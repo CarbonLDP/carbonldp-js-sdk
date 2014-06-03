@@ -1,0 +1,1 @@
+This is my very first GIT project, so... don't be judgemental. This is some early javaScript for the Carbon LDP JavaScript library. I'll probably merge it back into the Carbon LDP project soon, but I thought it would be a goiod chance for me to start learning Git.
