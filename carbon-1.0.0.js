@@ -1,215 +1,876 @@
 /**
-* @overview Carbon LDP JavaScript Library v1.0.0
-* @copyright Base22, LLC. 2014
-*/
+ * @overview Carbon LDP JavaScript Library v1.0.0
+ * @copyright Base22, LLC. 2014
+ */
 
 /** Directives for use when pasting code for evaluation at: http://www.jslint.com/ */
 /*jslint browser: false, devel: true, debug: false, sloppy: false, white: true */
 
+/** Immediately Invoked Function Expression (IIFE) */
 
-// Document me using Node.js 
-// Install: sudo npm install jsdoc 
-// cd to /usr/local/bin
-// sudo ./node_modules/.bin/jsdoc /Users/Shared/git-repo/CarbonJS/carbon-1.0.0.js
-// Find documentation in: /usr/local/bin/out/index.html
+(function ( root, factory, $, jsonld, Map ) {
+	'use strict';
 
-/**
-* An object that maps keys to values. A map cannot contain duplicate keys; each key can map to at most one value.
-* For those familiar with the Java programming language, this is similar to a HashMap; it implements most of the methods defined by Java's java.util.Map interface.
-*   
-* @constructor
-* @version 1.0.0
-* @author cody@base22.com Burleson, Cody
-*/
-function Map() {
+	if ( ! factory ) {
+		console.error( "The Carbon factory couldn't be initialized." );
+		return null;
+	}
 
-	this.dict = {};
+	// Setup defaults for all ajax calls
+	$.ajaxSetup( {
+		headers : {
+			'Accept': 'application/ld+json'
+		},
+		dataType: 'json'
+	} );
 
-	/**
-	* Returns the number of key-value mappings in this map.
-	* @method
-	*/
-	this.size = function() {
-		return Object.keys(this.dict).length;
+	root.Carbon = factory( $, jsonld, Map );
+
+}( this, function ( $, jsonld, Map ) {
+	'use strict';
+
+	if ( ! $ ) {
+		console.error( "The Carbon LDP JavaScript library depends on jQuery. Please include it on the source code." );
+		return null;
+	}
+
+	if ( ! jsonld ) {
+		console.error( "The Carbon LDP JavaScript library depends on JSON-LD. Please include it on the source code." );
+		return null;
+	}
+	if ( ! Map ) {
+		console.error( "The Carbon LDP JavaScript library depends on the Map library. Please include it on the source code." );
+		return null;
+	}
+
+	// Private variables
+	var _version = "1.0.0";
+
+	// Carbon constructor
+	var carbon = function () {
 	};
 
-	/**
-	* Returns true if this map contains no key-value mappings.
-	* @method
-	*/
-	this.isEmpty = function() {
-		return Object.keys(this.dict).length == 0;
+	// Public variables and methods
+	carbon.DefaultPrefixes = {
+		acl     : 'http://www.w3.org/ns/auth/acl#',
+		c       : 'http://carbonldp.com/ns/v1/platform#',
+		cs      : 'http://carbonldp.com/ns/v1/security#',
+		cc      : 'http://creativecommons.org/ns#',
+		cert    : 'http://www.w3.org/ns/auth/cert#',
+		dbp     : 'http://dbpedia.org/property/',
+		dc      : 'http://purl.org/dc/terms/',
+		dc11    : 'http://purl.org/dc/elements/1.1/',
+		dcterms : 'http://purl.org/dc/terms/',
+		doap    : 'http://usefulinc.com/ns/doap#',
+		example : 'http://example.org/ns#',
+		exif    : 'http://www.w3.org/2003/12/exif/ns#',
+		fn      : 'http://www.w3.org/2005/xpath-functions#',
+		foaf    : 'http://xmlns.com/foaf/0.1/',
+		geo     : 'http://www.w3.org/2003/01/geo/wgs84_pos#',
+		geonames: 'http://www.geonames.org/ontology#',
+		gr      : 'http://purl.org/goodrelations/v1#',
+		http    : 'http://www.w3.org/2006/http#',
+		ldp     : 'http://www.w3.org/ns/ldp#',
+		log     : 'http://www.w3.org/2000/10/swap/log#',
+		owl     : 'http://www.w3.org/2002/07/owl#',
+		rdf     : 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
+		rdfs    : 'http://www.w3.org/2000/01/rdf-schema#',
+		rei     : 'http://www.w3.org/2004/06/rei#',
+		rsa     : 'http://www.w3.org/ns/auth/rsa#',
+		rss     : 'http://purl.org/rss/1.0/',
+		sfn     : 'http://www.w3.org/ns/sparql#',
+		sioc    : 'http://rdfs.org/sioc/ns#',
+		skos    : 'http://www.w3.org/2004/02/skos/core#',
+		swrc    : 'http://swrc.ontoware.org/ontology#',
+		types   : 'http://rdfs.org/sioc/types#',
+		vcard   : 'http://www.w3.org/2001/vcard-rdf/3.0#',
+		wot     : 'http://xmlns.com/wot/0.1/',
+		xhtml   : 'http://www.w3.org/1999/xhtml#',
+		xsd     : 'http://www.w3.org/2001/XMLSchema#'
+	};
+	carbon.NS = carbon.DefaultPrefixes.c;
+	carbon.SECURITY_NS = carbon.DefaultPrefixes.cs;
+	carbon.SECONDARY_RES_SIGN = '#';
+	carbon.SYSTEM_RES_SIGN = '#$';
+
+	carbon.getVersion = function () {
+		return _version;
 	};
 
-	/**
-	* Returns the value to which the specified key is mapped, or null if this map contains no mapping for the key. 
-	* @method
-	* @param {String} key
-	* 	the key whose associated value is to be returned
-	*/
-	this.get = function(key){
-		return this.dict[key];
-	};
+	// ----------------------------------------------------------------------
+	// Auth
+	// ----------------------------------------------------------------------
 
-	/**
-	* Returns true if this map contains a mapping for the specified key.
-	* @method
-	* @param {String} key
-	* 	- key whose presence in this map is to be tested
-	*/
-	this.containsKey = function(key){
+	carbon.Auth = (function ( carbon, $, Map ) {
+		var auth = {};
 
-		if( this.get(key) !== undefined) {
+		auth.headers = {
+			authMethod: "X-Carbon-Auth-Method",
+			username  : "X-Carbon-Agent-Username",
+			password  : "X-Carbon-Agent-Password",
+			key       : "X-Carbon-Agent-Key",
+			token     : "X-Carbon-Agent-Token"
+		};
+
+		auth.Token = (function ( carbon, $ ) {
+			var _token = {};
+
+			_token.class = carbon.DefaultPrefixes.cs + 'Token';
+
+			_token.Property = {
+				key: carbon.DefaultPrefixes.cs + 'key'
+			};
+
+			return _token;
+		}( carbon, $ ));
+
+		var _authMethods = ['token', 'basic', 'username', 'key'];
+		var _method = null;
+		auth.getMethod = function () {
+			return _method;
+		};
+		auth.setMethod = function ( method ) {
+			if ( method === null ) {
+				_method = null;
+				return;
+			}
+			if ( $.inArray( method, _authMethods ) == - 1 ) {
+				console.error( '<< Carbon.Auth.setMethod() > The method: "' + method + '" is not supported.' );
+				return;
+			}
+			_method = method;
+		};
+
+		var _credentials = {
+			token   : null,
+			username: {
+				username: null,
+				password: null
+			},
+			key     : null
+		};
+
+		auth.login = function ( username, password, remember ) {
+			remember = typeof remember !== 'undefined' ? remember : false;
+
+			var headers = {
+				"Authorization": "Basic " + btoa( username + ":" + password ),
+				"Accept"       : "application/ld+json"
+			};
+
+			if ( remember ) {
+				headers["Prefer"] = "return=\"cs:Cookie\"";
+			}
+
+			return $.ajax( {
+				type   : 'POST',
+				url    : 'http://carbonldp.com/api/auth/login',
+				headers: headers
+			} ).then(
+				function ( jsonResponse, textStatus, jqXHR ) {
+					return carbon.digestLDObjects( jsonResponse );
+				}, function ( jqXHR, textStatus, errorThrown ) {
+					// TODO: FT
+					var deferred = $.Deferred();
+
+					deferred.reject();
+
+					return deferred;
+				}
+			).then(
+				function ( resources ) {
+					var deferred = $.Deferred();
+
+					var tokenResource = carbon.Document.getResourceOfType( auth.Token.class, resources );
+					if ( tokenResource === null ) {
+						// The response didn't contained a token object
+						// TODO: Fail
+						deferred.reject();
+					} else {
+						auth.setToken(tokenResource);
+						deferred.resolve();
+					}
+					return deferred.promise();
+				},
+				function ( errorObject ) {
+					// TODO: FT
+				}
+			);
+		};
+
+		auth.hasCredentials = function () {
+			var method = auth.getMethod();
+			if ( method === null ) return false;
+
+			switch ( method ) {
+				case "basic":
+				case "username":
+					var username = _credentials.username.username;
+					var password = _credentials.username.password;
+
+					if ( username === null ) return false;
+					if ( password === null ) return false;
+
+					break;
+				case "token":
+					var token = _credentials.token;
+
+					if ( token === null ) return false;
+					break;
+				case "key":
+					var key = _credentials.key;
+
+					if ( key === null ) return false;
+					break;
+				default:
+					return false;
+			}
 			return true;
-		} else {
-			return false;
+		};
+
+		auth.setToken = function ( tokenResource ) {
+			var tokenKey = tokenResource.getPropertyValue( auth.Token.Property.key );
+			if ( tokenKey === null ) {
+				// The token resource didn't have a key
+				// TODO: Fail
+			}
+
+			auth.setMethod( 'token' );
+			_credentials.token = tokenKey;
+		};
+
+		auth.setCredentialHeaders = function ( headers ) {
+			var method = auth.getMethod();
+			if ( method === null ) return headers;
+
+			var authHeaders = {};
+			switch ( method ) {
+				case "token":
+					var token = _credentials.token;
+
+					if ( token === null ) break;
+
+					authHeaders[auth.headers.authMethod] = method;
+					authHeaders[auth.headers.token] = token;
+					break;
+				default:
+					break;
+			}
+
+			$.extend( headers, authHeaders );
+			return headers;
+		};
+
+		return auth;
+	}( carbon, $, Map ));
+
+	// ----------------------------------------------------------------------
+	// End: Auth
+	// ----------------------------------------------------------------------
+
+	// ----------------------------------------------------------------------
+	// ResourceLibrary
+	// ----------------------------------------------------------------------
+
+	carbon.SourceLibrary = (function ( carbon, $, Map ) {
+		var sourceLibrary = {};
+
+		function addLDPResources( ldpResources ) {
+			ldpResources.forEach( function ( ldpResource ) {
+				_sources.put( ldpResource.getURI(), ldpResource );
+			} );
 		}
 
-	};
+		// Local variable to store the RDFSources retrieved
+		var _sources = new Map();
+		// Local variable to store the ETags and relate them to their URI
+		var _etags = new Map();
 
-	/**
-	* Associates the specified value with the specified key in this map. If the map previously contained a mapping for the key, the old value is replaced.
-	* @method
-	* @param {String} key
-	*	- key with which the specified value is to be associated
-	* @param {Object} value
-	* 	- value to be associated with the specified key
-	*/
-	this.put = function(key,value) {
-		this.dict[key] = value;
-	};
+		/**
+		 * Retrieves an RDFSource from the local cac
+		 * @param {String} uri The URI of the source that wants to be retrieved.
+		 * @param {boolean} options.useCache  Specifies if the cache will be used or not.
+		 * @returns {Promise}
+		 */
+		sourceLibrary.get = function ( uri, options ) {
+			var defaultOptions = {
+				useCache: true
+			};
+			if ( typeof options == 'object' ) {
+				options = $.extend( defaultOptions, options );
+			} else {
+				options = defaultOptions;
+			}
 
-	/**
-	* Removes the mapping for the specified key from this map if present.
-	* @method
-	* @param {String} key
-	*	- key whose mapping is to be removed from the map
-	*/
-	this.remove = function(key) {
-		'use strict';
-		delete this.dict[key];
-	};
+			if ( _sources.containsKey( uri ) && options.useCache ) {
+				return new Promise( function ( fulfill, reject ) {
+					fulfill( _sources.get( uri ) );
+				} );
+			} else {
 
-	/**
-	* Removes all of the mappings from this map. The map will be empty after this call returns.
-	* @method
-	*/
-	this.clear = function(){
-		this.dict = {};
-	};
+				var headers = {
+					"Accept"       : "application/ld+json"
+				};
 
-}
+				headers = carbon.Auth.setCredentialHeaders(headers);
 
+				return $.ajax( {
+					type   : 'GET',
+					url    : uri,
+					headers: headers
+				} ).then(
+					function ( jsonResponse, textStatus, jqXHR ) {
+						return carbon.digestLDObjects( jsonResponse );
+					}, function ( jqXHR, textStatus, errorThrown ) {
+						// TODO: FT
+					}
+				).then(
+					function ( ldpResources ) {
+						var deferred = $.Deferred();
 
-/** 
-* =============================
-* Map Test Cases
-* =============================
-*/
+						addLDPResources( ldpResources );
 
-/**
-* Useful for unit testing JavaScript, this method asserts that the given condition is true. 
-* If the given condition is not true, an optionally provided message is logged or 'Assertion failed.'
-* @method
-*/
-function assert(condition, message) {
-    if (!condition) {
-        console.error(message) || console.error('Assertion failed');
-    } else {
-    	console.log("-- PASS");
-    }
-}
-
-var myMap = new Map();
-
-assert( myMap.isEmpty() );
-
-assert( myMap.size() == 0 , "size should be zero before any entries have been put into the lookup table.");
-
-myMap.put('key1','http://value1?dt=2014_06_01&dummy=true');
-
-var testObj = {prop1:"Hello", prop2:" World!"};
-
-myMap.put('key2',testObj);
-
-assert( myMap.size() == 2, "size should be 2 after adding 2 entries.");
-
-var ref = myMap.get('key2');
-
-assert( ref !== undefined , "ref should not be undefined; it should be a reference to testObj");
-
-assert( ref.prop1 == 'Hello' , "ref.prop1 should equal 'hello' ");
-
-assert( myMap.containsKey('notReal') == false, "containsKey('notReal') should return false; no such object is in the lookup table.");
-
-assert( myMap.containsKey('key2') == true, "containsKey('key2') should return true; that object is in the lookup table.");
-
-myMap.remove('key1');
-
-assert( myMap.size() == 1 , "size should be 1 after removing item under 'key1'.");
-
-myMap.clear();
-
-assert( myMap.size() == 0 , "size should be 0 after clearing lookup table.");
-
-
-
-
-
-
-/** Immediately Invoked Function Expression (IIFE) */
-(function ( root, factory ) {
-
-	'use strict';
-
-	root.carbon = factory(/* root */);
-
-/** 
-* IIFE, defined above by with (function ( root, factory ) { 
-* is actually invoked next. The IIFE is defined above with (function () {, and then, when we reach
-* }()); here, we're invoking the IIFE. We defined the IIFE with two parameters: root and factory.
-* The root is typically the window object, but can be different on systems such as Node.js; we pass
-* in this for the root parameter.
-* For the factory, we're defining an inline function that returns an object. 
-* If needed, we can later add parameters to the factory function as long as we pass values in 
-* above where we set the Carbon object by calling the factory.
-*/
-}(this, function(/* root */) {
-
-	'use strict';
-
-	var	carbon = function(){};
-	
-	carbon.VERSION = '1.0.0';
-    carbon.registries = {};
-    
-	carbon.getRegistry = function(id) {
-
-		var requestedRegistry = carbon.registries[id];
-        
-        console.log(requestedRegistry);
-        
-        
-		var registry = {
-			id : id,
-			resources : []
+						deferred.resolve( ldpResources );
+						return deferred.promise();
+					}, function ( errorObject ) {
+						// TODO: FT
+					}
+				);
+			}
 		};
-		
-		return registry;
 
+		return sourceLibrary;
+	}( carbon, $, Map ));
+
+	// ----------------------------------------------------------------------
+	// End: ResourceLibrary
+	// ----------------------------------------------------------------------
+
+	carbon.digestLDObjects = function ( jsonLDObjects ) {
+		var deferred = $.Deferred();
+		var processor = new jsonld.JsonLdProcessor();
+		processor.expand( jsonLDObjects ).then( function ( jsonLDObjects ) {
+			deferred.resolve( jsonLDObjects );
+		}, function () {
+			// TODO: Create custom error object
+			deferred.reject();
+		} );
+		return deferred.promise().then( function ( jsonLDObjects ) {
+			var deferred = $.Deferred();
+
+			carbon.Resource.injectMethods( jsonLDObjects );
+
+			deferred.resolve( jsonLDObjects );
+			return deferred.promise();
+		}, function ( errorObject ) {
+			// TODO: FT
+		} );
+	};
+
+	// ----------------------------------------------------------------------
+	// Document
+	// ----------------------------------------------------------------------
+
+	carbon.Document = (function ( carbon, $ ) {
+		var _document = {};
+
+		_document.getResourceOfType = function ( type, document ) {
+			if ( ! (document instanceof Array) ) throw 'Not an array';
+
+			var typedResource = null;
+			document.some( function ( resource ) {
+				if ( hasFunction( resource, "isOfType" ) ) {
+					if ( resource.isOfType( type ) ) {
+						typedResource = resource;
+						return true;
+					}
+				}
+			} );
+			return typedResource;
+		};
+
+		return _document;
+	}( carbon, $ ));
+
+	// ----------------------------------------------------------------------
+	// End: Document
+	// ----------------------------------------------------------------------
+
+	// ----------------------------------------------------------------------
+	// Resource
+	// ----------------------------------------------------------------------
+
+	carbon.Resource = (function ( carbon, $ ) {
+		var resource = {};
+
+		resource.class = carbon.DefaultPrefixes.ldp + 'Resource';
+
+		resource.Property = {
+			type: carbon.DefaultPrefixes.rdf + 'type'
+		};
+
+		resource.isResource = function ( jsonldResource ) {
+			return jsonldResource.hasOwnProperty( "@id" );
+		};
+
+		resource.injectMethods = function ( jsonldResources ) {
+			jsonldResources.forEach( function ( jsonldResource ) {
+
+				jsonldResource.getURI = function () {
+					return this["@id"];
+				};
+
+				jsonldResource.isOfType = function ( type ) {
+					var property = carbon.Resource.Property.type;
+					if ( ! this.hasOwnProperty( property ) ) {
+						return false;
+					}
+					var values = this[property];
+					var isOfType = false;
+					values.some( function ( value ) {
+						if ( carbon.Resource.isResource( value ) ) {
+							if ( value["@id"] == type ) {
+								isOfType = true;
+								return true;
+							}
+						}
+					} );
+					return isOfType;
+				};
+
+				jsonldResource.hasProperty = function ( property ) {
+					return this.hasOwnProperty( property );
+				};
+
+				jsonldResource.getProperty = function ( property ) {
+					if ( ! this.hasProperty( property ) ) return null;
+					if ( this[property] instanceof Array ) {
+						if ( this[property].length < 1 ) return null;
+						return this[property][0];
+					}
+					return this[property];
+				};
+
+				jsonldResource.getPropertyValue = function ( property ) {
+					var propertyObject = this.getProperty( property );
+					if ( propertyObject === null ) return null;
+					if ( propertyObject.hasOwnProperty( '@value' ) ) return propertyObject['@value'];
+					return null;
+				};
+
+				jsonldResource.getPropertyURI = function ( property ) {
+					var propertyObject = this.getProperty( property );
+					if ( propertyObject === null ) return null;
+					if ( propertyObject.hasOwnProperty( '@id' ) ) return propertyObject['@id'];
+					return null;
+				};
+
+				jsonldResource.listProperties = function ( property ) {
+					if ( ! this.hasProperty( property ) ) return null;
+					if ( this[property] instanceof Array ) {
+						if ( this[property].length < 1 ) return null;
+						return this[property];
+					}
+					return null;
+				};
+
+			} );
+		};
+
+		return resource;
+	}( carbon, $ ));
+
+	// ----------------------------------------------------------------------
+	// End: Resource
+	// ----------------------------------------------------------------------
+
+	// ----------------------------------------------------------------------
+	// Source
+	// ----------------------------------------------------------------------
+
+	carbon.Source = (function ( carbon, $ ) {
+		var source = {};
+
+		source.class = carbon.DefaultPrefixes.ldp + 'RDFSource';
+
+		source.Property = {
+
+		};
+
+		source.injectMethods = function ( resources ) {
+			resources.forEach( function ( resource ) {
+
+				resource.getETag = function () {
+
+				};
+
+			} );
+		};
+
+		return source;
+	}( carbon, $ ));
+
+	// ----------------------------------------------------------------------
+	// End: Source
+	// ----------------------------------------------------------------------
+
+	// ----------------------------------------------------------------------
+	// BasicContainer
+	// ----------------------------------------------------------------------
+
+	carbon.BasicContainer = (function ( carbon, $ ) {
+		var basicContainer = {};
+
+		basicContainer.class = carbon.DefaultPrefixes.ldp + 'BasicContainer';
+
+		basicContainer.Property = {
+			contains: carbon.DefaultPrefixes.ldp + 'contains',
+			member  : carbon.DefaultPrefixes.ldp + 'member'
+		};
+
+		basicContainer.injectMethods = function ( sources ) {
+			sources.forEach( function ( source ) {
+
+				// TODO: FT
+
+			} );
+		};
+
+		return basicContainer;
+	}( carbon, $ ));
+
+	// ----------------------------------------------------------------------
+	// End: BasicContainer
+	// ----------------------------------------------------------------------
+
+	// ----------------------------------------------------------------------
+	// DirectContainer
+	// ----------------------------------------------------------------------
+
+	carbon.DirectContainer = (function ( carbon, $ ) {
+		var directContainer = {};
+
+		directContainer.class = carbon.DefaultPrefixes.ldp + 'DirectContainer';
+
+		directContainer.Property = {
+			contains: carbon.DefaultPrefixes.ldp + 'contains'
+		};
+
+		directContainer.injectMethods = function ( sources ) {
+			sources.forEach( function ( source ) {
+
+				// TODO: FT
+
+			} );
+		};
+
+		return directContainer;
+	}( carbon, $ ));
+
+	// ----------------------------------------------------------------------
+	// End: DirectContainer
+	// ----------------------------------------------------------------------
+
+	// ----------------------------------------------------------------------
+	// IndirectContainer
+	// ----------------------------------------------------------------------
+
+	carbon.IndirectContainer = (function ( carbon, $ ) {
+		var indirectContainer = {};
+
+		indirectContainer.class = carbon.DefaultPrefixes.ldp + 'IndirectContainer';
+
+		indirectContainer.Property = {
+			contains: carbon.DefaultPrefixes.ldp + 'contains'
+		};
+
+		indirectContainer.injectMethods = function ( sources ) {
+			sources.forEach( function ( source ) {
+
+				// TODO: FT
+
+			} );
+		};
+
+		return indirectContainer;
+	}( carbon, $ ));
+
+	// ----------------------------------------------------------------------
+	// End: DirectContainer
+	// ----------------------------------------------------------------------
+
+	/**
+	 * Parses the given JSON-LD object into an ErrorResponse object.
+	 */
+	carbon.parseErrorResponse = function ( urlOrJsonObj, opts ) {
+
+		console.log( '-- Carbon.parseErrorResponse() > typeof urlOrJsonObj param: ' + typeof urlOrJsonObj );
+
+		// Private properties
+		var deferred = $.Deferred();
+
+		var type = "ErrorResponse";
+
+		// ----------------------------------------------------------------------
+		// ErrorResponse - Public (delegate) properties and methods
+		// ----------------------------------------------------------------------
+
+		// ----------------------------------------------------------------------
+		// ErrorResponse - Instance Initialization
+		// ----------------------------------------------------------------------
+
+		// If the err parameter given is a string, we assume it is a URL
+		if ( typeof urlOrJsonObj == "string" ) {
+
+			console.log( "-- Carbon.parseErrorResponse() > Got string parameter; assuming it's a URL to load." );
+
+			$.when( fetch( urlOrJsonObj, opts ) ).then( // SUCCESS FUNCTION
+				// May want to do a promise deal here since the method we're calling
+				// uses a deferred and returns a promise...
+				// WARNING: DEFINED AGAIN BELOW IN OUTER ELSE BLOCK!
+				function ( doc ) {
+					var promise = makeErrorResponse( doc );
+					promise.done( function ( errorResponseObject ) {
+						deferred.resolve( errorResponseObject );
+					} );
+					promise.fail( function ( errMsg ) {
+						deferred.reject( errMsg );
+					} );
+				},
+
+				// FAILURE FUNCTION
+				function () {
+
+					console.error( 'TO DO: We\'ll need better error handling here - tied more specifically to error codes.' );
+					console.error( 'Is the resource secured, but not being requested with appropriate credentials, API key, or token?' );
+					console.error( 'Check the web server fronting the app server or servlet container that hosts Carbon; is it running and accessible?' );
+					console.error( 'Check all integrated database services; are they running and accessible?' );
+
+					var errMessage = 'Error loading: ' + urlOrJsonObj;
+					deferred.reject( errMessage );
+
+				} );
+
+		} else {
+			console.log( "-- Carbon.parseErrorResponse() > Parameter is not a string; assuming it's JSON-LD object." );
+
+			// THIS IS THE SAME AS WHAT'S DEFINED IN SUCCESS FUNCTION ABOVE!
+			var promise = makeErrorResponse( doc );
+			promise.done( function ( errorResponseObject ) {
+				deferred.resolve( errorResponseObject );
+			} );
+			promise.fail( function ( errMsg ) {
+				deferred.reject( errMsg );
+			} );
+
+		}
+
+		return deferred.promise();
 	};
 
 	return carbon;
 
-}));
+	// ======================================================================
+	// END - Carbon object factory (produces and returns the Carbon object)
+	// ======================================================================
 
+	// ======================================================================
+	// Private Functions
+	// ======================================================================
 
+	function hasFunction( object, functionName ) {
+		if ( typeof object[functionName] === 'function' ) return true;
+		return false;
+	}
 
+	/**
+	 * Makes an Ajax GET request to the given URL through promise
+	 *
+	 */
+	function fetch( url, opts ) {
 
+		console.log( '>> fetch("' + url + '")' );
 
+		// do the fetch...
+		var httpHeaders = {};
+		if ( opts && opts.headers ) {
+			httpHeaders = opts.headers;
+		}
 
+		return $.ajax( {
+			url    : url,
+			headers: httpHeaders
+			//context: window.document
+		} );
 
-var myMap = new Map();
-myMap.put('key1',"Hello");
-myMap.put('key2',' World!');
+	} // END fetch()
+
+	/**
+	 * private method makes an inline object array of HeaderIssues, ParameterIssues, EntityBodyIssues
+	 * This is a utility function used by the function makeErrorResponse(), below.
+	 */
+	function makeInlineIssues( expandedJLO, issues ) {
+
+		var C_ISSUE_CODE = 'http://carbonldp.com/ns#issueCode', C_ISSUE_DESC = 'http://carbonldp.com/ns#issueDescription', C_KEY = 'http://carbonldp.com/ns#key', C_VAL = 'http://carbonldp.com/ns#value';
+
+		var expandedJLOLen = expandedJLO.length;
+		var issuesLen = issues.length;
+
+		var resultingIssueObjArray = [];
+
+		for ( var p = 0; p < issuesLen; p ++ ) {
+
+			var issueId = issues[p]['@id'];
+
+			// Now that we have the URL to the inline parameter issue, we'll loop until we find the inline for it
+
+			for ( var pi = 0; pi < expandedJLOLen; pi ++ ) {
+
+				if ( expandedJLO[pi]['@id'] === issueId ) {
+
+					var issue = {};
+
+					issue.uri = expandedJLO[pi]['@id'];
+
+					// Accept string or number
+					var code = expandedJLO[pi][C_ISSUE_CODE][0]['@value'];
+					if ( typeof code === 'string' ) {
+						issue.issueCode = parseInt( code );
+					} else {
+						issue.issueCode = code;
+					}
+
+					issue.issueDescription = expandedJLO[pi][C_ISSUE_DESC][0]['@value'];
+					if ( expandedJLO[pi][C_KEY] ) {
+						issue.key = expandedJLO[pi][C_KEY][0]['@value'];
+					}
+					if ( expandedJLO[pi][C_VAL] ) {
+						issue.val = expandedJLO[pi][C_VAL][0]['@value'];
+					}
+
+					resultingIssueObjArray.push( issue );
+
+				}
+
+			}
+
+		}
+
+		return resultingIssueObjArray;
+
+	} // END: makeInlineIssues()
+
+	/**
+	 * Makes an ErrorResponse object with the given expanded JSON-LD error response.
+	 */
+	function makeErrorResponse( doc ) {
+
+		console.log( ">> ~private makeErrorResponse()" );
+
+		var deferred = $.Deferred();
+
+		var CLASS = "ErrorResponse";
+
+		var Properties = {
+			CARBON_CODE     : carbon.NS + "carbonCode",
+			DEBUG_MESSAGE   : cabon.NS + 'debugMessage',
+			E_BODY_ISSUE    : cabon.NS + 'EntityBodyIssue',
+			C_ERROR_RESPONSE: cabon.NS + 'ErrorResponse',
+			FRIENDLY_MSG    : cabon.NS + 'friendlyMessage',
+			HAS_E_BODY_ISSUE: cabon.NS + 'hasEntityBodyIssue',
+			HAS_HEADER_ISSUE: cabon.NS + 'hasHeaderIssue',
+			HAS_PARAM_ISSUE : cabon.NS + 'hasParameterIssue',
+			HEADER_ISSUE    : cabon.NS + 'HeaderIssue',
+			HTTP_STATUS_CODE: cabon.NS + 'httpStatusCode'
+		};
+
+		var ErrorResponse = {
+			getObjectType: function () {
+				return type;
+			}
+		};
+
+		var errorResponse = Object.create( ErrorResponse );
+
+		var context = {"c": carbon.NS_C};
+
+		jsonld.expand( doc, context, function ( err, expandedJLO ) {
+
+			// Uncomment to log the expanded JSON-LD object...
+			// console.log(JSON.stringify(expandedJLO, null, 2));
+
+			var expandedJLOLen = expandedJLO.length;
+
+			for ( var i = 0; i < expandedJLOLen; i ++ ) {
+
+				// The first (and only) @id URI without a hash is our root resource; the rest are inline.
+				if ( expandedJLO[i]['@id'].indexOf( '#' ) == - 1 ) {
+
+					errorResponse.uri = expandedJLO[i]['@id'];
+
+					// Handle either string or number
+
+					var cCode = expandedJLO[i][C_CARBON_CODE][0]['@value'];
+					if ( typeof cCode === 'string' ) {
+						errorResponse.carbonCode = parseInt( cCode );
+					} else {
+						errorResponse.carbonCode = cCode;
+					}
+
+					errorResponse.friendlyMessage = expandedJLO[i][C_FRIENDLY_MSG][0]['@value'];
+
+					// Handle either string or number
+					var status = expandedJLO[i][C_HTTP_STATUS_CODE][0]['@value'];
+					if ( typeof status === 'string' ) {
+						errorResponse.httpStatusCode = parseInt( status );
+					} else {
+						errorResponse.httpStatusCode = status;
+					}
+
+					errorResponse.debugMessage = expandedJLO[i][C_DEBUG_MESSAGE][0]['@value'];
+					errorResponse.paramIssues = [];
+					errorResponse.headerIssues = [];
+					errorResponse.entityBodyIssues = [];
+
+					// The param issue is an array of one or more objects, with each object specifying
+					// the @id of an inline.
+
+					var paramIssues = expandedJLO[i][C_HAS_PARAM_ISSUE];
+					errorResponse.paramIssues = makeInlineIssues( expandedJLO, paramIssues );
+
+					var headerIssues = expandedJLO[i][C_HAS_HEADER_ISSUE];
+					errorResponse.headerIssues = makeInlineIssues( expandedJLO, headerIssues );
+
+					var entityBodyIssues = expandedJLO[i][C_HAS_E_BODY_ISSUE];
+					errorResponse.entityBodyIssues = makeInlineIssues( expandedJLO, entityBodyIssues );
+
+					break;
+
+				}
+
+			}
+
+			errorResponse.hasParameterIssue = function () {
+				return errorResponse.paramIssues.length > 0;
+			};
+
+			errorResponse.hasHeaderIssue = function () {
+				return errorResponse.headerIssues.length > 0;
+			};
+
+			errorResponse.hasEntityBodyIssue = function () {
+				return errorResponse.entityBodyIssues.length > 0;
+			};
+
+			// DO THE WORK HERE...
+
+			deferred.resolve( errorResponse );
+
+		} );
+
+		return deferred.promise();
+
+	} // END: makeErrorResponse()
+
+}, jQuery, jsonld, Map ));
 
