@@ -1,0 +1,3 @@
+[submodule "jsonld"]
+	path = jsonld
+	url = https://github.com/digitalbazaar/jsonld.js.git

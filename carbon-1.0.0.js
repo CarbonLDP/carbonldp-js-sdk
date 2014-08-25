@@ -53,6 +53,9 @@
 		};
 
 		// Public variables and methods
+		carbon.getVersion = function () {
+			return _version;
+		};
 
 		carbon.getAPIBaseURL = function () {
 			return _protocol + "://" + _domain + "/api/";
@@ -100,24 +103,20 @@
 		carbon.SECONDARY_RES_SIGN = '#';
 		carbon.SYSTEM_RES_SIGN = '#$';
 
-		carbon.getVersion = function () {
-			return _version;
-		};
-
 		// ----------------------------------------------------------------------
 		// Auth
 		// ----------------------------------------------------------------------
 
 		carbon.Auth = (function ( carbon, $, Map ) {
-			var auth = {};
-
-			auth.headers = {
+			var _authHeaders = {
 				authMethod: "X-Carbon-Auth-Method",
 				username  : "X-Carbon-Agent-Username",
 				password  : "X-Carbon-Agent-Password",
 				key       : "X-Carbon-Agent-Key",
 				token     : "X-Carbon-Agent-Token"
 			};
+
+			var auth = {};
 
 			auth.Token = (function ( carbon, $ ) {
 				var _token = {};
@@ -315,8 +314,8 @@
 
 						if ( token === null ) break;
 
-						authHeaders[auth.headers.authMethod] = method;
-						authHeaders[auth.headers.token] = token;
+						authHeaders[_authHeaders.authMethod] = method;
+						authHeaders[_authHeaders.token] = token;
 						break;
 					default:
 						break;
