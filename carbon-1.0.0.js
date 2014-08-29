@@ -124,7 +124,27 @@
 				_token.class = carbon.DefaultPrefixes.cs + 'Token';
 
 				_token.Property = {
-					key: carbon.DefaultPrefixes.cs + 'key'
+					key: {
+						uri     : carbon.DefaultPrefixes.cs + 'key',
+						multi   : false,
+						literal : true,
+						readOnly: true
+					}
+				};
+
+				_token.injectMethods = function ( resources ) {
+					if ( ! ( resources instanceof Array ) ) {
+						resources = [ resources ];
+					}
+
+					resources.forEach( function ( resource ) {
+						carbon.Resource.injectPropertyMethods( resource, _token.Property );
+					} );
+				};
+
+				_token.isToken = function( resource ) {
+					if( ! carbon.Resource.isResource(resource) ) return false;
+					return resource.isOfType(_token.class);
 				};
 
 				return _token;
@@ -173,6 +193,11 @@
 					return agentResource;
 				};
 
+				_agent.isAgent = function( resource ) {
+					if( ! carbon.Resource.isResource(resource) ) return false;
+					return resource.isOfType(_agent.class);
+				};
+
 				_agent.injectMethods = function ( resources ) {
 					if ( ! ( resources instanceof Array ) ) {
 						resources = [ resources ];
@@ -200,7 +225,7 @@
 				}
 				if ( $.inArray( method, _authMethods ) == - 1 ) {
 					console.error( '<< Carbon.Auth.setMethod() > The method: "' + method + '" is not supported.' );
-					return;
+					throw 'Method not supported';
 				}
 				_method = method;
 			};
@@ -251,6 +276,8 @@
 							// TODO: Fail
 							deferred.reject();
 						} else {
+							carbon.Auth.Token.injectMethods(tokenResource);
+
 							auth.setToken( tokenResource );
 							deferred.resolve();
 						}
@@ -292,11 +319,23 @@
 				return true;
 			};
 
+			auth.eraseCredentials = function () {
+				carbon.Auth.setMethod( null );
+				_credentials = {
+					token   : null,
+					username: {
+						username: null,
+						password: null
+					},
+					key     : null
+				};
+			};
+
 			auth.setToken = function ( tokenResource ) {
-				var tokenKey = tokenResource.getPropertyValue( auth.Token.Property.key );
+				var tokenKey = tokenResource.getKey();
 				if ( tokenKey === null ) {
 					// The token resource didn't have a key
-					// TODO: Fail
+					throw 'The token doesn\'t contain a key';
 				}
 
 				auth.setMethod( 'token' );
@@ -325,7 +364,7 @@
 				return headers;
 			};
 
-			auth.postAgent = function ( agent ) {
+			auth.registerAgent = function ( agent ) {
 				var headers = {
 					"Content-Type": "application/ld+json",
 					"Accept"      : "application/ld+json"
