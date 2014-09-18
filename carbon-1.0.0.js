@@ -44,11 +44,16 @@
 		}
 
 		// Private variables
-		var _version = "1.0.0";
-		var _protocol = "http";
+		var _version = "0.2.0";
+		var _protocol = "https";
 		var _domain = "carbonldp.com"
+		var _appSlug = null;
+		var _api = null;
 
-		// Carbon constructor
+		// ----------------------------------------------------------------------
+		// Carbon
+		// ----------------------------------------------------------------------
+
 		var carbon = function () {
 		};
 
@@ -58,13 +63,25 @@
 		};
 
 		carbon.getAPIBaseURL = function () {
-			return _protocol + "://" + _domain + "/api/";
-		}
+			return _protocol + "://" + _domain + "/";
+		};
+		carbon.getAPIVersion = function() {
+			if ( ! _api ) {
+				throw 'Carbon hasn\'t been initiated';
+			}
+			return _api.getVersion();
+		};
+
+		carbon.setDefaultAppSlug = function ( appSlug ) {
+			_appSlug = appSlug;
+		};
 
 		carbon.DefaultPrefixes = {
 			acl     : 'http://www.w3.org/ns/auth/acl#',
+			api     : 'http://purl.org/linked-data/api/vocab#',
 			c       : 'http://carbonldp.com/ns/v1/platform#',
 			cs      : 'http://carbonldp.com/ns/v1/security#',
+			cp      : 'http://carbonldp.com/ns/v1/patch#',
 			cc      : 'http://creativecommons.org/ns#',
 			cert    : 'http://www.w3.org/ns/auth/cert#',
 			dbp     : 'http://dbpedia.org/property/',
@@ -103,6 +120,20 @@
 		carbon.SECONDARY_RES_SIGN = '#';
 		carbon.SYSTEM_RES_SIGN = '#$';
 
+		carbon.API = (function ( carbon, $ ) {
+			var _api = {};
+			_api.class = carbon.DefaultPrefixes.api + 'API';
+
+			_api.Property = {
+				version: {
+					uri     : carbon.DefaultPrefixes.doap + 'version',
+					multi   : false,
+					literal : true,
+					readOnly: true
+				}
+			};
+			return _api;
+		}( carbon, $ ));
 		// ----------------------------------------------------------------------
 		// Auth
 		// ----------------------------------------------------------------------
@@ -257,7 +288,7 @@
 					headers: headers
 				} ).then(
 					function ( jsonResponse, textStatus, jqXHR ) {
-						return carbon.digestLDObjects( jsonResponse );
+						return carbon.digestRDFResources( jsonResponse );
 					}, function ( jqXHR, textStatus, errorThrown ) {
 						// TODO: FT
 						var deferred = $.Deferred();
@@ -379,7 +410,7 @@
 					data   : JSON.stringify( agent )
 				} ).then(
 					function ( jsonResponse, textStatus, jqXHR ) {
-						return carbon.digestLDObjects( jsonResponse );
+						return carbon.digestRDFResources( jsonResponse );
 					}, function ( jqXHR, textStatus, errorThrown ) {
 						// TODO: FT
 					}
@@ -456,7 +487,7 @@
 						headers: headers
 					} ).then(
 						function ( jsonResponse, textStatus, jqXHR ) {
-							return carbon.digestLDObjects( jsonResponse );
+							return carbon.digestRDFResources( jsonResponse );
 						}, function ( jqXHR, textStatus, errorThrown ) {
 							// TODO: FT
 						}
@@ -482,27 +513,6 @@
 		// End: ResourceLibrary
 		// ----------------------------------------------------------------------
 
-		carbon.digestLDObjects = function ( jsonLDObjects ) {
-			var deferred = $.Deferred();
-			var processor = new jsonld.JsonLdProcessor();
-			processor.expand( jsonLDObjects ).then( function ( jsonLDObjects ) {
-				deferred.resolve( jsonLDObjects );
-			}, function () {
-				// TODO: Create custom error object
-				deferred.reject();
-			} );
-			return deferred.promise().then( function ( jsonLDObjects ) {
-				var deferred = $.Deferred();
-
-				carbon.Resource.injectMethods( jsonLDObjects );
-
-				deferred.resolve( jsonLDObjects );
-				return deferred.promise();
-			}, function ( errorObject ) {
-				// TODO: FT
-			} );
-		};
-
 		// ----------------------------------------------------------------------
 		// Document
 		// ----------------------------------------------------------------------
@@ -511,17 +521,22 @@
 			var _document = {};
 
 			_document.getResourceOfType = function ( type, document ) {
-				if ( ! (document instanceof Array) ) throw 'Not an array';
-
 				var typedResource = null;
-				document.some( function ( resource ) {
-					if ( hasFunction( resource, "isOfType" ) ) {
-						if ( resource.isOfType( type ) ) {
-							typedResource = resource;
-							return true;
+				if ( isArray(document) ) {
+					document.some( function ( resource ) {
+						if ( hasFunction( resource, "isOfType" ) ) {
+							if ( resource.isOfType( type ) ) {
+								typedResource = resource;
+								return true;
+							}
 						}
+					} );
+				} else {
+					if ( hasFunction( document, "isOfType" ) && document.isOfType( type ) ) {
+						typedResource = document;
 					}
-				} );
+				}
+
 				return typedResource;
 			};
 
@@ -550,7 +565,7 @@
 			};
 
 			_resource.injectMethods = function ( jsonldResources ) {
-				if ( ! ( jsonldResources instanceof Array ) ) {
+				if ( ! isArray( jsonldResources ) ) {
 					jsonldResources = [ jsonldResources ];
 				}
 
@@ -748,15 +763,15 @@
 		// ----------------------------------------------------------------------
 
 		carbon.Source = (function ( carbon, $ ) {
-			var source = {};
+			var _source = {};
 
-			source.class = carbon.DefaultPrefixes.ldp + 'RDFSource';
+			_source.class = carbon.DefaultPrefixes.ldp + 'RDFSource';
 
-			source.Property = {
+			_source.Property = {
 
 			};
 
-			source.injectMethods = function ( resources ) {
+			_source.injectMethods = function ( resources ) {
 				resources.forEach( function ( resource ) {
 
 					resource.getETag = function () {
@@ -766,7 +781,7 @@
 				} );
 			};
 
-			return source;
+			return _source;
 		}( carbon, $ ));
 
 		// ----------------------------------------------------------------------
@@ -778,16 +793,16 @@
 		// ----------------------------------------------------------------------
 
 		carbon.BasicContainer = (function ( carbon, $ ) {
-			var basicContainer = {};
+			var _basicContainer = {};
 
-			basicContainer.class = carbon.DefaultPrefixes.ldp + 'BasicContainer';
+			_basicContainer.class = carbon.DefaultPrefixes.ldp + 'BasicContainer';
 
-			basicContainer.Property = {
+			_basicContainer.Property = {
 				contains: carbon.DefaultPrefixes.ldp + 'contains',
 				member  : carbon.DefaultPrefixes.ldp + 'member'
 			};
 
-			basicContainer.injectMethods = function ( sources ) {
+			_basicContainer.injectMethods = function ( sources ) {
 				sources.forEach( function ( source ) {
 
 					// TODO: FT
@@ -795,7 +810,7 @@
 				} );
 			};
 
-			return basicContainer;
+			return _basicContainer;
 		}( carbon, $ ));
 
 		// ----------------------------------------------------------------------
@@ -807,15 +822,15 @@
 		// ----------------------------------------------------------------------
 
 		carbon.DirectContainer = (function ( carbon, $ ) {
-			var directContainer = {};
+			var _directContainer = {};
 
-			directContainer.class = carbon.DefaultPrefixes.ldp + 'DirectContainer';
+			_directContainer.class = carbon.DefaultPrefixes.ldp + 'DirectContainer';
 
-			directContainer.Property = {
+			_directContainer.Property = {
 				contains: carbon.DefaultPrefixes.ldp + 'contains'
 			};
 
-			directContainer.injectMethods = function ( sources ) {
+			_directContainer.injectMethods = function ( sources ) {
 				sources.forEach( function ( source ) {
 
 					// TODO: FT
@@ -823,7 +838,7 @@
 				} );
 			};
 
-			return directContainer;
+			return _directContainer;
 		}( carbon, $ ));
 
 		// ----------------------------------------------------------------------
@@ -835,15 +850,15 @@
 		// ----------------------------------------------------------------------
 
 		carbon.IndirectContainer = (function ( carbon, $ ) {
-			var indirectContainer = {};
+			var _indirectContainer = {};
 
-			indirectContainer.class = carbon.DefaultPrefixes.ldp + 'IndirectContainer';
+			_indirectContainer.class = carbon.DefaultPrefixes.ldp + 'IndirectContainer';
 
-			indirectContainer.Property = {
+			_indirectContainer.Property = {
 				contains: carbon.DefaultPrefixes.ldp + 'contains'
 			};
 
-			indirectContainer.injectMethods = function ( sources ) {
+			_indirectContainer.injectMethods = function ( sources ) {
 				sources.forEach( function ( source ) {
 
 					// TODO: FT
@@ -851,289 +866,148 @@
 				} );
 			};
 
-			return indirectContainer;
+			return _indirectContainer;
 		}( carbon, $ ));
 
 		// ----------------------------------------------------------------------
-		// End: DirectContainer
+		// End: IndirectContainer
 		// ----------------------------------------------------------------------
+
+		carbon.init = function( options ) {
+			var defaultOptions = {
+				protocol: null,
+				domain: null,
+				appSlug: null
+			};
+			if ( typeof options == 'object' ) {
+				options = $.extend( defaultOptions, options );
+			} else {
+				options = defaultOptions;
+			}
+
+			if ( options.protocol ) _protocol = options.protocol;
+			if ( options.domain ) _domain = options.domain;
+
+			if ( options.appSlug ) carbon.setDefaultAppSlug(options.appSlug);
+
+			var apiURL = carbon.getAPIBaseURL() + 'api';
+			var apiPromise = carbon.getRDFResource( apiURL, {
+				authenticate: false
+			});
+
+			return apiPromise.then(
+				function ( rdfResources ) {
+					var deferred = $.Deferred();
+
+					var apiDescription = carbon.Document.getResourceOfType(carbon.API.class, rdfResources);
+					if ( ! apiDescription ) {
+						deferred.reject();
+						return deferred.promise();
+					}
+
+					carbon.Resource.injectPropertyMethods( apiDescription, carbon.API.Property );
+					_api = apiDescription;
+
+					deferred.resolve();
+					return deferred.promise();
+				}, function ( errorObject ) {
+					// TODO: FT
+				}
+			);
+		};
 
 		carbon.getGenericRequestURI = function () {
 			return carbon.getAPIBaseURL() + 'requests/' + (new Date().getTime());
 		};
 
-		/**
-		 * Parses the given JSON-LD object into an ErrorResponse object.
-		 */
-		carbon.parseErrorResponse = function ( urlOrJsonObj, opts ) {
+		carbon.getRDFResource = function ( uri, options ) {
+			var defaultOptions = {
+				authenticate: true
+			};
+			if ( typeof options == 'object' ) {
+				options = $.extend( defaultOptions, options );
+			} else {
+				options = defaultOptions;
+			}
 
-			console.log( '-- Carbon.parseErrorResponse() > typeof urlOrJsonObj param: ' + typeof urlOrJsonObj );
+			var headers = {
+				"Accept": "application/ld+json"
+			};
 
-			// Private properties
+			if ( options.authenticate ) {
+				headers = carbon.Auth.setCredentialHeaders( headers );
+			}
+
+			var deferred = $.Deferred();
+			$.ajax( {
+				type   : 'GET',
+				url    : uri,
+				headers: headers
+			} ).then(
+				function ( jsonResponse, textStatus, jqXHR ) {
+					carbon.digestRDFResources( jsonResponse ).then(
+						function ( rdfResources ) {
+							deferred.resolve(rdfResources);
+						}, function ( errorObject ) {
+							// TODO: FT
+							deferred.reject(errorObject);
+						}
+					);
+				}, function ( jqXHR, textStatus, errorThrown ) {
+					// TODO: FT
+					deferred.reject();
+				}
+			);
+
+			return deferred.promise();
+		};
+
+		carbon.digestRDFResources = function ( jsonLDObjects ) {
 			var deferred = $.Deferred();
 
-			var type = "ErrorResponse";
+			carbon.processJsonLD(jsonLDObjects).then(
+				function ( jsonLDObjects ) {
+					carbon.Resource.injectMethods( jsonLDObjects );
+					deferred.resolve( jsonLDObjects );
+				}, function ( errorObject ) {
+					// TODO: FT
+				}
+			);
 
-			// ----------------------------------------------------------------------
-			// ErrorResponse - Public (delegate) properties and methods
-			// ----------------------------------------------------------------------
+			return deferred.promise();
+		};
 
-			// ----------------------------------------------------------------------
-			// ErrorResponse - Instance Initialization
-			// ----------------------------------------------------------------------
+		carbon.processJsonLD = function ( jsonLDDocument ) {
+			var deferred = $.Deferred();
 
-			// If the err parameter given is a string, we assume it is a URL
-			if ( typeof urlOrJsonObj == "string" ) {
-
-				console.log( "-- Carbon.parseErrorResponse() > Got string parameter; assuming it's a URL to load." );
-
-				$.when( fetch( urlOrJsonObj, opts ) ).then( // SUCCESS FUNCTION
-					// May want to do a promise deal here since the method we're calling
-					// uses a deferred and returns a promise...
-					// WARNING: DEFINED AGAIN BELOW IN OUTER ELSE BLOCK!
-					function ( doc ) {
-						var promise = makeErrorResponse( doc );
-						promise.done( function ( errorResponseObject ) {
-							deferred.resolve( errorResponseObject );
-						} );
-						promise.fail( function ( errMsg ) {
-							deferred.reject( errMsg );
-						} );
-					},
-
-					// FAILURE FUNCTION
-					function () {
-
-						console.error( 'TO DO: We\'ll need better error handling here - tied more specifically to error codes.' );
-						console.error( 'Is the resource secured, but not being requested with appropriate credentials, API key, or token?' );
-						console.error( 'Check the web server fronting the app server or servlet container that hosts Carbon; is it running and accessible?' );
-						console.error( 'Check all integrated database services; are they running and accessible?' );
-
-						var errMessage = 'Error loading: ' + urlOrJsonObj;
-						deferred.reject( errMessage );
-
-					} );
-
-			} else {
-				console.log( "-- Carbon.parseErrorResponse() > Parameter is not a string; assuming it's JSON-LD object." );
-
-				// THIS IS THE SAME AS WHAT'S DEFINED IN SUCCESS FUNCTION ABOVE!
-				var promise = makeErrorResponse( doc );
-				promise.done( function ( errorResponseObject ) {
-					deferred.resolve( errorResponseObject );
-				} );
-				promise.fail( function ( errMsg ) {
-					deferred.reject( errMsg );
-				} );
-
-			}
+			var processor = new jsonld.JsonLdProcessor();
+			processor.expand( jsonLDDocument ).then(
+				function ( jsonLDObjects ) {
+					deferred.resolve( jsonLDObjects );
+				}, function () {
+					// TODO: Create custom error object
+					deferred.reject();
+				}
+			);
 
 			return deferred.promise();
 		};
 
 		return carbon;
 
-		// ======================================================================
-		// END - Carbon object factory (produces and returns the Carbon object)
-		// ======================================================================
+		// ----------------------------------------------------------------------
+		// End: Carbon
+		// ----------------------------------------------------------------------
 
-		// ======================================================================
-		// Private Functions
-		// ======================================================================
+		// Private functions
 
 		function hasFunction( object, functionName ) {
-			if ( typeof object[functionName] === 'function' ) return true;
-			return false;
+			return typeof object[functionName] === 'function';
 		}
 
-		/**
-		 * Makes an Ajax GET request to the given URL through promise
-		 *
-		 */
-		function fetch( url, opts ) {
-
-			console.log( '>> fetch("' + url + '")' );
-
-			// do the fetch...
-			var httpHeaders = {};
-			if ( opts && opts.headers ) {
-				httpHeaders = opts.headers;
-			}
-
-			return $.ajax( {
-				url    : url,
-				headers: httpHeaders
-				//context: window.document
-			} );
-
-		} // END fetch()
-
-		/**
-		 * private method makes an inline object array of HeaderIssues, ParameterIssues, EntityBodyIssues
-		 * This is a utility function used by the function makeErrorResponse(), below.
-		 */
-		function makeInlineIssues( expandedJLO, issues ) {
-
-			var C_ISSUE_CODE = 'http://carbonldp.com/ns#issueCode', C_ISSUE_DESC = 'http://carbonldp.com/ns#issueDescription', C_KEY = 'http://carbonldp.com/ns#key', C_VAL = 'http://carbonldp.com/ns#value';
-
-			var expandedJLOLen = expandedJLO.length;
-			var issuesLen = issues.length;
-
-			var resultingIssueObjArray = [];
-
-			for ( var p = 0; p < issuesLen; p ++ ) {
-
-				var issueId = issues[p]['@id'];
-
-				// Now that we have the URL to the inline parameter issue, we'll loop until we find the inline for it
-
-				for ( var pi = 0; pi < expandedJLOLen; pi ++ ) {
-
-					if ( expandedJLO[pi]['@id'] === issueId ) {
-
-						var issue = {};
-
-						issue.uri = expandedJLO[pi]['@id'];
-
-						// Accept string or number
-						var code = expandedJLO[pi][C_ISSUE_CODE][0]['@value'];
-						if ( typeof code === 'string' ) {
-							issue.issueCode = parseInt( code );
-						} else {
-							issue.issueCode = code;
-						}
-
-						issue.issueDescription = expandedJLO[pi][C_ISSUE_DESC][0]['@value'];
-						if ( expandedJLO[pi][C_KEY] ) {
-							issue.key = expandedJLO[pi][C_KEY][0]['@value'];
-						}
-						if ( expandedJLO[pi][C_VAL] ) {
-							issue.val = expandedJLO[pi][C_VAL][0]['@value'];
-						}
-
-						resultingIssueObjArray.push( issue );
-
-					}
-
-				}
-
-			}
-
-			return resultingIssueObjArray;
-
-		} // END: makeInlineIssues()
-
-		/**
-		 * Makes an ErrorResponse object with the given expanded JSON-LD error response.
-		 */
-		function makeErrorResponse( doc ) {
-
-			console.log( ">> ~private makeErrorResponse()" );
-
-			var deferred = $.Deferred();
-
-			var CLASS = "ErrorResponse";
-
-			var Properties = {
-				CARBON_CODE     : carbon.NS + "carbonCode",
-				DEBUG_MESSAGE   : cabon.NS + 'debugMessage',
-				E_BODY_ISSUE    : cabon.NS + 'EntityBodyIssue',
-				C_ERROR_RESPONSE: cabon.NS + 'ErrorResponse',
-				FRIENDLY_MSG    : cabon.NS + 'friendlyMessage',
-				HAS_E_BODY_ISSUE: cabon.NS + 'hasEntityBodyIssue',
-				HAS_HEADER_ISSUE: cabon.NS + 'hasHeaderIssue',
-				HAS_PARAM_ISSUE : cabon.NS + 'hasParameterIssue',
-				HEADER_ISSUE    : cabon.NS + 'HeaderIssue',
-				HTTP_STATUS_CODE: cabon.NS + 'httpStatusCode'
-			};
-
-			var ErrorResponse = {
-				getObjectType: function () {
-					return type;
-				}
-			};
-
-			var errorResponse = Object.create( ErrorResponse );
-
-			var context = {"c": carbon.NS_C};
-
-			jsonld.expand( doc, context, function ( err, expandedJLO ) {
-
-				// Uncomment to log the expanded JSON-LD object...
-				// console.log(JSON.stringify(expandedJLO, null, 2));
-
-				var expandedJLOLen = expandedJLO.length;
-
-				for ( var i = 0; i < expandedJLOLen; i ++ ) {
-
-					// The first (and only) @id URI without a hash is our root resource; the rest are inline.
-					if ( expandedJLO[i]['@id'].indexOf( '#' ) == - 1 ) {
-
-						errorResponse.uri = expandedJLO[i]['@id'];
-
-						// Handle either string or number
-
-						var cCode = expandedJLO[i][C_CARBON_CODE][0]['@value'];
-						if ( typeof cCode === 'string' ) {
-							errorResponse.carbonCode = parseInt( cCode );
-						} else {
-							errorResponse.carbonCode = cCode;
-						}
-
-						errorResponse.friendlyMessage = expandedJLO[i][C_FRIENDLY_MSG][0]['@value'];
-
-						// Handle either string or number
-						var status = expandedJLO[i][C_HTTP_STATUS_CODE][0]['@value'];
-						if ( typeof status === 'string' ) {
-							errorResponse.httpStatusCode = parseInt( status );
-						} else {
-							errorResponse.httpStatusCode = status;
-						}
-
-						errorResponse.debugMessage = expandedJLO[i][C_DEBUG_MESSAGE][0]['@value'];
-						errorResponse.paramIssues = [];
-						errorResponse.headerIssues = [];
-						errorResponse.entityBodyIssues = [];
-
-						// The param issue is an array of one or more objects, with each object specifying
-						// the @id of an inline.
-
-						var paramIssues = expandedJLO[i][C_HAS_PARAM_ISSUE];
-						errorResponse.paramIssues = makeInlineIssues( expandedJLO, paramIssues );
-
-						var headerIssues = expandedJLO[i][C_HAS_HEADER_ISSUE];
-						errorResponse.headerIssues = makeInlineIssues( expandedJLO, headerIssues );
-
-						var entityBodyIssues = expandedJLO[i][C_HAS_E_BODY_ISSUE];
-						errorResponse.entityBodyIssues = makeInlineIssues( expandedJLO, entityBodyIssues );
-
-						break;
-
-					}
-
-				}
-
-				errorResponse.hasParameterIssue = function () {
-					return errorResponse.paramIssues.length > 0;
-				};
-
-				errorResponse.hasHeaderIssue = function () {
-					return errorResponse.headerIssues.length > 0;
-				};
-
-				errorResponse.hasEntityBodyIssue = function () {
-					return errorResponse.entityBodyIssues.length > 0;
-				};
-
-				// DO THE WORK HERE...
-
-				deferred.resolve( errorResponse );
-
-			} );
-
-			return deferred.promise();
-
-		} // END: makeErrorResponse()
+		function isArray( object ) {
+			return Object.prototype.toString.call( object ) === '[object Array]';
+		}
 
 	},
 	jQuery, jsonld, Map
