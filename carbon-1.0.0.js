@@ -46,7 +46,19 @@
 		// Private variables
 		var _version = "0.2.0";
 		var _protocol = "https";
-		var _domain = "carbonldp.com"
+		var _domain = "carbonldp.com";
+
+		// 0 - off
+		// 1 - errors
+		// 2 - errors / warnings
+		// 3 - errors / warnings / debug
+		// 4 - errors / warnings / debug / trace
+		var _loggingLevel = 0;
+		var _canShowErrors = (typeof console !== 'undefined' && typeof console.error !== 'undefined');
+		var _canShowWarnings = (typeof console !== 'undefined' && typeof console.warn !== 'undefined');
+		var _canShowDebug = (typeof console !== 'undefined' && typeof console.debug !== 'undefined');
+		var _canShowLog = (typeof console !== 'undefined' && typeof console.log !== 'undefined');
+
 		var _appSlug = null;
 		var _api = null;
 
@@ -65,7 +77,7 @@
 		carbon.getAPIBaseURL = function () {
 			return _protocol + "://" + _domain + "/";
 		};
-		carbon.getAPIVersion = function() {
+		carbon.getAPIVersion = function () {
 			if ( ! _api ) {
 				throw 'Carbon hasn\'t been initiated';
 			}
@@ -173,9 +185,9 @@
 					} );
 				};
 
-				_token.isToken = function( resource ) {
-					if( ! carbon.Resource.isResource(resource) ) return false;
-					return resource.isOfType(_token.class);
+				_token.isToken = function ( resource ) {
+					if ( ! carbon.Resource.isResource( resource ) ) return false;
+					return resource.isOfType( _token.class );
 				};
 
 				return _token;
@@ -224,9 +236,9 @@
 					return agentResource;
 				};
 
-				_agent.isAgent = function( resource ) {
-					if( ! carbon.Resource.isResource(resource) ) return false;
-					return resource.isOfType(_agent.class);
+				_agent.isAgent = function ( resource ) {
+					if ( ! carbon.Resource.isResource( resource ) ) return false;
+					return resource.isOfType( _agent.class );
 				};
 
 				_agent.injectMethods = function ( resources ) {
@@ -282,42 +294,38 @@
 					headers["Prefer"] = "return=\"cs:Cookie\"";
 				}
 
-				return $.ajax( {
-					type   : 'POST',
-					url    : carbon.getAPIBaseURL() + 'auth/login',
+				var deferred = $.Deferred();
+
+				$.ajax( {
+					type   : 'GET',
+					url    : carbon.getAPIBaseURL() + 'auth/token',
 					headers: headers
 				} ).then(
 					function ( jsonResponse, textStatus, jqXHR ) {
-						return carbon.digestRDFResources( jsonResponse );
+						carbon.digestRDFResources( jsonResponse ).then(
+							function ( rdfResources ) {
+								var tokenResource = carbon.Document.getResourceOfType( auth.Token.class, rdfResources );
+								if ( ! tokenResource ) {
+									// TODO: Fail
+									deferred.reject();
+								} else {
+									carbon.Auth.Token.injectMethods( tokenResource );
+
+									auth.setToken( tokenResource );
+									deferred.resolve();
+								}
+							}, function ( errorObject ) {
+								// TODO: FT
+								deferred.reject( errorObject );
+							}
+						);
 					}, function ( jqXHR, textStatus, errorThrown ) {
 						// TODO: FT
-						var deferred = $.Deferred();
-
 						deferred.reject();
-
-						return deferred;
-					}
-				).then(
-					function ( resources ) {
-						var deferred = $.Deferred();
-
-						var tokenResource = carbon.Document.getResourceOfType( auth.Token.class, resources );
-						if ( tokenResource === null ) {
-							// The response didn't contained a token object
-							// TODO: Fail
-							deferred.reject();
-						} else {
-							carbon.Auth.Token.injectMethods(tokenResource);
-
-							auth.setToken( tokenResource );
-							deferred.resolve();
-						}
-						return deferred.promise();
-					},
-					function ( errorObject ) {
-						// TODO: FT
 					}
 				);
+
+				return deferred;
 			};
 
 			auth.hasCredentials = function () {
@@ -442,23 +450,15 @@
 		carbon.SourceLibrary = (function ( carbon, $, Map ) {
 			var sourceLibrary = {};
 
-			function addLDPResources( ldpResources ) {
-				ldpResources.forEach( function ( ldpResource ) {
-					_sources.put( ldpResource.getURI(), ldpResource );
+			function addRDFSources( rdfSources ) {
+				rdfSources.forEach( function ( rdfSource ) {
+					_sources.put( rdfSource.getURI(), rdfSource );
 				} );
 			}
 
 			// Local variable to store the RDFSources retrieved
 			var _sources = new Map();
-			// Local variable to store the ETags and relate them to their URI
-			var _etags = new Map();
 
-			/**
-			 * Retrieves an RDFSource from the local cac
-			 * @param {String} uri The URI of the source that wants to be retrieved.
-			 * @param {boolean} options.useCache  Specifies if the cache will be used or not.
-			 * @returns {Promise}
-			 */
 			sourceLibrary.get = function ( uri, options ) {
 				var defaultOptions = {
 					useCache: true
@@ -469,41 +469,24 @@
 					options = defaultOptions;
 				}
 
+				var deferred = $.Deferred();
+
 				if ( _sources.containsKey( uri ) && options.useCache ) {
-					return new Promise( function ( fulfill, reject ) {
-						fulfill( _sources.get( uri ) );
-					} );
+					deferred.resolve( _sources.get( uri ) );
 				} else {
-
-					var headers = {
-						"Accept": "application/ld+json"
-					};
-
-					headers = carbon.Auth.setCredentialHeaders( headers );
-
-					return $.ajax( {
-						type   : 'GET',
-						url    : uri,
-						headers: headers
+					carbon.getRDFResource( uri, {
+						authenticate: true
 					} ).then(
-						function ( jsonResponse, textStatus, jqXHR ) {
-							return carbon.digestRDFResources( jsonResponse );
-						}, function ( jqXHR, textStatus, errorThrown ) {
+						function ( rdfResources, jqXHR ) {
 							// TODO: FT
-						}
-					).then(
-						function ( ldpResources ) {
-							var deferred = $.Deferred();
-
-							addLDPResources( ldpResources );
-
-							deferred.resolve( ldpResources );
-							return deferred.promise();
 						}, function ( errorObject ) {
 							// TODO: FT
+							deferred.reject( errorObject );
 						}
 					);
 				}
+
+				return deferred.promise();
 			};
 
 			return sourceLibrary;
@@ -514,7 +497,7 @@
 		// ----------------------------------------------------------------------
 
 		// ----------------------------------------------------------------------
-		// Document
+		// RDF Document
 		// ----------------------------------------------------------------------
 
 		carbon.Document = (function ( carbon, $ ) {
@@ -522,7 +505,7 @@
 
 			_document.getResourceOfType = function ( type, document ) {
 				var typedResource = null;
-				if ( isArray(document) ) {
+				if ( isArray( document ) ) {
 					document.some( function ( resource ) {
 						if ( hasFunction( resource, "isOfType" ) ) {
 							if ( resource.isOfType( type ) ) {
@@ -544,11 +527,11 @@
 		}( carbon, $ ));
 
 		// ----------------------------------------------------------------------
-		// End: Document
+		// End: RDF Document
 		// ----------------------------------------------------------------------
 
 		// ----------------------------------------------------------------------
-		// Resource
+		// RDF Resource
 		// ----------------------------------------------------------------------
 
 		carbon.Resource = (function ( carbon, $ ) {
@@ -560,22 +543,22 @@
 				type: carbon.DefaultPrefixes.rdf + 'type'
 			};
 
-			_resource.isResource = function ( jsonldResource ) {
-				return jsonldResource.hasOwnProperty( "@id" );
+			_resource.isResource = function ( rdfResource ) {
+				return rdfResource.hasOwnProperty( "@id" );
 			};
 
-			_resource.injectMethods = function ( jsonldResources ) {
-				if ( ! isArray( jsonldResources ) ) {
-					jsonldResources = [ jsonldResources ];
+			_resource.injectMethods = function ( rdfResources ) {
+				if ( ! isArray( rdfResources ) ) {
+					rdfResources = [ rdfResources ];
 				}
 
-				jsonldResources.forEach( function ( jsonldResource ) {
+				rdfResources.forEach( function ( rdfResource ) {
 
-					jsonldResource.getURI = function () {
+					rdfResource.getURI = function () {
 						return this["@id"];
 					};
 
-					jsonldResource.isOfType = function ( type ) {
+					rdfResource.isOfType = function ( type ) {
 						var property = carbon.Resource.Property.type;
 						if ( ! this.hasOwnProperty( property ) ) {
 							return false;
@@ -593,16 +576,16 @@
 						return isOfType;
 					};
 
-					jsonldResource.addType = function ( type ) {
+					rdfResource.addType = function ( type ) {
 						var typeResource = carbon.Resource.create( type );
 						this.addProperty( carbon.Resource.Property.type, typeResource );
 					};
 
-					jsonldResource.hasProperty = function ( property ) {
+					rdfResource.hasProperty = function ( property ) {
 						return this.hasOwnProperty( property );
 					};
 
-					jsonldResource.getProperty = function ( property ) {
+					rdfResource.getProperty = function ( property ) {
 						if ( ! this.hasProperty( property ) ) return null;
 						if ( this[property] instanceof Array ) {
 							if ( this[property].length < 1 ) return null;
@@ -611,21 +594,21 @@
 						return this[property];
 					};
 
-					jsonldResource.getPropertyValue = function ( property ) {
+					rdfResource.getPropertyValue = function ( property ) {
 						var propertyObject = this.getProperty( property );
 						if ( propertyObject === null ) return null;
 						if ( propertyObject.hasOwnProperty( '@value' ) ) return propertyObject['@value'];
 						return null;
 					};
 
-					jsonldResource.getPropertyURI = function ( property ) {
+					rdfResource.getPropertyURI = function ( property ) {
 						var propertyObject = this.getProperty( property );
 						if ( propertyObject === null ) return null;
 						if ( propertyObject.hasOwnProperty( '@id' ) ) return propertyObject['@id'];
 						return null;
 					};
 
-					jsonldResource.listProperties = function ( property ) {
+					rdfResource.listProperties = function ( property ) {
 						if ( ! this.hasProperty( property ) ) return null;
 						if ( this[property] instanceof Array ) {
 							if ( this[property].length < 1 ) return null;
@@ -634,7 +617,24 @@
 						return null;
 					};
 
-					jsonldResource.addProperty = function ( property, value ) {
+					var _propertyCallbacks = {
+						add   : [],
+						remove: []
+					};
+					rdfResource._getAddCallbacks = function () {
+						return _propertyCallbacks.add;
+					};
+					rdfResource._addAddCallback = function ( callback ) {
+						_propertyCallbacks.add.push( callback );
+					};
+					rdfResource._getRemoveCallbacks = function () {
+						return _propertyCallbacks.remove;
+					};
+					rdfResource._addRemoveCallback = function ( callback ) {
+						_propertyCallbacks.remove.push( callback );
+					};
+
+					rdfResource.addProperty = function ( property, value ) {
 						var propertyArray;
 						if ( this.hasProperty( property ) ) {
 							propertyArray = this.listProperties( property );
@@ -650,18 +650,49 @@
 							propertyValue["@value"] = value;
 						}
 
-						propertyArray.push( propertyValue );
+						// Execute callbacks
+						var addCallbacks = rdfResource._getAddCallbacks();
+						var addIt = true;
+						for ( var i = 0; i < addCallbacks.length; i ++ ) {
+							var addCallback = addCallbacks[i];
+							if ( ! addCallback( property, value ) ) {
+								addIt = false;
+								break;
+							}
+						}
 
-						this[property] = propertyArray;
+						if ( addIt ) {
+							propertyArray.push( propertyValue );
+							this[property] = propertyArray;
+						}
 					};
 
-					jsonldResource.setProperty = function ( property, value ) {
+					rdfResource.setProperty = function ( property, value ) {
 						this.removeProperty( property );
+						if ( value === undefined || value === null ) return;
 						this.addProperty( property, value );
 					};
 
-					jsonldResource.removeProperty = function ( property ) {
-						if ( this.hasOwnProperty( property ) ) delete this[property];
+					// TODO: Add remove by value
+					rdfResource.removeProperty = function ( property ) {
+						// Execute callbacks
+						var removeCallbacks = rdfResource._getRemoveCallbacks();
+						var removeIt = true;
+						for ( var i = 0; i < removeCallbacks.length; i ++ ) {
+							var removeCallback = removeCallbacks[i];
+							if ( ! removeCallback( property ) ) {
+								removeIt = false;
+								break;
+							}
+						}
+
+						if ( ! this.hasOwnProperty( property ) ) {
+							return;
+						}
+
+						if ( removeIt ) {
+							delete this[property];
+						}
 					};
 
 				} );
@@ -755,11 +786,11 @@
 		}( carbon, $ ) );
 
 		// ----------------------------------------------------------------------
-		// End: Resource
+		// End: RDF Resource
 		// ----------------------------------------------------------------------
 
 		// ----------------------------------------------------------------------
-		// Source
+		// RDF Source
 		// ----------------------------------------------------------------------
 
 		carbon.Source = (function ( carbon, $ ) {
@@ -773,9 +804,122 @@
 
 			_source.injectMethods = function ( resources ) {
 				resources.forEach( function ( resource ) {
+					var _addModifications = [];
+					var _setModifications = [];
+					var _removeModifications = [];
 
-					resource.getETag = function () {
+					function _addModificationIndexes( property ) {
+						var indexes = [];
+						var length = _addModifications.length;
+						for ( var i = 0; i < length; i ++ ) {
+							if ( _addModifications[i].property == property ) {
+								indexes.push( i );
+							}
+						}
+						return indexes;
+					}
 
+					function _setModificationIndex( property ) {
+						var length = _setModifications.length;
+						for ( var i = 0; i < length; i ++ ) {
+							if ( _setModifications[i].property == property ) {
+								return i;
+							}
+						}
+						return - 1;
+					}
+
+					function _removeModificationIndex( property ) {
+						var length = _removeModifications.length;
+						for ( var i = 0; i < length; i ++ ) {
+							if ( _removeModifications[i] == property ) {
+								return i;
+							}
+						}
+						return - 1;
+					}
+
+					var _isDirty = false;
+					resource.isDirty = function () {
+						return _isDirty;
+					}
+
+					function propertyAdded( property, value ) {
+						_isDirty = true;
+
+						var removeIndex = _removeModificationIndex( property );
+						if ( removeIndex != - 1 ) {
+							// A remove modification for this property was already executed
+							// combine them into a set modification
+							_removeModifications.splice( removeIndex, 1 );
+							_setModifications.push( {
+								property: property,
+								value   : value
+							} );
+							return;
+						}
+
+						var setIndex = _setModificationIndex( property );
+						if ( setIndex != - 1 ) {
+							// A set modification for this property was already executed
+							// move it into another addModification
+							var setModification = _setModifications[setIndex];
+							_setModifications.splice( setIndex, 1 );
+							_addModifications.push( setModification );
+						}
+
+						_addModifications.push( {
+							property: property,
+							value   : value
+						} );
+
+						return true;
+					}
+
+					resource._addAddCallback( propertyAdded );
+
+					// TODO: Remove by value
+					function propertyRemoved( property, value ) {
+						_isDirty = true;
+
+						var setIndex = _setModificationIndex( property );
+						if ( setIndex != - 1 ) {
+							// A set modification for this property was already executed
+							// delete it
+							_setModifications.splice( setIndex, 1 );
+						} else {
+							var addIndexes = _addModificationIndexes( property );
+							if ( addIndexes.length > 0 ) {
+								// Add modifications for this property were already executed
+								// delete them
+								var length = _addModifications.length;
+								for ( var i = length - 1; i >= 0; i -- ) {
+									_addModifications.splice( i, 1 );
+								}
+							}
+						}
+
+						_removeModifications.push( property );
+
+						return true;
+					}
+
+					resource._addRemoveCallback( propertyRemoved );
+
+					resource.logModifications = function() {
+						console.log("addModifications: %o", _addModifications);
+						console.log("setModifications: %o", _setModifications);
+						console.log("removeModifications: %o", _removeModifications);
+					};
+
+					var _etag = null;
+
+					resource.getETag = function() {
+						return _etag;
+					};
+
+					resource.setETag = function( etag ) {
+						_etag = etag;
 					};
 
 				} );
@@ -785,7 +929,7 @@
 		}( carbon, $ ));
 
 		// ----------------------------------------------------------------------
-		// End: Source
+		// End: RDF Source
 		// ----------------------------------------------------------------------
 
 		// ----------------------------------------------------------------------
@@ -873,11 +1017,12 @@
 		// End: IndirectContainer
 		// ----------------------------------------------------------------------
 
-		carbon.init = function( options ) {
+		carbon.init = function ( options ) {
 			var defaultOptions = {
-				protocol: null,
-				domain: null,
-				appSlug: null
+				protocol    : null,
+				domain      : null,
+				loggingLevel: 0,
+				appSlug     : null
 			};
 			if ( typeof options == 'object' ) {
 				options = $.extend( defaultOptions, options );
@@ -885,22 +1030,29 @@
 				options = defaultOptions;
 			}
 
+			_loggingLevel = options.loggingLevel;
+
+			log( ">> init() > Initializing Carbon's SDK." );
+			debug( "-- init() >  Options: %o", options );
+
 			if ( options.protocol ) _protocol = options.protocol;
 			if ( options.domain ) _domain = options.domain;
 
-			if ( options.appSlug ) carbon.setDefaultAppSlug(options.appSlug);
+			if ( options.appSlug ) carbon.setDefaultAppSlug( options.appSlug );
 
+			log( "-- init() > Retrieving Carbon's API Description..." );
 			var apiURL = carbon.getAPIBaseURL() + 'api';
 			var apiPromise = carbon.getRDFResource( apiURL, {
 				authenticate: false
-			});
+			} );
 
 			return apiPromise.then(
 				function ( rdfResources ) {
 					var deferred = $.Deferred();
 
-					var apiDescription = carbon.Document.getResourceOfType(carbon.API.class, rdfResources);
+					var apiDescription = carbon.Document.getResourceOfType( carbon.API.class, rdfResources );
 					if ( ! apiDescription ) {
+						error( "<< init() > The response didn't contain the API Description" );
 						deferred.reject();
 						return deferred.promise();
 					}
@@ -908,6 +1060,7 @@
 					carbon.Resource.injectPropertyMethods( apiDescription, carbon.API.Property );
 					_api = apiDescription;
 
+					debug( "<< init() > Carbon's API Description has been successfully retrieved." );
 					deferred.resolve();
 					return deferred.promise();
 				}, function ( errorObject ) {
@@ -921,6 +1074,8 @@
 		};
 
 		carbon.getRDFResource = function ( uri, options ) {
+			log( ">> getRDFResource()" );
+
 			var defaultOptions = {
 				authenticate: true
 			};
@@ -929,6 +1084,8 @@
 			} else {
 				options = defaultOptions;
 			}
+
+			debug( "-- getRDFResource() > Get resource: %s, options: %o", uri, options );
 
 			var headers = {
 				"Accept": "application/ld+json"
@@ -945,16 +1102,19 @@
 				headers: headers
 			} ).then(
 				function ( jsonResponse, textStatus, jqXHR ) {
+					debug( "-- getRDFResource() > The request was successfull." );
+					log( "-- getRDFResource() > Digesting response..." );
 					carbon.digestRDFResources( jsonResponse ).then(
 						function ( rdfResources ) {
-							deferred.resolve(rdfResources);
+							debug( "<< getRDFResource() > The response was successfully digested." );
+							deferred.resolve( rdfResources, jqXHR );
 						}, function ( errorObject ) {
-							// TODO: FT
-							deferred.reject(errorObject);
+							error( "<< getRDFResource() > The response couldn't be digested." );
+							deferred.reject( errorObject );
 						}
 					);
 				}, function ( jqXHR, textStatus, errorThrown ) {
-					// TODO: FT
+					error( "<< getRDFResource() > The request failed. Response: %o", jqXHR );
 					deferred.reject();
 				}
 			);
@@ -963,14 +1123,17 @@
 		};
 
 		carbon.digestRDFResources = function ( jsonLDObjects ) {
+			log( ">> digestRDFResources()" );
 			var deferred = $.Deferred();
-
-			carbon.processJsonLD(jsonLDObjects).then(
+			log( "-- digestRDFResources() > Processing the jsonLD object..." );
+			carbon.processJsonLD( jsonLDObjects ).then(
 				function ( jsonLDObjects ) {
+					debug( "<< digestRDFResources() > JsonLD successfully processed." );
 					carbon.Resource.injectMethods( jsonLDObjects );
 					deferred.resolve( jsonLDObjects );
 				}, function ( errorObject ) {
-					// TODO: FT
+					error( "<< digestRDFResources() > JsonLD couldn't be processed." );
+					deferred.reject( errorObject );
 				}
 			);
 
@@ -978,14 +1141,19 @@
 		};
 
 		carbon.processJsonLD = function ( jsonLDDocument ) {
+			log( ">> processJsonLD()" );
+			debug( "-- processJsonLD() > JSON-LD Document: %o", jsonLDDocument );
+
 			var deferred = $.Deferred();
 
+			log( "-- processJsonLD() > Expanding JSON-LD Document..." );
 			var processor = new jsonld.JsonLdProcessor();
 			processor.expand( jsonLDDocument ).then(
 				function ( jsonLDObjects ) {
+					debug( "<< processJsonLD() > JsonLD successfully expanded." );
 					deferred.resolve( jsonLDObjects );
 				}, function () {
-					// TODO: Create custom error object
+					error( "<< processJsonLD() > The JSON-LD Document couldn't be expanded." );
 					deferred.reject();
 				}
 			);
@@ -1009,6 +1177,37 @@
 			return Object.prototype.toString.call( object ) === '[object Array]';
 		}
 
+		// Will be used as a "trace" level of debugging
+		function log() {
+			if ( _loggingLevel < 4 || ! _canShowLog ) {
+				return;
+			}
+			console.log.apply( console, arguments );
+		}
+
+		function debug() {
+			if ( _loggingLevel >= 3 ) {
+				if ( ! _canShowDebug ) {
+					if ( _canShowLog ) console.log.apply( console, arguments );
+					else return;
+				}
+			}
+			console.debug.apply( console, arguments );
+		}
+
+		function warn() {
+			if ( _loggingLevel < 2 || ! _canShowWarnings ) {
+				return;
+			}
+			console.warn.apply( console, arguments );
+		}
+
+		function error() {
+			if ( _loggingLevel < 1 || ! _canShowErrors ) {
+				return;
+			}
+			console.error.apply( console, arguments );
+		}
 	},
 	jQuery, jsonld, Map
 ))
