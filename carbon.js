@@ -539,10 +539,12 @@
 
 				var deferred = $.Deferred();
 				$.ajax( {
-					type   : 'PATCH',
-					url    : uri,
-					headers: headers,
-					data   : patchRequest.toJsonLD()
+					type       : 'PATCH',
+					url        : uri,
+					dataType   : "text",
+					headers    : headers,
+					crossDomain: true,
+					data       : patchRequest.toJsonLD()
 				} ).then(
 					function ( jsonResponse, textStatus, jqXHR ) {
 						debug( "-- REST.patch() > The request was successfull." );
@@ -823,7 +825,7 @@
 			};
 
 			_resource.isResource = function ( rdfResource ) {
-				if (! rdfResource ) return false;
+				if ( ! rdfResource ) return false;
 				return rdfResource.hasOwnProperty( "@id" );
 			};
 
@@ -900,12 +902,12 @@
 					rdfResource.listPropertyValues = function ( property ) {
 						var values = [];
 						if ( ! this.hasProperty( property ) ) return values;
-						var propertyArray = isArray(this[property]) ? this[property] : [this[property]];
+						var propertyArray = isArray( this[property] ) ? this[property] : [this[property]];
 						var length = propertyArray.length;
-						for(var i = 0; i < length; i++) {
+						for ( var i = 0; i < length; i ++ ) {
 							var propertyObject = propertyArray[i];
-							if (property) {
-								if ( propertyObject.hasOwnProperty( '@value' ) ) values.push(propertyObject['@value']);
+							if ( property ) {
+								if ( propertyObject.hasOwnProperty( '@value' ) ) values.push( propertyObject['@value'] );
 							}
 						}
 						return values;
@@ -1023,7 +1025,7 @@
 						}
 						// Single-Getter
 						if ( propertyValue.literal === null ) {
-							if( propertyValue.multi ) {
+							if ( propertyValue.multi ) {
 								(function () {
 									var _propertyURI = propertyValue.uri;
 									resource["list" + capitalizedProperty + "s"] = function () {
@@ -1046,7 +1048,7 @@
 								};
 							})();
 
-							if( propertyValue.multi ) {
+							if ( propertyValue.multi ) {
 								(function () {
 									var _propertyURI = propertyValue.uri;
 									resource["list" + capitalizedProperty + "s"] = function () {
@@ -1055,7 +1057,7 @@
 								})();
 							}
 						} else {
-							if( propertyValue.multi ) {
+							if ( propertyValue.multi ) {
 								(function () {
 									var _propertyURI = propertyValue.uri;
 									resource["list" + capitalizedProperty + "s"] = function () {
@@ -1084,7 +1086,7 @@
 							(function () {
 								var _propertyURI = propertyValue.uri;
 								resource["deleteAll" + capitalizedProperty + "s"] = function () {
-									this.removeProperty( _propertyURI);
+									this.removeProperty( _propertyURI );
 								};
 							})();
 						}
