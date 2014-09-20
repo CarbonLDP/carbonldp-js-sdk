@@ -1,4 +1,8 @@
-# 0.2.0 (August 06, 2014)
+# 0.3.0 (September 19, 2014)
+* RDF Sources can be retrieved
+* RDF Sources keep track on their changes
+* RDF Sources can be committed (and use PATCH to do it)
+# 0.2.0 (September 18, 2014)
 * Carbon can now be initialized.
 * Carbon's API version can now be retrieved.
 # 0.1.0 (August 06, 2014)

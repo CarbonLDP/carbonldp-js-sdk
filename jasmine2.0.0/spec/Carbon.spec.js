@@ -16,7 +16,7 @@ describe( 'Carbon object', function () {
 
 		$j.ajax( {
 			type   : 'HEAD',
-			url    : Carbon.getAPIBaseURL() + 'ldp/testapp/',
+			url    : Carbon.getAPIRequestURL() + 'ldp/testapp/',
 			headers: {
 				"Authorization": "Basic " + btoa( testAgentCredentials.username + ':' + testAgentCredentials.password )
 			},
@@ -59,8 +59,8 @@ describe( 'Carbon object', function () {
 		expect( Carbon.getVersion() ).toEqual( jasmine.any( String ) );
 	} );
 
-	it( 'has method, getAPIBaseURL(), which returns a URL', function () {
-		expect( Carbon.getAPIBaseURL() ).toEqual( jasmine.any( String ) );
+	it( 'has method, getAPIRequestURL(), which returns a URL', function () {
+		expect( Carbon.getAPIRequestURL() ).toEqual( jasmine.any( String ) );
 	} );
 
 	it( 'contains common namespaces', function () {
@@ -70,7 +70,7 @@ describe( 'Carbon object', function () {
 	it( 'contains SDK constants', function () {
 		expect( Carbon.NS ).toEqual( Carbon.DefaultPrefixes.c );
 		expect( Carbon.SECURITY_NS ).toEqual( Carbon.DefaultPrefixes.cs );
-		expect( Carbon.SECONDARY_RES_SIGN ).toEqual( jasmine.any( String ) );
+		expect( Carbon.INLINE_RESOURCE_SIGN ).toEqual( jasmine.any( String ) );
 		expect( Carbon.SYSTEM_RES_SIGN ).toEqual( jasmine.any( String ) );
 	} );
 
