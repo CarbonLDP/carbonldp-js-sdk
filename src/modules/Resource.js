@@ -22,7 +22,7 @@
 	};
 
 	_resource.injectMethods = function ( rdfResources ) {
-		if ( ! isArray( rdfResources ) ) {
+		if ( ! _shared.isArray( rdfResources ) ) {
 			rdfResources = [ rdfResources ];
 		}
 
@@ -101,7 +101,7 @@
 			rdfResource.listPropertyValues = function ( property ) {
 				var values = [];
 				if ( ! this.hasProperty( property ) ) return values;
-				var propertyArray = isArray( this[property] ) ? this[property] : [this[property]];
+				var propertyArray = _shared.isArray( this[property] ) ? this[property] : [this[property]];
 				var length = propertyArray.length;
 				for ( var i = 0; i < length; i ++ ) {
 					var propertyObject = propertyArray[i];

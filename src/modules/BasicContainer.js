@@ -57,7 +57,7 @@
 	};
 
 	_basicContainer.injectMethods = function ( sources ) {
-		sources = isArray( sources ) ? sources : [sources];
+		sources = _shared.isArray( sources ) ? sources : [sources];
 
 		Carbon.Resource.injectPropertyMethods( sources, Carbon.BasicContainer.Properties );
 

@@ -4,7 +4,7 @@
 	var _persistedInlineResource = {};
 
 	_persistedInlineResource.injectMethods = function ( inlineResources ) {
-		inlineResources = isArray( inlineResources ) ? inlineResources : [inlineResources];
+		inlineResources = _shared.isArray( inlineResources ) ? inlineResources : [inlineResources];
 
 		var length = inlineResources.length;
 		for ( var i = 0; i < length; i ++ ) {

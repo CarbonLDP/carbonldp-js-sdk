@@ -1,11 +1,11 @@
-(function ( Carbon, $, Map ) {
+(function ( Carbon, $, jsonld, Map, _shared ) {
 	'use strict';
 
 	var _sparql = {};
 
 	_sparql.ask = function ( url, query ) {
-		if ( ! isString( url ) ) throw "The URL must be a String!";
-		if ( ! isString( query ) ) throw "The query must be a String!";
+		if ( ! _shared.isString( url ) ) throw "The URL must be a String!";
+		if ( ! _shared.isString( query ) ) throw "The query must be a String!";
 
 		var headers = {};
 		headers["Content-Type"] = "application/sparql-query";
@@ -33,8 +33,8 @@
 		return deferred;
 	};
 	_sparql.select = function ( url, query ) {
-		if ( ! isString( url ) ) throw "The URL must be a String!";
-		if ( ! isString( query ) ) throw "The query must be a String!";
+		if ( ! _shared.isString( url ) ) throw "The URL must be a String!";
+		if ( ! _shared.isString( query ) ) throw "The query must be a String!";
 
 		var headers = {};
 		headers["Content-Type"] = "application/sparql-query";
@@ -73,4 +73,4 @@
 	};
 
 	Carbon.SPARQL = _sparql;
-}( Carbon, $, Map ));
+}( Carbon, $, jsonld, Map, _shared ));

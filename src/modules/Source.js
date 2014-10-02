@@ -17,7 +17,7 @@
 	};
 
 	_source.injectMethods = function ( resources ) {
-		resources = isArray( resources ) ? resources : [resources];
+		resources = _shared.isArray( resources ) ? resources : [resources];
 
 		resources.forEach( function ( resource ) {
 
@@ -71,7 +71,7 @@
 				return _inlineResources.getKeys();
 			};
 			resource._addInlineResources = function ( inlineResources ) {
-				inlineResources = isArray( inlineResources ) ? inlineResources : [inlineResources];
+				inlineResources = _shared.isArray( inlineResources ) ? inlineResources : [inlineResources];
 
 				var length = inlineResources.length;
 				for ( var i = 0; i < length; i ++ ) {

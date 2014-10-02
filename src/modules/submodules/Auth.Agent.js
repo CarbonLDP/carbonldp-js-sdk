@@ -1,4 +1,6 @@
-(function ( Carbon, $ ) {
+(function ( Carbon, $, jsonld, Map, _shared ) {
+	'use strict';
+
 	var _agent = {};
 
 	_agent.class = Carbon.DefaultPrefixes.cs + 'Agent';
@@ -59,4 +61,4 @@
 	};
 
 	Carbon.Auth.Agent = _agent;
-}( Carbon, $ ));
+}( Carbon, $, jsonld, Map, _shared ));

@@ -1,4 +1,6 @@
-(function ( Carbon, $ ) {
+(function ( Carbon, $, jsonld, Map, _shared ) {
+	'use strict';
+
 	var _token = {};
 
 	_token.class = Carbon.DefaultPrefixes.cs + 'Token';
@@ -28,4 +30,4 @@
 	};
 
 	Carbon.Auth.Token = _token;
-}( Carbon, $ ));
+}( Carbon, $, jsonld, Map, _shared ));

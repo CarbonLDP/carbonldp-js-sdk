@@ -4,7 +4,7 @@
 	var _persistedSource = {};
 
 	_persistedSource.injectMethods = function ( sources ) {
-		sources = isArray( sources ) ? sources : [sources];
+		sources = _shared.isArray( sources ) ? sources : [sources];
 
 		var length = sources.length;
 		for ( var i = 0; i < length; i ++ ) {

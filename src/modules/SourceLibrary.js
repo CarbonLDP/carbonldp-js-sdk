@@ -1,4 +1,6 @@
-(function ( Carbon, $, Map ) {
+(function ( Carbon, $, jsonld, Map, _shared ) {
+	'use strict';
+
 	var _sourceLibrary = {};
 
 	function addRDFSources( rdfSources ) {
@@ -61,7 +63,7 @@
 						// Add Inline Resources to the documentResources
 						var inlineResources = Carbon.Document.getInlineResources( documentResource, rdfResources );
 						Carbon.InlineResource.injectMethods( inlineResources );
-						Carbon.PersistedInlineResource.injectMethods( inlineResources );
+						Carbon._PersistedInlineResource.injectMethods( inlineResources );
 						documentResource._addInlineResources( inlineResources );
 					}
 
@@ -96,7 +98,7 @@
 	_sourceLibrary.post = function ( parent, children, options ) {
 		if ( ! parent || ! children ) return;
 
-		children = isArray( children ) ? children : [children];
+		children = _shared.isArray( children ) ? children : [children];
 
 		var slugs = new Map();
 		var sources = [];
@@ -110,7 +112,7 @@
 			if ( Carbon.Resource.isResource( child ) ) {
 				source = child;
 			} else {
-				if ( _shared.hasProperty( child, "slug" ) && isString( child.slug ) ) slug = child.slug;
+				if ( _shared.hasProperty( child, "slug" ) && _shared.isString( child.slug ) ) slug = child.slug;
 				if ( _shared.hasProperty( child, "source" ) && Carbon.Resource.isResource( child.source ) ) source = child.source;
 				else source = Carbon.Source.create( null );
 			}
@@ -215,5 +217,5 @@
 		return Carbon.getAPIBaseURI() + "apps/" + Carbon.getAppSlug() + "/";
 	};
 
-	return _sourceLibrary;
-}( Carbon, $, Map, _shared ));
+	Carbon.SourceLibrary = _sourceLibrary;
+}( Carbon, $, jsonld, Map, _shared ));

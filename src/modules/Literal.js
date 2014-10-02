@@ -39,7 +39,7 @@
 		boolean           : Carbon.DefaultPrefixes.xsd + "boolean",
 		string            : Carbon.DefaultPrefixes.xsd + "string"
 	};
-	_literal.InvertedDataTypes = (function (carbon) {
+	_literal.InvertedDataTypes = (function ( carbon ) {
 		var _inverted = {};
 
 		var _normal = _literal.DataTypes;
@@ -50,39 +50,39 @@
 		}
 
 		return _inverted;
-	}(Carbon));
+	}( Carbon ));
 
 	_literal.toLiteral = function ( value ) {
 		var literal = {};
 		var type = null;
 
 		switch ( true ) {
-			case isDate( value ):
+			case _shared.isDate( value ):
 				type = _literal.DataTypes.dateTime;
 				value = value.toISOString();
 				break;
-			case isNumber( value ):
+			case _shared.isNumber( value ):
 				if ( _shared.isInteger( value ) ) {
 					type = _literal.DataTypes.integer;
 				} else {
 					type = _literal.DataTypes.double;
 				}
 				break;
-			case isString( value ):
+			case _shared.isString( value ):
 				type = _literal.DataTypes.string;
 				break;
 			/*
 			 TODO: Should we support arrays?
-			 case isArray(value):
+			 case_shared.isArray(value):
 			 break;
 			 */
-			case isBoolean( value ):
+			case _shared.isBoolean( value ):
 				type = _literal.DataTypes.boolean;
 				break;
 		}
 
 		literal["@value"] = value;
-		if( type ) literal["@type"] = type;
+		if ( type ) literal["@type"] = type;
 
 		return literal;
 	};
@@ -138,9 +138,9 @@
 			case "unsignedByte" :
 			case "double" :
 			case "float" :
-				if ( isNumber( value ) ) {
+				if ( _shared.isNumber( value ) ) {
 					// Do nothing, it is already a number
-				} else if ( isString( value ) ) {
+				} else if ( _shared.isString( value ) ) {
 					value = parseFloat( value );
 				} else {
 					throw "The number couldn't be parsed!";
@@ -149,9 +149,9 @@
 
 			// Misc
 			case "boolean" :
-				if ( isBoolean( value ) ) {
+				if ( _shared.isBoolean( value ) ) {
 					// Do nothing, it is already a boolean
-				} else if ( isString( value ) ) {
+				} else if ( _shared.isString( value ) ) {
 					value = _shared.parseBoolean( value );
 				} else {
 					value = ! ! value;

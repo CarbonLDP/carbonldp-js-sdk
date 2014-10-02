@@ -35,7 +35,7 @@
 	};
 
 	_patchRequest.injectMethods = function ( rdfResources ) {
-		rdfResources = isArray( rdfResources ) ? rdfResources : [rdfResources];
+		rdfResources = _shared.isArray( rdfResources ) ? rdfResources : [rdfResources];
 
 		var length = rdfResources.length;
 		for ( var i = 0; i < length; i ++ ) {

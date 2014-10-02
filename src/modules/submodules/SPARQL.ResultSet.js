@@ -1,13 +1,15 @@
-(function ( SPARQL ) {
+(function ( Carbon, $, jsonld, Map, _shared ) {
+	'use strict';
+
 	var _resultSet = {};
 
 	_resultSet.isResultSet = function ( resultSet ) {
 		if ( ! resultSet ) return false;
-		return hasProperty( resultSet, "head" ) && hasProperty( resultSet, "results" );
+		return _shared.hasProperty( resultSet, "head" ) && _shared.hasProperty( resultSet, "results" );
 	};
 
 	_resultSet.injectMethods = function ( resultSets ) {
-		resultSets = isArray( resultSets ) ? resultSets : [resultSets];
+		resultSets = _shared.isArray( resultSets ) ? resultSets : [resultSets];
 		var length = resultSets.length;
 		for ( var i = 0; i < length; i ++ ) {
 			var resultSet = resultSets[i];
@@ -31,5 +33,5 @@
 		}
 	};
 
-	SPARQL.ResultSet = _resultSet;
-}( Carbon.SPARQL ));
+	Carbon.SPARQL.ResultSet = _resultSet;
+}( Carbon, $, jsonld, Map, _shared ));

@@ -4,7 +4,7 @@
 	var _rest = {};
 
 	_rest.get = function ( uri, options ) {
-		log( ">> REST.get()" );
+		_shared.log( ">> REST.get()" );
 
 		var defaultOptions = {
 			authenticate: true
@@ -15,7 +15,7 @@
 			options = defaultOptions;
 		}
 
-		debug( "-- REST.get() > GET resource: %s, options: %o", uri, options );
+		_shared.debug( "-- REST.get() > GET resource: %s, options: %o", uri, options );
 
 		var headers = {
 			"Accept": "application/ld+json"
@@ -32,19 +32,19 @@
 			headers: headers
 		} ).then(
 			function ( jsonResponse, textStatus, jqXHR ) {
-				debug( "-- REST.get() > The request was successfull." );
-				log( "-- REST.get() > Digesting response..." );
+				_shared.debug( "-- REST.get() > The request was successfull." );
+				_shared.log( "-- REST.get() > Digesting response..." );
 				Carbon.digestRDFResources( jsonResponse ).then(
 					function ( rdfResources ) {
-						debug( "<< REST.get() > The response was successfully digested." );
+						_shared.debug( "<< REST.get() > The response was successfully digested." );
 						deferred.resolve( rdfResources, jqXHR );
 					}, function ( errorObject ) {
-						error( "<< REST.get() > The response couldn't be digested." );
+						_shared.error( "<< REST.get() > The response couldn't be digested." );
 						deferred.reject( errorObject );
 					}
 				);
 			}, function ( jqXHR, textStatus, errorThrown ) {
-				error( "<< REST.get() > The request failed. Response: %o", jqXHR );
+				_shared.error( "<< REST.get() > The request failed. Response: %o", jqXHR );
 				deferred.reject();
 			}
 		);
@@ -53,7 +53,7 @@
 	};
 
 	_rest.post = function ( uri, body, options ) {
-		log( ">> REST.post()" );
+		_shared.log( ">> REST.post()" );
 
 		var defaultOptions = {
 			authenticate: true,
@@ -65,7 +65,7 @@
 			options = defaultOptions;
 		}
 
-		debug( "-- REST.post() > POST uri: %s, body: %o, options: %o", uri, body, options );
+		_shared.debug( "-- REST.post() > POST uri: %s, body: %o, options: %o", uri, body, options );
 
 		var headers = {
 			"Accept"      : "application/ld+json",
@@ -89,10 +89,10 @@
 			data       : body
 		} ).then(
 			function ( jsonResponse, textStatus, jqXHR ) {
-				debug( "-- REST.post() > The request was successfull." );
+				_shared.debug( "-- REST.post() > The request was successfull." );
 				deferred.resolve( jsonResponse, jqXHR );
 			}, function ( jqXHR, textStatus, errorThrown ) {
-				error( "<< REST.post() > The request failed. Response: %o", jqXHR );
+				_shared.error( "<< REST.post() > The request failed. Response: %o", jqXHR );
 				deferred.reject();
 			}
 		);
@@ -101,7 +101,7 @@
 	};
 
 	_rest.patch = function ( uri, patchRequest, options ) {
-		log( ">> REST.patch()" );
+		_shared.log( ">> REST.patch()" );
 
 		var defaultOptions = {
 			authenticate: true,
@@ -113,7 +113,7 @@
 			options = defaultOptions;
 		}
 
-		debug( "-- REST.patch() > PATCH resource: %s, patchRequest: %o, options: %o", uri, patchRequest, options );
+		_shared.debug( "-- REST.patch() > PATCH resource: %s, patchRequest: %o, options: %o", uri, patchRequest, options );
 
 		var headers = {
 			"Accept"      : "application/ld+json",
@@ -137,10 +137,10 @@
 			data       : patchRequest.toJsonLD()
 		} ).then(
 			function ( jsonResponse, textStatus, jqXHR ) {
-				debug( "-- REST.patch() > The request was successfull." );
+				_shared.debug( "-- REST.patch() > The request was successfull." );
 				deferred.resolve( jqXHR );
 			}, function ( jqXHR, textStatus, errorThrown ) {
-				error( "<< REST.patch() > The request failed. Response: %o", jqXHR );
+				_shared.error( "<< REST.patch() > The request failed. Response: %o", jqXHR );
 				deferred.reject();
 			}
 		);

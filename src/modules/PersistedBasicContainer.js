@@ -4,7 +4,7 @@
 	var _persistedBC = {};
 
 	_persistedBC.injectMethods = function ( basicContainers ) {
-		basicContainers = isArray( basicContainers ) ? basicContainers : [basicContainers];
+		basicContainers = _shared.isArray( basicContainers ) ? basicContainers : [basicContainers];
 
 		var length = basicContainers.length;
 		for ( var i = 0; i < length; i ++ ) {
@@ -12,7 +12,7 @@
 			(function ( basicContainer ) {
 
 				basicContainer.createSource = function ( children ) {
-					//if ( stringContains( slug, carbon.INLINE_RESOURCE_SIGN ) ) throw "The slug of a source cannot contain a # symbol.";
+					//if (_shared.stringContains( slug, carbon.INLINE_RESOURCE_SIGN ) ) throw "The slug of a source cannot contain a # symbol.";
 
 					var deferred = $.Deferred();
 

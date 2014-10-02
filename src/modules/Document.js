@@ -4,7 +4,7 @@
 	var _document = {};
 
 	_document.toJsonLD = function ( document ) {
-		var arrayDocument = isArray( document ) ? document : [document];
+		var arrayDocument = _shared.isArray( document ) ? document : [document];
 		var jsonLD = "[";
 
 		var addComma = false;
@@ -26,7 +26,7 @@
 	};
 
 	_document.getResourceOfType = function ( type, document ) {
-		var arrayDocument = isArray( document ) ? document : [document];
+		var arrayDocument = _shared.isArray( document ) ? document : [document];
 
 		var length = arrayDocument.length;
 		for ( var i = 0; i < length; i ++ ) {
@@ -40,7 +40,7 @@
 	};
 
 	_document.getResourceWithURI = function ( uri, document ) {
-		var arrayDocument = isArray( document ) ? document : [document];
+		var arrayDocument = _shared.isArray( document ) ? document : [document];
 
 		var length = arrayDocument.length;
 		for ( var i = 0; i < length; i ++ ) {
@@ -56,7 +56,7 @@
 	_document.getDocumentResources = function ( document ) {
 		var documentResources = [];
 
-		var arrayDocument = isArray( document ) ? document : [document];
+		var arrayDocument = _shared.isArray( document ) ? document : [document];
 
 		var length = arrayDocument.length;
 		for ( var i = 0; i < length; i ++ ) {
@@ -73,7 +73,7 @@
 	_document.getInlineResources = function ( documentResource, document ) {
 		var inlineResources = [];
 
-		var arrayDocument = isArray( document ) ? document : [document];
+		var arrayDocument = _shared.isArray( document ) ? document : [document];
 
 		var length = arrayDocument.length;
 		for ( var i = 0; i < length; i ++ ) {

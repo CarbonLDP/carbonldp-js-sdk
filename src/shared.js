@@ -45,12 +45,12 @@ _shared = (function(_shared) {
 	};
 
 	_shared.isInteger = function( number ) {
-		if ( ! isNumber( number ) ) return false;
+		if ( ! _shared.isNumber( number ) ) return false;
 		return number % 1 == 0;
 	};
 
 	_shared.isDouble = function( number ) {
-		if ( ! isNumber( number ) ) return false;
+		if ( ! _shared.isNumber( number ) ) return false;
 		return number % 1 != 0;
 	};
 
