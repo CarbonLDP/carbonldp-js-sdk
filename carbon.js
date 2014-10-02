@@ -1,5 +1,5 @@
 /**
- * @overview Carbon LDP JavaScript Library v1.0.0
+ * @overview Carbon LDP JavaScript Library v0.4.0
  * @copyright Base22, LLC. 2014
  */
 
@@ -44,7 +44,7 @@
 		}
 
 		// Private variables
-		var _version = "0.2.0";
+		var _version = "0.4.0";
 		var _requestProtocol = "https";
 		var _uriProtocol = "http";
 		var _domain = "carbonldp.com";
@@ -392,6 +392,13 @@
 				_credentials.token = tokenKey;
 			};
 
+			auth.setBasicCredentials = function ( username, password ) {
+				if ( ! username || ! password ) return;
+				auth.setMethod( 'basic' );
+				_credentials.username.username = username;
+				_credentials.username.password = password;
+			};
+
 			auth.setCredentialHeaders = function ( headers ) {
 				var method = auth.getMethod();
 				if ( method === null ) return headers;
@@ -509,6 +516,54 @@
 				return deferred.promise();
 			};
 
+			_rest.post = function ( uri, body, options ) {
+				log( ">> REST.post()" );
+
+				var defaultOptions = {
+					authenticate: true,
+					headers     : null
+				};
+				if ( typeof options == 'object' ) {
+					options = $.extend( defaultOptions, options );
+				} else {
+					options = defaultOptions;
+				}
+
+				debug( "-- REST.post() > POST uri: %s, body: %o, options: %o", uri, body, options );
+
+				var headers = {
+					"Accept"      : "application/ld+json",
+					"Content-Type": "application/ld+json"
+				};
+
+				if ( options.authenticate ) {
+					headers = carbon.Auth.setCredentialHeaders( headers );
+				}
+
+				if ( options.headers ) {
+					headers = $.extend( headers, options.headers );
+				}
+
+				var deferred = $.Deferred();
+				$.ajax( {
+					type       : 'POST',
+					url        : uri,
+					headers    : headers,
+					crossDomain: true,
+					data       : body
+				} ).then(
+					function ( jsonResponse, textStatus, jqXHR ) {
+						debug( "-- REST.post() > The request was successfull." );
+						deferred.resolve( jsonResponse, jqXHR );
+					}, function ( jqXHR, textStatus, errorThrown ) {
+						error( "<< REST.post() > The request failed. Response: %o", jqXHR );
+						deferred.reject();
+					}
+				);
+
+				return deferred.promise();
+			};
+
 			_rest.patch = function ( uri, patchRequest, options ) {
 				log( ">> REST.patch()" );
 
@@ -541,7 +596,6 @@
 				$.ajax( {
 					type       : 'PATCH',
 					url        : uri,
-					dataType   : "text",
 					headers    : headers,
 					crossDomain: true,
 					data       : patchRequest.toJsonLD()
@@ -565,6 +619,124 @@
 		// End: REST
 		// ----------------------------------------------------------------------
 		// ----------------------------------------------------------------------
+		// SPARQL
+		// ----------------------------------------------------------------------
+
+		carbon.SPARQL = (function ( carbon, $, Map ) {
+			var _sparql = {};
+
+			_sparql.ask = function ( url, query ) {
+				if ( ! isString( url ) ) throw "The URL must be a String!";
+				if ( ! isString( query ) ) throw "The query must be a String!";
+
+				var headers = {};
+				headers["Content-Type"] = "application/sparql-query";
+				headers["Accept"] = "application/json; q=0.8, application/ld+json; q=0.2";
+
+				var deferred = $.Deferred();
+
+				carbon.REST.post( url, query, {
+					headers: headers
+				} ).then(
+					function ( jsonResponse, jqXHR ) {
+						if ( typeof jsonResponse !== 'boolean' ) {
+							// TODO: FT
+							deferred.reject();
+							return;
+						}
+
+						deferred.resolve( jsonResponse );
+					}, function ( errorResponse ) {
+						// TODO: FT
+						deferred.reject( errorResponse );
+					}
+				);
+
+				return deferred;
+			};
+			_sparql.select = function ( url, query ) {
+				if ( ! isString( url ) ) throw "The URL must be a String!";
+				if ( ! isString( query ) ) throw "The query must be a String!";
+
+				var headers = {};
+				headers["Content-Type"] = "application/sparql-query";
+				headers["Accept"] = "application/sparql-results+json; q=0.8, application/ld+json; q=0.2";
+
+				var deferred = $.Deferred();
+
+				carbon.REST.post( url, query, {
+					headers: headers
+				} ).then(
+					function ( jsonResponse, jqXHR ) {
+						if ( ! carbon.SPARQL.ResultSet.isResultSet( jsonResponse ) ) {
+							// TODO: FT
+							deferred.reject();
+							return;
+						}
+						carbon.SPARQL.ResultSet.injectMethods( jsonResponse );
+
+						deferred.resolve( jsonResponse );
+					}, function ( errorResponse ) {
+						// TODO: FT
+						deferred.reject( errorResponse );
+					}
+				);
+
+				return deferred;
+			};
+			_sparql.describe = function () {
+				// TODO
+			};
+			_sparql.construct = function () {
+				// TODO
+			};
+			_sparql.update = function () {
+				// TODO
+			};
+
+			_sparql.ResultSet = (function ( carbon, $, Map ) {
+				var _resultSet = {};
+
+				_resultSet.isResultSet = function ( resultSet ) {
+					if ( ! resultSet ) return false;
+					return hasProperty( resultSet, "head" ) && hasProperty( resultSet, "results" );
+				};
+
+				_resultSet.injectMethods = function ( resultSets ) {
+					resultSets = isArray( resultSets ) ? resultSets : [resultSets];
+					var length = resultSets.length;
+					for ( var i = 0; i < length; i ++ ) {
+						var resultSet = resultSets[i];
+						(function ( resultSet ) {
+
+							resultSet.hasColumn = function ( column ) {
+								var length = resultSet.head.vars.length;
+								for ( var i = 0; i < length; i ++ ) {
+									if ( resultSet.head.vars[i] == column ) return true;
+								}
+								return false;
+							};
+							resultSet.getRows = function () {
+								return resultSet.results.bindings;
+							};
+							resultSet.isEmpty = function () {
+								return resultSet.results.bindings.length == 0;
+							};
+
+						}( resultSet ));
+					}
+				};
+
+				return _resultSet;
+			}( carbon, $, Map ));
+
+			return _sparql;
+		}( carbon, $, Map ));
+
+		// ----------------------------------------------------------------------
+		// End: SPARQL
+		// ----------------------------------------------------------------------
+		// ----------------------------------------------------------------------
 		// SourceLibrary
 		// ----------------------------------------------------------------------
 
@@ -584,12 +756,6 @@
 				if ( ! _uriProtocol || ! _domain || ! _appSlug ) throw "Carbon hasn't been initialized to support relative uris.";
 
 				return _sourceLibrary.getSourceBaseURI() + uri;
-			}
-
-			function getRequestURL( uri ) {
-				if ( ! _requestProtocol || ! _uriProtocol ) throw "Carbon hasn't been initialized to support relative uris.";
-				if ( stringStartsWith( uri, _requestProtocol ) ) return;
-				return uri.replace( _uriProtocol, _requestProtocol );
 			}
 
 			// Local variable to store the RDFSources retrieved
@@ -619,21 +785,32 @@
 						function ( rdfResources, jqXHR ) {
 							var documentResources = carbon.Document.getDocumentResources( rdfResources );
 							carbon.Source.injectMethods( documentResources );
-							carbon.PersistedSource.injectMethods( documentResources );
+							carbon._PersistedSource.injectMethods( documentResources );
 
-							// Add Inline Resources to the documentResources
 							var length = documentResources.length;
 							for ( var i = 0; i < length; i ++ ) {
 								var documentResource = documentResources[i];
+								// Add methods depending on the RDFSource type
+								if ( carbon.BasicContainer.isBasicContainer( documentResource ) ) {
+									carbon.BasicContainer.injectMethods( documentResource );
+									carbon._PersistedBasicContainer.injectMethods( documentResource );
+								} else if ( carbon.DirectContainer.isDirectContainer( documentResource ) ) {
+
+								} else if ( carbon.IndirectContainer.isIndirectContainer( documentResource ) ) {
+
+								}
+
+								// Add Inline Resources to the documentResources
 								var inlineResources = carbon.Document.getInlineResources( documentResource, rdfResources );
 								carbon.InlineResource.injectMethods( inlineResources );
-								documentResource.addInlineResources( inlineResources );
+								carbon.PersistedInlineResource.injectMethods( inlineResources );
+								documentResource._addInlineResources( inlineResources );
 							}
 
 							var rdfSource = carbon.Document.getResourceWithURI( uri, documentResources );
 							if ( ! rdfSource ) {
 								// TODO: FT
-								deferred.reject( errorObject );
+								deferred.reject( null );
 							}
 
 							// Add the ETag to the RDFSource
@@ -658,7 +835,85 @@
 				return deferred.promise();
 			};
 
+			_sourceLibrary.post = function ( parent, children, options ) {
+				if ( ! parent || ! children ) return;
+
+				children = isArray( children ) ? children : [children];
+
+				var slugs = new Map();
+				var sources = [];
+
+				var length = children.length;
+				for ( var i = 0; i < length; i ++ ) {
+					var child = children[i];
+					var slug = null;
+					var source = null;
+
+					if ( carbon.Resource.isResource( child ) ) {
+						source = child;
+					} else {
+						if ( hasProperty( child, "slug" ) && isString( child.slug ) ) slug = child.slug;
+						if ( hasProperty( child, "source" ) && carbon.Resource.isResource( child.source ) ) source = child.source;
+						else source = carbon.Source.create( null );
+					}
+
+					if ( source.isPersisted() ) throw "One of the RDFSources is already persisted.";
+
+					var sourceURI = carbon.getGenericRequestURI();
+					source._setURI( sourceURI );
+
+					sources.push( source );
+					if ( slug ) {
+						var genericURISlug = carbon.URI.getSlug( sourceURI );
+						slugs.put( genericURISlug, slug );
+					}
+				}
+
+				var body = null;
+				var slugHeader = null;
+
+				if ( sources.length == 0 ) return;
+				if ( sources.length == 1 ) {
+					if ( slugs.getValues().length == 1 ) {
+						slugHeader = slugs.getValues()[0];
+					}
+					body = sources[0].toJsonLD();
+				} else {
+					// TODO: Construct slug header
+					body = carbon.Document.toJsonLD( sources );
+				}
+
+				var requestURL = getRequestURL( parent.getURI() );
+				var headers = {};
+				if ( slugHeader ) headers["Slug"] = slugHeader;
+
+				var deferred = $.Deferred();
+
+				carbon.REST.post( requestURL, body, {
+					headers: headers
+				} ).then(
+					function ( jqXHR ) {
+						// TODO: FT
+						deferred.resolve();
+					}, function ( errorObject ) {
+						// TODO: FT
+						deferred.reject();
+					}
+				);
+
+				return deferred;
+			};
+
 			_sourceLibrary.commit = function ( source ) {
+				if ( source ) {
+					return commitSource( source );
+				} else {
+					return commitAllSources();
+				}
+
+			};
+
+			function commitSource( source ) {
 				if ( ! source.isDirty() ) return;
 
 				var uri = prepareURI( source.getURI() );
@@ -692,7 +947,11 @@
 				);
 
 				return deferred;
-			};
+			}
+
+			function commitAllSources() {
+
+			}
 
 			_sourceLibrary.getSourceBaseURI = function () {
 				return carbon.getAPIBaseURI() + "apps/" + _appSlug + "/";
@@ -704,13 +963,215 @@
 		// ----------------------------------------------------------------------
 		// End: ResourceLibrary
 		// ----------------------------------------------------------------------
+		// ----------------------------------------------------------------------
+		// PropertyValue
+		// ----------------------------------------------------------------------
 
+		carbon.Literal = (function ( carbon, $ ) {
+			var _literal = {};
+
+			// TODO: Finish adding the extra datatypes
+			_literal.DataTypes = {
+
+				// Date/Time
+				date              : carbon.DefaultPrefixes.xsd + "date",
+				dateTime          : carbon.DefaultPrefixes.xsd + "dateTime",
+				duration          : carbon.DefaultPrefixes.xsd + "duration",
+				gDay              : carbon.DefaultPrefixes.xsd + "gDay",
+				gMonth            : carbon.DefaultPrefixes.xsd + "gMonth",
+				gMonthDay         : carbon.DefaultPrefixes.xsd + "gMonthDay",
+				gYear             : carbon.DefaultPrefixes.xsd + "gYear",
+				gYearMonth        : carbon.DefaultPrefixes.xsd + "gYearMonth",
+				time              : carbon.DefaultPrefixes.xsd + "time",
+
+				// Numbers
+				byte              : carbon.DefaultPrefixes.xsd + "byte",
+				decimal           : carbon.DefaultPrefixes.xsd + "decimal",
+				int               : carbon.DefaultPrefixes.xsd + "int",
+				integer           : carbon.DefaultPrefixes.xsd + "integer",
+				long              : carbon.DefaultPrefixes.xsd + "long",
+				negativeInteger   : carbon.DefaultPrefixes.xsd + "negativeInteger",
+				nonNegativeInteger: carbon.DefaultPrefixes.xsd + "nonNegativeInteger",
+				nonPositiveInteger: carbon.DefaultPrefixes.xsd + "nonPositiveInteger",
+				positiveInteger   : carbon.DefaultPrefixes.xsd + "positiveInteger",
+				short             : carbon.DefaultPrefixes.xsd + "short",
+				unsignedLong      : carbon.DefaultPrefixes.xsd + "unsignedLong",
+				unsignedInt       : carbon.DefaultPrefixes.xsd + "unsignedInt",
+				unsignedShort     : carbon.DefaultPrefixes.xsd + "unsignedShort",
+				unsignedByte      : carbon.DefaultPrefixes.xsd + "unsignedByte",
+				double            : carbon.DefaultPrefixes.xsd + "double",
+				float             : carbon.DefaultPrefixes.xsd + "float",
+
+				// Misc
+				boolean           : carbon.DefaultPrefixes.xsd + "boolean",
+				string            : carbon.DefaultPrefixes.xsd + "string"
+			};
+			_literal.InvertedDataTypes = (function (carbon) {
+				var _inverted = {};
+
+				var _normal = _literal.DataTypes;
+				for ( var property in _normal ) {
+					if ( _normal.hasOwnProperty( property ) ) {
+						_inverted[_normal[property]] = property;
+					}
+				}
+
+				return _inverted;
+			}(carbon));
+
+			_literal.toLiteral = function ( value ) {
+				var literal = {};
+				var type = null;
+
+				switch ( true ) {
+					case isDate( value ):
+						type = _literal.DataTypes.dateTime;
+						value = value.toISOString();
+						break;
+					case isNumber( value ):
+						if ( isInteger( value ) ) {
+							type = _literal.DataTypes.integer;
+						} else {
+							type = _literal.DataTypes.double;
+						}
+						break;
+					case isString( value ):
+						type = _literal.DataTypes.string;
+						break;
+					/*
+					 TODO: Should we support arrays?
+					 case isArray(value):
+					 break;
+					 */
+					case isBoolean( value ):
+						type = _literal.DataTypes.boolean;
+						break;
+				}
+
+				literal["@value"] = value;
+				if( type ) literal["@type"] = type;
+
+				return literal;
+			};
+			_literal.parseLiteral = function ( jsonLDValue ) {
+				if ( ! jsonLDValue ) return null;
+				if ( ! hasProperty( jsonLDValue, "@value" ) ) return null;
+
+				if ( ! hasProperty( jsonLDValue, "@type" ) ) {
+					// The literal doesn't have a defined type
+					return jsonLDValue["@value"];
+				}
+
+				var type = jsonLDValue["@type"];
+				if ( ! hasProperty( _literal.InvertedDataTypes, type ) ) {
+					// The Datetype isn't supported
+					return jsonLDValue["@value"];
+				}
+				var dataType = _literal.InvertedDataTypes[type];
+				var dataTypes = _literal.DataTypes;
+				var value = jsonLDValue["@value"];
+				switch ( dataType ) {
+					// Dates
+					case "date":
+					case "dateTime":
+					case "time":
+						value = new Date( value );
+						break;
+					case "duration":
+						// TODO: Support duration values (create a class or something...)
+						break;
+					case "gDay":
+					case "gMonth":
+					case "gMonthDay":
+					case "gYear":
+					case "gYearMonth":
+						// TODO: Decide. Should we return it as a Date?
+						break;
+
+					// Numbers
+					case "byte" :
+					case "decimal" :
+					case "int" :
+					case "integer" :
+					case "long" :
+					case "negativeInteger" :
+					case "nonNegativeInteger" :
+					case "nonPositiveInteger" :
+					case "positiveInteger" :
+					case "short" :
+					case "unsignedLong" :
+					case "unsignedInt" :
+					case "unsignedShort" :
+					case "unsignedByte" :
+					case "double" :
+					case "float" :
+						if ( isNumber( value ) ) {
+							// Do nothing, it is already a number
+						} else if ( isString( value ) ) {
+							value = parseFloat( value );
+						} else {
+							throw "The number couldn't be parsed!";
+						}
+						break;
+
+					// Misc
+					case "boolean" :
+						if ( isBoolean( value ) ) {
+							// Do nothing, it is already a boolean
+						} else if ( isString( value ) ) {
+							value = parseBoolean( value );
+						} else {
+							value = ! ! value;
+						}
+						break;
+					case "string":
+						// Do nothing, the value will already be a string
+						break;
+					default:
+						break;
+				}
+
+				return value;
+			};
+			_literal.isLiteral = function ( jsonLDValue ) {
+				if ( ! jsonLDValue ) return false;
+				return hasProperty( jsonLDValue, "@value" );
+			};
+
+			return _literal;
+		}( carbon, $ ));
+
+		// ----------------------------------------------------------------------
+		// End: PropertyValue
+		// ----------------------------------------------------------------------
 		// ----------------------------------------------------------------------
 		// RDF Document
 		// ----------------------------------------------------------------------
 
 		carbon.Document = (function ( carbon, $ ) {
 			var _document = {};
+
+			_document.toJsonLD = function ( document ) {
+				var arrayDocument = isArray( document ) ? document : [document];
+				var jsonLD = "[";
+
+				var addComma = false;
+				var length = arrayDocument.length;
+				for ( var i = 0; i < length; i ++ ) {
+					var resource = arrayDocument[i];
+					if ( hasFunction( resource, "toJsonLD" ) ) {
+						if ( addComma ) {
+							jsonLD += ",";
+						}
+						jsonLD += resource.toJsonLD();
+						addComma = true;
+					}
+				}
+
+				jsonLD += "]";
+
+				return jsonLD;
+			};
 
 			_document.getResourceOfType = function ( type, document ) {
 				var arrayDocument = isArray( document ) ? document : [document];
@@ -805,6 +1266,29 @@
 				return ! stringContains( uri, carbon.INLINE_RESOURCE_SIGN );
 			};
 
+			_uri.getGlobalBase = function ( uri ) {
+				if ( ! isString( uri ) ) throw 'Not a String!';
+				var index = uri.indexOf( carbon.INLINE_RESOURCE_SIGN );
+				if ( index == - 1 ) return uri;
+
+				return uri.substring( 0, index - 1 );
+			};
+			_uri.getSlug = function ( uri ) {
+				if ( ! isString( uri ) ) throw 'Not a String!';
+				var tempURI = stringEndsWith( uri, "/" ) ? uri.substring( 0, uri.length - 1 ) : uri;
+				var index = tempURI.lastIndexOf( "/" );
+				if ( index == - 1 ) return uri;
+
+				return uri.substring( 0, index - 1 );
+			};
+			_uri.getLocalSlug = function ( uri ) {
+				if ( ! isString( uri ) ) throw 'Not a String!';
+				var index = uri.indexOf( carbon.INLINE_RESOURCE_SIGN );
+				if ( index == - 1 ) return null;
+
+				return uri.substring( index + 1, uri.length - 1 );
+			};
+
 			return _uri;
 		}( carbon, $ ));
 
@@ -829,6 +1313,13 @@
 				return rdfResource.hasOwnProperty( "@id" );
 			};
 
+			_resource.create = function ( uri ) {
+				var newResource = {};
+				_resource.injectMethods( newResource );
+				newResource._setURI( uri );
+				return newResource;
+			};
+
 			_resource.injectMethods = function ( rdfResources ) {
 				if ( ! isArray( rdfResources ) ) {
 					rdfResources = [ rdfResources ];
@@ -838,6 +1329,13 @@
 
 					rdfResource.getURI = function () {
 						return this["@id"];
+					};
+					rdfResource._setURI = function ( uri ) {
+						this["@id"] = uri;
+					};
+
+					rdfResource.isPersisted = function () {
+						return ! ! this.getURI();
 					};
 
 					rdfResource.isOfType = function ( type ) {
@@ -991,6 +1489,9 @@
 						}
 					};
 
+					rdfResource.toJsonLD = function () {
+						return JSON.stringify( rdfResource );
+					};
 				} );
 			};
 
@@ -1094,16 +1595,6 @@
 				}
 			};
 
-			_resource.create = function ( uri ) {
-				var newResource = {};
-
-				newResource["@id"] = uri;
-
-				_resource.injectMethods( newResource );
-
-				return newResource;
-			};
-
 			return _resource;
 		}( carbon, $ ) );
 
@@ -1140,11 +1631,29 @@
 				return stringStartsWith( uri, documentResource.getURI() + carbon.INLINE_RESOURCE_SIGN );
 			};
 
+			_inlineResource._create = function () {
+				var newResource = carbon.Resource.create( null );
+				_inlineResource.injectMethods( newResource );
+				return newResource;
+			};
+
 			_inlineResource.injectMethods = function ( rdfResources ) {
+				rdfResources = isArray( rdfResources ) ? rdfResources : [rdfResources];
 				var length = rdfResources.length;
 				for ( var i = 0; i < length; i ++ ) {
 					var rdfResource = rdfResources[i];
 					(function ( rdfResource ) {
+
+						var _documentResource = null;
+						rdfResource.getDocumentResource = function ( documentResource ) {
+							return _documentResource;
+						};
+						rdfResource._setDocumentResource = function ( documentResource ) {
+							if ( ! _inlineResource.isInlineResourceOf( this, documentResource ) ) {
+								throw "The Resource is not the Document Resource of this Inline Resource.";
+							}
+							_documentResource = documentResource;
+						};
 
 					}( rdfResource ));
 				}
@@ -1157,23 +1666,172 @@
 		// End: Inline Resource
 		// ----------------------------------------------------------------------
 		// ----------------------------------------------------------------------
-		// Persisted Resource
+		// Persisted Inline Resource
 		// ----------------------------------------------------------------------
 
-		carbon.PersistedResource = (function ( carbon, Map, $ ) {
-			var _persistedResource = {};
+		carbon.PersistedInlineResource = (function ( carbon, Map, $ ) {
+			var _persistedInlineResource = {};
 
-			_persistedResource.injectMethods = function ( rdfResources ) {
-				var length = rdfResources.length;
+			_persistedInlineResource.injectMethods = function ( inlineResources ) {
+				inlineResources = isArray( inlineResources ) ? inlineResources : [inlineResources];
+
+				var length = inlineResources.length;
 				for ( var i = 0; i < length; i ++ ) {
-					var rdfResource = rdfResources[i];
-					(function ( rdfResource ) {
+					var inlineResource = inlineResources[i];
+					(function ( inlineResource ) {
 
-					}( rdfResource ));
+						// === Property Modifications
+
+						var _addModifications = [];
+						var _setModifications = [];
+						var _deleteModifications = [];
+
+						function _addModificationIndexes( property ) {
+							var indexes = [];
+							var length = _addModifications.length;
+							for ( var i = 0; i < length; i ++ ) {
+								if ( _addModifications[i].property == property ) {
+									indexes.push( i );
+								}
+							}
+							return indexes;
+						}
+
+						function _setModificationIndex( property ) {
+							var length = _setModifications.length;
+							for ( var i = 0; i < length; i ++ ) {
+								if ( _setModifications[i].property == property ) {
+									return i;
+								}
+							}
+							return - 1;
+						}
+
+						function _deleteModificationIndex( property ) {
+							var length = _deleteModifications.length;
+							for ( var i = 0; i < length; i ++ ) {
+								if ( _deleteModifications[i] == property ) {
+									return i;
+								}
+							}
+							return - 1;
+						}
+
+						var _isDirty = false;
+						inlineResource.isDirty = function () {
+							return _isDirty;
+						};
+
+						function propertyAdded( property, value ) {
+							_isDirty = true;
+
+							var deleteIndex = _deleteModificationIndex( property );
+							if ( deleteIndex != - 1 ) {
+								// A delete modification for this property was already executed
+								// combine them into a set modification
+								_deleteModifications.splice( deleteIndex, 1 );
+								_setModifications.push( {
+									property: property,
+									value   : value
+								} );
+								return;
+							}
+
+							var setIndex = _setModificationIndex( property );
+							if ( setIndex != - 1 ) {
+								// A set modification for this property was already executed
+								// move it into another addModification
+								var setModification = _setModifications[setIndex];
+								_setModifications.splice( setIndex, 1 );
+								_addModifications.push( setModification );
+							}
+
+							_addModifications.push( {
+								property: property,
+								value   : value
+							} );
+
+							return true;
+						}
+
+						inlineResource._addAddCallback( propertyAdded );
+
+						// TODO: Remove by value
+						function propertyRemoved( property, value ) {
+							_isDirty = true;
+
+							var setIndex = _setModificationIndex( property );
+							if ( setIndex != - 1 ) {
+								// A set modification for this property was already executed
+								// delete it
+								_setModifications.splice( setIndex, 1 );
+							} else {
+								var addIndexes = _addModificationIndexes( property );
+								addIndexes.reverse();
+								if ( addIndexes.length > 0 ) {
+									// Add modifications for this property were already executed
+									// delete them
+									var length = _addModifications.length;
+									for ( var i = length - 1; i >= 0; i -- ) {
+										if ( addIndexes[0] == i ) {
+											addIndexes.splice( 0, 1 );
+											_addModifications.splice( i, 1 );
+										}
+									}
+								}
+							}
+
+							_deleteModifications.push( property );
+
+							return true;
+						}
+
+						inlineResource._addRemoveCallback( propertyRemoved );
+
+						// === End: Property Modifications
+
+						inlineResource._completePATCHRequest = function ( patchRequest ) {
+							(function () {
+								var length = _addModifications.length;
+								for ( var i = 0; i < length; i ++ ) {
+									var addModification = _addModifications[i];
+									patchRequest.addAddAction( inlineResource, addModification.property, addModification.value );
+								}
+							}());
+							(function () {
+								var length = _setModifications.length;
+								for ( var i = 0; i < length; i ++ ) {
+									var setModification = _setModifications[i];
+									patchRequest.addSetAction( inlineResource, setModification.property, setModification.value );
+								}
+							}());
+							(function () {
+								var length = _deleteModifications.length;
+								for ( var i = 0; i < length; i ++ ) {
+									var deleteModification = _deleteModifications[i];
+									patchRequest.addDeleteAction( inlineResource, deleteModification );
+								}
+							}());
+
+							return patchRequest;
+						};
+
+						inlineResource.commit = function () {
+							return this.getDocumentResource().commit();
+						};
+
+						inlineResource._clean = function () {
+							_isDirty = false;
+							_addModifications = [];
+							_setModifications = [];
+							_deleteModifications = [];
+						};
+
+					}( inlineResource ));
 				}
 			};
 
-			return _persistedResource;
+			return _persistedInlineResource;
 		}( carbon, Map, $ ) );
 
 		// ----------------------------------------------------------------------
@@ -1192,16 +1850,68 @@
 
 			};
 
+			_source.create = function () {
+				var newSource = carbon.Resource.create( null );
+				_source.injectMethods( newSource );
+				newSource.addType( carbon.Source.class );
+				return newSource;
+			};
+
 			_source.injectMethods = function ( resources ) {
+				resources = isArray( resources ) ? resources : [resources];
+
 				resources.forEach( function ( resource ) {
+
+					resource._setURI = function ( uri ) {
+						resource["@id"] = uri;
+						var slugs = resource.getInlineResourceSlugs();
+						(function ( slugs ) {
+							var length = slugs.length;
+							for ( var i = 0; i < length; i ++ ) {
+								var slug = slugs[i];
+								var inlineResource = resource.getInlineResource( slug );
+
+								var inlineResourceURI = uri + carbon.INLINE_RESOURCE_SIGN + slug;
+								inlineResource._setURI( inlineResourceURI );
+							}
+						}( slugs ));
+
+					};
 
 					// === InlineResources
 
 					var _inlineResources = new Map();
+					resource.hasInlineResource = function ( uri ) {
+						if ( ! carbon.URI.isURI( uri ) ) {
+							// The URI provided is relative
+							if ( ! stringStartsWith( uri, carbon.INLINE_RESOURCE_SIGN ) ) {
+								uri = resource.getURI() + carbon.INLINE_RESOURCE_SIGN + uri;
+							} else {
+								uri = resource.getURI() + uri;
+							}
+						}
+						return _inlineResources.has( uri );
+					};
 					resource.getInlineResource = function ( uri ) {
+						if ( carbon.URI.isURI( uri ) ) {
+							// The URI provided isn't relative
+							if ( resource.isPersisted() ) throw "Cannot add an inlineResource with a complete URI to a non persisted Source.";
+							else if ( carbon.URI.getGlobalBase( uri ) != resource.getURI() ) throw "The inlineResource doesn't belong to this RDFSource.";
+
+							uri = carbon.URI.getLocalSlug( uri );
+						} else {
+							uri = stringStartsWith( carbon.INLINE_RESOURCE_SIGN ) ? uri.substring( 1, uri.length - 1 ) : uri;
+						}
+
 						return _inlineResources.get( uri );
 					};
-					resource.addInlineResources = function ( inlineResources ) {
+					resource.getInlineResources = function () {
+						return _inlineResources.getValues();
+					};
+					resource.getInlineResourceSlugs = function () {
+						return _inlineResources.getKeys();
+					};
+					resource._addInlineResources = function ( inlineResources ) {
 						inlineResources = isArray( inlineResources ) ? inlineResources : [inlineResources];
 
 						var length = inlineResources.length;
@@ -1211,19 +1921,17 @@
 							if ( ! carbon.InlineResource.isInlineResource( inlineResource ) ) throw "The inlineResource doesn't belong to this RDFSource.";
 
 							var uri = inlineResource.getURI();
-							if ( ! carbon.URI.isURI( uri ) ) {
-								// The InlineResource has a relative URI
-								uri = this.getURI() + uri;
-								inlineResource["@id"] = uri;
-							} else {
+							if ( carbon.URI.isURI( uri ) ) {
 								if ( ! carbon.InlineResource.isInlineResourceOf( inlineResource, this ) ) throw "The inlineResource doesn't belong to this RDFSource.";
+								uri = carbon.URI.getLocalSlug( uri );
+							} else {
+								// The InlineResource has a relative URI
+								uri = stringStartsWith( carbon.INLINE_RESOURCE_SIGN ) ? uri.substring( 1, uri.length - 1 ) : uri;
 							}
 
+							inlineResource._setDocumentResource( this );
 							_inlineResources.put( uri, inlineResource );
 						}
-					};
-					resource.getInlineResources = function () {
-						return _inlineResources.getValues();
 					};
 
 					// === End: InlineResources
@@ -1250,10 +1958,12 @@
 		// Persisted RDF Source
 		// ----------------------------------------------------------------------
 
-		carbon.PersistedSource = (function ( carbon, Map, $ ) {
+		carbon._PersistedSource = (function ( carbon, Map, $ ) {
 			var _persistedSource = {};
 
 			_persistedSource.injectMethods = function ( sources ) {
+				sources = isArray( sources ) ? sources : [sources];
+
 				var length = sources.length;
 				for ( var i = 0; i < length; i ++ ) {
 					var source = sources[i];
@@ -1303,7 +2013,8 @@
 							var inlineResources = this.getInlineResources();
 							var length = inlineResources.length;
 							for ( var i = 0; i < length; i ++ ) {
-								if ( inlineResources.isDirty() ) return true;
+								var inlineResource = inlineResources[i];
+								if ( inlineResource.isDirty() ) return true;
 							}
 
 							return false;
@@ -1415,6 +2126,16 @@
 								}
 							}());
 
+							// InlineResources
+							(function () {
+								var inlineResources = source.getInlineResources();
+								var length = inlineResources.length;
+								for ( var i = 0; i < length; i ++ ) {
+									var inlineResource = inlineResources[i];
+									inlineResource._completePATCHRequest( patchRequest );
+								}
+							}());
+
 							return patchRequest;
 						};
 
@@ -1427,7 +2148,25 @@
 							_addModifications = [];
 							_setModifications = [];
 							_deleteModifications = [];
+
+							(function () {
+								var inlineResources = source.getInlineResources();
+								var length = inlineResources.length;
+								for ( var i = 0; i < length; i ++ ) {
+									var inlineResource = inlineResources[i];
+									inlineResource._clean();
+								}
+							}());
 						};
+
+						// === SPARQL Methods
+
+						source.select = function ( query ) {
+							var requestURL = getRequestURL( source.getURI() );
+							return carbon.SPARQL.select( requestURL, query );
+						};
+
+						// === End: SPARQL Methods
 
 					}( source ));
 				}
@@ -1449,20 +2188,111 @@
 
 			_basicContainer.class = carbon.DefaultPrefixes.ldp + 'BasicContainer';
 
-			_basicContainer.Property = {
-				contains: carbon.DefaultPrefixes.ldp + 'contains',
-				member  : carbon.DefaultPrefixes.ldp + 'member'
+			_basicContainer.Properties = {
+				contains         : {
+					uri       : carbon.DefaultPrefixes.ldp + 'contains',
+					multiValue: true,
+					literal   : false,
+					readOnly  : true
+				},
+				member           : {
+					uri       : carbon.DefaultPrefixes.ldp + 'member',
+					multiValue: true,
+					literal   : false,
+					readOnly  : true
+				},
+				memberOfRelation : {
+					uri       : carbon.DefaultPrefixes.ldp + 'memberOfRelation',
+					multiValue: false,
+					literal   : false,
+					readOnly  : true
+				},
+				hasMemberRelation: {
+					uri       : carbon.DefaultPrefixes.ldp + 'hasMemberRelation',
+					multiValue: false,
+					literal   : false,
+					readOnly  : true
+				}
+			};
+
+			_basicContainer.isBasicContainer = function ( rdfSource ) {
+				if ( ! rdfSource ) return false;
+				if ( ! carbon.Resource.isResource( rdfSource ) ) return false;
+				return rdfSource.isOfType( carbon.BasicContainer.class );
+			};
+
+			_basicContainer.create = function ( memberOfRelation, hasMemberRelation ) {
+				var container = carbon.Source.create();
+				carbon.BasicContainer.injectMethods( container );
+
+				container.addType( carbon.BasicContainer.class );
+
+				if ( memberOfRelation ) {
+					if ( ! carbon.URI.isURI( memberOfRelation ) ) throw "The memberOfRelation must be a URI.";
+					container.setProperty( carbon.BasicContainer.Properties.memberOfRelation.uri, memberOfRelation );
+				}
+				if ( hasMemberRelation ) {
+					if ( ! carbon.URI.isURI( hasMemberRelation ) ) throw "The hasMemberRelation must be a URI.";
+					container.setProperty( carbon.BasicContainer.Properties.hasMemberRelation.uri, hasMemberRelation );
+				}
+
+				return container;
 			};
 
 			_basicContainer.injectMethods = function ( sources ) {
-				sources.forEach( function ( source ) {
+				sources = isArray( sources ) ? sources : [sources];
 
-					// TODO: FT
+				carbon.Resource.injectPropertyMethods( sources, carbon.BasicContainer.Properties );
 
-				} );
+				var length = sources.length;
+				for ( var i = 0; i < length; i ++ ) {
+					var source = sources[i];
+					(function ( source ) {
+
+					}( source ));
+				}
 			};
 
 			return _basicContainer;
+		}( carbon, $ ));
+
+		carbon._PersistedBasicContainer = (function ( carbon, $ ) {
+			var _persistedBC = {};
+
+			_persistedBC.injectMethods = function ( basicContainers ) {
+				basicContainers = isArray( basicContainers ) ? basicContainers : [basicContainers];
+
+				var length = basicContainers.length;
+				for ( var i = 0; i < length; i ++ ) {
+					var basicContainer = basicContainers[i];
+					(function ( basicContainer ) {
+
+						basicContainer.createSource = function ( children ) {
+							//if ( stringContains( slug, carbon.INLINE_RESOURCE_SIGN ) ) throw "The slug of a source cannot contain a # symbol.";
+
+							var deferred = $.Deferred();
+
+							carbon.SourceLibrary.post( basicContainer, children ).then(
+								function () {
+									// TODO: Decide. What should we do here?
+									deferred.resolve();
+								}, function ( errorResponse ) {
+									// TODO: FT
+									deferred.reject();
+								}
+							);
+
+							return deferred;
+						};
+						basicContainer.createBasicContainer = function ( slug, basicContainer ) {
+							// TODO
+						};
+
+					}( basicContainer ));
+				}
+			};
+
+			return _persistedBC;
 		}( carbon, $ ));
 
 		// ----------------------------------------------------------------------
@@ -1480,6 +2310,12 @@
 
 			_directContainer.Property = {
 				contains: carbon.DefaultPrefixes.ldp + 'contains'
+			};
+
+			_directContainer.isDirectContainer = function ( rdfSource ) {
+				if ( ! rdfSource ) return false;
+				if ( ! carbon.Resource.isResource( rdfSource ) ) return false;
+				return rdfSource.isOfType( carbon.DirectContainer.class );
 			};
 
 			_directContainer.injectMethods = function ( sources ) {
@@ -1508,6 +2344,12 @@
 
 			_indirectContainer.Property = {
 				contains: carbon.DefaultPrefixes.ldp + 'contains'
+			};
+
+			_indirectContainer.isIndirectContainer = function ( rdfSource ) {
+				if ( ! rdfSource ) return false;
+				if ( ! carbon.Resource.isResource( rdfSource ) ) return false;
+				return rdfSource.isOfType( carbon.IndirectContainer.class );
 			};
 
 			_indirectContainer.injectMethods = function ( sources ) {
@@ -1777,6 +2619,11 @@
 			return typeof object[functionName] === 'function';
 		}
 
+		function hasProperty( object, property ) {
+			if ( ! object ) return false;
+			return 'undefined' !== typeof object[property];
+		}
+
 		function isArray( object ) {
 			return Object.prototype.toString.call( object ) === '[object Array]';
 		}
@@ -1785,12 +2632,78 @@
 			return typeof string == 'string' || string instanceof String;
 		}
 
+		function isBoolean( boolean ) {
+			return typeof boolean == 'boolean';
+		}
+
+		function isNumber( number ) {
+			return typeof number == 'number' || number instanceof Number;
+		}
+
+		function isInteger( number ) {
+			if ( ! isNumber( number ) ) return false;
+			return number % 1 == 0;
+		}
+
+		function isDouble( number ) {
+			if ( ! isNumber( number ) ) return false;
+			return number % 1 != 0;
+		}
+
+		function isDate( date ) {
+			return typeof date == 'date' || date instanceof Date;
+		}
+
 		function stringStartsWith( string, substring ) {
 			return string.lastIndexOf( substring, 0 ) === 0;
 		}
 
+		function stringEndsWith( string, substring ) {
+			return string.indexOf( substring, string.length - substring.length ) !== - 1;
+		}
+
 		function stringContains( string, substring ) {
 			return ~ string.indexOf( substring );
+		}
+
+		function slugify( slug ) {
+			slug = slug
+				.replace( /^\s\s*/, '' ) // Trim start
+				.replace( /\s\s*$/, '' ) // Trim end
+				.replace( /[^a-zA-Z0-9- ]/g, '' ) // Remove non alpha numeric symbols
+				.replace( / +/g, '-' ) // Change spaces into single hyphens
+			;
+			return slug;
+		}
+
+		function parseBoolean( string ) {
+			switch ( string.toLowerCase() ) {
+				case "true":
+				case "yes":
+				case "1":
+					return true;
+				case "false":
+				case "no":
+				case "0":
+				case null:
+					return false;
+				default:
+					return Boolean( string );
+			}
+		}
+
+		function parseETag( etag ) {
+			// Weak ETag
+			if ( stringStartsWith( etag, 'W"/' ) ) {
+				etag = etag.slice( 3, etag.length - 2 );
+			}
+			return Date.parse( etag );
+		}
+
+		function getRequestURL( uri ) {
+			if ( ! _requestProtocol || ! _uriProtocol ) throw "Carbon hasn't been initialized to support relative uris.";
+			if ( stringStartsWith( uri, _requestProtocol ) ) return;
+			return uri.replace( _uriProtocol, _requestProtocol );
 		}
 
 		// Will be used as a "trace" level of debugging
