@@ -17,16 +17,16 @@
 					var deferred = $.Deferred();
 
 					Carbon.SourceLibrary.post( basicContainer, children ).then(
-						function () {
+						function ( sourceURIs) {
 							// TODO: Decide. What should we do here?
-							deferred.resolve();
+							deferred.resolve( sourceURIs );
 						}, function ( errorResponse ) {
 							// TODO: FT
 							deferred.reject();
 						}
 					);
 
-					return deferred;
+					return deferred.promise();
 				};
 				basicContainer.createBasicContainer = function ( slug, basicContainer ) {
 					// TODO

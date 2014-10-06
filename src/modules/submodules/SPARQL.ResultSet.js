@@ -22,11 +22,32 @@
 					}
 					return false;
 				};
+				resultSet.isEmpty = function () {
+					return resultSet.results.bindings.length == 0;
+				};
+				resultSet.getColumnNames = function() {
+					return resultSet.head.vars;
+				};
 				resultSet.getRows = function () {
 					return resultSet.results.bindings;
 				};
-				resultSet.isEmpty = function () {
-					return resultSet.results.bindings.length == 0;
+
+				function defaultSortFunction( a, b ) {
+					if (a > b) return 1;
+					if (a.name < b.name) return -1;
+					return 0;
+				}
+
+				resultSet.sortByValue = function( column, sortFunction) {
+					sortFunction = !!sortFunction ? sortFunction : defaultSortFunction;
+					var completeSortingFunction = (function(){
+						return function ( rowA, rowB ) {
+							var a = a[column].value;
+							var b = b[column].value;
+							return sortFunction( a, b );
+						}
+					}());
+					resultSet.results.bindings.sort(completeSortingFunction);
 				};
 
 			}( resultSet ));

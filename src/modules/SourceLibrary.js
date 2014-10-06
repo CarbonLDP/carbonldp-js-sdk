@@ -152,9 +152,15 @@
 		Carbon.REST.post( requestURL, body, {
 			headers: headers
 		} ).then(
-			function ( jqXHR ) {
-				// TODO: FT
-				deferred.resolve();
+			function ( jsonResponse, jqXHR ) {
+				var location = jqXHR.getResponseHeader("Location");
+
+				if( children.length == 1 ) {
+					deferred.resolve( location );
+				} else {
+					// TODO: Handle multiple locations
+					deferred.resolve( location );
+				}
 			}, function ( errorObject ) {
 				// TODO: FT
 				deferred.reject();

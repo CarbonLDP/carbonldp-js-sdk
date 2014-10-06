@@ -824,16 +824,16 @@
 					var deferred = $.Deferred();
 
 					Carbon.SourceLibrary.post( basicContainer, children ).then(
-						function () {
+						function ( sourceURIs) {
 							// TODO: Decide. What should we do here?
-							deferred.resolve();
+							deferred.resolve( sourceURIs );
 						}, function ( errorResponse ) {
 							// TODO: FT
 							deferred.reject();
 						}
 					);
 
-					return deferred;
+					return deferred.promise();
 				};
 				basicContainer.createBasicContainer = function ( slug, basicContainer ) {
 					// TODO
@@ -1214,6 +1214,85 @@
 					}());
 				};
 
+				// === InlineResources
+
+				var _inlineResources = new Map();
+				source.hasInlineResource = function ( uri ) {
+					if ( ! Carbon.URI.isURI( uri ) ) {
+						// The URI provided is relative
+						if ( ! _shared.stringStartsWith( uri, Carbon.INLINE_RESOURCE_SIGN ) ) {
+							uri = source.getURI() + Carbon.INLINE_RESOURCE_SIGN + uri;
+						} else {
+							uri = source.getURI() + uri;
+						}
+					}
+					return _inlineResources.has( uri );
+				};
+				source.getInlineResource = function ( uri ) {
+					if ( Carbon.URI.isURI( uri ) ) {
+						// The URI provided isn't relative
+						if ( source.isPersisted() ) throw "Cannot add an inlineResource with a complete URI to a non persisted Source.";
+						else if ( Carbon.URI.getGlobalBase( uri ) != source.getURI() ) throw "The inlineResource doesn't belong to this RDFSource.";
+					} else {
+						uri = _shared.stringStartsWith( Carbon.INLINE_RESOURCE_SIGN ) ? uri.substring( 1, uri.length - 1 ) : uri;
+						uri = source.getURI() + "#" + uri;
+					}
+
+					return _inlineResources.get( uri );
+				};
+				source.getInlineResources = function () {
+					return _inlineResources.getValues();
+				};
+				source.getInlineResourceSlugs = function () {
+					return _inlineResources.getKeys();
+				};
+				source._addInlineResources = function ( inlineResources ) {
+					inlineResources = _shared.isArray( inlineResources ) ? inlineResources : [inlineResources];
+
+					var length = inlineResources.length;
+					for ( var i = 0; i < length; i ++ ) {
+						var inlineResource = inlineResources[i];
+
+						if ( ! Carbon.InlineResource.isInlineResource( inlineResource ) ) throw "The inlineResource doesn't belong to this RDFSource.";
+
+						var uri = inlineResource.getURI();
+						if ( Carbon.URI.isURI( uri ) ) {
+							if ( ! Carbon.InlineResource.isInlineResourceOf( inlineResource, this ) ) throw "The inlineResource doesn't belong to this RDFSource.";
+						} else {
+							// The InlineResource has a relative URI
+							uri = _shared.stringStartsWith( Carbon.INLINE_RESOURCE_SIGN ) ? uri.substring( 1, uri.length - 1 ) : uri;
+							uri = source.getURI() + "#" + uri;
+						}
+
+						inlineResource._setDocumentResource( this );
+						_inlineResources.put( uri, inlineResource );
+					}
+				};
+				source.createInlineResource = function ( slug ) {
+					if ( ! slug ) slug = new Date().getMilliseconds();
+
+					var uri = null;
+					if ( Carbon.URI.isURI( slug ) ) {
+						// The URI provided isn't relative
+						if ( source.isPersisted() ) throw "Cannot add an inlineResource with a complete URI to a non persisted Source.";
+						else if ( Carbon.URI.getGlobalBase( slug ) != source.getURI() ) throw "The inlineResource doesn't belong to this RDFSource.";
+						uri = slug;
+					} else {
+						slug = _shared.stringStartsWith( Carbon.INLINE_RESOURCE_SIGN ) ? slug.substring( 1, slug.length - 1 ) : slug;
+						uri = source.getURI() + "#" + slug;
+					}
+
+					if ( _inlineResources.containsKey( uri ) ) throw "An InlineResource already exists with that slug";
+
+					var inlineResource = Carbon.InlineResource._create();
+					inlineResource._setURI( uri );
+					Carbon._PersistedInlineResource.injectMethods( inlineResource );
+
+					_inlineResources.put(uri, inlineResource);
+
+					return inlineResource;
+				};
+				// === End: InlineResources
 				// === SPARQL Methods
 
 				source.select = function ( query ) {
@@ -1222,6 +1301,14 @@
 				};
 
 				// === End: SPARQL Methods
+
+				source.toJsonLD = function () {
+					var jsonLDResources = [this];
+
+					jsonLDResources = jsonLDResources.concat( _inlineResources.getValues() );
+
+					return JSON.stringify( jsonLDResources );
+				};
 
 			}( source ));
 		}
@@ -1520,12 +1607,11 @@
 					propertyArray = [];
 				}
 
-				// TODO: Do proper type casting
 				var propertyValue = {};
 				if ( Carbon.Resource.isResource( value ) ) {
 					propertyValue["@id"] = value.getURI();
 				} else {
-					propertyValue["@value"] = value;
+					propertyValue = Carbon.Literal.toLiteral( value );
 				}
 
 				// Execute callbacks
@@ -1782,6 +1868,7 @@
 
 			resource._setURI = function ( uri ) {
 				resource["@id"] = uri;
+				/*
 				var slugs = resource.getInlineResourceSlugs();
 				(function ( slugs ) {
 					var length = slugs.length;
@@ -1793,73 +1880,11 @@
 						inlineResource._setURI( inlineResourceURI );
 					}
 				}( slugs ));
-
+				*/
 			};
-
-			// === InlineResources
-
-			var _inlineResources = new Map();
-			resource.hasInlineResource = function ( uri ) {
-				if ( ! Carbon.URI.isURI( uri ) ) {
-					// The URI provided is relative
-					if ( ! _shared.stringStartsWith( uri, Carbon.INLINE_RESOURCE_SIGN ) ) {
-						uri = resource.getURI() + Carbon.INLINE_RESOURCE_SIGN + uri;
-					} else {
-						uri = resource.getURI() + uri;
-					}
-				}
-				return _inlineResources.has( uri );
-			};
-			resource.getInlineResource = function ( uri ) {
-				if ( Carbon.URI.isURI( uri ) ) {
-					// The URI provided isn't relative
-					if ( resource.isPersisted() ) throw "Cannot add an inlineResource with a complete URI to a non persisted Source.";
-					else if ( Carbon.URI.getGlobalBase( uri ) != resource.getURI() ) throw "The inlineResource doesn't belong to this RDFSource.";
-
-					uri = Carbon.URI.getLocalSlug( uri );
-				} else {
-					uri = _shared.stringStartsWith( Carbon.INLINE_RESOURCE_SIGN ) ? uri.substring( 1, uri.length - 1 ) : uri;
-				}
-
-				return _inlineResources.get( uri );
-			};
-			resource.getInlineResources = function () {
-				return _inlineResources.getValues();
-			};
-			resource.getInlineResourceSlugs = function () {
-				return _inlineResources.getKeys();
-			};
-			resource._addInlineResources = function ( inlineResources ) {
-				inlineResources = _shared.isArray( inlineResources ) ? inlineResources : [inlineResources];
-
-				var length = inlineResources.length;
-				for ( var i = 0; i < length; i ++ ) {
-					var inlineResource = inlineResources[i];
-
-					if ( ! Carbon.InlineResource.isInlineResource( inlineResource ) ) throw "The inlineResource doesn't belong to this RDFSource.";
-
-					var uri = inlineResource.getURI();
-					if ( Carbon.URI.isURI( uri ) ) {
-						if ( ! Carbon.InlineResource.isInlineResourceOf( inlineResource, this ) ) throw "The inlineResource doesn't belong to this RDFSource.";
-						uri = Carbon.URI.getLocalSlug( uri );
-					} else {
-						// The InlineResource has a relative URI
-						uri = _shared.stringStartsWith( Carbon.INLINE_RESOURCE_SIGN ) ? uri.substring( 1, uri.length - 1 ) : uri;
-					}
-
-					inlineResource._setDocumentResource( this );
-					_inlineResources.put( uri, inlineResource );
-				}
-			};
-
-			// === End: InlineResources
 
 			resource.toJsonLD = function () {
-				var jsonLDResources = [this];
-
-				jsonLDResources = jsonLDResources.concat( _inlineResources.getValues() );
-
-				return JSON.stringify( jsonLDResources );
+				return JSON.stringify( this );
 			};
 
 		} );
@@ -2021,9 +2046,15 @@
 		Carbon.REST.post( requestURL, body, {
 			headers: headers
 		} ).then(
-			function ( jqXHR ) {
-				// TODO: FT
-				deferred.resolve();
+			function ( jsonResponse, jqXHR ) {
+				var location = jqXHR.getResponseHeader("Location");
+
+				if( children.length == 1 ) {
+					deferred.resolve( location );
+				} else {
+					// TODO: Handle multiple locations
+					deferred.resolve( location );
+				}
 			}, function ( errorObject ) {
 				// TODO: FT
 				deferred.reject();
@@ -2260,11 +2291,32 @@
 					}
 					return false;
 				};
+				resultSet.isEmpty = function () {
+					return resultSet.results.bindings.length == 0;
+				};
+				resultSet.getColumnNames = function() {
+					return resultSet.head.vars;
+				};
 				resultSet.getRows = function () {
 					return resultSet.results.bindings;
 				};
-				resultSet.isEmpty = function () {
-					return resultSet.results.bindings.length == 0;
+
+				function defaultSortFunction( a, b ) {
+					if (a > b) return 1;
+					if (a.name < b.name) return -1;
+					return 0;
+				}
+
+				resultSet.sortByValue = function( column, sortFunction) {
+					sortFunction = !!sortFunction ? sortFunction : defaultSortFunction;
+					var completeSortingFunction = (function(){
+						return function ( rowA, rowB ) {
+							var a = a[column].value;
+							var b = b[column].value;
+							return sortFunction( a, b );
+						}
+					}());
+					resultSet.results.bindings.sort(completeSortingFunction);
 				};
 
 			}( resultSet ));

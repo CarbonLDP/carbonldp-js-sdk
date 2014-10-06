@@ -201,6 +201,85 @@
 					}());
 				};
 
+				// === InlineResources
+
+				var _inlineResources = new Map();
+				source.hasInlineResource = function ( uri ) {
+					if ( ! Carbon.URI.isURI( uri ) ) {
+						// The URI provided is relative
+						if ( ! _shared.stringStartsWith( uri, Carbon.INLINE_RESOURCE_SIGN ) ) {
+							uri = source.getURI() + Carbon.INLINE_RESOURCE_SIGN + uri;
+						} else {
+							uri = source.getURI() + uri;
+						}
+					}
+					return _inlineResources.has( uri );
+				};
+				source.getInlineResource = function ( uri ) {
+					if ( Carbon.URI.isURI( uri ) ) {
+						// The URI provided isn't relative
+						if ( source.isPersisted() ) throw "Cannot add an inlineResource with a complete URI to a non persisted Source.";
+						else if ( Carbon.URI.getGlobalBase( uri ) != source.getURI() ) throw "The inlineResource doesn't belong to this RDFSource.";
+					} else {
+						uri = _shared.stringStartsWith( Carbon.INLINE_RESOURCE_SIGN ) ? uri.substring( 1, uri.length - 1 ) : uri;
+						uri = source.getURI() + "#" + uri;
+					}
+
+					return _inlineResources.get( uri );
+				};
+				source.getInlineResources = function () {
+					return _inlineResources.getValues();
+				};
+				source.getInlineResourceSlugs = function () {
+					return _inlineResources.getKeys();
+				};
+				source._addInlineResources = function ( inlineResources ) {
+					inlineResources = _shared.isArray( inlineResources ) ? inlineResources : [inlineResources];
+
+					var length = inlineResources.length;
+					for ( var i = 0; i < length; i ++ ) {
+						var inlineResource = inlineResources[i];
+
+						if ( ! Carbon.InlineResource.isInlineResource( inlineResource ) ) throw "The inlineResource doesn't belong to this RDFSource.";
+
+						var uri = inlineResource.getURI();
+						if ( Carbon.URI.isURI( uri ) ) {
+							if ( ! Carbon.InlineResource.isInlineResourceOf( inlineResource, this ) ) throw "The inlineResource doesn't belong to this RDFSource.";
+						} else {
+							// The InlineResource has a relative URI
+							uri = _shared.stringStartsWith( Carbon.INLINE_RESOURCE_SIGN ) ? uri.substring( 1, uri.length - 1 ) : uri;
+							uri = source.getURI() + "#" + uri;
+						}
+
+						inlineResource._setDocumentResource( this );
+						_inlineResources.put( uri, inlineResource );
+					}
+				};
+				source.createInlineResource = function ( slug ) {
+					if ( ! slug ) slug = new Date().getMilliseconds();
+
+					var uri = null;
+					if ( Carbon.URI.isURI( slug ) ) {
+						// The URI provided isn't relative
+						if ( source.isPersisted() ) throw "Cannot add an inlineResource with a complete URI to a non persisted Source.";
+						else if ( Carbon.URI.getGlobalBase( slug ) != source.getURI() ) throw "The inlineResource doesn't belong to this RDFSource.";
+						uri = slug;
+					} else {
+						slug = _shared.stringStartsWith( Carbon.INLINE_RESOURCE_SIGN ) ? slug.substring( 1, slug.length - 1 ) : slug;
+						uri = source.getURI() + "#" + slug;
+					}
+
+					if ( _inlineResources.containsKey( uri ) ) throw "An InlineResource already exists with that slug";
+
+					var inlineResource = Carbon.InlineResource._create();
+					inlineResource._setURI( uri );
+					Carbon._PersistedInlineResource.injectMethods( inlineResource );
+
+					_inlineResources.put(uri, inlineResource);
+
+					return inlineResource;
+				};
+				// === End: InlineResources
 				// === SPARQL Methods
 
 				source.select = function ( query ) {
@@ -209,6 +288,14 @@
 				};
 
 				// === End: SPARQL Methods
+
+				source.toJsonLD = function () {
+					var jsonLDResources = [this];
+
+					jsonLDResources = jsonLDResources.concat( _inlineResources.getValues() );
+
+					return JSON.stringify( jsonLDResources );
+				};
 
 			}( source ));
 		}

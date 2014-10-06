@@ -137,12 +137,11 @@
 					propertyArray = [];
 				}
 
-				// TODO: Do proper type casting
 				var propertyValue = {};
 				if ( Carbon.Resource.isResource( value ) ) {
 					propertyValue["@id"] = value.getURI();
 				} else {
-					propertyValue["@value"] = value;
+					propertyValue = Carbon.Literal.toLiteral( value );
 				}
 
 				// Execute callbacks
