@@ -7,7 +7,7 @@
 reports/
 
 # IntelliJ
-# .idea/
+.idea/**
 # *.iml
 # *.iws
 
@@ -19,6 +19,9 @@ target/
 .sass-cache/
 /.sass-cache/*
 */.sass-cache/*
+
+# NPM
+node_modules/**
 
 # ----- Operating Systems
 # OS X

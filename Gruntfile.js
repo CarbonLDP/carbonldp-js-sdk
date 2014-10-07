@@ -33,6 +33,7 @@ module.exports = function(grunt) {
 
 	grunt.loadNpmTasks('grunt-contrib-concat');
 	grunt.loadNpmTasks('grunt-string-replace');
+	grunt.loadNpmTasks('grunt-karma');
 
 	grunt.registerTask('default', [
 		'concat:modules',
