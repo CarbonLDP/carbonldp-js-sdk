@@ -44,7 +44,6 @@ Icon
 # https://github.com/github/gitignore/blob/master/Global/Linux.gitignore
 *~
 !.gitignore
-*~
  
 # KDE directory preferences
 .directory
@@ -93,7 +92,6 @@ $RECYCLE.BIN/
 *.un~
 Session.vim
 .netrwhist
-*~
  
  
 # Sublime Text
@@ -120,7 +118,6 @@ bin/**
 tmp/**
 tmp/**/*
 *.tmp
-*.bak
 *.swp
 *~.nib
 local.properties
@@ -159,7 +156,6 @@ nb-configuration.xml
  
 # Xcode
 # https://github.com/github/gitignore/blob/master/Global/Xcode.gitignore
-build/
 *.pbxuser
 !default.pbxuser
 *.mode1v3

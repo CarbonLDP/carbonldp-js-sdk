@@ -317,4 +317,4 @@
 
 	//#include("modules.js")
 
-}(this, $, jsonld, Map));
+}(this, $, jsonld));
