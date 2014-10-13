@@ -2356,7 +2356,7 @@
 	var _app = {};
 
 	_app.class = Carbon.DefaultPrefixes.cs + 'Application';
-	_app.Property = {
+	_app.Properties = {
 		slug  : {
 			uri    : Carbon.DefaultPrefixes.c + 'slug',
 			multi  : false,
@@ -2410,17 +2410,23 @@
 		// TODO: Use inline option to get them all at once
 		Carbon.SourceLibrary.get( uri )
 			.then(
-				function ( appsContainer ) {
-					var members = appsContainer.listMemberURIs();
-					if ( ! members || members.length == 0 ) {
-						// Return an empty array
-						deferred.resolve([]);
-						return;
-					}
-
-					Carbon.SourceLibrary.get( members ).then(deferred.resolve, deferred.reject);
+			function ( appsContainer ) {
+				var members = appsContainer.listMemberURIs();
+				if ( ! members || members.length == 0 ) {
+					// Return an empty array
+					deferred.resolve( [] );
+					return;
 				}
-			)
+
+				return Carbon.SourceLibrary.get( members );
+			}, deferred.reject
+		)
+			.then(
+			function ( apps ) {
+				apps = _shared.isArray( apps ) ? apps : [apps];
+				Carbon.Resource.injectPropertyMethods( apps, _app.Properties );
+			}, deferred.reject
+		)
 		;
 
 		return deferred;
