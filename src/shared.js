@@ -120,7 +120,7 @@ _shared = (function ( _shared ) {
 
 	_shared.getRequestURL = function ( uri ) {
 		if ( ! _shared.requestProtocol || ! _shared.uriProtocol ) throw "Carbon hasn't been initialized to support relative uris.";
-		if ( _shared.stringStartsWith( uri, _shared.requestProtocol ) ) return;
+		if ( _shared.stringStartsWith( uri, _shared.requestProtocol ) ) return uri;
 		return uri.replace( _shared.uriProtocol, _shared.requestProtocol );
 	};
 
