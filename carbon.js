@@ -2166,163 +2166,169 @@
 		} );
 	};
 
-	_resource.injectPropertyMethods = function ( resource, propertiesObject ) {
-		for ( var property in propertiesObject ) {
-			// This is needed so the Object properties don't get included
-			if ( propertiesObject.hasOwnProperty( property ) ) {
-				var capitalizedProperty = property.charAt( 0 ).toUpperCase() + property.slice( 1 );
+	_resource.injectPropertyMethods = function ( resources, propertiesObject ) {
+		resources = _shared.isArray(resources) ? resources : [resources];
 
-				var propertyValue = propertiesObject[property];
-				if ( typeof propertyValue == 'string' || propertyValue instanceof String ) {
-					var stringValue = propertyValue;
-					propertyValue = {};
-					propertyValue.uri = stringValue;
-				}
-				var defaultPropertyOptions = {
-					multi   : true,
-					readOnly: false,
-					literal : null,
-					plural  : null
-				};
-				$.extend( defaultPropertyOptions, propertyValue );
-				propertyValue = defaultPropertyOptions;
+		for( var i = 0, length = resources.length; i < length; i++) {
+			var resource = resources[i];
 
-				var pluralProperty = _shared.isNull( propertyValue.plural ) ? capitalizedProperty + 's' : propertyValue.plural;
+			for ( var property in propertiesObject ) {
+				// This is needed so the Object properties don't get included
+				if ( propertiesObject.hasOwnProperty( property ) ) {
+					var capitalizedProperty = property.charAt( 0 ).toUpperCase() + property.slice( 1 );
 
-				if ( _shared.isNundefined( propertyValue.literal ) ) {
-					// The type isn't known, inject all versions
-					// Single-Simple-Getter
-					(function () {
-						var _propertyURI = propertyValue.uri;
-						resource["get" + capitalizedProperty] = function () {
-							return this.getProperty( _propertyURI );
-						};
-					})();
-					// Single-Literal-Getter
-					(function () {
-						var _propertyURI = propertyValue.uri;
-						resource["get" + capitalizedProperty + "Value"] = function () {
-							return this.getPropertyValue( _propertyURI );
-						};
-					})();
-					// Single-Resource-Getters
-					(function () {
-						var _propertyURI = propertyValue.uri;
-						resource["get" + capitalizedProperty + "URI"] = function () {
-							return this.getPropertyURI( _propertyURI );
-						};
-					})();
-					(function () {
-						var _propertyURI = propertyValue.uri;
-						resource["get" + capitalizedProperty + "Resource"] = function () {
-							return this.getPropertyResource( _propertyURI );
-						};
-					})();
+					var propertyValue = propertiesObject[property];
+					if ( typeof propertyValue == 'string' || propertyValue instanceof String ) {
+						var stringValue = propertyValue;
+						propertyValue = {};
+						propertyValue.uri = stringValue;
+					}
+					var defaultPropertyOptions = {
+						multi   : true,
+						readOnly: false,
+						literal : null,
+						plural  : null
+					};
+					$.extend( defaultPropertyOptions, propertyValue );
+					propertyValue = defaultPropertyOptions;
 
-					if ( propertyValue.multi ) {
-						// Multiple-Simple-Getter
+					var pluralProperty = _shared.isNull( propertyValue.plural ) ? capitalizedProperty + 's' : propertyValue.plural;
+
+					if ( _shared.isNundefined( propertyValue.literal ) ) {
+						// The type isn't known, inject all versions
+						// Single-Simple-Getter
 						(function () {
 							var _propertyURI = propertyValue.uri;
-							resource["list" + pluralProperty] = function () {
+							resource["get" + capitalizedProperty] = function () {
 								return this.getProperty( _propertyURI );
 							};
 						})();
-						// Multiple-Literal-Getter
+						// Single-Literal-Getter
 						(function () {
 							var _propertyURI = propertyValue.uri;
-							resource["list" + capitalizedProperty + "Values"] = function () {
+							resource["get" + capitalizedProperty + "Value"] = function () {
 								return this.getPropertyValue( _propertyURI );
 							};
 						})();
-						// Multiple-Resource-Getters
+						// Single-Resource-Getters
 						(function () {
 							var _propertyURI = propertyValue.uri;
-							resource["list" + capitalizedProperty + "URIs"] = function () {
+							resource["get" + capitalizedProperty + "URI"] = function () {
 								return this.getPropertyURI( _propertyURI );
 							};
 						})();
 						(function () {
 							var _propertyURI = propertyValue.uri;
-							resource["list" + capitalizedProperty + "Resources"] = function () {
+							resource["get" + capitalizedProperty + "Resource"] = function () {
 								return this.getPropertyResource( _propertyURI );
 							};
 						})();
-					}
-				} else if ( ! propertyValue.literal ) {
-					// Single-Simple-Getter
-					(function () {
-						var _propertyURI = propertyValue.uri;
-						resource["get" + capitalizedProperty] = function () {
-							return this.getPropertyResource( _propertyURI );
-						};
-					})();
-					// Single-Resource-Getters
-					(function () {
-						var _propertyURI = propertyValue.uri;
-						resource["get" + capitalizedProperty + "URI"] = function () {
-							return this.getPropertyURI( _propertyURI );
-						};
-					})();
 
-					if ( propertyValue.multi ) {
-						// Multiple-Simple-Getter
+						if ( propertyValue.multi ) {
+							// Multiple-Simple-Getter
+							(function () {
+								var _propertyURI = propertyValue.uri;
+								resource["list" + pluralProperty] = function () {
+									return this.getProperty( _propertyURI );
+								};
+							})();
+							// Multiple-Literal-Getter
+							(function () {
+								var _propertyURI = propertyValue.uri;
+								resource["list" + capitalizedProperty + "Values"] = function () {
+									return this.getPropertyValue( _propertyURI );
+								};
+							})();
+							// Multiple-Resource-Getters
+							(function () {
+								var _propertyURI = propertyValue.uri;
+								resource["list" + capitalizedProperty + "URIs"] = function () {
+									return this.getPropertyURI( _propertyURI );
+								};
+							})();
+							(function () {
+								var _propertyURI = propertyValue.uri;
+								resource["list" + capitalizedProperty + "Resources"] = function () {
+									return this.getPropertyResource( _propertyURI );
+								};
+							})();
+						}
+					} else if ( ! propertyValue.literal ) {
+						// Single-Simple-Getter
 						(function () {
 							var _propertyURI = propertyValue.uri;
-							resource["list" + pluralProperty] = function () {
+							resource["get" + capitalizedProperty] = function () {
 								return this.getPropertyResource( _propertyURI );
 							};
 						})();
-						// Multiple-Resource-Getters
+						// Single-Resource-Getters
 						(function () {
 							var _propertyURI = propertyValue.uri;
-							resource["list" + capitalizedProperty + "URIs"] = function () {
+							resource["get" + capitalizedProperty + "URI"] = function () {
 								return this.getPropertyURI( _propertyURI );
 							};
 						})();
-					}
-				} else {
-					// Single-Simple-Getter
-					(function () {
-						var _propertyURI = propertyValue.uri;
-						resource["get" + capitalizedProperty] = function () {
-							return this.getPropertyValue( _propertyURI );
-						};
-					})();
 
-					if ( propertyValue.multi ) {
-						// Multiple-Simple-Getter
+						if ( propertyValue.multi ) {
+							// Multiple-Simple-Getter
+							(function () {
+								var _propertyURI = propertyValue.uri;
+								resource["list" + pluralProperty] = function () {
+									return this.getPropertyResource( _propertyURI );
+								};
+							})();
+							// Multiple-Resource-Getters
+							(function () {
+								var _propertyURI = propertyValue.uri;
+								resource["list" + capitalizedProperty + "URIs"] = function () {
+									return this.getPropertyURI( _propertyURI );
+								};
+							})();
+						}
+					} else {
+						// Single-Simple-Getter
 						(function () {
 							var _propertyURI = propertyValue.uri;
-							resource["list" + pluralProperty] = function () {
+							resource["get" + capitalizedProperty] = function () {
 								return this.getPropertyValue( _propertyURI );
 							};
 						})();
-					}
-				}
 
-				if ( ! propertyValue.readOnly ) {
-					if( propertyValue.multi ) {
+						if ( propertyValue.multi ) {
+							// Multiple-Simple-Getter
+							(function () {
+								var _propertyURI = propertyValue.uri;
+								resource["list" + pluralProperty] = function () {
+									return this.getPropertyValue( _propertyURI );
+								};
+							})();
+						}
+					}
+
+					if ( ! propertyValue.readOnly ) {
+						if ( propertyValue.multi ) {
+							(function () {
+								var _propertyURI = propertyValue.uri;
+								resource["add" + capitalizedProperty] = function ( value ) {
+									this.addProperty( _propertyURI, value );
+								};
+							})();
+						}
+
 						(function () {
 							var _propertyURI = propertyValue.uri;
-							resource["add" + capitalizedProperty] = function ( value ) {
-								this.addProperty( _propertyURI, value );
+							resource["set" + capitalizedProperty] = function ( value ) {
+								this.setProperty( _propertyURI, value );
+							};
+						})();
+
+						(function () {
+							var _propertyURI = propertyValue.uri;
+							resource["deleteAll" + pluralProperty] = function () {
+								this.removeProperty( _propertyURI );
 							};
 						})();
 					}
-
-					(function () {
-						var _propertyURI = propertyValue.uri;
-						resource["set" + capitalizedProperty] = function ( value ) {
-							this.setProperty( _propertyURI, value );
-						};
-					})();
-
-					(function () {
-						var _propertyURI = propertyValue.uri;
-						resource["deleteAll" + pluralProperty] = function () {
-							this.removeProperty( _propertyURI );
-						};
-					})();
 				}
 			}
 		}
