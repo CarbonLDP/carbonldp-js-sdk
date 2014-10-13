@@ -100,6 +100,7 @@
 		var length = uris.length;
 		for ( var i = 0; i < length; i ++ ) {
 			var uri = prepareURI( uris[i] );
+			uri = _shared.getURIFromURL(uri);
 
 			(function () {
 				var requestURL = _shared.getRequestURL( uri );

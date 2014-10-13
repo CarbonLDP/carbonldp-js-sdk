@@ -242,6 +242,12 @@
 		return Date.parse( etag );
 	};
 
+
+	_shared.getURIFromURL = function ( uri ) {
+		if ( ! _shared.requestProtocol || ! _shared.uriProtocol ) throw "Carbon hasn't been initialized to support relative uris.";
+		if ( ! _shared.stringStartsWith( uri, _shared.requestProtocol ) ) return uri;
+		return uri.replace( _shared.requestProtocol, _shared.uriProtocol );
+	};
 	_shared.getRequestURL = function ( uri ) {
 		if ( ! _shared.requestProtocol || ! _shared.uriProtocol ) throw "Carbon hasn't been initialized to support relative uris.";
 		if ( _shared.stringStartsWith( uri, _shared.requestProtocol ) ) return uri;
@@ -2551,6 +2557,7 @@
 		var length = uris.length;
 		for ( var i = 0; i < length; i ++ ) {
 			var uri = prepareURI( uris[i] );
+			uri = _shared.getURIFromURL(uri);
 
 			(function () {
 				var requestURL = _shared.getRequestURL( uri );
