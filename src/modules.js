@@ -2081,17 +2081,27 @@
 		var length = uris.length;
 		for ( var i = 0; i < length; i ++ ) {
 			var uri = prepareURI( uris[i] );
-			uri = _shared.getURIFromURL(uri);
+			uri = _shared.getURIFromURL( uri );
 
 			(function () {
 				var requestURL = _shared.getRequestURL( uri );
 
-				deferredArray.push(constructGETPromise( uri, requestURL, options ));
+				deferredArray.push( constructGETPromise( uri, requestURL, options ) );
 			})();
 
 		}
 
-		return $.when.apply($, deferredArray );
+		var deferred = $.Deferred();
+		$.when.apply( $, deferredArray ).then(
+			function () {
+				var sources = [];
+				for ( var i = 0, length = arguments.length; i < length; i ++ ) {
+					sources.push( arguments[i] );
+				}
+				deferred.resolve( sources );
+			}, deferred.reject
+		);
+		return deferred.promise();
 	};
 
 	_sourceLibrary.post = function ( parent, children, options ) {
@@ -2407,12 +2417,7 @@
 						return;
 					}
 
-					return Carbon.SourceLibrary.get( members );
-				}
-			)
-			.then(
-				function () {
-					deferred.resolve(arguments);
+					Carbon.SourceLibrary.get( members ).then(deferred.resolve, deferred.reject);
 				}
 			)
 		;

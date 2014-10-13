@@ -66,12 +66,7 @@
 						return;
 					}
 
-					return Carbon.SourceLibrary.get( members );
-				}
-			)
-			.then(
-				function () {
-					deferred.resolve(arguments);
+					Carbon.SourceLibrary.get( members ).then(deferred.resolve, deferred.reject);
 				}
 			)
 		;
