@@ -2385,7 +2385,7 @@
 	};
 
 	_app.getApps = function () {
-		var uri = _shared.requestProtocol + _shared.domain + _shared.endpoints.apps;
+		var uri = Carbon.getAPIRequestURL() + _shared.endpoints.apps;
 
 		var deferred = $.Deferred();
 

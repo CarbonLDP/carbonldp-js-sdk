@@ -129,7 +129,7 @@
 	_shared.uriProtocol = "http";
 	_shared.domain = "carbonldp.com";
 	_shared.endpoints = {
-		apps: '/apps/'
+		apps: 'apps/'
 	};
 
 	// 0 - off
@@ -2861,7 +2861,7 @@
 	};
 
 	_app.getApps = function () {
-		var uri = _shared.requestProtocol + _shared.domain + _shared.endpoints.apps;
+		var uri = Carbon.getAPIRequestURL() + _shared.endpoints.apps;
 
 		var deferred = $.Deferred();
 

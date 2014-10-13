@@ -5,7 +5,7 @@ _shared = (function ( _shared ) {
 	_shared.uriProtocol = "http";
 	_shared.domain = "carbonldp.com";
 	_shared.endpoints = {
-		apps: '/apps/'
+		apps: 'apps/'
 	};
 
 	// 0 - off
