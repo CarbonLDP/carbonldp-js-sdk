@@ -21,7 +21,70 @@
 	// Local variable to store the RDFSources retrieved
 	var _sources = new Map();
 
-	_sourceLibrary.get = function ( uri, options ) {
+	function constructGETPromise( uri, requestURL, options ) {
+		var deferred = $.Deferred();
+
+		if ( _sources.containsKey( uri ) && options.useCache ) {
+			deferred.resolve( _sources.get( uri ) );
+			return deferred.promise();
+		}
+
+		Carbon.REST.get( requestURL, {
+			authenticate: true
+		} ).then(
+			function ( rdfResources, jqXHR ) {
+				var documentResources = Carbon.Document.getDocumentResources( rdfResources );
+				Carbon.Source.injectMethods( documentResources );
+				Carbon._PersistedSource.injectMethods( documentResources );
+
+				var length = documentResources.length;
+				for ( var i = 0; i < length; i ++ ) {
+					var documentResource = documentResources[i];
+					// Add methods depending on the RDFSource type
+					if ( Carbon.BasicContainer.isBasicContainer( documentResource ) ) {
+						Carbon.BasicContainer.injectMethods( documentResource );
+						Carbon._PersistedBasicContainer.injectMethods( documentResource );
+					} else if ( Carbon.DirectContainer.isDirectContainer( documentResource ) ) {
+
+					} else if ( Carbon.IndirectContainer.isIndirectContainer( documentResource ) ) {
+
+					}
+
+					// Add Inline Resources to the documentResources
+					var inlineResources = Carbon.Document.getInlineResources( documentResource, rdfResources );
+					Carbon.InlineResource.injectMethods( inlineResources );
+					Carbon._PersistedInlineResource.injectMethods( inlineResources );
+					documentResource._addInlineResources( inlineResources );
+				}
+
+				var rdfSource = Carbon.Document.getResourceWithURI( uri, documentResources );
+				if ( ! rdfSource ) {
+					// TODO: FT
+					deferred.reject( null );
+				}
+
+				// Add the ETag to the RDFSource
+				var etag = jqXHR.getResponseHeader( Carbon.HTTPHeaders.etag );
+				if ( ! etag ) {
+					// TODO: Decide. Just log it?
+					console.error( "-- SourceLibrary.get() > The response didn't contain an ETag." );
+				} else {
+					rdfSource.setETag( etag );
+				}
+
+				// Add the DocumentResources retrieved to the cache
+				addRDFSources( documentResources );
+				deferred.resolve( rdfSource );
+			}, function ( errorObject ) {
+				// TODO: FT
+				deferred.reject( errorObject );
+			}
+		);
+
+		return deferred.promise();
+	}
+
+	_sourceLibrary.get = function ( uris, options ) {
 		var defaultOptions = {
 			useCache: true
 		};
@@ -31,68 +94,22 @@
 			options = defaultOptions;
 		}
 
-		uri = prepareURI( uri );
-		var requestURL = _shared.getRequestURL( uri );
+		uris = _shared.isArray( uris ) ? uris : [uris];
 
-		var deferred = $.Deferred();
+		var deferredArray = [];
+		var length = uris.length;
+		for ( var i = 0; i < length; i ++ ) {
+			var uri = prepareURI( uris[i] );
 
-		if ( _sources.containsKey( uri ) && options.useCache ) {
-			deferred.resolve( _sources.get( uri ) );
-		} else {
-			Carbon.REST.get( requestURL, {
-				authenticate: true
-			} ).then(
-				function ( rdfResources, jqXHR ) {
-					var documentResources = Carbon.Document.getDocumentResources( rdfResources );
-					Carbon.Source.injectMethods( documentResources );
-					Carbon._PersistedSource.injectMethods( documentResources );
+			(function () {
+				var requestURL = _shared.getRequestURL( uri );
 
-					var length = documentResources.length;
-					for ( var i = 0; i < length; i ++ ) {
-						var documentResource = documentResources[i];
-						// Add methods depending on the RDFSource type
-						if ( Carbon.BasicContainer.isBasicContainer( documentResource ) ) {
-							Carbon.BasicContainer.injectMethods( documentResource );
-							Carbon._PersistedBasicContainer.injectMethods( documentResource );
-						} else if ( Carbon.DirectContainer.isDirectContainer( documentResource ) ) {
+				deferredArray.push(constructGETPromise( uri, requestURL, options ));
+			})();
 
-						} else if ( Carbon.IndirectContainer.isIndirectContainer( documentResource ) ) {
-
-						}
-
-						// Add Inline Resources to the documentResources
-						var inlineResources = Carbon.Document.getInlineResources( documentResource, rdfResources );
-						Carbon.InlineResource.injectMethods( inlineResources );
-						Carbon._PersistedInlineResource.injectMethods( inlineResources );
-						documentResource._addInlineResources( inlineResources );
-					}
-
-					var rdfSource = Carbon.Document.getResourceWithURI( uri, documentResources );
-					if ( ! rdfSource ) {
-						// TODO: FT
-						deferred.reject( null );
-					}
-
-					// Add the ETag to the RDFSource
-					var etag = jqXHR.getResponseHeader( Carbon.HTTPHeaders.etag );
-					if ( ! etag ) {
-						// TODO: Decide. Just log it?
-						console.error( "-- SourceLibrary.get() > The response didn't contain an ETag." );
-					} else {
-						rdfSource.setETag( etag );
-					}
-
-					// Add the DocumentResources retrieved to the cache
-					addRDFSources( documentResources );
-					deferred.resolve( rdfSource );
-				}, function ( errorObject ) {
-					// TODO: FT
-					deferred.reject( errorObject );
-				}
-			);
 		}
 
-		return deferred.promise();
+		return $.when.apply($, deferredArray );
 	};
 
 	_sourceLibrary.post = function ( parent, children, options ) {
@@ -153,9 +170,9 @@
 			headers: headers
 		} ).then(
 			function ( jsonResponse, jqXHR ) {
-				var location = jqXHR.getResponseHeader("Location");
+				var location = jqXHR.getResponseHeader( "Location" );
 
-				if( children.length == 1 ) {
+				if ( children.length == 1 ) {
 					deferred.resolve( location );
 				} else {
 					// TODO: Handle multiple locations

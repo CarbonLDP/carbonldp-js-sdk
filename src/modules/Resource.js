@@ -63,53 +63,66 @@
 			};
 
 			rdfResource.hasProperty = function ( property ) {
-				return this.hasOwnProperty( property );
+				return _shared.hasProperty( this, property );
 			};
 
 			rdfResource.getProperty = function ( property ) {
 				if ( ! this.hasProperty( property ) ) return null;
-				if ( this[property] instanceof Array ) {
-					if ( this[property].length < 1 ) return null;
-					return this[property][0];
-				}
-				return this[property];
+				var value = this[property];
+				value = _shared.isArray( this[property] ) ? value : [value];
+				if ( value.length == 0 ) return null;
+				return value[0];
 			};
 
 			rdfResource.getPropertyValue = function ( property ) {
 				var propertyObject = this.getProperty( property );
 				if ( propertyObject === null ) return null;
-				if ( propertyObject.hasOwnProperty( '@value' ) ) return propertyObject['@value'];
-				return null;
+				if ( ! Carbon.Literal.isLiteral( propertyObject ) ) return null;
+				return Carbon.Literal.parseLiteral( propertyObject );
 			};
 
 			rdfResource.getPropertyURI = function ( property ) {
 				var propertyObject = this.getProperty( property );
 				if ( propertyObject === null ) return null;
-				if ( propertyObject.hasOwnProperty( '@id' ) ) return propertyObject['@id'];
-				return null;
+				if ( ! _shared.hasProperty( propertyObject, '@id' ) ) return null;
+				return propertyObject['@id'];
+			};
+
+			rdfResource.getPropertyResource = function ( property ) {
+				// TODO: Use the SourceLibrary to return a promise with the resource the property points to
 			};
 
 			rdfResource.listProperties = function ( property ) {
-				if ( ! this.hasProperty( property ) ) return null;
-				if ( this[property] instanceof Array ) {
-					if ( this[property].length < 1 ) return null;
-					return this[property];
-				}
-				return null;
+				if ( ! this.hasProperty( property ) ) return [];
+				return _shared.isArray( this[property] ) ? this[property] : [this[property]];
 			};
 
 			rdfResource.listPropertyValues = function ( property ) {
 				var values = [];
 				if ( ! this.hasProperty( property ) ) return values;
-				var propertyArray = _shared.isArray( this[property] ) ? this[property] : [this[property]];
+				var propertyArray = this.listProperties( property );
 				var length = propertyArray.length;
 				for ( var i = 0; i < length; i ++ ) {
 					var propertyObject = propertyArray[i];
-					if ( property ) {
-						if ( propertyObject.hasOwnProperty( '@value' ) ) values.push( propertyObject['@value'] );
-					}
+					if ( Carbon.Literal.isLiteral( propertyObject ) ) values.push( Carbon.Literal.parseLiteral( propertyObject ) );
 				}
 				return values;
+			};
+
+			rdfResource.listPropertyURIs = function ( property ) {
+				var uris = [];
+				if ( ! this.hasProperty( property ) ) return uris;
+				var propertyArray = this.listProperties( property );
+				var length = propertyArray.length;
+				for ( var i = 0; i < length; i ++ ) {
+					var propertyObject = propertyArray[i];
+					if ( _shared.hasProperty( propertyObject, '@id' ) ) uris.push( propertyObject['@id'] );
+				}
+				return uris;
+			};
+
+			rdfResource.listPropertyResources = function ( property ) {
+				// TODO: Use the SourceLibrary to return a promise of an array with all the resources the property points to
 			};
 
 			var _propertyCallbacks = {
@@ -210,38 +223,107 @@
 				var defaultPropertyOptions = {
 					multi   : true,
 					readOnly: false,
-					literal : null
+					literal : null,
+					plural  : null
 				};
 				$.extend( defaultPropertyOptions, propertyValue );
 				propertyValue = defaultPropertyOptions;
 
-				if ( propertyValue.multi ) {
-					// Adder
-					(function () {
-						var _propertyURI = propertyValue.uri;
-						resource["add" + capitalizedProperty] = function ( value ) {
-							this.addProperty( _propertyURI, value );
-						};
-					})();
-				}
-				// Single-Getter
-				if ( propertyValue.literal === null ) {
-					if ( propertyValue.multi ) {
-						(function () {
-							var _propertyURI = propertyValue.uri;
-							resource["list" + capitalizedProperty + "s"] = function () {
-								return this.listProperties( _propertyURI );
-							};
-						})();
-					}
+				var pluralProperty = _shared.isNull( propertyValue.plural ) ? capitalizedProperty + 's' : propertyValue.plural;
 
+				if ( _shared.isNundefined( propertyValue.literal ) ) {
+					// The type isn't known, inject all versions
+					// Single-Simple-Getter
 					(function () {
 						var _propertyURI = propertyValue.uri;
 						resource["get" + capitalizedProperty] = function () {
 							return this.getProperty( _propertyURI );
 						};
 					})();
-				} else if ( propertyValue.literal ) {
+					// Single-Literal-Getter
+					(function () {
+						var _propertyURI = propertyValue.uri;
+						resource["get" + capitalizedProperty + "Value"] = function () {
+							return this.getPropertyValue( _propertyURI );
+						};
+					})();
+					// Single-Resource-Getters
+					(function () {
+						var _propertyURI = propertyValue.uri;
+						resource["get" + capitalizedProperty + "URI"] = function () {
+							return this.getPropertyURI( _propertyURI );
+						};
+					})();
+					(function () {
+						var _propertyURI = propertyValue.uri;
+						resource["get" + capitalizedProperty + "Resource"] = function () {
+							return this.getPropertyResource( _propertyURI );
+						};
+					})();
+
+					if ( propertyValue.multi ) {
+						// Multiple-Simple-Getter
+						(function () {
+							var _propertyURI = propertyValue.uri;
+							resource["list" + pluralProperty] = function () {
+								return this.getProperty( _propertyURI );
+							};
+						})();
+						// Multiple-Literal-Getter
+						(function () {
+							var _propertyURI = propertyValue.uri;
+							resource["list" + capitalizedProperty + "Values"] = function () {
+								return this.getPropertyValue( _propertyURI );
+							};
+						})();
+						// Multiple-Resource-Getters
+						(function () {
+							var _propertyURI = propertyValue.uri;
+							resource["list" + capitalizedProperty + "URIs"] = function () {
+								return this.getPropertyURI( _propertyURI );
+							};
+						})();
+						(function () {
+							var _propertyURI = propertyValue.uri;
+							resource["list" + capitalizedProperty + "Resources"] = function () {
+								return this.getPropertyResource( _propertyURI );
+							};
+						})();
+					}
+				} else if ( ! propertyValue.literal ) {
+					// Single-Simple-Getter
+					(function () {
+						var _propertyURI = propertyValue.uri;
+						resource["get" + capitalizedProperty] = function () {
+							return this.getPropertyResource( _propertyURI );
+						};
+					})();
+					// Single-Resource-Getters
+					(function () {
+						var _propertyURI = propertyValue.uri;
+						resource["get" + capitalizedProperty + "URI"] = function () {
+							return this.getPropertyURI( _propertyURI );
+						};
+					})();
+
+					if ( propertyValue.multi ) {
+						// Multiple-Simple-Getter
+						(function () {
+							var _propertyURI = propertyValue.uri;
+							resource["list" + pluralProperty] = function () {
+								return this.getPropertyResource( _propertyURI );
+							};
+						})();
+						// Multiple-Resource-Getters
+						(function () {
+							var _propertyURI = propertyValue.uri;
+							resource["list" + capitalizedProperty + "URIs"] = function () {
+								return this.getPropertyURI( _propertyURI );
+							};
+						})();
+					}
+				} else {
+					// Single-Simple-Getter
 					(function () {
 						var _propertyURI = propertyValue.uri;
 						resource["get" + capitalizedProperty] = function () {
@@ -250,33 +332,26 @@
 					})();
 
 					if ( propertyValue.multi ) {
+						// Multiple-Simple-Getter
 						(function () {
 							var _propertyURI = propertyValue.uri;
-							resource["list" + capitalizedProperty + "s"] = function () {
-								return this.listPropertyValues( _propertyURI );
+							resource["list" + pluralProperty] = function () {
+								return this.getPropertyValue( _propertyURI );
 							};
 						})();
 					}
-				} else {
-					if ( propertyValue.multi ) {
-						(function () {
-							var _propertyURI = propertyValue.uri;
-							resource["list" + capitalizedProperty + "s"] = function () {
-								return this.listProperties( _propertyURI );
-							};
-						})();
-					}
-
-					(function () {
-						var _propertyURI = propertyValue.uri;
-						resource["get" + capitalizedProperty + "URI"] = function () {
-							return this.getPropertyURI( _propertyURI );
-						};
-					})();
 				}
 
 				if ( ! propertyValue.readOnly ) {
-					// Setter
+					if( propertyValue.multi ) {
+						(function () {
+							var _propertyURI = propertyValue.uri;
+							resource["add" + capitalizedProperty] = function ( value ) {
+								this.addProperty( _propertyURI, value );
+							};
+						})();
+					}
+
 					(function () {
 						var _propertyURI = propertyValue.uri;
 						resource["set" + capitalizedProperty] = function ( value ) {
@@ -286,7 +361,7 @@
 
 					(function () {
 						var _propertyURI = propertyValue.uri;
-						resource["deleteAll" + capitalizedProperty + "s"] = function () {
+						resource["deleteAll" + pluralProperty] = function () {
 							this.removeProperty( _propertyURI );
 						};
 					})();

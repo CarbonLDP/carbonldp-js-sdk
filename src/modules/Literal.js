@@ -37,7 +37,8 @@
 
 		// Misc
 		boolean           : Carbon.DefaultPrefixes.xsd + "boolean",
-		string            : Carbon.DefaultPrefixes.xsd + "string"
+		string            : Carbon.DefaultPrefixes.xsd + "string",
+		object            : Carbon.DefaultPrefixes.xsd + "object"
 	};
 	_literal.InvertedDataTypes = (function ( carbon ) {
 		var _inverted = {};
@@ -53,6 +54,9 @@
 	}( Carbon ));
 
 	_literal.toLiteral = function ( value ) {
+		if ( _shared.isNundefined( value ) ) return null;
+		if ( Carbon.Resource.isResource( value ) ) throw 'The value is an RDF Resource!';
+
 		var literal = {};
 		var type = null;
 
@@ -71,13 +75,13 @@
 			case _shared.isString( value ):
 				type = _literal.DataTypes.string;
 				break;
-			/*
-			 TODO: Should we support arrays?
-			 case_shared.isArray(value):
-			 break;
-			 */
 			case _shared.isBoolean( value ):
 				type = _literal.DataTypes.boolean;
+				break;
+			default:
+				// Treat it as an unknown object
+				type = _literal.DataTypes.object;
+				value = JSON.stringify( value );
 				break;
 		}
 
@@ -101,7 +105,6 @@
 			return jsonLDValue["@value"];
 		}
 		var dataType = _literal.InvertedDataTypes[type];
-		var dataTypes = _literal.DataTypes;
 		var value = jsonLDValue["@value"];
 		switch ( dataType ) {
 			// Dates
@@ -159,6 +162,9 @@
 				break;
 			case "string":
 				// Do nothing, the value will already be a string
+				break;
+			case "object":
+				value = JSON.parse( value );
 				break;
 			default:
 				break;

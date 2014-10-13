@@ -9,125 +9,128 @@
 	}
 
 	function Map() {
-		'use strict';
+	'use strict';
 
-		var _dict = {};
-		var _keys = [];
+	var _dict = {};
+	var _keys = [];
 
-		/**
-		 * Returns the number of key-value mappings in this map.
-		 * @method
-		 */
-		this.size = function () {
-			return _keys.length;
-		};
+	/**
+	 * Returns the number of key-value mappings in this map.
+	 * @method
+	 */
+	this.size = function () {
+		return _keys.length;
+	};
 
-		/**
-		 * Returns true if this map contains no key-value mappings.
-		 * @method
-		 */
-		this.isEmpty = function () {
-			return _keys.length == 0;
-		};
+	/**
+	 * Returns true if this map contains no key-value mappings.
+	 * @method
+	 */
+	this.isEmpty = function () {
+		return _keys.length == 0;
+	};
 
-		/**
-		 * Returns all the keys
-		 * @method
-		 */
-		this.getKeys = function () {
-			return _keys;
-		};
+	/**
+	 * Returns all the keys
+	 * @method
+	 */
+	this.getKeys = function () {
+		return _keys;
+	};
 
-		/**
-		 * Returns all the values
-		 * @method
-		 */
-		this.getValues = function () {
-			var values = [];
+	/**
+	 * Returns all the values
+	 * @method
+	 */
+	this.getValues = function () {
+		var values = [];
 
-			var length = _keys.length;
-			for ( var i = 0; i < length; i ++ ) {
-				values.push( this.get( _keys[i] ) );
+		var length = _keys.length;
+		for ( var i = 0; i < length; i ++ ) {
+			values.push( this.get( _keys[i] ) );
+		}
+
+		return values;
+	};
+
+	/**
+	 * Returns the value to which the specified key is mapped, or null if this map contains no mapping for the key.
+	 * @method
+	 * @param {String} key
+	 *    the key whose associated value is to be returned
+	 */
+	this.get = function ( key ) {
+		return _dict[key];
+	};
+
+	/**
+	 * Returns true if this map contains a mapping for the specified key.
+	 * @method
+	 * @param {String} key
+	 *    - key whose presence in this map is to be tested
+	 */
+	this.containsKey = function ( key ) {
+		var length = _keys.length;
+		for ( var i = 0; i < length; i ++ ) {
+			if ( _keys[i] == key ) return true;
+		}
+		return false;
+	};
+
+	/**
+	 * Associates the specified value with the specified key in this map. If the map previously contained a mapping for the key, the old value is replaced.
+	 * @method
+	 * @param {String} key
+	 *    - key with which the specified value is to be associated
+	 * @param {Object} value
+	 *    - value to be associated with the specified key
+	 */
+	this.put = function ( key, value ) {
+		this.remove( key );
+
+		_dict[key] = value;
+		_keys.push( key );
+
+	};
+
+	/**
+	 * Removes the mapping for the specified key from this map if present.
+	 * @method
+	 * @param {String} key
+	 *    - key whose mapping is to be removed from the map
+	 */
+	this.remove = function ( key ) {
+		delete _dict[key];
+
+		var length = _keys.length;
+		for ( var i = length - 1; i >= 0; i -- ) {
+			if ( _keys[i] == key ) {
+				_keys.splice( i, 1 );
 			}
+		}
+	};
 
-			return values;
-		};
-
-		/**
-		 * Returns the value to which the specified key is mapped, or null if this map contains no mapping for the key.
-		 * @method
-		 * @param {String} key
-		 *    the key whose associated value is to be returned
-		 */
-		this.get = function ( key ) {
-			return _dict[key];
-		};
-
-		/**
-		 * Returns true if this map contains a mapping for the specified key.
-		 * @method
-		 * @param {String} key
-		 *    - key whose presence in this map is to be tested
-		 */
-		this.containsKey = function ( key ) {
-			var length = _keys.length;
-			for ( var i = 0; i < length; i ++ ) {
-				if ( _keys[i] == key ) return true;
-			}
-			return false;
-		};
-
-		/**
-		 * Associates the specified value with the specified key in this map. If the map previously contained a mapping for the key, the old value is replaced.
-		 * @method
-		 * @param {String} key
-		 *    - key with which the specified value is to be associated
-		 * @param {Object} value
-		 *    - value to be associated with the specified key
-		 */
-		this.put = function ( key, value ) {
-			this.remove( key );
-
-			_dict[key] = value;
-			_keys.push( key );
-
-		};
-
-		/**
-		 * Removes the mapping for the specified key from this map if present.
-		 * @method
-		 * @param {String} key
-		 *    - key whose mapping is to be removed from the map
-		 */
-		this.remove = function ( key ) {
-			delete _dict[key];
-
-			var length = _keys.length;
-			for ( var i = length - 1; i >= 0; i -- ) {
-				if ( _keys[i] == key ) {
-					_keys.splice( i, 1 );
-				}
-			}
-		};
-
-		/**
-		 * Removes all of the mappings from this map. The map will be empty after this call returns.
-		 * @method
-		 */
-		this.clear = function () {
-			_dict = {};
-			_keys = [];
-		};
-	}
+	/**
+	 * Removes all of the mappings from this map. The map will be empty after this call returns.
+	 * @method
+	 */
+	this.clear = function () {
+		_dict = {};
+		_keys = [];
+	};
+}
 
 	var _shared = {};
 
-	_shared = (function(_shared) {
+	_shared = (function ( _shared ) {
 
-	_shared.version = "0.2.0";
+	_shared.version = "0.5.0";
 	_shared.requestProtocol = "https";
 	_shared.uriProtocol = "http";
 	_shared.domain = "carbonldp.com";
+	_shared.endpoints = {
+		apps: '/apps/'
+	};
 
 	// 0 - off
 	// 1 - errors
@@ -143,58 +146,69 @@
 	_shared.appSlug = null;
 	_shared.api = null;
 
-	_shared.hasFunction = function( object, functionName ) {
+	_shared.hasFunction = function ( object, functionName ) {
 		return typeof object[functionName] === 'function';
 	};
 
-	_shared.hasProperty = function( object, property ) {
+	_shared.hasProperty = function ( object, property ) {
 		if ( ! object ) return false;
 		return 'undefined' !== typeof object[property];
 	};
 
-	_shared.isArray = function( object ) {
+	_shared.isNundefined = function ( value ) {
+		return value == null;
+	};
+
+	_shared.isNull = function ( value ) {
+		return value === null;
+	};
+	_shared.isUndefined = function ( value ) {
+		return value === undefined;
+	};
+
+	_shared.isArray = function ( object ) {
 		return Object.prototype.toString.call( object ) === '[object Array]';
 	};
 
-	_shared.isString = function( string ) {
+	_shared.isString = function ( string ) {
 		return typeof string == 'string' || string instanceof String;
 	};
 
-	_shared.isBoolean = function( boolean ) {
+	_shared.isBoolean = function ( boolean ) {
 		return typeof boolean == 'boolean';
 	};
 
-	_shared.isNumber = function( number ) {
+	_shared.isNumber = function ( number ) {
 		return typeof number == 'number' || number instanceof Number;
 	};
 
-	_shared.isInteger = function( number ) {
+	_shared.isInteger = function ( number ) {
 		if ( ! _shared.isNumber( number ) ) return false;
 		return number % 1 == 0;
 	};
 
-	_shared.isDouble = function( number ) {
+	_shared.isDouble = function ( number ) {
 		if ( ! _shared.isNumber( number ) ) return false;
 		return number % 1 != 0;
 	};
 
-	_shared.isDate = function( date ) {
+	_shared.isDate = function ( date ) {
 		return typeof date == 'date' || date instanceof Date;
 	};
 
-	_shared.stringStartsWith = function( string, substring ) {
+	_shared.stringStartsWith = function ( string, substring ) {
 		return string.lastIndexOf( substring, 0 ) === 0;
 	};
 
-	_shared.stringEndsWith = function( string, substring ) {
+	_shared.stringEndsWith = function ( string, substring ) {
 		return string.indexOf( substring, string.length - substring.length ) !== - 1;
 	};
 
-	_shared.stringContains = function( string, substring ) {
+	_shared.stringContains = function ( string, substring ) {
 		return ~ string.indexOf( substring );
 	};
 
-	_shared.slugify = function( slug ) {
+	_shared.slugify = function ( slug ) {
 		slug = slug
 			.replace( /^\s\s*/, '' ) // Trim start
 			.replace( /\s\s*$/, '' ) // Trim end
@@ -204,7 +218,7 @@
 		return slug;
 	};
 
-	_shared.parseBoolean = function( string ) {
+	_shared.parseBoolean = function ( string ) {
 		switch ( string.toLowerCase() ) {
 			case "true":
 			case "yes":
@@ -220,7 +234,7 @@
 		}
 	};
 
-	_shared.parseETag = function( etag ) {
+	_shared.parseETag = function ( etag ) {
 		// Weak ETag
 		if ( _shared.stringStartsWith( etag, 'W"/' ) ) {
 			etag = etag.slice( 3, etag.length - 2 );
@@ -228,21 +242,21 @@
 		return Date.parse( etag );
 	};
 
-	_shared.getRequestURL = function( uri ) {
+	_shared.getRequestURL = function ( uri ) {
 		if ( ! _shared.requestProtocol || ! _shared.uriProtocol ) throw "Carbon hasn't been initialized to support relative uris.";
 		if ( _shared.stringStartsWith( uri, _shared.requestProtocol ) ) return;
 		return uri.replace( _shared.uriProtocol, _shared.requestProtocol );
 	};
 
 	// Will be used as a "trace" level of debugging
-	_shared.log = function() {
+	_shared.log = function () {
 		if ( _shared.loggingLevel < 4 || ! _shared.canShowLog ) {
 			return;
 		}
 		console.log.apply( console, arguments );
 	};
 
-	_shared.debug = function() {
+	_shared.debug = function () {
 		if ( _shared.loggingLevel >= 3 ) {
 			if ( ! _shared.canShowDebug ) {
 				if ( _shared.canShowLog ) console.log.apply( console, arguments );
@@ -252,14 +266,14 @@
 		console.debug.apply( console, arguments );
 	};
 
-	_shared.warn = function() {
+	_shared.warn = function () {
 		if ( _shared.loggingLevel < 2 || ! _shared.canShowWarnings ) {
 			return;
 		}
 		console.warn.apply( console, arguments );
 	};
 
-	_shared.error = function() {
+	_shared.error = function () {
 		if ( _shared.loggingLevel < 1 || ! _shared.canShowErrors ) {
 			return;
 		}
@@ -267,7 +281,7 @@
 	};
 
 	return _shared;
-}(_shared) );
+}( _shared ) );
 
 	(function ( global, $, jsonld, Map, _shared ) {
 		'use strict';
@@ -992,7 +1006,8 @@
 
 		// Misc
 		boolean           : Carbon.DefaultPrefixes.xsd + "boolean",
-		string            : Carbon.DefaultPrefixes.xsd + "string"
+		string            : Carbon.DefaultPrefixes.xsd + "string",
+		object            : Carbon.DefaultPrefixes.xsd + "object"
 	};
 	_literal.InvertedDataTypes = (function ( carbon ) {
 		var _inverted = {};
@@ -1008,6 +1023,9 @@
 	}( Carbon ));
 
 	_literal.toLiteral = function ( value ) {
+		if ( _shared.isNundefined( value ) ) return null;
+		if ( Carbon.Resource.isResource( value ) ) throw 'The value is an RDF Resource!';
+
 		var literal = {};
 		var type = null;
 
@@ -1026,13 +1044,13 @@
 			case _shared.isString( value ):
 				type = _literal.DataTypes.string;
 				break;
-			/*
-			 TODO: Should we support arrays?
-			 case_shared.isArray(value):
-			 break;
-			 */
 			case _shared.isBoolean( value ):
 				type = _literal.DataTypes.boolean;
+				break;
+			default:
+				// Treat it as an unknown object
+				type = _literal.DataTypes.object;
+				value = JSON.stringify( value );
 				break;
 		}
 
@@ -1056,7 +1074,6 @@
 			return jsonLDValue["@value"];
 		}
 		var dataType = _literal.InvertedDataTypes[type];
-		var dataTypes = _literal.DataTypes;
 		var value = jsonLDValue["@value"];
 		switch ( dataType ) {
 			// Dates
@@ -1114,6 +1131,9 @@
 				break;
 			case "string":
 				// Do nothing, the value will already be a string
+				break;
+			case "object":
+				value = JSON.parse( value );
 				break;
 			default:
 				break;
@@ -1995,53 +2015,66 @@
 			};
 
 			rdfResource.hasProperty = function ( property ) {
-				return this.hasOwnProperty( property );
+				return _shared.hasProperty( this, property );
 			};
 
 			rdfResource.getProperty = function ( property ) {
 				if ( ! this.hasProperty( property ) ) return null;
-				if ( this[property] instanceof Array ) {
-					if ( this[property].length < 1 ) return null;
-					return this[property][0];
-				}
-				return this[property];
+				var value = this[property];
+				value = _shared.isArray( this[property] ) ? value : [value];
+				if ( value.length == 0 ) return null;
+				return value[0];
 			};
 
 			rdfResource.getPropertyValue = function ( property ) {
 				var propertyObject = this.getProperty( property );
 				if ( propertyObject === null ) return null;
-				if ( propertyObject.hasOwnProperty( '@value' ) ) return propertyObject['@value'];
-				return null;
+				if ( ! Carbon.Literal.isLiteral( propertyObject ) ) return null;
+				return Carbon.Literal.parseLiteral( propertyObject );
 			};
 
 			rdfResource.getPropertyURI = function ( property ) {
 				var propertyObject = this.getProperty( property );
 				if ( propertyObject === null ) return null;
-				if ( propertyObject.hasOwnProperty( '@id' ) ) return propertyObject['@id'];
-				return null;
+				if ( ! _shared.hasProperty( propertyObject, '@id' ) ) return null;
+				return propertyObject['@id'];
+			};
+
+			rdfResource.getPropertyResource = function ( property ) {
+				// TODO: Use the SourceLibrary to return a promise with the resource the property points to
 			};
 
 			rdfResource.listProperties = function ( property ) {
-				if ( ! this.hasProperty( property ) ) return null;
-				if ( this[property] instanceof Array ) {
-					if ( this[property].length < 1 ) return null;
-					return this[property];
-				}
-				return null;
+				if ( ! this.hasProperty( property ) ) return [];
+				return _shared.isArray( this[property] ) ? this[property] : [this[property]];
 			};
 
 			rdfResource.listPropertyValues = function ( property ) {
 				var values = [];
 				if ( ! this.hasProperty( property ) ) return values;
-				var propertyArray = _shared.isArray( this[property] ) ? this[property] : [this[property]];
+				var propertyArray = this.listProperties( property );
 				var length = propertyArray.length;
 				for ( var i = 0; i < length; i ++ ) {
 					var propertyObject = propertyArray[i];
-					if ( property ) {
-						if ( propertyObject.hasOwnProperty( '@value' ) ) values.push( propertyObject['@value'] );
-					}
+					if ( Carbon.Literal.isLiteral( propertyObject ) ) values.push( Carbon.Literal.parseLiteral( propertyObject ) );
 				}
 				return values;
+			};
+
+			rdfResource.listPropertyURIs = function ( property ) {
+				var uris = [];
+				if ( ! this.hasProperty( property ) ) return uris;
+				var propertyArray = this.listProperties( property );
+				var length = propertyArray.length;
+				for ( var i = 0; i < length; i ++ ) {
+					var propertyObject = propertyArray[i];
+					if ( _shared.hasProperty( propertyObject, '@id' ) ) uris.push( propertyObject['@id'] );
+				}
+				return uris;
+			};
+
+			rdfResource.listPropertyResources = function ( property ) {
+				// TODO: Use the SourceLibrary to return a promise of an array with all the resources the property points to
 			};
 
 			var _propertyCallbacks = {
@@ -2142,38 +2175,107 @@
 				var defaultPropertyOptions = {
 					multi   : true,
 					readOnly: false,
-					literal : null
+					literal : null,
+					plural  : null
 				};
 				$.extend( defaultPropertyOptions, propertyValue );
 				propertyValue = defaultPropertyOptions;
 
-				if ( propertyValue.multi ) {
-					// Adder
-					(function () {
-						var _propertyURI = propertyValue.uri;
-						resource["add" + capitalizedProperty] = function ( value ) {
-							this.addProperty( _propertyURI, value );
-						};
-					})();
-				}
-				// Single-Getter
-				if ( propertyValue.literal === null ) {
-					if ( propertyValue.multi ) {
-						(function () {
-							var _propertyURI = propertyValue.uri;
-							resource["list" + capitalizedProperty + "s"] = function () {
-								return this.listProperties( _propertyURI );
-							};
-						})();
-					}
+				var pluralProperty = _shared.isNull( propertyValue.plural ) ? capitalizedProperty + 's' : propertyValue.plural;
 
+				if ( _shared.isNundefined( propertyValue.literal ) ) {
+					// The type isn't known, inject all versions
+					// Single-Simple-Getter
 					(function () {
 						var _propertyURI = propertyValue.uri;
 						resource["get" + capitalizedProperty] = function () {
 							return this.getProperty( _propertyURI );
 						};
 					})();
-				} else if ( propertyValue.literal ) {
+					// Single-Literal-Getter
+					(function () {
+						var _propertyURI = propertyValue.uri;
+						resource["get" + capitalizedProperty + "Value"] = function () {
+							return this.getPropertyValue( _propertyURI );
+						};
+					})();
+					// Single-Resource-Getters
+					(function () {
+						var _propertyURI = propertyValue.uri;
+						resource["get" + capitalizedProperty + "URI"] = function () {
+							return this.getPropertyURI( _propertyURI );
+						};
+					})();
+					(function () {
+						var _propertyURI = propertyValue.uri;
+						resource["get" + capitalizedProperty + "Resource"] = function () {
+							return this.getPropertyResource( _propertyURI );
+						};
+					})();
+
+					if ( propertyValue.multi ) {
+						// Multiple-Simple-Getter
+						(function () {
+							var _propertyURI = propertyValue.uri;
+							resource["list" + pluralProperty] = function () {
+								return this.getProperty( _propertyURI );
+							};
+						})();
+						// Multiple-Literal-Getter
+						(function () {
+							var _propertyURI = propertyValue.uri;
+							resource["list" + capitalizedProperty + "Values"] = function () {
+								return this.getPropertyValue( _propertyURI );
+							};
+						})();
+						// Multiple-Resource-Getters
+						(function () {
+							var _propertyURI = propertyValue.uri;
+							resource["list" + capitalizedProperty + "URIs"] = function () {
+								return this.getPropertyURI( _propertyURI );
+							};
+						})();
+						(function () {
+							var _propertyURI = propertyValue.uri;
+							resource["list" + capitalizedProperty + "Resources"] = function () {
+								return this.getPropertyResource( _propertyURI );
+							};
+						})();
+					}
+				} else if ( ! propertyValue.literal ) {
+					// Single-Simple-Getter
+					(function () {
+						var _propertyURI = propertyValue.uri;
+						resource["get" + capitalizedProperty] = function () {
+							return this.getPropertyResource( _propertyURI );
+						};
+					})();
+					// Single-Resource-Getters
+					(function () {
+						var _propertyURI = propertyValue.uri;
+						resource["get" + capitalizedProperty + "URI"] = function () {
+							return this.getPropertyURI( _propertyURI );
+						};
+					})();
+
+					if ( propertyValue.multi ) {
+						// Multiple-Simple-Getter
+						(function () {
+							var _propertyURI = propertyValue.uri;
+							resource["list" + pluralProperty] = function () {
+								return this.getPropertyResource( _propertyURI );
+							};
+						})();
+						// Multiple-Resource-Getters
+						(function () {
+							var _propertyURI = propertyValue.uri;
+							resource["list" + capitalizedProperty + "URIs"] = function () {
+								return this.getPropertyURI( _propertyURI );
+							};
+						})();
+					}
+				} else {
+					// Single-Simple-Getter
 					(function () {
 						var _propertyURI = propertyValue.uri;
 						resource["get" + capitalizedProperty] = function () {
@@ -2182,33 +2284,26 @@
 					})();
 
 					if ( propertyValue.multi ) {
+						// Multiple-Simple-Getter
 						(function () {
 							var _propertyURI = propertyValue.uri;
-							resource["list" + capitalizedProperty + "s"] = function () {
-								return this.listPropertyValues( _propertyURI );
+							resource["list" + pluralProperty] = function () {
+								return this.getPropertyValue( _propertyURI );
 							};
 						})();
 					}
-				} else {
-					if ( propertyValue.multi ) {
-						(function () {
-							var _propertyURI = propertyValue.uri;
-							resource["list" + capitalizedProperty + "s"] = function () {
-								return this.listProperties( _propertyURI );
-							};
-						})();
-					}
-
-					(function () {
-						var _propertyURI = propertyValue.uri;
-						resource["get" + capitalizedProperty + "URI"] = function () {
-							return this.getPropertyURI( _propertyURI );
-						};
-					})();
 				}
 
 				if ( ! propertyValue.readOnly ) {
-					// Setter
+					if( propertyValue.multi ) {
+						(function () {
+							var _propertyURI = propertyValue.uri;
+							resource["add" + capitalizedProperty] = function ( value ) {
+								this.addProperty( _propertyURI, value );
+							};
+						})();
+					}
+
 					(function () {
 						var _propertyURI = propertyValue.uri;
 						resource["set" + capitalizedProperty] = function ( value ) {
@@ -2218,7 +2313,7 @@
 
 					(function () {
 						var _propertyURI = propertyValue.uri;
-						resource["deleteAll" + capitalizedProperty + "s"] = function () {
+						resource["deleteAll" + pluralProperty] = function () {
 							this.removeProperty( _propertyURI );
 						};
 					})();
@@ -2377,7 +2472,70 @@
 	// Local variable to store the RDFSources retrieved
 	var _sources = new Map();
 
-	_sourceLibrary.get = function ( uri, options ) {
+	function constructGETPromise( uri, requestURL, options ) {
+		var deferred = $.Deferred();
+
+		if ( _sources.containsKey( uri ) && options.useCache ) {
+			deferred.resolve( _sources.get( uri ) );
+			return deferred.promise();
+		}
+
+		Carbon.REST.get( requestURL, {
+			authenticate: true
+		} ).then(
+			function ( rdfResources, jqXHR ) {
+				var documentResources = Carbon.Document.getDocumentResources( rdfResources );
+				Carbon.Source.injectMethods( documentResources );
+				Carbon._PersistedSource.injectMethods( documentResources );
+
+				var length = documentResources.length;
+				for ( var i = 0; i < length; i ++ ) {
+					var documentResource = documentResources[i];
+					// Add methods depending on the RDFSource type
+					if ( Carbon.BasicContainer.isBasicContainer( documentResource ) ) {
+						Carbon.BasicContainer.injectMethods( documentResource );
+						Carbon._PersistedBasicContainer.injectMethods( documentResource );
+					} else if ( Carbon.DirectContainer.isDirectContainer( documentResource ) ) {
+
+					} else if ( Carbon.IndirectContainer.isIndirectContainer( documentResource ) ) {
+
+					}
+
+					// Add Inline Resources to the documentResources
+					var inlineResources = Carbon.Document.getInlineResources( documentResource, rdfResources );
+					Carbon.InlineResource.injectMethods( inlineResources );
+					Carbon._PersistedInlineResource.injectMethods( inlineResources );
+					documentResource._addInlineResources( inlineResources );
+				}
+
+				var rdfSource = Carbon.Document.getResourceWithURI( uri, documentResources );
+				if ( ! rdfSource ) {
+					// TODO: FT
+					deferred.reject( null );
+				}
+
+				// Add the ETag to the RDFSource
+				var etag = jqXHR.getResponseHeader( Carbon.HTTPHeaders.etag );
+				if ( ! etag ) {
+					// TODO: Decide. Just log it?
+					console.error( "-- SourceLibrary.get() > The response didn't contain an ETag." );
+				} else {
+					rdfSource.setETag( etag );
+				}
+
+				// Add the DocumentResources retrieved to the cache
+				addRDFSources( documentResources );
+				deferred.resolve( rdfSource );
+			}, function ( errorObject ) {
+				// TODO: FT
+				deferred.reject( errorObject );
+			}
+		);
+
+		return deferred.promise();
+	}
+
+	_sourceLibrary.get = function ( uris, options ) {
 		var defaultOptions = {
 			useCache: true
 		};
@@ -2387,68 +2545,22 @@
 			options = defaultOptions;
 		}
 
-		uri = prepareURI( uri );
-		var requestURL = _shared.getRequestURL( uri );
+		uris = _shared.isArray( uris ) ? uris : [uris];
 
-		var deferred = $.Deferred();
+		var deferredArray = [];
+		var length = uris.length;
+		for ( var i = 0; i < length; i ++ ) {
+			var uri = prepareURI( uris[i] );
 
-		if ( _sources.containsKey( uri ) && options.useCache ) {
-			deferred.resolve( _sources.get( uri ) );
-		} else {
-			Carbon.REST.get( requestURL, {
-				authenticate: true
-			} ).then(
-				function ( rdfResources, jqXHR ) {
-					var documentResources = Carbon.Document.getDocumentResources( rdfResources );
-					Carbon.Source.injectMethods( documentResources );
-					Carbon._PersistedSource.injectMethods( documentResources );
+			(function () {
+				var requestURL = _shared.getRequestURL( uri );
 
-					var length = documentResources.length;
-					for ( var i = 0; i < length; i ++ ) {
-						var documentResource = documentResources[i];
-						// Add methods depending on the RDFSource type
-						if ( Carbon.BasicContainer.isBasicContainer( documentResource ) ) {
-							Carbon.BasicContainer.injectMethods( documentResource );
-							Carbon._PersistedBasicContainer.injectMethods( documentResource );
-						} else if ( Carbon.DirectContainer.isDirectContainer( documentResource ) ) {
+				deferredArray.push(constructGETPromise( uri, requestURL, options ));
+			})();
 
-						} else if ( Carbon.IndirectContainer.isIndirectContainer( documentResource ) ) {
-
-						}
-
-						// Add Inline Resources to the documentResources
-						var inlineResources = Carbon.Document.getInlineResources( documentResource, rdfResources );
-						Carbon.InlineResource.injectMethods( inlineResources );
-						Carbon._PersistedInlineResource.injectMethods( inlineResources );
-						documentResource._addInlineResources( inlineResources );
-					}
-
-					var rdfSource = Carbon.Document.getResourceWithURI( uri, documentResources );
-					if ( ! rdfSource ) {
-						// TODO: FT
-						deferred.reject( null );
-					}
-
-					// Add the ETag to the RDFSource
-					var etag = jqXHR.getResponseHeader( Carbon.HTTPHeaders.etag );
-					if ( ! etag ) {
-						// TODO: Decide. Just log it?
-						console.error( "-- SourceLibrary.get() > The response didn't contain an ETag." );
-					} else {
-						rdfSource.setETag( etag );
-					}
-
-					// Add the DocumentResources retrieved to the cache
-					addRDFSources( documentResources );
-					deferred.resolve( rdfSource );
-				}, function ( errorObject ) {
-					// TODO: FT
-					deferred.reject( errorObject );
-				}
-			);
 		}
 
-		return deferred.promise();
+		return $.when.apply($, deferredArray );
 	};
 
 	_sourceLibrary.post = function ( parent, children, options ) {
@@ -2509,9 +2621,9 @@
 			headers: headers
 		} ).then(
 			function ( jsonResponse, jqXHR ) {
-				var location = jqXHR.getResponseHeader("Location");
+				var location = jqXHR.getResponseHeader( "Location" );
 
-				if( children.length == 1 ) {
+				if ( children.length == 1 ) {
 					deferred.resolve( location );
 				} else {
 					// TODO: Handle multiple locations
@@ -2696,6 +2808,82 @@
 
 	Carbon.Auth.Agent = _agent;
 }( Carbon, $, jsonld, Map, _shared ));
+(function ( Carbon, $, jsonld, Map, _shared ) {
+	'use strict';
+
+	var _app = {};
+
+	_app.class = Carbon.DefaultPrefixes.cs + 'Application';
+	_app.Property = {
+		slug  : {
+			uri    : Carbon.DefaultPrefixes.c + 'slug',
+			multi  : false,
+			literal: true
+		},
+		name  : {
+			uri    : Carbon.DefaultPrefixes.doap + "name",
+			multi  : false,
+			literal: true
+		},
+		domain: {
+			uri    : Carbon.DefaultPrefixes.cs + 'sourceDomain',
+			multi  : true,
+			literal: false
+		}
+	};
+
+	_app.create = function ( uri ) {
+		uri = typeof uri !== 'undefined' ? uri : Carbon.getGenericRequestURI();
+
+		var appResource = Carbon.Resource.create( uri );
+		appResource.addType( _app.class );
+
+		_app.injectMethods( appResource );
+
+		return appResource;
+	};
+
+	_app.isApp = function ( resource ) {
+		if ( ! Carbon.Resource.isResource( resource ) ) return false;
+		return resource.isOfType( _app.class );
+	};
+
+	_app.injectMethods = function ( resources ) {
+		if ( ! ( resources instanceof Array ) ) {
+			resources = [ resources ];
+		}
+
+		resources.forEach( function ( resource ) {
+
+			Carbon.Resource.injectPropertyMethods( resource, _app.Property );
+
+		} );
+	};
+
+	_app.getApps = function () {
+		var uri = _shared.requestProtocol + _shared.domain + _shared.endpoints.apps;
+
+		var deferred = $.Deferred();
+
+		// TODO: Use inline option to get them all at once
+		return Carbon.SourceLibrary.get( uri )
+			.then(
+				function ( appsContainer ) {
+					var members = appsContainer.listMemberURIs();
+					if ( ! members ) {
+						// Return an empty array
+						deferred.resolve([]);
+						return;
+					}
+
+					return Carbon.SourceLibrary.get( members );
+				}
+			)
+		;
+	};
+
+	Carbon.Auth.App = _app;
+}( Carbon, jQuery, jsonld, Map, _shared ));
 (function ( Carbon, $, jsonld, Map, _shared ) {
 	'use strict';
 

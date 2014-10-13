@@ -1,3 +1,7 @@
+# 0.5.0 (October 13, 2014)
+* Multiple RDF Sources can be pulled at the same time.
+* The Literal module supports objects.
+* Created the App module for the Auth module.
 # 0.4.0 (October 2, 2014)
 * RDF Sources can now be created
 * Started the support for BasicContainer
