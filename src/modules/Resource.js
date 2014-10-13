@@ -271,27 +271,27 @@
 							(function () {
 								var _propertyURI = propertyValue.uri;
 								resource["list" + pluralProperty] = function () {
-									return this.getProperty( _propertyURI );
+									return this.listProperties( _propertyURI );
 								};
 							})();
 							// Multiple-Literal-Getter
 							(function () {
 								var _propertyURI = propertyValue.uri;
 								resource["list" + capitalizedProperty + "Values"] = function () {
-									return this.getPropertyValue( _propertyURI );
+									return this.listPropertyValues( _propertyURI );
 								};
 							})();
 							// Multiple-Resource-Getters
 							(function () {
 								var _propertyURI = propertyValue.uri;
 								resource["list" + capitalizedProperty + "URIs"] = function () {
-									return this.getPropertyURI( _propertyURI );
+									return this.listPropertyURIs( _propertyURI );
 								};
 							})();
 							(function () {
 								var _propertyURI = propertyValue.uri;
 								resource["list" + capitalizedProperty + "Resources"] = function () {
-									return this.getPropertyResource( _propertyURI );
+									return this.listPropertyResources( _propertyURI );
 								};
 							})();
 						}
@@ -316,14 +316,14 @@
 							(function () {
 								var _propertyURI = propertyValue.uri;
 								resource["list" + pluralProperty] = function () {
-									return this.getPropertyResource( _propertyURI );
+									return this.listPropertyResources( _propertyURI );
 								};
 							})();
 							// Multiple-Resource-Getters
 							(function () {
 								var _propertyURI = propertyValue.uri;
 								resource["list" + capitalizedProperty + "URIs"] = function () {
-									return this.getPropertyURI( _propertyURI );
+									return this.listPropertyURIs( _propertyURI );
 								};
 							})();
 						}
@@ -341,7 +341,7 @@
 							(function () {
 								var _propertyURI = propertyValue.uri;
 								resource["list" + pluralProperty] = function () {
-									return this.getPropertyValue( _propertyURI );
+									return this.listPropertyValues( _propertyURI );
 								};
 							})();
 						}

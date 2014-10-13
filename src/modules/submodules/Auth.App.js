@@ -56,11 +56,11 @@
 		var deferred = $.Deferred();
 
 		// TODO: Use inline option to get them all at once
-		return Carbon.SourceLibrary.get( uri )
+		Carbon.SourceLibrary.get( uri )
 			.then(
 				function ( appsContainer ) {
 					var members = appsContainer.listMemberURIs();
-					if ( ! members ) {
+					if ( ! members || members.length == 0 ) {
 						// Return an empty array
 						deferred.resolve([]);
 						return;
@@ -69,7 +69,14 @@
 					return Carbon.SourceLibrary.get( members );
 				}
 			)
+			.then(
+				function () {
+					deferred.resolve(arguments);
+				}
+			)
 		;
+
+		return deferred;
 	};
 
 	Carbon.Auth.App = _app;

@@ -1747,27 +1747,27 @@
 							(function () {
 								var _propertyURI = propertyValue.uri;
 								resource["list" + pluralProperty] = function () {
-									return this.getProperty( _propertyURI );
+									return this.listProperties( _propertyURI );
 								};
 							})();
 							// Multiple-Literal-Getter
 							(function () {
 								var _propertyURI = propertyValue.uri;
 								resource["list" + capitalizedProperty + "Values"] = function () {
-									return this.getPropertyValue( _propertyURI );
+									return this.listPropertyValues( _propertyURI );
 								};
 							})();
 							// Multiple-Resource-Getters
 							(function () {
 								var _propertyURI = propertyValue.uri;
 								resource["list" + capitalizedProperty + "URIs"] = function () {
-									return this.getPropertyURI( _propertyURI );
+									return this.listPropertyURIs( _propertyURI );
 								};
 							})();
 							(function () {
 								var _propertyURI = propertyValue.uri;
 								resource["list" + capitalizedProperty + "Resources"] = function () {
-									return this.getPropertyResource( _propertyURI );
+									return this.listPropertyResources( _propertyURI );
 								};
 							})();
 						}
@@ -1792,14 +1792,14 @@
 							(function () {
 								var _propertyURI = propertyValue.uri;
 								resource["list" + pluralProperty] = function () {
-									return this.getPropertyResource( _propertyURI );
+									return this.listPropertyResources( _propertyURI );
 								};
 							})();
 							// Multiple-Resource-Getters
 							(function () {
 								var _propertyURI = propertyValue.uri;
 								resource["list" + capitalizedProperty + "URIs"] = function () {
-									return this.getPropertyURI( _propertyURI );
+									return this.listPropertyURIs( _propertyURI );
 								};
 							})();
 						}
@@ -1817,7 +1817,7 @@
 							(function () {
 								var _propertyURI = propertyValue.uri;
 								resource["list" + pluralProperty] = function () {
-									return this.getPropertyValue( _propertyURI );
+									return this.listPropertyValues( _propertyURI );
 								};
 							})();
 						}
@@ -2397,11 +2397,11 @@
 		var deferred = $.Deferred();
 
 		// TODO: Use inline option to get them all at once
-		return Carbon.SourceLibrary.get( uri )
+		Carbon.SourceLibrary.get( uri )
 			.then(
 				function ( appsContainer ) {
 					var members = appsContainer.listMemberURIs();
-					if ( ! members ) {
+					if ( ! members || members.length == 0 ) {
 						// Return an empty array
 						deferred.resolve([]);
 						return;
@@ -2410,7 +2410,14 @@
 					return Carbon.SourceLibrary.get( members );
 				}
 			)
+			.then(
+				function () {
+					deferred.resolve(arguments);
+				}
+			)
 		;
+
+		return deferred;
 	};
 
 	Carbon.Auth.App = _app;
