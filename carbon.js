@@ -2580,7 +2580,8 @@
 				for ( var i = 0, length = arguments.length; i < length; i ++ ) {
 					sources.push( arguments[i] );
 				}
-				deferred.resolve( sources );
+				if(sources.length == 1) deferred.resolve( sources[0] );
+				else deferred.resolve( sources );
 			}, deferred.reject
 		);
 		return deferred.promise();
