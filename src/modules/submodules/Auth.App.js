@@ -73,6 +73,7 @@
 			function ( apps ) {
 				apps = _shared.isArray( apps ) ? apps : [apps];
 				Carbon.Resource.injectPropertyMethods( apps, _app.Properties );
+				deferred.resolve( apps );
 			}, deferred.reject
 		)
 		;
