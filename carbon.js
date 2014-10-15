@@ -124,7 +124,7 @@
 
 	_shared = (function ( _shared ) {
 
-	_shared.version = "0.5.0";
+	_shared.version = "0.6.0";
 	_shared.requestProtocol = "https";
 	_shared.uriProtocol = "http";
 	_shared.domain = "carbonldp.com";
@@ -2890,8 +2890,7 @@
 		var deferred = $.Deferred();
 
 		// TODO: Use inline option to get them all at once
-		Carbon.SourceLibrary.get( uri )
-			.then(
+		Carbon.SourceLibrary.get( uri ).then(
 			function ( appsContainer ) {
 				var members = appsContainer.listMemberURIs();
 				if ( ! members || members.length == 0 ) {
@@ -2902,17 +2901,31 @@
 
 				return Carbon.SourceLibrary.get( members );
 			}, deferred.reject
-		)
-			.then(
+		).then(
 			function ( apps ) {
 				apps = _shared.isArray( apps ) ? apps : [apps];
 				Carbon.Resource.injectPropertyMethods( apps, _app.Properties );
 				deferred.resolve( apps );
 			}, deferred.reject
-		)
-		;
+		);
 
 		return deferred;
+	};
+
+	_app.getApp = function ( appURI ) {
+		if ( ! Carbon.URI.isURI( appURI ) ) {
+			// The URI is relative, treat it as a slug
+			appURI = Carbon.getAPIRequestURL() + _shared.endpoints.apps + appURI;
+		}
+
+		var deferred = $.Deferred();
+		Carbon.SourceLibrary.get( appURI ).then(
+			function ( app ) {
+				Carbon.Resource.injectPropertyMethods( app, _app.Properties );
+				deferred.resolve( app );
+			}, deferred.reject
+		);
+		return deferred.promise();
 	};
 
 	Carbon.Auth.App = _app;

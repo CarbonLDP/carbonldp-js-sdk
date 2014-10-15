@@ -1,3 +1,5 @@
+# 0.6.0 (October 15, 2014)
+* All Applications available can be pulled one or all at the same time.
 # 0.5.0 (October 13, 2014)
 * Multiple RDF Sources can be pulled at the same time.
 * The Literal module supports objects.

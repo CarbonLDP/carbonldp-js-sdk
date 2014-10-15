@@ -1,6 +1,6 @@
 _shared = (function ( _shared ) {
 
-	_shared.version = "0.5.0";
+	_shared.version = "0.6.0";
 	_shared.requestProtocol = "https";
 	_shared.uriProtocol = "http";
 	_shared.domain = "carbonldp.com";
