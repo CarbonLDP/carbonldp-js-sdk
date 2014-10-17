@@ -124,7 +124,7 @@
 
 	_shared = (function ( _shared ) {
 
-	_shared.version = "0.7.0";
+	_shared.version = "0.7.1";
 	_shared.requestProtocol = "https";
 	_shared.uriProtocol = "http";
 	_shared.domain = "carbonldp.com";
