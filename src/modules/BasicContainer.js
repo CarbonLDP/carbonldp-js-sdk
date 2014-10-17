@@ -7,10 +7,12 @@
 
 	_basicContainer.Properties = {
 		contains         : {
-			uri       : Carbon.DefaultPrefixes.ldp + 'contains',
-			multiValue: true,
-			literal   : false,
-			readOnly  : true
+			uri         : Carbon.DefaultPrefixes.ldp + 'contains',
+			multiValue  : true,
+			literal     : false,
+			readOnly    : true,
+			singularForm: "containment",
+			pluralForm  : "containments"
 		},
 		member           : {
 			uri       : Carbon.DefaultPrefixes.ldp + 'member',

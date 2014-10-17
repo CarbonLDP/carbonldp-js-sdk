@@ -100,6 +100,130 @@
 		return deferred.promise();
 	};
 
+	_rest.head = function ( uri, options ) {
+		_shared.log( ">> REST.head()" );
+
+		var defaultOptions = {
+			authenticate: true,
+			headers     : null
+		};
+		if ( typeof options == 'object' ) {
+			options = $.extend( defaultOptions, options );
+		} else {
+			options = defaultOptions;
+		}
+
+		_shared.debug( "-- REST.head() > URI: %s, options %o", uri, options );
+
+		var headers = {
+			"Accept"      : "application/ld+json",
+			"Content-Type": "application/ld+json"
+		};
+
+		if ( options.authenticate ) {
+			headers = Carbon.Auth.setCredentialHeaders( headers );
+		}
+
+		if ( options.headers ) {
+			headers = $.extend( headers, options.headers );
+		}
+
+		var deferred = $.Deferred();
+		$.ajax( {
+			type       : 'HEAD',
+			url        : uri,
+			headers    : headers,
+			crossDomain: true
+		} ).then(
+			function ( jsonResponse, textStatus, jqXHR ) {
+				var info = {};
+				info.etag = jqXHR.getResponseHeader("etag");
+
+				_shared.debug( "-- REST.head() > The request was successfull. Info: %o" );
+				deferred.resolve( jqXHR, info );
+			}, function ( jqXHR, textStatus, errorThrown ) {
+				_shared.error( "<< REST.head() > The request failed. Response: %o", jqXHR );
+				deferred.reject();
+			}
+		);
+
+		return deferred.promise();
+	};
+
+	_rest.options = function ( uri, options ) {
+		_shared.log( ">> REST.options()" );
+
+		var defaultOptions = {
+			authenticate: true,
+			headers     : null
+		};
+		if ( typeof options == 'object' ) {
+			options = $.extend( defaultOptions, options );
+		} else {
+			options = defaultOptions;
+		}
+
+		_shared.debug( "-- REST.options() > URI: %s, options %o", uri, options );
+
+		var headers = {
+			"Accept"      : "application/ld+json",
+			"Content-Type": "application/ld+json"
+		};
+
+		if ( options.authenticate ) {
+			headers = Carbon.Auth.setCredentialHeaders( headers );
+		}
+
+		if ( options.headers ) {
+			headers = $.extend( headers, options.headers );
+		}
+
+		var deferred = $.Deferred();
+		$.ajax( {
+			type       : 'OPTIONS',
+			url        : uri,
+			headers    : headers,
+			crossDomain: true
+		} ).then(
+			function ( jsonResponse, textStatus, jqXHR ) {
+				_shared.debug( "-- REST.options() > The request was successful." );
+
+				var info = {};
+				info.allows = getMethodsAllowed( jqXHR.getResponseHeader( "Allow" ) );
+
+				deferred.resolve( jqXHR, info );
+			}, function ( jqXHR, textStatus, errorThrown ) {
+				_shared.error( "<< REST.options() > The request failed. Response: %o", jqXHR );
+				deferred.reject();
+			}
+		);
+
+		return deferred.promise();
+	};
+
+	function getMethodsAllowed( allowHeader ) {
+		var allows = {
+			GET    : false,
+			HEAD   : false,
+			OPTIONS: false,
+			POST   : false,
+			PUT    : false,
+			PATCH  : false,
+			DELETE : false
+		};
+
+		if ( ! _shared.isString( allowHeader ) ) return allows;
+
+		var parts = allowHeader.split( "," );
+		for ( var i = 0, length = parts.length; i < length; i ++ ) {
+			var part = parts[i].trim().toUpperCase();
+			if ( allows.hasOwnProperty( part ) ) {
+				allows[part] = true;
+			}
+		}
+		return allows;
+	}
+
 	_rest.patch = function ( uri, patchRequest, options ) {
 		_shared.log( ">> REST.patch()" );
 

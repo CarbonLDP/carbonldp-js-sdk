@@ -1,3 +1,6 @@
+# 0.7.0 (October 16, 2014)
+* SourceLibrary now offers ETag resource verification (resourceHasChanged())
+* Retrieving a resource using the cache now validates that it hasn't changed in the server side
 # 0.6.0 (October 15, 2014)
 * All Applications available can be pulled one or all at the same time.
 # 0.5.0 (October 13, 2014)

@@ -225,10 +225,12 @@
 
 	_basicContainer.Properties = {
 		contains         : {
-			uri       : Carbon.DefaultPrefixes.ldp + 'contains',
-			multiValue: true,
-			literal   : false,
-			readOnly  : true
+			uri         : Carbon.DefaultPrefixes.ldp + 'contains',
+			multiValue  : true,
+			literal     : false,
+			readOnly    : true,
+			singularForm: "containment",
+			pluralForm  : "containments"
 		},
 		member           : {
 			uri       : Carbon.DefaultPrefixes.ldp + 'member',
@@ -1424,6 +1426,130 @@
 		return deferred.promise();
 	};
 
+	_rest.head = function ( uri, options ) {
+		_shared.log( ">> REST.head()" );
+
+		var defaultOptions = {
+			authenticate: true,
+			headers     : null
+		};
+		if ( typeof options == 'object' ) {
+			options = $.extend( defaultOptions, options );
+		} else {
+			options = defaultOptions;
+		}
+
+		_shared.debug( "-- REST.head() > URI: %s, options %o", uri, options );
+
+		var headers = {
+			"Accept"      : "application/ld+json",
+			"Content-Type": "application/ld+json"
+		};
+
+		if ( options.authenticate ) {
+			headers = Carbon.Auth.setCredentialHeaders( headers );
+		}
+
+		if ( options.headers ) {
+			headers = $.extend( headers, options.headers );
+		}
+
+		var deferred = $.Deferred();
+		$.ajax( {
+			type       : 'HEAD',
+			url        : uri,
+			headers    : headers,
+			crossDomain: true
+		} ).then(
+			function ( jsonResponse, textStatus, jqXHR ) {
+				var info = {};
+				info.etag = jqXHR.getResponseHeader("etag");
+
+				_shared.debug( "-- REST.head() > The request was successfull. Info: %o" );
+				deferred.resolve( jqXHR, info );
+			}, function ( jqXHR, textStatus, errorThrown ) {
+				_shared.error( "<< REST.head() > The request failed. Response: %o", jqXHR );
+				deferred.reject();
+			}
+		);
+
+		return deferred.promise();
+	};
+
+	_rest.options = function ( uri, options ) {
+		_shared.log( ">> REST.options()" );
+
+		var defaultOptions = {
+			authenticate: true,
+			headers     : null
+		};
+		if ( typeof options == 'object' ) {
+			options = $.extend( defaultOptions, options );
+		} else {
+			options = defaultOptions;
+		}
+
+		_shared.debug( "-- REST.options() > URI: %s, options %o", uri, options );
+
+		var headers = {
+			"Accept"      : "application/ld+json",
+			"Content-Type": "application/ld+json"
+		};
+
+		if ( options.authenticate ) {
+			headers = Carbon.Auth.setCredentialHeaders( headers );
+		}
+
+		if ( options.headers ) {
+			headers = $.extend( headers, options.headers );
+		}
+
+		var deferred = $.Deferred();
+		$.ajax( {
+			type       : 'OPTIONS',
+			url        : uri,
+			headers    : headers,
+			crossDomain: true
+		} ).then(
+			function ( jsonResponse, textStatus, jqXHR ) {
+				_shared.debug( "-- REST.options() > The request was successful." );
+
+				var info = {};
+				info.allows = getMethodsAllowed( jqXHR.getResponseHeader( "Allow" ) );
+
+				deferred.resolve( jqXHR, info );
+			}, function ( jqXHR, textStatus, errorThrown ) {
+				_shared.error( "<< REST.options() > The request failed. Response: %o", jqXHR );
+				deferred.reject();
+			}
+		);
+
+		return deferred.promise();
+	};
+
+	function getMethodsAllowed( allowHeader ) {
+		var allows = {
+			GET    : false,
+			HEAD   : false,
+			OPTIONS: false,
+			POST   : false,
+			PUT    : false,
+			PATCH  : false,
+			DELETE : false
+		};
+
+		if ( ! _shared.isString( allowHeader ) ) return allows;
+
+		var parts = allowHeader.split( "," );
+		for ( var i = 0, length = parts.length; i < length; i ++ ) {
+			var part = parts[i].trim().toUpperCase();
+			if ( allows.hasOwnProperty( part ) ) {
+				allows[part] = true;
+			}
+		}
+		return allows;
+	}
+
 	_rest.patch = function ( uri, patchRequest, options ) {
 		_shared.log( ">> REST.patch()" );
 
@@ -1982,7 +2108,7 @@
 (function ( Carbon, $, jsonld, Map, _shared ) {
 	'use strict';
 
-	var _sourceLibrary = {};
+	var SourceLibrary = {};
 
 	function addRDFSources( rdfSources ) {
 		rdfSources.forEach( function ( rdfSource ) {
@@ -1996,19 +2122,16 @@
 		// The URI is relative
 		if ( ! Carbon.getURIProtocol() || ! Carbon.getDomain() || ! Carbon.getAppSlug() ) throw "Carbon hasn't been initialized to support relative uris.";
 
-		return _sourceLibrary.getSourceBaseURI() + uri;
+		return SourceLibrary.getSourceBaseURI() + uri;
 	}
 
 	// Local variable to store the RDFSources retrieved
 	var _sources = new Map();
 
-	function constructGETPromise( uri, requestURL, options ) {
-		var deferred = $.Deferred();
+	function getSource( uri, options ) {
+		var requestURL = _shared.getRequestURL( uri );
 
-		if ( _sources.containsKey( uri ) && options.useCache ) {
-			deferred.resolve( _sources.get( uri ) );
-			return deferred.promise();
-		}
+		var deferred = $.Deferred();
 
 		Carbon.REST.get( requestURL, {
 			authenticate: true
@@ -2048,8 +2171,9 @@
 				var etag = jqXHR.getResponseHeader( Carbon.HTTPHeaders.etag );
 				if ( ! etag ) {
 					// TODO: Decide. Just log it?
-					console.error( "-- SourceLibrary.get() > The response didn't contain an ETag." );
+					_shared.error( "-- SourceLibrary.get() > The response didn't contain an ETag." );
 				} else {
+					etag = _shared.parseETag( etag );
 					rdfSource.setETag( etag );
 				}
 
@@ -2065,7 +2189,25 @@
 		return deferred.promise();
 	}
 
-	_sourceLibrary.get = function ( uris, options ) {
+	function constructGETPromise( uri, options ) {
+
+		if ( _sources.containsKey( uri ) && options.useCache ) {
+			return SourceLibrary.sourceHasChanged( _sources.get( uri ) ).then(
+				function ( hasChanged ) {
+					if ( hasChanged ) return getSource( uri, options );
+					else {
+						var deferred = $.Deferred();
+						deferred.resolve( _sources.get( uri ) );
+						return deferred.promise();
+					}
+				}
+			);
+		}
+
+		return getSource( uri, options );
+	}
+
+	SourceLibrary.get = function ( uris, options ) {
 		var defaultOptions = {
 			useCache: true
 		};
@@ -2084,11 +2226,8 @@
 			uri = _shared.getURIFromURL( uri );
 
 			(function () {
-				var requestURL = _shared.getRequestURL( uri );
-
-				deferredArray.push( constructGETPromise( uri, requestURL, options ) );
+				deferredArray.push( constructGETPromise( uri, options ) );
 			})();
-
 		}
 
 		var deferred = $.Deferred();
@@ -2098,14 +2237,42 @@
 				for ( var i = 0, length = arguments.length; i < length; i ++ ) {
 					sources.push( arguments[i] );
 				}
-				if(sources.length == 1) deferred.resolve( sources[0] );
+				if ( sources.length == 1 ) deferred.resolve( sources[0] );
 				else deferred.resolve( sources );
 			}, deferred.reject
 		);
 		return deferred.promise();
 	};
 
-	_sourceLibrary.post = function ( parent, children, options ) {
+	SourceLibrary.sourceHasChanged = function ( source, options ) {
+		var defaultOptions = {
+
+		};
+		if ( typeof options == 'object' ) {
+			options = $.extend( defaultOptions, options );
+		} else {
+			options = defaultOptions;
+		}
+
+		var requestURL = _shared.getRequestURL( source.getURI() );
+
+		var deferred = $.Deferred();
+		Carbon.REST.head( requestURL, options ).then(
+			function ( jqXHR, info ) {
+				if ( ! info.etag ) {
+					_shared.error( "-- SourceLibrary.sourceHasChanged() > The response didn't contain an ETag." );
+					throw "The response didn't contain an ETag.";
+				}
+				var newETag = _shared.parseETag( info.etag );
+				var hasChanged = source.getETag() != newETag;
+				deferred.resolve( hasChanged );
+
+			}, deferred.reject
+		);
+		return deferred.promise();
+	};
+
+	SourceLibrary.post = function ( parent, children, options ) {
 		if ( ! parent || ! children ) return;
 
 		children = _shared.isArray( children ) ? children : [children];
@@ -2180,7 +2347,7 @@
 		return deferred;
 	};
 
-	_sourceLibrary.commit = function ( source ) {
+	SourceLibrary.commit = function ( source ) {
 		if ( source ) {
 			return commitSource( source );
 		} else {
@@ -2229,11 +2396,11 @@
 
 	}
 
-	_sourceLibrary.getSourceBaseURI = function () {
+	SourceLibrary.getSourceBaseURI = function () {
 		return Carbon.getAPIBaseURI() + "apps/" + Carbon.getAppSlug() + "/";
 	};
 
-	Carbon.SourceLibrary = _sourceLibrary;
+	Carbon.SourceLibrary = SourceLibrary;
 }( Carbon, $, jsonld, Map, _shared ));
 (function ( Carbon, $, jsonld, Map, _shared ) {
 	'use strict';
