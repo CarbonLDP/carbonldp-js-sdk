@@ -258,7 +258,7 @@
 		var patchRequest = source._createPATCHRequest();
 
 		var headers = {};
-		headers[Carbon.HTTPHeaders.ifMatch] = source.getETag();
+		headers[Carbon.HTTPHeaders.ifMatch] = source.getETag().toISOString();
 
 		var deferred = $.Deferred();
 

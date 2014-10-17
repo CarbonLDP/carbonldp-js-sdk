@@ -1,3 +1,5 @@
+# 0.7.1 (October 16, 2014)
+* ETags are now being stored as Date objects.
 # 0.7.0 (October 16, 2014)
 * SourceLibrary now offers ETag resource verification (resourceHasChanged())
 * Retrieving a resource using the cache now validates that it hasn't changed in the server side

@@ -139,7 +139,7 @@
 				var info = {};
 				info.etag = jqXHR.getResponseHeader("etag");
 
-				_shared.debug( "-- REST.head() > The request was successfull. Info: %o" );
+				_shared.debug( "-- REST.head() > The request was successfull. Info: %o", info );
 				deferred.resolve( jqXHR, info );
 			}, function ( jqXHR, textStatus, errorThrown ) {
 				_shared.error( "<< REST.head() > The request failed. Response: %o", jqXHR );

@@ -1465,7 +1465,7 @@
 				var info = {};
 				info.etag = jqXHR.getResponseHeader("etag");
 
-				_shared.debug( "-- REST.head() > The request was successfull. Info: %o" );
+				_shared.debug( "-- REST.head() > The request was successfull. Info: %o", info );
 				deferred.resolve( jqXHR, info );
 			}, function ( jqXHR, textStatus, errorThrown ) {
 				_shared.error( "<< REST.head() > The request failed. Response: %o", jqXHR );
@@ -2365,7 +2365,7 @@
 		var patchRequest = source._createPATCHRequest();
 
 		var headers = {};
-		headers[Carbon.HTTPHeaders.ifMatch] = source.getETag();
+		headers[Carbon.HTTPHeaders.ifMatch] = source.getETag().toISOString();
 
 		var deferred = $.Deferred();
 

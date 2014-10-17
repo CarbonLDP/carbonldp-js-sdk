@@ -1,6 +1,6 @@
 _shared = (function ( _shared ) {
 
-	_shared.version = "0.7.0";
+	_shared.version = "0.7.1";
 	_shared.requestProtocol = "https";
 	_shared.uriProtocol = "http";
 	_shared.domain = "carbonldp.com";
@@ -115,7 +115,7 @@ _shared = (function ( _shared ) {
 		if ( _shared.stringStartsWith( etag, 'W' ) ) {
 			etag = etag.substring( 3, etag.length - 1 );
 		}
-		return Date.parse( etag );
+		return new Date( etag );
 	};
 
 
