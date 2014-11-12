@@ -1,43 +1,42 @@
+'use strict';
+
+var pkg = require( './package.json' );
+
+var endsWith = function ( string, substring ) {
+	var index = string.lastIndexOf( substring );
+	return index === string.length - substring.length;
+};
 
 module.exports = function(grunt) {
 
+	// Load all grunt tasks
+	require( 'load-grunt-tasks' )( grunt );
+
+	grunt.loadTasks( 'grunt_tasks' );
+
 	// Project configuration.
 	grunt.initConfig({
-		pkg: grunt.file.readJSON('package.json'),
-		concat: {
-			modules: {
-				src: [
-					'src/modules/*.js',
-					'src/modules/**/*.js'
-				],
-				dest: 'src/modules.js'
-			}
-		},
-		'string-replace': {
-			insertModules: {
-				files: {
-					'carbon.js': 'src/carbon.js'
-				},
-				options: {
-					replacements: [{
-						pattern: /\/\/#include\("(.*?)"\)/ig,
-						replacement: function(match, file) {
-							return grunt.file.read('src/' + file);
-						}
-					}]
-				}
-			}
-		}
+         watch      : {
+             main: {
+                 options: {
+	                 spawn: false
+                 },
+                 files  : [ 'src/**/*' ],
+                 tasks  : [] //all the tasks are run dynamically during the watch event handler
+             }
+         },
+         karma      : {
+             configFile: 'karma.conf.js',
+             all_tests   : {
+                 browsers: [ 'PhantomJS', 'Chrome', 'Firefox' ]
+             },
+             unit: {
+                 browsers: [ 'PhantomJS' ]
+             }
+         }
 	});
 
-
-	grunt.loadNpmTasks('grunt-contrib-concat');
-	grunt.loadNpmTasks('grunt-string-replace');
-	grunt.loadNpmTasks('grunt-karma');
-
-	grunt.registerTask('default', [
-		'concat:modules',
-		'string-replace:insertModules'
-	]);
+	grunt.registerTask( 'serve', [ 'watch'] );
+	grunt.registerTask( 'test', [ 'karma:all_tests' ] );
 
 };

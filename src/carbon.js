@@ -1,3 +1,14 @@
+define(
+	[
+		// Dependencies
+	], function(){
+		var Carbon = {};
+
+
+	    return Carbon;
+	}
+);
+
 (function(global, $, jsonld) {
 	if ( ! $ ) {
 		console.error( "The Carbon LDP JavaScript library depends on jQuery. Please include it on the source code." );
@@ -182,19 +193,19 @@
 		};
 
 		_carbon.processJsonLD = function ( jsonLDDocument ) {
-		_shared.log( ">> processJsonLD()" );
-		_shared.debug( "-- processJsonLD() > JSON-LD Document: %o", jsonLDDocument );
+			_shared.log( ">> processJsonLD()" );
+			_shared.debug( "-- processJsonLD() > JSON-LD Document: %o", jsonLDDocument );
 
 			var deferred = $.Deferred();
 
-		_shared.log( "-- processJsonLD() > Expanding JSON-LD Document..." );
+			_shared.log( "-- processJsonLD() > Expanding JSON-LD Document..." );
 			var processor = new jsonld.JsonLdProcessor();
 			processor.expand( jsonLDDocument ).then(
 				function ( jsonLDObjects ) {
-				_shared.debug( "<< processJsonLD() > JsonLD successfully expanded." );
+					_shared.debug( "<< processJsonLD() > JsonLD successfully expanded." );
 					deferred.resolve( jsonLDObjects );
 				}, function () {
-				_shared.error( "<< processJsonLD() > The JSON-LD Document couldn't be expanded." );
+					_shared.error( "<< processJsonLD() > The JSON-LD Document couldn't be expanded." );
 					deferred.reject();
 				}
 			);

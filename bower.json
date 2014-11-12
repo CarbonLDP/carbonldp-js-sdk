@@ -26,5 +26,13 @@
     "bower_components",
     "test",
     "tests"
-  ]
+  ],
+  "dependencies": {
+    "bluebird": "~2.3.11",
+    "underscore": "~1.7.0",
+    "squire": "~0.2.0"
+  },
+  "devDependencies": {
+    "requirejs": "~2.1.15"
+  }
 }

@@ -23,6 +23,11 @@ target/
 # NPM
 node_modules/**
 
+# Bower
+bower_components/
+/bower_components/*
+*/bower_componentss/*
+
 # ----- Operating Systems
 # OS X
 # https://github.com/github/gitignore/blob/master/Global/OSX.gitignore
