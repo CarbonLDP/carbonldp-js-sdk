@@ -99,13 +99,22 @@
 
 			rdfResource.listPropertyValues = function ( property ) {
 				var values = [];
-				if ( ! this.hasProperty( property ) ) return values;
-				var propertyArray = this.listProperties( property );
-				var length = propertyArray.length;
-				for ( var i = 0; i < length; i ++ ) {
-					var propertyObject = propertyArray[i];
-					if ( Carbon.Literal.isLiteral( propertyObject ) ) values.push( Carbon.Literal.parseLiteral( propertyObject ) );
+
+				if ( this.hasProperty( property ) ) {
+					var propertyArray = this.listProperties( property );
+					var length = propertyArray.length;
+					for ( var i = 0; i < length; i ++ ) {
+						var propertyObject = propertyArray[i];
+						if ( Carbon.Literal.isLiteral( propertyObject ) ) values.push( Carbon.Literal.parseLiteral( propertyObject ) );
+					}
 				}
+
+				values.push = (function() {
+					return function( value ) {
+						rdfResource.addProperty( property, value );
+						Array.prototype.push.call( values, value );
+					};
+				}());
 				return values;
 			};
 
@@ -206,6 +215,121 @@
 				return JSON.stringify( rdfResource );
 			};
 		} );
+	};
+
+	_resource.injectProperties = function( resources, propertiesObject ) {
+		resources = _shared.isArray(resources) ? resources : [resources];
+
+		for( var i = 0, length = resources.length; i < length; i++) {
+			var resource = resources[i];
+
+			for ( var name in propertiesObject ) {
+				if ( propertiesObject.hasOwnProperty( name ) ) {
+
+					var description = propertiesObject[name];
+					if ( typeof description == 'string' || description instanceof String ) {
+						var string = description;
+						description = {};
+						description.uri = string;
+					}
+					var defaultPropertyOptions = {
+						multi   : true,
+						readOnly: false,
+						literal : null,
+						plural  : null
+					};
+					$.extend( defaultPropertyOptions, description );
+					description = defaultPropertyOptions;
+
+					var getter, setter;
+
+					if ( _shared.isNundefined( description.literal ) ) {
+						// The type isn't known, inject all versions
+						// TODO: Single-Simple-Getter
+						getter = (function () {
+							var uri = description.uri;
+							return function () {
+								return this.getProperty( uri );
+							};
+						})();
+						// TODO: Single-Literal-Getter
+						// TODO: Single-Resource-Getters
+
+						if ( description.multi ) {
+							// Multiple-Simple-Getter
+							getter = (function () {
+								var uri = description.uri;
+								return function () {
+									return this.listProperties( uri );
+								};
+							})();
+							// TODO: Multiple-Literal-Getter
+							// TODO: Multiple-Resource-Getters
+						}
+					} else if ( ! description.literal ) {
+						// TODO: Single-Simple-Getter
+						getter = (function () {
+							var uri = description.uri;
+							return function () {
+								return this.getPropertyResource( uri );
+							};
+						})();
+						// TODO: Single-Resource-Getters
+
+						if ( description.multi ) {
+							// Multiple-Simple-Getter
+							getter = (function () {
+								var uri = description.uri;
+								return function () {
+									return this.listPropertyResources( uri );
+								};
+							})();
+							// TODO: Multiple-Resource-Getters
+						}
+					} else {
+						// TODO: Single-Simple-Getter
+						getter = (function () {
+							var uri = description.uri;
+							return function () {
+								return this.getPropertyValue( uri );
+							};
+						})();
+
+						if ( description.multi ) {
+							// Multiple-Simple-Getter
+							getter = (function () {
+								var uri = description.uri;
+								return function () {
+									return this.listPropertyValues( uri );
+								};
+							})();
+						}
+					}
+
+					if ( ! description.readOnly ) {
+						if ( description.multi ) {
+							// TODO: Adder
+						}
+
+						setter = (function () {
+							var uri = description.uri;
+							return function ( value ) {
+								this.setProperty( uri, value );
+							};
+						})();
+
+						// TODO: DeleteAll method
+					}
+
+					Object.defineProperty(resource, name, {
+						enumerable: false,
+						get: getter,
+						set: setter
+					});
+
+				}
+			}
+		}
 	};
 
 	_resource.injectPropertyMethods = function ( resources, propertiesObject ) {
