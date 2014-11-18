@@ -1,3 +1,11 @@
+define(
+	[
+
+	], function() {
+
+	}
+);
+
 (function ( Carbon, $, jsonld, Map, _shared ) {
 	'use strict';
 

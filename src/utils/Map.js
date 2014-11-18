@@ -4,7 +4,8 @@ define(
 	], function(){
 		'use strict';
 
-		var Map = function() {
+		var Map = function( object ) {
+
 			var _dict = {};
 			var _keys = [];
 
@@ -110,6 +111,16 @@ define(
 				_keys = [];
 			};
 
+
+			// Initialize map with object
+			if ( object ) {
+				for ( var name in object ) {
+					if ( object.hasOwnProperty( name ) ) {
+						var value = object[name];
+						this.put( name, value );
+					}
+				}
+			}
 
 		};
 

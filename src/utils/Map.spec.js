@@ -1,6 +1,6 @@
 define(
 	[
-		'src/utils/Map', 'underscore'
+		'Carbon/utils/Map', 'underscore'
 	], function( Map, _ ) {
 		describe(
 			'Map', function() {
@@ -8,6 +8,23 @@ define(
 					'is defined', function() {
 						expect( Map ).not.toBeNull();
 						expect( _.isFunction( Map ) ).toBe( true );
+					}
+				);
+
+				it(
+					'can be initialized by sending an object', function() {
+						var map = new Map(
+							{
+								'key1': 1,
+								'key2': 2,
+								'key3': 3
+							}
+						);
+
+						expect( map.size() ).toBe( 3 );
+						expect( map.containsKey('key1') ).toBe( true );
+						expect( map.containsKey('key2') ).toBe( true );
+						expect( map.containsKey('key3') ).toBe( true );
 					}
 				);
 

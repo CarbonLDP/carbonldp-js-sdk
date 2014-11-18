@@ -30,9 +30,11 @@
   "dependencies": {
     "bluebird": "~2.3.11",
     "underscore": "~1.7.0",
-    "squire": "~0.2.0"
+    "URIjs": "~1.14.1",
+    "jog": "~1.0.2"
   },
   "devDependencies": {
+    "squire": "~0.2.0",
     "requirejs": "~2.1.15"
   }
 }
