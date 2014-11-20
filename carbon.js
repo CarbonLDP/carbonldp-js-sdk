@@ -3313,4 +3313,4 @@
 	Carbon.SPARQL.ResultSet = _resultSet;
 }( Carbon, $, jsonld, Map, _shared ));
 
-}(this, $, jsonld));
+}(window, $, jsonld));
