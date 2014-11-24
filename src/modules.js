@@ -1206,6 +1206,10 @@
 					return Carbon.SourceLibrary.commit( source );
 				};
 
+				source.destroy = function () {
+					return Carbon.SourceLibrary.destroy( source );
+				};
+
 				source._clean = function () {
 					_isDirty = false;
 					_addModifications = [];
@@ -1327,9 +1331,9 @@
 (function ( Carbon, $, jsonld, Map, _shared ) {
 	'use strict';
 
-	var _rest = {};
+	var REST = {};
 
-	_rest.get = function ( uri, options ) {
+	REST.get = function ( uri, options ) {
 		_shared.log( ">> REST.get()" );
 
 		var defaultOptions = {
@@ -1358,11 +1362,11 @@
 			headers: headers
 		} ).then(
 			function ( jsonResponse, textStatus, jqXHR ) {
-				_shared.debug( "-- REST.get() > The request was successfull." );
+				_shared.debug( "-- REST.get() > The request was successful." );
 				_shared.log( "-- REST.get() > Digesting response..." );
 				Carbon.digestRDFResources( jsonResponse ).then(
 					function ( rdfResources ) {
-						_shared.debug( "<< REST.get() > The response was successfully digested." );
+						_shared.debug( "<< REST.get() > The response was successfuly digested." );
 						deferred.resolve( rdfResources, jqXHR );
 					}, function ( errorObject ) {
 						_shared.error( "<< REST.get() > The response couldn't be digested." );
@@ -1378,7 +1382,7 @@
 		return deferred.promise();
 	};
 
-	_rest.post = function ( uri, body, options ) {
+	REST.post = function ( uri, body, options ) {
 		_shared.log( ">> REST.post()" );
 
 		var defaultOptions = {
@@ -1415,7 +1419,7 @@
 			data       : body
 		} ).then(
 			function ( jsonResponse, textStatus, jqXHR ) {
-				_shared.debug( "-- REST.post() > The request was successfull." );
+				_shared.debug( "-- REST.post() > The request was successful." );
 				deferred.resolve( jsonResponse, jqXHR );
 			}, function ( jqXHR, textStatus, errorThrown ) {
 				_shared.error( "<< REST.post() > The request failed. Response: %o", jqXHR );
@@ -1426,7 +1430,7 @@
 		return deferred.promise();
 	};
 
-	_rest.head = function ( uri, options ) {
+	REST.head = function ( uri, options ) {
 		_shared.log( ">> REST.head()" );
 
 		var defaultOptions = {
@@ -1465,7 +1469,7 @@
 				var info = {};
 				info.etag = jqXHR.getResponseHeader("etag");
 
-				_shared.debug( "-- REST.head() > The request was successfull. Info: %o", info );
+				_shared.debug( "-- REST.head() > The request was successful. Info: %o", info );
 				deferred.resolve( jqXHR, info );
 			}, function ( jqXHR, textStatus, errorThrown ) {
 				_shared.error( "<< REST.head() > The request failed. Response: %o", jqXHR );
@@ -1476,7 +1480,7 @@
 		return deferred.promise();
 	};
 
-	_rest.options = function ( uri, options ) {
+	REST.options = function ( uri, options ) {
 		_shared.log( ">> REST.options()" );
 
 		var defaultOptions = {
@@ -1550,7 +1554,7 @@
 		return allows;
 	}
 
-	_rest.patch = function ( uri, patchRequest, options ) {
+	REST.patch = function ( uri, patchRequest, options ) {
 		_shared.log( ">> REST.patch()" );
 
 		var defaultOptions = {
@@ -1587,7 +1591,7 @@
 			data       : patchRequest.toJsonLD()
 		} ).then(
 			function ( jsonResponse, textStatus, jqXHR ) {
-				_shared.debug( "-- REST.patch() > The request was successfull." );
+				_shared.debug( "-- REST.patch() > The request was successful." );
 				deferred.resolve( jqXHR );
 			}, function ( jqXHR, textStatus, errorThrown ) {
 				_shared.error( "<< REST.patch() > The request failed. Response: %o", jqXHR );
@@ -1598,7 +1602,51 @@
 		return deferred.promise();
 	};
 
-	Carbon.REST = _rest;
+	REST.executeDelete = function ( uri, options ) {
+		_shared.log( ">> REST.executeDelete()" );
+
+		var defaultOptions = {
+			authenticate: true,
+			headers     : null
+		};
+		if ( typeof options == 'object' ) {
+			options = $.extend( defaultOptions, options );
+		} else {
+			options = defaultOptions;
+		}
+
+		var headers = {
+			"Accept"      : "application/ld+json"
+		};
+
+		if ( options.authenticate ) {
+			headers = Carbon.Auth.setCredentialHeaders( headers );
+		}
+
+		if ( options.headers ) {
+			headers = $.extend( headers, options.headers );
+		}
+
+		var deferred = $.Deferred();
+		$.ajax( {
+		        type       : 'DELETE',
+		        url        : uri,
+		        headers    : headers,
+		        crossDomain: true
+	        } ).then(
+			function ( jsonResponse, textStatus, jqXHR ) {
+				_shared.debug( "-- REST.executeDelete() > The request was successful." );
+				deferred.resolve( jqXHR );
+			}, function ( jqXHR, textStatus, errorThrown ) {
+				_shared.error( "<< REST.executeDelete() > The request failed. Response: %o", jqXHR );
+				deferred.reject();
+			}
+		);
+
+		return deferred.promise();
+	};
+
+	Carbon.REST = REST;
 }( Carbon, $, jsonld, Map, _shared ));
 (function ( Carbon, $, jsonld, Map, _shared ) {
 	'use strict';
@@ -2469,6 +2517,38 @@
 		);
 
 		return deferred;
+	};
+
+	SourceLibrary.destroy = function ( source, options ) {
+		// TODO: Support several sources
+
+		var defaultOptions = {
+
+		};
+		if ( typeof options == 'object' ) {
+			options = $.extend( defaultOptions, options );
+		} else {
+			options = defaultOptions;
+		}
+
+		// TODO: Support (and differentiate containers and other types of resources)
+
+		var sourceURI = null;
+		if ( Carbon.Resource.isResource( source ) ) sourceURI = source.getURI();
+		else if ( _shared.isString( source ) ) sourceURI = prepareURI( source );
+		else throw "The supplied source is neither a Source or a URI";
+
+		var requestURL = _shared.getRequestURL( sourceURI );
+
+		var deferred = $.Deferred();
+		Carbon.REST.executeDelete( requestURL, options ).then(
+			function ( jqXHR, info ) {
+				_sources.remove( sourceURI );
+
+				deferred.resolve();
+			}, deferred.reject
+		);
+		return deferred.promise();
 	};
 
 	SourceLibrary.commit = function ( source ) {

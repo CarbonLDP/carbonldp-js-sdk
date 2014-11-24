@@ -240,6 +240,38 @@
 		return deferred;
 	};
 
+	SourceLibrary.destroy = function ( source, options ) {
+		// TODO: Support several sources
+
+		var defaultOptions = {
+
+		};
+		if ( typeof options == 'object' ) {
+			options = $.extend( defaultOptions, options );
+		} else {
+			options = defaultOptions;
+		}
+
+		// TODO: Support (and differentiate containers and other types of resources)
+
+		var sourceURI = null;
+		if ( Carbon.Resource.isResource( source ) ) sourceURI = source.getURI();
+		else if ( _shared.isString( source ) ) sourceURI = prepareURI( source );
+		else throw "The supplied source is neither a Source or a URI";
+
+		var requestURL = _shared.getRequestURL( sourceURI );
+
+		var deferred = $.Deferred();
+		Carbon.REST.executeDelete( requestURL, options ).then(
+			function ( jqXHR, info ) {
+				_sources.remove( sourceURI );
+
+				deferred.resolve();
+			}, deferred.reject
+		);
+		return deferred.promise();
+	};
+
 	SourceLibrary.commit = function ( source ) {
 		if ( source ) {
 			return commitSource( source );

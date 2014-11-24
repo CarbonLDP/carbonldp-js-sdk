@@ -185,6 +185,10 @@
 					return Carbon.SourceLibrary.commit( source );
 				};
 
+				source.destroy = function () {
+					return Carbon.SourceLibrary.destroy( source );
+				};
+
 				source._clean = function () {
 					_isDirty = false;
 					_addModifications = [];
