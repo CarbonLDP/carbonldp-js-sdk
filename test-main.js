@@ -20,9 +20,11 @@ require.config(
 		baseUrl: '/base',
 
 		paths: {
-			'underscore': 'bower_components/underscore/underscore',
-			'Squire':     'bower_components/squire/src/Squire',
-			'jog': 'bower_components/jog/dist/jog.min'
+			'underscore':  'bower_components/underscore/underscore',
+			'Squire':      'bower_components/squire/src/Squire',
+			'jog':         'bower_components/jog/dist/jog.min',
+			'jsonld':      'src/dependencies/jsonld.js/jsonld',
+			'bluebird':    'bower_components/bluebird/js/browser/bluebird'
 		},
 
 		packages: [
@@ -41,6 +43,9 @@ require.config(
 		shim: {
 			'underscore': {
 				exports: '_'
+			},
+			'bluebird':   {
+				exports: 'Promise'
 			}
 		}
 	}

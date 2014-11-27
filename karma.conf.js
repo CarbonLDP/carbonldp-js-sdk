@@ -20,7 +20,11 @@ module.exports = function(config) {
 			'bower_components/requirejs/require.js',
 			'node_modules/karma-requirejs/lib/adapter.js',
 
-			{pattern: 'bower_components/**/*.js', included: false},
+			{pattern: 'bower_components/bluebird/**/*.js', included: false},
+			{pattern: 'bower_components/URIjs/**/*.js', included: false},
+			{pattern: 'bower_components/squire/**/*.js', included: false},
+			{pattern: 'bower_components/jog/**/*.js', included: false},
+			{pattern: 'bower_components/underscore/**/*.js', included: false},
 			{pattern: 'src/**/*.js', included: false},
 
 			'test-main.js'
@@ -29,7 +33,8 @@ module.exports = function(config) {
 
 		// list of files to exclude
 		exclude: [
-			'bower_components/**/*.spec.js'
+			'bower_components/**/*.spec.js',
+			'bower_components/**/tests/**/*.js'
 		],
 
 
