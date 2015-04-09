@@ -17,39 +17,66 @@ module.exports = function( grunt ) {
 	// Project configuration.
 	grunt.initConfig(
 		{
-			watch:     {
+			watch    : {
 				main: {
 					options: {
 						spawn: false
 					},
-					files:   [ 'src/**/*' ],
-					tasks:   [] //all the tasks are run dynamically during the watch event handler
+					files  : [ 'src/**/*' ],
+					tasks  : [] //all the tasks are run dynamically during the watch event handler
 				}
 			},
-			karma:     {
+			karma    : {
 				configFile: 'karma.conf.js',
-				all_tests:  {
+				all_tests : {
 					browsers: [ 'PhantomJS', 'Chrome', 'Firefox' ]
 				},
-				unit:       {
+				unit      : {
 					browsers: [ 'PhantomJS' ]
 				}
 			},
 			requirejs: {
-				jsonld: {
+				dev : {
 					options: {
-						baseUrl:        '',
-						include:        [
-							'bower_components/jsonld.js/js/jsonld'
+						baseUrl                : '.',
+						name                   : 'bower_components/almond/almond.js',
+						include                : [ 'Carbon' ],
+						packages               : [
+							{
+								name    : 'Carbon',
+								location: 'src',
+								main    : 'Carbon'
+							}
 						],
-						out:            'src/dependencies/jsonld.js/jsonld.js',
-						removeCombined: true,
-						optimize:       'none',
+						out                    : 'dist/Carbon.js',
+						wrap                   : {
+							startFile: 'build/start.frag',
+							endFile  : 'build/end.frag'
+						},
+						optimize               : 'none',
+						preserveLicenseComments: false
+					}
+				},
+				prod: {
+					options: {
+						baseUrl                : '.',
+						name                   : 'bower_components/almond/almond.js',
+						include                : [ 'Carbon' ],
+						packages               : [
+							{
+								name    : 'Carbon',
+								location: 'src',
+								main    : 'Carbon'
+							}
+						],
+						out                    : 'dist/Carbon.min.js',
+						wrap                   : {
+							startFile: 'build/start.frag',
+							endFile  : 'build/end.frag'
+						},
+						optimize               : 'uglify2',
 						preserveLicenseComments: false,
-						wrap:           {
-							startFile: 'src/dependencies/jsonld.js/start.js',
-							endFile:   'src/dependencies/jsonld.js/end.js'
-						}
+						generateSourceMaps     : true
 					}
 				}
 			}

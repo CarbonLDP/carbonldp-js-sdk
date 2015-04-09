@@ -1,8 +1,8 @@
 // Karma configuration
 // Generated on Wed Nov 12 2014 12:33:32 GMT-0600 (CST)
 
-module.exports = function(config) {
-	config.set({
+module.exports = function( config ) {
+	config.set( {
 
 		// base path that will be used to resolve all patterns (eg. files, exclude)
 		basePath: '',
@@ -10,7 +10,7 @@ module.exports = function(config) {
 
 		// frameworks to use
 		// available frameworks: https://npmjs.org/browse/keyword/karma-adapter
-		frameworks: ['jasmine', 'requirejs'],
+		frameworks: [ 'jasmine', 'requirejs' ],
 
 
 		// list of files / patterns to load in the browser
@@ -20,12 +20,12 @@ module.exports = function(config) {
 			'bower_components/requirejs/require.js',
 			'node_modules/karma-requirejs/lib/adapter.js',
 
-			{pattern: 'bower_components/bluebird/**/*.js', included: false},
-			{pattern: 'bower_components/URIjs/**/*.js', included: false},
-			{pattern: 'bower_components/squire/**/*.js', included: false},
-			{pattern: 'bower_components/jog/**/*.js', included: false},
-			{pattern: 'bower_components/underscore/**/*.js', included: false},
-			{pattern: 'src/**/*.js', included: false},
+			// {pattern: 'bower_components/bluebird/**/*.js', included: false},
+			// {pattern: 'bower_components/URIjs/**/*.js', included: false},
+			// {pattern: 'bower_components/squire/**/*.js', included: false},
+			// {pattern: 'bower_components/jog/**/*.js', included: false},
+			// {pattern: 'bower_components/underscore/**/*.js', included: false},
+			{ pattern: 'src/*.js', included: false },
 
 			'test-main.js'
 		],
@@ -46,7 +46,7 @@ module.exports = function(config) {
 		// test results reporter to use
 		// possible values: 'dots', 'progress'
 		// available reporters: https://npmjs.org/browse/keyword/karma-reporter
-		reporters: ['progress'],
+		reporters: [ 'progress' ],
 
 
 		// web server port
@@ -74,5 +74,5 @@ module.exports = function(config) {
 		// Continuous Integration mode
 		// if true, Karma captures browsers, runs the tests and exits
 		singleRun: true
-	});
+	} );
 };
