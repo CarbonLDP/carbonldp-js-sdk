@@ -1,11 +1,15 @@
 import * as Literal from './Literal';
-import Value from './Value';
+import * as Value from './Value';
 import PropertyDescription from './PropertyDescription';
 
 import * as Utils from '../Utils';
 import * as RDF from '../namespaces/RDF';
+import * as RDFNode from './RDFNode';
 
-interface Resource {
+interface Resource extends RDFNode.Class {
+	_propertyAddedCallbacks:(( property:string, value:any )=>void)[];
+	_propertyDeletedCallbacks:(( property:string, value?:any )=>void)[];
+
 	uri:string;
 
 	hasType:( type:string )=>boolean;
@@ -18,7 +22,7 @@ interface Resource {
 	getPropertyURIs:( property:string )=>string[];
 	addProperty:( property:string, value:any )=>void;
 	setProperty:( property:string, value:any )=>void;
-	removeProperty:( property:string )=>void;
+	deleteProperty:( property:string )=>void;
 }
 
 function hasType( type:string ):boolean {
@@ -38,8 +42,8 @@ function hasProperty( propertyURI:string ):boolean {
 	return Utils.hasProperty( this, propertyURI );
 }
 
-function getProperty( propertyURI:string ):Value {
-	var values:Value[] = this.getProperties( propertyURI );
+function getProperty( propertyURI:string ):Value.Class {
+	var values:Value.Class[] = this.getProperties( propertyURI );
 	return values[ 0 ];
 }
 
@@ -53,13 +57,13 @@ function getPropertyValue( propertyURI:string ):any {
 }
 
 function getPropertyURI( propertyURI:string ):string {
-	var value:Value = this.getProperty( propertyURI );
+	var value:Value.Class = this.getProperty( propertyURI );
 	if ( Utils.isNull( value ) ) return null;
 	if ( ! Utils.hasProperty( value, '@id' ) ) return null;
 	return value[ '@id' ];
 }
 
-function getProperties( propertyURI:string ):Value[] {
+function getProperties( propertyURI:string ):Value.Class[] {
 	if ( ! this.hasProperty( propertyURI ) ) return [];
 	return Utils.isArray( this[ propertyURI ] ) ? this[ propertyURI ] : [ this[ propertyURI ] ];
 }
@@ -68,9 +72,9 @@ function getPropertyValues( propertyURI ):any[] {
 	var values:any[] = [];
 
 	if ( this.hasProperty( propertyURI ) ) {
-		var propertyArray:Value[] = this.getProperties( propertyURI );
+		var propertyArray:Value.Class[] = this.getProperties( propertyURI );
 		for ( var i:number = 0, length:number = propertyArray.length; i < length; i ++ ) {
-			var value:Value = propertyArray[ i ];
+			var value:Value.Class = propertyArray[ i ];
 			if ( Literal.Factory.is( value ) ) values.push( Literal.Factory.parse( <Literal.Class>value ) );
 		}
 	}
@@ -84,10 +88,10 @@ function getPropertyURIs( propertyURI:string ):string[] {
 	var uris:string[] = [];
 
 	if ( this.hasProperty( propertyURI ) ) {
-		var values:Value[] = this.getProperties( propertyURI );
+		var values:Value.Class[] = this.getProperties( propertyURI );
 
 		for ( var i = 0, length = values.length; i < length; i ++ ) {
-			var value:Value = values[ i ];
+			var value:Value.Class = values[ i ];
 			if ( Utils.hasProperty( value, '@id' ) ) uris.push( value[ '@id' ] );
 		}
 	}
@@ -100,24 +104,36 @@ function getPropertyURIs( propertyURI:string ):string[] {
 function addProperty( propertyURI:string, value:any ):void {
 	var propertyArray = this.getProperties( propertyURI );
 
-	var propertyValue:Value;
-	if ( Factory.is( value ) ) {
+	var propertyValue:Value.Class;
+	if ( RDFNode.Factory.is( value ) ) {
 		propertyValue = {
 			'@id': value[ '@id' ]
 		};
 	} else propertyValue = Literal.Factory.from( value );
+
+	var callbacks:(( property:string, value:any ) => void)[] = this._propertyAddedCallbacks;
+	for ( let i:number = 0, length:number = callbacks.length; i < length; i ++ ) {
+		var callback:( property:string, value:any ) => void = callbacks[ i ];
+		callback.call( this, propertyURI, propertyValue );
+	}
 
 	propertyArray.push( propertyValue );
 	this[ propertyURI ] = propertyArray;
 }
 
 function setProperty( propertyURI:string, value:any ):void {
-	this.removeProperty( propertyURI );
+	this.deleteProperty( propertyURI );
 	if ( Utils.isNull( value ) ) return;
 	this.addProperty( propertyURI, value );
 }
 
-function removeProperty( propertyURI:string ):void {
+function deleteProperty( propertyURI:string ):void {
+	var callbacks:(( property:string, value?:any ) => void)[] = this._propertyDeletedCallbacks;
+	for ( let i:number = 0, length:number = callbacks.length; i < length; i ++ ) {
+		var callback:( property:string, value?:any ) => void = callbacks[ i ];
+		callback.call( this, propertyURI );
+	}
+
 	delete this[ propertyURI ];
 }
 
@@ -144,10 +160,32 @@ function tieArray( resource:Resource, property:string, array:any[] ) {
 }
 
 class Factory {
-	static is( object:any ):boolean {
-		if ( Utils.isNull( object ) ) return false;
-		if ( ! Utils.isObject( object ) ) return false;
-		return Utils.hasProperty( object, '@id' );
+	static is( value:any ):boolean {
+		return (
+		RDFNode.Factory.is( value ) &&
+
+		Utils.hasFunction( value, '_propertyAddedCallbacks' ) &&
+		Utils.hasFunction( value, '_propertyDeletedCallbacks' ) &&
+
+		Utils.hasProperty( value, 'uri' ) &&
+
+		Utils.hasFunction( value, 'hasType' ) &&
+		Utils.hasFunction( value, 'hasProperty' ) &&
+		Utils.hasFunction( value, 'getProperty' ) &&
+		Utils.hasFunction( value, 'getPropertyValue' ) &&
+		Utils.hasFunction( value, 'getPropertyURI' ) &&
+		Utils.hasFunction( value, 'getProperties' ) &&
+		Utils.hasFunction( value, 'getPropertyValues' ) &&
+		Utils.hasFunction( value, 'getPropertyURIs' ) &&
+		Utils.hasFunction( value, 'addProperty' ) &&
+		Utils.hasFunction( value, 'setProperty' ) &&
+		Utils.hasFunction( value, 'deleteProperty' )
+		);
+	}
+
+	static create():Resource {
+		var resource = {};
+		return Factory.from( resource );
 	}
 
 	static from( object:Object ):Resource;
@@ -159,29 +197,41 @@ class Factory {
 		for ( var i:number = 0, length:number = objects.length; i < length; i ++ ) {
 			var resource:Resource = <any>objects[ i ];
 
-			Object.defineProperties( resource, {
-				'uri': {
-					get: function () {
-						return this[ '@id' ];
+			if ( ! Factory.is( resource ) ) {
+				Object.defineProperties( resource, {
+					'_propertyAddedCallbacks': {
+						writable: false,
+						enumerable: false,
+						value: []
 					},
-					set: function ( value ) {
-						this[ '@id' ] = value;
+					'_propertyDeletedCallbacks': {
+						writable: false,
+						enumerable: false,
+						value: []
 					},
-					enumerable: false
-				}
-			} );
+					'uri': {
+						get: function () {
+							return this[ '@id' ];
+						},
+						set: function ( value ) {
+							this[ '@id' ] = value;
+						},
+						enumerable: false
+					}
+				} );
 
-			resource.hasType = hasType;
-			resource.hasProperty = hasProperty;
-			resource.getProperty = getProperty;
-			resource.getPropertyValue = getPropertyValue;
-			resource.getPropertyURI = getPropertyURI;
-			resource.getProperties = getProperties;
-			resource.getPropertyValues = getPropertyValues;
-			resource.getPropertyURIs = getPropertyURIs;
-			resource.addProperty = addProperty;
-			resource.setProperty = setProperty;
-			resource.removeProperty = removeProperty;
+				resource.hasType = hasType;
+				resource.hasProperty = hasProperty;
+				resource.getProperty = getProperty;
+				resource.getPropertyValue = getPropertyValue;
+				resource.getPropertyURI = getPropertyURI;
+				resource.getProperties = getProperties;
+				resource.getPropertyValues = getPropertyValues;
+				resource.getPropertyURIs = getPropertyURIs;
+				resource.addProperty = addProperty;
+				resource.setProperty = setProperty;
+				resource.deleteProperty = deleteProperty;
+			}
 
 			resources.push( resource );
 		}

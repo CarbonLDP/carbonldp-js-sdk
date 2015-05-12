@@ -108,5 +108,15 @@ define(["require", "exports", '../Utils', '../namespaces/XSD'], function (requir
         return Factory;
     })();
     exports.Factory = Factory;
+    var Util = (function () {
+        function Util() {
+        }
+        Util.areEqual = function (literal1, literal2) {
+            // TODO: Implement
+            return false;
+        };
+        return Util;
+    })();
+    exports.Util = Util;
 });
 //# sourceMappingURL=Literal.js.map

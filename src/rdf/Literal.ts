@@ -112,4 +112,11 @@ class Factory {
 	}
 }
 
-export { Literal as Class, Factory};
+class Util {
+	static areEqual( literal1:Literal, literal2:Literal ):boolean {
+		// TODO: Implement
+		return false;
+	}
+}
+
+export { Literal as Class, Factory, Util };

@@ -6,11 +6,18 @@ interface RDFNode {
 
 class Factory {
 	static is( value:any ):boolean {
-		if ( ! Utils.isObject( value ) ) return false;
-		if ( ! Utils.hasProperty( value, '@id' ) ) return false;
-
-		return true;
+		return (
+		Utils.isNull( value ) &&
+		(! Utils.isObject( value )) &&
+		(! Utils.hasProperty( value, '@id' ))
+		);
 	}
 }
 
-export { RDFNode as Class, Factory };
+class Util {
+	static areEqual( node1:RDFNode, node2:RDFNode ):boolean {
+		return node1[ '@id' ] === node2[ '@id' ];
+	}
+}
+
+export { RDFNode as Class, Factory, Util };

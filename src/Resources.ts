@@ -7,7 +7,7 @@ var jsonld;
 import * as HTTP from './HTTP';
 import Documents from './Documents';
 import * as Utils from './Utils';
-import { RDFDocument, Resource, ResourceFactory } from './RDF';
+import { RDFDocument, Resource } from './RDF';
 import * as RDFSource from './ldp/RDFSource';
 import * as PersistedRDFSource from './ldp/PersistedRDFSource';
 

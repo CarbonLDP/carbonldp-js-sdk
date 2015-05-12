@@ -44,6 +44,10 @@ define(["require", "exports", '../Utils', '../namespaces/XSD', './Resource'], fu
             expect(Resource.Factory.is).toBeDefined();
             // TODO: Test
         });
+        it("has static method, create(), which creates an empty Resource and returns it.", function () {
+            expect(Resource.Factory.create).toBeDefined();
+            // TODO: Test
+        });
         it("has static method, from( object ), which injects RDFResource methods to the object and returns it", function () {
             expect(Resource.Factory.from).toBeDefined();
             var resource = Resource.Factory.from(object);

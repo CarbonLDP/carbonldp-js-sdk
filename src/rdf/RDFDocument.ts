@@ -1,4 +1,4 @@
-import Value from './Value';
+import * as Value from './Value';
 import * as RDFNode from './RDFNode';
 import * as Utils from '../Utils';
 import * as URI from './URI';

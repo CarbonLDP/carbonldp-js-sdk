@@ -1,4 +1,4 @@
-define(["require", "exports", './Literal', '../Utils', '../namespaces/RDF'], function (require, exports, Literal, Utils, RDF) {
+define(["require", "exports", './Literal', '../Utils', '../namespaces/RDF', './RDFNode'], function (require, exports, Literal, Utils, RDF, RDFNode) {
     function hasType(type) {
         var property = RDF.Predicate.type;
         if (!this.hasOwnProperty(property))
@@ -70,23 +70,33 @@ define(["require", "exports", './Literal', '../Utils', '../namespaces/RDF'], fun
     function addProperty(propertyURI, value) {
         var propertyArray = this.getProperties(propertyURI);
         var propertyValue;
-        if (Factory.is(value)) {
+        if (RDFNode.Factory.is(value)) {
             propertyValue = {
                 '@id': value['@id']
             };
         }
         else
             propertyValue = Literal.Factory.from(value);
+        var callbacks = this._propertyAddedCallbacks;
+        for (var i = 0, length_1 = callbacks.length; i < length_1; i++) {
+            var callback = callbacks[i];
+            callback.call(this, propertyURI, propertyValue);
+        }
         propertyArray.push(propertyValue);
         this[propertyURI] = propertyArray;
     }
     function setProperty(propertyURI, value) {
-        this.removeProperty(propertyURI);
+        this.deleteProperty(propertyURI);
         if (Utils.isNull(value))
             return;
         this.addProperty(propertyURI, value);
     }
-    function removeProperty(propertyURI) {
+    function deleteProperty(propertyURI) {
+        var callbacks = this._propertyDeletedCallbacks;
+        for (var i = 0, length_2 = callbacks.length; i < length_2; i++) {
+            var callback = callbacks[i];
+            callback.call(this, propertyURI);
+        }
         delete this[propertyURI];
     }
     function tieArray(resource, property, array) {
@@ -116,40 +126,66 @@ define(["require", "exports", './Literal', '../Utils', '../namespaces/RDF'], fun
     var Factory = (function () {
         function Factory() {
         }
-        Factory.is = function (object) {
-            if (Utils.isNull(object))
-                return false;
-            if (!Utils.isObject(object))
-                return false;
-            return Utils.hasProperty(object, '@id');
+        Factory.is = function (value) {
+            return (RDFNode.Factory.is(value) &&
+                Utils.hasFunction(value, '_propertyAddedCallbacks') &&
+                Utils.hasFunction(value, '_propertyDeletedCallbacks') &&
+                Utils.hasProperty(value, 'uri') &&
+                Utils.hasFunction(value, 'hasType') &&
+                Utils.hasFunction(value, 'hasProperty') &&
+                Utils.hasFunction(value, 'getProperty') &&
+                Utils.hasFunction(value, 'getPropertyValue') &&
+                Utils.hasFunction(value, 'getPropertyURI') &&
+                Utils.hasFunction(value, 'getProperties') &&
+                Utils.hasFunction(value, 'getPropertyValues') &&
+                Utils.hasFunction(value, 'getPropertyURIs') &&
+                Utils.hasFunction(value, 'addProperty') &&
+                Utils.hasFunction(value, 'setProperty') &&
+                Utils.hasFunction(value, 'deleteProperty'));
+        };
+        Factory.create = function () {
+            var resource = {};
+            return Factory.from(resource);
         };
         Factory.from = function (objectOrObjects) {
             var objects = Utils.isArray(objectOrObjects) ? objectOrObjects : [objectOrObjects];
             var resources = [];
             for (var i = 0, length = objects.length; i < length; i++) {
                 var resource = objects[i];
-                Object.defineProperties(resource, {
-                    'uri': {
-                        get: function () {
-                            return this['@id'];
+                if (!Factory.is(resource)) {
+                    Object.defineProperties(resource, {
+                        '_propertyAddedCallbacks': {
+                            writable: false,
+                            enumerable: false,
+                            value: []
                         },
-                        set: function (value) {
-                            this['@id'] = value;
+                        '_propertyDeletedCallbacks': {
+                            writable: false,
+                            enumerable: false,
+                            value: []
                         },
-                        enumerable: false
-                    }
-                });
-                resource.hasType = hasType;
-                resource.hasProperty = hasProperty;
-                resource.getProperty = getProperty;
-                resource.getPropertyValue = getPropertyValue;
-                resource.getPropertyURI = getPropertyURI;
-                resource.getProperties = getProperties;
-                resource.getPropertyValues = getPropertyValues;
-                resource.getPropertyURIs = getPropertyURIs;
-                resource.addProperty = addProperty;
-                resource.setProperty = setProperty;
-                resource.removeProperty = removeProperty;
+                        'uri': {
+                            get: function () {
+                                return this['@id'];
+                            },
+                            set: function (value) {
+                                this['@id'] = value;
+                            },
+                            enumerable: false
+                        }
+                    });
+                    resource.hasType = hasType;
+                    resource.hasProperty = hasProperty;
+                    resource.getProperty = getProperty;
+                    resource.getPropertyValue = getPropertyValue;
+                    resource.getPropertyURI = getPropertyURI;
+                    resource.getProperties = getProperties;
+                    resource.getPropertyValues = getPropertyValues;
+                    resource.getPropertyURIs = getPropertyURIs;
+                    resource.addProperty = addProperty;
+                    resource.setProperty = setProperty;
+                    resource.deleteProperty = deleteProperty;
+                }
                 resources.push(resource);
             }
             if (Utils.isArray(objectOrObjects))

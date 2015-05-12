@@ -22,6 +22,14 @@ class Util {
 		return parts[ 0 ];
 	}
 
+	static getFragment( uri:string ):string {
+		var parts:string[] = uri.split( '#' );
+		if ( parts.length < 2 ) return null;
+		if ( parts.length > 2 ) throw new Error( 'IllegalArgument: The URI provided has more than one # sign.' );
+
+		return parts[ 1 ];
+	}
+
 	static resolve( parentURI:string, childURI:string ):string {
 		var finalURI:string = parentURI;
 		if ( ! Utils.S.endsWith( parentURI, '/' ) ) finalURI += '/';
@@ -30,6 +38,12 @@ class Util {
 		else finalURI += childURI;
 
 		return finalURI;
+	}
+
+	static removeProtocol( uri:string ):string {
+		if ( Utils.S.startsWith( uri, 'https://' ) ) return uri.substr( 5, uri.length );
+		if ( Utils.S.startsWith( uri, 'http://' ) ) return uri.substr( 4, uri.length );
+		return uri;
 	}
 }
 
