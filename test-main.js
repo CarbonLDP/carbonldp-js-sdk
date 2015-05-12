@@ -20,11 +20,13 @@ require.config(
 		baseUrl: '/base',
 
 		paths: {
-			'underscore': 'bower_components/underscore/underscore',
-			'Squire'    : 'bower_components/squire/src/Squire',
-			'jog'       : 'bower_components/jog/dist/jog.min',
-			// 'jsonld':      'src/dependencies/jsonld.js/jsonld',
-			'bluebird'  : 'bower_components/bluebird/js/browser/bluebird'
+			'es6-promise-polyfill': 'bower_components/es6-promise/promise',
+			'jsonld'              : 'bower_components/jsonld.js/js/jsonld'
+
+			//'underscore': 'bower_components/underscore/underscore',
+			//'Squire'    : 'bower_components/squire/src/Squire',
+			//'jog'       : 'bower_components/jog/dist/jog.min',
+			//'bluebird'  : 'bower_components/bluebird/js/browser/bluebird'
 		},
 
 		packages: [

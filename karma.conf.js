@@ -18,14 +18,27 @@ module.exports = function( config ) {
 			'node_modules/karma-jasmine/lib/jasmine.js',
 			'node_modules/karma-jasmine/lib/adapter.js',
 			'bower_components/requirejs/require.js',
+			'bower_components/jasmine-ajax/lib/mock-ajax.js',
 			'node_modules/karma-requirejs/lib/adapter.js',
+			'node_modules/babel-core/browser-polyfill.js',
 
 			// {pattern: 'bower_components/bluebird/**/*.js', included: false},
 			// {pattern: 'bower_components/URIjs/**/*.js', included: false},
 			// {pattern: 'bower_components/squire/**/*.js', included: false},
 			// {pattern: 'bower_components/jog/**/*.js', included: false},
 			// {pattern: 'bower_components/underscore/**/*.js', included: false},
+			{ pattern: 'bower_components/jsonld.js/js/jsonld.js', included: false },
+			{ pattern: 'bower_components/es6-promise/promise.js', included: false },
+
 			{ pattern: 'src/*.js', included: false },
+			{ pattern: 'src/*.js.map', included: false },
+			{ pattern: 'src/*.ts', included: false },
+			{ pattern: 'src/rdf/*.js', included: false },
+			{ pattern: 'src/rdf/*.js.map', included: false },
+			{ pattern: 'src/rdf/*.ts', included: false },
+			{ pattern: 'src/namespaces/*.js', included: false },
+			{ pattern: 'src/namespaces/*.js.map', included: false },
+			{ pattern: 'src/namespaces/*.ts', included: false },
 
 			'test-main.js'
 		],
@@ -40,7 +53,9 @@ module.exports = function( config ) {
 
 		// preprocess matching files before serving them to the browser
 		// available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
-		preprocessors: {},
+		preprocessors: {
+			'src/**/*.js': [ 'sourcemap' ]
+		},
 
 
 		// test results reporter to use

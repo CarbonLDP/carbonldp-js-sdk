@@ -1474,7 +1474,7 @@ jsonld.cache = {
 };
 
 /**
- * Document loaders.
+ * RDFDocument loaders.
  */
 jsonld.documentLoaders = {};
 

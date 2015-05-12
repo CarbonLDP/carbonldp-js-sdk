@@ -22,7 +22,7 @@ module.exports = function( grunt ) {
 					options: {
 						spawn: false
 					},
-					files  : [ 'src/**/*' ],
+					files  : [ 'src/**/*.ts' ],
 					tasks  : [] //all the tasks are run dynamically during the watch event handler
 				}
 			},

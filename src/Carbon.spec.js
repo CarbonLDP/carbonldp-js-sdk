@@ -1,8 +1,10 @@
-define(["require", "exports", './Carbon'], function (require, exports, Carbon) {
+define(["require", "exports", './Carbon'], function (require, exports, Carbon_1) {
     describe('Carbon', function () {
         it('is defined', function () {
-            expect(Carbon).toBeDefined();
-            expect(Carbon.REST).toBeDefined();
+            expect(Carbon_1.default).toBeDefined();
+        });
+        it('has module Apps', function () {
+            expect(Carbon_1.default.Apps).toBeDefined();
         });
     });
 });

@@ -1,7 +1,7 @@
 define(
 	[
 		// Dependencies
-	], function(){
+	], function() {
 		'use strict';
 
 		var Map = function( object ) {
@@ -13,7 +13,7 @@ define(
 			 * Returns the number of key-value mappings in this map.
 			 * @method
 			 */
-			this.size = function () {
+			this.size = function() {
 				return _keys.length;
 			};
 
@@ -21,7 +21,7 @@ define(
 			 * Returns true if this map contains no key-value mappings.
 			 * @method
 			 */
-			this.isEmpty = function () {
+			this.isEmpty = function() {
 				return _keys.length == 0;
 			};
 
@@ -29,7 +29,7 @@ define(
 			 * Returns all the keys
 			 * @method
 			 */
-			this.getKeys = function () {
+			this.getKeys = function() {
 				return _keys;
 			};
 
@@ -37,11 +37,11 @@ define(
 			 * Returns all the values
 			 * @method
 			 */
-			this.getValues = function () {
+			this.getValues = function() {
 				var values = [];
 
-				for ( var i = 0, length = _keys.length; i < length; i ++ ) {
-					values.push( this.get( _keys[i] ) );
+				for( var i = 0, length = _keys.length; i < length; i ++ ) {
+					values.push( this.get( _keys[ i ] ) );
 				}
 
 				return values;
@@ -53,8 +53,8 @@ define(
 			 * @param {String} key
 			 *    the key whose associated value is to be returned
 			 */
-			this.get = function ( key ) {
-				return _dict[key];
+			this.get = function( key ) {
+				return _dict[ key ];
 			};
 
 			/**
@@ -63,9 +63,9 @@ define(
 			 * @param {String} key
 			 *    - key whose presence in this map is to be tested
 			 */
-			this.containsKey = function ( key ) {
-				for ( var i = 0, length = _keys.length; i < length; i ++ ) {
-					if ( _keys[i] == key ) return true;
+			this.containsKey = function( key ) {
+				for( var i = 0, length = _keys.length; i < length; i ++ ) {
+					if( _keys[ i ] == key ) return true;
 				}
 				return false;
 			};
@@ -78,10 +78,10 @@ define(
 			 * @param {Object} value
 			 *    - value to be associated with the specified key
 			 */
-			this.put = function ( key, value ) {
+			this.put = function( key, value ) {
 				this.remove( key );
 
-				_dict[key] = value;
+				_dict[ key ] = value;
 				_keys.push( key );
 
 			};
@@ -92,11 +92,11 @@ define(
 			 * @param {String} key
 			 *    - key whose mapping is to be removed from the map
 			 */
-			this.remove = function ( key ) {
-				delete _dict[key];
+			this.remove = function( key ) {
+				delete _dict[ key ];
 
-				for ( var length = _keys.length, i = length - 1; i >= 0; i -- ) {
-					if ( _keys[i] == key ) {
+				for( var length = _keys.length, i = length - 1; i >= 0; i -- ) {
+					if( _keys[ i ] == key ) {
 						_keys.splice( i, 1 );
 					}
 				}
@@ -106,17 +106,17 @@ define(
 			 * Removes all of the mappings from this map. The map will be empty after this call returns.
 			 * @method
 			 */
-			this.clear = function () {
+			this.clear = function() {
 				_dict = {};
 				_keys = [];
 			};
 
 
 			// Initialize map with object
-			if ( object ) {
-				for ( var name in object ) {
-					if ( object.hasOwnProperty( name ) ) {
-						var value = object[name];
+			if( object ) {
+				for( var name in object ) {
+					if( object.hasOwnProperty( name ) ) {
+						var value = object[ name ];
 						this.put( name, value );
 					}
 				}
