@@ -1,4 +1,5 @@
 import * as Resource from './Resource';
+import * as RDFNode from './RDFNode';
 import * as FragmentResource from './FragmentResource';
 import * as URI from './URI';
 import * as Utils from '../Utils';
@@ -74,20 +75,32 @@ function deleteFragment( uri:string ):boolean {
 
 class Factory {
 	static is( value:any ):boolean {
+		//@formatter:off
 		return (
-		Resource.Factory.is( value ) &&
+			Resource.Factory.is( value ) &&
 
-		Utils.hasProperty( value, '_fragments' ) &&
+			Utils.hasProperty( value, '_fragments' ) &&
 
-		Utils.hasFunction( value, 'hasFragment' ) &&
-		Utils.hasFunction( value, 'getFragment' ) &&
-		Utils.hasFunction( value, 'getFragments' ) &&
-		Utils.hasFunction( value, 'createFragment' ) &&
-		Utils.hasFunction( value, 'deleteFragment' )
+			Utils.hasFunction( value, 'hasFragment' ) &&
+			Utils.hasFunction( value, 'getFragment' ) &&
+			Utils.hasFunction( value, 'getFragments' ) &&
+			Utils.hasFunction( value, 'createFragment' ) &&
+			Utils.hasFunction( value, 'deleteFragment' )
 		);
+		//@formatter:on
 	}
 
-	static from( resource:Resource.Class, fragments:Resource.Class[] = [] ):DocumentResource {
+	static from( resource:RDFNode.Class, fragments:RDFNode.Class[] = [] ):DocumentResource {
+		resource = Resource.Factory.is( resource ) ? resource : Resource.Factory.from( resource );
+
+		var documentResource:DocumentResource = <DocumentResource> resource;
+		if ( ! Factory.is( documentResource ) ) Factory.injectBehaviour( documentResource );
+		Factory.addFragments( documentResource, fragments );
+
+		return documentResource;
+	}
+
+	private static injectBehaviour( resource:Resource.Class ):DocumentResource {
 		Object.defineProperty( resource, '_fragments', {
 			writable: false,
 			enumerable: false,
@@ -97,13 +110,6 @@ class Factory {
 
 		var documentResource:DocumentResource = <DocumentResource> resource;
 
-		for ( let i:number = 0, length:number = fragments.length; i < length; i ++ ) {
-			var resource:Resource.Class = fragments[ i ];
-			var fragment:FragmentResource.Class = FragmentResource.Factory.from( resource );
-
-			documentResource._fragments.push( fragment );
-		}
-
 		documentResource.hasFragment = hasFragment;
 		documentResource.getFragment = getFragment;
 		documentResource.getFragments = getFragments;
@@ -111,6 +117,15 @@ class Factory {
 		documentResource.deleteFragment = deleteFragment;
 
 		return documentResource;
+	}
+
+	private static addFragments( documentResource:DocumentResource, fragments:RDFNode.Class[] ):void {
+		for ( let i:number = 0, length:number = fragments.length; i < length; i ++ ) {
+			var resource:RDFNode.Class = fragments[ i ];
+			var fragment:FragmentResource.Class = FragmentResource.Factory.from( resource );
+
+			documentResource._fragments.push( fragment );
+		}
 	}
 }
 

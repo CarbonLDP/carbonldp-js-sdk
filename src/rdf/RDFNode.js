@@ -3,9 +3,11 @@ define(["require", "exports", '../Utils'], function (require, exports, Utils) {
         function Factory() {
         }
         Factory.is = function (value) {
-            return (Utils.isNull(value) &&
-                (!Utils.isObject(value)) &&
-                (!Utils.hasProperty(value, '@id')));
+            //@formatter:off
+            return ((!Utils.isNull(value)) &&
+                Utils.isObject(value) &&
+                Utils.hasProperty(value, '@id'));
+            //@formatter:on
         };
         return Factory;
     })();

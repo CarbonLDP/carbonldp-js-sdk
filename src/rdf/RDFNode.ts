@@ -6,11 +6,13 @@ interface RDFNode {
 
 class Factory {
 	static is( value:any ):boolean {
+		//@formatter:off
 		return (
-		Utils.isNull( value ) &&
-		(! Utils.isObject( value )) &&
-		(! Utils.hasProperty( value, '@id' ))
+			( ! Utils.isNull( value ) ) &&
+			Utils.isObject( value ) &&
+			Utils.hasProperty( value, '@id' )
 		);
+		//@formatter:on
 	}
 }
 

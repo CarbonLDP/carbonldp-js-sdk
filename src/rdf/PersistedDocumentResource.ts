@@ -1,7 +1,8 @@
 /// <reference path="../../typings/es6/es6.d.ts" />
+/// <reference path="../../typings/es6-promise/es6-promise.d.ts" />
 
 import * as DocumentResource from './DocumentResource';
-import Parent from '../Parent';
+import Committer from '../Committer';
 import * as Literal from './Literal';
 import * as RDFNode from './RDFNode';
 import * as Utils from '../Utils';
@@ -32,12 +33,12 @@ enum SpecialValue {
 interface PersistedDocumentResource extends DocumentResource.Class {
 	_dirty:boolean;
 	_modifications:Modifications;
-	_parent:Parent;
+	_commiter:Committer;
 	_clean():void;
 
 	isDirty():boolean;
 
-	commit():void;
+	commit():Promise<any>;
 	delete():void;
 }
 
@@ -133,21 +134,40 @@ function registerDeleteModification( propertyURI:string, value:any = null ):void
 	addModification.call( this, ModificationType.DELETE, propertyURI, value );
 }
 
+function clean():void {
+	this._modifications = new Modifications();
+	this._dirty = true;
+}
+
+function isDirty():boolean {
+	return this._dirty;
+}
+
+function commit():Promise<any> {
+	return this._committer.commit( this );
+}
+
+function destroy():any {
+	// TODO: Implement
+}
+
 class Factory {
 	static is( value:any ) {
+		//@formatter:off
 		return (
-		DocumentResource.Factory.is( value ) &&
+			DocumentResource.Factory.is( value ) &&
 
-		Utils.hasProperty( value, '_dirty' ) &&
-		Utils.hasProperty( value, '_modifications' ) &&
-		Utils.hasProperty( value, '_parent' ) &&
-		Utils.hasFunction( value, '_clean' ) &&
+			Utils.hasProperty( value, '_dirty' ) &&
+			Utils.hasProperty( value, '_modifications' ) &&
+			Utils.hasProperty( value, '_parent' ) &&
+			Utils.hasFunction( value, '_clean' ) &&
 
-		Utils.hasFunction( value, 'isDirty' ) &&
+			Utils.hasFunction( value, 'isDirty' ) &&
 
-		Utils.hasFunction( value, 'commit' ) &&
-		Utils.hasFunction( value, 'delete' )
+			Utils.hasFunction( value, 'commit' ) &&
+			Utils.hasFunction( value, 'delete' )
 		);
+		//@formatter:on
 	}
 
 	static from( documentResource:DocumentResource.Class, parent:Parent ):PersistedDocumentResource {
@@ -162,7 +182,7 @@ class Factory {
 				'_modifications': {
 					writable: false,
 					enumerable: false,
-					value: new Map<string, Value.Class[]>()
+					value: new Modifications()
 				},
 				'_parent': {
 					writable: false,
@@ -173,6 +193,12 @@ class Factory {
 
 			persisted._propertyAddedCallbacks.push( registerAddModification );
 			persisted._propertyDeletedCallbacks.push( registerDeleteModification );
+
+			persisted._clean = clean;
+
+			persisted.isDirty = isDirty;
+			persisted.commit = commit;
+			persisted.delete = destroy;
 		}
 		return persisted;
 	}

@@ -1,4 +1,5 @@
 /// <reference path="../../typings/es6/es6.d.ts" />
+/// <reference path="../../typings/es6-promise/es6-promise.d.ts" />
 define(["require", "exports", './DocumentResource', '../Utils', './Value'], function (require, exports, DocumentResource, Utils, Value) {
     var Modifications = (function () {
         function Modifications() {
@@ -107,10 +108,24 @@ define(["require", "exports", './DocumentResource', '../Utils', './Value'], func
         }
         addModification.call(this, ModificationType.DELETE, propertyURI, value);
     }
+    function clean() {
+        this._modifications = new Modifications();
+        this._dirty = true;
+    }
+    function isDirty() {
+        return this._dirty;
+    }
+    function commit() {
+        return this._committer.commit(this);
+    }
+    function destroy() {
+        // TODO: Implement
+    }
     var Factory = (function () {
         function Factory() {
         }
         Factory.is = function (value) {
+            //@formatter:off
             return (DocumentResource.Factory.is(value) &&
                 Utils.hasProperty(value, '_dirty') &&
                 Utils.hasProperty(value, '_modifications') &&
@@ -119,6 +134,7 @@ define(["require", "exports", './DocumentResource', '../Utils', './Value'], func
                 Utils.hasFunction(value, 'isDirty') &&
                 Utils.hasFunction(value, 'commit') &&
                 Utils.hasFunction(value, 'delete'));
+            //@formatter:on
         };
         Factory.from = function (documentResource, parent) {
             var persisted = documentResource;
@@ -132,7 +148,7 @@ define(["require", "exports", './DocumentResource', '../Utils', './Value'], func
                     '_modifications': {
                         writable: false,
                         enumerable: false,
-                        value: new Map()
+                        value: new Modifications()
                     },
                     '_parent': {
                         writable: false,
@@ -142,6 +158,10 @@ define(["require", "exports", './DocumentResource', '../Utils', './Value'], func
                 });
                 persisted._propertyAddedCallbacks.push(registerAddModification);
                 persisted._propertyDeletedCallbacks.push(registerDeleteModification);
+                persisted._clean = clean;
+                persisted.isDirty = isDirty;
+                persisted.commit = commit;
+                persisted.delete = destroy;
             }
             return persisted;
         };

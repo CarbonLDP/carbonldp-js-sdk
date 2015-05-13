@@ -63,7 +63,7 @@ define(["require", "exports", '../Utils', '../namespaces/XSD', './Resource'], fu
             expect(Utils.isFunction(resource.getPropertyURIs)).toBeTruthy();
             expect(Utils.isFunction(resource.addProperty)).toBeTruthy();
             expect(Utils.isFunction(resource.setProperty)).toBeTruthy();
-            expect(Utils.isFunction(resource.removeProperty)).toBeTruthy();
+            expect(Utils.isFunction(resource.deleteProperty)).toBeTruthy();
             // TODO: Finish test
         });
         it("has static method, injectDescriptions( resource, descriptions ), which injects properties that get/set uri properties to the object", function () {

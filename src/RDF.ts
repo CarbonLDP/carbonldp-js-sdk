@@ -1,3 +1,7 @@
+import * as DocumentResource from './rdf/DocumentResource';
+import * as PersistedDocumentResource from './rdf/PersistedDocumentResource';
+import * as FragmentResource from './rdf/FragmentResource';
+import * as PersistedFragmentResource from './rdf/PersistedFragmentResource';
 import * as Literal from './rdf/Literal';
 import PropertyDescription from './rdf/PropertyDescription';
 import * as RDFDocument from './rdf/RDFDocument';
@@ -8,6 +12,10 @@ import * as Value from './rdf/Value';
 
 //@formatter:off
 export {
+	DocumentResource,
+	PersistedDocumentResource,
+	FragmentResource,
+	PersistedFragmentResource,
 	Literal,
 	PropertyDescription,
 	RDFDocument,

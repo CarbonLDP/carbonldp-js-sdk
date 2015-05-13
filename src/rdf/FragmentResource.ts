@@ -1,3 +1,4 @@
+import * as RDFNode from './RDFNode';
 import * as Resource from './Resource';
 import * as URI from './URI';
 import * as Utils from '../Utils';
@@ -24,29 +25,35 @@ class Factory {
 		return fragment;
 	}
 
-	static from( resource:Resource.Class ):FragmentResource;
-	static from( resources:Resource.Class[] ):FragmentResource[];
+	static from( resource:RDFNode.Class ):FragmentResource;
+	static from( resources:RDFNode.Class[] ):FragmentResource[];
 	static from( resourceOrResources:any ):any {
-		var resources:Resource.Class[] = Utils.isArray( resourceOrResources ) ? resourceOrResources : [ resourceOrResources ];
+		var resources:RDFNode.Class[] = Utils.isArray( resourceOrResources ) ? resourceOrResources : [ resourceOrResources ];
 		var fragments:FragmentResource[] = [];
 		for ( let i:number = 0, length:number = resources.length; i < length; i ++ ) {
-			var fragment:FragmentResource = <FragmentResource> resources[ i ];
+			var resource:RDFNode.Class = resources[ i ];
+			resource = Resource.Factory.is( resource ) ? resource : Resource.Factory.from( resource );
 
-			if ( ! Factory.is( fragment ) ) {
-				Object.defineProperty( fragment, 'slug', {
-					writable: true,
-					enumerable: false
-				} );
-
-				if ( ! fragment.uri ) fragment.slug = null;
-				else fragment.slug = '#' + URI.Util.getFragment( fragment.uri );
-			}
+			var fragment:FragmentResource = <FragmentResource> resource;
+			if ( ! Factory.is( fragment ) ) Factory.injectBehaviour( fragment );
 
 			fragments.push( fragment );
 		}
 
 		if ( Utils.isArray( resourceOrResources ) ) return fragments;
 		else return fragments[ 0 ];
+	}
+
+	private static injectBehaviour( fragment:FragmentResource ):FragmentResource {
+		Object.defineProperty( fragment, 'slug', {
+			writable: true,
+			enumerable: false
+		} );
+
+		if ( ! fragment.uri ) fragment.slug = null;
+		else fragment.slug = '#' + URI.Util.getFragment( fragment.uri );
+
+		return fragment;
 	}
 }
 

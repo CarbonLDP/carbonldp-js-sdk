@@ -10,6 +10,36 @@ describe( 'RDF', function () {
 		it( 'is defined', function () {
 			expect( PersistedDocumentResource ).toBeDefined();
 		} );
+		describe( 'Class', function () {
+			var persisted:PersistedDocumentResource.Class;
+
+			beforeEach( function () {
+				var resource:Resource.Class = Resource.Factory.create();
+				var documentResource:DocumentResource.Class = DocumentResource.Factory.from( resource );
+				persisted = PersistedDocumentResource.Factory.from( documentResource, null );
+			} );
+
+			it( 'has method, isDirty(), that returns true when the resource has been modified.', function () {
+				expect( persisted.isDirty ).toBeDefined();
+				expect( Utils.isFunction( persisted.isDirty ) ).toBe( true );
+
+				expect( persisted.isDirty() ).toBe( false );
+				persisted.addProperty( 'http://example.org/title', 'My title' );
+				expect( persisted.isDirty() ).toBe( true );
+			} );
+			it( 'has method, commit(), that commits the changes the resource has, using its parent.', function () {
+				expect( persisted.commit ).toBeDefined();
+				expect( Utils.isFunction( persisted.commit ) ).toBe( true );
+
+				// TODO: Finish test
+			} );
+			it( 'has method, delete(), that deletes the object itself, using its parent.', function () {
+				expect( persisted.delete ).toBeDefined();
+				expect( Utils.isFunction( persisted.delete ) ).toBe( true );
+
+				// TODO: Finish test
+			} );
+		} );
 		describe( 'Factory', function () {
 			it( 'is defined', function () {
 				expect( PersistedDocumentResource.Factory ).toBeDefined();
@@ -23,9 +53,15 @@ describe( 'RDF', function () {
 				expect( persisted ).not.toBeNull();
 				expect( persisted ).toEqual( resource );
 
-				persisted.addProperty( 'http://example.org/title', 'Awesome title' );
+				expect( Utils.hasProperty( persisted, '_dirty' ) ).toBe( true );
+				expect( Utils.hasProperty( persisted, '_modifications' ) ).toBe( true );
+				expect( Utils.hasProperty( persisted, '_parent' ) ).toBe( true );
+				expect( Utils.hasFunction( persisted, '_clean' ) ).toBe( true );
 
-				expect( persisted._dirty ).toBe
+				expect( Utils.hasFunction( persisted, 'isDirty' ) ).toBe( true );
+
+				expect( Utils.hasFunction( persisted, 'commit' ) ).toBe( true );
+				expect( Utils.hasFunction( persisted, 'delete' ) ).toBe( true );
 			} );
 		} );
 	} );
