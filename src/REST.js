@@ -36,11 +36,13 @@ define(["require", "exports", './HTTP', './Utils'], function (require, exports, 
         });
     }
     function setHeaders(request, headers) {
-        var names = headers.getAllKeys();
-        for (var i = 0, length = names.length; i < length; i++) {
-            var name = names[i];
+        var namesIterator = headers.keys();
+        var next = namesIterator.next();
+        while (!next.done) {
+            var name = next.value;
             var value = headers.get(name);
             request.setRequestHeader(name, value.toString());
+            next = namesIterator.next();
         }
     }
     function addBasicAuthHeader(request, credentials) {
@@ -79,7 +81,6 @@ define(["require", "exports", './HTTP', './Utils'], function (require, exports, 
         return sendRequest(Method.GET, url, options);
     }
     exports.get = get;
-    // TODO: export function post( url:string, fields:HashMap<string, any>, options:RequestOptions = {} )
     function post(url, body, options) {
         if (options === void 0) { options = {}; }
         return sendRequest(Method.POST, url, body, options);

@@ -170,7 +170,7 @@ class Factory {
 		//@formatter:on
 	}
 
-	static from( documentResource:DocumentResource.Class, parent:Parent ):PersistedDocumentResource {
+	static from( documentResource:DocumentResource.Class, committer:Committer ):PersistedDocumentResource {
 		var persisted:PersistedDocumentResource = <PersistedDocumentResource> documentResource;
 		if ( ! Factory.is( persisted ) ) {
 			Object.defineProperties( persisted, {

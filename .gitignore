@@ -4,6 +4,9 @@
 # Include your project-specific ignores in this section
 # ----- Project ignores
 
+src/**/*.js
+src/**/*.map
+
 reports/
 
 # IntelliJ

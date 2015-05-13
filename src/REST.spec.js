@@ -42,13 +42,13 @@ define(["require", "exports", './HTTP', './REST', 'es6-promise-polyfill'], funct
                 testHTTPResponse(response);
                 expect(response.status).toEqual(200);
                 var headers = response.headers;
-                expect(headers.hasKey('X-Custom-Header-1')).toBeTruthy();
+                expect(headers.has('X-Custom-Header-1')).toBeTruthy();
                 expect(headers.get('X-Custom-Header-1').values.length).toEqual(1);
-                expect(headers.hasKey('X-Custom-Header-2')).toBeTruthy();
+                expect(headers.has('X-Custom-Header-2')).toBeTruthy();
                 expect(headers.get('X-Custom-Header-2').values.length).toEqual(1);
-                expect(headers.hasKey('X-Custom-Header-3')).toBeTruthy();
+                expect(headers.has('X-Custom-Header-3')).toBeTruthy();
                 expect(headers.get('X-Custom-Header-3').values.length).toEqual(1);
-                expect(headers.hasKey('X-Custom-Header-Multi')).toBeTruthy();
+                expect(headers.has('X-Custom-Header-Multi')).toBeTruthy();
                 expect(headers.get('X-Custom-Header-Multi').values.length).toEqual(8);
             }, failTest));
             promise = REST.get('/404');

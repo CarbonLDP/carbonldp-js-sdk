@@ -1,7 +1,7 @@
+/// <reference path="../typings/es6/es6.d.ts" />
 /// <reference path="../typings/es6-promise/es6-promise.d.ts" />
 import * as HTTP from './HTTP';
 import * as Utils from './Utils';
-import HashMap from './HashMap';
 
 enum Method {
 	OPTIONS,
@@ -43,12 +43,15 @@ function sendRequest( method:Method, url:string, bodyOrOptions:any = defaultRequ
 	);
 }
 
-function setHeaders( request:XMLHttpRequest, headers:HashMap<string, HTTP.Header> ):void {
-	var names:string[] = headers.getAllKeys();
-	for ( var i:number = 0, length:number = names.length; i < length; i ++ ) {
-		var name:string = names[ i ];
+function setHeaders( request:XMLHttpRequest, headers:Map<string, HTTP.Header> ):void {
+	var namesIterator:Iterator<string> = headers.keys();
+	var next = namesIterator.next();
+	while ( ! next.done ) {
+		var name:string = next.value;
 		var value:HTTP.Header = headers.get( name );
 		request.setRequestHeader( name, value.toString() );
+		
+		next = namesIterator.next();
 	}
 }
 
@@ -80,7 +83,7 @@ export interface Credentials {
 }
 
 export interface RequestOptions {
-	headers?: HashMap<string, HTTP.Header>;
+	headers?: Map<string, HTTP.Header>;
 	basic?:Credentials;
 	sendCredentialsOnCORS?:boolean;
 	timeout?:number;
@@ -99,7 +102,7 @@ export function get( url:string, options:RequestOptions = {} ):Promise<HTTP.Resp
 	return sendRequest( Method.GET, url, options );
 }
 
-// TODO: export function post( url:string, fields:HashMap<string, any>, options:RequestOptions = {} )
+// TODO: export function post( url:string, fields:Map<string, any>, options:RequestOptions = {} )
 export function post( url:string, body:string, options:RequestOptions = {} ):Promise<HTTP.Response> {
 	return sendRequest( Method.POST, url, body, options );
 }

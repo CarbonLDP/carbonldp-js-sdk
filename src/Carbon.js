@@ -18,5 +18,4 @@ define(["require", "exports", './Apps', './Documents', './RDF', './Resources', '
     exports.Carbon = Carbon;
     exports.default = new Carbon(configuration);
 });
-//@formatter:on 
 //# sourceMappingURL=Carbon.js.map

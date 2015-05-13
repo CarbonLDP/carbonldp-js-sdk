@@ -13,7 +13,6 @@ define(["require", "exports", './Documents', './Resources', './Utils', 'es6-prom
         it('has method get( uri, options ) which makes an AJAX GET request and returns a promise with the response', function (done) {
             expect(Resources_1.default).toBeDefined();
             expect(Utils.isFunction(Resources_1.default)).toBe(true);
-            // TODO: Mock Documents module
             var documents = new Documents_1.default();
             var resources = new Resources_1.default(documents);
             expect(resources.get).toBeTruthy();
@@ -34,7 +33,6 @@ define(["require", "exports", './Documents', './Resources', './Utils', 'es6-prom
             promise = resources.get('http://example.org/resource');
             promises.push(promise.then(function (resource) {
                 expect(resource).toBeDefined();
-                // TODO: Finish
             }, failTest));
             Promise.all(promises).then(done, done);
         });

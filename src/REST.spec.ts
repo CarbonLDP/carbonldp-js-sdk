@@ -1,8 +1,8 @@
 /// <reference path="../typings/jasmine/jasmine.d.ts" />
 /// <reference path="../typings/jasmine-ajax/mock-ajax.d.ts" />
+/// <reference path="../typings/es6/es6.d.ts" />
 /// <reference path="../typings/es6-promise/es6-promise.d.ts" />
 /// <reference path="../typings/es6-promise-polyfill/es6-promise-polyfill.d.ts" />
-import HashMap from './HashMap';
 import * as HTTP from './HTTP';
 import * as REST from './REST';
 import * as es6Promise from 'es6-promise-polyfill';
@@ -57,14 +57,14 @@ describe( 'REST', function () {
 			testHTTPResponse( response );
 			expect( response.status ).toEqual( 200 );
 
-			var headers:HashMap<string, HTTP.Header> = response.headers;
-			expect( headers.hasKey( 'X-Custom-Header-1' ) ).toBeTruthy();
+			var headers:Map<string, HTTP.Header> = response.headers;
+			expect( headers.has( 'X-Custom-Header-1' ) ).toBeTruthy();
 			expect( headers.get( 'X-Custom-Header-1' ).values.length ).toEqual( 1 );
-			expect( headers.hasKey( 'X-Custom-Header-2' ) ).toBeTruthy();
+			expect( headers.has( 'X-Custom-Header-2' ) ).toBeTruthy();
 			expect( headers.get( 'X-Custom-Header-2' ).values.length ).toEqual( 1 );
-			expect( headers.hasKey( 'X-Custom-Header-3' ) ).toBeTruthy();
+			expect( headers.has( 'X-Custom-Header-3' ) ).toBeTruthy();
 			expect( headers.get( 'X-Custom-Header-3' ).values.length ).toEqual( 1 );
-			expect( headers.hasKey( 'X-Custom-Header-Multi' ) ).toBeTruthy();
+			expect( headers.has( 'X-Custom-Header-Multi' ) ).toBeTruthy();
 			expect( headers.get( 'X-Custom-Header-Multi' ).values.length ).toEqual( 8 );
 		}, failTest ) );
 
@@ -74,7 +74,8 @@ describe( 'REST', function () {
 			testHTTPResponse( response );
 			expect( response.status ).toEqual( 404 );
 
-			var headers:HashMap<string, HTTP.Header> = response.headers;
+			var headers:Map<string, HTTP.Header> = response.headers;
+			// TODO: Finish test
 
 		} ) );
 

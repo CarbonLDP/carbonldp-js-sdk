@@ -33,19 +33,21 @@ class Resources implements Committer {
 			( processedResponse:HTTP.ProcessedResponse<RDFDocument.Class> ) => {
 				var document:RDFDocument.Class = <RDFDocument.Class> processedResponse.result;
 				var documentResourceNodes:RDFNode.Class[] = RDFDocument.Util.getDocumentResources( document );
-				var documentResources:PersistedDocumentResource.Class[] = [];
-				for ( let i:number = 0, length:number = documentResourceNodes.length; i < length; i ++ ) {
-					var documentResourceNode:RDFNode.Class = documentResourceNodes[ i ];
-					var fragmentNodes:RDFNode.Class[] = RDFDocument.Util.getFragmentResources( document, documentResourceNode );
-					var documentResource:DocumentResource.Class = DocumentResource.Factory.from( documentResourceNode, fragmentNodes );
 
-					var persistedDocumentResource:PersistedDocumentResource.Class = PersistedDocumentResource.Factory.from( documentResource, this );
+				if ( documentResourceNodes.length > 1 ) throw new Error( 'NotSupported: Multiple document resources were returned.' );
 
+				var documentResourceNode:RDFNode.Class = documentResourceNodes[ 0 ];
+				var fragmentNodes:RDFNode.Class[] = RDFDocument.Util.getFragmentResources( document, documentResourceNode );
+				var documentResource:DocumentResource.Class = DocumentResource.Factory.from( documentResourceNode, fragmentNodes );
 
-				}
+				var persistedDocumentResource:PersistedDocumentResource.Class = PersistedDocumentResource.Factory.from( documentResource, this );
 
-				// TODO: Finish implementing
-				return null;
+				// TODO: Inject registered definitions
+
+				return {
+					result: persistedDocumentResource,
+					response: processedResponse.response
+				};
 			}
 		);
 	}

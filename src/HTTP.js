@@ -1,4 +1,5 @@
-define(["require", "exports", './Utils', './HashMap'], function (require, exports, Utils, HashMap_1) {
+/// <reference path="../typings/es6/es6.d.ts" />
+define(["require", "exports", './Utils'], function (require, exports, Utils) {
     var StatusCode;
     (function (StatusCode) {
         StatusCode[StatusCode["CONTINUE"] = 100] = "CONTINUE";
@@ -47,7 +48,7 @@ define(["require", "exports", './Utils', './HashMap'], function (require, export
         function HeaderUtil() {
         }
         HeaderUtil.parseHeaders = function (headersString) {
-            var headers = new HashMap_1.default();
+            var headers = new Map();
             var headerStrings = headersString.split('\r\n');
             for (var i = 0, length = headerStrings.length; i < length; i++) {
                 var headerString = headerStrings[i];
@@ -58,12 +59,12 @@ define(["require", "exports", './Utils', './HashMap'], function (require, export
                     throw new Error("ParseException: The header couldn't be parsed.");
                 var name = parts[0].trim();
                 var header = new Header(parts[1].trim());
-                if (headers.hasKey(name)) {
+                if (headers.has(name)) {
                     var existingHeader = headers.get(name);
                     existingHeader.values.concat(header.values);
                 }
                 else
-                    headers.put(name, header);
+                    headers.set(name, header);
             }
             return headers;
         };
@@ -172,12 +173,10 @@ define(["require", "exports", './Utils', './HashMap'], function (require, export
             if (headersString)
                 this.headers = HeaderUtil.parseHeaders(headersString);
             else
-                this.headers = new HashMap_1.default();
+                this.headers = new Map();
         };
         return Response;
     })();
     exports.Response = Response;
-    //@formatter:off
 });
-//@formatter:on 
 //# sourceMappingURL=HTTP.js.map

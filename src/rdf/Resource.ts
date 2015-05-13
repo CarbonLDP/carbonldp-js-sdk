@@ -161,26 +161,31 @@ function tieArray( resource:Resource, property:string, array:any[] ) {
 
 class Factory {
 	static is( value:any ):boolean {
+		//@formatter:off
 		return (
-		RDFNode.Factory.is( value ) &&
+			// RDFNode.Factory.is( value ) &&
 
-		Utils.hasFunction( value, '_propertyAddedCallbacks' ) &&
-		Utils.hasFunction( value, '_propertyDeletedCallbacks' ) &&
+			( ! Utils.isNull( value ) ) &&
+			Utils.isObject( value ) &&
 
-		Utils.hasProperty( value, 'uri' ) &&
+			Utils.hasPropertyDefined( value, '_propertyAddedCallbacks' ) &&
+			Utils.hasPropertyDefined( value, '_propertyDeletedCallbacks' ) &&
 
-		Utils.hasFunction( value, 'hasType' ) &&
-		Utils.hasFunction( value, 'hasProperty' ) &&
-		Utils.hasFunction( value, 'getProperty' ) &&
-		Utils.hasFunction( value, 'getPropertyValue' ) &&
-		Utils.hasFunction( value, 'getPropertyURI' ) &&
-		Utils.hasFunction( value, 'getProperties' ) &&
-		Utils.hasFunction( value, 'getPropertyValues' ) &&
-		Utils.hasFunction( value, 'getPropertyURIs' ) &&
-		Utils.hasFunction( value, 'addProperty' ) &&
-		Utils.hasFunction( value, 'setProperty' ) &&
-		Utils.hasFunction( value, 'deleteProperty' )
+			Utils.hasPropertyDefined( value, 'uri' ) &&
+
+			Utils.hasFunction( value, 'hasType' ) &&
+			Utils.hasFunction( value, 'hasProperty' ) &&
+			Utils.hasFunction( value, 'getProperty' ) &&
+			Utils.hasFunction( value, 'getPropertyValue' ) &&
+			Utils.hasFunction( value, 'getPropertyURI' ) &&
+			Utils.hasFunction( value, 'getProperties' ) &&
+			Utils.hasFunction( value, 'getPropertyValues' ) &&
+			Utils.hasFunction( value, 'getPropertyURIs' ) &&
+			Utils.hasFunction( value, 'addProperty' ) &&
+			Utils.hasFunction( value, 'setProperty' ) &&
+			Utils.hasFunction( value, 'deleteProperty' )
 		);
+		//@formatter:on
 	}
 
 	static create():Resource {

@@ -1,5 +1,6 @@
+/// <reference path="../typings/es6/es6.d.ts" />
+
 import * as Utils from './Utils';
-import HashMap from './HashMap';
 
 enum StatusCode {
 	CONTINUE = 100,
@@ -45,8 +46,8 @@ enum StatusCode {
 }
 
 class HeaderUtil {
-	static parseHeaders( headersString:string ):HashMap<string, Header> {
-		var headers:HashMap<string, Header> = new HashMap<string, Header>();
+	static parseHeaders( headersString:string ):Map<string, Header> {
+		var headers:Map<string, Header> = new Map<string, Header>();
 
 		var headerStrings:string[] = headersString.split( '\r\n' );
 		for ( var i:number = 0, length:number = headerStrings.length; i < length; i ++ ) {
@@ -58,10 +59,10 @@ class HeaderUtil {
 
 			var name = parts[ 0 ].trim();
 			var header = new Header( parts[ 1 ].trim() );
-			if ( headers.hasKey( name ) ) {
+			if ( headers.has( name ) ) {
 				var existingHeader:Header = headers.get( name );
 				existingHeader.values.concat( header.values );
-			} else headers.put( name, header );
+			} else headers.set( name, header );
 		}
 
 		return headers;
@@ -166,14 +167,14 @@ class Response {
 
 	status:number;
 	data:string;
-	headers:HashMap<string, Header>;
+	headers:Map<string, Header>;
 	request:XMLHttpRequest;
 
 
 	private setHeaders( request:XMLHttpRequest ):void {
 		var headersString = request.getAllResponseHeaders();
 		if ( headersString ) this.headers = HeaderUtil.parseHeaders( headersString );
-		else this.headers = new HashMap<string, Header>();
+		else this.headers = new Map<string, Header>();
 	}
 }
 

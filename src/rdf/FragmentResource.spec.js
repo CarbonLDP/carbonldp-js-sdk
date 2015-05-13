@@ -26,7 +26,6 @@ define(["require", "exports", './FragmentResource', '../Utils'], function (requi
                 it('has method, from( resources ), that makes the resources provided, fragment resources and returns them.', function () {
                     expect(FragmentResource.Factory.from).toBeDefined();
                     expect(Utils.isFunction(FragmentResource.Factory.from)).toBeTruthy();
-                    // TODO: Finish test
                 });
             });
         });

@@ -119,13 +119,11 @@ define(["require", "exports", './DocumentResource', '../Utils', './Value'], func
         return this._committer.commit(this);
     }
     function destroy() {
-        // TODO: Implement
     }
     var Factory = (function () {
         function Factory() {
         }
         Factory.is = function (value) {
-            //@formatter:off
             return (DocumentResource.Factory.is(value) &&
                 Utils.hasProperty(value, '_dirty') &&
                 Utils.hasProperty(value, '_modifications') &&
@@ -134,9 +132,8 @@ define(["require", "exports", './DocumentResource', '../Utils', './Value'], func
                 Utils.hasFunction(value, 'isDirty') &&
                 Utils.hasFunction(value, 'commit') &&
                 Utils.hasFunction(value, 'delete'));
-            //@formatter:on
         };
-        Factory.from = function (documentResource, parent) {
+        Factory.from = function (documentResource, committer) {
             var persisted = documentResource;
             if (!Factory.is(persisted)) {
                 Object.defineProperties(persisted, {

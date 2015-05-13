@@ -9,6 +9,10 @@ define(["require", "exports"], function (require, exports) {
         return 'undefined' !== typeof object[property];
     }
     exports.hasProperty = hasProperty;
+    function hasPropertyDefined(object, property) {
+        return !!Object.getOwnPropertyDescriptor(object, property);
+    }
+    exports.hasPropertyDefined = hasPropertyDefined;
     function isNull(value) {
         return value === null;
     }
@@ -106,6 +110,7 @@ define(["require", "exports"], function (require, exports) {
         return S;
     })();
     exports.S = S;
-    ;
+    //@formatter:off
 });
+//@foramtter:on 
 //# sourceMappingURL=Utils.js.map

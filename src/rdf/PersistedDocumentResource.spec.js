@@ -21,12 +21,10 @@ define(["require", "exports", './Resource', './DocumentResource', './PersistedDo
                 it('has method, commit(), that commits the changes the resource has, using its parent.', function () {
                     expect(persisted.commit).toBeDefined();
                     expect(Utils.isFunction(persisted.commit)).toBe(true);
-                    // TODO: Finish test
                 });
                 it('has method, delete(), that deletes the object itself, using its parent.', function () {
                     expect(persisted.delete).toBeDefined();
                     expect(Utils.isFunction(persisted.delete)).toBe(true);
-                    // TODO: Finish test
                 });
             });
             describe('Factory', function () {

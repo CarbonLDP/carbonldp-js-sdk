@@ -5,7 +5,6 @@ define(["require", "exports", './Documents', './Resources', './RDF'], function (
             this.parent = parent;
             this.base = base;
             this.Definitions = new Map();
-            // TODO: Save app base URI
             this.Documents = new Documents_1.default(this);
             this.Resources = new Resources_1.default(this.Documents);
         }

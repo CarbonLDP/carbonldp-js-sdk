@@ -10,7 +10,5 @@ define(["require", "exports", './rdf/DocumentResource', './rdf/PersistedDocument
     exports.Resource = Resource;
     exports.URI = URI;
     exports.Value = Value;
-    //@formatter:off
 });
-//@formatter:on 
 //# sourceMappingURL=RDF.js.map

@@ -6,7 +6,6 @@ define(["require", "exports", "jsonld", './REST', './Utils', './RDF'], function 
             return JSON.parse(input);
         }
         catch (error) {
-            // TODO: Handle SyntaxError
             throw error;
         }
     }
@@ -47,7 +46,6 @@ define(["require", "exports", "jsonld", './REST', './Utils', './RDF'], function 
                     expandedResult = [expandedResult];
                 }
                 var uri;
-                // TODO: Get URI
                 var document = RDF.RDFDocument.Factory.create(uri, expandedResult);
                 return {
                     result: document,

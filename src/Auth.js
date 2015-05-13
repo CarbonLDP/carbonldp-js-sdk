@@ -10,7 +10,6 @@ define(["require", "exports"], function (require, exports) {
         }
         Auth.prototype.login = function (username, password) {
             return new Promise(function (resolve, reject) {
-                // TODO: Implement
                 reject("Not implemented");
             });
         };

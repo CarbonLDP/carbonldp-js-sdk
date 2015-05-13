@@ -127,10 +127,14 @@ define(["require", "exports", './Literal', '../Utils', '../namespaces/RDF', './R
         function Factory() {
         }
         Factory.is = function (value) {
-            return (RDFNode.Factory.is(value) &&
-                Utils.hasFunction(value, '_propertyAddedCallbacks') &&
-                Utils.hasFunction(value, '_propertyDeletedCallbacks') &&
-                Utils.hasProperty(value, 'uri') &&
+            //@formatter:off
+            return (
+            // RDFNode.Factory.is( value ) &&
+            (!Utils.isNull(value)) &&
+                Utils.isObject(value) &&
+                Utils.hasPropertyDefined(value, '_propertyAddedCallbacks') &&
+                Utils.hasPropertyDefined(value, '_propertyDeletedCallbacks') &&
+                Utils.hasPropertyDefined(value, 'uri') &&
                 Utils.hasFunction(value, 'hasType') &&
                 Utils.hasFunction(value, 'hasProperty') &&
                 Utils.hasFunction(value, 'getProperty') &&
@@ -142,6 +146,7 @@ define(["require", "exports", './Literal', '../Utils', '../namespaces/RDF', './R
                 Utils.hasFunction(value, 'addProperty') &&
                 Utils.hasFunction(value, 'setProperty') &&
                 Utils.hasFunction(value, 'deleteProperty'));
+            //@formatter:on
         };
         Factory.create = function () {
             var resource = {};

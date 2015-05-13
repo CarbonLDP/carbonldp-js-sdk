@@ -1,55 +1,59 @@
-export function hasFunction( object:Object, functionName:string ):boolean {
+function hasFunction( object:Object, functionName:string ):boolean {
 	return typeof object[ functionName ] === 'function';
 }
 
-export function hasProperty( object:Object, property:string ):boolean {
+function hasProperty( object:Object, property:string ):boolean {
 	if ( ! object ) return false;
 	return 'undefined' !== typeof object[ property ];
 }
 
-export function isNull( value:any ) {
+function hasPropertyDefined( object:Object, property:string ):boolean {
+	return ! ! Object.getOwnPropertyDescriptor( object, property );
+}
+
+function isNull( value:any ) {
 	return value === null;
 }
 
-export function isArray( object:any ) {
+function isArray( object:any ) {
 	return Object.prototype.toString.call( object ) === '[object Array]';
 }
 
-export function isString( string:any ) {
+function isString( string:any ) {
 	return typeof string == 'string' || string instanceof String;
 }
 
-export function isBoolean( boolean:any ) {
+function isBoolean( boolean:any ) {
 	return typeof boolean == 'boolean';
 }
 
-export function isNumber( number:any ) {
+function isNumber( number:any ) {
 	return typeof number == 'number' || number instanceof Number;
 }
 
-export function isInteger( number:any ) {
+function isInteger( number:any ) {
 	if ( ! isNumber( number ) )return false;
 	return number % 1 == 0;
 }
 
-export function isDouble( number:any ) {
+function isDouble( number:any ) {
 	if ( ! isNumber( number ) ) return false;
 	return number % 1 != 0;
 }
 
-export function isDate( date:any ) {
+function isDate( date:any ) {
 	return typeof date == 'date' || date instanceof Date;
 }
 
-export function isObject( object:any ) {
+function isObject( object:any ) {
 	return typeof object === 'object';
 }
 
-export function isFunction( value:any ) {
+function isFunction( value:any ) {
 	return typeof value === 'function';
 }
 
-export function parseBoolean( value:string ):boolean {
+function parseBoolean( value:string ):boolean {
 	if ( ! isString( value ) ) return false;
 
 	switch ( value.toLowerCase() ) {
@@ -67,7 +71,7 @@ export function parseBoolean( value:string ):boolean {
 	}
 }
 
-export function extend( ...target:Object[] ):Object {
+function extend( ...target:Object[] ):Object {
 	if ( arguments.length <= 1 ) return;
 	for ( var i = 1, length = arguments.length; i < length; i ++ ) {
 		var toMerge = arguments[ i ];
@@ -82,7 +86,7 @@ export function extend( ...target:Object[] ):Object {
 	return target;
 }
 
-export class S {
+class S {
 	static startsWith( string:string, substring:string ):boolean {
 		return string.lastIndexOf( substring, 0 ) === 0;
 	}
@@ -95,4 +99,24 @@ export class S {
 		return string.indexOf( substring ) !== - 1;
 	}
 }
-;
+
+//@formatter:off
+export {
+	hasFunction,
+	hasProperty,
+	hasPropertyDefined,
+	isNull,
+	isArray,
+	isString,
+	isBoolean,
+	isNumber,
+	isInteger,
+	isDouble,
+	isDate,
+	isObject,
+	isFunction,
+	parseBoolean,
+	extend,
+	S
+};
+//@foramtter:on

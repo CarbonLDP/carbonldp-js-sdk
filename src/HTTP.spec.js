@@ -84,7 +84,6 @@ define(["require", "exports", './HTTP', './Utils'], function (require, exports, 
                 expect(value.secondaryValue).toBeNull();
             });
             it('has method, toString(), which constructs the string representation', function () {
-                // TODO: Test
             });
         });
         describe('has class, Response, which', function () {

@@ -27,12 +27,26 @@ module.exports = function( grunt ) {
 				}
 			},
 			karma    : {
-				configFile: 'karma.conf.js',
-				all_tests : {
-					browsers: [ 'PhantomJS', 'Chrome', 'Firefox' ]
+				all_tests: {
+					browsers  : [ 'PhantomJS', 'Chrome', 'Firefox' ],
+					configFile: 'karma.conf.js'
 				},
-				unit      : {
-					browsers: [ 'PhantomJS' ]
+				unit     : {
+					browsers  : [ 'Chrome' ],
+					configFile: 'karma.conf.js',
+					logLevel  : 'DEBUG'
+				}
+			},
+			ts       : {
+				default: {
+					src    : [ 'src/**/*.ts' ],
+					options: {
+						compiler: 'node_modules/typescript/bin/tsc',
+						module  : 'amd',
+						target  : 'es5',
+						verbose : true,
+						fast    : 'never'
+					}
 				}
 			},
 			requirejs: {
@@ -41,11 +55,17 @@ module.exports = function( grunt ) {
 						baseUrl                : '.',
 						name                   : 'bower_components/almond/almond.js',
 						include                : [ 'Carbon' ],
+						exclude                : [ 'jsonld' ],
 						packages               : [
 							{
 								name    : 'Carbon',
 								location: 'src',
 								main    : 'Carbon'
+							},
+							{
+								name    : 'jsonld',
+								location: 'bower_components/jsonld.js/js',
+								main    : 'jsonld'
 							}
 						],
 						out                    : 'dist/Carbon.js',
@@ -62,11 +82,17 @@ module.exports = function( grunt ) {
 						baseUrl                : '.',
 						name                   : 'bower_components/almond/almond.js',
 						include                : [ 'Carbon' ],
+						exclude                : [ 'jsonld' ],
 						packages               : [
 							{
 								name    : 'Carbon',
 								location: 'src',
 								main    : 'Carbon'
+							},
+							{
+								name    : 'jsonld',
+								location: 'bower_components/jsonld.js/js',
+								main    : 'jsonld'
 							}
 						],
 						out                    : 'dist/Carbon.min.js',
@@ -83,8 +109,7 @@ module.exports = function( grunt ) {
 		}
 	);
 
-	grunt.registerTask( 'serve', [ 'watch' ] );
+	grunt.registerTask( 'dist:dev', [ 'ts', 'karma:unit', 'requirejs:dev' ] );
 	grunt.registerTask( 'test', [ 'karma:all_tests' ] );
-	grunt.registerTask( 'dependencies', [ 'requirejs:jsonld' ] );
 
 };

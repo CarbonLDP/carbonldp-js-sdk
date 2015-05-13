@@ -42,11 +42,9 @@ define(["require", "exports", '../Utils', '../namespaces/XSD', './Resource'], fu
         });
         it("has static method, is( object ), which returns true if the object is an RDFResource (has an '@id')", function () {
             expect(Resource.Factory.is).toBeDefined();
-            // TODO: Test
         });
         it("has static method, create(), which creates an empty Resource and returns it.", function () {
             expect(Resource.Factory.create).toBeDefined();
-            // TODO: Test
         });
         it("has static method, from( object ), which injects RDFResource methods to the object and returns it", function () {
             expect(Resource.Factory.from).toBeDefined();
@@ -64,7 +62,6 @@ define(["require", "exports", '../Utils', '../namespaces/XSD', './Resource'], fu
             expect(Utils.isFunction(resource.addProperty)).toBeTruthy();
             expect(Utils.isFunction(resource.setProperty)).toBeTruthy();
             expect(Utils.isFunction(resource.deleteProperty)).toBeTruthy();
-            // TODO: Finish test
         });
         it("has static method, injectDescriptions( resource, descriptions ), which injects properties that get/set uri properties to the object", function () {
             expect(Resource.Factory.injectDescriptions).toBeDefined();
@@ -88,7 +85,6 @@ define(["require", "exports", '../Utils', '../namespaces/XSD', './Resource'], fu
             expect(comments[3]['@id']).toEqual('http://example.com/posts/1/comments/4/');
         });
         it("has static method, injectDescriptions( resources, descriptions ), which injects properties that get/set uri properties to the objects", function () {
-            // TODO: Test
         });
     });
 });

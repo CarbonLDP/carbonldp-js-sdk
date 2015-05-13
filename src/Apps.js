@@ -11,7 +11,6 @@ define(["require", "exports", './RDF', './Utils'], function (require, exports, R
                 this.parent.resolve(uri);
             }
             return new Promise(function (resolve, reject) {
-                // TODO: Implement
                 reject("Not implemented");
             });
         };
