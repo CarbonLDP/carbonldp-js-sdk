@@ -7,7 +7,7 @@ import PropertyDescription from './PropertyDescription';
 describe( 'Resource.Factory', function () {
 
 	var object;
-	var descriptions:PropertyDescription[];
+	var descriptions:Object;
 
 	beforeEach( function () {
 		object = {
@@ -29,20 +29,18 @@ describe( 'Resource.Factory', function () {
 				}
 			]
 		};
-		descriptions = [
-			{
-				name: 'title',
+		descriptions = {
+			'title': {
 				uri: 'http://example.com/ns#title',
 				multi: false,
 				literal: true
 			},
-			{
-				name: 'comment',
+			'comment': {
 				uri: 'http://example.com/ns#comment',
 				multi: true,
 				literal: false
 			}
-		];
+		};
 	} );
 
 	it( 'is defined', function () {
@@ -62,18 +60,19 @@ describe( 'Resource.Factory', function () {
 
 		var resource:Resource.Class = Resource.Factory.from( object );
 		expect( resource.uri ).toBeDefined();
-		expect( Utils.isFunction( resource.addProperty ) ).toBeTruthy();
-		expect( Utils.isFunction( resource.hasType ) ).toBeTruthy();
-		expect( Utils.isFunction( resource.hasProperty ) ).toBeTruthy();
-		expect( Utils.isFunction( resource.getProperty ) ).toBeTruthy();
-		expect( Utils.isFunction( resource.getPropertyValue ) ).toBeTruthy();
-		expect( Utils.isFunction( resource.getPropertyURI ) ).toBeTruthy();
-		expect( Utils.isFunction( resource.getProperties ) ).toBeTruthy();
-		expect( Utils.isFunction( resource.getPropertyValues ) ).toBeTruthy();
-		expect( Utils.isFunction( resource.getPropertyURIs ) ).toBeTruthy();
-		expect( Utils.isFunction( resource.addProperty ) ).toBeTruthy();
-		expect( Utils.isFunction( resource.setProperty ) ).toBeTruthy();
-		expect( Utils.isFunction( resource.deleteProperty ) ).toBeTruthy();
+		expect( Utils.isFunction( resource.addProperty ) ).toBe( true );
+		expect( Utils.isFunction( resource.hasProperty ) ).toBe( true );
+		expect( Utils.isFunction( resource.getProperty ) ).toBe( true );
+		expect( Utils.isFunction( resource.getPropertyValue ) ).toBe( true );
+		expect( Utils.isFunction( resource.getPropertyURI ) ).toBe( true );
+		expect( Utils.isFunction( resource.getProperties ) ).toBe( true );
+		expect( Utils.isFunction( resource.getPropertyValues ) ).toBe( true );
+		expect( Utils.isFunction( resource.getPropertyURIs ) ).toBe( true );
+		expect( Utils.isFunction( resource.addProperty ) ).toBe( true );
+		expect( Utils.isFunction( resource.setProperty ) ).toBe( true );
+		expect( Utils.isFunction( resource.deleteProperty ) ).toBe( true );
+
+		expect( Utils.hasPropertyDefined( resource, 'types' ) ).toBe( true );
 		// TODO: Finish test
 	} );
 	it( "has static method, injectDescriptions( resource, descriptions ), which injects properties that get/set uri properties to the object", function () {
@@ -92,16 +91,16 @@ describe( 'Resource.Factory', function () {
 
 		var comments:any = post.comment;
 		expect( comments ).toBeDefined();
-		expect( Utils.isArray( comments ) ).toBeTruthy();
+		expect( Utils.isArray( comments ) ).toBe( true );
 		expect( comments.length ).toEqual( 3 );
 
 		var comment:any = {'@id': 'http://example.com/posts/1/comments/4/'};
 		comments.push( comment );
 
 		comments = post[ 'http://example.com/ns#comment' ];
-		expect( Utils.isArray( comments ) ).toBeTruthy();
+		expect( Utils.isArray( comments ) ).toBe( true );
 		expect( comments.length ).toEqual( 4 );
-		expect( Utils.isObject( comments[ 3 ] ) ).toBeTruthy();
+		expect( Utils.isObject( comments[ 3 ] ) ).toBe( true );
 		expect( comments[ 3 ][ '@id' ] ).toEqual( 'http://example.com/posts/1/comments/4/' );
 	} );
 

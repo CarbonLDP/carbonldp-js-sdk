@@ -18,12 +18,9 @@ module.exports = function( grunt ) {
 	grunt.initConfig(
 		{
 			watch    : {
-				main: {
-					options: {
-						spawn: false
-					},
-					files  : [ 'src/**/*.ts' ],
-					tasks  : [] //all the tasks are run dynamically during the watch event handler
+				typescript: {
+					files: [ 'src/**/*.ts' ],
+					tasks: [ 'ts' ] //all the tasks are run dynamically during the watch event handler
 				}
 			},
 			karma    : {
@@ -110,6 +107,7 @@ module.exports = function( grunt ) {
 	);
 
 	grunt.registerTask( 'dist:dev', [ 'ts', 'karma:unit', 'requirejs:dev' ] );
+	grunt.registerTask( 'develop', [ 'watch' ] );
 	grunt.registerTask( 'test', [ 'karma:all_tests' ] );
 
 };

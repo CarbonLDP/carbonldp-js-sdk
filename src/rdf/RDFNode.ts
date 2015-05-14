@@ -14,6 +14,12 @@ class Factory {
 		);
 		//@formatter:on
 	}
+
+	static create( uri:string ):RDFNode {
+		return {
+			'@id': uri
+		};
+	}
 }
 
 class Util {

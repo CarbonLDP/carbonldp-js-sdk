@@ -8,7 +8,7 @@ var jsonld;
 import * as HTTP from './HTTP';
 import Documents from './Documents';
 import Committer from './Committer';
-import * as Utils from './Utils';
+import Parent from './Parent';
 import {
 	RDFDocument,
 	RDFNode,
@@ -18,22 +18,51 @@ import {
 	FragmentResource,
 	PersistedFragmentResource
 } from './RDF';
+import * as Utils from './Utils';
 import * as RDFSource from './ldp/RDFSource';
 //@formatter:on
 
 class Resources implements Committer {
-	private documents:Documents;
+	private parent:Parent;
 
-	constructor( documents:Documents ) {
-		this.documents = documents;
+	constructor( parent:Parent ) {
+		this.parent = parent;
 	}
 
 	get( uri:string ):Promise<HTTP.ProcessedResponse<PersistedDocumentResource.Class>> {
-		return this.documents.get( uri ).then(
+		return this.parent.Documents.get( uri ).then(
+			( processedResponse:HTTP.ProcessedResponse<RDFDocument.Class[]> ) => {
+				var documents:RDFDocument.Class[] = processedResponse.result;
+				if ( documents.length === 0 ) throw new Error( 'BadResponse: No document was returned.' );
+				if ( documents.length > 1 ) throw new Error( 'Unsupported: Multiple graphs are currently not supported.' );
+				var document:RDFDocument.Class = documents[ 0 ];
+
+				var nodes:RDFNode.Class[] = RDFDocument.Util.getResources( document );
+				var resources:Resource.Class[] = Resource.Factory.from( nodes );
+
+				var definitionURIs:string[] = this.parent.getDefinitionURIs();
+
+				for ( let i:number = 0, length:number = definitionURIs.length; i < length; i ++ ) {
+					var definitionURI:string = definitionURIs[ i ];
+					var toInject:Resource.Class[] = [];
+					for ( let j:number = 0, resourcesLength:number = resources.length; j < resourcesLength; j ++ ) {
+						var resource:Resource.Class = resources[ j ];
+						if ( resource.types.indexOf( definitionURI ) !== - 1 ) toInject.push( resource );
+					}
+					if ( toInject.length > 0 ) Resource.Factory.injectDescriptions( toInject, this.parent.getDefinition( definitionURI ) );
+				}
+
+				return {
+					result: document,
+					response: processedResponse.response
+				};
+			}
+		).then(
 			( processedResponse:HTTP.ProcessedResponse<RDFDocument.Class> ) => {
-				var document:RDFDocument.Class = <RDFDocument.Class> processedResponse.result;
+				var document:RDFDocument.Class = processedResponse.result;
 				var documentResourceNodes:RDFNode.Class[] = RDFDocument.Util.getDocumentResources( document );
 
+				if ( documentResourceNodes.length === 0 ) throw new Error( 'BadResponse: No document resource was returned.' );
 				if ( documentResourceNodes.length > 1 ) throw new Error( 'NotSupported: Multiple document resources were returned.' );
 
 				var documentResourceNode:RDFNode.Class = documentResourceNodes[ 0 ];

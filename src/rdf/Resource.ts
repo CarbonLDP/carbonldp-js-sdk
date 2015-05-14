@@ -1,3 +1,5 @@
+/// <reference path="../../typings/es6/es6.d.ts" />
+
 import * as Literal from './Literal';
 import * as Value from './Value';
 import PropertyDescription from './PropertyDescription';
@@ -11,8 +13,8 @@ interface Resource extends RDFNode.Class {
 	_propertyDeletedCallbacks:(( property:string, value?:any )=>void)[];
 
 	uri:string;
+	types:Array<string>;
 
-	hasType:( type:string )=>boolean;
 	hasProperty:( property:string )=>boolean;
 	getProperty:( property:string )=>any;
 	getPropertyValue:( property:string )=>any;
@@ -23,19 +25,6 @@ interface Resource extends RDFNode.Class {
 	addProperty:( property:string, value:any )=>void;
 	setProperty:( property:string, value:any )=>void;
 	deleteProperty:( property:string )=>void;
-}
-
-function hasType( type:string ):boolean {
-	var property = RDF.Predicate.type;
-	if ( ! this.hasOwnProperty( property ) ) return false;
-	var values = Utils.isArray( this[ property ] ) ? this[ property ] : [ this[ property ] ];
-	return (function () {
-		for ( var i = 0, length = values.length; i < length; i ++ ) {
-			var value = values[ i ];
-			if ( value[ '@id' ] == type ) return true;
-		}
-		return false;
-	})();
 }
 
 function hasProperty( propertyURI:string ):boolean {
@@ -172,8 +161,8 @@ class Factory {
 			Utils.hasPropertyDefined( value, '_propertyDeletedCallbacks' ) &&
 
 			Utils.hasPropertyDefined( value, 'uri' ) &&
+			Utils.hasPropertyDefined( value, 'types' ) &&
 
-			Utils.hasFunction( value, 'hasType' ) &&
 			Utils.hasFunction( value, 'hasProperty' ) &&
 			Utils.hasFunction( value, 'getProperty' ) &&
 			Utils.hasFunction( value, 'getPropertyValue' ) &&
@@ -193,9 +182,7 @@ class Factory {
 		return Factory.from( resource );
 	}
 
-	static from( object:Object ):Resource;
-	static from( objects:Object[] ):Resource[];
-	static from( objectOrObjects:(Object | Object[]) ):any {
+	static from( objectOrObjects:any ):any {
 		var objects:Object[] = Utils.isArray( objectOrObjects ) ? <Object[]>objectOrObjects : [ <Object>objectOrObjects ];
 		var resources:Resource[] = [];
 
@@ -214,6 +201,16 @@ class Factory {
 						enumerable: false,
 						value: []
 					},
+					'types': {
+						get: function () {
+							if ( ! this[ '@type' ] ) this[ '@type' ] = [];
+							return this[ '@type' ];
+						},
+						set: function ( value ) {
+							// TODO: Implement
+						},
+						enumerable: false
+					},
 					'uri': {
 						get: function () {
 							return this[ '@id' ];
@@ -225,7 +222,6 @@ class Factory {
 					}
 				} );
 
-				resource.hasType = hasType;
 				resource.hasProperty = hasProperty;
 				resource.getProperty = getProperty;
 				resource.getPropertyValue = getPropertyValue;
@@ -245,15 +241,50 @@ class Factory {
 		else return resources[ 0 ];
 	}
 
-	static injectDescriptions( resource:Resource, descriptions:PropertyDescription[] ):Object;
-	static injectDescriptions( resources:Resource[], descriptions:PropertyDescription[] ):Object[];
-	static injectDescriptions( resourceOrResources:(Resource | Resource[]), descriptions:PropertyDescription[] ):any {
+	static injectDefinitions( resource:Resource, definitions:Map<string, Map<string, PropertyDescription>> ):Resource;
+	static injectDefinitions( resources:Resource[], definitions:Map<string, Map<string, PropertyDescription>> ):Resource[];
+	static injectDefinitions( resourceOrResources:any, definitions:Map<string, Map<string, PropertyDescription>> ):any {
 		var resources:Resource[] = Utils.isArray( resourceOrResources ) ? <Resource[]>resourceOrResources : [ <Resource>resourceOrResources ];
+
+		for ( let i:number = 0, length:number = resources.length; i < length; i ++ ) {
+			var resource:Resource = resources[ i ];
+			for ( let j:number = 0, length:number = resource.types.length; i < length; j ++ ) {
+				var type:string = resource.types[ i ];
+				var descriptions:Map<string, PropertyDescription> = new Map<string, PropertyDescription>();
+				if ( definitions.has( type ) ) {
+					Utils.M.extend( descriptions, definitions.get( type ) );
+				}
+				if ( descriptions.size() !== 0 ) Factory.injectDescriptions( resource, descriptions );
+			}
+		}
+
+		if ( Utils.isArray( resourceOrResources ) ) return resources;
+		else return resources[ 0 ];
+	}
+
+
+	static injectDescriptions( resource:Resource, descriptions:Map<string, PropertyDescription> ):Object;
+	static injectDescriptions( resource:Resource, descriptionsObject:Object ):Object;
+	static injectDescriptions( resources:Resource[], descriptions:Map<string, PropertyDescription> ):Object[];
+	static injectDescriptions( resource:Resource[], descriptionsObject:Object ):Object[];
+	static injectDescriptions( resourceOrResources:any, descriptionsMapOrObject:any ):any {
+		var resources:Resource[] = Utils.isArray( resourceOrResources ) ? <Resource[]>resourceOrResources : [ <Resource>resourceOrResources ];
+
+		var descriptions:Map<string, PropertyDescription>;
+		if ( Utils.isMap( descriptionsMapOrObject ) ) {
+			descriptions = <any> descriptionsMapOrObject;
+		} else if ( Utils.isObject( descriptionsMapOrObject ) ) {
+			descriptions = <any> Utils.M.from( descriptionsMapOrObject );
+		} else throw new Error( 'IllegalArgument' );
 
 		for ( var i:number = 0, length:number = resources.length; i < length; i ++ ) {
 			var resource:Resource = resources[ i ];
-			for ( var j:number = 0, descriptionLength:number = descriptions.length; j < descriptionLength; j ++ ) {
-				var description:PropertyDescription = descriptions[ j ];
+
+			var descriptionNames:Iterator<string> = descriptions.keys();
+			var next:IteratorValue<string>;
+			while ( ! (next = descriptionNames.next()).done ) {
+				var name:string = next.value;
+				var description:PropertyDescription = descriptions.get( name );
 
 				var getter:()=>any, setter:( any )=>void;
 
@@ -272,7 +303,7 @@ class Factory {
 				setter = Factory.setter( description );
 
 				Object.defineProperty(
-					resource, description.name, {
+					resource, name, {
 						enumerable: false,
 						get: getter,
 						set: setter

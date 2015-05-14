@@ -1,3 +1,4 @@
+import * as Persisted from './rdf/Persisted';
 import * as DocumentResource from './rdf/DocumentResource';
 import * as PersistedDocumentResource from './rdf/PersistedDocumentResource';
 import * as FragmentResource from './rdf/FragmentResource';
@@ -12,6 +13,7 @@ import * as Value from './rdf/Value';
 
 //@formatter:off
 export {
+	Persisted,
 	DocumentResource,
 	PersistedDocumentResource,
 	FragmentResource,

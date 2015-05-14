@@ -4,39 +4,19 @@
 import * as DocumentResource from './DocumentResource';
 import Committer from '../Committer';
 import * as Literal from './Literal';
+import * as Persisted from './Persisted';
 import * as RDFNode from './RDFNode';
 import * as Utils from '../Utils';
 import * as Value from './Value';
 
-class Modifications {
-	add:Map<string, Value.Class[]>;
-	set:Map<string, Value.Class[]>;
-	delete:Map<string, Value.Class[]>;
-
-	constructor() {
-		this.add = new Map<string, Value.Class[]>();
-		this.set = new Map<string, Value.Class[]>();
-		this.delete = new Map<string, Value.Class[]>();
-	}
-}
-
-enum ModificationType {
-	ADD,
-	SET,
-	DELETE
-}
 
 enum SpecialValue {
 	ALL_VALUES
 }
 
-interface PersistedDocumentResource extends DocumentResource.Class {
-	_dirty:boolean;
-	_modifications:Modifications;
+interface PersistedDocumentResource extends DocumentResource.Class, Persisted.Class {
 	_commiter:Committer;
 	_clean():void;
-
-	isDirty():boolean;
 
 	commit():Promise<any>;
 	delete():void;
@@ -46,23 +26,23 @@ function modificationsDeleteAllValues( deleteModifications:Value.Class[] ):boole
 	return deleteModifications.length === 1 && deleteModifications[ 0 ] === SpecialValue.ALL_VALUES;
 }
 
-function getModifications( type:ModificationType ):Map<string, Value.Class[]> {
+function getModifications( type:Persisted.ModificationType ):Map<string, Value.Class[]> {
 	var modifications:Map<string, Value.Class[]>;
 	switch ( type ) {
-		case ModificationType.ADD:
+		case Persisted.ModificationType.ADD:
 			modifications = this._modifications.add;
 			break;
-		case ModificationType.SET:
+		case Persisted.ModificationType.SET:
 			modifications = this._modifications.set;
 			break;
-		case ModificationType.DELETE:
+		case Persisted.ModificationType.DELETE:
 			modifications = this._modifications.delete;
 			break;
 	}
 	return modifications;
 }
 
-function addModification( type:ModificationType, propertyURI:string, value:any ):void {
+function addModification( type:Persisted.ModificationType, propertyURI:string, value:any ):void {
 	var modifications:Map<string, Value.Class[]> = getModifications.call( this, type, propertyURI );
 
 	var values:Value.Class[];
@@ -79,7 +59,7 @@ function addModification( type:ModificationType, propertyURI:string, value:any )
 	values.push( value );
 }
 
-function removeModification( type:ModificationType, propertyURI:string, value:any ):void {
+function removeModification( type:Persisted.ModificationType, propertyURI:string, value:any ):void {
 	var modifications:Map<string, Value.Class[]> = getModifications.call( this, type, propertyURI );
 	var values:Value.Class[] = modifications.get( propertyURI );
 	for ( let i:number = 0, length:number = values.length; i < length; i ++ ) {
@@ -98,11 +78,11 @@ function registerAddModification( propertyURI:string, value:any ):void {
 
 		if ( modificationsDeleteAllValues( deleteModifications ) ) {
 			this._modifications.delete.delete( propertyURI );
-			addModification.call( this, ModificationType.SET, propertyURI, value );
+			addModification.call( this, Persisted.ModificationType.SET, propertyURI, value );
 			return;
 		}
 
-		removeModification.call( this, ModificationType.DELETE, propertyURI, value );
+		removeModification.call( this, Persisted.ModificationType.DELETE, propertyURI, value );
 
 		for ( let i:number = 0, length:number = deleteModifications.length; i < length; i ++ ) {
 			if ( Value.Util.areEqual( deleteModifications[ i ], value ) ) {
@@ -111,9 +91,9 @@ function registerAddModification( propertyURI:string, value:any ):void {
 			}
 		}
 	} else if ( this._modifications.set.has( propertyURI ) ) {
-		addModification.call( this, ModificationType.SET, propertyURI, value );
+		addModification.call( this, Persisted.ModificationType.SET, propertyURI, value );
 	} else {
-		addModification.call( this, ModificationType.ADD, propertyURI, value );
+		addModification.call( this, Persisted.ModificationType.ADD, propertyURI, value );
 	}
 }
 
@@ -127,20 +107,16 @@ function registerDeleteModification( propertyURI:string, value:any = null ):void
 		if ( this._modifications.set.has( propertyURI ) ) this._modifications.set.delete( propertyURI );
 		if ( this._modifications.delete.has( propertyURI ) ) this._modifications.delete.delete( propertyURI );
 	} else {
-		if ( this._modifications.add.has( propertyURI ) ) removeModification.call( this, ModificationType.ADD, propertyURI, value );
-		if ( this._modifications.set.has( propertyURI ) ) removeModification.call( this, ModificationType.SET, propertyURI, value );
+		if ( this._modifications.add.has( propertyURI ) ) removeModification.call( this, Persisted.ModificationType.ADD, propertyURI, value );
+		if ( this._modifications.set.has( propertyURI ) ) removeModification.call( this, Persisted.ModificationType.SET, propertyURI, value );
 	}
 
-	addModification.call( this, ModificationType.DELETE, propertyURI, value );
+	addModification.call( this, Persisted.ModificationType.DELETE, propertyURI, value );
 }
 
 function clean():void {
-	this._modifications = new Modifications();
+	this._modifications = new Persisted.Modifications();
 	this._dirty = true;
-}
-
-function isDirty():boolean {
-	return this._dirty;
 }
 
 function commit():Promise<any> {
@@ -156,13 +132,10 @@ class Factory {
 		//@formatter:off
 		return (
 			DocumentResource.Factory.is( value ) &&
+			Persisted.Factory.is( value ) &&
 
-			Utils.hasProperty( value, '_dirty' ) &&
-			Utils.hasProperty( value, '_modifications' ) &&
 			Utils.hasProperty( value, '_parent' ) &&
 			Utils.hasFunction( value, '_clean' ) &&
-
-			Utils.hasFunction( value, 'isDirty' ) &&
 
 			Utils.hasFunction( value, 'commit' ) &&
 			Utils.hasFunction( value, 'delete' )
@@ -172,18 +145,11 @@ class Factory {
 
 	static from( documentResource:DocumentResource.Class, committer:Committer ):PersistedDocumentResource {
 		var persisted:PersistedDocumentResource = <PersistedDocumentResource> documentResource;
+
+		Persisted.Factory.from( persisted );
+
 		if ( ! Factory.is( persisted ) ) {
 			Object.defineProperties( persisted, {
-				'_dirty': {
-					writable: true,
-					enumerable: false,
-					value: false
-				},
-				'_modifications': {
-					writable: false,
-					enumerable: false,
-					value: new Modifications()
-				},
 				'_parent': {
 					writable: false,
 					enumerable: false,
@@ -196,10 +162,10 @@ class Factory {
 
 			persisted._clean = clean;
 
-			persisted.isDirty = isDirty;
 			persisted.commit = commit;
 			persisted.delete = destroy;
 		}
+
 		return persisted;
 	}
 }

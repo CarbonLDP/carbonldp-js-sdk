@@ -9,26 +9,53 @@ interface RDFDocument extends RDFNode.Class {
 
 class Factory {
 	static is( object:Object ):boolean {
-		if ( ! Utils.hasProperty( object, '@graph' ) ) return false;
-		if ( ! Utils.hasProperty( object, '@id' ) ) return false;
-
-		return true;
+		//@formatter:off
+		return (
+			Utils.hasProperty( object, '@graph' )
+		);
+		//@formatter:on
 	}
 
-	static create( uri:string, resources:RDFNode.Class[] ):RDFDocument {
-		return {
-			'@id': uri,
-			'@graph': resources
-		};
+	static create( resources:RDFNode.Class[] ):RDFDocument;
+	static create( resources:RDFNode.Class[], uri?:string ):RDFDocument {
+		var document:any = uri ? RDFNode.Factory.create( uri ) : {};
+		document[ '@graph' ] = resources;
+
+		return document;
 	}
 }
 
 class Util {
-	private static getResources( document:RDFNode.Class[] ):RDFNode.Class[];
-	private static getResources( document:RDFDocument ):RDFNode.Class[];
-	private static getResources( document:any ):RDFNode.Class[] {
-		if ( Utils.isArray( document ) ) return document;
-		else return document[ '@graph' ];
+	static getDocuments( object:Object[] ):RDFDocument[];
+	static getDocuments( object:Object ):RDFDocument[];
+	static getDocuments( value:any ):RDFDocument[] {
+		if ( Utils.isArray( value ) ) {
+			if ( value.length === 0 ) return value;
+			if ( Factory.is( value[ 0 ] ) ) return value;
+			if ( RDFNode.Factory.is( value[ 0 ] ) ) return [ Factory.create( value ) ];
+		} else if ( Utils.isObject( value ) ) {
+			if ( Factory.is( value ) ) return [ value ];
+			if ( RDFNode.Factory.is( value ) ) return [ Factory.create( [ value ] ) ];
+		} else throw new Error( "IllegalArgument: The value structure isn't valid." );
+	}
+
+	static getResources( document:RDFNode.Class[] ):RDFNode.Class[];
+	static getResources( document:RDFDocument ):RDFNode.Class[];
+	static getResources( document:any ):RDFNode.Class[] {
+		if ( Utils.isArray( document ) ) {
+			if ( document.length === 0 ) return document;
+			if ( document.length === 1 ) {
+				if ( Utils.isArray( document[ 0 ] ) ) return Util.getResources( document[ 0 ] );
+				if ( ! Utils.isObject( document[ 0 ] ) ) throw new Error( "IllegalArgument: The document structure isn't valid." );
+				if ( ! document[ 0 ].hasOwnProperty( '@graph' ) ) return document;
+				return Util.getResources( document[ 0 ][ '@graph' ] );
+			}
+			return document;
+		} else {
+			if ( ! Utils.isObject( document ) ) throw new Error( "IllegalArgument: The document structure isn't valid." );
+			if ( ! document.hasOwnProperty( '@graph' ) ) throw new Error( "IllegalArgument: The document structure isn't valid." );
+			return Util.getResources( document[ '@graph' ] );
+		}
 	}
 
 	static getDocumentResources( document:RDFNode.Class[] ):RDFNode.Class[];
@@ -48,11 +75,11 @@ class Util {
 		return documentResources;
 	}
 
-	static getFragmentResources( document:RDFNode.Class[], documentResource?:RDFNode.Class ):RDFNode.Class[];
-	static getFragmentResources( document:RDFDocument, documentResource?:RDFNode.Class ):RDFNode.Class[];
-	static getFragmentResources( document:RDFNode.Class[], documentResource?:string ):RDFNode.Class[];
-	static getFragmentResources( document:RDFDocument, documentResource?:string ):RDFNode.Class[];
-	static getFragmentResources( document:any, documentResource?:any ):RDFNode.Class[] {
+	static getFragmentResources( document:RDFNode.Class[], documentResource ?:RDFNode.Class ):RDFNode.Class[];
+	static getFragmentResources( document:RDFDocument, documentResource ?:RDFNode.Class ):RDFNode.Class[];
+	static getFragmentResources( document:RDFNode.Class[], documentResource ?:string ):RDFNode.Class[];
+	static getFragmentResources( document:RDFDocument, documentResource ?:string ):RDFNode.Class[];
+	static getFragmentResources( document:any, documentResource ?:any ):RDFNode.Class[] {
 		var resources:RDFNode.Class[] = Util.getResources( document );
 
 		var documentURIToMatch:string = null;
@@ -81,4 +108,10 @@ class Util {
 	}
 }
 
-export { RDFDocument as Class, Factory, Util };
+//@formatter:off
+export {
+	RDFDocument as Class,
+	Factory,
+	Util
+};
+//@formatter:on
