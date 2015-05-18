@@ -12,24 +12,16 @@ module.exports = function( grunt ) {
 	// Load all grunt tasks
 	require( 'load-grunt-tasks' )( grunt );
 
-	grunt.loadTasks( 'grunt_tasks' );
-
 	// Project configuration.
 	grunt.initConfig(
 		{
-			watch    : {
-				typescript: {
-					files: [ 'src/**/*.ts' ],
-					tasks: [ 'ts' ] //all the tasks are run dynamically during the watch event handler
-				}
-			},
 			karma    : {
 				all_tests: {
 					browsers  : [ 'PhantomJS', 'Chrome', 'Firefox' ],
 					configFile: 'karma.conf.js'
 				},
 				unit     : {
-					browsers  : [ 'Chrome' ],
+					browsers  : [ 'PhantomJS' ],
 					configFile: 'karma.conf.js',
 					logLevel  : 'DEBUG'
 				}
@@ -107,7 +99,6 @@ module.exports = function( grunt ) {
 	);
 
 	grunt.registerTask( 'dist:dev', [ 'ts', 'karma:unit', 'requirejs:dev' ] );
-	grunt.registerTask( 'develop', [ 'watch' ] );
 	grunt.registerTask( 'test', [ 'karma:all_tests' ] );
 
 };
