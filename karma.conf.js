@@ -28,7 +28,6 @@ module.exports = function( config ) {
 			// {pattern: 'bower_components/jog/**/*.js', included: false},
 			// {pattern: 'bower_components/underscore/**/*.js', included: false},
 			{ pattern: 'bower_components/jsonld.js/js/jsonld.js', included: false },
-			{ pattern: 'bower_components/es6-promise/promise.js', included: false },
 
 			{ pattern: 'src/*.js', included: false },
 			{ pattern: 'src/*.js.map', included: false },

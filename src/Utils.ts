@@ -49,7 +49,7 @@ function isDate( date:any ):boolean {
 }
 
 function isObject( object:any ):boolean {
-	return typeof object === 'object';
+	return typeof object === 'object' && ( ! ! object );
 }
 
 function isFunction( value:any ):boolean {
@@ -144,7 +144,7 @@ class A {
 	}
 
 	static joinWithoutDuplicates<T>( ...arrays:Array<Array<T>> ):Array<T> {
-		var result:Array<T> = arrays[ 0 ];
+		var result:Array<T> = arrays[ 0 ].slice();
 
 		for ( let i:number = 1, length:number = arrays.length; i < length; i ++ ) {
 			result = result.concat( arrays[ i ].filter( function ( item ) {
@@ -200,6 +200,7 @@ export {
 	isMap,
 	parseBoolean,
 	extend,
+	forEachOwnProperty,
 	S,
 	A,
 	M

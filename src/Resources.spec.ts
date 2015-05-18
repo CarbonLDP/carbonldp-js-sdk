@@ -1,7 +1,6 @@
 /// <reference path="../typings/jasmine/jasmine.d.ts" />
 /// <reference path="../typings/jasmine-ajax/mock-ajax.d.ts" />
 /// <reference path="../typings/es6-promise/es6-promise.d.ts" />
-/// <reference path="../typings/es6-promise-polyfill/es6-promise-polyfill.d.ts" />
 //@formatter:off
 import App from './App';
 import Documents from './Documents';
@@ -11,10 +10,7 @@ import {
 	RDFNode,
 	Resource
 } from './RDF';
-import * as es6Promise from 'es6-promise-polyfill';
 //@formatter:on
-
-es6Promise.polyfill();
 
 describe( 'Resources', function () {
 	beforeEach( function () {
@@ -29,9 +25,6 @@ describe( 'Resources', function () {
 		expect( Resources ).toBeDefined();
 	} );
 	it( 'has method get( uri, options ) which makes an AJAX GET request and returns a promise with the response', function ( done ) {
-		expect( Resources ).toBeDefined();
-		expect( Utils.isFunction( Resources ) ).toBe( true );
-
 		var app = new App( null, '' );
 
 		app.addDefinition( 'http://example.org/ns#BlogPost', {
@@ -44,7 +37,7 @@ describe( 'Resources', function () {
 
 		var resources = app.Resources;
 
-		expect( resources.get ).toBeTruthy();
+		expect( resources.get ).toBeDefined();
 
 		var failTest = function ( error ) {
 			console.log( error );
@@ -52,7 +45,7 @@ describe( 'Resources', function () {
 		};
 		var testPromise = function ( promise:any ) {
 			expect( promise ).toBeDefined();
-			expect( promise instanceof Promise ).toBeTruthy();
+			expect( promise instanceof Promise ).toBe( true );
 		};
 
 		var promises:Promise<any>[] = [], promise:Promise<any>;

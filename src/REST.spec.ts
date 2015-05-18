@@ -2,12 +2,8 @@
 /// <reference path="../typings/jasmine-ajax/mock-ajax.d.ts" />
 /// <reference path="../typings/es6/es6.d.ts" />
 /// <reference path="../typings/es6-promise/es6-promise.d.ts" />
-/// <reference path="../typings/es6-promise-polyfill/es6-promise-polyfill.d.ts" />
 import * as HTTP from './HTTP';
 import * as REST from './REST';
-import * as es6Promise from 'es6-promise-polyfill';
-
-es6Promise.polyfill();
 
 describe( 'REST', function () {
 	beforeEach( function () {
