@@ -1,26 +1,21 @@
 //@formatter:off
-import {
-	Persisted,
-	PropertyDescription,
-	RDFNode,
-	Resource
-} from '../../RDF';
+import * as RDF from '../../RDF';
 import * as CP from '../../namespaces/CP';
 //@formatter:on
 
 
-interface PATCHRequest extends Resource.Class {
-	addAction:Map<string, RDFNode.Class>;
-	setAction:Map<string, RDFNode.Class>;
-	deleteAction:Map<string, RDFNode.Class>;
+interface PATCHRequest extends RDF.Resource.Class {
+	addAction:Map<string, RDF.Node.Class>;
+	setAction:Map<string, RDF.Node.Class>;
+	deleteAction:Map<string, RDF.Node.Class>;
 }
 
 class Factory {
 	static create():PATCHRequest;
-	static create( object:Persisted.Class ):PATCHRequest;
-	static create( objects:Persisted.Class[] ):PATCHRequest;
+	static create( object:RDF.Persisted.Class ):PATCHRequest;
+	static create( objects:RDF.Persisted.Class[] ):PATCHRequest;
 	static create( objectOrObjects:any = [] ):PATCHRequest {
-		var patch:PATCHRequest = <any> Resource.Factory.create();
+		var patch:PATCHRequest = <any> RDF.Resource.Factory.create();
 
 		// TODO: Implement
 		return null;

@@ -5,6 +5,10 @@ class Util {
 		return uri.indexOf( '#' ) != - 1;
 	}
 
+	static hasProtocol( uri:string ):boolean {
+		return Utils.S.startsWith( uri, 'https://' ) || Utils.S.startsWith( uri, 'http://' );
+	}
+
 	static isAbsolute( uri:string ):boolean {
 		if ( Utils.S.startsWith( uri, 'http://' ) ) return true;
 		if ( Utils.S.startsWith( uri, 'https://' ) ) return true;

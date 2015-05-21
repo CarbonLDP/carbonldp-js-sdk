@@ -1,29 +1,43 @@
 /// <reference path="../typings/es6-promise/es6-promise.d.ts" />
-import App from './App';
+import * as App from './App';
 import Parent from './Parent';
+import * as HTTP from './HTTP';
 import * as RDF from './RDF';
 import * as Utils from './Utils';
+import * as CS from './namespaces/CS';
 
 class Apps {
-	// TODO: Get parent reference
 	private parent:Parent;
-	private containerURI:string;
 
-	constructor( parent:Parent, containerURI:string ) {
+	constructor( parent:Parent ) {
 		this.parent = parent;
-		this.containerURI = containerURI;
 	}
 
-	get( uri:string ):Promise<App> {
+	get( uri:string ):Promise<App.Class> {
+		var appsContainerURI:string = this.getAppsContainerURI();
 		if ( RDF.URI.Util.isRelative( uri ) ) {
-			if ( ! Utils.S.startsWith( uri, this.containerURI ) ) uri = RDF.URI.Util.resolve( this.containerURI, uri );
+			if ( ! Utils.S.startsWith( uri, appsContainerURI ) ) uri = RDF.URI.Util.resolve( appsContainerURI, uri );
 			this.parent.resolve( uri )
 		}
 
-		return new Promise<App>( function ( resolve, reject ) {
-			// TODO: Implement
-			reject( "Not implemented" );
-		} );
+		return this.parent.Resources.get( uri ).then(
+			( processedResponse:HTTP.ProcessedResponse<RDF.PersistedDocumentResource.Class> ) => {
+				var resource:RDF.PersistedDocumentResource.Class = processedResponse.result;
+				if ( ! resource.types.indexOf( CS.Class.Application ) ) {
+					throw new Error( 'The resource fetched is not a cs:Application.' );
+				}
+
+				var appResource:App.Resource = App.Factory.from( resource );
+				var app:App.Class = new App.Class( this.parent, appResource );
+
+				return app;
+			}
+		);
+	}
+
+	private getAppsContainerURI():string {
+		if ( ! this.parent.hasSetting( "platform.apps.container" ) ) throw new Error( "The apps container URI hasn't been set." );
+		return this.parent.getSetting( "platform.apps.container" );
 	}
 }
 

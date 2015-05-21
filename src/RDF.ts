@@ -21,7 +21,7 @@ export {
 	Literal,
 	PropertyDescription,
 	RDFDocument,
-	RDFNode,
+	RDFNode as Node,
 	Resource,
 	URI,
 	Value

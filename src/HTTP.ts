@@ -126,7 +126,7 @@ class HeaderValue {
 		else if ( parts.length === 2 ) {
 			this.mainKey = HeaderValue.cleanString( parts[ 0 ] );
 			this.mainValue = HeaderValue.cleanString( parts[ 1 ] );
-		} else throw new Error( "ParseError: The header value contains multiple ';'" );
+		} else this.mainValue = main;
 	}
 
 	private setSecondary( secondary:string ):void {
@@ -135,7 +135,7 @@ class HeaderValue {
 		else if ( parts.length === 2 ) {
 			this.secondaryKey = HeaderValue.cleanString( parts[ 0 ] );
 			this.secondaryValue = HeaderValue.cleanString( parts[ 1 ] );
-		} else throw new Error( "ParseError: The header value contains multiple ';'" );
+		} else this.secondaryValue = secondary;
 	}
 
 	private static cleanString( toClean:string ):string {

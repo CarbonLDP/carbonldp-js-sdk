@@ -47,13 +47,16 @@ class Documents {
 
 	}
 
-	get( uri:string ):Promise<HTTP.ProcessedResponse<RDFDocument.Class[]>> {
+	get( uri:string, requestOptions:REST.RequestOptions = {} ):Promise<HTTP.ProcessedResponse<RDFDocument.Class[]>> {
 		if ( URI.Util.isRelative( uri ) ) {
 			if ( ! this.parent ) throw new Error( "IllegalArgument: This module doesn't support relative URIs." );
 			uri = this.parent.resolve( uri );
 		}
 
-		return REST.get( uri ).then(
+		var headers = requestOptions.headers ? requestOptions.headers : requestOptions.headers = new Map<string, HTTP.Header>();
+		headers.set( "Accept", new HTTP.Header( "application/ld+json" ) );
+
+		return REST.get( uri, requestOptions ).then(
 			( response:HTTP.Response ) => {
 				var parsedObject = parse( response.data );
 

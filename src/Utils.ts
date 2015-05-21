@@ -95,15 +95,13 @@ function parseBoolean( value:string ):boolean {
 	}
 }
 
-function extend( ...target:Object[] ):Object {
+function extend( target:Object, ...objects:Object[] ):Object {
 	if ( arguments.length <= 1 ) return;
 	for ( var i = 1, length = arguments.length; i < length; i ++ ) {
-		var toMerge = arguments[ i ];
-		if ( isObject( toMerge ) ) {
-			for ( var name in toMerge ) {
-				if ( toMerge.hasOwnProperty( name ) ) {
-					target[ name ] = toMerge[ name ];
-				}
+		var toMerge = objects[ i ];
+		for ( var name in toMerge ) {
+			if ( toMerge.hasOwnProperty( name ) ) {
+				target[ name ] = toMerge[ name ];
 			}
 		}
 	}

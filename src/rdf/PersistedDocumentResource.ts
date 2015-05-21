@@ -15,7 +15,7 @@ enum SpecialValue {
 }
 
 interface PersistedDocumentResource extends DocumentResource.Class, Persisted.Class {
-	_commiter:Committer;
+	_committer:Committer;
 	_clean():void;
 
 	commit():Promise<any>;
@@ -150,10 +150,10 @@ class Factory {
 
 		if ( ! Factory.is( persisted ) ) {
 			Object.defineProperties( persisted, {
-				'_parent': {
+				'_committer': {
 					writable: false,
 					enumerable: false,
-					value: parent
+					value: committer
 				}
 			} );
 

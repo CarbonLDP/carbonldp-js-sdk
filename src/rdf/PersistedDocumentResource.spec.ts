@@ -55,7 +55,7 @@ describe( 'RDF', function () {
 
 				expect( Utils.hasProperty( persisted, '_dirty' ) ).toBe( true );
 				expect( Utils.hasProperty( persisted, '_modifications' ) ).toBe( true );
-				expect( Utils.hasProperty( persisted, '_parent' ) ).toBe( true );
+				expect( Utils.hasProperty( persisted, '_committer' ) ).toBe( true );
 				expect( Utils.hasFunction( persisted, '_clean' ) ).toBe( true );
 
 				expect( Utils.hasFunction( persisted, 'isDirty' ) ).toBe( true );

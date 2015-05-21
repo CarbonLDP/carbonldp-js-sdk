@@ -44,7 +44,7 @@ module.exports = function( grunt ) {
 						baseUrl                : '.',
 						name                   : 'bower_components/almond/almond.js',
 						include                : [ 'Carbon' ],
-						exclude                : [ 'jsonld' ],
+						exclude                : [],
 						packages               : [
 							{
 								name    : 'Carbon',
@@ -71,7 +71,7 @@ module.exports = function( grunt ) {
 						baseUrl                : '.',
 						name                   : 'bower_components/almond/almond.js',
 						include                : [ 'Carbon' ],
-						exclude                : [ 'jsonld' ],
+						exclude                : [],
 						packages               : [
 							{
 								name    : 'Carbon',
@@ -97,7 +97,6 @@ module.exports = function( grunt ) {
 			}
 		}
 	);
-
 	grunt.registerTask( 'dist:dev', [ 'ts', 'karma:unit', 'requirejs:dev' ] );
 	grunt.registerTask( 'test', [ 'karma:all_tests' ] );
 

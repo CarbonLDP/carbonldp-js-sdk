@@ -30,7 +30,6 @@ function sendRequest( method:Method, url:string, bodyOrOptions:any = defaultRequ
 			request.open( Method[ method ], url, true );
 
 			if ( options.headers ) setHeaders( request, options.headers );
-			if ( options.basic ) addBasicAuthHeader( request, options.basic );
 			request.withCredentials = options.sendCredentialsOnCORS;
 			if ( options.timeout ) request.timeout = options.timeout;
 
@@ -50,16 +49,9 @@ function setHeaders( request:XMLHttpRequest, headers:Map<string, HTTP.Header> ):
 		var name:string = next.value;
 		var value:HTTP.Header = headers.get( name );
 		request.setRequestHeader( name, value.toString() );
-		
+
 		next = namesIterator.next();
 	}
-}
-
-function addBasicAuthHeader( request:XMLHttpRequest, credentials:Credentials ):void {
-	var header:HTTP.Header = new HTTP.Header();
-	var authorization = 'Basic ' + atob( credentials.username + ':' + credentials.password );
-	header.values.push( new HTTP.HeaderValue( authorization ) );
-	request.setRequestHeader( 'Authorization', header.toString() );
 }
 
 function onLoad( resolve:( value:HTTP.Response | Thenable<HTTP.Response> ) => void, reject:( value:HTTP.Response ) => void, request:XMLHttpRequest ):()=>void {
@@ -77,14 +69,9 @@ function onError( reject:( value:HTTP.Response ) => void, request:XMLHttpRequest
 	};
 }
 
-export interface Credentials {
-	username:string;
-	password:string;
-}
 
 export interface RequestOptions {
 	headers?: Map<string, HTTP.Header>;
-	basic?:Credentials;
 	sendCredentialsOnCORS?:boolean;
 	timeout?:number;
 	request?: XMLHttpRequest;

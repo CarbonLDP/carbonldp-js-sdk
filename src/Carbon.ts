@@ -5,77 +5,31 @@ import Parent from './Parent';
 import * as RDF from './RDF';
 import Resources from './Resources';
 import * as REST from './REST';
-import * as configuration from './configuration';
+import settings from './settings';
 import * as Utils from './Utils';
 
-class Carbon implements Parent {
+class Carbon extends Parent {
 	Apps:Apps;
-	Documents:Documents;
-	Resources:Resources;
 
-	private configuration:any;
-	private definitions:Map<string, Map<string, RDF.PropertyDescription>>;
+	constructor( settings:any ) {
+		super();
 
-	constructor( configuration:any ) {
-		this.Apps = new Apps( this, configuration.appsContainer );
+		Utils.M.extend( this.settings, Utils.M.from( settings ) );
 
-		this.Documents = new Documents( this );
-		this.Resources = new Resources( this );
+		this.Apps = new Apps( this );
 	}
 
-	resolve( relativeURI:string ):string {
-		var finalURI:string = this.configuration.useSSL ? 'https://' : 'http://';
-		finalURI += this.configuration.domain;
-		return RDF.URI.Util.resolve( finalURI, relativeURI );
-	}
+	resolve( uri:string ):string {
+		if ( RDF.URI.Util.isAbsolute( uri ) ) return uri;
 
-	hasDefinition( uri:string ):boolean {
-		return this.definitions.has( uri );
-	}
-
-	getDefinition( uri:string ):Map<string, RDF.PropertyDescription> {
-		var descriptions:Map<string, RDF.PropertyDescription> = new Map<string, RDF.PropertyDescription>();
-		if ( this.definitions.has( uri ) ) {
-			Utils.M.extend<string, RDF.PropertyDescription>( descriptions, this.definitions.get( uri ) );
-		}
-		return descriptions;
-	}
-	getDefinitionURIs():string[] {
-		return Utils.A.from<string>( this.definitions.keys() );
-	}
-
-	addDefinition( uri:string, descriptions:Map<string, RDF.PropertyDescription> ):void;
-	addDefinition( uri:string, descriptions:Object ):void {
-		var extender:Map<string, RDF.PropertyDescription>;
-		if ( Utils.isMap( descriptions ) ) {
-			extender = <any> descriptions;
-		} else if ( Utils.isObject( descriptions ) ) {
-			extender = <any> Utils.M.from( descriptions );
-		} else throw new Error( 'IllegalArgument' );
-
-		if ( this.definitions.has( uri ) ) Utils.M.extend( this.definitions.get( uri ), extender );
-		else this.definitions.set( uri, extender );
-	}
-
-	setDefinition( uri:string, descriptions:Map<string, RDF.PropertyDescription> ):void;
-	setDefinition( uri:string, descriptions:Object ):void {
-		var extender:Map<string, RDF.PropertyDescription>;
-		if ( Utils.isMap( descriptions ) ) {
-			extender = <any> descriptions;
-		} else if ( Utils.isObject( descriptions ) ) {
-			extender = <any> Utils.M.from( descriptions );
-		} else throw new Error( 'IllegalArgument' );
-
-		this.definitions.set( uri, extender );
-	}
-
-	deleteDefinition( uri:string ):void {
-		this.definitions.delete( uri );
+		var finalURI:string = this.settings.get( "http.ssl" ) ? 'https://' : 'http://';
+		finalURI += this.settings.get( "domain" );
+		return RDF.URI.Util.resolve( finalURI, uri );
 	}
 }
 
 //@formatter:off
-export default new Carbon( configuration );
+export default new Carbon( settings );
 
 export {
 	Carbon,
