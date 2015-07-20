@@ -15,7 +15,7 @@ class Factory {
 	static create( object:RDF.Persisted.Class ):PATCHRequest;
 	static create( objects:RDF.Persisted.Class[] ):PATCHRequest;
 	static create( objectOrObjects:any = [] ):PATCHRequest {
-		var patch:PATCHRequest = <any> RDF.Resource.Factory.create();
+		var patch:PATCHRequest = <any> RDF.Resource.factory.create();
 
 		// TODO: Implement
 		return null;

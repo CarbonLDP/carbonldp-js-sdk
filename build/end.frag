@@ -1,2 +1,2 @@
-	return require('Carbon').default;
+	return require('Carbon');
 }));

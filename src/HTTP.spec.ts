@@ -13,28 +13,28 @@ describe( 'HTTP', function () {
 		} );
 	} );
 
-	describe( 'has class, Header, which', function () {
+	describe( 'has class, Header.Class, which', function () {
 		it( 'is defined', function () {
-			expect( HTTP.Header ).not.toBeNull();
-			expect( Utils.isFunction( HTTP.Header ) ).toBe( true );
+			expect( HTTP.Header.Class ).not.toBeNull();
+			expect( Utils.isFunction( HTTP.Header.Class ) ).toBe( true );
 		} );
 		it( 'has a constructor, ( value ), which takes a string representation and parses it', function () {
-			var header:HTTP.Header;
+			var header:HTTP.Header.Class;
 
-			header = new HTTP.Header( 'value1, value2, value3, value4' );
+			header = new HTTP.Header.Class( 'value1, value2, value3, value4' );
 			expect( header.values ).not.toBeNull();
 			expect( Utils.isArray( header.values ) ).toBeTruthy();
 			expect( header.values.length ).toEqual( 4 );
 		} );
 		it( 'has a constructor, ( values ), which takes an array of HeaderValues', function () {
-			var header:HTTP.Header;
+			var header:HTTP.Header.Class;
 
-			header = new HTTP.Header(
+			header = new HTTP.Header.Class(
 				[
-					new HTTP.HeaderValue( 'value1' ),
-					new HTTP.HeaderValue( 'value2' ),
-					new HTTP.HeaderValue( 'value3' ),
-					new HTTP.HeaderValue( 'value4' )
+					new HTTP.Header.Value( 'value1' ),
+					new HTTP.Header.Value( 'value2' ),
+					new HTTP.Header.Value( 'value3' ),
+					new HTTP.Header.Value( 'value4' )
 				]
 			);
 
@@ -43,13 +43,13 @@ describe( 'HTTP', function () {
 			expect( header.values.length ).toEqual( 4 );
 		} );
 		it( 'has a method, toString(), which returns it\'s string representation', function () {
-			var header:HTTP.Header;
+			var header:HTTP.Header.Class;
 
-			header = new HTTP.Header();
-			header.values.push( new HTTP.HeaderValue( 'header1' ) );
-			header.values.push( new HTTP.HeaderValue( 'header2' ) );
-			header.values.push( new HTTP.HeaderValue( 'header3' ) );
-			header.values.push( new HTTP.HeaderValue( 'header4' ) );
+			header = new HTTP.Header.Class();
+			header.values.push( new HTTP.Header.Value( 'header1' ) );
+			header.values.push( new HTTP.Header.Value( 'header2' ) );
+			header.values.push( new HTTP.Header.Value( 'header3' ) );
+			header.values.push( new HTTP.Header.Value( 'header4' ) );
 
 			expect( header.toString() ).toEqual( 'header1, header2, header3, header4' );
 		} );
@@ -57,46 +57,46 @@ describe( 'HTTP', function () {
 
 	describe( 'has class, HeaderValue, which', function () {
 		it( 'is defined', function () {
-			expect( HTTP.HeaderValue ).not.toBeNull();
-			expect( Utils.isFunction( HTTP.HeaderValue ) ).toBe( true );
+			expect( HTTP.Header.Value ).not.toBeNull();
+			expect( Utils.isFunction( HTTP.Header.Value ) ).toBe( true );
 		} );
 		it( 'has a constructor, ( value ), which takes a string representation and parses it', function () {
-			var value:HTTP.HeaderValue;
+			var value:HTTP.Header.Value;
 
-			value = new HTTP.HeaderValue( 'include="http://example.org"; return=representation' );
+			value = new HTTP.Header.Value( 'include="http://example.org"; return=representation' );
 			expect( value.mainKey ).toEqual( 'include' );
 			expect( value.mainValue ).toEqual( 'http://example.org' );
 			expect( value.secondaryKey ).toEqual( 'return' );
 			expect( value.secondaryValue ).toEqual( 'representation' );
 
-			value = new HTTP.HeaderValue( '"http://example.org"; representation' );
+			value = new HTTP.Header.Value( '"http://example.org"; representation' );
 			expect( value.mainKey ).toBeNull();
 			expect( value.mainValue ).toEqual( 'http://example.org' );
 			expect( value.secondaryKey ).toBeNull();
 			expect( value.secondaryValue ).toEqual( 'representation' );
 
-			value = new HTTP.HeaderValue( 'something' );
+			value = new HTTP.Header.Value( 'something' );
 			expect( value.mainKey ).toBeNull();
 			expect( value.mainValue ).toEqual( 'something' );
 			expect( value.secondaryKey ).toBeNull();
 			expect( value.secondaryValue ).toBeNull();
 		} );
 		it( 'has a constructor, ( mainKey, mainValue, secondaryKey, secondaryValue ), which takes the header parts', function () {
-			var value:HTTP.HeaderValue;
+			var value:HTTP.Header.Value;
 
-			value = new HTTP.HeaderValue( 'include', 'http://example.org', 'return', 'representation' );
+			value = new HTTP.Header.Value( 'include', 'http://example.org', 'return', 'representation' );
 			expect( value.mainKey ).toEqual( 'include' );
 			expect( value.mainValue ).toEqual( 'http://example.org' );
 			expect( value.secondaryKey ).toEqual( 'return' );
 			expect( value.secondaryValue ).toEqual( 'representation' );
 
-			value = new HTTP.HeaderValue( null, 'http://example.org', null, 'representation' );
+			value = new HTTP.Header.Value( null, 'http://example.org', null, 'representation' );
 			expect( value.mainKey ).toBeNull();
 			expect( value.mainValue ).toEqual( 'http://example.org' );
 			expect( value.secondaryKey ).toBeNull();
 			expect( value.secondaryValue ).toEqual( 'representation' );
 
-			value = new HTTP.HeaderValue( null, 'something', null, null );
+			value = new HTTP.Header.Value( null, 'something', null, null );
 			expect( value.mainKey ).toBeNull();
 			expect( value.mainValue ).toEqual( 'something' );
 			expect( value.secondaryKey ).toBeNull();

@@ -148,8 +148,9 @@ function tieArray( resource:Resource, property:string, array:any[] ) {
 	return array;
 }
 
+
 class Factory {
-	static is( value:any ):boolean {
+	is( value:any ):boolean {
 		//@formatter:off
 		return (
 			// RDFNode.Factory.is( value ) &&
@@ -157,88 +158,140 @@ class Factory {
 			( ! Utils.isNull( value ) ) &&
 			Utils.isObject( value ) &&
 
-			Utils.hasPropertyDefined( value, '_propertyAddedCallbacks' ) &&
-			Utils.hasPropertyDefined( value, '_propertyDeletedCallbacks' ) &&
-
-			Utils.hasPropertyDefined( value, 'uri' ) &&
-			Utils.hasPropertyDefined( value, 'types' ) &&
-
-			Utils.hasFunction( value, 'hasProperty' ) &&
-			Utils.hasFunction( value, 'getProperty' ) &&
-			Utils.hasFunction( value, 'getPropertyValue' ) &&
-			Utils.hasFunction( value, 'getPropertyURI' ) &&
-			Utils.hasFunction( value, 'getProperties' ) &&
-			Utils.hasFunction( value, 'getPropertyValues' ) &&
-			Utils.hasFunction( value, 'getPropertyURIs' ) &&
-			Utils.hasFunction( value, 'addProperty' ) &&
-			Utils.hasFunction( value, 'setProperty' ) &&
-			Utils.hasFunction( value, 'deleteProperty' )
+			this.hasClassProperties( value )
 		);
 		//@formatter:on
 	}
 
-	static create():Resource {
+	create():Resource {
 		var resource = {};
-		return Factory.from( resource );
+		return <Resource> this.from( resource );
 	}
 
-	static from( objectOrObjects:any ):any {
+	from( objectOrObjects:(Object | Object[]) ):(Resource | Resource[]) {
 		var objects:Object[] = Utils.isArray( objectOrObjects ) ? <Object[]>objectOrObjects : [ <Object>objectOrObjects ];
-		var resources:Resource[] = [];
 
 		for ( var i:number = 0, length:number = objects.length; i < length; i ++ ) {
-			var resource:Resource = <any>objects[ i ];
-
-			if ( ! Factory.is( resource ) ) {
-				Object.defineProperties( resource, {
-					'_propertyAddedCallbacks': {
-						writable: false,
-						enumerable: false,
-						value: []
-					},
-					'_propertyDeletedCallbacks': {
-						writable: false,
-						enumerable: false,
-						value: []
-					},
-					'types': {
-						get: function () {
-							if ( ! this[ '@type' ] ) this[ '@type' ] = [];
-							return this[ '@type' ];
-						},
-						set: function ( value ) {
-							// TODO: Implement
-						},
-						enumerable: false
-					},
-					'uri': {
-						get: function () {
-							return this[ '@id' ];
-						},
-						set: function ( value ) {
-							this[ '@id' ] = value;
-						},
-						enumerable: false
-					}
-				} );
-
-				resource.hasProperty = hasProperty;
-				resource.getProperty = getProperty;
-				resource.getPropertyValue = getPropertyValue;
-				resource.getPropertyURI = getPropertyURI;
-				resource.getProperties = getProperties;
-				resource.getPropertyValues = getPropertyValues;
-				resource.getPropertyURIs = getPropertyURIs;
-				resource.addProperty = addProperty;
-				resource.setProperty = setProperty;
-				resource.deleteProperty = deleteProperty;
-			}
-
-			resources.push( resource );
+			var resource:RDFNode.Class = <RDFNode.Class> objects[ i ];
+			if ( ! this.hasClassProperties( resource ) ) this.injectBehaviour( resource );
 		}
 
-		if ( Utils.isArray( objectOrObjects ) ) return resources;
-		else return resources[ 0 ];
+		if ( Utils.isArray( objectOrObjects ) ) return <Resource[]> objects;
+		else return <Resource> objects[ 0 ];
+	}
+
+	protected hasRDFClass( resource:RDFNode.Class ):boolean {
+		// TODO: Implement
+		return true;
+	}
+
+	protected hasClassProperties( resource:RDFNode.Class ):boolean {
+		return (
+			Utils.hasPropertyDefined( resource, '_propertyAddedCallbacks' ) &&
+			Utils.hasPropertyDefined( resource, '_propertyDeletedCallbacks' ) &&
+
+			Utils.hasPropertyDefined( resource, 'uri' ) &&
+			Utils.hasPropertyDefined( resource, 'types' ) &&
+
+			Utils.hasFunction( resource, 'hasProperty' ) &&
+			Utils.hasFunction( resource, 'getProperty' ) &&
+			Utils.hasFunction( resource, 'getPropertyValue' ) &&
+			Utils.hasFunction( resource, 'getPropertyURI' ) &&
+			Utils.hasFunction( resource, 'getProperties' ) &&
+			Utils.hasFunction( resource, 'getPropertyValues' ) &&
+			Utils.hasFunction( resource, 'getPropertyURIs' ) &&
+			Utils.hasFunction( resource, 'addProperty' ) &&
+			Utils.hasFunction( resource, 'setProperty' ) &&
+			Utils.hasFunction( resource, 'deleteProperty' )
+		);
+	}
+
+	protected injectBehaviour( resource:RDFNode.Class ):Resource {
+		Object.defineProperties( resource, {
+			'_propertyAddedCallbacks': {
+				writable: false,
+				enumerable: false,
+				value: []
+			},
+			'_propertyDeletedCallbacks': {
+				writable: false,
+				enumerable: false,
+				value: []
+			},
+
+			'types': {
+				get: function () {
+					if ( ! this[ '@type' ] ) this[ '@type' ] = [];
+					return this[ '@type' ];
+				},
+				set: function ( value ) {
+					// TODO: Implement
+				},
+				enumerable: false
+			},
+			'uri': {
+				get: function () {
+					return this[ '@id' ];
+				},
+				set: function ( value ) {
+					this[ '@id' ] = value;
+				},
+				enumerable: false
+			},
+
+			'hasProperty': {
+				writable: false,
+				enumerable: false,
+				value: hasProperty
+			},
+			'getProperty': {
+				writable: false,
+				enumerable: false,
+				value: getProperty
+			},
+			'getPropertyValue': {
+				writable: false,
+				enumerable: false,
+				value: getPropertyValue
+			},
+			'getPropertyURI': {
+				writable: false,
+				enumerable: false,
+				value: getPropertyURI
+			},
+			'getProperties': {
+				writable: false,
+				enumerable: false,
+				value: getProperties
+			},
+			'getPropertyValues': {
+				writable: false,
+				enumerable: false,
+				value: getPropertyValues
+			},
+			'getPropertyURIs': {
+				writable: false,
+				enumerable: false,
+				value: getPropertyURIs
+			},
+			'addProperty': {
+				writable: false,
+				enumerable: false,
+				value: addProperty
+			},
+			'setProperty': {
+				writable: false,
+				enumerable: false,
+				value: setProperty
+			},
+			'deleteProperty': {
+				writable: false,
+				enumerable: false,
+				value: deleteProperty
+			}
+		} );
+
+		return <Resource> resource;
 	}
 
 	static injectDefinitions( resource:Resource, definitions:Map<string, Map<string, PropertyDescription>> ):Resource;
@@ -366,4 +419,12 @@ class Factory {
 	}
 }
 
-export { Resource as Class, Factory };
+var factory = new Factory;
+
+//@formatter:off
+export {
+	Resource as Class,
+	Factory,
+	factory
+};
+//@formatter:on

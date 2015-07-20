@@ -7,19 +7,12 @@ module.exports = function( config ) {
 		// base path that will be used to resolve all patterns (eg. files, exclude)
 		basePath: '',
 
-
-		// frameworks to use
-		// available frameworks: https://npmjs.org/browse/keyword/karma-adapter
 		frameworks: [ 'jasmine', 'requirejs' ],
-
 
 		// list of files / patterns to load in the browser
 		files: [
-			'node_modules/karma-jasmine/lib/jasmine.js',
-			'node_modules/karma-jasmine/lib/adapter.js',
-			'bower_components/requirejs/require.js',
+			'test/karma-jasmine/lib/extender.js',
 			'bower_components/jasmine-ajax/lib/mock-ajax.js',
-			'node_modules/karma-requirejs/lib/adapter.js',
 			'node_modules/babel-core/browser-polyfill.js',
 
 			// {pattern: 'bower_components/bluebird/**/*.js', included: false},
@@ -29,15 +22,9 @@ module.exports = function( config ) {
 			// {pattern: 'bower_components/underscore/**/*.js', included: false},
 			{ pattern: 'bower_components/jsonld.js/js/jsonld.js', included: false },
 
-			{ pattern: 'src/*.js', included: false },
-			{ pattern: 'src/*.js.map', included: false },
-			{ pattern: 'src/*.ts', included: false },
-			{ pattern: 'src/rdf/*.js', included: false },
-			{ pattern: 'src/rdf/*.js.map', included: false },
-			{ pattern: 'src/rdf/*.ts', included: false },
-			{ pattern: 'src/namespaces/*.js', included: false },
-			{ pattern: 'src/namespaces/*.js.map', included: false },
-			{ pattern: 'src/namespaces/*.ts', included: false },
+			{ pattern: 'src/**/*.js', included: false },
+			{ pattern: 'src/**/*.js.map', included: false },
+			{ pattern: 'src/**/*.ts', included: false },
 
 			'test-main.js'
 		],

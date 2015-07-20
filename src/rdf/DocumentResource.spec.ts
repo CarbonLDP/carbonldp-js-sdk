@@ -11,12 +11,12 @@ describe( 'RDF', function () {
 		var fragments:FragmentResource.Class[];
 
 		beforeEach( function () {
-			resource = Resource.Factory.create();
+			resource = Resource.factory.create();
 			fragments = [];
-			fragments.push( FragmentResource.Factory.create( '#fragment-1' ) );
-			fragments.push( FragmentResource.Factory.create( '#fragment-2' ) );
-			fragments.push( FragmentResource.Factory.create( '#fragment-3' ) );
-			fragments.push( FragmentResource.Factory.create( '#fragment-4' ) );
+			fragments.push( FragmentResource.factory.create( '#fragment-1' ) );
+			fragments.push( FragmentResource.factory.create( '#fragment-2' ) );
+			fragments.push( FragmentResource.factory.create( '#fragment-3' ) );
+			fragments.push( FragmentResource.factory.create( '#fragment-4' ) );
 		} );
 
 		it( 'is defined', function () {
@@ -26,7 +26,7 @@ describe( 'RDF', function () {
 			var documentResource:DocumentResource.Class;
 
 			beforeEach( function () {
-				documentResource = DocumentResource.Factory.from( resource, fragments );
+				documentResource = DocumentResource.factory.from( resource, fragments );
 			} );
 
 			it( 'has method, hasFragment( uri ), that returns true if the documentResource has a fragment with that uri/slug.', function () {
@@ -63,7 +63,7 @@ describe( 'RDF', function () {
 
 				var fragment:FragmentResource.Class = documentResource.createFragment( '#new-fragment' );
 
-				expect( FragmentResource.Factory.is( fragment ) ).toEqual( true );
+				expect( FragmentResource.factory.is( fragment ) ).toEqual( true );
 				expect( documentResource.hasFragment( '#new-fragment' ) ).toEqual( true );
 			} );
 			it( "has method, deleteFragment( uri ), that tries to removes a fragment with the uri supplied, and returns true if successful.", function () {
@@ -82,10 +82,10 @@ describe( 'RDF', function () {
 				expect( DocumentResource.Factory ).toBeDefined();
 			} );
 			it( 'has method, from( resource, fragments ), that makes the resource a document resource and adds all the fragments to it.', function () {
-				expect( DocumentResource.Factory.from ).toBeDefined();
-				expect( Utils.isFunction( DocumentResource.Factory.from ) ).toEqual( true );
+				expect( DocumentResource.factory.from ).toBeDefined();
+				expect( Utils.isFunction( DocumentResource.factory.from ) ).toEqual( true );
 
-				var documentResource:DocumentResource.Class = DocumentResource.Factory.from( resource );
+				var documentResource:DocumentResource.Class = DocumentResource.factory.from( resource );
 				expect( documentResource ).toEqual( resource );
 
 				expect( documentResource._fragments ).toBeDefined();

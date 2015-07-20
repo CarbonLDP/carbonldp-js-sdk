@@ -1,7 +1,6 @@
 /// <reference path="../typings/es6-promise/es6-promise.d.ts" />
 import * as HTTP from './HTTP';
 import Parent from './Parent';
-import * as REST from './REST';
 
 enum Method {
 	Basic
@@ -44,7 +43,7 @@ class Auth {
 		}
 	}
 
-	addAuthentication( requestOptions:REST.RequestOptions ):void {
+	addAuthentication( requestOptions:HTTP.Request.Options ):void {
 		if( ! this.isAuthenticated( false ) ) {
 			if( this.parent.parent ) {
 				this.parent.parent.Auth.addAuthentication( requestOptions);
@@ -54,7 +53,7 @@ class Auth {
 			}
 		}
 
-		var headers:Map<string, HTTP.Header> = requestOptions.headers ? requestOptions.headers : requestOptions.headers = new Map<string, HTTP.Header>();
+		var headers:Map<string, HTTP.Header.Class> = requestOptions.headers ? requestOptions.headers : requestOptions.headers = new Map<string, HTTP.Header.Class>();
 		switch ( this.method ) {
 			case Method.Basic:
 				this.addBasicAuthHeader( headers );
@@ -79,15 +78,15 @@ class Auth {
 		} );
 	}
 
-	private addBasicAuthHeader( headers:Map<string, HTTP.Header> ):void {
-		var header:HTTP.Header;
+	private addBasicAuthHeader( headers:Map<string, HTTP.Header.Class> ):void {
+		var header:HTTP.Header.Class;
 		if ( headers.has( 'Authorization' ) ) header = headers.get( 'Authorization' );
 		else {
-			header = new HTTP.Header();
+			header = new HTTP.Header.Class();
 			headers.set( 'Authorization', header );
 		}
 		var authorization = 'Basic ' + btoa( this.credentials.username + ':' + this.credentials.password );
-		header.values.push( new HTTP.HeaderValue( authorization ) );
+		header.values.push( new HTTP.Header.Value( authorization ) );
 	}
 
 

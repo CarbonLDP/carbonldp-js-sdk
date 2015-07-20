@@ -7,7 +7,6 @@ var jsonld;
 //@formatter:off
 import * as HTTP from './HTTP';
 import Parent from './Parent';
-import * as REST from './REST';
 import * as Utils from './Utils';
 import {
 	RDFDocument,
@@ -47,16 +46,16 @@ class Documents {
 
 	}
 
-	get( uri:string, requestOptions:REST.RequestOptions = {} ):Promise<HTTP.ProcessedResponse<RDFDocument.Class[]>> {
+	get( uri:string, requestOptions:HTTP.Request.Options = {} ):Promise<HTTP.ProcessedResponse<RDFDocument.Class[]>> {
 		if ( URI.Util.isRelative( uri ) ) {
 			if ( ! this.parent ) throw new Error( "IllegalArgument: This module doesn't support relative URIs." );
 			uri = this.parent.resolve( uri );
 		}
 
-		var headers = requestOptions.headers ? requestOptions.headers : requestOptions.headers = new Map<string, HTTP.Header>();
-		headers.set( "Accept", new HTTP.Header( "application/ld+json" ) );
+		var headers = requestOptions.headers ? requestOptions.headers : requestOptions.headers = new Map<string, HTTP.Header.Class>();
+		headers.set( "Accept", new HTTP.Header.Class( "application/ld+json" ) );
 
-		return REST.get( uri, requestOptions ).then(
+		return HTTP.Request.Service.get( uri, requestOptions ).then(
 			( response:HTTP.Response ) => {
 				var parsedObject = parse( response.data );
 

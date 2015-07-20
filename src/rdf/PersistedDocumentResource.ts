@@ -131,7 +131,7 @@ class Factory {
 	static is( value:any ) {
 		//@formatter:off
 		return (
-			DocumentResource.Factory.is( value ) &&
+			DocumentResource.factory.is( value ) &&
 			Persisted.Factory.is( value ) &&
 
 			Utils.hasProperty( value, '_parent' ) &&

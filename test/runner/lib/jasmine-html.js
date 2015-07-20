@@ -231,6 +231,10 @@ jasmineRequire.HtmlReporter = function( j$ ) {
 			}
 
 			function renderSuite( suiteNode, $node ) {
+				if( suiteNode.result.description.a ) {
+					console.log( suiteNode.result.description.a );
+				}
+
 				if( suiteNode.children && suiteNode.children.length > 0 ) {
 					$node.appendChild(
 						createDom( 'input', { type: 'checkbox', id: 'checkbox-' + suiteNode.result.id } )

@@ -20,7 +20,6 @@ import {
 } from './RDF';
 import * as Utils from './Utils';
 import * as RDFSource from './ldp/RDFSource';
-import * as REST from './REST';
 import * as LDP from './namespaces/LDP';
 //@formatter:on
 
@@ -29,11 +28,11 @@ enum InteractionModel {
 	Container
 }
 
-function setPreferredInteractionModel( interactionModel:InteractionModel, requestOptions:REST.RequestOptions ) {
-	var headers = requestOptions.headers ? requestOptions.headers : requestOptions.headers = new Map<string, HTTP.Header>();
-	if ( ! headers.has( "Prefer" ) ) headers.set( "Prefer", new HTTP.Header() );
-	var prefer:HTTP.Header = headers.get( "Prefer" );
-	prefer.values.push( new HTTP.HeaderValue( LDP.Class.RDFSource + "; rel=interaction-model" ) );
+function setPreferredInteractionModel( interactionModel:InteractionModel, requestOptions:HTTP.Request.Options ) {
+	var headers = requestOptions.headers ? requestOptions.headers : requestOptions.headers = new Map<string, HTTP.Header.Class>();
+	if ( ! headers.has( "Prefer" ) ) headers.set( "Prefer", new HTTP.Header.Class() );
+	var prefer:HTTP.Header.Class = headers.get( "Prefer" );
+	prefer.values.push( new HTTP.Header.Value( LDP.Class.RDFSource + "; rel=interaction-model" ) );
 }
 
 class Resources implements Committer {
@@ -44,7 +43,7 @@ class Resources implements Committer {
 	}
 
 	get( uri:string ):Promise<HTTP.ProcessedResponse<PersistedDocumentResource.Class>> {
-		var requestOptions:REST.RequestOptions = {};
+		var requestOptions:HTTP.Request.Options = {};
 		if ( this.parent && this.parent.Auth.isAuthenticated() ) this.parent.Auth.addAuthentication( requestOptions );
 
 		setPreferredInteractionModel( InteractionModel.RDFSource, requestOptions );
@@ -57,19 +56,9 @@ class Resources implements Committer {
 				var document:RDFDocument.Class = documents[ 0 ];
 
 				var nodes:Node.Class[] = RDFDocument.Util.getResources( document );
-				var resources:Resource.Class[] = Resource.Factory.from( nodes );
+				var resources:Resource.Class[] = <Resource.Class[]> Resource.factory.from( nodes );
 
-				var definitionURIs:string[] = this.parent.getDefinitionURIs();
-
-				for ( let i:number = 0, length:number = definitionURIs.length; i < length; i ++ ) {
-					var definitionURI:string = definitionURIs[ i ];
-					var toInject:Resource.Class[] = [];
-					for ( let j:number = 0, resourcesLength:number = resources.length; j < resourcesLength; j ++ ) {
-						var resource:Resource.Class = resources[ j ];
-						if ( resource.types.indexOf( definitionURI ) !== - 1 ) toInject.push( resource );
-					}
-					if ( toInject.length > 0 ) Resource.Factory.injectDescriptions( toInject, this.parent.getDefinition( definitionURI ) );
-				}
+				this.injectDefinitions( resources );
 
 				return {
 					result: document,
@@ -86,7 +75,7 @@ class Resources implements Committer {
 
 				var documentResourceNode:Node.Class = documentResourceNodes[ 0 ];
 				var fragmentNodes:Node.Class[] = RDFDocument.Util.getFragmentResources( document, documentResourceNode );
-				var documentResource:DocumentResource.Class = DocumentResource.Factory.from( documentResourceNode, fragmentNodes );
+				var documentResource:DocumentResource.Class = DocumentResource.factory.from( documentResourceNode, fragmentNodes );
 
 				var persistedDocumentResource:PersistedDocumentResource.Class = PersistedDocumentResource.Factory.from( documentResource, this );
 
@@ -103,6 +92,22 @@ class Resources implements Committer {
 	commit( object:any = null ):Promise<HTTP.Response> {
 		// TODO: Implement
 		return null;
+	}
+
+	private injectDefinitions( resources:Resource.Class[] ):Resource.Class[] {
+		var definitionURIs:string[] = this.parent.getDefinitionURIs();
+
+		for ( let i:number = 0, length:number = definitionURIs.length; i < length; i ++ ) {
+			var definitionURI:string = definitionURIs[ i ];
+			var toInject:Resource.Class[] = [];
+			for ( let j:number = 0, resourcesLength:number = resources.length; j < resourcesLength; j ++ ) {
+				var resource:Resource.Class = resources[ j ];
+				if ( resource.types.indexOf( definitionURI ) !== - 1 ) toInject.push( resource );
+			}
+			if ( toInject.length > 0 ) Resource.Factory.injectDescriptions( toInject, this.parent.getDefinition( definitionURI ) );
+		}
+
+		return resources;
 	}
 
 }

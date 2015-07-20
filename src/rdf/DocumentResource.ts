@@ -12,6 +12,8 @@ interface DocumentResource extends Resource.Class {
 	getFragments():FragmentResource.Class[];
 	createFragment( uri:string ):FragmentResource.Class;
 	deleteFragment( uri:string ):boolean;
+
+	toJsonLD():string;
 }
 
 function getFragmentSlug( fragmentURI:string ):string {
@@ -53,7 +55,7 @@ function createFragment( uri:string ):FragmentResource.Class {
 	var documentResource:DocumentResource = <DocumentResource> this;
 	if ( documentResource.hasFragment( fragmentSlug ) ) throw new Error( 'Conflict: A fragment already exists with that slug.' );
 
-	var fragment:FragmentResource.Class = FragmentResource.Factory.create( fragmentSlug );
+	var fragment:FragmentResource.Class = FragmentResource.factory.create( fragmentSlug );
 	documentResource._fragments.push( fragment );
 	return fragment;
 }
@@ -72,61 +74,110 @@ function deleteFragment( uri:string ):boolean {
 
 	return false;
 }
+function toJsonLD():string {
+	var resources = [ this ];
+	resources = resources.concat( this._fragments );
+	return JSON.stringify( resources );
+}
 
 class Factory {
-	static is( value:any ):boolean {
+	is( value:any ):boolean {
 		//@formatter:off
 		return (
-			Resource.Factory.is( value ) &&
-
-			Utils.hasProperty( value, '_fragments' ) &&
-
-			Utils.hasFunction( value, 'hasFragment' ) &&
-			Utils.hasFunction( value, 'getFragment' ) &&
-			Utils.hasFunction( value, 'getFragments' ) &&
-			Utils.hasFunction( value, 'createFragment' ) &&
-			Utils.hasFunction( value, 'deleteFragment' )
+			Resource.factory.is( value ) &&
+			this.hasClassProperties( value )
 		);
 		//@formatter:on
 	}
 
-	static from( resource:RDFNode.Class, fragments:RDFNode.Class[] = [] ):DocumentResource {
-		resource = Resource.Factory.is( resource ) ? resource : Resource.Factory.from( resource );
+	from( resource:RDFNode.Class, fragments:RDFNode.Class[] = [] ):DocumentResource {
+		resource = Resource.factory.is( resource ) ? resource : <Resource.Class> Resource.factory.from( resource );
 
 		var documentResource:DocumentResource = <DocumentResource> resource;
-		if ( ! Factory.is( documentResource ) ) Factory.injectBehaviour( documentResource );
-		Factory.addFragments( documentResource, fragments );
+		if ( ! this.is( documentResource ) ) this.injectBehaviour( documentResource );
+		this.addFragments( documentResource, fragments );
 
 		return documentResource;
 	}
 
-	private static injectBehaviour( resource:Resource.Class ):DocumentResource {
-		Object.defineProperty( resource, '_fragments', {
-			writable: false,
-			enumerable: false,
-			configurable: false,
-			value: []
+	protected hasClassProperties( resource:RDFNode.Class ):boolean {
+		return (
+			Utils.hasProperty( resource, '_fragments' ) &&
+
+			Utils.hasFunction( resource, 'hasFragment' ) &&
+			Utils.hasFunction( resource, 'getFragment' ) &&
+			Utils.hasFunction( resource, 'getFragments' ) &&
+			Utils.hasFunction( resource, 'createFragment' ) &&
+			Utils.hasFunction( resource, 'deleteFragment' )
+		);
+	}
+
+	protected injectBehaviour( resource:Resource.Class ):DocumentResource {
+
+		Object.defineProperties( resource, {
+			'_fragments': {
+				writable: false,
+				enumerable: false,
+				configurable: false,
+				value: []
+			},
+			'hasFragment': {
+				writable: false,
+				enumerable: false,
+				configurable: true,
+				value: hasFragment
+			},
+			'getFragment': {
+				writable: false,
+				enumerable: false,
+				configurable: true,
+				value: getFragment
+			},
+			'getFragments': {
+				writable: false,
+				enumerable: false,
+				configurable: true,
+				value: getFragments
+			},
+			'createFragment': {
+				writable: false,
+				enumerable: false,
+				configurable: true,
+				value: createFragment
+			},
+			'deleteFragment': {
+				writable: false,
+				enumerable: false,
+				configurable: true,
+				value: deleteFragment
+			},
+			'toJsonLD': {
+				writable: false,
+				enumerable: false,
+				configurable: true,
+				value: toJsonLD
+			}
 		} );
 
-		var documentResource:DocumentResource = <DocumentResource> resource;
-
-		documentResource.hasFragment = hasFragment;
-		documentResource.getFragment = getFragment;
-		documentResource.getFragments = getFragments;
-		documentResource.createFragment = createFragment;
-		documentResource.deleteFragment = deleteFragment;
-
-		return documentResource;
+		return <DocumentResource> resource;
 	}
 
-	private static addFragments( documentResource:DocumentResource, fragments:RDFNode.Class[] ):void {
+	private addFragments( documentResource:DocumentResource, fragments:RDFNode.Class[] ):void {
 		for ( let i:number = 0, length:number = fragments.length; i < length; i ++ ) {
 			var resource:RDFNode.Class = fragments[ i ];
-			var fragment:FragmentResource.Class = FragmentResource.Factory.from( resource );
+			var fragment:FragmentResource.Class = FragmentResource.factory.from( resource );
 
 			documentResource._fragments.push( fragment );
 		}
 	}
 }
 
-export { DocumentResource as Class, Factory };
+var factory = new Factory();
+
+//@formatter:off
+export {
+	DocumentResource as Class,
+	Factory,
+	factory
+};
+//@formatter:on

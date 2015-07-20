@@ -8,34 +8,36 @@ interface FragmentResource extends Resource.Class {
 }
 
 class Factory {
-	static is( resource:Resource.Class ):boolean {
-		if ( Utils.hasProperty( resource, 'slug' ) ) return true;
-		return false;
+	is( resource:Resource.Class ):boolean {
+		return (
+			Resource.factory.is( resource ) &&
+			this.hasClassProperties( resource )
+		);
 	}
 
-	static create( slug:string ):FragmentResource {
+	create( slug:string ):FragmentResource {
 		slug = URI.Util.hasFragment( slug ) ? URI.Util.getFragment( slug ) : slug;
 		slug = '#' + slug;
 
-		var resource:Resource.Class = Resource.Factory.create();
+		var resource:Resource.Class = Resource.factory.create();
 
-		var fragment:FragmentResource = Factory.from( resource );
+		var fragment:FragmentResource = this.from( resource );
 		fragment.slug = slug;
 
 		return fragment;
 	}
 
-	static from( resource:RDFNode.Class ):FragmentResource;
-	static from( resources:RDFNode.Class[] ):FragmentResource[];
-	static from( resourceOrResources:any ):any {
+	from( resource:RDFNode.Class ):FragmentResource;
+	from( resources:RDFNode.Class[] ):FragmentResource[];
+	from( resourceOrResources:any ):any {
 		var resources:RDFNode.Class[] = Utils.isArray( resourceOrResources ) ? resourceOrResources : [ resourceOrResources ];
 		var fragments:FragmentResource[] = [];
 		for ( let i:number = 0, length:number = resources.length; i < length; i ++ ) {
 			var resource:RDFNode.Class = resources[ i ];
-			resource = Resource.Factory.is( resource ) ? resource : Resource.Factory.from( resource );
+			resource = Resource.factory.is( resource ) ? resource : <Resource.Class> Resource.factory.from( resource );
 
 			var fragment:FragmentResource = <FragmentResource> resource;
-			if ( ! Factory.is( fragment ) ) Factory.injectBehaviour( fragment );
+			if ( ! this.is( fragment ) ) this.injectBehaviour( fragment );
 
 			fragments.push( fragment );
 		}
@@ -44,7 +46,13 @@ class Factory {
 		else return fragments[ 0 ];
 	}
 
-	private static injectBehaviour( fragment:FragmentResource ):FragmentResource {
+	protected hasClassProperties( resource:RDFNode.Class ):boolean {
+		return (
+			Utils.hasProperty( resource, 'slug' )
+		);
+	}
+
+	protected injectBehaviour( fragment:FragmentResource ):FragmentResource {
 		Object.defineProperty( fragment, 'slug', {
 			writable: true,
 			enumerable: false
@@ -57,9 +65,12 @@ class Factory {
 	}
 }
 
+var factory = new Factory();
+
 //@formatter:off
 export {
 	FragmentResource as Class,
-	Factory
+	Factory,
+	factory
 };
 //@formatter:on

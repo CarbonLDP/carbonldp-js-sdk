@@ -14,8 +14,8 @@ describe( 'RDF', function () {
 			var persisted:PersistedDocumentResource.Class;
 
 			beforeEach( function () {
-				var resource:Resource.Class = Resource.Factory.create();
-				var documentResource:DocumentResource.Class = DocumentResource.Factory.from( resource );
+				var resource:Resource.Class = Resource.factory.create();
+				var documentResource:DocumentResource.Class = DocumentResource.factory.from( resource );
 				persisted = PersistedDocumentResource.Factory.from( documentResource, null );
 			} );
 
@@ -45,8 +45,8 @@ describe( 'RDF', function () {
 				expect( PersistedDocumentResource.Factory ).toBeDefined();
 			} );
 			it( 'is defined', function () {
-				var resource:Resource.Class = Resource.Factory.create();
-				var documentResource:DocumentResource.Class = DocumentResource.Factory.from( resource );
+				var resource:Resource.Class = Resource.factory.create();
+				var documentResource:DocumentResource.Class = DocumentResource.factory.from( resource );
 				var persisted:PersistedDocumentResource.Class = PersistedDocumentResource.Factory.from( documentResource, null );
 
 				expect( persisted ).toBeDefined();

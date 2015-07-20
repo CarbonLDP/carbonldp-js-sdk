@@ -27,7 +27,7 @@ class Apps {
 					throw new Error( 'The resource fetched is not a cs:Application.' );
 				}
 
-				var appResource:App.Resource = App.Factory.from( resource );
+				var appResource:App.Resource = App.factory.from( resource );
 				var app:App.Class = new App.Class( this.parent, appResource );
 
 				return app;

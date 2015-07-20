@@ -2,17 +2,34 @@
 /// <reference path="../typings/es6-promise/es6-promise.d.ts" />
 import * as Utils from './Utils';
 
+//@formatter:off
+import {
+	INSTANCE,
+	STATIC,
+	module,
+	submodule,
+	isDefined,
+	hasMethod,
+	hasProperty
+} from './test/JasmineExtender';
+//@formatter:on
+
 interface dummy {
 	doSomething?();
 	something?:any;
 }
 
-describe( 'Utils', function () {
-	it( 'is defined', function () {
+describe( module( 'Carbon.Utils' ), function () {
+
+	it( isDefined(), function () {
 		expect( Utils ).toBeDefined();
 		expect( Utils ).not.toBeNull();
 	} );
-	it( 'has method, hasFunction( object, functionName ), which returns true if the object has a function with that name', function () {
+
+	it( hasMethod( STATIC, 'hasFunction', 'Checks if the object has a property with that name and if it that property is a function.', [
+		{name: 'object', type: 'object'},
+		{name: 'name', type: 'string'}
+	], {type: 'boolean'} ), function () {
 		expect( Utils.hasFunction ).toBeDefined();
 
 		var myObject:dummy = {};
@@ -25,7 +42,10 @@ describe( 'Utils', function () {
 		myObject.something = 'something';
 		expect( Utils.hasFunction( myObject, 'something' ) ).toBe( false );
 	} );
-	it( 'has method, hasProperty( object, propertyName ), which returns true if the object has a property with that name', function () {
+	it( hasMethod( STATIC, 'hasProperty', 'Checks if the object has a property with that name.', [
+		{name: 'object', type: 'object'},
+		{name: 'name', type: 'string'}
+	], {type: 'boolean'} ), function () {
 		expect( Utils.hasProperty ).toBeDefined();
 
 		var postPrototype:any = {};
@@ -39,7 +59,10 @@ describe( 'Utils', function () {
 		expect( Utils.hasProperty( post, 'ownProperty' ) ).toBe( true );
 		expect( Utils.hasProperty( post, 'prototypeProperty' ) ).toBe( true );
 	} );
-	it( 'has method, hasPropertyDefined( object, propertyName ), which returns true if the object has a property with that name defined (even if the property value is undefined). ', function () {
+	it( hasMethod( STATIC, 'hasPropertyDefined', 'Checks if an object has a property defined under that name (even if its value is undefined).', [
+		{name: 'object', type: 'object'},
+		{name: 'name', type: 'string'}
+	], {type: 'boolean'} ), function () {
 		expect( Utils.hasPropertyDefined ).toBeDefined();
 
 		var postPrototype:any = {};
@@ -68,7 +91,9 @@ describe( 'Utils', function () {
 
 	} );
 
-	it( 'has method, isNull( value ), which returns true if the value is null', function () {
+	it( hasMethod( STATIC, 'isNull', 'Checks if the value passed is null.', [
+		{name: 'value', type: 'any'}
+	], {type: 'boolean'} ), function () {
 		expect( Utils.isNull ).toBeDefined();
 
 		expect( Utils.isNull( null ) ).toBe( true );
@@ -80,7 +105,9 @@ describe( 'Utils', function () {
 		expect( Utils.isNull( [] ) ).toBe( false );
 	} );
 
-	it( 'has method, isArray( value ), which returns true if the value is an array', function () {
+	it( hasMethod( STATIC, 'isArray', 'Checks if the value passed is an array.', [
+		{name: 'value', type: 'any'}
+	], {type: 'boolean'} ), function () {
 		expect( Utils.isArray ).toBeDefined();
 
 		expect( Utils.isArray( null ) ).toBe( false );
@@ -92,7 +119,9 @@ describe( 'Utils', function () {
 		expect( Utils.isArray( [] ) ).toBe( true );
 	} );
 
-	it( 'has method, isString( value ), which returns true if the value is a string', function () {
+	it( hasMethod( STATIC, 'isString', 'Checks if the value passed is a string.', [
+		{name: 'value', type: 'any'}
+	], {type: 'boolean'} ), function () {
 		expect( Utils.isString ).toBeDefined();
 
 		expect( Utils.isString( null ) ).toBe( false );
@@ -104,7 +133,9 @@ describe( 'Utils', function () {
 		expect( Utils.isString( [] ) ).toBe( false );
 	} );
 
-	it( 'has method, isBoolean( value ), which returns true if the value is a boolean', function () {
+	it( hasMethod( STATIC, 'isBoolean', 'Checks if the value passed is a boolean.', [
+		{name: 'value', type: 'any'}
+	], {type: 'boolean'} ), function () {
 		expect( Utils.isBoolean ).toBeDefined();
 
 		expect( Utils.isBoolean( null ) ).toBe( false );
@@ -116,7 +147,9 @@ describe( 'Utils', function () {
 		expect( Utils.isBoolean( [] ) ).toBe( false );
 	} );
 
-	it( 'has method, isNumber( value ), which returns true if the value is a number', function () {
+	it( hasMethod( STATIC, 'isNumber', 'Checks if the value passed is a number', [
+		{name: 'value', type: 'any'}
+	], {type: 'boolean'} ), function () {
 		expect( Utils.isNumber ).toBeDefined();
 
 		expect( Utils.isNumber( null ) ).toBe( false );
@@ -131,7 +164,9 @@ describe( 'Utils', function () {
 		expect( Utils.isNumber( [] ) ).toBe( false );
 	} );
 
-	it( 'has method, isInteger( value ), which returns true if the map is an integer', function () {
+	it( hasMethod( STATIC, 'isInteger', 'Checks if the value passed is an integer.', [
+		{name: 'value', type: 'any'}
+	], {type: 'boolean'} ), function () {
 		expect( Utils.isInteger ).toBeDefined();
 
 		expect( Utils.isInteger( null ) ).toBe( false );
@@ -146,7 +181,9 @@ describe( 'Utils', function () {
 		expect( Utils.isInteger( [] ) ).toBe( false );
 	} );
 
-	it( 'has method, isDouble( value ), which returns true if the value is a double', function () {
+	it( hasMethod( STATIC, 'isDouble', 'Checks if the value passed is a double.', [
+		{name: 'value', type: 'any'}
+	], {type: 'boolean'} ), function () {
 		expect( Utils.isNumber ).toBeDefined();
 
 		expect( Utils.isNumber( null ) ).toBe( false );
@@ -161,7 +198,9 @@ describe( 'Utils', function () {
 		expect( Utils.isNumber( [] ) ).toBe( false );
 	} );
 
-	it( 'has method, isDate( value ), which returns true if the value is a date object', function () {
+	it( hasMethod( STATIC, 'isDate', 'Checks if the value passed is a Date object.', [
+		{name: 'value', type: 'any'}
+	], {type: 'boolean'} ), function () {
 		expect( Utils.isDate ).toBeDefined();
 
 		expect( Utils.isDate( null ) ).toBe( false );
@@ -174,7 +213,9 @@ describe( 'Utils', function () {
 		expect( Utils.isDate( new Date() ) ).toBe( true );
 	} );
 
-	it( 'has method, isObject( value ), which returns true if the value is an object', function () {
+	it( hasMethod( STATIC, 'isObject', 'Checks if the value passed is an object (doesn\'t include null).', [
+		{name: 'value', type: 'any'}
+	], {type: 'boolean'} ), function () {
 		expect( Utils.isObject ).toBeDefined();
 
 		expect( Utils.isObject( null ) ).toBe( false );
@@ -187,7 +228,9 @@ describe( 'Utils', function () {
 		expect( Utils.isObject( new Date() ) ).toBe( true );
 	} );
 
-	it( 'has method, isFunction( value ), which returns true if the value is an object', function () {
+	it( hasMethod( STATIC, 'isFunction', 'Checks if the value passed is a function.', [
+		{name: 'value', type: 'any'}
+	], {type: 'boolean'} ), function () {
 		expect( Utils.isFunction ).toBeDefined();
 
 		expect( Utils.isFunction( null ) ).toBe( false );
@@ -201,7 +244,9 @@ describe( 'Utils', function () {
 		expect( Utils.isFunction( function () {} ) ).toBe( true );
 	} );
 
-	it( 'has method, isMap( value ), which returns true if the value is an ES6 Map', function () {
+	it( hasMethod( STATIC, 'isMap', 'Checks if the value passed is an ES6 Map.', [
+		{name: 'value', type: 'any'}
+	], {type: 'boolean'} ), function () {
 		expect( Utils.isMap ).toBeDefined();
 
 		expect( Utils.isMap( null ) ).toBe( false );
@@ -216,7 +261,9 @@ describe( 'Utils', function () {
 		expect( Utils.isMap( new Map<any, any>() ) ).toBe( true );
 	} );
 
-	it( 'has method, parseBoolean( value ), which parses a string and returns a boolean representation.', function () {
+	it( hasMethod( STATIC, 'parseBoolean', 'Parses a string into a boolean.', [
+		{name: 'value', type: 'string'}
+	], {type: 'boolean'} ), function () {
 		expect( Utils.parseBoolean ).toBeDefined();
 
 		expect( Utils.parseBoolean( "true" ) ).toBe( true );
@@ -232,11 +279,14 @@ describe( 'Utils', function () {
 		expect( Utils.parseBoolean( "an invalid string" ) ).toBe( false );
 	} );
 
-	it( 'has method, extend( objects... )', function () {
+	it( hasMethod( STATIC, 'extend', '', [] ), function () {
 		// TODO: Test
 	} );
 
-	it( 'has method, forEachOwnProperty( object, action ), which executes an action( name, value ) for each own property of the object.', function () {
+	it( hasMethod( STATIC, 'forEachOwnProperty', 'Executes an action for each own property of the object.', [
+		{name: 'object', type: 'object'},
+		{name: 'action', type: 'function', description: 'action( name, value )'}
+	] ), function () {
 		expect( Utils.forEachOwnProperty ).toBeDefined();
 
 		var postPrototype:any = {};
@@ -258,11 +308,14 @@ describe( 'Utils', function () {
 		expect( anotherPost.three ).toBe( 3 );
 	} );
 
-	describe( 'S (String utilities )', function () {
-		it( 'is defined', function () {
+	describe( submodule( STATIC, 'S', 'Utility functions related to strings.' ), function () {
+		it( isDefined(), function () {
 			expect( Utils.S ).toBeDefined();
 		} );
-		it( 'has method, startsWith( string, substring ), that returns true if the string starts with the substring.', function () {
+		it( hasMethod( STATIC, 'startsWith', 'Checks if a string starts with a substring.', [
+			{name: 'string', type: 'string'},
+			{name: 'substring', type: 'string'}
+		], {type: 'boolean'} ), function () {
 			expect( Utils.S.startsWith ).toBeDefined();
 
 			expect( Utils.S.startsWith( 'hello', 'he' ) ).toBe( true );
@@ -277,7 +330,10 @@ describe( 'Utils', function () {
 			expect( Utils.S.startsWith( '536345', '3' ) ).toBe( false );
 			expect( Utils.S.startsWith( 'eeeee', 'f' ) ).toBe( false );
 		} );
-		it( 'has method, endsWith( string, substring ), that returns true if the string ends with the substring.', function () {
+		it( hasMethod( STATIC, 'endsWith', 'Checks if a string ends with a substring.', [
+			{name: 'string', type: 'string'},
+			{name: 'substring', type: 'string'}
+		], {type: 'boolean'} ), function () {
 			expect( Utils.S.endsWith ).toBeDefined();
 
 			expect( Utils.S.endsWith( 'hello', 'he' ) ).toBe( false );
@@ -292,7 +348,10 @@ describe( 'Utils', function () {
 			expect( Utils.S.endsWith( '536345', '5' ) ).toBe( true );
 			expect( Utils.S.endsWith( 'eeeee', 'e' ) ).toBe( true );
 		} );
-		it( 'has method, contains( string, substring ), that returns true if the string contains the substring.', function () {
+		it( hasMethod( STATIC, 'contains', 'Checks if a string contains a substring (in any part).', [
+			{name: 'string', type: 'string'},
+			{name: 'substring', type: 'string'}
+		], {type: 'boolean'} ), function () {
 			expect( Utils.S.contains ).toBeDefined();
 
 			expect( Utils.S.contains( 'hello', 'he' ) ).toBe( true );
@@ -308,12 +367,14 @@ describe( 'Utils', function () {
 			expect( Utils.S.contains( 'hello', ' ' ) ).toBe( false );
 		} );
 	} );
-	describe( 'A (Array utilities )', function () {
-		it( 'is defined', function () {
+	describe( submodule( STATIC, 'A', 'Utility functions related to Arrays' ), function () {
+		it( isDefined(), function () {
 			expect( Utils.A ).toBeDefined();
 		} );
 
-		it( "has method, from( iterator ), that returns an array with the iterator's values", function () {
+		it( hasMethod( STATIC, 'from', 'Collects the values of an ES6 iterator and returns an array.', [
+			{name: 'iterator', type: 'iterator'}
+		], {type: 'array'} ), function () {
 			expect( Utils.A.from ).toBeDefined();
 
 			var iterator:Iterator<string> = {
@@ -344,7 +405,10 @@ describe( 'Utils', function () {
 			expect( array.length ).toBe( 5 );
 		} );
 
-		it( 'has method, joinWithoutDuplicates( arrays... ), that takes two or more arrays and joins them while removing duplicates.', function () {
+		it( hasMethod( STATIC, 'joinWithoutDuplicates', 'Takes two or more arrays and joins them while removing duplicates', [
+			// TODO: Describe multiple arguments
+			{name: 'array', type: 'array'}
+		], {type: 'array'} ), function () {
 			expect( Utils.A.joinWithoutDuplicates ).toBeDefined();
 
 			var array1:Array<number> = [ 5, 3, 1 ];
@@ -363,12 +427,14 @@ describe( 'Utils', function () {
 			expect( result.indexOf( 4 ) ).not.toBe( - 1 );
 		} );
 	} );
-	describe( 'M (Map utilities )', function () {
-		it( 'is defined', function () {
+	describe( submodule( 'M', 'Utility functions related to ES6 Maps.' ), function () {
+		it( isDefined(), function () {
 			expect( Utils.M ).toBeDefined();
 		} );
 
-		it( 'has method, from( object ), that takes an object and creates a map from its properties.', function () {
+		it( hasMethod( STATIC, 'from', 'Takes an object and creates a map from its properties.', [
+			{name: 'object', type: 'object'}
+		], {type: 'map'} ), function () {
 			expect( Utils.M.from ).toBeDefined();
 
 			var post:Object = {
