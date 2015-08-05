@@ -1,0 +1,74 @@
+{{#if title}}
+	<h4>{{title}}</h4>
+	<hr>
+	{{#if specs}}
+		<table>
+			<thead>
+				<tr>
+					<th width="33%">Parent</th>
+					<th width="33%">Name</th>
+					<th width="33%">Result</th>
+				</tr>
+			</thead>
+			<tbody>
+				{{#each specs}}
+				<tr>
+					<td>{{this.parent.description.name}}</td>
+					<td>{{this.description.name}}</td>
+					<td class="text-center">
+
+						{{#ifCond ../title '==' 'Passed Specs'}}
+						<i class="fi-check"></i>
+						{{else}}
+
+						{{/ifCond}}
+						{{#ifCond ../title '==' 'Failed Specs'}}
+						<i class="fi-x"></i>
+						{{/ifCond}}
+					</td>
+				</tr>
+				{{/each}}
+			</tbody>
+		</table>
+	{{else}}
+		<div class="panel callout radius">No {{title}}</div>
+	{{/if}}
+{{else}}
+	<h4>Overall Specs Status</h4>
+	<hr>
+	<table>
+		<thead>
+			<tr>
+				<th width="33%">Parent</th>
+				<th width="33%">Name</th>
+				<th width="33%">Result</th>
+			</tr>
+		</thead>
+		<tbody>
+			{{#each failedSpecs}}
+			<tr>
+				<td>{{this.parent.description.name}}</td>
+				<td>{{this.description.name}}</td>
+				<td class="text-center"><i class="fi-x"></i></td>
+			</tr>
+			{{/each}}
+			{{#each passedSpecs}}
+			<tr>
+				<td>{{this.parent.description.name}}</td>
+				<td>{{this.description.name}}</td>
+				<td class="text-center"><i class="fi-check"></i></td>
+			</tr>
+			{{/each}}
+			{{#each pendingSpecs}}
+			<tr>
+				<td>{{this.description.name}}</td>
+			</tr>
+			{{/each}}
+			{{#each disabledSpecs}}
+			<tr>
+				<td>{{this.description.name}}</td>
+			</tr>
+			{{/each}}
+		</tbody>
+	</table>
+{{/if}}

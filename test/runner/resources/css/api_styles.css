@@ -1,0 +1,94 @@
+/*
+    1.) Jasmine CSS Modifications
+    2.) API
+    3.) API > Navigation Bar
+
+*/
+
+
+.alert-box .close { top:10% }
+
+
+nav.top-bar ul.title-area li.logo img { width:100px; margin-top:5px;}
+
+
+
+body { -webkit-font-smoothing: antialiased; display:flex; flex-direction:column; }
+.api-container { flex:1; }
+footer{ background-color:#D3D3D3; padding:3em; width:100%; }
+
+.api-container .back-to-top {
+    position: fixed;
+    bottom: 1em;
+    right: 1em;
+    text-decoration: none;
+    background-color: #f2f2f2;
+    padding: 10px 20px;
+    border:1px solid #d8d8d8;
+    border-radius: .5em;
+    color: #008CBA;
+    font-size: 30px;
+    display:none;
+}
+.api-container .back-to-top:hover {  background-color: rgba(135, 135, 135, 0.50);  }
+
+/*.results-message-box .passed-box,
+.results-message-box .passed-box h2 { color:#43AC6A; }
+.results-message-box .passed-box { border:1px solid #43AC6A; }*/
+.results-message-box a.passed-box,
+.results-message-box a.passed-box h2 { color:#43AC6A; }
+.results-message-box a.passed-box { display:block; border:1px solid #43AC6A; }
+.results-message-box a.failed-box,
+.results-message-box a.failed-box h2 { color:#f04124; }
+.results-message-box a.failed-box { display:block; border:1px solid #f04124; }
+.results-message-box a.disabled-box,
+.results-message-box a.disabled-box h2 { color:#959595; }
+.results-message-box a.disabled-box { display:block; border:1px solid #959595; }
+.results-message-box a.pending-box,
+.results-message-box a.pending-box h2 { color:#008CBA; }
+.results-message-box a.pending-box { display:block; border:1px solid #008CBA; }
+
+.results-message-box .pending-box:hover,
+.results-message-box .passed-box:hover,
+.results-message-box .failed-box:hover,
+.results-message-box .disabled-box:hover { background-color:white; cursor:pointer; }
+
+
+
+
+
+/*  .) API > Suite Summary   */
+.results .suite-summary .fi-upload{ color:#008CBA; }
+.results .suite-summary .fi-download{ color:#43AC6A; }
+.results .suite-summary .fi-check{ color:#43AC6A; }
+.results .suite-summary .fi-x{ color:red; }
+
+
+.results .suite-summary .heading {  }
+.results .suite-summary .body,
+.results .suite-summary .body ul {  list-style:none;  }
+.results .suite-summary .body ul li {  }
+.results .suite-summary .body ul li i.fi-check{ color:#43AC6A; }
+.results .suite-summary .body ul li i.fi-x{ color:red; }
+.results .suite-summary .footer {  padding-top:10px;  }
+
+
+
+/*  .) API > Suite Summary > Spec Card  */
+.results .suite-summary .spec-card .signature .code-signature { background-color:#FFFFFF; padding:.5em; font-family: Monaco, "Lucida Console", monospace; margin:0; }
+.results .suite-summary .spec-card .signature .code-signature .access { color:#0000E6; }
+.results .suite-summary .spec-card .signature .code-signature .type { color:#009B00; }
+.results .suite-summary .spec-card .signature .code-signature .param-type { color:#9933CC; }
+.results .suite-summary .presenting-card { border: 3px dashed #008CBA;}
+
+
+
+/*  .) API > Navigation Panel    */
+.navigation-panel { padding:0px }
+.navigation-panel .panel-heading  { padding:10px; }
+.navigation-panel .panel-body  { padding:0; }
+.navigation-panel .panel-body ul { list-style:none; padding:0; border-top:1px solid grey; }
+.navigation-panel .panel-body ul li { border-bottom:1px solid grey;  padding:0; margin:0px }
+.navigation-panel .panel-body ul li a { display:block; color:#000000; padding: 10px 10px 10px 15px; min-height:34px; }
+.navigation-panel .panel-body ul li a:hover { background-color:lightgrey; }
+.navigation-panel .panel-body ul li a span.label { font-size:13px; }

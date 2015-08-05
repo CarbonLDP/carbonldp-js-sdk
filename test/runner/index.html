@@ -1,17 +1,96 @@
 <!DOCTYPE HTML>
-<html>
+<html class="no-js">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 	<title>Carbon JS API</title>
 
 	<link rel="shortcut icon" type="image/png" href="lib/jasmine-2.0.3/jasmine_favicon.png">
-	<link rel="stylesheet" type="text/css" href="lib/jasmine-2.0.3/jasmine.css">
-	<link rel="stylesheet" type="text/css" href="bower_components/bootstrap/dist/css/bootstrap.min.css">
+	<link rel="stylesheet" href="bower_components/foundation/css/foundation.css">
+	<link rel="stylesheet" href="bower_components/foundation-icon-fonts/foundation-icons.css">
 	<link rel="stylesheet" type="text/css" href="runner.css">
+	<link rel="stylesheet" type="text/css" href="resources/css/api_styles.css">
 
-	<script data-main="runner" src="bower_components/requirejs/require.js"></script>
+
+	<script type="text/javascript" src="bower_components/handlebars/handlebars.min.js"></script>
+	<script type="text/javascript" src="bower_components/requirejs/require.js" data-main="runner"></script>
+	<script type="text/javascript" src="bower_components/modernizr/modernizr.js"></script>
+	<script type="text/javascript" src="bower_components/jquery/dist/jquery.min.js"></script>
+	<script type="text/javascript" src="bower_components/foundation/js/foundation.js"></script>
+	<!--<script type="text/javascript" src="bower_components/foundation/js/foundation/foundation.alert.js"></script>-->
+	<script type="text/javascript" src="resources/js/api_animations.js"></script>
+
 </head>
-
 <body>
+	<div class="fixed">
+		<nav class="top-bar" data-topbar role="navigation">
+			<ul class="title-area">
+				<li class="logo">
+					<!--<h1><a href="#">Carbon</a></h1>-->
+					<img src="resources/images/carbonldp_logo.png"/>
+				</li>
+				<!-- Remove the class "menu-icon" to get rid of menu icon. Take out "Menu" to just have icon alone -->
+				<li class="toggle-topbar menu-icon"><a href="#"><span>Menu</span></a></li>
+			</ul>
+
+			<section class="top-bar-section">
+				<!-- Right Nav Section -->
+				<ul class="right">
+					<!--<li class="active"><a href="#">Right Button Active</a></li>-->
+					<!--<li class="has-dropdown">
+						<a href="#">Right Button Dropdown</a>
+						<ul class="dropdown">
+							<li><a href="#">First link in dropdown</a></li>
+							<li class="active"><a href="#">Active link in dropdown</a></li>
+						</ul>
+					</li>-->
+				</ul>
+
+				<!-- Left Nav Section -->
+				<ul class="left">
+					<!--<li><a href="#">Left Nav Button</a></li>-->
+				</ul>
+			</section>
+		</nav>
+	</div>
+	<br/>
+	<br/>
+	<br/>
+	<section role="main" class="api-container fluid-container">
+		<div class="row">
+			<div class="small-12 medium-12 columns">
+				<div class="results-message-box">
+					<!--<div data-alert class="failures alert-box ">
+						This is a secondary alert.
+						<a href="#" class="close">&times;</a>
+					</div>-->
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="small-12 medium-3 large-3 columns">
+				<div class="panel navigation-panel">
+					<div class="panel-heading">
+						<h3>Modules</h3>
+					</div>
+					<div class="panel-body">
+						<nav>
+							<ul class="side-nav"></ul>
+						</nav>
+					</div>
+				</div>
+			</div>
+			<div class="small-12 medium-9 large-9 columns">
+				<div class="results">
+					<div class="suite-summary">
+					</div>
+				</div>
+			</div>
+		</div>
+		<a href="#" class="back-to-top large"><i class="fi-arrow-up large"></i></a>
+	</section>
+	<!--<footer>
+		<div id="footer">Sticky Footer!</div>
+	</footer>-->
 </body>
 </html>

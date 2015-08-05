@@ -1,0 +1,37 @@
+<div data-alert class="secondary alert-box ">
+	<p class="text-center">Finished tests in <strong>{{finishTime}}</strong> seconds.</p>
+	{{#if failedSpecs}}
+
+	{{/if}}
+	<div class="row">
+		<div class="small-6 medium-3 large-3 columns text-center">
+			<a class="passed-box status-box" show="passedSpecs">
+				<h2>{{passedSpecs.length}}</h2>
+
+				<p>Passed Specs</p>
+			</a>
+		</div>
+		<div class="small-6 medium-3 large-3 columns text-center">
+			<a class="failed-box status-box" show="failedSpecs">
+				<h2>{{failedSpecs.length}}</h2>
+
+				<p>Failed Specs</p>
+			</a>
+		</div>
+		<div class="small-6 medium-3 large-3 columns text-center">
+			<a class="pending-box status-box" show="pendingSpecs">
+				<h2>{{pendingSpecs.length}}</h2>
+
+				<p>Pending Specs</p>
+			</a>
+		</div>
+		<div class="small-6 medium-3 large-3 columns text-center">
+			<a class="disabled-box status-box" show="disabledSpecs">
+				<h2>{{disabledSpecs.length}}</h2>
+
+				<p>Disabled Specs</p>
+			</a>
+		</div>
+	</div>
+	<a href="#" class="close">&times;</a>
+</div>

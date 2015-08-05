@@ -3,6 +3,7 @@ body { overflow-y: scroll; }
 .jasmine_html-reporter { background-color: #eeeeee; padding: 5px; margin: -8px; font-size: 11px; font-family: Monaco, "Lucida Console", monospace; line-height: 14px; color: #333333; }
 .jasmine_html-reporter a { text-decoration: none; }
 .jasmine_html-reporter a:hover { text-decoration: underline; }
+
 .jasmine_html-reporter p, .jasmine_html-reporter h1, .jasmine_html-reporter h2, .jasmine_html-reporter h3, .jasmine_html-reporter h4, .jasmine_html-reporter h5, .jasmine_html-reporter h6 { margin: 0; line-height: 14px; }
 .jasmine_html-reporter .banner, .jasmine_html-reporter .symbol-summary, .jasmine_html-reporter .summary, .jasmine_html-reporter .result-message, .jasmine_html-reporter .spec .description, .jasmine_html-reporter .spec-detail .description, .jasmine_html-reporter .alert .bar, .jasmine_html-reporter .stack-trace { padding-left: 9px; padding-right: 9px; }
 .jasmine_html-reporter .banner { position: relative; }
@@ -13,8 +14,9 @@ body { overflow-y: scroll; }
 .jasmine_html-reporter .version { color: #aaaaaa; }
 .jasmine_html-reporter .banner { margin-top: 14px; }
 .jasmine_html-reporter .duration { color: #aaaaaa; float: right; }
-.jasmine_html-reporter .symbol-summary { overflow: hidden; *zoom: 1; margin: 14px 0; }
-.jasmine_html-reporter .symbol-summary li { display: inline-block; height: 8px; width: 14px; font-size: 16px; }
+/*.jasmine_html-reporter .symbol-summary { overflow: hidden; *zoom: 1; margin: 14px 0; }
+/!*.jasmine_html-reporter .symbol-summary li { display: inline-block; height: 8px; width: 14px; font-size: 16px; }*!/
+.jasmine_html-reporter .symbol-summary li { display: inline-block; height: 10px; width: 15px; font-size: 16px; }
 .jasmine_html-reporter .symbol-summary li.passed { font-size: 14px; }
 .jasmine_html-reporter .symbol-summary li.passed:before { color: #007069; content: "\02022"; }
 .jasmine_html-reporter .symbol-summary li.failed { line-height: 9px; }
@@ -24,7 +26,7 @@ body { overflow-y: scroll; }
 .jasmine_html-reporter .symbol-summary li.pending { line-height: 17px; }
 .jasmine_html-reporter .symbol-summary li.pending:before { color: #ba9d37; content: "*"; }
 .jasmine_html-reporter .symbol-summary li.empty { font-size: 14px; }
-.jasmine_html-reporter .symbol-summary li.empty:before { color: #ba9d37; content: "\02022"; }
+.jasmine_html-reporter .symbol-summary li.empty:before { color: #ba9d37; content: "\02022"; }*/
 .jasmine_html-reporter .exceptions { color: #fff; float: right; margin-top: 5px; margin-right: 5px; }
 .jasmine_html-reporter .bar { line-height: 28px; font-size: 14px; display: block; color: #eee; }
 .jasmine_html-reporter .bar.failed { background-color: #ca3a11; }
