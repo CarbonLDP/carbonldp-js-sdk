@@ -1,7 +1,8 @@
 (function( jasmineRequire ) {
+
+	var templatesDirectory = './templates/';
+
 	function createHTMLReporterClass( j$ ) {
-
-
 		var createElement, createTextNode;
 		var suites = {};
 		var templates = {};
@@ -304,27 +305,27 @@
 				console.log( 'Handlebar: %o %o,', this, something );
 			} );
 			// Loads the template 'spec_card' of a spec
-			$.get( "templates/spec_card.html", function() {
+			$.get( templatesDirectory + "spec_card.html", function() {
 			} ).done( function( template ) {
 				(Handlebars.registerPartial( 'spec_card', ( template ) ));
 			} );
 			// Loads the template to list a suite as an element
-			$.get( "templates/li_suite.html", function() {
+			$.get( templatesDirectory + "li_suite.html", function() {
 			} ).done( function( template ) {
 				templates[ 'li_suite' ] = (Handlebars.compile( template ));
 			} );
 			// Loads the template 'suite_summary' to show the content of a suite
-			$.get( "templates/suite_summary.html", function() {
+			$.get( templatesDirectory + "suite_summary.html", function() {
 			} ).done( function( template ) {
 				templates[ 'suite_summary' ] = (Handlebars.compile( template ));
 			} );
 			// Loads the template 'message_box' to show a summary of the test
-			$.get( "templates/message_box.html", function() {
+			$.get( templatesDirectory + "message_box.html", function() {
 			} ).done( function( template ) {
 				templates[ 'message_box' ] = (Handlebars.compile( template ));
 			} );
 			// Loads the template 'specs_summary' to show a summary of all the specs
-			$.get( "templates/specs_summary.html", function() {
+			$.get( templatesDirectory + "specs_summary.html", function() {
 			} ).done( function( template ) {
 				templates[ 'specs_summary' ] = (Handlebars.compile( template ));
 			} );

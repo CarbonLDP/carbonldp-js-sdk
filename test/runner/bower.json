@@ -19,6 +19,7 @@
     "requirejs": "~2.1.18",
     "bootstrap": "~3.3.0",
     "foundation": "~5.5.2",
-    "foundation-icon-fonts": "*"
+    "foundation-icon-fonts": "*",
+    "handlebars": "~3.0.3"
   }
 }
