@@ -39,6 +39,7 @@
 
 	// Define all of your specs here. These are RequireJS modules.
 	var specs = [
+		'src/App.spec',
 		'src/HTTP/Request.spec',
 		'src/Utils.spec'
 	];

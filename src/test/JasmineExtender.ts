@@ -47,6 +47,7 @@ function toJSON( descriptor:any ):string {
 
 export const MODULE = 'module';
 export const SUBMODULE = 'submodule';
+export const CLASS = 'class';
 
 
 export const STATIC:string = 'static';
@@ -77,12 +78,16 @@ export function submodule( access:string, name:string, description:string = null
 	return toJSON( descriptor );
 }
 
-export function staticNature():string {
-	return STATIC;
-}
+export function clazz( name:string, description:string, parent:string = null, interfaces:Array<string> = null ):string {
+	var descriptor = {
+		suiteType: CLASS,
+		name: name,
+		description: description,
+		parent: parent,
+		interfaces: interfaces
+	};
 
-export function instanceNature():string {
-	return INSTANCE;
+	return toJSON( descriptor );
 }
 
 export function isDefined():string {
@@ -152,6 +157,42 @@ export function hasMethod( access:string, name:string, descriptionOrArgumentsOrR
 	return toJSON( descriptor );
 }
 
+export var method = hasMethod;
+
+export function hasSignature();
+export function hasSignature( description:string ):string;
+export function hasSignature( description:string, arguments:MethodArgument[] ):string;
+export function hasSignature( description:string, arguments:MethodArgument[], returns:MethodReturn ):string;
+export function hasSignature( arguments:MethodArgument[] ):string;
+export function hasSignature( arguments:MethodArgument[], returns:MethodReturn ):string;
+export function hasSignature( returns:MethodReturn ):string;
+export function hasSignature( descriptionOrArgumentsOrReturns:any = null, argumentsOrReturns:any = null, returns:MethodReturn = null ):string {
+	var description = null;
+	var methodArguments = null;
+
+	if ( typeof descriptionOrArgumentsOrReturns === 'string' ) {
+		description = descriptionOrArgumentsOrReturns;
+	} else if ( Object.prototype.toString.call( descriptionOrArgumentsOrReturns ) === '[object Array]' ) {
+		methodArguments = descriptionOrArgumentsOrReturns;
+	} else if ( descriptionOrArgumentsOrReturns ) {
+		returns = descriptionOrArgumentsOrReturns;
+	}
+
+	if ( Object.prototype.toString.call( argumentsOrReturns ) === '[object Array]' ) {
+		methodArguments = argumentsOrReturns;
+	} else if ( argumentsOrReturns ) {
+		returns = argumentsOrReturns;
+	}
+
+	var descriptor = {
+		description: description,
+		arguments: methodArguments,
+		returns: returns
+	};
+
+	return toJSON( descriptor );
+}
+
 export function hasProperty( access:string, name:string, type:string, description:string = null ):string {
 	var descriptor = {
 		access: access,
@@ -163,3 +204,5 @@ export function hasProperty( access:string, name:string, type:string, descriptio
 
 	return toJSON( descriptor );
 }
+
+export var property = hasProperty;
