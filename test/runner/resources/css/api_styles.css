@@ -7,16 +7,14 @@
 
 
 .alert-box .close { top:10% }
-
-
 nav.top-bar ul.title-area li.logo img { width:100px; margin-top:5px;}
 
-
+.row-full { margin: 0; max-width: none; }
 
 body { -webkit-font-smoothing: antialiased; display:flex; flex-direction:column; }
-.api-container { flex:1; }
 footer{ background-color:#D3D3D3; padding:3em; width:100%; }
 
+.api-container { flex:1; margin-top: 45px; }
 .api-container .back-to-top {
     position: fixed;
     bottom: 1em;
@@ -32,32 +30,38 @@ footer{ background-color:#D3D3D3; padding:3em; width:100%; }
 }
 .api-container .back-to-top:hover {  background-color: rgba(135, 135, 135, 0.50);  }
 
-/*.results-message-box .passed-box,
-.results-message-box .passed-box h2 { color:#43AC6A; }
-.results-message-box .passed-box { border:1px solid #43AC6A; }*/
-.results-message-box a.passed-box,
+.results-message-box .alert-box { border: 1px solid lightgray; background: none; color: #959595; }
+.results-message-box a.passed-box p,
 .results-message-box a.passed-box h2 { color:#43AC6A; }
+.results-message-box a.passed-box:hover p,
+.results-message-box a.passed-box:hover h2 { color:#ffffff; }
 .results-message-box a.passed-box { display:block; border:1px solid #43AC6A; }
-.results-message-box a.failed-box,
+.results-message-box a.passed-box:hover { background-color:#43AC6A; cursor:pointer; }
+.results-message-box a.failed-box p,
 .results-message-box a.failed-box h2 { color:#f04124; }
+.results-message-box a.failed-box:hover p,
+.results-message-box a.failed-box:hover h2 { color:#ffffff; }
 .results-message-box a.failed-box { display:block; border:1px solid #f04124; }
-.results-message-box a.disabled-box,
+.results-message-box a.failed-box:hover { background-color:#f04124; cursor:pointer; }
+.results-message-box a.disabled-box p,
 .results-message-box a.disabled-box h2 { color:#959595; }
+.results-message-box a.disabled-box:hover p,
+.results-message-box a.disabled-box:hover h2 { color:#ffffff; }
 .results-message-box a.disabled-box { display:block; border:1px solid #959595; }
-.results-message-box a.pending-box,
+.results-message-box a.disabled-box:hover { background-color:#959595; cursor:pointer; }
+.results-message-box a.pending-box p,
 .results-message-box a.pending-box h2 { color:#008CBA; }
+.results-message-box a.pending-box:hover p,
+.results-message-box a.pending-box:hover h2 { color:#ffffff; }
 .results-message-box a.pending-box { display:block; border:1px solid #008CBA; }
-
-.results-message-box .pending-box:hover,
-.results-message-box .passed-box:hover,
-.results-message-box .failed-box:hover,
-.results-message-box .disabled-box:hover { background-color:white; cursor:pointer; }
+.results-message-box a.pending-box:hover { background-color:#008CBA; cursor:pointer; }
 
 
 
 
-
+/*-------------------------------*/
 /*  .) API > Suite Summary   */
+.results { margin-left: 300px !important; padding-top: 15px; }
 .results .suite-summary .fi-upload{ color:#008CBA; }
 .results .suite-summary .fi-download{ color:#43AC6A; }
 .results .suite-summary .fi-check{ color:#43AC6A; }
@@ -65,30 +69,79 @@ footer{ background-color:#D3D3D3; padding:3em; width:100%; }
 
 
 .results .suite-summary .heading {  }
-.results .suite-summary .body,
-.results .suite-summary .body ul {  list-style:none;  }
-.results .suite-summary .body ul li {  }
-.results .suite-summary .body ul li i.fi-check{ color:#43AC6A; }
-.results .suite-summary .body ul li i.fi-x{ color:red; }
-.results .suite-summary .footer {  padding-top:10px;  }
+.results .suite-summary .methods-list,
+.results .suite-summary .methods-list ul {  list-style:none;  }
+.results .suite-summary .methods-list ul li {  }
+.results .suite-summary .methods-list ul li i.fi-check{ color:#43AC6A; }
+.results .suite-summary .methods-list ul li i.fi-x{ color:red; }
+.results .suite-summary .methods-description {  padding-top:10px;  }
 
 
-
+/*-------------------------------*/
 /*  .) API > Suite Summary > Spec Card  */
 .results .suite-summary .spec-card .signature .code-signature { background-color:#FFFFFF; padding:.5em; font-family: Monaco, "Lucida Console", monospace; margin:0; }
 .results .suite-summary .spec-card .signature .code-signature .access { color:#0000E6; }
 .results .suite-summary .spec-card .signature .code-signature .type { color:#009B00; }
 .results .suite-summary .spec-card .signature .code-signature .param-type { color:#9933CC; }
-.results .suite-summary .presenting-card { border: 3px dashed #008CBA;}
+.results .suite-summary .presenting-card { border: 2px dashed #008CBA;}
+
+.results .suite-summary .suite-summary-related-object { margin-bottom: 10%;}
+.results .related-object-summary .properties table p.type,
+.results .suite-summary .spec-card .arguments p.type,
+.results .suite-summary .spec-card .arguments p.description,
+.results .suite-summary .suite-summary-related-object .parameters p.type { font-size: small; margin: 0; }
 
 
-
+/*-------------------------------*/
 /*  .) API > Navigation Panel    */
-.navigation-panel { padding:0px }
-.navigation-panel .panel-heading  { padding:10px; }
-.navigation-panel .panel-body  { padding:0; }
-.navigation-panel .panel-body ul { list-style:none; padding:0; border-top:1px solid grey; }
-.navigation-panel .panel-body ul li { border-bottom:1px solid grey;  padding:0; margin:0px }
-.navigation-panel .panel-body ul li a { display:block; color:#000000; padding: 10px 10px 10px 15px; min-height:34px; }
-.navigation-panel .panel-body ul li a:hover { background-color:lightgrey; }
-.navigation-panel .panel-body ul li a span.label { font-size:13px; }
+.navigation-panel { position: fixed; height: 100%; border-right: 1px solid #333333; min-width: 300px; width: 250px !important; padding-top: 15px; background-color: #ffffff; z-index: 1; }
+.navigation-panel #panel-modules,
+.navigation-panel #panel-related-objects { padding:0 }
+.navigation-panel #panel-modules .panel-heading,
+.navigation-panel #panel-related-objects .panel-heading  { padding:10px; }
+.navigation-panel #panel-modules .panel-body,
+.navigation-panel #panel-related-objects .panel-body { padding:0; }
+.navigation-panel #panel-modules .panel-body ul,
+.navigation-panel #panel-related-objects .panel-body ul { list-style:none; padding:0; border-top:1px solid grey; }
+.navigation-panel #panel-modules .panel-body ul li,
+.navigation-panel #panel-related-objects .panel-body ul li { border-bottom:1px solid grey;  padding:0; margin:0px }
+.navigation-panel #panel-modules .panel-body ul li a,
+.navigation-panel #panel-related-objects .panel-body ul li a { display:block; color:#000000; padding: 10px 10px 10px 15px; min-height:34px; }
+.navigation-panel #panel-modules .panel-body ul li a:hover,
+.navigation-panel #panel-related-objects .panel-body ul li a:hover { background-color:lightgrey; }
+.navigation-panel #panel-modules .panel-body ul li a span.label,
+.navigation-panel #panel-related-objects .panel-body ul li a span.label{ font-size:13px; }
+
+
+
+
+
+/*-------------------------------*/
+/*  .) Media Queries     */
+/*Small screens*/
+@media only screen { } /* Define mobile styles */
+
+/* max-width 640px, mobile-only styles, use when QAing mobile issues */
+@media only screen and (max-width: 40em) {
+    .results { margin: 0 !important; }
+    .navigation-panel { position: relative; width: 100% !important; border-right: none; margin-bottom: 5px;}
+}
+
+/* Medium screens*/
+/* min-width 641px, medium screens */
+@media only screen and (min-width: 40.063em) {  }
+
+@media only screen and (min-width: 40.063em) and (max-width: 64em) { } /* min-width 641px and max-width 1024px, use when QAing tablet-only issues */
+
+/* Large screens*/
+@media only screen and (min-width: 64.063em) { } /* min-width 1025px, large screens */
+
+@media only screen and (min-width: 64.063em) and (max-width: 90em) { } /* min-width 1025px and max-width 1440px, use when QAing large screen-only issues */
+
+/* XLarge screens*/
+@media only screen and (min-width: 90.063em) { } /* min-width 1441px, xlarge screens */
+
+@media only screen and (min-width: 90.063em) and (max-width: 120em) { } /* min-width 1441px and max-width 1920px, use when QAing xlarge screen-only issues */
+
+/* XXLarge screens*/
+@media only screen and (min-width: 120.063em) { } /* min-width 1921px, xxlarge screens */

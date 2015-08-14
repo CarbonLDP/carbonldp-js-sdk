@@ -25,71 +25,71 @@
 			<div class="panel code-signature">
 				<span class="access">
 					{{#if this.description.access.type}}
-						{{this.description.access}}
+					{{this.description.access}}
 					{{else}}
 					{{/if}}
 				</span>
 				<span class="type">
 					{{#if this.description.returns.type}}
-						{{this.description.returns.type}}
+					{{this.description.returns.type}}
 					{{else}}
-						void
+					void
 					{{/if}}
 				</span>
 				<span>{{this.description.name}}</span>
 				{{#if this.description.arguments}}
 				(
-					{{#each this.description.arguments}}
-						{{#if this.optional}}
-						{{else}}
-							<span class="param-type">{{this.type}}</span>
-							<span>{{this.name}}</span>
-						{{/if}}
-						{{#if @last}} {{else}},{{/if}}
-					{{/each}}
+				{{#each this.description.arguments}}
+				{{#if this.optional}}
+				{{else}}
+				<span class="param-type">{{this.type}}</span>
+				<span>{{this.name}}</span>
+				{{/if}}
+				{{#if @last}} {{else}},{{/if}}
+				{{/each}}
 				)
 				{{else}}
-					()
+				()
 				{{/if}}{ ... }
 			</div>
 			{{#each this.description.arguments}}
+			{{#if this.optional}}
+			<div class="panel code-signature">
+				<span class="access">
+					{{#if this.description.access.type}}
+					{{this.description.access}}
+					{{else}}
+					{{/if}}
+				</span>
+				<span class="type">
+					{{#if this.description.returns.type}}
+					{{this.description.returns.type}}
+					{{else}}
+					void
+					{{/if}}
+				</span>
+				<span>{{this.description.name}}</span>
+				{{#if this.description.arguments}}
+				(
+				{{#each this.description.arguments}}
 				{{#if this.optional}}
-					<div class="panel code-signature">
-						<span class="access">
-							{{#if this.description.access.type}}
-								{{this.description.access}}
-							{{else}}
-							{{/if}}
-						</span>
-						<span class="type">
-							{{#if this.description.returns.type}}
-								{{this.description.returns.type}}
-							{{else}}
-								void
-							{{/if}}
-						</span>
-						<span>{{this.description.name}}</span>
-						{{#if this.description.arguments}}
-						(
-							{{#each this.description.arguments}}
-								{{#if this.optional}}
-								{{else}}
-									<span class="param-type">{{this.type}}</span>
-									<span>{{this.name}}</span>
-								{{/if}}
-								{{#if @last}} {{else}},{{/if}}
-							{{/each}}
-						)
-						{{else}}
-							()
-						{{/if}}{ ... }
-					</div>
+				{{else}}
+				<span class="param-type">{{this.type}}</span>
+				<span>{{this.name}}</span>
 				{{/if}}
+				{{#if @last}} {{else}},{{/if}}
+				{{/each}}
+				)
+				{{else}}
+				()
+				{{/if}}{ ... }
+			</div>
+			{{/if}}
 			{{/each}}
 		</div>
 	</div>
 	<hr>
-	<div class="row body">
+	<div class="row arguments">
 		<div class="small-12 medium-12 large-12 columns">
 			<h4><i class="fi-upload"></i> Arguments</h4>
 			{{#if this.description.arguments}}
@@ -97,36 +97,25 @@
 				<thead>
 					<tr>
 						<th>Arguments</th>
-						<th>Type</th>
-						<th>Default</th>
-						<th>Optional</th>
-						<th>Description</th>
+						<th width="200">Description</th>
 					</tr>
 				</thead>
 				<tbody>
 					{{#each this.description.arguments}}
 					<tr>
 						<td>{{this.name}}</td>
-						<td><span class="label radius secondary">{{this.type}}</span></td>
-						<td class="text-center">
-							{{#if this.default}}
-							{{this.default}}
-							{{else}}
-							-
-							{{/if}}
-						</td>
-						<td class="text-center">
-							{{#if this.optional}}
-							{{this.optional}}
-							{{else}}
-							false
-							{{/if}}
-						</td>
-						<td class="text-center">
+						<td>
+							<p class="type">
+								<span><strong><i>{{{this.type}}}</i></strong></span>
+								{{#if this.optional}}
+								<span>(optional)</span>
+								{{/if}}
+								{{#if this.default}}
+								<span>Default: {{this.default}}</span>
+								{{/if}}
+							</p>
 							{{#if this.description}}
-							{{this.description}}
-							{{else}}
-							-
+								<p class="description">{{this.description}}</p>
 							{{/if}}
 						</td>
 					</tr>
@@ -139,6 +128,8 @@
 			</div>
 			{{/if}}
 		</div>
+	</div>
+	<div class="row returns">
 		<div class="small-12 medium-12 large-12 columns">
 			<h4><i class="fi-download"></i> Returns</h4>
 			{{#if this.description.returns}}
@@ -163,7 +154,7 @@
 			{{/if}}
 		</div>
 	</div>
-	<!--<div class="row footer">
+	<!--<div class="row expectations">
 		<div class="small-12 medium-12 large-12 columns">
 			<h4>Expectations</h4>
 			{{#ifCond this.passedExpectations '||' this.failedExpectations}}

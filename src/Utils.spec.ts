@@ -427,7 +427,7 @@ describe( module( 'Carbon.Utils' ), function () {
 			expect( result.indexOf( 4 ) ).not.toBe( - 1 );
 		} );
 	} );
-	describe( submodule( 'M', 'Utility functions related to ES6 Maps.' ), function () {
+	describe( submodule( STATIC, 'M', 'Utility functions related to ES6 Maps.' ), function () {
 		it( isDefined(), function () {
 			expect( Utils.M ).toBeDefined();
 		} );

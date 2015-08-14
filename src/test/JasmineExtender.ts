@@ -55,6 +55,7 @@ export const INSTANCE:string = 'instance';
 export const CONSTRUCTOR:string = 'constructor';
 export const METHOD:string = 'method';
 export const PROPERTY:string = 'property';
+export const INTERFACE:string = 'interface';
 
 export function module( name:string, description:string = null ):string {
 	var descriptor = {
@@ -159,6 +160,44 @@ export function hasProperty( access:string, name:string, type:string, descriptio
 		name: name,
 		type: type,
 		description: description
+	};
+
+	return toJSON( descriptor );
+}
+
+
+export function hasInterface( access:string, name:string ):string;
+export function hasInterface( access:string, name:string, description:string ):string;
+export function hasInterface( access:string, name:string, arguments:MethodArgument[] ):string;
+export function hasInterface( access:string, name:string, returns:MethodReturn ):string;
+export function hasInterface( access:string, name:string, description:string, arguments:MethodArgument[] ):string;
+export function hasInterface( access:string, name:string, description:string, returns:MethodReturn ):string;
+export function hasInterface( access:string, name:string, arguments:MethodArgument[], returns:MethodReturn ):string;
+export function hasInterface( access:string, name:string, description:string, arguments:MethodArgument[], returns:MethodReturn ):string;
+export function hasInterface( access:string, name:string, descriptionOrArgumentsOrReturns:any = null, argumentsOrReturns:any = null, returns:MethodReturn = null ):string {
+	var description = null, methodArguments = [];
+
+	if ( typeof descriptionOrArgumentsOrReturns === 'string' ) {
+		description = descriptionOrArgumentsOrReturns;
+	} else if ( Object.prototype.toString.call( descriptionOrArgumentsOrReturns ) === '[object Array]' ) {
+		methodArguments = descriptionOrArgumentsOrReturns;
+	} else if ( descriptionOrArgumentsOrReturns ) {
+		returns = descriptionOrArgumentsOrReturns;
+	}
+
+	if ( Object.prototype.toString.call( argumentsOrReturns ) === '[object Array]' ) {
+		methodArguments = argumentsOrReturns;
+	} else if ( argumentsOrReturns ) {
+		returns = argumentsOrReturns;
+	}
+
+	var descriptor = {
+		access: access,
+		specType: INTERFACE,
+		name: name,
+		description: description,
+		arguments: methodArguments,
+		returns: returns
 	};
 
 	return toJSON( descriptor );

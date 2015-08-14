@@ -62,7 +62,7 @@ class Service {
 		sendCredentialsOnCORS: true
 	};
 
-	static send( method:(Method | string), url:string, options:Options ):Promise<Response>;
+	static send( method:(Method | string), url:string, options?:Options ):Promise<Response>;
 	static send( method:(Method | string), url:string, body:string, options?:Options ):Promise<Response>;
 	static send( method:any, url:string, bodyOrOptions:any = Service.defaultOptions, options:Options = Service.defaultOptions ):Promise<Response> {
 		var body:string = Utils.isString( bodyOrOptions ) ? bodyOrOptions : null;

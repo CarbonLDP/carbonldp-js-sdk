@@ -12,6 +12,7 @@
 				return 0;
 			}
 		};
+		var relatedObjects = {};
 
 		function HTMLReporter( options ) {
 			console.log( "HTMLReporter -> %o", arguments );
@@ -56,6 +57,20 @@
 			}
 			this.currentResult.result.status = getSuiteStatus( this.currentResult );
 			this.currentResult = this.currentResult.parent;
+			convertDescriptionToObject( result );
+			if( suites[ result.id ].suite.description.suiteType == 'submodule' ) {
+				suites[ result.id ].suite.description.name = '';
+				//Convert Suite JSON fullName to object
+				var parts = suites[ result.id ].suite.fullName.replace( /JSON{/g, 'JSON{{' ).split( 'JSON{' );
+				for( var i = 0; i < parts.length; i ++ ) {
+					parts[ i ] = stringToObject( parts[ i ] );
+					if( parts[ i ].name.length > 0 ) {
+						// Sets the new Suite Name by adding its parent name
+						suites[ result.id ].suite.description.name += '.' + parts[ i ].name.trim();
+					}
+				}
+				suites[ result.id ].suite.description.name = suites[ result.id ].suite.description.name.replace( '.', '' );
+			}
 		};
 
 		HTMLReporter.prototype.specStarted = function( result ) {
@@ -69,7 +84,11 @@
 
 		HTMLReporter.prototype.specDone = function( result ) {
 			//console.log( "specDone -> %o", arguments );
-			if( result.description != 'defined' ) {
+			convertDescriptionToObject( result );
+			if( result.description.specType === 'interface' || result.description.specType === 'class' ) {
+				relatedObjects[ result.description.specType + '_' + result.description.name ] = result;
+			}
+			if( result.description.name != 'defined' ) {
 				switch( result.status ) {
 					case 'failed':
 						this.failedSpecs.push( result );
@@ -87,7 +106,7 @@
 						this.emptySpecs.push( result );
 						break;
 					default:
-						console.log( "\t\t -> %o", result.status )
+						console.log( "Unknown spec status\t\t -> %o", result.status )
 						break;
 				}
 			}
@@ -99,17 +118,20 @@
 			console.log( "Failed: %o, pending: %o, passed: %o, disabled: %o, empty: %o", this.failedSpecs.length, this.pendingSpecs.length, this.passedSpecs.length, this.disabledSpecs.length, this.emptySpecs.length );
 			this.timer = this.timer.elapsed() / 1000;
 			console.log( this.timer );
-
-			convertDescriptionsToObjects();
+			console.log( relatedObjects );
+			var specs = { 'failedSpecs': this.failedSpecs, 'passedSpecs': this.passedSpecs, 'pendingSpecs': this.pendingSpecs, 'disabledSpecs': this.disabledSpecs };
+			convertDescriptionsToObjects( specs );
 			sortSuites( suites );
 
-			var navigationPanel = find( '.api-container .navigation-panel .panel-body ul' );
-			renderSuitesList( navigationPanel );
+			var panelModules = find( '.api-container .navigation-panel #panel-modules .panel-body ul' );
+			renderSuitesList( panelModules );
+
+			var panelRelatedObjects = find( '.api-container .navigation-panel #panel-related-objects .panel-body ul' );
+			renderRelatedObjectsList( panelRelatedObjects );
 
 			var messageBox = find( '.api-container .results-message-box' );
-			printMessageBoxTemplate( messageBox, this );
+			printTemplate_MessageBox( messageBox, this );
 
-			var specs = { 'failedSpecs': this.failedSpecs, 'passedSpecs': this.passedSpecs, 'pendingSpecs': this.pendingSpecs, 'disabledSpecs': this.disabledSpecs };
 			var title;
 			$( '.results-message-box a.status-box' ).on( 'click', function() {
 				//find( '.results .suite-summary' ).innerHTML = specs[ this.getAttribute( 'show' ) ].length;
@@ -138,7 +160,6 @@
 				pendingSpecs : specs.pendingSpecs,
 				disabledSpecs: specs.disabledSpecs
 			} );
-
 		};
 
 
@@ -199,54 +220,53 @@
 		 *
 		 */
 		function renderSuitesList( suitesContainer ) {
-			/*console.log( ({}).toString.call( suites ).match( /\s([a-zA-Z]+)/ )[ 1 ].toLowerCase() );*/
 			for( var key in suites ) {
-				printSuiteListTemplate( suites[ key ], suitesContainer );
+				printTemplate_SuiteList( suites[ key ], suitesContainer );
 			}
 			return suitesContainer;
 		}
 
+		function renderRelatedObjectsList( relatedObjectsContainer ) {
+			for( var key in relatedObjects ) {
+				printTemplate_ObjectsList( relatedObjects[ key ], relatedObjectsContainer );
+			}
+		}
+
 
 		/**
-		 * Method that converts the JSON description of a Spec or Suite to an Object
+		 *
 		 *
 		 *
 		 */
-		function convertDescriptionsToObjects() {
-			var parts;
+		function convertDescriptionsToObjects( specs ) {
 			for( var key in suites ) {
-				//Convert Suite JSON description to object
-				suites[ key ].suite.description = suites[ key ].suite.description.replace( 'JSON{', '{' );
-				suites[ key ].suite.description = stringToObject( suites[ key ].suite.description );
-
-				if( suites[ key ].suite.description.suiteType == 'submodule' ) {
-					suites[ key ].suite.description.name = '';
-					//Convert Suite JSON fullName to object
-					parts = suites[ key ].suite.fullName.replace( /JSON{/g, 'JSON{{' ).split( 'JSON{' );
-					for( var i = 0; i < parts.length; i ++ ) {
-						parts[ i ] = stringToObject( parts[ i ] );
-						if( parts[ i ].name.length > 0 ) {
-							// Sets the new Suite Name by adding its parent name
-							suites[ key ].suite.description.name += '.' + parts[ i ].name.trim();
-						}
-					}
-
-					suites[ key ].suite.description.name = suites[ key ].suite.description.name.replace( '.', '' );
-				}
-
-				// Convert Spec description to Object
+				suites[ key ].suite.description.relatedClasses = [];
+				var specsToRemove = [];
+				//
 				for( var specKey in suites[ key ].children ) {
-					suites[ key ].children[ specKey ].description = suites[ key ].children[ specKey ].description.replace( 'JSON{', '{' );
-					suites[ key ].children[ specKey ].description = stringToObject( suites[ key ].children[ specKey ].description );
-					suites[ key ].children[ specKey ].description.signatures = [];
-					for( var specArgKey in suites[ key ].children[ specKey ].description.arguments ) {
-						suites[ key ].children[ specKey ].description.arguments
+					console.log( '%s-> %s = %o', suites[ key ].children[ specKey ].description.specType, suites[ key ].children[ specKey ].description.name, suites[ key ].children[ specKey ] );
+					if( suites[ key ].children[ specKey ].description.specType == 'interface' ) {
+						console.log( suites[ key ].children[ specKey ] );
+						//suites[ key ].suite.description.relatedClasses.push( suites[ key ].children[ specKey ] );
+						//specsToRemove.push( suites[ key ].children[ specKey ] );
+						suites[ key ].children.pop( suites[ key ].children[ specKey ] );
+						specs.passedSpecs.pop( suites[ key ].children[ specKey ] );
 					}
 				}
-
+				/*for( var spec in specsToRemove ) {
+					suites[ key ].children.pop( spec );
+					specs.passedSpecs.pop( spec );
+				}*/
 				// Sort Specs alphabetically
 				sortSpecs( suites[ key ].children );
 			}
+		}
+
+		function convertDescriptionToObject( spec ) {
+			// Convert Spec description to Object
+			spec.description = spec.description.replace( 'JSON{', '{' );
+			spec.description = stringToObject( spec.description );
+			spec.description.signatures = [];
 		}
 
 
@@ -278,7 +298,6 @@
 			} );
 			// Allows Handlebars to manage logical operators on if conditions
 			Handlebars.registerHelper( 'ifCond', function( v1, operator, v2, options ) {
-
 				switch( operator ) {
 					case '==':
 						return (v1 == v2) ? options.fn( this ) : options.inverse( this );
@@ -313,10 +332,20 @@
 			} ).done( function( template ) {
 				templates[ 'li_suite' ] = (Handlebars.compile( template ));
 			} );
+			// Loads the template to list a related object as an element
+			$.get( "templates/li_related_object.html", function() {
+			} ).done( function( template ) {
+				templates[ 'li_related_object' ] = (Handlebars.compile( template ));
+			} );
 			// Loads the template 'suite_summary' to show the content of a suite
 			$.get( "templates/suite_summary.html", function() {
 			} ).done( function( template ) {
 				templates[ 'suite_summary' ] = (Handlebars.compile( template ));
+			} );
+			// Loads the template 'related_object_summary' to show the content of a related object
+			$.get( "templates/related_object_summary.html", function() {
+			} ).done( function( template ) {
+				templates[ 'related_object_summary' ] = (Handlebars.compile( template ));
 			} );
 			// Loads the template 'message_box' to show a summary of the test
 			$.get( "templates/message_box.html", function() {
@@ -328,55 +357,110 @@
 			} ).done( function( template ) {
 				templates[ 'specs_summary' ] = (Handlebars.compile( template ));
 			} );
+
 		}
 
-		function printSuiteListTemplate( result, container ) {
+
+		function showRelatedObject( a ) {
+			var relatedObjectSummaryContainer = find( '.api-container .results .related-object-summary' );
+			var object = relatedObjects[ a.getAttribute( 'related-object-id' ) ];
+
+			relatedObjectSummaryContainer.innerHTML = templates.related_object_summary( {
+				object_id         : object.id,
+				object_name       : object.description.name,
+				object_description: null,
+				object_access     : object.description.access,
+				object_type       : object.description.specType,
+				object_specs      : object.children,
+				object_attributes : object.description.arguments
+			} );
+			$( '.results .related-object-summary' ).show();
+			$( '.results .suite-summary' ).hide();
+			$( '.results .related-object-summary .methods-list ul li a' ).on( 'click', function() {
+
+			} );
+			return false;
+		}
+
+		/**
+		 * Method that prints the suite_summary template
+		 *
+		 * @param suite
+		 * @param suiteSummaryContainer
+		 *
+		 */
+		function printTemplate_SuiteSummary( suite, suiteSummaryContainer ) {
+			suiteSummaryContainer.innerHTML = templates.suite_summary( {
+				suite_id            : suite.suite.id,
+				suite_name          : suite.suite.description.name,
+				suite_description   : suite.suite.description.description,
+				suite_access        : suite.suite.description.access,
+				suite_type          : suite.suite.description.suiteType,
+				suite_status        : getStatusClass( suite.suite.status ),
+				suite_specs         : suite.children,
+				suite_relatedClasses: suite.suite.description.relatedClasses
+			} );
+		}
+
+		function printTemplate_ObjectsList( object, container ) {
+			container.innerHTML += templates.li_related_object( {
+				object_id  : object.id,
+				object_type: object.description.specType,
+				object_name: object.description.name
+			} );
+			$( '.api-container .navigation-panel #panel-related-objects .panel-body ul li.related_object a' ).click( function() {
+				showRelatedObject( this );
+			} );
+		}
+
+		function printTemplate_SuiteList( result, container ) {
 			container.innerHTML += templates.li_suite( {
 				id    : result.suite.id,
 				name  : result.suite.description.name,
 				specs : result.children.length,
 				status: getStatusClass( result.suite.status )
 			} );
-			$( '.api-container .navigation-panel .panel-body ul li.suite_element a' ).click( function() {
-				displaySuiteContent( this );
+			$( '.api-container .navigation-panel #panel-modules .panel-body ul li.suite_element a' ).click( function() {
+				var a = this;
+				//console.log( suites[ a.getAttribue( 'suite_id' ) ] );
+				var suiteSummaryContainer = find( '.api-container .results .suite-summary' );
+				printTemplate_SuiteSummary( suites[ a.getAttribute( 'suite_id' ) ], suiteSummaryContainer );
+				$( '.results .related-object-summary' ).hide();
+				$( '.results .suite-summary' ).show();
+				$( '.results .suite-summary .methods-list ul li a' ).on( 'click', function() {
+					//console.log( '%o', this );
+					/*find this.getAttribute( 'card' ) ).style.borderColor = '#008CBA';
+					find( this.getAttribute( 'card' ) ).style.borderWidth = '3px';*/
+					var presentingCard = $( this.getAttribute( 'card' ) );
+					presentingCard.toggleClass( 'presenting-card' );
+					setTimeout( function() {
+						presentingCard.toggleClass( 'presenting-card' );
+					}, 2000 );
+				} );
+
+				$( '.results .suite-summary .spec-card .arguments p.type a' ).click( function() {
+					showRelatedObject( this );
+					return false;
+				} );
 				return false;
 			} );
 		}
 
 		/**
-		 * Method that prints the sutie_summary template
+		 * Method that prints the suite_summary template
 		 *
 		 * @param suite
 		 * @param suiteSummaryContainer
 		 *
 		 */
-		function printSuiteSummaryTemplate( suite, suiteSummaryContainer ) {
-			suiteSummaryContainer.innerHTML = templates.suite_summary( {
-				suite_id         : suite.suite.id,
-				suite_name       : suite.suite.description.name,
-				suite_description: suite.suite.description.description,
-				suite_access     : suite.suite.description.access,
-				suite_type       : suite.suite.description.suiteType,
-				suite_status     : getStatusClass( suite.suite.status ),
-				suite_specs      : suite.children
-			} );
-		}
-
-		/**
-		 * Method that prints the sutie_summary template
-		 *
-		 * @param suite
-		 * @param suiteSummaryContainer
-		 *
-		 */
-		function printMessageBoxTemplate( messageBox, obj ) {
+		function printTemplate_MessageBox( messageBox, obj ) {
 			messageBox.innerHTML = templates.message_box( {
 				finishTime   : obj.timer,
 				failedSpecs  : obj.failedSpecs,
 				passedSpecs  : obj.passedSpecs,
 				pendingSpecs : obj.pendingSpecs,
 				disabledSpecs: obj.disabledSpecs,
-				totalSpecs   : obj.totalSpecsDefined
+				totalSpecs   : obj.passedSpecs + obj.failedSpecs + obj.failedSpecs + obj.pendingSpecs + obj.disabledSpecs
 			} );
 		}
 
@@ -442,24 +526,6 @@
 				}
 			}
 			return count;
-		}
-
-		function displaySuiteContent( a ) {
-			console.log( suites[ a.getAttribute( 'suite_id' ) ] );
-			var suiteSummaryContainer = find( '.api-container .results .suite-summary' );
-			printSuiteSummaryTemplate( suites[ a.getAttribute( 'suite_id' ) ], suiteSummaryContainer );
-			$( '.results .suite-summary .body ul li a' ).on( 'click', function() {
-				//console.log( '%o', this );
-				/*find( this.getAttribute( 'card' ) ).style.borderColor = '#008CBA';
-				find( this.getAttribute( 'card' ) ).style.borderWidth = '3px';*/
-				var presentingCard = $( this.getAttribute( 'card' ) );
-				presentingCard.toggleClass( 'presenting-card' );
-				setTimeout( function() {
-					presentingCard.toggleClass( 'presenting-card' );
-				}, 2000 );
-
-
-			} );
 		}
 
 		/**

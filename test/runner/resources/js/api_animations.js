@@ -23,7 +23,7 @@ jQuery( function( $ ) {
 	}
 
 	function spotSpecCard() {
-		$( '.results .suite-summary .body ul li a' ).on( 'click', function() {
+		$( '.results .suite-summary .methods-list ul li a' ).on( 'click', function() {
 			alert();
 		} );
 	}

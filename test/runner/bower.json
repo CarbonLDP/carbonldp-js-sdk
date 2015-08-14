@@ -17,8 +17,10 @@
   ],
   "dependencies": {
     "requirejs": "~2.1.18",
-    "bootstrap": "~3.3.0",
     "foundation": "~5.5.2",
     "foundation-icon-fonts": "*"
+  },
+  "resolutions": {
+    "jquery": ">= 2.1.0"
   }
 }
