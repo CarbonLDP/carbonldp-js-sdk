@@ -47,6 +47,8 @@ function toJSON( descriptor:any ):string {
 
 export const MODULE = 'module';
 export const SUBMODULE = 'submodule';
+export const CLASS = 'class';
+export const INTERFACE = 'interface';
 
 
 export const STATIC:string = 'static';
@@ -55,7 +57,6 @@ export const INSTANCE:string = 'instance';
 export const CONSTRUCTOR:string = 'constructor';
 export const METHOD:string = 'method';
 export const PROPERTY:string = 'property';
-export const INTERFACE:string = 'interface';
 
 export function module( name:string, description:string = null ):string {
 	var descriptor = {
@@ -78,12 +79,53 @@ export function submodule( access:string, name:string, description:string = null
 	return toJSON( descriptor );
 }
 
-export function staticNature():string {
-	return STATIC;
+export function clazz( name:string, description:string, parent:string = null, interfaces:Array<string> = null ):string {
+	var descriptor = {
+		suiteType: CLASS,
+		name: name,
+		description: description,
+		parent: parent,
+		interfaces: interfaces
+	};
+
+	return toJSON( descriptor );
 }
 
-export function instanceNature():string {
-	return INSTANCE;
+export function hasInterface( access:string, name:string ):string;
+export function hasInterface( access:string, name:string, description:string ):string;
+export function hasInterface( access:string, name:string, arguments:MethodArgument[] ):string;
+export function hasInterface( access:string, name:string, returns:MethodReturn ):string;
+export function hasInterface( access:string, name:string, description:string, arguments:MethodArgument[] ):string;
+export function hasInterface( access:string, name:string, description:string, returns:MethodReturn ):string;
+export function hasInterface( access:string, name:string, arguments:MethodArgument[], returns:MethodReturn ):string;
+export function hasInterface( access:string, name:string, description:string, arguments:MethodArgument[], returns:MethodReturn ):string;
+export function hasInterface( access:string, name:string, descriptionOrArgumentsOrReturns:any = null, argumentsOrReturns:any = null, returns:MethodReturn = null ):string {
+	var description = null, methodArguments = [];
+
+	if ( typeof descriptionOrArgumentsOrReturns === 'string' ) {
+		description = descriptionOrArgumentsOrReturns;
+	} else if ( Object.prototype.toString.call( descriptionOrArgumentsOrReturns ) === '[object Array]' ) {
+		methodArguments = descriptionOrArgumentsOrReturns;
+	} else if ( descriptionOrArgumentsOrReturns ) {
+		returns = descriptionOrArgumentsOrReturns;
+	}
+
+	if ( Object.prototype.toString.call( argumentsOrReturns ) === '[object Array]' ) {
+		methodArguments = argumentsOrReturns;
+	} else if ( argumentsOrReturns ) {
+		returns = argumentsOrReturns;
+	}
+
+	var descriptor = {
+		access: access,
+		specType: INTERFACE,
+		name: name,
+		description: description,
+		arguments: methodArguments,
+		returns: returns
+	};
+
+	return toJSON( descriptor );
 }
 
 export function isDefined():string {
@@ -153,29 +195,18 @@ export function hasMethod( access:string, name:string, descriptionOrArgumentsOrR
 	return toJSON( descriptor );
 }
 
-export function hasProperty( access:string, name:string, type:string, description:string = null ):string {
-	var descriptor = {
-		access: access,
-		specType: PROPERTY,
-		name: name,
-		type: type,
-		description: description
-	};
+export var method = hasMethod;
 
-	return toJSON( descriptor );
-}
-
-
-export function hasInterface( access:string, name:string ):string;
-export function hasInterface( access:string, name:string, description:string ):string;
-export function hasInterface( access:string, name:string, arguments:MethodArgument[] ):string;
-export function hasInterface( access:string, name:string, returns:MethodReturn ):string;
-export function hasInterface( access:string, name:string, description:string, arguments:MethodArgument[] ):string;
-export function hasInterface( access:string, name:string, description:string, returns:MethodReturn ):string;
-export function hasInterface( access:string, name:string, arguments:MethodArgument[], returns:MethodReturn ):string;
-export function hasInterface( access:string, name:string, description:string, arguments:MethodArgument[], returns:MethodReturn ):string;
-export function hasInterface( access:string, name:string, descriptionOrArgumentsOrReturns:any = null, argumentsOrReturns:any = null, returns:MethodReturn = null ):string {
-	var description = null, methodArguments = [];
+export function hasSignature();
+export function hasSignature( description:string ):string;
+export function hasSignature( description:string, arguments:MethodArgument[] ):string;
+export function hasSignature( description:string, arguments:MethodArgument[], returns:MethodReturn ):string;
+export function hasSignature( arguments:MethodArgument[] ):string;
+export function hasSignature( arguments:MethodArgument[], returns:MethodReturn ):string;
+export function hasSignature( returns:MethodReturn ):string;
+export function hasSignature( descriptionOrArgumentsOrReturns:any = null, argumentsOrReturns:any = null, returns:MethodReturn = null ):string {
+	var description = null;
+	var methodArguments = null;
 
 	if ( typeof descriptionOrArgumentsOrReturns === 'string' ) {
 		description = descriptionOrArgumentsOrReturns;
@@ -192,9 +223,6 @@ export function hasInterface( access:string, name:string, descriptionOrArguments
 	}
 
 	var descriptor = {
-		access: access,
-		specType: INTERFACE,
-		name: name,
 		description: description,
 		arguments: methodArguments,
 		returns: returns
@@ -202,3 +230,17 @@ export function hasInterface( access:string, name:string, descriptionOrArguments
 
 	return toJSON( descriptor );
 }
+
+export function hasProperty( access:string, name:string, type:string, description:string = null ):string {
+	var descriptor = {
+		access: access,
+		specType: PROPERTY,
+		name: name,
+		type: type,
+		description: description
+	};
+
+	return toJSON( descriptor );
+}
+
+export var property = hasProperty;

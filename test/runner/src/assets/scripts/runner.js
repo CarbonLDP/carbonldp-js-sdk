@@ -3,15 +3,17 @@
 
 	// Configure RequireJS to shim Jasmine
 	require.config( {
-		baseUrl : '../../',
+		baseUrl : '../../../',
 		paths   : {
 			'jsonld'      : 'bower_components/jsonld.js/js/jsonld',
 			'jasmine-ajax': 'bower_components/jasmine-ajax/lib/mock-ajax',
 
-			'jasmine'     : 'test/runner/lib/jasmine-2.0.3/jasmine',
-			'jasmine-html': 'test/runner/lib/jasmine-html',
-			'boot'        : 'test/runner/lib/jasmine-2.0.3/boot',
-			'jquery'      : 'test/runner/bower_components/jquery/jquery.min.js'
+			'jasmine': 'test/runner/src/assets/lib/jasmine-2.0.3/jasmine',
+			'boot'   : 'test/runner/src/assets/lib/jasmine-2.0.3/boot',
+
+			'jasmine-html': 'test/runner/src/assets/scripts/jasmine-html',
+
+			'jquery': 'test/runner/src/assets/bower_components/jquery/jquery.min.js'
 		},
 		packages: [
 			{
@@ -37,6 +39,7 @@
 
 	// Define all of your specs here. These are RequireJS modules.
 	var specs = [
+		'src/App.spec',
 		'src/HTTP/Request.spec',
 		'src/Utils.spec'
 	];
