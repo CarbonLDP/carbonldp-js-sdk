@@ -1,0 +1,11 @@
+{
+	"compilerOptions": {
+		"target": "ES5",
+		"isolatedModules": true,
+		"module": "amd"
+	},
+	"exclude": [
+		"node_modules",
+		"bower_components"
+	]
+}
