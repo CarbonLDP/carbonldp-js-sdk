@@ -1,8 +1,7 @@
 /// <reference path="../typings/es6-promise/es6-promise.d.ts" />
 /// <reference path="../typings/jsonld.js/jsonld.js.d.ts" />
 /// <amd-dependency path="jsonld" name="jsonld" />
-declare
-var jsonld;
+declare var jsonld;
 
 //@formatter:off
 import * as HTTP from './HTTP';

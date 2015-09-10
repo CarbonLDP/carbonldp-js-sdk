@@ -1,5 +1,4 @@
-declare
-class Map<K, V> {
+declare class Map<K, V> {
 	constructor();
 
 	size():number;

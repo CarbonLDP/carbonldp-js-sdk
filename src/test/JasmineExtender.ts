@@ -93,12 +93,12 @@ export function clazz( name:string, description:string, parent:string = null, in
 
 export function hasInterface( access:string, name:string ):string;
 export function hasInterface( access:string, name:string, description:string ):string;
-export function hasInterface( access:string, name:string, arguments:MethodArgument[] ):string;
+export function hasInterface( access:string, name:string, methodArguments:MethodArgument[] ):string;
 export function hasInterface( access:string, name:string, returns:MethodReturn ):string;
-export function hasInterface( access:string, name:string, description:string, arguments:MethodArgument[] ):string;
+export function hasInterface( access:string, name:string, description:string, methodArguments:MethodArgument[] ):string;
 export function hasInterface( access:string, name:string, description:string, returns:MethodReturn ):string;
-export function hasInterface( access:string, name:string, arguments:MethodArgument[], returns:MethodReturn ):string;
-export function hasInterface( access:string, name:string, description:string, arguments:MethodArgument[], returns:MethodReturn ):string;
+export function hasInterface( access:string, name:string, methodArguments:MethodArgument[], returns:MethodReturn ):string;
+export function hasInterface( access:string, name:string, description:string, methodArguments:MethodArgument[], returns:MethodReturn ):string;
 export function hasInterface( access:string, name:string, descriptionOrArgumentsOrReturns:any = null, argumentsOrReturns:any = null, returns:MethodReturn = null ):string {
 	var description = null, methodArguments = [];
 
@@ -133,22 +133,22 @@ export function isDefined():string {
 }
 
 export function hasConstructor():string;
-export function hasConstructor( arguments:MethodArgument[] ):string;
-export function hasConstructor( description:string, arguments:MethodArgument[] ):string
-export function hasConstructor( argumentsOrDescription:any = null, arguments:MethodArgument[] = null ):string {
+export function hasConstructor( constructorArguments:MethodArgument[] ):string;
+export function hasConstructor( description:string, constructorArguments:MethodArgument[] ):string
+export function hasConstructor( argumentsOrDescription:any = null, constructorArguments:MethodArgument[] = null ):string {
 	var description = null;
 
 	if ( typeof argumentsOrDescription === 'string' ) {
 		description = argumentsOrDescription;
 	} else if ( Object.prototype.toString.call( argumentsOrDescription ) === '[object Array]' ) {
-		arguments = argumentsOrDescription;
+		constructorArguments = argumentsOrDescription;
 	}
 
 	var descriptor = {
 		access: STATIC,
 		specType: CONSTRUCTOR,
 		description: description,
-		arguments: arguments
+		arguments: constructorArguments
 	};
 
 	return toJSON( descriptor );
@@ -157,14 +157,14 @@ export function hasConstructor( argumentsOrDescription:any = null, arguments:Met
 export function hasMethod( access:string, name:string ):string;
 
 export function hasMethod( access:string, name:string, description:string ):string;
-export function hasMethod( access:string, name:string, arguments:MethodArgument[] ):string;
+export function hasMethod( access:string, name:string, methodArguments:MethodArgument[] ):string;
 export function hasMethod( access:string, name:string, returns:MethodReturn ):string;
 
-export function hasMethod( access:string, name:string, description:string, arguments:MethodArgument[] ):string;
+export function hasMethod( access:string, name:string, description:string, methodArguments:MethodArgument[] ):string;
 export function hasMethod( access:string, name:string, description:string, returns:MethodReturn ):string;
-export function hasMethod( access:string, name:string, arguments:MethodArgument[], returns:MethodReturn ):string;
+export function hasMethod( access:string, name:string, methodArguments:MethodArgument[], returns:MethodReturn ):string;
 
-export function hasMethod( access:string, name:string, description:string, arguments:MethodArgument[], returns:MethodReturn ):string;
+export function hasMethod( access:string, name:string, description:string, methodArguments:MethodArgument[], returns:MethodReturn ):string;
 
 export function hasMethod( access:string, name:string, descriptionOrArgumentsOrReturns:any = null, argumentsOrReturns:any = null, returns:MethodReturn = null ):string {
 	var description = null, methodArguments = [];
@@ -199,10 +199,10 @@ export var method = hasMethod;
 
 export function hasSignature();
 export function hasSignature( description:string ):string;
-export function hasSignature( description:string, arguments:MethodArgument[] ):string;
-export function hasSignature( description:string, arguments:MethodArgument[], returns:MethodReturn ):string;
-export function hasSignature( arguments:MethodArgument[] ):string;
-export function hasSignature( arguments:MethodArgument[], returns:MethodReturn ):string;
+export function hasSignature( description:string, methodArguments:MethodArgument[] ):string;
+export function hasSignature( description:string, methodArguments:MethodArgument[], returns:MethodReturn ):string;
+export function hasSignature( methodArguments:MethodArgument[] ):string;
+export function hasSignature( methodArguments:MethodArgument[], returns:MethodReturn ):string;
 export function hasSignature( returns:MethodReturn ):string;
 export function hasSignature( descriptionOrArgumentsOrReturns:any = null, argumentsOrReturns:any = null, returns:MethodReturn = null ):string {
 	var description = null;
