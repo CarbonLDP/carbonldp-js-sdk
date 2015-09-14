@@ -138,7 +138,7 @@
 			};
 
 			HTMLReporter.prototype.jasmineDone = function() {
-				console.log( "jasmineDone -> %o", arguments );
+				console.log( "jasmineDone >> %o", arguments );
 				console.log( "Total Specs: %o", this.totalSpecsDefined );
 				console.log( "Failed: %o, pending: %o, passed: %o, disabled: %o, empty: %o", this.failedSpecs.length, this.pendingSpecs.length, this.passedSpecs.length, this.disabledSpecs.length, this.emptySpecs.length );
 				this.timer = this.timer.elapsed() / 1000;
@@ -159,10 +159,10 @@
 				classes = sortSuites( classes );
 				interfaces = sortSuites( interfaces );
 
-				var panelModules = find( '.api-container .navigation-panel #panel-modules ul' );
-				var panelClasses = find( '.api-container .navigation-panel #panel-classes ul' );
-				var panelInterfaces = find( '.api-container .navigation-panel #panel-interfaces ul' );
-				var messageBox = find( '.api-container .results-message-box' );
+				var panelModules = find( '.site-sidebar__modules ul' );
+				var panelClasses = find( '.site-sidebar__classes ul' );
+				var panelInterfaces = find( '.site-sidebar__interfaces ul' );
+				var messageBox = find( '.results-message-box' );
 
 
 				renderModulesList( panelModules );
@@ -207,7 +207,7 @@
 				} );
 
 				// Add smooth scroll to list elements
-				$( '.api-container .navigation-panel ul.side-nav li a, .results-summary table a' ).on( 'click', function() {
+				$( '.navigation-panel ul.side-nav li a, .results-summary table a' ).on( 'click', function() {
 					var scrollTo = $( $( this ).attr( 'href' ).replace( /[!"$%&'()*+,.\/:;<=>?@[\\\]^`{|}~]/g, "\\$&" ) );
 					var container = $( 'div.suites-summary' );
 					//jQuery( 'html, body' ).animate( { scrollTop: scrollTo.offset().top - container.offset().top + container.scrollTop() + 30 }, 500 );
@@ -315,7 +315,7 @@
 				for( var key in modules ) {
 					if( modules.hasOwnProperty( key ) ) {
 						printTemplate_ModulesList( modules[ key ], modulesListContainer );
-						printTemplate_ModuleSummary( suites[ modules[ key ].description.name ], $( '.api-container .results .suites-summary .modules' ) );
+						printTemplate_ModuleSummary( suites[ modules[ key ].description.name ], $( '.results .suites-summary .modules' ) );
 					}
 				}
 			}
@@ -324,7 +324,7 @@
 				for( var key in classes ) {
 					if( classes.hasOwnProperty( key ) ) {
 						printTemplate_ClassesList( classes[ key ], classesListContainer );
-						printTemplate_ClassSummary( suites[ classes[ key ].description.name ], $( '.api-container .results .suites-summary .classes' ) );
+						printTemplate_ClassSummary( suites[ classes[ key ].description.name ], $( '.results .suites-summary .classes' ) );
 					}
 				}
 			}
@@ -333,7 +333,7 @@
 				for( var key in interfaces ) {
 					if( interfaces.hasOwnProperty( key ) ) {
 						printTemplate_InterfacesList( interfaces[ key ], interfacesListContainer );
-						printTemplate_InterfaceSummary( suites[ interfaces[ key ].description.name ], $( '.api-container .results .suites-summary .interfaces' ) );
+						printTemplate_InterfaceSummary( suites[ interfaces[ key ].description.name ], $( '.results .suites-summary .interfaces' ) );
 					}
 				}
 			}
