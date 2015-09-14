@@ -6,11 +6,14 @@ import * as Utils from './Utils';
 import {
 	INSTANCE,
 	STATIC,
+	clazz,
 	module,
 	submodule,
+	property,
 	isDefined,
 	hasMethod,
-	hasProperty
+	hasProperty,
+	interfaze
 } from './test/JasmineExtender';
 //@formatter:on
 
@@ -19,7 +22,7 @@ interface dummy {
 	something?:any;
 }
 
-describe( module( 'Carbon.Utils' ), function () {
+describe( module( 'Carbon/Utils', 'The description of Carbon/Utils' ), function () {
 
 	it( isDefined(), function () {
 		expect( Utils ).toBeDefined();
@@ -308,7 +311,8 @@ describe( module( 'Carbon.Utils' ), function () {
 		expect( anotherPost.three ).toBe( 3 );
 	} );
 
-	describe( submodule( STATIC, 'S', 'Utility functions related to strings.' ), function () {
+
+	describe( clazz( 'Carbon.Utils.S', 'Utility functions related to strings.' ), function () {
 		it( isDefined(), function () {
 			expect( Utils.S ).toBeDefined();
 		} );
@@ -367,7 +371,7 @@ describe( module( 'Carbon.Utils' ), function () {
 			expect( Utils.S.contains( 'hello', ' ' ) ).toBe( false );
 		} );
 	} );
-	describe( submodule( STATIC, 'A', 'Utility functions related to Arrays' ), function () {
+	describe( clazz( 'Carbon.Utils.A', 'Utility functions related to Arrays' ), function () {
 		it( isDefined(), function () {
 			expect( Utils.A ).toBeDefined();
 		} );
@@ -427,7 +431,7 @@ describe( module( 'Carbon.Utils' ), function () {
 			expect( result.indexOf( 4 ) ).not.toBe( - 1 );
 		} );
 	} );
-	describe( submodule( STATIC, 'M', 'Utility functions related to ES6 Maps.' ), function () {
+	describe( clazz( 'Carbon.Utils.M', 'Utility functions related to ES6 Maps.' ), function () {
 		it( isDefined(), function () {
 			expect( Utils.M ).toBeDefined();
 		} );

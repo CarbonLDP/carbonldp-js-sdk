@@ -1,0 +1,34 @@
+{{#if @index}}
+<hr>
+{{/if}}
+<div id="{{this.parent.description.name}}.{{this.description.name}}" class="property-summary">
+	<div class="row heading">
+		<div class="small-12 columns">
+			<h4><i>{{this.description.name}}</i> <span class="label ">property</span></h4>
+
+			{{#if this.description.description}}
+			<p>{{this.description.description}}</p>
+			{{/if}}
+			<table>
+				<tbody>
+					<tr>
+						<td>Type:</td>
+						<td>
+							<p class="type">
+								<span>{{this.description.type}}</span>
+							</p>
+						</td>
+					</tr>
+					<tr>
+						<td>Access:</td>
+						<td>
+							<p class="access">
+								<span>{{this.description.access}}</span>
+							</p>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+</div>

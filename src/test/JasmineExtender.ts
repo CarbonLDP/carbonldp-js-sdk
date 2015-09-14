@@ -91,11 +91,33 @@ export function clazz( name:string, description:string, parent:string = null, in
 	return toJSON( descriptor );
 }
 
+export function interfaze( name:string, description:string, parent:string = null ):string {
+	var descriptor = {
+		suiteType: INTERFACE,
+		name: name,
+		description: description,
+		parent: parent
+	};
+
+	return toJSON( descriptor );
+}
+
+export function constructor( name:string, description:string, parent:string = null ):string {
+	var descriptor = {
+		suiteType: CONSTRUCTOR,
+		name: name,
+		description: description,
+		parent: parent
+	};
+
+	return toJSON( descriptor );
+}
+
 export function hasInterface( access:string, name:string ):string;
 export function hasInterface( access:string, name:string, description:string ):string;
-export function hasInterface( access:string, name:string, arguments:MethodArgument[] ):string;
+export function hasInterface( access:string, name:string, properties:MethodArgument[] ):string;
 export function hasInterface( access:string, name:string, returns:MethodReturn ):string;
-export function hasInterface( access:string, name:string, description:string, arguments:MethodArgument[] ):string;
+export function hasInterface( access:string, name:string, description:string, properties:MethodArgument[] ):string;
 export function hasInterface( access:string, name:string, description:string, returns:MethodReturn ):string;
 export function hasInterface( access:string, name:string, arguments:MethodArgument[], returns:MethodReturn ):string;
 export function hasInterface( access:string, name:string, description:string, arguments:MethodArgument[], returns:MethodReturn ):string;

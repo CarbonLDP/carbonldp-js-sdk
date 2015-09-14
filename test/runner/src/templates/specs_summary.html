@@ -1,20 +1,32 @@
-{{#if title}}
-	<h4>{{title}}</h4>
-	<hr>
-	{{#if specs}}
+<div class="row-full heading">
+	<div class="small-12 columns">
+		{{#if title}}
+		<h4>{{title}}</h4>
+		{{else}}
+		<h4>Overall Specs Status</h4>
+		{{/if}}
+	</div>
+</div>
+<hr>
+<div class="row description">
+	<div class="small-12 medium-12 large-12 columns text-center">
+		{{#if title}}
+		{{#if specs}}
 		<table>
 			<thead>
 				<tr>
-					<th width="33%">Parent</th>
-					<th width="33%">Name</th>
-					<th width="33%">Result</th>
+					<th width="30%">Parent</th>
+					<th width="30%">Name</th>
+					<th width="30%">Type</th>
+					<th width="10%">Result</th>
 				</tr>
 			</thead>
 			<tbody>
 				{{#each specs}}
 				<tr>
-					<td>{{this.parent.description.name}}</td>
+					<td><a href="#{{this.parent.description.name}}">{{this.parent.description.name}}</a></td>
 					<td>{{this.description.name}}</td>
+					<td>{{this.description.specType}}</td>
 					<td class="text-center">
 
 						{{#ifCond ../title '==' 'Passed Specs'}}
@@ -30,45 +42,54 @@
 				{{/each}}
 			</tbody>
 		</table>
-	{{else}}
+		{{else}}
 		<div class="panel callout radius">No {{title}}</div>
-	{{/if}}
-{{else}}
-	<h4>Overall Specs Status</h4>
-	<hr>
-	<table>
-		<thead>
-			<tr>
-				<th width="33%">Parent</th>
-				<th width="33%">Name</th>
-				<th width="33%">Result</th>
-			</tr>
-		</thead>
-		<tbody>
-			{{#each failedSpecs}}
-			<tr>
-				<td>{{this.parent.description.name}}</td>
-				<td>{{this.description.name}}</td>
-				<td class="text-center"><i class="fi-x"></i></td>
-			</tr>
-			{{/each}}
-			{{#each passedSpecs}}
-			<tr>
-				<td>{{this.parent.description.name}}</td>
-				<td>{{this.description.name}}</td>
-				<td class="text-center"><i class="fi-check"></i></td>
-			</tr>
-			{{/each}}
-			{{#each pendingSpecs}}
-			<tr>
-				<td>{{this.description.name}}</td>
-			</tr>
-			{{/each}}
-			{{#each disabledSpecs}}
-			<tr>
-				<td>{{this.description.name}}</td>
-			</tr>
-			{{/each}}
-		</tbody>
-	</table>
-{{/if}}
+		{{/if}}
+		{{else}}
+		<table>
+			<thead>
+				<tr>
+					<th width="30%">Parent</th>
+					<th width="30%">Name</th>
+					<th width="30%">Type</th>
+					<th width="10%">Result</th>
+				</tr>
+			</thead>
+			<tbody>
+				{{#each failedSpecs}}
+				<tr>
+					<td><a href="#{{this.parent.description.name}}">{{this.parent.description.name}}</a></td>
+					<td>{{this.description.name}}</td>
+					<td>{{this.description.specType}}</td>
+					<td class="text-center"><i class="fi-x"></i></td>
+				</tr>
+				{{/each}}
+				{{#each passedSpecs}}
+				<tr>
+					<td><a href="#{{this.parent.description.name}}">{{this.parent.description.name}}</a></td>
+					<td>{{this.description.name}}</td>
+					<td>{{this.description.specType}}</td>
+					<td class="text-center"><i class="fi-check"></i></td>
+				</tr>
+				{{/each}}
+				{{#each pendingSpecs}}
+				<tr>
+					<td><a href="#{{this.parent.description.name}}">{{this.parent.description.name}}</a></td>
+					<td>{{this.description.name}}</td>
+					<td>{{this.description.specType}}</td>
+					<td class="text-center"><i class="fi-check"></i></td>
+				</tr>
+				{{/each}}
+				{{#each disabledSpecs}}
+				<tr>
+					<td><a href="#{{this.parent.description.name}}">{{this.parent.description.name}}</a></td>
+					<td>{{this.description.name}}</td>
+					<td>{{this.description.specType}}</td>
+					<td class="text-center"><i class="fi-check"></i></td>
+				</tr>
+				{{/each}}
+			</tbody>
+		</table>
+		{{/if}}
+	</div>
+</div>

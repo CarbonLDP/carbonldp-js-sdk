@@ -1,0 +1,168 @@
+{{debug this}}
+<div id="{{class_id}}" class="class">
+	<div class="row-full heading">
+		<div class="small-12 columns">
+			<h1><span><i class="fi-page"></i></span>&nbsp;&nbsp;{{class_name}} <span class="label ">class</span></h1>
+			<h4 class="subheader">{{{class_description}}}</h4>
+		</div>
+	</div>
+	<hr>
+	<div class="row">
+		<div class="small-12 medium-12 large-6 columns methods-list">
+			<h4>Methods</h4>
+			{{#if class_methods}}
+			<ul>
+				{{#each class_methods}}
+				<li>
+					<a href="#{{#if this.parent.description.name}}{{this.parent.description.name}}{{else}}{{this.parent.result.description.name}}{{/if}}.{{this.description.name}}()" data-methodstabid="panel1_{{../class_suiteid}}">
+						<span class="left">
+							<i class="fi-{{getSpecStatusColor this.status}}"></i>
+						</span>
+						&nbsp;&nbsp;{{this.description.name}}
+					</a>
+				</li>
+				{{/each }}
+			</ul>
+			{{else}}
+			<div class="panel callout radius">
+				<h5>This class has no methods.</h5>
+			</div>
+			{{/if}}
+		</div>
+		<div class="small-12 medium-12 large-6 columns properties-list">
+			<h4>Properties</h4>
+			{{#if class_properties}}
+			<ul>
+				{{#each class_properties}}
+				<li>
+					<a href="#{{this.parent.description.name}}.{{this.description.name}}" data-propertiestabid="panel2_{{../class_suiteid}}">
+						<span class="left">
+							<i class="fi-{{getSpecStatusColor this.status}}"></i>
+						</span>
+						&nbsp;&nbsp;{{this.description.name}}
+					</a>
+				</li>
+				{{/each }}
+			</ul>
+			{{else}}
+			<div class="panel callout radius">
+				<h5>This class has no properties.</h5>
+			</div>
+			{{/if}}
+		</div>
+	</div>
+	<div class="row signature">
+		<div class="small-12 medium-12 columns constructors-list">
+			<h4>Constructors</h4>
+			{{#if class_constructors}}
+			{{#each class_constructors}}
+			{{#if this.signatures}}
+			<h5 class="subheader">{{{this.description.description}}}</h5>
+			{{#each this.signatures}}
+			<div class="panel code-signature">
+				<span class="access">
+					new
+					{{#if this.description.access}}
+					{{this.description.access}}
+					{{/if}}
+				</span>
+				<span class="type">
+				</span>
+				<span class="name">
+					{{{this.parent.parent.result.description.name}}}
+				</span>
+				{{#if this.description.arguments}}
+				(
+				{{#each this.description.arguments}}
+				<span class="param-type">{{{this.type}}}</span>
+				<span>{{this.name}}</span>
+				{{#if @last}} {{else}},{{/if}}
+				{{/each}}
+				)
+				{{else}}
+				()
+				{{/if}}{ ... }
+			</div>
+			<br>
+			{{/each }}
+			{{else}}
+			{{#if this.description.description}}
+			<h5 class="subheader">{{{this.description.description}}}</h5>
+			{{/if}}
+			<div class="panel code-signature">
+				<span class="access">
+					new
+					{{#if this.description.access}}
+					{{this.description.access}}
+					{{/if}}
+				</span>
+				<span class="type">
+				</span>
+				<span class="name">
+					{{this.parent.description.name}}
+				</span>
+				{{#if this.description.arguments}}
+				(
+				{{#each this.description.arguments}}
+				<span class="param-type">{{this.type}}</span>
+				<span>{{this.name}}</span>
+				{{#if @last}} {{else}},{{/if}}
+				{{/each}}
+				)
+				{{else}}
+				()
+				{{/if}}{ ... }
+			</div>
+			<br>
+			{{/if}}
+			{{/each}}
+			{{else}}
+			<div class="panel callout radius">
+				<h5>This class has no constructors.</h5>
+			</div>
+			{{/if}}
+		</div>
+	</div>
+	<hr>
+	<div class="row description">
+		<div class="small-12 medium-12 large-12 columns">
+			<h4>Descriptions</h4>
+			<br>
+
+			<div>
+				<ul class="tabs" data-tab>
+					<li class="tab-title active"><a href="#panel1_{{class_suiteid}}">Methods</a></li>
+					<li class="tab-title"><a href="#panel2_{{class_suiteid}}">Properties</a></li>
+				</ul>
+				<div class="tabs-content">
+					<div class="content methods-description active" id="panel1_{{class_suiteid}}">
+						{{#if class_methods}}
+						{{#each class_methods}}
+						{{>method_summary}}
+						{{/each}}
+						{{else}}
+						<div class="method-summary">
+							<div class="panel callout radius">
+								<h5>This class has no methods.</h5>
+							</div>
+						</div>
+						{{/if}}
+					</div>
+					<div class="content properties-description" id="panel2_{{class_suiteid}}">
+						{{#if class_properties}}
+						{{#each class_properties}}
+						{{>property_summary}}
+						{{/each}}
+						{{else}}
+						<div class="property-summary">
+							<div class="panel callout radius">
+								<h5>This class has no properties.</h5>
+							</div>
+						</div>
+						{{/if}}
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

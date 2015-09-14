@@ -7,11 +7,14 @@
 import * as App from './App';
 
 import {
+	PROPERTY,
 	INSTANCE,
 	STATIC,
 	module,
 	clazz,
+	interfaze,
 	method,
+	constructor,
 	property,
 	isDefined,
 	hasConstructor,
@@ -23,12 +26,20 @@ import {
 
 describe( module( 'Carbon/App' ), function () {
 
+	describe( interfaze( 'RDF.Resource.Class', 'Description of Interface' ), function () {
+
+		it( hasProperty( PROPERTY, 'rootContainer', 'string', 'The Root of the Container'
+		), function () {
+			expect( 2 ).toBeGreaterThan( 3 );
+		} );
+
+	} );
 	describe( clazz( 'Carbon.App.Class',
 		'Class that represents a Carbon Application. It centers the scope of several services (Carbon.Auth, Carbon.Resources, etc.) into the Application\'s scope.',
 		'Carbon.Parent'
 	), function () {
 
-		it( hasConstructor( [
+		it( hasConstructor( 'Constructor of Carbon.App.Class', [
 			{name: 'parent', type: 'Carbon.Parent'},
 			{name: 'resource', type: 'Carbon.App.Resource'}
 		] ), function () {
@@ -45,6 +56,9 @@ describe( module( 'Carbon/App' ), function () {
 			// TODO: Test
 		} );
 
+		it( hasProperty( STATIC, 'TestingProperty', 'bool', 'Description' ), function () {
+
+		} );
 	} );
 
 	describe( clazz( 'Carbon.App.Factory',
@@ -53,11 +67,15 @@ describe( module( 'Carbon/App' ), function () {
 		'Carbon.Parent'
 	), function () {
 
-		it( hasConstructor( [
-			{name: 'parent', type: 'Carbon.Parent'},
-			{name: 'resource', type: 'Carbon.App.Resource'}
-		] ), function () {
-			// TODO: Test
+
+		describe( constructor( '', 'Constructor of Carbon.App.Factory' ), function () {
+			it( hasConstructor( [
+				{name: 'parent', type: 'Carbon.Parent'},
+				{name: 'resource', type: 'Carbon.App.Resource'},
+				{name: 'resource', type: '<a href="#Carbon.Utils.A">Carbon.Utils.A</a>'}
+			] ), function () {
+				// TODO: Test
+			} );
 		} );
 
 		it( hasMethod( INSTANCE, 'is',
@@ -74,26 +92,20 @@ describe( module( 'Carbon/App' ), function () {
 			''
 		), function () {
 			it( hasSignature(
+				'Signature 1',
 				[
 					{name: 'resource', type: 'Carbon.RDF.Node.Class'}
 				],
 				{type: 'Carbon.App.Resource'}
 			), function () {
-				// TODO: Test
-			} );
-
-			it( hasSignature(
-				[
-					{name: 'resources', type: 'Carbon.RDF.Node.Class[]'}
-				],
-				{type: 'Carbon.App.Resource[]'}
-			), function () {
-				// TODO: Test
+				expect( 1 ).toBeGreaterThan( 0 );
 			} );
 		} );
+
+
 	} );
 
-	describe( property( STATIC, 'Carbon.App.factory', 'Carbon.App.Factory',
+	describe( property( STATIC, 'factory', 'Carbon.App.Factory',
 		'Instance of the class Carbon.App.Factory'
 	), function () {
 
@@ -102,5 +114,6 @@ describe( module( 'Carbon/App' ), function () {
 		} );
 
 	} );
+
 
 } );

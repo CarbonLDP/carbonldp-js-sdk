@@ -17,22 +17,25 @@ import Response from './Response';
 import {
 	INSTANCE,
 	STATIC,
+	clazz,
+	module,
 	submodule,
 	isDefined,
 	hasMethod,
 	hasProperty,
 	hasInterface,
-	MethodArgument
+	MethodArgument,
+	interfaze
 } from './../test/JasmineExtender';
 //@formatter:on
 
-describe( 'Carbon.HTTP.Request', function () {
+describe( module( 'Carbon/HTTP/Request' ), function () {
 
 	it( isDefined(), function () {
 		expect( Request ).toBeDefined();
 	} );
 
-	describe( submodule( STATIC, 'Service' ), function () {
+	describe( clazz( 'Carbon.HTTP.Request.Service', '' ), function () {
 
 		beforeEach( function () {
 			jasmine.Ajax.install();
@@ -335,29 +338,6 @@ describe( 'Carbon.HTTP.Request', function () {
 			}
 		}
 	} );
+
+	
 } );
-class ObjectDescriptor {
-	static Options = {
-		name: 'Options',
-		parameters: [
-			{name: 'headers', type: 'Map<string, Header>', optional: true},
-			{name: 'sendCredentialsOnCORS', type: 'boolean', optional: true},
-			{name: 'timeout', type: 'number', optional: true},
-			{name: 'request', type: 'XMLHttpRequest', optional: true},
-		]
-	};
-	static Header = {
-		name: 'Header',
-		parameters: [
-			{name: 'values', type: 'Array of Values (Value[])'}
-		]
-	};
-	static Value = {
-		name: 'Value',
-		parameters: [
-			{name: 'mainValue', type: 'string'},
-			{name: 'secondaryKey', type: 'string'},
-			{name: 'secondaryValue', type: 'string'}
-		]
-	}
-}
