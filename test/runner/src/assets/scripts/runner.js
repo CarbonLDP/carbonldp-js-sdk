@@ -33,6 +33,9 @@
 			'boot'        : {
 				deps   : [ 'jasmine', 'jasmine-html' ],
 				exports: 'window.jasmineRequire'
+			},
+			'jasmine-ajax': {
+				deps	: [ 'jasmine', 'jasmine-html' ]
 			}
 		}
 	} );
@@ -40,6 +43,7 @@
 	// Define all of your specs here. These are RequireJS modules.
 	var specs = [
 		'src/App.spec',
+		'src/Errors/AbstractError.spec',
 		'src/HTTP/Request.spec',
 		'src/Utils.spec'
 	];
@@ -48,10 +52,7 @@
 	// AMD or UMD specs. `boot.js` will do a bunch of configuration and attach it's initializers to `window.onload()`. Because
 	// we are using RequireJS `window.onload()` has already been triggered so we have to manually call it again. This will
 	// initialize the HTML Reporter and execute the environment.
-	require( [ 'boot' ], function() {
-		require( [ 'jasmine-ajax' ], function() {
-
-		} );
+	require( [ 'boot', 'jasmine-ajax' ], function() {
 
 		// Load the specs
 		require( specs, function() {
