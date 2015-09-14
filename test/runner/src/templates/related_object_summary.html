@@ -1,0 +1,101 @@
+{{debug this}}
+<div class="row heading">
+	<div class="small-12 medium-12 large-12 columns">
+		<h2>{{object_name}} <span class="label ">{{object_type}}</span></h2>
+		{{#if object_description}}
+		<h4 class="subheader">{{object_description}}</h4>
+		{{/if}}
+	</div>
+</div>
+
+<div class="row properties">
+	<div class="small-12 medium-12 large-12 columns">
+		<h4>Properties</h4>
+		<hr>
+		{{#if object_attributes}}
+		<table>
+			<tbody>
+				<tr>
+					<td>Property:</td>
+					<td>Description:</td>
+				</tr>
+				{{#each object_attributes}}
+				<tr>
+					<td>{{this.name}}</td>
+					<td>
+						<p class="type">
+							<strong><i>{{this.type}}</i></strong>
+							{{#if this.optional}}
+							<span>(optional)</span>
+							{{/if}}
+						</p>
+						{{#if this.description.description}}
+						<p>{{this.description.description}}</p>
+						{{/if}}
+					</td>
+				</tr>
+				{{/each}}
+			</tbody>
+		</table>
+		<ul>
+			{{#each object_attributes}}
+			{{/each }}
+		</ul>
+		{{else}}
+		<div class="panel callout radius">
+			<h5>This suite has no methods.</h5>
+		</div>
+		{{/if}}
+	</div>
+</div>
+<div class="row methods-list">
+	<div class="small-12 medium-12 large-12 columns">
+		<h4>Methods</h4>
+		<hr>
+		{{#if suite_specs}}
+		<ul>
+			{{#each suite_specs}}
+			<li><a href="#spec_card_{{this.id}}" card="#spec_card_{{this.id}}"><span class="left"><i class="fi-{{getSpecStatusColor this.status}}"></i></span>&nbsp;&nbsp;{{this.description.name}}</a></li>
+			{{/each }}
+		</ul>
+		{{else}}
+		<div class="panel callout radius">
+			<h5>This suite has no methods.</h5>
+		</div>
+		{{/if}}
+	</div>
+</div>
+<div class="row related-objects">
+	<div class="small-12 medium-12 large-12 columns">
+		<h4>Related Resources</h4>
+		<hr>
+		{{#if suite_relatedClasses}}
+		<ul>
+			{{#each suite_relatedClasses}}
+			
+			{{/each}}
+		</ul>
+		{{else}}
+		<div class="panel callout radius">
+			<h5>This suite has no related objects.</h5>
+		</div>
+		{{/if}}
+	</div>
+</div>
+<div class="row methods-description">
+	<div class="small-12 medium-12 large-12 columns">
+		<h4>Methods Description</h4>
+		<hr>
+		{{#if suite_specs}}
+		<ul>
+			{{#each suite_specs}}
+			{{>spec_card}}
+			{{/each}}
+		</ul>
+		{{else}}
+		<div class="panel callout radius">
+			<h5>This suite has no methods.</h5>
+		</div>
+		{{/if}}
+	</div>
+</div>

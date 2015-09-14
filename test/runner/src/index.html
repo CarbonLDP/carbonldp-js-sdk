@@ -1,0 +1,136 @@
+<!DOCTYPE HTML>
+<html class="no-js">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+	<title>Carbon JS API</title>
+
+	<link rel="shortcut icon" href="assets/images/favicon.ico" type="image/x-icon"/>
+
+	<link rel="stylesheet" href="../bower_components/foundation/css/foundation.css">
+	<link rel="stylesheet" href="../bower_components/foundation-icon-fonts/foundation-icons.css">
+	<link rel="stylesheet" type="text/css" href="assets/styles/runner.css">
+	<link rel="stylesheet" type="text/css" href="assets/styles/api_styles.css">
+
+
+	<script type="text/javascript" src="../bower_components/handlebars/handlebars.min.js"></script>
+	<script type="text/javascript" src="../bower_components/requirejs/require.js" data-main="assets/scripts/runner"></script>
+	<script type="text/javascript" src="../bower_components/modernizr/modernizr.js"></script>
+
+	<script type="text/javascript" src="../bower_components/jquery/dist/jquery.js"></script>
+	<script type="text/javascript" src="../bower_components/foundation/js/foundation.js"></script>
+	<script type="text/javascript" src="../bower_components/foundation/js/foundation/foundation.tab.js"></script>
+	<script type="text/javascript" src="assets/scripts/api_animations.js"></script>
+
+
+</head>
+<body>
+
+	<div role="main" class="api-container">
+		<div class="fixed">
+			<nav class="top-bar" data-topbar role="navigation">
+				<ul class="title-area">
+					<li class="logo">
+						<!--<h1><a href="#">Carbon</a></h1>-->
+						<img src="./assets/images/carbonldp_logo.png"/>
+					</li>
+					<!-- Remove the class "menu-icon" to get rid of menu icon. Take out "Menu" to just have icon alone -->
+					<li class="toggle-topbar menu-icon"><a href="#"><span>Menu</span></a></li>
+				</ul>
+
+				<section class="top-bar-section">
+					<!-- Right Nav Section -->
+					<ul class="right">
+						<!--<li class="active"><a href="#">Right Button Active</a></li>-->
+						<!--<li class="has-dropdown">
+							<a href="#">Right Button Dropdown</a>
+							<ul class="dropdown">
+								<li><a href="#">First link in dropdown</a></li>
+								<li class="active"><a href="#">Active link in dropdown</a></li>
+							</ul>
+						</li>-->
+					</ul>
+
+					<!-- Left Nav Section -->
+					<ul class="left">
+						<!--<li><a href="#">Left Nav Button</a></li>-->
+					</ul>
+				</section>
+			</nav>
+		</div>
+		<div class="small-12 columns navigation-panel">
+			<div id="panel-modules" class="panel modules">
+				<div class="panel-heading">
+					<h3>Modules</h3>
+				</div>
+				<div class="panel-body">
+					<nav>
+						<ul class="side-nav">
+							<li><a href="#specsResultContainer">View Results</a></li>
+						</ul>
+					</nav>
+				</div>
+			</div>
+			<div id="panel-classes" class="panel classes">
+				<div class="panel-heading">
+					<h4>Classes</h4>
+				</div>
+				<div class="panel-body">
+					<nav>
+						<ul class="side-nav"></ul>
+					</nav>
+				</div>
+			</div>
+			<div id="panel-interfaces" class="panel interfaces">
+				<div class="panel-heading">
+					<h4>Interfaces</h4>
+				</div>
+				<div class="panel-body">
+					<nav>
+						<ul class="side-nav"></ul>
+					</nav>
+				</div>
+			</div>
+		</div>
+		<div id="specsResultContainer" class="small-12 columns results">
+			<div class="row-full">
+				<div class="small-12 medium-12 columns">
+					<div id="results-message-box" class="results-message-box">
+					</div>
+				</div>
+				<br>
+
+				<div class="small-12 medium-12 columns">
+					<div class="results-summary">
+					</div>
+				</div>
+			</div>
+			<div class="row-full">
+				<div class="small-12 medium-12 large-12 columns">
+					<div class="suites-summary">
+						<div id="modules" class="modules"></div>
+						<hr>
+						<h1>Classes</h1>
+						<hr>
+						<div id="classes" class="classes"></div>
+						<hr>
+						<h1>Interfaces</h1>
+						<hr>
+						<div id="interfaces" class="interfaces"></div>
+					</div>
+				</div>
+				<div class="small-12 medium-12 large-12 columns">
+					<div class="related-object-summary"></div>
+				</div>
+			</div>
+		</div>
+		<a href="#" class="back-to-top large"><i class="fi-arrow-up large"></i></a>
+	</div>
+	<!--<footer>
+		<div id="footer">Sticky Footer!</div>
+	</footer>-->
+	<script>
+		$( document ).foundation();
+	</script>
+</body>
+</html>

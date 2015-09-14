@@ -1,0 +1,26 @@
+{
+  "name": "test",
+  "version": "0.0.1",
+  "authors": [
+    "Miguel Aragón <miguel.aragon@base22.com>"
+  ],
+  "description": "Testsuite for Carbon JS SDK",
+  "main": "index.html",
+  "license": "MIT",
+  "homepage": "https://carbonldp.com/",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "requirejs": "~2.1.18",
+    "foundation": "~5.5.2",
+    "foundation-icon-fonts": "*"
+  },
+  "resolutions": {
+    "jquery": ">= 2.1.0"
+  }
+}

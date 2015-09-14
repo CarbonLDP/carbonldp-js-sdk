@@ -1,0 +1,95 @@
+<div id="{{interface_id}}" class="interface">
+	<div class="row-full heading">
+		<div class="small-12 columns">
+			<h1><span><i class="fi-page"></i></span>&nbsp;&nbsp;{{interface_name}} <span class="label ">interface</span></h1>
+			<h4 class="subheader">{{{interface_description}}}</h4>
+		</div>
+	</div>
+	<hr>
+	<div class="row">
+		<div class="small-12 medium-12 large-6 columns methods-list">
+			<h4>Methods</h4>
+			{{#if interface_methods}}
+			<ul>
+				{{#each interface_methods}}
+				<li>
+					<a href="#{{this.parent.description.name}}.{{this.description.name}}()" data-methodstabid="panel1_{{../class_id}}">
+						<span class="left">
+							<i class="fi-{{getSpecStatusColor this.status}}"></i>
+						</span>
+						&nbsp;&nbsp;{{this.description.name}}
+					</a>
+				</li>
+				{{/each }}
+			</ul>
+			{{else}}
+			<div class="panel callout radius">
+				<h5>This interface has no methods.</h5>
+			</div>
+			{{/if}}
+		</div>
+		<div class="small-12 medium-12 large-6 columns properties-list">
+			<h4>Properties</h4>
+			{{#if interface_properties}}
+			<ul>
+				{{#each interface_properties}}
+				<li>
+					<a href="#{{this.parent.description.name}}.{{this.description.name}}" data-propertiestabid="panel2_{{../class_id}}">
+						<span class="left">
+							<i class="fi-{{getSpecStatusColor this.status}}"></i>
+						</span>
+						&nbsp;&nbsp;{{this.description.name}}
+					</a>
+				</li>
+				{{/each }}
+			</ul>
+			{{else}}
+			<div class="panel callout radius">
+				<h5>This interface has no properties.</h5>
+			</div>
+			{{/if}}
+		</div>
+	</div>
+	<hr>
+	<div class="row description">
+		<div class="small-12 medium-12 large-12 columns">
+			<h4>Descriptions</h4>
+			<br>
+
+			<div>
+				<ul class="tabs" data-tab>
+					<li class="tab-title active"><a href="#panel1_{{class_id}}">Methods</a></li>
+					<li class="tab-title"><a href="#panel2_{{class_id}}">Properties</a></li>
+				</ul>
+				<div class="tabs-content">
+					<div class="content methods-description active" id="panel1_{{class_id}}">
+						{{#if interface_methods}}
+						{{#each interface_methods}}
+						{{>method_summary}}
+						{{/each}}
+						{{else}}
+						<div class="method-summary">
+							<div class="panel callout radius">
+								<h5>This interface has no methods.</h5>
+							</div>
+						</div>
+						{{/if}}
+					</div>
+					<div class="content properties-description" id="panel2_{{class_id}}">
+						{{#if interface_properties}}
+						{{#each interface_properties}}
+						{{>property_summary}}
+						{{/each}}
+						{{else}}
+						<div class="property-summary">
+							<div class="panel callout radius">
+								<h5>This interface has no properties.</h5>
+							</div>
+						</div>
+						{{/if}}
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

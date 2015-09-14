@@ -1,43 +1,103 @@
+'use strict';
 
-module.exports = function(grunt) {
+var pkg = require( './package.json' );
+
+var endsWith = function( string, substring ) {
+	var index = string.lastIndexOf( substring );
+	return index === string.length - substring.length;
+};
+
+module.exports = function( grunt ) {
+
+	// Load all grunt tasks
+	require( 'load-grunt-tasks' )( grunt );
 
 	// Project configuration.
-	grunt.initConfig({
-		pkg: grunt.file.readJSON('package.json'),
-		concat: {
-			modules: {
-				src: [
-					'src/modules/*.js',
-					'src/modules/**/*.js'
-				],
-				dest: 'src/modules.js'
-			}
-		},
-		'string-replace': {
-			insertModules: {
-				files: {
-					'carbon.js': 'src/carbon.js'
+	grunt.initConfig(
+		{
+			karma    : {
+				all_tests: {
+					browsers  : [ 'PhantomJS', 'Chrome', 'Firefox' ],
+					configFile: 'karma.conf.js'
 				},
-				options: {
-					replacements: [{
-						pattern: /\/\/#include\("(.*?)"\)/ig,
-						replacement: function(match, file) {
-							return grunt.file.read('src/' + file);
-						}
-					}]
+				unit     : {
+					browsers  : [ 'PhantomJS' ],
+					configFile: 'karma.conf.js',
+					logLevel  : 'DEBUG'
+				}
+			},
+			ts       : {
+				default: {
+					src    : [ 'src/**/*.ts' ],
+					options: {
+						compiler: 'node_modules/typescript/bin/tsc',
+						module  : 'amd',
+						target  : 'es5',
+						verbose : true,
+						fast    : 'never'
+					}
+				}
+			},
+			requirejs: {
+				dev : {
+					options: {
+						baseUrl                : '.',
+						name                   : 'bower_components/almond/almond.js',
+						include                : [ 'Carbon' ],
+						exclude                : [],
+						packages               : [
+							{
+								name    : 'Carbon',
+								location: 'src',
+								main    : 'Carbon'
+							},
+							{
+								name    : 'jsonld',
+								location: 'bower_components/jsonld.js/js',
+								main    : 'jsonld'
+							}
+						],
+						out                    : 'dist/Carbon.js',
+						wrap                   : {
+							startFile: 'build/start.frag',
+							endFile  : 'build/end.frag'
+						},
+						optimize               : 'none',
+						preserveLicenseComments: false
+					}
+				},
+				prod: {
+					options: {
+						baseUrl                : '.',
+						name                   : 'bower_components/almond/almond.js',
+						include                : [ 'Carbon' ],
+						exclude                : [],
+						packages               : [
+							{
+								name    : 'Carbon',
+								location: 'src',
+								main    : 'Carbon'
+							},
+							{
+								name    : 'jsonld',
+								location: 'bower_components/jsonld.js/js',
+								main    : 'jsonld'
+							}
+						],
+						out                    : 'dist/Carbon.min.js',
+						wrap                   : {
+							startFile: 'build/start.frag',
+							endFile  : 'build/end.frag'
+						},
+						optimize               : 'uglify2',
+						preserveLicenseComments: false,
+						generateSourceMaps     : true
+					}
 				}
 			}
 		}
-	});
-
-
-	grunt.loadNpmTasks('grunt-contrib-concat');
-	grunt.loadNpmTasks('grunt-string-replace');
-	grunt.loadNpmTasks('grunt-karma');
-
-	grunt.registerTask('default', [
-		'concat:modules',
-		'string-replace:insertModules'
-	]);
+	);
+	grunt.registerTask( 'dist:dev', [ 'ts', 'karma:unit', 'requirejs:dev' ] );
+	grunt.registerTask( 'test', [ 'karma:all_tests' ] );
 
 };

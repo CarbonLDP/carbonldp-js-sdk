@@ -1,0 +1,39 @@
+{
+	"name": "carbon-js-sdk",
+	"version": "0.7.1",
+	"description": "Javascript SDK for creating Carbon LDP applications.",
+	"main": "carbon.js",
+	"keywords": [
+		"carbon",
+		"ldp",
+		"javascript",
+		"sdk",
+		"js",
+		"sdk",
+		"linked",
+		"data",
+		"semantic",
+		"web"
+	],
+	"authors": [
+		"Base22"
+	],
+	"license": "MIT",
+	"homepage": "http://carbonldp.com",
+	"ignore": [
+		"**/.*",
+		"node_modules",
+		"bower_components",
+		"test",
+		"tests"
+	],
+	"dependencies": {
+		"jsonld.js": "~0.3.22"
+	},
+	"devDependencies": {
+		"requirejs": "~2.1.15",
+		"almond": "~0.3.0",
+		"jasmine-ajax": "~3.1.0",
+		"es6-promise": "~2.0.1"
+	}
+}

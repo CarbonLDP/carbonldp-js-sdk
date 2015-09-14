@@ -1,0 +1,259 @@
+/*
+    1.) API > General Styles
+    2.) API > Results-Message-Box
+    3.) API > Suites Summary
+    4.) API > Suites Summary > Module
+    5.) API > Suites Summary > Class
+    6.) API > Suites Summary > Interface
+    7.) API > Suites Summary > General Styles
+    8.) API > Navigation Panel
+    9.) Media Queries
+*/
+
+
+
+
+
+
+/*-------------------------------*/
+/*  1.) API > General Styles  */
+.alert-box .close { top:10% }
+nav.top-bar ul.title-area li.logo img { width:100px; margin-top:5px;}
+
+.row-full { margin: 0; max-width: none; }
+
+body { -webkit-font-smoothing: antialiased; display:flex; flex-direction:column; background-color: #f5f5f5; }
+footer{ background-color:#D3D3D3; padding:3em; width:100%; }
+
+.api-container { flex:1; /*margin-top: 45px;*/ }
+.api-container .back-to-top {
+    position: fixed;
+    bottom: 1em;
+    right: 1em;
+    text-decoration: none;
+    background-color: #f2f2f2;
+    padding: 10px 20px;
+    border:1px solid #d8d8d8;
+    border-radius: .5em;
+    color: #008CBA;
+    font-size: 30px
+    display:none;
+}
+.api-container .back-to-top:hover {  background-color: #f5f5f5;;  }
+
+
+
+
+/*-------------------------------*/
+/*  2.) API > Results-Message-Box   */
+.results .results-message-box .alert-box { border: 1px solid #008CBA; background: #ffffff; color: #008CBA; }
+.results .results-message-box a.passed-box p,
+.results .results-message-box a.passed-box h2 { color:#43AC6A; }
+.results .results-message-box a.passed-box:hover p,
+.results .results-message-box a.passed-box:hover h2 { color:#ffffff; }
+.results .results-message-box a.passed-box { display:block; border:1px solid #43AC6A; }
+.results .results-message-box a.passed-box:hover { background-color:#43AC6A; cursor:pointer; }
+.results .results-message-box a.failed-box p,
+.results .results-message-box a.failed-box h2 { color:#f04124; }
+.results .results-message-box a.failed-box:hover p,
+.results .results-message-box a.failed-box:hover h2 { color:#ffffff; }
+.results .results-message-box a.failed-box { display:block; border:1px solid #f04124; }
+.results .results-message-box a.failed-box:hover { background-color:#f04124; cursor:pointer; }
+.results .results-message-box a.disabled-box p,
+.results .results-message-box a.disabled-box h2 { color:#959595; }
+.results .results-message-box a.disabled-box:hover p,
+.results .results-message-box a.disabled-box:hover h2 { color:#ffffff; }
+.results .results-message-box a.disabled-box { display:block; border:1px solid #959595; }
+.results .results-message-box a.disabled-box:hover { background-color:#959595; cursor:pointer; }
+.results .results-message-box a.pending-box p,
+.results .results-message-box a.pending-box h2 { color:#008CBA; }
+.results .results-message-box a.pending-box:hover p,
+.results .results-message-box a.pending-box:hover h2 { color:#ffffff; }
+.results .results-message-box a.pending-box { display:block; border:1px solid #008CBA; }
+.results .results-message-box a.pending-box:hover { background-color:#008CBA; cursor:pointer; }
+
+.results .results-summary { background-color: #ffffff; border: 1px solid lightgray; padding-top: 15px; padding-bottom: 15px; }
+.results .results-summary .description table { margin-left: auto !important; margin-right: auto !important; }
+
+
+
+/*-------------------------------*/
+/*  3.) API > Suites Summary   */
+.results { margin-left: 300px !important; padding-top: 15px; background-color: #f5f5f5; width: 70%; }
+.results .results-summary .fi-upload,
+.results .suites-summary .fi-upload{ color:#008CBA; }
+.results .results-summary .fi-download,
+.results .suites-summary .fi-download{ color:#43AC6A; }
+.results .results-summary .fi-check,
+.results .suites-summary .fi-check{ color:#43AC6A; }
+.results .results-summary .fi-x,
+.results .suites-summary .fi-x{ color:red; }
+.results .results-summary .fi-minus,
+.results .suites-summary .fi-minus{ color:darkgray; }
+
+
+
+/*-------------------------------*/
+/*  4.) API > Suites Summary > Module   */
+.results .suites-summary .modules .module { margin-bottom: 5%; margin-top: 5%; background-color: #ffffff; border:1px solid #D3D3D3; border-radius: 4px }
+
+
+
+/*-------------------------------*/
+/*  5.) API > Suites Summary > Class   */
+.results .suites-summary .classes .class { margin-bottom: 5%; margin-top: 5%; background-color: #ffffff; border:1px solid #D3D3D3; border-radius: 4px }
+
+
+
+/*-------------------------------*/
+/*  6.) API > Suites Summary > Interface   */
+.results .suites-summary .interfaces .interface { margin-bottom: 5%; margin-top: 5%; background-color: #ffffff; border:1px solid #D3D3D3; border-radius: 4px }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*-------------------------------*/
+/*  7.) API > Suites Summary > General Styles     */
+.results .suites-summary .description ul.tabs li a { border: 1px solid lightgray; border-bottom: none;}
+.results .suites-summary .description .tabs-content { border: 1px solid lightgray; padding-top:1.25em;}
+
+.results .suites-summary .methods-list ul,
+.results .suites-summary .classes-list ul,
+.results .suites-summary .properties-list ul,
+.results .suites-summary .interfaces-list ul{ list-style-type: none; }
+
+
+.results .suites-summary .property-summary,
+.results .suites-summary .method-summary { margin-bottom: 5%; padding-left: 3%; padding-right: 3%; }
+.results .suites-summary .method-summary .signature { margin-bottom: 1.25em; }
+
+
+.results .suites-summary .signature .code-signature { background-color:#FFFFFF; padding:.5em; font-family: Monaco, "Lucida Console", monospace; margin:0; }
+.results .suites-summary .signature .code-signature .access { color:#0000E6; }
+.results .suites-summary .signature .code-signature .type { color:#009B00; }
+.results .suites-summary .signature .code-signature .param-type,
+.results .suites-summary .signature .code-signature .param-type a { color:#9933CC; }
+.results .suites-summary .signature .code-signature .param-type a { text-decoration: underline; }
+
+.results .suites-summary .arguments p.type,
+.results .suites-summary .arguments p.description,
+.results .suites-summary .parameters p.type,
+.results .suites-summary .property-summary p.type,
+.results .suites-summary .property-summary p.access { font-size: small; margin: 0; }
+
+
+
+/*-------------------------------*/
+/*  8.) API > Navigation Panel    */
+.navigation-panel
+{
+    position: fixed;
+    height: 100%;
+    border-right: 1px solid #333333;
+    min-width: 300px;
+    width: 300px !important;
+    padding-top: 15px;
+    background-color: #ffffff;
+    z-index: 1;
+    overflow-y: scroll;
+}
+
+.navigation-panel #panel-modules,
+.navigation-panel #panel-classes,
+.navigation-panel #panel-interfaces { padding:0 }
+
+.navigation-panel #panel-modules .panel-heading,
+.navigation-panel #panel-classes .panel-heading,
+.navigation-panel #panel-interfaces .panel-heading { padding:10px; }
+
+.navigation-panel #panel-modules .panel-body,
+.navigation-panel #panel-classes .panel-body,
+.navigation-panel #panel-interfaces .panel-body { padding:0; }
+
+.navigation-panel #panel-modules .panel-body ul,
+.navigation-panel #panel-classes .panel-body ul,
+.navigation-panel #panel-interfaces .panel-body ul { list-style:none; padding:0; border-top:1px solid grey; }
+
+.navigation-panel #panel-modules .panel-body ul li,
+.navigation-panel #panel-classes .panel-body ul li,
+.navigation-panel #panel-interfaces .panel-body ul li { border-bottom:1px solid grey;  padding:0; margin:0; }
+
+.navigation-panel #panel-modules .panel-body ul li a,
+.navigation-panel #panel-classes .panel-body ul li a,
+.navigation-panel #panel-interfaces .panel-body ul li a { display:block; color:#000000; padding: 10px 10px 10px 15px; min-height:34px; }
+
+.navigation-panel #panel-modules .panel-body ul li a.active,
+.navigation-panel #panel-classes .panel-body ul li a.active,
+.navigation-panel #panel-interfaces .panel-body ul li a.active,
+.navigation-panel #panel-modules .panel-body ul li a:hover,
+.navigation-panel #panel-classes .panel-body ul li a:hover,
+.navigation-panel #panel-interfaces .panel-body ul li a:hover { background-color:lightgrey; }
+
+.navigation-panel #panel-modules .panel-body ul li a span.label,
+.navigation-panel #panel-classes .panel-body ul li a span.label,
+.navigation-panel #panel-interfaces .panel-body ul li a span.label { font-size:13px; }
+
+
+
+
+
+
+
+
+
+/*-------------------------------*/
+/*  9.) Media Queries     */
+/*Small screens*/
+@media only screen { } /* Define mobile styles */
+
+/* max-width 640px, mobile-only styles, use when QAing mobile issues */
+@media only screen and (max-width: 640px) {
+    .results {
+        margin: 0 !important;
+        padding-left: 0;
+        padding-right: 0;
+        width: 100%;
+    }
+    .navigation-panel { position: relative; width: 100% !important; border-right: none; margin-bottom: 5px;}
+    .api-container .back-to-top {
+        bottom: 10px;
+        right: 20px;
+    }
+}
+
+/* Medium screens*/
+/* min-width 641px, medium screens */
+@media only screen and (min-width: 640px) and (max-width: 855px) {
+    .results{
+        width: 60% !important;
+    }
+}
+
+/* min-width 641px and max-width 1024px, use when QAing tablet-only issues */
+@media only screen and (min-width: 641px) and (max-width: 1024px) {
+
+}
+
+/* Large screens*/
+@media only screen and (min-width: 1025px) { } /* min-width 1025px, large screens */
+
+@media only screen and (min-width: 1025px) and (max-width: 1440px) { } /* min-width 1025px and max-width 1440px, use when QAing large screen-only issues */
+
+/* XLarge screens*/
+@media only screen and (min-width: 90.063em) { } /* min-width 1441px, xlarge screens */
+
+@media only screen and (min-width: 90.063em) and (max-width: 120em) { } /* min-width 1441px and max-width 1920px, use when QAing xlarge screen-only issues */
+
+/* XXLarge screens*/
+@media only screen and (min-width: 120.063em) { } /* min-width 1921px, xxlarge screens */
