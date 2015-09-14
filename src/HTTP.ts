@@ -2,18 +2,18 @@
 
 import * as Utils from './Utils';
 
-import * as Exceptions from './http/Exceptions';
-import * as Header from './http/Header';
-import Method from './http/Method';
-import ProcessedResponse from './http/ProcessedResponse';
-import * as Request from './http/Request';
-import Response from './http/Response';
-import StatusCode from './http/StatusCode';
+import * as Errors from './HTTP/Errors';
+import * as Header from './HTTP/Header';
+import Method from './HTTP/Method';
+import ProcessedResponse from './HTTP/ProcessedResponse';
+import * as Request from './HTTP/Request';
+import Response from './HTTP/Response';
+import StatusCode from './HTTP/StatusCode';
 
 
 //@formatter:off
 export {
-	Exceptions,
+	Errors,
 	Header,
 	Method,
 	ProcessedResponse,

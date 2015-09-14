@@ -12,7 +12,7 @@ class Util {
 			if ( ! headerString.trim() ) continue;
 
 			var parts:string[] = headerString.split( ':' );
-			if ( parts.length != 2 ) throw new Error( "ParseException: The header couldn't be parsed." );
+			if ( parts.length != 2 ) throw new Error( "ParseError: The header couldn't be parsed." );
 
 			var name = parts[ 0 ].trim();
 			var header = new Header( parts[ 1 ].trim() );

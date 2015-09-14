@@ -5,7 +5,7 @@ import Method from './Method';
 import Response from './Response';
 import * as Header from './Header';
 
-import * as Exceptions from './Exceptions';
+import * as Errors from './Errors';
 
 import * as Utils from './../Utils';
 
@@ -46,14 +46,14 @@ function rejectRequest( reject:( error:any ) => void, request:XMLHttpRequest ):v
 	var response:Response = new Response( request );
 
 	if ( response.status >= 400 && response.status < 600 ) {
-		if ( Exceptions.statusCodeMap.has( response.status ) ) {
-			var e = Exceptions.statusCodeMap.get( response.status );
+		if ( Errors.statusCodeMap.has( response.status ) ) {
+			var e = Errors.statusCodeMap.get( response.status );
 			// TODO: Set error message
 			reject( new e( "", response ) );
 		}
 	}
 
-	reject( new Exceptions.UnknownException( "", response ) );
+	reject( new Errors.UnknownError( "", response ) );
 }
 
 class Service {

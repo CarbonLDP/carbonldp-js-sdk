@@ -381,7 +381,7 @@ describe( module( 'Carbon/Utils', 'The description of Carbon/Utils' ), function 
 		], {type: 'array'} ), function () {
 			expect( Utils.A.from ).toBeDefined();
 
-			var iterator:Iterator<string> = {
+			var iterator:Iterator<string> & { current:number, values:Array<string>} = {
 				current: 0,
 				values: [
 					"one", "two", "three", "four", "five"

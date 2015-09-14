@@ -5,11 +5,11 @@
 
 //@formatter:off
 import {
-	NotFoundException,
-	InternalServerErrorException,
-	ForbiddenException,
-	UnauthorizedException
-} from './Exceptions';
+	NotFoundError,
+	InternalServerErrorError,
+	ForbiddenError,
+	UnauthorizedError
+} from './Errors';
 import * as Request from './Request';
 import * as Header from './Header';
 import Response from './Response';
@@ -150,14 +150,14 @@ describe( module( 'Carbon/HTTP/Request' ), function () {
 			promise = Request.Service.head( '/404' );
 			testPromise( promise );
 			promise = promise.catch( function ( exception ) {
-				expect( exception instanceof NotFoundException ).toBe( true );
+				expect( exception instanceof NotFoundError ).toBe( true );
 			} );
 			promises.push( promise );
 
 			promise = Request.Service.head( '/500' );
 			testPromise( promise );
 			promise = promise.catch( function ( exception ) {
-				expect( exception instanceof InternalServerErrorException ).toBe( true );
+				expect( exception instanceof InternalServerErrorError ).toBe( true );
 			} );
 			promises.push( promise );
 
@@ -207,7 +207,7 @@ describe( module( 'Carbon/HTTP/Request' ), function () {
 			promise = Request.Service.get( '/404' );
 			testPromise( promise );
 			promise = promise.catch( function ( exception ) {
-				testHTTException( '404', exception );
+				testHTTError( '404', exception );
 			} );
 			promises.push( promise );
 
@@ -321,19 +321,19 @@ describe( module( 'Carbon/HTTP/Request' ), function () {
 		var testHTTPResponseDataText = function ( response:any ) {
 			expect( response.data ).toEqual( 'OK' );
 		};
-		var testHTTException = function ( code:string, exception ) {
+		var testHTTError = function ( code:string, exception ) {
 			switch ( code ) {
 				case '401':
-					expect( exception instanceof UnauthorizedException ).toBe( true );
+					expect( exception instanceof UnauthorizedError ).toBe( true );
 					break;
 				case '403':
-					expect( exception instanceof ForbiddenException ).toBe( true );
+					expect( exception instanceof ForbiddenError ).toBe( true );
 					break;
 				case '404':
-					expect( exception instanceof NotFoundException ).toBe( true );
+					expect( exception instanceof NotFoundError ).toBe( true );
 					break;
 				case '500':
-					expect( exception instanceof InternalServerErrorException ).toBe( true );
+					expect( exception instanceof InternalServerErrorError ).toBe( true );
 					break;
 			}
 		}

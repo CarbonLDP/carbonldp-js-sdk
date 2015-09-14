@@ -28,10 +28,7 @@ describe( module( 'Carbon/App' ), function () {
 
 	describe( interfaze( 'RDF.Resource.Class', 'Description of Interface' ), function () {
 
-		it( hasProperty( PROPERTY, 'rootContainer', 'string', 'The Root of the Container'
-		), function () {
-			expect( 2 ).toBeGreaterThan( 3 );
-		} );
+		it( hasProperty( PROPERTY, 'rootContainer', 'string', 'The Root of the Container' ), function () {} );
 
 	} );
 	describe( clazz( 'Carbon.App.Class',

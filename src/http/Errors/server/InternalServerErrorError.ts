@@ -1,9 +1,9 @@
-import RESTException from './../HTTPException';
+import RESTError from './../HTTPError';
 
 const name:string = 'InternalServerError';
 const statusCode:number = 500;
 
-class InternalServerError extends RESTException {
+class InternalServerError extends RESTError {
 	static get statusCode():number { return statusCode; }
 
 	get name():string { return name; }
