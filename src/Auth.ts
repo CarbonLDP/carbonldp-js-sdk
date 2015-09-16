@@ -1,5 +1,6 @@
 /// <reference path="../typings/es6-promise/es6-promise.d.ts" />
 import * as HTTP from './HTTP';
+import * as Errors from './Errors';
 import Parent from './Parent';
 
 enum Method {
@@ -28,6 +29,7 @@ class Auth {
 			this.authenticated ||
 			(askParent && ! ! this.parent.parent && this.parent.parent.Auth.isAuthenticated())
 		);
+		//@formatter:on
 	}
 
 	login( username:string, password:string ):Promise<void> {
@@ -38,7 +40,7 @@ class Auth {
 				return this.basicAuthentication( username, password );
 			default:
 				return new Promise<void>( function () {
-					throw new Error( "IllegalState" );
+					throw new Errors.IllegalStateError( 'The authentication method specified isn\'t supported.' );
 				} );
 		}
 	}
