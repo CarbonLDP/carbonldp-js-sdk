@@ -57,6 +57,7 @@ export const INSTANCE:string = 'instance';
 export const CONSTRUCTOR:string = 'constructor';
 export const METHOD:string = 'method';
 export const PROPERTY:string = 'property';
+export const SUPER_CLASS = 'super-class';
 
 export function module( name:string, description:string = null ):string {
 	var descriptor = {
@@ -266,3 +267,12 @@ export function hasProperty( access:string, name:string, type:string, descriptio
 }
 
 export var property = hasProperty;
+
+export function extendsClass( name:string ):string {
+	var descriptor = {
+		specType: SUPER_CLASS,
+		name: name
+	};
+
+	return toJSON( descriptor );
+}
