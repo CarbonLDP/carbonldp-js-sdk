@@ -1,4 +1,8 @@
-# 0.7.1 (October 16, 2014)
+#0.8.0 (September 14, 2015)
+* Changed source code to Typescript
+* Carbon can now be imported as an AMD module
+
+#0.7.1 (October 16, 2014)
 * ETags are now being stored as Date objects.
 # 0.7.0 (October 16, 2014)
 * SourceLibrary now offers ETag resource verification (resourceHasChanged())

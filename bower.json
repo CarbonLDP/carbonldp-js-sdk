@@ -1,8 +1,11 @@
 {
-	"name": "carbon-js-sdk",
-	"version": "0.7.1",
-	"description": "Javascript SDK for creating Carbon LDP applications.",
-	"main": "carbon.js",
+	"name": "carbon-sdk",
+	"description": "SDK for creating Carbon LDP applications.",
+	"main": "dist/Carbon.js",
+	"moduleType": [
+		"amd",
+		"globals"
+	],
 	"keywords": [
 		"carbon",
 		"ldp",
@@ -15,6 +18,7 @@
 		"semantic",
 		"web"
 	],
+	"private": false,
 	"authors": [
 		"Base22"
 	],
