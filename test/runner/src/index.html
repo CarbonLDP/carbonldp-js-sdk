@@ -25,55 +25,62 @@
 
 </head>
 <body class="site">
-	<header class="site__header">
+	<header class="site-header">
 		<div class="site-header__logo">
 			<img src="assets/images/carbonldp_logo.png"/>
 		</div>
 	</header>
-	<div class="site__body">
-		<aside class="site-body__sidebar">
-			<nav>
-				<div class="panel">
-					<div class="panel-body">
-						<nav>
-							<ul class="side-nav">
-								<li><a href="#specsResultContainer">View Results</a></li>
-							</ul>
-						</nav>
-					</div>
-				</div>
-				<div id="panel-modules" class="site-sidebar__modules panel modules">
-					<div class="panel-heading">
-						<h3>Modules</h3>
-					</div>
-					<div class="panel-body">
-						<nav>
-							<ul class="side-nav"></ul>
-						</nav>
-					</div>
-				</div>
-				<div id="panel-classes" class="site-sidebar__classes panel classes">
-					<div class="panel-heading">
-						<h4>Classes</h4>
-					</div>
-					<div class="panel-body">
-						<nav>
-							<ul class="side-nav"></ul>
-						</nav>
-					</div>
-				</div>
-				<div id="panel-interfaces" class="site-sidebar__interfaces panel interfaces">
-					<div class="panel-heading">
-						<h4>Interfaces</h4>
-					</div>
-					<div class="panel-body">
-						<nav>
-							<ul class="side-nav"></ul>
-						</nav>
-					</div>
-				</div>
-			</nav>
-		</aside>
+	<div class="site-body">
+		<nav class="site-sidebar">
+			<ul>
+				<li>
+					<a href="#specsResultContainer">View Results</a>
+				</li>
+				<li>
+					Modules
+					<ul class="site-sidebar__modules"></ul>
+				</li>
+				<li>
+					Classes
+					<ul class="site-sidebar__classes"></ul>
+				</li>
+				<li>
+					Interfaces
+					<ul class="site-sidebar__interfaces"></ul>
+				</li>
+			</ul>
+		</nav>
+		<div class="site-body__content">
+			<h1>Carbon SDK API Documentation</h1>
+
+			<div class="introduction">
+				This is the introduction
+			</div>
+			<h2>Test Results</h2>
+
+			<div class="test-results">
+				<div class="test-results__stats"></div>
+				<div class="test-results__list"></div>
+			</div>
+			<h2>Modules</h2>
+			<div class="sdk-modules">
+				<article class="sdk-module">
+					<h1></h1>
+				</article>
+			</div>
+			<h2>Classes</h2>
+			<div class="sdk-classes">
+				<article class="sdk-class">
+
+				</article>
+			</div>
+			<h2>Interfaces</h2>
+			<div class="sdk-interfaces">
+				<article class="sdk-interface"></article>
+			</div>
+		</div>
+
+
 		<div id="specsResultContainer" class="small-12 columns results site-body__content">
 			<div class="row-full">
 				<div class="small-12 medium-12 columns">
@@ -89,15 +96,22 @@
 			<div class="row-full">
 				<div class="small-12 medium-12 large-12 columns">
 					<div class="suites-summary">
+
+
+						<h1>Carbon SDK API Documentation</h1>
+
+						<div class="introduction">
+							This is the introduction
+						</div>
 						<div id="modules" class="modules"></div>
-						<hr>
 						<h1>Classes</h1>
-						<hr>
+
 						<div id="classes" class="classes"></div>
-						<hr>
 						<h1>Interfaces</h1>
-						<hr>
+
 						<div id="interfaces" class="interfaces"></div>
+
+
 					</div>
 				</div>
 				<div class="small-12 medium-12 large-12 columns">

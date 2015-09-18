@@ -159,9 +159,9 @@
 				classes = sortSuites( classes );
 				interfaces = sortSuites( interfaces );
 
-				var panelModules = find( '.site-sidebar__modules ul' );
-				var panelClasses = find( '.site-sidebar__classes ul' );
-				var panelInterfaces = find( '.site-sidebar__interfaces ul' );
+				var panelModules = find( '.site-sidebar__modules' );
+				var panelClasses = find( '.site-sidebar__classes' );
+				var panelInterfaces = find( '.site-sidebar__interfaces' );
 				var messageBox = find( '.results-message-box' );
 
 
@@ -497,23 +497,26 @@
 			/**
 			 * Method that prints the suite_summary template
 			 *
-			 * @param suite
+			 * @param moduleSuite
 			 * @param suiteSummaryContainer
 			 *
 			 */
-			function printTemplate_ModuleSummary( module, moduleSummaryContainer ) {
+			function printTemplate_ModuleSummary( moduleSuite, moduleSummaryContainer ) {
 				//console.log( '%o', module.suite );
+
+				var module = {
+					name       : moduleSuite.suite.description.name,
+					description: moduleSuite.suite.description.description,
+					classes    : findClasses( moduleSuite.suite.description.name ),
+					methods    : findMethods( moduleSuite.suite.description.name ),
+					specs      : findSpecs( moduleSuite.suite.description.name ),
+					properties : findProperties( moduleSuite.suite.description.name ),
+					interfaces : findInterfaces( moduleSuite.suite.description.name ),
+					suiteid    : moduleSuite.suite.id
+				};
+
 				moduleSummaryContainer.append( templates.module_summary( {
-					module_id         : module.suite.description.name,
-					module_name       : module.suite.description.name,
-					module_nameId     : module.suite.description.nameId,
-					module_description: module.suite.description.description,
-					module_classes    : findClasses( module.suite.description.name ),
-					module_methods    : findMethods( module.suite.description.name ),
-					module_specs      : findSpecs( module.suite.description.name ),
-					module_properties : findProperties( module.suite.description.name ),
-					module_interfaces : findInterfaces( module.suite.description.name ),
-					module_suiteid    : module.suite.id
+					module: module
 				} ) );
 			}
 
