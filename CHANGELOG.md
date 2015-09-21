@@ -1,3 +1,6 @@
+#0.8.1 (September 14, 2015)
+* Added LICENSE files
+
 #0.8.0 (September 14, 2015)
 * Changed source code to Typescript
 * Carbon can now be imported as an AMD module
