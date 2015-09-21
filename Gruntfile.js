@@ -63,7 +63,7 @@ module.exports = function( grunt ) {
 							endFile  : 'build/end.frag'
 						},
 						optimize               : 'none',
-						preserveLicenseComments: false
+						preserveLicenseComments: true
 					}
 				},
 				prod: {
@@ -90,14 +90,16 @@ module.exports = function( grunt ) {
 							endFile  : 'build/end.frag'
 						},
 						optimize               : 'uglify2',
-						preserveLicenseComments: false,
-						generateSourceMaps     : true
+						preserveLicenseComments: true,
+						generateSourceMaps     : false
 					}
 				}
 			}
 		}
 	);
+	grunt.registerTask( 'dist', [ 'ts', 'karma:unit', 'requirejs:dev', 'requirejs:prod' ] );
 	grunt.registerTask( 'dist:dev', [ 'ts', 'karma:unit', 'requirejs:dev' ] );
+	grunt.registerTask( 'dist:prod', [ 'ts', 'karma:unit', 'requirejs:prod' ] );
 	grunt.registerTask( 'test', [ 'karma:all_tests' ] );
 
 };
