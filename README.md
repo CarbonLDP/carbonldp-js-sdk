@@ -1,4 +1,4 @@
-# [CarbonLDP Javascript SDK](http://carbonldp.com/)
+# [CarbonLDP JavaScript SDK](http://carbonldp.com/)
 
 ## License
 
