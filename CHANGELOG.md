@@ -1,3 +1,7 @@
+#0.8.2 (October 23, 2015)
+* Created system to compile distribution files when committing code
+* Applied convention of mimicking folder structure with aggregator files
+
 #0.8.1 (September 14, 2015)
 * Added LICENSE files
 
