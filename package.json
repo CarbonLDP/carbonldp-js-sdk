@@ -30,6 +30,6 @@
 		"babel-core": "^5.4.3"
 	},
 	"scripts": {
-		"preinstall": "cp -f scripts/pre-commit .git/hooks/pre-commit"
+		"preinstall": "node scripts/copy-hooks.js"
 	}
 }
