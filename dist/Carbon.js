@@ -1,7 +1,8 @@
 /**
- * CarbonLDP JavaScript SDK
+ * CarbonLDP JavaScript SDK v0.8.1-ALPHA
  *
- * @license Copyright (c) 2015-present, Base22 Technology Group, LLC.
+ * @license BSD-3-Clause
+ * Copyright (c) 2015-present, Base22 Technology Group, LLC.
  * All rights reserved.
  *
  * This source code is licensed under the BSD-style license found in the
@@ -1636,6 +1637,22 @@ define('Carbon/Utils',["require", "exports"], function (require, exports) {
         return M;
     })();
     exports.M = M;
+    var UUID = (function () {
+        function UUID() {
+        }
+        UUID.is = function (uuid) {
+            return UUID.regExp.test(uuid);
+        };
+        UUID.generate = function () {
+            return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+                var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+                return v.toString(16);
+            });
+        };
+        UUID.regExp = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+        return UUID;
+    })();
+    exports.UUID = UUID;
 });
 //# sourceMappingURL=Utils.js.map;
 /// <reference path="../../typings/es6/es6.d.ts" />
@@ -1974,8 +1991,31 @@ define('Carbon/Errors/IllegalStateError',["require", "exports", './AbstractError
     exports.default = IllegalStateError;
 });
 //# sourceMappingURL=IllegalStateError.js.map;
-define('Carbon/Errors',["require", "exports", './Errors/IllegalStateError'], function (require, exports, IllegalStateError_1) {
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+define('Carbon/Errors/IllegalArgumentError',["require", "exports", './AbstractError'], function (require, exports, AbstractError_1) {
+    var IllegalArgumentError = (function (_super) {
+        __extends(IllegalArgumentError, _super);
+        function IllegalArgumentError() {
+            _super.apply(this, arguments);
+        }
+        Object.defineProperty(IllegalArgumentError.prototype, "name", {
+            get: function () { return 'IllegalArgumentError'; },
+            enumerable: true,
+            configurable: true
+        });
+        return IllegalArgumentError;
+    })(AbstractError_1.default);
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.default = IllegalArgumentError;
+});
+//# sourceMappingURL=IllegalArgumentError.js.map;
+define('Carbon/Errors',["require", "exports", './Errors/IllegalStateError', './Errors/IllegalArgumentError'], function (require, exports, IllegalStateError_1, IllegalArgumentError_1) {
     exports.IllegalStateError = IllegalStateError_1.default;
+    exports.IllegalArgumentError = IllegalArgumentError_1.default;
 });
 //# sourceMappingURL=Errors.js.map;
 define('Carbon/Auth',["require", "exports", './HTTP', './Errors'], function (require, exports, HTTP, Errors) {
@@ -10466,7 +10506,7 @@ define('Carbon/rdf/RDFDocument',["require", "exports", './RDFNode', '../Utils', 
         Util.getDocumentResources = function (document) {
             var resources = Util.getResources(document);
             var documentResources = [];
-            for (var i = 0, length = resources.length; i < length; i++) {
+            for (var i = 0, length_1 = resources.length; i < length_1; i++) {
                 var resource = resources[i];
                 var uri = resource['@id'];
                 if (!uri)
@@ -10516,14 +10556,14 @@ define('Carbon/RDF',["require", "exports", './rdf/Persisted', './rdf/DocumentRes
     exports.PersistedFragmentResource = PersistedFragmentResource;
     exports.Literal = Literal;
     exports.PropertyDescription = PropertyDescription_1.default;
-    exports.RDFDocument = RDFDocument;
+    exports.Document = RDFDocument;
     exports.Node = RDFNode;
     exports.Resource = Resource;
     exports.URI = URI;
     exports.Value = Value;
 });
 //# sourceMappingURL=RDF.js.map;
-define('Carbon/Documents',["require", "exports", "jsonld", './HTTP', './Utils', './RDF'], function (require, exports, jsonld, HTTP, Utils, RDF_1) {
+define('Carbon/Documents',["require", "exports", "jsonld", './HTTP', './Errors', './RDF'], function (require, exports, jsonld, HTTP, Errors, RDF) {
     /// <reference path="../typings/es6-promise/es6-promise.d.ts" />
     /// <reference path="../typings/jsonld.js/jsonld.js.d.ts" />
     function parse(input) {
@@ -10537,16 +10577,13 @@ define('Carbon/Documents',["require", "exports", "jsonld", './HTTP', './Utils', 
     function expand(input, options) {
         return new Promise(function (resolve, reject) {
             jsonld.expand(input.result, options, function (error, expanded) {
-                if (!error) {
-                    input.result = expanded;
-                    resolve(input);
+                if (error) {
+                    throw error;
                 }
-                else
-                    reject(error);
+                input.result = expanded;
+                resolve(input);
             });
         });
-    }
-    function setDocumentURI(document, response) {
     }
     var Documents = (function () {
         function Documents(parent) {
@@ -10555,9 +10592,9 @@ define('Carbon/Documents',["require", "exports", "jsonld", './HTTP', './Utils', 
         }
         Documents.prototype.get = function (uri, requestOptions) {
             if (requestOptions === void 0) { requestOptions = {}; }
-            if (RDF_1.URI.Util.isRelative(uri)) {
+            if (RDF.URI.Util.isRelative(uri)) {
                 if (!this.parent)
-                    throw new Error("IllegalArgument: This module doesn't support relative URIs.");
+                    throw new Errors.IllegalArgumentError("IllegalArgument: This module doesn't support relative URIs.");
                 uri = this.parent.resolve(uri);
             }
             var headers = requestOptions.headers ? requestOptions.headers : requestOptions.headers = new Map();
@@ -10570,11 +10607,7 @@ define('Carbon/Documents',["require", "exports", "jsonld", './HTTP', './Utils', 
                 });
             }).then(function (processedResponse) {
                 var expandedResult = processedResponse.result;
-                var documents = RDF_1.RDFDocument.Util.getDocuments(expandedResult);
-                if (documents.length === 1) {
-                    if (!Utils.hasProperty(documents[0], '@id'))
-                        setDocumentURI(documents[0], processedResponse.response);
-                }
+                var documents = RDF.Document.Util.getDocuments(expandedResult);
                 return {
                     result: documents,
                     response: processedResponse.response
@@ -10587,7 +10620,7 @@ define('Carbon/Documents',["require", "exports", "jsonld", './HTTP', './Utils', 
     exports.default = Documents;
 });
 //# sourceMappingURL=Documents.js.map;
-define('Carbon/Resources',["require", "exports", "jsonld", './HTTP', './RDF', './namespaces/LDP'], function (require, exports, jsonld, HTTP, RDF_1, LDP) {
+define('Carbon/Resources',["require", "exports", "jsonld", './HTTP', './RDF', './namespaces/LDP'], function (require, exports, jsonld, HTTP, RDF, LDP) {
     /// <reference path="../typings/es6-promise/es6-promise.d.ts" />
     /// <reference path="../typings/jsonld.js/jsonld.js.d.ts" />
     var InteractionModel;
@@ -10613,14 +10646,9 @@ define('Carbon/Resources',["require", "exports", "jsonld", './HTTP', './RDF', '.
                 this.parent.Auth.addAuthentication(requestOptions);
             setPreferredInteractionModel(InteractionModel.RDFSource, requestOptions);
             return this.parent.Documents.get(uri, requestOptions).then(function (processedResponse) {
-                var documents = processedResponse.result;
-                if (documents.length === 0)
-                    throw new Error('BadResponse: No document was returned.');
-                if (documents.length > 1)
-                    throw new Error('Unsupported: Multiple graphs are currently not supported.');
-                var document = documents[0];
-                var nodes = RDF_1.RDFDocument.Util.getResources(document);
-                var resources = RDF_1.Resource.factory.from(nodes);
+                var document = Resources.getDocument(processedResponse);
+                var nodes = RDF.Document.Util.getResources(document);
+                var resources = RDF.Resource.factory.from(nodes);
                 _this.injectDefinitions(resources);
                 return {
                     result: document,
@@ -10628,15 +10656,10 @@ define('Carbon/Resources',["require", "exports", "jsonld", './HTTP', './RDF', '.
                 };
             }).then(function (processedResponse) {
                 var document = processedResponse.result;
-                var documentResourceNodes = RDF_1.RDFDocument.Util.getDocumentResources(document);
-                if (documentResourceNodes.length === 0)
-                    throw new Error('BadResponse: No document resource was returned.');
-                if (documentResourceNodes.length > 1)
-                    throw new Error('NotSupported: Multiple document resources were returned.');
-                var documentResourceNode = documentResourceNodes[0];
-                var fragmentNodes = RDF_1.RDFDocument.Util.getFragmentResources(document, documentResourceNode);
-                var documentResource = RDF_1.DocumentResource.factory.from(documentResourceNode, fragmentNodes);
-                var persistedDocumentResource = RDF_1.PersistedDocumentResource.Factory.from(documentResource, _this);
+                var documentResourceNode = Resources.getDocumentResourceNode(document);
+                var fragmentNodes = RDF.Document.Util.getFragmentResources(document, documentResourceNode);
+                var documentResource = RDF.DocumentResource.factory.from(documentResourceNode, fragmentNodes);
+                var persistedDocumentResource = RDF.PersistedDocumentResource.Factory.from(documentResource, _this);
                 return {
                     result: persistedDocumentResource,
                     response: processedResponse.response
@@ -10646,6 +10669,22 @@ define('Carbon/Resources',["require", "exports", "jsonld", './HTTP', './RDF', '.
         Resources.prototype.commit = function (object) {
             if (object === void 0) { object = null; }
             return null;
+        };
+        Resources.getDocument = function (processedResponse) {
+            var documents = processedResponse.result;
+            if (documents.length === 0)
+                throw new Error('BadResponse: No document was returned.');
+            if (documents.length > 1)
+                throw new Error('Unsupported: Multiple graphs are currently not supported.');
+            return documents[0];
+        };
+        Resources.getDocumentResourceNode = function (document) {
+            var documentResourceNodes = RDF.Document.Util.getDocumentResources(document);
+            if (documentResourceNodes.length === 0)
+                throw new Error('BadResponse: No document resource was returned.');
+            if (documentResourceNodes.length > 1)
+                throw new Error('NotSupported: Multiple document resources were returned.');
+            return documentResourceNodes[0];
         };
         Resources.prototype.injectDefinitions = function (resources) {
             var definitionURIs = this.parent.getDefinitionURIs();
@@ -10658,7 +10697,7 @@ define('Carbon/Resources',["require", "exports", "jsonld", './HTTP', './RDF', '.
                         toInject.push(resource);
                 }
                 if (toInject.length > 0)
-                    RDF_1.Resource.Factory.injectDescriptions(toInject, this.parent.getDefinition(definitionURI));
+                    RDF.Resource.Factory.injectDescriptions(toInject, this.parent.getDefinition(definitionURI));
             }
             return resources;
         };
@@ -11242,7 +11281,7 @@ define('Carbon/Carbon',["require", "exports", './Apps', './Auth', './Documents',
         Carbon.RDF = RDF;
         Carbon.Resources = Resources_1.default;
         Carbon.Utils = Utils;
-        Carbon.version = '0.8.0-alpha';
+        Carbon.version = '0.8.1-ALPHA';
         return Carbon;
     })(Parent_1.default);
     exports.Carbon = Carbon;
