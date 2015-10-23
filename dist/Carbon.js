@@ -10807,7 +10807,7 @@ var __extends = (this && this.__extends) || function (d, b) {
     function __() { this.constructor = d; }
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
-define('Carbon/ldp/RDFSource',["require", "exports", './../NS', './../RDF', './../Utils'], function (require, exports, NS, RDF, Utils) {
+define('Carbon/LDP/RDFSource',["require", "exports", './../NS', './../RDF', './../Utils'], function (require, exports, NS, RDF, Utils) {
     var RDFClass = NS.LDP.Class.RDFSource;
     var Factory = (function (_super) {
         __extends(Factory, _super);
@@ -10854,7 +10854,7 @@ var __extends = (this && this.__extends) || function (d, b) {
     function __() { this.constructor = d; }
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
-define('Carbon/ldp/Container',["require", "exports", './../NS', './../RDF', './RDFSource', './../Utils'], function (require, exports, NS, RDF, RDFSource, Utils) {
+define('Carbon/LDP/Container',["require", "exports", './../NS', './../RDF', './RDFSource', './../Utils'], function (require, exports, NS, RDF, RDFSource, Utils) {
     var RDFClass = NS.LDP.Class.Container;
     var Definition = Utils.M.from({
         "memberOfRelation": {
@@ -10918,7 +10918,7 @@ var __extends = (this && this.__extends) || function (d, b) {
     function __() { this.constructor = d; }
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
-define('Carbon/ldp/AccessPoint',["require", "exports", './../NS', './../RDF', './Container', './../Utils'], function (require, exports, NS, RDF, Container, Utils) {
+define('Carbon/LDP/AccessPoint',["require", "exports", './../NS', './../RDF', './Container', './../Utils'], function (require, exports, NS, RDF, Container, Utils) {
     var RDFClass = NS.C.Class.AccessPoint;
     var Definition = Utils.M.from({
         "membershipResource": {
@@ -10973,7 +10973,7 @@ var __extends = (this && this.__extends) || function (d, b) {
     function __() { this.constructor = d; }
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
-define('Carbon/ldp/BasicContainer',["require", "exports", './../NS', './Container', './../Utils'], function (require, exports, NS, Container, Utils) {
+define('Carbon/LDP/BasicContainer',["require", "exports", './../NS', './Container', './../Utils'], function (require, exports, NS, Container, Utils) {
     exports.Class = Container;
     var RDFClass = NS.LDP.Class.BasicContainer;
     var Factory = (function (_super) {
@@ -11021,7 +11021,7 @@ var __extends = (this && this.__extends) || function (d, b) {
     function __() { this.constructor = d; }
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
-define('Carbon/ldp/DirectContainer',["require", "exports", './../NS', './AccessPoint', './../Utils'], function (require, exports, NS, AccessPoint, Utils) {
+define('Carbon/LDP/DirectContainer',["require", "exports", './../NS', './AccessPoint', './../Utils'], function (require, exports, NS, AccessPoint, Utils) {
     var RDFClass = NS.LDP.Class.DirectContainer;
     var Factory = (function (_super) {
         __extends(Factory, _super);
@@ -11068,7 +11068,7 @@ var __extends = (this && this.__extends) || function (d, b) {
     function __() { this.constructor = d; }
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
-define('Carbon/ldp/IndirectContainer',["require", "exports", './../NS', './../RDF', './AccessPoint', './../Utils'], function (require, exports, NS, RDF, AccessPoint, Utils) {
+define('Carbon/LDP/IndirectContainer',["require", "exports", './../NS', './../RDF', './AccessPoint', './../Utils'], function (require, exports, NS, RDF, AccessPoint, Utils) {
     var RDFClass = NS.LDP.Class.IndirectContainer;
     var Definition = Utils.M.from({
         "insertedContentRelation": {
@@ -11117,7 +11117,7 @@ define('Carbon/ldp/IndirectContainer',["require", "exports", './../NS', './../RD
     exports.factory = factory;
 });
 //# sourceMappingURL=IndirectContainer.js.map;
-define('Carbon/ldp/PersistedRDFSource',["require", "exports"], function (require, exports) {
+define('Carbon/LDP/PersistedRDFSource',["require", "exports"], function (require, exports) {
     var Factory = (function () {
         function Factory() {
         }
@@ -11125,7 +11125,7 @@ define('Carbon/ldp/PersistedRDFSource',["require", "exports"], function (require
     })();
 });
 //# sourceMappingURL=PersistedRDFSource.js.map;
-define('Carbon/LDP',["require", "exports", './ldp/AccessPoint', './ldp/BasicContainer', './ldp/Container', './ldp/DirectContainer', './ldp/IndirectContainer', './ldp/PersistedRDFSource', './ldp/RDFSource'], function (require, exports, AccessPoint, BasicContainer, Container, DirectContainer, IndirectContainer, PersistedRDFSource, RDFSource) {
+define('Carbon/LDP',["require", "exports", './LDP/AccessPoint', './LDP/BasicContainer', './LDP/Container', './LDP/DirectContainer', './LDP/IndirectContainer', './LDP/PersistedRDFSource', './LDP/RDFSource'], function (require, exports, AccessPoint, BasicContainer, Container, DirectContainer, IndirectContainer, PersistedRDFSource, RDFSource) {
     exports.AccessPoint = AccessPoint;
     exports.BasicContainer = BasicContainer;
     exports.Container = Container;

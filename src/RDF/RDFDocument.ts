@@ -61,12 +61,12 @@ class Util {
 	static getDocumentResources( document:RDFNode.Class[] ):RDFNode.Class[];
 	static getDocumentResources( document:RDFDocument ):RDFNode.Class[];
 	static getDocumentResources( document:any ):RDFNode.Class[] {
-		var resources:RDFNode.Class[] = Util.getResources( document );
-		var documentResources:RDFNode.Class[] = [];
+		let resources:RDFNode.Class[] = Util.getResources( document );
+		let documentResources:RDFNode.Class[] = [];
 
-		for ( var i:number = 0, length:number = resources.length; i < length; i ++ ) {
-			var resource:RDFNode.Class = resources[ i ];
-			var uri:string = resource[ '@id' ];
+		for ( let i:number = 0, length:number = resources.length; i < length; i ++ ) {
+			let resource:RDFNode.Class = resources[ i ];
+			let uri:string = resource[ '@id' ];
 			if ( ! uri ) continue;
 
 			if ( ! URI.Util.hasFragment( uri ) ) documentResources.push( resource );

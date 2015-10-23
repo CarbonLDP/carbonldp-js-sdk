@@ -8,17 +8,9 @@ import * as HTTP from './HTTP';
 import Documents from './Documents';
 import Committer from './Committer';
 import Parent from './Parent';
-import {
-	RDFDocument,
-	Node,
-	Resource,
-	DocumentResource,
-	PersistedDocumentResource,
-	FragmentResource,
-	PersistedFragmentResource
-} from './RDF';
+import * as RDF from './RDF';
 import * as Utils from './Utils';
-import * as RDFSource from './ldp/RDFSource';
+import * as RDFSource from './LDP/RDFSource';
 import * as LDP from './namespaces/LDP';
 //@formatter:on
 
@@ -41,21 +33,19 @@ class Resources implements Committer {
 		this.parent = parent;
 	}
 
-	get( uri:string ):Promise<HTTP.ProcessedResponse<PersistedDocumentResource.Class>> {
+	get( uri:string ):Promise<HTTP.ProcessedResponse<RDF.PersistedDocumentResource.Class>> {
 		var requestOptions:HTTP.Request.Options = {};
 		if ( this.parent && this.parent.Auth.isAuthenticated() ) this.parent.Auth.addAuthentication( requestOptions );
 
 		setPreferredInteractionModel( InteractionModel.RDFSource, requestOptions );
 
 		return this.parent.Documents.get( uri, requestOptions ).then(
-			( processedResponse:HTTP.ProcessedResponse<RDFDocument.Class[]> ) => {
-				var documents:RDFDocument.Class[] = processedResponse.result;
-				if ( documents.length === 0 ) throw new Error( 'BadResponse: No document was returned.' );
-				if ( documents.length > 1 ) throw new Error( 'Unsupported: Multiple graphs are currently not supported.' );
-				var document:RDFDocument.Class = documents[ 0 ];
+			( processedResponse:HTTP.ProcessedResponse<RDF.Document.Class[]> ) => {
 
-				var nodes:Node.Class[] = RDFDocument.Util.getResources( document );
-				var resources:Resource.Class[] = <Resource.Class[]> Resource.factory.from( nodes );
+				var document:RDF.Document.Class = Resources.getDocument( processedResponse );
+
+				var nodes:RDF.Node.Class[] = RDF.Document.Util.getResources( document );
+				var resources:RDF.Resource.Class[] = <RDF.Resource.Class[]> RDF.Resource.factory.from( nodes );
 
 				this.injectDefinitions( resources );
 
@@ -65,18 +55,13 @@ class Resources implements Committer {
 				};
 			}
 		).then(
-			( processedResponse:HTTP.ProcessedResponse<RDFDocument.Class> ) => {
-				var document:RDFDocument.Class = processedResponse.result;
-				var documentResourceNodes:Node.Class[] = RDFDocument.Util.getDocumentResources( document );
+			( processedResponse:HTTP.ProcessedResponse<RDF.Document.Class> ) => {
+				let document:RDF.Document.Class = processedResponse.result;
+				let documentResourceNode:RDF.Node.Class = Resources.getDocumentResourceNode( document );
+				let fragmentNodes:RDF.Node.Class[] = RDF.Document.Util.getFragmentResources( document, documentResourceNode );
+				let documentResource:RDF.DocumentResource.Class = RDF.DocumentResource.factory.from( documentResourceNode, fragmentNodes );
 
-				if ( documentResourceNodes.length === 0 ) throw new Error( 'BadResponse: No document resource was returned.' );
-				if ( documentResourceNodes.length > 1 ) throw new Error( 'NotSupported: Multiple document resources were returned.' );
-
-				var documentResourceNode:Node.Class = documentResourceNodes[ 0 ];
-				var fragmentNodes:Node.Class[] = RDFDocument.Util.getFragmentResources( document, documentResourceNode );
-				var documentResource:DocumentResource.Class = DocumentResource.factory.from( documentResourceNode, fragmentNodes );
-
-				var persistedDocumentResource:PersistedDocumentResource.Class = PersistedDocumentResource.Factory.from( documentResource, this );
+				let persistedDocumentResource:RDF.PersistedDocumentResource.Class = RDF.PersistedDocumentResource.Factory.from( documentResource, this );
 
 				// TODO: Inject registered definitions
 
@@ -93,17 +78,34 @@ class Resources implements Committer {
 		return null;
 	}
 
-	private injectDefinitions( resources:Resource.Class[] ):Resource.Class[] {
-		var definitionURIs:string[] = this.parent.getDefinitionURIs();
+	private static getDocument( processedResponse:HTTP.ProcessedResponse<RDF.Document.Class[]> ):RDF.Document.Class {
+		var documents:RDF.Document.Class[] = processedResponse.result;
+		if ( documents.length === 0 ) throw new Error( 'BadResponse: No document was returned.' );
+		if ( documents.length > 1 ) throw new Error( 'Unsupported: Multiple graphs are currently not supported.' );
+		return documents[ 0 ];
+	}
+
+	private static getDocumentResourceNode( document:RDF.Document.Class ):RDF.Node.Class {
+		let documentResourceNodes:RDF.Node.Class[] = RDF.Document.Util.getDocumentResources( document );
+
+		// TODO: Use specific Error classes
+		if ( documentResourceNodes.length === 0 ) throw new Error( 'BadResponse: No document resource was returned.' );
+		if ( documentResourceNodes.length > 1 ) throw new Error( 'NotSupported: Multiple document resources were returned.' );
+
+		return documentResourceNodes[ 0 ];
+	}
+
+	private injectDefinitions( resources:RDF.Resource.Class[] ):RDF.Resource.Class[] {
+		let definitionURIs:string[] = this.parent.getDefinitionURIs();
 
 		for ( let i:number = 0, length:number = definitionURIs.length; i < length; i ++ ) {
-			var definitionURI:string = definitionURIs[ i ];
-			var toInject:Resource.Class[] = [];
+			let definitionURI:string = definitionURIs[ i ];
+			let toInject:RDF.Resource.Class[] = [];
 			for ( let j:number = 0, resourcesLength:number = resources.length; j < resourcesLength; j ++ ) {
-				var resource:Resource.Class = resources[ j ];
+				let resource:RDF.Resource.Class = resources[ j ];
 				if ( resource.types.indexOf( definitionURI ) !== - 1 ) toInject.push( resource );
 			}
-			if ( toInject.length > 0 ) Resource.Factory.injectDescriptions( toInject, this.parent.getDefinition( definitionURI ) );
+			if ( toInject.length > 0 ) RDF.Resource.Factory.injectDescriptions( toInject, this.parent.getDefinition( definitionURI ) );
 		}
 
 		return resources;
