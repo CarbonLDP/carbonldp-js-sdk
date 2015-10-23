@@ -162,7 +162,7 @@
 				var panelModules = find( '.site-sidebar__modules' );
 				var panelClasses = find( '.site-sidebar__classes' );
 				var panelInterfaces = find( '.site-sidebar__interfaces' );
-				var messageBox = find( '.results-message-box' );
+				var messageBox = find( '.test-results__stats' );
 
 
 				renderModulesList( panelModules );
@@ -171,7 +171,7 @@
 				renderMessageBox( messageBox, this );
 
 				// Display Results Box
-				find( '.results .results-summary' ).innerHTML = templates.specs_summary( {
+				find( '.test-results__list' ).innerHTML = templates.specs_summary( {
 					passedSpecs  : specsResults.passedSpecs,
 					failedSpecs  : specsResults.failedSpecs,
 					pendingSpecs : specsResults.pendingSpecs,
@@ -194,7 +194,7 @@
 							title = 'Disabled Specs';
 							break;
 					}
-					find( '.results .results-summary' ).innerHTML = templates.specs_summary( {
+					find( '.test-results__list' ).innerHTML = templates.specs_summary( {
 						title: title,
 						specs: specsResults[ this.getAttribute( 'show' ) ]
 					} );
@@ -315,7 +315,7 @@
 				for( var key in modules ) {
 					if( modules.hasOwnProperty( key ) ) {
 						printTemplate_ModulesList( modules[ key ], modulesListContainer );
-						printTemplate_ModuleSummary( suites[ modules[ key ].description.name ], $( '.results .suites-summary .modules' ) );
+						printTemplate_ModuleSummary( suites[ modules[ key ].description.name ], $( '.sdk-modules' ) );
 					}
 				}
 			}
@@ -324,7 +324,7 @@
 				for( var key in classes ) {
 					if( classes.hasOwnProperty( key ) ) {
 						printTemplate_ClassesList( classes[ key ], classesListContainer );
-						printTemplate_ClassSummary( suites[ classes[ key ].description.name ], $( '.results .suites-summary .classes' ) );
+						printTemplate_ClassSummary( suites[ classes[ key ].description.name ], $( '.sdk-classes' ) );
 					}
 				}
 			}
@@ -333,7 +333,7 @@
 				for( var key in interfaces ) {
 					if( interfaces.hasOwnProperty( key ) ) {
 						printTemplate_InterfacesList( interfaces[ key ], interfacesListContainer );
-						printTemplate_InterfaceSummary( suites[ interfaces[ key ].description.name ], $( '.results .suites-summary .interfaces' ) );
+						printTemplate_InterfaceSummary( suites[ interfaces[ key ].description.name ], $( '.sdk-interfaces' ) );
 					}
 				}
 			}
