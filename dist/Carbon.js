@@ -9464,7 +9464,7 @@ return factory;
 
 define('jsonld', ['jsonld/jsonld'], function (main) { return main; });
 
-define('Carbon/rdf/Persisted',["require", "exports", '../Utils'], function (require, exports, Utils) {
+define('Carbon/RDF/Persisted',["require", "exports", '../Utils'], function (require, exports, Utils) {
     var Modifications = (function () {
         function Modifications() {
             this.add = new Map();
@@ -9527,7 +9527,7 @@ define('Carbon/rdf/Persisted',["require", "exports", '../Utils'], function (requ
     exports.Factory = Factory;
 });
 //# sourceMappingURL=Persisted.js.map;
-define('Carbon/rdf/Literal',["require", "exports", '../Utils', '../namespaces/XSD'], function (require, exports, Utils, XSD) {
+define('Carbon/RDF/Literal',["require", "exports", '../Utils', '../namespaces/XSD'], function (require, exports, Utils, XSD) {
     var Factory = (function () {
         function Factory() {
         }
@@ -9641,7 +9641,7 @@ define('Carbon/rdf/Literal',["require", "exports", '../Utils', '../namespaces/XS
     exports.Util = Util;
 });
 //# sourceMappingURL=Literal.js.map;
-define('Carbon/rdf/RDFNode',["require", "exports", '../Utils'], function (require, exports, Utils) {
+define('Carbon/RDF/RDFNode',["require", "exports", '../Utils'], function (require, exports, Utils) {
     var Factory = (function () {
         function Factory() {
         }
@@ -9670,7 +9670,7 @@ define('Carbon/rdf/RDFNode',["require", "exports", '../Utils'], function (requir
 });
 //# sourceMappingURL=RDFNode.js.map;
 /// <reference path="../../typings/es6/es6.d.ts" />
-define('Carbon/rdf/Resource',["require", "exports", './Literal', '../Utils', './RDFNode'], function (require, exports, Literal, Utils, RDFNode) {
+define('Carbon/RDF/Resource',["require", "exports", './Literal', '../Utils', './RDFNode'], function (require, exports, Literal, Utils, RDFNode) {
     function hasProperty(propertyURI) {
         return Utils.hasProperty(this, propertyURI);
     }
@@ -10017,7 +10017,7 @@ define('Carbon/rdf/Resource',["require", "exports", './Literal', '../Utils', './
     exports.factory = factory;
 });
 //# sourceMappingURL=Resource.js.map;
-define('Carbon/rdf/URI',["require", "exports", '../Utils'], function (require, exports, Utils) {
+define('Carbon/RDF/URI',["require", "exports", '../Utils'], function (require, exports, Utils) {
     var Util = (function () {
         function Util() {
         }
@@ -10074,7 +10074,7 @@ define('Carbon/rdf/URI',["require", "exports", '../Utils'], function (require, e
     exports.Util = Util;
 });
 //# sourceMappingURL=URI.js.map;
-define('Carbon/rdf/FragmentResource',["require", "exports", './Resource', './URI', '../Utils'], function (require, exports, Resource, URI, Utils) {
+define('Carbon/RDF/FragmentResource',["require", "exports", './Resource', './URI', '../Utils'], function (require, exports, Resource, URI, Utils) {
     var Factory = (function () {
         function Factory() {
         }
@@ -10127,7 +10127,7 @@ define('Carbon/rdf/FragmentResource',["require", "exports", './Resource', './URI
     exports.factory = factory;
 });
 //# sourceMappingURL=FragmentResource.js.map;
-define('Carbon/rdf/DocumentResource',["require", "exports", './Resource', './FragmentResource', './URI', '../Utils'], function (require, exports, Resource, FragmentResource, URI, Utils) {
+define('Carbon/RDF/DocumentResource',["require", "exports", './Resource', './FragmentResource', './URI', '../Utils'], function (require, exports, Resource, FragmentResource, URI, Utils) {
     function getFragmentSlug(fragmentURI) {
         var fragmentSlug;
         if (URI.Util.isAbsolute(fragmentURI)) {
@@ -10270,7 +10270,7 @@ define('Carbon/rdf/DocumentResource',["require", "exports", './Resource', './Fra
     exports.factory = factory;
 });
 //# sourceMappingURL=DocumentResource.js.map;
-define('Carbon/rdf/Value',["require", "exports", './Literal', './RDFNode'], function (require, exports, Literal, RDFNode) {
+define('Carbon/RDF/Value',["require", "exports", './Literal', './RDFNode'], function (require, exports, Literal, RDFNode) {
     var Util = (function () {
         function Util() {
         }
@@ -10291,7 +10291,7 @@ define('Carbon/rdf/Value',["require", "exports", './Literal', './RDFNode'], func
 //# sourceMappingURL=Value.js.map;
 /// <reference path="../../typings/es6/es6.d.ts" />
 /// <reference path="../../typings/es6-promise/es6-promise.d.ts" />
-define('Carbon/rdf/PersistedDocumentResource',["require", "exports", './DocumentResource', './Persisted', '../Utils', './Value'], function (require, exports, DocumentResource, Persisted, Utils, Value) {
+define('Carbon/RDF/PersistedDocumentResource',["require", "exports", './DocumentResource', './Persisted', '../Utils', './Value'], function (require, exports, DocumentResource, Persisted, Utils, Value) {
     var SpecialValue;
     (function (SpecialValue) {
         SpecialValue[SpecialValue["ALL_VALUES"] = 0] = "ALL_VALUES";
@@ -10429,10 +10429,10 @@ define('Carbon/rdf/PersistedDocumentResource',["require", "exports", './Document
     exports.Factory = Factory;
 });
 //# sourceMappingURL=PersistedDocumentResource.js.map;
-define('Carbon/rdf/PersistedFragmentResource',["require", "exports"], function (require, exports) {
+define('Carbon/RDF/PersistedFragmentResource',["require", "exports"], function (require, exports) {
 });
 //# sourceMappingURL=PersistedFragmentResource.js.map;
-define('Carbon/rdf/PropertyDescription',["require", "exports"], function (require, exports) {
+define('Carbon/RDF/PropertyDescription',["require", "exports"], function (require, exports) {
     var PropertyDescription = (function () {
         function PropertyDescription() {
             this.multi = true;
@@ -10444,7 +10444,7 @@ define('Carbon/rdf/PropertyDescription',["require", "exports"], function (requir
     exports.default = PropertyDescription;
 });
 //# sourceMappingURL=PropertyDescription.js.map;
-define('Carbon/rdf/RDFDocument',["require", "exports", './RDFNode', '../Utils', './URI'], function (require, exports, RDFNode, Utils, URI) {
+define('Carbon/RDF/RDFDocument',["require", "exports", './RDFNode', '../Utils', './URI'], function (require, exports, RDFNode, Utils, URI) {
     var Factory = (function () {
         function Factory() {
         }
@@ -10548,7 +10548,7 @@ define('Carbon/rdf/RDFDocument',["require", "exports", './RDFNode', '../Utils', 
     exports.Util = Util;
 });
 //# sourceMappingURL=RDFDocument.js.map;
-define('Carbon/RDF',["require", "exports", './rdf/Persisted', './rdf/DocumentResource', './rdf/PersistedDocumentResource', './rdf/FragmentResource', './rdf/PersistedFragmentResource', './rdf/Literal', './rdf/PropertyDescription', './rdf/RDFDocument', './rdf/RDFNode', './rdf/Resource', './rdf/URI', './rdf/Value'], function (require, exports, Persisted, DocumentResource, PersistedDocumentResource, FragmentResource, PersistedFragmentResource, Literal, PropertyDescription_1, RDFDocument, RDFNode, Resource, URI, Value) {
+define('Carbon/RDF',["require", "exports", './RDF/Persisted', './RDF/DocumentResource', './RDF/PersistedDocumentResource', './RDF/FragmentResource', './RDF/PersistedFragmentResource', './RDF/Literal', './RDF/PropertyDescription', './RDF/RDFDocument', './RDF/RDFNode', './RDF/Resource', './RDF/URI', './RDF/Value'], function (require, exports, Persisted, DocumentResource, PersistedDocumentResource, FragmentResource, PersistedFragmentResource, Literal, PropertyDescription_1, RDFDocument, RDFNode, Resource, URI, Value) {
     exports.Persisted = Persisted;
     exports.DocumentResource = DocumentResource;
     exports.PersistedDocumentResource = PersistedDocumentResource;
@@ -10556,14 +10556,14 @@ define('Carbon/RDF',["require", "exports", './rdf/Persisted', './rdf/DocumentRes
     exports.PersistedFragmentResource = PersistedFragmentResource;
     exports.Literal = Literal;
     exports.PropertyDescription = PropertyDescription_1.default;
-    exports.Document = RDFDocument;
+    exports.RDFDocument = RDFDocument;
     exports.Node = RDFNode;
     exports.Resource = Resource;
     exports.URI = URI;
     exports.Value = Value;
 });
 //# sourceMappingURL=RDF.js.map;
-define('Carbon/Documents',["require", "exports", "jsonld", './HTTP', './Errors', './RDF'], function (require, exports, jsonld, HTTP, Errors, RDF) {
+define('Carbon/Documents',["require", "exports", "jsonld", './HTTP', './Utils', './RDF'], function (require, exports, jsonld, HTTP, Utils, RDF_1) {
     /// <reference path="../typings/es6-promise/es6-promise.d.ts" />
     /// <reference path="../typings/jsonld.js/jsonld.js.d.ts" />
     function parse(input) {
@@ -10577,13 +10577,16 @@ define('Carbon/Documents',["require", "exports", "jsonld", './HTTP', './Errors',
     function expand(input, options) {
         return new Promise(function (resolve, reject) {
             jsonld.expand(input.result, options, function (error, expanded) {
-                if (error) {
-                    throw error;
+                if (!error) {
+                    input.result = expanded;
+                    resolve(input);
                 }
-                input.result = expanded;
-                resolve(input);
+                else
+                    reject(error);
             });
         });
+    }
+    function setDocumentURI(document, response) {
     }
     var Documents = (function () {
         function Documents(parent) {
@@ -10592,9 +10595,9 @@ define('Carbon/Documents',["require", "exports", "jsonld", './HTTP', './Errors',
         }
         Documents.prototype.get = function (uri, requestOptions) {
             if (requestOptions === void 0) { requestOptions = {}; }
-            if (RDF.URI.Util.isRelative(uri)) {
+            if (RDF_1.URI.Util.isRelative(uri)) {
                 if (!this.parent)
-                    throw new Errors.IllegalArgumentError("IllegalArgument: This module doesn't support relative URIs.");
+                    throw new Error("IllegalArgument: This module doesn't support relative URIs.");
                 uri = this.parent.resolve(uri);
             }
             var headers = requestOptions.headers ? requestOptions.headers : requestOptions.headers = new Map();
@@ -10607,7 +10610,11 @@ define('Carbon/Documents',["require", "exports", "jsonld", './HTTP', './Errors',
                 });
             }).then(function (processedResponse) {
                 var expandedResult = processedResponse.result;
-                var documents = RDF.Document.Util.getDocuments(expandedResult);
+                var documents = RDF_1.RDFDocument.Util.getDocuments(expandedResult);
+                if (documents.length === 1) {
+                    if (!Utils.hasProperty(documents[0], '@id'))
+                        setDocumentURI(documents[0], processedResponse.response);
+                }
                 return {
                     result: documents,
                     response: processedResponse.response
