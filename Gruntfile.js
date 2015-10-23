@@ -100,7 +100,7 @@ module.exports = function( grunt ) {
 	grunt.registerTask( 'dist', [ 'ts', 'karma:unit', 'requirejs:dev', 'requirejs:prod' ] );
 	grunt.registerTask( 'dist:dev', [ 'ts', 'karma:unit', 'requirejs:dev' ] );
 	grunt.registerTask( 'dist:prod', [ 'ts', 'karma:unit', 'requirejs:prod' ] );
-	grunt.registerTask( 'test', [ 'karma:unit' ] );
-	grunt.registerTask( 'test-all', [ 'karma:all_tests' ] );
+	grunt.registerTask( 'test', [ 'ts', 'karma:unit' ] );
+	grunt.registerTask( 'test-all', [ 'ts', 'karma:all_tests' ] );
 
 };
