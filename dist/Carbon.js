@@ -10556,14 +10556,14 @@ define('Carbon/RDF',["require", "exports", './RDF/Persisted', './RDF/DocumentRes
     exports.PersistedFragmentResource = PersistedFragmentResource;
     exports.Literal = Literal;
     exports.PropertyDescription = PropertyDescription_1.default;
-    exports.RDFDocument = RDFDocument;
+    exports.Document = RDFDocument;
     exports.Node = RDFNode;
     exports.Resource = Resource;
     exports.URI = URI;
     exports.Value = Value;
 });
 //# sourceMappingURL=RDF.js.map;
-define('Carbon/Documents',["require", "exports", "jsonld", './HTTP', './Utils', './RDF'], function (require, exports, jsonld, HTTP, Utils, RDF_1) {
+define('Carbon/Documents',["require", "exports", "jsonld", './HTTP', './Errors', './RDF'], function (require, exports, jsonld, HTTP, Errors, RDF) {
     /// <reference path="../typings/es6-promise/es6-promise.d.ts" />
     /// <reference path="../typings/jsonld.js/jsonld.js.d.ts" />
     function parse(input) {
@@ -10577,16 +10577,13 @@ define('Carbon/Documents',["require", "exports", "jsonld", './HTTP', './Utils', 
     function expand(input, options) {
         return new Promise(function (resolve, reject) {
             jsonld.expand(input.result, options, function (error, expanded) {
-                if (!error) {
-                    input.result = expanded;
-                    resolve(input);
+                if (error) {
+                    throw error;
                 }
-                else
-                    reject(error);
+                input.result = expanded;
+                resolve(input);
             });
         });
-    }
-    function setDocumentURI(document, response) {
     }
     var Documents = (function () {
         function Documents(parent) {
@@ -10595,9 +10592,9 @@ define('Carbon/Documents',["require", "exports", "jsonld", './HTTP', './Utils', 
         }
         Documents.prototype.get = function (uri, requestOptions) {
             if (requestOptions === void 0) { requestOptions = {}; }
-            if (RDF_1.URI.Util.isRelative(uri)) {
+            if (RDF.URI.Util.isRelative(uri)) {
                 if (!this.parent)
-                    throw new Error("IllegalArgument: This module doesn't support relative URIs.");
+                    throw new Errors.IllegalArgumentError("IllegalArgument: This module doesn't support relative URIs.");
                 uri = this.parent.resolve(uri);
             }
             var headers = requestOptions.headers ? requestOptions.headers : requestOptions.headers = new Map();
@@ -10610,11 +10607,7 @@ define('Carbon/Documents',["require", "exports", "jsonld", './HTTP', './Utils', 
                 });
             }).then(function (processedResponse) {
                 var expandedResult = processedResponse.result;
-                var documents = RDF_1.RDFDocument.Util.getDocuments(expandedResult);
-                if (documents.length === 1) {
-                    if (!Utils.hasProperty(documents[0], '@id'))
-                        setDocumentURI(documents[0], processedResponse.response);
-                }
+                var documents = RDF.Document.Util.getDocuments(expandedResult);
                 return {
                     result: documents,
                     response: processedResponse.response

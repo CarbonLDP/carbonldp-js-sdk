@@ -455,4 +455,29 @@ describe( module( 'Carbon/Utils', 'The description of Carbon/Utils' ), function 
 			expect( result.get( 'three' ) ).toBe( 3 );
 		} );
 	} );
+
+	describe( clazz( 'Carbon.Utils.UUID', 'Utility functions related to UUIDs' ), function () {
+		it( isDefined(), function () {
+			expect( Utils.UUID ).toBeDefined();
+		} );
+
+		it( hasMethod( STATIC, 'is', 'Returns true if the string provided is a UUID (version 1 to 5).', [
+			{name: 'uuid', type: 'string'}
+		], {type: 'string'} ), function () {
+			expect( Utils.UUID.is ).toBeDefined();
+
+			expect( Utils.UUID.is( null ) ).toEqual( false );
+			expect( Utils.UUID.is( '13123123123' ) ).toEqual( false );
+			expect( Utils.UUID.is( 'asdfasdfasdfasdfagawerq' ) ).toEqual( false );
+			expect( Utils.UUID.is( 'asdfasdfasdfasdfagawerq' ) ).toEqual( false );
+			expect( Utils.UUID.is( '8cef9ec9-32b6-4beb-ba11-fb8a1d8f67cd' ) ).toEqual( true );
+		} );
+
+		it( hasMethod( STATIC, 'generate', 'Generates a new, version 4, UUID.', {type: 'string'} ), function () {
+			expect( Utils.UUID.generate ).toBeDefined();
+
+			var uuid:string = Utils.UUID.generate();
+			expect( uuid ).not.toBeNull();
+		} );
+	} );
 } );

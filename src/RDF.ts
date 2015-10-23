@@ -20,7 +20,7 @@ export {
 	PersistedFragmentResource,
 	Literal,
 	PropertyDescription,
-	RDFDocument,
+	RDFDocument as Document,
 	RDFNode as Node,
 	Resource,
 	URI,
