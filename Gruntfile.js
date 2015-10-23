@@ -26,7 +26,7 @@ module.exports = function( grunt ) {
 					logLevel  : 'DEBUG'
 				}
 			},
-			ts       : {
+			ts   : {
 				default: {
 					src    : [ 'src/**/*.ts' ],
 					options: {
@@ -42,10 +42,10 @@ module.exports = function( grunt ) {
 				dev : {
 					options: {
 						baseUrl                : '.',
-						name                   : 'bower_components/almond/almond.js',
-						include                : [ 'Carbon' ],
-						exclude                : [],
-						packages               : [
+						name   : 'bower_components/almond/almond.js',
+						include: [ 'Carbon' ],
+						exclude: [],
+						packages: [
 							{
 								name    : 'Carbon',
 								location: 'src',
@@ -57,22 +57,22 @@ module.exports = function( grunt ) {
 								main    : 'jsonld'
 							}
 						],
-						out                    : 'dist/Carbon.js',
-						wrap                   : {
+						out     : 'dist/Carbon.js',
+						wrap    : {
 							startFile: 'build/start.frag',
 							endFile  : 'build/end.frag'
 						},
-						optimize               : 'none',
-						preserveLicenseComments: false
+						optimize: 'none',
+						preserveLicenseComments: true
 					}
 				},
 				prod: {
 					options: {
 						baseUrl                : '.',
-						name                   : 'bower_components/almond/almond.js',
-						include                : [ 'Carbon' ],
-						exclude                : [],
-						packages               : [
+						name   : 'bower_components/almond/almond.js',
+						include: [ 'Carbon' ],
+						exclude: [],
+						packages: [
 							{
 								name    : 'Carbon',
 								location: 'src',
@@ -84,20 +84,23 @@ module.exports = function( grunt ) {
 								main    : 'jsonld'
 							}
 						],
-						out                    : 'dist/Carbon.min.js',
-						wrap                   : {
+						out     : 'dist/Carbon.min.js',
+						wrap    : {
 							startFile: 'build/start.frag',
 							endFile  : 'build/end.frag'
 						},
-						optimize               : 'uglify2',
-						preserveLicenseComments: false,
-						generateSourceMaps     : true
+						optimize: 'uglify2',
+						preserveLicenseComments: true,
+						generateSourceMaps     : false
 					}
 				}
 			}
 		}
 	);
+	grunt.registerTask( 'dist', [ 'ts', 'karma:unit', 'requirejs:dev', 'requirejs:prod' ] );
 	grunt.registerTask( 'dist:dev', [ 'ts', 'karma:unit', 'requirejs:dev' ] );
-	grunt.registerTask( 'test', [ 'karma:all_tests' ] );
+	grunt.registerTask( 'dist:prod', [ 'ts', 'karma:unit', 'requirejs:prod' ] );
+	grunt.registerTask( 'test', [ 'karma:unit' ] );
+	grunt.registerTask( 'test-all', [ 'karma:all_tests' ] );
 
 };

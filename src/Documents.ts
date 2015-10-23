@@ -7,10 +7,8 @@ declare var jsonld;
 import * as HTTP from './HTTP';
 import Parent from './Parent';
 import * as Utils from './Utils';
-import {
-	RDFDocument,
-	URI
-} from './RDF';
+import * as Errors from './Errors';
+import * as RDF from './RDF';
 //@formatter:on
 
 function parse( input:string ):any {
@@ -25,16 +23,16 @@ function parse( input:string ):any {
 function expand( input:HTTP.ProcessedResponse<any>, options?:jsonld.ExpandOptions ):Promise<Object> {
 	return new Promise( function ( resolve, reject ) {
 		jsonld.expand( input.result, options, function ( error, expanded:Object ) {
-			if ( ! error ) {
-				input.result = expanded;
-				resolve( input );
-			} else reject( error );
+			if ( error ) {
+				// TODO: Handle jsonld.expand error
+				throw error;
+			}
+
+			input.result = expanded;
+			resolve( input );
+
 		} );
 	} );
-}
-
-function setDocumentURI( document:RDFDocument.Class, response:HTTP.Response ):void {
-	// TODO: Implement
 }
 
 class Documents {
@@ -45,9 +43,9 @@ class Documents {
 
 	}
 
-	get( uri:string, requestOptions:HTTP.Request.Options = {} ):Promise<HTTP.ProcessedResponse<RDFDocument.Class[]>> {
-		if ( URI.Util.isRelative( uri ) ) {
-			if ( ! this.parent ) throw new Error( "IllegalArgument: This module doesn't support relative URIs." );
+	get( uri:string, requestOptions:HTTP.Request.Options = {} ):Promise<HTTP.ProcessedResponse<RDF.Document.Class[]>> {
+		if ( RDF.URI.Util.isRelative( uri ) ) {
+			if ( ! this.parent ) throw new Errors.IllegalArgumentError( "IllegalArgument: This module doesn't support relative URIs." );
 			uri = this.parent.resolve( uri );
 		}
 
@@ -66,11 +64,7 @@ class Documents {
 		).then(
 			( processedResponse:HTTP.ProcessedResponse<Object> ) => {
 				var expandedResult:any = processedResponse.result;
-				var documents:RDFDocument.Class[] = RDFDocument.Util.getDocuments( expandedResult );
-
-				if ( documents.length === 1 ) {
-					if ( ! Utils.hasProperty( documents[ 0 ], '@id' ) ) setDocumentURI( documents[ 0 ], processedResponse.response );
-				}
+				var documents:RDF.Document.Class[] = RDF.Document.Util.getDocuments( expandedResult );
 
 				return {
 					result: documents,

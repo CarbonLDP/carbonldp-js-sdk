@@ -1,0 +1,4 @@
+#!/bin/bash
+grunt dist
+git add -f dist/Carbon.js dist/Carbon.min.js dist/Carbon.min.js.map
+exit 0

@@ -1,7 +1,11 @@
 {
-	"name": "carbon-sdk",
+	"name": "carbonldp-sdk",
 	"description": "SDK for creating Carbon LDP applications.",
 	"main": "dist/Carbon.js",
+	"repository": {
+		"type": "git",
+		"url": "git://github.com/CarbonLDP/CarbonLDP-JS-SDK.git"
+	},
 	"moduleType": [
 		"amd",
 		"globals"
@@ -22,7 +26,7 @@
 	"authors": [
 		"Base22"
 	],
-	"license": "MIT",
+	"license": "BSD-3-Clause",
 	"homepage": "http://carbonldp.com",
 	"ignore": [
 		"**/.*",

@@ -28,7 +28,7 @@ class Carbon extends Parent {
 	static Resources = Resources;
 	static Utils = Utils;
 
-	static version = '0.8.0-alpha';
+	static version = '0.8.1-ALPHA';
 
 	resolve( uri:string ):string {
 		if ( RDF.URI.Util.isAbsolute( uri ) ) return uri;

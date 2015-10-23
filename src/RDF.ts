@@ -1,15 +1,15 @@
-import * as Persisted from './rdf/Persisted';
-import * as DocumentResource from './rdf/DocumentResource';
-import * as PersistedDocumentResource from './rdf/PersistedDocumentResource';
-import * as FragmentResource from './rdf/FragmentResource';
-import * as PersistedFragmentResource from './rdf/PersistedFragmentResource';
-import * as Literal from './rdf/Literal';
-import PropertyDescription from './rdf/PropertyDescription';
-import * as RDFDocument from './rdf/RDFDocument';
-import * as RDFNode from './rdf/RDFNode';
-import * as Resource from './rdf/Resource';
-import * as URI from './rdf/URI';
-import * as Value from './rdf/Value';
+import * as Persisted from './RDF/Persisted';
+import * as DocumentResource from './RDF/DocumentResource';
+import * as PersistedDocumentResource from './RDF/PersistedDocumentResource';
+import * as FragmentResource from './RDF/FragmentResource';
+import * as PersistedFragmentResource from './RDF/PersistedFragmentResource';
+import * as Literal from './RDF/Literal';
+import PropertyDescription from './RDF/PropertyDescription';
+import * as RDFDocument from './RDF/RDFDocument';
+import * as RDFNode from './RDF/RDFNode';
+import * as Resource from './RDF/Resource';
+import * as URI from './RDF/URI';
+import * as Value from './RDF/Value';
 
 //@formatter:off
 export {
@@ -20,7 +20,7 @@ export {
 	PersistedFragmentResource,
 	Literal,
 	PropertyDescription,
-	RDFDocument,
+	RDFDocument as Document,
 	RDFNode as Node,
 	Resource,
 	URI,
