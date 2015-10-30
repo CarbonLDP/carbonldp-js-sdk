@@ -241,7 +241,7 @@ describe( 'Resource.Factory', function () {
 	it( "has static method, from( object ), which injects RDFResource methods to the object and returns it", function () {
 		expect( Resource.factory.from ).toBeDefined();
 
-		var resource:Resource.Class = <Resource.Class> Resource.factory.from( object );
+		var resource:Resource.Class = Resource.factory.from( object );
 		expect( resource.uri ).toBeDefined();
 		expect( Utils.isFunction( resource.addProperty ) ).toBe( true );
 		expect( Utils.isFunction( resource.hasProperty ) ).toBe( true );
