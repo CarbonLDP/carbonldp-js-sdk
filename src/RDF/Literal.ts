@@ -3,7 +3,7 @@ interface Literal {
 	'@value':string;
 }
 import * as Utils from '../Utils';
-import XSD = require('../namespaces/XSD' );
+import XSD = require('../NS/XSD' );
 
 class Factory {
 	static from( value:any ):Literal {

@@ -6,7 +6,7 @@ import * as Value from './Value';
 import PropertyDescription from './PropertyDescription';
 
 import * as Utils from './../Utils';
-import * as RDF from './../namespaces/RDF';
+import * as RDF from './../NS/RDF';
 import * as RDFNode from './RDFNode';
 
 interface Resource extends RDFNode.Class {

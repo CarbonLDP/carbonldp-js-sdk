@@ -5,7 +5,7 @@ import Parent from './Parent';
 import * as HTTP from './HTTP';
 import * as RDF from './RDF';
 import * as Utils from './Utils';
-import * as CS from './namespaces/CS';
+import * as CS from './NS/CS';
 
 class Apps {
 	private parent:Parent;

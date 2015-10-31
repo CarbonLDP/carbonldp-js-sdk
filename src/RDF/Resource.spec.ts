@@ -1,6 +1,6 @@
 /// <reference path="../../typings/jasmine/jasmine.d.ts" />
 import * as Utils from '../Utils';
-import * as XSD from '../namespaces/XSD';
+import * as XSD from '../NS/XSD';
 import * as Resource from './Resource';
 import PropertyDescription from './PropertyDescription';
 

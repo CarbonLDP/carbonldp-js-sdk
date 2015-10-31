@@ -13,7 +13,7 @@ import * as Utils from './Utils';
 
 import * as Document from './Document';
 import * as RDFSource from './LDP/RDFSource';
-import * as LDP from './namespaces/LDP';
+import * as LDP from './NS/LDP';
 //@formatter:on
 
 enum InteractionModel {
