@@ -1,4 +1,4 @@
-const namespace:string = 'http://carbonldp.com/ns/v1/patch#';
+const namespace:string = 'https://carbonldp.com/ns/v1/patch#';
 
 class Predicate {
 	static ADD_ACTION:string = namespace + 'addAction';
