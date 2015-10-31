@@ -1,11 +1,13 @@
-import * as FragmentResource from './FragmentResource';
+/*
+	import * as FragmentResource from './FragmentResource';
 
-interface PersistedFragmentResource extends FragmentResource.Class {
+	interface PersistedFragmentResource extends FragmentResource.Class {
 
-}
+	}
 
-//@formatter:off
-export {
-	PersistedFragmentResource as Class
-};
-//@formatter:on
+	//@formatter:off
+	export {
+		PersistedFragmentResource as Class
+	};
+	//@formatter:on
+*/

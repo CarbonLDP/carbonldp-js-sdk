@@ -1,7 +1,7 @@
 import * as Document from './Document';
 import * as Fragment from './Fragment';
-import * as RDF from './../RDF';
-import * as Utils from './../Utils';
+import * as RDF from './RDF';
+import * as Utils from './Utils';
 
 interface NamedFragment extends Fragment.Class {
 	slug:string

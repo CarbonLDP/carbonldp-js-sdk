@@ -5,7 +5,6 @@ import Documents from './Documents';
 import * as HTTP from './HTTP';
 import Parent from './Parent';
 import * as RDF from './RDF';
-import Resources from './Resources';
 import settings from './settings';
 import * as Utils from './Utils';
 
@@ -25,7 +24,6 @@ class Carbon extends Parent {
 	static Documents = Documents;
 	static HTTP = HTTP;
 	static RDF = RDF;
-	static Resources = Resources;
 	static Utils = Utils;
 
 	static version = '0.8.2-ALPHA';

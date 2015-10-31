@@ -1,10 +1,10 @@
-/// <reference path="./../../typings/es6/es6.d.ts" />
+/// <reference path="./../typings/es6/es6.d.ts" />
 
 import * as Fragment from './Fragment';
 import * as NamedFragment from './NamedFragment';
-import * as RDF from './../RDF';
-import * as Utils from './../Utils';
-import * as Errors from './../Errors';
+import * as RDF from './RDF';
+import * as Utils from './Utils';
+import * as Errors from './Errors';
 
 interface Document extends RDF.Resource.Class {
 	_fragmentsIndex:Map<string, Fragment.Class>;
@@ -18,7 +18,12 @@ interface Document extends RDF.Resource.Class {
 	createFragment( slug:string ):NamedFragment.Class;
 	createNamedFragment( slug:string ):NamedFragment.Class;
 
+	removeFragment( fragment:NamedFragment.Class ):void;
+	removeFragment( fragment:Fragment.Class ):void;
 	removeFragment( slug:string ):void;
+	removeFragment( fragmentOrSlug ):void;
+
+	toJSON():string;
 }
 
 function hasFragment( id:string ):boolean {
@@ -85,6 +90,17 @@ function removeFragment( fragment:Fragment.Class ):void;
 function removeFragment( slug:string ):void;
 function removeFragment( fragmentOrSlug ):void {
 	// TODO: FT
+}
+
+function toJSON():string {
+	let rdfDocument:RDF.Document.Class = {
+		'@graph': this.getFragments()
+	};
+	if( this.uri ) rdfDocument['@id'] = this.id;
+
+	rdfDocument['@graph'].push( this );
+
+	return JSON.stringify( rdfDocument );
 }
 
 class Factory extends RDF.Resource.Factory {
@@ -187,6 +203,12 @@ class Factory extends RDF.Resource.Factory {
 				enumerable: false,
 				configurable: false,
 				value: removeFragment
+			},
+			'toJSON': {
+				writable: false,
+				enumerable: false,
+				configurable: false,
+				value: toJSON
 			}
 		} );
 

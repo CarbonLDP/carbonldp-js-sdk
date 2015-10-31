@@ -119,4 +119,10 @@ class Util {
 	}
 }
 
-export { Literal as Class, Factory, Util };
+//@formatter:off
+export {
+	Literal as Class,
+	Factory,
+	Util
+};
+//@formatter:on

@@ -1,6 +1,6 @@
-/// <reference path="../../typings/jasmine/jasmine.d.ts" />
+/// <reference path="../typings/jasmine/jasmine.d.ts" />
 import * as Document from './Document';
-import * as Utils from './../Utils';
+import * as Utils from './Utils';
 
 //@formatter:off
 import {
@@ -12,16 +12,17 @@ import {
 	hasConstructor,
 	hasMethod,
 	hasProperty
-} from './../test/JasmineExtender';
+} from './test/JasmineExtender';
 //@formatter:on
 
 // TODO: Change module name
 describe( module( 'Carbon.Resource' ), function () {
 	it( 'works', function() {
 		var document:Document.Class = Document.factory.from( {
+			'@id': 'http://example.com/',
 			'@graph': [
 				{
-					'@id': 'http://example.org/'
+					'@id': 'http://example.com/'
 				},
 				{
 					'@id': '_:1'
@@ -30,10 +31,10 @@ describe( module( 'Carbon.Resource' ), function () {
 					'@id': '_:2'
 				},
 				{
-					'@id': 'http://example.org/#1'
+					'@id': 'http://example.com/#1'
 				},
 				{
-					'@id': 'http://example.org/#2'
+					'@id': 'http://example.com/#2'
 				}
 			]
 		} );

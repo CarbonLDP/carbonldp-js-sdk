@@ -189,7 +189,7 @@ describe( module( 'Carbon.Resource' ), function () {
 
 describe( 'Resource.Factory', function () {
 
-	var object;
+	var object:Object;
 	var descriptions:Object;
 
 	beforeEach( function () {

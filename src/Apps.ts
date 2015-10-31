@@ -1,5 +1,6 @@
 /// <reference path="../typings/es6-promise/es6-promise.d.ts" />
 import * as App from './App';
+import * as Document from './Document';
 import Parent from './Parent';
 import * as HTTP from './HTTP';
 import * as RDF from './RDF';
@@ -20,17 +21,14 @@ class Apps {
 			this.parent.resolve( uri )
 		}
 
-		return this.parent.Resources.get( uri ).then(
-			( processedResponse:HTTP.ProcessedResponse<RDF.PersistedDocumentResource.Class> ) => {
-				var resource:RDF.PersistedDocumentResource.Class = processedResponse.result;
-				if ( ! resource.types.indexOf( CS.Class.Application ) ) {
-					throw new Error( 'The resource fetched is not a cs:Application.' );
-				}
+		return this.parent.Documents.get( uri ).then(
+			( processedResponse:HTTP.ProcessedResponse<Document.Class> ) => {
+				var document:Document.Class = processedResponse.result;
 
-				var appResource:App.Resource = App.factory.from( resource );
-				var app:App.Class = new App.Class( this.parent, appResource );
+				if ( ! document.types.indexOf( CS.Class.Application ) ) throw new Error( 'The resource fetched is not a cs:Application.' );
 
-				return app;
+				var appResource:App.Resource = App.factory.from( document );
+				return new App.Class( this.parent, appResource );
 			}
 		);
 	}

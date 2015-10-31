@@ -1,13 +1,25 @@
 import * as Document from './Document';
-import * as RDF from './../RDF';
-import * as Utils from './../Utils';
+import * as Errors from './Errors';
+import * as RDF from './RDF';
+import * as Utils from './Utils';
 
 interface Fragment extends RDF.Resource.Class{
-	document:Document.Class
+	document:Document.Class;
 }
 
 interface DocumentHolder extends Object {
 	document:Document.Class;
+}
+
+function externalAnonymousFragmentFilter( propertyURI:string, value:(RDF.Node.Class | RDF.Literal.Class) ) {
+	if( ! RDF.Node.Factory.is( value ) ) return;
+	if( ! RDF.URI.Util.isBNodeID( value[ '@id' ] ) ) return;
+
+	if( ! ( 'document' in value ) ) throw new Errors.IllegalArgumentError( "The resource provided doesn't belong to a document." );
+
+	let fragment:Fragment = <any> value;
+
+	if( this.document !== fragment.document ) throw new Errors.IllegalArgumentError( "The anonymous fragment provided belongs to another document. To reference it from another document it needs to be named." );
 }
 
 class Factory extends RDF.Resource.Factory {
@@ -32,6 +44,8 @@ class Factory extends RDF.Resource.Factory {
 	protected injectBehavior( object:(Object & DocumentHolder) ):Fragment {
 		let fragment = <Fragment> super.injectBehavior( object );
 		if( this.hasClassProperties( fragment ) ) return fragment;
+
+		fragment._propertyAddedCallbacks.push( externalAnonymousFragmentFilter );
 
 		let document:Document.Class = fragment.document;
 		delete fragment.document;

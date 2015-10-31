@@ -3,7 +3,8 @@ import * as RDFNode from './RDFNode';
 import * as Utils from '../Utils';
 import * as URI from './URI';
 
-interface RDFDocument extends RDFNode.Class {
+interface RDFDocument {
+	'@id'?:string;
 	'@graph':RDFNode.Class[];
 }
 

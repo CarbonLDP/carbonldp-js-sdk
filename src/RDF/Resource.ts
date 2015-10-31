@@ -1,6 +1,7 @@
 /// <reference path="../../typings/es6/es6.d.ts" />
 
 import * as Literal from './Literal';
+import * as URI from './URI';
 import * as Value from './Value';
 import PropertyDescription from './PropertyDescription';
 
@@ -9,7 +10,7 @@ import * as RDF from './../namespaces/RDF';
 import * as RDFNode from './RDFNode';
 
 interface Resource extends RDFNode.Class {
-	_propertyAddedCallbacks:(( property:string, value:any )=>void)[];
+	_propertyAddedCallbacks:(( property:string, value:(RDFNode.Class | Literal.Class) )=>void)[];
 	_propertyDeletedCallbacks:(( property:string, value?:any )=>void)[];
 
 	uri:string;
@@ -94,7 +95,7 @@ function addProperty( propertyURI:string, value:any ):void {
 	var propertyArray = this.getProperties( propertyURI );
 
 	var propertyValue:Value.Class;
-	if ( RDFNode.Factory.is( value ) ) {
+	if( RDFNode.Factory.is( value ) ) {
 		propertyValue = {
 			'@id': value[ '@id' ]
 		};
@@ -165,7 +166,10 @@ class Factory {
 
 	create():Resource {
 		var resource = {};
-		return <Resource> this.from( resource );
+
+		var resourceArray:Resource[] = this.from([{}]);
+
+		return this.from( resource );
 	}
 
 	from( object:Array<Object> ):Resource[];
