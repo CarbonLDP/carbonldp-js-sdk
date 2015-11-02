@@ -6,7 +6,7 @@ import * as RDF from './RDF';
 import * as Utils from './Utils';
 import * as Errors from './Errors';
 
-interface Document extends RDF.Resource.Class {
+export interface Class extends RDF.Resource.Class {
 	_fragmentsIndex:Map<string, Fragment.Class>;
 
 	hasFragment( slug:string ):boolean;
@@ -27,34 +27,34 @@ interface Document extends RDF.Resource.Class {
 }
 
 function hasFragment( id:string ):boolean {
-	let document:Document = <Document> this;
+	let document:Class = <Class> this;
 	id = RDF.URI.Util.hasFragment( id ) ? RDF.URI.Util.getFragment( id ) : id;
 	return document._fragmentsIndex.has( id );
 }
 function getFragment( id:string ):Fragment.Class {
-	let document:Document = <Document> this;
+	let document:Class = <Class> this;
 	id = RDF.URI.Util.hasFragment( id ) ? RDF.URI.Util.getFragment( id ) : id;
 	return document._fragmentsIndex.get( id );
 }
 function getNamedFragment( slug:string ):NamedFragment.Class {
-	let document:Document = <Document> this;
+	let document:Class = <Class> this;
 	if( RDF.URI.Util.isBNodeID( slug ) ) throw new Errors.IllegalArgumentError( "Named fragments can't have a slug that starts with '_:'." );
 	slug = RDF.URI.Util.hasFragment( slug ) ? RDF.URI.Util.getFragment( slug ) : slug;
 	return <NamedFragment.Class> document._fragmentsIndex.get( slug );
 }
 function getFragments():Fragment.Class[] {
-	let document:Document = <Document> this;
+	let document:Class = <Class> this;
 	return Utils.A.from( document._fragmentsIndex.values() );
 }
 
 function createFragment( slug:string ):NamedFragment.Class;
 function createFragment( slug?:string ):Fragment.Class;
 function createFragment( slug ):any {
-	let document:Document = <Document> this;
+	let document:Class = <Class> this;
 	if( slug ) return document.createNamedFragment( slug );
 
 	let id:string = Fragment.Util.generateID();
-	let fragmentObject:RDF.Node.Class & { document:Document } = {
+	let fragmentObject:RDF.Node.Class & { document:Class } = {
 		'@id': id,
 		'document': document
 	};
@@ -66,14 +66,14 @@ function createFragment( slug ):any {
 	return fragment
 }
 function createNamedFragment( slug:string ):NamedFragment.Class {
-	let document:Document = <Document> this;
+	let document:Class = <Class> this;
 
 	if( RDF.URI.Util.isBNodeID( slug ) ) throw new Errors.IllegalArgumentError( "Named fragments can't have a slug that starts with '_:'." );
 	slug = RDF.URI.Util.hasFragment( slug ) ? RDF.URI.Util.getFragment( slug ) : slug;
 	if( document._fragmentsIndex.has( slug ) ) throw new Errors.IDAlreadyInUseError( "The slug provided is already being used by a fragment." );
 
 	let uri:string = document.uri + '#' + slug;
-	let fragmentObject:RDF.Node.Class & { document:Document } = {
+	let fragmentObject:RDF.Node.Class & { document:Class } = {
 		'@id': uri,
 		'document': document
 	};
@@ -103,13 +103,13 @@ function toJSON():string {
 	return JSON.stringify( rdfDocument );
 }
 
-class Factory extends RDF.Resource.Factory {
-	from( rdfDocuments:RDF.Document.Class[] ):Document[];
-	from( rdfDocument:RDF.Document.Class ):Document;
+export class Factory extends RDF.Resource.Factory {
+	from( rdfDocuments:RDF.Document.Class[] ):Class[];
+	from( rdfDocument:RDF.Document.Class ):Class;
 	from( rdfDocuments ):any {
 		if( ! Utils.isArray( rdfDocuments ) ) return this.singleFrom( <RDF.Document.Class> rdfDocuments );
 
-		let documents:Document[] = [];
+		let documents:Class[] = [];
 		for ( let i:number = 0, length:number = rdfDocuments.length; i < length; i ++ ) {
 			let rdfDocument:RDF.Document.Class = <RDF.Document.Class> rdfDocuments[ i ];
 
@@ -119,16 +119,16 @@ class Factory extends RDF.Resource.Factory {
 		return documents;
 	}
 
-	protected singleFrom( rdfDocument:RDF.Document.Class ):Document {
+	protected singleFrom( rdfDocument:RDF.Document.Class ):Class {
 		let documentResources:RDF.Node.Class[] = RDF.Document.Util.getDocumentResources( rdfDocument );
 		if( documentResources.length > 1 ) throw new Errors.IllegalArgumentError('The RDFDocument contains more than one document resource.');
 		else if( documentResources.length === 0 ) throw new Errors.IllegalArgumentError('The RDFDocument doesn\'t contain a document resource.');
 
-		let document:Document = this.injectBehavior( documentResources[ 0 ] );
+		let document:Class = this.injectBehavior( documentResources[ 0 ] );
 
 		let fragmentResources:RDF.Node.Class[] = RDF.Document.Util.getBNodeResources( rdfDocument );
 		for( let i = 0, length = fragmentResources.length; i < length; i++ ) {
-			let fragmentResource:RDF.Node.Class & {document:Document} = <any>fragmentResources[i];
+			let fragmentResource:RDF.Node.Class & {document:Class} = <any>fragmentResources[i];
 			fragmentResource.document = document;
 
 			let fragment:Fragment.Class = Fragment.factory.from( fragmentResource );
@@ -139,7 +139,7 @@ class Factory extends RDF.Resource.Factory {
 
 		let namedFragmentResources:RDF.Node.Class[] = RDF.Document.Util.getFragmentResources( rdfDocument );
 		for( let i = 0, length = namedFragmentResources.length; i < length; i++ ) {
-			let namedFragmentResource:RDF.Node.Class & {document:Document} = <any>namedFragmentResources[i];
+			let namedFragmentResource:RDF.Node.Class & { document:Class } = <any>namedFragmentResources[i];
 			namedFragmentResource.document = document;
 
 			let namedFragment:NamedFragment.Class = NamedFragment.factory.from( namedFragmentResource );
@@ -150,10 +150,10 @@ class Factory extends RDF.Resource.Factory {
 		return document;
 	}
 
-	protected injectBehavior( resource:RDF.Node.Class ):Document {
+	protected injectBehavior( resource:RDF.Node.Class ):Class {
 		let documentResource:RDF.Resource.Class = super.injectBehavior( resource );
 
-		if( this.hasClassProperties( documentResource ) ) return <Document> documentResource;
+		if( this.hasClassProperties( documentResource ) ) return <Class> documentResource;
 
 		Object.defineProperties( documentResource, {
 			'_fragmentsIndex': {
@@ -212,7 +212,7 @@ class Factory extends RDF.Resource.Factory {
 			}
 		} );
 
-		return <Document> documentResource;
+		return <any> documentResource;
 	}
 
 	protected hasClassProperties( documentResource:RDF.Resource.Class ):boolean {
@@ -221,12 +221,7 @@ class Factory extends RDF.Resource.Factory {
 		);
 	}
 }
-var factory:Factory = new Factory();
+
+export var factory:Factory = new Factory();
 
 export default Document;
-
-export {
-	Document as Class,
-	factory,
-	Factory
-};

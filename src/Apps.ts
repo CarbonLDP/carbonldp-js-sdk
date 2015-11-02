@@ -7,7 +7,7 @@ import * as RDF from './RDF';
 import * as Utils from './Utils';
 import * as CS from './NS/CS';
 
-class Apps {
+export class Apps {
 	private parent:Parent;
 
 	constructor( parent:Parent ) {
