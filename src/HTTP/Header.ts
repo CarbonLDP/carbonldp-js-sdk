@@ -2,31 +2,7 @@
 
 import * as Utils from './../Utils';
 
-class Util {
-	static parseHeaders( headersString:string ):Map<string, Header> {
-		var headers:Map<string, Header> = new Map<string, Header>();
-
-		var headerStrings:string[] = headersString.split( '\r\n' );
-		for ( var i:number = 0, length:number = headerStrings.length; i < length; i ++ ) {
-			var headerString:string = headerStrings[ i ];
-			if ( ! headerString.trim() ) continue;
-
-			var parts:string[] = headerString.split( ':' );
-			if ( parts.length != 2 ) throw new Error( "ParseError: The header couldn't be parsed." );
-
-			var name = parts[ 0 ].trim();
-			var header = new Header( parts[ 1 ].trim() );
-			if ( headers.has( name ) ) {
-				var existingHeader:Header = headers.get( name );
-				existingHeader.values.concat( header.values );
-			} else headers.set( name, header );
-		}
-
-		return headers;
-	}
-}
-
-class Header {
+export class Class {
 	constructor();
 	constructor( values:Value[] );
 	constructor( value:string );
@@ -55,7 +31,7 @@ class Header {
 	}
 }
 
-class Value {
+export class Value {
 	constructor( value:string );
 	constructor( mainKey:string, mainValue:string, secondaryKey:string, secondaryValue:string );
 	constructor( value:string, mainValue?:string, secondaryKey?:string, secondaryValue?:string ) {
@@ -114,10 +90,26 @@ class Value {
 	}
 }
 
-//@formatter:off
-export {
-	Header as Class,
-	Value,
-	Util
-};
-//@formatter:on
+export class Util {
+	static parseHeaders( headersString:string ):Map<string, Class> {
+		var headers:Map<string, Class> = new Map<string, Class>();
+
+		var headerStrings:string[] = headersString.split( '\r\n' );
+		for ( var i:number = 0, length:number = headerStrings.length; i < length; i ++ ) {
+			var headerString:string = headerStrings[ i ];
+			if ( ! headerString.trim() ) continue;
+
+			var parts:string[] = headerString.split( ':' );
+			if ( parts.length != 2 ) throw new Error( "ParseError: The header couldn't be parsed." );
+
+			var name = parts[ 0 ].trim();
+			var header = new Class( parts[ 1 ].trim() );
+			if ( headers.has( name ) ) {
+				var existingHeader:Class = headers.get( name );
+				existingHeader.values.concat( header.values );
+			} else headers.set( name, header );
+		}
+
+		return headers;
+	}
+}

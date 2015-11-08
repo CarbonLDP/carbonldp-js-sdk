@@ -7,13 +7,13 @@ import * as RDF from './RDF';
 import * as LDP from './LDP';
 import * as Utils from './Utils';
 
-interface Resource extends RDF.Resource.Class {
+export interface Resource extends RDF.Resource.Class {
 	rootContainer:string;
 }
 
-const RDFClass:string = NS.CS.Class.Application;
+export const RDFClass:string = NS.CS.Class.Application;
 
-const Definition:Map<string, RDF.PropertyDescription> = <any> Utils.M.from( {
+export const Definition:Map<string, RDF.PropertyDescription> = <any> Utils.M.from( {
 	"rootContainer": {
 		"uri": NS.CS.Predicate.rootContainer,
 		"multi": false,
@@ -21,7 +21,7 @@ const Definition:Map<string, RDF.PropertyDescription> = <any> Utils.M.from( {
 	}
 } );
 
-class App extends Parent {
+export class Class extends Parent {
 	private resource:Resource;
 	private base:string;
 
@@ -49,7 +49,7 @@ class App extends Parent {
 	}
 }
 
-class Factory extends LDP.RDFSource.Factory {
+export class Factory extends LDP.RDFSource.Factory {
 	is( object:Object ):boolean {
 		//@formatter:off
 		return (
@@ -93,14 +93,7 @@ class Factory extends LDP.RDFSource.Factory {
 		return <Resource> resource;
 	}
 }
-var factory = new Factory();
 
-//@formatter:off
-export default App;
-export {
-	App as Class,
-	Resource,
-	Factory,
-	factory
-};
-//@formatter:on
+export var factory = new Factory();
+
+export default Class;

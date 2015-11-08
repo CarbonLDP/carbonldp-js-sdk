@@ -1,4 +1,5 @@
-/// <reference path="../typings/es6/es6.d.ts" />
+/// <reference path="../typings/tsd.d.ts" />
+
 import * as APIDescription from './APIDescription';
 import Apps from './Apps';
 import Auth from './Auth';
@@ -7,7 +8,7 @@ import Documents from './Documents';
 import * as HTTP from './HTTP';
 import Parent from './Parent';
 import * as RDF from './RDF';
-import settings from './settings';
+import defaultSettings from './settings';
 import * as Utils from './Utils';
 
 class Carbon extends Parent {
@@ -15,6 +16,8 @@ class Carbon extends Parent {
 
 	constructor( settings:any ) {
 		super();
+
+		settings = settings ? settings : defaultSettings;
 
 		Utils.M.extend( this.settings, Utils.M.from( settings ) );
 
@@ -25,12 +28,13 @@ class Carbon extends Parent {
 
 	static Apps = Apps;
 	static Auth = Auth;
+	static Document = Document;
 	static Documents = Documents;
 	static HTTP = HTTP;
 	static RDF = RDF;
 	static Utils = Utils;
 
-	static version = '0.8.2-ALPHA';
+	static version = '0.9.2-ALPHA';
 
 	resolve( uri:string ):string {
 		if ( RDF.URI.Util.isAbsolute( uri ) ) return uri;
@@ -53,13 +57,4 @@ class Carbon extends Parent {
 	}
 }
 
-let instance:Carbon = new Carbon( settings );
-
-//@formatter:off
-export default instance;
-
-export {
-	instance as carbon,
-	Carbon
-};
-//@formatter:on
+export default Carbon;

@@ -1,0 +1,1 @@
+{"version":3,"file":"RDF.js","sourceRoot":"","sources":["../../src/NS/RDF.ts"],"names":["Predicate","Predicate.constructor"],"mappings":"AAAA,IAAM,SAAS,GAAU,6CAA6C;AAQrE,iBAAS,aAR6D;AAEvE;IAAAA;IAEAC,CAACA;IADOD,cAAIA,GAAGA,SAASA,GAAGA,MAAMA,CAACA;IAClCA,gBAACA;AAADA,CAACA,AAFD,IAEC;AAKA,iBAAS,aALT;AAED,gBAAgB;AAKhB,eAAe"}

@@ -1,9 +1,14 @@
 {
 	"compilerOptions": {
-		"target": "ES5",
-		"isolatedModules": true,
-		"module": "amd"
+		"declaration": true,
+		"module": "commonjs",
+		"outDir": "dist",
+		"sourceMap": true,
+		"target": "es5"
 	},
+	"files": [
+		"src/Carbon.ts"
+	],
 	"exclude": [
 		"node_modules",
 		"bower_components"

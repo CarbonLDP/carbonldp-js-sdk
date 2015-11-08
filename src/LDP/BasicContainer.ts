@@ -7,11 +7,11 @@ import * as Utils from './../Utils';
 
 const RDFClass:string = NS.LDP.Class.BasicContainer;
 
-interface BasicContainer extends Container.Class {
+export interface Class extends Container.Class {
 
 }
 
-class Factory extends Container.Factory {
+export class Factory extends Container.Factory {
 	is( object:Object ):boolean {
 		//@formatter:off
 		return (
@@ -22,8 +22,8 @@ class Factory extends Container.Factory {
 		//@formatter:on
 	}
 
-	from( resource:RDF.Node.Class ):BasicContainer;
-	from( resources:RDF.Node.Class[] ):BasicContainer[];
+	from( resource:RDF.Node.Class ):Class;
+	from( resources:RDF.Node.Class[] ):Class[];
 	from( resourceOrResources:any ):any {
 		var sources:(Container.Class | Container.Class[]) = super.from( resourceOrResources );
 		var resources:Container.Class[] = Utils.isArray( sources ) ? <Container.Class[]> sources : <Container.Class[]> [ sources ];
@@ -33,8 +33,8 @@ class Factory extends Container.Factory {
 			if ( ! this.hasClassProperties( resource ) ) this.injectBehaviour( resource );
 		}
 
-		if ( Utils.isArray( resourceOrResources ) ) return <BasicContainer[]> resources;
-		else return <BasicContainer> resources[ 0 ];
+		if ( Utils.isArray( resourceOrResources ) ) return <Class[]> resources;
+		else return <Class> resources[ 0 ];
 	}
 
 	protected hasRDFClass( resource:RDF.Resource.Class ):boolean {
@@ -47,17 +47,9 @@ class Factory extends Container.Factory {
 		return true;
 	}
 
-	protected injectBehaviour( resource:Container.Class ):BasicContainer {
-		return <BasicContainer> resource;
+	protected injectBehaviour( resource:Container.Class ):Class {
+		return <Class> resource;
 	}
 }
 
-var factory = new Factory();
-
-//@formatter:off
-export {
-	Container as Class,
-	Factory,
-	factory
-};
-//@formatter:on
+export var factory:Factory = new Factory();
