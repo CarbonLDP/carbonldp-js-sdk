@@ -1,11 +1,12 @@
 /// <reference path="../typings/es6/es6.d.ts" />
+import * as APIDescription from './APIDescription';
 import Apps from './Apps';
 import Auth from './Auth';
+import * as Document from './Document';
 import Documents from './Documents';
 import * as HTTP from './HTTP';
 import Parent from './Parent';
 import * as RDF from './RDF';
-import Resources from './Resources';
 import settings from './settings';
 import * as Utils from './Utils';
 
@@ -17,6 +18,8 @@ class Carbon extends Parent {
 
 		Utils.M.extend( this.settings, Utils.M.from( settings ) );
 
+		this.registerDefaultDefinitions();
+
 		this.Apps = new Apps( this );
 	}
 
@@ -25,7 +28,6 @@ class Carbon extends Parent {
 	static Documents = Documents;
 	static HTTP = HTTP;
 	static RDF = RDF;
-	static Resources = Resources;
 	static Utils = Utils;
 
 	static version = '0.8.2-ALPHA';
@@ -37,12 +39,27 @@ class Carbon extends Parent {
 		finalURI += this.settings.get( "domain" );
 		return RDF.URI.Util.resolve( finalURI, uri );
 	}
+
+	getAPIDescription():Promise<APIDescription.Class> {
+		return this.Documents.get( 'platform/api/' ).then(
+			( processedResponse:HTTP.ProcessedResponse<Document.Class> ) => {
+				return <any> processedResponse.result;
+			}
+		);
+	}
+
+	private registerDefaultDefinitions():void {
+		this.addDefinition( APIDescription.RDFClass, APIDescription.Definition );
+	}
 }
 
+let instance:Carbon = new Carbon( settings );
+
 //@formatter:off
-export default new Carbon( settings );
+export default instance;
 
 export {
+	instance as carbon,
 	Carbon
 };
 //@formatter:on

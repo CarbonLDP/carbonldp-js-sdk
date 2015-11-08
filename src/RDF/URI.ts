@@ -19,6 +19,10 @@ class Util {
 		return ! Util.isAbsolute( uri );
 	}
 
+	static isBNodeID( uri:string ):boolean {
+		return Utils.S.startsWith( uri, '_:' );
+	}
+
 	static getDocumentURI( uri:string ):string {
 		var parts:string[] = uri.split( '#' );
 		if ( parts.length > 2 ) throw new Error( 'IllegalArgument: The URI provided has more than one # sign.' );

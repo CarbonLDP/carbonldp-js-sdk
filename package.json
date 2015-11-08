@@ -1,8 +1,23 @@
 {
-  "name": "carbon-js-sdk",
-  "version": "0.8.2",
+  "name": "carbonldp-sdk",
+  "version": "0.9.0-ALPHA",
+  "description": "JavaScript/TypeScript SDK to create CarbonLDP's Applications",
+  "homepage": "https://github.com/CarbonLDP/CarbonLDP-JS-SDK",
+  "contributors": [
+    "Miguel Aragon <miguel.aragon@base22.com>"
+  ],
+  "license": "BSD-3-Clause",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/CarbonLDP/CarbonLDP-JS-SDK.git"
+  },
+  "main": "src",
+  "dependencies":
+    "jsonld": "^0.4.2"
+  },
   "devDependencies": {
     "almond": "^0.3.0",
+    "babel-core": "^5.4.3",
     "grunt": "~0.4",
     "grunt-browser-output": "1.0.3",
     "grunt-contrib-clean": "~0.6",
@@ -26,14 +41,10 @@
     "karma-requirejs": "^0.2.2",
     "karma-sourcemap-loader": "^0.3.4",
     "load-grunt-tasks": "^3.2.0",
-    "phantomjs": "^1.9.16",
     "requirejs": "^2.1.15",
-    "systemjs-builder": "^0.14.9",
     "tsd": "^0.6.4",
-    "typescript": "^1.6.0-beta"
-  },
-  "dependencies": {
-    "babel-core": "^5.4.3"
+    "typescript": "^1.6.0-beta",
+    "phantomjs": "^1.9.16"
   },
   "scripts": {
     "preinstall": "node scripts/copy-hooks.js"

@@ -2,14 +2,12 @@
 
 import Auth from './Auth';
 import Documents from './Documents';
-import Resources from './Resources';
 import * as RDF from './RDF';
 import * as Utils from './Utils';
 
 class Parent {
 	Auth:Auth;
 	Documents:Documents;
-	Resources:Resources;
 
 	parent:Parent;
 	protected settings:Map<string, any>;
@@ -21,7 +19,6 @@ class Parent {
 
 		this.Auth = new Auth( this );
 		this.Documents = new Documents( this );
-		this.Resources = new Resources( this );
 	}
 
 	resolve( relativeURI:string ):string {

@@ -1,9 +1,9 @@
-import * as C from './namespaces/C';
-import * as CP from './namespaces/CP';
-import * as CS from './namespaces/CS';
-import * as LDP from './namespaces/LDP';
-import * as RDF from './namespaces/RDF';
-import * as XSD from './namespaces/XSD';
+import * as C from './NS/C';
+import * as CP from './NS/CP';
+import * as CS from './NS/CS';
+import * as LDP from './NS/LDP';
+import * as RDF from './NS/RDF';
+import * as XSD from './NS/XSD';
 
 //@formatter:off
 export {

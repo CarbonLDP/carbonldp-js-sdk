@@ -1,4 +1,4 @@
-const namespace:string = "http://carbonldp.com/ns/v1/security#";
+const namespace:string = "https://carbonldp.com/ns/v1/security#";
 
 class Class {
 	static get Application():string { return namespace + "Application"; }

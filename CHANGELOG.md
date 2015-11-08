@@ -1,3 +1,8 @@
+#0.9.0 (October 31, 2015)
+* Add initial support for BNods
+* Changed interface to revolve around the Document concept
+* Added APIDescription functionality to retrieve CarbonLDP's API description
+
 #0.8.2 (October 23, 2015)
 * Created system to compile distribution files when committing code
 * Applied convention of mimicking folder structure with aggregator files

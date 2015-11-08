@@ -1,6 +1,6 @@
 //@formatter:off
 import * as RDF from '../../RDF';
-import * as CP from '../../namespaces/CP';
+import * as CP from '../../NS/CP';
 //@formatter:on
 
 

@@ -1,7 +1,7 @@
 /// <reference path="../../typings/jasmine/jasmine.d.ts" />
 /// <reference path="../../typings/jasmine-ajax/mock-ajax.d.ts" />
 import * as RDFNode from './RDFNode';
-import * as RDFDocument from './RDFDocument';
+import * as RDFDocument from './Document';
 import * as Utils from '../Utils';
 
 describe( 'RDFDocument', function () {

@@ -16,7 +16,7 @@
         define([], factory);
     } else {
         var exports = factory();
-        root.Carbon = exports.default;
-        root.C = exports.Carbon;
+        root.carbon = exports.carbon;
+        root.Carbon = exports.Carbon;
     }
 }(this, function () {

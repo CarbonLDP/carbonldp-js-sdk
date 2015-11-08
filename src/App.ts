@@ -3,7 +3,6 @@
 import * as NS from './NS';
 import Documents from './Documents';
 import Parent from './Parent';
-import Resources from './Resources';
 import * as RDF from './RDF';
 import * as LDP from './LDP';
 import * as Utils from './Utils';

@@ -1,15 +1,16 @@
 /// <reference path="../../typings/es6/es6.d.ts" />
 
 import * as Literal from './Literal';
+import * as URI from './URI';
 import * as Value from './Value';
 import PropertyDescription from './PropertyDescription';
 
-import * as Utils from '../Utils';
-import * as RDF from '../namespaces/RDF';
+import * as Utils from './../Utils';
+import * as RDF from './../NS/RDF';
 import * as RDFNode from './RDFNode';
 
 interface Resource extends RDFNode.Class {
-	_propertyAddedCallbacks:(( property:string, value:any )=>void)[];
+	_propertyAddedCallbacks:(( property:string, value:(RDFNode.Class | Literal.Class) )=>void)[];
 	_propertyDeletedCallbacks:(( property:string, value?:any )=>void)[];
 
 	uri:string;
@@ -94,7 +95,7 @@ function addProperty( propertyURI:string, value:any ):void {
 	var propertyArray = this.getProperties( propertyURI );
 
 	var propertyValue:Value.Class;
-	if ( RDFNode.Factory.is( value ) ) {
+	if( RDFNode.Factory.is( value ) ) {
 		propertyValue = {
 			'@id': value[ '@id' ]
 		};
@@ -165,19 +166,27 @@ class Factory {
 
 	create():Resource {
 		var resource = {};
-		return <Resource> this.from( resource );
+
+		var resourceArray:Resource[] = this.from([{}]);
+
+		return this.from( resource );
 	}
 
-	from( objectOrObjects:(Object | Object[]) ):(Resource | Resource[]) {
-		var objects:Object[] = Utils.isArray( objectOrObjects ) ? <Object[]>objectOrObjects : [ <Object>objectOrObjects ];
+	from( object:Array<Object> ):Resource[];
+	from( object:Object ):Resource;
+	from( objects ):any {
+		if( ! Utils.isArray( objects ) ) return this.singleFrom( objects );
 
 		for ( var i:number = 0, length:number = objects.length; i < length; i ++ ) {
 			var resource:RDFNode.Class = <RDFNode.Class> objects[ i ];
-			if ( ! this.hasClassProperties( resource ) ) this.injectBehaviour( resource );
+			this.injectBehavior( resource );
 		}
 
-		if ( Utils.isArray( objectOrObjects ) ) return <Resource[]> objects;
-		else return <Resource> objects[ 0 ];
+		return objects;
+	}
+
+	protected singleFrom( object:Object ):Resource {
+		return this.injectBehavior( object );
 	}
 
 	protected hasRDFClass( resource:RDFNode.Class ):boolean {
@@ -206,7 +215,10 @@ class Factory {
 		);
 	}
 
-	protected injectBehaviour( resource:RDFNode.Class ):Resource {
+	protected injectBehavior( node:Object ):Resource {
+		let resource:Resource = <Resource> node;
+		if( this.hasClassProperties( resource ) ) return <Resource> resource;
+
 		Object.defineProperties( resource, {
 			'_propertyAddedCallbacks': {
 				writable: false,
@@ -291,7 +303,7 @@ class Factory {
 			}
 		} );
 
-		return <Resource> resource;
+		return resource;
 	}
 
 	static injectDefinitions( resource:Resource, definitions:Map<string, Map<string, PropertyDescription>> ):Resource;

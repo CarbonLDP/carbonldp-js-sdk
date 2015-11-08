@@ -1,6 +1,6 @@
 /// <reference path="../../typings/jasmine/jasmine.d.ts" />
 import * as Utils from '../Utils';
-import * as XSD from '../namespaces/XSD';
+import * as XSD from '../NS/XSD';
 import * as Resource from './Resource';
 import PropertyDescription from './PropertyDescription';
 
@@ -189,7 +189,7 @@ describe( module( 'Carbon.Resource' ), function () {
 
 describe( 'Resource.Factory', function () {
 
-	var object;
+	var object:Object;
 	var descriptions:Object;
 
 	beforeEach( function () {
@@ -241,7 +241,7 @@ describe( 'Resource.Factory', function () {
 	it( "has static method, from( object ), which injects RDFResource methods to the object and returns it", function () {
 		expect( Resource.factory.from ).toBeDefined();
 
-		var resource:Resource.Class = <Resource.Class> Resource.factory.from( object );
+		var resource:Resource.Class = Resource.factory.from( object );
 		expect( resource.uri ).toBeDefined();
 		expect( Utils.isFunction( resource.addProperty ) ).toBe( true );
 		expect( Utils.isFunction( resource.hasProperty ) ).toBe( true );

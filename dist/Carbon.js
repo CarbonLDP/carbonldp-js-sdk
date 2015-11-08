@@ -1,5 +1,5 @@
 /**
- * CarbonLDP JavaScript SDK v0.8.1-ALPHA
+ * CarbonLDP JavaScript SDK v0.8.2-ALPHA
  *
  * @license BSD-3-Clause
  * Copyright (c) 2015-present, Base22 Technology Group, LLC.
@@ -17,7 +17,6 @@
     } else {
         var exports = factory();
         root.Carbon = exports.default;
-        root.C = exports.Carbon;
     }
 }(this, function () {/**
  * @license almond 0.3.1 Copyright (c) 2011-2014, The Dojo Foundation All Rights Reserved.
@@ -453,13 +452,23 @@ var requirejs, require, define;
 define("bower_components/almond/almond.js", function(){});
 
 define('Carbon/namespaces/C',["require", "exports"], function (require, exports) {
-    var namespace = "http://carbonldp.com/ns/v1/platform#";
+    var namespace = "https://carbonldp.com/ns/v1/platform#";
     exports.namespace = namespace;
     var Class = (function () {
         function Class() {
         }
         Object.defineProperty(Class, "AccessPoint", {
             get: function () { return namespace + "AccessPoint"; },
+            enumerable: true,
+            configurable: true
+        });
+        Object.defineProperty(Class, "API", {
+            get: function () { return namespace + "API"; },
+            enumerable: true,
+            configurable: true
+        });
+        Object.defineProperty(Class, "VolatileResource", {
+            get: function () { return namespace + "VolatileResource"; },
             enumerable: true,
             configurable: true
         });
@@ -474,13 +483,23 @@ define('Carbon/namespaces/C',["require", "exports"], function (require, exports)
             enumerable: true,
             configurable: true
         });
+        Object.defineProperty(Predicate, "version", {
+            get: function () { return namespace + "version"; },
+            enumerable: true,
+            configurable: true
+        });
+        Object.defineProperty(Predicate, "buildDate", {
+            get: function () { return namespace + "buildDate"; },
+            enumerable: true,
+            configurable: true
+        });
         return Predicate;
     })();
     exports.Predicate = Predicate;
 });
 //# sourceMappingURL=C.js.map;
 define('Carbon/namespaces/CP',["require", "exports"], function (require, exports) {
-    var namespace = 'http://carbonldp.com/ns/v1/patch#';
+    var namespace = 'https://carbonldp.com/ns/v1/patch#';
     exports.namespace = namespace;
     var Predicate = (function () {
         function Predicate() {
@@ -494,7 +513,7 @@ define('Carbon/namespaces/CP',["require", "exports"], function (require, exports
 });
 //# sourceMappingURL=CP.js.map;
 define('Carbon/namespaces/CS',["require", "exports"], function (require, exports) {
-    var namespace = "http://carbonldp.com/ns/v1/security#";
+    var namespace = "https://carbonldp.com/ns/v1/security#";
     exports.namespace = namespace;
     var Class = (function () {
         function Class() {
@@ -733,6 +752,238 @@ define('Carbon/NS',["require", "exports", './namespaces/C', './namespaces/CP', '
     exports.XSD = XSD;
 });
 //# sourceMappingURL=NS.js.map;
+/// <reference path="../typings/es6/es6.d.ts" />
+define('Carbon/Utils',["require", "exports"], function (require, exports) {
+    function hasFunction(object, functionName) {
+        return typeof object[functionName] === 'function';
+    }
+    exports.hasFunction = hasFunction;
+    function hasProperty(object, property) {
+        if (!object)
+            return false;
+        return 'undefined' !== typeof object[property];
+    }
+    exports.hasProperty = hasProperty;
+    function hasPropertyDefined(object, property) {
+        return !!Object.getOwnPropertyDescriptor(object, property);
+    }
+    exports.hasPropertyDefined = hasPropertyDefined;
+    function isNull(value) {
+        return value === null;
+    }
+    exports.isNull = isNull;
+    function isArray(object) {
+        return Object.prototype.toString.call(object) === '[object Array]';
+    }
+    exports.isArray = isArray;
+    function isString(string) {
+        return typeof string == 'string' || string instanceof String;
+    }
+    exports.isString = isString;
+    function isBoolean(boolean) {
+        return typeof boolean == 'boolean';
+    }
+    exports.isBoolean = isBoolean;
+    function isNumber(number) {
+        return typeof number == 'number' || number instanceof Number;
+    }
+    exports.isNumber = isNumber;
+    function isInteger(number) {
+        if (!isNumber(number))
+            return false;
+        return number % 1 == 0;
+    }
+    exports.isInteger = isInteger;
+    function isDouble(number) {
+        if (!isNumber(number))
+            return false;
+        return number % 1 != 0;
+    }
+    exports.isDouble = isDouble;
+    function isDate(date) {
+        return typeof date == 'date' || date instanceof Date;
+    }
+    exports.isDate = isDate;
+    function isObject(object) {
+        return typeof object === 'object' && (!!object);
+    }
+    exports.isObject = isObject;
+    function isFunction(value) {
+        return typeof value === 'function';
+    }
+    exports.isFunction = isFunction;
+    function isMap(value) {
+        return (isObject(value) &&
+            hasFunction(value, 'get') &&
+            hasFunction(value, 'has') &&
+            hasProperty(value, 'size') &&
+            hasFunction(value, 'clear') &&
+            hasFunction(value, 'delete') &&
+            hasFunction(value, 'entries') &&
+            hasFunction(value, 'forEach') &&
+            hasFunction(value, 'get') &&
+            hasFunction(value, 'has') &&
+            hasFunction(value, 'keys') &&
+            hasFunction(value, 'set') &&
+            hasFunction(value, 'values'));
+    }
+    exports.isMap = isMap;
+    function parseBoolean(value) {
+        if (!isString(value))
+            return false;
+        switch (value.toLowerCase()) {
+            case "true":
+            case "yes":
+            case "y":
+            case "1":
+                return true;
+            case "false":
+            case "no":
+            case "n":
+            case "0":
+            default:
+                return false;
+        }
+    }
+    exports.parseBoolean = parseBoolean;
+    function extend(target) {
+        var objects = [];
+        for (var _i = 1; _i < arguments.length; _i++) {
+            objects[_i - 1] = arguments[_i];
+        }
+        if (arguments.length <= 1)
+            return;
+        for (var i = 1, length = arguments.length; i < length; i++) {
+            var toMerge = objects[i];
+            for (var name in toMerge) {
+                if (toMerge.hasOwnProperty(name)) {
+                    target[name] = toMerge[name];
+                }
+            }
+        }
+        return target;
+    }
+    exports.extend = extend;
+    function forEachOwnProperty(object, action) {
+        if (!isObject(object))
+            throw new Error('IllegalArgument');
+        for (var name in object) {
+            if (object.hasOwnProperty(name)) {
+                action(name, object[name]);
+            }
+        }
+    }
+    exports.forEachOwnProperty = forEachOwnProperty;
+    var S = (function () {
+        function S() {
+        }
+        S.startsWith = function (string, substring) {
+            return string.lastIndexOf(substring, 0) === 0;
+        };
+        S.endsWith = function (string, substring) {
+            return string.indexOf(substring, string.length - substring.length) !== -1;
+        };
+        S.contains = function (string, substring) {
+            return string.indexOf(substring) !== -1;
+        };
+        return S;
+    })();
+    exports.S = S;
+    var A = (function () {
+        function A() {
+        }
+        A.from = function (iterator) {
+            var array = [];
+            var next;
+            while (!(next = iterator.next()).done) {
+                array.push(next.value);
+            }
+            return array;
+        };
+        A.joinWithoutDuplicates = function () {
+            var arrays = [];
+            for (var _i = 0; _i < arguments.length; _i++) {
+                arrays[_i - 0] = arguments[_i];
+            }
+            var result = arrays[0].slice();
+            for (var i = 1, length_1 = arrays.length; i < length_1; i++) {
+                result = result.concat(arrays[i].filter(function (item) {
+                    return result.indexOf(item) < 0;
+                }));
+            }
+            return result;
+        };
+        return A;
+    })();
+    exports.A = A;
+    var M = (function () {
+        function M() {
+        }
+        M.from = function (object) {
+            var map = new Map();
+            forEachOwnProperty(object, function (name, value) {
+                map.set(name, value);
+            });
+            return map;
+        };
+        M.extend = function (toExtend) {
+            var extenders = [];
+            for (var _i = 1; _i < arguments.length; _i++) {
+                extenders[_i - 1] = arguments[_i];
+            }
+            for (var i = 0, length_2 = extenders.length; i < length_2; i++) {
+                var extender = extenders[i];
+                var values = extender.entries();
+                var next;
+                while (!(next = values.next()).done) {
+                    var entry = next.value;
+                    var key = entry[0];
+                    var value = entry[1];
+                    if (!toExtend.has(key))
+                        toExtend.set(key, value);
+                }
+            }
+            return toExtend;
+        };
+        return M;
+    })();
+    exports.M = M;
+    var UUID = (function () {
+        function UUID() {
+        }
+        UUID.is = function (uuid) {
+            return UUID.regExp.test(uuid);
+        };
+        UUID.generate = function () {
+            return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+                var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+                return v.toString(16);
+            });
+        };
+        UUID.regExp = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+        return UUID;
+    })();
+    exports.UUID = UUID;
+});
+//# sourceMappingURL=Utils.js.map;
+define('Carbon/APIDescription',["require", "exports", './NS', './Utils'], function (require, exports, NS, Utils) {
+    var RDFClass = NS.C.Class.API;
+    exports.RDFClass = RDFClass;
+    var Definition = Utils.M.from({
+        "version": {
+            "uri": NS.C.Predicate.version,
+            "multi": false,
+            "literal": true
+        },
+        "buildDate": {
+            "uri": NS.C.Predicate.buildDate,
+            "multi": false,
+            "literal": true
+        }
+    });
+    exports.Definition = Definition;
+});
+//# sourceMappingURL=APIDescription.js.map;
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -1441,220 +1692,6 @@ define('Carbon/HTTP/Errors',["require", "exports", './Errors/client/BadRequestEr
     }
 });
 //# sourceMappingURL=Errors.js.map;
-/// <reference path="../typings/es6/es6.d.ts" />
-define('Carbon/Utils',["require", "exports"], function (require, exports) {
-    function hasFunction(object, functionName) {
-        return typeof object[functionName] === 'function';
-    }
-    exports.hasFunction = hasFunction;
-    function hasProperty(object, property) {
-        if (!object)
-            return false;
-        return 'undefined' !== typeof object[property];
-    }
-    exports.hasProperty = hasProperty;
-    function hasPropertyDefined(object, property) {
-        return !!Object.getOwnPropertyDescriptor(object, property);
-    }
-    exports.hasPropertyDefined = hasPropertyDefined;
-    function isNull(value) {
-        return value === null;
-    }
-    exports.isNull = isNull;
-    function isArray(object) {
-        return Object.prototype.toString.call(object) === '[object Array]';
-    }
-    exports.isArray = isArray;
-    function isString(string) {
-        return typeof string == 'string' || string instanceof String;
-    }
-    exports.isString = isString;
-    function isBoolean(boolean) {
-        return typeof boolean == 'boolean';
-    }
-    exports.isBoolean = isBoolean;
-    function isNumber(number) {
-        return typeof number == 'number' || number instanceof Number;
-    }
-    exports.isNumber = isNumber;
-    function isInteger(number) {
-        if (!isNumber(number))
-            return false;
-        return number % 1 == 0;
-    }
-    exports.isInteger = isInteger;
-    function isDouble(number) {
-        if (!isNumber(number))
-            return false;
-        return number % 1 != 0;
-    }
-    exports.isDouble = isDouble;
-    function isDate(date) {
-        return typeof date == 'date' || date instanceof Date;
-    }
-    exports.isDate = isDate;
-    function isObject(object) {
-        return typeof object === 'object' && (!!object);
-    }
-    exports.isObject = isObject;
-    function isFunction(value) {
-        return typeof value === 'function';
-    }
-    exports.isFunction = isFunction;
-    function isMap(value) {
-        return (isObject(value) &&
-            hasFunction(value, 'get') &&
-            hasFunction(value, 'has') &&
-            hasProperty(value, 'size') &&
-            hasFunction(value, 'clear') &&
-            hasFunction(value, 'delete') &&
-            hasFunction(value, 'entries') &&
-            hasFunction(value, 'forEach') &&
-            hasFunction(value, 'get') &&
-            hasFunction(value, 'has') &&
-            hasFunction(value, 'keys') &&
-            hasFunction(value, 'set') &&
-            hasFunction(value, 'values'));
-    }
-    exports.isMap = isMap;
-    function parseBoolean(value) {
-        if (!isString(value))
-            return false;
-        switch (value.toLowerCase()) {
-            case "true":
-            case "yes":
-            case "y":
-            case "1":
-                return true;
-            case "false":
-            case "no":
-            case "n":
-            case "0":
-            default:
-                return false;
-        }
-    }
-    exports.parseBoolean = parseBoolean;
-    function extend(target) {
-        var objects = [];
-        for (var _i = 1; _i < arguments.length; _i++) {
-            objects[_i - 1] = arguments[_i];
-        }
-        if (arguments.length <= 1)
-            return;
-        for (var i = 1, length = arguments.length; i < length; i++) {
-            var toMerge = objects[i];
-            for (var name in toMerge) {
-                if (toMerge.hasOwnProperty(name)) {
-                    target[name] = toMerge[name];
-                }
-            }
-        }
-        return target;
-    }
-    exports.extend = extend;
-    function forEachOwnProperty(object, action) {
-        if (!isObject(object))
-            throw new Error('IllegalArgument');
-        for (var name in object) {
-            if (object.hasOwnProperty(name)) {
-                action(name, object[name]);
-            }
-        }
-    }
-    exports.forEachOwnProperty = forEachOwnProperty;
-    var S = (function () {
-        function S() {
-        }
-        S.startsWith = function (string, substring) {
-            return string.lastIndexOf(substring, 0) === 0;
-        };
-        S.endsWith = function (string, substring) {
-            return string.indexOf(substring, string.length - substring.length) !== -1;
-        };
-        S.contains = function (string, substring) {
-            return string.indexOf(substring) !== -1;
-        };
-        return S;
-    })();
-    exports.S = S;
-    var A = (function () {
-        function A() {
-        }
-        A.from = function (iterator) {
-            var array = [];
-            var next;
-            while (!(next = iterator.next()).done) {
-                array.push(next.value);
-            }
-            return array;
-        };
-        A.joinWithoutDuplicates = function () {
-            var arrays = [];
-            for (var _i = 0; _i < arguments.length; _i++) {
-                arrays[_i - 0] = arguments[_i];
-            }
-            var result = arrays[0].slice();
-            for (var i = 1, length_1 = arrays.length; i < length_1; i++) {
-                result = result.concat(arrays[i].filter(function (item) {
-                    return result.indexOf(item) < 0;
-                }));
-            }
-            return result;
-        };
-        return A;
-    })();
-    exports.A = A;
-    var M = (function () {
-        function M() {
-        }
-        M.from = function (object) {
-            var map = new Map();
-            forEachOwnProperty(object, function (name, value) {
-                map.set(name, value);
-            });
-            return map;
-        };
-        M.extend = function (toExtend) {
-            var extenders = [];
-            for (var _i = 1; _i < arguments.length; _i++) {
-                extenders[_i - 1] = arguments[_i];
-            }
-            for (var i = 0, length_2 = extenders.length; i < length_2; i++) {
-                var extender = extenders[i];
-                var values = extender.entries();
-                var next;
-                while (!(next = values.next()).done) {
-                    var entry = next.value;
-                    var key = entry[0];
-                    var value = entry[1];
-                    if (!toExtend.has(key))
-                        toExtend.set(key, value);
-                }
-            }
-            return toExtend;
-        };
-        return M;
-    })();
-    exports.M = M;
-    var UUID = (function () {
-        function UUID() {
-        }
-        UUID.is = function (uuid) {
-            return UUID.regExp.test(uuid);
-        };
-        UUID.generate = function () {
-            return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-                var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
-                return v.toString(16);
-            });
-        };
-        UUID.regExp = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
-        return UUID;
-    })();
-    exports.UUID = UUID;
-});
-//# sourceMappingURL=Utils.js.map;
 /// <reference path="../../typings/es6/es6.d.ts" />
 define('Carbon/HTTP/Header',["require", "exports", './../Utils'], function (require, exports, Utils) {
     var Util = (function () {
@@ -2013,9 +2050,32 @@ define('Carbon/Errors/IllegalArgumentError',["require", "exports", './AbstractEr
     exports.default = IllegalArgumentError;
 });
 //# sourceMappingURL=IllegalArgumentError.js.map;
-define('Carbon/Errors',["require", "exports", './Errors/IllegalStateError', './Errors/IllegalArgumentError'], function (require, exports, IllegalStateError_1, IllegalArgumentError_1) {
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+define('Carbon/Errors/IDAlreadyInUseError',["require", "exports", './AbstractError'], function (require, exports, AbstractError_1) {
+    var IDAlreadyInUseError = (function (_super) {
+        __extends(IDAlreadyInUseError, _super);
+        function IDAlreadyInUseError() {
+            _super.apply(this, arguments);
+        }
+        Object.defineProperty(IDAlreadyInUseError.prototype, "name", {
+            get: function () { return 'IDAlreadyInUseError'; },
+            enumerable: true,
+            configurable: true
+        });
+        return IDAlreadyInUseError;
+    })(AbstractError_1.default);
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.default = IDAlreadyInUseError;
+});
+//# sourceMappingURL=IDAlreadyInUseError.js.map;
+define('Carbon/Errors',["require", "exports", './Errors/IllegalStateError', './Errors/IllegalArgumentError', './Errors/IDAlreadyInUseError'], function (require, exports, IllegalStateError_1, IllegalArgumentError_1, IDAlreadyInUseError_1) {
     exports.IllegalStateError = IllegalStateError_1.default;
     exports.IllegalArgumentError = IllegalArgumentError_1.default;
+    exports.IDAlreadyInUseError = IDAlreadyInUseError_1.default;
 });
 //# sourceMappingURL=Errors.js.map;
 define('Carbon/Auth',["require", "exports", './HTTP', './Errors'], function (require, exports, HTTP, Errors) {
@@ -9641,6 +9701,18 @@ define('Carbon/RDF/Literal',["require", "exports", '../Utils', '../namespaces/XS
     exports.Util = Util;
 });
 //# sourceMappingURL=Literal.js.map;
+define('Carbon/RDF/PropertyDescription',["require", "exports"], function (require, exports) {
+    var PropertyDescription = (function () {
+        function PropertyDescription() {
+            this.multi = true;
+            this.literal = null;
+        }
+        return PropertyDescription;
+    })();
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.default = PropertyDescription;
+});
+//# sourceMappingURL=PropertyDescription.js.map;
 define('Carbon/RDF/RDFNode',["require", "exports", '../Utils'], function (require, exports, Utils) {
     var Factory = (function () {
         function Factory() {
@@ -9669,8 +9741,182 @@ define('Carbon/RDF/RDFNode',["require", "exports", '../Utils'], function (requir
     exports.Util = Util;
 });
 //# sourceMappingURL=RDFNode.js.map;
+define('Carbon/RDF/URI',["require", "exports", '../Utils'], function (require, exports, Utils) {
+    var Util = (function () {
+        function Util() {
+        }
+        Util.hasFragment = function (uri) {
+            return uri.indexOf('#') != -1;
+        };
+        Util.hasProtocol = function (uri) {
+            return Utils.S.startsWith(uri, 'https://') || Utils.S.startsWith(uri, 'http://');
+        };
+        Util.isAbsolute = function (uri) {
+            if (Utils.S.startsWith(uri, 'http://'))
+                return true;
+            if (Utils.S.startsWith(uri, 'https://'))
+                return true;
+            if (Utils.S.startsWith(uri, '://'))
+                return true;
+        };
+        Util.isRelative = function (uri) {
+            return !Util.isAbsolute(uri);
+        };
+        Util.isBNodeID = function (uri) {
+            return Utils.S.startsWith(uri, '_:');
+        };
+        Util.getDocumentURI = function (uri) {
+            var parts = uri.split('#');
+            if (parts.length > 2)
+                throw new Error('IllegalArgument: The URI provided has more than one # sign.');
+            return parts[0];
+        };
+        Util.getFragment = function (uri) {
+            var parts = uri.split('#');
+            if (parts.length < 2)
+                return null;
+            if (parts.length > 2)
+                throw new Error('IllegalArgument: The URI provided has more than one # sign.');
+            return parts[1];
+        };
+        Util.resolve = function (parentURI, childURI) {
+            var finalURI = parentURI;
+            if (!Utils.S.endsWith(parentURI, '/'))
+                finalURI += '/';
+            if (Utils.S.startsWith(childURI, '/'))
+                finalURI = finalURI + childURI.substr(1, childURI.length);
+            else
+                finalURI += childURI;
+            return finalURI;
+        };
+        Util.removeProtocol = function (uri) {
+            if (Utils.S.startsWith(uri, 'https://'))
+                return uri.substr(5, uri.length);
+            if (Utils.S.startsWith(uri, 'http://'))
+                return uri.substr(4, uri.length);
+            return uri;
+        };
+        return Util;
+    })();
+    exports.Util = Util;
+});
+//# sourceMappingURL=URI.js.map;
+define('Carbon/RDF/Document',["require", "exports", './RDFNode', '../Utils', './URI'], function (require, exports, RDFNode, Utils, URI) {
+    var Factory = (function () {
+        function Factory() {
+        }
+        Factory.is = function (object) {
+            return (Utils.hasProperty(object, '@graph'));
+        };
+        Factory.create = function (resources, uri) {
+            var document = uri ? RDFNode.Factory.create(uri) : {};
+            document['@graph'] = resources;
+            return document;
+        };
+        return Factory;
+    })();
+    exports.Factory = Factory;
+    var Util = (function () {
+        function Util() {
+        }
+        Util.getDocuments = function (value) {
+            if (Utils.isArray(value)) {
+                if (value.length === 0)
+                    return value;
+                if (Factory.is(value[0]))
+                    return value;
+                if (RDFNode.Factory.is(value[0]))
+                    return [Factory.create(value)];
+            }
+            else if (Utils.isObject(value)) {
+                if (Factory.is(value))
+                    return [value];
+                if (RDFNode.Factory.is(value))
+                    return [Factory.create([value])];
+            }
+            else
+                throw new Error("IllegalArgument: The value structure isn't valid.");
+        };
+        Util.getResources = function (document) {
+            if (Utils.isArray(document)) {
+                if (document.length === 0)
+                    return document;
+                if (document.length === 1) {
+                    if (Utils.isArray(document[0]))
+                        return Util.getResources(document[0]);
+                    if (!Utils.isObject(document[0]))
+                        throw new Error("IllegalArgument: The document structure isn't valid.");
+                    if (!document[0].hasOwnProperty('@graph'))
+                        return document;
+                    return Util.getResources(document[0]['@graph']);
+                }
+                return document;
+            }
+            else {
+                if (!Utils.isObject(document))
+                    throw new Error("IllegalArgument: The document structure isn't valid.");
+                if (!document.hasOwnProperty('@graph'))
+                    throw new Error("IllegalArgument: The document structure isn't valid.");
+                return Util.getResources(document['@graph']);
+            }
+        };
+        Util.getDocumentResources = function (document) {
+            var resources = Util.getResources(document);
+            var documentResources = [];
+            for (var i = 0, length_1 = resources.length; i < length_1; i++) {
+                var resource = resources[i];
+                var uri = resource['@id'];
+                if (!uri)
+                    continue;
+                if (!URI.Util.hasFragment(uri) && !URI.Util.isBNodeID(uri))
+                    documentResources.push(resource);
+            }
+            return documentResources;
+        };
+        Util.getFragmentResources = function (document, documentResource) {
+            var resources = Util.getResources(document);
+            var documentURIToMatch = null;
+            if (documentResource) {
+                if (Utils.isString(documentResource))
+                    documentURIToMatch = documentResource;
+                else
+                    documentURIToMatch = documentResource['@id'];
+            }
+            var fragmentResources = [];
+            for (var i = 0, length = resources.length; i < length; i++) {
+                var resource = resources[i];
+                var uri = resource['@id'];
+                if (!uri)
+                    continue;
+                if (!URI.Util.hasFragment(uri))
+                    continue;
+                if (!documentURIToMatch)
+                    fragmentResources.push(resource);
+                else {
+                    var documentURI = URI.Util.getDocumentURI(uri);
+                    if (documentURI === documentURIToMatch)
+                        fragmentResources.push(resource);
+                }
+            }
+            return fragmentResources;
+        };
+        Util.getBNodeResources = function (document) {
+            var resources = Util.getResources(document);
+            var bnodes = [];
+            for (var i = 0, length_2 = resources.length; i < length_2; i++) {
+                var resource = resources[i];
+                if (!('@id' in resource) || URI.Util.isBNodeID(resource['@id']))
+                    bnodes.push(resource);
+            }
+            return bnodes;
+        };
+        return Util;
+    })();
+    exports.Util = Util;
+});
+//# sourceMappingURL=Document.js.map;
 /// <reference path="../../typings/es6/es6.d.ts" />
-define('Carbon/RDF/Resource',["require", "exports", './Literal', '../Utils', './RDFNode'], function (require, exports, Literal, Utils, RDFNode) {
+define('Carbon/RDF/Resource',["require", "exports", './Literal', './../Utils', './RDFNode'], function (require, exports, Literal, Utils, RDFNode) {
     function hasProperty(propertyURI) {
         return Utils.hasProperty(this, propertyURI);
     }
@@ -9782,19 +10028,20 @@ define('Carbon/RDF/Resource',["require", "exports", './Literal', '../Utils', './
         };
         Factory.prototype.create = function () {
             var resource = {};
+            var resourceArray = this.from([{}]);
             return this.from(resource);
         };
-        Factory.prototype.from = function (objectOrObjects) {
-            var objects = Utils.isArray(objectOrObjects) ? objectOrObjects : [objectOrObjects];
+        Factory.prototype.from = function (objects) {
+            if (!Utils.isArray(objects))
+                return this.singleFrom(objects);
             for (var i = 0, length = objects.length; i < length; i++) {
                 var resource = objects[i];
-                if (!this.hasClassProperties(resource))
-                    this.injectBehaviour(resource);
+                this.injectBehavior(resource);
             }
-            if (Utils.isArray(objectOrObjects))
-                return objects;
-            else
-                return objects[0];
+            return objects;
+        };
+        Factory.prototype.singleFrom = function (object) {
+            return this.injectBehavior(object);
         };
         Factory.prototype.hasRDFClass = function (resource) {
             return true;
@@ -9815,7 +10062,10 @@ define('Carbon/RDF/Resource',["require", "exports", './Literal', '../Utils', './
                 Utils.hasFunction(resource, 'setProperty') &&
                 Utils.hasFunction(resource, 'deleteProperty'));
         };
-        Factory.prototype.injectBehaviour = function (resource) {
+        Factory.prototype.injectBehavior = function (node) {
+            var resource = node;
+            if (this.hasClassProperties(resource))
+                return resource;
             Object.defineProperties(resource, {
                 '_propertyAddedCallbacks': {
                     writable: false,
@@ -10017,259 +10267,6 @@ define('Carbon/RDF/Resource',["require", "exports", './Literal', '../Utils', './
     exports.factory = factory;
 });
 //# sourceMappingURL=Resource.js.map;
-define('Carbon/RDF/URI',["require", "exports", '../Utils'], function (require, exports, Utils) {
-    var Util = (function () {
-        function Util() {
-        }
-        Util.hasFragment = function (uri) {
-            return uri.indexOf('#') != -1;
-        };
-        Util.hasProtocol = function (uri) {
-            return Utils.S.startsWith(uri, 'https://') || Utils.S.startsWith(uri, 'http://');
-        };
-        Util.isAbsolute = function (uri) {
-            if (Utils.S.startsWith(uri, 'http://'))
-                return true;
-            if (Utils.S.startsWith(uri, 'https://'))
-                return true;
-            if (Utils.S.startsWith(uri, '://'))
-                return true;
-        };
-        Util.isRelative = function (uri) {
-            return !Util.isAbsolute(uri);
-        };
-        Util.getDocumentURI = function (uri) {
-            var parts = uri.split('#');
-            if (parts.length > 2)
-                throw new Error('IllegalArgument: The URI provided has more than one # sign.');
-            return parts[0];
-        };
-        Util.getFragment = function (uri) {
-            var parts = uri.split('#');
-            if (parts.length < 2)
-                return null;
-            if (parts.length > 2)
-                throw new Error('IllegalArgument: The URI provided has more than one # sign.');
-            return parts[1];
-        };
-        Util.resolve = function (parentURI, childURI) {
-            var finalURI = parentURI;
-            if (!Utils.S.endsWith(parentURI, '/'))
-                finalURI += '/';
-            if (Utils.S.startsWith(childURI, '/'))
-                finalURI = finalURI + childURI.substr(1, childURI.length);
-            else
-                finalURI += childURI;
-            return finalURI;
-        };
-        Util.removeProtocol = function (uri) {
-            if (Utils.S.startsWith(uri, 'https://'))
-                return uri.substr(5, uri.length);
-            if (Utils.S.startsWith(uri, 'http://'))
-                return uri.substr(4, uri.length);
-            return uri;
-        };
-        return Util;
-    })();
-    exports.Util = Util;
-});
-//# sourceMappingURL=URI.js.map;
-define('Carbon/RDF/FragmentResource',["require", "exports", './Resource', './URI', '../Utils'], function (require, exports, Resource, URI, Utils) {
-    var Factory = (function () {
-        function Factory() {
-        }
-        Factory.prototype.is = function (resource) {
-            return (Resource.factory.is(resource) &&
-                this.hasClassProperties(resource));
-        };
-        Factory.prototype.create = function (slug) {
-            slug = URI.Util.hasFragment(slug) ? URI.Util.getFragment(slug) : slug;
-            slug = '#' + slug;
-            var resource = Resource.factory.create();
-            var fragment = this.from(resource);
-            fragment.slug = slug;
-            return fragment;
-        };
-        Factory.prototype.from = function (resourceOrResources) {
-            var resources = Utils.isArray(resourceOrResources) ? resourceOrResources : [resourceOrResources];
-            var fragments = [];
-            for (var i = 0, length_1 = resources.length; i < length_1; i++) {
-                var resource = resources[i];
-                resource = Resource.factory.is(resource) ? resource : Resource.factory.from(resource);
-                var fragment = resource;
-                if (!this.is(fragment))
-                    this.injectBehaviour(fragment);
-                fragments.push(fragment);
-            }
-            if (Utils.isArray(resourceOrResources))
-                return fragments;
-            else
-                return fragments[0];
-        };
-        Factory.prototype.hasClassProperties = function (resource) {
-            return (Utils.hasProperty(resource, 'slug'));
-        };
-        Factory.prototype.injectBehaviour = function (fragment) {
-            Object.defineProperty(fragment, 'slug', {
-                writable: true,
-                enumerable: false
-            });
-            if (!fragment.uri)
-                fragment.slug = null;
-            else
-                fragment.slug = '#' + URI.Util.getFragment(fragment.uri);
-            return fragment;
-        };
-        return Factory;
-    })();
-    exports.Factory = Factory;
-    var factory = new Factory();
-    exports.factory = factory;
-});
-//# sourceMappingURL=FragmentResource.js.map;
-define('Carbon/RDF/DocumentResource',["require", "exports", './Resource', './FragmentResource', './URI', '../Utils'], function (require, exports, Resource, FragmentResource, URI, Utils) {
-    function getFragmentSlug(fragmentURI) {
-        var fragmentSlug;
-        if (URI.Util.isAbsolute(fragmentURI)) {
-            throw new Error('IllegalArgument: Absolute URIs are not currently supported.');
-        }
-        else {
-            if (URI.Util.hasFragment(fragmentURI))
-                fragmentSlug = URI.Util.getFragment(fragmentURI);
-            else
-                fragmentSlug = fragmentURI;
-        }
-        return '#' + fragmentSlug;
-    }
-    function hasFragment(uri) {
-        return !Utils.isNull(this.getFragment(uri));
-    }
-    function getFragment(uri) {
-        var fragmentSlug = getFragmentSlug(uri);
-        var documentResource = this;
-        var fragments = documentResource._fragments;
-        for (var i = 0, length_1 = fragments.length; i < length_1; i++) {
-            var fragment = fragments[i];
-            if (fragment.slug === fragmentSlug)
-                return fragment;
-        }
-        return null;
-    }
-    function getFragments() {
-        var documentResource = this;
-        return documentResource._fragments.slice();
-    }
-    function createFragment(uri) {
-        var fragmentSlug = getFragmentSlug(uri);
-        var documentResource = this;
-        if (documentResource.hasFragment(fragmentSlug))
-            throw new Error('Conflict: A fragment already exists with that slug.');
-        var fragment = FragmentResource.factory.create(fragmentSlug);
-        documentResource._fragments.push(fragment);
-        return fragment;
-    }
-    function deleteFragment(uri) {
-        var fragmentSlug = getFragmentSlug(uri);
-        var documentResource = this;
-        for (var i = 0, length_2 = documentResource._fragments.length; i < length_2; i++) {
-            var fragment = documentResource._fragments[i];
-            if (fragment.slug === fragmentSlug) {
-                documentResource._fragments.splice(i, 1);
-                return true;
-            }
-        }
-        return false;
-    }
-    function toJsonLD() {
-        var resources = [this];
-        resources = resources.concat(this._fragments);
-        return JSON.stringify(resources);
-    }
-    var Factory = (function () {
-        function Factory() {
-        }
-        Factory.prototype.is = function (value) {
-            return (Resource.factory.is(value) &&
-                this.hasClassProperties(value));
-        };
-        Factory.prototype.from = function (resource, fragments) {
-            if (fragments === void 0) { fragments = []; }
-            resource = Resource.factory.is(resource) ? resource : Resource.factory.from(resource);
-            var documentResource = resource;
-            if (!this.is(documentResource))
-                this.injectBehaviour(documentResource);
-            this.addFragments(documentResource, fragments);
-            return documentResource;
-        };
-        Factory.prototype.hasClassProperties = function (resource) {
-            return (Utils.hasProperty(resource, '_fragments') &&
-                Utils.hasFunction(resource, 'hasFragment') &&
-                Utils.hasFunction(resource, 'getFragment') &&
-                Utils.hasFunction(resource, 'getFragments') &&
-                Utils.hasFunction(resource, 'createFragment') &&
-                Utils.hasFunction(resource, 'deleteFragment'));
-        };
-        Factory.prototype.injectBehaviour = function (resource) {
-            Object.defineProperties(resource, {
-                '_fragments': {
-                    writable: false,
-                    enumerable: false,
-                    configurable: false,
-                    value: []
-                },
-                'hasFragment': {
-                    writable: false,
-                    enumerable: false,
-                    configurable: true,
-                    value: hasFragment
-                },
-                'getFragment': {
-                    writable: false,
-                    enumerable: false,
-                    configurable: true,
-                    value: getFragment
-                },
-                'getFragments': {
-                    writable: false,
-                    enumerable: false,
-                    configurable: true,
-                    value: getFragments
-                },
-                'createFragment': {
-                    writable: false,
-                    enumerable: false,
-                    configurable: true,
-                    value: createFragment
-                },
-                'deleteFragment': {
-                    writable: false,
-                    enumerable: false,
-                    configurable: true,
-                    value: deleteFragment
-                },
-                'toJsonLD': {
-                    writable: false,
-                    enumerable: false,
-                    configurable: true,
-                    value: toJsonLD
-                }
-            });
-            return resource;
-        };
-        Factory.prototype.addFragments = function (documentResource, fragments) {
-            for (var i = 0, length_3 = fragments.length; i < length_3; i++) {
-                var resource = fragments[i];
-                var fragment = FragmentResource.factory.from(resource);
-                documentResource._fragments.push(fragment);
-            }
-        };
-        return Factory;
-    })();
-    exports.Factory = Factory;
-    var factory = new Factory();
-    exports.factory = factory;
-});
-//# sourceMappingURL=DocumentResource.js.map;
 define('Carbon/RDF/Value',["require", "exports", './Literal', './RDFNode'], function (require, exports, Literal, RDFNode) {
     var Util = (function () {
         function Util() {
@@ -10289,283 +10286,324 @@ define('Carbon/RDF/Value',["require", "exports", './Literal', './RDFNode'], func
     exports.Util = Util;
 });
 //# sourceMappingURL=Value.js.map;
-/// <reference path="../../typings/es6/es6.d.ts" />
-/// <reference path="../../typings/es6-promise/es6-promise.d.ts" />
-define('Carbon/RDF/PersistedDocumentResource',["require", "exports", './DocumentResource', './Persisted', '../Utils', './Value'], function (require, exports, DocumentResource, Persisted, Utils, Value) {
-    var SpecialValue;
-    (function (SpecialValue) {
-        SpecialValue[SpecialValue["ALL_VALUES"] = 0] = "ALL_VALUES";
-    })(SpecialValue || (SpecialValue = {}));
-    function modificationsDeleteAllValues(deleteModifications) {
-        return deleteModifications.length === 1 && deleteModifications[0] === SpecialValue.ALL_VALUES;
-    }
-    function getModifications(type) {
-        var modifications;
-        switch (type) {
-            case Persisted.ModificationType.ADD:
-                modifications = this._modifications.add;
-                break;
-            case Persisted.ModificationType.SET:
-                modifications = this._modifications.set;
-                break;
-            case Persisted.ModificationType.DELETE:
-                modifications = this._modifications.delete;
-                break;
-        }
-        return modifications;
-    }
-    function addModification(type, propertyURI, value) {
-        var modifications = getModifications.call(this, type, propertyURI);
-        var values;
-        if (modifications.has(propertyURI)) {
-            values = modifications.get(propertyURI);
-            for (var i = 0, length_1 = values.length; i < length_1; i++) {
-                if (Value.Util.areEqual(values[i], value))
-                    return;
-            }
-        }
-        else {
-            values = [];
-            modifications.set(propertyURI, values);
-        }
-        values.push(value);
-    }
-    function removeModification(type, propertyURI, value) {
-        var modifications = getModifications.call(this, type, propertyURI);
-        var values = modifications.get(propertyURI);
-        for (var i = 0, length_2 = values.length; i < length_2; i++) {
-            if (Value.Util.areEqual(values[i], value)) {
-                values.splice(i, 1);
-                break;
-            }
-        }
-    }
-    function registerAddModification(propertyURI, value) {
-        this._dirty = true;
-        if (this._modifications.delete.has(propertyURI)) {
-            var deleteModifications = this._modifications.delete.get(propertyURI);
-            if (modificationsDeleteAllValues(deleteModifications)) {
-                this._modifications.delete.delete(propertyURI);
-                addModification.call(this, Persisted.ModificationType.SET, propertyURI, value);
-                return;
-            }
-            removeModification.call(this, Persisted.ModificationType.DELETE, propertyURI, value);
-            for (var i = 0, length_3 = deleteModifications.length; i < length_3; i++) {
-                if (Value.Util.areEqual(deleteModifications[i], value)) {
-                    deleteModifications.splice(i, 1);
-                    break;
-                }
-            }
-        }
-        else if (this._modifications.set.has(propertyURI)) {
-            addModification.call(this, Persisted.ModificationType.SET, propertyURI, value);
-        }
-        else {
-            addModification.call(this, Persisted.ModificationType.ADD, propertyURI, value);
-        }
-    }
-    function registerDeleteModification(propertyURI, value) {
-        if (value === void 0) { value = null; }
-        this._dirty = true;
-        if (Utils.isNull(value))
-            value = SpecialValue.ALL_VALUES;
-        if (value === SpecialValue.ALL_VALUES) {
-            if (this._modifications.add.has(propertyURI))
-                this._modifications.add.delete(propertyURI);
-            if (this._modifications.set.has(propertyURI))
-                this._modifications.set.delete(propertyURI);
-            if (this._modifications.delete.has(propertyURI))
-                this._modifications.delete.delete(propertyURI);
-        }
-        else {
-            if (this._modifications.add.has(propertyURI))
-                removeModification.call(this, Persisted.ModificationType.ADD, propertyURI, value);
-            if (this._modifications.set.has(propertyURI))
-                removeModification.call(this, Persisted.ModificationType.SET, propertyURI, value);
-        }
-        addModification.call(this, Persisted.ModificationType.DELETE, propertyURI, value);
-    }
-    function clean() {
-        this._modifications = new Persisted.Modifications();
-        this._dirty = true;
-    }
-    function commit() {
-        return this._committer.commit(this);
-    }
-    function destroy() {
-    }
-    var Factory = (function () {
-        function Factory() {
-        }
-        Factory.is = function (value) {
-            return (DocumentResource.factory.is(value) &&
-                Persisted.Factory.is(value) &&
-                Utils.hasProperty(value, '_parent') &&
-                Utils.hasFunction(value, '_clean') &&
-                Utils.hasFunction(value, 'commit') &&
-                Utils.hasFunction(value, 'delete'));
-        };
-        Factory.from = function (documentResource, committer) {
-            var persisted = documentResource;
-            Persisted.Factory.from(persisted);
-            if (!Factory.is(persisted)) {
-                Object.defineProperties(persisted, {
-                    '_committer': {
-                        writable: false,
-                        enumerable: false,
-                        value: committer
-                    }
-                });
-                persisted._propertyAddedCallbacks.push(registerAddModification);
-                persisted._propertyDeletedCallbacks.push(registerDeleteModification);
-                persisted._clean = clean;
-                persisted.commit = commit;
-                persisted.delete = destroy;
-            }
-            return persisted;
-        };
-        return Factory;
-    })();
-    exports.Factory = Factory;
-});
-//# sourceMappingURL=PersistedDocumentResource.js.map;
-define('Carbon/RDF/PersistedFragmentResource',["require", "exports"], function (require, exports) {
-});
-//# sourceMappingURL=PersistedFragmentResource.js.map;
-define('Carbon/RDF/PropertyDescription',["require", "exports"], function (require, exports) {
-    var PropertyDescription = (function () {
-        function PropertyDescription() {
-            this.multi = true;
-            this.literal = null;
-        }
-        return PropertyDescription;
-    })();
-    Object.defineProperty(exports, "__esModule", { value: true });
-    exports.default = PropertyDescription;
-});
-//# sourceMappingURL=PropertyDescription.js.map;
-define('Carbon/RDF/RDFDocument',["require", "exports", './RDFNode', '../Utils', './URI'], function (require, exports, RDFNode, Utils, URI) {
-    var Factory = (function () {
-        function Factory() {
-        }
-        Factory.is = function (object) {
-            return (Utils.hasProperty(object, '@graph'));
-        };
-        Factory.create = function (resources, uri) {
-            var document = uri ? RDFNode.Factory.create(uri) : {};
-            document['@graph'] = resources;
-            return document;
-        };
-        return Factory;
-    })();
-    exports.Factory = Factory;
-    var Util = (function () {
-        function Util() {
-        }
-        Util.getDocuments = function (value) {
-            if (Utils.isArray(value)) {
-                if (value.length === 0)
-                    return value;
-                if (Factory.is(value[0]))
-                    return value;
-                if (RDFNode.Factory.is(value[0]))
-                    return [Factory.create(value)];
-            }
-            else if (Utils.isObject(value)) {
-                if (Factory.is(value))
-                    return [value];
-                if (RDFNode.Factory.is(value))
-                    return [Factory.create([value])];
-            }
-            else
-                throw new Error("IllegalArgument: The value structure isn't valid.");
-        };
-        Util.getResources = function (document) {
-            if (Utils.isArray(document)) {
-                if (document.length === 0)
-                    return document;
-                if (document.length === 1) {
-                    if (Utils.isArray(document[0]))
-                        return Util.getResources(document[0]);
-                    if (!Utils.isObject(document[0]))
-                        throw new Error("IllegalArgument: The document structure isn't valid.");
-                    if (!document[0].hasOwnProperty('@graph'))
-                        return document;
-                    return Util.getResources(document[0]['@graph']);
-                }
-                return document;
-            }
-            else {
-                if (!Utils.isObject(document))
-                    throw new Error("IllegalArgument: The document structure isn't valid.");
-                if (!document.hasOwnProperty('@graph'))
-                    throw new Error("IllegalArgument: The document structure isn't valid.");
-                return Util.getResources(document['@graph']);
-            }
-        };
-        Util.getDocumentResources = function (document) {
-            var resources = Util.getResources(document);
-            var documentResources = [];
-            for (var i = 0, length_1 = resources.length; i < length_1; i++) {
-                var resource = resources[i];
-                var uri = resource['@id'];
-                if (!uri)
-                    continue;
-                if (!URI.Util.hasFragment(uri))
-                    documentResources.push(resource);
-            }
-            return documentResources;
-        };
-        Util.getFragmentResources = function (document, documentResource) {
-            var resources = Util.getResources(document);
-            var documentURIToMatch = null;
-            if (documentResource) {
-                if (Utils.isString(documentResource))
-                    documentURIToMatch = documentResource;
-                else
-                    documentURIToMatch = documentResource['@id'];
-            }
-            var fragmentResources = [];
-            for (var i = 0, length = resources.length; i < length; i++) {
-                var resource = resources[i];
-                var uri = resource['@id'];
-                if (!uri)
-                    continue;
-                if (!URI.Util.hasFragment(uri))
-                    continue;
-                if (!documentURIToMatch)
-                    fragmentResources.push(resource);
-                else {
-                    var documentURI = URI.Util.getDocumentURI(uri);
-                    if (documentURI === documentURIToMatch)
-                        fragmentResources.push(resource);
-                }
-            }
-            return fragmentResources;
-        };
-        return Util;
-    })();
-    exports.Util = Util;
-});
-//# sourceMappingURL=RDFDocument.js.map;
-define('Carbon/RDF',["require", "exports", './RDF/Persisted', './RDF/DocumentResource', './RDF/PersistedDocumentResource', './RDF/FragmentResource', './RDF/PersistedFragmentResource', './RDF/Literal', './RDF/PropertyDescription', './RDF/RDFDocument', './RDF/RDFNode', './RDF/Resource', './RDF/URI', './RDF/Value'], function (require, exports, Persisted, DocumentResource, PersistedDocumentResource, FragmentResource, PersistedFragmentResource, Literal, PropertyDescription_1, RDFDocument, RDFNode, Resource, URI, Value) {
+define('Carbon/RDF',["require", "exports", './RDF/Persisted', './RDF/Literal', './RDF/PropertyDescription', './RDF/Document', './RDF/RDFNode', './RDF/Resource', './RDF/URI', './RDF/Value'], function (require, exports, Persisted, Literal, PropertyDescription_1, Document, RDFNode, Resource, URI, Value) {
     exports.Persisted = Persisted;
-    exports.DocumentResource = DocumentResource;
-    exports.PersistedDocumentResource = PersistedDocumentResource;
-    exports.FragmentResource = FragmentResource;
-    exports.PersistedFragmentResource = PersistedFragmentResource;
     exports.Literal = Literal;
     exports.PropertyDescription = PropertyDescription_1.default;
-    exports.Document = RDFDocument;
+    exports.Document = Document;
     exports.Node = RDFNode;
     exports.Resource = Resource;
     exports.URI = URI;
     exports.Value = Value;
 });
 //# sourceMappingURL=RDF.js.map;
-define('Carbon/Documents',["require", "exports", "jsonld", './HTTP', './Errors', './RDF'], function (require, exports, jsonld, HTTP, Errors, RDF) {
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+define('Carbon/Fragment',["require", "exports", './Errors', './RDF', './Utils'], function (require, exports, Errors, RDF, Utils) {
+    function externalAnonymousFragmentFilter(propertyURI, value) {
+        if (!RDF.Node.Factory.is(value))
+            return;
+        if (!RDF.URI.Util.isBNodeID(value['@id']))
+            return;
+        if (!('document' in value))
+            throw new Errors.IllegalArgumentError("The resource provided doesn't belong to a document.");
+        var fragment = value;
+        if (this.document !== fragment.document)
+            throw new Errors.IllegalArgumentError("The anonymous fragment provided belongs to another document. To reference it from another document it needs to be named.");
+    }
+    var Factory = (function (_super) {
+        __extends(Factory, _super);
+        function Factory() {
+            _super.apply(this, arguments);
+        }
+        Factory.prototype.from = function (objects) {
+            if (!Utils.isArray(objects))
+                return this.singleFrom(objects);
+            for (var i = 0, length_1 = objects.length; i < length_1; i++) {
+                var object = objects[i];
+                this.singleFrom(object);
+            }
+            return objects;
+        };
+        Factory.prototype.singleFrom = function (object) {
+            return this.injectBehavior(object);
+        };
+        Factory.prototype.injectBehavior = function (object) {
+            var fragment = _super.prototype.injectBehavior.call(this, object);
+            if (this.hasClassProperties(fragment))
+                return fragment;
+            fragment._propertyAddedCallbacks.push(externalAnonymousFragmentFilter);
+            var document = fragment.document;
+            delete fragment.document;
+            Object.defineProperties(fragment, {
+                'document': {
+                    writable: false,
+                    enumerable: false,
+                    value: document
+                }
+            });
+            return fragment;
+        };
+        Factory.prototype.hasClassProperties = function (resource) {
+            return false;
+        };
+        return Factory;
+    })(RDF.Resource.Factory);
+    exports.Factory = Factory;
+    var factory = new Factory();
+    exports.factory = factory;
+    var Util = (function () {
+        function Util() {
+        }
+        Util.generateID = function () {
+            return '_:' + Utils.UUID.generate();
+        };
+        return Util;
+    })();
+    exports.Util = Util;
+});
+//# sourceMappingURL=Fragment.js.map;
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+define('Carbon/NamedFragment',["require", "exports", './Fragment', './RDF', './Utils'], function (require, exports, Fragment, RDF, Utils) {
+    var Factory = (function (_super) {
+        __extends(Factory, _super);
+        function Factory() {
+            _super.apply(this, arguments);
+        }
+        Factory.prototype.from = function (objects) {
+            if (!Utils.isArray(objects))
+                return this.singleFrom(objects);
+            for (var i = 0, length_1 = objects.length; i < length_1; i++) {
+                var object = objects[i];
+                this.singleFrom(object);
+            }
+            return objects;
+        };
+        Factory.prototype.singleFrom = function (object) {
+            return this.injectBehavior(object);
+        };
+        Factory.prototype.injectBehavior = function (node) {
+            var fragment = _super.prototype.injectBehavior.call(this, node);
+            if (this.hasClassProperties(fragment))
+                return fragment;
+            Object.defineProperties(fragment, {
+                'slug': {
+                    get: function () {
+                        return RDF.URI.Util.getFragment(fragment.uri);
+                    },
+                    set: function (slug) {
+                        this.uri = this.document.uri + '#' + slug;
+                    },
+                    enumerable: false
+                }
+            });
+            return fragment;
+        };
+        Factory.prototype.hasClassProperties = function (resource) {
+            return (Utils.hasPropertyDefined(resource, 'slug'));
+        };
+        return Factory;
+    })(Fragment.Factory);
+    exports.Factory = Factory;
+    var factory = new Factory();
+    exports.factory = factory;
+});
+//# sourceMappingURL=NamedFragment.js.map;
+/// <reference path="./../typings/es6/es6.d.ts" />
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+define('Carbon/Document',["require", "exports", './Fragment', './NamedFragment', './RDF', './Utils', './Errors'], function (require, exports, Fragment, NamedFragment, RDF, Utils, Errors) {
+    function hasFragment(id) {
+        var document = this;
+        id = RDF.URI.Util.hasFragment(id) ? RDF.URI.Util.getFragment(id) : id;
+        return document._fragmentsIndex.has(id);
+    }
+    function getFragment(id) {
+        var document = this;
+        id = RDF.URI.Util.hasFragment(id) ? RDF.URI.Util.getFragment(id) : id;
+        return document._fragmentsIndex.get(id);
+    }
+    function getNamedFragment(slug) {
+        var document = this;
+        if (RDF.URI.Util.isBNodeID(slug))
+            throw new Errors.IllegalArgumentError("Named fragments can't have a slug that starts with '_:'.");
+        slug = RDF.URI.Util.hasFragment(slug) ? RDF.URI.Util.getFragment(slug) : slug;
+        return document._fragmentsIndex.get(slug);
+    }
+    function getFragments() {
+        var document = this;
+        return Utils.A.from(document._fragmentsIndex.values());
+    }
+    function createFragment(slug) {
+        var document = this;
+        if (slug)
+            return document.createNamedFragment(slug);
+        var id = Fragment.Util.generateID();
+        var fragmentObject = {
+            '@id': id,
+            'document': document
+        };
+        var fragment = Fragment.factory.from(fragmentObject);
+        document._fragmentsIndex.set(id, fragment);
+        return fragment;
+    }
+    function createNamedFragment(slug) {
+        var document = this;
+        if (RDF.URI.Util.isBNodeID(slug))
+            throw new Errors.IllegalArgumentError("Named fragments can't have a slug that starts with '_:'.");
+        slug = RDF.URI.Util.hasFragment(slug) ? RDF.URI.Util.getFragment(slug) : slug;
+        if (document._fragmentsIndex.has(slug))
+            throw new Errors.IDAlreadyInUseError("The slug provided is already being used by a fragment.");
+        var uri = document.uri + '#' + slug;
+        var fragmentObject = {
+            '@id': uri,
+            'document': document
+        };
+        var fragment = NamedFragment.factory.from(fragmentObject);
+        document._fragmentsIndex.set(slug, fragment);
+        return fragment;
+    }
+    function removeFragment(fragmentOrSlug) {
+    }
+    function toJSON() {
+        var rdfDocument = {
+            '@graph': this.getFragments()
+        };
+        if (this.uri)
+            rdfDocument['@id'] = this.id;
+        rdfDocument['@graph'].push(this);
+        return JSON.stringify(rdfDocument);
+    }
+    var Factory = (function (_super) {
+        __extends(Factory, _super);
+        function Factory() {
+            _super.apply(this, arguments);
+        }
+        Factory.prototype.from = function (rdfDocuments) {
+            if (!Utils.isArray(rdfDocuments))
+                return this.singleFrom(rdfDocuments);
+            var documents = [];
+            for (var i = 0, length_1 = rdfDocuments.length; i < length_1; i++) {
+                var rdfDocument = rdfDocuments[i];
+                documents.push(this.singleFrom(rdfDocument));
+            }
+            return documents;
+        };
+        Factory.prototype.singleFrom = function (rdfDocument) {
+            var documentResources = RDF.Document.Util.getDocumentResources(rdfDocument);
+            if (documentResources.length > 1)
+                throw new Errors.IllegalArgumentError('The RDFDocument contains more than one document resource.');
+            else if (documentResources.length === 0)
+                throw new Errors.IllegalArgumentError('The RDFDocument doesn\'t contain a document resource.');
+            var document = this.injectBehavior(documentResources[0]);
+            var fragmentResources = RDF.Document.Util.getBNodeResources(rdfDocument);
+            for (var i = 0, length_2 = fragmentResources.length; i < length_2; i++) {
+                var fragmentResource = fragmentResources[i];
+                fragmentResource.document = document;
+                var fragment = Fragment.factory.from(fragmentResource);
+                if (!fragment.uri)
+                    fragment.uri = Fragment.Util.generateID();
+                document._fragmentsIndex.set(fragment.uri, fragment);
+            }
+            var namedFragmentResources = RDF.Document.Util.getFragmentResources(rdfDocument);
+            for (var i = 0, length_3 = namedFragmentResources.length; i < length_3; i++) {
+                var namedFragmentResource = namedFragmentResources[i];
+                namedFragmentResource.document = document;
+                var namedFragment = NamedFragment.factory.from(namedFragmentResource);
+                document._fragmentsIndex.set(RDF.URI.Util.getFragment(namedFragment.uri), namedFragment);
+            }
+            return document;
+        };
+        Factory.prototype.injectBehavior = function (resource) {
+            var documentResource = _super.prototype.injectBehavior.call(this, resource);
+            if (this.hasClassProperties(documentResource))
+                return documentResource;
+            Object.defineProperties(documentResource, {
+                '_fragmentsIndex': {
+                    writable: false,
+                    enumerable: false,
+                    configurable: false,
+                    value: new Map()
+                },
+                'hasFragment': {
+                    writable: false,
+                    enumerable: false,
+                    configurable: false,
+                    value: hasFragment
+                },
+                'getFragment': {
+                    writable: false,
+                    enumerable: false,
+                    configurable: false,
+                    value: getFragment
+                },
+                'getNamedFragment': {
+                    writable: false,
+                    enumerable: false,
+                    configurable: false,
+                    value: getNamedFragment
+                },
+                'getFragments': {
+                    writable: false,
+                    enumerable: false,
+                    configurable: false,
+                    value: getFragments
+                },
+                'createFragment': {
+                    writable: false,
+                    enumerable: false,
+                    configurable: false,
+                    value: createFragment
+                },
+                'createNamedFragment': {
+                    writable: false,
+                    enumerable: false,
+                    configurable: false,
+                    value: createNamedFragment
+                },
+                'removeFragment': {
+                    writable: false,
+                    enumerable: false,
+                    configurable: false,
+                    value: removeFragment
+                },
+                'toJSON': {
+                    writable: false,
+                    enumerable: false,
+                    configurable: false,
+                    value: toJSON
+                }
+            });
+            return documentResource;
+        };
+        Factory.prototype.hasClassProperties = function (documentResource) {
+            return (Utils.hasPropertyDefined(documentResource, '_fragmentsIndex'));
+        };
+        return Factory;
+    })(RDF.Resource.Factory);
+    exports.Factory = Factory;
+    var factory = new Factory();
+    exports.factory = factory;
+});
+//# sourceMappingURL=Document.js.map;
+define('Carbon/Documents',["require", "exports", "jsonld", './Errors', './HTTP', './RDF', './Document', './namespaces/LDP'], function (require, exports, jsonld, Errors, HTTP, RDF, Document, LDP) {
     /// <reference path="../typings/es6-promise/es6-promise.d.ts" />
     /// <reference path="../typings/jsonld.js/jsonld.js.d.ts" />
+    var InteractionModel;
+    (function (InteractionModel) {
+        InteractionModel[InteractionModel["RDFSource"] = 0] = "RDFSource";
+        InteractionModel[InteractionModel["Container"] = 1] = "Container";
+    })(InteractionModel || (InteractionModel = {}));
     function parse(input) {
         try {
             return JSON.parse(input);
@@ -10585,20 +10623,34 @@ define('Carbon/Documents',["require", "exports", "jsonld", './HTTP', './Errors',
             });
         });
     }
+    function setPreferredInteractionModel(interactionModel, requestOptions) {
+        var headers = requestOptions.headers ? requestOptions.headers : requestOptions.headers = new Map();
+        if (!headers.has("Prefer"))
+            headers.set("Prefer", new HTTP.Header.Class());
+        var prefer = headers.get("Prefer");
+        prefer.values.push(new HTTP.Header.Value(LDP.Class.RDFSource + "; rel=interaction-model"));
+    }
+    function setAcceptHeader(requestOptions) {
+        var headers = requestOptions.headers ? requestOptions.headers : requestOptions.headers = new Map();
+        headers.set("Accept", new HTTP.Header.Class("application/ld+json"));
+    }
     var Documents = (function () {
         function Documents(parent) {
             if (parent === void 0) { parent = null; }
             this.parent = parent;
         }
         Documents.prototype.get = function (uri, requestOptions) {
+            var _this = this;
             if (requestOptions === void 0) { requestOptions = {}; }
             if (RDF.URI.Util.isRelative(uri)) {
                 if (!this.parent)
                     throw new Errors.IllegalArgumentError("IllegalArgument: This module doesn't support relative URIs.");
                 uri = this.parent.resolve(uri);
             }
-            var headers = requestOptions.headers ? requestOptions.headers : requestOptions.headers = new Map();
-            headers.set("Accept", new HTTP.Header.Class("application/ld+json"));
+            if (this.parent && this.parent.Auth.isAuthenticated())
+                this.parent.Auth.addAuthentication(requestOptions);
+            setAcceptHeader(requestOptions);
+            setPreferredInteractionModel(InteractionModel.RDFSource, requestOptions);
             return HTTP.Request.Service.get(uri, requestOptions).then(function (response) {
                 var parsedObject = parse(response.data);
                 return expand({
@@ -10607,86 +10659,34 @@ define('Carbon/Documents',["require", "exports", "jsonld", './HTTP', './Errors',
                 });
             }).then(function (processedResponse) {
                 var expandedResult = processedResponse.result;
-                var documents = RDF.Document.Util.getDocuments(expandedResult);
-                return {
-                    result: documents,
-                    response: processedResponse.response
-                };
-            });
-        };
-        return Documents;
-    })();
-    Object.defineProperty(exports, "__esModule", { value: true });
-    exports.default = Documents;
-});
-//# sourceMappingURL=Documents.js.map;
-define('Carbon/Resources',["require", "exports", "jsonld", './HTTP', './RDF', './namespaces/LDP'], function (require, exports, jsonld, HTTP, RDF, LDP) {
-    /// <reference path="../typings/es6-promise/es6-promise.d.ts" />
-    /// <reference path="../typings/jsonld.js/jsonld.js.d.ts" />
-    var InteractionModel;
-    (function (InteractionModel) {
-        InteractionModel[InteractionModel["RDFSource"] = 0] = "RDFSource";
-        InteractionModel[InteractionModel["Container"] = 1] = "Container";
-    })(InteractionModel || (InteractionModel = {}));
-    function setPreferredInteractionModel(interactionModel, requestOptions) {
-        var headers = requestOptions.headers ? requestOptions.headers : requestOptions.headers = new Map();
-        if (!headers.has("Prefer"))
-            headers.set("Prefer", new HTTP.Header.Class());
-        var prefer = headers.get("Prefer");
-        prefer.values.push(new HTTP.Header.Value(LDP.Class.RDFSource + "; rel=interaction-model"));
-    }
-    var Resources = (function () {
-        function Resources(parent) {
-            this.parent = parent;
-        }
-        Resources.prototype.get = function (uri) {
-            var _this = this;
-            var requestOptions = {};
-            if (this.parent && this.parent.Auth.isAuthenticated())
-                this.parent.Auth.addAuthentication(requestOptions);
-            setPreferredInteractionModel(InteractionModel.RDFSource, requestOptions);
-            return this.parent.Documents.get(uri, requestOptions).then(function (processedResponse) {
-                var document = Resources.getDocument(processedResponse);
-                var nodes = RDF.Document.Util.getResources(document);
-                var resources = RDF.Resource.factory.from(nodes);
-                _this.injectDefinitions(resources);
+                var rdfDocuments = RDF.Document.Util.getDocuments(expandedResult);
+                var rdfDocument = _this.getRDFDocument(rdfDocuments);
+                var document = Document.factory.from(rdfDocument);
+                _this.injectDefinitions(document.getFragments().concat(document));
                 return {
                     result: document,
                     response: processedResponse.response
                 };
-            }).then(function (processedResponse) {
-                var document = processedResponse.result;
-                var documentResourceNode = Resources.getDocumentResourceNode(document);
-                var fragmentNodes = RDF.Document.Util.getFragmentResources(document, documentResourceNode);
-                var documentResource = RDF.DocumentResource.factory.from(documentResourceNode, fragmentNodes);
-                var persistedDocumentResource = RDF.PersistedDocumentResource.Factory.from(documentResource, _this);
-                return {
-                    result: persistedDocumentResource,
-                    response: processedResponse.response
-                };
             });
         };
-        Resources.prototype.commit = function (object) {
-            if (object === void 0) { object = null; }
-            return null;
+        Documents.prototype.commit = function (document, requestOptions) {
+            // TODO: Check if the document was already persisted
+            // TODO: Check if the document is dirty
+            if (requestOptions === void 0) { requestOptions = {}; }
+            if (this.parent && this.parent.Auth.isAuthenticated())
+                this.parent.Auth.addAuthentication(requestOptions);
+            setAcceptHeader(requestOptions);
+            setPreferredInteractionModel(InteractionModel.RDFSource, requestOptions);
+            return HTTP.Request.Service.put(document.uri, document.toJSON(), requestOptions);
         };
-        Resources.getDocument = function (processedResponse) {
-            var documents = processedResponse.result;
-            if (documents.length === 0)
+        Documents.prototype.getRDFDocument = function (rdfDocuments) {
+            if (rdfDocuments.length === 0)
                 throw new Error('BadResponse: No document was returned.');
-            if (documents.length > 1)
+            if (rdfDocuments.length > 1)
                 throw new Error('Unsupported: Multiple graphs are currently not supported.');
-            return documents[0];
+            return rdfDocuments[0];
         };
-        Resources.getDocumentResourceNode = function (document) {
-            var documentResourceNodes = RDF.Document.Util.getDocumentResources(document);
-            if (documentResourceNodes.length === 0)
-                throw new Error('BadResponse: No document resource was returned.');
-            if (documentResourceNodes.length > 1)
-                throw new Error('NotSupported: Multiple document resources were returned.');
-            return documentResourceNodes[0];
-        };
-        Resources.prototype.injectDefinitions = function (resources) {
+        Documents.prototype.injectDefinitions = function (resources) {
             var definitionURIs = this.parent.getDefinitionURIs();
             for (var i = 0, length_1 = definitionURIs.length; i < length_1; i++) {
                 var definitionURI = definitionURIs[i];
@@ -10701,21 +10701,20 @@ define('Carbon/Resources',["require", "exports", "jsonld", './HTTP', './RDF', '.
             }
             return resources;
         };
-        return Resources;
+        return Documents;
     })();
     Object.defineProperty(exports, "__esModule", { value: true });
-    exports.default = Resources;
+    exports.default = Documents;
 });
-//# sourceMappingURL=Resources.js.map;
+//# sourceMappingURL=Documents.js.map;
 /// <reference path="../typings/es6/es6.d.ts" />
-define('Carbon/Parent',["require", "exports", './Auth', './Documents', './Resources', './Utils'], function (require, exports, Auth_1, Documents_1, Resources_1, Utils) {
+define('Carbon/Parent',["require", "exports", './Auth', './Documents', './Utils'], function (require, exports, Auth_1, Documents_1, Utils) {
     var Parent = (function () {
         function Parent() {
             this.settings = new Map();
             this.definitions = new Map();
             this.Auth = new Auth_1.default(this);
             this.Documents = new Documents_1.default(this);
-            this.Resources = new Resources_1.default(this);
         }
         Parent.prototype.resolve = function (relativeURI) {
             throw new Error('Method needs to be implemented by child.');
@@ -11222,14 +11221,12 @@ define('Carbon/Apps',["require", "exports", './App', './RDF', './Utils', './name
                     uri = RDF.URI.Util.resolve(appsContainerURI, uri);
                 this.parent.resolve(uri);
             }
-            return this.parent.Resources.get(uri).then(function (processedResponse) {
-                var resource = processedResponse.result;
-                if (!resource.types.indexOf(CS.Class.Application)) {
+            return this.parent.Documents.get(uri).then(function (processedResponse) {
+                var document = processedResponse.result;
+                if (!document.types.indexOf(CS.Class.Application))
                     throw new Error('The resource fetched is not a cs:Application.');
-                }
-                var appResource = App.factory.from(resource);
-                var app = new App.Class(_this.parent, appResource);
-                return app;
+                var appResource = App.factory.from(document);
+                return new App.Class(_this.parent, appResource);
             });
         };
         Apps.prototype.getAppsContainerURI = function () {
@@ -11259,12 +11256,13 @@ var __extends = (this && this.__extends) || function (d, b) {
     function __() { this.constructor = d; }
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
-define('Carbon/Carbon',["require", "exports", './Apps', './Auth', './Documents', './HTTP', './Parent', './RDF', './Resources', './settings', './Utils'], function (require, exports, Apps_1, Auth_1, Documents_1, HTTP, Parent_1, RDF, Resources_1, settings_1, Utils) {
+define('Carbon/Carbon',["require", "exports", './APIDescription', './Apps', './Auth', './Documents', './HTTP', './Parent', './RDF', './settings', './Utils'], function (require, exports, APIDescription, Apps_1, Auth_1, Documents_1, HTTP, Parent_1, RDF, settings_1, Utils) {
     var Carbon = (function (_super) {
         __extends(Carbon, _super);
         function Carbon(settings) {
             _super.call(this);
             Utils.M.extend(this.settings, Utils.M.from(settings));
+            this.registerDefaultDefinitions();
             this.Apps = new Apps_1.default(this);
         }
         Carbon.prototype.resolve = function (uri) {
@@ -11274,19 +11272,29 @@ define('Carbon/Carbon',["require", "exports", './Apps', './Auth', './Documents',
             finalURI += this.settings.get("domain");
             return RDF.URI.Util.resolve(finalURI, uri);
         };
+        Carbon.prototype.getAPIDescription = function () {
+            return this.Documents.get('platform/api/').then(function (processedResponse) {
+                return processedResponse.result;
+            });
+        };
+        Carbon.prototype.registerDefaultDefinitions = function () {
+            this.addDefinition(APIDescription.RDFClass, APIDescription.Definition);
+        };
+        Carbon.Class = Carbon;
         Carbon.Apps = Apps_1.default;
         Carbon.Auth = Auth_1.default;
         Carbon.Documents = Documents_1.default;
         Carbon.HTTP = HTTP;
         Carbon.RDF = RDF;
-        Carbon.Resources = Resources_1.default;
         Carbon.Utils = Utils;
-        Carbon.version = '0.8.1-ALPHA';
+        Carbon.version = '0.8.2-ALPHA';
         return Carbon;
     })(Parent_1.default);
-    exports.Carbon = Carbon;
+    exports.Class = Carbon;
+    var instance = new Carbon(settings_1.default);
+    exports.instance = instance;
     Object.defineProperty(exports, "__esModule", { value: true });
-    exports.default = new Carbon(settings_1.default);
+    exports.default = instance;
 });
 //# sourceMappingURL=Carbon.js.map;
 define('Carbon', ['Carbon/Carbon'], function (main) { return main; });

@@ -3,7 +3,7 @@ interface Literal {
 	'@value':string;
 }
 import * as Utils from '../Utils';
-import XSD = require('../namespaces/XSD' );
+import XSD = require('../NS/XSD' );
 
 class Factory {
 	static from( value:any ):Literal {
@@ -119,4 +119,10 @@ class Util {
 	}
 }
 
-export { Literal as Class, Factory, Util };
+//@formatter:off
+export {
+	Literal as Class,
+	Factory,
+	Util
+};
+//@formatter:on

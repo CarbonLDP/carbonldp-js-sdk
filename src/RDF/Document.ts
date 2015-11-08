@@ -3,7 +3,8 @@ import * as RDFNode from './RDFNode';
 import * as Utils from '../Utils';
 import * as URI from './URI';
 
-interface RDFDocument extends RDFNode.Class {
+interface RDFDocument {
+	'@id'?:string;
 	'@graph':RDFNode.Class[];
 }
 
@@ -69,7 +70,7 @@ class Util {
 			let uri:string = resource[ '@id' ];
 			if ( ! uri ) continue;
 
-			if ( ! URI.Util.hasFragment( uri ) ) documentResources.push( resource );
+			if ( ! URI.Util.hasFragment( uri ) && ! URI.Util.isBNodeID( uri ) ) documentResources.push( resource );
 		}
 
 		return documentResources;
@@ -105,6 +106,18 @@ class Util {
 		}
 
 		return fragmentResources;
+	}
+
+	static getBNodeResources( document:RDFDocument ):RDFNode.Class[] {
+		var resources:RDFNode.Class[] = Util.getResources( document );
+
+		var bnodes:RDFNode.Class[] = [];
+		for( let i:number = 0, length:number = resources.length; i < length; i++ ) {
+			let resource = resources[i];
+			if( ! ( '@id' in resource ) || URI.Util.isBNodeID( resource['@id'] ) ) bnodes.push( resource );
+		}
+
+		return bnodes;
 	}
 }
 
