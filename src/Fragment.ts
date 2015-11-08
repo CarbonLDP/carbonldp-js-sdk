@@ -1,17 +1,17 @@
-import * as Document from './Document';
-import * as Errors from './Errors';
-import * as RDF from './RDF';
-import * as Utils from './Utils';
+import * as Document from "./Document";
+import * as Errors from "./Errors";
+import * as RDF from "./RDF";
+import * as Utils from "./Utils";
 
-export interface Class extends RDF.Resource.Class{
+export interface Class extends RDF.Resource.Class {
 	document:Document.Class;
 }
 
-function externalAnonymousFragmentFilter( propertyURI:string, value:(RDF.Node.Class | RDF.Literal.Class) ) {
+function externalAnonymousFragmentFilter( propertyURI:string, value:(RDF.Node.Class | RDF.Literal.Class) ):void {
 	if( ! RDF.Node.Factory.is( value ) ) return;
-	if( ! RDF.URI.Util.isBNodeID( value[ '@id' ] ) ) return;
+	if( ! RDF.URI.Util.isBNodeID( value[ "@id" ] ) ) return;
 
-	if( ! ( 'document' in value ) ) throw new Errors.IllegalArgumentError( "The resource provided doesn't belong to a document." );
+	if( ! ( "document" in value ) ) throw new Errors.IllegalArgumentError( "The resource provided doesn't belong to a document." );
 
 	let fragment:Class = <any> value;
 
@@ -21,7 +21,7 @@ function externalAnonymousFragmentFilter( propertyURI:string, value:(RDF.Node.Cl
 export class Factory extends RDF.Resource.Factory {
 	from( object:Array<Object & { document:Document.Class }> ):Class[];
 	from( object:Object & { document:Document.Class } ):Class;
-	from( objects ):any {
+	from( objects:any ):any {
 		if( ! Utils.isArray( objects ) ) return this.singleFrom( <Object & { document:Document.Class }>objects );
 
 		for ( let i:number = 0, length:number = objects.length; i < length; i ++ ) {
@@ -38,7 +38,7 @@ export class Factory extends RDF.Resource.Factory {
 	}
 
 	protected injectBehavior( object:(Object & { document:Document.Class }) ):Class {
-		let fragment = <Class> super.injectBehavior( object );
+		let fragment:Class = <Class> super.injectBehavior( object );
 		if( this.hasClassProperties( fragment ) ) return fragment;
 
 		fragment._propertyAddedCallbacks.push( externalAnonymousFragmentFilter );
@@ -47,7 +47,7 @@ export class Factory extends RDF.Resource.Factory {
 		delete fragment.document;
 
 		Object.defineProperties( fragment, {
-			'document': {
+			"document": {
 				writable: false,
 				enumerable: false,
 				value: document
@@ -66,7 +66,7 @@ export var factory:Factory = new Factory();
 
 export class Util {
 	static generateID():string {
-		return '_:' + Utils.UUID.generate();
+		return "_:" + Utils.UUID.generate();
 	}
 }
 

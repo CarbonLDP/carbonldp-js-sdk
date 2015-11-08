@@ -1,6 +1,6 @@
-import RESTError from './../HTTPError';
+import RESTError from "./../HTTPError";
 
-const name:string = 'PreconditionRequiredError';
+const name:string = "PreconditionRequiredError";
 const statusCode:number = 428;
 
 class PreconditionRequiredError extends RESTError {

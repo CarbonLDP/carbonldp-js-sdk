@@ -1,6 +1,6 @@
-import RESTError from './../HTTPError';
+import RESTError from "./../HTTPError";
 
-const name:string = 'MethodNotAcceptableError';
+const name:string = "MethodNotAcceptableError";
 const statusCode:number = 406;
 
 class MethodNotAcceptableError extends RESTError {

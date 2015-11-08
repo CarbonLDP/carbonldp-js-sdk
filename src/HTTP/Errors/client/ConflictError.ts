@@ -1,6 +1,6 @@
-import RESTError from './../HTTPError';
+import RESTError from "./../HTTPError";
 
-const name:string = 'ConflictError';
+const name:string = "ConflictError";
 const statusCode:number = 409;
 
 class ConflictError extends RESTError {

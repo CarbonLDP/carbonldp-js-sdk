@@ -1,8 +1,8 @@
-import AbstractError from '../../Errors/AbstractError';
-import Response from './../Response';
+import AbstractError from "../../Errors/AbstractError";
+import Response from "./../Response";
 
 class HTTPError extends AbstractError {
-	get name():string { return 'HTTPError' }
+	get name():string { return "HTTPError"; }
 
 	response:Response;
 

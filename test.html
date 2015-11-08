@@ -5,11 +5,12 @@
 	<title>Title</title>
 </head>
 <body>
-	<script src="dist/Carbon.js"></script>
+	<script src="dist/bundles/Carbon.sfx.js"></script>
 	<script>
 		(function() {
-			Carbon.setSetting( "domain", "dev.carbonldp.com" );
-			Carbon.getAPIDescription().then(
+			var carbon = new Carbon();
+			carbon.setSetting( "domain", "dev.carbonldp.com" );
+			carbon.getAPIDescription().then(
 				function( api ) {
 					console.log( "Carbon API version: %s", api.version );
 					console.log( "Carbon Build Date: %s", api.buildDate.toISOString() );

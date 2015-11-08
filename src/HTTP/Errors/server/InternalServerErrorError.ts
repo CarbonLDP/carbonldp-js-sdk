@@ -1,6 +1,6 @@
-import RESTError from './../HTTPError';
+import RESTError from "./../HTTPError";
 
-const name:string = 'InternalServerError';
+const name:string = "InternalServerError";
 const statusCode:number = 500;
 
 class InternalServerError extends RESTError {

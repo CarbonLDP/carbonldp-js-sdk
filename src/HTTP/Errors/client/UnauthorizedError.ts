@@ -1,6 +1,6 @@
-import RESTError from './../HTTPError';
+import RESTError from "./../HTTPError";
 
-const name:string = 'UnauthorizedError';
+const name:string = "UnauthorizedError";
 const statusCode:number = 401;
 
 class UnauthorizedError extends RESTError {

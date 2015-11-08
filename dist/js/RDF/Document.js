@@ -1,0 +1,120 @@
+var RDFNode = require('./RDFNode');
+var Utils = require('../Utils');
+var URI = require('./URI');
+var Factory = (function () {
+    function Factory() {
+    }
+    Factory.is = function (object) {
+        //@formatter:off
+        return (Utils.hasProperty(object, '@graph'));
+        //@formatter:on
+    };
+    Factory.create = function (resources, uri) {
+        var document = uri ? RDFNode.Factory.create(uri) : {};
+        document['@graph'] = resources;
+        return document;
+    };
+    return Factory;
+})();
+exports.Factory = Factory;
+var Util = (function () {
+    function Util() {
+    }
+    Util.getDocuments = function (value) {
+        if (Utils.isArray(value)) {
+            if (value.length === 0)
+                return value;
+            if (Factory.is(value[0]))
+                return value;
+            if (RDFNode.Factory.is(value[0]))
+                return [Factory.create(value)];
+        }
+        else if (Utils.isObject(value)) {
+            if (Factory.is(value))
+                return [value];
+            if (RDFNode.Factory.is(value))
+                return [Factory.create([value])];
+        }
+        else
+            throw new Error("IllegalArgument: The value structure isn't valid.");
+    };
+    Util.getResources = function (document) {
+        if (Utils.isArray(document)) {
+            if (document.length === 0)
+                return document;
+            if (document.length === 1) {
+                if (Utils.isArray(document[0]))
+                    return Util.getResources(document[0]);
+                if (!Utils.isObject(document[0]))
+                    throw new Error("IllegalArgument: The document structure isn't valid.");
+                if (!document[0].hasOwnProperty('@graph'))
+                    return document;
+                return Util.getResources(document[0]['@graph']);
+            }
+            return document;
+        }
+        else {
+            if (!Utils.isObject(document))
+                throw new Error("IllegalArgument: The document structure isn't valid.");
+            if (!document.hasOwnProperty('@graph'))
+                throw new Error("IllegalArgument: The document structure isn't valid.");
+            return Util.getResources(document['@graph']);
+        }
+    };
+    Util.getDocumentResources = function (document) {
+        var resources = Util.getResources(document);
+        var documentResources = [];
+        for (var i = 0, length_1 = resources.length; i < length_1; i++) {
+            var resource = resources[i];
+            var uri = resource['@id'];
+            if (!uri)
+                continue;
+            if (!URI.Util.hasFragment(uri) && !URI.Util.isBNodeID(uri))
+                documentResources.push(resource);
+        }
+        return documentResources;
+    };
+    Util.getFragmentResources = function (document, documentResource) {
+        var resources = Util.getResources(document);
+        var documentURIToMatch = null;
+        if (documentResource) {
+            if (Utils.isString(documentResource))
+                documentURIToMatch = documentResource;
+            else
+                documentURIToMatch = documentResource['@id'];
+        }
+        var fragmentResources = [];
+        for (var i = 0, length = resources.length; i < length; i++) {
+            var resource = resources[i];
+            var uri = resource['@id'];
+            if (!uri)
+                continue;
+            if (!URI.Util.hasFragment(uri))
+                continue;
+            if (!documentURIToMatch)
+                fragmentResources.push(resource);
+            else {
+                var documentURI = URI.Util.getDocumentURI(uri);
+                if (documentURI === documentURIToMatch)
+                    fragmentResources.push(resource);
+            }
+        }
+        return fragmentResources;
+    };
+    Util.getBNodeResources = function (document) {
+        var resources = Util.getResources(document);
+        var bnodes = [];
+        for (var i = 0, length_2 = resources.length; i < length_2; i++) {
+            var resource = resources[i];
+            if (!('@id' in resource) || URI.Util.isBNodeID(resource['@id']))
+                bnodes.push(resource);
+        }
+        return bnodes;
+    };
+    return Util;
+})();
+exports.Util = Util;
+//@formatter:off
+//@formatter:on 
+
+//# sourceMappingURL=Document.js.map

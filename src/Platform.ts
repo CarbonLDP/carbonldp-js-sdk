@@ -1,4 +1,4 @@
-import Parent from './Parent';
+import Parent from "./Parent";
 
 class Platform extends Parent {
 	constructor( parent:Parent ) {

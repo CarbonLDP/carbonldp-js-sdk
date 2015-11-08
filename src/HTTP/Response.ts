@@ -1,4 +1,4 @@
-import * as Header from './Header';
+import * as Header from "./Header";
 
 class Response {
 	constructor( request:XMLHttpRequest ) {
@@ -16,9 +16,12 @@ class Response {
 
 
 	private setHeaders( request:XMLHttpRequest ):void {
-		var headersString = request.getAllResponseHeaders();
-		if ( headersString ) this.headers = Header.Util.parseHeaders( headersString );
-		else this.headers = new Map<string, Header.Class>();
+		let headersString:string = request.getAllResponseHeaders();
+		if ( headersString ) {
+			this.headers = Header.Util.parseHeaders( headersString );
+		} else {
+			this.headers = new Map<string, Header.Class>();
+		}
 	}
 }
 

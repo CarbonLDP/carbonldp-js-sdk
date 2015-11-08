@@ -1,0 +1,1 @@
+{"version":3,"sources":["LDP/PersistedRDFSource.ts"],"names":["Factory","Factory.constructor"],"mappings":"AAIA;IAAAA;IACAC,CAACA;IAADD,cAACA;AAADA,CADA,AACCA,IAAA;AAEsC","file":"LDP/PersistedRDFSource.js","sourcesContent":["interface PersistedRDFSource {\n\n}\n\nclass Factory {\n}\n\nexport { PersistedRDFSource as Class };"],"sourceRoot":"/source/"}

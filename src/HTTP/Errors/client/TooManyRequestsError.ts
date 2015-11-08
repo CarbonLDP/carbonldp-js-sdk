@@ -1,6 +1,6 @@
-import RESTError from './../HTTPError';
+import RESTError from "./../HTTPError";
 
-const name:string = 'TooManyRequestsError';
+const name:string = "TooManyRequestsError";
 const statusCode:number = 429;
 
 class TooManyRequestsError extends RESTError {

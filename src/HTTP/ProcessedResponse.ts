@@ -1,4 +1,4 @@
-import Response from './Response';
+import Response from "./Response";
 
 interface ProcessedResponse<T> {
 	result:T;

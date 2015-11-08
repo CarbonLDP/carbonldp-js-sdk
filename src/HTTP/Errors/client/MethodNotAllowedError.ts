@@ -1,6 +1,6 @@
-import RESTError from './../HTTPError';
+import RESTError from "./../HTTPError";
 
-const name:string = 'MethodNotAllowedError';
+const name:string = "MethodNotAllowedError";
 const statusCode:number = 405;
 
 class MethodNotAllowedError extends RESTError {

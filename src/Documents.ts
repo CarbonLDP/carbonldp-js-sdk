@@ -1,19 +1,17 @@
 /// <reference path="../typings/tsd.d.ts" />
 
-import * as jsonld from 'jsonld';
+import * as jsonld from "jsonld";
 
-//@formatter:off
-import Committer from './Committer';
-import * as Errors from './Errors';
-import * as HTTP from './HTTP';
-import Parent from './Parent';
-import * as RDF from './RDF';
-import * as Utils from './Utils';
+import Committer from "./Committer";
+import * as Errors from "./Errors";
+import * as HTTP from "./HTTP";
+import Parent from "./Parent";
+import * as RDF from "./RDF";
+import * as Utils from "./Utils";
 
-import * as Document from './Document';
-import * as RDFSource from './LDP/RDFSource';
-import * as LDP from './NS/LDP';
-//@formatter:on
+import * as Document from "./Document";
+import * as RDFSource from "./LDP/RDFSource";
+import * as LDP from "./NS/LDP";
 
 enum InteractionModel {
 	RDFSource,
@@ -30,8 +28,8 @@ function parse( input:string ):any {
 }
 
 function expand( input:HTTP.ProcessedResponse<any>, options?:jsonld.ExpandOptions ):Promise<Object> {
-	return new Promise( ( resolve, reject ) => {
-		jsonld.expand( input.result, options, function ( error, expanded:Object ) {
+	return new Promise( ( resolve:( result:Object ) => void, reject:( error:any ) => void ) => {
+		jsonld.expand( input.result, options, function ( error:any, expanded:Object ):void {
 			if ( error ) {
 				// TODO: Handle jsonld.expand error
 				throw error;
@@ -39,20 +37,19 @@ function expand( input:HTTP.ProcessedResponse<any>, options?:jsonld.ExpandOption
 
 			input.result = expanded;
 			resolve( input );
-
 		} );
 	} );
 }
 
-function setPreferredInteractionModel( interactionModel:InteractionModel, requestOptions:HTTP.Request.Options ) {
-	var headers = requestOptions.headers ? requestOptions.headers : requestOptions.headers = new Map<string, HTTP.Header.Class>();
+function setPreferredInteractionModel( interactionModel:InteractionModel, requestOptions:HTTP.Request.Options ):void {
+	let headers:Map<string, HTTP.Header.Class> = requestOptions.headers ? requestOptions.headers : requestOptions.headers = new Map<string, HTTP.Header.Class>();
 	if ( ! headers.has( "Prefer" ) ) headers.set( "Prefer", new HTTP.Header.Class() );
-	var prefer:HTTP.Header.Class = headers.get( "Prefer" );
+	let prefer:HTTP.Header.Class = headers.get( "Prefer" );
 	prefer.values.push( new HTTP.Header.Value( LDP.Class.RDFSource + "; rel=interaction-model" ) );
 }
 
-function setAcceptHeader( requestOptions:HTTP.Request.Options ) {
-	var headers = requestOptions.headers ? requestOptions.headers : requestOptions.headers = new Map<string, HTTP.Header.Class>();
+function setAcceptHeader( requestOptions:HTTP.Request.Options ):void {
+	let headers:Map<string, HTTP.Header.Class> = requestOptions.headers ? requestOptions.headers : requestOptions.headers = new Map<string, HTTP.Header.Class>();
 	headers.set( "Accept", new HTTP.Header.Class( "application/ld+json" ) );
 }
 
@@ -76,7 +73,7 @@ class Documents implements Committer<Document.Class> {
 
 		return HTTP.Request.Service.get( uri, requestOptions ).then(
 			( response:HTTP.Response ) => {
-				var parsedObject = parse( response.data );
+				let parsedObject:Object = parse( response.data );
 
 				return expand( {
 					result: parsedObject,
@@ -85,11 +82,11 @@ class Documents implements Committer<Document.Class> {
 			}
 		).then(
 			( processedResponse:HTTP.ProcessedResponse<Object> ) => {
-				var expandedResult:any = processedResponse.result;
-				var rdfDocuments:RDF.Document.Class[] = RDF.Document.Util.getDocuments( expandedResult );
-				var rdfDocument:RDF.Document.Class = this.getRDFDocument( rdfDocuments );
+				let expandedResult:any = processedResponse.result;
+				let rdfDocuments:RDF.Document.Class[] = RDF.Document.Util.getDocuments( expandedResult );
+				let rdfDocument:RDF.Document.Class = this.getRDFDocument( rdfDocuments );
 
-				var document:Document.Class = Document.factory.from( rdfDocument );
+				let document:Document.Class = Document.factory.from( rdfDocument );
 
 				this.injectDefinitions( (<RDF.Resource.Class[]>document.getFragments()).concat( document ) );
 				// TODO: Inject persisted states
@@ -97,7 +94,7 @@ class Documents implements Committer<Document.Class> {
 				return {
 					result: document,
 					response: processedResponse.response
-				}
+				};
 			}
 		);
 	}
@@ -115,8 +112,8 @@ class Documents implements Committer<Document.Class> {
 	}
 
 	private getRDFDocument( rdfDocuments:RDF.Document.Class[] ):RDF.Document.Class {
-		if ( rdfDocuments.length === 0 ) throw new Error( 'BadResponse: No document was returned.' );
-		if ( rdfDocuments.length > 1 ) throw new Error( 'Unsupported: Multiple graphs are currently not supported.' );
+		if ( rdfDocuments.length === 0 ) throw new Error( "BadResponse: No document was returned." );
+		if ( rdfDocuments.length > 1 ) throw new Error( "Unsupported: Multiple graphs are currently not supported." );
 		return rdfDocuments[ 0 ];
 	}
 

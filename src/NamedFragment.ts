@@ -1,16 +1,16 @@
-import * as Document from './Document';
-import * as Fragment from './Fragment';
-import * as RDF from './RDF';
-import * as Utils from './Utils';
+import * as Document from "./Document";
+import * as Fragment from "./Fragment";
+import * as RDF from "./RDF";
+import * as Utils from "./Utils";
 
 export interface Class extends Fragment.Class {
-	slug:string
+	slug:string;
 }
 
 export class Factory extends Fragment.Factory {
 	from( object:Array<Object & { document:Document.Class }> ):Class[];
 	from( object:Object & { document:Document.Class } ):Class;
-	from( objects ):any {
+	from( objects:any ):any {
 		if( ! Utils.isArray( objects ) ) return this.singleFrom( <Object & { document:Document.Class }>objects );
 
 		for ( let i:number = 0, length:number = objects.length; i < length; i ++ ) {
@@ -27,16 +27,16 @@ export class Factory extends Fragment.Factory {
 	}
 
 	protected injectBehavior( node:(Object & { document:Document.Class }) ):Class {
-		let fragment = <Class> super.injectBehavior( node );
+		let fragment:Class = <Class> super.injectBehavior( node );
 		if( this.hasClassProperties( fragment ) ) return fragment;
 
 		Object.defineProperties( fragment, {
-			'slug': {
-				get: function () {
-					return RDF.URI.Util.getFragment( fragment.uri )
+			"slug": {
+				get: function ():string {
+					return RDF.URI.Util.getFragment( fragment.uri );
 				},
-				set: function ( slug ) {
-					this.uri = this.document.uri + '#' + slug;
+				set: function ( slug:string ):void {
+					this.uri = this.document.uri + "#" + slug;
 				},
 				enumerable: false
 			}
@@ -47,7 +47,7 @@ export class Factory extends Fragment.Factory {
 
 	protected hasClassProperties( resource:Fragment.Class ):boolean {
 		return (
-			Utils.hasPropertyDefined( resource, 'slug' )
+			Utils.hasPropertyDefined( resource, "slug" )
 		);
 	}
 }

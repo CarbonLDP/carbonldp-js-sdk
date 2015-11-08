@@ -21,6 +21,7 @@
   "devDependencies": {
     "almond": "^0.3.0",
     "babel-core": "^5.4.3",
+    "del": "^2.0.2",
     "grunt": "~0.4",
     "grunt-browser-output": "1.0.3",
     "grunt-contrib-clean": "~0.6",
@@ -44,10 +45,10 @@
     "karma-requirejs": "^0.2.2",
     "karma-sourcemap-loader": "^0.3.4",
     "load-grunt-tasks": "^3.2.0",
+    "phantomjs": "^1.9.16",
     "requirejs": "^2.1.15",
     "tsd": "^0.6.4",
-    "typescript": "^1.6.0-beta",
-    "phantomjs": "^1.9.16"
+    "typescript": "^1.6.0-beta"
   },
   "scripts": {
     "preinstall": "node scripts/copy-hooks.js"

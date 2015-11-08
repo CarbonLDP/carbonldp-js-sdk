@@ -1,6 +1,6 @@
-import RESTError from './../HTTPError';
+import RESTError from "./../HTTPError";
 
-const name:string = 'BadRequestError';
+const name:string = "BadRequestError";
 const statusCode:number = 400;
 
 class BadRequestError extends RESTError {

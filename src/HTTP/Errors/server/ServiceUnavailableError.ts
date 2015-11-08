@@ -1,6 +1,6 @@
-import RESTError from './../HTTPError';
+import RESTError from "./../HTTPError";
 
-const name:string = 'ServiceUnavailableError';
+const name:string = "ServiceUnavailableError";
 const statusCode:number = 503;
 
 class ServiceUnavailableError extends RESTError {
