@@ -1,4 +1,4 @@
 #!/bin/bash
-grunt dist
-git add -f dist/Carbon.js dist/Carbon.min.js dist/Carbon.min.js.map
-exit 0
+./node_modules/.bin/gulp build
+git add -f dist
+exit 1
