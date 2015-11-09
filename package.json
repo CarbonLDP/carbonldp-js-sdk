@@ -43,7 +43,7 @@
     "typescript": "^1.6.0-beta"
   },
   "scripts": {
-    "build": "./node_modules/.bin/gulp build",
+    "start": "./node_modules/.bin/gulp build",
     "lint": "./node_modules/.bin/gulp lint",
     "preinstall": "node scripts/copy-hooks.js",
     "test": "./node_modules/.bin/gulp test"
