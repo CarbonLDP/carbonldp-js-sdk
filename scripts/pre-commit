@@ -1,4 +1,4 @@
 #!/bin/bash
 ./node_modules/.bin/gulp build
 git add -f dist
-exit 2
+exit 0

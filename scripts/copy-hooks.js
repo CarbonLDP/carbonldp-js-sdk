@@ -1,8 +1,17 @@
 var fileSystem = require( 'fs' );
+
 copyFile( 'scripts/pre-commit', '.git/hooks/pre-commit', function( error ) {
-	if( error ) process.exit( 1 );
-	else process.exit();
+	if( error ) {
+		process.exit( 1 );
+		return;
+	}
+
+	fileSystem.chmod( '.git/hooks/pre-commit', '755', function( error ) {
+		if( error ) process.exit( 1 );
+		else process.exit();
+	} );
 } );
+
 
 
 function copyFile( source, target, callback ) {
