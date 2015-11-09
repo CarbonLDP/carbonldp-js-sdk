@@ -1,4 +1,4 @@
-import AbstractError from './AbstractError';
+import AbstractError from "./AbstractError";
 declare class IllegalStateError extends AbstractError {
     name: string;
 }

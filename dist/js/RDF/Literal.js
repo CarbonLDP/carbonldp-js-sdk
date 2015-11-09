@@ -1,5 +1,5 @@
-var Utils = require('../Utils');
-var XSD = require('../NS/XSD');
+var Utils = require("../Utils");
+var XSD = require("../NS/XSD");
 var Factory = (function () {
     function Factory() {
     }
@@ -13,8 +13,9 @@ var Factory = (function () {
                 value = value.toISOString();
                 break;
             case Utils.isNumber(value):
-                if (Utils.isInteger(value))
+                if (Utils.isInteger(value)) {
                     type = XSD.DataType.integer;
+                }
                 else
                     type = XSD.DataType.double;
                 break;
@@ -30,23 +31,23 @@ var Factory = (function () {
                 value = JSON.stringify(value);
                 break;
         }
-        var literal = { '@value': value };
+        var literal = { "@value": value };
         if (type)
-            literal['@type'] = type;
+            literal["@type"] = type;
         return literal;
     };
     Factory.parse = function (literal) {
         if (!literal)
             return null;
-        if (!Utils.hasProperty(literal, '@value'))
+        if (!Utils.hasProperty(literal, "@value"))
             return null;
-        if (!Utils.hasProperty(literal, '@type'))
-            return literal['@value'];
-        var type = literal['@type'];
-        // The DataType isn't supported
+        if (!Utils.hasProperty(literal, "@type"))
+            return literal["@value"];
+        var type = literal["@type"];
+        // The DataType isn"t supported
         if (!Utils.hasProperty(XSD.DataType, type))
-            return literal['@value'];
-        var valueString = literal['@value'];
+            return literal["@value"];
+        var valueString = literal["@value"];
         var value;
         switch (type) {
             // Dates
@@ -104,7 +105,7 @@ var Factory = (function () {
             return false;
         if (!Utils.isObject(value))
             return false;
-        return Utils.hasProperty(value, '@value');
+        return Utils.hasProperty(value, "@value");
     };
     return Factory;
 })();
@@ -119,7 +120,5 @@ var Util = (function () {
     return Util;
 })();
 exports.Util = Util;
-//@formatter:off
-//@formatter:on 
 
 //# sourceMappingURL=Literal.js.map

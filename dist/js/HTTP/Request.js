@@ -1,26 +1,28 @@
 /// <reference path="../../typings/es6/es6.d.ts" />
 /// <reference path="../../typings/es6-promise/es6-promise.d.ts" />
-var Method_1 = require('./Method');
-var Response_1 = require('./Response');
-var Errors = require('./Errors');
-var Utils = require('./../Utils');
+var Method_1 = require("./Method");
+var Response_1 = require("./Response");
+var Errors = require("./Errors");
+var Utils = require("./../Utils");
 function setHeaders(request, headers) {
     var namesIterator = headers.keys();
     var next = namesIterator.next();
     while (!next.done) {
-        var name = next.value;
-        var value = headers.get(name);
-        request.setRequestHeader(name, value.toString());
+        var name_1 = next.value;
+        var value = headers.get(name_1);
+        request.setRequestHeader(name_1, value.toString());
         next = namesIterator.next();
     }
 }
 function onLoad(resolve, reject, request) {
     return function () {
         var response = new Response_1.default(request);
-        if (request.status >= 200 && request.status <= 299)
+        if (request.status >= 200 && request.status <= 299) {
             resolve(response);
-        else
+        }
+        else {
             rejectRequest(reject, request);
+        }
     };
 }
 function onError(reject, request) {
@@ -32,9 +34,9 @@ function rejectRequest(reject, request) {
     var response = new Response_1.default(request);
     if (response.status >= 400 && response.status < 600) {
         if (Errors.statusCodeMap.has(response.status)) {
-            var e = Errors.statusCodeMap.get(response.status);
+            var error = Errors.statusCodeMap.get(response.status);
             // TODO: Set error message
-            reject(new e("", response));
+            reject(new error("", response));
         }
     }
     reject(new Errors.UnknownError("", response));
@@ -59,10 +61,12 @@ var Service = (function () {
                 request.timeout = options.timeout;
             request.onload = onLoad(resolve, reject, request);
             request.onerror = onError(reject, request);
-            if (body)
+            if (body) {
                 request.send(body);
-            else
+            }
+            else {
                 request.send();
+            }
         });
     };
     Service.options = function (url, options) {
@@ -99,7 +103,5 @@ var Service = (function () {
     return Service;
 })();
 exports.Service = Service;
-//@formatter:off
-//@formatter:on 
 
 //# sourceMappingURL=Request.js.map

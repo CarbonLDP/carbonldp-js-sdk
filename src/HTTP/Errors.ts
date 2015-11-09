@@ -1,3 +1,5 @@
+import HTTPError from "./Errors/HTTPError";
+
 import BadRequestError from "./Errors/client/BadRequestError";
 import ConflictError from "./Errors/client/ConflictError";
 import ForbiddenError from "./Errors/client/ForbiddenError";
@@ -23,7 +25,7 @@ import ServiceUnavailableError from "./Errors/server/ServiceUnavailableError";
 import UnknownError from "./Errors/UnknownError";
 
 
-let client:Array<any> = [];
+let client:Array<typeof HTTPError> = [];
 client.push( BadRequestError );
 client.push( ConflictError );
 client.push( ForbiddenError );
@@ -39,7 +41,7 @@ client.push( TooManyRequestsError );
 client.push( UnauthorizedError );
 client.push( UnsupportedMediaTypeError );
 
-let server:Array<any> = [];
+let server:Array<typeof HTTPError> = [];
 server.push( BadGatewayError );
 server.push( GatewayTimeoutError );
 server.push( HTTPVersionNotSupportedError );
@@ -47,7 +49,7 @@ server.push( InternalServerErrorError );
 server.push( NotImplementedError );
 server.push( ServiceUnavailableError );
 
-let statusCodeMap:Map<number, any> = new Map<number, any>();
+let statusCodeMap:Map<number, typeof HTTPError> = new Map<number, typeof HTTPError>();
 for ( let i:number = 0, length:number = client.length; i < length; i ++ ) {
 	statusCodeMap.set( client[ i ].statusCode, client[ i ] );
 }
@@ -56,6 +58,8 @@ for ( let i:number = 0, length:number = server.length; i < length; i ++ ) {
 }
 
 export {
+	HTTPError as Error,
+
 	BadRequestError,
 	ConflictError,
 	ForbiddenError,

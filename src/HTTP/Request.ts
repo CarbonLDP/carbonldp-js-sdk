@@ -8,7 +8,7 @@ import * as Header from "./Header";
 import * as Errors from "./Errors";
 
 import * as Utils from "./../Utils";
-import HTTPError from "../../dist/js/HTTP/Errors/HTTPError";
+import HTTPError from "./Errors/HTTPError";
 
 interface Options {
 	headers?: Map<string, Header.Class>;
@@ -51,7 +51,7 @@ function rejectRequest( reject:( error:any ) => void, request:XMLHttpRequest ):v
 
 	if ( response.status >= 400 && response.status < 600 ) {
 		if ( Errors.statusCodeMap.has( response.status ) ) {
-			let error:HTTPError = Errors.statusCodeMap.get( response.status );
+			let error:typeof HTTPError = Errors.statusCodeMap.get( response.status );
 			// TODO: Set error message
 			reject( new error( "", response ) );
 		}

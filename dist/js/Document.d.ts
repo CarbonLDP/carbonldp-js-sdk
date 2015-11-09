@@ -1,7 +1,7 @@
 /// <reference path="../typings/es6/es6.d.ts" />
-import * as Fragment from './Fragment';
-import * as NamedFragment from './NamedFragment';
-import * as RDF from './RDF';
+import * as Fragment from "./Fragment";
+import * as NamedFragment from "./NamedFragment";
+import * as RDF from "./RDF";
 export interface Class extends RDF.Resource.Class {
     _fragmentsIndex: Map<string, Fragment.Class>;
     hasFragment(slug: string): boolean;

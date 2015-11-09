@@ -1,8 +1,8 @@
 /// <reference path="../../typings/es6/es6.d.ts" />
 /// <reference path="../../typings/es6-promise/es6-promise.d.ts" />
-import Method from './Method';
-import Response from './Response';
-import * as Header from './Header';
+import Method from "./Method";
+import Response from "./Response";
+import * as Header from "./Header";
 interface Options {
     headers?: Map<string, Header.Class>;
     sendCredentialsOnCORS?: boolean;

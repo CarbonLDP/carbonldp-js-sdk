@@ -119,6 +119,6 @@
 
     export default Resources;
 
-*/ 
+*/
 
 //# sourceMappingURL=Resources.js.map

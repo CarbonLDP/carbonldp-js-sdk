@@ -1,8 +1,8 @@
 /// <reference path="../typings/tsd.d.ts" />
-import Committer from './Committer';
-import * as HTTP from './HTTP';
-import Parent from './Parent';
-import * as Document from './Document';
+import Committer from "./Committer";
+import * as HTTP from "./HTTP";
+import Parent from "./Parent";
+import * as Document from "./Document";
 declare class Documents implements Committer<Document.Class> {
     private parent;
     constructor(parent?: Parent);

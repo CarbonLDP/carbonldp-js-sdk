@@ -1,14 +1,37 @@
 export interface SuiteDescriptor {
-	access:string;
+	access?:string;
+	suiteType:string;
 	name:string;
 	description?:string;
 }
 
 export interface SpecDescriptor {
-	access:string;
+	access?:string;
 	specType:string;
-	name:string;
+	name?:string;
 	description?:string;
+}
+
+export interface InterfaceDescriptor {
+	parent?:string;
+}
+
+export interface InterfaceSuiteDescriptor extends SuiteDescriptor, InterfaceDescriptor {
+
+}
+
+export interface InterfaceSpecDescriptor extends SpecDescriptor, InterfaceDescriptor {
+
+}
+
+export interface ClassDescriptor extends InterfaceDescriptor {
+	interfaces?:string[];
+}
+
+export interface ClassSuiteDescriptor extends SuiteDescriptor, ClassDescriptor {
+}
+
+export interface ClassSpecDescriptor extends SpecDescriptor, ClassDescriptor {
 }
 
 export interface PropertyDescriptor extends SpecDescriptor {
@@ -17,7 +40,7 @@ export interface PropertyDescriptor extends SpecDescriptor {
 
 export interface MethodDescriptor extends SpecDescriptor {
 	arguments?:MethodArgument[];
-	result?:MethodReturn;
+	returns?:MethodReturn;
 }
 
 export interface MethodArgument {
@@ -45,22 +68,23 @@ function toJSON( descriptor:any ):string {
 	return "JSON" + JSON.stringify( descriptor );
 }
 
-export const MODULE = 'module';
-export const SUBMODULE = 'submodule';
-export const CLASS = 'class';
-export const INTERFACE = 'interface';
+export const MODULE:string = "module";
+export const SUBMODULE:string = "submodule";
+export const CLASS:string = "class";
+export const INTERFACE:string = "interface";
 
 
-export const STATIC:string = 'static';
-export const INSTANCE:string = 'instance';
+export const STATIC:string = "static";
+export const INSTANCE:string = "instance";
 
-export const CONSTRUCTOR:string = 'constructor';
-export const METHOD:string = 'method';
-export const PROPERTY:string = 'property';
-export const SUPER_CLASS = 'super-class';
+export const CONSTRUCTOR:string = "constructor";
+export const METHOD:string = "method";
+export const SIGNATURE:string = "signature";
+export const PROPERTY:string = "property";
+export const SUPER_CLASS:string = "super-class";
 
 export function module( name:string, description:string = null ):string {
-	var descriptor = {
+	let descriptor:SuiteDescriptor = {
 		suiteType: MODULE,
 		name: name,
 		description: description
@@ -70,7 +94,7 @@ export function module( name:string, description:string = null ):string {
 }
 
 export function submodule( access:string, name:string, description:string = null ):string {
-	var descriptor = {
+	let descriptor:SuiteDescriptor = {
 		suiteType: SUBMODULE,
 		access: access,
 		name: name,
@@ -81,7 +105,7 @@ export function submodule( access:string, name:string, description:string = null
 }
 
 export function clazz( name:string, description:string, parent:string = null, interfaces:Array<string> = null ):string {
-	var descriptor = {
+	let descriptor:ClassSuiteDescriptor = {
 		suiteType: CLASS,
 		name: name,
 		description: description,
@@ -93,7 +117,7 @@ export function clazz( name:string, description:string, parent:string = null, in
 }
 
 export function interfaze( name:string, description:string, parent:string = null ):string {
-	var descriptor = {
+	let descriptor:InterfaceSuiteDescriptor = {
 		suiteType: INTERFACE,
 		name: name,
 		description: description,
@@ -103,71 +127,45 @@ export function interfaze( name:string, description:string, parent:string = null
 	return toJSON( descriptor );
 }
 
-export function constructor( name:string, description:string, parent:string = null ):string {
-	var descriptor = {
+export function constructor( name:string, description:string ):string {
+	let descriptor:SuiteDescriptor = {
 		suiteType: CONSTRUCTOR,
 		name: name,
-		description: description,
-		parent: parent
+		description: description
 	};
 
 	return toJSON( descriptor );
 }
 
 export function hasInterface( access:string, name:string ):string;
-export function hasInterface( access:string, name:string, description:string ):string;
-export function hasInterface( access:string, name:string, methodArguments:MethodArgument[] ):string;
-export function hasInterface( access:string, name:string, returns:MethodReturn ):string;
-export function hasInterface( access:string, name:string, description:string, methodArguments:MethodArgument[] ):string;
-export function hasInterface( access:string, name:string, description:string, returns:MethodReturn ):string;
-export function hasInterface( access:string, name:string, methodArguments:MethodArgument[], returns:MethodReturn ):string;
-export function hasInterface( access:string, name:string, description:string, methodArguments:MethodArgument[], returns:MethodReturn ):string;
-export function hasInterface( access:string, name:string, descriptionOrArgumentsOrReturns:any = null, argumentsOrReturns:any = null, returns:MethodReturn = null ):string {
-	var description = null, methodArguments = [];
-
-	if ( typeof descriptionOrArgumentsOrReturns === 'string' ) {
-		description = descriptionOrArgumentsOrReturns;
-	} else if ( Object.prototype.toString.call( descriptionOrArgumentsOrReturns ) === '[object Array]' ) {
-		methodArguments = descriptionOrArgumentsOrReturns;
-	} else if ( descriptionOrArgumentsOrReturns ) {
-		returns = descriptionOrArgumentsOrReturns;
-	}
-
-	if ( Object.prototype.toString.call( argumentsOrReturns ) === '[object Array]' ) {
-		methodArguments = argumentsOrReturns;
-	} else if ( argumentsOrReturns ) {
-		returns = argumentsOrReturns;
-	}
-
-	var descriptor = {
+export function hasInterface( access:string, name:string, description:string = null ):string {
+	let descriptor:InterfaceSpecDescriptor = {
 		access: access,
 		specType: INTERFACE,
 		name: name,
-		description: description,
-		arguments: methodArguments,
-		returns: returns
+		description: description
 	};
 
 	return toJSON( descriptor );
 }
 
 export function isDefined():string {
-	return 'defined';
+	return "defined";
 }
 
 export function hasConstructor():string;
 export function hasConstructor( constructorArguments:MethodArgument[] ):string;
 export function hasConstructor( description:string, constructorArguments:MethodArgument[] ):string
 export function hasConstructor( argumentsOrDescription:any = null, constructorArguments:MethodArgument[] = null ):string {
-	var description = null;
+	let description:string = null;
 
-	if ( typeof argumentsOrDescription === 'string' ) {
+	if ( typeof argumentsOrDescription === "string" ) {
 		description = argumentsOrDescription;
-	} else if ( Object.prototype.toString.call( argumentsOrDescription ) === '[object Array]' ) {
+	} else if ( Object.prototype.toString.call( argumentsOrDescription ) === "[object Array]" ) {
 		constructorArguments = argumentsOrDescription;
 	}
 
-	var descriptor = {
+	let descriptor:MethodDescriptor = {
 		access: STATIC,
 		specType: CONSTRUCTOR,
 		description: description,
@@ -190,23 +188,23 @@ export function hasMethod( access:string, name:string, methodArguments:MethodArg
 export function hasMethod( access:string, name:string, description:string, methodArguments:MethodArgument[], returns:MethodReturn ):string;
 
 export function hasMethod( access:string, name:string, descriptionOrArgumentsOrReturns:any = null, argumentsOrReturns:any = null, returns:MethodReturn = null ):string {
-	var description = null, methodArguments = [];
+	let description:string = null, methodArguments:MethodArgument[] = [];
 
-	if ( typeof descriptionOrArgumentsOrReturns === 'string' ) {
+	if ( typeof descriptionOrArgumentsOrReturns === "string" ) {
 		description = descriptionOrArgumentsOrReturns;
-	} else if ( Object.prototype.toString.call( descriptionOrArgumentsOrReturns ) === '[object Array]' ) {
+	} else if ( Object.prototype.toString.call( descriptionOrArgumentsOrReturns ) === "[object Array]" ) {
 		methodArguments = descriptionOrArgumentsOrReturns;
 	} else if ( descriptionOrArgumentsOrReturns ) {
 		returns = descriptionOrArgumentsOrReturns;
 	}
 
-	if ( Object.prototype.toString.call( argumentsOrReturns ) === '[object Array]' ) {
+	if ( Object.prototype.toString.call( argumentsOrReturns ) === "[object Array]" ) {
 		methodArguments = argumentsOrReturns;
 	} else if ( argumentsOrReturns ) {
 		returns = argumentsOrReturns;
 	}
 
-	var descriptor = {
+	let descriptor:MethodDescriptor = {
 		access: access,
 		specType: METHOD,
 		name: name,
@@ -218,9 +216,11 @@ export function hasMethod( access:string, name:string, descriptionOrArgumentsOrR
 	return toJSON( descriptor );
 }
 
-export var method = hasMethod;
+/* tslint:disable: typedef */
+export let method = hasMethod;
+/* tslint:enable: typedef */
 
-export function hasSignature();
+export function hasSignature():string;
 export function hasSignature( description:string ):string;
 export function hasSignature( description:string, methodArguments:MethodArgument[] ):string;
 export function hasSignature( description:string, methodArguments:MethodArgument[], returns:MethodReturn ):string;
@@ -228,24 +228,25 @@ export function hasSignature( methodArguments:MethodArgument[] ):string;
 export function hasSignature( methodArguments:MethodArgument[], returns:MethodReturn ):string;
 export function hasSignature( returns:MethodReturn ):string;
 export function hasSignature( descriptionOrArgumentsOrReturns:any = null, argumentsOrReturns:any = null, returns:MethodReturn = null ):string {
-	var description = null;
-	var methodArguments = null;
+	let description:string = null;
+	let methodArguments:MethodArgument[] = null;
 
-	if ( typeof descriptionOrArgumentsOrReturns === 'string' ) {
+	if ( typeof descriptionOrArgumentsOrReturns === "string" ) {
 		description = descriptionOrArgumentsOrReturns;
-	} else if ( Object.prototype.toString.call( descriptionOrArgumentsOrReturns ) === '[object Array]' ) {
+	} else if ( Object.prototype.toString.call( descriptionOrArgumentsOrReturns ) === "[object Array]" ) {
 		methodArguments = descriptionOrArgumentsOrReturns;
 	} else if ( descriptionOrArgumentsOrReturns ) {
 		returns = descriptionOrArgumentsOrReturns;
 	}
 
-	if ( Object.prototype.toString.call( argumentsOrReturns ) === '[object Array]' ) {
+	if ( Object.prototype.toString.call( argumentsOrReturns ) === "[object Array]" ) {
 		methodArguments = argumentsOrReturns;
 	} else if ( argumentsOrReturns ) {
 		returns = argumentsOrReturns;
 	}
 
-	var descriptor = {
+	let descriptor:MethodDescriptor = {
+		specType: SIGNATURE,
 		description: description,
 		arguments: methodArguments,
 		returns: returns
@@ -255,7 +256,7 @@ export function hasSignature( descriptionOrArgumentsOrReturns:any = null, argume
 }
 
 export function hasProperty( access:string, name:string, type:string, description:string = null ):string {
-	var descriptor = {
+	let descriptor:PropertyDescriptor = {
 		access: access,
 		specType: PROPERTY,
 		name: name,
@@ -266,10 +267,12 @@ export function hasProperty( access:string, name:string, type:string, descriptio
 	return toJSON( descriptor );
 }
 
-export var property = hasProperty;
+/* tslint:disable: typedef */
+export let property = hasProperty;
+/* tslint:enable: typedef */
 
 export function extendsClass( name:string ):string {
-	var descriptor = {
+	let descriptor:SpecDescriptor = {
 		specType: SUPER_CLASS,
 		name: name
 	};

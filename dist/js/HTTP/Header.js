@@ -1,26 +1,29 @@
 /// <reference path="../../typings/es6/es6.d.ts" />
-var Utils = require('./../Utils');
+var Utils = require("./../Utils");
 var Class = (function () {
     function Class(valueOrValues) {
         this.values = [];
-        if (!valueOrValues)
+        if (!valueOrValues) {
             return;
-        else if (Array.isArray(valueOrValues))
+        }
+        else if (Array.isArray(valueOrValues)) {
             this.values = valueOrValues;
-        else
+        }
+        else {
             this.setValues(valueOrValues);
+        }
     }
+    Class.prototype.toString = function () {
+        return this.values.join(", ");
+    };
     Class.prototype.setValues = function (valuesString) {
         this.values = [];
         var valueStrings = valuesString.split(",");
-        for (var i = 0, length = valueStrings.length; i < length; i++) {
+        for (var i = 0, length_1 = valueStrings.length; i < length_1; i++) {
             var valueString = valueStrings[i];
             var value = new Value(valueString);
             this.values.push(value);
         }
-    };
-    Class.prototype.toString = function () {
-        return this.values.join(', ');
     };
     return Class;
 })();
@@ -40,6 +43,25 @@ var Value = (function () {
         else
             this.setValue(value);
     }
+    Value.cleanString = function (toClean) {
+        toClean = toClean.trim();
+        toClean = (Utils.S.startsWith(toClean, "\"") || Utils.S.startsWith(toClean, "'")) ? toClean.substr(1, toClean.length) : toClean;
+        toClean = (Utils.S.endsWith(toClean, "\"") || Utils.S.endsWith(toClean, "'")) ? toClean.substr(0, toClean.length - 1) : toClean;
+        return toClean;
+    };
+    Value.prototype.toString = function () {
+        var result = "";
+        if (this.mainKey)
+            result += this.mainKey + "=";
+        result += this.mainValue;
+        if (this.secondaryKey || this.secondaryValue)
+            result += "; ";
+        if (this.secondaryKey)
+            result += this.secondaryKey + "=";
+        if (this.secondaryValue)
+            result += this.secondaryValue;
+        return result;
+    };
     Value.prototype.setValue = function (value) {
         var parts = value.split(";");
         this.setMain(parts[0]);
@@ -48,8 +70,9 @@ var Value = (function () {
     };
     Value.prototype.setMain = function (main) {
         var parts = main.split("=");
-        if (parts.length === 1)
+        if (parts.length === 1) {
             this.mainValue = Value.cleanString(parts[0]);
+        }
         else if (parts.length === 2) {
             this.mainKey = Value.cleanString(parts[0]);
             this.mainValue = Value.cleanString(parts[1]);
@@ -59,33 +82,15 @@ var Value = (function () {
     };
     Value.prototype.setSecondary = function (secondary) {
         var parts = secondary.split("=");
-        if (parts.length === 1)
+        if (parts.length === 1) {
             this.secondaryValue = Value.cleanString(parts[0]);
+        }
         else if (parts.length === 2) {
             this.secondaryKey = Value.cleanString(parts[0]);
             this.secondaryValue = Value.cleanString(parts[1]);
         }
         else
             this.secondaryValue = secondary;
-    };
-    Value.cleanString = function (toClean) {
-        toClean = toClean.trim();
-        toClean = (Utils.S.startsWith(toClean, "\"") || Utils.S.startsWith(toClean, "'")) ? toClean.substr(1, toClean.length) : toClean;
-        toClean = (Utils.S.endsWith(toClean, "\"") || Utils.S.endsWith(toClean, "'")) ? toClean.substr(0, toClean.length - 1) : toClean;
-        return toClean;
-    };
-    Value.prototype.toString = function () {
-        var result = '';
-        if (this.mainKey)
-            result += this.mainKey + '=';
-        result += this.mainValue;
-        if (this.secondaryKey || this.secondaryValue)
-            result += '; ';
-        if (this.secondaryKey)
-            result += this.secondaryKey + '=';
-        if (this.secondaryValue)
-            result += this.secondaryValue;
-        return result;
     };
     return Value;
 })();
@@ -95,22 +100,22 @@ var Util = (function () {
     }
     Util.parseHeaders = function (headersString) {
         var headers = new Map();
-        var headerStrings = headersString.split('\r\n');
-        for (var i = 0, length = headerStrings.length; i < length; i++) {
+        var headerStrings = headersString.split("\r\n");
+        for (var i = 0, length_2 = headerStrings.length; i < length_2; i++) {
             var headerString = headerStrings[i];
             if (!headerString.trim())
                 continue;
-            var parts = headerString.split(':');
-            if (parts.length != 2)
+            var parts = headerString.split(":");
+            if (parts.length !== 2)
                 throw new Error("ParseError: The header couldn't be parsed.");
-            var name = parts[0].trim();
+            var name_1 = parts[0].trim();
             var header = new Class(parts[1].trim());
-            if (headers.has(name)) {
-                var existingHeader = headers.get(name);
+            if (headers.has(name_1)) {
+                var existingHeader = headers.get(name_1);
                 existingHeader.values.concat(header.values);
             }
             else
-                headers.set(name, header);
+                headers.set(name_1, header);
         }
         return headers;
     };

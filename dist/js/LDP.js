@@ -1,18 +1,16 @@
-var AccessPoint = require('./LDP/AccessPoint');
+var AccessPoint = require("./LDP/AccessPoint");
 exports.AccessPoint = AccessPoint;
-var BasicContainer = require('./LDP/BasicContainer');
+var BasicContainer = require("./LDP/BasicContainer");
 exports.BasicContainer = BasicContainer;
-var Container = require('./LDP/Container');
+var Container = require("./LDP/Container");
 exports.Container = Container;
-var DirectContainer = require('./LDP/DirectContainer');
+var DirectContainer = require("./LDP/DirectContainer");
 exports.DirectContainer = DirectContainer;
-var IndirectContainer = require('./LDP/IndirectContainer');
+var IndirectContainer = require("./LDP/IndirectContainer");
 exports.IndirectContainer = IndirectContainer;
-var PersistedRDFSource = require('./LDP/PersistedRDFSource');
+var PersistedRDFSource = require("./LDP/PersistedRDFSource");
 exports.PersistedRDFSource = PersistedRDFSource;
-var RDFSource = require('./LDP/RDFSource');
+var RDFSource = require("./LDP/RDFSource");
 exports.RDFSource = RDFSource;
-//@formatter:off
-//@formatter:on 
 
 //# sourceMappingURL=LDP.js.map

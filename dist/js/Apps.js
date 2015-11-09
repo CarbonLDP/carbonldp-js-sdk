@@ -1,8 +1,8 @@
 /// <reference path="../typings/es6-promise/es6-promise.d.ts" />
-var App = require('./App');
-var RDF = require('./RDF');
-var Utils = require('./Utils');
-var CS = require('./NS/CS');
+var App = require("./App");
+var RDF = require("./RDF");
+var Utils = require("./Utils");
+var CS = require("./NS/CS");
 var Apps = (function () {
     function Apps(parent) {
         this.parent = parent;
@@ -18,7 +18,7 @@ var Apps = (function () {
         return this.parent.Documents.get(uri).then(function (processedResponse) {
             var document = processedResponse.result;
             if (!document.types.indexOf(CS.Class.Application))
-                throw new Error('The resource fetched is not a cs:Application.');
+                throw new Error("The resource fetched is not a cs:Application.");
             var appResource = App.factory.from(document);
             return new App.Class(_this.parent, appResource);
         });

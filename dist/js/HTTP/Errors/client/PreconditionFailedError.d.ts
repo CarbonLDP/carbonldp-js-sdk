@@ -1,4 +1,4 @@
-import RESTError from './../HTTPError';
+import RESTError from "./../HTTPError";
 declare class PreconditionFailedError extends RESTError {
     static statusCode: number;
     name: string;

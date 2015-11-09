@@ -1,4 +1,4 @@
-var Header = require('./Header');
+var Header = require("./Header");
 var Response = (function () {
     function Response(request) {
         this.status = request.status;
@@ -8,10 +8,12 @@ var Response = (function () {
     }
     Response.prototype.setHeaders = function (request) {
         var headersString = request.getAllResponseHeaders();
-        if (headersString)
+        if (headersString) {
             this.headers = Header.Util.parseHeaders(headersString);
-        else
+        }
+        else {
             this.headers = new Map();
+        }
     };
     return Response;
 })();

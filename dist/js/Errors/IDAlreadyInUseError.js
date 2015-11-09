@@ -3,14 +3,14 @@ var __extends = (this && this.__extends) || function (d, b) {
     function __() { this.constructor = d; }
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
-var AbstractError_1 = require('./AbstractError');
+var AbstractError_1 = require("./AbstractError");
 var IDAlreadyInUseError = (function (_super) {
     __extends(IDAlreadyInUseError, _super);
     function IDAlreadyInUseError() {
         _super.apply(this, arguments);
     }
     Object.defineProperty(IDAlreadyInUseError.prototype, "name", {
-        get: function () { return 'IDAlreadyInUseError'; },
+        get: function () { return "IDAlreadyInUseError"; },
         enumerable: true,
         configurable: true
     });

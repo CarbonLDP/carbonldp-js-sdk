@@ -1,6 +1,6 @@
 interface Literal {
-    '@type'?: string;
-    '@value': string;
+    "@type"?: string;
+    "@value": string;
 }
 declare class Factory {
     static from(value: any): Literal;

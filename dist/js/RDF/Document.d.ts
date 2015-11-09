@@ -1,23 +1,22 @@
-import * as RDFNode from './RDFNode';
-interface RDFDocument {
-    '@id'?: string;
-    '@graph': RDFNode.Class[];
+import * as RDFNode from "./RDFNode";
+export interface Class {
+    "@id"?: string;
+    "@graph": RDFNode.Class[];
 }
-declare class Factory {
+export declare class Factory {
     static is(object: Object): boolean;
-    static create(resources: RDFNode.Class[]): RDFDocument;
+    static create(resources: RDFNode.Class[]): Class;
 }
-declare class Util {
-    static getDocuments(object: Object[]): RDFDocument[];
-    static getDocuments(object: Object): RDFDocument[];
+export declare class Util {
+    static getDocuments(object: Object[]): Class[];
+    static getDocuments(object: Object): Class[];
     static getResources(document: RDFNode.Class[]): RDFNode.Class[];
-    static getResources(document: RDFDocument): RDFNode.Class[];
+    static getResources(document: Class): RDFNode.Class[];
     static getDocumentResources(document: RDFNode.Class[]): RDFNode.Class[];
-    static getDocumentResources(document: RDFDocument): RDFNode.Class[];
+    static getDocumentResources(document: Class): RDFNode.Class[];
     static getFragmentResources(document: RDFNode.Class[], documentResource?: RDFNode.Class): RDFNode.Class[];
-    static getFragmentResources(document: RDFDocument, documentResource?: RDFNode.Class): RDFNode.Class[];
+    static getFragmentResources(document: Class, documentResource?: RDFNode.Class): RDFNode.Class[];
     static getFragmentResources(document: RDFNode.Class[], documentResource?: string): RDFNode.Class[];
-    static getFragmentResources(document: RDFDocument, documentResource?: string): RDFNode.Class[];
-    static getBNodeResources(document: RDFDocument): RDFNode.Class[];
+    static getFragmentResources(document: Class, documentResource?: string): RDFNode.Class[];
+    static getBNodeResources(document: Class): RDFNode.Class[];
 }
-export { RDFDocument as Class, Factory, Util };

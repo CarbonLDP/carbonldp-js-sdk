@@ -1,5 +1,4 @@
-//@formatter:off
-var RDF = require('../../RDF');
+var RDF = require("../../RDF");
 var Factory = (function () {
     function Factory() {
     }
@@ -16,7 +15,5 @@ var Factory = (function () {
     return Factory;
 })();
 exports.Factory = Factory;
-//@formatter:off
-//@formatter:on 
 
 //# sourceMappingURL=PATCHRequest.js.map

@@ -1,6 +1,6 @@
 /// <reference path="../typings/es6-promise/es6-promise.d.ts" />
-import * as HTTP from './HTTP';
-import Parent from './Parent';
+import * as HTTP from "./HTTP";
+import Parent from "./Parent";
 declare enum Method {
     Basic = 0,
 }

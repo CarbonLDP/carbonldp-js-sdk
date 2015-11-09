@@ -1,4 +1,4 @@
-import * as RDFNode from './RDFNode';
+import * as RDFNode from "./RDFNode";
 
 interface MixinFactory<C> {
 	is( object:Object ):boolean;

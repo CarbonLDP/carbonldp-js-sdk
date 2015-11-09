@@ -1,4 +1,4 @@
-var Auth = require('./Auth');
+var Auth = require("./Auth");
 var settings = {};
 settings["domain"] = "carbonldp.com";
 settings["http.ssl"] = true;

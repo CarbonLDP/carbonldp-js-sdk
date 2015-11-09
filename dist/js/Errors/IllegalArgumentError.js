@@ -3,14 +3,14 @@ var __extends = (this && this.__extends) || function (d, b) {
     function __() { this.constructor = d; }
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
-var AbstractError_1 = require('./AbstractError');
+var AbstractError_1 = require("./AbstractError");
 var IllegalArgumentError = (function (_super) {
     __extends(IllegalArgumentError, _super);
     function IllegalArgumentError() {
         _super.apply(this, arguments);
     }
     Object.defineProperty(IllegalArgumentError.prototype, "name", {
-        get: function () { return 'IllegalArgumentError'; },
+        get: function () { return "IllegalArgumentError"; },
         enumerable: true,
         configurable: true
     });

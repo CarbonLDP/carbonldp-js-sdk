@@ -1,4 +1,4 @@
-var Utils = require('../Utils');
+var Utils = require("../Utils");
 var Modifications = (function () {
     function Modifications() {
         this.add = new Map();
@@ -22,16 +22,14 @@ var Factory = (function () {
     function Factory() {
     }
     Factory.is = function (object) {
-        //@formatter:off
-        return (Utils.hasPropertyDefined(object, '_dirty') &&
-            Utils.hasPropertyDefined(object, '_modifications') &&
-            Utils.hasFunction(object, 'isDirty'));
-        //@formatter:on
+        return (Utils.hasPropertyDefined(object, "_dirty") &&
+            Utils.hasPropertyDefined(object, "_modifications") &&
+            Utils.hasFunction(object, "isDirty"));
     };
     Factory.from = function (objectOrObjects) {
         var objects = Utils.isArray(objectOrObjects) ? objectOrObjects : [objectOrObjects];
         var values = [];
-        for (var i = 0, length = objects.length; i < length; i++) {
+        for (var i = 0, length_1 = objects.length; i < length_1; i++) {
             var value = objects[i];
             if (!Factory.is(value))
                 Factory.injectBehaviour(value);
@@ -39,17 +37,16 @@ var Factory = (function () {
         }
         if (Utils.isArray(objectOrObjects))
             return values;
-        else
-            return values[0];
+        return values[0];
     };
     Factory.injectBehaviour = function (value) {
         Object.defineProperties(value, {
-            '_dirty': {
+            "_dirty": {
                 writable: true,
                 enumerable: false,
                 value: false
             },
-            '_modifications': {
+            "_modifications": {
                 writable: false,
                 enumerable: false,
                 value: new Modifications()
@@ -61,7 +58,5 @@ var Factory = (function () {
     return Factory;
 })();
 exports.Factory = Factory;
-//@formatter:off
-//@formatter:on 
 
 //# sourceMappingURL=Persisted.js.map

@@ -4,12 +4,12 @@ var __extends = (this && this.__extends) || function (d, b) {
     function __() { this.constructor = d; }
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
-var NS = require('./../NS');
-var RDF = require('./../RDF');
-var AccessPoint = require('./AccessPoint');
-var Utils = require('./../Utils');
-var RDFClass = NS.LDP.Class.IndirectContainer;
-var Definition = Utils.M.from({
+var NS = require("./../NS");
+var RDF = require("./../RDF");
+var AccessPoint = require("./AccessPoint");
+var Utils = require("./../Utils");
+exports.RDF_CLASS = NS.LDP.Class.IndirectContainer;
+exports.DEFINITION = Utils.M.from({
     "insertedContentRelation": {
         "uri": NS.LDP.Predicate.insertedContentRelation,
         "multi": false,
@@ -22,11 +22,9 @@ var Factory = (function (_super) {
         _super.apply(this, arguments);
     }
     Factory.prototype.is = function (object) {
-        //@formatter:off
         return (_super.prototype.is.call(this, object) &&
             this.hasRDFClass(object) &&
             this.hasClassProperties(object));
-        //@formatter:on
     };
     Factory.prototype.from = function (resourceOrResources) {
         var sources = _super.prototype.from.call(this, resourceOrResources);
@@ -38,25 +36,21 @@ var Factory = (function (_super) {
         }
         if (Utils.isArray(resourceOrResources))
             return resources;
-        else
-            return resources[0];
+        return resources[0];
     };
     Factory.prototype.hasRDFClass = function (resource) {
-        return (resource.types.indexOf(RDFClass) !== -1);
+        return (resource.types.indexOf(exports.RDF_CLASS) !== -1);
     };
     Factory.prototype.hasClassProperties = function (resource) {
         return (Utils.hasPropertyDefined(resource, "insertedContentRelation"));
     };
     Factory.prototype.injectBehaviour = function (resource) {
-        RDF.Resource.Factory.injectDescriptions(resource, Definition);
+        RDF.Resource.Factory.injectDescriptions(resource, exports.DEFINITION);
         return resource;
     };
     return Factory;
 })(AccessPoint.Factory);
 exports.Factory = Factory;
-var factory = new Factory();
-exports.factory = factory;
-//@formatter:off
-//@formatter:on 
+exports.factory = new Factory();
 
 //# sourceMappingURL=IndirectContainer.js.map

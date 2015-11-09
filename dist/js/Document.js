@@ -4,11 +4,11 @@ var __extends = (this && this.__extends) || function (d, b) {
     function __() { this.constructor = d; }
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
-var Fragment = require('./Fragment');
-var NamedFragment = require('./NamedFragment');
-var RDF = require('./RDF');
-var Utils = require('./Utils');
-var Errors = require('./Errors');
+var Fragment = require("./Fragment");
+var NamedFragment = require("./NamedFragment");
+var RDF = require("./RDF");
+var Utils = require("./Utils");
+var Errors = require("./Errors");
 function hasFragment(id) {
     var document = this;
     id = RDF.URI.Util.hasFragment(id) ? RDF.URI.Util.getFragment(id) : id;
@@ -36,8 +36,8 @@ function createFragment(slug) {
         return document.createNamedFragment(slug);
     var id = Fragment.Util.generateID();
     var fragmentObject = {
-        '@id': id,
-        'document': document
+        "@id": id,
+        "document": document
     };
     var fragment = Fragment.factory.from(fragmentObject);
     document._fragmentsIndex.set(id, fragment);
@@ -50,10 +50,10 @@ function createNamedFragment(slug) {
     slug = RDF.URI.Util.hasFragment(slug) ? RDF.URI.Util.getFragment(slug) : slug;
     if (document._fragmentsIndex.has(slug))
         throw new Errors.IDAlreadyInUseError("The slug provided is already being used by a fragment.");
-    var uri = document.uri + '#' + slug;
+    var uri = document.uri + "#" + slug;
     var fragmentObject = {
-        '@id': uri,
-        'document': document
+        "@id": uri,
+        "document": document
     };
     var fragment = NamedFragment.factory.from(fragmentObject);
     document._fragmentsIndex.set(slug, fragment);
@@ -64,11 +64,11 @@ function removeFragment(fragmentOrSlug) {
 }
 function toJSON() {
     var rdfDocument = {
-        '@graph': this.getFragments()
+        "@graph": this.getFragments()
     };
     if (this.uri)
-        rdfDocument['@id'] = this.id;
-    rdfDocument['@graph'].push(this);
+        rdfDocument["@id"] = this.id;
+    rdfDocument["@graph"].push(this);
     return JSON.stringify(rdfDocument);
 }
 var Factory = (function (_super) {
@@ -89,9 +89,9 @@ var Factory = (function (_super) {
     Factory.prototype.singleFrom = function (rdfDocument) {
         var documentResources = RDF.Document.Util.getDocumentResources(rdfDocument);
         if (documentResources.length > 1)
-            throw new Errors.IllegalArgumentError('The RDFDocument contains more than one document resource.');
-        else if (documentResources.length === 0)
-            throw new Errors.IllegalArgumentError('The RDFDocument doesn\'t contain a document resource.');
+            throw new Errors.IllegalArgumentError("The RDFDocument contains more than one document resource.");
+        if (documentResources.length === 0)
+            throw new Errors.IllegalArgumentError("The RDFDocument doesn\'t contain a document resource.");
         var document = this.injectBehavior(documentResources[0]);
         var fragmentResources = RDF.Document.Util.getBNodeResources(rdfDocument);
         for (var i = 0, length_2 = fragmentResources.length; i < length_2; i++) {
@@ -116,55 +116,55 @@ var Factory = (function (_super) {
         if (this.hasClassProperties(documentResource))
             return documentResource;
         Object.defineProperties(documentResource, {
-            '_fragmentsIndex': {
+            "_fragmentsIndex": {
                 writable: false,
                 enumerable: false,
                 configurable: false,
                 value: new Map()
             },
-            'hasFragment': {
+            "hasFragment": {
                 writable: false,
                 enumerable: false,
                 configurable: false,
                 value: hasFragment
             },
-            'getFragment': {
+            "getFragment": {
                 writable: false,
                 enumerable: false,
                 configurable: false,
                 value: getFragment
             },
-            'getNamedFragment': {
+            "getNamedFragment": {
                 writable: false,
                 enumerable: false,
                 configurable: false,
                 value: getNamedFragment
             },
-            'getFragments': {
+            "getFragments": {
                 writable: false,
                 enumerable: false,
                 configurable: false,
                 value: getFragments
             },
-            'createFragment': {
+            "createFragment": {
                 writable: false,
                 enumerable: false,
                 configurable: false,
                 value: createFragment
             },
-            'createNamedFragment': {
+            "createNamedFragment": {
                 writable: false,
                 enumerable: false,
                 configurable: false,
                 value: createNamedFragment
             },
-            'removeFragment': {
+            "removeFragment": {
                 writable: false,
                 enumerable: false,
                 configurable: false,
                 value: removeFragment
             },
-            'toJSON': {
+            "toJSON": {
                 writable: false,
                 enumerable: false,
                 configurable: false,
@@ -174,7 +174,7 @@ var Factory = (function (_super) {
         return documentResource;
     };
     Factory.prototype.hasClassProperties = function (documentResource) {
-        return (Utils.hasPropertyDefined(documentResource, '_fragmentsIndex'));
+        return (Utils.hasPropertyDefined(documentResource, "_fragmentsIndex"));
     };
     return Factory;
 })(RDF.Resource.Factory);

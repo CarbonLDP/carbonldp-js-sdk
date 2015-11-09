@@ -5,7 +5,7 @@ import * as RDF from "./../RDF";
 import * as AccessPoint from "./AccessPoint";
 import * as Utils from "./../Utils";
 
-export const RDF_CLASS:string = NS.LDP.Class.Class;
+export const RDF_CLASS:string = NS.LDP.Class.DirectContainer;
 
 export interface Class extends AccessPoint.Class {
 

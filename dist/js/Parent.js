@@ -1,7 +1,7 @@
 /// <reference path="../typings/es6/es6.d.ts" />
-var Auth_1 = require('./Auth');
-var Documents_1 = require('./Documents');
-var Utils = require('./Utils');
+var Auth_1 = require("./Auth");
+var Documents_1 = require("./Documents");
+var Utils = require("./Utils");
 var Parent = (function () {
     function Parent() {
         this.settings = new Map();
@@ -10,13 +10,11 @@ var Parent = (function () {
         this.Documents = new Documents_1.default(this);
     }
     Parent.prototype.resolve = function (relativeURI) {
-        throw new Error('Method needs to be implemented by child.');
+        throw new Error("Method needs to be implemented by child.");
     };
     Parent.prototype.hasSetting = function (name) {
-        //@formatter:off
         return (this.settings.has(name) ||
             (this.parent && this.parent.hasSetting(name)));
-        //@formatter:off
     };
     Parent.prototype.getSetting = function (name) {
         if (this.settings.has(name))
@@ -62,11 +60,13 @@ var Parent = (function () {
             extender = Utils.M.from(descriptions);
         }
         else
-            throw new Error('IllegalArgument');
-        if (this.definitions.has(uri))
+            throw new Error("IllegalArgument");
+        if (this.definitions.has(uri)) {
             Utils.M.extend(this.definitions.get(uri), extender);
-        else
+        }
+        else {
             this.definitions.set(uri, extender);
+        }
     };
     Parent.prototype.setDefinition = function (uri, descriptions) {
         var extender;
@@ -77,7 +77,7 @@ var Parent = (function () {
             extender = Utils.M.from(descriptions);
         }
         else
-            throw new Error('IllegalArgument');
+            throw new Error("IllegalArgument");
         this.definitions.set(uri, extender);
     };
     Parent.prototype.deleteDefinition = function (uri) {

@@ -1,5 +1,5 @@
 /// <reference path="../../typings/es6/es6.d.ts" />
-import * as Value from './Value';
+import * as Value from "./Value";
 declare class Modifications {
     add: Map<string, Value.Class[]>;
     set: Map<string, Value.Class[]>;

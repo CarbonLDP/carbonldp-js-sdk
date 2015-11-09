@@ -3,8 +3,8 @@ var __extends = (this && this.__extends) || function (d, b) {
     function __() { this.constructor = d; }
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
-var HTTPError_1 = require('./../HTTPError');
-var name = 'ForbiddenError';
+var HTTPError_1 = require("./../HTTPError");
+var name = "ForbiddenError";
 var statusCode = 403;
 var ForbiddenError = (function (_super) {
     __extends(ForbiddenError, _super);

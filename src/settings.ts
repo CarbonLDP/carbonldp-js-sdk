@@ -1,6 +1,6 @@
 import * as Auth from "./Auth";
 
-interface CarbonSettings {
+export interface CarbonSettings {
 	"domain"?:string;
 	"http.ssl"?:boolean;
 	"auth.method"?:Auth.Method;

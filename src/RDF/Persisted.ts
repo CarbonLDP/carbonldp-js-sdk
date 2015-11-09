@@ -1,6 +1,6 @@
 /// <reference path="../../typings/es6/es6.d.ts" />
-import * as Value from './Value';
-import * as Utils from '../Utils';
+import * as Value from "./Value";
+import * as Utils from "../Utils";
 
 class Modifications {
 	add:Map<string, Value.Class[]>;
@@ -33,23 +33,21 @@ function isDirty():boolean {
 
 class Factory {
 	static is( object:Object ):boolean {
-		//@formatter:off
 		return (
-			Utils.hasPropertyDefined( object, '_dirty' ) &&
-			Utils.hasPropertyDefined( object, '_modifications' ) &&
-			Utils.hasFunction( object, 'isDirty' )
+			Utils.hasPropertyDefined( object, "_dirty" ) &&
+			Utils.hasPropertyDefined( object, "_modifications" ) &&
+			Utils.hasFunction( object, "isDirty" )
 		);
-		//@formatter:on
 	}
 
 	static from( object:Object ):Persisted;
 	static from( objects:Object[] ):Persisted[];
 	static from( objectOrObjects:any ):any {
-		var objects:Object[] = Utils.isArray( objectOrObjects ) ? <Object[]>objectOrObjects : [ <Object>objectOrObjects ];
-		var values:Persisted[] = [];
+		let objects:Object[] = Utils.isArray( objectOrObjects ) ? <Object[]>objectOrObjects : [ <Object>objectOrObjects ];
+		let values:Persisted[] = [];
 
-		for ( var i:number = 0, length:number = objects.length; i < length; i ++ ) {
-			var value:Persisted = <any>objects[ i ];
+		for ( let i:number = 0, length:number = objects.length; i < length; i ++ ) {
+			let value:Persisted = <any>objects[ i ];
 
 			if ( ! Factory.is( value ) ) Factory.injectBehaviour( value );
 
@@ -57,17 +55,17 @@ class Factory {
 		}
 
 		if ( Utils.isArray( objectOrObjects ) ) return values;
-		else return values[ 0 ];
+		return values[ 0 ];
 	}
 
 	private static injectBehaviour( value:Persisted ):Persisted {
 		Object.defineProperties( value, {
-			'_dirty': {
+			"_dirty": {
 				writable: true,
 				enumerable: false,
 				value: false
 			},
-			'_modifications': {
+			"_modifications": {
 				writable: false,
 				enumerable: false,
 				value: new Modifications()
@@ -80,11 +78,9 @@ class Factory {
 	}
 }
 
-//@formatter:off
 export {
 	Modifications,
 	ModificationType,
 	Persisted as Class,
 	Factory
 };
-//@formatter:on

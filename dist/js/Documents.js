@@ -1,11 +1,10 @@
 /// <reference path="../typings/tsd.d.ts" />
-var jsonld = require('jsonld');
-var Errors = require('./Errors');
-var HTTP = require('./HTTP');
-var RDF = require('./RDF');
-var Document = require('./Document');
-var LDP = require('./NS/LDP');
-//@formatter:on
+var jsonld = require("jsonld");
+var Errors = require("./Errors");
+var HTTP = require("./HTTP");
+var RDF = require("./RDF");
+var Document = require("./Document");
+var LDP = require("./NS/LDP");
 var InteractionModel;
 (function (InteractionModel) {
     InteractionModel[InteractionModel["RDFSource"] = 0] = "RDFSource";
@@ -91,9 +90,9 @@ var Documents = (function () {
     };
     Documents.prototype.getRDFDocument = function (rdfDocuments) {
         if (rdfDocuments.length === 0)
-            throw new Error('BadResponse: No document was returned.');
+            throw new Error("BadResponse: No document was returned.");
         if (rdfDocuments.length > 1)
-            throw new Error('Unsupported: Multiple graphs are currently not supported.');
+            throw new Error("Unsupported: Multiple graphs are currently not supported.");
         return rdfDocuments[0];
     };
     Documents.prototype.injectDefinitions = function (resources) {

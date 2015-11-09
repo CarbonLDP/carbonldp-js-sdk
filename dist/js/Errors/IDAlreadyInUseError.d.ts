@@ -1,4 +1,4 @@
-import IllegalArgumentError from './AbstractError';
+import IllegalArgumentError from "./AbstractError";
 declare class IDAlreadyInUseError extends IllegalArgumentError {
     name: string;
 }

@@ -1,4 +1,4 @@
-import RESTError from './../HTTPError';
+import RESTError from "./../HTTPError";
 declare class UnauthorizedError extends RESTError {
     static statusCode: number;
     name: string;

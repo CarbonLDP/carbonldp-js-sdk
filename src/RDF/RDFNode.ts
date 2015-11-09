@@ -1,31 +1,27 @@
-import * as Utils from '../Utils';
+import * as Utils from "../Utils";
 
-interface RDFNode {
-	'@id':string;
+export interface Class {
+	"@id":string;
 }
 
-class Factory {
+export class Factory {
 	static is( value:any ):boolean {
-		//@formatter:off
 		return (
 			( ! Utils.isNull( value ) ) &&
 			Utils.isObject( value ) &&
-			Utils.hasProperty( value, '@id' )
+			Utils.hasProperty( value, "@id" )
 		);
-		//@formatter:on
 	}
 
-	static create( uri:string ):RDFNode {
+	static create( uri:string ):Class {
 		return {
-			'@id': uri
+			"@id": uri
 		};
 	}
 }
 
-class Util {
-	static areEqual( node1:RDFNode, node2:RDFNode ):boolean {
-		return node1[ '@id' ] === node2[ '@id' ];
+export class Util {
+	static areEqual( node1:Class, node2:Class ):boolean {
+		return node1[ "@id" ] === node2[ "@id" ];
 	}
 }
-
-export { RDFNode as Class, Factory, Util };

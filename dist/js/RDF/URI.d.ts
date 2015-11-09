@@ -1,4 +1,4 @@
-declare class Util {
+export declare class Util {
     static hasFragment(uri: string): boolean;
     static hasProtocol(uri: string): boolean;
     static isAbsolute(uri: string): boolean;
@@ -9,4 +9,3 @@ declare class Util {
     static resolve(parentURI: string, childURI: string): string;
     static removeProtocol(uri: string): string;
 }
-export { Util };

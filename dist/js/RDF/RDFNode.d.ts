@@ -1,11 +1,10 @@
-interface RDFNode {
-    '@id': string;
+export interface Class {
+    "@id": string;
 }
-declare class Factory {
+export declare class Factory {
     static is(value: any): boolean;
-    static create(uri: string): RDFNode;
+    static create(uri: string): Class;
 }
-declare class Util {
-    static areEqual(node1: RDFNode, node2: RDFNode): boolean;
+export declare class Util {
+    static areEqual(node1: Class, node2: Class): boolean;
 }
-export { RDFNode as Class, Factory, Util };

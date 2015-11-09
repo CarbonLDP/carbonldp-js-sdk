@@ -1,5 +1,5 @@
-import * as Document from './Document';
-import * as RDF from './RDF';
+import * as Document from "./Document";
+import * as RDF from "./RDF";
 export interface Class extends RDF.Resource.Class {
     document: Document.Class;
 }

@@ -10,6 +10,6 @@
         PersistedFragmentResource as Class
     };
     //@formatter:on
-*/ 
+*/
 
 //# sourceMappingURL=PersistedFragmentResource.js.map

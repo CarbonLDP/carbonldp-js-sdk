@@ -42,7 +42,5 @@ var Predicate = (function () {
     return Predicate;
 })();
 exports.Predicate = Predicate;
-//@formatter:off
-//@formatter:on 
 
 //# sourceMappingURL=C.js.map

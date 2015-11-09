@@ -721,20 +721,19 @@ $__System.register("2", [], function(exports_1) {
         }
     }
 });
-//@formatter:on 
 
 $__System.register("3", [], function(exports_1) {
     var namespace, Predicate;
     return {
         setters:[],
         execute: function() {
-            namespace = 'https://carbonldp.com/ns/v1/patch#';
+            namespace = "https://carbonldp.com/ns/v1/patch#";
             Predicate = (function () {
                 function Predicate() {
                 }
-                Predicate.ADD_ACTION = namespace + 'addAction';
-                Predicate.SET_ACTION = namespace + 'setAction';
-                Predicate.DELETE_ACTION = namespace + 'deleteAction';
+                Predicate.ADD_ACTION = namespace + "addAction";
+                Predicate.SET_ACTION = namespace + "setAction";
+                Predicate.DELETE_ACTION = namespace + "deleteAction";
                 return Predicate;
             })();
             exports_1("namespace", namespace);
@@ -742,7 +741,6 @@ $__System.register("3", [], function(exports_1) {
         }
     }
 });
-//@formatter:on 
 
 $__System.register("4", [], function(exports_1) {
     var namespace, Class, Predicate;
@@ -781,7 +779,6 @@ $__System.register("4", [], function(exports_1) {
         }
     }
 });
-//@formatter:on 
 
 $__System.register("5", [], function(exports_1) {
     var namespace, Class, Predicate;
@@ -940,18 +937,17 @@ $__System.register("5", [], function(exports_1) {
         }
     }
 });
-//@formatter:on 
 
 $__System.register("6", [], function(exports_1) {
     var namespace, Predicate;
     return {
         setters:[],
         execute: function() {
-            namespace = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#';
+            namespace = "http://www.w3.org/1999/02/22-rdf-syntax-ns#";
             Predicate = (function () {
                 function Predicate() {
                 }
-                Predicate.type = namespace + 'type';
+                Predicate.type = namespace + "type";
                 return Predicate;
             })();
             exports_1("namespace", namespace);
@@ -959,7 +955,6 @@ $__System.register("6", [], function(exports_1) {
         }
     }
 });
-//@formatter:on 
 
 $__System.register("7", [], function(exports_1) {
     var namespace, DataType;
@@ -1034,18 +1029,17 @@ $__System.register("8", ["2", "3", "4", "5", "6", "7"], function(exports_1) {
         }
     }
 });
-//@formatter:on 
 
 /// <reference path="../typings/es6/es6.d.ts" />
 $__System.register("9", [], function(exports_1) {
     var S, A, M, UUID;
     function hasFunction(object, functionName) {
-        return typeof object[functionName] === 'function';
+        return typeof object[functionName] === "function";
     }
     function hasProperty(object, property) {
         if (!object)
             return false;
-        return 'undefined' !== typeof object[property];
+        return "undefined" !== typeof object[property];
     }
     function hasPropertyDefined(object, property) {
         return !!Object.getOwnPropertyDescriptor(object, property);
@@ -1054,56 +1048,55 @@ $__System.register("9", [], function(exports_1) {
         return value === null;
     }
     function isArray(object) {
-        return Object.prototype.toString.call(object) === '[object Array]';
+        return Object.prototype.toString.call(object) === "[object Array]";
     }
     function isString(string) {
-        return typeof string == 'string' || string instanceof String;
+        return typeof string === "string" || string instanceof String;
     }
     function isBoolean(boolean) {
-        return typeof boolean == 'boolean';
+        return typeof boolean === "boolean";
     }
     function isNumber(number) {
-        return typeof number == 'number' || number instanceof Number;
+        return typeof number === "number" || number instanceof Number;
     }
     function isInteger(number) {
         if (!isNumber(number))
             return false;
-        return number % 1 == 0;
+        return number % 1 === 0;
     }
     function isDouble(number) {
         if (!isNumber(number))
             return false;
-        return number % 1 != 0;
+        return number % 1 !== 0;
     }
     function isDate(date) {
-        return typeof date == 'date' || date instanceof Date;
+        return typeof date === "date" || date instanceof Date;
     }
     function isObject(object) {
-        return typeof object === 'object' && (!!object);
+        return typeof object === "object" && (!!object);
     }
     function isFunction(value) {
-        return typeof value === 'function';
+        return typeof value === "function";
     }
     function isMap(value) {
-        //@formatter:off
         return (isObject(value) &&
-            hasFunction(value, 'get') &&
-            hasFunction(value, 'has') &&
-            hasProperty(value, 'size') &&
-            hasFunction(value, 'clear') &&
-            hasFunction(value, 'delete') &&
-            hasFunction(value, 'entries') &&
-            hasFunction(value, 'forEach') &&
-            hasFunction(value, 'get') &&
-            hasFunction(value, 'has') &&
-            hasFunction(value, 'keys') &&
-            hasFunction(value, 'set') &&
-            hasFunction(value, 'values'));
-        //@formatter:on
+            hasFunction(value, "get") &&
+            hasFunction(value, "has") &&
+            hasProperty(value, "size") &&
+            hasFunction(value, "clear") &&
+            hasFunction(value, "delete") &&
+            hasFunction(value, "entries") &&
+            hasFunction(value, "forEach") &&
+            hasFunction(value, "get") &&
+            hasFunction(value, "has") &&
+            hasFunction(value, "keys") &&
+            hasFunction(value, "set") &&
+            hasFunction(value, "values"));
     }
     function parseBoolean(value) {
         if (!isString(value))
             return false;
+        /* tslint:disable: no-switch-case-fall-through */
         switch (value.toLowerCase()) {
             case "true":
             case "yes":
@@ -1117,6 +1110,7 @@ $__System.register("9", [], function(exports_1) {
             default:
                 return false;
         }
+        /* tslint:enable: no-switch-case-fall-through */
     }
     function extend(target) {
         var objects = [];
@@ -1137,7 +1131,7 @@ $__System.register("9", [], function(exports_1) {
     }
     function forEachOwnProperty(object, action) {
         if (!isObject(object))
-            throw new Error('IllegalArgument');
+            throw new Error("IllegalArgument");
         for (var name in object) {
             if (object.hasOwnProperty(name)) {
                 action(name, object[name]);
@@ -1166,9 +1160,10 @@ $__System.register("9", [], function(exports_1) {
                 }
                 A.from = function (iterator) {
                     var array = [];
-                    var next;
-                    while (!(next = iterator.next()).done) {
+                    var next = iterator.next();
+                    while (!next.done) {
                         array.push(next.value);
+                        next = iterator.next();
                     }
                     return array;
                 };
@@ -1205,13 +1200,14 @@ $__System.register("9", [], function(exports_1) {
                     for (var i = 0, length = extenders.length; i < length; i++) {
                         var extender = extenders[i];
                         var values = extender.entries();
-                        var next;
-                        while (!(next = values.next()).done) {
+                        var next = values.next();
+                        while (!next.done) {
                             var entry = next.value;
                             var key = entry[0];
                             var value = entry[1];
                             if (!toExtend.has(key))
                                 toExtend.set(key, value);
+                            next = values.next();
                         }
                     }
                     return toExtend;
@@ -1225,8 +1221,9 @@ $__System.register("9", [], function(exports_1) {
                     return UUID.regExp.test(uuid);
                 };
                 UUID.generate = function () {
-                    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-                        var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+                    return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function (c) {
+                        var r = Math.random() * 16 | 0;
+                        var v = c === "x" ? r : (r & 0x3 | 0x8);
                         return v.toString(16);
                     });
                 };
@@ -1257,11 +1254,10 @@ $__System.register("9", [], function(exports_1) {
         }
     }
 });
-//@foramtter:on 
 
 $__System.register("a", ["8", "9"], function(exports_1) {
     var NS, Utils;
-    var RDFClass, Definition;
+    var RDF_CLASS, DEFINITION;
     return {
         setters:[
             function (NS_1) {
@@ -1271,8 +1267,8 @@ $__System.register("a", ["8", "9"], function(exports_1) {
                 Utils = Utils_1;
             }],
         execute: function() {
-            RDFClass = NS.C.Class.API;
-            Definition = Utils.M.from({
+            exports_1("RDF_CLASS", RDF_CLASS = NS.C.Class.API);
+            exports_1("DEFINITION", DEFINITION = Utils.M.from({
                 "version": {
                     "uri": NS.C.Predicate.version,
                     "multi": false,
@@ -1283,9 +1279,7 @@ $__System.register("a", ["8", "9"], function(exports_1) {
                     "multi": false,
                     "literal": true
                 }
-            });
-            exports_1("Definition", Definition);
-            exports_1("RDFClass", RDFClass);
+            }));
         }
     }
 });
@@ -1307,12 +1301,12 @@ $__System.register("b", [], function(exports_1) {
                     this.message = message;
                 }
                 Object.defineProperty(AbstractError.prototype, "name", {
-                    get: function () { return 'AbstractError'; },
+                    get: function () { return "AbstractError"; },
                     enumerable: true,
                     configurable: true
                 });
                 AbstractError.prototype.toString = function () {
-                    return this.name + ':' + this.message;
+                    return this.name + ":" + this.message;
                 };
                 return AbstractError;
             })(Error);
@@ -1341,8 +1335,13 @@ $__System.register("c", ["b"], function(exports_1) {
                     _super.call(this, message);
                     this.response = response;
                 }
+                Object.defineProperty(HTTPError, "statusCode", {
+                    get: function () { return null; },
+                    enumerable: true,
+                    configurable: true
+                });
                 Object.defineProperty(HTTPError.prototype, "name", {
-                    get: function () { return 'HTTPError'; },
+                    get: function () { return "HTTPError"; },
                     enumerable: true,
                     configurable: true
                 });
@@ -1367,7 +1366,7 @@ $__System.register("d", ["c"], function(exports_1) {
                 HTTPError_1 = HTTPError_1_1;
             }],
         execute: function() {
-            name = 'BadRequestError';
+            name = "BadRequestError";
             statusCode = 400;
             BadRequestError = (function (_super) {
                 __extends(BadRequestError, _super);
@@ -1405,7 +1404,7 @@ $__System.register("e", ["c"], function(exports_1) {
                 HTTPError_1 = HTTPError_1_1;
             }],
         execute: function() {
-            name = 'ConflictError';
+            name = "ConflictError";
             statusCode = 409;
             ConflictError = (function (_super) {
                 __extends(ConflictError, _super);
@@ -1443,7 +1442,7 @@ $__System.register("f", ["c"], function(exports_1) {
                 HTTPError_1 = HTTPError_1_1;
             }],
         execute: function() {
-            name = 'ForbiddenError';
+            name = "ForbiddenError";
             statusCode = 403;
             ForbiddenError = (function (_super) {
                 __extends(ForbiddenError, _super);
@@ -1481,7 +1480,7 @@ $__System.register("10", ["c"], function(exports_1) {
                 HTTPError_1 = HTTPError_1_1;
             }],
         execute: function() {
-            name = 'MethodNotAllowedError';
+            name = "MethodNotAllowedError";
             statusCode = 405;
             MethodNotAllowedError = (function (_super) {
                 __extends(MethodNotAllowedError, _super);
@@ -1519,7 +1518,7 @@ $__System.register("11", ["c"], function(exports_1) {
                 HTTPError_1 = HTTPError_1_1;
             }],
         execute: function() {
-            name = 'MethodNotAcceptableError';
+            name = "MethodNotAcceptableError";
             statusCode = 406;
             MethodNotAcceptableError = (function (_super) {
                 __extends(MethodNotAcceptableError, _super);
@@ -1557,7 +1556,7 @@ $__System.register("12", ["c"], function(exports_1) {
                 HTTPError_1 = HTTPError_1_1;
             }],
         execute: function() {
-            name = 'NotFoundError';
+            name = "NotFoundError";
             statusCode = 404;
             NotFoundError = (function (_super) {
                 __extends(NotFoundError, _super);
@@ -1595,7 +1594,7 @@ $__System.register("13", ["c"], function(exports_1) {
                 HTTPError_1 = HTTPError_1_1;
             }],
         execute: function() {
-            name = 'PreconditionFailedError';
+            name = "PreconditionFailedError";
             statusCode = 412;
             PreconditionFailedError = (function (_super) {
                 __extends(PreconditionFailedError, _super);
@@ -1633,7 +1632,7 @@ $__System.register("14", ["c"], function(exports_1) {
                 HTTPError_1 = HTTPError_1_1;
             }],
         execute: function() {
-            name = 'PreconditionRequiredError';
+            name = "PreconditionRequiredError";
             statusCode = 428;
             PreconditionRequiredError = (function (_super) {
                 __extends(PreconditionRequiredError, _super);
@@ -1671,7 +1670,7 @@ $__System.register("15", ["c"], function(exports_1) {
                 HTTPError_1 = HTTPError_1_1;
             }],
         execute: function() {
-            name = 'RequestEntityTooLargeError';
+            name = "RequestEntityTooLargeError";
             statusCode = 413;
             RequestEntityTooLargeError = (function (_super) {
                 __extends(RequestEntityTooLargeError, _super);
@@ -1709,7 +1708,7 @@ $__System.register("16", ["c"], function(exports_1) {
                 HTTPError_1 = HTTPError_1_1;
             }],
         execute: function() {
-            name = 'RequestHeaderFieldsTooLargeError';
+            name = "RequestHeaderFieldsTooLargeError";
             statusCode = 431;
             RequestHeaderFieldsTooLargeError = (function (_super) {
                 __extends(RequestHeaderFieldsTooLargeError, _super);
@@ -1747,7 +1746,7 @@ $__System.register("17", ["c"], function(exports_1) {
                 HTTPError_1 = HTTPError_1_1;
             }],
         execute: function() {
-            name = 'RequestURITooLongError';
+            name = "RequestURITooLongError";
             statusCode = 414;
             RequestURITooLongError = (function (_super) {
                 __extends(RequestURITooLongError, _super);
@@ -1785,7 +1784,7 @@ $__System.register("18", ["c"], function(exports_1) {
                 HTTPError_1 = HTTPError_1_1;
             }],
         execute: function() {
-            name = 'TooManyRequestsError';
+            name = "TooManyRequestsError";
             statusCode = 429;
             TooManyRequestsError = (function (_super) {
                 __extends(TooManyRequestsError, _super);
@@ -1823,7 +1822,7 @@ $__System.register("19", ["c"], function(exports_1) {
                 HTTPError_1 = HTTPError_1_1;
             }],
         execute: function() {
-            name = 'UnauthorizedError';
+            name = "UnauthorizedError";
             statusCode = 401;
             UnauthorizedError = (function (_super) {
                 __extends(UnauthorizedError, _super);
@@ -1861,7 +1860,7 @@ $__System.register("1a", ["c"], function(exports_1) {
                 HTTPError_1 = HTTPError_1_1;
             }],
         execute: function() {
-            name = 'UnsupportedMediaTypeError';
+            name = "UnsupportedMediaTypeError";
             statusCode = 415;
             UnsupportedMediaTypeError = (function (_super) {
                 __extends(UnsupportedMediaTypeError, _super);
@@ -1899,7 +1898,7 @@ $__System.register("1b", ["c"], function(exports_1) {
                 HTTPError_1 = HTTPError_1_1;
             }],
         execute: function() {
-            name = 'BadGatewayError';
+            name = "BadGatewayError";
             statusCode = 502;
             BadGatewayError = (function (_super) {
                 __extends(BadGatewayError, _super);
@@ -1937,7 +1936,7 @@ $__System.register("1c", ["c"], function(exports_1) {
                 HTTPError_1 = HTTPError_1_1;
             }],
         execute: function() {
-            name = 'GatewayTimeoutError';
+            name = "GatewayTimeoutError";
             statusCode = 504;
             GatewayTimeoutError = (function (_super) {
                 __extends(GatewayTimeoutError, _super);
@@ -1975,7 +1974,7 @@ $__System.register("1d", ["c"], function(exports_1) {
                 HTTPError_1 = HTTPError_1_1;
             }],
         execute: function() {
-            name = 'HTTPVersionNotSupportedError';
+            name = "HTTPVersionNotSupportedError";
             statusCode = 505;
             HTTPVersionNotSupportedError = (function (_super) {
                 __extends(HTTPVersionNotSupportedError, _super);
@@ -2013,7 +2012,7 @@ $__System.register("1e", ["c"], function(exports_1) {
                 HTTPError_1 = HTTPError_1_1;
             }],
         execute: function() {
-            name = 'InternalServerError';
+            name = "InternalServerError";
             statusCode = 500;
             InternalServerError = (function (_super) {
                 __extends(InternalServerError, _super);
@@ -2051,7 +2050,7 @@ $__System.register("1f", ["c"], function(exports_1) {
                 HTTPError_1 = HTTPError_1_1;
             }],
         execute: function() {
-            name = 'NotImplementedError';
+            name = "NotImplementedError";
             statusCode = 501;
             NotImplementedError = (function (_super) {
                 __extends(NotImplementedError, _super);
@@ -2089,7 +2088,7 @@ $__System.register("20", ["c"], function(exports_1) {
                 HTTPError_1 = HTTPError_1_1;
             }],
         execute: function() {
-            name = 'ServiceUnavailableError';
+            name = "ServiceUnavailableError";
             statusCode = 503;
             ServiceUnavailableError = (function (_super) {
                 __extends(ServiceUnavailableError, _super);
@@ -2127,7 +2126,7 @@ $__System.register("21", ["c"], function(exports_1) {
                 HTTPError_1 = HTTPError_1_1;
             }],
         execute: function() {
-            name = 'UnknownError';
+            name = "UnknownError";
             UnknownError = (function (_super) {
                 __extends(UnknownError, _super);
                 function UnknownError() {
@@ -2145,11 +2144,14 @@ $__System.register("21", ["c"], function(exports_1) {
     }
 });
 
-$__System.register("22", ["d", "e", "f", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "1a", "1b", "1c", "1d", "1e", "1f", "20", "21"], function(exports_1) {
-    var BadRequestError_1, ConflictError_1, ForbiddenError_1, MethodNotAllowedError_1, NotAcceptableError_1, NotFoundError_1, PreconditionFailedError_1, PreconditionRequiredError_1, RequestEntityTooLargeError_1, RequestHeaderFieldsTooLargeError_1, RequestURITooLongError_1, TooManyRequestsError_1, UnauthorizedError_1, UnsupportedMediaTypeError_1, BadGatewayError_1, GatewayTimeoutError_1, HTTPVersionNotSupportedError_1, InternalServerErrorError_1, NotImplementedError_1, ServiceUnavailableError_1, UnknownError_1;
+$__System.register("22", ["c", "d", "e", "f", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "1a", "1b", "1c", "1d", "1e", "1f", "20", "21"], function(exports_1) {
+    var HTTPError_1, BadRequestError_1, ConflictError_1, ForbiddenError_1, MethodNotAllowedError_1, NotAcceptableError_1, NotFoundError_1, PreconditionFailedError_1, PreconditionRequiredError_1, RequestEntityTooLargeError_1, RequestHeaderFieldsTooLargeError_1, RequestURITooLongError_1, TooManyRequestsError_1, UnauthorizedError_1, UnsupportedMediaTypeError_1, BadGatewayError_1, GatewayTimeoutError_1, HTTPVersionNotSupportedError_1, InternalServerErrorError_1, NotImplementedError_1, ServiceUnavailableError_1, UnknownError_1;
     var client, server, statusCodeMap;
     return {
         setters:[
+            function (HTTPError_1_1) {
+                HTTPError_1 = HTTPError_1_1;
+            },
             function (BadRequestError_1_1) {
                 BadRequestError_1 = BadRequestError_1_1;
             },
@@ -2243,6 +2245,7 @@ $__System.register("22", ["d", "e", "f", "10", "11", "12", "13", "14", "15", "16
             for (var i = 0, length = server.length; i < length; i++) {
                 statusCodeMap.set(server[i].statusCode, server[i]);
             }
+            exports_1("Error", HTTPError_1.default);
             exports_1("BadRequestError", BadRequestError_1.default);
             exports_1("ConflictError", ConflictError_1.default);
             exports_1("ForbiddenError", ForbiddenError_1.default);
@@ -2270,7 +2273,6 @@ $__System.register("22", ["d", "e", "f", "10", "11", "12", "13", "14", "15", "16
         }
     }
 });
-//@formatter:on 
 
 /// <reference path="../../typings/es6/es6.d.ts" />
 $__System.register("23", ["9"], function(exports_1) {
@@ -2285,13 +2287,19 @@ $__System.register("23", ["9"], function(exports_1) {
             Class = (function () {
                 function Class(valueOrValues) {
                     this.values = [];
-                    if (!valueOrValues)
+                    if (!valueOrValues) {
                         return;
-                    else if (Array.isArray(valueOrValues))
+                    }
+                    else if (Array.isArray(valueOrValues)) {
                         this.values = valueOrValues;
-                    else
+                    }
+                    else {
                         this.setValues(valueOrValues);
+                    }
                 }
+                Class.prototype.toString = function () {
+                    return this.values.join(", ");
+                };
                 Class.prototype.setValues = function (valuesString) {
                     this.values = [];
                     var valueStrings = valuesString.split(",");
@@ -2300,9 +2308,6 @@ $__System.register("23", ["9"], function(exports_1) {
                         var value = new Value(valueString);
                         this.values.push(value);
                     }
-                };
-                Class.prototype.toString = function () {
-                    return this.values.join(', ');
                 };
                 return Class;
             })();
@@ -2322,6 +2327,25 @@ $__System.register("23", ["9"], function(exports_1) {
                     else
                         this.setValue(value);
                 }
+                Value.cleanString = function (toClean) {
+                    toClean = toClean.trim();
+                    toClean = (Utils.S.startsWith(toClean, "\"") || Utils.S.startsWith(toClean, "'")) ? toClean.substr(1, toClean.length) : toClean;
+                    toClean = (Utils.S.endsWith(toClean, "\"") || Utils.S.endsWith(toClean, "'")) ? toClean.substr(0, toClean.length - 1) : toClean;
+                    return toClean;
+                };
+                Value.prototype.toString = function () {
+                    var result = "";
+                    if (this.mainKey)
+                        result += this.mainKey + "=";
+                    result += this.mainValue;
+                    if (this.secondaryKey || this.secondaryValue)
+                        result += "; ";
+                    if (this.secondaryKey)
+                        result += this.secondaryKey + "=";
+                    if (this.secondaryValue)
+                        result += this.secondaryValue;
+                    return result;
+                };
                 Value.prototype.setValue = function (value) {
                     var parts = value.split(";");
                     this.setMain(parts[0]);
@@ -2330,8 +2354,9 @@ $__System.register("23", ["9"], function(exports_1) {
                 };
                 Value.prototype.setMain = function (main) {
                     var parts = main.split("=");
-                    if (parts.length === 1)
+                    if (parts.length === 1) {
                         this.mainValue = Value.cleanString(parts[0]);
+                    }
                     else if (parts.length === 2) {
                         this.mainKey = Value.cleanString(parts[0]);
                         this.mainValue = Value.cleanString(parts[1]);
@@ -2341,33 +2366,15 @@ $__System.register("23", ["9"], function(exports_1) {
                 };
                 Value.prototype.setSecondary = function (secondary) {
                     var parts = secondary.split("=");
-                    if (parts.length === 1)
+                    if (parts.length === 1) {
                         this.secondaryValue = Value.cleanString(parts[0]);
+                    }
                     else if (parts.length === 2) {
                         this.secondaryKey = Value.cleanString(parts[0]);
                         this.secondaryValue = Value.cleanString(parts[1]);
                     }
                     else
                         this.secondaryValue = secondary;
-                };
-                Value.cleanString = function (toClean) {
-                    toClean = toClean.trim();
-                    toClean = (Utils.S.startsWith(toClean, "\"") || Utils.S.startsWith(toClean, "'")) ? toClean.substr(1, toClean.length) : toClean;
-                    toClean = (Utils.S.endsWith(toClean, "\"") || Utils.S.endsWith(toClean, "'")) ? toClean.substr(0, toClean.length - 1) : toClean;
-                    return toClean;
-                };
-                Value.prototype.toString = function () {
-                    var result = '';
-                    if (this.mainKey)
-                        result += this.mainKey + '=';
-                    result += this.mainValue;
-                    if (this.secondaryKey || this.secondaryValue)
-                        result += '; ';
-                    if (this.secondaryKey)
-                        result += this.secondaryKey + '=';
-                    if (this.secondaryValue)
-                        result += this.secondaryValue;
-                    return result;
                 };
                 return Value;
             })();
@@ -2377,13 +2384,13 @@ $__System.register("23", ["9"], function(exports_1) {
                 }
                 Util.parseHeaders = function (headersString) {
                     var headers = new Map();
-                    var headerStrings = headersString.split('\r\n');
+                    var headerStrings = headersString.split("\r\n");
                     for (var i = 0, length = headerStrings.length; i < length; i++) {
                         var headerString = headerStrings[i];
                         if (!headerString.trim())
                             continue;
-                        var parts = headerString.split(':');
-                        if (parts.length != 2)
+                        var parts = headerString.split(":");
+                        if (parts.length !== 2)
                             throw new Error("ParseError: The header couldn't be parsed.");
                         var name = parts[0].trim();
                         var header = new Class(parts[1].trim());
@@ -2448,10 +2455,12 @@ $__System.register("26", ["23"], function(exports_1) {
                 }
                 Response.prototype.setHeaders = function (request) {
                     var headersString = request.getAllResponseHeaders();
-                    if (headersString)
+                    if (headersString) {
                         this.headers = Header.Util.parseHeaders(headersString);
-                    else
+                    }
+                    else {
                         this.headers = new Map();
+                    }
                 };
                 return Response;
             })();
@@ -2478,10 +2487,12 @@ $__System.register("27", ["24", "26", "22", "9"], function(exports_1) {
     function onLoad(resolve, reject, request) {
         return function () {
             var response = new Response_1.default(request);
-            if (request.status >= 200 && request.status <= 299)
+            if (request.status >= 200 && request.status <= 299) {
                 resolve(response);
-            else
+            }
+            else {
                 rejectRequest(reject, request);
+            }
         };
     }
     function onError(reject, request) {
@@ -2493,9 +2504,9 @@ $__System.register("27", ["24", "26", "22", "9"], function(exports_1) {
         var response = new Response_1.default(request);
         if (response.status >= 400 && response.status < 600) {
             if (Errors.statusCodeMap.has(response.status)) {
-                var e = Errors.statusCodeMap.get(response.status);
+                var error = Errors.statusCodeMap.get(response.status);
                 // TODO: Set error message
-                reject(new e("", response));
+                reject(new error("", response));
             }
         }
         reject(new Errors.UnknownError("", response));
@@ -2535,10 +2546,12 @@ $__System.register("27", ["24", "26", "22", "9"], function(exports_1) {
                             request.timeout = options.timeout;
                         request.onload = onLoad(resolve, reject, request);
                         request.onerror = onError(reject, request);
-                        if (body)
+                        if (body) {
                             request.send(body);
-                        else
+                        }
+                        else {
                             request.send();
+                        }
                     });
                 };
                 Service.options = function (url, options) {
@@ -2578,7 +2591,6 @@ $__System.register("27", ["24", "26", "22", "9"], function(exports_1) {
         }
     }
 });
-//@formatter:on 
 
 $__System.register("28", [], function(exports_1) {
     var StatusCode;
@@ -2669,7 +2681,6 @@ $__System.register("29", ["22", "23", "24", "25", "27", "26", "28"], function(ex
         }
     }
 });
-//@formatter:on 
 
 $__System.register("2a", ["b"], function(exports_1) {
     var __extends = (this && this.__extends) || function (d, b) {
@@ -2691,7 +2702,7 @@ $__System.register("2a", ["b"], function(exports_1) {
                     _super.apply(this, arguments);
                 }
                 Object.defineProperty(IllegalStateError.prototype, "name", {
-                    get: function () { return 'IllegalStateError'; },
+                    get: function () { return "IllegalStateError"; },
                     enumerable: true,
                     configurable: true
                 });
@@ -2722,7 +2733,7 @@ $__System.register("2b", ["b"], function(exports_1) {
                     _super.apply(this, arguments);
                 }
                 Object.defineProperty(IllegalArgumentError.prototype, "name", {
-                    get: function () { return 'IllegalArgumentError'; },
+                    get: function () { return "IllegalArgumentError"; },
                     enumerable: true,
                     configurable: true
                 });
@@ -2753,7 +2764,7 @@ $__System.register("2c", ["b"], function(exports_1) {
                     _super.apply(this, arguments);
                 }
                 Object.defineProperty(IDAlreadyInUseError.prototype, "name", {
-                    get: function () { return 'IDAlreadyInUseError'; },
+                    get: function () { return "IDAlreadyInUseError"; },
                     enumerable: true,
                     configurable: true
                 });
@@ -2784,7 +2795,6 @@ $__System.register("2d", ["2a", "2b", "2c"], function(exports_1) {
         }
     }
 });
-//@formatter:on 
 
 $__System.register("2e", ["29", "2d"], function(exports_1) {
     var HTTP, Errors;
@@ -2809,10 +2819,8 @@ $__System.register("2e", ["29", "2d"], function(exports_1) {
                 }
                 Auth.prototype.isAuthenticated = function (askParent) {
                     if (askParent === void 0) { askParent = true; }
-                    //@formatter:off
                     return (this.authenticated ||
                         (askParent && !!this.parent.parent && this.parent.parent.Auth.isAuthenticated()));
-                    //@formatter:on
                 };
                 Auth.prototype.login = function (username, password) {
                     var method = this.parent.getSetting("auth.method");
@@ -2821,7 +2829,7 @@ $__System.register("2e", ["29", "2d"], function(exports_1) {
                             return this.basicAuthentication(username, password);
                         default:
                             return new Promise(function () {
-                                throw new Errors.IllegalStateError('The authentication method specified isn\'t supported.');
+                                throw new Errors.IllegalStateError("The authentication method specified isn\'t supported.");
                             });
                     }
                 };
@@ -2841,6 +2849,8 @@ $__System.register("2e", ["29", "2d"], function(exports_1) {
                             this.addBasicAuthHeader(headers);
                             requestOptions.sendCredentialsOnCORS = true;
                             break;
+                        default:
+                            break;
                     }
                 };
                 Auth.prototype.basicAuthentication = function (username, password) {
@@ -2858,13 +2868,14 @@ $__System.register("2e", ["29", "2d"], function(exports_1) {
                 };
                 Auth.prototype.addBasicAuthHeader = function (headers) {
                     var header;
-                    if (headers.has('Authorization'))
-                        header = headers.get('Authorization');
+                    if (headers.has("Authorization")) {
+                        header = headers.get("Authorization");
+                    }
                     else {
                         header = new HTTP.Header.Class();
-                        headers.set('Authorization', header);
+                        headers.set("Authorization", header);
                     }
-                    var authorization = 'Basic ' + btoa(this.credentials.username + ':' + this.credentials.password);
+                    var authorization = "Basic " + btoa(this.credentials.username + ":" + this.credentials.password);
                     header.values.push(new HTTP.Header.Value(authorization));
                 };
                 return Auth;
@@ -2875,7 +2886,6 @@ $__System.register("2e", ["29", "2d"], function(exports_1) {
         }
     }
 });
-//@formatter:on 
 
 (function() {
 var _removeDefine = $__System.get("@@amd-helpers").createDefine();
@@ -8078,11 +8088,9 @@ $__System.register("30", ["9"], function(exports_1) {
                 function Factory() {
                 }
                 Factory.is = function (object) {
-                    //@formatter:off
-                    return (Utils.hasPropertyDefined(object, '_dirty') &&
-                        Utils.hasPropertyDefined(object, '_modifications') &&
-                        Utils.hasFunction(object, 'isDirty'));
-                    //@formatter:on
+                    return (Utils.hasPropertyDefined(object, "_dirty") &&
+                        Utils.hasPropertyDefined(object, "_modifications") &&
+                        Utils.hasFunction(object, "isDirty"));
                 };
                 Factory.from = function (objectOrObjects) {
                     var objects = Utils.isArray(objectOrObjects) ? objectOrObjects : [objectOrObjects];
@@ -8095,17 +8103,16 @@ $__System.register("30", ["9"], function(exports_1) {
                     }
                     if (Utils.isArray(objectOrObjects))
                         return values;
-                    else
-                        return values[0];
+                    return values[0];
                 };
                 Factory.injectBehaviour = function (value) {
                     Object.defineProperties(value, {
-                        '_dirty': {
+                        "_dirty": {
                             writable: true,
                             enumerable: false,
                             value: false
                         },
-                        '_modifications': {
+                        "_modifications": {
                             writable: false,
                             enumerable: false,
                             value: new Modifications()
@@ -8122,7 +8129,6 @@ $__System.register("30", ["9"], function(exports_1) {
         }
     }
 });
-//@formatter:on 
 
 $__System.register("31", ["9", "7"], function(exports_1) {
     var Utils, XSD;
@@ -8149,8 +8155,9 @@ $__System.register("31", ["9", "7"], function(exports_1) {
                             value = value.toISOString();
                             break;
                         case Utils.isNumber(value):
-                            if (Utils.isInteger(value))
+                            if (Utils.isInteger(value)) {
                                 type = XSD.DataType.integer;
+                            }
                             else
                                 type = XSD.DataType.double;
                             break;
@@ -8166,23 +8173,23 @@ $__System.register("31", ["9", "7"], function(exports_1) {
                             value = JSON.stringify(value);
                             break;
                     }
-                    var literal = { '@value': value };
+                    var literal = { "@value": value };
                     if (type)
-                        literal['@type'] = type;
+                        literal["@type"] = type;
                     return literal;
                 };
                 Factory.parse = function (literal) {
                     if (!literal)
                         return null;
-                    if (!Utils.hasProperty(literal, '@value'))
+                    if (!Utils.hasProperty(literal, "@value"))
                         return null;
-                    if (!Utils.hasProperty(literal, '@type'))
-                        return literal['@value'];
-                    var type = literal['@type'];
-                    // The DataType isn't supported
+                    if (!Utils.hasProperty(literal, "@type"))
+                        return literal["@value"];
+                    var type = literal["@type"];
+                    // The DataType isn"t supported
                     if (!Utils.hasProperty(XSD.DataType, type))
-                        return literal['@value'];
-                    var valueString = literal['@value'];
+                        return literal["@value"];
+                    var valueString = literal["@value"];
                     var value;
                     switch (type) {
                         // Dates
@@ -8240,7 +8247,7 @@ $__System.register("31", ["9", "7"], function(exports_1) {
                         return false;
                     if (!Utils.isObject(value))
                         return false;
-                    return Utils.hasProperty(value, '@value');
+                    return Utils.hasProperty(value, "@value");
                 };
                 return Factory;
             })();
@@ -8258,7 +8265,6 @@ $__System.register("31", ["9", "7"], function(exports_1) {
         }
     }
 });
-//@formatter:on 
 
 $__System.register("32", [], function(exports_1) {
     var PropertyDescription;
@@ -8290,28 +8296,26 @@ $__System.register("33", ["9"], function(exports_1) {
                 function Factory() {
                 }
                 Factory.is = function (value) {
-                    //@formatter:off
                     return ((!Utils.isNull(value)) &&
                         Utils.isObject(value) &&
-                        Utils.hasProperty(value, '@id'));
-                    //@formatter:on
+                        Utils.hasProperty(value, "@id"));
                 };
                 Factory.create = function (uri) {
                     return {
-                        '@id': uri
+                        "@id": uri
                     };
                 };
                 return Factory;
             })();
+            exports_1("Factory", Factory);
             Util = (function () {
                 function Util() {
                 }
                 Util.areEqual = function (node1, node2) {
-                    return node1['@id'] === node2['@id'];
+                    return node1["@id"] === node2["@id"];
                 };
                 return Util;
             })();
-            exports_1("Factory", Factory);
             exports_1("Util", Util);
         }
     }
@@ -8330,53 +8334,54 @@ $__System.register("34", ["9"], function(exports_1) {
                 function Util() {
                 }
                 Util.hasFragment = function (uri) {
-                    return uri.indexOf('#') != -1;
+                    return uri.indexOf("#") !== -1;
                 };
                 Util.hasProtocol = function (uri) {
-                    return Utils.S.startsWith(uri, 'https://') || Utils.S.startsWith(uri, 'http://');
+                    return Utils.S.startsWith(uri, "https://") || Utils.S.startsWith(uri, "http://");
                 };
                 Util.isAbsolute = function (uri) {
-                    if (Utils.S.startsWith(uri, 'http://'))
+                    if (Utils.S.startsWith(uri, "http://"))
                         return true;
-                    if (Utils.S.startsWith(uri, 'https://'))
+                    if (Utils.S.startsWith(uri, "https://"))
                         return true;
-                    if (Utils.S.startsWith(uri, '://'))
+                    if (Utils.S.startsWith(uri, "://"))
                         return true;
                 };
                 Util.isRelative = function (uri) {
                     return !Util.isAbsolute(uri);
                 };
                 Util.isBNodeID = function (uri) {
-                    return Utils.S.startsWith(uri, '_:');
+                    return Utils.S.startsWith(uri, "_:");
                 };
                 Util.getDocumentURI = function (uri) {
-                    var parts = uri.split('#');
+                    var parts = uri.split("#");
                     if (parts.length > 2)
-                        throw new Error('IllegalArgument: The URI provided has more than one # sign.');
+                        throw new Error("IllegalArgument: The URI provided has more than one # sign.");
                     return parts[0];
                 };
                 Util.getFragment = function (uri) {
-                    var parts = uri.split('#');
+                    var parts = uri.split("#");
                     if (parts.length < 2)
                         return null;
                     if (parts.length > 2)
-                        throw new Error('IllegalArgument: The URI provided has more than one # sign.');
+                        throw new Error("IllegalArgument: The URI provided has more than one # sign.");
                     return parts[1];
                 };
                 Util.resolve = function (parentURI, childURI) {
                     var finalURI = parentURI;
-                    if (!Utils.S.endsWith(parentURI, '/'))
-                        finalURI += '/';
-                    if (Utils.S.startsWith(childURI, '/'))
+                    if (!Utils.S.endsWith(parentURI, "/"))
+                        finalURI += "/";
+                    if (Utils.S.startsWith(childURI, "/")) {
                         finalURI = finalURI + childURI.substr(1, childURI.length);
+                    }
                     else
                         finalURI += childURI;
                     return finalURI;
                 };
                 Util.removeProtocol = function (uri) {
-                    if (Utils.S.startsWith(uri, 'https://'))
+                    if (Utils.S.startsWith(uri, "https://"))
                         return uri.substr(5, uri.length);
-                    if (Utils.S.startsWith(uri, 'http://'))
+                    if (Utils.S.startsWith(uri, "http://"))
                         return uri.substr(4, uri.length);
                     return uri;
                 };
@@ -8406,17 +8411,16 @@ $__System.register("35", ["33", "9", "34"], function(exports_1) {
                 function Factory() {
                 }
                 Factory.is = function (object) {
-                    //@formatter:off
-                    return (Utils.hasProperty(object, '@graph'));
-                    //@formatter:on
+                    return (Utils.hasProperty(object, "@graph"));
                 };
                 Factory.create = function (resources, uri) {
                     var document = uri ? RDFNode.Factory.create(uri) : {};
-                    document['@graph'] = resources;
+                    document["@graph"] = resources;
                     return document;
                 };
                 return Factory;
             })();
+            exports_1("Factory", Factory);
             Util = (function () {
                 function Util() {
                 }
@@ -8447,18 +8451,18 @@ $__System.register("35", ["33", "9", "34"], function(exports_1) {
                                 return Util.getResources(document[0]);
                             if (!Utils.isObject(document[0]))
                                 throw new Error("IllegalArgument: The document structure isn't valid.");
-                            if (!document[0].hasOwnProperty('@graph'))
+                            if (!document[0].hasOwnProperty("@graph"))
                                 return document;
-                            return Util.getResources(document[0]['@graph']);
+                            return Util.getResources(document[0]["@graph"]);
                         }
                         return document;
                     }
                     else {
                         if (!Utils.isObject(document))
                             throw new Error("IllegalArgument: The document structure isn't valid.");
-                        if (!document.hasOwnProperty('@graph'))
+                        if (!document.hasOwnProperty("@graph"))
                             throw new Error("IllegalArgument: The document structure isn't valid.");
-                        return Util.getResources(document['@graph']);
+                        return Util.getResources(document["@graph"]);
                     }
                 };
                 Util.getDocumentResources = function (document) {
@@ -8466,7 +8470,7 @@ $__System.register("35", ["33", "9", "34"], function(exports_1) {
                     var documentResources = [];
                     for (var i = 0, length = resources.length; i < length; i++) {
                         var resource = resources[i];
-                        var uri = resource['@id'];
+                        var uri = resource["@id"];
                         if (!uri)
                             continue;
                         if (!URI.Util.hasFragment(uri) && !URI.Util.isBNodeID(uri))
@@ -8478,21 +8482,23 @@ $__System.register("35", ["33", "9", "34"], function(exports_1) {
                     var resources = Util.getResources(document);
                     var documentURIToMatch = null;
                     if (documentResource) {
-                        if (Utils.isString(documentResource))
+                        if (Utils.isString(documentResource)) {
                             documentURIToMatch = documentResource;
+                        }
                         else
-                            documentURIToMatch = documentResource['@id'];
+                            documentURIToMatch = documentResource["@id"];
                     }
                     var fragmentResources = [];
                     for (var i = 0, length = resources.length; i < length; i++) {
                         var resource = resources[i];
-                        var uri = resource['@id'];
+                        var uri = resource["@id"];
                         if (!uri)
                             continue;
                         if (!URI.Util.hasFragment(uri))
                             continue;
-                        if (!documentURIToMatch)
+                        if (!documentURIToMatch) {
                             fragmentResources.push(resource);
+                        }
                         else {
                             var documentURI = URI.Util.getDocumentURI(uri);
                             if (documentURI === documentURIToMatch)
@@ -8506,19 +8512,17 @@ $__System.register("35", ["33", "9", "34"], function(exports_1) {
                     var bnodes = [];
                     for (var i = 0, length = resources.length; i < length; i++) {
                         var resource = resources[i];
-                        if (!('@id' in resource) || URI.Util.isBNodeID(resource['@id']))
+                        if (!("@id" in resource) || URI.Util.isBNodeID(resource["@id"]))
                             bnodes.push(resource);
                     }
                     return bnodes;
                 };
                 return Util;
             })();
-            exports_1("Factory", Factory);
             exports_1("Util", Util);
         }
     }
 });
-//@formatter:on 
 
 /// <reference path="../../typings/es6/es6.d.ts" />
 $__System.register("36", ["31", "9", "33"], function(exports_1) {
@@ -8543,9 +8547,9 @@ $__System.register("36", ["31", "9", "33"], function(exports_1) {
         var value = this.getProperty(propertyURI);
         if (Utils.isNull(value))
             return null;
-        if (!Utils.hasProperty(value, '@id'))
+        if (!Utils.hasProperty(value, "@id"))
             return null;
-        return value['@id'];
+        return value["@id"];
     }
     function getProperties(propertyURI) {
         if (!this.hasProperty(propertyURI))
@@ -8571,8 +8575,8 @@ $__System.register("36", ["31", "9", "33"], function(exports_1) {
             var values = this.getProperties(propertyURI);
             for (var i = 0, length = values.length; i < length; i++) {
                 var value = values[i];
-                if (Utils.hasProperty(value, '@id'))
-                    uris.push(value['@id']);
+                if (Utils.hasProperty(value, "@id"))
+                    uris.push(value["@id"]);
             }
         }
         uris = tieArray(this, propertyURI, uris);
@@ -8583,7 +8587,7 @@ $__System.register("36", ["31", "9", "33"], function(exports_1) {
         var propertyValue;
         if (RDFNode.Factory.is(value)) {
             propertyValue = {
-                '@id': value['@id']
+                "@id": value["@id"]
             };
         }
         else
@@ -8622,7 +8626,7 @@ $__System.register("36", ["31", "9", "33"], function(exports_1) {
                 }
                 return Array.prototype.push.call(array, items);
             };
-        }());
+        })();
         // TODO: concat
         // TODO: join
         // TODO: pop
@@ -8649,140 +8653,6 @@ $__System.register("36", ["31", "9", "33"], function(exports_1) {
             Factory = (function () {
                 function Factory() {
                 }
-                Factory.prototype.is = function (value) {
-                    //@formatter:off
-                    return (
-                    // RDFNode.Factory.is( value ) &&
-                    (!Utils.isNull(value)) &&
-                        Utils.isObject(value) &&
-                        this.hasClassProperties(value));
-                    //@formatter:on
-                };
-                Factory.prototype.create = function () {
-                    var resource = {};
-                    var resourceArray = this.from([{}]);
-                    return this.from(resource);
-                };
-                Factory.prototype.from = function (objects) {
-                    if (!Utils.isArray(objects))
-                        return this.singleFrom(objects);
-                    for (var i = 0, length = objects.length; i < length; i++) {
-                        var resource = objects[i];
-                        this.injectBehavior(resource);
-                    }
-                    return objects;
-                };
-                Factory.prototype.singleFrom = function (object) {
-                    return this.injectBehavior(object);
-                };
-                Factory.prototype.hasRDFClass = function (resource) {
-                    // TODO: Implement
-                    return true;
-                };
-                Factory.prototype.hasClassProperties = function (resource) {
-                    return (Utils.hasPropertyDefined(resource, '_propertyAddedCallbacks') &&
-                        Utils.hasPropertyDefined(resource, '_propertyDeletedCallbacks') &&
-                        Utils.hasPropertyDefined(resource, 'uri') &&
-                        Utils.hasPropertyDefined(resource, 'types') &&
-                        Utils.hasFunction(resource, 'hasProperty') &&
-                        Utils.hasFunction(resource, 'getProperty') &&
-                        Utils.hasFunction(resource, 'getPropertyValue') &&
-                        Utils.hasFunction(resource, 'getPropertyURI') &&
-                        Utils.hasFunction(resource, 'getProperties') &&
-                        Utils.hasFunction(resource, 'getPropertyValues') &&
-                        Utils.hasFunction(resource, 'getPropertyURIs') &&
-                        Utils.hasFunction(resource, 'addProperty') &&
-                        Utils.hasFunction(resource, 'setProperty') &&
-                        Utils.hasFunction(resource, 'deleteProperty'));
-                };
-                Factory.prototype.injectBehavior = function (node) {
-                    var resource = node;
-                    if (this.hasClassProperties(resource))
-                        return resource;
-                    Object.defineProperties(resource, {
-                        '_propertyAddedCallbacks': {
-                            writable: false,
-                            enumerable: false,
-                            value: []
-                        },
-                        '_propertyDeletedCallbacks': {
-                            writable: false,
-                            enumerable: false,
-                            value: []
-                        },
-                        'types': {
-                            get: function () {
-                                if (!this['@type'])
-                                    this['@type'] = [];
-                                return this['@type'];
-                            },
-                            set: function (value) {
-                                // TODO: Implement
-                            },
-                            enumerable: false
-                        },
-                        'uri': {
-                            get: function () {
-                                return this['@id'];
-                            },
-                            set: function (value) {
-                                this['@id'] = value;
-                            },
-                            enumerable: false
-                        },
-                        'hasProperty': {
-                            writable: false,
-                            enumerable: false,
-                            value: hasProperty
-                        },
-                        'getProperty': {
-                            writable: false,
-                            enumerable: false,
-                            value: getProperty
-                        },
-                        'getPropertyValue': {
-                            writable: false,
-                            enumerable: false,
-                            value: getPropertyValue
-                        },
-                        'getPropertyURI': {
-                            writable: false,
-                            enumerable: false,
-                            value: getPropertyURI
-                        },
-                        'getProperties': {
-                            writable: false,
-                            enumerable: false,
-                            value: getProperties
-                        },
-                        'getPropertyValues': {
-                            writable: false,
-                            enumerable: false,
-                            value: getPropertyValues
-                        },
-                        'getPropertyURIs': {
-                            writable: false,
-                            enumerable: false,
-                            value: getPropertyURIs
-                        },
-                        'addProperty': {
-                            writable: false,
-                            enumerable: false,
-                            value: addProperty
-                        },
-                        'setProperty': {
-                            writable: false,
-                            enumerable: false,
-                            value: setProperty
-                        },
-                        'deleteProperty': {
-                            writable: false,
-                            enumerable: false,
-                            value: deleteProperty
-                        }
-                    });
-                    return resource;
-                };
                 Factory.injectDefinitions = function (resourceOrResources, definitions) {
                     var resources = Utils.isArray(resourceOrResources) ? resourceOrResources : [resourceOrResources];
                     for (var i = 0, length = resources.length; i < length; i++) {
@@ -8799,8 +8669,7 @@ $__System.register("36", ["31", "9", "33"], function(exports_1) {
                     }
                     if (Utils.isArray(resourceOrResources))
                         return resources;
-                    else
-                        return resources[0];
+                    return resources[0];
                 };
                 Factory.injectDescriptions = function (resourceOrResources, descriptionsMapOrObject) {
                     var resources = Utils.isArray(resourceOrResources) ? resourceOrResources : [resourceOrResources];
@@ -8812,31 +8681,34 @@ $__System.register("36", ["31", "9", "33"], function(exports_1) {
                         descriptions = Utils.M.from(descriptionsMapOrObject);
                     }
                     else
-                        throw new Error('IllegalArgument');
+                        throw new Error("IllegalArgument");
                     for (var i = 0, length = resources.length; i < length; i++) {
                         var resource = resources[i];
                         var descriptionNames = descriptions.keys();
-                        var next;
-                        while (!(next = descriptionNames.next()).done) {
+                        var next = descriptionNames.next();
+                        while (!next.done) {
                             var name = next.value;
                             var description = descriptions.get(name);
-                            var getter, setter;
+                            var getter = void 0, setter = void 0;
                             if (Utils.isNull(description.literal)) {
                                 // The type isn't known, inject generic versions
-                                if (description.multi)
+                                if (description.multi) {
                                     getter = Factory.genericMultipleGetter(description);
+                                }
                                 else
                                     getter = Factory.genericGetter(description);
                             }
                             else if (!description.literal) {
-                                if (description.multi)
+                                if (description.multi) {
                                     getter = Factory.urisGetter(description);
+                                }
                                 else
                                     getter = Factory.uriGetter(description);
                             }
                             else {
-                                if (description.multi)
+                                if (description.multi) {
                                     getter = Factory.literalsGetter(description);
+                                }
                                 else
                                     getter = Factory.literalGetter(description);
                             }
@@ -8846,12 +8718,12 @@ $__System.register("36", ["31", "9", "33"], function(exports_1) {
                                 get: getter,
                                 set: setter
                             });
+                            next = descriptionNames.next();
                         }
                     }
                     if (Utils.isArray(resourceOrResources))
                         return resources;
-                    else
-                        return resources[0];
+                    return resources[0];
                 };
                 Factory.genericGetter = function (description) {
                     var uri = description.uri;
@@ -8895,15 +8767,144 @@ $__System.register("36", ["31", "9", "33"], function(exports_1) {
                         this.setProperty(uri, value);
                     };
                 };
+                Factory.prototype.is = function (value) {
+                    return (
+                    // RDFNode.Factory.is( value ) &&
+                    (!Utils.isNull(value)) &&
+                        Utils.isObject(value) &&
+                        this.hasClassProperties(value));
+                };
+                Factory.prototype.create = function () {
+                    var resource = {};
+                    return this.from(resource);
+                };
+                Factory.prototype.from = function (objects) {
+                    if (!Utils.isArray(objects))
+                        return this.singleFrom(objects);
+                    for (var i = 0, length = objects.length; i < length; i++) {
+                        var resource = objects[i];
+                        this.injectBehavior(resource);
+                    }
+                    return objects;
+                };
+                Factory.prototype.singleFrom = function (object) {
+                    return this.injectBehavior(object);
+                };
+                Factory.prototype.hasRDFClass = function (resource) {
+                    // TODO: Implement
+                    return true;
+                };
+                Factory.prototype.hasClassProperties = function (resource) {
+                    return (Utils.hasPropertyDefined(resource, "_propertyAddedCallbacks") &&
+                        Utils.hasPropertyDefined(resource, "_propertyDeletedCallbacks") &&
+                        Utils.hasPropertyDefined(resource, "uri") &&
+                        Utils.hasPropertyDefined(resource, "types") &&
+                        Utils.hasFunction(resource, "hasProperty") &&
+                        Utils.hasFunction(resource, "getProperty") &&
+                        Utils.hasFunction(resource, "getPropertyValue") &&
+                        Utils.hasFunction(resource, "getPropertyURI") &&
+                        Utils.hasFunction(resource, "getProperties") &&
+                        Utils.hasFunction(resource, "getPropertyValues") &&
+                        Utils.hasFunction(resource, "getPropertyURIs") &&
+                        Utils.hasFunction(resource, "addProperty") &&
+                        Utils.hasFunction(resource, "setProperty") &&
+                        Utils.hasFunction(resource, "deleteProperty"));
+                };
+                Factory.prototype.injectBehavior = function (node) {
+                    var resource = node;
+                    if (this.hasClassProperties(resource))
+                        return resource;
+                    Object.defineProperties(resource, {
+                        "_propertyAddedCallbacks": {
+                            writable: false,
+                            enumerable: false,
+                            value: []
+                        },
+                        "_propertyDeletedCallbacks": {
+                            writable: false,
+                            enumerable: false,
+                            value: []
+                        },
+                        "types": {
+                            get: function () {
+                                if (!this["@type"])
+                                    this["@type"] = [];
+                                return this["@type"];
+                            },
+                            set: function (value) {
+                                // TODO: Implement
+                            },
+                            enumerable: false
+                        },
+                        "uri": {
+                            get: function () {
+                                return this["@id"];
+                            },
+                            set: function (value) {
+                                this["@id"] = value;
+                            },
+                            enumerable: false
+                        },
+                        "hasProperty": {
+                            writable: false,
+                            enumerable: false,
+                            value: hasProperty
+                        },
+                        "getProperty": {
+                            writable: false,
+                            enumerable: false,
+                            value: getProperty
+                        },
+                        "getPropertyValue": {
+                            writable: false,
+                            enumerable: false,
+                            value: getPropertyValue
+                        },
+                        "getPropertyURI": {
+                            writable: false,
+                            enumerable: false,
+                            value: getPropertyURI
+                        },
+                        "getProperties": {
+                            writable: false,
+                            enumerable: false,
+                            value: getProperties
+                        },
+                        "getPropertyValues": {
+                            writable: false,
+                            enumerable: false,
+                            value: getPropertyValues
+                        },
+                        "getPropertyURIs": {
+                            writable: false,
+                            enumerable: false,
+                            value: getPropertyURIs
+                        },
+                        "addProperty": {
+                            writable: false,
+                            enumerable: false,
+                            value: addProperty
+                        },
+                        "setProperty": {
+                            writable: false,
+                            enumerable: false,
+                            value: setProperty
+                        },
+                        "deleteProperty": {
+                            writable: false,
+                            enumerable: false,
+                            value: deleteProperty
+                        }
+                    });
+                    return resource;
+                };
                 return Factory;
             })();
-            factory = new Factory;
             exports_1("Factory", Factory);
-            exports_1("factory", factory);
+            exports_1("factory", factory = new Factory);
         }
     }
 });
-//@formatter:on 
 
 $__System.register("37", ["31", "33"], function(exports_1) {
     var Literal, RDFNode;
@@ -8977,7 +8978,6 @@ $__System.register("38", ["30", "31", "32", "35", "33", "36", "34", "37"], funct
         }
     }
 });
-//@formatter:on 
 
 $__System.register("39", ["2d", "38", "9"], function(exports_1) {
     var __extends = (this && this.__extends) || function (d, b) {
@@ -8990,9 +8990,9 @@ $__System.register("39", ["2d", "38", "9"], function(exports_1) {
     function externalAnonymousFragmentFilter(propertyURI, value) {
         if (!RDF.Node.Factory.is(value))
             return;
-        if (!RDF.URI.Util.isBNodeID(value['@id']))
+        if (!RDF.URI.Util.isBNodeID(value["@id"]))
             return;
-        if (!('document' in value))
+        if (!("document" in value))
             throw new Errors.IllegalArgumentError("The resource provided doesn't belong to a document.");
         var fragment = value;
         if (this.document !== fragment.document)
@@ -9035,7 +9035,7 @@ $__System.register("39", ["2d", "38", "9"], function(exports_1) {
                     var document = fragment.document;
                     delete fragment.document;
                     Object.defineProperties(fragment, {
-                        'document': {
+                        "document": {
                             writable: false,
                             enumerable: false,
                             value: document
@@ -9054,7 +9054,7 @@ $__System.register("39", ["2d", "38", "9"], function(exports_1) {
                 function Util() {
                 }
                 Util.generateID = function () {
-                    return '_:' + Utils.UUID.generate();
+                    return "_:" + Utils.UUID.generate();
                 };
                 return Util;
             })();
@@ -9105,12 +9105,12 @@ $__System.register("3a", ["39", "38", "9"], function(exports_1) {
                     if (this.hasClassProperties(fragment))
                         return fragment;
                     Object.defineProperties(fragment, {
-                        'slug': {
+                        "slug": {
                             get: function () {
                                 return RDF.URI.Util.getFragment(fragment.uri);
                             },
                             set: function (slug) {
-                                this.uri = this.document.uri + '#' + slug;
+                                this.uri = this.document.uri + "#" + slug;
                             },
                             enumerable: false
                         }
@@ -9118,7 +9118,7 @@ $__System.register("3a", ["39", "38", "9"], function(exports_1) {
                     return fragment;
                 };
                 Factory.prototype.hasClassProperties = function (resource) {
-                    return (Utils.hasPropertyDefined(resource, 'slug'));
+                    return (Utils.hasPropertyDefined(resource, "slug"));
                 };
                 return Factory;
             })(Fragment.Factory);
@@ -9164,8 +9164,8 @@ $__System.register("3b", ["39", "3a", "38", "9", "2d"], function(exports_1) {
             return document.createNamedFragment(slug);
         var id = Fragment.Util.generateID();
         var fragmentObject = {
-            '@id': id,
-            'document': document
+            "@id": id,
+            "document": document
         };
         var fragment = Fragment.factory.from(fragmentObject);
         document._fragmentsIndex.set(id, fragment);
@@ -9178,10 +9178,10 @@ $__System.register("3b", ["39", "3a", "38", "9", "2d"], function(exports_1) {
         slug = RDF.URI.Util.hasFragment(slug) ? RDF.URI.Util.getFragment(slug) : slug;
         if (document._fragmentsIndex.has(slug))
             throw new Errors.IDAlreadyInUseError("The slug provided is already being used by a fragment.");
-        var uri = document.uri + '#' + slug;
+        var uri = document.uri + "#" + slug;
         var fragmentObject = {
-            '@id': uri,
-            'document': document
+            "@id": uri,
+            "document": document
         };
         var fragment = NamedFragment.factory.from(fragmentObject);
         document._fragmentsIndex.set(slug, fragment);
@@ -9192,11 +9192,11 @@ $__System.register("3b", ["39", "3a", "38", "9", "2d"], function(exports_1) {
     }
     function toJSON() {
         var rdfDocument = {
-            '@graph': this.getFragments()
+            "@graph": this.getFragments()
         };
         if (this.uri)
-            rdfDocument['@id'] = this.id;
-        rdfDocument['@graph'].push(this);
+            rdfDocument["@id"] = this.id;
+        rdfDocument["@graph"].push(this);
         return JSON.stringify(rdfDocument);
     }
     return {
@@ -9235,9 +9235,9 @@ $__System.register("3b", ["39", "3a", "38", "9", "2d"], function(exports_1) {
                 Factory.prototype.singleFrom = function (rdfDocument) {
                     var documentResources = RDF.Document.Util.getDocumentResources(rdfDocument);
                     if (documentResources.length > 1)
-                        throw new Errors.IllegalArgumentError('The RDFDocument contains more than one document resource.');
-                    else if (documentResources.length === 0)
-                        throw new Errors.IllegalArgumentError('The RDFDocument doesn\'t contain a document resource.');
+                        throw new Errors.IllegalArgumentError("The RDFDocument contains more than one document resource.");
+                    if (documentResources.length === 0)
+                        throw new Errors.IllegalArgumentError("The RDFDocument doesn\'t contain a document resource.");
                     var document = this.injectBehavior(documentResources[0]);
                     var fragmentResources = RDF.Document.Util.getBNodeResources(rdfDocument);
                     for (var i = 0, length = fragmentResources.length; i < length; i++) {
@@ -9262,55 +9262,55 @@ $__System.register("3b", ["39", "3a", "38", "9", "2d"], function(exports_1) {
                     if (this.hasClassProperties(documentResource))
                         return documentResource;
                     Object.defineProperties(documentResource, {
-                        '_fragmentsIndex': {
+                        "_fragmentsIndex": {
                             writable: false,
                             enumerable: false,
                             configurable: false,
                             value: new Map()
                         },
-                        'hasFragment': {
+                        "hasFragment": {
                             writable: false,
                             enumerable: false,
                             configurable: false,
                             value: hasFragment
                         },
-                        'getFragment': {
+                        "getFragment": {
                             writable: false,
                             enumerable: false,
                             configurable: false,
                             value: getFragment
                         },
-                        'getNamedFragment': {
+                        "getNamedFragment": {
                             writable: false,
                             enumerable: false,
                             configurable: false,
                             value: getNamedFragment
                         },
-                        'getFragments': {
+                        "getFragments": {
                             writable: false,
                             enumerable: false,
                             configurable: false,
                             value: getFragments
                         },
-                        'createFragment': {
+                        "createFragment": {
                             writable: false,
                             enumerable: false,
                             configurable: false,
                             value: createFragment
                         },
-                        'createNamedFragment': {
+                        "createNamedFragment": {
                             writable: false,
                             enumerable: false,
                             configurable: false,
                             value: createNamedFragment
                         },
-                        'removeFragment': {
+                        "removeFragment": {
                             writable: false,
                             enumerable: false,
                             configurable: false,
                             value: removeFragment
                         },
-                        'toJSON': {
+                        "toJSON": {
                             writable: false,
                             enumerable: false,
                             configurable: false,
@@ -9320,7 +9320,7 @@ $__System.register("3b", ["39", "3a", "38", "9", "2d"], function(exports_1) {
                     return documentResource;
                 };
                 Factory.prototype.hasClassProperties = function (documentResource) {
-                    return (Utils.hasPropertyDefined(documentResource, '_fragmentsIndex'));
+                    return (Utils.hasPropertyDefined(documentResource, "_fragmentsIndex"));
                 };
                 return Factory;
             })(RDF.Resource.Factory);
@@ -9388,7 +9388,6 @@ $__System.register("3c", ["2f", "2d", "29", "38", "3b", "5"], function(exports_1
                 LDP = LDP_1;
             }],
         execute: function() {
-            //@formatter:on
             (function (InteractionModel) {
                 InteractionModel[InteractionModel["RDFSource"] = 0] = "RDFSource";
                 InteractionModel[InteractionModel["Container"] = 1] = "Container";
@@ -9441,9 +9440,9 @@ $__System.register("3c", ["2f", "2d", "29", "38", "3b", "5"], function(exports_1
                 };
                 Documents.prototype.getRDFDocument = function (rdfDocuments) {
                     if (rdfDocuments.length === 0)
-                        throw new Error('BadResponse: No document was returned.');
+                        throw new Error("BadResponse: No document was returned.");
                     if (rdfDocuments.length > 1)
-                        throw new Error('Unsupported: Multiple graphs are currently not supported.');
+                        throw new Error("Unsupported: Multiple graphs are currently not supported.");
                     return rdfDocuments[0];
                 };
                 Documents.prototype.injectDefinitions = function (resources) {
@@ -9492,13 +9491,11 @@ $__System.register("3d", ["2e", "3c", "9"], function(exports_1) {
                     this.Documents = new Documents_1.default(this);
                 }
                 Parent.prototype.resolve = function (relativeURI) {
-                    throw new Error('Method needs to be implemented by child.');
+                    throw new Error("Method needs to be implemented by child.");
                 };
                 Parent.prototype.hasSetting = function (name) {
-                    //@formatter:off
                     return (this.settings.has(name) ||
                         (this.parent && this.parent.hasSetting(name)));
-                    //@formatter:off
                 };
                 Parent.prototype.getSetting = function (name) {
                     if (this.settings.has(name))
@@ -9544,11 +9541,13 @@ $__System.register("3d", ["2e", "3c", "9"], function(exports_1) {
                         extender = Utils.M.from(descriptions);
                     }
                     else
-                        throw new Error('IllegalArgument');
-                    if (this.definitions.has(uri))
+                        throw new Error("IllegalArgument");
+                    if (this.definitions.has(uri)) {
                         Utils.M.extend(this.definitions.get(uri), extender);
-                    else
+                    }
+                    else {
                         this.definitions.set(uri, extender);
+                    }
                 };
                 Parent.prototype.setDefinition = function (uri, descriptions) {
                     var extender;
@@ -9559,7 +9558,7 @@ $__System.register("3d", ["2e", "3c", "9"], function(exports_1) {
                         extender = Utils.M.from(descriptions);
                     }
                     else
-                        throw new Error('IllegalArgument');
+                        throw new Error("IllegalArgument");
                     this.definitions.set(uri, extender);
                 };
                 Parent.prototype.deleteDefinition = function (uri) {
@@ -9579,7 +9578,7 @@ $__System.register("3e", ["8", "38", "9"], function(exports_1) {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
     var NS, RDF, Utils;
-    var RDFClass, Factory, factory;
+    var RDF_CLASS, Factory, factory;
     return {
         setters:[
             function (NS_1) {
@@ -9592,17 +9591,15 @@ $__System.register("3e", ["8", "38", "9"], function(exports_1) {
                 Utils = Utils_1;
             }],
         execute: function() {
-            RDFClass = NS.LDP.Class.RDFSource;
+            exports_1("RDF_CLASS", RDF_CLASS = NS.LDP.Class.RDFSource);
             Factory = (function (_super) {
                 __extends(Factory, _super);
                 function Factory() {
                     _super.apply(this, arguments);
                 }
                 Factory.prototype.is = function (object) {
-                    //@formatter:off
                     return (_super.prototype.is.call(this, object) &&
-                        object.types.indexOf(RDFClass) !== -1);
-                    //@formatter:on
+                        object.types.indexOf(RDF_CLASS) !== -1);
                 };
                 Factory.prototype.from = function (resourceOrResources) {
                     var superResult = _super.prototype.from.call(this, resourceOrResources);
@@ -9614,11 +9611,10 @@ $__System.register("3e", ["8", "38", "9"], function(exports_1) {
                     }
                     if (Utils.isArray(resourceOrResources))
                         return resources;
-                    else
-                        return resources[0];
+                    return resources[0];
                 };
                 Factory.prototype.hasRDFClass = function (resource) {
-                    return (resource.types.indexOf(RDFClass) !== -1);
+                    return (resource.types.indexOf(RDF_CLASS) !== -1);
                 };
                 Factory.prototype.hasClassProperties = function (resource) {
                     return (Utils.hasPropertyDefined(resource, "memberOfRelation") &&
@@ -9629,13 +9625,11 @@ $__System.register("3e", ["8", "38", "9"], function(exports_1) {
                 };
                 return Factory;
             })(RDF.Resource.Factory);
-            factory = new Factory();
             exports_1("Factory", Factory);
-            exports_1("factory", factory);
+            exports_1("factory", factory = new Factory());
         }
     }
 });
-//@formatter:on 
 
 /// <reference path="../../typings/es6/es6.d.ts" />
 $__System.register("3f", ["8", "38", "3e", "9"], function(exports_1) {
@@ -9645,7 +9639,7 @@ $__System.register("3f", ["8", "38", "3e", "9"], function(exports_1) {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
     var NS, RDF, RDFSource, Utils;
-    var RDFClass, Definition, Factory, factory;
+    var RDF_CLASS, DEFINITION, Factory, factory;
     return {
         setters:[
             function (NS_1) {
@@ -9661,8 +9655,8 @@ $__System.register("3f", ["8", "38", "3e", "9"], function(exports_1) {
                 Utils = Utils_1;
             }],
         execute: function() {
-            RDFClass = NS.LDP.Class.Container;
-            Definition = Utils.M.from({
+            exports_1("RDF_CLASS", RDF_CLASS = NS.LDP.Class.Container);
+            exports_1("DEFINITION", DEFINITION = Utils.M.from({
                 "memberOfRelation": {
                     "uri": NS.LDP.Predicate.memberOfRelation,
                     "multi": false,
@@ -9673,18 +9667,16 @@ $__System.register("3f", ["8", "38", "3e", "9"], function(exports_1) {
                     "multi": false,
                     "literal": false
                 }
-            });
+            }));
             Factory = (function (_super) {
                 __extends(Factory, _super);
                 function Factory() {
                     _super.apply(this, arguments);
                 }
                 Factory.prototype.is = function (object) {
-                    //@formatter:off
                     return (_super.prototype.is.call(this, object) &&
                         this.hasRDFClass(object) &&
                         this.hasClassProperties(object));
-                    //@formatter:on
                 };
                 Factory.prototype.from = function (resourceOrResources) {
                     var superResult = _super.prototype.from.call(this, resourceOrResources);
@@ -9696,11 +9688,10 @@ $__System.register("3f", ["8", "38", "3e", "9"], function(exports_1) {
                     }
                     if (Utils.isArray(resourceOrResources))
                         return resources;
-                    else
-                        return resources[0];
+                    return resources[0];
                 };
                 Factory.prototype.hasRDFClass = function (resource) {
-                    return (resource.types.indexOf(RDFClass) !== -1 ||
+                    return (resource.types.indexOf(RDF_CLASS) !== -1 ||
                         resource.types.indexOf(NS.LDP.Class.BasicContainer) !== -1 ||
                         resource.types.indexOf(NS.LDP.Class.DirectContainer) !== -1 ||
                         resource.types.indexOf(NS.LDP.Class.IndirectContainer) !== -1);
@@ -9710,18 +9701,16 @@ $__System.register("3f", ["8", "38", "3e", "9"], function(exports_1) {
                         Utils.hasPropertyDefined(resource, "hasMemberRelation"));
                 };
                 Factory.prototype.injectBehaviour = function (resource) {
-                    RDF.Resource.Factory.injectDescriptions(resource, Definition);
+                    RDF.Resource.Factory.injectDescriptions(resource, DEFINITION);
                     return resource;
                 };
                 return Factory;
             })(RDFSource.Factory);
-            factory = new Factory();
             exports_1("Factory", Factory);
-            exports_1("factory", factory);
+            exports_1("factory", factory = new Factory());
         }
     }
 });
-//@formatter:on 
 
 /// <reference path="../../typings/es6/es6.d.ts" />
 $__System.register("40", ["8", "38", "3f", "9"], function(exports_1) {
@@ -9731,7 +9720,7 @@ $__System.register("40", ["8", "38", "3f", "9"], function(exports_1) {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
     var NS, RDF, Container, Utils;
-    var RDFClass, Definition, Factory, factory;
+    var RDF_CLASS, DEFINITION, Factory, factory;
     return {
         setters:[
             function (NS_1) {
@@ -9747,25 +9736,23 @@ $__System.register("40", ["8", "38", "3f", "9"], function(exports_1) {
                 Utils = Utils_1;
             }],
         execute: function() {
-            RDFClass = NS.C.Class.AccessPoint;
-            Definition = Utils.M.from({
+            exports_1("RDF_CLASS", RDF_CLASS = NS.C.Class.AccessPoint);
+            exports_1("DEFINITION", DEFINITION = Utils.M.from({
                 "membershipResource": {
                     "uri": NS.LDP.Predicate.membershipResource,
                     "multi": false,
                     "literal": false
                 }
-            });
+            }));
             Factory = (function (_super) {
                 __extends(Factory, _super);
                 function Factory() {
                     _super.apply(this, arguments);
                 }
                 Factory.prototype.is = function (object) {
-                    //@formatter:off
                     return (_super.prototype.is.call(this, object) &&
                         this.hasRDFClass(object) &&
                         this.hasClassProperties(object));
-                    //@formatter:on
                 };
                 Factory.prototype.from = function (resourceOrResources) {
                     var superResult = _super.prototype.from.call(this, resourceOrResources);
@@ -9775,30 +9762,27 @@ $__System.register("40", ["8", "38", "3f", "9"], function(exports_1) {
                         if (!this.hasClassProperties(resource))
                             this.injectBehaviour(resource);
                     }
-                    if (Utils.isArray(resourceOrResources))
-                        return resources;
-                    else
+                    if (!Utils.isArray(resourceOrResources))
                         return resources[0];
+                    return resources;
                 };
                 Factory.prototype.hasRDFClass = function (resource) {
-                    return (resource.types.indexOf(RDFClass) !== -1);
+                    return (resource.types.indexOf(RDF_CLASS) !== -1);
                 };
                 Factory.prototype.hasClassProperties = function (resource) {
                     return (Utils.hasPropertyDefined(resource, "membershipResource"));
                 };
                 Factory.prototype.injectBehaviour = function (resource) {
-                    RDF.Resource.Factory.injectDescriptions(resource, Definition);
+                    RDF.Resource.Factory.injectDescriptions(resource, DEFINITION);
                     return resource;
                 };
                 return Factory;
             })(Container.Factory);
-            factory = new Factory();
             exports_1("Factory", Factory);
-            exports_1("factory", factory);
+            exports_1("factory", factory = new Factory());
         }
     }
 });
-//@formatter:on 
 
 /// <reference path="../../typings/es6/es6.d.ts" />
 $__System.register("41", ["8", "3f", "9"], function(exports_1) {
@@ -9808,7 +9792,7 @@ $__System.register("41", ["8", "3f", "9"], function(exports_1) {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
     var NS, Container, Utils;
-    var RDFClass, Factory, factory;
+    var RDF_CLASS, Factory, factory;
     return {
         setters:[
             function (NS_1) {
@@ -9821,18 +9805,16 @@ $__System.register("41", ["8", "3f", "9"], function(exports_1) {
                 Utils = Utils_1;
             }],
         execute: function() {
-            RDFClass = NS.LDP.Class.BasicContainer;
+            RDF_CLASS = NS.LDP.Class.BasicContainer;
             Factory = (function (_super) {
                 __extends(Factory, _super);
                 function Factory() {
                     _super.apply(this, arguments);
                 }
                 Factory.prototype.is = function (object) {
-                    //@formatter:off
                     return (_super.prototype.is.call(this, object) &&
                         this.hasRDFClass(object) &&
                         this.hasClassProperties(object));
-                    //@formatter:on
                 };
                 Factory.prototype.from = function (resourceOrResources) {
                     var sources = _super.prototype.from.call(this, resourceOrResources);
@@ -9843,9 +9825,8 @@ $__System.register("41", ["8", "3f", "9"], function(exports_1) {
                             this.injectBehaviour(resource);
                     }
                     if (Utils.isArray(resourceOrResources))
-                        return resources;
-                    else
                         return resources[0];
+                    return resources;
                 };
                 Factory.prototype.hasRDFClass = function (resource) {
                     return (resource.types.indexOf(NS.LDP.Class.BasicContainer) !== -1);
@@ -9872,7 +9853,7 @@ $__System.register("42", ["8", "40", "9"], function(exports_1) {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
     var NS, AccessPoint, Utils;
-    var RDFClass, Factory, factory;
+    var RDF_CLASS, Factory, factory;
     return {
         setters:[
             function (NS_1) {
@@ -9885,18 +9866,16 @@ $__System.register("42", ["8", "40", "9"], function(exports_1) {
                 Utils = Utils_1;
             }],
         execute: function() {
-            RDFClass = NS.LDP.Class.DirectContainer;
+            exports_1("RDF_CLASS", RDF_CLASS = NS.LDP.Class.DirectContainer);
             Factory = (function (_super) {
                 __extends(Factory, _super);
                 function Factory() {
                     _super.apply(this, arguments);
                 }
                 Factory.prototype.is = function (object) {
-                    //@formatter:off
                     return (_super.prototype.is.call(this, object) &&
                         this.hasRDFClass(object) &&
                         this.hasClassProperties(object));
-                    //@formatter:on
                 };
                 Factory.prototype.from = function (resourceOrResources) {
                     var sources = _super.prototype.from.call(this, resourceOrResources);
@@ -9908,11 +9887,10 @@ $__System.register("42", ["8", "40", "9"], function(exports_1) {
                     }
                     if (Utils.isArray(resourceOrResources))
                         return resources;
-                    else
-                        return resources[0];
+                    return resources[0];
                 };
                 Factory.prototype.hasRDFClass = function (resource) {
-                    return (resource.types.indexOf(RDFClass) !== -1);
+                    return (resource.types.indexOf(RDF_CLASS) !== -1);
                 };
                 Factory.prototype.hasClassProperties = function (resource) {
                     return true;
@@ -9922,13 +9900,11 @@ $__System.register("42", ["8", "40", "9"], function(exports_1) {
                 };
                 return Factory;
             })(AccessPoint.Factory);
-            factory = new Factory();
             exports_1("Factory", Factory);
-            exports_1("factory", factory);
+            exports_1("factory", factory = new Factory());
         }
     }
 });
-//@formatter:on 
 
 /// <reference path="../../typings/es6/es6.d.ts" />
 $__System.register("43", ["8", "38", "40", "9"], function(exports_1) {
@@ -9938,7 +9914,7 @@ $__System.register("43", ["8", "38", "40", "9"], function(exports_1) {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
     var NS, RDF, AccessPoint, Utils;
-    var RDFClass, Definition, Factory, factory;
+    var RDF_CLASS, DEFINITION, Factory, factory;
     return {
         setters:[
             function (NS_1) {
@@ -9954,25 +9930,23 @@ $__System.register("43", ["8", "38", "40", "9"], function(exports_1) {
                 Utils = Utils_1;
             }],
         execute: function() {
-            RDFClass = NS.LDP.Class.IndirectContainer;
-            Definition = Utils.M.from({
+            exports_1("RDF_CLASS", RDF_CLASS = NS.LDP.Class.IndirectContainer);
+            exports_1("DEFINITION", DEFINITION = Utils.M.from({
                 "insertedContentRelation": {
                     "uri": NS.LDP.Predicate.insertedContentRelation,
                     "multi": false,
                     "literal": false
                 }
-            });
+            }));
             Factory = (function (_super) {
                 __extends(Factory, _super);
                 function Factory() {
                     _super.apply(this, arguments);
                 }
                 Factory.prototype.is = function (object) {
-                    //@formatter:off
                     return (_super.prototype.is.call(this, object) &&
                         this.hasRDFClass(object) &&
                         this.hasClassProperties(object));
-                    //@formatter:on
                 };
                 Factory.prototype.from = function (resourceOrResources) {
                     var sources = _super.prototype.from.call(this, resourceOrResources);
@@ -9984,28 +9958,25 @@ $__System.register("43", ["8", "38", "40", "9"], function(exports_1) {
                     }
                     if (Utils.isArray(resourceOrResources))
                         return resources;
-                    else
-                        return resources[0];
+                    return resources[0];
                 };
                 Factory.prototype.hasRDFClass = function (resource) {
-                    return (resource.types.indexOf(RDFClass) !== -1);
+                    return (resource.types.indexOf(RDF_CLASS) !== -1);
                 };
                 Factory.prototype.hasClassProperties = function (resource) {
                     return (Utils.hasPropertyDefined(resource, "insertedContentRelation"));
                 };
                 Factory.prototype.injectBehaviour = function (resource) {
-                    RDF.Resource.Factory.injectDescriptions(resource, Definition);
+                    RDF.Resource.Factory.injectDescriptions(resource, DEFINITION);
                     return resource;
                 };
                 return Factory;
             })(AccessPoint.Factory);
-            factory = new Factory();
             exports_1("Factory", Factory);
-            exports_1("factory", factory);
+            exports_1("factory", factory = new Factory());
         }
     }
 });
-//@formatter:on 
 
 $__System.register("44", [], function(exports_1) {
     var Factory;
@@ -10057,7 +10028,6 @@ $__System.register("45", ["40", "41", "3f", "42", "43", "44", "3e"], function(ex
         }
     }
 });
-//@formatter:on 
 
 /// <reference path="../typings/es6/es6.d.ts" />
 $__System.register("46", ["8", "3d", "38", "45", "9"], function(exports_1) {
@@ -10067,7 +10037,7 @@ $__System.register("46", ["8", "3d", "38", "45", "9"], function(exports_1) {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
     var NS, Parent_1, RDF, LDP, Utils;
-    var RDFClass, Definition, Class, Factory, factory;
+    var RDF_CLASS, DEFINITION, Class, Factory, factory;
     return {
         setters:[
             function (NS_1) {
@@ -10086,8 +10056,8 @@ $__System.register("46", ["8", "3d", "38", "45", "9"], function(exports_1) {
                 Utils = Utils_1;
             }],
         execute: function() {
-            exports_1("RDFClass", RDFClass = NS.CS.Class.Application);
-            exports_1("Definition", Definition = Utils.M.from({
+            exports_1("RDF_CLASS", RDF_CLASS = NS.CS.Class.Application);
+            exports_1("DEFINITION", DEFINITION = Utils.M.from({
                 "rootContainer": {
                     "uri": NS.CS.Predicate.rootContainer,
                     "multi": false,
@@ -10124,10 +10094,8 @@ $__System.register("46", ["8", "3d", "38", "45", "9"], function(exports_1) {
                     _super.apply(this, arguments);
                 }
                 Factory.prototype.is = function (object) {
-                    //@formatter:off
                     return (_super.prototype.is.call(this, object) &&
                         Utils.hasPropertyDefined(object, "rootContainer"));
-                    //@formatter:on
                 };
                 Factory.prototype.from = function (resourceOrResources) {
                     var superResult = _super.prototype.from.call(this, resourceOrResources);
@@ -10139,18 +10107,17 @@ $__System.register("46", ["8", "3d", "38", "45", "9"], function(exports_1) {
                     }
                     if (Utils.isArray(resourceOrResources))
                         return resources;
-                    else
-                        return resources[0];
+                    return resources[0];
                 };
                 Factory.prototype.hasRDFClass = function (resource) {
-                    return (resource.types.indexOf(RDFClass) !== -1);
+                    return (resource.types.indexOf(RDF_CLASS) !== -1);
                 };
                 Factory.prototype.hasClassProperties = function (resource) {
                     return (Utils.hasPropertyDefined(resource, "memberOfRelation") &&
                         Utils.hasPropertyDefined(resource, "hasMemberRelation"));
                 };
                 Factory.prototype.injectBehaviour = function (resource) {
-                    RDF.Resource.Factory.injectDescriptions(resource, Definition);
+                    RDF.Resource.Factory.injectDescriptions(resource, DEFINITION);
                     return resource;
                 };
                 return Factory;
@@ -10195,7 +10162,7 @@ $__System.register("47", ["46", "38", "9", "4"], function(exports_1) {
                     return this.parent.Documents.get(uri).then(function (processedResponse) {
                         var document = processedResponse.result;
                         if (!document.types.indexOf(CS.Class.Application))
-                            throw new Error('The resource fetched is not a cs:Application.');
+                            throw new Error("The resource fetched is not a cs:Application.");
                         var appResource = App.factory.from(document);
                         return new App.Class(_this.parent, appResource);
                     });
@@ -10287,18 +10254,19 @@ $__System.register("49", ["a", "47", "2e", "3b", "3c", "29", "3d", "38", "48", "
                 Carbon.prototype.resolve = function (uri) {
                     if (RDF.URI.Util.isAbsolute(uri))
                         return uri;
-                    var finalURI = this.settings.get("http.ssl") ? 'https://' : 'http://';
+                    var finalURI = this.settings.get("http.ssl") ? "https://" : "http://";
                     finalURI += this.settings.get("domain");
                     return RDF.URI.Util.resolve(finalURI, uri);
                 };
                 Carbon.prototype.getAPIDescription = function () {
-                    return this.Documents.get('platform/api/').then(function (processedResponse) {
+                    return this.Documents.get("platform/api/").then(function (processedResponse) {
                         return processedResponse.result;
                     });
                 };
                 Carbon.prototype.registerDefaultDefinitions = function () {
-                    this.addDefinition(APIDescription.RDFClass, APIDescription.Definition);
+                    this.addDefinition(APIDescription.RDF_CLASS, APIDescription.DEFINITION);
                 };
+                /* tslint:disable: variable-name typedef */
                 Carbon.Apps = Apps_1.default;
                 Carbon.Auth = Auth_1.default;
                 Carbon.Document = Document;
@@ -10306,7 +10274,8 @@ $__System.register("49", ["a", "47", "2e", "3b", "3c", "29", "3d", "38", "48", "
                 Carbon.HTTP = HTTP;
                 Carbon.RDF = RDF;
                 Carbon.Utils = Utils;
-                Carbon.version = '0.9.2-ALPHA';
+                /* tslint:disable: variable-name typedef */
+                Carbon.version = "0.9.2-ALPHA";
                 return Carbon;
             })(Parent_1.default);
             exports_1("default",Carbon);

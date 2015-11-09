@@ -4,8 +4,8 @@ export declare class Class {
     constructor(values: Value[]);
     constructor(value: string);
     values: Value[];
-    private setValues(valuesString);
     toString(): string;
+    private setValues(valuesString);
 }
 export declare class Value {
     constructor(value: string);
@@ -14,11 +14,11 @@ export declare class Value {
     mainValue: string;
     secondaryKey: string;
     secondaryValue: string;
+    private static cleanString(toClean);
+    toString(): string;
     private setValue(value);
     private setMain(main);
     private setSecondary(secondary);
-    private static cleanString(toClean);
-    toString(): string;
 }
 export declare class Util {
     static parseHeaders(headersString: string): Map<string, Class>;

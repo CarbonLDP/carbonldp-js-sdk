@@ -3,6 +3,8 @@ var del = require( 'del' );
 var gulp = require( 'gulp' );
 var util = require( 'gulp-util' );
 
+var karma = require( 'karma' );
+
 var sourcemaps = require( 'gulp-sourcemaps' );
 var ts = require( 'gulp-typescript' );
 var tslint = require( 'gulp-tslint' );
@@ -29,6 +31,13 @@ gulp.task( 'ts-lint', function() {
 		.pipe( tslint() )
 		.pipe( tslint.report( 'prose' ) )
 	;
+});
+
+gulp.task( 'test', function( done ) {
+	new karma.Server({
+		configFile: __dirname + '/karma.conf.js',
+		singleRun: true
+	}, done ).start();
 });
 
 gulp.task( 'compile-library', function() {
@@ -76,7 +85,10 @@ gulp.task( 'clean:dist', function( done ) {
 	return del( config.dist.all, done );
 });
 
-gulp.task( 'build', [ 'clean:dist' ], function() {
+
+gulp.task( 'lint', [ 'ts-lint' ] );
+gulp.task( 'build', [ 'test', 'ts-lint' ], function() {
 	return gulp.start( 'build:afterCleaning' );
 });
+gulp.task( 'build:afterTesting', [ 'clean:dist' ], function() { return gulp.start( 'build:afterCleaning' ); });
 gulp.task( 'build:afterCleaning', [ 'compile-library', 'bundle-sfx' ] );

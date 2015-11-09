@@ -1,12 +1,12 @@
 /// <reference path="../typings/es6/es6.d.ts" />
 function hasFunction(object, functionName) {
-    return typeof object[functionName] === 'function';
+    return typeof object[functionName] === "function";
 }
 exports.hasFunction = hasFunction;
 function hasProperty(object, property) {
     if (!object)
         return false;
-    return 'undefined' !== typeof object[property];
+    return "undefined" !== typeof object[property];
 }
 exports.hasProperty = hasProperty;
 function hasPropertyDefined(object, property) {
@@ -18,66 +18,65 @@ function isNull(value) {
 }
 exports.isNull = isNull;
 function isArray(object) {
-    return Object.prototype.toString.call(object) === '[object Array]';
+    return Object.prototype.toString.call(object) === "[object Array]";
 }
 exports.isArray = isArray;
 function isString(string) {
-    return typeof string == 'string' || string instanceof String;
+    return typeof string === "string" || string instanceof String;
 }
 exports.isString = isString;
 function isBoolean(boolean) {
-    return typeof boolean == 'boolean';
+    return typeof boolean === "boolean";
 }
 exports.isBoolean = isBoolean;
 function isNumber(number) {
-    return typeof number == 'number' || number instanceof Number;
+    return typeof number === "number" || number instanceof Number;
 }
 exports.isNumber = isNumber;
 function isInteger(number) {
     if (!isNumber(number))
         return false;
-    return number % 1 == 0;
+    return number % 1 === 0;
 }
 exports.isInteger = isInteger;
 function isDouble(number) {
     if (!isNumber(number))
         return false;
-    return number % 1 != 0;
+    return number % 1 !== 0;
 }
 exports.isDouble = isDouble;
 function isDate(date) {
-    return typeof date == 'date' || date instanceof Date;
+    return typeof date === "date" || date instanceof Date;
 }
 exports.isDate = isDate;
 function isObject(object) {
-    return typeof object === 'object' && (!!object);
+    return typeof object === "object" && (!!object);
 }
 exports.isObject = isObject;
 function isFunction(value) {
-    return typeof value === 'function';
+    return typeof value === "function";
 }
 exports.isFunction = isFunction;
 function isMap(value) {
-    //@formatter:off
     return (isObject(value) &&
-        hasFunction(value, 'get') &&
-        hasFunction(value, 'has') &&
-        hasProperty(value, 'size') &&
-        hasFunction(value, 'clear') &&
-        hasFunction(value, 'delete') &&
-        hasFunction(value, 'entries') &&
-        hasFunction(value, 'forEach') &&
-        hasFunction(value, 'get') &&
-        hasFunction(value, 'has') &&
-        hasFunction(value, 'keys') &&
-        hasFunction(value, 'set') &&
-        hasFunction(value, 'values'));
-    //@formatter:on
+        hasFunction(value, "get") &&
+        hasFunction(value, "has") &&
+        hasProperty(value, "size") &&
+        hasFunction(value, "clear") &&
+        hasFunction(value, "delete") &&
+        hasFunction(value, "entries") &&
+        hasFunction(value, "forEach") &&
+        hasFunction(value, "get") &&
+        hasFunction(value, "has") &&
+        hasFunction(value, "keys") &&
+        hasFunction(value, "set") &&
+        hasFunction(value, "values"));
 }
 exports.isMap = isMap;
 function parseBoolean(value) {
     if (!isString(value))
         return false;
+    /* tslint:disable: no-switch-case-fall-through */
     switch (value.toLowerCase()) {
         case "true":
         case "yes":
@@ -91,6 +90,7 @@ function parseBoolean(value) {
         default:
             return false;
     }
+    /* tslint:enable: no-switch-case-fall-through */
 }
 exports.parseBoolean = parseBoolean;
 function extend(target) {
@@ -100,11 +100,11 @@ function extend(target) {
     }
     if (arguments.length <= 1)
         return;
-    for (var i = 1, length = arguments.length; i < length; i++) {
+    for (var i = 1, length_1 = arguments.length; i < length_1; i++) {
         var toMerge = objects[i];
-        for (var name in toMerge) {
-            if (toMerge.hasOwnProperty(name)) {
-                target[name] = toMerge[name];
+        for (var name_1 in toMerge) {
+            if (toMerge.hasOwnProperty(name_1)) {
+                target[name_1] = toMerge[name_1];
             }
         }
     }
@@ -113,10 +113,10 @@ function extend(target) {
 exports.extend = extend;
 function forEachOwnProperty(object, action) {
     if (!isObject(object))
-        throw new Error('IllegalArgument');
-    for (var name in object) {
-        if (object.hasOwnProperty(name)) {
-            action(name, object[name]);
+        throw new Error("IllegalArgument");
+    for (var name_2 in object) {
+        if (object.hasOwnProperty(name_2)) {
+            action(name_2, object[name_2]);
         }
     }
 }
@@ -141,9 +141,10 @@ var A = (function () {
     }
     A.from = function (iterator) {
         var array = [];
-        var next;
-        while (!(next = iterator.next()).done) {
+        var next = iterator.next();
+        while (!next.done) {
             array.push(next.value);
+            next = iterator.next();
         }
         return array;
     };
@@ -153,7 +154,7 @@ var A = (function () {
             arrays[_i - 0] = arguments[_i];
         }
         var result = arrays[0].slice();
-        for (var i = 1, length_1 = arrays.length; i < length_1; i++) {
+        for (var i = 1, length_2 = arrays.length; i < length_2; i++) {
             result = result.concat(arrays[i].filter(function (item) {
                 return result.indexOf(item) < 0;
             }));
@@ -178,16 +179,17 @@ var M = (function () {
         for (var _i = 1; _i < arguments.length; _i++) {
             extenders[_i - 1] = arguments[_i];
         }
-        for (var i = 0, length_2 = extenders.length; i < length_2; i++) {
+        for (var i = 0, length_3 = extenders.length; i < length_3; i++) {
             var extender = extenders[i];
             var values = extender.entries();
-            var next;
-            while (!(next = values.next()).done) {
+            var next = values.next();
+            while (!next.done) {
                 var entry = next.value;
                 var key = entry[0];
                 var value = entry[1];
                 if (!toExtend.has(key))
                     toExtend.set(key, value);
+                next = values.next();
             }
         }
         return toExtend;
@@ -202,8 +204,9 @@ var UUID = (function () {
         return UUID.regExp.test(uuid);
     };
     UUID.generate = function () {
-        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-            var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+        return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function (c) {
+            var r = Math.random() * 16 | 0;
+            var v = c === "x" ? r : (r & 0x3 | 0x8);
             return v.toString(16);
         });
     };
@@ -211,7 +214,5 @@ var UUID = (function () {
     return UUID;
 })();
 exports.UUID = UUID;
-//@formatter:off
-//@foramtter:on 
 
 //# sourceMappingURL=Utils.js.map

@@ -1,17 +1,15 @@
-var Utils = require('../Utils');
+var Utils = require("../Utils");
 var Factory = (function () {
     function Factory() {
     }
     Factory.is = function (value) {
-        //@formatter:off
         return ((!Utils.isNull(value)) &&
             Utils.isObject(value) &&
-            Utils.hasProperty(value, '@id'));
-        //@formatter:on
+            Utils.hasProperty(value, "@id"));
     };
     Factory.create = function (uri) {
         return {
-            '@id': uri
+            "@id": uri
         };
     };
     return Factory;
@@ -21,7 +19,7 @@ var Util = (function () {
     function Util() {
     }
     Util.areEqual = function (node1, node2) {
-        return node1['@id'] === node2['@id'];
+        return node1["@id"] === node2["@id"];
     };
     return Util;
 })();

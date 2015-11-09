@@ -1,4 +1,4 @@
-import * as Header from './Header';
+import * as Header from "./Header";
 declare class Response {
     constructor(request: XMLHttpRequest);
     status: number;

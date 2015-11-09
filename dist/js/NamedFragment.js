@@ -3,9 +3,9 @@ var __extends = (this && this.__extends) || function (d, b) {
     function __() { this.constructor = d; }
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
-var Fragment = require('./Fragment');
-var RDF = require('./RDF');
-var Utils = require('./Utils');
+var Fragment = require("./Fragment");
+var RDF = require("./RDF");
+var Utils = require("./Utils");
 var Factory = (function (_super) {
     __extends(Factory, _super);
     function Factory() {
@@ -28,12 +28,12 @@ var Factory = (function (_super) {
         if (this.hasClassProperties(fragment))
             return fragment;
         Object.defineProperties(fragment, {
-            'slug': {
+            "slug": {
                 get: function () {
                     return RDF.URI.Util.getFragment(fragment.uri);
                 },
                 set: function (slug) {
-                    this.uri = this.document.uri + '#' + slug;
+                    this.uri = this.document.uri + "#" + slug;
                 },
                 enumerable: false
             }
@@ -41,7 +41,7 @@ var Factory = (function (_super) {
         return fragment;
     };
     Factory.prototype.hasClassProperties = function (resource) {
-        return (Utils.hasPropertyDefined(resource, 'slug'));
+        return (Utils.hasPropertyDefined(resource, "slug"));
     };
     return Factory;
 })(Fragment.Factory);

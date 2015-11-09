@@ -1,31 +1,31 @@
 /// <reference path="../../typings/es6/es6.d.ts" />
 
-import * as Literal from './Literal';
-import * as URI from './URI';
-import * as Value from './Value';
-import PropertyDescription from './PropertyDescription';
+import * as Literal from "./Literal";
+import * as URI from "./URI";
+import * as Value from "./Value";
+import PropertyDescription from "./PropertyDescription";
 
-import * as Utils from './../Utils';
-import * as RDF from './../NS/RDF';
-import * as RDFNode from './RDFNode';
+import * as Utils from "./../Utils";
+import * as RDF from "./../NS/RDF";
+import * as RDFNode from "./RDFNode";
 
-interface Resource extends RDFNode.Class {
-	_propertyAddedCallbacks:(( property:string, value:(RDFNode.Class | Literal.Class) )=>void)[];
-	_propertyDeletedCallbacks:(( property:string, value?:any )=>void)[];
+export interface Class extends RDFNode.Class {
+	_propertyAddedCallbacks:(( property:string, value:(RDFNode.Class | Literal.Class) ) => void)[];
+	_propertyDeletedCallbacks:(( property:string, value?:any ) => void)[];
 
 	uri:string;
 	types:Array<string>;
 
-	hasProperty:( property:string )=>boolean;
-	getProperty:( property:string )=>any;
-	getPropertyValue:( property:string )=>any;
-	getPropertyURI:( property:string )=>string;
-	getProperties:( property:string )=>any[];
-	getPropertyValues:( property:string )=>any[];
-	getPropertyURIs:( property:string )=>string[];
-	addProperty:( property:string, value:any )=>void;
-	setProperty:( property:string, value:any )=>void;
-	deleteProperty:( property:string )=>void;
+	hasProperty:( property:string ) => boolean;
+	getProperty:( property:string ) => any;
+	getPropertyValue:( property:string ) => any;
+	getPropertyURI:( property:string ) => string;
+	getProperties:( property:string ) => any[];
+	getPropertyValues:( property:string ) => any[];
+	getPropertyURIs:( property:string ) => string[];
+	addProperty:( property:string, value:any ) => void;
+	setProperty:( property:string, value:any ) => void;
+	deleteProperty:( property:string ) => void;
 }
 
 function hasProperty( propertyURI:string ):boolean {
@@ -33,12 +33,12 @@ function hasProperty( propertyURI:string ):boolean {
 }
 
 function getProperty( propertyURI:string ):Value.Class {
-	var values:Value.Class[] = this.getProperties( propertyURI );
+	let values:Value.Class[] = this.getProperties( propertyURI );
 	return values[ 0 ];
 }
 
 function getPropertyValue( propertyURI:string ):any {
-	var propertyObject:any = this.getProperty( propertyURI );
+	let propertyObject:any = this.getProperty( propertyURI );
 
 	if ( Utils.isNull( propertyObject ) ) return null;
 
@@ -47,10 +47,10 @@ function getPropertyValue( propertyURI:string ):any {
 }
 
 function getPropertyURI( propertyURI:string ):string {
-	var value:Value.Class = this.getProperty( propertyURI );
+	let value:Value.Class = this.getProperty( propertyURI );
 	if ( Utils.isNull( value ) ) return null;
-	if ( ! Utils.hasProperty( value, '@id' ) ) return null;
-	return value[ '@id' ];
+	if ( ! Utils.hasProperty( value, "@id" ) ) return null;
+	return value[ "@id" ];
 }
 
 function getProperties( propertyURI:string ):Value.Class[] {
@@ -58,52 +58,52 @@ function getProperties( propertyURI:string ):Value.Class[] {
 	return Utils.isArray( this[ propertyURI ] ) ? this[ propertyURI ] : [ this[ propertyURI ] ];
 }
 
-function getPropertyValues( propertyURI ):any[] {
-	var values:any[] = [];
+function getPropertyValues( propertyURI:string ):any[] {
+	let values:any[] = [];
 
 	if ( this.hasProperty( propertyURI ) ) {
-		var propertyArray:Value.Class[] = this.getProperties( propertyURI );
-		for ( var i:number = 0, length:number = propertyArray.length; i < length; i ++ ) {
-			var value:Value.Class = propertyArray[ i ];
+		let propertyArray:Value.Class[] = this.getProperties( propertyURI );
+		for ( let i:number = 0, length:number = propertyArray.length; i < length; i ++ ) {
+			let value:Value.Class = propertyArray[ i ];
 			if ( Literal.Factory.is( value ) ) values.push( Literal.Factory.parse( <Literal.Class>value ) );
 		}
 	}
 
-	values = tieArray( <Resource> this, propertyURI, values );
+	values = tieArray( <Class> this, propertyURI, values );
 
 	return values;
 }
 
 function getPropertyURIs( propertyURI:string ):string[] {
-	var uris:string[] = [];
+	let uris:string[] = [];
 
 	if ( this.hasProperty( propertyURI ) ) {
-		var values:Value.Class[] = this.getProperties( propertyURI );
+		let values:Value.Class[] = this.getProperties( propertyURI );
 
-		for ( var i = 0, length = values.length; i < length; i ++ ) {
-			var value:Value.Class = values[ i ];
-			if ( Utils.hasProperty( value, '@id' ) ) uris.push( value[ '@id' ] );
+		for ( let i:number = 0, length:number = values.length; i < length; i ++ ) {
+			let value:Value.Class = values[ i ];
+			if ( Utils.hasProperty( value, "@id" ) ) uris.push( value[ "@id" ] );
 		}
 	}
 
-	uris = tieArray( <Resource> this, propertyURI, uris );
+	uris = tieArray( <Class> this, propertyURI, uris );
 
 	return uris;
 }
 
 function addProperty( propertyURI:string, value:any ):void {
-	var propertyArray = this.getProperties( propertyURI );
+	let propertyArray:Value.Class[] = this.getProperties( propertyURI );
 
-	var propertyValue:Value.Class;
+	let propertyValue:Value.Class;
 	if( RDFNode.Factory.is( value ) ) {
 		propertyValue = {
-			'@id': value[ '@id' ]
+			"@id": value[ "@id" ]
 		};
 	} else propertyValue = Literal.Factory.from( value );
 
-	var callbacks:(( property:string, value:any ) => void)[] = this._propertyAddedCallbacks;
+	let callbacks:(( property:string, value:any ) => void)[] = this._propertyAddedCallbacks;
 	for ( let i:number = 0, length:number = callbacks.length; i < length; i ++ ) {
-		var callback:( property:string, value:any ) => void = callbacks[ i ];
+		let callback:( property:string, value:any ) => void = callbacks[ i ];
 		callback.call( this, propertyURI, propertyValue );
 	}
 
@@ -118,24 +118,24 @@ function setProperty( propertyURI:string, value:any ):void {
 }
 
 function deleteProperty( propertyURI:string ):void {
-	var callbacks:(( property:string, value?:any ) => void)[] = this._propertyDeletedCallbacks;
+	let callbacks:(( property:string, value?:any ) => void)[] = this._propertyDeletedCallbacks;
 	for ( let i:number = 0, length:number = callbacks.length; i < length; i ++ ) {
-		var callback:( property:string, value?:any ) => void = callbacks[ i ];
+		let callback:( property:string, value?:any ) => void = callbacks[ i ];
 		callback.call( this, propertyURI );
 	}
 
 	delete this[ propertyURI ];
 }
 
-function tieArray( resource:Resource, property:string, array:any[] ) {
-	array.push = (function () {
+function tieArray( resource:Class, property:string, array:any[] ):any[] {
+	array.push = (function():( ...items:any[] ) => number {
 		return function ( ...items:any[] ):number {
-			for ( var i:number = 0, length:number = items.length; i < length; i ++ ) {
+			for ( let i:number = 0, length:number = items.length; i < length; i ++ ) {
 				resource.addProperty( property, items[ i ] );
 			}
 			return Array.prototype.push.call( array, items );
 		};
-	}());
+	})();
 	// TODO: concat
 	// TODO: join
 	// TODO: pop
@@ -150,172 +150,17 @@ function tieArray( resource:Resource, property:string, array:any[] ) {
 }
 
 
-class Factory {
-	is( value:any ):boolean {
-		//@formatter:off
-		return (
-			// RDFNode.Factory.is( value ) &&
-
-			( ! Utils.isNull( value ) ) &&
-			Utils.isObject( value ) &&
-
-			this.hasClassProperties( value )
-		);
-		//@formatter:on
-	}
-
-	create():Resource {
-		var resource = {};
-
-		var resourceArray:Resource[] = this.from([{}]);
-
-		return this.from( resource );
-	}
-
-	from( object:Array<Object> ):Resource[];
-	from( object:Object ):Resource;
-	from( objects ):any {
-		if( ! Utils.isArray( objects ) ) return this.singleFrom( objects );
-
-		for ( var i:number = 0, length:number = objects.length; i < length; i ++ ) {
-			var resource:RDFNode.Class = <RDFNode.Class> objects[ i ];
-			this.injectBehavior( resource );
-		}
-
-		return objects;
-	}
-
-	protected singleFrom( object:Object ):Resource {
-		return this.injectBehavior( object );
-	}
-
-	protected hasRDFClass( resource:RDFNode.Class ):boolean {
-		// TODO: Implement
-		return true;
-	}
-
-	protected hasClassProperties( resource:RDFNode.Class ):boolean {
-		return (
-			Utils.hasPropertyDefined( resource, '_propertyAddedCallbacks' ) &&
-			Utils.hasPropertyDefined( resource, '_propertyDeletedCallbacks' ) &&
-
-			Utils.hasPropertyDefined( resource, 'uri' ) &&
-			Utils.hasPropertyDefined( resource, 'types' ) &&
-
-			Utils.hasFunction( resource, 'hasProperty' ) &&
-			Utils.hasFunction( resource, 'getProperty' ) &&
-			Utils.hasFunction( resource, 'getPropertyValue' ) &&
-			Utils.hasFunction( resource, 'getPropertyURI' ) &&
-			Utils.hasFunction( resource, 'getProperties' ) &&
-			Utils.hasFunction( resource, 'getPropertyValues' ) &&
-			Utils.hasFunction( resource, 'getPropertyURIs' ) &&
-			Utils.hasFunction( resource, 'addProperty' ) &&
-			Utils.hasFunction( resource, 'setProperty' ) &&
-			Utils.hasFunction( resource, 'deleteProperty' )
-		);
-	}
-
-	protected injectBehavior( node:Object ):Resource {
-		let resource:Resource = <Resource> node;
-		if( this.hasClassProperties( resource ) ) return <Resource> resource;
-
-		Object.defineProperties( resource, {
-			'_propertyAddedCallbacks': {
-				writable: false,
-				enumerable: false,
-				value: []
-			},
-			'_propertyDeletedCallbacks': {
-				writable: false,
-				enumerable: false,
-				value: []
-			},
-
-			'types': {
-				get: function () {
-					if ( ! this[ '@type' ] ) this[ '@type' ] = [];
-					return this[ '@type' ];
-				},
-				set: function ( value ) {
-					// TODO: Implement
-				},
-				enumerable: false
-			},
-			'uri': {
-				get: function () {
-					return this[ '@id' ];
-				},
-				set: function ( value ) {
-					this[ '@id' ] = value;
-				},
-				enumerable: false
-			},
-
-			'hasProperty': {
-				writable: false,
-				enumerable: false,
-				value: hasProperty
-			},
-			'getProperty': {
-				writable: false,
-				enumerable: false,
-				value: getProperty
-			},
-			'getPropertyValue': {
-				writable: false,
-				enumerable: false,
-				value: getPropertyValue
-			},
-			'getPropertyURI': {
-				writable: false,
-				enumerable: false,
-				value: getPropertyURI
-			},
-			'getProperties': {
-				writable: false,
-				enumerable: false,
-				value: getProperties
-			},
-			'getPropertyValues': {
-				writable: false,
-				enumerable: false,
-				value: getPropertyValues
-			},
-			'getPropertyURIs': {
-				writable: false,
-				enumerable: false,
-				value: getPropertyURIs
-			},
-			'addProperty': {
-				writable: false,
-				enumerable: false,
-				value: addProperty
-			},
-			'setProperty': {
-				writable: false,
-				enumerable: false,
-				value: setProperty
-			},
-			'deleteProperty': {
-				writable: false,
-				enumerable: false,
-				value: deleteProperty
-			}
-		} );
-
-		return resource;
-	}
-
-	static injectDefinitions( resource:Resource, definitions:Map<string, Map<string, PropertyDescription>> ):Resource;
-	static injectDefinitions( resources:Resource[], definitions:Map<string, Map<string, PropertyDescription>> ):Resource[];
+export class Factory {
+	static injectDefinitions( resource:Class, definitions:Map<string, Map<string, PropertyDescription>> ):Class;
+	static injectDefinitions( resources:Class[], definitions:Map<string, Map<string, PropertyDescription>> ):Class[];
 	static injectDefinitions( resourceOrResources:any, definitions:Map<string, Map<string, PropertyDescription>> ):any {
-		var resources:Resource[] = Utils.isArray( resourceOrResources ) ? <Resource[]>resourceOrResources : [ <Resource>resourceOrResources ];
+		let resources:Class[] = Utils.isArray( resourceOrResources ) ? <Class[]>resourceOrResources : [ <Class>resourceOrResources ];
 
 		for ( let i:number = 0, length:number = resources.length; i < length; i ++ ) {
-			var resource:Resource = resources[ i ];
+			let resource:Class = resources[ i ];
 			for ( let j:number = 0, length:number = resource.types.length; i < length; j ++ ) {
-				var type:string = resource.types[ i ];
-				var descriptions:Map<string, PropertyDescription> = new Map<string, PropertyDescription>();
+				let type:string = resource.types[ i ];
+				let descriptions:Map<string, PropertyDescription> = new Map<string, PropertyDescription>();
 				if ( definitions.has( type ) ) {
 					Utils.M.extend( descriptions, definitions.get( type ) );
 				}
@@ -324,45 +169,48 @@ class Factory {
 		}
 
 		if ( Utils.isArray( resourceOrResources ) ) return resources;
-		else return resources[ 0 ];
+		return resources[ 0 ];
 	}
 
 
-	static injectDescriptions( resource:Resource, descriptions:Map<string, PropertyDescription> ):Object;
-	static injectDescriptions( resource:Resource, descriptionsObject:Object ):Object;
-	static injectDescriptions( resources:Resource[], descriptions:Map<string, PropertyDescription> ):Object[];
-	static injectDescriptions( resource:Resource[], descriptionsObject:Object ):Object[];
+	static injectDescriptions( resource:Class, descriptions:Map<string, PropertyDescription> ):Object;
+	static injectDescriptions( resource:Class, descriptionsObject:Object ):Object;
+	static injectDescriptions( resources:Class[], descriptions:Map<string, PropertyDescription> ):Object[];
+	static injectDescriptions( resource:Class[], descriptionsObject:Object ):Object[];
 	static injectDescriptions( resourceOrResources:any, descriptionsMapOrObject:any ):any {
-		var resources:Resource[] = Utils.isArray( resourceOrResources ) ? <Resource[]>resourceOrResources : [ <Resource>resourceOrResources ];
+		let resources:Class[] = Utils.isArray( resourceOrResources ) ? <Class[]>resourceOrResources : [ <Class>resourceOrResources ];
 
-		var descriptions:Map<string, PropertyDescription>;
+		let descriptions:Map<string, PropertyDescription>;
 		if ( Utils.isMap( descriptionsMapOrObject ) ) {
 			descriptions = <any> descriptionsMapOrObject;
 		} else if ( Utils.isObject( descriptionsMapOrObject ) ) {
 			descriptions = <any> Utils.M.from( descriptionsMapOrObject );
-		} else throw new Error( 'IllegalArgument' );
+		} else throw new Error( "IllegalArgument" );
 
-		for ( var i:number = 0, length:number = resources.length; i < length; i ++ ) {
-			var resource:Resource = resources[ i ];
+		for ( let i:number = 0, length:number = resources.length; i < length; i ++ ) {
+			let resource:Class = resources[ i ];
 
-			var descriptionNames:Iterator<string> = descriptions.keys();
-			var next:IteratorValue<string>;
-			while ( ! (next = descriptionNames.next()).done ) {
-				var name:string = next.value;
-				var description:PropertyDescription = descriptions.get( name );
+			let descriptionNames:Iterator<string> = descriptions.keys();
+			let next:IteratorValue<string> = descriptionNames.next();
+			while ( ! next.done ) {
+				let name:string = next.value;
+				let description:PropertyDescription = descriptions.get( name );
 
-				var getter:()=>any, setter:( any )=>void;
+				let getter:() => any, setter:( any:any ) => void;
 
 				if ( Utils.isNull( description.literal ) ) {
 					// The type isn't known, inject generic versions
-					if ( description.multi ) getter = Factory.genericMultipleGetter( description );
-					else getter = Factory.genericGetter( description );
+					if ( description.multi ) {
+						getter = Factory.genericMultipleGetter( description );
+					} else getter = Factory.genericGetter( description );
 				} else if ( ! description.literal ) {
-					if ( description.multi ) getter = Factory.urisGetter( description );
-					else getter = Factory.uriGetter( description );
+					if ( description.multi ) {
+						getter = Factory.urisGetter( description );
+					} else getter = Factory.uriGetter( description );
 				} else {
-					if ( description.multi ) getter = Factory.literalsGetter( description );
-					else getter = Factory.literalGetter( description );
+					if ( description.multi ) {
+						getter = Factory.literalsGetter( description );
+					} else getter = Factory.literalGetter( description );
 				}
 
 				setter = Factory.setter( description );
@@ -374,69 +222,213 @@ class Factory {
 						set: setter
 					}
 				);
+
+				next = descriptionNames.next();
 			}
 		}
 
 		if ( Utils.isArray( resourceOrResources ) ) return resources;
-		else return resources[ 0 ];
+		return resources[ 0 ];
 	}
 
-	private static genericGetter( description:PropertyDescription ):()=>any {
-		var uri = description.uri;
-		return function () {
+	private static genericGetter( description:PropertyDescription ):() => any {
+		let uri:string = description.uri;
+		return function():Value.Class {
 			return this.getProperty( uri );
 		};
 	}
 
-	private static genericMultipleGetter( description:PropertyDescription ):()=>any {
-		var uri = description.uri;
-		return function () {
+	private static genericMultipleGetter( description:PropertyDescription ):() => any {
+		let uri:string = description.uri;
+		return function():Value.Class[] {
 			return this.getProperties( uri );
 		};
 	}
 
-	private static uriGetter( description:PropertyDescription ):()=>any {
-		var uri = description.uri;
-		return function () {
+	private static uriGetter( description:PropertyDescription ):() => any {
+		let uri:string = description.uri;
+		return function():string {
 			return this.getPropertyURI( uri );
 		};
 	}
 
-	private static urisGetter( description:PropertyDescription ):()=>any {
-		var uri = description.uri;
-		return function () {
+	private static urisGetter( description:PropertyDescription ):() => any {
+		let uri:string = description.uri;
+		return function():string[] {
 			return this.getPropertyURIs( uri );
 		};
 	}
 
-	private static literalGetter( description:PropertyDescription ):()=>any {
-		var uri = description.uri;
-		return function () {
+	private static literalGetter( description:PropertyDescription ):() => any {
+		let uri:string = description.uri;
+		return function():any {
 			return this.getPropertyValue( uri );
 		};
 	}
 
-	private static literalsGetter( description:PropertyDescription ):()=>any {
-		var uri = description.uri;
-		return function ():any {
+	private static literalsGetter( description:PropertyDescription ):() => any {
+		let uri:string = description.uri;
+		return function():any[] {
 			return this.getPropertyValues( uri );
 		};
 	}
 
-	private static setter( description:PropertyDescription ):( value:any )=>void {
-		var uri = description.uri;
+	private static setter( description:PropertyDescription ):( value:any ) => void {
+		let uri:string = description.uri;
 		return function ( value:any ):void {
 			this.setProperty( uri, value );
 		};
 	}
+
+	is( value:any ):boolean {
+		return (
+			// RDFNode.Factory.is( value ) &&
+
+				( ! Utils.isNull( value ) ) &&
+				Utils.isObject( value ) &&
+
+				this.hasClassProperties( value )
+		);
+	}
+
+	create():Class {
+		let resource:Object = {};
+		return this.from( resource );
+	}
+
+	from( object:Array<Object> ):Class[];
+	from( object:Object ):Class;
+	from( objects:any ):any {
+		if( ! Utils.isArray( objects ) ) return this.singleFrom( objects );
+
+		for ( let i:number = 0, length:number = objects.length; i < length; i ++ ) {
+			let resource:RDFNode.Class = <RDFNode.Class> objects[ i ];
+			this.injectBehavior( resource );
+		}
+
+		return objects;
+	}
+
+	protected singleFrom( object:Object ):Class {
+		return this.injectBehavior( object );
+	}
+
+	protected hasRDFClass( resource:RDFNode.Class ):boolean {
+		// TODO: Implement
+		return true;
+	}
+
+	protected hasClassProperties( resource:RDFNode.Class ):boolean {
+		return (
+				Utils.hasPropertyDefined( resource, "_propertyAddedCallbacks" ) &&
+				Utils.hasPropertyDefined( resource, "_propertyDeletedCallbacks" ) &&
+
+				Utils.hasPropertyDefined( resource, "uri" ) &&
+				Utils.hasPropertyDefined( resource, "types" ) &&
+
+				Utils.hasFunction( resource, "hasProperty" ) &&
+				Utils.hasFunction( resource, "getProperty" ) &&
+				Utils.hasFunction( resource, "getPropertyValue" ) &&
+				Utils.hasFunction( resource, "getPropertyURI" ) &&
+				Utils.hasFunction( resource, "getProperties" ) &&
+				Utils.hasFunction( resource, "getPropertyValues" ) &&
+				Utils.hasFunction( resource, "getPropertyURIs" ) &&
+				Utils.hasFunction( resource, "addProperty" ) &&
+				Utils.hasFunction( resource, "setProperty" ) &&
+				Utils.hasFunction( resource, "deleteProperty" )
+		);
+	}
+
+	protected injectBehavior( node:Object ):Class {
+		let resource:Class = <Class> node;
+		if( this.hasClassProperties( resource ) ) return <Class> resource;
+
+		Object.defineProperties( resource, {
+			"_propertyAddedCallbacks": {
+				writable: false,
+				enumerable: false,
+				value: []
+			},
+			"_propertyDeletedCallbacks": {
+				writable: false,
+				enumerable: false,
+				value: []
+			},
+
+			"types": {
+				get: function():Value.Class[] {
+					if ( ! this[ "@type" ] ) this[ "@type" ] = [];
+					return this[ "@type" ];
+				},
+				set: function ( value:any ):void {
+					// TODO: Implement
+				},
+				enumerable: false
+			},
+			"uri": {
+				get: function():string {
+					return this[ "@id" ];
+				},
+				set: function ( value:string ):void {
+					this[ "@id" ] = value;
+				},
+				enumerable: false
+			},
+
+			"hasProperty": {
+				writable: false,
+				enumerable: false,
+				value: hasProperty
+			},
+			"getProperty": {
+				writable: false,
+				enumerable: false,
+				value: getProperty
+			},
+			"getPropertyValue": {
+				writable: false,
+				enumerable: false,
+				value: getPropertyValue
+			},
+			"getPropertyURI": {
+				writable: false,
+				enumerable: false,
+				value: getPropertyURI
+			},
+			"getProperties": {
+				writable: false,
+				enumerable: false,
+				value: getProperties
+			},
+			"getPropertyValues": {
+				writable: false,
+				enumerable: false,
+				value: getPropertyValues
+			},
+			"getPropertyURIs": {
+				writable: false,
+				enumerable: false,
+				value: getPropertyURIs
+			},
+			"addProperty": {
+				writable: false,
+				enumerable: false,
+				value: addProperty
+			},
+			"setProperty": {
+				writable: false,
+				enumerable: false,
+				value: setProperty
+			},
+			"deleteProperty": {
+				writable: false,
+				enumerable: false,
+				value: deleteProperty
+			}
+		} );
+
+		return resource;
+	}
 }
 
-var factory = new Factory;
-
-//@formatter:off
-export {
-	Resource as Class,
-	Factory,
-	factory
-};
-//@formatter:on
+export let factory:Factory = new Factory;

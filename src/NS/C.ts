@@ -12,10 +12,8 @@ class Predicate {
 	static get buildDate():string { return namespace + "buildDate"; }
 }
 
-//@formatter:off
 export {
 	namespace,
 	Class,
 	Predicate
 };
-//@formatter:on

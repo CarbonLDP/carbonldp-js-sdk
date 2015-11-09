@@ -173,6 +173,6 @@
 
     export { PersistedDocumentResource as Class, Factory };
 
-*/ 
+*/
 
 //# sourceMappingURL=PersistedDocumentResource.js.map

@@ -3,15 +3,15 @@ var __extends = (this && this.__extends) || function (d, b) {
     function __() { this.constructor = d; }
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
-var Errors = require('./Errors');
-var RDF = require('./RDF');
-var Utils = require('./Utils');
+var Errors = require("./Errors");
+var RDF = require("./RDF");
+var Utils = require("./Utils");
 function externalAnonymousFragmentFilter(propertyURI, value) {
     if (!RDF.Node.Factory.is(value))
         return;
-    if (!RDF.URI.Util.isBNodeID(value['@id']))
+    if (!RDF.URI.Util.isBNodeID(value["@id"]))
         return;
-    if (!('document' in value))
+    if (!("document" in value))
         throw new Errors.IllegalArgumentError("The resource provided doesn't belong to a document.");
     var fragment = value;
     if (this.document !== fragment.document)
@@ -42,7 +42,7 @@ var Factory = (function (_super) {
         var document = fragment.document;
         delete fragment.document;
         Object.defineProperties(fragment, {
-            'document': {
+            "document": {
                 writable: false,
                 enumerable: false,
                 value: document
@@ -61,7 +61,7 @@ var Util = (function () {
     function Util() {
     }
     Util.generateID = function () {
-        return '_:' + Utils.UUID.generate();
+        return "_:" + Utils.UUID.generate();
     };
     return Util;
 })();

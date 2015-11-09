@@ -1,7 +1,7 @@
 /// <reference path="../typings/es6/es6.d.ts" />
-import Auth from './Auth';
-import Documents from './Documents';
-import * as RDF from './RDF';
+import Auth from "./Auth";
+import Documents from "./Documents";
+import * as RDF from "./RDF";
 declare class Parent {
     Auth: Auth;
     Documents: Documents;

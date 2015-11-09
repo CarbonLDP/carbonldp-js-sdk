@@ -4,21 +4,19 @@ var __extends = (this && this.__extends) || function (d, b) {
     function __() { this.constructor = d; }
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
-var NS = require('./../NS');
-var Container = require('./Container');
-var Utils = require('./../Utils');
-var RDFClass = NS.LDP.Class.BasicContainer;
+var NS = require("./../NS");
+var Container = require("./Container");
+var Utils = require("./../Utils");
+var RDF_CLASS = NS.LDP.Class.BasicContainer;
 var Factory = (function (_super) {
     __extends(Factory, _super);
     function Factory() {
         _super.apply(this, arguments);
     }
     Factory.prototype.is = function (object) {
-        //@formatter:off
         return (_super.prototype.is.call(this, object) &&
             this.hasRDFClass(object) &&
             this.hasClassProperties(object));
-        //@formatter:on
     };
     Factory.prototype.from = function (resourceOrResources) {
         var sources = _super.prototype.from.call(this, resourceOrResources);
@@ -29,9 +27,8 @@ var Factory = (function (_super) {
                 this.injectBehaviour(resource);
         }
         if (Utils.isArray(resourceOrResources))
-            return resources;
-        else
             return resources[0];
+        return resources;
     };
     Factory.prototype.hasRDFClass = function (resource) {
         return (resource.types.indexOf(NS.LDP.Class.BasicContainer) !== -1);

@@ -3,15 +3,20 @@ var __extends = (this && this.__extends) || function (d, b) {
     function __() { this.constructor = d; }
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
-var AbstractError_1 = require('../../Errors/AbstractError');
+var AbstractError_1 = require("../../Errors/AbstractError");
 var HTTPError = (function (_super) {
     __extends(HTTPError, _super);
     function HTTPError(message, response) {
         _super.call(this, message);
         this.response = response;
     }
+    Object.defineProperty(HTTPError, "statusCode", {
+        get: function () { return null; },
+        enumerable: true,
+        configurable: true
+    });
     Object.defineProperty(HTTPError.prototype, "name", {
-        get: function () { return 'HTTPError'; },
+        get: function () { return "HTTPError"; },
         enumerable: true,
         configurable: true
     });

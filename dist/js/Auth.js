@@ -1,6 +1,6 @@
 /// <reference path="../typings/es6-promise/es6-promise.d.ts" />
-var HTTP = require('./HTTP');
-var Errors = require('./Errors');
+var HTTP = require("./HTTP");
+var Errors = require("./Errors");
 var Method;
 (function (Method) {
     Method[Method["Basic"] = 0] = "Basic";
@@ -14,10 +14,8 @@ var Auth = (function () {
     }
     Auth.prototype.isAuthenticated = function (askParent) {
         if (askParent === void 0) { askParent = true; }
-        //@formatter:off
         return (this.authenticated ||
             (askParent && !!this.parent.parent && this.parent.parent.Auth.isAuthenticated()));
-        //@formatter:on
     };
     Auth.prototype.login = function (username, password) {
         var method = this.parent.getSetting("auth.method");
@@ -26,7 +24,7 @@ var Auth = (function () {
                 return this.basicAuthentication(username, password);
             default:
                 return new Promise(function () {
-                    throw new Errors.IllegalStateError('The authentication method specified isn\'t supported.');
+                    throw new Errors.IllegalStateError("The authentication method specified isn\'t supported.");
                 });
         }
     };
@@ -46,6 +44,8 @@ var Auth = (function () {
                 this.addBasicAuthHeader(headers);
                 requestOptions.sendCredentialsOnCORS = true;
                 break;
+            default:
+                break;
         }
     };
     Auth.prototype.basicAuthentication = function (username, password) {
@@ -63,13 +63,14 @@ var Auth = (function () {
     };
     Auth.prototype.addBasicAuthHeader = function (headers) {
         var header;
-        if (headers.has('Authorization'))
-            header = headers.get('Authorization');
+        if (headers.has("Authorization")) {
+            header = headers.get("Authorization");
+        }
         else {
             header = new HTTP.Header.Class();
-            headers.set('Authorization', header);
+            headers.set("Authorization", header);
         }
-        var authorization = 'Basic ' + btoa(this.credentials.username + ':' + this.credentials.password);
+        var authorization = "Basic " + btoa(this.credentials.username + ":" + this.credentials.password);
         header.values.push(new HTTP.Header.Value(authorization));
     };
     return Auth;
@@ -77,6 +78,5 @@ var Auth = (function () {
 exports.Class = Auth;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = Auth;
-//@formatter:on 
 
 //# sourceMappingURL=Auth.js.map

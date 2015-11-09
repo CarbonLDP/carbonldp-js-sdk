@@ -22,22 +22,22 @@ import {
 	hasProperty
 } from "./test/JasmineExtender";
 
-describe( module( "Carbon/App" ), function () {
+describe( module( "Carbon/App" ), function():void {
 
-	describe( interfaze( "RDF.Resource.Class", "Description of Interface" ), function () {
+	describe( interfaze( "RDF.Resource.Class", "Description of Interface" ), function():void {
 
-		it( hasProperty( PROPERTY, "rootContainer", "string", "The Root of the Container" ), function () {} );
+		it( hasProperty( PROPERTY, "rootContainer", "string", "The Root of the Container" ), function():void {} );
 
 	} );
 	describe( clazz( "Carbon.App.Class",
 		"Class that represents a Carbon Application. It centers the scope of several services (Carbon.Auth, Carbon.Resources, etc.) into the Application\"s scope.",
 		"Carbon.Parent"
-	), function () {
+	), function():void {
 
 		it( hasConstructor( "Constructor of Carbon.App.Class", [
 			{name: "parent", type: "Carbon.Parent"},
 			{name: "resource", type: "Carbon.App.Resource"}
-		] ), function () {
+		] ), function():void {
 			// TODO: Test
 		} );
 
@@ -47,11 +47,11 @@ describe( module( "Carbon/App" ), function () {
 				{name: "uri", type: "string"}
 			],
 			{type: "string"}
-		), function () {
+		), function():void {
 			// TODO: Test
 		} );
 
-		it( hasProperty( STATIC, "TestingProperty", "bool", "Description" ), function () {
+		it( hasProperty( STATIC, "TestingProperty", "bool", "Description" ), function():void {
 
 		} );
 	} );
@@ -60,15 +60,15 @@ describe( module( "Carbon/App" ), function () {
 		"Class that represents a Carbon Application. It centers the scope of several services (Carbon.Auth, Carbon.Resources, etc.) into the Application\"s scope.<br>" +
 		"Instead of instantiating this class it is recommended to use the already exposed instance: Carbon.App.factory",
 		"Carbon.Parent"
-	), function () {
+	), function():void {
 
 
-		describe( constructor( "", "Constructor of Carbon.App.Factory" ), function () {
+		describe( constructor( "", "Constructor of Carbon.App.Factory" ), function():void {
 			it( hasConstructor( [
 				{name: "parent", type: "Carbon.Parent"},
 				{name: "resource", type: "Carbon.App.Resource"},
-				{name: "resource", type: "<a href="#Carbon.Utils.A">Carbon.Utils.A</a>"}
-			] ), function () {
+				{name: "resource", type: '<a href="#Carbon.Utils.A">Carbon.Utils.A</a>'}
+			] ), function():void {
 				// TODO: Test
 			} );
 		} );
@@ -79,20 +79,20 @@ describe( module( "Carbon/App" ), function () {
 				{name: "object", type: "Object"}
 			],
 			{type: "boolean"}
-		), function () {
+		), function():void {
 			// TODO: Test
 		} );
 
 		describe( method( INSTANCE, "from",
 			""
-		), function () {
+		), function():void {
 			it( hasSignature(
 				"Signature 1",
 				[
 					{name: "resource", type: "Carbon.RDF.Node.Class"}
 				],
 				{type: "Carbon.App.Resource"}
-			), function () {
+			), function():void {
 				expect( 1 ).toBeGreaterThan( 0 );
 			} );
 		} );
@@ -102,9 +102,9 @@ describe( module( "Carbon/App" ), function () {
 
 	describe( property( STATIC, "factory", "Carbon.App.Factory",
 		"Instance of the class Carbon.App.Factory"
-	), function () {
+	), function():void {
 
-		it( isDefined(), function () {
+		it( isDefined(), function():void {
 			expect( App.factory ).toBeDefined();
 		} );
 

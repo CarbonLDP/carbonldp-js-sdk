@@ -1,5 +1,5 @@
-var Literal = require('./Literal');
-var RDFNode = require('./RDFNode');
+var Literal = require("./Literal");
+var RDFNode = require("./RDFNode");
 var Util = (function () {
     function Util() {
     }

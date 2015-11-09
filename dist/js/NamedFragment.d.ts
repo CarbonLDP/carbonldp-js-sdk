@@ -1,5 +1,5 @@
-import * as Document from './Document';
-import * as Fragment from './Fragment';
+import * as Document from "./Document";
+import * as Fragment from "./Fragment";
 export interface Class extends Fragment.Class {
     slug: string;
 }

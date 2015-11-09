@@ -1,16 +1,18 @@
 /// <reference path="../../typings/es6/es6.d.ts" />
-import * as RDF from './../RDF';
-import * as Container from './Container';
-interface AccessPoint extends Container.Class {
+import * as RDF from "./../RDF";
+import * as Container from "./Container";
+export declare const RDF_CLASS: string;
+export interface Class extends Container.Class {
     membershipResource: string;
 }
-declare class Factory extends Container.Factory {
+export declare const DEFINITION: Map<string, RDF.PropertyDescription>;
+export declare class Factory extends Container.Factory {
     is(object: Object): boolean;
-    from(resource: RDF.Node.Class): AccessPoint;
-    from(resources: RDF.Node.Class[]): AccessPoint[];
+    from(resource: RDF.Node.Class): Class;
+    from(resources: RDF.Node.Class[]): Class[];
     protected hasRDFClass(resource: RDF.Resource.Class): boolean;
     protected hasClassProperties(resource: RDF.Node.Class): boolean;
-    protected injectBehaviour(resource: Container.Class): AccessPoint;
+    protected injectBehaviour(resource: Container.Class): Class;
 }
-declare var factory: Factory;
-export { AccessPoint as Class, Factory, factory };
+export declare let factory: Factory;
+export default Class;

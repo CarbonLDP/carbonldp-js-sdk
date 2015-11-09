@@ -1,12 +1,12 @@
 /// <reference path="../typings/es6/es6.d.ts" />
-import Parent from './Parent';
-import * as RDF from './RDF';
-import * as LDP from './LDP';
+import Parent from "./Parent";
+import * as RDF from "./RDF";
+import * as LDP from "./LDP";
 export interface Resource extends RDF.Resource.Class {
     rootContainer: string;
 }
-export declare const RDFClass: string;
-export declare const Definition: Map<string, RDF.PropertyDescription>;
+export declare const RDF_CLASS: string;
+export declare const DEFINITION: Map<string, RDF.PropertyDescription>;
 export declare class Class extends Parent {
     private resource;
     private base;
@@ -22,5 +22,5 @@ export declare class Factory extends LDP.RDFSource.Factory {
     protected hasClassProperties(resource: RDF.Node.Class): boolean;
     protected injectBehaviour(resource: RDF.Resource.Class): Resource;
 }
-export declare var factory: Factory;
+export declare let factory: Factory;
 export default Class;

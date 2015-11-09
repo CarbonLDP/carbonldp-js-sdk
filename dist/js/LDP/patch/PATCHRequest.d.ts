@@ -1,4 +1,4 @@
-import * as RDF from '../../RDF';
+import * as RDF from "../../RDF";
 interface PATCHRequest extends RDF.Resource.Class {
     addAction: Map<string, RDF.Node.Class>;
     setAction: Map<string, RDF.Node.Class>;

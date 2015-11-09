@@ -3,8 +3,8 @@ var __extends = (this && this.__extends) || function (d, b) {
     function __() { this.constructor = d; }
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
-var HTTPError_1 = require('./../HTTPError');
-var name = 'PreconditionRequiredError';
+var HTTPError_1 = require("./../HTTPError");
+var name = "PreconditionRequiredError";
 var statusCode = 428;
 var PreconditionRequiredError = (function (_super) {
     __extends(PreconditionRequiredError, _super);

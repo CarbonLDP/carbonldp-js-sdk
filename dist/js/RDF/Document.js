@@ -1,17 +1,15 @@
-var RDFNode = require('./RDFNode');
-var Utils = require('../Utils');
-var URI = require('./URI');
+var RDFNode = require("./RDFNode");
+var Utils = require("../Utils");
+var URI = require("./URI");
 var Factory = (function () {
     function Factory() {
     }
     Factory.is = function (object) {
-        //@formatter:off
-        return (Utils.hasProperty(object, '@graph'));
-        //@formatter:on
+        return (Utils.hasProperty(object, "@graph"));
     };
     Factory.create = function (resources, uri) {
         var document = uri ? RDFNode.Factory.create(uri) : {};
-        document['@graph'] = resources;
+        document["@graph"] = resources;
         return document;
     };
     return Factory;
@@ -47,18 +45,18 @@ var Util = (function () {
                     return Util.getResources(document[0]);
                 if (!Utils.isObject(document[0]))
                     throw new Error("IllegalArgument: The document structure isn't valid.");
-                if (!document[0].hasOwnProperty('@graph'))
+                if (!document[0].hasOwnProperty("@graph"))
                     return document;
-                return Util.getResources(document[0]['@graph']);
+                return Util.getResources(document[0]["@graph"]);
             }
             return document;
         }
         else {
             if (!Utils.isObject(document))
                 throw new Error("IllegalArgument: The document structure isn't valid.");
-            if (!document.hasOwnProperty('@graph'))
+            if (!document.hasOwnProperty("@graph"))
                 throw new Error("IllegalArgument: The document structure isn't valid.");
-            return Util.getResources(document['@graph']);
+            return Util.getResources(document["@graph"]);
         }
     };
     Util.getDocumentResources = function (document) {
@@ -66,7 +64,7 @@ var Util = (function () {
         var documentResources = [];
         for (var i = 0, length_1 = resources.length; i < length_1; i++) {
             var resource = resources[i];
-            var uri = resource['@id'];
+            var uri = resource["@id"];
             if (!uri)
                 continue;
             if (!URI.Util.hasFragment(uri) && !URI.Util.isBNodeID(uri))
@@ -78,21 +76,23 @@ var Util = (function () {
         var resources = Util.getResources(document);
         var documentURIToMatch = null;
         if (documentResource) {
-            if (Utils.isString(documentResource))
+            if (Utils.isString(documentResource)) {
                 documentURIToMatch = documentResource;
+            }
             else
-                documentURIToMatch = documentResource['@id'];
+                documentURIToMatch = documentResource["@id"];
         }
         var fragmentResources = [];
-        for (var i = 0, length = resources.length; i < length; i++) {
+        for (var i = 0, length_2 = resources.length; i < length_2; i++) {
             var resource = resources[i];
-            var uri = resource['@id'];
+            var uri = resource["@id"];
             if (!uri)
                 continue;
             if (!URI.Util.hasFragment(uri))
                 continue;
-            if (!documentURIToMatch)
+            if (!documentURIToMatch) {
                 fragmentResources.push(resource);
+            }
             else {
                 var documentURI = URI.Util.getDocumentURI(uri);
                 if (documentURI === documentURIToMatch)
@@ -104,9 +104,9 @@ var Util = (function () {
     Util.getBNodeResources = function (document) {
         var resources = Util.getResources(document);
         var bnodes = [];
-        for (var i = 0, length_2 = resources.length; i < length_2; i++) {
+        for (var i = 0, length_3 = resources.length; i < length_3; i++) {
             var resource = resources[i];
-            if (!('@id' in resource) || URI.Util.isBNodeID(resource['@id']))
+            if (!("@id" in resource) || URI.Util.isBNodeID(resource["@id"]))
                 bnodes.push(resource);
         }
         return bnodes;
@@ -114,7 +114,5 @@ var Util = (function () {
     return Util;
 })();
 exports.Util = Util;
-//@formatter:off
-//@formatter:on 
 
 //# sourceMappingURL=Document.js.map

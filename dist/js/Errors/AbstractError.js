@@ -10,12 +10,12 @@ var AbstractError = (function (_super) {
         this.message = message;
     }
     Object.defineProperty(AbstractError.prototype, "name", {
-        get: function () { return 'AbstractError'; },
+        get: function () { return "AbstractError"; },
         enumerable: true,
         configurable: true
     });
     AbstractError.prototype.toString = function () {
-        return this.name + ':' + this.message;
+        return this.name + ":" + this.message;
     };
     return AbstractError;
 })(Error);
