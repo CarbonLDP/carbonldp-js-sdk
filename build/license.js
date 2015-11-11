@@ -10,13 +10,3 @@
  *
  * see: https://github.com/CarbonLDP/CarbonLDP-JS-SDK
  */
-
-(function (root, factory) {
-    if (typeof define === 'function' && define.amd) {
-        define([], factory);
-    } else {
-        var exports = factory();
-        root.carbon = exports.carbon;
-        root.Carbon = exports.Carbon;
-    }
-}(this, function () {
