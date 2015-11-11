@@ -1,4 +1,4 @@
-declare module jsonld {
+declare module 'jsonld' {
 	interface ExpandOptions {
 		base?:string;
 		expandContext?:Object;

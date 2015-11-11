@@ -1,6 +1,6 @@
-import RESTError from './../HTTPError';
+import RESTError from "./../HTTPError";
 
-const name:string = 'RequestURITooLongError';
+const name:string = "RequestURITooLongError";
 const statusCode:number = 414;
 
 class RequestURITooLongError extends RESTError {

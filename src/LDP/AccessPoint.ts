@@ -1,17 +1,17 @@
 /// <reference path="../../typings/es6/es6.d.ts" />
 
-import * as NS from './../NS';
-import * as RDF from './../RDF';
-import * as Container from './Container';
-import * as Utils from './../Utils';
+import * as NS from "./../NS";
+import * as RDF from "./../RDF";
+import * as Container from "./Container";
+import * as Utils from "./../Utils";
 
-const RDFClass:string = NS.C.Class.AccessPoint;
+export const RDF_CLASS:string = NS.C.Class.AccessPoint;
 
-interface AccessPoint extends Container.Class {
+export interface Class extends Container.Class {
 	membershipResource:string;
 }
 
-const Definition:Map<string, RDF.PropertyDescription> = <any> Utils.M.from( {
+export const DEFINITION:Map<string, RDF.PropertyDescription> = <any> Utils.M.from( {
 	"membershipResource": {
 		"uri": NS.LDP.Predicate.membershipResource,
 		"multi": false,
@@ -19,35 +19,33 @@ const Definition:Map<string, RDF.PropertyDescription> = <any> Utils.M.from( {
 	}
 } );
 
-class Factory extends Container.Factory {
+export class Factory extends Container.Factory {
 	is( object:Object ):boolean {
-		//@formatter:off
 		return (
 			super.is( object ) &&
 			this.hasRDFClass( <Container.Class> object ) &&
 			this.hasClassProperties( <Container.Class> object )
 		);
-		//@formatter:on
 	}
 
-	from( resource:RDF.Node.Class ):AccessPoint;
-	from( resources:RDF.Node.Class[] ):AccessPoint[];
+	from( resource:RDF.Node.Class ):Class;
+	from( resources:RDF.Node.Class[] ):Class[];
 	from( resourceOrResources:any ):any {
-		var superResult:(Container.Class | Container.Class[]) = super.from( resourceOrResources );
-		var resources:Container.Class[] = Utils.isArray( superResult ) ? <Container.Class[]> superResult : <Container.Class[]> [ superResult ];
+		let superResult:(Container.Class | Container.Class[]) = super.from( resourceOrResources );
+		let resources:Container.Class[] = Utils.isArray( superResult ) ? <Container.Class[]> superResult : <Container.Class[]> [ superResult ];
 
 		for ( let i:number = 0, length:number = resources.length; i < length; i ++ ) {
-			var resource:Container.Class = resources[ i ];
+			let resource:Container.Class = resources[ i ];
 			if ( ! this.hasClassProperties( resource ) ) this.injectBehaviour( resource );
 		}
 
-		if ( Utils.isArray( resourceOrResources ) ) return <AccessPoint[]> resources;
-		else return <AccessPoint> resources[ 0 ];
+		if ( ! Utils.isArray( resourceOrResources ) ) return <Class> resources[ 0 ];
+		return <Class[]> resources;
 	}
 
 	protected hasRDFClass( resource:RDF.Resource.Class ):boolean {
 		return (
-			resource.types.indexOf( RDFClass ) !== - 1
+			resource.types.indexOf( RDF_CLASS ) !== - 1
 		);
 	}
 
@@ -57,18 +55,12 @@ class Factory extends Container.Factory {
 		);
 	}
 
-	protected injectBehaviour( resource:Container.Class ):AccessPoint {
-		RDF.Resource.Factory.injectDescriptions( resource, Definition );
-		return <AccessPoint> resource;
+	protected injectBehaviour( resource:Container.Class ):Class {
+		RDF.Resource.Factory.injectDescriptions( resource, DEFINITION );
+		return <Class> resource;
 	}
 }
 
-var factory = new Factory();
+export let factory:Factory = new Factory();
 
-//@formatter:off
-export {
-	AccessPoint as Class,
-	Factory,
-	factory
-};
-//@formatter:on
+export default Class;

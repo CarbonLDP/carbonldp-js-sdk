@@ -1,12 +1,11 @@
 /// <reference path="../typings/jasmine/jasmine.d.ts" />
 /// <reference path="../typings/jasmine-ajax/mock-ajax.d.ts" />
 
-import Parent from './Parent';
-import * as Documents from './Documents';
+import Parent from "./Parent";
+import * as Documents from "./Documents";
 
-import * as Utils from './Utils';
+import * as Utils from "./Utils";
 
-//@formatter:off
 import {
 	INSTANCE,
 	STATIC,
@@ -16,27 +15,26 @@ import {
 	hasConstructor,
 	hasMethod,
 	hasProperty
-} from './test/JasmineExtender';
-//@formatter:on
+} from "./test/JasmineExtender";
 
 // TODO: Change module name
-describe( module( 'Carbon.Documents' ), function () {
+describe( module( "Carbon.Documents" ), function():void {
 
-	beforeEach( function () {
+	beforeEach( function():void {
 		jasmine.Ajax.install();
 	} );
 
-	afterEach( function () {
+	afterEach( function():void {
 		jasmine.Ajax.uninstall();
 	} );
 
-	it( isDefined(), function() {
+	it( isDefined(), function():void {
 		expect( Documents ).toBeDefined();
 	});
 
-	it( hasMethod( INSTANCE, 'from', [
-		{ name:'uri', type:'string' }
-	], { type:'Promise<Carbon.HTTP.ProcessedResponse<Carbon.Document>>'}), function( done ) {
+	it( hasMethod( INSTANCE, "from", [
+		{ name:"uri", type:"string" }
+	], { type:"Promise<Carbon.HTTP.ProcessedResponse<Carbon.Document>>"}), function( done:() => void ):void {
 		let parent:Parent = new Parent();
 
 		let responseBody:string = JSON.stringify({
@@ -65,13 +63,13 @@ describe( module( 'Carbon.Documents' ), function () {
 			]
 		});
 
-		jasmine.Ajax.stubRequest( 'http://example.com/resource/', null, 'GET' ).andReturn( {
+		jasmine.Ajax.stubRequest( "http://example.com/resource/", null, "GET" ).andReturn( {
 			status: 200,
 			responseHeaders: [],
 			responseText: responseBody
 		} );
 
-		parent.Documents.get( 'http://example.com/resource/' ).then( function ( processedResponse:any ) {
+		parent.Documents.get( "http://example.com/resource/" ).then( function( processedResponse:any ):void {
 			expect( processedResponse ).toBeDefined();
 		}, failTest ).then( done, done );
 	});

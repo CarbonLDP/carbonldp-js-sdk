@@ -1,6 +1,6 @@
-import RESTError from './../HTTPError';
+import RESTError from "./../HTTPError";
 
-const name:string = 'HTTPVersionNotSupportedError';
+const name:string = "HTTPVersionNotSupportedError";
 const statusCode:number = 505;
 
 class HTTPVersionNotSupportedError extends RESTError {

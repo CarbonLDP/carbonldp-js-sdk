@@ -10,10 +10,8 @@ class Predicate {
 	static get rootContainer():string { return namespace + "rootContainer"; }
 }
 
-//@formatter:off
 export {
 	namespace,
 	Class,
 	Predicate
 };
-//@formatter:on

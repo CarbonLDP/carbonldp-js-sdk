@@ -1,7 +1,7 @@
 /// <reference path="../typings/es6-promise/es6-promise.d.ts" />
-import * as HTTP from './HTTP';
-import * as Errors from './Errors';
-import Parent from './Parent';
+import * as HTTP from "./HTTP";
+import * as Errors from "./Errors";
+import Parent from "./Parent";
 
 enum Method {
 	Basic
@@ -24,23 +24,21 @@ class Auth {
 	}
 
 	isAuthenticated( askParent:boolean = true ):boolean {
-		//@formatter:off
 		return (
 			this.authenticated ||
 			(askParent && ! ! this.parent.parent && this.parent.parent.Auth.isAuthenticated())
 		);
-		//@formatter:on
 	}
 
 	login( username:string, password:string ):Promise<void> {
-		var method:Method = <any> this.parent.getSetting( "auth.method" );
+		let method:Method = <any> this.parent.getSetting( "auth.method" );
 
 		switch ( method ) {
 			case Method.Basic:
 				return this.basicAuthentication( username, password );
 			default:
-				return new Promise<void>( function () {
-					throw new Errors.IllegalStateError( 'The authentication method specified isn\'t supported.' );
+				return new Promise<void>( function():void {
+					throw new Errors.IllegalStateError( "The authentication method specified isn\'t supported." );
 				} );
 		}
 	}
@@ -55,18 +53,20 @@ class Auth {
 			}
 		}
 
-		var headers:Map<string, HTTP.Header.Class> = requestOptions.headers ? requestOptions.headers : requestOptions.headers = new Map<string, HTTP.Header.Class>();
+		let headers:Map<string, HTTP.Header.Class> = requestOptions.headers ? requestOptions.headers : requestOptions.headers = new Map<string, HTTP.Header.Class>();
 		switch ( this.method ) {
 			case Method.Basic:
 				this.addBasicAuthHeader( headers );
 				requestOptions.sendCredentialsOnCORS = true;
 				break;
+			default:
+				break;
 		}
 	}
 
 
-	private basicAuthentication( username, password ):Promise<void> {
-		return new Promise<void>( ( resolve, reject ) => {
+	private basicAuthentication( username:string, password:string ):Promise<void> {
+		return new Promise<void>( ( resolve:() => void, reject:() => void ) => {
 			// TODO: Check that the credentials are valid
 			this.credentials = {
 				username: username,
@@ -81,23 +81,22 @@ class Auth {
 	}
 
 	private addBasicAuthHeader( headers:Map<string, HTTP.Header.Class> ):void {
-		var header:HTTP.Header.Class;
-		if ( headers.has( 'Authorization' ) ) header = headers.get( 'Authorization' );
-		else {
+		let header:HTTP.Header.Class;
+		if ( headers.has( "Authorization" ) ) {
+			header = headers.get( "Authorization" );
+		} else {
 			header = new HTTP.Header.Class();
-			headers.set( 'Authorization', header );
+			headers.set( "Authorization", header );
 		}
-		var authorization = 'Basic ' + btoa( this.credentials.username + ':' + this.credentials.password );
+		let authorization:string = "Basic " + btoa( this.credentials.username + ":" + this.credentials.password );
 		header.values.push( new HTTP.Header.Value( authorization ) );
 	}
 
 
 }
 
-//@formatter:off
 export default Auth;
 export {
 	Auth as Class,
 	Method
 };
-//@formatter:on

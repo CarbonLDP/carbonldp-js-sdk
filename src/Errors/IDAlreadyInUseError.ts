@@ -1,7 +1,7 @@
-import IllegalArgumentError from './AbstractError';
+import IllegalArgumentError from "./AbstractError";
 
 class IDAlreadyInUseError extends IllegalArgumentError {
-	get name():string { return 'IDAlreadyInUseError' }
+	get name():string { return "IDAlreadyInUseError"; }
 }
 
 export default IDAlreadyInUseError;

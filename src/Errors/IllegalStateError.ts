@@ -1,7 +1,7 @@
-import AbstractError from './AbstractError';
+import AbstractError from "./AbstractError";
 
 class IllegalStateError extends AbstractError {
-	get name():string { return 'IllegalStateError' }
+	get name():string { return "IllegalStateError"; }
 }
 
 export default IllegalStateError;

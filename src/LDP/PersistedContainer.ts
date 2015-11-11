@@ -1,4 +1,4 @@
-import * as RDF from './../RDF';
+import * as RDF from "./../RDF";
 
 interface PersistedContainer {
 

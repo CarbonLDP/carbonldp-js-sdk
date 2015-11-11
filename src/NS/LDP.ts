@@ -59,10 +59,8 @@ class Predicate {
 
 }
 
-//@formatter:off
 export {
 	namespace,
 	Class,
 	Predicate
 };
-//@formatter:on

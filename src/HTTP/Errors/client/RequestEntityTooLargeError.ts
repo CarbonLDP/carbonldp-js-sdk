@@ -1,6 +1,6 @@
-import RESTError from './../HTTPError';
+import RESTError from "./../HTTPError";
 
-const name:string = 'RequestEntityTooLargeError';
+const name:string = "RequestEntityTooLargeError";
 const statusCode:number = 413;
 
 class RequestEntityTooLargeError extends RESTError {

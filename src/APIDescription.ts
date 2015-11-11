@@ -1,11 +1,11 @@
 /// <reference path="../typings/es6/es6.d.ts" />
-import * as NS from './NS';
-import * as RDF from './RDF';
-import * as Utils from './Utils';
+import * as NS from "./NS";
+import * as RDF from "./RDF";
+import * as Utils from "./Utils";
 
-const RDFClass:string = NS.C.Class.API;
+export const RDF_CLASS:string = NS.C.Class.API;
 
-const Definition:Map<string, RDF.PropertyDescription> = <any> Utils.M.from( {
+export const DEFINITION:Map<string, RDF.PropertyDescription> = <any> Utils.M.from( {
 	"version": {
 		"uri": NS.C.Predicate.version,
 		"multi": false,
@@ -18,15 +18,9 @@ const Definition:Map<string, RDF.PropertyDescription> = <any> Utils.M.from( {
 	}
 } );
 
-interface APIDescription {
+export interface Class {
 	version:string;
 	buildDate:Date;
 }
 
-export default APIDescription;
-
-export {
-	APIDescription as Class,
-	Definition,
-	RDFClass
-};
+export default Class;

@@ -1,19 +1,19 @@
 /// <reference path="../typings/es6/es6.d.ts" />
 
-import * as NS from './NS';
-import Documents from './Documents';
-import Parent from './Parent';
-import * as RDF from './RDF';
-import * as LDP from './LDP';
-import * as Utils from './Utils';
+import * as NS from "./NS";
+import Documents from "./Documents";
+import Parent from "./Parent";
+import * as RDF from "./RDF";
+import * as LDP from "./LDP";
+import * as Utils from "./Utils";
 
-interface Resource extends RDF.Resource.Class {
+export interface Resource extends RDF.Resource.Class {
 	rootContainer:string;
 }
 
-const RDFClass:string = NS.CS.Class.Application;
+export const RDF_CLASS:string = NS.CS.Class.Application;
 
-const Definition:Map<string, RDF.PropertyDescription> = <any> Utils.M.from( {
+export const DEFINITION:Map<string, RDF.PropertyDescription> = <any> Utils.M.from( {
 	"rootContainer": {
 		"uri": NS.CS.Predicate.rootContainer,
 		"multi": false,
@@ -21,7 +21,7 @@ const Definition:Map<string, RDF.PropertyDescription> = <any> Utils.M.from( {
 	}
 } );
 
-class App extends Parent {
+export class Class extends Parent {
 	private resource:Resource;
 	private base:string;
 
@@ -37,46 +37,44 @@ class App extends Parent {
 	resolve( uri:string ):string {
 		if ( RDF.URI.Util.isAbsolute( uri ) ) return uri;
 
-		var finalURI:string = this.parent.resolve( this.base );
+		let finalURI:string = this.parent.resolve( this.base );
 		return RDF.URI.Util.resolve( finalURI, uri );
 	}
 
 	private getBase( resource:Resource ):string {
-		var rootContainerURI = RDF.URI.Util.removeProtocol( resource.rootContainer );
-		var parentBase = RDF.URI.Util.removeProtocol( this.parent.resolve( "" ) );
+		let rootContainerURI:string = RDF.URI.Util.removeProtocol( resource.rootContainer );
+		let parentBase:string = RDF.URI.Util.removeProtocol( this.parent.resolve( "" ) );
 		if ( Utils.S.startsWith( rootContainerURI, parentBase ) ) rootContainerURI = rootContainerURI.substr( parentBase.length, rootContainerURI.length );
 		return rootContainerURI;
 	}
 }
 
-class Factory extends LDP.RDFSource.Factory {
+export class Factory extends LDP.RDFSource.Factory {
 	is( object:Object ):boolean {
-		//@formatter:off
 		return (
 			super.is( object ) &&
 			Utils.hasPropertyDefined( object, "rootContainer" )
 		);
-		//@formatter:on
 	}
 
 	from( resource:RDF.Node.Class ):Resource;
 	from( resources:RDF.Node.Class[] ):Resource[];
 	from( resourceOrResources:any ):any {
-		var superResult:(RDF.Resource.Class | RDF.Resource.Class[]) = super.from( resourceOrResources );
-		var resources:RDF.Resource.Class[] = Utils.isArray( superResult ) ? <RDF.Resource.Class[]> superResult : <RDF.Resource.Class[]> [ superResult ];
+		let superResult:(RDF.Resource.Class | RDF.Resource.Class[]) = super.from( resourceOrResources );
+		let resources:RDF.Resource.Class[] = Utils.isArray( superResult ) ? <RDF.Resource.Class[]> superResult : <RDF.Resource.Class[]> [ superResult ];
 
 		for ( let i:number = 0, length:number = resources.length; i < length; i ++ ) {
-			var resource:RDF.Resource.Class = resources[ i ];
+			let resource:RDF.Resource.Class = resources[ i ];
 			if ( ! this.hasClassProperties( resource ) ) this.injectBehaviour( resource );
 		}
 
 		if ( Utils.isArray( resourceOrResources ) ) return <Resource[]> resources;
-		else return <Resource> resources[ 0 ];
+		return <Resource> resources[ 0 ];
 	}
 
 	protected hasRDFClass( resource:RDF.Resource.Class ):boolean {
 		return (
-			resource.types.indexOf( RDFClass ) !== - 1
+			resource.types.indexOf( RDF_CLASS ) !== - 1
 		);
 	}
 
@@ -88,19 +86,12 @@ class Factory extends LDP.RDFSource.Factory {
 	}
 
 	protected injectBehaviour( resource:RDF.Resource.Class ):Resource {
-		RDF.Resource.Factory.injectDescriptions( resource, Definition );
+		RDF.Resource.Factory.injectDescriptions( resource, DEFINITION );
 
 		return <Resource> resource;
 	}
 }
-var factory = new Factory();
 
-//@formatter:off
-export default App;
-export {
-	App as Class,
-	Resource,
-	Factory,
-	factory
-};
-//@formatter:on
+export let factory:Factory = new Factory();
+
+export default Class;

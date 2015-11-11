@@ -1,6 +1,6 @@
-import RESTError from './../HTTPError';
+import RESTError from "./../HTTPError";
 
-const name:string = 'RequestHeaderFieldsTooLargeError';
+const name:string = "RequestHeaderFieldsTooLargeError";
 const statusCode:number = 431;
 
 class RequestHeaderFieldsTooLargeError extends RESTError {

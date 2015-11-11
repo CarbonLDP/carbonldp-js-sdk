@@ -1,41 +1,39 @@
-import * as NS from './../NS';
-import * as RDF from './../RDF';
-import * as Utils from './../Utils';
+import * as NS from "./../NS";
+import * as RDF from "./../RDF";
+import * as Utils from "./../Utils";
 
-const RDFClass:string = NS.LDP.Class.RDFSource;
+export const RDF_CLASS:string = NS.LDP.Class.RDFSource;
 
-interface RDFSource extends RDF.Resource.Class {
+export interface Class extends RDF.Resource.Class {
 
 }
 
-class Factory extends RDF.Resource.Factory {
+export class Factory extends RDF.Resource.Factory {
 	is( object:Object ):boolean {
-		//@formatter:off
 		return (
 			super.is( object ) &&
-			(<RDF.Resource.Class> object).types.indexOf( RDFClass ) !== -1
+			(<RDF.Resource.Class> object).types.indexOf( RDF_CLASS ) !== -1
 		);
-		//@formatter:on
 	}
 
-	from( resource:RDF.Node.Class ):RDFSource;
-	from( resources:RDF.Node.Class[] ):RDFSource[];
+	from( resource:RDF.Node.Class ):Class;
+	from( resources:RDF.Node.Class[] ):Class[];
 	from( resourceOrResources:any ):any {
-		var superResult:(RDF.Resource.Class | RDF.Resource.Class[]) = super.from( resourceOrResources );
-		var resources:RDF.Resource.Class[] = Utils.isArray( superResult ) ? <RDF.Resource.Class[]> superResult : <RDF.Resource.Class[]> [ superResult ];
+		let superResult:(RDF.Resource.Class | RDF.Resource.Class[]) = super.from( resourceOrResources );
+		let resources:RDF.Resource.Class[] = Utils.isArray( superResult ) ? <RDF.Resource.Class[]> superResult : <RDF.Resource.Class[]> [ superResult ];
 
 		for ( let i:number = 0, length:number = resources.length; i < length; i ++ ) {
-			var resource:RDF.Resource.Class = resources[ i ];
+			let resource:RDF.Resource.Class = resources[ i ];
 			if ( ! this.hasClassProperties( resource ) ) this.injectBehaviour( resource );
 		}
 
-		if ( Utils.isArray( resourceOrResources ) ) return <RDFSource[]> resources;
-		else return <RDFSource> resources[ 0 ];
+		if ( Utils.isArray( resourceOrResources ) ) return <Class[]> resources;
+		return <Class> resources[ 0 ];
 	}
 
 	protected hasRDFClass( resource:RDF.Resource.Class ):boolean {
 		return (
-			resource.types.indexOf( RDFClass ) !== - 1
+			resource.types.indexOf( RDF_CLASS ) !== - 1
 		);
 	}
 
@@ -46,17 +44,11 @@ class Factory extends RDF.Resource.Factory {
 		);
 	}
 
-	protected injectBehaviour( resource:RDF.Resource.Class ):RDFSource {
-		return <RDFSource> resource;
+	protected injectBehaviour( resource:RDF.Resource.Class ):Class {
+		return <Class> resource;
 	}
 }
 
-var factory = new Factory();
+export let factory:Factory = new Factory();
 
-//@formatter:off
-export {
-	RDFSource as Class,
-	Factory,
-	factory
-};
-//@formatter:on
+export default Class;

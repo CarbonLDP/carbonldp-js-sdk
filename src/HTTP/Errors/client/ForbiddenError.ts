@@ -1,6 +1,6 @@
-import RESTError from './../HTTPError';
+import RESTError from "./../HTTPError";
 
-const name:string = 'ForbiddenError';
+const name:string = "ForbiddenError";
 const statusCode:number = 403;
 
 class ForbiddenError extends RESTError {

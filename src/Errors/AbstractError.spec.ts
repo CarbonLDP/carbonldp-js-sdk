@@ -1,6 +1,6 @@
 /// <reference path="../../typings/jasmine/jasmine.d.ts" />
-import AbstractError from './AbstractError';
-import * as Utils from './../Utils';
+import AbstractError from "./AbstractError";
+import * as Utils from "./../Utils";
 
 import {
 		INSTANCE,
@@ -15,18 +15,18 @@ import {
 		hasInterface,
 		MethodArgument,
 		interfaze
-} from './../test/JasmineExtender';
+} from "./../test/JasmineExtender";
 
-describe( module( 'Carbon/Errors/AbstractError' ), function () {
+describe( module( "Carbon/Errors/AbstractError" ), function ():void {
 
 	describe( clazz(
-			'Carbon.Errors.AbstractError',
-			''
-	), function() {
+			"Carbon.Errors.AbstractError",
+			""
+	), function():void {
 
 		class DummyError extends AbstractError {}
 
-		it( isDefined(), function() {
+		it( isDefined(), function():void {
 			expect( AbstractError ).toBeDefined();
 			expect( AbstractError ).not.toBeNull();
 			expect( Utils.isFunction( AbstractError ) ).toBe( true );
@@ -34,16 +34,16 @@ describe( module( 'Carbon/Errors/AbstractError' ), function () {
 
 		it( hasConstructor(
 				[
-					{ name: 'message', type: 'string' }
+					{ name: "message", type: "string" }
 				]
-		), function() {
-			var exception:AbstractError = new DummyError( 'This is the message' );
+		), function():void {
+			let exception:AbstractError = new DummyError( "This is the message" );
 			expect( exception instanceof Error ).toBe( true );
 			expect( exception instanceof AbstractError ).toBe( true );
 		} );
 
-		it( hasMethod( INSTANCE, 'toString', 'Returns a string representation', { type: 'string' } ), function() {
-			var exception:AbstractError = new DummyError( 'This is the message' );
+		it( hasMethod( INSTANCE, "toString", "Returns a string representation", { type: "string" } ), function():void {
+			let exception:AbstractError = new DummyError( "This is the message" );
 
 			expect( exception.toString ).toBeDefined();
 			expect( exception.toString ).not.toBeNull();
@@ -52,20 +52,20 @@ describe( module( 'Carbon/Errors/AbstractError' ), function () {
 			expect( Utils.isString( exception.toString() ) ).toBe( true );
 		});
 
-		it( hasProperty( INSTANCE, 'name', 'string' ), function() {
-			var exception:AbstractError = new DummyError( 'This is the message' );
+		it( hasProperty( INSTANCE, "name", "string" ), function():void {
+			let exception:AbstractError = new DummyError( "This is the message" );
 
 			expect( exception.name ).toBeDefined();
 			expect( Utils.isString( exception.name ) ).toBe( true );
-			expect( exception.name ).toEqual( 'AbstractError' );
+			expect( exception.name ).toEqual( "AbstractError" );
 		});
 
-		it( hasProperty( INSTANCE, 'message', 'string' ), function() {
-			var exception:AbstractError = new DummyError( 'This is the message' );
+		it( hasProperty( INSTANCE, "message", "string" ), function():void {
+			let exception:AbstractError = new DummyError( "This is the message" );
 
 			expect( exception.message ).toBeDefined();
 			expect( Utils.isString( exception.message ) ).toBe( true );
-			expect( exception.message ).toEqual( 'This is the message' );
+			expect( exception.message ).toEqual( "This is the message" );
 		});
 	});
 } );

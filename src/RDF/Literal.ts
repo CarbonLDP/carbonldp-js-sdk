@@ -1,15 +1,15 @@
 interface Literal {
-	'@type'?:string;
-	'@value':string;
+	"@type"?:string;
+	"@value":string;
 }
-import * as Utils from '../Utils';
-import XSD = require('../NS/XSD' );
+import * as Utils from "../Utils";
+import * as XSD from "../NS/XSD" ;
 
 class Factory {
 	static from( value:any ):Literal {
 		if ( Utils.isNull( value ) ) throw new Error( "IllegalArgument: null cannot be converted into a Literal" );
 
-		var type:any;
+		let type:any;
 
 		switch ( true ) {
 			case Utils.isDate( value ):
@@ -17,8 +17,9 @@ class Factory {
 				value = value.toISOString();
 				break;
 			case Utils.isNumber( value ):
-				if ( Utils.isInteger( value ) ) type = XSD.DataType.integer;
-				else type = XSD.DataType.double;
+				if ( Utils.isInteger( value ) ) {
+					type = XSD.DataType.integer;
+				} else type = XSD.DataType.double;
 				break;
 			case Utils.isString( value ):
 				type = XSD.DataType.string;
@@ -33,23 +34,23 @@ class Factory {
 				break;
 		}
 
-		var literal:Literal = {'@value': value};
-		if ( type ) literal[ '@type' ] = type;
+		let literal:Literal = {"@value": value};
+		if ( type ) literal[ "@type" ] = type;
 
 		return literal;
 	}
 
 	static parse( literal:Literal ):any {
 		if ( ! literal ) return null;
-		if ( ! Utils.hasProperty( literal, '@value' ) ) return null;
-		if ( ! Utils.hasProperty( literal, '@type' ) ) return literal[ '@value' ];
+		if ( ! Utils.hasProperty( literal, "@value" ) ) return null;
+		if ( ! Utils.hasProperty( literal, "@type" ) ) return literal[ "@value" ];
 
-		var type:string = literal[ '@type' ];
-		// The DataType isn't supported
-		if ( ! Utils.hasProperty( XSD.DataType, type ) ) return literal[ '@value' ];
+		let type:string = literal[ "@type" ];
+		// The DataType isn"t supported
+		if ( ! Utils.hasProperty( XSD.DataType, type ) ) return literal[ "@value" ];
 
-		var valueString = literal[ '@value' ];
-		var value:any;
+		let valueString:string = literal[ "@value" ];
+		let value:any;
 		switch ( <any> type ) {
 			// Dates
 			case XSD.DataType.date:
@@ -108,7 +109,7 @@ class Factory {
 	static is( value:any ):boolean {
 		if ( ! value ) return false;
 		if ( ! Utils.isObject( value ) ) return false;
-		return Utils.hasProperty( value, '@value' );
+		return Utils.hasProperty( value, "@value" );
 	}
 }
 
@@ -119,10 +120,8 @@ class Util {
 	}
 }
 
-//@formatter:off
 export {
 	Literal as Class,
 	Factory,
 	Util
 };
-//@formatter:on

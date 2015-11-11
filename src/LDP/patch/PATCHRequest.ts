@@ -1,8 +1,5 @@
-//@formatter:off
-import * as RDF from '../../RDF';
-import * as CP from '../../NS/CP';
-//@formatter:on
-
+import * as RDF from "../../RDF";
+import * as CP from "../../NS/CP";
 
 interface PATCHRequest extends RDF.Resource.Class {
 	addAction:Map<string, RDF.Node.Class>;
@@ -15,7 +12,7 @@ class Factory {
 	static create( object:RDF.Persisted.Class ):PATCHRequest;
 	static create( objects:RDF.Persisted.Class[] ):PATCHRequest;
 	static create( objectOrObjects:any = [] ):PATCHRequest {
-		var patch:PATCHRequest = <any> RDF.Resource.factory.create();
+		let patch:PATCHRequest = <any> RDF.Resource.factory.create();
 
 		// TODO: Implement
 		return null;
@@ -27,9 +24,7 @@ class Factory {
 	}
 }
 
-//@formatter:off
 export {
 	PATCHRequest as Class,
 	Factory
 };
-//@formatter:on

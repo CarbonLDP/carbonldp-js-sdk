@@ -1,4 +1,8 @@
 #!/bin/bash
-grunt dist
-git add -f dist/Carbon.js dist/Carbon.min.js dist/Carbon.min.js.map
+if [ "$(uname)" == "Darwin" ]; then
+	# Export PATH variable to make executables available to SourceTree or other encapsulated apps
+	export PATH=/usr/local/bin:$PATH
+fi
+./node_modules/.bin/gulp build
+git add -f dist
 exit 0

@@ -12,15 +12,10 @@ module.exports = function( config ) {
 		// list of files / patterns to load in the browser
 		files: [
 			'test/karma-jasmine/lib/extender.js',
-			'bower_components/jasmine-ajax/lib/mock-ajax.js',
-			'node_modules/babel-core/browser-polyfill.js',
+			'node_modules/jasmine-ajax/lib/mock-ajax.js',
+			'node_modules/es6-shim/es6-shim.min.js',
 
-			// {pattern: 'bower_components/bluebird/**/*.js', included: false},
-			// {pattern: 'bower_components/URIjs/**/*.js', included: false},
-			// {pattern: 'bower_components/squire/**/*.js', included: false},
-			// {pattern: 'bower_components/jog/**/*.js', included: false},
-			// {pattern: 'bower_components/underscore/**/*.js', included: false},
-			{ pattern: 'bower_components/jsonld.js/js/jsonld.js', included: false },
+			{ pattern: 'node_modules/jsonld/js/jsonld.js', included: false },
 
 			{ pattern: 'src/**/*.js', included: false },
 			{ pattern: 'src/**/*.js.map', included: false },
@@ -29,20 +24,11 @@ module.exports = function( config ) {
 			'test-main.js'
 		],
 
-
-		// list of files to exclude
-		exclude: [
-			'bower_components/**/*.spec.js',
-			'bower_components/**/tests/**/*.js'
-		],
-
-
 		// preprocess matching files before serving them to the browser
 		// available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
 		preprocessors: {
 			'src/**/*.js': [ 'sourcemap' ]
 		},
-
 
 		// test results reporter to use
 		// possible values: 'dots', 'progress'

@@ -1,46 +1,42 @@
-import * as Document from './Document';
-import * as Fragment from './Fragment';
-import * as RDF from './RDF';
-import * as Utils from './Utils';
+import * as Document from "./Document";
+import * as Fragment from "./Fragment";
+import * as RDF from "./RDF";
+import * as Utils from "./Utils";
 
-interface NamedFragment extends Fragment.Class {
-	slug:string
+export interface Class extends Fragment.Class {
+	slug:string;
 }
 
-interface DocumentHolder extends Object {
-	document:Document.Class;
-}
-
-class Factory extends Fragment.Factory {
-	from( object:Array<Object & DocumentHolder> ):NamedFragment[];
-	from( object:Object & DocumentHolder ):NamedFragment;
-	from( objects ):any {
-		if( ! Utils.isArray( objects ) ) return this.singleFrom( <Object & DocumentHolder>objects );
+export class Factory extends Fragment.Factory {
+	from( object:Array<Object & { document:Document.Class }> ):Class[];
+	from( object:Object & { document:Document.Class } ):Class;
+	from( objects:any ):any {
+		if( ! Utils.isArray( objects ) ) return this.singleFrom( <Object & { document:Document.Class }>objects );
 
 		for ( let i:number = 0, length:number = objects.length; i < length; i ++ ) {
-			let object:(Object & DocumentHolder) = <(Object & DocumentHolder)> objects[ i ];
+			let object:(Object & { document:Document.Class }) = <(Object & { document:Document.Class })> objects[ i ];
 
 			this.singleFrom( object );
 		}
 
-		return <NamedFragment[]> objects;
+		return <Class[]> objects;
 	}
 
-	protected singleFrom( object:Object & DocumentHolder ):NamedFragment {
+	protected singleFrom( object:Object & { document:Document.Class } ):Class {
 		return this.injectBehavior( object );
 	}
 
-	protected injectBehavior( node:(Object & DocumentHolder) ):NamedFragment {
-		let fragment = <NamedFragment> super.injectBehavior( node );
+	protected injectBehavior( node:(Object & { document:Document.Class }) ):Class {
+		let fragment:Class = <Class> super.injectBehavior( node );
 		if( this.hasClassProperties( fragment ) ) return fragment;
 
 		Object.defineProperties( fragment, {
-			'slug': {
-				get: function () {
-					return RDF.URI.Util.getFragment( fragment.uri )
+			"slug": {
+				get: function ():string {
+					return RDF.URI.Util.getFragment( fragment.uri );
 				},
-				set: function ( slug ) {
-					this.uri = this.document.uri + '#' + slug;
+				set: function ( slug:string ):void {
+					this.uri = this.document.uri + "#" + slug;
 				},
 				enumerable: false
 			}
@@ -51,16 +47,11 @@ class Factory extends Fragment.Factory {
 
 	protected hasClassProperties( resource:Fragment.Class ):boolean {
 		return (
-			Utils.hasPropertyDefined( resource, 'slug' )
+			Utils.hasPropertyDefined( resource, "slug" )
 		);
 	}
 }
 
-let factory:Factory = new Factory();
+export var factory:Factory = new Factory();
 
-export default NamedFragment;
-export {
-	NamedFragment as Class,
-	factory,
-	Factory
-};
+export default Class;

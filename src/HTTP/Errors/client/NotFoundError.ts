@@ -1,6 +1,6 @@
-import RESTError from './../HTTPError';
+import RESTError from "./../HTTPError";
 
-const name:string = 'NotFoundError';
+const name:string = "NotFoundError";
 const statusCode:number = 404;
 
 class NotFoundError extends RESTError {

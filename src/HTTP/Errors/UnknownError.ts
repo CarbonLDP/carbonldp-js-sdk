@@ -1,6 +1,6 @@
-import RESTError from './HTTPError';
+import RESTError from "./HTTPError";
 
-const name:string = 'UnknownError';
+const name:string = "UnknownError";
 
 class UnknownError extends RESTError {
 	get name():string { return name; }
