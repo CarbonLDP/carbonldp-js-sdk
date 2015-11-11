@@ -47,7 +47,7 @@ var Carbon = (function (_super) {
     Carbon.RDF = RDF;
     Carbon.Utils = Utils;
     /* tslint:disable: variable-name typedef */
-    Carbon.version = "0.9.2-ALPHA";
+    Carbon.version = "0.10.1-ALPHA";
     return Carbon;
 })(Parent_1.default);
 Object.defineProperty(exports, "__esModule", { value: true });

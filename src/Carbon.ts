@@ -22,7 +22,7 @@ class Carbon extends Parent {
 	static Utils = Utils;
 	/* tslint:disable: variable-name typedef */
 
-	static version = "0.9.2-ALPHA";
+	static version = "0.10.1-ALPHA";
 
 	// TODO:
 	apps:Apps;

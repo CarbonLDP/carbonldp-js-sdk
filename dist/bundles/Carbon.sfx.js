@@ -10275,7 +10275,7 @@ $__System.register("49", ["48", "43", "3", "12", "1d", "1e", "41", "7", "2", "9"
                 Carbon.RDF = RDF;
                 Carbon.Utils = Utils;
                 /* tslint:disable: variable-name typedef */
-                Carbon.version = "0.9.2-ALPHA";
+                Carbon.version = "0.10.1-ALPHA";
                 return Carbon;
             })(Parent_1.default);
             exports_1("default",Carbon);
