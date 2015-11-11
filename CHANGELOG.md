@@ -1,3 +1,8 @@
+#0.10.0 (October 31, 2015)
+* Changed building process to use gulp instead of grunt
+* Added new build form to use Carbon with JSPM and TypeScript
+* Added new bundle to import Carbon as a SFX package
+
 #0.9.0 (October 31, 2015)
 * Add initial support for BNods
 * Changed interface to revolve around the Document concept
