@@ -38,23 +38,18 @@ export class Util {
 		} else throw new Error( "IllegalArgument: The value structure isn't valid." );
 	}
 
-	static getResources( document:RDFNode.Class[] ):RDFNode.Class[];
-	static getResources( document:Class ):RDFNode.Class[];
-	static getResources( document:any ):RDFNode.Class[] {
-		if ( Utils.isArray( document ) ) {
-			if ( document.length === 0 ) return document;
-			if ( document.length === 1 ) {
-				if ( Utils.isArray( document[ 0 ] ) ) return Util.getResources( document[ 0 ] );
-				if ( ! Utils.isObject( document[ 0 ] ) ) throw new Error( "IllegalArgument: The document structure isn't valid." );
-				if ( ! document[ 0 ].hasOwnProperty( "@graph" ) ) return document;
-				return Util.getResources( document[ 0 ][ "@graph" ] );
-			}
-			return document;
-		} else {
-			if ( ! Utils.isObject( document ) ) throw new Error( "IllegalArgument: The document structure isn't valid." );
-			if ( ! document.hasOwnProperty( "@graph" ) ) throw new Error( "IllegalArgument: The document structure isn't valid." );
-			return Util.getResources( document[ "@graph" ] );
+	static getResources( objects:Object[] ):RDFNode.Class[];
+	static getResources( object:Object ):RDFNode.Class[];
+	static getResources( value:any ):RDFNode.Class[] {
+		let documents:Class[] = Util.getDocuments( value );
+
+		let resources:RDFNode.Class[] = [];
+
+		for( let document of documents ) {
+			resources = resources.concat( document[ "@graph"] );
 		}
+
+		return resources;
 	}
 
 	static getDocumentResources( document:RDFNode.Class[] ):RDFNode.Class[];

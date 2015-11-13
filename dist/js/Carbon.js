@@ -6,7 +6,7 @@ var __extends = (this && this.__extends) || function (d, b) {
 };
 var APIDescription = require("./APIDescription");
 var Apps_1 = require("./Apps");
-var Auth_1 = require("./Auth");
+var Auth = require("./Auth");
 var Document = require("./Document");
 var Documents_1 = require("./Documents");
 var HTTP = require("./HTTP");
@@ -40,7 +40,7 @@ var Carbon = (function (_super) {
     };
     /* tslint:disable: variable-name typedef */
     Carbon.Apps = Apps_1.default;
-    Carbon.Auth = Auth_1.default;
+    Carbon.Auth = Auth;
     Carbon.Document = Document;
     Carbon.Documents = Documents_1.default;
     Carbon.HTTP = HTTP;

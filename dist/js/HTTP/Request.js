@@ -1,8 +1,9 @@
 /// <reference path="../../typings/es6/es6.d.ts" />
 /// <reference path="../../typings/es6-promise/es6-promise.d.ts" />
+var Errors = require("./Errors");
+var Header = require("./Header");
 var Method_1 = require("./Method");
 var Response_1 = require("./Response");
-var Errors = require("./Errors");
 var Utils = require("./../Utils");
 function setHeaders(request, headers) {
     var namesIterator = headers.keys();
@@ -44,14 +45,16 @@ function rejectRequest(reject, request) {
 var Service = (function () {
     function Service() {
     }
-    Service.send = function (method, url, bodyOrOptions, options) {
+    Service.send = function (method, url, bodyOrOptions, options, parser) {
         if (bodyOrOptions === void 0) { bodyOrOptions = Service.defaultOptions; }
         if (options === void 0) { options = Service.defaultOptions; }
+        if (parser === void 0) { parser = null; }
         var body = Utils.isString(bodyOrOptions) ? bodyOrOptions : null;
         options = Utils.isString(bodyOrOptions) ? options : bodyOrOptions;
+        options = options ? options : Service.defaultOptions;
         if (Utils.isNumber(method))
             method = Method_1.default[method];
-        return new Promise(function (resolve, reject) {
+        var requestPromise = new Promise(function (resolve, reject) {
             var request = options.request ? options.request : new XMLHttpRequest();
             request.open(method, url, true);
             if (options.headers)
@@ -68,6 +71,16 @@ var Service = (function () {
                 request.send();
             }
         });
+        if (parser === null)
+            return requestPromise;
+        return requestPromise.then(function (response) {
+            return parser.parse(response.data).then(function (parsedBody) {
+                return {
+                    result: parsedBody,
+                    response: response
+                };
+            });
+        });
     };
     Service.options = function (url, options) {
         if (options === void 0) { options = Service.defaultOptions; }
@@ -81,9 +94,11 @@ var Service = (function () {
         if (options === void 0) { options = Service.defaultOptions; }
         return Service.send(Method_1.default.GET, url, options);
     };
-    Service.post = function (url, body, options) {
+    Service.post = function (url, bodyOrOptions, options, parser) {
+        if (bodyOrOptions === void 0) { bodyOrOptions = Service.defaultOptions; }
         if (options === void 0) { options = Service.defaultOptions; }
-        return Service.send(Method_1.default.POST, url, body, options);
+        if (parser === void 0) { parser = null; }
+        return Service.send(Method_1.default.POST, url, bodyOrOptions, options, parser);
     };
     Service.put = function (url, body, options) {
         if (options === void 0) { options = Service.defaultOptions; }
@@ -96,6 +111,20 @@ var Service = (function () {
     Service.delete = function (url, body, options) {
         if (options === void 0) { options = Service.defaultOptions; }
         return Service.send(Method_1.default.DELETE, url, body, options);
+    };
+    Service.setAcceptHeader = function (accept, requestOptions) {
+        var headers = requestOptions.headers ? requestOptions.headers : requestOptions.headers = new Map();
+        headers.set("Accept", new Header.Class(accept));
+        return requestOptions;
+    };
+    // TODO: Move this method to a more specific module
+    Service.setPreferredInteractionModel = function (interactionModelURI, requestOptions) {
+        var headers = requestOptions.headers ? requestOptions.headers : requestOptions.headers = new Map();
+        if (!headers.has("Prefer"))
+            headers.set("Prefer", new Header.Class());
+        var prefer = headers.get("Prefer");
+        prefer.values.push(new Header.Value(interactionModelURI + "; rel=interaction-model"));
+        return requestOptions;
     };
     Service.defaultOptions = {
         sendCredentialsOnCORS: true

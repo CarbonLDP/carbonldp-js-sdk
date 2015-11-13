@@ -1,7 +1,7 @@
 /// <reference path="../typings/tsd.d.ts" />
 import * as APIDescription from "./APIDescription";
 import Apps from "./Apps";
-import Auth from "./Auth";
+import * as Auth from "./Auth";
 import * as Document from "./Document";
 import Documents from "./Documents";
 import * as HTTP from "./HTTP";

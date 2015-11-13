@@ -10,8 +10,8 @@ export declare class Factory {
 export declare class Util {
     static getDocuments(object: Object[]): Class[];
     static getDocuments(object: Object): Class[];
-    static getResources(document: RDFNode.Class[]): RDFNode.Class[];
-    static getResources(document: Class): RDFNode.Class[];
+    static getResources(objects: Object[]): RDFNode.Class[];
+    static getResources(object: Object): RDFNode.Class[];
     static getDocumentResources(document: RDFNode.Class[]): RDFNode.Class[];
     static getDocumentResources(document: Class): RDFNode.Class[];
     static getFragmentResources(document: RDFNode.Class[], documentResource?: RDFNode.Class): RDFNode.Class[];

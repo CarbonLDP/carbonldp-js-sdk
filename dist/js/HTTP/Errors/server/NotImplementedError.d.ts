@@ -1,5 +1,5 @@
-import RESTError from "./../HTTPError";
-declare class NotImplementedError extends RESTError {
+import HTTPError from "./../HTTPError";
+declare class NotImplementedError extends HTTPError {
     static statusCode: number;
     name: string;
 }

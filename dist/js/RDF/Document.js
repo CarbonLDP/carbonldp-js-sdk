@@ -36,28 +36,14 @@ var Util = (function () {
         else
             throw new Error("IllegalArgument: The value structure isn't valid.");
     };
-    Util.getResources = function (document) {
-        if (Utils.isArray(document)) {
-            if (document.length === 0)
-                return document;
-            if (document.length === 1) {
-                if (Utils.isArray(document[0]))
-                    return Util.getResources(document[0]);
-                if (!Utils.isObject(document[0]))
-                    throw new Error("IllegalArgument: The document structure isn't valid.");
-                if (!document[0].hasOwnProperty("@graph"))
-                    return document;
-                return Util.getResources(document[0]["@graph"]);
-            }
-            return document;
+    Util.getResources = function (value) {
+        var documents = Util.getDocuments(value);
+        var resources = [];
+        for (var _i = 0; _i < documents.length; _i++) {
+            var document_1 = documents[_i];
+            resources = resources.concat(document_1["@graph"]);
         }
-        else {
-            if (!Utils.isObject(document))
-                throw new Error("IllegalArgument: The document structure isn't valid.");
-            if (!document.hasOwnProperty("@graph"))
-                throw new Error("IllegalArgument: The document structure isn't valid.");
-            return Util.getResources(document["@graph"]);
-        }
+        return resources;
     };
     Util.getDocumentResources = function (document) {
         var resources = Util.getResources(document);

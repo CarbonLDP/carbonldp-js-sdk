@@ -13,11 +13,6 @@ import * as Document from "./Document";
 import * as RDFSource from "./LDP/RDFSource";
 import * as LDP from "./NS/LDP";
 
-enum InteractionModel {
-	RDFSource,
-	Container
-}
-
 function parse( input:string ):any {
 	try {
 		return JSON.parse( input );
@@ -41,18 +36,6 @@ function expand( input:HTTP.ProcessedResponse<any>, options?:jsonld.ExpandOption
 	} );
 }
 
-function setPreferredInteractionModel( interactionModel:InteractionModel, requestOptions:HTTP.Request.Options ):void {
-	let headers:Map<string, HTTP.Header.Class> = requestOptions.headers ? requestOptions.headers : requestOptions.headers = new Map<string, HTTP.Header.Class>();
-	if ( ! headers.has( "Prefer" ) ) headers.set( "Prefer", new HTTP.Header.Class() );
-	let prefer:HTTP.Header.Class = headers.get( "Prefer" );
-	prefer.values.push( new HTTP.Header.Value( LDP.Class.RDFSource + "; rel=interaction-model" ) );
-}
-
-function setAcceptHeader( requestOptions:HTTP.Request.Options ):void {
-	let headers:Map<string, HTTP.Header.Class> = requestOptions.headers ? requestOptions.headers : requestOptions.headers = new Map<string, HTTP.Header.Class>();
-	headers.set( "Accept", new HTTP.Header.Class( "application/ld+json" ) );
-}
-
 class Documents implements Committer<Document.Class> {
 	private parent:Parent;
 
@@ -68,8 +51,8 @@ class Documents implements Committer<Document.Class> {
 
 		if ( this.parent && this.parent.Auth.isAuthenticated() ) this.parent.Auth.addAuthentication( requestOptions );
 
-		setAcceptHeader( requestOptions );
-		setPreferredInteractionModel( InteractionModel.RDFSource, requestOptions );
+		HTTP.Request.Service.setAcceptHeader( "application/ld+json", requestOptions );
+		HTTP.Request.Service.setPreferredInteractionModel( LDP.Class.RDFSource, requestOptions );
 
 		return HTTP.Request.Service.get( uri, requestOptions ).then(
 			( response:HTTP.Response ) => {
@@ -105,8 +88,8 @@ class Documents implements Committer<Document.Class> {
 
 		if ( this.parent && this.parent.Auth.isAuthenticated() ) this.parent.Auth.addAuthentication( requestOptions );
 
-		setAcceptHeader( requestOptions );
-		setPreferredInteractionModel( InteractionModel.RDFSource, requestOptions );
+		HTTP.Request.Service.setAcceptHeader( "application/ld+json", requestOptions );
+		HTTP.Request.Service.setPreferredInteractionModel( LDP.Class.RDFSource, requestOptions );
 
 		return HTTP.Request.Service.put( document.uri, document.toJSON(), requestOptions );
 	}

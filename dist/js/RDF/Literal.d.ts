@@ -1,13 +1,13 @@
-interface Literal {
+export interface Class {
     "@type"?: string;
     "@value": string;
 }
-declare class Factory {
-    static from(value: any): Literal;
-    static parse(literal: Literal): any;
+export declare class Factory {
+    static from(value: any): Class;
+    static parse(literal: Class): any;
     static is(value: any): boolean;
 }
-declare class Util {
-    static areEqual(literal1: Literal, literal2: Literal): boolean;
+export declare class Util {
+    static areEqual(literal1: Class, literal2: Class): boolean;
 }
-export { Literal as Class, Factory, Util };
+export default Class;

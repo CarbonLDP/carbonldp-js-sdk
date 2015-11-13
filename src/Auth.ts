@@ -1,46 +1,56 @@
 /// <reference path="../typings/es6-promise/es6-promise.d.ts" />
+import AuthenticationToken from "./Auth/AuthenticationToken";
+import Authenticator from "./Auth/Authenticator";
+import BasicAuthenticator from "./Auth/BasicAuthenticator";
+import TokenAuthenticator from "./Auth/TokenAuthenticator";
+import UsernameAndPasswordToken from "./Auth/UsernameAndPasswordToken";
+
 import * as HTTP from "./HTTP";
 import * as Errors from "./Errors";
 import Parent from "./Parent";
+import * as Utils from "./Utils";
 
-enum Method {
-	Basic
+export enum Method {
+	BASIC,
+	TOKEN
 }
 
-export interface Credentials {
-	username:string;
-	password:string;
-}
-
-class Auth {
+export class Class {
 	private parent:Parent;
 
-	private authenticated:boolean = false;
 	private method:Method = null;
-	private credentials:Credentials;
+	private authenticators:Map<Method, Authenticator<AuthenticationToken>>;
 
 	constructor( parent:Parent ) {
 		this.parent = parent;
+
+		this.authenticators = new Map<Method, Authenticator<AuthenticationToken>>();
+		this.authenticators.set( Method.BASIC, new BasicAuthenticator() );
+		this.authenticators.set( Method.TOKEN, new TokenAuthenticator( this.parent ) );
 	}
 
 	isAuthenticated( askParent:boolean = true ):boolean {
+		let authenticated:boolean = false;
+
+		// TODO
+
 		return (
-			this.authenticated ||
+			authenticated ||
 			(askParent && ! ! this.parent.parent && this.parent.parent.Auth.isAuthenticated())
 		);
 	}
 
 	login( username:string, password:string ):Promise<void> {
-		let method:Method = <any> this.parent.getSetting( "auth.method" );
+		let authenticationToken:AuthenticationToken = new UsernameAndPasswordToken( username, password );
 
-		switch ( method ) {
-			case Method.Basic:
-				return this.basicAuthentication( username, password );
-			default:
-				return new Promise<void>( function():void {
-					throw new Errors.IllegalStateError( "The authentication method specified isn\'t supported." );
-				} );
-		}
+		let method:Method = <any> this.parent.getSetting( "auth.method" );
+		let authenticator:Authenticator<AuthenticationToken> = this.authenticators.get( method );
+
+		if( authenticator === null ) return new Promise<void>( function():void {
+			throw new Errors.IllegalStateError( "The authentication method specified isn\'t supported." );
+		} );
+
+		return authenticator.authenticate( authenticationToken );
 	}
 
 	addAuthentication( requestOptions:HTTP.Request.Options ):void {
@@ -53,50 +63,8 @@ class Auth {
 			}
 		}
 
-		let headers:Map<string, HTTP.Header.Class> = requestOptions.headers ? requestOptions.headers : requestOptions.headers = new Map<string, HTTP.Header.Class>();
-		switch ( this.method ) {
-			case Method.Basic:
-				this.addBasicAuthHeader( headers );
-				requestOptions.sendCredentialsOnCORS = true;
-				break;
-			default:
-				break;
-		}
+		// TODO
 	}
-
-
-	private basicAuthentication( username:string, password:string ):Promise<void> {
-		return new Promise<void>( ( resolve:() => void, reject:() => void ) => {
-			// TODO: Check that the credentials are valid
-			this.credentials = {
-				username: username,
-				password: password
-			};
-
-			this.method = Method.Basic;
-			this.authenticated = true;
-
-			resolve();
-		} );
-	}
-
-	private addBasicAuthHeader( headers:Map<string, HTTP.Header.Class> ):void {
-		let header:HTTP.Header.Class;
-		if ( headers.has( "Authorization" ) ) {
-			header = headers.get( "Authorization" );
-		} else {
-			header = new HTTP.Header.Class();
-			headers.set( "Authorization", header );
-		}
-		let authorization:string = "Basic " + btoa( this.credentials.username + ":" + this.credentials.password );
-		header.values.push( new HTTP.Header.Value( authorization ) );
-	}
-
-
 }
 
-export default Auth;
-export {
-	Auth as Class,
-	Method
-};
+export default Class;

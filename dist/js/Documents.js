@@ -5,11 +5,6 @@ var HTTP = require("./HTTP");
 var RDF = require("./RDF");
 var Document = require("./Document");
 var LDP = require("./NS/LDP");
-var InteractionModel;
-(function (InteractionModel) {
-    InteractionModel[InteractionModel["RDFSource"] = 0] = "RDFSource";
-    InteractionModel[InteractionModel["Container"] = 1] = "Container";
-})(InteractionModel || (InteractionModel = {}));
 function parse(input) {
     try {
         return JSON.parse(input);
@@ -31,17 +26,6 @@ function expand(input, options) {
         });
     });
 }
-function setPreferredInteractionModel(interactionModel, requestOptions) {
-    var headers = requestOptions.headers ? requestOptions.headers : requestOptions.headers = new Map();
-    if (!headers.has("Prefer"))
-        headers.set("Prefer", new HTTP.Header.Class());
-    var prefer = headers.get("Prefer");
-    prefer.values.push(new HTTP.Header.Value(LDP.Class.RDFSource + "; rel=interaction-model"));
-}
-function setAcceptHeader(requestOptions) {
-    var headers = requestOptions.headers ? requestOptions.headers : requestOptions.headers = new Map();
-    headers.set("Accept", new HTTP.Header.Class("application/ld+json"));
-}
 var Documents = (function () {
     function Documents(parent) {
         if (parent === void 0) { parent = null; }
@@ -57,8 +41,8 @@ var Documents = (function () {
         }
         if (this.parent && this.parent.Auth.isAuthenticated())
             this.parent.Auth.addAuthentication(requestOptions);
-        setAcceptHeader(requestOptions);
-        setPreferredInteractionModel(InteractionModel.RDFSource, requestOptions);
+        HTTP.Request.Service.setAcceptHeader("application/ld+json", requestOptions);
+        HTTP.Request.Service.setPreferredInteractionModel(LDP.Class.RDFSource, requestOptions);
         return HTTP.Request.Service.get(uri, requestOptions).then(function (response) {
             var parsedObject = parse(response.data);
             return expand({
@@ -84,8 +68,8 @@ var Documents = (function () {
         if (requestOptions === void 0) { requestOptions = {}; }
         if (this.parent && this.parent.Auth.isAuthenticated())
             this.parent.Auth.addAuthentication(requestOptions);
-        setAcceptHeader(requestOptions);
-        setPreferredInteractionModel(InteractionModel.RDFSource, requestOptions);
+        HTTP.Request.Service.setAcceptHeader("application/ld+json", requestOptions);
+        HTTP.Request.Service.setPreferredInteractionModel(LDP.Class.RDFSource, requestOptions);
         return HTTP.Request.Service.put(document.uri, document.toJSON(), requestOptions);
     };
     Documents.prototype.getRDFDocument = function (rdfDocuments) {

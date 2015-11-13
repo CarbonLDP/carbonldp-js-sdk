@@ -1,9 +1,9 @@
-import RESTError from "./../HTTPError";
+import HTTPError from "./../HTTPError";
 
 const name:string = "UnsupportedMediaTypeError";
 const statusCode:number = 415;
 
-class UnsupportedMediaTypeError extends RESTError {
+class UnsupportedMediaTypeError extends HTTPError {
 	static get statusCode():number { return statusCode; }
 
 	get name():string { return name; }

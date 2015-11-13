@@ -1,5 +1,5 @@
-import RESTError from "./../HTTPError";
-declare class MethodNotAcceptableError extends RESTError {
+import HTTPError from "./../HTTPError";
+declare class MethodNotAcceptableError extends HTTPError {
     static statusCode: number;
     name: string;
 }

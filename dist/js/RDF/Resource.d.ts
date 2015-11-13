@@ -1,5 +1,6 @@
 /// <reference path="../../typings/es6/es6.d.ts" />
 import * as Literal from "./Literal";
+import * as Value from "./Value";
 import PropertyDescription from "./PropertyDescription";
 import * as RDFNode from "./RDFNode";
 export interface Class extends RDFNode.Class {
@@ -8,7 +9,7 @@ export interface Class extends RDFNode.Class {
     uri: string;
     types: Array<string>;
     hasProperty: (property: string) => boolean;
-    getProperty: (property: string) => any;
+    getProperty: (property: string) => Value.Class;
     getPropertyValue: (property: string) => any;
     getPropertyURI: (property: string) => string;
     getProperties: (property: string) => any[];

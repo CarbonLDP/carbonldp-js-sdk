@@ -1,9 +1,9 @@
-import RESTError from "./../HTTPError";
+import HTTPError from "./../HTTPError";
 
 const name:string = "NotImplementedError";
 const statusCode:number = 501;
 
-class NotImplementedError extends RESTError {
+class NotImplementedError extends HTTPError {
 	static get statusCode():number { return statusCode; }
 
 	get name():string { return name; }

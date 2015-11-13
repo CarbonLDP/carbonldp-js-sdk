@@ -15,6 +15,7 @@ import TooManyRequestsError from "./Errors/client/TooManyRequestsError";
 import UnauthorizedError from "./Errors/client/UnauthorizedError";
 import UnsupportedMediaTypeError from "./Errors/client/UnsupportedMediaTypeError";
 
+import BadResponseError from "./Errors/server/BadResponseError";
 import BadGatewayError from "./Errors/server/BadGatewayError";
 import GatewayTimeoutError from "./Errors/server/GatewayTimeoutError";
 import HTTPVersionNotSupportedError from "./Errors/server/HTTPVersionNotSupportedError";
@@ -42,6 +43,7 @@ client.push( UnauthorizedError );
 client.push( UnsupportedMediaTypeError );
 
 let server:Array<typeof HTTPError> = [];
+server.push( BadResponseError );
 server.push( BadGatewayError );
 server.push( GatewayTimeoutError );
 server.push( HTTPVersionNotSupportedError );
@@ -75,6 +77,7 @@ export {
 	UnauthorizedError,
 	UnsupportedMediaTypeError,
 
+	BadResponseError,
 	BadGatewayError,
 	GatewayTimeoutError,
 	HTTPVersionNotSupportedError,

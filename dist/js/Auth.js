@@ -1,34 +1,38 @@
-/// <reference path="../typings/es6-promise/es6-promise.d.ts" />
-var HTTP = require("./HTTP");
+var BasicAuthenticator_1 = require("./Auth/BasicAuthenticator");
+var TokenAuthenticator_1 = require("./Auth/TokenAuthenticator");
+var UsernameAndPasswordToken_1 = require("./Auth/UsernameAndPasswordToken");
 var Errors = require("./Errors");
-var Method;
 (function (Method) {
-    Method[Method["Basic"] = 0] = "Basic";
-})(Method || (Method = {}));
-exports.Method = Method;
-var Auth = (function () {
-    function Auth(parent) {
-        this.authenticated = false;
+    Method[Method["BASIC"] = 0] = "BASIC";
+    Method[Method["TOKEN"] = 1] = "TOKEN";
+})(exports.Method || (exports.Method = {}));
+var Method = exports.Method;
+var Class = (function () {
+    function Class(parent) {
         this.method = null;
         this.parent = parent;
+        this.authenticators = new Map();
+        this.authenticators.set(Method.BASIC, new BasicAuthenticator_1.default());
+        this.authenticators.set(Method.TOKEN, new TokenAuthenticator_1.default(this.parent));
     }
-    Auth.prototype.isAuthenticated = function (askParent) {
+    Class.prototype.isAuthenticated = function (askParent) {
         if (askParent === void 0) { askParent = true; }
-        return (this.authenticated ||
+        var authenticated = false;
+        // TODO
+        return (authenticated ||
             (askParent && !!this.parent.parent && this.parent.parent.Auth.isAuthenticated()));
     };
-    Auth.prototype.login = function (username, password) {
+    Class.prototype.login = function (username, password) {
+        var authenticationToken = new UsernameAndPasswordToken_1.default(username, password);
         var method = this.parent.getSetting("auth.method");
-        switch (method) {
-            case Method.Basic:
-                return this.basicAuthentication(username, password);
-            default:
-                return new Promise(function () {
-                    throw new Errors.IllegalStateError("The authentication method specified isn\'t supported.");
-                });
-        }
+        var authenticator = this.authenticators.get(method);
+        if (authenticator === null)
+            return new Promise(function () {
+                throw new Errors.IllegalStateError("The authentication method specified isn\'t supported.");
+            });
+        return authenticator.authenticate(authenticationToken);
     };
-    Auth.prototype.addAuthentication = function (requestOptions) {
+    Class.prototype.addAuthentication = function (requestOptions) {
         if (!this.isAuthenticated(false)) {
             if (this.parent.parent) {
                 this.parent.parent.Auth.addAuthentication(requestOptions);
@@ -38,45 +42,12 @@ var Auth = (function () {
                 console.warn("There is no authentication to add to the request.");
             }
         }
-        var headers = requestOptions.headers ? requestOptions.headers : requestOptions.headers = new Map();
-        switch (this.method) {
-            case Method.Basic:
-                this.addBasicAuthHeader(headers);
-                requestOptions.sendCredentialsOnCORS = true;
-                break;
-            default:
-                break;
-        }
+        // TODO
     };
-    Auth.prototype.basicAuthentication = function (username, password) {
-        var _this = this;
-        return new Promise(function (resolve, reject) {
-            // TODO: Check that the credentials are valid
-            _this.credentials = {
-                username: username,
-                password: password
-            };
-            _this.method = Method.Basic;
-            _this.authenticated = true;
-            resolve();
-        });
-    };
-    Auth.prototype.addBasicAuthHeader = function (headers) {
-        var header;
-        if (headers.has("Authorization")) {
-            header = headers.get("Authorization");
-        }
-        else {
-            header = new HTTP.Header.Class();
-            headers.set("Authorization", header);
-        }
-        var authorization = "Basic " + btoa(this.credentials.username + ":" + this.credentials.password);
-        header.values.push(new HTTP.Header.Value(authorization));
-    };
-    return Auth;
+    return Class;
 })();
-exports.Class = Auth;
+exports.Class = Class;
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = Auth;
+exports.default = Class;
 
 //# sourceMappingURL=Auth.js.map

@@ -1,8 +1,8 @@
-import RESTError from "./HTTPError";
+import HTTPError from "./HTTPError";
 
 const name:string = "UnknownError";
 
-class UnknownError extends RESTError {
+class UnknownError extends HTTPError {
 	get name():string { return name; }
 }
 

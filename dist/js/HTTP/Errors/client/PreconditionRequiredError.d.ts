@@ -1,5 +1,5 @@
-import RESTError from "./../HTTPError";
-declare class PreconditionRequiredError extends RESTError {
+import HTTPError from "./../HTTPError";
+declare class PreconditionRequiredError extends HTTPError {
     static statusCode: number;
     name: string;
 }

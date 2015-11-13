@@ -1,5 +1,5 @@
-import RESTError from "./../HTTPError";
-declare class ForbiddenError extends RESTError {
+import HTTPError from "./../HTTPError";
+declare class ForbiddenError extends HTTPError {
     static statusCode: number;
     name: string;
 }

@@ -1,12 +1,13 @@
-interface Literal {
-	"@type"?:string;
-	"@value":string;
-}
 import * as Utils from "../Utils";
 import * as XSD from "../NS/XSD" ;
 
-class Factory {
-	static from( value:any ):Literal {
+export interface Class {
+	"@type"?:string;
+	"@value":string;
+}
+
+export class Factory {
+	static from( value:any ):Class {
 		if ( Utils.isNull( value ) ) throw new Error( "IllegalArgument: null cannot be converted into a Literal" );
 
 		let type:any;
@@ -34,13 +35,13 @@ class Factory {
 				break;
 		}
 
-		let literal:Literal = {"@value": value};
+		let literal:Class = {"@value": value};
 		if ( type ) literal[ "@type" ] = type;
 
 		return literal;
 	}
 
-	static parse( literal:Literal ):any {
+	static parse( literal:Class ):any {
 		if ( ! literal ) return null;
 		if ( ! Utils.hasProperty( literal, "@value" ) ) return null;
 		if ( ! Utils.hasProperty( literal, "@type" ) ) return literal[ "@value" ];
@@ -113,15 +114,11 @@ class Factory {
 	}
 }
 
-class Util {
-	static areEqual( literal1:Literal, literal2:Literal ):boolean {
+export class Util {
+	static areEqual( literal1:Class, literal2:Class ):boolean {
 		// TODO: Implement
 		return false;
 	}
 }
 
-export {
-	Literal as Class,
-	Factory,
-	Util
-};
+export default Class;

@@ -17,7 +17,7 @@ export interface Class extends RDFNode.Class {
 	types:Array<string>;
 
 	hasProperty:( property:string ) => boolean;
-	getProperty:( property:string ) => any;
+	getProperty:( property:string ) => Value.Class;
 	getPropertyValue:( property:string ) => any;
 	getPropertyURI:( property:string ) => string;
 	getProperties:( property:string ) => any[];

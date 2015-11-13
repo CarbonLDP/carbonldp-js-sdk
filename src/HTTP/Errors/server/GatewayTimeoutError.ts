@@ -1,9 +1,9 @@
-import RESTError from "./../HTTPError";
+import HTTPError from "./../HTTPError";
 
 const name:string = "GatewayTimeoutError";
 const statusCode:number = 504;
 
-class GatewayTimeoutError extends RESTError {
+class GatewayTimeoutError extends HTTPError {
 	static get statusCode():number { return statusCode; }
 
 	get name():string { return name; }
