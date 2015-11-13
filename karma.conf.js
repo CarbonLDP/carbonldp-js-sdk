@@ -3,37 +3,30 @@
 
 module.exports = function( config ) {
 	config.set( {
+		basePath: "",
 
-		// base path that will be used to resolve all patterns (eg. files, exclude)
-		basePath: '',
+		frameworks: [ "phantomjs-shim", "jspm", "jasmine" ],
 
-		frameworks: [ 'jasmine', 'requirejs' ],
+		jspm: {
+			config: "jspm.config.js",
+			packages: "test/jspm_packages/",
 
-		// list of files / patterns to load in the browser
-		files: [
-			'test/karma-jasmine/lib/extender.js',
-			'node_modules/jasmine-ajax/lib/mock-ajax.js',
-			'node_modules/es6-shim/es6-shim.min.js',
+			loadFiles: [
+				"test/karma-jasmine/lib/extender.js",
+				"node_modules/jasmine-ajax/lib/mock-ajax.js",
+				"node_modules/es6-shim/es6-shim.min.js",
 
-			{ pattern: 'node_modules/jsonld/js/jsonld.js', included: false },
-
-			{ pattern: 'src/**/*.js', included: false },
-			{ pattern: 'src/**/*.js.map', included: false },
-			{ pattern: 'src/**/*.ts', included: false },
-
-			'test-main.js'
-		],
-
-		// preprocess matching files before serving them to the browser
-		// available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
-		preprocessors: {
-			'src/**/*.js': [ 'sourcemap' ]
+				"src/**/*.spec.ts"
+			],
+			serveFiles: [
+				"src/**/*.ts", "!src/**/*.spec.ts"
+			]
 		},
 
 		// test results reporter to use
-		// possible values: 'dots', 'progress'
+		// possible values: "dots", "progress"
 		// available reporters: https://npmjs.org/browse/keyword/karma-reporter
-		reporters: [ 'progress' ],
+		reporters: [ "progress" ],
 
 
 		// web server port
@@ -55,7 +48,7 @@ module.exports = function( config ) {
 
 		// start these browsers
 		// available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
-		browsers: [ 'PhantomJS' ],
+		browsers: [ "PhantomJS" ],
 
 
 		// Continuous Integration mode

@@ -1,3 +1,6 @@
+#0.11.0 (November 12, 2015)
+* Changed RequireJS for JSPM in karma runner
+
 #0.10.0 (October 31, 2015)
 * Changed building process to use gulp instead of grunt
 * Added new build form to use Carbon with JSPM and TypeScript

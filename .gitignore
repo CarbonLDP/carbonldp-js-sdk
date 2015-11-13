@@ -7,6 +7,8 @@
 src/**/*.js
 src/**/*.map
 
+test/jspm_packages
+
 reports/
 
 # IntelliJ
