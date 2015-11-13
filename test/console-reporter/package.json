@@ -1,0 +1,16 @@
+{
+	"name": "karma-documentation-runner",
+	"description": "Karma reporter that supports documentation names.",
+	"version": "0.0.1",
+	"author": "Miguel Aragón <miguel@araco.mx>",
+	"keywords": [
+		"karma-plugin",
+		"karma-reporter"
+	],
+	"license": "MIT",
+	"main": "reporter.js",
+	"dependencies": {
+		"chalk": "1.1.0",
+		"karma": "~0.13.9"
+	}
+}

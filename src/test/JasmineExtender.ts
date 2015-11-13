@@ -150,7 +150,7 @@ export function hasInterface( access:string, name:string, description:string = n
 }
 
 export function isDefined():string {
-	return "defined";
+	return "is defined";
 }
 
 export function hasConstructor():string;

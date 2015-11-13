@@ -87,12 +87,8 @@ gulp.task( 'clean:dist', function( done ) {
 
 
 gulp.task( 'lint', [ 'ts-lint' ] );
-// TODO: LDP-425
-/*
-	gulp.task( 'build', [ 'test', 'ts-lint' ], function() {
-		return gulp.start( 'build:afterCleaning' );
-	});
-	gulp.task( 'build:afterTesting', [ 'clean:dist' ], function() { return gulp.start( 'build:afterCleaning' ); });
-*/
-gulp.task( 'build', [ 'clean:dist' ], function() { return gulp.start( 'build:afterCleaning' ); });
+gulp.task( 'build', [ 'test', 'ts-lint' ], function() {
+	return gulp.start( 'build:afterTesting' );
+});
+gulp.task( 'build:afterTesting', [ 'clean:dist' ], function() { return gulp.start( 'build:afterCleaning' ); });
 gulp.task( 'build:afterCleaning', [ 'compile-library', 'bundle-sfx' ] );
