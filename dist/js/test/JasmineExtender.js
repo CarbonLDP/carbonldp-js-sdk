@@ -82,7 +82,7 @@ function hasInterface(access, name, description) {
 }
 exports.hasInterface = hasInterface;
 function isDefined() {
-    return "defined";
+    return "is defined";
 }
 exports.isDefined = isDefined;
 function hasConstructor(argumentsOrDescription, constructorArguments) {
