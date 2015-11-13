@@ -10251,6 +10251,12 @@ $__System.register("49", ["48", "43", "3", "12", "1d", "1e", "41", "7", "2", "9"
                     this.registerDefaultDefinitions();
                     this.apps = new Apps_1.default(this);
                 }
+                Object.defineProperty(Carbon, "version", {
+                    /* tslint:disable: variable-name typedef */
+                    get: function () { return "0.11.0-ALPHA"; },
+                    enumerable: true,
+                    configurable: true
+                });
                 Carbon.prototype.resolve = function (uri) {
                     if (RDF.URI.Util.isAbsolute(uri))
                         return uri;
@@ -10274,8 +10280,6 @@ $__System.register("49", ["48", "43", "3", "12", "1d", "1e", "41", "7", "2", "9"
                 Carbon.HTTP = HTTP;
                 Carbon.RDF = RDF;
                 Carbon.Utils = Utils;
-                /* tslint:disable: variable-name typedef */
-                Carbon.version = "0.10.1-ALPHA";
                 return Carbon;
             })(Parent_1.default);
             exports_1("default",Carbon);

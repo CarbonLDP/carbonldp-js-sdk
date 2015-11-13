@@ -23,6 +23,12 @@ var Carbon = (function (_super) {
         this.registerDefaultDefinitions();
         this.apps = new Apps_1.default(this);
     }
+    Object.defineProperty(Carbon, "version", {
+        /* tslint:disable: variable-name typedef */
+        get: function () { return "0.11.0-ALPHA"; },
+        enumerable: true,
+        configurable: true
+    });
     Carbon.prototype.resolve = function (uri) {
         if (RDF.URI.Util.isAbsolute(uri))
             return uri;
@@ -46,8 +52,6 @@ var Carbon = (function (_super) {
     Carbon.HTTP = HTTP;
     Carbon.RDF = RDF;
     Carbon.Utils = Utils;
-    /* tslint:disable: variable-name typedef */
-    Carbon.version = "0.10.1-ALPHA";
     return Carbon;
 })(Parent_1.default);
 Object.defineProperty(exports, "__esModule", { value: true });
