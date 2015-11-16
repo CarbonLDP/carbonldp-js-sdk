@@ -20,6 +20,7 @@ export interface Class extends RDFNode.Class {
     deleteProperty: (property: string) => void;
 }
 export declare class Factory {
+    static hasClassProperties(resource: RDFNode.Class): boolean;
     static injectDefinitions(resource: Class, definitions: Map<string, Map<string, PropertyDescription>>): Class;
     static injectDefinitions(resources: Class[], definitions: Map<string, Map<string, PropertyDescription>>): Class[];
     static injectDescriptions(resource: Class, descriptions: Map<string, PropertyDescription>): Object;
@@ -39,7 +40,6 @@ export declare class Factory {
     from(object: Object): Class;
     protected singleFrom(object: Object): Class;
     protected hasRDFClass(resource: RDFNode.Class): boolean;
-    protected hasClassProperties(resource: RDFNode.Class): boolean;
     protected injectBehavior(node: Object): Class;
 }
 export declare let factory: Factory;

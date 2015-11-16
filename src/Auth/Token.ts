@@ -19,10 +19,17 @@ export const DEFINITION:Map<string, RDF.PropertyDescription> = <any> Utils.M.fro
 
 export interface Class extends RDF.Resource.Class {
 	key:string;
-	expirationDate:Date;
+	expirationTime:Date;
 }
 
 export class Factory extends RDF.Resource.Factory {
+	static hasClassProperties( resource:RDF.Node.Class ):boolean {
+		return (
+				Utils.hasPropertyDefined( resource, "key" ) &&
+				Utils.hasPropertyDefined( resource, "expirationTime" )
+		);
+	}
+
 	from( object:Array<Object> ):Class[];
 	from( object:Object ):Class;
 	from( objects:any ):any {
@@ -40,18 +47,11 @@ export class Factory extends RDF.Resource.Factory {
 		return resource.types.indexOf( RDF_CLASS ) !== -1;
 	}
 
-	protected hasClassProperties( resource:RDF.Node.Class ):boolean {
-		return (
-			Utils.hasPropertyDefined( resource, "key" ) &&
-			Utils.hasPropertyDefined( resource, "expirationTime" )
-		);
-	}
-
 	protected injectBehavior( node:Object ):Class {
 		let token:Class = <Class> node;
 		super.injectBehavior( node );
 
-		if( this.hasClassProperties( token ) ) return token;
+		if( Factory.hasClassProperties( token ) ) return token;
 
 		RDF.Resource.Factory.injectDescriptions( token, DEFINITION );
 

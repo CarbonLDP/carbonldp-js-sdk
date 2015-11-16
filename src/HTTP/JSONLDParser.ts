@@ -13,7 +13,7 @@ export class Class implements Parser<any> {
 		});
 	}
 
-	private expandJSON( parsedObject:Object, options?:jsonld.ExpandOptions  ):Promise<Object> {
+	private expandJSON( parsedObject:Object, options?:jsonld.ExpandOptions ):Promise<Object> {
 		return new Promise( ( resolve:( result:Object ) => void, reject:( error:any ) => void ):void => {
 			jsonld.expand( parsedObject, options, ( error:any, expanded:Object ):void => {
 				if ( error ) {

@@ -6,12 +6,13 @@ import * as RDF from "./../RDF";
 import * as Utils from "./../Utils";
 
 import Authenticator from "./Authenticator";
+import AuthenticationToken from "./AuthenticationToken";
 import BasicAuthenticator from "./BasicAuthenticator";
 import UsernameAndPasswordToken from "./UsernameAndPasswordToken";
 import * as Token from "./Token";
 
 export class Class implements Authenticator<UsernameAndPasswordToken> {
-	private static TOKEN_CONTAINER:string = "auth-tokens/";
+	private static TOKEN_CONTAINER:string = "platform/auth-tokens/";
 
 	private parent:Parent;
 	private basicAuthenticator:BasicAuthenticator;
@@ -25,7 +26,7 @@ export class Class implements Authenticator<UsernameAndPasswordToken> {
 	}
 
 	isAuthenticated():boolean {
-		return this.token && this.token.expirationDate > new Date();
+		return this.token && this.token.expirationTime > new Date();
 	}
 
 	authenticate( authenticationToken:UsernameAndPasswordToken ):Promise<void> {
@@ -50,6 +51,10 @@ export class Class implements Authenticator<UsernameAndPasswordToken> {
 
 	clearAuthentication():void {
 		this.token = null;
+	}
+
+	supports( authenticationToken:AuthenticationToken ):boolean {
+		return authenticationToken instanceof UsernameAndPasswordToken;
 	}
 
 	private createToken():Promise<HTTP.ProcessedResponse<Token.Class>> {
@@ -88,10 +93,8 @@ export class Class implements Authenticator<UsernameAndPasswordToken> {
 		let authorization:string = "Token " + this.token.key;
 		header.values.push( new HTTP.Header.Value( authorization ) );
 
-		return headers
+		return headers;
 	}
 }
-
-
 
 export default Class;

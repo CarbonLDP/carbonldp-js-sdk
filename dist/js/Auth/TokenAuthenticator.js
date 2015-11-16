@@ -3,6 +3,7 @@ var Errors = require("./../Errors");
 var NS = require("./../NS");
 var RDF = require("./../RDF");
 var BasicAuthenticator_1 = require("./BasicAuthenticator");
+var UsernameAndPasswordToken_1 = require("./UsernameAndPasswordToken");
 var Token = require("./Token");
 var Class = (function () {
     function Class(parent) {
@@ -12,7 +13,7 @@ var Class = (function () {
         this.basicAuthenticator = new BasicAuthenticator_1.default();
     }
     Class.prototype.isAuthenticated = function () {
-        return this.token && this.token.expirationDate > new Date();
+        return this.token && this.token.expirationTime > new Date();
     };
     Class.prototype.authenticate = function (authenticationToken) {
         var _this = this;
@@ -29,6 +30,9 @@ var Class = (function () {
     };
     Class.prototype.clearAuthentication = function () {
         this.token = null;
+    };
+    Class.prototype.supports = function (authenticationToken) {
+        return authenticationToken instanceof UsernameAndPasswordToken_1.default;
     };
     Class.prototype.createToken = function () {
         var uri = this.parent.resolve(Class.TOKEN_CONTAINER);
@@ -63,7 +67,7 @@ var Class = (function () {
         header.values.push(new HTTP.Header.Value(authorization));
         return headers;
     };
-    Class.TOKEN_CONTAINER = "auth-tokens/";
+    Class.TOKEN_CONTAINER = "platform/auth-tokens/";
     return Class;
 })();
 exports.Class = Class;

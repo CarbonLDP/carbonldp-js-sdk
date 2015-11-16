@@ -1,5 +1,6 @@
 var HTTP = require("./../HTTP");
 var Errors = require("./../Errors");
+var UsernameAndPasswordToken_1 = require("./UsernameAndPasswordToken");
 var Class = (function () {
     function Class() {
     }
@@ -16,10 +17,7 @@ var Class = (function () {
             if (!authenticationToken.password)
                 throw new Errors.IllegalArgumentError("The password cannot be empty.");
             // TODO: Check that the username and password are correct
-            _this.credentials = {
-                username: authenticationToken.username,
-                password: authenticationToken.password
-            };
+            _this.credentials = authenticationToken;
             resolve();
         });
     };
@@ -31,6 +29,9 @@ var Class = (function () {
     Class.prototype.clearAuthentication = function () {
         this.credentials = null;
     };
+    Class.prototype.supports = function (authenticationToken) {
+        return authenticationToken instanceof UsernameAndPasswordToken_1.default;
+    };
     Class.prototype.addBasicAuthenticationHeader = function (headers) {
         var header;
         if (headers.has("Authorization")) {
@@ -40,7 +41,7 @@ var Class = (function () {
             header = new HTTP.Header.Class();
             headers.set("Authorization", header);
         }
-        var authorization = "BASIC " + btoa(this.credentials.username + ":" + this.credentials.password);
+        var authorization = "Basic " + btoa(this.credentials.username + ":" + this.credentials.password);
         header.values.push(new HTTP.Header.Value(authorization));
         return headers;
     };

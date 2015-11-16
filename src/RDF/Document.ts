@@ -45,9 +45,12 @@ export class Util {
 
 		let resources:RDFNode.Class[] = [];
 
+		/* tslint:disable: typedef */
+		// TSLint is saying that document should have a typedef, but TypeScript doesn't allow typedefs in for .. of loops
 		for( let document of documents ) {
 			resources = resources.concat( document[ "@graph"] );
 		}
+		/* tslint:enable: typedef */
 
 		return resources;
 	}

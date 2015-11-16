@@ -95,8 +95,8 @@ function parseBoolean( value:string ):boolean {
 }
 
 function extend( target:Object, ...objects:Object[] ):Object {
-	if ( arguments.length <= 1 ) return;
-	for ( let i:number = 1, length:number = arguments.length; i < length; i ++ ) {
+	if ( arguments.length <= 1 ) return target;
+	for ( let i:number = 0, length:number = arguments.length; i < length; i ++ ) {
 		let toMerge:Object = objects[ i ];
 		for ( let name in toMerge ) {
 			if ( toMerge.hasOwnProperty( name ) ) {

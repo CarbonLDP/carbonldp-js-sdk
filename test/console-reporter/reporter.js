@@ -233,6 +233,103 @@ var DocumentationReporter = function( baseReporterDecorator, formatError, config
 		return listAllObjectProperties(Object.getPrototypeOf(obj)).indexOf(property) > -1;
 	}
 
+	function isJSON( description ) {
+		return description && description.indexOf( "JSON" ) === 0;
+	}
+
+	function parseDescription( description ) {
+		description = description.substring( 4 );
+		try {
+			return JSON.parse( description );
+		} catch( error ) {
+			// TODO: Handle error
+			throw error;
+		}
+	}
+
+	function composeName( description ) {
+		var descriptionObject = parseDescription( description );
+
+		if( "suiteType" in descriptionObject ) {
+			return composeSuiteName( descriptionObject );
+		} else if( "specType" in descriptionObject ) {
+			return composeSpecName( descriptionObject );
+		}
+
+		return description.name;
+	}
+
+	function composeSuiteName( suite ) {
+		switch( suite.suiteType ) {
+			case "module":
+				break;
+			case "submodule":
+				break;
+			case "class":
+				break;
+			case "interface":
+				break;
+			case "constructor":
+				break;
+			case "method":
+				return "method > " + suite.name;
+		}
+
+		return suite.name;
+	}
+
+	function composeSpecName( spec ) {
+		switch( spec.specType ) {
+			case "constructor":
+				return "constructor > " + composeConstructorSignature( spec );
+			case "method":
+				return "method > " + spec.name + composeMethodSignature( spec );
+			case "property":
+				break;
+			case "signature":
+				break;
+			case "super-class":
+				break;
+			case "interface":
+				break;
+		}
+
+		return spec.name;
+	}
+
+	function composeConstructorSignature( spec ) {
+		return composeArgumentsString( spec );
+	}
+
+	function composeMethodSignature( signature ) {
+		var signatureString = composeArgumentsString( signature ) + ":";
+
+		if( "returns" in signature && signature.returns ) {
+			signatureString += signature.returns.type;
+		} else signatureString += "void";
+
+		return signatureString;
+	}
+
+	function composeArgumentsString( spec ) {
+		var specString = "(";
+
+		if( "arguments" in spec && spec.arguments ) {
+			for( var i = 0, length = spec.arguments.length; i < length; i++ ){
+				var argument = spec.arguments[ i ];
+				specString += " " + argument.name + ":" + argument.type;
+
+				if( (i + 1) !== length ) {
+					specString += ",";
+				} else specString += " ";
+			}
+		}
+
+		specString += ")";
+
+		return specString;
+	}
+
 	/**
 	 * Called each time a test is completed in a given browser.
 	 *
@@ -254,49 +351,48 @@ var DocumentationReporter = function( baseReporterDecorator, formatError, config
 			var item = suite[description] || {};
 			suite[description] = item;
 
-			item.name = "hello";
+			item.name = isJSON( description ) ? composeName( description ) : description;
+
 			item.isRoot = depth === 0;
 			item.type = 'describe';
 			item.skipped = result.skipped;
 			item.success = (item.success === undefined ? true : item.success) && result.success;
 
 			// it block
-			if (depth === maxDepth) {
-				item.type = 'it';
-				item.count = item.count || 0;
-				item.count++;
-				item.failed = item.failed || [];
-				item.name = (result.success ? getLogSymbol(colors.success) : getLogSymbol(colors.error)) + ' ' + item.name;
-				item.success = result.success;
-				item.skipped = result.skipped;
-				self.netTime += result.time;
+			if (depth !== maxDepth) return item.items = item.items || {};
 
-				if (result.skipped) {
-					self.numberOfSkippedTests++;
+			item.type = 'it';
+			item.count = item.count || 0;
+			item.count++;
+			item.failed = item.failed || [];
+			item.name = (result.success ? getLogSymbol(colors.success) : getLogSymbol(colors.error)) + ' ' + item.name;
+			item.success = result.success;
+			item.skipped = result.skipped;
+			self.netTime += result.time;
+
+			if (result.skipped) {
+				self.numberOfSkippedTests++;
+			}
+
+			if (result.success === false) {
+				// add browser to failed browsers array
+				item.failed.push(browser.name);
+
+				// add error log
+				item.log = result.log;
+			}
+
+			if (config.reportSlowerThan && result.time > config.reportSlowerThan) {
+				// add slow report warning
+				item.name += colors.warning.print((' (slow: ' + formatTimeInterval(result.time) + ')'));
+				self.numberOfSlowTests++;
+			}
+
+			if (item.count === self.numberOfBrowsers) {
+				// print results to output when test was ran through all browsers
+				if (outputMode !== 'minimal') {
+					print(self.allResults, depth);
 				}
-
-				if (result.success === false) {
-					// add browser to failed browsers array
-					item.failed.push(browser.name);
-
-					// add error log
-					item.log = result.log;
-				}
-
-				if (config.reportSlowerThan && result.time > config.reportSlowerThan) {
-					// add slow report warning
-					item.name += colors.warning.print((' (slow: ' + formatTimeInterval(result.time) + ')'));
-					self.numberOfSlowTests++;
-				}
-
-				if (item.count === self.numberOfBrowsers) {
-					// print results to output when test was ran through all browsers
-					if (outputMode !== 'minimal') {
-						print(self.allResults, depth);
-					}
-				}
-			} else {
-				item.items = item.items || {};
 			}
 
 			return item.items;

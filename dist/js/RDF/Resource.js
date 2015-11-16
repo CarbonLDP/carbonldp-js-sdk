@@ -115,6 +115,22 @@ function tieArray(resource, property, array) {
 var Factory = (function () {
     function Factory() {
     }
+    Factory.hasClassProperties = function (resource) {
+        return (Utils.hasPropertyDefined(resource, "_propertyAddedCallbacks") &&
+            Utils.hasPropertyDefined(resource, "_propertyDeletedCallbacks") &&
+            Utils.hasPropertyDefined(resource, "uri") &&
+            Utils.hasPropertyDefined(resource, "types") &&
+            Utils.hasFunction(resource, "hasProperty") &&
+            Utils.hasFunction(resource, "getProperty") &&
+            Utils.hasFunction(resource, "getPropertyValue") &&
+            Utils.hasFunction(resource, "getPropertyURI") &&
+            Utils.hasFunction(resource, "getProperties") &&
+            Utils.hasFunction(resource, "getPropertyValues") &&
+            Utils.hasFunction(resource, "getPropertyURIs") &&
+            Utils.hasFunction(resource, "addProperty") &&
+            Utils.hasFunction(resource, "setProperty") &&
+            Utils.hasFunction(resource, "deleteProperty"));
+    };
     Factory.injectDefinitions = function (resourceOrResources, definitions) {
         var resources = Utils.isArray(resourceOrResources) ? resourceOrResources : [resourceOrResources];
         for (var i = 0, length_6 = resources.length; i < length_6; i++) {
@@ -234,7 +250,7 @@ var Factory = (function () {
         // RDFNode.Factory.is( value ) &&
         (!Utils.isNull(value)) &&
             Utils.isObject(value) &&
-            this.hasClassProperties(value));
+            Factory.hasClassProperties(value));
     };
     Factory.prototype.create = function () {
         var resource = {};
@@ -256,25 +272,9 @@ var Factory = (function () {
         // TODO: Implement
         return true;
     };
-    Factory.prototype.hasClassProperties = function (resource) {
-        return (Utils.hasPropertyDefined(resource, "_propertyAddedCallbacks") &&
-            Utils.hasPropertyDefined(resource, "_propertyDeletedCallbacks") &&
-            Utils.hasPropertyDefined(resource, "uri") &&
-            Utils.hasPropertyDefined(resource, "types") &&
-            Utils.hasFunction(resource, "hasProperty") &&
-            Utils.hasFunction(resource, "getProperty") &&
-            Utils.hasFunction(resource, "getPropertyValue") &&
-            Utils.hasFunction(resource, "getPropertyURI") &&
-            Utils.hasFunction(resource, "getProperties") &&
-            Utils.hasFunction(resource, "getPropertyValues") &&
-            Utils.hasFunction(resource, "getPropertyURIs") &&
-            Utils.hasFunction(resource, "addProperty") &&
-            Utils.hasFunction(resource, "setProperty") &&
-            Utils.hasFunction(resource, "deleteProperty"));
-    };
     Factory.prototype.injectBehavior = function (node) {
         var resource = node;
-        if (this.hasClassProperties(resource))
+        if (Factory.hasClassProperties(resource))
             return resource;
         Object.defineProperties(resource, {
             "_propertyAddedCallbacks": {

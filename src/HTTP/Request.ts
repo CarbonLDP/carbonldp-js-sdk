@@ -17,6 +17,10 @@ interface Options {
 	request?:XMLHttpRequest;
 }
 
+interface OptionsWithParser<T> extends Options {
+	parser:Parser<T>;
+}
+
 function setHeaders( request:XMLHttpRequest, headers:Map<string, Header.Class> ):void {
 	let namesIterator:Iterator<string> = headers.keys();
 	let next:IteratorValue<string> = namesIterator.next();
@@ -73,11 +77,13 @@ class Service {
 	static send( method:(Method | string), url:string, body:string, options?:Options ):Promise<Response>;
 	static send<T>( method:(Method | string), url:string, body:string, options?:Options, parser?:Parser<T> ):Promise<ProcessedResponse<T>>;
 	static send<T>( method:any, url:string, bodyOrOptions:any = Service.defaultOptions, options:Options = Service.defaultOptions, parser:Parser<T> = null ):any {
-		let body:string = Utils.isString( bodyOrOptions ) ? bodyOrOptions : null;
-		options = Utils.isString( bodyOrOptions ) ? options : bodyOrOptions;
-		options = options ? options : Service.defaultOptions;
-		if ( Utils.isNumber( method ) ) method = Method[ method ];
+		let body:string = bodyOrOptions && Utils.isString( bodyOrOptions ) ? bodyOrOptions : null;
 
+		options = ! bodyOrOptions || Utils.isString( bodyOrOptions ) ? options : bodyOrOptions;
+		options = options ? options : {};
+		options = Utils.extend( options, Service.defaultOptions );
+
+		if ( Utils.isNumber( method ) ) method = Method[ method ];
 
 		let requestPromise:Promise<Response> = new Promise<Response>( ( resolve:( result:Response ) => void, reject:( error:any ) => void ):void => {
 			let request:XMLHttpRequest = options.request ? options.request : new XMLHttpRequest();

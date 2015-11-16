@@ -151,6 +151,27 @@ function tieArray( resource:Class, property:string, array:any[] ):any[] {
 
 
 export class Factory {
+	static hasClassProperties( resource:RDFNode.Class ):boolean {
+		return (
+				Utils.hasPropertyDefined( resource, "_propertyAddedCallbacks" ) &&
+				Utils.hasPropertyDefined( resource, "_propertyDeletedCallbacks" ) &&
+
+				Utils.hasPropertyDefined( resource, "uri" ) &&
+				Utils.hasPropertyDefined( resource, "types" ) &&
+
+				Utils.hasFunction( resource, "hasProperty" ) &&
+				Utils.hasFunction( resource, "getProperty" ) &&
+				Utils.hasFunction( resource, "getPropertyValue" ) &&
+				Utils.hasFunction( resource, "getPropertyURI" ) &&
+				Utils.hasFunction( resource, "getProperties" ) &&
+				Utils.hasFunction( resource, "getPropertyValues" ) &&
+				Utils.hasFunction( resource, "getPropertyURIs" ) &&
+				Utils.hasFunction( resource, "addProperty" ) &&
+				Utils.hasFunction( resource, "setProperty" ) &&
+				Utils.hasFunction( resource, "deleteProperty" )
+		);
+	}
+
 	static injectDefinitions( resource:Class, definitions:Map<string, Map<string, PropertyDescription>> ):Class;
 	static injectDefinitions( resources:Class[], definitions:Map<string, Map<string, PropertyDescription>> ):Class[];
 	static injectDefinitions( resourceOrResources:any, definitions:Map<string, Map<string, PropertyDescription>> ):any {
@@ -287,7 +308,7 @@ export class Factory {
 				( ! Utils.isNull( value ) ) &&
 				Utils.isObject( value ) &&
 
-				this.hasClassProperties( value )
+				Factory.hasClassProperties( value )
 		);
 	}
 
@@ -318,30 +339,9 @@ export class Factory {
 		return true;
 	}
 
-	protected hasClassProperties( resource:RDFNode.Class ):boolean {
-		return (
-				Utils.hasPropertyDefined( resource, "_propertyAddedCallbacks" ) &&
-				Utils.hasPropertyDefined( resource, "_propertyDeletedCallbacks" ) &&
-
-				Utils.hasPropertyDefined( resource, "uri" ) &&
-				Utils.hasPropertyDefined( resource, "types" ) &&
-
-				Utils.hasFunction( resource, "hasProperty" ) &&
-				Utils.hasFunction( resource, "getProperty" ) &&
-				Utils.hasFunction( resource, "getPropertyValue" ) &&
-				Utils.hasFunction( resource, "getPropertyURI" ) &&
-				Utils.hasFunction( resource, "getProperties" ) &&
-				Utils.hasFunction( resource, "getPropertyValues" ) &&
-				Utils.hasFunction( resource, "getPropertyURIs" ) &&
-				Utils.hasFunction( resource, "addProperty" ) &&
-				Utils.hasFunction( resource, "setProperty" ) &&
-				Utils.hasFunction( resource, "deleteProperty" )
-		);
-	}
-
 	protected injectBehavior( node:Object ):Class {
 		let resource:Class = <Class> node;
-		if( this.hasClassProperties( resource ) ) return <Class> resource;
+		if( Factory.hasClassProperties( resource ) ) return <Class> resource;
 
 		Object.defineProperties( resource, {
 			"_propertyAddedCallbacks": {

@@ -24,6 +24,10 @@ var Factory = (function (_super) {
     function Factory() {
         _super.apply(this, arguments);
     }
+    Factory.hasClassProperties = function (resource) {
+        return (Utils.hasPropertyDefined(resource, "key") &&
+            Utils.hasPropertyDefined(resource, "expirationTime"));
+    };
     Factory.prototype.from = function (objects) {
         if (!Utils.isArray(objects))
             return this.singleFrom(objects);
@@ -36,14 +40,10 @@ var Factory = (function (_super) {
     Factory.prototype.hasRDFClass = function (resource) {
         return resource.types.indexOf(exports.RDF_CLASS) !== -1;
     };
-    Factory.prototype.hasClassProperties = function (resource) {
-        return (Utils.hasPropertyDefined(resource, "key") &&
-            Utils.hasPropertyDefined(resource, "expirationTime"));
-    };
     Factory.prototype.injectBehavior = function (node) {
         var token = node;
         _super.prototype.injectBehavior.call(this, node);
-        if (this.hasClassProperties(token))
+        if (Factory.hasClassProperties(token))
             return token;
         RDF.Resource.Factory.injectDescriptions(token, exports.DEFINITION);
         return token;

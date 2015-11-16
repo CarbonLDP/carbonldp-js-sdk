@@ -99,8 +99,8 @@ function extend(target) {
         objects[_i - 1] = arguments[_i];
     }
     if (arguments.length <= 1)
-        return;
-    for (var i = 1, length_1 = arguments.length; i < length_1; i++) {
+        return target;
+    for (var i = 0, length_1 = arguments.length; i < length_1; i++) {
         var toMerge = objects[i];
         for (var name_1 in toMerge) {
             if (toMerge.hasOwnProperty(name_1)) {

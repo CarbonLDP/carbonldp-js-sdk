@@ -1,5 +1,6 @@
 import * as HTTP from "./../HTTP";
 import Authenticator from "./Authenticator";
+import AuthenticationToken from "./AuthenticationToken";
 import * as Errors from "./../Errors";
 import UsernameAndPasswordToken from "./UsernameAndPasswordToken";
 
@@ -12,7 +13,7 @@ export class Class implements Authenticator<UsernameAndPasswordToken> {
 	private credentials:Credentials;
 
 	isAuthenticated():boolean {
-		return this.credentials !== null;
+		return !! this.credentials;
 	}
 
 	authenticate( authenticationToken:UsernameAndPasswordToken ):Promise<void>  {
@@ -24,10 +25,7 @@ export class Class implements Authenticator<UsernameAndPasswordToken> {
 
 			// TODO: Check that the username and password are correct
 
-			this.credentials = {
-				username: authenticationToken.username,
-				password: authenticationToken.password
-			};
+			this.credentials = authenticationToken;
 
 			resolve();
 		});
@@ -45,6 +43,10 @@ export class Class implements Authenticator<UsernameAndPasswordToken> {
 		this.credentials = null;
 	}
 
+	supports( authenticationToken:AuthenticationToken ):boolean {
+		return authenticationToken instanceof UsernameAndPasswordToken;
+	}
+
 	private addBasicAuthenticationHeader( headers:Map<string, HTTP.Header.Class> ):Map<string, HTTP.Header.Class> {
 		let header:HTTP.Header.Class;
 		if ( headers.has( "Authorization" ) ) {
@@ -53,10 +55,10 @@ export class Class implements Authenticator<UsernameAndPasswordToken> {
 			header = new HTTP.Header.Class();
 			headers.set( "Authorization", header );
 		}
-		let authorization:string = "BASIC " + btoa( this.credentials.username + ":" + this.credentials.password );
+		let authorization:string = "Basic " + btoa( this.credentials.username + ":" + this.credentials.password );
 		header.values.push( new HTTP.Header.Value( authorization ) );
 
-		return headers
+		return headers;
 	}
 }
 

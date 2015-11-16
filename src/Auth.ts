@@ -19,51 +19,70 @@ export class Class {
 	private parent:Parent;
 
 	private method:Method = null;
-	private authenticators:Map<Method, Authenticator<AuthenticationToken>>;
+	private authenticators:Array<Authenticator<AuthenticationToken>>;
+	private authenticator:Authenticator<AuthenticationToken>;
 
 	constructor( parent:Parent ) {
 		this.parent = parent;
 
-		this.authenticators = new Map<Method, Authenticator<AuthenticationToken>>();
-		this.authenticators.set( Method.BASIC, new BasicAuthenticator() );
-		this.authenticators.set( Method.TOKEN, new TokenAuthenticator( this.parent ) );
+		this.authenticators = [];
+		this.authenticators.push( new TokenAuthenticator( this.parent ) );
+		this.authenticators.push( new BasicAuthenticator() );
 	}
 
 	isAuthenticated( askParent:boolean = true ):boolean {
-		let authenticated:boolean = false;
-
-		// TODO
-
 		return (
-			authenticated ||
-			(askParent && ! ! this.parent.parent && this.parent.parent.Auth.isAuthenticated())
+			( this.authenticator && this.authenticator.isAuthenticated() ) ||
+			( askParent && ! ! this.parent.parent && this.parent.parent.Auth.isAuthenticated() )
 		);
 	}
 
-	login( username:string, password:string ):Promise<void> {
-		let authenticationToken:AuthenticationToken = new UsernameAndPasswordToken( username, password );
+	authenticate( username:string, password:string ):Promise<void>;
+	authenticate( authenticationToken:AuthenticationToken ):Promise<void>;
+	authenticate( usernameOrToken:any, password:string = null ):Promise<void> {
+		return new Promise<void>( ( resolve:( result:any ) => void, reject:( reject:Error ) => void ) => {
+			if( ! usernameOrToken ) throw new Errors.IllegalArgumentError( "Either a username or an authenticationToken are required." );
 
-		let method:Method = <any> this.parent.getSetting( "auth.method" );
-		let authenticator:Authenticator<AuthenticationToken> = this.authenticators.get( method );
+			let authenticationToken:AuthenticationToken;
+			if( Utils.isString( usernameOrToken ) ) {
+				let username:string = usernameOrToken;
+				if( ! password ) throw new Errors.IllegalArgumentError( "A password is required when providing a username." );
+				authenticationToken = new UsernameAndPasswordToken( username, password );
+			} else {
+				authenticationToken = usernameOrToken;
+			}
 
-		if( authenticator === null ) return new Promise<void>( function():void {
-			throw new Errors.IllegalStateError( "The authentication method specified isn\'t supported." );
-		} );
+			if( this.authenticator ) this.clearAuthentication();
 
-		return authenticator.authenticate( authenticationToken );
+			this.authenticator = this.getAuthenticator( authenticationToken );
+
+			resolve( this.authenticator.authenticate( authenticationToken ) );
+		});
 	}
 
 	addAuthentication( requestOptions:HTTP.Request.Options ):void {
-		if( ! this.isAuthenticated( false ) ) {
-			if( this.parent.parent ) {
-				this.parent.parent.Auth.addAuthentication( requestOptions);
-				return;
-			} else {
-				console.warn( "There is no authentication to add to the request." );
-			}
+		if( this.isAuthenticated( false ) ) {
+			this.authenticator.addAuthentication( requestOptions );
+		} else if( "parent" in this.parent ) {
+			this.parent.parent.Auth.addAuthentication( requestOptions );
+		} else {
+			console.warn( "There is no authentication to add to the request." );
+		}
+	}
+
+	clearAuthentication():void {
+		if( ! this.authenticator ) return;
+
+		this.authenticator.clearAuthentication();
+		this.authenticator = null;
+	}
+
+	private getAuthenticator( authenticationToken:AuthenticationToken ):Authenticator<AuthenticationToken> {
+		for( let authenticator of this.authenticators ) {
+			if( authenticator.supports( authenticationToken ) ) return authenticator;
 		}
 
-		// TODO
+		throw new Errors.IllegalStateError( "The configured authentication method isn\'t supported." );
 	}
 }
 

@@ -1620,35 +1620,7 @@ $__System.register("13", ["14", "11", "15", "7", "12", "16"], function(exports_1
     }
 });
 
-$__System.register("17", [], function(exports_1) {
-    var Class;
-    return {
-        setters:[],
-        execute: function() {
-            Class = (function () {
-                function Class(username, password) {
-                    this._username = username;
-                    this._password = password;
-                }
-                Object.defineProperty(Class.prototype, "username", {
-                    get: function () { return this._username; },
-                    enumerable: true,
-                    configurable: true
-                });
-                Object.defineProperty(Class.prototype, "password", {
-                    get: function () { return this._password; },
-                    enumerable: true,
-                    configurable: true
-                });
-                return Class;
-            })();
-            exports_1("Class", Class);
-            exports_1("default",Class);
-        }
-    }
-});
-
-$__System.register("18", ["6", "7", "9"], function(exports_1) {
+$__System.register("17", ["6", "7", "9"], function(exports_1) {
     var __extends = (this && this.__extends) || function (d, b) {
         for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
         function __() { this.constructor = d; }
@@ -1686,6 +1658,10 @@ $__System.register("18", ["6", "7", "9"], function(exports_1) {
                 function Factory() {
                     _super.apply(this, arguments);
                 }
+                Factory.hasClassProperties = function (resource) {
+                    return (Utils.hasPropertyDefined(resource, "key") &&
+                        Utils.hasPropertyDefined(resource, "expirationTime"));
+                };
                 Factory.prototype.from = function (objects) {
                     if (!Utils.isArray(objects))
                         return this.singleFrom(objects);
@@ -1698,14 +1674,10 @@ $__System.register("18", ["6", "7", "9"], function(exports_1) {
                 Factory.prototype.hasRDFClass = function (resource) {
                     return resource.types.indexOf(RDF_CLASS) !== -1;
                 };
-                Factory.prototype.hasClassProperties = function (resource) {
-                    return (Utils.hasPropertyDefined(resource, "key") &&
-                        Utils.hasPropertyDefined(resource, "expirationTime"));
-                };
                 Factory.prototype.injectBehavior = function (node) {
                     var token = node;
                     _super.prototype.injectBehavior.call(this, node);
-                    if (this.hasClassProperties(token))
+                    if (Factory.hasClassProperties(token))
                         return token;
                     RDF.Resource.Factory.injectDescriptions(token, DEFINITION);
                     return token;
@@ -1718,7 +1690,7 @@ $__System.register("18", ["6", "7", "9"], function(exports_1) {
     }
 });
 
-$__System.register("19", ["1a", "1b"], function(exports_1) {
+$__System.register("18", ["19", "1a"], function(exports_1) {
     var Literal, RDFNode;
     var Util;
     return {
@@ -1751,7 +1723,7 @@ $__System.register("19", ["1a", "1b"], function(exports_1) {
 });
 
 /// <reference path="../../typings/es6/es6.d.ts" />
-$__System.register("1c", ["1a", "9", "1b"], function(exports_1) {
+$__System.register("1b", ["19", "9", "1a"], function(exports_1) {
     var Literal, Utils, RDFNode;
     var Factory, factory;
     function hasProperty(propertyURI) {
@@ -1879,6 +1851,22 @@ $__System.register("1c", ["1a", "9", "1b"], function(exports_1) {
             Factory = (function () {
                 function Factory() {
                 }
+                Factory.hasClassProperties = function (resource) {
+                    return (Utils.hasPropertyDefined(resource, "_propertyAddedCallbacks") &&
+                        Utils.hasPropertyDefined(resource, "_propertyDeletedCallbacks") &&
+                        Utils.hasPropertyDefined(resource, "uri") &&
+                        Utils.hasPropertyDefined(resource, "types") &&
+                        Utils.hasFunction(resource, "hasProperty") &&
+                        Utils.hasFunction(resource, "getProperty") &&
+                        Utils.hasFunction(resource, "getPropertyValue") &&
+                        Utils.hasFunction(resource, "getPropertyURI") &&
+                        Utils.hasFunction(resource, "getProperties") &&
+                        Utils.hasFunction(resource, "getPropertyValues") &&
+                        Utils.hasFunction(resource, "getPropertyURIs") &&
+                        Utils.hasFunction(resource, "addProperty") &&
+                        Utils.hasFunction(resource, "setProperty") &&
+                        Utils.hasFunction(resource, "deleteProperty"));
+                };
                 Factory.injectDefinitions = function (resourceOrResources, definitions) {
                     var resources = Utils.isArray(resourceOrResources) ? resourceOrResources : [resourceOrResources];
                     for (var i = 0, length = resources.length; i < length; i++) {
@@ -1998,7 +1986,7 @@ $__System.register("1c", ["1a", "9", "1b"], function(exports_1) {
                     // RDFNode.Factory.is( value ) &&
                     (!Utils.isNull(value)) &&
                         Utils.isObject(value) &&
-                        this.hasClassProperties(value));
+                        Factory.hasClassProperties(value));
                 };
                 Factory.prototype.create = function () {
                     var resource = {};
@@ -2020,25 +2008,9 @@ $__System.register("1c", ["1a", "9", "1b"], function(exports_1) {
                     // TODO: Implement
                     return true;
                 };
-                Factory.prototype.hasClassProperties = function (resource) {
-                    return (Utils.hasPropertyDefined(resource, "_propertyAddedCallbacks") &&
-                        Utils.hasPropertyDefined(resource, "_propertyDeletedCallbacks") &&
-                        Utils.hasPropertyDefined(resource, "uri") &&
-                        Utils.hasPropertyDefined(resource, "types") &&
-                        Utils.hasFunction(resource, "hasProperty") &&
-                        Utils.hasFunction(resource, "getProperty") &&
-                        Utils.hasFunction(resource, "getPropertyValue") &&
-                        Utils.hasFunction(resource, "getPropertyURI") &&
-                        Utils.hasFunction(resource, "getProperties") &&
-                        Utils.hasFunction(resource, "getPropertyValues") &&
-                        Utils.hasFunction(resource, "getPropertyURIs") &&
-                        Utils.hasFunction(resource, "addProperty") &&
-                        Utils.hasFunction(resource, "setProperty") &&
-                        Utils.hasFunction(resource, "deleteProperty"));
-                };
                 Factory.prototype.injectBehavior = function (node) {
                     var resource = node;
-                    if (this.hasClassProperties(resource))
+                    if (Factory.hasClassProperties(resource))
                         return resource;
                     Object.defineProperties(resource, {
                         "_propertyAddedCallbacks": {
@@ -2132,7 +2104,7 @@ $__System.register("1c", ["1a", "9", "1b"], function(exports_1) {
     }
 });
 
-$__System.register("1d", ["9"], function(exports_1) {
+$__System.register("1c", ["9"], function(exports_1) {
     var Utils;
     var Util;
     return {
@@ -2203,7 +2175,7 @@ $__System.register("1d", ["9"], function(exports_1) {
     }
 });
 
-$__System.register("1b", ["9"], function(exports_1) {
+$__System.register("1a", ["9"], function(exports_1) {
     var Utils;
     var Factory, Util;
     return {
@@ -2241,7 +2213,7 @@ $__System.register("1b", ["9"], function(exports_1) {
     }
 });
 
-$__System.register("1e", ["1b", "9", "1d"], function(exports_1) {
+$__System.register("1d", ["1a", "9", "1c"], function(exports_1) {
     var RDFNode, Utils, URI;
     var Factory, Util;
     return {
@@ -2294,10 +2266,13 @@ $__System.register("1e", ["1b", "9", "1d"], function(exports_1) {
                 Util.getResources = function (value) {
                     var documents = Util.getDocuments(value);
                     var resources = [];
+                    /* tslint:disable: typedef */
+                    // TSLint is saying that document should have a typedef, but TypeScript doesn't allow typedefs in for .. of loops
                     for (var _i = 0; _i < documents.length; _i++) {
                         var document = documents[_i];
                         resources = resources.concat(document["@graph"]);
                     }
+                    /* tslint:enable: typedef */
                     return resources;
                 };
                 Util.getDocumentResources = function (document) {
@@ -2359,7 +2334,7 @@ $__System.register("1e", ["1b", "9", "1d"], function(exports_1) {
     }
 });
 
-$__System.register("1f", [], function(exports_1) {
+$__System.register("1e", [], function(exports_1) {
     var PropertyDescription;
     return {
         setters:[],
@@ -2376,7 +2351,7 @@ $__System.register("1f", [], function(exports_1) {
     }
 });
 
-$__System.register("1a", ["9", "20"], function(exports_1) {
+$__System.register("19", ["9", "1f"], function(exports_1) {
     var Utils, XSD;
     var Factory, Util;
     return {
@@ -2512,7 +2487,7 @@ $__System.register("1a", ["9", "20"], function(exports_1) {
     }
 });
 
-$__System.register("21", ["9"], function(exports_1) {
+$__System.register("20", ["9"], function(exports_1) {
     var Utils;
     var Modifications, ModificationType, Factory;
     function isDirty() {
@@ -2583,7 +2558,7 @@ $__System.register("21", ["9"], function(exports_1) {
     }
 });
 
-$__System.register("7", ["21", "1a", "1f", "1e", "1b", "1c", "1d", "19"], function(exports_1) {
+$__System.register("7", ["20", "19", "1e", "1d", "1a", "1b", "1c", "18"], function(exports_1) {
     var Persisted, Literal, PropertyDescription_1, Document, Node, Resource, URI, Value;
     return {
         setters:[
@@ -2624,8 +2599,8 @@ $__System.register("7", ["21", "1a", "1f", "1e", "1b", "1c", "1d", "19"], functi
     }
 });
 
-$__System.register("22", ["15", "11", "6", "7", "23", "18"], function(exports_1) {
-    var HTTP, Errors, NS, RDF, BasicAuthenticator_1, Token;
+$__System.register("21", ["15", "11", "6", "7", "22", "23", "17"], function(exports_1) {
+    var HTTP, Errors, NS, RDF, BasicAuthenticator_1, UsernameAndPasswordToken_1, Token;
     var Class;
     return {
         setters:[
@@ -2644,6 +2619,9 @@ $__System.register("22", ["15", "11", "6", "7", "23", "18"], function(exports_1)
             function (BasicAuthenticator_1_1) {
                 BasicAuthenticator_1 = BasicAuthenticator_1_1;
             },
+            function (UsernameAndPasswordToken_1_1) {
+                UsernameAndPasswordToken_1 = UsernameAndPasswordToken_1_1;
+            },
             function (Token_1) {
                 Token = Token_1;
             }],
@@ -2656,7 +2634,7 @@ $__System.register("22", ["15", "11", "6", "7", "23", "18"], function(exports_1)
                     this.basicAuthenticator = new BasicAuthenticator_1.default();
                 }
                 Class.prototype.isAuthenticated = function () {
-                    return this.token && this.token.expirationDate > new Date();
+                    return this.token && this.token.expirationTime > new Date();
                 };
                 Class.prototype.authenticate = function (authenticationToken) {
                     var _this = this;
@@ -2673,6 +2651,9 @@ $__System.register("22", ["15", "11", "6", "7", "23", "18"], function(exports_1)
                 };
                 Class.prototype.clearAuthentication = function () {
                     this.token = null;
+                };
+                Class.prototype.supports = function (authenticationToken) {
+                    return authenticationToken instanceof UsernameAndPasswordToken_1.default;
                 };
                 Class.prototype.createToken = function () {
                     var uri = this.parent.resolve(Class.TOKEN_CONTAINER);
@@ -2707,7 +2688,35 @@ $__System.register("22", ["15", "11", "6", "7", "23", "18"], function(exports_1)
                     header.values.push(new HTTP.Header.Value(authorization));
                     return headers;
                 };
-                Class.TOKEN_CONTAINER = "auth-tokens/";
+                Class.TOKEN_CONTAINER = "platform/auth-tokens/";
+                return Class;
+            })();
+            exports_1("Class", Class);
+            exports_1("default",Class);
+        }
+    }
+});
+
+$__System.register("23", [], function(exports_1) {
+    var Class;
+    return {
+        setters:[],
+        execute: function() {
+            Class = (function () {
+                function Class(username, password) {
+                    this._username = username;
+                    this._password = password;
+                }
+                Object.defineProperty(Class.prototype, "username", {
+                    get: function () { return this._username; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(Class.prototype, "password", {
+                    get: function () { return this._password; },
+                    enumerable: true,
+                    configurable: true
+                });
                 return Class;
             })();
             exports_1("Class", Class);
@@ -2981,9 +2990,10 @@ $__System.register("2b", ["2c", "2a", "2d", "29", "9"], function(exports_1) {
                     if (bodyOrOptions === void 0) { bodyOrOptions = Service.defaultOptions; }
                     if (options === void 0) { options = Service.defaultOptions; }
                     if (parser === void 0) { parser = null; }
-                    var body = Utils.isString(bodyOrOptions) ? bodyOrOptions : null;
-                    options = Utils.isString(bodyOrOptions) ? options : bodyOrOptions;
-                    options = options ? options : Service.defaultOptions;
+                    var body = bodyOrOptions && Utils.isString(bodyOrOptions) ? bodyOrOptions : null;
+                    options = !bodyOrOptions || Utils.isString(bodyOrOptions) ? options : bodyOrOptions;
+                    options = options ? options : {};
+                    options = Utils.extend(options, Service.defaultOptions);
                     if (Utils.isNumber(method))
                         method = Method_1.default[method];
                     var requestPromise = new Promise(function (resolve, reject) {
@@ -9552,8 +9562,8 @@ $__System.register("15", ["2c", "2a", "30", "2f", "2d", "2e", "2b", "29", "28"],
     }
 });
 
-$__System.register("23", ["15", "11"], function(exports_1) {
-    var HTTP, Errors;
+$__System.register("22", ["15", "11", "23"], function(exports_1) {
+    var HTTP, Errors, UsernameAndPasswordToken_1;
     var Class;
     return {
         setters:[
@@ -9562,6 +9572,9 @@ $__System.register("23", ["15", "11"], function(exports_1) {
             },
             function (Errors_1) {
                 Errors = Errors_1;
+            },
+            function (UsernameAndPasswordToken_1_1) {
+                UsernameAndPasswordToken_1 = UsernameAndPasswordToken_1_1;
             }],
         execute: function() {
             Class = (function () {
@@ -9580,10 +9593,7 @@ $__System.register("23", ["15", "11"], function(exports_1) {
                         if (!authenticationToken.password)
                             throw new Errors.IllegalArgumentError("The password cannot be empty.");
                         // TODO: Check that the username and password are correct
-                        _this.credentials = {
-                            username: authenticationToken.username,
-                            password: authenticationToken.password
-                        };
+                        _this.credentials = authenticationToken;
                         resolve();
                     });
                 };
@@ -9595,6 +9605,9 @@ $__System.register("23", ["15", "11"], function(exports_1) {
                 Class.prototype.clearAuthentication = function () {
                     this.credentials = null;
                 };
+                Class.prototype.supports = function (authenticationToken) {
+                    return authenticationToken instanceof UsernameAndPasswordToken_1.default;
+                };
                 Class.prototype.addBasicAuthenticationHeader = function (headers) {
                     var header;
                     if (headers.has("Authorization")) {
@@ -9604,7 +9617,7 @@ $__System.register("23", ["15", "11"], function(exports_1) {
                         header = new HTTP.Header.Class();
                         headers.set("Authorization", header);
                     }
-                    var authorization = "BASIC " + btoa(this.credentials.username + ":" + this.credentials.password);
+                    var authorization = "Basic " + btoa(this.credentials.username + ":" + this.credentials.password);
                     header.values.push(new HTTP.Header.Value(authorization));
                     return headers;
                 };
@@ -9616,8 +9629,8 @@ $__System.register("23", ["15", "11"], function(exports_1) {
     }
 });
 
-$__System.register("3", ["23", "22", "17", "11"], function(exports_1) {
-    var BasicAuthenticator_1, TokenAuthenticator_1, UsernameAndPasswordToken_1, Errors;
+$__System.register("3", ["22", "21", "23", "11", "9"], function(exports_1) {
+    var BasicAuthenticator_1, TokenAuthenticator_1, UsernameAndPasswordToken_1, Errors, Utils;
     var Method, Class;
     return {
         setters:[
@@ -9632,6 +9645,9 @@ $__System.register("3", ["23", "22", "17", "11"], function(exports_1) {
             },
             function (Errors_1) {
                 Errors = Errors_1;
+            },
+            function (Utils_1) {
+                Utils = Utils_1;
             }],
         execute: function() {
             (function (Method) {
@@ -9643,38 +9659,61 @@ $__System.register("3", ["23", "22", "17", "11"], function(exports_1) {
                 function Class(parent) {
                     this.method = null;
                     this.parent = parent;
-                    this.authenticators = new Map();
-                    this.authenticators.set(Method.BASIC, new BasicAuthenticator_1.default());
-                    this.authenticators.set(Method.TOKEN, new TokenAuthenticator_1.default(this.parent));
+                    this.authenticators = [];
+                    this.authenticators.push(new TokenAuthenticator_1.default(this.parent));
+                    this.authenticators.push(new BasicAuthenticator_1.default());
                 }
                 Class.prototype.isAuthenticated = function (askParent) {
                     if (askParent === void 0) { askParent = true; }
-                    var authenticated = false;
-                    // TODO
-                    return (authenticated ||
+                    return ((this.authenticator && this.authenticator.isAuthenticated()) ||
                         (askParent && !!this.parent.parent && this.parent.parent.Auth.isAuthenticated()));
                 };
-                Class.prototype.login = function (username, password) {
-                    var authenticationToken = new UsernameAndPasswordToken_1.default(username, password);
-                    var method = this.parent.getSetting("auth.method");
-                    var authenticator = this.authenticators.get(method);
-                    if (authenticator === null)
-                        return new Promise(function () {
-                            throw new Errors.IllegalStateError("The authentication method specified isn\'t supported.");
-                        });
-                    return authenticator.authenticate(authenticationToken);
-                };
-                Class.prototype.addAuthentication = function (requestOptions) {
-                    if (!this.isAuthenticated(false)) {
-                        if (this.parent.parent) {
-                            this.parent.parent.Auth.addAuthentication(requestOptions);
-                            return;
+                Class.prototype.authenticate = function (usernameOrToken, password) {
+                    var _this = this;
+                    if (password === void 0) { password = null; }
+                    return new Promise(function (resolve, reject) {
+                        if (!usernameOrToken)
+                            throw new Errors.IllegalArgumentError("Either a username or an authenticationToken are required.");
+                        var authenticationToken;
+                        if (Utils.isString(usernameOrToken)) {
+                            var username = usernameOrToken;
+                            if (!password)
+                                throw new Errors.IllegalArgumentError("A password is required when providing a username.");
+                            authenticationToken = new UsernameAndPasswordToken_1.default(username, password);
                         }
                         else {
-                            console.warn("There is no authentication to add to the request.");
+                            authenticationToken = usernameOrToken;
                         }
+                        if (_this.authenticator)
+                            _this.clearAuthentication();
+                        _this.authenticator = _this.getAuthenticator(authenticationToken);
+                        resolve(_this.authenticator.authenticate(authenticationToken));
+                    });
+                };
+                Class.prototype.addAuthentication = function (requestOptions) {
+                    if (this.isAuthenticated(false)) {
+                        this.authenticator.addAuthentication(requestOptions);
                     }
-                    // TODO
+                    else if ("parent" in this.parent) {
+                        this.parent.parent.Auth.addAuthentication(requestOptions);
+                    }
+                    else {
+                        console.warn("There is no authentication to add to the request.");
+                    }
+                };
+                Class.prototype.clearAuthentication = function () {
+                    if (!this.authenticator)
+                        return;
+                    this.authenticator.clearAuthentication();
+                    this.authenticator = null;
+                };
+                Class.prototype.getAuthenticator = function (authenticationToken) {
+                    for (var _i = 0, _a = this.authenticators; _i < _a.length; _i++) {
+                        var authenticator = _a[_i];
+                        if (authenticator.supports(authenticationToken))
+                            return authenticator;
+                    }
+                    throw new Errors.IllegalStateError("The configured authentication method isn\'t supported.");
                 };
                 return Class;
             })();
@@ -10027,8 +10066,8 @@ $__System.register("9", [], function(exports_1) {
             objects[_i - 1] = arguments[_i];
         }
         if (arguments.length <= 1)
-            return;
-        for (var i = 1, length = arguments.length; i < length; i++) {
+            return target;
+        for (var i = 0, length = arguments.length; i < length; i++) {
             var toMerge = objects[i];
             for (var name in toMerge) {
                 if (toMerge.hasOwnProperty(name)) {
@@ -10164,7 +10203,7 @@ $__System.register("9", [], function(exports_1) {
     }
 });
 
-$__System.register("20", [], function(exports_1) {
+$__System.register("1f", [], function(exports_1) {
     var namespace, DataType;
     return {
         setters:[],
@@ -10502,7 +10541,7 @@ $__System.register("4e", [], function(exports_1) {
     }
 });
 
-$__System.register("6", ["4e", "4d", "4b", "16", "4c", "20"], function(exports_1) {
+$__System.register("6", ["4e", "4d", "4b", "16", "4c", "1f"], function(exports_1) {
     var C, CP, CS, LDP, RDF, XSD;
     return {
         setters:[
