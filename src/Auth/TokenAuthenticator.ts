@@ -1,7 +1,7 @@
 import * as HTTP from "./../HTTP";
 import * as Errors from "./../Errors";
 import * as NS from "./../NS";
-import Parent from "./../Parent";
+import Context from "./../Context";
 import * as RDF from "./../RDF";
 import * as Utils from "./../Utils";
 
@@ -12,16 +12,16 @@ import UsernameAndPasswordToken from "./UsernameAndPasswordToken";
 import * as Token from "./Token";
 
 export class Class implements Authenticator<UsernameAndPasswordToken> {
-	private static TOKEN_CONTAINER:string = "platform/auth-tokens/";
+	private static TOKEN_CONTAINER:string = "auth-tokens/";
 
-	private parent:Parent;
+	private context:Context;
 	private basicAuthenticator:BasicAuthenticator;
 	private token:Token.Class;
 
-	constructor( parent:Parent ) {
-		if( parent === null ) throw new Errors.IllegalArgumentError( "parent cannot be null" );
+	constructor( context:Context ) {
+		if( context === null ) throw new Errors.IllegalArgumentError( "context cannot be null" );
 
-		this.parent = parent;
+		this.context = context;
 		this.basicAuthenticator = new BasicAuthenticator();
 	}
 
@@ -58,7 +58,7 @@ export class Class implements Authenticator<UsernameAndPasswordToken> {
 	}
 
 	private createToken():Promise<HTTP.ProcessedResponse<Token.Class>> {
-		let uri:string = this.parent.resolve( Class.TOKEN_CONTAINER );
+		let uri:string = this.context.resolve( Class.TOKEN_CONTAINER );
 		let requestOptions:HTTP.Request.Options = {};
 
 		this.basicAuthenticator.addAuthentication( requestOptions );

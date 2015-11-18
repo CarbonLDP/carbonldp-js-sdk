@@ -7,7 +7,7 @@ import UsernameAndPasswordToken from "./Auth/UsernameAndPasswordToken";
 
 import * as HTTP from "./HTTP";
 import * as Errors from "./Errors";
-import Parent from "./Parent";
+import Context from "./Context";
 import * as Utils from "./Utils";
 
 export enum Method {
@@ -16,24 +16,24 @@ export enum Method {
 }
 
 export class Class {
-	private parent:Parent;
+	private context:Context;
 
 	private method:Method = null;
 	private authenticators:Array<Authenticator<AuthenticationToken>>;
 	private authenticator:Authenticator<AuthenticationToken>;
 
-	constructor( parent:Parent ) {
-		this.parent = parent;
+	constructor( context:Context ) {
+		this.context = context;
 
 		this.authenticators = [];
-		this.authenticators.push( new TokenAuthenticator( this.parent ) );
+		this.authenticators.push( new TokenAuthenticator( this.context ) );
 		this.authenticators.push( new BasicAuthenticator() );
 	}
 
 	isAuthenticated( askParent:boolean = true ):boolean {
 		return (
 			( this.authenticator && this.authenticator.isAuthenticated() ) ||
-			( askParent && ! ! this.parent.parent && this.parent.parent.Auth.isAuthenticated() )
+			( askParent && ! ! this.context.parentContext && this.context.parentContext.Auth.isAuthenticated() )
 		);
 	}
 
@@ -63,8 +63,8 @@ export class Class {
 	addAuthentication( requestOptions:HTTP.Request.Options ):void {
 		if( this.isAuthenticated( false ) ) {
 			this.authenticator.addAuthentication( requestOptions );
-		} else if( "parent" in this.parent ) {
-			this.parent.parent.Auth.addAuthentication( requestOptions );
+		} else if( "parent" in this.context ) {
+			this.context.parentContext.Auth.addAuthentication( requestOptions );
 		} else {
 			console.warn( "There is no authentication to add to the request." );
 		}

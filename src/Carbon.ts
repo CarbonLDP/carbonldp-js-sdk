@@ -6,12 +6,12 @@ import * as Auth from "./Auth";
 import * as Document from "./Document";
 import Documents from "./Documents";
 import * as HTTP from "./HTTP";
-import Parent from "./Parent";
+import Context from "./Context";
 import * as RDF from "./RDF";
 import defaultSettings from "./settings";
 import * as Utils from "./Utils";
 
-class Carbon extends Parent {
+class Carbon extends Context {
 	/* tslint:disable: variable-name typedef */
 	static Apps = Apps;
 	static Auth = Auth;

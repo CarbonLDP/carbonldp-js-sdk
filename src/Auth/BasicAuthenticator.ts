@@ -23,8 +23,6 @@ export class Class implements Authenticator<UsernameAndPasswordToken> {
 			if( ! authenticationToken.username ) throw new Errors.IllegalArgumentError( "The username cannot be empty." );
 			if( ! authenticationToken.password ) throw new Errors.IllegalArgumentError( "The password cannot be empty." );
 
-			// TODO: Check that the username and password are correct
-
 			this.credentials = authenticationToken;
 
 			resolve();
@@ -32,6 +30,8 @@ export class Class implements Authenticator<UsernameAndPasswordToken> {
 	}
 
 	addAuthentication( requestOptions:HTTP.Request.Options ):HTTP.Request.Options {
+		if( ! this.isAuthenticated() ) throw new Errors.IllegalStateError( "The authenticator isn't authenticated." );
+
 		let headers:Map<string, HTTP.Header.Class> = requestOptions.headers ? requestOptions.headers : requestOptions.headers = new Map<string, HTTP.Header.Class>();
 
 		this.addBasicAuthenticationHeader( headers );

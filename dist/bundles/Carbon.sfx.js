@@ -9581,7 +9581,7 @@ $__System.register("22", ["15", "11", "23"], function(exports_1) {
                 function Class() {
                 }
                 Class.prototype.isAuthenticated = function () {
-                    return this.credentials !== null;
+                    return !!this.credentials;
                 };
                 Class.prototype.authenticate = function (authenticationToken) {
                     var _this = this;
@@ -9592,12 +9592,13 @@ $__System.register("22", ["15", "11", "23"], function(exports_1) {
                             throw new Errors.IllegalArgumentError("The username cannot be empty.");
                         if (!authenticationToken.password)
                             throw new Errors.IllegalArgumentError("The password cannot be empty.");
-                        // TODO: Check that the username and password are correct
                         _this.credentials = authenticationToken;
                         resolve();
                     });
                 };
                 Class.prototype.addAuthentication = function (requestOptions) {
+                    if (!this.isAuthenticated())
+                        throw new Errors.IllegalStateError("The authenticator isn't authenticated.");
                     var headers = requestOptions.headers ? requestOptions.headers : requestOptions.headers = new Map();
                     this.addBasicAuthenticationHeader(headers);
                     return requestOptions;
@@ -10690,12 +10691,12 @@ $__System.register("50", ["4f", "4a", "3", "12", "13", "15", "48", "7", "2", "9"
     }
 });
 
-$__System.registerDynamic("1", ["50"], true, function(req, exports, module) {
+$__System.registerDynamic("1", ["50"], true, function($__require, exports, module) {
   ;
   var global = this,
       __define = global.define;
   global.define = undefined;
-  var Carbon = req('50');
+  var Carbon = $__require('50');
   global.Carbon = Carbon.default;
   global.define = __define;
   return module.exports;

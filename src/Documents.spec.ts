@@ -1,7 +1,7 @@
 /// <reference path="../typings/jasmine/jasmine.d.ts" />
 /// <reference path="../typings/jasmine-ajax/mock-ajax.d.ts" />
 
-import Parent from "./Parent";
+import Context from "./Context";
 import * as Documents from "./Documents";
 
 import * as Utils from "./Utils";
@@ -35,7 +35,7 @@ describe( module( "Carbon.Documents" ), function():void {
 	it( hasMethod( INSTANCE, "from", [
 		{ name:"uri", type:"string" }
 	], { type:"Promise<Carbon.HTTP.ProcessedResponse<Carbon.Document>>"}), function( done:() => void ):void {
-		let parent:Parent = new Parent();
+		let context:Context = new Context();
 
 		let responseBody:string = JSON.stringify({
 			"@id": "http://example.com/resource/",
@@ -69,7 +69,7 @@ describe( module( "Carbon.Documents" ), function():void {
 			responseText: responseBody
 		} );
 
-		parent.Documents.get( "http://example.com/resource/" ).then( function( processedResponse:any ):void {
+		context.Documents.get( "http://example.com/resource/" ).then( function( processedResponse:any ):void {
 			expect( processedResponse ).toBeDefined();
 		}, failTest ).then( done, done );
 	});

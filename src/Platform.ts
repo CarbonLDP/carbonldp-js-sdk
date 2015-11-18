@@ -1,9 +1,9 @@
-import Parent from "./Parent";
+import Context from "./Context";
 
-class Platform extends Parent {
-	constructor( parent:Parent ) {
+class Platform extends Context {
+	constructor( context:Context ) {
 		super();
 
-		this.parent = parent;
+		this.context = context;
 	}
 }

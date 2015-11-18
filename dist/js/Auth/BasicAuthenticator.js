@@ -5,7 +5,7 @@ var Class = (function () {
     function Class() {
     }
     Class.prototype.isAuthenticated = function () {
-        return this.credentials !== null;
+        return !!this.credentials;
     };
     Class.prototype.authenticate = function (authenticationToken) {
         var _this = this;
@@ -16,12 +16,13 @@ var Class = (function () {
                 throw new Errors.IllegalArgumentError("The username cannot be empty.");
             if (!authenticationToken.password)
                 throw new Errors.IllegalArgumentError("The password cannot be empty.");
-            // TODO: Check that the username and password are correct
             _this.credentials = authenticationToken;
             resolve();
         });
     };
     Class.prototype.addAuthentication = function (requestOptions) {
+        if (!this.isAuthenticated())
+            throw new Errors.IllegalStateError("The authenticator isn't authenticated.");
         var headers = requestOptions.headers ? requestOptions.headers : requestOptions.headers = new Map();
         this.addBasicAuthenticationHeader(headers);
         return requestOptions;

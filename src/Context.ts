@@ -2,16 +2,17 @@
 
 import Auth from "./Auth";
 import Documents from "./Documents";
+import * as Errors from "./Errors";
 import * as RDF from "./RDF";
 import * as Utils from "./Utils";
 
-class Parent {
+class Context {
 	/* tslint:disable: variable-name */
 	Auth:Auth;
 	Documents:Documents;
 	/* tslint:enable: variable-name */
 
-	parent:Parent;
+	parentContext:Context;
 	protected settings:Map<string, any>;
 	protected definitions:Map<string, Map<string, RDF.PropertyDescription>>;
 
@@ -24,19 +25,19 @@ class Parent {
 	}
 
 	resolve( relativeURI:string ):string {
-		throw new Error( "Method needs to be implemented by child." );
+		throw new Errors.IllegalStateError( "Method needs to be implemented by child." );
 	}
 
 	hasSetting( name:string ):boolean {
 		return (
 			this.settings.has( name ) ||
-			( this.parent && this.parent.hasSetting( name ) )
+			( this.parentContext && this.parentContext.hasSetting( name ) )
 		);
 	}
 
 	getSetting( name:string ):any {
 		if( this.settings.has( name ) ) return this.settings.get( name );
-		if( this.parent && this.parent.hasSetting( name ) ) return this.parent.getSetting( name );
+		if( this.parentContext && this.parentContext.hasSetting( name ) ) return this.parentContext.getSetting( name );
 		return null;
 	}
 
@@ -50,7 +51,7 @@ class Parent {
 
 	hasDefinition( uri:string ):boolean {
 		if ( this.definitions.has( uri ) ) return true;
-		if ( this.parent && this.parent.hasDefinition( uri ) ) return true;
+		if ( this.parentContext && this.parentContext.hasDefinition( uri ) ) return true;
 		return false;
 	}
 
@@ -58,14 +59,14 @@ class Parent {
 		let descriptions:Map<string, RDF.PropertyDescription> = new Map<string, RDF.PropertyDescription>();
 		if ( this.definitions.has( uri ) ) {
 			Utils.M.extend<string, RDF.PropertyDescription>( descriptions, this.definitions.get( uri ) );
-			if ( this.parent && this.parent.hasDefinition( uri ) ) Utils.M.extend( descriptions, this.parent.getDefinition( uri ) );
+			if ( this.parentContext && this.parentContext.hasDefinition( uri ) ) Utils.M.extend( descriptions, this.parentContext.getDefinition( uri ) );
 		}
 		return descriptions;
 	}
 
 	getDefinitionURIs():string[] {
 		let uris:string[] = Utils.A.from<string>( this.definitions.keys() );
-		if ( this.parent ) uris = Utils.A.joinWithoutDuplicates<string>( uris, this.parent.getDefinitionURIs() );
+		if ( this.parentContext ) uris = Utils.A.joinWithoutDuplicates<string>( uris, this.parentContext.getDefinitionURIs() );
 		return uris;
 	}
 
@@ -77,7 +78,7 @@ class Parent {
 			extender = <any> descriptions;
 		} else if ( Utils.isObject( descriptions ) ) {
 			extender = <any> Utils.M.from( descriptions );
-		} else throw new Error( "IllegalArgument" );
+		} else throw new Errors.IllegalArgumentError( "descriptions must be a Map or an Object" );
 
 		if ( this.definitions.has( uri ) ) {
 			Utils.M.extend( this.definitions.get( uri ), extender );
@@ -93,7 +94,7 @@ class Parent {
 			extender = <any> descriptions;
 		} else if ( Utils.isObject( descriptions ) ) {
 			extender = <any> Utils.M.from( descriptions );
-		} else throw new Error( "IllegalArgument" );
+		} else throw new Errors.IllegalArgumentError( "descriptions must be a Map or an Object" );
 
 		this.definitions.set( uri, extender );
 	}
@@ -103,4 +104,4 @@ class Parent {
 	}
 }
 
-export default Parent;
+export default Context;

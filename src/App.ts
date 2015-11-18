@@ -2,7 +2,7 @@
 
 import * as NS from "./NS";
 import Documents from "./Documents";
-import Parent from "./Parent";
+import Context from "./Context";
 import * as RDF from "./RDF";
 import * as LDP from "./LDP";
 import * as Utils from "./Utils";
@@ -21,14 +21,14 @@ export const DEFINITION:Map<string, RDF.PropertyDescription> = <any> Utils.M.fro
 	}
 } );
 
-export class Class extends Parent {
+export class Class extends Context {
 	private resource:Resource;
 	private base:string;
 
-	constructor( parent:Parent, resource:Resource ) {
+	constructor( parentContext:Context, resource:Resource ) {
 		super();
 
-		this.parent = parent;
+		this.parentContext = parentContext;
 		this.resource = resource;
 
 		this.base = this.getBase( this.resource );
@@ -37,13 +37,13 @@ export class Class extends Parent {
 	resolve( uri:string ):string {
 		if ( RDF.URI.Util.isAbsolute( uri ) ) return uri;
 
-		let finalURI:string = this.parent.resolve( this.base );
+		let finalURI:string = this.parentContext.resolve( this.base );
 		return RDF.URI.Util.resolve( finalURI, uri );
 	}
 
 	private getBase( resource:Resource ):string {
 		let rootContainerURI:string = RDF.URI.Util.removeProtocol( resource.rootContainer );
-		let parentBase:string = RDF.URI.Util.removeProtocol( this.parent.resolve( "" ) );
+		let parentBase:string = RDF.URI.Util.removeProtocol( this.parentContext.resolve( "" ) );
 		if ( Utils.S.startsWith( rootContainerURI, parentBase ) ) rootContainerURI = rootContainerURI.substr( parentBase.length, rootContainerURI.length );
 		return rootContainerURI;
 	}

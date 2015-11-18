@@ -5,7 +5,7 @@ import * as jsonld from "jsonld";
 import Committer from "./Committer";
 import * as Errors from "./Errors";
 import * as HTTP from "./HTTP";
-import Parent from "./Parent";
+import Context from "./Context";
 import * as RDF from "./RDF";
 import * as Utils from "./Utils";
 
@@ -37,19 +37,19 @@ function expand( input:HTTP.ProcessedResponse<any>, options?:jsonld.ExpandOption
 }
 
 class Documents implements Committer<Document.Class> {
-	private parent:Parent;
+	private context:Context;
 
-	constructor( parent:Parent = null ) {
-		this.parent = parent;
+	constructor( context:Context = null ) {
+		this.context = context;
 	}
 
 	get( uri:string, requestOptions:HTTP.Request.Options = {} ):Promise<HTTP.ProcessedResponse<Document.Class>> {
 		if ( RDF.URI.Util.isRelative( uri ) ) {
-			if ( ! this.parent ) throw new Errors.IllegalArgumentError( "IllegalArgument: This module doesn't support relative URIs." );
-			uri = this.parent.resolve( uri );
+			if ( ! this.context ) throw new Errors.IllegalArgumentError( "IllegalArgument: This module doesn't support relative URIs." );
+			uri = this.context.resolve( uri );
 		}
 
-		if ( this.parent && this.parent.Auth.isAuthenticated() ) this.parent.Auth.addAuthentication( requestOptions );
+		if ( this.context && this.context.Auth.isAuthenticated() ) this.context.Auth.addAuthentication( requestOptions );
 
 		HTTP.Request.Service.setAcceptHeader( "application/ld+json", requestOptions );
 		HTTP.Request.Service.setPreferredInteractionModel( LDP.Class.RDFSource, requestOptions );
@@ -86,7 +86,7 @@ class Documents implements Committer<Document.Class> {
 		// TODO: Check if the document was already persisted
 		// TODO: Check if the document is dirty
 
-		if ( this.parent && this.parent.Auth.isAuthenticated() ) this.parent.Auth.addAuthentication( requestOptions );
+		if ( this.context && this.context.Auth.isAuthenticated() ) this.context.Auth.addAuthentication( requestOptions );
 
 		HTTP.Request.Service.setAcceptHeader( "application/ld+json", requestOptions );
 		HTTP.Request.Service.setPreferredInteractionModel( LDP.Class.RDFSource, requestOptions );
@@ -101,7 +101,7 @@ class Documents implements Committer<Document.Class> {
 	}
 
 	private injectDefinitions( resources:RDF.Resource.Class[] ):RDF.Resource.Class[] {
-		let definitionURIs:string[] = this.parent.getDefinitionURIs();
+		let definitionURIs:string[] = this.context.getDefinitionURIs();
 
 		for ( let i:number = 0, length:number = definitionURIs.length; i < length; i ++ ) {
 			let definitionURI:string = definitionURIs[ i ];
@@ -110,7 +110,7 @@ class Documents implements Committer<Document.Class> {
 				let resource:RDF.Resource.Class = resources[ j ];
 				if ( resource.types.indexOf( definitionURI ) !== - 1 ) toInject.push( resource );
 			}
-			if ( toInject.length > 0 ) RDF.Resource.Factory.injectDescriptions( toInject, this.parent.getDefinition( definitionURI ) );
+			if ( toInject.length > 0 ) RDF.Resource.Factory.injectDescriptions( toInject, this.context.getDefinition( definitionURI ) );
 		}
 
 		return resources;
