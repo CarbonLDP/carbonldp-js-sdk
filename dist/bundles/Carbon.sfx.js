@@ -10724,7 +10724,7 @@ $__System.register("51", ["50", "4b", "3", "5", "14", "15", "17", "4", "6", "2",
                 }
                 Object.defineProperty(Carbon, "version", {
                     /* tslint:disable: variable-name typedef */
-                    get: function () { return "0.11.0-ALPHA"; },
+                    get: function () { return "0.12.0-ALPHA"; },
                     enumerable: true,
                     configurable: true
                 });

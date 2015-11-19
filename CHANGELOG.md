@@ -1,3 +1,6 @@
+#0.12.0 (November 19, 2015)
+* Added Token Authentication support
+
 #0.11.0 (November 12, 2015)
 * Changed RequireJS for JSPM in karma runner
 

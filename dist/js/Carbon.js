@@ -28,7 +28,7 @@ var Carbon = (function (_super) {
     }
     Object.defineProperty(Carbon, "version", {
         /* tslint:disable: variable-name typedef */
-        get: function () { return "0.11.0-ALPHA"; },
+        get: function () { return "0.12.0-ALPHA"; },
         enumerable: true,
         configurable: true
     });

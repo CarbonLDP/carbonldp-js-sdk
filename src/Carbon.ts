@@ -23,7 +23,7 @@ class Carbon extends Context {
 	static Utils = Utils;
 	/* tslint:disable: variable-name typedef */
 
-	static get version():string { return "0.11.0-ALPHA"; }
+	static get version():string { return "0.12.0-ALPHA"; }
 
 	// TODO: Rename it to Apps. TypeScript is throwing an error regarding a static variable that will not be accessible if this instance variable has the same name
 	apps:Apps;
