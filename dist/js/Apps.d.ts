@@ -1,9 +1,9 @@
 /// <reference path="../typings/es6-promise/es6-promise.d.ts" />
 import * as App from "./App";
-import Parent from "./Parent";
+import Context from "./Context";
 export declare class Apps {
-    private parent;
-    constructor(parent: Parent);
+    private context;
+    constructor(context: Context);
     get(uri: string): Promise<App.Class>;
     private getAppsContainerURI();
 }

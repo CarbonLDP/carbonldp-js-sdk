@@ -2,10 +2,10 @@
 import Auth from "./Auth";
 import Documents from "./Documents";
 import * as RDF from "./RDF";
-declare class Parent {
+declare class Context {
     Auth: Auth;
     Documents: Documents;
-    parent: Parent;
+    parentContext: Context;
     protected settings: Map<string, any>;
     protected definitions: Map<string, Map<string, RDF.PropertyDescription>>;
     constructor();
@@ -22,4 +22,4 @@ declare class Parent {
     setDefinition(uri: string, descriptions: Map<string, RDF.PropertyDescription>): void;
     deleteDefinition(uri: string): void;
 }
-export default Parent;
+export default Context;

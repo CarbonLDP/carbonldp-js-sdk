@@ -1,14 +1,14 @@
 import * as HTTP from "./../HTTP";
-import Parent from "./../Parent";
+import Context from "./../Context";
 import Authenticator from "./Authenticator";
 import AuthenticationToken from "./AuthenticationToken";
 import UsernameAndPasswordToken from "./UsernameAndPasswordToken";
 export declare class Class implements Authenticator<UsernameAndPasswordToken> {
     private static TOKEN_CONTAINER;
-    private parent;
+    private context;
     private basicAuthenticator;
     private token;
-    constructor(parent: Parent);
+    constructor(context: Context);
     isAuthenticated(): boolean;
     authenticate(authenticationToken: UsernameAndPasswordToken): Promise<void>;
     addAuthentication(requestOptions: HTTP.Request.Options): HTTP.Request.Options;

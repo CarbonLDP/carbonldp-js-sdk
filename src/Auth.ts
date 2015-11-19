@@ -33,7 +33,7 @@ export class Class {
 	isAuthenticated( askParent:boolean = true ):boolean {
 		return (
 			( this.authenticator && this.authenticator.isAuthenticated() ) ||
-			( askParent && ! ! this.context.parentContext && this.context.parentContext.Auth.isAuthenticated() )
+			( askParent && ! ! this.context.parentContext && this.context.parentContext.Auth !== this && this.context.parentContext.Auth.isAuthenticated() )
 		);
 	}
 
@@ -63,7 +63,7 @@ export class Class {
 	addAuthentication( requestOptions:HTTP.Request.Options ):void {
 		if( this.isAuthenticated( false ) ) {
 			this.authenticator.addAuthentication( requestOptions );
-		} else if( "parent" in this.context ) {
+		} else if( "parentContext" in this.context ) {
 			this.context.parentContext.Auth.addAuthentication( requestOptions );
 		} else {
 			console.warn( "There is no authentication to add to the request." );
@@ -78,7 +78,10 @@ export class Class {
 	}
 
 	private getAuthenticator( authenticationToken:AuthenticationToken ):Authenticator<AuthenticationToken> {
+		// TODO: FOR_OF_TYPEDEF
+		/* tslint:disable: typedef */
 		for( let authenticator of this.authenticators ) {
+		/* tslint:enable: typedef */
 			if( authenticator.supports( authenticationToken ) ) return authenticator;
 		}
 

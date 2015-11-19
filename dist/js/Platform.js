@@ -3,14 +3,24 @@ var __extends = (this && this.__extends) || function (d, b) {
     function __() { this.constructor = d; }
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
-var Parent_1 = require("./Parent");
-var Platform = (function (_super) {
-    __extends(Platform, _super);
-    function Platform(parent) {
+var Context_1 = require("./Context");
+var RDF = require("./RDF");
+var Class = (function (_super) {
+    __extends(Class, _super);
+    function Class(parentContext) {
         _super.call(this);
-        this.parent = parent;
+        this.parentContext = parentContext;
     }
-    return Platform;
-})(Parent_1.default);
+    Class.prototype.resolve = function (uri) {
+        if (RDF.URI.Util.isAbsolute(uri))
+            return uri;
+        var finalURI = this.parentContext.resolve(this.parentContext.getSetting("platform.container"));
+        return RDF.URI.Util.resolve(finalURI, uri);
+    };
+    return Class;
+})(Context_1.default);
+exports.Class = Class;
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.default = Class;
 
 //# sourceMappingURL=Platform.js.map

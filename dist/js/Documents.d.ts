@@ -1,11 +1,11 @@
 /// <reference path="../typings/tsd.d.ts" />
 import Committer from "./Committer";
 import * as HTTP from "./HTTP";
-import Parent from "./Parent";
+import Context from "./Context";
 import * as Document from "./Document";
 declare class Documents implements Committer<Document.Class> {
-    private parent;
-    constructor(parent?: Parent);
+    private context;
+    constructor(context?: Context);
     get(uri: string, requestOptions?: HTTP.Request.Options): Promise<HTTP.ProcessedResponse<Document.Class>>;
     commit(document: Document.Class, requestOptions?: HTTP.Request.Options): Promise<HTTP.Response>;
     private getRDFDocument(rdfDocuments);

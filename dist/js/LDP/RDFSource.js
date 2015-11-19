@@ -12,6 +12,10 @@ var Factory = (function (_super) {
     function Factory() {
         _super.apply(this, arguments);
     }
+    Factory.hasClassProperties = function (resource) {
+        return (Utils.hasPropertyDefined(resource, "memberOfRelation") &&
+            Utils.hasPropertyDefined(resource, "hasMemberRelation"));
+    };
     Factory.prototype.is = function (object) {
         return (_super.prototype.is.call(this, object) &&
             object.types.indexOf(exports.RDF_CLASS) !== -1);
@@ -21,7 +25,7 @@ var Factory = (function (_super) {
         var resources = Utils.isArray(superResult) ? superResult : [superResult];
         for (var i = 0, length_1 = resources.length; i < length_1; i++) {
             var resource = resources[i];
-            if (!this.hasClassProperties(resource))
+            if (!Factory.hasClassProperties(resource))
                 this.injectBehaviour(resource);
         }
         if (Utils.isArray(resourceOrResources))
@@ -30,10 +34,6 @@ var Factory = (function (_super) {
     };
     Factory.prototype.hasRDFClass = function (resource) {
         return (resource.types.indexOf(exports.RDF_CLASS) !== -1);
-    };
-    Factory.prototype.hasClassProperties = function (resource) {
-        return (Utils.hasPropertyDefined(resource, "memberOfRelation") &&
-            Utils.hasPropertyDefined(resource, "hasMemberRelation"));
     };
     Factory.prototype.injectBehaviour = function (resource) {
         return resource;

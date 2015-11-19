@@ -1,17 +1,17 @@
 /// <reference path="../typings/es6-promise/es6-promise.d.ts" />
 import AuthenticationToken from "./Auth/AuthenticationToken";
 import * as HTTP from "./HTTP";
-import Parent from "./Parent";
+import Context from "./Context";
 export declare enum Method {
     BASIC = 0,
     TOKEN = 1,
 }
 export declare class Class {
-    private parent;
+    private context;
     private method;
     private authenticators;
     private authenticator;
-    constructor(parent: Parent);
+    constructor(context: Context);
     isAuthenticated(askParent?: boolean): boolean;
     authenticate(username: string, password: string): Promise<void>;
     authenticate(authenticationToken: AuthenticationToken): Promise<void>;

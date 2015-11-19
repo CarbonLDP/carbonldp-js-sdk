@@ -93,14 +93,34 @@ function removeFragment( fragmentOrSlug:any ):void {
 }
 
 function toJSON():string {
+	let resources:{ toJSON:() => string }[] = [];
+	resources.push( this );
+	resources.push( this.getFragments() );
+
+	let toJSONFunctions:(() => string)[] = [];
+	// TODO: FOR_OF_TYPEDEF
+	/* tslint:disable: typedef */
+	for( let resource of resources ) {
+		/* tslint:enable: typedef */
+		let toJSON:() => string = null;
+		if( "toJSON" in resource ) {
+			toJSONFunctions.push( resource.toJSON );
+			delete resource.toJSON;
+		}
+		toJSONFunctions.push( toJSON );
+	}
+
 	let rdfDocument:RDF.Document.Class = {
-		"@graph": this.getFragments()
+		"@graph": <any> resources
 	};
-	if( this.uri ) rdfDocument["@id"] = this.id;
+	if( this.uri ) rdfDocument[ "@id" ] = this.id;
+	let json:string = JSON.stringify( rdfDocument );
 
-	rdfDocument["@graph"].push( this );
+	for( let i:number = 0, length:number = resources.length; i < length; i++ ) {
+		if( toJSONFunctions[i] !== null ) resources[ i ].toJSON = toJSONFunctions[i];
+	}
 
-	return JSON.stringify( rdfDocument );
+	return json;
 }
 
 export class Factory extends RDF.Resource.Factory {
@@ -207,7 +227,7 @@ export class Factory extends RDF.Resource.Factory {
 			"toJSON": {
 				writable: false,
 				enumerable: false,
-				configurable: false,
+				configurable: true,
 				value: toJSON
 			}
 		} );

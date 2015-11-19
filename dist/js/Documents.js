@@ -27,20 +27,20 @@ function expand(input, options) {
     });
 }
 var Documents = (function () {
-    function Documents(parent) {
-        if (parent === void 0) { parent = null; }
-        this.parent = parent;
+    function Documents(context) {
+        if (context === void 0) { context = null; }
+        this.context = context;
     }
     Documents.prototype.get = function (uri, requestOptions) {
         var _this = this;
         if (requestOptions === void 0) { requestOptions = {}; }
         if (RDF.URI.Util.isRelative(uri)) {
-            if (!this.parent)
+            if (!this.context)
                 throw new Errors.IllegalArgumentError("IllegalArgument: This module doesn't support relative URIs.");
-            uri = this.parent.resolve(uri);
+            uri = this.context.resolve(uri);
         }
-        if (this.parent && this.parent.Auth.isAuthenticated())
-            this.parent.Auth.addAuthentication(requestOptions);
+        if (this.context && this.context.Auth.isAuthenticated())
+            this.context.Auth.addAuthentication(requestOptions);
         HTTP.Request.Service.setAcceptHeader("application/ld+json", requestOptions);
         HTTP.Request.Service.setPreferredInteractionModel(LDP.Class.RDFSource, requestOptions);
         return HTTP.Request.Service.get(uri, requestOptions).then(function (response) {
@@ -66,8 +66,8 @@ var Documents = (function () {
         // TODO: Check if the document was already persisted
         // TODO: Check if the document is dirty
         if (requestOptions === void 0) { requestOptions = {}; }
-        if (this.parent && this.parent.Auth.isAuthenticated())
-            this.parent.Auth.addAuthentication(requestOptions);
+        if (this.context && this.context.Auth.isAuthenticated())
+            this.context.Auth.addAuthentication(requestOptions);
         HTTP.Request.Service.setAcceptHeader("application/ld+json", requestOptions);
         HTTP.Request.Service.setPreferredInteractionModel(LDP.Class.RDFSource, requestOptions);
         return HTTP.Request.Service.put(document.uri, document.toJSON(), requestOptions);
@@ -80,7 +80,7 @@ var Documents = (function () {
         return rdfDocuments[0];
     };
     Documents.prototype.injectDefinitions = function (resources) {
-        var definitionURIs = this.parent.getDefinitionURIs();
+        var definitionURIs = this.context.getDefinitionURIs();
         for (var i = 0, length_1 = definitionURIs.length; i < length_1; i++) {
             var definitionURI = definitionURIs[i];
             var toInject = [];
@@ -90,7 +90,7 @@ var Documents = (function () {
                     toInject.push(resource);
             }
             if (toInject.length > 0)
-                RDF.Resource.Factory.injectDescriptions(toInject, this.parent.getDefinition(definitionURI));
+                RDF.Resource.Factory.injectDescriptions(toInject, this.context.getDefinition(definitionURI));
         }
         return resources;
     };

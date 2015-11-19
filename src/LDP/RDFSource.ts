@@ -9,6 +9,13 @@ export interface Class extends RDF.Resource.Class {
 }
 
 export class Factory extends RDF.Resource.Factory {
+	static hasClassProperties( resource:RDF.Node.Class ):boolean {
+		return (
+				Utils.hasPropertyDefined( resource, "memberOfRelation" ) &&
+				Utils.hasPropertyDefined( resource, "hasMemberRelation" )
+		);
+	}
+
 	is( object:Object ):boolean {
 		return (
 			super.is( object ) &&
@@ -24,7 +31,7 @@ export class Factory extends RDF.Resource.Factory {
 
 		for ( let i:number = 0, length:number = resources.length; i < length; i ++ ) {
 			let resource:RDF.Resource.Class = resources[ i ];
-			if ( ! this.hasClassProperties( resource ) ) this.injectBehaviour( resource );
+			if ( ! Factory.hasClassProperties( resource ) ) this.injectBehaviour( resource );
 		}
 
 		if ( Utils.isArray( resourceOrResources ) ) return <Class[]> resources;
@@ -34,13 +41,6 @@ export class Factory extends RDF.Resource.Factory {
 	protected hasRDFClass( resource:RDF.Resource.Class ):boolean {
 		return (
 			resource.types.indexOf( RDF_CLASS ) !== - 1
-		);
-	}
-
-	protected hasClassProperties( resource:RDF.Node.Class ):boolean {
-		return (
-			Utils.hasPropertyDefined( resource, "memberOfRelation" ) &&
-			Utils.hasPropertyDefined( resource, "hasMemberRelation" )
 		);
 	}
 

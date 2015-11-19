@@ -9,17 +9,17 @@ var Utils = require("./Utils");
 })(exports.Method || (exports.Method = {}));
 var Method = exports.Method;
 var Class = (function () {
-    function Class(parent) {
+    function Class(context) {
         this.method = null;
-        this.parent = parent;
+        this.context = context;
         this.authenticators = [];
-        this.authenticators.push(new TokenAuthenticator_1.default(this.parent));
+        this.authenticators.push(new TokenAuthenticator_1.default(this.context));
         this.authenticators.push(new BasicAuthenticator_1.default());
     }
     Class.prototype.isAuthenticated = function (askParent) {
         if (askParent === void 0) { askParent = true; }
         return ((this.authenticator && this.authenticator.isAuthenticated()) ||
-            (askParent && !!this.parent.parent && this.parent.parent.Auth.isAuthenticated()));
+            (askParent && !!this.context.parentContext && this.context.parentContext.Auth !== this && this.context.parentContext.Auth.isAuthenticated()));
     };
     Class.prototype.authenticate = function (usernameOrToken, password) {
         var _this = this;
@@ -47,8 +47,8 @@ var Class = (function () {
         if (this.isAuthenticated(false)) {
             this.authenticator.addAuthentication(requestOptions);
         }
-        else if ("parent" in this.parent) {
-            this.parent.parent.Auth.addAuthentication(requestOptions);
+        else if ("parentContext" in this.context) {
+            this.context.parentContext.Auth.addAuthentication(requestOptions);
         }
         else {
             console.warn("There is no authentication to add to the request.");
@@ -61,8 +61,11 @@ var Class = (function () {
         this.authenticator = null;
     };
     Class.prototype.getAuthenticator = function (authenticationToken) {
+        // TODO: FOR_OF_TYPEDEF
+        /* tslint:disable: typedef */
         for (var _i = 0, _a = this.authenticators; _i < _a.length; _i++) {
             var authenticator = _a[_i];
+            /* tslint:enable: typedef */
             if (authenticator.supports(authenticationToken))
                 return authenticator;
         }

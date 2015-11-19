@@ -6,14 +6,14 @@ var BasicAuthenticator_1 = require("./BasicAuthenticator");
 var UsernameAndPasswordToken_1 = require("./UsernameAndPasswordToken");
 var Token = require("./Token");
 var Class = (function () {
-    function Class(parent) {
-        if (parent === null)
-            throw new Errors.IllegalArgumentError("parent cannot be null");
-        this.parent = parent;
+    function Class(context) {
+        if (context === null)
+            throw new Errors.IllegalArgumentError("context cannot be null");
+        this.context = context;
         this.basicAuthenticator = new BasicAuthenticator_1.default();
     }
     Class.prototype.isAuthenticated = function () {
-        return this.token && this.token.expirationTime > new Date();
+        return !!this.token && this.token.expirationTime > new Date();
     };
     Class.prototype.authenticate = function (authenticationToken) {
         var _this = this;
@@ -35,7 +35,7 @@ var Class = (function () {
         return authenticationToken instanceof UsernameAndPasswordToken_1.default;
     };
     Class.prototype.createToken = function () {
-        var uri = this.parent.resolve(Class.TOKEN_CONTAINER);
+        var uri = this.context.resolve(Class.TOKEN_CONTAINER);
         var requestOptions = {};
         this.basicAuthenticator.addAuthentication(requestOptions);
         HTTP.Request.Service.setAcceptHeader("application/ld+json", requestOptions);
@@ -67,7 +67,7 @@ var Class = (function () {
         header.values.push(new HTTP.Header.Value(authorization));
         return headers;
     };
-    Class.TOKEN_CONTAINER = "platform/auth-tokens/";
+    Class.TOKEN_CONTAINER = "auth-tokens/";
     return Class;
 })();
 exports.Class = Class;

@@ -63,13 +63,33 @@ function removeFragment(fragmentOrSlug) {
     // TODO: FT
 }
 function toJSON() {
+    var resources = [];
+    resources.push(this);
+    resources.push(this.getFragments());
+    var toJSONFunctions = [];
+    // TODO: FOR_OF_TYPEDEF
+    /* tslint:disable: typedef */
+    for (var _i = 0; _i < resources.length; _i++) {
+        var resource = resources[_i];
+        /* tslint:enable: typedef */
+        var toJSON_1 = null;
+        if ("toJSON" in resource) {
+            toJSONFunctions.push(resource.toJSON);
+            delete resource.toJSON;
+        }
+        toJSONFunctions.push(toJSON_1);
+    }
     var rdfDocument = {
-        "@graph": this.getFragments()
+        "@graph": resources
     };
     if (this.uri)
         rdfDocument["@id"] = this.id;
-    rdfDocument["@graph"].push(this);
-    return JSON.stringify(rdfDocument);
+    var json = JSON.stringify(rdfDocument);
+    for (var i = 0, length_1 = resources.length; i < length_1; i++) {
+        if (toJSONFunctions[i] !== null)
+            resources[i].toJSON = toJSONFunctions[i];
+    }
+    return json;
 }
 var Factory = (function (_super) {
     __extends(Factory, _super);
@@ -80,7 +100,7 @@ var Factory = (function (_super) {
         if (!Utils.isArray(rdfDocuments))
             return this.singleFrom(rdfDocuments);
         var documents = [];
-        for (var i = 0, length_1 = rdfDocuments.length; i < length_1; i++) {
+        for (var i = 0, length_2 = rdfDocuments.length; i < length_2; i++) {
             var rdfDocument = rdfDocuments[i];
             documents.push(this.singleFrom(rdfDocument));
         }
@@ -94,7 +114,7 @@ var Factory = (function (_super) {
             throw new Errors.IllegalArgumentError("The RDFDocument doesn\'t contain a document resource.");
         var document = this.injectBehavior(documentResources[0]);
         var fragmentResources = RDF.Document.Util.getBNodeResources(rdfDocument);
-        for (var i = 0, length_2 = fragmentResources.length; i < length_2; i++) {
+        for (var i = 0, length_3 = fragmentResources.length; i < length_3; i++) {
             var fragmentResource = fragmentResources[i];
             fragmentResource.document = document;
             var fragment = Fragment.factory.from(fragmentResource);
@@ -103,7 +123,7 @@ var Factory = (function (_super) {
             document._fragmentsIndex.set(fragment.uri, fragment);
         }
         var namedFragmentResources = RDF.Document.Util.getFragmentResources(rdfDocument);
-        for (var i = 0, length_3 = namedFragmentResources.length; i < length_3; i++) {
+        for (var i = 0, length_4 = namedFragmentResources.length; i < length_4; i++) {
             var namedFragmentResource = namedFragmentResources[i];
             namedFragmentResource.document = document;
             var namedFragment = NamedFragment.factory.from(namedFragmentResource);
@@ -167,7 +187,7 @@ var Factory = (function (_super) {
             "toJSON": {
                 writable: false,
                 enumerable: false,
-                configurable: false,
+                configurable: true,
                 value: toJSON
             }
         });

@@ -7,10 +7,11 @@ var __extends = (this && this.__extends) || function (d, b) {
 var APIDescription = require("./APIDescription");
 var Apps_1 = require("./Apps");
 var Auth = require("./Auth");
+var Context_1 = require("./Context");
 var Document = require("./Document");
 var Documents_1 = require("./Documents");
 var HTTP = require("./HTTP");
-var Parent_1 = require("./Parent");
+var Platform_1 = require("./Platform");
 var RDF = require("./RDF");
 var settings_1 = require("./settings");
 var Utils = require("./Utils");
@@ -22,6 +23,8 @@ var Carbon = (function (_super) {
         Utils.M.extend(this.settings, Utils.M.from(settings));
         this.registerDefaultDefinitions();
         this.apps = new Apps_1.default(this);
+        this.platform = new Platform_1.default(this);
+        this.Auth = this.platform.Auth;
     }
     Object.defineProperty(Carbon, "version", {
         /* tslint:disable: variable-name typedef */
@@ -53,7 +56,7 @@ var Carbon = (function (_super) {
     Carbon.RDF = RDF;
     Carbon.Utils = Utils;
     return Carbon;
-})(Parent_1.default);
+})(Context_1.default);
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = Carbon;
 

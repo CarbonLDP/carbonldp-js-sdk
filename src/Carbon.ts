@@ -3,10 +3,11 @@
 import * as APIDescription from "./APIDescription";
 import Apps from "./Apps";
 import * as Auth from "./Auth";
+import Context from "./Context";
 import * as Document from "./Document";
 import Documents from "./Documents";
 import * as HTTP from "./HTTP";
-import Context from "./Context";
+import Platform from "./Platform";
 import * as RDF from "./RDF";
 import defaultSettings from "./settings";
 import * as Utils from "./Utils";
@@ -24,8 +25,9 @@ class Carbon extends Context {
 
 	static get version():string { return "0.11.0-ALPHA"; }
 
-	// TODO:
+	// TODO: Rename it to Apps. TypeScript is throwing an error regarding a static variable that will not be accessible if this instance variable has the same name
 	apps:Apps;
+	platform:Platform;
 
 	constructor( settings:any ) {
 		super();
@@ -37,6 +39,9 @@ class Carbon extends Context {
 		this.registerDefaultDefinitions();
 
 		this.apps = new Apps( this );
+		this.platform = new Platform( this );
+
+		this.Auth = this.platform.Auth;
 	}
 
 	resolve( uri:string ):string {

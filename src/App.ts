@@ -50,6 +50,12 @@ export class Class extends Context {
 }
 
 export class Factory extends LDP.RDFSource.Factory {
+	static hasClassProperties( resource:RDF.Node.Class ):boolean {
+		return (
+			Utils.hasPropertyDefined( resource, "rootContainer" )
+		);
+	}
+
 	is( object:Object ):boolean {
 		return (
 			super.is( object ) &&
@@ -65,7 +71,7 @@ export class Factory extends LDP.RDFSource.Factory {
 
 		for ( let i:number = 0, length:number = resources.length; i < length; i ++ ) {
 			let resource:RDF.Resource.Class = resources[ i ];
-			if ( ! this.hasClassProperties( resource ) ) this.injectBehaviour( resource );
+			if ( ! Factory.hasClassProperties( resource ) ) this.injectBehaviour( resource );
 		}
 
 		if ( Utils.isArray( resourceOrResources ) ) return <Resource[]> resources;
@@ -75,13 +81,6 @@ export class Factory extends LDP.RDFSource.Factory {
 	protected hasRDFClass( resource:RDF.Resource.Class ):boolean {
 		return (
 			resource.types.indexOf( RDF_CLASS ) !== - 1
-		);
-	}
-
-	protected hasClassProperties( resource:RDF.Node.Class ):boolean {
-		return (
-			Utils.hasPropertyDefined( resource, "memberOfRelation" ) &&
-			Utils.hasPropertyDefined( resource, "hasMemberRelation" )
 		);
 	}
 
