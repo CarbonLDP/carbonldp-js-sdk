@@ -6,6 +6,6 @@ import * as JSONLDParser from "./HTTP/JSONLDParser";
 import Method from "./HTTP/Method";
 import ProcessedResponse from "./HTTP/ProcessedResponse";
 import * as Request from "./HTTP/Request";
-import Response from "./HTTP/Response";
+import * as Response from "./HTTP/Response";
 import StatusCode from "./HTTP/StatusCode";
 export { Errors, Header, JSONParser, JSONLDParser, Method, ProcessedResponse, Request, Response, StatusCode };

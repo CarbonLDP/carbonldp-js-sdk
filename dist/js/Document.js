@@ -96,6 +96,17 @@ var Factory = (function (_super) {
     function Factory() {
         _super.apply(this, arguments);
     }
+    Factory.hasClassProperties = function (documentResource) {
+        return (Utils.hasPropertyDefined(documentResource, "_fragmentsIndex") &&
+            Utils.hasFunction(documentResource, "hasFragment") &&
+            Utils.hasFunction(documentResource, "getFragment") &&
+            Utils.hasFunction(documentResource, "getNamedFragment") &&
+            Utils.hasFunction(documentResource, "getFragments") &&
+            Utils.hasFunction(documentResource, "createFragment") &&
+            Utils.hasFunction(documentResource, "createNamedFragment") &&
+            Utils.hasFunction(documentResource, "removeFragment") &&
+            Utils.hasFunction(documentResource, "toJSON"));
+    };
     Factory.prototype.from = function (rdfDocuments) {
         if (!Utils.isArray(rdfDocuments))
             return this.singleFrom(rdfDocuments);
@@ -133,7 +144,7 @@ var Factory = (function (_super) {
     };
     Factory.prototype.injectBehavior = function (resource) {
         var documentResource = _super.prototype.injectBehavior.call(this, resource);
-        if (this.hasClassProperties(documentResource))
+        if (Factory.hasClassProperties(documentResource))
             return documentResource;
         Object.defineProperties(documentResource, {
             "_fragmentsIndex": {
@@ -192,9 +203,6 @@ var Factory = (function (_super) {
             }
         });
         return documentResource;
-    };
-    Factory.prototype.hasClassProperties = function (documentResource) {
-        return (Utils.hasPropertyDefined(documentResource, "_fragmentsIndex"));
     };
     return Factory;
 })(RDF.Resource.Factory);

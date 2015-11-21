@@ -5,13 +5,13 @@ import Method from "./Method";
 import Parser from "./Parser";
 import ProcessedResponse from "./ProcessedResponse";
 import Response from "./Response";
-interface Options {
+export interface Options {
     headers?: Map<string, Header.Class>;
     sendCredentialsOnCORS?: boolean;
     timeout?: number;
     request?: XMLHttpRequest;
 }
-declare class Service {
+export declare class Service {
     private static defaultOptions;
     static send(method: (Method | string), url: string, options?: Options): Promise<Response>;
     static send(method: (Method | string), url: string, body: string, options?: Options): Promise<Response>;
@@ -25,7 +25,10 @@ declare class Service {
     static put(url: string, body: string, options?: Options): Promise<Response>;
     static patch(url: string, body: string, options?: Options): Promise<Response>;
     static delete(url: string, body: string, options?: Options): Promise<Response>;
+}
+export declare class Util {
     static setAcceptHeader(accept: string, requestOptions: Options): Options;
+    static setContentTypeHeader(contentType: string, requestOptions: Options): Options;
+    static setIfMatchHeader(etag: string, requestOptions: Options): Options;
     static setPreferredInteractionModel(interactionModelURI: string, requestOptions: Options): Options;
 }
-export { Options, Service };

@@ -18,7 +18,7 @@ function isNull( value:any ):boolean {
 }
 
 function isArray( object:any ):boolean {
-	return Object.prototype.toString.call( object ) === "[object Array]";
+	return object instanceof Array;
 }
 
 function isString( string:any ):boolean {

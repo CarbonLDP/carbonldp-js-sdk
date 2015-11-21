@@ -1,5 +1,3 @@
-var Persisted = require("./RDF/Persisted");
-exports.Persisted = Persisted;
 var Literal = require("./RDF/Literal");
 exports.Literal = Literal;
 var PropertyDescription_1 = require("./RDF/PropertyDescription");

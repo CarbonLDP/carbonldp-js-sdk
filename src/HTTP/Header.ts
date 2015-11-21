@@ -53,8 +53,8 @@ export class Value {
 
 	private static cleanString( toClean:string ):string {
 		toClean = toClean.trim();
-		toClean = (Utils.S.startsWith( toClean, "\"" ) || Utils.S.startsWith( toClean, "'" )) ? toClean.substr( 1, toClean.length ) : toClean;
-		toClean = (Utils.S.endsWith( toClean, "\"" ) || Utils.S.endsWith( toClean, "'" )) ? toClean.substr( 0, toClean.length - 1 ) : toClean;
+		// toClean = (Utils.S.startsWith( toClean, "\"" ) || Utils.S.startsWith( toClean, "'" )) ? toClean.substr( 1, toClean.length ) : toClean;
+		// toClean = (Utils.S.endsWith( toClean, "\"" ) || Utils.S.endsWith( toClean, "'" )) ? toClean.substr( 0, toClean.length - 1 ) : toClean;
 		return toClean;
 	}
 
@@ -105,7 +105,8 @@ export class Util {
 			if ( ! headerString.trim() ) continue;
 
 			let parts:string[] = headerString.split( ":" );
-			if ( parts.length !== 2 ) throw new Error( "ParseError: The header couldn't be parsed." );
+			if ( parts.length < 2 ) throw new Error( "ParseError: The header couldn't be parsed." );
+			if ( parts.length > 2 ) parts[ 1 ] = parts.slice( 1 ).join( ":" );
 
 			let name:string = parts[ 0 ].trim();
 			let header:Class = new Class( parts[ 1 ].trim() );

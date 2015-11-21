@@ -1,16 +1,16 @@
-/// <reference path="../../typings/es6/es6.d.ts" />
-import * as Value from "./Value";
-import * as Utils from "../Utils";
+/// <reference path="./../typings/es6/es6.d.ts" />
+import * as RDF from "./RDF";
+import * as Utils from "./Utils";
 
 class Modifications {
-	add:Map<string, Value.Class[]>;
-	set:Map<string, Value.Class[]>;
-	delete:Map<string, Value.Class[]>;
+	add:Map<string, RDF.Value.Class[]>;
+	set:Map<string, RDF.Value.Class[]>;
+	delete:Map<string, RDF.Value.Class[]>;
 
 	constructor() {
-		this.add = new Map<string, Value.Class[]>();
-		this.set = new Map<string, Value.Class[]>();
-		this.delete = new Map<string, Value.Class[]>();
+		this.add = new Map<string, RDF.Value.Class[]>();
+		this.set = new Map<string, RDF.Value.Class[]>();
+		this.delete = new Map<string, RDF.Value.Class[]>();
 	}
 }
 

@@ -15,11 +15,16 @@ export class Factory extends RDF.Resource.Factory {
 				Utils.hasPropertyDefined( resource, "hasMemberRelation" )
 		);
 	}
+	static hasRDFClass( resource:RDF.Resource.Class ):boolean {
+		return (
+				resource.types.indexOf( RDF_CLASS ) !== - 1
+		);
+	}
 
 	is( object:Object ):boolean {
 		return (
 			super.is( object ) &&
-			(<RDF.Resource.Class> object).types.indexOf( RDF_CLASS ) !== -1
+			Factory.hasRDFClass( <RDF.Resource.Class> object )
 		);
 	}
 
@@ -36,12 +41,6 @@ export class Factory extends RDF.Resource.Factory {
 
 		if ( Utils.isArray( resourceOrResources ) ) return <Class[]> resources;
 		return <Class> resources[ 0 ];
-	}
-
-	protected hasRDFClass( resource:RDF.Resource.Class ):boolean {
-		return (
-			resource.types.indexOf( RDF_CLASS ) !== - 1
-		);
 	}
 
 	protected injectBehaviour( resource:RDF.Resource.Class ):Class {

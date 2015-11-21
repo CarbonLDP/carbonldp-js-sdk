@@ -10,7 +10,8 @@ import * as RDF from "./RDF";
 import * as Utils from "./Utils";
 
 import * as Document from "./Document";
-import * as RDFSource from "./LDP/RDFSource";
+import * as PersistedDocument from "./PersistedDocument";
+
 import * as LDP from "./NS/LDP";
 
 function parse( input:string ):any {
@@ -36,14 +37,14 @@ function expand( input:HTTP.ProcessedResponse<any>, options?:jsonld.ExpandOption
 	} );
 }
 
-class Documents implements Committer<Document.Class> {
+class Documents {
 	private context:Context;
 
-	constructor( context:Context = null ) {
+	constructor( context:Context ) {
 		this.context = context;
 	}
 
-	get( uri:string, requestOptions:HTTP.Request.Options = {} ):Promise<HTTP.ProcessedResponse<Document.Class>> {
+	get( uri:string, requestOptions:HTTP.Request.Options = {} ):Promise<HTTP.ProcessedResponse<PersistedDocument.Class>> {
 		if ( RDF.URI.Util.isRelative( uri ) ) {
 			if ( ! this.context ) throw new Errors.IllegalArgumentError( "IllegalArgument: This module doesn't support relative URIs." );
 			uri = this.context.resolve( uri );
@@ -51,11 +52,11 @@ class Documents implements Committer<Document.Class> {
 
 		if ( this.context && this.context.Auth.isAuthenticated() ) this.context.Auth.addAuthentication( requestOptions );
 
-		HTTP.Request.Service.setAcceptHeader( "application/ld+json", requestOptions );
-		HTTP.Request.Service.setPreferredInteractionModel( LDP.Class.RDFSource, requestOptions );
+		HTTP.Request.Util.setAcceptHeader( "application/ld+json", requestOptions );
+		HTTP.Request.Util.setPreferredInteractionModel( LDP.Class.RDFSource, requestOptions );
 
 		return HTTP.Request.Service.get( uri, requestOptions ).then(
-			( response:HTTP.Response ) => {
+			( response:HTTP.Response.Class ) => {
 				let parsedObject:Object = parse( response.data );
 
 				return expand( {
@@ -67,35 +68,55 @@ class Documents implements Committer<Document.Class> {
 			( processedResponse:HTTP.ProcessedResponse<Object> ) => {
 				let expandedResult:any = processedResponse.result;
 				let rdfDocuments:RDF.Document.Class[] = RDF.Document.Util.getDocuments( expandedResult );
-				let rdfDocument:RDF.Document.Class = this.getRDFDocument( rdfDocuments );
+				let rdfDocument:RDF.Document.Class = this.getRDFDocument( rdfDocuments, processedResponse.response );
 
 				let document:Document.Class = Document.factory.from( rdfDocument );
 
 				this.injectDefinitions( (<RDF.Resource.Class[]>document.getFragments()).concat( document ) );
-				// TODO: Inject persisted states
 
 				return {
 					result: document,
 					response: processedResponse.response
 				};
 			}
+		).then(
+			( processedResponse:HTTP.ProcessedResponse<Document.Class> ) => {
+				let document:Document.Class = processedResponse.result;
+
+				let persistedDocument:PersistedDocument.Class = PersistedDocument.Factory.from( document, this.context );
+
+				let etag:string = HTTP.Response.Util.getETag( processedResponse.response );
+				if( etag === null ) throw new HTTP.Errors.BadResponseError( "The response doesn't contain an ETag", processedResponse.response );
+
+				persistedDocument._etag = etag;
+
+				// TODO: Inject persisted container behavior
+
+				return {
+					result: persistedDocument,
+					response: processedResponse.response
+				};
+			}
 		);
 	}
 
-	commit( document:Document.Class, requestOptions:HTTP.Request.Options = {} ):Promise<HTTP.Response> {
-		// TODO: Check if the document was already persisted
-		// TODO: Check if the document is dirty
+	save( persistedDocument:PersistedDocument.Class, requestOptions:HTTP.Request.Options = {} ):Promise<HTTP.Response.Class> {
+		if( ! persistedDocument.isDirty() ) return new Promise<HTTP.Response.Class>( ( resolve:( result:HTTP.Response.Class ) => void ) => {
+			resolve( null );
+		});
 
 		if ( this.context && this.context.Auth.isAuthenticated() ) this.context.Auth.addAuthentication( requestOptions );
 
-		HTTP.Request.Service.setAcceptHeader( "application/ld+json", requestOptions );
-		HTTP.Request.Service.setPreferredInteractionModel( LDP.Class.RDFSource, requestOptions );
+		HTTP.Request.Util.setAcceptHeader( "application/ld+json", requestOptions );
+		HTTP.Request.Util.setContentTypeHeader( "application/ld+json", requestOptions );
+		HTTP.Request.Util.setPreferredInteractionModel( LDP.Class.RDFSource, requestOptions );
+		HTTP.Request.Util.setIfMatchHeader( persistedDocument._etag, requestOptions );
 
-		return HTTP.Request.Service.put( document.uri, document.toJSON(), requestOptions );
+		return HTTP.Request.Service.put( persistedDocument.uri, persistedDocument.toJSON(), requestOptions );
 	}
 
-	private getRDFDocument( rdfDocuments:RDF.Document.Class[] ):RDF.Document.Class {
-		if ( rdfDocuments.length === 0 ) throw new Error( "BadResponse: No document was returned." );
+	private getRDFDocument( rdfDocuments:RDF.Document.Class[], response:HTTP.Response.Class ):RDF.Document.Class {
+		if ( rdfDocuments.length === 0 ) throw new HTTP.Errors.BadResponseError( "No document was returned.", response );
 		if ( rdfDocuments.length > 1 ) throw new Error( "Unsupported: Multiple graphs are currently not supported." );
 		return rdfDocuments[ 0 ];
 	}

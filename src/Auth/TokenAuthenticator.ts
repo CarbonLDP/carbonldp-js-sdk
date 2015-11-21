@@ -63,8 +63,8 @@ export class Class implements Authenticator<UsernameAndPasswordToken> {
 
 		this.basicAuthenticator.addAuthentication( requestOptions );
 
-		HTTP.Request.Service.setAcceptHeader( "application/ld+json", requestOptions );
-		HTTP.Request.Service.setPreferredInteractionModel( NS.LDP.Class.RDFSource, requestOptions );
+		HTTP.Request.Util.setAcceptHeader( "application/ld+json", requestOptions );
+		HTTP.Request.Util.setPreferredInteractionModel( NS.LDP.Class.RDFSource, requestOptions );
 
 		return HTTP.Request.Service.post( uri, null, requestOptions, new HTTP.JSONLDParser.Class() ).then( ( processedResponse:HTTP.ProcessedResponse<Object> ) => {
 			let nodes:RDF.Node.Class[] = RDF.Document.Util.getResources( processedResponse.result );

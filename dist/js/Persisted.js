@@ -1,4 +1,4 @@
-var Utils = require("../Utils");
+var Utils = require("./Utils");
 var Modifications = (function () {
     function Modifications() {
         this.add = new Map();

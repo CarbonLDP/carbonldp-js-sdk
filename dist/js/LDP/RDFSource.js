@@ -16,9 +16,12 @@ var Factory = (function (_super) {
         return (Utils.hasPropertyDefined(resource, "memberOfRelation") &&
             Utils.hasPropertyDefined(resource, "hasMemberRelation"));
     };
+    Factory.hasRDFClass = function (resource) {
+        return (resource.types.indexOf(exports.RDF_CLASS) !== -1);
+    };
     Factory.prototype.is = function (object) {
         return (_super.prototype.is.call(this, object) &&
-            object.types.indexOf(exports.RDF_CLASS) !== -1);
+            Factory.hasRDFClass(object));
     };
     Factory.prototype.from = function (resourceOrResources) {
         var superResult = _super.prototype.from.call(this, resourceOrResources);
@@ -31,9 +34,6 @@ var Factory = (function (_super) {
         if (Utils.isArray(resourceOrResources))
             return resources;
         return resources[0];
-    };
-    Factory.prototype.hasRDFClass = function (resource) {
-        return (resource.types.indexOf(exports.RDF_CLASS) !== -1);
     };
     Factory.prototype.injectBehaviour = function (resource) {
         return resource;

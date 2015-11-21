@@ -1,9 +1,9 @@
-/// <reference path="../../typings/es6/es6.d.ts" />
-import * as Value from "./Value";
+/// <reference path="../typings/es6/es6.d.ts" />
+import * as RDF from "./RDF";
 declare class Modifications {
-    add: Map<string, Value.Class[]>;
-    set: Map<string, Value.Class[]>;
-    delete: Map<string, Value.Class[]>;
+    add: Map<string, RDF.Value.Class[]>;
+    set: Map<string, RDF.Value.Class[]>;
+    delete: Map<string, RDF.Value.Class[]>;
     constructor();
 }
 declare enum ModificationType {

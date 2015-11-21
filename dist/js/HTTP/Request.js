@@ -113,13 +113,31 @@ var Service = (function () {
         if (options === void 0) { options = Service.defaultOptions; }
         return Service.send(Method_1.default.DELETE, url, body, options);
     };
-    Service.setAcceptHeader = function (accept, requestOptions) {
+    Service.defaultOptions = {
+        sendCredentialsOnCORS: true
+    };
+    return Service;
+})();
+exports.Service = Service;
+var Util = (function () {
+    function Util() {
+    }
+    Util.setAcceptHeader = function (accept, requestOptions) {
         var headers = requestOptions.headers ? requestOptions.headers : requestOptions.headers = new Map();
         headers.set("Accept", new Header.Class(accept));
         return requestOptions;
     };
-    // TODO: Move this method to a more specific module
-    Service.setPreferredInteractionModel = function (interactionModelURI, requestOptions) {
+    Util.setContentTypeHeader = function (contentType, requestOptions) {
+        var headers = requestOptions.headers ? requestOptions.headers : requestOptions.headers = new Map();
+        headers.set("Content-Type", new Header.Class(contentType));
+        return requestOptions;
+    };
+    Util.setIfMatchHeader = function (etag, requestOptions) {
+        var headers = requestOptions.headers ? requestOptions.headers : requestOptions.headers = new Map();
+        headers.set("If-Match", new Header.Class(etag));
+        return requestOptions;
+    };
+    Util.setPreferredInteractionModel = function (interactionModelURI, requestOptions) {
         var headers = requestOptions.headers ? requestOptions.headers : requestOptions.headers = new Map();
         if (!headers.has("Prefer"))
             headers.set("Prefer", new Header.Class());
@@ -127,11 +145,8 @@ var Service = (function () {
         prefer.values.push(new Header.Value(interactionModelURI + "; rel=interaction-model"));
         return requestOptions;
     };
-    Service.defaultOptions = {
-        sendCredentialsOnCORS: true
-    };
-    return Service;
+    return Util;
 })();
-exports.Service = Service;
+exports.Util = Util;
 
 //# sourceMappingURL=Request.js.map

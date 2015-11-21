@@ -18,7 +18,7 @@ function isNull(value) {
 }
 exports.isNull = isNull;
 function isArray(object) {
-    return Object.prototype.toString.call(object) === "[object Array]";
+    return object instanceof Array;
 }
 exports.isArray = isArray;
 function isString(string) {

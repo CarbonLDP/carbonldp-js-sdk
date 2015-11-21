@@ -11,8 +11,8 @@ var Method_1 = require("./HTTP/Method");
 exports.Method = Method_1.default;
 var Request = require("./HTTP/Request");
 exports.Request = Request;
-var Response_1 = require("./HTTP/Response");
-exports.Response = Response_1.default;
+var Response = require("./HTTP/Response");
+exports.Response = Response;
 var StatusCode_1 = require("./HTTP/StatusCode");
 exports.StatusCode = StatusCode_1.default;
 

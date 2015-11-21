@@ -69,7 +69,7 @@ function getPropertyValues( propertyURI:string ):any[] {
 		}
 	}
 
-	values = tieArray( <Class> this, propertyURI, values );
+	values = new TiedArray( <Class> this, propertyURI, values );
 
 	return values;
 }
@@ -86,7 +86,7 @@ function getPropertyURIs( propertyURI:string ):string[] {
 		}
 	}
 
-	uris = tieArray( <Class> this, propertyURI, uris );
+	uris = new TiedArray( <Class> this, propertyURI, uris );
 
 	return uris;
 }
@@ -127,26 +127,89 @@ function deleteProperty( propertyURI:string ):void {
 	delete this[ propertyURI ];
 }
 
-function tieArray( resource:Class, property:string, array:any[] ):any[] {
-	array.push = (function():( ...items:any[] ) => number {
-		return function ( ...items:any[] ):number {
-			for ( let i:number = 0, length:number = items.length; i < length; i ++ ) {
-				resource.addProperty( property, items[ i ] );
-			}
-			return Array.prototype.push.call( array, items );
-		};
-	})();
-	// TODO: concat
-	// TODO: join
-	// TODO: pop
-	// TODO: reverse
-	// TODO: shift
-	// TODO: slice
-	// TODO: sort
-	// TODO: splice
-	// TODO: unshift
+class TiedArray<T> extends Array<T> {
+	private resource:Class;
+	private property:string;
 
-	return array;
+	constructor( resource:Class, property:string, array: T[] ) {
+		super();
+
+		super.push( ...array );
+
+		this.resource = resource;
+		this.property = property;
+	}
+
+	/**
+	 * Appends new elements to an array, and returns the new length of the array.
+	 * @param items New elements of the Array.
+	 */
+	push(...items: T[]): number {
+		for ( let i:number = 0, length:number = items.length; i < length; i ++ ) {
+			this.resource.addProperty( this.property, items[ i ] );
+		}
+		return super.push( ...items );
+	}
+
+	/**
+	 * Removes the last element from an array and returns it.
+	 */
+	pop(): T {
+		// TODO
+		return null;
+	}
+
+	/**
+	 * Adds all the elements of an array separated by the specified separator string.
+	 * @param separator A string used to separate one element of an array from the next in the resulting String. If omitted, the array elements are separated with a comma.
+	 */
+	join(separator?: string): string {
+		// TODO
+		return null;
+	}
+
+	/**
+	 * Reverses the elements in an Array.
+	 */
+	reverse(): T[] {
+		// TODO
+		return null;
+	}
+
+	/**
+	 * Removes the first element from an array and returns it.
+	 */
+	shift(): T {
+		// TODO
+		return null;
+	}
+
+	/**
+	 * Removes elements from an array and, if necessary, inserts new elements in their place, returning the deleted elements.
+	 * @param start The zero-based location in the array from which to start removing elements.
+	 */
+	splice(start: number): T[];
+
+	/**
+	 * Removes elements from an array and, if necessary, inserts new elements in their place, returning the deleted elements.
+	 * @param start The zero-based location in the array from which to start removing elements.
+	 * @param deleteCount The number of elements to remove.
+	 * @param items Elements to insert into the array in place of the deleted elements.
+	 */
+	splice(start: number, deleteCount: number, ...items: T[]): T[];
+	splice(start: number, deleteCount?: number, ...items: T[]): T[] {
+		// TODO
+		return null;
+	}
+
+	/**
+	 * Inserts new elements at the start of an array.
+	 * @param items  Elements to insert at the start of the Array.
+	 */
+	unshift(...items: T[]): number {
+		// TODO
+		return null;
+	}
 }
 
 

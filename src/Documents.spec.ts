@@ -34,7 +34,8 @@ describe( module( "Carbon.Documents" ), function():void {
 
 	it( hasMethod( INSTANCE, "from", [
 		{ name:"uri", type:"string" }
-	], { type:"Promise<Carbon.HTTP.ProcessedResponse<Carbon.Document>>"}), function( done:() => void ):void {
+	], { type:"Promise<Carbon.HTTP.ProcessedResponse<Carbon.Document>>"}), ( done:(() => void) & { fail:( error?:any ) => void } ):void => {
+		let promises:Promise<any>[] = [];
 		let context:Context = new Context();
 
 		let responseBody:string = JSON.stringify({
@@ -65,17 +66,21 @@ describe( module( "Carbon.Documents" ), function():void {
 
 		jasmine.Ajax.stubRequest( "http://example.com/resource/", null, "GET" ).andReturn( {
 			status: 200,
-			responseHeaders: [],
+			responseHeaders: [
+				{ "name": "ETag", "value": "162458126348712643" }
+			],
 			responseText: responseBody
 		} );
 
-		context.Documents.get( "http://example.com/resource/" ).then( function( processedResponse:any ):void {
+		promises.push( context.Documents.get( "http://example.com/resource/" ).then( ( processedResponse:any ):void => {
 			expect( processedResponse ).toBeDefined();
-		}, failTest ).then( done, done );
-	});
+		}) );
 
-	function failTest( error:any ):void {
-		console.log( error );
-		expect( true ).toBe( false );
-	}
+		Promise.all( promises ).then( ():void => {
+			done();
+		}, ( error:Error ):void => {
+			error = !! error ? error : new Error( "Unknown error" );
+			done.fail( error );
+		});
+	});
 });

@@ -10,15 +10,11 @@ import Response from "./Response";
 
 import * as Utils from "./../Utils";
 
-interface Options {
+export interface Options {
 	headers?: Map<string, Header.Class>;
 	sendCredentialsOnCORS?:boolean;
 	timeout?:number;
 	request?:XMLHttpRequest;
-}
-
-interface OptionsWithParser<T> extends Options {
-	parser:Parser<T>;
 }
 
 function setHeaders( request:XMLHttpRequest, headers:Map<string, Header.Class> ):void {
@@ -66,7 +62,7 @@ function rejectRequest( reject:( error:any ) => void, request:XMLHttpRequest ):v
 	reject( new Errors.UnknownError( "", response ) );
 }
 
-class Service {
+export class Service {
 
 	private static defaultOptions:Options = {
 		sendCredentialsOnCORS: true
@@ -144,14 +140,27 @@ class Service {
 	static delete( url:string, body:string, options:Options = Service.defaultOptions ):Promise<Response> {
 		return Service.send( Method.DELETE, url, body, options );
 	}
+}
 
+export class Util {
 	static setAcceptHeader( accept:string, requestOptions:Options ):Options {
 		let headers:Map<string, Header.Class> = requestOptions.headers ? requestOptions.headers : requestOptions.headers = new Map<string, Header.Class>();
 		headers.set( "Accept", new Header.Class( accept ) );
 		return requestOptions;
 	}
 
-	// TODO: Move this method to a more specific module
+	static setContentTypeHeader( contentType:string, requestOptions:Options ):Options {
+		let headers:Map<string, Header.Class> = requestOptions.headers ? requestOptions.headers : requestOptions.headers = new Map<string, Header.Class>();
+		headers.set( "Content-Type", new Header.Class( contentType ) );
+		return requestOptions;
+	}
+
+	static setIfMatchHeader( etag:string, requestOptions:Options ):Options {
+		let headers:Map<string, Header.Class> = requestOptions.headers ? requestOptions.headers : requestOptions.headers = new Map<string, Header.Class>();
+		headers.set( "If-Match", new Header.Class( etag ) );
+		return requestOptions;
+	}
+
 	static setPreferredInteractionModel( interactionModelURI:string, requestOptions:Options ):Options {
 		let headers:Map<string, Header.Class> = requestOptions.headers ? requestOptions.headers : requestOptions.headers = new Map<string, Header.Class>();
 		if ( ! headers.has( "Prefer" ) ) headers.set( "Prefer", new Header.Class() );
@@ -162,8 +171,3 @@ class Service {
 		return requestOptions;
 	}
 }
-
-export {
-	Options,
-	Service
-};

@@ -4,6 +4,7 @@ var Errors = require("./Errors");
 var HTTP = require("./HTTP");
 var RDF = require("./RDF");
 var Document = require("./Document");
+var PersistedDocument = require("./PersistedDocument");
 var LDP = require("./NS/LDP");
 function parse(input) {
     try {
@@ -28,7 +29,6 @@ function expand(input, options) {
 }
 var Documents = (function () {
     function Documents(context) {
-        if (context === void 0) { context = null; }
         this.context = context;
     }
     Documents.prototype.get = function (uri, requestOptions) {
@@ -41,8 +41,8 @@ var Documents = (function () {
         }
         if (this.context && this.context.Auth.isAuthenticated())
             this.context.Auth.addAuthentication(requestOptions);
-        HTTP.Request.Service.setAcceptHeader("application/ld+json", requestOptions);
-        HTTP.Request.Service.setPreferredInteractionModel(LDP.Class.RDFSource, requestOptions);
+        HTTP.Request.Util.setAcceptHeader("application/ld+json", requestOptions);
+        HTTP.Request.Util.setPreferredInteractionModel(LDP.Class.RDFSource, requestOptions);
         return HTTP.Request.Service.get(uri, requestOptions).then(function (response) {
             var parsedObject = parse(response.data);
             return expand({
@@ -52,29 +52,44 @@ var Documents = (function () {
         }).then(function (processedResponse) {
             var expandedResult = processedResponse.result;
             var rdfDocuments = RDF.Document.Util.getDocuments(expandedResult);
-            var rdfDocument = _this.getRDFDocument(rdfDocuments);
+            var rdfDocument = _this.getRDFDocument(rdfDocuments, processedResponse.response);
             var document = Document.factory.from(rdfDocument);
             _this.injectDefinitions(document.getFragments().concat(document));
-            // TODO: Inject persisted states
             return {
                 result: document,
                 response: processedResponse.response
             };
+        }).then(function (processedResponse) {
+            var document = processedResponse.result;
+            var persistedDocument = PersistedDocument.Factory.from(document, _this.context);
+            var etag = HTTP.Response.Util.getETag(processedResponse.response);
+            if (etag === null)
+                throw new HTTP.Errors.BadResponseError("The response doesn't contain an ETag", processedResponse.response);
+            persistedDocument._etag = etag;
+            // TODO: Inject persisted container behavior
+            return {
+                result: persistedDocument,
+                response: processedResponse.response
+            };
         });
     };
-    Documents.prototype.commit = function (document, requestOptions) {
-        // TODO: Check if the document was already persisted
-        // TODO: Check if the document is dirty
+    Documents.prototype.save = function (persistedDocument, requestOptions) {
         if (requestOptions === void 0) { requestOptions = {}; }
+        if (!persistedDocument.isDirty())
+            return new Promise(function (resolve) {
+                resolve(null);
+            });
         if (this.context && this.context.Auth.isAuthenticated())
             this.context.Auth.addAuthentication(requestOptions);
-        HTTP.Request.Service.setAcceptHeader("application/ld+json", requestOptions);
-        HTTP.Request.Service.setPreferredInteractionModel(LDP.Class.RDFSource, requestOptions);
-        return HTTP.Request.Service.put(document.uri, document.toJSON(), requestOptions);
+        HTTP.Request.Util.setAcceptHeader("application/ld+json", requestOptions);
+        HTTP.Request.Util.setContentTypeHeader("application/ld+json", requestOptions);
+        HTTP.Request.Util.setPreferredInteractionModel(LDP.Class.RDFSource, requestOptions);
+        HTTP.Request.Util.setIfMatchHeader(persistedDocument._etag, requestOptions);
+        return HTTP.Request.Service.put(persistedDocument.uri, persistedDocument.toJSON(), requestOptions);
     };
-    Documents.prototype.getRDFDocument = function (rdfDocuments) {
+    Documents.prototype.getRDFDocument = function (rdfDocuments, response) {
         if (rdfDocuments.length === 0)
-            throw new Error("BadResponse: No document was returned.");
+            throw new HTTP.Errors.BadResponseError("No document was returned.", response);
         if (rdfDocuments.length > 1)
             throw new Error("Unsupported: Multiple graphs are currently not supported.");
         return rdfDocuments[0];

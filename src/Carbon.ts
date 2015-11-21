@@ -13,15 +13,16 @@ import defaultSettings from "./settings";
 import * as Utils from "./Utils";
 
 class Carbon extends Context {
-	/* tslint:disable: variable-name typedef */
-	static Apps = Apps;
-	static Auth = Auth;
-	static Document = Document;
-	static Documents = Documents;
-	static HTTP = HTTP;
-	static RDF = RDF;
+
+	/* tslint:disable: variable-name */
+	static Apps:typeof Apps = Apps;
+	static Auth:typeof Auth = Auth;
+	static Document:typeof Document = Document;
+	static Documents:typeof Documents = Documents;
+	static HTTP:typeof HTTP = HTTP;
+	static RDF:typeof RDF = RDF;
 	static Utils = Utils;
-	/* tslint:disable: variable-name typedef */
+	/* tslint:enable: variable-name */
 
 	static get version():string { return "0.12.0-ALPHA"; }
 

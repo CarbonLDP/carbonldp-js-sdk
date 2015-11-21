@@ -124,6 +124,24 @@ function toJSON():string {
 }
 
 export class Factory extends RDF.Resource.Factory {
+	static hasClassProperties( documentResource:RDF.Resource.Class ):boolean {
+		return (
+			Utils.hasPropertyDefined( documentResource, "_fragmentsIndex" ) &&
+
+			Utils.hasFunction( documentResource, "hasFragment" ) &&
+			Utils.hasFunction( documentResource, "getFragment" ) &&
+			Utils.hasFunction( documentResource, "getNamedFragment" ) &&
+			Utils.hasFunction( documentResource, "getFragments" ) &&
+
+			Utils.hasFunction( documentResource, "createFragment" ) &&
+			Utils.hasFunction( documentResource, "createNamedFragment" ) &&
+
+			Utils.hasFunction( documentResource, "removeFragment" ) &&
+
+			Utils.hasFunction( documentResource, "toJSON" )
+		);
+	}
+
 	from( rdfDocuments:RDF.Document.Class[] ):Class[];
 	from( rdfDocument:RDF.Document.Class ):Class;
 	from( rdfDocuments:any ):any {
@@ -173,7 +191,7 @@ export class Factory extends RDF.Resource.Factory {
 	protected injectBehavior( resource:RDF.Node.Class ):Class {
 		let documentResource:RDF.Resource.Class = super.injectBehavior( resource );
 
-		if( this.hasClassProperties( documentResource ) ) return <Class> documentResource;
+		if( Factory.hasClassProperties( documentResource ) ) return <Class> documentResource;
 
 		Object.defineProperties( documentResource, {
 			"_fragmentsIndex": {
@@ -233,12 +251,6 @@ export class Factory extends RDF.Resource.Factory {
 		} );
 
 		return <any> documentResource;
-	}
-
-	protected hasClassProperties( documentResource:RDF.Resource.Class ):boolean {
-		return (
-			Utils.hasPropertyDefined( documentResource, "_fragmentsIndex" )
-		);
 	}
 }
 

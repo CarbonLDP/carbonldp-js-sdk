@@ -1,5 +1,4 @@
 /// <reference path="../../typings/es6/es6.d.ts" />
-var Utils = require("./../Utils");
 var Class = (function () {
     function Class(valueOrValues) {
         this.values = [];
@@ -45,8 +44,8 @@ var Value = (function () {
     }
     Value.cleanString = function (toClean) {
         toClean = toClean.trim();
-        toClean = (Utils.S.startsWith(toClean, "\"") || Utils.S.startsWith(toClean, "'")) ? toClean.substr(1, toClean.length) : toClean;
-        toClean = (Utils.S.endsWith(toClean, "\"") || Utils.S.endsWith(toClean, "'")) ? toClean.substr(0, toClean.length - 1) : toClean;
+        // toClean = (Utils.S.startsWith( toClean, "\"" ) || Utils.S.startsWith( toClean, "'" )) ? toClean.substr( 1, toClean.length ) : toClean;
+        // toClean = (Utils.S.endsWith( toClean, "\"" ) || Utils.S.endsWith( toClean, "'" )) ? toClean.substr( 0, toClean.length - 1 ) : toClean;
         return toClean;
     };
     Value.prototype.toString = function () {
@@ -106,8 +105,10 @@ var Util = (function () {
             if (!headerString.trim())
                 continue;
             var parts = headerString.split(":");
-            if (parts.length !== 2)
+            if (parts.length < 2)
                 throw new Error("ParseError: The header couldn't be parsed.");
+            if (parts.length > 2)
+                parts[1] = parts.slice(1).join(":");
             var name_1 = parts[0].trim();
             var header = new Class(parts[1].trim());
             if (headers.has(name_1)) {

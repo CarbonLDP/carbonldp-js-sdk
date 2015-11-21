@@ -1,5 +1,5 @@
 import * as Header from "./Header";
-declare class Response {
+export declare class Class {
     constructor(request: XMLHttpRequest);
     status: number;
     data: string;
@@ -7,4 +7,7 @@ declare class Response {
     request: XMLHttpRequest;
     private setHeaders(request);
 }
-export default Response;
+export declare class Util {
+    static getETag(response: Class): string;
+}
+export default Class;

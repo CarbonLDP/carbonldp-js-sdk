@@ -1,4 +1,9 @@
 /// <reference path="../../typings/es6/es6.d.ts" />
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
 var Literal = require("./Literal");
 var Utils = require("./../Utils");
 var RDFNode = require("./RDFNode");
@@ -40,7 +45,7 @@ function getPropertyValues(propertyURI) {
                 values.push(Literal.Factory.parse(value));
         }
     }
-    values = tieArray(this, propertyURI, values);
+    values = new TiedArray(this, propertyURI, values);
     return values;
 }
 function getPropertyURIs(propertyURI) {
@@ -53,7 +58,7 @@ function getPropertyURIs(propertyURI) {
                 uris.push(value["@id"]);
         }
     }
-    uris = tieArray(this, propertyURI, uris);
+    uris = new TiedArray(this, propertyURI, uris);
     return uris;
 }
 function addProperty(propertyURI, value) {
@@ -88,30 +93,79 @@ function deleteProperty(propertyURI) {
     }
     delete this[propertyURI];
 }
-function tieArray(resource, property, array) {
-    array.push = (function () {
-        return function () {
-            var items = [];
-            for (var _i = 0; _i < arguments.length; _i++) {
-                items[_i - 0] = arguments[_i];
-            }
-            for (var i = 0, length_5 = items.length; i < length_5; i++) {
-                resource.addProperty(property, items[i]);
-            }
-            return Array.prototype.push.call(array, items);
-        };
-    })();
-    // TODO: concat
-    // TODO: join
-    // TODO: pop
-    // TODO: reverse
-    // TODO: shift
-    // TODO: slice
-    // TODO: sort
-    // TODO: splice
-    // TODO: unshift
-    return array;
-}
+var TiedArray = (function (_super) {
+    __extends(TiedArray, _super);
+    function TiedArray(resource, property, array) {
+        _super.call(this);
+        _super.prototype.push.apply(this, array);
+        this.resource = resource;
+        this.property = property;
+    }
+    /**
+     * Appends new elements to an array, and returns the new length of the array.
+     * @param items New elements of the Array.
+     */
+    TiedArray.prototype.push = function () {
+        var items = [];
+        for (var _i = 0; _i < arguments.length; _i++) {
+            items[_i - 0] = arguments[_i];
+        }
+        for (var i = 0, length_5 = items.length; i < length_5; i++) {
+            this.resource.addProperty(this.property, items[i]);
+        }
+        return _super.prototype.push.apply(this, items);
+    };
+    /**
+     * Removes the last element from an array and returns it.
+     */
+    TiedArray.prototype.pop = function () {
+        // TODO
+        return null;
+    };
+    /**
+     * Adds all the elements of an array separated by the specified separator string.
+     * @param separator A string used to separate one element of an array from the next in the resulting String. If omitted, the array elements are separated with a comma.
+     */
+    TiedArray.prototype.join = function (separator) {
+        // TODO
+        return null;
+    };
+    /**
+     * Reverses the elements in an Array.
+     */
+    TiedArray.prototype.reverse = function () {
+        // TODO
+        return null;
+    };
+    /**
+     * Removes the first element from an array and returns it.
+     */
+    TiedArray.prototype.shift = function () {
+        // TODO
+        return null;
+    };
+    TiedArray.prototype.splice = function (start, deleteCount) {
+        var items = [];
+        for (var _i = 2; _i < arguments.length; _i++) {
+            items[_i - 2] = arguments[_i];
+        }
+        // TODO
+        return null;
+    };
+    /**
+     * Inserts new elements at the start of an array.
+     * @param items  Elements to insert at the start of the Array.
+     */
+    TiedArray.prototype.unshift = function () {
+        var items = [];
+        for (var _i = 0; _i < arguments.length; _i++) {
+            items[_i - 0] = arguments[_i];
+        }
+        // TODO
+        return null;
+    };
+    return TiedArray;
+})(Array);
 var Factory = (function () {
     function Factory() {
     }

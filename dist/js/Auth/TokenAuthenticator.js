@@ -38,8 +38,8 @@ var Class = (function () {
         var uri = this.context.resolve(Class.TOKEN_CONTAINER);
         var requestOptions = {};
         this.basicAuthenticator.addAuthentication(requestOptions);
-        HTTP.Request.Service.setAcceptHeader("application/ld+json", requestOptions);
-        HTTP.Request.Service.setPreferredInteractionModel(NS.LDP.Class.RDFSource, requestOptions);
+        HTTP.Request.Util.setAcceptHeader("application/ld+json", requestOptions);
+        HTTP.Request.Util.setPreferredInteractionModel(NS.LDP.Class.RDFSource, requestOptions);
         return HTTP.Request.Service.post(uri, null, requestOptions, new HTTP.JSONLDParser.Class()).then(function (processedResponse) {
             var nodes = RDF.Document.Util.getResources(processedResponse.result);
             var resources = RDF.Resource.factory.from(nodes);
