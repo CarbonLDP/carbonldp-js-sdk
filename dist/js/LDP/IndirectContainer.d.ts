@@ -6,13 +6,11 @@ export interface Class extends AccessPoint.Class {
     insertedContentRelation: string;
 }
 export declare const DEFINITION: Map<string, RDF.PropertyDescription>;
-export declare class Factory extends AccessPoint.Factory {
+export declare class Injector extends RDF.AbstractInjector<Class> {
+    constructor();
+    hasClassProperties(resource: RDF.Node.Class): boolean;
     is(object: Object): boolean;
-    from(resource: RDF.Node.Class): Class;
-    from(resources: RDF.Node.Class[]): Class[];
-    protected hasRDFClass(resource: RDF.Resource.Class): boolean;
-    protected hasClassProperties(resource: RDF.Node.Class): boolean;
-    protected injectBehaviour(resource: AccessPoint.Class): Class;
+    protected injectBehaviour<T extends AccessPoint.Class>(resource: T): (T & Class);
 }
-export declare let factory: Factory;
+export declare let injector: Injector;
 export default Class;

@@ -79,8 +79,7 @@
 		"trailing-comma": [
 			true,
 			{
-				"multiline": "always",
-				"singleline": "always"
+				"multiline": "always"
 			}
 		],
 		"triple-equals": [

@@ -54,12 +54,11 @@ function createFragment( slug:any ):any {
 	if( slug ) return document.createNamedFragment( slug );
 
 	let id:string = Fragment.Util.generateID();
-	let fragmentObject:RDF.Node.Class & { document:Class } = {
-		"@id": id,
-		"document": document
+	let fragmentObject:RDF.Node.Class = {
+		"@id": id
 	};
 
-	let fragment:Fragment.Class = Fragment.factory.from( fragmentObject );
+	let fragment:Fragment.Class = Fragment.factory.from( fragmentObject, document );
 
 	document._fragmentsIndex.set( id, fragment );
 
@@ -73,12 +72,11 @@ function createNamedFragment( slug:string ):NamedFragment.Class {
 	if( document._fragmentsIndex.has( slug ) ) throw new Errors.IDAlreadyInUseError( "The slug provided is already being used by a fragment." );
 
 	let uri:string = document.uri + "#" + slug;
-	let fragmentObject:RDF.Node.Class & { document:Class } = {
-		"@id": uri,
-		"document": document
+	let fragmentObject:RDF.Node.Class = {
+		"@id": uri
 	};
 
-	let fragment:NamedFragment.Class = <NamedFragment.Class> NamedFragment.factory.from( fragmentObject );
+	let fragment:NamedFragment.Class = <NamedFragment.Class> NamedFragment.factory.from( fragmentObject, document );
 
 	document._fragmentsIndex.set( slug, fragment );
 
@@ -98,10 +96,8 @@ function toJSON():string {
 	resources.push( this.getFragments() );
 
 	let toJSONFunctions:(() => string)[] = [];
-	// TODO: FOR_OF_TYPEDEF
-	/* tslint:disable: typedef */
+
 	for( let resource of resources ) {
-		/* tslint:enable: typedef */
 		let toJSON:() => string = null;
 		if( "toJSON" in resource ) {
 			toJSONFunctions.push( resource.toJSON );
@@ -123,8 +119,8 @@ function toJSON():string {
 	return json;
 }
 
-export class Factory extends RDF.Resource.Factory {
-	static hasClassProperties( documentResource:RDF.Resource.Class ):boolean {
+export class Factory {
+	hasClassProperties( documentResource:RDF.Resource.Class ):boolean {
 		return (
 			Utils.hasPropertyDefined( documentResource, "_fragmentsIndex" ) &&
 
@@ -159,17 +155,18 @@ export class Factory extends RDF.Resource.Factory {
 
 	protected singleFrom( rdfDocument:RDF.Document.Class ):Class {
 		let documentResources:RDF.Node.Class[] = RDF.Document.Util.getDocumentResources( rdfDocument );
-		if( documentResources.length > 1 ) throw new Errors.IllegalArgumentError("The RDFDocument contains more than one document resource.");
-		if( documentResources.length === 0 ) throw new Errors.IllegalArgumentError("The RDFDocument doesn\'t contain a document resource.");
+		if( documentResources.length > 1 ) throw new Errors.IllegalArgumentError( "The RDFDocument contains more than one document resource." );
+		if( documentResources.length === 0 ) throw new Errors.IllegalArgumentError( "The RDFDocument doesn\'t contain a document resource." );
 
-		let document:Class = this.injectBehavior( documentResources[ 0 ] );
+		let documentResource:RDF.Resource.Class = RDF.Resource.factory.from( documentResources[ 0 ] );
+
+		let document:Class = this.injectBehavior( documentResource );
 
 		let fragmentResources:RDF.Node.Class[] = RDF.Document.Util.getBNodeResources( rdfDocument );
 		for( let i:number = 0, length:number = fragmentResources.length; i < length; i++ ) {
-			let fragmentResource:RDF.Node.Class & {document:Class} = <any>fragmentResources[i];
-			fragmentResource.document = document;
+			let fragmentResource:RDF.Node.Class = fragmentResources[i];
 
-			let fragment:Fragment.Class = Fragment.factory.from( fragmentResource );
+			let fragment:Fragment.Class = Fragment.factory.from( fragmentResource, document );
 
 			if( ! fragment.uri ) fragment.uri = Fragment.Util.generateID();
 			document._fragmentsIndex.set( fragment.uri, fragment );
@@ -177,10 +174,9 @@ export class Factory extends RDF.Resource.Factory {
 
 		let namedFragmentResources:RDF.Node.Class[] = RDF.Document.Util.getFragmentResources( rdfDocument );
 		for( let i:number = 0, length:number = namedFragmentResources.length; i < length; i++ ) {
-			let namedFragmentResource:RDF.Node.Class & { document:Class } = <any>namedFragmentResources[i];
-			namedFragmentResource.document = document;
+			let namedFragmentResource:RDF.Node.Class = <any> namedFragmentResources[i];
 
-			let namedFragment:NamedFragment.Class = NamedFragment.factory.from( namedFragmentResource );
+			let namedFragment:NamedFragment.Class = NamedFragment.factory.from( namedFragmentResource, document );
 
 			document._fragmentsIndex.set( RDF.URI.Util.getFragment( namedFragment.uri ), namedFragment );
 		}
@@ -188,66 +184,64 @@ export class Factory extends RDF.Resource.Factory {
 		return document;
 	}
 
-	protected injectBehavior( resource:RDF.Node.Class ):Class {
-		let documentResource:RDF.Resource.Class = super.injectBehavior( resource );
-
-		if( Factory.hasClassProperties( documentResource ) ) return <Class> documentResource;
+	protected injectBehavior( documentResource:RDF.Resource.Class ):Class {
+		if( this.hasClassProperties( documentResource ) ) return <any> documentResource;
 
 		Object.defineProperties( documentResource, {
 			"_fragmentsIndex": {
 				writable: false,
 				enumerable: false,
 				configurable: false,
-				value: new Map<string, Fragment.Class>()
+				value: new Map<string, Fragment.Class>(),
 			},
 			"hasFragment": {
 				writable: false,
 				enumerable: false,
 				configurable: false,
-				value: hasFragment
+				value: hasFragment,
 			},
 			"getFragment": {
 				writable: false,
 				enumerable: false,
 				configurable: false,
-				value: getFragment
+				value: getFragment,
 			},
 			"getNamedFragment": {
 				writable: false,
 				enumerable: false,
 				configurable: false,
-				value: getNamedFragment
+				value: getNamedFragment,
 			},
 			"getFragments": {
 				writable: false,
 				enumerable: false,
 				configurable: false,
-				value: getFragments
+				value: getFragments,
 			},
 			"createFragment": {
 				writable: false,
 				enumerable: false,
 				configurable: false,
-				value: createFragment
+				value: createFragment,
 			},
 			"createNamedFragment": {
 				writable: false,
 				enumerable: false,
 				configurable: false,
-				value: createNamedFragment
+				value: createNamedFragment,
 			},
 			"removeFragment": {
 				writable: false,
 				enumerable: false,
 				configurable: false,
-				value: removeFragment
+				value: removeFragment,
 			},
 			"toJSON": {
 				writable: false,
 				enumerable: false,
 				configurable: true,
-				value: toJSON
-			}
+				value: toJSON,
+			},
 		} );
 
 		return <any> documentResource;

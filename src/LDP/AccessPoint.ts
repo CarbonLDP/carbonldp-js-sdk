@@ -15,11 +15,21 @@ export const DEFINITION:Map<string, RDF.PropertyDescription> = <any> Utils.M.fro
 	"membershipResource": {
 		"uri": NS.LDP.Predicate.membershipResource,
 		"multi": false,
-		"literal": false
-	}
+		"literal": false,
+	},
 } );
 
-export class Factory extends Container.Factory {
+export class Injector extends RDF.AbstractInjector<Class> {
+	constructor() {
+		super( RDF_CLASS, [ Container.injector ] );
+	}
+
+	hasClassProperties( resource:Object ):boolean {
+		return (
+			Utils.hasPropertyDefined( resource, "membershipResource" )
+		);
+	}
+
 	is( object:Object ):boolean {
 		return (
 			super.is( object ) &&
@@ -28,39 +38,12 @@ export class Factory extends Container.Factory {
 		);
 	}
 
-	from( resource:RDF.Node.Class ):Class;
-	from( resources:RDF.Node.Class[] ):Class[];
-	from( resourceOrResources:any ):any {
-		let superResult:(Container.Class | Container.Class[]) = super.from( resourceOrResources );
-		let resources:Container.Class[] = Utils.isArray( superResult ) ? <Container.Class[]> superResult : <Container.Class[]> [ superResult ];
-
-		for ( let i:number = 0, length:number = resources.length; i < length; i ++ ) {
-			let resource:Container.Class = resources[ i ];
-			if ( ! this.hasClassProperties( resource ) ) this.injectBehaviour( resource );
-		}
-
-		if ( ! Utils.isArray( resourceOrResources ) ) return <Class> resources[ 0 ];
-		return <Class[]> resources;
-	}
-
-	protected hasRDFClass( resource:RDF.Resource.Class ):boolean {
-		return (
-			resource.types.indexOf( RDF_CLASS ) !== - 1
-		);
-	}
-
-	protected hasClassProperties( resource:RDF.Node.Class ):boolean {
-		return (
-			Utils.hasPropertyDefined( resource, "membershipResource" )
-		);
-	}
-
-	protected injectBehaviour( resource:Container.Class ):Class {
+	protected injectBehavior<T extends Container.Class>( resource:T ):( T & Class ) {
 		RDF.Resource.Factory.injectDescriptions( resource, DEFINITION );
-		return <Class> resource;
+		return <any> resource;
 	}
 }
 
-export let factory:Factory = new Factory();
+export let injector:Injector = new Injector();
 
 export default Class;

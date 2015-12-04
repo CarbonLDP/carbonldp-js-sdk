@@ -27,7 +27,7 @@ var Carbon = (function (_super) {
         this.Auth = this.platform.Auth;
     }
     Object.defineProperty(Carbon, "version", {
-        /* tslint:enable: variable-name typedef */
+        /* tslint:enable: variable-name */
         get: function () { return "0.12.0-ALPHA"; },
         enumerable: true,
         configurable: true
@@ -47,7 +47,7 @@ var Carbon = (function (_super) {
     Carbon.prototype.registerDefaultDefinitions = function () {
         this.addDefinition(APIDescription.RDF_CLASS, APIDescription.DEFINITION);
     };
-    /* tslint:disable: variable-name typedef */
+    /* tslint:disable: variable-name */
     Carbon.Apps = Apps_1.default;
     Carbon.Auth = Auth;
     Carbon.Document = Document;

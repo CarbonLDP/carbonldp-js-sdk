@@ -11,13 +11,13 @@ exports.DEFINITION = Utils.M.from({
     "key": {
         "uri": NS.CS.Predicate.tokenKey,
         "multi": false,
-        "literal": true
+        "literal": true,
     },
     "expirationTime": {
         "uri": NS.CS.Predicate.expirationTime,
         "multi": false,
-        "literal": true
-    }
+        "literal": true,
+    },
 });
 var Factory = (function (_super) {
     __extends(Factory, _super);

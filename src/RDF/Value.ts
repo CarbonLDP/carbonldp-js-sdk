@@ -16,3 +16,5 @@ export class Util {
 		} else return false;
 	}
 }
+
+export default Class;

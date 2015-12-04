@@ -6,13 +6,13 @@ exports.DEFINITION = Utils.M.from({
     "version": {
         "uri": NS.C.Predicate.version,
         "multi": false,
-        "literal": true
+        "literal": true,
     },
     "buildDate": {
         "uri": NS.C.Predicate.buildDate,
         "multi": false,
-        "literal": true
-    }
+        "literal": true,
+    },
 });
 
 //# sourceMappingURL=APIDescription.js.map

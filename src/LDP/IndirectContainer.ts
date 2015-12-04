@@ -15,11 +15,21 @@ export const DEFINITION:Map<string, RDF.PropertyDescription> = <any> Utils.M.fro
 	"insertedContentRelation": {
 		"uri": NS.LDP.Predicate.insertedContentRelation,
 		"multi": false,
-		"literal": false
-	}
+		"literal": false,
+	},
 } );
 
-export class Factory extends AccessPoint.Factory {
+export class Injector extends RDF.AbstractInjector<Class> {
+	constructor() {
+		super( RDF_CLASS, [ AccessPoint.injector ] );
+	}
+
+	hasClassProperties( resource:RDF.Node.Class ):boolean {
+		return (
+			Utils.hasPropertyDefined( resource, "insertedContentRelation" )
+		);
+	}
+
 	is( object:Object ):boolean {
 		return (
 			super.is( object ) &&
@@ -28,39 +38,12 @@ export class Factory extends AccessPoint.Factory {
 		);
 	}
 
-	from( resource:RDF.Node.Class ):Class;
-	from( resources:RDF.Node.Class[] ):Class[];
-	from( resourceOrResources:any ):any {
-		let sources:(AccessPoint.Class | AccessPoint.Class[]) = super.from( resourceOrResources );
-		let resources:AccessPoint.Class[] = Utils.isArray( sources ) ? <AccessPoint.Class[]> sources : <AccessPoint.Class[]> [ sources ];
-
-		for ( let i:number = 0, length:number = resources.length; i < length; i ++ ) {
-			let resource:AccessPoint.Class = resources[ i ];
-			if ( ! this.hasClassProperties( resource ) ) this.injectBehaviour( resource );
-		}
-
-		if ( Utils.isArray( resourceOrResources ) ) return <Class[]> resources;
-		return <Class> resources[ 0 ];
-	}
-
-	protected hasRDFClass( resource:RDF.Resource.Class ):boolean {
-		return (
-			resource.types.indexOf( RDF_CLASS ) !== - 1
-		);
-	}
-
-	protected hasClassProperties( resource:RDF.Node.Class ):boolean {
-		return (
-			Utils.hasPropertyDefined( resource, "insertedContentRelation" )
-		);
-	}
-
-	protected injectBehaviour( resource:AccessPoint.Class ):Class {
+	protected injectBehavior<T extends AccessPoint.Class>( resource:T ):( T & Class ) {
 		RDF.Resource.Factory.injectDescriptions( resource, DEFINITION );
-		return <Class> resource;
+		return <any> resource;
 	}
 }
 
-export let factory:Factory = new Factory();
+export let injector:Injector = new Injector();
 
 export default Class;

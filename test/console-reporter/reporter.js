@@ -287,7 +287,7 @@ var DocumentationReporter = function( baseReporterDecorator, formatError, config
 			case "property":
 				break;
 			case "signature":
-				break;
+				return composeMethodSignature( spec );
 			case "super-class":
 				break;
 			case "interface":

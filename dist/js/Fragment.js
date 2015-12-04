@@ -1,8 +1,3 @@
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
 var Errors = require("./Errors");
 var RDF = require("./RDF");
 var Utils = require("./Utils");
@@ -17,44 +12,42 @@ function externalAnonymousFragmentFilter(propertyURI, value) {
     if (this.document !== fragment.document)
         throw new Errors.IllegalArgumentError("The anonymous fragment provided belongs to another document. To reference it from another document it needs to be named.");
 }
-var Factory = (function (_super) {
-    __extends(Factory, _super);
+var Factory = (function () {
     function Factory() {
-        _super.apply(this, arguments);
     }
-    Factory.prototype.from = function (objects) {
-        if (!Utils.isArray(objects))
-            return this.singleFrom(objects);
-        for (var i = 0, length_1 = objects.length; i < length_1; i++) {
-            var object = objects[i];
-            this.singleFrom(object);
+    Factory.prototype.hasClassProperties = function (resource) {
+        return (Utils.hasPropertyDefined(resource, "document"));
+    };
+    Factory.prototype.from = function (nodeOrNodes, document) {
+        if (!Utils.isArray(nodeOrNodes))
+            return this.singleFrom(nodeOrNodes, document);
+        for (var _i = 0; _i < nodeOrNodes.length; _i++) {
+            var node = nodeOrNodes[_i];
+            this.singleFrom(node, document);
         }
-        return objects;
+        return nodeOrNodes;
     };
-    Factory.prototype.singleFrom = function (object) {
-        return this.injectBehavior(object);
+    Factory.prototype.singleFrom = function (node, document) {
+        var resource = RDF.Resource.factory.from(node);
+        if (!this.hasClassProperties(resource))
+            this.injectBehavior(resource, document);
+        return node;
     };
-    Factory.prototype.injectBehavior = function (object) {
-        var fragment = _super.prototype.injectBehavior.call(this, object);
-        if (this.hasClassProperties(fragment))
-            return fragment;
-        fragment._propertyAddedCallbacks.push(externalAnonymousFragmentFilter);
-        var document = fragment.document;
-        delete fragment.document;
-        Object.defineProperties(fragment, {
+    Factory.prototype.injectBehavior = function (object, document) {
+        if (this.hasClassProperties(object))
+            return object;
+        object._propertyAddedCallbacks.push(externalAnonymousFragmentFilter);
+        Object.defineProperties(object, {
             "document": {
                 writable: false,
                 enumerable: false,
-                value: document
-            }
+                value: document,
+            },
         });
-        return fragment;
-    };
-    Factory.prototype.hasClassProperties = function (resource) {
-        return false;
+        return object;
     };
     return Factory;
-})(RDF.Resource.Factory);
+})();
 exports.Factory = Factory;
 exports.factory = new Factory();
 var Util = (function () {

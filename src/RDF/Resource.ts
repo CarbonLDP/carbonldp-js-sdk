@@ -1,5 +1,6 @@
-/// <reference path="../../typings/es6/es6.d.ts" />
+/// <reference path="./../../node_modules/typescript/lib/lib.es6.d.ts" />
 
+import AbstractInjector from "./AbstractInjector";
 import * as Literal from "./Literal";
 import * as URI from "./URI";
 import * as Value from "./Value";
@@ -213,28 +214,7 @@ class TiedArray<T> extends Array<T> {
 }
 
 
-export class Factory {
-	static hasClassProperties( resource:RDFNode.Class ):boolean {
-		return (
-				Utils.hasPropertyDefined( resource, "_propertyAddedCallbacks" ) &&
-				Utils.hasPropertyDefined( resource, "_propertyDeletedCallbacks" ) &&
-
-				Utils.hasPropertyDefined( resource, "uri" ) &&
-				Utils.hasPropertyDefined( resource, "types" ) &&
-
-				Utils.hasFunction( resource, "hasProperty" ) &&
-				Utils.hasFunction( resource, "getProperty" ) &&
-				Utils.hasFunction( resource, "getPropertyValue" ) &&
-				Utils.hasFunction( resource, "getPropertyURI" ) &&
-				Utils.hasFunction( resource, "getProperties" ) &&
-				Utils.hasFunction( resource, "getPropertyValues" ) &&
-				Utils.hasFunction( resource, "getPropertyURIs" ) &&
-				Utils.hasFunction( resource, "addProperty" ) &&
-				Utils.hasFunction( resource, "setProperty" ) &&
-				Utils.hasFunction( resource, "deleteProperty" )
-		);
-	}
-
+export class Factory extends AbstractInjector<Class> {
 	static injectDefinitions( resource:Class, definitions:Map<string, Map<string, PropertyDescription>> ):Class;
 	static injectDefinitions( resources:Class[], definitions:Map<string, Map<string, PropertyDescription>> ):Class[];
 	static injectDefinitions( resourceOrResources:any, definitions:Map<string, Map<string, PropertyDescription>> ):any {
@@ -248,7 +228,7 @@ export class Factory {
 				if ( definitions.has( type ) ) {
 					Utils.M.extend( descriptions, definitions.get( type ) );
 				}
-				if ( descriptions.size() !== 0 ) Factory.injectDescriptions( resource, descriptions );
+				if ( descriptions.size !== 0 ) Factory.injectDescriptions( resource, descriptions );
 			}
 		}
 
@@ -275,12 +255,12 @@ export class Factory {
 			let resource:Class = resources[ i ];
 
 			let descriptionNames:Iterator<string> = descriptions.keys();
-			let next:IteratorValue<string> = descriptionNames.next();
+			let next:IteratorResult<string> = descriptionNames.next();
 			while ( ! next.done ) {
 				let name:string = next.value;
 				let description:PropertyDescription = descriptions.get( name );
 
-				let getter:() => any, setter:( any:any ) => void;
+				let getter:() => any, setter:( value:any ) => void;
 
 				if ( Utils.isNull( description.literal ) ) {
 					// The type isn't known, inject generic versions
@@ -303,7 +283,7 @@ export class Factory {
 					resource, name, {
 						enumerable: false,
 						get: getter,
-						set: setter
+						set: setter,
 					}
 				);
 
@@ -364,58 +344,60 @@ export class Factory {
 		};
 	}
 
-	is( value:any ):boolean {
+	constructor() {
+		super( null );
+	}
+
+	hasClassProperties( resource:RDFNode.Class ):boolean {
 		return (
-			// RDFNode.Factory.is( value ) &&
+			Utils.hasPropertyDefined( resource, "_propertyAddedCallbacks" ) &&
+			Utils.hasPropertyDefined( resource, "_propertyDeletedCallbacks" ) &&
 
-				( ! Utils.isNull( value ) ) &&
-				Utils.isObject( value ) &&
+			Utils.hasPropertyDefined( resource, "uri" ) &&
+			Utils.hasPropertyDefined( resource, "types" ) &&
 
-				Factory.hasClassProperties( value )
+			Utils.hasFunction( resource, "hasProperty" ) &&
+			Utils.hasFunction( resource, "getProperty" ) &&
+			Utils.hasFunction( resource, "getPropertyValue" ) &&
+			Utils.hasFunction( resource, "getPropertyURI" ) &&
+			Utils.hasFunction( resource, "getProperties" ) &&
+			Utils.hasFunction( resource, "getPropertyValues" ) &&
+			Utils.hasFunction( resource, "getPropertyURIs" ) &&
+			Utils.hasFunction( resource, "addProperty" ) &&
+			Utils.hasFunction( resource, "setProperty" ) &&
+			Utils.hasFunction( resource, "deleteProperty" )
 		);
 	}
 
-	create():Class {
-		let resource:Object = {};
-		return this.from( resource );
+	is( value:any ):boolean {
+		return (
+			super.is( value ) &&
+
+			( ! Utils.isNull( value ) ) &&
+			Utils.isObject( value ) &&
+
+			this.hasClassProperties( value )
+		);
 	}
 
-	from( object:Array<Object> ):Class[];
-	from( object:Object ):Class;
-	from( objects:any ):any {
-		if( ! Utils.isArray( objects ) ) return this.singleFrom( objects );
-
-		for ( let i:number = 0, length:number = objects.length; i < length; i ++ ) {
-			let resource:RDFNode.Class = <RDFNode.Class> objects[ i ];
-			this.injectBehavior( resource );
-		}
-
-		return objects;
-	}
-
-	protected singleFrom( object:Object ):Class {
-		return this.injectBehavior( object );
-	}
-
-	protected hasRDFClass( resource:RDFNode.Class ):boolean {
-		// TODO: Implement
+	hasRDFClass( resource:RDFNode.Class ):boolean {
 		return true;
 	}
 
-	protected injectBehavior( node:Object ):Class {
-		let resource:Class = <Class> node;
-		if( Factory.hasClassProperties( resource ) ) return <Class> resource;
+	protected injectBehavior<T>( node:T ):( T & Class ) {
+		let resource:Class = <any> node;
+		if( this.hasClassProperties( resource ) ) return <any> resource;
 
 		Object.defineProperties( resource, {
 			"_propertyAddedCallbacks": {
 				writable: false,
 				enumerable: false,
-				value: []
+				value: [],
 			},
 			"_propertyDeletedCallbacks": {
 				writable: false,
 				enumerable: false,
-				value: []
+				value: [],
 			},
 
 			"types": {
@@ -426,7 +408,7 @@ export class Factory {
 				set: function ( value:any ):void {
 					// TODO: Implement
 				},
-				enumerable: false
+				enumerable: false,
 			},
 			"uri": {
 				get: function():string {
@@ -435,62 +417,62 @@ export class Factory {
 				set: function ( value:string ):void {
 					this[ "@id" ] = value;
 				},
-				enumerable: false
+				enumerable: false,
 			},
 
 			"hasProperty": {
 				writable: false,
 				enumerable: false,
-				value: hasProperty
+				value: hasProperty,
 			},
 			"getProperty": {
 				writable: false,
 				enumerable: false,
-				value: getProperty
+				value: getProperty,
 			},
 			"getPropertyValue": {
 				writable: false,
 				enumerable: false,
-				value: getPropertyValue
+				value: getPropertyValue,
 			},
 			"getPropertyURI": {
 				writable: false,
 				enumerable: false,
-				value: getPropertyURI
+				value: getPropertyURI,
 			},
 			"getProperties": {
 				writable: false,
 				enumerable: false,
-				value: getProperties
+				value: getProperties,
 			},
 			"getPropertyValues": {
 				writable: false,
 				enumerable: false,
-				value: getPropertyValues
+				value: getPropertyValues,
 			},
 			"getPropertyURIs": {
 				writable: false,
 				enumerable: false,
-				value: getPropertyURIs
+				value: getPropertyURIs,
 			},
 			"addProperty": {
 				writable: false,
 				enumerable: false,
-				value: addProperty
+				value: addProperty,
 			},
 			"setProperty": {
 				writable: false,
 				enumerable: false,
-				value: setProperty
+				value: setProperty,
 			},
 			"deleteProperty": {
 				writable: false,
 				enumerable: false,
-				value: deleteProperty
-			}
+				value: deleteProperty,
+			},
 		} );
 
-		return resource;
+		return <any> resource;
 	}
 }
 

@@ -4,19 +4,11 @@ export interface Class extends Fragment.Class {
     slug: string;
 }
 export declare class Factory extends Fragment.Factory {
-    from(object: Array<Object & {
-        document: Document.Class;
-    }>): Class[];
-    from(object: Object & {
-        document: Document.Class;
-    }): Class;
-    protected singleFrom(object: Object & {
-        document: Document.Class;
-    }): Class;
-    protected injectBehavior(node: (Object & {
-        document: Document.Class;
-    })): Class;
-    protected hasClassProperties(resource: Fragment.Class): boolean;
+    hasClassProperties(resource: Fragment.Class): boolean;
+    from<T extends Object>(nodes: T[], document: Document.Class): (T & Class)[];
+    from<T extends Object>(node: T, document: Document.Class): (T & Class);
+    protected singleFrom<T extends Object>(node: T, document: Document.Class): (T & Class);
+    protected injectBehavior<T extends Fragment.Class>(fragment: T, document: Document.Class): (T & Class);
 }
 export declare var factory: Factory;
 export default Class;

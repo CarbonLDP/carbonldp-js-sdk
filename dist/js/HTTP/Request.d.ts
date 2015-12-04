@@ -20,11 +20,15 @@ export declare class Service {
     static options(url: string, options?: Options): Promise<Response>;
     static head(url: string, options?: Options): Promise<Response>;
     static get(url: string, options?: Options): Promise<Response>;
+    static get<T>(url: string, options?: Options, parser?: Parser<T>): Promise<ProcessedResponse<T>>;
     static post(url: string, body: string, options?: Options): Promise<Response>;
     static post<T>(url: string, body: string, options?: Options, parser?: Parser<T>): Promise<ProcessedResponse<T>>;
     static put(url: string, body: string, options?: Options): Promise<Response>;
+    static put<T>(url: string, body: string, options?: Options, parser?: Parser<T>): Promise<ProcessedResponse<T>>;
     static patch(url: string, body: string, options?: Options): Promise<Response>;
+    static patch<T>(url: string, body: string, options?: Options, parser?: Parser<T>): Promise<ProcessedResponse<T>>;
     static delete(url: string, body: string, options?: Options): Promise<Response>;
+    static delete<T>(url: string, body: string, options?: Options, parser?: Parser<T>): Promise<ProcessedResponse<T>>;
 }
 export declare class Util {
     static setAcceptHeader(accept: string, requestOptions: Options): Options;

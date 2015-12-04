@@ -78,7 +78,7 @@ var Service = (function () {
             return parser.parse(response.data).then(function (parsedBody) {
                 return {
                     result: parsedBody,
-                    response: response
+                    response: response,
                 };
             });
         });
@@ -91,9 +91,10 @@ var Service = (function () {
         if (options === void 0) { options = Service.defaultOptions; }
         return Service.send(Method_1.default.HEAD, url, options);
     };
-    Service.get = function (url, options) {
+    Service.get = function (url, options, parser) {
         if (options === void 0) { options = Service.defaultOptions; }
-        return Service.send(Method_1.default.GET, url, options);
+        if (parser === void 0) { parser = null; }
+        return Service.send(Method_1.default.GET, url, null, options, parser);
     };
     Service.post = function (url, bodyOrOptions, options, parser) {
         if (bodyOrOptions === void 0) { bodyOrOptions = Service.defaultOptions; }
@@ -101,17 +102,23 @@ var Service = (function () {
         if (parser === void 0) { parser = null; }
         return Service.send(Method_1.default.POST, url, bodyOrOptions, options, parser);
     };
-    Service.put = function (url, body, options) {
+    Service.put = function (url, bodyOrOptions, options, parser) {
+        if (bodyOrOptions === void 0) { bodyOrOptions = Service.defaultOptions; }
         if (options === void 0) { options = Service.defaultOptions; }
-        return Service.send(Method_1.default.PUT, url, body, options);
+        if (parser === void 0) { parser = null; }
+        return Service.send(Method_1.default.PUT, url, bodyOrOptions, options, parser);
     };
-    Service.patch = function (url, body, options) {
+    Service.patch = function (url, bodyOrOptions, options, parser) {
+        if (bodyOrOptions === void 0) { bodyOrOptions = Service.defaultOptions; }
         if (options === void 0) { options = Service.defaultOptions; }
-        return Service.send(Method_1.default.PATCH, url, body, options);
+        if (parser === void 0) { parser = null; }
+        return Service.send(Method_1.default.PATCH, url, bodyOrOptions, options, parser);
     };
-    Service.delete = function (url, body, options) {
+    Service.delete = function (url, bodyOrOptions, options, parser) {
+        if (bodyOrOptions === void 0) { bodyOrOptions = Service.defaultOptions; }
         if (options === void 0) { options = Service.defaultOptions; }
-        return Service.send(Method_1.default.DELETE, url, body, options);
+        if (parser === void 0) { parser = null; }
+        return Service.send(Method_1.default.DELETE, url, bodyOrOptions, options, parser);
     };
     Service.defaultOptions = {
         sendCredentialsOnCORS: true

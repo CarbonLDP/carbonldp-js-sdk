@@ -47,7 +47,7 @@ var Documents = (function () {
             var parsedObject = parse(response.data);
             return expand({
                 result: parsedObject,
-                response: response
+                response: response,
             });
         }).then(function (processedResponse) {
             var expandedResult = processedResponse.result;
@@ -57,7 +57,7 @@ var Documents = (function () {
             _this.injectDefinitions(document.getFragments().concat(document));
             return {
                 result: document,
-                response: processedResponse.response
+                response: processedResponse.response,
             };
         }).then(function (processedResponse) {
             var document = processedResponse.result;
@@ -69,7 +69,7 @@ var Documents = (function () {
             // TODO: Inject persisted container behavior
             return {
                 result: persistedDocument,
-                response: processedResponse.response
+                response: processedResponse.response,
             };
         });
     };
@@ -86,6 +86,15 @@ var Documents = (function () {
         HTTP.Request.Util.setPreferredInteractionModel(LDP.Class.RDFSource, requestOptions);
         HTTP.Request.Util.setIfMatchHeader(persistedDocument._etag, requestOptions);
         return HTTP.Request.Service.put(persistedDocument.uri, persistedDocument.toJSON(), requestOptions);
+    };
+    Documents.prototype.delete = function (persistedDocument, requestOptions) {
+        if (requestOptions === void 0) { requestOptions = {}; }
+        if (this.context && this.context.Auth.isAuthenticated())
+            this.context.Auth.addAuthentication(requestOptions);
+        HTTP.Request.Util.setAcceptHeader("application/ld+json", requestOptions);
+        HTTP.Request.Util.setPreferredInteractionModel(LDP.Class.RDFSource, requestOptions);
+        HTTP.Request.Util.setIfMatchHeader(persistedDocument._etag, requestOptions);
+        return HTTP.Request.Service.delete(persistedDocument.uri, persistedDocument.toJSON(), requestOptions);
     };
     Documents.prototype.getRDFDocument = function (rdfDocuments, response) {
         if (rdfDocuments.length === 0)

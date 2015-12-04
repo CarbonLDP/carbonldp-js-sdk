@@ -1,5 +1,5 @@
 import * as RDF from "./../RDF";
 
-interface PersistedContainer {
+export interface Class {
 
 }

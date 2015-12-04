@@ -9,13 +9,13 @@ export const DEFINITION:Map<string, RDF.PropertyDescription> = <any> Utils.M.fro
 	"version": {
 		"uri": NS.C.Predicate.version,
 		"multi": false,
-		"literal": true
+		"literal": true,
 	},
 	"buildDate": {
 		"uri": NS.C.Predicate.buildDate,
 		"multi": false,
-		"literal": true
-	}
+		"literal": true,
+	},
 } );
 
 export interface Class {

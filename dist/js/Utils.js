@@ -21,28 +21,28 @@ function isArray(object) {
     return object instanceof Array;
 }
 exports.isArray = isArray;
-function isString(string) {
-    return typeof string === "string" || string instanceof String;
+function isString(value) {
+    return typeof value === "string" || value instanceof String;
 }
 exports.isString = isString;
-function isBoolean(boolean) {
-    return typeof boolean === "boolean";
+function isBoolean(value) {
+    return typeof value === "boolean";
 }
 exports.isBoolean = isBoolean;
-function isNumber(number) {
-    return typeof number === "number" || number instanceof Number;
+function isNumber(value) {
+    return typeof value === "number" || value instanceof Number;
 }
 exports.isNumber = isNumber;
-function isInteger(number) {
-    if (!isNumber(number))
+function isInteger(value) {
+    if (!isNumber(value))
         return false;
-    return number % 1 === 0;
+    return value % 1 === 0;
 }
 exports.isInteger = isInteger;
-function isDouble(number) {
-    if (!isNumber(number))
+function isDouble(value) {
+    if (!isNumber(value))
         return false;
-    return number % 1 !== 0;
+    return value % 1 !== 0;
 }
 exports.isDouble = isDouble;
 function isDate(date) {
@@ -124,14 +124,14 @@ exports.forEachOwnProperty = forEachOwnProperty;
 var S = (function () {
     function S() {
     }
-    S.startsWith = function (string, substring) {
-        return string.lastIndexOf(substring, 0) === 0;
+    S.startsWith = function (str, substring) {
+        return str.lastIndexOf(substring, 0) === 0;
     };
-    S.endsWith = function (string, substring) {
-        return string.indexOf(substring, string.length - substring.length) !== -1;
+    S.endsWith = function (str, substring) {
+        return str.indexOf(substring, str.length - substring.length) !== -1;
     };
-    S.contains = function (string, substring) {
-        return string.indexOf(substring) !== -1;
+    S.contains = function (str, substring) {
+        return str.indexOf(substring) !== -1;
     };
     return S;
 })();

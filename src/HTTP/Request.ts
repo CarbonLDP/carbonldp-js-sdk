@@ -105,7 +105,7 @@ export class Service {
 			return parser.parse( response.data ).then( ( parsedBody:T ) => {
 				return {
 					result: parsedBody,
-					response: response
+					response: response,
 				};
 			});
 		});
@@ -119,26 +119,34 @@ export class Service {
 		return Service.send( Method.HEAD, url, options );
 	}
 
-	static get( url:string, options:Options = Service.defaultOptions ):Promise<Response> {
-		return Service.send( Method.GET, url, options );
+	static get( url:string, options?:Options ):Promise<Response>;
+	static get<T>( url:string, options?:Options, parser?:Parser<T> ):Promise<ProcessedResponse<T>>;
+	static get<T>( url:string, options:Options = Service.defaultOptions, parser:Parser<T> = null ):any {
+		return Service.send( Method.GET, url, null, options, parser );
 	}
 
 	static post( url:string, body:string, options?:Options ):Promise<Response>;
 	static post<T>( url:string, body:string, options?:Options, parser?:Parser<T> ):Promise<ProcessedResponse<T>>;
 	static post<T>( url:string, bodyOrOptions:any = Service.defaultOptions, options:Options = Service.defaultOptions, parser:Parser<T> = null ):any {
-			return Service.send( Method.POST, url, bodyOrOptions, options, parser );
+		return Service.send( Method.POST, url, bodyOrOptions, options, parser );
 	}
 
-	static put( url:string, body:string, options:Options = Service.defaultOptions ):Promise<Response> {
-		return Service.send( Method.PUT, url, body, options );
+	static put( url:string, body:string, options?:Options ):Promise<Response>;
+	static put<T>( url:string, body:string, options?:Options, parser?:Parser<T> ):Promise<ProcessedResponse<T>>;
+	static put<T>( url:string, bodyOrOptions:any = Service.defaultOptions, options:Options = Service.defaultOptions, parser:Parser<T> = null ):any {
+		return Service.send( Method.PUT, url, bodyOrOptions, options, parser );
 	}
 
-	static patch( url:string, body:string, options:Options = Service.defaultOptions ):Promise<Response> {
-		return Service.send( Method.PATCH, url, body, options );
+	static patch( url:string, body:string, options?:Options ):Promise<Response>;
+	static patch<T>( url:string, body:string, options?:Options, parser?:Parser<T> ):Promise<ProcessedResponse<T>>;
+	static patch<T>( url:string, bodyOrOptions:any = Service.defaultOptions, options:Options = Service.defaultOptions, parser:Parser<T> = null ):any {
+		return Service.send( Method.PATCH, url, bodyOrOptions, options, parser );
 	}
 
-	static delete( url:string, body:string, options:Options = Service.defaultOptions ):Promise<Response> {
-		return Service.send( Method.DELETE, url, body, options );
+	static delete( url:string, body:string, options?:Options ):Promise<Response>;
+	static delete<T>( url:string, body:string, options?:Options, parser?:Parser<T> ):Promise<ProcessedResponse<T>>;
+	static delete<T>( url:string, bodyOrOptions:any = Service.defaultOptions, options:Options = Service.defaultOptions, parser:Parser<T> = null ):any {
+		return Service.send( Method.DELETE, url, bodyOrOptions, options, parser );
 	}
 }
 

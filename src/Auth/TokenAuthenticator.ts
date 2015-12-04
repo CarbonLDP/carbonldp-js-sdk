@@ -77,7 +77,7 @@ export class Class implements Authenticator<UsernameAndPasswordToken> {
 
 			return {
 				result: Token.factory.from( resources[ 0 ] ),
-				response: processedResponse.response
+				response: processedResponse.response,
 			};
 		} );
 	}

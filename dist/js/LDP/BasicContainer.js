@@ -5,43 +5,31 @@ var __extends = (this && this.__extends) || function (d, b) {
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
 var NS = require("./../NS");
+var RDF = require("./../RDF");
 var Container = require("./Container");
-var Utils = require("./../Utils");
 var RDF_CLASS = NS.LDP.Class.BasicContainer;
-var Factory = (function (_super) {
-    __extends(Factory, _super);
-    function Factory() {
-        _super.apply(this, arguments);
+var Injector = (function (_super) {
+    __extends(Injector, _super);
+    function Injector() {
+        _super.call(this, RDF_CLASS, [Container.injector]);
     }
-    Factory.prototype.is = function (object) {
+    Injector.prototype.is = function (object) {
         return (_super.prototype.is.call(this, object) &&
             this.hasRDFClass(object) &&
             this.hasClassProperties(object));
     };
-    Factory.prototype.from = function (resourceOrResources) {
-        var sources = _super.prototype.from.call(this, resourceOrResources);
-        var resources = Utils.isArray(sources) ? sources : [sources];
-        for (var i = 0, length_1 = resources.length; i < length_1; i++) {
-            var resource = resources[i];
-            if (!this.hasClassProperties(resource))
-                this.injectBehaviour(resource);
-        }
-        if (Utils.isArray(resourceOrResources))
-            return resources[0];
-        return resources;
-    };
-    Factory.prototype.hasRDFClass = function (resource) {
+    Injector.prototype.hasRDFClass = function (resource) {
         return (resource.types.indexOf(NS.LDP.Class.BasicContainer) !== -1);
     };
-    Factory.prototype.hasClassProperties = function (resource) {
+    Injector.prototype.hasClassProperties = function (resource) {
         return true;
     };
-    Factory.prototype.injectBehaviour = function (resource) {
+    Injector.prototype.injectBehaviour = function (resource) {
         return resource;
     };
-    return Factory;
-})(Container.Factory);
-exports.Factory = Factory;
-exports.factory = new Factory();
+    return Injector;
+})(RDF.AbstractInjector);
+exports.Injector = Injector;
+exports.injector = new Injector();
 
 //# sourceMappingURL=BasicContainer.js.map

@@ -1,4 +1,4 @@
-/// <reference path="../typings/es6/es6.d.ts" />
+/// <reference path="./../node_modules/typescript/lib/lib.es6.d.ts" />
 
 function hasFunction( object:Object, functionName:string ):boolean {
 	return typeof object[ functionName ] === "function";
@@ -21,26 +21,26 @@ function isArray( object:any ):boolean {
 	return object instanceof Array;
 }
 
-function isString( string:any ):boolean {
-	return typeof string === "string" || string instanceof String;
+function isString( value:any ):boolean {
+	return typeof value === "string" || value instanceof String;
 }
 
-function isBoolean( boolean:any ):boolean {
-	return typeof boolean === "boolean";
+function isBoolean( value:any ):boolean {
+	return typeof value === "boolean";
 }
 
-function isNumber( number:any ):boolean {
-	return typeof number === "number" || number instanceof Number;
+function isNumber( value:any ):boolean {
+	return typeof value === "number" || value instanceof Number;
 }
 
-function isInteger( number:any ):boolean {
-	if ( ! isNumber( number ) )return false;
-	return number % 1 === 0;
+function isInteger( value:any ):boolean {
+	if ( ! isNumber( value ) )return false;
+	return value % 1 === 0;
 }
 
-function isDouble( number:any ):boolean {
-	if ( ! isNumber( number ) ) return false;
-	return number % 1 !== 0;
+function isDouble( value:any ):boolean {
+	if ( ! isNumber( value ) ) return false;
+	return value % 1 !== 0;
 }
 
 function isDate( date:any ):boolean {
@@ -117,23 +117,23 @@ function forEachOwnProperty( object:Object, action:( name:string, value:any ) =>
 }
 
 class S {
-	static startsWith( string:string, substring:string ):boolean {
-		return string.lastIndexOf( substring, 0 ) === 0;
+	static startsWith( str:string, substring:string ):boolean {
+		return str.lastIndexOf( substring, 0 ) === 0;
 	}
 
-	static endsWith( string:string, substring:string ):boolean {
-		return string.indexOf( substring, string.length - substring.length ) !== - 1;
+	static endsWith( str:string, substring:string ):boolean {
+		return str.indexOf( substring, str.length - substring.length ) !== - 1;
 	}
 
-	static contains( string:string, substring:string ):boolean {
-		return string.indexOf( substring ) !== - 1;
+	static contains( str:string, substring:string ):boolean {
+		return str.indexOf( substring ) !== - 1;
 	}
 }
 
 class A {
 	static from<T>( iterator:Iterator<T> ):Array<T> {
 		let array:Array<T> = [];
-		let next:IteratorValue<T> = iterator.next();
+		let next:IteratorResult<T> = iterator.next();
 		while ( ! next.done ) {
 			array.push( next.value );
 			next = iterator.next();
@@ -168,7 +168,7 @@ class M {
 			let extender:Map<K, V> = extenders[ i ];
 			let values:Iterator<Array<(K|V)>> = extender.entries();
 
-			let next:IteratorValue<Array<(K|V)>> = values.next();
+			let next:IteratorResult<Array<(K|V)>> = values.next();
 			while ( ! next.done ) {
 				let entry:Array<(K|V)> = next.value;
 				let key:K = <K> entry[ 0 ];

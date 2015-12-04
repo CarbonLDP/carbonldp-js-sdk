@@ -1,14 +1,11 @@
 import Context from "./Context";
 import * as Document from "./Document";
 import * as Errors from "./Errors";
+import * as HTTP from "./HTTP";
 import * as PersistedResource from "./PersistedResource";
 import * as PersistedFragment from "./PersistedFragment";
 import * as RDF from "./RDF";
 import * as Utils from "./Utils";
-
-enum SpecialValue {
-	ALL_VALUES
-}
 
 export interface Class extends PersistedResource.Class, Document.Class {
 	_context:Context;
@@ -19,104 +16,8 @@ export interface Class extends PersistedResource.Class, Document.Class {
 	destroy():Promise<void>;
 }
 
-function modificationsDeleteAllValues( deleteModifications:RDF.Value.Class[] ):boolean {
-	return deleteModifications.length === 1 && deleteModifications[ 0 ] === SpecialValue.ALL_VALUES;
-}
-
-function getModifications( type:PersistedResource.ModificationType ):Map<string, RDF.Value.Class[]> {
-	let modifications:Map<string, RDF.Value.Class[]>;
-	switch ( type ) {
-		case PersistedResource.ModificationType.ADD:
-			modifications = this._modifications.add;
-			break;
-		case PersistedResource.ModificationType.SET:
-			modifications = this._modifications.set;
-			break;
-		case PersistedResource.ModificationType.DELETE:
-			modifications = this._modifications.delete;
-			break;
-		default:
-			throw new Errors.IllegalStateError( "" );
-	}
-	return modifications;
-}
-
-function addModification( type:PersistedResource.ModificationType, propertyURI:string, value:any ):void {
-	let modifications:Map<string, RDF.Value.Class[]> = getModifications.call( this, type, propertyURI );
-
-	let values:RDF.Value.Class[];
-	if ( modifications.has( propertyURI ) ) {
-		values = modifications.get( propertyURI );
-		for ( let i:number = 0, length:number = values.length; i < length; i ++ ) {
-			if ( RDF.Value.Util.areEqual( values[ i ], value ) ) return;
-		}
-	} else {
-		values = [];
-		modifications.set( propertyURI, values );
-	}
-
-	values.push( value );
-}
-
-function removeModification( type:PersistedResource.ModificationType, propertyURI:string, value:any ):void {
-	let modifications:Map<string, RDF.Value.Class[]> = getModifications.call( this, type, propertyURI );
-	let values:RDF.Value.Class[] = modifications.get( propertyURI );
-	for ( let i:number = 0, length:number = values.length; i < length; i ++ ) {
-		if ( RDF.Value.Util.areEqual( values[ i ], value ) ) {
-			values.splice( i, 1 );
-			break;
-		}
-	}
-}
-
-function registerAddModification( propertyURI:string, value:any ):void {
-	this._dirty = true;
-
-	if ( this._modifications.delete.has( propertyURI ) ) {
-		let deleteModifications:RDF.Value.Class[] = this._modifications.delete.get( propertyURI );
-
-		if ( modificationsDeleteAllValues( deleteModifications ) ) {
-			this._modifications.delete.delete( propertyURI );
-			addModification.call( this, PersistedResource.ModificationType.SET, propertyURI, value );
-			return;
-		}
-
-		removeModification.call( this, PersistedResource.ModificationType.DELETE, propertyURI, value );
-
-		for ( let i:number = 0, length:number = deleteModifications.length; i < length; i ++ ) {
-			if ( RDF.Value.Util.areEqual( deleteModifications[ i ], value ) ) {
-				deleteModifications.splice( i, 1 );
-				break;
-			}
-		}
-	} else if ( this._modifications.set.has( propertyURI ) ) {
-		addModification.call( this, PersistedResource.ModificationType.SET, propertyURI, value );
-	} else {
-		addModification.call( this, PersistedResource.ModificationType.ADD, propertyURI, value );
-	}
-}
-
-function registerDeleteModification( propertyURI:string, value:any = null ):void {
-	this._dirty = true;
-
-	if ( Utils.isNull( value ) ) value = SpecialValue.ALL_VALUES;
-
-	if ( value === SpecialValue.ALL_VALUES ) {
-		if ( this._modifications.add.has( propertyURI ) ) this._modifications.add.delete( propertyURI );
-		if ( this._modifications.set.has( propertyURI ) ) this._modifications.set.delete( propertyURI );
-		if ( this._modifications.delete.has( propertyURI ) ) this._modifications.delete.delete( propertyURI );
-	} else {
-		if ( this._modifications.add.has( propertyURI ) ) removeModification.call( this, PersistedResource.ModificationType.ADD, propertyURI, value );
-		if ( this._modifications.set.has( propertyURI ) ) removeModification.call( this, PersistedResource.ModificationType.SET, propertyURI, value );
-	}
-
-	addModification.call( this, PersistedResource.ModificationType.DELETE, propertyURI, value );
-}
-
 function isDirty():boolean {
-	/* tslint:disable: typedef */
 	for( let fragment of this.getFragments() ) {
-		/* tslint:enable: typedef */
 		if( fragment.isDirty() ) return true;
 	}
 	return false;
@@ -127,12 +28,14 @@ function refresh():Promise<void> {
 	return null;
 }
 function save():Promise<void> {
-	// TODO: FT
-	return this._context.Documents.save( this );
+	return this._context.Documents.save( this ).then( ( response:HTTP.Response.Class) => {
+		// TODO
+	});
 }
 function destroy():Promise<void> {
-	// TODO
-	return null;
+	return this._context.Documents.delete( this ).then( ( response:HTTP.Response.Class) => {
+		// TODO
+	});
 }
 
 export class Factory {
@@ -178,32 +81,32 @@ export class Factory {
 				writable: false,
 				enumerable: false,
 				configurable: true,
-				value: context
+				value: context,
 			},
 			"_etag": {
 				writable: true,
 				enumerable: false,
 				configurable: true,
-				value: null
+				value: null,
 			},
 			"refresh": {
 				writable: false,
 				enumerable: false,
 				configurable: true,
-				value: refresh
+				value: refresh,
 			},
 			"save": {
 				writable: false,
 				enumerable: false,
 				configurable: true,
-				value: save
+				value: save,
 			},
 			"destroy": {
 				writable: false,
 				enumerable: false,
 				configurable: true,
-				value: destroy
-			}
+				value: destroy,
+			},
 		} );
 
 		// Overwrite isDirty to also take into account the fragments state
@@ -213,9 +116,6 @@ export class Factory {
 				return superFunction.call( this ) || isDirty.call( this );
 			};
 		})();
-
-		persisted._propertyAddedCallbacks.push( registerAddModification );
-		persisted._propertyDeletedCallbacks.push( registerDeleteModification );
 
 		return <any> persisted;
 	}

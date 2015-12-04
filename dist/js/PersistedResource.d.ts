@@ -19,8 +19,8 @@ export interface Class {
 export declare class Factory {
     static hasClassProperties(object: Object): boolean;
     static is(object: Object): boolean;
-    static from<T>(object: T): T & Class;
-    static from<T>(objects: T[]): (T & Class)[];
+    static from<T extends RDF.Resource.Class>(object: T): T & Class;
+    static from<T extends RDF.Resource.Class>(objects: T[]): (T & Class)[];
     private static singleFrom<T>(object);
     private static injectBehavior<T>(persistedResource);
 }

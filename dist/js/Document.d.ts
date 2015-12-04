@@ -17,12 +17,12 @@ export interface Class extends RDF.Resource.Class {
     removeFragment(fragmentOrSlug: any): void;
     toJSON(): string;
 }
-export declare class Factory extends RDF.Resource.Factory {
-    static hasClassProperties(documentResource: RDF.Resource.Class): boolean;
+export declare class Factory {
+    hasClassProperties(documentResource: RDF.Resource.Class): boolean;
     from(rdfDocuments: RDF.Document.Class[]): Class[];
     from(rdfDocument: RDF.Document.Class): Class;
     protected singleFrom(rdfDocument: RDF.Document.Class): Class;
-    protected injectBehavior(resource: RDF.Node.Class): Class;
+    protected injectBehavior(documentResource: RDF.Resource.Class): Class;
 }
 export declare var factory: Factory;
 export default Document;

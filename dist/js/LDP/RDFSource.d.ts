@@ -2,13 +2,10 @@ import * as RDF from "./../RDF";
 export declare const RDF_CLASS: string;
 export interface Class extends RDF.Resource.Class {
 }
-export declare class Factory extends RDF.Resource.Factory {
-    static hasClassProperties(resource: RDF.Node.Class): boolean;
-    static hasRDFClass(resource: RDF.Resource.Class): boolean;
+export declare class Injector extends RDF.AbstractInjector<Class> {
+    constructor();
+    hasClassProperties(resource: RDF.Node.Class): boolean;
     is(object: Object): boolean;
-    from(resource: RDF.Node.Class): Class;
-    from(resources: RDF.Node.Class[]): Class[];
-    protected injectBehaviour(resource: RDF.Resource.Class): Class;
 }
-export declare let factory: Factory;
+export declare let injector: Injector;
 export default Class;

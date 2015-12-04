@@ -21,7 +21,7 @@ class Carbon extends Context {
 	static Documents:typeof Documents = Documents;
 	static HTTP:typeof HTTP = HTTP;
 	static RDF:typeof RDF = RDF;
-	static Utils = Utils;
+	static Utils:typeof Utils = Utils;
 	/* tslint:enable: variable-name */
 
 	static get version():string { return "0.12.0-ALPHA"; }

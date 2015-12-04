@@ -16,16 +16,20 @@ export const DEFINITION:Map<string, RDF.PropertyDescription> = <any> Utils.M.fro
 	"memberOfRelation": {
 		"uri": NS.LDP.Predicate.memberOfRelation,
 		"multi": false,
-		"literal": false
+		"literal": false,
 	},
 	"hasMemberRelation": {
 		"uri": NS.LDP.Predicate.hasMemberRelation,
 		"multi": false,
-		"literal": false
-	}
+		"literal": false,
+	},
 } );
 
-export class Factory extends RDFSource.Factory {
+export class Injector extends RDF.AbstractInjector<Class> {
+	constructor() {
+		super( RDF_CLASS, [ RDFSource.injector ] );
+	}
+
 	is( object:Object ):boolean {
 		return (
 			super.is( object ) &&
@@ -34,22 +38,7 @@ export class Factory extends RDFSource.Factory {
 		);
 	}
 
-	from( resource:RDF.Node.Class ):Class;
-	from( resources:RDF.Node.Class[] ):Class[];
-	from( resourceOrResources:any ):any {
-		let superResult:(RDFSource.Class | RDFSource.Class[]) = super.from( resourceOrResources );
-		let resources:RDFSource.Class[] = Utils.isArray( superResult ) ? <RDFSource.Class[]> superResult : <RDFSource.Class[]> [ superResult ];
-
-		for ( let i:number = 0, length:number = resources.length; i < length; i ++ ) {
-			let resource:RDFSource.Class = resources[ i ];
-			if ( ! this.hasClassProperties( resource ) ) this.injectBehaviour( resource );
-		}
-
-		if ( Utils.isArray( resourceOrResources ) ) return <Class[]> resources;
-		return <Class> resources[ 0 ];
-	}
-
-	protected hasRDFClass( resource:RDF.Resource.Class ):boolean {
+	hasRDFClass( resource:RDF.Resource.Class ):boolean {
 		return (
 			resource.types.indexOf( RDF_CLASS ) !== - 1 ||
 			resource.types.indexOf( NS.LDP.Class.BasicContainer ) !== - 1 ||
@@ -58,19 +47,20 @@ export class Factory extends RDFSource.Factory {
 		);
 	}
 
-	protected hasClassProperties( resource:RDF.Node.Class ):boolean {
+	hasClassProperties( resource:RDF.Node.Class ):boolean {
 		return (
 			Utils.hasPropertyDefined( resource, "memberOfRelation" ) &&
 			Utils.hasPropertyDefined( resource, "hasMemberRelation" )
 		);
 	}
 
-	protected injectBehaviour( resource:RDF.Resource.Class ):Class {
+
+	protected injectBehavior( resource:RDF.Resource.Class ):Class {
 		RDF.Resource.Factory.injectDescriptions( resource, DEFINITION );
 		return <Class> resource;
 	}
 }
 
-export let factory:Factory = new Factory();
+export let injector:Injector = new Injector();
 
 export default Class;

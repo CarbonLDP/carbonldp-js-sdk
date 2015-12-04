@@ -1,4 +1,5 @@
 /// <reference path="../../typings/es6/es6.d.ts" />
+import AbstractInjector from "./AbstractInjector";
 import * as Literal from "./Literal";
 import * as Value from "./Value";
 import PropertyDescription from "./PropertyDescription";
@@ -19,8 +20,7 @@ export interface Class extends RDFNode.Class {
     setProperty: (property: string, value: any) => void;
     deleteProperty: (property: string) => void;
 }
-export declare class Factory {
-    static hasClassProperties(resource: RDFNode.Class): boolean;
+export declare class Factory extends AbstractInjector<Class> {
     static injectDefinitions(resource: Class, definitions: Map<string, Map<string, PropertyDescription>>): Class;
     static injectDefinitions(resources: Class[], definitions: Map<string, Map<string, PropertyDescription>>): Class[];
     static injectDescriptions(resource: Class, descriptions: Map<string, PropertyDescription>): Object;
@@ -34,12 +34,10 @@ export declare class Factory {
     private static literalGetter(description);
     private static literalsGetter(description);
     private static setter(description);
+    constructor();
+    hasClassProperties(resource: RDFNode.Class): boolean;
     is(value: any): boolean;
-    create(): Class;
-    from(object: Array<Object>): Class[];
-    from(object: Object): Class;
-    protected singleFrom(object: Object): Class;
-    protected hasRDFClass(resource: RDFNode.Class): boolean;
-    protected injectBehavior(node: Object): Class;
+    hasRDFClass(resource: RDFNode.Class): boolean;
+    protected injectBehavior<T>(node: T): (T & Class);
 }
 export declare let factory: Factory;

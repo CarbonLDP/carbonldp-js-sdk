@@ -28,7 +28,9 @@ var config = {
 
 gulp.task( 'ts-lint', function() {
 	return gulp.src( config.source.typescript )
-		.pipe( tslint() )
+		.pipe( tslint({
+			tslint: require( "tslint" )
+		}) )
 		.pipe( tslint.report( 'prose' ) )
 	;
 });

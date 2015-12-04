@@ -61,7 +61,7 @@ class Documents {
 
 				return expand( {
 					result: parsedObject,
-					response: response
+					response: response,
 				} );
 			}
 		).then(
@@ -71,12 +71,12 @@ class Documents {
 				let rdfDocument:RDF.Document.Class = this.getRDFDocument( rdfDocuments, processedResponse.response );
 
 				let document:Document.Class = Document.factory.from( rdfDocument );
-
-				this.injectDefinitions( (<RDF.Resource.Class[]>document.getFragments()).concat( document ) );
+				this.injectBehaviors( ( <RDF.Resource.Class[]>document.getFragments() ).concat( document ) );
+				this.injectDefinitions( ( <RDF.Resource.Class[]>document.getFragments() ).concat( document ) );
 
 				return {
 					result: document,
-					response: processedResponse.response
+					response: processedResponse.response,
 				};
 			}
 		).then(
@@ -94,7 +94,7 @@ class Documents {
 
 				return {
 					result: persistedDocument,
-					response: processedResponse.response
+					response: processedResponse.response,
 				};
 			}
 		);
@@ -113,6 +113,16 @@ class Documents {
 		HTTP.Request.Util.setIfMatchHeader( persistedDocument._etag, requestOptions );
 
 		return HTTP.Request.Service.put( persistedDocument.uri, persistedDocument.toJSON(), requestOptions );
+	}
+
+	delete( persistedDocument:PersistedDocument.Class, requestOptions:HTTP.Request.Options = {} ):Promise<HTTP.Response.Class> {
+		if ( this.context && this.context.Auth.isAuthenticated() ) this.context.Auth.addAuthentication( requestOptions );
+
+		HTTP.Request.Util.setAcceptHeader( "application/ld+json", requestOptions );
+		HTTP.Request.Util.setPreferredInteractionModel( LDP.Class.RDFSource, requestOptions );
+		HTTP.Request.Util.setIfMatchHeader( persistedDocument._etag, requestOptions );
+
+		return HTTP.Request.Service.delete( persistedDocument.uri, persistedDocument.toJSON(), requestOptions );
 	}
 
 	private getRDFDocument( rdfDocuments:RDF.Document.Class[], response:HTTP.Response.Class ):RDF.Document.Class {

@@ -49,7 +49,7 @@ class Factory {
 		for ( let i:number = 0, length:number = objects.length; i < length; i ++ ) {
 			let value:Persisted = <any>objects[ i ];
 
-			if ( ! Factory.is( value ) ) Factory.injectBehaviour( value );
+			if ( ! Factory.is( value ) ) Factory.injectBehavior( value );
 
 			values.push( value );
 		}
@@ -58,18 +58,18 @@ class Factory {
 		return values[ 0 ];
 	}
 
-	private static injectBehaviour( value:Persisted ):Persisted {
+	private static injectBehavior( value:Persisted ):Persisted {
 		Object.defineProperties( value, {
 			"_dirty": {
 				writable: true,
 				enumerable: false,
-				value: false
+				value: false,
 			},
 			"_modifications": {
 				writable: false,
 				enumerable: false,
-				value: new Modifications()
-			}
+				value: new Modifications(),
+			},
 		} );
 
 		value.isDirty = isDirty;

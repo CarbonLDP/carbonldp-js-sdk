@@ -21,7 +21,7 @@ function module(name, description) {
     var descriptor = {
         suiteType: exports.MODULE,
         name: name,
-        description: description
+        description: description,
     };
     return toJSON(descriptor);
 }
@@ -32,7 +32,7 @@ function submodule(access, name, description) {
         suiteType: exports.SUBMODULE,
         access: access,
         name: name,
-        description: description
+        description: description,
     };
     return toJSON(descriptor);
 }
@@ -45,7 +45,7 @@ function clazz(name, description, parent, interfaces) {
         name: name,
         description: description,
         parent: parent,
-        interfaces: interfaces
+        interfaces: interfaces,
     };
     return toJSON(descriptor);
 }
@@ -56,7 +56,7 @@ function interfaze(name, description, parent) {
         suiteType: exports.INTERFACE,
         name: name,
         description: description,
-        parent: parent
+        parent: parent,
     };
     return toJSON(descriptor);
 }
@@ -65,7 +65,7 @@ function constructor(name, description) {
     var descriptor = {
         suiteType: exports.CONSTRUCTOR,
         name: name,
-        description: description
+        description: description,
     };
     return toJSON(descriptor);
 }
@@ -76,7 +76,7 @@ function hasInterface(access, name, description) {
         access: access,
         specType: exports.INTERFACE,
         name: name,
-        description: description
+        description: description,
     };
     return toJSON(descriptor);
 }
@@ -99,7 +99,7 @@ function hasConstructor(argumentsOrDescription, constructorArguments) {
         access: exports.STATIC,
         specType: exports.CONSTRUCTOR,
         description: description,
-        arguments: constructorArguments
+        arguments: constructorArguments,
     };
     return toJSON(descriptor);
 }
@@ -130,7 +130,7 @@ function hasMethod(access, name, descriptionOrArgumentsOrReturns, argumentsOrRet
         name: name,
         description: description,
         arguments: methodArguments,
-        returns: returns
+        returns: returns,
     };
     return toJSON(descriptor);
 }
@@ -162,7 +162,7 @@ function hasSignature(descriptionOrArgumentsOrReturns, argumentsOrReturns, retur
         specType: exports.SIGNATURE,
         description: description,
         arguments: methodArguments,
-        returns: returns
+        returns: returns,
     };
     return toJSON(descriptor);
 }
@@ -174,7 +174,7 @@ function hasProperty(access, name, type, description) {
         specType: exports.PROPERTY,
         name: name,
         type: type,
-        description: description
+        description: description,
     };
     return toJSON(descriptor);
 }
@@ -185,7 +185,7 @@ exports.property = hasProperty;
 function extendsClass(name) {
     var descriptor = {
         specType: exports.SUPER_CLASS,
-        name: name
+        name: name,
     };
     return toJSON(descriptor);
 }

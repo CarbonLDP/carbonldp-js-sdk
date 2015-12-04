@@ -61,11 +61,8 @@ var Class = (function () {
         this.authenticator = null;
     };
     Class.prototype.getAuthenticator = function (authenticationToken) {
-        // TODO: FOR_OF_TYPEDEF
-        /* tslint:disable: typedef */
         for (var _i = 0, _a = this.authenticators; _i < _a.length; _i++) {
             var authenticator = _a[_i];
-            /* tslint:enable: typedef */
             if (authenticator.supports(authenticationToken))
                 return authenticator;
         }

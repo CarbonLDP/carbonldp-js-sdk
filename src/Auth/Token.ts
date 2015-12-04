@@ -8,13 +8,13 @@ export const DEFINITION:Map<string, RDF.PropertyDescription> = <any> Utils.M.fro
 	"key": {
 		"uri": NS.CS.Predicate.tokenKey,
 		"multi": false,
-		"literal": true
+		"literal": true,
 	},
 	"expirationTime": {
 		"uri": NS.CS.Predicate.expirationTime,
 		"multi": false,
-		"literal": true
-	}
+		"literal": true,
+	},
 } );
 
 export interface Class extends RDF.Resource.Class {

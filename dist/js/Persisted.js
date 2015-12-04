@@ -44,13 +44,13 @@ var Factory = (function () {
             "_dirty": {
                 writable: true,
                 enumerable: false,
-                value: false
+                value: false,
             },
             "_modifications": {
                 writable: false,
                 enumerable: false,
-                value: new Modifications()
-            }
+                value: new Modifications(),
+            },
         });
         value.isDirty = isDirty;
         return value;

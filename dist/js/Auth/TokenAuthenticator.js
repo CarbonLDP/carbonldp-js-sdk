@@ -50,7 +50,7 @@ var Class = (function () {
                 throw new HTTP.Errors.BadResponseError("Multiple '" + Token.RDF_CLASS + "' were returned. ", processedResponse.response);
             return {
                 result: Token.factory.from(resources[0]),
-                response: processedResponse.response
+                response: processedResponse.response,
             };
         });
     };

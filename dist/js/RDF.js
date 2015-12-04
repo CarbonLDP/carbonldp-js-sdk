@@ -1,3 +1,5 @@
+var AbstractInjector_1 = require("./RDF/AbstractInjector");
+exports.AbstractInjector = AbstractInjector_1.default;
 var Literal = require("./RDF/Literal");
 exports.Literal = Literal;
 var PropertyDescription_1 = require("./RDF/PropertyDescription");

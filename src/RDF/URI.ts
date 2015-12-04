@@ -23,6 +23,10 @@ export class Util {
 		return Utils.S.startsWith( uri, "_:" );
 	}
 
+	static isPrefixed( uri:string ):boolean {
+		return ! Util.isAbsolute( uri ) && Utils.S.contains( uri, ":" );
+	}
+
 	static getDocumentURI( uri:string ):string {
 		let parts:string[] = uri.split( "#" );
 		if ( parts.length > 2 ) throw new Error( "IllegalArgument: The URI provided has more than one # sign." );

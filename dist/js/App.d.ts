@@ -1,7 +1,6 @@
 /// <reference path="../typings/es6/es6.d.ts" />
 import Context from "./Context";
 import * as RDF from "./RDF";
-import * as LDP from "./LDP";
 export interface Resource extends RDF.Resource.Class {
     rootContainer: string;
 }
@@ -14,13 +13,11 @@ export declare class Class extends Context {
     resolve(uri: string): string;
     private getBase(resource);
 }
-export declare class Factory extends LDP.RDFSource.Factory {
-    static hasClassProperties(resource: RDF.Node.Class): boolean;
+export declare class Factory extends RDF.AbstractInjector<Resource> {
+    constructor();
+    hasClassProperties(resource: Object): boolean;
     is(object: Object): boolean;
-    from(resource: RDF.Node.Class): Resource;
-    from(resources: RDF.Node.Class[]): Resource[];
-    protected hasRDFClass(resource: RDF.Resource.Class): boolean;
-    protected injectBehaviour(resource: RDF.Resource.Class): Resource;
+    protected injectBehavior<T extends RDF.Resource.Class>(resource: T): (T & Resource);
 }
 export declare let factory: Factory;
 export default Class;

@@ -11,20 +11,25 @@ var Factory = (function (_super) {
     function Factory() {
         _super.apply(this, arguments);
     }
-    Factory.prototype.from = function (objects) {
-        if (!Utils.isArray(objects))
-            return this.singleFrom(objects);
-        for (var i = 0, length_1 = objects.length; i < length_1; i++) {
-            var object = objects[i];
-            this.singleFrom(object);
+    Factory.prototype.hasClassProperties = function (resource) {
+        return (Utils.hasPropertyDefined(resource, "slug"));
+    };
+    Factory.prototype.from = function (nodeOrNodes, document) {
+        if (!Utils.isArray(nodeOrNodes))
+            return this.singleFrom(nodeOrNodes, document);
+        for (var _i = 0; _i < nodeOrNodes.length; _i++) {
+            var node = nodeOrNodes[_i];
+            this.singleFrom(node, document);
         }
-        return objects;
+        return nodeOrNodes;
     };
-    Factory.prototype.singleFrom = function (object) {
-        return this.injectBehavior(object);
+    Factory.prototype.singleFrom = function (node, document) {
+        var fragment = Fragment.factory.from(node, document);
+        if (!this.hasClassProperties(fragment))
+            this.injectBehavior(fragment, document);
+        return fragment;
     };
-    Factory.prototype.injectBehavior = function (node) {
-        var fragment = _super.prototype.injectBehavior.call(this, node);
+    Factory.prototype.injectBehavior = function (fragment, document) {
         if (this.hasClassProperties(fragment))
             return fragment;
         Object.defineProperties(fragment, {
@@ -35,13 +40,10 @@ var Factory = (function (_super) {
                 set: function (slug) {
                     this.uri = this.document.uri + "#" + slug;
                 },
-                enumerable: false
-            }
+                enumerable: false,
+            },
         });
         return fragment;
-    };
-    Factory.prototype.hasClassProperties = function (resource) {
-        return (Utils.hasPropertyDefined(resource, "slug"));
     };
     return Factory;
 })(Fragment.Factory);

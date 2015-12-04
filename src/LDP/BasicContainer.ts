@@ -11,7 +11,11 @@ export interface Class extends Container.Class {
 
 }
 
-export class Factory extends Container.Factory {
+export class Injector extends RDF.AbstractInjector<Class> {
+	constructor() {
+		super( RDF_CLASS, [ Container.injector ] );
+	}
+
 	is( object:Object ):boolean {
 		return (
 			super.is( object ) &&
@@ -20,36 +24,21 @@ export class Factory extends Container.Factory {
 		);
 	}
 
-	from( resource:RDF.Node.Class ):Class;
-	from( resources:RDF.Node.Class[] ):Class[];
-	from( resourceOrResources:any ):any {
-		let sources:(Container.Class | Container.Class[]) = super.from( resourceOrResources );
-		let resources:Container.Class[] = Utils.isArray( sources ) ? <Container.Class[]> sources : <Container.Class[]> [ sources ];
-
-		for ( let i:number = 0, length:number = resources.length; i < length; i ++ ) {
-			let resource:Container.Class = resources[ i ];
-			if ( ! this.hasClassProperties( resource ) ) this.injectBehaviour( resource );
-		}
-
-		if ( Utils.isArray( resourceOrResources ) ) return <Class> resources[ 0 ];
-		return <Class[]> resources;
-	}
-
-	protected hasRDFClass( resource:RDF.Resource.Class ):boolean {
+	hasRDFClass( resource:RDF.Resource.Class ):boolean {
 		return (
 			resource.types.indexOf( NS.LDP.Class.BasicContainer ) !== - 1
 		);
 	}
 
-	protected hasClassProperties( resource:RDF.Node.Class ):boolean {
+	hasClassProperties( resource:RDF.Node.Class ):boolean {
 		return true;
 	}
 
-	protected injectBehaviour( resource:Container.Class ):Class {
-		return <Class> resource;
+	protected injectBehavior<T>( resource:T ):( T & Class ) {
+		return <any> resource;
 	}
 }
 
-export let factory:Factory = new Factory();
+export let injector:Injector = new Injector();
 
 export default Class;

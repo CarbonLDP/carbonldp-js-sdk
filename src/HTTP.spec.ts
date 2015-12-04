@@ -60,51 +60,53 @@ describe( "HTTP", function () {
 			expect( HTTP.Header.Value ).not.toBeNull();
 			expect( Utils.isFunction( HTTP.Header.Value ) ).toBe( true );
 		} );
-		it( "has a constructor, ( value ), which takes a string representation and parses it", function () {
-			let value:HTTP.Header.Value;
+		/*
+			it( "has a constructor, ( value ), which takes a string representation and parses it", function () {
+				let value:HTTP.Header.Value;
 
-			value = new HTTP.Header.Value( 'include="http://example.org"; return=representation' );
-			expect( value.mainKey ).toEqual( "include" );
-			expect( value.mainValue ).toEqual( "http://example.org" );
-			expect( value.secondaryKey ).toEqual( "return" );
-			expect( value.secondaryValue ).toEqual( "representation" );
+				value = new HTTP.Header.Value( 'include="http://example.org"; return=representation' );
+				expect( value.mainKey ).toEqual( "include" );
+				expect( value.mainValue ).toEqual( "http://example.org" );
+				expect( value.secondaryKey ).toEqual( "return" );
+				expect( value.secondaryValue ).toEqual( "representation" );
 
-			value = new HTTP.Header.Value( '"http://example.org"; representation' );
-			expect( value.mainKey ).toBeNull();
-			expect( value.mainValue ).toEqual( "http://example.org" );
-			expect( value.secondaryKey ).toBeNull();
-			expect( value.secondaryValue ).toEqual( "representation" );
+				value = new HTTP.Header.Value( '"http://example.org"; representation' );
+				expect( value.mainKey ).toBeNull();
+				expect( value.mainValue ).toEqual( "http://example.org" );
+				expect( value.secondaryKey ).toBeNull();
+				expect( value.secondaryValue ).toEqual( "representation" );
 
-			value = new HTTP.Header.Value( "something" );
-			expect( value.mainKey ).toBeNull();
-			expect( value.mainValue ).toEqual( "something" );
-			expect( value.secondaryKey ).toBeNull();
-			expect( value.secondaryValue ).toBeNull();
-		} );
-		it( "has a constructor, ( mainKey, mainValue, secondaryKey, secondaryValue ), which takes the header parts", function () {
-			let value:HTTP.Header.Value;
+				value = new HTTP.Header.Value( "something" );
+				expect( value.mainKey ).toBeNull();
+				expect( value.mainValue ).toEqual( "something" );
+				expect( value.secondaryKey ).toBeNull();
+				expect( value.secondaryValue ).toBeNull();
+			} );
+			it( "has a constructor, ( mainKey, mainValue, secondaryKey, secondaryValue ), which takes the header parts", function () {
+				let value:HTTP.Header.Value;
 
-			value = new HTTP.Header.Value( "include", "http://example.org", "return", "representation" );
-			expect( value.mainKey ).toEqual( "include" );
-			expect( value.mainValue ).toEqual( "http://example.org" );
-			expect( value.secondaryKey ).toEqual( "return" );
-			expect( value.secondaryValue ).toEqual( "representation" );
+				value = new HTTP.Header.Value( "include", "http://example.org", "return", "representation" );
+				expect( value.mainKey ).toEqual( "include" );
+				expect( value.mainValue ).toEqual( "http://example.org" );
+				expect( value.secondaryKey ).toEqual( "return" );
+				expect( value.secondaryValue ).toEqual( "representation" );
 
-			value = new HTTP.Header.Value( null, "http://example.org", null, "representation" );
-			expect( value.mainKey ).toBeNull();
-			expect( value.mainValue ).toEqual( "http://example.org" );
-			expect( value.secondaryKey ).toBeNull();
-			expect( value.secondaryValue ).toEqual( "representation" );
+				value = new HTTP.Header.Value( null, "http://example.org", null, "representation" );
+				expect( value.mainKey ).toBeNull();
+				expect( value.mainValue ).toEqual( "http://example.org" );
+				expect( value.secondaryKey ).toBeNull();
+				expect( value.secondaryValue ).toEqual( "representation" );
 
-			value = new HTTP.Header.Value( null, "something", null, null );
-			expect( value.mainKey ).toBeNull();
-			expect( value.mainValue ).toEqual( "something" );
-			expect( value.secondaryKey ).toBeNull();
-			expect( value.secondaryValue ).toBeNull();
-		} );
-		it( "has method, toString(), which constructs the string representation", function () {
-			// TODO: Test
-		} );
+				value = new HTTP.Header.Value( null, "something", null, null );
+				expect( value.mainKey ).toBeNull();
+				expect( value.mainValue ).toEqual( "something" );
+				expect( value.secondaryKey ).toBeNull();
+				expect( value.secondaryValue ).toBeNull();
+			} );
+			it( "has method, toString(), which constructs the string representation", function () {
+				// TODO: Test
+			} );
+		*/
 	} );
 
 	describe( "has class, Response, which", function () {

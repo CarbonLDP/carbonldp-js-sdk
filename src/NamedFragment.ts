@@ -8,27 +8,34 @@ export interface Class extends Fragment.Class {
 }
 
 export class Factory extends Fragment.Factory {
-	from( object:Array<Object & { document:Document.Class }> ):Class[];
-	from( object:Object & { document:Document.Class } ):Class;
-	from( objects:any ):any {
-		if( ! Utils.isArray( objects ) ) return this.singleFrom( <Object & { document:Document.Class }>objects );
+	hasClassProperties( resource:Fragment.Class ):boolean {
+		return (
+				Utils.hasPropertyDefined( resource, "slug" )
+		);
+	}
 
-		for ( let i:number = 0, length:number = objects.length; i < length; i ++ ) {
-			let object:(Object & { document:Document.Class }) = <(Object & { document:Document.Class })> objects[ i ];
+	from<T extends Object>( nodes:T[], document:Document.Class ):( T & Class )[];
+	from<T extends Object>( node:T, document:Document.Class ):( T & Class );
+	from( nodeOrNodes:any, document:Document.Class ):any {
+		if( ! Utils.isArray( nodeOrNodes ) ) return this.singleFrom( nodeOrNodes, document );
 
-			this.singleFrom( object );
+		for( let node of nodeOrNodes ) {
+			this.singleFrom( node, document );
 		}
 
-		return <Class[]> objects;
+		return <any> nodeOrNodes;
 	}
 
-	protected singleFrom( object:Object & { document:Document.Class } ):Class {
-		return this.injectBehavior( object );
+	protected singleFrom<T extends Object>( node:T, document:Document.Class ):( T & Class ) {
+		let fragment:( T & Fragment.Class ) = Fragment.factory.from( node, document );
+
+		if ( ! this.hasClassProperties( fragment ) ) this.injectBehavior( fragment, document );
+
+		return <any> fragment;
 	}
 
-	protected injectBehavior( node:(Object & { document:Document.Class }) ):Class {
-		let fragment:Class = <Class> super.injectBehavior( node );
-		if( this.hasClassProperties( fragment ) ) return fragment;
+	protected injectBehavior<T extends Fragment.Class>( fragment:T, document:Document.Class ):( T & Class ) {
+		if( this.hasClassProperties( fragment ) ) return <any> fragment;
 
 		Object.defineProperties( fragment, {
 			"slug": {
@@ -38,17 +45,11 @@ export class Factory extends Fragment.Factory {
 				set: function ( slug:string ):void {
 					this.uri = this.document.uri + "#" + slug;
 				},
-				enumerable: false
-			}
+				enumerable: false,
+			},
 		} );
 
-		return fragment;
-	}
-
-	protected hasClassProperties( resource:Fragment.Class ):boolean {
-		return (
-			Utils.hasPropertyDefined( resource, "slug" )
-		);
+		return <any>fragment;
 	}
 }
 

@@ -13,44 +13,29 @@ exports.DEFINITION = Utils.M.from({
     "membershipResource": {
         "uri": NS.LDP.Predicate.membershipResource,
         "multi": false,
-        "literal": false
-    }
+        "literal": false,
+    },
 });
-var Factory = (function (_super) {
-    __extends(Factory, _super);
-    function Factory() {
-        _super.apply(this, arguments);
+var Injector = (function (_super) {
+    __extends(Injector, _super);
+    function Injector() {
+        _super.call(this, exports.RDF_CLASS, [Container.injector]);
     }
-    Factory.prototype.is = function (object) {
+    Injector.prototype.hasClassProperties = function (resource) {
+        return (Utils.hasPropertyDefined(resource, "membershipResource"));
+    };
+    Injector.prototype.is = function (object) {
         return (_super.prototype.is.call(this, object) &&
             this.hasRDFClass(object) &&
             this.hasClassProperties(object));
     };
-    Factory.prototype.from = function (resourceOrResources) {
-        var superResult = _super.prototype.from.call(this, resourceOrResources);
-        var resources = Utils.isArray(superResult) ? superResult : [superResult];
-        for (var i = 0, length_1 = resources.length; i < length_1; i++) {
-            var resource = resources[i];
-            if (!this.hasClassProperties(resource))
-                this.injectBehaviour(resource);
-        }
-        if (!Utils.isArray(resourceOrResources))
-            return resources[0];
-        return resources;
-    };
-    Factory.prototype.hasRDFClass = function (resource) {
-        return (resource.types.indexOf(exports.RDF_CLASS) !== -1);
-    };
-    Factory.prototype.hasClassProperties = function (resource) {
-        return (Utils.hasPropertyDefined(resource, "membershipResource"));
-    };
-    Factory.prototype.injectBehaviour = function (resource) {
+    Injector.prototype.injectBehaviour = function (resource) {
         RDF.Resource.Factory.injectDescriptions(resource, exports.DEFINITION);
         return resource;
     };
-    return Factory;
-})(Container.Factory);
-exports.Factory = Factory;
-exports.factory = new Factory();
+    return Injector;
+})(RDF.AbstractInjector);
+exports.Injector = Injector;
+exports.injector = new Injector();
 
 //# sourceMappingURL=AccessPoint.js.map

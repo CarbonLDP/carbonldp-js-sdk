@@ -1,9 +1,4 @@
 /// <reference path="./../typings/es6/es6.d.ts" />
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
 var Fragment = require("./Fragment");
 var NamedFragment = require("./NamedFragment");
 var RDF = require("./RDF");
@@ -36,10 +31,9 @@ function createFragment(slug) {
         return document.createNamedFragment(slug);
     var id = Fragment.Util.generateID();
     var fragmentObject = {
-        "@id": id,
-        "document": document
+        "@id": id
     };
-    var fragment = Fragment.factory.from(fragmentObject);
+    var fragment = Fragment.factory.from(fragmentObject, document);
     document._fragmentsIndex.set(id, fragment);
     return fragment;
 }
@@ -52,10 +46,9 @@ function createNamedFragment(slug) {
         throw new Errors.IDAlreadyInUseError("The slug provided is already being used by a fragment.");
     var uri = document.uri + "#" + slug;
     var fragmentObject = {
-        "@id": uri,
-        "document": document
+        "@id": uri
     };
-    var fragment = NamedFragment.factory.from(fragmentObject);
+    var fragment = NamedFragment.factory.from(fragmentObject, document);
     document._fragmentsIndex.set(slug, fragment);
     return fragment;
 }
@@ -67,11 +60,8 @@ function toJSON() {
     resources.push(this);
     resources.push(this.getFragments());
     var toJSONFunctions = [];
-    // TODO: FOR_OF_TYPEDEF
-    /* tslint:disable: typedef */
     for (var _i = 0; _i < resources.length; _i++) {
         var resource = resources[_i];
-        /* tslint:enable: typedef */
         var toJSON_1 = null;
         if ("toJSON" in resource) {
             toJSONFunctions.push(resource.toJSON);
@@ -91,12 +81,10 @@ function toJSON() {
     }
     return json;
 }
-var Factory = (function (_super) {
-    __extends(Factory, _super);
+var Factory = (function () {
     function Factory() {
-        _super.apply(this, arguments);
     }
-    Factory.hasClassProperties = function (documentResource) {
+    Factory.prototype.hasClassProperties = function (documentResource) {
         return (Utils.hasPropertyDefined(documentResource, "_fragmentsIndex") &&
             Utils.hasFunction(documentResource, "hasFragment") &&
             Utils.hasFunction(documentResource, "getFragment") &&
@@ -123,12 +111,12 @@ var Factory = (function (_super) {
             throw new Errors.IllegalArgumentError("The RDFDocument contains more than one document resource.");
         if (documentResources.length === 0)
             throw new Errors.IllegalArgumentError("The RDFDocument doesn\'t contain a document resource.");
-        var document = this.injectBehavior(documentResources[0]);
+        var documentResource = RDF.Resource.factory.from(documentResources[0]);
+        var document = this.injectBehavior(documentResource);
         var fragmentResources = RDF.Document.Util.getBNodeResources(rdfDocument);
         for (var i = 0, length_3 = fragmentResources.length; i < length_3; i++) {
             var fragmentResource = fragmentResources[i];
-            fragmentResource.document = document;
-            var fragment = Fragment.factory.from(fragmentResource);
+            var fragment = Fragment.factory.from(fragmentResource, document);
             if (!fragment.uri)
                 fragment.uri = Fragment.Util.generateID();
             document._fragmentsIndex.set(fragment.uri, fragment);
@@ -136,76 +124,74 @@ var Factory = (function (_super) {
         var namedFragmentResources = RDF.Document.Util.getFragmentResources(rdfDocument);
         for (var i = 0, length_4 = namedFragmentResources.length; i < length_4; i++) {
             var namedFragmentResource = namedFragmentResources[i];
-            namedFragmentResource.document = document;
-            var namedFragment = NamedFragment.factory.from(namedFragmentResource);
+            var namedFragment = NamedFragment.factory.from(namedFragmentResource, document);
             document._fragmentsIndex.set(RDF.URI.Util.getFragment(namedFragment.uri), namedFragment);
         }
         return document;
     };
-    Factory.prototype.injectBehavior = function (resource) {
-        var documentResource = _super.prototype.injectBehavior.call(this, resource);
-        if (Factory.hasClassProperties(documentResource))
+    Factory.prototype.injectBehavior = function (documentResource) {
+        if (this.hasClassProperties(documentResource))
             return documentResource;
         Object.defineProperties(documentResource, {
             "_fragmentsIndex": {
                 writable: false,
                 enumerable: false,
                 configurable: false,
-                value: new Map()
+                value: new Map(),
             },
             "hasFragment": {
                 writable: false,
                 enumerable: false,
                 configurable: false,
-                value: hasFragment
+                value: hasFragment,
             },
             "getFragment": {
                 writable: false,
                 enumerable: false,
                 configurable: false,
-                value: getFragment
+                value: getFragment,
             },
             "getNamedFragment": {
                 writable: false,
                 enumerable: false,
                 configurable: false,
-                value: getNamedFragment
+                value: getNamedFragment,
             },
             "getFragments": {
                 writable: false,
                 enumerable: false,
                 configurable: false,
-                value: getFragments
+                value: getFragments,
             },
             "createFragment": {
                 writable: false,
                 enumerable: false,
                 configurable: false,
-                value: createFragment
+                value: createFragment,
             },
             "createNamedFragment": {
                 writable: false,
                 enumerable: false,
                 configurable: false,
-                value: createNamedFragment
+                value: createNamedFragment,
             },
             "removeFragment": {
                 writable: false,
                 enumerable: false,
                 configurable: false,
-                value: removeFragment
+                value: removeFragment,
             },
             "toJSON": {
                 writable: false,
                 enumerable: false,
                 configurable: true,
-                value: toJSON
-            }
+                value: toJSON,
+            },
         });
         return documentResource;
     };
     return Factory;
-})(RDF.Resource.Factory);
+})();
 exports.Factory = Factory;
 exports.factory = new Factory();
 Object.defineProperty(exports, "__esModule", { value: true });

@@ -39,13 +39,10 @@ var Util = (function () {
     Util.getResources = function (value) {
         var documents = Util.getDocuments(value);
         var resources = [];
-        /* tslint:disable: typedef */
-        // TSLint is saying that document should have a typedef, but TypeScript doesn't allow typedefs in for .. of loops
         for (var _i = 0; _i < documents.length; _i++) {
             var document_1 = documents[_i];
             resources = resources.concat(document_1["@graph"]);
         }
-        /* tslint:enable: typedef */
         return resources;
     };
     Util.getDocumentResources = function (document) {

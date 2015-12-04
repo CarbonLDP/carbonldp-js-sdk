@@ -14,8 +14,8 @@ exports.DEFINITION = Utils.M.from({
     "rootContainer": {
         "uri": NS.CS.Predicate.rootContainer,
         "multi": false,
-        "literal": false
-    }
+        "literal": false,
+    },
 });
 var Class = (function (_super) {
     __extends(Class, _super);
@@ -44,36 +44,21 @@ exports.Class = Class;
 var Factory = (function (_super) {
     __extends(Factory, _super);
     function Factory() {
-        _super.apply(this, arguments);
+        _super.call(this, exports.RDF_CLASS, [LDP.RDFSource.injector]);
     }
-    Factory.hasClassProperties = function (resource) {
+    Factory.prototype.hasClassProperties = function (resource) {
         return (Utils.hasPropertyDefined(resource, "rootContainer"));
     };
     Factory.prototype.is = function (object) {
         return (_super.prototype.is.call(this, object) &&
-            Utils.hasPropertyDefined(object, "rootContainer"));
+            this.hasClassProperties(object));
     };
-    Factory.prototype.from = function (resourceOrResources) {
-        var superResult = _super.prototype.from.call(this, resourceOrResources);
-        var resources = Utils.isArray(superResult) ? superResult : [superResult];
-        for (var i = 0, length_1 = resources.length; i < length_1; i++) {
-            var resource = resources[i];
-            if (!Factory.hasClassProperties(resource))
-                this.injectBehaviour(resource);
-        }
-        if (Utils.isArray(resourceOrResources))
-            return resources;
-        return resources[0];
-    };
-    Factory.prototype.hasRDFClass = function (resource) {
-        return (resource.types.indexOf(exports.RDF_CLASS) !== -1);
-    };
-    Factory.prototype.injectBehaviour = function (resource) {
+    Factory.prototype.injectBehavior = function (resource) {
         RDF.Resource.Factory.injectDescriptions(resource, exports.DEFINITION);
         return resource;
     };
     return Factory;
-})(LDP.RDFSource.Factory);
+})(RDF.AbstractInjector);
 exports.Factory = Factory;
 exports.factory = new Factory();
 Object.defineProperty(exports, "__esModule", { value: true });

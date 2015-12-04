@@ -112,6 +112,11 @@ export class Factory {
 		if ( ! Utils.isObject( value ) ) return false;
 		return Utils.hasProperty( value, "@value" );
 	}
+
+	static hasType( value:Class, type:string ):boolean {
+		if( ! value[ "@type" ] && type === <any> XSD.DataType.string ) return true;
+		return value[ "@type" ] === type;
+	}
 }
 
 export class Util {

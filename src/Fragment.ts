@@ -18,47 +18,47 @@ function externalAnonymousFragmentFilter( propertyURI:string, value:(RDF.Node.Cl
 	if( this.document !== fragment.document ) throw new Errors.IllegalArgumentError( "The anonymous fragment provided belongs to another document. To reference it from another document it needs to be named." );
 }
 
-export class Factory extends RDF.Resource.Factory {
-	from( object:Array<Object & { document:Document.Class }> ):Class[];
-	from( object:Object & { document:Document.Class } ):Class;
-	from( objects:any ):any {
-		if( ! Utils.isArray( objects ) ) return this.singleFrom( <Object & { document:Document.Class }>objects );
+export class Factory {
+	hasClassProperties( resource:RDF.Resource.Class ):boolean {
+		return (
+			Utils.hasPropertyDefined( resource, "document" )
+		);
+	}
 
-		for ( let i:number = 0, length:number = objects.length; i < length; i ++ ) {
-			let object:(Object & { document:Document.Class }) = <(Object & { document:Document.Class })> objects[ i ];
+	from<T extends Object>( nodes:T[], document:Document.Class ):( T & Class )[];
+	from<T extends Object>( node:T, document:Document.Class ):( T & Class );
+	from( nodeOrNodes:any, document:Document.Class ):any {
+		if( ! Utils.isArray( nodeOrNodes ) ) return this.singleFrom( nodeOrNodes, document );
 
-			this.singleFrom( object );
+		for( let node of nodeOrNodes ) {
+			this.singleFrom( node, document );
 		}
 
-		return <Class[]> objects;
+		return <any> nodeOrNodes;
 	}
 
-	protected singleFrom( object:Object & { document:Document.Class } ):Class {
-		return this.injectBehavior( object );
+	protected singleFrom<T extends Object>( node:T, document:Document.Class ):( T & Class ) {
+		let resource:( T & RDF.Resource.Class ) = RDF.Resource.factory.from( node );
+
+		if ( ! this.hasClassProperties( resource ) ) this.injectBehavior( resource, document );
+
+		return <any> node;
 	}
 
-	protected injectBehavior( object:(Object & { document:Document.Class }) ):Class {
-		let fragment:Class = <Class> super.injectBehavior( object );
-		if( this.hasClassProperties( fragment ) ) return fragment;
+	protected injectBehavior<T extends RDF.Resource.Class>( object:T, document:Document.Class ):( T & Class ) {
+		if( this.hasClassProperties( object ) ) return <any> object;
 
-		fragment._propertyAddedCallbacks.push( externalAnonymousFragmentFilter );
+		object._propertyAddedCallbacks.push( externalAnonymousFragmentFilter );
 
-		let document:Document.Class = fragment.document;
-		delete fragment.document;
-
-		Object.defineProperties( fragment, {
+		Object.defineProperties( object, {
 			"document": {
 				writable: false,
 				enumerable: false,
-				value: document
-			}
+				value: document,
+			},
 		} );
 
-		return fragment;
-	}
-
-	protected hasClassProperties( resource:RDF.Resource.Class ):boolean {
-		return false;
+		return <any> object;
 	}
 }
 

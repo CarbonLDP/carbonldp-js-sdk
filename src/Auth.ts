@@ -78,10 +78,7 @@ export class Class {
 	}
 
 	private getAuthenticator( authenticationToken:AuthenticationToken ):Authenticator<AuthenticationToken> {
-		// TODO: FOR_OF_TYPEDEF
-		/* tslint:disable: typedef */
 		for( let authenticator of this.authenticators ) {
-		/* tslint:enable: typedef */
 			if( authenticator.supports( authenticationToken ) ) return authenticator;
 		}
 

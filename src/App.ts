@@ -17,8 +17,8 @@ export const DEFINITION:Map<string, RDF.PropertyDescription> = <any> Utils.M.fro
 	"rootContainer": {
 		"uri": NS.CS.Predicate.rootContainer,
 		"multi": false,
-		"literal": false
-	}
+		"literal": false,
+	},
 } );
 
 export class Class extends Context {
@@ -49,8 +49,12 @@ export class Class extends Context {
 	}
 }
 
-export class Factory extends LDP.RDFSource.Factory {
-	static hasClassProperties( resource:RDF.Node.Class ):boolean {
+export class Factory extends RDF.AbstractInjector<Resource> {
+	constructor() {
+		super( RDF_CLASS, [ LDP.RDFSource.injector ] );
+	}
+
+	hasClassProperties( resource:Object ):boolean {
 		return (
 			Utils.hasPropertyDefined( resource, "rootContainer" )
 		);
@@ -59,35 +63,14 @@ export class Factory extends LDP.RDFSource.Factory {
 	is( object:Object ):boolean {
 		return (
 			super.is( object ) &&
-			Utils.hasPropertyDefined( object, "rootContainer" )
+			this.hasClassProperties( object )
 		);
 	}
 
-	from( resource:RDF.Node.Class ):Resource;
-	from( resources:RDF.Node.Class[] ):Resource[];
-	from( resourceOrResources:any ):any {
-		let superResult:(RDF.Resource.Class | RDF.Resource.Class[]) = super.from( resourceOrResources );
-		let resources:RDF.Resource.Class[] = Utils.isArray( superResult ) ? <RDF.Resource.Class[]> superResult : <RDF.Resource.Class[]> [ superResult ];
 
-		for ( let i:number = 0, length:number = resources.length; i < length; i ++ ) {
-			let resource:RDF.Resource.Class = resources[ i ];
-			if ( ! Factory.hasClassProperties( resource ) ) this.injectBehaviour( resource );
-		}
-
-		if ( Utils.isArray( resourceOrResources ) ) return <Resource[]> resources;
-		return <Resource> resources[ 0 ];
-	}
-
-	protected hasRDFClass( resource:RDF.Resource.Class ):boolean {
-		return (
-			resource.types.indexOf( RDF_CLASS ) !== - 1
-		);
-	}
-
-	protected injectBehaviour( resource:RDF.Resource.Class ):Resource {
+	protected injectBehavior<T extends RDF.Resource.Class>( resource:T ):( T & Resource ) {
 		RDF.Resource.Factory.injectDescriptions( resource, DEFINITION );
-
-		return <Resource> resource;
+		return <any> resource;
 	}
 }
 

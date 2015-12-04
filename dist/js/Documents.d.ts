@@ -7,6 +7,7 @@ declare class Documents {
     constructor(context: Context);
     get(uri: string, requestOptions?: HTTP.Request.Options): Promise<HTTP.ProcessedResponse<PersistedDocument.Class>>;
     save(persistedDocument: PersistedDocument.Class, requestOptions?: HTTP.Request.Options): Promise<HTTP.Response.Class>;
+    delete(persistedDocument: PersistedDocument.Class, requestOptions?: HTTP.Request.Options): Promise<HTTP.Response.Class>;
     private getRDFDocument(rdfDocuments, response);
     private injectDefinitions(resources);
 }

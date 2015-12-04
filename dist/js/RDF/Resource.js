@@ -4,6 +4,7 @@ var __extends = (this && this.__extends) || function (d, b) {
     function __() { this.constructor = d; }
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
+var AbstractInjector_1 = require("./AbstractInjector");
 var Literal = require("./Literal");
 var Utils = require("./../Utils");
 var RDFNode = require("./RDFNode");
@@ -166,25 +167,11 @@ var TiedArray = (function (_super) {
     };
     return TiedArray;
 })(Array);
-var Factory = (function () {
+var Factory = (function (_super) {
+    __extends(Factory, _super);
     function Factory() {
+        _super.call(this, null);
     }
-    Factory.hasClassProperties = function (resource) {
-        return (Utils.hasPropertyDefined(resource, "_propertyAddedCallbacks") &&
-            Utils.hasPropertyDefined(resource, "_propertyDeletedCallbacks") &&
-            Utils.hasPropertyDefined(resource, "uri") &&
-            Utils.hasPropertyDefined(resource, "types") &&
-            Utils.hasFunction(resource, "hasProperty") &&
-            Utils.hasFunction(resource, "getProperty") &&
-            Utils.hasFunction(resource, "getPropertyValue") &&
-            Utils.hasFunction(resource, "getPropertyURI") &&
-            Utils.hasFunction(resource, "getProperties") &&
-            Utils.hasFunction(resource, "getPropertyValues") &&
-            Utils.hasFunction(resource, "getPropertyURIs") &&
-            Utils.hasFunction(resource, "addProperty") &&
-            Utils.hasFunction(resource, "setProperty") &&
-            Utils.hasFunction(resource, "deleteProperty"));
-    };
     Factory.injectDefinitions = function (resourceOrResources, definitions) {
         var resources = Utils.isArray(resourceOrResources) ? resourceOrResources : [resourceOrResources];
         for (var i = 0, length_6 = resources.length; i < length_6; i++) {
@@ -248,7 +235,7 @@ var Factory = (function () {
                 Object.defineProperty(resource, name_1, {
                     enumerable: false,
                     get: getter,
-                    set: setter
+                    set: setter,
                 });
                 next = descriptionNames.next();
             }
@@ -299,47 +286,45 @@ var Factory = (function () {
             this.setProperty(uri, value);
         };
     };
+    Factory.prototype.hasClassProperties = function (resource) {
+        return (Utils.hasPropertyDefined(resource, "_propertyAddedCallbacks") &&
+            Utils.hasPropertyDefined(resource, "_propertyDeletedCallbacks") &&
+            Utils.hasPropertyDefined(resource, "uri") &&
+            Utils.hasPropertyDefined(resource, "types") &&
+            Utils.hasFunction(resource, "hasProperty") &&
+            Utils.hasFunction(resource, "getProperty") &&
+            Utils.hasFunction(resource, "getPropertyValue") &&
+            Utils.hasFunction(resource, "getPropertyURI") &&
+            Utils.hasFunction(resource, "getProperties") &&
+            Utils.hasFunction(resource, "getPropertyValues") &&
+            Utils.hasFunction(resource, "getPropertyURIs") &&
+            Utils.hasFunction(resource, "addProperty") &&
+            Utils.hasFunction(resource, "setProperty") &&
+            Utils.hasFunction(resource, "deleteProperty"));
+    };
     Factory.prototype.is = function (value) {
-        return (
-        // RDFNode.Factory.is( value ) &&
-        (!Utils.isNull(value)) &&
+        return (_super.prototype.is.call(this, value) &&
+            (!Utils.isNull(value)) &&
             Utils.isObject(value) &&
-            Factory.hasClassProperties(value));
-    };
-    Factory.prototype.create = function () {
-        var resource = {};
-        return this.from(resource);
-    };
-    Factory.prototype.from = function (objects) {
-        if (!Utils.isArray(objects))
-            return this.singleFrom(objects);
-        for (var i = 0, length_9 = objects.length; i < length_9; i++) {
-            var resource = objects[i];
-            this.injectBehavior(resource);
-        }
-        return objects;
-    };
-    Factory.prototype.singleFrom = function (object) {
-        return this.injectBehavior(object);
+            this.hasClassProperties(value));
     };
     Factory.prototype.hasRDFClass = function (resource) {
-        // TODO: Implement
         return true;
     };
     Factory.prototype.injectBehavior = function (node) {
         var resource = node;
-        if (Factory.hasClassProperties(resource))
+        if (this.hasClassProperties(resource))
             return resource;
         Object.defineProperties(resource, {
             "_propertyAddedCallbacks": {
                 writable: false,
                 enumerable: false,
-                value: []
+                value: [],
             },
             "_propertyDeletedCallbacks": {
                 writable: false,
                 enumerable: false,
-                value: []
+                value: [],
             },
             "types": {
                 get: function () {
@@ -350,7 +335,7 @@ var Factory = (function () {
                 set: function (value) {
                     // TODO: Implement
                 },
-                enumerable: false
+                enumerable: false,
             },
             "uri": {
                 get: function () {
@@ -359,63 +344,63 @@ var Factory = (function () {
                 set: function (value) {
                     this["@id"] = value;
                 },
-                enumerable: false
+                enumerable: false,
             },
             "hasProperty": {
                 writable: false,
                 enumerable: false,
-                value: hasProperty
+                value: hasProperty,
             },
             "getProperty": {
                 writable: false,
                 enumerable: false,
-                value: getProperty
+                value: getProperty,
             },
             "getPropertyValue": {
                 writable: false,
                 enumerable: false,
-                value: getPropertyValue
+                value: getPropertyValue,
             },
             "getPropertyURI": {
                 writable: false,
                 enumerable: false,
-                value: getPropertyURI
+                value: getPropertyURI,
             },
             "getProperties": {
                 writable: false,
                 enumerable: false,
-                value: getProperties
+                value: getProperties,
             },
             "getPropertyValues": {
                 writable: false,
                 enumerable: false,
-                value: getPropertyValues
+                value: getPropertyValues,
             },
             "getPropertyURIs": {
                 writable: false,
                 enumerable: false,
-                value: getPropertyURIs
+                value: getPropertyURIs,
             },
             "addProperty": {
                 writable: false,
                 enumerable: false,
-                value: addProperty
+                value: addProperty,
             },
             "setProperty": {
                 writable: false,
                 enumerable: false,
-                value: setProperty
+                value: setProperty,
             },
             "deleteProperty": {
                 writable: false,
                 enumerable: false,
-                value: deleteProperty
-            }
+                value: deleteProperty,
+            },
         });
         return resource;
     };
     return Factory;
-})();
+})(AbstractInjector_1.default);
 exports.Factory = Factory;
 exports.factory = new Factory;
 
