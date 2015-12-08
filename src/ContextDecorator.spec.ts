@@ -188,6 +188,11 @@ describe( module( "Carbon/ContextDecorator" ), ():void => {
 							],
 						},
 					],
+					"http://example.com/ns#languageMap": [
+						{ "@value": "español", "@type": "http://www.w3.org/2001/XMLSchema#string", "@language": "es" },
+						{ "@value": "english", "@type": "http://www.w3.org/2001/XMLSchema#string", "@language": "en" },
+						{ "@value": "日本語", "@language": "jp" },
+					],
 				};
 
 				let context:ContextDecorator.Context = {
@@ -205,6 +210,10 @@ describe( module( "Carbon/ContextDecorator" ), ():void => {
 						"@id": "ex:numberList",
 						"@type": "xsd:integer",
 						"@container": "@list",
+					},
+					"languageMap": {
+						"@id": "ex:languageMap",
+						"@container": "@language",
 					},
 				};
 
@@ -227,6 +236,12 @@ describe( module( "Carbon/ContextDecorator" ), ():void => {
 				expect( compactedObject.numberList[ 2 ] ).toEqual( 4 );
 				expect( compactedObject.numberList[ 3 ] ).toEqual( 5 );
 				expect( compactedObject.numberList[ 4 ] ).toEqual( 6 );
+
+				expect( Utils.hasProperty( compactedObject, "languageMap" ) ).toEqual( true );
+				expect( Utils.isObject( compactedObject.languageMap ) ).toEqual( true );
+				expect( compactedObject.languageMap.es ).toEqual( "español" );
+				expect( compactedObject.languageMap.en ).toEqual( "english" );
+				expect( compactedObject.languageMap.jp ).toEqual( "日本語" );
 			});
 		});
 	});

@@ -47,12 +47,12 @@ export class Factory {
 		if ( ! Utils.hasProperty( literal, "@type" ) ) return literal[ "@value" ];
 
 		let type:string = literal[ "@type" ];
-		// The DataType isn"t supported
+		// The DataType isn't supported
 		if ( ! Utils.hasProperty( XSD.DataType, type ) ) return literal[ "@value" ];
 
 		let valueString:string = literal[ "@value" ];
 		let value:any;
-		switch ( <any> type ) {
+		switch ( type ) {
 			// Dates
 			case XSD.DataType.date:
 			case XSD.DataType.dateTime:

@@ -1,6 +1,7 @@
 /// <reference path="../node_modules/typescript/lib/lib.es6.d.ts" />
 
 import * as Errors from "./Errors";
+import * as NS from "./NS";
 import * as RDF from "./RDF";
 import * as Utils from "./Utils";
 
@@ -107,6 +108,7 @@ export class Class {
 	private static compactSingle( expandedObject:any, digestedContext:DigestedContext ):any {
 		let compactedObject:any = {};
 		let propertyURINameMap:Map<string, string> = Class.getPropertyURINameMap( digestedContext );
+
 		Utils.forEachOwnProperty( expandedObject, ( propertyURI:string, value:any ):void => {
 			if( propertyURINameMap.has( propertyURI ) ) {
 				let propertyName:string = propertyURINameMap.get( propertyURI );
@@ -116,7 +118,6 @@ export class Class {
 			}
 		});
 
-		// TODO
 		return compactedObject;
 	}
 
@@ -149,7 +150,6 @@ export class Class {
 				}
 				break;
 			case ContainerType.SET:
-				// Property is not a list
 				if( propertyDefinition.literal ) {
 					return Class.getPropertyLiterals( expandedObject, propertyURI, propertyDefinition.literalType.toString() );
 				} else if( propertyDefinition.literal === false ) {
@@ -159,14 +159,7 @@ export class Class {
 				}
 				break;
 			case ContainerType.LANGUAGE:
-				if( propertyDefinition.literal ) {
-					return Class.getPropertyLiteralsMap( expandedObject, propertyURI, propertyDefinition.literalType.toString() );
-				} else if( propertyDefinition.literal === false ) {
-					return Class.getPropertyPointersMap( expandedObject, propertyURI );
-				} else {
-					return Class.getPropertiesMap( expandedObject, propertyURI );
-				}
-				break;
+				return Class.getPropertyLanguageMap( expandedObject, propertyURI );
 			default:
 				throw new Errors.IllegalArgumentError( "The containerType specified is not supported." );
 		}
@@ -261,11 +254,31 @@ export class Class {
 	}
 
 	private static getProperties( expandedObject:any, propertyURI:string ):any {
+		let propertyValues:Array<any> = expandedObject[ propertyURI ];
+		if( ! propertyValues ) return null;
+		if( ! propertyValues.length ) return null;
 
+		let properties:Array<any> = [];
+		for( let propertyValue of propertyValues ) {
+			properties.push( Class.parseValue( propertyValue ) );
+		}
+
+		return properties;
 	}
 
 	private static getPropertyPointers( expandedObject:any, propertyURI:string ):any {
+		let propertyValues:Array<any> = expandedObject[ propertyURI ];
+		if( ! propertyValues ) return null;
+		if( ! propertyValues.length ) return null;
 
+		let propertyPointers:Array<any> = [];
+		for( let propertyValue of propertyValues ) {
+			if( ! RDF.Node.Factory.is( propertyValue ) ) continue;
+
+			// TODO: Create pointer
+		}
+
+		return propertyPointers;
 	}
 
 	private static getPropertyLiterals( expandedObject:any, propertyURI:string, literalType:string ):any {
@@ -283,20 +296,25 @@ export class Class {
 		return propertyLiterals;
 	}
 
-	private static getPropertiesMap( expandedObject:any, propertyURI:string ):any {
+	private static getPropertyLanguageMap( expandedObject:any, propertyURI:string ):any {
+		let propertyValues:Array<any> = expandedObject[ propertyURI ];
+		if( ! propertyValues ) return null;
 
-	}
+		let propertyLanguageMap:any = {};
+		for( let propertyValue of propertyValues ) {
+			if( ! RDF.Literal.Factory.is( propertyValue ) ) continue;
+			if( ! RDF.Literal.Factory.hasType( propertyValue, NS.XSD.DataType.string ) ) continue;
 
-	private static getPropertyPointersMap( expandedObject:any, propertyURI:string ):any {
+			let languageTag:string = propertyValue[ "@language" ];
+			if( ! languageTag ) continue;
 
-	}
+			propertyLanguageMap[ languageTag ] = RDF.Literal.Factory.parse( propertyValue );
+		}
 
-	private static getPropertyLiteralsMap( expandedObject:any, propertyURI:string, literalType:string ):any {
-
+		return propertyLanguageMap;
 	}
 
 	private static getList( propertyValues:Array<any> ):RDF.List.Class {
-		let propertyList:RDF.List.Class;
 		for( let propertyValue of propertyValues ) {
 			if( ! RDF.List.Factory.is( propertyValue ) ) continue;
 
@@ -311,7 +329,12 @@ export class Class {
 		} else if( RDF.Node.Factory.is( propertyValue ) ) {
 			// TODO: Create pointer
 		} else if( RDF.List.Factory.is( propertyValue ) ) {
-			// TODO: Parse list
+			let parsedValue:Array<any> = [];
+			let listValues:Array<any> = propertyValue[ "@list" ];
+			for( let listValue of listValues ) {
+				parsedValue.push( Class.parseValue( listValue ) );
+			}
+			return parsedValue;
 		} else {
 			// TODO: What else could it be?
 		}

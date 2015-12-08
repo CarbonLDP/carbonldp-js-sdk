@@ -108,7 +108,7 @@ function extend( target:Object, ...objects:Object[] ):Object {
 }
 
 function forEachOwnProperty( object:Object, action:( name:string, value:any ) => void ):void {
-	if ( ! isObject( object ) ) throw new Error( "IllegalArgument" );
+	if ( ! ( isObject( object ) || isFunction( object ) ) ) throw new Error( "IllegalArgument" );
 	for ( let name in object ) {
 		if ( object.hasOwnProperty( name ) ) {
 			action( name, object[ name ] );
