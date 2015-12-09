@@ -107,11 +107,11 @@ function extend( target:Object, ...objects:Object[] ):Object {
 	return target;
 }
 
-function forEachOwnProperty( object:Object, action:( name:string, value:any ) => void ):void {
+function forEachOwnProperty( object:Object, action:( name:string, value:any ) => ( boolean | void ) ):void {
 	if ( ! ( isObject( object ) || isFunction( object ) ) ) throw new Error( "IllegalArgument" );
 	for ( let name in object ) {
 		if ( object.hasOwnProperty( name ) ) {
-			action( name, object[ name ] );
+			if( action( name, object[ name ] ) === false ) break;
 		}
 	}
 }

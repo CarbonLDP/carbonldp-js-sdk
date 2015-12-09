@@ -1,13 +1,17 @@
-/// <reference path="./../typings/es6/es6.d.ts" />
+/// <reference path="./../typings/tsd.d.ts" />
 
+import * as Errors from "./Errors";
 import * as Fragment from "./Fragment";
 import * as NamedFragment from "./NamedFragment";
+import * as Pointer from "./Pointer";
 import * as RDF from "./RDF";
 import * as Utils from "./Utils";
-import * as Errors from "./Errors";
 
-export interface Class extends RDF.Resource.Class {
+
+export interface Class extends Pointer.Library, Pointer.Validator {
 	_fragmentsIndex:Map<string, Fragment.Class>;
+
+	uri:string;
 
 	hasFragment( slug:string ):boolean;
 	getFragment( slug:string ):Fragment.Class;
@@ -120,9 +124,13 @@ function toJSON():string {
 }
 
 export class Factory {
-	hasClassProperties( documentResource:RDF.Resource.Class ):boolean {
+	hasClassProperties( documentResource:Object ):boolean {
 		return (
+			Utils.isObject( documentResource ) &&
+
 			Utils.hasPropertyDefined( documentResource, "_fragmentsIndex" ) &&
+
+			Utils.hasPropertyDefined( documentResource, "uri" ) &&
 
 			Utils.hasFunction( documentResource, "hasFragment" ) &&
 			Utils.hasFunction( documentResource, "getFragment" ) &&
@@ -164,7 +172,7 @@ export class Factory {
 
 		let fragmentResources:RDF.Node.Class[] = RDF.Document.Util.getBNodeResources( rdfDocument );
 		for( let i:number = 0, length:number = fragmentResources.length; i < length; i++ ) {
-			let fragmentResource:RDF.Node.Class = fragmentResources[i];
+			let fragmentResource:RDF.Node.Class = fragmentResources[ i ];
 
 			let fragment:Fragment.Class = Fragment.factory.from( fragmentResource, document );
 

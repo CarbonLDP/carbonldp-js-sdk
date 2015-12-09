@@ -9,8 +9,11 @@ import Context from "./Context";
 import * as RDF from "./RDF";
 import * as Utils from "./Utils";
 
+import * as ContextDigester from "./ContextDigester";
 import * as Document from "./Document";
+import * as JSONLDConverter from "./JSONLDConverter";
 import * as PersistedDocument from "./PersistedDocument";
+import * as Pointer from "./Pointer";
 
 import * as LDP from "./NS/LDP";
 
@@ -37,16 +40,38 @@ function expand( input:HTTP.ProcessedResponse<any>, options?:jsonld.ExpandOption
 	} );
 }
 
-class Documents {
+class Documents implements Pointer.Library, Pointer.Validator {
 	private context:Context;
+	private pointers:Map<string, Pointer.Class>;
+	private jsonldConverter:JSONLDConverter.Class;
 
 	constructor( context:Context ) {
 		this.context = context;
+
+		this.pointers = new Map<string, Pointer.Class>();
+	}
+
+	inScope( id:string ):boolean {
+		// TODO: Implement
+		return null;
+	}
+
+	hasPointer( id:string ):boolean {
+		if( this.pointers.has( id ) ) return true;
+
+		// TODO: Ask parentContext
+
+		return false;
+	}
+
+	getPointer( id:string ):Pointer.Class {
+		// TODO: Implement
+		return null;
 	}
 
 	get( uri:string, requestOptions:HTTP.Request.Options = {} ):Promise<HTTP.ProcessedResponse<PersistedDocument.Class>> {
 		if ( RDF.URI.Util.isRelative( uri ) ) {
-			if ( ! this.context ) throw new Errors.IllegalArgumentError( "IllegalArgument: This module doesn't support relative URIs." );
+			if ( ! this.context ) throw new Errors.IllegalArgumentError( "This module doesn't support relative URIs." );
 			uri = this.context.resolve( uri );
 		}
 
@@ -70,16 +95,36 @@ class Documents {
 				let rdfDocuments:RDF.Document.Class[] = RDF.Document.Util.getDocuments( expandedResult );
 				let rdfDocument:RDF.Document.Class = this.getRDFDocument( rdfDocuments, processedResponse.response );
 
-				let document:Document.Class = Document.factory.from( rdfDocument );
-				this.injectBehaviors( ( <RDF.Resource.Class[]>document.getFragments() ).concat( document ) );
-				this.injectDefinitions( ( <RDF.Resource.Class[]>document.getFragments() ).concat( document ) );
+				let documentResources:RDF.Node.Class[] = RDF.Document.Util.getDocumentResources( rdfDocument );
+				if( documentResources.length > 1 ) throw new HTTP.Errors.BadResponseError( "The RDFDocument contains more than one document resource.", processedResponse.response );
+				if( documentResources.length === 0 ) throw new HTTP.Errors.BadResponseError( "The RDFDocument doesn\'t contain a document resource.", processedResponse.response );
 
+				// TODO: Get digestedContext for documentResource
+				let documentResourceDigestedContext:ContextDigester.DigestedContext;
+				// TODO: Compact documentResource
+				let compactedDocumentResource:any = this.jsonldConverter.compact( documentResources, documentResourceDigestedContext, this );
+
+				let fragmentResources:RDF.Node.Class[] = RDF.Document.Util.getBNodeResources( rdfDocument );
+				let namedFragmentResources:RDF.Node.Class[] = RDF.Document.Util.getFragmentResources( rdfDocument );
+
+				// TODO: Compact fragmentResources
+				// TODO: Compact namedFragmentResources
+
+				/*
+					let document:Document.Class = Document.factory.from( rdfDocument );
+					this.injectBehaviors( ( <RDF.Resource.Class[]>document.getFragments() ).concat( document ) );
+					this.injectDefinitions( ( <RDF.Resource.Class[]>document.getFragments() ).concat( document ) );
+				*/
+
+				// TODO: Finish
 				return {
-					result: document,
+					result: null,
 					response: processedResponse.response,
 				};
 			}
-		).then(
+		);
+		/*
+		.then(
 			( processedResponse:HTTP.ProcessedResponse<Document.Class> ) => {
 				let document:Document.Class = processedResponse.result;
 
@@ -98,6 +143,7 @@ class Documents {
 				};
 			}
 		);
+		*/
 	}
 
 	save( persistedDocument:PersistedDocument.Class, requestOptions:HTTP.Request.Options = {} ):Promise<HTTP.Response.Class> {

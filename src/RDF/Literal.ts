@@ -1,5 +1,8 @@
-import * as Utils from "../Utils";
-import * as XSD from "../NS/XSD" ;
+import * as Utils from "./../Utils";
+import * as XSD from "./../NS/XSD" ;
+
+import Serializer from "./Literal/Serializer";
+import * as Serializers from "./Literal/Serializers";
 
 export interface Class {
 	"@type"?:string;
@@ -127,3 +130,8 @@ export class Util {
 }
 
 export default Class;
+
+export {
+	Serializer,
+	Serializers
+};

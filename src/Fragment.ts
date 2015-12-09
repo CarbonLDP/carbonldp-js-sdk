@@ -3,7 +3,9 @@ import * as Errors from "./Errors";
 import * as RDF from "./RDF";
 import * as Utils from "./Utils";
 
-export interface Class extends RDF.Resource.Class {
+export interface Class {
+	uri:string;
+
 	document:Document.Class;
 }
 
