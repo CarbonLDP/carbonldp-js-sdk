@@ -7,45 +7,34 @@ export interface Class extends Fragment.Class {
 	slug:string;
 }
 
-export class Factory extends Fragment.Factory {
+export class Factory {
 	hasClassProperties( resource:Fragment.Class ):boolean {
 		return (
-				Utils.hasPropertyDefined( resource, "slug" )
+			Utils.hasPropertyDefined( resource, "slug" )
 		);
 	}
 
-	from<T extends Object>( nodes:T[], document:Document.Class ):( T & Class )[];
-	from<T extends Object>( node:T, document:Document.Class ):( T & Class );
-	from( nodeOrNodes:any, document:Document.Class ):any {
-		if( ! Utils.isArray( nodeOrNodes ) ) return this.singleFrom( nodeOrNodes, document );
-
-		for( let node of nodeOrNodes ) {
-			this.singleFrom( node, document );
-		}
-
-		return <any> nodeOrNodes;
+	create( slug:string, document:Document.Class ):Class {
+		return this.createFrom( {}, slug, document );
 	}
 
-	protected singleFrom<T extends Object>( node:T, document:Document.Class ):( T & Class ) {
-		let fragment:( T & Fragment.Class ) = Fragment.factory.from( node, document );
+	createFrom<T extends Object>( object:T, slug:string, document:Document.Class ):T & Class {
+		let uri:string = document.uri + "#" + slug;
 
-		if ( ! this.hasClassProperties( fragment ) ) this.injectBehavior( fragment, document );
+		let fragment:Fragment.Class = Fragment.factory.createFrom( object, uri, document );
 
-		return <any> fragment;
-	}
-
-	protected injectBehavior<T extends Fragment.Class>( fragment:T, document:Document.Class ):( T & Class ) {
 		if( this.hasClassProperties( fragment ) ) return <any> fragment;
 
 		Object.defineProperties( fragment, {
 			"slug": {
-				get: function ():string {
+				enumerable: false,
+				configurable: true,
+				get: function():string {
 					return RDF.URI.Util.getFragment( fragment.uri );
 				},
-				set: function ( slug:string ):void {
-					this.uri = this.document.uri + "#" + slug;
+				set: function( value:string ):void {
+					this.uri = this.document.uri + "#" + value;
 				},
-				enumerable: false,
 			},
 		} );
 

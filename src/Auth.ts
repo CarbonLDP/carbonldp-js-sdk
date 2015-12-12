@@ -1,4 +1,5 @@
-/// <reference path="../typings/es6-promise/es6-promise.d.ts" />
+/// <reference path="./../typings/tsd.d.ts" />
+
 import AuthenticationToken from "./Auth/AuthenticationToken";
 import Authenticator from "./Auth/Authenticator";
 import BasicAuthenticator from "./Auth/BasicAuthenticator";

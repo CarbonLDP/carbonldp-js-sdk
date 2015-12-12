@@ -32,14 +32,14 @@ var Factory = (function () {
         for (var i = 0, length_1 = objects.length; i < length_1; i++) {
             var value = objects[i];
             if (!Factory.is(value))
-                Factory.injectBehaviour(value);
+                Factory.injectBehavior(value);
             values.push(value);
         }
         if (Utils.isArray(objectOrObjects))
             return values;
         return values[0];
     };
-    Factory.injectBehaviour = function (value) {
+    Factory.injectBehavior = function (value) {
         Object.defineProperties(value, {
             "_dirty": {
                 writable: true,

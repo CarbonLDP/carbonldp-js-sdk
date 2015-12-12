@@ -1,4 +1,4 @@
-/// <reference path="../typings/es6/es6.d.ts" />
+/// <reference path="./../typings/tsd.d.ts" />
 var NS = require("./NS");
 var Utils = require("./Utils");
 exports.RDF_CLASS = NS.C.Class.API;

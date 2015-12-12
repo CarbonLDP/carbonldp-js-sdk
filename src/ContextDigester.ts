@@ -76,6 +76,22 @@ export class Class {
 		return Class.combineDigestedContexts( digestedContexts );
 	}
 
+	static combineDigestedContexts( digestedContexts:DigestedContext[] ):DigestedContext {
+		if( digestedContexts.length === 0 ) throw new Errors.IllegalArgumentError( "At least one digestedContext needs to be specified." );
+
+		let combinedContext:DigestedContext = digestedContexts.shift();
+
+		for( let digestedContext of digestedContexts ) {
+			Utils.M.extend( combinedContext.prefixes, digestedContext.prefixes );
+			Utils.M.extend( combinedContext.prefixedURIs, digestedContext.prefixedURIs );
+			Utils.M.extend( combinedContext.properties, digestedContext.properties );
+		}
+
+		Class.resolvePrefixedURIs( combinedContext );
+
+		return combinedContext;
+	}
+
 	private static digestSingleContext( context:Context ):DigestedContext {
 		let digestedContext:DigestedContext = new DigestedContext();
 
@@ -183,22 +199,6 @@ export class Class {
 		}
 
 		return uri;
-	}
-
-	private static combineDigestedContexts( digestedContexts:DigestedContext[] ):DigestedContext {
-		if( digestedContexts.length === 0 ) throw new Errors.IllegalArgumentError( "At least one digestedContext needs to be specified." );
-
-		let combinedContext:DigestedContext = digestedContexts.shift();
-
-		for( let digestedContext of digestedContexts ) {
-			Utils.M.extend( combinedContext.prefixes, digestedContext.prefixes );
-			Utils.M.extend( combinedContext.prefixedURIs, digestedContext.prefixedURIs );
-			Utils.M.extend( combinedContext.properties, digestedContext.properties );
-		}
-
-		Class.resolvePrefixedURIs( combinedContext );
-
-		return combinedContext;
 	}
 }
 

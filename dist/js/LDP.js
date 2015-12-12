@@ -8,8 +8,6 @@ var DirectContainer = require("./LDP/DirectContainer");
 exports.DirectContainer = DirectContainer;
 var IndirectContainer = require("./LDP/IndirectContainer");
 exports.IndirectContainer = IndirectContainer;
-var PersistedRDFSource = require("./LDP/PersistedRDFSource");
-exports.PersistedRDFSource = PersistedRDFSource;
 var RDFSource = require("./LDP/RDFSource");
 exports.RDFSource = RDFSource;
 

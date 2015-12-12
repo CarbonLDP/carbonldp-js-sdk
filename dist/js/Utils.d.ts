@@ -1,4 +1,4 @@
-/// <reference path="../typings/es6/es6.d.ts" />
+/// <reference path="../typings/tsd.d.ts" />
 declare function hasFunction(object: Object, functionName: string): boolean;
 declare function hasProperty(object: Object, property: string): boolean;
 declare function hasPropertyDefined(object: Object, property: string): boolean;
@@ -15,7 +15,7 @@ declare function isFunction(value: any): boolean;
 declare function isMap(value: any): boolean;
 declare function parseBoolean(value: string): boolean;
 declare function extend(target: Object, ...objects: Object[]): Object;
-declare function forEachOwnProperty(object: Object, action: (name: string, value: any) => void): void;
+declare function forEachOwnProperty(object: Object, action: (name: string, value: any) => (boolean | void)): void;
 declare class S {
     static startsWith(str: string, substring: string): boolean;
     static endsWith(str: string, substring: string): boolean;

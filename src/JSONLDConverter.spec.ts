@@ -1,6 +1,6 @@
+/// <reference path="./../typings/tsd.d.ts" />
 /// <reference path="./../typings/jasmine/jasmine.d.ts" />
 /// <reference path="./../typings/jasmine-ajax/mock-ajax.d.ts" />
-/// <reference path="./../typings/es6-promise/es6-promise.d.ts" />
 
 import {
 		INSTANCE,
@@ -60,7 +60,7 @@ describe( module( "Carbon/JSONLDConverter" ), ():void => {
 				expect( Utils.isFunction( jsonldConverter.compact ) ).toBeDefined();
 
 				let expandedObject:any = {
-					"@id": "http://example.com/resource-1/",
+					"@id": "http://example.com/expandedObject/",
 					"http://example.com/ns#string": [
 						{ "@value": "some-string", "@type": "http://www.w3.org/2001/XMLSchema#string" },
 					],
@@ -256,6 +256,7 @@ describe( module( "Carbon/JSONLDConverter" ), ():void => {
 				let mockedResolveFunction:() => Promise<void> = function():Promise<void> { throw Error( "Don't call this method, duh" ); };
 
 				let compactedObject:any = {
+					"uri": "http://example.com/compactedObject",
 					"string": "some-string",
 					"date": new Date( "2015-12-04T23:06:57.920Z" ),
 					"numberList": [ 2, 3, 4, 5, 6, ],

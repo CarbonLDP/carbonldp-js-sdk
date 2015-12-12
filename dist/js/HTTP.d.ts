@@ -1,4 +1,3 @@
-/// <reference path="../typings/es6/es6.d.ts" />
 import * as Errors from "./HTTP/Errors";
 import * as Header from "./HTTP/Header";
 import * as JSONParser from "./HTTP/JSONParser";

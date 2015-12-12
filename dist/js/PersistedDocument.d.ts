@@ -1,8 +1,9 @@
-import Context from "./Context";
 import * as Document from "./Document";
+import Documents from "./Documents";
 import * as PersistedResource from "./PersistedResource";
-export interface Class extends PersistedResource.Class, Document.Class {
-    _context: Context;
+import * as Pointer from "./Pointer";
+export interface Class extends Pointer.Class, PersistedResource.Class, Document.Class {
+    _documents: Documents;
     _etag: string;
     refresh(): Promise<void>;
     save(): Promise<void>;
@@ -10,9 +11,8 @@ export interface Class extends PersistedResource.Class, Document.Class {
 }
 export declare class Factory {
     static hasClassProperties(document: Document.Class): boolean;
-    static from(documents: Document.Class[], context: Context): Class[];
-    static from(document: Document.Class, context: Context): Class;
-    protected static singleFrom(document: Document.Class, context: Context): Class;
-    protected static injectBehavior(persisted: (Document.Class & PersistedResource.Class), context: Context): Class;
+    static create(uri: string, documents: Documents): Class;
+    static createFrom<T extends Object>(object: T, uri: string, documents: Documents): Class;
+    static decorate<T extends Document.Class>(document: T, documents: Documents): T & Class;
 }
 export default Class;

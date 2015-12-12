@@ -24,7 +24,7 @@
     "gulp": "^3.9.0",
     "gulp-sourcemaps": "^1.6.0",
     "gulp-tslint": "^3.5.0",
-    "gulp-typescript": "^2.9.2",
+    "gulp-typescript": "^2.10.0",
     "gulp-util": "^3.0.7",
     "jasmine-ajax": "^3.2.0",
     "jasmine-core": "^2.3.4",
@@ -41,7 +41,7 @@
     "systemjs-builder": "^0.14.10",
     "tsd": "^0.6.4",
     "tslint": "^3.0.0",
-    "typescript": "^1.6.0-beta"
+    "typescript": "^1.7.3"
   },
   "scripts": {
     "start": "./node_modules/.bin/gulp build",

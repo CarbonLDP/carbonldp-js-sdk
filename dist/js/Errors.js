@@ -4,5 +4,7 @@ var IllegalArgumentError_1 = require("./Errors/IllegalArgumentError");
 exports.IllegalArgumentError = IllegalArgumentError_1.default;
 var IDAlreadyInUseError_1 = require("./Errors/IDAlreadyInUseError");
 exports.IDAlreadyInUseError = IDAlreadyInUseError_1.default;
+var NotImplementedError_1 = require("./Errors/NotImplementedError");
+exports.NotImplementedError = NotImplementedError_1.default;
 
 //# sourceMappingURL=Errors.js.map

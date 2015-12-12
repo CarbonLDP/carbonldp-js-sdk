@@ -1,4 +1,4 @@
-/// <reference path="../typings/es6-promise/es6-promise.d.ts" />
+/// <reference path="./../typings/tsd.d.ts" />
 var App = require("./App");
 var RDF = require("./RDF");
 var Utils = require("./Utils");

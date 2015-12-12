@@ -27,6 +27,24 @@ export class Util {
 		return ! Util.isAbsolute( uri ) && Utils.S.contains( uri, ":" );
 	}
 
+	static isFragmentOf( fragmentURI:string, uri:string ):boolean {
+		if( ! Util.hasFragment( fragmentURI ) ) return false;
+
+		return Util.getDocumentURI( fragmentURI ) === uri;
+	}
+
+	static isBaseOf( baseURI:string, uri:string ):boolean {
+		if( baseURI === uri ) return true;
+		if( uri.startsWith( baseURI ) ) {
+			if( Utils.S.endsWith( baseURI, "/" ) ) return true;
+
+			let relativeURI:string = uri.substring( baseURI.length );
+			if( Utils.S.startsWith( relativeURI, "/" ) || Utils.S.startsWith( relativeURI, "#" ) ) return true;
+		}
+
+		return false;
+	}
+
 	static getDocumentURI( uri:string ):string {
 		let parts:string[] = uri.split( "#" );
 		if ( parts.length > 2 ) throw new Error( "IllegalArgument: The URI provided has more than one # sign." );

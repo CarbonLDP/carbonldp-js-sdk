@@ -18,6 +18,31 @@ var Factory = (function () {
     Factory.prototype.hasClassProperties = function (resource) {
         return (Utils.hasPropertyDefined(resource, "document"));
     };
+    Factory.prototype.create = function (idOrDocument, document) {
+        if (document === void 0) { document = null; }
+        return this.createFrom({}, idOrDocument, document);
+    };
+    Factory.prototype.createFrom = function (object, idOrDocument, document) {
+        if (document === void 0) { document = null; }
+        var id = !!document ? idOrDocument : Util.generateID();
+        if (this.hasClassProperties(object))
+            return object;
+        Object.defineProperties(object, {
+            "uri": {
+                writable: true,
+                enumerable: false,
+                configurable: true,
+                value: id,
+            },
+            "document": {
+                writable: false,
+                enumerable: false,
+                configurable: true,
+                value: document,
+            },
+        });
+        return object;
+    };
     Factory.prototype.from = function (nodeOrNodes, document) {
         if (!Utils.isArray(nodeOrNodes))
             return this.singleFrom(nodeOrNodes, document);

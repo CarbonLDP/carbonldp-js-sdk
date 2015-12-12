@@ -1,9 +1,11 @@
-/// <reference path="../typings/es6/es6.d.ts" />
+/// <reference path="../typings/tsd.d.ts" />
 import * as Fragment from "./Fragment";
 import * as NamedFragment from "./NamedFragment";
+import * as Pointer from "./Pointer";
 import * as RDF from "./RDF";
-export interface Class extends RDF.Resource.Class {
+export interface Class extends Pointer.Library, Pointer.Validator {
     _fragmentsIndex: Map<string, Fragment.Class>;
+    uri: string;
     hasFragment(slug: string): boolean;
     getFragment(slug: string): Fragment.Class;
     getNamedFragment(slug: string): NamedFragment.Class;
@@ -18,11 +20,15 @@ export interface Class extends RDF.Resource.Class {
     toJSON(): string;
 }
 export declare class Factory {
-    hasClassProperties(documentResource: RDF.Resource.Class): boolean;
+    hasClassProperties(documentResource: Object): boolean;
+    create(uri: string): Class;
+    create(): Class;
+    createFrom<T extends Object>(object: T, uri: string): T & Class;
+    createFrom<T extends Object>(object: T): T & Class;
+    decorate<T extends Object>(object: T): T & Class;
     from(rdfDocuments: RDF.Document.Class[]): Class[];
     from(rdfDocument: RDF.Document.Class): Class;
     protected singleFrom(rdfDocument: RDF.Document.Class): Class;
-    protected injectBehavior(documentResource: RDF.Resource.Class): Class;
 }
 export declare var factory: Factory;
 export default Document;

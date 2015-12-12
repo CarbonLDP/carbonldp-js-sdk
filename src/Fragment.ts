@@ -1,11 +1,10 @@
 import * as Document from "./Document";
 import * as Errors from "./Errors";
+import * as Pointer from "./Pointer";
 import * as RDF from "./RDF";
 import * as Utils from "./Utils";
 
-export interface Class {
-	uri:string;
-
+export interface Class extends Pointer.Class {
 	document:Document.Class;
 }
 
@@ -21,10 +20,41 @@ function externalAnonymousFragmentFilter( propertyURI:string, value:(RDF.Node.Cl
 }
 
 export class Factory {
-	hasClassProperties( resource:RDF.Resource.Class ):boolean {
+	hasClassProperties( resource:Object ):boolean {
 		return (
 			Utils.hasPropertyDefined( resource, "document" )
 		);
+	}
+
+	create( id:string, document:Document.Class ):Class;
+	create( document:Document.Class ):Class;
+	create( idOrDocument:any, document:Document.Class = null ):Class {
+		return this.createFrom( {}, idOrDocument, document );
+	}
+
+	createFrom<T extends Object>( object:T, id:string, document:Document.Class ):T & Class;
+	createFrom<T extends Object>( object:T, document:Document.Class ):T & Class;
+	createFrom<T extends Object>( object:T, idOrDocument:any, document:Document.Class = null ):T & Class {
+		let id:string = !! document ? idOrDocument : Util.generateID();
+
+		if( this.hasClassProperties( object ) ) return <any> object;
+
+		Object.defineProperties( object, {
+			"uri": {
+				writable: true,
+				enumerable: false,
+				configurable: true,
+				value: id,
+			},
+			"document": {
+				writable: false,
+				enumerable: false,
+				configurable: true,
+				value: document,
+			},
+		} );
+
+		return <any> object;
 	}
 
 	from<T extends Object>( nodes:T[], document:Document.Class ):( T & Class )[];

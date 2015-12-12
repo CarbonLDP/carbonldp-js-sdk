@@ -1,4 +1,4 @@
-/// <reference path="../typings/es6/es6.d.ts" />
+/// <reference path="./../typings/tsd.d.ts" />
 function hasFunction(object, functionName) {
     return typeof object[functionName] === "function";
 }
@@ -112,11 +112,12 @@ function extend(target) {
 }
 exports.extend = extend;
 function forEachOwnProperty(object, action) {
-    if (!isObject(object))
+    if (!(isObject(object) || isFunction(object)))
         throw new Error("IllegalArgument");
     for (var name_2 in object) {
         if (object.hasOwnProperty(name_2)) {
-            action(name_2, object[name_2]);
+            if (action(name_2, object[name_2]) === false)
+                break;
         }
     }
 }

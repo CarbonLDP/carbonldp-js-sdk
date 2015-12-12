@@ -74,7 +74,8 @@ export declare function hasMethod(access: string, name: string, description: str
 export declare function hasMethod(access: string, name: string, description: string, returns: MethodReturn): string;
 export declare function hasMethod(access: string, name: string, methodArguments: MethodArgument[], returns: MethodReturn): string;
 export declare function hasMethod(access: string, name: string, description: string, methodArguments: MethodArgument[], returns: MethodReturn): string;
-export declare let method: typeof hasMethod;
+export declare function method(access: string, name: string): string;
+export declare function method(access: string, name: string, description: string): string;
 export declare function hasSignature(): string;
 export declare function hasSignature(description: string): string;
 export declare function hasSignature(description: string, methodArguments: MethodArgument[]): string;

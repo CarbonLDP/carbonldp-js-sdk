@@ -1,4 +1,4 @@
-/// <reference path="./../node_modules/typescript/lib/lib.es6.d.ts" />
+/// <reference path="./../typings/tsd.d.ts" />
 
 function hasFunction( object:Object, functionName:string ):boolean {
 	return typeof object[ functionName ] === "function";

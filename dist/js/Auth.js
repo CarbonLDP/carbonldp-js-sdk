@@ -1,3 +1,4 @@
+/// <reference path="./../typings/tsd.d.ts" />
 var BasicAuthenticator_1 = require("./Auth/BasicAuthenticator");
 var TokenAuthenticator_1 = require("./Auth/TokenAuthenticator");
 var UsernameAndPasswordToken_1 = require("./Auth/UsernameAndPasswordToken");

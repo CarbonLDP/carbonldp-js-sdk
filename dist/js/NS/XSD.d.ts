@@ -1,31 +1,31 @@
 export declare const namespace: string;
-export declare enum DataType {
-    date,
-    dateTime,
-    duration,
-    gDay,
-    gMonth,
-    gMonthDay,
-    gYear,
-    gYearMonth,
-    time,
-    byte,
-    decimal,
-    int,
-    integer,
-    long,
-    negativeInteger,
-    nonNegativeInteger,
-    nonPositiveInteger,
-    positiveInteger,
-    short,
-    unsignedLong,
-    unsignedInt,
-    unsignedShort,
-    unsignedByte,
-    double,
-    float,
-    boolean,
-    string,
-    object,
+export declare class DataType {
+    static date: string;
+    static dateTime: string;
+    static duration: string;
+    static gDay: string;
+    static gMonth: string;
+    static gMonthDay: string;
+    static gYear: string;
+    static gYearMonth: string;
+    static time: string;
+    static byte: string;
+    static decimal: string;
+    static int: string;
+    static integer: string;
+    static long: string;
+    static negativeInteger: string;
+    static nonNegativeInteger: string;
+    static nonPositiveInteger: string;
+    static positiveInteger: string;
+    static short: string;
+    static unsignedLong: string;
+    static unsignedInt: string;
+    static unsignedShort: string;
+    static unsignedByte: string;
+    static double: string;
+    static float: string;
+    static boolean: string;
+    static string: string;
+    static object: string;
 }

@@ -1,26 +1,20 @@
-var Errors = require("./Errors");
-var PersistedResource = require("./PersistedResource");
-var PersistedFragment = require("./PersistedFragment");
+var Document = require("./Document");
 var Utils = require("./Utils");
 function isDirty() {
-    for (var _i = 0, _a = this.getFragments(); _i < _a.length; _i++) {
-        var fragment = _a[_i];
-        if (fragment.isDirty())
-            return true;
-    }
-    return false;
+    // TODO
+    return null;
 }
 function refresh() {
     // TODO
     return null;
 }
 function save() {
-    return this._context.Documents.save(this).then(function (response) {
+    return this._documents.save(this).then(function (response) {
         // TODO
     });
 }
 function destroy() {
-    return this._context.Documents.delete(this).then(function (response) {
+    return this._documents.delete(this).then(function (response) {
         // TODO
     });
 }
@@ -28,44 +22,76 @@ var Factory = (function () {
     function Factory() {
     }
     Factory.hasClassProperties = function (document) {
-        return (Utils.hasPropertyDefined(document, "_context") &&
+        return (Utils.hasPropertyDefined(document, "_decorate") &&
             Utils.hasPropertyDefined(document, "_etag") &&
             Utils.hasFunction(document, "refresh") &&
             Utils.hasFunction(document, "save") &&
             Utils.hasFunction(document, "destroy"));
     };
-    Factory.from = function (documents, context) {
-        if (!context)
-            throw new Errors.IllegalArgumentError("The context cannot be null/undefined.");
-        if (!Utils.isArray(documents))
-            return Factory.singleFrom(documents, context);
-        for (var i = 0, length_1 = documents.length; i < length_1; i++) {
-            var document_1 = documents[i];
-            Factory.singleFrom(document_1, context);
-        }
-        return documents;
+    Factory.create = function (uri, documents) {
+        var document = Document.factory.create(uri);
+        return Factory.decorate(document, documents);
     };
-    Factory.singleFrom = function (document, context) {
-        var persisted = PersistedResource.Factory.from(document);
-        var persistedDocument = Factory.hasClassProperties(document) ? persisted : Factory.injectBehavior(persisted, context);
-        PersistedFragment.Factory.from(persistedDocument.getFragments());
-        return persistedDocument;
+    Factory.createFrom = function (object, uri, documents) {
+        var document = Document.factory.createFrom(object, uri);
+        return Factory.decorate(document, documents);
     };
-    Factory.injectBehavior = function (persisted, context) {
-        if (Factory.hasClassProperties(persisted))
-            return persisted;
-        Object.defineProperties(persisted, {
-            "_context": {
+    Factory.decorate = function (document, documents) {
+        if (Factory.hasClassProperties(document))
+            return document;
+        var persistedDocument = document;
+        Object.defineProperties(persistedDocument, {
+            "_documents": {
                 writable: false,
                 enumerable: false,
                 configurable: true,
-                value: context,
+                value: documents,
             },
             "_etag": {
                 writable: true,
                 enumerable: false,
                 configurable: true,
                 value: null,
+            },
+            "hasPointer": {
+                writable: false,
+                enumerable: false,
+                configurable: true,
+                value: (function () {
+                    var superFunction = persistedDocument.hasPointer;
+                    return function (id) {
+                        if (superFunction.call(this, id))
+                            return true;
+                        return this._documents.hasPointer(id);
+                    };
+                })(),
+            },
+            "getPointer": {
+                writable: false,
+                enumerable: false,
+                configurable: true,
+                value: (function () {
+                    var superFunction = persistedDocument.getPointer;
+                    var inScopeFunction = persistedDocument.inScope;
+                    return function (id) {
+                        if (inScopeFunction.call(this, id))
+                            return superFunction.call(this, id);
+                        return this._documents.getPointer(id);
+                    };
+                })(),
+            },
+            "inScope": {
+                writable: false,
+                enumerable: false,
+                configurable: true,
+                value: (function () {
+                    var superFunction = persistedDocument.inScope;
+                    return function (id) {
+                        if (superFunction.call(this, id))
+                            return true;
+                        return this._documents.inScope(id);
+                    };
+                })(),
             },
             "refresh": {
                 writable: false,
@@ -86,14 +112,19 @@ var Factory = (function () {
                 value: destroy,
             },
         });
-        // Overwrite isDirty to also take into account the fragments state
-        persisted.isDirty = (function () {
-            var superFunction = persisted.isDirty;
-            return function () {
-                return superFunction.call(this) || isDirty.call(this);
+        /*
+
+        // TODO: Overwrite isDirty to also take into account the fragments state
+        // TODO: Update with the new comparison system
+        persistedDocument.isDirty = (function():() => boolean {
+            let superFunction:() => boolean = persistedDocument.isDirty;
+            return function():boolean {
+                return superFunction.call( this ) || isDirty.call( this );
             };
         })();
-        return persisted;
+
+        */
+        return persistedDocument;
     };
     return Factory;
 })();

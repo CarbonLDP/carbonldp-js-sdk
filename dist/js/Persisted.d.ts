@@ -1,4 +1,3 @@
-/// <reference path="../typings/es6/es6.d.ts" />
 import * as RDF from "./RDF";
 declare class Modifications {
     add: Map<string, RDF.Value.Class[]>;
@@ -20,6 +19,6 @@ declare class Factory {
     static is(object: Object): boolean;
     static from(object: Object): Persisted;
     static from(objects: Object[]): Persisted[];
-    private static injectBehaviour(value);
+    private static injectBehavior(value);
 }
 export { Modifications, ModificationType, Persisted as Class, Factory };

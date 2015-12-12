@@ -1,34 +1,41 @@
+var Utils = require("./../Utils");
 exports.namespace = "http://www.w3.org/2001/XMLSchema#";
-(function (DataType) {
-    DataType[DataType["date"] = (exports.namespace + "date")] = "date";
-    DataType[DataType["dateTime"] = (exports.namespace + "dateTime")] = "dateTime";
-    DataType[DataType["duration"] = (exports.namespace + "duration")] = "duration";
-    DataType[DataType["gDay"] = (exports.namespace + "gDay")] = "gDay";
-    DataType[DataType["gMonth"] = (exports.namespace + "gMonth")] = "gMonth";
-    DataType[DataType["gMonthDay"] = (exports.namespace + "gMonthDay")] = "gMonthDay";
-    DataType[DataType["gYear"] = (exports.namespace + "gYear")] = "gYear";
-    DataType[DataType["gYearMonth"] = (exports.namespace + "gYearMonth")] = "gYearMonth";
-    DataType[DataType["time"] = (exports.namespace + "time")] = "time";
-    DataType[DataType["byte"] = (exports.namespace + "byte")] = "byte";
-    DataType[DataType["decimal"] = (exports.namespace + "decimal")] = "decimal";
-    DataType[DataType["int"] = (exports.namespace + "int")] = "int";
-    DataType[DataType["integer"] = (exports.namespace + "integer")] = "integer";
-    DataType[DataType["long"] = (exports.namespace + "long")] = "long";
-    DataType[DataType["negativeInteger"] = (exports.namespace + "negativeInteger")] = "negativeInteger";
-    DataType[DataType["nonNegativeInteger"] = (exports.namespace + "nonNegativeInteger")] = "nonNegativeInteger";
-    DataType[DataType["nonPositiveInteger"] = (exports.namespace + "nonPositiveInteger")] = "nonPositiveInteger";
-    DataType[DataType["positiveInteger"] = (exports.namespace + "positiveInteger")] = "positiveInteger";
-    DataType[DataType["short"] = (exports.namespace + "short")] = "short";
-    DataType[DataType["unsignedLong"] = (exports.namespace + "unsignedLong")] = "unsignedLong";
-    DataType[DataType["unsignedInt"] = (exports.namespace + "unsignedInt")] = "unsignedInt";
-    DataType[DataType["unsignedShort"] = (exports.namespace + "unsignedShort")] = "unsignedShort";
-    DataType[DataType["unsignedByte"] = (exports.namespace + "unsignedByte")] = "unsignedByte";
-    DataType[DataType["double"] = (exports.namespace + "double")] = "double";
-    DataType[DataType["float"] = (exports.namespace + "float")] = "float";
-    DataType[DataType["boolean"] = (exports.namespace + "boolean")] = "boolean";
-    DataType[DataType["string"] = (exports.namespace + "string")] = "string";
-    DataType[DataType["object"] = (exports.namespace + "object")] = "object";
-})(exports.DataType || (exports.DataType = {}));
-var DataType = exports.DataType;
+var DataType = (function () {
+    function DataType() {
+    }
+    DataType.date = exports.namespace + "date";
+    DataType.dateTime = exports.namespace + "dateTime";
+    DataType.duration = exports.namespace + "duration";
+    DataType.gDay = exports.namespace + "gDay";
+    DataType.gMonth = exports.namespace + "gMonth";
+    DataType.gMonthDay = exports.namespace + "gMonthDay";
+    DataType.gYear = exports.namespace + "gYear";
+    DataType.gYearMonth = exports.namespace + "gYearMonth";
+    DataType.time = exports.namespace + "time";
+    DataType.byte = exports.namespace + "byte";
+    DataType.decimal = exports.namespace + "decimal";
+    DataType.int = exports.namespace + "int";
+    DataType.integer = exports.namespace + "integer";
+    DataType.long = exports.namespace + "long";
+    DataType.negativeInteger = exports.namespace + "negativeInteger";
+    DataType.nonNegativeInteger = exports.namespace + "nonNegativeInteger";
+    DataType.nonPositiveInteger = exports.namespace + "nonPositiveInteger";
+    DataType.positiveInteger = exports.namespace + "positiveInteger";
+    DataType.short = exports.namespace + "short";
+    DataType.unsignedLong = exports.namespace + "unsignedLong";
+    DataType.unsignedInt = exports.namespace + "unsignedInt";
+    DataType.unsignedShort = exports.namespace + "unsignedShort";
+    DataType.unsignedByte = exports.namespace + "unsignedByte";
+    DataType.double = exports.namespace + "double";
+    DataType.float = exports.namespace + "float";
+    DataType.boolean = exports.namespace + "boolean";
+    DataType.string = exports.namespace + "string";
+    DataType.object = exports.namespace + "object";
+    return DataType;
+})();
+exports.DataType = DataType;
+Utils.forEachOwnProperty(DataType, function (key, value) {
+    DataType[value] = key;
+});
 
 //# sourceMappingURL=XSD.js.map

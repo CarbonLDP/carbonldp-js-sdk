@@ -1,4 +1,4 @@
-/// <reference path="../../typings/es6/es6.d.ts" />
+/// <reference path="./../../typings/tsd.d.ts" />
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -182,7 +182,7 @@ var Factory = (function (_super) {
                 if (definitions.has(type)) {
                     Utils.M.extend(descriptions, definitions.get(type));
                 }
-                if (descriptions.size() !== 0)
+                if (descriptions.size !== 0)
                     Factory.injectDescriptions(resource, descriptions);
             }
         }

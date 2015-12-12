@@ -19,7 +19,7 @@
             return null;
         }
 
-        private static injectBehaviour( value:PATCHRequest ):PATCHRequest {
+        private static injectBehavior( value:PATCHRequest ):PATCHRequest {
             // TODO: Implement
             return null;
         }

@@ -41,7 +41,7 @@ var Injector = (function (_super) {
         return (Utils.hasPropertyDefined(resource, "memberOfRelation") &&
             Utils.hasPropertyDefined(resource, "hasMemberRelation"));
     };
-    Injector.prototype.injectBehaviour = function (resource) {
+    Injector.prototype.injectBehavior = function (resource) {
         RDF.Resource.Factory.injectDescriptions(resource, exports.DEFINITION);
         return resource;
     };

@@ -1,4 +1,4 @@
-/// <reference path="../../typings/es6/es6.d.ts" />
+/// <reference path="../../typings/tsd.d.ts" />
 import AbstractInjector from "./AbstractInjector";
 import * as Literal from "./Literal";
 import * as Value from "./Value";

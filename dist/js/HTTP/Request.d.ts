@@ -1,5 +1,4 @@
-/// <reference path="../../typings/es6/es6.d.ts" />
-/// <reference path="../../typings/es6-promise/es6-promise.d.ts" />
+/// <reference path="../../typings/tsd.d.ts" />
 import * as Header from "./Header";
 import Method from "./Method";
 import Parser from "./Parser";

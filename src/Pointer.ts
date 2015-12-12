@@ -21,6 +21,7 @@ export class Factory {
 }
 
 export interface Validator {
+	inScope( id:string ):boolean;
 	inScope( pointer:Class ):boolean;
 }
 

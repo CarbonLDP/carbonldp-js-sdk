@@ -1,5 +1,7 @@
-var Utils = require("../Utils");
-var XSD = require("../NS/XSD");
+var Utils = require("./../Utils");
+var XSD = require("./../NS/XSD");
+var Serializers = require("./Literal/Serializers");
+exports.Serializers = Serializers;
 var Factory = (function () {
     function Factory() {
     }
@@ -44,7 +46,7 @@ var Factory = (function () {
         if (!Utils.hasProperty(literal, "@type"))
             return literal["@value"];
         var type = literal["@type"];
-        // The DataType isn"t supported
+        // The DataType isn't supported
         if (!Utils.hasProperty(XSD.DataType, type))
             return literal["@value"];
         var valueString = literal["@value"];
@@ -106,6 +108,11 @@ var Factory = (function () {
         if (!Utils.isObject(value))
             return false;
         return Utils.hasProperty(value, "@value");
+    };
+    Factory.hasType = function (value, type) {
+        if (!value["@type"] && type === XSD.DataType.string)
+            return true;
+        return value["@type"] === type;
     };
     return Factory;
 })();

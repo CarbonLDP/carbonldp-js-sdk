@@ -38,14 +38,14 @@ export class Class {
 	compact( expandedObjects:Object[], digestedContext:ContextDigester.DigestedContext, pointerLibrary:Pointer.Library ):Object[];
 	compact( expandedObject:Object, digestedContext:ContextDigester.DigestedContext, pointerLibrary:Pointer.Library ):Object;
 	compact( expandedObjectOrObjects:any, targetObjectOrObjectsOrDigestedContext:any, digestedContextOrPointerLibrary:any, pointerLibrary:Pointer.Library = null ):any {
-		let targetObjects:Object[] = ! pointerLibrary ? null : targetObjectOrObjectsOrDigestedContext;
+		let targetObjectOrObjects:any = ! pointerLibrary ? null : targetObjectOrObjectsOrDigestedContext;
 		let digestedContext:any = ! pointerLibrary ? targetObjectOrObjectsOrDigestedContext : digestedContextOrPointerLibrary;
 		pointerLibrary = ! pointerLibrary ? digestedContextOrPointerLibrary : pointerLibrary;
 
-		if( ! Utils.isArray( expandedObjectOrObjects ) ) return this.compactSingle( expandedObjectOrObjects, targetObjects, digestedContext, pointerLibrary );
+		if( ! Utils.isArray( expandedObjectOrObjects ) ) return this.compactSingle( expandedObjectOrObjects, targetObjectOrObjects, digestedContext, pointerLibrary );
 
 		let expandedObjects:Object[] = expandedObjectOrObjects;
-		targetObjects = !! targetObjects ? targetObjects : [];
+		let targetObjects:Object[] = !! targetObjectOrObjects ? targetObjectOrObjects : [];
 		for( let i:number = 0, length:number = expandedObjects.length; i < length; i++ ) {
 			let expandedObject:Object = expandedObjects[ i ];
 			let targetObject:Object = targetObjects[ i ] = !! targetObjects[ i ] ? targetObjects[ i ] : {};

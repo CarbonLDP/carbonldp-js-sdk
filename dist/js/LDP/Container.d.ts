@@ -1,4 +1,3 @@
-/// <reference path="../../typings/es6/es6.d.ts" />
 import * as RDF from "./../RDF";
 import * as RDFSource from "./RDFSource";
 export declare const RDF_CLASS: string;
@@ -12,7 +11,7 @@ export declare class Injector extends RDF.AbstractInjector<Class> {
     is(object: Object): boolean;
     hasRDFClass(resource: RDF.Resource.Class): boolean;
     hasClassProperties(resource: RDF.Node.Class): boolean;
-    protected injectBehaviour(resource: RDF.Resource.Class): Class;
+    protected injectBehavior(resource: RDF.Resource.Class): Class;
 }
 export declare let injector: Injector;
 export default Class;

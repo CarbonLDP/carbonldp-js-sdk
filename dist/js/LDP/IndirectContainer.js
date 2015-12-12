@@ -29,7 +29,7 @@ var Injector = (function (_super) {
             this.hasRDFClass(object) &&
             this.hasClassProperties(object));
     };
-    Injector.prototype.injectBehaviour = function (resource) {
+    Injector.prototype.injectBehavior = function (resource) {
         RDF.Resource.Factory.injectDescriptions(resource, exports.DEFINITION);
         return resource;
     };

@@ -1,4 +1,3 @@
-/// <reference path="../../typings/es6/es6.d.ts" />
 import * as RDF from "./../RDF";
 import * as AccessPoint from "./AccessPoint";
 export declare const RDF_CLASS: string;

@@ -1,4 +1,3 @@
-/// <reference path="../../typings/es6/es6.d.ts" />
 export declare class Class {
     constructor();
     constructor(values: Value[]);

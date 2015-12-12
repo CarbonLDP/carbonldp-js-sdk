@@ -6,3 +6,4 @@ export interface Class {
 export declare class Util {
     static areEqual(value1: Class, value2: Class): boolean;
 }
+export default Class;

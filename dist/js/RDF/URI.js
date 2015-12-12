@@ -22,6 +22,26 @@ var Util = (function () {
     Util.isBNodeID = function (uri) {
         return Utils.S.startsWith(uri, "_:");
     };
+    Util.isPrefixed = function (uri) {
+        return !Util.isAbsolute(uri) && Utils.S.contains(uri, ":");
+    };
+    Util.isFragmentOf = function (fragmentURI, uri) {
+        if (!Util.hasFragment(fragmentURI))
+            return false;
+        return Util.getDocumentURI(fragmentURI) === uri;
+    };
+    Util.isBaseOf = function (baseURI, uri) {
+        if (baseURI === uri)
+            return true;
+        if (uri.startsWith(baseURI)) {
+            if (Utils.S.endsWith(baseURI, "/"))
+                return true;
+            var relativeURI = uri.substring(baseURI.length);
+            if (Utils.S.startsWith(relativeURI, "/") || Utils.S.startsWith(relativeURI, "#"))
+                return true;
+        }
+        return false;
+    };
     Util.getDocumentURI = function (uri) {
         var parts = uri.split("#");
         if (parts.length > 2)

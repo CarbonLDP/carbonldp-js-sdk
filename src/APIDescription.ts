@@ -1,4 +1,4 @@
-/// <reference path="../typings/es6/es6.d.ts" />
+/// <reference path="./../typings/tsd.d.ts" />
 import * as NS from "./NS";
 import * as RDF from "./RDF";
 import * as Utils from "./Utils";

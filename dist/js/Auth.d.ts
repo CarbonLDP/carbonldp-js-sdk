@@ -1,4 +1,4 @@
-/// <reference path="../typings/es6-promise/es6-promise.d.ts" />
+/// <reference path="../typings/tsd.d.ts" />
 import AuthenticationToken from "./Auth/AuthenticationToken";
 import * as HTTP from "./HTTP";
 import Context from "./Context";

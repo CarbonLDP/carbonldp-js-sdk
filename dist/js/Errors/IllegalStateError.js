@@ -6,8 +6,9 @@ var __extends = (this && this.__extends) || function (d, b) {
 var AbstractError_1 = require("./AbstractError");
 var IllegalStateError = (function (_super) {
     __extends(IllegalStateError, _super);
-    function IllegalStateError() {
-        _super.apply(this, arguments);
+    function IllegalStateError(message) {
+        if (message === void 0) { message = ""; }
+        _super.call(this, message);
     }
     Object.defineProperty(IllegalStateError.prototype, "name", {
         get: function () { return "IllegalStateError"; },

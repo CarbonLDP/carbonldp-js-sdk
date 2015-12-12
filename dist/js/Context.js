@@ -1,17 +1,19 @@
-/// <reference path="../typings/es6/es6.d.ts" />
+/// <reference path="./../typings/tsd.d.ts" />
 var Auth_1 = require("./Auth");
+var ContextDigester = require("./ContextDigester");
 var Documents_1 = require("./Documents");
-var Errors = require("./Errors");
-var Utils = require("./Utils");
 var Context = (function () {
-    function Context() {
+    function Context(parentContext) {
+        if (parentContext === void 0) { parentContext = null; }
+        this.parentContext = parentContext;
         this.settings = new Map();
-        this.definitions = new Map();
+        this.mainContext = new ContextDigester.DigestedContext();
+        this.classContexts = new Map();
         this.Auth = new Auth_1.default(this);
         this.Documents = new Documents_1.default(this);
     }
-    Context.prototype.resolve = function (relativeURI) {
-        throw new Errors.IllegalStateError("Method needs to be implemented by child.");
+    Context.prototype.getBaseURI = function () {
+        return this.resolve("");
     };
     Context.prototype.hasSetting = function (name) {
         return (this.settings.has(name) ||
@@ -30,59 +32,35 @@ var Context = (function () {
     Context.prototype.deleteSetting = function (name) {
         this.settings.delete(name);
     };
-    Context.prototype.hasDefinition = function (uri) {
-        if (this.definitions.has(uri))
-            return true;
-        if (this.parentContext && this.parentContext.hasDefinition(uri))
-            return true;
-        return false;
+    Context.prototype.getMainContext = function () {
+        return this.mainContext;
     };
-    Context.prototype.getDefinition = function (uri) {
-        var descriptions = new Map();
-        if (this.definitions.has(uri)) {
-            Utils.M.extend(descriptions, this.definitions.get(uri));
-            if (this.parentContext && this.parentContext.hasDefinition(uri))
-                Utils.M.extend(descriptions, this.parentContext.getDefinition(uri));
-        }
-        return descriptions;
+    Context.prototype.expandMainContext = function (contextOrContexts) {
+        var digestedContext = ContextDigester.Class.digestContext(contextOrContexts);
+        this.mainContext = ContextDigester.Class.combineDigestedContexts([this.mainContext, digestedContext]);
     };
-    Context.prototype.getDefinitionURIs = function () {
-        var uris = Utils.A.from(this.definitions.keys());
-        if (this.parentContext)
-            uris = Utils.A.joinWithoutDuplicates(uris, this.parentContext.getDefinitionURIs());
-        return uris;
+    Context.prototype.setMainContext = function (contextOrContexts) {
+        this.mainContext = ContextDigester.Class.digestContext(contextOrContexts);
     };
-    Context.prototype.addDefinition = function (uri, descriptions) {
-        var extender;
-        if (Utils.isMap(descriptions)) {
-            extender = descriptions;
-        }
-        else if (Utils.isObject(descriptions)) {
-            extender = Utils.M.from(descriptions);
-        }
-        else
-            throw new Errors.IllegalArgumentError("descriptions must be a Map or an Object");
-        if (this.definitions.has(uri)) {
-            Utils.M.extend(this.definitions.get(uri), extender);
-        }
-        else {
-            this.definitions.set(uri, extender);
-        }
+    Context.prototype.hasClassContext = function (classURI) {
+        return this.classContexts.has(classURI);
     };
-    Context.prototype.setDefinition = function (uri, descriptions) {
-        var extender;
-        if (Utils.isMap(descriptions)) {
-            extender = descriptions;
-        }
-        else if (Utils.isObject(descriptions)) {
-            extender = Utils.M.from(descriptions);
-        }
-        else
-            throw new Errors.IllegalArgumentError("descriptions must be a Map or an Object");
-        this.definitions.set(uri, extender);
+    Context.prototype.getClassContext = function (classURI) {
+        return this.classContexts.get(classURI);
     };
-    Context.prototype.deleteDefinition = function (uri) {
-        this.definitions.delete(uri);
+    Context.prototype.expandClassContext = function (classURI, contextOrContexts) {
+        if (!this.classContexts.has(classURI)) {
+            this.setClassContext(classURI, contextOrContexts);
+            return;
+        }
+        var digestedContext = ContextDigester.Class.digestContext(contextOrContexts);
+        digestedContext = ContextDigester.Class.combineDigestedContexts([this.classContexts.get(classURI), digestedContext]);
+        this.classContexts.set(classURI, digestedContext);
+    };
+    Context.prototype.setClassContext = function (classURI, contextOrContexts) {
+        var digestedContext = ContextDigester.Class.digestContext(contextOrContexts);
+        digestedContext = ContextDigester.Class.combineDigestedContexts([this.mainContext, digestedContext]);
+        this.classContexts.set(classURI, digestedContext);
     };
     return Context;
 })();

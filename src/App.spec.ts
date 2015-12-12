@@ -1,7 +1,6 @@
+/// <reference path="./../typings/tsd.d.ts" />
 /// <reference path="./../typings/jasmine/jasmine.d.ts" />
 /// <reference path="./../typings/jasmine-ajax/mock-ajax.d.ts" />
-/// <reference path="./../typings/es6/es6.d.ts" />
-/// <reference path="./../typings/es6-promise/es6-promise.d.ts" />
 
 import * as App from "./App";
 

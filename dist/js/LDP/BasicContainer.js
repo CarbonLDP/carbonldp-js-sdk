@@ -1,4 +1,4 @@
-/// <reference path="../../typings/es6/es6.d.ts" />
+/// <reference path="./../../typings/tsd.d.ts" />
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -24,7 +24,7 @@ var Injector = (function (_super) {
     Injector.prototype.hasClassProperties = function (resource) {
         return true;
     };
-    Injector.prototype.injectBehaviour = function (resource) {
+    Injector.prototype.injectBehavior = function (resource) {
         return resource;
     };
     return Injector;

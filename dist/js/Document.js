@@ -1,25 +1,60 @@
-/// <reference path="./../typings/es6/es6.d.ts" />
+/// <reference path="./../typings/tsd.d.ts" />
+var Errors = require("./Errors");
 var Fragment = require("./Fragment");
 var NamedFragment = require("./NamedFragment");
+var Pointer = require("./Pointer");
 var RDF = require("./RDF");
 var Utils = require("./Utils");
-var Errors = require("./Errors");
+function hasPointer(id) {
+    var document = this;
+    if (!document.inScope(id))
+        return false;
+    return !!document.getFragment(id);
+}
+function getPointer(id) {
+    var document = this;
+    if (!document.inScope(id))
+        return null;
+    var fragment = document.getFragment(id);
+    fragment = !fragment ? document.createFragment(id) : fragment;
+    return fragment;
+}
+function inScope(idOrPointer) {
+    var document = this;
+    var id = Pointer.Factory.is(idOrPointer) ? idOrPointer.uri : idOrPointer;
+    if (id === document.uri)
+        return false;
+    // BNodes need to be already in the index to be in-scope
+    if (RDF.URI.Util.isBNodeID(id) && !document._fragmentsIndex.has(id))
+        return false;
+    if (RDF.URI.Util.isAbsolute(id) && !RDF.URI.Util.isFragmentOf(id, document.uri))
+        return false;
+    return true;
+}
 function hasFragment(id) {
     var document = this;
-    id = RDF.URI.Util.hasFragment(id) ? RDF.URI.Util.getFragment(id) : id;
-    return document._fragmentsIndex.has(id);
+    if (!document.inScope(id))
+        return false;
+    return !!document._fragmentsIndex.has(id);
 }
 function getFragment(id) {
     var document = this;
-    id = RDF.URI.Util.hasFragment(id) ? RDF.URI.Util.getFragment(id) : id;
+    if (!RDF.URI.Util.isBNodeID(id))
+        return document.getNamedFragment(id);
     return document._fragmentsIndex.get(id);
 }
-function getNamedFragment(slug) {
+function getNamedFragment(id) {
     var document = this;
-    if (RDF.URI.Util.isBNodeID(slug))
-        throw new Errors.IllegalArgumentError("Named fragments can't have a slug that starts with '_:'.");
-    slug = RDF.URI.Util.hasFragment(slug) ? RDF.URI.Util.getFragment(slug) : slug;
-    return document._fragmentsIndex.get(slug);
+    if (RDF.URI.Util.isBNodeID(id))
+        throw new Errors.IllegalArgumentError("Named fragments can't have a id that starts with '_:'.");
+    if (RDF.URI.Util.isAbsolute(id)) {
+        if (!RDF.URI.Util.isFragmentOf(id, document.uri))
+            throw new Errors.IllegalArgumentError("The id is out of scope.");
+        id = RDF.URI.Util.hasFragment(id) ? RDF.URI.Util.getFragment(id) : id;
+    }
+    else if (Utils.S.startsWith(id, "#"))
+        id = id.substring(1);
+    return document._fragmentsIndex.get(id);
 }
 function getFragments() {
     var document = this;
@@ -27,13 +62,18 @@ function getFragments() {
 }
 function createFragment(slug) {
     var document = this;
-    if (slug)
-        return document.createNamedFragment(slug);
-    var id = Fragment.Util.generateID();
-    var fragmentObject = {
-        "@id": id
-    };
-    var fragment = Fragment.factory.from(fragmentObject, document);
+    var id;
+    if (slug) {
+        if (!RDF.URI.Util.isBNodeID(slug))
+            return document.createNamedFragment(slug);
+        id = slug;
+        if (this._fragmentsIndex.has(id))
+            return this.getFragment(id);
+    }
+    else {
+        id = Fragment.Util.generateID();
+    }
+    var fragment = Fragment.factory.create(id, document);
     document._fragmentsIndex.set(id, fragment);
     return fragment;
 }
@@ -41,14 +81,16 @@ function createNamedFragment(slug) {
     var document = this;
     if (RDF.URI.Util.isBNodeID(slug))
         throw new Errors.IllegalArgumentError("Named fragments can't have a slug that starts with '_:'.");
-    slug = RDF.URI.Util.hasFragment(slug) ? RDF.URI.Util.getFragment(slug) : slug;
+    if (RDF.URI.Util.isAbsolute(slug)) {
+        if (!RDF.URI.Util.isFragmentOf(slug, document.uri))
+            throw new Errors.IllegalArgumentError("The slug is out of scope.");
+        slug = RDF.URI.Util.hasFragment(slug) ? RDF.URI.Util.getFragment(slug) : slug;
+    }
+    else if (Utils.S.startsWith(slug, "#"))
+        slug = slug.substring(1);
     if (document._fragmentsIndex.has(slug))
         throw new Errors.IDAlreadyInUseError("The slug provided is already being used by a fragment.");
-    var uri = document.uri + "#" + slug;
-    var fragmentObject = {
-        "@id": uri
-    };
-    var fragment = NamedFragment.factory.from(fragmentObject, document);
+    var fragment = NamedFragment.factory.create(slug, document);
     document._fragmentsIndex.set(slug, fragment);
     return fragment;
 }
@@ -85,7 +127,9 @@ var Factory = (function () {
     function Factory() {
     }
     Factory.prototype.hasClassProperties = function (documentResource) {
-        return (Utils.hasPropertyDefined(documentResource, "_fragmentsIndex") &&
+        return (Utils.isObject(documentResource) &&
+            Utils.hasPropertyDefined(documentResource, "_fragmentsIndex") &&
+            Utils.hasPropertyDefined(documentResource, "uri") &&
             Utils.hasFunction(documentResource, "hasFragment") &&
             Utils.hasFunction(documentResource, "getFragment") &&
             Utils.hasFunction(documentResource, "getNamedFragment") &&
@@ -94,6 +138,102 @@ var Factory = (function () {
             Utils.hasFunction(documentResource, "createNamedFragment") &&
             Utils.hasFunction(documentResource, "removeFragment") &&
             Utils.hasFunction(documentResource, "toJSON"));
+    };
+    Factory.prototype.create = function (uri) {
+        if (uri === void 0) { uri = null; }
+        return this.createFrom({}, uri);
+    };
+    Factory.prototype.createFrom = function (object, uri) {
+        if (uri === void 0) { uri = null; }
+        var document = this.decorate(object);
+        if (!!uri)
+            document.uri = uri;
+        return document;
+    };
+    Factory.prototype.decorate = function (object) {
+        if (this.hasClassProperties(object))
+            return object;
+        Object.defineProperties(object, {
+            "_fragmentsIndex": {
+                writable: false,
+                enumerable: false,
+                configurable: true,
+                value: new Map(),
+            },
+            "uri": {
+                writable: true,
+                enumerable: false,
+                configurable: true,
+                value: null,
+            },
+            "hasPointer": {
+                writable: true,
+                enumerable: false,
+                configurable: true,
+                value: hasPointer,
+            },
+            "getPointer": {
+                writable: true,
+                enumerable: false,
+                configurable: true,
+                value: getPointer,
+            },
+            "inScope": {
+                writable: true,
+                enumerable: false,
+                configurable: true,
+                value: inScope,
+            },
+            "hasFragment": {
+                writable: true,
+                enumerable: false,
+                configurable: true,
+                value: hasFragment,
+            },
+            "getFragment": {
+                writable: true,
+                enumerable: false,
+                configurable: true,
+                value: getFragment,
+            },
+            "getNamedFragment": {
+                writable: true,
+                enumerable: false,
+                configurable: true,
+                value: getNamedFragment,
+            },
+            "getFragments": {
+                writable: true,
+                enumerable: false,
+                configurable: true,
+                value: getFragments,
+            },
+            "createFragment": {
+                writable: true,
+                enumerable: false,
+                configurable: true,
+                value: createFragment,
+            },
+            "createNamedFragment": {
+                writable: true,
+                enumerable: false,
+                configurable: true,
+                value: createNamedFragment,
+            },
+            "removeFragment": {
+                writable: true,
+                enumerable: false,
+                configurable: true,
+                value: removeFragment,
+            },
+            "toJSON": {
+                writable: true,
+                enumerable: false,
+                configurable: true,
+                value: toJSON,
+            },
+        });
+        return object;
     };
     Factory.prototype.from = function (rdfDocuments) {
         if (!Utils.isArray(rdfDocuments))
@@ -112,7 +252,7 @@ var Factory = (function () {
         if (documentResources.length === 0)
             throw new Errors.IllegalArgumentError("The RDFDocument doesn\'t contain a document resource.");
         var documentResource = RDF.Resource.factory.from(documentResources[0]);
-        var document = this.injectBehavior(documentResource);
+        var document = this.decorate(documentResource);
         var fragmentResources = RDF.Document.Util.getBNodeResources(rdfDocument);
         for (var i = 0, length_3 = fragmentResources.length; i < length_3; i++) {
             var fragmentResource = fragmentResources[i];
@@ -128,67 +268,6 @@ var Factory = (function () {
             document._fragmentsIndex.set(RDF.URI.Util.getFragment(namedFragment.uri), namedFragment);
         }
         return document;
-    };
-    Factory.prototype.injectBehavior = function (documentResource) {
-        if (this.hasClassProperties(documentResource))
-            return documentResource;
-        Object.defineProperties(documentResource, {
-            "_fragmentsIndex": {
-                writable: false,
-                enumerable: false,
-                configurable: false,
-                value: new Map(),
-            },
-            "hasFragment": {
-                writable: false,
-                enumerable: false,
-                configurable: false,
-                value: hasFragment,
-            },
-            "getFragment": {
-                writable: false,
-                enumerable: false,
-                configurable: false,
-                value: getFragment,
-            },
-            "getNamedFragment": {
-                writable: false,
-                enumerable: false,
-                configurable: false,
-                value: getNamedFragment,
-            },
-            "getFragments": {
-                writable: false,
-                enumerable: false,
-                configurable: false,
-                value: getFragments,
-            },
-            "createFragment": {
-                writable: false,
-                enumerable: false,
-                configurable: false,
-                value: createFragment,
-            },
-            "createNamedFragment": {
-                writable: false,
-                enumerable: false,
-                configurable: false,
-                value: createNamedFragment,
-            },
-            "removeFragment": {
-                writable: false,
-                enumerable: false,
-                configurable: false,
-                value: removeFragment,
-            },
-            "toJSON": {
-                writable: false,
-                enumerable: false,
-                configurable: true,
-                value: toJSON,
-            },
-        });
-        return documentResource;
     };
     return Factory;
 })();

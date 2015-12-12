@@ -1,4 +1,4 @@
-/// <reference path="../typings/es6-promise/es6-promise.d.ts" />
+/// <reference path="../typings/tsd.d.ts" />
 import * as App from "./App";
 import Context from "./Context";
 export declare class Apps {

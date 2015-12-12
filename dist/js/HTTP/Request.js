@@ -1,5 +1,4 @@
-/// <reference path="../../typings/es6/es6.d.ts" />
-/// <reference path="../../typings/es6-promise/es6-promise.d.ts" />
+/// <reference path="./../../typings/tsd.d.ts" />
 var Errors = require("./Errors");
 var Header = require("./Header");
 var Method_1 = require("./Method");

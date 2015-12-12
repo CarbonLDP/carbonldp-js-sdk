@@ -135,8 +135,17 @@ function hasMethod(access, name, descriptionOrArgumentsOrReturns, argumentsOrRet
     return toJSON(descriptor);
 }
 exports.hasMethod = hasMethod;
-/* tslint:disable: typedef */
-exports.method = hasMethod;
+function method(access, name, description) {
+    if (description === void 0) { description = null; }
+    var descriptor = {
+        access: access,
+        suiteType: exports.METHOD,
+        name: name,
+        description: description,
+    };
+    return toJSON(descriptor);
+}
+exports.method = method;
 function hasSignature(descriptionOrArgumentsOrReturns, argumentsOrReturns, returns) {
     if (descriptionOrArgumentsOrReturns === void 0) { descriptionOrArgumentsOrReturns = null; }
     if (argumentsOrReturns === void 0) { argumentsOrReturns = null; }

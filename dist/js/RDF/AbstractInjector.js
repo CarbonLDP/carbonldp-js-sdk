@@ -13,7 +13,9 @@ var AbstractInjector = (function () {
         configurable: true
     });
     AbstractInjector.prototype.hasRDFClass = function (resource) {
-        return (resource.types.indexOf(this.RDF_CLASS) !== -1);
+        if (this.RDF_CLASS === null)
+            return true;
+        return resource.types.indexOf(this.RDF_CLASS) !== -1;
     };
     AbstractInjector.prototype.is = function (object) {
         for (var _i = 0, _a = this.parentInjectors; _i < _a.length; _i++) {
