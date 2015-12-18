@@ -1,5 +1,5 @@
-var HTTP = require("./../HTTP");
 var Errors = require("./../Errors");
+var HTTP = require("./../HTTP");
 var NS = require("./../NS");
 var RDF = require("./../RDF");
 var BasicAuthenticator_1 = require("./BasicAuthenticator");
@@ -35,21 +35,26 @@ var Class = (function () {
         return authenticationToken instanceof UsernameAndPasswordToken_1.default;
     };
     Class.prototype.createToken = function () {
+        var _this = this;
         var uri = this.context.resolve(Class.TOKEN_CONTAINER);
         var requestOptions = {};
         this.basicAuthenticator.addAuthentication(requestOptions);
         HTTP.Request.Util.setAcceptHeader("application/ld+json", requestOptions);
         HTTP.Request.Util.setPreferredInteractionModel(NS.LDP.Class.RDFSource, requestOptions);
         return HTTP.Request.Service.post(uri, null, requestOptions, new HTTP.JSONLDParser.Class()).then(function (processedResponse) {
-            var nodes = RDF.Document.Util.getResources(processedResponse.result);
-            var resources = RDF.Resource.factory.from(nodes);
-            resources = resources.filter(Token.factory.hasRDFClass);
-            if (resources.length === 0)
+            var expandedResult = processedResponse.result;
+            var expandedNodes = RDF.Document.Util.getResources(expandedResult);
+            expandedNodes = expandedNodes.filter(Token.factory.hasRDFClass);
+            if (expandedNodes.length === 0)
                 throw new HTTP.Errors.BadResponseError("No '" + Token.RDF_CLASS + "' was returned.", processedResponse.response);
-            if (resources.length > 1)
+            if (expandedNodes.length > 1)
                 throw new HTTP.Errors.BadResponseError("Multiple '" + Token.RDF_CLASS + "' were returned. ", processedResponse.response);
+            var expandedToken = expandedNodes[0];
+            var token = Token.factory.decorate({});
+            var digestedSchema = _this.context.Documents.getSchemaFor(expandedToken);
+            _this.context.Documents.jsonldConverter.compact(expandedToken, token, digestedSchema, _this.context.Documents);
             return {
-                result: Token.factory.from(resources[0]),
+                result: token,
                 response: processedResponse.response,
             };
         });

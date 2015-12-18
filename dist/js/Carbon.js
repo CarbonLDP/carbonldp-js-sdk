@@ -4,10 +4,9 @@ var __extends = (this && this.__extends) || function (d, b) {
     function __() { this.constructor = d; }
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
-var APIDescription = require("./APIDescription");
 var Apps_1 = require("./Apps");
 var Auth = require("./Auth");
-var Context_1 = require("./Context");
+var AbstractContext_1 = require("./AbstractContext");
 var Document = require("./Document");
 var Documents_1 = require("./Documents");
 var HTTP = require("./HTTP");
@@ -21,10 +20,8 @@ var Carbon = (function (_super) {
         _super.call(this);
         settings = settings ? settings : settings_1.default;
         Utils.M.extend(this.settings, Utils.M.from(settings));
-        this.registerDefaultDefinitions();
-        this.apps = new Apps_1.default(this);
         this.platform = new Platform_1.default(this);
-        this.Auth = this.platform.Auth;
+        this.apps = new Apps_1.default(this.platform);
     }
     Object.defineProperty(Carbon, "version", {
         /* tslint:enable: variable-name */
@@ -44,9 +41,6 @@ var Carbon = (function (_super) {
             return processedResponse.result;
         });
     };
-    Carbon.prototype.registerDefaultDefinitions = function () {
-        this.addDefinition(APIDescription.RDF_CLASS, APIDescription.DEFINITION);
-    };
     /* tslint:disable: variable-name */
     Carbon.Apps = Apps_1.default;
     Carbon.Auth = Auth;
@@ -56,7 +50,7 @@ var Carbon = (function (_super) {
     Carbon.RDF = RDF;
     Carbon.Utils = Utils;
     return Carbon;
-})(Context_1.default);
+})(AbstractContext_1.default);
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = Carbon;
 

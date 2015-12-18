@@ -1,7 +1,8 @@
-import * as HTTP from "./../HTTP";
-import * as Errors from "./../Errors";
-import * as NS from "./../NS";
 import Context from "./../Context";
+import * as Errors from "./../Errors";
+import * as HTTP from "./../HTTP";
+import * as NS from "./../NS";
+import * as ObjectSchema from "./../ObjectSchema";
 import * as RDF from "./../RDF";
 import * as Utils from "./../Utils";
 
@@ -67,16 +68,23 @@ export class Class implements Authenticator<UsernameAndPasswordToken> {
 		HTTP.Request.Util.setPreferredInteractionModel( NS.LDP.Class.RDFSource, requestOptions );
 
 		return HTTP.Request.Service.post( uri, null, requestOptions, new HTTP.JSONLDParser.Class() ).then( ( processedResponse:HTTP.ProcessedResponse<Object> ) => {
-			let nodes:RDF.Node.Class[] = RDF.Document.Util.getResources( processedResponse.result );
-			let resources:RDF.Resource.Class[] = RDF.Resource.factory.from( nodes );
+			let expandedResult:Object = processedResponse.result;
+			let expandedNodes:RDF.Node.Class[] = RDF.Document.Util.getResources( expandedResult );
 
-			resources = resources.filter( Token.factory.hasRDFClass );
+			expandedNodes = expandedNodes.filter( Token.factory.hasRDFClass );
 
-			if( resources.length === 0 ) throw new HTTP.Errors.BadResponseError( "No '" + Token.RDF_CLASS + "' was returned.", processedResponse.response );
-			if( resources.length > 1 ) throw new HTTP.Errors.BadResponseError( "Multiple '" + Token.RDF_CLASS + "' were returned. ", processedResponse.response );
+			if( expandedNodes.length === 0 ) throw new HTTP.Errors.BadResponseError( "No '" + Token.RDF_CLASS + "' was returned.", processedResponse.response );
+			if( expandedNodes.length > 1 ) throw new HTTP.Errors.BadResponseError( "Multiple '" + Token.RDF_CLASS + "' were returned. ", processedResponse.response );
+
+			let expandedToken:RDF.Node.Class = expandedNodes[ 0 ];
+			let token:Token.Class = Token.factory.decorate( {} );
+
+			let digestedSchema:ObjectSchema.DigestedObjectSchema = this.context.Documents.getSchemaFor( expandedToken );
+
+			this.context.Documents.jsonldConverter.compact( expandedToken, token, digestedSchema, this.context.Documents );
 
 			return {
-				result: Token.factory.from( resources[ 0 ] ),
+				result: token,
 				response: processedResponse.response,
 			};
 		} );

@@ -1,7 +1,13 @@
 /// <reference path="../typings/tsd.d.ts" />
 import AuthenticationToken from "./Auth/AuthenticationToken";
+import Authenticator from "./Auth/Authenticator";
+import BasicAuthenticator from "./Auth/BasicAuthenticator";
+import * as Token from "./Auth/Token";
+import TokenAuthenticator from "./Auth/TokenAuthenticator";
+import UsernameAndPasswordToken from "./Auth/UsernameAndPasswordToken";
 import * as HTTP from "./HTTP";
 import Context from "./Context";
+export { AuthenticationToken, Authenticator, BasicAuthenticator, Token, TokenAuthenticator, UsernameAndPasswordToken };
 export declare enum Method {
     BASIC = 0,
     TOKEN = 1,

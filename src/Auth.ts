@@ -3,6 +3,7 @@
 import AuthenticationToken from "./Auth/AuthenticationToken";
 import Authenticator from "./Auth/Authenticator";
 import BasicAuthenticator from "./Auth/BasicAuthenticator";
+import * as Token from "./Auth/Token";
 import TokenAuthenticator from "./Auth/TokenAuthenticator";
 import UsernameAndPasswordToken from "./Auth/UsernameAndPasswordToken";
 
@@ -10,6 +11,15 @@ import * as HTTP from "./HTTP";
 import * as Errors from "./Errors";
 import Context from "./Context";
 import * as Utils from "./Utils";
+
+export {
+	AuthenticationToken,
+	Authenticator,
+	BasicAuthenticator,
+	Token,
+	TokenAuthenticator,
+	UsernameAndPasswordToken
+}
 
 export enum Method {
 	BASIC,
@@ -34,7 +44,7 @@ export class Class {
 	isAuthenticated( askParent:boolean = true ):boolean {
 		return (
 			( this.authenticator && this.authenticator.isAuthenticated() ) ||
-			( askParent && ! ! this.context.parentContext && this.context.parentContext.Auth !== this && this.context.parentContext.Auth.isAuthenticated() )
+			( askParent && !! this.context.parentContext && this.context.parentContext.Auth.isAuthenticated() )
 		);
 	}
 
@@ -64,7 +74,7 @@ export class Class {
 	addAuthentication( requestOptions:HTTP.Request.Options ):void {
 		if( this.isAuthenticated( false ) ) {
 			this.authenticator.addAuthentication( requestOptions );
-		} else if( "parentContext" in this.context ) {
+		} else if( !! this.context.parentContext ) {
 			this.context.parentContext.Auth.addAuthentication( requestOptions );
 		} else {
 			console.warn( "There is no authentication to add to the request." );

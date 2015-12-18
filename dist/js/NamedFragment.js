@@ -11,7 +11,7 @@ var Factory = (function () {
         return this.createFrom({}, slug, document);
     };
     Factory.prototype.createFrom = function (object, slug, document) {
-        var uri = document.uri + "#" + slug;
+        var uri = document.id + "#" + slug;
         var fragment = Fragment.factory.createFrom(object, uri, document);
         if (this.hasClassProperties(fragment))
             return fragment;
@@ -20,10 +20,10 @@ var Factory = (function () {
                 enumerable: false,
                 configurable: true,
                 get: function () {
-                    return RDF.URI.Util.getFragment(fragment.uri);
+                    return RDF.URI.Util.getFragment(fragment.id);
                 },
                 set: function (value) {
-                    this.uri = this.document.uri + "#" + value;
+                    this.id = this.document.id + "#" + value;
                 },
             },
         });

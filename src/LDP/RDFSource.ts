@@ -1,32 +1,23 @@
 import * as NS from "./../NS";
+import * as ObjectSchema from "./../ObjectSchema";
 import * as RDF from "./../RDF";
+import * as Resource from "./../Resource";
 import * as Utils from "./../Utils";
 
 export const RDF_CLASS:string = NS.LDP.Class.RDFSource;
 
-export interface Class extends RDF.Resource.Class {
+export const SCHEMA:ObjectSchema.Class = {
+
+};
+
+export interface Class extends Resource.Class {
 
 }
 
-export class Injector extends RDF.AbstractInjector<Class> {
-	constructor() {
-		super( RDF_CLASS, [ RDF.Resource.factory ] );
-	}
+export class Factory {
 
-	hasClassProperties( resource:RDF.Node.Class ):boolean {
-		return (
-			Utils.hasPropertyDefined( resource, "memberOfRelation" ) &&
-			Utils.hasPropertyDefined( resource, "hasMemberRelation" )
-		);
-	}
-
-	is( object:Object ):boolean {
-		return (
-			this.hasRDFClass( <RDF.Resource.Class> object )
-		);
-	}
 }
 
-export let injector:Injector = new Injector();
+export let factory:Factory = new Factory();
 
 export default Class;

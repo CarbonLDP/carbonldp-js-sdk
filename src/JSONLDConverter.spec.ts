@@ -29,8 +29,8 @@ import * as Errors from "./Errors";
 import * as Pointer from "./Pointer";
 import * as Utils from "./Utils";
 
-import * as ContextDigester from "./ContextDigester";
 import * as JSONLDConverter from "./JSONLDConverter";
+import * as ObjectSchema from "./ObjectSchema";
 
 describe( module( "Carbon/JSONLDConverter" ), ():void => {
 	it( isDefined(), ():void => {
@@ -38,12 +38,12 @@ describe( module( "Carbon/JSONLDConverter" ), ():void => {
 		expect( Utils.isObject( JSONLDConverter ) ).toEqual( true );
 	});
 
-	describe( clazz( "Carbon.ContextDigester.Class", `
+	describe( clazz( "Carbon.JSONLDConverter.Class", `
 
 	`), ():void => {
 		it( isDefined(), ():void => {
-			expect( ContextDigester.Class ).toBeDefined();
-			expect( Utils.isFunction( ContextDigester.Class ) ).toEqual( true );
+			expect( JSONLDConverter.Class ).toBeDefined();
+			expect( Utils.isFunction( JSONLDConverter.Class ) ).toEqual( true );
 		});
 
 		describe( method( INSTANCE, "compact" ), ():void => {
@@ -51,7 +51,7 @@ describe( module( "Carbon/JSONLDConverter" ), ():void => {
 			it( hasSignature( "", [
 				{ name: "expandedObject", type: "Object" },
 				{ name: "targetObject", type: "Object" },
-				{ name: "digestedContext", type: "Carbon.ContextDigester.DigestedContext" },
+				{ name: "digestedSchema", type: "Carbon.ObjectSchema.DigestedObjectSchema" },
 				{ name: "pointerLibrary", type: "Carbon.Pointer.Library" },
 			], { type: "Object", description: "" } ), ():void => {
 				let jsonldConverter:JSONLDConverter.Class = new JSONLDConverter.Class();
@@ -102,7 +102,7 @@ describe( module( "Carbon/JSONLDConverter" ), ():void => {
 					],
 				};
 
-				let context:ContextDigester.Context = {
+				let schema:ObjectSchema.Class = {
 					"ex": "http://example.com/ns#",
 					"xsd": "http://www.w3.org/2001/XMLSchema#",
 					"string": {
@@ -150,8 +150,8 @@ describe( module( "Carbon/JSONLDConverter" ), ():void => {
 				};
 
 				let compactedObject:any = {};
-				let digestedContext:ContextDigester.DigestedContext = ContextDigester.Class.digestContext( context );
-				jsonldConverter.compact( expandedObject, compactedObject, digestedContext, mockedPointerLibrary );
+				let digestedSchema:ObjectSchema.DigestedObjectSchema = ObjectSchema.Digester.digestSchema( schema );
+				jsonldConverter.compact( expandedObject, compactedObject, digestedSchema, mockedPointerLibrary );
 
 				expect( compactedObject ).toBeDefined();
 				expect( Utils.isObject( compactedObject ) ).toEqual( true );
@@ -201,14 +201,14 @@ describe( module( "Carbon/JSONLDConverter" ), ():void => {
 			// TODO: Improve signature description
 			it( hasSignature( "", [
 				{ name: "compactedObject", type: "Object" },
-				{ name: "digestedContext", type: "Carbon.ContextDigester.DigestedContext" },
+				{ name: "digestedSchema", type: "Carbon.ObjectSchema.DigestedObjectSchema" },
 			], { type: "Object", description: "" } ), ():void => {
-				let contextDecorator:JSONLDConverter.Class = new JSONLDConverter.Class();
+				let jsonldConverter:JSONLDConverter.Class = new JSONLDConverter.Class();
 
-				expect( contextDecorator.compact ).toBeDefined();
-				expect( Utils.isFunction( contextDecorator.compact ) ).toBeDefined();
+				expect( jsonldConverter.compact ).toBeDefined();
+				expect( Utils.isFunction( jsonldConverter.compact ) ).toBeDefined();
 
-				let context:ContextDigester.Context = {
+				let schema:ObjectSchema.Class = {
 					"ex": "http://example.com/ns#",
 					"xsd": "http://www.w3.org/2001/XMLSchema#",
 					"string": {
@@ -315,8 +315,8 @@ describe( module( "Carbon/JSONLDConverter" ), ():void => {
 					},
 				};
 
-				let digestedContext:ContextDigester.DigestedContext = ContextDigester.Class.digestContext( context );
-				let expandedObject:any = contextDecorator.expand( compactedObject, digestedContext );
+				let digestedSchema:ObjectSchema.DigestedObjectSchema = ObjectSchema.Digester.digestSchema( schema );
+				let expandedObject:any = jsonldConverter.expand( compactedObject, digestedSchema );
 
 				expect( expandedObject ).toBeDefined();
 				expect( Utils.isObject( expandedObject ) ).toEqual( true );

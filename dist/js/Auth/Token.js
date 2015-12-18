@@ -1,55 +1,44 @@
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
 var NS = require("./../NS");
-var RDF = require("./../RDF");
+var Pointer = require("./../Pointer");
 var Utils = require("./../Utils");
 exports.RDF_CLASS = NS.CS.Class.Token;
-exports.DEFINITION = Utils.M.from({
+exports.CONTEXT = {
     "key": {
-        "uri": NS.CS.Predicate.tokenKey,
-        "multi": false,
-        "literal": true,
+        "@id": NS.CS.Predicate.tokenKey,
+        "@type": NS.XSD.DataType.string,
     },
     "expirationTime": {
-        "uri": NS.CS.Predicate.expirationTime,
-        "multi": false,
-        "literal": true,
+        "@id": NS.CS.Predicate.expirationTime,
+        "@type": NS.XSD.DataType.dateTime,
     },
-});
-var Factory = (function (_super) {
-    __extends(Factory, _super);
+};
+var Factory = (function () {
     function Factory() {
-        _super.apply(this, arguments);
     }
-    Factory.hasClassProperties = function (resource) {
-        return (Utils.hasPropertyDefined(resource, "key") &&
-            Utils.hasPropertyDefined(resource, "expirationTime"));
+    Factory.prototype.hasClassProperties = function (object) {
+        return (Utils.isObject(object) &&
+            Utils.hasPropertyDefined(object, "key") &&
+            Utils.hasPropertyDefined(object, "expirationTime"));
     };
-    Factory.prototype.from = function (objects) {
-        if (!Utils.isArray(objects))
-            return this.singleFrom(objects);
-        for (var i = 0, length_1 = objects.length; i < length_1; i++) {
-            var resource = objects[i];
-            this.injectBehavior(resource);
+    Factory.prototype.decorate = function (object) {
+        if (this.hasClassProperties(object))
+            return object;
+        return object;
+    };
+    Factory.prototype.hasRDFClass = function (pointerOrExpandedObject) {
+        var types = [];
+        if ("@type" in pointerOrExpandedObject) {
+            types = pointerOrExpandedObject["@type"];
         }
-        return objects;
-    };
-    Factory.prototype.hasRDFClass = function (resource) {
-        return resource.types.indexOf(exports.RDF_CLASS) !== -1;
-    };
-    Factory.prototype.injectBehavior = function (node) {
-        var token = node;
-        _super.prototype.injectBehavior.call(this, node);
-        if (Factory.hasClassProperties(token))
-            return token;
-        RDF.Resource.Factory.injectDescriptions(token, exports.DEFINITION);
-        return token;
+        else if ("types" in pointerOrExpandedObject) {
+            // TODO: Use proper class
+            var resource = pointerOrExpandedObject;
+            types = Pointer.Util.getIDs(resource.types);
+        }
+        return types.indexOf(exports.RDF_CLASS) !== -1;
     };
     return Factory;
-})(RDF.Resource.Factory);
+})();
 exports.Factory = Factory;
 exports.factory = new Factory();
 

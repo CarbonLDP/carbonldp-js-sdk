@@ -1,5 +1,3 @@
-var AbstractInjector_1 = require("./RDF/AbstractInjector");
-exports.AbstractInjector = AbstractInjector_1.default;
 var Literal = require("./RDF/Literal");
 exports.Literal = Literal;
 var PropertyDescription_1 = require("./RDF/PropertyDescription");
@@ -10,8 +8,6 @@ var List = require("./RDF/List");
 exports.List = List;
 var Node = require("./RDF/RDFNode");
 exports.Node = Node;
-var Resource = require("./RDF/Resource");
-exports.Resource = Resource;
 var URI = require("./RDF/URI");
 exports.URI = URI;
 var Value = require("./RDF/Value");

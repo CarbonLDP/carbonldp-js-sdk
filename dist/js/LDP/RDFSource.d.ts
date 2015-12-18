@@ -1,11 +1,10 @@
-import * as RDF from "./../RDF";
+import * as ObjectSchema from "./../ObjectSchema";
+import * as Resource from "./../Resource";
 export declare const RDF_CLASS: string;
-export interface Class extends RDF.Resource.Class {
+export declare const SCHEMA: ObjectSchema.Class;
+export interface Class extends Resource.Class {
 }
-export declare class Injector extends RDF.AbstractInjector<Class> {
-    constructor();
-    hasClassProperties(resource: RDF.Node.Class): boolean;
-    is(object: Object): boolean;
+export declare class Factory {
 }
-export declare let injector: Injector;
+export declare let factory: Factory;
 export default Class;

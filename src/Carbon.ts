@@ -3,7 +3,7 @@
 import * as APIDescription from "./APIDescription";
 import Apps from "./Apps";
 import * as Auth from "./Auth";
-import Context from "./Context";
+import AbstractContext from "./AbstractContext";
 import * as Document from "./Document";
 import Documents from "./Documents";
 import * as HTTP from "./HTTP";
@@ -12,7 +12,7 @@ import * as RDF from "./RDF";
 import defaultSettings from "./settings";
 import * as Utils from "./Utils";
 
-class Carbon extends Context {
+class Carbon extends AbstractContext {
 
 	/* tslint:disable: variable-name */
 	static Apps:typeof Apps = Apps;
@@ -37,12 +37,8 @@ class Carbon extends Context {
 
 		Utils.M.extend( this.settings, Utils.M.from( settings ) );
 
-		this.registerDefaultDefinitions();
-
-		this.apps = new Apps( this );
 		this.platform = new Platform( this );
-
-		this.Auth = this.platform.Auth;
+		this.apps = new Apps( this.platform );
 	}
 
 	resolve( uri:string ):string {
@@ -59,10 +55,6 @@ class Carbon extends Context {
 				return <any> processedResponse.result;
 			}
 		);
-	}
-
-	private registerDefaultDefinitions():void {
-		this.addDefinition( APIDescription.RDF_CLASS, APIDescription.DEFINITION );
 	}
 }
 

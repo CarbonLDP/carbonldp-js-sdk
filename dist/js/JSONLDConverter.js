@@ -1,6 +1,6 @@
 /// <reference path="./../typings/tsd.d.ts" />
 var Errors = require("./Errors");
-var ContextDigester = require("./ContextDigester");
+var ObjectSchema = require("./ObjectSchema");
 var NS = require("./NS");
 var Pointer = require("./Pointer");
 var RDF = require("./RDF");
@@ -30,38 +30,38 @@ var Class = (function () {
         literalSerializers.set(NS.XSD.DataType.string, RDF.Literal.Serializers.XSD.stringSerializer);
         return literalSerializers;
     };
-    Class.prototype.compact = function (expandedObjectOrObjects, targetObjectOrObjectsOrDigestedContext, digestedContextOrPointerLibrary, pointerLibrary) {
+    Class.prototype.compact = function (expandedObjectOrObjects, targetObjectOrObjectsOrDigestedContext, digestedSchemaOrPointerLibrary, pointerLibrary) {
         if (pointerLibrary === void 0) { pointerLibrary = null; }
         var targetObjectOrObjects = !pointerLibrary ? null : targetObjectOrObjectsOrDigestedContext;
-        var digestedContext = !pointerLibrary ? targetObjectOrObjectsOrDigestedContext : digestedContextOrPointerLibrary;
-        pointerLibrary = !pointerLibrary ? digestedContextOrPointerLibrary : pointerLibrary;
+        var digestedSchema = !pointerLibrary ? targetObjectOrObjectsOrDigestedContext : digestedSchemaOrPointerLibrary;
+        pointerLibrary = !pointerLibrary ? digestedSchemaOrPointerLibrary : pointerLibrary;
         if (!Utils.isArray(expandedObjectOrObjects))
-            return this.compactSingle(expandedObjectOrObjects, targetObjectOrObjects, digestedContext, pointerLibrary);
+            return this.compactSingle(expandedObjectOrObjects, targetObjectOrObjects, digestedSchema, pointerLibrary);
         var expandedObjects = expandedObjectOrObjects;
         var targetObjects = !!targetObjectOrObjects ? targetObjectOrObjects : [];
         for (var i = 0, length_1 = expandedObjects.length; i < length_1; i++) {
             var expandedObject = expandedObjects[i];
             var targetObject = targetObjects[i] = !!targetObjects[i] ? targetObjects[i] : {};
-            this.compactSingle(expandedObject, targetObject, digestedContext, pointerLibrary);
+            this.compactSingle(expandedObject, targetObject, digestedSchema, pointerLibrary);
         }
         return targetObjects;
     };
-    Class.prototype.expand = function (compactedObjectOrObjects, digestedContext, pointerValidator) {
+    Class.prototype.expand = function (compactedObjectOrObjects, digestedSchema, pointerValidator) {
         if (pointerValidator === void 0) { pointerValidator = null; }
         if (!Utils.isArray(compactedObjectOrObjects))
-            return this.expandSingle(compactedObjectOrObjects, digestedContext, pointerValidator);
+            return this.expandSingle(compactedObjectOrObjects, digestedSchema, pointerValidator);
     };
-    Class.prototype.expandSingle = function (compactedObject, digestedContext, pointerValidator) {
+    Class.prototype.expandSingle = function (compactedObject, digestedSchema, pointerValidator) {
         var _this = this;
         var expandedObject = {};
-        if (!compactedObject["uri"])
-            throw new Errors.IllegalArgumentError("The compactedObject doesn't have a uri defined.");
-        expandedObject["@id"] = compactedObject["uri"];
+        expandedObject["@id"] = !!compactedObject["id"] ? compactedObject["id"] : "";
+        if (!!compactedObject["types"])
+            expandedObject["@type"] = compactedObject["types"];
         Utils.forEachOwnProperty(compactedObject, function (propertyName, value) {
-            if (propertyName === "uri")
+            if (propertyName === "id")
                 return;
-            if (digestedContext.properties.has(propertyName)) {
-                var definition = digestedContext.properties.get(propertyName);
+            if (digestedSchema.properties.has(propertyName)) {
+                var definition = digestedSchema.properties.get(propertyName);
                 var expandedValue = _this.expandProperty(value, definition, pointerValidator);
                 if (!expandedValue)
                     return;
@@ -86,7 +86,7 @@ var Class = (function () {
                     return this.expandPropertyValue(propertyValue, pointerValidator);
                 }
                 break;
-            case ContextDigester.ContainerType.LIST:
+            case ObjectSchema.ContainerType.LIST:
                 if (propertyDefinition.literal) {
                     return this.expandPropertyLiteralList(propertyValue, propertyDefinition.literalType.toString());
                 }
@@ -97,7 +97,7 @@ var Class = (function () {
                     return this.expandPropertyList(propertyValue, pointerValidator);
                 }
                 break;
-            case ContextDigester.ContainerType.SET:
+            case ObjectSchema.ContainerType.SET:
                 if (propertyDefinition.literal) {
                     return this.expandPropertyLiterals(propertyValue, propertyDefinition.literalType.toString());
                 }
@@ -108,7 +108,7 @@ var Class = (function () {
                     return this.expandPropertyValues(propertyValue, pointerValidator);
                 }
                 break;
-            case ContextDigester.ContainerType.LANGUAGE:
+            case ObjectSchema.ContainerType.LANGUAGE:
                 return this.expandPropertyLanguageMap(propertyValue);
             default:
                 throw new Errors.IllegalArgumentError("The containerType specified is not supported.");
@@ -206,7 +206,7 @@ var Class = (function () {
         return mapValues;
     };
     Class.prototype.serializeLiteral = function (propertyValue, literalType) {
-        if (Pointer.Factory.is(propertyValue)) {
+        if (Pointer.factory.is(propertyValue)) {
             // TODO: Warn of data loss
             return null;
         }
@@ -223,11 +223,11 @@ var Class = (function () {
         }
     };
     Class.prototype.expandPointer = function (propertyValue, pointerValidator) {
-        if (!Pointer.Factory.is(propertyValue)) {
+        if (!Pointer.factory.is(propertyValue)) {
             // TODO: Warn of data loss
             return null;
         }
-        if (!!pointerValidator && pointerValidator.inScope(propertyValue)) {
+        if (!!pointerValidator && !pointerValidator.inScope(propertyValue)) {
             // TODO: Warn of data loss
             return null;
         }
@@ -251,7 +251,7 @@ var Class = (function () {
             // TODO: Lists of lists are not currently supported by the spec
             return null;
         }
-        else if (Pointer.Factory.is(propertyValue)) {
+        else if (Pointer.factory.is(propertyValue)) {
             return this.expandPointer(propertyValue, pointerValidator);
         }
         else {
@@ -283,26 +283,29 @@ var Class = (function () {
         serializedValue = this.literalSerializers.get(literalType).serialize(literalValue);
         return { "@value": serializedValue, "@type": literalType };
     };
-    Class.prototype.compactSingle = function (expandedObject, targetObject, digestedContext, pointerLibrary) {
+    Class.prototype.compactSingle = function (expandedObject, targetObject, digestedSchema, pointerLibrary) {
         var _this = this;
-        var propertyURINameMap = this.getPropertyURINameMap(digestedContext);
+        var propertyURINameMap = this.getPropertyURINameMap(digestedSchema);
         if (!expandedObject["@id"])
             throw new Errors.IllegalArgumentError("The expandedObject doesn't have an @id defined.");
-        expandedObject["uri"] = expandedObject["@id"];
+        targetObject["id"] = expandedObject["@id"];
+        targetObject["types"] = !!expandedObject["@type"] ? expandedObject["@type"] : [];
         Utils.forEachOwnProperty(expandedObject, function (propertyURI, value) {
             if (propertyURI === "@id")
                 return;
+            if (propertyURI === "@type")
+                return;
             if (propertyURINameMap.has(propertyURI)) {
                 var propertyName = propertyURINameMap.get(propertyURI);
-                _this.assignProperty(targetObject, expandedObject, propertyName, digestedContext, pointerLibrary);
+                _this.assignProperty(targetObject, expandedObject, propertyName, digestedSchema, pointerLibrary);
             }
             else {
             }
         });
         return targetObject;
     };
-    Class.prototype.assignProperty = function (compactedObject, expandedObject, propertyName, digestedContext, pointerLibrary) {
-        var propertyDefinition = digestedContext.properties.get(propertyName);
+    Class.prototype.assignProperty = function (compactedObject, expandedObject, propertyName, digestedSchema, pointerLibrary) {
+        var propertyDefinition = digestedSchema.properties.get(propertyName);
         compactedObject[propertyName] = this.getPropertyValue(expandedObject, propertyDefinition, pointerLibrary);
     };
     Class.prototype.getPropertyValue = function (expandedObject, propertyDefinition, pointerLibrary) {
@@ -320,7 +323,7 @@ var Class = (function () {
                     return this.getProperty(expandedObject, propertyURI, pointerLibrary);
                 }
                 break;
-            case ContextDigester.ContainerType.LIST:
+            case ObjectSchema.ContainerType.LIST:
                 if (propertyDefinition.literal) {
                     return this.getPropertyLiteralList(expandedObject, propertyURI, propertyDefinition.literalType.toString());
                 }
@@ -331,7 +334,7 @@ var Class = (function () {
                     return this.getPropertyList(expandedObject, propertyURI, pointerLibrary);
                 }
                 break;
-            case ContextDigester.ContainerType.SET:
+            case ObjectSchema.ContainerType.SET:
                 if (propertyDefinition.literal) {
                     return this.getPropertyLiterals(expandedObject, propertyURI, propertyDefinition.literalType.toString());
                 }
@@ -342,7 +345,7 @@ var Class = (function () {
                     return this.getProperties(expandedObject, propertyURI, pointerLibrary);
                 }
                 break;
-            case ContextDigester.ContainerType.LANGUAGE:
+            case ObjectSchema.ContainerType.LANGUAGE:
                 return this.getPropertyLanguageMap(expandedObject, propertyURI);
             default:
                 throw new Errors.IllegalArgumentError("The containerType specified is not supported.");
@@ -503,9 +506,9 @@ var Class = (function () {
         }
         return null;
     };
-    Class.prototype.getPropertyURINameMap = function (digestedContext) {
+    Class.prototype.getPropertyURINameMap = function (digestedSchema) {
         var map = new Map();
-        digestedContext.properties.forEach(function (definition, propertyName) {
+        digestedSchema.properties.forEach(function (definition, propertyName) {
             map.set(definition.uri.toString(), propertyName);
         });
         return map;

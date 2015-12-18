@@ -19,7 +19,7 @@ export class Factory {
 	}
 
 	createFrom<T extends Object>( object:T, slug:string, document:Document.Class ):T & Class {
-		let uri:string = document.uri + "#" + slug;
+		let uri:string = document.id + "#" + slug;
 
 		let fragment:Fragment.Class = Fragment.factory.createFrom( object, uri, document );
 
@@ -30,10 +30,10 @@ export class Factory {
 				enumerable: false,
 				configurable: true,
 				get: function():string {
-					return RDF.URI.Util.getFragment( fragment.uri );
+					return RDF.URI.Util.getFragment( fragment.id );
 				},
 				set: function( value:string ):void {
-					this.uri = this.document.uri + "#" + value;
+					this.id = this.document.id + "#" + value;
 				},
 			},
 		} );

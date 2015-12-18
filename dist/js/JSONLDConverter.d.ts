@@ -1,5 +1,5 @@
 /// <reference path="../typings/tsd.d.ts" />
-import * as ContextDigester from "./ContextDigester";
+import * as ObjectSchema from "./ObjectSchema";
 import * as Pointer from "./Pointer";
 import * as RDF from "./RDF";
 export declare class Class {
@@ -7,13 +7,13 @@ export declare class Class {
     literalSerializers: Map<string, RDF.Literal.Serializer>;
     private static getDefaultSerializers();
     constructor(literalSerializers?: Map<string, RDF.Literal.Serializer>);
-    compact(expandedObjects: Object[], targetObjects: Object[], digestedContext: ContextDigester.DigestedContext, pointerLibrary: Pointer.Library): Object[];
-    compact(expandedObject: Object, targetObject: Object, digestedContext: ContextDigester.DigestedContext, pointerLibrary: Pointer.Library): Object;
-    compact(expandedObjects: Object[], digestedContext: ContextDigester.DigestedContext, pointerLibrary: Pointer.Library): Object[];
-    compact(expandedObject: Object, digestedContext: ContextDigester.DigestedContext, pointerLibrary: Pointer.Library): Object;
-    expand(compactedObjects: Object[], digestedContext: ContextDigester.DigestedContext, pointerValidator?: Pointer.Validator): Object[];
-    expand(compactedObject: Object, digestedContext: ContextDigester.DigestedContext, pointerValidator?: Pointer.Validator): Object;
-    private expandSingle(compactedObject, digestedContext, pointerValidator);
+    compact(expandedObjects: Object[], targetObjects: Object[], digestedSchema: ObjectSchema.DigestedObjectSchema, pointerLibrary: Pointer.Library): Object[];
+    compact(expandedObject: Object, targetObject: Object, digestedSchema: ObjectSchema.DigestedObjectSchema, pointerLibrary: Pointer.Library): Object;
+    compact(expandedObjects: Object[], digestedSchema: ObjectSchema.DigestedObjectSchema, pointerLibrary: Pointer.Library): Object[];
+    compact(expandedObject: Object, digestedSchema: ObjectSchema.DigestedObjectSchema, pointerLibrary: Pointer.Library): Object;
+    expand(compactedObjects: Object[], digestedSchema: ObjectSchema.DigestedObjectSchema, pointerValidator?: Pointer.Validator): RDF.Node.Class[];
+    expand(compactedObject: Object, digestedSchema: ObjectSchema.DigestedObjectSchema, pointerValidator?: Pointer.Validator): RDF.Node.Class;
+    private expandSingle(compactedObject, digestedSchema, pointerValidator);
     private expandProperty(propertyValue, propertyDefinition, pointerValidator);
     private expandPropertyValue(propertyValue, pointerValidator);
     private expandPropertyPointer(propertyValue, pointerValidator);
@@ -30,8 +30,8 @@ export declare class Class {
     private expandArray(propertyValue, pointerValidator);
     private expandValue(propertyValue, pointerValidator);
     private expandLiteral(literalValue);
-    private compactSingle(expandedObject, targetObject, digestedContext, pointerLibrary);
-    private assignProperty(compactedObject, expandedObject, propertyName, digestedContext, pointerLibrary);
+    private compactSingle(expandedObject, targetObject, digestedSchema, pointerLibrary);
+    private assignProperty(compactedObject, expandedObject, propertyName, digestedSchema, pointerLibrary);
     private getPropertyValue(expandedObject, propertyDefinition, pointerLibrary);
     private getProperty(expandedObject, propertyURI, pointerLibrary);
     private getPropertyPointer(expandedObject, propertyURI, pointerLibrary);
@@ -44,7 +44,7 @@ export declare class Class {
     private getPropertyLiterals(expandedObject, propertyURI, literalType);
     private getPropertyLanguageMap(expandedObject, propertyURI);
     private getList(propertyValues);
-    private getPropertyURINameMap(digestedContext);
+    private getPropertyURINameMap(digestedSchema);
     private parseValue(propertyValue, pointerLibrary);
 }
 export default Class;

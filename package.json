@@ -40,7 +40,7 @@
     "phantomjs": "^1.9.16",
     "systemjs-builder": "^0.14.10",
     "tsd": "^0.6.4",
-    "tslint": "^3.0.0",
+    "tslint": "^3.2.0",
     "typescript": "^1.7.3"
   },
   "scripts": {

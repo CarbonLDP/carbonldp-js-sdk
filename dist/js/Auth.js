@@ -1,7 +1,12 @@
 /// <reference path="./../typings/tsd.d.ts" />
 var BasicAuthenticator_1 = require("./Auth/BasicAuthenticator");
+exports.BasicAuthenticator = BasicAuthenticator_1.default;
+var Token = require("./Auth/Token");
+exports.Token = Token;
 var TokenAuthenticator_1 = require("./Auth/TokenAuthenticator");
+exports.TokenAuthenticator = TokenAuthenticator_1.default;
 var UsernameAndPasswordToken_1 = require("./Auth/UsernameAndPasswordToken");
+exports.UsernameAndPasswordToken = UsernameAndPasswordToken_1.default;
 var Errors = require("./Errors");
 var Utils = require("./Utils");
 (function (Method) {
@@ -20,7 +25,7 @@ var Class = (function () {
     Class.prototype.isAuthenticated = function (askParent) {
         if (askParent === void 0) { askParent = true; }
         return ((this.authenticator && this.authenticator.isAuthenticated()) ||
-            (askParent && !!this.context.parentContext && this.context.parentContext.Auth !== this && this.context.parentContext.Auth.isAuthenticated()));
+            (askParent && !!this.context.parentContext && this.context.parentContext.Auth.isAuthenticated()));
     };
     Class.prototype.authenticate = function (usernameOrToken, password) {
         var _this = this;
@@ -48,7 +53,7 @@ var Class = (function () {
         if (this.isAuthenticated(false)) {
             this.authenticator.addAuthentication(requestOptions);
         }
-        else if ("parentContext" in this.context) {
+        else if (!!this.context.parentContext) {
             this.context.parentContext.Auth.addAuthentication(requestOptions);
         }
         else {

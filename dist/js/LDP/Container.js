@@ -1,53 +1,43 @@
-/// <reference path="../../typings/es6/es6.d.ts" />
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
+/// <reference path="../../typings/tsd.d.ts" />
 var NS = require("./../NS");
-var RDF = require("./../RDF");
-var RDFSource = require("./RDFSource");
+var Pointer = require("./../Pointer");
 var Utils = require("./../Utils");
 exports.RDF_CLASS = NS.LDP.Class.Container;
-exports.DEFINITION = Utils.M.from({
+exports.SCHEMA = {
     "memberOfRelation": {
-        "uri": NS.LDP.Predicate.memberOfRelation,
-        "multi": false,
-        "literal": false,
+        "@id": NS.LDP.Predicate.memberOfRelation,
+        "@type": "@id",
     },
     "hasMemberRelation": {
-        "uri": NS.LDP.Predicate.hasMemberRelation,
-        "multi": false,
-        "literal": false,
+        "@id": NS.LDP.Predicate.hasMemberRelation,
+        "@type": "@id",
     },
-});
-var Injector = (function (_super) {
-    __extends(Injector, _super);
-    function Injector() {
-        _super.call(this, exports.RDF_CLASS, [RDFSource.injector]);
+};
+var Factory = (function () {
+    function Factory() {
     }
-    Injector.prototype.is = function (object) {
-        return (_super.prototype.is.call(this, object) &&
-            this.hasRDFClass(object) &&
-            this.hasClassProperties(object));
-    };
-    Injector.prototype.hasRDFClass = function (resource) {
-        return (resource.types.indexOf(exports.RDF_CLASS) !== -1 ||
-            resource.types.indexOf(NS.LDP.Class.BasicContainer) !== -1 ||
-            resource.types.indexOf(NS.LDP.Class.DirectContainer) !== -1 ||
-            resource.types.indexOf(NS.LDP.Class.IndirectContainer) !== -1);
-    };
-    Injector.prototype.hasClassProperties = function (resource) {
+    Factory.prototype.hasClassProperties = function (resource) {
         return (Utils.hasPropertyDefined(resource, "memberOfRelation") &&
             Utils.hasPropertyDefined(resource, "hasMemberRelation"));
     };
-    Injector.prototype.injectBehavior = function (resource) {
-        RDF.Resource.Factory.injectDescriptions(resource, exports.DEFINITION);
-        return resource;
+    Factory.prototype.hasRDFClass = function (pointerOrExpandedObject) {
+        var types = [];
+        if ("@type" in pointerOrExpandedObject) {
+            types = pointerOrExpandedObject["@type"];
+        }
+        else if ("types" in pointerOrExpandedObject) {
+            // TODO: Use proper class
+            var resource = pointerOrExpandedObject;
+            types = Pointer.Util.getIDs(resource.types);
+        }
+        return (types.indexOf(exports.RDF_CLASS) !== -1 ||
+            types.indexOf(NS.LDP.Class.BasicContainer) !== -1 ||
+            types.indexOf(NS.LDP.Class.DirectContainer) !== -1 ||
+            types.indexOf(NS.LDP.Class.IndirectContainer) !== -1);
     };
-    return Injector;
-})(RDF.AbstractInjector);
-exports.Injector = Injector;
-exports.injector = new Injector();
+    return Factory;
+})();
+exports.Factory = Factory;
+exports.factory = new Factory();
 
 //# sourceMappingURL=Container.js.map

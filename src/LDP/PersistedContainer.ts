@@ -11,16 +11,6 @@ function createChild( object:Object ):Promise<void> {
 }
 
 export class Factory {
-	create():Class {
-		// TODO
-		return null;
-	}
-
-	createFrom<T extends Object>( object:T ):T & Class {
-		// TODO
-		return null;
-	}
-
 	decorate<T extends Object>( object:T ):T & Class {
 		// TODO
 		return null;

@@ -1,4 +1,4 @@
-/// <reference path="../typings/es6/es6.d.ts" />
+/// <reference path="./../typings/tsd.d.ts" />
 var Errors = require("./HTTP/Errors");
 exports.Errors = Errors;
 var Header = require("./HTTP/Header");

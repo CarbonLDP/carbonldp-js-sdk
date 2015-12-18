@@ -1,13 +1,10 @@
+import AbstractContext from "./AbstractContext";
 import Context from "./Context";
 import * as RDF from "./RDF";
 
-export class Class extends Context {
-	parentContext:Context;
-
+export class Class extends AbstractContext {
 	constructor( parentContext:Context ) {
-		super();
-
-		this.parentContext = parentContext;
+		super( parentContext );
 	}
 
 	resolve( uri:string ):string {

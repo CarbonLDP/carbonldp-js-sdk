@@ -1,44 +1,34 @@
 /// <reference path="./../../typings/tsd.d.ts" />
 
 import * as NS from "./../NS";
+import * as Pointer from "./../Pointer";
 import * as RDF from "./../RDF";
 import * as Container from "./Container";
 import * as Utils from "./../Utils";
 
-const RDF_CLASS:string = NS.LDP.Class.BasicContainer;
+export const RDF_CLASS:string = NS.LDP.Class.BasicContainer;
 
 export interface Class extends Container.Class {
 
 }
 
-export class Injector extends RDF.AbstractInjector<Class> {
-	constructor() {
-		super( RDF_CLASS, [ Container.injector ] );
-	}
+export class Factory {
+	hasRDFClass( pointer:Pointer.Class ):boolean;
+	hasRDFClass( expandedObject:Object ):boolean;
+	hasRDFClass( pointerOrExpandedObject:Object ):boolean {
+		let types:string[] = [];
+		if( "@type" in pointerOrExpandedObject ) {
+			types = pointerOrExpandedObject[ "@type" ];
+		} else if( "types" in pointerOrExpandedObject ) {
+			// TODO: Use proper class
+			let resource:{ types: Pointer.Class[] } = <any> pointerOrExpandedObject;
+			types = Pointer.Util.getIDs( resource.types );
+		}
 
-	is( object:Object ):boolean {
-		return (
-			super.is( object ) &&
-			this.hasRDFClass( <Container.Class> object ) &&
-			this.hasClassProperties( <Container.Class> object )
-		);
-	}
-
-	hasRDFClass( resource:RDF.Resource.Class ):boolean {
-		return (
-			resource.types.indexOf( NS.LDP.Class.BasicContainer ) !== - 1
-		);
-	}
-
-	hasClassProperties( resource:RDF.Node.Class ):boolean {
-		return true;
-	}
-
-	protected injectBehavior<T>( resource:T ):( T & Class ) {
-		return <any> resource;
+		return types.indexOf( NS.LDP.Class.BasicContainer ) !== - 1;
 	}
 }
 
-export let injector:Injector = new Injector();
+export let factory:Factory = new Factory();
 
 export default Class;

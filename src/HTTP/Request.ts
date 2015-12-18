@@ -18,7 +18,7 @@ export interface Options {
 
 function setHeaders( request:XMLHttpRequest, headers:Map<string, Header.Class> ):void {
 	let namesIterator:Iterator<string> = headers.keys();
-	let next:IteratorValue<string> = namesIterator.next();
+	let next:IteratorResult<string> = namesIterator.next();
 	while ( ! next.done ) {
 		let name:string = next.value;
 		let value:Header.Class = headers.get( name );
@@ -28,7 +28,7 @@ function setHeaders( request:XMLHttpRequest, headers:Map<string, Header.Class> )
 	}
 }
 
-function onLoad( resolve:( value:Response | Thenable<Response> ) => void, reject:( value:Response ) => void, request:XMLHttpRequest ):() => void {
+function onLoad( resolve:( result:any ) => void, reject:( value:Response ) => void, request:XMLHttpRequest ):() => void {
 	return () => {
 		let response:Response = new Response( request );
 		if ( request.status >= 200 && request.status <= 299 ) {

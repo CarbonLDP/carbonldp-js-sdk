@@ -1,17 +1,18 @@
+/// <reference path="../../typings/tsd.d.ts" />
+import * as ObjectSchema from "./../ObjectSchema";
+import * as Pointer from "./../Pointer";
 import * as RDF from "./../RDF";
 import * as RDFSource from "./RDFSource";
 export declare const RDF_CLASS: string;
+export declare const SCHEMA: ObjectSchema.Class;
 export interface Class extends RDFSource.Class {
-    memberOfRelation: string;
-    hasMemberRelation: string;
+    memberOfRelation: Pointer.Class;
+    hasMemberRelation: Pointer.Class;
 }
-export declare const DEFINITION: Map<string, RDF.PropertyDescription>;
-export declare class Injector extends RDF.AbstractInjector<Class> {
-    constructor();
-    is(object: Object): boolean;
-    hasRDFClass(resource: RDF.Resource.Class): boolean;
+export declare class Factory {
     hasClassProperties(resource: RDF.Node.Class): boolean;
-    protected injectBehavior(resource: RDF.Resource.Class): Class;
+    hasRDFClass(pointer: Pointer.Class): boolean;
+    hasRDFClass(expandedObject: Object): boolean;
 }
-export declare let injector: Injector;
+export declare let factory: Factory;
 export default Class;

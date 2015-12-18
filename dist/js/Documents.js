@@ -4,11 +4,10 @@ var Errors = require("./Errors");
 var HTTP = require("./HTTP");
 var RDF = require("./RDF");
 var Utils = require("./Utils");
-var ContextDigester = require("./ContextDigester");
 var JSONLDConverter = require("./JSONLDConverter");
 var PersistedDocument = require("./PersistedDocument");
 var Pointer = require("./Pointer");
-var NS = require("./NS");
+var ObjectSchema = require("./ObjectSchema");
 var LDP = require("./NS/LDP");
 function parse(input) {
     try {
@@ -50,7 +49,7 @@ var Documents = (function () {
         configurable: true
     });
     Documents.prototype.inScope = function (idOrPointer) {
-        var id = Pointer.Factory.is(idOrPointer) ? idOrPointer.uri : idOrPointer;
+        var id = Pointer.factory.is(idOrPointer) ? idOrPointer.id : idOrPointer;
         if (RDF.URI.Util.isBNodeID(id))
             return false;
         if (RDF.URI.Util.hasFragment(id))
@@ -146,7 +145,7 @@ var Documents = (function () {
             };
         });
     };
-    Documents.prototype.createChild = function (parentURI, child, requestOptions) {
+    Documents.prototype.createChild = function (parentURI, childDocument, requestOptions) {
         // TODO: Validate that the child is not persisted already
         if (requestOptions === void 0) { requestOptions = {}; }
         if (this.context && this.context.Auth.isAuthenticated())
@@ -154,21 +153,25 @@ var Documents = (function () {
         HTTP.Request.Util.setAcceptHeader("application/ld+json", requestOptions);
         HTTP.Request.Util.setContentTypeHeader("application/ld+json", requestOptions);
         HTTP.Request.Util.setPreferredInteractionModel(LDP.Class.Container, requestOptions);
-        // return HTTP.Request.Service.post( parentURI,
+        var body = childDocument.toJSON(this, this.jsonldConverter);
+        return HTTP.Request.Service.post(parentURI, body, requestOptions);
     };
     Documents.prototype.save = function (persistedDocument, requestOptions) {
+        // TODO: Check if the document isDirty
+        /*
+        if( ! persistedDocument.isDirty() ) return new Promise<HTTP.Response.Class>( ( resolve:( result:HTTP.Response.Class ) => void ) => {
+            resolve( null );
+        });
+        */
         if (requestOptions === void 0) { requestOptions = {}; }
-        if (!persistedDocument.isDirty())
-            return new Promise(function (resolve) {
-                resolve(null);
-            });
         if (this.context && this.context.Auth.isAuthenticated())
             this.context.Auth.addAuthentication(requestOptions);
         HTTP.Request.Util.setAcceptHeader("application/ld+json", requestOptions);
         HTTP.Request.Util.setContentTypeHeader("application/ld+json", requestOptions);
         HTTP.Request.Util.setPreferredInteractionModel(LDP.Class.RDFSource, requestOptions);
         HTTP.Request.Util.setIfMatchHeader(persistedDocument._etag, requestOptions);
-        return HTTP.Request.Service.put(persistedDocument.uri, persistedDocument.toJSON(), requestOptions);
+        var body = persistedDocument.toJSON(this, this.jsonldConverter);
+        return HTTP.Request.Service.put(persistedDocument.id, body, requestOptions);
     };
     Documents.prototype.delete = function (persistedDocument, requestOptions) {
         if (requestOptions === void 0) { requestOptions = {}; }
@@ -177,7 +180,15 @@ var Documents = (function () {
         HTTP.Request.Util.setAcceptHeader("application/ld+json", requestOptions);
         HTTP.Request.Util.setPreferredInteractionModel(LDP.Class.RDFSource, requestOptions);
         HTTP.Request.Util.setIfMatchHeader(persistedDocument._etag, requestOptions);
-        return HTTP.Request.Service.delete(persistedDocument.uri, persistedDocument.toJSON(), requestOptions);
+        return HTTP.Request.Service.delete(persistedDocument.id, persistedDocument.toJSON(), requestOptions);
+    };
+    Documents.prototype.getSchemaFor = function (object) {
+        if ("@id" in object) {
+            return this.getDigestedObjectSchemaForExpandedObject(object);
+        }
+        else {
+            return this.getDigestedObjectSchemaForDocument(object);
+        }
     };
     Documents.prototype.getRDFDocument = function (rdfDocuments, response) {
         if (rdfDocuments.length === 0)
@@ -189,8 +200,10 @@ var Documents = (function () {
     Documents.prototype.getPointerID = function (uri) {
         if (RDF.URI.Util.isBNodeID(uri))
             throw new Errors.IllegalArgumentError("BNodes cannot be fetched directly.");
-        if (RDF.URI.Util.hasFragment(uri))
-            throw new Errors.IllegalArgumentError("Fragment URI's cannot be fetched directly.");
+        // TODO: Make named fragments independently resolvable
+        /*
+            if( RDF.URI.Util.hasFragment( uri ) ) throw new Errors.IllegalArgumentError( "Fragment URI's cannot be fetched directly." );
+        */
         if (!!this.context) {
             if (RDF.URI.Util.isRelative(uri)) {
                 var baseURI = this.context.getBaseURI();
@@ -209,9 +222,9 @@ var Documents = (function () {
         }
     };
     Documents.prototype.createPointer = function (localID) {
-        var uri = !!this.context ? this.context.resolve(localID) : localID;
+        var id = !!this.context ? this.context.resolve(localID) : localID;
         return {
-            uri: uri,
+            id: id,
             resolve: function () {
                 // TODO
                 return null;
@@ -231,38 +244,47 @@ var Documents = (function () {
         return targetObjects;
     };
     Documents.prototype.compactSingle = function (expandedObject, targetObject, pointerLibrary) {
-        var digestedContext;
+        var digestedSchema = this.getDigestedObjectSchemaForExpandedObject(expandedObject);
+        return this.jsonldConverter.compact(expandedObject, targetObject, digestedSchema, pointerLibrary);
+    };
+    Documents.prototype.getDigestedObjectSchemaForExpandedObject = function (expandedObject) {
+        var types = this.getExpandedObjectTypes(expandedObject);
+        return this.getDigestedObjectSchema(types);
+    };
+    Documents.prototype.getDigestedObjectSchemaForDocument = function (document) {
+        var types = this.getDocumentTypes(document);
+        return this.getDigestedObjectSchema(types);
+    };
+    Documents.prototype.getDigestedObjectSchema = function (objectTypes) {
+        var digestedSchema;
         if (!!this.context) {
-            var types = this.getExpandedObjectTypes(expandedObject);
-            var typesDigestedContexts = [];
-            for (var _i = 0; _i < types.length; _i++) {
-                var type = types[_i];
-                if (this.context.hasClassContext(type))
-                    typesDigestedContexts.push(this.context.getClassContext(type));
+            var typesDigestedObjectSchemas = [this.context.getObjectSchema()];
+            for (var _i = 0; _i < objectTypes.length; _i++) {
+                var type = objectTypes[_i];
+                if (this.context.getObjectSchema(type))
+                    typesDigestedObjectSchemas.push(this.context.getObjectSchema(type));
             }
-            if (typesDigestedContexts.length === 0) {
-                digestedContext = this.context.getMainContext();
+            if (typesDigestedObjectSchemas.length > 1) {
+                digestedSchema = ObjectSchema.Digester.combineDigestedObjectSchemas(typesDigestedObjectSchemas);
             }
             else {
-                digestedContext = ContextDigester.Class.combineDigestedContexts(typesDigestedContexts);
+                digestedSchema = typesDigestedObjectSchemas[0];
             }
         }
         else {
-            digestedContext = new ContextDigester.DigestedContext();
+            digestedSchema = new ObjectSchema.DigestedObjectSchema();
         }
-        return this.jsonldConverter.compact(expandedObject, targetObject, digestedContext, pointerLibrary);
+        return digestedSchema;
     };
     Documents.prototype.getExpandedObjectTypes = function (expandedObject) {
-        var types = [];
-        if (!expandedObject[NS.RDF.Predicate.type])
-            return types;
-        for (var _i = 0, _a = expandedObject[NS.RDF.Predicate.type]; _i < _a.length; _i++) {
-            var typeObject = _a[_i];
-            if (!typeObject["@id"])
-                continue;
-            types.push(typeObject["@id"]);
-        }
-        return types;
+        if (!expandedObject["@type"])
+            return [];
+        return expandedObject["@type"];
+    };
+    Documents.prototype.getDocumentTypes = function (document) {
+        if (!document.types)
+            return [];
+        return document.types;
     };
     return Documents;
 })();

@@ -1,18 +1,15 @@
 /// <reference path="./../typings/tsd.d.ts" />
 var NS = require("./NS");
-var Utils = require("./Utils");
 exports.RDF_CLASS = NS.C.Class.API;
-exports.DEFINITION = Utils.M.from({
+exports.SCHEMA = {
     "version": {
-        "uri": NS.C.Predicate.version,
-        "multi": false,
-        "literal": true,
+        "@id": NS.C.Predicate.version,
+        "@type": NS.XSD.DataType.string,
     },
     "buildDate": {
-        "uri": NS.C.Predicate.buildDate,
-        "multi": false,
-        "literal": true,
+        "@id": NS.C.Predicate.buildDate,
+        "@type": NS.XSD.DataType.dateTime,
     },
-});
+};
 
 //# sourceMappingURL=APIDescription.js.map

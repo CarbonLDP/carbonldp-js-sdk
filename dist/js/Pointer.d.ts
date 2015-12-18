@@ -1,5 +1,5 @@
 export interface Class {
-    uri: string;
+    id: string;
     resolve(): Promise<void>;
 }
 export interface Library {
@@ -7,7 +7,11 @@ export interface Library {
     getPointer(id: string): Class;
 }
 export declare class Factory {
-    static is(value: any): boolean;
+    is(value: any): boolean;
+}
+export declare let factory: Factory;
+export declare class Util {
+    static getIDs(pointers: Class[]): string[];
 }
 export interface Validator {
     inScope(id: string): boolean;

@@ -1,4 +1,4 @@
-/// <reference path="../../typings/es6/es6.d.ts" />
+/// <reference path="../../typings/tsd.d.ts" />
 var Class = (function () {
     function Class(valueOrValues) {
         this.values = [];

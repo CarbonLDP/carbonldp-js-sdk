@@ -1,3 +1,8 @@
+export declare class Class {
+    stringValue: string;
+    constructor(stringValue: string);
+    toString(): string;
+}
 export declare class Util {
     static hasFragment(uri: string): boolean;
     static hasProtocol(uri: string): boolean;
@@ -12,3 +17,4 @@ export declare class Util {
     static resolve(parentURI: string, childURI: string): string;
     static removeProtocol(uri: string): string;
 }
+export default Class;

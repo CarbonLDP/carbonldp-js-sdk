@@ -15,6 +15,8 @@ export class Factory {
 		);
 	}
 
+	/*
+
 	static from( fragments:Fragment.Class[] ):Class[];
 	static from( fragment:Fragment.Class ):Class;
 	static from( fragments:any ):any {
@@ -41,6 +43,8 @@ export class Factory {
 
 		return <any> persisted;
 	}
+
+	*/
 }
 
 export default Class;

@@ -9,7 +9,6 @@ import Context from "./Context";
 import * as RDF from "./RDF";
 import * as Utils from "./Utils";
 
-import * as ContextDigester from "./ContextDigester";
 import * as Document from "./Document";
 import * as Fragment from "./Fragment";
 import * as JSONLDConverter from "./JSONLDConverter";
@@ -17,7 +16,7 @@ import * as PersistedDocument from "./PersistedDocument";
 import * as Pointer from "./Pointer";
 import * as NamedFragment from "./NamedFragment";
 import * as NS from "./NS";
-
+import * as ObjectSchema from "./ObjectSchema";
 import * as LDP from "./NS/LDP";
 
 function parse( input:string ):any {
@@ -43,7 +42,7 @@ function expand( input:HTTP.ProcessedResponse<any>, options?:jsonld.ExpandOption
 	} );
 }
 
-class Documents implements Pointer.Library, Pointer.Validator {
+class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Resolver {
 	_jsonldConverter:JSONLDConverter.Class;
 
 	get jsonldConverter():JSONLDConverter.Class { return this._jsonldConverter; }
@@ -67,7 +66,7 @@ class Documents implements Pointer.Library, Pointer.Validator {
 	inScope( pointer:Pointer.Class ):boolean;
 	inScope( id:string ):boolean;
 	inScope( idOrPointer:any ):boolean {
-		let id:string = Pointer.Factory.is( idOrPointer ) ? idOrPointer.uri : idOrPointer;
+		let id:string = Pointer.factory.is( idOrPointer ) ? idOrPointer.id : idOrPointer;
 
 		if( RDF.URI.Util.isBNodeID( id ) ) return false;
 		if( RDF.URI.Util.hasFragment( id ) ) return false;
@@ -178,7 +177,7 @@ class Documents implements Pointer.Library, Pointer.Validator {
 		);
 	}
 
-	createChild( parentURI:string, child:Document.Class, requestOptions:HTTP.Request.Options = {} ):Promise<HTTP.Response.Class> {
+	createChild( parentURI:string, childDocument:Document.Class, requestOptions:HTTP.Request.Options = {} ):Promise<HTTP.Response.Class> {
 		// TODO: Validate that the child is not persisted already
 
 		if ( this.context && this.context.Auth.isAuthenticated() ) this.context.Auth.addAuthentication( requestOptions );
@@ -187,13 +186,18 @@ class Documents implements Pointer.Library, Pointer.Validator {
 		HTTP.Request.Util.setContentTypeHeader( "application/ld+json", requestOptions );
 		HTTP.Request.Util.setPreferredInteractionModel( LDP.Class.Container, requestOptions );
 
-		// return HTTP.Request.Service.post( parentURI,
+		let body:string = childDocument.toJSON( this, this.jsonldConverter );
+
+		return HTTP.Request.Service.post( parentURI, body, requestOptions );
 	}
 
 	save( persistedDocument:PersistedDocument.Class, requestOptions:HTTP.Request.Options = {} ):Promise<HTTP.Response.Class> {
+		// TODO: Check if the document isDirty
+		/*
 		if( ! persistedDocument.isDirty() ) return new Promise<HTTP.Response.Class>( ( resolve:( result:HTTP.Response.Class ) => void ) => {
 			resolve( null );
 		});
+		*/
 
 		if ( this.context && this.context.Auth.isAuthenticated() ) this.context.Auth.addAuthentication( requestOptions );
 
@@ -202,7 +206,9 @@ class Documents implements Pointer.Library, Pointer.Validator {
 		HTTP.Request.Util.setPreferredInteractionModel( LDP.Class.RDFSource, requestOptions );
 		HTTP.Request.Util.setIfMatchHeader( persistedDocument._etag, requestOptions );
 
-		return HTTP.Request.Service.put( persistedDocument.uri, persistedDocument.toJSON(), requestOptions );
+		let body:string = persistedDocument.toJSON( this, this.jsonldConverter );
+
+		return HTTP.Request.Service.put( persistedDocument.id, body, requestOptions );
 	}
 
 	delete( persistedDocument:PersistedDocument.Class, requestOptions:HTTP.Request.Options = {} ):Promise<HTTP.Response.Class> {
@@ -212,7 +218,15 @@ class Documents implements Pointer.Library, Pointer.Validator {
 		HTTP.Request.Util.setPreferredInteractionModel( LDP.Class.RDFSource, requestOptions );
 		HTTP.Request.Util.setIfMatchHeader( persistedDocument._etag, requestOptions );
 
-		return HTTP.Request.Service.delete( persistedDocument.uri, persistedDocument.toJSON(), requestOptions );
+		return HTTP.Request.Service.delete( persistedDocument.id, persistedDocument.toJSON(), requestOptions );
+	}
+
+	getSchemaFor( object:Object ):ObjectSchema.DigestedObjectSchema {
+		if( "@id" in object ) {
+			return this.getDigestedObjectSchemaForExpandedObject( object );
+		} else {
+			return this.getDigestedObjectSchemaForDocument( <any> object );
+		}
 	}
 
 	private getRDFDocument( rdfDocuments:RDF.Document.Class[], response:HTTP.Response.Class ):RDF.Document.Class {
@@ -223,7 +237,10 @@ class Documents implements Pointer.Library, Pointer.Validator {
 
 	private getPointerID( uri:string ):string {
 		if( RDF.URI.Util.isBNodeID( uri ) ) throw new Errors.IllegalArgumentError( "BNodes cannot be fetched directly." );
-		if( RDF.URI.Util.hasFragment( uri ) ) throw new Errors.IllegalArgumentError( "Fragment URI's cannot be fetched directly." );
+		// TODO: Make named fragments independently resolvable
+		/*
+			if( RDF.URI.Util.hasFragment( uri ) ) throw new Errors.IllegalArgumentError( "Fragment URI's cannot be fetched directly." );
+		*/
 
 		if( !! this.context ) {
 			if( RDF.URI.Util.isRelative( uri ) ) {
@@ -241,9 +258,9 @@ class Documents implements Pointer.Library, Pointer.Validator {
 	}
 
 	private createPointer( localID:string ):Pointer.Class {
-		let uri:string = !! this.context ? this.context.resolve( localID ) : localID;
+		let id:string = !! this.context ? this.context.resolve( localID ) : localID;
 		return {
-			uri: uri,
+			id: id,
 			resolve: function():Promise<void> {
 				// TODO
 				return null;
@@ -269,38 +286,52 @@ class Documents implements Pointer.Library, Pointer.Validator {
 	}
 
 	private compactSingle( expandedObject:Object, targetObject:Object, pointerLibrary:Pointer.Library ):Object {
-		let digestedContext:ContextDigester.DigestedContext;
-		if( !! this.context ) {
-			let types:string[] = this.getExpandedObjectTypes( expandedObject );
+		let digestedSchema:ObjectSchema.DigestedObjectSchema = this.getDigestedObjectSchemaForExpandedObject( expandedObject );
 
-			let typesDigestedContexts:ContextDigester.DigestedContext[] = [];
-			for( let type of types ) {
-				if( this.context.hasClassContext( type ) ) typesDigestedContexts.push( this.context.getClassContext( type ) );
+		return this.jsonldConverter.compact( expandedObject, targetObject, digestedSchema, pointerLibrary );
+	}
+
+	private getDigestedObjectSchemaForExpandedObject( expandedObject:Object ):ObjectSchema.DigestedObjectSchema {
+		let types:string[] = this.getExpandedObjectTypes( expandedObject );
+
+		return this.getDigestedObjectSchema( types );
+	}
+
+	private getDigestedObjectSchemaForDocument( document:Document.Class ):ObjectSchema.DigestedObjectSchema {
+		let types:string[] = this.getDocumentTypes( document );
+
+		return this.getDigestedObjectSchema( types );
+	}
+
+	private getDigestedObjectSchema( objectTypes:string[] ):ObjectSchema.DigestedObjectSchema {
+		let digestedSchema:ObjectSchema.DigestedObjectSchema;
+		if( !! this.context ) {
+			let typesDigestedObjectSchemas:ObjectSchema.DigestedObjectSchema[] = [ this.context.getObjectSchema() ];
+			for( let type of objectTypes ) {
+				if( this.context.getObjectSchema( type ) ) typesDigestedObjectSchemas.push( this.context.getObjectSchema( type ) );
 			}
 
-			if( typesDigestedContexts.length === 0 ) {
-				digestedContext = this.context.getMainContext();
+			if( typesDigestedObjectSchemas.length > 1 ) {
+				digestedSchema = ObjectSchema.Digester.combineDigestedObjectSchemas( typesDigestedObjectSchemas );
 			} else {
-				digestedContext = ContextDigester.Class.combineDigestedContexts( typesDigestedContexts );
+				digestedSchema = typesDigestedObjectSchemas[ 0 ];
 			}
 		} else {
-			digestedContext = new ContextDigester.DigestedContext();
+			digestedSchema = new ObjectSchema.DigestedObjectSchema();
 		}
 
-		return this.jsonldConverter.compact( expandedObject, targetObject, digestedContext, pointerLibrary );
-
+		return digestedSchema;
 	}
 
 	private getExpandedObjectTypes( expandedObject:Object ):string[] {
-		let types:string[] = [];
-		if( ! expandedObject[ NS.RDF.Predicate.type ] ) return types;
+		if( ! expandedObject[ "@type" ] ) return [];
 
-		for( let typeObject of expandedObject[ NS.RDF.Predicate.type ] ) {
-			if( ! typeObject[ "@id" ] ) continue;
-			types.push( typeObject[ "@id" ] );
-		}
+		return expandedObject[ "@type" ];
+	}
 
-		return types;
+	private getDocumentTypes( document:Document.Class ):string[] {
+		if( ! document.types ) return [];
+		return document.types;
 	}
 }
 

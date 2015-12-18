@@ -1,7 +1,7 @@
 import * as Utils from "./Utils";
 
 export interface Class {
-	uri:string;
+	id:string;
 	resolve():Promise<void>;
 }
 
@@ -11,12 +11,24 @@ export interface Library {
 }
 
 export class Factory {
-	static is( value:any ):boolean {
+	is( value:any ):boolean {
 		return !! (
 			Utils.isObject( value ) &&
-			Utils.hasProperty( value, "uri" ) &&
+			Utils.hasProperty( value, "id" ) &&
 			Utils.hasFunction( value, "resolve" )
 		);
+	}
+}
+
+export let factory:Factory = new Factory();
+
+export class Util {
+	static getIDs( pointers:Class[] ):string[] {
+		let ids:string[] = [];
+		for( let pointer of pointers ) {
+			ids.push( pointer.id );
+		}
+		return ids;
 	}
 }
 

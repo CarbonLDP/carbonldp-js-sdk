@@ -24,10 +24,12 @@ import {
 	MethodArgument,
 } from "./test/JasmineExtender";
 
-import Context from "./Context";
+import AbstractContext from "./AbstractContext";
+import * as Document from "./Document";
 import Documents from "./Documents";
+import * as Fragment from "./Fragment";
 import * as PersistedDocument from "./PersistedDocument";
-
+import * as ObjectSchema from "./ObjectSchema";
 import * as Utils from "./Utils";
 
 // TODO: Add description
@@ -50,7 +52,7 @@ describe( module( "Carbon/Documents", "" ), ():void => {
 	], { type:"Promise<Carbon.HTTP.ProcessedResponse<Carbon.Document>>"}), ( done:(() => void) & { fail:( error?:any ) => void } ):void => {
 		let promises:Promise<any>[] = [];
 
-		class MockedContext extends Context {
+		class MockedContext extends AbstractContext {
 			resolve( uri:string ):string {
 				return uri;
 			}
@@ -95,7 +97,7 @@ describe( module( "Carbon/Documents", "" ), ():void => {
 			],
 		});
 
-		let mainContext:ContextDigester.Context = {
+		let objectSchema:ObjectSchema.Class = {
 			"ex": "http://example.com/ns#",
 			"xsd": "http://www.w3.org/2001/XMLSchema#",
 			"string": {
@@ -131,7 +133,7 @@ describe( module( "Carbon/Documents", "" ), ():void => {
 			},
 		};
 
-		context.expandMainContext( mainContext );
+		context.extendObjectSchema( objectSchema );
 
 		jasmine.Ajax.stubRequest( "http://example.com/resource/", null, "GET" ).andReturn( {
 			status: 200,
@@ -147,6 +149,90 @@ describe( module( "Carbon/Documents", "" ), ():void => {
 			let document:PersistedDocument.Class = processedResponse.result;
 			expect( document ).toBeDefined();
 			expect( Utils.isObject( document ) ).toEqual( true );
+
+			// TODO: Finish assertions
+		}) );
+
+		Promise.all( promises ).then( ():void => {
+			done();
+		}, ( error:Error ):void => {
+			error = !! error ? error : new Error( "Unknown error" );
+			done.fail( error );
+		});
+	});
+
+	it( hasMethod( INSTANCE, "createChild", [
+		{ name:"parentURI", type:"string" },
+		{ name:"childDocument", type:"Carbon.Document.Class" },
+	], { type:"Promise<HTTP.Response.Class>"}), ( done:(() => void) & { fail:( error?:any ) => void } ):void => {
+		let promises:Promise<any>[] = [];
+
+		class MockedContext extends AbstractContext {
+			resolve( uri:string ):string {
+				return uri;
+			}
+		}
+
+		let context:MockedContext = new MockedContext();
+		let documents:Documents = context.Documents;
+
+		let objectSchema:ObjectSchema.Class = {
+			"ex": "http://example.com/ns#",
+			"xsd": "http://www.w3.org/2001/XMLSchema#",
+			"string": {
+				"@id": "ex:string",
+				"@type": "xsd:string",
+			},
+			"date": {
+				"@id": "ex:date",
+				"@type": "xsd:dateTime",
+			},
+			"numberList": {
+				"@id": "ex:numberList",
+				"@type": "xsd:integer",
+				"@container": "@list",
+			},
+			"languageMap": {
+				"@id": "ex:languageMap",
+				"@container": "@language",
+			},
+			"pointer": {
+				"@id": "ex:pointer",
+				"@type": "@id",
+			},
+			"pointerList": {
+				"@id": "ex:pointerList",
+				"@type": "@id",
+				"@container": "@list",
+			},
+			"pointerSet": {
+				"@id": "ex:pointerSet",
+				"@type": "@id",
+				"@container": "@set",
+			},
+		};
+
+		let childDocument:Document.Class = Document.factory.create();
+		let fragment1:Fragment.Class = childDocument.createFragment();
+		let fragment2:Fragment.Class = childDocument.createFragment();
+		let namedFragment1:Fragment.Class = childDocument.createFragment( "1" );
+		let namedFragment2:Fragment.Class = childDocument.createFragment( "2" );
+
+		(<any> childDocument).string = "Some string";
+		(<any> childDocument).date = new Date();
+		(<any> childDocument).pointerList = [ fragment1, fragment2 ];
+		(<any> childDocument).pointerSet = [ fragment1, namedFragment1 ];
+
+		(<any> namedFragment2).pointer = childDocument;
+
+		context.extendObjectSchema( objectSchema );
+
+		jasmine.Ajax.stubRequest( "http://example.com/parent-resource/", null, "POST" ).andReturn( {
+			// TODO
+		} );
+
+		promises.push( documents.createChild( "http://example.com/parent-resource/", childDocument ).then( ( response:any ):void => {
+			expect( response ).toBeDefined();
 
 			// TODO: Finish assertions
 		}) );

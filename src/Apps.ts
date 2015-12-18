@@ -15,11 +15,11 @@ export class Apps {
 		this.context = context;
 	}
 
-	get( uri:string ):Promise<App.Class> {
+	get( uri:string ):Promise<App.Context> {
 		let appsContainerURI:string = this.getAppsContainerURI();
 		if ( RDF.URI.Util.isRelative( uri ) ) {
 			if ( ! Utils.S.startsWith( uri, appsContainerURI ) ) uri = RDF.URI.Util.resolve( appsContainerURI, uri );
-			this.context.resolve( uri );
+			uri = this.context.resolve( uri );
 		}
 
 		return this.context.Documents.get( uri ).then(
@@ -28,8 +28,7 @@ export class Apps {
 
 				if ( ! document.types.indexOf( CS.Class.Application ) ) throw new Error( "The resource fetched is not a cs:Application." );
 
-				let appResource:App.Resource = App.factory.from( document );
-				return new App.Class( this.context, appResource );
+				return new App.Context( this.context, <any> document );
 			}
 		);
 	}

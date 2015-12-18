@@ -1,35 +1,25 @@
 /// <reference path="./../../typings/tsd.d.ts" />
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
 var NS = require("./../NS");
-var RDF = require("./../RDF");
-var Container = require("./Container");
-var RDF_CLASS = NS.LDP.Class.BasicContainer;
-var Injector = (function (_super) {
-    __extends(Injector, _super);
-    function Injector() {
-        _super.call(this, RDF_CLASS, [Container.injector]);
+var Pointer = require("./../Pointer");
+exports.RDF_CLASS = NS.LDP.Class.BasicContainer;
+var Factory = (function () {
+    function Factory() {
     }
-    Injector.prototype.is = function (object) {
-        return (_super.prototype.is.call(this, object) &&
-            this.hasRDFClass(object) &&
-            this.hasClassProperties(object));
+    Factory.prototype.hasRDFClass = function (pointerOrExpandedObject) {
+        var types = [];
+        if ("@type" in pointerOrExpandedObject) {
+            types = pointerOrExpandedObject["@type"];
+        }
+        else if ("types" in pointerOrExpandedObject) {
+            // TODO: Use proper class
+            var resource = pointerOrExpandedObject;
+            types = Pointer.Util.getIDs(resource.types);
+        }
+        return types.indexOf(NS.LDP.Class.BasicContainer) !== -1;
     };
-    Injector.prototype.hasRDFClass = function (resource) {
-        return (resource.types.indexOf(NS.LDP.Class.BasicContainer) !== -1);
-    };
-    Injector.prototype.hasClassProperties = function (resource) {
-        return true;
-    };
-    Injector.prototype.injectBehavior = function (resource) {
-        return resource;
-    };
-    return Injector;
-})(RDF.AbstractInjector);
-exports.Injector = Injector;
-exports.injector = new Injector();
+    return Factory;
+})();
+exports.Factory = Factory;
+exports.factory = new Factory();
 
 //# sourceMappingURL=BasicContainer.js.map

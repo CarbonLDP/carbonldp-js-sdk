@@ -13,14 +13,13 @@ var Apps = (function () {
         if (RDF.URI.Util.isRelative(uri)) {
             if (!Utils.S.startsWith(uri, appsContainerURI))
                 uri = RDF.URI.Util.resolve(appsContainerURI, uri);
-            this.context.resolve(uri);
+            uri = this.context.resolve(uri);
         }
         return this.context.Documents.get(uri).then(function (processedResponse) {
             var document = processedResponse.result;
             if (!document.types.indexOf(CS.Class.Application))
                 throw new Error("The resource fetched is not a cs:Application.");
-            var appResource = App.factory.from(document);
-            return new App.Class(_this.context, appResource);
+            return new App.Context(_this.context, document);
         });
     };
     Apps.prototype.getAppsContainerURI = function () {

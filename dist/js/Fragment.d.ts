@@ -1,7 +1,6 @@
 import * as Document from "./Document";
-import * as Pointer from "./Pointer";
-import * as RDF from "./RDF";
-export interface Class extends Pointer.Class {
+import * as Resource from "./Resource";
+export interface Class extends Resource.Class {
     document: Document.Class;
 }
 export declare class Factory {
@@ -10,10 +9,6 @@ export declare class Factory {
     create(document: Document.Class): Class;
     createFrom<T extends Object>(object: T, id: string, document: Document.Class): T & Class;
     createFrom<T extends Object>(object: T, document: Document.Class): T & Class;
-    from<T extends Object>(nodes: T[], document: Document.Class): (T & Class)[];
-    from<T extends Object>(node: T, document: Document.Class): (T & Class);
-    protected singleFrom<T extends Object>(node: T, document: Document.Class): (T & Class);
-    protected injectBehavior<T extends RDF.Resource.Class>(object: T, document: Document.Class): (T & Class);
 }
 export declare var factory: Factory;
 export declare class Util {

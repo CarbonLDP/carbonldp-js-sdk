@@ -2,14 +2,14 @@
 import * as APIDescription from "./APIDescription";
 import Apps from "./Apps";
 import * as Auth from "./Auth";
-import Context from "./Context";
+import AbstractContext from "./AbstractContext";
 import * as Document from "./Document";
 import Documents from "./Documents";
 import * as HTTP from "./HTTP";
 import Platform from "./Platform";
 import * as RDF from "./RDF";
 import * as Utils from "./Utils";
-declare class Carbon extends Context {
+declare class Carbon extends AbstractContext {
     static Apps: typeof Apps;
     static Auth: typeof Auth;
     static Document: typeof Document;
@@ -23,6 +23,5 @@ declare class Carbon extends Context {
     constructor(settings: any);
     resolve(uri: string): string;
     getAPIDescription(): Promise<APIDescription.Class>;
-    private registerDefaultDefinitions();
 }
 export default Carbon;

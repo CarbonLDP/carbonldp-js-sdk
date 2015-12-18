@@ -5,14 +5,6 @@ function createChild(object) {
 var Factory = (function () {
     function Factory() {
     }
-    Factory.prototype.create = function () {
-        // TODO
-        return null;
-    };
-    Factory.prototype.createFrom = function (object) {
-        // TODO
-        return null;
-    };
     Factory.prototype.decorate = function (object) {
         // TODO
         return null;

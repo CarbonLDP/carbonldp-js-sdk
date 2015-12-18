@@ -1,5 +1,5 @@
-import * as HTTP from "./../HTTP";
 import Context from "./../Context";
+import * as HTTP from "./../HTTP";
 import Authenticator from "./Authenticator";
 import AuthenticationToken from "./AuthenticationToken";
 import UsernameAndPasswordToken from "./UsernameAndPasswordToken";

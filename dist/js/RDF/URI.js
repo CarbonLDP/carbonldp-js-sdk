@@ -1,4 +1,14 @@
-var Utils = require("../Utils");
+var Utils = require("./../Utils");
+var Class = (function () {
+    function Class(stringValue) {
+        this.stringValue = stringValue;
+    }
+    Class.prototype.toString = function () {
+        return this.stringValue;
+    };
+    return Class;
+})();
+exports.Class = Class;
 var Util = (function () {
     function Util() {
     }
@@ -15,6 +25,7 @@ var Util = (function () {
             return true;
         if (Utils.S.startsWith(uri, "://"))
             return true;
+        return false;
     };
     Util.isRelative = function (uri) {
         return !Util.isAbsolute(uri);
@@ -77,5 +88,7 @@ var Util = (function () {
     return Util;
 })();
 exports.Util = Util;
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.default = Class;
 
 //# sourceMappingURL=URI.js.map

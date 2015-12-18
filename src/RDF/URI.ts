@@ -1,4 +1,16 @@
-import * as Utils from "../Utils";
+import * as Utils from "./../Utils";
+
+export class Class {
+	stringValue:string;
+
+	constructor( stringValue:string ) {
+		this.stringValue = stringValue;
+	}
+
+	toString():string {
+		return this.stringValue;
+	}
+}
 
 export class Util {
 	static hasFragment( uri:string ):boolean {
@@ -13,6 +25,8 @@ export class Util {
 		if ( Utils.S.startsWith( uri, "http://" ) ) return true;
 		if ( Utils.S.startsWith( uri, "https://" ) ) return true;
 		if ( Utils.S.startsWith( uri, "://" ) ) return true;
+
+		return false;
 	}
 
 	static isRelative( uri:string ):boolean {
@@ -77,3 +91,5 @@ export class Util {
 		return uri;
 	}
 }
+
+export default Class;

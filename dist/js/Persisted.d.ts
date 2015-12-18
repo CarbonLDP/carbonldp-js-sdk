@@ -1,3 +1,4 @@
+/// <reference path="../typings/tsd.d.ts" />
 import * as RDF from "./RDF";
 declare class Modifications {
     add: Map<string, RDF.Value.Class[]>;
