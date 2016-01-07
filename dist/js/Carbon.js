@@ -10,7 +10,6 @@ var AbstractContext_1 = require("./AbstractContext");
 var Document = require("./Document");
 var Documents_1 = require("./Documents");
 var HTTP = require("./HTTP");
-var Platform_1 = require("./Platform");
 var RDF = require("./RDF");
 var settings_1 = require("./settings");
 var Utils = require("./Utils");
@@ -20,8 +19,7 @@ var Carbon = (function (_super) {
         _super.call(this);
         settings = settings ? settings : settings_1.default;
         Utils.M.extend(this.settings, Utils.M.from(settings));
-        this.platform = new Platform_1.default(this);
-        this.apps = new Apps_1.default(this.platform);
+        this.apps = new Apps_1.default(this);
     }
     Object.defineProperty(Carbon, "version", {
         /* tslint:enable: variable-name */
@@ -33,11 +31,11 @@ var Carbon = (function (_super) {
         if (RDF.URI.Util.isAbsolute(uri))
             return uri;
         var finalURI = this.settings.get("http.ssl") ? "https://" : "http://";
-        finalURI += this.settings.get("domain");
+        finalURI += this.settings.get("domain") + "/" + this.getSetting("platform.container");
         return RDF.URI.Util.resolve(finalURI, uri);
     };
     Carbon.prototype.getAPIDescription = function () {
-        return this.Documents.get("platform/api/").then(function (processedResponse) {
+        return this.Documents.get("api/").then(function (processedResponse) {
             return processedResponse.result;
         });
     };

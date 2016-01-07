@@ -52,8 +52,6 @@ var Documents = (function () {
         var id = Pointer.factory.is(idOrPointer) ? idOrPointer.id : idOrPointer;
         if (RDF.URI.Util.isBNodeID(id))
             return false;
-        if (RDF.URI.Util.hasFragment(id))
-            return false;
         if (!!this.context) {
             var baseURI = this.context.getBaseURI();
             if (RDF.URI.Util.isAbsolute(id) && RDF.URI.Util.isBaseOf(baseURI, id))

@@ -4,6 +4,11 @@ var Pointer = require("./../Pointer");
 var Utils = require("./../Utils");
 exports.RDF_CLASS = NS.LDP.Class.Container;
 exports.SCHEMA = {
+    "contains": {
+        "@id": NS.LDP.Predicate.contains,
+        "@container": "@set",
+        "@type": "@id",
+    },
     "memberOfRelation": {
         "@id": NS.LDP.Predicate.memberOfRelation,
         "@type": "@id",

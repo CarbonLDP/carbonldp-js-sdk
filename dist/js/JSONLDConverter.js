@@ -231,7 +231,7 @@ var Class = (function () {
             // TODO: Warn of data loss
             return null;
         }
-        return { "@id": propertyValue.uri };
+        return { "@id": propertyValue.id };
     };
     Class.prototype.expandArray = function (propertyValue, pointerValidator) {
         var listValues = [];

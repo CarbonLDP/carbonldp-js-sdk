@@ -6,7 +6,9 @@ declare class Class {
 }
 declare class Predicate {
     static accessPoint: string;
-    static version: string;
     static buildDate: string;
+    static created: string;
+    static modified: string;
+    static version: string;
 }
 export { namespace, Class, Predicate };

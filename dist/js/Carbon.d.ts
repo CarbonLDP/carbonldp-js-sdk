@@ -6,7 +6,6 @@ import AbstractContext from "./AbstractContext";
 import * as Document from "./Document";
 import Documents from "./Documents";
 import * as HTTP from "./HTTP";
-import Platform from "./Platform";
 import * as RDF from "./RDF";
 import * as Utils from "./Utils";
 declare class Carbon extends AbstractContext {
@@ -19,7 +18,6 @@ declare class Carbon extends AbstractContext {
     static Utils: typeof Utils;
     static version: string;
     apps: Apps;
-    platform: Platform;
     constructor(settings: any);
     resolve(uri: string): string;
     getAPIDescription(): Promise<APIDescription.Class>;

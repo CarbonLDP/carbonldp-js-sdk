@@ -29,13 +29,23 @@ var Predicate = (function () {
         enumerable: true,
         configurable: true
     });
-    Object.defineProperty(Predicate, "version", {
-        get: function () { return namespace + "version"; },
+    Object.defineProperty(Predicate, "buildDate", {
+        get: function () { return namespace + "buildDate"; },
         enumerable: true,
         configurable: true
     });
-    Object.defineProperty(Predicate, "buildDate", {
-        get: function () { return namespace + "buildDate"; },
+    Object.defineProperty(Predicate, "created", {
+        get: function () { return namespace + "created"; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Predicate, "modified", {
+        get: function () { return namespace + "modified"; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Predicate, "version", {
+        get: function () { return namespace + "version"; },
         enumerable: true,
         configurable: true
     });

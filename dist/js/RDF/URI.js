@@ -44,6 +44,8 @@ var Util = (function () {
     Util.isBaseOf = function (baseURI, uri) {
         if (baseURI === uri)
             return true;
+        if (baseURI === "")
+            return true;
         if (uri.startsWith(baseURI)) {
             if (Utils.S.endsWith(baseURI, "/"))
                 return true;
