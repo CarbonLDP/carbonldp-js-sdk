@@ -49,6 +49,8 @@ export class Util {
 
 	static isBaseOf( baseURI:string, uri:string ):boolean {
 		if( baseURI === uri ) return true;
+		if( baseURI === "" ) return true;
+
 		if( uri.startsWith( baseURI ) ) {
 			if( Utils.S.endsWith( baseURI, "/" ) ) return true;
 

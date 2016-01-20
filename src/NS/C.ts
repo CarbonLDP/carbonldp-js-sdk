@@ -8,8 +8,10 @@ class Class {
 
 class Predicate {
 	static get accessPoint():string { return namespace + "accessPoint"; }
-	static get version():string { return namespace + "version"; }
 	static get buildDate():string { return namespace + "buildDate"; }
+	static get created():string { return namespace + "created"; }
+	static get modified():string { return namespace + "modified"; }
+	static get version():string { return namespace + "version"; }
 }
 
 export {

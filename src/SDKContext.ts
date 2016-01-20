@@ -8,6 +8,7 @@ import Documents from "./Documents";
 import * as Errors from "./Errors";
 import * as JSONLDConverter from "./JSONLDConverter";
 import * as LDP from "./LDP";
+import * as NS from "./NS";
 import * as Pointer from "./Pointer";
 import * as RDF from "./RDF";
 import * as Utils from "./Utils";

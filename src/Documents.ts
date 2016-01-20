@@ -69,7 +69,6 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 		let id:string = Pointer.factory.is( idOrPointer ) ? idOrPointer.id : idOrPointer;
 
 		if( RDF.URI.Util.isBNodeID( id ) ) return false;
-		if( RDF.URI.Util.hasFragment( id ) ) return false;
 
 		if( !! this.context ) {
 			let baseURI:string = this.context.getBaseURI();

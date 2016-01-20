@@ -265,7 +265,7 @@ export class Class {
 			return null;
 		}
 
-		return { "@id": propertyValue.uri };
+		return { "@id": propertyValue.id };
 	}
 
 	private expandArray( propertyValue:any, pointerValidator:Pointer.Validator ):any {

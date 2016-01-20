@@ -10,6 +10,11 @@ import * as Utils from "./../Utils";
 export const RDF_CLASS:string = NS.LDP.Class.Container;
 
 export const SCHEMA:ObjectSchema.Class = {
+	"contains": {
+		"@id": NS.LDP.Predicate.contains,
+		"@container": "@set",
+		"@type": "@id",
+	},
 	"memberOfRelation": {
 		"@id": NS.LDP.Predicate.memberOfRelation,
 		"@type": "@id",

@@ -7,7 +7,6 @@ import AbstractContext from "./AbstractContext";
 import * as Document from "./Document";
 import Documents from "./Documents";
 import * as HTTP from "./HTTP";
-import Platform from "./Platform";
 import * as RDF from "./RDF";
 import defaultSettings from "./settings";
 import * as Utils from "./Utils";
@@ -28,7 +27,6 @@ class Carbon extends AbstractContext {
 
 	// TODO: Rename it to Apps. TypeScript is throwing an error regarding a static variable that will not be accessible if this instance variable has the same name
 	apps:Apps;
-	platform:Platform;
 
 	constructor( settings:any ) {
 		super();
@@ -37,20 +35,19 @@ class Carbon extends AbstractContext {
 
 		Utils.M.extend( this.settings, Utils.M.from( settings ) );
 
-		this.platform = new Platform( this );
-		this.apps = new Apps( this.platform );
+		this.apps = new Apps( this );
 	}
 
 	resolve( uri:string ):string {
 		if ( RDF.URI.Util.isAbsolute( uri ) ) return uri;
 
 		let finalURI:string = this.settings.get( "http.ssl" ) ? "https://" : "http://";
-		finalURI += this.settings.get( "domain" );
+		finalURI += this.settings.get( "domain" ) + "/" + this.getSetting( "platform.container" );
 		return RDF.URI.Util.resolve( finalURI, uri );
 	}
 
 	getAPIDescription():Promise<APIDescription.Class> {
-		return this.Documents.get( "platform/api/" ).then(
+		return this.Documents.get( "api/" ).then(
 			( processedResponse:HTTP.ProcessedResponse<Document.Class> ) => {
 				return <any> processedResponse.result;
 			}
