@@ -58,12 +58,11 @@ function inScope( id:string ):boolean;
 function inScope( idOrPointer:any ):boolean {
 	let document:Class = <Class> this;
 
-	let id:string = Pointer.factory.is( idOrPointer ) ? idOrPointer.id : idOrPointer;
+	let id:string = Pointer.Factory.is( idOrPointer ) ? idOrPointer.id : idOrPointer;
 
 	if( id === document.id ) return true;
 
-	// BNodes need to be already in the index to be in-scope
-	if( RDF.URI.Util.isBNodeID( id ) && document._fragmentsIndex.has( id ) ) return true;
+	if( RDF.URI.Util.isBNodeID( id ) ) return true;
 
 	if( RDF.URI.Util.isAbsolute( id ) && RDF.URI.Util.isFragmentOf( id, document.id ) ) return true;
 
@@ -202,7 +201,7 @@ export class Factory {
 	createFrom<T extends Object>( object:T, uri:string = null ):T & Class {
 		if( !! uri && RDF.URI.Util.isBNodeID( uri ) ) throw new Errors.IllegalArgumentError( "Documents cannot have a BNodeID as a uri." );
 
-		let resource:Resource.Class = Resource.factory.createFrom( object, uri );
+		let resource:Resource.Class = Resource.Factory.createFrom( object, uri );
 
 		let document:Class = this.decorate( resource );
 

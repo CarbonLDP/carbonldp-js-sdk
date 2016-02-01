@@ -236,7 +236,7 @@ export class Class {
 	}
 
 	private serializeLiteral( propertyValue:any, literalType:string ):string {
-		if( Pointer.factory.is( propertyValue ) ) {
+		if( Pointer.Factory.is( propertyValue ) ) {
 			// TODO: Warn of data loss
 			return null;
 		}
@@ -255,7 +255,7 @@ export class Class {
 	}
 
 	private expandPointer( propertyValue:any, pointerValidator:Pointer.Validator ):RDF.Node.Class {
-		if( ! Pointer.factory.is( propertyValue ) ) {
+		if( ! Pointer.Factory.is( propertyValue ) ) {
 			// TODO: Warn of data loss
 			return null;
 		}
@@ -286,7 +286,7 @@ export class Class {
 		if( Utils.isArray( propertyValue ) ) {
 			// TODO: Lists of lists are not currently supported by the spec
 			return null;
-		} else if( Pointer.factory.is( propertyValue ) ) {
+		} else if( Pointer.Factory.is( propertyValue ) ) {
 			return this.expandPointer( propertyValue, pointerValidator );
 		} else {
 			return this.expandLiteral( propertyValue );

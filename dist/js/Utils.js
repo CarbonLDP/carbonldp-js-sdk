@@ -215,5 +215,16 @@ var UUID = (function () {
     return UUID;
 })();
 exports.UUID = UUID;
+var P = (function () {
+    function P() {
+    }
+    P.createRejectedPromise = function (error) {
+        return new Promise(function (resolve, reject) {
+            reject(error);
+        });
+    };
+    return P;
+})();
+exports.P = P;
 
 //# sourceMappingURL=Utils.js.map

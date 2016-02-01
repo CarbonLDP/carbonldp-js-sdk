@@ -27,7 +27,7 @@ export class Factory {
 	createFrom<T extends Object>( object:T, idOrDocument:any, document:Document.Class = null ):T & Class {
 		let id:string = !! document ? idOrDocument : Util.generateID();
 
-		let resource:Resource.Class = Resource.factory.createFrom( object, id );
+		let resource:Resource.Class = Resource.Factory.createFrom( object, id );
 
 		if( this.hasClassProperties( resource ) ) return <any> resource;
 

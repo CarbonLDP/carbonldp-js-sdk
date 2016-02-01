@@ -13,7 +13,7 @@ var Factory = (function () {
     Factory.prototype.createFrom = function (object, idOrDocument, document) {
         if (document === void 0) { document = null; }
         var id = !!document ? idOrDocument : Util.generateID();
-        var resource = Resource.factory.createFrom(object, id);
+        var resource = Resource.Factory.createFrom(object, id);
         if (this.hasClassProperties(resource))
             return resource;
         Object.defineProperties(resource, {

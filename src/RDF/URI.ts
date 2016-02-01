@@ -61,6 +61,10 @@ export class Util {
 		return false;
 	}
 
+	static getRelativeURI( absoluteURI:string, base:string ):string {
+		return absoluteURI.substring( base.length );
+	}
+
 	static getDocumentURI( uri:string ):string {
 		let parts:string[] = uri.split( "#" );
 		if ( parts.length > 2 ) throw new Error( "IllegalArgument: The URI provided has more than one # sign." );

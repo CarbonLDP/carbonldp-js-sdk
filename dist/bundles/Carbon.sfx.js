@@ -720,32 +720,57 @@ $__System.register("4", ["5"], function(exports_1) {
     }
 });
 
-$__System.register("6", [], function(exports_1) {
-    var Factory, factory;
-    function createChild(object) {
-        // TODO
-        return null;
+$__System.register("6", ["7"], function(exports_1) {
+    var Utils;
+    var Factory;
+    function createChild(slugOrObject, object) {
+        if (slugOrObject === void 0) { slugOrObject = null; }
+        if (object === void 0) { object = null; }
+        var slug = Utils.isString(slugOrObject) ? slugOrObject : null;
+        object = !!slugOrObject && !Utils.isString(slugOrObject) ? slugOrObject : (!!object ? object : null);
+        // TODO: Check if the object is a document
+        // TODO: If it's not a document turn it and any of the objects related to it into document/fragments
+        var document = object;
+        if (slug !== null) {
+            return this._documents.createChild(this.id, slug, document);
+        }
+        else
+            return this._documents.createChild(this.id, document);
     }
     return {
-        setters:[],
+        setters:[
+            function (Utils_1) {
+                Utils = Utils_1;
+            }],
         execute: function() {
             Factory = (function () {
                 function Factory() {
                 }
-                Factory.prototype.decorate = function (object) {
-                    // TODO
-                    return null;
+                Factory.hasClassProperties = function (document) {
+                    return (Utils.hasFunction(document, "createChild"));
+                };
+                Factory.decorate = function (persistedDocument) {
+                    if (Factory.hasClassProperties(persistedDocument))
+                        return persistedDocument;
+                    Object.defineProperties(persistedDocument, {
+                        "createChild": {
+                            writable: false,
+                            enumerable: false,
+                            configurable: true,
+                            value: createChild,
+                        },
+                    });
+                    return persistedDocument;
                 };
                 return Factory;
             })();
             exports_1("Factory", Factory);
-            exports_1("factory", factory = new Factory());
         }
     }
 });
 
 /// <reference path="../../typings/tsd.d.ts" />
-$__System.register("7", ["5", "8", "9"], function(exports_1) {
+$__System.register("8", ["5", "9", "7"], function(exports_1) {
     var NS, Pointer, Utils;
     var RDF_CLASS, SCHEMA, Factory, factory;
     return {
@@ -807,7 +832,7 @@ $__System.register("7", ["5", "8", "9"], function(exports_1) {
 });
 
 /// <reference path="./../../typings/tsd.d.ts" />
-$__System.register("a", ["5", "8"], function(exports_1) {
+$__System.register("a", ["5", "9"], function(exports_1) {
     var NS, Pointer;
     var RDF_CLASS, Factory, factory;
     return {
@@ -844,7 +869,7 @@ $__System.register("a", ["5", "8"], function(exports_1) {
 });
 
 /// <reference path="../../typings/tsd.d.ts" />
-$__System.register("b", ["5", "9"], function(exports_1) {
+$__System.register("b", ["5", "7"], function(exports_1) {
     var NS, Utils;
     var RDF_CLASS, SCHEMA, Factory;
     return {
@@ -876,7 +901,7 @@ $__System.register("b", ["5", "9"], function(exports_1) {
     }
 });
 
-$__System.register("c", ["b", "a", "7", "6", "4"], function(exports_1) {
+$__System.register("c", ["b", "a", "8", "6", "4"], function(exports_1) {
     var AccessPoint, BasicContainer, Container, PersistedContainer, RDFSource;
     return {
         setters:[
@@ -905,7 +930,7 @@ $__System.register("c", ["b", "a", "7", "6", "4"], function(exports_1) {
     }
 });
 
-$__System.register("d", ["e", "f", "9"], function(exports_1) {
+$__System.register("d", ["e", "f", "7"], function(exports_1) {
     var Fragment, RDF, Utils;
     var Factory, factory;
     return {
@@ -956,14 +981,17 @@ $__System.register("d", ["e", "f", "9"], function(exports_1) {
     }
 });
 
-$__System.register("10", ["9"], function(exports_1) {
-    var Utils;
-    var Factory, factory;
+$__System.register("10", ["9", "7"], function(exports_1) {
+    var Pointer, Utils;
+    var Factory;
     function hasType(type) {
         return this.types.indexOf(type) !== -1;
     }
     return {
         setters:[
+            function (Pointer_1) {
+                Pointer = Pointer_1;
+            },
             function (Utils_1) {
                 Utils = Utils_1;
             }],
@@ -971,65 +999,34 @@ $__System.register("10", ["9"], function(exports_1) {
             Factory = (function () {
                 function Factory() {
                 }
-                Factory.prototype.hasClassProperties = function (resource) {
-                    return (Utils.hasPropertyDefined(resource, "_id") &&
-                        Utils.hasPropertyDefined(resource, "id") &&
-                        Utils.hasPropertyDefined(resource, "types") &&
-                        Utils.hasPropertyDefined(resource, "resolve"));
+                Factory.hasClassProperties = function (resource) {
+                    return (Utils.hasPropertyDefined(resource, "types"));
                 };
-                Factory.prototype.create = function (id, types) {
+                Factory.create = function (id, types) {
                     if (id === void 0) { id = null; }
                     if (types === void 0) { types = null; }
-                    return this.createFrom({}, id, types);
+                    return Factory.createFrom({}, id, types);
                 };
-                Factory.prototype.createFrom = function (object, id, types) {
+                Factory.createFrom = function (object, id, types) {
                     if (id === void 0) { id = null; }
                     if (types === void 0) { types = null; }
                     id = !!id ? id : "";
                     types = !!types ? types : [];
-                    var resource = this.decorate(object);
+                    var resource = Factory.decorate(object);
                     resource.id = id;
                     resource.types = types;
                     return resource;
                 };
-                Factory.prototype.decorate = function (object) {
-                    if (this.hasClassProperties(object))
+                Factory.decorate = function (object) {
+                    Pointer.Factory.decorate(object);
+                    if (Factory.hasClassProperties(object))
                         return object;
                     Object.defineProperties(object, {
-                        "_id": {
-                            writable: true,
-                            enumerable: false,
-                            configurable: true,
-                            value: "",
-                        },
-                        "id": {
-                            enumerable: false,
-                            configurable: true,
-                            get: function () {
-                                if (!this._id)
-                                    return "";
-                                return this._id;
-                            },
-                            set: function (value) {
-                                this._id = value;
-                            },
-                        },
                         "types": {
                             writable: true,
                             enumerable: false,
                             configurable: true,
                             value: [],
-                        },
-                        "resolve": {
-                            writable: false,
-                            enumerable: false,
-                            configurable: true,
-                            value: function () {
-                                var _this = this;
-                                return new Promise(function (resolve, reject) {
-                                    return _this;
-                                });
-                            },
                         },
                     });
                     return object;
@@ -1037,12 +1034,11 @@ $__System.register("10", ["9"], function(exports_1) {
                 return Factory;
             })();
             exports_1("Factory", Factory);
-            exports_1("factory", factory = new Factory());
         }
     }
 });
 
-$__System.register("e", ["10", "9"], function(exports_1) {
+$__System.register("e", ["10", "7"], function(exports_1) {
     var Resource, Utils;
     var Factory, factory, Util;
     return {
@@ -1067,7 +1063,7 @@ $__System.register("e", ["10", "9"], function(exports_1) {
                 Factory.prototype.createFrom = function (object, idOrDocument, document) {
                     if (document === void 0) { document = null; }
                     var id = !!document ? idOrDocument : Util.generateID();
-                    var resource = Resource.factory.createFrom(object, id);
+                    var resource = Resource.Factory.createFrom(object, id);
                     if (this.hasClassProperties(resource))
                         return resource;
                     Object.defineProperties(resource, {
@@ -1098,7 +1094,7 @@ $__System.register("e", ["10", "9"], function(exports_1) {
 });
 
 /// <reference path="./../typings/tsd.d.ts" />
-$__System.register("11", ["12", "e", "13", "d", "14", "8", "f", "10", "9"], function(exports_1) {
+$__System.register("11", ["12", "e", "13", "d", "14", "9", "f", "10", "7"], function(exports_1) {
     var Errors, Fragment, JSONLDConverter_1, NamedFragment, ObjectSchema, Pointer, RDF, Resource, Utils;
     var Factory, factory;
     function hasPointer(id) {
@@ -1119,11 +1115,10 @@ $__System.register("11", ["12", "e", "13", "d", "14", "8", "f", "10", "9"], func
     }
     function inScope(idOrPointer) {
         var document = this;
-        var id = Pointer.factory.is(idOrPointer) ? idOrPointer.id : idOrPointer;
+        var id = Pointer.Factory.is(idOrPointer) ? idOrPointer.id : idOrPointer;
         if (id === document.id)
             return true;
-        // BNodes need to be already in the index to be in-scope
-        if (RDF.URI.Util.isBNodeID(id) && document._fragmentsIndex.has(id))
+        if (RDF.URI.Util.isBNodeID(id))
             return true;
         if (RDF.URI.Util.isAbsolute(id) && RDF.URI.Util.isFragmentOf(id, document.id))
             return true;
@@ -1269,7 +1264,7 @@ $__System.register("11", ["12", "e", "13", "d", "14", "8", "f", "10", "9"], func
                     if (uri === void 0) { uri = null; }
                     if (!!uri && RDF.URI.Util.isBNodeID(uri))
                         throw new Errors.IllegalArgumentError("Documents cannot have a BNodeID as a uri.");
-                    var resource = Resource.factory.createFrom(object, uri);
+                    var resource = Resource.Factory.createFrom(object, uri);
                     var document = this.decorate(resource);
                     return document;
                 };
@@ -1361,7 +1356,7 @@ $__System.register("11", ["12", "e", "13", "d", "14", "8", "f", "10", "9"], func
     }
 });
 
-$__System.register("15", ["11", "9"], function(exports_1) {
+$__System.register("15", ["11", "7"], function(exports_1) {
     var Document, Utils;
     var Factory;
     function isDirty() {
@@ -1373,14 +1368,13 @@ $__System.register("15", ["11", "9"], function(exports_1) {
         return null;
     }
     function save() {
+        var _this = this;
         return this._documents.save(this).then(function (response) {
-            // TODO
+            return [_this, response];
         });
     }
     function destroy() {
-        return this._documents.delete(this).then(function (response) {
-            // TODO
-        });
+        return this._documents.delete(this);
     }
     return {
         setters:[
@@ -1395,11 +1389,16 @@ $__System.register("15", ["11", "9"], function(exports_1) {
                 function Factory() {
                 }
                 Factory.hasClassProperties = function (document) {
-                    return (Utils.hasPropertyDefined(document, "_decorate") &&
+                    return (Utils.hasPropertyDefined(document, "_documents") &&
                         Utils.hasPropertyDefined(document, "_etag") &&
                         Utils.hasFunction(document, "refresh") &&
                         Utils.hasFunction(document, "save") &&
                         Utils.hasFunction(document, "destroy"));
+                };
+                Factory.is = function (object) {
+                    return (
+                    // TODO: Add Document.Class check
+                    Factory.hasClassProperties(object));
                 };
                 Factory.create = function (uri, documents) {
                     var document = Document.factory.create(uri);
@@ -1507,7 +1506,7 @@ $__System.register("15", ["11", "9"], function(exports_1) {
 });
 
 /// <reference path="./../typings/tsd.d.ts" />
-$__System.register("14", ["12", "f", "9"], function(exports_1) {
+$__System.register("14", ["12", "f", "7"], function(exports_1) {
     var Errors, RDF, Utils;
     var ContainerType, DigestedObjectSchema, DigestedPropertyDefinition, Digester;
     return {
@@ -1693,7 +1692,7 @@ $__System.register("14", ["12", "f", "9"], function(exports_1) {
 });
 
 /// <reference path="./../typings/tsd.d.ts" />
-$__System.register("13", ["12", "14", "5", "8", "f", "9"], function(exports_1) {
+$__System.register("13", ["12", "14", "5", "9", "f", "7"], function(exports_1) {
     var Errors, ObjectSchema, NS, Pointer, RDF, Utils;
     var Class;
     return {
@@ -1918,7 +1917,7 @@ $__System.register("13", ["12", "14", "5", "8", "f", "9"], function(exports_1) {
                     return mapValues;
                 };
                 Class.prototype.serializeLiteral = function (propertyValue, literalType) {
-                    if (Pointer.factory.is(propertyValue)) {
+                    if (Pointer.Factory.is(propertyValue)) {
                         // TODO: Warn of data loss
                         return null;
                     }
@@ -1935,7 +1934,7 @@ $__System.register("13", ["12", "14", "5", "8", "f", "9"], function(exports_1) {
                     }
                 };
                 Class.prototype.expandPointer = function (propertyValue, pointerValidator) {
-                    if (!Pointer.factory.is(propertyValue)) {
+                    if (!Pointer.Factory.is(propertyValue)) {
                         // TODO: Warn of data loss
                         return null;
                     }
@@ -1963,7 +1962,7 @@ $__System.register("13", ["12", "14", "5", "8", "f", "9"], function(exports_1) {
                         // TODO: Lists of lists are not currently supported by the spec
                         return null;
                     }
-                    else if (Pointer.factory.is(propertyValue)) {
+                    else if (Pointer.Factory.is(propertyValue)) {
                         return this.expandPointer(propertyValue, pointerValidator);
                     }
                     else {
@@ -2253,7 +2252,7 @@ $__System.register("13", ["12", "14", "5", "8", "f", "9"], function(exports_1) {
 });
 
 /// <reference path="../typings/tsd.d.ts" />
-$__System.register("16", ["17", "12", "18", "f", "9", "13", "15", "8", "14", "19"], function(exports_1) {
+$__System.register("16", ["17", "12", "18", "f", "7", "13", "15", "9", "14", "19"], function(exports_1) {
     var jsonld, Errors, HTTP, RDF, Utils, JSONLDConverter, PersistedDocument, Pointer, ObjectSchema, LDP;
     var Documents;
     function parse(input) {
@@ -2265,15 +2264,16 @@ $__System.register("16", ["17", "12", "18", "f", "9", "13", "15", "8", "14", "19
             throw error;
         }
     }
-    function expand(input, options) {
+    function expand(_a, options) {
+        var result = _a[0], response = _a[1];
         return new Promise(function (resolve, reject) {
-            jsonld.expand(input.result, options, function (error, expanded) {
+            jsonld.expand(result, options, function (error, expanded) {
                 if (error) {
                     // TODO: Handle jsonld.expand error
                     throw error;
                 }
-                input.result = expanded;
-                resolve(input);
+                result = expanded;
+                resolve([result, response]);
             });
         });
     }
@@ -2329,7 +2329,7 @@ $__System.register("16", ["17", "12", "18", "f", "9", "13", "15", "8", "14", "19
                     configurable: true
                 });
                 Documents.prototype.inScope = function (idOrPointer) {
-                    var id = Pointer.factory.is(idOrPointer) ? idOrPointer.id : idOrPointer;
+                    var id = Pointer.Factory.is(idOrPointer) ? idOrPointer.id : idOrPointer;
                     if (RDF.URI.Util.isBNodeID(id))
                         return false;
                     if (!!this.context) {
@@ -2374,6 +2374,12 @@ $__System.register("16", ["17", "12", "18", "f", "9", "13", "15", "8", "14", "19
                     if (!!this.context)
                         uri = this.context.resolve(uri);
                     if (this.pointers.has(pointerID)) {
+                        var pointer = this.getPointer(uri);
+                        if (pointer.isResolved()) {
+                            return new Promise(function (resolve, reject) {
+                                resolve([pointer, null]);
+                            });
+                        }
                     }
                     if (this.context && this.context.Auth.isAuthenticated())
                         this.context.Auth.addAuthentication(requestOptions);
@@ -2381,26 +2387,24 @@ $__System.register("16", ["17", "12", "18", "f", "9", "13", "15", "8", "14", "19
                     HTTP.Request.Util.setPreferredInteractionModel(LDP.Class.RDFSource, requestOptions);
                     return HTTP.Request.Service.get(uri, requestOptions).then(function (response) {
                         var parsedObject = parse(response.data);
-                        return expand({
-                            result: parsedObject,
-                            response: response,
-                        });
-                    }).then(function (processedResponse) {
-                        var etag = HTTP.Response.Util.getETag(processedResponse.response);
+                        return expand([parsedObject, response]);
+                    }).then(function (_a) {
+                        var expandedResult = _a[0], response = _a[1];
+                        var etag = HTTP.Response.Util.getETag(response);
                         if (etag === null)
-                            throw new HTTP.Errors.BadResponseError("The response doesn't contain an ETag", processedResponse.response);
-                        var expandedResult = processedResponse.result;
+                            throw new HTTP.Errors.BadResponseError("The response doesn't contain an ETag", response);
                         var rdfDocuments = RDF.Document.Util.getDocuments(expandedResult);
-                        var rdfDocument = _this.getRDFDocument(rdfDocuments, processedResponse.response);
+                        var rdfDocument = _this.getRDFDocument(rdfDocuments, response);
                         var documentResources = RDF.Document.Util.getDocumentResources(rdfDocument);
                         if (documentResources.length > 1)
-                            throw new HTTP.Errors.BadResponseError("The RDFDocument contains more than one document resource.", processedResponse.response);
+                            throw new HTTP.Errors.BadResponseError("The RDFDocument contains more than one document resource.", response);
                         if (documentResources.length === 0)
-                            throw new HTTP.Errors.BadResponseError("The RDFDocument doesn\'t contain a document resource.", processedResponse.response);
+                            throw new HTTP.Errors.BadResponseError("The RDFDocument doesn\'t contain a document resource.", response);
                         var documentResource = documentResources[0];
                         var fragmentResources = RDF.Document.Util.getBNodeResources(rdfDocument);
                         var namedFragmentResources = RDF.Document.Util.getFragmentResources(rdfDocument);
                         var documentPointer = _this.getPointer(uri);
+                        documentPointer._resolved = true;
                         var document = PersistedDocument.Factory.createFrom(documentPointer, uri, _this);
                         document._etag = etag;
                         var fragments = [];
@@ -2409,30 +2413,51 @@ $__System.register("16", ["17", "12", "18", "f", "9", "13", "15", "8", "14", "19
                             fragments.push(document.createFragment(fragmentResource["@id"]));
                         }
                         var namedFragments = [];
-                        for (var _a = 0; _a < namedFragmentResources.length; _a++) {
-                            var namedFragmentResource = namedFragmentResources[_a];
+                        for (var _b = 0; _b < namedFragmentResources.length; _b++) {
+                            var namedFragmentResource = namedFragmentResources[_b];
                             namedFragments.push(document.createNamedFragment(namedFragmentResource["@id"]));
                         }
                         _this.compact(documentResource, document, document);
                         _this.compact(fragmentResources, fragments, document);
                         _this.compact(namedFragmentResources, namedFragments, document);
                         // TODO: Decorate additional behavior (container, app, etc.)
-                        return {
-                            result: document,
-                            response: processedResponse.response,
-                        };
+                        return [document, response];
                     });
                 };
-                Documents.prototype.createChild = function (parentURI, childDocument, requestOptions) {
-                    // TODO: Validate that the child is not persisted already
+                Documents.prototype.createChild = function (parentURI, slugOrChildDocument, childDocumentOrRequestOptions, requestOptions) {
+                    var _this = this;
+                    if (childDocumentOrRequestOptions === void 0) { childDocumentOrRequestOptions = {}; }
                     if (requestOptions === void 0) { requestOptions = {}; }
+                    var slug = Utils.isString(slugOrChildDocument) ? slugOrChildDocument : null;
+                    var childDocument = !Utils.isString(slugOrChildDocument) ? slugOrChildDocument : childDocumentOrRequestOptions;
+                    requestOptions = !Utils.isString(slugOrChildDocument) ? childDocumentOrRequestOptions : requestOptions;
+                    if (PersistedDocument.Factory.is(childDocument))
+                        return Utils.P.createRejectedPromise(new Errors.IllegalArgumentError("The childDocument provided has been already persisted."));
+                    if (childDocument.id) {
+                        if (!RDF.URI.Util.isBaseOf(parentURI, childDocument.id))
+                            return Utils.P.createRejectedPromise(new Errors.IllegalArgumentError("The childDocument's URI is not relative to the parentURI specified"));
+                    }
                     if (this.context && this.context.Auth.isAuthenticated())
                         this.context.Auth.addAuthentication(requestOptions);
                     HTTP.Request.Util.setAcceptHeader("application/ld+json", requestOptions);
                     HTTP.Request.Util.setContentTypeHeader("application/ld+json", requestOptions);
                     HTTP.Request.Util.setPreferredInteractionModel(LDP.Class.Container, requestOptions);
+                    if (slug !== null)
+                        HTTP.Request.Util.setSlug(slug, requestOptions);
                     var body = childDocument.toJSON(this, this.jsonldConverter);
-                    return HTTP.Request.Service.post(parentURI, body, requestOptions);
+                    return HTTP.Request.Service.post(parentURI, body, requestOptions).then(function (response) {
+                        var locationHeader = response.headers.get("Location");
+                        if (locationHeader === null || locationHeader.values.length < 1)
+                            throw new HTTP.Errors.BadResponseError("The response is missing a Location header.", response);
+                        if (locationHeader.values.length !== 1)
+                            throw new HTTP.Errors.BadResponseError("The response contains more than one Location header.", response);
+                        var locationURI = locationHeader.values[0].toString();
+                        var pointer = _this.getPointer(locationURI);
+                        return [
+                            pointer,
+                            response,
+                        ];
+                    });
                 };
                 Documents.prototype.save = function (persistedDocument, requestOptions) {
                     // TODO: Check if the document isDirty
@@ -2449,7 +2474,9 @@ $__System.register("16", ["17", "12", "18", "f", "9", "13", "15", "8", "14", "19
                     HTTP.Request.Util.setPreferredInteractionModel(LDP.Class.RDFSource, requestOptions);
                     HTTP.Request.Util.setIfMatchHeader(persistedDocument._etag, requestOptions);
                     var body = persistedDocument.toJSON(this, this.jsonldConverter);
-                    return HTTP.Request.Service.put(persistedDocument.id, body, requestOptions);
+                    return HTTP.Request.Service.put(persistedDocument.id, body, requestOptions).then(function (response) {
+                        return [persistedDocument, response];
+                    });
                 };
                 Documents.prototype.delete = function (persistedDocument, requestOptions) {
                     if (requestOptions === void 0) { requestOptions = {}; }
@@ -2500,14 +2527,18 @@ $__System.register("16", ["17", "12", "18", "f", "9", "13", "15", "8", "14", "19
                     }
                 };
                 Documents.prototype.createPointer = function (localID) {
+                    var _this = this;
                     var id = !!this.context ? this.context.resolve(localID) : localID;
-                    return {
-                        id: id,
-                        resolve: function () {
-                            // TODO
-                            return null;
+                    var pointer = Pointer.Factory.create(id);
+                    Object.defineProperty(pointer, "resolve", {
+                        writable: false,
+                        enumerable: false,
+                        configurable: true,
+                        value: function () {
+                            return _this.get(id);
                         },
-                    };
+                    });
+                    return pointer;
                 };
                 Documents.prototype.compact = function (expandedObjectOrObjects, targetObjectOrObjects, pointerLibrary) {
                     if (!Utils.isArray(expandedObjectOrObjects))
@@ -2798,7 +2829,7 @@ $__System.register("1a", ["1b", "1c", "5", "1d"], function(exports_1) {
     }
 });
 
-$__System.register("1b", ["9"], function(exports_1) {
+$__System.register("1b", ["7"], function(exports_1) {
     var Utils;
     var Factory;
     return {
@@ -2822,7 +2853,7 @@ $__System.register("1b", ["9"], function(exports_1) {
     }
 });
 
-$__System.register("1e", ["9"], function(exports_1) {
+$__System.register("1e", ["7"], function(exports_1) {
     var Utils;
     var Class, Util;
     return {
@@ -2887,6 +2918,9 @@ $__System.register("1e", ["9"], function(exports_1) {
                     }
                     return false;
                 };
+                Util.getRelativeURI = function (absoluteURI, base) {
+                    return absoluteURI.substring(base.length);
+                };
                 Util.getDocumentURI = function (uri) {
                     var parts = uri.split("#");
                     if (parts.length > 2)
@@ -2927,7 +2961,7 @@ $__System.register("1e", ["9"], function(exports_1) {
     }
 });
 
-$__System.register("1d", ["9"], function(exports_1) {
+$__System.register("1d", ["7"], function(exports_1) {
     var Utils;
     var Factory, Util;
     return {
@@ -2965,7 +2999,7 @@ $__System.register("1d", ["9"], function(exports_1) {
     }
 });
 
-$__System.register("1f", ["1d", "9", "1e"], function(exports_1) {
+$__System.register("1f", ["1d", "7", "1e"], function(exports_1) {
     var RDFNode, Utils, URI;
     var Factory, Util;
     return {
@@ -3100,7 +3134,7 @@ $__System.register("20", [], function(exports_1) {
     }
 });
 
-$__System.register("21", ["12", "9"], function(exports_1) {
+$__System.register("21", ["12", "7"], function(exports_1) {
     var __extends = (this && this.__extends) || function (d, b) {
         for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
         function __() { this.constructor = d; }
@@ -3252,7 +3286,7 @@ $__System.register("23", [], function(exports_1) {
     }
 });
 
-$__System.register("1c", ["9", "24", "23", "22"], function(exports_1) {
+$__System.register("1c", ["7", "24", "23", "22"], function(exports_1) {
     var Utils, XSD, Serializer_1, Serializers;
     var Factory, Util;
     return {
@@ -3541,9 +3575,9 @@ $__System.register("25", ["12", "18", "5", "f", "26", "27", "28"], function(expo
     }
 });
 
-$__System.register("8", ["9"], function(exports_1) {
+$__System.register("9", ["7"], function(exports_1) {
     var Utils;
-    var Factory, factory, Util;
+    var Factory, Util;
     return {
         setters:[
             function (Utils_1) {
@@ -3553,15 +3587,76 @@ $__System.register("8", ["9"], function(exports_1) {
             Factory = (function () {
                 function Factory() {
                 }
-                Factory.prototype.is = function (value) {
+                Factory.hasClassProperties = function (object) {
+                    return !!(Utils.hasPropertyDefined(object, "_id") &&
+                        Utils.hasPropertyDefined(object, "_resolved") &&
+                        Utils.hasPropertyDefined(object, "id") &&
+                        Utils.hasFunction(object, "isResolved") &&
+                        Utils.hasPropertyDefined(object, "resolve"));
+                };
+                Factory.is = function (value) {
                     return !!(Utils.isObject(value) &&
-                        Utils.hasProperty(value, "id") &&
-                        Utils.hasFunction(value, "resolve"));
+                        Factory.hasClassProperties(value));
+                };
+                Factory.create = function (id) {
+                    id = !!id ? id : "";
+                    var pointer = Factory.decorate({});
+                    pointer.id = id;
+                    return pointer;
+                };
+                Factory.decorate = function (object) {
+                    if (Factory.hasClassProperties(object))
+                        return object;
+                    Object.defineProperties(object, {
+                        "_id": {
+                            writable: true,
+                            enumerable: false,
+                            configurable: true,
+                            value: "",
+                        },
+                        "_resolved": {
+                            writable: true,
+                            enumerable: false,
+                            configurable: true,
+                            value: false,
+                        },
+                        "id": {
+                            enumerable: false,
+                            configurable: true,
+                            get: function () {
+                                if (!this._id)
+                                    return "";
+                                return this._id;
+                            },
+                            set: function (value) {
+                                this._id = value;
+                            },
+                        },
+                        "isResolved": {
+                            writable: false,
+                            enumerable: false,
+                            configurable: true,
+                            value: function () {
+                                return this._resolved;
+                            },
+                        },
+                        "resolve": {
+                            writable: false,
+                            enumerable: false,
+                            configurable: true,
+                            value: function () {
+                                var _this = this;
+                                return new Promise(function (resolve, reject) {
+                                    return _this;
+                                });
+                            },
+                        },
+                    });
+                    return object;
                 };
                 return Factory;
             })();
             exports_1("Factory", Factory);
-            exports_1("factory", factory = new Factory());
             Util = (function () {
                 function Util() {
                 }
@@ -3580,7 +3675,7 @@ $__System.register("8", ["9"], function(exports_1) {
     }
 });
 
-$__System.register("28", ["5", "8", "9"], function(exports_1) {
+$__System.register("28", ["5", "9", "7"], function(exports_1) {
     var NS, Pointer, Utils;
     var RDF_CLASS, CONTEXT, Factory, factory;
     return {
@@ -3922,7 +4017,7 @@ $__System.register("2f", ["30"], function(exports_1) {
 });
 
 /// <reference path="./../../typings/tsd.d.ts" />
-$__System.register("31", ["32", "30", "33", "2f", "9"], function(exports_1) {
+$__System.register("31", ["32", "30", "33", "2f", "7"], function(exports_1) {
     var Errors, Header, Method_1, Response_1, Utils;
     var Service, Util;
     function setHeaders(request, headers) {
@@ -4088,6 +4183,14 @@ $__System.register("31", ["32", "30", "33", "2f", "9"], function(exports_1) {
                         headers.set("Prefer", new Header.Class());
                     var prefer = headers.get("Prefer");
                     prefer.values.push(new Header.Value(interactionModelURI + "; rel=interaction-model"));
+                    return requestOptions;
+                };
+                Util.setSlug = function (slug, requestOptions) {
+                    var headers = requestOptions.headers ? requestOptions.headers : requestOptions.headers = new Map();
+                    if (!headers.has("Slug"))
+                        headers.set("Slug", new Header.Class());
+                    var slugHeader = headers.get("Slug");
+                    slugHeader.values.push(new Header.Value(slug));
                     return requestOptions;
                 };
                 return Util;
@@ -10606,7 +10709,7 @@ $__System.register("4f", [], function(exports_1) {
 });
 
 /// <reference path="./../typings/tsd.d.ts" />
-$__System.register("3", ["4f", "4e", "26", "28", "25", "27", "12", "9"], function(exports_1) {
+$__System.register("3", ["4f", "4e", "26", "28", "25", "27", "12", "7"], function(exports_1) {
     var AuthenticationToken_1, Authenticator_1, BasicAuthenticator_1, Token, TokenAuthenticator_1, UsernameAndPasswordToken_1, Errors, Utils;
     var Method, Class;
     return {
@@ -10716,8 +10819,8 @@ $__System.register("3", ["4f", "4e", "26", "28", "25", "27", "12", "9"], functio
 });
 
 /// <reference path="./../typings/tsd.d.ts" />
-$__System.register("9", [], function(exports_1) {
-    var S, A, M, UUID;
+$__System.register("7", [], function(exports_1) {
+    var S, A, M, UUID, P;
     function hasFunction(object, functionName) {
         return typeof object[functionName] === "function";
     }
@@ -10916,6 +11019,16 @@ $__System.register("9", [], function(exports_1) {
                 UUID.regExp = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
                 return UUID;
             })();
+            P = (function () {
+                function P() {
+                }
+                P.createRejectedPromise = function (error) {
+                    return new Promise(function (resolve, reject) {
+                        reject(error);
+                    });
+                };
+                return P;
+            })();
             exports_1("hasFunction", hasFunction);
             exports_1("hasProperty", hasProperty);
             exports_1("hasPropertyDefined", hasPropertyDefined);
@@ -10937,11 +11050,12 @@ $__System.register("9", [], function(exports_1) {
             exports_1("A", A);
             exports_1("M", M);
             exports_1("UUID", UUID);
+            exports_1("P", P);
         }
     }
 });
 
-$__System.register("24", ["9"], function(exports_1) {
+$__System.register("24", ["7"], function(exports_1) {
     var Utils;
     var namespace, DataType;
     return {
@@ -11562,7 +11676,7 @@ $__System.register("57", ["55", "14"], function(exports_1) {
 });
 
 /// <reference path="./../typings/tsd.d.ts" />
-$__System.register("56", ["57", "5", "f", "9"], function(exports_1) {
+$__System.register("56", ["57", "5", "f", "7"], function(exports_1) {
     var __extends = (this && this.__extends) || function (d, b) {
         for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
         function __() { this.constructor = d; }
@@ -11626,7 +11740,7 @@ $__System.register("56", ["57", "5", "f", "9"], function(exports_1) {
 });
 
 /// <reference path="./../typings/tsd.d.ts" />
-$__System.register("58", ["56", "f", "9", "51"], function(exports_1) {
+$__System.register("58", ["56", "f", "7", "51"], function(exports_1) {
     var App, RDF, Utils, CS;
     var Apps;
     return {
@@ -11656,8 +11770,8 @@ $__System.register("58", ["56", "f", "9", "51"], function(exports_1) {
                             uri = RDF.URI.Util.resolve(appsContainerURI, uri);
                         uri = this.context.resolve(uri);
                     }
-                    return this.context.Documents.get(uri).then(function (processedResponse) {
-                        var document = processedResponse.result;
+                    return this.context.Documents.get(uri).then(function (_a) {
+                        var document = _a[0], response = _a[1];
                         if (!document.types.indexOf(CS.Class.Application))
                             throw new Error("The resource fetched is not a cs:Application.");
                         return new App.Context(_this.context, document);
@@ -11677,7 +11791,7 @@ $__System.register("58", ["56", "f", "9", "51"], function(exports_1) {
 });
 
 /// <reference path="../typings/tsd.d.ts" />
-$__System.register("59", ["58", "3", "57", "11", "16", "18", "f", "2", "9"], function(exports_1) {
+$__System.register("59", ["58", "3", "57", "11", "16", "18", "f", "2", "7"], function(exports_1) {
     var __extends = (this && this.__extends) || function (d, b) {
         for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
         function __() { this.constructor = d; }
@@ -11737,8 +11851,9 @@ $__System.register("59", ["58", "3", "57", "11", "16", "18", "f", "2", "9"], fun
                     return RDF.URI.Util.resolve(finalURI, uri);
                 };
                 Carbon.prototype.getAPIDescription = function () {
-                    return this.Documents.get("api/").then(function (processedResponse) {
-                        return processedResponse.result;
+                    return this.Documents.get("api/").then(function (_a) {
+                        var description = _a[0], response = _a[1];
+                        return description;
                     });
                 };
                 /* tslint:disable: variable-name */

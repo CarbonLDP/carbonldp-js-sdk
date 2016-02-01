@@ -206,7 +206,7 @@ var Class = (function () {
         return mapValues;
     };
     Class.prototype.serializeLiteral = function (propertyValue, literalType) {
-        if (Pointer.factory.is(propertyValue)) {
+        if (Pointer.Factory.is(propertyValue)) {
             // TODO: Warn of data loss
             return null;
         }
@@ -223,7 +223,7 @@ var Class = (function () {
         }
     };
     Class.prototype.expandPointer = function (propertyValue, pointerValidator) {
-        if (!Pointer.factory.is(propertyValue)) {
+        if (!Pointer.Factory.is(propertyValue)) {
             // TODO: Warn of data loss
             return null;
         }
@@ -251,7 +251,7 @@ var Class = (function () {
             // TODO: Lists of lists are not currently supported by the spec
             return null;
         }
-        else if (Pointer.factory.is(propertyValue)) {
+        else if (Pointer.Factory.is(propertyValue)) {
             return this.expandPointer(propertyValue, pointerValidator);
         }
         else {

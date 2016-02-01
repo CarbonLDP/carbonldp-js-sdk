@@ -12,6 +12,7 @@ export declare class Util {
     static isPrefixed(uri: string): boolean;
     static isFragmentOf(fragmentURI: string, uri: string): boolean;
     static isBaseOf(baseURI: string, uri: string): boolean;
+    static getRelativeURI(absoluteURI: string, base: string): string;
     static getDocumentURI(uri: string): string;
     static getFragment(uri: string): string;
     static resolve(parentURI: string, childURI: string): string;

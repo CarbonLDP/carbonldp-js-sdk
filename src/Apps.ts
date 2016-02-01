@@ -23,9 +23,7 @@ export class Apps {
 		}
 
 		return this.context.Documents.get( uri ).then(
-			( processedResponse:HTTP.ProcessedResponse<Document.Class> ) => {
-				let document:Document.Class = processedResponse.result;
-
+			( [ document, response ]:[ Document.Class, HTTP.Response.Class ] ) => {
 				if ( ! document.types.indexOf( CS.Class.Application ) ) throw new Error( "The resource fetched is not a cs:Application." );
 
 				return new App.Context( this.context, <any> document );

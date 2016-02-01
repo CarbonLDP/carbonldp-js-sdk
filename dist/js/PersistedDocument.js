@@ -9,24 +9,28 @@ function refresh() {
     return null;
 }
 function save() {
+    var _this = this;
     return this._documents.save(this).then(function (response) {
-        // TODO
+        return [_this, response];
     });
 }
 function destroy() {
-    return this._documents.delete(this).then(function (response) {
-        // TODO
-    });
+    return this._documents.delete(this);
 }
 var Factory = (function () {
     function Factory() {
     }
     Factory.hasClassProperties = function (document) {
-        return (Utils.hasPropertyDefined(document, "_decorate") &&
+        return (Utils.hasPropertyDefined(document, "_documents") &&
             Utils.hasPropertyDefined(document, "_etag") &&
             Utils.hasFunction(document, "refresh") &&
             Utils.hasFunction(document, "save") &&
             Utils.hasFunction(document, "destroy"));
+    };
+    Factory.is = function (object) {
+        return (
+        // TODO: Add Document.Class check
+        Factory.hasClassProperties(object));
     };
     Factory.create = function (uri, documents) {
         var document = Document.factory.create(uri);

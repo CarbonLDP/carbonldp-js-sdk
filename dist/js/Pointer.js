@@ -2,15 +2,76 @@ var Utils = require("./Utils");
 var Factory = (function () {
     function Factory() {
     }
-    Factory.prototype.is = function (value) {
+    Factory.hasClassProperties = function (object) {
+        return !!(Utils.hasPropertyDefined(object, "_id") &&
+            Utils.hasPropertyDefined(object, "_resolved") &&
+            Utils.hasPropertyDefined(object, "id") &&
+            Utils.hasFunction(object, "isResolved") &&
+            Utils.hasPropertyDefined(object, "resolve"));
+    };
+    Factory.is = function (value) {
         return !!(Utils.isObject(value) &&
-            Utils.hasProperty(value, "id") &&
-            Utils.hasFunction(value, "resolve"));
+            Factory.hasClassProperties(value));
+    };
+    Factory.create = function (id) {
+        id = !!id ? id : "";
+        var pointer = Factory.decorate({});
+        pointer.id = id;
+        return pointer;
+    };
+    Factory.decorate = function (object) {
+        if (Factory.hasClassProperties(object))
+            return object;
+        Object.defineProperties(object, {
+            "_id": {
+                writable: true,
+                enumerable: false,
+                configurable: true,
+                value: "",
+            },
+            "_resolved": {
+                writable: true,
+                enumerable: false,
+                configurable: true,
+                value: false,
+            },
+            "id": {
+                enumerable: false,
+                configurable: true,
+                get: function () {
+                    if (!this._id)
+                        return "";
+                    return this._id;
+                },
+                set: function (value) {
+                    this._id = value;
+                },
+            },
+            "isResolved": {
+                writable: false,
+                enumerable: false,
+                configurable: true,
+                value: function () {
+                    return this._resolved;
+                },
+            },
+            "resolve": {
+                writable: false,
+                enumerable: false,
+                configurable: true,
+                value: function () {
+                    var _this = this;
+                    return new Promise(function (resolve, reject) {
+                        return _this;
+                    });
+                },
+            },
+        });
+        return object;
     };
     return Factory;
 })();
 exports.Factory = Factory;
-exports.factory = new Factory();
 var Util = (function () {
     function Util() {
     }

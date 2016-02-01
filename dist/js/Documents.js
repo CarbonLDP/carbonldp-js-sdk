@@ -18,15 +18,16 @@ function parse(input) {
         throw error;
     }
 }
-function expand(input, options) {
+function expand(_a, options) {
+    var result = _a[0], response = _a[1];
     return new Promise(function (resolve, reject) {
-        jsonld.expand(input.result, options, function (error, expanded) {
+        jsonld.expand(result, options, function (error, expanded) {
             if (error) {
                 // TODO: Handle jsonld.expand error
                 throw error;
             }
-            input.result = expanded;
-            resolve(input);
+            result = expanded;
+            resolve([result, response]);
         });
     });
 }
@@ -49,7 +50,7 @@ var Documents = (function () {
         configurable: true
     });
     Documents.prototype.inScope = function (idOrPointer) {
-        var id = Pointer.factory.is(idOrPointer) ? idOrPointer.id : idOrPointer;
+        var id = Pointer.Factory.is(idOrPointer) ? idOrPointer.id : idOrPointer;
         if (RDF.URI.Util.isBNodeID(id))
             return false;
         if (!!this.context) {
@@ -94,6 +95,12 @@ var Documents = (function () {
         if (!!this.context)
             uri = this.context.resolve(uri);
         if (this.pointers.has(pointerID)) {
+            var pointer = this.getPointer(uri);
+            if (pointer.isResolved()) {
+                return new Promise(function (resolve, reject) {
+                    resolve([pointer, null]);
+                });
+            }
         }
         if (this.context && this.context.Auth.isAuthenticated())
             this.context.Auth.addAuthentication(requestOptions);
@@ -101,26 +108,24 @@ var Documents = (function () {
         HTTP.Request.Util.setPreferredInteractionModel(LDP.Class.RDFSource, requestOptions);
         return HTTP.Request.Service.get(uri, requestOptions).then(function (response) {
             var parsedObject = parse(response.data);
-            return expand({
-                result: parsedObject,
-                response: response,
-            });
-        }).then(function (processedResponse) {
-            var etag = HTTP.Response.Util.getETag(processedResponse.response);
+            return expand([parsedObject, response]);
+        }).then(function (_a) {
+            var expandedResult = _a[0], response = _a[1];
+            var etag = HTTP.Response.Util.getETag(response);
             if (etag === null)
-                throw new HTTP.Errors.BadResponseError("The response doesn't contain an ETag", processedResponse.response);
-            var expandedResult = processedResponse.result;
+                throw new HTTP.Errors.BadResponseError("The response doesn't contain an ETag", response);
             var rdfDocuments = RDF.Document.Util.getDocuments(expandedResult);
-            var rdfDocument = _this.getRDFDocument(rdfDocuments, processedResponse.response);
+            var rdfDocument = _this.getRDFDocument(rdfDocuments, response);
             var documentResources = RDF.Document.Util.getDocumentResources(rdfDocument);
             if (documentResources.length > 1)
-                throw new HTTP.Errors.BadResponseError("The RDFDocument contains more than one document resource.", processedResponse.response);
+                throw new HTTP.Errors.BadResponseError("The RDFDocument contains more than one document resource.", response);
             if (documentResources.length === 0)
-                throw new HTTP.Errors.BadResponseError("The RDFDocument doesn\'t contain a document resource.", processedResponse.response);
+                throw new HTTP.Errors.BadResponseError("The RDFDocument doesn\'t contain a document resource.", response);
             var documentResource = documentResources[0];
             var fragmentResources = RDF.Document.Util.getBNodeResources(rdfDocument);
             var namedFragmentResources = RDF.Document.Util.getFragmentResources(rdfDocument);
             var documentPointer = _this.getPointer(uri);
+            documentPointer._resolved = true;
             var document = PersistedDocument.Factory.createFrom(documentPointer, uri, _this);
             document._etag = etag;
             var fragments = [];
@@ -129,30 +134,51 @@ var Documents = (function () {
                 fragments.push(document.createFragment(fragmentResource["@id"]));
             }
             var namedFragments = [];
-            for (var _a = 0; _a < namedFragmentResources.length; _a++) {
-                var namedFragmentResource = namedFragmentResources[_a];
+            for (var _b = 0; _b < namedFragmentResources.length; _b++) {
+                var namedFragmentResource = namedFragmentResources[_b];
                 namedFragments.push(document.createNamedFragment(namedFragmentResource["@id"]));
             }
             _this.compact(documentResource, document, document);
             _this.compact(fragmentResources, fragments, document);
             _this.compact(namedFragmentResources, namedFragments, document);
             // TODO: Decorate additional behavior (container, app, etc.)
-            return {
-                result: document,
-                response: processedResponse.response,
-            };
+            return [document, response];
         });
     };
-    Documents.prototype.createChild = function (parentURI, childDocument, requestOptions) {
-        // TODO: Validate that the child is not persisted already
+    Documents.prototype.createChild = function (parentURI, slugOrChildDocument, childDocumentOrRequestOptions, requestOptions) {
+        var _this = this;
+        if (childDocumentOrRequestOptions === void 0) { childDocumentOrRequestOptions = {}; }
         if (requestOptions === void 0) { requestOptions = {}; }
+        var slug = Utils.isString(slugOrChildDocument) ? slugOrChildDocument : null;
+        var childDocument = !Utils.isString(slugOrChildDocument) ? slugOrChildDocument : childDocumentOrRequestOptions;
+        requestOptions = !Utils.isString(slugOrChildDocument) ? childDocumentOrRequestOptions : requestOptions;
+        if (PersistedDocument.Factory.is(childDocument))
+            return Utils.P.createRejectedPromise(new Errors.IllegalArgumentError("The childDocument provided has been already persisted."));
+        if (childDocument.id) {
+            if (!RDF.URI.Util.isBaseOf(parentURI, childDocument.id))
+                return Utils.P.createRejectedPromise(new Errors.IllegalArgumentError("The childDocument's URI is not relative to the parentURI specified"));
+        }
         if (this.context && this.context.Auth.isAuthenticated())
             this.context.Auth.addAuthentication(requestOptions);
         HTTP.Request.Util.setAcceptHeader("application/ld+json", requestOptions);
         HTTP.Request.Util.setContentTypeHeader("application/ld+json", requestOptions);
         HTTP.Request.Util.setPreferredInteractionModel(LDP.Class.Container, requestOptions);
+        if (slug !== null)
+            HTTP.Request.Util.setSlug(slug, requestOptions);
         var body = childDocument.toJSON(this, this.jsonldConverter);
-        return HTTP.Request.Service.post(parentURI, body, requestOptions);
+        return HTTP.Request.Service.post(parentURI, body, requestOptions).then(function (response) {
+            var locationHeader = response.headers.get("Location");
+            if (locationHeader === null || locationHeader.values.length < 1)
+                throw new HTTP.Errors.BadResponseError("The response is missing a Location header.", response);
+            if (locationHeader.values.length !== 1)
+                throw new HTTP.Errors.BadResponseError("The response contains more than one Location header.", response);
+            var locationURI = locationHeader.values[0].toString();
+            var pointer = _this.getPointer(locationURI);
+            return [
+                pointer,
+                response,
+            ];
+        });
     };
     Documents.prototype.save = function (persistedDocument, requestOptions) {
         // TODO: Check if the document isDirty
@@ -169,7 +195,9 @@ var Documents = (function () {
         HTTP.Request.Util.setPreferredInteractionModel(LDP.Class.RDFSource, requestOptions);
         HTTP.Request.Util.setIfMatchHeader(persistedDocument._etag, requestOptions);
         var body = persistedDocument.toJSON(this, this.jsonldConverter);
-        return HTTP.Request.Service.put(persistedDocument.id, body, requestOptions);
+        return HTTP.Request.Service.put(persistedDocument.id, body, requestOptions).then(function (response) {
+            return [persistedDocument, response];
+        });
     };
     Documents.prototype.delete = function (persistedDocument, requestOptions) {
         if (requestOptions === void 0) { requestOptions = {}; }
@@ -220,14 +248,18 @@ var Documents = (function () {
         }
     };
     Documents.prototype.createPointer = function (localID) {
+        var _this = this;
         var id = !!this.context ? this.context.resolve(localID) : localID;
-        return {
-            id: id,
-            resolve: function () {
-                // TODO
-                return null;
+        var pointer = Pointer.Factory.create(id);
+        Object.defineProperty(pointer, "resolve", {
+            writable: false,
+            enumerable: false,
+            configurable: true,
+            value: function () {
+                return _this.get(id);
             },
-        };
+        });
+        return pointer;
     };
     Documents.prototype.compact = function (expandedObjectOrObjects, targetObjectOrObjects, pointerLibrary) {
         if (!Utils.isArray(expandedObjectOrObjects))

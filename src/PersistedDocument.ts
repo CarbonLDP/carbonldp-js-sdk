@@ -28,23 +28,28 @@ function refresh():Promise<void> {
 }
 function save():Promise<void> {
 	return this._documents.save( this ).then( ( response:HTTP.Response.Class) => {
-		// TODO
+		return [ this, response ];
 	});
 }
 function destroy():Promise<void> {
-	return this._documents.delete( this ).then( ( response:HTTP.Response.Class) => {
-		// TODO
-	});
+	return this._documents.delete( this );
 }
 
 export class Factory {
 	static hasClassProperties( document:Document.Class ):boolean {
 		return (
-			Utils.hasPropertyDefined( document, "_decorate" ) &&
+			Utils.hasPropertyDefined( document, "_documents" ) &&
 			Utils.hasPropertyDefined( document, "_etag" ) &&
 			Utils.hasFunction( document, "refresh" ) &&
 			Utils.hasFunction( document, "save" ) &&
 			Utils.hasFunction( document, "destroy" )
+		);
+	}
+
+	static is( object:Object ):boolean {
+		return (
+			// TODO: Add Document.Class check
+			Factory.hasClassProperties( <any> object )
 		);
 	}
 

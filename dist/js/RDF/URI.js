@@ -55,6 +55,9 @@ var Util = (function () {
         }
         return false;
     };
+    Util.getRelativeURI = function (absoluteURI, base) {
+        return absoluteURI.substring(base.length);
+    };
     Util.getDocumentURI = function (uri) {
         var parts = uri.split("#");
         if (parts.length > 2)

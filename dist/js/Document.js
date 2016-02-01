@@ -26,11 +26,10 @@ function getPointer(id) {
 }
 function inScope(idOrPointer) {
     var document = this;
-    var id = Pointer.factory.is(idOrPointer) ? idOrPointer.id : idOrPointer;
+    var id = Pointer.Factory.is(idOrPointer) ? idOrPointer.id : idOrPointer;
     if (id === document.id)
         return true;
-    // BNodes need to be already in the index to be in-scope
-    if (RDF.URI.Util.isBNodeID(id) && document._fragmentsIndex.has(id))
+    if (RDF.URI.Util.isBNodeID(id))
         return true;
     if (RDF.URI.Util.isAbsolute(id) && RDF.URI.Util.isFragmentOf(id, document.id))
         return true;
@@ -146,7 +145,7 @@ var Factory = (function () {
         if (uri === void 0) { uri = null; }
         if (!!uri && RDF.URI.Util.isBNodeID(uri))
             throw new Errors.IllegalArgumentError("Documents cannot have a BNodeID as a uri.");
-        var resource = Resource.factory.createFrom(object, uri);
+        var resource = Resource.Factory.createFrom(object, uri);
         var document = this.decorate(resource);
         return document;
     };

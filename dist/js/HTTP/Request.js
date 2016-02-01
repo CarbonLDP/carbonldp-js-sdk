@@ -151,6 +151,14 @@ var Util = (function () {
         prefer.values.push(new Header.Value(interactionModelURI + "; rel=interaction-model"));
         return requestOptions;
     };
+    Util.setSlug = function (slug, requestOptions) {
+        var headers = requestOptions.headers ? requestOptions.headers : requestOptions.headers = new Map();
+        if (!headers.has("Slug"))
+            headers.set("Slug", new Header.Class());
+        var slugHeader = headers.get("Slug");
+        slugHeader.values.push(new Header.Value(slug));
+        return requestOptions;
+    };
     return Util;
 })();
 exports.Util = Util;

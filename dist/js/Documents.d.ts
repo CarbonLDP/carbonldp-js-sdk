@@ -16,9 +16,10 @@ declare class Documents implements Pointer.Library, Pointer.Validator, ObjectSch
     inScope(id: string): boolean;
     hasPointer(id: string): boolean;
     getPointer(id: string): Pointer.Class;
-    get(uri: string, requestOptions?: HTTP.Request.Options): Promise<HTTP.ProcessedResponse<PersistedDocument.Class>>;
-    createChild(parentURI: string, childDocument: Document.Class, requestOptions?: HTTP.Request.Options): Promise<HTTP.Response.Class>;
-    save(persistedDocument: PersistedDocument.Class, requestOptions?: HTTP.Request.Options): Promise<HTTP.Response.Class>;
+    get(uri: string, requestOptions?: HTTP.Request.Options): Promise<[PersistedDocument.Class, HTTP.Response.Class]>;
+    createChild(parentURI: string, slug: string, childDocument: Document.Class, requestOptions?: HTTP.Request.Options): Promise<[Pointer.Class, HTTP.Response.Class]>;
+    createChild(parentURI: string, childDocument: Document.Class, requestOptions?: HTTP.Request.Options): Promise<[Pointer.Class, HTTP.Response.Class]>;
+    save(persistedDocument: PersistedDocument.Class, requestOptions?: HTTP.Request.Options): Promise<[PersistedDocument.Class, HTTP.Response.Class]>;
     delete(persistedDocument: PersistedDocument.Class, requestOptions?: HTTP.Request.Options): Promise<HTTP.Response.Class>;
     getSchemaFor(object: Object): ObjectSchema.DigestedObjectSchema;
     private getRDFDocument(rdfDocuments, response);

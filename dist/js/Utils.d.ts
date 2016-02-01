@@ -34,4 +34,7 @@ declare class UUID {
     static is(uuid: string): boolean;
     static generate(): string;
 }
-export { hasFunction, hasProperty, hasPropertyDefined, isNull, isArray, isString, isBoolean, isNumber, isInteger, isDouble, isDate, isObject, isFunction, isMap, parseBoolean, extend, forEachOwnProperty, S, A, M, UUID };
+declare class P {
+    static createRejectedPromise<T extends Error>(error: T): Promise<any>;
+}
+export { hasFunction, hasProperty, hasPropertyDefined, isNull, isArray, isString, isBoolean, isNumber, isInteger, isDouble, isDate, isObject, isFunction, isMap, parseBoolean, extend, forEachOwnProperty, S, A, M, UUID, P };

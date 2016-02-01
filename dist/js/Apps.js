@@ -15,8 +15,8 @@ var Apps = (function () {
                 uri = RDF.URI.Util.resolve(appsContainerURI, uri);
             uri = this.context.resolve(uri);
         }
-        return this.context.Documents.get(uri).then(function (processedResponse) {
-            var document = processedResponse.result;
+        return this.context.Documents.get(uri).then(function (_a) {
+            var document = _a[0], response = _a[1];
             if (!document.types.indexOf(CS.Class.Application))
                 throw new Error("The resource fetched is not a cs:Application.");
             return new App.Context(_this.context, document);

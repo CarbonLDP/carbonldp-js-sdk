@@ -177,4 +177,14 @@ export class Util {
 
 		return requestOptions;
 	}
+
+	static setSlug( slug:string, requestOptions:Options ):Options {
+		let headers:Map<string, Header.Class> = requestOptions.headers ? requestOptions.headers : requestOptions.headers = new Map<string, Header.Class>();
+		if ( ! headers.has( "Slug" ) ) headers.set( "Slug", new Header.Class() );
+
+		let slugHeader:Header.Class = headers.get( "Slug" );
+		slugHeader.values.push( new Header.Value( slug ) );
+
+		return requestOptions;
+	}
 }
