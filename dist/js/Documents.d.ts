@@ -6,6 +6,7 @@ import * as JSONLDConverter from "./JSONLDConverter";
 import * as PersistedDocument from "./PersistedDocument";
 import * as Pointer from "./Pointer";
 import * as ObjectSchema from "./ObjectSchema";
+import * as SPARQL from "./SPARQL";
 declare class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Resolver {
     _jsonldConverter: JSONLDConverter.Class;
     jsonldConverter: JSONLDConverter.Class;
@@ -22,6 +23,7 @@ declare class Documents implements Pointer.Library, Pointer.Validator, ObjectSch
     save(persistedDocument: PersistedDocument.Class, requestOptions?: HTTP.Request.Options): Promise<[PersistedDocument.Class, HTTP.Response.Class]>;
     delete(persistedDocument: PersistedDocument.Class, requestOptions?: HTTP.Request.Options): Promise<HTTP.Response.Class>;
     getSchemaFor(object: Object): ObjectSchema.DigestedObjectSchema;
+    executeSELECTQuery(documentURI: string, selectQuery: string, requestOptions?: HTTP.Request.Options): Promise<[SPARQL.Results.Class, HTTP.Response.Class]>;
     private getRDFDocument(rdfDocuments, response);
     private getPointerID(uri);
     private createPointer(localID);

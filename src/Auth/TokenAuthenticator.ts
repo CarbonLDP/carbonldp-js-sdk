@@ -32,12 +32,12 @@ export class Class implements Authenticator<UsernameAndPasswordToken> {
 
 	authenticate( authenticationToken:UsernameAndPasswordToken ):Promise<void> {
 		return this.basicAuthenticator.authenticate( authenticationToken ).then(
-			():Promise<HTTP.ProcessedResponse<Token.Class>> => {
+			():Promise<[ Token.Class, HTTP.Response.Class ]> => {
 				return this.createToken();
 			}
 		).then(
-			( processedResponse:HTTP.ProcessedResponse<Token.Class> ):void => {
-				this.token = processedResponse.result;
+			( [ token, response ]:[ Token.Class, HTTP.Response.Class ] ):void => {
+				this.token = token;
 			}
 		);
 	}
@@ -58,7 +58,7 @@ export class Class implements Authenticator<UsernameAndPasswordToken> {
 		return authenticationToken instanceof UsernameAndPasswordToken;
 	}
 
-	private createToken():Promise<HTTP.ProcessedResponse<Token.Class>> {
+	private createToken():Promise<[ Token.Class, HTTP.Response.Class ]> {
 		let uri:string = this.context.resolve( Class.TOKEN_CONTAINER );
 		let requestOptions:HTTP.Request.Options = {};
 
@@ -67,14 +67,13 @@ export class Class implements Authenticator<UsernameAndPasswordToken> {
 		HTTP.Request.Util.setAcceptHeader( "application/ld+json", requestOptions );
 		HTTP.Request.Util.setPreferredInteractionModel( NS.LDP.Class.RDFSource, requestOptions );
 
-		return HTTP.Request.Service.post( uri, null, requestOptions, new HTTP.JSONLDParser.Class() ).then( ( processedResponse:HTTP.ProcessedResponse<Object> ) => {
-			let expandedResult:Object = processedResponse.result;
+		return HTTP.Request.Service.post( uri, null, requestOptions, new HTTP.JSONLDParser.Class() ).then( ( [ expandedResult, response ]:[ Object, HTTP.Response.Class ] ) => {
 			let expandedNodes:RDF.Node.Class[] = RDF.Document.Util.getResources( expandedResult );
 
 			expandedNodes = expandedNodes.filter( Token.factory.hasRDFClass );
 
-			if( expandedNodes.length === 0 ) throw new HTTP.Errors.BadResponseError( "No '" + Token.RDF_CLASS + "' was returned.", processedResponse.response );
-			if( expandedNodes.length > 1 ) throw new HTTP.Errors.BadResponseError( "Multiple '" + Token.RDF_CLASS + "' were returned. ", processedResponse.response );
+			if( expandedNodes.length === 0 ) throw new HTTP.Errors.BadResponseError( "No '" + Token.RDF_CLASS + "' was returned.", response );
+			if( expandedNodes.length > 1 ) throw new HTTP.Errors.BadResponseError( "Multiple '" + Token.RDF_CLASS + "' were returned. ", response );
 
 			let expandedToken:RDF.Node.Class = expandedNodes[ 0 ];
 			let token:Token.Class = Token.factory.decorate( {} );
@@ -83,10 +82,7 @@ export class Class implements Authenticator<UsernameAndPasswordToken> {
 
 			this.context.Documents.jsonldConverter.compact( expandedToken, token, digestedSchema, this.context.Documents );
 
-			return {
-				result: token,
-				response: processedResponse.response,
-			};
+			return [ token, response ];
 		} );
 	}
 

@@ -9,6 +9,7 @@ var PersistedDocument = require("./PersistedDocument");
 var Pointer = require("./Pointer");
 var ObjectSchema = require("./ObjectSchema");
 var LDP = require("./NS/LDP");
+var SPARQL = require("./SPARQL");
 function parse(input) {
     try {
         return JSON.parse(input);
@@ -216,6 +217,17 @@ var Documents = (function () {
             return this.getDigestedObjectSchemaForDocument(object);
         }
     };
+    Documents.prototype.executeSELECTQuery = function (documentURI, selectQuery, requestOptions) {
+        if (requestOptions === void 0) { requestOptions = {}; }
+        if (!RDF.URI.Util.isAbsolute(documentURI)) {
+            if (!this.context)
+                throw new Errors.IllegalArgumentError("This Documents instance doesn't support relative URIs.");
+            documentURI = this.context.resolve(documentURI);
+        }
+        if (this.context && this.context.Auth.isAuthenticated())
+            this.context.Auth.addAuthentication(requestOptions);
+        return SPARQL.Service.executeSELECTQuery(documentURI, selectQuery, requestOptions);
+    };
     Documents.prototype.getRDFDocument = function (rdfDocuments, response) {
         if (rdfDocuments.length === 0)
             throw new HTTP.Errors.BadResponseError("No document was returned.", response);
@@ -231,6 +243,7 @@ var Documents = (function () {
             if( RDF.URI.Util.hasFragment( uri ) ) throw new Errors.IllegalArgumentError( "Fragment URI's cannot be fetched directly." );
         */
         if (!!this.context) {
+            // TODO: Check this, it may be incorrect
             if (RDF.URI.Util.isRelative(uri)) {
                 var baseURI = this.context.getBaseURI();
                 if (!RDF.URI.Util.isBaseOf(baseURI, uri))

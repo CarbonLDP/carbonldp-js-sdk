@@ -300,6 +300,7 @@ var Class = (function () {
                 _this.assignProperty(targetObject, expandedObject, propertyName, digestedSchema, pointerLibrary);
             }
             else {
+                _this.assignURIProperty(targetObject, expandedObject, propertyURI, pointerLibrary);
             }
         });
         return targetObject;
@@ -307,6 +308,22 @@ var Class = (function () {
     Class.prototype.assignProperty = function (compactedObject, expandedObject, propertyName, digestedSchema, pointerLibrary) {
         var propertyDefinition = digestedSchema.properties.get(propertyName);
         compactedObject[propertyName] = this.getPropertyValue(expandedObject, propertyDefinition, pointerLibrary);
+    };
+    Class.prototype.assignURIProperty = function (compactedObject, expandedObject, propertyURI, pointerLibrary) {
+        var guessedDefinition = new ObjectSchema.DigestedPropertyDefinition();
+        guessedDefinition.uri = new RDF.URI.Class(propertyURI);
+        guessedDefinition.containerType = this.getPropertyContainerType(expandedObject[propertyURI]);
+        compactedObject[propertyURI] = this.getPropertyValue(expandedObject, guessedDefinition, pointerLibrary);
+    };
+    Class.prototype.getPropertyContainerType = function (propertyValues) {
+        if (propertyValues.length === 1) {
+            if (RDF.List.Factory.is(propertyValues[0]))
+                return ObjectSchema.ContainerType.LIST;
+        }
+        else {
+            return ObjectSchema.ContainerType.SET;
+        }
+        return null;
     };
     Class.prototype.getPropertyValue = function (expandedObject, propertyDefinition, pointerLibrary) {
         var propertyURI = propertyDefinition.uri.toString();

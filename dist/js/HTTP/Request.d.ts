@@ -2,7 +2,6 @@
 import * as Header from "./Header";
 import Method from "./Method";
 import Parser from "./Parser";
-import ProcessedResponse from "./ProcessedResponse";
 import Response from "./Response";
 export interface Options {
     headers?: Map<string, Header.Class>;
@@ -15,19 +14,19 @@ export declare class Service {
     static send(method: (Method | string), url: string, options?: Options): Promise<Response>;
     static send(method: (Method | string), url: string, body: string, options?: Options): Promise<Response>;
     static send(method: (Method | string), url: string, body: string, options?: Options): Promise<Response>;
-    static send<T>(method: (Method | string), url: string, body: string, options?: Options, parser?: Parser<T>): Promise<ProcessedResponse<T>>;
+    static send<T>(method: (Method | string), url: string, body: string, options?: Options, parser?: Parser<T>): Promise<[T, Response]>;
     static options(url: string, options?: Options): Promise<Response>;
     static head(url: string, options?: Options): Promise<Response>;
     static get(url: string, options?: Options): Promise<Response>;
-    static get<T>(url: string, options?: Options, parser?: Parser<T>): Promise<ProcessedResponse<T>>;
+    static get<T>(url: string, options?: Options, parser?: Parser<T>): Promise<[T, Response]>;
     static post(url: string, body: string, options?: Options): Promise<Response>;
-    static post<T>(url: string, body: string, options?: Options, parser?: Parser<T>): Promise<ProcessedResponse<T>>;
+    static post<T>(url: string, body: string, options?: Options, parser?: Parser<T>): Promise<[T, Response]>;
     static put(url: string, body: string, options?: Options): Promise<Response>;
-    static put<T>(url: string, body: string, options?: Options, parser?: Parser<T>): Promise<ProcessedResponse<T>>;
+    static put<T>(url: string, body: string, options?: Options, parser?: Parser<T>): Promise<[T, Response]>;
     static patch(url: string, body: string, options?: Options): Promise<Response>;
-    static patch<T>(url: string, body: string, options?: Options, parser?: Parser<T>): Promise<ProcessedResponse<T>>;
+    static patch<T>(url: string, body: string, options?: Options, parser?: Parser<T>): Promise<[T, Response]>;
     static delete(url: string, body: string, options?: Options): Promise<Response>;
-    static delete<T>(url: string, body: string, options?: Options, parser?: Parser<T>): Promise<ProcessedResponse<T>>;
+    static delete<T>(url: string, body: string, options?: Options, parser?: Parser<T>): Promise<[T, Response]>;
 }
 export declare class Util {
     static setAcceptHeader(accept: string, requestOptions: Options): Options;

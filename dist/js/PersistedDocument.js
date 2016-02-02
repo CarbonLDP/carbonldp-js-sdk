@@ -17,6 +17,9 @@ function save() {
 function destroy() {
     return this._documents.delete(this);
 }
+function executeSELECTQuery(selectQuery) {
+    return this._documents.executeSELECTQuery(this.id, selectQuery);
+}
 var Factory = (function () {
     function Factory() {
     }
@@ -25,7 +28,8 @@ var Factory = (function () {
             Utils.hasPropertyDefined(document, "_etag") &&
             Utils.hasFunction(document, "refresh") &&
             Utils.hasFunction(document, "save") &&
-            Utils.hasFunction(document, "destroy"));
+            Utils.hasFunction(document, "destroy") &&
+            Utils.hasFunction(document, "executeSELECTQuery"));
     };
     Factory.is = function (object) {
         return (
@@ -114,6 +118,12 @@ var Factory = (function () {
                 enumerable: false,
                 configurable: true,
                 value: destroy,
+            },
+            "executeSELECTQuery": {
+                writable: false,
+                enumerable: false,
+                configurable: true,
+                value: executeSELECTQuery,
             },
         });
         /*

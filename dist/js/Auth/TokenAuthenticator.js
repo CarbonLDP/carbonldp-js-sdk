@@ -19,8 +19,9 @@ var Class = (function () {
         var _this = this;
         return this.basicAuthenticator.authenticate(authenticationToken).then(function () {
             return _this.createToken();
-        }).then(function (processedResponse) {
-            _this.token = processedResponse.result;
+        }).then(function (_a) {
+            var token = _a[0], response = _a[1];
+            _this.token = token;
         });
     };
     Class.prototype.addAuthentication = function (requestOptions) {
@@ -41,22 +42,19 @@ var Class = (function () {
         this.basicAuthenticator.addAuthentication(requestOptions);
         HTTP.Request.Util.setAcceptHeader("application/ld+json", requestOptions);
         HTTP.Request.Util.setPreferredInteractionModel(NS.LDP.Class.RDFSource, requestOptions);
-        return HTTP.Request.Service.post(uri, null, requestOptions, new HTTP.JSONLDParser.Class()).then(function (processedResponse) {
-            var expandedResult = processedResponse.result;
+        return HTTP.Request.Service.post(uri, null, requestOptions, new HTTP.JSONLDParser.Class()).then(function (_a) {
+            var expandedResult = _a[0], response = _a[1];
             var expandedNodes = RDF.Document.Util.getResources(expandedResult);
             expandedNodes = expandedNodes.filter(Token.factory.hasRDFClass);
             if (expandedNodes.length === 0)
-                throw new HTTP.Errors.BadResponseError("No '" + Token.RDF_CLASS + "' was returned.", processedResponse.response);
+                throw new HTTP.Errors.BadResponseError("No '" + Token.RDF_CLASS + "' was returned.", response);
             if (expandedNodes.length > 1)
-                throw new HTTP.Errors.BadResponseError("Multiple '" + Token.RDF_CLASS + "' were returned. ", processedResponse.response);
+                throw new HTTP.Errors.BadResponseError("Multiple '" + Token.RDF_CLASS + "' were returned. ", response);
             var expandedToken = expandedNodes[0];
             var token = Token.factory.decorate({});
             var digestedSchema = _this.context.Documents.getSchemaFor(expandedToken);
             _this.context.Documents.jsonldConverter.compact(expandedToken, token, digestedSchema, _this.context.Documents);
-            return {
-                result: token,
-                response: processedResponse.response,
-            };
+            return [token, response];
         });
     };
     Class.prototype.addTokenAuthenticationHeader = function (headers) {

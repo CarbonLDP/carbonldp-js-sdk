@@ -1,3 +1,4 @@
+import * as ObjectSchema from "./../ObjectSchema";
 import * as Utils from "./../Utils";
 
 export class Class {
@@ -95,6 +96,31 @@ export class Util {
 		if ( Utils.S.startsWith( uri, "https://" ) ) return uri.substr( 5, uri.length );
 		if ( Utils.S.startsWith( uri, "http://" ) ) return uri.substr( 4, uri.length );
 		return uri;
+	}
+
+	static prefix( uri:string, prefix:string, prefixURI:string ):string;
+	static prefix( uri:string, objectSchema:ObjectSchema.DigestedObjectSchema ):string;
+	static prefix( uri:string, prefixOrObjectSchema:any, prefixURI:string = null ):string {
+		let objectSchema:ObjectSchema.DigestedObjectSchema = ! Utils.isString( prefixOrObjectSchema ) ? prefixOrObjectSchema : null;
+		let prefix:string = Utils.isString( prefixOrObjectSchema ) ? prefixOrObjectSchema : null;
+
+		if( objectSchema !== null ) return prefixWithObjectSchema( uri, objectSchema );
+
+		return `${ prefix }:${ uri.substring( prefixURI.length ) }`;
+	}
+}
+
+function prefixWithObjectSchema( uri:string, objectSchema:ObjectSchema.DigestedObjectSchema ):string {
+	let prefixEntries:IterableIterator<[ string, Class ]> = objectSchema.prefixes.entries();
+	while( true ) {
+		let result:IteratorResult<[ string, Class ]> = prefixEntries.next();
+		if( result.done ) return uri;
+
+		let [ prefix, prefixURI ]:[ string, Class ] = result.value;
+		if( ! Util.isAbsolute( prefixURI.toString() ) ) continue;
+		if( ! uri.startsWith( prefixURI.toString() ) ) continue;
+
+		return Util.prefix( uri, prefix, prefixURI.toString() );
 	}
 }
 

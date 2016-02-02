@@ -1,13 +1,16 @@
 import * as Document from "./Document";
 import Documents from "./Documents";
+import * as HTTP from "./HTTP";
 import * as PersistedResource from "./PersistedResource";
 import * as Pointer from "./Pointer";
+import * as SPARQL from "./SPARQL";
 export interface Class extends Pointer.Class, PersistedResource.Class, Document.Class {
     _documents: Documents;
     _etag: string;
     refresh(): Promise<void>;
     save(): Promise<void>;
     destroy(): Promise<void>;
+    executeSELECTQuery(): Promise<[SPARQL.Results.Class, HTTP.Response.Class]>;
 }
 export declare class Factory {
     static hasClassProperties(document: Document.Class): boolean;

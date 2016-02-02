@@ -75,10 +75,7 @@ var Service = (function () {
             return requestPromise;
         return requestPromise.then(function (response) {
             return parser.parse(response.data).then(function (parsedBody) {
-                return {
-                    result: parsedBody,
-                    response: response,
-                };
+                return [parsedBody, response];
             });
         });
     };

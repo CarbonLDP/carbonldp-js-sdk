@@ -6,6 +6,7 @@ import * as PersistedResource from "./PersistedResource";
 import * as PersistedFragment from "./PersistedFragment";
 import * as Pointer from "./Pointer";
 import * as RDF from "./RDF";
+import * as SPARQL from "./SPARQL";
 import * as Utils from "./Utils";
 
 export interface Class extends Pointer.Class, PersistedResource.Class, Document.Class {
@@ -15,6 +16,8 @@ export interface Class extends Pointer.Class, PersistedResource.Class, Document.
 	refresh():Promise<void>;
 	save():Promise<void>;
 	destroy():Promise<void>;
+
+	executeSELECTQuery():Promise<[ SPARQL.Results.Class, HTTP.Response.Class ]>;
 }
 
 function isDirty():boolean {
@@ -35,6 +38,10 @@ function destroy():Promise<void> {
 	return this._documents.delete( this );
 }
 
+function executeSELECTQuery( selectQuery:string ):Promise<[ SPARQL.Results.Class, HTTP.Response.Class ]> {
+	return this._documents.executeSELECTQuery( this.id, selectQuery );
+}
+
 export class Factory {
 	static hasClassProperties( document:Document.Class ):boolean {
 		return (
@@ -42,7 +49,9 @@ export class Factory {
 			Utils.hasPropertyDefined( document, "_etag" ) &&
 			Utils.hasFunction( document, "refresh" ) &&
 			Utils.hasFunction( document, "save" ) &&
-			Utils.hasFunction( document, "destroy" )
+			Utils.hasFunction( document, "destroy" ) &&
+
+			Utils.hasFunction( document, "executeSELECTQuery" )
 		);
 	}
 
@@ -142,6 +151,13 @@ export class Factory {
 				enumerable: false,
 				configurable: true,
 				value: destroy,
+			},
+
+			"executeSELECTQuery": {
+				writable: false,
+				enumerable: false,
+				configurable: true,
+				value: executeSELECTQuery,
 			},
 		} );
 
