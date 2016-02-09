@@ -11,11 +11,7 @@ let sourcemaps = require( "gulp-sourcemaps" );
 let ts = require( "gulp-typescript" );
 let tslint = require( "gulp-tslint" );
 
-let babel = require( "gulp-babel" );
-
 let Builder = require( "systemjs-builder" );
-
-let jspm = require( "gulp-jspm" );
 
 let config = {
 	source: {
