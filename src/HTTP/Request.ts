@@ -4,7 +4,6 @@ import * as Errors from "./Errors";
 import * as Header from "./Header";
 import Method from "./Method";
 import Parser from "./Parser";
-import ProcessedResponse from "./ProcessedResponse";
 import Response from "./Response";
 
 import * as Utils from "./../Utils";
