@@ -1,4 +1,4 @@
-/// <reference path="./../../typings/tsd.d.ts" />
+/// <reference path="./../../typings/typings.d.ts" />
 /*
 
     import * as DocumentResource from './DocumentResource';
@@ -173,5 +173,12 @@
     export { PersistedDocumentResource as Class, Factory };
 
 */
+"use strict";
 
+System.register([], function (_export, _context) {
+    return {
+        setters: [],
+        execute: function () {}
+    };
+});
 //# sourceMappingURL=PersistedDocumentResource.js.map

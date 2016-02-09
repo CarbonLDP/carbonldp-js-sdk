@@ -1,4 +1,4 @@
-/// <reference path="../typings/tsd.d.ts" />
+/// <reference path="../typings/typings.d.ts" />
 import * as Errors from "./HTTP/Errors";
 import * as Header from "./HTTP/Header";
 import * as JSONParser from "./HTTP/JSONParser";

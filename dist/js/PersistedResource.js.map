@@ -1,1 +1,1 @@
-{"version":3,"sources":["PersistedResource.ts"],"names":[],"mappings":"AAAA,8CAA8C","file":"PersistedResource.js","sourcesContent":["/// <reference path=\"./../typings/tsd.d.ts\" />\n\nexport interface Class {\n\tisDirty():boolean;\n}\n\nexport default Class;\n"],"sourceRoot":"/source/"}
+{"version":3,"sources":[],"names":[],"mappings":"","file":"PersistedResource.js","sourcesContent":[],"sourceRoot":"/source/"}

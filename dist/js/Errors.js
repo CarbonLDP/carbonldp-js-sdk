@@ -1,10 +1,26 @@
-var IllegalStateError_1 = require("./Errors/IllegalStateError");
-exports.IllegalStateError = IllegalStateError_1.default;
-var IllegalArgumentError_1 = require("./Errors/IllegalArgumentError");
-exports.IllegalArgumentError = IllegalArgumentError_1.default;
-var IDAlreadyInUseError_1 = require("./Errors/IDAlreadyInUseError");
-exports.IDAlreadyInUseError = IDAlreadyInUseError_1.default;
-var NotImplementedError_1 = require("./Errors/NotImplementedError");
-exports.NotImplementedError = NotImplementedError_1.default;
+"use strict";
 
+System.register(["./Errors/IllegalStateError", "./Errors/IllegalArgumentError", "./Errors/IDAlreadyInUseError", "./Errors/NotImplementedError"], function (_export, _context) {
+  var IllegalStateError, IllegalArgumentError, IDAlreadyInUseError, NotImplementedError;
+  return {
+    setters: [function (_ErrorsIllegalStateError) {
+      IllegalStateError = _ErrorsIllegalStateError.default;
+    }, function (_ErrorsIllegalArgumentError) {
+      IllegalArgumentError = _ErrorsIllegalArgumentError.default;
+    }, function (_ErrorsIDAlreadyInUseError) {
+      IDAlreadyInUseError = _ErrorsIDAlreadyInUseError.default;
+    }, function (_ErrorsNotImplementedError) {
+      NotImplementedError = _ErrorsNotImplementedError.default;
+    }],
+    execute: function () {
+      _export("IllegalStateError", IllegalStateError);
+
+      _export("IllegalArgumentError", IllegalArgumentError);
+
+      _export("IDAlreadyInUseError", IDAlreadyInUseError);
+
+      _export("NotImplementedError", NotImplementedError);
+    }
+  };
+});
 //# sourceMappingURL=Errors.js.map

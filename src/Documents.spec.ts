@@ -1,5 +1,4 @@
-/// <reference path="../typings/jasmine/jasmine.d.ts" />
-/// <reference path="../typings/jasmine-ajax/mock-ajax.d.ts" />
+/// <reference path="./../typings/typings.d.ts" />
 
 import {
 	INSTANCE,
@@ -28,6 +27,7 @@ import AbstractContext from "./AbstractContext";
 import * as Document from "./Document";
 import Documents from "./Documents";
 import * as Fragment from "./Fragment";
+import * as HTTP from "./HTTP";
 import * as PersistedDocument from "./PersistedDocument";
 import * as ObjectSchema from "./ObjectSchema";
 import * as Utils from "./Utils";
@@ -48,8 +48,8 @@ describe( module( "Carbon/Documents", "" ), ():void => {
 	});
 
 	it( hasMethod( INSTANCE, "get", [
-		{ name:"uri", type:"string" }
-	], { type:"Promise<Carbon.HTTP.ProcessedResponse<Carbon.Document>>"}), ( done:(() => void) & { fail:( error?:any ) => void } ):void => {
+		{ name: "uri", type: "string" }
+	], { type: "Promise<[ Carbon.PersistedDocument.Class, HTTP.Response.Class ]>"}), ( done:(() => void) & { fail:( error?:any ) => void } ):void => {
 		let promises:Promise<any>[] = [];
 
 		class MockedContext extends AbstractContext {
@@ -137,18 +137,18 @@ describe( module( "Carbon/Documents", "" ), ():void => {
 
 		jasmine.Ajax.stubRequest( "http://example.com/resource/", null, "GET" ).andReturn( {
 			status: 200,
-			responseHeaders: [
-				{ "name": "ETag", "value": "162458126348712643" }
-			],
+			responseHeaders: {
+				"ETag": "162458126348712643",
+			},
 			responseText: responseBody,
 		} );
 
-		promises.push( documents.get( "http://example.com/resource/" ).then( ( processedResponse:any ):void => {
-			expect( processedResponse ).toBeDefined();
-
-			let document:PersistedDocument.Class = processedResponse.result;
+		promises.push( documents.get( "http://example.com/resource/" ).then( ( [ document, response ]:[ PersistedDocument.Class, HTTP.Response.Class ] ):void => {
 			expect( document ).toBeDefined();
 			expect( Utils.isObject( document ) ).toEqual( true );
+
+			expect( response ).toBeDefined();
+			expect( Utils.isObject( response ) ).toEqual( true );
 
 			// TODO: Finish assertions
 		}) );
@@ -162,8 +162,8 @@ describe( module( "Carbon/Documents", "" ), ():void => {
 	});
 
 	it( hasMethod( INSTANCE, "createChild", [
-		{ name:"parentURI", type:"string" },
-		{ name:"childDocument", type:"Carbon.Document.Class" },
+		{ name: "parentURI", type: "string" },
+		{ name: "childDocument", type: "Carbon.Document.Class" },
 	], { type:"Promise<HTTP.Response.Class>"}), ( done:(() => void) & { fail:( error?:any ) => void } ):void => {
 		let promises:Promise<any>[] = [];
 
@@ -228,7 +228,10 @@ describe( module( "Carbon/Documents", "" ), ():void => {
 		context.extendObjectSchema( objectSchema );
 
 		jasmine.Ajax.stubRequest( "http://example.com/parent-resource/", null, "POST" ).andReturn( {
-			// TODO
+			status: 200,
+			responseHeaders: {
+				"Location": "http://example.com/parent-resource/new-resource/",
+			},
 		} );
 
 		promises.push( documents.createChild( "http://example.com/parent-resource/", childDocument ).then( ( response:any ):void => {

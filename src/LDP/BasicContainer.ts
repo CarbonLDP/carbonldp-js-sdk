@@ -1,4 +1,4 @@
-/// <reference path="./../../typings/tsd.d.ts" />
+/// <reference path="./../../typings/typings.d.ts" />
 
 import * as NS from "./../NS";
 import * as Pointer from "./../Pointer";

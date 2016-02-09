@@ -1,4 +1,4 @@
-/// <reference path="../typings/tsd.d.ts" />
+/// <reference path="../typings/typings.d.ts" />
 import AbstractContext from "./AbstractContext";
 import Context from "./Context";
 import * as Document from "./Document";

@@ -1,41 +1,61 @@
-var Utils = require("./../Utils");
-exports.namespace = "http://www.w3.org/2001/XMLSchema#";
-var DataType = (function () {
-    function DataType() {
-    }
-    DataType.date = exports.namespace + "date";
-    DataType.dateTime = exports.namespace + "dateTime";
-    DataType.duration = exports.namespace + "duration";
-    DataType.gDay = exports.namespace + "gDay";
-    DataType.gMonth = exports.namespace + "gMonth";
-    DataType.gMonthDay = exports.namespace + "gMonthDay";
-    DataType.gYear = exports.namespace + "gYear";
-    DataType.gYearMonth = exports.namespace + "gYearMonth";
-    DataType.time = exports.namespace + "time";
-    DataType.byte = exports.namespace + "byte";
-    DataType.decimal = exports.namespace + "decimal";
-    DataType.int = exports.namespace + "int";
-    DataType.integer = exports.namespace + "integer";
-    DataType.long = exports.namespace + "long";
-    DataType.negativeInteger = exports.namespace + "negativeInteger";
-    DataType.nonNegativeInteger = exports.namespace + "nonNegativeInteger";
-    DataType.nonPositiveInteger = exports.namespace + "nonPositiveInteger";
-    DataType.positiveInteger = exports.namespace + "positiveInteger";
-    DataType.short = exports.namespace + "short";
-    DataType.unsignedLong = exports.namespace + "unsignedLong";
-    DataType.unsignedInt = exports.namespace + "unsignedInt";
-    DataType.unsignedShort = exports.namespace + "unsignedShort";
-    DataType.unsignedByte = exports.namespace + "unsignedByte";
-    DataType.double = exports.namespace + "double";
-    DataType.float = exports.namespace + "float";
-    DataType.boolean = exports.namespace + "boolean";
-    DataType.string = exports.namespace + "string";
-    DataType.object = exports.namespace + "object";
-    return DataType;
-})();
-exports.DataType = DataType;
-Utils.forEachOwnProperty(DataType, function (key, value) {
-    DataType[value] = key;
-});
+"use strict";
 
+System.register(["./../Utils"], function (_export, _context) {
+    var Utils, namespace, DataType;
+
+    function _classCallCheck(instance, Constructor) {
+        if (!(instance instanceof Constructor)) {
+            throw new TypeError("Cannot call a class as a function");
+        }
+    }
+
+    return {
+        setters: [function (_Utils) {
+            Utils = _Utils;
+        }],
+        execute: function () {
+            _export("namespace", namespace = "http://www.w3.org/2001/XMLSchema#");
+
+            _export("namespace", namespace);
+
+            _export("DataType", DataType = function DataType() {
+                _classCallCheck(this, DataType);
+            });
+
+            _export("DataType", DataType);
+
+            DataType.date = namespace + "date";
+            DataType.dateTime = namespace + "dateTime";
+            DataType.duration = namespace + "duration";
+            DataType.gDay = namespace + "gDay";
+            DataType.gMonth = namespace + "gMonth";
+            DataType.gMonthDay = namespace + "gMonthDay";
+            DataType.gYear = namespace + "gYear";
+            DataType.gYearMonth = namespace + "gYearMonth";
+            DataType.time = namespace + "time";
+            DataType.byte = namespace + "byte";
+            DataType.decimal = namespace + "decimal";
+            DataType.int = namespace + "int";
+            DataType.integer = namespace + "integer";
+            DataType.long = namespace + "long";
+            DataType.negativeInteger = namespace + "negativeInteger";
+            DataType.nonNegativeInteger = namespace + "nonNegativeInteger";
+            DataType.nonPositiveInteger = namespace + "nonPositiveInteger";
+            DataType.positiveInteger = namespace + "positiveInteger";
+            DataType.short = namespace + "short";
+            DataType.unsignedLong = namespace + "unsignedLong";
+            DataType.unsignedInt = namespace + "unsignedInt";
+            DataType.unsignedShort = namespace + "unsignedShort";
+            DataType.unsignedByte = namespace + "unsignedByte";
+            DataType.double = namespace + "double";
+            DataType.float = namespace + "float";
+            DataType.boolean = namespace + "boolean";
+            DataType.string = namespace + "string";
+            DataType.object = namespace + "object";
+            Utils.forEachOwnProperty(DataType, function (key, value) {
+                DataType[value] = key;
+            });
+        }
+    };
+});
 //# sourceMappingURL=XSD.js.map

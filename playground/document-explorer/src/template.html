@@ -1,0 +1,49 @@
+<div class="ui top fixed inverted menu">
+	<form class="right menu" *ngIf=" ! carbon.Auth.isAuthenticated() ">
+		<div class="item">
+			<div class="ui input">
+				<input type="text" placeholder="Username" [(ngModel)]="username">
+			</div>
+		</div>
+		<div class="item">
+			<div class="ui input">
+				<input type="password" placeholder="password" [(ngModel)]="password">
+			</div>
+		</div>
+		<button type="submit" class="item" (click)=" login( username, password ) ">Log-in</button>
+	</form>
+	<div class="right menu" *ngIf=" carbon.Auth.isAuthenticated() ">
+		<div class="item">
+			Logged as: {{ username }}
+		</div>
+		<a class="item" (click)=" logout() ">Logout</a>
+	</div>
+</div>
+<div class="main">
+	<document-explorer *ngIf=" !! appContext " [appContext]=" appContext "></document-explorer>
+	<div class="ui padded equal height divided grid" *ngIf=" ! appContext ">
+		<div class="row">
+			<div class="sixteen wide column">
+				<div class="ui cards">
+					<div class="card">
+						<div class="content">
+							<div class="header">
+								Test App
+							</div>
+							<div class="description">
+								The description of the application
+							</div>
+						</div>
+						<div class="extra content">
+							<div class="ui three buttons">
+								<div class="ui basic green button" (click)="getAppContext( 'test-app/' )">Select</div>
+								<div class="ui basic yellow button">Edit</div>
+								<div class="ui basic red button">Delete</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

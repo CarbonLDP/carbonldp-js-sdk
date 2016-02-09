@@ -1,4 +1,4 @@
-/// <reference path="../typings/tsd.d.ts" />
+/// <reference path="../typings/typings.d.ts" />
 import Context from "./Context";
 import * as SDKContext from "./SDKContext";
 declare abstract class AbstractContext extends SDKContext.Class {

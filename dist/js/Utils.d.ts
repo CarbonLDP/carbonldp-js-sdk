@@ -1,4 +1,4 @@
-/// <reference path="../typings/tsd.d.ts" />
+/// <reference path="../typings/typings.d.ts" />
 declare function hasFunction(object: Object, functionName: string): boolean;
 declare function hasProperty(object: Object, property: string): boolean;
 declare function hasPropertyDefined(object: Object, property: string): boolean;

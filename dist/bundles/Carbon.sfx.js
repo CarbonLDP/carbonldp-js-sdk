@@ -769,7 +769,7 @@ $__System.register("6", ["7"], function(exports_1) {
     }
 });
 
-/// <reference path="../../typings/tsd.d.ts" />
+/// <reference path="../../typings/typings.d.ts" />
 $__System.register("8", ["5", "9", "7"], function(exports_1) {
     var NS, Pointer, Utils;
     var RDF_CLASS, SCHEMA, Factory, factory;
@@ -831,7 +831,7 @@ $__System.register("8", ["5", "9", "7"], function(exports_1) {
     }
 });
 
-/// <reference path="./../../typings/tsd.d.ts" />
+/// <reference path="./../../typings/typings.d.ts" />
 $__System.register("a", ["5", "9"], function(exports_1) {
     var NS, Pointer;
     var RDF_CLASS, Factory, factory;
@@ -868,7 +868,7 @@ $__System.register("a", ["5", "9"], function(exports_1) {
     }
 });
 
-/// <reference path="../../typings/tsd.d.ts" />
+/// <reference path="../../typings/typings.d.ts" />
 $__System.register("b", ["5", "7"], function(exports_1) {
     var NS, Utils;
     var RDF_CLASS, SCHEMA, Factory;
@@ -930,7 +930,7 @@ $__System.register("c", ["b", "a", "8", "6", "4"], function(exports_1) {
     }
 });
 
-/// <reference path="./../../typings/tsd.d.ts" />
+/// <reference path="./../../typings/typings.d.ts" />
 $__System.register("d", ["e", "7", "f"], function(exports_1) {
     var HTTP, Utils, ResultsParser_1;
     var Class;
@@ -965,7 +965,7 @@ $__System.register("d", ["e", "7", "f"], function(exports_1) {
     }
 });
 
-/// <reference path="./../../typings/tsd.d.ts" />
+/// <reference path="./../../typings/typings.d.ts" />
 $__System.register("f", ["10"], function(exports_1) {
     var JSONParser_1;
     var Class;
@@ -1207,7 +1207,7 @@ $__System.register("14", ["16", "7"], function(exports_1) {
     }
 });
 
-/// <reference path="./../typings/tsd.d.ts" />
+/// <reference path="./../typings/typings.d.ts" />
 $__System.register("17", ["18", "14", "19", "13", "1a", "9", "15", "16", "7"], function(exports_1) {
     var Errors, Fragment, JSONLDConverter_1, NamedFragment, ObjectSchema, Pointer, RDF, Resource, Utils;
     var Factory, factory;
@@ -1629,7 +1629,7 @@ $__System.register("1b", ["17", "7"], function(exports_1) {
     }
 });
 
-/// <reference path="./../typings/tsd.d.ts" />
+/// <reference path="./../typings/typings.d.ts" />
 $__System.register("1a", ["18", "15", "7"], function(exports_1) {
     var Errors, RDF, Utils;
     var ContainerType, DigestedObjectSchema, DigestedPropertyDefinition, Digester;
@@ -1815,7 +1815,7 @@ $__System.register("1a", ["18", "15", "7"], function(exports_1) {
     }
 });
 
-/// <reference path="./../typings/tsd.d.ts" />
+/// <reference path="./../typings/typings.d.ts" />
 $__System.register("19", ["18", "1a", "5", "9", "15", "7"], function(exports_1) {
     var Errors, ObjectSchema, NS, Pointer, RDF, Utils;
     var Class;
@@ -2392,7 +2392,7 @@ $__System.register("19", ["18", "1a", "5", "9", "15", "7"], function(exports_1) 
     }
 });
 
-/// <reference path="../typings/tsd.d.ts" />
+/// <reference path="../typings/typings.d.ts" />
 $__System.register("1c", ["1d", "18", "e", "15", "7", "19", "1b", "9", "1a", "1e", "12"], function(exports_1) {
     var jsonld, Errors, HTTP, RDF, Utils, JSONLDConverter, PersistedDocument, Pointer, ObjectSchema, LDP, SPARQL;
     var Documents;
@@ -4192,7 +4192,7 @@ $__System.register("34", ["35"], function(exports_1) {
     }
 });
 
-/// <reference path="./../../typings/tsd.d.ts" />
+/// <reference path="./../../typings/typings.d.ts" />
 $__System.register("36", ["37", "35", "38", "34", "7"], function(exports_1) {
     var Errors, Header, Method_1, Response_1, Utils;
     var Service, Util;
@@ -9572,7 +9572,7 @@ var _removeDefine = $__System.get("@@amd-helpers").createDefine();
 
 _removeDefine();
 })();
-/// <reference path="../../typings/tsd.d.ts" />
+/// <reference path="../../typings/typings.d.ts" />
 $__System.register("3a", ["1d", "10"], function(exports_1) {
     var jsonld, JSONParser_1;
     var Class;
@@ -9642,7 +9642,7 @@ $__System.register("10", [], function(exports_1) {
     }
 });
 
-/// <reference path="../../typings/tsd.d.ts" />
+/// <reference path="../../typings/typings.d.ts" />
 $__System.register("35", [], function(exports_1) {
     var Class, Value, Util;
     return {
@@ -10751,7 +10751,7 @@ $__System.register("37", ["3c", "51", "50", "4f", "4e", "4d", "4c", "4b", "4a", 
     }
 });
 
-/// <reference path="./../typings/tsd.d.ts" />
+/// <reference path="./../typings/typings.d.ts" />
 $__System.register("e", ["37", "35", "10", "3a", "38", "39", "36", "34", "33"], function(exports_1) {
     var Errors, Header, JSONParser, JSONLDParser, Method_1, ProcessedResponse_1, Request, Response, StatusCode_1;
     return {
@@ -10881,7 +10881,7 @@ $__System.register("53", [], function(exports_1) {
     }
 });
 
-/// <reference path="./../typings/tsd.d.ts" />
+/// <reference path="./../typings/typings.d.ts" />
 $__System.register("3", ["53", "52", "2b", "2d", "2a", "2c", "18", "7"], function(exports_1) {
     var AuthenticationToken_1, Authenticator_1, BasicAuthenticator_1, Token, TokenAuthenticator_1, UsernameAndPasswordToken_1, Errors, Utils;
     var Method, Class;
@@ -10991,7 +10991,7 @@ $__System.register("3", ["53", "52", "2b", "2d", "2a", "2c", "18", "7"], functio
     }
 });
 
-/// <reference path="./../typings/tsd.d.ts" />
+/// <reference path="./../typings/typings.d.ts" />
 $__System.register("7", [], function(exports_1) {
     var S, A, M, UUID, P;
     function hasFunction(object, functionName) {
@@ -11643,7 +11643,7 @@ $__System.register("58", ["5"], function(exports_1) {
     }
 });
 
-/// <reference path="./../typings/tsd.d.ts" />
+/// <reference path="./../typings/typings.d.ts" />
 $__System.register("59", ["5a", "58", "3", "1c", "18", "c", "1a"], function(exports_1) {
     var App, APIDescription, Auth, Documents_1, Errors, LDP, ObjectSchema;
     var Class, instance;
@@ -11809,7 +11809,7 @@ $__System.register("59", ["5a", "58", "3", "1c", "18", "c", "1a"], function(expo
     }
 });
 
-/// <reference path="./../typings/tsd.d.ts" />
+/// <reference path="./../typings/typings.d.ts" />
 $__System.register("5b", ["59", "1a"], function(exports_1) {
     var __extends = (this && this.__extends) || function (d, b) {
         for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -11848,7 +11848,7 @@ $__System.register("5b", ["59", "1a"], function(exports_1) {
     }
 });
 
-/// <reference path="./../typings/tsd.d.ts" />
+/// <reference path="./../typings/typings.d.ts" />
 $__System.register("5a", ["5b", "5", "15", "7"], function(exports_1) {
     var __extends = (this && this.__extends) || function (d, b) {
         for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -11912,7 +11912,7 @@ $__System.register("5a", ["5b", "5", "15", "7"], function(exports_1) {
     }
 });
 
-/// <reference path="./../typings/tsd.d.ts" />
+/// <reference path="./../typings/typings.d.ts" />
 $__System.register("5c", ["5a", "15", "7", "55"], function(exports_1) {
     var App, RDF, Utils, CS;
     var Apps;
@@ -11963,7 +11963,7 @@ $__System.register("5c", ["5a", "15", "7", "55"], function(exports_1) {
     }
 });
 
-/// <reference path="../typings/tsd.d.ts" />
+/// <reference path="../typings/typings.d.ts" />
 $__System.register("5d", ["5c", "3", "5b", "17", "1c", "e", "15", "2", "7"], function(exports_1) {
     var __extends = (this && this.__extends) || function (d, b) {
         for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];

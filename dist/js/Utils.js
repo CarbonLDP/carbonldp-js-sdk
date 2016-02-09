@@ -1,230 +1,343 @@
-/// <reference path="./../typings/tsd.d.ts" />
-function hasFunction(object, functionName) {
-    return typeof object[functionName] === "function";
-}
-exports.hasFunction = hasFunction;
-function hasProperty(object, property) {
-    if (!object)
-        return false;
-    return "undefined" !== typeof object[property];
-}
-exports.hasProperty = hasProperty;
-function hasPropertyDefined(object, property) {
-    return !!Object.getOwnPropertyDescriptor(object, property);
-}
-exports.hasPropertyDefined = hasPropertyDefined;
-function isNull(value) {
-    return value === null;
-}
-exports.isNull = isNull;
-function isArray(object) {
-    return object instanceof Array;
-}
-exports.isArray = isArray;
-function isString(value) {
-    return typeof value === "string" || value instanceof String;
-}
-exports.isString = isString;
-function isBoolean(value) {
-    return typeof value === "boolean";
-}
-exports.isBoolean = isBoolean;
-function isNumber(value) {
-    return typeof value === "number" || value instanceof Number;
-}
-exports.isNumber = isNumber;
-function isInteger(value) {
-    if (!isNumber(value))
-        return false;
-    return value % 1 === 0;
-}
-exports.isInteger = isInteger;
-function isDouble(value) {
-    if (!isNumber(value))
-        return false;
-    return value % 1 !== 0;
-}
-exports.isDouble = isDouble;
-function isDate(date) {
-    return typeof date === "date" || date instanceof Date;
-}
-exports.isDate = isDate;
-function isObject(object) {
-    return typeof object === "object" && (!!object);
-}
-exports.isObject = isObject;
-function isFunction(value) {
-    return typeof value === "function";
-}
-exports.isFunction = isFunction;
-function isMap(value) {
-    return (isObject(value) &&
-        hasFunction(value, "get") &&
-        hasFunction(value, "has") &&
-        hasProperty(value, "size") &&
-        hasFunction(value, "clear") &&
-        hasFunction(value, "delete") &&
-        hasFunction(value, "entries") &&
-        hasFunction(value, "forEach") &&
-        hasFunction(value, "get") &&
-        hasFunction(value, "has") &&
-        hasFunction(value, "keys") &&
-        hasFunction(value, "set") &&
-        hasFunction(value, "values"));
-}
-exports.isMap = isMap;
-function parseBoolean(value) {
-    if (!isString(value))
-        return false;
-    /* tslint:disable: no-switch-case-fall-through */
-    switch (value.toLowerCase()) {
-        case "true":
-        case "yes":
-        case "y":
-        case "1":
-            return true;
-        case "false":
-        case "no":
-        case "n":
-        case "0":
-        default:
-            return false;
-    }
-    /* tslint:enable: no-switch-case-fall-through */
-}
-exports.parseBoolean = parseBoolean;
-function extend(target) {
-    var objects = [];
-    for (var _i = 1; _i < arguments.length; _i++) {
-        objects[_i - 1] = arguments[_i];
-    }
-    if (arguments.length <= 1)
-        return target;
-    for (var i = 0, length_1 = arguments.length; i < length_1; i++) {
-        var toMerge = objects[i];
-        for (var name_1 in toMerge) {
-            if (toMerge.hasOwnProperty(name_1)) {
-                target[name_1] = toMerge[name_1];
-            }
-        }
-    }
-    return target;
-}
-exports.extend = extend;
-function forEachOwnProperty(object, action) {
-    if (!(isObject(object) || isFunction(object)))
-        throw new Error("IllegalArgument");
-    for (var name_2 in object) {
-        if (object.hasOwnProperty(name_2)) {
-            if (action(name_2, object[name_2]) === false)
-                break;
-        }
-    }
-}
-exports.forEachOwnProperty = forEachOwnProperty;
-var S = (function () {
-    function S() {
-    }
-    S.startsWith = function (str, substring) {
-        return str.lastIndexOf(substring, 0) === 0;
-    };
-    S.endsWith = function (str, substring) {
-        return str.indexOf(substring, str.length - substring.length) !== -1;
-    };
-    S.contains = function (str, substring) {
-        return str.indexOf(substring) !== -1;
-    };
-    return S;
-})();
-exports.S = S;
-var A = (function () {
-    function A() {
-    }
-    A.from = function (iterator) {
-        var array = [];
-        var next = iterator.next();
-        while (!next.done) {
-            array.push(next.value);
-            next = iterator.next();
-        }
-        return array;
-    };
-    A.joinWithoutDuplicates = function () {
-        var arrays = [];
-        for (var _i = 0; _i < arguments.length; _i++) {
-            arrays[_i - 0] = arguments[_i];
-        }
-        var result = arrays[0].slice();
-        for (var i = 1, length_2 = arrays.length; i < length_2; i++) {
-            result = result.concat(arrays[i].filter(function (item) {
-                return result.indexOf(item) < 0;
-            }));
-        }
-        return result;
-    };
-    return A;
-})();
-exports.A = A;
-var M = (function () {
-    function M() {
-    }
-    M.from = function (object) {
-        var map = new Map();
-        forEachOwnProperty(object, function (name, value) {
-            map.set(name, value);
-        });
-        return map;
-    };
-    M.extend = function (toExtend) {
-        var extenders = [];
-        for (var _i = 1; _i < arguments.length; _i++) {
-            extenders[_i - 1] = arguments[_i];
-        }
-        for (var i = 0, length_3 = extenders.length; i < length_3; i++) {
-            var extender = extenders[i];
-            var values = extender.entries();
-            var next = values.next();
-            while (!next.done) {
-                var entry = next.value;
-                var key = entry[0];
-                var value = entry[1];
-                if (!toExtend.has(key))
-                    toExtend.set(key, value);
-                next = values.next();
-            }
-        }
-        return toExtend;
-    };
-    return M;
-})();
-exports.M = M;
-var UUID = (function () {
-    function UUID() {
-    }
-    UUID.is = function (uuid) {
-        return UUID.regExp.test(uuid);
-    };
-    UUID.generate = function () {
-        return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function (c) {
-            var r = Math.random() * 16 | 0;
-            var v = c === "x" ? r : (r & 0x3 | 0x8);
-            return v.toString(16);
-        });
-    };
-    UUID.regExp = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
-    return UUID;
-})();
-exports.UUID = UUID;
-var P = (function () {
-    function P() {
-    }
-    P.createRejectedPromise = function (error) {
-        return new Promise(function (resolve, reject) {
-            reject(error);
-        });
-    };
-    return P;
-})();
-exports.P = P;
+"use strict";
 
+System.register([], function (_export, _context) {
+    var _createClass, _typeof, S, A, M, UUID, P;
+
+    function _classCallCheck(instance, Constructor) {
+        if (!(instance instanceof Constructor)) {
+            throw new TypeError("Cannot call a class as a function");
+        }
+    }
+
+    function hasFunction(object, functionName) {
+        return typeof object[functionName] === "function";
+    }
+
+    function hasProperty(object, property) {
+        if (!object) return false;
+        return "undefined" !== typeof object[property];
+    }
+
+    function hasPropertyDefined(object, property) {
+        return !!Object.getOwnPropertyDescriptor(object, property);
+    }
+
+    function isNull(value) {
+        return value === null;
+    }
+
+    function isArray(object) {
+        return object instanceof Array;
+    }
+
+    function isString(value) {
+        return typeof value === "string" || value instanceof String;
+    }
+
+    function isBoolean(value) {
+        return typeof value === "boolean";
+    }
+
+    function isNumber(value) {
+        return typeof value === "number" || value instanceof Number;
+    }
+
+    function isInteger(value) {
+        if (!isNumber(value)) return false;
+        return value % 1 === 0;
+    }
+
+    function isDouble(value) {
+        if (!isNumber(value)) return false;
+        return value % 1 !== 0;
+    }
+
+    function isDate(date) {
+        return typeof date === "date" || date instanceof Date;
+    }
+
+    function isObject(object) {
+        return (typeof object === "undefined" ? "undefined" : _typeof(object)) === "object" && !!object;
+    }
+
+    function isFunction(value) {
+        return typeof value === "function";
+    }
+
+    function isMap(value) {
+        return isObject(value) && hasFunction(value, "get") && hasFunction(value, "has") && hasProperty(value, "size") && hasFunction(value, "clear") && hasFunction(value, "delete") && hasFunction(value, "entries") && hasFunction(value, "forEach") && hasFunction(value, "get") && hasFunction(value, "has") && hasFunction(value, "keys") && hasFunction(value, "set") && hasFunction(value, "values");
+    }
+
+    function parseBoolean(value) {
+        if (!isString(value)) return false;
+
+        switch (value.toLowerCase()) {
+            case "true":
+            case "yes":
+            case "y":
+            case "1":
+                return true;
+
+            case "false":
+            case "no":
+            case "n":
+            case "0":
+            default:
+                return false;
+        }
+    }
+
+    function extend(target) {
+        for (var _len = arguments.length, objects = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+            objects[_key - 1] = arguments[_key];
+        }
+
+        if (arguments.length <= 1) return target;
+
+        for (var i = 0, length = arguments.length; i < length; i++) {
+            var toMerge = objects[i];
+
+            for (var name in toMerge) {
+                if (toMerge.hasOwnProperty(name)) {
+                    target[name] = toMerge[name];
+                }
+            }
+        }
+
+        return target;
+    }
+
+    function forEachOwnProperty(object, action) {
+        if (!(isObject(object) || isFunction(object))) throw new Error("IllegalArgument");
+
+        for (var name in object) {
+            if (object.hasOwnProperty(name)) {
+                if (action(name, object[name]) === false) break;
+            }
+        }
+    }
+
+    return {
+        setters: [],
+        execute: function () {
+            _createClass = function () {
+                function defineProperties(target, props) {
+                    for (var i = 0; i < props.length; i++) {
+                        var descriptor = props[i];
+                        descriptor.enumerable = descriptor.enumerable || false;
+                        descriptor.configurable = true;
+                        if ("value" in descriptor) descriptor.writable = true;
+                        Object.defineProperty(target, descriptor.key, descriptor);
+                    }
+                }
+
+                return function (Constructor, protoProps, staticProps) {
+                    if (protoProps) defineProperties(Constructor.prototype, protoProps);
+                    if (staticProps) defineProperties(Constructor, staticProps);
+                    return Constructor;
+                };
+            }();
+
+            _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) {
+                return typeof obj;
+            } : function (obj) {
+                return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj;
+            };
+
+            _export("S", S = function () {
+                function S() {
+                    _classCallCheck(this, S);
+                }
+
+                _createClass(S, null, [{
+                    key: "startsWith",
+                    value: function startsWith(str, substring) {
+                        return str.lastIndexOf(substring, 0) === 0;
+                    }
+                }, {
+                    key: "endsWith",
+                    value: function endsWith(str, substring) {
+                        return str.indexOf(substring, str.length - substring.length) !== -1;
+                    }
+                }, {
+                    key: "contains",
+                    value: function contains(str, substring) {
+                        return str.indexOf(substring) !== -1;
+                    }
+                }]);
+
+                return S;
+            }());
+
+            _export("A", A = function () {
+                function A() {
+                    _classCallCheck(this, A);
+                }
+
+                _createClass(A, null, [{
+                    key: "from",
+                    value: function from(iterator) {
+                        var array = [];
+                        var next = iterator.next();
+
+                        while (!next.done) {
+                            array.push(next.value);
+                            next = iterator.next();
+                        }
+
+                        return array;
+                    }
+                }, {
+                    key: "joinWithoutDuplicates",
+                    value: function joinWithoutDuplicates() {
+                        for (var _len2 = arguments.length, arrays = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
+                            arrays[_key2] = arguments[_key2];
+                        }
+
+                        var result = arrays[0].slice();
+
+                        for (var i = 1, length = arrays.length; i < length; i++) {
+                            result = result.concat(arrays[i].filter(function (item) {
+                                return result.indexOf(item) < 0;
+                            }));
+                        }
+
+                        return result;
+                    }
+                }]);
+
+                return A;
+            }());
+
+            _export("M", M = function () {
+                function M() {
+                    _classCallCheck(this, M);
+                }
+
+                _createClass(M, null, [{
+                    key: "from",
+                    value: function from(object) {
+                        var map = new Map();
+                        forEachOwnProperty(object, function (name, value) {
+                            map.set(name, value);
+                        });
+                        return map;
+                    }
+                }, {
+                    key: "extend",
+                    value: function extend(toExtend) {
+                        for (var _len3 = arguments.length, extenders = Array(_len3 > 1 ? _len3 - 1 : 0), _key3 = 1; _key3 < _len3; _key3++) {
+                            extenders[_key3 - 1] = arguments[_key3];
+                        }
+
+                        for (var i = 0, length = extenders.length; i < length; i++) {
+                            var extender = extenders[i];
+                            var values = extender.entries();
+                            var next = values.next();
+
+                            while (!next.done) {
+                                var entry = next.value;
+                                var key = entry[0];
+                                var value = entry[1];
+                                if (!toExtend.has(key)) toExtend.set(key, value);
+                                next = values.next();
+                            }
+                        }
+
+                        return toExtend;
+                    }
+                }]);
+
+                return M;
+            }());
+
+            _export("UUID", UUID = function () {
+                function UUID() {
+                    _classCallCheck(this, UUID);
+                }
+
+                _createClass(UUID, null, [{
+                    key: "is",
+                    value: function is(uuid) {
+                        return UUID.regExp.test(uuid);
+                    }
+                }, {
+                    key: "generate",
+                    value: function generate() {
+                        return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function (c) {
+                            var r = Math.random() * 16 | 0;
+                            var v = c === "x" ? r : r & 0x3 | 0x8;
+                            return v.toString(16);
+                        });
+                    }
+                }]);
+
+                return UUID;
+            }());
+
+            UUID.regExp = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+
+            _export("P", P = function () {
+                function P() {
+                    _classCallCheck(this, P);
+                }
+
+                _createClass(P, null, [{
+                    key: "createRejectedPromise",
+                    value: function createRejectedPromise(error) {
+                        return new Promise(function (resolve, reject) {
+                            reject(error);
+                        });
+                    }
+                }]);
+
+                return P;
+            }());
+
+            _export("hasFunction", hasFunction);
+
+            _export("hasProperty", hasProperty);
+
+            _export("hasPropertyDefined", hasPropertyDefined);
+
+            _export("isNull", isNull);
+
+            _export("isArray", isArray);
+
+            _export("isString", isString);
+
+            _export("isBoolean", isBoolean);
+
+            _export("isNumber", isNumber);
+
+            _export("isInteger", isInteger);
+
+            _export("isDouble", isDouble);
+
+            _export("isDate", isDate);
+
+            _export("isObject", isObject);
+
+            _export("isFunction", isFunction);
+
+            _export("isMap", isMap);
+
+            _export("parseBoolean", parseBoolean);
+
+            _export("extend", extend);
+
+            _export("forEachOwnProperty", forEachOwnProperty);
+
+            _export("S", S);
+
+            _export("A", A);
+
+            _export("M", M);
+
+            _export("UUID", UUID);
+
+            _export("P", P);
+        }
+    };
+});
 //# sourceMappingURL=Utils.js.map

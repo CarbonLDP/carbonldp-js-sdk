@@ -1,4 +1,4 @@
-/// <reference path="../../typings/tsd.d.ts" />
+/// <reference path="../../typings/typings.d.ts" />
 
 import * as Container from "./Container";
 import * as NS from "./../NS";

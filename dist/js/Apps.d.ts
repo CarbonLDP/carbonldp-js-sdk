@@ -1,4 +1,4 @@
-/// <reference path="../typings/tsd.d.ts" />
+/// <reference path="../typings/typings.d.ts" />
 import * as App from "./App";
 import Context from "./Context";
 export declare class Apps {
