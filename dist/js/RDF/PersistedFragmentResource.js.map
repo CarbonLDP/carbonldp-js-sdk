@@ -1,1 +1,1 @@
-{"version":3,"sources":[],"names":[],"mappings":"","file":"RDF/PersistedFragmentResource.js","sourcesContent":[],"sourceRoot":"/source/"}
+{"version":3,"sources":["RDF/PersistedFragmentResource.ts"],"names":[],"mappings":"AAAA;;;;;;;;;;;;EAYE","file":"RDF/PersistedFragmentResource.js","sourcesContent":["/*\n\timport * as FragmentResource from './FragmentResource';\n\n\tinterface PersistedFragmentResource extends FragmentResource.Class {\n\n\t}\n\n\t//@formatter:off\n\texport {\n\t\tPersistedFragmentResource as Class\n\t};\n\t//@formatter:on\n*/\n"],"sourceRoot":"/source/"}

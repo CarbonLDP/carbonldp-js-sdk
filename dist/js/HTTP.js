@@ -1,42 +1,43 @@
-"use strict";
-
-System.register(["./HTTP/Errors", "./HTTP/Header", "./HTTP/JSONParser", "./HTTP/JSONLDParser", "./HTTP/Method", "./HTTP/Request", "./HTTP/Response", "./HTTP/StatusCode"], function (_export, _context) {
-  var Errors, Header, JSONParser, JSONLDParser, Method, Request, Response, StatusCode;
-  return {
-    setters: [function (_HTTPErrors) {
-      Errors = _HTTPErrors;
-    }, function (_HTTPHeader) {
-      Header = _HTTPHeader;
-    }, function (_HTTPJSONParser) {
-      JSONParser = _HTTPJSONParser;
-    }, function (_HTTPJSONLDParser) {
-      JSONLDParser = _HTTPJSONLDParser;
-    }, function (_HTTPMethod) {
-      Method = _HTTPMethod.default;
-    }, function (_HTTPRequest) {
-      Request = _HTTPRequest;
-    }, function (_HTTPResponse) {
-      Response = _HTTPResponse;
-    }, function (_HTTPStatusCode) {
-      StatusCode = _HTTPStatusCode.default;
-    }],
-    execute: function () {
-      _export("Errors", Errors);
-
-      _export("Header", Header);
-
-      _export("JSONParser", JSONParser);
-
-      _export("JSONLDParser", JSONLDParser);
-
-      _export("Method", Method);
-
-      _export("Request", Request);
-
-      _export("Response", Response);
-
-      _export("StatusCode", StatusCode);
+/// <reference path="./../typings/typings.d.ts" />
+System.register(["./HTTP/Errors", "./HTTP/Header", "./HTTP/JSONParser", "./HTTP/JSONLDParser", "./HTTP/Method", "./HTTP/Request", "./HTTP/Response", "./HTTP/StatusCode"], function(exports_1) {
+    var Errors, Header, JSONParser, JSONLDParser, Method_1, Request, Response, StatusCode_1;
+    return {
+        setters:[
+            function (Errors_1) {
+                Errors = Errors_1;
+            },
+            function (Header_1) {
+                Header = Header_1;
+            },
+            function (JSONParser_1) {
+                JSONParser = JSONParser_1;
+            },
+            function (JSONLDParser_1) {
+                JSONLDParser = JSONLDParser_1;
+            },
+            function (Method_1_1) {
+                Method_1 = Method_1_1;
+            },
+            function (Request_1) {
+                Request = Request_1;
+            },
+            function (Response_1) {
+                Response = Response_1;
+            },
+            function (StatusCode_1_1) {
+                StatusCode_1 = StatusCode_1_1;
+            }],
+        execute: function() {
+            exports_1("Errors", Errors);
+            exports_1("Header", Header);
+            exports_1("JSONParser", JSONParser);
+            exports_1("JSONLDParser", JSONLDParser);
+            exports_1("Method", Method_1.default);
+            exports_1("Request", Request);
+            exports_1("Response", Response);
+            exports_1("StatusCode", StatusCode_1.default);
+        }
     }
-  };
 });
+
 //# sourceMappingURL=HTTP.js.map

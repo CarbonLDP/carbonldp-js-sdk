@@ -1,198 +1,159 @@
-"use strict";
-
-System.register([], function (_export, _context) {
-    var _createClass, namespace, Class, Predicate;
-
-    function _classCallCheck(instance, Constructor) {
-        if (!(instance instanceof Constructor)) {
-            throw new TypeError("Cannot call a class as a function");
+System.register([], function(exports_1) {
+    var namespace, Class, Predicate;
+    return {
+        setters:[],
+        execute: function() {
+            namespace = "http://www.w3.org/ns/ldp#";
+            Class = (function () {
+                function Class() {
+                }
+                Object.defineProperty(Class, "Resource", {
+                    get: function () { return namespace + "Resource"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(Class, "RDFSource", {
+                    get: function () { return namespace + "RDFSource"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(Class, "Container", {
+                    get: function () { return namespace + "Container"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(Class, "BasicContainer", {
+                    get: function () { return namespace + "BasicContainer"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(Class, "DirectContainer", {
+                    get: function () { return namespace + "DirectContainer"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(Class, "IndirectContainer", {
+                    get: function () { return namespace + "IndirectContainer"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(Class, "NonRDFSource", {
+                    get: function () { return namespace + "NonRDFSource"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(Class, "MemberSubject", {
+                    get: function () { return namespace + "MemberSubject"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(Class, "PreferContainment", {
+                    get: function () { return namespace + "PreferContainment"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(Class, "PreferMembership", {
+                    get: function () { return namespace + "PreferMembership"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(Class, "PreferEmptyContainer", {
+                    get: function () { return namespace + "PreferEmptyContainer"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(Class, "PreferMinimalContainer", {
+                    get: function () { return namespace + "PreferMinimalContainer"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(Class, "Page", {
+                    get: function () { return namespace + "Page"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(Class, "PageSortCriterion", {
+                    get: function () { return namespace + "PageSortCriterion"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(Class, "Ascending", {
+                    get: function () { return namespace + "Ascending"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(Class, "Descending", {
+                    get: function () { return namespace + "Descending"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                return Class;
+            })();
+            Predicate = (function () {
+                function Predicate() {
+                }
+                Object.defineProperty(Predicate, "contains", {
+                    get: function () { return namespace + "contains"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(Predicate, "member", {
+                    get: function () { return namespace + "member"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(Predicate, "hasMemberRelation", {
+                    get: function () { return namespace + "hasMemberRelation"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(Predicate, "memberOfRelation", {
+                    get: function () { return namespace + "memberOfRelation"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(Predicate, "membershipResource", {
+                    get: function () { return namespace + "membershipResource"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(Predicate, "insertedContentRelation", {
+                    get: function () { return namespace + "insertedContentRelation"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(Predicate, "constrainedBy", {
+                    get: function () { return namespace + "constrainedBy"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(Predicate, "pageSortCriteria", {
+                    get: function () { return namespace + "pageSortCriteria"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(Predicate, "pageSortOrder", {
+                    get: function () { return namespace + "pageSortOrder"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(Predicate, "pageSortCollation", {
+                    get: function () { return namespace + "pageSortCollation"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(Predicate, "pageSequence", {
+                    get: function () { return namespace + "pageSequence"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                return Predicate;
+            })();
+            exports_1("namespace", namespace);
+            exports_1("Class", Class);
+            exports_1("Predicate", Predicate);
         }
     }
-
-    return {
-        setters: [],
-        execute: function () {
-            _createClass = function () {
-                function defineProperties(target, props) {
-                    for (var i = 0; i < props.length; i++) {
-                        var descriptor = props[i];
-                        descriptor.enumerable = descriptor.enumerable || false;
-                        descriptor.configurable = true;
-                        if ("value" in descriptor) descriptor.writable = true;
-                        Object.defineProperty(target, descriptor.key, descriptor);
-                    }
-                }
-
-                return function (Constructor, protoProps, staticProps) {
-                    if (protoProps) defineProperties(Constructor.prototype, protoProps);
-                    if (staticProps) defineProperties(Constructor, staticProps);
-                    return Constructor;
-                };
-            }();
-
-            _export("namespace", namespace = "http://www.w3.org/ns/ldp#");
-
-            _export("Class", Class = function () {
-                function Class() {
-                    _classCallCheck(this, Class);
-                }
-
-                _createClass(Class, null, [{
-                    key: "Resource",
-                    get: function get() {
-                        return namespace + "Resource";
-                    }
-                }, {
-                    key: "RDFSource",
-                    get: function get() {
-                        return namespace + "RDFSource";
-                    }
-                }, {
-                    key: "Container",
-                    get: function get() {
-                        return namespace + "Container";
-                    }
-                }, {
-                    key: "BasicContainer",
-                    get: function get() {
-                        return namespace + "BasicContainer";
-                    }
-                }, {
-                    key: "DirectContainer",
-                    get: function get() {
-                        return namespace + "DirectContainer";
-                    }
-                }, {
-                    key: "IndirectContainer",
-                    get: function get() {
-                        return namespace + "IndirectContainer";
-                    }
-                }, {
-                    key: "NonRDFSource",
-                    get: function get() {
-                        return namespace + "NonRDFSource";
-                    }
-                }, {
-                    key: "MemberSubject",
-                    get: function get() {
-                        return namespace + "MemberSubject";
-                    }
-                }, {
-                    key: "PreferContainment",
-                    get: function get() {
-                        return namespace + "PreferContainment";
-                    }
-                }, {
-                    key: "PreferMembership",
-                    get: function get() {
-                        return namespace + "PreferMembership";
-                    }
-                }, {
-                    key: "PreferEmptyContainer",
-                    get: function get() {
-                        return namespace + "PreferEmptyContainer";
-                    }
-                }, {
-                    key: "PreferMinimalContainer",
-                    get: function get() {
-                        return namespace + "PreferMinimalContainer";
-                    }
-                }, {
-                    key: "Page",
-                    get: function get() {
-                        return namespace + "Page";
-                    }
-                }, {
-                    key: "PageSortCriterion",
-                    get: function get() {
-                        return namespace + "PageSortCriterion";
-                    }
-                }, {
-                    key: "Ascending",
-                    get: function get() {
-                        return namespace + "Ascending";
-                    }
-                }, {
-                    key: "Descending",
-                    get: function get() {
-                        return namespace + "Descending";
-                    }
-                }]);
-
-                return Class;
-            }());
-
-            _export("Predicate", Predicate = function () {
-                function Predicate() {
-                    _classCallCheck(this, Predicate);
-                }
-
-                _createClass(Predicate, null, [{
-                    key: "contains",
-                    get: function get() {
-                        return namespace + "contains";
-                    }
-                }, {
-                    key: "member",
-                    get: function get() {
-                        return namespace + "member";
-                    }
-                }, {
-                    key: "hasMemberRelation",
-                    get: function get() {
-                        return namespace + "hasMemberRelation";
-                    }
-                }, {
-                    key: "memberOfRelation",
-                    get: function get() {
-                        return namespace + "memberOfRelation";
-                    }
-                }, {
-                    key: "membershipResource",
-                    get: function get() {
-                        return namespace + "membershipResource";
-                    }
-                }, {
-                    key: "insertedContentRelation",
-                    get: function get() {
-                        return namespace + "insertedContentRelation";
-                    }
-                }, {
-                    key: "constrainedBy",
-                    get: function get() {
-                        return namespace + "constrainedBy";
-                    }
-                }, {
-                    key: "pageSortCriteria",
-                    get: function get() {
-                        return namespace + "pageSortCriteria";
-                    }
-                }, {
-                    key: "pageSortOrder",
-                    get: function get() {
-                        return namespace + "pageSortOrder";
-                    }
-                }, {
-                    key: "pageSortCollation",
-                    get: function get() {
-                        return namespace + "pageSortCollation";
-                    }
-                }, {
-                    key: "pageSequence",
-                    get: function get() {
-                        return namespace + "pageSequence";
-                    }
-                }]);
-
-                return Predicate;
-            }());
-
-            _export("namespace", namespace);
-
-            _export("Class", Class);
-
-            _export("Predicate", Predicate);
-        }
-    };
 });
+
 //# sourceMappingURL=LDP.js.map

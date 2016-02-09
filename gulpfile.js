@@ -15,6 +15,8 @@ let babel = require( "gulp-babel" );
 
 let Builder = require( "systemjs-builder" );
 
+let jspm = require( "gulp-jspm" );
+
 let config = {
 	source: {
 		typescript: [
@@ -49,7 +51,8 @@ gulp.task( "test", ( done ) => {
 gulp.task( "compile-library", () => {
 	let tsProject = ts.createProject({
 		"declaration": true,
-		"target": "es6"
+		"target": "es5",
+		"module": "system",
 	});
 
 	let tsResults = gulp.src( config.source.typescript )
@@ -61,10 +64,6 @@ gulp.task( "compile-library", () => {
 	;
 
 	return tsResults.js
-		.pipe( babel({
-			presets: [ "es2015" ],
-			plugins: [ "transform-es2015-modules-systemjs" ],
-		}) )
 		.pipe( sourcemaps.write( "." ) )
 		.pipe( gulp.dest( config.dist.tsOutput ) )
 	;
@@ -74,8 +73,13 @@ gulp.task( "bundle-sfx", ( done ) => {
 	let builder = new Builder();
 
 	builder.buildStatic( "build/sfx.js", config.dist.sfxBundle, {
+		sourceMaps: true,
 		config: {
 			"transpiler": "typescript",
+			"typescriptOptions": {
+				sourceMap: true,
+				"inlineSourceMap": false,
+			},
 			"paths": {
 				"build/sfx.js": "build/sfx.js",
 				"Carbon": "src/Carbon.ts",

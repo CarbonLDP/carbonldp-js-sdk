@@ -1,1 +1,1 @@
-{"version":3,"sources":[],"names":[],"mappings":"","file":"Committer.js","sourcesContent":[],"sourceRoot":"/source/"}
+{"version":3,"sources":["Committer.ts"],"names":[],"mappings":"AAAA,kDAAkD","file":"Committer.js","sourcesContent":["/// <reference path=\"./../typings/typings.d.ts\" />\n\ninterface Committer<E> {\n\tcommit( object:E ):Promise<any>;\n}\n\nexport default Committer;\n"],"sourceRoot":"/source/"}

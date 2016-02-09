@@ -1,26 +1,26 @@
-"use strict";
-
-System.register(["./Errors/IllegalStateError", "./Errors/IllegalArgumentError", "./Errors/IDAlreadyInUseError", "./Errors/NotImplementedError"], function (_export, _context) {
-  var IllegalStateError, IllegalArgumentError, IDAlreadyInUseError, NotImplementedError;
-  return {
-    setters: [function (_ErrorsIllegalStateError) {
-      IllegalStateError = _ErrorsIllegalStateError.default;
-    }, function (_ErrorsIllegalArgumentError) {
-      IllegalArgumentError = _ErrorsIllegalArgumentError.default;
-    }, function (_ErrorsIDAlreadyInUseError) {
-      IDAlreadyInUseError = _ErrorsIDAlreadyInUseError.default;
-    }, function (_ErrorsNotImplementedError) {
-      NotImplementedError = _ErrorsNotImplementedError.default;
-    }],
-    execute: function () {
-      _export("IllegalStateError", IllegalStateError);
-
-      _export("IllegalArgumentError", IllegalArgumentError);
-
-      _export("IDAlreadyInUseError", IDAlreadyInUseError);
-
-      _export("NotImplementedError", NotImplementedError);
+System.register(["./Errors/IllegalStateError", "./Errors/IllegalArgumentError", "./Errors/IDAlreadyInUseError", "./Errors/NotImplementedError"], function(exports_1) {
+    var IllegalStateError_1, IllegalArgumentError_1, IDAlreadyInUseError_1, NotImplementedError_1;
+    return {
+        setters:[
+            function (IllegalStateError_1_1) {
+                IllegalStateError_1 = IllegalStateError_1_1;
+            },
+            function (IllegalArgumentError_1_1) {
+                IllegalArgumentError_1 = IllegalArgumentError_1_1;
+            },
+            function (IDAlreadyInUseError_1_1) {
+                IDAlreadyInUseError_1 = IDAlreadyInUseError_1_1;
+            },
+            function (NotImplementedError_1_1) {
+                NotImplementedError_1 = NotImplementedError_1_1;
+            }],
+        execute: function() {
+            exports_1("IllegalStateError", IllegalStateError_1.default);
+            exports_1("IllegalArgumentError", IllegalArgumentError_1.default);
+            exports_1("IDAlreadyInUseError", IDAlreadyInUseError_1.default);
+            exports_1("NotImplementedError", NotImplementedError_1.default);
+        }
     }
-  };
 });
+
 //# sourceMappingURL=Errors.js.map

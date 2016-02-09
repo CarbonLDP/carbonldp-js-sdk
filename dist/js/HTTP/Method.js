@@ -1,10 +1,8 @@
-"use strict";
-
-System.register([], function (_export, _context) {
+System.register([], function(exports_1) {
     var Method;
     return {
-        setters: [],
-        execute: function () {
+        setters:[],
+        execute: function() {
             (function (Method) {
                 Method[Method["OPTIONS"] = 0] = "OPTIONS";
                 Method[Method["HEAD"] = 1] = "HEAD";
@@ -14,9 +12,9 @@ System.register([], function (_export, _context) {
                 Method[Method["PATCH"] = 5] = "PATCH";
                 Method[Method["DELETE"] = 6] = "DELETE";
             })(Method || (Method = {}));
-
-            _export("default", Method);
+            exports_1("default",Method);
         }
-    };
+    }
 });
+
 //# sourceMappingURL=Method.js.map

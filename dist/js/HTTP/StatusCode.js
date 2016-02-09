@@ -1,10 +1,8 @@
-"use strict";
-
-System.register([], function (_export, _context) {
+System.register([], function(exports_1) {
     var StatusCode;
     return {
-        setters: [],
-        execute: function () {
+        setters:[],
+        execute: function() {
             (function (StatusCode) {
                 StatusCode[StatusCode["CONTINUE"] = 100] = "CONTINUE";
                 StatusCode[StatusCode["SWITCHING_PROTOCOLS"] = 101] = "SWITCHING_PROTOCOLS";
@@ -47,9 +45,9 @@ System.register([], function (_export, _context) {
                 StatusCode[StatusCode["GATEWAY_TIME_OUT"] = 504] = "GATEWAY_TIME_OUT";
                 StatusCode[StatusCode["HTTP_VERSION_NOT_SUPPORTED"] = 505] = "HTTP_VERSION_NOT_SUPPORTED";
             })(StatusCode || (StatusCode = {}));
-
-            _export("default", StatusCode);
+            exports_1("default",StatusCode);
         }
-    };
+    }
 });
+
 //# sourceMappingURL=StatusCode.js.map

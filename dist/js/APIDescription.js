@@ -1,29 +1,25 @@
-"use strict";
-
-System.register(["./NS"], function (_export, _context) {
-    var NS, RDF_CLASS, SCHEMA;
+System.register(["./NS"], function(exports_1) {
+    var NS;
+    var RDF_CLASS, SCHEMA;
     return {
-        setters: [function (_NS) {
-            NS = _NS;
-        }],
-        execute: function () {
-            _export("RDF_CLASS", RDF_CLASS = NS.C.Class.API);
-
-            _export("RDF_CLASS", RDF_CLASS);
-
-            _export("SCHEMA", SCHEMA = {
+        setters:[
+            function (NS_1) {
+                NS = NS_1;
+            }],
+        execute: function() {
+            exports_1("RDF_CLASS", RDF_CLASS = NS.C.Class.API);
+            exports_1("SCHEMA", SCHEMA = {
                 "version": {
                     "@id": NS.C.Predicate.version,
-                    "@type": NS.XSD.DataType.string
+                    "@type": NS.XSD.DataType.string,
                 },
                 "buildDate": {
                     "@id": NS.C.Predicate.buildDate,
-                    "@type": NS.XSD.DataType.dateTime
-                }
+                    "@type": NS.XSD.DataType.dateTime,
+                },
             });
-
-            _export("SCHEMA", SCHEMA);
         }
-    };
+    }
 });
+
 //# sourceMappingURL=APIDescription.js.map

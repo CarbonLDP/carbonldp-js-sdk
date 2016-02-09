@@ -1,38 +1,38 @@
-"use strict";
-
-System.register(["./RDF/Literal", "./RDF/PropertyDescription", "./RDF/Document", "./RDF/List", "./RDF/RDFNode", "./RDF/URI", "./RDF/Value"], function (_export, _context) {
-  var Literal, PropertyDescription, Document, List, Node, URI, Value;
-  return {
-    setters: [function (_RDFLiteral) {
-      Literal = _RDFLiteral;
-    }, function (_RDFPropertyDescription) {
-      PropertyDescription = _RDFPropertyDescription.default;
-    }, function (_RDFDocument) {
-      Document = _RDFDocument;
-    }, function (_RDFList) {
-      List = _RDFList;
-    }, function (_RDFRDFNode) {
-      Node = _RDFRDFNode;
-    }, function (_RDFURI) {
-      URI = _RDFURI;
-    }, function (_RDFValue) {
-      Value = _RDFValue;
-    }],
-    execute: function () {
-      _export("Literal", Literal);
-
-      _export("PropertyDescription", PropertyDescription);
-
-      _export("Document", Document);
-
-      _export("List", List);
-
-      _export("Node", Node);
-
-      _export("URI", URI);
-
-      _export("Value", Value);
+System.register(["./RDF/Literal", "./RDF/PropertyDescription", "./RDF/Document", "./RDF/List", "./RDF/RDFNode", "./RDF/URI", "./RDF/Value"], function(exports_1) {
+    var Literal, PropertyDescription_1, Document, List, Node, URI, Value;
+    return {
+        setters:[
+            function (Literal_1) {
+                Literal = Literal_1;
+            },
+            function (PropertyDescription_1_1) {
+                PropertyDescription_1 = PropertyDescription_1_1;
+            },
+            function (Document_1) {
+                Document = Document_1;
+            },
+            function (List_1) {
+                List = List_1;
+            },
+            function (Node_1) {
+                Node = Node_1;
+            },
+            function (URI_1) {
+                URI = URI_1;
+            },
+            function (Value_1) {
+                Value = Value_1;
+            }],
+        execute: function() {
+            exports_1("Literal", Literal);
+            exports_1("PropertyDescription", PropertyDescription_1.default);
+            exports_1("Document", Document);
+            exports_1("List", List);
+            exports_1("Node", Node);
+            exports_1("URI", URI);
+            exports_1("Value", Value);
+        }
     }
-  };
 });
+
 //# sourceMappingURL=RDF.js.map
