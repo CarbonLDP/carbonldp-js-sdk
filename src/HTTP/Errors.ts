@@ -19,7 +19,7 @@ import BadResponseError from "./Errors/server/BadResponseError";
 import BadGatewayError from "./Errors/server/BadGatewayError";
 import GatewayTimeoutError from "./Errors/server/GatewayTimeoutError";
 import HTTPVersionNotSupportedError from "./Errors/server/HTTPVersionNotSupportedError";
-import InternalServerErrorError from "./Errors/server/InternalServerErrorError";
+import InternalServerError from "./Errors/server/InternalServerError";
 import NotImplementedError from "./Errors/server/NotImplementedError";
 import ServiceUnavailableError from "./Errors/server/ServiceUnavailableError";
 
@@ -47,7 +47,7 @@ server.push( BadResponseError );
 server.push( BadGatewayError );
 server.push( GatewayTimeoutError );
 server.push( HTTPVersionNotSupportedError );
-server.push( InternalServerErrorError );
+server.push( InternalServerError );
 server.push( NotImplementedError );
 server.push( ServiceUnavailableError );
 
@@ -81,7 +81,7 @@ export {
 	BadGatewayError,
 	GatewayTimeoutError,
 	HTTPVersionNotSupportedError,
-	InternalServerErrorError,
+	InternalServerError,
 	NotImplementedError,
 	ServiceUnavailableError,
 
