@@ -5,35 +5,35 @@ System.register(["./../HTTPError"], function(exports_1) {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
     var HTTPError_1;
-    var name, statusCode, NotAcceptableError;
+    var name, statusCode, InternalServerError;
     return {
         setters:[
             function (HTTPError_1_1) {
                 HTTPError_1 = HTTPError_1_1;
             }],
         execute: function() {
-            name = "NotAcceptableError";
-            statusCode = 406;
-            NotAcceptableError = (function (_super) {
-                __extends(NotAcceptableError, _super);
-                function NotAcceptableError() {
+            name = "InternalServerError";
+            statusCode = 500;
+            InternalServerError = (function (_super) {
+                __extends(InternalServerError, _super);
+                function InternalServerError() {
                     _super.apply(this, arguments);
                 }
-                Object.defineProperty(NotAcceptableError, "statusCode", {
+                Object.defineProperty(InternalServerError, "statusCode", {
                     get: function () { return statusCode; },
                     enumerable: true,
                     configurable: true
                 });
-                Object.defineProperty(NotAcceptableError.prototype, "name", {
+                Object.defineProperty(InternalServerError.prototype, "name", {
                     get: function () { return name; },
                     enumerable: true,
                     configurable: true
                 });
-                return NotAcceptableError;
+                return InternalServerError;
             })(HTTPError_1.default);
-            exports_1("default",NotAcceptableError);
+            exports_1("default",InternalServerError);
         }
     }
 });
 
-//# sourceMappingURL=NotAcceptableError.js.map
+//# sourceMappingURL=InternalServerError.js.map

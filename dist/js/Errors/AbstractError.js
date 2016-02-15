@@ -20,7 +20,7 @@ System.register([], function(exports_1) {
                     configurable: true
                 });
                 AbstractError.prototype.toString = function () {
-                    return this.name + ":" + this.message;
+                    return this.name + ": " + this.message;
                 };
                 return AbstractError;
             })(Error);

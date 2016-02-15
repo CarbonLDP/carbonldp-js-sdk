@@ -23,11 +23,9 @@ export class Util {
 	}
 
 	static isAbsolute( uri:string ):boolean {
-		if ( Utils.S.startsWith( uri, "http://" ) ) return true;
-		if ( Utils.S.startsWith( uri, "https://" ) ) return true;
-		if ( Utils.S.startsWith( uri, "://" ) ) return true;
-
-		return false;
+		return Utils.S.startsWith( uri, "http://" )
+			|| Utils.S.startsWith( uri, "https://" )
+			|| Utils.S.startsWith( uri, "://" );
 	}
 
 	static isRelative( uri:string ):boolean {
@@ -39,7 +37,7 @@ export class Util {
 	}
 
 	static isPrefixed( uri:string ):boolean {
-		return ! Util.isAbsolute( uri ) && Utils.S.contains( uri, ":" );
+		return ! Util.isAbsolute( uri ) && ! Util.isBNodeID( uri ) && Utils.S.contains( uri, ":" );
 	}
 
 	static isFragmentOf( fragmentURI:string, uri:string ):boolean {
@@ -63,6 +61,8 @@ export class Util {
 	}
 
 	static getRelativeURI( absoluteURI:string, base:string ):string {
+		if ( ! absoluteURI.startsWith( base ) )
+			return absoluteURI;
 		return absoluteURI.substring( base.length );
 	}
 
@@ -82,6 +82,9 @@ export class Util {
 	}
 
 	static resolve( parentURI:string, childURI:string ):string {
+		if ( Util.isAbsolute( childURI ) || Util.isPrefixed( childURI ) )
+			return childURI;
+
 		let finalURI:string = parentURI;
 		if ( ! Utils.S.endsWith( parentURI, "/" ) ) finalURI += "/";
 
@@ -105,6 +108,9 @@ export class Util {
 		let prefix:string = Utils.isString( prefixOrObjectSchema ) ? prefixOrObjectSchema : null;
 
 		if( objectSchema !== null ) return prefixWithObjectSchema( uri, objectSchema );
+
+		if ( Util.isPrefixed( uri ) || ! uri.startsWith( prefixURI ) )
+			return uri;
 
 		return `${ prefix }:${ uri.substring( prefixURI.length ) }`;
 	}

@@ -28,9 +28,9 @@ System.register(["./../NS", "./../Pointer", "./../Utils"], function(exports_1) {
                 function Factory() {
                 }
                 Factory.prototype.hasClassProperties = function (object) {
-                    return (Utils.isObject(object) &&
-                        Utils.hasPropertyDefined(object, "key") &&
-                        Utils.hasPropertyDefined(object, "expirationTime"));
+                    return Utils.isObject(object)
+                        && Utils.hasPropertyDefined(object, "key")
+                        && Utils.hasPropertyDefined(object, "expirationTime");
                 };
                 Factory.prototype.decorate = function (object) {
                     if (this.hasClassProperties(object))

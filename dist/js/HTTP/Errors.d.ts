@@ -17,7 +17,7 @@ import BadResponseError from "./Errors/server/BadResponseError";
 import BadGatewayError from "./Errors/server/BadGatewayError";
 import GatewayTimeoutError from "./Errors/server/GatewayTimeoutError";
 import HTTPVersionNotSupportedError from "./Errors/server/HTTPVersionNotSupportedError";
-import InternalServerErrorError from "./Errors/server/InternalServerErrorError";
+import InternalServerErrorError from "./Errors/server/InternalServerError";
 import NotImplementedError from "./Errors/server/NotImplementedError";
 import ServiceUnavailableError from "./Errors/server/ServiceUnavailableError";
 import UnknownError from "./Errors/UnknownError";

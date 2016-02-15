@@ -1,5 +1,5 @@
-System.register(["./Errors/HTTPError", "./Errors/client/BadRequestError", "./Errors/client/ConflictError", "./Errors/client/ForbiddenError", "./Errors/client/MethodNotAllowedError", "./Errors/client/NotAcceptableError", "./Errors/client/NotFoundError", "./Errors/client/PreconditionFailedError", "./Errors/client/PreconditionRequiredError", "./Errors/client/RequestEntityTooLargeError", "./Errors/client/RequestHeaderFieldsTooLargeError", "./Errors/client/RequestURITooLongError", "./Errors/client/TooManyRequestsError", "./Errors/client/UnauthorizedError", "./Errors/client/UnsupportedMediaTypeError", "./Errors/server/BadResponseError", "./Errors/server/BadGatewayError", "./Errors/server/GatewayTimeoutError", "./Errors/server/HTTPVersionNotSupportedError", "./Errors/server/InternalServerErrorError", "./Errors/server/NotImplementedError", "./Errors/server/ServiceUnavailableError", "./Errors/UnknownError"], function(exports_1) {
-    var HTTPError_1, BadRequestError_1, ConflictError_1, ForbiddenError_1, MethodNotAllowedError_1, NotAcceptableError_1, NotFoundError_1, PreconditionFailedError_1, PreconditionRequiredError_1, RequestEntityTooLargeError_1, RequestHeaderFieldsTooLargeError_1, RequestURITooLongError_1, TooManyRequestsError_1, UnauthorizedError_1, UnsupportedMediaTypeError_1, BadResponseError_1, BadGatewayError_1, GatewayTimeoutError_1, HTTPVersionNotSupportedError_1, InternalServerErrorError_1, NotImplementedError_1, ServiceUnavailableError_1, UnknownError_1;
+System.register(["./Errors/HTTPError", "./Errors/client/BadRequestError", "./Errors/client/ConflictError", "./Errors/client/ForbiddenError", "./Errors/client/MethodNotAllowedError", "./Errors/client/NotAcceptableError", "./Errors/client/NotFoundError", "./Errors/client/PreconditionFailedError", "./Errors/client/PreconditionRequiredError", "./Errors/client/RequestEntityTooLargeError", "./Errors/client/RequestHeaderFieldsTooLargeError", "./Errors/client/RequestURITooLongError", "./Errors/client/TooManyRequestsError", "./Errors/client/UnauthorizedError", "./Errors/client/UnsupportedMediaTypeError", "./Errors/server/BadResponseError", "./Errors/server/BadGatewayError", "./Errors/server/GatewayTimeoutError", "./Errors/server/HTTPVersionNotSupportedError", "./Errors/server/InternalServerError", "./Errors/server/NotImplementedError", "./Errors/server/ServiceUnavailableError", "./Errors/UnknownError"], function(exports_1) {
+    var HTTPError_1, BadRequestError_1, ConflictError_1, ForbiddenError_1, MethodNotAllowedError_1, NotAcceptableError_1, NotFoundError_1, PreconditionFailedError_1, PreconditionRequiredError_1, RequestEntityTooLargeError_1, RequestHeaderFieldsTooLargeError_1, RequestURITooLongError_1, TooManyRequestsError_1, UnauthorizedError_1, UnsupportedMediaTypeError_1, BadResponseError_1, BadGatewayError_1, GatewayTimeoutError_1, HTTPVersionNotSupportedError_1, InternalServerError_1, NotImplementedError_1, ServiceUnavailableError_1, UnknownError_1;
     var client, server, statusCodeMap;
     return {
         setters:[
@@ -60,8 +60,8 @@ System.register(["./Errors/HTTPError", "./Errors/client/BadRequestError", "./Err
             function (HTTPVersionNotSupportedError_1_1) {
                 HTTPVersionNotSupportedError_1 = HTTPVersionNotSupportedError_1_1;
             },
-            function (InternalServerErrorError_1_1) {
-                InternalServerErrorError_1 = InternalServerErrorError_1_1;
+            function (InternalServerError_1_1) {
+                InternalServerError_1 = InternalServerError_1_1;
             },
             function (NotImplementedError_1_1) {
                 NotImplementedError_1 = NotImplementedError_1_1;
@@ -93,7 +93,7 @@ System.register(["./Errors/HTTPError", "./Errors/client/BadRequestError", "./Err
             server.push(BadGatewayError_1.default);
             server.push(GatewayTimeoutError_1.default);
             server.push(HTTPVersionNotSupportedError_1.default);
-            server.push(InternalServerErrorError_1.default);
+            server.push(InternalServerError_1.default);
             server.push(NotImplementedError_1.default);
             server.push(ServiceUnavailableError_1.default);
             statusCodeMap = new Map();
@@ -122,7 +122,7 @@ System.register(["./Errors/HTTPError", "./Errors/client/BadRequestError", "./Err
             exports_1("BadGatewayError", BadGatewayError_1.default);
             exports_1("GatewayTimeoutError", GatewayTimeoutError_1.default);
             exports_1("HTTPVersionNotSupportedError", HTTPVersionNotSupportedError_1.default);
-            exports_1("InternalServerErrorError", InternalServerErrorError_1.default);
+            exports_1("InternalServerErrorError", InternalServerError_1.default);
             exports_1("NotImplementedError", NotImplementedError_1.default);
             exports_1("ServiceUnavailableError", ServiceUnavailableError_1.default);
             exports_1("UnknownError", UnknownError_1.default);

@@ -41,13 +41,9 @@ System.register(["./../Utils"], function(exports_1) {
                     return Utils.S.startsWith(uri, "https://") || Utils.S.startsWith(uri, "http://");
                 };
                 Util.isAbsolute = function (uri) {
-                    if (Utils.S.startsWith(uri, "http://"))
-                        return true;
-                    if (Utils.S.startsWith(uri, "https://"))
-                        return true;
-                    if (Utils.S.startsWith(uri, "://"))
-                        return true;
-                    return false;
+                    return Utils.S.startsWith(uri, "http://")
+                        || Utils.S.startsWith(uri, "https://")
+                        || Utils.S.startsWith(uri, "://");
                 };
                 Util.isRelative = function (uri) {
                     return !Util.isAbsolute(uri);
@@ -56,7 +52,7 @@ System.register(["./../Utils"], function(exports_1) {
                     return Utils.S.startsWith(uri, "_:");
                 };
                 Util.isPrefixed = function (uri) {
-                    return !Util.isAbsolute(uri) && Utils.S.contains(uri, ":");
+                    return !Util.isAbsolute(uri) && !Util.isBNodeID(uri) && Utils.S.contains(uri, ":");
                 };
                 Util.isFragmentOf = function (fragmentURI, uri) {
                     if (!Util.hasFragment(fragmentURI))
@@ -78,6 +74,8 @@ System.register(["./../Utils"], function(exports_1) {
                     return false;
                 };
                 Util.getRelativeURI = function (absoluteURI, base) {
+                    if (!absoluteURI.startsWith(base))
+                        return absoluteURI;
                     return absoluteURI.substring(base.length);
                 };
                 Util.getDocumentURI = function (uri) {
@@ -95,6 +93,8 @@ System.register(["./../Utils"], function(exports_1) {
                     return parts[1];
                 };
                 Util.resolve = function (parentURI, childURI) {
+                    if (Util.isAbsolute(childURI) || Util.isPrefixed(childURI))
+                        return childURI;
                     var finalURI = parentURI;
                     if (!Utils.S.endsWith(parentURI, "/"))
                         finalURI += "/";
@@ -118,6 +118,8 @@ System.register(["./../Utils"], function(exports_1) {
                     var prefix = Utils.isString(prefixOrObjectSchema) ? prefixOrObjectSchema : null;
                     if (objectSchema !== null)
                         return prefixWithObjectSchema(uri, objectSchema);
+                    if (Util.isPrefixed(uri) || !uri.startsWith(prefixURI))
+                        return uri;
                     return prefix + ":" + uri.substring(prefixURI.length);
                 };
                 return Util;

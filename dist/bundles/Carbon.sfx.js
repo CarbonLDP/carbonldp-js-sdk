@@ -3276,13 +3276,9 @@ $__System.register("29", ["5"], function(exports_1) {
                     return Utils.S.startsWith(uri, "https://") || Utils.S.startsWith(uri, "http://");
                 };
                 Util.isAbsolute = function (uri) {
-                    if (Utils.S.startsWith(uri, "http://"))
-                        return true;
-                    if (Utils.S.startsWith(uri, "https://"))
-                        return true;
-                    if (Utils.S.startsWith(uri, "://"))
-                        return true;
-                    return false;
+                    return Utils.S.startsWith(uri, "http://")
+                        || Utils.S.startsWith(uri, "https://")
+                        || Utils.S.startsWith(uri, "://");
                 };
                 Util.isRelative = function (uri) {
                     return !Util.isAbsolute(uri);
@@ -3291,7 +3287,7 @@ $__System.register("29", ["5"], function(exports_1) {
                     return Utils.S.startsWith(uri, "_:");
                 };
                 Util.isPrefixed = function (uri) {
-                    return !Util.isAbsolute(uri) && Utils.S.contains(uri, ":");
+                    return !Util.isAbsolute(uri) && !Util.isBNodeID(uri) && Utils.S.contains(uri, ":");
                 };
                 Util.isFragmentOf = function (fragmentURI, uri) {
                     if (!Util.hasFragment(fragmentURI))
@@ -3313,6 +3309,8 @@ $__System.register("29", ["5"], function(exports_1) {
                     return false;
                 };
                 Util.getRelativeURI = function (absoluteURI, base) {
+                    if (!absoluteURI.startsWith(base))
+                        return absoluteURI;
                     return absoluteURI.substring(base.length);
                 };
                 Util.getDocumentURI = function (uri) {
@@ -3330,6 +3328,8 @@ $__System.register("29", ["5"], function(exports_1) {
                     return parts[1];
                 };
                 Util.resolve = function (parentURI, childURI) {
+                    if (Util.isAbsolute(childURI) || Util.isPrefixed(childURI))
+                        return childURI;
                     var finalURI = parentURI;
                     if (!Utils.S.endsWith(parentURI, "/"))
                         finalURI += "/";
@@ -3353,6 +3353,8 @@ $__System.register("29", ["5"], function(exports_1) {
                     var prefix = Utils.isString(prefixOrObjectSchema) ? prefixOrObjectSchema : null;
                     if (objectSchema !== null)
                         return prefixWithObjectSchema(uri, objectSchema);
+                    if (Util.isPrefixed(uri) || !uri.startsWith(prefixURI))
+                        return uri;
                     return prefix + ":" + uri.substring(prefixURI.length);
                 };
                 return Util;
@@ -5135,7 +5137,6 @@ var _removeDefine = $__System.get("@@amd-helpers").createDefine();
       var maxRedirects = ('maxRedirects' in options) ? options.maxRedirects : -1;
       var request = require('request');
       var http = require('http');
-      var cache = new jsonld.DocumentCache();
       var queue = new jsonld.RequestQueue();
       if (options.usePromise) {
         return queue.wrapLoader(function(url) {
@@ -5166,7 +5167,7 @@ var _removeDefine = $__System.get("@@amd-helpers").createDefine();
             document: null
           });
         }
-        var doc = cache.get(url);
+        var doc = null;
         if (doc !== null) {
           return callback(null, doc);
         }
@@ -5230,13 +5231,6 @@ var _removeDefine = $__System.get("@@amd-helpers").createDefine();
             return loadDocument(res.headers.location, redirects, callback);
           }
           redirects.push(url);
-          for (var i = 0; i < redirects.length; ++i) {
-            cache.set(redirects[i], {
-              contextUrl: null,
-              documentUrl: redirects[i],
-              document: body
-            });
-          }
           callback(err, doc);
         }
       }
@@ -8343,15 +8337,16 @@ var _removeDefine = $__System.get("@@amd-helpers").createDefine();
       var datatype = '(?:\\^\\^' + iri + ')';
       var language = '(?:@([a-z]+(?:-[a-z0-9]+)*))';
       var literal = '(?:' + plain + '(?:' + datatype + '|' + language + ')?)';
+      var comment = '(?:#.*)?';
       var ws = '[ \\t]+';
       var wso = '[ \\t]*';
       var eoln = /(?:\r\n)|(?:\n)|(?:\r)/g;
-      var empty = new RegExp('^' + wso + '$');
+      var empty = new RegExp('^' + wso + comment + '$');
       var subject = '(?:' + iri + '|' + bnode + ')' + ws;
       var property = iri + ws;
       var object = '(?:' + iri + '|' + bnode + '|' + literal + ')' + wso;
       var graphName = '(?:\\.|(?:(?:' + iri + '|' + bnode + ')' + wso + '\\.))';
-      var quad = new RegExp('^' + wso + subject + property + object + graphName + wso + '$');
+      var quad = new RegExp('^' + wso + subject + property + object + graphName + wso + comment + '$');
       var dataset = {};
       var lines = input.split(eoln);
       var lineNumber = 0;
@@ -9391,33 +9386,33 @@ $__System.register("37", ["33"], function(exports_1) {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
     var HTTPError_1;
-    var name, statusCode, MethodNotAcceptableError;
+    var name, statusCode, NotAcceptableError;
     return {
         setters:[
             function (HTTPError_1_1) {
                 HTTPError_1 = HTTPError_1_1;
             }],
         execute: function() {
-            name = "MethodNotAcceptableError";
+            name = "NotAcceptableError";
             statusCode = 406;
-            MethodNotAcceptableError = (function (_super) {
-                __extends(MethodNotAcceptableError, _super);
-                function MethodNotAcceptableError() {
+            NotAcceptableError = (function (_super) {
+                __extends(NotAcceptableError, _super);
+                function NotAcceptableError() {
                     _super.apply(this, arguments);
                 }
-                Object.defineProperty(MethodNotAcceptableError, "statusCode", {
+                Object.defineProperty(NotAcceptableError, "statusCode", {
                     get: function () { return statusCode; },
                     enumerable: true,
                     configurable: true
                 });
-                Object.defineProperty(MethodNotAcceptableError.prototype, "name", {
+                Object.defineProperty(NotAcceptableError.prototype, "name", {
                     get: function () { return name; },
                     enumerable: true,
                     configurable: true
                 });
-                return MethodNotAcceptableError;
+                return NotAcceptableError;
             })(HTTPError_1.default);
-            exports_1("default",MethodNotAcceptableError);
+            exports_1("default",NotAcceptableError);
         }
     }
 });
@@ -10100,7 +10095,7 @@ $__System.register("49", ["33"], function(exports_1) {
 });
 
 $__System.register("4a", ["33", "32", "34", "35", "36", "37", "38", "39", "3a", "3b", "3c", "3d", "3e", "3f", "40", "41", "42", "43", "44", "45", "46", "47", "49"], function(exports_1) {
-    var HTTPError_1, BadRequestError_1, ConflictError_1, ForbiddenError_1, MethodNotAllowedError_1, NotAcceptableError_1, NotFoundError_1, PreconditionFailedError_1, PreconditionRequiredError_1, RequestEntityTooLargeError_1, RequestHeaderFieldsTooLargeError_1, RequestURITooLongError_1, TooManyRequestsError_1, UnauthorizedError_1, UnsupportedMediaTypeError_1, BadResponseError_1, BadGatewayError_1, GatewayTimeoutError_1, HTTPVersionNotSupportedError_1, InternalServerErrorError_1, NotImplementedError_1, ServiceUnavailableError_1, UnknownError_1;
+    var HTTPError_1, BadRequestError_1, ConflictError_1, ForbiddenError_1, MethodNotAllowedError_1, NotAcceptableError_1, NotFoundError_1, PreconditionFailedError_1, PreconditionRequiredError_1, RequestEntityTooLargeError_1, RequestHeaderFieldsTooLargeError_1, RequestURITooLongError_1, TooManyRequestsError_1, UnauthorizedError_1, UnsupportedMediaTypeError_1, BadResponseError_1, BadGatewayError_1, GatewayTimeoutError_1, HTTPVersionNotSupportedError_1, InternalServerError_1, NotImplementedError_1, ServiceUnavailableError_1, UnknownError_1;
     var client, server, statusCodeMap;
     return {
         setters:[
@@ -10161,8 +10156,8 @@ $__System.register("4a", ["33", "32", "34", "35", "36", "37", "38", "39", "3a", 
             function (HTTPVersionNotSupportedError_1_1) {
                 HTTPVersionNotSupportedError_1 = HTTPVersionNotSupportedError_1_1;
             },
-            function (InternalServerErrorError_1_1) {
-                InternalServerErrorError_1 = InternalServerErrorError_1_1;
+            function (InternalServerError_1_1) {
+                InternalServerError_1 = InternalServerError_1_1;
             },
             function (NotImplementedError_1_1) {
                 NotImplementedError_1 = NotImplementedError_1_1;
@@ -10194,7 +10189,7 @@ $__System.register("4a", ["33", "32", "34", "35", "36", "37", "38", "39", "3a", 
             server.push(BadGatewayError_1.default);
             server.push(GatewayTimeoutError_1.default);
             server.push(HTTPVersionNotSupportedError_1.default);
-            server.push(InternalServerErrorError_1.default);
+            server.push(InternalServerError_1.default);
             server.push(NotImplementedError_1.default);
             server.push(ServiceUnavailableError_1.default);
             statusCodeMap = new Map();
@@ -10223,7 +10218,7 @@ $__System.register("4a", ["33", "32", "34", "35", "36", "37", "38", "39", "3a", 
             exports_1("BadGatewayError", BadGatewayError_1.default);
             exports_1("GatewayTimeoutError", GatewayTimeoutError_1.default);
             exports_1("HTTPVersionNotSupportedError", HTTPVersionNotSupportedError_1.default);
-            exports_1("InternalServerErrorError", InternalServerErrorError_1.default);
+            exports_1("InternalServerErrorError", InternalServerError_1.default);
             exports_1("NotImplementedError", NotImplementedError_1.default);
             exports_1("ServiceUnavailableError", ServiceUnavailableError_1.default);
             exports_1("UnknownError", UnknownError_1.default);
@@ -11243,9 +11238,9 @@ $__System.register("55", ["8", "c", "5"], function(exports_1) {
                 function Factory() {
                 }
                 Factory.prototype.hasClassProperties = function (object) {
-                    return (Utils.isObject(object) &&
-                        Utils.hasPropertyDefined(object, "key") &&
-                        Utils.hasPropertyDefined(object, "expirationTime"));
+                    return Utils.isObject(object)
+                        && Utils.hasPropertyDefined(object, "key")
+                        && Utils.hasPropertyDefined(object, "expirationTime");
                 };
                 Factory.prototype.decorate = function (object) {
                     if (this.hasClassProperties(object))
@@ -11517,7 +11512,7 @@ $__System.register("48", [], function(exports_1) {
                     configurable: true
                 });
                 AbstractError.prototype.toString = function () {
-                    return this.name + ":" + this.message;
+                    return this.name + ": " + this.message;
                 };
                 return AbstractError;
             })(Error);
