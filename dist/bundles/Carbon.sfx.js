@@ -10218,7 +10218,7 @@ $__System.register("4a", ["33", "32", "34", "35", "36", "37", "38", "39", "3a", 
             exports_1("BadGatewayError", BadGatewayError_1.default);
             exports_1("GatewayTimeoutError", GatewayTimeoutError_1.default);
             exports_1("HTTPVersionNotSupportedError", HTTPVersionNotSupportedError_1.default);
-            exports_1("InternalServerErrorError", InternalServerError_1.default);
+            exports_1("InternalServerError", InternalServerError_1.default);
             exports_1("NotImplementedError", NotImplementedError_1.default);
             exports_1("ServiceUnavailableError", ServiceUnavailableError_1.default);
             exports_1("UnknownError", UnknownError_1.default);
