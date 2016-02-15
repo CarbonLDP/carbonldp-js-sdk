@@ -25,12 +25,9 @@ export interface Class extends Pointer.Class {
 
 export class Factory {
 	hasClassProperties( object:Object ):boolean {
-		return (
-			Utils.isObject( object ) &&
-
-			Utils.hasPropertyDefined( object, "key" ) &&
-			Utils.hasPropertyDefined( object, "expirationTime" )
-		);
+		return Utils.isObject( object )
+			&& Utils.hasPropertyDefined( object, "key" )
+			&& Utils.hasPropertyDefined( object, "expirationTime" );
 	}
 
 	decorate<T extends Object>( object:T ):T & Class {
