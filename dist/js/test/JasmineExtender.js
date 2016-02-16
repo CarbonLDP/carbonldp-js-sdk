@@ -1,5 +1,5 @@
 System.register([], function(exports_1) {
-    var MODULE, SUBMODULE, CLASS, INTERFACE, STATIC, INSTANCE, CONSTRUCTOR, METHOD, SIGNATURE, PROPERTY, SUPER_CLASS, property;
+    var MODULE, REEXPORTS, CLASS, INTERFACE, STATIC, INSTANCE, CONSTRUCTOR, METHOD, SIGNATURE, PROPERTY, SUPER_CLASS, property;
     function serialize(descriptor) {
         return "JSON" + JSON.stringify(descriptor);
     }
@@ -17,17 +17,6 @@ System.register([], function(exports_1) {
         return toJSON(descriptor);
     }
     exports_1("module", module);
-    function submodule(access, name, description) {
-        if (description === void 0) { description = null; }
-        var descriptor = {
-            suiteType: SUBMODULE,
-            access: access,
-            name: name,
-            description: description,
-        };
-        return toJSON(descriptor);
-    }
-    exports_1("submodule", submodule);
     function clazz(name, description, parent, interfaces) {
         if (parent === void 0) { parent = null; }
         if (interfaces === void 0) { interfaces = null; }
@@ -61,6 +50,16 @@ System.register([], function(exports_1) {
         return toJSON(descriptor);
     }
     exports_1("constructor", constructor);
+    function reexports(access, name, originalLocation) {
+        var descriptor = {
+            specType: REEXPORTS,
+            access: access,
+            name: name,
+            originalLocation: originalLocation,
+        };
+        return toJSON(descriptor);
+    }
+    exports_1("reexports", reexports);
     function hasInterface(access, name, description) {
         if (description === void 0) { description = null; }
         var descriptor = {
@@ -192,7 +191,7 @@ System.register([], function(exports_1) {
         setters:[],
         execute: function() {
             exports_1("MODULE", MODULE = "module");
-            exports_1("SUBMODULE", SUBMODULE = "submodule");
+            exports_1("REEXPORTS", REEXPORTS = "reexports");
             exports_1("CLASS", CLASS = "class");
             exports_1("INTERFACE", INTERFACE = "interface");
             exports_1("STATIC", STATIC = "static");

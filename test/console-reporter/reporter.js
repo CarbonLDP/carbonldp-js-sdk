@@ -263,14 +263,12 @@ var DocumentationReporter = function( baseReporterDecorator, formatError, config
 		switch( suite.suiteType ) {
 			case "module":
 				break;
-			case "submodule":
-				break;
 			case "class":
 				break;
 			case "interface":
 				break;
 			case "constructor":
-				break;
+				return "constructor > ";
 			case "method":
 				return "method > " + suite.name;
 		}
@@ -285,13 +283,17 @@ var DocumentationReporter = function( baseReporterDecorator, formatError, config
 			case "method":
 				return "method > " + spec.name + composeMethodSignature( spec );
 			case "property":
-				break;
+				return "property > " + spec.name;
 			case "signature":
 				return composeMethodSignature( spec );
 			case "super-class":
 				break;
 			case "interface":
 				break;
+			case "reexports":
+				return "reexports > " + spec.name + ": " + spec.originalLocation;
+			case "defaultExport":
+				return "default export > " + spec.name;
 		}
 
 		return spec.name;

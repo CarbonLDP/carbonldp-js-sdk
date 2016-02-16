@@ -31,6 +31,9 @@ export interface MethodDescriptor extends SpecDescriptor {
     arguments?: MethodArgument[];
     returns?: MethodReturn;
 }
+export interface ReexportsDescriptor extends SpecDescriptor {
+    originalLocation: string;
+}
 export interface MethodArgument {
     name: string;
     type: string;
@@ -46,7 +49,7 @@ export declare function serialize(descriptor: SuiteDescriptor): string;
 export declare function serialize(descriptor: PropertyDescriptor): string;
 export declare function serialize(descriptor: MethodDescriptor): string;
 export declare const MODULE: string;
-export declare const SUBMODULE: string;
+export declare const REEXPORTS: string;
 export declare const CLASS: string;
 export declare const INTERFACE: string;
 export declare const STATIC: string;
@@ -57,10 +60,10 @@ export declare const SIGNATURE: string;
 export declare const PROPERTY: string;
 export declare const SUPER_CLASS: string;
 export declare function module(name: string, description?: string): string;
-export declare function submodule(access: string, name: string, description?: string): string;
 export declare function clazz(name: string, description: string, parent?: string, interfaces?: Array<string>): string;
 export declare function interfaze(name: string, description: string, parent?: string): string;
 export declare function constructor(name: string, description: string): string;
+export declare function reexports(access: string, name: string, originalLocation: string): string;
 export declare function hasInterface(access: string, name: string): string;
 export declare function isDefined(): string;
 export declare function hasConstructor(): string;

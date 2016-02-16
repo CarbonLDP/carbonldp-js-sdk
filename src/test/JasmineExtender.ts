@@ -1,7 +1,7 @@
 export interface SuiteDescriptor {
 	access?:string;
 	suiteType:string;
-	name:string;
+	name?:string;
 	description?:string;
 }
 
@@ -43,6 +43,10 @@ export interface MethodDescriptor extends SpecDescriptor {
 	returns?:MethodReturn;
 }
 
+export interface ReexportsDescriptor extends SpecDescriptor {
+	originalLocation: string;
+}
+
 export interface MethodArgument {
 	name:string;
 	type:string;
@@ -69,7 +73,6 @@ function toJSON( descriptor:any ):string {
 }
 
 export const MODULE:string = "module";
-export const SUBMODULE:string = "submodule";
 export const CLASS:string = "class";
 export const INTERFACE:string = "interface";
 
@@ -82,21 +85,12 @@ export const METHOD:string = "method";
 export const SIGNATURE:string = "signature";
 export const PROPERTY:string = "property";
 export const SUPER_CLASS:string = "super-class";
+export const REEXPORTS:string = "reexports";
+export const DEFAULTEXPORT:string = "defaultExport";
 
 export function module( name:string, description:string = null ):string {
 	let descriptor:SuiteDescriptor = {
 		suiteType: MODULE,
-		name: name,
-		description: description,
-	};
-
-	return toJSON( descriptor );
-}
-
-export function submodule( access:string, name:string, description:string = null ):string {
-	let descriptor:SuiteDescriptor = {
-		suiteType: SUBMODULE,
-		access: access,
 		name: name,
 		description: description,
 	};
@@ -127,11 +121,21 @@ export function interfaze( name:string, description:string, parent:string = null
 	return toJSON( descriptor );
 }
 
-export function constructor( name:string, description:string ):string {
+export function constructor( description:string = null ):string {
 	let descriptor:SuiteDescriptor = {
 		suiteType: CONSTRUCTOR,
-		name: name,
 		description: description,
+	};
+
+	return toJSON( descriptor );
+}
+
+export function reexports( access: string, name: string, originalLocation: string ): string {
+	let descriptor:ReexportsDescriptor = {
+		specType: REEXPORTS,
+		access: access,
+		name: name,
+		originalLocation: originalLocation,
 	};
 
 	return toJSON( descriptor );
@@ -285,6 +289,15 @@ export function extendsClass( name:string ):string {
 		specType: SUPER_CLASS,
 		name: name,
 	};
+
+	return toJSON( descriptor );
+}
+
+export function hasDefaultExport( exportName: string ): string {
+	let descriptor:SpecDescriptor = {
+		specType: DEFAULTEXPORT,
+		name: exportName
+	}
 
 	return toJSON( descriptor );
 }
