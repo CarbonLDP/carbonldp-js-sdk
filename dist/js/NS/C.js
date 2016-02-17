@@ -17,6 +17,31 @@ System.register([], function(exports_1) {
                     enumerable: true,
                     configurable: true
                 });
+                Object.defineProperty(Class, "NonReadableMembershipResourceTriples", {
+                    get: function () { return namespace + "NonReadableMembershipResourceTriples"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(Class, "PreferContainmentResources", {
+                    get: function () { return namespace + "PreferContainmentResources"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(Class, "PreferContainmentTriples", {
+                    get: function () { return namespace + "PreferContainmentTriples"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(Class, "PreferMembershipResources", {
+                    get: function () { return namespace + "PreferMembershipResources"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(Class, "PreferMembershipTriples", {
+                    get: function () { return namespace + "PreferMembershipTriples"; },
+                    enumerable: true,
+                    configurable: true
+                });
                 Object.defineProperty(Class, "VolatileResource", {
                     get: function () { return namespace + "VolatileResource"; },
                     enumerable: true,

@@ -10,6 +10,7 @@ export interface Class {
 	"@value"?:string;
 }
 
+// TODO: Move all getters and setters to RDFNode.Util
 export class Util {
 	static areEqual( value1:Class, value2:Class ):boolean {
 		if ( Literal.Factory.is( value1 ) && Literal.Factory.is( value2 ) ) {
