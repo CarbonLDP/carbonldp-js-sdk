@@ -17,8 +17,8 @@ export interface Class extends Pointer.Class, PersistedResource.Class, Document.
 	save():Promise<void>;
 	destroy():Promise<void>;
 
-	executeRawASKQuery():Promise<[ SPARQL.Results.Class, HTTP.Response.Class ]>;
-	executeRawSELECTQuery():Promise<[ SPARQL.Results.Class, HTTP.Response.Class ]>;
+	executeRawASKQuery():Promise<[ SPARQL.RawResults.Class, HTTP.Response.Class ]>;
+	executeRawSELECTQuery():Promise<[ SPARQL.RawResults.Class, HTTP.Response.Class ]>;
 	executeRawDESCRIBEQuery():Promise<[ string, HTTP.Response.Class ]>;
 	executeRawCONSTRUCTQuery():Promise<[ string, HTTP.Response.Class ]>;
 }
@@ -41,11 +41,11 @@ function destroy():Promise<void> {
 	return this._documents.delete( this );
 }
 
-function executeRawASKQuery( askQuery:string, requestOptions:HTTP.Request.Options = {} ):Promise<[ SPARQL.Results.Class, HTTP.Response.Class ]> {
+function executeRawASKQuery( askQuery:string, requestOptions:HTTP.Request.Options = {} ):Promise<[ SPARQL.RawResults.Class, HTTP.Response.Class ]> {
 	return this._documents.executeRawASKQuery( this.id, askQuery, requestOptions );
 }
 
-function executeRawSELECTQuery( selectQuery:string, requestOptions:HTTP.Request.Options = {} ):Promise<[ SPARQL.Results.Class, HTTP.Response.Class ]> {
+function executeRawSELECTQuery( selectQuery:string, requestOptions:HTTP.Request.Options = {} ):Promise<[ SPARQL.RawResults.Class, HTTP.Response.Class ]> {
 	return this._documents.executeRawSELECTQuery( this.id, selectQuery, requestOptions );
 }
 

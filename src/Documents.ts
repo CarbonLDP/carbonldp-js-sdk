@@ -253,7 +253,7 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 		}
 	}
 
-	executeRawASKQuery( documentURI:string, askQuery:string, requestOptions:HTTP.Request.Options = {} ):Promise<[ SPARQL.Results.Class, HTTP.Response.Class ]> {
+	executeRawASKQuery( documentURI:string, askQuery:string, requestOptions:HTTP.Request.Options = {} ):Promise<[ SPARQL.RawResults.Class, HTTP.Response.Class ]> {
 		if( ! RDF.URI.Util.isAbsolute( documentURI ) ) {
 			if( ! this.context ) throw new Errors.IllegalArgumentError( "This Documents instance doesn't support relative URIs." );
 			documentURI = this.context.resolve( documentURI );
@@ -264,7 +264,7 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 		return SPARQL.Service.executeRawASKQuery( documentURI, askQuery, requestOptions );
 	}
 
-	executeRawSELECTQuery( documentURI:string, selectQuery:string, requestOptions:HTTP.Request.Options = {} ):Promise<[ SPARQL.Results.Class, HTTP.Response.Class ]> {
+	executeRawSELECTQuery( documentURI:string, selectQuery:string, requestOptions:HTTP.Request.Options = {} ):Promise<[ SPARQL.RawResults.Class, HTTP.Response.Class ]> {
 		if( ! RDF.URI.Util.isAbsolute( documentURI ) ) {
 			if( ! this.context ) throw new Errors.IllegalArgumentError( "This Documents instance doesn't support relative URIs." );
 			documentURI = this.context.resolve( documentURI );
