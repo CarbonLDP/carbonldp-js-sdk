@@ -5,7 +5,6 @@ import {
 	STATIC,
 
 	module,
-	submodule,
 
 	isDefined,
 
@@ -30,6 +29,7 @@ import * as Fragment from "./Fragment";
 import * as HTTP from "./HTTP";
 import * as PersistedDocument from "./PersistedDocument";
 import * as ObjectSchema from "./ObjectSchema";
+import * as SPARQL from "./SPARQL";
 import * as Utils from "./Utils";
 
 // TODO: Add description
@@ -246,5 +246,138 @@ describe( module( "Carbon/Documents", "" ), ():void => {
 			error = !! error ? error : new Error( "Unknown error" );
 			done.fail( error );
 		});
+	});
+
+	it( hasMethod( INSTANCE, "executeRawASKQuery", `
+			Executes an ASK query on a document and returns a raw application/sparql-results+json object
+		`, [
+		{ name: "documentURI", type: "string" },
+		{ name: "askQuery", type: "string" },
+		{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
+	], { type: "Promise<[ Carbon.SPARQL.RawResults.Class, Carbon.HTTP.Response.Class ]>" } ), ():void => {
+		class MockedContext extends AbstractContext {
+			resolve( uri:string ):string {
+				return uri;
+			}
+		}
+
+		let context:MockedContext = new MockedContext();
+		let documents:Documents = context.Documents;
+
+		// Property Integrity
+		(() => {
+			expect( "executeRawASKQuery" in documents ).toEqual( true );
+			expect( Utils.isFunction( documents.executeRawASKQuery ) ).toEqual( true );
+		})();
+
+		// Proper execution
+		(() => {
+			spyOn( SPARQL.Service, "executeRawASKQuery" );
+
+			documents.executeRawASKQuery( "http://example.com/document/", "ASK { ?subject, ?predicate, ?object }" );
+
+			// TODO: Test authentication and relative URIs check
+
+			expect( SPARQL.Service.executeRawASKQuery ).toHaveBeenCalled();
+		})();
+	});
+	it( hasMethod( INSTANCE, "executeRawSELECTQuery", `Executes a SELECT query on a document and returns a raw application/sparql-results+json object`, [
+		{ name: "documentURI", type: "string" },
+		{ name: "selectQuery", type: "string" },
+		{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
+	], { type: "Promise<[ Carbon.SPARQL.RawResults.Class, Carbon.HTTP.Response.Class ]>" } ), ():void => {
+		class MockedContext extends AbstractContext {
+			resolve( uri:string ):string {
+				return uri;
+			}
+		}
+
+		let context:MockedContext = new MockedContext();
+		let documents:Documents = context.Documents;
+
+		// Property Integrity
+		(() => {
+			expect( "executeRawSELECTQuery" in documents ).toEqual( true );
+			expect( Utils.isFunction( documents.executeRawSELECTQuery ) ).toEqual( true );
+		})();
+
+		// Proper execution
+		(() => {
+			spyOn( SPARQL.Service, "executeRawSELECTQuery" );
+
+			documents.executeRawSELECTQuery( "http://example.com/document/", "SELECT ?book ?title WHERE { <http://example.com/some-document/> ?book ?title }" );
+
+			// TODO: Test authentication and relative URIs check
+
+			expect( SPARQL.Service.executeRawSELECTQuery ).toHaveBeenCalled();
+		})();
+	});
+
+	it( hasMethod( INSTANCE, "executeRawCONSTRUCTQuery", `
+			Executes a CONSTRUCT query on a document and returns a string with the resulting model
+		`, [
+		{ name: "documentURI", type: "string" },
+		{ name: "constructQuery", type: "string" },
+		{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
+	], { type: "Promise<[ string, Carbon.HTTP.Response.Class ]>" } ), ():void => {
+		class MockedContext extends AbstractContext {
+			resolve( uri:string ):string {
+				return uri;
+			}
+		}
+
+		let context:MockedContext = new MockedContext();
+		let documents:Documents = context.Documents;
+
+		// Property Integrity
+		(() => {
+			expect( "executeRawCONSTRUCTQuery" in documents ).toEqual( true );
+			expect( Utils.isFunction( documents.executeRawCONSTRUCTQuery ) ).toEqual( true );
+		})();
+
+		// Proper execution
+		(() => {
+			spyOn( SPARQL.Service, "executeRawCONSTRUCTQuery" );
+
+			documents.executeRawCONSTRUCTQuery( "http://example.com/document/", "CONSTRUCT { ?subject ?predicate ?object } WHERE { ?subject ?predicate ?object }" );
+
+			// TODO: Test authentication and relative URIs check
+
+			expect( SPARQL.Service.executeRawCONSTRUCTQuery ).toHaveBeenCalled();
+		})();
+	});
+
+	it( hasMethod( INSTANCE, "executeRawDESCRIBEQuery", `
+			Executes a DESCRIBE Query and returns a string with the resulting model
+		`, [
+		{ name: "documentURI", type: "string" },
+		{ name: "describeQuery", type: "string" },
+		{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
+	], { type: "Promise<[ string, Carbon.HTTP.Response.Class ]>" } ), ():void => {
+		class MockedContext extends AbstractContext {
+			resolve( uri:string ):string {
+				return uri;
+			}
+		}
+
+		let context:MockedContext = new MockedContext();
+		let documents:Documents = context.Documents;
+
+		// Property Integrity
+		(() => {
+			expect( "executeRawDESCRIBEQuery" in documents ).toEqual( true );
+			expect( Utils.isFunction( documents.executeRawDESCRIBEQuery ) ).toEqual( true );
+		})();
+
+		// Proper execution
+		(() => {
+			spyOn( SPARQL.Service, "executeRawDESCRIBEQuery" );
+
+			documents.executeRawDESCRIBEQuery( "http://example.com/document/", "DESCRIBE { ?subject ?predicate ?object } WHERE { ?subject ?predicate ?object }" );
+
+			// TODO: Test authentication and relative URIs check
+
+			expect( SPARQL.Service.executeRawDESCRIBEQuery ).toHaveBeenCalled();
+		})();
 	});
 });

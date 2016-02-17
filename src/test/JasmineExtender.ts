@@ -296,8 +296,8 @@ export function extendsClass( name:string ):string {
 export function hasDefaultExport( exportName: string ): string {
 	let descriptor:SpecDescriptor = {
 		specType: DEFAULTEXPORT,
-		name: exportName
-	}
+		name: exportName,
+	};
 
 	return toJSON( descriptor );
 }

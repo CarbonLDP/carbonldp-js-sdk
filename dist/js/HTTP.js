@@ -1,6 +1,6 @@
 /// <reference path="./../typings/typings.d.ts" />
-System.register(["./HTTP/Errors", "./HTTP/Header", "./HTTP/JSONParser", "./HTTP/JSONLDParser", "./HTTP/Method", "./HTTP/Request", "./HTTP/Response", "./HTTP/StatusCode"], function(exports_1) {
-    var Errors, Header, JSONParser, JSONLDParser, Method_1, Request, Response, StatusCode_1;
+System.register(["./HTTP/Errors", "./HTTP/Header", "./HTTP/JSONParser", "./HTTP/JSONLDParser", "./HTTP/Method", "./HTTP/Request", "./HTTP/Response", "./HTTP/StatusCode", "./HTTP/StringParser"], function(exports_1) {
+    var Errors, Header, JSONParser, JSONLDParser, Method_1, Request, Response, StatusCode_1, StringParser;
     return {
         setters:[
             function (Errors_1) {
@@ -26,6 +26,9 @@ System.register(["./HTTP/Errors", "./HTTP/Header", "./HTTP/JSONParser", "./HTTP/
             },
             function (StatusCode_1_1) {
                 StatusCode_1 = StatusCode_1_1;
+            },
+            function (StringParser_1) {
+                StringParser = StringParser_1;
             }],
         execute: function() {
             exports_1("Errors", Errors);
@@ -36,6 +39,7 @@ System.register(["./HTTP/Errors", "./HTTP/Header", "./HTTP/JSONParser", "./HTTP/
             exports_1("Request", Request);
             exports_1("Response", Response);
             exports_1("StatusCode", StatusCode_1.default);
+            exports_1("StringParser", StringParser);
         }
     }
 });

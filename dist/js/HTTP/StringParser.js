@@ -9,13 +9,7 @@ System.register([], function(exports_1) {
                 }
                 Class.prototype.parse = function (body) {
                     return new Promise(function (resolve, reject) {
-                        try {
-                            resolve(JSON.parse(body));
-                        }
-                        catch (error) {
-                            // TODO: Handle SyntaxError
-                            reject(error);
-                        }
+                        resolve(body);
                     });
                 };
                 return Class;
@@ -26,4 +20,4 @@ System.register([], function(exports_1) {
     }
 });
 
-//# sourceMappingURL=JSONParser.js.map
+//# sourceMappingURL=StringParser.js.map
