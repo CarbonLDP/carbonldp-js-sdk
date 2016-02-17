@@ -27,7 +27,7 @@ export class Class {
 
 		let valueStrings:string[] = valuesString.split( "," );
 		for ( let i:number = 0, length:number = valueStrings.length; i < length; i ++ ) {
-			let valueString:string = valueStrings[ i ];
+			let valueString:string = valueStrings[ i ].trim();
 			this.values.push( new Value( valueString ) );
 		}
 	}
@@ -49,7 +49,7 @@ export class Util {
 	static parseHeaders( headersString:string ):Map<string, Class> {
 		let headers:Map<string, Class> = new Map<string, Class>();
 
-		let headerStrings:string[] = headersString.split( "\r\n" );
+		let headerStrings:string[] = headersString.split( /\r?\n/ );
 		for ( let i:number = 0, length:number = headerStrings.length; i < length; i ++ ) {
 			let headerString:string = headerStrings[ i ];
 			if ( ! headerString.trim() ) continue;
@@ -69,3 +69,5 @@ export class Util {
 		return headers;
 	}
 }
+
+export default Class;

@@ -24,7 +24,7 @@ System.register([], function(exports_1) {
                     this.values = [];
                     var valueStrings = valuesString.split(",");
                     for (var i = 0, length_1 = valueStrings.length; i < length_1; i++) {
-                        var valueString = valueStrings[i];
+                        var valueString = valueStrings[i].trim();
                         this.values.push(new Value(valueString));
                     }
                 };
@@ -46,7 +46,7 @@ System.register([], function(exports_1) {
                 }
                 Util.parseHeaders = function (headersString) {
                     var headers = new Map();
-                    var headerStrings = headersString.split("\r\n");
+                    var headerStrings = headersString.split(/\r?\n/);
                     for (var i = 0, length_2 = headerStrings.length; i < length_2; i++) {
                         var headerString = headerStrings[i];
                         if (!headerString.trim())
@@ -70,6 +70,7 @@ System.register([], function(exports_1) {
                 return Util;
             })();
             exports_1("Util", Util);
+            exports_1("default",Class);
         }
     }
 });

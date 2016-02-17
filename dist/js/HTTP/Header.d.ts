@@ -15,3 +15,4 @@ export declare class Value {
 export declare class Util {
     static parseHeaders(headersString: string): Map<string, Class>;
 }
+export default Class;

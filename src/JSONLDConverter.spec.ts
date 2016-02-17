@@ -36,9 +36,7 @@ describe( module( "Carbon/JSONLDConverter" ), ():void => {
 		expect( Utils.isObject( JSONLDConverter ) ).toEqual( true );
 	});
 
-	describe( clazz( "Carbon.JSONLDConverter.Class", `
-
-	`), ():void => {
+	describe( clazz( "Carbon.JSONLDConverter.Class", "" ), ():void => {
 		it( isDefined(), ():void => {
 			expect( JSONLDConverter.Class ).toBeDefined();
 			expect( Utils.isFunction( JSONLDConverter.Class ) ).toEqual( true );

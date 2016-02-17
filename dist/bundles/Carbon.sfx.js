@@ -10575,7 +10575,7 @@ $__System.register("4d", [], function(exports_1) {
                     this.values = [];
                     var valueStrings = valuesString.split(",");
                     for (var i = 0, length = valueStrings.length; i < length; i++) {
-                        var valueString = valueStrings[i];
+                        var valueString = valueStrings[i].trim();
                         this.values.push(new Value(valueString));
                     }
                 };
@@ -10597,7 +10597,7 @@ $__System.register("4d", [], function(exports_1) {
                 }
                 Util.parseHeaders = function (headersString) {
                     var headers = new Map();
-                    var headerStrings = headersString.split("\r\n");
+                    var headerStrings = headersString.split(/\r?\n/);
                     for (var i = 0, length = headerStrings.length; i < length; i++) {
                         var headerString = headerStrings[i];
                         if (!headerString.trim())
@@ -10621,6 +10621,7 @@ $__System.register("4d", [], function(exports_1) {
                 return Util;
             })();
             exports_1("Util", Util);
+            exports_1("default",Class);
         }
     }
 });
