@@ -1,3 +1,9 @@
+# 0.14.0 (February 9, 2016)
+* Support for Raw ASK, SELECT, DESCRIBE and CONSTRUCT queries
+* Documents can create children
+## Breaking Changes
+* `context.Auth`, `context.Documents` and `context.Apps` were renamed to their lowercase counterpart
+
 # 0.13.0 (February 9, 2016)
 * Changed ObjectDescriptions to JSON-LD contexts 'extendObjectSchema'
 * Documents can create children

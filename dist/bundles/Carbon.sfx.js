@@ -12202,7 +12202,7 @@ $__System.register("5f", ["2", "12", "7", "1a", "13", "20", "4", "5e", "5"], fun
                 }
                 Object.defineProperty(Carbon, "version", {
                     /* tslint:enable: variable-name */
-                    get: function () { return "0.12.0-ALPHA"; },
+                    get: function () { return "0.14.0-ALPHA"; },
                     enumerable: true,
                     configurable: true
                 });
