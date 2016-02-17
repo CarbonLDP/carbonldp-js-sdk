@@ -1,5 +1,5 @@
 System.register([], function(exports_1) {
-    var MODULE, REEXPORTS, CLASS, INTERFACE, STATIC, INSTANCE, CONSTRUCTOR, METHOD, SIGNATURE, PROPERTY, SUPER_CLASS, property;
+    var MODULE, CLASS, INTERFACE, STATIC, INSTANCE, CONSTRUCTOR, METHOD, SIGNATURE, PROPERTY, SUPER_CLASS, REEXPORTS, DEFAULTEXPORT, property;
     function serialize(descriptor) {
         return "JSON" + JSON.stringify(descriptor);
     }
@@ -41,10 +41,10 @@ System.register([], function(exports_1) {
         return toJSON(descriptor);
     }
     exports_1("interfaze", interfaze);
-    function constructor(name, description) {
+    function constructor(description) {
+        if (description === void 0) { description = null; }
         var descriptor = {
             suiteType: CONSTRUCTOR,
-            name: name,
             description: description,
         };
         return toJSON(descriptor);
@@ -187,11 +187,18 @@ System.register([], function(exports_1) {
         return toJSON(descriptor);
     }
     exports_1("extendsClass", extendsClass);
+    function hasDefaultExport(exportName) {
+        var descriptor = {
+            specType: DEFAULTEXPORT,
+            name: exportName,
+        };
+        return toJSON(descriptor);
+    }
+    exports_1("hasDefaultExport", hasDefaultExport);
     return {
         setters:[],
         execute: function() {
             exports_1("MODULE", MODULE = "module");
-            exports_1("REEXPORTS", REEXPORTS = "reexports");
             exports_1("CLASS", CLASS = "class");
             exports_1("INTERFACE", INTERFACE = "interface");
             exports_1("STATIC", STATIC = "static");
@@ -201,6 +208,8 @@ System.register([], function(exports_1) {
             exports_1("SIGNATURE", SIGNATURE = "signature");
             exports_1("PROPERTY", PROPERTY = "property");
             exports_1("SUPER_CLASS", SUPER_CLASS = "super-class");
+            exports_1("REEXPORTS", REEXPORTS = "reexports");
+            exports_1("DEFAULTEXPORT", DEFAULTEXPORT = "defaultExport");
             /* tslint:disable: typedef */
             exports_1("property", property = hasProperty);
         }

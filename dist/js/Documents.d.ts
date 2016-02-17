@@ -23,7 +23,10 @@ declare class Documents implements Pointer.Library, Pointer.Validator, ObjectSch
     save(persistedDocument: PersistedDocument.Class, requestOptions?: HTTP.Request.Options): Promise<[PersistedDocument.Class, HTTP.Response.Class]>;
     delete(persistedDocument: PersistedDocument.Class, requestOptions?: HTTP.Request.Options): Promise<HTTP.Response.Class>;
     getSchemaFor(object: Object): ObjectSchema.DigestedObjectSchema;
-    executeSELECTQuery(documentURI: string, selectQuery: string, requestOptions?: HTTP.Request.Options): Promise<[SPARQL.Results.Class, HTTP.Response.Class]>;
+    executeRawASKQuery(documentURI: string, askQuery: string, requestOptions?: HTTP.Request.Options): Promise<[SPARQL.Results.Class, HTTP.Response.Class]>;
+    executeRawSELECTQuery(documentURI: string, selectQuery: string, requestOptions?: HTTP.Request.Options): Promise<[SPARQL.Results.Class, HTTP.Response.Class]>;
+    executeRawCONSTRUCTQuery(documentURI: string, constructQuery: string, requestOptions?: HTTP.Request.Options): Promise<[string, HTTP.Response.Class]>;
+    executeRawDESCRIBEQuery(documentURI: string, constructQuery: string, requestOptions?: HTTP.Request.Options): Promise<[string, HTTP.Response.Class]>;
     private getRDFDocument(rdfDocuments, response);
     private getPointerID(uri);
     private createPointer(localID);

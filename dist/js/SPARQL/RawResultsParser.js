@@ -14,7 +14,6 @@ System.register(["./../HTTP/JSONParser"], function(exports_1) {
                 Class.prototype.parse = function (input) {
                     var jsonParser = new JSONParser_1.default();
                     return jsonParser.parse(input).then(function (parsedObject) {
-                        // TODO: Add sugar
                         return parsedObject;
                     });
                 };
@@ -26,4 +25,4 @@ System.register(["./../HTTP/JSONParser"], function(exports_1) {
     }
 });
 
-//# sourceMappingURL=ResultsParser.js.map
+//# sourceMappingURL=RawResultsParser.js.map

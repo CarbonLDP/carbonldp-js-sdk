@@ -129,53 +129,50 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 		HTTP.Request.Util.setAcceptHeader( "application/ld+json", requestOptions );
 		HTTP.Request.Util.setPreferredInteractionModel( LDP.Class.RDFSource, requestOptions );
 
-		return HTTP.Request.Service.get( uri, requestOptions ).then(
-			( response:HTTP.Response.Class ) => {
-				let parsedObject:Object = parse( response.data );
+		return HTTP.Request.Service.get( uri, requestOptions ).then( ( response:HTTP.Response.Class ) => {
+			let parsedObject:Object = parse( response.data );
 
-				return expand( [ parsedObject, response ] );
+			return expand( [ parsedObject, response ] );
+		} ).then( ( [ expandedResult, response ]:[ Object, HTTP.Response.Class ] ) => {
+			let etag:string = HTTP.Response.Util.getETag( response );
+			if( etag === null ) throw new HTTP.Errors.BadResponseError( "The response doesn't contain an ETag", response );
+
+			let rdfDocuments:RDF.Document.Class[] = RDF.Document.Util.getDocuments( expandedResult );
+			let rdfDocument:RDF.Document.Class = this.getRDFDocument( rdfDocuments, response );
+
+			let documentResources:RDF.Node.Class[] = RDF.Document.Util.getDocumentResources( rdfDocument );
+			if( documentResources.length > 1 ) throw new HTTP.Errors.BadResponseError( "The RDFDocument contains more than one document resource.", response );
+			if( documentResources.length === 0 ) throw new HTTP.Errors.BadResponseError( "The RDFDocument doesn\'t contain a document resource.", response );
+
+			let documentResource:RDF.Node.Class = documentResources[ 0 ];
+			let fragmentResources:RDF.Node.Class[] = RDF.Document.Util.getBNodeResources( rdfDocument );
+			let namedFragmentResources:RDF.Node.Class[] = RDF.Document.Util.getFragmentResources( rdfDocument );
+
+			let documentPointer:Pointer.Class = this.getPointer( uri );
+			documentPointer._resolved = true;
+
+			let document:PersistedDocument.Class = PersistedDocument.Factory.createFrom( documentPointer, uri, this );
+			document._etag = etag;
+
+			let fragments:Fragment.Class[] = [];
+			for( let fragmentResource of fragmentResources ) {
+				fragments.push( document.createFragment( fragmentResource[ "@id" ] ) );
 			}
-		).then(
-			( [ expandedResult, response ]:[ Object, HTTP.Response.Class ] ) => {
-				let etag:string = HTTP.Response.Util.getETag( response );
-				if( etag === null ) throw new HTTP.Errors.BadResponseError( "The response doesn't contain an ETag", response );
 
-				let rdfDocuments:RDF.Document.Class[] = RDF.Document.Util.getDocuments( expandedResult );
-				let rdfDocument:RDF.Document.Class = this.getRDFDocument( rdfDocuments, response );
-
-				let documentResources:RDF.Node.Class[] = RDF.Document.Util.getDocumentResources( rdfDocument );
-				if( documentResources.length > 1 ) throw new HTTP.Errors.BadResponseError( "The RDFDocument contains more than one document resource.", response );
-				if( documentResources.length === 0 ) throw new HTTP.Errors.BadResponseError( "The RDFDocument doesn\'t contain a document resource.", response );
-
-				let documentResource:RDF.Node.Class = documentResources[ 0 ];
-				let fragmentResources:RDF.Node.Class[] = RDF.Document.Util.getBNodeResources( rdfDocument );
-				let namedFragmentResources:RDF.Node.Class[] = RDF.Document.Util.getFragmentResources( rdfDocument );
-
-				let documentPointer:Pointer.Class = this.getPointer( uri );
-				documentPointer._resolved = true;
-
-				let document:PersistedDocument.Class = PersistedDocument.Factory.createFrom( documentPointer, uri, this );
-				document._etag = etag;
-
-				let fragments:Fragment.Class[] = [];
-				for( let fragmentResource of fragmentResources ) {
-					fragments.push( document.createFragment( fragmentResource[ "@id" ] ) );
-				}
-
-				let namedFragments:NamedFragment.Class[] = [];
-				for( let namedFragmentResource of namedFragmentResources ) {
-					namedFragments.push( document.createNamedFragment( namedFragmentResource[ "@id" ] ) );
-				}
-
-				this.compact( documentResource, document, document );
-				this.compact( fragmentResources, fragments, document );
-				this.compact( namedFragmentResources, namedFragments, document );
-
-				// TODO: Decorate additional behavior (container, app, etc.)
-				return [ document, response ];
+			let namedFragments:NamedFragment.Class[] = [];
+			for( let namedFragmentResource of namedFragmentResources ) {
+				namedFragments.push( document.createNamedFragment( namedFragmentResource[ "@id" ] ) );
 			}
-		);
+
+			this.compact( documentResource, document, document );
+			this.compact( fragmentResources, fragments, document );
+			this.compact( namedFragmentResources, namedFragments, document );
+
+			// TODO: Decorate additional behavior (container, app, etc.)
+			return [ document, response ];
+		} );
 	}
+
 	createChild( parentURI:string, slug:string, childDocument:Document.Class, requestOptions?:HTTP.Request.Options ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
 	createChild( parentURI:string, childDocument:Document.Class, requestOptions?:HTTP.Request.Options ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
 	createChild( parentURI:string, slugOrChildDocument:any, childDocumentOrRequestOptions:any = {}, requestOptions:HTTP.Request.Options = {} ):Promise<[ Pointer.Class, HTTP.Response.Class ]> {
@@ -256,7 +253,7 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 		}
 	}
 
-	executeSELECTQuery( documentURI:string, selectQuery:string, requestOptions:HTTP.Request.Options = {} ):Promise<[ SPARQL.Results.Class, HTTP.Response.Class ]> {
+	executeRawASKQuery( documentURI:string, askQuery:string, requestOptions:HTTP.Request.Options = {} ):Promise<[ SPARQL.Results.Class, HTTP.Response.Class ]> {
 		if( ! RDF.URI.Util.isAbsolute( documentURI ) ) {
 			if( ! this.context ) throw new Errors.IllegalArgumentError( "This Documents instance doesn't support relative URIs." );
 			documentURI = this.context.resolve( documentURI );
@@ -264,7 +261,40 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 
 		if ( this.context && this.context.Auth.isAuthenticated() ) this.context.Auth.addAuthentication( requestOptions );
 
-		return SPARQL.Service.executeSELECTQuery( documentURI, selectQuery, requestOptions );
+		return SPARQL.Service.executeRawASKQuery( documentURI, askQuery, requestOptions );
+	}
+
+	executeRawSELECTQuery( documentURI:string, selectQuery:string, requestOptions:HTTP.Request.Options = {} ):Promise<[ SPARQL.Results.Class, HTTP.Response.Class ]> {
+		if( ! RDF.URI.Util.isAbsolute( documentURI ) ) {
+			if( ! this.context ) throw new Errors.IllegalArgumentError( "This Documents instance doesn't support relative URIs." );
+			documentURI = this.context.resolve( documentURI );
+		}
+
+		if ( this.context && this.context.Auth.isAuthenticated() ) this.context.Auth.addAuthentication( requestOptions );
+
+		return SPARQL.Service.executeRawSELECTQuery( documentURI, selectQuery, requestOptions );
+	}
+
+	executeRawCONSTRUCTQuery( documentURI:string, constructQuery:string, requestOptions:HTTP.Request.Options = {} ):Promise<[ string, HTTP.Response.Class ]> {
+		if( ! RDF.URI.Util.isAbsolute( documentURI ) ) {
+			if( ! this.context ) throw new Errors.IllegalArgumentError( "This Documents instance doesn't support relative URIs." );
+			documentURI = this.context.resolve( documentURI );
+		}
+
+		if ( this.context && this.context.Auth.isAuthenticated() ) this.context.Auth.addAuthentication( requestOptions );
+
+		return SPARQL.Service.executeRawCONSTRUCTQuery( documentURI, constructQuery, requestOptions );
+	}
+
+	executeRawDESCRIBEQuery( documentURI:string, constructQuery:string, requestOptions:HTTP.Request.Options = {} ):Promise<[ string, HTTP.Response.Class ]> {
+		if( ! RDF.URI.Util.isAbsolute( documentURI ) ) {
+			if( ! this.context ) throw new Errors.IllegalArgumentError( "This Documents instance doesn't support relative URIs." );
+			documentURI = this.context.resolve( documentURI );
+		}
+
+		if ( this.context && this.context.Auth.isAuthenticated() ) this.context.Auth.addAuthentication( requestOptions );
+
+		return SPARQL.Service.executeRawDESCRIBEQuery( documentURI, constructQuery, requestOptions );
 	}
 
 	private getRDFDocument( rdfDocuments:RDF.Document.Class[], response:HTTP.Response.Class ):RDF.Document.Class {

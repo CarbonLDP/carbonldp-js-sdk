@@ -1,3 +1,5 @@
+import * as Utils from "./../Utils";
+
 export class ValueTypes {
 	static get URI():string { return "uri"; }
 	static get LITERAL():string { return "literal"; }
@@ -16,11 +18,26 @@ export interface BindingProperty {
 }
 
 export interface Class {
-	"head":{ "vars":string[], "links"?:string[] };
+	"head":{ "vars"?:string[], "links"?:string[] };
 	"results"?:{
 		"bindings":BindingObject[],
 	};
 	"boolean"?:boolean;
+}
+
+export class Factory {
+	static hasClassProperties( value:Object ):boolean {
+		return (
+			Utils.hasPropertyDefined( value, "head" )
+		);
+	}
+
+	static is( value:any ):boolean {
+		return (
+			Utils.isObject( value ) &&
+			Factory.hasClassProperties( value )
+		);
+	}
 }
 
 export default Class;

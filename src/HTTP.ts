@@ -10,6 +10,7 @@ import Method from "./HTTP/Method";
 import * as Request from "./HTTP/Request";
 import * as Response from "./HTTP/Response";
 import StatusCode from "./HTTP/StatusCode";
+import * as StringParser from "./HTTP/StringParser";
 
 export {
 	Errors,
@@ -19,5 +20,6 @@ export {
 	Method,
 	Request,
 	Response,
-	StatusCode
+	StatusCode,
+	StringParser
 };

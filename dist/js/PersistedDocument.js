@@ -18,8 +18,21 @@ System.register(["./Document", "./Utils"], function(exports_1) {
     function destroy() {
         return this._documents.delete(this);
     }
-    function executeSELECTQuery(selectQuery) {
-        return this._documents.executeSELECTQuery(this.id, selectQuery);
+    function executeRawASKQuery(askQuery, requestOptions) {
+        if (requestOptions === void 0) { requestOptions = {}; }
+        return this._documents.executeRawASKQuery(this.id, askQuery, requestOptions);
+    }
+    function executeRawSELECTQuery(selectQuery, requestOptions) {
+        if (requestOptions === void 0) { requestOptions = {}; }
+        return this._documents.executeRawSELECTQuery(this.id, selectQuery, requestOptions);
+    }
+    function executeRawCONSTRUCTQuery(constructQuery, requestOptions) {
+        if (requestOptions === void 0) { requestOptions = {}; }
+        return this._documents.executeRawCONSTRUCTQuery(this.id, constructQuery, requestOptions);
+    }
+    function executeRawDESCRIBEQuery(describeQuery, requestOptions) {
+        if (requestOptions === void 0) { requestOptions = {}; }
+        return this._documents.executeRawDESCRIBEQuery(this.id, describeQuery, requestOptions);
     }
     return {
         setters:[
@@ -39,7 +52,10 @@ System.register(["./Document", "./Utils"], function(exports_1) {
                         Utils.hasFunction(document, "refresh") &&
                         Utils.hasFunction(document, "save") &&
                         Utils.hasFunction(document, "destroy") &&
-                        Utils.hasFunction(document, "executeSELECTQuery"));
+                        Utils.hasFunction(document, "executeRawASKQuery") &&
+                        Utils.hasFunction(document, "executeRawSELECTQuery") &&
+                        Utils.hasFunction(document, "executeRawDESCRIBEQuery") &&
+                        Utils.hasFunction(document, "executeRawCONSTRUCTQuery"));
                 };
                 Factory.is = function (object) {
                     return (
@@ -129,11 +145,29 @@ System.register(["./Document", "./Utils"], function(exports_1) {
                             configurable: true,
                             value: destroy,
                         },
-                        "executeSELECTQuery": {
+                        "executeRawASKQuery": {
                             writable: false,
                             enumerable: false,
                             configurable: true,
-                            value: executeSELECTQuery,
+                            value: executeRawASKQuery,
+                        },
+                        "executeRawSELECTQuery": {
+                            writable: false,
+                            enumerable: false,
+                            configurable: true,
+                            value: executeRawSELECTQuery,
+                        },
+                        "executeRawCONSTRUCTQuery": {
+                            writable: false,
+                            enumerable: false,
+                            configurable: true,
+                            value: executeRawCONSTRUCTQuery,
+                        },
+                        "executeRawDESCRIBEQuery": {
+                            writable: false,
+                            enumerable: false,
+                            configurable: true,
+                            value: executeRawDESCRIBEQuery,
                         },
                     });
                     /*

@@ -29,9 +29,11 @@ export declare class Service {
     static delete<T>(url: string, body: string, options?: Options, parser?: Parser<T>): Promise<[T, Response]>;
 }
 export declare class Util {
+    static getHeader(headerName: string, requestOptions: Options): Options;
     static setAcceptHeader(accept: string, requestOptions: Options): Options;
     static setContentTypeHeader(contentType: string, requestOptions: Options): Options;
     static setIfMatchHeader(etag: string, requestOptions: Options): Options;
     static setPreferredInteractionModel(interactionModelURI: string, requestOptions: Options): Options;
     static setSlug(slug: string, requestOptions: Options): Options;
+    static addPreference(preference: string, requestOptions: Options): Options;
 }

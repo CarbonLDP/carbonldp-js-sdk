@@ -7,4 +7,5 @@ import Method from "./HTTP/Method";
 import * as Request from "./HTTP/Request";
 import * as Response from "./HTTP/Response";
 import StatusCode from "./HTTP/StatusCode";
-export { Errors, Header, JSONParser, JSONLDParser, Method, Request, Response, StatusCode };
+import * as StringParser from "./HTTP/StringParser";
+export { Errors, Header, JSONParser, JSONLDParser, Method, Request, Response, StatusCode, StringParser };

@@ -1,4 +1,4 @@
-import * as Results from "./SPARQL/Results";
-import * as ResultsParser from "./SPARQL/ResultsParser";
+import * as RawResults from "./SPARQL/RawResults";
+import * as RawResultsParser from "./SPARQL/RawResultsParser";
 import Service from "./SPARQL/Service";
-export { Results, ResultsParser, Service };
+export { RawResults, RawResultsParser, Service };

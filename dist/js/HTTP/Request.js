@@ -141,6 +141,11 @@ System.register(["./Errors", "./Header", "./Method", "./Response", "./../Utils"]
             Util = (function () {
                 function Util() {
                 }
+                Util.getHeader = function (headerName, requestOptions) {
+                    if (!requestOptions.headers)
+                        return null;
+                    return requestOptions.headers.get(headerName);
+                };
                 Util.setAcceptHeader = function (accept, requestOptions) {
                     var headers = requestOptions.headers ? requestOptions.headers : requestOptions.headers = new Map();
                     headers.set("Accept", new Header.Class(accept));
@@ -158,18 +163,24 @@ System.register(["./Errors", "./Header", "./Method", "./Response", "./../Utils"]
                 };
                 Util.setPreferredInteractionModel = function (interactionModelURI, requestOptions) {
                     var headers = requestOptions.headers ? requestOptions.headers : requestOptions.headers = new Map();
-                    if (!headers.has("Prefer"))
-                        headers.set("Prefer", new Header.Class());
+                    headers.set("Prefer", new Header.Class());
                     var prefer = headers.get("Prefer");
                     prefer.values.push(new Header.Value(interactionModelURI + "; rel=interaction-model"));
                     return requestOptions;
                 };
                 Util.setSlug = function (slug, requestOptions) {
                     var headers = requestOptions.headers ? requestOptions.headers : requestOptions.headers = new Map();
-                    if (!headers.has("Slug"))
-                        headers.set("Slug", new Header.Class());
+                    headers.set("Slug", new Header.Class());
                     var slugHeader = headers.get("Slug");
                     slugHeader.values.push(new Header.Value(slug));
+                    return requestOptions;
+                };
+                Util.addPreference = function (preference, requestOptions) {
+                    var headers = requestOptions.headers ? requestOptions.headers : requestOptions.headers = new Map();
+                    if (!headers.has("Prefer"))
+                        headers.set("Prefer", new Header.Class());
+                    var slugHeader = headers.get("Prefer");
+                    slugHeader.values.push(new Header.Value(preference));
                     return requestOptions;
                 };
                 return Util;

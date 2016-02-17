@@ -17,7 +17,10 @@ export interface Class extends Pointer.Class, PersistedResource.Class, Document.
 	save():Promise<void>;
 	destroy():Promise<void>;
 
-	executeSELECTQuery():Promise<[ SPARQL.Results.Class, HTTP.Response.Class ]>;
+	executeRawASKQuery():Promise<[ SPARQL.Results.Class, HTTP.Response.Class ]>;
+	executeRawSELECTQuery():Promise<[ SPARQL.Results.Class, HTTP.Response.Class ]>;
+	executeRawDESCRIBEQuery():Promise<[ string, HTTP.Response.Class ]>;
+	executeRawCONSTRUCTQuery():Promise<[ string, HTTP.Response.Class ]>;
 }
 
 function isDirty():boolean {
@@ -38,8 +41,20 @@ function destroy():Promise<void> {
 	return this._documents.delete( this );
 }
 
-function executeSELECTQuery( selectQuery:string ):Promise<[ SPARQL.Results.Class, HTTP.Response.Class ]> {
-	return this._documents.executeSELECTQuery( this.id, selectQuery );
+function executeRawASKQuery( askQuery:string, requestOptions:HTTP.Request.Options = {} ):Promise<[ SPARQL.Results.Class, HTTP.Response.Class ]> {
+	return this._documents.executeRawASKQuery( this.id, askQuery, requestOptions );
+}
+
+function executeRawSELECTQuery( selectQuery:string, requestOptions:HTTP.Request.Options = {} ):Promise<[ SPARQL.Results.Class, HTTP.Response.Class ]> {
+	return this._documents.executeRawSELECTQuery( this.id, selectQuery, requestOptions );
+}
+
+function executeRawCONSTRUCTQuery( constructQuery:string, requestOptions:HTTP.Request.Options = {} ):Promise<[ string, HTTP.Response.Class ]> {
+	return this._documents.executeRawCONSTRUCTQuery( this.id, constructQuery, requestOptions );
+}
+
+function executeRawDESCRIBEQuery( describeQuery:string, requestOptions:HTTP.Request.Options = {} ):Promise<[ string, HTTP.Response.Class ]> {
+	return this._documents.executeRawDESCRIBEQuery( this.id, describeQuery, requestOptions );
 }
 
 export class Factory {
@@ -51,7 +66,10 @@ export class Factory {
 			Utils.hasFunction( document, "save" ) &&
 			Utils.hasFunction( document, "destroy" ) &&
 
-			Utils.hasFunction( document, "executeSELECTQuery" )
+			Utils.hasFunction( document, "executeRawASKQuery" ) &&
+			Utils.hasFunction( document, "executeRawSELECTQuery" ) &&
+			Utils.hasFunction( document, "executeRawDESCRIBEQuery" ) &&
+			Utils.hasFunction( document, "executeRawCONSTRUCTQuery" )
 		);
 	}
 
@@ -153,11 +171,29 @@ export class Factory {
 				value: destroy,
 			},
 
-			"executeSELECTQuery": {
+			"executeRawASKQuery": {
 				writable: false,
 				enumerable: false,
 				configurable: true,
-				value: executeSELECTQuery,
+				value: executeRawASKQuery,
+			},
+			"executeRawSELECTQuery": {
+				writable: false,
+				enumerable: false,
+				configurable: true,
+				value: executeRawSELECTQuery,
+			},
+			"executeRawCONSTRUCTQuery": {
+				writable: false,
+				enumerable: false,
+				configurable: true,
+				value: executeRawCONSTRUCTQuery,
+			},
+			"executeRawDESCRIBEQuery": {
+				writable: false,
+				enumerable: false,
+				configurable: true,
+				value: executeRawDESCRIBEQuery,
 			},
 		} );
 

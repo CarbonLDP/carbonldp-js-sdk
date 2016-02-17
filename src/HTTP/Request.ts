@@ -146,6 +146,11 @@ export class Service {
 }
 
 export class Util {
+	static getHeader( headerName:string, requestOptions:Options ):Options {
+		if( ! requestOptions.headers ) return null;
+		return requestOptions.headers.get( headerName );
+	}
+
 	static setAcceptHeader( accept:string, requestOptions:Options ):Options {
 		let headers:Map<string, Header.Class> = requestOptions.headers ? requestOptions.headers : requestOptions.headers = new Map<string, Header.Class>();
 		headers.set( "Accept", new Header.Class( accept ) );
@@ -166,7 +171,7 @@ export class Util {
 
 	static setPreferredInteractionModel( interactionModelURI:string, requestOptions:Options ):Options {
 		let headers:Map<string, Header.Class> = requestOptions.headers ? requestOptions.headers : requestOptions.headers = new Map<string, Header.Class>();
-		if ( ! headers.has( "Prefer" ) ) headers.set( "Prefer", new Header.Class() );
+		headers.set( "Prefer", new Header.Class() );
 
 		let prefer:Header.Class = headers.get( "Prefer" );
 		prefer.values.push( new Header.Value( interactionModelURI + "; rel=interaction-model" ) );
@@ -176,10 +181,20 @@ export class Util {
 
 	static setSlug( slug:string, requestOptions:Options ):Options {
 		let headers:Map<string, Header.Class> = requestOptions.headers ? requestOptions.headers : requestOptions.headers = new Map<string, Header.Class>();
-		if ( ! headers.has( "Slug" ) ) headers.set( "Slug", new Header.Class() );
+		headers.set( "Slug", new Header.Class() );
 
 		let slugHeader:Header.Class = headers.get( "Slug" );
 		slugHeader.values.push( new Header.Value( slug ) );
+
+		return requestOptions;
+	}
+
+	static addPreference( preference:string, requestOptions:Options ):Options {
+		let headers:Map<string, Header.Class> = requestOptions.headers ? requestOptions.headers : requestOptions.headers = new Map<string, Header.Class>();
+		if ( ! headers.has( "Prefer" ) ) headers.set( "Prefer", new Header.Class() );
+
+		let slugHeader:Header.Class = headers.get( "Prefer" );
+		slugHeader.values.push( new Header.Value( preference ) );
 
 		return requestOptions;
 	}
