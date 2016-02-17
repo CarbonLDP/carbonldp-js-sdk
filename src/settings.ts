@@ -13,6 +13,6 @@ settings[ "domain" ] = "carbonldp.com";
 settings[ "http.ssl" ] = true;
 settings[ "auth.method" ] = Auth.Method.TOKEN;
 settings[ "platform.container" ] = "platform/";
-settings[ "platform.apps.container" ] = settings[ "platform.container" ] + "apps/";
+settings[ "platform.apps.container" ] = "apps/";
 
 export default settings;

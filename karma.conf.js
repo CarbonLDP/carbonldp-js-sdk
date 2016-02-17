@@ -19,19 +19,11 @@ module.exports = function( config ) {
 				"src/**/*.spec.ts"
 			],
 			serveFiles: [
-				"src/**/*.ts", "!src/**/*.spec.ts"
+				"src/**/!(*.spec).ts"
 			]
 		},
 
-		// test results reporter to use
-		// possible values: "dots", "progress"
-		// available reporters: https://npmjs.org/browse/keyword/karma-reporter
 		reporters: [ "documentation" ],
-
-		preprocessors: {
-			"**/*!transpiled": [ "sourcemap" ]
-		},
-
 
 		// web server port
 		port: 9876,

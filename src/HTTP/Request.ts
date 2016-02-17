@@ -1,29 +1,23 @@
-/// <reference path="../../typings/es6/es6.d.ts" />
-/// <reference path="../../typings/es6-promise/es6-promise.d.ts" />
+/// <reference path="./../../typings/typings.d.ts" />
 
 import * as Errors from "./Errors";
 import * as Header from "./Header";
 import Method from "./Method";
 import Parser from "./Parser";
-import ProcessedResponse from "./ProcessedResponse";
 import Response from "./Response";
 
 import * as Utils from "./../Utils";
 
-interface Options {
+export interface Options {
 	headers?: Map<string, Header.Class>;
 	sendCredentialsOnCORS?:boolean;
 	timeout?:number;
 	request?:XMLHttpRequest;
 }
 
-interface OptionsWithParser<T> extends Options {
-	parser:Parser<T>;
-}
-
 function setHeaders( request:XMLHttpRequest, headers:Map<string, Header.Class> ):void {
 	let namesIterator:Iterator<string> = headers.keys();
-	let next:IteratorValue<string> = namesIterator.next();
+	let next:IteratorResult<string> = namesIterator.next();
 	while ( ! next.done ) {
 		let name:string = next.value;
 		let value:Header.Class = headers.get( name );
@@ -33,7 +27,7 @@ function setHeaders( request:XMLHttpRequest, headers:Map<string, Header.Class> )
 	}
 }
 
-function onLoad( resolve:( value:Response | Thenable<Response> ) => void, reject:( value:Response ) => void, request:XMLHttpRequest ):() => void {
+function onLoad( resolve:( result:any ) => void, reject:( value:Response ) => void, request:XMLHttpRequest ):() => void {
 	return () => {
 		let response:Response = new Response( request );
 		if ( request.status >= 200 && request.status <= 299 ) {
@@ -66,7 +60,7 @@ function rejectRequest( reject:( error:any ) => void, request:XMLHttpRequest ):v
 	reject( new Errors.UnknownError( "", response ) );
 }
 
-class Service {
+export class Service {
 
 	private static defaultOptions:Options = {
 		sendCredentialsOnCORS: true
@@ -75,7 +69,7 @@ class Service {
 	static send( method:(Method | string), url:string, options?:Options ):Promise<Response>;
 	static send( method:(Method | string), url:string, body:string, options?:Options ):Promise<Response>;
 	static send( method:(Method | string), url:string, body:string, options?:Options ):Promise<Response>;
-	static send<T>( method:(Method | string), url:string, body:string, options?:Options, parser?:Parser<T> ):Promise<ProcessedResponse<T>>;
+	static send<T>( method:(Method | string), url:string, body:string, options?:Options, parser?:Parser<T> ):Promise<[ T, Response ]>;
 	static send<T>( method:any, url:string, bodyOrOptions:any = Service.defaultOptions, options:Options = Service.defaultOptions, parser:Parser<T> = null ):any {
 		let body:string = bodyOrOptions && Utils.isString( bodyOrOptions ) ? bodyOrOptions : null;
 
@@ -107,10 +101,7 @@ class Service {
 
 		return requestPromise.then( ( response:Response ) => {
 			return parser.parse( response.data ).then( ( parsedBody:T ) => {
-				return {
-					result: parsedBody,
-					response: response
-				};
+				return [ parsedBody, response ];
 			});
 		});
 	}
@@ -123,26 +114,41 @@ class Service {
 		return Service.send( Method.HEAD, url, options );
 	}
 
-	static get( url:string, options:Options = Service.defaultOptions ):Promise<Response> {
-		return Service.send( Method.GET, url, options );
+	static get( url:string, options?:Options ):Promise<Response>;
+	static get<T>( url:string, options?:Options, parser?:Parser<T> ):Promise<[ T, Response ]>;
+	static get<T>( url:string, options:Options = Service.defaultOptions, parser:Parser<T> = null ):any {
+		return Service.send( Method.GET, url, null, options, parser );
 	}
 
 	static post( url:string, body:string, options?:Options ):Promise<Response>;
-	static post<T>( url:string, body:string, options?:Options, parser?:Parser<T> ):Promise<ProcessedResponse<T>>;
+	static post<T>( url:string, body:string, options?:Options, parser?:Parser<T> ):Promise<[ T, Response ] >;
 	static post<T>( url:string, bodyOrOptions:any = Service.defaultOptions, options:Options = Service.defaultOptions, parser:Parser<T> = null ):any {
-			return Service.send( Method.POST, url, bodyOrOptions, options, parser );
+		return Service.send( Method.POST, url, bodyOrOptions, options, parser );
 	}
 
-	static put( url:string, body:string, options:Options = Service.defaultOptions ):Promise<Response> {
-		return Service.send( Method.PUT, url, body, options );
+	static put( url:string, body:string, options?:Options ):Promise<Response>;
+	static put<T>( url:string, body:string, options?:Options, parser?:Parser<T> ):Promise<[ T, Response ]>;
+	static put<T>( url:string, bodyOrOptions:any = Service.defaultOptions, options:Options = Service.defaultOptions, parser:Parser<T> = null ):any {
+		return Service.send( Method.PUT, url, bodyOrOptions, options, parser );
 	}
 
-	static patch( url:string, body:string, options:Options = Service.defaultOptions ):Promise<Response> {
-		return Service.send( Method.PATCH, url, body, options );
+	static patch( url:string, body:string, options?:Options ):Promise<Response>;
+	static patch<T>( url:string, body:string, options?:Options, parser?:Parser<T> ):Promise<[ T, Response ]>;
+	static patch<T>( url:string, bodyOrOptions:any = Service.defaultOptions, options:Options = Service.defaultOptions, parser:Parser<T> = null ):any {
+		return Service.send( Method.PATCH, url, bodyOrOptions, options, parser );
 	}
 
-	static delete( url:string, body:string, options:Options = Service.defaultOptions ):Promise<Response> {
-		return Service.send( Method.DELETE, url, body, options );
+	static delete( url:string, body:string, options?:Options ):Promise<Response>;
+	static delete<T>( url:string, body:string, options?:Options, parser?:Parser<T> ):Promise<[ T, Response ]>;
+	static delete<T>( url:string, bodyOrOptions:any = Service.defaultOptions, options:Options = Service.defaultOptions, parser:Parser<T> = null ):any {
+		return Service.send( Method.DELETE, url, bodyOrOptions, options, parser );
+	}
+}
+
+export class Util {
+	static getHeader( headerName:string, requestOptions:Options ):Options {
+		if( ! requestOptions.headers ) return null;
+		return requestOptions.headers.get( headerName );
 	}
 
 	static setAcceptHeader( accept:string, requestOptions:Options ):Options {
@@ -151,19 +157,45 @@ class Service {
 		return requestOptions;
 	}
 
-	// TODO: Move this method to a more specific module
+	static setContentTypeHeader( contentType:string, requestOptions:Options ):Options {
+		let headers:Map<string, Header.Class> = requestOptions.headers ? requestOptions.headers : requestOptions.headers = new Map<string, Header.Class>();
+		headers.set( "Content-Type", new Header.Class( contentType ) );
+		return requestOptions;
+	}
+
+	static setIfMatchHeader( etag:string, requestOptions:Options ):Options {
+		let headers:Map<string, Header.Class> = requestOptions.headers ? requestOptions.headers : requestOptions.headers = new Map<string, Header.Class>();
+		headers.set( "If-Match", new Header.Class( etag ) );
+		return requestOptions;
+	}
+
 	static setPreferredInteractionModel( interactionModelURI:string, requestOptions:Options ):Options {
 		let headers:Map<string, Header.Class> = requestOptions.headers ? requestOptions.headers : requestOptions.headers = new Map<string, Header.Class>();
-		if ( ! headers.has( "Prefer" ) ) headers.set( "Prefer", new Header.Class() );
+		headers.set( "Prefer", new Header.Class() );
 
 		let prefer:Header.Class = headers.get( "Prefer" );
 		prefer.values.push( new Header.Value( interactionModelURI + "; rel=interaction-model" ) );
 
 		return requestOptions;
 	}
-}
 
-export {
-	Options,
-	Service
-};
+	static setSlug( slug:string, requestOptions:Options ):Options {
+		let headers:Map<string, Header.Class> = requestOptions.headers ? requestOptions.headers : requestOptions.headers = new Map<string, Header.Class>();
+		headers.set( "Slug", new Header.Class() );
+
+		let slugHeader:Header.Class = headers.get( "Slug" );
+		slugHeader.values.push( new Header.Value( slug ) );
+
+		return requestOptions;
+	}
+
+	static addPreference( preference:string, requestOptions:Options ):Options {
+		let headers:Map<string, Header.Class> = requestOptions.headers ? requestOptions.headers : requestOptions.headers = new Map<string, Header.Class>();
+		if ( ! headers.has( "Prefer" ) ) headers.set( "Prefer", new Header.Class() );
+
+		let slugHeader:Header.Class = headers.get( "Prefer" );
+		slugHeader.values.push( new Header.Value( preference ) );
+
+		return requestOptions;
+	}
+}

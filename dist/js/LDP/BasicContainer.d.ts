@@ -1,15 +1,12 @@
-/// <reference path="../../typings/es6/es6.d.ts" />
-import * as RDF from "./../RDF";
+/// <reference path="../../typings/typings.d.ts" />
+import * as Pointer from "./../Pointer";
 import * as Container from "./Container";
+export declare const RDF_CLASS: string;
 export interface Class extends Container.Class {
 }
-export declare class Factory extends Container.Factory {
-    is(object: Object): boolean;
-    from(resource: RDF.Node.Class): Class;
-    from(resources: RDF.Node.Class[]): Class[];
-    protected hasRDFClass(resource: RDF.Resource.Class): boolean;
-    protected hasClassProperties(resource: RDF.Node.Class): boolean;
-    protected injectBehaviour(resource: Container.Class): Class;
+export declare class Factory {
+    hasRDFClass(pointer: Pointer.Class): boolean;
+    hasRDFClass(expandedObject: Object): boolean;
 }
 export declare let factory: Factory;
 export default Class;

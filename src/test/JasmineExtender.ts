@@ -1,7 +1,7 @@
 export interface SuiteDescriptor {
 	access?:string;
 	suiteType:string;
-	name:string;
+	name?:string;
 	description?:string;
 }
 
@@ -43,6 +43,10 @@ export interface MethodDescriptor extends SpecDescriptor {
 	returns?:MethodReturn;
 }
 
+export interface ReexportsDescriptor extends SpecDescriptor {
+	originalLocation: string;
+}
+
 export interface MethodArgument {
 	name:string;
 	type:string;
@@ -69,7 +73,6 @@ function toJSON( descriptor:any ):string {
 }
 
 export const MODULE:string = "module";
-export const SUBMODULE:string = "submodule";
 export const CLASS:string = "class";
 export const INTERFACE:string = "interface";
 
@@ -82,23 +85,14 @@ export const METHOD:string = "method";
 export const SIGNATURE:string = "signature";
 export const PROPERTY:string = "property";
 export const SUPER_CLASS:string = "super-class";
+export const REEXPORTS:string = "reexports";
+export const DEFAULTEXPORT:string = "defaultExport";
 
 export function module( name:string, description:string = null ):string {
 	let descriptor:SuiteDescriptor = {
 		suiteType: MODULE,
 		name: name,
-		description: description
-	};
-
-	return toJSON( descriptor );
-}
-
-export function submodule( access:string, name:string, description:string = null ):string {
-	let descriptor:SuiteDescriptor = {
-		suiteType: SUBMODULE,
-		access: access,
-		name: name,
-		description: description
+		description: description,
 	};
 
 	return toJSON( descriptor );
@@ -110,7 +104,7 @@ export function clazz( name:string, description:string, parent:string = null, in
 		name: name,
 		description: description,
 		parent: parent,
-		interfaces: interfaces
+		interfaces: interfaces,
 	};
 
 	return toJSON( descriptor );
@@ -121,17 +115,27 @@ export function interfaze( name:string, description:string, parent:string = null
 		suiteType: INTERFACE,
 		name: name,
 		description: description,
-		parent: parent
+		parent: parent,
 	};
 
 	return toJSON( descriptor );
 }
 
-export function constructor( name:string, description:string ):string {
+export function constructor( description:string = null ):string {
 	let descriptor:SuiteDescriptor = {
 		suiteType: CONSTRUCTOR,
+		description: description,
+	};
+
+	return toJSON( descriptor );
+}
+
+export function reexports( access: string, name: string, originalLocation: string ): string {
+	let descriptor:ReexportsDescriptor = {
+		specType: REEXPORTS,
+		access: access,
 		name: name,
-		description: description
+		originalLocation: originalLocation,
 	};
 
 	return toJSON( descriptor );
@@ -143,7 +147,7 @@ export function hasInterface( access:string, name:string, description:string = n
 		access: access,
 		specType: INTERFACE,
 		name: name,
-		description: description
+		description: description,
 	};
 
 	return toJSON( descriptor );
@@ -169,7 +173,7 @@ export function hasConstructor( argumentsOrDescription:any = null, constructorAr
 		access: STATIC,
 		specType: CONSTRUCTOR,
 		description: description,
-		arguments: constructorArguments
+		arguments: constructorArguments,
 	};
 
 	return toJSON( descriptor );
@@ -210,15 +214,24 @@ export function hasMethod( access:string, name:string, descriptionOrArgumentsOrR
 		name: name,
 		description: description,
 		arguments: methodArguments,
-		returns: returns
+		returns: returns,
 	};
 
 	return toJSON( descriptor );
 }
 
-/* tslint:disable: typedef */
-export let method = hasMethod;
-/* tslint:enable: typedef */
+export function method( access:string, name:string ):string;
+export function method( access:string, name:string, description:string ):string;
+export function method( access:string, name:string, description:string = null ):string {
+	let descriptor:SuiteDescriptor = {
+		access: access,
+		suiteType: METHOD,
+		name: name,
+		description: description,
+	};
+
+	return toJSON( descriptor );
+}
 
 export function hasSignature():string;
 export function hasSignature( description:string ):string;
@@ -249,7 +262,7 @@ export function hasSignature( descriptionOrArgumentsOrReturns:any = null, argume
 		specType: SIGNATURE,
 		description: description,
 		arguments: methodArguments,
-		returns: returns
+		returns: returns,
 	};
 
 	return toJSON( descriptor );
@@ -261,7 +274,7 @@ export function hasProperty( access:string, name:string, type:string, descriptio
 		specType: PROPERTY,
 		name: name,
 		type: type,
-		description: description
+		description: description,
 	};
 
 	return toJSON( descriptor );
@@ -274,7 +287,16 @@ export let property = hasProperty;
 export function extendsClass( name:string ):string {
 	let descriptor:SpecDescriptor = {
 		specType: SUPER_CLASS,
-		name: name
+		name: name,
+	};
+
+	return toJSON( descriptor );
+}
+
+export function hasDefaultExport( exportName: string ): string {
+	let descriptor:SpecDescriptor = {
+		specType: DEFAULTEXPORT,
+		name: exportName,
 	};
 
 	return toJSON( descriptor );

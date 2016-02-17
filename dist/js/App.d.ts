@@ -1,26 +1,24 @@
-/// <reference path="../typings/es6/es6.d.ts" />
+/// <reference path="../typings/typings.d.ts" />
+import AbstractContext from "./AbstractContext";
 import Context from "./Context";
-import * as RDF from "./RDF";
+import * as Document from "./Document";
 import * as LDP from "./LDP";
-export interface Resource extends RDF.Resource.Class {
-    rootContainer: string;
+import * as ObjectSchema from "./ObjectSchema";
+export interface Class extends Document.Class {
+    rootContainer: LDP.PersistedContainer.Class;
 }
 export declare const RDF_CLASS: string;
-export declare const DEFINITION: Map<string, RDF.PropertyDescription>;
-export declare class Class extends Context {
-    private resource;
+export declare const SCHEMA: ObjectSchema.Class;
+declare class AppContext extends AbstractContext {
+    private app;
     private base;
-    constructor(parentContext: Context, resource: Resource);
+    constructor(parentContext: Context, app: Class);
     resolve(uri: string): string;
     private getBase(resource);
 }
-export declare class Factory extends LDP.RDFSource.Factory {
-    static hasClassProperties(resource: RDF.Node.Class): boolean;
-    is(object: Object): boolean;
-    from(resource: RDF.Node.Class): Resource;
-    from(resources: RDF.Node.Class[]): Resource[];
-    protected hasRDFClass(resource: RDF.Resource.Class): boolean;
-    protected injectBehaviour(resource: RDF.Resource.Class): Resource;
+export { AppContext as Context };
+export declare class Factory {
+    hasClassProperties(resource: Object): boolean;
 }
 export declare let factory: Factory;
 export default Class;

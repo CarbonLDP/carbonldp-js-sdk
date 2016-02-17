@@ -1,6 +1,6 @@
 {
   "name": "carbonldp-sdk",
-  "version": "0.12.0-ALPHA",
+  "version": "0.14.0-ALPHA",
   "description": "JavaScript/TypeScript SDK to create CarbonLDP's Applications",
   "homepage": "https://github.com/CarbonLDP/CarbonLDP-JS-SDK",
   "contributors": [
@@ -21,14 +21,14 @@
   "devDependencies": {
     "del": "^2.0.2",
     "es6-shim": "^0.33.10",
-    "gulp": "^3.9.0",
+    "gulp": "^3.9.1",
     "gulp-sourcemaps": "^1.6.0",
     "gulp-tslint": "^3.5.0",
-    "gulp-typescript": "^2.9.2",
+    "gulp-typescript": "^2.10.0",
     "gulp-util": "^3.0.7",
     "jasmine-ajax": "^3.2.0",
     "jasmine-core": "^2.3.4",
-    "karma": "~0.13.9",
+    "karma": "^0.13.19",
     "karma-chrome-launcher": "~0.2.0",
     "karma-documentation-runner": "file:test/console-reporter",
     "karma-firefox-launcher": "~0.1.3",
@@ -38,15 +38,17 @@
     "karma-phantomjs-shim": "^1.1.2",
     "karma-sourcemap-loader": "^0.3.4",
     "phantomjs": "^1.9.16",
-    "systemjs-builder": "^0.14.10",
-    "tsd": "^0.6.4",
-    "typescript": "^1.6.0-beta"
+    "systemjs": "github:justindujardin/systemjs#typescript-source-maps",
+    "systemjs-builder": "github:justindujardin/builder#typescript-source-maps",
+    "tslint": "^3.3.0",
+    "typescript": "^1.7.5",
+    "typings": "^0.6.5"
   },
   "scripts": {
     "start": "./node_modules/.bin/gulp build",
     "lint": "./node_modules/.bin/gulp lint",
     "preinstall": "node scripts/copy-hooks.js",
-    "install": "./node_modules/.bin/jspm install",
+    "postinstall": "./node_modules/.bin/jspm install && ./node_modules/.bin/typings install",
     "test": "./node_modules/.bin/gulp test"
   },
   "jspm": {

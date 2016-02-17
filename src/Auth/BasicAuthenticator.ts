@@ -3,29 +3,26 @@ import Authenticator from "./Authenticator";
 import AuthenticationToken from "./AuthenticationToken";
 import * as Errors from "./../Errors";
 import UsernameAndPasswordToken from "./UsernameAndPasswordToken";
+import * as UsernameAndPasswordCredentials from "./UsernameAndPasswordCredentials";
 
-export interface Credentials {
-	username:string;
-	password:string;
-}
 
 export class Class implements Authenticator<UsernameAndPasswordToken> {
-	private credentials:Credentials;
+	private credentials:UsernameAndPasswordCredentials.Class;
 
 	isAuthenticated():boolean {
 		return !! this.credentials;
 	}
 
-	authenticate( authenticationToken:UsernameAndPasswordToken ):Promise<void>  {
+	authenticate( authenticationToken:UsernameAndPasswordToken ):Promise<UsernameAndPasswordCredentials.Class>  {
 		if( authenticationToken === null ) throw new Errors.IllegalArgumentError( "The authenticationToken cannot be null." );
 
-		return new Promise<void>( ( resolve:() => void, reject:( error:any ) => void ) => {
+		return new Promise<UsernameAndPasswordCredentials.Class>( ( resolve:( result:any ) => void, reject:( error:any ) => void ) => {
 			if( ! authenticationToken.username ) throw new Errors.IllegalArgumentError( "The username cannot be empty." );
 			if( ! authenticationToken.password ) throw new Errors.IllegalArgumentError( "The password cannot be empty." );
 
-			this.credentials = authenticationToken;
+			this.credentials = new UsernameAndPasswordCredentials.Class( authenticationToken.username, authenticationToken.password );
 
-			resolve();
+			resolve( this.credentials );
 		});
 	}
 

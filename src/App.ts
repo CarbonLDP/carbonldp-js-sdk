@@ -1,37 +1,37 @@
-/// <reference path="../typings/es6/es6.d.ts" />
+/// <reference path="./../typings/typings.d.ts" />
 
-import * as NS from "./NS";
-import Documents from "./Documents";
+import AbstractContext from "./AbstractContext";
 import Context from "./Context";
-import * as RDF from "./RDF";
+import * as Document from "./Document";
+import Documents from "./Documents";
 import * as LDP from "./LDP";
+import * as NS from "./NS";
+import * as ObjectSchema from "./ObjectSchema";
+import * as RDF from "./RDF";
 import * as Utils from "./Utils";
 
-export interface Resource extends RDF.Resource.Class {
-	rootContainer:string;
+export interface Class extends Document.Class {
+	rootContainer:LDP.PersistedContainer.Class;
 }
 
 export const RDF_CLASS:string = NS.CS.Class.Application;
 
-export const DEFINITION:Map<string, RDF.PropertyDescription> = <any> Utils.M.from( {
+export const SCHEMA:ObjectSchema.Class = {
 	"rootContainer": {
-		"uri": NS.CS.Predicate.rootContainer,
-		"multi": false,
-		"literal": false
-	}
-} );
+		"@id": NS.CS.Predicate.rootContainer,
+		"@type": "@id",
+	},
+};
 
-export class Class extends Context {
-	private resource:Resource;
+class AppContext extends AbstractContext {
+	private app:Class;
 	private base:string;
 
-	constructor( parentContext:Context, resource:Resource ) {
-		super();
+	constructor( parentContext:Context, app:Class ) {
+		super( parentContext );
+		this.app = app;
 
-		this.parentContext = parentContext;
-		this.resource = resource;
-
-		this.base = this.getBase( this.resource );
+		this.base = this.getBase( this.app );
 	}
 
 	resolve( uri:string ):string {
@@ -41,53 +41,20 @@ export class Class extends Context {
 		return RDF.URI.Util.resolve( finalURI, uri );
 	}
 
-	private getBase( resource:Resource ):string {
-		let rootContainerURI:string = RDF.URI.Util.removeProtocol( resource.rootContainer );
-		let parentBase:string = RDF.URI.Util.removeProtocol( this.parentContext.resolve( "" ) );
-		if ( Utils.S.startsWith( rootContainerURI, parentBase ) ) rootContainerURI = rootContainerURI.substr( parentBase.length, rootContainerURI.length );
-		return rootContainerURI;
+	private getBase( resource:Class ):string {
+		return resource.rootContainer.id;
 	}
 }
 
-export class Factory extends LDP.RDFSource.Factory {
-	static hasClassProperties( resource:RDF.Node.Class ):boolean {
+export {
+	AppContext as Context
+};
+
+export class Factory {
+	hasClassProperties( resource:Object ):boolean {
 		return (
 			Utils.hasPropertyDefined( resource, "rootContainer" )
 		);
-	}
-
-	is( object:Object ):boolean {
-		return (
-			super.is( object ) &&
-			Utils.hasPropertyDefined( object, "rootContainer" )
-		);
-	}
-
-	from( resource:RDF.Node.Class ):Resource;
-	from( resources:RDF.Node.Class[] ):Resource[];
-	from( resourceOrResources:any ):any {
-		let superResult:(RDF.Resource.Class | RDF.Resource.Class[]) = super.from( resourceOrResources );
-		let resources:RDF.Resource.Class[] = Utils.isArray( superResult ) ? <RDF.Resource.Class[]> superResult : <RDF.Resource.Class[]> [ superResult ];
-
-		for ( let i:number = 0, length:number = resources.length; i < length; i ++ ) {
-			let resource:RDF.Resource.Class = resources[ i ];
-			if ( ! Factory.hasClassProperties( resource ) ) this.injectBehaviour( resource );
-		}
-
-		if ( Utils.isArray( resourceOrResources ) ) return <Resource[]> resources;
-		return <Resource> resources[ 0 ];
-	}
-
-	protected hasRDFClass( resource:RDF.Resource.Class ):boolean {
-		return (
-			resource.types.indexOf( RDF_CLASS ) !== - 1
-		);
-	}
-
-	protected injectBehaviour( resource:RDF.Resource.Class ):Resource {
-		RDF.Resource.Factory.injectDescriptions( resource, DEFINITION );
-
-		return <Resource> resource;
 	}
 }
 

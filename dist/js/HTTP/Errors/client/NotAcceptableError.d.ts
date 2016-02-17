@@ -1,6 +1,6 @@
 import HTTPError from "./../HTTPError";
-declare class MethodNotAcceptableError extends HTTPError {
+declare class NotAcceptableError extends HTTPError {
     static statusCode: number;
     name: string;
 }
-export default MethodNotAcceptableError;
+export default NotAcceptableError;

@@ -1,19 +1,18 @@
-/// <reference path="../../typings/es6/es6.d.ts" />
+/// <reference path="../../typings/typings.d.ts" />
+import * as ObjectSchema from "./../ObjectSchema";
+import * as Pointer from "./../Pointer";
 import * as RDF from "./../RDF";
 import * as RDFSource from "./RDFSource";
 export declare const RDF_CLASS: string;
+export declare const SCHEMA: ObjectSchema.Class;
 export interface Class extends RDFSource.Class {
-    memberOfRelation: string;
-    hasMemberRelation: string;
+    memberOfRelation: Pointer.Class;
+    hasMemberRelation: Pointer.Class;
 }
-export declare const DEFINITION: Map<string, RDF.PropertyDescription>;
-export declare class Factory extends RDFSource.Factory {
-    is(object: Object): boolean;
-    from(resource: RDF.Node.Class): Class;
-    from(resources: RDF.Node.Class[]): Class[];
-    protected hasRDFClass(resource: RDF.Resource.Class): boolean;
-    protected hasClassProperties(resource: RDF.Node.Class): boolean;
-    protected injectBehaviour(resource: RDF.Resource.Class): Class;
+export declare class Factory {
+    hasClassProperties(resource: RDF.Node.Class): boolean;
+    hasRDFClass(pointer: Pointer.Class): boolean;
+    hasRDFClass(expandedObject: Object): boolean;
 }
 export declare let factory: Factory;
 export default Class;

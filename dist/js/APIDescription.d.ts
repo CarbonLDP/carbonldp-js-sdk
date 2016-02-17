@@ -1,7 +1,7 @@
-/// <reference path="../typings/es6/es6.d.ts" />
-import * as RDF from "./RDF";
+/// <reference path="../typings/typings.d.ts" />
+import * as ObjectSchema from "./ObjectSchema";
 export declare const RDF_CLASS: string;
-export declare const DEFINITION: Map<string, RDF.PropertyDescription>;
+export declare const SCHEMA: ObjectSchema.Class;
 export interface Class {
     version: string;
     buildDate: Date;

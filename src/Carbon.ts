@@ -1,33 +1,31 @@
-/// <reference path="../typings/tsd.d.ts" />
+/// <reference path="../typings/typings.d.ts" />
 
 import * as APIDescription from "./APIDescription";
 import Apps from "./Apps";
 import * as Auth from "./Auth";
-import Context from "./Context";
+import AbstractContext from "./AbstractContext";
 import * as Document from "./Document";
 import Documents from "./Documents";
 import * as HTTP from "./HTTP";
-import Platform from "./Platform";
 import * as RDF from "./RDF";
 import defaultSettings from "./settings";
 import * as Utils from "./Utils";
 
-class Carbon extends Context {
-	/* tslint:disable: variable-name typedef */
-	static Apps = Apps;
-	static Auth = Auth;
-	static Document = Document;
-	static Documents = Documents;
-	static HTTP = HTTP;
-	static RDF = RDF;
-	static Utils = Utils;
-	/* tslint:disable: variable-name typedef */
+class Carbon extends AbstractContext {
 
-	static get version():string { return "0.12.0-ALPHA"; }
+	/* tslint:disable: variable-name */
+	static Apps:typeof Apps = Apps;
+	static Auth:typeof Auth = Auth;
+	static Document:typeof Document = Document;
+	static Documents:typeof Documents = Documents;
+	static HTTP:typeof HTTP = HTTP;
+	static RDF:typeof RDF = RDF;
+	static Utils:typeof Utils = Utils;
+	/* tslint:enable: variable-name */
 
-	// TODO: Rename it to Apps. TypeScript is throwing an error regarding a static variable that will not be accessible if this instance variable has the same name
+	static get version():string { return "0.14.0-ALPHA"; }
+
 	apps:Apps;
-	platform:Platform;
 
 	constructor( settings:any ) {
 		super();
@@ -36,32 +34,23 @@ class Carbon extends Context {
 
 		Utils.M.extend( this.settings, Utils.M.from( settings ) );
 
-		this.registerDefaultDefinitions();
-
 		this.apps = new Apps( this );
-		this.platform = new Platform( this );
-
-		this.Auth = this.platform.Auth;
 	}
 
 	resolve( uri:string ):string {
 		if ( RDF.URI.Util.isAbsolute( uri ) ) return uri;
 
 		let finalURI:string = this.settings.get( "http.ssl" ) ? "https://" : "http://";
-		finalURI += this.settings.get( "domain" );
+		finalURI += this.settings.get( "domain" ) + "/" + this.getSetting( "platform.container" );
 		return RDF.URI.Util.resolve( finalURI, uri );
 	}
 
 	getAPIDescription():Promise<APIDescription.Class> {
-		return this.Documents.get( "platform/api/" ).then(
-			( processedResponse:HTTP.ProcessedResponse<Document.Class> ) => {
-				return <any> processedResponse.result;
+		return this.documents.get( "api/" ).then(
+			( [ description, response ]:[ Document.Class, HTTP.Response.Class ] ) => {
+				return <any> description;
 			}
 		);
-	}
-
-	private registerDefaultDefinitions():void {
-		this.addDefinition( APIDescription.RDF_CLASS, APIDescription.DEFINITION );
 	}
 }
 

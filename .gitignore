@@ -7,7 +7,17 @@
 src/**/*.js
 src/**/*.map
 
-test/jspm_packages
+# Typings
+**/typings/browser/
+**/typings/main/
+**/typings/browser.d.ts
+**/typings/main.d.ts
+
+# JSPM
+**/jspm_packages/
+
+# Semantic UI
+**/semantic/dist/
 
 reports/
 
@@ -21,17 +31,13 @@ log/
 target/
 
 # SASS
-.sass-cache/
-/.sass-cache/*
-*/.sass-cache/*
+**/.sass-cache/
 
 # NPM
-node_modules/**
+**/node_modules/
 
 # Bower
-bower_components/
-/bower_components/*
-*/bower_componentss/*
+**/bower_components/
 
 # ----- Operating Systems
 # OS X

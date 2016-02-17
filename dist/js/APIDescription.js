@@ -1,17 +1,24 @@
-/// <reference path="../typings/es6/es6.d.ts" />
-var NS = require("./NS");
-var Utils = require("./Utils");
-exports.RDF_CLASS = NS.C.Class.API;
-exports.DEFINITION = Utils.M.from({
-    "version": {
-        "uri": NS.C.Predicate.version,
-        "multi": false,
-        "literal": true
-    },
-    "buildDate": {
-        "uri": NS.C.Predicate.buildDate,
-        "multi": false,
-        "literal": true
+System.register(["./NS"], function(exports_1) {
+    var NS;
+    var RDF_CLASS, SCHEMA;
+    return {
+        setters:[
+            function (NS_1) {
+                NS = NS_1;
+            }],
+        execute: function() {
+            exports_1("RDF_CLASS", RDF_CLASS = NS.C.Class.API);
+            exports_1("SCHEMA", SCHEMA = {
+                "version": {
+                    "@id": NS.C.Predicate.version,
+                    "@type": NS.XSD.DataType.string,
+                },
+                "buildDate": {
+                    "@id": NS.C.Predicate.buildDate,
+                    "@type": NS.XSD.DataType.dateTime,
+                },
+            });
+        }
     }
 });
 

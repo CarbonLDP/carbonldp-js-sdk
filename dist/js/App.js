@@ -1,82 +1,65 @@
-/// <reference path="../typings/es6/es6.d.ts" />
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
-var NS = require("./NS");
-var Context_1 = require("./Context");
-var RDF = require("./RDF");
-var LDP = require("./LDP");
-var Utils = require("./Utils");
-exports.RDF_CLASS = NS.CS.Class.Application;
-exports.DEFINITION = Utils.M.from({
-    "rootContainer": {
-        "uri": NS.CS.Predicate.rootContainer,
-        "multi": false,
-        "literal": false
+/// <reference path="./../typings/typings.d.ts" />
+System.register(["./AbstractContext", "./NS", "./RDF", "./Utils"], function(exports_1) {
+    var __extends = (this && this.__extends) || function (d, b) {
+        for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+    var AbstractContext_1, NS, RDF, Utils;
+    var RDF_CLASS, SCHEMA, AppContext, Factory, factory;
+    return {
+        setters:[
+            function (AbstractContext_1_1) {
+                AbstractContext_1 = AbstractContext_1_1;
+            },
+            function (NS_1) {
+                NS = NS_1;
+            },
+            function (RDF_1) {
+                RDF = RDF_1;
+            },
+            function (Utils_1) {
+                Utils = Utils_1;
+            }],
+        execute: function() {
+            exports_1("RDF_CLASS", RDF_CLASS = NS.CS.Class.Application);
+            exports_1("SCHEMA", SCHEMA = {
+                "rootContainer": {
+                    "@id": NS.CS.Predicate.rootContainer,
+                    "@type": "@id",
+                },
+            });
+            AppContext = (function (_super) {
+                __extends(AppContext, _super);
+                function AppContext(parentContext, app) {
+                    _super.call(this, parentContext);
+                    this.app = app;
+                    this.base = this.getBase(this.app);
+                }
+                AppContext.prototype.resolve = function (uri) {
+                    if (RDF.URI.Util.isAbsolute(uri))
+                        return uri;
+                    var finalURI = this.parentContext.resolve(this.base);
+                    return RDF.URI.Util.resolve(finalURI, uri);
+                };
+                AppContext.prototype.getBase = function (resource) {
+                    return resource.rootContainer.id;
+                };
+                return AppContext;
+            })(AbstractContext_1.default);
+            exports_1("Context", AppContext);
+            Factory = (function () {
+                function Factory() {
+                }
+                Factory.prototype.hasClassProperties = function (resource) {
+                    return (Utils.hasPropertyDefined(resource, "rootContainer"));
+                };
+                return Factory;
+            })();
+            exports_1("Factory", Factory);
+            exports_1("factory", factory = new Factory());
+        }
     }
 });
-var Class = (function (_super) {
-    __extends(Class, _super);
-    function Class(parentContext, resource) {
-        _super.call(this);
-        this.parentContext = parentContext;
-        this.resource = resource;
-        this.base = this.getBase(this.resource);
-    }
-    Class.prototype.resolve = function (uri) {
-        if (RDF.URI.Util.isAbsolute(uri))
-            return uri;
-        var finalURI = this.parentContext.resolve(this.base);
-        return RDF.URI.Util.resolve(finalURI, uri);
-    };
-    Class.prototype.getBase = function (resource) {
-        var rootContainerURI = RDF.URI.Util.removeProtocol(resource.rootContainer);
-        var parentBase = RDF.URI.Util.removeProtocol(this.parentContext.resolve(""));
-        if (Utils.S.startsWith(rootContainerURI, parentBase))
-            rootContainerURI = rootContainerURI.substr(parentBase.length, rootContainerURI.length);
-        return rootContainerURI;
-    };
-    return Class;
-})(Context_1.default);
-exports.Class = Class;
-var Factory = (function (_super) {
-    __extends(Factory, _super);
-    function Factory() {
-        _super.apply(this, arguments);
-    }
-    Factory.hasClassProperties = function (resource) {
-        return (Utils.hasPropertyDefined(resource, "rootContainer"));
-    };
-    Factory.prototype.is = function (object) {
-        return (_super.prototype.is.call(this, object) &&
-            Utils.hasPropertyDefined(object, "rootContainer"));
-    };
-    Factory.prototype.from = function (resourceOrResources) {
-        var superResult = _super.prototype.from.call(this, resourceOrResources);
-        var resources = Utils.isArray(superResult) ? superResult : [superResult];
-        for (var i = 0, length_1 = resources.length; i < length_1; i++) {
-            var resource = resources[i];
-            if (!Factory.hasClassProperties(resource))
-                this.injectBehaviour(resource);
-        }
-        if (Utils.isArray(resourceOrResources))
-            return resources;
-        return resources[0];
-    };
-    Factory.prototype.hasRDFClass = function (resource) {
-        return (resource.types.indexOf(exports.RDF_CLASS) !== -1);
-    };
-    Factory.prototype.injectBehaviour = function (resource) {
-        RDF.Resource.Factory.injectDescriptions(resource, exports.DEFINITION);
-        return resource;
-    };
-    return Factory;
-})(LDP.RDFSource.Factory);
-exports.Factory = Factory;
-exports.factory = new Factory();
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = Class;
 
 //# sourceMappingURL=App.js.map

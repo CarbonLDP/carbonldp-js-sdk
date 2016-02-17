@@ -1,7 +1,4 @@
-/// <reference path="./../typings/jasmine/jasmine.d.ts" />
-/// <reference path="./../typings/jasmine-ajax/mock-ajax.d.ts" />
-/// <reference path="./../typings/es6/es6.d.ts" />
-/// <reference path="./../typings/es6-promise/es6-promise.d.ts" />
+/// <reference path="./../typings/typings.d.ts" />
 
 import * as App from "./App";
 
@@ -19,16 +16,10 @@ import {
 	hasConstructor,
 	hasMethod,
 	hasSignature,
-	hasProperty
+	hasProperty,
 } from "./test/JasmineExtender";
 
 describe( module( "Carbon/App" ), function():void {
-
-	describe( interfaze( "RDF.Resource.Class", "Description of Interface" ), function():void {
-
-		it( hasProperty( PROPERTY, "rootContainer", "string", "The Root of the Container" ), function():void {} );
-
-	} );
 	describe( clazz( "Carbon.App.Class",
 		"Class that represents a Carbon Application. It centers the scope of several services (Carbon.Auth, Carbon.Resources, etc.) into the Application\"s scope.",
 		"Carbon.Parent"
@@ -36,7 +27,7 @@ describe( module( "Carbon/App" ), function():void {
 
 		it( hasConstructor( "Constructor of Carbon.App.Class", [
 			{name: "parent", type: "Carbon.Parent"},
-			{name: "resource", type: "Carbon.App.Resource"}
+			{name: "resource", type: "Carbon.App.Resource"},
 		] ), function():void {
 			// TODO: Test
 		} );
@@ -67,7 +58,7 @@ describe( module( "Carbon/App" ), function():void {
 			it( hasConstructor( [
 				{name: "parent", type: "Carbon.Parent"},
 				{name: "resource", type: "Carbon.App.Resource"},
-				{name: "resource", type: '<a href="#Carbon.Utils.A">Carbon.Utils.A</a>'}
+				{name: "resource", type: '<a href="#Carbon.Utils.A">Carbon.Utils.A</a>'},
 			] ), function():void {
 				// TODO: Test
 			} );

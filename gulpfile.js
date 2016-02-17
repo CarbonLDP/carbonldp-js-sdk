@@ -1,53 +1,57 @@
-var del = require( 'del' );
+"use strict";
 
-var gulp = require( 'gulp' );
-var util = require( 'gulp-util' );
+let del = require( "del" );
 
-var karma = require( 'karma' );
+let gulp = require( "gulp" );
+let util = require( "gulp-util" );
 
-var sourcemaps = require( 'gulp-sourcemaps' );
-var ts = require( 'gulp-typescript' );
-var tslint = require( 'gulp-tslint' );
+let karma = require( "karma" );
 
-var Builder = require( 'systemjs-builder' );
+let sourcemaps = require( "gulp-sourcemaps" );
+let ts = require( "gulp-typescript" );
+let tslint = require( "gulp-tslint" );
 
-var config = {
+let Builder = require( "systemjs-builder" );
+
+let config = {
 	source: {
 		typescript: [
-			'src/**/*.ts',
-			'!src/**/*.spec.ts'
+			"src/**/*.ts",
+			"!src/**/*.spec.ts"
 		],
-		main: 'src/Carbon'
+		main: "src/Carbon"
 	},
 	dist: {
-		sfxBundle: 'dist/bundles/Carbon.sfx.js',
-		tsOutput: 'dist/js',
-		all: 'dist/**/*'
+		sfxBundle: "dist/bundles/Carbon.sfx.js",
+		tsOutput: "dist/js",
+		all: "dist/**/*"
 	}
 };
 
-gulp.task( 'ts-lint', function() {
+gulp.task( "ts-lint", () => {
 	return gulp.src( config.source.typescript )
-		.pipe( tslint() )
-		.pipe( tslint.report( 'prose' ) )
+		.pipe( tslint({
+			tslint: require( "tslint" )
+		}) )
+		.pipe( tslint.report( "prose" ) )
 	;
 });
 
-gulp.task( 'test', function( done ) {
+gulp.task( "test", ( done ) => {
 	new karma.Server({
-		configFile: __dirname + '/karma.conf.js',
+		configFile: __dirname + "/karma.conf.js",
 		singleRun: true
 	}, done ).start();
 });
 
-gulp.task( 'compile-library', function() {
-	var tsProject = ts.createProject({
+gulp.task( "compile-library", () => {
+	let tsProject = ts.createProject({
 		"declaration": true,
-		"module": "commonjs",
-		"target": "es5"
+		"target": "es5",
+		"module": "system",
 	});
 
-	var tsResults = gulp.src( config.source.typescript )
+	let tsResults = gulp.src( config.source.typescript )
 			.pipe( sourcemaps.init() )
 			.pipe( ts( tsProject ) );
 
@@ -56,17 +60,22 @@ gulp.task( 'compile-library', function() {
 	;
 
 	return tsResults.js
-		.pipe( sourcemaps.write( '.' ) )
+		.pipe( sourcemaps.write( "." ) )
 		.pipe( gulp.dest( config.dist.tsOutput ) )
 	;
 });
 
-gulp.task( 'bundle-sfx', function( done ) {
-	var builder = new Builder();
+gulp.task( "bundle-sfx", ( done ) => {
+	let builder = new Builder();
 
 	builder.buildStatic( "build/sfx.js", config.dist.sfxBundle, {
+		sourceMaps: true,
 		config: {
 			"transpiler": "typescript",
+			"typescriptOptions": {
+				sourceMap: true,
+				"inlineSourceMap": false,
+			},
 			"paths": {
 				"build/sfx.js": "build/sfx.js",
 				"Carbon": "src/Carbon.ts",
@@ -74,21 +83,21 @@ gulp.task( 'bundle-sfx', function( done ) {
 				"*": "*.ts"
 			}
 		}
-	}).then( function() {
+	}).then( () => {
 		done();
-	}).catch( function( error ) {
+	}).catch( ( error ) => {
 		util.log( error );
 	});
 });
 
-gulp.task( 'clean:dist', function( done ) {
+gulp.task( "clean:dist", ( done ) => {
 	return del( config.dist.all, done );
 });
 
 
-gulp.task( 'lint', [ 'ts-lint' ] );
-gulp.task( 'build', [ 'test', 'ts-lint' ], function() {
-	return gulp.start( 'build:afterTesting' );
+gulp.task( "lint", [ "ts-lint" ] );
+gulp.task( "build", [ "test", "ts-lint" ], () => {
+	return gulp.start( "build:afterTesting" );
 });
-gulp.task( 'build:afterTesting', [ 'clean:dist' ], function() { return gulp.start( 'build:afterCleaning' ); });
-gulp.task( 'build:afterCleaning', [ 'compile-library', 'bundle-sfx' ] );
+gulp.task( "build:afterTesting", [ "clean:dist" ], () => { return gulp.start( "build:afterCleaning" ); });
+gulp.task( "build:afterCleaning", [ "compile-library", "bundle-sfx" ] );

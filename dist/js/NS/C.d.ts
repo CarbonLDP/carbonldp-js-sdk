@@ -1,12 +1,13 @@
-declare const namespace: string;
-declare class Class {
+export declare let namespace: string;
+export declare class Class {
     static AccessPoint: string;
     static API: string;
     static VolatileResource: string;
 }
-declare class Predicate {
+export declare class Predicate {
     static accessPoint: string;
-    static version: string;
     static buildDate: string;
+    static created: string;
+    static modified: string;
+    static version: string;
 }
-export { namespace, Class, Predicate };

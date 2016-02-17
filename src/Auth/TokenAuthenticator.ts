@@ -1,7 +1,8 @@
-import * as HTTP from "./../HTTP";
-import * as Errors from "./../Errors";
-import * as NS from "./../NS";
 import Context from "./../Context";
+import * as Errors from "./../Errors";
+import * as HTTP from "./../HTTP";
+import * as NS from "./../NS";
+import * as ObjectSchema from "./../ObjectSchema";
 import * as RDF from "./../RDF";
 import * as Utils from "./../Utils";
 
@@ -10,13 +11,15 @@ import AuthenticationToken from "./AuthenticationToken";
 import BasicAuthenticator from "./BasicAuthenticator";
 import UsernameAndPasswordToken from "./UsernameAndPasswordToken";
 import * as Token from "./Token";
+import * as TokenCredentials from "./TokenCredentials";
+import * as Credentials from "./Credentials";
 
 export class Class implements Authenticator<UsernameAndPasswordToken> {
 	private static TOKEN_CONTAINER:string = "auth-tokens/";
 
 	private context:Context;
 	private basicAuthenticator:BasicAuthenticator;
-	private token:Token.Class;
+	private credentials:TokenCredentials.Class;
 
 	constructor( context:Context ) {
 		if( context === null ) throw new Errors.IllegalArgumentError( "context cannot be null" );
@@ -26,17 +29,21 @@ export class Class implements Authenticator<UsernameAndPasswordToken> {
 	}
 
 	isAuthenticated():boolean {
-		return !! this.token && this.token.expirationTime > new Date();
+		return !! this.credentials && this.credentials.token.expirationTime > new Date();
 	}
 
-	authenticate( authenticationToken:UsernameAndPasswordToken ):Promise<void> {
+	authenticate( authenticationToken:UsernameAndPasswordToken ):Promise<TokenCredentials.Class> {
 		return this.basicAuthenticator.authenticate( authenticationToken ).then(
-			():Promise<HTTP.ProcessedResponse<Token.Class>> => {
+			( credentials:Credentials.Class ):Promise<[ Token.Class, HTTP.Response.Class ]> => {
 				return this.createToken();
 			}
 		).then(
-			( processedResponse:HTTP.ProcessedResponse<Token.Class> ):void => {
-				this.token = processedResponse.result;
+			( [ token, response ]:[ Token.Class, HTTP.Response.Class ] ):TokenCredentials.Class => {
+				this.credentials = new TokenCredentials.Class( token );
+
+				this.basicAuthenticator.clearAuthentication();
+
+				return this.credentials;
 			}
 		);
 	}
@@ -50,35 +57,38 @@ export class Class implements Authenticator<UsernameAndPasswordToken> {
 	}
 
 	clearAuthentication():void {
-		this.token = null;
+		this.credentials = null;
 	}
 
 	supports( authenticationToken:AuthenticationToken ):boolean {
 		return authenticationToken instanceof UsernameAndPasswordToken;
 	}
 
-	private createToken():Promise<HTTP.ProcessedResponse<Token.Class>> {
+	private createToken():Promise<[ Token.Class, HTTP.Response.Class ]> {
 		let uri:string = this.context.resolve( Class.TOKEN_CONTAINER );
 		let requestOptions:HTTP.Request.Options = {};
 
 		this.basicAuthenticator.addAuthentication( requestOptions );
 
-		HTTP.Request.Service.setAcceptHeader( "application/ld+json", requestOptions );
-		HTTP.Request.Service.setPreferredInteractionModel( NS.LDP.Class.RDFSource, requestOptions );
+		HTTP.Request.Util.setAcceptHeader( "application/ld+json", requestOptions );
+		HTTP.Request.Util.setPreferredInteractionModel( NS.LDP.Class.RDFSource, requestOptions );
 
-		return HTTP.Request.Service.post( uri, null, requestOptions, new HTTP.JSONLDParser.Class() ).then( ( processedResponse:HTTP.ProcessedResponse<Object> ) => {
-			let nodes:RDF.Node.Class[] = RDF.Document.Util.getResources( processedResponse.result );
-			let resources:RDF.Resource.Class[] = RDF.Resource.factory.from( nodes );
+		return HTTP.Request.Service.post( uri, null, requestOptions, new HTTP.JSONLDParser.Class() ).then( ( [ expandedResult, response ]:[ Object, HTTP.Response.Class ] ) => {
+			let expandedNodes:RDF.Node.Class[] = RDF.Document.Util.getResources( expandedResult );
 
-			resources = resources.filter( Token.factory.hasRDFClass );
+			expandedNodes = expandedNodes.filter( Token.Factory.hasRDFClass );
 
-			if( resources.length === 0 ) throw new HTTP.Errors.BadResponseError( "No '" + Token.RDF_CLASS + "' was returned.", processedResponse.response );
-			if( resources.length > 1 ) throw new HTTP.Errors.BadResponseError( "Multiple '" + Token.RDF_CLASS + "' were returned. ", processedResponse.response );
+			if( expandedNodes.length === 0 ) throw new HTTP.Errors.BadResponseError( "No '" + Token.RDF_CLASS + "' was returned.", response );
+			if( expandedNodes.length > 1 ) throw new HTTP.Errors.BadResponseError( "Multiple '" + Token.RDF_CLASS + "' were returned. ", response );
 
-			return {
-				result: Token.factory.from( resources[ 0 ] ),
-				response: processedResponse.response
-			};
+			let expandedToken:RDF.Node.Class = expandedNodes[ 0 ];
+			let token:Token.Class = Token.Factory.decorate( {} );
+
+			let digestedSchema:ObjectSchema.DigestedObjectSchema = this.context.documents.getSchemaFor( expandedToken );
+
+			this.context.documents.jsonldConverter.compact( expandedToken, token, digestedSchema, this.context.documents );
+
+			return [ token, response ];
 		} );
 	}
 
@@ -90,7 +100,7 @@ export class Class implements Authenticator<UsernameAndPasswordToken> {
 			header = new HTTP.Header.Class();
 			headers.set( "Authorization", header );
 		}
-		let authorization:string = "Token " + this.token.key;
+		let authorization:string = "Token " + this.credentials.token.key;
 		header.values.push( new HTTP.Header.Value( authorization ) );
 
 		return headers;

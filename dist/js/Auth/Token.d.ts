@@ -1,16 +1,16 @@
-import * as RDF from "./../RDF";
+import * as ObjectSchema from "./../ObjectSchema";
+import * as Pointer from "./../Pointer";
 export declare const RDF_CLASS: string;
-export declare const DEFINITION: Map<string, RDF.PropertyDescription>;
-export interface Class extends RDF.Resource.Class {
+export declare const CONTEXT: ObjectSchema.Class;
+export interface Class extends Pointer.Class {
     key: string;
     expirationTime: Date;
 }
-export declare class Factory extends RDF.Resource.Factory {
-    static hasClassProperties(resource: RDF.Node.Class): boolean;
-    from(object: Array<Object>): Class[];
-    from(object: Object): Class;
-    hasRDFClass(resource: RDF.Resource.Class): boolean;
-    protected injectBehavior(node: Object): Class;
+export declare class Factory {
+    static is(value: any): boolean;
+    static hasClassProperties(object: Object): boolean;
+    static decorate<T extends Object>(object: T): T & Class;
+    static hasRDFClass(pointer: Pointer.Class): boolean;
+    static hasRDFClass(expandedObject: Object): boolean;
 }
-export declare let factory: Factory;
 export default Class;

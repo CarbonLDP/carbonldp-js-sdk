@@ -1,22 +1,14 @@
 import * as Document from "./Document";
-import * as RDF from "./RDF";
-export interface Class extends RDF.Resource.Class {
+import * as Resource from "./Resource";
+export interface Class extends Resource.Class {
     document: Document.Class;
 }
-export declare class Factory extends RDF.Resource.Factory {
-    from(object: Array<Object & {
-        document: Document.Class;
-    }>): Class[];
-    from(object: Object & {
-        document: Document.Class;
-    }): Class;
-    protected singleFrom(object: Object & {
-        document: Document.Class;
-    }): Class;
-    protected injectBehavior(object: (Object & {
-        document: Document.Class;
-    })): Class;
-    protected hasClassProperties(resource: RDF.Resource.Class): boolean;
+export declare class Factory {
+    hasClassProperties(resource: Object): boolean;
+    create(id: string, document: Document.Class): Class;
+    create(document: Document.Class): Class;
+    createFrom<T extends Object>(object: T, id: string, document: Document.Class): T & Class;
+    createFrom<T extends Object>(object: T, document: Document.Class): T & Class;
 }
 export declare var factory: Factory;
 export declare class Util {

@@ -1,12 +1,16 @@
-/// <reference path="./../typings/es6/es6.d.ts" />
+/// <reference path="./../typings/typings.d.ts" />
 
-import * as Fragment from "./Fragment";
-import * as NamedFragment from "./NamedFragment";
-import * as RDF from "./RDF";
-import * as Utils from "./Utils";
 import * as Errors from "./Errors";
+import * as Fragment from "./Fragment";
+import JSONLDConverter from "./JSONLDConverter";
+import * as NamedFragment from "./NamedFragment";
+import * as ObjectSchema from "./ObjectSchema";
+import * as Pointer from "./Pointer";
+import * as RDF from "./RDF";
+import * as Resource from "./Resource";
+import * as Utils from "./Utils";
 
-export interface Class extends RDF.Resource.Class {
+export interface Class extends Resource.Class, Pointer.Library, Pointer.Validator {
 	_fragmentsIndex:Map<string, Fragment.Class>;
 
 	hasFragment( slug:string ):boolean;
@@ -23,24 +27,74 @@ export interface Class extends RDF.Resource.Class {
 	removeFragment( slug:string ):void;
 	removeFragment( fragmentOrSlug:any ):void;
 
+	toJSON( objectSchemaResolver:ObjectSchema.Resolver, jsonldConverter:JSONLDConverter ):string;
+	toJSON( objectSchemaResolver:ObjectSchema.Resolver ):string;
 	toJSON():string;
+}
+
+function hasPointer( id:string ):boolean {
+	let document:Class = <Class> this;
+
+	if( ! document.inScope( id ) ) return false;
+
+	return !! document.getFragment( id );
+}
+
+function getPointer( id:string ):Pointer.Class {
+	let document:Class = <Class> this;
+
+	if( ! document.inScope( id ) ) return null;
+
+	if( id === document.id ) return document;
+
+	let fragment:Fragment.Class = document.getFragment( id );
+	fragment = ! fragment ? document.createFragment( id ) : fragment;
+
+	return fragment;
+}
+
+function inScope( pointer:Pointer.Class ):boolean;
+function inScope( id:string ):boolean;
+function inScope( idOrPointer:any ):boolean {
+	let document:Class = <Class> this;
+
+	let id:string = Pointer.Factory.is( idOrPointer ) ? idOrPointer.id : idOrPointer;
+
+	if( id === document.id ) return true;
+
+	if( RDF.URI.Util.isBNodeID( id ) ) return true;
+
+	if( RDF.URI.Util.isAbsolute( id ) && RDF.URI.Util.isFragmentOf( id, document.id ) ) return true;
+
+	if( ! RDF.URI.Util.isAbsolute( document.id ) && ! RDF.URI.Util.isAbsolute( id ) && RDF.URI.Util.isFragmentOf( id, document.id ) ) return true;
+
+	return false;
 }
 
 function hasFragment( id:string ):boolean {
 	let document:Class = <Class> this;
-	id = RDF.URI.Util.hasFragment( id ) ? RDF.URI.Util.getFragment( id ) : id;
-	return document._fragmentsIndex.has( id );
+
+	if( ! document.inScope( id ) ) return false;
+
+	return !! document._fragmentsIndex.has( id );
 }
 function getFragment( id:string ):Fragment.Class {
 	let document:Class = <Class> this;
-	id = RDF.URI.Util.hasFragment( id ) ? RDF.URI.Util.getFragment( id ) : id;
+
+	if( ! RDF.URI.Util.isBNodeID( id ) ) return document.getNamedFragment( id );
+
 	return document._fragmentsIndex.get( id );
 }
-function getNamedFragment( slug:string ):NamedFragment.Class {
+function getNamedFragment( id:string ):NamedFragment.Class {
 	let document:Class = <Class> this;
-	if( RDF.URI.Util.isBNodeID( slug ) ) throw new Errors.IllegalArgumentError( "Named fragments can't have a slug that starts with '_:'." );
-	slug = RDF.URI.Util.hasFragment( slug ) ? RDF.URI.Util.getFragment( slug ) : slug;
-	return <NamedFragment.Class> document._fragmentsIndex.get( slug );
+
+	if( RDF.URI.Util.isBNodeID( id ) ) throw new Errors.IllegalArgumentError( "Named fragments can't have a id that starts with '_:'." );
+	if( RDF.URI.Util.isAbsolute( id ) ) {
+		if( ! RDF.URI.Util.isFragmentOf( id, document.id ) ) throw new Errors.IllegalArgumentError( "The id is out of scope." );
+		id = RDF.URI.Util.hasFragment( id ) ? RDF.URI.Util.getFragment( id ) : id;
+	} else if( Utils.S.startsWith( id, "#" ) ) id = id.substring( 1 );
+
+	return <NamedFragment.Class> document._fragmentsIndex.get( id );
 }
 function getFragments():Fragment.Class[] {
 	let document:Class = <Class> this;
@@ -51,15 +105,17 @@ function createFragment( slug:string ):NamedFragment.Class;
 function createFragment( slug?:string ):Fragment.Class;
 function createFragment( slug:any ):any {
 	let document:Class = <Class> this;
-	if( slug ) return document.createNamedFragment( slug );
 
-	let id:string = Fragment.Util.generateID();
-	let fragmentObject:RDF.Node.Class & { document:Class } = {
-		"@id": id,
-		"document": document
-	};
+	let id:string;
+	if( slug ) {
+		if( ! RDF.URI.Util.isBNodeID( slug ) ) return document.createNamedFragment( slug );
+		id = slug;
+		if( this._fragmentsIndex.has( id ) ) return this.getFragment( id );
+	} else {
+		id = Fragment.Util.generateID();
+	}
 
-	let fragment:Fragment.Class = Fragment.factory.from( fragmentObject );
+	let fragment:Fragment.Class = Fragment.factory.create( id, document );
 
 	document._fragmentsIndex.set( id, fragment );
 
@@ -69,16 +125,15 @@ function createNamedFragment( slug:string ):NamedFragment.Class {
 	let document:Class = <Class> this;
 
 	if( RDF.URI.Util.isBNodeID( slug ) ) throw new Errors.IllegalArgumentError( "Named fragments can't have a slug that starts with '_:'." );
-	slug = RDF.URI.Util.hasFragment( slug ) ? RDF.URI.Util.getFragment( slug ) : slug;
+
+	if( RDF.URI.Util.isAbsolute( slug ) ) {
+		if( ! RDF.URI.Util.isFragmentOf( slug, document.id ) ) throw new Errors.IllegalArgumentError( "The slug is out of scope." );
+		slug = RDF.URI.Util.hasFragment( slug ) ? RDF.URI.Util.getFragment( slug ) : slug;
+	} else if( Utils.S.startsWith( slug, "#" ) ) slug = slug.substring( 1 );
+
 	if( document._fragmentsIndex.has( slug ) ) throw new Errors.IDAlreadyInUseError( "The slug provided is already being used by a fragment." );
 
-	let uri:string = document.uri + "#" + slug;
-	let fragmentObject:RDF.Node.Class & { document:Class } = {
-		"@id": uri,
-		"document": document
-	};
-
-	let fragment:NamedFragment.Class = <NamedFragment.Class> NamedFragment.factory.from( fragmentObject );
+	let fragment:NamedFragment.Class = <NamedFragment.Class> NamedFragment.factory.create( slug, document );
 
 	document._fragmentsIndex.set( slug, fragment );
 
@@ -92,153 +147,146 @@ function removeFragment( fragmentOrSlug:any ):void {
 	// TODO: FT
 }
 
-function toJSON():string {
+function toJSON( objectSchemaResolver:ObjectSchema.Resolver, jsonLDConverter:JSONLDConverter ):string;
+function toJSON( objectSchemaResolver:ObjectSchema.Resolver ):string;
+function toJSON():string;
+function toJSON( objectSchemaResolver:ObjectSchema.Resolver = null, jsonldConverter:JSONLDConverter = null ):string {
+	jsonldConverter = !! jsonldConverter ? jsonldConverter : new JSONLDConverter();
+
 	let resources:{ toJSON:() => string }[] = [];
 	resources.push( this );
-	resources.push( this.getFragments() );
+	resources = resources.concat( this.getFragments() );
 
-	let toJSONFunctions:(() => string)[] = [];
-	// TODO: FOR_OF_TYPEDEF
-	/* tslint:disable: typedef */
+	let expandedResources:RDF.Node.Class[] = [];
 	for( let resource of resources ) {
-		/* tslint:enable: typedef */
-		let toJSON:() => string = null;
-		if( "toJSON" in resource ) {
-			toJSONFunctions.push( resource.toJSON );
-			delete resource.toJSON;
-		}
-		toJSONFunctions.push( toJSON );
+		let digestedContext:ObjectSchema.DigestedObjectSchema = objectSchemaResolver ? objectSchemaResolver.getSchemaFor( resource ) : new ObjectSchema.DigestedObjectSchema();
+
+		expandedResources.push( jsonldConverter.expand( resource, digestedContext, this ) );
 	}
 
-	let rdfDocument:RDF.Document.Class = {
-		"@graph": <any> resources
+	let graph:RDF.Document.Class = {
+		"@id": this.id,
+		"@graph": expandedResources,
 	};
-	if( this.uri ) rdfDocument[ "@id" ] = this.id;
-	let json:string = JSON.stringify( rdfDocument );
 
-	for( let i:number = 0, length:number = resources.length; i < length; i++ ) {
-		if( toJSONFunctions[i] !== null ) resources[ i ].toJSON = toJSONFunctions[i];
-	}
-
-	return json;
+	return JSON.stringify( graph );
 }
 
-export class Factory extends RDF.Resource.Factory {
-	from( rdfDocuments:RDF.Document.Class[] ):Class[];
-	from( rdfDocument:RDF.Document.Class ):Class;
-	from( rdfDocuments:any ):any {
-		if( ! Utils.isArray( rdfDocuments ) ) return this.singleFrom( <RDF.Document.Class> rdfDocuments );
+export class Factory {
+	hasClassProperties( documentResource:Object ):boolean {
+		return (
+			Utils.isObject( documentResource ) &&
 
-		let documents:Class[] = [];
-		for ( let i:number = 0, length:number = rdfDocuments.length; i < length; i ++ ) {
-			let rdfDocument:RDF.Document.Class = <RDF.Document.Class> rdfDocuments[ i ];
+			Utils.hasPropertyDefined( documentResource, "_fragmentsIndex" ) &&
 
-			documents.push( this.singleFrom( rdfDocument ) );
-		}
-
-		return documents;
+			Utils.hasFunction( documentResource, "hasFragment" ) &&
+			Utils.hasFunction( documentResource, "getFragment" ) &&
+			Utils.hasFunction( documentResource, "getNamedFragment" ) &&
+			Utils.hasFunction( documentResource, "getFragments" ) &&
+			Utils.hasFunction( documentResource, "createFragment" ) &&
+			Utils.hasFunction( documentResource, "createNamedFragment" ) &&
+			Utils.hasFunction( documentResource, "removeFragment" ) &&
+			Utils.hasFunction( documentResource, "toJSON" )
+		);
 	}
 
-	protected singleFrom( rdfDocument:RDF.Document.Class ):Class {
-		let documentResources:RDF.Node.Class[] = RDF.Document.Util.getDocumentResources( rdfDocument );
-		if( documentResources.length > 1 ) throw new Errors.IllegalArgumentError("The RDFDocument contains more than one document resource.");
-		if( documentResources.length === 0 ) throw new Errors.IllegalArgumentError("The RDFDocument doesn\'t contain a document resource.");
-
-		let document:Class = this.injectBehavior( documentResources[ 0 ] );
-
-		let fragmentResources:RDF.Node.Class[] = RDF.Document.Util.getBNodeResources( rdfDocument );
-		for( let i:number = 0, length:number = fragmentResources.length; i < length; i++ ) {
-			let fragmentResource:RDF.Node.Class & {document:Class} = <any>fragmentResources[i];
-			fragmentResource.document = document;
-
-			let fragment:Fragment.Class = Fragment.factory.from( fragmentResource );
-
-			if( ! fragment.uri ) fragment.uri = Fragment.Util.generateID();
-			document._fragmentsIndex.set( fragment.uri, fragment );
-		}
-
-		let namedFragmentResources:RDF.Node.Class[] = RDF.Document.Util.getFragmentResources( rdfDocument );
-		for( let i:number = 0, length:number = namedFragmentResources.length; i < length; i++ ) {
-			let namedFragmentResource:RDF.Node.Class & { document:Class } = <any>namedFragmentResources[i];
-			namedFragmentResource.document = document;
-
-			let namedFragment:NamedFragment.Class = NamedFragment.factory.from( namedFragmentResource );
-
-			document._fragmentsIndex.set( RDF.URI.Util.getFragment( namedFragment.uri ), namedFragment );
-		}
-
-		return document;
+	create( uri:string ):Class;
+	create():Class;
+	create( uri:string = null ):Class {
+		return this.createFrom( {}, uri );
 	}
 
-	protected injectBehavior( resource:RDF.Node.Class ):Class {
-		let documentResource:RDF.Resource.Class = super.injectBehavior( resource );
+	createFrom<T extends Object>( object:T, uri:string ):T & Class;
+	createFrom<T extends Object>( object:T ):T & Class;
+	createFrom<T extends Object>( object:T, uri:string = null ):T & Class {
+		if( !! uri && RDF.URI.Util.isBNodeID( uri ) ) throw new Errors.IllegalArgumentError( "Documents cannot have a BNodeID as a uri." );
 
-		if( this.hasClassProperties( documentResource ) ) return <Class> documentResource;
+		let resource:Resource.Class = Resource.Factory.createFrom( object, uri );
 
-		Object.defineProperties( documentResource, {
+		let document:Class = this.decorate( resource );
+
+		return <any> document;
+	}
+
+	decorate<T extends Object>( object:T ):T & Class {
+		if( this.hasClassProperties( object ) ) return <any> object;
+
+		Object.defineProperties( object, {
 			"_fragmentsIndex": {
 				writable: false,
 				enumerable: false,
-				configurable: false,
-				value: new Map<string, Fragment.Class>()
+				configurable: true,
+				value: new Map<string, Fragment.Class>(),
 			},
-			"hasFragment": {
-				writable: false,
-				enumerable: false,
-				configurable: false,
-				value: hasFragment
-			},
-			"getFragment": {
-				writable: false,
-				enumerable: false,
-				configurable: false,
-				value: getFragment
-			},
-			"getNamedFragment": {
-				writable: false,
-				enumerable: false,
-				configurable: false,
-				value: getNamedFragment
-			},
-			"getFragments": {
-				writable: false,
-				enumerable: false,
-				configurable: false,
-				value: getFragments
-			},
-			"createFragment": {
-				writable: false,
-				enumerable: false,
-				configurable: false,
-				value: createFragment
-			},
-			"createNamedFragment": {
-				writable: false,
-				enumerable: false,
-				configurable: false,
-				value: createNamedFragment
-			},
-			"removeFragment": {
-				writable: false,
-				enumerable: false,
-				configurable: false,
-				value: removeFragment
-			},
-			"toJSON": {
-				writable: false,
+			"hasPointer": {
+				writable: true,
 				enumerable: false,
 				configurable: true,
-				value: toJSON
-			}
+				value: hasPointer,
+			},
+			"getPointer": {
+				writable: true,
+				enumerable: false,
+				configurable: true,
+				value: getPointer,
+			},
+			"inScope": {
+				writable: true,
+				enumerable: false,
+				configurable: true,
+				value: inScope,
+			},
+			"hasFragment": {
+				writable: true,
+				enumerable: false,
+				configurable: true,
+				value: hasFragment,
+			},
+			"getFragment": {
+				writable: true,
+				enumerable: false,
+				configurable: true,
+				value: getFragment,
+			},
+			"getNamedFragment": {
+				writable: true,
+				enumerable: false,
+				configurable: true,
+				value: getNamedFragment,
+			},
+			"getFragments": {
+				writable: true,
+				enumerable: false,
+				configurable: true,
+				value: getFragments,
+			},
+			"createFragment": {
+				writable: true,
+				enumerable: false,
+				configurable: true,
+				value: createFragment,
+			},
+			"createNamedFragment": {
+				writable: true,
+				enumerable: false,
+				configurable: true,
+				value: createNamedFragment,
+			},
+			"removeFragment": {
+				writable: true,
+				enumerable: false,
+				configurable: true,
+				value: removeFragment,
+			},
+			"toJSON": {
+				writable: true,
+				enumerable: false,
+				configurable: true,
+				value: toJSON,
+			},
 		} );
 
-		return <any> documentResource;
-	}
-
-	protected hasClassProperties( documentResource:RDF.Resource.Class ):boolean {
-		return (
-			Utils.hasPropertyDefined( documentResource, "_fragmentsIndex" )
-		);
+		return <any> object;
 	}
 }
 

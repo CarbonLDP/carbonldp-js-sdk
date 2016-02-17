@@ -1,14 +1,10 @@
-/// <reference path="../../typings/jasmine/jasmine.d.ts" />
-/// <reference path="../../typings/jasmine-ajax/mock-ajax.d.ts" />
-/// <reference path="../../typings/es6/es6.d.ts" />
-/// <reference path="../../typings/es6-promise/es6-promise.d.ts" />
+/// <reference path="./../../typings/typings.d.ts" />
 
 import {
 	INSTANCE,
 	STATIC,
 
 	module,
-	submodule,
 
 	isDefined,
 
@@ -32,6 +28,7 @@ import * as Utils from "./../Utils";
 
 import AuthenticationToken from "./AuthenticationToken";
 import UsernameAndPasswordToken from "./UsernameAndPasswordToken";
+import * as UsernameAndPasswordCredentials from "./UsernameAndPasswordCredentials";
 
 import * as BasicAuthenticator from "./BasicAuthenticator";
 
@@ -82,39 +79,59 @@ describe( module( "Carbon/Auth/BasicAuthenticator" ), ():void => {
 		`, [
 			{ name: "authenticationToken", type: "Carbon.Auth.UsernameAndPasswordToken" }
 		], { type: "Promise<void>" } ), ( done:( error?:Error ) => void ):void => {
-			let promises:Promise<void>[] = [];
-			let promise:Promise<void>;
-			let authenticator:BasicAuthenticator.Class = new BasicAuthenticator.Class();
 
-			expect( authenticator.authenticate ).toBeDefined();
-			expect( Utils.isFunction( authenticator.authenticate ) ).toEqual( true );
+			// Property Integrity
+			(() => {
+				let authenticator:BasicAuthenticator.Class = new BasicAuthenticator.Class();
 
-			let successfulAuthenticator:BasicAuthenticator.Class = new BasicAuthenticator.Class();
+				expect( authenticator.authenticate ).toBeDefined();
+				expect( Utils.isFunction( authenticator.authenticate ) ).toEqual( true );
+			})();
 
-			promise = successfulAuthenticator.authenticate( new UsernameAndPasswordToken( "foo", "foo" ) );
+			let promises:Promise<any>[] = [];
 
-			expect( !! promise ).toEqual( true );
-			expect( promise instanceof Promise ).toEqual( true );
+			// Successful Authentication
+			(() => {
+				let authenticator:BasicAuthenticator.Class = new BasicAuthenticator.Class();
+				let promise:Promise<UsernameAndPasswordCredentials.Class>;
+				promise = authenticator.authenticate( new UsernameAndPasswordToken( "foo", "foo" ) );
 
-			promises.push( promise.then( ():void => {
-				expect( successfulAuthenticator.isAuthenticated() ).toEqual( true );
-			}, done ) );
+				expect( !! promise ).toEqual( true );
+				expect( promise instanceof Promise ).toEqual( true );
 
-			let unsuccessfulAuthenticator:BasicAuthenticator.Class = new BasicAuthenticator.Class();
+				promises.push( promise.then( ( credentials: UsernameAndPasswordCredentials.Class ):void => {
+					expect( authenticator.isAuthenticated() ).toEqual( true );
 
-			promise = unsuccessfulAuthenticator.authenticate( new UsernameAndPasswordToken( null, null ) );
+					expect( credentials ).toBeDefined();
+					expect( credentials ).not.toBeNull();
 
-			expect( !! promise ).toEqual( true );
-			expect( promise instanceof Promise ).toEqual( true );
+					expect( "username" in credentials ).toEqual( true );
+					expect( !! credentials.username ).toEqual( true );
+					expect( Utils.isString( credentials.username ) ).toEqual( true );
 
-			promises.push( promise.then( ():void => {
-				done( new Error( "Promise should have failed." ) );
-			}, ( error:Error ):void => {
-				expect( error instanceof Errors.IllegalArgumentError ).toEqual( true );
+					expect( "password" in credentials ).toEqual( true );
+					expect( !! credentials.password ).toEqual( true );
+					expect( Utils.isString( credentials.password ) ).toEqual( true );
+				}, done ) );
+			})();
 
-				expect( unsuccessfulAuthenticator.isAuthenticated() ).toEqual( false );
-				return;
-			}) );
+			(() => {
+				let unsuccessfulAuthenticator:BasicAuthenticator.Class = new BasicAuthenticator.Class();
+				let promise:Promise<UsernameAndPasswordCredentials.Class>;
+				promise = unsuccessfulAuthenticator.authenticate( new UsernameAndPasswordToken( null, null ) );
+
+				expect( !! promise ).toEqual( true );
+				expect( promise instanceof Promise ).toEqual( true );
+
+				promises.push( promise.then( ():void => {
+					done( new Error( "Promise should have failed." ) );
+				}, ( error:Error ):void => {
+					expect( error instanceof Errors.IllegalArgumentError ).toEqual( true );
+
+					expect( unsuccessfulAuthenticator.isAuthenticated() ).toEqual( false );
+					return;
+				}) );
+			})();
 
 			Promise.all( promises ).then( ():void => {
 				done();

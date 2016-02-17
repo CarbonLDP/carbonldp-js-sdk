@@ -1,8 +1,11 @@
-/// <reference path="../typings/es6/es6.d.ts" />
+/// <reference path="../typings/typings.d.ts" />
 import * as Fragment from "./Fragment";
+import JSONLDConverter from "./JSONLDConverter";
 import * as NamedFragment from "./NamedFragment";
-import * as RDF from "./RDF";
-export interface Class extends RDF.Resource.Class {
+import * as ObjectSchema from "./ObjectSchema";
+import * as Pointer from "./Pointer";
+import * as Resource from "./Resource";
+export interface Class extends Resource.Class, Pointer.Library, Pointer.Validator {
     _fragmentsIndex: Map<string, Fragment.Class>;
     hasFragment(slug: string): boolean;
     getFragment(slug: string): Fragment.Class;
@@ -15,14 +18,17 @@ export interface Class extends RDF.Resource.Class {
     removeFragment(fragment: Fragment.Class): void;
     removeFragment(slug: string): void;
     removeFragment(fragmentOrSlug: any): void;
+    toJSON(objectSchemaResolver: ObjectSchema.Resolver, jsonldConverter: JSONLDConverter): string;
+    toJSON(objectSchemaResolver: ObjectSchema.Resolver): string;
     toJSON(): string;
 }
-export declare class Factory extends RDF.Resource.Factory {
-    from(rdfDocuments: RDF.Document.Class[]): Class[];
-    from(rdfDocument: RDF.Document.Class): Class;
-    protected singleFrom(rdfDocument: RDF.Document.Class): Class;
-    protected injectBehavior(resource: RDF.Node.Class): Class;
-    protected hasClassProperties(documentResource: RDF.Resource.Class): boolean;
+export declare class Factory {
+    hasClassProperties(documentResource: Object): boolean;
+    create(uri: string): Class;
+    create(): Class;
+    createFrom<T extends Object>(object: T, uri: string): T & Class;
+    createFrom<T extends Object>(object: T): T & Class;
+    decorate<T extends Object>(object: T): T & Class;
 }
 export declare var factory: Factory;
 export default Document;

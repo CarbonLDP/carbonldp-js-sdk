@@ -1,6 +1,6 @@
 import * as Header from "./Header";
 
-class Response {
+export class Class {
 	constructor( request:XMLHttpRequest ) {
 		this.status = request.status;
 		this.data = request.responseText;
@@ -25,4 +25,18 @@ class Response {
 	}
 }
 
-export default Response;
+export class Util {
+	static getETag( response:Class ):string {
+		if( ! response || ! response.headers ) return null;
+
+		let etagHeader:Header.Class = response.headers.get( "ETag" );
+
+		if( ! etagHeader ) return null;
+		if( ! etagHeader.values.length ) return null;
+		if( etagHeader.values.length > 1 ) console.warn( "The response contains more than one ETag. Response: %o", response );
+
+		return etagHeader.values[ 0 ].toString();
+	}
+}
+
+export default Class;

@@ -1,22 +1,21 @@
-/// <reference path="../typings/es6/es6.d.ts" />
+/// <reference path="./../typings/typings.d.ts" />
 import * as NS from "./NS";
+import * as ObjectSchema from "./ObjectSchema";
 import * as RDF from "./RDF";
 import * as Utils from "./Utils";
 
 export const RDF_CLASS:string = NS.C.Class.API;
 
-export const DEFINITION:Map<string, RDF.PropertyDescription> = <any> Utils.M.from( {
+export const SCHEMA:ObjectSchema.Class = {
 	"version": {
-		"uri": NS.C.Predicate.version,
-		"multi": false,
-		"literal": true
+		"@id": NS.C.Predicate.version,
+		"@type": NS.XSD.DataType.string,
 	},
 	"buildDate": {
-		"uri": NS.C.Predicate.buildDate,
-		"multi": false,
-		"literal": true
-	}
-} );
+		"@id": NS.C.Predicate.buildDate,
+		"@type": NS.XSD.DataType.dateTime,
+	},
+};
 
 export interface Class {
 	version:string;

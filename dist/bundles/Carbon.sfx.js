@@ -669,486 +669,359 @@
 })(typeof self != 'undefined' ? self : global);
 
 "bundle";
-$__System.register("2", ["3"], function(exports_1) {
-    var Auth;
-    var settings;
+/// <reference path="./../typings/typings.d.ts" />
+$__System.register("2", ["3", "4", "5", "6"], function(exports_1) {
+    var App, RDF, Utils, CS;
+    var Apps;
     return {
         setters:[
-            function (Auth_1) {
-                Auth = Auth_1;
+            function (App_1) {
+                App = App_1;
+            },
+            function (RDF_1) {
+                RDF = RDF_1;
+            },
+            function (Utils_1) {
+                Utils = Utils_1;
+            },
+            function (CS_1) {
+                CS = CS_1;
             }],
         execute: function() {
-            settings = {};
-            settings["domain"] = "carbonldp.com";
-            settings["http.ssl"] = true;
-            settings["auth.method"] = Auth.Method.TOKEN;
-            settings["platform.container"] = "platform/";
-            settings["platform.apps.container"] = settings["platform.container"] + "apps/";
-            exports_1("default",settings);
+            Apps = (function () {
+                function Apps(context) {
+                    this.context = context;
+                }
+                Apps.prototype.get = function (uri) {
+                    var _this = this;
+                    var appsContainerURI = this.getAppsContainerURI();
+                    if (RDF.URI.Util.isRelative(uri)) {
+                        if (!Utils.S.startsWith(uri, appsContainerURI))
+                            uri = RDF.URI.Util.resolve(appsContainerURI, uri);
+                        uri = this.context.resolve(uri);
+                    }
+                    return this.context.documents.get(uri).then(function (_a) {
+                        var document = _a[0], response = _a[1];
+                        if (!document.types.indexOf(CS.Class.Application))
+                            throw new Error("The resource fetched is not a cs:Application.");
+                        return new App.Context(_this.context, document);
+                    });
+                };
+                Apps.prototype.getAppsContainerURI = function () {
+                    if (!this.context.hasSetting("platform.apps.container"))
+                        throw new Error("The apps container URI hasn't been set.");
+                    return this.context.getSetting("platform.apps.container");
+                };
+                return Apps;
+            })();
+            exports_1("Apps", Apps);
+            exports_1("default",Apps);
         }
     }
 });
 
-$__System.register("4", ["5", "6"], function(exports_1) {
+/// <reference path="./../typings/typings.d.ts" />
+$__System.register("3", ["7", "8", "4", "5"], function(exports_1) {
     var __extends = (this && this.__extends) || function (d, b) {
         for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
-    var Context_1, RDF;
-    var Class;
+    var AbstractContext_1, NS, RDF, Utils;
+    var RDF_CLASS, SCHEMA, AppContext, Factory, factory;
     return {
         setters:[
-            function (Context_1_1) {
-                Context_1 = Context_1_1;
+            function (AbstractContext_1_1) {
+                AbstractContext_1 = AbstractContext_1_1;
+            },
+            function (NS_1) {
+                NS = NS_1;
             },
             function (RDF_1) {
                 RDF = RDF_1;
+            },
+            function (Utils_1) {
+                Utils = Utils_1;
             }],
         execute: function() {
-            Class = (function (_super) {
-                __extends(Class, _super);
-                function Class(parentContext) {
-                    _super.call(this);
-                    this.parentContext = parentContext;
+            exports_1("RDF_CLASS", RDF_CLASS = NS.CS.Class.Application);
+            exports_1("SCHEMA", SCHEMA = {
+                "rootContainer": {
+                    "@id": NS.CS.Predicate.rootContainer,
+                    "@type": "@id",
+                },
+            });
+            AppContext = (function (_super) {
+                __extends(AppContext, _super);
+                function AppContext(parentContext, app) {
+                    _super.call(this, parentContext);
+                    this.app = app;
+                    this.base = this.getBase(this.app);
                 }
-                Class.prototype.resolve = function (uri) {
+                AppContext.prototype.resolve = function (uri) {
                     if (RDF.URI.Util.isAbsolute(uri))
                         return uri;
-                    var finalURI = this.parentContext.resolve(this.parentContext.getSetting("platform.container"));
+                    var finalURI = this.parentContext.resolve(this.base);
                     return RDF.URI.Util.resolve(finalURI, uri);
                 };
-                return Class;
-            })(Context_1.default);
-            exports_1("Class", Class);
-            exports_1("default",Class);
-        }
-    }
-});
-
-$__System.register("7", [], function(exports_1) {
-    var Factory;
-    return {
-        setters:[],
-        execute: function() {
+                AppContext.prototype.getBase = function (resource) {
+                    return resource.rootContainer.id;
+                };
+                return AppContext;
+            })(AbstractContext_1.default);
+            exports_1("Context", AppContext);
             Factory = (function () {
                 function Factory() {
                 }
+                Factory.prototype.hasClassProperties = function (resource) {
+                    return (Utils.hasPropertyDefined(resource, "rootContainer"));
+                };
                 return Factory;
             })();
-        }
-    }
-});
-
-/// <reference path="../../typings/es6/es6.d.ts" />
-$__System.register("8", ["9", "6", "a", "b"], function(exports_1) {
-    var __extends = (this && this.__extends) || function (d, b) {
-        for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-    var NS, RDF, AccessPoint, Utils;
-    var RDF_CLASS, DEFINITION, Factory, factory;
-    return {
-        setters:[
-            function (NS_1) {
-                NS = NS_1;
-            },
-            function (RDF_1) {
-                RDF = RDF_1;
-            },
-            function (AccessPoint_1) {
-                AccessPoint = AccessPoint_1;
-            },
-            function (Utils_1) {
-                Utils = Utils_1;
-            }],
-        execute: function() {
-            exports_1("RDF_CLASS", RDF_CLASS = NS.LDP.Class.IndirectContainer);
-            exports_1("DEFINITION", DEFINITION = Utils.M.from({
-                "insertedContentRelation": {
-                    "uri": NS.LDP.Predicate.insertedContentRelation,
-                    "multi": false,
-                    "literal": false
-                }
-            }));
-            Factory = (function (_super) {
-                __extends(Factory, _super);
-                function Factory() {
-                    _super.apply(this, arguments);
-                }
-                Factory.prototype.is = function (object) {
-                    return (_super.prototype.is.call(this, object) &&
-                        this.hasRDFClass(object) &&
-                        this.hasClassProperties(object));
-                };
-                Factory.prototype.from = function (resourceOrResources) {
-                    var sources = _super.prototype.from.call(this, resourceOrResources);
-                    var resources = Utils.isArray(sources) ? sources : [sources];
-                    for (var i = 0, length = resources.length; i < length; i++) {
-                        var resource = resources[i];
-                        if (!this.hasClassProperties(resource))
-                            this.injectBehaviour(resource);
-                    }
-                    if (Utils.isArray(resourceOrResources))
-                        return resources;
-                    return resources[0];
-                };
-                Factory.prototype.hasRDFClass = function (resource) {
-                    return (resource.types.indexOf(RDF_CLASS) !== -1);
-                };
-                Factory.prototype.hasClassProperties = function (resource) {
-                    return (Utils.hasPropertyDefined(resource, "insertedContentRelation"));
-                };
-                Factory.prototype.injectBehaviour = function (resource) {
-                    RDF.Resource.Factory.injectDescriptions(resource, DEFINITION);
-                    return resource;
-                };
-                return Factory;
-            })(AccessPoint.Factory);
             exports_1("Factory", Factory);
             exports_1("factory", factory = new Factory());
         }
     }
 });
 
-/// <reference path="../../typings/es6/es6.d.ts" />
-$__System.register("c", ["9", "a", "b"], function(exports_1) {
-    var __extends = (this && this.__extends) || function (d, b) {
-        for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-    var NS, AccessPoint, Utils;
-    var RDF_CLASS, Factory, factory;
+$__System.register("9", ["8"], function(exports_1) {
+    var NS;
+    var RDF_CLASS, SCHEMA;
     return {
         setters:[
             function (NS_1) {
                 NS = NS_1;
-            },
-            function (AccessPoint_1) {
-                AccessPoint = AccessPoint_1;
-            },
-            function (Utils_1) {
-                Utils = Utils_1;
             }],
         execute: function() {
-            exports_1("RDF_CLASS", RDF_CLASS = NS.LDP.Class.DirectContainer);
-            Factory = (function (_super) {
-                __extends(Factory, _super);
-                function Factory() {
-                    _super.apply(this, arguments);
-                }
-                Factory.prototype.is = function (object) {
-                    return (_super.prototype.is.call(this, object) &&
-                        this.hasRDFClass(object) &&
-                        this.hasClassProperties(object));
-                };
-                Factory.prototype.from = function (resourceOrResources) {
-                    var sources = _super.prototype.from.call(this, resourceOrResources);
-                    var resources = Utils.isArray(sources) ? sources : [sources];
-                    for (var i = 0, length = resources.length; i < length; i++) {
-                        var resource = resources[i];
-                        if (!this.hasClassProperties(resource))
-                            this.injectBehaviour(resource);
-                    }
-                    if (Utils.isArray(resourceOrResources))
-                        return resources;
-                    return resources[0];
-                };
-                Factory.prototype.hasRDFClass = function (resource) {
-                    return (resource.types.indexOf(RDF_CLASS) !== -1);
-                };
-                Factory.prototype.hasClassProperties = function (resource) {
-                    return true;
-                };
-                Factory.prototype.injectBehaviour = function (resource) {
-                    return resource;
-                };
-                return Factory;
-            })(AccessPoint.Factory);
-            exports_1("Factory", Factory);
-            exports_1("factory", factory = new Factory());
-        }
-    }
-});
-
-/// <reference path="../../typings/es6/es6.d.ts" />
-$__System.register("d", ["9", "e", "b"], function(exports_1) {
-    var __extends = (this && this.__extends) || function (d, b) {
-        for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-    var NS, Container, Utils;
-    var RDF_CLASS, Factory, factory;
-    return {
-        setters:[
-            function (NS_1) {
-                NS = NS_1;
-            },
-            function (Container_1) {
-                Container = Container_1;
-            },
-            function (Utils_1) {
-                Utils = Utils_1;
-            }],
-        execute: function() {
-            RDF_CLASS = NS.LDP.Class.BasicContainer;
-            Factory = (function (_super) {
-                __extends(Factory, _super);
-                function Factory() {
-                    _super.apply(this, arguments);
-                }
-                Factory.prototype.is = function (object) {
-                    return (_super.prototype.is.call(this, object) &&
-                        this.hasRDFClass(object) &&
-                        this.hasClassProperties(object));
-                };
-                Factory.prototype.from = function (resourceOrResources) {
-                    var sources = _super.prototype.from.call(this, resourceOrResources);
-                    var resources = Utils.isArray(sources) ? sources : [sources];
-                    for (var i = 0, length = resources.length; i < length; i++) {
-                        var resource = resources[i];
-                        if (!this.hasClassProperties(resource))
-                            this.injectBehaviour(resource);
-                    }
-                    if (Utils.isArray(resourceOrResources))
-                        return resources[0];
-                    return resources;
-                };
-                Factory.prototype.hasRDFClass = function (resource) {
-                    return (resource.types.indexOf(NS.LDP.Class.BasicContainer) !== -1);
-                };
-                Factory.prototype.hasClassProperties = function (resource) {
-                    return true;
-                };
-                Factory.prototype.injectBehaviour = function (resource) {
-                    return resource;
-                };
-                return Factory;
-            })(Container.Factory);
-            exports_1("Factory", Factory);
-            exports_1("factory", factory = new Factory());
-        }
-    }
-});
-
-$__System.register("f", ["9", "6", "b"], function(exports_1) {
-    var __extends = (this && this.__extends) || function (d, b) {
-        for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-    var NS, RDF, Utils;
-    var RDF_CLASS, Factory, factory;
-    return {
-        setters:[
-            function (NS_1) {
-                NS = NS_1;
-            },
-            function (RDF_1) {
-                RDF = RDF_1;
-            },
-            function (Utils_1) {
-                Utils = Utils_1;
-            }],
-        execute: function() {
-            exports_1("RDF_CLASS", RDF_CLASS = NS.LDP.Class.RDFSource);
-            Factory = (function (_super) {
-                __extends(Factory, _super);
-                function Factory() {
-                    _super.apply(this, arguments);
-                }
-                Factory.hasClassProperties = function (resource) {
-                    return (Utils.hasPropertyDefined(resource, "memberOfRelation") &&
-                        Utils.hasPropertyDefined(resource, "hasMemberRelation"));
-                };
-                Factory.prototype.is = function (object) {
-                    return (_super.prototype.is.call(this, object) &&
-                        object.types.indexOf(RDF_CLASS) !== -1);
-                };
-                Factory.prototype.from = function (resourceOrResources) {
-                    var superResult = _super.prototype.from.call(this, resourceOrResources);
-                    var resources = Utils.isArray(superResult) ? superResult : [superResult];
-                    for (var i = 0, length = resources.length; i < length; i++) {
-                        var resource = resources[i];
-                        if (!Factory.hasClassProperties(resource))
-                            this.injectBehaviour(resource);
-                    }
-                    if (Utils.isArray(resourceOrResources))
-                        return resources;
-                    return resources[0];
-                };
-                Factory.prototype.hasRDFClass = function (resource) {
-                    return (resource.types.indexOf(RDF_CLASS) !== -1);
-                };
-                Factory.prototype.injectBehaviour = function (resource) {
-                    return resource;
-                };
-                return Factory;
-            })(RDF.Resource.Factory);
-            exports_1("Factory", Factory);
-            exports_1("factory", factory = new Factory());
-        }
-    }
-});
-
-/// <reference path="../../typings/es6/es6.d.ts" />
-$__System.register("e", ["9", "6", "f", "b"], function(exports_1) {
-    var __extends = (this && this.__extends) || function (d, b) {
-        for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-    var NS, RDF, RDFSource, Utils;
-    var RDF_CLASS, DEFINITION, Factory, factory;
-    return {
-        setters:[
-            function (NS_1) {
-                NS = NS_1;
-            },
-            function (RDF_1) {
-                RDF = RDF_1;
-            },
-            function (RDFSource_1) {
-                RDFSource = RDFSource_1;
-            },
-            function (Utils_1) {
-                Utils = Utils_1;
-            }],
-        execute: function() {
-            exports_1("RDF_CLASS", RDF_CLASS = NS.LDP.Class.Container);
-            exports_1("DEFINITION", DEFINITION = Utils.M.from({
-                "memberOfRelation": {
-                    "uri": NS.LDP.Predicate.memberOfRelation,
-                    "multi": false,
-                    "literal": false
+            exports_1("RDF_CLASS", RDF_CLASS = NS.C.Class.API);
+            exports_1("SCHEMA", SCHEMA = {
+                "version": {
+                    "@id": NS.C.Predicate.version,
+                    "@type": NS.XSD.DataType.string,
                 },
-                "hasMemberRelation": {
-                    "uri": NS.LDP.Predicate.hasMemberRelation,
-                    "multi": false,
-                    "literal": false
-                }
-            }));
-            Factory = (function (_super) {
-                __extends(Factory, _super);
-                function Factory() {
-                    _super.apply(this, arguments);
-                }
-                Factory.prototype.is = function (object) {
-                    return (_super.prototype.is.call(this, object) &&
-                        this.hasRDFClass(object) &&
-                        this.hasClassProperties(object));
-                };
-                Factory.prototype.from = function (resourceOrResources) {
-                    var superResult = _super.prototype.from.call(this, resourceOrResources);
-                    var resources = Utils.isArray(superResult) ? superResult : [superResult];
-                    for (var i = 0, length = resources.length; i < length; i++) {
-                        var resource = resources[i];
-                        if (!this.hasClassProperties(resource))
-                            this.injectBehaviour(resource);
-                    }
-                    if (Utils.isArray(resourceOrResources))
-                        return resources;
-                    return resources[0];
-                };
-                Factory.prototype.hasRDFClass = function (resource) {
-                    return (resource.types.indexOf(RDF_CLASS) !== -1 ||
-                        resource.types.indexOf(NS.LDP.Class.BasicContainer) !== -1 ||
-                        resource.types.indexOf(NS.LDP.Class.DirectContainer) !== -1 ||
-                        resource.types.indexOf(NS.LDP.Class.IndirectContainer) !== -1);
-                };
-                Factory.prototype.hasClassProperties = function (resource) {
-                    return (Utils.hasPropertyDefined(resource, "memberOfRelation") &&
-                        Utils.hasPropertyDefined(resource, "hasMemberRelation"));
-                };
-                Factory.prototype.injectBehaviour = function (resource) {
-                    RDF.Resource.Factory.injectDescriptions(resource, DEFINITION);
-                    return resource;
-                };
-                return Factory;
-            })(RDFSource.Factory);
-            exports_1("Factory", Factory);
-            exports_1("factory", factory = new Factory());
+                "buildDate": {
+                    "@id": NS.C.Predicate.buildDate,
+                    "@type": NS.XSD.DataType.dateTime,
+                },
+            });
         }
     }
 });
 
-/// <reference path="../../typings/es6/es6.d.ts" />
-$__System.register("a", ["9", "6", "e", "b"], function(exports_1) {
-    var __extends = (this && this.__extends) || function (d, b) {
-        for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-    var NS, RDF, Container, Utils;
-    var RDF_CLASS, DEFINITION, Factory, factory;
+/// <reference path="../../typings/typings.d.ts" />
+$__System.register("a", ["8", "5"], function(exports_1) {
+    var NS, Utils;
+    var RDF_CLASS, SCHEMA, Factory;
     return {
         setters:[
             function (NS_1) {
                 NS = NS_1;
-            },
-            function (RDF_1) {
-                RDF = RDF_1;
-            },
-            function (Container_1) {
-                Container = Container_1;
             },
             function (Utils_1) {
                 Utils = Utils_1;
             }],
         execute: function() {
             exports_1("RDF_CLASS", RDF_CLASS = NS.C.Class.AccessPoint);
-            exports_1("DEFINITION", DEFINITION = Utils.M.from({
+            exports_1("SCHEMA", SCHEMA = {
                 "membershipResource": {
-                    "uri": NS.LDP.Predicate.membershipResource,
-                    "multi": false,
-                    "literal": false
-                }
-            }));
-            Factory = (function (_super) {
-                __extends(Factory, _super);
+                    "@id": NS.LDP.Predicate.membershipResource,
+                    "@type": "@id",
+                },
+            });
+            Factory = (function () {
                 function Factory() {
-                    _super.apply(this, arguments);
                 }
-                Factory.prototype.is = function (object) {
-                    return (_super.prototype.is.call(this, object) &&
-                        this.hasRDFClass(object) &&
-                        this.hasClassProperties(object));
-                };
-                Factory.prototype.from = function (resourceOrResources) {
-                    var superResult = _super.prototype.from.call(this, resourceOrResources);
-                    var resources = Utils.isArray(superResult) ? superResult : [superResult];
-                    for (var i = 0, length = resources.length; i < length; i++) {
-                        var resource = resources[i];
-                        if (!this.hasClassProperties(resource))
-                            this.injectBehaviour(resource);
-                    }
-                    if (!Utils.isArray(resourceOrResources))
-                        return resources[0];
-                    return resources;
-                };
-                Factory.prototype.hasRDFClass = function (resource) {
-                    return (resource.types.indexOf(RDF_CLASS) !== -1);
-                };
                 Factory.prototype.hasClassProperties = function (resource) {
                     return (Utils.hasPropertyDefined(resource, "membershipResource"));
                 };
-                Factory.prototype.injectBehaviour = function (resource) {
-                    RDF.Resource.Factory.injectDescriptions(resource, DEFINITION);
-                    return resource;
+                return Factory;
+            })();
+            exports_1("Factory", Factory);
+        }
+    }
+});
+
+/// <reference path="./../../typings/typings.d.ts" />
+$__System.register("b", ["8", "c"], function(exports_1) {
+    var NS, Pointer;
+    var RDF_CLASS, Factory, factory;
+    return {
+        setters:[
+            function (NS_1) {
+                NS = NS_1;
+            },
+            function (Pointer_1) {
+                Pointer = Pointer_1;
+            }],
+        execute: function() {
+            exports_1("RDF_CLASS", RDF_CLASS = NS.LDP.Class.BasicContainer);
+            Factory = (function () {
+                function Factory() {
+                }
+                Factory.prototype.hasRDFClass = function (pointerOrExpandedObject) {
+                    var types = [];
+                    if ("@type" in pointerOrExpandedObject) {
+                        types = pointerOrExpandedObject["@type"];
+                    }
+                    else if ("types" in pointerOrExpandedObject) {
+                        // TODO: Use proper class
+                        var resource = pointerOrExpandedObject;
+                        types = Pointer.Util.getIDs(resource.types);
+                    }
+                    return types.indexOf(NS.LDP.Class.BasicContainer) !== -1;
                 };
                 return Factory;
-            })(Container.Factory);
+            })();
             exports_1("Factory", Factory);
             exports_1("factory", factory = new Factory());
         }
     }
 });
 
-$__System.register("10", ["a", "d", "e", "c", "8", "7", "f"], function(exports_1) {
-    var AccessPoint, BasicContainer, Container, DirectContainer, IndirectContainer, PersistedRDFSource, RDFSource;
+/// <reference path="../../typings/typings.d.ts" />
+$__System.register("d", ["8", "c", "5"], function(exports_1) {
+    var NS, Pointer, Utils;
+    var RDF_CLASS, SCHEMA, Factory, factory;
+    return {
+        setters:[
+            function (NS_1) {
+                NS = NS_1;
+            },
+            function (Pointer_1) {
+                Pointer = Pointer_1;
+            },
+            function (Utils_1) {
+                Utils = Utils_1;
+            }],
+        execute: function() {
+            exports_1("RDF_CLASS", RDF_CLASS = NS.LDP.Class.Container);
+            exports_1("SCHEMA", SCHEMA = {
+                "contains": {
+                    "@id": NS.LDP.Predicate.contains,
+                    "@container": "@set",
+                    "@type": "@id",
+                },
+                "memberOfRelation": {
+                    "@id": NS.LDP.Predicate.memberOfRelation,
+                    "@type": "@id",
+                },
+                "hasMemberRelation": {
+                    "@id": NS.LDP.Predicate.hasMemberRelation,
+                    "@type": "@id",
+                },
+            });
+            Factory = (function () {
+                function Factory() {
+                }
+                Factory.prototype.hasClassProperties = function (resource) {
+                    return (Utils.hasPropertyDefined(resource, "memberOfRelation") &&
+                        Utils.hasPropertyDefined(resource, "hasMemberRelation"));
+                };
+                Factory.prototype.hasRDFClass = function (pointerOrExpandedObject) {
+                    var types = [];
+                    if ("@type" in pointerOrExpandedObject) {
+                        types = pointerOrExpandedObject["@type"];
+                    }
+                    else if ("types" in pointerOrExpandedObject) {
+                        // TODO: Use proper class
+                        var resource = pointerOrExpandedObject;
+                        types = Pointer.Util.getIDs(resource.types);
+                    }
+                    return (types.indexOf(RDF_CLASS) !== -1 ||
+                        types.indexOf(NS.LDP.Class.BasicContainer) !== -1 ||
+                        types.indexOf(NS.LDP.Class.DirectContainer) !== -1 ||
+                        types.indexOf(NS.LDP.Class.IndirectContainer) !== -1);
+                };
+                return Factory;
+            })();
+            exports_1("Factory", Factory);
+            exports_1("factory", factory = new Factory());
+        }
+    }
+});
+
+$__System.register("e", ["5"], function(exports_1) {
+    var Utils;
+    var Factory;
+    function createChild(slugOrObject, object) {
+        if (slugOrObject === void 0) { slugOrObject = null; }
+        if (object === void 0) { object = null; }
+        var slug = Utils.isString(slugOrObject) ? slugOrObject : null;
+        object = !!slugOrObject && !Utils.isString(slugOrObject) ? slugOrObject : (!!object ? object : null);
+        // TODO: Check if the object is a document
+        // TODO: If it's not a document turn it and any of the objects related to it into document/fragments
+        var document = object;
+        if (slug !== null) {
+            return this._documents.createChild(this.id, slug, document);
+        }
+        else
+            return this._documents.createChild(this.id, document);
+    }
+    return {
+        setters:[
+            function (Utils_1) {
+                Utils = Utils_1;
+            }],
+        execute: function() {
+            Factory = (function () {
+                function Factory() {
+                }
+                Factory.hasClassProperties = function (document) {
+                    return (Utils.hasFunction(document, "createChild"));
+                };
+                Factory.decorate = function (persistedDocument) {
+                    if (Factory.hasClassProperties(persistedDocument))
+                        return persistedDocument;
+                    Object.defineProperties(persistedDocument, {
+                        "createChild": {
+                            writable: false,
+                            enumerable: false,
+                            configurable: true,
+                            value: createChild,
+                        },
+                    });
+                    return persistedDocument;
+                };
+                return Factory;
+            })();
+            exports_1("Factory", Factory);
+        }
+    }
+});
+
+$__System.register("f", ["8"], function(exports_1) {
+    var NS;
+    var RDF_CLASS, SCHEMA, Factory, factory;
+    return {
+        setters:[
+            function (NS_1) {
+                NS = NS_1;
+            }],
+        execute: function() {
+            exports_1("RDF_CLASS", RDF_CLASS = NS.LDP.Class.RDFSource);
+            exports_1("SCHEMA", SCHEMA = {
+                "created": {
+                    "@id": NS.C.Predicate.created,
+                    "@type": NS.XSD.DataType.dateTime,
+                },
+                "modified": {
+                    "@id": NS.C.Predicate.modified,
+                    "@type": NS.XSD.DataType.dateTime,
+                },
+            });
+            Factory = (function () {
+                function Factory() {
+                }
+                return Factory;
+            })();
+            exports_1("Factory", Factory);
+            exports_1("factory", factory = new Factory());
+        }
+    }
+});
+
+$__System.register("10", ["a", "b", "d", "e", "f"], function(exports_1) {
+    var AccessPoint, BasicContainer, Container, PersistedContainer, RDFSource;
     return {
         setters:[
             function (AccessPoint_1) {
@@ -1160,14 +1033,8 @@ $__System.register("10", ["a", "d", "e", "c", "8", "7", "f"], function(exports_1
             function (Container_1) {
                 Container = Container_1;
             },
-            function (DirectContainer_1) {
-                DirectContainer = DirectContainer_1;
-            },
-            function (IndirectContainer_1) {
-                IndirectContainer = IndirectContainer_1;
-            },
-            function (PersistedRDFSource_1) {
-                PersistedRDFSource = PersistedRDFSource_1;
+            function (PersistedContainer_1) {
+                PersistedContainer = PersistedContainer_1;
             },
             function (RDFSource_1) {
                 RDFSource = RDFSource_1;
@@ -1176,103 +1043,233 @@ $__System.register("10", ["a", "d", "e", "c", "8", "7", "f"], function(exports_1
             exports_1("AccessPoint", AccessPoint);
             exports_1("BasicContainer", BasicContainer);
             exports_1("Container", Container);
-            exports_1("DirectContainer", DirectContainer);
-            exports_1("IndirectContainer", IndirectContainer);
-            exports_1("PersistedRDFSource", PersistedRDFSource);
+            exports_1("PersistedContainer", PersistedContainer);
             exports_1("RDFSource", RDFSource);
         }
     }
 });
 
-$__System.register("11", ["12", "6", "b"], function(exports_1) {
-    var __extends = (this && this.__extends) || function (d, b) {
-        for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-    var Fragment, RDF, Utils;
-    var Factory, factory;
+/// <reference path="./../typings/typings.d.ts" />
+$__System.register("11", ["3", "9", "12", "13", "14", "10", "15"], function(exports_1) {
+    var App, APIDescription, Auth, Documents_1, Errors, LDP, ObjectSchema;
+    var Class, instance;
     return {
         setters:[
-            function (Fragment_1) {
-                Fragment = Fragment_1;
+            function (App_1) {
+                App = App_1;
             },
-            function (RDF_1) {
-                RDF = RDF_1;
+            function (APIDescription_1) {
+                APIDescription = APIDescription_1;
             },
-            function (Utils_1) {
-                Utils = Utils_1;
+            function (Auth_1) {
+                Auth = Auth_1;
+            },
+            function (Documents_1_1) {
+                Documents_1 = Documents_1_1;
+            },
+            function (Errors_1) {
+                Errors = Errors_1;
+            },
+            function (LDP_1) {
+                LDP = LDP_1;
+            },
+            function (ObjectSchema_1) {
+                ObjectSchema = ObjectSchema_1;
             }],
         execute: function() {
-            Factory = (function (_super) {
-                __extends(Factory, _super);
-                function Factory() {
-                    _super.apply(this, arguments);
+            Class = (function () {
+                function Class() {
+                    this.settings = new Map();
+                    this.generalObjectSchema = new ObjectSchema.DigestedObjectSchema();
+                    this.typeObjectSchemaMap = new Map();
+                    this.auth = new Auth.Class(this);
+                    this.documents = new Documents_1.default(this);
+                    this.registerDefaultObjectSchemas();
                 }
-                Factory.prototype.from = function (objects) {
-                    if (!Utils.isArray(objects))
-                        return this.singleFrom(objects);
-                    for (var i = 0, length = objects.length; i < length; i++) {
-                        var object = objects[i];
-                        this.singleFrom(object);
+                Object.defineProperty(Class.prototype, "parentContext", {
+                    get: function () { return null; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Class.prototype.getBaseURI = function () {
+                    return this.resolve("");
+                };
+                Class.prototype.resolve = function (relativeURI) {
+                    return relativeURI;
+                };
+                Class.prototype.hasSetting = function (name) {
+                    return (this.settings.has(name) ||
+                        (this.parentContext && this.parentContext.hasSetting(name)));
+                };
+                Class.prototype.getSetting = function (name) {
+                    if (this.settings.has(name))
+                        return this.settings.get(name);
+                    if (this.parentContext && this.parentContext.hasSetting(name))
+                        return this.parentContext.getSetting(name);
+                    return null;
+                };
+                Class.prototype.setSetting = function (name, value) {
+                    this.settings.set(name, value);
+                };
+                Class.prototype.deleteSetting = function (name) {
+                    this.settings.delete(name);
+                };
+                Class.prototype.hasObjectSchema = function (type) {
+                    if (this.typeObjectSchemaMap.has(type))
+                        return true;
+                    if (!!this.parentContext && this.parentContext.hasObjectSchema(type))
+                        return true;
+                    return false;
+                };
+                Class.prototype.getObjectSchema = function (type) {
+                    if (type === void 0) { type = null; }
+                    if (!!type) {
+                        // Type specific schema
+                        if (this.typeObjectSchemaMap.has(type))
+                            return this.typeObjectSchemaMap.get(type);
+                        if (!!this.parentContext && this.parentContext.hasObjectSchema(type))
+                            return this.parentContext.getObjectSchema(type);
+                        return null;
                     }
-                    return objects;
+                    else {
+                        // General schema
+                        if (!!this.generalObjectSchema)
+                            return this.generalObjectSchema;
+                        if (!!this.parentContext)
+                            return this.parentContext.getObjectSchema();
+                        throw new Errors.IllegalStateError();
+                    }
                 };
-                Factory.prototype.singleFrom = function (object) {
-                    return this.injectBehavior(object);
+                Class.prototype.extendObjectSchema = function (typeOrObjectSchema, objectSchema) {
+                    if (objectSchema === void 0) { objectSchema = null; }
+                    var type = objectSchema ? typeOrObjectSchema : null;
+                    objectSchema = !!objectSchema ? objectSchema : typeOrObjectSchema;
+                    var digestedSchema = ObjectSchema.Digester.digestSchema(objectSchema);
+                    if (!type) {
+                        this.extendGeneralObjectSchema(digestedSchema);
+                    }
+                    else {
+                        this.extendTypeObjectSchema(digestedSchema, type);
+                    }
                 };
-                Factory.prototype.injectBehavior = function (node) {
-                    var fragment = _super.prototype.injectBehavior.call(this, node);
-                    if (this.hasClassProperties(fragment))
-                        return fragment;
-                    Object.defineProperties(fragment, {
-                        "slug": {
-                            get: function () {
-                                return RDF.URI.Util.getFragment(fragment.uri);
-                            },
-                            set: function (slug) {
-                                this.uri = this.document.uri + "#" + slug;
-                            },
-                            enumerable: false
-                        }
-                    });
-                    return fragment;
+                Class.prototype.clearObjectSchema = function (type) {
+                    if (type === void 0) { type = null; }
+                    if (!type) {
+                        this.generalObjectSchema = !!this.parentContext ? null : new ObjectSchema.DigestedObjectSchema();
+                    }
+                    else {
+                        this.typeObjectSchemaMap.delete(type);
+                    }
                 };
-                Factory.prototype.hasClassProperties = function (resource) {
-                    return (Utils.hasPropertyDefined(resource, "slug"));
+                Class.prototype.extendGeneralObjectSchema = function (digestedSchema) {
+                    var digestedSchemaToExtend;
+                    if (!!this.generalObjectSchema) {
+                        digestedSchemaToExtend = this.generalObjectSchema;
+                    }
+                    else if (!!this.parentContext) {
+                        digestedSchemaToExtend = this.parentContext.getObjectSchema();
+                    }
+                    else {
+                        digestedSchemaToExtend = new ObjectSchema.DigestedObjectSchema();
+                    }
+                    this.generalObjectSchema = ObjectSchema.Digester.combineDigestedObjectSchemas([
+                        new ObjectSchema.DigestedObjectSchema(),
+                        digestedSchemaToExtend,
+                        digestedSchema,
+                    ]);
                 };
-                return Factory;
-            })(Fragment.Factory);
-            exports_1("Factory", Factory);
-            exports_1("factory", factory = new Factory());
+                Class.prototype.extendTypeObjectSchema = function (digestedSchema, type) {
+                    var digestedSchemaToExtend;
+                    if (this.typeObjectSchemaMap.has(type)) {
+                        digestedSchemaToExtend = this.typeObjectSchemaMap.get(type);
+                    }
+                    else if (!!this.parentContext && this.parentContext.hasObjectSchema(type)) {
+                        digestedSchemaToExtend = this.parentContext.getObjectSchema(type);
+                    }
+                    else {
+                        digestedSchemaToExtend = new ObjectSchema.DigestedObjectSchema();
+                    }
+                    var extendedDigestedSchema = ObjectSchema.Digester.combineDigestedObjectSchemas([
+                        new ObjectSchema.DigestedObjectSchema(),
+                        digestedSchemaToExtend,
+                        digestedSchema,
+                    ]);
+                    this.typeObjectSchemaMap.set(type, extendedDigestedSchema);
+                };
+                Class.prototype.registerDefaultObjectSchemas = function () {
+                    this.extendObjectSchema(LDP.RDFSource.RDF_CLASS, LDP.RDFSource.SCHEMA);
+                    this.extendObjectSchema(LDP.Container.RDF_CLASS, LDP.Container.SCHEMA);
+                    this.extendObjectSchema(LDP.BasicContainer.RDF_CLASS, LDP.Container.SCHEMA);
+                    this.extendObjectSchema(APIDescription.RDF_CLASS, APIDescription.SCHEMA);
+                    this.extendObjectSchema(App.RDF_CLASS, App.SCHEMA);
+                    this.extendObjectSchema(Auth.Token.RDF_CLASS, Auth.Token.CONTEXT);
+                };
+                return Class;
+            })();
+            exports_1("Class", Class);
+            exports_1("instance", instance = new Class());
+            exports_1("default",instance);
         }
     }
 });
 
-$__System.register("12", ["13", "6", "b"], function(exports_1) {
+/// <reference path="./../typings/typings.d.ts" />
+$__System.register("7", ["11", "15"], function(exports_1) {
     var __extends = (this && this.__extends) || function (d, b) {
         for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
-    var Errors, RDF, Utils;
-    var Factory, factory, Util;
-    function externalAnonymousFragmentFilter(propertyURI, value) {
-        if (!RDF.Node.Factory.is(value))
-            return;
-        if (!RDF.URI.Util.isBNodeID(value["@id"]))
-            return;
-        if (!("document" in value))
-            throw new Errors.IllegalArgumentError("The resource provided doesn't belong to a document.");
-        var fragment = value;
-        if (this.document !== fragment.document)
-            throw new Errors.IllegalArgumentError("The anonymous fragment provided belongs to another document. To reference it from another document it needs to be named.");
+    var SDKContext, ObjectSchema;
+    var AbstractContext;
+    return {
+        setters:[
+            function (SDKContext_1) {
+                SDKContext = SDKContext_1;
+            },
+            function (ObjectSchema_1) {
+                ObjectSchema = ObjectSchema_1;
+            }],
+        execute: function() {
+            AbstractContext = (function (_super) {
+                __extends(AbstractContext, _super);
+                function AbstractContext(parentContext) {
+                    if (parentContext === void 0) { parentContext = null; }
+                    _super.call(this);
+                    this._parentContext = !!parentContext ? parentContext : SDKContext.instance;
+                    this.generalObjectSchema = !!parentContext ? null : new ObjectSchema.DigestedObjectSchema();
+                }
+                Object.defineProperty(AbstractContext.prototype, "parentContext", {
+                    get: function () { return this._parentContext; },
+                    enumerable: true,
+                    configurable: true
+                });
+                ;
+                return AbstractContext;
+            })(SDKContext.Class);
+            exports_1("default",AbstractContext);
+        }
     }
+});
+
+/// <reference path="./../typings/typings.d.ts" />
+$__System.register("16", ["14", "15", "8", "c", "4", "5"], function(exports_1) {
+    var Errors, ObjectSchema, NS, Pointer, RDF, Utils;
+    var Class;
     return {
         setters:[
             function (Errors_1) {
                 Errors = Errors_1;
             },
+            function (ObjectSchema_1) {
+                ObjectSchema = ObjectSchema_1;
+            },
+            function (NS_1) {
+                NS = NS_1;
+            },
+            function (Pointer_1) {
+                Pointer = Pointer_1;
+            },
             function (RDF_1) {
                 RDF = RDF_1;
             },
@@ -1280,44 +1277,598 @@ $__System.register("12", ["13", "6", "b"], function(exports_1) {
                 Utils = Utils_1;
             }],
         execute: function() {
-            Factory = (function (_super) {
-                __extends(Factory, _super);
-                function Factory() {
-                    _super.apply(this, arguments);
+            Class = (function () {
+                function Class(literalSerializers) {
+                    if (literalSerializers === void 0) { literalSerializers = null; }
+                    this._literalSerializers = !!literalSerializers ? literalSerializers : Class.getDefaultSerializers();
                 }
-                Factory.prototype.from = function (objects) {
-                    if (!Utils.isArray(objects))
-                        return this.singleFrom(objects);
-                    for (var i = 0, length = objects.length; i < length; i++) {
-                        var object = objects[i];
-                        this.singleFrom(object);
+                Object.defineProperty(Class.prototype, "literalSerializers", {
+                    get: function () { return this._literalSerializers; },
+                    enumerable: true,
+                    configurable: true
+                });
+                ;
+                Class.getDefaultSerializers = function () {
+                    var literalSerializers = new Map();
+                    literalSerializers.set(NS.XSD.DataType.date, RDF.Literal.Serializers.XSD.dateSerializer);
+                    literalSerializers.set(NS.XSD.DataType.dateTime, RDF.Literal.Serializers.XSD.dateTimeSerializer);
+                    literalSerializers.set(NS.XSD.DataType.time, RDF.Literal.Serializers.XSD.timeSerializer);
+                    literalSerializers.set(NS.XSD.DataType.integer, RDF.Literal.Serializers.XSD.integerSerializer);
+                    literalSerializers.set(NS.XSD.DataType.int, RDF.Literal.Serializers.XSD.integerSerializer);
+                    literalSerializers.set(NS.XSD.DataType.unsignedInt, RDF.Literal.Serializers.XSD.unsignedIntegerSerializer);
+                    literalSerializers.set(NS.XSD.DataType.float, RDF.Literal.Serializers.XSD.floatSerializer);
+                    literalSerializers.set(NS.XSD.DataType.double, RDF.Literal.Serializers.XSD.floatSerializer);
+                    literalSerializers.set(NS.XSD.DataType.boolean, RDF.Literal.Serializers.XSD.booleanSerializer);
+                    literalSerializers.set(NS.XSD.DataType.string, RDF.Literal.Serializers.XSD.stringSerializer);
+                    return literalSerializers;
+                };
+                Class.prototype.compact = function (expandedObjectOrObjects, targetObjectOrObjectsOrDigestedContext, digestedSchemaOrPointerLibrary, pointerLibrary) {
+                    if (pointerLibrary === void 0) { pointerLibrary = null; }
+                    var targetObjectOrObjects = !pointerLibrary ? null : targetObjectOrObjectsOrDigestedContext;
+                    var digestedSchema = !pointerLibrary ? targetObjectOrObjectsOrDigestedContext : digestedSchemaOrPointerLibrary;
+                    pointerLibrary = !pointerLibrary ? digestedSchemaOrPointerLibrary : pointerLibrary;
+                    if (!Utils.isArray(expandedObjectOrObjects))
+                        return this.compactSingle(expandedObjectOrObjects, targetObjectOrObjects, digestedSchema, pointerLibrary);
+                    var expandedObjects = expandedObjectOrObjects;
+                    var targetObjects = !!targetObjectOrObjects ? targetObjectOrObjects : [];
+                    for (var i = 0, length = expandedObjects.length; i < length; i++) {
+                        var expandedObject = expandedObjects[i];
+                        var targetObject = targetObjects[i] = !!targetObjects[i] ? targetObjects[i] : {};
+                        this.compactSingle(expandedObject, targetObject, digestedSchema, pointerLibrary);
                     }
-                    return objects;
+                    return targetObjects;
                 };
-                Factory.prototype.singleFrom = function (object) {
-                    return this.injectBehavior(object);
+                Class.prototype.expand = function (compactedObjectOrObjects, digestedSchema, pointerValidator) {
+                    if (pointerValidator === void 0) { pointerValidator = null; }
+                    if (!Utils.isArray(compactedObjectOrObjects))
+                        return this.expandSingle(compactedObjectOrObjects, digestedSchema, pointerValidator);
                 };
-                Factory.prototype.injectBehavior = function (object) {
-                    var fragment = _super.prototype.injectBehavior.call(this, object);
-                    if (this.hasClassProperties(fragment))
-                        return fragment;
-                    fragment._propertyAddedCallbacks.push(externalAnonymousFragmentFilter);
-                    var document = fragment.document;
-                    delete fragment.document;
-                    Object.defineProperties(fragment, {
+                Class.prototype.expandSingle = function (compactedObject, digestedSchema, pointerValidator) {
+                    var _this = this;
+                    var expandedObject = {};
+                    expandedObject["@id"] = !!compactedObject["id"] ? compactedObject["id"] : "";
+                    if (!!compactedObject["types"])
+                        expandedObject["@type"] = compactedObject["types"];
+                    Utils.forEachOwnProperty(compactedObject, function (propertyName, value) {
+                        if (propertyName === "id")
+                            return;
+                        if (digestedSchema.properties.has(propertyName)) {
+                            var definition = digestedSchema.properties.get(propertyName);
+                            var expandedValue = _this.expandProperty(value, definition, pointerValidator);
+                            if (!expandedValue)
+                                return;
+                            expandedObject[definition.uri.toString()] = expandedValue;
+                        }
+                        else {
+                        }
+                    });
+                    return expandedObject;
+                };
+                Class.prototype.expandProperty = function (propertyValue, propertyDefinition, pointerValidator) {
+                    switch (propertyDefinition.containerType) {
+                        case null:
+                            // Property is not a list
+                            if (propertyDefinition.literal) {
+                                return this.expandPropertyLiteral(propertyValue, propertyDefinition.literalType.toString());
+                            }
+                            else if (propertyDefinition.literal === false) {
+                                return this.expandPropertyPointer(propertyValue, pointerValidator);
+                            }
+                            else {
+                                return this.expandPropertyValue(propertyValue, pointerValidator);
+                            }
+                            break;
+                        case ObjectSchema.ContainerType.LIST:
+                            if (propertyDefinition.literal) {
+                                return this.expandPropertyLiteralList(propertyValue, propertyDefinition.literalType.toString());
+                            }
+                            else if (propertyDefinition.literal === false) {
+                                return this.expandPropertyPointerList(propertyValue, pointerValidator);
+                            }
+                            else {
+                                return this.expandPropertyList(propertyValue, pointerValidator);
+                            }
+                            break;
+                        case ObjectSchema.ContainerType.SET:
+                            if (propertyDefinition.literal) {
+                                return this.expandPropertyLiterals(propertyValue, propertyDefinition.literalType.toString());
+                            }
+                            else if (propertyDefinition.literal === false) {
+                                return this.expandPropertyPointers(propertyValue, pointerValidator);
+                            }
+                            else {
+                                return this.expandPropertyValues(propertyValue, pointerValidator);
+                            }
+                            break;
+                        case ObjectSchema.ContainerType.LANGUAGE:
+                            return this.expandPropertyLanguageMap(propertyValue);
+                        default:
+                            throw new Errors.IllegalArgumentError("The containerType specified is not supported.");
+                    }
+                };
+                Class.prototype.expandPropertyValue = function (propertyValue, pointerValidator) {
+                    if (Utils.isArray(propertyValue)) {
+                        return this.expandPropertyValues(propertyValue, pointerValidator);
+                    }
+                    else {
+                        var expandedValue = this.expandValue(propertyValue, pointerValidator);
+                        if (!expandedValue)
+                            return null;
+                        return [expandedValue];
+                    }
+                };
+                Class.prototype.expandPropertyPointer = function (propertyValue, pointerValidator) {
+                    var expandedPointer = this.expandPointer(propertyValue, pointerValidator);
+                    if (!expandedPointer)
+                        return null;
+                    return [expandedPointer];
+                };
+                Class.prototype.expandPropertyLiteral = function (propertyValue, literalType) {
+                    // TODO: Language
+                    var serializedValue = this.serializeLiteral(propertyValue, literalType);
+                    if (serializedValue === null)
+                        return null;
+                    return [
+                        { "@value": serializedValue, "@type": literalType }
+                    ];
+                };
+                Class.prototype.expandPropertyList = function (propertyValues, pointerValidator) {
+                    propertyValues = Utils.isArray(propertyValues) ? propertyValues : [propertyValues];
+                    var expandedArray = this.expandArray(propertyValues, pointerValidator);
+                    if (!expandedArray)
+                        return null;
+                    return [
+                        { "@list": expandedArray }
+                    ];
+                };
+                Class.prototype.expandPropertyPointerList = function (propertyValues, pointerValidator) {
+                    var listValues = this.expandPropertyPointers(propertyValues, pointerValidator);
+                    return [
+                        { "@list": listValues }
+                    ];
+                };
+                Class.prototype.expandPropertyLiteralList = function (propertyValues, literalType) {
+                    var listValues = this.expandPropertyLiterals(propertyValues, literalType);
+                    return [
+                        { "@list": listValues }
+                    ];
+                };
+                Class.prototype.expandPropertyValues = function (propertyValue, pointerValidator) {
+                    var expandedArray = this.expandArray(propertyValue, pointerValidator);
+                    if (!expandedArray)
+                        return null;
+                    return expandedArray;
+                };
+                Class.prototype.expandPropertyPointers = function (propertyValues, pointerValidator) {
+                    propertyValues = Utils.isArray(propertyValues) ? propertyValues : [propertyValues];
+                    var expandedPointers = [];
+                    for (var _i = 0; _i < propertyValues.length; _i++) {
+                        var propertyValue = propertyValues[_i];
+                        var expandedPointer = this.expandPointer(propertyValue, pointerValidator);
+                        if (!expandedPointer)
+                            continue;
+                        expandedPointers.push(expandedPointer);
+                    }
+                    return expandedPointers;
+                };
+                Class.prototype.expandPropertyLiterals = function (propertyValues, literalType) {
+                    propertyValues = Utils.isArray(propertyValues) ? propertyValues : [propertyValues];
+                    var listValues = [];
+                    for (var _i = 0; _i < propertyValues.length; _i++) {
+                        var propertyValue = propertyValues[_i];
+                        var serializedValue = this.serializeLiteral(propertyValue, literalType);
+                        if (!serializedValue)
+                            continue;
+                        listValues.push({ "@value": serializedValue, "@type": literalType });
+                    }
+                    return listValues;
+                };
+                Class.prototype.expandPropertyLanguageMap = function (propertyValue) {
+                    var _this = this;
+                    if (!Utils.isObject(propertyValue)) {
+                        // TODO: Warn of data loss
+                        return null;
+                    }
+                    var mapValues = [];
+                    Utils.forEachOwnProperty(propertyValue, function (languageTag, value) {
+                        // TODO: Validate language tags
+                        var serializedValue = _this.literalSerializers.get(NS.XSD.DataType.string).serialize(value);
+                        mapValues.push({ "@value": serializedValue, "@type": NS.XSD.DataType.string, "@language": languageTag });
+                    });
+                    return mapValues;
+                };
+                Class.prototype.serializeLiteral = function (propertyValue, literalType) {
+                    if (Pointer.Factory.is(propertyValue)) {
+                        // TODO: Warn of data loss
+                        return null;
+                    }
+                    if (!this.literalSerializers.has(literalType)) {
+                        // TODO: Warn of data loss
+                        return null;
+                    }
+                    try {
+                        return this.literalSerializers.get(literalType).serialize(propertyValue);
+                    }
+                    catch (error) {
+                        // TODO: Warn of data loss
+                        return null;
+                    }
+                };
+                Class.prototype.expandPointer = function (propertyValue, pointerValidator) {
+                    if (!Pointer.Factory.is(propertyValue)) {
+                        // TODO: Warn of data loss
+                        return null;
+                    }
+                    if (!!pointerValidator && !pointerValidator.inScope(propertyValue)) {
+                        // TODO: Warn of data loss
+                        return null;
+                    }
+                    return { "@id": propertyValue.id };
+                };
+                Class.prototype.expandArray = function (propertyValue, pointerValidator) {
+                    var listValues = [];
+                    for (var _i = 0; _i < propertyValue.length; _i++) {
+                        var listValue = propertyValue[_i];
+                        var expandedValue = this.expandValue(listValue, pointerValidator);
+                        if (!expandedValue)
+                            continue;
+                        listValues.push(expandedValue);
+                    }
+                    if (!listValues.length)
+                        return null;
+                    return listValues;
+                };
+                Class.prototype.expandValue = function (propertyValue, pointerValidator) {
+                    if (Utils.isArray(propertyValue)) {
+                        // TODO: Lists of lists are not currently supported by the spec
+                        return null;
+                    }
+                    else if (Pointer.Factory.is(propertyValue)) {
+                        return this.expandPointer(propertyValue, pointerValidator);
+                    }
+                    else {
+                        return this.expandLiteral(propertyValue);
+                    }
+                };
+                Class.prototype.expandLiteral = function (literalValue) {
+                    var serializedValue;
+                    var literalType;
+                    switch (true) {
+                        case Utils.isFunction(literalValue):
+                            return null;
+                        case Utils.isDate(literalValue):
+                            literalType = NS.XSD.DataType.dateTime;
+                            break;
+                        case Utils.isNumber(literalValue):
+                            literalType = NS.XSD.DataType.float;
+                            break;
+                        case Utils.isBoolean(literalValue):
+                            literalType = NS.XSD.DataType.boolean;
+                            break;
+                        case Utils.isString(literalValue):
+                            literalType = NS.XSD.DataType.string;
+                            break;
+                        default:
+                            // TODO: Warn of data loss
+                            return null;
+                    }
+                    serializedValue = this.literalSerializers.get(literalType).serialize(literalValue);
+                    return { "@value": serializedValue, "@type": literalType };
+                };
+                Class.prototype.compactSingle = function (expandedObject, targetObject, digestedSchema, pointerLibrary) {
+                    var _this = this;
+                    var propertyURINameMap = this.getPropertyURINameMap(digestedSchema);
+                    if (!expandedObject["@id"])
+                        throw new Errors.IllegalArgumentError("The expandedObject doesn't have an @id defined.");
+                    targetObject["id"] = expandedObject["@id"];
+                    targetObject["types"] = !!expandedObject["@type"] ? expandedObject["@type"] : [];
+                    Utils.forEachOwnProperty(expandedObject, function (propertyURI, value) {
+                        if (propertyURI === "@id")
+                            return;
+                        if (propertyURI === "@type")
+                            return;
+                        if (propertyURINameMap.has(propertyURI)) {
+                            var propertyName = propertyURINameMap.get(propertyURI);
+                            _this.assignProperty(targetObject, expandedObject, propertyName, digestedSchema, pointerLibrary);
+                        }
+                        else {
+                            _this.assignURIProperty(targetObject, expandedObject, propertyURI, pointerLibrary);
+                        }
+                    });
+                    return targetObject;
+                };
+                Class.prototype.assignProperty = function (compactedObject, expandedObject, propertyName, digestedSchema, pointerLibrary) {
+                    var propertyDefinition = digestedSchema.properties.get(propertyName);
+                    compactedObject[propertyName] = this.getPropertyValue(expandedObject, propertyDefinition, pointerLibrary);
+                };
+                Class.prototype.assignURIProperty = function (compactedObject, expandedObject, propertyURI, pointerLibrary) {
+                    var guessedDefinition = new ObjectSchema.DigestedPropertyDefinition();
+                    guessedDefinition.uri = new RDF.URI.Class(propertyURI);
+                    guessedDefinition.containerType = this.getPropertyContainerType(expandedObject[propertyURI]);
+                    compactedObject[propertyURI] = this.getPropertyValue(expandedObject, guessedDefinition, pointerLibrary);
+                };
+                Class.prototype.getPropertyContainerType = function (propertyValues) {
+                    if (propertyValues.length === 1) {
+                        if (RDF.List.Factory.is(propertyValues[0]))
+                            return ObjectSchema.ContainerType.LIST;
+                    }
+                    else {
+                        return ObjectSchema.ContainerType.SET;
+                    }
+                    return null;
+                };
+                Class.prototype.getPropertyValue = function (expandedObject, propertyDefinition, pointerLibrary) {
+                    var propertyURI = propertyDefinition.uri.toString();
+                    switch (propertyDefinition.containerType) {
+                        case null:
+                            // Property is not a list
+                            if (propertyDefinition.literal) {
+                                return this.getPropertyLiteral(expandedObject, propertyURI, propertyDefinition.literalType.toString());
+                            }
+                            else if (propertyDefinition.literal === false) {
+                                return this.getPropertyPointer(expandedObject, propertyURI, pointerLibrary);
+                            }
+                            else {
+                                return this.getProperty(expandedObject, propertyURI, pointerLibrary);
+                            }
+                            break;
+                        case ObjectSchema.ContainerType.LIST:
+                            if (propertyDefinition.literal) {
+                                return this.getPropertyLiteralList(expandedObject, propertyURI, propertyDefinition.literalType.toString());
+                            }
+                            else if (propertyDefinition.literal === false) {
+                                return this.getPropertyPointerList(expandedObject, propertyURI, pointerLibrary);
+                            }
+                            else {
+                                return this.getPropertyList(expandedObject, propertyURI, pointerLibrary);
+                            }
+                            break;
+                        case ObjectSchema.ContainerType.SET:
+                            if (propertyDefinition.literal) {
+                                return this.getPropertyLiterals(expandedObject, propertyURI, propertyDefinition.literalType.toString());
+                            }
+                            else if (propertyDefinition.literal === false) {
+                                return this.getPropertyPointers(expandedObject, propertyURI, pointerLibrary);
+                            }
+                            else {
+                                return this.getProperties(expandedObject, propertyURI, pointerLibrary);
+                            }
+                            break;
+                        case ObjectSchema.ContainerType.LANGUAGE:
+                            return this.getPropertyLanguageMap(expandedObject, propertyURI);
+                        default:
+                            throw new Errors.IllegalArgumentError("The containerType specified is not supported.");
+                    }
+                };
+                Class.prototype.getProperty = function (expandedObject, propertyURI, pointerLibrary) {
+                    var propertyValues = expandedObject[propertyURI];
+                    if (!propertyValues)
+                        return null;
+                    if (!propertyValues.length)
+                        return null;
+                    var propertyValue = propertyValues[0];
+                    return this.parseValue(propertyValue, pointerLibrary);
+                };
+                Class.prototype.getPropertyPointer = function (expandedObject, propertyURI, pointerLibrary) {
+                    var propertyValues = expandedObject[propertyURI];
+                    if (!propertyValues)
+                        return null;
+                    for (var _i = 0; _i < propertyValues.length; _i++) {
+                        var propertyValue = propertyValues[_i];
+                        if (!RDF.Node.Factory.is(propertyValue))
+                            continue;
+                        return pointerLibrary.getPointer(propertyValue["@id"]);
+                    }
+                    return null;
+                };
+                Class.prototype.getPropertyLiteral = function (expandedObject, propertyURI, literalType) {
+                    var propertyValues = expandedObject[propertyURI];
+                    if (!propertyValues)
+                        return null;
+                    for (var _i = 0; _i < propertyValues.length; _i++) {
+                        var propertyValue = propertyValues[_i];
+                        if (!RDF.Literal.Factory.is(propertyValue))
+                            continue;
+                        if (!RDF.Literal.Factory.hasType(propertyValue, literalType))
+                            continue;
+                        return RDF.Literal.Factory.parse(propertyValue);
+                    }
+                    return null;
+                };
+                Class.prototype.getPropertyList = function (expandedObject, propertyURI, pointerLibrary) {
+                    var propertyValues = expandedObject[propertyURI];
+                    if (!propertyValues)
+                        return null;
+                    var propertyList = this.getList(propertyValues);
+                    if (!propertyList)
+                        return null;
+                    var listValues = [];
+                    for (var _i = 0, _a = propertyList["@list"]; _i < _a.length; _i++) {
+                        var listValue = _a[_i];
+                        listValues.push(this.parseValue(listValue, pointerLibrary));
+                    }
+                    return listValues;
+                };
+                Class.prototype.getPropertyPointerList = function (expandedObject, propertyURI, pointerLibrary) {
+                    var propertyValues = expandedObject[propertyURI];
+                    if (!propertyValues)
+                        return null;
+                    var propertyList = this.getList(propertyValues);
+                    if (!propertyList)
+                        return null;
+                    var listPointers = [];
+                    for (var _i = 0, _a = propertyList["@list"]; _i < _a.length; _i++) {
+                        var listValue = _a[_i];
+                        if (!RDF.Node.Factory.is(listValue))
+                            continue;
+                        var pointer = pointerLibrary.getPointer(listValue["@id"]);
+                        listPointers.push(pointer);
+                    }
+                    return listPointers;
+                };
+                Class.prototype.getPropertyLiteralList = function (expandedObject, propertyURI, literalType) {
+                    var propertyValues = expandedObject[propertyURI];
+                    if (!propertyValues)
+                        return null;
+                    var propertyList = this.getList(propertyValues);
+                    if (!propertyList)
+                        return null;
+                    var listLiterals = [];
+                    for (var _i = 0, _a = propertyList["@list"]; _i < _a.length; _i++) {
+                        var listValue = _a[_i];
+                        if (!RDF.Literal.Factory.is(listValue))
+                            continue;
+                        if (!RDF.Literal.Factory.hasType(listValue, literalType))
+                            continue;
+                        listLiterals.push(RDF.Literal.Factory.parse(listValue));
+                    }
+                    return listLiterals;
+                };
+                Class.prototype.getProperties = function (expandedObject, propertyURI, pointerLibrary) {
+                    var propertyValues = expandedObject[propertyURI];
+                    if (!propertyValues)
+                        return null;
+                    if (!propertyValues.length)
+                        return null;
+                    var properties = [];
+                    for (var _i = 0; _i < propertyValues.length; _i++) {
+                        var propertyValue = propertyValues[_i];
+                        properties.push(this.parseValue(propertyValue, pointerLibrary));
+                    }
+                    return properties;
+                };
+                Class.prototype.getPropertyPointers = function (expandedObject, propertyURI, pointerLibrary) {
+                    var propertyValues = expandedObject[propertyURI];
+                    if (!propertyValues)
+                        return null;
+                    if (!propertyValues.length)
+                        return null;
+                    var propertyPointers = [];
+                    for (var _i = 0; _i < propertyValues.length; _i++) {
+                        var propertyValue = propertyValues[_i];
+                        if (!RDF.Node.Factory.is(propertyValue))
+                            continue;
+                        var pointer = pointerLibrary.getPointer(propertyValue["@id"]);
+                        propertyPointers.push(pointer);
+                    }
+                    return propertyPointers;
+                };
+                Class.prototype.getPropertyLiterals = function (expandedObject, propertyURI, literalType) {
+                    var propertyValues = expandedObject[propertyURI];
+                    if (!propertyValues)
+                        return null;
+                    var propertyLiterals = [];
+                    for (var _i = 0; _i < propertyValues.length; _i++) {
+                        var propertyValue = propertyValues[_i];
+                        if (!RDF.Literal.Factory.is(propertyValue))
+                            continue;
+                        if (!RDF.Literal.Factory.hasType(propertyValue, literalType))
+                            continue;
+                        propertyLiterals.push(RDF.Literal.Factory.parse(propertyValue));
+                    }
+                    return propertyLiterals;
+                };
+                Class.prototype.getPropertyLanguageMap = function (expandedObject, propertyURI) {
+                    var propertyValues = expandedObject[propertyURI];
+                    if (!propertyValues)
+                        return null;
+                    var propertyLanguageMap = {};
+                    for (var _i = 0; _i < propertyValues.length; _i++) {
+                        var propertyValue = propertyValues[_i];
+                        if (!RDF.Literal.Factory.is(propertyValue))
+                            continue;
+                        if (!RDF.Literal.Factory.hasType(propertyValue, NS.XSD.DataType.string))
+                            continue;
+                        var languageTag = propertyValue["@language"];
+                        if (!languageTag)
+                            continue;
+                        propertyLanguageMap[languageTag] = RDF.Literal.Factory.parse(propertyValue);
+                    }
+                    return propertyLanguageMap;
+                };
+                Class.prototype.getList = function (propertyValues) {
+                    for (var _i = 0; _i < propertyValues.length; _i++) {
+                        var propertyValue = propertyValues[_i];
+                        if (!RDF.List.Factory.is(propertyValue))
+                            continue;
+                        return propertyValue;
+                    }
+                    return null;
+                };
+                Class.prototype.getPropertyURINameMap = function (digestedSchema) {
+                    var map = new Map();
+                    digestedSchema.properties.forEach(function (definition, propertyName) {
+                        map.set(definition.uri.toString(), propertyName);
+                    });
+                    return map;
+                };
+                Class.prototype.parseValue = function (propertyValue, pointerLibrary) {
+                    if (RDF.Literal.Factory.is(propertyValue)) {
+                        return RDF.Literal.Factory.parse(propertyValue);
+                    }
+                    else if (RDF.Node.Factory.is(propertyValue)) {
+                        return pointerLibrary.getPointer(propertyValue["@id"]);
+                    }
+                    else if (RDF.List.Factory.is(propertyValue)) {
+                        var parsedValue = [];
+                        var listValues = propertyValue["@list"];
+                        for (var _i = 0; _i < listValues.length; _i++) {
+                            var listValue = listValues[_i];
+                            parsedValue.push(this.parseValue(listValue, pointerLibrary));
+                        }
+                        return parsedValue;
+                    }
+                    else {
+                    }
+                };
+                return Class;
+            })();
+            exports_1("Class", Class);
+            exports_1("default",Class);
+        }
+    }
+});
+
+$__System.register("17", ["18", "5"], function(exports_1) {
+    var Resource, Utils;
+    var Factory, factory, Util;
+    return {
+        setters:[
+            function (Resource_1) {
+                Resource = Resource_1;
+            },
+            function (Utils_1) {
+                Utils = Utils_1;
+            }],
+        execute: function() {
+            Factory = (function () {
+                function Factory() {
+                }
+                Factory.prototype.hasClassProperties = function (resource) {
+                    return (Utils.hasPropertyDefined(resource, "document"));
+                };
+                Factory.prototype.create = function (idOrDocument, document) {
+                    if (document === void 0) { document = null; }
+                    return this.createFrom({}, idOrDocument, document);
+                };
+                Factory.prototype.createFrom = function (object, idOrDocument, document) {
+                    if (document === void 0) { document = null; }
+                    var id = !!document ? idOrDocument : Util.generateID();
+                    var resource = Resource.Factory.createFrom(object, id);
+                    if (this.hasClassProperties(resource))
+                        return resource;
+                    Object.defineProperties(resource, {
                         "document": {
                             writable: false,
                             enumerable: false,
-                            value: document
-                        }
+                            configurable: true,
+                            value: document,
+                        },
                     });
-                    return fragment;
-                };
-                Factory.prototype.hasClassProperties = function (resource) {
-                    return false;
+                    return resource;
                 };
                 return Factory;
-            })(RDF.Resource.Factory);
+            })();
             exports_1("Factory", Factory);
             exports_1("factory", factory = new Factory());
             Util = (function () {
@@ -1333,31 +1884,171 @@ $__System.register("12", ["13", "6", "b"], function(exports_1) {
     }
 });
 
-/// <reference path="./../typings/es6/es6.d.ts" />
-$__System.register("14", ["12", "11", "6", "b", "13"], function(exports_1) {
-    var __extends = (this && this.__extends) || function (d, b) {
-        for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-    var Fragment, NamedFragment, RDF, Utils, Errors;
+$__System.register("19", ["17", "4", "5"], function(exports_1) {
+    var Fragment, RDF, Utils;
     var Factory, factory;
+    return {
+        setters:[
+            function (Fragment_1) {
+                Fragment = Fragment_1;
+            },
+            function (RDF_1) {
+                RDF = RDF_1;
+            },
+            function (Utils_1) {
+                Utils = Utils_1;
+            }],
+        execute: function() {
+            Factory = (function () {
+                function Factory() {
+                }
+                Factory.prototype.hasClassProperties = function (resource) {
+                    return (Utils.hasPropertyDefined(resource, "slug"));
+                };
+                Factory.prototype.create = function (slug, document) {
+                    return this.createFrom({}, slug, document);
+                };
+                Factory.prototype.createFrom = function (object, slug, document) {
+                    var uri = document.id + "#" + slug;
+                    var fragment = Fragment.factory.createFrom(object, uri, document);
+                    if (this.hasClassProperties(fragment))
+                        return fragment;
+                    Object.defineProperties(fragment, {
+                        "slug": {
+                            enumerable: false,
+                            configurable: true,
+                            get: function () {
+                                return RDF.URI.Util.getFragment(fragment.id);
+                            },
+                            set: function (value) {
+                                this.id = this.document.id + "#" + value;
+                            },
+                        },
+                    });
+                    return fragment;
+                };
+                return Factory;
+            })();
+            exports_1("Factory", Factory);
+            exports_1("factory", factory = new Factory());
+        }
+    }
+});
+
+$__System.register("18", ["c", "5"], function(exports_1) {
+    var Pointer, Utils;
+    var Factory;
+    function hasType(type) {
+        return this.types.indexOf(type) !== -1;
+    }
+    return {
+        setters:[
+            function (Pointer_1) {
+                Pointer = Pointer_1;
+            },
+            function (Utils_1) {
+                Utils = Utils_1;
+            }],
+        execute: function() {
+            Factory = (function () {
+                function Factory() {
+                }
+                Factory.hasClassProperties = function (resource) {
+                    return (Utils.hasPropertyDefined(resource, "types"));
+                };
+                Factory.create = function (id, types) {
+                    if (id === void 0) { id = null; }
+                    if (types === void 0) { types = null; }
+                    return Factory.createFrom({}, id, types);
+                };
+                Factory.createFrom = function (object, id, types) {
+                    if (id === void 0) { id = null; }
+                    if (types === void 0) { types = null; }
+                    id = !!id ? id : "";
+                    types = !!types ? types : [];
+                    var resource = Factory.decorate(object);
+                    resource.id = id;
+                    resource.types = types;
+                    return resource;
+                };
+                Factory.decorate = function (object) {
+                    Pointer.Factory.decorate(object);
+                    if (Factory.hasClassProperties(object))
+                        return object;
+                    Object.defineProperties(object, {
+                        "types": {
+                            writable: true,
+                            enumerable: false,
+                            configurable: true,
+                            value: [],
+                        },
+                    });
+                    return object;
+                };
+                return Factory;
+            })();
+            exports_1("Factory", Factory);
+        }
+    }
+});
+
+/// <reference path="./../typings/typings.d.ts" />
+$__System.register("1a", ["14", "17", "16", "19", "15", "c", "4", "18", "5"], function(exports_1) {
+    var Errors, Fragment, JSONLDConverter_1, NamedFragment, ObjectSchema, Pointer, RDF, Resource, Utils;
+    var Factory, factory;
+    function hasPointer(id) {
+        var document = this;
+        if (!document.inScope(id))
+            return false;
+        return !!document.getFragment(id);
+    }
+    function getPointer(id) {
+        var document = this;
+        if (!document.inScope(id))
+            return null;
+        if (id === document.id)
+            return document;
+        var fragment = document.getFragment(id);
+        fragment = !fragment ? document.createFragment(id) : fragment;
+        return fragment;
+    }
+    function inScope(idOrPointer) {
+        var document = this;
+        var id = Pointer.Factory.is(idOrPointer) ? idOrPointer.id : idOrPointer;
+        if (id === document.id)
+            return true;
+        if (RDF.URI.Util.isBNodeID(id))
+            return true;
+        if (RDF.URI.Util.isAbsolute(id) && RDF.URI.Util.isFragmentOf(id, document.id))
+            return true;
+        if (!RDF.URI.Util.isAbsolute(document.id) && !RDF.URI.Util.isAbsolute(id) && RDF.URI.Util.isFragmentOf(id, document.id))
+            return true;
+        return false;
+    }
     function hasFragment(id) {
         var document = this;
-        id = RDF.URI.Util.hasFragment(id) ? RDF.URI.Util.getFragment(id) : id;
-        return document._fragmentsIndex.has(id);
+        if (!document.inScope(id))
+            return false;
+        return !!document._fragmentsIndex.has(id);
     }
     function getFragment(id) {
         var document = this;
-        id = RDF.URI.Util.hasFragment(id) ? RDF.URI.Util.getFragment(id) : id;
+        if (!RDF.URI.Util.isBNodeID(id))
+            return document.getNamedFragment(id);
         return document._fragmentsIndex.get(id);
     }
-    function getNamedFragment(slug) {
+    function getNamedFragment(id) {
         var document = this;
-        if (RDF.URI.Util.isBNodeID(slug))
-            throw new Errors.IllegalArgumentError("Named fragments can't have a slug that starts with '_:'.");
-        slug = RDF.URI.Util.hasFragment(slug) ? RDF.URI.Util.getFragment(slug) : slug;
-        return document._fragmentsIndex.get(slug);
+        if (RDF.URI.Util.isBNodeID(id))
+            throw new Errors.IllegalArgumentError("Named fragments can't have a id that starts with '_:'.");
+        if (RDF.URI.Util.isAbsolute(id)) {
+            if (!RDF.URI.Util.isFragmentOf(id, document.id))
+                throw new Errors.IllegalArgumentError("The id is out of scope.");
+            id = RDF.URI.Util.hasFragment(id) ? RDF.URI.Util.getFragment(id) : id;
+        }
+        else if (Utils.S.startsWith(id, "#"))
+            id = id.substring(1);
+        return document._fragmentsIndex.get(id);
     }
     function getFragments() {
         var document = this;
@@ -1365,14 +2056,18 @@ $__System.register("14", ["12", "11", "6", "b", "13"], function(exports_1) {
     }
     function createFragment(slug) {
         var document = this;
-        if (slug)
-            return document.createNamedFragment(slug);
-        var id = Fragment.Util.generateID();
-        var fragmentObject = {
-            "@id": id,
-            "document": document
-        };
-        var fragment = Fragment.factory.from(fragmentObject);
+        var id;
+        if (slug) {
+            if (!RDF.URI.Util.isBNodeID(slug))
+                return document.createNamedFragment(slug);
+            id = slug;
+            if (this._fragmentsIndex.has(id))
+                return this.getFragment(id);
+        }
+        else {
+            id = Fragment.Util.generateID();
+        }
+        var fragment = Fragment.factory.create(id, document);
         document._fragmentsIndex.set(id, fragment);
         return fragment;
     }
@@ -1380,175 +2075,179 @@ $__System.register("14", ["12", "11", "6", "b", "13"], function(exports_1) {
         var document = this;
         if (RDF.URI.Util.isBNodeID(slug))
             throw new Errors.IllegalArgumentError("Named fragments can't have a slug that starts with '_:'.");
-        slug = RDF.URI.Util.hasFragment(slug) ? RDF.URI.Util.getFragment(slug) : slug;
+        if (RDF.URI.Util.isAbsolute(slug)) {
+            if (!RDF.URI.Util.isFragmentOf(slug, document.id))
+                throw new Errors.IllegalArgumentError("The slug is out of scope.");
+            slug = RDF.URI.Util.hasFragment(slug) ? RDF.URI.Util.getFragment(slug) : slug;
+        }
+        else if (Utils.S.startsWith(slug, "#"))
+            slug = slug.substring(1);
         if (document._fragmentsIndex.has(slug))
             throw new Errors.IDAlreadyInUseError("The slug provided is already being used by a fragment.");
-        var uri = document.uri + "#" + slug;
-        var fragmentObject = {
-            "@id": uri,
-            "document": document
-        };
-        var fragment = NamedFragment.factory.from(fragmentObject);
+        var fragment = NamedFragment.factory.create(slug, document);
         document._fragmentsIndex.set(slug, fragment);
         return fragment;
     }
     function removeFragment(fragmentOrSlug) {
         // TODO: FT
     }
-    function toJSON() {
+    function toJSON(objectSchemaResolver, jsonldConverter) {
+        if (objectSchemaResolver === void 0) { objectSchemaResolver = null; }
+        if (jsonldConverter === void 0) { jsonldConverter = null; }
+        jsonldConverter = !!jsonldConverter ? jsonldConverter : new JSONLDConverter_1.default();
         var resources = [];
         resources.push(this);
-        resources.push(this.getFragments());
-        var toJSONFunctions = [];
-        // TODO: FOR_OF_TYPEDEF
-        /* tslint:disable: typedef */
+        resources = resources.concat(this.getFragments());
+        var expandedResources = [];
         for (var _i = 0; _i < resources.length; _i++) {
             var resource = resources[_i];
-            /* tslint:enable: typedef */
-            var toJSON_1 = null;
-            if ("toJSON" in resource) {
-                toJSONFunctions.push(resource.toJSON);
-                delete resource.toJSON;
-            }
-            toJSONFunctions.push(toJSON_1);
+            var digestedContext = objectSchemaResolver ? objectSchemaResolver.getSchemaFor(resource) : new ObjectSchema.DigestedObjectSchema();
+            expandedResources.push(jsonldConverter.expand(resource, digestedContext, this));
         }
-        var rdfDocument = {
-            "@graph": resources
+        var graph = {
+            "@id": this.id,
+            "@graph": expandedResources,
         };
-        if (this.uri)
-            rdfDocument["@id"] = this.id;
-        var json = JSON.stringify(rdfDocument);
-        for (var i = 0, length = resources.length; i < length; i++) {
-            if (toJSONFunctions[i] !== null)
-                resources[i].toJSON = toJSONFunctions[i];
-        }
-        return json;
+        return JSON.stringify(graph);
     }
     return {
         setters:[
+            function (Errors_1) {
+                Errors = Errors_1;
+            },
             function (Fragment_1) {
                 Fragment = Fragment_1;
+            },
+            function (JSONLDConverter_1_1) {
+                JSONLDConverter_1 = JSONLDConverter_1_1;
             },
             function (NamedFragment_1) {
                 NamedFragment = NamedFragment_1;
             },
+            function (ObjectSchema_1) {
+                ObjectSchema = ObjectSchema_1;
+            },
+            function (Pointer_1) {
+                Pointer = Pointer_1;
+            },
             function (RDF_1) {
                 RDF = RDF_1;
             },
+            function (Resource_1) {
+                Resource = Resource_1;
+            },
             function (Utils_1) {
                 Utils = Utils_1;
-            },
-            function (Errors_1) {
-                Errors = Errors_1;
             }],
         execute: function() {
-            Factory = (function (_super) {
-                __extends(Factory, _super);
+            Factory = (function () {
                 function Factory() {
-                    _super.apply(this, arguments);
                 }
-                Factory.prototype.from = function (rdfDocuments) {
-                    if (!Utils.isArray(rdfDocuments))
-                        return this.singleFrom(rdfDocuments);
-                    var documents = [];
-                    for (var i = 0, length = rdfDocuments.length; i < length; i++) {
-                        var rdfDocument = rdfDocuments[i];
-                        documents.push(this.singleFrom(rdfDocument));
-                    }
-                    return documents;
+                Factory.prototype.hasClassProperties = function (documentResource) {
+                    return (Utils.isObject(documentResource) &&
+                        Utils.hasPropertyDefined(documentResource, "_fragmentsIndex") &&
+                        Utils.hasFunction(documentResource, "hasFragment") &&
+                        Utils.hasFunction(documentResource, "getFragment") &&
+                        Utils.hasFunction(documentResource, "getNamedFragment") &&
+                        Utils.hasFunction(documentResource, "getFragments") &&
+                        Utils.hasFunction(documentResource, "createFragment") &&
+                        Utils.hasFunction(documentResource, "createNamedFragment") &&
+                        Utils.hasFunction(documentResource, "removeFragment") &&
+                        Utils.hasFunction(documentResource, "toJSON"));
                 };
-                Factory.prototype.singleFrom = function (rdfDocument) {
-                    var documentResources = RDF.Document.Util.getDocumentResources(rdfDocument);
-                    if (documentResources.length > 1)
-                        throw new Errors.IllegalArgumentError("The RDFDocument contains more than one document resource.");
-                    if (documentResources.length === 0)
-                        throw new Errors.IllegalArgumentError("The RDFDocument doesn\'t contain a document resource.");
-                    var document = this.injectBehavior(documentResources[0]);
-                    var fragmentResources = RDF.Document.Util.getBNodeResources(rdfDocument);
-                    for (var i = 0, length = fragmentResources.length; i < length; i++) {
-                        var fragmentResource = fragmentResources[i];
-                        fragmentResource.document = document;
-                        var fragment = Fragment.factory.from(fragmentResource);
-                        if (!fragment.uri)
-                            fragment.uri = Fragment.Util.generateID();
-                        document._fragmentsIndex.set(fragment.uri, fragment);
-                    }
-                    var namedFragmentResources = RDF.Document.Util.getFragmentResources(rdfDocument);
-                    for (var i = 0, length = namedFragmentResources.length; i < length; i++) {
-                        var namedFragmentResource = namedFragmentResources[i];
-                        namedFragmentResource.document = document;
-                        var namedFragment = NamedFragment.factory.from(namedFragmentResource);
-                        document._fragmentsIndex.set(RDF.URI.Util.getFragment(namedFragment.uri), namedFragment);
-                    }
+                Factory.prototype.create = function (uri) {
+                    if (uri === void 0) { uri = null; }
+                    return this.createFrom({}, uri);
+                };
+                Factory.prototype.createFrom = function (object, uri) {
+                    if (uri === void 0) { uri = null; }
+                    if (!!uri && RDF.URI.Util.isBNodeID(uri))
+                        throw new Errors.IllegalArgumentError("Documents cannot have a BNodeID as a uri.");
+                    var resource = Resource.Factory.createFrom(object, uri);
+                    var document = this.decorate(resource);
                     return document;
                 };
-                Factory.prototype.injectBehavior = function (resource) {
-                    var documentResource = _super.prototype.injectBehavior.call(this, resource);
-                    if (this.hasClassProperties(documentResource))
-                        return documentResource;
-                    Object.defineProperties(documentResource, {
+                Factory.prototype.decorate = function (object) {
+                    if (this.hasClassProperties(object))
+                        return object;
+                    Object.defineProperties(object, {
                         "_fragmentsIndex": {
                             writable: false,
                             enumerable: false,
-                            configurable: false,
-                            value: new Map()
+                            configurable: true,
+                            value: new Map(),
                         },
-                        "hasFragment": {
-                            writable: false,
-                            enumerable: false,
-                            configurable: false,
-                            value: hasFragment
-                        },
-                        "getFragment": {
-                            writable: false,
-                            enumerable: false,
-                            configurable: false,
-                            value: getFragment
-                        },
-                        "getNamedFragment": {
-                            writable: false,
-                            enumerable: false,
-                            configurable: false,
-                            value: getNamedFragment
-                        },
-                        "getFragments": {
-                            writable: false,
-                            enumerable: false,
-                            configurable: false,
-                            value: getFragments
-                        },
-                        "createFragment": {
-                            writable: false,
-                            enumerable: false,
-                            configurable: false,
-                            value: createFragment
-                        },
-                        "createNamedFragment": {
-                            writable: false,
-                            enumerable: false,
-                            configurable: false,
-                            value: createNamedFragment
-                        },
-                        "removeFragment": {
-                            writable: false,
-                            enumerable: false,
-                            configurable: false,
-                            value: removeFragment
-                        },
-                        "toJSON": {
-                            writable: false,
+                        "hasPointer": {
+                            writable: true,
                             enumerable: false,
                             configurable: true,
-                            value: toJSON
-                        }
+                            value: hasPointer,
+                        },
+                        "getPointer": {
+                            writable: true,
+                            enumerable: false,
+                            configurable: true,
+                            value: getPointer,
+                        },
+                        "inScope": {
+                            writable: true,
+                            enumerable: false,
+                            configurable: true,
+                            value: inScope,
+                        },
+                        "hasFragment": {
+                            writable: true,
+                            enumerable: false,
+                            configurable: true,
+                            value: hasFragment,
+                        },
+                        "getFragment": {
+                            writable: true,
+                            enumerable: false,
+                            configurable: true,
+                            value: getFragment,
+                        },
+                        "getNamedFragment": {
+                            writable: true,
+                            enumerable: false,
+                            configurable: true,
+                            value: getNamedFragment,
+                        },
+                        "getFragments": {
+                            writable: true,
+                            enumerable: false,
+                            configurable: true,
+                            value: getFragments,
+                        },
+                        "createFragment": {
+                            writable: true,
+                            enumerable: false,
+                            configurable: true,
+                            value: createFragment,
+                        },
+                        "createNamedFragment": {
+                            writable: true,
+                            enumerable: false,
+                            configurable: true,
+                            value: createNamedFragment,
+                        },
+                        "removeFragment": {
+                            writable: true,
+                            enumerable: false,
+                            configurable: true,
+                            value: removeFragment,
+                        },
+                        "toJSON": {
+                            writable: true,
+                            enumerable: false,
+                            configurable: true,
+                            value: toJSON,
+                        },
                     });
-                    return documentResource;
-                };
-                Factory.prototype.hasClassProperties = function (documentResource) {
-                    return (Utils.hasPropertyDefined(documentResource, "_fragmentsIndex"));
+                    return object;
                 };
                 return Factory;
-            })(RDF.Resource.Factory);
+            })();
             exports_1("Factory", Factory);
             exports_1("factory", factory = new Factory());
             exports_1("default",Document);
@@ -1556,9 +2255,543 @@ $__System.register("14", ["12", "11", "6", "b", "13"], function(exports_1) {
     }
 });
 
-/// <reference path="../typings/tsd.d.ts" />
-$__System.register("15", ["16", "13", "17", "6", "14", "18"], function(exports_1) {
-    var jsonld, Errors, HTTP, RDF, Document, LDP;
+$__System.register("1b", ["1a", "5"], function(exports_1) {
+    var Document, Utils;
+    var Factory;
+    function isDirty() {
+        // TODO
+        return null;
+    }
+    function refresh() {
+        // TODO
+        return null;
+    }
+    function save() {
+        var _this = this;
+        return this._documents.save(this).then(function (response) {
+            return [_this, response];
+        });
+    }
+    function destroy() {
+        return this._documents.delete(this);
+    }
+    function executeRawASKQuery(askQuery, requestOptions) {
+        if (requestOptions === void 0) { requestOptions = {}; }
+        return this._documents.executeRawASKQuery(this.id, askQuery, requestOptions);
+    }
+    function executeRawSELECTQuery(selectQuery, requestOptions) {
+        if (requestOptions === void 0) { requestOptions = {}; }
+        return this._documents.executeRawSELECTQuery(this.id, selectQuery, requestOptions);
+    }
+    function executeRawCONSTRUCTQuery(constructQuery, requestOptions) {
+        if (requestOptions === void 0) { requestOptions = {}; }
+        return this._documents.executeRawCONSTRUCTQuery(this.id, constructQuery, requestOptions);
+    }
+    function executeRawDESCRIBEQuery(describeQuery, requestOptions) {
+        if (requestOptions === void 0) { requestOptions = {}; }
+        return this._documents.executeRawDESCRIBEQuery(this.id, describeQuery, requestOptions);
+    }
+    return {
+        setters:[
+            function (Document_1) {
+                Document = Document_1;
+            },
+            function (Utils_1) {
+                Utils = Utils_1;
+            }],
+        execute: function() {
+            Factory = (function () {
+                function Factory() {
+                }
+                Factory.hasClassProperties = function (document) {
+                    return (Utils.hasPropertyDefined(document, "_documents") &&
+                        Utils.hasPropertyDefined(document, "_etag") &&
+                        Utils.hasFunction(document, "refresh") &&
+                        Utils.hasFunction(document, "save") &&
+                        Utils.hasFunction(document, "destroy") &&
+                        Utils.hasFunction(document, "executeRawASKQuery") &&
+                        Utils.hasFunction(document, "executeRawSELECTQuery") &&
+                        Utils.hasFunction(document, "executeRawDESCRIBEQuery") &&
+                        Utils.hasFunction(document, "executeRawCONSTRUCTQuery"));
+                };
+                Factory.is = function (object) {
+                    return (
+                    // TODO: Add Document.Class check
+                    Factory.hasClassProperties(object));
+                };
+                Factory.create = function (uri, documents) {
+                    var document = Document.factory.create(uri);
+                    return Factory.decorate(document, documents);
+                };
+                Factory.createFrom = function (object, uri, documents) {
+                    var document = Document.factory.createFrom(object, uri);
+                    return Factory.decorate(document, documents);
+                };
+                Factory.decorate = function (document, documents) {
+                    if (Factory.hasClassProperties(document))
+                        return document;
+                    var persistedDocument = document;
+                    Object.defineProperties(persistedDocument, {
+                        "_documents": {
+                            writable: false,
+                            enumerable: false,
+                            configurable: true,
+                            value: documents,
+                        },
+                        "_etag": {
+                            writable: true,
+                            enumerable: false,
+                            configurable: true,
+                            value: null,
+                        },
+                        "hasPointer": {
+                            writable: false,
+                            enumerable: false,
+                            configurable: true,
+                            value: (function () {
+                                var superFunction = persistedDocument.hasPointer;
+                                return function (id) {
+                                    if (superFunction.call(this, id))
+                                        return true;
+                                    return this._documents.hasPointer(id);
+                                };
+                            })(),
+                        },
+                        "getPointer": {
+                            writable: false,
+                            enumerable: false,
+                            configurable: true,
+                            value: (function () {
+                                var superFunction = persistedDocument.getPointer;
+                                var inScopeFunction = persistedDocument.inScope;
+                                return function (id) {
+                                    if (inScopeFunction.call(this, id))
+                                        return superFunction.call(this, id);
+                                    return this._documents.getPointer(id);
+                                };
+                            })(),
+                        },
+                        "inScope": {
+                            writable: false,
+                            enumerable: false,
+                            configurable: true,
+                            value: (function () {
+                                var superFunction = persistedDocument.inScope;
+                                return function (id) {
+                                    if (superFunction.call(this, id))
+                                        return true;
+                                    return this._documents.inScope(id);
+                                };
+                            })(),
+                        },
+                        "refresh": {
+                            writable: false,
+                            enumerable: false,
+                            configurable: true,
+                            value: refresh,
+                        },
+                        "save": {
+                            writable: false,
+                            enumerable: false,
+                            configurable: true,
+                            value: save,
+                        },
+                        "destroy": {
+                            writable: false,
+                            enumerable: false,
+                            configurable: true,
+                            value: destroy,
+                        },
+                        "executeRawASKQuery": {
+                            writable: false,
+                            enumerable: false,
+                            configurable: true,
+                            value: executeRawASKQuery,
+                        },
+                        "executeRawSELECTQuery": {
+                            writable: false,
+                            enumerable: false,
+                            configurable: true,
+                            value: executeRawSELECTQuery,
+                        },
+                        "executeRawCONSTRUCTQuery": {
+                            writable: false,
+                            enumerable: false,
+                            configurable: true,
+                            value: executeRawCONSTRUCTQuery,
+                        },
+                        "executeRawDESCRIBEQuery": {
+                            writable: false,
+                            enumerable: false,
+                            configurable: true,
+                            value: executeRawDESCRIBEQuery,
+                        },
+                    });
+                    /*
+            
+                    // TODO: Overwrite isDirty to also take into account the fragments state
+                    // TODO: Update with the new comparison system
+                    persistedDocument.isDirty = (function():() => boolean {
+                        let superFunction:() => boolean = persistedDocument.isDirty;
+                        return function():boolean {
+                            return superFunction.call( this ) || isDirty.call( this );
+                        };
+                    })();
+            
+                    */
+                    return persistedDocument;
+                };
+                return Factory;
+            })();
+            exports_1("Factory", Factory);
+        }
+    }
+});
+
+/// <reference path="./../typings/typings.d.ts" />
+$__System.register("15", ["14", "4", "5"], function(exports_1) {
+    var Errors, RDF, Utils;
+    var ContainerType, DigestedObjectSchema, DigestedPropertyDefinition, Digester;
+    return {
+        setters:[
+            function (Errors_1) {
+                Errors = Errors_1;
+            },
+            function (RDF_1) {
+                RDF = RDF_1;
+            },
+            function (Utils_1) {
+                Utils = Utils_1;
+            }],
+        execute: function() {
+            (function (ContainerType) {
+                ContainerType[ContainerType["SET"] = 0] = "SET";
+                ContainerType[ContainerType["LIST"] = 1] = "LIST";
+                ContainerType[ContainerType["LANGUAGE"] = 2] = "LANGUAGE";
+            })(ContainerType || (ContainerType = {}));
+            exports_1("ContainerType", ContainerType);
+            DigestedObjectSchema = (function () {
+                function DigestedObjectSchema() {
+                    this.base = "";
+                    this.prefixes = new Map();
+                    this.properties = new Map();
+                    this.prefixedURIs = new Map();
+                }
+                return DigestedObjectSchema;
+            })();
+            exports_1("DigestedObjectSchema", DigestedObjectSchema);
+            DigestedPropertyDefinition = (function () {
+                function DigestedPropertyDefinition() {
+                    this.uri = null;
+                    this.literal = null;
+                    this.literalType = null;
+                    this.language = null;
+                    this.containerType = null;
+                }
+                return DigestedPropertyDefinition;
+            })();
+            exports_1("DigestedPropertyDefinition", DigestedPropertyDefinition);
+            Digester = (function () {
+                function Digester() {
+                }
+                Digester.digestSchema = function (schemaOrSchemas) {
+                    if (!Utils.isArray(schemaOrSchemas))
+                        return Digester.digestSingleSchema(schemaOrSchemas);
+                    var digestedSchemas = [];
+                    for (var _i = 0, _a = schemaOrSchemas; _i < _a.length; _i++) {
+                        var schema = _a[_i];
+                        digestedSchemas.push(Digester.digestSingleSchema(schema));
+                    }
+                    return Digester.combineDigestedObjectSchemas(digestedSchemas);
+                };
+                Digester.combineDigestedObjectSchemas = function (digestedSchemas) {
+                    if (digestedSchemas.length === 0)
+                        throw new Errors.IllegalArgumentError("At least one DigestedObjectSchema needs to be specified.");
+                    var combinedSchema = digestedSchemas.shift();
+                    for (var _i = 0; _i < digestedSchemas.length; _i++) {
+                        var digestedSchema = digestedSchemas[_i];
+                        Utils.M.extend(combinedSchema.prefixes, digestedSchema.prefixes);
+                        Utils.M.extend(combinedSchema.prefixedURIs, digestedSchema.prefixedURIs);
+                        Utils.M.extend(combinedSchema.properties, digestedSchema.properties);
+                    }
+                    Digester.resolvePrefixedURIs(combinedSchema);
+                    return combinedSchema;
+                };
+                Digester.digestSingleSchema = function (schema) {
+                    var digestedSchema = new DigestedObjectSchema();
+                    for (var propertyName in schema) {
+                        if (!schema.hasOwnProperty(propertyName))
+                            continue;
+                        if (propertyName === "@reverse")
+                            continue;
+                        if (propertyName === "@index")
+                            continue;
+                        if (propertyName === "@base")
+                            continue;
+                        if (propertyName === "@vocab")
+                            continue;
+                        var propertyValue = schema[propertyName];
+                        if (Utils.isString(propertyValue)) {
+                            if (RDF.URI.Util.isPrefixed(propertyName))
+                                throw new Errors.IllegalArgumentError("A prefixed property cannot be equal to another URI.");
+                            var uri = new RDF.URI.Class(propertyValue);
+                            if (RDF.URI.Util.isPrefixed(uri.stringValue))
+                                uri = Digester.resolvePrefixedURI(uri, digestedSchema);
+                            digestedSchema.prefixes.set(propertyName, uri);
+                        }
+                        else if (!!propertyValue && Utils.isObject(propertyValue)) {
+                            var schemaDefinition = propertyValue;
+                            var digestedDefinition = new DigestedPropertyDefinition();
+                            if ("@id" in schemaDefinition) {
+                                if (RDF.URI.Util.isPrefixed(propertyName))
+                                    throw new Errors.IllegalArgumentError("A prefixed property cannot have assigned another URI.");
+                                if (!Utils.isString(schemaDefinition["@id"]))
+                                    throw new Errors.IllegalArgumentError("@id needs to point to a string");
+                                digestedDefinition.uri = Digester.resolvePrefixedURI(new RDF.URI.Class(schemaDefinition["@id"]), digestedSchema);
+                            }
+                            else if (RDF.URI.Util.isPrefixed(propertyName)) {
+                                digestedDefinition.uri = Digester.resolvePrefixedURI(new RDF.URI.Class(propertyName), digestedSchema);
+                            }
+                            else {
+                                // TODO: Handle @vocab or @base case
+                                throw new Errors.IllegalArgumentError("Every property definition needs to have a uri defined.");
+                            }
+                            if ("@type" in schemaDefinition) {
+                                if (!Utils.isString(schemaDefinition["@type"]))
+                                    throw new Errors.IllegalArgumentError("@type needs to point to a string");
+                                if (schemaDefinition["@type"] === "@id") {
+                                    digestedDefinition.literal = false;
+                                }
+                                else {
+                                    digestedDefinition.literal = true;
+                                    digestedDefinition.literalType = Digester.resolvePrefixedURI(new RDF.URI.Class(schemaDefinition["@type"]), digestedSchema);
+                                }
+                            }
+                            if ("@language" in schemaDefinition) {
+                                if (!Utils.isString(schemaDefinition["@language"]))
+                                    throw new Errors.IllegalArgumentError("@language needs to point to a string");
+                                digestedDefinition.language = schemaDefinition["@language"];
+                            }
+                            if ("@container" in schemaDefinition) {
+                                switch (schemaDefinition["@container"]) {
+                                    case "@set":
+                                        digestedDefinition.containerType = ContainerType.SET;
+                                        break;
+                                    case "@list":
+                                        digestedDefinition.containerType = ContainerType.LIST;
+                                        break;
+                                    case "@language":
+                                        if (digestedDefinition.language !== null)
+                                            throw new Errors.IllegalArgumentError("@container cannot be set to @language when the property definition already contains an @language tag.");
+                                        digestedDefinition.containerType = ContainerType.LANGUAGE;
+                                        break;
+                                    default:
+                                        throw new Errors.IllegalArgumentError("@container needs to be equal to '@list', '@set', or '@language'");
+                                }
+                            }
+                            digestedSchema.properties.set(propertyName, digestedDefinition);
+                        }
+                        else {
+                            throw new Errors.IllegalArgumentError("ObjectSchema Properties can only have string values or object values.");
+                        }
+                    }
+                    Digester.resolvePrefixedURIs(digestedSchema);
+                    return digestedSchema;
+                };
+                Digester.resolvePrefixedURIs = function (digestedSchema) {
+                    digestedSchema.prefixes.forEach(function (prefixValue, prefixName) {
+                        if (!digestedSchema.prefixedURIs.has(prefixName))
+                            return;
+                        var prefixedURIs = digestedSchema.prefixedURIs.get(prefixName);
+                        for (var _i = 0; _i < prefixedURIs.length; _i++) {
+                            var prefixedURI = prefixedURIs[_i];
+                            Digester.resolvePrefixedURI(prefixedURI, digestedSchema);
+                        }
+                        digestedSchema.prefixedURIs.delete(prefixName);
+                    });
+                    return digestedSchema;
+                };
+                Digester.resolvePrefixedURI = function (uri, digestedSchema) {
+                    if (!RDF.URI.Util.isPrefixed(uri.stringValue))
+                        return uri;
+                    var uriParts = uri.stringValue.split(":");
+                    var prefix = uriParts[0];
+                    var slug = uriParts[1];
+                    if (digestedSchema.prefixes.has(prefix)) {
+                        uri.stringValue = digestedSchema.prefixes.get(prefix) + slug;
+                    }
+                    else {
+                        if (!digestedSchema.prefixedURIs.has(prefix))
+                            digestedSchema.prefixedURIs.set(prefix, []);
+                        digestedSchema.prefixedURIs.get(prefix).push(uri);
+                    }
+                    return uri;
+                };
+                return Digester;
+            })();
+            exports_1("Digester", Digester);
+        }
+    }
+});
+
+$__System.register("1c", ["5"], function(exports_1) {
+    var Utils;
+    var ValueTypes, Factory;
+    return {
+        setters:[
+            function (Utils_1) {
+                Utils = Utils_1;
+            }],
+        execute: function() {
+            ValueTypes = (function () {
+                function ValueTypes() {
+                }
+                Object.defineProperty(ValueTypes, "URI", {
+                    get: function () { return "uri"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(ValueTypes, "LITERAL", {
+                    get: function () { return "literal"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(ValueTypes, "BNODE", {
+                    get: function () { return "bnode"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                return ValueTypes;
+            })();
+            exports_1("ValueTypes", ValueTypes);
+            Factory = (function () {
+                function Factory() {
+                }
+                Factory.hasClassProperties = function (value) {
+                    return (Utils.hasPropertyDefined(value, "head"));
+                };
+                Factory.is = function (value) {
+                    return (Utils.isObject(value) &&
+                        Factory.hasClassProperties(value));
+                };
+                return Factory;
+            })();
+            exports_1("Factory", Factory);
+        }
+    }
+});
+
+/// <reference path="./../../typings/typings.d.ts" />
+$__System.register("1d", ["1e"], function(exports_1) {
+    var JSONParser_1;
+    var Class;
+    return {
+        setters:[
+            function (JSONParser_1_1) {
+                JSONParser_1 = JSONParser_1_1;
+            }],
+        execute: function() {
+            Class = (function () {
+                function Class() {
+                }
+                Class.prototype.parse = function (input) {
+                    var jsonParser = new JSONParser_1.default();
+                    return jsonParser.parse(input).then(function (parsedObject) {
+                        return parsedObject;
+                    });
+                };
+                return Class;
+            })();
+            exports_1("Class", Class);
+            exports_1("default",Class);
+        }
+    }
+});
+
+/// <reference path="./../../typings/typings.d.ts" />
+$__System.register("1f", ["20", "5", "1d"], function(exports_1) {
+    var HTTP, Utils, RawResultsParser_1;
+    var Class;
+    return {
+        setters:[
+            function (HTTP_1) {
+                HTTP = HTTP_1;
+            },
+            function (Utils_1) {
+                Utils = Utils_1;
+            },
+            function (RawResultsParser_1_1) {
+                RawResultsParser_1 = RawResultsParser_1_1;
+            }],
+        execute: function() {
+            Class = (function () {
+                function Class() {
+                }
+                Class.executeRawASKQuery = function (url, askQuery, options) {
+                    if (options === void 0) { options = {}; }
+                    options = Utils.extend(options, Class.defaultOptions);
+                    HTTP.Request.Util.setAcceptHeader("application/sparql-results+json", options);
+                    HTTP.Request.Util.setContentTypeHeader("application/sparql-query", options);
+                    return HTTP.Request.Service.post(url, askQuery, options, Class.resultsParser);
+                };
+                Class.executeRawSELECTQuery = function (url, selectQuery, options) {
+                    if (options === void 0) { options = {}; }
+                    options = Utils.extend(options, Class.defaultOptions);
+                    HTTP.Request.Util.setAcceptHeader("application/sparql-results+json", options);
+                    HTTP.Request.Util.setContentTypeHeader("application/sparql-query", options);
+                    return HTTP.Request.Service.post(url, selectQuery, options, Class.resultsParser);
+                };
+                Class.executeRawCONSTRUCTQuery = function (url, constructQuery, options) {
+                    if (options === void 0) { options = {}; }
+                    options = Utils.extend(options, Class.defaultOptions);
+                    if (HTTP.Request.Util.getHeader("Accept", options) === null)
+                        HTTP.Request.Util.setAcceptHeader("application/ld+json", options);
+                    HTTP.Request.Util.setContentTypeHeader("application/sparql-query", options);
+                    return HTTP.Request.Service.post(url, constructQuery, options, Class.stringParser);
+                };
+                Class.executeRawDESCRIBEQuery = function (url, describeQuery, options) {
+                    if (options === void 0) { options = {}; }
+                    options = Utils.extend(options, Class.defaultOptions);
+                    if (HTTP.Request.Util.getHeader("Accept", options) === null)
+                        HTTP.Request.Util.setAcceptHeader("application/ld+json", options);
+                    HTTP.Request.Util.setContentTypeHeader("application/sparql-query", options);
+                    return HTTP.Request.Service.post(url, describeQuery, options, Class.stringParser);
+                };
+                Class.defaultOptions = {};
+                Class.resultsParser = new RawResultsParser_1.default();
+                Class.stringParser = new HTTP.StringParser.Class();
+                return Class;
+            })();
+            exports_1("Class", Class);
+            exports_1("default",Class);
+        }
+    }
+});
+
+$__System.register("21", ["1c", "1d", "1f"], function(exports_1) {
+    var RawResults, RawResultsParser, Service_1;
+    return {
+        setters:[
+            function (RawResults_1) {
+                RawResults = RawResults_1;
+            },
+            function (RawResultsParser_1) {
+                RawResultsParser = RawResultsParser_1;
+            },
+            function (Service_1_1) {
+                Service_1 = Service_1_1;
+            }],
+        execute: function() {
+            exports_1("RawResults", RawResults);
+            exports_1("RawResultsParser", RawResultsParser);
+            exports_1("Service", Service_1.default);
+        }
+    }
+});
+
+/// <reference path="../typings/typings.d.ts" />
+$__System.register("13", ["22", "14", "20", "4", "5", "16", "1b", "c", "15", "23", "21"], function(exports_1) {
+    var jsonld, Errors, HTTP, RDF, Utils, JSONLDConverter, PersistedDocument, Pointer, ObjectSchema, LDP, SPARQL;
     var Documents;
     function parse(input) {
         try {
@@ -1569,15 +2802,16 @@ $__System.register("15", ["16", "13", "17", "6", "14", "18"], function(exports_1
             throw error;
         }
     }
-    function expand(input, options) {
+    function expand(_a, options) {
+        var result = _a[0], response = _a[1];
         return new Promise(function (resolve, reject) {
-            jsonld.expand(input.result, options, function (error, expanded) {
+            jsonld.expand(result, options, function (error, expanded) {
                 if (error) {
                     // TODO: Handle jsonld.expand error
                     throw error;
                 }
-                input.result = expanded;
-                resolve(input);
+                result = expanded;
+                resolve([result, response]);
             });
         });
     }
@@ -1595,80 +2829,357 @@ $__System.register("15", ["16", "13", "17", "6", "14", "18"], function(exports_1
             function (RDF_1) {
                 RDF = RDF_1;
             },
-            function (Document_1) {
-                Document = Document_1;
+            function (Utils_1) {
+                Utils = Utils_1;
+            },
+            function (JSONLDConverter_1) {
+                JSONLDConverter = JSONLDConverter_1;
+            },
+            function (PersistedDocument_1) {
+                PersistedDocument = PersistedDocument_1;
+            },
+            function (Pointer_1) {
+                Pointer = Pointer_1;
+            },
+            function (ObjectSchema_1) {
+                ObjectSchema = ObjectSchema_1;
             },
             function (LDP_1) {
                 LDP = LDP_1;
+            },
+            function (SPARQL_1) {
+                SPARQL = SPARQL_1;
             }],
         execute: function() {
             Documents = (function () {
                 function Documents(context) {
                     if (context === void 0) { context = null; }
                     this.context = context;
+                    this.pointers = new Map();
+                    if (!!this.context && !!this.context.parentContext) {
+                        var contextJSONLDConverter = this.context.parentContext.documents.jsonldConverter;
+                        this._jsonldConverter = new JSONLDConverter.Class(contextJSONLDConverter.literalSerializers);
+                    }
+                    else {
+                        this._jsonldConverter = new JSONLDConverter.Class();
+                    }
                 }
+                Object.defineProperty(Documents.prototype, "jsonldConverter", {
+                    get: function () { return this._jsonldConverter; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Documents.prototype.inScope = function (idOrPointer) {
+                    var id = Pointer.Factory.is(idOrPointer) ? idOrPointer.id : idOrPointer;
+                    if (RDF.URI.Util.isBNodeID(id))
+                        return false;
+                    if (!!this.context) {
+                        var baseURI = this.context.getBaseURI();
+                        if (RDF.URI.Util.isAbsolute(id) && RDF.URI.Util.isBaseOf(baseURI, id))
+                            return true;
+                    }
+                    else {
+                        if (RDF.URI.Util.isAbsolute(id))
+                            return true;
+                    }
+                    if (!!this.context && !!this.context.parentContext)
+                        return this.context.parentContext.documents.inScope(id);
+                    return false;
+                };
+                Documents.prototype.hasPointer = function (id) {
+                    id = this.getPointerID(id);
+                    if (this.pointers.has(id))
+                        return true;
+                    if (!!this.context && !!this.context.parentContext)
+                        return this.context.parentContext.documents.hasPointer(id);
+                    return false;
+                };
+                Documents.prototype.getPointer = function (id) {
+                    var localID = this.getPointerID(id);
+                    if (!localID) {
+                        if (!!this.context && !!this.context.parentContext)
+                            return this.context.parentContext.documents.getPointer(id);
+                        throw new Errors.IllegalArgumentError("The pointer id is not supported by this module.");
+                    }
+                    var pointer;
+                    if (!this.pointers.has(localID)) {
+                        pointer = this.createPointer(localID);
+                        this.pointers.set(localID, pointer);
+                    }
+                    return this.pointers.get(localID);
+                };
                 Documents.prototype.get = function (uri, requestOptions) {
                     var _this = this;
                     if (requestOptions === void 0) { requestOptions = {}; }
-                    if (RDF.URI.Util.isRelative(uri)) {
-                        if (!this.context)
-                            throw new Errors.IllegalArgumentError("IllegalArgument: This module doesn't support relative URIs.");
+                    var pointerID = this.getPointerID(uri);
+                    if (!!this.context)
                         uri = this.context.resolve(uri);
+                    if (this.pointers.has(pointerID)) {
+                        var pointer = this.getPointer(uri);
+                        if (pointer.isResolved()) {
+                            return new Promise(function (resolve, reject) {
+                                resolve([pointer, null]);
+                            });
+                        }
                     }
-                    if (this.context && this.context.Auth.isAuthenticated())
-                        this.context.Auth.addAuthentication(requestOptions);
-                    HTTP.Request.Service.setAcceptHeader("application/ld+json", requestOptions);
-                    HTTP.Request.Service.setPreferredInteractionModel(LDP.Class.RDFSource, requestOptions);
+                    if (this.context && this.context.auth.isAuthenticated())
+                        this.context.auth.addAuthentication(requestOptions);
+                    HTTP.Request.Util.setAcceptHeader("application/ld+json", requestOptions);
+                    HTTP.Request.Util.setPreferredInteractionModel(LDP.Class.RDFSource, requestOptions);
                     return HTTP.Request.Service.get(uri, requestOptions).then(function (response) {
                         var parsedObject = parse(response.data);
-                        return expand({
-                            result: parsedObject,
-                            response: response
-                        });
-                    }).then(function (processedResponse) {
-                        var expandedResult = processedResponse.result;
+                        return expand([parsedObject, response]);
+                    }).then(function (_a) {
+                        var expandedResult = _a[0], response = _a[1];
+                        var etag = HTTP.Response.Util.getETag(response);
+                        if (etag === null)
+                            throw new HTTP.Errors.BadResponseError("The response doesn't contain an ETag", response);
                         var rdfDocuments = RDF.Document.Util.getDocuments(expandedResult);
-                        var rdfDocument = _this.getRDFDocument(rdfDocuments);
-                        var document = Document.factory.from(rdfDocument);
-                        _this.injectDefinitions(document.getFragments().concat(document));
-                        // TODO: Inject persisted states
-                        return {
-                            result: document,
-                            response: processedResponse.response
-                        };
+                        var rdfDocument = _this.getRDFDocument(rdfDocuments, response);
+                        var documentResources = RDF.Document.Util.getDocumentResources(rdfDocument);
+                        if (documentResources.length > 1)
+                            throw new HTTP.Errors.BadResponseError("The RDFDocument contains more than one document resource.", response);
+                        if (documentResources.length === 0)
+                            throw new HTTP.Errors.BadResponseError("The RDFDocument doesn\'t contain a document resource.", response);
+                        var documentResource = documentResources[0];
+                        var fragmentResources = RDF.Document.Util.getBNodeResources(rdfDocument);
+                        var namedFragmentResources = RDF.Document.Util.getFragmentResources(rdfDocument);
+                        var documentPointer = _this.getPointer(uri);
+                        documentPointer._resolved = true;
+                        var document = PersistedDocument.Factory.createFrom(documentPointer, uri, _this);
+                        document._etag = etag;
+                        var fragments = [];
+                        for (var _i = 0; _i < fragmentResources.length; _i++) {
+                            var fragmentResource = fragmentResources[_i];
+                            fragments.push(document.createFragment(fragmentResource["@id"]));
+                        }
+                        var namedFragments = [];
+                        for (var _b = 0; _b < namedFragmentResources.length; _b++) {
+                            var namedFragmentResource = namedFragmentResources[_b];
+                            namedFragments.push(document.createNamedFragment(namedFragmentResource["@id"]));
+                        }
+                        _this.compact(documentResource, document, document);
+                        _this.compact(fragmentResources, fragments, document);
+                        _this.compact(namedFragmentResources, namedFragments, document);
+                        // TODO: Decorate additional behavior (container, app, etc.)
+                        return [document, response];
                     });
                 };
-                Documents.prototype.commit = function (document, requestOptions) {
-                    // TODO: Check if the document was already persisted
-                    // TODO: Check if the document is dirty
+                Documents.prototype.createChild = function (parentURI, slugOrChildDocument, childDocumentOrRequestOptions, requestOptions) {
+                    var _this = this;
+                    if (childDocumentOrRequestOptions === void 0) { childDocumentOrRequestOptions = {}; }
                     if (requestOptions === void 0) { requestOptions = {}; }
-                    if (this.context && this.context.Auth.isAuthenticated())
-                        this.context.Auth.addAuthentication(requestOptions);
-                    HTTP.Request.Service.setAcceptHeader("application/ld+json", requestOptions);
-                    HTTP.Request.Service.setPreferredInteractionModel(LDP.Class.RDFSource, requestOptions);
-                    return HTTP.Request.Service.put(document.uri, document.toJSON(), requestOptions);
+                    var slug = Utils.isString(slugOrChildDocument) ? slugOrChildDocument : null;
+                    var childDocument = !Utils.isString(slugOrChildDocument) ? slugOrChildDocument : childDocumentOrRequestOptions;
+                    requestOptions = !Utils.isString(slugOrChildDocument) ? childDocumentOrRequestOptions : requestOptions;
+                    if (PersistedDocument.Factory.is(childDocument))
+                        return Utils.P.createRejectedPromise(new Errors.IllegalArgumentError("The childDocument provided has been already persisted."));
+                    if (childDocument.id) {
+                        if (!RDF.URI.Util.isBaseOf(parentURI, childDocument.id))
+                            return Utils.P.createRejectedPromise(new Errors.IllegalArgumentError("The childDocument's URI is not relative to the parentURI specified"));
+                    }
+                    if (this.context && this.context.auth.isAuthenticated())
+                        this.context.auth.addAuthentication(requestOptions);
+                    HTTP.Request.Util.setAcceptHeader("application/ld+json", requestOptions);
+                    HTTP.Request.Util.setContentTypeHeader("application/ld+json", requestOptions);
+                    HTTP.Request.Util.setPreferredInteractionModel(LDP.Class.Container, requestOptions);
+                    if (slug !== null)
+                        HTTP.Request.Util.setSlug(slug, requestOptions);
+                    var body = childDocument.toJSON(this, this.jsonldConverter);
+                    return HTTP.Request.Service.post(parentURI, body, requestOptions).then(function (response) {
+                        var locationHeader = response.headers.get("Location");
+                        if (locationHeader === null || locationHeader.values.length < 1)
+                            throw new HTTP.Errors.BadResponseError("The response is missing a Location header.", response);
+                        if (locationHeader.values.length !== 1)
+                            throw new HTTP.Errors.BadResponseError("The response contains more than one Location header.", response);
+                        var locationURI = locationHeader.values[0].toString();
+                        var pointer = _this.getPointer(locationURI);
+                        return [
+                            pointer,
+                            response,
+                        ];
+                    });
                 };
-                Documents.prototype.getRDFDocument = function (rdfDocuments) {
+                Documents.prototype.save = function (persistedDocument, requestOptions) {
+                    // TODO: Check if the document isDirty
+                    /*
+                    if( ! persistedDocument.isDirty() ) return new Promise<HTTP.Response.Class>( ( resolve:( result:HTTP.Response.Class ) => void ) => {
+                        resolve( null );
+                    });
+                    */
+                    if (requestOptions === void 0) { requestOptions = {}; }
+                    if (this.context && this.context.auth.isAuthenticated())
+                        this.context.auth.addAuthentication(requestOptions);
+                    HTTP.Request.Util.setAcceptHeader("application/ld+json", requestOptions);
+                    HTTP.Request.Util.setContentTypeHeader("application/ld+json", requestOptions);
+                    HTTP.Request.Util.setPreferredInteractionModel(LDP.Class.RDFSource, requestOptions);
+                    HTTP.Request.Util.setIfMatchHeader(persistedDocument._etag, requestOptions);
+                    var body = persistedDocument.toJSON(this, this.jsonldConverter);
+                    return HTTP.Request.Service.put(persistedDocument.id, body, requestOptions).then(function (response) {
+                        return [persistedDocument, response];
+                    });
+                };
+                Documents.prototype.delete = function (persistedDocument, requestOptions) {
+                    if (requestOptions === void 0) { requestOptions = {}; }
+                    if (this.context && this.context.auth.isAuthenticated())
+                        this.context.auth.addAuthentication(requestOptions);
+                    HTTP.Request.Util.setAcceptHeader("application/ld+json", requestOptions);
+                    HTTP.Request.Util.setPreferredInteractionModel(LDP.Class.RDFSource, requestOptions);
+                    HTTP.Request.Util.setIfMatchHeader(persistedDocument._etag, requestOptions);
+                    return HTTP.Request.Service.delete(persistedDocument.id, persistedDocument.toJSON(), requestOptions);
+                };
+                Documents.prototype.getSchemaFor = function (object) {
+                    if ("@id" in object) {
+                        return this.getDigestedObjectSchemaForExpandedObject(object);
+                    }
+                    else {
+                        return this.getDigestedObjectSchemaForDocument(object);
+                    }
+                };
+                Documents.prototype.executeRawASKQuery = function (documentURI, askQuery, requestOptions) {
+                    if (requestOptions === void 0) { requestOptions = {}; }
+                    if (!RDF.URI.Util.isAbsolute(documentURI)) {
+                        if (!this.context)
+                            throw new Errors.IllegalArgumentError("This Documents instance doesn't support relative URIs.");
+                        documentURI = this.context.resolve(documentURI);
+                    }
+                    if (this.context && this.context.auth.isAuthenticated())
+                        this.context.auth.addAuthentication(requestOptions);
+                    return SPARQL.Service.executeRawASKQuery(documentURI, askQuery, requestOptions);
+                };
+                Documents.prototype.executeRawSELECTQuery = function (documentURI, selectQuery, requestOptions) {
+                    if (requestOptions === void 0) { requestOptions = {}; }
+                    if (!RDF.URI.Util.isAbsolute(documentURI)) {
+                        if (!this.context)
+                            throw new Errors.IllegalArgumentError("This Documents instance doesn't support relative URIs.");
+                        documentURI = this.context.resolve(documentURI);
+                    }
+                    if (this.context && this.context.auth.isAuthenticated())
+                        this.context.auth.addAuthentication(requestOptions);
+                    return SPARQL.Service.executeRawSELECTQuery(documentURI, selectQuery, requestOptions);
+                };
+                Documents.prototype.executeRawCONSTRUCTQuery = function (documentURI, constructQuery, requestOptions) {
+                    if (requestOptions === void 0) { requestOptions = {}; }
+                    if (!RDF.URI.Util.isAbsolute(documentURI)) {
+                        if (!this.context)
+                            throw new Errors.IllegalArgumentError("This Documents instance doesn't support relative URIs.");
+                        documentURI = this.context.resolve(documentURI);
+                    }
+                    if (this.context && this.context.auth.isAuthenticated())
+                        this.context.auth.addAuthentication(requestOptions);
+                    return SPARQL.Service.executeRawCONSTRUCTQuery(documentURI, constructQuery, requestOptions);
+                };
+                Documents.prototype.executeRawDESCRIBEQuery = function (documentURI, constructQuery, requestOptions) {
+                    if (requestOptions === void 0) { requestOptions = {}; }
+                    if (!RDF.URI.Util.isAbsolute(documentURI)) {
+                        if (!this.context)
+                            throw new Errors.IllegalArgumentError("This Documents instance doesn't support relative URIs.");
+                        documentURI = this.context.resolve(documentURI);
+                    }
+                    if (this.context && this.context.auth.isAuthenticated())
+                        this.context.auth.addAuthentication(requestOptions);
+                    return SPARQL.Service.executeRawDESCRIBEQuery(documentURI, constructQuery, requestOptions);
+                };
+                Documents.prototype.getRDFDocument = function (rdfDocuments, response) {
                     if (rdfDocuments.length === 0)
-                        throw new Error("BadResponse: No document was returned.");
+                        throw new HTTP.Errors.BadResponseError("No document was returned.", response);
                     if (rdfDocuments.length > 1)
                         throw new Error("Unsupported: Multiple graphs are currently not supported.");
                     return rdfDocuments[0];
                 };
-                Documents.prototype.injectDefinitions = function (resources) {
-                    var definitionURIs = this.context.getDefinitionURIs();
-                    for (var i = 0, length = definitionURIs.length; i < length; i++) {
-                        var definitionURI = definitionURIs[i];
-                        var toInject = [];
-                        for (var j = 0, resourcesLength = resources.length; j < resourcesLength; j++) {
-                            var resource = resources[j];
-                            if (resource.types.indexOf(definitionURI) !== -1)
-                                toInject.push(resource);
+                Documents.prototype.getPointerID = function (uri) {
+                    if (RDF.URI.Util.isBNodeID(uri))
+                        throw new Errors.IllegalArgumentError("BNodes cannot be fetched directly.");
+                    // TODO: Make named fragments independently resolvable
+                    /*
+                        if( RDF.URI.Util.hasFragment( uri ) ) throw new Errors.IllegalArgumentError( "Fragment URI's cannot be fetched directly." );
+                    */
+                    if (!!this.context) {
+                        // TODO: Check this, it may be incorrect
+                        if (RDF.URI.Util.isRelative(uri)) {
+                            var baseURI = this.context.getBaseURI();
+                            if (!RDF.URI.Util.isBaseOf(baseURI, uri))
+                                return null;
+                            return uri.substring(baseURI.length);
                         }
-                        if (toInject.length > 0)
-                            RDF.Resource.Factory.injectDescriptions(toInject, this.context.getDefinition(definitionURI));
+                        else {
+                            return uri;
+                        }
                     }
-                    return resources;
+                    else {
+                        if (RDF.URI.Util.isRelative(uri))
+                            throw new Errors.IllegalArgumentError("This Documents instance doesn't support relative URIs.");
+                        return uri;
+                    }
+                };
+                Documents.prototype.createPointer = function (localID) {
+                    var _this = this;
+                    var id = !!this.context ? this.context.resolve(localID) : localID;
+                    var pointer = Pointer.Factory.create(id);
+                    Object.defineProperty(pointer, "resolve", {
+                        writable: false,
+                        enumerable: false,
+                        configurable: true,
+                        value: function () {
+                            return _this.get(id);
+                        },
+                    });
+                    return pointer;
+                };
+                Documents.prototype.compact = function (expandedObjectOrObjects, targetObjectOrObjects, pointerLibrary) {
+                    if (!Utils.isArray(expandedObjectOrObjects))
+                        return this.compactSingle(expandedObjectOrObjects, targetObjectOrObjects, pointerLibrary);
+                    var expandedObjects = expandedObjectOrObjects;
+                    var targetObjects = !!targetObjectOrObjects ? targetObjectOrObjects : [];
+                    for (var i = 0, length = expandedObjects.length; i < length; i++) {
+                        var expandedObject = expandedObjects[i];
+                        var targetObject = targetObjects[i] = !!targetObjects[i] ? targetObjects[i] : {};
+                        this.compactSingle(expandedObject, targetObject, pointerLibrary);
+                    }
+                    return targetObjects;
+                };
+                Documents.prototype.compactSingle = function (expandedObject, targetObject, pointerLibrary) {
+                    var digestedSchema = this.getDigestedObjectSchemaForExpandedObject(expandedObject);
+                    return this.jsonldConverter.compact(expandedObject, targetObject, digestedSchema, pointerLibrary);
+                };
+                Documents.prototype.getDigestedObjectSchemaForExpandedObject = function (expandedObject) {
+                    var types = this.getExpandedObjectTypes(expandedObject);
+                    return this.getDigestedObjectSchema(types);
+                };
+                Documents.prototype.getDigestedObjectSchemaForDocument = function (document) {
+                    var types = this.getDocumentTypes(document);
+                    return this.getDigestedObjectSchema(types);
+                };
+                Documents.prototype.getDigestedObjectSchema = function (objectTypes) {
+                    var digestedSchema;
+                    if (!!this.context) {
+                        var typesDigestedObjectSchemas = [this.context.getObjectSchema()];
+                        for (var _i = 0; _i < objectTypes.length; _i++) {
+                            var type = objectTypes[_i];
+                            if (this.context.getObjectSchema(type))
+                                typesDigestedObjectSchemas.push(this.context.getObjectSchema(type));
+                        }
+                        if (typesDigestedObjectSchemas.length > 1) {
+                            digestedSchema = ObjectSchema.Digester.combineDigestedObjectSchemas(typesDigestedObjectSchemas);
+                        }
+                        else {
+                            digestedSchema = typesDigestedObjectSchemas[0];
+                        }
+                    }
+                    else {
+                        digestedSchema = new ObjectSchema.DigestedObjectSchema();
+                    }
+                    return digestedSchema;
+                };
+                Documents.prototype.getExpandedObjectTypes = function (expandedObject) {
+                    if (!expandedObject["@type"])
+                        return [];
+                    return expandedObject["@type"];
+                };
+                Documents.prototype.getDocumentTypes = function (document) {
+                    if (!document.types)
+                        return [];
+                    return document.types;
                 };
                 return Documents;
             })();
@@ -1677,600 +3188,40 @@ $__System.register("15", ["16", "13", "17", "6", "14", "18"], function(exports_1
     }
 });
 
-$__System.register("19", ["9", "6", "b"], function(exports_1) {
-    var __extends = (this && this.__extends) || function (d, b) {
-        for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-    var NS, RDF, Utils;
-    var RDF_CLASS, DEFINITION, Factory, factory;
+$__System.register("24", [], function(exports_1) {
     return {
-        setters:[
-            function (NS_1) {
-                NS = NS_1;
-            },
-            function (RDF_1) {
-                RDF = RDF_1;
-            },
-            function (Utils_1) {
-                Utils = Utils_1;
-            }],
+        setters:[],
         execute: function() {
-            exports_1("RDF_CLASS", RDF_CLASS = NS.CS.Class.Token);
-            exports_1("DEFINITION", DEFINITION = Utils.M.from({
-                "key": {
-                    "uri": NS.CS.Predicate.tokenKey,
-                    "multi": false,
-                    "literal": true
-                },
-                "expirationTime": {
-                    "uri": NS.CS.Predicate.expirationTime,
-                    "multi": false,
-                    "literal": true
-                }
-            }));
-            Factory = (function (_super) {
-                __extends(Factory, _super);
-                function Factory() {
-                    _super.apply(this, arguments);
-                }
-                Factory.hasClassProperties = function (resource) {
-                    return (Utils.hasPropertyDefined(resource, "key") &&
-                        Utils.hasPropertyDefined(resource, "expirationTime"));
-                };
-                Factory.prototype.from = function (objects) {
-                    if (!Utils.isArray(objects))
-                        return this.singleFrom(objects);
-                    for (var i = 0, length = objects.length; i < length; i++) {
-                        var resource = objects[i];
-                        this.injectBehavior(resource);
-                    }
-                    return objects;
-                };
-                Factory.prototype.hasRDFClass = function (resource) {
-                    return resource.types.indexOf(RDF_CLASS) !== -1;
-                };
-                Factory.prototype.injectBehavior = function (node) {
-                    var token = node;
-                    _super.prototype.injectBehavior.call(this, node);
-                    if (Factory.hasClassProperties(token))
-                        return token;
-                    RDF.Resource.Factory.injectDescriptions(token, DEFINITION);
-                    return token;
-                };
-                return Factory;
-            })(RDF.Resource.Factory);
-            exports_1("Factory", Factory);
-            exports_1("factory", factory = new Factory());
         }
     }
 });
 
-$__System.register("1a", ["1b", "1c"], function(exports_1) {
-    var Literal, RDFNode;
-    var Util;
+$__System.register("25", [], function(exports_1) {
     return {
-        setters:[
-            function (Literal_1) {
-                Literal = Literal_1;
-            },
-            function (RDFNode_1) {
-                RDFNode = RDFNode_1;
-            }],
+        setters:[],
         execute: function() {
-            Util = (function () {
-                function Util() {
-                }
-                Util.areEqual = function (value1, value2) {
-                    if (Literal.Factory.is(value1) && Literal.Factory.is(value2)) {
-                        return Literal.Util.areEqual(value1, value2);
-                    }
-                    else if (RDFNode.Factory.is(value1) && RDFNode.Factory.is(value2)) {
-                        return RDFNode.Util.areEqual(value1, value2);
-                    }
-                    else
-                        return false;
-                };
-                return Util;
-            })();
-            exports_1("Util", Util);
         }
     }
 });
 
-/// <reference path="../../typings/es6/es6.d.ts" />
-$__System.register("1d", ["1b", "b", "1c"], function(exports_1) {
-    var Literal, Utils, RDFNode;
-    var Factory, factory;
-    function hasProperty(propertyURI) {
-        return Utils.hasProperty(this, propertyURI);
-    }
-    function getProperty(propertyURI) {
-        var values = this.getProperties(propertyURI);
-        return values[0];
-    }
-    function getPropertyValue(propertyURI) {
-        var propertyObject = this.getProperty(propertyURI);
-        if (Utils.isNull(propertyObject))
-            return null;
-        if (!Literal.Factory.is(propertyObject))
-            return null;
-        return Literal.Factory.parse(propertyObject);
-    }
-    function getPropertyURI(propertyURI) {
-        var value = this.getProperty(propertyURI);
-        if (Utils.isNull(value))
-            return null;
-        if (!Utils.hasProperty(value, "@id"))
-            return null;
-        return value["@id"];
-    }
-    function getProperties(propertyURI) {
-        if (!this.hasProperty(propertyURI))
-            return [];
-        return Utils.isArray(this[propertyURI]) ? this[propertyURI] : [this[propertyURI]];
-    }
-    function getPropertyValues(propertyURI) {
-        var values = [];
-        if (this.hasProperty(propertyURI)) {
-            var propertyArray = this.getProperties(propertyURI);
-            for (var i = 0, length = propertyArray.length; i < length; i++) {
-                var value = propertyArray[i];
-                if (Literal.Factory.is(value))
-                    values.push(Literal.Factory.parse(value));
-            }
-        }
-        values = tieArray(this, propertyURI, values);
-        return values;
-    }
-    function getPropertyURIs(propertyURI) {
-        var uris = [];
-        if (this.hasProperty(propertyURI)) {
-            var values = this.getProperties(propertyURI);
-            for (var i = 0, length = values.length; i < length; i++) {
-                var value = values[i];
-                if (Utils.hasProperty(value, "@id"))
-                    uris.push(value["@id"]);
-            }
-        }
-        uris = tieArray(this, propertyURI, uris);
-        return uris;
-    }
-    function addProperty(propertyURI, value) {
-        var propertyArray = this.getProperties(propertyURI);
-        var propertyValue;
-        if (RDFNode.Factory.is(value)) {
-            propertyValue = {
-                "@id": value["@id"]
-            };
-        }
-        else
-            propertyValue = Literal.Factory.from(value);
-        var callbacks = this._propertyAddedCallbacks;
-        for (var i = 0, length = callbacks.length; i < length; i++) {
-            var callback = callbacks[i];
-            callback.call(this, propertyURI, propertyValue);
-        }
-        propertyArray.push(propertyValue);
-        this[propertyURI] = propertyArray;
-    }
-    function setProperty(propertyURI, value) {
-        this.deleteProperty(propertyURI);
-        if (Utils.isNull(value))
-            return;
-        this.addProperty(propertyURI, value);
-    }
-    function deleteProperty(propertyURI) {
-        var callbacks = this._propertyDeletedCallbacks;
-        for (var i = 0, length = callbacks.length; i < length; i++) {
-            var callback = callbacks[i];
-            callback.call(this, propertyURI);
-        }
-        delete this[propertyURI];
-    }
-    function tieArray(resource, property, array) {
-        array.push = (function () {
-            return function () {
-                var items = [];
-                for (var _i = 0; _i < arguments.length; _i++) {
-                    items[_i - 0] = arguments[_i];
-                }
-                for (var i = 0, length = items.length; i < length; i++) {
-                    resource.addProperty(property, items[i]);
-                }
-                return Array.prototype.push.call(array, items);
-            };
-        })();
-        // TODO: concat
-        // TODO: join
-        // TODO: pop
-        // TODO: reverse
-        // TODO: shift
-        // TODO: slice
-        // TODO: sort
-        // TODO: splice
-        // TODO: unshift
-        return array;
-    }
+$__System.register("26", [], function(exports_1) {
+    var PropertyDescription;
     return {
-        setters:[
-            function (Literal_1) {
-                Literal = Literal_1;
-            },
-            function (Utils_1) {
-                Utils = Utils_1;
-            },
-            function (RDFNode_1) {
-                RDFNode = RDFNode_1;
-            }],
+        setters:[],
         execute: function() {
-            Factory = (function () {
-                function Factory() {
+            PropertyDescription = (function () {
+                function PropertyDescription() {
+                    this.multi = true;
+                    this.literal = null;
                 }
-                Factory.hasClassProperties = function (resource) {
-                    return (Utils.hasPropertyDefined(resource, "_propertyAddedCallbacks") &&
-                        Utils.hasPropertyDefined(resource, "_propertyDeletedCallbacks") &&
-                        Utils.hasPropertyDefined(resource, "uri") &&
-                        Utils.hasPropertyDefined(resource, "types") &&
-                        Utils.hasFunction(resource, "hasProperty") &&
-                        Utils.hasFunction(resource, "getProperty") &&
-                        Utils.hasFunction(resource, "getPropertyValue") &&
-                        Utils.hasFunction(resource, "getPropertyURI") &&
-                        Utils.hasFunction(resource, "getProperties") &&
-                        Utils.hasFunction(resource, "getPropertyValues") &&
-                        Utils.hasFunction(resource, "getPropertyURIs") &&
-                        Utils.hasFunction(resource, "addProperty") &&
-                        Utils.hasFunction(resource, "setProperty") &&
-                        Utils.hasFunction(resource, "deleteProperty"));
-                };
-                Factory.injectDefinitions = function (resourceOrResources, definitions) {
-                    var resources = Utils.isArray(resourceOrResources) ? resourceOrResources : [resourceOrResources];
-                    for (var i = 0, length = resources.length; i < length; i++) {
-                        var resource = resources[i];
-                        for (var j = 0, length_1 = resource.types.length; i < length_1; j++) {
-                            var type = resource.types[i];
-                            var descriptions = new Map();
-                            if (definitions.has(type)) {
-                                Utils.M.extend(descriptions, definitions.get(type));
-                            }
-                            if (descriptions.size() !== 0)
-                                Factory.injectDescriptions(resource, descriptions);
-                        }
-                    }
-                    if (Utils.isArray(resourceOrResources))
-                        return resources;
-                    return resources[0];
-                };
-                Factory.injectDescriptions = function (resourceOrResources, descriptionsMapOrObject) {
-                    var resources = Utils.isArray(resourceOrResources) ? resourceOrResources : [resourceOrResources];
-                    var descriptions;
-                    if (Utils.isMap(descriptionsMapOrObject)) {
-                        descriptions = descriptionsMapOrObject;
-                    }
-                    else if (Utils.isObject(descriptionsMapOrObject)) {
-                        descriptions = Utils.M.from(descriptionsMapOrObject);
-                    }
-                    else
-                        throw new Error("IllegalArgument");
-                    for (var i = 0, length = resources.length; i < length; i++) {
-                        var resource = resources[i];
-                        var descriptionNames = descriptions.keys();
-                        var next = descriptionNames.next();
-                        while (!next.done) {
-                            var name = next.value;
-                            var description = descriptions.get(name);
-                            var getter = void 0, setter = void 0;
-                            if (Utils.isNull(description.literal)) {
-                                // The type isn't known, inject generic versions
-                                if (description.multi) {
-                                    getter = Factory.genericMultipleGetter(description);
-                                }
-                                else
-                                    getter = Factory.genericGetter(description);
-                            }
-                            else if (!description.literal) {
-                                if (description.multi) {
-                                    getter = Factory.urisGetter(description);
-                                }
-                                else
-                                    getter = Factory.uriGetter(description);
-                            }
-                            else {
-                                if (description.multi) {
-                                    getter = Factory.literalsGetter(description);
-                                }
-                                else
-                                    getter = Factory.literalGetter(description);
-                            }
-                            setter = Factory.setter(description);
-                            Object.defineProperty(resource, name, {
-                                enumerable: false,
-                                get: getter,
-                                set: setter
-                            });
-                            next = descriptionNames.next();
-                        }
-                    }
-                    if (Utils.isArray(resourceOrResources))
-                        return resources;
-                    return resources[0];
-                };
-                Factory.genericGetter = function (description) {
-                    var uri = description.uri;
-                    return function () {
-                        return this.getProperty(uri);
-                    };
-                };
-                Factory.genericMultipleGetter = function (description) {
-                    var uri = description.uri;
-                    return function () {
-                        return this.getProperties(uri);
-                    };
-                };
-                Factory.uriGetter = function (description) {
-                    var uri = description.uri;
-                    return function () {
-                        return this.getPropertyURI(uri);
-                    };
-                };
-                Factory.urisGetter = function (description) {
-                    var uri = description.uri;
-                    return function () {
-                        return this.getPropertyURIs(uri);
-                    };
-                };
-                Factory.literalGetter = function (description) {
-                    var uri = description.uri;
-                    return function () {
-                        return this.getPropertyValue(uri);
-                    };
-                };
-                Factory.literalsGetter = function (description) {
-                    var uri = description.uri;
-                    return function () {
-                        return this.getPropertyValues(uri);
-                    };
-                };
-                Factory.setter = function (description) {
-                    var uri = description.uri;
-                    return function (value) {
-                        this.setProperty(uri, value);
-                    };
-                };
-                Factory.prototype.is = function (value) {
-                    return (
-                    // RDFNode.Factory.is( value ) &&
-                    (!Utils.isNull(value)) &&
-                        Utils.isObject(value) &&
-                        Factory.hasClassProperties(value));
-                };
-                Factory.prototype.create = function () {
-                    var resource = {};
-                    return this.from(resource);
-                };
-                Factory.prototype.from = function (objects) {
-                    if (!Utils.isArray(objects))
-                        return this.singleFrom(objects);
-                    for (var i = 0, length = objects.length; i < length; i++) {
-                        var resource = objects[i];
-                        this.injectBehavior(resource);
-                    }
-                    return objects;
-                };
-                Factory.prototype.singleFrom = function (object) {
-                    return this.injectBehavior(object);
-                };
-                Factory.prototype.hasRDFClass = function (resource) {
-                    // TODO: Implement
-                    return true;
-                };
-                Factory.prototype.injectBehavior = function (node) {
-                    var resource = node;
-                    if (Factory.hasClassProperties(resource))
-                        return resource;
-                    Object.defineProperties(resource, {
-                        "_propertyAddedCallbacks": {
-                            writable: false,
-                            enumerable: false,
-                            value: []
-                        },
-                        "_propertyDeletedCallbacks": {
-                            writable: false,
-                            enumerable: false,
-                            value: []
-                        },
-                        "types": {
-                            get: function () {
-                                if (!this["@type"])
-                                    this["@type"] = [];
-                                return this["@type"];
-                            },
-                            set: function (value) {
-                                // TODO: Implement
-                            },
-                            enumerable: false
-                        },
-                        "uri": {
-                            get: function () {
-                                return this["@id"];
-                            },
-                            set: function (value) {
-                                this["@id"] = value;
-                            },
-                            enumerable: false
-                        },
-                        "hasProperty": {
-                            writable: false,
-                            enumerable: false,
-                            value: hasProperty
-                        },
-                        "getProperty": {
-                            writable: false,
-                            enumerable: false,
-                            value: getProperty
-                        },
-                        "getPropertyValue": {
-                            writable: false,
-                            enumerable: false,
-                            value: getPropertyValue
-                        },
-                        "getPropertyURI": {
-                            writable: false,
-                            enumerable: false,
-                            value: getPropertyURI
-                        },
-                        "getProperties": {
-                            writable: false,
-                            enumerable: false,
-                            value: getProperties
-                        },
-                        "getPropertyValues": {
-                            writable: false,
-                            enumerable: false,
-                            value: getPropertyValues
-                        },
-                        "getPropertyURIs": {
-                            writable: false,
-                            enumerable: false,
-                            value: getPropertyURIs
-                        },
-                        "addProperty": {
-                            writable: false,
-                            enumerable: false,
-                            value: addProperty
-                        },
-                        "setProperty": {
-                            writable: false,
-                            enumerable: false,
-                            value: setProperty
-                        },
-                        "deleteProperty": {
-                            writable: false,
-                            enumerable: false,
-                            value: deleteProperty
-                        }
-                    });
-                    return resource;
-                };
-                return Factory;
+                return PropertyDescription;
             })();
-            exports_1("Factory", Factory);
-            exports_1("factory", factory = new Factory);
+            exports_1("default",PropertyDescription);
         }
     }
 });
 
-$__System.register("1e", ["b"], function(exports_1) {
-    var Utils;
-    var Util;
-    return {
-        setters:[
-            function (Utils_1) {
-                Utils = Utils_1;
-            }],
-        execute: function() {
-            Util = (function () {
-                function Util() {
-                }
-                Util.hasFragment = function (uri) {
-                    return uri.indexOf("#") !== -1;
-                };
-                Util.hasProtocol = function (uri) {
-                    return Utils.S.startsWith(uri, "https://") || Utils.S.startsWith(uri, "http://");
-                };
-                Util.isAbsolute = function (uri) {
-                    if (Utils.S.startsWith(uri, "http://"))
-                        return true;
-                    if (Utils.S.startsWith(uri, "https://"))
-                        return true;
-                    if (Utils.S.startsWith(uri, "://"))
-                        return true;
-                };
-                Util.isRelative = function (uri) {
-                    return !Util.isAbsolute(uri);
-                };
-                Util.isBNodeID = function (uri) {
-                    return Utils.S.startsWith(uri, "_:");
-                };
-                Util.getDocumentURI = function (uri) {
-                    var parts = uri.split("#");
-                    if (parts.length > 2)
-                        throw new Error("IllegalArgument: The URI provided has more than one # sign.");
-                    return parts[0];
-                };
-                Util.getFragment = function (uri) {
-                    var parts = uri.split("#");
-                    if (parts.length < 2)
-                        return null;
-                    if (parts.length > 2)
-                        throw new Error("IllegalArgument: The URI provided has more than one # sign.");
-                    return parts[1];
-                };
-                Util.resolve = function (parentURI, childURI) {
-                    var finalURI = parentURI;
-                    if (!Utils.S.endsWith(parentURI, "/"))
-                        finalURI += "/";
-                    if (Utils.S.startsWith(childURI, "/")) {
-                        finalURI = finalURI + childURI.substr(1, childURI.length);
-                    }
-                    else
-                        finalURI += childURI;
-                    return finalURI;
-                };
-                Util.removeProtocol = function (uri) {
-                    if (Utils.S.startsWith(uri, "https://"))
-                        return uri.substr(5, uri.length);
-                    if (Utils.S.startsWith(uri, "http://"))
-                        return uri.substr(4, uri.length);
-                    return uri;
-                };
-                return Util;
-            })();
-            exports_1("Util", Util);
-        }
-    }
-});
-
-$__System.register("1c", ["b"], function(exports_1) {
-    var Utils;
-    var Factory, Util;
-    return {
-        setters:[
-            function (Utils_1) {
-                Utils = Utils_1;
-            }],
-        execute: function() {
-            Factory = (function () {
-                function Factory() {
-                }
-                Factory.is = function (value) {
-                    return ((!Utils.isNull(value)) &&
-                        Utils.isObject(value) &&
-                        Utils.hasProperty(value, "@id"));
-                };
-                Factory.create = function (uri) {
-                    return {
-                        "@id": uri
-                    };
-                };
-                return Factory;
-            })();
-            exports_1("Factory", Factory);
-            Util = (function () {
-                function Util() {
-                }
-                Util.areEqual = function (node1, node2) {
-                    return node1["@id"] === node2["@id"];
-                };
-                return Util;
-            })();
-            exports_1("Util", Util);
-        }
-    }
-});
-
-$__System.register("1f", ["1c", "b", "1e"], function(exports_1) {
+$__System.register("27", ["28", "5", "29"], function(exports_1) {
     var RDFNode, Utils, URI;
     var Factory, Util;
     return {
@@ -2323,13 +3274,10 @@ $__System.register("1f", ["1c", "b", "1e"], function(exports_1) {
                 Util.getResources = function (value) {
                     var documents = Util.getDocuments(value);
                     var resources = [];
-                    /* tslint:disable: typedef */
-                    // TSLint is saying that document should have a typedef, but TypeScript doesn't allow typedefs in for .. of loops
                     for (var _i = 0; _i < documents.length; _i++) {
                         var document = documents[_i];
                         resources = resources.concat(document["@graph"]);
                     }
-                    /* tslint:enable: typedef */
                     return resources;
                 };
                 Util.getDocumentResources = function (document) {
@@ -2391,25 +3339,316 @@ $__System.register("1f", ["1c", "b", "1e"], function(exports_1) {
     }
 });
 
-$__System.register("20", [], function(exports_1) {
-    var PropertyDescription;
+$__System.register("29", ["5"], function(exports_1) {
+    var Utils;
+    var Class, Util;
+    function prefixWithObjectSchema(uri, objectSchema) {
+        var prefixEntries = objectSchema.prefixes.entries();
+        while (true) {
+            var result = prefixEntries.next();
+            if (result.done)
+                return uri;
+            var _a = result.value, prefix = _a[0], prefixURI = _a[1];
+            if (!Util.isAbsolute(prefixURI.toString()))
+                continue;
+            if (!uri.startsWith(prefixURI.toString()))
+                continue;
+            return Util.prefix(uri, prefix, prefixURI.toString());
+        }
+    }
     return {
-        setters:[],
+        setters:[
+            function (Utils_1) {
+                Utils = Utils_1;
+            }],
         execute: function() {
-            PropertyDescription = (function () {
-                function PropertyDescription() {
-                    this.multi = true;
-                    this.literal = null;
+            Class = (function () {
+                function Class(stringValue) {
+                    this.stringValue = stringValue;
                 }
-                return PropertyDescription;
+                Class.prototype.toString = function () {
+                    return this.stringValue;
+                };
+                return Class;
             })();
-            exports_1("default",PropertyDescription);
+            exports_1("Class", Class);
+            Util = (function () {
+                function Util() {
+                }
+                Util.hasFragment = function (uri) {
+                    return uri.indexOf("#") !== -1;
+                };
+                Util.hasProtocol = function (uri) {
+                    return Utils.S.startsWith(uri, "https://") || Utils.S.startsWith(uri, "http://");
+                };
+                Util.isAbsolute = function (uri) {
+                    return Utils.S.startsWith(uri, "http://")
+                        || Utils.S.startsWith(uri, "https://")
+                        || Utils.S.startsWith(uri, "://");
+                };
+                Util.isRelative = function (uri) {
+                    return !Util.isAbsolute(uri);
+                };
+                Util.isBNodeID = function (uri) {
+                    return Utils.S.startsWith(uri, "_:");
+                };
+                Util.isPrefixed = function (uri) {
+                    return !Util.isAbsolute(uri) && !Util.isBNodeID(uri) && Utils.S.contains(uri, ":");
+                };
+                Util.isFragmentOf = function (fragmentURI, uri) {
+                    if (!Util.hasFragment(fragmentURI))
+                        return false;
+                    return Util.getDocumentURI(fragmentURI) === uri;
+                };
+                Util.isBaseOf = function (baseURI, uri) {
+                    if (baseURI === uri)
+                        return true;
+                    if (baseURI === "")
+                        return true;
+                    if (uri.startsWith(baseURI)) {
+                        if (Utils.S.endsWith(baseURI, "/"))
+                            return true;
+                        var relativeURI = uri.substring(baseURI.length);
+                        if (Utils.S.startsWith(relativeURI, "/") || Utils.S.startsWith(relativeURI, "#"))
+                            return true;
+                    }
+                    return false;
+                };
+                Util.getRelativeURI = function (absoluteURI, base) {
+                    if (!absoluteURI.startsWith(base))
+                        return absoluteURI;
+                    return absoluteURI.substring(base.length);
+                };
+                Util.getDocumentURI = function (uri) {
+                    var parts = uri.split("#");
+                    if (parts.length > 2)
+                        throw new Error("IllegalArgument: The URI provided has more than one # sign.");
+                    return parts[0];
+                };
+                Util.getFragment = function (uri) {
+                    var parts = uri.split("#");
+                    if (parts.length < 2)
+                        return null;
+                    if (parts.length > 2)
+                        throw new Error("IllegalArgument: The URI provided has more than one # sign.");
+                    return parts[1];
+                };
+                Util.resolve = function (parentURI, childURI) {
+                    if (Util.isAbsolute(childURI) || Util.isPrefixed(childURI))
+                        return childURI;
+                    var finalURI = parentURI;
+                    if (!Utils.S.endsWith(parentURI, "/"))
+                        finalURI += "/";
+                    if (Utils.S.startsWith(childURI, "/")) {
+                        finalURI = finalURI + childURI.substr(1, childURI.length);
+                    }
+                    else
+                        finalURI += childURI;
+                    return finalURI;
+                };
+                Util.removeProtocol = function (uri) {
+                    if (Utils.S.startsWith(uri, "https://"))
+                        return uri.substr(5, uri.length);
+                    if (Utils.S.startsWith(uri, "http://"))
+                        return uri.substr(4, uri.length);
+                    return uri;
+                };
+                Util.prefix = function (uri, prefixOrObjectSchema, prefixURI) {
+                    if (prefixURI === void 0) { prefixURI = null; }
+                    var objectSchema = !Utils.isString(prefixOrObjectSchema) ? prefixOrObjectSchema : null;
+                    var prefix = Utils.isString(prefixOrObjectSchema) ? prefixOrObjectSchema : null;
+                    if (objectSchema !== null)
+                        return prefixWithObjectSchema(uri, objectSchema);
+                    if (Util.isPrefixed(uri) || !uri.startsWith(prefixURI))
+                        return uri;
+                    return prefix + ":" + uri.substring(prefixURI.length);
+                };
+                return Util;
+            })();
+            exports_1("Util", Util);
+            exports_1("default",Class);
         }
     }
 });
 
-$__System.register("1b", ["b", "21"], function(exports_1) {
-    var Utils, XSD;
+$__System.register("2a", ["5"], function(exports_1) {
+    var Utils;
+    var Factory;
+    return {
+        setters:[
+            function (Utils_1) {
+                Utils = Utils_1;
+            }],
+        execute: function() {
+            Factory = (function () {
+                function Factory() {
+                }
+                Factory.is = function (value) {
+                    return ((!Utils.isNull(value)) &&
+                        Utils.isObject(value) &&
+                        Utils.hasProperty(value, "@list"));
+                };
+                return Factory;
+            })();
+            exports_1("Factory", Factory);
+        }
+    }
+});
+
+$__System.register("2b", [], function(exports_1) {
+    return {
+        setters:[],
+        execute: function() {
+        }
+    }
+});
+
+$__System.register("2c", ["14", "5"], function(exports_1) {
+    var __extends = (this && this.__extends) || function (d, b) {
+        for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+    var Errors, Utils;
+    var DateSerializer, dateSerializer, DateTimeSerializer, dateTimeSerializer, TimeSerializer, timeSerializer, IntegerSerializer, integerSerializer, UnsignedIntegerSerializer, unsignedIntegerSerializer, FloatSerializer, floatSerializer, BooleanSerializer, booleanSerializer, StringSerializer, stringSerializer;
+    function pad(value) {
+        var paddedValue = String(value);
+        if (paddedValue.length === 1)
+            paddedValue = "0" + paddedValue;
+        return paddedValue;
+    }
+    return {
+        setters:[
+            function (Errors_1) {
+                Errors = Errors_1;
+            },
+            function (Utils_1) {
+                Utils = Utils_1;
+            }],
+        execute: function() {
+            DateSerializer = (function () {
+                function DateSerializer() {
+                }
+                DateSerializer.prototype.serialize = function (value) {
+                    if (!Utils.isDate(value))
+                        throw new Errors.IllegalArgumentError("The value is not a Date object.");
+                    return value.getUTCFullYear() + "-" + pad((value.getUTCMonth() + 1)) + "-" + pad(value.getUTCDate());
+                };
+                return DateSerializer;
+            })();
+            exports_1("DateSerializer", DateSerializer);
+            exports_1("dateSerializer", dateSerializer = new DateSerializer());
+            DateTimeSerializer = (function () {
+                function DateTimeSerializer() {
+                }
+                DateTimeSerializer.prototype.serialize = function (value) {
+                    if (!Utils.isDate(value))
+                        throw new Errors.IllegalArgumentError("The value is not a Date object.");
+                    return value.toISOString();
+                };
+                return DateTimeSerializer;
+            })();
+            exports_1("DateTimeSerializer", DateTimeSerializer);
+            exports_1("dateTimeSerializer", dateTimeSerializer = new DateTimeSerializer());
+            TimeSerializer = (function () {
+                function TimeSerializer() {
+                }
+                TimeSerializer.prototype.serialize = function (value) {
+                    if (!Utils.isDate(value))
+                        throw new Errors.IllegalArgumentError("The value is not a Date object.");
+                    return pad(value.getUTCHours())
+                        + ":" + pad(value.getUTCMinutes())
+                        + ":" + pad(value.getUTCSeconds())
+                        + "." + String((value.getUTCMilliseconds() / 1000).toFixed(3)).slice(2, 5)
+                        + "Z";
+                };
+                return TimeSerializer;
+            })();
+            exports_1("TimeSerializer", TimeSerializer);
+            exports_1("timeSerializer", timeSerializer = new TimeSerializer());
+            IntegerSerializer = (function () {
+                function IntegerSerializer() {
+                }
+                IntegerSerializer.prototype.serialize = function (value) {
+                    if (!Utils.isNumber(value))
+                        throw new Errors.IllegalArgumentError("The value is not a number.");
+                    // Negative truncate
+                    return (~~value) + "";
+                };
+                return IntegerSerializer;
+            })();
+            exports_1("IntegerSerializer", IntegerSerializer);
+            exports_1("integerSerializer", integerSerializer = new IntegerSerializer());
+            UnsignedIntegerSerializer = (function (_super) {
+                __extends(UnsignedIntegerSerializer, _super);
+                function UnsignedIntegerSerializer() {
+                    _super.apply(this, arguments);
+                }
+                UnsignedIntegerSerializer.prototype.serialize = function (value) {
+                    var stringValue = _super.prototype.serialize.call(this, value);
+                    stringValue = Utils.S.startsWith(stringValue, "-") ? stringValue.substring(1) : stringValue;
+                    return stringValue;
+                };
+                return UnsignedIntegerSerializer;
+            })(IntegerSerializer);
+            exports_1("UnsignedIntegerSerializer", UnsignedIntegerSerializer);
+            exports_1("unsignedIntegerSerializer", unsignedIntegerSerializer = new UnsignedIntegerSerializer());
+            FloatSerializer = (function () {
+                function FloatSerializer() {
+                }
+                FloatSerializer.prototype.serialize = function (value) {
+                    if (!Utils.isNumber(value))
+                        throw new Errors.IllegalArgumentError("The value is not a number.");
+                    return value + "";
+                };
+                return FloatSerializer;
+            })();
+            exports_1("FloatSerializer", FloatSerializer);
+            exports_1("floatSerializer", floatSerializer = new FloatSerializer());
+            BooleanSerializer = (function () {
+                function BooleanSerializer() {
+                }
+                BooleanSerializer.prototype.serialize = function (value) {
+                    if (!!value) {
+                        return "true";
+                    }
+                    else {
+                        return "false";
+                    }
+                };
+                return BooleanSerializer;
+            })();
+            exports_1("BooleanSerializer", BooleanSerializer);
+            exports_1("booleanSerializer", booleanSerializer = new BooleanSerializer());
+            StringSerializer = (function () {
+                function StringSerializer() {
+                }
+                StringSerializer.prototype.serialize = function (value) {
+                    return value + "";
+                };
+                return StringSerializer;
+            })();
+            exports_1("StringSerializer", StringSerializer);
+            exports_1("stringSerializer", stringSerializer = new StringSerializer());
+        }
+    }
+});
+
+$__System.register("2d", ["2c"], function(exports_1) {
+    var XSD;
+    return {
+        setters:[
+            function (XSD_1) {
+                XSD = XSD_1;
+            }],
+        execute: function() {
+            exports_1("XSD", XSD);
+        }
+    }
+});
+
+$__System.register("2e", ["5", "2f", "2b", "2d"], function(exports_1) {
+    var Utils, XSD, Serializer_1, Serializers;
     var Factory, Util;
     return {
         setters:[
@@ -2418,6 +3657,12 @@ $__System.register("1b", ["b", "21"], function(exports_1) {
             },
             function (XSD_1) {
                 XSD = XSD_1;
+            },
+            function (Serializer_1_1) {
+                Serializer_1 = Serializer_1_1;
+            },
+            function (Serializers_1) {
+                Serializers = Serializers_1;
             }],
         execute: function() {
             Factory = (function () {
@@ -2464,7 +3709,7 @@ $__System.register("1b", ["b", "21"], function(exports_1) {
                     if (!Utils.hasProperty(literal, "@type"))
                         return literal["@value"];
                     var type = literal["@type"];
-                    // The DataType isn"t supported
+                    // The DataType isn't supported
                     if (!Utils.hasProperty(XSD.DataType, type))
                         return literal["@value"];
                     var valueString = literal["@value"];
@@ -2527,6 +3772,11 @@ $__System.register("1b", ["b", "21"], function(exports_1) {
                         return false;
                     return Utils.hasProperty(value, "@value");
                 };
+                Factory.hasType = function (value, type) {
+                    if (!value["@type"] && type === XSD.DataType.string)
+                        return true;
+                    return value["@type"] === type;
+                };
                 return Factory;
             })();
             exports_1("Factory", Factory);
@@ -2540,88 +3790,281 @@ $__System.register("1b", ["b", "21"], function(exports_1) {
                 return Util;
             })();
             exports_1("Util", Util);
+            exports_1("Serializer", Serializer_1.default);
+            exports_1("Serializers", Serializers);
         }
     }
 });
 
-$__System.register("22", ["b"], function(exports_1) {
+$__System.register("28", ["5"], function(exports_1) {
     var Utils;
-    var Modifications, ModificationType, Factory;
-    function isDirty() {
-        return this._dirty;
-    }
+    var Factory, Util;
     return {
         setters:[
             function (Utils_1) {
                 Utils = Utils_1;
             }],
         execute: function() {
-            Modifications = (function () {
-                function Modifications() {
-                    this.add = new Map();
-                    this.set = new Map();
-                    this.delete = new Map();
-                }
-                return Modifications;
-            })();
-            (function (ModificationType) {
-                ModificationType[ModificationType["ADD"] = 0] = "ADD";
-                ModificationType[ModificationType["SET"] = 1] = "SET";
-                ModificationType[ModificationType["DELETE"] = 2] = "DELETE";
-            })(ModificationType || (ModificationType = {}));
             Factory = (function () {
                 function Factory() {
                 }
-                Factory.is = function (object) {
-                    return (Utils.hasPropertyDefined(object, "_dirty") &&
-                        Utils.hasPropertyDefined(object, "_modifications") &&
-                        Utils.hasFunction(object, "isDirty"));
+                Factory.is = function (value) {
+                    return ((!Utils.isNull(value)) &&
+                        Utils.isObject(value) &&
+                        Utils.hasProperty(value, "@id"));
                 };
-                Factory.from = function (objectOrObjects) {
-                    var objects = Utils.isArray(objectOrObjects) ? objectOrObjects : [objectOrObjects];
-                    var values = [];
-                    for (var i = 0, length = objects.length; i < length; i++) {
-                        var value = objects[i];
-                        if (!Factory.is(value))
-                            Factory.injectBehaviour(value);
-                        values.push(value);
-                    }
-                    if (Utils.isArray(objectOrObjects))
-                        return values;
-                    return values[0];
-                };
-                Factory.injectBehaviour = function (value) {
-                    Object.defineProperties(value, {
-                        "_dirty": {
-                            writable: true,
-                            enumerable: false,
-                            value: false
-                        },
-                        "_modifications": {
-                            writable: false,
-                            enumerable: false,
-                            value: new Modifications()
-                        }
-                    });
-                    value.isDirty = isDirty;
-                    return value;
+                Factory.create = function (uri) {
+                    return {
+                        "@id": uri
+                    };
                 };
                 return Factory;
             })();
-            exports_1("Modifications", Modifications);
-            exports_1("ModificationType", ModificationType);
             exports_1("Factory", Factory);
+            Util = (function () {
+                function Util() {
+                }
+                Util.areEqual = function (node1, node2) {
+                    return node1["@id"] === node2["@id"];
+                };
+                return Util;
+            })();
+            exports_1("Util", Util);
         }
     }
 });
 
-$__System.register("6", ["22", "1b", "20", "1f", "1c", "1d", "1e", "1a"], function(exports_1) {
-    var Persisted, Literal, PropertyDescription_1, Document, Node, Resource, URI, Value;
+$__System.register("30", ["2a", "2e", "8", "28"], function(exports_1) {
+    var List, Literal, NS, RDFNode;
+    var Util;
     return {
         setters:[
-            function (Persisted_1) {
-                Persisted = Persisted_1;
+            function (List_1) {
+                List = List_1;
             },
+            function (Literal_1) {
+                Literal = Literal_1;
+            },
+            function (NS_1) {
+                NS = NS_1;
+            },
+            function (RDFNode_1) {
+                RDFNode = RDFNode_1;
+            }],
+        execute: function() {
+            Util = (function () {
+                function Util() {
+                }
+                Util.areEqual = function (value1, value2) {
+                    if (Literal.Factory.is(value1) && Literal.Factory.is(value2)) {
+                        return Literal.Util.areEqual(value1, value2);
+                    }
+                    else if (RDFNode.Factory.is(value1) && RDFNode.Factory.is(value2)) {
+                        return RDFNode.Util.areEqual(value1, value2);
+                    }
+                    else
+                        return false;
+                };
+                Util.getProperty = function (expandedObject, propertyURI, pointerLibrary) {
+                    var propertyValues = expandedObject[propertyURI];
+                    if (!propertyValues)
+                        return null;
+                    if (!propertyValues.length)
+                        return null;
+                    var propertyValue = propertyValues[0];
+                    return Util.parseValue(propertyValue, pointerLibrary);
+                };
+                Util.getPropertyPointer = function (expandedObject, propertyURI, pointerLibrary) {
+                    var propertyValues = expandedObject[propertyURI];
+                    if (!propertyValues)
+                        return null;
+                    for (var _i = 0; _i < propertyValues.length; _i++) {
+                        var propertyValue = propertyValues[_i];
+                        if (!RDFNode.Factory.is(propertyValue))
+                            continue;
+                        return pointerLibrary.getPointer(propertyValue["@id"]);
+                    }
+                    return null;
+                };
+                Util.getPropertyLiteral = function (expandedObject, propertyURI, literalType) {
+                    var propertyValues = expandedObject[propertyURI];
+                    if (!propertyValues)
+                        return null;
+                    for (var _i = 0; _i < propertyValues.length; _i++) {
+                        var propertyValue = propertyValues[_i];
+                        if (!Literal.Factory.is(propertyValue))
+                            continue;
+                        if (!Literal.Factory.hasType(propertyValue, literalType))
+                            continue;
+                        return Literal.Factory.parse(propertyValue);
+                    }
+                    return null;
+                };
+                Util.getPropertyList = function (expandedObject, propertyURI, pointerLibrary) {
+                    var propertyValues = expandedObject[propertyURI];
+                    if (!propertyValues)
+                        return null;
+                    var propertyList = Util.getList(propertyValues);
+                    if (!propertyList)
+                        return null;
+                    var listValues = [];
+                    for (var _i = 0, _a = propertyList["@list"]; _i < _a.length; _i++) {
+                        var listValue = _a[_i];
+                        listValues.push(Util.parseValue(listValue, pointerLibrary));
+                    }
+                    return listValues;
+                };
+                Util.getPropertyPointerList = function (expandedObject, propertyURI, pointerLibrary) {
+                    var propertyValues = expandedObject[propertyURI];
+                    if (!propertyValues)
+                        return null;
+                    var propertyList = Util.getList(propertyValues);
+                    if (!propertyList)
+                        return null;
+                    var listPointers = [];
+                    for (var _i = 0, _a = propertyList["@list"]; _i < _a.length; _i++) {
+                        var listValue = _a[_i];
+                        if (!RDFNode.Factory.is(listValue))
+                            continue;
+                        var pointer = pointerLibrary.getPointer(listValue["@id"]);
+                        listPointers.push(pointer);
+                    }
+                    return listPointers;
+                };
+                Util.getPropertyLiteralList = function (expandedObject, propertyURI, literalType) {
+                    var propertyValues = expandedObject[propertyURI];
+                    if (!propertyValues)
+                        return null;
+                    var propertyList = Util.getList(propertyValues);
+                    if (!propertyList)
+                        return null;
+                    var listLiterals = [];
+                    for (var _i = 0, _a = propertyList["@list"]; _i < _a.length; _i++) {
+                        var listValue = _a[_i];
+                        if (!Literal.Factory.is(listValue))
+                            continue;
+                        if (!Literal.Factory.hasType(listValue, literalType))
+                            continue;
+                        listLiterals.push(Literal.Factory.parse(listValue));
+                    }
+                    return listLiterals;
+                };
+                Util.getProperties = function (expandedObject, propertyURI, pointerLibrary) {
+                    var propertyValues = expandedObject[propertyURI];
+                    if (!propertyValues)
+                        return null;
+                    if (!propertyValues.length)
+                        return null;
+                    var properties = [];
+                    for (var _i = 0; _i < propertyValues.length; _i++) {
+                        var propertyValue = propertyValues[_i];
+                        properties.push(Util.parseValue(propertyValue, pointerLibrary));
+                    }
+                    return properties;
+                };
+                Util.getPropertyPointers = function (expandedObject, propertyURI, pointerLibrary) {
+                    var propertyValues = expandedObject[propertyURI];
+                    if (!propertyValues)
+                        return null;
+                    if (!propertyValues.length)
+                        return null;
+                    var propertyPointers = [];
+                    for (var _i = 0; _i < propertyValues.length; _i++) {
+                        var propertyValue = propertyValues[_i];
+                        if (!RDFNode.Factory.is(propertyValue))
+                            continue;
+                        var pointer = pointerLibrary.getPointer(propertyValue["@id"]);
+                        propertyPointers.push(pointer);
+                    }
+                    return propertyPointers;
+                };
+                Util.getPropertyURIs = function (expandedObject, propertyURI) {
+                    var propertyValues = expandedObject[propertyURI];
+                    if (!propertyValues)
+                        return null;
+                    if (!propertyValues.length)
+                        return null;
+                    var propertyURIs = [];
+                    for (var _i = 0; _i < propertyValues.length; _i++) {
+                        var propertyValue = propertyValues[_i];
+                        if (!RDFNode.Factory.is(propertyValue))
+                            continue;
+                        propertyURIs.push(propertyValue["@id"]);
+                    }
+                    return propertyURIs;
+                };
+                Util.getPropertyLiterals = function (expandedObject, propertyURI, literalType) {
+                    var propertyValues = expandedObject[propertyURI];
+                    if (!propertyValues)
+                        return null;
+                    var propertyLiterals = [];
+                    for (var _i = 0; _i < propertyValues.length; _i++) {
+                        var propertyValue = propertyValues[_i];
+                        if (!Literal.Factory.is(propertyValue))
+                            continue;
+                        if (!Literal.Factory.hasType(propertyValue, literalType))
+                            continue;
+                        propertyLiterals.push(Literal.Factory.parse(propertyValue));
+                    }
+                    return propertyLiterals;
+                };
+                Util.getPropertyLanguageMap = function (expandedObject, propertyURI) {
+                    var propertyValues = expandedObject[propertyURI];
+                    if (!propertyValues)
+                        return null;
+                    var propertyLanguageMap = {};
+                    for (var _i = 0; _i < propertyValues.length; _i++) {
+                        var propertyValue = propertyValues[_i];
+                        if (!Literal.Factory.is(propertyValue))
+                            continue;
+                        if (!Literal.Factory.hasType(propertyValue, NS.XSD.DataType.string))
+                            continue;
+                        var languageTag = propertyValue["@language"];
+                        if (!languageTag)
+                            continue;
+                        propertyLanguageMap[languageTag] = Literal.Factory.parse(propertyValue);
+                    }
+                    return propertyLanguageMap;
+                };
+                Util.getList = function (propertyValues) {
+                    for (var _i = 0; _i < propertyValues.length; _i++) {
+                        var propertyValue = propertyValues[_i];
+                        if (!List.Factory.is(propertyValue))
+                            continue;
+                        return propertyValue;
+                    }
+                    return null;
+                };
+                Util.parseValue = function (propertyValue, pointerLibrary) {
+                    if (Literal.Factory.is(propertyValue)) {
+                        return Literal.Factory.parse(propertyValue);
+                    }
+                    else if (RDFNode.Factory.is(propertyValue)) {
+                        return pointerLibrary.getPointer(propertyValue["@id"]);
+                    }
+                    else if (List.Factory.is(propertyValue)) {
+                        var parsedValue = [];
+                        var listValues = propertyValue["@list"];
+                        for (var _i = 0; _i < listValues.length; _i++) {
+                            var listValue = listValues[_i];
+                            parsedValue.push(this.parseValue(listValue, pointerLibrary));
+                        }
+                        return parsedValue;
+                    }
+                    else {
+                    }
+                };
+                return Util;
+            })();
+            exports_1("Util", Util);
+        }
+    }
+});
+
+$__System.register("4", ["2e", "26", "27", "2a", "28", "29", "30"], function(exports_1) {
+    var Literal, PropertyDescription_1, Document, List, Node, URI, Value;
+    return {
+        setters:[
             function (Literal_1) {
                 Literal = Literal_1;
             },
@@ -2631,11 +4074,11 @@ $__System.register("6", ["22", "1b", "20", "1f", "1c", "1d", "1e", "1a"], functi
             function (Document_1) {
                 Document = Document_1;
             },
+            function (List_1) {
+                List = List_1;
+            },
             function (Node_1) {
                 Node = Node_1;
-            },
-            function (Resource_1) {
-                Resource = Resource_1;
             },
             function (URI_1) {
                 URI = URI_1;
@@ -2644,520 +4087,13 @@ $__System.register("6", ["22", "1b", "20", "1f", "1c", "1d", "1e", "1a"], functi
                 Value = Value_1;
             }],
         execute: function() {
-            exports_1("Persisted", Persisted);
             exports_1("Literal", Literal);
             exports_1("PropertyDescription", PropertyDescription_1.default);
             exports_1("Document", Document);
+            exports_1("List", List);
             exports_1("Node", Node);
-            exports_1("Resource", Resource);
             exports_1("URI", URI);
             exports_1("Value", Value);
-        }
-    }
-});
-
-$__System.register("23", ["17", "13", "9", "6", "24", "25", "19"], function(exports_1) {
-    var HTTP, Errors, NS, RDF, BasicAuthenticator_1, UsernameAndPasswordToken_1, Token;
-    var Class;
-    return {
-        setters:[
-            function (HTTP_1) {
-                HTTP = HTTP_1;
-            },
-            function (Errors_1) {
-                Errors = Errors_1;
-            },
-            function (NS_1) {
-                NS = NS_1;
-            },
-            function (RDF_1) {
-                RDF = RDF_1;
-            },
-            function (BasicAuthenticator_1_1) {
-                BasicAuthenticator_1 = BasicAuthenticator_1_1;
-            },
-            function (UsernameAndPasswordToken_1_1) {
-                UsernameAndPasswordToken_1 = UsernameAndPasswordToken_1_1;
-            },
-            function (Token_1) {
-                Token = Token_1;
-            }],
-        execute: function() {
-            Class = (function () {
-                function Class(context) {
-                    if (context === null)
-                        throw new Errors.IllegalArgumentError("context cannot be null");
-                    this.context = context;
-                    this.basicAuthenticator = new BasicAuthenticator_1.default();
-                }
-                Class.prototype.isAuthenticated = function () {
-                    return !!this.token && this.token.expirationTime > new Date();
-                };
-                Class.prototype.authenticate = function (authenticationToken) {
-                    var _this = this;
-                    return this.basicAuthenticator.authenticate(authenticationToken).then(function () {
-                        return _this.createToken();
-                    }).then(function (processedResponse) {
-                        _this.token = processedResponse.result;
-                    });
-                };
-                Class.prototype.addAuthentication = function (requestOptions) {
-                    var headers = requestOptions.headers ? requestOptions.headers : requestOptions.headers = new Map();
-                    this.addTokenAuthenticationHeader(headers);
-                    return requestOptions;
-                };
-                Class.prototype.clearAuthentication = function () {
-                    this.token = null;
-                };
-                Class.prototype.supports = function (authenticationToken) {
-                    return authenticationToken instanceof UsernameAndPasswordToken_1.default;
-                };
-                Class.prototype.createToken = function () {
-                    var uri = this.context.resolve(Class.TOKEN_CONTAINER);
-                    var requestOptions = {};
-                    this.basicAuthenticator.addAuthentication(requestOptions);
-                    HTTP.Request.Service.setAcceptHeader("application/ld+json", requestOptions);
-                    HTTP.Request.Service.setPreferredInteractionModel(NS.LDP.Class.RDFSource, requestOptions);
-                    return HTTP.Request.Service.post(uri, null, requestOptions, new HTTP.JSONLDParser.Class()).then(function (processedResponse) {
-                        var nodes = RDF.Document.Util.getResources(processedResponse.result);
-                        var resources = RDF.Resource.factory.from(nodes);
-                        resources = resources.filter(Token.factory.hasRDFClass);
-                        if (resources.length === 0)
-                            throw new HTTP.Errors.BadResponseError("No '" + Token.RDF_CLASS + "' was returned.", processedResponse.response);
-                        if (resources.length > 1)
-                            throw new HTTP.Errors.BadResponseError("Multiple '" + Token.RDF_CLASS + "' were returned. ", processedResponse.response);
-                        return {
-                            result: Token.factory.from(resources[0]),
-                            response: processedResponse.response
-                        };
-                    });
-                };
-                Class.prototype.addTokenAuthenticationHeader = function (headers) {
-                    var header;
-                    if (headers.has("Authorization")) {
-                        header = headers.get("Authorization");
-                    }
-                    else {
-                        header = new HTTP.Header.Class();
-                        headers.set("Authorization", header);
-                    }
-                    var authorization = "Token " + this.token.key;
-                    header.values.push(new HTTP.Header.Value(authorization));
-                    return headers;
-                };
-                Class.TOKEN_CONTAINER = "auth-tokens/";
-                return Class;
-            })();
-            exports_1("Class", Class);
-            exports_1("default",Class);
-        }
-    }
-});
-
-$__System.register("25", [], function(exports_1) {
-    var Class;
-    return {
-        setters:[],
-        execute: function() {
-            Class = (function () {
-                function Class(username, password) {
-                    this._username = username;
-                    this._password = password;
-                }
-                Object.defineProperty(Class.prototype, "username", {
-                    get: function () { return this._username; },
-                    enumerable: true,
-                    configurable: true
-                });
-                Object.defineProperty(Class.prototype, "password", {
-                    get: function () { return this._password; },
-                    enumerable: true,
-                    configurable: true
-                });
-                return Class;
-            })();
-            exports_1("Class", Class);
-            exports_1("default",Class);
-        }
-    }
-});
-
-$__System.register("26", ["27"], function(exports_1) {
-    var __extends = (this && this.__extends) || function (d, b) {
-        for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-    var AbstractError_1;
-    var IDAlreadyInUseError;
-    return {
-        setters:[
-            function (AbstractError_1_1) {
-                AbstractError_1 = AbstractError_1_1;
-            }],
-        execute: function() {
-            IDAlreadyInUseError = (function (_super) {
-                __extends(IDAlreadyInUseError, _super);
-                function IDAlreadyInUseError() {
-                    _super.apply(this, arguments);
-                }
-                Object.defineProperty(IDAlreadyInUseError.prototype, "name", {
-                    get: function () { return "IDAlreadyInUseError"; },
-                    enumerable: true,
-                    configurable: true
-                });
-                return IDAlreadyInUseError;
-            })(AbstractError_1.default);
-            exports_1("default",IDAlreadyInUseError);
-        }
-    }
-});
-
-$__System.register("28", ["27"], function(exports_1) {
-    var __extends = (this && this.__extends) || function (d, b) {
-        for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-    var AbstractError_1;
-    var IllegalArgumentError;
-    return {
-        setters:[
-            function (AbstractError_1_1) {
-                AbstractError_1 = AbstractError_1_1;
-            }],
-        execute: function() {
-            IllegalArgumentError = (function (_super) {
-                __extends(IllegalArgumentError, _super);
-                function IllegalArgumentError() {
-                    _super.apply(this, arguments);
-                }
-                Object.defineProperty(IllegalArgumentError.prototype, "name", {
-                    get: function () { return "IllegalArgumentError"; },
-                    enumerable: true,
-                    configurable: true
-                });
-                return IllegalArgumentError;
-            })(AbstractError_1.default);
-            exports_1("default",IllegalArgumentError);
-        }
-    }
-});
-
-$__System.register("29", ["27"], function(exports_1) {
-    var __extends = (this && this.__extends) || function (d, b) {
-        for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-    var AbstractError_1;
-    var IllegalStateError;
-    return {
-        setters:[
-            function (AbstractError_1_1) {
-                AbstractError_1 = AbstractError_1_1;
-            }],
-        execute: function() {
-            IllegalStateError = (function (_super) {
-                __extends(IllegalStateError, _super);
-                function IllegalStateError() {
-                    _super.apply(this, arguments);
-                }
-                Object.defineProperty(IllegalStateError.prototype, "name", {
-                    get: function () { return "IllegalStateError"; },
-                    enumerable: true,
-                    configurable: true
-                });
-                return IllegalStateError;
-            })(AbstractError_1.default);
-            exports_1("default",IllegalStateError);
-        }
-    }
-});
-
-$__System.register("13", ["29", "28", "26"], function(exports_1) {
-    var IllegalStateError_1, IllegalArgumentError_1, IDAlreadyInUseError_1;
-    return {
-        setters:[
-            function (IllegalStateError_1_1) {
-                IllegalStateError_1 = IllegalStateError_1_1;
-            },
-            function (IllegalArgumentError_1_1) {
-                IllegalArgumentError_1 = IllegalArgumentError_1_1;
-            },
-            function (IDAlreadyInUseError_1_1) {
-                IDAlreadyInUseError_1 = IDAlreadyInUseError_1_1;
-            }],
-        execute: function() {
-            exports_1("IllegalStateError", IllegalStateError_1.default);
-            exports_1("IllegalArgumentError", IllegalArgumentError_1.default);
-            exports_1("IDAlreadyInUseError", IDAlreadyInUseError_1.default);
-        }
-    }
-});
-
-$__System.register("2a", [], function(exports_1) {
-    var StatusCode;
-    return {
-        setters:[],
-        execute: function() {
-            (function (StatusCode) {
-                StatusCode[StatusCode["CONTINUE"] = 100] = "CONTINUE";
-                StatusCode[StatusCode["SWITCHING_PROTOCOLS"] = 101] = "SWITCHING_PROTOCOLS";
-                StatusCode[StatusCode["OK"] = 200] = "OK";
-                StatusCode[StatusCode["CREATED"] = 201] = "CREATED";
-                StatusCode[StatusCode["ACCEPTED"] = 202] = "ACCEPTED";
-                StatusCode[StatusCode["NON_AUTHORITATIVE_INFORMATION"] = 203] = "NON_AUTHORITATIVE_INFORMATION";
-                StatusCode[StatusCode["NO_CONTENT"] = 204] = "NO_CONTENT";
-                StatusCode[StatusCode["RESET_CONTENT"] = 205] = "RESET_CONTENT";
-                StatusCode[StatusCode["PARTIAL_CONTENT"] = 206] = "PARTIAL_CONTENT";
-                StatusCode[StatusCode["MULTIPLE_CHOICES"] = 300] = "MULTIPLE_CHOICES";
-                StatusCode[StatusCode["MOVED_PERMANENTLY"] = 301] = "MOVED_PERMANENTLY";
-                StatusCode[StatusCode["FOUND"] = 302] = "FOUND";
-                StatusCode[StatusCode["SEE_OTHER"] = 303] = "SEE_OTHER";
-                StatusCode[StatusCode["NOT_MODIFIED"] = 304] = "NOT_MODIFIED";
-                StatusCode[StatusCode["USE_PROXY"] = 305] = "USE_PROXY";
-                StatusCode[StatusCode["TEMPORARY_REDIRECT"] = 307] = "TEMPORARY_REDIRECT";
-                StatusCode[StatusCode["BAD_REQUEST"] = 400] = "BAD_REQUEST";
-                StatusCode[StatusCode["UNAUTHORIZED"] = 401] = "UNAUTHORIZED";
-                StatusCode[StatusCode["PAYMENT_REQUIRED"] = 402] = "PAYMENT_REQUIRED";
-                StatusCode[StatusCode["FORBIDDEN"] = 403] = "FORBIDDEN";
-                StatusCode[StatusCode["NOT_FOUND"] = 404] = "NOT_FOUND";
-                StatusCode[StatusCode["METHOD_NOT_ALLOWED"] = 405] = "METHOD_NOT_ALLOWED";
-                StatusCode[StatusCode["NOT_ACCEPTABLE"] = 406] = "NOT_ACCEPTABLE";
-                StatusCode[StatusCode["PROXY_AUTHENTICATION_REQUIRED"] = 407] = "PROXY_AUTHENTICATION_REQUIRED";
-                StatusCode[StatusCode["REQUEST_TIME_OUT"] = 408] = "REQUEST_TIME_OUT";
-                StatusCode[StatusCode["CONFLICT"] = 409] = "CONFLICT";
-                StatusCode[StatusCode["GONE"] = 410] = "GONE";
-                StatusCode[StatusCode["LENGTH_REQUIRED"] = 411] = "LENGTH_REQUIRED";
-                StatusCode[StatusCode["PRECONDITION_FAILED"] = 412] = "PRECONDITION_FAILED";
-                StatusCode[StatusCode["REQUEST_ENTITY_TOO_LARGE"] = 413] = "REQUEST_ENTITY_TOO_LARGE";
-                StatusCode[StatusCode["REQUEST_URI_TOO_LARGE"] = 414] = "REQUEST_URI_TOO_LARGE";
-                StatusCode[StatusCode["UNSUPPORTED_MEDIA_TYPE"] = 415] = "UNSUPPORTED_MEDIA_TYPE";
-                StatusCode[StatusCode["REQUESTED_RANGE_NOT_SATISFIABLE"] = 416] = "REQUESTED_RANGE_NOT_SATISFIABLE";
-                StatusCode[StatusCode["EXPECTATION_FAILED"] = 417] = "EXPECTATION_FAILED";
-                StatusCode[StatusCode["INTERNAL_SERVER_ERROR"] = 500] = "INTERNAL_SERVER_ERROR";
-                StatusCode[StatusCode["NOT_IMPLEMENTED"] = 501] = "NOT_IMPLEMENTED";
-                StatusCode[StatusCode["BAD_GATEWAY"] = 502] = "BAD_GATEWAY";
-                StatusCode[StatusCode["SERVICE_UNAVAILABLE"] = 503] = "SERVICE_UNAVAILABLE";
-                StatusCode[StatusCode["GATEWAY_TIME_OUT"] = 504] = "GATEWAY_TIME_OUT";
-                StatusCode[StatusCode["HTTP_VERSION_NOT_SUPPORTED"] = 505] = "HTTP_VERSION_NOT_SUPPORTED";
-            })(StatusCode || (StatusCode = {}));
-            exports_1("default",StatusCode);
-        }
-    }
-});
-
-$__System.register("2b", ["2c"], function(exports_1) {
-    var Header;
-    var Response;
-    return {
-        setters:[
-            function (Header_1) {
-                Header = Header_1;
-            }],
-        execute: function() {
-            Response = (function () {
-                function Response(request) {
-                    this.status = request.status;
-                    this.data = request.responseText;
-                    this.setHeaders(request);
-                    this.request = request;
-                }
-                Response.prototype.setHeaders = function (request) {
-                    var headersString = request.getAllResponseHeaders();
-                    if (headersString) {
-                        this.headers = Header.Util.parseHeaders(headersString);
-                    }
-                    else {
-                        this.headers = new Map();
-                    }
-                };
-                return Response;
-            })();
-            exports_1("default",Response);
-        }
-    }
-});
-
-/// <reference path="../../typings/es6/es6.d.ts" />
-/// <reference path="../../typings/es6-promise/es6-promise.d.ts" />
-$__System.register("2d", ["2e", "2c", "2f", "2b", "b"], function(exports_1) {
-    var Errors, Header, Method_1, Response_1, Utils;
-    var Service;
-    function setHeaders(request, headers) {
-        var namesIterator = headers.keys();
-        var next = namesIterator.next();
-        while (!next.done) {
-            var name = next.value;
-            var value = headers.get(name);
-            request.setRequestHeader(name, value.toString());
-            next = namesIterator.next();
-        }
-    }
-    function onLoad(resolve, reject, request) {
-        return function () {
-            var response = new Response_1.default(request);
-            if (request.status >= 200 && request.status <= 299) {
-                resolve(response);
-            }
-            else {
-                rejectRequest(reject, request);
-            }
-        };
-    }
-    function onError(reject, request) {
-        return function () {
-            rejectRequest(reject, request);
-        };
-    }
-    function rejectRequest(reject, request) {
-        var response = new Response_1.default(request);
-        if (response.status >= 400 && response.status < 600) {
-            if (Errors.statusCodeMap.has(response.status)) {
-                var error = Errors.statusCodeMap.get(response.status);
-                // TODO: Set error message
-                reject(new error("", response));
-            }
-        }
-        reject(new Errors.UnknownError("", response));
-    }
-    return {
-        setters:[
-            function (Errors_1) {
-                Errors = Errors_1;
-            },
-            function (Header_1) {
-                Header = Header_1;
-            },
-            function (Method_1_1) {
-                Method_1 = Method_1_1;
-            },
-            function (Response_1_1) {
-                Response_1 = Response_1_1;
-            },
-            function (Utils_1) {
-                Utils = Utils_1;
-            }],
-        execute: function() {
-            Service = (function () {
-                function Service() {
-                }
-                Service.send = function (method, url, bodyOrOptions, options, parser) {
-                    if (bodyOrOptions === void 0) { bodyOrOptions = Service.defaultOptions; }
-                    if (options === void 0) { options = Service.defaultOptions; }
-                    if (parser === void 0) { parser = null; }
-                    var body = bodyOrOptions && Utils.isString(bodyOrOptions) ? bodyOrOptions : null;
-                    options = !bodyOrOptions || Utils.isString(bodyOrOptions) ? options : bodyOrOptions;
-                    options = options ? options : {};
-                    options = Utils.extend(options, Service.defaultOptions);
-                    if (Utils.isNumber(method))
-                        method = Method_1.default[method];
-                    var requestPromise = new Promise(function (resolve, reject) {
-                        var request = options.request ? options.request : new XMLHttpRequest();
-                        request.open(method, url, true);
-                        if (options.headers)
-                            setHeaders(request, options.headers);
-                        request.withCredentials = options.sendCredentialsOnCORS;
-                        if (options.timeout)
-                            request.timeout = options.timeout;
-                        request.onload = onLoad(resolve, reject, request);
-                        request.onerror = onError(reject, request);
-                        if (body) {
-                            request.send(body);
-                        }
-                        else {
-                            request.send();
-                        }
-                    });
-                    if (parser === null)
-                        return requestPromise;
-                    return requestPromise.then(function (response) {
-                        return parser.parse(response.data).then(function (parsedBody) {
-                            return {
-                                result: parsedBody,
-                                response: response
-                            };
-                        });
-                    });
-                };
-                Service.options = function (url, options) {
-                    if (options === void 0) { options = Service.defaultOptions; }
-                    return Service.send(Method_1.default.OPTIONS, url, options);
-                };
-                Service.head = function (url, options) {
-                    if (options === void 0) { options = Service.defaultOptions; }
-                    return Service.send(Method_1.default.HEAD, url, options);
-                };
-                Service.get = function (url, options) {
-                    if (options === void 0) { options = Service.defaultOptions; }
-                    return Service.send(Method_1.default.GET, url, options);
-                };
-                Service.post = function (url, bodyOrOptions, options, parser) {
-                    if (bodyOrOptions === void 0) { bodyOrOptions = Service.defaultOptions; }
-                    if (options === void 0) { options = Service.defaultOptions; }
-                    if (parser === void 0) { parser = null; }
-                    return Service.send(Method_1.default.POST, url, bodyOrOptions, options, parser);
-                };
-                Service.put = function (url, body, options) {
-                    if (options === void 0) { options = Service.defaultOptions; }
-                    return Service.send(Method_1.default.PUT, url, body, options);
-                };
-                Service.patch = function (url, body, options) {
-                    if (options === void 0) { options = Service.defaultOptions; }
-                    return Service.send(Method_1.default.PATCH, url, body, options);
-                };
-                Service.delete = function (url, body, options) {
-                    if (options === void 0) { options = Service.defaultOptions; }
-                    return Service.send(Method_1.default.DELETE, url, body, options);
-                };
-                Service.setAcceptHeader = function (accept, requestOptions) {
-                    var headers = requestOptions.headers ? requestOptions.headers : requestOptions.headers = new Map();
-                    headers.set("Accept", new Header.Class(accept));
-                    return requestOptions;
-                };
-                // TODO: Move this method to a more specific module
-                Service.setPreferredInteractionModel = function (interactionModelURI, requestOptions) {
-                    var headers = requestOptions.headers ? requestOptions.headers : requestOptions.headers = new Map();
-                    if (!headers.has("Prefer"))
-                        headers.set("Prefer", new Header.Class());
-                    var prefer = headers.get("Prefer");
-                    prefer.values.push(new Header.Value(interactionModelURI + "; rel=interaction-model"));
-                    return requestOptions;
-                };
-                Service.defaultOptions = {
-                    sendCredentialsOnCORS: true
-                };
-                return Service;
-            })();
-            exports_1("Service", Service);
-        }
-    }
-});
-
-$__System.register("30", [], function(exports_1) {
-    return {
-        setters:[],
-        execute: function() {
-        }
-    }
-});
-
-$__System.register("2f", [], function(exports_1) {
-    var Method;
-    return {
-        setters:[],
-        execute: function() {
-            (function (Method) {
-                Method[Method["OPTIONS"] = 0] = "OPTIONS";
-                Method[Method["HEAD"] = 1] = "HEAD";
-                Method[Method["GET"] = 2] = "GET";
-                Method[Method["POST"] = 3] = "POST";
-                Method[Method["PUT"] = 4] = "PUT";
-                Method[Method["PATCH"] = 5] = "PATCH";
-                Method[Method["DELETE"] = 6] = "DELETE";
-            })(Method || (Method = {}));
-            exports_1("default",Method);
         }
     }
 });
@@ -4307,7 +5243,6 @@ var _removeDefine = $__System.get("@@amd-helpers").createDefine();
       var maxRedirects = ('maxRedirects' in options) ? options.maxRedirects : -1;
       var request = require('request');
       var http = require('http');
-      var cache = new jsonld.DocumentCache();
       var queue = new jsonld.RequestQueue();
       if (options.usePromise) {
         return queue.wrapLoader(function(url) {
@@ -4338,7 +5273,7 @@ var _removeDefine = $__System.get("@@amd-helpers").createDefine();
             document: null
           });
         }
-        var doc = cache.get(url);
+        var doc = null;
         if (doc !== null) {
           return callback(null, doc);
         }
@@ -4402,13 +5337,6 @@ var _removeDefine = $__System.get("@@amd-helpers").createDefine();
             return loadDocument(res.headers.location, redirects, callback);
           }
           redirects.push(url);
-          for (var i = 0; i < redirects.length; ++i) {
-            cache.set(redirects[i], {
-              contextUrl: null,
-              documentUrl: redirects[i],
-              document: body
-            });
-          }
           callback(err, doc);
         }
       }
@@ -7515,15 +8443,16 @@ var _removeDefine = $__System.get("@@amd-helpers").createDefine();
       var datatype = '(?:\\^\\^' + iri + ')';
       var language = '(?:@([a-z]+(?:-[a-z0-9]+)*))';
       var literal = '(?:' + plain + '(?:' + datatype + '|' + language + ')?)';
+      var comment = '(?:#.*)?';
       var ws = '[ \\t]+';
       var wso = '[ \\t]*';
       var eoln = /(?:\r\n)|(?:\n)|(?:\r)/g;
-      var empty = new RegExp('^' + wso + '$');
+      var empty = new RegExp('^' + wso + comment + '$');
       var subject = '(?:' + iri + '|' + bnode + ')' + ws;
       var property = iri + ws;
       var object = '(?:' + iri + '|' + bnode + '|' + literal + ')' + wso;
       var graphName = '(?:\\.|(?:(?:' + iri + '|' + bnode + ')' + wso + '\\.))';
-      var quad = new RegExp('^' + wso + subject + property + object + graphName + wso + '$');
+      var quad = new RegExp('^' + wso + subject + property + object + graphName + wso + comment + '$');
       var dataset = {};
       var lines = input.split(eoln);
       var lineNumber = 0;
@@ -8312,7 +9241,7 @@ var _removeDefine = $__System.get("@@amd-helpers").createDefine();
     });
   };
   if (!_nodejs && (typeof define === 'function' && define.amd)) {
-    define("16", [], function() {
+    define("22", [], function() {
       wrapper(factory);
       return factory;
     });
@@ -8334,8 +9263,36 @@ var _removeDefine = $__System.get("@@amd-helpers").createDefine();
 
 _removeDefine();
 })();
-/// <reference path="../../typings/tsd.d.ts" />
-$__System.register("31", ["16", "32"], function(exports_1) {
+/// <reference path="./../../typings/typings.d.ts" />
+$__System.register("1e", [], function(exports_1) {
+    var Class;
+    return {
+        setters:[],
+        execute: function() {
+            Class = (function () {
+                function Class() {
+                }
+                Class.prototype.parse = function (body) {
+                    return new Promise(function (resolve, reject) {
+                        try {
+                            resolve(JSON.parse(body));
+                        }
+                        catch (error) {
+                            // TODO: Handle SyntaxError
+                            reject(error);
+                        }
+                    });
+                };
+                return Class;
+            })();
+            exports_1("Class", Class);
+            exports_1("default",Class);
+        }
+    }
+});
+
+/// <reference path="../../typings/typings.d.ts" />
+$__System.register("31", ["22", "1e"], function(exports_1) {
     var jsonld, JSONParser_1;
     var Class;
     return {
@@ -8377,962 +9334,7 @@ $__System.register("31", ["16", "32"], function(exports_1) {
     }
 });
 
-$__System.register("32", [], function(exports_1) {
-    var Class;
-    return {
-        setters:[],
-        execute: function() {
-            Class = (function () {
-                function Class() {
-                }
-                Class.prototype.parse = function (body) {
-                    return new Promise(function (resolve, reject) {
-                        try {
-                            resolve(JSON.parse(body));
-                        }
-                        catch (error) {
-                            // TODO: Handle SyntaxError
-                            reject(error);
-                        }
-                    });
-                };
-                return Class;
-            })();
-            exports_1("Class", Class);
-            exports_1("default",Class);
-        }
-    }
-});
-
-/// <reference path="../../typings/es6/es6.d.ts" />
-$__System.register("2c", ["b"], function(exports_1) {
-    var Utils;
-    var Class, Value, Util;
-    return {
-        setters:[
-            function (Utils_1) {
-                Utils = Utils_1;
-            }],
-        execute: function() {
-            Class = (function () {
-                function Class(valueOrValues) {
-                    this.values = [];
-                    if (!valueOrValues) {
-                        return;
-                    }
-                    else if (Array.isArray(valueOrValues)) {
-                        this.values = valueOrValues;
-                    }
-                    else {
-                        this.setValues(valueOrValues);
-                    }
-                }
-                Class.prototype.toString = function () {
-                    return this.values.join(", ");
-                };
-                Class.prototype.setValues = function (valuesString) {
-                    this.values = [];
-                    var valueStrings = valuesString.split(",");
-                    for (var i = 0, length = valueStrings.length; i < length; i++) {
-                        var valueString = valueStrings[i];
-                        var value = new Value(valueString);
-                        this.values.push(value);
-                    }
-                };
-                return Class;
-            })();
-            exports_1("Class", Class);
-            Value = (function () {
-                function Value(value, mainValue, secondaryKey, secondaryValue) {
-                    this.mainKey = null;
-                    this.mainValue = null;
-                    this.secondaryKey = null;
-                    this.secondaryValue = null;
-                    if (mainValue) {
-                        this.mainKey = value;
-                        this.mainValue = mainValue;
-                        this.secondaryKey = secondaryKey;
-                        this.secondaryValue = secondaryValue;
-                    }
-                    else
-                        this.setValue(value);
-                }
-                Value.cleanString = function (toClean) {
-                    toClean = toClean.trim();
-                    toClean = (Utils.S.startsWith(toClean, "\"") || Utils.S.startsWith(toClean, "'")) ? toClean.substr(1, toClean.length) : toClean;
-                    toClean = (Utils.S.endsWith(toClean, "\"") || Utils.S.endsWith(toClean, "'")) ? toClean.substr(0, toClean.length - 1) : toClean;
-                    return toClean;
-                };
-                Value.prototype.toString = function () {
-                    var result = "";
-                    if (this.mainKey)
-                        result += this.mainKey + "=";
-                    result += this.mainValue;
-                    if (this.secondaryKey || this.secondaryValue)
-                        result += "; ";
-                    if (this.secondaryKey)
-                        result += this.secondaryKey + "=";
-                    if (this.secondaryValue)
-                        result += this.secondaryValue;
-                    return result;
-                };
-                Value.prototype.setValue = function (value) {
-                    var parts = value.split(";");
-                    this.setMain(parts[0]);
-                    if (parts.length > 1)
-                        this.setSecondary(parts[1]);
-                };
-                Value.prototype.setMain = function (main) {
-                    var parts = main.split("=");
-                    if (parts.length === 1) {
-                        this.mainValue = Value.cleanString(parts[0]);
-                    }
-                    else if (parts.length === 2) {
-                        this.mainKey = Value.cleanString(parts[0]);
-                        this.mainValue = Value.cleanString(parts[1]);
-                    }
-                    else
-                        this.mainValue = main;
-                };
-                Value.prototype.setSecondary = function (secondary) {
-                    var parts = secondary.split("=");
-                    if (parts.length === 1) {
-                        this.secondaryValue = Value.cleanString(parts[0]);
-                    }
-                    else if (parts.length === 2) {
-                        this.secondaryKey = Value.cleanString(parts[0]);
-                        this.secondaryValue = Value.cleanString(parts[1]);
-                    }
-                    else
-                        this.secondaryValue = secondary;
-                };
-                return Value;
-            })();
-            exports_1("Value", Value);
-            Util = (function () {
-                function Util() {
-                }
-                Util.parseHeaders = function (headersString) {
-                    var headers = new Map();
-                    var headerStrings = headersString.split("\r\n");
-                    for (var i = 0, length = headerStrings.length; i < length; i++) {
-                        var headerString = headerStrings[i];
-                        if (!headerString.trim())
-                            continue;
-                        var parts = headerString.split(":");
-                        if (parts.length !== 2)
-                            throw new Error("ParseError: The header couldn't be parsed.");
-                        var name = parts[0].trim();
-                        var header = new Class(parts[1].trim());
-                        if (headers.has(name)) {
-                            var existingHeader = headers.get(name);
-                            existingHeader.values.concat(header.values);
-                        }
-                        else
-                            headers.set(name, header);
-                    }
-                    return headers;
-                };
-                return Util;
-            })();
-            exports_1("Util", Util);
-        }
-    }
-});
-
-$__System.register("33", ["34"], function(exports_1) {
-    var __extends = (this && this.__extends) || function (d, b) {
-        for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-    var HTTPError_1;
-    var name, UnknownError;
-    return {
-        setters:[
-            function (HTTPError_1_1) {
-                HTTPError_1 = HTTPError_1_1;
-            }],
-        execute: function() {
-            name = "UnknownError";
-            UnknownError = (function (_super) {
-                __extends(UnknownError, _super);
-                function UnknownError() {
-                    _super.apply(this, arguments);
-                }
-                Object.defineProperty(UnknownError.prototype, "name", {
-                    get: function () { return name; },
-                    enumerable: true,
-                    configurable: true
-                });
-                return UnknownError;
-            })(HTTPError_1.default);
-            exports_1("default",UnknownError);
-        }
-    }
-});
-
-$__System.register("35", ["34"], function(exports_1) {
-    var __extends = (this && this.__extends) || function (d, b) {
-        for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-    var HTTPError_1;
-    var name, statusCode, ServiceUnavailableError;
-    return {
-        setters:[
-            function (HTTPError_1_1) {
-                HTTPError_1 = HTTPError_1_1;
-            }],
-        execute: function() {
-            name = "ServiceUnavailableError";
-            statusCode = 503;
-            ServiceUnavailableError = (function (_super) {
-                __extends(ServiceUnavailableError, _super);
-                function ServiceUnavailableError() {
-                    _super.apply(this, arguments);
-                }
-                Object.defineProperty(ServiceUnavailableError, "statusCode", {
-                    get: function () { return statusCode; },
-                    enumerable: true,
-                    configurable: true
-                });
-                Object.defineProperty(ServiceUnavailableError.prototype, "name", {
-                    get: function () { return name; },
-                    enumerable: true,
-                    configurable: true
-                });
-                return ServiceUnavailableError;
-            })(HTTPError_1.default);
-            exports_1("default",ServiceUnavailableError);
-        }
-    }
-});
-
-$__System.register("36", ["34"], function(exports_1) {
-    var __extends = (this && this.__extends) || function (d, b) {
-        for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-    var HTTPError_1;
-    var name, statusCode, NotImplementedError;
-    return {
-        setters:[
-            function (HTTPError_1_1) {
-                HTTPError_1 = HTTPError_1_1;
-            }],
-        execute: function() {
-            name = "NotImplementedError";
-            statusCode = 501;
-            NotImplementedError = (function (_super) {
-                __extends(NotImplementedError, _super);
-                function NotImplementedError() {
-                    _super.apply(this, arguments);
-                }
-                Object.defineProperty(NotImplementedError, "statusCode", {
-                    get: function () { return statusCode; },
-                    enumerable: true,
-                    configurable: true
-                });
-                Object.defineProperty(NotImplementedError.prototype, "name", {
-                    get: function () { return name; },
-                    enumerable: true,
-                    configurable: true
-                });
-                return NotImplementedError;
-            })(HTTPError_1.default);
-            exports_1("default",NotImplementedError);
-        }
-    }
-});
-
-$__System.register("37", ["34"], function(exports_1) {
-    var __extends = (this && this.__extends) || function (d, b) {
-        for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-    var HTTPError_1;
-    var name, statusCode, InternalServerError;
-    return {
-        setters:[
-            function (HTTPError_1_1) {
-                HTTPError_1 = HTTPError_1_1;
-            }],
-        execute: function() {
-            name = "InternalServerError";
-            statusCode = 500;
-            InternalServerError = (function (_super) {
-                __extends(InternalServerError, _super);
-                function InternalServerError() {
-                    _super.apply(this, arguments);
-                }
-                Object.defineProperty(InternalServerError, "statusCode", {
-                    get: function () { return statusCode; },
-                    enumerable: true,
-                    configurable: true
-                });
-                Object.defineProperty(InternalServerError.prototype, "name", {
-                    get: function () { return name; },
-                    enumerable: true,
-                    configurable: true
-                });
-                return InternalServerError;
-            })(HTTPError_1.default);
-            exports_1("default",InternalServerError);
-        }
-    }
-});
-
-$__System.register("38", ["34"], function(exports_1) {
-    var __extends = (this && this.__extends) || function (d, b) {
-        for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-    var HTTPError_1;
-    var name, statusCode, HTTPVersionNotSupportedError;
-    return {
-        setters:[
-            function (HTTPError_1_1) {
-                HTTPError_1 = HTTPError_1_1;
-            }],
-        execute: function() {
-            name = "HTTPVersionNotSupportedError";
-            statusCode = 505;
-            HTTPVersionNotSupportedError = (function (_super) {
-                __extends(HTTPVersionNotSupportedError, _super);
-                function HTTPVersionNotSupportedError() {
-                    _super.apply(this, arguments);
-                }
-                Object.defineProperty(HTTPVersionNotSupportedError, "statusCode", {
-                    get: function () { return statusCode; },
-                    enumerable: true,
-                    configurable: true
-                });
-                Object.defineProperty(HTTPVersionNotSupportedError.prototype, "name", {
-                    get: function () { return name; },
-                    enumerable: true,
-                    configurable: true
-                });
-                return HTTPVersionNotSupportedError;
-            })(HTTPError_1.default);
-            exports_1("default",HTTPVersionNotSupportedError);
-        }
-    }
-});
-
-$__System.register("39", ["34"], function(exports_1) {
-    var __extends = (this && this.__extends) || function (d, b) {
-        for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-    var HTTPError_1;
-    var name, statusCode, GatewayTimeoutError;
-    return {
-        setters:[
-            function (HTTPError_1_1) {
-                HTTPError_1 = HTTPError_1_1;
-            }],
-        execute: function() {
-            name = "GatewayTimeoutError";
-            statusCode = 504;
-            GatewayTimeoutError = (function (_super) {
-                __extends(GatewayTimeoutError, _super);
-                function GatewayTimeoutError() {
-                    _super.apply(this, arguments);
-                }
-                Object.defineProperty(GatewayTimeoutError, "statusCode", {
-                    get: function () { return statusCode; },
-                    enumerable: true,
-                    configurable: true
-                });
-                Object.defineProperty(GatewayTimeoutError.prototype, "name", {
-                    get: function () { return name; },
-                    enumerable: true,
-                    configurable: true
-                });
-                return GatewayTimeoutError;
-            })(HTTPError_1.default);
-            exports_1("default",GatewayTimeoutError);
-        }
-    }
-});
-
-$__System.register("3a", ["34"], function(exports_1) {
-    var __extends = (this && this.__extends) || function (d, b) {
-        for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-    var HTTPError_1;
-    var name, statusCode, BadGatewayError;
-    return {
-        setters:[
-            function (HTTPError_1_1) {
-                HTTPError_1 = HTTPError_1_1;
-            }],
-        execute: function() {
-            name = "BadGatewayError";
-            statusCode = 502;
-            BadGatewayError = (function (_super) {
-                __extends(BadGatewayError, _super);
-                function BadGatewayError() {
-                    _super.apply(this, arguments);
-                }
-                Object.defineProperty(BadGatewayError, "statusCode", {
-                    get: function () { return statusCode; },
-                    enumerable: true,
-                    configurable: true
-                });
-                Object.defineProperty(BadGatewayError.prototype, "name", {
-                    get: function () { return name; },
-                    enumerable: true,
-                    configurable: true
-                });
-                return BadGatewayError;
-            })(HTTPError_1.default);
-            exports_1("default",BadGatewayError);
-        }
-    }
-});
-
-$__System.register("3b", ["34"], function(exports_1) {
-    var __extends = (this && this.__extends) || function (d, b) {
-        for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-    var HTTPError_1;
-    var name, statusCode, Class;
-    return {
-        setters:[
-            function (HTTPError_1_1) {
-                HTTPError_1 = HTTPError_1_1;
-            }],
-        execute: function() {
-            name = "BadResponseError";
-            statusCode = 0;
-            Class = (function (_super) {
-                __extends(Class, _super);
-                function Class() {
-                    _super.apply(this, arguments);
-                }
-                Object.defineProperty(Class, "statusCode", {
-                    get: function () { return statusCode; },
-                    enumerable: true,
-                    configurable: true
-                });
-                Object.defineProperty(Class.prototype, "name", {
-                    get: function () { return name; },
-                    enumerable: true,
-                    configurable: true
-                });
-                return Class;
-            })(HTTPError_1.default);
-            exports_1("default",Class);
-        }
-    }
-});
-
-$__System.register("3c", ["34"], function(exports_1) {
-    var __extends = (this && this.__extends) || function (d, b) {
-        for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-    var HTTPError_1;
-    var name, statusCode, UnsupportedMediaTypeError;
-    return {
-        setters:[
-            function (HTTPError_1_1) {
-                HTTPError_1 = HTTPError_1_1;
-            }],
-        execute: function() {
-            name = "UnsupportedMediaTypeError";
-            statusCode = 415;
-            UnsupportedMediaTypeError = (function (_super) {
-                __extends(UnsupportedMediaTypeError, _super);
-                function UnsupportedMediaTypeError() {
-                    _super.apply(this, arguments);
-                }
-                Object.defineProperty(UnsupportedMediaTypeError, "statusCode", {
-                    get: function () { return statusCode; },
-                    enumerable: true,
-                    configurable: true
-                });
-                Object.defineProperty(UnsupportedMediaTypeError.prototype, "name", {
-                    get: function () { return name; },
-                    enumerable: true,
-                    configurable: true
-                });
-                return UnsupportedMediaTypeError;
-            })(HTTPError_1.default);
-            exports_1("default",UnsupportedMediaTypeError);
-        }
-    }
-});
-
-$__System.register("3d", ["34"], function(exports_1) {
-    var __extends = (this && this.__extends) || function (d, b) {
-        for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-    var HTTPError_1;
-    var name, statusCode, UnauthorizedError;
-    return {
-        setters:[
-            function (HTTPError_1_1) {
-                HTTPError_1 = HTTPError_1_1;
-            }],
-        execute: function() {
-            name = "UnauthorizedError";
-            statusCode = 401;
-            UnauthorizedError = (function (_super) {
-                __extends(UnauthorizedError, _super);
-                function UnauthorizedError() {
-                    _super.apply(this, arguments);
-                }
-                Object.defineProperty(UnauthorizedError, "statusCode", {
-                    get: function () { return statusCode; },
-                    enumerable: true,
-                    configurable: true
-                });
-                Object.defineProperty(UnauthorizedError.prototype, "name", {
-                    get: function () { return name; },
-                    enumerable: true,
-                    configurable: true
-                });
-                return UnauthorizedError;
-            })(HTTPError_1.default);
-            exports_1("default",UnauthorizedError);
-        }
-    }
-});
-
-$__System.register("3e", ["34"], function(exports_1) {
-    var __extends = (this && this.__extends) || function (d, b) {
-        for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-    var HTTPError_1;
-    var name, statusCode, TooManyRequestsError;
-    return {
-        setters:[
-            function (HTTPError_1_1) {
-                HTTPError_1 = HTTPError_1_1;
-            }],
-        execute: function() {
-            name = "TooManyRequestsError";
-            statusCode = 429;
-            TooManyRequestsError = (function (_super) {
-                __extends(TooManyRequestsError, _super);
-                function TooManyRequestsError() {
-                    _super.apply(this, arguments);
-                }
-                Object.defineProperty(TooManyRequestsError, "statusCode", {
-                    get: function () { return statusCode; },
-                    enumerable: true,
-                    configurable: true
-                });
-                Object.defineProperty(TooManyRequestsError.prototype, "name", {
-                    get: function () { return name; },
-                    enumerable: true,
-                    configurable: true
-                });
-                return TooManyRequestsError;
-            })(HTTPError_1.default);
-            exports_1("default",TooManyRequestsError);
-        }
-    }
-});
-
-$__System.register("3f", ["34"], function(exports_1) {
-    var __extends = (this && this.__extends) || function (d, b) {
-        for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-    var HTTPError_1;
-    var name, statusCode, RequestURITooLongError;
-    return {
-        setters:[
-            function (HTTPError_1_1) {
-                HTTPError_1 = HTTPError_1_1;
-            }],
-        execute: function() {
-            name = "RequestURITooLongError";
-            statusCode = 414;
-            RequestURITooLongError = (function (_super) {
-                __extends(RequestURITooLongError, _super);
-                function RequestURITooLongError() {
-                    _super.apply(this, arguments);
-                }
-                Object.defineProperty(RequestURITooLongError, "statusCode", {
-                    get: function () { return statusCode; },
-                    enumerable: true,
-                    configurable: true
-                });
-                Object.defineProperty(RequestURITooLongError.prototype, "name", {
-                    get: function () { return name; },
-                    enumerable: true,
-                    configurable: true
-                });
-                return RequestURITooLongError;
-            })(HTTPError_1.default);
-            exports_1("default",RequestURITooLongError);
-        }
-    }
-});
-
-$__System.register("40", ["34"], function(exports_1) {
-    var __extends = (this && this.__extends) || function (d, b) {
-        for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-    var HTTPError_1;
-    var name, statusCode, RequestHeaderFieldsTooLargeError;
-    return {
-        setters:[
-            function (HTTPError_1_1) {
-                HTTPError_1 = HTTPError_1_1;
-            }],
-        execute: function() {
-            name = "RequestHeaderFieldsTooLargeError";
-            statusCode = 431;
-            RequestHeaderFieldsTooLargeError = (function (_super) {
-                __extends(RequestHeaderFieldsTooLargeError, _super);
-                function RequestHeaderFieldsTooLargeError() {
-                    _super.apply(this, arguments);
-                }
-                Object.defineProperty(RequestHeaderFieldsTooLargeError, "statusCode", {
-                    get: function () { return statusCode; },
-                    enumerable: true,
-                    configurable: true
-                });
-                Object.defineProperty(RequestHeaderFieldsTooLargeError.prototype, "name", {
-                    get: function () { return name; },
-                    enumerable: true,
-                    configurable: true
-                });
-                return RequestHeaderFieldsTooLargeError;
-            })(HTTPError_1.default);
-            exports_1("default",RequestHeaderFieldsTooLargeError);
-        }
-    }
-});
-
-$__System.register("41", ["34"], function(exports_1) {
-    var __extends = (this && this.__extends) || function (d, b) {
-        for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-    var HTTPError_1;
-    var name, statusCode, RequestEntityTooLargeError;
-    return {
-        setters:[
-            function (HTTPError_1_1) {
-                HTTPError_1 = HTTPError_1_1;
-            }],
-        execute: function() {
-            name = "RequestEntityTooLargeError";
-            statusCode = 413;
-            RequestEntityTooLargeError = (function (_super) {
-                __extends(RequestEntityTooLargeError, _super);
-                function RequestEntityTooLargeError() {
-                    _super.apply(this, arguments);
-                }
-                Object.defineProperty(RequestEntityTooLargeError, "statusCode", {
-                    get: function () { return statusCode; },
-                    enumerable: true,
-                    configurable: true
-                });
-                Object.defineProperty(RequestEntityTooLargeError.prototype, "name", {
-                    get: function () { return name; },
-                    enumerable: true,
-                    configurable: true
-                });
-                return RequestEntityTooLargeError;
-            })(HTTPError_1.default);
-            exports_1("default",RequestEntityTooLargeError);
-        }
-    }
-});
-
-$__System.register("42", ["34"], function(exports_1) {
-    var __extends = (this && this.__extends) || function (d, b) {
-        for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-    var HTTPError_1;
-    var name, statusCode, PreconditionRequiredError;
-    return {
-        setters:[
-            function (HTTPError_1_1) {
-                HTTPError_1 = HTTPError_1_1;
-            }],
-        execute: function() {
-            name = "PreconditionRequiredError";
-            statusCode = 428;
-            PreconditionRequiredError = (function (_super) {
-                __extends(PreconditionRequiredError, _super);
-                function PreconditionRequiredError() {
-                    _super.apply(this, arguments);
-                }
-                Object.defineProperty(PreconditionRequiredError, "statusCode", {
-                    get: function () { return statusCode; },
-                    enumerable: true,
-                    configurable: true
-                });
-                Object.defineProperty(PreconditionRequiredError.prototype, "name", {
-                    get: function () { return name; },
-                    enumerable: true,
-                    configurable: true
-                });
-                return PreconditionRequiredError;
-            })(HTTPError_1.default);
-            exports_1("default",PreconditionRequiredError);
-        }
-    }
-});
-
-$__System.register("43", ["34"], function(exports_1) {
-    var __extends = (this && this.__extends) || function (d, b) {
-        for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-    var HTTPError_1;
-    var name, statusCode, PreconditionFailedError;
-    return {
-        setters:[
-            function (HTTPError_1_1) {
-                HTTPError_1 = HTTPError_1_1;
-            }],
-        execute: function() {
-            name = "PreconditionFailedError";
-            statusCode = 412;
-            PreconditionFailedError = (function (_super) {
-                __extends(PreconditionFailedError, _super);
-                function PreconditionFailedError() {
-                    _super.apply(this, arguments);
-                }
-                Object.defineProperty(PreconditionFailedError, "statusCode", {
-                    get: function () { return statusCode; },
-                    enumerable: true,
-                    configurable: true
-                });
-                Object.defineProperty(PreconditionFailedError.prototype, "name", {
-                    get: function () { return name; },
-                    enumerable: true,
-                    configurable: true
-                });
-                return PreconditionFailedError;
-            })(HTTPError_1.default);
-            exports_1("default",PreconditionFailedError);
-        }
-    }
-});
-
-$__System.register("44", ["34"], function(exports_1) {
-    var __extends = (this && this.__extends) || function (d, b) {
-        for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-    var HTTPError_1;
-    var name, statusCode, NotFoundError;
-    return {
-        setters:[
-            function (HTTPError_1_1) {
-                HTTPError_1 = HTTPError_1_1;
-            }],
-        execute: function() {
-            name = "NotFoundError";
-            statusCode = 404;
-            NotFoundError = (function (_super) {
-                __extends(NotFoundError, _super);
-                function NotFoundError() {
-                    _super.apply(this, arguments);
-                }
-                Object.defineProperty(NotFoundError, "statusCode", {
-                    get: function () { return statusCode; },
-                    enumerable: true,
-                    configurable: true
-                });
-                Object.defineProperty(NotFoundError.prototype, "name", {
-                    get: function () { return name; },
-                    enumerable: true,
-                    configurable: true
-                });
-                return NotFoundError;
-            })(HTTPError_1.default);
-            exports_1("default",NotFoundError);
-        }
-    }
-});
-
-$__System.register("45", ["34"], function(exports_1) {
-    var __extends = (this && this.__extends) || function (d, b) {
-        for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-    var HTTPError_1;
-    var name, statusCode, MethodNotAcceptableError;
-    return {
-        setters:[
-            function (HTTPError_1_1) {
-                HTTPError_1 = HTTPError_1_1;
-            }],
-        execute: function() {
-            name = "MethodNotAcceptableError";
-            statusCode = 406;
-            MethodNotAcceptableError = (function (_super) {
-                __extends(MethodNotAcceptableError, _super);
-                function MethodNotAcceptableError() {
-                    _super.apply(this, arguments);
-                }
-                Object.defineProperty(MethodNotAcceptableError, "statusCode", {
-                    get: function () { return statusCode; },
-                    enumerable: true,
-                    configurable: true
-                });
-                Object.defineProperty(MethodNotAcceptableError.prototype, "name", {
-                    get: function () { return name; },
-                    enumerable: true,
-                    configurable: true
-                });
-                return MethodNotAcceptableError;
-            })(HTTPError_1.default);
-            exports_1("default",MethodNotAcceptableError);
-        }
-    }
-});
-
-$__System.register("46", ["34"], function(exports_1) {
-    var __extends = (this && this.__extends) || function (d, b) {
-        for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-    var HTTPError_1;
-    var name, statusCode, MethodNotAllowedError;
-    return {
-        setters:[
-            function (HTTPError_1_1) {
-                HTTPError_1 = HTTPError_1_1;
-            }],
-        execute: function() {
-            name = "MethodNotAllowedError";
-            statusCode = 405;
-            MethodNotAllowedError = (function (_super) {
-                __extends(MethodNotAllowedError, _super);
-                function MethodNotAllowedError() {
-                    _super.apply(this, arguments);
-                }
-                Object.defineProperty(MethodNotAllowedError, "statusCode", {
-                    get: function () { return statusCode; },
-                    enumerable: true,
-                    configurable: true
-                });
-                Object.defineProperty(MethodNotAllowedError.prototype, "name", {
-                    get: function () { return name; },
-                    enumerable: true,
-                    configurable: true
-                });
-                return MethodNotAllowedError;
-            })(HTTPError_1.default);
-            exports_1("default",MethodNotAllowedError);
-        }
-    }
-});
-
-$__System.register("47", ["34"], function(exports_1) {
-    var __extends = (this && this.__extends) || function (d, b) {
-        for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-    var HTTPError_1;
-    var name, statusCode, ForbiddenError;
-    return {
-        setters:[
-            function (HTTPError_1_1) {
-                HTTPError_1 = HTTPError_1_1;
-            }],
-        execute: function() {
-            name = "ForbiddenError";
-            statusCode = 403;
-            ForbiddenError = (function (_super) {
-                __extends(ForbiddenError, _super);
-                function ForbiddenError() {
-                    _super.apply(this, arguments);
-                }
-                Object.defineProperty(ForbiddenError, "statusCode", {
-                    get: function () { return statusCode; },
-                    enumerable: true,
-                    configurable: true
-                });
-                Object.defineProperty(ForbiddenError.prototype, "name", {
-                    get: function () { return name; },
-                    enumerable: true,
-                    configurable: true
-                });
-                return ForbiddenError;
-            })(HTTPError_1.default);
-            exports_1("default",ForbiddenError);
-        }
-    }
-});
-
-$__System.register("48", ["34"], function(exports_1) {
-    var __extends = (this && this.__extends) || function (d, b) {
-        for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-    var HTTPError_1;
-    var name, statusCode, ConflictError;
-    return {
-        setters:[
-            function (HTTPError_1_1) {
-                HTTPError_1 = HTTPError_1_1;
-            }],
-        execute: function() {
-            name = "ConflictError";
-            statusCode = 409;
-            ConflictError = (function (_super) {
-                __extends(ConflictError, _super);
-                function ConflictError() {
-                    _super.apply(this, arguments);
-                }
-                Object.defineProperty(ConflictError, "statusCode", {
-                    get: function () { return statusCode; },
-                    enumerable: true,
-                    configurable: true
-                });
-                Object.defineProperty(ConflictError.prototype, "name", {
-                    get: function () { return name; },
-                    enumerable: true,
-                    configurable: true
-                });
-                return ConflictError;
-            })(HTTPError_1.default);
-            exports_1("default",ConflictError);
-        }
-    }
-});
-
-$__System.register("49", ["34"], function(exports_1) {
+$__System.register("32", ["33"], function(exports_1) {
     var __extends = (this && this.__extends) || function (d, b) {
         for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
         function __() { this.constructor = d; }
@@ -9370,38 +9372,767 @@ $__System.register("49", ["34"], function(exports_1) {
     }
 });
 
-$__System.register("27", [], function(exports_1) {
+$__System.register("34", ["33"], function(exports_1) {
     var __extends = (this && this.__extends) || function (d, b) {
         for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
-    var AbstractError;
+    var HTTPError_1;
+    var name, statusCode, ConflictError;
     return {
-        setters:[],
+        setters:[
+            function (HTTPError_1_1) {
+                HTTPError_1 = HTTPError_1_1;
+            }],
         execute: function() {
-            AbstractError = (function (_super) {
-                __extends(AbstractError, _super);
-                function AbstractError(message) {
-                    _super.call(this, message);
-                    this.message = message;
+            name = "ConflictError";
+            statusCode = 409;
+            ConflictError = (function (_super) {
+                __extends(ConflictError, _super);
+                function ConflictError() {
+                    _super.apply(this, arguments);
                 }
-                Object.defineProperty(AbstractError.prototype, "name", {
-                    get: function () { return "AbstractError"; },
+                Object.defineProperty(ConflictError, "statusCode", {
+                    get: function () { return statusCode; },
                     enumerable: true,
                     configurable: true
                 });
-                AbstractError.prototype.toString = function () {
-                    return this.name + ":" + this.message;
-                };
-                return AbstractError;
-            })(Error);
-            exports_1("default",AbstractError);
+                Object.defineProperty(ConflictError.prototype, "name", {
+                    get: function () { return name; },
+                    enumerable: true,
+                    configurable: true
+                });
+                return ConflictError;
+            })(HTTPError_1.default);
+            exports_1("default",ConflictError);
         }
     }
 });
 
-$__System.register("34", ["27"], function(exports_1) {
+$__System.register("35", ["33"], function(exports_1) {
+    var __extends = (this && this.__extends) || function (d, b) {
+        for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+    var HTTPError_1;
+    var name, statusCode, ForbiddenError;
+    return {
+        setters:[
+            function (HTTPError_1_1) {
+                HTTPError_1 = HTTPError_1_1;
+            }],
+        execute: function() {
+            name = "ForbiddenError";
+            statusCode = 403;
+            ForbiddenError = (function (_super) {
+                __extends(ForbiddenError, _super);
+                function ForbiddenError() {
+                    _super.apply(this, arguments);
+                }
+                Object.defineProperty(ForbiddenError, "statusCode", {
+                    get: function () { return statusCode; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(ForbiddenError.prototype, "name", {
+                    get: function () { return name; },
+                    enumerable: true,
+                    configurable: true
+                });
+                return ForbiddenError;
+            })(HTTPError_1.default);
+            exports_1("default",ForbiddenError);
+        }
+    }
+});
+
+$__System.register("36", ["33"], function(exports_1) {
+    var __extends = (this && this.__extends) || function (d, b) {
+        for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+    var HTTPError_1;
+    var name, statusCode, MethodNotAllowedError;
+    return {
+        setters:[
+            function (HTTPError_1_1) {
+                HTTPError_1 = HTTPError_1_1;
+            }],
+        execute: function() {
+            name = "MethodNotAllowedError";
+            statusCode = 405;
+            MethodNotAllowedError = (function (_super) {
+                __extends(MethodNotAllowedError, _super);
+                function MethodNotAllowedError() {
+                    _super.apply(this, arguments);
+                }
+                Object.defineProperty(MethodNotAllowedError, "statusCode", {
+                    get: function () { return statusCode; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(MethodNotAllowedError.prototype, "name", {
+                    get: function () { return name; },
+                    enumerable: true,
+                    configurable: true
+                });
+                return MethodNotAllowedError;
+            })(HTTPError_1.default);
+            exports_1("default",MethodNotAllowedError);
+        }
+    }
+});
+
+$__System.register("37", ["33"], function(exports_1) {
+    var __extends = (this && this.__extends) || function (d, b) {
+        for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+    var HTTPError_1;
+    var name, statusCode, NotAcceptableError;
+    return {
+        setters:[
+            function (HTTPError_1_1) {
+                HTTPError_1 = HTTPError_1_1;
+            }],
+        execute: function() {
+            name = "NotAcceptableError";
+            statusCode = 406;
+            NotAcceptableError = (function (_super) {
+                __extends(NotAcceptableError, _super);
+                function NotAcceptableError() {
+                    _super.apply(this, arguments);
+                }
+                Object.defineProperty(NotAcceptableError, "statusCode", {
+                    get: function () { return statusCode; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(NotAcceptableError.prototype, "name", {
+                    get: function () { return name; },
+                    enumerable: true,
+                    configurable: true
+                });
+                return NotAcceptableError;
+            })(HTTPError_1.default);
+            exports_1("default",NotAcceptableError);
+        }
+    }
+});
+
+$__System.register("38", ["33"], function(exports_1) {
+    var __extends = (this && this.__extends) || function (d, b) {
+        for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+    var HTTPError_1;
+    var name, statusCode, NotFoundError;
+    return {
+        setters:[
+            function (HTTPError_1_1) {
+                HTTPError_1 = HTTPError_1_1;
+            }],
+        execute: function() {
+            name = "NotFoundError";
+            statusCode = 404;
+            NotFoundError = (function (_super) {
+                __extends(NotFoundError, _super);
+                function NotFoundError() {
+                    _super.apply(this, arguments);
+                }
+                Object.defineProperty(NotFoundError, "statusCode", {
+                    get: function () { return statusCode; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(NotFoundError.prototype, "name", {
+                    get: function () { return name; },
+                    enumerable: true,
+                    configurable: true
+                });
+                return NotFoundError;
+            })(HTTPError_1.default);
+            exports_1("default",NotFoundError);
+        }
+    }
+});
+
+$__System.register("39", ["33"], function(exports_1) {
+    var __extends = (this && this.__extends) || function (d, b) {
+        for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+    var HTTPError_1;
+    var name, statusCode, PreconditionFailedError;
+    return {
+        setters:[
+            function (HTTPError_1_1) {
+                HTTPError_1 = HTTPError_1_1;
+            }],
+        execute: function() {
+            name = "PreconditionFailedError";
+            statusCode = 412;
+            PreconditionFailedError = (function (_super) {
+                __extends(PreconditionFailedError, _super);
+                function PreconditionFailedError() {
+                    _super.apply(this, arguments);
+                }
+                Object.defineProperty(PreconditionFailedError, "statusCode", {
+                    get: function () { return statusCode; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(PreconditionFailedError.prototype, "name", {
+                    get: function () { return name; },
+                    enumerable: true,
+                    configurable: true
+                });
+                return PreconditionFailedError;
+            })(HTTPError_1.default);
+            exports_1("default",PreconditionFailedError);
+        }
+    }
+});
+
+$__System.register("3a", ["33"], function(exports_1) {
+    var __extends = (this && this.__extends) || function (d, b) {
+        for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+    var HTTPError_1;
+    var name, statusCode, PreconditionRequiredError;
+    return {
+        setters:[
+            function (HTTPError_1_1) {
+                HTTPError_1 = HTTPError_1_1;
+            }],
+        execute: function() {
+            name = "PreconditionRequiredError";
+            statusCode = 428;
+            PreconditionRequiredError = (function (_super) {
+                __extends(PreconditionRequiredError, _super);
+                function PreconditionRequiredError() {
+                    _super.apply(this, arguments);
+                }
+                Object.defineProperty(PreconditionRequiredError, "statusCode", {
+                    get: function () { return statusCode; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(PreconditionRequiredError.prototype, "name", {
+                    get: function () { return name; },
+                    enumerable: true,
+                    configurable: true
+                });
+                return PreconditionRequiredError;
+            })(HTTPError_1.default);
+            exports_1("default",PreconditionRequiredError);
+        }
+    }
+});
+
+$__System.register("3b", ["33"], function(exports_1) {
+    var __extends = (this && this.__extends) || function (d, b) {
+        for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+    var HTTPError_1;
+    var name, statusCode, RequestEntityTooLargeError;
+    return {
+        setters:[
+            function (HTTPError_1_1) {
+                HTTPError_1 = HTTPError_1_1;
+            }],
+        execute: function() {
+            name = "RequestEntityTooLargeError";
+            statusCode = 413;
+            RequestEntityTooLargeError = (function (_super) {
+                __extends(RequestEntityTooLargeError, _super);
+                function RequestEntityTooLargeError() {
+                    _super.apply(this, arguments);
+                }
+                Object.defineProperty(RequestEntityTooLargeError, "statusCode", {
+                    get: function () { return statusCode; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(RequestEntityTooLargeError.prototype, "name", {
+                    get: function () { return name; },
+                    enumerable: true,
+                    configurable: true
+                });
+                return RequestEntityTooLargeError;
+            })(HTTPError_1.default);
+            exports_1("default",RequestEntityTooLargeError);
+        }
+    }
+});
+
+$__System.register("3c", ["33"], function(exports_1) {
+    var __extends = (this && this.__extends) || function (d, b) {
+        for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+    var HTTPError_1;
+    var name, statusCode, RequestHeaderFieldsTooLargeError;
+    return {
+        setters:[
+            function (HTTPError_1_1) {
+                HTTPError_1 = HTTPError_1_1;
+            }],
+        execute: function() {
+            name = "RequestHeaderFieldsTooLargeError";
+            statusCode = 431;
+            RequestHeaderFieldsTooLargeError = (function (_super) {
+                __extends(RequestHeaderFieldsTooLargeError, _super);
+                function RequestHeaderFieldsTooLargeError() {
+                    _super.apply(this, arguments);
+                }
+                Object.defineProperty(RequestHeaderFieldsTooLargeError, "statusCode", {
+                    get: function () { return statusCode; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(RequestHeaderFieldsTooLargeError.prototype, "name", {
+                    get: function () { return name; },
+                    enumerable: true,
+                    configurable: true
+                });
+                return RequestHeaderFieldsTooLargeError;
+            })(HTTPError_1.default);
+            exports_1("default",RequestHeaderFieldsTooLargeError);
+        }
+    }
+});
+
+$__System.register("3d", ["33"], function(exports_1) {
+    var __extends = (this && this.__extends) || function (d, b) {
+        for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+    var HTTPError_1;
+    var name, statusCode, RequestURITooLongError;
+    return {
+        setters:[
+            function (HTTPError_1_1) {
+                HTTPError_1 = HTTPError_1_1;
+            }],
+        execute: function() {
+            name = "RequestURITooLongError";
+            statusCode = 414;
+            RequestURITooLongError = (function (_super) {
+                __extends(RequestURITooLongError, _super);
+                function RequestURITooLongError() {
+                    _super.apply(this, arguments);
+                }
+                Object.defineProperty(RequestURITooLongError, "statusCode", {
+                    get: function () { return statusCode; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(RequestURITooLongError.prototype, "name", {
+                    get: function () { return name; },
+                    enumerable: true,
+                    configurable: true
+                });
+                return RequestURITooLongError;
+            })(HTTPError_1.default);
+            exports_1("default",RequestURITooLongError);
+        }
+    }
+});
+
+$__System.register("3e", ["33"], function(exports_1) {
+    var __extends = (this && this.__extends) || function (d, b) {
+        for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+    var HTTPError_1;
+    var name, statusCode, TooManyRequestsError;
+    return {
+        setters:[
+            function (HTTPError_1_1) {
+                HTTPError_1 = HTTPError_1_1;
+            }],
+        execute: function() {
+            name = "TooManyRequestsError";
+            statusCode = 429;
+            TooManyRequestsError = (function (_super) {
+                __extends(TooManyRequestsError, _super);
+                function TooManyRequestsError() {
+                    _super.apply(this, arguments);
+                }
+                Object.defineProperty(TooManyRequestsError, "statusCode", {
+                    get: function () { return statusCode; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(TooManyRequestsError.prototype, "name", {
+                    get: function () { return name; },
+                    enumerable: true,
+                    configurable: true
+                });
+                return TooManyRequestsError;
+            })(HTTPError_1.default);
+            exports_1("default",TooManyRequestsError);
+        }
+    }
+});
+
+$__System.register("3f", ["33"], function(exports_1) {
+    var __extends = (this && this.__extends) || function (d, b) {
+        for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+    var HTTPError_1;
+    var name, statusCode, UnauthorizedError;
+    return {
+        setters:[
+            function (HTTPError_1_1) {
+                HTTPError_1 = HTTPError_1_1;
+            }],
+        execute: function() {
+            name = "UnauthorizedError";
+            statusCode = 401;
+            UnauthorizedError = (function (_super) {
+                __extends(UnauthorizedError, _super);
+                function UnauthorizedError() {
+                    _super.apply(this, arguments);
+                }
+                Object.defineProperty(UnauthorizedError, "statusCode", {
+                    get: function () { return statusCode; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(UnauthorizedError.prototype, "name", {
+                    get: function () { return name; },
+                    enumerable: true,
+                    configurable: true
+                });
+                return UnauthorizedError;
+            })(HTTPError_1.default);
+            exports_1("default",UnauthorizedError);
+        }
+    }
+});
+
+$__System.register("40", ["33"], function(exports_1) {
+    var __extends = (this && this.__extends) || function (d, b) {
+        for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+    var HTTPError_1;
+    var name, statusCode, UnsupportedMediaTypeError;
+    return {
+        setters:[
+            function (HTTPError_1_1) {
+                HTTPError_1 = HTTPError_1_1;
+            }],
+        execute: function() {
+            name = "UnsupportedMediaTypeError";
+            statusCode = 415;
+            UnsupportedMediaTypeError = (function (_super) {
+                __extends(UnsupportedMediaTypeError, _super);
+                function UnsupportedMediaTypeError() {
+                    _super.apply(this, arguments);
+                }
+                Object.defineProperty(UnsupportedMediaTypeError, "statusCode", {
+                    get: function () { return statusCode; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(UnsupportedMediaTypeError.prototype, "name", {
+                    get: function () { return name; },
+                    enumerable: true,
+                    configurable: true
+                });
+                return UnsupportedMediaTypeError;
+            })(HTTPError_1.default);
+            exports_1("default",UnsupportedMediaTypeError);
+        }
+    }
+});
+
+$__System.register("41", ["33"], function(exports_1) {
+    var __extends = (this && this.__extends) || function (d, b) {
+        for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+    var HTTPError_1;
+    var name, statusCode, Class;
+    return {
+        setters:[
+            function (HTTPError_1_1) {
+                HTTPError_1 = HTTPError_1_1;
+            }],
+        execute: function() {
+            name = "BadResponseError";
+            statusCode = 0;
+            Class = (function (_super) {
+                __extends(Class, _super);
+                function Class() {
+                    _super.apply(this, arguments);
+                }
+                Object.defineProperty(Class, "statusCode", {
+                    get: function () { return statusCode; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(Class.prototype, "name", {
+                    get: function () { return name; },
+                    enumerable: true,
+                    configurable: true
+                });
+                return Class;
+            })(HTTPError_1.default);
+            exports_1("default",Class);
+        }
+    }
+});
+
+$__System.register("42", ["33"], function(exports_1) {
+    var __extends = (this && this.__extends) || function (d, b) {
+        for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+    var HTTPError_1;
+    var name, statusCode, BadGatewayError;
+    return {
+        setters:[
+            function (HTTPError_1_1) {
+                HTTPError_1 = HTTPError_1_1;
+            }],
+        execute: function() {
+            name = "BadGatewayError";
+            statusCode = 502;
+            BadGatewayError = (function (_super) {
+                __extends(BadGatewayError, _super);
+                function BadGatewayError() {
+                    _super.apply(this, arguments);
+                }
+                Object.defineProperty(BadGatewayError, "statusCode", {
+                    get: function () { return statusCode; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(BadGatewayError.prototype, "name", {
+                    get: function () { return name; },
+                    enumerable: true,
+                    configurable: true
+                });
+                return BadGatewayError;
+            })(HTTPError_1.default);
+            exports_1("default",BadGatewayError);
+        }
+    }
+});
+
+$__System.register("43", ["33"], function(exports_1) {
+    var __extends = (this && this.__extends) || function (d, b) {
+        for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+    var HTTPError_1;
+    var name, statusCode, GatewayTimeoutError;
+    return {
+        setters:[
+            function (HTTPError_1_1) {
+                HTTPError_1 = HTTPError_1_1;
+            }],
+        execute: function() {
+            name = "GatewayTimeoutError";
+            statusCode = 504;
+            GatewayTimeoutError = (function (_super) {
+                __extends(GatewayTimeoutError, _super);
+                function GatewayTimeoutError() {
+                    _super.apply(this, arguments);
+                }
+                Object.defineProperty(GatewayTimeoutError, "statusCode", {
+                    get: function () { return statusCode; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(GatewayTimeoutError.prototype, "name", {
+                    get: function () { return name; },
+                    enumerable: true,
+                    configurable: true
+                });
+                return GatewayTimeoutError;
+            })(HTTPError_1.default);
+            exports_1("default",GatewayTimeoutError);
+        }
+    }
+});
+
+$__System.register("44", ["33"], function(exports_1) {
+    var __extends = (this && this.__extends) || function (d, b) {
+        for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+    var HTTPError_1;
+    var name, statusCode, HTTPVersionNotSupportedError;
+    return {
+        setters:[
+            function (HTTPError_1_1) {
+                HTTPError_1 = HTTPError_1_1;
+            }],
+        execute: function() {
+            name = "HTTPVersionNotSupportedError";
+            statusCode = 505;
+            HTTPVersionNotSupportedError = (function (_super) {
+                __extends(HTTPVersionNotSupportedError, _super);
+                function HTTPVersionNotSupportedError() {
+                    _super.apply(this, arguments);
+                }
+                Object.defineProperty(HTTPVersionNotSupportedError, "statusCode", {
+                    get: function () { return statusCode; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(HTTPVersionNotSupportedError.prototype, "name", {
+                    get: function () { return name; },
+                    enumerable: true,
+                    configurable: true
+                });
+                return HTTPVersionNotSupportedError;
+            })(HTTPError_1.default);
+            exports_1("default",HTTPVersionNotSupportedError);
+        }
+    }
+});
+
+$__System.register("45", ["33"], function(exports_1) {
+    var __extends = (this && this.__extends) || function (d, b) {
+        for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+    var HTTPError_1;
+    var name, statusCode, InternalServerError;
+    return {
+        setters:[
+            function (HTTPError_1_1) {
+                HTTPError_1 = HTTPError_1_1;
+            }],
+        execute: function() {
+            name = "InternalServerError";
+            statusCode = 500;
+            InternalServerError = (function (_super) {
+                __extends(InternalServerError, _super);
+                function InternalServerError() {
+                    _super.apply(this, arguments);
+                }
+                Object.defineProperty(InternalServerError, "statusCode", {
+                    get: function () { return statusCode; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(InternalServerError.prototype, "name", {
+                    get: function () { return name; },
+                    enumerable: true,
+                    configurable: true
+                });
+                return InternalServerError;
+            })(HTTPError_1.default);
+            exports_1("default",InternalServerError);
+        }
+    }
+});
+
+$__System.register("46", ["33"], function(exports_1) {
+    var __extends = (this && this.__extends) || function (d, b) {
+        for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+    var HTTPError_1;
+    var name, statusCode, NotImplementedError;
+    return {
+        setters:[
+            function (HTTPError_1_1) {
+                HTTPError_1 = HTTPError_1_1;
+            }],
+        execute: function() {
+            name = "NotImplementedError";
+            statusCode = 501;
+            NotImplementedError = (function (_super) {
+                __extends(NotImplementedError, _super);
+                function NotImplementedError() {
+                    _super.apply(this, arguments);
+                }
+                Object.defineProperty(NotImplementedError, "statusCode", {
+                    get: function () { return statusCode; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(NotImplementedError.prototype, "name", {
+                    get: function () { return name; },
+                    enumerable: true,
+                    configurable: true
+                });
+                return NotImplementedError;
+            })(HTTPError_1.default);
+            exports_1("default",NotImplementedError);
+        }
+    }
+});
+
+$__System.register("47", ["33"], function(exports_1) {
+    var __extends = (this && this.__extends) || function (d, b) {
+        for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+    var HTTPError_1;
+    var name, statusCode, ServiceUnavailableError;
+    return {
+        setters:[
+            function (HTTPError_1_1) {
+                HTTPError_1 = HTTPError_1_1;
+            }],
+        execute: function() {
+            name = "ServiceUnavailableError";
+            statusCode = 503;
+            ServiceUnavailableError = (function (_super) {
+                __extends(ServiceUnavailableError, _super);
+                function ServiceUnavailableError() {
+                    _super.apply(this, arguments);
+                }
+                Object.defineProperty(ServiceUnavailableError, "statusCode", {
+                    get: function () { return statusCode; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(ServiceUnavailableError.prototype, "name", {
+                    get: function () { return name; },
+                    enumerable: true,
+                    configurable: true
+                });
+                return ServiceUnavailableError;
+            })(HTTPError_1.default);
+            exports_1("default",ServiceUnavailableError);
+        }
+    }
+});
+
+$__System.register("33", ["48"], function(exports_1) {
     var __extends = (this && this.__extends) || function (d, b) {
         for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
         function __() { this.constructor = d; }
@@ -9438,8 +10169,40 @@ $__System.register("34", ["27"], function(exports_1) {
     }
 });
 
-$__System.register("2e", ["34", "49", "48", "47", "46", "45", "44", "43", "42", "41", "40", "3f", "3e", "3d", "3c", "3b", "3a", "39", "38", "37", "36", "35", "33"], function(exports_1) {
-    var HTTPError_1, BadRequestError_1, ConflictError_1, ForbiddenError_1, MethodNotAllowedError_1, NotAcceptableError_1, NotFoundError_1, PreconditionFailedError_1, PreconditionRequiredError_1, RequestEntityTooLargeError_1, RequestHeaderFieldsTooLargeError_1, RequestURITooLongError_1, TooManyRequestsError_1, UnauthorizedError_1, UnsupportedMediaTypeError_1, BadResponseError_1, BadGatewayError_1, GatewayTimeoutError_1, HTTPVersionNotSupportedError_1, InternalServerErrorError_1, NotImplementedError_1, ServiceUnavailableError_1, UnknownError_1;
+$__System.register("49", ["33"], function(exports_1) {
+    var __extends = (this && this.__extends) || function (d, b) {
+        for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+    var HTTPError_1;
+    var name, UnknownError;
+    return {
+        setters:[
+            function (HTTPError_1_1) {
+                HTTPError_1 = HTTPError_1_1;
+            }],
+        execute: function() {
+            name = "UnknownError";
+            UnknownError = (function (_super) {
+                __extends(UnknownError, _super);
+                function UnknownError() {
+                    _super.apply(this, arguments);
+                }
+                Object.defineProperty(UnknownError.prototype, "name", {
+                    get: function () { return name; },
+                    enumerable: true,
+                    configurable: true
+                });
+                return UnknownError;
+            })(HTTPError_1.default);
+            exports_1("default",UnknownError);
+        }
+    }
+});
+
+$__System.register("4a", ["33", "32", "34", "35", "36", "37", "38", "39", "3a", "3b", "3c", "3d", "3e", "3f", "40", "41", "42", "43", "44", "45", "46", "47", "49"], function(exports_1) {
+    var HTTPError_1, BadRequestError_1, ConflictError_1, ForbiddenError_1, MethodNotAllowedError_1, NotAcceptableError_1, NotFoundError_1, PreconditionFailedError_1, PreconditionRequiredError_1, RequestEntityTooLargeError_1, RequestHeaderFieldsTooLargeError_1, RequestURITooLongError_1, TooManyRequestsError_1, UnauthorizedError_1, UnsupportedMediaTypeError_1, BadResponseError_1, BadGatewayError_1, GatewayTimeoutError_1, HTTPVersionNotSupportedError_1, InternalServerError_1, NotImplementedError_1, ServiceUnavailableError_1, UnknownError_1;
     var client, server, statusCodeMap;
     return {
         setters:[
@@ -9500,8 +10263,8 @@ $__System.register("2e", ["34", "49", "48", "47", "46", "45", "44", "43", "42", 
             function (HTTPVersionNotSupportedError_1_1) {
                 HTTPVersionNotSupportedError_1 = HTTPVersionNotSupportedError_1_1;
             },
-            function (InternalServerErrorError_1_1) {
-                InternalServerErrorError_1 = InternalServerErrorError_1_1;
+            function (InternalServerError_1_1) {
+                InternalServerError_1 = InternalServerError_1_1;
             },
             function (NotImplementedError_1_1) {
                 NotImplementedError_1 = NotImplementedError_1_1;
@@ -9533,7 +10296,7 @@ $__System.register("2e", ["34", "49", "48", "47", "46", "45", "44", "43", "42", 
             server.push(BadGatewayError_1.default);
             server.push(GatewayTimeoutError_1.default);
             server.push(HTTPVersionNotSupportedError_1.default);
-            server.push(InternalServerErrorError_1.default);
+            server.push(InternalServerError_1.default);
             server.push(NotImplementedError_1.default);
             server.push(ServiceUnavailableError_1.default);
             statusCodeMap = new Map();
@@ -9562,7 +10325,7 @@ $__System.register("2e", ["34", "49", "48", "47", "46", "45", "44", "43", "42", 
             exports_1("BadGatewayError", BadGatewayError_1.default);
             exports_1("GatewayTimeoutError", GatewayTimeoutError_1.default);
             exports_1("HTTPVersionNotSupportedError", HTTPVersionNotSupportedError_1.default);
-            exports_1("InternalServerErrorError", InternalServerErrorError_1.default);
+            exports_1("InternalServerError", InternalServerError_1.default);
             exports_1("NotImplementedError", NotImplementedError_1.default);
             exports_1("ServiceUnavailableError", ServiceUnavailableError_1.default);
             exports_1("UnknownError", UnknownError_1.default);
@@ -9573,9 +10336,422 @@ $__System.register("2e", ["34", "49", "48", "47", "46", "45", "44", "43", "42", 
     }
 });
 
-/// <reference path="../typings/es6/es6.d.ts" />
-$__System.register("17", ["2e", "2c", "32", "31", "2f", "30", "2d", "2b", "2a"], function(exports_1) {
-    var Errors, Header, JSONParser, JSONLDParser, Method_1, ProcessedResponse_1, Request, Response_1, StatusCode_1;
+$__System.register("4b", [], function(exports_1) {
+    var Method;
+    return {
+        setters:[],
+        execute: function() {
+            (function (Method) {
+                Method[Method["OPTIONS"] = 0] = "OPTIONS";
+                Method[Method["HEAD"] = 1] = "HEAD";
+                Method[Method["GET"] = 2] = "GET";
+                Method[Method["POST"] = 3] = "POST";
+                Method[Method["PUT"] = 4] = "PUT";
+                Method[Method["PATCH"] = 5] = "PATCH";
+                Method[Method["DELETE"] = 6] = "DELETE";
+            })(Method || (Method = {}));
+            exports_1("default",Method);
+        }
+    }
+});
+
+/// <reference path="./../../typings/typings.d.ts" />
+$__System.register("4c", ["4a", "4d", "4b", "4e", "5"], function(exports_1) {
+    var Errors, Header, Method_1, Response_1, Utils;
+    var Service, Util;
+    function setHeaders(request, headers) {
+        var namesIterator = headers.keys();
+        var next = namesIterator.next();
+        while (!next.done) {
+            var name = next.value;
+            var value = headers.get(name);
+            request.setRequestHeader(name, value.toString());
+            next = namesIterator.next();
+        }
+    }
+    function onLoad(resolve, reject, request) {
+        return function () {
+            var response = new Response_1.default(request);
+            if (request.status >= 200 && request.status <= 299) {
+                resolve(response);
+            }
+            else {
+                rejectRequest(reject, request);
+            }
+        };
+    }
+    function onError(reject, request) {
+        return function () {
+            rejectRequest(reject, request);
+        };
+    }
+    function rejectRequest(reject, request) {
+        var response = new Response_1.default(request);
+        if (response.status >= 400 && response.status < 600) {
+            if (Errors.statusCodeMap.has(response.status)) {
+                var error = Errors.statusCodeMap.get(response.status);
+                // TODO: Set error message
+                reject(new error("", response));
+            }
+        }
+        reject(new Errors.UnknownError("", response));
+    }
+    return {
+        setters:[
+            function (Errors_1) {
+                Errors = Errors_1;
+            },
+            function (Header_1) {
+                Header = Header_1;
+            },
+            function (Method_1_1) {
+                Method_1 = Method_1_1;
+            },
+            function (Response_1_1) {
+                Response_1 = Response_1_1;
+            },
+            function (Utils_1) {
+                Utils = Utils_1;
+            }],
+        execute: function() {
+            Service = (function () {
+                function Service() {
+                }
+                Service.send = function (method, url, bodyOrOptions, options, parser) {
+                    if (bodyOrOptions === void 0) { bodyOrOptions = Service.defaultOptions; }
+                    if (options === void 0) { options = Service.defaultOptions; }
+                    if (parser === void 0) { parser = null; }
+                    var body = bodyOrOptions && Utils.isString(bodyOrOptions) ? bodyOrOptions : null;
+                    options = !bodyOrOptions || Utils.isString(bodyOrOptions) ? options : bodyOrOptions;
+                    options = options ? options : {};
+                    options = Utils.extend(options, Service.defaultOptions);
+                    if (Utils.isNumber(method))
+                        method = Method_1.default[method];
+                    var requestPromise = new Promise(function (resolve, reject) {
+                        var request = options.request ? options.request : new XMLHttpRequest();
+                        request.open(method, url, true);
+                        if (options.headers)
+                            setHeaders(request, options.headers);
+                        request.withCredentials = options.sendCredentialsOnCORS;
+                        if (options.timeout)
+                            request.timeout = options.timeout;
+                        request.onload = onLoad(resolve, reject, request);
+                        request.onerror = onError(reject, request);
+                        if (body) {
+                            request.send(body);
+                        }
+                        else {
+                            request.send();
+                        }
+                    });
+                    if (parser === null)
+                        return requestPromise;
+                    return requestPromise.then(function (response) {
+                        return parser.parse(response.data).then(function (parsedBody) {
+                            return [parsedBody, response];
+                        });
+                    });
+                };
+                Service.options = function (url, options) {
+                    if (options === void 0) { options = Service.defaultOptions; }
+                    return Service.send(Method_1.default.OPTIONS, url, options);
+                };
+                Service.head = function (url, options) {
+                    if (options === void 0) { options = Service.defaultOptions; }
+                    return Service.send(Method_1.default.HEAD, url, options);
+                };
+                Service.get = function (url, options, parser) {
+                    if (options === void 0) { options = Service.defaultOptions; }
+                    if (parser === void 0) { parser = null; }
+                    return Service.send(Method_1.default.GET, url, null, options, parser);
+                };
+                Service.post = function (url, bodyOrOptions, options, parser) {
+                    if (bodyOrOptions === void 0) { bodyOrOptions = Service.defaultOptions; }
+                    if (options === void 0) { options = Service.defaultOptions; }
+                    if (parser === void 0) { parser = null; }
+                    return Service.send(Method_1.default.POST, url, bodyOrOptions, options, parser);
+                };
+                Service.put = function (url, bodyOrOptions, options, parser) {
+                    if (bodyOrOptions === void 0) { bodyOrOptions = Service.defaultOptions; }
+                    if (options === void 0) { options = Service.defaultOptions; }
+                    if (parser === void 0) { parser = null; }
+                    return Service.send(Method_1.default.PUT, url, bodyOrOptions, options, parser);
+                };
+                Service.patch = function (url, bodyOrOptions, options, parser) {
+                    if (bodyOrOptions === void 0) { bodyOrOptions = Service.defaultOptions; }
+                    if (options === void 0) { options = Service.defaultOptions; }
+                    if (parser === void 0) { parser = null; }
+                    return Service.send(Method_1.default.PATCH, url, bodyOrOptions, options, parser);
+                };
+                Service.delete = function (url, bodyOrOptions, options, parser) {
+                    if (bodyOrOptions === void 0) { bodyOrOptions = Service.defaultOptions; }
+                    if (options === void 0) { options = Service.defaultOptions; }
+                    if (parser === void 0) { parser = null; }
+                    return Service.send(Method_1.default.DELETE, url, bodyOrOptions, options, parser);
+                };
+                Service.defaultOptions = {
+                    sendCredentialsOnCORS: true
+                };
+                return Service;
+            })();
+            exports_1("Service", Service);
+            Util = (function () {
+                function Util() {
+                }
+                Util.getHeader = function (headerName, requestOptions) {
+                    if (!requestOptions.headers)
+                        return null;
+                    return requestOptions.headers.get(headerName);
+                };
+                Util.setAcceptHeader = function (accept, requestOptions) {
+                    var headers = requestOptions.headers ? requestOptions.headers : requestOptions.headers = new Map();
+                    headers.set("Accept", new Header.Class(accept));
+                    return requestOptions;
+                };
+                Util.setContentTypeHeader = function (contentType, requestOptions) {
+                    var headers = requestOptions.headers ? requestOptions.headers : requestOptions.headers = new Map();
+                    headers.set("Content-Type", new Header.Class(contentType));
+                    return requestOptions;
+                };
+                Util.setIfMatchHeader = function (etag, requestOptions) {
+                    var headers = requestOptions.headers ? requestOptions.headers : requestOptions.headers = new Map();
+                    headers.set("If-Match", new Header.Class(etag));
+                    return requestOptions;
+                };
+                Util.setPreferredInteractionModel = function (interactionModelURI, requestOptions) {
+                    var headers = requestOptions.headers ? requestOptions.headers : requestOptions.headers = new Map();
+                    headers.set("Prefer", new Header.Class());
+                    var prefer = headers.get("Prefer");
+                    prefer.values.push(new Header.Value(interactionModelURI + "; rel=interaction-model"));
+                    return requestOptions;
+                };
+                Util.setSlug = function (slug, requestOptions) {
+                    var headers = requestOptions.headers ? requestOptions.headers : requestOptions.headers = new Map();
+                    headers.set("Slug", new Header.Class());
+                    var slugHeader = headers.get("Slug");
+                    slugHeader.values.push(new Header.Value(slug));
+                    return requestOptions;
+                };
+                Util.addPreference = function (preference, requestOptions) {
+                    var headers = requestOptions.headers ? requestOptions.headers : requestOptions.headers = new Map();
+                    if (!headers.has("Prefer"))
+                        headers.set("Prefer", new Header.Class());
+                    var slugHeader = headers.get("Prefer");
+                    slugHeader.values.push(new Header.Value(preference));
+                    return requestOptions;
+                };
+                return Util;
+            })();
+            exports_1("Util", Util);
+        }
+    }
+});
+
+/// <reference path="../../typings/typings.d.ts" />
+$__System.register("4d", [], function(exports_1) {
+    var Class, Value, Util;
+    return {
+        setters:[],
+        execute: function() {
+            Class = (function () {
+                function Class(valueOrValues) {
+                    this.values = [];
+                    if (!valueOrValues) {
+                        return;
+                    }
+                    else if (Array.isArray(valueOrValues)) {
+                        this.values = valueOrValues;
+                    }
+                    else {
+                        this.setValues(valueOrValues);
+                    }
+                }
+                Class.prototype.toString = function () {
+                    return this.values.join(", ");
+                };
+                Class.prototype.setValues = function (valuesString) {
+                    this.values = [];
+                    var valueStrings = valuesString.split(",");
+                    for (var i = 0, length = valueStrings.length; i < length; i++) {
+                        var valueString = valueStrings[i].trim();
+                        this.values.push(new Value(valueString));
+                    }
+                };
+                return Class;
+            })();
+            exports_1("Class", Class);
+            Value = (function () {
+                function Value(value) {
+                    this.value = value;
+                }
+                Value.prototype.toString = function () {
+                    return this.value;
+                };
+                return Value;
+            })();
+            exports_1("Value", Value);
+            Util = (function () {
+                function Util() {
+                }
+                Util.parseHeaders = function (headersString) {
+                    var headers = new Map();
+                    var headerStrings = headersString.split(/\r?\n/);
+                    for (var i = 0, length = headerStrings.length; i < length; i++) {
+                        var headerString = headerStrings[i];
+                        if (!headerString.trim())
+                            continue;
+                        var parts = headerString.split(":");
+                        if (parts.length < 2)
+                            throw new Error("ParseError: The header couldn't be parsed.");
+                        if (parts.length > 2)
+                            parts[1] = parts.slice(1).join(":");
+                        var name = parts[0].trim();
+                        var header = new Class(parts[1].trim());
+                        if (headers.has(name)) {
+                            var existingHeader = headers.get(name);
+                            existingHeader.values.concat(header.values);
+                        }
+                        else
+                            headers.set(name, header);
+                    }
+                    return headers;
+                };
+                return Util;
+            })();
+            exports_1("Util", Util);
+            exports_1("default",Class);
+        }
+    }
+});
+
+$__System.register("4e", ["4d"], function(exports_1) {
+    var Header;
+    var Class, Util;
+    return {
+        setters:[
+            function (Header_1) {
+                Header = Header_1;
+            }],
+        execute: function() {
+            Class = (function () {
+                function Class(request) {
+                    this.status = request.status;
+                    this.data = request.responseText;
+                    this.setHeaders(request);
+                    this.request = request;
+                }
+                Class.prototype.setHeaders = function (request) {
+                    var headersString = request.getAllResponseHeaders();
+                    if (headersString) {
+                        this.headers = Header.Util.parseHeaders(headersString);
+                    }
+                    else {
+                        this.headers = new Map();
+                    }
+                };
+                return Class;
+            })();
+            exports_1("Class", Class);
+            Util = (function () {
+                function Util() {
+                }
+                Util.getETag = function (response) {
+                    if (!response || !response.headers)
+                        return null;
+                    var etagHeader = response.headers.get("ETag");
+                    if (!etagHeader)
+                        return null;
+                    if (!etagHeader.values.length)
+                        return null;
+                    if (etagHeader.values.length > 1)
+                        console.warn("The response contains more than one ETag. Response: %o", response);
+                    return etagHeader.values[0].toString();
+                };
+                return Util;
+            })();
+            exports_1("Util", Util);
+            exports_1("default",Class);
+        }
+    }
+});
+
+$__System.register("4f", [], function(exports_1) {
+    var StatusCode;
+    return {
+        setters:[],
+        execute: function() {
+            (function (StatusCode) {
+                StatusCode[StatusCode["CONTINUE"] = 100] = "CONTINUE";
+                StatusCode[StatusCode["SWITCHING_PROTOCOLS"] = 101] = "SWITCHING_PROTOCOLS";
+                StatusCode[StatusCode["OK"] = 200] = "OK";
+                StatusCode[StatusCode["CREATED"] = 201] = "CREATED";
+                StatusCode[StatusCode["ACCEPTED"] = 202] = "ACCEPTED";
+                StatusCode[StatusCode["NON_AUTHORITATIVE_INFORMATION"] = 203] = "NON_AUTHORITATIVE_INFORMATION";
+                StatusCode[StatusCode["NO_CONTENT"] = 204] = "NO_CONTENT";
+                StatusCode[StatusCode["RESET_CONTENT"] = 205] = "RESET_CONTENT";
+                StatusCode[StatusCode["PARTIAL_CONTENT"] = 206] = "PARTIAL_CONTENT";
+                StatusCode[StatusCode["MULTIPLE_CHOICES"] = 300] = "MULTIPLE_CHOICES";
+                StatusCode[StatusCode["MOVED_PERMANENTLY"] = 301] = "MOVED_PERMANENTLY";
+                StatusCode[StatusCode["FOUND"] = 302] = "FOUND";
+                StatusCode[StatusCode["SEE_OTHER"] = 303] = "SEE_OTHER";
+                StatusCode[StatusCode["NOT_MODIFIED"] = 304] = "NOT_MODIFIED";
+                StatusCode[StatusCode["USE_PROXY"] = 305] = "USE_PROXY";
+                StatusCode[StatusCode["TEMPORARY_REDIRECT"] = 307] = "TEMPORARY_REDIRECT";
+                StatusCode[StatusCode["BAD_REQUEST"] = 400] = "BAD_REQUEST";
+                StatusCode[StatusCode["UNAUTHORIZED"] = 401] = "UNAUTHORIZED";
+                StatusCode[StatusCode["PAYMENT_REQUIRED"] = 402] = "PAYMENT_REQUIRED";
+                StatusCode[StatusCode["FORBIDDEN"] = 403] = "FORBIDDEN";
+                StatusCode[StatusCode["NOT_FOUND"] = 404] = "NOT_FOUND";
+                StatusCode[StatusCode["METHOD_NOT_ALLOWED"] = 405] = "METHOD_NOT_ALLOWED";
+                StatusCode[StatusCode["NOT_ACCEPTABLE"] = 406] = "NOT_ACCEPTABLE";
+                StatusCode[StatusCode["PROXY_AUTHENTICATION_REQUIRED"] = 407] = "PROXY_AUTHENTICATION_REQUIRED";
+                StatusCode[StatusCode["REQUEST_TIME_OUT"] = 408] = "REQUEST_TIME_OUT";
+                StatusCode[StatusCode["CONFLICT"] = 409] = "CONFLICT";
+                StatusCode[StatusCode["GONE"] = 410] = "GONE";
+                StatusCode[StatusCode["LENGTH_REQUIRED"] = 411] = "LENGTH_REQUIRED";
+                StatusCode[StatusCode["PRECONDITION_FAILED"] = 412] = "PRECONDITION_FAILED";
+                StatusCode[StatusCode["REQUEST_ENTITY_TOO_LARGE"] = 413] = "REQUEST_ENTITY_TOO_LARGE";
+                StatusCode[StatusCode["REQUEST_URI_TOO_LARGE"] = 414] = "REQUEST_URI_TOO_LARGE";
+                StatusCode[StatusCode["UNSUPPORTED_MEDIA_TYPE"] = 415] = "UNSUPPORTED_MEDIA_TYPE";
+                StatusCode[StatusCode["REQUESTED_RANGE_NOT_SATISFIABLE"] = 416] = "REQUESTED_RANGE_NOT_SATISFIABLE";
+                StatusCode[StatusCode["EXPECTATION_FAILED"] = 417] = "EXPECTATION_FAILED";
+                StatusCode[StatusCode["INTERNAL_SERVER_ERROR"] = 500] = "INTERNAL_SERVER_ERROR";
+                StatusCode[StatusCode["NOT_IMPLEMENTED"] = 501] = "NOT_IMPLEMENTED";
+                StatusCode[StatusCode["BAD_GATEWAY"] = 502] = "BAD_GATEWAY";
+                StatusCode[StatusCode["SERVICE_UNAVAILABLE"] = 503] = "SERVICE_UNAVAILABLE";
+                StatusCode[StatusCode["GATEWAY_TIME_OUT"] = 504] = "GATEWAY_TIME_OUT";
+                StatusCode[StatusCode["HTTP_VERSION_NOT_SUPPORTED"] = 505] = "HTTP_VERSION_NOT_SUPPORTED";
+            })(StatusCode || (StatusCode = {}));
+            exports_1("default",StatusCode);
+        }
+    }
+});
+
+/// <reference path="./../../typings/typings.d.ts" />
+$__System.register("50", [], function(exports_1) {
+    var Class;
+    return {
+        setters:[],
+        execute: function() {
+            Class = (function () {
+                function Class() {
+                }
+                Class.prototype.parse = function (body) {
+                    return new Promise(function (resolve, reject) {
+                        resolve(body);
+                    });
+                };
+                return Class;
+            })();
+            exports_1("Class", Class);
+            exports_1("default",Class);
+        }
+    }
+});
+
+/// <reference path="./../typings/typings.d.ts" />
+$__System.register("20", ["4a", "4d", "1e", "31", "4b", "4c", "4e", "4f", "50"], function(exports_1) {
+    var Errors, Header, JSONParser, JSONLDParser, Method_1, Request, Response, StatusCode_1, StringParser;
     return {
         setters:[
             function (Errors_1) {
@@ -9593,17 +10769,17 @@ $__System.register("17", ["2e", "2c", "32", "31", "2f", "30", "2d", "2b", "2a"],
             function (Method_1_1) {
                 Method_1 = Method_1_1;
             },
-            function (ProcessedResponse_1_1) {
-                ProcessedResponse_1 = ProcessedResponse_1_1;
-            },
             function (Request_1) {
                 Request = Request_1;
             },
-            function (Response_1_1) {
-                Response_1 = Response_1_1;
+            function (Response_1) {
+                Response = Response_1;
             },
             function (StatusCode_1_1) {
                 StatusCode_1 = StatusCode_1_1;
+            },
+            function (StringParser_1) {
+                StringParser = StringParser_1;
             }],
         execute: function() {
             exports_1("Errors", Errors);
@@ -9611,16 +10787,46 @@ $__System.register("17", ["2e", "2c", "32", "31", "2f", "30", "2d", "2b", "2a"],
             exports_1("JSONParser", JSONParser);
             exports_1("JSONLDParser", JSONLDParser);
             exports_1("Method", Method_1.default);
-            exports_1("ProcessedResponse", ProcessedResponse_1.default);
             exports_1("Request", Request);
-            exports_1("Response", Response_1.default);
+            exports_1("Response", Response);
             exports_1("StatusCode", StatusCode_1.default);
+            exports_1("StringParser", StringParser);
         }
     }
 });
 
-$__System.register("24", ["17", "13", "25"], function(exports_1) {
-    var HTTP, Errors, UsernameAndPasswordToken_1;
+$__System.register("51", [], function(exports_1) {
+    var Class;
+    return {
+        setters:[],
+        execute: function() {
+            Class = (function () {
+                function Class(username, password) {
+                    this._username = username;
+                    this._password = password;
+                }
+                Object.defineProperty(Class.prototype, "username", {
+                    get: function () { return this._username; },
+                    enumerable: true,
+                    configurable: true
+                });
+                ;
+                Object.defineProperty(Class.prototype, "password", {
+                    get: function () { return this._password; },
+                    enumerable: true,
+                    configurable: true
+                });
+                ;
+                return Class;
+            })();
+            exports_1("Class", Class);
+            exports_1("default",Class);
+        }
+    }
+});
+
+$__System.register("52", ["20", "14", "53", "51"], function(exports_1) {
+    var HTTP, Errors, UsernameAndPasswordToken_1, UsernameAndPasswordCredentials;
     var Class;
     return {
         setters:[
@@ -9632,6 +10838,9 @@ $__System.register("24", ["17", "13", "25"], function(exports_1) {
             },
             function (UsernameAndPasswordToken_1_1) {
                 UsernameAndPasswordToken_1 = UsernameAndPasswordToken_1_1;
+            },
+            function (UsernameAndPasswordCredentials_1) {
+                UsernameAndPasswordCredentials = UsernameAndPasswordCredentials_1;
             }],
         execute: function() {
             Class = (function () {
@@ -9649,8 +10858,8 @@ $__System.register("24", ["17", "13", "25"], function(exports_1) {
                             throw new Errors.IllegalArgumentError("The username cannot be empty.");
                         if (!authenticationToken.password)
                             throw new Errors.IllegalArgumentError("The password cannot be empty.");
-                        _this.credentials = authenticationToken;
-                        resolve();
+                        _this.credentials = new UsernameAndPasswordCredentials.Class(authenticationToken.username, authenticationToken.password);
+                        resolve(_this.credentials);
                     });
                 };
                 Class.prototype.addAuthentication = function (requestOptions) {
@@ -9687,636 +10896,80 @@ $__System.register("24", ["17", "13", "25"], function(exports_1) {
     }
 });
 
-$__System.register("3", ["24", "23", "25", "13", "b"], function(exports_1) {
-    var BasicAuthenticator_1, TokenAuthenticator_1, UsernameAndPasswordToken_1, Errors, Utils;
-    var Method, Class;
+$__System.register("54", [], function(exports_1) {
+    var namespace, Class, Predicate;
     return {
-        setters:[
-            function (BasicAuthenticator_1_1) {
-                BasicAuthenticator_1 = BasicAuthenticator_1_1;
-            },
-            function (TokenAuthenticator_1_1) {
-                TokenAuthenticator_1 = TokenAuthenticator_1_1;
-            },
-            function (UsernameAndPasswordToken_1_1) {
-                UsernameAndPasswordToken_1 = UsernameAndPasswordToken_1_1;
-            },
-            function (Errors_1) {
-                Errors = Errors_1;
-            },
-            function (Utils_1) {
-                Utils = Utils_1;
-            }],
+        setters:[],
         execute: function() {
-            (function (Method) {
-                Method[Method["BASIC"] = 0] = "BASIC";
-                Method[Method["TOKEN"] = 1] = "TOKEN";
-            })(Method || (Method = {}));
-            exports_1("Method", Method);
+            exports_1("namespace", namespace = "https://carbonldp.com/ns/v1/platform#");
             Class = (function () {
-                function Class(context) {
-                    this.method = null;
-                    this.context = context;
-                    this.authenticators = [];
-                    this.authenticators.push(new TokenAuthenticator_1.default(this.context));
-                    this.authenticators.push(new BasicAuthenticator_1.default());
+                function Class() {
                 }
-                Class.prototype.isAuthenticated = function (askParent) {
-                    if (askParent === void 0) { askParent = true; }
-                    return ((this.authenticator && this.authenticator.isAuthenticated()) ||
-                        (askParent && !!this.context.parentContext && this.context.parentContext.Auth !== this && this.context.parentContext.Auth.isAuthenticated()));
-                };
-                Class.prototype.authenticate = function (usernameOrToken, password) {
-                    var _this = this;
-                    if (password === void 0) { password = null; }
-                    return new Promise(function (resolve, reject) {
-                        if (!usernameOrToken)
-                            throw new Errors.IllegalArgumentError("Either a username or an authenticationToken are required.");
-                        var authenticationToken;
-                        if (Utils.isString(usernameOrToken)) {
-                            var username = usernameOrToken;
-                            if (!password)
-                                throw new Errors.IllegalArgumentError("A password is required when providing a username.");
-                            authenticationToken = new UsernameAndPasswordToken_1.default(username, password);
-                        }
-                        else {
-                            authenticationToken = usernameOrToken;
-                        }
-                        if (_this.authenticator)
-                            _this.clearAuthentication();
-                        _this.authenticator = _this.getAuthenticator(authenticationToken);
-                        resolve(_this.authenticator.authenticate(authenticationToken));
-                    });
-                };
-                Class.prototype.addAuthentication = function (requestOptions) {
-                    if (this.isAuthenticated(false)) {
-                        this.authenticator.addAuthentication(requestOptions);
-                    }
-                    else if ("parentContext" in this.context) {
-                        this.context.parentContext.Auth.addAuthentication(requestOptions);
-                    }
-                    else {
-                        console.warn("There is no authentication to add to the request.");
-                    }
-                };
-                Class.prototype.clearAuthentication = function () {
-                    if (!this.authenticator)
-                        return;
-                    this.authenticator.clearAuthentication();
-                    this.authenticator = null;
-                };
-                Class.prototype.getAuthenticator = function (authenticationToken) {
-                    // TODO: FOR_OF_TYPEDEF
-                    /* tslint:disable: typedef */
-                    for (var _i = 0, _a = this.authenticators; _i < _a.length; _i++) {
-                        var authenticator = _a[_i];
-                        /* tslint:enable: typedef */
-                        if (authenticator.supports(authenticationToken))
-                            return authenticator;
-                    }
-                    throw new Errors.IllegalStateError("The configured authentication method isn\'t supported.");
-                };
+                Object.defineProperty(Class, "AccessPoint", {
+                    get: function () { return namespace + "AccessPoint"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(Class, "API", {
+                    get: function () { return namespace + "API"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(Class, "VolatileResource", {
+                    get: function () { return namespace + "VolatileResource"; },
+                    enumerable: true,
+                    configurable: true
+                });
                 return Class;
             })();
             exports_1("Class", Class);
-            exports_1("default",Class);
+            Predicate = (function () {
+                function Predicate() {
+                }
+                Object.defineProperty(Predicate, "accessPoint", {
+                    get: function () { return namespace + "accessPoint"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(Predicate, "buildDate", {
+                    get: function () { return namespace + "buildDate"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(Predicate, "created", {
+                    get: function () { return namespace + "created"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(Predicate, "modified", {
+                    get: function () { return namespace + "modified"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(Predicate, "version", {
+                    get: function () { return namespace + "version"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                return Predicate;
+            })();
+            exports_1("Predicate", Predicate);
         }
     }
 });
 
-/// <reference path="../typings/es6/es6.d.ts" />
-$__System.register("5", ["3", "15", "13", "b"], function(exports_1) {
-    var Auth_1, Documents_1, Errors, Utils;
-    var Context;
-    return {
-        setters:[
-            function (Auth_1_1) {
-                Auth_1 = Auth_1_1;
-            },
-            function (Documents_1_1) {
-                Documents_1 = Documents_1_1;
-            },
-            function (Errors_1) {
-                Errors = Errors_1;
-            },
-            function (Utils_1) {
-                Utils = Utils_1;
-            }],
-        execute: function() {
-            Context = (function () {
-                function Context() {
-                    this.settings = new Map();
-                    this.definitions = new Map();
-                    this.Auth = new Auth_1.default(this);
-                    this.Documents = new Documents_1.default(this);
-                }
-                Context.prototype.resolve = function (relativeURI) {
-                    throw new Errors.IllegalStateError("Method needs to be implemented by child.");
-                };
-                Context.prototype.hasSetting = function (name) {
-                    return (this.settings.has(name) ||
-                        (this.parentContext && this.parentContext.hasSetting(name)));
-                };
-                Context.prototype.getSetting = function (name) {
-                    if (this.settings.has(name))
-                        return this.settings.get(name);
-                    if (this.parentContext && this.parentContext.hasSetting(name))
-                        return this.parentContext.getSetting(name);
-                    return null;
-                };
-                Context.prototype.setSetting = function (name, value) {
-                    this.settings.set(name, value);
-                };
-                Context.prototype.deleteSetting = function (name) {
-                    this.settings.delete(name);
-                };
-                Context.prototype.hasDefinition = function (uri) {
-                    if (this.definitions.has(uri))
-                        return true;
-                    if (this.parentContext && this.parentContext.hasDefinition(uri))
-                        return true;
-                    return false;
-                };
-                Context.prototype.getDefinition = function (uri) {
-                    var descriptions = new Map();
-                    if (this.definitions.has(uri)) {
-                        Utils.M.extend(descriptions, this.definitions.get(uri));
-                        if (this.parentContext && this.parentContext.hasDefinition(uri))
-                            Utils.M.extend(descriptions, this.parentContext.getDefinition(uri));
-                    }
-                    return descriptions;
-                };
-                Context.prototype.getDefinitionURIs = function () {
-                    var uris = Utils.A.from(this.definitions.keys());
-                    if (this.parentContext)
-                        uris = Utils.A.joinWithoutDuplicates(uris, this.parentContext.getDefinitionURIs());
-                    return uris;
-                };
-                Context.prototype.addDefinition = function (uri, descriptions) {
-                    var extender;
-                    if (Utils.isMap(descriptions)) {
-                        extender = descriptions;
-                    }
-                    else if (Utils.isObject(descriptions)) {
-                        extender = Utils.M.from(descriptions);
-                    }
-                    else
-                        throw new Errors.IllegalArgumentError("descriptions must be a Map or an Object");
-                    if (this.definitions.has(uri)) {
-                        Utils.M.extend(this.definitions.get(uri), extender);
-                    }
-                    else {
-                        this.definitions.set(uri, extender);
-                    }
-                };
-                Context.prototype.setDefinition = function (uri, descriptions) {
-                    var extender;
-                    if (Utils.isMap(descriptions)) {
-                        extender = descriptions;
-                    }
-                    else if (Utils.isObject(descriptions)) {
-                        extender = Utils.M.from(descriptions);
-                    }
-                    else
-                        throw new Errors.IllegalArgumentError("descriptions must be a Map or an Object");
-                    this.definitions.set(uri, extender);
-                };
-                Context.prototype.deleteDefinition = function (uri) {
-                    this.definitions.delete(uri);
-                };
-                return Context;
-            })();
-            exports_1("default",Context);
-        }
-    }
-});
-
-/// <reference path="../typings/es6/es6.d.ts" />
-$__System.register("4a", ["9", "5", "6", "10", "b"], function(exports_1) {
-    var __extends = (this && this.__extends) || function (d, b) {
-        for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-    var NS, Context_1, RDF, LDP, Utils;
-    var RDF_CLASS, DEFINITION, Class, Factory, factory;
-    return {
-        setters:[
-            function (NS_1) {
-                NS = NS_1;
-            },
-            function (Context_1_1) {
-                Context_1 = Context_1_1;
-            },
-            function (RDF_1) {
-                RDF = RDF_1;
-            },
-            function (LDP_1) {
-                LDP = LDP_1;
-            },
-            function (Utils_1) {
-                Utils = Utils_1;
-            }],
-        execute: function() {
-            exports_1("RDF_CLASS", RDF_CLASS = NS.CS.Class.Application);
-            exports_1("DEFINITION", DEFINITION = Utils.M.from({
-                "rootContainer": {
-                    "uri": NS.CS.Predicate.rootContainer,
-                    "multi": false,
-                    "literal": false
-                }
-            }));
-            Class = (function (_super) {
-                __extends(Class, _super);
-                function Class(parentContext, resource) {
-                    _super.call(this);
-                    this.parentContext = parentContext;
-                    this.resource = resource;
-                    this.base = this.getBase(this.resource);
-                }
-                Class.prototype.resolve = function (uri) {
-                    if (RDF.URI.Util.isAbsolute(uri))
-                        return uri;
-                    var finalURI = this.parentContext.resolve(this.base);
-                    return RDF.URI.Util.resolve(finalURI, uri);
-                };
-                Class.prototype.getBase = function (resource) {
-                    var rootContainerURI = RDF.URI.Util.removeProtocol(resource.rootContainer);
-                    var parentBase = RDF.URI.Util.removeProtocol(this.parentContext.resolve(""));
-                    if (Utils.S.startsWith(rootContainerURI, parentBase))
-                        rootContainerURI = rootContainerURI.substr(parentBase.length, rootContainerURI.length);
-                    return rootContainerURI;
-                };
-                return Class;
-            })(Context_1.default);
-            exports_1("Class", Class);
-            Factory = (function (_super) {
-                __extends(Factory, _super);
-                function Factory() {
-                    _super.apply(this, arguments);
-                }
-                Factory.hasClassProperties = function (resource) {
-                    return (Utils.hasPropertyDefined(resource, "rootContainer"));
-                };
-                Factory.prototype.is = function (object) {
-                    return (_super.prototype.is.call(this, object) &&
-                        Utils.hasPropertyDefined(object, "rootContainer"));
-                };
-                Factory.prototype.from = function (resourceOrResources) {
-                    var superResult = _super.prototype.from.call(this, resourceOrResources);
-                    var resources = Utils.isArray(superResult) ? superResult : [superResult];
-                    for (var i = 0, length = resources.length; i < length; i++) {
-                        var resource = resources[i];
-                        if (!Factory.hasClassProperties(resource))
-                            this.injectBehaviour(resource);
-                    }
-                    if (Utils.isArray(resourceOrResources))
-                        return resources;
-                    return resources[0];
-                };
-                Factory.prototype.hasRDFClass = function (resource) {
-                    return (resource.types.indexOf(RDF_CLASS) !== -1);
-                };
-                Factory.prototype.injectBehaviour = function (resource) {
-                    RDF.Resource.Factory.injectDescriptions(resource, DEFINITION);
-                    return resource;
-                };
-                return Factory;
-            })(LDP.RDFSource.Factory);
-            exports_1("Factory", Factory);
-            exports_1("factory", factory = new Factory());
-            exports_1("default",Class);
-        }
-    }
-});
-
-$__System.register("4b", ["4a", "6", "b", "4c"], function(exports_1) {
-    var App, RDF, Utils, CS;
-    var Apps;
-    return {
-        setters:[
-            function (App_1) {
-                App = App_1;
-            },
-            function (RDF_1) {
-                RDF = RDF_1;
-            },
-            function (Utils_1) {
-                Utils = Utils_1;
-            },
-            function (CS_1) {
-                CS = CS_1;
-            }],
-        execute: function() {
-            Apps = (function () {
-                function Apps(context) {
-                    this.context = context;
-                }
-                Apps.prototype.get = function (uri) {
-                    var _this = this;
-                    var appsContainerURI = this.getAppsContainerURI();
-                    if (RDF.URI.Util.isRelative(uri)) {
-                        if (!Utils.S.startsWith(uri, appsContainerURI))
-                            uri = RDF.URI.Util.resolve(appsContainerURI, uri);
-                        this.context.resolve(uri);
-                    }
-                    return this.context.Documents.get(uri).then(function (processedResponse) {
-                        var document = processedResponse.result;
-                        if (!document.types.indexOf(CS.Class.Application))
-                            throw new Error("The resource fetched is not a cs:Application.");
-                        var appResource = App.factory.from(document);
-                        return new App.Class(_this.context, appResource);
-                    });
-                };
-                Apps.prototype.getAppsContainerURI = function () {
-                    if (!this.context.hasSetting("platform.apps.container"))
-                        throw new Error("The apps container URI hasn't been set.");
-                    return this.context.getSetting("platform.apps.container");
-                };
-                return Apps;
-            })();
-            exports_1("Apps", Apps);
-            exports_1("default",Apps);
-        }
-    }
-});
-
-/// <reference path="../typings/es6/es6.d.ts" />
-$__System.register("b", [], function(exports_1) {
-    var S, A, M, UUID;
-    function hasFunction(object, functionName) {
-        return typeof object[functionName] === "function";
-    }
-    function hasProperty(object, property) {
-        if (!object)
-            return false;
-        return "undefined" !== typeof object[property];
-    }
-    function hasPropertyDefined(object, property) {
-        return !!Object.getOwnPropertyDescriptor(object, property);
-    }
-    function isNull(value) {
-        return value === null;
-    }
-    function isArray(object) {
-        return Object.prototype.toString.call(object) === "[object Array]";
-    }
-    function isString(string) {
-        return typeof string === "string" || string instanceof String;
-    }
-    function isBoolean(boolean) {
-        return typeof boolean === "boolean";
-    }
-    function isNumber(number) {
-        return typeof number === "number" || number instanceof Number;
-    }
-    function isInteger(number) {
-        if (!isNumber(number))
-            return false;
-        return number % 1 === 0;
-    }
-    function isDouble(number) {
-        if (!isNumber(number))
-            return false;
-        return number % 1 !== 0;
-    }
-    function isDate(date) {
-        return typeof date === "date" || date instanceof Date;
-    }
-    function isObject(object) {
-        return typeof object === "object" && (!!object);
-    }
-    function isFunction(value) {
-        return typeof value === "function";
-    }
-    function isMap(value) {
-        return (isObject(value) &&
-            hasFunction(value, "get") &&
-            hasFunction(value, "has") &&
-            hasProperty(value, "size") &&
-            hasFunction(value, "clear") &&
-            hasFunction(value, "delete") &&
-            hasFunction(value, "entries") &&
-            hasFunction(value, "forEach") &&
-            hasFunction(value, "get") &&
-            hasFunction(value, "has") &&
-            hasFunction(value, "keys") &&
-            hasFunction(value, "set") &&
-            hasFunction(value, "values"));
-    }
-    function parseBoolean(value) {
-        if (!isString(value))
-            return false;
-        /* tslint:disable: no-switch-case-fall-through */
-        switch (value.toLowerCase()) {
-            case "true":
-            case "yes":
-            case "y":
-            case "1":
-                return true;
-            case "false":
-            case "no":
-            case "n":
-            case "0":
-            default:
-                return false;
-        }
-        /* tslint:enable: no-switch-case-fall-through */
-    }
-    function extend(target) {
-        var objects = [];
-        for (var _i = 1; _i < arguments.length; _i++) {
-            objects[_i - 1] = arguments[_i];
-        }
-        if (arguments.length <= 1)
-            return target;
-        for (var i = 0, length = arguments.length; i < length; i++) {
-            var toMerge = objects[i];
-            for (var name in toMerge) {
-                if (toMerge.hasOwnProperty(name)) {
-                    target[name] = toMerge[name];
-                }
-            }
-        }
-        return target;
-    }
-    function forEachOwnProperty(object, action) {
-        if (!isObject(object))
-            throw new Error("IllegalArgument");
-        for (var name in object) {
-            if (object.hasOwnProperty(name)) {
-                action(name, object[name]);
-            }
-        }
-    }
-    return {
-        setters:[],
-        execute: function() {
-            S = (function () {
-                function S() {
-                }
-                S.startsWith = function (string, substring) {
-                    return string.lastIndexOf(substring, 0) === 0;
-                };
-                S.endsWith = function (string, substring) {
-                    return string.indexOf(substring, string.length - substring.length) !== -1;
-                };
-                S.contains = function (string, substring) {
-                    return string.indexOf(substring) !== -1;
-                };
-                return S;
-            })();
-            A = (function () {
-                function A() {
-                }
-                A.from = function (iterator) {
-                    var array = [];
-                    var next = iterator.next();
-                    while (!next.done) {
-                        array.push(next.value);
-                        next = iterator.next();
-                    }
-                    return array;
-                };
-                A.joinWithoutDuplicates = function () {
-                    var arrays = [];
-                    for (var _i = 0; _i < arguments.length; _i++) {
-                        arrays[_i - 0] = arguments[_i];
-                    }
-                    var result = arrays[0].slice();
-                    for (var i = 1, length = arrays.length; i < length; i++) {
-                        result = result.concat(arrays[i].filter(function (item) {
-                            return result.indexOf(item) < 0;
-                        }));
-                    }
-                    return result;
-                };
-                return A;
-            })();
-            M = (function () {
-                function M() {
-                }
-                M.from = function (object) {
-                    var map = new Map();
-                    forEachOwnProperty(object, function (name, value) {
-                        map.set(name, value);
-                    });
-                    return map;
-                };
-                M.extend = function (toExtend) {
-                    var extenders = [];
-                    for (var _i = 1; _i < arguments.length; _i++) {
-                        extenders[_i - 1] = arguments[_i];
-                    }
-                    for (var i = 0, length = extenders.length; i < length; i++) {
-                        var extender = extenders[i];
-                        var values = extender.entries();
-                        var next = values.next();
-                        while (!next.done) {
-                            var entry = next.value;
-                            var key = entry[0];
-                            var value = entry[1];
-                            if (!toExtend.has(key))
-                                toExtend.set(key, value);
-                            next = values.next();
-                        }
-                    }
-                    return toExtend;
-                };
-                return M;
-            })();
-            UUID = (function () {
-                function UUID() {
-                }
-                UUID.is = function (uuid) {
-                    return UUID.regExp.test(uuid);
-                };
-                UUID.generate = function () {
-                    return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function (c) {
-                        var r = Math.random() * 16 | 0;
-                        var v = c === "x" ? r : (r & 0x3 | 0x8);
-                        return v.toString(16);
-                    });
-                };
-                UUID.regExp = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
-                return UUID;
-            })();
-            exports_1("hasFunction", hasFunction);
-            exports_1("hasProperty", hasProperty);
-            exports_1("hasPropertyDefined", hasPropertyDefined);
-            exports_1("isNull", isNull);
-            exports_1("isArray", isArray);
-            exports_1("isString", isString);
-            exports_1("isBoolean", isBoolean);
-            exports_1("isNumber", isNumber);
-            exports_1("isInteger", isInteger);
-            exports_1("isDouble", isDouble);
-            exports_1("isDate", isDate);
-            exports_1("isObject", isObject);
-            exports_1("isFunction", isFunction);
-            exports_1("isMap", isMap);
-            exports_1("parseBoolean", parseBoolean);
-            exports_1("extend", extend);
-            exports_1("forEachOwnProperty", forEachOwnProperty);
-            exports_1("S", S);
-            exports_1("A", A);
-            exports_1("M", M);
-            exports_1("UUID", UUID);
-        }
-    }
-});
-
-$__System.register("21", [], function(exports_1) {
-    var namespace, DataType;
-    return {
-        setters:[],
-        execute: function() {
-            exports_1("namespace", namespace = "http://www.w3.org/2001/XMLSchema#");
-            (function (DataType) {
-                DataType[DataType["date"] = (namespace + "date")] = "date";
-                DataType[DataType["dateTime"] = (namespace + "dateTime")] = "dateTime";
-                DataType[DataType["duration"] = (namespace + "duration")] = "duration";
-                DataType[DataType["gDay"] = (namespace + "gDay")] = "gDay";
-                DataType[DataType["gMonth"] = (namespace + "gMonth")] = "gMonth";
-                DataType[DataType["gMonthDay"] = (namespace + "gMonthDay")] = "gMonthDay";
-                DataType[DataType["gYear"] = (namespace + "gYear")] = "gYear";
-                DataType[DataType["gYearMonth"] = (namespace + "gYearMonth")] = "gYearMonth";
-                DataType[DataType["time"] = (namespace + "time")] = "time";
-                DataType[DataType["byte"] = (namespace + "byte")] = "byte";
-                DataType[DataType["decimal"] = (namespace + "decimal")] = "decimal";
-                DataType[DataType["int"] = (namespace + "int")] = "int";
-                DataType[DataType["integer"] = (namespace + "integer")] = "integer";
-                DataType[DataType["long"] = (namespace + "long")] = "long";
-                DataType[DataType["negativeInteger"] = (namespace + "negativeInteger")] = "negativeInteger";
-                DataType[DataType["nonNegativeInteger"] = (namespace + "nonNegativeInteger")] = "nonNegativeInteger";
-                DataType[DataType["nonPositiveInteger"] = (namespace + "nonPositiveInteger")] = "nonPositiveInteger";
-                DataType[DataType["positiveInteger"] = (namespace + "positiveInteger")] = "positiveInteger";
-                DataType[DataType["short"] = (namespace + "short")] = "short";
-                DataType[DataType["unsignedLong"] = (namespace + "unsignedLong")] = "unsignedLong";
-                DataType[DataType["unsignedInt"] = (namespace + "unsignedInt")] = "unsignedInt";
-                DataType[DataType["unsignedShort"] = (namespace + "unsignedShort")] = "unsignedShort";
-                DataType[DataType["unsignedByte"] = (namespace + "unsignedByte")] = "unsignedByte";
-                DataType[DataType["double"] = (namespace + "double")] = "double";
-                DataType[DataType["float"] = (namespace + "float")] = "float";
-                DataType[DataType["boolean"] = (namespace + "boolean")] = "boolean";
-                DataType[DataType["string"] = (namespace + "string")] = "string";
-                DataType[DataType["object"] = (namespace + "object")] = "object";
-            })(DataType || (DataType = {}));
-            exports_1("DataType", DataType);
-        }
-    }
-});
-
-$__System.register("4d", [], function(exports_1) {
+$__System.register("55", [], function(exports_1) {
     var namespace, Predicate;
     return {
         setters:[],
         execute: function() {
-            namespace = "http://www.w3.org/1999/02/22-rdf-syntax-ns#";
+            namespace = "https://carbonldp.com/ns/v1/patch#";
             Predicate = (function () {
                 function Predicate() {
                 }
-                Predicate.type = namespace + "type";
+                Predicate.ADD_ACTION = namespace + "addAction";
+                Predicate.SET_ACTION = namespace + "setAction";
+                Predicate.DELETE_ACTION = namespace + "deleteAction";
                 return Predicate;
             })();
             exports_1("namespace", namespace);
@@ -10325,7 +10978,55 @@ $__System.register("4d", [], function(exports_1) {
     }
 });
 
-$__System.register("18", [], function(exports_1) {
+$__System.register("6", [], function(exports_1) {
+    var namespace, Class, Predicate;
+    return {
+        setters:[],
+        execute: function() {
+            namespace = "https://carbonldp.com/ns/v1/security#";
+            Class = (function () {
+                function Class() {
+                }
+                Object.defineProperty(Class, "Application", {
+                    get: function () { return namespace + "Application"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(Class, "Token", {
+                    get: function () { return namespace + "Token"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                return Class;
+            })();
+            Predicate = (function () {
+                function Predicate() {
+                }
+                Object.defineProperty(Predicate, "rootContainer", {
+                    get: function () { return namespace + "rootContainer"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(Predicate, "tokenKey", {
+                    get: function () { return namespace + "tokenKey"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(Predicate, "expirationTime", {
+                    get: function () { return namespace + "expirationTime"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                return Predicate;
+            })();
+            exports_1("namespace", namespace);
+            exports_1("Class", Class);
+            exports_1("Predicate", Predicate);
+        }
+    }
+});
+
+$__System.register("23", [], function(exports_1) {
     var namespace, Class, Predicate;
     return {
         setters:[],
@@ -10483,66 +11184,16 @@ $__System.register("18", [], function(exports_1) {
     }
 });
 
-$__System.register("4c", [], function(exports_1) {
-    var namespace, Class, Predicate;
-    return {
-        setters:[],
-        execute: function() {
-            namespace = "https://carbonldp.com/ns/v1/security#";
-            Class = (function () {
-                function Class() {
-                }
-                Object.defineProperty(Class, "Application", {
-                    get: function () { return namespace + "Application"; },
-                    enumerable: true,
-                    configurable: true
-                });
-                Object.defineProperty(Class, "Token", {
-                    get: function () { return namespace + "Token"; },
-                    enumerable: true,
-                    configurable: true
-                });
-                return Class;
-            })();
-            Predicate = (function () {
-                function Predicate() {
-                }
-                Object.defineProperty(Predicate, "rootContainer", {
-                    get: function () { return namespace + "rootContainer"; },
-                    enumerable: true,
-                    configurable: true
-                });
-                Object.defineProperty(Predicate, "tokenKey", {
-                    get: function () { return namespace + "tokenKey"; },
-                    enumerable: true,
-                    configurable: true
-                });
-                Object.defineProperty(Predicate, "expirationTime", {
-                    get: function () { return namespace + "expirationTime"; },
-                    enumerable: true,
-                    configurable: true
-                });
-                return Predicate;
-            })();
-            exports_1("namespace", namespace);
-            exports_1("Class", Class);
-            exports_1("Predicate", Predicate);
-        }
-    }
-});
-
-$__System.register("4e", [], function(exports_1) {
+$__System.register("56", [], function(exports_1) {
     var namespace, Predicate;
     return {
         setters:[],
         execute: function() {
-            namespace = "https://carbonldp.com/ns/v1/patch#";
+            namespace = "http://www.w3.org/1999/02/22-rdf-syntax-ns#";
             Predicate = (function () {
                 function Predicate() {
                 }
-                Predicate.ADD_ACTION = namespace + "addAction";
-                Predicate.SET_ACTION = namespace + "setAction";
-                Predicate.DELETE_ACTION = namespace + "deleteAction";
+                Predicate.type = namespace + "type";
                 return Predicate;
             })();
             exports_1("namespace", namespace);
@@ -10551,60 +11202,58 @@ $__System.register("4e", [], function(exports_1) {
     }
 });
 
-$__System.register("4f", [], function(exports_1) {
-    var namespace, Class, Predicate;
+$__System.register("2f", ["5"], function(exports_1) {
+    var Utils;
+    var namespace, DataType;
     return {
-        setters:[],
+        setters:[
+            function (Utils_1) {
+                Utils = Utils_1;
+            }],
         execute: function() {
-            namespace = "https://carbonldp.com/ns/v1/platform#";
-            Class = (function () {
-                function Class() {
+            exports_1("namespace", namespace = "http://www.w3.org/2001/XMLSchema#");
+            DataType = (function () {
+                function DataType() {
                 }
-                Object.defineProperty(Class, "AccessPoint", {
-                    get: function () { return namespace + "AccessPoint"; },
-                    enumerable: true,
-                    configurable: true
-                });
-                Object.defineProperty(Class, "API", {
-                    get: function () { return namespace + "API"; },
-                    enumerable: true,
-                    configurable: true
-                });
-                Object.defineProperty(Class, "VolatileResource", {
-                    get: function () { return namespace + "VolatileResource"; },
-                    enumerable: true,
-                    configurable: true
-                });
-                return Class;
+                DataType.date = namespace + "date";
+                DataType.dateTime = namespace + "dateTime";
+                DataType.duration = namespace + "duration";
+                DataType.gDay = namespace + "gDay";
+                DataType.gMonth = namespace + "gMonth";
+                DataType.gMonthDay = namespace + "gMonthDay";
+                DataType.gYear = namespace + "gYear";
+                DataType.gYearMonth = namespace + "gYearMonth";
+                DataType.time = namespace + "time";
+                DataType.byte = namespace + "byte";
+                DataType.decimal = namespace + "decimal";
+                DataType.int = namespace + "int";
+                DataType.integer = namespace + "integer";
+                DataType.long = namespace + "long";
+                DataType.negativeInteger = namespace + "negativeInteger";
+                DataType.nonNegativeInteger = namespace + "nonNegativeInteger";
+                DataType.nonPositiveInteger = namespace + "nonPositiveInteger";
+                DataType.positiveInteger = namespace + "positiveInteger";
+                DataType.short = namespace + "short";
+                DataType.unsignedLong = namespace + "unsignedLong";
+                DataType.unsignedInt = namespace + "unsignedInt";
+                DataType.unsignedShort = namespace + "unsignedShort";
+                DataType.unsignedByte = namespace + "unsignedByte";
+                DataType.double = namespace + "double";
+                DataType.float = namespace + "float";
+                DataType.boolean = namespace + "boolean";
+                DataType.string = namespace + "string";
+                DataType.object = namespace + "object";
+                return DataType;
             })();
-            Predicate = (function () {
-                function Predicate() {
-                }
-                Object.defineProperty(Predicate, "accessPoint", {
-                    get: function () { return namespace + "accessPoint"; },
-                    enumerable: true,
-                    configurable: true
-                });
-                Object.defineProperty(Predicate, "version", {
-                    get: function () { return namespace + "version"; },
-                    enumerable: true,
-                    configurable: true
-                });
-                Object.defineProperty(Predicate, "buildDate", {
-                    get: function () { return namespace + "buildDate"; },
-                    enumerable: true,
-                    configurable: true
-                });
-                return Predicate;
-            })();
-            exports_1("namespace", namespace);
-            exports_1("Class", Class);
-            exports_1("Predicate", Predicate);
+            exports_1("DataType", DataType);
+            Utils.forEachOwnProperty(DataType, function (key, value) {
+                DataType[value] = key;
+            });
         }
     }
 });
 
-$__System.register("9", ["4f", "4e", "4c", "18", "4d", "21"], function(exports_1) {
+$__System.register("8", ["54", "55", "6", "23", "56", "2f"], function(exports_1) {
     var C, CP, CS, LDP, RDF, XSD;
     return {
         setters:[
@@ -10637,57 +11286,892 @@ $__System.register("9", ["4f", "4e", "4c", "18", "4d", "21"], function(exports_1
     }
 });
 
-$__System.register("50", ["9", "b"], function(exports_1) {
-    var NS, Utils;
-    var RDF_CLASS, DEFINITION;
+$__System.register("c", ["5"], function(exports_1) {
+    var Utils;
+    var Factory, Util;
+    return {
+        setters:[
+            function (Utils_1) {
+                Utils = Utils_1;
+            }],
+        execute: function() {
+            Factory = (function () {
+                function Factory() {
+                }
+                Factory.hasClassProperties = function (object) {
+                    return !!(Utils.hasPropertyDefined(object, "_id") &&
+                        Utils.hasPropertyDefined(object, "_resolved") &&
+                        Utils.hasPropertyDefined(object, "id") &&
+                        Utils.hasFunction(object, "isResolved") &&
+                        Utils.hasPropertyDefined(object, "resolve"));
+                };
+                Factory.is = function (value) {
+                    return !!(Utils.isObject(value) &&
+                        Factory.hasClassProperties(value));
+                };
+                Factory.create = function (id) {
+                    id = !!id ? id : "";
+                    var pointer = Factory.decorate({});
+                    pointer.id = id;
+                    return pointer;
+                };
+                Factory.decorate = function (object) {
+                    if (Factory.hasClassProperties(object))
+                        return object;
+                    Object.defineProperties(object, {
+                        "_id": {
+                            writable: true,
+                            enumerable: false,
+                            configurable: true,
+                            value: "",
+                        },
+                        "_resolved": {
+                            writable: true,
+                            enumerable: false,
+                            configurable: true,
+                            value: false,
+                        },
+                        "id": {
+                            enumerable: false,
+                            configurable: true,
+                            get: function () {
+                                if (!this._id)
+                                    return "";
+                                return this._id;
+                            },
+                            set: function (value) {
+                                this._id = value;
+                            },
+                        },
+                        "isResolved": {
+                            writable: false,
+                            enumerable: false,
+                            configurable: true,
+                            value: function () {
+                                return this._resolved;
+                            },
+                        },
+                        "resolve": {
+                            writable: false,
+                            enumerable: false,
+                            configurable: true,
+                            value: function () {
+                                var _this = this;
+                                return new Promise(function (resolve, reject) {
+                                    return _this;
+                                });
+                            },
+                        },
+                    });
+                    return object;
+                };
+                return Factory;
+            })();
+            exports_1("Factory", Factory);
+            Util = (function () {
+                function Util() {
+                }
+                Util.getIDs = function (pointers) {
+                    var ids = [];
+                    for (var _i = 0; _i < pointers.length; _i++) {
+                        var pointer = pointers[_i];
+                        ids.push(pointer.id);
+                    }
+                    return ids;
+                };
+                return Util;
+            })();
+            exports_1("Util", Util);
+        }
+    }
+});
+
+$__System.register("57", ["8", "c", "5"], function(exports_1) {
+    var NS, Pointer, Utils;
+    var RDF_CLASS, CONTEXT, Factory;
     return {
         setters:[
             function (NS_1) {
                 NS = NS_1;
             },
+            function (Pointer_1) {
+                Pointer = Pointer_1;
+            },
             function (Utils_1) {
                 Utils = Utils_1;
             }],
         execute: function() {
-            exports_1("RDF_CLASS", RDF_CLASS = NS.C.Class.API);
-            exports_1("DEFINITION", DEFINITION = Utils.M.from({
-                "version": {
-                    "uri": NS.C.Predicate.version,
-                    "multi": false,
-                    "literal": true
+            exports_1("RDF_CLASS", RDF_CLASS = NS.CS.Class.Token);
+            exports_1("CONTEXT", CONTEXT = {
+                "key": {
+                    "@id": NS.CS.Predicate.tokenKey,
+                    "@type": NS.XSD.DataType.string,
                 },
-                "buildDate": {
-                    "uri": NS.C.Predicate.buildDate,
-                    "multi": false,
-                    "literal": true
+                "expirationTime": {
+                    "@id": NS.CS.Predicate.expirationTime,
+                    "@type": NS.XSD.DataType.dateTime,
+                },
+            });
+            Factory = (function () {
+                function Factory() {
                 }
-            }));
+                Factory.is = function (value) {
+                    return (Utils.isObject(value) &&
+                        Factory.hasClassProperties(value));
+                };
+                Factory.hasClassProperties = function (object) {
+                    return (Utils.hasPropertyDefined(object, "key") &&
+                        Utils.hasPropertyDefined(object, "expirationTime"));
+                };
+                Factory.decorate = function (object) {
+                    if (this.hasClassProperties(object))
+                        return object;
+                    return object;
+                };
+                Factory.hasRDFClass = function (pointerOrExpandedObject) {
+                    var types = [];
+                    if ("@type" in pointerOrExpandedObject) {
+                        types = pointerOrExpandedObject["@type"];
+                    }
+                    else if ("types" in pointerOrExpandedObject) {
+                        // TODO: Use proper class
+                        var resource = pointerOrExpandedObject;
+                        types = Pointer.Util.getIDs(resource.types);
+                    }
+                    return types.indexOf(RDF_CLASS) !== -1;
+                };
+                return Factory;
+            })();
+            exports_1("Factory", Factory);
         }
     }
 });
 
-/// <reference path="../typings/tsd.d.ts" />
-$__System.register("51", ["50", "4b", "3", "5", "14", "15", "17", "4", "6", "2", "b"], function(exports_1) {
+$__System.register("58", [], function(exports_1) {
+    var Class;
+    return {
+        setters:[],
+        execute: function() {
+            Class = (function () {
+                function Class(token) {
+                    this._token = token;
+                }
+                Object.defineProperty(Class.prototype, "token", {
+                    get: function () { return this._token; },
+                    enumerable: true,
+                    configurable: true
+                });
+                ;
+                return Class;
+            })();
+            exports_1("Class", Class);
+            exports_1("default",Class);
+        }
+    }
+});
+
+$__System.register("59", ["14", "20", "8", "4", "52", "53", "57", "58"], function(exports_1) {
+    var Errors, HTTP, NS, RDF, BasicAuthenticator_1, UsernameAndPasswordToken_1, Token, TokenCredentials;
+    var Class;
+    return {
+        setters:[
+            function (Errors_1) {
+                Errors = Errors_1;
+            },
+            function (HTTP_1) {
+                HTTP = HTTP_1;
+            },
+            function (NS_1) {
+                NS = NS_1;
+            },
+            function (RDF_1) {
+                RDF = RDF_1;
+            },
+            function (BasicAuthenticator_1_1) {
+                BasicAuthenticator_1 = BasicAuthenticator_1_1;
+            },
+            function (UsernameAndPasswordToken_1_1) {
+                UsernameAndPasswordToken_1 = UsernameAndPasswordToken_1_1;
+            },
+            function (Token_1) {
+                Token = Token_1;
+            },
+            function (TokenCredentials_1) {
+                TokenCredentials = TokenCredentials_1;
+            }],
+        execute: function() {
+            Class = (function () {
+                function Class(context) {
+                    if (context === null)
+                        throw new Errors.IllegalArgumentError("context cannot be null");
+                    this.context = context;
+                    this.basicAuthenticator = new BasicAuthenticator_1.default();
+                }
+                Class.prototype.isAuthenticated = function () {
+                    return !!this.credentials && this.credentials.token.expirationTime > new Date();
+                };
+                Class.prototype.authenticate = function (authenticationToken) {
+                    var _this = this;
+                    return this.basicAuthenticator.authenticate(authenticationToken).then(function (credentials) {
+                        return _this.createToken();
+                    }).then(function (_a) {
+                        var token = _a[0], response = _a[1];
+                        _this.credentials = new TokenCredentials.Class(token);
+                        _this.basicAuthenticator.clearAuthentication();
+                        return _this.credentials;
+                    });
+                };
+                Class.prototype.addAuthentication = function (requestOptions) {
+                    var headers = requestOptions.headers ? requestOptions.headers : requestOptions.headers = new Map();
+                    this.addTokenAuthenticationHeader(headers);
+                    return requestOptions;
+                };
+                Class.prototype.clearAuthentication = function () {
+                    this.credentials = null;
+                };
+                Class.prototype.supports = function (authenticationToken) {
+                    return authenticationToken instanceof UsernameAndPasswordToken_1.default;
+                };
+                Class.prototype.createToken = function () {
+                    var _this = this;
+                    var uri = this.context.resolve(Class.TOKEN_CONTAINER);
+                    var requestOptions = {};
+                    this.basicAuthenticator.addAuthentication(requestOptions);
+                    HTTP.Request.Util.setAcceptHeader("application/ld+json", requestOptions);
+                    HTTP.Request.Util.setPreferredInteractionModel(NS.LDP.Class.RDFSource, requestOptions);
+                    return HTTP.Request.Service.post(uri, null, requestOptions, new HTTP.JSONLDParser.Class()).then(function (_a) {
+                        var expandedResult = _a[0], response = _a[1];
+                        var expandedNodes = RDF.Document.Util.getResources(expandedResult);
+                        expandedNodes = expandedNodes.filter(Token.Factory.hasRDFClass);
+                        if (expandedNodes.length === 0)
+                            throw new HTTP.Errors.BadResponseError("No '" + Token.RDF_CLASS + "' was returned.", response);
+                        if (expandedNodes.length > 1)
+                            throw new HTTP.Errors.BadResponseError("Multiple '" + Token.RDF_CLASS + "' were returned. ", response);
+                        var expandedToken = expandedNodes[0];
+                        var token = Token.Factory.decorate({});
+                        var digestedSchema = _this.context.documents.getSchemaFor(expandedToken);
+                        _this.context.documents.jsonldConverter.compact(expandedToken, token, digestedSchema, _this.context.documents);
+                        return [token, response];
+                    });
+                };
+                Class.prototype.addTokenAuthenticationHeader = function (headers) {
+                    var header;
+                    if (headers.has("Authorization")) {
+                        header = headers.get("Authorization");
+                    }
+                    else {
+                        header = new HTTP.Header.Class();
+                        headers.set("Authorization", header);
+                    }
+                    var authorization = "Token " + this.credentials.token.key;
+                    header.values.push(new HTTP.Header.Value(authorization));
+                    return headers;
+                };
+                Class.TOKEN_CONTAINER = "auth-tokens/";
+                return Class;
+            })();
+            exports_1("Class", Class);
+            exports_1("default",Class);
+        }
+    }
+});
+
+$__System.register("53", [], function(exports_1) {
+    var Class;
+    return {
+        setters:[],
+        execute: function() {
+            Class = (function () {
+                function Class(username, password) {
+                    this._username = username;
+                    this._password = password;
+                }
+                Object.defineProperty(Class.prototype, "username", {
+                    get: function () { return this._username; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(Class.prototype, "password", {
+                    get: function () { return this._password; },
+                    enumerable: true,
+                    configurable: true
+                });
+                return Class;
+            })();
+            exports_1("Class", Class);
+            exports_1("default",Class);
+        }
+    }
+});
+
+$__System.register("5a", ["48"], function(exports_1) {
     var __extends = (this && this.__extends) || function (d, b) {
         for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
-    var APIDescription, Apps_1, Auth, Context_1, Document, Documents_1, HTTP, Platform_1, RDF, settings_1, Utils;
+    var AbstractError_1;
+    var IllegalStateError;
+    return {
+        setters:[
+            function (AbstractError_1_1) {
+                AbstractError_1 = AbstractError_1_1;
+            }],
+        execute: function() {
+            IllegalStateError = (function (_super) {
+                __extends(IllegalStateError, _super);
+                function IllegalStateError(message) {
+                    if (message === void 0) { message = ""; }
+                    _super.call(this, message);
+                }
+                Object.defineProperty(IllegalStateError.prototype, "name", {
+                    get: function () { return "IllegalStateError"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                return IllegalStateError;
+            })(AbstractError_1.default);
+            exports_1("default",IllegalStateError);
+        }
+    }
+});
+
+$__System.register("5b", ["48"], function(exports_1) {
+    var __extends = (this && this.__extends) || function (d, b) {
+        for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+    var AbstractError_1;
+    var IllegalArgumentError;
+    return {
+        setters:[
+            function (AbstractError_1_1) {
+                AbstractError_1 = AbstractError_1_1;
+            }],
+        execute: function() {
+            IllegalArgumentError = (function (_super) {
+                __extends(IllegalArgumentError, _super);
+                function IllegalArgumentError() {
+                    _super.apply(this, arguments);
+                }
+                Object.defineProperty(IllegalArgumentError.prototype, "name", {
+                    get: function () { return "IllegalArgumentError"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                return IllegalArgumentError;
+            })(AbstractError_1.default);
+            exports_1("default",IllegalArgumentError);
+        }
+    }
+});
+
+$__System.register("5c", ["48"], function(exports_1) {
+    var __extends = (this && this.__extends) || function (d, b) {
+        for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+    var AbstractError_1;
+    var IDAlreadyInUseError;
+    return {
+        setters:[
+            function (AbstractError_1_1) {
+                AbstractError_1 = AbstractError_1_1;
+            }],
+        execute: function() {
+            IDAlreadyInUseError = (function (_super) {
+                __extends(IDAlreadyInUseError, _super);
+                function IDAlreadyInUseError() {
+                    _super.apply(this, arguments);
+                }
+                Object.defineProperty(IDAlreadyInUseError.prototype, "name", {
+                    get: function () { return "IDAlreadyInUseError"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                return IDAlreadyInUseError;
+            })(AbstractError_1.default);
+            exports_1("default",IDAlreadyInUseError);
+        }
+    }
+});
+
+$__System.register("48", [], function(exports_1) {
+    var __extends = (this && this.__extends) || function (d, b) {
+        for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+    var AbstractError;
+    return {
+        setters:[],
+        execute: function() {
+            AbstractError = (function (_super) {
+                __extends(AbstractError, _super);
+                function AbstractError(message) {
+                    _super.call(this, message);
+                    this.message = message;
+                }
+                Object.defineProperty(AbstractError.prototype, "name", {
+                    get: function () { return "AbstractError"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                AbstractError.prototype.toString = function () {
+                    return this.name + ": " + this.message;
+                };
+                return AbstractError;
+            })(Error);
+            exports_1("default",AbstractError);
+        }
+    }
+});
+
+$__System.register("5d", ["48"], function(exports_1) {
+    var __extends = (this && this.__extends) || function (d, b) {
+        for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+    var AbstractError_1;
+    var NotImplementedError;
+    return {
+        setters:[
+            function (AbstractError_1_1) {
+                AbstractError_1 = AbstractError_1_1;
+            }],
+        execute: function() {
+            NotImplementedError = (function (_super) {
+                __extends(NotImplementedError, _super);
+                function NotImplementedError(message) {
+                    if (message === void 0) { message = ""; }
+                    _super.call(this, message);
+                }
+                Object.defineProperty(NotImplementedError.prototype, "name", {
+                    get: function () { return "NotImplementedError"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                return NotImplementedError;
+            })(AbstractError_1.default);
+            exports_1("default",NotImplementedError);
+        }
+    }
+});
+
+$__System.register("14", ["5a", "5b", "5c", "5d"], function(exports_1) {
+    var IllegalStateError_1, IllegalArgumentError_1, IDAlreadyInUseError_1, NotImplementedError_1;
+    return {
+        setters:[
+            function (IllegalStateError_1_1) {
+                IllegalStateError_1 = IllegalStateError_1_1;
+            },
+            function (IllegalArgumentError_1_1) {
+                IllegalArgumentError_1 = IllegalArgumentError_1_1;
+            },
+            function (IDAlreadyInUseError_1_1) {
+                IDAlreadyInUseError_1 = IDAlreadyInUseError_1_1;
+            },
+            function (NotImplementedError_1_1) {
+                NotImplementedError_1 = NotImplementedError_1_1;
+            }],
+        execute: function() {
+            exports_1("IllegalStateError", IllegalStateError_1.default);
+            exports_1("IllegalArgumentError", IllegalArgumentError_1.default);
+            exports_1("IDAlreadyInUseError", IDAlreadyInUseError_1.default);
+            exports_1("NotImplementedError", NotImplementedError_1.default);
+        }
+    }
+});
+
+/// <reference path="./../typings/typings.d.ts" />
+$__System.register("12", ["24", "25", "52", "57", "59", "53", "14", "5"], function(exports_1) {
+    var AuthenticationToken_1, Authenticator_1, BasicAuthenticator_1, Token, TokenAuthenticator_1, UsernameAndPasswordToken_1, Errors, Utils;
+    var Method, Class;
+    return {
+        setters:[
+            function (AuthenticationToken_1_1) {
+                AuthenticationToken_1 = AuthenticationToken_1_1;
+            },
+            function (Authenticator_1_1) {
+                Authenticator_1 = Authenticator_1_1;
+            },
+            function (BasicAuthenticator_1_1) {
+                BasicAuthenticator_1 = BasicAuthenticator_1_1;
+            },
+            function (Token_1) {
+                Token = Token_1;
+            },
+            function (TokenAuthenticator_1_1) {
+                TokenAuthenticator_1 = TokenAuthenticator_1_1;
+            },
+            function (UsernameAndPasswordToken_1_1) {
+                UsernameAndPasswordToken_1 = UsernameAndPasswordToken_1_1;
+            },
+            function (Errors_1) {
+                Errors = Errors_1;
+            },
+            function (Utils_1) {
+                Utils = Utils_1;
+            }],
+        execute: function() {
+            exports_1("AuthenticationToken", AuthenticationToken_1.default);
+            exports_1("Authenticator", Authenticator_1.default);
+            exports_1("BasicAuthenticator", BasicAuthenticator_1.default);
+            exports_1("Token", Token);
+            exports_1("TokenAuthenticator", TokenAuthenticator_1.default);
+            exports_1("UsernameAndPasswordToken", UsernameAndPasswordToken_1.default);
+            (function (Method) {
+                Method[Method["BASIC"] = 0] = "BASIC";
+                Method[Method["TOKEN"] = 1] = "TOKEN";
+            })(Method || (Method = {}));
+            exports_1("Method", Method);
+            Class = (function () {
+                function Class(context) {
+                    this.method = null;
+                    this.context = context;
+                    this.authenticators = [];
+                    this.authenticators.push(new TokenAuthenticator_1.default(this.context));
+                    this.authenticators.push(new BasicAuthenticator_1.default());
+                }
+                Class.prototype.isAuthenticated = function (askParent) {
+                    if (askParent === void 0) { askParent = true; }
+                    return ((this.authenticator && this.authenticator.isAuthenticated()) ||
+                        (askParent && !!this.context.parentContext && this.context.parentContext.auth.isAuthenticated()));
+                };
+                Class.prototype.authenticate = function (usernameOrToken, password) {
+                    var _this = this;
+                    if (password === void 0) { password = null; }
+                    return new Promise(function (resolve, reject) {
+                        if (!usernameOrToken)
+                            throw new Errors.IllegalArgumentError("Either a username or an authenticationToken are required.");
+                        var authenticationToken;
+                        if (Utils.isString(usernameOrToken)) {
+                            var username = usernameOrToken;
+                            if (!password)
+                                throw new Errors.IllegalArgumentError("A password is required when providing a username.");
+                            authenticationToken = new UsernameAndPasswordToken_1.default(username, password);
+                        }
+                        else {
+                            authenticationToken = usernameOrToken;
+                        }
+                        if (_this.authenticator)
+                            _this.clearAuthentication();
+                        _this.authenticator = _this.getAuthenticator(authenticationToken);
+                        resolve(_this.authenticator.authenticate(authenticationToken));
+                    });
+                };
+                Class.prototype.addAuthentication = function (requestOptions) {
+                    if (this.isAuthenticated(false)) {
+                        this.authenticator.addAuthentication(requestOptions);
+                    }
+                    else if (!!this.context.parentContext) {
+                        this.context.parentContext.auth.addAuthentication(requestOptions);
+                    }
+                    else {
+                        console.warn("There is no authentication to add to the request.");
+                    }
+                };
+                Class.prototype.clearAuthentication = function () {
+                    if (!this.authenticator)
+                        return;
+                    this.authenticator.clearAuthentication();
+                    this.authenticator = null;
+                };
+                Class.prototype.getAuthenticator = function (authenticationToken) {
+                    for (var _i = 0, _a = this.authenticators; _i < _a.length; _i++) {
+                        var authenticator = _a[_i];
+                        if (authenticator.supports(authenticationToken))
+                            return authenticator;
+                    }
+                    throw new Errors.IllegalStateError("The configured authentication method isn\'t supported.");
+                };
+                return Class;
+            })();
+            exports_1("Class", Class);
+            exports_1("default",Class);
+        }
+    }
+});
+
+$__System.register("5e", ["12"], function(exports_1) {
+    var Auth;
+    var settings;
+    return {
+        setters:[
+            function (Auth_1) {
+                Auth = Auth_1;
+            }],
+        execute: function() {
+            settings = {};
+            settings["domain"] = "carbonldp.com";
+            settings["http.ssl"] = true;
+            settings["auth.method"] = Auth.Method.TOKEN;
+            settings["platform.container"] = "platform/";
+            settings["platform.apps.container"] = "apps/";
+            exports_1("default",settings);
+        }
+    }
+});
+
+/// <reference path="./../typings/typings.d.ts" />
+$__System.register("5", [], function(exports_1) {
+    var S, A, M, UUID, P;
+    function hasFunction(object, functionName) {
+        return typeof object[functionName] === "function";
+    }
+    function hasProperty(object, property) {
+        if (!object)
+            return false;
+        return "undefined" !== typeof object[property];
+    }
+    function hasPropertyDefined(object, property) {
+        return !!Object.getOwnPropertyDescriptor(object, property);
+    }
+    function isNull(value) {
+        return value === null;
+    }
+    function isArray(object) {
+        return object instanceof Array;
+    }
+    function isString(value) {
+        return typeof value === "string" || value instanceof String;
+    }
+    function isBoolean(value) {
+        return typeof value === "boolean";
+    }
+    function isNumber(value) {
+        return typeof value === "number" || value instanceof Number;
+    }
+    function isInteger(value) {
+        if (!isNumber(value))
+            return false;
+        return value % 1 === 0;
+    }
+    function isDouble(value) {
+        if (!isNumber(value))
+            return false;
+        return value % 1 !== 0;
+    }
+    function isDate(date) {
+        return typeof date === "date" || date instanceof Date;
+    }
+    function isObject(object) {
+        return typeof object === "object" && (!!object);
+    }
+    function isFunction(value) {
+        return typeof value === "function";
+    }
+    function isMap(value) {
+        return (isObject(value) &&
+            hasFunction(value, "get") &&
+            hasFunction(value, "has") &&
+            hasProperty(value, "size") &&
+            hasFunction(value, "clear") &&
+            hasFunction(value, "delete") &&
+            hasFunction(value, "entries") &&
+            hasFunction(value, "forEach") &&
+            hasFunction(value, "get") &&
+            hasFunction(value, "has") &&
+            hasFunction(value, "keys") &&
+            hasFunction(value, "set") &&
+            hasFunction(value, "values"));
+    }
+    function parseBoolean(value) {
+        if (!isString(value))
+            return false;
+        /* tslint:disable: no-switch-case-fall-through */
+        switch (value.toLowerCase()) {
+            case "true":
+            case "yes":
+            case "y":
+            case "1":
+                return true;
+            case "false":
+            case "no":
+            case "n":
+            case "0":
+            default:
+                return false;
+        }
+        /* tslint:enable: no-switch-case-fall-through */
+    }
+    function extend(target) {
+        var objects = [];
+        for (var _i = 1; _i < arguments.length; _i++) {
+            objects[_i - 1] = arguments[_i];
+        }
+        if (arguments.length <= 1)
+            return target;
+        for (var i = 0, length = arguments.length; i < length; i++) {
+            var toMerge = objects[i];
+            for (var name in toMerge) {
+                if (toMerge.hasOwnProperty(name)) {
+                    target[name] = toMerge[name];
+                }
+            }
+        }
+        return target;
+    }
+    function forEachOwnProperty(object, action) {
+        if (!(isObject(object) || isFunction(object)))
+            throw new Error("IllegalArgument");
+        for (var name in object) {
+            if (object.hasOwnProperty(name)) {
+                if (action(name, object[name]) === false)
+                    break;
+            }
+        }
+    }
+    return {
+        setters:[],
+        execute: function() {
+            S = (function () {
+                function S() {
+                }
+                S.startsWith = function (str, substring) {
+                    return str.lastIndexOf(substring, 0) === 0;
+                };
+                S.endsWith = function (str, substring) {
+                    return str.indexOf(substring, str.length - substring.length) !== -1;
+                };
+                S.contains = function (str, substring) {
+                    return str.indexOf(substring) !== -1;
+                };
+                return S;
+            })();
+            A = (function () {
+                function A() {
+                }
+                A.from = function (iterator) {
+                    var array = [];
+                    var next = iterator.next();
+                    while (!next.done) {
+                        array.push(next.value);
+                        next = iterator.next();
+                    }
+                    return array;
+                };
+                A.joinWithoutDuplicates = function () {
+                    var arrays = [];
+                    for (var _i = 0; _i < arguments.length; _i++) {
+                        arrays[_i - 0] = arguments[_i];
+                    }
+                    var result = arrays[0].slice();
+                    for (var i = 1, length = arrays.length; i < length; i++) {
+                        result = result.concat(arrays[i].filter(function (item) {
+                            return result.indexOf(item) < 0;
+                        }));
+                    }
+                    return result;
+                };
+                return A;
+            })();
+            M = (function () {
+                function M() {
+                }
+                M.from = function (object) {
+                    var map = new Map();
+                    forEachOwnProperty(object, function (name, value) {
+                        map.set(name, value);
+                    });
+                    return map;
+                };
+                M.extend = function (toExtend) {
+                    var extenders = [];
+                    for (var _i = 1; _i < arguments.length; _i++) {
+                        extenders[_i - 1] = arguments[_i];
+                    }
+                    for (var i = 0, length = extenders.length; i < length; i++) {
+                        var extender = extenders[i];
+                        var values = extender.entries();
+                        var next = values.next();
+                        while (!next.done) {
+                            var entry = next.value;
+                            var key = entry[0];
+                            var value = entry[1];
+                            if (!toExtend.has(key))
+                                toExtend.set(key, value);
+                            next = values.next();
+                        }
+                    }
+                    return toExtend;
+                };
+                return M;
+            })();
+            UUID = (function () {
+                function UUID() {
+                }
+                UUID.is = function (uuid) {
+                    return UUID.regExp.test(uuid);
+                };
+                UUID.generate = function () {
+                    return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function (c) {
+                        var r = Math.random() * 16 | 0;
+                        var v = c === "x" ? r : (r & 0x3 | 0x8);
+                        return v.toString(16);
+                    });
+                };
+                UUID.regExp = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+                return UUID;
+            })();
+            P = (function () {
+                function P() {
+                }
+                P.createRejectedPromise = function (error) {
+                    return new Promise(function (resolve, reject) {
+                        reject(error);
+                    });
+                };
+                return P;
+            })();
+            exports_1("hasFunction", hasFunction);
+            exports_1("hasProperty", hasProperty);
+            exports_1("hasPropertyDefined", hasPropertyDefined);
+            exports_1("isNull", isNull);
+            exports_1("isArray", isArray);
+            exports_1("isString", isString);
+            exports_1("isBoolean", isBoolean);
+            exports_1("isNumber", isNumber);
+            exports_1("isInteger", isInteger);
+            exports_1("isDouble", isDouble);
+            exports_1("isDate", isDate);
+            exports_1("isObject", isObject);
+            exports_1("isFunction", isFunction);
+            exports_1("isMap", isMap);
+            exports_1("parseBoolean", parseBoolean);
+            exports_1("extend", extend);
+            exports_1("forEachOwnProperty", forEachOwnProperty);
+            exports_1("S", S);
+            exports_1("A", A);
+            exports_1("M", M);
+            exports_1("UUID", UUID);
+            exports_1("P", P);
+        }
+    }
+});
+
+/// <reference path="../typings/typings.d.ts" />
+$__System.register("5f", ["2", "12", "7", "1a", "13", "20", "4", "5e", "5"], function(exports_1) {
+    var __extends = (this && this.__extends) || function (d, b) {
+        for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+    var Apps_1, Auth, AbstractContext_1, Document, Documents_1, HTTP, RDF, settings_1, Utils;
     var Carbon;
     return {
         setters:[
-            function (APIDescription_1) {
-                APIDescription = APIDescription_1;
-            },
             function (Apps_1_1) {
                 Apps_1 = Apps_1_1;
             },
             function (Auth_1) {
                 Auth = Auth_1;
             },
-            function (Context_1_1) {
-                Context_1 = Context_1_1;
+            function (AbstractContext_1_1) {
+                AbstractContext_1 = AbstractContext_1_1;
             },
             function (Document_1) {
                 Document = Document_1;
@@ -10697,9 +12181,6 @@ $__System.register("51", ["50", "4b", "3", "5", "14", "15", "17", "4", "6", "2",
             },
             function (HTTP_1) {
                 HTTP = HTTP_1;
-            },
-            function (Platform_1_1) {
-                Platform_1 = Platform_1_1;
             },
             function (RDF_1) {
                 RDF = RDF_1;
@@ -10717,14 +12198,11 @@ $__System.register("51", ["50", "4b", "3", "5", "14", "15", "17", "4", "6", "2",
                     _super.call(this);
                     settings = settings ? settings : settings_1.default;
                     Utils.M.extend(this.settings, Utils.M.from(settings));
-                    this.registerDefaultDefinitions();
                     this.apps = new Apps_1.default(this);
-                    this.platform = new Platform_1.default(this);
-                    this.Auth = this.platform.Auth;
                 }
                 Object.defineProperty(Carbon, "version", {
-                    /* tslint:disable: variable-name typedef */
-                    get: function () { return "0.12.0-ALPHA"; },
+                    /* tslint:enable: variable-name */
+                    get: function () { return "0.14.0-ALPHA"; },
                     enumerable: true,
                     configurable: true
                 });
@@ -10732,18 +12210,16 @@ $__System.register("51", ["50", "4b", "3", "5", "14", "15", "17", "4", "6", "2",
                     if (RDF.URI.Util.isAbsolute(uri))
                         return uri;
                     var finalURI = this.settings.get("http.ssl") ? "https://" : "http://";
-                    finalURI += this.settings.get("domain");
+                    finalURI += this.settings.get("domain") + "/" + this.getSetting("platform.container");
                     return RDF.URI.Util.resolve(finalURI, uri);
                 };
                 Carbon.prototype.getAPIDescription = function () {
-                    return this.Documents.get("platform/api/").then(function (processedResponse) {
-                        return processedResponse.result;
+                    return this.documents.get("api/").then(function (_a) {
+                        var description = _a[0], response = _a[1];
+                        return description;
                     });
                 };
-                Carbon.prototype.registerDefaultDefinitions = function () {
-                    this.addDefinition(APIDescription.RDF_CLASS, APIDescription.DEFINITION);
-                };
-                /* tslint:disable: variable-name typedef */
+                /* tslint:disable: variable-name */
                 Carbon.Apps = Apps_1.default;
                 Carbon.Auth = Auth;
                 Carbon.Document = Document;
@@ -10752,18 +12228,18 @@ $__System.register("51", ["50", "4b", "3", "5", "14", "15", "17", "4", "6", "2",
                 Carbon.RDF = RDF;
                 Carbon.Utils = Utils;
                 return Carbon;
-            })(Context_1.default);
+            })(AbstractContext_1.default);
             exports_1("default",Carbon);
         }
     }
 });
 
-$__System.registerDynamic("1", ["51"], true, function($__require, exports, module) {
+$__System.registerDynamic("1", ["5f"], true, function($__require, exports, module) {
   ;
   var global = this,
       __define = global.define;
   global.define = undefined;
-  var Carbon = $__require('51');
+  var Carbon = $__require('5f');
   global.Carbon = Carbon.default;
   global.define = __define;
   return module.exports;
@@ -10773,3 +12249,4 @@ $__System.registerDynamic("1", ["51"], true, function($__require, exports, modul
 (function(factory) {
   factory();
 });
+//# sourceMappingURL=Carbon.sfx.js.map

@@ -1,14 +1,10 @@
-/// <reference path="../../typings/jasmine/jasmine.d.ts" />
-/// <reference path="../../typings/jasmine-ajax/mock-ajax.d.ts" />
-/// <reference path="../../typings/es6/es6.d.ts" />
-/// <reference path="../../typings/es6-promise/es6-promise.d.ts" />
+/// <reference path="./../../typings/typings.d.ts" />
 
 import {
 		INSTANCE,
 		STATIC,
 
 		module,
-		submodule,
 
 		isDefined,
 
@@ -26,6 +22,7 @@ import {
 		MethodArgument,
 } from "./../test/JasmineExtender";
 
+import AbstractContext from "./../AbstractContext";
 import Context from "./../Context";
 import * as Errors from "./../Errors";
 import * as HTTP from "./../HTTP";
@@ -33,6 +30,9 @@ import * as Utils from "./../Utils";
 
 import AuthenticationToken from "./AuthenticationToken";
 import UsernameAndPasswordToken from "./UsernameAndPasswordToken";
+
+import * as Token from "./Token";
+import * as TokenCredentials from "./TokenCredentials";
 
 import * as TokenAuthenticator from "./TokenAuthenticator";
 
@@ -64,9 +64,13 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 				{ name: "context", type: "Carbon.Context", description: "The context where to authenticate the agent." }
 			]
 		), ():void => {
-			class DummyContext extends Context {}
+			class MockedContext extends AbstractContext {
+				resolve( uri:string ):string {
+					return uri;
+				}
+			}
 
-			let authenticator:TokenAuthenticator.Class = new TokenAuthenticator.Class( new DummyContext() );
+			let authenticator:TokenAuthenticator.Class = new TokenAuthenticator.Class( new MockedContext() );
 
 			expect( !! authenticator ).toEqual( true );
 			expect( authenticator instanceof TokenAuthenticator.Class ).toEqual( true );
@@ -75,9 +79,13 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 		it( hasMethod( INSTANCE, "isAuthenticated", `
 			returns true if the instance contains stored credentials.
 		`, { type: "boolean" } ), ():void => {
-			class DummyContext extends Context {}
+			class MockedContext extends AbstractContext {
+				resolve( uri:string ):string {
+					return uri;
+				}
+			}
 
-			let authenticator:TokenAuthenticator.Class = new TokenAuthenticator.Class( new DummyContext() );
+			let authenticator:TokenAuthenticator.Class = new TokenAuthenticator.Class( new MockedContext() );
 
 			expect( "isAuthenticated" in authenticator ).toEqual( true );
 			expect( Utils.isFunction( authenticator.isAuthenticated ) ).toEqual( true );
@@ -89,18 +97,26 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 			Stores credentials to authenticate future requests.
 		`, [
 			{ name: "authenticationToken", type: "Carbon.Auth.UsernameAndPasswordToken" }
-		], { type: "Promise<void>" } ), ( done:( error?:Error ) => void ):void => {
-			class DummyContext extends Context {}
-			let authenticator:TokenAuthenticator.Class = new TokenAuthenticator.Class( new DummyContext() );
+		], { type: "Promise<Carbon.Auth.TokenCredentials.Class>" } ), ( done:( error?:Error ) => void ):void => {
+			class MockedContext extends AbstractContext {
+				resolve( uri:string ):string {
+					return uri;
+				}
+			}
 
-			expect( "authenticate" in authenticator ).toEqual( true );
-			expect( Utils.isFunction( authenticator.authenticate ) ).toEqual( true );
+			// Property Integrity
+			(() => {
+				let authenticator:TokenAuthenticator.Class = new TokenAuthenticator.Class( new MockedContext() );
+
+				expect( "authenticate" in authenticator ).toEqual( true );
+				expect( Utils.isFunction( authenticator.authenticate ) ).toEqual( true );
+			})();
 
 			let promises:Promise<void>[] = [];
 
 			// Successful Authentication
 			(() => {
-				class SuccessfulContext extends Context {
+				class SuccessfulContext extends AbstractContext {
 					resolve( relativeURI:string ):string {
 						return "http://example.com/successful/" + relativeURI;
 					}
@@ -122,20 +138,26 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 								"@type": "http://www.w3.org/2001/XMLSchema#dateTime"
 							}
 						}
-					`
+					`,
 				} );
 
 				let context:SuccessfulContext = new SuccessfulContext();
 				let authenticator:TokenAuthenticator.Class = new TokenAuthenticator.Class( context );
 
-				promises.push( authenticator.authenticate( new UsernameAndPasswordToken( "user", "pass" ) ).then( ():void => {
+				promises.push( authenticator.authenticate( new UsernameAndPasswordToken( "user", "pass" ) ).then( ( tokenCredentials:TokenCredentials.Class ):void => {
 					expect( authenticator.isAuthenticated() ).toEqual( true );
+
+					expect( tokenCredentials ).toBeDefined();
+					expect( tokenCredentials ).not.toBeNull();
+					expect( "token" in tokenCredentials ).toEqual( true );
+					expect( !! tokenCredentials.token ).toEqual( true );
+					expect( Token.Factory.is( tokenCredentials.token ) ).toEqual( true );
 				}) );
 			})();
 
 			// Unsuccessful Authentication
 			(() => {
-				class UnsuccessfulContext extends Context {
+				class UnsuccessfulContext extends AbstractContext {
 					resolve( relativeURI:string ):string {
 						return "http://example.com/unsuccessful/" + relativeURI;
 					}
@@ -174,17 +196,27 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 		`, [
 			{ name: "requestOptions", type:"Carbon.HTTP.Request.Options", description: "Request options object to add Authentication headers." }
 		], { type: "Carbon.HTTP.Request.Options", description: "The request options with the added authentication headers." } ), (  done:( error?:Error ) => void ):void => {
-			class DummyContext extends Context {}
-			let authenticator:TokenAuthenticator.Class = new TokenAuthenticator.Class( new DummyContext() );
 
-			expect( "addAuthentication" in authenticator ).toEqual( true );
-			expect( Utils.isFunction( authenticator.addAuthentication ) ).toEqual( true );
+			// Property Integrity
+			(() => {
+				class MockedContext extends AbstractContext {
+					resolve( uri:string ):string {
+						return uri;
+					}
+				}
+
+				let authenticator:TokenAuthenticator.Class = new TokenAuthenticator.Class( new MockedContext() );
+
+				expect( "addAuthentication" in authenticator ).toEqual( true );
+				expect( Utils.isFunction( authenticator.addAuthentication ) ).toEqual( true );
+			})();
+
 
 			let promises:Promise<void>[] = [];
 
 			// Successful Authentication
 			(() => {
-				class SuccessfulContext extends Context {
+				class SuccessfulContext extends AbstractContext {
 					resolve( relativeURI:string ):string {
 						return "http://example.com/successful/" + relativeURI;
 					}
@@ -195,6 +227,7 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 				jasmine.Ajax.stubRequest( "http://example.com/successful/auth-tokens/", null, "POST" ).andReturn( {
 					status: 200,
 					// TODO: Change this line to a multi line (right now its throwing ParseError on PhantomJS
+					/* tslint:disable: quotemark */
 					responseText: '' +
 						'{' +
 						'	"@id": "",' +
@@ -206,14 +239,15 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 						'		"@value": "' + expirationTime.toISOString() + ',' +
 						'		"@type": "http://www.w3.org/2001/XMLSchema#dateTime"' +
 						'	}' +
-						'}'
+						'}',
+					/* tslint:enable: quotemark */
 				} );
 
 				let context:SuccessfulContext = new SuccessfulContext();
 				let authenticator:TokenAuthenticator.Class = new TokenAuthenticator.Class( context );
 
 				promises.push( authenticator.authenticate( new UsernameAndPasswordToken( "user", "pass" ) ).then( ():void => {
-					let requestOptions = authenticator.addAuthentication( {} );
+					let requestOptions:HTTP.Request.Options = authenticator.addAuthentication( {} );
 
 					expect( !! requestOptions ).toEqual( true );
 					expect( Utils.isObject( requestOptions ) ).toEqual( true );
@@ -247,17 +281,24 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 		it( hasMethod( INSTANCE, "clearAuthentication", `
 			Clears any saved credentials and restores the Authenticator to its initial state.
 		` ), ( done:( error?:Error ) => void ):void => {
-			class DummyContext extends Context {}
-			let authenticator:TokenAuthenticator.Class = new TokenAuthenticator.Class( new DummyContext() );
+			// Property Integrity
+			(() => {
+				class MockedContext extends AbstractContext {
+					resolve( uri:string ):string {
+						return uri;
+					}
+				}
+				let authenticator:TokenAuthenticator.Class = new TokenAuthenticator.Class( new MockedContext() );
 
-			expect( "clearAuthentication" in authenticator ).toEqual( true );
-			expect( Utils.isFunction( authenticator.clearAuthentication ) ).toEqual( true );
+				expect( "clearAuthentication" in authenticator ).toEqual( true );
+				expect( Utils.isFunction( authenticator.clearAuthentication ) ).toEqual( true );
+			})();
 
 			let promises:Promise<void>[] = [];
 
 			// Successful Authentication
 			(() => {
-				class SuccessfulContext extends Context {
+				class SuccessfulContext extends AbstractContext {
 					resolve( relativeURI:string ):string {
 						return "http://example.com/successful/" + relativeURI;
 					}
@@ -268,6 +309,7 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 				jasmine.Ajax.stubRequest( "http://example.com/successful/auth-tokens/", null, "POST" ).andReturn( {
 					status: 200,
 					// TODO: Change this line to a multi line (right now its throwing ParseError on PhantomJS
+					/* tslint:disable: quotemark */
 					responseText: '' +
 					'{' +
 					'	"@id": "",' +
@@ -279,7 +321,8 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 					'		"@value": "' + expirationTime.toISOString() + ',' +
 					'		"@type": "http://www.w3.org/2001/XMLSchema#dateTime"' +
 					'	}' +
-					'}'
+					'}',
+					/* tslint:enable: quotemark */
 				} );
 
 				let context:SuccessfulContext = new SuccessfulContext();
@@ -308,8 +351,12 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 			],
 			{ type: "boolean" }
 		), ():void => {
-			class DummyContext extends Context {}
-			let authenticator:TokenAuthenticator.Class = new TokenAuthenticator.Class( new DummyContext() );
+			class MockedContext extends AbstractContext {
+				resolve( uri:string ):string {
+					return uri;
+				}
+			}
+			let authenticator:TokenAuthenticator.Class = new TokenAuthenticator.Class( new MockedContext() );
 
 			expect( authenticator.supports ).toBeDefined();
 			expect( Utils.isFunction( authenticator.supports ) ).toEqual( true );

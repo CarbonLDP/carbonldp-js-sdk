@@ -1,0 +1,10 @@
+document-explorer {
+    display: flex;
+    flex-direction: column;
+
+    flex: 1;
+}
+
+document-explorer > .ui.grid {
+    flex: 1;
+}

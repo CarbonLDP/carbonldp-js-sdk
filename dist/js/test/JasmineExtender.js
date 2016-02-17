@@ -1,194 +1,219 @@
-function serialize(descriptor) {
-    return "JSON" + JSON.stringify(descriptor);
-}
-exports.serialize = serialize;
-function toJSON(descriptor) {
-    return "JSON" + JSON.stringify(descriptor);
-}
-exports.MODULE = "module";
-exports.SUBMODULE = "submodule";
-exports.CLASS = "class";
-exports.INTERFACE = "interface";
-exports.STATIC = "static";
-exports.INSTANCE = "instance";
-exports.CONSTRUCTOR = "constructor";
-exports.METHOD = "method";
-exports.SIGNATURE = "signature";
-exports.PROPERTY = "property";
-exports.SUPER_CLASS = "super-class";
-function module(name, description) {
-    if (description === void 0) { description = null; }
-    var descriptor = {
-        suiteType: exports.MODULE,
-        name: name,
-        description: description
-    };
-    return toJSON(descriptor);
-}
-exports.module = module;
-function submodule(access, name, description) {
-    if (description === void 0) { description = null; }
-    var descriptor = {
-        suiteType: exports.SUBMODULE,
-        access: access,
-        name: name,
-        description: description
-    };
-    return toJSON(descriptor);
-}
-exports.submodule = submodule;
-function clazz(name, description, parent, interfaces) {
-    if (parent === void 0) { parent = null; }
-    if (interfaces === void 0) { interfaces = null; }
-    var descriptor = {
-        suiteType: exports.CLASS,
-        name: name,
-        description: description,
-        parent: parent,
-        interfaces: interfaces
-    };
-    return toJSON(descriptor);
-}
-exports.clazz = clazz;
-function interfaze(name, description, parent) {
-    if (parent === void 0) { parent = null; }
-    var descriptor = {
-        suiteType: exports.INTERFACE,
-        name: name,
-        description: description,
-        parent: parent
-    };
-    return toJSON(descriptor);
-}
-exports.interfaze = interfaze;
-function constructor(name, description) {
-    var descriptor = {
-        suiteType: exports.CONSTRUCTOR,
-        name: name,
-        description: description
-    };
-    return toJSON(descriptor);
-}
-exports.constructor = constructor;
-function hasInterface(access, name, description) {
-    if (description === void 0) { description = null; }
-    var descriptor = {
-        access: access,
-        specType: exports.INTERFACE,
-        name: name,
-        description: description
-    };
-    return toJSON(descriptor);
-}
-exports.hasInterface = hasInterface;
-function isDefined() {
-    return "is defined";
-}
-exports.isDefined = isDefined;
-function hasConstructor(argumentsOrDescription, constructorArguments) {
-    if (argumentsOrDescription === void 0) { argumentsOrDescription = null; }
-    if (constructorArguments === void 0) { constructorArguments = null; }
-    var description = null;
-    if (typeof argumentsOrDescription === "string") {
-        description = argumentsOrDescription;
+System.register([], function(exports_1) {
+    var MODULE, CLASS, INTERFACE, STATIC, INSTANCE, CONSTRUCTOR, METHOD, SIGNATURE, PROPERTY, SUPER_CLASS, REEXPORTS, DEFAULTEXPORT, property;
+    function serialize(descriptor) {
+        return "JSON" + JSON.stringify(descriptor);
     }
-    else if (Object.prototype.toString.call(argumentsOrDescription) === "[object Array]") {
-        constructorArguments = argumentsOrDescription;
+    exports_1("serialize", serialize);
+    function toJSON(descriptor) {
+        return "JSON" + JSON.stringify(descriptor);
     }
-    var descriptor = {
-        access: exports.STATIC,
-        specType: exports.CONSTRUCTOR,
-        description: description,
-        arguments: constructorArguments
-    };
-    return toJSON(descriptor);
-}
-exports.hasConstructor = hasConstructor;
-function hasMethod(access, name, descriptionOrArgumentsOrReturns, argumentsOrReturns, returns) {
-    if (descriptionOrArgumentsOrReturns === void 0) { descriptionOrArgumentsOrReturns = null; }
-    if (argumentsOrReturns === void 0) { argumentsOrReturns = null; }
-    if (returns === void 0) { returns = null; }
-    var description = null, methodArguments = [];
-    if (typeof descriptionOrArgumentsOrReturns === "string") {
-        description = descriptionOrArgumentsOrReturns;
+    function module(name, description) {
+        if (description === void 0) { description = null; }
+        var descriptor = {
+            suiteType: MODULE,
+            name: name,
+            description: description,
+        };
+        return toJSON(descriptor);
     }
-    else if (Object.prototype.toString.call(descriptionOrArgumentsOrReturns) === "[object Array]") {
-        methodArguments = descriptionOrArgumentsOrReturns;
+    exports_1("module", module);
+    function clazz(name, description, parent, interfaces) {
+        if (parent === void 0) { parent = null; }
+        if (interfaces === void 0) { interfaces = null; }
+        var descriptor = {
+            suiteType: CLASS,
+            name: name,
+            description: description,
+            parent: parent,
+            interfaces: interfaces,
+        };
+        return toJSON(descriptor);
     }
-    else if (descriptionOrArgumentsOrReturns) {
-        returns = descriptionOrArgumentsOrReturns;
+    exports_1("clazz", clazz);
+    function interfaze(name, description, parent) {
+        if (parent === void 0) { parent = null; }
+        var descriptor = {
+            suiteType: INTERFACE,
+            name: name,
+            description: description,
+            parent: parent,
+        };
+        return toJSON(descriptor);
     }
-    if (Object.prototype.toString.call(argumentsOrReturns) === "[object Array]") {
-        methodArguments = argumentsOrReturns;
+    exports_1("interfaze", interfaze);
+    function constructor(description) {
+        if (description === void 0) { description = null; }
+        var descriptor = {
+            suiteType: CONSTRUCTOR,
+            description: description,
+        };
+        return toJSON(descriptor);
     }
-    else if (argumentsOrReturns) {
-        returns = argumentsOrReturns;
+    exports_1("constructor", constructor);
+    function reexports(access, name, originalLocation) {
+        var descriptor = {
+            specType: REEXPORTS,
+            access: access,
+            name: name,
+            originalLocation: originalLocation,
+        };
+        return toJSON(descriptor);
     }
-    var descriptor = {
-        access: access,
-        specType: exports.METHOD,
-        name: name,
-        description: description,
-        arguments: methodArguments,
-        returns: returns
-    };
-    return toJSON(descriptor);
-}
-exports.hasMethod = hasMethod;
-/* tslint:disable: typedef */
-exports.method = hasMethod;
-function hasSignature(descriptionOrArgumentsOrReturns, argumentsOrReturns, returns) {
-    if (descriptionOrArgumentsOrReturns === void 0) { descriptionOrArgumentsOrReturns = null; }
-    if (argumentsOrReturns === void 0) { argumentsOrReturns = null; }
-    if (returns === void 0) { returns = null; }
-    var description = null;
-    var methodArguments = null;
-    if (typeof descriptionOrArgumentsOrReturns === "string") {
-        description = descriptionOrArgumentsOrReturns;
+    exports_1("reexports", reexports);
+    function hasInterface(access, name, description) {
+        if (description === void 0) { description = null; }
+        var descriptor = {
+            access: access,
+            specType: INTERFACE,
+            name: name,
+            description: description,
+        };
+        return toJSON(descriptor);
     }
-    else if (Object.prototype.toString.call(descriptionOrArgumentsOrReturns) === "[object Array]") {
-        methodArguments = descriptionOrArgumentsOrReturns;
+    exports_1("hasInterface", hasInterface);
+    function isDefined() {
+        return "is defined";
     }
-    else if (descriptionOrArgumentsOrReturns) {
-        returns = descriptionOrArgumentsOrReturns;
+    exports_1("isDefined", isDefined);
+    function hasConstructor(argumentsOrDescription, constructorArguments) {
+        if (argumentsOrDescription === void 0) { argumentsOrDescription = null; }
+        if (constructorArguments === void 0) { constructorArguments = null; }
+        var description = null;
+        if (typeof argumentsOrDescription === "string") {
+            description = argumentsOrDescription;
+        }
+        else if (Object.prototype.toString.call(argumentsOrDescription) === "[object Array]") {
+            constructorArguments = argumentsOrDescription;
+        }
+        var descriptor = {
+            access: STATIC,
+            specType: CONSTRUCTOR,
+            description: description,
+            arguments: constructorArguments,
+        };
+        return toJSON(descriptor);
     }
-    if (Object.prototype.toString.call(argumentsOrReturns) === "[object Array]") {
-        methodArguments = argumentsOrReturns;
+    exports_1("hasConstructor", hasConstructor);
+    function hasMethod(access, name, descriptionOrArgumentsOrReturns, argumentsOrReturns, returns) {
+        if (descriptionOrArgumentsOrReturns === void 0) { descriptionOrArgumentsOrReturns = null; }
+        if (argumentsOrReturns === void 0) { argumentsOrReturns = null; }
+        if (returns === void 0) { returns = null; }
+        var description = null, methodArguments = [];
+        if (typeof descriptionOrArgumentsOrReturns === "string") {
+            description = descriptionOrArgumentsOrReturns;
+        }
+        else if (Object.prototype.toString.call(descriptionOrArgumentsOrReturns) === "[object Array]") {
+            methodArguments = descriptionOrArgumentsOrReturns;
+        }
+        else if (descriptionOrArgumentsOrReturns) {
+            returns = descriptionOrArgumentsOrReturns;
+        }
+        if (Object.prototype.toString.call(argumentsOrReturns) === "[object Array]") {
+            methodArguments = argumentsOrReturns;
+        }
+        else if (argumentsOrReturns) {
+            returns = argumentsOrReturns;
+        }
+        var descriptor = {
+            access: access,
+            specType: METHOD,
+            name: name,
+            description: description,
+            arguments: methodArguments,
+            returns: returns,
+        };
+        return toJSON(descriptor);
     }
-    else if (argumentsOrReturns) {
-        returns = argumentsOrReturns;
+    exports_1("hasMethod", hasMethod);
+    function method(access, name, description) {
+        if (description === void 0) { description = null; }
+        var descriptor = {
+            access: access,
+            suiteType: METHOD,
+            name: name,
+            description: description,
+        };
+        return toJSON(descriptor);
     }
-    var descriptor = {
-        specType: exports.SIGNATURE,
-        description: description,
-        arguments: methodArguments,
-        returns: returns
-    };
-    return toJSON(descriptor);
-}
-exports.hasSignature = hasSignature;
-function hasProperty(access, name, type, description) {
-    if (description === void 0) { description = null; }
-    var descriptor = {
-        access: access,
-        specType: exports.PROPERTY,
-        name: name,
-        type: type,
-        description: description
-    };
-    return toJSON(descriptor);
-}
-exports.hasProperty = hasProperty;
-/* tslint:disable: typedef */
-exports.property = hasProperty;
-/* tslint:enable: typedef */
-function extendsClass(name) {
-    var descriptor = {
-        specType: exports.SUPER_CLASS,
-        name: name
-    };
-    return toJSON(descriptor);
-}
-exports.extendsClass = extendsClass;
+    exports_1("method", method);
+    function hasSignature(descriptionOrArgumentsOrReturns, argumentsOrReturns, returns) {
+        if (descriptionOrArgumentsOrReturns === void 0) { descriptionOrArgumentsOrReturns = null; }
+        if (argumentsOrReturns === void 0) { argumentsOrReturns = null; }
+        if (returns === void 0) { returns = null; }
+        var description = null;
+        var methodArguments = null;
+        if (typeof descriptionOrArgumentsOrReturns === "string") {
+            description = descriptionOrArgumentsOrReturns;
+        }
+        else if (Object.prototype.toString.call(descriptionOrArgumentsOrReturns) === "[object Array]") {
+            methodArguments = descriptionOrArgumentsOrReturns;
+        }
+        else if (descriptionOrArgumentsOrReturns) {
+            returns = descriptionOrArgumentsOrReturns;
+        }
+        if (Object.prototype.toString.call(argumentsOrReturns) === "[object Array]") {
+            methodArguments = argumentsOrReturns;
+        }
+        else if (argumentsOrReturns) {
+            returns = argumentsOrReturns;
+        }
+        var descriptor = {
+            specType: SIGNATURE,
+            description: description,
+            arguments: methodArguments,
+            returns: returns,
+        };
+        return toJSON(descriptor);
+    }
+    exports_1("hasSignature", hasSignature);
+    function hasProperty(access, name, type, description) {
+        if (description === void 0) { description = null; }
+        var descriptor = {
+            access: access,
+            specType: PROPERTY,
+            name: name,
+            type: type,
+            description: description,
+        };
+        return toJSON(descriptor);
+    }
+    exports_1("hasProperty", hasProperty);
+    /* tslint:enable: typedef */
+    function extendsClass(name) {
+        var descriptor = {
+            specType: SUPER_CLASS,
+            name: name,
+        };
+        return toJSON(descriptor);
+    }
+    exports_1("extendsClass", extendsClass);
+    function hasDefaultExport(exportName) {
+        var descriptor = {
+            specType: DEFAULTEXPORT,
+            name: exportName,
+        };
+        return toJSON(descriptor);
+    }
+    exports_1("hasDefaultExport", hasDefaultExport);
+    return {
+        setters:[],
+        execute: function() {
+            exports_1("MODULE", MODULE = "module");
+            exports_1("CLASS", CLASS = "class");
+            exports_1("INTERFACE", INTERFACE = "interface");
+            exports_1("STATIC", STATIC = "static");
+            exports_1("INSTANCE", INSTANCE = "instance");
+            exports_1("CONSTRUCTOR", CONSTRUCTOR = "constructor");
+            exports_1("METHOD", METHOD = "method");
+            exports_1("SIGNATURE", SIGNATURE = "signature");
+            exports_1("PROPERTY", PROPERTY = "property");
+            exports_1("SUPER_CLASS", SUPER_CLASS = "super-class");
+            exports_1("REEXPORTS", REEXPORTS = "reexports");
+            exports_1("DEFAULTEXPORT", DEFAULTEXPORT = "defaultExport");
+            /* tslint:disable: typedef */
+            exports_1("property", property = hasProperty);
+        }
+    }
+});
 
 //# sourceMappingURL=JasmineExtender.js.map

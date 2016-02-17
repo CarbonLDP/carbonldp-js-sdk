@@ -1,64 +1,46 @@
 import * as Document from "./Document";
 import * as Errors from "./Errors";
+import * as Pointer from "./Pointer";
 import * as RDF from "./RDF";
+import * as Resource from "./Resource";
 import * as Utils from "./Utils";
 
-export interface Class extends RDF.Resource.Class {
+export interface Class extends Resource.Class {
 	document:Document.Class;
 }
 
-function externalAnonymousFragmentFilter( propertyURI:string, value:(RDF.Node.Class | RDF.Literal.Class) ):void {
-	if( ! RDF.Node.Factory.is( value ) ) return;
-	if( ! RDF.URI.Util.isBNodeID( value[ "@id" ] ) ) return;
-
-	if( ! ( "document" in value ) ) throw new Errors.IllegalArgumentError( "The resource provided doesn't belong to a document." );
-
-	let fragment:Class = <any> value;
-
-	if( this.document !== fragment.document ) throw new Errors.IllegalArgumentError( "The anonymous fragment provided belongs to another document. To reference it from another document it needs to be named." );
-}
-
-export class Factory extends RDF.Resource.Factory {
-	from( object:Array<Object & { document:Document.Class }> ):Class[];
-	from( object:Object & { document:Document.Class } ):Class;
-	from( objects:any ):any {
-		if( ! Utils.isArray( objects ) ) return this.singleFrom( <Object & { document:Document.Class }>objects );
-
-		for ( let i:number = 0, length:number = objects.length; i < length; i ++ ) {
-			let object:(Object & { document:Document.Class }) = <(Object & { document:Document.Class })> objects[ i ];
-
-			this.singleFrom( object );
-		}
-
-		return <Class[]> objects;
+export class Factory {
+	hasClassProperties( resource:Object ):boolean {
+		return (
+			Utils.hasPropertyDefined( resource, "document" )
+		);
 	}
 
-	protected singleFrom( object:Object & { document:Document.Class } ):Class {
-		return this.injectBehavior( object );
+	create( id:string, document:Document.Class ):Class;
+	create( document:Document.Class ):Class;
+	create( idOrDocument:any, document:Document.Class = null ):Class {
+		return this.createFrom( {}, idOrDocument, document );
 	}
 
-	protected injectBehavior( object:(Object & { document:Document.Class }) ):Class {
-		let fragment:Class = <Class> super.injectBehavior( object );
-		if( this.hasClassProperties( fragment ) ) return fragment;
+	createFrom<T extends Object>( object:T, id:string, document:Document.Class ):T & Class;
+	createFrom<T extends Object>( object:T, document:Document.Class ):T & Class;
+	createFrom<T extends Object>( object:T, idOrDocument:any, document:Document.Class = null ):T & Class {
+		let id:string = !! document ? idOrDocument : Util.generateID();
 
-		fragment._propertyAddedCallbacks.push( externalAnonymousFragmentFilter );
+		let resource:Resource.Class = Resource.Factory.createFrom( object, id );
 
-		let document:Document.Class = fragment.document;
-		delete fragment.document;
+		if( this.hasClassProperties( resource ) ) return <any> resource;
 
-		Object.defineProperties( fragment, {
+		Object.defineProperties( resource, {
 			"document": {
 				writable: false,
 				enumerable: false,
-				value: document
-			}
+				configurable: true,
+				value: document,
+			},
 		} );
 
-		return fragment;
-	}
-
-	protected hasClassProperties( resource:RDF.Resource.Class ):boolean {
-		return false;
+		return <any> resource;
 	}
 }
 

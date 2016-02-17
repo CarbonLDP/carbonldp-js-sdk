@@ -1,7 +1,7 @@
 export interface SuiteDescriptor {
     access?: string;
     suiteType: string;
-    name: string;
+    name?: string;
     description?: string;
 }
 export interface SpecDescriptor {
@@ -31,6 +31,9 @@ export interface MethodDescriptor extends SpecDescriptor {
     arguments?: MethodArgument[];
     returns?: MethodReturn;
 }
+export interface ReexportsDescriptor extends SpecDescriptor {
+    originalLocation: string;
+}
 export interface MethodArgument {
     name: string;
     type: string;
@@ -46,7 +49,6 @@ export declare function serialize(descriptor: SuiteDescriptor): string;
 export declare function serialize(descriptor: PropertyDescriptor): string;
 export declare function serialize(descriptor: MethodDescriptor): string;
 export declare const MODULE: string;
-export declare const SUBMODULE: string;
 export declare const CLASS: string;
 export declare const INTERFACE: string;
 export declare const STATIC: string;
@@ -56,11 +58,13 @@ export declare const METHOD: string;
 export declare const SIGNATURE: string;
 export declare const PROPERTY: string;
 export declare const SUPER_CLASS: string;
+export declare const REEXPORTS: string;
+export declare const DEFAULTEXPORT: string;
 export declare function module(name: string, description?: string): string;
-export declare function submodule(access: string, name: string, description?: string): string;
 export declare function clazz(name: string, description: string, parent?: string, interfaces?: Array<string>): string;
 export declare function interfaze(name: string, description: string, parent?: string): string;
-export declare function constructor(name: string, description: string): string;
+export declare function constructor(description?: string): string;
+export declare function reexports(access: string, name: string, originalLocation: string): string;
 export declare function hasInterface(access: string, name: string): string;
 export declare function isDefined(): string;
 export declare function hasConstructor(): string;
@@ -74,7 +78,8 @@ export declare function hasMethod(access: string, name: string, description: str
 export declare function hasMethod(access: string, name: string, description: string, returns: MethodReturn): string;
 export declare function hasMethod(access: string, name: string, methodArguments: MethodArgument[], returns: MethodReturn): string;
 export declare function hasMethod(access: string, name: string, description: string, methodArguments: MethodArgument[], returns: MethodReturn): string;
-export declare let method: typeof hasMethod;
+export declare function method(access: string, name: string): string;
+export declare function method(access: string, name: string, description: string): string;
 export declare function hasSignature(): string;
 export declare function hasSignature(description: string): string;
 export declare function hasSignature(description: string, methodArguments: MethodArgument[]): string;
@@ -85,3 +90,4 @@ export declare function hasSignature(returns: MethodReturn): string;
 export declare function hasProperty(access: string, name: string, type: string, description?: string): string;
 export declare let property: typeof hasProperty;
 export declare function extendsClass(name: string): string;
+export declare function hasDefaultExport(exportName: string): string;

@@ -1,0 +1,1 @@
+{"version":3,"sources":["RDF/Literal/Serializers.ts"],"names":[],"mappings":";;;;;;;;YAGC,qBAAG","file":"RDF/Literal/Serializers.js","sourcesContent":["import * as XSD from \"./Serializers/XSD\";\n\nexport {\n\tXSD\n};\n"],"sourceRoot":"/source/"}

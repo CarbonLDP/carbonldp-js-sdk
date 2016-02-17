@@ -1,5 +1,8 @@
-import * as Utils from "../Utils";
-import * as XSD from "../NS/XSD" ;
+import * as Utils from "./../Utils";
+import * as XSD from "./../NS/XSD" ;
+
+import Serializer from "./Literal/Serializer";
+import * as Serializers from "./Literal/Serializers";
 
 export interface Class {
 	"@type"?:string;
@@ -47,12 +50,12 @@ export class Factory {
 		if ( ! Utils.hasProperty( literal, "@type" ) ) return literal[ "@value" ];
 
 		let type:string = literal[ "@type" ];
-		// The DataType isn"t supported
+		// The DataType isn't supported
 		if ( ! Utils.hasProperty( XSD.DataType, type ) ) return literal[ "@value" ];
 
 		let valueString:string = literal[ "@value" ];
 		let value:any;
-		switch ( <any> type ) {
+		switch ( type ) {
 			// Dates
 			case XSD.DataType.date:
 			case XSD.DataType.dateTime:
@@ -112,6 +115,11 @@ export class Factory {
 		if ( ! Utils.isObject( value ) ) return false;
 		return Utils.hasProperty( value, "@value" );
 	}
+
+	static hasType( value:Class, type:string ):boolean {
+		if( ! value[ "@type" ] && type === <any> XSD.DataType.string ) return true;
+		return value[ "@type" ] === type;
+	}
 }
 
 export class Util {
@@ -122,3 +130,8 @@ export class Util {
 }
 
 export default Class;
+
+export {
+	Serializer,
+	Serializers
+};
