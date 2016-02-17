@@ -1,6 +1,6 @@
 System.register(["./../NS", "./../Pointer", "./../Utils"], function(exports_1) {
     var NS, Pointer, Utils;
-    var RDF_CLASS, CONTEXT, Factory, factory;
+    var RDF_CLASS, CONTEXT, Factory;
     return {
         setters:[
             function (NS_1) {
@@ -27,17 +27,20 @@ System.register(["./../NS", "./../Pointer", "./../Utils"], function(exports_1) {
             Factory = (function () {
                 function Factory() {
                 }
-                Factory.prototype.hasClassProperties = function (object) {
-                    return Utils.isObject(object)
-                        && Utils.hasPropertyDefined(object, "key")
-                        && Utils.hasPropertyDefined(object, "expirationTime");
+                Factory.is = function (value) {
+                    return (Utils.isObject(value) &&
+                        Factory.hasClassProperties(value));
                 };
-                Factory.prototype.decorate = function (object) {
+                Factory.hasClassProperties = function (object) {
+                    return (Utils.hasPropertyDefined(object, "key") &&
+                        Utils.hasPropertyDefined(object, "expirationTime"));
+                };
+                Factory.decorate = function (object) {
                     if (this.hasClassProperties(object))
                         return object;
                     return object;
                 };
-                Factory.prototype.hasRDFClass = function (pointerOrExpandedObject) {
+                Factory.hasRDFClass = function (pointerOrExpandedObject) {
                     var types = [];
                     if ("@type" in pointerOrExpandedObject) {
                         types = pointerOrExpandedObject["@type"];
@@ -52,7 +55,6 @@ System.register(["./../NS", "./../Pointer", "./../Utils"], function(exports_1) {
                 return Factory;
             })();
             exports_1("Factory", Factory);
-            exports_1("factory", factory = new Factory());
         }
     }
 });

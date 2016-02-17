@@ -24,21 +24,29 @@ export interface Class extends Pointer.Class {
 }
 
 export class Factory {
-	hasClassProperties( object:Object ):boolean {
-		return Utils.isObject( object )
-			&& Utils.hasPropertyDefined( object, "key" )
-			&& Utils.hasPropertyDefined( object, "expirationTime" );
+	static is( value:any ):boolean {
+		return (
+			Utils.isObject( value ) &&
+			Factory.hasClassProperties( value )
+		);
 	}
 
-	decorate<T extends Object>( object:T ):T & Class {
+	static hasClassProperties( object:Object ):boolean {
+		return (
+			Utils.hasPropertyDefined( object, "key" ) &&
+			Utils.hasPropertyDefined( object, "expirationTime" )
+		);
+	}
+
+	static decorate<T extends Object>( object:T ):T & Class {
 		if( this.hasClassProperties( object ) ) return <any> object;
 
 		return <any> object;
 	}
 
-	hasRDFClass( pointer:Pointer.Class ):boolean;
-	hasRDFClass( expandedObject:Object ):boolean;
-	hasRDFClass( pointerOrExpandedObject:Object ):boolean {
+	static hasRDFClass( pointer:Pointer.Class ):boolean;
+	static hasRDFClass( expandedObject:Object ):boolean;
+	static hasRDFClass( pointerOrExpandedObject:Object ):boolean {
 		let types:string[] = [];
 		if( "@type" in pointerOrExpandedObject ) {
 			types = pointerOrExpandedObject[ "@type" ];
@@ -51,7 +59,5 @@ export class Factory {
 		return types.indexOf( RDF_CLASS ) !== -1;
 	}
 }
-
-export let factory:Factory = new Factory();
 
 export default Class;

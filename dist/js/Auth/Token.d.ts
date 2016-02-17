@@ -7,10 +7,10 @@ export interface Class extends Pointer.Class {
     expirationTime: Date;
 }
 export declare class Factory {
-    hasClassProperties(object: Object): boolean;
-    decorate<T extends Object>(object: T): T & Class;
-    hasRDFClass(pointer: Pointer.Class): boolean;
-    hasRDFClass(expandedObject: Object): boolean;
+    static is(value: any): boolean;
+    static hasClassProperties(object: Object): boolean;
+    static decorate<T extends Object>(object: T): T & Class;
+    static hasRDFClass(pointer: Pointer.Class): boolean;
+    static hasRDFClass(expandedObject: Object): boolean;
 }
-export declare let factory: Factory;
 export default Class;

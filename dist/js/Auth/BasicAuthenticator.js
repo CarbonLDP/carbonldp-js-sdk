@@ -1,5 +1,5 @@
-System.register(["./../HTTP", "./../Errors", "./UsernameAndPasswordToken"], function(exports_1) {
-    var HTTP, Errors, UsernameAndPasswordToken_1;
+System.register(["./../HTTP", "./../Errors", "./UsernameAndPasswordToken", "./UsernameAndPasswordCredentials"], function(exports_1) {
+    var HTTP, Errors, UsernameAndPasswordToken_1, UsernameAndPasswordCredentials;
     var Class;
     return {
         setters:[
@@ -11,6 +11,9 @@ System.register(["./../HTTP", "./../Errors", "./UsernameAndPasswordToken"], func
             },
             function (UsernameAndPasswordToken_1_1) {
                 UsernameAndPasswordToken_1 = UsernameAndPasswordToken_1_1;
+            },
+            function (UsernameAndPasswordCredentials_1) {
+                UsernameAndPasswordCredentials = UsernameAndPasswordCredentials_1;
             }],
         execute: function() {
             Class = (function () {
@@ -28,8 +31,8 @@ System.register(["./../HTTP", "./../Errors", "./UsernameAndPasswordToken"], func
                             throw new Errors.IllegalArgumentError("The username cannot be empty.");
                         if (!authenticationToken.password)
                             throw new Errors.IllegalArgumentError("The password cannot be empty.");
-                        _this.credentials = authenticationToken;
-                        resolve();
+                        _this.credentials = new UsernameAndPasswordCredentials.Class(authenticationToken.username, authenticationToken.password);
+                        resolve(_this.credentials);
                     });
                 };
                 Class.prototype.addAuthentication = function (requestOptions) {

@@ -59,7 +59,7 @@ System.register(["./Apps", "./Auth", "./AbstractContext", "./Document", "./Docum
                     return RDF.URI.Util.resolve(finalURI, uri);
                 };
                 Carbon.prototype.getAPIDescription = function () {
-                    return this.Documents.get("api/").then(function (_a) {
+                    return this.documents.get("api/").then(function (_a) {
                         var description = _a[0], response = _a[1];
                         return description;
                     });

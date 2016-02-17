@@ -31,12 +31,11 @@ System.register(["./App", "./APIDescription", "./Auth", "./Documents", "./Errors
                     this.settings = new Map();
                     this.generalObjectSchema = new ObjectSchema.DigestedObjectSchema();
                     this.typeObjectSchemaMap = new Map();
-                    this.Auth = new Auth.Class(this);
-                    this.Documents = new Documents_1.default(this);
+                    this.auth = new Auth.Class(this);
+                    this.documents = new Documents_1.default(this);
                     this.registerDefaultObjectSchemas();
                 }
                 Object.defineProperty(Class.prototype, "parentContext", {
-                    /* tslint:enable: variable-name */
                     get: function () { return null; },
                     enumerable: true,
                     configurable: true
@@ -157,7 +156,6 @@ System.register(["./App", "./APIDescription", "./Auth", "./Documents", "./Errors
                 return Class;
             })();
             exports_1("Class", Class);
-            /* tslint:disable: variable-name */
             exports_1("instance", instance = new Class());
             exports_1("default",instance);
         }

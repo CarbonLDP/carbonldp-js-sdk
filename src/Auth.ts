@@ -44,7 +44,7 @@ export class Class {
 	isAuthenticated( askParent:boolean = true ):boolean {
 		return (
 			( this.authenticator && this.authenticator.isAuthenticated() ) ||
-			( askParent && !! this.context.parentContext && this.context.parentContext.Auth.isAuthenticated() )
+			( askParent && !! this.context.parentContext && this.context.parentContext.auth.isAuthenticated() )
 		);
 	}
 
@@ -75,7 +75,7 @@ export class Class {
 		if( this.isAuthenticated( false ) ) {
 			this.authenticator.addAuthentication( requestOptions );
 		} else if( !! this.context.parentContext ) {
-			this.context.parentContext.Auth.addAuthentication( requestOptions );
+			this.context.parentContext.auth.addAuthentication( requestOptions );
 		} else {
 			console.warn( "There is no authentication to add to the request." );
 		}

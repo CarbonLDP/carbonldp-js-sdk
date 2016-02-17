@@ -66,7 +66,7 @@ System.register(["jsonld", "./Errors", "./HTTP", "./RDF", "./Utils", "./JSONLDCo
                     this.context = context;
                     this.pointers = new Map();
                     if (!!this.context && !!this.context.parentContext) {
-                        var contextJSONLDConverter = this.context.parentContext.Documents.jsonldConverter;
+                        var contextJSONLDConverter = this.context.parentContext.documents.jsonldConverter;
                         this._jsonldConverter = new JSONLDConverter.Class(contextJSONLDConverter.literalSerializers);
                     }
                     else {
@@ -92,7 +92,7 @@ System.register(["jsonld", "./Errors", "./HTTP", "./RDF", "./Utils", "./JSONLDCo
                             return true;
                     }
                     if (!!this.context && !!this.context.parentContext)
-                        return this.context.parentContext.Documents.inScope(id);
+                        return this.context.parentContext.documents.inScope(id);
                     return false;
                 };
                 Documents.prototype.hasPointer = function (id) {
@@ -100,14 +100,14 @@ System.register(["jsonld", "./Errors", "./HTTP", "./RDF", "./Utils", "./JSONLDCo
                     if (this.pointers.has(id))
                         return true;
                     if (!!this.context && !!this.context.parentContext)
-                        return this.context.parentContext.Documents.hasPointer(id);
+                        return this.context.parentContext.documents.hasPointer(id);
                     return false;
                 };
                 Documents.prototype.getPointer = function (id) {
                     var localID = this.getPointerID(id);
                     if (!localID) {
                         if (!!this.context && !!this.context.parentContext)
-                            return this.context.parentContext.Documents.getPointer(id);
+                            return this.context.parentContext.documents.getPointer(id);
                         throw new Errors.IllegalArgumentError("The pointer id is not supported by this module.");
                     }
                     var pointer;
@@ -131,8 +131,8 @@ System.register(["jsonld", "./Errors", "./HTTP", "./RDF", "./Utils", "./JSONLDCo
                             });
                         }
                     }
-                    if (this.context && this.context.Auth.isAuthenticated())
-                        this.context.Auth.addAuthentication(requestOptions);
+                    if (this.context && this.context.auth.isAuthenticated())
+                        this.context.auth.addAuthentication(requestOptions);
                     HTTP.Request.Util.setAcceptHeader("application/ld+json", requestOptions);
                     HTTP.Request.Util.setPreferredInteractionModel(LDP.Class.RDFSource, requestOptions);
                     return HTTP.Request.Service.get(uri, requestOptions).then(function (response) {
@@ -187,8 +187,8 @@ System.register(["jsonld", "./Errors", "./HTTP", "./RDF", "./Utils", "./JSONLDCo
                         if (!RDF.URI.Util.isBaseOf(parentURI, childDocument.id))
                             return Utils.P.createRejectedPromise(new Errors.IllegalArgumentError("The childDocument's URI is not relative to the parentURI specified"));
                     }
-                    if (this.context && this.context.Auth.isAuthenticated())
-                        this.context.Auth.addAuthentication(requestOptions);
+                    if (this.context && this.context.auth.isAuthenticated())
+                        this.context.auth.addAuthentication(requestOptions);
                     HTTP.Request.Util.setAcceptHeader("application/ld+json", requestOptions);
                     HTTP.Request.Util.setContentTypeHeader("application/ld+json", requestOptions);
                     HTTP.Request.Util.setPreferredInteractionModel(LDP.Class.Container, requestOptions);
@@ -217,8 +217,8 @@ System.register(["jsonld", "./Errors", "./HTTP", "./RDF", "./Utils", "./JSONLDCo
                     });
                     */
                     if (requestOptions === void 0) { requestOptions = {}; }
-                    if (this.context && this.context.Auth.isAuthenticated())
-                        this.context.Auth.addAuthentication(requestOptions);
+                    if (this.context && this.context.auth.isAuthenticated())
+                        this.context.auth.addAuthentication(requestOptions);
                     HTTP.Request.Util.setAcceptHeader("application/ld+json", requestOptions);
                     HTTP.Request.Util.setContentTypeHeader("application/ld+json", requestOptions);
                     HTTP.Request.Util.setPreferredInteractionModel(LDP.Class.RDFSource, requestOptions);
@@ -230,8 +230,8 @@ System.register(["jsonld", "./Errors", "./HTTP", "./RDF", "./Utils", "./JSONLDCo
                 };
                 Documents.prototype.delete = function (persistedDocument, requestOptions) {
                     if (requestOptions === void 0) { requestOptions = {}; }
-                    if (this.context && this.context.Auth.isAuthenticated())
-                        this.context.Auth.addAuthentication(requestOptions);
+                    if (this.context && this.context.auth.isAuthenticated())
+                        this.context.auth.addAuthentication(requestOptions);
                     HTTP.Request.Util.setAcceptHeader("application/ld+json", requestOptions);
                     HTTP.Request.Util.setPreferredInteractionModel(LDP.Class.RDFSource, requestOptions);
                     HTTP.Request.Util.setIfMatchHeader(persistedDocument._etag, requestOptions);
@@ -252,8 +252,8 @@ System.register(["jsonld", "./Errors", "./HTTP", "./RDF", "./Utils", "./JSONLDCo
                             throw new Errors.IllegalArgumentError("This Documents instance doesn't support relative URIs.");
                         documentURI = this.context.resolve(documentURI);
                     }
-                    if (this.context && this.context.Auth.isAuthenticated())
-                        this.context.Auth.addAuthentication(requestOptions);
+                    if (this.context && this.context.auth.isAuthenticated())
+                        this.context.auth.addAuthentication(requestOptions);
                     return SPARQL.Service.executeRawASKQuery(documentURI, askQuery, requestOptions);
                 };
                 Documents.prototype.executeRawSELECTQuery = function (documentURI, selectQuery, requestOptions) {
@@ -263,8 +263,8 @@ System.register(["jsonld", "./Errors", "./HTTP", "./RDF", "./Utils", "./JSONLDCo
                             throw new Errors.IllegalArgumentError("This Documents instance doesn't support relative URIs.");
                         documentURI = this.context.resolve(documentURI);
                     }
-                    if (this.context && this.context.Auth.isAuthenticated())
-                        this.context.Auth.addAuthentication(requestOptions);
+                    if (this.context && this.context.auth.isAuthenticated())
+                        this.context.auth.addAuthentication(requestOptions);
                     return SPARQL.Service.executeRawSELECTQuery(documentURI, selectQuery, requestOptions);
                 };
                 Documents.prototype.executeRawCONSTRUCTQuery = function (documentURI, constructQuery, requestOptions) {
@@ -274,8 +274,8 @@ System.register(["jsonld", "./Errors", "./HTTP", "./RDF", "./Utils", "./JSONLDCo
                             throw new Errors.IllegalArgumentError("This Documents instance doesn't support relative URIs.");
                         documentURI = this.context.resolve(documentURI);
                     }
-                    if (this.context && this.context.Auth.isAuthenticated())
-                        this.context.Auth.addAuthentication(requestOptions);
+                    if (this.context && this.context.auth.isAuthenticated())
+                        this.context.auth.addAuthentication(requestOptions);
                     return SPARQL.Service.executeRawCONSTRUCTQuery(documentURI, constructQuery, requestOptions);
                 };
                 Documents.prototype.executeRawDESCRIBEQuery = function (documentURI, constructQuery, requestOptions) {
@@ -285,8 +285,8 @@ System.register(["jsonld", "./Errors", "./HTTP", "./RDF", "./Utils", "./JSONLDCo
                             throw new Errors.IllegalArgumentError("This Documents instance doesn't support relative URIs.");
                         documentURI = this.context.resolve(documentURI);
                     }
-                    if (this.context && this.context.Auth.isAuthenticated())
-                        this.context.Auth.addAuthentication(requestOptions);
+                    if (this.context && this.context.auth.isAuthenticated())
+                        this.context.auth.addAuthentication(requestOptions);
                     return SPARQL.Service.executeRawDESCRIBEQuery(documentURI, constructQuery, requestOptions);
                 };
                 Documents.prototype.getRDFDocument = function (rdfDocuments, response) {

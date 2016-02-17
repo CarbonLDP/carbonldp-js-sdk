@@ -29,7 +29,7 @@ System.register(["./App", "./RDF", "./Utils", "./NS/CS"], function(exports_1) {
                             uri = RDF.URI.Util.resolve(appsContainerURI, uri);
                         uri = this.context.resolve(uri);
                     }
-                    return this.context.Documents.get(uri).then(function (_a) {
+                    return this.context.documents.get(uri).then(function (_a) {
                         var document = _a[0], response = _a[1];
                         if (!document.types.indexOf(CS.Class.Application))
                             throw new Error("The resource fetched is not a cs:Application.");

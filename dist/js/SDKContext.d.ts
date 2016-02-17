@@ -4,8 +4,8 @@ import Context from "./Context";
 import Documents from "./Documents";
 import * as ObjectSchema from "./ObjectSchema";
 export declare class Class implements Context {
-    Auth: Auth.Class;
-    Documents: Documents;
+    auth: Auth.Class;
+    documents: Documents;
     parentContext: Context;
     protected settings: Map<string, any>;
     protected generalObjectSchema: ObjectSchema.DigestedObjectSchema;

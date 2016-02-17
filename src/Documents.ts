@@ -58,7 +58,7 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 		this.pointers = new Map<string, Pointer.Class>();
 
 		if( !! this.context && !! this.context.parentContext ) {
-			let contextJSONLDConverter:JSONLDConverter.Class = this.context.parentContext.Documents.jsonldConverter;
+			let contextJSONLDConverter:JSONLDConverter.Class = this.context.parentContext.documents.jsonldConverter;
 			this._jsonldConverter = new JSONLDConverter.Class( contextJSONLDConverter.literalSerializers );
 		} else {
 			this._jsonldConverter = new JSONLDConverter.Class();
@@ -79,7 +79,7 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 			if( RDF.URI.Util.isAbsolute( id ) ) return true;
 		}
 
-		if( !! this.context && !! this.context.parentContext ) return this.context.parentContext.Documents.inScope( id );
+		if( !! this.context && !! this.context.parentContext ) return this.context.parentContext.documents.inScope( id );
 
 		return false;
 	}
@@ -89,7 +89,7 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 
 		if( this.pointers.has( id ) ) return true;
 
-		if( !! this.context && !! this.context.parentContext ) return this.context.parentContext.Documents.hasPointer( id );
+		if( !! this.context && !! this.context.parentContext ) return this.context.parentContext.documents.hasPointer( id );
 
 		return false;
 	}
@@ -98,7 +98,7 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 		let localID:string = this.getPointerID( id );
 
 		if( ! localID ) {
-			if( !! this.context && !! this.context.parentContext ) return this.context.parentContext.Documents.getPointer( id );
+			if( !! this.context && !! this.context.parentContext ) return this.context.parentContext.documents.getPointer( id );
 			throw new Errors.IllegalArgumentError( "The pointer id is not supported by this module." );
 		}
 
@@ -124,7 +124,7 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 			}
 		}
 
-		if ( this.context && this.context.Auth.isAuthenticated() ) this.context.Auth.addAuthentication( requestOptions );
+		if ( this.context && this.context.auth.isAuthenticated() ) this.context.auth.addAuthentication( requestOptions );
 
 		HTTP.Request.Util.setAcceptHeader( "application/ld+json", requestOptions );
 		HTTP.Request.Util.setPreferredInteractionModel( LDP.Class.RDFSource, requestOptions );
@@ -186,7 +186,7 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 			if( ! RDF.URI.Util.isBaseOf( parentURI, childDocument.id ) ) return Utils.P.createRejectedPromise( new Errors.IllegalArgumentError( "The childDocument's URI is not relative to the parentURI specified" ) );
 		}
 
-		if ( this.context && this.context.Auth.isAuthenticated() ) this.context.Auth.addAuthentication( requestOptions );
+		if ( this.context && this.context.auth.isAuthenticated() ) this.context.auth.addAuthentication( requestOptions );
 
 		HTTP.Request.Util.setAcceptHeader( "application/ld+json", requestOptions );
 		HTTP.Request.Util.setContentTypeHeader( "application/ld+json", requestOptions );
@@ -221,7 +221,7 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 		});
 		*/
 
-		if ( this.context && this.context.Auth.isAuthenticated() ) this.context.Auth.addAuthentication( requestOptions );
+		if ( this.context && this.context.auth.isAuthenticated() ) this.context.auth.addAuthentication( requestOptions );
 
 		HTTP.Request.Util.setAcceptHeader( "application/ld+json", requestOptions );
 		HTTP.Request.Util.setContentTypeHeader( "application/ld+json", requestOptions );
@@ -236,7 +236,7 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 	}
 
 	delete( persistedDocument:PersistedDocument.Class, requestOptions:HTTP.Request.Options = {} ):Promise<HTTP.Response.Class> {
-		if ( this.context && this.context.Auth.isAuthenticated() ) this.context.Auth.addAuthentication( requestOptions );
+		if ( this.context && this.context.auth.isAuthenticated() ) this.context.auth.addAuthentication( requestOptions );
 
 		HTTP.Request.Util.setAcceptHeader( "application/ld+json", requestOptions );
 		HTTP.Request.Util.setPreferredInteractionModel( LDP.Class.RDFSource, requestOptions );
@@ -259,7 +259,7 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 			documentURI = this.context.resolve( documentURI );
 		}
 
-		if ( this.context && this.context.Auth.isAuthenticated() ) this.context.Auth.addAuthentication( requestOptions );
+		if ( this.context && this.context.auth.isAuthenticated() ) this.context.auth.addAuthentication( requestOptions );
 
 		return SPARQL.Service.executeRawASKQuery( documentURI, askQuery, requestOptions );
 	}
@@ -270,7 +270,7 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 			documentURI = this.context.resolve( documentURI );
 		}
 
-		if ( this.context && this.context.Auth.isAuthenticated() ) this.context.Auth.addAuthentication( requestOptions );
+		if ( this.context && this.context.auth.isAuthenticated() ) this.context.auth.addAuthentication( requestOptions );
 
 		return SPARQL.Service.executeRawSELECTQuery( documentURI, selectQuery, requestOptions );
 	}
@@ -281,7 +281,7 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 			documentURI = this.context.resolve( documentURI );
 		}
 
-		if ( this.context && this.context.Auth.isAuthenticated() ) this.context.Auth.addAuthentication( requestOptions );
+		if ( this.context && this.context.auth.isAuthenticated() ) this.context.auth.addAuthentication( requestOptions );
 
 		return SPARQL.Service.executeRawCONSTRUCTQuery( documentURI, constructQuery, requestOptions );
 	}
@@ -292,7 +292,7 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 			documentURI = this.context.resolve( documentURI );
 		}
 
-		if ( this.context && this.context.Auth.isAuthenticated() ) this.context.Auth.addAuthentication( requestOptions );
+		if ( this.context && this.context.auth.isAuthenticated() ) this.context.auth.addAuthentication( requestOptions );
 
 		return SPARQL.Service.executeRawDESCRIBEQuery( documentURI, constructQuery, requestOptions );
 	}

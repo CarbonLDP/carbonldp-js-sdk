@@ -700,7 +700,7 @@ $__System.register("2", ["3", "4", "5", "6"], function(exports_1) {
                             uri = RDF.URI.Util.resolve(appsContainerURI, uri);
                         uri = this.context.resolve(uri);
                     }
-                    return this.context.Documents.get(uri).then(function (_a) {
+                    return this.context.documents.get(uri).then(function (_a) {
                         var document = _a[0], response = _a[1];
                         if (!document.types.indexOf(CS.Class.Application))
                             throw new Error("The resource fetched is not a cs:Application.");
@@ -1082,12 +1082,11 @@ $__System.register("11", ["3", "9", "12", "13", "14", "10", "15"], function(expo
                     this.settings = new Map();
                     this.generalObjectSchema = new ObjectSchema.DigestedObjectSchema();
                     this.typeObjectSchemaMap = new Map();
-                    this.Auth = new Auth.Class(this);
-                    this.Documents = new Documents_1.default(this);
+                    this.auth = new Auth.Class(this);
+                    this.documents = new Documents_1.default(this);
                     this.registerDefaultObjectSchemas();
                 }
                 Object.defineProperty(Class.prototype, "parentContext", {
-                    /* tslint:enable: variable-name */
                     get: function () { return null; },
                     enumerable: true,
                     configurable: true
@@ -1208,7 +1207,6 @@ $__System.register("11", ["3", "9", "12", "13", "14", "10", "15"], function(expo
                 return Class;
             })();
             exports_1("Class", Class);
-            /* tslint:disable: variable-name */
             exports_1("instance", instance = new Class());
             exports_1("default",instance);
         }
@@ -2859,7 +2857,7 @@ $__System.register("13", ["22", "14", "20", "4", "5", "16", "1b", "c", "15", "23
                     this.context = context;
                     this.pointers = new Map();
                     if (!!this.context && !!this.context.parentContext) {
-                        var contextJSONLDConverter = this.context.parentContext.Documents.jsonldConverter;
+                        var contextJSONLDConverter = this.context.parentContext.documents.jsonldConverter;
                         this._jsonldConverter = new JSONLDConverter.Class(contextJSONLDConverter.literalSerializers);
                     }
                     else {
@@ -2885,7 +2883,7 @@ $__System.register("13", ["22", "14", "20", "4", "5", "16", "1b", "c", "15", "23
                             return true;
                     }
                     if (!!this.context && !!this.context.parentContext)
-                        return this.context.parentContext.Documents.inScope(id);
+                        return this.context.parentContext.documents.inScope(id);
                     return false;
                 };
                 Documents.prototype.hasPointer = function (id) {
@@ -2893,14 +2891,14 @@ $__System.register("13", ["22", "14", "20", "4", "5", "16", "1b", "c", "15", "23
                     if (this.pointers.has(id))
                         return true;
                     if (!!this.context && !!this.context.parentContext)
-                        return this.context.parentContext.Documents.hasPointer(id);
+                        return this.context.parentContext.documents.hasPointer(id);
                     return false;
                 };
                 Documents.prototype.getPointer = function (id) {
                     var localID = this.getPointerID(id);
                     if (!localID) {
                         if (!!this.context && !!this.context.parentContext)
-                            return this.context.parentContext.Documents.getPointer(id);
+                            return this.context.parentContext.documents.getPointer(id);
                         throw new Errors.IllegalArgumentError("The pointer id is not supported by this module.");
                     }
                     var pointer;
@@ -2924,8 +2922,8 @@ $__System.register("13", ["22", "14", "20", "4", "5", "16", "1b", "c", "15", "23
                             });
                         }
                     }
-                    if (this.context && this.context.Auth.isAuthenticated())
-                        this.context.Auth.addAuthentication(requestOptions);
+                    if (this.context && this.context.auth.isAuthenticated())
+                        this.context.auth.addAuthentication(requestOptions);
                     HTTP.Request.Util.setAcceptHeader("application/ld+json", requestOptions);
                     HTTP.Request.Util.setPreferredInteractionModel(LDP.Class.RDFSource, requestOptions);
                     return HTTP.Request.Service.get(uri, requestOptions).then(function (response) {
@@ -2980,8 +2978,8 @@ $__System.register("13", ["22", "14", "20", "4", "5", "16", "1b", "c", "15", "23
                         if (!RDF.URI.Util.isBaseOf(parentURI, childDocument.id))
                             return Utils.P.createRejectedPromise(new Errors.IllegalArgumentError("The childDocument's URI is not relative to the parentURI specified"));
                     }
-                    if (this.context && this.context.Auth.isAuthenticated())
-                        this.context.Auth.addAuthentication(requestOptions);
+                    if (this.context && this.context.auth.isAuthenticated())
+                        this.context.auth.addAuthentication(requestOptions);
                     HTTP.Request.Util.setAcceptHeader("application/ld+json", requestOptions);
                     HTTP.Request.Util.setContentTypeHeader("application/ld+json", requestOptions);
                     HTTP.Request.Util.setPreferredInteractionModel(LDP.Class.Container, requestOptions);
@@ -3010,8 +3008,8 @@ $__System.register("13", ["22", "14", "20", "4", "5", "16", "1b", "c", "15", "23
                     });
                     */
                     if (requestOptions === void 0) { requestOptions = {}; }
-                    if (this.context && this.context.Auth.isAuthenticated())
-                        this.context.Auth.addAuthentication(requestOptions);
+                    if (this.context && this.context.auth.isAuthenticated())
+                        this.context.auth.addAuthentication(requestOptions);
                     HTTP.Request.Util.setAcceptHeader("application/ld+json", requestOptions);
                     HTTP.Request.Util.setContentTypeHeader("application/ld+json", requestOptions);
                     HTTP.Request.Util.setPreferredInteractionModel(LDP.Class.RDFSource, requestOptions);
@@ -3023,8 +3021,8 @@ $__System.register("13", ["22", "14", "20", "4", "5", "16", "1b", "c", "15", "23
                 };
                 Documents.prototype.delete = function (persistedDocument, requestOptions) {
                     if (requestOptions === void 0) { requestOptions = {}; }
-                    if (this.context && this.context.Auth.isAuthenticated())
-                        this.context.Auth.addAuthentication(requestOptions);
+                    if (this.context && this.context.auth.isAuthenticated())
+                        this.context.auth.addAuthentication(requestOptions);
                     HTTP.Request.Util.setAcceptHeader("application/ld+json", requestOptions);
                     HTTP.Request.Util.setPreferredInteractionModel(LDP.Class.RDFSource, requestOptions);
                     HTTP.Request.Util.setIfMatchHeader(persistedDocument._etag, requestOptions);
@@ -3045,8 +3043,8 @@ $__System.register("13", ["22", "14", "20", "4", "5", "16", "1b", "c", "15", "23
                             throw new Errors.IllegalArgumentError("This Documents instance doesn't support relative URIs.");
                         documentURI = this.context.resolve(documentURI);
                     }
-                    if (this.context && this.context.Auth.isAuthenticated())
-                        this.context.Auth.addAuthentication(requestOptions);
+                    if (this.context && this.context.auth.isAuthenticated())
+                        this.context.auth.addAuthentication(requestOptions);
                     return SPARQL.Service.executeRawASKQuery(documentURI, askQuery, requestOptions);
                 };
                 Documents.prototype.executeRawSELECTQuery = function (documentURI, selectQuery, requestOptions) {
@@ -3056,8 +3054,8 @@ $__System.register("13", ["22", "14", "20", "4", "5", "16", "1b", "c", "15", "23
                             throw new Errors.IllegalArgumentError("This Documents instance doesn't support relative URIs.");
                         documentURI = this.context.resolve(documentURI);
                     }
-                    if (this.context && this.context.Auth.isAuthenticated())
-                        this.context.Auth.addAuthentication(requestOptions);
+                    if (this.context && this.context.auth.isAuthenticated())
+                        this.context.auth.addAuthentication(requestOptions);
                     return SPARQL.Service.executeRawSELECTQuery(documentURI, selectQuery, requestOptions);
                 };
                 Documents.prototype.executeRawCONSTRUCTQuery = function (documentURI, constructQuery, requestOptions) {
@@ -3067,8 +3065,8 @@ $__System.register("13", ["22", "14", "20", "4", "5", "16", "1b", "c", "15", "23
                             throw new Errors.IllegalArgumentError("This Documents instance doesn't support relative URIs.");
                         documentURI = this.context.resolve(documentURI);
                     }
-                    if (this.context && this.context.Auth.isAuthenticated())
-                        this.context.Auth.addAuthentication(requestOptions);
+                    if (this.context && this.context.auth.isAuthenticated())
+                        this.context.auth.addAuthentication(requestOptions);
                     return SPARQL.Service.executeRawCONSTRUCTQuery(documentURI, constructQuery, requestOptions);
                 };
                 Documents.prototype.executeRawDESCRIBEQuery = function (documentURI, constructQuery, requestOptions) {
@@ -3078,8 +3076,8 @@ $__System.register("13", ["22", "14", "20", "4", "5", "16", "1b", "c", "15", "23
                             throw new Errors.IllegalArgumentError("This Documents instance doesn't support relative URIs.");
                         documentURI = this.context.resolve(documentURI);
                     }
-                    if (this.context && this.context.Auth.isAuthenticated())
-                        this.context.Auth.addAuthentication(requestOptions);
+                    if (this.context && this.context.auth.isAuthenticated())
+                        this.context.auth.addAuthentication(requestOptions);
                     return SPARQL.Service.executeRawDESCRIBEQuery(documentURI, constructQuery, requestOptions);
                 };
                 Documents.prototype.getRDFDocument = function (rdfDocuments, response) {
@@ -10797,8 +10795,38 @@ $__System.register("20", ["4a", "4d", "1e", "31", "4b", "4c", "4e", "4f", "50"],
     }
 });
 
-$__System.register("51", ["20", "14", "52"], function(exports_1) {
-    var HTTP, Errors, UsernameAndPasswordToken_1;
+$__System.register("51", [], function(exports_1) {
+    var Class;
+    return {
+        setters:[],
+        execute: function() {
+            Class = (function () {
+                function Class(username, password) {
+                    this._username = username;
+                    this._password = password;
+                }
+                Object.defineProperty(Class.prototype, "username", {
+                    get: function () { return this._username; },
+                    enumerable: true,
+                    configurable: true
+                });
+                ;
+                Object.defineProperty(Class.prototype, "password", {
+                    get: function () { return this._password; },
+                    enumerable: true,
+                    configurable: true
+                });
+                ;
+                return Class;
+            })();
+            exports_1("Class", Class);
+            exports_1("default",Class);
+        }
+    }
+});
+
+$__System.register("52", ["20", "14", "53", "51"], function(exports_1) {
+    var HTTP, Errors, UsernameAndPasswordToken_1, UsernameAndPasswordCredentials;
     var Class;
     return {
         setters:[
@@ -10810,6 +10838,9 @@ $__System.register("51", ["20", "14", "52"], function(exports_1) {
             },
             function (UsernameAndPasswordToken_1_1) {
                 UsernameAndPasswordToken_1 = UsernameAndPasswordToken_1_1;
+            },
+            function (UsernameAndPasswordCredentials_1) {
+                UsernameAndPasswordCredentials = UsernameAndPasswordCredentials_1;
             }],
         execute: function() {
             Class = (function () {
@@ -10827,8 +10858,8 @@ $__System.register("51", ["20", "14", "52"], function(exports_1) {
                             throw new Errors.IllegalArgumentError("The username cannot be empty.");
                         if (!authenticationToken.password)
                             throw new Errors.IllegalArgumentError("The password cannot be empty.");
-                        _this.credentials = authenticationToken;
-                        resolve();
+                        _this.credentials = new UsernameAndPasswordCredentials.Class(authenticationToken.username, authenticationToken.password);
+                        resolve(_this.credentials);
                     });
                 };
                 Class.prototype.addAuthentication = function (requestOptions) {
@@ -10865,7 +10896,7 @@ $__System.register("51", ["20", "14", "52"], function(exports_1) {
     }
 });
 
-$__System.register("53", [], function(exports_1) {
+$__System.register("54", [], function(exports_1) {
     var namespace, Class, Predicate;
     return {
         setters:[],
@@ -10927,7 +10958,7 @@ $__System.register("53", [], function(exports_1) {
     }
 });
 
-$__System.register("54", [], function(exports_1) {
+$__System.register("55", [], function(exports_1) {
     var namespace, Predicate;
     return {
         setters:[],
@@ -11153,7 +11184,7 @@ $__System.register("23", [], function(exports_1) {
     }
 });
 
-$__System.register("55", [], function(exports_1) {
+$__System.register("56", [], function(exports_1) {
     var namespace, Predicate;
     return {
         setters:[],
@@ -11222,7 +11253,7 @@ $__System.register("2f", ["5"], function(exports_1) {
     }
 });
 
-$__System.register("8", ["53", "54", "6", "23", "55", "2f"], function(exports_1) {
+$__System.register("8", ["54", "55", "6", "23", "56", "2f"], function(exports_1) {
     var C, CP, CS, LDP, RDF, XSD;
     return {
         setters:[
@@ -11355,9 +11386,9 @@ $__System.register("c", ["5"], function(exports_1) {
     }
 });
 
-$__System.register("56", ["8", "c", "5"], function(exports_1) {
+$__System.register("57", ["8", "c", "5"], function(exports_1) {
     var NS, Pointer, Utils;
-    var RDF_CLASS, CONTEXT, Factory, factory;
+    var RDF_CLASS, CONTEXT, Factory;
     return {
         setters:[
             function (NS_1) {
@@ -11384,17 +11415,20 @@ $__System.register("56", ["8", "c", "5"], function(exports_1) {
             Factory = (function () {
                 function Factory() {
                 }
-                Factory.prototype.hasClassProperties = function (object) {
-                    return Utils.isObject(object)
-                        && Utils.hasPropertyDefined(object, "key")
-                        && Utils.hasPropertyDefined(object, "expirationTime");
+                Factory.is = function (value) {
+                    return (Utils.isObject(value) &&
+                        Factory.hasClassProperties(value));
                 };
-                Factory.prototype.decorate = function (object) {
+                Factory.hasClassProperties = function (object) {
+                    return (Utils.hasPropertyDefined(object, "key") &&
+                        Utils.hasPropertyDefined(object, "expirationTime"));
+                };
+                Factory.decorate = function (object) {
                     if (this.hasClassProperties(object))
                         return object;
                     return object;
                 };
-                Factory.prototype.hasRDFClass = function (pointerOrExpandedObject) {
+                Factory.hasRDFClass = function (pointerOrExpandedObject) {
                     var types = [];
                     if ("@type" in pointerOrExpandedObject) {
                         types = pointerOrExpandedObject["@type"];
@@ -11409,13 +11443,35 @@ $__System.register("56", ["8", "c", "5"], function(exports_1) {
                 return Factory;
             })();
             exports_1("Factory", Factory);
-            exports_1("factory", factory = new Factory());
         }
     }
 });
 
-$__System.register("57", ["14", "20", "8", "4", "51", "52", "56"], function(exports_1) {
-    var Errors, HTTP, NS, RDF, BasicAuthenticator_1, UsernameAndPasswordToken_1, Token;
+$__System.register("58", [], function(exports_1) {
+    var Class;
+    return {
+        setters:[],
+        execute: function() {
+            Class = (function () {
+                function Class(token) {
+                    this._token = token;
+                }
+                Object.defineProperty(Class.prototype, "token", {
+                    get: function () { return this._token; },
+                    enumerable: true,
+                    configurable: true
+                });
+                ;
+                return Class;
+            })();
+            exports_1("Class", Class);
+            exports_1("default",Class);
+        }
+    }
+});
+
+$__System.register("59", ["14", "20", "8", "4", "52", "53", "57", "58"], function(exports_1) {
+    var Errors, HTTP, NS, RDF, BasicAuthenticator_1, UsernameAndPasswordToken_1, Token, TokenCredentials;
     var Class;
     return {
         setters:[
@@ -11439,6 +11495,9 @@ $__System.register("57", ["14", "20", "8", "4", "51", "52", "56"], function(expo
             },
             function (Token_1) {
                 Token = Token_1;
+            },
+            function (TokenCredentials_1) {
+                TokenCredentials = TokenCredentials_1;
             }],
         execute: function() {
             Class = (function () {
@@ -11449,15 +11508,17 @@ $__System.register("57", ["14", "20", "8", "4", "51", "52", "56"], function(expo
                     this.basicAuthenticator = new BasicAuthenticator_1.default();
                 }
                 Class.prototype.isAuthenticated = function () {
-                    return !!this.token && this.token.expirationTime > new Date();
+                    return !!this.credentials && this.credentials.token.expirationTime > new Date();
                 };
                 Class.prototype.authenticate = function (authenticationToken) {
                     var _this = this;
-                    return this.basicAuthenticator.authenticate(authenticationToken).then(function () {
+                    return this.basicAuthenticator.authenticate(authenticationToken).then(function (credentials) {
                         return _this.createToken();
                     }).then(function (_a) {
                         var token = _a[0], response = _a[1];
-                        _this.token = token;
+                        _this.credentials = new TokenCredentials.Class(token);
+                        _this.basicAuthenticator.clearAuthentication();
+                        return _this.credentials;
                     });
                 };
                 Class.prototype.addAuthentication = function (requestOptions) {
@@ -11466,7 +11527,7 @@ $__System.register("57", ["14", "20", "8", "4", "51", "52", "56"], function(expo
                     return requestOptions;
                 };
                 Class.prototype.clearAuthentication = function () {
-                    this.token = null;
+                    this.credentials = null;
                 };
                 Class.prototype.supports = function (authenticationToken) {
                     return authenticationToken instanceof UsernameAndPasswordToken_1.default;
@@ -11481,15 +11542,15 @@ $__System.register("57", ["14", "20", "8", "4", "51", "52", "56"], function(expo
                     return HTTP.Request.Service.post(uri, null, requestOptions, new HTTP.JSONLDParser.Class()).then(function (_a) {
                         var expandedResult = _a[0], response = _a[1];
                         var expandedNodes = RDF.Document.Util.getResources(expandedResult);
-                        expandedNodes = expandedNodes.filter(Token.factory.hasRDFClass);
+                        expandedNodes = expandedNodes.filter(Token.Factory.hasRDFClass);
                         if (expandedNodes.length === 0)
                             throw new HTTP.Errors.BadResponseError("No '" + Token.RDF_CLASS + "' was returned.", response);
                         if (expandedNodes.length > 1)
                             throw new HTTP.Errors.BadResponseError("Multiple '" + Token.RDF_CLASS + "' were returned. ", response);
                         var expandedToken = expandedNodes[0];
-                        var token = Token.factory.decorate({});
-                        var digestedSchema = _this.context.Documents.getSchemaFor(expandedToken);
-                        _this.context.Documents.jsonldConverter.compact(expandedToken, token, digestedSchema, _this.context.Documents);
+                        var token = Token.Factory.decorate({});
+                        var digestedSchema = _this.context.documents.getSchemaFor(expandedToken);
+                        _this.context.documents.jsonldConverter.compact(expandedToken, token, digestedSchema, _this.context.documents);
                         return [token, response];
                     });
                 };
@@ -11502,7 +11563,7 @@ $__System.register("57", ["14", "20", "8", "4", "51", "52", "56"], function(expo
                         header = new HTTP.Header.Class();
                         headers.set("Authorization", header);
                     }
-                    var authorization = "Token " + this.token.key;
+                    var authorization = "Token " + this.credentials.token.key;
                     header.values.push(new HTTP.Header.Value(authorization));
                     return headers;
                 };
@@ -11515,7 +11576,7 @@ $__System.register("57", ["14", "20", "8", "4", "51", "52", "56"], function(expo
     }
 });
 
-$__System.register("52", [], function(exports_1) {
+$__System.register("53", [], function(exports_1) {
     var Class;
     return {
         setters:[],
@@ -11543,7 +11604,7 @@ $__System.register("52", [], function(exports_1) {
     }
 });
 
-$__System.register("58", ["48"], function(exports_1) {
+$__System.register("5a", ["48"], function(exports_1) {
     var __extends = (this && this.__extends) || function (d, b) {
         for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
         function __() { this.constructor = d; }
@@ -11575,7 +11636,7 @@ $__System.register("58", ["48"], function(exports_1) {
     }
 });
 
-$__System.register("59", ["48"], function(exports_1) {
+$__System.register("5b", ["48"], function(exports_1) {
     var __extends = (this && this.__extends) || function (d, b) {
         for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
         function __() { this.constructor = d; }
@@ -11606,7 +11667,7 @@ $__System.register("59", ["48"], function(exports_1) {
     }
 });
 
-$__System.register("5a", ["48"], function(exports_1) {
+$__System.register("5c", ["48"], function(exports_1) {
     var __extends = (this && this.__extends) || function (d, b) {
         for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
         function __() { this.constructor = d; }
@@ -11668,7 +11729,7 @@ $__System.register("48", [], function(exports_1) {
     }
 });
 
-$__System.register("5b", ["48"], function(exports_1) {
+$__System.register("5d", ["48"], function(exports_1) {
     var __extends = (this && this.__extends) || function (d, b) {
         for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
         function __() { this.constructor = d; }
@@ -11700,7 +11761,7 @@ $__System.register("5b", ["48"], function(exports_1) {
     }
 });
 
-$__System.register("14", ["58", "59", "5a", "5b"], function(exports_1) {
+$__System.register("14", ["5a", "5b", "5c", "5d"], function(exports_1) {
     var IllegalStateError_1, IllegalArgumentError_1, IDAlreadyInUseError_1, NotImplementedError_1;
     return {
         setters:[
@@ -11726,7 +11787,7 @@ $__System.register("14", ["58", "59", "5a", "5b"], function(exports_1) {
 });
 
 /// <reference path="./../typings/typings.d.ts" />
-$__System.register("12", ["24", "25", "51", "56", "57", "52", "14", "5"], function(exports_1) {
+$__System.register("12", ["24", "25", "52", "57", "59", "53", "14", "5"], function(exports_1) {
     var AuthenticationToken_1, Authenticator_1, BasicAuthenticator_1, Token, TokenAuthenticator_1, UsernameAndPasswordToken_1, Errors, Utils;
     var Method, Class;
     return {
@@ -11778,7 +11839,7 @@ $__System.register("12", ["24", "25", "51", "56", "57", "52", "14", "5"], functi
                 Class.prototype.isAuthenticated = function (askParent) {
                     if (askParent === void 0) { askParent = true; }
                     return ((this.authenticator && this.authenticator.isAuthenticated()) ||
-                        (askParent && !!this.context.parentContext && this.context.parentContext.Auth.isAuthenticated()));
+                        (askParent && !!this.context.parentContext && this.context.parentContext.auth.isAuthenticated()));
                 };
                 Class.prototype.authenticate = function (usernameOrToken, password) {
                     var _this = this;
@@ -11807,7 +11868,7 @@ $__System.register("12", ["24", "25", "51", "56", "57", "52", "14", "5"], functi
                         this.authenticator.addAuthentication(requestOptions);
                     }
                     else if (!!this.context.parentContext) {
-                        this.context.parentContext.Auth.addAuthentication(requestOptions);
+                        this.context.parentContext.auth.addAuthentication(requestOptions);
                     }
                     else {
                         console.warn("There is no authentication to add to the request.");
@@ -11835,7 +11896,7 @@ $__System.register("12", ["24", "25", "51", "56", "57", "52", "14", "5"], functi
     }
 });
 
-$__System.register("5c", ["12"], function(exports_1) {
+$__System.register("5e", ["12"], function(exports_1) {
     var Auth;
     var settings;
     return {
@@ -12093,7 +12154,7 @@ $__System.register("5", [], function(exports_1) {
 });
 
 /// <reference path="../typings/typings.d.ts" />
-$__System.register("5d", ["2", "12", "7", "1a", "13", "20", "4", "5c", "5"], function(exports_1) {
+$__System.register("5f", ["2", "12", "7", "1a", "13", "20", "4", "5e", "5"], function(exports_1) {
     var __extends = (this && this.__extends) || function (d, b) {
         for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
         function __() { this.constructor = d; }
@@ -12153,7 +12214,7 @@ $__System.register("5d", ["2", "12", "7", "1a", "13", "20", "4", "5c", "5"], fun
                     return RDF.URI.Util.resolve(finalURI, uri);
                 };
                 Carbon.prototype.getAPIDescription = function () {
-                    return this.Documents.get("api/").then(function (_a) {
+                    return this.documents.get("api/").then(function (_a) {
                         var description = _a[0], response = _a[1];
                         return description;
                     });
@@ -12173,12 +12234,12 @@ $__System.register("5d", ["2", "12", "7", "1a", "13", "20", "4", "5c", "5"], fun
     }
 });
 
-$__System.registerDynamic("1", ["5d"], true, function($__require, exports, module) {
+$__System.registerDynamic("1", ["5f"], true, function($__require, exports, module) {
   ;
   var global = this,
       __define = global.define;
   global.define = undefined;
-  var Carbon = $__require('5d');
+  var Carbon = $__require('5f');
   global.Carbon = Carbon.default;
   global.define = __define;
   return module.exports;

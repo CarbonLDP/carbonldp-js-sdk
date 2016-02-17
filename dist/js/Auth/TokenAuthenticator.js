@@ -1,5 +1,5 @@
-System.register(["./../Errors", "./../HTTP", "./../NS", "./../RDF", "./BasicAuthenticator", "./UsernameAndPasswordToken", "./Token"], function(exports_1) {
-    var Errors, HTTP, NS, RDF, BasicAuthenticator_1, UsernameAndPasswordToken_1, Token;
+System.register(["./../Errors", "./../HTTP", "./../NS", "./../RDF", "./BasicAuthenticator", "./UsernameAndPasswordToken", "./Token", "./TokenCredentials"], function(exports_1) {
+    var Errors, HTTP, NS, RDF, BasicAuthenticator_1, UsernameAndPasswordToken_1, Token, TokenCredentials;
     var Class;
     return {
         setters:[
@@ -23,6 +23,9 @@ System.register(["./../Errors", "./../HTTP", "./../NS", "./../RDF", "./BasicAuth
             },
             function (Token_1) {
                 Token = Token_1;
+            },
+            function (TokenCredentials_1) {
+                TokenCredentials = TokenCredentials_1;
             }],
         execute: function() {
             Class = (function () {
@@ -33,15 +36,17 @@ System.register(["./../Errors", "./../HTTP", "./../NS", "./../RDF", "./BasicAuth
                     this.basicAuthenticator = new BasicAuthenticator_1.default();
                 }
                 Class.prototype.isAuthenticated = function () {
-                    return !!this.token && this.token.expirationTime > new Date();
+                    return !!this.credentials && this.credentials.token.expirationTime > new Date();
                 };
                 Class.prototype.authenticate = function (authenticationToken) {
                     var _this = this;
-                    return this.basicAuthenticator.authenticate(authenticationToken).then(function () {
+                    return this.basicAuthenticator.authenticate(authenticationToken).then(function (credentials) {
                         return _this.createToken();
                     }).then(function (_a) {
                         var token = _a[0], response = _a[1];
-                        _this.token = token;
+                        _this.credentials = new TokenCredentials.Class(token);
+                        _this.basicAuthenticator.clearAuthentication();
+                        return _this.credentials;
                     });
                 };
                 Class.prototype.addAuthentication = function (requestOptions) {
@@ -50,7 +55,7 @@ System.register(["./../Errors", "./../HTTP", "./../NS", "./../RDF", "./BasicAuth
                     return requestOptions;
                 };
                 Class.prototype.clearAuthentication = function () {
-                    this.token = null;
+                    this.credentials = null;
                 };
                 Class.prototype.supports = function (authenticationToken) {
                     return authenticationToken instanceof UsernameAndPasswordToken_1.default;
@@ -65,15 +70,15 @@ System.register(["./../Errors", "./../HTTP", "./../NS", "./../RDF", "./BasicAuth
                     return HTTP.Request.Service.post(uri, null, requestOptions, new HTTP.JSONLDParser.Class()).then(function (_a) {
                         var expandedResult = _a[0], response = _a[1];
                         var expandedNodes = RDF.Document.Util.getResources(expandedResult);
-                        expandedNodes = expandedNodes.filter(Token.factory.hasRDFClass);
+                        expandedNodes = expandedNodes.filter(Token.Factory.hasRDFClass);
                         if (expandedNodes.length === 0)
                             throw new HTTP.Errors.BadResponseError("No '" + Token.RDF_CLASS + "' was returned.", response);
                         if (expandedNodes.length > 1)
                             throw new HTTP.Errors.BadResponseError("Multiple '" + Token.RDF_CLASS + "' were returned. ", response);
                         var expandedToken = expandedNodes[0];
-                        var token = Token.factory.decorate({});
-                        var digestedSchema = _this.context.Documents.getSchemaFor(expandedToken);
-                        _this.context.Documents.jsonldConverter.compact(expandedToken, token, digestedSchema, _this.context.Documents);
+                        var token = Token.Factory.decorate({});
+                        var digestedSchema = _this.context.documents.getSchemaFor(expandedToken);
+                        _this.context.documents.jsonldConverter.compact(expandedToken, token, digestedSchema, _this.context.documents);
                         return [token, response];
                     });
                 };
@@ -86,7 +91,7 @@ System.register(["./../Errors", "./../HTTP", "./../NS", "./../RDF", "./BasicAuth
                         header = new HTTP.Header.Class();
                         headers.set("Authorization", header);
                     }
-                    var authorization = "Token " + this.token.key;
+                    var authorization = "Token " + this.credentials.token.key;
                     header.values.push(new HTTP.Header.Value(authorization));
                     return headers;
                 };

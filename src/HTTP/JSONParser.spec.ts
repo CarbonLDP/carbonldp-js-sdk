@@ -20,7 +20,7 @@ import * as Utils from "../Utils";
 import * as JSONParser from "./JSONParser";
 import DefaultExport from "./JSONParser";
 
-fdescribe( module(
+describe( module(
 	"Carbon/HTTP/JSONParser"
 ), ():void => {
 

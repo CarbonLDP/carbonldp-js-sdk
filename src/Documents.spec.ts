@@ -59,7 +59,7 @@ describe( module( "Carbon/Documents", "" ), ():void => {
 		}
 
 		let context:MockedContext = new MockedContext();
-		let documents:Documents = context.Documents;
+		let documents:Documents = context.documents;
 
 		let responseBody:string = JSON.stringify({
 			"@id": "http://example.com/resource/",
@@ -174,7 +174,7 @@ describe( module( "Carbon/Documents", "" ), ():void => {
 		}
 
 		let context:MockedContext = new MockedContext();
-		let documents:Documents = context.Documents;
+		let documents:Documents = context.documents;
 
 		let objectSchema:ObjectSchema.Class = {
 			"ex": "http://example.com/ns#",
@@ -262,7 +262,7 @@ describe( module( "Carbon/Documents", "" ), ():void => {
 		}
 
 		let context:MockedContext = new MockedContext();
-		let documents:Documents = context.Documents;
+		let documents:Documents = context.documents;
 
 		// Property Integrity
 		(() => {
@@ -293,7 +293,7 @@ describe( module( "Carbon/Documents", "" ), ():void => {
 		}
 
 		let context:MockedContext = new MockedContext();
-		let documents:Documents = context.Documents;
+		let documents:Documents = context.documents;
 
 		// Property Integrity
 		(() => {
@@ -327,7 +327,7 @@ describe( module( "Carbon/Documents", "" ), ():void => {
 		}
 
 		let context:MockedContext = new MockedContext();
-		let documents:Documents = context.Documents;
+		let documents:Documents = context.documents;
 
 		// Property Integrity
 		(() => {
@@ -361,7 +361,7 @@ describe( module( "Carbon/Documents", "" ), ():void => {
 		}
 
 		let context:MockedContext = new MockedContext();
-		let documents:Documents = context.Documents;
+		let documents:Documents = context.documents;
 
 		// Property Integrity
 		(() => {

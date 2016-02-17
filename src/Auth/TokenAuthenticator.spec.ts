@@ -5,7 +5,6 @@ import {
 		STATIC,
 
 		module,
-		submodule,
 
 		isDefined,
 
@@ -31,6 +30,9 @@ import * as Utils from "./../Utils";
 
 import AuthenticationToken from "./AuthenticationToken";
 import UsernameAndPasswordToken from "./UsernameAndPasswordToken";
+
+import * as Token from "./Token";
+import * as TokenCredentials from "./TokenCredentials";
 
 import * as TokenAuthenticator from "./TokenAuthenticator";
 
@@ -95,7 +97,7 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 			Stores credentials to authenticate future requests.
 		`, [
 			{ name: "authenticationToken", type: "Carbon.Auth.UsernameAndPasswordToken" }
-		], { type: "Promise<void>" } ), ( done:( error?:Error ) => void ):void => {
+		], { type: "Promise<Carbon.Auth.TokenCredentials.Class>" } ), ( done:( error?:Error ) => void ):void => {
 			class MockedContext extends AbstractContext {
 				resolve( uri:string ):string {
 					return uri;
@@ -142,8 +144,14 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 				let context:SuccessfulContext = new SuccessfulContext();
 				let authenticator:TokenAuthenticator.Class = new TokenAuthenticator.Class( context );
 
-				promises.push( authenticator.authenticate( new UsernameAndPasswordToken( "user", "pass" ) ).then( ():void => {
+				promises.push( authenticator.authenticate( new UsernameAndPasswordToken( "user", "pass" ) ).then( ( tokenCredentials:TokenCredentials.Class ):void => {
 					expect( authenticator.isAuthenticated() ).toEqual( true );
+
+					expect( tokenCredentials ).toBeDefined();
+					expect( tokenCredentials ).not.toBeNull();
+					expect( "token" in tokenCredentials ).toEqual( true );
+					expect( !! tokenCredentials.token ).toEqual( true );
+					expect( Token.Factory.is( tokenCredentials.token ) ).toEqual( true );
 				}) );
 			})();
 

@@ -47,7 +47,7 @@ class Carbon extends AbstractContext {
 	}
 
 	getAPIDescription():Promise<APIDescription.Class> {
-		return this.Documents.get( "api/" ).then(
+		return this.documents.get( "api/" ).then(
 			( [ description, response ]:[ Document.Class, HTTP.Response.Class ] ) => {
 				return <any> description;
 			}

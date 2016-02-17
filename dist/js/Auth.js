@@ -43,7 +43,7 @@ System.register(["./Auth/BasicAuthenticator", "./Auth/Token", "./Auth/TokenAuthe
                 Class.prototype.isAuthenticated = function (askParent) {
                     if (askParent === void 0) { askParent = true; }
                     return ((this.authenticator && this.authenticator.isAuthenticated()) ||
-                        (askParent && !!this.context.parentContext && this.context.parentContext.Auth.isAuthenticated()));
+                        (askParent && !!this.context.parentContext && this.context.parentContext.auth.isAuthenticated()));
                 };
                 Class.prototype.authenticate = function (usernameOrToken, password) {
                     var _this = this;
@@ -72,7 +72,7 @@ System.register(["./Auth/BasicAuthenticator", "./Auth/Token", "./Auth/TokenAuthe
                         this.authenticator.addAuthentication(requestOptions);
                     }
                     else if (!!this.context.parentContext) {
-                        this.context.parentContext.Auth.addAuthentication(requestOptions);
+                        this.context.parentContext.auth.addAuthentication(requestOptions);
                     }
                     else {
                         console.warn("There is no authentication to add to the request.");

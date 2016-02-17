@@ -10,10 +10,8 @@ import * as Utils from "./Utils";
 import * as ObjectSchema from "./ObjectSchema";
 
 interface Context {
-	/* tslint:disable: variable-name */
-	Auth:Auth;
-	Documents:Documents;
-	/* tslint:enable: variable-name */
+	auth:Auth;
+	documents:Documents;
 
 	parentContext:Context;
 

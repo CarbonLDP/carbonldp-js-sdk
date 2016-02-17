@@ -15,10 +15,8 @@ import * as Utils from "./Utils";
 import * as ObjectSchema from "./ObjectSchema";
 
 export class Class implements Context {
-	/* tslint:disable: variable-name */
-	Auth:Auth.Class;
-	Documents:Documents;
-	/* tslint:enable: variable-name */
+	auth:Auth.Class;
+	documents:Documents;
 
 	get parentContext():Context { return null; }
 
@@ -33,8 +31,8 @@ export class Class implements Context {
 		this.generalObjectSchema = new ObjectSchema.DigestedObjectSchema();
 		this.typeObjectSchemaMap = new Map<string, ObjectSchema.DigestedObjectSchema>();
 
-		this.Auth = new Auth.Class( this );
-		this.Documents = new Documents( this );
+		this.auth = new Auth.Class( this );
+		this.documents = new Documents( this );
 
 		this.registerDefaultObjectSchemas();
 	}
@@ -161,8 +159,6 @@ export class Class implements Context {
 	}
 }
 
-/* tslint:disable: variable-name */
 export const instance:Class = new Class();
-/* tslint:enable: variable-name */
 
 export default instance;

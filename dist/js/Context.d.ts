@@ -3,8 +3,8 @@ import Auth from "./Auth";
 import Documents from "./Documents";
 import * as ObjectSchema from "./ObjectSchema";
 interface Context {
-    Auth: Auth;
-    Documents: Documents;
+    auth: Auth;
+    documents: Documents;
     parentContext: Context;
     getBaseURI(): string;
     resolve(relativeURI: string): string;
