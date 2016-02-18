@@ -294,6 +294,8 @@ var DocumentationReporter = function( baseReporterDecorator, formatError, config
 				return "reexports > " + spec.name + ": " + spec.originalLocation;
 			case "defaultExport":
 				return "default export > " + spec.name;
+			case "enum":
+				return "enum > " + spec.name;
 		}
 
 		return spec.name;
