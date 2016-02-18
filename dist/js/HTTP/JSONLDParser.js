@@ -26,7 +26,7 @@ System.register(["jsonld", "./JSONParser"], function(exports_1) {
                         jsonld.expand(parsedObject, options, function (error, expanded) {
                             if (error) {
                                 // TODO: Handle jsonld.expand error
-                                throw error;
+                                reject(error);
                             }
                             parsedObject = expanded;
                             resolve(expanded);

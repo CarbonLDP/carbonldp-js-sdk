@@ -34,6 +34,8 @@ export interface MethodDescriptor extends SpecDescriptor {
 export interface ReexportsDescriptor extends SpecDescriptor {
     originalLocation: string;
 }
+export interface EnumDescriptor extends SpecDescriptor {
+}
 export interface MethodArgument {
     name: string;
     type: string;
@@ -60,6 +62,7 @@ export declare const PROPERTY: string;
 export declare const SUPER_CLASS: string;
 export declare const REEXPORTS: string;
 export declare const DEFAULTEXPORT: string;
+export declare const ENUM: string;
 export declare function module(name: string, description?: string): string;
 export declare function clazz(name: string, description: string, parent?: string, interfaces?: Array<string>): string;
 export declare function interfaze(name: string, description: string, parent?: string): string;
@@ -91,3 +94,4 @@ export declare function hasProperty(access: string, name: string, type: string, 
 export declare let property: typeof hasProperty;
 export declare function extendsClass(name: string): string;
 export declare function hasDefaultExport(exportName: string): string;
+export declare function hasEnum(name: string, description?: string): string;

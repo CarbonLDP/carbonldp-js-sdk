@@ -398,8 +398,7 @@ describe( module( "Carbon/RDF/URI" ), ():void => {
 		), ():void => {
 
 			it( hasSignature(
-				`Replace a base of a URI with the prefix provided.
-				 If the prefix can not be resolved, the URI provided will be returned`, [
+				"Replace a base of a URI with the prefix provided. If the prefix can not be resolved, the URI provided will be returned", [
 					{ name: "uri", type: "string" },
 					{ name: "prefix", type: "string" },
 					{ name: "prefixURI", type: "string" }
@@ -426,8 +425,7 @@ describe( module( "Carbon/RDF/URI" ), ():void => {
 			});
 
 			it( hasSignature(
-				`Replace the base of a URI with a prefix in accordance with the ObjectSchema provided.
-				 If the prefix can not be resolved, the URI provided will be returned`, [
+				"Replace the base of a URI with a prefix in accordance with the ObjectSchema provided. If the prefix can not be resolved, the URI provided will be returned", [
 					{ name: "uri", type: "string" },
 					{ name: "objectSchema", type: "Carbon.ObjectSchema.DigestedObjectSchema" }
 				],

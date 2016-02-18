@@ -1,5 +1,5 @@
 System.register([], function(exports_1) {
-    var MODULE, CLASS, INTERFACE, STATIC, INSTANCE, CONSTRUCTOR, METHOD, SIGNATURE, PROPERTY, SUPER_CLASS, REEXPORTS, DEFAULTEXPORT, property;
+    var MODULE, CLASS, INTERFACE, STATIC, INSTANCE, CONSTRUCTOR, METHOD, SIGNATURE, PROPERTY, SUPER_CLASS, REEXPORTS, DEFAULTEXPORT, ENUM, property;
     function serialize(descriptor) {
         return "JSON" + JSON.stringify(descriptor);
     }
@@ -195,6 +195,15 @@ System.register([], function(exports_1) {
         return toJSON(descriptor);
     }
     exports_1("hasDefaultExport", hasDefaultExport);
+    function hasEnum(name, description) {
+        var descriptor = {
+            specType: ENUM,
+            name: name,
+            description: description,
+        };
+        return toJSON(descriptor);
+    }
+    exports_1("hasEnum", hasEnum);
     return {
         setters:[],
         execute: function() {
@@ -210,6 +219,7 @@ System.register([], function(exports_1) {
             exports_1("SUPER_CLASS", SUPER_CLASS = "super-class");
             exports_1("REEXPORTS", REEXPORTS = "reexports");
             exports_1("DEFAULTEXPORT", DEFAULTEXPORT = "defaultExport");
+            exports_1("ENUM", ENUM = "enum");
             /* tslint:disable: typedef */
             exports_1("property", property = hasProperty);
         }
