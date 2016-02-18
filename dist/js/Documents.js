@@ -254,8 +254,16 @@ System.register(["jsonld", "./Errors", "./HTTP", "./RDF", "./Utils", "./JSONLDCo
                         var documentResource = _this.getDocumentResource(rdfDocument, response);
                         var membershipResourceURI = RDF.Node.Util.getPropertyURI(documentResource, NS.LDP.Predicate.membershipResource);
                         var membershipResource;
-                        if (documentResource["@id"] === membershipResourceURI || membershipResourceURI === null) {
+                        if (documentResource["@id"] === membershipResourceURI) {
                             membershipResource = documentResource;
+                        }
+                        else if (membershipResourceURI === null) {
+                            if (documentResource["@type"].contains(NS.LDP.Class.BasicContainer)) {
+                                membershipResource = documentResource;
+                            }
+                            else {
+                                throw new HTTP.Errors.BadResponseError("The document is not an ldp:BasicContainer and it doesn't contain an ldp:membershipResource triple.", response);
+                            }
                         }
                         else {
                             var membershipResourceDocument = _this.getRDFDocument(membershipResourceURI, rdfDocuments, response);

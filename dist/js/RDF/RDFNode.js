@@ -34,10 +34,8 @@ System.register(["./../Utils"], function(exports_1) {
                         return null;
                     if (!Utils.isArray(node[predicate]))
                         return null;
-                    var uris = node[predicate]
-                        .filter(function (value) { return Factory.is(value); })
-                        .map(function (value) { return value["@id"]; });
-                    return uris.length > 0 ? uris[0] : null;
+                    var uri = node[predicate].find(function (value) { return Factory.is(value); });
+                    return typeof uri !== "undefined" ? uri["@id"] : null;
                 };
                 return Util;
             })();

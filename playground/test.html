@@ -58,12 +58,9 @@
 			var resource;
 
 			carbon.auth.authenticate( "admin@carbonldp.com", "hello" ).then( function() {
-				return carbon.apps.get( "test-app/" );
-			} ).then( function( result ) {
-				appContext = result;
-				return appContext.documents.getMembers( "/" );
-			} ).then( function( result ) {
-				console.log( "%o", result );
+				return carbon.apps.getAll();
+			} ).then( function( appContexts ) {
+				console.log( "%o", appContexts );
 			} );
 
 			function executeSELECTQuery( document ) {

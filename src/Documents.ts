@@ -214,7 +214,6 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 		);
 	}
 
-	// TODO: Move this method to a Container specific Service
 	getMembers( uri:string, includeNonReadable:boolean, requestOptions:HTTP.Request.Options ):Promise<[ Pointer.Class[], HTTP.Response.Class ]>;
 	getMembers( uri:string, includeNonReadable:boolean ):Promise<[ Pointer.Class[], HTTP.Response.Class ]>;
 	getMembers( uri:string, requestOptions:HTTP.Request.Options ):Promise<[ Pointer.Class[], HTTP.Response.Class ]>;
@@ -259,8 +258,14 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 			let membershipResourceURI:string = RDF.Node.Util.getPropertyURI( documentResource, NS.LDP.Predicate.membershipResource );
 
 			let membershipResource:RDF.Node.Class;
-			if( documentResource[ "@id" ] === membershipResourceURI || membershipResourceURI === null ) {
+			if( documentResource[ "@id" ] === membershipResourceURI ) {
 				membershipResource = documentResource;
+			} else if( membershipResourceURI === null ) {
+				if( documentResource[ "@type" ].contains( NS.LDP.Class.BasicContainer ) ) {
+					membershipResource = documentResource;
+				} else {
+					throw new HTTP.Errors.BadResponseError( "The document is not an ldp:BasicContainer and it doesn't contain an ldp:membershipResource triple.", response );
+				}
 			} else {
 				let membershipResourceDocument:RDF.Document.Class = this.getRDFDocument( membershipResourceURI, rdfDocuments, response );
 				if ( membershipResourceDocument === null ) throw new HTTP.Errors.BadResponseError( "The membershipResource document was not included in the response.", response );

@@ -29,10 +29,8 @@ export class Util {
 	static getPropertyURI( node:Class, predicate:string ):string {
 		if( ! ( predicate in node ) ) return null;
 		if( ! Utils.isArray( node[ predicate ] ) ) return null;
-		let uris:string[] = node[ predicate ]
-			.filter( ( value:Value.Class ) => Factory.is( value ) )
-			.map( ( value:Value.Class ) => value[ "@id" ] );
+		let uri:string = node[ predicate ].find( ( value:Value.Class ) => Factory.is( value ) );
 
-		return uris.length > 0 ? uris[ 0 ] : null;
+		return typeof uri !== "undefined" ? uri[ "@id" ] : null;
 	}
 }
