@@ -10025,33 +10025,33 @@ $__System.register("45", ["33"], function(exports_1) {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
     var HTTPError_1;
-    var name, statusCode, InternalServerError;
+    var name, statusCode, InternalServerErrorError;
     return {
         setters:[
             function (HTTPError_1_1) {
                 HTTPError_1 = HTTPError_1_1;
             }],
         execute: function() {
-            name = "InternalServerError";
+            name = "InternalServerErrorError";
             statusCode = 500;
-            InternalServerError = (function (_super) {
-                __extends(InternalServerError, _super);
-                function InternalServerError() {
+            InternalServerErrorError = (function (_super) {
+                __extends(InternalServerErrorError, _super);
+                function InternalServerErrorError() {
                     _super.apply(this, arguments);
                 }
-                Object.defineProperty(InternalServerError, "statusCode", {
+                Object.defineProperty(InternalServerErrorError, "statusCode", {
                     get: function () { return statusCode; },
                     enumerable: true,
                     configurable: true
                 });
-                Object.defineProperty(InternalServerError.prototype, "name", {
+                Object.defineProperty(InternalServerErrorError.prototype, "name", {
                     get: function () { return name; },
                     enumerable: true,
                     configurable: true
                 });
-                return InternalServerError;
+                return InternalServerErrorError;
             })(HTTPError_1.default);
-            exports_1("default",InternalServerError);
+            exports_1("default",InternalServerErrorError);
         }
     }
 });
@@ -10202,7 +10202,7 @@ $__System.register("49", ["33"], function(exports_1) {
 });
 
 $__System.register("4a", ["33", "32", "34", "35", "36", "37", "38", "39", "3a", "3b", "3c", "3d", "3e", "3f", "40", "41", "42", "43", "44", "45", "46", "47", "49"], function(exports_1) {
-    var HTTPError_1, BadRequestError_1, ConflictError_1, ForbiddenError_1, MethodNotAllowedError_1, NotAcceptableError_1, NotFoundError_1, PreconditionFailedError_1, PreconditionRequiredError_1, RequestEntityTooLargeError_1, RequestHeaderFieldsTooLargeError_1, RequestURITooLongError_1, TooManyRequestsError_1, UnauthorizedError_1, UnsupportedMediaTypeError_1, BadResponseError_1, BadGatewayError_1, GatewayTimeoutError_1, HTTPVersionNotSupportedError_1, InternalServerError_1, NotImplementedError_1, ServiceUnavailableError_1, UnknownError_1;
+    var HTTPError_1, BadRequestError_1, ConflictError_1, ForbiddenError_1, MethodNotAllowedError_1, NotAcceptableError_1, NotFoundError_1, PreconditionFailedError_1, PreconditionRequiredError_1, RequestEntityTooLargeError_1, RequestHeaderFieldsTooLargeError_1, RequestURITooLongError_1, TooManyRequestsError_1, UnauthorizedError_1, UnsupportedMediaTypeError_1, BadResponseError_1, BadGatewayError_1, GatewayTimeoutError_1, HTTPVersionNotSupportedError_1, InternalServerErrorError_1, NotImplementedError_1, ServiceUnavailableError_1, UnknownError_1;
     var client, server, statusCodeMap;
     return {
         setters:[
@@ -10263,8 +10263,8 @@ $__System.register("4a", ["33", "32", "34", "35", "36", "37", "38", "39", "3a", 
             function (HTTPVersionNotSupportedError_1_1) {
                 HTTPVersionNotSupportedError_1 = HTTPVersionNotSupportedError_1_1;
             },
-            function (InternalServerError_1_1) {
-                InternalServerError_1 = InternalServerError_1_1;
+            function (InternalServerErrorError_1_1) {
+                InternalServerErrorError_1 = InternalServerErrorError_1_1;
             },
             function (NotImplementedError_1_1) {
                 NotImplementedError_1 = NotImplementedError_1_1;
@@ -10296,7 +10296,7 @@ $__System.register("4a", ["33", "32", "34", "35", "36", "37", "38", "39", "3a", 
             server.push(BadGatewayError_1.default);
             server.push(GatewayTimeoutError_1.default);
             server.push(HTTPVersionNotSupportedError_1.default);
-            server.push(InternalServerError_1.default);
+            server.push(InternalServerErrorError_1.default);
             server.push(NotImplementedError_1.default);
             server.push(ServiceUnavailableError_1.default);
             statusCodeMap = new Map();
@@ -10325,7 +10325,7 @@ $__System.register("4a", ["33", "32", "34", "35", "36", "37", "38", "39", "3a", 
             exports_1("BadGatewayError", BadGatewayError_1.default);
             exports_1("GatewayTimeoutError", GatewayTimeoutError_1.default);
             exports_1("HTTPVersionNotSupportedError", HTTPVersionNotSupportedError_1.default);
-            exports_1("InternalServerError", InternalServerError_1.default);
+            exports_1("InternalServerErrorError", InternalServerErrorError_1.default);
             exports_1("NotImplementedError", NotImplementedError_1.default);
             exports_1("ServiceUnavailableError", ServiceUnavailableError_1.default);
             exports_1("UnknownError", UnknownError_1.default);
