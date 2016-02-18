@@ -1,3 +1,7 @@
+# 0.15.0 (February 18, 2016)
+* `context.documents` can now retrieve the members of a document using `getMembers()`
+* `carbon.apps` can no retrieve all accessible appContexts at once with `getAll()`
+
 # 0.14.0 (February 9, 2016)
 * Support for Raw ASK, SELECT, DESCRIBE and CONSTRUCT queries
 * Documents can create children

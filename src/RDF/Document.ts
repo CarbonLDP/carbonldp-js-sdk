@@ -1,7 +1,8 @@
-import * as Value from "./Value";
+import * as HTTP from "./../HTTP";
 import * as RDFNode from "./RDFNode";
 import * as Utils from "../Utils";
 import * as URI from "./URI";
+import * as Value from "./Value";
 
 export interface Class {
 	"@id"?:string;
@@ -115,3 +116,14 @@ export class Util {
 		return bnodes;
 	}
 }
+
+export class Parser implements HTTP.Parser.Class<Class[]> {
+	parse( input:string ):Promise<any> {
+		let jsonLDParser:HTTP.JSONLDParser.Class = new HTTP.JSONLDParser.Class();
+		return jsonLDParser.parse( input ).then( ( expandedResult:any ) => {
+			return Util.getDocuments( expandedResult );
+		});
+	}
+}
+
+export default Class;

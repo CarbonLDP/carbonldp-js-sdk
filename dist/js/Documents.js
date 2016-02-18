@@ -1,6 +1,6 @@
 /// <reference path="../typings/typings.d.ts" />
-System.register(["jsonld", "./Errors", "./HTTP", "./RDF", "./Utils", "./JSONLDConverter", "./PersistedDocument", "./Pointer", "./ObjectSchema", "./NS/LDP", "./SPARQL"], function(exports_1) {
-    var jsonld, Errors, HTTP, RDF, Utils, JSONLDConverter, PersistedDocument, Pointer, ObjectSchema, LDP, SPARQL;
+System.register(["jsonld", "./Errors", "./HTTP", "./RDF", "./Utils", "./JSONLDConverter", "./PersistedDocument", "./Pointer", "./NS", "./ObjectSchema", "./NS/LDP", "./SPARQL"], function(exports_1) {
+    var jsonld, Errors, HTTP, RDF, Utils, JSONLDConverter, PersistedDocument, Pointer, NS, ObjectSchema, LDP, SPARQL;
     var Documents;
     function parse(input) {
         try {
@@ -49,6 +49,9 @@ System.register(["jsonld", "./Errors", "./HTTP", "./RDF", "./Utils", "./JSONLDCo
             },
             function (Pointer_1) {
                 Pointer = Pointer_1;
+            },
+            function (NS_1) {
+                NS = NS_1;
             },
             function (ObjectSchema_1) {
                 ObjectSchema = ObjectSchema_1;
@@ -144,7 +147,9 @@ System.register(["jsonld", "./Errors", "./HTTP", "./RDF", "./Utils", "./JSONLDCo
                         if (etag === null)
                             throw new HTTP.Errors.BadResponseError("The response doesn't contain an ETag", response);
                         var rdfDocuments = RDF.Document.Util.getDocuments(expandedResult);
-                        var rdfDocument = _this.getRDFDocument(rdfDocuments, response);
+                        var rdfDocument = _this.getRDFDocument(uri, rdfDocuments, response);
+                        if (rdfDocument === null)
+                            throw new HTTP.Errors.BadResponseError("No document was returned.", response);
                         var documentResources = RDF.Document.Util.getDocumentResources(rdfDocument);
                         if (documentResources.length > 1)
                             throw new HTTP.Errors.BadResponseError("The RDFDocument contains more than one document resource.", response);
@@ -207,6 +212,68 @@ System.register(["jsonld", "./Errors", "./HTTP", "./RDF", "./Utils", "./JSONLDCo
                             pointer,
                             response,
                         ];
+                    });
+                };
+                Documents.prototype.getMembers = function (uri, includeNonReadableOrRequestOptions, requestOptions) {
+                    var _this = this;
+                    if (includeNonReadableOrRequestOptions === void 0) { includeNonReadableOrRequestOptions = null; }
+                    if (requestOptions === void 0) { requestOptions = {}; }
+                    var includeNonReadable = Utils.isBoolean(includeNonReadableOrRequestOptions) ? includeNonReadableOrRequestOptions : true;
+                    requestOptions = Utils.isObject(includeNonReadableOrRequestOptions) && includeNonReadableOrRequestOptions !== null ? includeNonReadableOrRequestOptions : requestOptions;
+                    if (!RDF.URI.Util.isAbsolute(uri)) {
+                        if (!this.context)
+                            throw new Errors.IllegalArgumentError("This Documents instance doesn't support relative URIs.");
+                        uri = this.context.resolve(uri);
+                    }
+                    if (this.context && this.context.auth.isAuthenticated())
+                        this.context.auth.addAuthentication(requestOptions);
+                    HTTP.Request.Util.setAcceptHeader("application/ld+json", requestOptions);
+                    HTTP.Request.Util.setPreferredInteractionModel(LDP.Class.Container, requestOptions);
+                    var containerRetrievalPreferences = {
+                        include: [
+                            NS.LDP.Class.PreferMinimalContainer,
+                            NS.LDP.Class.PreferMembership,
+                        ],
+                        omit: [
+                            NS.LDP.Class.PreferContainment,
+                            NS.C.Class.PreferContainmentResources,
+                            NS.C.Class.PreferMembershipResources,
+                        ],
+                    };
+                    if (includeNonReadable) {
+                        containerRetrievalPreferences.include.push(NS.C.Class.NonReadableMembershipResourceTriples);
+                    }
+                    else {
+                        containerRetrievalPreferences.omit.push(NS.C.Class.NonReadableMembershipResourceTriples);
+                    }
+                    return HTTP.Request.Service.get(uri, requestOptions, new RDF.Document.Parser()).then(function (_a) {
+                        var rdfDocuments = _a[0], response = _a[1];
+                        var rdfDocument = _this.getRDFDocument(uri, rdfDocuments, response);
+                        if (rdfDocument === null)
+                            throw new HTTP.Errors.BadResponseError("No document was returned.", response);
+                        var documentResource = _this.getDocumentResource(rdfDocument, response);
+                        var membershipResourceURI = RDF.Node.Util.getPropertyURI(documentResource, NS.LDP.Predicate.membershipResource);
+                        var membershipResource;
+                        if (documentResource["@id"] === membershipResourceURI) {
+                            membershipResource = documentResource;
+                        }
+                        else if (membershipResourceURI === null) {
+                            if (documentResource["@type"].contains(NS.LDP.Class.BasicContainer)) {
+                                membershipResource = documentResource;
+                            }
+                            else {
+                                throw new HTTP.Errors.BadResponseError("The document is not an ldp:BasicContainer and it doesn't contain an ldp:membershipResource triple.", response);
+                            }
+                        }
+                        else {
+                            var membershipResourceDocument = _this.getRDFDocument(membershipResourceURI, rdfDocuments, response);
+                            if (membershipResourceDocument === null)
+                                throw new HTTP.Errors.BadResponseError("The membershipResource document was not included in the response.", response);
+                            membershipResource = _this.getDocumentResource(membershipResourceDocument, response);
+                        }
+                        var hasMemberRelation = RDF.Node.Util.getPropertyURI(documentResource, NS.LDP.Predicate.hasMemberRelation);
+                        var memberPointers = RDF.Value.Util.getPropertyPointers(membershipResource, hasMemberRelation, _this);
+                        return [memberPointers, response];
                     });
                 };
                 Documents.prototype.save = function (persistedDocument, requestOptions) {
@@ -289,12 +356,19 @@ System.register(["jsonld", "./Errors", "./HTTP", "./RDF", "./Utils", "./JSONLDCo
                         this.context.auth.addAuthentication(requestOptions);
                     return SPARQL.Service.executeRawDESCRIBEQuery(documentURI, constructQuery, requestOptions);
                 };
-                Documents.prototype.getRDFDocument = function (rdfDocuments, response) {
-                    if (rdfDocuments.length === 0)
-                        throw new HTTP.Errors.BadResponseError("No document was returned.", response);
+                Documents.prototype.getRDFDocument = function (requestURL, rdfDocuments, response) {
+                    rdfDocuments = rdfDocuments.filter(function (rdfDocument) { return rdfDocument["@id"] === requestURL; });
                     if (rdfDocuments.length > 1)
-                        throw new Error("Unsupported: Multiple graphs are currently not supported.");
-                    return rdfDocuments[0];
+                        throw new HTTP.Errors.BadResponseError("Several documents share the same id.", response);
+                    return rdfDocuments.length > 0 ? rdfDocuments[0] : null;
+                };
+                Documents.prototype.getDocumentResource = function (rdfDocument, response) {
+                    var documentResources = RDF.Document.Util.getDocumentResources(rdfDocument);
+                    if (documentResources.length === 0)
+                        throw new HTTP.Errors.BadResponseError("The RDFDocument: " + rdfDocument["@id"] + ", doesn't contain a document resource.", response);
+                    if (documentResources.length > 1)
+                        throw new HTTP.Errors.BadResponseError("The RDFDocument: " + rdfDocument["@id"] + ", contains more than one document resource.", response);
+                    return documentResources[0];
                 };
                 Documents.prototype.getPointerID = function (uri) {
                     if (RDF.URI.Util.isBNodeID(uri))

@@ -91,6 +91,14 @@ System.register(["./Utils"], function(exports_1) {
                     }
                     return ids;
                 };
+                Util.resolveAll = function (pointers) {
+                    var promises = pointers.map(function (pointer) { return pointer.resolve(); });
+                    return Promise.all(promises).then(function (results) {
+                        var resolvedPointers = results.map(function (result) { return result[0]; });
+                        var responses = results.map(function (result) { return result[1]; });
+                        return [resolvedPointers, responses];
+                    });
+                };
                 return Util;
             })();
             exports_1("Util", Util);

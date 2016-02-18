@@ -102,6 +102,16 @@ export class Util {
 		}
 		return ids;
 	}
+
+	static resolveAll( pointers:Class[] ):Promise<[ Class[], HTTP.Response.Class[] ]> {
+		let promises:Promise<[ Class, HTTP.Response.Class ]>[] = pointers.map( ( pointer:Class ) => pointer.resolve() );
+		return Promise.all( promises ).then( ( results:Array<Array<any>> ) => {
+			let resolvedPointers:Class[] = results.map( ( result:Array<any> ) => result[0] );
+			let responses:HTTP.Response.Class[] = results.map( ( result:Array<any> ) => result[1] );
+
+			return [ resolvedPointers, responses ];
+		});
+	}
 }
 
 export interface Validator {

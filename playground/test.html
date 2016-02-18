@@ -57,17 +57,10 @@
 			var appContext;
 			var resource;
 
-			carbon.Auth.authenticate( "admin@carbonldp.com", "hello" ).then( function() {
-				return carbon.apps.get( "test-app/" );
-			} ).then( function( result ) {
-				appContext = result;
-				return appContext.Documents.get( "/" );
-			} ).then( function( result ) {
-				return executeSELECTQuery( result[ 0 ] );
-			} ).then( function( processedResponse ) {
-				console.log( processedResponse );
-			} ).catch( function( error ) {
-				console.error( error );
+			carbon.auth.authenticate( "admin@carbonldp.com", "hello" ).then( function() {
+				return carbon.apps.getAll();
+			} ).then( function( appContexts ) {
+				console.log( "%o", appContexts );
 			} );
 
 			function executeSELECTQuery( document ) {
@@ -80,7 +73,7 @@
 
 				console.log( "%o", resource );
 
-				return appContext.Documents.save( resource );
+				return appContext.documents.save( resource );
 			}
 		})();
 	</script>

@@ -248,6 +248,50 @@ describe( module( "Carbon/Documents", "" ), ():void => {
 		});
 	});
 
+	describe( method( INSTANCE, "getMembers", "Retrieves (but doesn't resolve) all the members of the document" ), () => {
+		it( isDefined(), () => {
+			class MockedContext extends AbstractContext {
+				resolve( uri:string ):string {
+					return uri;
+				}
+			}
+
+			let context:MockedContext = new MockedContext();
+			let documents:Documents = context.documents;
+
+			// Property Integrity
+			(() => {
+				expect( "getMembers" in documents ).toEqual( true );
+				expect( Utils.isFunction( documents.getMembers ) ).toEqual( true );
+			})();
+		});
+
+		it( hasSignature( "", [
+			{ name: "uri", type: "string" },
+			{ name: "includeNonReadable", type: "boolean" },
+			{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
+		], { type: "Promise<[ Carbon.Pointer.Class[], Carbon.HTTP.Response.Class[] ]>" } ), () => {
+			// TODO
+		});
+		it( hasSignature( "", [
+			{ name: "uri", type: "string" },
+			{ name: "includeNonReadable", type: "boolean", optional: true },
+		], { type: "Promise<[ Carbon.Pointer.Class[], Carbon.HTTP.Response.Class[] ]>" } ), () => {
+			// TODO
+		});
+		it( hasSignature( "", [
+			{ name: "uri", type: "string" },
+			{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
+		], { type: "Promise<[ Carbon.Pointer.Class[], Carbon.HTTP.Response.Class[] ]>" } ), () => {
+			// TODO
+		});
+		it( hasSignature( "", [
+			{ name: "uri", type: "string" },
+		], { type: "Promise<[ Carbon.Pointer.Class[], Carbon.HTTP.Response.Class[] ]>" } ), () => {
+			// TODO
+		});
+	});
+
 	it( hasMethod( INSTANCE, "executeRawASKQuery", `
 			Executes an ASK query on a document and returns a raw application/sparql-results+json object
 		`, [
