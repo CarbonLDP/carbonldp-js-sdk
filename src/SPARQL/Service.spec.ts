@@ -315,7 +315,7 @@ describe( module( "Carbon/SPARQL/Service" ), ():void => {
 					'   ldp:contains <l1>, <l2>, <l3>.' +
 				'';
 				let acceptHeader:string = "text/turtle";
-				let requestOptions:HTTP.Request.Options = {};
+				let requestOptions:HTTP.Request.Options = {headers: new Map().set("some", new HTTP.Header.Class("some") )};
 				HTTP.Request.Util.setAcceptHeader( acceptHeader, requestOptions );
 
 				jasmine.Ajax.stubRequest( "http://example.com/sparql-endpoint/turtle/", constructQuery, "POST" ).andReturn( {

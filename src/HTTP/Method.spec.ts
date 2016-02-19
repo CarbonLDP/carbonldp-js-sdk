@@ -13,7 +13,7 @@ import * as Utils from "../Utils";
 
 import Method from "./Method";
 
-fdescribe( module(
+describe( module(
 	"Carbon/HTTP/Method"
 ), ():void => {
 

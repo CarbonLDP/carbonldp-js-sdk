@@ -147,7 +147,7 @@ export class Service {
 
 export class Util {
 	static getHeader( headerName:string, requestOptions:Options ):Options {
-		if( ! requestOptions.headers ) return null;
+		if( ! requestOptions.headers ) return undefined;
 		return requestOptions.headers.get( headerName );
 	}
 

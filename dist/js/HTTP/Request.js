@@ -143,7 +143,7 @@ System.register(["./Errors", "./Header", "./Method", "./Response", "./../Utils"]
                 }
                 Util.getHeader = function (headerName, requestOptions) {
                     if (!requestOptions.headers)
-                        return null;
+                        return undefined;
                     return requestOptions.headers.get(headerName);
                 };
                 Util.setAcceptHeader = function (accept, requestOptions) {

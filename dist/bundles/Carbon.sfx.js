@@ -2744,7 +2744,7 @@ $__System.register("1f", ["20", "5", "1d"], function(exports_1) {
                 Class.executeRawCONSTRUCTQuery = function (url, constructQuery, options) {
                     if (options === void 0) { options = {}; }
                     options = Utils.extend(options, Class.defaultOptions);
-                    if (HTTP.Request.Util.getHeader("Accept", options) === null)
+                    if (HTTP.Request.Util.getHeader("Accept", options) === undefined)
                         HTTP.Request.Util.setAcceptHeader("application/ld+json", options);
                     HTTP.Request.Util.setContentTypeHeader("application/sparql-query", options);
                     return HTTP.Request.Service.post(url, constructQuery, options, Class.stringParser);
@@ -2752,7 +2752,7 @@ $__System.register("1f", ["20", "5", "1d"], function(exports_1) {
                 Class.executeRawDESCRIBEQuery = function (url, describeQuery, options) {
                     if (options === void 0) { options = {}; }
                     options = Utils.extend(options, Class.defaultOptions);
-                    if (HTTP.Request.Util.getHeader("Accept", options) === null)
+                    if (HTTP.Request.Util.getHeader("Accept", options) === undefined)
                         HTTP.Request.Util.setAcceptHeader("application/ld+json", options);
                     HTTP.Request.Util.setContentTypeHeader("application/sparql-query", options);
                     return HTTP.Request.Service.post(url, describeQuery, options, Class.stringParser);
@@ -10500,7 +10500,7 @@ $__System.register("4c", ["4a", "4d", "4b", "4e", "5"], function(exports_1) {
                 }
                 Util.getHeader = function (headerName, requestOptions) {
                     if (!requestOptions.headers)
-                        return null;
+                        return undefined;
                     return requestOptions.headers.get(headerName);
                 };
                 Util.setAcceptHeader = function (accept, requestOptions) {
