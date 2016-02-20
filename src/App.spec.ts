@@ -54,7 +54,7 @@ describe( module( "Carbon/App" ), function():void {
 	), function():void {
 
 
-		describe( constructor( "", "Constructor of Carbon.App.Factory" ), function():void {
+		describe( constructor(), function():void {
 			it( hasConstructor( [
 				{name: "parent", type: "Carbon.Parent"},
 				{name: "resource", type: "Carbon.App.Resource"},

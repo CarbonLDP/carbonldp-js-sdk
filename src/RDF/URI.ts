@@ -81,6 +81,20 @@ export class Util {
 		return parts[ 1 ];
 	}
 
+	static getSlug( uri:string ):string {
+		uri = Util.getDocumentURI( uri );
+
+		if( uri === "" ) return uri;
+		if( uri === "/" ) return uri;
+
+		let parts:string[] = uri.split( "/" );
+		if( parts[ parts.length - 1 ] === "" ) {
+			return parts[ parts.length - 2 ] + "/";
+		} else {
+			return parts[ parts.length - 1 ];
+		}
+	}
+
 	static resolve( parentURI:string, childURI:string ):string {
 		if ( Util.isAbsolute( childURI ) || Util.isPrefixed( childURI ) )
 			return childURI;

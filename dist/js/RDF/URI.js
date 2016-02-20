@@ -92,6 +92,20 @@ System.register(["./../Utils"], function(exports_1) {
                         throw new Error("IllegalArgument: The URI provided has more than one # sign.");
                     return parts[1];
                 };
+                Util.getSlug = function (uri) {
+                    uri = Util.getDocumentURI(uri);
+                    if (uri === "")
+                        return uri;
+                    if (uri === "/")
+                        return uri;
+                    var parts = uri.split("/");
+                    if (parts[parts.length - 1] === "") {
+                        return parts[parts.length - 2] + "/";
+                    }
+                    else {
+                        return parts[parts.length - 1];
+                    }
+                };
                 Util.resolve = function (parentURI, childURI) {
                     if (Util.isAbsolute(childURI) || Util.isPrefixed(childURI))
                         return childURI;

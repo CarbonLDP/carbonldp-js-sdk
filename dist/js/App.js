@@ -24,9 +24,16 @@ System.register(["./AbstractContext", "./NS", "./RDF", "./Utils"], function(expo
         execute: function() {
             exports_1("RDF_CLASS", RDF_CLASS = NS.CS.Class.Application);
             exports_1("SCHEMA", SCHEMA = {
+                "name": {
+                    "@id": NS.CS.Predicate.name,
+                    "@type": NS.XSD.DataType.string,
+                },
                 "rootContainer": {
                     "@id": NS.CS.Predicate.rootContainer,
                     "@type": "@id",
+                },
+                "allowsOrigin": {
+                    "@id": NS.CS.Predicate.allowsOrigin
                 },
             });
             AppContext = (function (_super) {

@@ -759,9 +759,16 @@ $__System.register("3", ["8", "9", "5", "6"], function(exports_1) {
         execute: function() {
             exports_1("RDF_CLASS", RDF_CLASS = NS.CS.Class.Application);
             exports_1("SCHEMA", SCHEMA = {
+                "name": {
+                    "@id": NS.CS.Predicate.name,
+                    "@type": NS.XSD.DataType.string,
+                },
                 "rootContainer": {
                     "@id": NS.CS.Predicate.rootContainer,
                     "@type": "@id",
+                },
+                "allowsOrigin": {
+                    "@id": NS.CS.Predicate.allowsOrigin
                 },
             });
             AppContext = (function (_super) {
@@ -3071,7 +3078,7 @@ $__System.register("13", ["22", "14", "20", "5", "6", "16", "1b", "4", "9", "15"
                             membershipResource = documentResource;
                         }
                         else if (membershipResourceURI === null) {
-                            if (documentResource["@type"].contains(NS.LDP.Class.BasicContainer)) {
+                            if (documentResource["@type"].indexOf(NS.LDP.Class.BasicContainer) !== -1) {
                                 membershipResource = documentResource;
                             }
                             else {
@@ -3543,6 +3550,20 @@ $__System.register("29", ["6"], function(exports_1) {
                     if (parts.length > 2)
                         throw new Error("IllegalArgument: The URI provided has more than one # sign.");
                     return parts[1];
+                };
+                Util.getSlug = function (uri) {
+                    uri = Util.getDocumentURI(uri);
+                    if (uri === "")
+                        return uri;
+                    if (uri === "/")
+                        return uri;
+                    var parts = uri.split("/");
+                    if (parts[parts.length - 1] === "") {
+                        return parts[parts.length - 2] + "/";
+                    }
+                    else {
+                        return parts[parts.length - 1];
+                    }
                 };
                 Util.resolve = function (parentURI, childURI) {
                     if (Util.isAbsolute(childURI) || Util.isPrefixed(childURI))
@@ -11159,11 +11180,26 @@ $__System.register("7", [], function(exports_1) {
                     enumerable: true,
                     configurable: true
                 });
+                Object.defineProperty(Class, "AllOrigins", {
+                    get: function () { return namespace + "AllOrigins"; },
+                    enumerable: true,
+                    configurable: true
+                });
                 return Class;
             })();
             Predicate = (function () {
                 function Predicate() {
                 }
+                Object.defineProperty(Predicate, "name", {
+                    get: function () { return namespace + "name"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(Predicate, "allowsOrigin", {
+                    get: function () { return namespace + "allowsOrigin"; },
+                    enumerable: true,
+                    configurable: true
+                });
                 Object.defineProperty(Predicate, "rootContainer", {
                     get: function () { return namespace + "rootContainer"; },
                     enumerable: true,
