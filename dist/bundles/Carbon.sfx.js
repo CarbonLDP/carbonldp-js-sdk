@@ -3457,8 +3457,8 @@ $__System.register("27", ["20", "28", "6", "29"], function(exports_1) {
     }
 });
 
-$__System.register("29", ["6"], function(exports_1) {
-    var Utils;
+$__System.register("29", ["14", "6"], function(exports_1) {
+    var Errors, Utils;
     var Class, Util;
     function prefixWithObjectSchema(uri, objectSchema) {
         var prefixEntries = objectSchema.prefixes.entries();
@@ -3476,6 +3476,9 @@ $__System.register("29", ["6"], function(exports_1) {
     }
     return {
         setters:[
+            function (Errors_1) {
+                Errors = Errors_1;
+            },
             function (Utils_1) {
                 Utils = Utils_1;
             }],
@@ -3552,7 +3555,12 @@ $__System.register("29", ["6"], function(exports_1) {
                     return parts[1];
                 };
                 Util.getSlug = function (uri) {
-                    uri = Util.getDocumentURI(uri);
+                    var uriParts = uri.split("#");
+                    if (uriParts.length === 2)
+                        return Util.getSlug(uriParts[1]);
+                    if (uriParts.length > 2)
+                        throw new Errors.IllegalArgumentError("Invalid URI: The uri contains two '#' symbols.");
+                    uri = uriParts[0];
                     if (uri === "")
                         return uri;
                     if (uri === "/")

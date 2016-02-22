@@ -1,3 +1,4 @@
+import * as Errors from "./../Errors";
 import * as ObjectSchema from "./../ObjectSchema";
 import * as Utils from "./../Utils";
 
@@ -82,7 +83,11 @@ export class Util {
 	}
 
 	static getSlug( uri:string ):string {
-		uri = Util.getDocumentURI( uri );
+		let uriParts:string[] = uri.split( "#" );
+		if( uriParts.length === 2 ) return Util.getSlug( uriParts[ 1 ] );
+		if( uriParts.length > 2 ) throw new Errors.IllegalArgumentError( "Invalid URI: The uri contains two '#' symbols." );
+
+		uri = uriParts[ 0 ];
 
 		if( uri === "" ) return uri;
 		if( uri === "/" ) return uri;

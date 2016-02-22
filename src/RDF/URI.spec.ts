@@ -339,6 +339,33 @@ describe( module( "Carbon/RDF/URI" ), ():void => {
 			expect( URI.Util.getDocumentURI.bind( null, errorURI ) ).toThrowError( /IllegalArgument/ );
 		});
 
+		it( hasMethod( STATIC, "getSlug", "Returns the slug of the URI. It takes an ending slash as part as the slug.", [
+			{ name: "uri", type: "string" }
+		], { type: "string" } ), ():void => {
+			// Property integrity
+			(() => {
+				expect( "getSlug" in URI.Util ).toEqual( true );
+				expect( Utils.isFunction( URI.Util.getSlug ) ).toEqual( true );
+			})();
+
+			expect( URI.Util.getSlug( "http://example.com/resource" ) ).toEqual( "resource" );
+			expect( URI.Util.getSlug( "http://example.com/resource/" ) ).toEqual( "resource/" );
+			expect( URI.Util.getSlug( "http://example.com/resource-1/resource-2/resource-3" ) ).toEqual( "resource-3" );
+			expect( URI.Util.getSlug( "http://example.com/resource-1/resource-2/resource-3/" ) ).toEqual( "resource-3/" );
+			expect( URI.Util.getSlug( "resource-1/resource-2/resource-3" ) ).toEqual( "resource-3" );
+			expect( URI.Util.getSlug( "resource-1/resource-2/resource-3/" ) ).toEqual( "resource-3/" );
+			expect( URI.Util.getSlug( "" ) ).toEqual( "" );
+			expect( URI.Util.getSlug( "/" ) ).toEqual( "/" );
+			expect( URI.Util.getSlug( "http://example.com/resource#fragment" ) ).toEqual( "fragment" );
+			expect( URI.Util.getSlug( "http://example.com/resource#fragment/" ) ).toEqual( "fragment/" );
+			expect( URI.Util.getSlug( "http://example.com/resource-1#fragment-2/fragment-3" ) ).toEqual( "fragment-3" );
+			expect( URI.Util.getSlug( "http://example.com/resource-1#fragment-2/fragment-3/" ) ).toEqual( "fragment-3/" );
+			expect( URI.Util.getSlug( "resource-1#fragment-2/fragment-3" ) ).toEqual( "fragment-3" );
+			expect( URI.Util.getSlug( "resource-1#fragment-2/fragment-3/" ) ).toEqual( "fragment-3/" );
+			expect( URI.Util.getSlug( "#" ) ).toEqual( "" );
+			expect( URI.Util.getSlug( "#/" ) ).toEqual( "/" );
+		});
+
 		it( hasMethod(
 			STATIC,
 			"resolve",
