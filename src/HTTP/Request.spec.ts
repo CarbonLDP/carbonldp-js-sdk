@@ -20,6 +20,7 @@ import * as Utils from "../Utils";
 import * as Header from "./Header";
 import Response from "./Response";
 import Parser from "./JSONParser";
+import * as NS from "../NS";
 
 import * as Request from "./Request";
 import {hasInterface} from "../test/JasmineExtender";
@@ -815,10 +816,7 @@ describe( module( "Carbon/HTTP/Request" ), function ():void {
 			optionsWithHeaders:Request.Options;
 
 		beforeEach( ():void => {
-			options = {
-				timeout: 5000,
-				sendCredentialsOnCORS: false
-			};
+			options = newOptionsObject();
 			optionsWithHeaders = {
 				headers: new Map()
 					.set( "Authorization",   new Header.Class( "Basic QWxhZGRpbjpvcGVuIHNlc2FtZQ==" ) )
@@ -836,9 +834,10 @@ describe( module( "Carbon/HTTP/Request" ), function ():void {
 		it( hasMethod(
 			STATIC,
 			"getHeader",
-			"Returns the header object of a header-name inside an options object request. Returns `undefined` if the header not exists", [
+			"Returns the header object of a header-name inside an options object request. Returns `undefined` if the header not exists. If `initialize` flag is provided with true, a empty header will be created even if it already exits", [
 				{ name: "headerName", type: "string" },
-				{ name: "requestOptions", type: "Object" }
+				{ name: "requestOptions", type: "Object" },
+				{ name: "initialize", type: "boolean", optional: true, default: "false" }
 			],
 			{ type: "Carbon.HTTP.Header.Class" }
 		), ():void => {
@@ -850,6 +849,10 @@ describe( module( "Carbon/HTTP/Request" ), function ():void {
 
 			expect( Request.Util.getHeader( "Other-header", optionsWithHeaders ) ).toBeUndefined();
 			expect( Request.Util.getHeader( "Authorization", options ) ).toBeUndefined();
+
+			expect( Request.Util.getHeader( "Other-header", optionsWithHeaders, true ) ).toEqual( new Header.Class() );
+			expect( Request.Util.getHeader( "Authorization", options, true ) ).toEqual( new Header.Class() );
+			expect( Request.Util.getHeader( "Authorization", optionsWithHeaders, true )  ).toEqual( new Header.Class() );
 		});
 
 		it( hasMethod(
@@ -918,7 +921,7 @@ describe( module( "Carbon/HTTP/Request" ), function ():void {
 		it( hasMethod(
 			STATIC,
 			"setPreferredInteractionModel",
-			"Set Prefer header adding `rel=interaction-model`, in an options object request", [
+			"Set a Prefer header with `rel=interaction-model` in an options object request", [
 				{ name: "interactionModelURI", type: "string" },
 				{ name: "requestOptions", type: "Object" }
 			], {
@@ -959,27 +962,80 @@ describe( module( "Carbon/HTTP/Request" ), function ():void {
 
 		it( hasMethod(
 			STATIC,
-			"addPreference",
-			"Adds a value in the Prefer header in an options object request", [
-				{ name: "preference", type: "string" },
-				{ name: "requestOptions", type: "Object" }
+			"setContainerRetrievalPreferences",
+			"Set a Prefer header with `return=representation` in an options object request", [
+				{ name: "preference", type: "Carbon.HTTP.Request.ContainerRetrievalPreferences" },
+				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options" }
 			], {
 				type: "Object"
 			}
 		), ():void => {
-			expect( Request.Util.addPreference ).toBeDefined();
-			expect( Utils.isFunction( Request.Util.addPreference ) ).toBe( true );
+			expect( Request.Util.setContainerRetrievalPreferences ).toBeDefined();
+			expect( Utils.isFunction( Request.Util.setContainerRetrievalPreferences ) ).toBe( true );
 
-			options = Request.Util.addPreference( "a-preference", options );
-			expect( Request.Util.getHeader( "Prefer", options ) ).toEqual( new Header.Class( "a-preference" ) );
+			let preferencesEmpty: Request.ContainerRetrievalPreferences = {};
+			let preferencesIncludeNormal: Request.ContainerRetrievalPreferences = {
+				include: [
+					NS.LDP.Class.PreferMinimalContainer,
+					NS.LDP.Class.PreferMembership,
+				]
+			};
+			let preferencesIncludeString: string = `return=representation; include="${NS.LDP.Class.PreferMinimalContainer} ${NS.LDP.Class.PreferMembership}"`;
+			let preferencesIncludeEmpty: Request.ContainerRetrievalPreferences = {
+				include: []
+			};
+			let preferencesOmitNormal: Request.ContainerRetrievalPreferences = {
+				omit: [
+					NS.LDP.Class.PreferContainment,
+					NS.C.Class.PreferContainmentResources,
+					NS.C.Class.PreferMembershipResources,
+				]
+			};
+			let preferencesOmitString: string = `return=representation; omit="${NS.LDP.Class.PreferContainment} ${NS.C.Class.PreferContainmentResources} ${NS.C.Class.PreferMembershipResources}"`;
+			let preferencesOmitEmpty: Request.ContainerRetrievalPreferences = {
+				omit: []
+			};
+			let preferencesFullNormal: Request.ContainerRetrievalPreferences = {
+				include: [
+					NS.LDP.Class.PreferMinimalContainer,
+					NS.LDP.Class.PreferMembership,
+				],
+				omit: [
+					NS.LDP.Class.PreferContainment,
+					NS.C.Class.PreferContainmentResources,
+					NS.C.Class.PreferMembershipResources,
+				]
+			};
+			let preferencesFullString: string = `return=representation; include="${NS.LDP.Class.PreferMinimalContainer} ${NS.LDP.Class.PreferMembership}" omit="${NS.LDP.Class.PreferContainment} ${NS.C.Class.PreferContainmentResources} ${NS.C.Class.PreferMembershipResources}"`;
+			let preferencesFullEmpty: Request.ContainerRetrievalPreferences = {
+				include: [],
+				omit: []
+			};
 
-			optionsWithHeaders = Request.Util.addPreference( "a-preference", optionsWithHeaders );
-			expect( Request.Util.getHeader( "Prefer", optionsWithHeaders ) ).toEqual( new Header.Class( "a-preference" ) );
-			expect( Request.Util.getHeader( "Location", optionsWithHeaders ) ).toEqual( new Header.Class( "http://example.com/resource/" ) );
+			options = Request.Util.setContainerRetrievalPreferences( preferencesEmpty, newOptionsObject() );
+			expect( Request.Util.getHeader( "Prefer", options ) ).toEqual( new Header.Class() );
+			options = Request.Util.setContainerRetrievalPreferences( preferencesIncludeEmpty, newOptionsObject() );
+			expect( Request.Util.getHeader( "Prefer", options ) ).toEqual( new Header.Class() );
+			options = Request.Util.setContainerRetrievalPreferences( preferencesOmitEmpty, newOptionsObject() );
+			expect( Request.Util.getHeader( "Prefer", options ) ).toEqual( new Header.Class() );
+			options = Request.Util.setContainerRetrievalPreferences( preferencesFullEmpty, newOptionsObject() );
+			expect( Request.Util.getHeader( "Prefer", options ) ).toEqual( new Header.Class() );
 
-			options = Request.Util.addPreference( "another-preference", options );
-			expect( Request.Util.getHeader( "Prefer", options ) ).toEqual( new Header.Class( "a-preference, another-preference" ) );
+			options = Request.Util.setContainerRetrievalPreferences( preferencesIncludeNormal, newOptionsObject() );
+			expect( Request.Util.getHeader( "Prefer", options ).toString() ).toEqual( preferencesIncludeString );
+			options = Request.Util.setContainerRetrievalPreferences( preferencesOmitNormal, newOptionsObject() );
+			expect( Request.Util.getHeader( "Prefer", options ).toString() ).toEqual( preferencesOmitString );
+			options = Request.Util.setContainerRetrievalPreferences( preferencesFullNormal, newOptionsObject() );
+			expect( Request.Util.getHeader( "Prefer", options ).toString() ).toEqual( preferencesFullString );
+
 		});
+
+		function newOptionsObject(): Request.Options {
+			return {
+				timeout: 5000,
+					sendCredentialsOnCORS: false
+			};
+		}
 
 	});
 

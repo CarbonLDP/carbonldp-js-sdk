@@ -190,8 +190,8 @@ export class Util {
 		let prefer:Header.Class = Util.getHeader( "Prefer", requestOptions, true );
 
 		let headerPieces:string[] = [ "return=representation;" ];
-		if( "include" in preferences ) headerPieces.push( 'include="' + preferences.include.join( " " ) + '"' );
-		if( "omit" in preferences ) headerPieces.push( 'omit="' + preferences.omit.join( " " ) + '"' );
+		if( "include" in preferences && preferences.include.length > 0 ) headerPieces.push( 'include="' + preferences.include.join( " " ) + '"' );
+		if( "omit" in preferences && preferences.omit.length > 0 ) headerPieces.push( 'omit="' + preferences.omit.join( " " ) + '"' );
 
 		if( headerPieces.length === 1 ) return requestOptions;
 
