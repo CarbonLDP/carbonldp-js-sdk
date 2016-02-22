@@ -1,3 +1,4 @@
+import * as HTTP from "./../HTTP";
 import * as RDFNode from "./RDFNode";
 export interface Class {
     "@id"?: string;
@@ -20,3 +21,7 @@ export declare class Util {
     static getFragmentResources(document: Class, documentResource?: string): RDFNode.Class[];
     static getBNodeResources(document: Class): RDFNode.Class[];
 }
+export declare class Parser implements HTTP.Parser.Class<Class[]> {
+    parse(input: string): Promise<any>;
+}
+export default Class;

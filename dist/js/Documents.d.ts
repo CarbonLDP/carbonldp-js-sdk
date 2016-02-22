@@ -20,6 +20,10 @@ declare class Documents implements Pointer.Library, Pointer.Validator, ObjectSch
     get(uri: string, requestOptions?: HTTP.Request.Options): Promise<[PersistedDocument.Class, HTTP.Response.Class]>;
     createChild(parentURI: string, slug: string, childDocument: Document.Class, requestOptions?: HTTP.Request.Options): Promise<[Pointer.Class, HTTP.Response.Class]>;
     createChild(parentURI: string, childDocument: Document.Class, requestOptions?: HTTP.Request.Options): Promise<[Pointer.Class, HTTP.Response.Class]>;
+    getMembers(uri: string, includeNonReadable: boolean, requestOptions: HTTP.Request.Options): Promise<[Pointer.Class[], HTTP.Response.Class]>;
+    getMembers(uri: string, includeNonReadable: boolean): Promise<[Pointer.Class[], HTTP.Response.Class]>;
+    getMembers(uri: string, requestOptions: HTTP.Request.Options): Promise<[Pointer.Class[], HTTP.Response.Class]>;
+    getMembers(uri: string): Promise<[Pointer.Class[], HTTP.Response.Class]>;
     save(persistedDocument: PersistedDocument.Class, requestOptions?: HTTP.Request.Options): Promise<[PersistedDocument.Class, HTTP.Response.Class]>;
     delete(persistedDocument: PersistedDocument.Class, requestOptions?: HTTP.Request.Options): Promise<HTTP.Response.Class>;
     getSchemaFor(object: Object): ObjectSchema.DigestedObjectSchema;
@@ -27,7 +31,8 @@ declare class Documents implements Pointer.Library, Pointer.Validator, ObjectSch
     executeRawSELECTQuery(documentURI: string, selectQuery: string, requestOptions?: HTTP.Request.Options): Promise<[SPARQL.RawResults.Class, HTTP.Response.Class]>;
     executeRawCONSTRUCTQuery(documentURI: string, constructQuery: string, requestOptions?: HTTP.Request.Options): Promise<[string, HTTP.Response.Class]>;
     executeRawDESCRIBEQuery(documentURI: string, constructQuery: string, requestOptions?: HTTP.Request.Options): Promise<[string, HTTP.Response.Class]>;
-    private getRDFDocument(rdfDocuments, response);
+    private getRDFDocument(requestURL, rdfDocuments, response);
+    private getDocumentResource(rdfDocument, response);
     private getPointerID(uri);
     private createPointer(localID);
     private compact(expandedObjects, targetObjects, pointerLibrary);

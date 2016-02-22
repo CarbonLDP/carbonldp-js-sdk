@@ -15,12 +15,21 @@ export const SCHEMA:ObjectSchema.Class = {
 		"@container": "@set",
 		"@type": "@id",
 	},
+	"members": {
+		"@id": NS.LDP.Predicate.member,
+		"@container": "@set",
+		"@type": "@id",
+	},
 	"memberOfRelation": {
 		"@id": NS.LDP.Predicate.memberOfRelation,
 		"@type": "@id",
 	},
 	"hasMemberRelation": {
 		"@id": NS.LDP.Predicate.hasMemberRelation,
+		"@type": "@id",
+	},
+	"insertedContentRelation": {
+		"@id": NS.LDP.Predicate.insertedContentRelation,
 		"@type": "@id",
 	},
 };

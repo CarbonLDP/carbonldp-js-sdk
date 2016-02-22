@@ -4,6 +4,7 @@ import * as App from "./App";
 import * as Document from "./Document";
 import Context from "./Context";
 import * as HTTP from "./HTTP";
+import * as Pointer from "./Pointer";
 import * as RDF from "./RDF";
 import * as Utils from "./Utils";
 import * as CS from "./NS/CS";
@@ -27,6 +28,18 @@ export class Apps {
 				if ( ! document.types.indexOf( CS.Class.Application ) ) throw new Error( "The resource fetched is not a cs:Application." );
 
 				return new App.Context( this.context, <any> document );
+			}
+		);
+	}
+
+	getAll():Promise<App.Context[]> {
+		return this.context.documents.getMembers( this.getAppsContainerURI(), false ).then(
+			( [ members, response ]:[ Pointer.Class[], HTTP.Response.Class ] ) => {
+				return Pointer.Util.resolveAll( members );
+			}
+		).then(
+			( [ members, responses ]:[ Pointer.Class[], HTTP.Response.Class[] ] ) => {
+				return members.map( ( member:Pointer.Class ) => new App.Context( this.context, <any> member ) );
 			}
 		);
 	}

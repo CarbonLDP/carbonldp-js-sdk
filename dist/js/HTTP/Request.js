@@ -141,7 +141,12 @@ System.register(["./Errors", "./Header", "./Method", "./Response", "./../Utils"]
             Util = (function () {
                 function Util() {
                 }
-                Util.getHeader = function (headerName, requestOptions) {
+                Util.getHeader = function (headerName, requestOptions, initialize) {
+                    if (initialize === void 0) { initialize = false; }
+                    if (initialize) {
+                        var headers = requestOptions.headers ? requestOptions.headers : requestOptions.headers = new Map();
+                        headers.set(headerName, new Header.Class());
+                    }
                     if (!requestOptions.headers)
                         return undefined;
                     return requestOptions.headers.get(headerName);
@@ -162,25 +167,25 @@ System.register(["./Errors", "./Header", "./Method", "./Response", "./../Utils"]
                     return requestOptions;
                 };
                 Util.setPreferredInteractionModel = function (interactionModelURI, requestOptions) {
-                    var headers = requestOptions.headers ? requestOptions.headers : requestOptions.headers = new Map();
-                    headers.set("Prefer", new Header.Class());
-                    var prefer = headers.get("Prefer");
+                    var prefer = Util.getHeader("Prefer", requestOptions, true);
                     prefer.values.push(new Header.Value(interactionModelURI + "; rel=interaction-model"));
                     return requestOptions;
                 };
-                Util.setSlug = function (slug, requestOptions) {
-                    var headers = requestOptions.headers ? requestOptions.headers : requestOptions.headers = new Map();
-                    headers.set("Slug", new Header.Class());
-                    var slugHeader = headers.get("Slug");
-                    slugHeader.values.push(new Header.Value(slug));
+                Util.setContainerRetrievalPreferences = function (preferences, requestOptions) {
+                    var prefer = Util.getHeader("Prefer", requestOptions, true);
+                    var headerPieces = ["return=representation;"];
+                    if ("include" in preferences)
+                        headerPieces.push('include="' + preferences.include.join(" ") + '"');
+                    if ("omit" in preferences)
+                        headerPieces.push('omit="' + preferences.omit.join(" ") + '"');
+                    if (headerPieces.length === 1)
+                        return requestOptions;
+                    prefer.values.push(new Header.Value(headerPieces.join(" ")));
                     return requestOptions;
                 };
-                Util.addPreference = function (preference, requestOptions) {
-                    var headers = requestOptions.headers ? requestOptions.headers : requestOptions.headers = new Map();
-                    if (!headers.has("Prefer"))
-                        headers.set("Prefer", new Header.Class());
-                    var slugHeader = headers.get("Prefer");
-                    slugHeader.values.push(new Header.Value(preference));
+                Util.setSlug = function (slug, requestOptions) {
+                    var slugHeader = Util.getHeader("Slug", requestOptions, true);
+                    slugHeader.values.push(new Header.Value(slug));
                     return requestOptions;
                 };
                 return Util;

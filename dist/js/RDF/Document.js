@@ -1,8 +1,11 @@
-System.register(["./RDFNode", "../Utils", "./URI"], function(exports_1) {
-    var RDFNode, Utils, URI;
-    var Factory, Util;
+System.register(["./../HTTP", "./RDFNode", "../Utils", "./URI"], function(exports_1) {
+    var HTTP, RDFNode, Utils, URI;
+    var Factory, Util, Parser;
     return {
         setters:[
+            function (HTTP_1) {
+                HTTP = HTTP_1;
+            },
             function (RDFNode_1) {
                 RDFNode = RDFNode_1;
             },
@@ -112,6 +115,18 @@ System.register(["./RDFNode", "../Utils", "./URI"], function(exports_1) {
                 return Util;
             })();
             exports_1("Util", Util);
+            Parser = (function () {
+                function Parser() {
+                }
+                Parser.prototype.parse = function (input) {
+                    var jsonLDParser = new HTTP.JSONLDParser.Class();
+                    return jsonLDParser.parse(input).then(function (expandedResult) {
+                        return Util.getDocuments(expandedResult);
+                    });
+                };
+                return Parser;
+            })();
+            exports_1("Parser", Parser);
         }
     }
 });

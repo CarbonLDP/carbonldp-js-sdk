@@ -1,6 +1,6 @@
 /// <reference path="./../typings/typings.d.ts" />
-System.register(["./HTTP/Errors", "./HTTP/Header", "./HTTP/JSONParser", "./HTTP/JSONLDParser", "./HTTP/Method", "./HTTP/Request", "./HTTP/Response", "./HTTP/StatusCode", "./HTTP/StringParser"], function(exports_1) {
-    var Errors, Header, JSONParser, JSONLDParser, Method_1, Request, Response, StatusCode_1, StringParser;
+System.register(["./HTTP/Errors", "./HTTP/Header", "./HTTP/JSONParser", "./HTTP/JSONLDParser", "./HTTP/Method", "./HTTP/Parser", "./HTTP/Request", "./HTTP/Response", "./HTTP/StatusCode", "./HTTP/StringParser"], function(exports_1) {
+    var Errors, Header, JSONParser, JSONLDParser, Method_1, Parser, Request, Response, StatusCode_1, StringParser;
     return {
         setters:[
             function (Errors_1) {
@@ -17,6 +17,9 @@ System.register(["./HTTP/Errors", "./HTTP/Header", "./HTTP/JSONParser", "./HTTP/
             },
             function (Method_1_1) {
                 Method_1 = Method_1_1;
+            },
+            function (Parser_1) {
+                Parser = Parser_1;
             },
             function (Request_1) {
                 Request = Request_1;
@@ -36,6 +39,7 @@ System.register(["./HTTP/Errors", "./HTTP/Header", "./HTTP/JSONParser", "./HTTP/
             exports_1("JSONParser", JSONParser);
             exports_1("JSONLDParser", JSONLDParser);
             exports_1("Method", Method_1.default);
+            exports_1("Parser", Parser);
             exports_1("Request", Request);
             exports_1("Response", Response);
             exports_1("StatusCode", StatusCode_1.default);

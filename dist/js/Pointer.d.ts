@@ -18,6 +18,7 @@ export declare class Factory {
 }
 export declare class Util {
     static getIDs(pointers: Class[]): string[];
+    static resolveAll(pointers: Class[]): Promise<[Class[], HTTP.Response.Class[]]>;
 }
 export interface Validator {
     inScope(id: string): boolean;

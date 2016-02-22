@@ -138,7 +138,8 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 			if( etag === null ) throw new HTTP.Errors.BadResponseError( "The response doesn't contain an ETag", response );
 
 			let rdfDocuments:RDF.Document.Class[] = RDF.Document.Util.getDocuments( expandedResult );
-			let rdfDocument:RDF.Document.Class = this.getRDFDocument( rdfDocuments, response );
+			let rdfDocument:RDF.Document.Class = this.getRDFDocument( uri, rdfDocuments, response );
+			if ( rdfDocument === null ) throw new HTTP.Errors.BadResponseError( "No document was returned.", response );
 
 			let documentResources:RDF.Node.Class[] = RDF.Document.Util.getDocumentResources( rdfDocument );
 			if( documentResources.length > 1 ) throw new HTTP.Errors.BadResponseError( "The RDFDocument contains more than one document resource.", response );
@@ -211,6 +212,72 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 				];
 			}
 		);
+	}
+
+	getMembers( uri:string, includeNonReadable:boolean, requestOptions:HTTP.Request.Options ):Promise<[ Pointer.Class[], HTTP.Response.Class ]>;
+	getMembers( uri:string, includeNonReadable:boolean ):Promise<[ Pointer.Class[], HTTP.Response.Class ]>;
+	getMembers( uri:string, requestOptions:HTTP.Request.Options ):Promise<[ Pointer.Class[], HTTP.Response.Class ]>;
+	getMembers( uri:string ):Promise<[ Pointer.Class[], HTTP.Response.Class ]>;
+	getMembers( uri:string, includeNonReadableOrRequestOptions:any = null, requestOptions:HTTP.Request.Options = {} ):Promise<[ Pointer.Class[], HTTP.Response.Class ]> {
+		let includeNonReadable:boolean = Utils.isBoolean( includeNonReadableOrRequestOptions ) ? includeNonReadableOrRequestOptions : true;
+		requestOptions = Utils.isObject( includeNonReadableOrRequestOptions ) && includeNonReadableOrRequestOptions !== null ? includeNonReadableOrRequestOptions : requestOptions;
+
+		if( ! RDF.URI.Util.isAbsolute( uri ) ) {
+			if( ! this.context ) throw new Errors.IllegalArgumentError( "This Documents instance doesn't support relative URIs." );
+			uri = this.context.resolve( uri );
+		}
+
+		if ( this.context && this.context.auth.isAuthenticated() ) this.context.auth.addAuthentication( requestOptions );
+
+		HTTP.Request.Util.setAcceptHeader( "application/ld+json", requestOptions );
+		HTTP.Request.Util.setPreferredInteractionModel( LDP.Class.Container, requestOptions );
+
+		let containerRetrievalPreferences:HTTP.Request.ContainerRetrievalPreferences = {
+			include: [
+				NS.LDP.Class.PreferMinimalContainer,
+				NS.LDP.Class.PreferMembership,
+			],
+			omit: [
+				NS.LDP.Class.PreferContainment,
+				NS.C.Class.PreferContainmentResources,
+				NS.C.Class.PreferMembershipResources,
+			],
+		};
+
+		if( includeNonReadable ) {
+			containerRetrievalPreferences.include.push( NS.C.Class.NonReadableMembershipResourceTriples );
+		} else {
+			containerRetrievalPreferences.omit.push( NS.C.Class.NonReadableMembershipResourceTriples );
+		}
+
+		return HTTP.Request.Service.get( uri, requestOptions, new RDF.Document.Parser() ).then( ( [ rdfDocuments, response ]:[ RDF.Document.Class[], HTTP.Response.Class ] ) => {
+			let rdfDocument:RDF.Document.Class = this.getRDFDocument( uri, rdfDocuments, response );
+			if ( rdfDocument === null ) throw new HTTP.Errors.BadResponseError( "No document was returned.", response );
+
+			let documentResource:RDF.Node.Class = this.getDocumentResource( rdfDocument, response );
+			let membershipResourceURI:string = RDF.Node.Util.getPropertyURI( documentResource, NS.LDP.Predicate.membershipResource );
+
+			let membershipResource:RDF.Node.Class;
+			if( documentResource[ "@id" ] === membershipResourceURI ) {
+				membershipResource = documentResource;
+			} else if( membershipResourceURI === null ) {
+				if( documentResource[ "@type" ].contains( NS.LDP.Class.BasicContainer ) ) {
+					membershipResource = documentResource;
+				} else {
+					throw new HTTP.Errors.BadResponseError( "The document is not an ldp:BasicContainer and it doesn't contain an ldp:membershipResource triple.", response );
+				}
+			} else {
+				let membershipResourceDocument:RDF.Document.Class = this.getRDFDocument( membershipResourceURI, rdfDocuments, response );
+				if ( membershipResourceDocument === null ) throw new HTTP.Errors.BadResponseError( "The membershipResource document was not included in the response.", response );
+				membershipResource = this.getDocumentResource( membershipResourceDocument, response );
+			}
+
+			let hasMemberRelation:string = RDF.Node.Util.getPropertyURI( documentResource, NS.LDP.Predicate.hasMemberRelation );
+
+			let memberPointers:Pointer.Class[] = RDF.Value.Util.getPropertyPointers( membershipResource, hasMemberRelation, this );
+
+			return [ memberPointers, response ];
+		});
 	}
 
 	save( persistedDocument:PersistedDocument.Class, requestOptions:HTTP.Request.Options = {} ):Promise<[ PersistedDocument.Class, HTTP.Response.Class ]> {
@@ -297,10 +364,20 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 		return SPARQL.Service.executeRawDESCRIBEQuery( documentURI, constructQuery, requestOptions );
 	}
 
-	private getRDFDocument( rdfDocuments:RDF.Document.Class[], response:HTTP.Response.Class ):RDF.Document.Class {
-		if ( rdfDocuments.length === 0 ) throw new HTTP.Errors.BadResponseError( "No document was returned.", response );
-		if ( rdfDocuments.length > 1 ) throw new Error( "Unsupported: Multiple graphs are currently not supported." );
-		return rdfDocuments[ 0 ];
+	private getRDFDocument( requestURL:string, rdfDocuments:RDF.Document.Class[], response:HTTP.Response.Class ):RDF.Document.Class {
+		rdfDocuments = rdfDocuments.filter( ( rdfDocument:RDF.Document.Class ) => rdfDocument[ "@id" ] === requestURL );
+
+		if ( rdfDocuments.length > 1 ) throw new HTTP.Errors.BadResponseError( "Several documents share the same id.", response );
+
+		return rdfDocuments.length > 0 ? rdfDocuments[ 0 ] : null;
+	}
+
+	private getDocumentResource( rdfDocument:RDF.Document.Class, response:HTTP.Response.Class ):RDF.Node.Class {
+		let documentResources:RDF.Node.Class[] = RDF.Document.Util.getDocumentResources( rdfDocument );
+		if ( documentResources.length === 0 ) throw new HTTP.Errors.BadResponseError( `The RDFDocument: ${ rdfDocument[ "@id" ] }, doesn't contain a document resource.`, response );
+		if ( documentResources.length > 1 ) throw new HTTP.Errors.BadResponseError( `The RDFDocument: ${ rdfDocument[ "@id" ] }, contains more than one document resource.`, response );
+
+		return documentResources[ 0 ];
 	}
 
 	private getPointerID( uri:string ):string {

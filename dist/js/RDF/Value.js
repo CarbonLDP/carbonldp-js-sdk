@@ -16,6 +16,7 @@ System.register(["./List", "./Literal", "./../NS", "./RDFNode"], function(export
                 RDFNode = RDFNode_1;
             }],
         execute: function() {
+            // TODO: Move all getters and setters to RDFNode.Util
             Util = (function () {
                 function Util() {
                 }
