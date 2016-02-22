@@ -1431,7 +1431,7 @@ $__System.register("16", ["14", "15", "9", "4", "5", "6"], function(exports_1) {
                     if (serializedValue === null)
                         return null;
                     return [
-                        { "@value": serializedValue, "@type": literalType }
+                        { "@value": serializedValue, "@type": literalType },
                     ];
                 };
                 Class.prototype.expandPropertyList = function (propertyValues, pointerValidator) {
@@ -1440,19 +1440,19 @@ $__System.register("16", ["14", "15", "9", "4", "5", "6"], function(exports_1) {
                     if (!expandedArray)
                         return null;
                     return [
-                        { "@list": expandedArray }
+                        { "@list": expandedArray },
                     ];
                 };
                 Class.prototype.expandPropertyPointerList = function (propertyValues, pointerValidator) {
                     var listValues = this.expandPropertyPointers(propertyValues, pointerValidator);
                     return [
-                        { "@list": listValues }
+                        { "@list": listValues },
                     ];
                 };
                 Class.prototype.expandPropertyLiteralList = function (propertyValues, literalType) {
                     var listValues = this.expandPropertyLiterals(propertyValues, literalType);
                     return [
-                        { "@list": listValues }
+                        { "@list": listValues },
                     ];
                 };
                 Class.prototype.expandPropertyValues = function (propertyValue, pointerValidator) {
@@ -2766,7 +2766,7 @@ $__System.register("1f", ["20", "6", "1d"], function(exports_1) {
                 Class.executeRawCONSTRUCTQuery = function (url, constructQuery, options) {
                     if (options === void 0) { options = {}; }
                     options = Utils.extend(options, Class.defaultOptions);
-                    if (HTTP.Request.Util.getHeader("Accept", options) === null)
+                    if (HTTP.Request.Util.getHeader("Accept", options) === undefined)
                         HTTP.Request.Util.setAcceptHeader("application/ld+json", options);
                     HTTP.Request.Util.setContentTypeHeader("application/sparql-query", options);
                     return HTTP.Request.Service.post(url, constructQuery, options, Class.stringParser);
@@ -2774,7 +2774,7 @@ $__System.register("1f", ["20", "6", "1d"], function(exports_1) {
                 Class.executeRawDESCRIBEQuery = function (url, describeQuery, options) {
                     if (options === void 0) { options = {}; }
                     options = Utils.extend(options, Class.defaultOptions);
-                    if (HTTP.Request.Util.getHeader("Accept", options) === null)
+                    if (HTTP.Request.Util.getHeader("Accept", options) === undefined)
                         HTTP.Request.Util.setAcceptHeader("application/ld+json", options);
                     HTTP.Request.Util.setContentTypeHeader("application/sparql-query", options);
                     return HTTP.Request.Service.post(url, describeQuery, options, Class.stringParser);
@@ -3926,7 +3926,7 @@ $__System.register("28", ["6"], function(exports_1) {
                 };
                 Factory.create = function (uri) {
                     return {
-                        "@id": uri
+                        "@id": uri,
                     };
                 };
                 return Factory;
@@ -9439,7 +9439,7 @@ $__System.register("31", ["22", "1e"], function(exports_1) {
                         jsonld.expand(parsedObject, options, function (error, expanded) {
                             if (error) {
                                 // TODO: Handle jsonld.expand error
-                                throw error;
+                                reject(error);
                             }
                             parsedObject = expanded;
                             resolve(expanded);
@@ -10153,33 +10153,33 @@ $__System.register("46", ["34"], function(exports_1) {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
     var HTTPError_1;
-    var name, statusCode, InternalServerError;
+    var name, statusCode, InternalServerErrorError;
     return {
         setters:[
             function (HTTPError_1_1) {
                 HTTPError_1 = HTTPError_1_1;
             }],
         execute: function() {
-            name = "InternalServerError";
+            name = "InternalServerErrorError";
             statusCode = 500;
-            InternalServerError = (function (_super) {
-                __extends(InternalServerError, _super);
-                function InternalServerError() {
+            InternalServerErrorError = (function (_super) {
+                __extends(InternalServerErrorError, _super);
+                function InternalServerErrorError() {
                     _super.apply(this, arguments);
                 }
-                Object.defineProperty(InternalServerError, "statusCode", {
+                Object.defineProperty(InternalServerErrorError, "statusCode", {
                     get: function () { return statusCode; },
                     enumerable: true,
                     configurable: true
                 });
-                Object.defineProperty(InternalServerError.prototype, "name", {
+                Object.defineProperty(InternalServerErrorError.prototype, "name", {
                     get: function () { return name; },
                     enumerable: true,
                     configurable: true
                 });
-                return InternalServerError;
+                return InternalServerErrorError;
             })(HTTPError_1.default);
-            exports_1("default",InternalServerError);
+            exports_1("default",InternalServerErrorError);
         }
     }
 });
@@ -10330,7 +10330,7 @@ $__System.register("4a", ["34"], function(exports_1) {
 });
 
 $__System.register("4b", ["34", "33", "35", "36", "37", "38", "39", "3a", "3b", "3c", "3d", "3e", "3f", "40", "41", "42", "43", "44", "45", "46", "47", "48", "4a"], function(exports_1) {
-    var HTTPError_1, BadRequestError_1, ConflictError_1, ForbiddenError_1, MethodNotAllowedError_1, NotAcceptableError_1, NotFoundError_1, PreconditionFailedError_1, PreconditionRequiredError_1, RequestEntityTooLargeError_1, RequestHeaderFieldsTooLargeError_1, RequestURITooLongError_1, TooManyRequestsError_1, UnauthorizedError_1, UnsupportedMediaTypeError_1, BadResponseError_1, BadGatewayError_1, GatewayTimeoutError_1, HTTPVersionNotSupportedError_1, InternalServerError_1, NotImplementedError_1, ServiceUnavailableError_1, UnknownError_1;
+    var HTTPError_1, BadRequestError_1, ConflictError_1, ForbiddenError_1, MethodNotAllowedError_1, NotAcceptableError_1, NotFoundError_1, PreconditionFailedError_1, PreconditionRequiredError_1, RequestEntityTooLargeError_1, RequestHeaderFieldsTooLargeError_1, RequestURITooLongError_1, TooManyRequestsError_1, UnauthorizedError_1, UnsupportedMediaTypeError_1, BadResponseError_1, BadGatewayError_1, GatewayTimeoutError_1, HTTPVersionNotSupportedError_1, InternalServerErrorError_1, NotImplementedError_1, ServiceUnavailableError_1, UnknownError_1;
     var client, server, statusCodeMap;
     return {
         setters:[
@@ -10391,8 +10391,8 @@ $__System.register("4b", ["34", "33", "35", "36", "37", "38", "39", "3a", "3b", 
             function (HTTPVersionNotSupportedError_1_1) {
                 HTTPVersionNotSupportedError_1 = HTTPVersionNotSupportedError_1_1;
             },
-            function (InternalServerError_1_1) {
-                InternalServerError_1 = InternalServerError_1_1;
+            function (InternalServerErrorError_1_1) {
+                InternalServerErrorError_1 = InternalServerErrorError_1_1;
             },
             function (NotImplementedError_1_1) {
                 NotImplementedError_1 = NotImplementedError_1_1;
@@ -10424,7 +10424,7 @@ $__System.register("4b", ["34", "33", "35", "36", "37", "38", "39", "3a", "3b", 
             server.push(BadGatewayError_1.default);
             server.push(GatewayTimeoutError_1.default);
             server.push(HTTPVersionNotSupportedError_1.default);
-            server.push(InternalServerError_1.default);
+            server.push(InternalServerErrorError_1.default);
             server.push(NotImplementedError_1.default);
             server.push(ServiceUnavailableError_1.default);
             statusCodeMap = new Map();
@@ -10453,7 +10453,7 @@ $__System.register("4b", ["34", "33", "35", "36", "37", "38", "39", "3a", "3b", 
             exports_1("BadGatewayError", BadGatewayError_1.default);
             exports_1("GatewayTimeoutError", GatewayTimeoutError_1.default);
             exports_1("HTTPVersionNotSupportedError", HTTPVersionNotSupportedError_1.default);
-            exports_1("InternalServerError", InternalServerError_1.default);
+            exports_1("InternalServerErrorError", InternalServerErrorError_1.default);
             exports_1("NotImplementedError", NotImplementedError_1.default);
             exports_1("ServiceUnavailableError", ServiceUnavailableError_1.default);
             exports_1("UnknownError", UnknownError_1.default);
@@ -10618,7 +10618,7 @@ $__System.register("4d", ["4b", "4e", "4c", "4f", "6"], function(exports_1) {
                     return Service.send(Method_1.default.DELETE, url, bodyOrOptions, options, parser);
                 };
                 Service.defaultOptions = {
-                    sendCredentialsOnCORS: true
+                    sendCredentialsOnCORS: true,
                 };
                 return Service;
             })();
@@ -10633,7 +10633,7 @@ $__System.register("4d", ["4b", "4e", "4c", "4f", "6"], function(exports_1) {
                         headers.set(headerName, new Header.Class());
                     }
                     if (!requestOptions.headers)
-                        return null;
+                        return undefined;
                     return requestOptions.headers.get(headerName);
                 };
                 Util.setAcceptHeader = function (accept, requestOptions) {
@@ -10659,9 +10659,9 @@ $__System.register("4d", ["4b", "4e", "4c", "4f", "6"], function(exports_1) {
                 Util.setContainerRetrievalPreferences = function (preferences, requestOptions) {
                     var prefer = Util.getHeader("Prefer", requestOptions, true);
                     var headerPieces = ["return=representation;"];
-                    if ("include" in preferences)
+                    if ("include" in preferences && preferences.include.length > 0)
                         headerPieces.push('include="' + preferences.include.join(" ") + '"');
-                    if ("omit" in preferences)
+                    if ("omit" in preferences && preferences.omit.length > 0)
                         headerPieces.push('omit="' + preferences.omit.join(" ") + '"');
                     if (headerPieces.length === 1)
                         return requestOptions;

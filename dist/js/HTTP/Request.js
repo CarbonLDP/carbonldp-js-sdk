@@ -133,7 +133,7 @@ System.register(["./Errors", "./Header", "./Method", "./Response", "./../Utils"]
                     return Service.send(Method_1.default.DELETE, url, bodyOrOptions, options, parser);
                 };
                 Service.defaultOptions = {
-                    sendCredentialsOnCORS: true
+                    sendCredentialsOnCORS: true,
                 };
                 return Service;
             })();
@@ -174,9 +174,9 @@ System.register(["./Errors", "./Header", "./Method", "./Response", "./../Utils"]
                 Util.setContainerRetrievalPreferences = function (preferences, requestOptions) {
                     var prefer = Util.getHeader("Prefer", requestOptions, true);
                     var headerPieces = ["return=representation;"];
-                    if ("include" in preferences)
+                    if ("include" in preferences && preferences.include.length > 0)
                         headerPieces.push('include="' + preferences.include.join(" ") + '"');
-                    if ("omit" in preferences)
+                    if ("omit" in preferences && preferences.omit.length > 0)
                         headerPieces.push('omit="' + preferences.omit.join(" ") + '"');
                     if (headerPieces.length === 1)
                         return requestOptions;

@@ -17,7 +17,7 @@ System.register(["./../Utils"], function(exports_1) {
                 };
                 Factory.create = function (uri) {
                     return {
-                        "@id": uri
+                        "@id": uri,
                     };
                 };
                 return Factory;

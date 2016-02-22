@@ -150,7 +150,7 @@ export class Class {
 		if( serializedValue === null ) return null;
 
 		return [
-			{ "@value": serializedValue, "@type": literalType }
+			{ "@value": serializedValue, "@type": literalType },
 		];
 	}
 
@@ -162,7 +162,7 @@ export class Class {
 		if( ! expandedArray ) return null;
 
 		return [
-			{ "@list": expandedArray }
+			{ "@list": expandedArray },
 		];
 	}
 
@@ -170,7 +170,7 @@ export class Class {
 		let listValues:Array<any> = this.expandPropertyPointers( propertyValues, pointerValidator );
 
 		return [
-			{ "@list": listValues }
+			{ "@list": listValues },
 		];
 	}
 
@@ -178,7 +178,7 @@ export class Class {
 		let listValues:Array<any> = this.expandPropertyLiterals( propertyValues, literalType );
 
 		return [
-			{ "@list": listValues }
+			{ "@list": listValues },
 		];
 	}
 

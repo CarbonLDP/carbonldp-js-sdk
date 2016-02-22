@@ -155,7 +155,7 @@ System.register(["./Errors", "./ObjectSchema", "./NS", "./Pointer", "./RDF", "./
                     if (serializedValue === null)
                         return null;
                     return [
-                        { "@value": serializedValue, "@type": literalType }
+                        { "@value": serializedValue, "@type": literalType },
                     ];
                 };
                 Class.prototype.expandPropertyList = function (propertyValues, pointerValidator) {
@@ -164,19 +164,19 @@ System.register(["./Errors", "./ObjectSchema", "./NS", "./Pointer", "./RDF", "./
                     if (!expandedArray)
                         return null;
                     return [
-                        { "@list": expandedArray }
+                        { "@list": expandedArray },
                     ];
                 };
                 Class.prototype.expandPropertyPointerList = function (propertyValues, pointerValidator) {
                     var listValues = this.expandPropertyPointers(propertyValues, pointerValidator);
                     return [
-                        { "@list": listValues }
+                        { "@list": listValues },
                     ];
                 };
                 Class.prototype.expandPropertyLiteralList = function (propertyValues, literalType) {
                     var listValues = this.expandPropertyLiterals(propertyValues, literalType);
                     return [
-                        { "@list": listValues }
+                        { "@list": listValues },
                     ];
                 };
                 Class.prototype.expandPropertyValues = function (propertyValue, pointerValidator) {
