@@ -258,7 +258,7 @@ System.register(["jsonld", "./Errors", "./HTTP", "./RDF", "./Utils", "./JSONLDCo
                             membershipResource = documentResource;
                         }
                         else if (membershipResourceURI === null) {
-                            if (documentResource["@type"].contains(NS.LDP.Class.BasicContainer)) {
+                            if (documentResource["@type"].indexOf(NS.LDP.Class.BasicContainer) !== -1) {
                                 membershipResource = documentResource;
                             }
                             else {

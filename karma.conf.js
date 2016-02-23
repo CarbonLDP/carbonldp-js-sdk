@@ -5,7 +5,7 @@ module.exports = function( config ) {
 	config.set( {
 		basePath: "",
 
-		frameworks: [ "phantomjs-shim", "jspm", "jasmine" ],
+		frameworks: [ "jspm", "jasmine" ],
 
 		jspm: {
 			config: "jspm.config.js",
@@ -44,7 +44,7 @@ module.exports = function( config ) {
 
 		// start these browsers
 		// available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
-		browsers: [ "PhantomJS" ],
+		browsers: [ "Chrome" ],
 
 
 		// Continuous Integration mode

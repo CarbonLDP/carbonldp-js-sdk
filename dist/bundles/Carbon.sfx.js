@@ -759,9 +759,16 @@ $__System.register("3", ["8", "9", "5", "6"], function(exports_1) {
         execute: function() {
             exports_1("RDF_CLASS", RDF_CLASS = NS.CS.Class.Application);
             exports_1("SCHEMA", SCHEMA = {
+                "name": {
+                    "@id": NS.CS.Predicate.name,
+                    "@type": NS.XSD.DataType.string,
+                },
                 "rootContainer": {
                     "@id": NS.CS.Predicate.rootContainer,
                     "@type": "@id",
+                },
+                "allowsOrigin": {
+                    "@id": NS.CS.Predicate.allowsOrigin
                 },
             });
             AppContext = (function (_super) {
@@ -3071,7 +3078,7 @@ $__System.register("13", ["22", "14", "20", "5", "6", "16", "1b", "4", "9", "15"
                             membershipResource = documentResource;
                         }
                         else if (membershipResourceURI === null) {
-                            if (documentResource["@type"].contains(NS.LDP.Class.BasicContainer)) {
+                            if (documentResource["@type"].indexOf(NS.LDP.Class.BasicContainer) !== -1) {
                                 membershipResource = documentResource;
                             }
                             else {
@@ -3450,8 +3457,8 @@ $__System.register("27", ["20", "28", "6", "29"], function(exports_1) {
     }
 });
 
-$__System.register("29", ["6"], function(exports_1) {
-    var Utils;
+$__System.register("29", ["14", "6"], function(exports_1) {
+    var Errors, Utils;
     var Class, Util;
     function prefixWithObjectSchema(uri, objectSchema) {
         var prefixEntries = objectSchema.prefixes.entries();
@@ -3469,6 +3476,9 @@ $__System.register("29", ["6"], function(exports_1) {
     }
     return {
         setters:[
+            function (Errors_1) {
+                Errors = Errors_1;
+            },
             function (Utils_1) {
                 Utils = Utils_1;
             }],
@@ -3543,6 +3553,25 @@ $__System.register("29", ["6"], function(exports_1) {
                     if (parts.length > 2)
                         throw new Error("IllegalArgument: The URI provided has more than one # sign.");
                     return parts[1];
+                };
+                Util.getSlug = function (uri) {
+                    var uriParts = uri.split("#");
+                    if (uriParts.length === 2)
+                        return Util.getSlug(uriParts[1]);
+                    if (uriParts.length > 2)
+                        throw new Errors.IllegalArgumentError("Invalid URI: The uri contains two '#' symbols.");
+                    uri = uriParts[0];
+                    if (uri === "")
+                        return uri;
+                    if (uri === "/")
+                        return uri;
+                    var parts = uri.split("/");
+                    if (parts[parts.length - 1] === "") {
+                        return parts[parts.length - 2] + "/";
+                    }
+                    else {
+                        return parts[parts.length - 1];
+                    }
                 };
                 Util.resolve = function (parentURI, childURI) {
                     if (Util.isAbsolute(childURI) || Util.isPrefixed(childURI))
@@ -11159,11 +11188,26 @@ $__System.register("7", [], function(exports_1) {
                     enumerable: true,
                     configurable: true
                 });
+                Object.defineProperty(Class, "AllOrigins", {
+                    get: function () { return namespace + "AllOrigins"; },
+                    enumerable: true,
+                    configurable: true
+                });
                 return Class;
             })();
             Predicate = (function () {
                 function Predicate() {
                 }
+                Object.defineProperty(Predicate, "name", {
+                    get: function () { return namespace + "name"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(Predicate, "allowsOrigin", {
+                    get: function () { return namespace + "allowsOrigin"; },
+                    enumerable: true,
+                    configurable: true
+                });
                 Object.defineProperty(Predicate, "rootContainer", {
                     get: function () { return namespace + "rootContainer"; },
                     enumerable: true,
@@ -12372,7 +12416,8 @@ $__System.register("60", ["2", "12", "8", "1a", "13", "20", "5", "5f", "6"], fun
                 }
                 Object.defineProperty(Carbon, "version", {
                     /* tslint:enable: variable-name */
-                    get: function () { return "0.15.0-ALPHA"; },
+                    // TODO: Get package.json version directly
+                    get: function () { return "0.15.1-ALPHA"; },
                     enumerable: true,
                     configurable: true
                 });

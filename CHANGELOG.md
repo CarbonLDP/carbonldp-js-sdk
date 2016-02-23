@@ -1,3 +1,7 @@
+# 0.15.1 (February 22, 2016)
+* Changed test browser to Chrome. PhantomJS was giving too many problems
+* Fixed `documents.getMembers()`
+
 # 0.15.0 (February 18, 2016)
 * `context.documents` can now retrieve the members of a document using `getMembers()`
 * `carbon.apps` can no retrieve all accessible appContexts at once with `getAll()`
