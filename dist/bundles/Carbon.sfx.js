@@ -12416,7 +12416,8 @@ $__System.register("60", ["2", "12", "8", "1a", "13", "20", "5", "5f", "6"], fun
                 }
                 Object.defineProperty(Carbon, "version", {
                     /* tslint:enable: variable-name */
-                    get: function () { return "0.15.0-ALPHA"; },
+                    // TODO: Get package.json version directly
+                    get: function () { return "0.15.1-ALPHA"; },
                     enumerable: true,
                     configurable: true
                 });

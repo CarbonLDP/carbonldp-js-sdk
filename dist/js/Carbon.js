@@ -47,7 +47,8 @@ System.register(["./Apps", "./Auth", "./AbstractContext", "./Document", "./Docum
                 }
                 Object.defineProperty(Carbon, "version", {
                     /* tslint:enable: variable-name */
-                    get: function () { return "0.15.0-ALPHA"; },
+                    // TODO: Get package.json version directly
+                    get: function () { return "0.15.1-ALPHA"; },
                     enumerable: true,
                     configurable: true
                 });
