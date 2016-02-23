@@ -16,7 +16,7 @@ import * as Utils from "../../../Utils";
 import * as XSD from "./XSD";
 import * as Errors from "../../../Errors";
 
-fdescribe( module(
+describe( module(
 	"Carbon/RDF/Literal/Serializers/XSD"
 ), ():void => {
 
