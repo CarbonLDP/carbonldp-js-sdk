@@ -68,7 +68,7 @@ System.register(["./../../../Errors", "./../../../Utils"], function(exports_1) {
                     if (!Utils.isNumber(value))
                         throw new Errors.IllegalArgumentError("The value is not a number.");
                     // Negative truncate
-                    return (~~value) + "";
+                    return (~~value).toString();
                 };
                 return IntegerSerializer;
             })();
@@ -94,7 +94,11 @@ System.register(["./../../../Errors", "./../../../Utils"], function(exports_1) {
                 FloatSerializer.prototype.serialize = function (value) {
                     if (!Utils.isNumber(value))
                         throw new Errors.IllegalArgumentError("The value is not a number.");
-                    return value + "";
+                    if (value === Number.POSITIVE_INFINITY)
+                        return "INF";
+                    if (value === Number.NEGATIVE_INFINITY)
+                        return "-INF";
+                    return value.toString();
                 };
                 return FloatSerializer;
             })();
@@ -104,12 +108,7 @@ System.register(["./../../../Errors", "./../../../Utils"], function(exports_1) {
                 function BooleanSerializer() {
                 }
                 BooleanSerializer.prototype.serialize = function (value) {
-                    if (!!value) {
-                        return "true";
-                    }
-                    else {
-                        return "false";
-                    }
+                    return (!!value).toString();
                 };
                 return BooleanSerializer;
             })();
@@ -119,7 +118,7 @@ System.register(["./../../../Errors", "./../../../Utils"], function(exports_1) {
                 function StringSerializer() {
                 }
                 StringSerializer.prototype.serialize = function (value) {
-                    return value + "";
+                    return String(value);
                 };
                 return StringSerializer;
             })();
