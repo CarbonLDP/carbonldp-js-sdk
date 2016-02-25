@@ -3317,8 +3317,8 @@ $__System.register("26", [], function(exports_1) {
     }
 });
 
-$__System.register("27", ["20", "28", "6", "29"], function(exports_1) {
-    var HTTP, RDFNode, Utils, URI;
+$__System.register("27", ["20", "28", "6", "29", "14"], function(exports_1) {
+    var HTTP, RDFNode, Utils, URI, Errors;
     var Factory, Util, Parser;
     return {
         setters:[
@@ -3333,13 +3333,17 @@ $__System.register("27", ["20", "28", "6", "29"], function(exports_1) {
             },
             function (URI_1) {
                 URI = URI_1;
+            },
+            function (Errors_1) {
+                Errors = Errors_1;
             }],
         execute: function() {
             Factory = (function () {
                 function Factory() {
                 }
                 Factory.is = function (object) {
-                    return (Utils.hasProperty(object, "@graph"));
+                    return Utils.hasProperty(object, "@graph")
+                        && Utils.isArray(object["@graph"]);
                 };
                 Factory.create = function (resources, uri) {
                     var document = uri ? RDFNode.Factory.create(uri) : {};
@@ -3367,8 +3371,7 @@ $__System.register("27", ["20", "28", "6", "29"], function(exports_1) {
                         if (RDFNode.Factory.is(value))
                             return [Factory.create([value])];
                     }
-                    else
-                        throw new Error("IllegalArgument: The value structure isn't valid.");
+                    throw new Errors.IllegalArgumentError("The value structure isn't valid.");
                 };
                 Util.getResources = function (value) {
                     var documents = Util.getDocuments(value);
@@ -3919,9 +3922,8 @@ $__System.register("28", ["6"], function(exports_1) {
                 function Factory() {
                 }
                 Factory.is = function (value) {
-                    return ((!Utils.isNull(value)) &&
-                        Utils.isObject(value) &&
-                        Utils.hasProperty(value, "@id"));
+                    return Utils.hasProperty(value, "@id")
+                        && Utils.isString(value["@id"]);
                 };
                 Factory.create = function (uri) {
                     return {

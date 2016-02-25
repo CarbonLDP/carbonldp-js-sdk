@@ -1,5 +1,5 @@
-System.register(["./../HTTP", "./RDFNode", "../Utils", "./URI"], function(exports_1) {
-    var HTTP, RDFNode, Utils, URI;
+System.register(["./../HTTP", "./RDFNode", "../Utils", "./URI", "../Errors"], function(exports_1) {
+    var HTTP, RDFNode, Utils, URI, Errors;
     var Factory, Util, Parser;
     return {
         setters:[
@@ -14,13 +14,17 @@ System.register(["./../HTTP", "./RDFNode", "../Utils", "./URI"], function(export
             },
             function (URI_1) {
                 URI = URI_1;
+            },
+            function (Errors_1) {
+                Errors = Errors_1;
             }],
         execute: function() {
             Factory = (function () {
                 function Factory() {
                 }
                 Factory.is = function (object) {
-                    return (Utils.hasProperty(object, "@graph"));
+                    return Utils.hasProperty(object, "@graph")
+                        && Utils.isArray(object["@graph"]);
                 };
                 Factory.create = function (resources, uri) {
                     var document = uri ? RDFNode.Factory.create(uri) : {};
@@ -48,8 +52,7 @@ System.register(["./../HTTP", "./RDFNode", "../Utils", "./URI"], function(export
                         if (RDFNode.Factory.is(value))
                             return [Factory.create([value])];
                     }
-                    else
-                        throw new Error("IllegalArgument: The value structure isn't valid.");
+                    throw new Errors.IllegalArgumentError("The value structure isn't valid.");
                 };
                 Util.getResources = function (value) {
                     var documents = Util.getDocuments(value);
