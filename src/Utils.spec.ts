@@ -92,6 +92,24 @@ describe( module( "Carbon/Utils", "The description of Carbon/Utils" ), function 
 
 	} );
 
+	it( hasMethod( STATIC, "isDefined", "Checks if the value passed is defined.", [
+		{ name: "value", type: "any" },
+	], { type: "boolean" } ), function ():void {
+		expect( Utils.isDefined ).toBeDefined();
+
+		expect( Utils.isDefined( null ) ).toBe( true );
+		expect( Utils.isDefined( "something" ) ).toBe( true );
+		expect( Utils.isDefined( true ) ).toBe( true );
+		expect( Utils.isDefined( false ) ).toBe( true );
+		expect( Utils.isDefined( 9 ) ).toBe( true );
+		expect( Utils.isDefined( {} ) ).toBe( true );
+		expect( Utils.isDefined( [] ) ).toBe( true );
+
+		let somethingUndefined;
+		expect( Utils.isDefined( undefined ) ).toBe( false );
+		expect( Utils.isDefined( somethingUndefined ) ).toBe( false );
+	} );
+
 	it( hasMethod( STATIC, "isNull", "Checks if the value passed is null.", [
 		{ name: "value", type: "any" },
 	], { type: "boolean" } ), function ():void {
