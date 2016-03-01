@@ -7,10 +7,13 @@ System.register([], function(exports_1) {
     function hasProperty(object, property) {
         if (!object)
             return false;
-        return "undefined" !== typeof object[property];
+        return isDefined(object[property]);
     }
     function hasPropertyDefined(object, property) {
         return !!Object.getOwnPropertyDescriptor(object, property);
+    }
+    function isDefined(value) {
+        return void 0 !== value;
     }
     function isNull(value) {
         return value === null;
@@ -212,6 +215,7 @@ System.register([], function(exports_1) {
             exports_1("hasFunction", hasFunction);
             exports_1("hasProperty", hasProperty);
             exports_1("hasPropertyDefined", hasPropertyDefined);
+            exports_1("isDefined", isDefined);
             exports_1("isNull", isNull);
             exports_1("isArray", isArray);
             exports_1("isString", isString);

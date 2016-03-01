@@ -320,7 +320,7 @@ describe( module( "Carbon/RDF/Document" ), ():void => {
 				documentResources = RDFDocument.Util.getDocumentResources( document );
 				expect( Utils.isArray( documentResources ) ).toBe( true );
 				expect( documentResources.length ).toBe( 1 );
-				expect( documentResources[ 0 ] ).toEqual( node );
+				expect( documentResources ).toEqual( [ node ] );
 
 				expect( RDFDocument.Util.getDocumentResources.bind( null, {} ) ).toThrowError( Errors.IllegalArgumentError );
 				expect( RDFDocument.Util.getDocumentResources.bind( null, null ) ).toThrowError( Errors.IllegalArgumentError );

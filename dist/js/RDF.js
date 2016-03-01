@@ -1,12 +1,9 @@
-System.register(["./RDF/Literal", "./RDF/PropertyDescription", "./RDF/Document", "./RDF/List", "./RDF/RDFNode", "./RDF/URI", "./RDF/Value"], function(exports_1) {
-    var Literal, PropertyDescription_1, Document, List, Node, URI, Value;
+System.register(["./RDF/Literal", "./RDF/Document", "./RDF/List", "./RDF/RDFNode", "./RDF/URI", "./RDF/Value"], function(exports_1) {
+    var Literal, Document, List, Node, URI, Value;
     return {
         setters:[
             function (Literal_1) {
                 Literal = Literal_1;
-            },
-            function (PropertyDescription_1_1) {
-                PropertyDescription_1 = PropertyDescription_1_1;
             },
             function (Document_1) {
                 Document = Document_1;
@@ -25,7 +22,6 @@ System.register(["./RDF/Literal", "./RDF/PropertyDescription", "./RDF/Document",
             }],
         execute: function() {
             exports_1("Literal", Literal);
-            exports_1("PropertyDescription", PropertyDescription_1.default);
             exports_1("Document", Document);
             exports_1("List", List);
             exports_1("Node", Node);

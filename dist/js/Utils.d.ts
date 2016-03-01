@@ -2,6 +2,7 @@
 declare function hasFunction(object: Object, functionName: string): boolean;
 declare function hasProperty(object: Object, property: string): boolean;
 declare function hasPropertyDefined(object: Object, property: string): boolean;
+declare function isDefined(value: any): boolean;
 declare function isNull(value: any): boolean;
 declare function isArray(object: any): boolean;
 declare function isString(value: any): boolean;
@@ -37,4 +38,4 @@ declare class UUID {
 declare class P {
     static createRejectedPromise<T extends Error>(error: T): Promise<any>;
 }
-export { hasFunction, hasProperty, hasPropertyDefined, isNull, isArray, isString, isBoolean, isNumber, isInteger, isDouble, isDate, isObject, isFunction, isMap, parseBoolean, extend, forEachOwnProperty, S, A, M, UUID, P };
+export { hasFunction, hasProperty, hasPropertyDefined, isDefined, isNull, isArray, isString, isBoolean, isNumber, isInteger, isDouble, isDate, isObject, isFunction, isMap, parseBoolean, extend, forEachOwnProperty, S, A, M, UUID, P };

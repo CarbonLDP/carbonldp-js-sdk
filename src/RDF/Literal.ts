@@ -70,7 +70,7 @@ export class Factory {
 			case XSD.DataType.time:
 				parts = valueString.match(/(\d+):(\d+):(\d+)\.(\d+)Z/);
 				value = new Date();
-				value.setUTCHours( parseInt( parts[1] ), parseInt( parts[2] ), parseInt( parts[3] ), parseInt( parts[4] ) );
+				value.setUTCHours( parseFloat( parts[1] ), parseFloat( parts[2] ), parseFloat( parts[3]), parseFloat( parts[4] ) );
 				break;
 			case XSD.DataType.duration:
 				// TODO: Support duration values (create a class or something...)

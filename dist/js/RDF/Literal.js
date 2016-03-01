@@ -1,5 +1,5 @@
-System.register(["./../Utils", "./../NS/XSD", "./Literal/Serializers"], function(exports_1) {
-    var Utils, XSD, Serializers;
+System.register(["./../Utils", "./../NS/XSD", "../Errors", "./Literal/Serializers"], function(exports_1) {
+    var Utils, XSD, Errors, Serializers;
     var Factory, Util;
     return {
         setters:[
@@ -8,6 +8,9 @@ System.register(["./../Utils", "./../NS/XSD", "./Literal/Serializers"], function
             },
             function (XSD_1) {
                 XSD = XSD_1;
+            },
+            function (Errors_1) {
+                Errors = Errors_1;
             },
             function (Serializers_1) {
                 Serializers = Serializers_1;
@@ -18,7 +21,9 @@ System.register(["./../Utils", "./../NS/XSD", "./Literal/Serializers"], function
                 }
                 Factory.from = function (value) {
                     if (Utils.isNull(value))
-                        throw new Error("IllegalArgument: null cannot be converted into a Literal");
+                        throw new Errors.IllegalArgumentError("Null cannot be converted into a Literal");
+                    if (!Utils.isDefined(value))
+                        throw new Errors.IllegalArgumentError("The value is undefined");
                     var type;
                     switch (true) {
                         case Utils.isDate(value):
@@ -29,8 +34,9 @@ System.register(["./../Utils", "./../NS/XSD", "./Literal/Serializers"], function
                             if (Utils.isInteger(value)) {
                                 type = XSD.DataType.integer;
                             }
-                            else
+                            else {
                                 type = XSD.DataType.double;
+                            }
                             break;
                         case Utils.isString(value):
                             type = XSD.DataType.string;
@@ -44,7 +50,7 @@ System.register(["./../Utils", "./../NS/XSD", "./Literal/Serializers"], function
                             value = JSON.stringify(value);
                             break;
                     }
-                    var literal = { "@value": value };
+                    var literal = { "@value": value.toString() };
                     if (type)
                         literal["@type"] = type;
                     return literal;
@@ -61,13 +67,17 @@ System.register(["./../Utils", "./../NS/XSD", "./Literal/Serializers"], function
                     if (!Utils.hasProperty(XSD.DataType, type))
                         return literal["@value"];
                     var valueString = literal["@value"];
-                    var value;
+                    var value, parts;
                     switch (type) {
                         // Dates
                         case XSD.DataType.date:
                         case XSD.DataType.dateTime:
-                        case XSD.DataType.time:
                             value = new Date(valueString);
+                            break;
+                        case XSD.DataType.time:
+                            parts = valueString.match(/(\d+):(\d+):(\d+)\.(\d+)Z/);
+                            value = new Date();
+                            value.setUTCHours(parseFloat(parts[1]), parseFloat(parts[2]), parseFloat(parts[3]), parseFloat(parts[4]));
                             break;
                         case XSD.DataType.duration:
                             // TODO: Support duration values (create a class or something...)
@@ -114,11 +124,8 @@ System.register(["./../Utils", "./../NS/XSD", "./Literal/Serializers"], function
                     return value;
                 };
                 Factory.is = function (value) {
-                    if (!value)
-                        return false;
-                    if (!Utils.isObject(value))
-                        return false;
-                    return Utils.hasProperty(value, "@value");
+                    return Utils.hasProperty(value, "@value")
+                        && Utils.isString(value["@value"]);
                 };
                 Factory.hasType = function (value, type) {
                     if (!value["@type"] && type === XSD.DataType.string)
