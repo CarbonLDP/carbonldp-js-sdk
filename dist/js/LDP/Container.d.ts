@@ -10,9 +10,8 @@ export interface Class extends RDFSource.Class {
     hasMemberRelation: Pointer.Class;
 }
 export declare class Factory {
-    hasClassProperties(resource: RDF.Node.Class): boolean;
-    hasRDFClass(pointer: Pointer.Class): boolean;
-    hasRDFClass(expandedObject: Object): boolean;
+    static hasClassProperties(resource: RDF.Node.Class): boolean;
+    static hasRDFClass(pointer: Pointer.Class): boolean;
+    static hasRDFClass(expandedObject: Object): boolean;
 }
-export declare let factory: Factory;
 export default Class;

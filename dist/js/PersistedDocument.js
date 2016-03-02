@@ -63,11 +63,11 @@ System.register(["./Document", "./Utils"], function(exports_1) {
                     Factory.hasClassProperties(object));
                 };
                 Factory.create = function (uri, documents) {
-                    var document = Document.factory.create(uri);
+                    var document = Document.Factory.create(uri);
                     return Factory.decorate(document, documents);
                 };
                 Factory.createFrom = function (object, uri, documents) {
-                    var document = Document.factory.createFrom(object, uri);
+                    var document = Document.Factory.createFrom(object, uri);
                     return Factory.decorate(document, documents);
                 };
                 Factory.decorate = function (document, documents) {

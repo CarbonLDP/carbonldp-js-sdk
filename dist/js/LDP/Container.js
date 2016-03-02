@@ -1,14 +1,11 @@
 /// <reference path="../../typings/typings.d.ts" />
-System.register(["./../NS", "./../Pointer", "./../Utils"], function(exports_1) {
-    var NS, Pointer, Utils;
-    var RDF_CLASS, SCHEMA, Factory, factory;
+System.register(["./../NS", "./../Utils"], function(exports_1) {
+    var NS, Utils;
+    var RDF_CLASS, SCHEMA, Factory;
     return {
         setters:[
             function (NS_1) {
                 NS = NS_1;
-            },
-            function (Pointer_1) {
-                Pointer = Pointer_1;
             },
             function (Utils_1) {
                 Utils = Utils_1;
@@ -26,8 +23,8 @@ System.register(["./../NS", "./../Pointer", "./../Utils"], function(exports_1) {
                     "@container": "@set",
                     "@type": "@id",
                 },
-                "memberOfRelation": {
-                    "@id": NS.LDP.Predicate.memberOfRelation,
+                "isMemberOfRelation": {
+                    "@id": NS.LDP.Predicate.isMemberOfRelation,
                     "@type": "@id",
                 },
                 "hasMemberRelation": {
@@ -42,19 +39,17 @@ System.register(["./../NS", "./../Pointer", "./../Utils"], function(exports_1) {
             Factory = (function () {
                 function Factory() {
                 }
-                Factory.prototype.hasClassProperties = function (resource) {
-                    return (Utils.hasPropertyDefined(resource, "memberOfRelation") &&
+                Factory.hasClassProperties = function (resource) {
+                    return (Utils.hasPropertyDefined(resource, "isMemberOfRelation") &&
                         Utils.hasPropertyDefined(resource, "hasMemberRelation"));
                 };
-                Factory.prototype.hasRDFClass = function (pointerOrExpandedObject) {
+                Factory.hasRDFClass = function (pointerOrExpandedObject) {
                     var types = [];
                     if ("@type" in pointerOrExpandedObject) {
                         types = pointerOrExpandedObject["@type"];
                     }
                     else if ("types" in pointerOrExpandedObject) {
-                        // TODO: Use proper class
-                        var resource = pointerOrExpandedObject;
-                        types = Pointer.Util.getIDs(resource.types);
+                        types = pointerOrExpandedObject.types;
                     }
                     return (types.indexOf(RDF_CLASS) !== -1 ||
                         types.indexOf(NS.LDP.Class.BasicContainer) !== -1 ||
@@ -64,7 +59,6 @@ System.register(["./../NS", "./../Pointer", "./../Utils"], function(exports_1) {
                 return Factory;
             })();
             exports_1("Factory", Factory);
-            exports_1("factory", factory = new Factory());
         }
     }
 });

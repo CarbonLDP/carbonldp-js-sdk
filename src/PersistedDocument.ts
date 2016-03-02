@@ -81,13 +81,13 @@ export class Factory {
 	}
 
 	static create( uri:string, documents:Documents ):Class {
-		let document:Document.Class = Document.factory.create( uri );
+		let document:Document.Class = Document.Factory.create( uri );
 
 		return Factory.decorate( document, documents );
 	}
 
 	static createFrom<T extends Object>( object:T, uri:string, documents:Documents ):Class {
-		let document:Document.Class = Document.factory.createFrom( object, uri );
+		let document:Document.Class = Document.Factory.createFrom( object, uri );
 
 		return Factory.decorate( document, documents );
 	}

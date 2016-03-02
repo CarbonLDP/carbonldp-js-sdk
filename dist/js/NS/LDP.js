@@ -107,8 +107,8 @@ System.register([], function(exports_1) {
                     enumerable: true,
                     configurable: true
                 });
-                Object.defineProperty(Predicate, "memberOfRelation", {
-                    get: function () { return namespace + "memberOfRelation"; },
+                Object.defineProperty(Predicate, "isMemberOfRelation", {
+                    get: function () { return namespace + "isMemberOfRelation"; },
                     enumerable: true,
                     configurable: true
                 });

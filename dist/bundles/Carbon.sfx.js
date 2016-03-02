@@ -892,16 +892,13 @@ $__System.register("c", ["9", "4"], function(exports_1) {
 });
 
 /// <reference path="../../typings/typings.d.ts" />
-$__System.register("d", ["9", "4", "6"], function(exports_1) {
-    var NS, Pointer, Utils;
-    var RDF_CLASS, SCHEMA, Factory, factory;
+$__System.register("d", ["9", "6"], function(exports_1) {
+    var NS, Utils;
+    var RDF_CLASS, SCHEMA, Factory;
     return {
         setters:[
             function (NS_1) {
                 NS = NS_1;
-            },
-            function (Pointer_1) {
-                Pointer = Pointer_1;
             },
             function (Utils_1) {
                 Utils = Utils_1;
@@ -919,8 +916,8 @@ $__System.register("d", ["9", "4", "6"], function(exports_1) {
                     "@container": "@set",
                     "@type": "@id",
                 },
-                "memberOfRelation": {
-                    "@id": NS.LDP.Predicate.memberOfRelation,
+                "isMemberOfRelation": {
+                    "@id": NS.LDP.Predicate.isMemberOfRelation,
                     "@type": "@id",
                 },
                 "hasMemberRelation": {
@@ -935,19 +932,17 @@ $__System.register("d", ["9", "4", "6"], function(exports_1) {
             Factory = (function () {
                 function Factory() {
                 }
-                Factory.prototype.hasClassProperties = function (resource) {
-                    return (Utils.hasPropertyDefined(resource, "memberOfRelation") &&
+                Factory.hasClassProperties = function (resource) {
+                    return (Utils.hasPropertyDefined(resource, "isMemberOfRelation") &&
                         Utils.hasPropertyDefined(resource, "hasMemberRelation"));
                 };
-                Factory.prototype.hasRDFClass = function (pointerOrExpandedObject) {
+                Factory.hasRDFClass = function (pointerOrExpandedObject) {
                     var types = [];
                     if ("@type" in pointerOrExpandedObject) {
                         types = pointerOrExpandedObject["@type"];
                     }
                     else if ("types" in pointerOrExpandedObject) {
-                        // TODO: Use proper class
-                        var resource = pointerOrExpandedObject;
-                        types = Pointer.Util.getIDs(resource.types);
+                        types = pointerOrExpandedObject.types;
                     }
                     return (types.indexOf(RDF_CLASS) !== -1 ||
                         types.indexOf(NS.LDP.Class.BasicContainer) !== -1 ||
@@ -957,7 +952,6 @@ $__System.register("d", ["9", "4", "6"], function(exports_1) {
                 return Factory;
             })();
             exports_1("Factory", Factory);
-            exports_1("factory", factory = new Factory());
         }
     }
 });
@@ -1013,7 +1007,7 @@ $__System.register("e", ["6"], function(exports_1) {
 
 $__System.register("f", ["9"], function(exports_1) {
     var NS;
-    var RDF_CLASS, SCHEMA, Factory, factory;
+    var RDF_CLASS, SCHEMA, Factory;
     return {
         setters:[
             function (NS_1) {
@@ -1037,7 +1031,6 @@ $__System.register("f", ["9"], function(exports_1) {
                 return Factory;
             })();
             exports_1("Factory", Factory);
-            exports_1("factory", factory = new Factory());
         }
     }
 });
@@ -2017,7 +2010,7 @@ $__System.register("18", ["4", "6"], function(exports_1) {
 /// <reference path="./../typings/typings.d.ts" />
 $__System.register("1a", ["14", "17", "16", "19", "15", "4", "5", "18", "6"], function(exports_1) {
     var Errors, Fragment, JSONLDConverter_1, NamedFragment, ObjectSchema, Pointer, RDF, Resource, Utils;
-    var Factory, factory;
+    var Factory;
     function hasPointer(id) {
         var document = this;
         if (!document.inScope(id))
@@ -2165,7 +2158,7 @@ $__System.register("1a", ["14", "17", "16", "19", "15", "4", "5", "18", "6"], fu
             Factory = (function () {
                 function Factory() {
                 }
-                Factory.prototype.hasClassProperties = function (documentResource) {
+                Factory.hasClassProperties = function (documentResource) {
                     return (Utils.isObject(documentResource) &&
                         Utils.hasPropertyDefined(documentResource, "_fragmentsIndex") &&
                         Utils.hasFunction(documentResource, "hasFragment") &&
@@ -2177,11 +2170,11 @@ $__System.register("1a", ["14", "17", "16", "19", "15", "4", "5", "18", "6"], fu
                         Utils.hasFunction(documentResource, "removeFragment") &&
                         Utils.hasFunction(documentResource, "toJSON"));
                 };
-                Factory.prototype.create = function (uri) {
+                Factory.create = function (uri) {
                     if (uri === void 0) { uri = null; }
                     return this.createFrom({}, uri);
                 };
-                Factory.prototype.createFrom = function (object, uri) {
+                Factory.createFrom = function (object, uri) {
                     if (uri === void 0) { uri = null; }
                     if (!!uri && RDF.URI.Util.isBNodeID(uri))
                         throw new Errors.IllegalArgumentError("Documents cannot have a BNodeID as a uri.");
@@ -2189,7 +2182,7 @@ $__System.register("1a", ["14", "17", "16", "19", "15", "4", "5", "18", "6"], fu
                     var document = this.decorate(resource);
                     return document;
                 };
-                Factory.prototype.decorate = function (object) {
+                Factory.decorate = function (object) {
                     if (this.hasClassProperties(object))
                         return object;
                     Object.defineProperties(object, {
@@ -2271,7 +2264,6 @@ $__System.register("1a", ["14", "17", "16", "19", "15", "4", "5", "18", "6"], fu
                 return Factory;
             })();
             exports_1("Factory", Factory);
-            exports_1("factory", factory = new Factory());
             exports_1("default",Document);
         }
     }
@@ -2342,11 +2334,11 @@ $__System.register("1b", ["1a", "6"], function(exports_1) {
                     Factory.hasClassProperties(object));
                 };
                 Factory.create = function (uri, documents) {
-                    var document = Document.factory.create(uri);
+                    var document = Document.Factory.create(uri);
                     return Factory.decorate(document, documents);
                 };
                 Factory.createFrom = function (object, uri, documents) {
-                    var document = Document.factory.createFrom(object, uri);
+                    var document = Document.Factory.createFrom(object, uri);
                     return Factory.decorate(document, documents);
                 };
                 Factory.decorate = function (document, documents) {
@@ -11288,8 +11280,8 @@ $__System.register("23", [], function(exports_1) {
                     enumerable: true,
                     configurable: true
                 });
-                Object.defineProperty(Predicate, "memberOfRelation", {
-                    get: function () { return namespace + "memberOfRelation"; },
+                Object.defineProperty(Predicate, "isMemberOfRelation", {
+                    get: function () { return namespace + "isMemberOfRelation"; },
                     enumerable: true,
                     configurable: true
                 });

@@ -173,7 +173,7 @@ function toJSON( objectSchemaResolver:ObjectSchema.Resolver = null, jsonldConver
 }
 
 export class Factory {
-	hasClassProperties( documentResource:Object ):boolean {
+	static hasClassProperties( documentResource:Object ):boolean {
 		return (
 			Utils.isObject( documentResource ) &&
 
@@ -190,15 +190,15 @@ export class Factory {
 		);
 	}
 
-	create( uri:string ):Class;
-	create():Class;
-	create( uri:string = null ):Class {
+	static create( uri:string ):Class;
+	static create():Class;
+	static create( uri:string = null ):Class {
 		return this.createFrom( {}, uri );
 	}
 
-	createFrom<T extends Object>( object:T, uri:string ):T & Class;
-	createFrom<T extends Object>( object:T ):T & Class;
-	createFrom<T extends Object>( object:T, uri:string = null ):T & Class {
+	static createFrom<T extends Object>( object:T, uri:string ):T & Class;
+	static createFrom<T extends Object>( object:T ):T & Class;
+	static createFrom<T extends Object>( object:T, uri:string = null ):T & Class {
 		if( !! uri && RDF.URI.Util.isBNodeID( uri ) ) throw new Errors.IllegalArgumentError( "Documents cannot have a BNodeID as a uri." );
 
 		let resource:Resource.Class = Resource.Factory.createFrom( object, uri );
@@ -208,7 +208,7 @@ export class Factory {
 		return <any> document;
 	}
 
-	decorate<T extends Object>( object:T ):T & Class {
+	static decorate<T extends Object>( object:T ):T & Class {
 		if( this.hasClassProperties( object ) ) return <any> object;
 
 		Object.defineProperties( object, {
@@ -289,7 +289,5 @@ export class Factory {
 		return <any> object;
 	}
 }
-
-export var factory:Factory = new Factory();
 
 export default Document;

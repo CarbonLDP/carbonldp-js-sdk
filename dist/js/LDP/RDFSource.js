@@ -1,6 +1,6 @@
 System.register(["./../NS"], function(exports_1) {
     var NS;
-    var RDF_CLASS, SCHEMA, Factory, factory;
+    var RDF_CLASS, SCHEMA, Factory;
     return {
         setters:[
             function (NS_1) {
@@ -24,7 +24,6 @@ System.register(["./../NS"], function(exports_1) {
                 return Factory;
             })();
             exports_1("Factory", Factory);
-            exports_1("factory", factory = new Factory());
         }
     }
 });
