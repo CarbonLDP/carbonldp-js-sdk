@@ -10,6 +10,7 @@ function hasProperty( object:Object, property:string ):boolean {
 }
 
 function hasPropertyDefined( object:Object, property:string ):boolean {
+	if ( ! object ) return false;
 	return ! ! Object.getOwnPropertyDescriptor( object, property );
 }
 

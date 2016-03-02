@@ -271,6 +271,8 @@ var DocumentationReporter = function( baseReporterDecorator, formatError, config
 				return "constructor > ";
 			case "method":
 				return "method > " + suite.name;
+			case "decoratedObject":
+				return "decorated object";
 		}
 
 		return suite.name;

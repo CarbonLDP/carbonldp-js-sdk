@@ -6,7 +6,10 @@ import * as RDF from "./../RDF";
 import * as Utils from "./../Utils";
 
 export interface Class extends PersistedDocument.Class {
-	createChild( object:Object ):Promise<void>;
+	createChild( slug:string, object:Object ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
+	createChild( slug:string ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
+	createChild( object:Object ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
+	createChild():Promise<[ Pointer.Class, HTTP.Response.Class ]>;
 }
 
 function createChild( slug:string, object:Object ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;

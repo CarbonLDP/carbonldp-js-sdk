@@ -10,6 +10,8 @@ System.register([], function(exports_1) {
         return isDefined(object[property]);
     }
     function hasPropertyDefined(object, property) {
+        if (!object)
+            return false;
         return !!Object.getOwnPropertyDescriptor(object, property);
     }
     function isDefined(value) {

@@ -21,7 +21,7 @@ System.register(["./../NS", "./../Utils"], function(exports_1) {
             Factory = (function () {
                 function Factory() {
                 }
-                Factory.prototype.hasClassProperties = function (resource) {
+                Factory.hasClassProperties = function (resource) {
                     return (Utils.hasPropertyDefined(resource, "membershipResource"));
                 };
                 return Factory;

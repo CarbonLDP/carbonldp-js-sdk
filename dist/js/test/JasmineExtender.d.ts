@@ -47,6 +47,9 @@ export interface MethodReturn {
     type: string;
     description?: string;
 }
+export interface DecorateDescriptor extends SuiteDescriptor {
+    type: string[];
+}
 export declare function serialize(descriptor: SuiteDescriptor): string;
 export declare function serialize(descriptor: PropertyDescriptor): string;
 export declare function serialize(descriptor: MethodDescriptor): string;
@@ -63,11 +66,13 @@ export declare const SUPER_CLASS: string;
 export declare const REEXPORTS: string;
 export declare const DEFAULTEXPORT: string;
 export declare const ENUM: string;
+export declare const DECORATED: string;
 export declare function module(name: string, description?: string): string;
 export declare function clazz(name: string, description: string, parent?: string, interfaces?: Array<string>): string;
 export declare function interfaze(name: string, description: string, parent?: string): string;
 export declare function constructor(description?: string): string;
 export declare function reexports(access: string, name: string, originalLocation: string): string;
+export declare function decoratedObject(description: string, type: string[]): string;
 export declare function hasInterface(access: string, name: string): string;
 export declare function isDefined(): string;
 export declare function hasConstructor(): string;

@@ -63,6 +63,10 @@ export interface MethodReturn {
 	description?:string;
 }
 
+export interface DecorateDescriptor extends SuiteDescriptor {
+	type:string[];
+}
+
 export function serialize( descriptor:SuiteDescriptor ):string
 export function serialize( descriptor:PropertyDescriptor ):string;
 export function serialize( descriptor:MethodDescriptor ):string;
@@ -91,6 +95,7 @@ export const SUPER_CLASS:string = "super-class";
 export const REEXPORTS:string = "reexports";
 export const DEFAULTEXPORT:string = "defaultExport";
 export const ENUM:string = "enum";
+export const DECORATED:string = "decoratedObject";
 
 export function module( name:string, description:string = null ):string {
 	let descriptor:SuiteDescriptor = {
@@ -140,6 +145,16 @@ export function reexports( access: string, name: string, originalLocation: strin
 		access: access,
 		name: name,
 		originalLocation: originalLocation,
+	};
+
+	return toJSON( descriptor );
+}
+
+export function decoratedObject( description:string = null, type: string[] ):string {
+	let descriptor:DecorateDescriptor = {
+		suiteType: DECORATED,
+		type: type,
+		description: description,
 	};
 
 	return toJSON( descriptor );

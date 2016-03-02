@@ -844,7 +844,7 @@ $__System.register("b", ["9", "6"], function(exports_1) {
             Factory = (function () {
                 function Factory() {
                 }
-                Factory.prototype.hasClassProperties = function (resource) {
+                Factory.hasClassProperties = function (resource) {
                     return (Utils.hasPropertyDefined(resource, "membershipResource"));
                 };
                 return Factory;
@@ -855,38 +855,32 @@ $__System.register("b", ["9", "6"], function(exports_1) {
 });
 
 /// <reference path="./../../typings/typings.d.ts" />
-$__System.register("c", ["9", "4"], function(exports_1) {
-    var NS, Pointer;
-    var RDF_CLASS, Factory, factory;
+$__System.register("c", ["9"], function(exports_1) {
+    var NS;
+    var RDF_CLASS, Factory;
     return {
         setters:[
             function (NS_1) {
                 NS = NS_1;
-            },
-            function (Pointer_1) {
-                Pointer = Pointer_1;
             }],
         execute: function() {
             exports_1("RDF_CLASS", RDF_CLASS = NS.LDP.Class.BasicContainer);
             Factory = (function () {
                 function Factory() {
                 }
-                Factory.prototype.hasRDFClass = function (pointerOrExpandedObject) {
+                Factory.hasRDFClass = function (pointerOrExpandedObject) {
                     var types = [];
                     if ("@type" in pointerOrExpandedObject) {
                         types = pointerOrExpandedObject["@type"];
                     }
                     else if ("types" in pointerOrExpandedObject) {
-                        // TODO: Use proper class
-                        var resource = pointerOrExpandedObject;
-                        types = Pointer.Util.getIDs(resource.types);
+                        types = pointerOrExpandedObject.types;
                     }
                     return types.indexOf(NS.LDP.Class.BasicContainer) !== -1;
                 };
                 return Factory;
             })();
             exports_1("Factory", Factory);
-            exports_1("factory", factory = new Factory());
         }
     }
 });
@@ -12081,6 +12075,8 @@ $__System.register("6", [], function(exports_1) {
         return isDefined(object[property]);
     }
     function hasPropertyDefined(object, property) {
+        if (!object)
+            return false;
         return !!Object.getOwnPropertyDescriptor(object, property);
     }
     function isDefined(value) {

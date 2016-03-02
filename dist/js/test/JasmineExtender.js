@@ -1,5 +1,5 @@
 System.register([], function(exports_1) {
-    var MODULE, CLASS, INTERFACE, STATIC, INSTANCE, CONSTRUCTOR, METHOD, SIGNATURE, PROPERTY, SUPER_CLASS, REEXPORTS, DEFAULTEXPORT, ENUM, property;
+    var MODULE, CLASS, INTERFACE, STATIC, INSTANCE, CONSTRUCTOR, METHOD, SIGNATURE, PROPERTY, SUPER_CLASS, REEXPORTS, DEFAULTEXPORT, ENUM, DECORATED, property;
     function serialize(descriptor) {
         return "JSON" + JSON.stringify(descriptor);
     }
@@ -60,6 +60,16 @@ System.register([], function(exports_1) {
         return toJSON(descriptor);
     }
     exports_1("reexports", reexports);
+    function decoratedObject(description, type) {
+        if (description === void 0) { description = null; }
+        var descriptor = {
+            suiteType: DECORATED,
+            type: type,
+            description: description,
+        };
+        return toJSON(descriptor);
+    }
+    exports_1("decoratedObject", decoratedObject);
     function hasInterface(access, name, description) {
         if (description === void 0) { description = null; }
         var descriptor = {
@@ -220,6 +230,7 @@ System.register([], function(exports_1) {
             exports_1("REEXPORTS", REEXPORTS = "reexports");
             exports_1("DEFAULTEXPORT", DEFAULTEXPORT = "defaultExport");
             exports_1("ENUM", ENUM = "enum");
+            exports_1("DECORATED", DECORATED = "decoratedObject");
             /* tslint:disable: typedef */
             exports_1("property", property = hasProperty);
         }

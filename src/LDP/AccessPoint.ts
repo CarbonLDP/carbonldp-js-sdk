@@ -20,7 +20,7 @@ export const SCHEMA:ObjectSchema.Class = {
 };
 
 export class Factory {
-	hasClassProperties( resource:Object ):boolean {
+	static hasClassProperties( resource:Object ):boolean {
 		return (
 			Utils.hasPropertyDefined( resource, "membershipResource" )
 		);
