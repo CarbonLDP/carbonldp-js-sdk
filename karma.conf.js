@@ -23,7 +23,7 @@ module.exports = function( config ) {
 			]
 		},
 
-		reporters: [ "documentation" ],
+		reporters: [ "markdown" ],
 
 		// web server port
 		port: 9876,

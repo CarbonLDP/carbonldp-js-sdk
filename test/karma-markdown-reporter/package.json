@@ -1,0 +1,12 @@
+{
+  "name": "karma-markdown-reporter",
+  "version": "1.0.0",
+  "description": "Karma markdown reporter",
+  "main": "reporter.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "MiguelAraCo <miguel.aragon@base22.com>",
+  "license": "UNLICENSED",
+  "private": true
+}
