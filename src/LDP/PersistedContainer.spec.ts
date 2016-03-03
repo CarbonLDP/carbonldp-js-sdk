@@ -24,7 +24,7 @@ import * as HTTP from "../HTTP";
 
 import * as PersistedContainer from "./PersistedContainer";
 
-fdescribe( module( "Carbon/LDP/PersistedContainer" ), ():void => {
+describe( module( "Carbon/LDP/PersistedContainer" ), ():void => {
 
 	class MockedContext extends AbstractContext {
 		resolve( uri:string ):string {
