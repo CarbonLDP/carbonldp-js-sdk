@@ -9,6 +9,7 @@ let karma = require( "karma" );
 
 let sourcemaps = require( "gulp-sourcemaps" );
 let ts = require( "gulp-typescript" );
+let dts = require( "dts-generator" );
 let tslint = require( "gulp-tslint" );
 
 let Builder = require( "systemjs-builder" );
@@ -90,6 +91,16 @@ gulp.task( "bundle-sfx", ( done ) => {
 	});
 });
 
+gulp.task( "bundle-definitions", ( done ) => {
+	dts.default({
+		name: "carbon",
+		project: "src/",
+		out: "dist/bundles/carbon.d.ts"
+	}).then( () => {
+		done();
+	});
+});
+
 gulp.task( "clean:dist", ( done ) => {
 	return del( config.dist.all, done );
 });
@@ -100,4 +111,4 @@ gulp.task( "build", [ "test", "ts-lint" ], () => {
 	return gulp.start( "build:afterTesting" );
 });
 gulp.task( "build:afterTesting", [ "clean:dist" ], () => { return gulp.start( "build:afterCleaning" ); });
-gulp.task( "build:afterCleaning", [ "compile-library", "bundle-sfx" ] );
+gulp.task( "build:afterCleaning", [ "compile-library", "bundle-sfx", "bundle-definitions" ] );

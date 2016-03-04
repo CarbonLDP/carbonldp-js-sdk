@@ -20,6 +20,7 @@
   },
   "devDependencies": {
     "del": "^2.0.2",
+    "dts-generator": "^1.7.0",
     "es6-shim": "^0.33.10",
     "gulp": "^3.9.1",
     "gulp-sourcemaps": "^1.6.0",
