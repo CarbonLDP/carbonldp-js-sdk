@@ -25,13 +25,7 @@ import * as HTTP from "../HTTP";
 import * as PersistedContainer from "./PersistedContainer";
 
 describe( module( "Carbon/LDP/PersistedContainer" ), ():void => {
-
-	class MockedContext extends AbstractContext {
-		resolve( uri:string ):string {
-			return uri;
-		}
-	}
-	let context:MockedContext;
+	let context:AbstractContext;
 
 	it( isDefined(), ():void => {
 		expect( PersistedContainer ).toBeDefined();
@@ -44,6 +38,11 @@ describe( module( "Carbon/LDP/PersistedContainer" ), ():void => {
 	), ():void => {
 
 		beforeEach( ():void => {
+			class MockedContext extends AbstractContext {
+				resolve( uri:string ):string {
+					return uri;
+				}
+			}
 			context = new MockedContext();
 		});
 
@@ -128,6 +127,11 @@ describe( module( "Carbon/LDP/PersistedContainer" ), ():void => {
 				let container:PersistedContainer.Class;
 
 				beforeEach( ():void => {
+					class MockedContext extends AbstractContext {
+						resolve( uri:string ):string {
+							return uri;
+						}
+					}
 					context = new MockedContext();
 					let document = PersistedDocument.Factory.create( "http://example.com/resource/", context.documents );
 					container = PersistedContainer.Factory.decorate( document );

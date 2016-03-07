@@ -34,13 +34,7 @@ describe( module( "Carbon/RDF/Value" ), ():void => {
 		let documentResource:any;
 		let pointerLibrary:Pointer.Library;
 		let result:any;
-
-		class MockedContext extends AbstractContext {
-			resolve( uri:string ):string {
-				return uri;
-			}
-		}
-		let context:MockedContext;
+		let context:AbstractContext;
 
 		beforeEach( ():void => {
 			expandedObject = [{
@@ -121,8 +115,15 @@ describe( module( "Carbon/RDF/Value" ), ():void => {
 					},
 				],
 			}];
-			documentResource = RDFDocument.Util.getDocumentResources( expandedObject )[ 0 ];
+
+			class MockedContext extends AbstractContext {
+				resolve( uri:string ):string {
+					return uri;
+				}
+			}
 			context = new MockedContext();
+
+			documentResource = RDFDocument.Util.getDocumentResources( expandedObject )[ 0 ];
 			pointerLibrary = PersistedDocument.Factory.create( expandedObject["@id"], context.documents );
 		});
 
