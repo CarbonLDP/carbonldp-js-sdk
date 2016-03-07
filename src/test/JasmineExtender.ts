@@ -130,6 +130,16 @@ export function interfaze( name:string, description:string, parent:string = null
 	return toJSON( descriptor );
 }
 
+export function enumeration( name:string, description:string = null ):string {
+	let descriptor:SuiteDescriptor = {
+		suiteType: ENUM,
+		name: name,
+		description: description
+	};
+
+	return toJSON( descriptor );
+}
+
 export function constructor( description:string = null ):string {
 	let descriptor:SuiteDescriptor = {
 		suiteType: CONSTRUCTOR,
@@ -321,7 +331,7 @@ export function hasDefaultExport( exportName: string ):string {
 	return toJSON( descriptor );
 }
 
-export function hasEnum( name:string, description?:string ):string {
+export function hasEnumeral( name:string, description:string = null ):string {
 	let descriptor:EnumDescriptor = {
 		specType: ENUM,
 		name: name,

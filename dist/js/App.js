@@ -6,7 +6,7 @@ System.register(["./AbstractContext", "./NS", "./RDF", "./Utils"], function(expo
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
     var AbstractContext_1, NS, RDF, Utils;
-    var RDF_CLASS, SCHEMA, AppContext, Factory, factory;
+    var RDF_CLASS, SCHEMA, AppContext, Factory;
     return {
         setters:[
             function (AbstractContext_1_1) {
@@ -51,13 +51,12 @@ System.register(["./AbstractContext", "./NS", "./RDF", "./Utils"], function(expo
             Factory = (function () {
                 function Factory() {
                 }
-                Factory.prototype.hasClassProperties = function (resource) {
+                Factory.hasClassProperties = function (resource) {
                     return (Utils.hasPropertyDefined(resource, "rootContainer"));
                 };
                 return Factory;
             })();
             exports_1("Factory", Factory);
-            exports_1("factory", factory = new Factory());
         }
     }
 });

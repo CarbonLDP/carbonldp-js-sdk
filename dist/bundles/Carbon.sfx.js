@@ -741,7 +741,7 @@ $__System.register("3", ["8", "9", "5", "6"], function(exports_1) {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
     var AbstractContext_1, NS, RDF, Utils;
-    var RDF_CLASS, SCHEMA, AppContext, Factory, factory;
+    var RDF_CLASS, SCHEMA, AppContext, Factory;
     return {
         setters:[
             function (AbstractContext_1_1) {
@@ -786,13 +786,12 @@ $__System.register("3", ["8", "9", "5", "6"], function(exports_1) {
             Factory = (function () {
                 function Factory() {
                 }
-                Factory.prototype.hasClassProperties = function (resource) {
+                Factory.hasClassProperties = function (resource) {
                     return (Utils.hasPropertyDefined(resource, "rootContainer"));
                 };
                 return Factory;
             })();
             exports_1("Factory", Factory);
-            exports_1("factory", factory = new Factory());
         }
     }
 });

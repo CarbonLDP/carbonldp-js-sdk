@@ -18,7 +18,6 @@ declare class AppContext extends AbstractContext {
 }
 export { AppContext as Context };
 export declare class Factory {
-    hasClassProperties(resource: Object): boolean;
+    static hasClassProperties(resource: Object): boolean;
 }
-export declare let factory: Factory;
 export default Class;
