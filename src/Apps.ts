@@ -9,7 +9,7 @@ import * as RDF from "./RDF";
 import * as Utils from "./Utils";
 import * as CS from "./NS/CS";
 
-export class Apps {
+class Apps {
 	private context:Context;
 
 	constructor( context:Context ) {

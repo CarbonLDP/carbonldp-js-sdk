@@ -134,7 +134,7 @@ export function enumeration( name:string, description:string = null ):string {
 	let descriptor:SuiteDescriptor = {
 		suiteType: ENUM,
 		name: name,
-		description: description
+		description: description,
 	};
 
 	return toJSON( descriptor );
@@ -264,6 +264,7 @@ export function method( access:string, name:string, description:string = null ):
 
 export function hasSignature():string;
 export function hasSignature( description:string ):string;
+export function hasSignature( description:string, returns:MethodReturn ):string;
 export function hasSignature( description:string, methodArguments:MethodArgument[] ):string;
 export function hasSignature( description:string, methodArguments:MethodArgument[], returns:MethodReturn ):string;
 export function hasSignature( methodArguments:MethodArgument[] ):string;

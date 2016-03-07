@@ -27,7 +27,7 @@ class Carbon extends AbstractContext {
 
 	apps:Apps;
 
-	constructor( settings:any ) {
+	constructor( settings?:any ) {
 		super();
 
 		settings = settings ? settings : defaultSettings;

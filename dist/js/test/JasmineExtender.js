@@ -41,6 +41,16 @@ System.register([], function(exports_1) {
         return toJSON(descriptor);
     }
     exports_1("interfaze", interfaze);
+    function enumeration(name, description) {
+        if (description === void 0) { description = null; }
+        var descriptor = {
+            suiteType: ENUM,
+            name: name,
+            description: description,
+        };
+        return toJSON(descriptor);
+    }
+    exports_1("enumeration", enumeration);
     function constructor(description) {
         if (description === void 0) { description = null; }
         var descriptor = {
@@ -205,7 +215,8 @@ System.register([], function(exports_1) {
         return toJSON(descriptor);
     }
     exports_1("hasDefaultExport", hasDefaultExport);
-    function hasEnum(name, description) {
+    function hasEnumeral(name, description) {
+        if (description === void 0) { description = null; }
         var descriptor = {
             specType: ENUM,
             name: name,
@@ -213,7 +224,7 @@ System.register([], function(exports_1) {
         };
         return toJSON(descriptor);
     }
-    exports_1("hasEnum", hasEnum);
+    exports_1("hasEnumeral", hasEnumeral);
     return {
         setters:[],
         execute: function() {

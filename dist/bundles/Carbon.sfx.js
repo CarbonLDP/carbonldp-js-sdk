@@ -727,7 +727,6 @@ $__System.register("2", ["3", "4", "5", "6", "7"], function(exports_1) {
                 };
                 return Apps;
             })();
-            exports_1("Apps", Apps);
             exports_1("default",Apps);
         }
     }
@@ -2257,7 +2256,6 @@ $__System.register("1a", ["14", "17", "16", "19", "15", "4", "5", "18", "6"], fu
                 return Factory;
             })();
             exports_1("Factory", Factory);
-            exports_1("default",Document);
         }
     }
 });
@@ -3056,7 +3054,7 @@ $__System.register("13", ["22", "14", "20", "5", "6", "16", "1b", "4", "9", "15"
                             membershipResource = documentResource;
                         }
                         else if (membershipResourceURI === null) {
-                            if (documentResource["@type"].contains(NS.LDP.Class.BasicContainer)) {
+                            if (documentResource["@type"].indexOf(NS.LDP.Class.BasicContainer) !== -1) {
                                 membershipResource = documentResource;
                             }
                             else {

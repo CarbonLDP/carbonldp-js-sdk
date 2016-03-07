@@ -56,7 +56,6 @@ System.register(["./App", "./Pointer", "./RDF", "./Utils", "./NS/CS"], function(
                 };
                 return Apps;
             })();
-            exports_1("Apps", Apps);
             exports_1("default",Apps);
         }
     }

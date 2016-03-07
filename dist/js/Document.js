@@ -255,7 +255,6 @@ System.register(["./Errors", "./Fragment", "./JSONLDConverter", "./NamedFragment
                 return Factory;
             })();
             exports_1("Factory", Factory);
-            exports_1("default",Document);
         }
     }
 });
