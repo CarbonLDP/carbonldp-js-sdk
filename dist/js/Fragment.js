@@ -1,6 +1,6 @@
 System.register(["./Resource", "./Utils"], function(exports_1) {
     var Resource, Utils;
-    var Factory, factory, Util;
+    var Factory, Util;
     return {
         setters:[
             function (Resource_1) {
@@ -13,18 +13,18 @@ System.register(["./Resource", "./Utils"], function(exports_1) {
             Factory = (function () {
                 function Factory() {
                 }
-                Factory.prototype.hasClassProperties = function (resource) {
+                Factory.hasClassProperties = function (resource) {
                     return (Utils.hasPropertyDefined(resource, "document"));
                 };
-                Factory.prototype.create = function (idOrDocument, document) {
+                Factory.create = function (idOrDocument, document) {
                     if (document === void 0) { document = null; }
                     return this.createFrom({}, idOrDocument, document);
                 };
-                Factory.prototype.createFrom = function (object, idOrDocument, document) {
+                Factory.createFrom = function (object, idOrDocument, document) {
                     if (document === void 0) { document = null; }
                     var id = !!document ? idOrDocument : Util.generateID();
                     var resource = Resource.Factory.createFrom(object, id);
-                    if (this.hasClassProperties(resource))
+                    if (Factory.hasClassProperties(resource))
                         return resource;
                     Object.defineProperties(resource, {
                         "document": {
@@ -39,7 +39,6 @@ System.register(["./Resource", "./Utils"], function(exports_1) {
                 return Factory;
             })();
             exports_1("Factory", Factory);
-            exports_1("factory", factory = new Factory());
             Util = (function () {
                 function Util() {
                 }

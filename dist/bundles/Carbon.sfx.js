@@ -1838,7 +1838,7 @@ $__System.register("16", ["14", "15", "9", "4", "5", "6"], function(exports_1) {
 
 $__System.register("17", ["18", "6"], function(exports_1) {
     var Resource, Utils;
-    var Factory, factory, Util;
+    var Factory, Util;
     return {
         setters:[
             function (Resource_1) {
@@ -1851,18 +1851,18 @@ $__System.register("17", ["18", "6"], function(exports_1) {
             Factory = (function () {
                 function Factory() {
                 }
-                Factory.prototype.hasClassProperties = function (resource) {
+                Factory.hasClassProperties = function (resource) {
                     return (Utils.hasPropertyDefined(resource, "document"));
                 };
-                Factory.prototype.create = function (idOrDocument, document) {
+                Factory.create = function (idOrDocument, document) {
                     if (document === void 0) { document = null; }
                     return this.createFrom({}, idOrDocument, document);
                 };
-                Factory.prototype.createFrom = function (object, idOrDocument, document) {
+                Factory.createFrom = function (object, idOrDocument, document) {
                     if (document === void 0) { document = null; }
                     var id = !!document ? idOrDocument : Util.generateID();
                     var resource = Resource.Factory.createFrom(object, id);
-                    if (this.hasClassProperties(resource))
+                    if (Factory.hasClassProperties(resource))
                         return resource;
                     Object.defineProperties(resource, {
                         "document": {
@@ -1877,7 +1877,6 @@ $__System.register("17", ["18", "6"], function(exports_1) {
                 return Factory;
             })();
             exports_1("Factory", Factory);
-            exports_1("factory", factory = new Factory());
             Util = (function () {
                 function Util() {
                 }
@@ -1893,7 +1892,7 @@ $__System.register("17", ["18", "6"], function(exports_1) {
 
 $__System.register("19", ["17", "5", "6"], function(exports_1) {
     var Fragment, RDF, Utils;
-    var Factory, factory;
+    var Factory;
     return {
         setters:[
             function (Fragment_1) {
@@ -1909,15 +1908,15 @@ $__System.register("19", ["17", "5", "6"], function(exports_1) {
             Factory = (function () {
                 function Factory() {
                 }
-                Factory.prototype.hasClassProperties = function (resource) {
+                Factory.hasClassProperties = function (resource) {
                     return (Utils.hasPropertyDefined(resource, "slug"));
                 };
-                Factory.prototype.create = function (slug, document) {
+                Factory.create = function (slug, document) {
                     return this.createFrom({}, slug, document);
                 };
-                Factory.prototype.createFrom = function (object, slug, document) {
+                Factory.createFrom = function (object, slug, document) {
                     var uri = document.id + "#" + slug;
-                    var fragment = Fragment.factory.createFrom(object, uri, document);
+                    var fragment = Fragment.Factory.createFrom(object, uri, document);
                     if (this.hasClassProperties(fragment))
                         return fragment;
                     Object.defineProperties(fragment, {
@@ -1937,7 +1936,6 @@ $__System.register("19", ["17", "5", "6"], function(exports_1) {
                 return Factory;
             })();
             exports_1("Factory", Factory);
-            exports_1("factory", factory = new Factory());
         }
     }
 });
@@ -2005,6 +2003,8 @@ $__System.register("1a", ["14", "17", "16", "19", "15", "4", "5", "18", "6"], fu
     var Factory;
     function hasPointer(id) {
         var document = this;
+        if (id === document.id)
+            return true;
         if (!document.inScope(id))
             return false;
         return !!document.getFragment(id);
@@ -2026,23 +2026,24 @@ $__System.register("1a", ["14", "17", "16", "19", "15", "4", "5", "18", "6"], fu
             return true;
         if (RDF.URI.Util.isBNodeID(id))
             return true;
-        if (RDF.URI.Util.isAbsolute(id) && RDF.URI.Util.isFragmentOf(id, document.id))
+        if (RDF.URI.Util.isFragmentOf(id, document.id))
             return true;
-        if (!RDF.URI.Util.isAbsolute(document.id) && !RDF.URI.Util.isAbsolute(id) && RDF.URI.Util.isFragmentOf(id, document.id))
-            return true;
-        return false;
+        return Utils.S.startsWith(id, "#");
     }
     function hasFragment(id) {
         var document = this;
-        if (!document.inScope(id))
+        if (RDF.URI.Util.isRelative(id) && !Utils.S.startsWith(id, "#"))
+            id = "#" + id;
+        if (!document.inScope(id) && !RDF.URI.Util.hasFragment(id))
             return false;
+        id = RDF.URI.Util.getFragment(id);
         return !!document._fragmentsIndex.has(id);
     }
     function getFragment(id) {
         var document = this;
         if (!RDF.URI.Util.isBNodeID(id))
             return document.getNamedFragment(id);
-        return document._fragmentsIndex.get(id);
+        return document._fragmentsIndex.get(id) || null;
     }
     function getNamedFragment(id) {
         var document = this;
@@ -2055,7 +2056,7 @@ $__System.register("1a", ["14", "17", "16", "19", "15", "4", "5", "18", "6"], fu
         }
         else if (Utils.S.startsWith(id, "#"))
             id = id.substring(1);
-        return document._fragmentsIndex.get(id);
+        return document._fragmentsIndex.get(id) || null;
     }
     function getFragments() {
         var document = this;
@@ -2069,12 +2070,12 @@ $__System.register("1a", ["14", "17", "16", "19", "15", "4", "5", "18", "6"], fu
                 return document.createNamedFragment(slug);
             id = slug;
             if (this._fragmentsIndex.has(id))
-                return this.getFragment(id);
+                throw new Errors.IDAlreadyInUseError("The slug provided is already being used by a fragment.");
         }
         else {
             id = Fragment.Util.generateID();
         }
-        var fragment = Fragment.factory.create(id, document);
+        var fragment = Fragment.Factory.create(id, document);
         document._fragmentsIndex.set(id, fragment);
         return fragment;
     }
@@ -2091,7 +2092,7 @@ $__System.register("1a", ["14", "17", "16", "19", "15", "4", "5", "18", "6"], fu
             slug = slug.substring(1);
         if (document._fragmentsIndex.has(slug))
             throw new Errors.IDAlreadyInUseError("The slug provided is already being used by a fragment.");
-        var fragment = NamedFragment.factory.create(slug, document);
+        var fragment = NamedFragment.Factory.create(slug, document);
         document._fragmentsIndex.set(slug, fragment);
         return fragment;
     }

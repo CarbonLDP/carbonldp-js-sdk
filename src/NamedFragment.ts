@@ -8,20 +8,20 @@ export interface Class extends Fragment.Class {
 }
 
 export class Factory {
-	hasClassProperties( resource:Fragment.Class ):boolean {
+	static hasClassProperties( resource:Fragment.Class ):boolean {
 		return (
 			Utils.hasPropertyDefined( resource, "slug" )
 		);
 	}
 
-	create( slug:string, document:Document.Class ):Class {
+	static create( slug:string, document:Document.Class ):Class {
 		return this.createFrom( {}, slug, document );
 	}
 
-	createFrom<T extends Object>( object:T, slug:string, document:Document.Class ):T & Class {
+	static createFrom<T extends Object>( object:T, slug:string, document:Document.Class ):T & Class {
 		let uri:string = document.id + "#" + slug;
 
-		let fragment:Fragment.Class = Fragment.factory.createFrom( object, uri, document );
+		let fragment:Fragment.Class = Fragment.Factory.createFrom( object, uri, document );
 
 		if( this.hasClassProperties( fragment ) ) return <any> fragment;
 
@@ -41,7 +41,5 @@ export class Factory {
 		return <any>fragment;
 	}
 }
-
-export var factory:Factory = new Factory();
 
 export default Class;

@@ -261,7 +261,7 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 			if( documentResource[ "@id" ] === membershipResourceURI ) {
 				membershipResource = documentResource;
 			} else if( membershipResourceURI === null ) {
-				if( documentResource[ "@type" ].contains( NS.LDP.Class.BasicContainer ) ) {
+				if( documentResource[ "@type" ].indexOf( NS.LDP.Class.BasicContainer ) !== -1 ) {
 					membershipResource = documentResource;
 				} else {
 					throw new HTTP.Errors.BadResponseError( "The document is not an ldp:BasicContainer and it doesn't contain an ldp:membershipResource triple.", response );
