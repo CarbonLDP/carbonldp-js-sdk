@@ -16,7 +16,7 @@ export class Factory {
 
 	static create( uri:string ):Class {
 		return {
-			"@id": uri
+			"@id": uri,
 		};
 	}
 }

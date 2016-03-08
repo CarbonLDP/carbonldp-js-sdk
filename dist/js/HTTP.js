@@ -1,5 +1,7 @@
 /// <reference path="./../typings/typings.d.ts" />
-System.register(["./HTTP/Errors", "./HTTP/Header", "./HTTP/JSONParser", "./HTTP/JSONLDParser", "./HTTP/Method", "./HTTP/Parser", "./HTTP/Request", "./HTTP/Response", "./HTTP/StatusCode", "./HTTP/StringParser"], function(exports_1) {
+System.register(["./HTTP/Errors", "./HTTP/Header", "./HTTP/JSONParser", "./HTTP/JSONLDParser", "./HTTP/Method", "./HTTP/Parser", "./HTTP/Request", "./HTTP/Response", "./HTTP/StatusCode", "./HTTP/StringParser"], function(exports_1, context_1) {
+    "use strict";
+    var __moduleName = context_1 && context_1.id;
     var Errors, Header, JSONParser, JSONLDParser, Method_1, Parser, Request, Response, StatusCode_1, StringParser;
     return {
         setters:[

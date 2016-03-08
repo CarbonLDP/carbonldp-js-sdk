@@ -1,5 +1,7 @@
 /// <reference path="./../typings/typings.d.ts" />
-System.register(["./App", "./Pointer", "./RDF", "./Utils", "./NS/CS"], function(exports_1) {
+System.register(["./App", "./Pointer", "./RDF", "./Utils", "./NS/CS"], function(exports_1, context_1) {
+    "use strict";
+    var __moduleName = context_1 && context_1.id;
     var App, Pointer, RDF, Utils, CS;
     var Apps;
     return {
@@ -55,7 +57,7 @@ System.register(["./App", "./Pointer", "./RDF", "./Utils", "./NS/CS"], function(
                     return this.context.getSetting("platform.apps.container");
                 };
                 return Apps;
-            })();
+            }());
             exports_1("Apps", Apps);
             exports_1("default",Apps);
         }

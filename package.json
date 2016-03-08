@@ -1,6 +1,6 @@
 {
   "name": "carbonldp-sdk",
-  "version": "0.15.1-ALPHA",
+  "version": "0.16.0-ALPHA",
   "description": "JavaScript/TypeScript SDK to create CarbonLDP's Applications",
   "homepage": "https://github.com/CarbonLDP/CarbonLDP-JS-SDK",
   "contributors": [
@@ -24,8 +24,8 @@
     "es6-shim": "^0.33.10",
     "gulp": "^3.9.1",
     "gulp-sourcemaps": "^1.6.0",
-    "gulp-tslint": "^3.5.0",
-    "gulp-typescript": "^2.10.0",
+    "gulp-tslint": "^3.6.0",
+    "gulp-typescript": "^2.12.1",
     "gulp-util": "^3.0.7",
     "jasmine-ajax": "^3.2.0",
     "jasmine-core": "^2.3.4",
@@ -36,10 +36,10 @@
     "karma-jasmine": "^0.3.6",
     "karma-jspm": "^2.0.2",
     "karma-sourcemap-loader": "^0.3.4",
-    "systemjs": "github:justindujardin/systemjs#typescript-source-maps",
-    "systemjs-builder": "github:justindujardin/builder#typescript-source-maps",
-    "tslint": "^3.3.0",
-    "typescript": "^1.7.5",
+    "systemjs": "github:CarbonLDP/systemjs#typescript-source-maps",
+    "systemjs-builder": "github:CarbonLDP/builder#typescript-source-maps",
+    "tslint": "^3.5.0",
+    "typescript": "^1.8.7",
     "typings": "^0.6.5"
   },
   "scripts": {
@@ -58,7 +58,7 @@
     "dependencies": {},
     "devDependencies": {
       "jsonld": "npm:jsonld@^0.4.2",
-      "typescript": "npm:typescript@^1.6.2"
+      "typescript": "npm:typescript@^1.8.7"
     }
   }
 }

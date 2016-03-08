@@ -40,10 +40,6 @@ JavaScript SDK that simplifies the use of CarbonLDP's REST API.
 - **tsd.json**: tsd configuration file
 - **tslint.json**: tslint configuration file
 
-## TODO
-- Configure Karma to run with JSPM instead of RequireJS
-- Create additional bundles
-
 ## License
 
 	Copyright (c) 2015-present, Base22 Technology Group, LLC.

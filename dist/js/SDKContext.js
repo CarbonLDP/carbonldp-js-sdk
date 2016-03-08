@@ -1,5 +1,7 @@
 /// <reference path="./../typings/typings.d.ts" />
-System.register(["./App", "./APIDescription", "./Auth", "./Documents", "./Errors", "./LDP", "./ObjectSchema"], function(exports_1) {
+System.register(["./App", "./APIDescription", "./Auth", "./Documents", "./Errors", "./LDP", "./ObjectSchema"], function(exports_1, context_1) {
+    "use strict";
+    var __moduleName = context_1 && context_1.id;
     var App, APIDescription, Auth, Documents_1, Errors, LDP, ObjectSchema;
     var Class, instance;
     return {
@@ -154,7 +156,7 @@ System.register(["./App", "./APIDescription", "./Auth", "./Documents", "./Errors
                     this.extendObjectSchema(Auth.Token.RDF_CLASS, Auth.Token.CONTEXT);
                 };
                 return Class;
-            })();
+            }());
             exports_1("Class", Class);
             exports_1("instance", instance = new Class());
             exports_1("default",instance);

@@ -1,4 +1,6 @@
-System.register(["./NS/C", "./NS/CP", "./NS/CS", "./NS/LDP", "./NS/RDF", "./NS/XSD"], function(exports_1) {
+System.register(["./NS/C", "./NS/CP", "./NS/CS", "./NS/LDP", "./NS/RDF", "./NS/XSD"], function(exports_1, context_1) {
+    "use strict";
+    var __moduleName = context_1 && context_1.id;
     var C, CP, CS, LDP, RDF, XSD;
     return {
         setters:[

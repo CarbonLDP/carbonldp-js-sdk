@@ -26,7 +26,7 @@ export const SCHEMA:ObjectSchema.Class = {
 		"@type": "@id",
 	},
 	"allowsOrigin": {
-		"@id": NS.CS.Predicate.allowsOrigin
+		"@id": NS.CS.Predicate.allowsOrigin,
 	},
 };
 

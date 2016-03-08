@@ -1,4 +1,6 @@
-System.register(["./../../../Errors", "./../../../Utils"], function(exports_1) {
+System.register(["./../../../Errors", "./../../../Utils"], function(exports_1, context_1) {
+    "use strict";
+    var __moduleName = context_1 && context_1.id;
     var __extends = (this && this.__extends) || function (d, b) {
         for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
         function __() { this.constructor = d; }
@@ -30,7 +32,7 @@ System.register(["./../../../Errors", "./../../../Utils"], function(exports_1) {
                     return value.getUTCFullYear() + "-" + pad((value.getUTCMonth() + 1)) + "-" + pad(value.getUTCDate());
                 };
                 return DateSerializer;
-            })();
+            }());
             exports_1("DateSerializer", DateSerializer);
             exports_1("dateSerializer", dateSerializer = new DateSerializer());
             DateTimeSerializer = (function () {
@@ -42,7 +44,7 @@ System.register(["./../../../Errors", "./../../../Utils"], function(exports_1) {
                     return value.toISOString();
                 };
                 return DateTimeSerializer;
-            })();
+            }());
             exports_1("DateTimeSerializer", DateTimeSerializer);
             exports_1("dateTimeSerializer", dateTimeSerializer = new DateTimeSerializer());
             TimeSerializer = (function () {
@@ -58,7 +60,7 @@ System.register(["./../../../Errors", "./../../../Utils"], function(exports_1) {
                         + "Z";
                 };
                 return TimeSerializer;
-            })();
+            }());
             exports_1("TimeSerializer", TimeSerializer);
             exports_1("timeSerializer", timeSerializer = new TimeSerializer());
             IntegerSerializer = (function () {
@@ -71,7 +73,7 @@ System.register(["./../../../Errors", "./../../../Utils"], function(exports_1) {
                     return (~~value) + "";
                 };
                 return IntegerSerializer;
-            })();
+            }());
             exports_1("IntegerSerializer", IntegerSerializer);
             exports_1("integerSerializer", integerSerializer = new IntegerSerializer());
             UnsignedIntegerSerializer = (function (_super) {
@@ -85,7 +87,7 @@ System.register(["./../../../Errors", "./../../../Utils"], function(exports_1) {
                     return stringValue;
                 };
                 return UnsignedIntegerSerializer;
-            })(IntegerSerializer);
+            }(IntegerSerializer));
             exports_1("UnsignedIntegerSerializer", UnsignedIntegerSerializer);
             exports_1("unsignedIntegerSerializer", unsignedIntegerSerializer = new UnsignedIntegerSerializer());
             FloatSerializer = (function () {
@@ -97,7 +99,7 @@ System.register(["./../../../Errors", "./../../../Utils"], function(exports_1) {
                     return value + "";
                 };
                 return FloatSerializer;
-            })();
+            }());
             exports_1("FloatSerializer", FloatSerializer);
             exports_1("floatSerializer", floatSerializer = new FloatSerializer());
             BooleanSerializer = (function () {
@@ -112,7 +114,7 @@ System.register(["./../../../Errors", "./../../../Utils"], function(exports_1) {
                     }
                 };
                 return BooleanSerializer;
-            })();
+            }());
             exports_1("BooleanSerializer", BooleanSerializer);
             exports_1("booleanSerializer", booleanSerializer = new BooleanSerializer());
             StringSerializer = (function () {
@@ -122,7 +124,7 @@ System.register(["./../../../Errors", "./../../../Utils"], function(exports_1) {
                     return value + "";
                 };
                 return StringSerializer;
-            })();
+            }());
             exports_1("StringSerializer", StringSerializer);
             exports_1("stringSerializer", stringSerializer = new StringSerializer());
         }

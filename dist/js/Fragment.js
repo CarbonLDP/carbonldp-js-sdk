@@ -1,4 +1,6 @@
-System.register(["./Resource", "./Utils"], function(exports_1) {
+System.register(["./Resource", "./Utils"], function(exports_1, context_1) {
+    "use strict";
+    var __moduleName = context_1 && context_1.id;
     var Resource, Utils;
     var Factory, factory, Util;
     return {
@@ -37,7 +39,7 @@ System.register(["./Resource", "./Utils"], function(exports_1) {
                     return resource;
                 };
                 return Factory;
-            })();
+            }());
             exports_1("Factory", Factory);
             exports_1("factory", factory = new Factory());
             Util = (function () {
@@ -47,7 +49,7 @@ System.register(["./Resource", "./Utils"], function(exports_1) {
                     return "_:" + Utils.UUID.generate();
                 };
                 return Util;
-            })();
+            }());
             exports_1("Util", Util);
         }
     }

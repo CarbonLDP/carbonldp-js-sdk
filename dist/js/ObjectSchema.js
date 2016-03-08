@@ -1,5 +1,7 @@
 /// <reference path="./../typings/typings.d.ts" />
-System.register(["./Errors", "./RDF", "./Utils"], function(exports_1) {
+System.register(["./Errors", "./RDF", "./Utils"], function(exports_1, context_1) {
+    "use strict";
+    var __moduleName = context_1 && context_1.id;
     var Errors, RDF, Utils;
     var ContainerType, DigestedObjectSchema, DigestedPropertyDefinition, Digester;
     return {
@@ -28,7 +30,7 @@ System.register(["./Errors", "./RDF", "./Utils"], function(exports_1) {
                     this.prefixedURIs = new Map();
                 }
                 return DigestedObjectSchema;
-            })();
+            }());
             exports_1("DigestedObjectSchema", DigestedObjectSchema);
             DigestedPropertyDefinition = (function () {
                 function DigestedPropertyDefinition() {
@@ -39,7 +41,7 @@ System.register(["./Errors", "./RDF", "./Utils"], function(exports_1) {
                     this.containerType = null;
                 }
                 return DigestedPropertyDefinition;
-            })();
+            }());
             exports_1("DigestedPropertyDefinition", DigestedPropertyDefinition);
             Digester = (function () {
                 function Digester() {
@@ -58,8 +60,8 @@ System.register(["./Errors", "./RDF", "./Utils"], function(exports_1) {
                     if (digestedSchemas.length === 0)
                         throw new Errors.IllegalArgumentError("At least one DigestedObjectSchema needs to be specified.");
                     var combinedSchema = digestedSchemas.shift();
-                    for (var _i = 0; _i < digestedSchemas.length; _i++) {
-                        var digestedSchema = digestedSchemas[_i];
+                    for (var _i = 0, digestedSchemas_1 = digestedSchemas; _i < digestedSchemas_1.length; _i++) {
+                        var digestedSchema = digestedSchemas_1[_i];
                         Utils.M.extend(combinedSchema.prefixes, digestedSchema.prefixes);
                         Utils.M.extend(combinedSchema.prefixedURIs, digestedSchema.prefixedURIs);
                         Utils.M.extend(combinedSchema.properties, digestedSchema.properties);
@@ -153,8 +155,8 @@ System.register(["./Errors", "./RDF", "./Utils"], function(exports_1) {
                         if (!digestedSchema.prefixedURIs.has(prefixName))
                             return;
                         var prefixedURIs = digestedSchema.prefixedURIs.get(prefixName);
-                        for (var _i = 0; _i < prefixedURIs.length; _i++) {
-                            var prefixedURI = prefixedURIs[_i];
+                        for (var _i = 0, prefixedURIs_1 = prefixedURIs; _i < prefixedURIs_1.length; _i++) {
+                            var prefixedURI = prefixedURIs_1[_i];
                             Digester.resolvePrefixedURI(prefixedURI, digestedSchema);
                         }
                         digestedSchema.prefixedURIs.delete(prefixName);
@@ -178,7 +180,7 @@ System.register(["./Errors", "./RDF", "./Utils"], function(exports_1) {
                     return uri;
                 };
                 return Digester;
-            })();
+            }());
             exports_1("Digester", Digester);
         }
     }

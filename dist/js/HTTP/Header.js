@@ -1,5 +1,7 @@
 /// <reference path="../../typings/typings.d.ts" />
-System.register([], function(exports_1) {
+System.register([], function(exports_1, context_1) {
+    "use strict";
+    var __moduleName = context_1 && context_1.id;
     var Class, Value, Util;
     return {
         setters:[],
@@ -29,7 +31,7 @@ System.register([], function(exports_1) {
                     }
                 };
                 return Class;
-            })();
+            }());
             exports_1("Class", Class);
             Value = (function () {
                 function Value(value) {
@@ -39,7 +41,7 @@ System.register([], function(exports_1) {
                     return this.value;
                 };
                 return Value;
-            })();
+            }());
             exports_1("Value", Value);
             Util = (function () {
                 function Util() {
@@ -68,7 +70,7 @@ System.register([], function(exports_1) {
                     return headers;
                 };
                 return Util;
-            })();
+            }());
             exports_1("Util", Util);
             exports_1("default",Class);
         }

@@ -1,4 +1,6 @@
-System.register(["./../Utils"], function(exports_1) {
+System.register(["./../Utils"], function(exports_1, context_1) {
+    "use strict";
+    var __moduleName = context_1 && context_1.id;
     var Utils;
     var namespace, DataType;
     return {
@@ -40,7 +42,7 @@ System.register(["./../Utils"], function(exports_1) {
                 DataType.string = namespace + "string";
                 DataType.object = namespace + "object";
                 return DataType;
-            })();
+            }());
             exports_1("DataType", DataType);
             Utils.forEachOwnProperty(DataType, function (key, value) {
                 DataType[value] = key;

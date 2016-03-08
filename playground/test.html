@@ -58,14 +58,18 @@
 			var resource;
 
 			carbon.auth.authenticate( "admin@carbonldp.com", "hello" ).then( function() {
-				return carbon.apps.getAll();
-			} ).then( function( appContexts ) {
-				console.log( "%o", appContexts );
-			} );
+				return carbon.apps.get( "test-app/" );
+			} ).then( function( fetchedAppContext ) {
+				appContext = fetchedAppContext;
 
-			function executeSELECTQuery( document ) {
-				return document.executeSELECTQuery( "SELECT ?c ?s ?p ?o WHERE { GRAPH ?c { ?s ?p ?o } }" );
-			}
+				return appContext.documents.get( "/" );
+			} ).then( function( result ) {
+				resource = result[ 0 ];
+
+				return resource.executeSELECTQuery( "SELECT ?s ?p ?o WHERE { GRAPH <https://local.carbonldp.com/apps/test-app/> { ?s ?p ?o } }" );
+			} ).then( function( results ) {
+				console.log( "%o", results );
+			} );
 
 			function incrementCounter( resource ) {
 				resource = result[ 0 ];

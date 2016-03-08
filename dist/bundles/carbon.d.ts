@@ -689,6 +689,7 @@ declare module 'carbon/RDF/Literal' {
 	}
 	export class Factory {
 	    static from(value: any): Class;
+	    static parse(literalValue: string, literalDataType?: string): any;
 	    static parse(literal: Class): any;
 	    static is(value: any): boolean;
 	    static hasType(value: Class, type: string): boolean;
@@ -1169,18 +1170,33 @@ declare module 'carbon/SPARQL/RawResultsParser' {
 	export default Class;
 
 }
+declare module 'carbon/SPARQL/SELECTResults' {
+	export interface BindingObject {
+	    [binding: string]: any;
+	}
+	export interface Class {
+	    vars: string[];
+	    bindings: BindingObject[];
+	}
+	export default Class;
+
+}
 declare module 'carbon/SPARQL/Service' {
 	/// <reference path="../../typings/typings.d.ts" />
 	import * as HTTP from 'carbon/HTTP';
-	import RawResults from 'carbon/SPARQL/RawResults';
+	import * as Pointer from 'carbon/Pointer';
+	import * as RawResults from 'carbon/SPARQL/RawResults';
 	export class Class {
 	    private static defaultOptions;
 	    private static resultsParser;
 	    private static stringParser;
-	    static executeRawASKQuery(url: string, askQuery: string, options?: HTTP.Request.Options): Promise<[RawResults, HTTP.Response.Class]>;
-	    static executeRawSELECTQuery(url: string, selectQuery: string, options?: HTTP.Request.Options): Promise<[RawResults, HTTP.Response.Class]>;
+	    static executeRawASKQuery(url: string, askQuery: string, options?: HTTP.Request.Options): Promise<[RawResults.Class, HTTP.Response.Class]>;
+	    static executeASKQuery(url: string, askQuery: string, options?: HTTP.Request.Options): Promise<[boolean, HTTP.Response.Class]>;
+	    static executeRawSELECTQuery(url: string, selectQuery: string, options?: HTTP.Request.Options): Promise<[RawResults.Class, HTTP.Response.Class]>;
+	    static executeSELECTQuery(url: string, selectQuery: string, pointerLibrary: Pointer.Library, options: HTTP.Request.Options): Promise<[any, HTTP.Response.Class]>;
 	    static executeRawCONSTRUCTQuery(url: string, constructQuery: string, options?: HTTP.Request.Options): Promise<[string, HTTP.Response.Class]>;
 	    static executeRawDESCRIBEQuery(url: string, describeQuery: string, options?: HTTP.Request.Options): Promise<[string, HTTP.Response.Class]>;
+	    private static parseRawBindingProperty(rawBindingProperty, pointerLibrary);
 	}
 	export default Class;
 
@@ -1189,7 +1205,8 @@ declare module 'carbon/SPARQL' {
 	import * as RawResults from 'carbon/SPARQL/RawResults';
 	import * as RawResultsParser from 'carbon/SPARQL/RawResultsParser';
 	import Service from 'carbon/SPARQL/Service';
-	export { RawResults, RawResultsParser, Service };
+	import * as SELECTResults from 'carbon/SPARQL/SELECTResults';
+	export { RawResults, RawResultsParser, Service, SELECTResults };
 
 }
 declare module 'carbon/PersistedDocument' {
@@ -1206,7 +1223,9 @@ declare module 'carbon/PersistedDocument' {
 	    save(): Promise<void>;
 	    destroy(): Promise<void>;
 	    executeRawASKQuery(): Promise<[SPARQL.RawResults.Class, HTTP.Response.Class]>;
+	    executeASKQuery(): Promise<[boolean, HTTP.Response.Class]>;
 	    executeRawSELECTQuery(): Promise<[SPARQL.RawResults.Class, HTTP.Response.Class]>;
+	    executeSELECTQuery(): Promise<[SPARQL.SELECTResults.Class, HTTP.Response.Class]>;
 	    executeRawDESCRIBEQuery(): Promise<[string, HTTP.Response.Class]>;
 	    executeRawCONSTRUCTQuery(): Promise<[string, HTTP.Response.Class]>;
 	}
@@ -1250,7 +1269,9 @@ declare module 'carbon/Documents' {
 	    delete(persistedDocument: PersistedDocument.Class, requestOptions?: HTTP.Request.Options): Promise<HTTP.Response.Class>;
 	    getSchemaFor(object: Object): ObjectSchema.DigestedObjectSchema;
 	    executeRawASKQuery(documentURI: string, askQuery: string, requestOptions?: HTTP.Request.Options): Promise<[SPARQL.RawResults.Class, HTTP.Response.Class]>;
+	    executeASKQuery(documentURI: string, askQuery: string, requestOptions?: HTTP.Request.Options): Promise<[boolean, HTTP.Response.Class]>;
 	    executeRawSELECTQuery(documentURI: string, selectQuery: string, requestOptions?: HTTP.Request.Options): Promise<[SPARQL.RawResults.Class, HTTP.Response.Class]>;
+	    executeSELECTQuery(documentURI: string, selectQuery: string, requestOptions?: HTTP.Request.Options): Promise<[SPARQL.SELECTResults.Class, HTTP.Response.Class]>;
 	    executeRawCONSTRUCTQuery(documentURI: string, constructQuery: string, requestOptions?: HTTP.Request.Options): Promise<[string, HTTP.Response.Class]>;
 	    executeRawDESCRIBEQuery(documentURI: string, constructQuery: string, requestOptions?: HTTP.Request.Options): Promise<[string, HTTP.Response.Class]>;
 	    private getRDFDocument(requestURL, rdfDocuments, response);

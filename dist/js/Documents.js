@@ -1,5 +1,7 @@
 /// <reference path="../typings/typings.d.ts" />
-System.register(["jsonld", "./Errors", "./HTTP", "./RDF", "./Utils", "./JSONLDConverter", "./PersistedDocument", "./Pointer", "./NS", "./ObjectSchema", "./NS/LDP", "./SPARQL"], function(exports_1) {
+System.register(["jsonld", "./Errors", "./HTTP", "./RDF", "./Utils", "./JSONLDConverter", "./PersistedDocument", "./Pointer", "./NS", "./ObjectSchema", "./NS/LDP", "./SPARQL"], function(exports_1, context_1) {
+    "use strict";
+    var __moduleName = context_1 && context_1.id;
     var jsonld, Errors, HTTP, RDF, Utils, JSONLDConverter, PersistedDocument, Pointer, NS, ObjectSchema, LDP, SPARQL;
     var Documents;
     function parse(input) {
@@ -127,10 +129,10 @@ System.register(["jsonld", "./Errors", "./HTTP", "./RDF", "./Utils", "./JSONLDCo
                     if (!!this.context)
                         uri = this.context.resolve(uri);
                     if (this.pointers.has(pointerID)) {
-                        var pointer = this.getPointer(uri);
-                        if (pointer.isResolved()) {
+                        var pointer_1 = this.getPointer(uri);
+                        if (pointer_1.isResolved()) {
                             return new Promise(function (resolve, reject) {
-                                resolve([pointer, null]);
+                                resolve([pointer_1, null]);
                             });
                         }
                     }
@@ -163,13 +165,13 @@ System.register(["jsonld", "./Errors", "./HTTP", "./RDF", "./Utils", "./JSONLDCo
                         var document = PersistedDocument.Factory.createFrom(documentPointer, uri, _this);
                         document._etag = etag;
                         var fragments = [];
-                        for (var _i = 0; _i < fragmentResources.length; _i++) {
-                            var fragmentResource = fragmentResources[_i];
+                        for (var _i = 0, fragmentResources_1 = fragmentResources; _i < fragmentResources_1.length; _i++) {
+                            var fragmentResource = fragmentResources_1[_i];
                             fragments.push(document.createFragment(fragmentResource["@id"]));
                         }
                         var namedFragments = [];
-                        for (var _b = 0; _b < namedFragmentResources.length; _b++) {
-                            var namedFragmentResource = namedFragmentResources[_b];
+                        for (var _b = 0, namedFragmentResources_1 = namedFragmentResources; _b < namedFragmentResources_1.length; _b++) {
+                            var namedFragmentResource = namedFragmentResources_1[_b];
                             namedFragments.push(document.createNamedFragment(namedFragmentResource["@id"]));
                         }
                         _this.compact(documentResource, document, document);
@@ -323,6 +325,17 @@ System.register(["jsonld", "./Errors", "./HTTP", "./RDF", "./Utils", "./JSONLDCo
                         this.context.auth.addAuthentication(requestOptions);
                     return SPARQL.Service.executeRawASKQuery(documentURI, askQuery, requestOptions);
                 };
+                Documents.prototype.executeASKQuery = function (documentURI, askQuery, requestOptions) {
+                    if (requestOptions === void 0) { requestOptions = {}; }
+                    if (!RDF.URI.Util.isAbsolute(documentURI)) {
+                        if (!this.context)
+                            throw new Errors.IllegalArgumentError("This Documents instance doesn't support relative URIs.");
+                        documentURI = this.context.resolve(documentURI);
+                    }
+                    if (this.context && this.context.auth.isAuthenticated())
+                        this.context.auth.addAuthentication(requestOptions);
+                    return SPARQL.Service.executeASKQuery(documentURI, askQuery, requestOptions);
+                };
                 Documents.prototype.executeRawSELECTQuery = function (documentURI, selectQuery, requestOptions) {
                     if (requestOptions === void 0) { requestOptions = {}; }
                     if (!RDF.URI.Util.isAbsolute(documentURI)) {
@@ -333,6 +346,17 @@ System.register(["jsonld", "./Errors", "./HTTP", "./RDF", "./Utils", "./JSONLDCo
                     if (this.context && this.context.auth.isAuthenticated())
                         this.context.auth.addAuthentication(requestOptions);
                     return SPARQL.Service.executeRawSELECTQuery(documentURI, selectQuery, requestOptions);
+                };
+                Documents.prototype.executeSELECTQuery = function (documentURI, selectQuery, requestOptions) {
+                    if (requestOptions === void 0) { requestOptions = {}; }
+                    if (!RDF.URI.Util.isAbsolute(documentURI)) {
+                        if (!this.context)
+                            throw new Errors.IllegalArgumentError("This Documents instance doesn't support relative URIs.");
+                        documentURI = this.context.resolve(documentURI);
+                    }
+                    if (this.context && this.context.auth.isAuthenticated())
+                        this.context.auth.addAuthentication(requestOptions);
+                    return SPARQL.Service.executeSELECTQuery(documentURI, selectQuery, this, requestOptions);
                 };
                 Documents.prototype.executeRawCONSTRUCTQuery = function (documentURI, constructQuery, requestOptions) {
                     if (requestOptions === void 0) { requestOptions = {}; }
@@ -437,8 +461,8 @@ System.register(["jsonld", "./Errors", "./HTTP", "./RDF", "./Utils", "./JSONLDCo
                     var digestedSchema;
                     if (!!this.context) {
                         var typesDigestedObjectSchemas = [this.context.getObjectSchema()];
-                        for (var _i = 0; _i < objectTypes.length; _i++) {
-                            var type = objectTypes[_i];
+                        for (var _i = 0, objectTypes_1 = objectTypes; _i < objectTypes_1.length; _i++) {
+                            var type = objectTypes_1[_i];
                             if (this.context.getObjectSchema(type))
                                 typesDigestedObjectSchemas.push(this.context.getObjectSchema(type));
                         }
@@ -465,7 +489,7 @@ System.register(["jsonld", "./Errors", "./HTTP", "./RDF", "./Utils", "./JSONLDCo
                     return document.types;
                 };
                 return Documents;
-            })();
+            }());
             exports_1("default",Documents);
         }
     }

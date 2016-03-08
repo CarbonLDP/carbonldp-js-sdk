@@ -1,4 +1,6 @@
-System.register(["./../Utils"], function(exports_1) {
+System.register(["./../Utils"], function(exports_1, context_1) {
+    "use strict";
+    var __moduleName = context_1 && context_1.id;
     var Utils;
     var ValueTypes, Factory;
     return {
@@ -26,7 +28,7 @@ System.register(["./../Utils"], function(exports_1) {
                     configurable: true
                 });
                 return ValueTypes;
-            })();
+            }());
             exports_1("ValueTypes", ValueTypes);
             Factory = (function () {
                 function Factory() {
@@ -39,7 +41,7 @@ System.register(["./../Utils"], function(exports_1) {
                         Factory.hasClassProperties(value));
                 };
                 return Factory;
-            })();
+            }());
             exports_1("Factory", Factory);
         }
     }

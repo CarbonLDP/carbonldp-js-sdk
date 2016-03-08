@@ -1,4 +1,6 @@
-System.register(["./Errors/IllegalStateError", "./Errors/IllegalArgumentError", "./Errors/IDAlreadyInUseError", "./Errors/NotImplementedError"], function(exports_1) {
+System.register(["./Errors/IllegalStateError", "./Errors/IllegalArgumentError", "./Errors/IDAlreadyInUseError", "./Errors/NotImplementedError"], function(exports_1, context_1) {
+    "use strict";
+    var __moduleName = context_1 && context_1.id;
     var IllegalStateError_1, IllegalArgumentError_1, IDAlreadyInUseError_1, NotImplementedError_1;
     return {
         setters:[

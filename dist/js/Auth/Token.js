@@ -1,4 +1,6 @@
-System.register(["./../NS", "./../Pointer", "./../Utils"], function(exports_1) {
+System.register(["./../NS", "./../Pointer", "./../Utils"], function(exports_1, context_1) {
+    "use strict";
+    var __moduleName = context_1 && context_1.id;
     var NS, Pointer, Utils;
     var RDF_CLASS, CONTEXT, Factory;
     return {
@@ -53,7 +55,7 @@ System.register(["./../NS", "./../Pointer", "./../Utils"], function(exports_1) {
                     return types.indexOf(RDF_CLASS) !== -1;
                 };
                 return Factory;
-            })();
+            }());
             exports_1("Factory", Factory);
         }
     }
