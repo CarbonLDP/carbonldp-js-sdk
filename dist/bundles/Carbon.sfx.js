@@ -1861,6 +1861,7 @@ $__System.register("17", ["18", "6"], function(exports_1) {
                 Factory.createFrom = function (object, idOrDocument, document) {
                     if (document === void 0) { document = null; }
                     var id = !!document ? idOrDocument : Util.generateID();
+                    document = document || idOrDocument;
                     var resource = Resource.Factory.createFrom(object, id);
                     if (Factory.hasClassProperties(resource))
                         return resource;
@@ -11756,32 +11757,62 @@ $__System.register("5a", ["48"], function(exports_1) {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
     var AbstractError_1;
-    var IllegalStateError;
+    var IDAlreadyInUseError;
     return {
         setters:[
             function (AbstractError_1_1) {
                 AbstractError_1 = AbstractError_1_1;
             }],
         execute: function() {
-            IllegalStateError = (function (_super) {
-                __extends(IllegalStateError, _super);
-                function IllegalStateError(message) {
-                    if (message === void 0) { message = ""; }
-                    _super.call(this, message);
+            IDAlreadyInUseError = (function (_super) {
+                __extends(IDAlreadyInUseError, _super);
+                function IDAlreadyInUseError() {
+                    _super.apply(this, arguments);
                 }
-                Object.defineProperty(IllegalStateError.prototype, "name", {
-                    get: function () { return "IllegalStateError"; },
+                Object.defineProperty(IDAlreadyInUseError.prototype, "name", {
+                    get: function () { return "IDAlreadyInUseError"; },
                     enumerable: true,
                     configurable: true
                 });
-                return IllegalStateError;
+                return IDAlreadyInUseError;
             })(AbstractError_1.default);
-            exports_1("default",IllegalStateError);
+            exports_1("default",IDAlreadyInUseError);
         }
     }
 });
 
 $__System.register("5b", ["48"], function(exports_1) {
+    var __extends = (this && this.__extends) || function (d, b) {
+        for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+    var AbstractError_1;
+    var IllegalActionError;
+    return {
+        setters:[
+            function (AbstractError_1_1) {
+                AbstractError_1 = AbstractError_1_1;
+            }],
+        execute: function() {
+            IllegalActionError = (function (_super) {
+                __extends(IllegalActionError, _super);
+                function IllegalActionError() {
+                    _super.apply(this, arguments);
+                }
+                Object.defineProperty(IllegalActionError.prototype, "name", {
+                    get: function () { return "IllegalActionError"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                return IllegalActionError;
+            })(AbstractError_1.default);
+            exports_1("default",IllegalActionError);
+        }
+    }
+});
+
+$__System.register("5c", ["48"], function(exports_1) {
     var __extends = (this && this.__extends) || function (d, b) {
         for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
         function __() { this.constructor = d; }
@@ -11812,33 +11843,34 @@ $__System.register("5b", ["48"], function(exports_1) {
     }
 });
 
-$__System.register("5c", ["48"], function(exports_1) {
+$__System.register("5d", ["48"], function(exports_1) {
     var __extends = (this && this.__extends) || function (d, b) {
         for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
     var AbstractError_1;
-    var IDAlreadyInUseError;
+    var IllegalStateError;
     return {
         setters:[
             function (AbstractError_1_1) {
                 AbstractError_1 = AbstractError_1_1;
             }],
         execute: function() {
-            IDAlreadyInUseError = (function (_super) {
-                __extends(IDAlreadyInUseError, _super);
-                function IDAlreadyInUseError() {
-                    _super.apply(this, arguments);
+            IllegalStateError = (function (_super) {
+                __extends(IllegalStateError, _super);
+                function IllegalStateError(message) {
+                    if (message === void 0) { message = ""; }
+                    _super.call(this, message);
                 }
-                Object.defineProperty(IDAlreadyInUseError.prototype, "name", {
-                    get: function () { return "IDAlreadyInUseError"; },
+                Object.defineProperty(IllegalStateError.prototype, "name", {
+                    get: function () { return "IllegalStateError"; },
                     enumerable: true,
                     configurable: true
                 });
-                return IDAlreadyInUseError;
+                return IllegalStateError;
             })(AbstractError_1.default);
-            exports_1("default",IDAlreadyInUseError);
+            exports_1("default",IllegalStateError);
         }
     }
 });
@@ -11874,7 +11906,7 @@ $__System.register("48", [], function(exports_1) {
     }
 });
 
-$__System.register("5d", ["48"], function(exports_1) {
+$__System.register("5e", ["48"], function(exports_1) {
     var __extends = (this && this.__extends) || function (d, b) {
         for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
         function __() { this.constructor = d; }
@@ -11906,26 +11938,30 @@ $__System.register("5d", ["48"], function(exports_1) {
     }
 });
 
-$__System.register("14", ["5a", "5b", "5c", "5d"], function(exports_1) {
-    var IllegalStateError_1, IllegalArgumentError_1, IDAlreadyInUseError_1, NotImplementedError_1;
+$__System.register("14", ["5a", "5b", "5c", "5d", "5e"], function(exports_1) {
+    var IDAlreadyInUseError_1, IllegalActionError_1, IllegalArgumentError_1, IllegalStateError_1, NotImplementedError_1;
     return {
         setters:[
-            function (IllegalStateError_1_1) {
-                IllegalStateError_1 = IllegalStateError_1_1;
+            function (IDAlreadyInUseError_1_1) {
+                IDAlreadyInUseError_1 = IDAlreadyInUseError_1_1;
+            },
+            function (IllegalActionError_1_1) {
+                IllegalActionError_1 = IllegalActionError_1_1;
             },
             function (IllegalArgumentError_1_1) {
                 IllegalArgumentError_1 = IllegalArgumentError_1_1;
             },
-            function (IDAlreadyInUseError_1_1) {
-                IDAlreadyInUseError_1 = IDAlreadyInUseError_1_1;
+            function (IllegalStateError_1_1) {
+                IllegalStateError_1 = IllegalStateError_1_1;
             },
             function (NotImplementedError_1_1) {
                 NotImplementedError_1 = NotImplementedError_1_1;
             }],
         execute: function() {
-            exports_1("IllegalStateError", IllegalStateError_1.default);
-            exports_1("IllegalArgumentError", IllegalArgumentError_1.default);
             exports_1("IDAlreadyInUseError", IDAlreadyInUseError_1.default);
+            exports_1("IllegalActionError", IllegalActionError_1.default);
+            exports_1("IllegalArgumentError", IllegalArgumentError_1.default);
+            exports_1("IllegalStateError", IllegalStateError_1.default);
             exports_1("NotImplementedError", NotImplementedError_1.default);
         }
     }
@@ -12041,7 +12077,7 @@ $__System.register("12", ["24", "25", "52", "57", "59", "53", "14", "6"], functi
     }
 });
 
-$__System.register("5e", ["12"], function(exports_1) {
+$__System.register("5f", ["12"], function(exports_1) {
     var Auth;
     var settings;
     return {
@@ -12305,7 +12341,7 @@ $__System.register("6", [], function(exports_1) {
 });
 
 /// <reference path="../typings/typings.d.ts" />
-$__System.register("5f", ["2", "12", "8", "1a", "13", "20", "5", "5e", "6"], function(exports_1) {
+$__System.register("60", ["2", "12", "8", "1a", "13", "20", "5", "5f", "6"], function(exports_1) {
     var __extends = (this && this.__extends) || function (d, b) {
         for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
         function __() { this.constructor = d; }
@@ -12385,12 +12421,12 @@ $__System.register("5f", ["2", "12", "8", "1a", "13", "20", "5", "5e", "6"], fun
     }
 });
 
-$__System.registerDynamic("1", ["5f"], true, function($__require, exports, module) {
+$__System.registerDynamic("1", ["60"], true, function($__require, exports, module) {
   ;
   var global = this,
       __define = global.define;
   global.define = undefined;
-  var Carbon = $__require('5f');
+  var Carbon = $__require('60');
   global.Carbon = Carbon.default;
   global.define = __define;
   return module.exports;

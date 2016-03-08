@@ -23,6 +23,7 @@ System.register(["./Resource", "./Utils"], function(exports_1) {
                 Factory.createFrom = function (object, idOrDocument, document) {
                     if (document === void 0) { document = null; }
                     var id = !!document ? idOrDocument : Util.generateID();
+                    document = document || idOrDocument;
                     var resource = Resource.Factory.createFrom(object, id);
                     if (Factory.hasClassProperties(resource))
                         return resource;

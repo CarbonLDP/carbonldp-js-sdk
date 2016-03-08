@@ -51,7 +51,7 @@ describe( module( "Document" ), ():void => {
 			STATIC,
 			"hasClassProperties",
 			"Returns true if the object provided has the properties and functions of a Document object", [
-				{ name: "documentResource", type: "Objet" }
+				{ name: "documentResource", type: "Object" }
 			],
 			{ type: "boolean" }
 		), ():void => {
