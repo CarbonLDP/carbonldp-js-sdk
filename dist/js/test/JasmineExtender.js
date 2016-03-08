@@ -1,4 +1,6 @@
-System.register([], function(exports_1) {
+System.register([], function(exports_1, context_1) {
+    "use strict";
+    var __moduleName = context_1 && context_1.id;
     var MODULE, CLASS, INTERFACE, STATIC, INSTANCE, CONSTRUCTOR, METHOD, SIGNATURE, PROPERTY, SUPER_CLASS, REEXPORTS, DEFAULTEXPORT, property;
     function serialize(descriptor) {
         return "JSON" + JSON.stringify(descriptor);

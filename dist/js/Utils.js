@@ -1,5 +1,7 @@
 /// <reference path="./../typings/typings.d.ts" />
-System.register([], function(exports_1) {
+System.register([], function(exports_1, context_1) {
+    "use strict";
+    var __moduleName = context_1 && context_1.id;
     var S, A, M, UUID, P;
     function hasFunction(object, functionName) {
         return typeof object[functionName] === "function";
@@ -123,7 +125,7 @@ System.register([], function(exports_1) {
                     return str.indexOf(substring) !== -1;
                 };
                 return S;
-            })();
+            }());
             A = (function () {
                 function A() {
                 }
@@ -150,7 +152,7 @@ System.register([], function(exports_1) {
                     return result;
                 };
                 return A;
-            })();
+            }());
             M = (function () {
                 function M() {
                 }
@@ -182,7 +184,7 @@ System.register([], function(exports_1) {
                     return toExtend;
                 };
                 return M;
-            })();
+            }());
             UUID = (function () {
                 function UUID() {
                 }
@@ -198,7 +200,7 @@ System.register([], function(exports_1) {
                 };
                 UUID.regExp = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
                 return UUID;
-            })();
+            }());
             P = (function () {
                 function P() {
                 }
@@ -208,7 +210,7 @@ System.register([], function(exports_1) {
                     });
                 };
                 return P;
-            })();
+            }());
             exports_1("hasFunction", hasFunction);
             exports_1("hasProperty", hasProperty);
             exports_1("hasPropertyDefined", hasPropertyDefined);

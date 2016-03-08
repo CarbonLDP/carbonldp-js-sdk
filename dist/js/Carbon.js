@@ -1,5 +1,7 @@
 /// <reference path="../typings/typings.d.ts" />
-System.register(["./Apps", "./Auth", "./AbstractContext", "./Document", "./Documents", "./HTTP", "./RDF", "./settings", "./Utils"], function(exports_1) {
+System.register(["./Apps", "./Auth", "./AbstractContext", "./Document", "./Documents", "./HTTP", "./RDF", "./settings", "./Utils"], function(exports_1, context_1) {
+    "use strict";
+    var __moduleName = context_1 && context_1.id;
     var __extends = (this && this.__extends) || function (d, b) {
         for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
         function __() { this.constructor = d; }
@@ -48,7 +50,7 @@ System.register(["./Apps", "./Auth", "./AbstractContext", "./Document", "./Docum
                 Object.defineProperty(Carbon, "version", {
                     /* tslint:enable: variable-name */
                     // TODO: Get package.json version directly
-                    get: function () { return "0.15.1-ALPHA"; },
+                    get: function () { return "0.16.0-ALPHA"; },
                     enumerable: true,
                     configurable: true
                 });
@@ -74,7 +76,7 @@ System.register(["./Apps", "./Auth", "./AbstractContext", "./Document", "./Docum
                 Carbon.RDF = RDF;
                 Carbon.Utils = Utils;
                 return Carbon;
-            })(AbstractContext_1.default);
+            }(AbstractContext_1.default));
             exports_1("default",Carbon);
         }
     }

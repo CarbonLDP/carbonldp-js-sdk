@@ -1,4 +1,6 @@
-System.register(["./LDP/AccessPoint", "./LDP/BasicContainer", "./LDP/Container", "./LDP/PersistedContainer", "./LDP/RDFSource"], function(exports_1) {
+System.register(["./LDP/AccessPoint", "./LDP/BasicContainer", "./LDP/Container", "./LDP/PersistedContainer", "./LDP/RDFSource"], function(exports_1, context_1) {
+    "use strict";
+    var __moduleName = context_1 && context_1.id;
     var AccessPoint, BasicContainer, Container, PersistedContainer, RDFSource;
     return {
         setters:[

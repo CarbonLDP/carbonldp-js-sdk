@@ -1,4 +1,6 @@
-System.register(["./NS"], function(exports_1) {
+System.register(["./NS"], function(exports_1, context_1) {
+    "use strict";
+    var __moduleName = context_1 && context_1.id;
     var NS;
     var RDF_CLASS, SCHEMA;
     return {

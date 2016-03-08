@@ -1,5 +1,7 @@
 /// <reference path="./../../typings/typings.d.ts" />
-System.register(["./../NS", "./../Pointer"], function(exports_1) {
+System.register(["./../NS", "./../Pointer"], function(exports_1, context_1) {
+    "use strict";
+    var __moduleName = context_1 && context_1.id;
     var NS, Pointer;
     var RDF_CLASS, Factory, factory;
     return {
@@ -28,7 +30,7 @@ System.register(["./../NS", "./../Pointer"], function(exports_1) {
                     return types.indexOf(NS.LDP.Class.BasicContainer) !== -1;
                 };
                 return Factory;
-            })();
+            }());
             exports_1("Factory", Factory);
             exports_1("factory", factory = new Factory());
         }

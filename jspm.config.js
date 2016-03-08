@@ -14,7 +14,7 @@ System.config({
 
   map: {
     "jsonld": "npm:jsonld@0.4.2",
-    "typescript": "npm:typescript@1.6.2",
+    "typescript": "npm:typescript@1.8.7",
     "github:jspm/nodelibs-assert@0.1.0": {
       "assert": "npm:assert@1.3.0"
     },

@@ -1,4 +1,6 @@
-System.register(["./../Errors", "./../HTTP", "./../NS", "./../RDF", "./BasicAuthenticator", "./UsernameAndPasswordToken", "./Token", "./TokenCredentials"], function(exports_1) {
+System.register(["./../Errors", "./../HTTP", "./../NS", "./../RDF", "./BasicAuthenticator", "./UsernameAndPasswordToken", "./Token", "./TokenCredentials"], function(exports_1, context_1) {
+    "use strict";
+    var __moduleName = context_1 && context_1.id;
     var Errors, HTTP, NS, RDF, BasicAuthenticator_1, UsernameAndPasswordToken_1, Token, TokenCredentials;
     var Class;
     return {
@@ -97,7 +99,7 @@ System.register(["./../Errors", "./../HTTP", "./../NS", "./../RDF", "./BasicAuth
                 };
                 Class.TOKEN_CONTAINER = "auth-tokens/";
                 return Class;
-            })();
+            }());
             exports_1("Class", Class);
             exports_1("default",Class);
         }

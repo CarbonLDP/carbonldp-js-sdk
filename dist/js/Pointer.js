@@ -1,4 +1,6 @@
-System.register(["./Utils"], function(exports_1) {
+System.register(["./Utils"], function(exports_1, context_1) {
+    "use strict";
+    var __moduleName = context_1 && context_1.id;
     var Utils;
     var Factory, Util;
     return {
@@ -78,15 +80,15 @@ System.register(["./Utils"], function(exports_1) {
                     return object;
                 };
                 return Factory;
-            })();
+            }());
             exports_1("Factory", Factory);
             Util = (function () {
                 function Util() {
                 }
                 Util.getIDs = function (pointers) {
                     var ids = [];
-                    for (var _i = 0; _i < pointers.length; _i++) {
-                        var pointer = pointers[_i];
+                    for (var _i = 0, pointers_1 = pointers; _i < pointers_1.length; _i++) {
+                        var pointer = pointers_1[_i];
                         ids.push(pointer.id);
                     }
                     return ids;
@@ -100,7 +102,7 @@ System.register(["./Utils"], function(exports_1) {
                     });
                 };
                 return Util;
-            })();
+            }());
             exports_1("Util", Util);
         }
     }

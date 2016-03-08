@@ -1,4 +1,6 @@
-System.register([], function(exports_1) {
+System.register([], function(exports_1, context_1) {
+    "use strict";
+    var __moduleName = context_1 && context_1.id;
     var namespace, Predicate;
     return {
         setters:[],
@@ -11,7 +13,7 @@ System.register([], function(exports_1) {
                 Predicate.SET_ACTION = namespace + "setAction";
                 Predicate.DELETE_ACTION = namespace + "deleteAction";
                 return Predicate;
-            })();
+            }());
             exports_1("namespace", namespace);
             exports_1("Predicate", Predicate);
         }

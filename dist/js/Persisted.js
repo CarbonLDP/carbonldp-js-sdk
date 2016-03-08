@@ -1,4 +1,6 @@
-System.register(["./Utils"], function(exports_1) {
+System.register(["./Utils"], function(exports_1, context_1) {
+    "use strict";
+    var __moduleName = context_1 && context_1.id;
     var Utils;
     var Modifications, ModificationType, Factory;
     function isDirty() {
@@ -17,7 +19,7 @@ System.register(["./Utils"], function(exports_1) {
                     this.delete = new Map();
                 }
                 return Modifications;
-            })();
+            }());
             (function (ModificationType) {
                 ModificationType[ModificationType["ADD"] = 0] = "ADD";
                 ModificationType[ModificationType["SET"] = 1] = "SET";
@@ -61,7 +63,7 @@ System.register(["./Utils"], function(exports_1) {
                     return value;
                 };
                 return Factory;
-            })();
+            }());
             exports_1("Modifications", Modifications);
             exports_1("ModificationType", ModificationType);
             exports_1("Factory", Factory);

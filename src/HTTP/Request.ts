@@ -68,7 +68,7 @@ function rejectRequest( reject:( error:any ) => void, request:XMLHttpRequest ):v
 export class Service {
 
 	private static defaultOptions:Options = {
-		sendCredentialsOnCORS: true
+		sendCredentialsOnCORS: true,
 	};
 
 	static send( method:(Method | string), url:string, options?:Options ):Promise<Response>;

@@ -1,4 +1,6 @@
-System.register(["./../HTTP", "./../Errors", "./UsernameAndPasswordToken", "./UsernameAndPasswordCredentials"], function(exports_1) {
+System.register(["./../HTTP", "./../Errors", "./UsernameAndPasswordToken", "./UsernameAndPasswordCredentials"], function(exports_1, context_1) {
+    "use strict";
+    var __moduleName = context_1 && context_1.id;
     var HTTP, Errors, UsernameAndPasswordToken_1, UsernameAndPasswordCredentials;
     var Class;
     return {
@@ -62,7 +64,7 @@ System.register(["./../HTTP", "./../Errors", "./UsernameAndPasswordToken", "./Us
                     return headers;
                 };
                 return Class;
-            })();
+            }());
             exports_1("Class", Class);
             exports_1("default",Class);
         }

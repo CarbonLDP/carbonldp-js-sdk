@@ -1,5 +1,7 @@
 /// <reference path="./../typings/typings.d.ts" />
-System.register(["./Auth/BasicAuthenticator", "./Auth/Token", "./Auth/TokenAuthenticator", "./Auth/UsernameAndPasswordToken", "./Errors", "./Utils"], function(exports_1) {
+System.register(["./Auth/BasicAuthenticator", "./Auth/Token", "./Auth/TokenAuthenticator", "./Auth/UsernameAndPasswordToken", "./Errors", "./Utils"], function(exports_1, context_1) {
+    "use strict";
+    var __moduleName = context_1 && context_1.id;
     var BasicAuthenticator_1, Token, TokenAuthenticator_1, UsernameAndPasswordToken_1, Errors, Utils;
     var Method, Class;
     return {
@@ -93,7 +95,7 @@ System.register(["./Auth/BasicAuthenticator", "./Auth/Token", "./Auth/TokenAuthe
                     throw new Errors.IllegalStateError("The configured authentication method isn\'t supported.");
                 };
                 return Class;
-            })();
+            }());
             exports_1("Class", Class);
             exports_1("default",Class);
         }

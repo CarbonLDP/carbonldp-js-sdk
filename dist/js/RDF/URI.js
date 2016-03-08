@@ -1,4 +1,6 @@
-System.register(["./../Errors", "./../Utils"], function(exports_1) {
+System.register(["./../Errors", "./../Utils"], function(exports_1, context_1) {
+    "use strict";
+    var __moduleName = context_1 && context_1.id;
     var Errors, Utils;
     var Class, Util;
     function prefixWithObjectSchema(uri, objectSchema) {
@@ -32,7 +34,7 @@ System.register(["./../Errors", "./../Utils"], function(exports_1) {
                     return this.stringValue;
                 };
                 return Class;
-            })();
+            }());
             exports_1("Class", Class);
             Util = (function () {
                 function Util() {
@@ -145,7 +147,7 @@ System.register(["./../Errors", "./../Utils"], function(exports_1) {
                     return prefix + ":" + uri.substring(prefixURI.length);
                 };
                 return Util;
-            })();
+            }());
             exports_1("Util", Util);
             exports_1("default",Class);
         }

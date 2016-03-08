@@ -1,4 +1,6 @@
-System.register(["./Fragment", "./RDF", "./Utils"], function(exports_1) {
+System.register(["./Fragment", "./RDF", "./Utils"], function(exports_1, context_1) {
+    "use strict";
+    var __moduleName = context_1 && context_1.id;
     var Fragment, RDF, Utils;
     var Factory, factory;
     return {
@@ -42,7 +44,7 @@ System.register(["./Fragment", "./RDF", "./Utils"], function(exports_1) {
                     return fragment;
                 };
                 return Factory;
-            })();
+            }());
             exports_1("Factory", Factory);
             exports_1("factory", factory = new Factory());
         }

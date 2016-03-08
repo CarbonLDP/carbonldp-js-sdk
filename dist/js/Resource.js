@@ -1,4 +1,6 @@
-System.register(["./Pointer", "./Utils"], function(exports_1) {
+System.register(["./Pointer", "./Utils"], function(exports_1, context_1) {
+    "use strict";
+    var __moduleName = context_1 && context_1.id;
     var Pointer, Utils;
     var Factory;
     function hasType(type) {
@@ -49,7 +51,7 @@ System.register(["./Pointer", "./Utils"], function(exports_1) {
                     return object;
                 };
                 return Factory;
-            })();
+            }());
             exports_1("Factory", Factory);
         }
     }
