@@ -207,10 +207,12 @@ System.register([], function(exports_1) {
         return toJSON(descriptor);
     }
     exports_1("extendsClass", extendsClass);
-    function hasDefaultExport(exportName) {
+    function hasDefaultExport(exportName, description) {
+        if (description === void 0) { description = null; }
         var descriptor = {
             specType: DEFAULTEXPORT,
             name: exportName,
+            description: description,
         };
         return toJSON(descriptor);
     }

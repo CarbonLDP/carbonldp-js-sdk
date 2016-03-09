@@ -100,5 +100,5 @@ export declare function hasSignature(returns: MethodReturn): string;
 export declare function hasProperty(access: string, name: string, type: string, description?: string): string;
 export declare let property: typeof hasProperty;
 export declare function extendsClass(name: string): string;
-export declare function hasDefaultExport(exportName: string): string;
+export declare function hasDefaultExport(exportName: string, description?: string): string;
 export declare function hasEnumeral(name: string, description?: string): string;

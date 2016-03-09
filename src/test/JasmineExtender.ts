@@ -323,10 +323,11 @@ export function extendsClass( name:string ):string {
 	return toJSON( descriptor );
 }
 
-export function hasDefaultExport( exportName: string ):string {
+export function hasDefaultExport( exportName: string, description:string = null ):string {
 	let descriptor:SpecDescriptor = {
 		specType: DEFAULTEXPORT,
 		name: exportName,
+		description: description,
 	};
 
 	return toJSON( descriptor );
