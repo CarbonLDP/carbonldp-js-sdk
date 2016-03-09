@@ -19,7 +19,7 @@ import * as URI from "./RDF/URI";
 
 import * as NamedFragment from "./NamedFragment";
 
-describe( module( "NamedFragment" ), ():void => {
+describe( module( "Carbon/NamedFragment" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( NamedFragment ).toBeDefined();
@@ -27,7 +27,7 @@ describe( module( "NamedFragment" ), ():void => {
 	});
 
 	describe( clazz(
-		"Factory",
+		"Carbon.NamedFragment.Factory",
 		"Factory class for NamedFragment objects."
 	), ():void => {
 

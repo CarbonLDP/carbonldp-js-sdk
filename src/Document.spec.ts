@@ -30,7 +30,7 @@ import * as NS from "./NS";
 
 import * as Document from "./Document";
 
-describe( module( "Document" ), ():void => {
+describe( module( "Carbon/Document" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( Document ).toBeDefined();
@@ -38,7 +38,7 @@ describe( module( "Document" ), ():void => {
 	});
 
 	describe( clazz(
-		"Factory",
+		"Carbon.Document.Factory",
 		"Factory class for Document objects."
 	), ():void => {
 

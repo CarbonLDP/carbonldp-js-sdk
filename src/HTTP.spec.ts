@@ -24,7 +24,7 @@ import * as StringParser from "./HTTP/StringParser";
 
 import * as HTTP from "./HTTP";
 
-describe( module( "HTTP" ), ():void => {
+describe( module( "Carbon/HTTP" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( HTTP ).toBeDefined();

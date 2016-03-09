@@ -20,7 +20,7 @@ import * as XSD from "./NS/XSD";
 
 import * as NS from "./NS";
 
-describe( module( "NS" ), ():void => {
+describe( module( "Carbon/NS" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( NS ).toBeDefined();

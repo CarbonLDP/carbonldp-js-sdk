@@ -18,7 +18,7 @@ import NotImplementedError from "./Errors/NotImplementedError";
 
 import * as Errors from "./Errors";
 
-describe( module( "Errors" ), ():void => {
+describe( module( "Carbon/Errors" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( Errors ).toBeDefined();

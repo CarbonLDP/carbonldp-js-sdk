@@ -18,7 +18,7 @@ import * as URI from "./RDF/URI";
 
 import * as Fragment from "./Fragment";
 
-describe( module( "Fragment" ), ():void => {
+describe( module( "Carbon/Fragment" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( Fragment ).toBeDefined();
@@ -26,7 +26,7 @@ describe( module( "Fragment" ), ():void => {
 	});
 
 	describe( clazz(
-		"Factory",
+		"Carbon.Fragment.Factory",
 		"Factory class for Fragment objects."
 	), ():void => {
 

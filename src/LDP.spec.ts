@@ -19,7 +19,7 @@ import * as RDFSource from "./LDP/RDFSource";
 
 import * as LDP from "./LDP";
 
-describe( module( "LDP" ), ():void => {
+describe( module( "Carbon/LDP" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( LDP ).toBeDefined();
