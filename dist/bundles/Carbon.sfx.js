@@ -3631,7 +3631,7 @@ $__System.register("2a", ["14", "6"], function(exports_1) {
                     if (baseURI === "")
                         return true;
                     if (uri.startsWith(baseURI)) {
-                        if (Utils.S.endsWith(baseURI, "/"))
+                        if (Utils.S.endsWith(baseURI, "/") || Utils.S.endsWith(baseURI, "#"))
                             return true;
                         var relativeURI = uri.substring(baseURI.length);
                         if (Utils.S.startsWith(relativeURI, "/") || Utils.S.startsWith(relativeURI, "#"))
@@ -12520,6 +12520,7 @@ $__System.register("61", ["2", "12", "8", "1a", "13", "20", "5", "60", "6"], fun
         execute: function() {
             Carbon = (function (_super) {
                 __extends(Carbon, _super);
+                // TODO: Define settings type
                 function Carbon(settings) {
                     _super.call(this);
                     settings = settings ? settings : settings_1.default;
@@ -12529,7 +12530,7 @@ $__System.register("61", ["2", "12", "8", "1a", "13", "20", "5", "60", "6"], fun
                 Object.defineProperty(Carbon, "version", {
                     /* tslint:enable: variable-name */
                     // TODO: Get package.json version directly
-                    get: function () { return "0.16.0-ALPHA"; },
+                    get: function () { return "0.16.1-ALPHA"; },
                     enumerable: true,
                     configurable: true
                 });

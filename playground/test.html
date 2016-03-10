@@ -5,7 +5,7 @@
 	<script>
 		(function() {
 			var carbon = new Carbon();
-			carbon.setSetting( "domain", "local.carbonldp.com" );
+			carbon.setSetting( "domain", "dev.carbonldp.com" );
 
 			carbon.extendObjectSchema( {
 				"acl": "http://www.w3.org/ns/auth/acl#",
@@ -58,26 +58,51 @@
 			var resource;
 
 			carbon.auth.authenticate( "admin@carbonldp.com", "hello" ).then( function() {
-				return carbon.apps.get( "test-app/" );
-			} ).then( function( fetchedAppContext ) {
-				appContext = fetchedAppContext;
-
-				return appContext.documents.get( "/" );
+				return carbon.documents.executeSELECTQuery( "apps/", "SELECT ?c ?s ?p ?o WHERE { GRAPH ?c { ?s ?p ?o. FILTER ( ! isBlank( ?s ) && ! isBlank( ?o ) ) } }" );
 			} ).then( function( result ) {
-				resource = result[ 0 ];
-
-				return resource.executeSELECTQuery( "SELECT ?s ?p ?o WHERE { GRAPH <https://local.carbonldp.com/apps/test-app/> { ?s ?p ?o } }" );
-			} ).then( function( results ) {
-				console.log( "%o", results );
+				var sparqlResults = result[ 0 ];
+				sparqlResults.bindings.forEach( function( binding ) {
+					for( var bindingName in binding ) {
+						if( ! binding.hasOwnProperty( bindingName ) ) continue;
+						if( typeof binding[ bindingName ] === "object" ) binding[ bindingName ] = binding[ bindingName ].id;
+					}
+				});
+				console.table( sparqlResults.bindings );
+			} ).catch( function( error ) {
+				console.error( error );
 			} );
 
-			function incrementCounter( resource ) {
-				resource = result[ 0 ];
-				resource.counter = "counter" in resource ? resource.counter + 1 : 1;
+//			carbon.auth.authenticate( "admin@carbonldp.com", "hello" ).then( function() {
+//				return carbon.apps.get( "test-app/" );
+//			} ).then( function( fetchedAppContext ) {
+//				appContext = fetchedAppContext;
+//
+//				return appContext.documents.get( "/" );
+//			} ).then( function( result ) {
+//				resource = result[ 0 ];
+//				return populate( resource.id );
+//			} ).then( function( results ) {
+//				console.log( "%o", results );
+//			} );
 
-				console.log( "%o", resource );
+			function populate( resourceURI ) {
+				console.log( "Populating: " + resourceURI );
+				var promises = [];
+				while( getRandom( 10 ) !== 0 ) {
+					promises.push( appContext.documents.createChild( resourceURI, Carbon.Document.factory.create() ).then( function( result ) {
+						var pointer = result[ 0 ];
+						console.log( "Created: " + pointer.id );
+						return populate( pointer.id );
+					}) );
+				}
 
-				return appContext.documents.save( resource );
+				return Promise.all( promises ).then( function() {
+					console.log( "Finished populating: " + resourceURI );
+				});
+			}
+
+			function getRandom( max ) {
+				return Math.floor(Math.random() * max);
 			}
 		})();
 	</script>

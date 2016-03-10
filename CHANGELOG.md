@@ -1,3 +1,6 @@
+# 0.16.1 (March 10, 2016)
+* Fix `URI.Util.isBaseOf`, it wasn't handling fragments like it should
+
 # 0.16.0 (March 8, 2016)
 * SPARQL queries can now be executed in a Document, Documents or whatever endpoint. The following methods were added:
     * `document.executeRawASKQuery()`

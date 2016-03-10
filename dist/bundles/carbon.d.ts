@@ -1700,7 +1700,7 @@ declare module 'carbon/Carbon' {
 	    static Utils: typeof Utils;
 	    static version: string;
 	    apps: Apps;
-	    constructor(settings: any);
+	    constructor(settings?: any);
 	    resolve(uri: string): string;
 	    getAPIDescription(): Promise<APIDescription.Class>;
 	}

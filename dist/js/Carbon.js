@@ -41,6 +41,7 @@ System.register(["./Apps", "./Auth", "./AbstractContext", "./Document", "./Docum
         execute: function() {
             Carbon = (function (_super) {
                 __extends(Carbon, _super);
+                // TODO: Define settings type
                 function Carbon(settings) {
                     _super.call(this);
                     settings = settings ? settings : settings_1.default;
@@ -50,7 +51,7 @@ System.register(["./Apps", "./Auth", "./AbstractContext", "./Document", "./Docum
                 Object.defineProperty(Carbon, "version", {
                     /* tslint:enable: variable-name */
                     // TODO: Get package.json version directly
-                    get: function () { return "0.16.0-ALPHA"; },
+                    get: function () { return "0.16.1-ALPHA"; },
                     enumerable: true,
                     configurable: true
                 });

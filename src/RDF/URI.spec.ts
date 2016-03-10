@@ -231,6 +231,7 @@ describe( module( "Carbon/RDF/URI" ), ():void => {
 			expect( "isBaseOf" in URI.Util ).toBe( true );
 			expect( Utils.isFunction( URI.Util.isBaseOf ) ).toBe( true );
 
+			let namespaceURI = "http://example.com/resource/#";
 			let fragmentURI = "http://example.com/resource/#fragment";
 			let childURI = "http://example.com/resource/child/";
 			let resourceURI = "http://example.com/resource/";
@@ -240,6 +241,7 @@ describe( module( "Carbon/RDF/URI" ), ():void => {
 			let anotherURI = "http://another_example.com/resource/";
 			let prefixAnotherURI = "another_prefix:resource";
 
+			expect( URI.Util.isBaseOf( namespaceURI, fragmentURI ) ).toBe( true );
 			expect( URI.Util.isBaseOf( resourceURI, fragmentURI) ).toBe( true );
 			expect( URI.Util.isBaseOf( resourceURI, childURI) ).toBe( true );
 			expect( URI.Util.isBaseOf( prefixResourceURI, prefixFragmentURI ) ).toBe( true );
