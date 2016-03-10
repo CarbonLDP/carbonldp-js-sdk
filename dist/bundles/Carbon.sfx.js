@@ -1105,8 +1105,8 @@ $__System.register("11", ["3", "a", "12", "13", "14", "10", "15"], function(expo
                     return relativeURI;
                 };
                 Class.prototype.hasSetting = function (name) {
-                    return (this.settings.has(name) ||
-                        (this.parentContext && this.parentContext.hasSetting(name)));
+                    return (this.settings.has(name))
+                        || (!!this.parentContext && this.parentContext.hasSetting(name));
                 };
                 Class.prototype.getSetting = function (name) {
                     if (this.settings.has(name))
@@ -11424,13 +11424,16 @@ $__System.register("9", ["54", "55", "7", "23", "56", "2e"], function(exports_1)
     }
 });
 
-$__System.register("4", ["6"], function(exports_1) {
-    var Utils;
+$__System.register("4", ["6", "14"], function(exports_1) {
+    var Utils, Errors;
     var Factory, Util;
     return {
         setters:[
             function (Utils_1) {
                 Utils = Utils_1;
+            },
+            function (Errors_1) {
+                Errors = Errors_1;
             }],
         execute: function() {
             Factory = (function () {
@@ -11494,9 +11497,8 @@ $__System.register("4", ["6"], function(exports_1) {
                             enumerable: false,
                             configurable: true,
                             value: function () {
-                                var _this = this;
                                 return new Promise(function (resolve, reject) {
-                                    return _this;
+                                    throw new Errors.NotImplementedError("A simple pointer cannot be resolved by it self.");
                                 });
                             },
                         },

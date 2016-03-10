@@ -20,7 +20,7 @@ import * as Value from "./RDF/Value";
 
 import * as RDF from "./RDF";
 
-fdescribe( module( "Carbon/RDF" ), ():void => {
+describe( module( "Carbon/RDF" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( RDF ).toBeDefined();

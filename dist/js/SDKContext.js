@@ -47,8 +47,8 @@ System.register(["./App", "./APIDescription", "./Auth", "./Documents", "./Errors
                     return relativeURI;
                 };
                 Class.prototype.hasSetting = function (name) {
-                    return (this.settings.has(name) ||
-                        (this.parentContext && this.parentContext.hasSetting(name)));
+                    return (this.settings.has(name))
+                        || (!!this.parentContext && this.parentContext.hasSetting(name));
                 };
                 Class.prototype.getSetting = function (name) {
                     if (this.settings.has(name))

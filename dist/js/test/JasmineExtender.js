@@ -71,7 +71,6 @@ System.register([], function(exports_1) {
     }
     exports_1("reexports", reexports);
     function decoratedObject(description, type) {
-        if (description === void 0) { description = null; }
         var descriptor = {
             suiteType: DECORATED,
             type: type,

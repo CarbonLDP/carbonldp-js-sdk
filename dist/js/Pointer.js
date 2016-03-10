@@ -1,10 +1,13 @@
-System.register(["./Utils"], function(exports_1) {
-    var Utils;
+System.register(["./Utils", "./Errors"], function(exports_1) {
+    var Utils, Errors;
     var Factory, Util;
     return {
         setters:[
             function (Utils_1) {
                 Utils = Utils_1;
+            },
+            function (Errors_1) {
+                Errors = Errors_1;
             }],
         execute: function() {
             Factory = (function () {
@@ -68,9 +71,8 @@ System.register(["./Utils"], function(exports_1) {
                             enumerable: false,
                             configurable: true,
                             value: function () {
-                                var _this = this;
                                 return new Promise(function (resolve, reject) {
-                                    return _this;
+                                    throw new Errors.NotImplementedError("A simple pointer cannot be resolved by it self.");
                                 });
                             },
                         },

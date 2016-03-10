@@ -160,7 +160,7 @@ export function reexports( access: string, name: string, originalLocation: strin
 	return toJSON( descriptor );
 }
 
-export function decoratedObject( description:string = null, type: string[] ):string {
+export function decoratedObject( description:string, type: string[] ):string {
 	let descriptor:DecorateDescriptor = {
 		suiteType: DECORATED,
 		type: type,
