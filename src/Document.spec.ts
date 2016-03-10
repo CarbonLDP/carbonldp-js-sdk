@@ -251,9 +251,9 @@ describe( module( "Carbon/Document" ), ():void => {
 				expect( pointer.id ).toBe( "_:BlankNode" );
 				pointer = document.getPointer( "#fragment" );
 				expect( pointer.id ).toBe( "http://example.com/document/#fragment" );
+				pointer = document.getPointer( "this-is-considered-a-fragment/" );
+				expect( pointer.id ).toBe( "http://example.com/document/#this-is-considered-a-fragment/" );
 
-				pointer = document.getPointer( "document/" );
-				expect( pointer ).toBeNull();
 				pointer = document.getPointer( "http://example.com/another-document/" );
 				expect( pointer ).toBeNull();
 			});
@@ -288,16 +288,14 @@ describe( module( "Carbon/Document" ), ():void => {
 					expect( document.inScope( pointer ) ).toBe( true );
 					pointer = Pointer.Factory.create( "#fragment" );
 					expect( document.inScope( pointer ) ).toBe( true );
+					pointer = Pointer.Factory.create( "this-is-considered-fragment/" );
+					expect( document.inScope( pointer ) ).toBe( true );
 
 					pointer = Pointer.Factory.create( "http://example.com/document/child/" );
 					expect( document.inScope( pointer ) ).toBe( false );
 					pointer = Pointer.Factory.create( "http://example.com/another-document/" );
 					expect( document.inScope( pointer ) ).toBe( false );
 					pointer = Pointer.Factory.create( "http://example.org/document/" );
-					expect( document.inScope( pointer ) ).toBe( false );
-					pointer = Pointer.Factory.create( "document/" );
-					expect( document.inScope( pointer ) ).toBe( false );
-					pointer = Pointer.Factory.create( "child/" );
 					expect( document.inScope( pointer ) ).toBe( false );
 				});
 
@@ -316,12 +314,11 @@ describe( module( "Carbon/Document" ), ():void => {
 					expect( document.inScope( "http://example.com/document/#another-fragment" ) ).toBe( true );
 					expect( document.inScope( "_:BlankNode" ) ).toBe( true );
 					expect( document.inScope( "#fragment" ) ).toBe( true );
+					expect( document.inScope( "this-is-considered-fragment/" ) ).toBe( true );
 
 					expect( document.inScope( "http://example.com/document/child/" ) ).toBe( false );
 					expect( document.inScope( "http://example.com/another-document/" ) ).toBe( false );
 					expect( document.inScope( "http://example.org/document/" ) ).toBe( false );
-					expect( document.inScope( "document/" ) ).toBe( false );
-
 				});
 
 			});

@@ -1,5 +1,5 @@
-System.register(["./Document", "./Utils"], function(exports_1) {
-    var Document, Utils;
+System.register(["./Document", "./Utils", "./RDF/URI"], function(exports_1) {
+    var Document, Utils, URI;
     var Factory;
     function isDirty() {
         // TODO
@@ -41,6 +41,9 @@ System.register(["./Document", "./Utils"], function(exports_1) {
             },
             function (Utils_1) {
                 Utils = Utils_1;
+            },
+            function (URI_1) {
+                URI = URI_1;
             }],
         execute: function() {
             Factory = (function () {
@@ -58,9 +61,9 @@ System.register(["./Document", "./Utils"], function(exports_1) {
                         Utils.hasFunction(document, "executeRawCONSTRUCTQuery"));
                 };
                 Factory.is = function (object) {
-                    return (
-                    // TODO: Add Document.Class check
-                    Factory.hasClassProperties(object));
+                    return Utils.isObject(object)
+                        && Document.Factory.hasClassProperties(object)
+                        && Factory.hasClassProperties(object);
                 };
                 Factory.create = function (uri, documents) {
                     var document = Document.Factory.create(uri);
@@ -96,7 +99,8 @@ System.register(["./Document", "./Utils"], function(exports_1) {
                                 return function (id) {
                                     if (superFunction.call(this, id))
                                         return true;
-                                    return this._documents.hasPointer(id);
+                                    return !URI.Util.isBNodeID(id)
+                                        && this._documents.hasPointer(id);
                                 };
                             })(),
                         },
@@ -120,10 +124,10 @@ System.register(["./Document", "./Utils"], function(exports_1) {
                             configurable: true,
                             value: (function () {
                                 var superFunction = persistedDocument.inScope;
-                                return function (id) {
-                                    if (superFunction.call(this, id))
+                                return function (idOrPointer) {
+                                    if (superFunction.call(this, idOrPointer))
                                         return true;
-                                    return this._documents.inScope(id);
+                                    return this._documents.inScope(idOrPointer);
                                 };
                             })(),
                         },

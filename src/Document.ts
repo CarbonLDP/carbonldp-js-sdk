@@ -39,7 +39,7 @@ function hasPointer( id:string ):boolean {
 
 	if( ! document.inScope( id ) ) return false;
 
-	return !! document.getFragment( id );
+	return document.hasFragment( id );
 }
 
 function getPointer( id:string ):Pointer.Class {
@@ -68,18 +68,17 @@ function inScope( idOrPointer:any ):boolean {
 
 	if( RDF.URI.Util.isFragmentOf( id, document.id ) ) return true;
 
-	return Utils.S.startsWith( id, "#" );
+	return RDF.URI.Util.isRelative( id );
 }
 
 function hasFragment( id:string ):boolean {
 	let document:Class = <Class> this;
 
-	if( RDF.URI.Util.isRelative( id ) && ! Utils.S.startsWith( id, "#" ) )
-		id = "#" + id;
+	if( ! document.inScope( id ) ) return false;
 
-	if( ! document.inScope( id ) && ! RDF.URI.Util.hasFragment( id ) ) return false;
+	if( RDF.URI.Util.hasFragment( id ) )
+		id = RDF.URI.Util.getFragment( id );
 
-	id = RDF.URI.Util.getFragment( id );
 	return !! document._fragmentsIndex.has( id );
 }
 function getFragment( id:string ):Fragment.Class {

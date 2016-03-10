@@ -8,7 +8,7 @@ System.register(["./Errors", "./Fragment", "./JSONLDConverter", "./NamedFragment
             return true;
         if (!document.inScope(id))
             return false;
-        return !!document.getFragment(id);
+        return document.hasFragment(id);
     }
     function getPointer(id) {
         var document = this;
@@ -29,15 +29,14 @@ System.register(["./Errors", "./Fragment", "./JSONLDConverter", "./NamedFragment
             return true;
         if (RDF.URI.Util.isFragmentOf(id, document.id))
             return true;
-        return Utils.S.startsWith(id, "#");
+        return RDF.URI.Util.isRelative(id);
     }
     function hasFragment(id) {
         var document = this;
-        if (RDF.URI.Util.isRelative(id) && !Utils.S.startsWith(id, "#"))
-            id = "#" + id;
-        if (!document.inScope(id) && !RDF.URI.Util.hasFragment(id))
+        if (!document.inScope(id))
             return false;
-        id = RDF.URI.Util.getFragment(id);
+        if (RDF.URI.Util.hasFragment(id))
+            id = RDF.URI.Util.getFragment(id);
         return !!document._fragmentsIndex.has(id);
     }
     function getFragment(id) {

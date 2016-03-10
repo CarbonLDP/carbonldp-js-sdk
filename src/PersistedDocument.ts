@@ -8,14 +8,15 @@ import * as Pointer from "./Pointer";
 import * as RDF from "./RDF";
 import * as SPARQL from "./SPARQL";
 import * as Utils from "./Utils";
+import * as URI from "./RDF/URI";
 
 export interface Class extends Pointer.Class, PersistedResource.Class, Document.Class {
 	_documents:Documents;
 	_etag:string;
 
 	refresh():Promise<void>;
-	save():Promise<void>;
-	destroy():Promise<void>;
+	save():Promise<[Class, HTTP.Response.Class]>;
+	destroy():Promise<HTTP.Response.Class>;
 
 	executeRawASKQuery():Promise<[ SPARQL.RawResults.Class, HTTP.Response.Class ]>;
 	executeRawSELECTQuery():Promise<[ SPARQL.RawResults.Class, HTTP.Response.Class ]>;
@@ -37,7 +38,7 @@ function save():Promise<void> {
 		return [ this, response ];
 	});
 }
-function destroy():Promise<void> {
+function destroy():Promise<HTTP.Response.Class> {
 	return this._documents.delete( this );
 }
 
@@ -74,10 +75,9 @@ export class Factory {
 	}
 
 	static is( object:Object ):boolean {
-		return (
-			// TODO: Add Document.Class check
-			Factory.hasClassProperties( <any> object )
-		);
+		return Utils.isObject( object )
+			&& Document.Factory.hasClassProperties( object )
+			&& Factory.hasClassProperties( <any> object );
 	}
 
 	static create( uri:string, documents:Documents ):Class {
@@ -120,7 +120,8 @@ export class Factory {
 					return function( id:string ):boolean {
 						if( superFunction.call( this, id ) ) return true;
 
-						return (<Class> this)._documents.hasPointer( id );
+						return ! URI.Util.isBNodeID( id )
+							&& (<Class> this)._documents.hasPointer( id );
 					};
 				})(),
 			},
@@ -142,12 +143,12 @@ export class Factory {
 				writable: false,
 				enumerable: false,
 				configurable: true,
-				value: ( function():( id:string ) => boolean {
-					let superFunction:( id:string ) => boolean = persistedDocument.inScope;
-					return function( id:string ):boolean {
-						if( superFunction.call( this, id ) ) return true;
+				value: ( function():( idOrPointer:any ) => boolean {
+					let superFunction:( idOrPointer:any ) => boolean = persistedDocument.inScope;
+					return function( idOrPointer:any ):boolean {
+						if( superFunction.call( this, idOrPointer ) ) return true;
 
-						return (<Class> this)._documents.inScope( id );
+						return (<Class> this)._documents.inScope( idOrPointer );
 					};
 				})(),
 			},
