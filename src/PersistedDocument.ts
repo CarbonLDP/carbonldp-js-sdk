@@ -18,10 +18,10 @@ export interface Class extends Pointer.Class, PersistedResource.Class, Document.
 	save():Promise<[Class, HTTP.Response.Class]>;
 	destroy():Promise<HTTP.Response.Class>;
 
-	executeRawASKQuery():Promise<[ SPARQL.RawResults.Class, HTTP.Response.Class ]>;
-	executeRawSELECTQuery():Promise<[ SPARQL.RawResults.Class, HTTP.Response.Class ]>;
-	executeRawDESCRIBEQuery():Promise<[ string, HTTP.Response.Class ]>;
-	executeRawCONSTRUCTQuery():Promise<[ string, HTTP.Response.Class ]>;
+	executeRawASKQuery( askQuery:string, requestOptions?:HTTP.Request.Options ):Promise<[ SPARQL.RawResults.Class, HTTP.Response.Class ]>;
+	executeRawSELECTQuery( selectQuery:string, requestOptions?:HTTP.Request.Options ):Promise<[ SPARQL.RawResults.Class, HTTP.Response.Class ]>;
+	executeRawCONSTRUCTQuery( constructQuery:string, requestOptions?:HTTP.Request.Options ):Promise<[ string, HTTP.Response.Class ]>;
+	executeRawDESCRIBEQuery( describeQuery:string, requestOptions?:HTTP.Request.Options ):Promise<[ string, HTTP.Response.Class ]>;
 }
 
 function isDirty():boolean {
@@ -34,9 +34,7 @@ function refresh():Promise<void> {
 	return null;
 }
 function save():Promise<void> {
-	return this._documents.save( this ).then( ( response:HTTP.Response.Class) => {
-		return [ this, response ];
-	});
+	return this._documents.save( this );
 }
 function destroy():Promise<HTTP.Response.Class> {
 	return this._documents.delete( this );

@@ -10,10 +10,7 @@ System.register(["./Document", "./Utils", "./RDF/URI"], function(exports_1) {
         return null;
     }
     function save() {
-        var _this = this;
-        return this._documents.save(this).then(function (response) {
-            return [_this, response];
-        });
+        return this._documents.save(this);
     }
     function destroy() {
         return this._documents.delete(this);

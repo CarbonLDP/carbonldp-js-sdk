@@ -10,10 +10,10 @@ export interface Class extends Pointer.Class, PersistedResource.Class, Document.
     refresh(): Promise<void>;
     save(): Promise<[Class, HTTP.Response.Class]>;
     destroy(): Promise<HTTP.Response.Class>;
-    executeRawASKQuery(): Promise<[SPARQL.RawResults.Class, HTTP.Response.Class]>;
-    executeRawSELECTQuery(): Promise<[SPARQL.RawResults.Class, HTTP.Response.Class]>;
-    executeRawDESCRIBEQuery(): Promise<[string, HTTP.Response.Class]>;
-    executeRawCONSTRUCTQuery(): Promise<[string, HTTP.Response.Class]>;
+    executeRawASKQuery(askQuery: string, requestOptions?: HTTP.Request.Options): Promise<[SPARQL.RawResults.Class, HTTP.Response.Class]>;
+    executeRawSELECTQuery(selectQuery: string, requestOptions?: HTTP.Request.Options): Promise<[SPARQL.RawResults.Class, HTTP.Response.Class]>;
+    executeRawCONSTRUCTQuery(constructQuery: string, requestOptions?: HTTP.Request.Options): Promise<[string, HTTP.Response.Class]>;
+    executeRawDESCRIBEQuery(describeQuery: string, requestOptions?: HTTP.Request.Options): Promise<[string, HTTP.Response.Class]>;
 }
 export declare class Factory {
     static hasClassProperties(document: Document.Class): boolean;

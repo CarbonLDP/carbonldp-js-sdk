@@ -375,66 +375,104 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 			), ():void => {
 				expect( document.refresh ).toBeDefined();
 				expect( Utils.isFunction( document.refresh ) ).toBe( true );
+
+				// TODO wait implementation in PersistedDocument
 			});
 
 			it( hasMethod(
 				INSTANCE,
 				"save",
 				"Save the PersistedDocument to the server.",
-				{ type: "Promise<void>" }
+				{ type: "Promise<[ Carbon.PersistedDocument.Class, HTTP.Response.Class ]>" }
 			), ():void => {
 				expect( document.save ).toBeDefined();
 				expect( Utils.isFunction( document.save ) ).toBe( true );
+
+				let spy = spyOn( context.documents, "save" );
+				document.save();
+				expect( spy ).toHaveBeenCalledWith( document );
 			});
 
 			it( hasMethod(
 				INSTANCE,
 				"destroy",
 				"Remove the data in the server referred by the id of the PersistedDocument.",
-				{ type: "Promise<void>" }
+				{ type: "Promise<Carbon.HTTP.Response.Class>" }
 			), ():void => {
 				expect( document.destroy ).toBeDefined();
 				expect( Utils.isFunction( document.destroy ) ).toBe( true );
+
+				let spy = spyOn( context.documents, "delete" );
+				document.destroy();
+				expect( spy ).toHaveBeenCalledWith( document );
 			});
 
 			it( hasMethod(
 				INSTANCE,
 				"executeRawASKQuery",
-				"Executes an ASK query in the document and returns a raw application/sparql-results+json object.",
+				"Executes an ASK query in the document and returns a raw application/sparql-results+json object.", [
+					{ name: "askQuery", type: "string" },
+					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true }
+				],
 				{ type: "Promise<void>" }
 			), ():void => {
 				expect( document.executeRawASKQuery ).toBeDefined();
 				expect( Utils.isFunction( document.executeRawASKQuery ) ).toBe( true );
+
+				let spy = spyOn( context.documents, "executeRawASKQuery" );
+				document.executeRawASKQuery( "ASK { ?subject, ?predicate, ?object }" );
+				expect( spy ).toHaveBeenCalledWith( document.id, "ASK { ?subject, ?predicate, ?object }", {} );
 			});
 
 			it( hasMethod(
 				INSTANCE,
 				"executeRawSELECTQuery",
-				"Executes an SELECT query in the document and returns a raw application/sparql-results+json object.",
+				"Executes an SELECT query in the document and returns a raw application/sparql-results+json object.",[
+					{ name: "selectQuery", type: "string" },
+					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true }
+				],
 				{ type: "Promise<void>" }
 			), ():void => {
 				expect( document.executeRawSELECTQuery ).toBeDefined();
 				expect( Utils.isFunction( document.executeRawSELECTQuery ) ).toBe( true );
+
+				let spy = spyOn( context.documents, "executeRawSELECTQuery" );
+				document.executeRawSELECTQuery( "SELECT ?book ?title WHERE { <http://example.com/some-document/> ?book ?title }" );
+				expect( spy ).toHaveBeenCalledWith( document.id, "SELECT ?book ?title WHERE { <http://example.com/some-document/> ?book ?title }", {} );
 			});
 
 			it( hasMethod(
 				INSTANCE,
 				"executeRawCONSTRUCTQuery",
-				"Executes an CONSTRUCT query in the document and returns a string with the resulting model.",
+				"Executes an CONSTRUCT query in the document and returns a string with the resulting model.",[
+					{ name: "constructQuery", type: "string" },
+					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true }
+				],
 				{ type: "Promise<void>" }
 			), ():void => {
 				expect( document.executeRawCONSTRUCTQuery ).toBeDefined();
 				expect( Utils.isFunction( document.executeRawCONSTRUCTQuery ) ).toBe( true );
+
+				let spy = spyOn( context.documents, "executeRawCONSTRUCTQuery" );
+				document.executeRawCONSTRUCTQuery( "CONSTRUCT { ?subject ?predicate ?object } WHERE { ?subject ?predicate ?object }" );
+				expect( spy ).toHaveBeenCalledWith( document.id, "CONSTRUCT { ?subject ?predicate ?object } WHERE { ?subject ?predicate ?object }", {} );
 			});
 
 			it( hasMethod(
 				INSTANCE,
 				"executeRawDESCRIBEQuery",
-				"Executes an DESCRIBE query in the document and returns a string with the resulting model.",
+				"Executes an DESCRIBE query in the document and returns a string with the resulting model.",[
+					{ name: "constructQuery", type: "string" },
+					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true }
+				],
 				{ type: "Promise<void>" }
 			), ():void => {
 				expect( document.executeRawDESCRIBEQuery ).toBeDefined();
 				expect( Utils.isFunction( document.executeRawDESCRIBEQuery ) ).toBe( true );
+
+				let spy = spyOn( context.documents, "executeRawDESCRIBEQuery" );
+				document.executeRawDESCRIBEQuery( "DESCRIBE { ?subject ?predicate ?object } WHERE { ?subject ?predicate ?object }" );
+				expect( spy ).toHaveBeenCalledWith( document.id, "DESCRIBE { ?subject ?predicate ?object } WHERE { ?subject ?predicate ?object }", {} );
 			});
 
 		});
