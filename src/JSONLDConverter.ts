@@ -7,6 +7,7 @@ import * as Pointer from "./Pointer";
 import * as RDF from "./RDF";
 import * as Utils from "./Utils";
 
+// TODO: Use Literal.Parsers to parse literals
 export class Class {
 	private _literalSerializers:Map<string, RDF.Literal.Serializer>;
 
@@ -97,7 +98,6 @@ export class Class {
 				} else {
 					return this.expandPropertyValue( propertyValue, pointerValidator );
 				}
-				break;
 			case ObjectSchema.ContainerType.LIST:
 				if( propertyDefinition.literal ) {
 					return this.expandPropertyLiteralList( propertyValue, propertyDefinition.literalType.toString() );
@@ -106,7 +106,6 @@ export class Class {
 				} else {
 					return this.expandPropertyList( propertyValue, pointerValidator );
 				}
-				break;
 			case ObjectSchema.ContainerType.SET:
 				if( propertyDefinition.literal ) {
 					return this.expandPropertyLiterals( propertyValue, propertyDefinition.literalType.toString() );
@@ -115,7 +114,6 @@ export class Class {
 				} else {
 					return this.expandPropertyValues( propertyValue, pointerValidator );
 				}
-				break;
 			case ObjectSchema.ContainerType.LANGUAGE:
 				return this.expandPropertyLanguageMap( propertyValue );
 			default:
@@ -380,7 +378,6 @@ export class Class {
 				} else {
 					return this.getProperty( expandedObject, propertyURI, pointerLibrary );
 				}
-				break;
 			case ObjectSchema.ContainerType.LIST:
 				if( propertyDefinition.literal ) {
 					return this.getPropertyLiteralList( expandedObject, propertyURI, propertyDefinition.literalType.toString() );
@@ -389,7 +386,6 @@ export class Class {
 				} else {
 					return this.getPropertyList( expandedObject, propertyURI, pointerLibrary );
 				}
-				break;
 			case ObjectSchema.ContainerType.SET:
 				if( propertyDefinition.literal ) {
 					return this.getPropertyLiterals( expandedObject, propertyURI, propertyDefinition.literalType.toString() );
@@ -398,7 +394,6 @@ export class Class {
 				} else {
 					return this.getProperties( expandedObject, propertyURI, pointerLibrary );
 				}
-				break;
 			case ObjectSchema.ContainerType.LANGUAGE:
 				return this.getPropertyLanguageMap( expandedObject, propertyURI );
 			default:

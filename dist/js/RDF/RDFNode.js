@@ -1,4 +1,6 @@
-System.register(["./../Utils"], function(exports_1) {
+System.register(["./../Utils"], function(exports_1, context_1) {
+    "use strict";
+    var __moduleName = context_1 && context_1.id;
     var Utils;
     var Factory, Util;
     return {
@@ -20,7 +22,7 @@ System.register(["./../Utils"], function(exports_1) {
                     };
                 };
                 return Factory;
-            })();
+            }());
             exports_1("Factory", Factory);
             Util = (function () {
                 function Util() {
@@ -37,7 +39,7 @@ System.register(["./../Utils"], function(exports_1) {
                     return typeof uri !== "undefined" ? uri["@id"] : null;
                 };
                 return Util;
-            })();
+            }());
             exports_1("Util", Util);
         }
     }

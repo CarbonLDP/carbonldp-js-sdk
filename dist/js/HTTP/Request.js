@@ -1,5 +1,7 @@
 /// <reference path="./../../typings/typings.d.ts" />
-System.register(["./Errors", "./Header", "./Method", "./Response", "./../Utils"], function(exports_1) {
+System.register(["./Errors", "./Header", "./Method", "./Response", "./../Utils"], function(exports_1, context_1) {
+    "use strict";
+    var __moduleName = context_1 && context_1.id;
     var Errors, Header, Method_1, Response_1, Utils;
     var Service, Util;
     function setHeaders(request, headers) {
@@ -136,7 +138,7 @@ System.register(["./Errors", "./Header", "./Method", "./Response", "./../Utils"]
                     sendCredentialsOnCORS: true,
                 };
                 return Service;
-            })();
+            }());
             exports_1("Service", Service);
             Util = (function () {
                 function Util() {
@@ -189,7 +191,7 @@ System.register(["./Errors", "./Header", "./Method", "./Response", "./../Utils"]
                     return requestOptions;
                 };
                 return Util;
-            })();
+            }());
             exports_1("Util", Util);
         }
     }

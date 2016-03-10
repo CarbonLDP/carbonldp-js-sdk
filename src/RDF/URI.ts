@@ -1,3 +1,4 @@
+import * as Errors from "./../Errors";
 import * as ObjectSchema from "./../ObjectSchema";
 import * as Utils from "./../Utils";
 
@@ -79,6 +80,24 @@ export class Util {
 		if ( parts.length > 2 ) throw new Error( "IllegalArgument: The URI provided has more than one # sign." );
 
 		return parts[ 1 ];
+	}
+
+	static getSlug( uri:string ):string {
+		let uriParts:string[] = uri.split( "#" );
+		if( uriParts.length === 2 ) return Util.getSlug( uriParts[ 1 ] );
+		if( uriParts.length > 2 ) throw new Errors.IllegalArgumentError( "Invalid URI: The uri contains two '#' symbols." );
+
+		uri = uriParts[ 0 ];
+
+		if( uri === "" ) return uri;
+		if( uri === "/" ) return uri;
+
+		let parts:string[] = uri.split( "/" );
+		if( parts[ parts.length - 1 ] === "" ) {
+			return parts[ parts.length - 2 ] + "/";
+		} else {
+			return parts[ parts.length - 1 ];
+		}
 	}
 
 	static resolve( parentURI:string, childURI:string ):string {

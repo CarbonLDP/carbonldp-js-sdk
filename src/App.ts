@@ -16,9 +16,16 @@ export interface Class extends Document.Class {
 export const RDF_CLASS:string = NS.CS.Class.Application;
 
 export const SCHEMA:ObjectSchema.Class = {
+	"name": {
+		"@id": NS.CS.Predicate.name,
+		"@type": NS.XSD.DataType.string,
+	},
 	"rootContainer": {
 		"@id": NS.CS.Predicate.rootContainer,
 		"@type": "@id",
+	},
+	"allowsOrigin": {
+		"@id": NS.CS.Predicate.allowsOrigin,
 	},
 };
 

@@ -1,4 +1,6 @@
-System.register(["./Header"], function(exports_1) {
+System.register(["./Header"], function(exports_1, context_1) {
+    "use strict";
+    var __moduleName = context_1 && context_1.id;
     var Header;
     var Class, Util;
     return {
@@ -24,7 +26,7 @@ System.register(["./Header"], function(exports_1) {
                     }
                 };
                 return Class;
-            })();
+            }());
             exports_1("Class", Class);
             Util = (function () {
                 function Util() {
@@ -42,7 +44,7 @@ System.register(["./Header"], function(exports_1) {
                     return etagHeader.values[0].toString();
                 };
                 return Util;
-            })();
+            }());
             exports_1("Util", Util);
             exports_1("default",Class);
         }

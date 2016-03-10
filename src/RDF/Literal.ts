@@ -50,25 +50,35 @@ export class Factory {
 		return literal;
 	}
 
-	static parse( literal:Class ):any {
-		if ( ! literal ) return null;
-		if ( ! Utils.hasProperty( literal, "@value" ) ) return null;
-		if ( ! Utils.hasProperty( literal, "@type" ) ) return literal[ "@value" ];
+	static parse( literalValue:string, literalDataType?:string ):any;
+	static parse( literal:Class ):any;
+	static parse( literalValueOrLiteral:any, literalDataType:string = null ):any {
+		let literalValue:string;
+		if( Utils.isString( literalValueOrLiteral ) ) {
+			literalValue = literalValueOrLiteral;
+		} else {
+			let literal:Class = literalValueOrLiteral;
+			if ( ! literal ) return null;
+			if ( ! Utils.hasProperty( literal, "@value" ) ) return null;
 
-		let type:string = literal[ "@type" ];
+			literalDataType = "@type" in literal ? literal[ "@type" ] : null;
+			literalValue = literal[ "@value" ];
+		}
+
+		if ( literalDataType === null ) return literalValue;
 		// The DataType isn't supported
-		if ( ! Utils.hasProperty( XSD.DataType, type ) ) return literal[ "@value" ];
+		if ( ! Utils.hasProperty( XSD.DataType, literalDataType ) ) return literalValue;
 
-		let valueString:string = literal[ "@value" ];
-		let value:any, parts:string[];
-		switch ( type ) {
+		let value:any;
+		let parts:string[];
+		switch ( literalDataType ) {
 			// Dates
 			case XSD.DataType.date:
 			case XSD.DataType.dateTime:
-				value = new Date( valueString );
+				value = new Date( literalValue );
 				break;
 			case XSD.DataType.time:
-				parts = valueString.match(/(\d+):(\d+):(\d+)\.(\d+)Z/);
+				parts = literalValue.match(/(\d+):(\d+):(\d+)\.(\d+)Z/);
 				value = new Date();
 				value.setUTCHours( parseFloat( parts[1] ), parseFloat( parts[2] ), parseFloat( parts[3]), parseFloat( parts[4] ) );
 				break;
@@ -100,18 +110,18 @@ export class Factory {
 			case XSD.DataType.unsignedByte :
 			case XSD.DataType.double :
 			case XSD.DataType.float :
-				value = parseFloat( valueString );
+				value = parseFloat( literalValue );
 				break;
 
 			// Misc
 			case XSD.DataType.boolean :
-				value = Utils.parseBoolean( valueString );
+				value = Utils.parseBoolean( literalValue );
 				break;
 			case XSD.DataType.string:
-				value = valueString;
+				value = literalValue;
 				break;
 			case XSD.DataType.object:
-				value = JSON.parse( valueString );
+				value = JSON.parse( literalValue );
 				break;
 			default:
 				break;

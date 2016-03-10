@@ -16,6 +16,7 @@ export declare class Util {
     static getRelativeURI(absoluteURI: string, base: string): string;
     static getDocumentURI(uri: string): string;
     static getFragment(uri: string): string;
+    static getSlug(uri: string): string;
     static resolve(parentURI: string, childURI: string): string;
     static removeProtocol(uri: string): string;
     static prefix(uri: string, prefix: string, prefixURI: string): string;

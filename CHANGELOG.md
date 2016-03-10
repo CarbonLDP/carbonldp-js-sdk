@@ -1,3 +1,18 @@
+# 0.16.0 (March 8, 2016)
+* SPARQL queries can now be executed in a Document, Documents or whatever endpoint. The following methods were added:
+    * `document.executeRawASKQuery()`
+    * `document.executeASKQuery()`
+    * `document.executeRawSPARQLQuery()`
+    * `document.executeSPARQLQuery()`
+    * `document.executeRawConstructQuery()`
+    * `document.executeRawDescribeQuery()`
+    Those methods are also accessible in `documents` and `SPARQL.Service`
+* A definition file has been generated for people that are using JSPM. It can be found in `dist/bundles/carbon.d.ts`
+
+# 0.15.1 (February 22, 2016)
+* Changed test browser to Chrome. PhantomJS was giving too many problems
+* Fixed `documents.getMembers()`
+
 # 0.15.0 (February 18, 2016)
 * `context.documents` can now retrieve the members of a document using `getMembers()`
 * `carbon.apps` can no retrieve all accessible appContexts at once with `getAll()`

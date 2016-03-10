@@ -1,4 +1,6 @@
-System.register(["./../Utils"], function(exports_1) {
+System.register(["./../Utils"], function(exports_1, context_1) {
+    "use strict";
+    var __moduleName = context_1 && context_1.id;
     var Utils;
     var Factory;
     return {
@@ -16,7 +18,7 @@ System.register(["./../Utils"], function(exports_1) {
                         && Utils.isArray(value["@list"]);
                 };
                 return Factory;
-            })();
+            }());
             exports_1("Factory", Factory);
         }
     }

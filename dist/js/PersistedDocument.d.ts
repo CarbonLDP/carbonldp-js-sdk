@@ -11,7 +11,9 @@ export interface Class extends Pointer.Class, PersistedResource.Class, Document.
     save(): Promise<[Class, HTTP.Response.Class]>;
     destroy(): Promise<HTTP.Response.Class>;
     executeRawASKQuery(askQuery: string, requestOptions?: HTTP.Request.Options): Promise<[SPARQL.RawResults.Class, HTTP.Response.Class]>;
+    executeASKQuery(): Promise<[boolean, HTTP.Response.Class]>;
     executeRawSELECTQuery(selectQuery: string, requestOptions?: HTTP.Request.Options): Promise<[SPARQL.RawResults.Class, HTTP.Response.Class]>;
+    executeSELECTQuery(): Promise<[SPARQL.SELECTResults.Class, HTTP.Response.Class]>;
     executeRawCONSTRUCTQuery(constructQuery: string, requestOptions?: HTTP.Request.Options): Promise<[string, HTTP.Response.Class]>;
     executeRawDESCRIBEQuery(describeQuery: string, requestOptions?: HTTP.Request.Options): Promise<[string, HTTP.Response.Class]>;
 }

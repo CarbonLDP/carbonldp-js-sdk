@@ -1,5 +1,7 @@
 /// <reference path="./../typings/typings.d.ts" />
-System.register(["./AbstractContext", "./NS", "./RDF", "./Utils"], function(exports_1) {
+System.register(["./AbstractContext", "./NS", "./RDF", "./Utils"], function(exports_1, context_1) {
+    "use strict";
+    var __moduleName = context_1 && context_1.id;
     var __extends = (this && this.__extends) || function (d, b) {
         for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
         function __() { this.constructor = d; }
@@ -24,9 +26,16 @@ System.register(["./AbstractContext", "./NS", "./RDF", "./Utils"], function(expo
         execute: function() {
             exports_1("RDF_CLASS", RDF_CLASS = NS.CS.Class.Application);
             exports_1("SCHEMA", SCHEMA = {
+                "name": {
+                    "@id": NS.CS.Predicate.name,
+                    "@type": NS.XSD.DataType.string,
+                },
                 "rootContainer": {
                     "@id": NS.CS.Predicate.rootContainer,
                     "@type": "@id",
+                },
+                "allowsOrigin": {
+                    "@id": NS.CS.Predicate.allowsOrigin,
                 },
             });
             AppContext = (function (_super) {
@@ -46,7 +55,7 @@ System.register(["./AbstractContext", "./NS", "./RDF", "./Utils"], function(expo
                     return resource.rootContainer.id;
                 };
                 return AppContext;
-            })(AbstractContext_1.default);
+            }(AbstractContext_1.default));
             exports_1("Context", AppContext);
             Factory = (function () {
                 function Factory() {
@@ -55,7 +64,7 @@ System.register(["./AbstractContext", "./NS", "./RDF", "./Utils"], function(expo
                     return (Utils.hasPropertyDefined(resource, "rootContainer"));
                 };
                 return Factory;
-            })();
+            }());
             exports_1("Factory", Factory);
         }
     }

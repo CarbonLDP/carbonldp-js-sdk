@@ -1,5 +1,7 @@
 /// <reference path="./../typings/typings.d.ts" />
-System.register(["./Errors", "./Fragment", "./JSONLDConverter", "./NamedFragment", "./ObjectSchema", "./Pointer", "./RDF", "./Resource", "./Utils"], function(exports_1) {
+System.register(["./Errors", "./Fragment", "./JSONLDConverter", "./NamedFragment", "./ObjectSchema", "./Pointer", "./RDF", "./Resource", "./Utils"], function(exports_1, context_1) {
+    "use strict";
+    var __moduleName = context_1 && context_1.id;
     var Errors, Fragment, JSONLDConverter_1, NamedFragment, ObjectSchema, Pointer, RDF, Resource, Utils;
     var Factory;
     function hasPointer(id) {
@@ -107,8 +109,8 @@ System.register(["./Errors", "./Fragment", "./JSONLDConverter", "./NamedFragment
         resources.push(this);
         resources = resources.concat(this.getFragments());
         var expandedResources = [];
-        for (var _i = 0; _i < resources.length; _i++) {
-            var resource = resources[_i];
+        for (var _i = 0, resources_1 = resources; _i < resources_1.length; _i++) {
+            var resource = resources_1[_i];
             var digestedContext = objectSchemaResolver ? objectSchemaResolver.getSchemaFor(resource) : new ObjectSchema.DigestedObjectSchema();
             expandedResources.push(jsonldConverter.expand(resource, digestedContext, this));
         }
@@ -255,7 +257,7 @@ System.register(["./Errors", "./Fragment", "./JSONLDConverter", "./NamedFragment
                     return object;
                 };
                 return Factory;
-            })();
+            }());
             exports_1("Factory", Factory);
         }
     }

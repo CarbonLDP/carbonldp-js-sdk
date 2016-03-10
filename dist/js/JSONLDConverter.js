@@ -1,5 +1,7 @@
 /// <reference path="./../typings/typings.d.ts" />
-System.register(["./Errors", "./ObjectSchema", "./NS", "./Pointer", "./RDF", "./Utils"], function(exports_1) {
+System.register(["./Errors", "./ObjectSchema", "./NS", "./Pointer", "./RDF", "./Utils"], function(exports_1, context_1) {
+    "use strict";
+    var __moduleName = context_1 && context_1.id;
     var Errors, ObjectSchema, NS, Pointer, RDF, Utils;
     var Class;
     return {
@@ -23,6 +25,7 @@ System.register(["./Errors", "./ObjectSchema", "./NS", "./Pointer", "./RDF", "./
                 Utils = Utils_1;
             }],
         execute: function() {
+            // TODO: Use Literal.Parsers to parse literals
             Class = (function () {
                 function Class(literalSerializers) {
                     if (literalSerializers === void 0) { literalSerializers = null; }
@@ -103,7 +106,6 @@ System.register(["./Errors", "./ObjectSchema", "./NS", "./Pointer", "./RDF", "./
                             else {
                                 return this.expandPropertyValue(propertyValue, pointerValidator);
                             }
-                            break;
                         case ObjectSchema.ContainerType.LIST:
                             if (propertyDefinition.literal) {
                                 return this.expandPropertyLiteralList(propertyValue, propertyDefinition.literalType.toString());
@@ -114,7 +116,6 @@ System.register(["./Errors", "./ObjectSchema", "./NS", "./Pointer", "./RDF", "./
                             else {
                                 return this.expandPropertyList(propertyValue, pointerValidator);
                             }
-                            break;
                         case ObjectSchema.ContainerType.SET:
                             if (propertyDefinition.literal) {
                                 return this.expandPropertyLiterals(propertyValue, propertyDefinition.literalType.toString());
@@ -125,7 +126,6 @@ System.register(["./Errors", "./ObjectSchema", "./NS", "./Pointer", "./RDF", "./
                             else {
                                 return this.expandPropertyValues(propertyValue, pointerValidator);
                             }
-                            break;
                         case ObjectSchema.ContainerType.LANGUAGE:
                             return this.expandPropertyLanguageMap(propertyValue);
                         default:
@@ -188,8 +188,8 @@ System.register(["./Errors", "./ObjectSchema", "./NS", "./Pointer", "./RDF", "./
                 Class.prototype.expandPropertyPointers = function (propertyValues, pointerValidator) {
                     propertyValues = Utils.isArray(propertyValues) ? propertyValues : [propertyValues];
                     var expandedPointers = [];
-                    for (var _i = 0; _i < propertyValues.length; _i++) {
-                        var propertyValue = propertyValues[_i];
+                    for (var _i = 0, propertyValues_1 = propertyValues; _i < propertyValues_1.length; _i++) {
+                        var propertyValue = propertyValues_1[_i];
                         var expandedPointer = this.expandPointer(propertyValue, pointerValidator);
                         if (!expandedPointer)
                             continue;
@@ -200,8 +200,8 @@ System.register(["./Errors", "./ObjectSchema", "./NS", "./Pointer", "./RDF", "./
                 Class.prototype.expandPropertyLiterals = function (propertyValues, literalType) {
                     propertyValues = Utils.isArray(propertyValues) ? propertyValues : [propertyValues];
                     var listValues = [];
-                    for (var _i = 0; _i < propertyValues.length; _i++) {
-                        var propertyValue = propertyValues[_i];
+                    for (var _i = 0, propertyValues_2 = propertyValues; _i < propertyValues_2.length; _i++) {
+                        var propertyValue = propertyValues_2[_i];
                         var serializedValue = this.serializeLiteral(propertyValue, literalType);
                         if (!serializedValue)
                             continue;
@@ -253,8 +253,8 @@ System.register(["./Errors", "./ObjectSchema", "./NS", "./Pointer", "./RDF", "./
                 };
                 Class.prototype.expandArray = function (propertyValue, pointerValidator) {
                     var listValues = [];
-                    for (var _i = 0; _i < propertyValue.length; _i++) {
-                        var listValue = propertyValue[_i];
+                    for (var _i = 0, propertyValue_1 = propertyValue; _i < propertyValue_1.length; _i++) {
+                        var listValue = propertyValue_1[_i];
                         var expandedValue = this.expandValue(listValue, pointerValidator);
                         if (!expandedValue)
                             continue;
@@ -357,7 +357,6 @@ System.register(["./Errors", "./ObjectSchema", "./NS", "./Pointer", "./RDF", "./
                             else {
                                 return this.getProperty(expandedObject, propertyURI, pointerLibrary);
                             }
-                            break;
                         case ObjectSchema.ContainerType.LIST:
                             if (propertyDefinition.literal) {
                                 return this.getPropertyLiteralList(expandedObject, propertyURI, propertyDefinition.literalType.toString());
@@ -368,7 +367,6 @@ System.register(["./Errors", "./ObjectSchema", "./NS", "./Pointer", "./RDF", "./
                             else {
                                 return this.getPropertyList(expandedObject, propertyURI, pointerLibrary);
                             }
-                            break;
                         case ObjectSchema.ContainerType.SET:
                             if (propertyDefinition.literal) {
                                 return this.getPropertyLiterals(expandedObject, propertyURI, propertyDefinition.literalType.toString());
@@ -379,7 +377,6 @@ System.register(["./Errors", "./ObjectSchema", "./NS", "./Pointer", "./RDF", "./
                             else {
                                 return this.getProperties(expandedObject, propertyURI, pointerLibrary);
                             }
-                            break;
                         case ObjectSchema.ContainerType.LANGUAGE:
                             return this.getPropertyLanguageMap(expandedObject, propertyURI);
                         default:
@@ -399,8 +396,8 @@ System.register(["./Errors", "./ObjectSchema", "./NS", "./Pointer", "./RDF", "./
                     var propertyValues = expandedObject[propertyURI];
                     if (!propertyValues)
                         return null;
-                    for (var _i = 0; _i < propertyValues.length; _i++) {
-                        var propertyValue = propertyValues[_i];
+                    for (var _i = 0, propertyValues_3 = propertyValues; _i < propertyValues_3.length; _i++) {
+                        var propertyValue = propertyValues_3[_i];
                         if (!RDF.Node.Factory.is(propertyValue))
                             continue;
                         return pointerLibrary.getPointer(propertyValue["@id"]);
@@ -411,8 +408,8 @@ System.register(["./Errors", "./ObjectSchema", "./NS", "./Pointer", "./RDF", "./
                     var propertyValues = expandedObject[propertyURI];
                     if (!propertyValues)
                         return null;
-                    for (var _i = 0; _i < propertyValues.length; _i++) {
-                        var propertyValue = propertyValues[_i];
+                    for (var _i = 0, propertyValues_4 = propertyValues; _i < propertyValues_4.length; _i++) {
+                        var propertyValue = propertyValues_4[_i];
                         if (!RDF.Literal.Factory.is(propertyValue))
                             continue;
                         if (!RDF.Literal.Factory.hasType(propertyValue, literalType))
@@ -477,8 +474,8 @@ System.register(["./Errors", "./ObjectSchema", "./NS", "./Pointer", "./RDF", "./
                     if (!propertyValues.length)
                         return null;
                     var properties = [];
-                    for (var _i = 0; _i < propertyValues.length; _i++) {
-                        var propertyValue = propertyValues[_i];
+                    for (var _i = 0, propertyValues_5 = propertyValues; _i < propertyValues_5.length; _i++) {
+                        var propertyValue = propertyValues_5[_i];
                         properties.push(this.parseValue(propertyValue, pointerLibrary));
                     }
                     return properties;
@@ -490,8 +487,8 @@ System.register(["./Errors", "./ObjectSchema", "./NS", "./Pointer", "./RDF", "./
                     if (!propertyValues.length)
                         return null;
                     var propertyPointers = [];
-                    for (var _i = 0; _i < propertyValues.length; _i++) {
-                        var propertyValue = propertyValues[_i];
+                    for (var _i = 0, propertyValues_6 = propertyValues; _i < propertyValues_6.length; _i++) {
+                        var propertyValue = propertyValues_6[_i];
                         if (!RDF.Node.Factory.is(propertyValue))
                             continue;
                         var pointer = pointerLibrary.getPointer(propertyValue["@id"]);
@@ -504,8 +501,8 @@ System.register(["./Errors", "./ObjectSchema", "./NS", "./Pointer", "./RDF", "./
                     if (!propertyValues)
                         return null;
                     var propertyLiterals = [];
-                    for (var _i = 0; _i < propertyValues.length; _i++) {
-                        var propertyValue = propertyValues[_i];
+                    for (var _i = 0, propertyValues_7 = propertyValues; _i < propertyValues_7.length; _i++) {
+                        var propertyValue = propertyValues_7[_i];
                         if (!RDF.Literal.Factory.is(propertyValue))
                             continue;
                         if (!RDF.Literal.Factory.hasType(propertyValue, literalType))
@@ -519,8 +516,8 @@ System.register(["./Errors", "./ObjectSchema", "./NS", "./Pointer", "./RDF", "./
                     if (!propertyValues)
                         return null;
                     var propertyLanguageMap = {};
-                    for (var _i = 0; _i < propertyValues.length; _i++) {
-                        var propertyValue = propertyValues[_i];
+                    for (var _i = 0, propertyValues_8 = propertyValues; _i < propertyValues_8.length; _i++) {
+                        var propertyValue = propertyValues_8[_i];
                         if (!RDF.Literal.Factory.is(propertyValue))
                             continue;
                         if (!RDF.Literal.Factory.hasType(propertyValue, NS.XSD.DataType.string))
@@ -533,8 +530,8 @@ System.register(["./Errors", "./ObjectSchema", "./NS", "./Pointer", "./RDF", "./
                     return propertyLanguageMap;
                 };
                 Class.prototype.getList = function (propertyValues) {
-                    for (var _i = 0; _i < propertyValues.length; _i++) {
-                        var propertyValue = propertyValues[_i];
+                    for (var _i = 0, propertyValues_9 = propertyValues; _i < propertyValues_9.length; _i++) {
+                        var propertyValue = propertyValues_9[_i];
                         if (!RDF.List.Factory.is(propertyValue))
                             continue;
                         return propertyValue;
@@ -558,8 +555,8 @@ System.register(["./Errors", "./ObjectSchema", "./NS", "./Pointer", "./RDF", "./
                     else if (RDF.List.Factory.is(propertyValue)) {
                         var parsedValue = [];
                         var listValues = propertyValue["@list"];
-                        for (var _i = 0; _i < listValues.length; _i++) {
-                            var listValue = listValues[_i];
+                        for (var _i = 0, listValues_1 = listValues; _i < listValues_1.length; _i++) {
+                            var listValue = listValues_1[_i];
                             parsedValue.push(this.parseValue(listValue, pointerLibrary));
                         }
                         return parsedValue;
@@ -568,7 +565,7 @@ System.register(["./Errors", "./ObjectSchema", "./NS", "./Pointer", "./RDF", "./
                     }
                 };
                 return Class;
-            })();
+            }());
             exports_1("Class", Class);
             exports_1("default",Class);
         }

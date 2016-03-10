@@ -1,5 +1,7 @@
 /// <reference path="./../../typings/typings.d.ts" />
-System.register(["./../HTTP/JSONParser"], function(exports_1) {
+System.register(["./../HTTP/JSONParser"], function(exports_1, context_1) {
+    "use strict";
+    var __moduleName = context_1 && context_1.id;
     var JSONParser_1;
     var Class;
     return {
@@ -18,7 +20,7 @@ System.register(["./../HTTP/JSONParser"], function(exports_1) {
                     });
                 };
                 return Class;
-            })();
+            }());
             exports_1("Class", Class);
             exports_1("default",Class);
         }

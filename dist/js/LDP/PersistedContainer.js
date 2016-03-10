@@ -1,4 +1,6 @@
-System.register(["./../Utils"], function(exports_1) {
+System.register(["./../Utils"], function(exports_1, context_1) {
+    "use strict";
+    var __moduleName = context_1 && context_1.id;
     var Utils;
     var Factory;
     function createChild(slugOrObject, object) {
@@ -41,7 +43,7 @@ System.register(["./../Utils"], function(exports_1) {
                     return persistedDocument;
                 };
                 return Factory;
-            })();
+            }());
             exports_1("Factory", Factory);
         }
     }

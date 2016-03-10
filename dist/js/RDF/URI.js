@@ -1,5 +1,7 @@
-System.register(["./../Utils"], function(exports_1) {
-    var Utils;
+System.register(["./../Errors", "./../Utils"], function(exports_1, context_1) {
+    "use strict";
+    var __moduleName = context_1 && context_1.id;
+    var Errors, Utils;
     var Class, Util;
     function prefixWithObjectSchema(uri, objectSchema) {
         var prefixEntries = objectSchema.prefixes.entries();
@@ -17,6 +19,9 @@ System.register(["./../Utils"], function(exports_1) {
     }
     return {
         setters:[
+            function (Errors_1) {
+                Errors = Errors_1;
+            },
             function (Utils_1) {
                 Utils = Utils_1;
             }],
@@ -29,7 +34,7 @@ System.register(["./../Utils"], function(exports_1) {
                     return this.stringValue;
                 };
                 return Class;
-            })();
+            }());
             exports_1("Class", Class);
             Util = (function () {
                 function Util() {
@@ -92,6 +97,25 @@ System.register(["./../Utils"], function(exports_1) {
                         throw new Error("IllegalArgument: The URI provided has more than one # sign.");
                     return parts[1];
                 };
+                Util.getSlug = function (uri) {
+                    var uriParts = uri.split("#");
+                    if (uriParts.length === 2)
+                        return Util.getSlug(uriParts[1]);
+                    if (uriParts.length > 2)
+                        throw new Errors.IllegalArgumentError("Invalid URI: The uri contains two '#' symbols.");
+                    uri = uriParts[0];
+                    if (uri === "")
+                        return uri;
+                    if (uri === "/")
+                        return uri;
+                    var parts = uri.split("/");
+                    if (parts[parts.length - 1] === "") {
+                        return parts[parts.length - 2] + "/";
+                    }
+                    else {
+                        return parts[parts.length - 1];
+                    }
+                };
                 Util.resolve = function (parentURI, childURI) {
                     if (Util.isAbsolute(childURI) || Util.isPrefixed(childURI))
                         return childURI;
@@ -123,7 +147,7 @@ System.register(["./../Utils"], function(exports_1) {
                     return prefix + ":" + uri.substring(prefixURI.length);
                 };
                 return Util;
-            })();
+            }());
             exports_1("Util", Util);
             exports_1("default",Class);
         }
