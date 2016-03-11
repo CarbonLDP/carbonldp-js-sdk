@@ -2,11 +2,22 @@ import * as Document from "./Document";
 import Documents from "./Documents";
 import * as HTTP from "./HTTP";
 import * as PersistedResource from "./PersistedResource";
+import * as PersistedFragment from "./PersistedFragment";
+import * as PersistedNamedFragment from "./PersistedNamedFragment";
 import * as Pointer from "./Pointer";
 import * as SPARQL from "./SPARQL";
 export interface Class extends Pointer.Class, PersistedResource.Class, Document.Class {
     _documents: Documents;
     _etag: string;
+    _fragmentsIndex: Map<string, PersistedFragment.Class>;
+    _savedFragments: PersistedFragment.Class[];
+    _syncSavedFragments(): void;
+    getFragment(slug: string): PersistedFragment.Class;
+    getNamedFragment(slug: string): PersistedNamedFragment.Class;
+    getFragments(): PersistedFragment.Class[];
+    createFragment(): PersistedFragment.Class;
+    createFragment(slug: string): PersistedNamedFragment.Class;
+    createNamedFragment(slug: string): PersistedNamedFragment.Class;
     refresh(): Promise<void>;
     save(): Promise<void>;
     destroy(): Promise<void>;
@@ -20,8 +31,8 @@ export interface Class extends Pointer.Class, PersistedResource.Class, Document.
 export declare class Factory {
     static hasClassProperties(document: Document.Class): boolean;
     static is(object: Object): boolean;
-    static create(uri: string, documents: Documents): Class;
-    static createFrom<T extends Object>(object: T, uri: string, documents: Documents): Class;
-    static decorate<T extends Document.Class>(document: T, documents: Documents): T & Class;
+    static create(uri: string, documents: Documents, snapshot?: Object): Class;
+    static createFrom<T extends Object>(object: T, uri: string, documents: Documents, snapshot?: Object): Class;
+    static decorate<T extends Document.Class>(document: T, documents: Documents, snapshot?: Object): T & Class;
 }
 export default Class;

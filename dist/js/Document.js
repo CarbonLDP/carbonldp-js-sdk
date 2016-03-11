@@ -3,7 +3,7 @@ System.register(["./Errors", "./Fragment", "./JSONLDConverter", "./NamedFragment
     "use strict";
     var __moduleName = context_1 && context_1.id;
     var Errors, Fragment, JSONLDConverter_1, NamedFragment, ObjectSchema, Pointer, RDF, Resource, Utils;
-    var Factory, factory;
+    var Factory;
     function hasPointer(id) {
         var document = this;
         if (!document.inScope(id))
@@ -35,9 +35,14 @@ System.register(["./Errors", "./Fragment", "./JSONLDConverter", "./NamedFragment
     }
     function hasFragment(id) {
         var document = this;
-        if (!document.inScope(id))
-            return false;
-        return !!document._fragmentsIndex.has(id);
+        if (RDF.URI.Util.isAbsolute(id)) {
+            if (!RDF.URI.Util.isFragmentOf(id, document.id))
+                return false;
+            id = RDF.URI.Util.hasFragment(id) ? RDF.URI.Util.getFragment(id) : id;
+        }
+        else if (Utils.S.startsWith(id, "#"))
+            id = id.substring(1);
+        return document._fragmentsIndex.has(id);
     }
     function getFragment(id) {
         var document = this;
@@ -63,6 +68,7 @@ System.register(["./Errors", "./Fragment", "./JSONLDConverter", "./NamedFragment
         return Utils.A.from(document._fragmentsIndex.values());
     }
     function createFragment(slug) {
+        if (slug === void 0) { slug = null; }
         var document = this;
         var id;
         if (slug) {
@@ -97,7 +103,16 @@ System.register(["./Errors", "./Fragment", "./JSONLDConverter", "./NamedFragment
         return fragment;
     }
     function removeFragment(fragmentOrSlug) {
-        // TODO: FT
+        var document = this;
+        var id = Utils.isString(fragmentOrSlug) ? fragmentOrSlug : fragmentOrSlug.id;
+        if (RDF.URI.Util.isAbsolute(id)) {
+            if (!RDF.URI.Util.isFragmentOf(id, document.id))
+                return;
+            id = RDF.URI.Util.hasFragment(id) ? RDF.URI.Util.getFragment(id) : id;
+        }
+        else if (Utils.S.startsWith(id, "#"))
+            id = id.substring(1);
+        document._fragmentsIndex.delete(id);
     }
     function toJSON(objectSchemaResolver, jsonldConverter) {
         if (objectSchemaResolver === void 0) { objectSchemaResolver = null; }
@@ -151,7 +166,7 @@ System.register(["./Errors", "./Fragment", "./JSONLDConverter", "./NamedFragment
             Factory = (function () {
                 function Factory() {
                 }
-                Factory.prototype.hasClassProperties = function (documentResource) {
+                Factory.hasClassProperties = function (documentResource) {
                     return (Utils.isObject(documentResource) &&
                         Utils.hasPropertyDefined(documentResource, "_fragmentsIndex") &&
                         Utils.hasFunction(documentResource, "hasFragment") &&
@@ -163,20 +178,20 @@ System.register(["./Errors", "./Fragment", "./JSONLDConverter", "./NamedFragment
                         Utils.hasFunction(documentResource, "removeFragment") &&
                         Utils.hasFunction(documentResource, "toJSON"));
                 };
-                Factory.prototype.create = function (uri) {
+                Factory.create = function (uri) {
                     if (uri === void 0) { uri = null; }
-                    return this.createFrom({}, uri);
+                    return Factory.createFrom({}, uri);
                 };
-                Factory.prototype.createFrom = function (object, uri) {
+                Factory.createFrom = function (object, uri) {
                     if (uri === void 0) { uri = null; }
                     if (!!uri && RDF.URI.Util.isBNodeID(uri))
                         throw new Errors.IllegalArgumentError("Documents cannot have a BNodeID as a uri.");
                     var resource = Resource.Factory.createFrom(object, uri);
-                    var document = this.decorate(resource);
+                    var document = Factory.decorate(resource);
                     return document;
                 };
-                Factory.prototype.decorate = function (object) {
-                    if (this.hasClassProperties(object))
+                Factory.decorate = function (object) {
+                    if (Factory.hasClassProperties(object))
                         return object;
                     Object.defineProperties(object, {
                         "_fragmentsIndex": {
@@ -257,7 +272,6 @@ System.register(["./Errors", "./Fragment", "./JSONLDConverter", "./NamedFragment
                 return Factory;
             }());
             exports_1("Factory", Factory);
-            exports_1("factory", factory = new Factory());
             exports_1("default",Document);
         }
     }

@@ -2,7 +2,7 @@
 System.register([], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
-    var S, A, M, UUID, P;
+    var O, S, A, M, UUID, P;
     function hasFunction(object, functionName) {
         return typeof object[functionName] === "function";
     }
@@ -112,6 +112,40 @@ System.register([], function(exports_1, context_1) {
     return {
         setters:[],
         execute: function() {
+            O = (function () {
+                function O() {
+                }
+                O.areShallowlyEqual = function (object1, object2) {
+                    if (object1 === object2)
+                        return true;
+                    if (!isObject(object1) || !isObject(object2))
+                        return false;
+                    var properties = [];
+                    for (var propertyName in object1) {
+                        if (!object1.hasOwnProperty(propertyName))
+                            continue;
+                        if (isFunction(object1[propertyName]))
+                            continue;
+                        if (!(propertyName in object2))
+                            return false;
+                        if (object1[propertyName] !== object2[propertyName])
+                            return false;
+                        properties.push(propertyName);
+                    }
+                    for (var propertyName in object2) {
+                        if (!object2.hasOwnProperty(propertyName))
+                            continue;
+                        if (isFunction(object2[propertyName]))
+                            continue;
+                        if (!(propertyName in object1))
+                            return false;
+                        if (properties.indexOf(propertyName) === -1)
+                            return false;
+                    }
+                    return true;
+                };
+                return O;
+            }());
             S = (function () {
                 function S() {
                 }
@@ -228,6 +262,7 @@ System.register([], function(exports_1, context_1) {
             exports_1("parseBoolean", parseBoolean);
             exports_1("extend", extend);
             exports_1("forEachOwnProperty", forEachOwnProperty);
+            exports_1("O", O);
             exports_1("S", S);
             exports_1("A", A);
             exports_1("M", M);

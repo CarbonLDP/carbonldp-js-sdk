@@ -1,36 +1,11 @@
 /// <reference path="../typings/typings.d.ts" />
-System.register(["jsonld", "./Errors", "./HTTP", "./RDF", "./Utils", "./JSONLDConverter", "./PersistedDocument", "./Pointer", "./NS", "./ObjectSchema", "./NS/LDP", "./SPARQL"], function(exports_1, context_1) {
+System.register(["./Errors", "./HTTP", "./RDF", "./Utils", "./JSONLDConverter", "./PersistedDocument", "./Pointer", "./NS", "./ObjectSchema", "./LDP", "./SPARQL"], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
-    var jsonld, Errors, HTTP, RDF, Utils, JSONLDConverter, PersistedDocument, Pointer, NS, ObjectSchema, LDP, SPARQL;
+    var Errors, HTTP, RDF, Utils, JSONLDConverter, PersistedDocument, Pointer, NS, ObjectSchema, LDP, SPARQL;
     var Documents;
-    function parse(input) {
-        try {
-            return JSON.parse(input);
-        }
-        catch (error) {
-            // TODO: Handle SyntaxError
-            throw error;
-        }
-    }
-    function expand(_a, options) {
-        var result = _a[0], response = _a[1];
-        return new Promise(function (resolve, reject) {
-            jsonld.expand(result, options, function (error, expanded) {
-                if (error) {
-                    // TODO: Handle jsonld.expand error
-                    throw error;
-                }
-                result = expanded;
-                resolve([result, response]);
-            });
-        });
-    }
     return {
         setters:[
-            function (jsonld_1) {
-                jsonld = jsonld_1;
-            },
             function (Errors_1) {
                 Errors = Errors_1;
             },
@@ -139,16 +114,12 @@ System.register(["jsonld", "./Errors", "./HTTP", "./RDF", "./Utils", "./JSONLDCo
                     if (this.context && this.context.auth.isAuthenticated())
                         this.context.auth.addAuthentication(requestOptions);
                     HTTP.Request.Util.setAcceptHeader("application/ld+json", requestOptions);
-                    HTTP.Request.Util.setPreferredInteractionModel(LDP.Class.RDFSource, requestOptions);
-                    return HTTP.Request.Service.get(uri, requestOptions).then(function (response) {
-                        var parsedObject = parse(response.data);
-                        return expand([parsedObject, response]);
-                    }).then(function (_a) {
-                        var expandedResult = _a[0], response = _a[1];
+                    HTTP.Request.Util.setPreferredInteractionModel(NS.LDP.Class.RDFSource, requestOptions);
+                    return HTTP.Request.Service.get(uri, requestOptions, new RDF.Document.Parser()).then(function (_a) {
+                        var rdfDocuments = _a[0], response = _a[1];
                         var etag = HTTP.Response.Util.getETag(response);
                         if (etag === null)
                             throw new HTTP.Errors.BadResponseError("The response doesn't contain an ETag", response);
-                        var rdfDocuments = RDF.Document.Util.getDocuments(expandedResult);
                         var rdfDocument = _this.getRDFDocument(uri, rdfDocuments, response);
                         if (rdfDocument === null)
                             throw new HTTP.Errors.BadResponseError("No document was returned.", response);
@@ -177,7 +148,15 @@ System.register(["jsonld", "./Errors", "./HTTP", "./RDF", "./Utils", "./JSONLDCo
                         _this.compact(documentResource, document, document);
                         _this.compact(fragmentResources, fragments, document);
                         _this.compact(namedFragmentResources, namedFragments, document);
-                        // TODO: Decorate additional behavior (container, app, etc.)
+                        // TODO: Move this to a more appropriate place
+                        document._syncSnapshot();
+                        fragments.forEach(function (fragment) { return fragment._syncSnapshot(); });
+                        namedFragments.forEach(function (fragment) { return fragment._syncSnapshot(); });
+                        document._syncSavedFragments();
+                        // TODO: Decorate additional behavior (app, etc.)
+                        // TODO: Make it dynamic
+                        if (LDP.Container.Factory.hasRDFClass(document))
+                            LDP.PersistedContainer.Factory.decorate(document);
                         return [document, response];
                     });
                 };
@@ -198,7 +177,7 @@ System.register(["jsonld", "./Errors", "./HTTP", "./RDF", "./Utils", "./JSONLDCo
                         this.context.auth.addAuthentication(requestOptions);
                     HTTP.Request.Util.setAcceptHeader("application/ld+json", requestOptions);
                     HTTP.Request.Util.setContentTypeHeader("application/ld+json", requestOptions);
-                    HTTP.Request.Util.setPreferredInteractionModel(LDP.Class.Container, requestOptions);
+                    HTTP.Request.Util.setPreferredInteractionModel(NS.LDP.Class.Container, requestOptions);
                     if (slug !== null)
                         HTTP.Request.Util.setSlug(slug, requestOptions);
                     var body = childDocument.toJSON(this, this.jsonldConverter);
@@ -209,6 +188,7 @@ System.register(["jsonld", "./Errors", "./HTTP", "./RDF", "./Utils", "./JSONLDCo
                         if (locationHeader.values.length !== 1)
                             throw new HTTP.Errors.BadResponseError("The response contains more than one Location header.", response);
                         var locationURI = locationHeader.values[0].toString();
+                        // TODO: If a Document was supplied, use it to create the pointer instead of creating a new one
                         var pointer = _this.getPointer(locationURI);
                         return [
                             pointer,
@@ -230,7 +210,7 @@ System.register(["jsonld", "./Errors", "./HTTP", "./RDF", "./Utils", "./JSONLDCo
                     if (this.context && this.context.auth.isAuthenticated())
                         this.context.auth.addAuthentication(requestOptions);
                     HTTP.Request.Util.setAcceptHeader("application/ld+json", requestOptions);
-                    HTTP.Request.Util.setPreferredInteractionModel(LDP.Class.Container, requestOptions);
+                    HTTP.Request.Util.setPreferredInteractionModel(NS.LDP.Class.Container, requestOptions);
                     var containerRetrievalPreferences = {
                         include: [
                             NS.LDP.Class.PreferMinimalContainer,
@@ -290,7 +270,7 @@ System.register(["jsonld", "./Errors", "./HTTP", "./RDF", "./Utils", "./JSONLDCo
                         this.context.auth.addAuthentication(requestOptions);
                     HTTP.Request.Util.setAcceptHeader("application/ld+json", requestOptions);
                     HTTP.Request.Util.setContentTypeHeader("application/ld+json", requestOptions);
-                    HTTP.Request.Util.setPreferredInteractionModel(LDP.Class.RDFSource, requestOptions);
+                    HTTP.Request.Util.setPreferredInteractionModel(NS.LDP.Class.RDFSource, requestOptions);
                     HTTP.Request.Util.setIfMatchHeader(persistedDocument._etag, requestOptions);
                     var body = persistedDocument.toJSON(this, this.jsonldConverter);
                     return HTTP.Request.Service.put(persistedDocument.id, body, requestOptions).then(function (response) {
@@ -302,7 +282,7 @@ System.register(["jsonld", "./Errors", "./HTTP", "./RDF", "./Utils", "./JSONLDCo
                     if (this.context && this.context.auth.isAuthenticated())
                         this.context.auth.addAuthentication(requestOptions);
                     HTTP.Request.Util.setAcceptHeader("application/ld+json", requestOptions);
-                    HTTP.Request.Util.setPreferredInteractionModel(LDP.Class.RDFSource, requestOptions);
+                    HTTP.Request.Util.setPreferredInteractionModel(NS.LDP.Class.RDFSource, requestOptions);
                     HTTP.Request.Util.setIfMatchHeader(persistedDocument._etag, requestOptions);
                     return HTTP.Request.Service.delete(persistedDocument.id, persistedDocument.toJSON(), requestOptions);
                 };

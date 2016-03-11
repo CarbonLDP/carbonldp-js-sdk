@@ -3,14 +3,11 @@ System.register(["./../Utils"], function(exports_1, context_1) {
     var __moduleName = context_1 && context_1.id;
     var Utils;
     var Factory;
-    function createChild(slugOrObject, object) {
-        if (slugOrObject === void 0) { slugOrObject = null; }
-        if (object === void 0) { object = null; }
-        var slug = Utils.isString(slugOrObject) ? slugOrObject : null;
-        object = !!slugOrObject && !Utils.isString(slugOrObject) ? slugOrObject : (!!object ? object : null);
-        // TODO: Check if the object is a document
-        // TODO: If it's not a document turn it and any of the objects related to it into document/fragments
-        var document = object;
+    function createChild(slugOrDocument, document) {
+        if (slugOrDocument === void 0) { slugOrDocument = null; }
+        if (document === void 0) { document = null; }
+        var slug = Utils.isString(slugOrDocument) ? slugOrDocument : null;
+        document = !!slugOrDocument && !Utils.isString(slugOrDocument) ? slugOrDocument : (!!document ? document : null);
         if (slug !== null) {
             return this._documents.createChild(this.id, slug, document);
         }

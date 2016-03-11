@@ -212,7 +212,7 @@ describe( module( "Carbon/Documents", "" ), ():void => {
 			},
 		};
 
-		let childDocument:Document.Class = Document.factory.create();
+		let childDocument:Document.Class = Document.Factory.create();
 		let fragment1:Fragment.Class = childDocument.createFragment();
 		let fragment2:Fragment.Class = childDocument.createFragment();
 		let namedFragment1:Fragment.Class = childDocument.createFragment( "1" );

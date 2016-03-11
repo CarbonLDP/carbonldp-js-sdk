@@ -1,12 +1,12 @@
-System.register(["./PersistedResource"], function(exports_1, context_1) {
+System.register(["./PersistedFragment"], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
-    var PersistedResource;
+    var PersistedFragment;
     var Factory;
     return {
         setters:[
-            function (PersistedResource_1) {
-                PersistedResource = PersistedResource_1;
+            function (PersistedFragment_1) {
+                PersistedFragment = PersistedFragment_1;
             }],
         execute: function() {
             Factory = (function () {
@@ -14,7 +14,7 @@ System.register(["./PersistedResource"], function(exports_1, context_1) {
                 }
                 Factory.decorate = function (fragment, snapshot) {
                     if (snapshot === void 0) { snapshot = {}; }
-                    PersistedResource.Factory.decorate(fragment, snapshot);
+                    PersistedFragment.Factory.decorate(fragment, snapshot);
                     return fragment;
                 };
                 return Factory;
@@ -24,4 +24,4 @@ System.register(["./PersistedResource"], function(exports_1, context_1) {
     }
 });
 
-//# sourceMappingURL=PersistedFragment.js.map
+//# sourceMappingURL=PersistedNamedFragment.js.map

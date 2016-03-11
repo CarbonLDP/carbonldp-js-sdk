@@ -4,8 +4,10 @@ import * as NS from "./../NS";
 import * as ObjectSchema from "./../ObjectSchema";
 import * as Pointer from "./../Pointer";
 import * as RDF from "./../RDF";
-import * as RDFSource from "./RDFSource";
+import * as Resource from "./../Resource";
 import * as Utils from "./../Utils";
+
+import * as RDFSource from "./RDFSource";
 
 export const RDF_CLASS:string = NS.LDP.Class.Container;
 
@@ -40,23 +42,23 @@ export interface Class extends RDFSource.Class {
 }
 
 export class Factory {
-	hasClassProperties( resource:RDF.Node.Class ):boolean {
+	static hasClassProperties( resource:RDF.Node.Class ):boolean {
 		return (
 			Utils.hasPropertyDefined( resource, "memberOfRelation" ) &&
 			Utils.hasPropertyDefined( resource, "hasMemberRelation" )
 		);
 	}
 
-	hasRDFClass( pointer:Pointer.Class ):boolean;
-	hasRDFClass( expandedObject:Object ):boolean;
-	hasRDFClass( pointerOrExpandedObject:Object ):boolean {
+	static hasRDFClass( resource:Resource.Class ):boolean;
+	static hasRDFClass( expandedObject:Object ):boolean;
+	static hasRDFClass( resourceOrExpandedObject:Object ):boolean {
 		let types:string[] = [];
-		if( "@type" in pointerOrExpandedObject ) {
-			types = pointerOrExpandedObject[ "@type" ];
-		} else if( "types" in pointerOrExpandedObject ) {
+		if( "@type" in resourceOrExpandedObject ) {
+			types = resourceOrExpandedObject[ "@type" ];
+		} else if( "types" in resourceOrExpandedObject ) {
 			// TODO: Use proper class
-			let resource:{ types: Pointer.Class[] } = <any> pointerOrExpandedObject;
-			types = Pointer.Util.getIDs( resource.types );
+			let resource:Resource.Class = <any> resourceOrExpandedObject;
+			types = resource.types;
 		}
 
 		return (
@@ -67,7 +69,5 @@ export class Factory {
 		);
 	}
 }
-
-export let factory:Factory = new Factory();
 
 export default Class;

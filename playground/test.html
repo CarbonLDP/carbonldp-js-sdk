@@ -48,29 +48,55 @@
 			} );
 
 			carbon.extendObjectSchema( {
-				"counter": {
-					"@id": "ex:counter",
-					"@type": "xsd:integer"
+				"stringProperty": {
+					"@id": "ex:stringProperty",
+					"@type": "xsd:string"
+				},
+				"something": {
+					"@id": "ex:something",
+					"@type": "xsd:string"
 				}
 			} );
 
 			var appContext;
-			var resource;
+			var document;
 
 			carbon.auth.authenticate( "admin@carbonldp.com", "hello" ).then( function() {
-				return carbon.documents.executeSELECTQuery( "apps/", "SELECT ?c ?s ?p ?o WHERE { GRAPH ?c { ?s ?p ?o. FILTER ( ! isBlank( ?s ) && ! isBlank( ?o ) ) } }" );
+				return carbon.apps.get( "test-app/" );
+			} ).then( function( fetchedAppContext ) {
+				appContext = fetchedAppContext;
+
+				return appContext.documents.get( "resource/" );
 			} ).then( function( result ) {
-				var sparqlResults = result[ 0 ];
-				sparqlResults.bindings.forEach( function( binding ) {
-					for( var bindingName in binding ) {
-						if( ! binding.hasOwnProperty( bindingName ) ) continue;
-						if( typeof binding[ bindingName ] === "object" ) binding[ bindingName ] = binding[ bindingName ].id;
-					}
-				});
-				console.table( sparqlResults.bindings );
-			} ).catch( function( error ) {
-				console.error( error );
+				document = result[ 0 ];
+
+				var newDocument = Carbon.Document.Factory.create();
+				newDocument.stringProperty = "My title!";
+				newDocument.types = [ "ex:FreshDocument" ];
+
+				return document.createChild( "My supa new document", newDocument );
+			} ).then( function( results ) {
+				return results[ 0 ].resolve();
+			} ).then( function( result ) {
+				document = result[ 0 ];
+
+				console.log( "%o", document );
 			} );
+
+//			carbon.auth.authenticate( "admin@carbonldp.com", "hello" ).then( function() {
+//				return carbon.documents.executeSELECTQuery( "apps/", "SELECT ?c ?s ?p ?o WHERE { GRAPH ?c { ?s ?p ?o. FILTER ( ! isBlank( ?s ) && ! isBlank( ?o ) ) } }" );
+//			} ).then( function( result ) {
+//				var sparqlResults = result[ 0 ];
+//				sparqlResults.bindings.forEach( function( binding ) {
+//					for( var bindingName in binding ) {
+//						if( ! binding.hasOwnProperty( bindingName ) ) continue;
+//						if( typeof binding[ bindingName ] === "object" ) binding[ bindingName ] = binding[ bindingName ].id;
+//					}
+//				});
+//				console.table( sparqlResults.bindings );
+//			} ).catch( function( error ) {
+//				console.error( error );
+//			} );
 
 //			carbon.auth.authenticate( "admin@carbonldp.com", "hello" ).then( function() {
 //				return carbon.apps.get( "test-app/" );

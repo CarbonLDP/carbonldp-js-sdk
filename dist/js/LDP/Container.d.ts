@@ -2,6 +2,7 @@
 import * as ObjectSchema from "./../ObjectSchema";
 import * as Pointer from "./../Pointer";
 import * as RDF from "./../RDF";
+import * as Resource from "./../Resource";
 import * as RDFSource from "./RDFSource";
 export declare const RDF_CLASS: string;
 export declare const SCHEMA: ObjectSchema.Class;
@@ -10,9 +11,8 @@ export interface Class extends RDFSource.Class {
     hasMemberRelation: Pointer.Class;
 }
 export declare class Factory {
-    hasClassProperties(resource: RDF.Node.Class): boolean;
-    hasRDFClass(pointer: Pointer.Class): boolean;
-    hasRDFClass(expandedObject: Object): boolean;
+    static hasClassProperties(resource: RDF.Node.Class): boolean;
+    static hasRDFClass(resource: Resource.Class): boolean;
+    static hasRDFClass(expandedObject: Object): boolean;
 }
-export declare let factory: Factory;
 export default Class;

@@ -23,12 +23,11 @@ export interface Class extends Resource.Class, Pointer.Library, Pointer.Validato
     toJSON(): string;
 }
 export declare class Factory {
-    hasClassProperties(documentResource: Object): boolean;
-    create(uri: string): Class;
-    create(): Class;
-    createFrom<T extends Object>(object: T, uri: string): T & Class;
-    createFrom<T extends Object>(object: T): T & Class;
-    decorate<T extends Object>(object: T): T & Class;
+    static hasClassProperties(documentResource: Object): boolean;
+    static create(uri: string): Class;
+    static create(): Class;
+    static createFrom<T extends Object>(object: T, uri: string): T & Class;
+    static createFrom<T extends Object>(object: T): T & Class;
+    static decorate<T extends Object>(object: T): T & Class;
 }
-export declare var factory: Factory;
 export default Document;

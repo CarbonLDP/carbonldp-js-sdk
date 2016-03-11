@@ -16,6 +16,9 @@ declare function isMap(value: any): boolean;
 declare function parseBoolean(value: string): boolean;
 declare function extend(target: Object, ...objects: Object[]): Object;
 declare function forEachOwnProperty(object: Object, action: (name: string, value: any) => (boolean | void)): void;
+declare class O {
+    static areShallowlyEqual(object1: Object, object2: Object): boolean;
+}
 declare class S {
     static startsWith(str: string, substring: string): boolean;
     static endsWith(str: string, substring: string): boolean;
@@ -37,4 +40,4 @@ declare class UUID {
 declare class P {
     static createRejectedPromise<T extends Error>(error: T): Promise<any>;
 }
-export { hasFunction, hasProperty, hasPropertyDefined, isNull, isArray, isString, isBoolean, isNumber, isInteger, isDouble, isDate, isObject, isFunction, isMap, parseBoolean, extend, forEachOwnProperty, S, A, M, UUID, P };
+export { hasFunction, hasProperty, hasPropertyDefined, isNull, isArray, isString, isBoolean, isNumber, isInteger, isDouble, isDate, isObject, isFunction, isMap, parseBoolean, extend, forEachOwnProperty, O, S, A, M, UUID, P };

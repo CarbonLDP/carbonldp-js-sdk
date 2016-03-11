@@ -85,7 +85,9 @@ declare module 'carbon/NS/RDF' {
 
 }
 declare module 'carbon/Utils' {
-	 function hasFunction(object: Object, functionName: string): boolean; function hasProperty(object: Object, property: string): boolean; function hasPropertyDefined(object: Object, property: string): boolean; function isNull(value: any): boolean; function isArray(object: any): boolean; function isString(value: any): boolean; function isBoolean(value: any): boolean; function isNumber(value: any): boolean; function isInteger(value: any): boolean; function isDouble(value: any): boolean; function isDate(date: any): boolean; function isObject(object: any): boolean; function isFunction(value: any): boolean; function isMap(value: any): boolean; function parseBoolean(value: string): boolean; function extend(target: Object, ...objects: Object[]): Object; function forEachOwnProperty(object: Object, action: (name: string, value: any) => (boolean | void)): void; class S {
+	 function hasFunction(object: Object, functionName: string): boolean; function hasProperty(object: Object, property: string): boolean; function hasPropertyDefined(object: Object, property: string): boolean; function isNull(value: any): boolean; function isArray(object: any): boolean; function isString(value: any): boolean; function isBoolean(value: any): boolean; function isNumber(value: any): boolean; function isInteger(value: any): boolean; function isDouble(value: any): boolean; function isDate(date: any): boolean; function isObject(object: any): boolean; function isFunction(value: any): boolean; function isMap(value: any): boolean; function parseBoolean(value: string): boolean; function extend(target: Object, ...objects: Object[]): Object; function forEachOwnProperty(object: Object, action: (name: string, value: any) => (boolean | void)): void; class O {
+	    static areShallowlyEqual(object1: Object, object2: Object): boolean;
+	} class S {
 	    static startsWith(str: string, substring: string): boolean;
 	    static endsWith(str: string, substring: string): boolean;
 	    static contains(str: string, substring: string): boolean;
@@ -102,7 +104,7 @@ declare module 'carbon/Utils' {
 	} class P {
 	    static createRejectedPromise<T extends Error>(error: T): Promise<any>;
 	}
-	export { hasFunction, hasProperty, hasPropertyDefined, isNull, isArray, isString, isBoolean, isNumber, isInteger, isDouble, isDate, isObject, isFunction, isMap, parseBoolean, extend, forEachOwnProperty, S, A, M, UUID, P };
+	export { hasFunction, hasProperty, hasPropertyDefined, isNull, isArray, isString, isBoolean, isNumber, isInteger, isDouble, isDate, isObject, isFunction, isMap, parseBoolean, extend, forEachOwnProperty, O, S, A, M, UUID, P };
 
 }
 declare module 'carbon/NS/XSD' {
@@ -1026,7 +1028,7 @@ declare module 'carbon/JSONLDConverter' {
 	    private expandPropertyList(propertyValues, pointerValidator);
 	    private expandPropertyPointerList(propertyValues, pointerValidator);
 	    private expandPropertyLiteralList(propertyValues, literalType);
-	    private expandPropertyValues(propertyValue, pointerValidator);
+	    private expandPropertyValues(propertyValues, pointerValidator);
 	    private expandPropertyPointers(propertyValues, pointerValidator);
 	    private expandPropertyLiterals(propertyValues, literalType);
 	    private expandPropertyLanguageMap(propertyValue);
@@ -1098,21 +1100,26 @@ declare module 'carbon/Document' {
 	    toJSON(): string;
 	}
 	export class Factory {
-	    hasClassProperties(documentResource: Object): boolean;
-	    create(uri: string): Class;
-	    create(): Class;
-	    createFrom<T extends Object>(object: T, uri: string): T & Class;
-	    createFrom<T extends Object>(object: T): T & Class;
-	    decorate<T extends Object>(object: T): T & Class;
+	    static hasClassProperties(documentResource: Object): boolean;
+	    static create(uri: string): Class;
+	    static create(): Class;
+	    static createFrom<T extends Object>(object: T, uri: string): T & Class;
+	    static createFrom<T extends Object>(object: T): T & Class;
+	    static decorate<T extends Object>(object: T): T & Class;
 	}
-	export var factory: Factory;
 	export default Document;
 
 }
 declare module 'carbon/PersistedResource' {
 	/// <reference path="../typings/typings.d.ts" />
 	export interface Class {
+	    _snapshot: Object;
+	    _syncSnapshot: () => void;
 	    isDirty(): boolean;
+	}
+	export class Factory {
+	    static hasClassProperties(object: Object): boolean;
+	    static decorate<T extends Object>(object: T, snapshot?: Object): T & Class;
 	}
 	export default Class;
 
@@ -1123,7 +1130,19 @@ declare module 'carbon/PersistedFragment' {
 	export interface Class extends PersistedResource.Class, Fragment.Class {
 	}
 	export class Factory {
-	    static hasClassProperties(fragment: Fragment.Class): boolean;
+	    static decorate<T extends Fragment.Class>(fragment: T, snapshot?: Object): T & Class;
+	}
+	export default Class;
+
+}
+declare module 'carbon/PersistedNamedFragment' {
+	import * as Fragment from 'carbon/Fragment';
+	import * as NamedFragment from 'carbon/NamedFragment';
+	import * as PersistedFragment from 'carbon/PersistedFragment';
+	export interface Class extends PersistedFragment.Class, NamedFragment.Class {
+	}
+	export class Factory {
+	    static decorate<T extends Fragment.Class>(fragment: T, snapshot?: Object): T & Class;
 	}
 	export default Class;
 
@@ -1214,11 +1233,22 @@ declare module 'carbon/PersistedDocument' {
 	import Documents from 'carbon/Documents';
 	import * as HTTP from 'carbon/HTTP';
 	import * as PersistedResource from 'carbon/PersistedResource';
+	import * as PersistedFragment from 'carbon/PersistedFragment';
+	import * as PersistedNamedFragment from 'carbon/PersistedNamedFragment';
 	import * as Pointer from 'carbon/Pointer';
 	import * as SPARQL from 'carbon/SPARQL';
 	export interface Class extends Pointer.Class, PersistedResource.Class, Document.Class {
 	    _documents: Documents;
 	    _etag: string;
+	    _fragmentsIndex: Map<string, PersistedFragment.Class>;
+	    _savedFragments: PersistedFragment.Class[];
+	    _syncSavedFragments(): void;
+	    getFragment(slug: string): PersistedFragment.Class;
+	    getNamedFragment(slug: string): PersistedNamedFragment.Class;
+	    getFragments(): PersistedFragment.Class[];
+	    createFragment(): PersistedFragment.Class;
+	    createFragment(slug: string): PersistedNamedFragment.Class;
+	    createNamedFragment(slug: string): PersistedNamedFragment.Class;
 	    refresh(): Promise<void>;
 	    save(): Promise<void>;
 	    destroy(): Promise<void>;
@@ -1232,11 +1262,96 @@ declare module 'carbon/PersistedDocument' {
 	export class Factory {
 	    static hasClassProperties(document: Document.Class): boolean;
 	    static is(object: Object): boolean;
-	    static create(uri: string, documents: Documents): Class;
-	    static createFrom<T extends Object>(object: T, uri: string, documents: Documents): Class;
-	    static decorate<T extends Document.Class>(document: T, documents: Documents): T & Class;
+	    static create(uri: string, documents: Documents, snapshot?: Object): Class;
+	    static createFrom<T extends Object>(object: T, uri: string, documents: Documents, snapshot?: Object): Class;
+	    static decorate<T extends Document.Class>(document: T, documents: Documents, snapshot?: Object): T & Class;
 	}
 	export default Class;
+
+}
+declare module 'carbon/LDP/RDFSource' {
+	import * as ObjectSchema from 'carbon/ObjectSchema';
+	import * as Resource from 'carbon/Resource';
+	export const RDF_CLASS: string;
+	export const SCHEMA: ObjectSchema.Class;
+	export interface Class extends Resource.Class {
+	}
+	export class Factory {
+	}
+	export let factory: Factory;
+	export default Class;
+
+}
+declare module 'carbon/LDP/Container' {
+	/// <reference path="../../typings/typings.d.ts" />
+	import * as ObjectSchema from 'carbon/ObjectSchema';
+	import * as Pointer from 'carbon/Pointer';
+	import * as RDF from 'carbon/RDF';
+	import * as Resource from 'carbon/Resource';
+	import * as RDFSource from 'carbon/LDP/RDFSource';
+	export const RDF_CLASS: string;
+	export const SCHEMA: ObjectSchema.Class;
+	export interface Class extends RDFSource.Class {
+	    memberOfRelation: Pointer.Class;
+	    hasMemberRelation: Pointer.Class;
+	}
+	export class Factory {
+	    static hasClassProperties(resource: RDF.Node.Class): boolean;
+	    static hasRDFClass(resource: Resource.Class): boolean;
+	    static hasRDFClass(expandedObject: Object): boolean;
+	}
+	export default Class;
+
+}
+declare module 'carbon/LDP/AccessPoint' {
+	/// <reference path="../../typings/typings.d.ts" />
+	import * as Container from 'carbon/LDP/Container';
+	import * as ObjectSchema from 'carbon/ObjectSchema';
+	export const RDF_CLASS: string;
+	export interface Class extends Container.Class {
+	    membershipResource: string;
+	}
+	export const SCHEMA: ObjectSchema.Class;
+	export class Factory {
+	    hasClassProperties(resource: Object): boolean;
+	}
+	export default Class;
+
+}
+declare module 'carbon/LDP/BasicContainer' {
+	/// <reference path="../../typings/typings.d.ts" />
+	import * as Pointer from 'carbon/Pointer';
+	import * as Container from 'carbon/LDP/Container';
+	export const RDF_CLASS: string;
+	export interface Class extends Container.Class {
+	}
+	export class Factory {
+	    hasRDFClass(pointer: Pointer.Class): boolean;
+	    hasRDFClass(expandedObject: Object): boolean;
+	}
+	export let factory: Factory;
+	export default Class;
+
+}
+declare module 'carbon/LDP/PersistedContainer' {
+	import * as Document from 'carbon/Document';
+	import * as PersistedDocument from 'carbon/PersistedDocument';
+	export interface Class extends PersistedDocument.Class {
+	    createChild(object: Object): Promise<void>;
+	}
+	export class Factory {
+	    static hasClassProperties(document: Document.Class): boolean;
+	    static decorate<T extends PersistedDocument.Class>(persistedDocument: T): T & Class;
+	}
+
+}
+declare module 'carbon/LDP' {
+	import * as AccessPoint from 'carbon/LDP/AccessPoint';
+	import * as BasicContainer from 'carbon/LDP/BasicContainer';
+	import * as Container from 'carbon/LDP/Container';
+	import * as PersistedContainer from 'carbon/LDP/PersistedContainer';
+	import * as RDFSource from 'carbon/LDP/RDFSource';
+	export { AccessPoint, BasicContainer, Container, PersistedContainer, RDFSource };
 
 }
 declare module 'carbon/Documents' {
@@ -1314,91 +1429,6 @@ declare module 'carbon/Context' {
 	    clearObjectSchema(): void;
 	}
 	export default Context;
-
-}
-declare module 'carbon/LDP/RDFSource' {
-	import * as ObjectSchema from 'carbon/ObjectSchema';
-	import * as Resource from 'carbon/Resource';
-	export const RDF_CLASS: string;
-	export const SCHEMA: ObjectSchema.Class;
-	export interface Class extends Resource.Class {
-	}
-	export class Factory {
-	}
-	export let factory: Factory;
-	export default Class;
-
-}
-declare module 'carbon/LDP/Container' {
-	/// <reference path="../../typings/typings.d.ts" />
-	import * as ObjectSchema from 'carbon/ObjectSchema';
-	import * as Pointer from 'carbon/Pointer';
-	import * as RDF from 'carbon/RDF';
-	import * as RDFSource from 'carbon/LDP/RDFSource';
-	export const RDF_CLASS: string;
-	export const SCHEMA: ObjectSchema.Class;
-	export interface Class extends RDFSource.Class {
-	    memberOfRelation: Pointer.Class;
-	    hasMemberRelation: Pointer.Class;
-	}
-	export class Factory {
-	    hasClassProperties(resource: RDF.Node.Class): boolean;
-	    hasRDFClass(pointer: Pointer.Class): boolean;
-	    hasRDFClass(expandedObject: Object): boolean;
-	}
-	export let factory: Factory;
-	export default Class;
-
-}
-declare module 'carbon/LDP/AccessPoint' {
-	/// <reference path="../../typings/typings.d.ts" />
-	import * as Container from 'carbon/LDP/Container';
-	import * as ObjectSchema from 'carbon/ObjectSchema';
-	export const RDF_CLASS: string;
-	export interface Class extends Container.Class {
-	    membershipResource: string;
-	}
-	export const SCHEMA: ObjectSchema.Class;
-	export class Factory {
-	    hasClassProperties(resource: Object): boolean;
-	}
-	export default Class;
-
-}
-declare module 'carbon/LDP/BasicContainer' {
-	/// <reference path="../../typings/typings.d.ts" />
-	import * as Pointer from 'carbon/Pointer';
-	import * as Container from 'carbon/LDP/Container';
-	export const RDF_CLASS: string;
-	export interface Class extends Container.Class {
-	}
-	export class Factory {
-	    hasRDFClass(pointer: Pointer.Class): boolean;
-	    hasRDFClass(expandedObject: Object): boolean;
-	}
-	export let factory: Factory;
-	export default Class;
-
-}
-declare module 'carbon/LDP/PersistedContainer' {
-	import * as Document from 'carbon/Document';
-	import * as PersistedDocument from 'carbon/PersistedDocument';
-	export interface Class extends PersistedDocument.Class {
-	    createChild(object: Object): Promise<void>;
-	}
-	export class Factory {
-	    static hasClassProperties(document: Document.Class): boolean;
-	    static decorate<T extends PersistedDocument.Class>(persistedDocument: T): T & Class;
-	}
-
-}
-declare module 'carbon/LDP' {
-	import * as AccessPoint from 'carbon/LDP/AccessPoint';
-	import * as BasicContainer from 'carbon/LDP/BasicContainer';
-	import * as Container from 'carbon/LDP/Container';
-	import * as PersistedContainer from 'carbon/LDP/PersistedContainer';
-	import * as RDFSource from 'carbon/LDP/RDFSource';
-	export { AccessPoint, BasicContainer, Container, PersistedContainer, RDFSource };
 
 }
 declare module 'carbon/App' {
