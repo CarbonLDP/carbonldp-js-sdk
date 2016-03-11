@@ -70,10 +70,11 @@
 			} ).then( function( result ) {
 				document = result[ 0 ];
 
-				document.removeFragment( "some-slug" );
-				document.removeFragment( "some-other-slug" );
+				var newDocument = Carbon.Document.Factory.create();
+				newDocument.stringProperty = "My title!";
+				newDocument.types = [ "ex:FreshDocument" ];
 
-				return document.save();
+				return document.createChild( "My supa new document", newDocument );
 			} ).then( function( results ) {
 				return results[ 0 ].resolve();
 			} ).then( function( result ) {

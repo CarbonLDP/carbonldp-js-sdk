@@ -147,7 +147,6 @@ function removeFragment( fragment:NamedFragment.Class ):void;
 function removeFragment( fragment:Fragment.Class ):void;
 function removeFragment( slug:string ):void;
 function removeFragment( fragmentOrSlug:any ):void {
-	// TODO: In persistedDocuments it should track the removedFragments to make the document dirty
 	let document:Class = <Class> this;
 
 	let id:string = Utils.isString( fragmentOrSlug ) ? fragmentOrSlug : <Fragment.Class> fragmentOrSlug.id;

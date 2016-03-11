@@ -1,16 +1,13 @@
 /// <reference path="../../typings/typings.d.ts" />
-System.register(["./../NS", "./../Pointer", "./../Utils"], function(exports_1, context_1) {
+System.register(["./../NS", "./../Utils"], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
-    var NS, Pointer, Utils;
+    var NS, Utils;
     var RDF_CLASS, SCHEMA, Factory;
     return {
         setters:[
             function (NS_1) {
                 NS = NS_1;
-            },
-            function (Pointer_1) {
-                Pointer = Pointer_1;
             },
             function (Utils_1) {
                 Utils = Utils_1;
@@ -48,15 +45,15 @@ System.register(["./../NS", "./../Pointer", "./../Utils"], function(exports_1, c
                     return (Utils.hasPropertyDefined(resource, "memberOfRelation") &&
                         Utils.hasPropertyDefined(resource, "hasMemberRelation"));
                 };
-                Factory.hasRDFClass = function (pointerOrExpandedObject) {
+                Factory.hasRDFClass = function (resourceOrExpandedObject) {
                     var types = [];
-                    if ("@type" in pointerOrExpandedObject) {
-                        types = pointerOrExpandedObject["@type"];
+                    if ("@type" in resourceOrExpandedObject) {
+                        types = resourceOrExpandedObject["@type"];
                     }
-                    else if ("types" in pointerOrExpandedObject) {
+                    else if ("types" in resourceOrExpandedObject) {
                         // TODO: Use proper class
-                        var resource = pointerOrExpandedObject;
-                        types = Pointer.Util.getIDs(resource.types);
+                        var resource = resourceOrExpandedObject;
+                        types = resource.types;
                     }
                     return (types.indexOf(RDF_CLASS) !== -1 ||
                         types.indexOf(NS.LDP.Class.BasicContainer) !== -1 ||

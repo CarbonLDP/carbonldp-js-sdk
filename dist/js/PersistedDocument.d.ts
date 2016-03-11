@@ -9,6 +9,9 @@ import * as SPARQL from "./SPARQL";
 export interface Class extends Pointer.Class, PersistedResource.Class, Document.Class {
     _documents: Documents;
     _etag: string;
+    _fragmentsIndex: Map<string, PersistedFragment.Class>;
+    _savedFragments: PersistedFragment.Class[];
+    _syncSavedFragments(): void;
     getFragment(slug: string): PersistedFragment.Class;
     getNamedFragment(slug: string): PersistedNamedFragment.Class;
     getFragments(): PersistedFragment.Class[];

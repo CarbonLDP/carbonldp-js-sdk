@@ -14,21 +14,18 @@ System.register(["./Document", "./PersistedResource", "./PersistedFragment", "./
                 if (fragment.isDirty())
                     return true;
             }
+            // Check if an already saved fragment was removed
+            for (var _b = 0, _c = document._savedFragments; _b < _c.length; _b++) {
+                var fragment = _c[_b];
+                if (!document.hasFragment(fragment.id))
+                    return true;
+            }
             return false;
         };
     }
-    function refresh() {
-        // TODO
-        return null;
-    }
-    function save() {
-        var _this = this;
-        return this._documents.save(this).then(function (response) {
-            return [_this, response];
-        });
-    }
-    function destroy() {
-        return this._documents.delete(this);
+    function syncSavedFragments() {
+        var document = this;
+        document._savedFragments = Utils.A.from(document._fragmentsIndex.values());
     }
     function extendCreateFragment(superFunction) {
         return function (slug) {
@@ -49,6 +46,19 @@ System.register(["./Document", "./PersistedResource", "./PersistedFragment", "./
             var fragment = superFunction.call(this, slug);
             return PersistedFragment.Factory.decorate(fragment);
         };
+    }
+    function refresh() {
+        // TODO
+        return null;
+    }
+    function save() {
+        var _this = this;
+        return this._documents.save(this).then(function (response) {
+            return [_this, response];
+        });
+    }
+    function destroy() {
+        return this._documents.delete(this);
     }
     function executeRawASKQuery(askQuery, requestOptions) {
         if (requestOptions === void 0) { requestOptions = {}; }
@@ -144,6 +154,18 @@ System.register(["./Document", "./PersistedResource", "./PersistedFragment", "./
                             enumerable: false,
                             configurable: true,
                             value: null,
+                        },
+                        "_savedFragments": {
+                            writable: true,
+                            enumerable: false,
+                            configurable: true,
+                            value: [],
+                        },
+                        "_syncSavedFragments": {
+                            writable: false,
+                            enumerable: false,
+                            configurable: true,
+                            value: syncSavedFragments,
                         },
                         "hasPointer": {
                             writable: false,

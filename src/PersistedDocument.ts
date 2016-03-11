@@ -15,6 +15,9 @@ import * as Utils from "./Utils";
 export interface Class extends Pointer.Class, PersistedResource.Class, Document.Class {
 	_documents:Documents;
 	_etag:string;
+	_fragmentsIndex:Map<string, PersistedFragment.Class>;
+	_savedFragments:PersistedFragment.Class[];
+	_syncSavedFragments():void;
 
 	getFragment( slug:string ):PersistedFragment.Class;
 	getNamedFragment( slug:string ):PersistedNamedFragment.Class;
@@ -45,21 +48,19 @@ function extendIsDirty( superFunction:() => boolean ):() => boolean {
 		for( let fragment of document.getFragments() ) {
 			if( fragment.isDirty() ) return true;
 		}
+
+		// Check if an already saved fragment was removed
+		for( let fragment of document._savedFragments ) {
+			if( ! document.hasFragment( fragment.id ) ) return true;
+		}
+
 		return false;
 	};
 }
 
-function refresh():Promise<void> {
-	// TODO
-	return null;
-}
-function save():Promise<void> {
-	return this._documents.save( this ).then( ( response:HTTP.Response.Class) => {
-		return [ this, response ];
-	});
-}
-function destroy():Promise<void> {
-	return this._documents.delete( this );
+function syncSavedFragments():void {
+	let document:Class = this;
+	document._savedFragments = Utils.A.from( document._fragmentsIndex.values() );
 }
 
 function extendCreateFragment( superFunction:( slug:string ) => NamedFragment.Class ):( slug:string ) => PersistedNamedFragment.Class;
@@ -80,7 +81,19 @@ function extendCreateNamedFragment( superFunction:( slug:string ) => NamedFragme
 		let fragment:NamedFragment.Class = superFunction.call( this, slug );
 		return PersistedFragment.Factory.decorate( fragment );
 	};
+}
 
+function refresh():Promise<void> {
+	// TODO
+	return null;
+}
+function save():Promise<void> {
+	return this._documents.save( this ).then( ( response:HTTP.Response.Class) => {
+		return [ this, response ];
+	});
+}
+function destroy():Promise<void> {
+	return this._documents.delete( this );
 }
 
 function executeRawASKQuery( askQuery:string, requestOptions:HTTP.Request.Options = {} ):Promise<[ SPARQL.RawResults.Class, HTTP.Response.Class ]> {
@@ -163,6 +176,18 @@ export class Factory {
 				enumerable: false,
 				configurable: true,
 				value: null,
+			},
+			"_savedFragments": {
+				writable: true,
+				enumerable: false,
+				configurable: true,
+				value: [],
+			},
+			"_syncSavedFragments": {
+				writable: false,
+				enumerable: false,
+				configurable: true,
+				value: syncSavedFragments,
 			},
 
 			"hasPointer": {

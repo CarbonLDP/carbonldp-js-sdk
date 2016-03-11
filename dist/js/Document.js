@@ -103,7 +103,6 @@ System.register(["./Errors", "./Fragment", "./JSONLDConverter", "./NamedFragment
         return fragment;
     }
     function removeFragment(fragmentOrSlug) {
-        // TODO: In persistedDocuments it should track the removedFragments to make the document dirty
         var document = this;
         var id = Utils.isString(fragmentOrSlug) ? fragmentOrSlug : fragmentOrSlug.id;
         if (RDF.URI.Util.isAbsolute(id)) {
