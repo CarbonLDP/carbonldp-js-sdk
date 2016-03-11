@@ -41,7 +41,7 @@ describe( module(
 		it( isDefined(), ():void => {
 			expect( CS.Class ).toBeDefined();
 			expect( Utils.isFunction( CS.Class ) ).toBe( true );
-			expect( Object.keys( CS.Class ).length ).toBe( 2 );
+			expect( Object.keys( CS.Class ).length ).toBe( 3 );
 		});
 
 		it( hasProperty(
@@ -66,6 +66,17 @@ describe( module(
 			expect( CS.Class.Token ).toBe( "https://carbonldp.com/ns/v1/security#Token" );
 		});
 
+		it( hasProperty(
+			STATIC,
+			"AllOrigins",
+			"string"
+		), ():void => {
+			expect( CS.Class.AllOrigins ).toBeDefined();
+			expect( Utils.isString( CS.Class.AllOrigins ) ).toBe( true );
+
+			expect( CS.Class.AllOrigins ).toBe( "https://carbonldp.com/ns/v1/security#AllOrigins" );
+		});
+
 	});
 
 	describe( clazz(
@@ -77,7 +88,29 @@ describe( module(
 			expect( CS.Predicate ).toBeDefined();
 			expect( Utils.isFunction( CS.Predicate ) ).toBe( true );
 
-			expect( Object.keys( CS.Predicate ).length ).toBe( 3 );
+			expect( Object.keys( CS.Predicate ).length ).toBe( 5 );
+		});
+
+		it( hasProperty(
+			STATIC,
+			"name",
+			"string"
+		), ():void => {
+			expect( CS.Predicate.name ).toBeDefined();
+			expect( Utils.isString( CS.Predicate.name ) ).toBe( true );
+
+			expect( CS.Predicate.name ).toBe( "https://carbonldp.com/ns/v1/security#name" );
+		});
+
+		it( hasProperty(
+			STATIC,
+			"allowsOrigin",
+			"string"
+		), ():void => {
+			expect( CS.Predicate.allowsOrigin ).toBeDefined();
+			expect( Utils.isString( CS.Predicate.allowsOrigin ) ).toBe( true );
+
+			expect( CS.Predicate.allowsOrigin ).toBe( "https://carbonldp.com/ns/v1/security#allowsOrigin" );
 		});
 
 		it( hasProperty(

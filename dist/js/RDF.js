@@ -1,4 +1,6 @@
-System.register(["./RDF/Literal", "./RDF/Document", "./RDF/List", "./RDF/RDFNode", "./RDF/URI", "./RDF/Value"], function(exports_1) {
+System.register(["./RDF/Literal", "./RDF/Document", "./RDF/List", "./RDF/RDFNode", "./RDF/URI", "./RDF/Value"], function(exports_1, context_1) {
+    "use strict";
+    var __moduleName = context_1 && context_1.id;
     var Literal, Document, List, Node, URI, Value;
     return {
         setters:[

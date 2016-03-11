@@ -1,4 +1,6 @@
-System.register(["./Document", "./Utils", "./RDF/URI"], function(exports_1) {
+System.register(["./Document", "./Utils", "./RDF/URI"], function(exports_1, context_1) {
+    "use strict";
+    var __moduleName = context_1 && context_1.id;
     var Document, Utils, URI;
     var Factory;
     function isDirty() {
@@ -19,9 +21,17 @@ System.register(["./Document", "./Utils", "./RDF/URI"], function(exports_1) {
         if (requestOptions === void 0) { requestOptions = {}; }
         return this._documents.executeRawASKQuery(this.id, askQuery, requestOptions);
     }
+    function executeASKQuery(askQuery, requestOptions) {
+        if (requestOptions === void 0) { requestOptions = {}; }
+        return this._documents.executeASKQuery(this.id, askQuery, requestOptions);
+    }
     function executeRawSELECTQuery(selectQuery, requestOptions) {
         if (requestOptions === void 0) { requestOptions = {}; }
         return this._documents.executeRawSELECTQuery(this.id, selectQuery, requestOptions);
+    }
+    function executeSELECTQuery(selectQuery, requestOptions) {
+        if (requestOptions === void 0) { requestOptions = {}; }
+        return this._documents.executeSELECTQuery(this.id, selectQuery, requestOptions);
     }
     function executeRawCONSTRUCTQuery(constructQuery, requestOptions) {
         if (requestOptions === void 0) { requestOptions = {}; }
@@ -53,7 +63,9 @@ System.register(["./Document", "./Utils", "./RDF/URI"], function(exports_1) {
                         Utils.hasFunction(document, "save") &&
                         Utils.hasFunction(document, "destroy") &&
                         Utils.hasFunction(document, "executeRawASKQuery") &&
+                        Utils.hasFunction(document, "executeASKQuery") &&
                         Utils.hasFunction(document, "executeRawSELECTQuery") &&
+                        Utils.hasFunction(document, "executeSELECTQuery") &&
                         Utils.hasFunction(document, "executeRawDESCRIBEQuery") &&
                         Utils.hasFunction(document, "executeRawCONSTRUCTQuery"));
                 };
@@ -152,11 +164,23 @@ System.register(["./Document", "./Utils", "./RDF/URI"], function(exports_1) {
                             configurable: true,
                             value: executeRawASKQuery,
                         },
+                        "executeASKQuery": {
+                            writable: false,
+                            enumerable: false,
+                            configurable: true,
+                            value: executeASKQuery,
+                        },
                         "executeRawSELECTQuery": {
                             writable: false,
                             enumerable: false,
                             configurable: true,
                             value: executeRawSELECTQuery,
+                        },
+                        "executeSELECTQuery": {
+                            writable: false,
+                            enumerable: false,
+                            configurable: true,
+                            value: executeSELECTQuery,
                         },
                         "executeRawCONSTRUCTQuery": {
                             writable: false,
@@ -186,7 +210,7 @@ System.register(["./Document", "./Utils", "./RDF/URI"], function(exports_1) {
                     return persistedDocument;
                 };
                 return Factory;
-            })();
+            }());
             exports_1("Factory", Factory);
         }
     }

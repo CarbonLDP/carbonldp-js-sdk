@@ -1,3 +1,131 @@
+declare module 'carbon/test/JasmineExtender' {
+	export interface SuiteDescriptor {
+	    access?: string;
+	    suiteType: string;
+	    name?: string;
+	    description?: string;
+	}
+	export interface SpecDescriptor {
+	    access?: string;
+	    specType: string;
+	    name?: string;
+	    description?: string;
+	}
+	export interface InterfaceDescriptor {
+	    parent?: string;
+	}
+	export interface InterfaceSuiteDescriptor extends SuiteDescriptor, InterfaceDescriptor {
+	}
+	export interface InterfaceSpecDescriptor extends SpecDescriptor, InterfaceDescriptor {
+	}
+	export interface ClassDescriptor extends InterfaceDescriptor {
+	    interfaces?: string[];
+	}
+	export interface ClassSuiteDescriptor extends SuiteDescriptor, ClassDescriptor {
+	}
+	export interface ClassSpecDescriptor extends SpecDescriptor, ClassDescriptor {
+	}
+	export interface PropertyDescriptor extends SpecDescriptor {
+	    type: string;
+	}
+	export interface MethodDescriptor extends SpecDescriptor {
+	    arguments?: MethodArgument[];
+	    returns?: MethodReturn;
+	}
+	export interface ReexportsDescriptor extends SpecDescriptor {
+	    originalLocation: string;
+	}
+	export interface EnumDescriptor extends SpecDescriptor {
+	}
+	export interface MethodArgument {
+	    name: string;
+	    type: string;
+	    description?: string;
+	    optional?: boolean;
+	    default?: string;
+	}
+	export interface MethodReturn {
+	    type: string;
+	    description?: string;
+	}
+	export interface DecorateDescriptor extends SuiteDescriptor {
+	    type: string[];
+	}
+	export function serialize(descriptor: SuiteDescriptor): string;
+	export function serialize(descriptor: PropertyDescriptor): string;
+	export function serialize(descriptor: MethodDescriptor): string;
+	export const MODULE: string;
+	export const CLASS: string;
+	export const INTERFACE: string;
+	export const STATIC: string;
+	export const INSTANCE: string;
+	export const CONSTRUCTOR: string;
+	export const METHOD: string;
+	export const SIGNATURE: string;
+	export const PROPERTY: string;
+	export const SUPER_CLASS: string;
+	export const REEXPORTS: string;
+	export const DEFAULTEXPORT: string;
+	export const ENUM: string;
+	export const DECORATED: string;
+	export function module(name: string, description?: string): string;
+	export function clazz(name: string, description: string, parent?: string, interfaces?: Array<string>): string;
+	export function interfaze(name: string, description: string, parent?: string): string;
+	export function enumeration(name: string, description?: string): string;
+	export function constructor(description?: string): string;
+	export function reexports(access: string, name: string, originalLocation: string): string;
+	export function decoratedObject(description: string, type: string[]): string;
+	export function hasInterface(access: string, name: string): string;
+	export function isDefined(): string;
+	export function hasConstructor(): string;
+	export function hasConstructor(constructorArguments: MethodArgument[]): string;
+	export function hasConstructor(description: string, constructorArguments: MethodArgument[]): string;
+	export function hasMethod(access: string, name: string): string;
+	export function hasMethod(access: string, name: string, description: string): string;
+	export function hasMethod(access: string, name: string, methodArguments: MethodArgument[]): string;
+	export function hasMethod(access: string, name: string, returns: MethodReturn): string;
+	export function hasMethod(access: string, name: string, description: string, methodArguments: MethodArgument[]): string;
+	export function hasMethod(access: string, name: string, description: string, returns: MethodReturn): string;
+	export function hasMethod(access: string, name: string, methodArguments: MethodArgument[], returns: MethodReturn): string;
+	export function hasMethod(access: string, name: string, description: string, methodArguments: MethodArgument[], returns: MethodReturn): string;
+	export function method(access: string, name: string): string;
+	export function method(access: string, name: string, description: string): string;
+	export function hasSignature(): string;
+	export function hasSignature(description: string): string;
+	export function hasSignature(description: string, returns: MethodReturn): string;
+	export function hasSignature(description: string, methodArguments: MethodArgument[]): string;
+	export function hasSignature(description: string, methodArguments: MethodArgument[], returns: MethodReturn): string;
+	export function hasSignature(methodArguments: MethodArgument[]): string;
+	export function hasSignature(methodArguments: MethodArgument[], returns: MethodReturn): string;
+	export function hasSignature(returns: MethodReturn): string;
+	export function hasProperty(access: string, name: string, type: string, description?: string): string;
+	export let property: typeof hasProperty;
+	export function extendsClass(name: string): string;
+	export function hasDefaultExport(exportName: string, description?: string): string;
+	export function hasEnumeral(name: string, description?: string): string;
+
+}
+declare module 'carbon/Utils' {
+	 function hasFunction(object: Object, functionName: string): boolean; function hasProperty(object: Object, property: string): boolean; function hasPropertyDefined(object: Object, property: string): boolean; function isDefined(value: any): boolean; function isNull(value: any): boolean; function isArray(object: any): boolean; function isString(value: any): boolean; function isBoolean(value: any): boolean; function isNumber(value: any): boolean; function isInteger(value: any): boolean; function isDouble(value: any): boolean; function isDate(date: any): boolean; function isObject(object: any): boolean; function isFunction(value: any): boolean; function isMap(value: any): boolean; function parseBoolean(value: string): boolean; function extend(target: Object, ...objects: Object[]): Object; function forEachOwnProperty(object: Object, action: (name: string, value: any) => (boolean | void)): void; class S {
+	    static startsWith(str: string, substring: string): boolean;
+	    static endsWith(str: string, substring: string): boolean;
+	    static contains(str: string, substring: string): boolean;
+	} class A {
+	    static from<T>(iterator: Iterator<T>): Array<T>;
+	    static joinWithoutDuplicates<T>(...arrays: Array<Array<T>>): Array<T>;
+	} class M {
+	    static from<V>(object: Object): Map<string, V>;
+	    static extend<K, V>(toExtend: Map<K, V>, ...extenders: Map<K, V>[]): Map<K, V>;
+	} class UUID {
+	    private static regExp;
+	    static is(uuid: string): boolean;
+	    static generate(): string;
+	} class P {
+	    static createRejectedPromise<T extends Error>(error: T): Promise<any>;
+	}
+	export { hasFunction, hasProperty, hasPropertyDefined, isDefined, isNull, isArray, isString, isBoolean, isNumber, isInteger, isDouble, isDate, isObject, isFunction, isMap, parseBoolean, extend, forEachOwnProperty, S, A, M, UUID, P };
+
+}
 declare module 'carbon/NS/C' {
 	export let namespace: string;
 	export class Class {
@@ -65,7 +193,7 @@ declare module 'carbon/NS/LDP' {
 	    static contains: string;
 	    static member: string;
 	    static hasMemberRelation: string;
-	    static memberOfRelation: string;
+	    static isMemberOfRelation: string;
 	    static membershipResource: string;
 	    static insertedContentRelation: string;
 	    static constrainedBy: string;
@@ -82,27 +210,6 @@ declare module 'carbon/NS/RDF' {
 	    static type: string;
 	}
 	export { namespace, Predicate };
-
-}
-declare module 'carbon/Utils' {
-	 function hasFunction(object: Object, functionName: string): boolean; function hasProperty(object: Object, property: string): boolean; function hasPropertyDefined(object: Object, property: string): boolean; function isNull(value: any): boolean; function isArray(object: any): boolean; function isString(value: any): boolean; function isBoolean(value: any): boolean; function isNumber(value: any): boolean; function isInteger(value: any): boolean; function isDouble(value: any): boolean; function isDate(date: any): boolean; function isObject(object: any): boolean; function isFunction(value: any): boolean; function isMap(value: any): boolean; function parseBoolean(value: string): boolean; function extend(target: Object, ...objects: Object[]): Object; function forEachOwnProperty(object: Object, action: (name: string, value: any) => (boolean | void)): void; class S {
-	    static startsWith(str: string, substring: string): boolean;
-	    static endsWith(str: string, substring: string): boolean;
-	    static contains(str: string, substring: string): boolean;
-	} class A {
-	    static from<T>(iterator: Iterator<T>): Array<T>;
-	    static joinWithoutDuplicates<T>(...arrays: Array<Array<T>>): Array<T>;
-	} class M {
-	    static from<V>(object: Object): Map<string, V>;
-	    static extend<K, V>(toExtend: Map<K, V>, ...extenders: Map<K, V>[]): Map<K, V>;
-	} class UUID {
-	    private static regExp;
-	    static is(uuid: string): boolean;
-	    static generate(): string;
-	} class P {
-	    static createRejectedPromise<T extends Error>(error: T): Promise<any>;
-	}
-	export { hasFunction, hasProperty, hasPropertyDefined, isNull, isArray, isString, isBoolean, isNumber, isInteger, isDouble, isDate, isObject, isFunction, isMap, parseBoolean, extend, forEachOwnProperty, S, A, M, UUID, P };
 
 }
 declare module 'carbon/NS/XSD' {
@@ -159,12 +266,18 @@ declare module 'carbon/Errors/AbstractError' {
 	export default AbstractError;
 
 }
-declare module 'carbon/Errors/IllegalStateError' {
-	import AbstractError from 'carbon/Errors/AbstractError'; class IllegalStateError extends AbstractError {
+declare module 'carbon/Errors/IDAlreadyInUseError' {
+	import AbstractError from 'carbon/Errors/AbstractError'; class IDAlreadyInUseError extends AbstractError {
 	    name: string;
-	    constructor(message?: string);
 	}
-	export default IllegalStateError;
+	export default IDAlreadyInUseError;
+
+}
+declare module 'carbon/Errors/IllegalActionError' {
+	import AbstractError from 'carbon/Errors/AbstractError'; class IllegalActionError extends AbstractError {
+	    name: string;
+	}
+	export default IllegalActionError;
 
 }
 declare module 'carbon/Errors/IllegalArgumentError' {
@@ -174,11 +287,12 @@ declare module 'carbon/Errors/IllegalArgumentError' {
 	export default IllegalArgumentError;
 
 }
-declare module 'carbon/Errors/IDAlreadyInUseError' {
-	import AbstractError from 'carbon/Errors/AbstractError'; class IDAlreadyInUseError extends AbstractError {
+declare module 'carbon/Errors/IllegalStateError' {
+	import AbstractError from 'carbon/Errors/AbstractError'; class IllegalStateError extends AbstractError {
 	    name: string;
+	    constructor(message?: string);
 	}
-	export default IDAlreadyInUseError;
+	export default IllegalStateError;
 
 }
 declare module 'carbon/Errors/NotImplementedError' {
@@ -190,11 +304,12 @@ declare module 'carbon/Errors/NotImplementedError' {
 
 }
 declare module 'carbon/Errors' {
-	import IllegalStateError from 'carbon/Errors/IllegalStateError';
-	import IllegalArgumentError from 'carbon/Errors/IllegalArgumentError';
 	import IDAlreadyInUseError from 'carbon/Errors/IDAlreadyInUseError';
+	import IllegalActionError from 'carbon/Errors/IllegalActionError';
+	import IllegalArgumentError from 'carbon/Errors/IllegalArgumentError';
+	import IllegalStateError from 'carbon/Errors/IllegalStateError';
 	import NotImplementedError from 'carbon/Errors/NotImplementedError';
-	export { IllegalStateError, IllegalArgumentError, IDAlreadyInUseError, NotImplementedError };
+	export { IDAlreadyInUseError, IllegalActionError, IllegalArgumentError, IllegalStateError, NotImplementedError };
 
 }
 declare module 'carbon/HTTP/Header' {
@@ -389,12 +504,12 @@ declare module 'carbon/HTTP/Errors/server/HTTPVersionNotSupportedError' {
 	export default HTTPVersionNotSupportedError;
 
 }
-declare module 'carbon/HTTP/Errors/server/InternalServerError' {
-	import HTTPError from 'carbon/HTTP/Errors/HTTPError'; class InternalServerError extends HTTPError {
+declare module 'carbon/HTTP/Errors/server/InternalServerErrorError' {
+	import HTTPError from 'carbon/HTTP/Errors/HTTPError'; class InternalServerErrorError extends HTTPError {
 	    static statusCode: number;
 	    name: string;
 	}
-	export default InternalServerError;
+	export default InternalServerErrorError;
 
 }
 declare module 'carbon/HTTP/Errors/server/NotImplementedError' {
@@ -440,11 +555,11 @@ declare module 'carbon/HTTP/Errors' {
 	import BadGatewayError from 'carbon/HTTP/Errors/server/BadGatewayError';
 	import GatewayTimeoutError from 'carbon/HTTP/Errors/server/GatewayTimeoutError';
 	import HTTPVersionNotSupportedError from 'carbon/HTTP/Errors/server/HTTPVersionNotSupportedError';
-	import InternalServerError from 'carbon/HTTP/Errors/server/InternalServerError';
+	import InternalServerErrorError from 'carbon/HTTP/Errors/server/InternalServerErrorError';
 	import NotImplementedError from 'carbon/HTTP/Errors/server/NotImplementedError';
 	import ServiceUnavailableError from 'carbon/HTTP/Errors/server/ServiceUnavailableError';
 	import UnknownError from 'carbon/HTTP/Errors/UnknownError'; let client: Array<typeof HTTPError>; let server: Array<typeof HTTPError>; let statusCodeMap: Map<number, typeof HTTPError>;
-	export { HTTPError as Error, BadRequestError, ConflictError, ForbiddenError, MethodNotAllowedError, NotAcceptableError, NotFoundError, PreconditionFailedError, PreconditionRequiredError, RequestEntityTooLargeError, RequestHeaderFieldsTooLargeError, RequestURITooLongError, TooManyRequestsError, UnauthorizedError, UnsupportedMediaTypeError, BadResponseError, BadGatewayError, GatewayTimeoutError, HTTPVersionNotSupportedError, InternalServerError, NotImplementedError, ServiceUnavailableError, UnknownError, client, server, statusCodeMap };
+	export { HTTPError as Error, BadRequestError, ConflictError, ForbiddenError, MethodNotAllowedError, NotAcceptableError, NotFoundError, PreconditionFailedError, PreconditionRequiredError, RequestEntityTooLargeError, RequestHeaderFieldsTooLargeError, RequestURITooLongError, TooManyRequestsError, UnauthorizedError, UnsupportedMediaTypeError, BadResponseError, BadGatewayError, GatewayTimeoutError, HTTPVersionNotSupportedError, InternalServerErrorError, NotImplementedError, ServiceUnavailableError, UnknownError, client, server, statusCodeMap };
 
 }
 declare module 'carbon/HTTP/Parser' {
@@ -618,7 +733,7 @@ declare module 'carbon/Pointer' {
 	export class Factory {
 	    static hasClassProperties(object: Object): boolean;
 	    static is(value: any): boolean;
-	    static create(id: string): Class;
+	    static create(id?: string): Class;
 	    static decorate<T extends Object>(object: T): Class;
 	}
 	export class Util {
@@ -701,15 +816,6 @@ declare module 'carbon/RDF/Literal' {
 	export { Serializer, Serializers };
 
 }
-declare module 'carbon/RDF/PropertyDescription' {
-	 class PropertyDescription {
-	    uri: string;
-	    multi: boolean;
-	    literal: boolean;
-	}
-	export default PropertyDescription;
-
-}
 declare module 'carbon/RDF/List' {
 	import Value from 'carbon/RDF/Value';
 	export interface Class {
@@ -753,7 +859,7 @@ declare module 'carbon/RDF/RDFNode' {
 	    "@id": string;
 	}
 	export class Factory {
-	    static is(value: any): boolean;
+	    static is(value: Object): boolean;
 	    static create(uri: string): Class;
 	}
 	export class Util {
@@ -799,10 +905,10 @@ declare module 'carbon/RDF/Document' {
 	}
 	export class Factory {
 	    static is(object: Object): boolean;
-	    static create(resources: RDFNode.Class[]): Class;
+	    static create(resources: RDFNode.Class[], uri?: string): Class;
 	}
 	export class Util {
-	    static getDocuments(object: Object[]): Class[];
+	    static getDocuments(objects: Object[]): Class[];
 	    static getDocuments(object: Object): Class[];
 	    static getResources(objects: Object[]): RDFNode.Class[];
 	    static getResources(object: Object): RDFNode.Class[];
@@ -810,8 +916,8 @@ declare module 'carbon/RDF/Document' {
 	    static getDocumentResources(document: Class): RDFNode.Class[];
 	    static getFragmentResources(document: RDFNode.Class[], documentResource?: RDFNode.Class): RDFNode.Class[];
 	    static getFragmentResources(document: Class, documentResource?: RDFNode.Class): RDFNode.Class[];
-	    static getFragmentResources(document: RDFNode.Class[], documentResource?: string): RDFNode.Class[];
-	    static getFragmentResources(document: Class, documentResource?: string): RDFNode.Class[];
+	    static getFragmentResources(document: RDFNode.Class[], documentResourceURI?: string): RDFNode.Class[];
+	    static getFragmentResources(document: Class, documentResourceURI?: string): RDFNode.Class[];
 	    static getBNodeResources(document: Class): RDFNode.Class[];
 	}
 	export class Parser implements HTTP.Parser.Class<Class[]> {
@@ -822,13 +928,12 @@ declare module 'carbon/RDF/Document' {
 }
 declare module 'carbon/RDF' {
 	import * as Literal from 'carbon/RDF/Literal';
-	import PropertyDescription from 'carbon/RDF/PropertyDescription';
 	import * as Document from 'carbon/RDF/Document';
 	import * as List from 'carbon/RDF/List';
 	import * as Node from 'carbon/RDF/RDFNode';
 	import * as URI from 'carbon/RDF/URI';
 	import * as Value from 'carbon/RDF/Value';
-	export { Literal, PropertyDescription, Document, List, Node, URI, Value };
+	export { Literal, Document, List, Node, URI, Value };
 
 }
 declare module 'carbon/ObjectSchema' {
@@ -893,6 +998,7 @@ declare module 'carbon/APIDescription' {
 	export default Class;
 
 }
+/// <reference path="../typings/typings.d.ts" />
 declare module 'carbon/Auth/AuthenticationToken' {
 	export interface Class {
 	}
@@ -989,13 +1095,12 @@ declare module 'carbon/Fragment' {
 	    document: Document.Class;
 	}
 	export class Factory {
-	    hasClassProperties(resource: Object): boolean;
-	    create(id: string, document: Document.Class): Class;
-	    create(document: Document.Class): Class;
-	    createFrom<T extends Object>(object: T, id: string, document: Document.Class): T & Class;
-	    createFrom<T extends Object>(object: T, document: Document.Class): T & Class;
+	    static hasClassProperties(resource: Object): boolean;
+	    static create(id: string, document: Document.Class): Class;
+	    static create(document: Document.Class): Class;
+	    static createFrom<T extends Object>(object: T, id: string, document: Document.Class): T & Class;
+	    static createFrom<T extends Object>(object: T, document: Document.Class): T & Class;
 	}
-	export var factory: Factory;
 	export class Util {
 	    static generateID(): string;
 	}
@@ -1064,11 +1169,10 @@ declare module 'carbon/NamedFragment' {
 	    slug: string;
 	}
 	export class Factory {
-	    hasClassProperties(resource: Fragment.Class): boolean;
-	    create(slug: string, document: Document.Class): Class;
-	    createFrom<T extends Object>(object: T, slug: string, document: Document.Class): T & Class;
+	    static hasClassProperties(resource: Fragment.Class): boolean;
+	    static create(slug: string, document: Document.Class): Class;
+	    static createFrom<T extends Object>(object: T, slug: string, document: Document.Class): T & Class;
 	}
-	export var factory: Factory;
 	export default Class;
 
 }
@@ -1098,15 +1202,14 @@ declare module 'carbon/Document' {
 	    toJSON(): string;
 	}
 	export class Factory {
-	    hasClassProperties(documentResource: Object): boolean;
-	    create(uri: string): Class;
-	    create(): Class;
-	    createFrom<T extends Object>(object: T, uri: string): T & Class;
-	    createFrom<T extends Object>(object: T): T & Class;
-	    decorate<T extends Object>(object: T): T & Class;
+	    static hasClassProperties(documentResource: Object): boolean;
+	    static create(uri: string): Class;
+	    static create(): Class;
+	    static createFrom<T extends Object>(object: T, uri: string): T & Class;
+	    static createFrom<T extends Object>(object: T): T & Class;
+	    static decorate<T extends Object>(object: T): T & Class;
 	}
-	export var factory: Factory;
-	export default Document;
+	export default Class;
 
 }
 declare module 'carbon/PersistedResource' {
@@ -1220,14 +1323,14 @@ declare module 'carbon/PersistedDocument' {
 	    _documents: Documents;
 	    _etag: string;
 	    refresh(): Promise<void>;
-	    save(): Promise<void>;
-	    destroy(): Promise<void>;
-	    executeRawASKQuery(): Promise<[SPARQL.RawResults.Class, HTTP.Response.Class]>;
-	    executeASKQuery(): Promise<[boolean, HTTP.Response.Class]>;
-	    executeRawSELECTQuery(): Promise<[SPARQL.RawResults.Class, HTTP.Response.Class]>;
-	    executeSELECTQuery(): Promise<[SPARQL.SELECTResults.Class, HTTP.Response.Class]>;
-	    executeRawDESCRIBEQuery(): Promise<[string, HTTP.Response.Class]>;
-	    executeRawCONSTRUCTQuery(): Promise<[string, HTTP.Response.Class]>;
+	    save(): Promise<[Class, HTTP.Response.Class]>;
+	    destroy(): Promise<HTTP.Response.Class>;
+	    executeRawASKQuery(askQuery: string, requestOptions?: HTTP.Request.Options): Promise<[SPARQL.RawResults.Class, HTTP.Response.Class]>;
+	    executeASKQuery(askQuery: string, requestOptions?: HTTP.Request.Options): Promise<[boolean, HTTP.Response.Class]>;
+	    executeRawSELECTQuery(selectQuery: string, requestOptions?: HTTP.Request.Options): Promise<[SPARQL.RawResults.Class, HTTP.Response.Class]>;
+	    executeSELECTQuery(selectQuery: string, requestOptions?: HTTP.Request.Options): Promise<[SPARQL.SELECTResults.Class, HTTP.Response.Class]>;
+	    executeRawCONSTRUCTQuery(constructQuery: string, requestOptions?: HTTP.Request.Options): Promise<[string, HTTP.Response.Class]>;
+	    executeRawDESCRIBEQuery(describeQuery: string, requestOptions?: HTTP.Request.Options): Promise<[string, HTTP.Response.Class]>;
 	}
 	export class Factory {
 	    static hasClassProperties(document: Document.Class): boolean;
@@ -1325,7 +1428,6 @@ declare module 'carbon/LDP/RDFSource' {
 	}
 	export class Factory {
 	}
-	export let factory: Factory;
 	export default Class;
 
 }
@@ -1342,11 +1444,10 @@ declare module 'carbon/LDP/Container' {
 	    hasMemberRelation: Pointer.Class;
 	}
 	export class Factory {
-	    hasClassProperties(resource: RDF.Node.Class): boolean;
-	    hasRDFClass(pointer: Pointer.Class): boolean;
-	    hasRDFClass(expandedObject: Object): boolean;
+	    static hasClassProperties(resource: RDF.Node.Class): boolean;
+	    static hasRDFClass(pointer: Pointer.Class): boolean;
+	    static hasRDFClass(expandedObject: Object): boolean;
 	}
-	export let factory: Factory;
 	export default Class;
 
 }
@@ -1360,7 +1461,7 @@ declare module 'carbon/LDP/AccessPoint' {
 	}
 	export const SCHEMA: ObjectSchema.Class;
 	export class Factory {
-	    hasClassProperties(resource: Object): boolean;
+	    static hasClassProperties(resource: Object): boolean;
 	}
 	export default Class;
 
@@ -1373,18 +1474,22 @@ declare module 'carbon/LDP/BasicContainer' {
 	export interface Class extends Container.Class {
 	}
 	export class Factory {
-	    hasRDFClass(pointer: Pointer.Class): boolean;
-	    hasRDFClass(expandedObject: Object): boolean;
+	    static hasRDFClass(pointer: Pointer.Class): boolean;
+	    static hasRDFClass(expandedObject: Object): boolean;
 	}
-	export let factory: Factory;
 	export default Class;
 
 }
 declare module 'carbon/LDP/PersistedContainer' {
 	import * as Document from 'carbon/Document';
+	import * as HTTP from 'carbon/HTTP';
 	import * as PersistedDocument from 'carbon/PersistedDocument';
+	import * as Pointer from 'carbon/Pointer';
 	export interface Class extends PersistedDocument.Class {
-	    createChild(object: Object): Promise<void>;
+	    createChild(slug: string, object: Object): Promise<[Pointer.Class, HTTP.Response.Class]>;
+	    createChild(slug: string): Promise<[Pointer.Class, HTTP.Response.Class]>;
+	    createChild(object: Object): Promise<[Pointer.Class, HTTP.Response.Class]>;
+	    createChild(): Promise<[Pointer.Class, HTTP.Response.Class]>;
 	}
 	export class Factory {
 	    static hasClassProperties(document: Document.Class): boolean;
@@ -1421,9 +1526,8 @@ declare module 'carbon/App' {
 	}
 	export { AppContext as Context };
 	export class Factory {
-	    hasClassProperties(resource: Object): boolean;
+	    static hasClassProperties(resource: Object): boolean;
 	}
-	export let factory: Factory;
 	export default Class;
 
 }
@@ -1445,8 +1549,8 @@ declare module 'carbon/SDKContext' {
 	    resolve(relativeURI: string): string;
 	    hasSetting(name: string): boolean;
 	    getSetting(name: string): any;
-	    setSetting(name: string, value: any): any;
-	    deleteSetting(name: string): any;
+	    setSetting(name: string, value: any): void;
+	    deleteSetting(name: string): void;
 	    hasObjectSchema(type: string): boolean;
 	    getObjectSchema(type?: string): ObjectSchema.DigestedObjectSchema;
 	    extendObjectSchema(type: string, objectSchema: ObjectSchema.Class): void;
@@ -1557,108 +1661,12 @@ declare module 'carbon/AbstractContext' {
 	export default AbstractContext;
 
 }
-declare module 'carbon/test/JasmineExtender' {
-	export interface SuiteDescriptor {
-	    access?: string;
-	    suiteType: string;
-	    name?: string;
-	    description?: string;
-	}
-	export interface SpecDescriptor {
-	    access?: string;
-	    specType: string;
-	    name?: string;
-	    description?: string;
-	}
-	export interface InterfaceDescriptor {
-	    parent?: string;
-	}
-	export interface InterfaceSuiteDescriptor extends SuiteDescriptor, InterfaceDescriptor {
-	}
-	export interface InterfaceSpecDescriptor extends SpecDescriptor, InterfaceDescriptor {
-	}
-	export interface ClassDescriptor extends InterfaceDescriptor {
-	    interfaces?: string[];
-	}
-	export interface ClassSuiteDescriptor extends SuiteDescriptor, ClassDescriptor {
-	}
-	export interface ClassSpecDescriptor extends SpecDescriptor, ClassDescriptor {
-	}
-	export interface PropertyDescriptor extends SpecDescriptor {
-	    type: string;
-	}
-	export interface MethodDescriptor extends SpecDescriptor {
-	    arguments?: MethodArgument[];
-	    returns?: MethodReturn;
-	}
-	export interface ReexportsDescriptor extends SpecDescriptor {
-	    originalLocation: string;
-	}
-	export interface MethodArgument {
-	    name: string;
-	    type: string;
-	    description?: string;
-	    optional?: boolean;
-	    default?: string;
-	}
-	export interface MethodReturn {
-	    type: string;
-	    description?: string;
-	}
-	export function serialize(descriptor: SuiteDescriptor): string;
-	export function serialize(descriptor: PropertyDescriptor): string;
-	export function serialize(descriptor: MethodDescriptor): string;
-	export const MODULE: string;
-	export const CLASS: string;
-	export const INTERFACE: string;
-	export const STATIC: string;
-	export const INSTANCE: string;
-	export const CONSTRUCTOR: string;
-	export const METHOD: string;
-	export const SIGNATURE: string;
-	export const PROPERTY: string;
-	export const SUPER_CLASS: string;
-	export const REEXPORTS: string;
-	export const DEFAULTEXPORT: string;
-	export function module(name: string, description?: string): string;
-	export function clazz(name: string, description: string, parent?: string, interfaces?: Array<string>): string;
-	export function interfaze(name: string, description: string, parent?: string): string;
-	export function constructor(description?: string): string;
-	export function reexports(access: string, name: string, originalLocation: string): string;
-	export function hasInterface(access: string, name: string): string;
-	export function isDefined(): string;
-	export function hasConstructor(): string;
-	export function hasConstructor(constructorArguments: MethodArgument[]): string;
-	export function hasConstructor(description: string, constructorArguments: MethodArgument[]): string;
-	export function hasMethod(access: string, name: string): string;
-	export function hasMethod(access: string, name: string, description: string): string;
-	export function hasMethod(access: string, name: string, methodArguments: MethodArgument[]): string;
-	export function hasMethod(access: string, name: string, returns: MethodReturn): string;
-	export function hasMethod(access: string, name: string, description: string, methodArguments: MethodArgument[]): string;
-	export function hasMethod(access: string, name: string, description: string, returns: MethodReturn): string;
-	export function hasMethod(access: string, name: string, methodArguments: MethodArgument[], returns: MethodReturn): string;
-	export function hasMethod(access: string, name: string, description: string, methodArguments: MethodArgument[], returns: MethodReturn): string;
-	export function method(access: string, name: string): string;
-	export function method(access: string, name: string, description: string): string;
-	export function hasSignature(): string;
-	export function hasSignature(description: string): string;
-	export function hasSignature(description: string, methodArguments: MethodArgument[]): string;
-	export function hasSignature(description: string, methodArguments: MethodArgument[], returns: MethodReturn): string;
-	export function hasSignature(methodArguments: MethodArgument[]): string;
-	export function hasSignature(methodArguments: MethodArgument[], returns: MethodReturn): string;
-	export function hasSignature(returns: MethodReturn): string;
-	export function hasProperty(access: string, name: string, type: string, description?: string): string;
-	export let property: typeof hasProperty;
-	export function extendsClass(name: string): string;
-	export function hasDefaultExport(exportName: string): string;
-
-}
+/// <reference path="../typings/typings.d.ts" />
 /// <reference path="../typings/typings.d.ts" />
 declare module 'carbon/Apps' {
 	/// <reference path="../typings/typings.d.ts" />
 	import * as App from 'carbon/App';
-	import Context from 'carbon/Context';
-	export class Apps {
+	import Context from 'carbon/Context'; class Apps {
 	    private context;
 	    constructor(context: Context);
 	    get(uri: string): Promise<App.Context>;
@@ -1668,6 +1676,8 @@ declare module 'carbon/Apps' {
 	export default Apps;
 
 }
+/// <reference path="../typings/typings.d.ts" />
+/// <reference path="../typings/typings.d.ts" />
 declare module 'carbon/settings' {
 	import * as Auth from 'carbon/Auth';
 	export interface CarbonSettings {
@@ -1700,13 +1710,19 @@ declare module 'carbon/Carbon' {
 	    static Utils: typeof Utils;
 	    static version: string;
 	    apps: Apps;
-	    constructor(settings: any);
+	    constructor(settings?: any);
 	    resolve(uri: string): string;
 	    getAPIDescription(): Promise<APIDescription.Class>;
 	}
 	export default Carbon;
 
 }
+/// <reference path="../typings/typings.d.ts" />
+/// <reference path="../typings/typings.d.ts" />
+/// <reference path="../typings/typings.d.ts" />
+/// <reference path="../typings/typings.d.ts" />
+/// <reference path="../typings/typings.d.ts" />
+/// <reference path="../typings/typings.d.ts" />
 /// <reference path="../typings/typings.d.ts" />
 /// <reference path="../typings/typings.d.ts" />
 /// <reference path="../typings/typings.d.ts" />
@@ -1738,18 +1754,22 @@ declare module 'carbon/Persisted' {
 
 }
 /// <reference path="../typings/typings.d.ts" />
+/// <reference path="../typings/typings.d.ts" />
+/// <reference path="../typings/typings.d.ts" />
+/// <reference path="../typings/typings.d.ts" />
+/// <reference path="../typings/typings.d.ts" />
+/// <reference path="../typings/typings.d.ts" />
+/// <reference path="../typings/typings.d.ts" />
+/// <reference path="../typings/typings.d.ts" />
 /// <reference path="../../typings/typings.d.ts" />
 /// <reference path="../../typings/typings.d.ts" />
 /// <reference path="../../typings/typings.d.ts" />
 /// <reference path="../../typings/typings.d.ts" />
 /// <reference path="../../typings/typings.d.ts" />
-declare module 'carbon/Errors/IllegalActionError' {
-	import AbstractError from 'carbon/Errors/AbstractError'; class IllegalActionError extends AbstractError {
-	    name: string;
-	}
-	export default IllegalActionError;
-
-}
+/// <reference path="../../typings/typings.d.ts" />
+/// <reference path="../../typings/typings.d.ts" />
+/// <reference path="../../typings/typings.d.ts" />
+/// <reference path="../../typings/typings.d.ts" />
 /// <reference path="../../typings/typings.d.ts" />
 /// <reference path="../../typings/typings.d.ts" />
 /// <reference path="../../typings/typings.d.ts" />
@@ -1783,6 +1803,25 @@ declare module 'carbon/Errors/IllegalActionError' {
 /// <reference path="../../../../typings/typings.d.ts" />
 /// <reference path="../../typings/typings.d.ts" />
 /// <reference path="../../typings/typings.d.ts" />
+/// <reference path="../../typings/typings.d.ts" />
+/// <reference path="../../typings/typings.d.ts" />
+/// <reference path="../../typings/typings.d.ts" />
+/// <reference path="../../typings/typings.d.ts" />
+/// <reference path="../../typings/typings.d.ts" />
+/// <reference path="../../typings/typings.d.ts" />
+/// <reference path="../../typings/typings.d.ts" />
+/// <reference path="../../typings/typings.d.ts" />
+/// <reference path="../../typings/typings.d.ts" />
+/// <reference path="../../typings/typings.d.ts" />
+/// <reference path="../../typings/typings.d.ts" />
+/// <reference path="../../typings/typings.d.ts" />
+/// <reference path="../../typings/typings.d.ts" />
+/// <reference path="../../typings/typings.d.ts" />
+/// <reference path="../../typings/typings.d.ts" />
+/// <reference path="../../typings/typings.d.ts" />
+/// <reference path="../../typings/typings.d.ts" />
+/// <reference path="../../../typings/typings.d.ts" />
+/// <reference path="../../../../typings/typings.d.ts" />
 /// <reference path="../../typings/typings.d.ts" />
 /// <reference path="../../typings/typings.d.ts" />
 /// <reference path="../../typings/typings.d.ts" />

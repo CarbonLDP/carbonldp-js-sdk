@@ -1,4 +1,6 @@
-System.register(["./../Utils", "./../NS/XSD", "../Errors", "./Literal/Serializers"], function(exports_1) {
+System.register(["./../Utils", "./../NS/XSD", "../Errors", "./Literal/Serializers"], function(exports_1, context_1) {
+    "use strict";
+    var __moduleName = context_1 && context_1.id;
     var Utils, XSD, Errors, Serializers;
     var Factory, Util;
     return {
@@ -55,27 +57,36 @@ System.register(["./../Utils", "./../NS/XSD", "../Errors", "./Literal/Serializer
                         literal["@type"] = type;
                     return literal;
                 };
-                Factory.parse = function (literal) {
-                    if (!literal)
-                        return null;
-                    if (!Utils.hasProperty(literal, "@value"))
-                        return null;
-                    if (!Utils.hasProperty(literal, "@type"))
-                        return literal["@value"];
-                    var type = literal["@type"];
+                Factory.parse = function (literalValueOrLiteral, literalDataType) {
+                    if (literalDataType === void 0) { literalDataType = null; }
+                    var literalValue;
+                    if (Utils.isString(literalValueOrLiteral)) {
+                        literalValue = literalValueOrLiteral;
+                    }
+                    else {
+                        var literal = literalValueOrLiteral;
+                        if (!literal)
+                            return null;
+                        if (!Utils.hasProperty(literal, "@value"))
+                            return null;
+                        literalDataType = "@type" in literal ? literal["@type"] : null;
+                        literalValue = literal["@value"];
+                    }
+                    if (literalDataType === null)
+                        return literalValue;
                     // The DataType isn't supported
-                    if (!Utils.hasProperty(XSD.DataType, type))
-                        return literal["@value"];
-                    var valueString = literal["@value"];
-                    var value, parts;
-                    switch (type) {
+                    if (!Utils.hasProperty(XSD.DataType, literalDataType))
+                        return literalValue;
+                    var value;
+                    var parts;
+                    switch (literalDataType) {
                         // Dates
                         case XSD.DataType.date:
                         case XSD.DataType.dateTime:
-                            value = new Date(valueString);
+                            value = new Date(literalValue);
                             break;
                         case XSD.DataType.time:
-                            parts = valueString.match(/(\d+):(\d+):(\d+)\.(\d+)Z/);
+                            parts = literalValue.match(/(\d+):(\d+):(\d+)\.(\d+)Z/);
                             value = new Date();
                             value.setUTCHours(parseFloat(parts[1]), parseFloat(parts[2]), parseFloat(parts[3]), parseFloat(parts[4]));
                             break;
@@ -106,17 +117,17 @@ System.register(["./../Utils", "./../NS/XSD", "../Errors", "./Literal/Serializer
                         case XSD.DataType.unsignedByte:
                         case XSD.DataType.double:
                         case XSD.DataType.float:
-                            value = parseFloat(valueString);
+                            value = parseFloat(literalValue);
                             break;
                         // Misc
                         case XSD.DataType.boolean:
-                            value = Utils.parseBoolean(valueString);
+                            value = Utils.parseBoolean(literalValue);
                             break;
                         case XSD.DataType.string:
-                            value = valueString;
+                            value = literalValue;
                             break;
                         case XSD.DataType.object:
-                            value = JSON.parse(valueString);
+                            value = JSON.parse(literalValue);
                             break;
                         default:
                             break;
@@ -133,7 +144,7 @@ System.register(["./../Utils", "./../NS/XSD", "../Errors", "./Literal/Serializer
                     return value["@type"] === type;
                 };
                 return Factory;
-            })();
+            }());
             exports_1("Factory", Factory);
             Util = (function () {
                 function Util() {
@@ -143,7 +154,7 @@ System.register(["./../Utils", "./../NS/XSD", "../Errors", "./Literal/Serializer
                     return false;
                 };
                 return Util;
-            })();
+            }());
             exports_1("Util", Util);
             exports_1("Serializers", Serializers);
         }

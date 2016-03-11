@@ -1,5 +1,7 @@
 /// <reference path="./../../typings/typings.d.ts" />
-System.register(["./../NS"], function(exports_1) {
+System.register(["./../NS"], function(exports_1, context_1) {
+    "use strict";
+    var __moduleName = context_1 && context_1.id;
     var NS;
     var RDF_CLASS, Factory;
     return {
@@ -23,7 +25,7 @@ System.register(["./../NS"], function(exports_1) {
                     return types.indexOf(NS.LDP.Class.BasicContainer) !== -1;
                 };
                 return Factory;
-            })();
+            }());
             exports_1("Factory", Factory);
         }
     }

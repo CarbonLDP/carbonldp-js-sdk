@@ -1,4 +1,6 @@
-System.register(["./../HTTP", "./RDFNode", "../Utils", "./URI", "../Errors"], function(exports_1) {
+System.register(["./../HTTP", "./RDFNode", "../Utils", "./URI", "../Errors"], function(exports_1, context_1) {
+    "use strict";
+    var __moduleName = context_1 && context_1.id;
     var HTTP, RDFNode, Utils, URI, Errors;
     var Factory, Util, Parser;
     return {
@@ -32,7 +34,7 @@ System.register(["./../HTTP", "./RDFNode", "../Utils", "./URI", "../Errors"], fu
                     return document;
                 };
                 return Factory;
-            })();
+            }());
             exports_1("Factory", Factory);
             Util = (function () {
                 function Util() {
@@ -57,8 +59,8 @@ System.register(["./../HTTP", "./RDFNode", "../Utils", "./URI", "../Errors"], fu
                 Util.getResources = function (value) {
                     var documents = Util.getDocuments(value);
                     var resources = [];
-                    for (var _i = 0; _i < documents.length; _i++) {
-                        var document_1 = documents[_i];
+                    for (var _i = 0, documents_1 = documents; _i < documents_1.length; _i++) {
+                        var document_1 = documents_1[_i];
                         resources = resources.concat(document_1["@graph"]);
                     }
                     return resources;
@@ -116,7 +118,7 @@ System.register(["./../HTTP", "./RDFNode", "../Utils", "./URI", "../Errors"], fu
                     return bnodes;
                 };
                 return Util;
-            })();
+            }());
             exports_1("Util", Util);
             Parser = (function () {
                 function Parser() {
@@ -128,7 +130,7 @@ System.register(["./../HTTP", "./RDFNode", "../Utils", "./URI", "../Errors"], fu
                     });
                 };
                 return Parser;
-            })();
+            }());
             exports_1("Parser", Parser);
         }
     }

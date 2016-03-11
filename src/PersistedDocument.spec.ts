@@ -76,7 +76,11 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 			expect( PersistedDocument.Factory.hasClassProperties( document ) ).toBe( false );
 			document["executeRawASKQuery"] = ():void => {};
 			expect( PersistedDocument.Factory.hasClassProperties( document ) ).toBe( false );
+			document["executeASKQuery"] = ():void => {};
+			expect( PersistedDocument.Factory.hasClassProperties( document ) ).toBe( false );
 			document["executeRawSELECTQuery"] = ():void => {};
+			expect( PersistedDocument.Factory.hasClassProperties( document ) ).toBe( false );
+			document["executeSELECTQuery"] = ():void => {};
 			expect( PersistedDocument.Factory.hasClassProperties( document ) ).toBe( false );
 			document["executeRawDESCRIBEQuery"] = ():void => {};
 			expect( PersistedDocument.Factory.hasClassProperties( document ) ).toBe( false );
@@ -109,7 +113,9 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 			object["save"] = ():void => {};
 			object["destroy"] = ():void => {};
 			object["executeRawASKQuery"] = ():void => {};
+			object["executeASKQuery"] = ():void => {};
 			object["executeRawSELECTQuery"] = ():void => {};
+			object["executeSELECTQuery"] = ():void => {};
 			object["executeRawDESCRIBEQuery"] = ():void => {};
 			object["executeRawCONSTRUCTQuery"] = ():void => {};
 			expect( PersistedDocument.Factory.is( object ) ).toBe( true );
@@ -414,7 +420,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 					{ name: "askQuery", type: "string" },
 					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true }
 				],
-				{ type: "Promise<void>" }
+				{ type: "Promise<[ Carbon.SPARQL.RawResults.Class, Carbon.HTTP.Response.Class ]>" }
 			), ():void => {
 				expect( document.executeRawASKQuery ).toBeDefined();
 				expect( Utils.isFunction( document.executeRawASKQuery ) ).toBe( true );
@@ -426,12 +432,29 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 
 			it( hasMethod(
 				INSTANCE,
+				"executeASKQuery",
+				"Executes an ASK query in the document and returns a boolean of th result.", [
+					{ name: "askQuery", type: "string" },
+					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true }
+				],
+				{ type: "Promise<[ boolean, Carbon.HTTP.Response.Class ]>" }
+			), ():void => {
+				expect( document.executeASKQuery ).toBeDefined();
+				expect( Utils.isFunction( document.executeASKQuery ) ).toBe( true );
+
+				let spy = spyOn( context.documents, "executeASKQuery" );
+				document.executeASKQuery( "ASK { ?subject, ?predicate, ?object }" );
+				expect( spy ).toHaveBeenCalledWith( document.id, "ASK { ?subject, ?predicate, ?object }", {} );
+			});
+
+			it( hasMethod(
+				INSTANCE,
 				"executeRawSELECTQuery",
 				"Executes an SELECT query in the document and returns a raw application/sparql-results+json object.",[
 					{ name: "selectQuery", type: "string" },
 					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true }
 				],
-				{ type: "Promise<void>" }
+				{ type: "Promise<[ Carbon.SPARQL.RawResults.Class, Carbon.HTTP.Response.Class ]>" }
 			), ():void => {
 				expect( document.executeRawSELECTQuery ).toBeDefined();
 				expect( Utils.isFunction( document.executeRawSELECTQuery ) ).toBe( true );
@@ -443,12 +466,29 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 
 			it( hasMethod(
 				INSTANCE,
+				"executeSELECTQuery",
+				"Executes an SELECT query in the document and returns the results as a `Carbon.SPARQL.SELECTResults.Class` object.",[
+					{ name: "selectQuery", type: "string" },
+					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true }
+				],
+				{ type: "Promise<[ Carbon.SPARQL.SELECTResults.Class, Carbon.HTTP.Response.Class ]>" }
+			), ():void => {
+				expect( document.executeSELECTQuery ).toBeDefined();
+				expect( Utils.isFunction( document.executeSELECTQuery ) ).toBe( true );
+
+				let spy = spyOn( context.documents, "executeSELECTQuery" );
+				document.executeSELECTQuery( "SELECT ?book ?title WHERE { <http://example.com/some-document/> ?book ?title }" );
+				expect( spy ).toHaveBeenCalledWith( document.id, "SELECT ?book ?title WHERE { <http://example.com/some-document/> ?book ?title }", {} );
+			});
+
+			it( hasMethod(
+				INSTANCE,
 				"executeRawCONSTRUCTQuery",
 				"Executes an CONSTRUCT query in the document and returns a string with the resulting model.",[
 					{ name: "constructQuery", type: "string" },
 					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true }
 				],
-				{ type: "Promise<void>" }
+				{ type: "Promise<[ string, Carbon.HTTP.Response.Class ]>" }
 			), ():void => {
 				expect( document.executeRawCONSTRUCTQuery ).toBeDefined();
 				expect( Utils.isFunction( document.executeRawCONSTRUCTQuery ) ).toBe( true );
@@ -465,7 +505,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 					{ name: "constructQuery", type: "string" },
 					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true }
 				],
-				{ type: "Promise<void>" }
+				{ type: "Promise<[ string, Carbon.HTTP.Response.Class ]>" }
 			), ():void => {
 				expect( document.executeRawDESCRIBEQuery ).toBeDefined();
 				expect( Utils.isFunction( document.executeRawDESCRIBEQuery ) ).toBe( true );
