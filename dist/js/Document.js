@@ -6,11 +6,9 @@ System.register(["./Errors", "./Fragment", "./JSONLDConverter", "./NamedFragment
     var Factory;
     function hasPointer(id) {
         var document = this;
-        if (id === document.id)
-            return true;
         if (!document.inScope(id))
             return false;
-        return document.hasFragment(id);
+        return !!document.getFragment(id);
     }
     function getPointer(id) {
         var document = this;
@@ -29,23 +27,28 @@ System.register(["./Errors", "./Fragment", "./JSONLDConverter", "./NamedFragment
             return true;
         if (RDF.URI.Util.isBNodeID(id))
             return true;
-        if (RDF.URI.Util.isFragmentOf(id, document.id))
+        if (RDF.URI.Util.isAbsolute(id) && RDF.URI.Util.isFragmentOf(id, document.id))
             return true;
-        return RDF.URI.Util.isRelative(id);
+        if (!RDF.URI.Util.isAbsolute(document.id) && !RDF.URI.Util.isAbsolute(id) && RDF.URI.Util.isFragmentOf(id, document.id))
+            return true;
+        return false;
     }
     function hasFragment(id) {
         var document = this;
-        if (!document.inScope(id))
-            return false;
-        if (RDF.URI.Util.hasFragment(id))
-            id = RDF.URI.Util.getFragment(id);
-        return !!document._fragmentsIndex.has(id);
+        if (RDF.URI.Util.isAbsolute(id)) {
+            if (!RDF.URI.Util.isFragmentOf(id, document.id))
+                return false;
+            id = RDF.URI.Util.hasFragment(id) ? RDF.URI.Util.getFragment(id) : id;
+        }
+        else if (Utils.S.startsWith(id, "#"))
+            id = id.substring(1);
+        return document._fragmentsIndex.has(id);
     }
     function getFragment(id) {
         var document = this;
         if (!RDF.URI.Util.isBNodeID(id))
             return document.getNamedFragment(id);
-        return document._fragmentsIndex.get(id) || null;
+        return document._fragmentsIndex.get(id);
     }
     function getNamedFragment(id) {
         var document = this;
@@ -58,13 +61,14 @@ System.register(["./Errors", "./Fragment", "./JSONLDConverter", "./NamedFragment
         }
         else if (Utils.S.startsWith(id, "#"))
             id = id.substring(1);
-        return document._fragmentsIndex.get(id) || null;
+        return document._fragmentsIndex.get(id);
     }
     function getFragments() {
         var document = this;
         return Utils.A.from(document._fragmentsIndex.values());
     }
     function createFragment(slug) {
+        if (slug === void 0) { slug = null; }
         var document = this;
         var id;
         if (slug) {
@@ -72,12 +76,12 @@ System.register(["./Errors", "./Fragment", "./JSONLDConverter", "./NamedFragment
                 return document.createNamedFragment(slug);
             id = slug;
             if (this._fragmentsIndex.has(id))
-                throw new Errors.IDAlreadyInUseError("The slug provided is already being used by a fragment.");
+                return this.getFragment(id);
         }
         else {
             id = Fragment.Util.generateID();
         }
-        var fragment = Fragment.Factory.create(id, document);
+        var fragment = Fragment.factory.create(id, document);
         document._fragmentsIndex.set(id, fragment);
         return fragment;
     }
@@ -94,12 +98,21 @@ System.register(["./Errors", "./Fragment", "./JSONLDConverter", "./NamedFragment
             slug = slug.substring(1);
         if (document._fragmentsIndex.has(slug))
             throw new Errors.IDAlreadyInUseError("The slug provided is already being used by a fragment.");
-        var fragment = NamedFragment.Factory.create(slug, document);
+        var fragment = NamedFragment.factory.create(slug, document);
         document._fragmentsIndex.set(slug, fragment);
         return fragment;
     }
     function removeFragment(fragmentOrSlug) {
-        // TODO: FT
+        var document = this;
+        var id = Utils.isString(fragmentOrSlug) ? fragmentOrSlug : fragmentOrSlug.id;
+        if (RDF.URI.Util.isAbsolute(id)) {
+            if (!RDF.URI.Util.isFragmentOf(id, document.id))
+                return;
+            id = RDF.URI.Util.hasFragment(id) ? RDF.URI.Util.getFragment(id) : id;
+        }
+        else if (Utils.S.startsWith(id, "#"))
+            id = id.substring(1);
+        document._fragmentsIndex.delete(id);
     }
     function toJSON(objectSchemaResolver, jsonldConverter) {
         if (objectSchemaResolver === void 0) { objectSchemaResolver = null; }
@@ -167,18 +180,18 @@ System.register(["./Errors", "./Fragment", "./JSONLDConverter", "./NamedFragment
                 };
                 Factory.create = function (uri) {
                     if (uri === void 0) { uri = null; }
-                    return this.createFrom({}, uri);
+                    return Factory.createFrom({}, uri);
                 };
                 Factory.createFrom = function (object, uri) {
                     if (uri === void 0) { uri = null; }
                     if (!!uri && RDF.URI.Util.isBNodeID(uri))
                         throw new Errors.IllegalArgumentError("Documents cannot have a BNodeID as a uri.");
                     var resource = Resource.Factory.createFrom(object, uri);
-                    var document = this.decorate(resource);
+                    var document = Factory.decorate(resource);
                     return document;
                 };
                 Factory.decorate = function (object) {
-                    if (this.hasClassProperties(object))
+                    if (Factory.hasClassProperties(object))
                         return object;
                     Object.defineProperties(object, {
                         "_fragmentsIndex": {
@@ -259,6 +272,7 @@ System.register(["./Errors", "./Fragment", "./JSONLDConverter", "./NamedFragment
                 return Factory;
             }());
             exports_1("Factory", Factory);
+            exports_1("default",Document);
         }
     }
 });

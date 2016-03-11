@@ -74,12 +74,12 @@ function inScope( idOrPointer:any ):boolean {
 function hasFragment( id:string ):boolean {
 	let document:Class = <Class> this;
 
-	if( ! document.inScope( id ) ) return false;
+	if( RDF.URI.Util.isAbsolute( id ) ) {
+		if( ! RDF.URI.Util.isFragmentOf( id, document.id ) ) return false;
+		id = RDF.URI.Util.hasFragment( id ) ? RDF.URI.Util.getFragment( id ) : id;
+	} else if( Utils.S.startsWith( id, "#" ) ) id = id.substring( 1 );
 
-	if( RDF.URI.Util.hasFragment( id ) )
-		id = RDF.URI.Util.getFragment( id );
-
-	return !! document._fragmentsIndex.has( id );
+	return document._fragmentsIndex.has( id );
 }
 function getFragment( id:string ):Fragment.Class {
 	let document:Class = <Class> this;
@@ -104,9 +104,9 @@ function getFragments():Fragment.Class[] {
 	return Utils.A.from( document._fragmentsIndex.values() );
 }
 
-function createFragment( slug:string ):Fragment.Class;
-function createFragment():Fragment.Class;
-function createFragment( slug?:string ):any {
+function createFragment( slug:string ):NamedFragment.Class;
+function createFragment( slug?:string ):Fragment.Class;
+function createFragment( slug:any = null ):any {
 	let document:Class = <Class> this;
 
 	let id:string;
@@ -147,7 +147,16 @@ function removeFragment( fragment:NamedFragment.Class ):void;
 function removeFragment( fragment:Fragment.Class ):void;
 function removeFragment( slug:string ):void;
 function removeFragment( fragmentOrSlug:any ):void {
-	// TODO: FT
+	let document:Class = <Class> this;
+
+	let id:string = Utils.isString( fragmentOrSlug ) ? fragmentOrSlug : <Fragment.Class> fragmentOrSlug.id;
+
+	if( RDF.URI.Util.isAbsolute( id ) ) {
+		if( ! RDF.URI.Util.isFragmentOf( id, document.id ) ) return;
+		id = RDF.URI.Util.hasFragment( id ) ? RDF.URI.Util.getFragment( id ) : id;
+	} else if( Utils.S.startsWith( id, "#" ) ) id = id.substring( 1 );
+
+	document._fragmentsIndex.delete( id );
 }
 
 function toJSON( objectSchemaResolver:ObjectSchema.Resolver, jsonLDConverter:JSONLDConverter ):string;
@@ -196,7 +205,7 @@ export class Factory {
 	static create( uri:string ):Class;
 	static create():Class;
 	static create( uri:string = null ):Class {
-		return this.createFrom( {}, uri );
+		return Factory.createFrom( {}, uri );
 	}
 
 	static createFrom<T extends Object>( object:T, uri:string ):T & Class;
@@ -206,13 +215,13 @@ export class Factory {
 
 		let resource:Resource.Class = Resource.Factory.createFrom( object, uri );
 
-		let document:Class = this.decorate( resource );
+		let document:Class = Factory.decorate( resource );
 
 		return <any> document;
 	}
 
 	static decorate<T extends Object>( object:T ):T & Class {
-		if( this.hasClassProperties( object ) ) return <any> object;
+		if( Factory.hasClassProperties( object ) ) return <any> object;
 
 		Object.defineProperties( object, {
 			"_fragmentsIndex": {
@@ -293,4 +302,4 @@ export class Factory {
 	}
 }
 
-export default Class;
+export default Document;

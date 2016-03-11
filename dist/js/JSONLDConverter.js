@@ -88,6 +88,12 @@ System.register(["./Errors", "./ObjectSchema", "./NS", "./Pointer", "./RDF", "./
                                 return;
                             expandedObject[definition.uri.toString()] = expandedValue;
                         }
+                        else if (RDF.URI.Util.isAbsolute(propertyName)) {
+                            var expandedValue = _this.expandPropertyValues(value, pointerValidator);
+                            if (!expandedValue)
+                                return;
+                            expandedObject[propertyName] = expandedValue;
+                        }
                         else {
                         }
                     });
@@ -179,8 +185,9 @@ System.register(["./Errors", "./ObjectSchema", "./NS", "./Pointer", "./RDF", "./
                         { "@list": listValues },
                     ];
                 };
-                Class.prototype.expandPropertyValues = function (propertyValue, pointerValidator) {
-                    var expandedArray = this.expandArray(propertyValue, pointerValidator);
+                Class.prototype.expandPropertyValues = function (propertyValues, pointerValidator) {
+                    propertyValues = Utils.isArray(propertyValues) ? propertyValues : [propertyValues];
+                    var expandedArray = this.expandArray(propertyValues, pointerValidator);
                     if (!expandedArray)
                         return null;
                     return expandedArray;

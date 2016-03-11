@@ -21,7 +21,7 @@ export declare class Class {
     private expandPropertyList(propertyValues, pointerValidator);
     private expandPropertyPointerList(propertyValues, pointerValidator);
     private expandPropertyLiteralList(propertyValues, literalType);
-    private expandPropertyValues(propertyValue, pointerValidator);
+    private expandPropertyValues(propertyValues, pointerValidator);
     private expandPropertyPointers(propertyValues, pointerValidator);
     private expandPropertyLiterals(propertyValues, literalType);
     private expandPropertyLanguageMap(propertyValue);

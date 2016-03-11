@@ -25,8 +25,8 @@ System.register(["./../NS", "./../Utils"], function(exports_1, context_1) {
                     "@container": "@set",
                     "@type": "@id",
                 },
-                "isMemberOfRelation": {
-                    "@id": NS.LDP.Predicate.isMemberOfRelation,
+                "memberOfRelation": {
+                    "@id": NS.LDP.Predicate.memberOfRelation,
                     "@type": "@id",
                 },
                 "hasMemberRelation": {
@@ -42,16 +42,18 @@ System.register(["./../NS", "./../Utils"], function(exports_1, context_1) {
                 function Factory() {
                 }
                 Factory.hasClassProperties = function (resource) {
-                    return (Utils.hasPropertyDefined(resource, "isMemberOfRelation") &&
+                    return (Utils.hasPropertyDefined(resource, "memberOfRelation") &&
                         Utils.hasPropertyDefined(resource, "hasMemberRelation"));
                 };
-                Factory.hasRDFClass = function (pointerOrExpandedObject) {
+                Factory.hasRDFClass = function (resourceOrExpandedObject) {
                     var types = [];
-                    if ("@type" in pointerOrExpandedObject) {
-                        types = pointerOrExpandedObject["@type"];
+                    if ("@type" in resourceOrExpandedObject) {
+                        types = resourceOrExpandedObject["@type"];
                     }
-                    else if ("types" in pointerOrExpandedObject) {
-                        types = pointerOrExpandedObject.types;
+                    else if ("types" in resourceOrExpandedObject) {
+                        // TODO: Use proper class
+                        var resource = resourceOrExpandedObject;
+                        types = resource.types;
                     }
                     return (types.indexOf(RDF_CLASS) !== -1 ||
                         types.indexOf(NS.LDP.Class.BasicContainer) !== -1 ||

@@ -4,9 +4,10 @@ import * as NS from "./../NS";
 import * as ObjectSchema from "./../ObjectSchema";
 import * as Pointer from "./../Pointer";
 import * as RDF from "./../RDF";
-import * as RDFSource from "./RDFSource";
+import * as Resource from "./../Resource";
 import * as Utils from "./../Utils";
-import * as Resource from "../Resource";
+
+import * as RDFSource from "./RDFSource";
 
 export const RDF_CLASS:string = NS.LDP.Class.Container;
 
@@ -21,8 +22,8 @@ export const SCHEMA:ObjectSchema.Class = {
 		"@container": "@set",
 		"@type": "@id",
 	},
-	"isMemberOfRelation": {
-		"@id": NS.LDP.Predicate.isMemberOfRelation,
+	"memberOfRelation": {
+		"@id": NS.LDP.Predicate.memberOfRelation,
 		"@type": "@id",
 	},
 	"hasMemberRelation": {
@@ -43,19 +44,20 @@ export interface Class extends RDFSource.Class {
 export class Factory {
 	static hasClassProperties( resource:RDF.Node.Class ):boolean {
 		return (
-			Utils.hasPropertyDefined( resource, "isMemberOfRelation" ) &&
+			Utils.hasPropertyDefined( resource, "memberOfRelation" ) &&
 			Utils.hasPropertyDefined( resource, "hasMemberRelation" )
 		);
 	}
 
-	static hasRDFClass( pointer:Pointer.Class ):boolean;
+	static hasRDFClass( resource:Resource.Class ):boolean;
 	static hasRDFClass( expandedObject:Object ):boolean;
-	static hasRDFClass( pointerOrExpandedObject:Object ):boolean {
+	static hasRDFClass( resourceOrExpandedObject:Object ):boolean {
 		let types:string[] = [];
-		if( "@type" in pointerOrExpandedObject ) {
-			types = pointerOrExpandedObject[ "@type" ];
-		} else if( "types" in pointerOrExpandedObject ) {
-			types = ( <Resource.Class> pointerOrExpandedObject ).types;
+		if( "@type" in resourceOrExpandedObject ) {
+			types = resourceOrExpandedObject[ "@type" ];
+		} else if( "types" in resourceOrExpandedObject ) {
+			let resource:Resource.Class = <any> resourceOrExpandedObject;
+			types = resource.types;
 		}
 
 		return (

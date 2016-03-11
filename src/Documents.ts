@@ -13,36 +13,15 @@ import * as Document from "./Document";
 import * as Fragment from "./Fragment";
 import * as JSONLDConverter from "./JSONLDConverter";
 import * as PersistedDocument from "./PersistedDocument";
+import * as PersistedFragment from "./PersistedFragment";
+import * as PersistedNamedFragment from "./PersistedNamedFragment";
 import * as Pointer from "./Pointer";
 import * as NamedFragment from "./NamedFragment";
 import * as NS from "./NS";
 import * as ObjectSchema from "./ObjectSchema";
-import * as LDP from "./NS/LDP";
+import * as LDP from "./LDP";
 import * as Resource from "./Resource";
 import * as SPARQL from "./SPARQL";
-
-function parse( input:string ):any {
-	try {
-		return JSON.parse( input );
-	} catch ( error ) {
-		// TODO: Handle SyntaxError
-		throw error;
-	}
-}
-
-function expand( [ result, response ]:[ Object, HTTP.Response.Class ], options?:jsonld.ExpandOptions ):Promise<[ Object, HTTP.Response.Class ]> {
-	return new Promise( ( resolve:( result:Object ) => void, reject:( error:any ) => void ) => {
-		jsonld.expand( result, options, function ( error:any, expanded:Object ):void {
-			if ( error ) {
-				// TODO: Handle jsonld.expand error
-				throw error;
-			}
-
-			result = expanded;
-			resolve( [ result, response ] );
-		} );
-	} );
-}
 
 class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Resolver {
 	_jsonldConverter:JSONLDConverter.Class;
@@ -127,17 +106,12 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 		if ( this.context && this.context.auth.isAuthenticated() ) this.context.auth.addAuthentication( requestOptions );
 
 		HTTP.Request.Util.setAcceptHeader( "application/ld+json", requestOptions );
-		HTTP.Request.Util.setPreferredInteractionModel( LDP.Class.RDFSource, requestOptions );
+		HTTP.Request.Util.setPreferredInteractionModel( NS.LDP.Class.RDFSource, requestOptions );
 
-		return HTTP.Request.Service.get( uri, requestOptions ).then( ( response:HTTP.Response.Class ) => {
-			let parsedObject:Object = parse( response.data );
-
-			return expand( [ parsedObject, response ] );
-		} ).then( ( [ expandedResult, response ]:[ Object, HTTP.Response.Class ] ) => {
+		return HTTP.Request.Service.get( uri, requestOptions, new RDF.Document.Parser() ).then( ( [ rdfDocuments, response ]:[ RDF.Document.Class[], HTTP.Response.Class ] ) => {
 			let etag:string = HTTP.Response.Util.getETag( response );
 			if( etag === null ) throw new HTTP.Errors.BadResponseError( "The response doesn't contain an ETag", response );
 
-			let rdfDocuments:RDF.Document.Class[] = RDF.Document.Util.getDocuments( expandedResult );
 			let rdfDocument:RDF.Document.Class = this.getRDFDocument( uri, rdfDocuments, response );
 			if ( rdfDocument === null ) throw new HTTP.Errors.BadResponseError( "No document was returned.", response );
 
@@ -155,12 +129,12 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 			let document:PersistedDocument.Class = PersistedDocument.Factory.createFrom( documentPointer, uri, this );
 			document._etag = etag;
 
-			let fragments:Fragment.Class[] = [];
+			let fragments:PersistedFragment.Class[] = [];
 			for( let fragmentResource of fragmentResources ) {
 				fragments.push( document.createFragment( fragmentResource[ "@id" ] ) );
 			}
 
-			let namedFragments:NamedFragment.Class[] = [];
+			let namedFragments:PersistedNamedFragment.Class[] = [];
 			for( let namedFragmentResource of namedFragmentResources ) {
 				namedFragments.push( document.createNamedFragment( namedFragmentResource[ "@id" ] ) );
 			}
@@ -169,7 +143,16 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 			this.compact( fragmentResources, fragments, document );
 			this.compact( namedFragmentResources, namedFragments, document );
 
-			// TODO: Decorate additional behavior (container, app, etc.)
+			// TODO: Move this to a more appropriate place
+			document._syncSnapshot();
+			fragments.forEach( ( fragment:PersistedFragment.Class ) => fragment._syncSnapshot() );
+			namedFragments.forEach( ( fragment:PersistedNamedFragment.Class ) => fragment._syncSnapshot() );
+			document._syncSavedFragments();
+
+			// TODO: Decorate additional behavior (app, etc.)
+			// TODO: Make it dynamic
+			if( LDP.Container.Factory.hasRDFClass( document ) ) LDP.PersistedContainer.Factory.decorate( document );
+
 			return [ document, response ];
 		} );
 	}
@@ -191,7 +174,7 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 
 		HTTP.Request.Util.setAcceptHeader( "application/ld+json", requestOptions );
 		HTTP.Request.Util.setContentTypeHeader( "application/ld+json", requestOptions );
-		HTTP.Request.Util.setPreferredInteractionModel( LDP.Class.Container, requestOptions );
+		HTTP.Request.Util.setPreferredInteractionModel( NS.LDP.Class.Container, requestOptions );
 
 		if( slug !== null ) HTTP.Request.Util.setSlug( slug, requestOptions );
 
@@ -204,7 +187,9 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 				if( locationHeader.values.length !== 1 ) throw new HTTP.Errors.BadResponseError( "The response contains more than one Location header.", response );
 
 				let locationURI:string = locationHeader.values[0].toString();
-				let pointer:Pointer.Class = this.getPointer( locationURI);
+
+				// TODO: If a Document was supplied, use it to create the pointer instead of creating a new one
+				let pointer:Pointer.Class = this.getPointer( locationURI );
 
 				return [
 					pointer,
@@ -230,7 +215,7 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 		if ( this.context && this.context.auth.isAuthenticated() ) this.context.auth.addAuthentication( requestOptions );
 
 		HTTP.Request.Util.setAcceptHeader( "application/ld+json", requestOptions );
-		HTTP.Request.Util.setPreferredInteractionModel( LDP.Class.Container, requestOptions );
+		HTTP.Request.Util.setPreferredInteractionModel( NS.LDP.Class.Container, requestOptions );
 
 		let containerRetrievalPreferences:HTTP.Request.ContainerRetrievalPreferences = {
 			include: [
@@ -292,7 +277,7 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 
 		HTTP.Request.Util.setAcceptHeader( "application/ld+json", requestOptions );
 		HTTP.Request.Util.setContentTypeHeader( "application/ld+json", requestOptions );
-		HTTP.Request.Util.setPreferredInteractionModel( LDP.Class.RDFSource, requestOptions );
+		HTTP.Request.Util.setPreferredInteractionModel( NS.LDP.Class.RDFSource, requestOptions );
 		HTTP.Request.Util.setIfMatchHeader( persistedDocument._etag, requestOptions );
 
 		let body:string = persistedDocument.toJSON( this, this.jsonldConverter );
@@ -306,7 +291,7 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 		if ( this.context && this.context.auth.isAuthenticated() ) this.context.auth.addAuthentication( requestOptions );
 
 		HTTP.Request.Util.setAcceptHeader( "application/ld+json", requestOptions );
-		HTTP.Request.Util.setPreferredInteractionModel( LDP.Class.RDFSource, requestOptions );
+		HTTP.Request.Util.setPreferredInteractionModel( NS.LDP.Class.RDFSource, requestOptions );
 		HTTP.Request.Util.setIfMatchHeader( persistedDocument._etag, requestOptions );
 
 		return HTTP.Request.Service.delete( persistedDocument.id, persistedDocument.toJSON(), requestOptions );

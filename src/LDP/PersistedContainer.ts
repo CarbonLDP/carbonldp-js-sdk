@@ -12,17 +12,21 @@ export interface Class extends PersistedDocument.Class {
 	createChild():Promise<[ Pointer.Class, HTTP.Response.Class ]>;
 }
 
-function createChild( slug:string, object:Object ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
+// TODO: Accept non document objects and turn them to documents
+/*
+	function createChild( slug:string, object:Object ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
+	function createChild( slug:string ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
+	function createChild( object:Object ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
+	function createChild():Promise<[ Pointer.Class, HTTP.Response.Class ]>;
+	function createChild( slugOrObject:Object = null, object:Object = null ):Promise<[ Pointer.Class, HTTP.Response.Class ]> {
+*/
+function createChild( slug:string, document:Document ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
 function createChild( slug:string ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
-function createChild( object:Object ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
+function createChild( document:Document ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
 function createChild():Promise<[ Pointer.Class, HTTP.Response.Class ]>;
-function createChild( slugOrObject:Object = null, object:Object = null ):Promise<[ Pointer.Class, HTTP.Response.Class ]> {
-	let slug:string = Utils.isString( slugOrObject ) ? <any> slugOrObject : null;
-	object = !! slugOrObject && ! Utils.isString( slugOrObject ) ? slugOrObject : ( !! object ? object : null );
-
-	// TODO: Check if the object is a document
-	// TODO: If it's not a document turn it and any of the objects related to it into document/fragments
-	let document:Document.Class = <Document.Class> object;
+function createChild( slugOrDocument:any = null, document:Document = null ):Promise<[ Pointer.Class, HTTP.Response.Class ]> {
+	let slug:string = Utils.isString( slugOrDocument ) ? <any> slugOrDocument : null;
+	document = !! slugOrDocument && ! Utils.isString( slugOrDocument ) ? slugOrDocument : ( !! document ? document : null );
 
 	if( slug !== null ) {
 		return this._documents.createChild( this.id, slug, document );
@@ -32,7 +36,7 @@ function createChild( slugOrObject:Object = null, object:Object = null ):Promise
 export class Factory {
 	static hasClassProperties( document:Document.Class ):boolean {
 		return (
-				Utils.hasFunction( document, "createChild" )
+			Utils.hasFunction( document, "createChild" )
 		);
 	}
 

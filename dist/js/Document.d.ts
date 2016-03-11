@@ -30,4 +30,4 @@ export declare class Factory {
     static createFrom<T extends Object>(object: T): T & Class;
     static decorate<T extends Object>(object: T): T & Class;
 }
-export default Class;
+export default Document;

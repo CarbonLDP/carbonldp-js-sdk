@@ -121,6 +121,31 @@ function forEachOwnProperty( object:Object, action:( name:string, value:any ) =>
 	}
 }
 
+class O {
+	static areShallowlyEqual( object1:Object, object2:Object ):boolean {
+		if( object1 === object2 ) return true;
+		if( ! isObject( object1 ) || ! isObject( object2 ) ) return false;
+
+		let properties:string[] = [];
+		for( let propertyName in object1 ) {
+			if( ! object1.hasOwnProperty( propertyName ) ) continue;
+			if( isFunction( object1[ propertyName ] ) ) continue;
+			if( ! ( propertyName in object2 ) ) return false;
+			if( object1[ propertyName ] !== object2[ propertyName ] ) return false;
+			properties.push( propertyName );
+		}
+
+		for( let propertyName in object2 ) {
+			if( ! object2.hasOwnProperty( propertyName ) ) continue;
+			if( isFunction( object2[ propertyName ] ) ) continue;
+			if( ! ( propertyName in object1 ) ) return false;
+			if( properties.indexOf( propertyName ) === -1 ) return false;
+		}
+
+		return true;
+	}
+}
+
 class S {
 	static startsWith( str:string, substring:string ):boolean {
 		return str.lastIndexOf( substring, 0 ) === 0;
@@ -230,6 +255,7 @@ export {
 	parseBoolean,
 	extend,
 	forEachOwnProperty,
+	O,
 	S,
 	A,
 	M,
