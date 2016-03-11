@@ -70,7 +70,7 @@ System.register(["./../Errors", "./../Utils"], function(exports_1, context_1) {
                     if (baseURI === "")
                         return true;
                     if (uri.startsWith(baseURI)) {
-                        if (Utils.S.endsWith(baseURI, "/"))
+                        if (Utils.S.endsWith(baseURI, "/") || Utils.S.endsWith(baseURI, "#"))
                             return true;
                         var relativeURI = uri.substring(baseURI.length);
                         if (Utils.S.startsWith(relativeURI, "/") || Utils.S.startsWith(relativeURI, "#"))
