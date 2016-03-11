@@ -40,16 +40,16 @@ export interface Class extends RDFSource.Class {
 }
 
 export class Factory {
-	hasClassProperties( resource:RDF.Node.Class ):boolean {
+	static hasClassProperties( resource:RDF.Node.Class ):boolean {
 		return (
 			Utils.hasPropertyDefined( resource, "memberOfRelation" ) &&
 			Utils.hasPropertyDefined( resource, "hasMemberRelation" )
 		);
 	}
 
-	hasRDFClass( pointer:Pointer.Class ):boolean;
-	hasRDFClass( expandedObject:Object ):boolean;
-	hasRDFClass( pointerOrExpandedObject:Object ):boolean {
+	static hasRDFClass( pointer:Pointer.Class ):boolean;
+	static hasRDFClass( expandedObject:Object ):boolean;
+	static hasRDFClass( pointerOrExpandedObject:Object ):boolean {
 		let types:string[] = [];
 		if( "@type" in pointerOrExpandedObject ) {
 			types = pointerOrExpandedObject[ "@type" ];
@@ -67,7 +67,5 @@ export class Factory {
 		);
 	}
 }
-
-export let factory:Factory = new Factory();
 
 export default Class;

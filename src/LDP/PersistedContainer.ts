@@ -29,7 +29,7 @@ function createChild( slugOrObject:Object = null, object:Object = null ):Promise
 export class Factory {
 	static hasClassProperties( document:Document.Class ):boolean {
 		return (
-				Utils.hasFunction( document, "createChild" )
+			Utils.hasFunction( document, "createChild" )
 		);
 	}
 

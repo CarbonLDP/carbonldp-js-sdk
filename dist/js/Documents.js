@@ -140,15 +140,11 @@ System.register(["jsonld", "./Errors", "./HTTP", "./RDF", "./Utils", "./JSONLDCo
                         this.context.auth.addAuthentication(requestOptions);
                     HTTP.Request.Util.setAcceptHeader("application/ld+json", requestOptions);
                     HTTP.Request.Util.setPreferredInteractionModel(LDP.Class.RDFSource, requestOptions);
-                    return HTTP.Request.Service.get(uri, requestOptions).then(function (response) {
-                        var parsedObject = parse(response.data);
-                        return expand([parsedObject, response]);
-                    }).then(function (_a) {
-                        var expandedResult = _a[0], response = _a[1];
+                    return HTTP.Request.Service.get(uri, requestOptions, new RDF.Document.Parser()).then(function (_a) {
+                        var rdfDocuments = _a[0], response = _a[1];
                         var etag = HTTP.Response.Util.getETag(response);
                         if (etag === null)
                             throw new HTTP.Errors.BadResponseError("The response doesn't contain an ETag", response);
-                        var rdfDocuments = RDF.Document.Util.getDocuments(expandedResult);
                         var rdfDocument = _this.getRDFDocument(uri, rdfDocuments, response);
                         if (rdfDocument === null)
                             throw new HTTP.Errors.BadResponseError("No document was returned.", response);
@@ -177,6 +173,9 @@ System.register(["jsonld", "./Errors", "./HTTP", "./RDF", "./Utils", "./JSONLDCo
                         _this.compact(documentResource, document, document);
                         _this.compact(fragmentResources, fragments, document);
                         _this.compact(namedFragmentResources, namedFragments, document);
+                        document._syncSnapshot();
+                        fragments.forEach(function (fragment) { return fragment._syncSnapshot(); });
+                        namedFragments.forEach(function (fragment) { return fragment._syncSnapshot(); });
                         // TODO: Decorate additional behavior (container, app, etc.)
                         return [document, response];
                     });
@@ -209,6 +208,7 @@ System.register(["jsonld", "./Errors", "./HTTP", "./RDF", "./Utils", "./JSONLDCo
                         if (locationHeader.values.length !== 1)
                             throw new HTTP.Errors.BadResponseError("The response contains more than one Location header.", response);
                         var locationURI = locationHeader.values[0].toString();
+                        // TODO: If a Document was supplied, use it to create the pointer instead of creating a new one
                         var pointer = _this.getPointer(locationURI);
                         return [
                             pointer,

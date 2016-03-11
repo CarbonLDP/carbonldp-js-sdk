@@ -6,6 +6,7 @@ import * as NS from "./NS";
 import * as Pointer from "./Pointer";
 import * as RDF from "./RDF";
 import * as Utils from "./Utils";
+import ContainerType from "./ObjectSchema";
 
 // TODO: Use Literal.Parsers to parse literals
 export class Class {
@@ -79,6 +80,12 @@ export class Class {
 				if( ! expandedValue ) return;
 
 				expandedObject[ definition.uri.toString() ] = expandedValue;
+			} else if( RDF.URI.Util.isAbsolute( propertyName ) ) {
+				let expandedValue:any = this.expandPropertyValues( value, pointerValidator );
+
+				if( ! expandedValue ) return;
+
+				expandedObject[ propertyName ] = expandedValue;
 			} else {
 				// TODO: Do your best. Use the default vocabulary
 			}
@@ -180,8 +187,10 @@ export class Class {
 		];
 	}
 
-	private expandPropertyValues( propertyValue:any, pointerValidator:Pointer.Validator ):any {
-		let expandedArray:any = this.expandArray( propertyValue, pointerValidator );
+	private expandPropertyValues( propertyValues:any, pointerValidator:Pointer.Validator ):any {
+		propertyValues = Utils.isArray( propertyValues ) ? propertyValues : [ propertyValues ];
+
+		let expandedArray:any = this.expandArray( propertyValues, pointerValidator );
 
 		if( ! expandedArray ) return null;
 

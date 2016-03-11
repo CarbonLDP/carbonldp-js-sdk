@@ -1,11 +1,21 @@
-System.register(["./Document", "./Utils"], function(exports_1, context_1) {
+System.register(["./Document", "./PersistedResource", "./PersistedFragment", "./PersistedNamedFragment", "./RDF", "./Utils"], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
-    var Document, Utils;
+    var Document, PersistedResource, PersistedFragment, PersistedNamedFragment, RDF, Utils;
     var Factory;
-    function isDirty() {
-        // TODO
-        return null;
+    function extendIsDirty(superFunction) {
+        return function () {
+            var isDirty = superFunction.call(this);
+            if (isDirty)
+                return true;
+            var document = this;
+            for (var _i = 0, _a = document.getFragments(); _i < _a.length; _i++) {
+                var fragment = _a[_i];
+                if (fragment.isDirty())
+                    return true;
+            }
+            return false;
+        };
     }
     function refresh() {
         // TODO
@@ -19,6 +29,26 @@ System.register(["./Document", "./Utils"], function(exports_1, context_1) {
     }
     function destroy() {
         return this._documents.delete(this);
+    }
+    function extendCreateFragment(superFunction) {
+        return function (slug) {
+            if (slug === void 0) { slug = null; }
+            var fragment = superFunction.call(this, slug);
+            if (slug !== null) {
+                if (RDF.URI.Util.isBNodeID(slug))
+                    return PersistedFragment.Factory.decorate(fragment);
+                return PersistedNamedFragment.Factory.decorate(fragment);
+            }
+            else {
+                return PersistedFragment.Factory.decorate(fragment);
+            }
+        };
+    }
+    function extendCreateNamedFragment(superFunction) {
+        return function (slug) {
+            var fragment = superFunction.call(this, slug);
+            return PersistedFragment.Factory.decorate(fragment);
+        };
     }
     function executeRawASKQuery(askQuery, requestOptions) {
         if (requestOptions === void 0) { requestOptions = {}; }
@@ -49,6 +79,18 @@ System.register(["./Document", "./Utils"], function(exports_1, context_1) {
             function (Document_1) {
                 Document = Document_1;
             },
+            function (PersistedResource_1) {
+                PersistedResource = PersistedResource_1;
+            },
+            function (PersistedFragment_1) {
+                PersistedFragment = PersistedFragment_1;
+            },
+            function (PersistedNamedFragment_1) {
+                PersistedNamedFragment = PersistedNamedFragment_1;
+            },
+            function (RDF_1) {
+                RDF = RDF_1;
+            },
             function (Utils_1) {
                 Utils = Utils_1;
             }],
@@ -74,15 +116,19 @@ System.register(["./Document", "./Utils"], function(exports_1, context_1) {
                     // TODO: Add Document.Class check
                     Factory.hasClassProperties(object));
                 };
-                Factory.create = function (uri, documents) {
-                    var document = Document.factory.create(uri);
-                    return Factory.decorate(document, documents);
+                Factory.create = function (uri, documents, snapshot) {
+                    if (snapshot === void 0) { snapshot = {}; }
+                    var document = Document.Factory.create(uri);
+                    return Factory.decorate(document, documents, snapshot);
                 };
-                Factory.createFrom = function (object, uri, documents) {
-                    var document = Document.factory.createFrom(object, uri);
-                    return Factory.decorate(document, documents);
+                Factory.createFrom = function (object, uri, documents, snapshot) {
+                    if (snapshot === void 0) { snapshot = {}; }
+                    var document = Document.Factory.createFrom(object, uri);
+                    return Factory.decorate(document, documents, snapshot);
                 };
-                Factory.decorate = function (document, documents) {
+                Factory.decorate = function (document, documents, snapshot) {
+                    if (snapshot === void 0) { snapshot = {}; }
+                    PersistedResource.Factory.decorate(document, snapshot);
                     if (Factory.hasClassProperties(document))
                         return document;
                     var persistedDocument = document;
@@ -193,19 +239,26 @@ System.register(["./Document", "./Utils"], function(exports_1, context_1) {
                             configurable: true,
                             value: executeRawDESCRIBEQuery,
                         },
+                        "createFragment": {
+                            writable: false,
+                            enumerable: false,
+                            configurable: true,
+                            value: extendCreateFragment(persistedDocument.createFragment),
+                        },
+                        "createNamedFragment": {
+                            writable: false,
+                            enumerable: false,
+                            configurable: true,
+                            value: extendCreateNamedFragment(persistedDocument.createNamedFragment),
+                        },
+                        // Overwrite PersistedResource.isDirty to take into account fragments state
+                        "isDirty": {
+                            writable: false,
+                            enumerable: false,
+                            configurable: true,
+                            value: extendIsDirty(persistedDocument.isDirty),
+                        },
                     });
-                    /*
-            
-                    // TODO: Overwrite isDirty to also take into account the fragments state
-                    // TODO: Update with the new comparison system
-                    persistedDocument.isDirty = (function():() => boolean {
-                        let superFunction:() => boolean = persistedDocument.isDirty;
-                        return function():boolean {
-                            return superFunction.call( this ) || isDirty.call( this );
-                        };
-                    })();
-            
-                    */
                     return persistedDocument;
                 };
                 return Factory;

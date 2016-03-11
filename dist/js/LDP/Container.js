@@ -3,7 +3,7 @@ System.register(["./../NS", "./../Pointer", "./../Utils"], function(exports_1, c
     "use strict";
     var __moduleName = context_1 && context_1.id;
     var NS, Pointer, Utils;
-    var RDF_CLASS, SCHEMA, Factory, factory;
+    var RDF_CLASS, SCHEMA, Factory;
     return {
         setters:[
             function (NS_1) {
@@ -44,11 +44,11 @@ System.register(["./../NS", "./../Pointer", "./../Utils"], function(exports_1, c
             Factory = (function () {
                 function Factory() {
                 }
-                Factory.prototype.hasClassProperties = function (resource) {
+                Factory.hasClassProperties = function (resource) {
                     return (Utils.hasPropertyDefined(resource, "memberOfRelation") &&
                         Utils.hasPropertyDefined(resource, "hasMemberRelation"));
                 };
-                Factory.prototype.hasRDFClass = function (pointerOrExpandedObject) {
+                Factory.hasRDFClass = function (pointerOrExpandedObject) {
                     var types = [];
                     if ("@type" in pointerOrExpandedObject) {
                         types = pointerOrExpandedObject["@type"];
@@ -66,7 +66,6 @@ System.register(["./../NS", "./../Pointer", "./../Utils"], function(exports_1, c
                 return Factory;
             }());
             exports_1("Factory", Factory);
-            exports_1("factory", factory = new Factory());
         }
     }
 });
