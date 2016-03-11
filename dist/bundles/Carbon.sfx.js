@@ -12742,7 +12742,7 @@ $__System.register("64", ["2", "c", "8", "15", "d", "23", "5", "63", "6"], funct
                 Object.defineProperty(Carbon, "version", {
                     /* tslint:enable: variable-name */
                     // TODO: Get package.json version directly
-                    get: function () { return "0.16.1-ALPHA"; },
+                    get: function () { return "0.17.0-ALPHA"; },
                     enumerable: true,
                     configurable: true
                 });
