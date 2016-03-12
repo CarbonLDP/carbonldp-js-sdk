@@ -1,6 +1,7 @@
 # 0.17.0 (March 11, 2016)
 * BasicContainers will now be decorated with `createChild()`
 * PersistedDocuments and PersistedFragments will now track their state. Execute `isDirty()` to know if something has changed since it was retrieved
+* Changed module type to commonjs so files can be required in nodeJS
 
 # 0.16.1 (March 10, 2016)
 * Fix `URI.Util.isBaseOf`, it wasn't handling fragments like it should

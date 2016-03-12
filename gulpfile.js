@@ -24,7 +24,7 @@ let config = {
 	},
 	dist: {
 		sfxBundle: "dist/bundles/Carbon.sfx.js",
-		tsOutput: "dist/js",
+		tsOutput: "dist",
 		all: "dist/**/*"
 	}
 };
@@ -49,7 +49,8 @@ gulp.task( "compile-library", () => {
 	let tsProject = ts.createProject({
 		"declaration": true,
 		"target": "es5",
-		"module": "system",
+		"module": "commonjs",
+		"removeComments": true,
 	});
 
 	let tsResults = gulp.src( config.source.typescript )
@@ -74,7 +75,7 @@ gulp.task( "bundle-sfx", ( done ) => {
 		config: {
 			"transpiler": "typescript",
 			"typescriptOptions": {
-				sourceMap: true,
+				"sourceMap": true,
 				"inlineSourceMap": false,
 			},
 			"paths": {
