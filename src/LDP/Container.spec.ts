@@ -59,9 +59,9 @@ describe( module( "Carbon/LDP/Container" ), ():void => {
 			"@type": "@id"
 		});
 
-		expect( Utils.hasProperty( Container.SCHEMA, "isMemberOfRelation" ) ).toBe( true );
-		expect( Container.SCHEMA[ "isMemberOfRelation" ] ).toEqual({
-			"@id": NS.LDP.Predicate.isMemberOfRelation,
+		expect( Utils.hasProperty( Container.SCHEMA, "memberOfRelation" ) ).toBe( true );
+		expect( Container.SCHEMA[ "memberOfRelation" ] ).toEqual({
+			"@id": NS.LDP.Predicate.memberOfRelation,
 			"@type": "@id"
 		});
 
@@ -103,7 +103,7 @@ describe( module( "Carbon/LDP/Container" ), ():void => {
 
 			object = {
 				hasMemberRelation: Pointer.Factory.create( "http://example.com/memberOf/" ),
-				isMemberOfRelation: Pointer.Factory.create( "http://example.com/isAMemberOf/" )
+				memberOfRelation: Pointer.Factory.create( "http://example.com/isAMemberOf/" )
 			};
 			expect( Container.Factory.hasClassProperties( object ) ).toBe( true );
 
@@ -112,7 +112,7 @@ describe( module( "Carbon/LDP/Container" ), ():void => {
 			};
 			expect( Container.Factory.hasClassProperties( object ) ).toBe( false );
 			object = {
-				isMemberOfRelation: Pointer.Factory.create( "http://example.com/isAMemberOf/" )
+				memberOfRelation: Pointer.Factory.create( "http://example.com/isAMemberOf/" )
 			};
 			expect( Container.Factory.hasClassProperties( object ) ).toBe( false );
 		});

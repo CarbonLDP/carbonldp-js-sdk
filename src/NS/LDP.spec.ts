@@ -272,10 +272,10 @@ describe( module(
 			"isMemberOfRelation",
 			"string"
 		), ():void => {
-			expect( LDP.Predicate.isMemberOfRelation ).toBeDefined();
-			expect( Utils.isString( LDP.Predicate.isMemberOfRelation ) ).toBe( true );
+			expect( LDP.Predicate.memberOfRelation ).toBeDefined();
+			expect( Utils.isString( LDP.Predicate.memberOfRelation ) ).toBe( true );
 
-			expect( LDP.Predicate.isMemberOfRelation ).toBe( "http://www.w3.org/ns/ldp#isMemberOfRelation" );
+			expect( LDP.Predicate.memberOfRelation ).toBe( "http://www.w3.org/ns/ldp#memberOfRelation" );
 		});
 
 		it( hasProperty(

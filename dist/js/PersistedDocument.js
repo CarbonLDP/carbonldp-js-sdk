@@ -1,7 +1,7 @@
-System.register(["./Document", "./PersistedResource", "./PersistedFragment", "./PersistedNamedFragment", "./RDF", "./Utils"], function(exports_1, context_1) {
+System.register(["./Document", "./PersistedResource", "./PersistedFragment", "./PersistedNamedFragment", "./RDF", "./Utils", "./RDF/URI"], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
-    var Document, PersistedResource, PersistedFragment, PersistedNamedFragment, RDF, Utils;
+    var Document, PersistedResource, PersistedFragment, PersistedNamedFragment, RDF, Utils, URI;
     var Factory;
     function extendIsDirty(superFunction) {
         return function () {
@@ -52,10 +52,7 @@ System.register(["./Document", "./PersistedResource", "./PersistedFragment", "./
         return null;
     }
     function save() {
-        var _this = this;
-        return this._documents.save(this).then(function (response) {
-            return [_this, response];
-        });
+        return this._documents.save(this);
     }
     function destroy() {
         return this._documents.delete(this);
@@ -103,6 +100,9 @@ System.register(["./Document", "./PersistedResource", "./PersistedFragment", "./
             },
             function (Utils_1) {
                 Utils = Utils_1;
+            },
+            function (URI_1) {
+                URI = URI_1;
             }],
         execute: function() {
             Factory = (function () {
@@ -122,9 +122,9 @@ System.register(["./Document", "./PersistedResource", "./PersistedFragment", "./
                         Utils.hasFunction(document, "executeRawCONSTRUCTQuery"));
                 };
                 Factory.is = function (object) {
-                    return (
-                    // TODO: Add Document.Class check
-                    Factory.hasClassProperties(object));
+                    return Utils.isObject(object)
+                        && Document.Factory.hasClassProperties(object)
+                        && Factory.hasClassProperties(object);
                 };
                 Factory.create = function (uri, documents, snapshot) {
                     if (snapshot === void 0) { snapshot = {}; }
@@ -176,7 +176,7 @@ System.register(["./Document", "./PersistedResource", "./PersistedFragment", "./
                                 return function (id) {
                                     if (superFunction.call(this, id))
                                         return true;
-                                    return this._documents.hasPointer(id);
+                                    return !URI.Util.isBNodeID(id) && this._documents.hasPointer(id);
                                 };
                             })(),
                         },
@@ -200,10 +200,10 @@ System.register(["./Document", "./PersistedResource", "./PersistedFragment", "./
                             configurable: true,
                             value: (function () {
                                 var superFunction = persistedDocument.inScope;
-                                return function (id) {
-                                    if (superFunction.call(this, id))
+                                return function (idOrPointer) {
+                                    if (superFunction.call(this, idOrPointer))
                                         return true;
-                                    return this._documents.inScope(id);
+                                    return this._documents.inScope(idOrPointer);
                                 };
                             })(),
                         },

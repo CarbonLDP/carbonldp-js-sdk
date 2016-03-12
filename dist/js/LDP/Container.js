@@ -51,7 +51,6 @@ System.register(["./../NS", "./../Utils"], function(exports_1, context_1) {
                         types = resourceOrExpandedObject["@type"];
                     }
                     else if ("types" in resourceOrExpandedObject) {
-                        // TODO: Use proper class
                         var resource = resourceOrExpandedObject;
                         types = resource.types;
                     }
