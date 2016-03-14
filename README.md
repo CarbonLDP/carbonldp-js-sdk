@@ -6,7 +6,8 @@ JavaScript SDK that simplifies the use of CarbonLDP's REST API.
     - [node.js](https://nodejs.org/en/)
     - gulp: `npm install gulp -g`
 2. cd into the project's root directory
-3. Run `npm` install
+3. Run `npm install`
+4. Run `npm run-script install-dev`
 4. To build the source code run `npm start`
 
 ## Gulp Tasks

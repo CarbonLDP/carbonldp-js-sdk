@@ -1,3 +1,6 @@
+# 0.17.1 (March 14, 2016)
+* Move dev scripts to `npm run-script install-dev` so they don't fail on external `npm install`s
+
 # 0.17.0 (March 11, 2016)
 * BasicContainers will now be decorated with `createChild()`
 * PersistedDocuments and PersistedFragments will now track their state. Execute `isDirty()` to know if something has changed since it was retrieved
