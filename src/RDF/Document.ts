@@ -1,8 +1,9 @@
 import * as HTTP from "./../HTTP";
 import * as RDFNode from "./RDFNode";
-import * as Utils from "../Utils";
+import * as Utils from "./../Utils";
 import * as URI from "./URI";
 import * as Value from "./Value";
+import * as Errors from "./../Errors";
 
 export interface Class {
 	"@id"?:string;
@@ -11,12 +12,10 @@ export interface Class {
 
 export class Factory {
 	static is( object:Object ):boolean {
-		return (
-			Utils.hasProperty( object, "@graph" )
-		);
+		return Utils.hasProperty( object, "@graph" )
+			&& Utils.isArray( object["@graph"] );
 	}
 
-	static create( resources:RDFNode.Class[] ):Class;
 	static create( resources:RDFNode.Class[], uri?:string ):Class {
 		let document:any = uri ? RDFNode.Factory.create( uri ) : {};
 		document[ "@graph" ] = resources;
@@ -26,7 +25,7 @@ export class Factory {
 }
 
 export class Util {
-	static getDocuments( object:Object[] ):Class[];
+	static getDocuments( objects:Object[] ):Class[];
 	static getDocuments( object:Object ):Class[];
 	static getDocuments( value:any ):Class[] {
 		if ( Utils.isArray( value ) ) {
@@ -36,7 +35,8 @@ export class Util {
 		} else if ( Utils.isObject( value ) ) {
 			if ( Factory.is( value ) ) return [ value ];
 			if ( RDFNode.Factory.is( value ) ) return [ Factory.create( [ value ] ) ];
-		} else throw new Error( "IllegalArgument: The value structure isn't valid." );
+		}
+		throw new Errors.IllegalArgumentError( "The value structure isn't valid." );
 	}
 
 	static getResources( objects:Object[] ):RDFNode.Class[];
@@ -72,8 +72,8 @@ export class Util {
 
 	static getFragmentResources( document:RDFNode.Class[], documentResource?:RDFNode.Class ):RDFNode.Class[];
 	static getFragmentResources( document:Class, documentResource?:RDFNode.Class ):RDFNode.Class[];
-	static getFragmentResources( document:RDFNode.Class[], documentResource?:string ):RDFNode.Class[];
-	static getFragmentResources( document:Class, documentResource?:string ):RDFNode.Class[];
+	static getFragmentResources( document:RDFNode.Class[], documentResourceURI?:string ):RDFNode.Class[];
+	static getFragmentResources( document:Class, documentResourceURI?:string ):RDFNode.Class[];
 	static getFragmentResources( document:any, documentResource?:any ):RDFNode.Class[] {
 		let resources:RDFNode.Class[] = Util.getResources( document );
 

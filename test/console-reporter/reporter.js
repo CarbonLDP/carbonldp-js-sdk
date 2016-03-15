@@ -271,6 +271,10 @@ var DocumentationReporter = function( baseReporterDecorator, formatError, config
 				return "constructor > ";
 			case "method":
 				return "method > " + suite.name;
+			case "decoratedObject":
+				return "decorated object";
+			case "enum":
+				return "enum > " + suite.name;
 		}
 
 		return suite.name;
@@ -294,6 +298,8 @@ var DocumentationReporter = function( baseReporterDecorator, formatError, config
 				return "reexports > " + spec.name + ": " + spec.originalLocation;
 			case "defaultExport":
 				return "default export > " + spec.name;
+			case "enum":
+				break;
 		}
 
 		return spec.name;

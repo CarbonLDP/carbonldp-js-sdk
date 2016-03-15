@@ -6,12 +6,9 @@ export interface Class {
 }
 
 export class Factory {
-	static is( value:any ):boolean {
-		return (
-			( ! Utils.isNull( value ) ) &&
-			Utils.isObject( value ) &&
-			Utils.hasProperty( value, "@id" )
-		);
+	static is( value:Object ):boolean {
+		return Utils.hasProperty( value, "@id" )
+			&& Utils.isString( value[ "@id" ] );
 	}
 
 	static create( uri:string ):Class {

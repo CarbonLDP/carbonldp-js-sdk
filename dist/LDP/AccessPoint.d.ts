@@ -7,6 +7,6 @@ export interface Class extends Container.Class {
 }
 export declare const SCHEMA: ObjectSchema.Class;
 export declare class Factory {
-    hasClassProperties(resource: Object): boolean;
+    static hasClassProperties(resource: Object): boolean;
 }
 export default Class;

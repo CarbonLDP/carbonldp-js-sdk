@@ -1,5 +1,6 @@
 "use strict";
 var Utils = require("./Utils");
+var Errors = require("./Errors");
 var Factory = (function () {
     function Factory() {
     }
@@ -61,9 +62,8 @@ var Factory = (function () {
                 enumerable: false,
                 configurable: true,
                 value: function () {
-                    var _this = this;
                     return new Promise(function (resolve, reject) {
-                        return _this;
+                        throw new Errors.NotImplementedError("A simple pointer cannot be resolved by it self.");
                     });
                 },
             },

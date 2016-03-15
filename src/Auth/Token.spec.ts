@@ -9,9 +9,9 @@ import {
 	isDefined,
 	hasMethod,
 	hasSignature
-} from "../test/JasmineExtender";
+} from "./../test/JasmineExtender";
 import * as Token from "./Token";
-import * as Utils from "../Utils";
+import * as Utils from "./../Utils";
 
 describe( module(
 	"Carbon/Auth/Token",

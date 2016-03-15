@@ -15,7 +15,7 @@ import {
 	hasSignature,
 	hasDefaultExport
 } from "./../test/JasmineExtender";
-import * as Utils from "../Utils";
+import * as Utils from "./../Utils";
 
 import * as Header from "./Header";
 import DefaultExport from "./Header";

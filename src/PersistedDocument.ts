@@ -11,6 +11,7 @@ import * as Pointer from "./Pointer";
 import * as RDF from "./RDF";
 import * as SPARQL from "./SPARQL";
 import * as Utils from "./Utils";
+import * as URI from "./RDF/URI";
 
 export interface Class extends Pointer.Class, PersistedResource.Class, Document.Class {
 	_documents:Documents;
@@ -27,15 +28,15 @@ export interface Class extends Pointer.Class, PersistedResource.Class, Document.
 	createNamedFragment( slug:string ):PersistedNamedFragment.Class;
 
 	refresh():Promise<void>;
-	save():Promise<void>;
-	destroy():Promise<void>;
+	save():Promise<[Class, HTTP.Response.Class]>;
+	destroy():Promise<HTTP.Response.Class>;
 
-	executeRawASKQuery():Promise<[ SPARQL.RawResults.Class, HTTP.Response.Class ]>;
-	executeASKQuery():Promise<[ boolean, HTTP.Response.Class ]>;
-	executeRawSELECTQuery():Promise<[ SPARQL.RawResults.Class, HTTP.Response.Class ]>;
-	executeSELECTQuery():Promise<[ SPARQL.SELECTResults.Class, HTTP.Response.Class ]>;
-	executeRawDESCRIBEQuery():Promise<[ string, HTTP.Response.Class ]>;
-	executeRawCONSTRUCTQuery():Promise<[ string, HTTP.Response.Class ]>;
+	executeRawASKQuery( askQuery:string, requestOptions?:HTTP.Request.Options ):Promise<[ SPARQL.RawResults.Class, HTTP.Response.Class ]>;
+	executeASKQuery( askQuery:string, requestOptions?:HTTP.Request.Options ):Promise<[ boolean, HTTP.Response.Class ]>;
+	executeRawSELECTQuery( selectQuery:string, requestOptions?:HTTP.Request.Options ):Promise<[ SPARQL.RawResults.Class, HTTP.Response.Class ]>;
+	executeSELECTQuery( selectQuery:string, requestOptions?:HTTP.Request.Options ):Promise<[ SPARQL.SELECTResults.Class, HTTP.Response.Class ]>;
+	executeRawCONSTRUCTQuery( constructQuery:string, requestOptions?:HTTP.Request.Options ):Promise<[ string, HTTP.Response.Class ]>;
+	executeRawDESCRIBEQuery( describeQuery:string, requestOptions?:HTTP.Request.Options ):Promise<[ string, HTTP.Response.Class ]>;
 }
 
 function extendIsDirty( superFunction:() => boolean ):() => boolean {
@@ -88,11 +89,9 @@ function refresh():Promise<void> {
 	return null;
 }
 function save():Promise<void> {
-	return this._documents.save( this ).then( ( response:HTTP.Response.Class) => {
-		return [ this, response ];
-	});
+	return this._documents.save( this );
 }
-function destroy():Promise<void> {
+function destroy():Promise<HTTP.Response.Class> {
 	return this._documents.delete( this );
 }
 
@@ -139,10 +138,9 @@ export class Factory {
 	}
 
 	static is( object:Object ):boolean {
-		return (
-			// TODO: Add Document.Class check
-			Factory.hasClassProperties( <any> object )
-		);
+		return Utils.isObject( object )
+			&& Document.Factory.hasClassProperties( object )
+			&& Factory.hasClassProperties( <any> object );
 	}
 
 	static create( uri:string, documents:Documents, snapshot:Object = {} ):Class {
@@ -199,7 +197,7 @@ export class Factory {
 					return function( id:string ):boolean {
 						if( superFunction.call( this, id ) ) return true;
 
-						return (<Class> this)._documents.hasPointer( id );
+						return ! URI.Util.isBNodeID( id ) && (<Class> this)._documents.hasPointer( id );
 					};
 				})(),
 			},
@@ -221,12 +219,12 @@ export class Factory {
 				writable: false,
 				enumerable: false,
 				configurable: true,
-				value: ( function():( id:string ) => boolean {
-					let superFunction:( id:string ) => boolean = persistedDocument.inScope;
-					return function( id:string ):boolean {
-						if( superFunction.call( this, id ) ) return true;
+				value: ( function():( idOrPointer:any ) => boolean {
+					let superFunction:( idOrPointer:any ) => boolean = persistedDocument.inScope;
+					return function( idOrPointer:any ):boolean {
+						if( superFunction.call( this, idOrPointer ) ) return true;
 
-						return (<Class> this)._documents.inScope( id );
+						return (<Class> this)._documents.inScope( idOrPointer );
 					};
 				})(),
 			},

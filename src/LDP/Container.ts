@@ -56,7 +56,6 @@ export class Factory {
 		if( "@type" in resourceOrExpandedObject ) {
 			types = resourceOrExpandedObject[ "@type" ];
 		} else if( "types" in resourceOrExpandedObject ) {
-			// TODO: Use proper class
 			let resource:Resource.Class = <any> resourceOrExpandedObject;
 			types = resource.types;
 		}

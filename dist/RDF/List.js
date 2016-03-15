@@ -4,9 +4,9 @@ var Factory = (function () {
     function Factory() {
     }
     Factory.is = function (value) {
-        return ((!Utils.isNull(value)) &&
-            Utils.isObject(value) &&
-            Utils.hasProperty(value, "@list"));
+        return Utils.isObject(value)
+            && Utils.hasProperty(value, "@list")
+            && Utils.isArray(value["@list"]);
     };
     return Factory;
 }());

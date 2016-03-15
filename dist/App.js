@@ -44,12 +44,11 @@ exports.Context = AppContext;
 var Factory = (function () {
     function Factory() {
     }
-    Factory.prototype.hasClassProperties = function (resource) {
+    Factory.hasClassProperties = function (resource) {
         return (Utils.hasPropertyDefined(resource, "rootContainer"));
     };
     return Factory;
 }());
 exports.Factory = Factory;
-exports.factory = new Factory();
 
 //# sourceMappingURL=App.js.map

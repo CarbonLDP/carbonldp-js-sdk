@@ -35,9 +35,11 @@ export interface Class extends Resource.Class, Pointer.Library, Pointer.Validato
 function hasPointer( id:string ):boolean {
 	let document:Class = <Class> this;
 
+	if( id === document.id ) return true;
+
 	if( ! document.inScope( id ) ) return false;
 
-	return !! document.getFragment( id );
+	return document.hasFragment( id );
 }
 
 function getPointer( id:string ):Pointer.Class {
@@ -64,11 +66,9 @@ function inScope( idOrPointer:any ):boolean {
 
 	if( RDF.URI.Util.isBNodeID( id ) ) return true;
 
-	if( RDF.URI.Util.isAbsolute( id ) && RDF.URI.Util.isFragmentOf( id, document.id ) ) return true;
+	if( RDF.URI.Util.isFragmentOf( id, document.id ) ) return true;
 
-	if( ! RDF.URI.Util.isAbsolute( document.id ) && ! RDF.URI.Util.isAbsolute( id ) && RDF.URI.Util.isFragmentOf( id, document.id ) ) return true;
-
-	return false;
+	return RDF.URI.Util.isRelative( id );
 }
 
 function hasFragment( id:string ):boolean {
@@ -86,7 +86,7 @@ function getFragment( id:string ):Fragment.Class {
 
 	if( ! RDF.URI.Util.isBNodeID( id ) ) return document.getNamedFragment( id );
 
-	return document._fragmentsIndex.get( id );
+	return document._fragmentsIndex.get( id ) || null;
 }
 function getNamedFragment( id:string ):NamedFragment.Class {
 	let document:Class = <Class> this;
@@ -97,7 +97,7 @@ function getNamedFragment( id:string ):NamedFragment.Class {
 		id = RDF.URI.Util.hasFragment( id ) ? RDF.URI.Util.getFragment( id ) : id;
 	} else if( Utils.S.startsWith( id, "#" ) ) id = id.substring( 1 );
 
-	return <NamedFragment.Class> document._fragmentsIndex.get( id );
+	return <NamedFragment.Class> document._fragmentsIndex.get( id ) || null;
 }
 function getFragments():Fragment.Class[] {
 	let document:Class = <Class> this;
@@ -113,12 +113,12 @@ function createFragment( slug:any = null ):any {
 	if( slug ) {
 		if( ! RDF.URI.Util.isBNodeID( slug ) ) return document.createNamedFragment( slug );
 		id = slug;
-		if( this._fragmentsIndex.has( id ) ) return this.getFragment( id );
+		if( this._fragmentsIndex.has( id ) ) throw new Errors.IDAlreadyInUseError( "The slug provided is already being used by a fragment." );
 	} else {
 		id = Fragment.Util.generateID();
 	}
 
-	let fragment:Fragment.Class = Fragment.factory.create( id, document );
+	let fragment:Fragment.Class = Fragment.Factory.create( id, document );
 
 	document._fragmentsIndex.set( id, fragment );
 
@@ -136,7 +136,7 @@ function createNamedFragment( slug:string ):NamedFragment.Class {
 
 	if( document._fragmentsIndex.has( slug ) ) throw new Errors.IDAlreadyInUseError( "The slug provided is already being used by a fragment." );
 
-	let fragment:NamedFragment.Class = <NamedFragment.Class> NamedFragment.factory.create( slug, document );
+	let fragment:NamedFragment.Class = <NamedFragment.Class> NamedFragment.Factory.create( slug, document );
 
 	document._fragmentsIndex.set( slug, fragment );
 

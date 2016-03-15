@@ -3,7 +3,6 @@
 import AbstractContext from "./AbstractContext";
 import Context from "./Context";
 import * as Document from "./Document";
-import Documents from "./Documents";
 import * as LDP from "./LDP";
 import * as NS from "./NS";
 import * as ObjectSchema from "./ObjectSchema";
@@ -58,13 +57,11 @@ export {
 };
 
 export class Factory {
-	hasClassProperties( resource:Object ):boolean {
+	static hasClassProperties( resource:Object ):boolean {
 		return (
 			Utils.hasPropertyDefined( resource, "rootContainer" )
 		);
 	}
 }
-
-export let factory:Factory = new Factory();
 
 export default Class;

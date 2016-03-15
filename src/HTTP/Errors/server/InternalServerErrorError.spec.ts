@@ -12,20 +12,20 @@ import {
 	hasConstructor,
 	hasProperty,
 	hasMethod
-} from "../../../test/JasmineExtender";
-import * as Utils from "../../../Utils";
+} from "./../../../test/JasmineExtender";
+import * as Utils from "./../../../Utils";
 
-import Response from "../../Response";
+import Response from "./../../Response";
 
-import InternalServerError from "./InternalServerError";
-import HTTPError from "../HTTPError";
+import InternalServerErrorError from "./InternalServerErrorError";
+import HTTPError from "./../HTTPError";
 
 describe( module(
-	"Carbon/HTTP/Errors/server/InternalServerError"
+	"Carbon/HTTP/Errors/server/InternalServerErrorError"
 ), ():void => {
 
 	describe( clazz(
-		"Carbon.HTTP.Errors.server.InternalServerError",
+		"Carbon.HTTP.Errors.server.InternalServerErrorError",
 		"Error class that can be throw to indicate that the server encountered an unexpected condition. This generic error is given when no more specific message is suitable"
 	), ():void => {
 
@@ -50,14 +50,14 @@ describe( module(
 		});
 
 		it( isDefined(), ():void => {
-			expect( InternalServerError ).toBeDefined();
-			expect( Utils.isFunction( InternalServerError ) ).toBe( true );
+			expect( InternalServerErrorError ).toBeDefined();
+			expect( Utils.isFunction( InternalServerErrorError ) ).toBe( true );
 		});
 
 		it( extendsClass(
 			"Carbon.Errors.HTTPError"
 		), ():void => {
-			let error: InternalServerError = new InternalServerError( "Message of the error", response );
+			let error: InternalServerErrorError = new InternalServerErrorError( "Message of the error", response );
 
 			expect( error instanceof HTTPError ).toBe( true );
 		});
@@ -66,10 +66,10 @@ describe( module(
 			{ name: "message", type: "string" },
 			{ name: "response", type: "Carbon.HTTP.Response" }
 		]), ():void => {
-			let error: InternalServerError = new InternalServerError( "Message of the error", response );
+			let error: InternalServerErrorError = new InternalServerErrorError( "Message of the error", response );
 
 			expect( error ).toBeTruthy();
-			expect( error instanceof InternalServerError).toBe( true );
+			expect( error instanceof InternalServerErrorError).toBe( true );
 		});
 
 		it( hasMethod(
@@ -77,12 +77,12 @@ describe( module(
 			"toString",
 			{ type: "string" }
 		), ():void => {
-			let error: InternalServerError = new InternalServerError( "Message of the error", response );
+			let error: InternalServerErrorError = new InternalServerErrorError( "Message of the error", response );
 
 			expect( error.toString ).toBeDefined();
 			expect( Utils.isFunction( error.toString ) );
 
-			expect( error.toString() ).toBe("InternalServerError: Message of the error");
+			expect( error.toString() ).toBe("InternalServerErrorError: Message of the error");
 		});
 
 		it( hasProperty(
@@ -90,12 +90,12 @@ describe( module(
 			"name",
 			"string"
 		), ():void => {
-			let error: InternalServerError = new InternalServerError( "Message of the error", response );
+			let error: InternalServerErrorError = new InternalServerErrorError( "Message of the error", response );
 
 			expect( error.name ).toBeDefined();
 			expect( Utils.isString( error.name ) ).toBe( true );
 
-			expect( error.name ).toBe( "InternalServerError" );
+			expect( error.name ).toBe( "InternalServerErrorError" );
 		});
 
 		it( hasProperty(
@@ -103,10 +103,10 @@ describe( module(
 			"statusCode",
 			"number"
 		), ():void => {
-			expect( InternalServerError.statusCode ).toBeDefined();
-			expect( Utils.isNumber( InternalServerError.statusCode ) );
+			expect( InternalServerErrorError.statusCode ).toBeDefined();
+			expect( Utils.isNumber( InternalServerErrorError.statusCode ) );
 
-			expect( InternalServerError.statusCode ).toBe( 500 );
+			expect( InternalServerErrorError.statusCode ).toBe( 500 );
 		});
 
 	});

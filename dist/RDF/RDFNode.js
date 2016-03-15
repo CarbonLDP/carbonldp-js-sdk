@@ -4,9 +4,8 @@ var Factory = (function () {
     function Factory() {
     }
     Factory.is = function (value) {
-        return ((!Utils.isNull(value)) &&
-            Utils.isObject(value) &&
-            Utils.hasProperty(value, "@id"));
+        return Utils.hasProperty(value, "@id")
+            && Utils.isString(value["@id"]);
     };
     Factory.create = function (uri) {
         return {

@@ -63,6 +63,10 @@ export interface MethodReturn {
 	description?:string;
 }
 
+export interface DecorateDescriptor extends SuiteDescriptor {
+	type:string[];
+}
+
 export function serialize( descriptor:SuiteDescriptor ):string
 export function serialize( descriptor:PropertyDescriptor ):string;
 export function serialize( descriptor:MethodDescriptor ):string;
@@ -91,6 +95,7 @@ export const SUPER_CLASS:string = "super-class";
 export const REEXPORTS:string = "reexports";
 export const DEFAULTEXPORT:string = "defaultExport";
 export const ENUM:string = "enum";
+export const DECORATED:string = "decoratedObject";
 
 export function module( name:string, description:string = null ):string {
 	let descriptor:SuiteDescriptor = {
@@ -150,6 +155,16 @@ export function reexports( access: string, name: string, originalLocation: strin
 		access: access,
 		name: name,
 		originalLocation: originalLocation,
+	};
+
+	return toJSON( descriptor );
+}
+
+export function decoratedObject( description:string, type: string[] ):string {
+	let descriptor:DecorateDescriptor = {
+		suiteType: DECORATED,
+		type: type,
+		description: description,
 	};
 
 	return toJSON( descriptor );
@@ -249,6 +264,7 @@ export function method( access:string, name:string, description:string = null ):
 
 export function hasSignature():string;
 export function hasSignature( description:string ):string;
+export function hasSignature( description:string, returns:MethodReturn ):string;
 export function hasSignature( description:string, methodArguments:MethodArgument[] ):string;
 export function hasSignature( description:string, methodArguments:MethodArgument[], returns:MethodReturn ):string;
 export function hasSignature( methodArguments:MethodArgument[] ):string;
@@ -307,10 +323,11 @@ export function extendsClass( name:string ):string {
 	return toJSON( descriptor );
 }
 
-export function hasDefaultExport( exportName: string ): string {
+export function hasDefaultExport( exportName: string, description:string = null ):string {
 	let descriptor:SpecDescriptor = {
 		specType: DEFAULTEXPORT,
 		name: exportName,
+		description: description,
 	};
 
 	return toJSON( descriptor );

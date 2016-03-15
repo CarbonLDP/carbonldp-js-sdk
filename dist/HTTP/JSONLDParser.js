@@ -15,7 +15,7 @@ var Class = (function () {
         return new Promise(function (resolve, reject) {
             jsonld.expand(parsedObject, options, function (error, expanded) {
                 if (error) {
-                    throw error;
+                    reject(error);
                 }
                 parsedObject = expanded;
                 resolve(expanded);

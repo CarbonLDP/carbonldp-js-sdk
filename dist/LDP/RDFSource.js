@@ -17,6 +17,5 @@ var Factory = (function () {
     return Factory;
 }());
 exports.Factory = Factory;
-exports.factory = new Factory();
 
 //# sourceMappingURL=RDFSource.js.map

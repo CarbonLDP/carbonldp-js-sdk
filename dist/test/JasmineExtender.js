@@ -19,6 +19,7 @@ exports.SUPER_CLASS = "super-class";
 exports.REEXPORTS = "reexports";
 exports.DEFAULTEXPORT = "defaultExport";
 exports.ENUM = "enum";
+exports.DECORATED = "decoratedObject";
 function module(name, description) {
     if (description === void 0) { description = null; }
     var descriptor = {
@@ -82,6 +83,15 @@ function reexports(access, name, originalLocation) {
     return toJSON(descriptor);
 }
 exports.reexports = reexports;
+function decoratedObject(description, type) {
+    var descriptor = {
+        suiteType: exports.DECORATED,
+        type: type,
+        description: description,
+    };
+    return toJSON(descriptor);
+}
+exports.decoratedObject = decoratedObject;
 function hasInterface(access, name, description) {
     if (description === void 0) { description = null; }
     var descriptor = {
@@ -209,10 +219,12 @@ function extendsClass(name) {
     return toJSON(descriptor);
 }
 exports.extendsClass = extendsClass;
-function hasDefaultExport(exportName) {
+function hasDefaultExport(exportName, description) {
+    if (description === void 0) { description = null; }
     var descriptor = {
         specType: exports.DEFAULTEXPORT,
         name: exportName,
+        description: description,
     };
     return toJSON(descriptor);
 }

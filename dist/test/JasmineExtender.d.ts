@@ -47,6 +47,9 @@ export interface MethodReturn {
     type: string;
     description?: string;
 }
+export interface DecorateDescriptor extends SuiteDescriptor {
+    type: string[];
+}
 export declare function serialize(descriptor: SuiteDescriptor): string;
 export declare function serialize(descriptor: PropertyDescriptor): string;
 export declare function serialize(descriptor: MethodDescriptor): string;
@@ -63,12 +66,14 @@ export declare const SUPER_CLASS: string;
 export declare const REEXPORTS: string;
 export declare const DEFAULTEXPORT: string;
 export declare const ENUM: string;
+export declare const DECORATED: string;
 export declare function module(name: string, description?: string): string;
 export declare function clazz(name: string, description: string, parent?: string, interfaces?: Array<string>): string;
 export declare function interfaze(name: string, description: string, parent?: string): string;
 export declare function enumeration(name: string, description?: string): string;
 export declare function constructor(description?: string): string;
 export declare function reexports(access: string, name: string, originalLocation: string): string;
+export declare function decoratedObject(description: string, type: string[]): string;
 export declare function hasInterface(access: string, name: string): string;
 export declare function isDefined(): string;
 export declare function hasConstructor(): string;
@@ -86,6 +91,7 @@ export declare function method(access: string, name: string): string;
 export declare function method(access: string, name: string, description: string): string;
 export declare function hasSignature(): string;
 export declare function hasSignature(description: string): string;
+export declare function hasSignature(description: string, returns: MethodReturn): string;
 export declare function hasSignature(description: string, methodArguments: MethodArgument[]): string;
 export declare function hasSignature(description: string, methodArguments: MethodArgument[], returns: MethodReturn): string;
 export declare function hasSignature(methodArguments: MethodArgument[]): string;
@@ -94,5 +100,5 @@ export declare function hasSignature(returns: MethodReturn): string;
 export declare function hasProperty(access: string, name: string, type: string, description?: string): string;
 export declare let property: typeof hasProperty;
 export declare function extendsClass(name: string): string;
-export declare function hasDefaultExport(exportName: string): string;
+export declare function hasDefaultExport(exportName: string, description?: string): string;
 export declare function hasEnumeral(name: string, description?: string): string;

@@ -1,4 +1,4 @@
-import AbstractError from "../../Errors/AbstractError";
+import AbstractError from "./../../Errors/AbstractError";
 import Response from "./../Response";
 
 class HTTPError extends AbstractError {

@@ -1,5 +1,6 @@
 import * as Utils from "./../Utils";
 import * as XSD from "./../NS/XSD" ;
+import * as Errors from "./../Errors";
 
 import Serializer from "./Literal/Serializer";
 import * as Serializers from "./Literal/Serializers";
@@ -11,7 +12,10 @@ export interface Class {
 
 export class Factory {
 	static from( value:any ):Class {
-		if ( Utils.isNull( value ) ) throw new Error( "IllegalArgument: null cannot be converted into a Literal" );
+		if ( Utils.isNull( value ) )
+			throw new Errors.IllegalArgumentError( "Null cannot be converted into a Literal" );
+		if ( ! Utils.isDefined( value ) )
+			throw new Errors.IllegalArgumentError( "The value is undefined" );
 
 		let type:any;
 
@@ -23,7 +27,9 @@ export class Factory {
 			case Utils.isNumber( value ):
 				if ( Utils.isInteger( value ) ) {
 					type = XSD.DataType.integer;
-				} else type = XSD.DataType.double;
+				} else {
+					type = XSD.DataType.double;
+				}
 				break;
 			case Utils.isString( value ):
 				type = XSD.DataType.string;
@@ -38,7 +44,7 @@ export class Factory {
 				break;
 		}
 
-		let literal:Class = {"@value": value};
+		let literal:Class = { "@value": value.toString() };
 		if ( type ) literal[ "@type" ] = type;
 
 		return literal;
@@ -64,12 +70,17 @@ export class Factory {
 		if ( ! Utils.hasProperty( XSD.DataType, literalDataType ) ) return literalValue;
 
 		let value:any;
+		let parts:string[];
 		switch ( literalDataType ) {
 			// Dates
 			case XSD.DataType.date:
 			case XSD.DataType.dateTime:
-			case XSD.DataType.time:
 				value = new Date( literalValue );
+				break;
+			case XSD.DataType.time:
+				parts = literalValue.match(/(\d+):(\d+):(\d+)\.(\d+)Z/);
+				value = new Date();
+				value.setUTCHours( parseFloat( parts[1] ), parseFloat( parts[2] ), parseFloat( parts[3]), parseFloat( parts[4] ) );
 				break;
 			case XSD.DataType.duration:
 				// TODO: Support duration values (create a class or something...)
@@ -120,9 +131,8 @@ export class Factory {
 	}
 
 	static is( value:any ):boolean {
-		if ( ! value ) return false;
-		if ( ! Utils.isObject( value ) ) return false;
-		return Utils.hasProperty( value, "@value" );
+		return Utils.hasProperty( value, "@value" )
+			&& Utils.isString( value[ "@value" ] );
 	}
 
 	static hasType( value:Class, type:string ):boolean {

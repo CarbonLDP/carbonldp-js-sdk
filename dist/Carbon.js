@@ -22,7 +22,7 @@ var Carbon = (function (_super) {
         this.apps = new Apps_1.default(this);
     }
     Object.defineProperty(Carbon, "version", {
-        get: function () { return "0.17.1-ALPHA"; },
+        get: function () { return "0.17.2-ALPHA"; },
         enumerable: true,
         configurable: true
     });
