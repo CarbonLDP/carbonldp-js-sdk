@@ -1,3 +1,6 @@
+# 0.17.2 (March 15, 2016)
+* Add missing unit tests.
+
 # 0.17.1 (March 14, 2016)
 * Move dev scripts to `npm run-script install-dev` so they don't fail on external `npm install`s
 
