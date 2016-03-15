@@ -9,9 +9,9 @@ import {
 	isDefined,
 	hasMethod
 } from "./../test/JasmineExtender";
-import * as Utils from "../Utils";
+import * as Utils from "./../Utils";
 import * as Value from "./Value";
-import * as Errors from "../Errors";
+import * as Errors from "./../Errors";
 
 import * as List from "./List";
 

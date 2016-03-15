@@ -9,7 +9,7 @@ import {
 	isDefined,
 	hasProperty
 } from "./../test/JasmineExtender";
-import * as Utils from "../Utils";
+import * as Utils from "./../Utils";
 
 import * as CS from "./CS";
 

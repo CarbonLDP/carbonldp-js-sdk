@@ -11,7 +11,7 @@ import {
 	hasMethod,
 	hasDefaultExport
 } from "./../test/JasmineExtender";
-import * as Utils from "../Utils";
+import * as Utils from "./../Utils";
 
 import * as JSONLDParser from "./JSONLDParser";
 import DefaultExport from "./JSONLDParser";

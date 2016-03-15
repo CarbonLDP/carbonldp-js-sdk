@@ -9,8 +9,8 @@ import {
 	isDefined,
 	hasMethod,
 	hasDefaultExport
-} from "../test/JasmineExtender";
-import * as Utils from "../Utils";
+} from "./../test/JasmineExtender";
+import * as Utils from "./../Utils";
 import * as RawResults from "./RawResults";
 
 import * as RawResultsParser from "./RawResultsParser";

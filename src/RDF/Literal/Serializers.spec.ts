@@ -9,7 +9,7 @@ import {
 	isDefined,
 	reexports
 } from "./../../test/JasmineExtender";
-import * as Utils from "../../Utils";
+import * as Utils from "./../../Utils";
 
 import * as XSD from "./Serializers/XSD";
 

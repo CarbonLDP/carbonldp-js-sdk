@@ -10,7 +10,7 @@ import {
 	isDefined,
 	hasEnumeral
 } from "./../test/JasmineExtender";
-import * as Utils from "../Utils";
+import * as Utils from "./../Utils";
 
 import Method from "./Method";
 

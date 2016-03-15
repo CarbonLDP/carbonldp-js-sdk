@@ -16,9 +16,9 @@ import {
 		hasInterface,
 		extendsClass
 } from "./../test/JasmineExtender";
-import * as Utils from "../Utils";
+import * as Utils from "./../Utils";
 import * as RDFNode from "./RDFNode";
-import * as Errors from "../Errors";
+import * as Errors from "./../Errors";
 
 import * as RDFDocument from "./Document";
 

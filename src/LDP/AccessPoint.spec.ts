@@ -9,10 +9,10 @@ import {
 	isDefined,
 	hasProperty,
 	hasMethod
-} from "../test/JasmineExtender";
-import * as Utils from "../Utils";
-import * as NS from "../NS";
-import * as Pointer from "../Pointer";
+} from "./../test/JasmineExtender";
+import * as Utils from "./../Utils";
+import * as NS from "./../NS";
+import * as Pointer from "./../Pointer";
 
 import * as AccessPoint from "./AccessPoint";
 

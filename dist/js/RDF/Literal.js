@@ -1,4 +1,4 @@
-System.register(["./../Utils", "./../NS/XSD", "../Errors", "./Literal/Serializers"], function(exports_1, context_1) {
+System.register(["./../Utils", "./../NS/XSD", "./../Errors", "./Literal/Serializers"], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     var Utils, XSD, Errors, Serializers;

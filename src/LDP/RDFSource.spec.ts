@@ -8,9 +8,9 @@ import {
 
 	isDefined,
 	hasProperty
-} from "../test/JasmineExtender";
-import * as Utils from "../Utils";
-import * as NS from "../NS";
+} from "./../test/JasmineExtender";
+import * as Utils from "./../Utils";
+import * as NS from "./../NS";
 
 import * as RDFSource from "./RDFSource";
 

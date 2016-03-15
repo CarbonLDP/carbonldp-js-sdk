@@ -10,11 +10,11 @@ import {
 	isDefined,
 	hasMethod,
 	hasProperty
-} from "../../../test/JasmineExtender";
-import * as Utils from "../../../Utils";
+} from "./../../../test/JasmineExtender";
+import * as Utils from "./../../../Utils";
 
 import * as XSD from "./XSD";
-import * as Errors from "../../../Errors";
+import * as Errors from "./../../../Errors";
 
 describe( module(
 	"Carbon/RDF/Literal/Serializers/XSD"

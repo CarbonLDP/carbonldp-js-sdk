@@ -9,13 +9,13 @@ import {
 	isDefined,
 	hasMethod
 } from "./../test/JasmineExtender";
-import * as Utils from "../Utils";
-import * as Pointer from "../Pointer";
-import * as PersistedDocument from "../PersistedDocument";
-import * as RDFDocument from "../RDF/Document";
-import * as RDFList from "../RDF/List";
-import AbstractContext from "../AbstractContext";
-import * as XSD from "../NS/XSD";
+import * as Utils from "./../Utils";
+import * as Pointer from "./../Pointer";
+import * as PersistedDocument from "./../PersistedDocument";
+import * as RDFDocument from "./../RDF/Document";
+import * as RDFList from "./../RDF/List";
+import AbstractContext from "./../AbstractContext";
+import * as XSD from "./../NS/XSD";
 
 import * as Value from "./Value";
 

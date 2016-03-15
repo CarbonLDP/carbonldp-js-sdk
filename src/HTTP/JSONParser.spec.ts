@@ -12,7 +12,7 @@ import {
 	hasMethod,
 	hasDefaultExport
 } from "./../test/JasmineExtender";
-import * as Utils from "../Utils";
+import * as Utils from "./../Utils";
 
 import * as JSONParser from "./JSONParser";
 import DefaultExport from "./JSONParser";

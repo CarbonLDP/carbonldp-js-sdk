@@ -11,11 +11,11 @@ import {
 	hasProperty,
 	hasMethod,
 	hasSignature
-} from "../test/JasmineExtender";
-import * as Utils from "../Utils";
-import * as NS from "../NS";
-import * as Pointer from "../Pointer";
-import * as Document from "../Document";
+} from "./../test/JasmineExtender";
+import * as Utils from "./../Utils";
+import * as NS from "./../NS";
+import * as Pointer from "./../Pointer";
+import * as Document from "./../Document";
 
 import * as Container from "./Container";
 

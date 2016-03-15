@@ -14,7 +14,7 @@ import {
 	hasProperty,
 	hasDefaultExport
 } from "./../test/JasmineExtender";
-import * as Utils from "../Utils";
+import * as Utils from "./../Utils";
 import * as Header from "./Header";
 
 import * as Response from "./Response";

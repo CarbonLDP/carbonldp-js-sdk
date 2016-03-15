@@ -5,7 +5,7 @@ import * as Pointer from "./../Pointer";
 import * as RDF from "./../RDF";
 import * as Container from "./Container";
 import * as Utils from "./../Utils";
-import * as Resource from "../Resource";
+import * as Resource from "./../Resource";
 
 export const RDF_CLASS:string = NS.LDP.Class.BasicContainer;
 

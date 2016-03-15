@@ -1,4 +1,4 @@
-System.register(["../../Errors/AbstractError"], function(exports_1, context_1) {
+System.register(["./../../Errors/AbstractError"], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     var __extends = (this && this.__extends) || function (d, b) {

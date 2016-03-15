@@ -16,14 +16,14 @@ import {
 	NotFoundError,
 	InternalServerErrorError
 } from "./Errors";
-import * as Utils from "../Utils";
+import * as Utils from "./../Utils";
 import * as Header from "./Header";
 import Response from "./Response";
 import Parser from "./JSONParser";
-import * as NS from "../NS";
+import * as NS from "./../NS";
 
 import * as Request from "./Request";
-import {hasInterface} from "../test/JasmineExtender";
+import {hasInterface} from "./../test/JasmineExtender";
 
 describe( module( "Carbon/HTTP/Request" ), function ():void {
 

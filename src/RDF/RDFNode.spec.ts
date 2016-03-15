@@ -9,7 +9,7 @@ import {
 	isDefined,
 	hasMethod
 } from "./../test/JasmineExtender";
-import * as Utils from "../Utils";
+import * as Utils from "./../Utils";
 
 import * as RDFNode from "./RDFNode";
 

@@ -13,14 +13,14 @@ import {
 	hasMethod,
 	hasSignature,
 	decoratedObject
-} from "../test/JasmineExtender";
-import * as Utils from "../Utils";
-import * as NS from "../NS";
-import * as Pointer from "../Pointer";
-import * as Document from "../Document";
-import * as PersistedDocument from "../PersistedDocument";
-import AbstractContext from "../AbstractContext";
-import * as HTTP from "../HTTP";
+} from "./../test/JasmineExtender";
+import * as Utils from "./../Utils";
+import * as NS from "./../NS";
+import * as Pointer from "./../Pointer";
+import * as Document from "./../Document";
+import * as PersistedDocument from "./../PersistedDocument";
+import AbstractContext from "./../AbstractContext";
+import * as HTTP from "./../HTTP";
 
 import * as PersistedContainer from "./PersistedContainer";
 

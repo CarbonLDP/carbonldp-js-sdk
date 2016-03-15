@@ -12,10 +12,10 @@ import {
 	isDefined,
 	hasMethod,
 	hasSignature
-} from "../test/JasmineExtender";
-import * as Utils from "../Utils";
+} from "./../test/JasmineExtender";
+import * as Utils from "./../Utils";
 import * as URI from "./URI";
-import * as ObjectSchema from "../ObjectSchema";
+import * as ObjectSchema from "./../ObjectSchema";
 
 describe( module( "Carbon/RDF/URI" ), ():void => {
 
