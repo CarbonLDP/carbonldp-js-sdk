@@ -19,7 +19,9 @@ export class Class implements Authenticator<UsernameAndPasswordToken> {
 
 	private context:Context;
 	private basicAuthenticator:BasicAuthenticator;
-	private credentials:TokenCredentials.Class;
+	private _credentials:TokenCredentials.Class;
+
+	set credentials( credentials:TokenCredentials.Class ) { this._credentials = credentials; };
 
 	constructor( context:Context ) {
 		if( context === null ) throw new Errors.IllegalArgumentError( "context cannot be null" );
@@ -29,7 +31,7 @@ export class Class implements Authenticator<UsernameAndPasswordToken> {
 	}
 
 	isAuthenticated():boolean {
-		return !! this.credentials && this.credentials.token.expirationTime > new Date();
+		return !! this._credentials && this._credentials.token.expirationTime > new Date();
 	}
 
 	authenticate( authenticationToken:UsernameAndPasswordToken ):Promise<TokenCredentials.Class> {
@@ -39,11 +41,11 @@ export class Class implements Authenticator<UsernameAndPasswordToken> {
 			}
 		).then(
 			( [ token, response ]:[ Token.Class, HTTP.Response.Class ] ):TokenCredentials.Class => {
-				this.credentials = new TokenCredentials.Class( token );
+				this._credentials = new TokenCredentials.Class( token );
 
 				this.basicAuthenticator.clearAuthentication();
 
-				return this.credentials;
+				return this._credentials;
 			}
 		);
 	}
@@ -57,7 +59,7 @@ export class Class implements Authenticator<UsernameAndPasswordToken> {
 	}
 
 	clearAuthentication():void {
-		this.credentials = null;
+		this._credentials = null;
 	}
 
 	supports( authenticationToken:AuthenticationToken ):boolean {
@@ -100,7 +102,7 @@ export class Class implements Authenticator<UsernameAndPasswordToken> {
 			header = new HTTP.Header.Class();
 			headers.set( "Authorization", header );
 		}
-		let authorization:string = "Token " + this.credentials.token.key;
+		let authorization:string = "Token " + this._credentials.token.key;
 		header.values.push( new HTTP.Header.Value( authorization ) );
 
 		return headers;

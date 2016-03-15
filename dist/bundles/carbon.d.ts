@@ -1495,7 +1495,7 @@ declare module 'carbon/Auth/Token' {
 	import * as Pointer from 'carbon/Pointer';
 	export const RDF_CLASS: string;
 	export const CONTEXT: ObjectSchema.Class;
-	export interface Class extends Pointer.Class {
+	export interface Class {
 	    key: string;
 	    expirationTime: Date;
 	}
@@ -1531,7 +1531,8 @@ declare module 'carbon/Auth/TokenAuthenticator' {
 	    private static TOKEN_CONTAINER;
 	    private context;
 	    private basicAuthenticator;
-	    private credentials;
+	    private _credentials;
+	    credentials: TokenCredentials.Class;
 	    constructor(context: Context);
 	    isAuthenticated(): boolean;
 	    authenticate(authenticationToken: UsernameAndPasswordToken): Promise<TokenCredentials.Class>;
@@ -1549,9 +1550,12 @@ declare module 'carbon/Auth' {
 	import AuthenticationToken from 'carbon/Auth/AuthenticationToken';
 	import Authenticator from 'carbon/Auth/Authenticator';
 	import BasicAuthenticator from 'carbon/Auth/BasicAuthenticator';
-	import * as Token from 'carbon/Auth/Token';
 	import TokenAuthenticator from 'carbon/Auth/TokenAuthenticator';
+	import * as Token from 'carbon/Auth/Token';
 	import UsernameAndPasswordToken from 'carbon/Auth/UsernameAndPasswordToken';
+	import UsernameAndPasswordCredentials from 'carbon/Auth/UsernameAndPasswordCredentials';
+	import TokenCredentials from 'carbon/Auth/TokenCredentials';
+	import Credentials from 'carbon/Auth/Credentials';
 	import * as HTTP from 'carbon/HTTP';
 	import Context from 'carbon/Context';
 	export { AuthenticationToken, Authenticator, BasicAuthenticator, Token, TokenAuthenticator, UsernameAndPasswordToken };
@@ -1566,11 +1570,16 @@ declare module 'carbon/Auth' {
 	    private authenticator;
 	    constructor(context: Context);
 	    isAuthenticated(askParent?: boolean): boolean;
-	    authenticate(username: string, password: string): Promise<void>;
-	    authenticate(authenticationToken: AuthenticationToken): Promise<void>;
-	    addAuthentication(requestOptions: HTTP.Request.Options): void;
+	    authenticate(username: string, password: string): Promise<Credentials>;
+	    authenticateUsing(method: "BASIC", username: string, password: string): Promise<UsernameAndPasswordCredentials>;
+	    authenticateUsing(method: "TOKEN", username: string, password: string): Promise<TokenCredentials>;
+	    authenticateUsing(method: string, username: string, password: string): Promise<Credentials>;
+	    authenticateUsing(method: string, token: AuthenticationToken): Promise<Credentials>;
+	    authenticateUsing(method: string, token: Credentials): Promise<Credentials>;
+	    addAuthentication(requestOptions: HTTP.Request.Options): any;
 	    clearAuthentication(): void;
-	    private getAuthenticator(authenticationToken);
+	    private authenticateWithBasic(username, password);
+	    private authenticateWithToken(userOrTokenOrCredentials, password);
 	}
 	export default Class;
 
@@ -1624,6 +1633,8 @@ declare module 'carbon/test/JasmineExtender' {
 	export interface ReexportsDescriptor extends SpecDescriptor {
 	    originalLocation: string;
 	}
+	export interface EnumDescriptor extends SpecDescriptor {
+	}
 	export interface MethodArgument {
 	    name: string;
 	    type: string;
@@ -1650,9 +1661,11 @@ declare module 'carbon/test/JasmineExtender' {
 	export const SUPER_CLASS: string;
 	export const REEXPORTS: string;
 	export const DEFAULTEXPORT: string;
+	export const ENUM: string;
 	export function module(name: string, description?: string): string;
 	export function clazz(name: string, description: string, parent?: string, interfaces?: Array<string>): string;
 	export function interfaze(name: string, description: string, parent?: string): string;
+	export function enumeration(name: string, description?: string): string;
 	export function constructor(description?: string): string;
 	export function reexports(access: string, name: string, originalLocation: string): string;
 	export function hasInterface(access: string, name: string): string;
@@ -1681,6 +1694,7 @@ declare module 'carbon/test/JasmineExtender' {
 	export let property: typeof hasProperty;
 	export function extendsClass(name: string): string;
 	export function hasDefaultExport(exportName: string): string;
+	export function hasEnumeral(name: string, description?: string): string;
 
 }
 /// <reference path="../typings/typings.d.ts" />
@@ -1698,6 +1712,7 @@ declare module 'carbon/Apps' {
 	export default Apps;
 
 }
+/// <reference path="../typings/typings.d.ts" />
 declare module 'carbon/settings' {
 	import * as Auth from 'carbon/Auth';
 	export interface CarbonSettings {

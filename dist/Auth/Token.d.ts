@@ -2,7 +2,7 @@ import * as ObjectSchema from "./../ObjectSchema";
 import * as Pointer from "./../Pointer";
 export declare const RDF_CLASS: string;
 export declare const CONTEXT: ObjectSchema.Class;
-export interface Class extends Pointer.Class {
+export interface Class {
     key: string;
     expirationTime: Date;
 }

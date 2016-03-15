@@ -3,9 +3,12 @@
 import AuthenticationToken from "./Auth/AuthenticationToken";
 import Authenticator from "./Auth/Authenticator";
 import BasicAuthenticator from "./Auth/BasicAuthenticator";
-import * as Token from "./Auth/Token";
 import TokenAuthenticator from "./Auth/TokenAuthenticator";
+import * as Token from "./Auth/Token";
 import UsernameAndPasswordToken from "./Auth/UsernameAndPasswordToken";
+import UsernameAndPasswordCredentials from "./Auth/UsernameAndPasswordCredentials";
+import TokenCredentials from "./Auth/TokenCredentials";
+import Credentials from "./Auth/Credentials";
 
 import * as HTTP from "./HTTP";
 import * as Errors from "./Errors";
@@ -37,8 +40,8 @@ export class Class {
 		this.context = context;
 
 		this.authenticators = [];
-		this.authenticators.push( new TokenAuthenticator( this.context ) );
-		this.authenticators.push( new BasicAuthenticator() );
+		this.authenticators[ Method.BASIC ] = new BasicAuthenticator();
+		this.authenticators[ Method.TOKEN ] = new TokenAuthenticator( this.context );
 	}
 
 	isAuthenticated( askParent:boolean = true ):boolean {
@@ -48,30 +51,30 @@ export class Class {
 		);
 	}
 
-	authenticate( username:string, password:string ):Promise<void>;
-	authenticate( authenticationToken:AuthenticationToken ):Promise<void>;
-	authenticate( usernameOrToken:any, password:string = null ):Promise<void> {
-		return new Promise<void>( ( resolve:( result:any ) => void, reject:( reject:Error ) => void ) => {
-			if( ! usernameOrToken ) throw new Errors.IllegalArgumentError( "Either a username or an authenticationToken are required." );
-
-			let authenticationToken:AuthenticationToken;
-			if( Utils.isString( usernameOrToken ) ) {
-				let username:string = usernameOrToken;
-				if( ! password ) throw new Errors.IllegalArgumentError( "A password is required when providing a username." );
-				authenticationToken = new UsernameAndPasswordToken( username, password );
-			} else {
-				authenticationToken = usernameOrToken;
-			}
-
-			if( this.authenticator ) this.clearAuthentication();
-
-			this.authenticator = this.getAuthenticator( authenticationToken );
-
-			resolve( this.authenticator.authenticate( authenticationToken ) );
-		});
+	authenticate( username:string, password:string ):Promise<Credentials> {
+		return this.authenticateUsing( "TOKEN", username, password );
 	}
 
-	addAuthentication( requestOptions:HTTP.Request.Options ):void {
+	authenticateUsing( method:"BASIC", username:string, password:string ):Promise<UsernameAndPasswordCredentials>;
+	authenticateUsing( method:"TOKEN", username:string, password:string ):Promise<TokenCredentials>;
+
+	// TODO remove non-specific overloads. Reference https://github.com/Microsoft/TypeScript/pull/6278, seems to be added for 1.9
+	authenticateUsing( method:string, username:string, password:string ):Promise<Credentials>;
+	authenticateUsing( method:string, token:AuthenticationToken ):Promise<Credentials>;
+	authenticateUsing( method:string, token:Credentials ):Promise<Credentials>;
+
+	authenticateUsing( method:string, userOrTokenOrCredentials:any, password?:string ):Promise<any> {
+		switch ( method ) {
+			case "BASIC":
+				return this.authenticateWithBasic( userOrTokenOrCredentials, password );
+			case "TOKEN":
+				return this.authenticateWithToken( userOrTokenOrCredentials, password );
+			default:
+				return Promise.reject( new Errors.IllegalArgumentError( `No exists the authentication method '${method}'` ) );
+		}
+	}
+
+	addAuthentication( requestOptions:HTTP.Request.Options ):any {
 		if( this.isAuthenticated( false ) ) {
 			this.authenticator.addAuthentication( requestOptions );
 		} else if( !! this.context.parentContext ) {
@@ -88,13 +91,51 @@ export class Class {
 		this.authenticator = null;
 	}
 
-	private getAuthenticator( authenticationToken:AuthenticationToken ):Authenticator<AuthenticationToken> {
-		for( let authenticator of this.authenticators ) {
-			if( authenticator.supports( authenticationToken ) ) return authenticator;
-		}
+	private authenticateWithBasic( username:string, password:string ):Promise<any> {
+		let authenticator:BasicAuthenticator =  <BasicAuthenticator> this.authenticators[ Method.BASIC ];
+		let authenticationToken:UsernameAndPasswordToken;
 
-		throw new Errors.IllegalStateError( "The configured authentication method isn\'t supported." );
+		authenticationToken = new UsernameAndPasswordToken( username, password );
+		this.clearAuthentication();
+
+		this.authenticator = authenticator;
+		return this.authenticator.authenticate( authenticationToken );
 	}
+
+	private authenticateWithToken( userOrTokenOrCredentials:any, password:string ):Promise<any> {
+		let authenticator:TokenAuthenticator =  <TokenAuthenticator> this.authenticators[ Method.TOKEN ];
+		let credentials:TokenCredentials = null;
+		let authenticationToken:UsernameAndPasswordToken = null;
+
+		return new Promise<TokenCredentials>( ( resolve, reject ):any => {
+			if ( Utils.isString( userOrTokenOrCredentials ) &&  Utils.isString( password ) ) {
+				authenticationToken = new UsernameAndPasswordToken( userOrTokenOrCredentials, password );
+
+			} else if( Token.Factory.is( userOrTokenOrCredentials ) ) {
+				credentials = new TokenCredentials( userOrTokenOrCredentials );
+
+			} else if ( userOrTokenOrCredentials instanceof  TokenCredentials ) {
+				credentials = userOrTokenOrCredentials;
+
+			} else {
+				throw new Errors.IllegalArgumentError( "Parameters do not match with the authentication request." );
+			}
+
+			this.clearAuthentication();
+
+			this.authenticator = authenticator;
+			if ( authenticationToken ) {
+				resolve( authenticator.authenticate( authenticationToken ) );
+			} else {
+				authenticator.credentials = credentials;
+				if( ! authenticator.isAuthenticated() )
+					throw new Errors.IllegalArgumentError( "The token provided in not valid." );
+				resolve( credentials );
+			}
+		});
+
+	}
+
 }
 
 export default Class;

@@ -11351,7 +11351,119 @@ $__System.register("56", ["23", "e", "57", "55"], function(exports_1) {
     }
 });
 
-$__System.register("58", [], function(exports_1) {
+$__System.register("58", ["e", "23", "9", "5", "56", "57", "59", "5a"], function(exports_1) {
+    var Errors, HTTP, NS, RDF, BasicAuthenticator_1, UsernameAndPasswordToken_1, Token, TokenCredentials;
+    var Class;
+    return {
+        setters:[
+            function (Errors_1) {
+                Errors = Errors_1;
+            },
+            function (HTTP_1) {
+                HTTP = HTTP_1;
+            },
+            function (NS_1) {
+                NS = NS_1;
+            },
+            function (RDF_1) {
+                RDF = RDF_1;
+            },
+            function (BasicAuthenticator_1_1) {
+                BasicAuthenticator_1 = BasicAuthenticator_1_1;
+            },
+            function (UsernameAndPasswordToken_1_1) {
+                UsernameAndPasswordToken_1 = UsernameAndPasswordToken_1_1;
+            },
+            function (Token_1) {
+                Token = Token_1;
+            },
+            function (TokenCredentials_1) {
+                TokenCredentials = TokenCredentials_1;
+            }],
+        execute: function() {
+            Class = (function () {
+                function Class(context) {
+                    if (context === null)
+                        throw new Errors.IllegalArgumentError("context cannot be null");
+                    this.context = context;
+                    this.basicAuthenticator = new BasicAuthenticator_1.default();
+                }
+                Object.defineProperty(Class.prototype, "credentials", {
+                    set: function (credentials) { this._credentials = credentials; },
+                    enumerable: true,
+                    configurable: true
+                });
+                ;
+                Class.prototype.isAuthenticated = function () {
+                    return !!this._credentials && this._credentials.token.expirationTime > new Date();
+                };
+                Class.prototype.authenticate = function (authenticationToken) {
+                    var _this = this;
+                    return this.basicAuthenticator.authenticate(authenticationToken).then(function (credentials) {
+                        return _this.createToken();
+                    }).then(function (_a) {
+                        var token = _a[0], response = _a[1];
+                        _this._credentials = new TokenCredentials.Class(token);
+                        _this.basicAuthenticator.clearAuthentication();
+                        return _this._credentials;
+                    });
+                };
+                Class.prototype.addAuthentication = function (requestOptions) {
+                    var headers = requestOptions.headers ? requestOptions.headers : requestOptions.headers = new Map();
+                    this.addTokenAuthenticationHeader(headers);
+                    return requestOptions;
+                };
+                Class.prototype.clearAuthentication = function () {
+                    this._credentials = null;
+                };
+                Class.prototype.supports = function (authenticationToken) {
+                    return authenticationToken instanceof UsernameAndPasswordToken_1.default;
+                };
+                Class.prototype.createToken = function () {
+                    var _this = this;
+                    var uri = this.context.resolve(Class.TOKEN_CONTAINER);
+                    var requestOptions = {};
+                    this.basicAuthenticator.addAuthentication(requestOptions);
+                    HTTP.Request.Util.setAcceptHeader("application/ld+json", requestOptions);
+                    HTTP.Request.Util.setPreferredInteractionModel(NS.LDP.Class.RDFSource, requestOptions);
+                    return HTTP.Request.Service.post(uri, null, requestOptions, new HTTP.JSONLDParser.Class()).then(function (_a) {
+                        var expandedResult = _a[0], response = _a[1];
+                        var expandedNodes = RDF.Document.Util.getResources(expandedResult);
+                        expandedNodes = expandedNodes.filter(Token.Factory.hasRDFClass);
+                        if (expandedNodes.length === 0)
+                            throw new HTTP.Errors.BadResponseError("No '" + Token.RDF_CLASS + "' was returned.", response);
+                        if (expandedNodes.length > 1)
+                            throw new HTTP.Errors.BadResponseError("Multiple '" + Token.RDF_CLASS + "' were returned. ", response);
+                        var expandedToken = expandedNodes[0];
+                        var token = Token.Factory.decorate({});
+                        var digestedSchema = _this.context.documents.getSchemaFor(expandedToken);
+                        _this.context.documents.jsonldConverter.compact(expandedToken, token, digestedSchema, _this.context.documents);
+                        return [token, response];
+                    });
+                };
+                Class.prototype.addTokenAuthenticationHeader = function (headers) {
+                    var header;
+                    if (headers.has("Authorization")) {
+                        header = headers.get("Authorization");
+                    }
+                    else {
+                        header = new HTTP.Header.Class();
+                        headers.set("Authorization", header);
+                    }
+                    var authorization = "Token " + this._credentials.token.key;
+                    header.values.push(new HTTP.Header.Value(authorization));
+                    return headers;
+                };
+                Class.TOKEN_CONTAINER = "auth-tokens/";
+                return Class;
+            })();
+            exports_1("Class", Class);
+            exports_1("default",Class);
+        }
+    }
+});
+
+$__System.register("5b", [], function(exports_1) {
     var namespace, Class, Predicate;
     return {
         setters:[],
@@ -11438,7 +11550,7 @@ $__System.register("58", [], function(exports_1) {
     }
 });
 
-$__System.register("59", [], function(exports_1) {
+$__System.register("5c", [], function(exports_1) {
     var namespace, Predicate;
     return {
         setters:[],
@@ -11521,7 +11633,7 @@ $__System.register("7", [], function(exports_1) {
     }
 });
 
-$__System.register("5a", [], function(exports_1) {
+$__System.register("5d", [], function(exports_1) {
     var namespace, Class, Predicate;
     return {
         setters:[],
@@ -11679,7 +11791,7 @@ $__System.register("5a", [], function(exports_1) {
     }
 });
 
-$__System.register("5b", [], function(exports_1) {
+$__System.register("5e", [], function(exports_1) {
     var namespace, Predicate;
     return {
         setters:[],
@@ -11748,7 +11860,7 @@ $__System.register("31", ["6"], function(exports_1) {
     }
 });
 
-$__System.register("9", ["58", "59", "7", "5a", "5b", "31"], function(exports_1) {
+$__System.register("9", ["5b", "5c", "7", "5d", "5e", "31"], function(exports_1) {
     var C, CP, CS, LDP, RDF, XSD;
     return {
         setters:[
@@ -11889,7 +12001,7 @@ $__System.register("4", ["6"], function(exports_1) {
     }
 });
 
-$__System.register("5c", ["9", "4", "6"], function(exports_1) {
+$__System.register("59", ["9", "4", "6"], function(exports_1) {
     var NS, Pointer, Utils;
     var RDF_CLASS, CONTEXT, Factory;
     return {
@@ -11950,135 +12062,6 @@ $__System.register("5c", ["9", "4", "6"], function(exports_1) {
     }
 });
 
-$__System.register("5d", [], function(exports_1) {
-    var Class;
-    return {
-        setters:[],
-        execute: function() {
-            Class = (function () {
-                function Class(token) {
-                    this._token = token;
-                }
-                Object.defineProperty(Class.prototype, "token", {
-                    get: function () { return this._token; },
-                    enumerable: true,
-                    configurable: true
-                });
-                ;
-                return Class;
-            })();
-            exports_1("Class", Class);
-            exports_1("default",Class);
-        }
-    }
-});
-
-$__System.register("5e", ["e", "23", "9", "5", "56", "57", "5c", "5d"], function(exports_1) {
-    var Errors, HTTP, NS, RDF, BasicAuthenticator_1, UsernameAndPasswordToken_1, Token, TokenCredentials;
-    var Class;
-    return {
-        setters:[
-            function (Errors_1) {
-                Errors = Errors_1;
-            },
-            function (HTTP_1) {
-                HTTP = HTTP_1;
-            },
-            function (NS_1) {
-                NS = NS_1;
-            },
-            function (RDF_1) {
-                RDF = RDF_1;
-            },
-            function (BasicAuthenticator_1_1) {
-                BasicAuthenticator_1 = BasicAuthenticator_1_1;
-            },
-            function (UsernameAndPasswordToken_1_1) {
-                UsernameAndPasswordToken_1 = UsernameAndPasswordToken_1_1;
-            },
-            function (Token_1) {
-                Token = Token_1;
-            },
-            function (TokenCredentials_1) {
-                TokenCredentials = TokenCredentials_1;
-            }],
-        execute: function() {
-            Class = (function () {
-                function Class(context) {
-                    if (context === null)
-                        throw new Errors.IllegalArgumentError("context cannot be null");
-                    this.context = context;
-                    this.basicAuthenticator = new BasicAuthenticator_1.default();
-                }
-                Class.prototype.isAuthenticated = function () {
-                    return !!this.credentials && this.credentials.token.expirationTime > new Date();
-                };
-                Class.prototype.authenticate = function (authenticationToken) {
-                    var _this = this;
-                    return this.basicAuthenticator.authenticate(authenticationToken).then(function (credentials) {
-                        return _this.createToken();
-                    }).then(function (_a) {
-                        var token = _a[0], response = _a[1];
-                        _this.credentials = new TokenCredentials.Class(token);
-                        _this.basicAuthenticator.clearAuthentication();
-                        return _this.credentials;
-                    });
-                };
-                Class.prototype.addAuthentication = function (requestOptions) {
-                    var headers = requestOptions.headers ? requestOptions.headers : requestOptions.headers = new Map();
-                    this.addTokenAuthenticationHeader(headers);
-                    return requestOptions;
-                };
-                Class.prototype.clearAuthentication = function () {
-                    this.credentials = null;
-                };
-                Class.prototype.supports = function (authenticationToken) {
-                    return authenticationToken instanceof UsernameAndPasswordToken_1.default;
-                };
-                Class.prototype.createToken = function () {
-                    var _this = this;
-                    var uri = this.context.resolve(Class.TOKEN_CONTAINER);
-                    var requestOptions = {};
-                    this.basicAuthenticator.addAuthentication(requestOptions);
-                    HTTP.Request.Util.setAcceptHeader("application/ld+json", requestOptions);
-                    HTTP.Request.Util.setPreferredInteractionModel(NS.LDP.Class.RDFSource, requestOptions);
-                    return HTTP.Request.Service.post(uri, null, requestOptions, new HTTP.JSONLDParser.Class()).then(function (_a) {
-                        var expandedResult = _a[0], response = _a[1];
-                        var expandedNodes = RDF.Document.Util.getResources(expandedResult);
-                        expandedNodes = expandedNodes.filter(Token.Factory.hasRDFClass);
-                        if (expandedNodes.length === 0)
-                            throw new HTTP.Errors.BadResponseError("No '" + Token.RDF_CLASS + "' was returned.", response);
-                        if (expandedNodes.length > 1)
-                            throw new HTTP.Errors.BadResponseError("Multiple '" + Token.RDF_CLASS + "' were returned. ", response);
-                        var expandedToken = expandedNodes[0];
-                        var token = Token.Factory.decorate({});
-                        var digestedSchema = _this.context.documents.getSchemaFor(expandedToken);
-                        _this.context.documents.jsonldConverter.compact(expandedToken, token, digestedSchema, _this.context.documents);
-                        return [token, response];
-                    });
-                };
-                Class.prototype.addTokenAuthenticationHeader = function (headers) {
-                    var header;
-                    if (headers.has("Authorization")) {
-                        header = headers.get("Authorization");
-                    }
-                    else {
-                        header = new HTTP.Header.Class();
-                        headers.set("Authorization", header);
-                    }
-                    var authorization = "Token " + this.credentials.token.key;
-                    header.values.push(new HTTP.Header.Value(authorization));
-                    return headers;
-                };
-                Class.TOKEN_CONTAINER = "auth-tokens/";
-                return Class;
-            })();
-            exports_1("Class", Class);
-            exports_1("default",Class);
-        }
-    }
-});
-
 $__System.register("57", [], function(exports_1) {
     var Class;
     return {
@@ -12099,6 +12082,29 @@ $__System.register("57", [], function(exports_1) {
                     enumerable: true,
                     configurable: true
                 });
+                return Class;
+            })();
+            exports_1("Class", Class);
+            exports_1("default",Class);
+        }
+    }
+});
+
+$__System.register("5a", [], function(exports_1) {
+    var Class;
+    return {
+        setters:[],
+        execute: function() {
+            Class = (function () {
+                function Class(token) {
+                    this._token = token;
+                }
+                Object.defineProperty(Class.prototype, "token", {
+                    get: function () { return this._token; },
+                    enumerable: true,
+                    configurable: true
+                });
+                ;
                 return Class;
             })();
             exports_1("Class", Class);
@@ -12290,8 +12296,8 @@ $__System.register("e", ["5f", "60", "61", "62"], function(exports_1) {
 });
 
 /// <reference path="./../typings/typings.d.ts" />
-$__System.register("c", ["26", "27", "56", "5c", "5e", "57", "e", "6"], function(exports_1) {
-    var AuthenticationToken_1, Authenticator_1, BasicAuthenticator_1, Token, TokenAuthenticator_1, UsernameAndPasswordToken_1, Errors, Utils;
+$__System.register("c", ["26", "27", "56", "58", "59", "57", "5a", "e", "6"], function(exports_1) {
+    var AuthenticationToken_1, Authenticator_1, BasicAuthenticator_1, TokenAuthenticator_1, Token, UsernameAndPasswordToken_1, TokenCredentials_1, Errors, Utils;
     var Method, Class;
     return {
         setters:[
@@ -12304,14 +12310,17 @@ $__System.register("c", ["26", "27", "56", "5c", "5e", "57", "e", "6"], function
             function (BasicAuthenticator_1_1) {
                 BasicAuthenticator_1 = BasicAuthenticator_1_1;
             },
-            function (Token_1) {
-                Token = Token_1;
-            },
             function (TokenAuthenticator_1_1) {
                 TokenAuthenticator_1 = TokenAuthenticator_1_1;
             },
+            function (Token_1) {
+                Token = Token_1;
+            },
             function (UsernameAndPasswordToken_1_1) {
                 UsernameAndPasswordToken_1 = UsernameAndPasswordToken_1_1;
+            },
+            function (TokenCredentials_1_1) {
+                TokenCredentials_1 = TokenCredentials_1_1;
             },
             function (Errors_1) {
                 Errors = Errors_1;
@@ -12336,35 +12345,26 @@ $__System.register("c", ["26", "27", "56", "5c", "5e", "57", "e", "6"], function
                     this.method = null;
                     this.context = context;
                     this.authenticators = [];
-                    this.authenticators.push(new TokenAuthenticator_1.default(this.context));
-                    this.authenticators.push(new BasicAuthenticator_1.default());
+                    this.authenticators[Method.BASIC] = new BasicAuthenticator_1.default();
+                    this.authenticators[Method.TOKEN] = new TokenAuthenticator_1.default(this.context);
                 }
                 Class.prototype.isAuthenticated = function (askParent) {
                     if (askParent === void 0) { askParent = true; }
                     return ((this.authenticator && this.authenticator.isAuthenticated()) ||
                         (askParent && !!this.context.parentContext && this.context.parentContext.auth.isAuthenticated()));
                 };
-                Class.prototype.authenticate = function (usernameOrToken, password) {
-                    var _this = this;
-                    if (password === void 0) { password = null; }
-                    return new Promise(function (resolve, reject) {
-                        if (!usernameOrToken)
-                            throw new Errors.IllegalArgumentError("Either a username or an authenticationToken are required.");
-                        var authenticationToken;
-                        if (Utils.isString(usernameOrToken)) {
-                            var username = usernameOrToken;
-                            if (!password)
-                                throw new Errors.IllegalArgumentError("A password is required when providing a username.");
-                            authenticationToken = new UsernameAndPasswordToken_1.default(username, password);
-                        }
-                        else {
-                            authenticationToken = usernameOrToken;
-                        }
-                        if (_this.authenticator)
-                            _this.clearAuthentication();
-                        _this.authenticator = _this.getAuthenticator(authenticationToken);
-                        resolve(_this.authenticator.authenticate(authenticationToken));
-                    });
+                Class.prototype.authenticate = function (username, password) {
+                    return this.authenticateUsing("TOKEN", username, password);
+                };
+                Class.prototype.authenticateUsing = function (method, userOrTokenOrCredentials, password) {
+                    switch (method) {
+                        case "BASIC":
+                            return this.authenticateWithBasic(userOrTokenOrCredentials, password);
+                        case "TOKEN":
+                            return this.authenticateWithToken(userOrTokenOrCredentials, password);
+                        default:
+                            return Promise.reject(new Errors.IllegalArgumentError("No exists the authentication method '" + method + "'"));
+                    }
                 };
                 Class.prototype.addAuthentication = function (requestOptions) {
                     if (this.isAuthenticated(false)) {
@@ -12383,13 +12383,44 @@ $__System.register("c", ["26", "27", "56", "5c", "5e", "57", "e", "6"], function
                     this.authenticator.clearAuthentication();
                     this.authenticator = null;
                 };
-                Class.prototype.getAuthenticator = function (authenticationToken) {
-                    for (var _i = 0, _a = this.authenticators; _i < _a.length; _i++) {
-                        var authenticator = _a[_i];
-                        if (authenticator.supports(authenticationToken))
-                            return authenticator;
-                    }
-                    throw new Errors.IllegalStateError("The configured authentication method isn\'t supported.");
+                Class.prototype.authenticateWithBasic = function (username, password) {
+                    var authenticator = this.authenticators[Method.BASIC];
+                    var authenticationToken;
+                    authenticationToken = new UsernameAndPasswordToken_1.default(username, password);
+                    this.clearAuthentication();
+                    this.authenticator = authenticator;
+                    return this.authenticator.authenticate(authenticationToken);
+                };
+                Class.prototype.authenticateWithToken = function (userOrTokenOrCredentials, password) {
+                    var _this = this;
+                    var authenticator = this.authenticators[Method.TOKEN];
+                    var credentials = null;
+                    var authenticationToken = null;
+                    return new Promise(function (resolve, reject) {
+                        if (Utils.isString(userOrTokenOrCredentials) && Utils.isString(password)) {
+                            authenticationToken = new UsernameAndPasswordToken_1.default(userOrTokenOrCredentials, password);
+                        }
+                        else if (Token.Factory.is(userOrTokenOrCredentials)) {
+                            credentials = new TokenCredentials_1.default(userOrTokenOrCredentials);
+                        }
+                        else if (userOrTokenOrCredentials instanceof TokenCredentials_1.default) {
+                            credentials = userOrTokenOrCredentials;
+                        }
+                        else {
+                            throw new Errors.IllegalArgumentError("Parameters do not match with the authentication request.");
+                        }
+                        _this.clearAuthentication();
+                        _this.authenticator = authenticator;
+                        if (authenticationToken) {
+                            resolve(authenticator.authenticate(authenticationToken));
+                        }
+                        else {
+                            authenticator.credentials = credentials;
+                            if (!authenticator.isAuthenticated())
+                                throw new Errors.IllegalArgumentError("The token provided in not valid.");
+                            resolve(credentials);
+                        }
+                    });
                 };
                 return Class;
             })();

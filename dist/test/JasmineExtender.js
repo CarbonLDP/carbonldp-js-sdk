@@ -18,6 +18,7 @@ exports.PROPERTY = "property";
 exports.SUPER_CLASS = "super-class";
 exports.REEXPORTS = "reexports";
 exports.DEFAULTEXPORT = "defaultExport";
+exports.ENUM = "enum";
 function module(name, description) {
     if (description === void 0) { description = null; }
     var descriptor = {
@@ -52,6 +53,16 @@ function interfaze(name, description, parent) {
     return toJSON(descriptor);
 }
 exports.interfaze = interfaze;
+function enumeration(name, description) {
+    if (description === void 0) { description = null; }
+    var descriptor = {
+        suiteType: exports.ENUM,
+        name: name,
+        description: description,
+    };
+    return toJSON(descriptor);
+}
+exports.enumeration = enumeration;
 function constructor(description) {
     if (description === void 0) { description = null; }
     var descriptor = {
@@ -206,5 +217,15 @@ function hasDefaultExport(exportName) {
     return toJSON(descriptor);
 }
 exports.hasDefaultExport = hasDefaultExport;
+function hasEnumeral(name, description) {
+    if (description === void 0) { description = null; }
+    var descriptor = {
+        specType: exports.ENUM,
+        name: name,
+        description: description,
+    };
+    return toJSON(descriptor);
+}
+exports.hasEnumeral = hasEnumeral;
 
 //# sourceMappingURL=JasmineExtender.js.map

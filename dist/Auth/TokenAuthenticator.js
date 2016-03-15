@@ -14,8 +14,14 @@ var Class = (function () {
         this.context = context;
         this.basicAuthenticator = new BasicAuthenticator_1.default();
     }
+    Object.defineProperty(Class.prototype, "credentials", {
+        set: function (credentials) { this._credentials = credentials; },
+        enumerable: true,
+        configurable: true
+    });
+    ;
     Class.prototype.isAuthenticated = function () {
-        return !!this.credentials && this.credentials.token.expirationTime > new Date();
+        return !!this._credentials && this._credentials.token.expirationTime > new Date();
     };
     Class.prototype.authenticate = function (authenticationToken) {
         var _this = this;
@@ -23,9 +29,9 @@ var Class = (function () {
             return _this.createToken();
         }).then(function (_a) {
             var token = _a[0], response = _a[1];
-            _this.credentials = new TokenCredentials.Class(token);
+            _this._credentials = new TokenCredentials.Class(token);
             _this.basicAuthenticator.clearAuthentication();
-            return _this.credentials;
+            return _this._credentials;
         });
     };
     Class.prototype.addAuthentication = function (requestOptions) {
@@ -34,7 +40,7 @@ var Class = (function () {
         return requestOptions;
     };
     Class.prototype.clearAuthentication = function () {
-        this.credentials = null;
+        this._credentials = null;
     };
     Class.prototype.supports = function (authenticationToken) {
         return authenticationToken instanceof UsernameAndPasswordToken_1.default;
@@ -70,7 +76,7 @@ var Class = (function () {
             header = new HTTP.Header.Class();
             headers.set("Authorization", header);
         }
-        var authorization = "Token " + this.credentials.token.key;
+        var authorization = "Token " + this._credentials.token.key;
         header.values.push(new HTTP.Header.Value(authorization));
         return headers;
     };

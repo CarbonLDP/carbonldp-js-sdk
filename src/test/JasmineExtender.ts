@@ -47,6 +47,9 @@ export interface ReexportsDescriptor extends SpecDescriptor {
 	originalLocation: string;
 }
 
+export interface EnumDescriptor extends SpecDescriptor {
+}
+
 export interface MethodArgument {
 	name:string;
 	type:string;
@@ -87,6 +90,7 @@ export const PROPERTY:string = "property";
 export const SUPER_CLASS:string = "super-class";
 export const REEXPORTS:string = "reexports";
 export const DEFAULTEXPORT:string = "defaultExport";
+export const ENUM:string = "enum";
 
 export function module( name:string, description:string = null ):string {
 	let descriptor:SuiteDescriptor = {
@@ -116,6 +120,16 @@ export function interfaze( name:string, description:string, parent:string = null
 		name: name,
 		description: description,
 		parent: parent,
+	};
+
+	return toJSON( descriptor );
+}
+
+export function enumeration( name:string, description:string = null ):string {
+	let descriptor:SuiteDescriptor = {
+		suiteType: ENUM,
+		name: name,
+		description: description,
 	};
 
 	return toJSON( descriptor );
@@ -297,6 +311,16 @@ export function hasDefaultExport( exportName: string ): string {
 	let descriptor:SpecDescriptor = {
 		specType: DEFAULTEXPORT,
 		name: exportName,
+	};
+
+	return toJSON( descriptor );
+}
+
+export function hasEnumeral( name:string, description:string = null ):string {
+	let descriptor:EnumDescriptor = {
+		specType: ENUM,
+		name: name,
+		description: description,
 	};
 
 	return toJSON( descriptor );

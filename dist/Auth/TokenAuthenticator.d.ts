@@ -8,7 +8,8 @@ export declare class Class implements Authenticator<UsernameAndPasswordToken> {
     private static TOKEN_CONTAINER;
     private context;
     private basicAuthenticator;
-    private credentials;
+    private _credentials;
+    credentials: TokenCredentials.Class;
     constructor(context: Context);
     isAuthenticated(): boolean;
     authenticate(authenticationToken: UsernameAndPasswordToken): Promise<TokenCredentials.Class>;

@@ -18,7 +18,7 @@ export const CONTEXT:ObjectSchema.Class = {
 	},
 };
 
-export interface Class extends Pointer.Class {
+export interface Class {
 	key:string;
 	expirationTime:Date;
 }
