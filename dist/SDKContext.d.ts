@@ -1,4 +1,3 @@
-/// <reference path="../typings/typings.d.ts" />
 import * as Auth from "./Auth";
 import Context from "./Context";
 import Documents from "./Documents";

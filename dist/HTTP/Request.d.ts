@@ -1,4 +1,3 @@
-/// <reference path="../../typings/typings.d.ts" />
 import * as Header from "./Header";
 import Method from "./Method";
 import Parser from "./Parser";

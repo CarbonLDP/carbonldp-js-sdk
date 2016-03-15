@@ -1,5 +1,3 @@
-/// <refrence path="../../typings/typings.d.ts" />
-
 import {
 	INSTANCE,
 

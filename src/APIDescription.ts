@@ -1,4 +1,3 @@
-/// <reference path="./../typings/typings.d.ts" />
 import * as NS from "./NS";
 import * as ObjectSchema from "./ObjectSchema";
 import * as RDF from "./RDF";

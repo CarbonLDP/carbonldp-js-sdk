@@ -1,4 +1,3 @@
-/// <reference path="../../typings/typings.d.ts" />
 import * as Container from "./Container";
 import * as ObjectSchema from "./../ObjectSchema";
 export declare const RDF_CLASS: string;

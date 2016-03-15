@@ -1,108 +1,7 @@
-declare module 'carbon/test/JasmineExtender' {
-	export interface SuiteDescriptor {
-	    access?: string;
-	    suiteType: string;
-	    name?: string;
-	    description?: string;
+declare module 'carbon/Auth/AuthenticationToken' {
+	export interface Class {
 	}
-	export interface SpecDescriptor {
-	    access?: string;
-	    specType: string;
-	    name?: string;
-	    description?: string;
-	}
-	export interface InterfaceDescriptor {
-	    parent?: string;
-	}
-	export interface InterfaceSuiteDescriptor extends SuiteDescriptor, InterfaceDescriptor {
-	}
-	export interface InterfaceSpecDescriptor extends SpecDescriptor, InterfaceDescriptor {
-	}
-	export interface ClassDescriptor extends InterfaceDescriptor {
-	    interfaces?: string[];
-	}
-	export interface ClassSuiteDescriptor extends SuiteDescriptor, ClassDescriptor {
-	}
-	export interface ClassSpecDescriptor extends SpecDescriptor, ClassDescriptor {
-	}
-	export interface PropertyDescriptor extends SpecDescriptor {
-	    type: string;
-	}
-	export interface MethodDescriptor extends SpecDescriptor {
-	    arguments?: MethodArgument[];
-	    returns?: MethodReturn;
-	}
-	export interface ReexportsDescriptor extends SpecDescriptor {
-	    originalLocation: string;
-	}
-	export interface EnumDescriptor extends SpecDescriptor {
-	}
-	export interface MethodArgument {
-	    name: string;
-	    type: string;
-	    description?: string;
-	    optional?: boolean;
-	    default?: string;
-	}
-	export interface MethodReturn {
-	    type: string;
-	    description?: string;
-	}
-	export interface DecorateDescriptor extends SuiteDescriptor {
-	    type: string[];
-	}
-	export function serialize(descriptor: SuiteDescriptor): string;
-	export function serialize(descriptor: PropertyDescriptor): string;
-	export function serialize(descriptor: MethodDescriptor): string;
-	export const MODULE: string;
-	export const CLASS: string;
-	export const INTERFACE: string;
-	export const STATIC: string;
-	export const INSTANCE: string;
-	export const CONSTRUCTOR: string;
-	export const METHOD: string;
-	export const SIGNATURE: string;
-	export const PROPERTY: string;
-	export const SUPER_CLASS: string;
-	export const REEXPORTS: string;
-	export const DEFAULTEXPORT: string;
-	export const ENUM: string;
-	export const DECORATED: string;
-	export function module(name: string, description?: string): string;
-	export function clazz(name: string, description: string, parent?: string, interfaces?: Array<string>): string;
-	export function interfaze(name: string, description: string, parent?: string): string;
-	export function enumeration(name: string, description?: string): string;
-	export function constructor(description?: string): string;
-	export function reexports(access: string, name: string, originalLocation: string): string;
-	export function decoratedObject(description: string, type: string[]): string;
-	export function hasInterface(access: string, name: string): string;
-	export function isDefined(): string;
-	export function hasConstructor(): string;
-	export function hasConstructor(constructorArguments: MethodArgument[]): string;
-	export function hasConstructor(description: string, constructorArguments: MethodArgument[]): string;
-	export function hasMethod(access: string, name: string): string;
-	export function hasMethod(access: string, name: string, description: string): string;
-	export function hasMethod(access: string, name: string, methodArguments: MethodArgument[]): string;
-	export function hasMethod(access: string, name: string, returns: MethodReturn): string;
-	export function hasMethod(access: string, name: string, description: string, methodArguments: MethodArgument[]): string;
-	export function hasMethod(access: string, name: string, description: string, returns: MethodReturn): string;
-	export function hasMethod(access: string, name: string, methodArguments: MethodArgument[], returns: MethodReturn): string;
-	export function hasMethod(access: string, name: string, description: string, methodArguments: MethodArgument[], returns: MethodReturn): string;
-	export function method(access: string, name: string): string;
-	export function method(access: string, name: string, description: string): string;
-	export function hasSignature(): string;
-	export function hasSignature(description: string): string;
-	export function hasSignature(description: string, returns: MethodReturn): string;
-	export function hasSignature(description: string, methodArguments: MethodArgument[]): string;
-	export function hasSignature(description: string, methodArguments: MethodArgument[], returns: MethodReturn): string;
-	export function hasSignature(methodArguments: MethodArgument[]): string;
-	export function hasSignature(methodArguments: MethodArgument[], returns: MethodReturn): string;
-	export function hasSignature(returns: MethodReturn): string;
-	export function hasProperty(access: string, name: string, type: string, description?: string): string;
-	export let property: typeof hasProperty;
-	export function extendsClass(name: string): string;
-	export function hasDefaultExport(exportName: string, description?: string): string;
-	export function hasEnumeral(name: string, description?: string): string;
+	export default Class;
 
 }
 declare module 'carbon/Utils' {
@@ -128,136 +27,6 @@ declare module 'carbon/Utils' {
 	export { hasFunction, hasProperty, hasPropertyDefined, isDefined, isNull, isArray, isString, isBoolean, isNumber, isInteger, isDouble, isDate, isObject, isFunction, isMap, parseBoolean, extend, forEachOwnProperty, O, S, A, M, UUID, P };
 
 }
-declare module 'carbon/NS/C' {
-	export let namespace: string;
-	export class Class {
-	    static AccessPoint: string;
-	    static API: string;
-	    static NonReadableMembershipResourceTriples: string;
-	    static PreferContainmentResources: string;
-	    static PreferContainmentTriples: string;
-	    static PreferMembershipResources: string;
-	    static PreferMembershipTriples: string;
-	    static VolatileResource: string;
-	}
-	export class Predicate {
-	    static accessPoint: string;
-	    static buildDate: string;
-	    static created: string;
-	    static modified: string;
-	    static version: string;
-	}
-
-}
-declare module 'carbon/NS/CP' {
-	 const namespace: string; class Predicate {
-	    static ADD_ACTION: string;
-	    static SET_ACTION: string;
-	    static DELETE_ACTION: string;
-	}
-	export { namespace, Predicate };
-
-}
-declare module 'carbon/NS/CS' {
-	 const namespace: string; class Class {
-	    static Application: string;
-	    static Token: string;
-	    static AllOrigins: string;
-	} class Predicate {
-	    static name: string;
-	    static allowsOrigin: string;
-	    static rootContainer: string;
-	    static tokenKey: string;
-	    static expirationTime: string;
-	}
-	export { namespace, Class, Predicate };
-
-}
-declare module 'carbon/NS/LDP' {
-	 const namespace: string; class Class {
-	    static Resource: string;
-	    static RDFSource: string;
-	    static Container: string;
-	    static BasicContainer: string;
-	    static DirectContainer: string;
-	    static IndirectContainer: string;
-	    static NonRDFSource: string;
-	    static MemberSubject: string;
-	    static PreferContainment: string;
-	    static PreferMembership: string;
-	    static PreferEmptyContainer: string;
-	    static PreferMinimalContainer: string;
-	    static Page: string;
-	    static PageSortCriterion: string;
-	    static Ascending: string;
-	    static Descending: string;
-	} class Predicate {
-	    static contains: string;
-	    static member: string;
-	    static hasMemberRelation: string;
-	    static memberOfRelation: string;
-	    static membershipResource: string;
-	    static insertedContentRelation: string;
-	    static constrainedBy: string;
-	    static pageSortCriteria: string;
-	    static pageSortOrder: string;
-	    static pageSortCollation: string;
-	    static pageSequence: string;
-	}
-	export { namespace, Class, Predicate };
-
-}
-declare module 'carbon/NS/RDF' {
-	 const namespace: string; class Predicate {
-	    static type: string;
-	}
-	export { namespace, Predicate };
-
-}
-declare module 'carbon/NS/XSD' {
-	export const namespace: string;
-	export class DataType {
-	    static date: string;
-	    static dateTime: string;
-	    static duration: string;
-	    static gDay: string;
-	    static gMonth: string;
-	    static gMonthDay: string;
-	    static gYear: string;
-	    static gYearMonth: string;
-	    static time: string;
-	    static byte: string;
-	    static decimal: string;
-	    static int: string;
-	    static integer: string;
-	    static long: string;
-	    static negativeInteger: string;
-	    static nonNegativeInteger: string;
-	    static nonPositiveInteger: string;
-	    static positiveInteger: string;
-	    static short: string;
-	    static unsignedLong: string;
-	    static unsignedInt: string;
-	    static unsignedShort: string;
-	    static unsignedByte: string;
-	    static double: string;
-	    static float: string;
-	    static boolean: string;
-	    static string: string;
-	    static object: string;
-	}
-
-}
-declare module 'carbon/NS' {
-	import * as C from 'carbon/NS/C';
-	import * as CP from 'carbon/NS/CP';
-	import * as CS from 'carbon/NS/CS';
-	import * as LDP from 'carbon/NS/LDP';
-	import * as RDF from 'carbon/NS/RDF';
-	import * as XSD from 'carbon/NS/XSD';
-	export { C, CP, CS, LDP, RDF, XSD };
-
-}
 declare module 'carbon/Errors/AbstractError' {
 	 abstract class AbstractError extends Error {
 	    message: string;
@@ -268,54 +37,7 @@ declare module 'carbon/Errors/AbstractError' {
 	export default AbstractError;
 
 }
-declare module 'carbon/Errors/IDAlreadyInUseError' {
-	import AbstractError from 'carbon/Errors/AbstractError'; class IDAlreadyInUseError extends AbstractError {
-	    name: string;
-	}
-	export default IDAlreadyInUseError;
-
-}
-declare module 'carbon/Errors/IllegalActionError' {
-	import AbstractError from 'carbon/Errors/AbstractError'; class IllegalActionError extends AbstractError {
-	    name: string;
-	}
-	export default IllegalActionError;
-
-}
-declare module 'carbon/Errors/IllegalArgumentError' {
-	import AbstractError from 'carbon/Errors/AbstractError'; class IllegalArgumentError extends AbstractError {
-	    name: string;
-	}
-	export default IllegalArgumentError;
-
-}
-declare module 'carbon/Errors/IllegalStateError' {
-	import AbstractError from 'carbon/Errors/AbstractError'; class IllegalStateError extends AbstractError {
-	    name: string;
-	    constructor(message?: string);
-	}
-	export default IllegalStateError;
-
-}
-declare module 'carbon/Errors/NotImplementedError' {
-	import AbstractError from 'carbon/Errors/AbstractError'; class NotImplementedError extends AbstractError {
-	    name: string;
-	    constructor(message?: string);
-	}
-	export default NotImplementedError;
-
-}
-declare module 'carbon/Errors' {
-	import IDAlreadyInUseError from 'carbon/Errors/IDAlreadyInUseError';
-	import IllegalActionError from 'carbon/Errors/IllegalActionError';
-	import IllegalArgumentError from 'carbon/Errors/IllegalArgumentError';
-	import IllegalStateError from 'carbon/Errors/IllegalStateError';
-	import NotImplementedError from 'carbon/Errors/NotImplementedError';
-	export { IDAlreadyInUseError, IllegalActionError, IllegalArgumentError, IllegalStateError, NotImplementedError };
-
-}
 declare module 'carbon/HTTP/Header' {
-	/// <reference path="../../typings/typings.d.ts" />
 	export class Class {
 	    constructor();
 	    constructor(values: Value[]);
@@ -572,7 +294,6 @@ declare module 'carbon/HTTP/Parser' {
 
 }
 declare module 'carbon/HTTP/JSONParser' {
-	/// <reference path="../../typings/typings.d.ts" />
 	import Parser from 'carbon/HTTP/Parser';
 	export class Class implements Parser<Object> {
 	    parse(body: string): Promise<Object>;
@@ -581,7 +302,6 @@ declare module 'carbon/HTTP/JSONParser' {
 
 }
 declare module 'carbon/HTTP/JSONLDParser' {
-	/// <reference path="../../typings/typings.d.ts" />
 	import Parser from 'carbon/HTTP/Parser';
 	export class Class implements Parser<any> {
 	    parse(input: string): Promise<any>;
@@ -604,7 +324,6 @@ declare module 'carbon/HTTP/Method' {
 
 }
 declare module 'carbon/HTTP/Request' {
-	/// <reference path="../../typings/typings.d.ts" />
 	import * as Header from 'carbon/HTTP/Header';
 	import Method from 'carbon/HTTP/Method';
 	import Parser from 'carbon/HTTP/Parser';
@@ -696,7 +415,6 @@ declare module 'carbon/HTTP/StatusCode' {
 
 }
 declare module 'carbon/HTTP/StringParser' {
-	/// <reference path="../../typings/typings.d.ts" />
 	import Parser from 'carbon/HTTP/Parser';
 	export class Class implements Parser<string> {
 	    parse(body: string): Promise<string>;
@@ -705,7 +423,6 @@ declare module 'carbon/HTTP/StringParser' {
 
 }
 declare module 'carbon/HTTP' {
-	/// <reference path="../typings/typings.d.ts" />
 	import * as Errors from 'carbon/HTTP/Errors';
 	import * as Header from 'carbon/HTTP/Header';
 	import * as JSONParser from 'carbon/HTTP/JSONParser';
@@ -717,6 +434,244 @@ declare module 'carbon/HTTP' {
 	import StatusCode from 'carbon/HTTP/StatusCode';
 	import * as StringParser from 'carbon/HTTP/StringParser';
 	export { Errors, Header, JSONParser, JSONLDParser, Method, Parser, Request, Response, StatusCode, StringParser };
+
+}
+declare module 'carbon/Auth/Credentials' {
+	export interface Class {
+	}
+	export default Class;
+
+}
+declare module 'carbon/Auth/Authenticator' {
+	import * as HTTP from 'carbon/HTTP';
+	import AuthenticationToken from 'carbon/Auth/AuthenticationToken';
+	import * as Credentials from 'carbon/Auth/Credentials';
+	export interface Class<T extends AuthenticationToken> {
+	    isAuthenticated(): boolean;
+	    authenticate(authenticationToken: T): Promise<Credentials.Class>;
+	    clearAuthentication(): void;
+	    addAuthentication(requestOptions: HTTP.Request.Options): HTTP.Request.Options;
+	    supports(authenticationToken: AuthenticationToken): boolean;
+	}
+	export default Class;
+
+}
+declare module 'carbon/Errors/IDAlreadyInUseError' {
+	import AbstractError from 'carbon/Errors/AbstractError'; class IDAlreadyInUseError extends AbstractError {
+	    name: string;
+	}
+	export default IDAlreadyInUseError;
+
+}
+declare module 'carbon/Errors/IllegalActionError' {
+	import AbstractError from 'carbon/Errors/AbstractError'; class IllegalActionError extends AbstractError {
+	    name: string;
+	}
+	export default IllegalActionError;
+
+}
+declare module 'carbon/Errors/IllegalArgumentError' {
+	import AbstractError from 'carbon/Errors/AbstractError'; class IllegalArgumentError extends AbstractError {
+	    name: string;
+	}
+	export default IllegalArgumentError;
+
+}
+declare module 'carbon/Errors/IllegalStateError' {
+	import AbstractError from 'carbon/Errors/AbstractError'; class IllegalStateError extends AbstractError {
+	    name: string;
+	    constructor(message?: string);
+	}
+	export default IllegalStateError;
+
+}
+declare module 'carbon/Errors/NotImplementedError' {
+	import AbstractError from 'carbon/Errors/AbstractError'; class NotImplementedError extends AbstractError {
+	    name: string;
+	    constructor(message?: string);
+	}
+	export default NotImplementedError;
+
+}
+declare module 'carbon/Errors' {
+	import IDAlreadyInUseError from 'carbon/Errors/IDAlreadyInUseError';
+	import IllegalActionError from 'carbon/Errors/IllegalActionError';
+	import IllegalArgumentError from 'carbon/Errors/IllegalArgumentError';
+	import IllegalStateError from 'carbon/Errors/IllegalStateError';
+	import NotImplementedError from 'carbon/Errors/NotImplementedError';
+	export { IDAlreadyInUseError, IllegalActionError, IllegalArgumentError, IllegalStateError, NotImplementedError };
+
+}
+declare module 'carbon/Auth/UsernameAndPasswordToken' {
+	import AuthenticationToken from 'carbon/Auth/AuthenticationToken';
+	export class Class implements AuthenticationToken {
+	    private _username;
+	    private _password;
+	    constructor(username: string, password: string);
+	    username: string;
+	    password: string;
+	}
+	export default Class;
+
+}
+declare module 'carbon/Auth/UsernameAndPasswordCredentials' {
+	import * as Credentials from 'carbon/Auth/Credentials';
+	export class Class implements Credentials.Class {
+	    private _username;
+	    private _password;
+	    username: string;
+	    password: string;
+	    constructor(username: string, password: string);
+	}
+	export default Class;
+
+}
+declare module 'carbon/Auth/BasicAuthenticator' {
+	import * as HTTP from 'carbon/HTTP';
+	import Authenticator from 'carbon/Auth/Authenticator';
+	import AuthenticationToken from 'carbon/Auth/AuthenticationToken';
+	import UsernameAndPasswordToken from 'carbon/Auth/UsernameAndPasswordToken';
+	import * as UsernameAndPasswordCredentials from 'carbon/Auth/UsernameAndPasswordCredentials';
+	export class Class implements Authenticator<UsernameAndPasswordToken> {
+	    private credentials;
+	    isAuthenticated(): boolean;
+	    authenticate(authenticationToken: UsernameAndPasswordToken): Promise<UsernameAndPasswordCredentials.Class>;
+	    addAuthentication(requestOptions: HTTP.Request.Options): HTTP.Request.Options;
+	    clearAuthentication(): void;
+	    supports(authenticationToken: AuthenticationToken): boolean;
+	    private addBasicAuthenticationHeader(headers);
+	}
+	export default Class;
+
+}
+declare module 'carbon/NS/C' {
+	export let namespace: string;
+	export class Class {
+	    static AccessPoint: string;
+	    static API: string;
+	    static NonReadableMembershipResourceTriples: string;
+	    static PreferContainmentResources: string;
+	    static PreferContainmentTriples: string;
+	    static PreferMembershipResources: string;
+	    static PreferMembershipTriples: string;
+	    static VolatileResource: string;
+	}
+	export class Predicate {
+	    static accessPoint: string;
+	    static buildDate: string;
+	    static created: string;
+	    static modified: string;
+	    static version: string;
+	}
+
+}
+declare module 'carbon/NS/CP' {
+	 const namespace: string; class Predicate {
+	    static ADD_ACTION: string;
+	    static SET_ACTION: string;
+	    static DELETE_ACTION: string;
+	}
+	export { namespace, Predicate };
+
+}
+declare module 'carbon/NS/CS' {
+	 const namespace: string; class Class {
+	    static Application: string;
+	    static Token: string;
+	    static AllOrigins: string;
+	} class Predicate {
+	    static name: string;
+	    static allowsOrigin: string;
+	    static rootContainer: string;
+	    static tokenKey: string;
+	    static expirationTime: string;
+	}
+	export { namespace, Class, Predicate };
+
+}
+declare module 'carbon/NS/LDP' {
+	 const namespace: string; class Class {
+	    static Resource: string;
+	    static RDFSource: string;
+	    static Container: string;
+	    static BasicContainer: string;
+	    static DirectContainer: string;
+	    static IndirectContainer: string;
+	    static NonRDFSource: string;
+	    static MemberSubject: string;
+	    static PreferContainment: string;
+	    static PreferMembership: string;
+	    static PreferEmptyContainer: string;
+	    static PreferMinimalContainer: string;
+	    static Page: string;
+	    static PageSortCriterion: string;
+	    static Ascending: string;
+	    static Descending: string;
+	} class Predicate {
+	    static contains: string;
+	    static member: string;
+	    static hasMemberRelation: string;
+	    static memberOfRelation: string;
+	    static membershipResource: string;
+	    static insertedContentRelation: string;
+	    static constrainedBy: string;
+	    static pageSortCriteria: string;
+	    static pageSortOrder: string;
+	    static pageSortCollation: string;
+	    static pageSequence: string;
+	}
+	export { namespace, Class, Predicate };
+
+}
+declare module 'carbon/NS/RDF' {
+	 const namespace: string; class Predicate {
+	    static type: string;
+	}
+	export { namespace, Predicate };
+
+}
+declare module 'carbon/NS/XSD' {
+	export const namespace: string;
+	export class DataType {
+	    static date: string;
+	    static dateTime: string;
+	    static duration: string;
+	    static gDay: string;
+	    static gMonth: string;
+	    static gMonthDay: string;
+	    static gYear: string;
+	    static gYearMonth: string;
+	    static time: string;
+	    static byte: string;
+	    static decimal: string;
+	    static int: string;
+	    static integer: string;
+	    static long: string;
+	    static negativeInteger: string;
+	    static nonNegativeInteger: string;
+	    static nonPositiveInteger: string;
+	    static positiveInteger: string;
+	    static short: string;
+	    static unsignedLong: string;
+	    static unsignedInt: string;
+	    static unsignedShort: string;
+	    static unsignedByte: string;
+	    static double: string;
+	    static float: string;
+	    static boolean: string;
+	    static string: string;
+	    static object: string;
+	}
+
+}
+declare module 'carbon/NS' {
+	import * as C from 'carbon/NS/C';
+	import * as CP from 'carbon/NS/CP';
+	import * as CS from 'carbon/NS/CS';
+	import * as LDP from 'carbon/NS/LDP';
+	import * as RDF from 'carbon/NS/RDF';
+	import * as XSD from 'carbon/NS/XSD';
+	export { C, CP, CS, LDP, RDF, XSD };
 
 }
 declare module 'carbon/Pointer' {
@@ -939,7 +894,6 @@ declare module 'carbon/RDF' {
 
 }
 declare module 'carbon/ObjectSchema' {
-	/// <reference path="../typings/typings.d.ts" />
 	import * as RDF from 'carbon/RDF';
 	export interface PropertyDefinition {
 	    "@id"?: string;
@@ -988,89 +942,7 @@ declare module 'carbon/ObjectSchema' {
 	export default Class;
 
 }
-declare module 'carbon/APIDescription' {
-	/// <reference path="../typings/typings.d.ts" />
-	import * as ObjectSchema from 'carbon/ObjectSchema';
-	export const RDF_CLASS: string;
-	export const SCHEMA: ObjectSchema.Class;
-	export interface Class {
-	    version: string;
-	    buildDate: Date;
-	}
-	export default Class;
-
-}
-/// <reference path="../typings/typings.d.ts" />
-declare module 'carbon/Auth/AuthenticationToken' {
-	export interface Class {
-	}
-	export default Class;
-
-}
-declare module 'carbon/Auth/Credentials' {
-	export interface Class {
-	}
-	export default Class;
-
-}
-declare module 'carbon/Auth/Authenticator' {
-	import * as HTTP from 'carbon/HTTP';
-	import AuthenticationToken from 'carbon/Auth/AuthenticationToken';
-	import * as Credentials from 'carbon/Auth/Credentials';
-	export interface Class<T extends AuthenticationToken> {
-	    isAuthenticated(): boolean;
-	    authenticate(authenticationToken: T): Promise<Credentials.Class>;
-	    clearAuthentication(): void;
-	    addAuthentication(requestOptions: HTTP.Request.Options): HTTP.Request.Options;
-	    supports(authenticationToken: AuthenticationToken): boolean;
-	}
-	export default Class;
-
-}
-declare module 'carbon/Auth/UsernameAndPasswordToken' {
-	import AuthenticationToken from 'carbon/Auth/AuthenticationToken';
-	export class Class implements AuthenticationToken {
-	    private _username;
-	    private _password;
-	    constructor(username: string, password: string);
-	    username: string;
-	    password: string;
-	}
-	export default Class;
-
-}
-declare module 'carbon/Auth/UsernameAndPasswordCredentials' {
-	import * as Credentials from 'carbon/Auth/Credentials';
-	export class Class implements Credentials.Class {
-	    private _username;
-	    private _password;
-	    username: string;
-	    password: string;
-	    constructor(username: string, password: string);
-	}
-	export default Class;
-
-}
-declare module 'carbon/Auth/BasicAuthenticator' {
-	import * as HTTP from 'carbon/HTTP';
-	import Authenticator from 'carbon/Auth/Authenticator';
-	import AuthenticationToken from 'carbon/Auth/AuthenticationToken';
-	import UsernameAndPasswordToken from 'carbon/Auth/UsernameAndPasswordToken';
-	import * as UsernameAndPasswordCredentials from 'carbon/Auth/UsernameAndPasswordCredentials';
-	export class Class implements Authenticator<UsernameAndPasswordToken> {
-	    private credentials;
-	    isAuthenticated(): boolean;
-	    authenticate(authenticationToken: UsernameAndPasswordToken): Promise<UsernameAndPasswordCredentials.Class>;
-	    addAuthentication(requestOptions: HTTP.Request.Options): HTTP.Request.Options;
-	    clearAuthentication(): void;
-	    supports(authenticationToken: AuthenticationToken): boolean;
-	    private addBasicAuthenticationHeader(headers);
-	}
-	export default Class;
-
-}
 declare module 'carbon/Committer' {
-	/// <reference path="../typings/typings.d.ts" />
 	interface Committer<E> {
 	    commit(object: E): Promise<any>;
 	}
@@ -1110,7 +982,6 @@ declare module 'carbon/Fragment' {
 
 }
 declare module 'carbon/JSONLDConverter' {
-	/// <reference path="../typings/typings.d.ts" />
 	import * as ObjectSchema from 'carbon/ObjectSchema';
 	import * as Pointer from 'carbon/Pointer';
 	import * as RDF from 'carbon/RDF';
@@ -1179,7 +1050,6 @@ declare module 'carbon/NamedFragment' {
 
 }
 declare module 'carbon/Document' {
-	/// <reference path="../typings/typings.d.ts" />
 	import * as Fragment from 'carbon/Fragment';
 	import JSONLDConverter from 'carbon/JSONLDConverter';
 	import * as NamedFragment from 'carbon/NamedFragment';
@@ -1215,7 +1085,6 @@ declare module 'carbon/Document' {
 
 }
 declare module 'carbon/PersistedResource' {
-	/// <reference path="../typings/typings.d.ts" />
 	export interface Class {
 	    _snapshot: Object;
 	    _syncSnapshot: () => void;
@@ -1284,7 +1153,6 @@ declare module 'carbon/SPARQL/RawResults' {
 
 }
 declare module 'carbon/SPARQL/RawResultsParser' {
-	/// <reference path="../../typings/typings.d.ts" />
 	import Parser from 'carbon/HTTP/Parser';
 	import RawResults from 'carbon/SPARQL/RawResults';
 	export class Class implements Parser<RawResults> {
@@ -1305,7 +1173,6 @@ declare module 'carbon/SPARQL/SELECTResults' {
 
 }
 declare module 'carbon/SPARQL/Service' {
-	/// <reference path="../../typings/typings.d.ts" />
 	import * as HTTP from 'carbon/HTTP';
 	import * as Pointer from 'carbon/Pointer';
 	import * as RawResults from 'carbon/SPARQL/RawResults';
@@ -1386,7 +1253,6 @@ declare module 'carbon/LDP/RDFSource' {
 
 }
 declare module 'carbon/LDP/Container' {
-	/// <reference path="../../typings/typings.d.ts" />
 	import * as ObjectSchema from 'carbon/ObjectSchema';
 	import * as Pointer from 'carbon/Pointer';
 	import * as RDF from 'carbon/RDF';
@@ -1407,7 +1273,6 @@ declare module 'carbon/LDP/Container' {
 
 }
 declare module 'carbon/LDP/AccessPoint' {
-	/// <reference path="../../typings/typings.d.ts" />
 	import * as Container from 'carbon/LDP/Container';
 	import * as ObjectSchema from 'carbon/ObjectSchema';
 	export const RDF_CLASS: string;
@@ -1422,7 +1287,6 @@ declare module 'carbon/LDP/AccessPoint' {
 
 }
 declare module 'carbon/LDP/BasicContainer' {
-	/// <reference path="../../typings/typings.d.ts" />
 	import * as Pointer from 'carbon/Pointer';
 	import * as Container from 'carbon/LDP/Container';
 	export const RDF_CLASS: string;
@@ -1462,7 +1326,6 @@ declare module 'carbon/LDP' {
 
 }
 declare module 'carbon/Documents' {
-	/// <reference path="../typings/typings.d.ts" />
 	import * as HTTP from 'carbon/HTTP';
 	import Context from 'carbon/Context';
 	import * as Document from 'carbon/Document';
@@ -1513,7 +1376,6 @@ declare module 'carbon/Documents' {
 
 }
 declare module 'carbon/Context' {
-	/// <reference path="../typings/typings.d.ts" />
 	import Auth from 'carbon/Auth';
 	import Documents from 'carbon/Documents';
 	import * as ObjectSchema from 'carbon/ObjectSchema';
@@ -1539,7 +1401,6 @@ declare module 'carbon/Context' {
 
 }
 declare module 'carbon/App' {
-	/// <reference path="../typings/typings.d.ts" />
 	import AbstractContext from 'carbon/AbstractContext';
 	import Context from 'carbon/Context';
 	import * as Document from 'carbon/Document';
@@ -1563,8 +1424,18 @@ declare module 'carbon/App' {
 	export default Class;
 
 }
+declare module 'carbon/APIDescription' {
+	import * as ObjectSchema from 'carbon/ObjectSchema';
+	export const RDF_CLASS: string;
+	export const SCHEMA: ObjectSchema.Class;
+	export interface Class {
+	    version: string;
+	    buildDate: Date;
+	}
+	export default Class;
+
+}
 declare module 'carbon/SDKContext' {
-	/// <reference path="../typings/typings.d.ts" />
 	import * as Auth from 'carbon/Auth';
 	import Context from 'carbon/Context';
 	import Documents from 'carbon/Documents';
@@ -1651,7 +1522,6 @@ declare module 'carbon/Auth/TokenAuthenticator' {
 
 }
 declare module 'carbon/Auth' {
-	/// <reference path="../typings/typings.d.ts" />
 	import AuthenticationToken from 'carbon/Auth/AuthenticationToken';
 	import Authenticator from 'carbon/Auth/Authenticator';
 	import BasicAuthenticator from 'carbon/Auth/BasicAuthenticator';
@@ -1682,7 +1552,6 @@ declare module 'carbon/Auth' {
 
 }
 declare module 'carbon/AbstractContext' {
-	/// <reference path="../typings/typings.d.ts" />
 	import Context from 'carbon/Context';
 	import * as SDKContext from 'carbon/SDKContext'; abstract class AbstractContext extends SDKContext.Class {
 	    _parentContext: Context;
@@ -1693,10 +1562,7 @@ declare module 'carbon/AbstractContext' {
 	export default AbstractContext;
 
 }
-/// <reference path="../typings/typings.d.ts" />
-/// <reference path="../typings/typings.d.ts" />
 declare module 'carbon/Apps' {
-	/// <reference path="../typings/typings.d.ts" />
 	import * as App from 'carbon/App';
 	import Context from 'carbon/Context'; class Apps {
 	    private context;
@@ -1708,8 +1574,6 @@ declare module 'carbon/Apps' {
 	export default Apps;
 
 }
-/// <reference path="../typings/typings.d.ts" />
-/// <reference path="../typings/typings.d.ts" />
 declare module 'carbon/settings' {
 	import * as Auth from 'carbon/Auth';
 	export interface CarbonSettings {
@@ -1723,7 +1587,6 @@ declare module 'carbon/settings' {
 
 }
 declare module 'carbon/Carbon' {
-	/// <reference path="../typings/typings.d.ts" />
 	import * as APIDescription from 'carbon/APIDescription';
 	import Apps from 'carbon/Apps';
 	import * as Auth from 'carbon/Auth';
@@ -1749,19 +1612,7 @@ declare module 'carbon/Carbon' {
 	export default Carbon;
 
 }
-/// <reference path="../typings/typings.d.ts" />
-/// <reference path="../typings/typings.d.ts" />
-/// <reference path="../typings/typings.d.ts" />
-/// <reference path="../typings/typings.d.ts" />
-/// <reference path="../typings/typings.d.ts" />
-/// <reference path="../typings/typings.d.ts" />
-/// <reference path="../typings/typings.d.ts" />
-/// <reference path="../typings/typings.d.ts" />
-/// <reference path="../typings/typings.d.ts" />
-/// <reference path="../typings/typings.d.ts" />
-/// <reference path="../typings/typings.d.ts" />
 declare module 'carbon/Persisted' {
-	/// <reference path="../typings/typings.d.ts" />
 	import * as RDF from 'carbon/RDF'; class Modifications {
 	    add: Map<string, RDF.Value.Class[]>;
 	    set: Map<string, RDF.Value.Class[]>;
@@ -1785,75 +1636,5 @@ declare module 'carbon/Persisted' {
 	export { Modifications, ModificationType, Persisted as Class, Factory };
 
 }
-/// <reference path="../typings/typings.d.ts" />
-/// <reference path="../typings/typings.d.ts" />
-/// <reference path="../typings/typings.d.ts" />
-/// <reference path="../typings/typings.d.ts" />
-/// <reference path="../typings/typings.d.ts" />
-/// <reference path="../typings/typings.d.ts" />
-/// <reference path="../typings/typings.d.ts" />
-/// <reference path="../typings/typings.d.ts" />
-/// <reference path="../../typings/typings.d.ts" />
-/// <reference path="../../typings/typings.d.ts" />
-/// <reference path="../../typings/typings.d.ts" />
-/// <reference path="../../typings/typings.d.ts" />
-/// <reference path="../../typings/typings.d.ts" />
-/// <reference path="../../typings/typings.d.ts" />
-/// <reference path="../../typings/typings.d.ts" />
-/// <reference path="../../typings/typings.d.ts" />
-/// <reference path="../../typings/typings.d.ts" />
-/// <reference path="../../typings/typings.d.ts" />
-/// <reference path="../../typings/typings.d.ts" />
-/// <reference path="../../typings/typings.d.ts" />
-/// <reference path="../../typings/typings.d.ts" />
-/// <reference path="../../typings/typings.d.ts" />
-/// <reference path="../../typings/typings.d.ts" />
-/// <reference path="../../typings/typings.d.ts" />
-/// <reference path="../../typings/typings.d.ts" />
-/// <reference path="../../../typings/typings.d.ts" />
-/// <reference path="../../../typings/typings.d.ts" />
-/// <reference path="../../../../typings/typings.d.ts" />
-/// <reference path="../../../../typings/typings.d.ts" />
-/// <reference path="../../../../typings/typings.d.ts" />
-/// <reference path="../../../../typings/typings.d.ts" />
-/// <reference path="../../../../typings/typings.d.ts" />
-/// <reference path="../../../../typings/typings.d.ts" />
-/// <reference path="../../../../typings/typings.d.ts" />
-/// <reference path="../../../../typings/typings.d.ts" />
-/// <reference path="../../../../typings/typings.d.ts" />
-/// <reference path="../../../../typings/typings.d.ts" />
-/// <reference path="../../../../typings/typings.d.ts" />
-/// <reference path="../../../../typings/typings.d.ts" />
-/// <reference path="../../../../typings/typings.d.ts" />
-/// <reference path="../../../../typings/typings.d.ts" />
-/// <reference path="../../../../typings/typings.d.ts" />
-/// <reference path="../../../../typings/typings.d.ts" />
-/// <reference path="../../../../typings/typings.d.ts" />
-/// <reference path="../../../../typings/typings.d.ts" />
-/// <reference path="../../../../typings/typings.d.ts" />
-/// <reference path="../../../../typings/typings.d.ts" />
-/// <reference path="../../../../typings/typings.d.ts" />
-/// <reference path="../../typings/typings.d.ts" />
-/// <reference path="../../typings/typings.d.ts" />
-/// <reference path="../../typings/typings.d.ts" />
-/// <reference path="../../typings/typings.d.ts" />
-/// <reference path="../../typings/typings.d.ts" />
-/// <reference path="../../typings/typings.d.ts" />
-/// <reference path="../../typings/typings.d.ts" />
-/// <reference path="../../typings/typings.d.ts" />
-/// <reference path="../../typings/typings.d.ts" />
-/// <reference path="../../typings/typings.d.ts" />
-/// <reference path="../../typings/typings.d.ts" />
-/// <reference path="../../typings/typings.d.ts" />
-/// <reference path="../../typings/typings.d.ts" />
-/// <reference path="../../typings/typings.d.ts" />
-/// <reference path="../../typings/typings.d.ts" />
-/// <reference path="../../typings/typings.d.ts" />
-/// <reference path="../../typings/typings.d.ts" />
-/// <reference path="../../typings/typings.d.ts" />
-/// <reference path="../../typings/typings.d.ts" />
-/// <reference path="../../../typings/typings.d.ts" />
-/// <reference path="../../../../typings/typings.d.ts" />
-/// <reference path="../../typings/typings.d.ts" />
-/// <reference path="../../typings/typings.d.ts" />
-/// <reference path="../../typings/typings.d.ts" />
+/// <reference no-default-lib="true"/>
+/// <reference path="./../typings/typings" />

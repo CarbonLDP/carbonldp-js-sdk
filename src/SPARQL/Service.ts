@@ -1,5 +1,3 @@
-/// <reference path="./../../typings/typings.d.ts" />
-
 import * as Errors from "./../Errors";
 import * as HTTP from "./../HTTP";
 import * as Pointer from "./../Pointer";

@@ -1,5 +1,3 @@
-/// <reference path="./../../typings/typings.d.ts" />
-
 import Parser from "./Parser";
 
 export class Class implements Parser<Object> {

@@ -1,4 +1,3 @@
-/// <reference path="../typings/typings.d.ts" />
 import * as APIDescription from "./APIDescription";
 import Apps from "./Apps";
 import * as Auth from "./Auth";

@@ -1,6 +1,6 @@
 {
   "name": "carbonldp-sdk",
-  "version": "0.17.2-ALPHA",
+  "version": "0.17.3-ALPHA",
   "description": "JavaScript/TypeScript SDK to create CarbonLDP's Applications",
   "homepage": "https://github.com/CarbonLDP/CarbonLDP-JS-SDK",
   "contributors": [
@@ -24,6 +24,7 @@
     "dts-generator": "^1.7.0",
     "es6-shim": "^0.33.10",
     "gulp": "^3.9.1",
+    "gulp-json-editor": "^2.2.1",
     "gulp-sourcemaps": "^1.6.0",
     "gulp-tslint": "^3.6.0",
     "gulp-typescript": "^2.12.1",
@@ -38,6 +39,8 @@
     "karma-jasmine": "^0.3.6",
     "karma-jspm": "^2.0.2",
     "karma-sourcemap-loader": "^0.3.4",
+    "minimatch": "^3.0.0",
+    "node-glob": "^1.2.0",
     "systemjs": "github:CarbonLDP/systemjs#typescript-source-maps",
     "systemjs-builder": "github:CarbonLDP/builder#typescript-source-maps",
     "tslint": "^3.5.0",

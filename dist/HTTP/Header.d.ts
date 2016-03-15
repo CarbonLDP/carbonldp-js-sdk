@@ -1,4 +1,3 @@
-/// <reference path="../../typings/typings.d.ts" />
 export declare class Class {
     constructor();
     constructor(values: Value[]);

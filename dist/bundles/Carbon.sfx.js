@@ -669,7 +669,6 @@
 })(typeof self != 'undefined' ? self : global);
 
 "bundle";
-/// <reference path="./../typings/typings.d.ts" />
 $__System.register("2", ["3", "4", "5", "6", "7"], function(exports_1) {
     var App, Pointer, RDF, Utils, CS;
     var Apps;
@@ -732,7 +731,6 @@ $__System.register("2", ["3", "4", "5", "6", "7"], function(exports_1) {
     }
 });
 
-/// <reference path="./../typings/typings.d.ts" />
 $__System.register("3", ["8", "9", "5", "6"], function(exports_1) {
     var __extends = (this && this.__extends) || function (d, b) {
         for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -826,7 +824,6 @@ $__System.register("a", ["9"], function(exports_1) {
     }
 });
 
-/// <reference path="./../typings/typings.d.ts" />
 $__System.register("b", ["3", "a", "c", "d", "e", "f", "10"], function(exports_1) {
     var App, APIDescription, Auth, Documents_1, Errors, LDP, ObjectSchema;
     var Class, instance;
@@ -901,7 +898,6 @@ $__System.register("b", ["3", "a", "c", "d", "e", "f", "10"], function(exports_1
                 Class.prototype.getObjectSchema = function (type) {
                     if (type === void 0) { type = null; }
                     if (!!type) {
-                        // Type specific schema
                         if (this.typeObjectSchemaMap.has(type))
                             return this.typeObjectSchemaMap.get(type);
                         if (!!this.parentContext && this.parentContext.hasObjectSchema(type))
@@ -909,7 +905,6 @@ $__System.register("b", ["3", "a", "c", "d", "e", "f", "10"], function(exports_1
                         return null;
                     }
                     else {
-                        // General schema
                         if (!!this.generalObjectSchema)
                             return this.generalObjectSchema;
                         if (!!this.parentContext)
@@ -990,7 +985,6 @@ $__System.register("b", ["3", "a", "c", "d", "e", "f", "10"], function(exports_1
     }
 });
 
-/// <reference path="./../typings/typings.d.ts" />
 $__System.register("8", ["b", "10"], function(exports_1) {
     var __extends = (this && this.__extends) || function (d, b) {
         for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -1029,7 +1023,6 @@ $__System.register("8", ["b", "10"], function(exports_1) {
     }
 });
 
-/// <reference path="./../typings/typings.d.ts" />
 $__System.register("11", ["e", "10", "9", "4", "5", "6"], function(exports_1) {
     var Errors, ObjectSchema, NS, Pointer, RDF, Utils;
     var Class;
@@ -1054,7 +1047,6 @@ $__System.register("11", ["e", "10", "9", "4", "5", "6"], function(exports_1) {
                 Utils = Utils_1;
             }],
         execute: function() {
-            // TODO: Use Literal.Parsers to parse literals
             Class = (function () {
                 function Class(literalSerializers) {
                     if (literalSerializers === void 0) { literalSerializers = null; }
@@ -1131,7 +1123,6 @@ $__System.register("11", ["e", "10", "9", "4", "5", "6"], function(exports_1) {
                 Class.prototype.expandProperty = function (propertyValue, propertyDefinition, pointerValidator) {
                     switch (propertyDefinition.containerType) {
                         case null:
-                            // Property is not a list
                             if (propertyDefinition.literal) {
                                 return this.expandPropertyLiteral(propertyValue, propertyDefinition.literalType.toString());
                             }
@@ -1185,7 +1176,6 @@ $__System.register("11", ["e", "10", "9", "4", "5", "6"], function(exports_1) {
                     return [expandedPointer];
                 };
                 Class.prototype.expandPropertyLiteral = function (propertyValue, literalType) {
-                    // TODO: Language
                     var serializedValue = this.serializeLiteral(propertyValue, literalType);
                     if (serializedValue === null)
                         return null;
@@ -1248,7 +1238,6 @@ $__System.register("11", ["e", "10", "9", "4", "5", "6"], function(exports_1) {
                 Class.prototype.expandPropertyLanguageMap = function (propertyValue) {
                     var _this = this;
                     if (!Utils.isObject(propertyValue)) {
-                        // TODO: Warn of data loss
                         return null;
                     }
                     var mapValues = [];
@@ -1261,28 +1250,23 @@ $__System.register("11", ["e", "10", "9", "4", "5", "6"], function(exports_1) {
                 };
                 Class.prototype.serializeLiteral = function (propertyValue, literalType) {
                     if (Pointer.Factory.is(propertyValue)) {
-                        // TODO: Warn of data loss
                         return null;
                     }
                     if (!this.literalSerializers.has(literalType)) {
-                        // TODO: Warn of data loss
                         return null;
                     }
                     try {
                         return this.literalSerializers.get(literalType).serialize(propertyValue);
                     }
                     catch (error) {
-                        // TODO: Warn of data loss
                         return null;
                     }
                 };
                 Class.prototype.expandPointer = function (propertyValue, pointerValidator) {
                     if (!Pointer.Factory.is(propertyValue)) {
-                        // TODO: Warn of data loss
                         return null;
                     }
                     if (!!pointerValidator && !pointerValidator.inScope(propertyValue)) {
-                        // TODO: Warn of data loss
                         return null;
                     }
                     return { "@id": propertyValue.id };
@@ -1302,7 +1286,6 @@ $__System.register("11", ["e", "10", "9", "4", "5", "6"], function(exports_1) {
                 };
                 Class.prototype.expandValue = function (propertyValue, pointerValidator) {
                     if (Utils.isArray(propertyValue)) {
-                        // TODO: Lists of lists are not currently supported by the spec
                         return null;
                     }
                     else if (Pointer.Factory.is(propertyValue)) {
@@ -1331,7 +1314,6 @@ $__System.register("11", ["e", "10", "9", "4", "5", "6"], function(exports_1) {
                             literalType = NS.XSD.DataType.string;
                             break;
                         default:
-                            // TODO: Warn of data loss
                             return null;
                     }
                     serializedValue = this.literalSerializers.get(literalType).serialize(literalValue);
@@ -1383,7 +1365,6 @@ $__System.register("11", ["e", "10", "9", "4", "5", "6"], function(exports_1) {
                     var propertyURI = propertyDefinition.uri.toString();
                     switch (propertyDefinition.containerType) {
                         case null:
-                            // Property is not a list
                             if (propertyDefinition.literal) {
                                 return this.getPropertyLiteral(expandedObject, propertyURI, propertyDefinition.literalType.toString());
                             }
@@ -1770,7 +1751,6 @@ $__System.register("13", ["4", "6"], function(exports_1) {
     }
 });
 
-/// <reference path="./../typings/typings.d.ts" />
 $__System.register("15", ["e", "12", "11", "14", "10", "4", "5", "13", "6"], function(exports_1) {
     var Errors, Fragment, JSONLDConverter_1, NamedFragment, ObjectSchema, Pointer, RDF, Resource, Utils;
     var Factory;
@@ -2047,7 +2027,6 @@ $__System.register("15", ["e", "12", "11", "14", "10", "4", "5", "13", "6"], fun
     }
 });
 
-/// <reference path="./../typings/typings.d.ts" />
 $__System.register("16", ["6"], function(exports_1) {
     var Utils;
     var Factory;
@@ -2169,7 +2148,6 @@ $__System.register("19", ["15", "16", "17", "18", "5", "6", "1a"], function(expo
                 if (fragment.isDirty())
                     return true;
             }
-            // Check if an already saved fragment was removed
             for (var _b = 0, _c = document._savedFragments; _b < _c.length; _b++) {
                 var fragment = _c[_b];
                 if (!document.hasFragment(fragment.id))
@@ -2203,7 +2181,6 @@ $__System.register("19", ["15", "16", "17", "18", "5", "6", "1a"], function(expo
         };
     }
     function refresh() {
-        // TODO
         return null;
     }
     function save() {
@@ -2428,7 +2405,6 @@ $__System.register("19", ["15", "16", "17", "18", "5", "6", "1a"], function(expo
                             configurable: true,
                             value: extendCreateNamedFragment(persistedDocument.createNamedFragment),
                         },
-                        // Overwrite PersistedResource.isDirty to take into account fragments state
                         "isDirty": {
                             writable: false,
                             enumerable: false,
@@ -2445,7 +2421,6 @@ $__System.register("19", ["15", "16", "17", "18", "5", "6", "1a"], function(expo
     }
 });
 
-/// <reference path="./../typings/typings.d.ts" />
 $__System.register("10", ["e", "5", "6"], function(exports_1) {
     var Errors, RDF, Utils;
     var ContainerType, DigestedObjectSchema, DigestedPropertyDefinition, Digester;
@@ -2550,7 +2525,6 @@ $__System.register("10", ["e", "5", "6"], function(exports_1) {
                                 digestedDefinition.uri = Digester.resolvePrefixedURI(new RDF.URI.Class(propertyName), digestedSchema);
                             }
                             else {
-                                // TODO: Handle @vocab or @base case
                                 throw new Errors.IllegalArgumentError("Every property definition needs to have a uri defined.");
                             }
                             if ("@type" in schemaDefinition) {
@@ -2631,7 +2605,6 @@ $__System.register("10", ["e", "5", "6"], function(exports_1) {
     }
 });
 
-/// <reference path="../../typings/typings.d.ts" />
 $__System.register("1b", ["9", "6"], function(exports_1) {
     var NS, Utils;
     var RDF_CLASS, SCHEMA, Factory;
@@ -2664,7 +2637,6 @@ $__System.register("1b", ["9", "6"], function(exports_1) {
     }
 });
 
-/// <reference path="./../../typings/typings.d.ts" />
 $__System.register("1c", ["9"], function(exports_1) {
     var NS;
     var RDF_CLASS, Factory;
@@ -2695,7 +2667,6 @@ $__System.register("1c", ["9"], function(exports_1) {
     }
 });
 
-/// <reference path="../../typings/typings.d.ts" />
 $__System.register("1d", ["9", "6"], function(exports_1) {
     var NS, Utils;
     var RDF_CLASS, SCHEMA, Factory;
@@ -2913,7 +2884,6 @@ $__System.register("20", ["6"], function(exports_1) {
     }
 });
 
-/// <reference path="./../../typings/typings.d.ts" />
 $__System.register("21", ["22"], function(exports_1) {
     var JSONParser_1;
     var Class;
@@ -2940,7 +2910,6 @@ $__System.register("21", ["22"], function(exports_1) {
     }
 });
 
-/// <reference path="./../../typings/typings.d.ts" />
 $__System.register("23", ["e", "24", "5", "6", "21"], function(exports_1) {
     var Errors, HTTP, RDF, Utils, RawResultsParser_1;
     var Class;
@@ -3086,7 +3055,6 @@ $__System.register("26", ["20", "21", "23", "25"], function(exports_1) {
     }
 });
 
-/// <reference path="../typings/typings.d.ts" />
 $__System.register("d", ["e", "24", "5", "6", "11", "19", "4", "9", "10", "f", "26"], function(exports_1) {
     var Errors, HTTP, RDF, Utils, JSONLDConverter, PersistedDocument, Pointer, NS, ObjectSchema, LDP, SPARQL;
     var Documents;
@@ -3234,13 +3202,10 @@ $__System.register("d", ["e", "24", "5", "6", "11", "19", "4", "9", "10", "f", "
                         _this.compact(documentResource, document, document);
                         _this.compact(fragmentResources, fragments, document);
                         _this.compact(namedFragmentResources, namedFragments, document);
-                        // TODO: Move this to a more appropriate place
                         document._syncSnapshot();
                         fragments.forEach(function (fragment) { return fragment._syncSnapshot(); });
                         namedFragments.forEach(function (fragment) { return fragment._syncSnapshot(); });
                         document._syncSavedFragments();
-                        // TODO: Decorate additional behavior (app, etc.)
-                        // TODO: Make it dynamic
                         if (LDP.Container.Factory.hasRDFClass(document))
                             LDP.PersistedContainer.Factory.decorate(document);
                         return [document, response];
@@ -3274,7 +3239,6 @@ $__System.register("d", ["e", "24", "5", "6", "11", "19", "4", "9", "10", "f", "
                         if (locationHeader.values.length !== 1)
                             throw new HTTP.Errors.BadResponseError("The response contains more than one Location header.", response);
                         var locationURI = locationHeader.values[0].toString();
-                        // TODO: If a Document was supplied, use it to create the pointer instead of creating a new one
                         var pointer = _this.getPointer(locationURI);
                         return [
                             pointer,
@@ -3463,12 +3427,7 @@ $__System.register("d", ["e", "24", "5", "6", "11", "19", "4", "9", "10", "f", "
                 Documents.prototype.getPointerID = function (uri) {
                     if (RDF.URI.Util.isBNodeID(uri))
                         throw new Errors.IllegalArgumentError("BNodes cannot be fetched directly.");
-                    // TODO: Make named fragments independently resolvable
-                    /*
-                        if( RDF.URI.Util.hasFragment( uri ) ) throw new Errors.IllegalArgumentError( "Fragment URI's cannot be fetched directly." );
-                    */
                     if (!!this.context) {
-                        // TODO: Check this, it may be incorrect
                         if (RDF.URI.Util.isRelative(uri)) {
                             var baseURI = this.context.getBaseURI();
                             if (!RDF.URI.Util.isBaseOf(baseURI, uri))
@@ -3968,7 +3927,6 @@ $__System.register("2d", ["e", "6"], function(exports_1) {
                 IntegerSerializer.prototype.serialize = function (value) {
                     if (!Utils.isNumber(value))
                         throw new Errors.IllegalArgumentError("The value is not a number.");
-                    // Negative truncate
                     return (~~value).toString();
                 };
                 return IntegerSerializer;
@@ -4092,7 +4050,6 @@ $__System.register("2f", ["6", "30", "e", "2c", "2e"], function(exports_1) {
                             type = XSD.DataType.boolean;
                             break;
                         default:
-                            // Treat it as an unknown object
                             type = XSD.DataType.object;
                             value = JSON.stringify(value);
                             break;
@@ -4119,13 +4076,11 @@ $__System.register("2f", ["6", "30", "e", "2c", "2e"], function(exports_1) {
                     }
                     if (literalDataType === null)
                         return literalValue;
-                    // The DataType isn't supported
                     if (!Utils.hasProperty(XSD.DataType, literalDataType))
                         return literalValue;
                     var value;
                     var parts;
                     switch (literalDataType) {
-                        // Dates
                         case XSD.DataType.date:
                         case XSD.DataType.dateTime:
                             value = new Date(literalValue);
@@ -4136,16 +4091,13 @@ $__System.register("2f", ["6", "30", "e", "2c", "2e"], function(exports_1) {
                             value.setUTCHours(parseFloat(parts[1]), parseFloat(parts[2]), parseFloat(parts[3]), parseFloat(parts[4]));
                             break;
                         case XSD.DataType.duration:
-                            // TODO: Support duration values (create a class or something...)
                             break;
                         case XSD.DataType.gDay:
                         case XSD.DataType.gMonth:
                         case XSD.DataType.gMonthDay:
                         case XSD.DataType.gYear:
                         case XSD.DataType.gYearMonth:
-                            // TODO: Decide. Should we return it as a Date?
                             break;
-                        // Numbers
                         case XSD.DataType.byte:
                         case XSD.DataType.decimal:
                         case XSD.DataType.int:
@@ -4164,7 +4116,6 @@ $__System.register("2f", ["6", "30", "e", "2c", "2e"], function(exports_1) {
                         case XSD.DataType.float:
                             value = parseFloat(literalValue);
                             break;
-                        // Misc
                         case XSD.DataType.boolean:
                             value = Utils.parseBoolean(literalValue);
                             break;
@@ -4195,7 +4146,6 @@ $__System.register("2f", ["6", "30", "e", "2c", "2e"], function(exports_1) {
                 function Util() {
                 }
                 Util.areEqual = function (literal1, literal2) {
-                    // TODO: Implement
                     return false;
                 };
                 return Util;
@@ -4270,7 +4220,6 @@ $__System.register("31", ["2b", "2f", "9", "2a"], function(exports_1) {
                 RDFNode = RDFNode_1;
             }],
         execute: function() {
-            // TODO: Move all getters and setters to RDFNode.Util
             Util = (function () {
                 function Util() {
                 }
@@ -9682,7 +9631,6 @@ var _removeDefine = $__System.get("@@amd-helpers").createDefine();
 
 _removeDefine();
 })();
-/// <reference path="./../../typings/typings.d.ts" />
 $__System.register("22", [], function(exports_1) {
     var Class;
     return {
@@ -9697,7 +9645,6 @@ $__System.register("22", [], function(exports_1) {
                             resolve(JSON.parse(body));
                         }
                         catch (error) {
-                            // TODO: Handle SyntaxError
                             reject(error);
                         }
                     });
@@ -9710,7 +9657,6 @@ $__System.register("22", [], function(exports_1) {
     }
 });
 
-/// <reference path="../../typings/typings.d.ts" />
 $__System.register("33", ["32", "22"], function(exports_1) {
     var jsonld, JSONParser_1;
     var Class;
@@ -9737,7 +9683,6 @@ $__System.register("33", ["32", "22"], function(exports_1) {
                     return new Promise(function (resolve, reject) {
                         jsonld.expand(parsedObject, options, function (error, expanded) {
                             if (error) {
-                                // TODO: Handle jsonld.expand error
                                 reject(error);
                             }
                             parsedObject = expanded;
@@ -10782,7 +10727,6 @@ $__System.register("4e", [], function(exports_1) {
     }
 });
 
-/// <reference path="./../../typings/typings.d.ts" />
 $__System.register("4f", ["4d", "50", "4e", "51", "6"], function(exports_1) {
     var Errors, Header, Method_1, Response_1, Utils;
     var Service, Util;
@@ -10817,7 +10761,6 @@ $__System.register("4f", ["4d", "50", "4e", "51", "6"], function(exports_1) {
         if (response.status >= 400 && response.status < 600) {
             if (Errors.statusCodeMap.has(response.status)) {
                 var error = Errors.statusCodeMap.get(response.status);
-                // TODO: Set error message
                 reject(new error("", response));
             }
         }
@@ -10979,7 +10922,6 @@ $__System.register("4f", ["4d", "50", "4e", "51", "6"], function(exports_1) {
     }
 });
 
-/// <reference path="../../typings/typings.d.ts" />
 $__System.register("50", [], function(exports_1) {
     var Class, Value, Util;
     return {
@@ -11159,7 +11101,6 @@ $__System.register("52", [], function(exports_1) {
     }
 });
 
-/// <reference path="./../../typings/typings.d.ts" />
 $__System.register("53", [], function(exports_1) {
     var Class;
     return {
@@ -11181,7 +11122,6 @@ $__System.register("53", [], function(exports_1) {
     }
 });
 
-/// <reference path="./../typings/typings.d.ts" />
 $__System.register("24", ["4d", "50", "22", "33", "4e", "34", "4f", "51", "52", "53"], function(exports_1) {
     var Errors, Header, JSONParser, JSONLDParser, Method_1, Parser, Request, Response, StatusCode_1, StringParser;
     return {
@@ -11920,7 +11860,6 @@ $__System.register("5b", ["9", "4", "6"], function(exports_1) {
                         types = pointerOrExpandedObject["@type"];
                     }
                     else if ("types" in pointerOrExpandedObject) {
-                        // TODO: Use proper class
                         var resource = pointerOrExpandedObject;
                         types = Pointer.Util.getIDs(resource.types);
                     }
@@ -12307,7 +12246,6 @@ $__System.register("e", ["5e", "5f", "60", "61", "62"], function(exports_1) {
     }
 });
 
-/// <reference path="./../typings/typings.d.ts" />
 $__System.register("c", ["27", "28", "55", "5b", "5d", "56", "e", "6"], function(exports_1) {
     var AuthenticationToken_1, Authenticator_1, BasicAuthenticator_1, Token, TokenAuthenticator_1, UsernameAndPasswordToken_1, Errors, Utils;
     var Method, Class;
@@ -12437,7 +12375,6 @@ $__System.register("63", ["c"], function(exports_1) {
     }
 });
 
-/// <reference path="./../typings/typings.d.ts" />
 $__System.register("6", [], function(exports_1) {
     var O, S, A, M, UUID, P;
     function hasFunction(object, functionName) {
@@ -12508,7 +12445,6 @@ $__System.register("6", [], function(exports_1) {
     function parseBoolean(value) {
         if (!isString(value))
             return false;
-        /* tslint:disable: no-switch-case-fall-through */
         switch (value.toLowerCase()) {
             case "true":
             case "yes":
@@ -12522,7 +12458,6 @@ $__System.register("6", [], function(exports_1) {
             default:
                 return false;
         }
-        /* tslint:enable: no-switch-case-fall-through */
     }
     function extend(target) {
         var objects = [];
@@ -12715,7 +12650,6 @@ $__System.register("6", [], function(exports_1) {
     }
 });
 
-/// <reference path="../typings/typings.d.ts" />
 $__System.register("64", ["2", "c", "8", "15", "d", "24", "5", "63", "6"], function(exports_1) {
     var __extends = (this && this.__extends) || function (d, b) {
         for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -12756,7 +12690,6 @@ $__System.register("64", ["2", "c", "8", "15", "d", "24", "5", "63", "6"], funct
         execute: function() {
             Carbon = (function (_super) {
                 __extends(Carbon, _super);
-                // TODO: Define settings type
                 function Carbon(settings) {
                     _super.call(this);
                     settings = settings ? settings : settings_1.default;
@@ -12764,9 +12697,7 @@ $__System.register("64", ["2", "c", "8", "15", "d", "24", "5", "63", "6"], funct
                     this.apps = new Apps_1.default(this);
                 }
                 Object.defineProperty(Carbon, "version", {
-                    /* tslint:enable: variable-name */
-                    // TODO: Get package.json version directly
-                    get: function () { return "0.17.2-ALPHA"; },
+                    get: function () { return "0.17.3-ALPHA"; },
                     enumerable: true,
                     configurable: true
                 });
@@ -12783,7 +12714,6 @@ $__System.register("64", ["2", "c", "8", "15", "d", "24", "5", "63", "6"], funct
                         return description;
                     });
                 };
-                /* tslint:disable: variable-name */
                 Carbon.Apps = Apps_1.default;
                 Carbon.Auth = Auth;
                 Carbon.Document = Document;

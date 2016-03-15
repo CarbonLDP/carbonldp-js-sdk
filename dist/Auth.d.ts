@@ -1,4 +1,3 @@
-/// <reference path="../typings/typings.d.ts" />
 import AuthenticationToken from "./Auth/AuthenticationToken";
 import Authenticator from "./Auth/Authenticator";
 import BasicAuthenticator from "./Auth/BasicAuthenticator";

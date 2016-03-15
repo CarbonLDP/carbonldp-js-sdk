@@ -1,5 +1,3 @@
-/// <reference path="./../typings/typings.d.ts" />
-
 function hasFunction( object:Object, functionName:string ):boolean {
 	return typeof object[ functionName ] === "function";
 }
