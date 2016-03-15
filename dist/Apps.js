@@ -40,7 +40,6 @@ var Apps = (function () {
     };
     return Apps;
 }());
-exports.Apps = Apps;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = Apps;
 

@@ -2,7 +2,7 @@ export interface Class {
     "@id": string;
 }
 export declare class Factory {
-    static is(value: any): boolean;
+    static is(value: Object): boolean;
     static create(uri: string): Class;
 }
 export declare class Util {

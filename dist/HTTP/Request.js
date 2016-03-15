@@ -131,7 +131,7 @@ var Util = (function () {
             headers.set(headerName, new Header.Class());
         }
         if (!requestOptions.headers)
-            return null;
+            return undefined;
         return requestOptions.headers.get(headerName);
     };
     Util.setAcceptHeader = function (accept, requestOptions) {
@@ -157,9 +157,9 @@ var Util = (function () {
     Util.setContainerRetrievalPreferences = function (preferences, requestOptions) {
         var prefer = Util.getHeader("Prefer", requestOptions, true);
         var headerPieces = ["return=representation;"];
-        if ("include" in preferences)
+        if ("include" in preferences && preferences.include.length > 0)
             headerPieces.push('include="' + preferences.include.join(" ") + '"');
-        if ("omit" in preferences)
+        if ("omit" in preferences && preferences.omit.length > 0)
             headerPieces.push('omit="' + preferences.omit.join(" ") + '"');
         if (headerPieces.length === 1)
             return requestOptions;

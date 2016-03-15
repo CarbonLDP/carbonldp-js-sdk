@@ -6,5 +6,4 @@ export interface Class extends Resource.Class {
 }
 export declare class Factory {
 }
-export declare let factory: Factory;
 export default Class;

@@ -10,8 +10,8 @@ import {
 	hasConstructor,
 	hasProperty,
 
-} from "../test/JasmineExtender";
-import * as Utils from "../Utils";
+} from "./../test/JasmineExtender";
+import * as Utils from "./../Utils";
 
 import * as UsernameAndPasswordToken from "./UsernameAndPasswordToken";
 

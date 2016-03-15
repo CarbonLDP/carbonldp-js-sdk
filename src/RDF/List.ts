@@ -7,11 +7,9 @@ export interface Class {
 
 export class Factory {
 	static is( value:any ):boolean {
-		return (
-			( ! Utils.isNull( value ) ) &&
-			Utils.isObject( value ) &&
-			Utils.hasProperty( value, "@list" )
-		);
+		return Utils.isObject( value )
+			&& Utils.hasProperty( value, "@list" )
+			&& Utils.isArray( value[ "@list" ] );
 	}
 }
 

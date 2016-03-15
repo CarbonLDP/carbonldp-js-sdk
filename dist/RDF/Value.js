@@ -109,7 +109,9 @@ var Util = (function () {
         var properties = [];
         for (var _i = 0, propertyValues_3 = propertyValues; _i < propertyValues_3.length; _i++) {
             var propertyValue = propertyValues_3[_i];
-            properties.push(Util.parseValue(propertyValue, pointerLibrary));
+            var parsedValue = Util.parseValue(propertyValue, pointerLibrary);
+            if (parsedValue !== null)
+                properties.push(parsedValue);
         }
         return properties;
     };
@@ -125,7 +127,8 @@ var Util = (function () {
             if (!RDFNode.Factory.is(propertyValue))
                 continue;
             var pointer = pointerLibrary.getPointer(propertyValue["@id"]);
-            propertyPointers.push(pointer);
+            if (pointer !== null)
+                propertyPointers.push(pointer);
         }
         return propertyPointers;
     };
@@ -204,6 +207,7 @@ var Util = (function () {
         }
         else {
         }
+        return null;
     };
     return Util;
 }());

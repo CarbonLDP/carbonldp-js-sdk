@@ -10,26 +10,27 @@ export interface Class extends Resource.Class {
 }
 
 export class Factory {
-	hasClassProperties( resource:Object ):boolean {
+	static hasClassProperties( resource:Object ):boolean {
 		return (
 			Utils.hasPropertyDefined( resource, "document" )
 		);
 	}
 
-	create( id:string, document:Document.Class ):Class;
-	create( document:Document.Class ):Class;
-	create( idOrDocument:any, document:Document.Class = null ):Class {
+	static create( id:string, document:Document.Class ):Class;
+	static create( document:Document.Class ):Class;
+	static create( idOrDocument:any, document:Document.Class = null ):Class {
 		return this.createFrom( {}, idOrDocument, document );
 	}
 
-	createFrom<T extends Object>( object:T, id:string, document:Document.Class ):T & Class;
-	createFrom<T extends Object>( object:T, document:Document.Class ):T & Class;
-	createFrom<T extends Object>( object:T, idOrDocument:any, document:Document.Class = null ):T & Class {
+	static createFrom<T extends Object>( object:T, id:string, document:Document.Class ):T & Class;
+	static createFrom<T extends Object>( object:T, document:Document.Class ):T & Class;
+	static createFrom<T extends Object>( object:T, idOrDocument:any, document:Document.Class = null ):T & Class {
 		let id:string = !! document ? idOrDocument : Util.generateID();
+		document = document || idOrDocument;
 
 		let resource:Resource.Class = Resource.Factory.createFrom( object, id );
 
-		if( this.hasClassProperties( resource ) ) return <any> resource;
+		if( Factory.hasClassProperties( resource ) ) return <any> resource;
 
 		Object.defineProperties( resource, {
 			"document": {
@@ -43,8 +44,6 @@ export class Factory {
 		return <any> resource;
 	}
 }
-
-export var factory:Factory = new Factory();
 
 export class Util {
 	static generateID():string {

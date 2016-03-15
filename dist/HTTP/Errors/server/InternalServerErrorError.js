@@ -5,26 +5,26 @@ var __extends = (this && this.__extends) || function (d, b) {
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
 var HTTPError_1 = require("./../HTTPError");
-var name = "InternalServerError";
+var name = "InternalServerErrorError";
 var statusCode = 500;
-var InternalServerError = (function (_super) {
-    __extends(InternalServerError, _super);
-    function InternalServerError() {
+var InternalServerErrorError = (function (_super) {
+    __extends(InternalServerErrorError, _super);
+    function InternalServerErrorError() {
         _super.apply(this, arguments);
     }
-    Object.defineProperty(InternalServerError, "statusCode", {
+    Object.defineProperty(InternalServerErrorError, "statusCode", {
         get: function () { return statusCode; },
         enumerable: true,
         configurable: true
     });
-    Object.defineProperty(InternalServerError.prototype, "name", {
+    Object.defineProperty(InternalServerErrorError.prototype, "name", {
         get: function () { return name; },
         enumerable: true,
         configurable: true
     });
-    return InternalServerError;
+    return InternalServerErrorError;
 }(HTTPError_1.default));
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = InternalServerError;
+exports.default = InternalServerErrorError;
 
-//# sourceMappingURL=InternalServerError.js.map
+//# sourceMappingURL=InternalServerErrorError.js.map

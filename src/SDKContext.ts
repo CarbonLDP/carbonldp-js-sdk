@@ -46,10 +46,8 @@ export class Class implements Context {
 	}
 
 	hasSetting( name:string ):boolean {
-		return (
-				this.settings.has( name ) ||
-				( this.parentContext && this.parentContext.hasSetting( name ) )
-		);
+		return  ( this.settings.has( name ) )
+			||  ( !! this.parentContext && this.parentContext.hasSetting( name ) );
 	}
 
 	getSetting( name:string ):any {
@@ -58,11 +56,11 @@ export class Class implements Context {
 		return null;
 	}
 
-	setSetting( name:string, value:any ):any {
+	setSetting( name:string, value:any ):void {
 		this.settings.set( name, value );
 	}
 
-	deleteSetting( name:string ):any {
+	deleteSetting( name:string ):void {
 		this.settings.delete( name );
 	}
 

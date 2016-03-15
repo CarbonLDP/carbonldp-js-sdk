@@ -1,6 +1,7 @@
 "use strict";
 var Utils = require("./../Utils");
 var XSD = require("./../NS/XSD");
+var Errors = require("./../Errors");
 var Serializers = require("./Literal/Serializers");
 exports.Serializers = Serializers;
 var Factory = (function () {
@@ -8,7 +9,9 @@ var Factory = (function () {
     }
     Factory.from = function (value) {
         if (Utils.isNull(value))
-            throw new Error("IllegalArgument: null cannot be converted into a Literal");
+            throw new Errors.IllegalArgumentError("Null cannot be converted into a Literal");
+        if (!Utils.isDefined(value))
+            throw new Errors.IllegalArgumentError("The value is undefined");
         var type;
         switch (true) {
             case Utils.isDate(value):
@@ -19,8 +22,9 @@ var Factory = (function () {
                 if (Utils.isInteger(value)) {
                     type = XSD.DataType.integer;
                 }
-                else
+                else {
                     type = XSD.DataType.double;
+                }
                 break;
             case Utils.isString(value):
                 type = XSD.DataType.string;
@@ -33,7 +37,7 @@ var Factory = (function () {
                 value = JSON.stringify(value);
                 break;
         }
-        var literal = { "@value": value };
+        var literal = { "@value": value.toString() };
         if (type)
             literal["@type"] = type;
         return literal;
@@ -58,11 +62,16 @@ var Factory = (function () {
         if (!Utils.hasProperty(XSD.DataType, literalDataType))
             return literalValue;
         var value;
+        var parts;
         switch (literalDataType) {
             case XSD.DataType.date:
             case XSD.DataType.dateTime:
-            case XSD.DataType.time:
                 value = new Date(literalValue);
+                break;
+            case XSD.DataType.time:
+                parts = literalValue.match(/(\d+):(\d+):(\d+)\.(\d+)Z/);
+                value = new Date();
+                value.setUTCHours(parseFloat(parts[1]), parseFloat(parts[2]), parseFloat(parts[3]), parseFloat(parts[4]));
                 break;
             case XSD.DataType.duration:
                 break;
@@ -105,11 +114,8 @@ var Factory = (function () {
         return value;
     };
     Factory.is = function (value) {
-        if (!value)
-            return false;
-        if (!Utils.isObject(value))
-            return false;
-        return Utils.hasProperty(value, "@value");
+        return Utils.hasProperty(value, "@value")
+            && Utils.isString(value["@value"]);
     };
     Factory.hasType = function (value, type) {
         if (!value["@type"] && type === XSD.DataType.string)

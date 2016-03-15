@@ -1,5 +1,6 @@
 import * as HTTP from "./HTTP";
 import * as Utils from "./Utils";
+import * as Errors from "./Errors";
 
 export interface Class {
 	_id:string;
@@ -34,7 +35,7 @@ export class Factory {
 		);
 	}
 
-	static create( id:string ):Class {
+	static create( id?:string ):Class {
 		id = !! id ? id : "";
 
 		let pointer:Class = Factory.decorate( {} );
@@ -82,9 +83,9 @@ export class Factory {
 				writable: false,
 				enumerable: false,
 				configurable: true,
-				value: function():Promise<void> {
+				value: function():Promise<[ Class, HTTP.Response.Class ]> {
 					return new Promise( ( resolve:( result:any ) => void, reject:( error:any ) => void ):any => {
-						return this;
+						throw new Errors.NotImplementedError( "A simple pointer cannot be resolved by it self." );
 					});
 				},
 			},

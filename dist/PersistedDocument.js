@@ -5,6 +5,7 @@ var PersistedFragment = require("./PersistedFragment");
 var PersistedNamedFragment = require("./PersistedNamedFragment");
 var RDF = require("./RDF");
 var Utils = require("./Utils");
+var URI = require("./RDF/URI");
 function extendIsDirty(superFunction) {
     return function () {
         var isDirty = superFunction.call(this);
@@ -52,10 +53,7 @@ function refresh() {
     return null;
 }
 function save() {
-    var _this = this;
-    return this._documents.save(this).then(function (response) {
-        return [_this, response];
-    });
+    return this._documents.save(this);
 }
 function destroy() {
     return this._documents.delete(this);
@@ -101,7 +99,9 @@ var Factory = (function () {
             Utils.hasFunction(document, "executeRawCONSTRUCTQuery"));
     };
     Factory.is = function (object) {
-        return (Factory.hasClassProperties(object));
+        return Utils.isObject(object)
+            && Document.Factory.hasClassProperties(object)
+            && Factory.hasClassProperties(object);
     };
     Factory.create = function (uri, documents, snapshot) {
         if (snapshot === void 0) { snapshot = {}; }
@@ -153,7 +153,7 @@ var Factory = (function () {
                     return function (id) {
                         if (superFunction.call(this, id))
                             return true;
-                        return this._documents.hasPointer(id);
+                        return !URI.Util.isBNodeID(id) && this._documents.hasPointer(id);
                     };
                 })(),
             },
@@ -177,10 +177,10 @@ var Factory = (function () {
                 configurable: true,
                 value: (function () {
                     var superFunction = persistedDocument.inScope;
-                    return function (id) {
-                        if (superFunction.call(this, id))
+                    return function (idOrPointer) {
+                        if (superFunction.call(this, idOrPointer))
                             return true;
-                        return this._documents.inScope(id);
+                        return this._documents.inScope(idOrPointer);
                     };
                 })(),
             },

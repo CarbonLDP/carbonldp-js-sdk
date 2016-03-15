@@ -5,15 +5,15 @@ var Utils = require("./Utils");
 var Factory = (function () {
     function Factory() {
     }
-    Factory.prototype.hasClassProperties = function (resource) {
+    Factory.hasClassProperties = function (resource) {
         return (Utils.hasPropertyDefined(resource, "slug"));
     };
-    Factory.prototype.create = function (slug, document) {
+    Factory.create = function (slug, document) {
         return this.createFrom({}, slug, document);
     };
-    Factory.prototype.createFrom = function (object, slug, document) {
+    Factory.createFrom = function (object, slug, document) {
         var uri = document.id + "#" + slug;
-        var fragment = Fragment.factory.createFrom(object, uri, document);
+        var fragment = Fragment.Factory.createFrom(object, uri, document);
         if (this.hasClassProperties(fragment))
             return fragment;
         Object.defineProperties(fragment, {
@@ -33,6 +33,5 @@ var Factory = (function () {
     return Factory;
 }());
 exports.Factory = Factory;
-exports.factory = new Factory();
 
 //# sourceMappingURL=NamedFragment.js.map

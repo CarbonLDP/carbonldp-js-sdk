@@ -54,7 +54,7 @@ var Class = (function () {
     Class.executeRawCONSTRUCTQuery = function (url, constructQuery, options) {
         if (options === void 0) { options = {}; }
         options = Utils.extend(options, Class.defaultOptions);
-        if (HTTP.Request.Util.getHeader("Accept", options) === null)
+        if (HTTP.Request.Util.getHeader("Accept", options) === undefined)
             HTTP.Request.Util.setAcceptHeader("application/ld+json", options);
         HTTP.Request.Util.setContentTypeHeader("application/sparql-query", options);
         return HTTP.Request.Service.post(url, constructQuery, options, Class.stringParser);
@@ -62,7 +62,7 @@ var Class = (function () {
     Class.executeRawDESCRIBEQuery = function (url, describeQuery, options) {
         if (options === void 0) { options = {}; }
         options = Utils.extend(options, Class.defaultOptions);
-        if (HTTP.Request.Util.getHeader("Accept", options) === null)
+        if (HTTP.Request.Util.getHeader("Accept", options) === undefined)
             HTTP.Request.Util.setAcceptHeader("application/ld+json", options);
         HTTP.Request.Util.setContentTypeHeader("application/sparql-query", options);
         return HTTP.Request.Service.post(url, describeQuery, options, Class.stringParser);

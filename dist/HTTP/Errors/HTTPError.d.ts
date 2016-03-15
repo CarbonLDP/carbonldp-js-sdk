@@ -1,4 +1,4 @@
-import AbstractError from "../../Errors/AbstractError";
+import AbstractError from "./../../Errors/AbstractError";
 import Response from "./../Response";
 declare class HTTPError extends AbstractError {
     static statusCode: number;

@@ -10,9 +10,11 @@ var Resource = require("./Resource");
 var Utils = require("./Utils");
 function hasPointer(id) {
     var document = this;
+    if (id === document.id)
+        return true;
     if (!document.inScope(id))
         return false;
-    return !!document.getFragment(id);
+    return document.hasFragment(id);
 }
 function getPointer(id) {
     var document = this;
@@ -31,11 +33,9 @@ function inScope(idOrPointer) {
         return true;
     if (RDF.URI.Util.isBNodeID(id))
         return true;
-    if (RDF.URI.Util.isAbsolute(id) && RDF.URI.Util.isFragmentOf(id, document.id))
+    if (RDF.URI.Util.isFragmentOf(id, document.id))
         return true;
-    if (!RDF.URI.Util.isAbsolute(document.id) && !RDF.URI.Util.isAbsolute(id) && RDF.URI.Util.isFragmentOf(id, document.id))
-        return true;
-    return false;
+    return RDF.URI.Util.isRelative(id);
 }
 function hasFragment(id) {
     var document = this;
@@ -52,7 +52,7 @@ function getFragment(id) {
     var document = this;
     if (!RDF.URI.Util.isBNodeID(id))
         return document.getNamedFragment(id);
-    return document._fragmentsIndex.get(id);
+    return document._fragmentsIndex.get(id) || null;
 }
 function getNamedFragment(id) {
     var document = this;
@@ -65,7 +65,7 @@ function getNamedFragment(id) {
     }
     else if (Utils.S.startsWith(id, "#"))
         id = id.substring(1);
-    return document._fragmentsIndex.get(id);
+    return document._fragmentsIndex.get(id) || null;
 }
 function getFragments() {
     var document = this;
@@ -80,12 +80,12 @@ function createFragment(slug) {
             return document.createNamedFragment(slug);
         id = slug;
         if (this._fragmentsIndex.has(id))
-            return this.getFragment(id);
+            throw new Errors.IDAlreadyInUseError("The slug provided is already being used by a fragment.");
     }
     else {
         id = Fragment.Util.generateID();
     }
-    var fragment = Fragment.factory.create(id, document);
+    var fragment = Fragment.Factory.create(id, document);
     document._fragmentsIndex.set(id, fragment);
     return fragment;
 }
@@ -102,7 +102,7 @@ function createNamedFragment(slug) {
         slug = slug.substring(1);
     if (document._fragmentsIndex.has(slug))
         throw new Errors.IDAlreadyInUseError("The slug provided is already being used by a fragment.");
-    var fragment = NamedFragment.factory.create(slug, document);
+    var fragment = NamedFragment.Factory.create(slug, document);
     document._fragmentsIndex.set(slug, fragment);
     return fragment;
 }

@@ -6,11 +6,16 @@ function hasFunction( object:Object, functionName:string ):boolean {
 
 function hasProperty( object:Object, property:string ):boolean {
 	if ( ! object ) return false;
-	return "undefined" !== typeof object[ property ];
+	return isDefined( object[ property ] );
 }
 
 function hasPropertyDefined( object:Object, property:string ):boolean {
+	if ( ! object ) return false;
 	return ! ! Object.getOwnPropertyDescriptor( object, property );
+}
+
+function isDefined( value:any ): boolean {
+	return void 0 !== value;
 }
 
 function isNull( value:any ):boolean {
@@ -235,6 +240,7 @@ export {
 	hasFunction,
 	hasProperty,
 	hasPropertyDefined,
+	isDefined,
 	isNull,
 	isArray,
 	isString,

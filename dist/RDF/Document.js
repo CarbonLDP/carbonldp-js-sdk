@@ -1,13 +1,15 @@
 "use strict";
 var HTTP = require("./../HTTP");
 var RDFNode = require("./RDFNode");
-var Utils = require("../Utils");
+var Utils = require("./../Utils");
 var URI = require("./URI");
+var Errors = require("./../Errors");
 var Factory = (function () {
     function Factory() {
     }
     Factory.is = function (object) {
-        return (Utils.hasProperty(object, "@graph"));
+        return Utils.hasProperty(object, "@graph")
+            && Utils.isArray(object["@graph"]);
     };
     Factory.create = function (resources, uri) {
         var document = uri ? RDFNode.Factory.create(uri) : {};
@@ -35,8 +37,7 @@ var Util = (function () {
             if (RDFNode.Factory.is(value))
                 return [Factory.create([value])];
         }
-        else
-            throw new Error("IllegalArgument: The value structure isn't valid.");
+        throw new Errors.IllegalArgumentError("The value structure isn't valid.");
     };
     Util.getResources = function (value) {
         var documents = Util.getDocuments(value);

@@ -4,18 +4,19 @@ var Utils = require("./Utils");
 var Factory = (function () {
     function Factory() {
     }
-    Factory.prototype.hasClassProperties = function (resource) {
+    Factory.hasClassProperties = function (resource) {
         return (Utils.hasPropertyDefined(resource, "document"));
     };
-    Factory.prototype.create = function (idOrDocument, document) {
+    Factory.create = function (idOrDocument, document) {
         if (document === void 0) { document = null; }
         return this.createFrom({}, idOrDocument, document);
     };
-    Factory.prototype.createFrom = function (object, idOrDocument, document) {
+    Factory.createFrom = function (object, idOrDocument, document) {
         if (document === void 0) { document = null; }
         var id = !!document ? idOrDocument : Util.generateID();
+        document = document || idOrDocument;
         var resource = Resource.Factory.createFrom(object, id);
-        if (this.hasClassProperties(resource))
+        if (Factory.hasClassProperties(resource))
             return resource;
         Object.defineProperties(resource, {
             "document": {
@@ -30,7 +31,6 @@ var Factory = (function () {
     return Factory;
 }());
 exports.Factory = Factory;
-exports.factory = new Factory();
 var Util = (function () {
     function Util() {
     }

@@ -1,12 +1,12 @@
 import HTTPError from "./../HTTPError";
 
-const name:string = "InternalServerError";
+const name:string = "InternalServerErrorError";
 const statusCode:number = 500;
 
-class InternalServerError extends HTTPError {
+class InternalServerErrorError extends HTTPError {
 	static get statusCode():number { return statusCode; }
 
 	get name():string { return name; }
 }
 
-export default InternalServerError;
+export default InternalServerErrorError;

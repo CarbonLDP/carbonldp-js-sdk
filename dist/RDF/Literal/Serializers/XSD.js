@@ -58,7 +58,7 @@ var IntegerSerializer = (function () {
     IntegerSerializer.prototype.serialize = function (value) {
         if (!Utils.isNumber(value))
             throw new Errors.IllegalArgumentError("The value is not a number.");
-        return (~~value) + "";
+        return (~~value).toString();
     };
     return IntegerSerializer;
 }());
@@ -84,7 +84,11 @@ var FloatSerializer = (function () {
     FloatSerializer.prototype.serialize = function (value) {
         if (!Utils.isNumber(value))
             throw new Errors.IllegalArgumentError("The value is not a number.");
-        return value + "";
+        if (value === Number.POSITIVE_INFINITY)
+            return "INF";
+        if (value === Number.NEGATIVE_INFINITY)
+            return "-INF";
+        return value.toString();
     };
     return FloatSerializer;
 }());
@@ -94,12 +98,7 @@ var BooleanSerializer = (function () {
     function BooleanSerializer() {
     }
     BooleanSerializer.prototype.serialize = function (value) {
-        if (!!value) {
-            return "true";
-        }
-        else {
-            return "false";
-        }
+        return (!!value).toString();
     };
     return BooleanSerializer;
 }());
@@ -109,7 +108,7 @@ var StringSerializer = (function () {
     function StringSerializer() {
     }
     StringSerializer.prototype.serialize = function (value) {
-        return value + "";
+        return String(value);
     };
     return StringSerializer;
 }());

@@ -49,7 +49,7 @@ export class IntegerSerializer implements Serializer {
 		if( ! Utils.isNumber( value ) ) throw new Errors.IllegalArgumentError( "The value is not a number." );
 
 		// Negative truncate
-		return ( ~~value ) + "";
+		return ( ~~value ).toString();
 	}
 }
 
@@ -70,8 +70,10 @@ export let unsignedIntegerSerializer:UnsignedIntegerSerializer = new UnsignedInt
 export class FloatSerializer implements Serializer {
 	serialize( value:any ):string {
 		if( ! Utils.isNumber( value ) ) throw new Errors.IllegalArgumentError( "The value is not a number." );
+		if( value === Number.POSITIVE_INFINITY ) return "INF";
+		if( value === Number.NEGATIVE_INFINITY ) return "-INF";
 
-		return value + "";
+		return value.toString();
 	}
 }
 
@@ -79,11 +81,7 @@ export let floatSerializer:FloatSerializer = new FloatSerializer();
 
 export class BooleanSerializer implements Serializer {
 	serialize( value:any ):string {
-		if( !! value ) {
-			return "true";
-		} else {
-			return "false";
-		}
+		return ( !! value ).toString();
 	}
 }
 
@@ -91,7 +89,7 @@ export let booleanSerializer:BooleanSerializer = new BooleanSerializer();
 
 export class StringSerializer implements Serializer {
 	serialize( value:any ):string {
-		return value + "";
+		return String( value );
 	}
 }
 

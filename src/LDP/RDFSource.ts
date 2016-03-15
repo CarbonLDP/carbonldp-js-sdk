@@ -25,6 +25,4 @@ export class Factory {
 
 }
 
-export let factory:Factory = new Factory();
-
 export default Class;

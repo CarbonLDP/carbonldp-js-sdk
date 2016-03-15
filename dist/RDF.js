@@ -1,8 +1,6 @@
 "use strict";
 var Literal = require("./RDF/Literal");
 exports.Literal = Literal;
-var PropertyDescription_1 = require("./RDF/PropertyDescription");
-exports.PropertyDescription = PropertyDescription_1.default;
 var Document = require("./RDF/Document");
 exports.Document = Document;
 var List = require("./RDF/List");

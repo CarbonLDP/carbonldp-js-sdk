@@ -9,8 +9,8 @@ import {
 	isDefined,
 	hasProperty,
 	extendsClass
-} from "../test/JasmineExtender";
-import * as Utils from "../Utils";
+} from "./../test/JasmineExtender";
+import * as Utils from "./../Utils";
 
 import IllegalArgumentError from "./IllegalArgumentError";
 import AbstractError from "./AbstractError";

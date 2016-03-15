@@ -15,8 +15,8 @@ export declare class Class implements Context {
     resolve(relativeURI: string): string;
     hasSetting(name: string): boolean;
     getSetting(name: string): any;
-    setSetting(name: string, value: any): any;
-    deleteSetting(name: string): any;
+    setSetting(name: string, value: any): void;
+    deleteSetting(name: string): void;
     hasObjectSchema(type: string): boolean;
     getObjectSchema(type?: string): ObjectSchema.DigestedObjectSchema;
     extendObjectSchema(type: string, objectSchema: ObjectSchema.Class): void;

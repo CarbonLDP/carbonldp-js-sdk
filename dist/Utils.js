@@ -6,13 +6,19 @@ exports.hasFunction = hasFunction;
 function hasProperty(object, property) {
     if (!object)
         return false;
-    return "undefined" !== typeof object[property];
+    return isDefined(object[property]);
 }
 exports.hasProperty = hasProperty;
 function hasPropertyDefined(object, property) {
+    if (!object)
+        return false;
     return !!Object.getOwnPropertyDescriptor(object, property);
 }
 exports.hasPropertyDefined = hasPropertyDefined;
+function isDefined(value) {
+    return void 0 !== value;
+}
+exports.isDefined = isDefined;
 function isNull(value) {
     return value === null;
 }

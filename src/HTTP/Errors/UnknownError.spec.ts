@@ -12,10 +12,10 @@ import {
 	hasConstructor,
 	hasProperty,
 	hasMethod
-} from "../../test/JasmineExtender";
-import * as Utils from "../../Utils";
+} from "./../../test/JasmineExtender";
+import * as Utils from "./../../Utils";
 
-import Response from "../Response";
+import Response from "./../Response";
 
 import UnknownError from "./UnknownError";
 import HTTPError from "./HTTPError";
