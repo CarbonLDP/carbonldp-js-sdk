@@ -7,7 +7,6 @@ var Token = require("./Auth/Token");
 exports.Token = Token;
 var UsernameAndPasswordToken_1 = require("./Auth/UsernameAndPasswordToken");
 exports.UsernameAndPasswordToken = UsernameAndPasswordToken_1.default;
-var TokenCredentials_1 = require("./Auth/TokenCredentials");
 var Errors = require("./Errors");
 var Utils = require("./Utils");
 (function (Method) {
@@ -67,35 +66,25 @@ var Class = (function () {
         return this.authenticator.authenticate(authenticationToken);
     };
     Class.prototype.authenticateWithToken = function (userOrTokenOrCredentials, password) {
-        var _this = this;
         var authenticator = this.authenticators[Method.TOKEN];
         var credentials = null;
         var authenticationToken = null;
-        return new Promise(function (resolve, reject) {
-            if (Utils.isString(userOrTokenOrCredentials) && Utils.isString(password)) {
-                authenticationToken = new UsernameAndPasswordToken_1.default(userOrTokenOrCredentials, password);
-            }
-            else if (Token.Factory.is(userOrTokenOrCredentials)) {
-                credentials = new TokenCredentials_1.default(userOrTokenOrCredentials);
-            }
-            else if (userOrTokenOrCredentials instanceof TokenCredentials_1.default) {
-                credentials = userOrTokenOrCredentials;
-            }
-            else {
-                throw new Errors.IllegalArgumentError("Parameters do not match with the authentication request.");
-            }
-            _this.clearAuthentication();
-            _this.authenticator = authenticator;
-            if (authenticationToken) {
-                resolve(authenticator.authenticate(authenticationToken));
-            }
-            else {
-                authenticator.credentials = credentials;
-                if (!authenticator.isAuthenticated())
-                    throw new Errors.IllegalArgumentError("The token provided in not valid.");
-                resolve(credentials);
-            }
-        });
+        if (Utils.isString(userOrTokenOrCredentials) && Utils.isString(password)) {
+            authenticationToken = new UsernameAndPasswordToken_1.default(userOrTokenOrCredentials, password);
+        }
+        else if (Token.Factory.is(userOrTokenOrCredentials)) {
+            credentials = userOrTokenOrCredentials;
+        }
+        else {
+            return Promise.reject(new Errors.IllegalArgumentError("Parameters do not match with the authentication request."));
+        }
+        this.clearAuthentication();
+        this.authenticator = authenticator;
+        if (authenticationToken)
+            return authenticator.authenticate(authenticationToken);
+        if (Utils.isString(credentials.expirationTime))
+            credentials.expirationTime = new Date(credentials.expirationTime);
+        return authenticator.authenticate(credentials);
     };
     return Class;
 }());

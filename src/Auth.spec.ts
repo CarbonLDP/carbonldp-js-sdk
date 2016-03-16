@@ -12,8 +12,6 @@ import {
 	isDefined,
 	hasConstructor,
 	hasMethod,
-	hasProperty,
-	extendsClass,
 	hasDefaultExport,
 	reexports,
 	hasEnumeral,
@@ -21,7 +19,6 @@ import {
 } from "./test/JasmineExtender";
 import * as Utils from "./Utils";
 import AbstractContext from "./AbstractContext";
-import * as App from "./App";
 import AuthenticationToken from "./Auth/AuthenticationToken";
 import Authenticator from "./Auth/Authenticator";
 import BasicAuthenticator from "./Auth/BasicAuthenticator";
@@ -29,11 +26,7 @@ import * as Token from "./Auth/Token";
 import TokenAuthenticator from "./Auth/TokenAuthenticator";
 import UsernameAndPasswordToken from "./Auth/UsernameAndPasswordToken";
 import UsernameAndPasswordCredentials from "./Auth/UsernameAndPasswordCredentials";
-import TokenCredentials from "./Auth/TokenCredentials";
-import Credentials from "./Auth/Credentials";
-import Context from "./Context";
 import * as Errors from "./Errors";
-import * as Pointer from "./Pointer";
 
 import * as Auth from "./Auth";
 import DefaultExport from "./Auth";
@@ -190,7 +183,6 @@ describe( module( "Carbon/Auth" ), ():void => {
 			"authenticateUsing"
 		), ():void => {
 			let context:AbstractContext;
-			let auth:Auth.Class;
 
 			beforeEach( ():void => {
 				class MockedContext extends AbstractContext {
@@ -199,8 +191,6 @@ describe( module( "Carbon/Auth" ), ():void => {
 					}
 				}
 				context = new MockedContext();
-
-				auth = new Auth.Class( context );
 
 				jasmine.Ajax.install();
 			});
@@ -217,9 +207,11 @@ describe( module( "Carbon/Auth" ), ():void => {
 				],
 				{ type: "Promise<Carbon.Auth.UsernameAndPasswordCredentials.Class>"}
 			), ( done:{ ():void, fail:() => void } ):void => {
-				expect( auth.authenticateUsing ).toBeDefined();
-				expect( Utils.isFunction( auth.authenticateUsing ) ).toBe( true );
-				expect( auth.isAuthenticated() ).toBe( false );
+				let auth01 = new Auth.Class( context );
+				
+				expect( auth01.authenticateUsing ).toBeDefined();
+				expect( Utils.isFunction( auth01.authenticateUsing ) ).toBe( true );
+				expect( auth01.isAuthenticated() ).toBe( false );
 
 				let username = "myUser@user.com";
 				let password = "myAwesomePassword";
@@ -227,7 +219,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 				let promise:Promise<any>;
 				let spies = {
 					success: ( credentials:UsernameAndPasswordCredentials ):void => {
-						expect( auth.isAuthenticated() ).toBe( true );
+						expect( auth01.isAuthenticated() ).toBe( true );
 						expect( credentials.username ).toEqual( username );
 						expect( credentials.password ).toEqual( password );
 					},
@@ -238,18 +230,18 @@ describe( module( "Carbon/Auth" ), ():void => {
 				let spySuccess = spyOn( spies, "success" ).and.callThrough();
 				let spyFail = spyOn( spies, "fail" ).and.callThrough();
 
-				promise = auth.authenticateUsing( "BASIC", username, password );
+				promise = auth01.authenticateUsing( "BASIC", username, password );
 				expect( promise instanceof Promise ).toBe( true );
 				promises.push( promise.then( spies.success, spies.fail ) );
 
 
-				let auth2 = new Auth.Class( context );
-				promise = auth2.authenticateUsing( "BASIC", {} );
+				let auth02 = new Auth.Class( context );
+				promise = auth02.authenticateUsing( "BASIC", {} );
 				expect( promise instanceof Promise ).toBe( true );
 				promises.push( promise.then( spies.success, spies.fail ) );
 
-				let auth3 = new Auth.Class( context );
-				promise = auth3.authenticateUsing( "Error", username, password );
+				let auth03 = new Auth.Class( context );
+				promise = auth03.authenticateUsing( "Error", username, password );
 				expect( promise instanceof Promise ).toBe( true );
 				promises.push( promise.then( spies.success, spies.fail ) );
 
@@ -261,20 +253,22 @@ describe( module( "Carbon/Auth" ), ():void => {
 			});
 
 			it( hasSignature(
-				"Authenticates the user with username and password, for generate a JSON Web Token (JWT).", [
+				"Authenticates the user with username and password, and generates a JSON Web Token (JWT) credentials.", [
 					{ name: "method", type: "'TOKEN'" },
 					{ name: "username", type: "string" },
 					{ name: "password", type: "string" }
 				],
-				{ type: "Promise<Carbon.Auth.TokenCredentials.Class>"}
+				{ type: "Promise<Carbon.Auth.Token.Class>"}
 			), ( done:{ ():void, fail:() => void } ):void => {
-				expect( auth.authenticateUsing ).toBeDefined();
-				expect( Utils.isFunction( auth.authenticateUsing ) ).toBe( true );
-				expect( auth.isAuthenticated() ).toBe( false );
+				let auth01 = new Auth.Class( context );
+
+				expect( auth01.authenticateUsing ).toBeDefined();
+				expect( Utils.isFunction( auth01.authenticateUsing ) ).toBe( true );
+				expect( auth01.isAuthenticated() ).toBe( false );
 
 				let date:Date = new Date();
 				date.setDate( date.getDate() + 1 );
-				let token = [
+				let token:Object = [
 					{
 						"@id": "_:BlankNode",
 						"@type": [
@@ -284,7 +278,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 						"https://carbonldp.com/ns/v1/security#expirationTime": [
 							{
 								"@type": "http://www.w3.org/2001/XMLSchema#dateTime",
-								"@value": date
+								"@value": date.toISOString()
 							}
 						],
 						"https://carbonldp.com/ns/v1/security#tokenKey": [
@@ -297,9 +291,9 @@ describe( module( "Carbon/Auth" ), ():void => {
 				let promises:Promise<any>[] = [];
 				let promise:Promise<any>;
 				let spies = {
-					success: ( credentials:TokenCredentials ):void => {
-						expect( auth.isAuthenticated() ).toBe( true );
-						expect( credentials.token.key ).toEqual( token[0]["https://carbonldp.com/ns/v1/security#tokenKey"][0]["@value"] );
+					success: ( credentials:Token.Class ):void => {
+						expect( auth01.isAuthenticated() ).toBe( true );
+						expect( credentials.key ).toEqual( token[0]["https://carbonldp.com/ns/v1/security#tokenKey"][0]["@value"] );
 					},
 					fail: ( error ):void => {
 						expect( error.name ).toBe( Errors.IllegalArgumentError.name );
@@ -308,7 +302,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 				let spySuccess = spyOn( spies, "success" ).and.callThrough();
 				let spyFail = spyOn( spies, "fail" ).and.callThrough();
 
-				promise = auth.authenticateUsing( "TOKEN", "myUser@user.con", "myAwesomePassword" );
+				promise = auth01.authenticateUsing( "TOKEN", "myUser@user.con", "myAwesomePassword" );
 				expect( promise instanceof Promise ).toBe( true );
 				promises.push( promise.then( spies.success, spies.fail ) );
 
@@ -317,13 +311,13 @@ describe( module( "Carbon/Auth" ), ():void => {
 					responseText: JSON.stringify( token )
 				});
 
-				let auth2:Auth.Class = new Auth.Class( context );
-				promise = auth2.authenticateUsing( "TOKEN", {} );
+				let auth02:Auth.Class = new Auth.Class( context );
+				promise = auth02.authenticateUsing( "TOKEN", {} );
 				expect( promise instanceof Promise ).toBe( true );
 				promises.push( promise.then( spies.success, spies.fail ) );
 
-				let auth3:Auth.Class = new Auth.Class( context );
-				promise = auth3.authenticateUsing( "Error", "myUser@user.con", "myAwesomePassword" );
+				let auth03:Auth.Class = new Auth.Class( context );
+				promise = auth03.authenticateUsing( "Error", "myUser@user.con", "myAwesomePassword" );
 				expect( promise instanceof Promise ).toBe( true );
 				promises.push( promise.then( spies.success, spies.fail ) );
 
@@ -335,37 +329,45 @@ describe( module( "Carbon/Auth" ), ():void => {
 			});
 
 			it( hasSignature(
-				"Authenticates the user with a JSON Web Token (JWT), i.e. the credentials generated by TokenAuthenticator", [
+				"Authenticates the user with a JSON Web Token (JWT), i.e. the credentials generated by TokenAuthenticator.", [
 					{ name: "method", type: "'TOKEN'" },
 					{ name: "token", type: "Carbon.Auth.Token.Class" }
 				],
-				{ type: "Promise<Carbon.Auth.TokenCredentials.Class>" }
+				{ type: "Promise<Carbon.Auth.Token.Class>" }
 			), ( done:{ ():void, fail:() => void } ):void => {
-				expect( auth.authenticateUsing ).toBeDefined();
-				expect( Utils.isFunction( auth.authenticateUsing ) ).toBe( true );
-				expect( auth.isAuthenticated() ).toBe( false );
+				let auth01 = new Auth.Class( context );
+				let auth02 = new Auth.Class( context );
+				
+				expect( auth01.authenticateUsing ).toBeDefined();
+				expect( Utils.isFunction( auth01.authenticateUsing ) ).toBe( true );
+				expect( auth01.isAuthenticated() ).toBe( false );
+
 
 				let date:Date;
-
 				let token:Token.Class;
 				let promises:Promise<any>[] = [];
 				let promise:Promise<any>;
 				let spies = {
-					success: ( credential:TokenCredentials ):void => {
-						expect( credential.token.key ).toEqual( token.key );
-						expect( auth.isAuthenticated() ).toBe( true );
+					success01: ( credential:Token.Class ):void => {
+						expect( credential.key ).toEqual( token.key );
+						expect( auth01.isAuthenticated() ).toBe( true );
+					},
+					success02: ( credential:Token.Class ):void => {
+						expect( credential.key ).toEqual( token.key );
+						expect( auth02.isAuthenticated() ).toBe( true );
 					},
 					fail: ( error ):void => {
 						expect( error.name ).toBe( Errors.IllegalArgumentError.name );
 					}
 				};
-				let spySuccess = spyOn( spies, "success" ).and.callThrough();
+				let spySuccess01 = spyOn( spies, "success01" ).and.callThrough();
+				let spySuccess02 = spyOn( spies, "success02" ).and.callThrough();
 				let spyFail = spyOn( spies, "fail" ).and.callThrough();
 
 				// OK Token
 				date = new Date();
 				date.setDate( date.getDate() + 1 );
-				token = {
+				token = <any> {
 					expirationTime: date,
 					id: "_:BlankNode",
 					key: "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJodHRwczovL2V4YW1wbGUuY29tL3VzZXJzL2EtdXNlci8iLCJleHAiOjExNDkxMjAwMDAwMDB9.T8XSFKyiT-5PAx_yxv2uY94nfvx65zWz8mI2OlSUFnE",
@@ -374,33 +376,16 @@ describe( module( "Carbon/Auth" ), ():void => {
 						"https://carbonldp.com/ns/v1/platform#VolatileResource"
 					]
 				};
-				promise = auth.authenticateUsing( "TOKEN", token );
+				promise = auth01.authenticateUsing( "TOKEN", token );
 				expect( promise instanceof Promise ).toBe( true );
-				promises.push( promise.then( spies.success, spies.fail ) );
+				promises.push( promise.then( spies.success01, spies.fail ) );
 
-				// Will fail, because expirationDate has been reached
-				let auth2:Auth.Class = new Auth.Class( context );
-				date = new Date();
-				date.setDate( date.getDate() - 1 );
-				token = {
-					expirationTime: date,
-					id: "_:BlankNode",
-					key: "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJodHRwczovL2V4YW1wbGUuY29tL3VzZXJzL2EtdXNlci8iLCJleHAiOjExNDkxMjAwMDAwMDB9.T8XSFKyiT-5PAx_yxv2uY94nfvx65zWz8mI2OlSUFnE",
-					types: [
-						"https://carbonldp.com/ns/v1/security#Token",
-						"https://carbonldp.com/ns/v1/platform#VolatileResource"
-					]
-				};
-				promise = auth2.authenticateUsing( "TOKEN", token );
-				expect( promise instanceof Promise ).toBe( true );
-				promises.push( promise.then( spies.success, spies.fail ) );
-
-				// Will fail, because expirationDate is not a Date object, it's a string.
+				// Will be OK, if expirationDate is a string the method tries parse it to a Date object
 				date = new Date();
 				date.setDate( date.getDate() + 1 );
 				var getFromStorage = ():Object => {
 					let storedToken = {
-						expirationTime: date,
+						expirationTime: date.toISOString(),
 						id: "_:BlankNode",
 						key: "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJodHRwczovL2V4YW1wbGUuY29tL3VzZXJzL2EtdXNlci8iLCJleHAiOjExNDkxMjAwMDAwMDB9.T8XSFKyiT-5PAx_yxv2uY94nfvx65zWz8mI2OlSUFnE",
 						types: [
@@ -410,43 +395,15 @@ describe( module( "Carbon/Auth" ), ():void => {
 					};
 					return JSON.parse( JSON.stringify( storedToken ) );
 				};
-				token = <Token.Class> getFromStorage();
-				promise = auth2.authenticateUsing( "TOKEN", token );
+				promise = auth02.authenticateUsing( "TOKEN", <Token.Class> getFromStorage() );
 				expect( promise instanceof Promise ).toBe( true );
-				promises.push( promise.then( spies.success, spies.fail ) );
+				promises.push( promise.then( spies.success02, spies.fail ) );
 
-				let auth3 = new Auth.Class( context );
-				promise = auth3.authenticateUsing( "TOKEN", {} );
-				expect( promise instanceof Promise ).toBe( true );
-				promises.push( promise.then( spies.success, spies.fail ) );
-
-				let auth4 = new Auth.Class( context );
-				promise = auth4.authenticateUsing( "Error", token );
-				expect( promise instanceof Promise ).toBe( true );
-				promises.push( promise.then( spies.success, spies.fail ) );
-
-				Promise.all( promises ).then( ():void => {
-					expect( spySuccess.calls.count() ).toBe( 1 );
-					expect( spyFail.calls.count() ).toBe( 4 );
-					done();
-				}, done.fail );
-			});
-
-			it( hasSignature(
-				"Authenticates the user with a JSON Web Token (JWT), i.e. the credentials generated by TokenAuthenticator", [
-					{ name: "method", type: "'TOKEN'" },
-					{ name: "token", type: "Carbon.Auth.TokenCredentials" }
-				],
-				{ type: "Promise<Carbon.Auth.TokenCredentials.Class>" }
-			), ( done:{ ():void, fail:() =>  void } ):void => {
-				expect( auth.authenticateUsing ).toBeDefined();
-				expect( Utils.isFunction( auth.authenticateUsing ) ).toBe( true );
-				expect( auth.isAuthenticated() ).toBe( false );
-
-				let date = new Date();
-				date.setDate( date.getDate() + 1 );
-
-				let token = {
+				// Will fail, because expirationDate has been reached
+				let auth03:Auth.Class = new Auth.Class( context );
+				date = new Date();
+				date.setDate( date.getDate() - 1 );
+				token = <any> {
 					expirationTime: date,
 					id: "_:BlankNode",
 					key: "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJodHRwczovL2V4YW1wbGUuY29tL3VzZXJzL2EtdXNlci8iLCJleHAiOjExNDkxMjAwMDAwMDB9.T8XSFKyiT-5PAx_yxv2uY94nfvx65zWz8mI2OlSUFnE",
@@ -455,39 +412,22 @@ describe( module( "Carbon/Auth" ), ():void => {
 						"https://carbonldp.com/ns/v1/platform#VolatileResource"
 					]
 				};
-				let credentials = new TokenCredentials( token );
-				let promises:Promise<any>[] = [];
-				let promise:Promise<any>;
-				let spies = {
-					success: ( credential:TokenCredentials ):void => {
-						expect( auth.isAuthenticated() ).toBe( true );
-						expect( credential.token.key ).toEqual( credentials.token.key );
-					},
-					fail: ( error ):void => {
-						expect( error.name ).toBe( Errors.IllegalArgumentError.name );
-					}
-				};
-				let spySuccess = spyOn( spies, "success" ).and.callThrough();
-				let spyFail = spyOn( spies, "fail" ).and.callThrough();
-
-				promise = auth.authenticateUsing( "TOKEN", credentials );
+				promise = auth03.authenticateUsing( "TOKEN", token );
 				expect( promise instanceof Promise ).toBe( true );
-				promises.push( promise.then( spies.success, spies.fail ) );
+				promises.push( promise.then( spies.success01, spies.fail ) );
 
-
-				let auth2 = new Auth.Class( context );
-				promise = auth2.authenticateUsing( "TOKEN", {} );
+				promise = auth03.authenticateUsing( "TOKEN", {} );
 				expect( promise instanceof Promise ).toBe( true );
-				promises.push( promise.then( spies.success, spies.fail ) );
+				promises.push( promise.then( spies.success01, spies.fail ) );
 
-				let auth3 = new Auth.Class( context );
-				promise = auth3.authenticateUsing( "Error", credentials );
+				promise = auth03.authenticateUsing( "Error", token );
 				expect( promise instanceof Promise ).toBe( true );
-				promises.push( promise.then( spies.success, spies.fail ) );
+				promises.push( promise.then( spies.success01, spies.fail ) );
 
 				Promise.all( promises ).then( ():void => {
-					expect( spySuccess.calls.count() ).toBe( 1 );
-					expect( spyFail.calls.count() ).toBe( 2 );
+					expect( spySuccess01.calls.count() ).toBe( 1 );
+					expect( spySuccess02.calls.count() ).toBe( 1 );
+					expect( spyFail.calls.count() ).toBe( 3 );
 					done();
 				}, done.fail );
 			});

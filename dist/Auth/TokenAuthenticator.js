@@ -6,7 +6,6 @@ var RDF = require("./../RDF");
 var BasicAuthenticator_1 = require("./BasicAuthenticator");
 var UsernameAndPasswordToken_1 = require("./UsernameAndPasswordToken");
 var Token = require("./Token");
-var TokenCredentials = require("./TokenCredentials");
 var Class = (function () {
     function Class(context) {
         if (context === null)
@@ -14,25 +13,33 @@ var Class = (function () {
         this.context = context;
         this.basicAuthenticator = new BasicAuthenticator_1.default();
     }
-    Object.defineProperty(Class.prototype, "credentials", {
-        set: function (credentials) { this._credentials = credentials; },
-        enumerable: true,
-        configurable: true
-    });
-    ;
     Class.prototype.isAuthenticated = function () {
-        return !!this._credentials && this._credentials.token.expirationTime > new Date();
+        return !!this._credentials && this._credentials.expirationTime > new Date();
     };
-    Class.prototype.authenticate = function (authenticationToken) {
+    Class.prototype.authenticate = function (authenticationOrCredentials) {
         var _this = this;
-        return this.basicAuthenticator.authenticate(authenticationToken).then(function (credentials) {
-            return _this.createToken();
-        }).then(function (_a) {
-            var token = _a[0], response = _a[1];
-            _this._credentials = new TokenCredentials.Class(token);
-            _this.basicAuthenticator.clearAuthentication();
-            return _this._credentials;
-        });
+        if (Token.Factory.is(authenticationOrCredentials)) {
+            this._credentials = authenticationOrCredentials;
+            return new Promise(function (resolve, reject) {
+                if (!_this.isAuthenticated()) {
+                    _this.clearAuthentication();
+                    throw new Errors.IllegalArgumentError("The token provided in not valid.");
+                }
+                resolve(_this._credentials);
+            });
+        }
+        else {
+            return this.basicAuthenticator.authenticate(authenticationOrCredentials)
+                .then(function (credentials) {
+                return _this.createToken();
+            })
+                .then(function (_a) {
+                var token = _a[0], response = _a[1];
+                _this._credentials = token;
+                _this.basicAuthenticator.clearAuthentication();
+                return _this._credentials;
+            });
+        }
     };
     Class.prototype.addAuthentication = function (requestOptions) {
         var headers = requestOptions.headers ? requestOptions.headers : requestOptions.headers = new Map();
@@ -76,7 +83,7 @@ var Class = (function () {
             header = new HTTP.Header.Class();
             headers.set("Authorization", header);
         }
-        var authorization = "Token " + this._credentials.token.key;
+        var authorization = "Token " + this._credentials.key;
         header.values.push(new HTTP.Header.Value(authorization));
         return headers;
     };

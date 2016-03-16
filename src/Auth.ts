@@ -7,7 +7,6 @@ import TokenAuthenticator from "./Auth/TokenAuthenticator";
 import * as Token from "./Auth/Token";
 import UsernameAndPasswordToken from "./Auth/UsernameAndPasswordToken";
 import UsernameAndPasswordCredentials from "./Auth/UsernameAndPasswordCredentials";
-import TokenCredentials from "./Auth/TokenCredentials";
 import Credentials from "./Auth/Credentials";
 
 import * as HTTP from "./HTTP";
@@ -56,11 +55,12 @@ export class Class {
 	}
 
 	authenticateUsing( method:"BASIC", username:string, password:string ):Promise<UsernameAndPasswordCredentials>;
-	authenticateUsing( method:"TOKEN", username:string, password:string ):Promise<TokenCredentials>;
+	authenticateUsing( method:"TOKEN", username:string, password:string ):Promise<Token.Class>;
+
+	authenticateUsing( method:"TOKEN", token:Token.Class ):Promise<Token.Class>;
 
 	// TODO remove non-specific overloads. Reference https://github.com/Microsoft/TypeScript/pull/6278, seems to be added for 1.9
 	authenticateUsing( method:string, username:string, password:string ):Promise<Credentials>;
-	authenticateUsing( method:string, token:AuthenticationToken ):Promise<Credentials>;
 	authenticateUsing( method:string, token:Credentials ):Promise<Credentials>;
 
 	authenticateUsing( method:string, userOrTokenOrCredentials:any, password?:string ):Promise<any> {
@@ -74,7 +74,7 @@ export class Class {
 		}
 	}
 
-	addAuthentication( requestOptions:HTTP.Request.Options ):any {
+	addAuthentication( requestOptions:HTTP.Request.Options ):void {
 		if( this.isAuthenticated( false ) ) {
 			this.authenticator.addAuthentication( requestOptions );
 		} else if( !! this.context.parentContext ) {
@@ -91,7 +91,7 @@ export class Class {
 		this.authenticator = null;
 	}
 
-	private authenticateWithBasic( username:string, password:string ):Promise<any> {
+	private authenticateWithBasic( username:string, password:string ):Promise<UsernameAndPasswordCredentials> {
 		let authenticator:BasicAuthenticator =  <BasicAuthenticator> this.authenticators[ Method.BASIC ];
 		let authenticationToken:UsernameAndPasswordToken;
 
@@ -102,38 +102,29 @@ export class Class {
 		return this.authenticator.authenticate( authenticationToken );
 	}
 
-	private authenticateWithToken( userOrTokenOrCredentials:any, password:string ):Promise<any> {
+	private authenticateWithToken( userOrTokenOrCredentials:any, password:string ):Promise<Token.Class> {
 		let authenticator:TokenAuthenticator =  <TokenAuthenticator> this.authenticators[ Method.TOKEN ];
-		let credentials:TokenCredentials = null;
+		let credentials:Token.Class = null;
 		let authenticationToken:UsernameAndPasswordToken = null;
 
-		return new Promise<TokenCredentials>( ( resolve, reject ):any => {
-			if ( Utils.isString( userOrTokenOrCredentials ) &&  Utils.isString( password ) ) {
-				authenticationToken = new UsernameAndPasswordToken( userOrTokenOrCredentials, password );
+		if ( Utils.isString( userOrTokenOrCredentials ) &&  Utils.isString( password ) ) {
+			authenticationToken = new UsernameAndPasswordToken( userOrTokenOrCredentials, password );
 
-			} else if( Token.Factory.is( userOrTokenOrCredentials ) ) {
-				credentials = new TokenCredentials( userOrTokenOrCredentials );
+		} else if( Token.Factory.is( userOrTokenOrCredentials ) ) {
+			credentials = userOrTokenOrCredentials;
 
-			} else if ( userOrTokenOrCredentials instanceof  TokenCredentials ) {
-				credentials = userOrTokenOrCredentials;
+		} else {
+			return Promise.reject<Token.Class>( new Errors.IllegalArgumentError( "Parameters do not match with the authentication request." ) );
+		}
 
-			} else {
-				throw new Errors.IllegalArgumentError( "Parameters do not match with the authentication request." );
-			}
+		this.clearAuthentication();
+		this.authenticator = authenticator;
+		if ( authenticationToken )
+			return authenticator.authenticate( authenticationToken );
 
-			this.clearAuthentication();
-
-			this.authenticator = authenticator;
-			if ( authenticationToken ) {
-				resolve( authenticator.authenticate( authenticationToken ) );
-			} else {
-				authenticator.credentials = credentials;
-				if( ! authenticator.isAuthenticated() )
-					throw new Errors.IllegalArgumentError( "The token provided in not valid." );
-				resolve( credentials );
-			}
-		});
-
+		if ( Utils.isString( credentials.expirationTime ) )
+			credentials.expirationTime = new Date( <any> credentials.expirationTime );
+		return authenticator.authenticate( credentials );
 	}
 
 }

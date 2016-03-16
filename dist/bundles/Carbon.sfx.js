@@ -11332,8 +11332,8 @@ $__System.register("55", ["24", "e", "56", "54"], function(exports_1) {
     }
 });
 
-$__System.register("57", ["e", "24", "9", "5", "55", "56", "58", "59"], function(exports_1) {
-    var Errors, HTTP, NS, RDF, BasicAuthenticator_1, UsernameAndPasswordToken_1, Token, TokenCredentials;
+$__System.register("57", ["e", "24", "9", "5", "55", "56", "58"], function(exports_1) {
+    var Errors, HTTP, NS, RDF, BasicAuthenticator_1, UsernameAndPasswordToken_1, Token;
     var Class;
     return {
         setters:[
@@ -11357,9 +11357,6 @@ $__System.register("57", ["e", "24", "9", "5", "55", "56", "58", "59"], function
             },
             function (Token_1) {
                 Token = Token_1;
-            },
-            function (TokenCredentials_1) {
-                TokenCredentials = TokenCredentials_1;
             }],
         execute: function() {
             Class = (function () {
@@ -11369,25 +11366,33 @@ $__System.register("57", ["e", "24", "9", "5", "55", "56", "58", "59"], function
                     this.context = context;
                     this.basicAuthenticator = new BasicAuthenticator_1.default();
                 }
-                Object.defineProperty(Class.prototype, "credentials", {
-                    set: function (credentials) { this._credentials = credentials; },
-                    enumerable: true,
-                    configurable: true
-                });
-                ;
                 Class.prototype.isAuthenticated = function () {
-                    return !!this._credentials && this._credentials.token.expirationTime > new Date();
+                    return !!this._credentials && this._credentials.expirationTime > new Date();
                 };
-                Class.prototype.authenticate = function (authenticationToken) {
+                Class.prototype.authenticate = function (authenticationOrCredentials) {
                     var _this = this;
-                    return this.basicAuthenticator.authenticate(authenticationToken).then(function (credentials) {
-                        return _this.createToken();
-                    }).then(function (_a) {
-                        var token = _a[0], response = _a[1];
-                        _this._credentials = new TokenCredentials.Class(token);
-                        _this.basicAuthenticator.clearAuthentication();
-                        return _this._credentials;
-                    });
+                    if (Token.Factory.is(authenticationOrCredentials)) {
+                        this._credentials = authenticationOrCredentials;
+                        return new Promise(function (resolve, reject) {
+                            if (!_this.isAuthenticated()) {
+                                _this.clearAuthentication();
+                                throw new Errors.IllegalArgumentError("The token provided in not valid.");
+                            }
+                            resolve(_this._credentials);
+                        });
+                    }
+                    else {
+                        return this.basicAuthenticator.authenticate(authenticationOrCredentials)
+                            .then(function (credentials) {
+                            return _this.createToken();
+                        })
+                            .then(function (_a) {
+                            var token = _a[0], response = _a[1];
+                            _this._credentials = token;
+                            _this.basicAuthenticator.clearAuthentication();
+                            return _this._credentials;
+                        });
+                    }
                 };
                 Class.prototype.addAuthentication = function (requestOptions) {
                     var headers = requestOptions.headers ? requestOptions.headers : requestOptions.headers = new Map();
@@ -11431,7 +11436,7 @@ $__System.register("57", ["e", "24", "9", "5", "55", "56", "58", "59"], function
                         header = new HTTP.Header.Class();
                         headers.set("Authorization", header);
                     }
-                    var authorization = "Token " + this._credentials.token.key;
+                    var authorization = "Token " + this._credentials.key;
                     header.values.push(new HTTP.Header.Value(authorization));
                     return headers;
                 };
@@ -11444,7 +11449,7 @@ $__System.register("57", ["e", "24", "9", "5", "55", "56", "58", "59"], function
     }
 });
 
-$__System.register("5a", [], function(exports_1) {
+$__System.register("59", [], function(exports_1) {
     var namespace, Class, Predicate;
     return {
         setters:[],
@@ -11531,7 +11536,7 @@ $__System.register("5a", [], function(exports_1) {
     }
 });
 
-$__System.register("5b", [], function(exports_1) {
+$__System.register("5a", [], function(exports_1) {
     var namespace, Predicate;
     return {
         setters:[],
@@ -11614,7 +11619,7 @@ $__System.register("7", [], function(exports_1) {
     }
 });
 
-$__System.register("5c", [], function(exports_1) {
+$__System.register("5b", [], function(exports_1) {
     var namespace, Class, Predicate;
     return {
         setters:[],
@@ -11772,7 +11777,7 @@ $__System.register("5c", [], function(exports_1) {
     }
 });
 
-$__System.register("5d", [], function(exports_1) {
+$__System.register("5c", [], function(exports_1) {
     var namespace, Predicate;
     return {
         setters:[],
@@ -11841,7 +11846,7 @@ $__System.register("30", ["6"], function(exports_1) {
     }
 });
 
-$__System.register("9", ["5a", "5b", "7", "5c", "5d", "30"], function(exports_1) {
+$__System.register("9", ["59", "5a", "7", "5b", "5c", "30"], function(exports_1) {
     var C, CP, CS, LDP, RDF, XSD;
     return {
         setters:[
@@ -12073,30 +12078,7 @@ $__System.register("56", [], function(exports_1) {
     }
 });
 
-$__System.register("59", [], function(exports_1) {
-    var Class;
-    return {
-        setters:[],
-        execute: function() {
-            Class = (function () {
-                function Class(token) {
-                    this._token = token;
-                }
-                Object.defineProperty(Class.prototype, "token", {
-                    get: function () { return this._token; },
-                    enumerable: true,
-                    configurable: true
-                });
-                ;
-                return Class;
-            })();
-            exports_1("Class", Class);
-            exports_1("default",Class);
-        }
-    }
-});
-
-$__System.register("5e", ["4b"], function(exports_1) {
+$__System.register("5d", ["4b"], function(exports_1) {
     var __extends = (this && this.__extends) || function (d, b) {
         for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
         function __() { this.constructor = d; }
@@ -12127,7 +12109,7 @@ $__System.register("5e", ["4b"], function(exports_1) {
     }
 });
 
-$__System.register("5f", ["4b"], function(exports_1) {
+$__System.register("5e", ["4b"], function(exports_1) {
     var __extends = (this && this.__extends) || function (d, b) {
         for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
         function __() { this.constructor = d; }
@@ -12158,7 +12140,7 @@ $__System.register("5f", ["4b"], function(exports_1) {
     }
 });
 
-$__System.register("60", ["4b"], function(exports_1) {
+$__System.register("5f", ["4b"], function(exports_1) {
     var __extends = (this && this.__extends) || function (d, b) {
         for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
         function __() { this.constructor = d; }
@@ -12189,7 +12171,7 @@ $__System.register("60", ["4b"], function(exports_1) {
     }
 });
 
-$__System.register("61", ["4b"], function(exports_1) {
+$__System.register("60", ["4b"], function(exports_1) {
     var __extends = (this && this.__extends) || function (d, b) {
         for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
         function __() { this.constructor = d; }
@@ -12252,7 +12234,7 @@ $__System.register("4b", [], function(exports_1) {
     }
 });
 
-$__System.register("62", ["4b"], function(exports_1) {
+$__System.register("61", ["4b"], function(exports_1) {
     var __extends = (this && this.__extends) || function (d, b) {
         for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
         function __() { this.constructor = d; }
@@ -12284,7 +12266,7 @@ $__System.register("62", ["4b"], function(exports_1) {
     }
 });
 
-$__System.register("e", ["5e", "5f", "60", "61", "62"], function(exports_1) {
+$__System.register("e", ["5d", "5e", "5f", "60", "61"], function(exports_1) {
     var IDAlreadyInUseError_1, IllegalActionError_1, IllegalArgumentError_1, IllegalStateError_1, NotImplementedError_1;
     return {
         setters:[
@@ -12314,8 +12296,8 @@ $__System.register("e", ["5e", "5f", "60", "61", "62"], function(exports_1) {
 });
 
 /// <reference path="./../typings/typings.d.ts" />
-$__System.register("c", ["27", "28", "55", "57", "58", "56", "59", "e", "6"], function(exports_1) {
-    var AuthenticationToken_1, Authenticator_1, BasicAuthenticator_1, TokenAuthenticator_1, Token, UsernameAndPasswordToken_1, TokenCredentials_1, Errors, Utils;
+$__System.register("c", ["27", "28", "55", "57", "58", "56", "e", "6"], function(exports_1) {
+    var AuthenticationToken_1, Authenticator_1, BasicAuthenticator_1, TokenAuthenticator_1, Token, UsernameAndPasswordToken_1, Errors, Utils;
     var Method, Class;
     return {
         setters:[
@@ -12336,9 +12318,6 @@ $__System.register("c", ["27", "28", "55", "57", "58", "56", "59", "e", "6"], fu
             },
             function (UsernameAndPasswordToken_1_1) {
                 UsernameAndPasswordToken_1 = UsernameAndPasswordToken_1_1;
-            },
-            function (TokenCredentials_1_1) {
-                TokenCredentials_1 = TokenCredentials_1_1;
             },
             function (Errors_1) {
                 Errors = Errors_1;
@@ -12410,35 +12389,25 @@ $__System.register("c", ["27", "28", "55", "57", "58", "56", "59", "e", "6"], fu
                     return this.authenticator.authenticate(authenticationToken);
                 };
                 Class.prototype.authenticateWithToken = function (userOrTokenOrCredentials, password) {
-                    var _this = this;
                     var authenticator = this.authenticators[Method.TOKEN];
                     var credentials = null;
                     var authenticationToken = null;
-                    return new Promise(function (resolve, reject) {
-                        if (Utils.isString(userOrTokenOrCredentials) && Utils.isString(password)) {
-                            authenticationToken = new UsernameAndPasswordToken_1.default(userOrTokenOrCredentials, password);
-                        }
-                        else if (Token.Factory.is(userOrTokenOrCredentials)) {
-                            credentials = new TokenCredentials_1.default(userOrTokenOrCredentials);
-                        }
-                        else if (userOrTokenOrCredentials instanceof TokenCredentials_1.default) {
-                            credentials = userOrTokenOrCredentials;
-                        }
-                        else {
-                            throw new Errors.IllegalArgumentError("Parameters do not match with the authentication request.");
-                        }
-                        _this.clearAuthentication();
-                        _this.authenticator = authenticator;
-                        if (authenticationToken) {
-                            resolve(authenticator.authenticate(authenticationToken));
-                        }
-                        else {
-                            authenticator.credentials = credentials;
-                            if (!authenticator.isAuthenticated())
-                                throw new Errors.IllegalArgumentError("The token provided in not valid.");
-                            resolve(credentials);
-                        }
-                    });
+                    if (Utils.isString(userOrTokenOrCredentials) && Utils.isString(password)) {
+                        authenticationToken = new UsernameAndPasswordToken_1.default(userOrTokenOrCredentials, password);
+                    }
+                    else if (Token.Factory.is(userOrTokenOrCredentials)) {
+                        credentials = userOrTokenOrCredentials;
+                    }
+                    else {
+                        return Promise.reject(new Errors.IllegalArgumentError("Parameters do not match with the authentication request."));
+                    }
+                    this.clearAuthentication();
+                    this.authenticator = authenticator;
+                    if (authenticationToken)
+                        return authenticator.authenticate(authenticationToken);
+                    if (Utils.isString(credentials.expirationTime))
+                        credentials.expirationTime = new Date(credentials.expirationTime);
+                    return authenticator.authenticate(credentials);
                 };
                 return Class;
             })();
@@ -12448,7 +12417,7 @@ $__System.register("c", ["27", "28", "55", "57", "58", "56", "59", "e", "6"], fu
     }
 });
 
-$__System.register("63", ["c"], function(exports_1) {
+$__System.register("62", ["c"], function(exports_1) {
     var Auth;
     var settings;
     return {
@@ -12747,7 +12716,7 @@ $__System.register("6", [], function(exports_1) {
 });
 
 /// <reference path="../typings/typings.d.ts" />
-$__System.register("64", ["2", "c", "8", "15", "d", "24", "5", "63", "6"], function(exports_1) {
+$__System.register("63", ["2", "c", "8", "15", "d", "24", "5", "62", "6"], function(exports_1) {
     var __extends = (this && this.__extends) || function (d, b) {
         for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
         function __() { this.constructor = d; }
@@ -12829,12 +12798,12 @@ $__System.register("64", ["2", "c", "8", "15", "d", "24", "5", "63", "6"], funct
     }
 });
 
-$__System.registerDynamic("1", ["64"], true, function($__require, exports, module) {
+$__System.registerDynamic("1", ["63"], true, function($__require, exports, module) {
   ;
   var global = this,
       __define = global.define;
   global.define = undefined;
-  var Carbon = $__require('64');
+  var Carbon = $__require('63');
   global.Carbon = Carbon.default;
   global.define = __define;
   return module.exports;

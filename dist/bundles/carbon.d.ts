@@ -1538,6 +1538,89 @@ declare module 'carbon/Context' {
 	export default Context;
 
 }
+declare module 'carbon/Auth/Token' {
+	import * as ObjectSchema from 'carbon/ObjectSchema';
+	import * as Pointer from 'carbon/Pointer';
+	import Credentials from 'carbon/Auth/Credentials';
+	export const RDF_CLASS: string;
+	export const CONTEXT: ObjectSchema.Class;
+	export interface Class extends Pointer.Class, Credentials {
+	    key: string;
+	    expirationTime: Date;
+	}
+	export class Factory {
+	    static is(value: any): boolean;
+	    static hasClassProperties(object: Object): boolean;
+	    static decorate<T extends Object>(object: T): T & Class;
+	    static hasRDFClass(pointer: Pointer.Class): boolean;
+	    static hasRDFClass(expandedObject: Object): boolean;
+	}
+	export default Class;
+
+}
+declare module 'carbon/Auth/TokenAuthenticator' {
+	import Context from 'carbon/Context';
+	import * as HTTP from 'carbon/HTTP';
+	import Authenticator from 'carbon/Auth/Authenticator';
+	import AuthenticationToken from 'carbon/Auth/AuthenticationToken';
+	import UsernameAndPasswordToken from 'carbon/Auth/UsernameAndPasswordToken';
+	import * as Token from 'carbon/Auth/Token';
+	export class Class implements Authenticator<UsernameAndPasswordToken> {
+	    private static TOKEN_CONTAINER;
+	    private context;
+	    private basicAuthenticator;
+	    private _credentials;
+	    constructor(context: Context);
+	    isAuthenticated(): boolean;
+	    authenticate(authenticationToken: UsernameAndPasswordToken): Promise<Token.Class>;
+	    authenticate(credentials: Token.Class): Promise<Token.Class>;
+	    addAuthentication(requestOptions: HTTP.Request.Options): HTTP.Request.Options;
+	    clearAuthentication(): void;
+	    supports(authenticationToken: AuthenticationToken): boolean;
+	    private createToken();
+	    private addTokenAuthenticationHeader(headers);
+	}
+	export default Class;
+
+}
+declare module 'carbon/Auth' {
+	/// <reference path="../typings/typings.d.ts" />
+	import AuthenticationToken from 'carbon/Auth/AuthenticationToken';
+	import Authenticator from 'carbon/Auth/Authenticator';
+	import BasicAuthenticator from 'carbon/Auth/BasicAuthenticator';
+	import TokenAuthenticator from 'carbon/Auth/TokenAuthenticator';
+	import * as Token from 'carbon/Auth/Token';
+	import UsernameAndPasswordToken from 'carbon/Auth/UsernameAndPasswordToken';
+	import UsernameAndPasswordCredentials from 'carbon/Auth/UsernameAndPasswordCredentials';
+	import Credentials from 'carbon/Auth/Credentials';
+	import * as HTTP from 'carbon/HTTP';
+	import Context from 'carbon/Context';
+	export { AuthenticationToken, Authenticator, BasicAuthenticator, Token, TokenAuthenticator, UsernameAndPasswordToken };
+	export enum Method {
+	    BASIC = 0,
+	    TOKEN = 1,
+	}
+	export class Class {
+	    private context;
+	    private method;
+	    private authenticators;
+	    private authenticator;
+	    constructor(context: Context);
+	    isAuthenticated(askParent?: boolean): boolean;
+	    authenticate(username: string, password: string): Promise<Credentials>;
+	    authenticateUsing(method: "BASIC", username: string, password: string): Promise<UsernameAndPasswordCredentials>;
+	    authenticateUsing(method: "TOKEN", username: string, password: string): Promise<Token.Class>;
+	    authenticateUsing(method: "TOKEN", token: Token.Class): Promise<Token.Class>;
+	    authenticateUsing(method: string, username: string, password: string): Promise<Credentials>;
+	    authenticateUsing(method: string, token: Credentials): Promise<Credentials>;
+	    addAuthentication(requestOptions: HTTP.Request.Options): void;
+	    clearAuthentication(): void;
+	    private authenticateWithBasic(username, password);
+	    private authenticateWithToken(userOrTokenOrCredentials, password);
+	}
+	export default Class;
+
+}
 declare module 'carbon/App' {
 	/// <reference path="../typings/typings.d.ts" />
 	import AbstractContext from 'carbon/AbstractContext';
@@ -1594,100 +1677,6 @@ declare module 'carbon/SDKContext' {
 	}
 	export const instance: Class;
 	export default instance;
-
-}
-declare module 'carbon/Auth/Token' {
-	import * as ObjectSchema from 'carbon/ObjectSchema';
-	import * as Pointer from 'carbon/Pointer';
-	export const RDF_CLASS: string;
-	export const CONTEXT: ObjectSchema.Class;
-	export interface Class {
-	    key: string;
-	    expirationTime: Date;
-	}
-	export class Factory {
-	    static is(value: any): boolean;
-	    static hasClassProperties(object: Object): boolean;
-	    static decorate<T extends Object>(object: T): T & Class;
-	    static hasRDFClass(pointer: Pointer.Class): boolean;
-	    static hasRDFClass(expandedObject: Object): boolean;
-	}
-	export default Class;
-
-}
-declare module 'carbon/Auth/TokenCredentials' {
-	import * as Credentials from 'carbon/Auth/Credentials';
-	import * as Token from 'carbon/Auth/Token';
-	export class Class implements Credentials.Class {
-	    private _token;
-	    token: Token.Class;
-	    constructor(token: Token.Class);
-	}
-	export default Class;
-
-}
-declare module 'carbon/Auth/TokenAuthenticator' {
-	import Context from 'carbon/Context';
-	import * as HTTP from 'carbon/HTTP';
-	import Authenticator from 'carbon/Auth/Authenticator';
-	import AuthenticationToken from 'carbon/Auth/AuthenticationToken';
-	import UsernameAndPasswordToken from 'carbon/Auth/UsernameAndPasswordToken';
-	import * as TokenCredentials from 'carbon/Auth/TokenCredentials';
-	export class Class implements Authenticator<UsernameAndPasswordToken> {
-	    private static TOKEN_CONTAINER;
-	    private context;
-	    private basicAuthenticator;
-	    private _credentials;
-	    credentials: TokenCredentials.Class;
-	    constructor(context: Context);
-	    isAuthenticated(): boolean;
-	    authenticate(authenticationToken: UsernameAndPasswordToken): Promise<TokenCredentials.Class>;
-	    addAuthentication(requestOptions: HTTP.Request.Options): HTTP.Request.Options;
-	    clearAuthentication(): void;
-	    supports(authenticationToken: AuthenticationToken): boolean;
-	    private createToken();
-	    private addTokenAuthenticationHeader(headers);
-	}
-	export default Class;
-
-}
-declare module 'carbon/Auth' {
-	/// <reference path="../typings/typings.d.ts" />
-	import AuthenticationToken from 'carbon/Auth/AuthenticationToken';
-	import Authenticator from 'carbon/Auth/Authenticator';
-	import BasicAuthenticator from 'carbon/Auth/BasicAuthenticator';
-	import TokenAuthenticator from 'carbon/Auth/TokenAuthenticator';
-	import * as Token from 'carbon/Auth/Token';
-	import UsernameAndPasswordToken from 'carbon/Auth/UsernameAndPasswordToken';
-	import UsernameAndPasswordCredentials from 'carbon/Auth/UsernameAndPasswordCredentials';
-	import TokenCredentials from 'carbon/Auth/TokenCredentials';
-	import Credentials from 'carbon/Auth/Credentials';
-	import * as HTTP from 'carbon/HTTP';
-	import Context from 'carbon/Context';
-	export { AuthenticationToken, Authenticator, BasicAuthenticator, Token, TokenAuthenticator, UsernameAndPasswordToken };
-	export enum Method {
-	    BASIC = 0,
-	    TOKEN = 1,
-	}
-	export class Class {
-	    private context;
-	    private method;
-	    private authenticators;
-	    private authenticator;
-	    constructor(context: Context);
-	    isAuthenticated(askParent?: boolean): boolean;
-	    authenticate(username: string, password: string): Promise<Credentials>;
-	    authenticateUsing(method: "BASIC", username: string, password: string): Promise<UsernameAndPasswordCredentials>;
-	    authenticateUsing(method: "TOKEN", username: string, password: string): Promise<TokenCredentials>;
-	    authenticateUsing(method: string, username: string, password: string): Promise<Credentials>;
-	    authenticateUsing(method: string, token: AuthenticationToken): Promise<Credentials>;
-	    authenticateUsing(method: string, token: Credentials): Promise<Credentials>;
-	    addAuthentication(requestOptions: HTTP.Request.Options): any;
-	    clearAuthentication(): void;
-	    private authenticateWithBasic(username, password);
-	    private authenticateWithToken(userOrTokenOrCredentials, password);
-	}
-	export default Class;
 
 }
 declare module 'carbon/AbstractContext' {
