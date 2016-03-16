@@ -4,14 +4,11 @@ import * as HTTP from "./../HTTP";
 import * as NS from "./../NS";
 import * as ObjectSchema from "./../ObjectSchema";
 import * as RDF from "./../RDF";
-import * as Utils from "./../Utils";
-
 import Authenticator from "./Authenticator";
 import AuthenticationToken from "./AuthenticationToken";
 import BasicAuthenticator from "./BasicAuthenticator";
 import UsernameAndPasswordToken from "./UsernameAndPasswordToken";
 import * as Token from "./Token";
-import * as TokenCredentials from "./TokenCredentials";
 import * as Credentials from "./Credentials";
 
 export class Class implements Authenticator<UsernameAndPasswordToken> {
@@ -19,7 +16,7 @@ export class Class implements Authenticator<UsernameAndPasswordToken> {
 
 	private context:Context;
 	private basicAuthenticator:BasicAuthenticator;
-	private credentials:TokenCredentials.Class;
+	private _credentials:Token.Class;
 
 	constructor( context:Context ) {
 		if( context === null ) throw new Errors.IllegalArgumentError( "context cannot be null" );
@@ -29,23 +26,36 @@ export class Class implements Authenticator<UsernameAndPasswordToken> {
 	}
 
 	isAuthenticated():boolean {
-		return !! this.credentials && this.credentials.token.expirationTime > new Date();
+		return !! this._credentials && this._credentials.expirationTime > new Date();
 	}
 
-	authenticate( authenticationToken:UsernameAndPasswordToken ):Promise<TokenCredentials.Class> {
-		return this.basicAuthenticator.authenticate( authenticationToken ).then(
-			( credentials:Credentials.Class ):Promise<[ Token.Class, HTTP.Response.Class ]> => {
-				return this.createToken();
-			}
-		).then(
-			( [ token, response ]:[ Token.Class, HTTP.Response.Class ] ):TokenCredentials.Class => {
-				this.credentials = new TokenCredentials.Class( token );
+	authenticate( authenticationToken:UsernameAndPasswordToken ):Promise<Token.Class>;
+	authenticate( credentials:Token.Class ):Promise<Token.Class>;
+	authenticate( authenticationOrCredentials:any ):Promise<Token.Class> {
+		if ( Token.Factory.is( authenticationOrCredentials ) ) {
+			this._credentials = authenticationOrCredentials;
+			return new Promise<Token.Class>( ( resolve:Function, reject:Function ) => {
+				if ( ! this.isAuthenticated() ) {
+					this.clearAuthentication();
+					throw new Errors.IllegalArgumentError( "The token provided in not valid." );
+				}
+				resolve( this._credentials );
+			});
 
-				this.basicAuthenticator.clearAuthentication();
+		} else {
+			return this.basicAuthenticator.authenticate( authenticationOrCredentials )
+				.then( ( credentials:Credentials.Class ):Promise<[ Token.Class, HTTP.Response.Class ]> => {
+					return this.createToken();
+				})
+				.then( ( [ token, response ]:[ Token.Class, HTTP.Response.Class ] ):Token.Class => {
+					this._credentials = token;
 
-				return this.credentials;
-			}
-		);
+					this.basicAuthenticator.clearAuthentication();
+
+					return this._credentials;
+				}
+			);
+		}
 	}
 
 	addAuthentication( requestOptions:HTTP.Request.Options ):HTTP.Request.Options {
@@ -57,7 +67,7 @@ export class Class implements Authenticator<UsernameAndPasswordToken> {
 	}
 
 	clearAuthentication():void {
-		this.credentials = null;
+		this._credentials = null;
 	}
 
 	supports( authenticationToken:AuthenticationToken ):boolean {
@@ -100,7 +110,7 @@ export class Class implements Authenticator<UsernameAndPasswordToken> {
 			header = new HTTP.Header.Class();
 			headers.set( "Authorization", header );
 		}
-		let authorization:string = "Token " + this.credentials.token.key;
+		let authorization:string = "Token " + this._credentials.key;
 		header.values.push( new HTTP.Header.Value( authorization ) );
 
 		return headers;

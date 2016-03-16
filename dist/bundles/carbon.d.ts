@@ -544,6 +544,127 @@ declare module 'carbonldp/Auth/BasicAuthenticator' {
 	export default Class;
 
 }
+declare module 'carbonldp/Committer' {
+	interface Committer<E> {
+	    commit(object: E): Promise<any>;
+	}
+	export default Committer;
+
+}
+declare module 'carbonldp/NS/XSD' {
+	export const namespace: string;
+	export class DataType {
+	    static date: string;
+	    static dateTime: string;
+	    static duration: string;
+	    static gDay: string;
+	    static gMonth: string;
+	    static gMonthDay: string;
+	    static gYear: string;
+	    static gYearMonth: string;
+	    static time: string;
+	    static byte: string;
+	    static decimal: string;
+	    static int: string;
+	    static integer: string;
+	    static long: string;
+	    static negativeInteger: string;
+	    static nonNegativeInteger: string;
+	    static nonPositiveInteger: string;
+	    static positiveInteger: string;
+	    static short: string;
+	    static unsignedLong: string;
+	    static unsignedInt: string;
+	    static unsignedShort: string;
+	    static unsignedByte: string;
+	    static double: string;
+	    static float: string;
+	    static boolean: string;
+	    static string: string;
+	    static object: string;
+	}
+
+}
+declare module 'carbonldp/RDF/Literal/Serializer' {
+	export interface Serializer {
+	    serialize(value: any): string;
+	}
+	export default Serializer;
+
+}
+declare module 'carbonldp/RDF/Literal/Serializers/XSD' {
+	import Serializer from 'carbonldp/RDF/Literal/Serializer';
+	export class DateSerializer implements Serializer {
+	    serialize(value: any): string;
+	}
+	export let dateSerializer: DateSerializer;
+	export class DateTimeSerializer implements Serializer {
+	    serialize(value: any): string;
+	}
+	export let dateTimeSerializer: DateTimeSerializer;
+	export class TimeSerializer implements Serializer {
+	    serialize(value: any): string;
+	}
+	export let timeSerializer: TimeSerializer;
+	export class IntegerSerializer implements Serializer {
+	    serialize(value: any): string;
+	}
+	export let integerSerializer: IntegerSerializer;
+	export class UnsignedIntegerSerializer extends IntegerSerializer {
+	    serialize(value: any): string;
+	}
+	export let unsignedIntegerSerializer: UnsignedIntegerSerializer;
+	export class FloatSerializer implements Serializer {
+	    serialize(value: any): string;
+	}
+	export let floatSerializer: FloatSerializer;
+	export class BooleanSerializer implements Serializer {
+	    serialize(value: any): string;
+	}
+	export let booleanSerializer: BooleanSerializer;
+	export class StringSerializer implements Serializer {
+	    serialize(value: any): string;
+	}
+	export let stringSerializer: StringSerializer;
+
+}
+declare module 'carbonldp/RDF/Literal/Serializers' {
+	import * as XSD from 'carbonldp/RDF/Literal/Serializers/XSD';
+	export { XSD };
+
+}
+declare module 'carbonldp/RDF/Literal' {
+	import Serializer from 'carbonldp/RDF/Literal/Serializer';
+	import * as Serializers from 'carbonldp/RDF/Literal/Serializers';
+	export interface Class {
+	    "@type"?: string;
+	    "@value": string;
+	}
+	export class Factory {
+	    static from(value: any): Class;
+	    static parse(literalValue: string, literalDataType?: string): any;
+	    static parse(literal: Class): any;
+	    static is(value: any): boolean;
+	    static hasType(value: Class, type: string): boolean;
+	}
+	export class Util {
+	    static areEqual(literal1: Class, literal2: Class): boolean;
+	}
+	export default Class;
+	export { Serializer, Serializers };
+
+}
+declare module 'carbonldp/RDF/List' {
+	import Value from 'carbonldp/RDF/Value';
+	export interface Class {
+	    "@list": Array<Value>;
+	}
+	export class Factory {
+	    static is(value: any): boolean;
+	}
+	export default Class;
+
+}
 declare module 'carbonldp/NS/C' {
 	export let namespace: string;
 	export class Class {
@@ -630,40 +751,6 @@ declare module 'carbonldp/NS/RDF' {
 	export { namespace, Predicate };
 
 }
-declare module 'carbonldp/NS/XSD' {
-	export const namespace: string;
-	export class DataType {
-	    static date: string;
-	    static dateTime: string;
-	    static duration: string;
-	    static gDay: string;
-	    static gMonth: string;
-	    static gMonthDay: string;
-	    static gYear: string;
-	    static gYearMonth: string;
-	    static time: string;
-	    static byte: string;
-	    static decimal: string;
-	    static int: string;
-	    static integer: string;
-	    static long: string;
-	    static negativeInteger: string;
-	    static nonNegativeInteger: string;
-	    static nonPositiveInteger: string;
-	    static positiveInteger: string;
-	    static short: string;
-	    static unsignedLong: string;
-	    static unsignedInt: string;
-	    static unsignedShort: string;
-	    static unsignedByte: string;
-	    static double: string;
-	    static float: string;
-	    static boolean: string;
-	    static string: string;
-	    static object: string;
-	}
-
-}
 declare module 'carbonldp/NS' {
 	import * as C from 'carbonldp/NS/C';
 	import * as CP from 'carbonldp/NS/CP';
@@ -700,86 +787,6 @@ declare module 'carbonldp/Pointer' {
 	export interface Validator {
 	    inScope(id: string): boolean;
 	    inScope(pointer: Class): boolean;
-	}
-	export default Class;
-
-}
-declare module 'carbonldp/RDF/Literal/Serializer' {
-	export interface Serializer {
-	    serialize(value: any): string;
-	}
-	export default Serializer;
-
-}
-declare module 'carbonldp/RDF/Literal/Serializers/XSD' {
-	import Serializer from 'carbonldp/RDF/Literal/Serializer';
-	export class DateSerializer implements Serializer {
-	    serialize(value: any): string;
-	}
-	export let dateSerializer: DateSerializer;
-	export class DateTimeSerializer implements Serializer {
-	    serialize(value: any): string;
-	}
-	export let dateTimeSerializer: DateTimeSerializer;
-	export class TimeSerializer implements Serializer {
-	    serialize(value: any): string;
-	}
-	export let timeSerializer: TimeSerializer;
-	export class IntegerSerializer implements Serializer {
-	    serialize(value: any): string;
-	}
-	export let integerSerializer: IntegerSerializer;
-	export class UnsignedIntegerSerializer extends IntegerSerializer {
-	    serialize(value: any): string;
-	}
-	export let unsignedIntegerSerializer: UnsignedIntegerSerializer;
-	export class FloatSerializer implements Serializer {
-	    serialize(value: any): string;
-	}
-	export let floatSerializer: FloatSerializer;
-	export class BooleanSerializer implements Serializer {
-	    serialize(value: any): string;
-	}
-	export let booleanSerializer: BooleanSerializer;
-	export class StringSerializer implements Serializer {
-	    serialize(value: any): string;
-	}
-	export let stringSerializer: StringSerializer;
-
-}
-declare module 'carbonldp/RDF/Literal/Serializers' {
-	import * as XSD from 'carbonldp/RDF/Literal/Serializers/XSD';
-	export { XSD };
-
-}
-declare module 'carbonldp/RDF/Literal' {
-	import Serializer from 'carbonldp/RDF/Literal/Serializer';
-	import * as Serializers from 'carbonldp/RDF/Literal/Serializers';
-	export interface Class {
-	    "@type"?: string;
-	    "@value": string;
-	}
-	export class Factory {
-	    static from(value: any): Class;
-	    static parse(literalValue: string, literalDataType?: string): any;
-	    static parse(literal: Class): any;
-	    static is(value: any): boolean;
-	    static hasType(value: Class, type: string): boolean;
-	}
-	export class Util {
-	    static areEqual(literal1: Class, literal2: Class): boolean;
-	}
-	export default Class;
-	export { Serializer, Serializers };
-
-}
-declare module 'carbonldp/RDF/List' {
-	import Value from 'carbonldp/RDF/Value';
-	export interface Class {
-	    "@list": Array<Value>;
-	}
-	export class Factory {
-	    static is(value: any): boolean;
 	}
 	export default Class;
 
@@ -823,6 +830,55 @@ declare module 'carbonldp/RDF/RDFNode' {
 	    static areEqual(node1: Class, node2: Class): boolean;
 	    static getPropertyURI(node: Class, predicate: string): string;
 	}
+
+}
+declare module 'carbonldp/ObjectSchema' {
+	import * as RDF from 'carbonldp/RDF';
+	export interface PropertyDefinition {
+	    "@id"?: string;
+	    "@type"?: string;
+	    "@language"?: string;
+	    "@container"?: string;
+	}
+	export interface Class {
+	    "@base"?: string;
+	    "@index"?: Object;
+	    "@language"?: string;
+	    "@reverse"?: Object;
+	    "@vocab"?: string;
+	    [name: string]: (string | PropertyDefinition);
+	}
+	export enum ContainerType {
+	    SET = 0,
+	    LIST = 1,
+	    LANGUAGE = 2,
+	}
+	export class DigestedObjectSchema {
+	    base: string;
+	    prefixes: Map<string, RDF.URI.Class>;
+	    properties: Map<string, DigestedPropertyDefinition>;
+	    prefixedURIs: Map<string, RDF.URI.Class[]>;
+	    constructor();
+	}
+	export class DigestedPropertyDefinition {
+	    uri: RDF.URI.Class;
+	    literal: boolean;
+	    literalType: RDF.URI.Class;
+	    language: string;
+	    containerType: ContainerType;
+	}
+	export interface Resolver {
+	    getSchemaFor(object: Object): DigestedObjectSchema;
+	}
+	export class Digester {
+	    static digestSchema(schemas: Class[]): DigestedObjectSchema;
+	    static digestSchema(schema: Class): DigestedObjectSchema;
+	    static combineDigestedObjectSchemas(digestedSchemas: DigestedObjectSchema[]): DigestedObjectSchema;
+	    private static digestSingleSchema(schema);
+	    private static resolvePrefixedURIs(digestedSchema);
+	    private static resolvePrefixedURI(uri, digestedSchema);
+	}
+	export default Class;
 
 }
 declare module 'carbonldp/RDF/URI' {
@@ -891,62 +947,6 @@ declare module 'carbonldp/RDF' {
 	import * as URI from 'carbonldp/RDF/URI';
 	import * as Value from 'carbonldp/RDF/Value';
 	export { Literal, Document, List, Node, URI, Value };
-
-}
-declare module 'carbonldp/ObjectSchema' {
-	import * as RDF from 'carbonldp/RDF';
-	export interface PropertyDefinition {
-	    "@id"?: string;
-	    "@type"?: string;
-	    "@language"?: string;
-	    "@container"?: string;
-	}
-	export interface Class {
-	    "@base"?: string;
-	    "@index"?: Object;
-	    "@language"?: string;
-	    "@reverse"?: Object;
-	    "@vocab"?: string;
-	    [name: string]: (string | PropertyDefinition);
-	}
-	export enum ContainerType {
-	    SET = 0,
-	    LIST = 1,
-	    LANGUAGE = 2,
-	}
-	export class DigestedObjectSchema {
-	    base: string;
-	    prefixes: Map<string, RDF.URI.Class>;
-	    properties: Map<string, DigestedPropertyDefinition>;
-	    prefixedURIs: Map<string, RDF.URI.Class[]>;
-	    constructor();
-	}
-	export class DigestedPropertyDefinition {
-	    uri: RDF.URI.Class;
-	    literal: boolean;
-	    literalType: RDF.URI.Class;
-	    language: string;
-	    containerType: ContainerType;
-	}
-	export interface Resolver {
-	    getSchemaFor(object: Object): DigestedObjectSchema;
-	}
-	export class Digester {
-	    static digestSchema(schemas: Class[]): DigestedObjectSchema;
-	    static digestSchema(schema: Class): DigestedObjectSchema;
-	    static combineDigestedObjectSchemas(digestedSchemas: DigestedObjectSchema[]): DigestedObjectSchema;
-	    private static digestSingleSchema(schema);
-	    private static resolvePrefixedURIs(digestedSchema);
-	    private static resolvePrefixedURI(uri, digestedSchema);
-	}
-	export default Class;
-
-}
-declare module 'carbonldp/Committer' {
-	interface Committer<E> {
-	    commit(object: E): Promise<any>;
-	}
-	export default Committer;
 
 }
 declare module 'carbonldp/Resource' {
@@ -1400,6 +1400,88 @@ declare module 'carbonldp/Context' {
 	export default Context;
 
 }
+declare module 'carbonldp/Auth/Token' {
+	import * as ObjectSchema from 'carbonldp/ObjectSchema';
+	import * as Pointer from 'carbonldp/Pointer';
+	import Credentials from 'carbonldp/Auth/Credentials';
+	export const RDF_CLASS: string;
+	export const CONTEXT: ObjectSchema.Class;
+	export interface Class extends Pointer.Class, Credentials {
+	    key: string;
+	    expirationTime: Date;
+	}
+	export class Factory {
+	    static is(value: any): boolean;
+	    static hasClassProperties(object: Object): boolean;
+	    static decorate<T extends Object>(object: T): T & Class;
+	    static hasRDFClass(pointer: Pointer.Class): boolean;
+	    static hasRDFClass(expandedObject: Object): boolean;
+	}
+	export default Class;
+
+}
+declare module 'carbonldp/Auth/TokenAuthenticator' {
+	import Context from 'carbonldp/Context';
+	import * as HTTP from 'carbonldp/HTTP';
+	import Authenticator from 'carbonldp/Auth/Authenticator';
+	import AuthenticationToken from 'carbonldp/Auth/AuthenticationToken';
+	import UsernameAndPasswordToken from 'carbonldp/Auth/UsernameAndPasswordToken';
+	import * as Token from 'carbonldp/Auth/Token';
+	export class Class implements Authenticator<UsernameAndPasswordToken> {
+	    private static TOKEN_CONTAINER;
+	    private context;
+	    private basicAuthenticator;
+	    private _credentials;
+	    constructor(context: Context);
+	    isAuthenticated(): boolean;
+	    authenticate(authenticationToken: UsernameAndPasswordToken): Promise<Token.Class>;
+	    authenticate(credentials: Token.Class): Promise<Token.Class>;
+	    addAuthentication(requestOptions: HTTP.Request.Options): HTTP.Request.Options;
+	    clearAuthentication(): void;
+	    supports(authenticationToken: AuthenticationToken): boolean;
+	    private createToken();
+	    private addTokenAuthenticationHeader(headers);
+	}
+	export default Class;
+
+}
+declare module 'carbonldp/Auth' {
+	import AuthenticationToken from 'carbonldp/Auth/AuthenticationToken';
+	import Authenticator from 'carbonldp/Auth/Authenticator';
+	import BasicAuthenticator from 'carbonldp/Auth/BasicAuthenticator';
+	import TokenAuthenticator from 'carbonldp/Auth/TokenAuthenticator';
+	import * as Token from 'carbonldp/Auth/Token';
+	import UsernameAndPasswordToken from 'carbonldp/Auth/UsernameAndPasswordToken';
+	import UsernameAndPasswordCredentials from 'carbonldp/Auth/UsernameAndPasswordCredentials';
+	import Credentials from 'carbonldp/Auth/Credentials';
+	import * as HTTP from 'carbonldp/HTTP';
+	import Context from 'carbonldp/Context';
+	export { AuthenticationToken, Authenticator, BasicAuthenticator, Token, TokenAuthenticator, UsernameAndPasswordToken };
+	export enum Method {
+	    BASIC = 0,
+	    TOKEN = 1,
+	}
+	export class Class {
+	    private context;
+	    private method;
+	    private authenticators;
+	    private authenticator;
+	    constructor(context: Context);
+	    isAuthenticated(askParent?: boolean): boolean;
+	    authenticate(username: string, password: string): Promise<Credentials>;
+	    authenticateUsing(method: "BASIC", username: string, password: string): Promise<UsernameAndPasswordCredentials>;
+	    authenticateUsing(method: "TOKEN", username: string, password: string): Promise<Token.Class>;
+	    authenticateUsing(method: "TOKEN", token: Token.Class): Promise<Token.Class>;
+	    authenticateUsing(method: string, username: string, password: string): Promise<Credentials>;
+	    authenticateUsing(method: string, token: Credentials): Promise<Credentials>;
+	    addAuthentication(requestOptions: HTTP.Request.Options): void;
+	    clearAuthentication(): void;
+	    private authenticateWithBasic(username, password);
+	    private authenticateWithToken(userOrTokenOrCredentials, password);
+	}
+	export default Class;
+
+}
 declare module 'carbonldp/App' {
 	import AbstractContext from 'carbonldp/AbstractContext';
 	import Context from 'carbonldp/Context';
@@ -1465,90 +1547,6 @@ declare module 'carbonldp/SDKContext' {
 	}
 	export const instance: Class;
 	export default instance;
-
-}
-declare module 'carbonldp/Auth/Token' {
-	import * as ObjectSchema from 'carbonldp/ObjectSchema';
-	import * as Pointer from 'carbonldp/Pointer';
-	export const RDF_CLASS: string;
-	export const CONTEXT: ObjectSchema.Class;
-	export interface Class extends Pointer.Class {
-	    key: string;
-	    expirationTime: Date;
-	}
-	export class Factory {
-	    static is(value: any): boolean;
-	    static hasClassProperties(object: Object): boolean;
-	    static decorate<T extends Object>(object: T): T & Class;
-	    static hasRDFClass(pointer: Pointer.Class): boolean;
-	    static hasRDFClass(expandedObject: Object): boolean;
-	}
-	export default Class;
-
-}
-declare module 'carbonldp/Auth/TokenCredentials' {
-	import * as Credentials from 'carbonldp/Auth/Credentials';
-	import * as Token from 'carbonldp/Auth/Token';
-	export class Class implements Credentials.Class {
-	    private _token;
-	    token: Token.Class;
-	    constructor(token: Token.Class);
-	}
-	export default Class;
-
-}
-declare module 'carbonldp/Auth/TokenAuthenticator' {
-	import Context from 'carbonldp/Context';
-	import * as HTTP from 'carbonldp/HTTP';
-	import Authenticator from 'carbonldp/Auth/Authenticator';
-	import AuthenticationToken from 'carbonldp/Auth/AuthenticationToken';
-	import UsernameAndPasswordToken from 'carbonldp/Auth/UsernameAndPasswordToken';
-	import * as TokenCredentials from 'carbonldp/Auth/TokenCredentials';
-	export class Class implements Authenticator<UsernameAndPasswordToken> {
-	    private static TOKEN_CONTAINER;
-	    private context;
-	    private basicAuthenticator;
-	    private credentials;
-	    constructor(context: Context);
-	    isAuthenticated(): boolean;
-	    authenticate(authenticationToken: UsernameAndPasswordToken): Promise<TokenCredentials.Class>;
-	    addAuthentication(requestOptions: HTTP.Request.Options): HTTP.Request.Options;
-	    clearAuthentication(): void;
-	    supports(authenticationToken: AuthenticationToken): boolean;
-	    private createToken();
-	    private addTokenAuthenticationHeader(headers);
-	}
-	export default Class;
-
-}
-declare module 'carbonldp/Auth' {
-	import AuthenticationToken from 'carbonldp/Auth/AuthenticationToken';
-	import Authenticator from 'carbonldp/Auth/Authenticator';
-	import BasicAuthenticator from 'carbonldp/Auth/BasicAuthenticator';
-	import * as Token from 'carbonldp/Auth/Token';
-	import TokenAuthenticator from 'carbonldp/Auth/TokenAuthenticator';
-	import UsernameAndPasswordToken from 'carbonldp/Auth/UsernameAndPasswordToken';
-	import * as HTTP from 'carbonldp/HTTP';
-	import Context from 'carbonldp/Context';
-	export { AuthenticationToken, Authenticator, BasicAuthenticator, Token, TokenAuthenticator, UsernameAndPasswordToken };
-	export enum Method {
-	    BASIC = 0,
-	    TOKEN = 1,
-	}
-	export class Class {
-	    private context;
-	    private method;
-	    private authenticators;
-	    private authenticator;
-	    constructor(context: Context);
-	    isAuthenticated(askParent?: boolean): boolean;
-	    authenticate(username: string, password: string): Promise<void>;
-	    authenticate(authenticationToken: AuthenticationToken): Promise<void>;
-	    addAuthentication(requestOptions: HTTP.Request.Options): void;
-	    clearAuthentication(): void;
-	    private getAuthenticator(authenticationToken);
-	}
-	export default Class;
 
 }
 declare module 'carbonldp/AbstractContext' {

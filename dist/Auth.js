@@ -1,10 +1,10 @@
 "use strict";
 var BasicAuthenticator_1 = require("./Auth/BasicAuthenticator");
 exports.BasicAuthenticator = BasicAuthenticator_1.default;
-var Token = require("./Auth/Token");
-exports.Token = Token;
 var TokenAuthenticator_1 = require("./Auth/TokenAuthenticator");
 exports.TokenAuthenticator = TokenAuthenticator_1.default;
+var Token = require("./Auth/Token");
+exports.Token = Token;
 var UsernameAndPasswordToken_1 = require("./Auth/UsernameAndPasswordToken");
 exports.UsernameAndPasswordToken = UsernameAndPasswordToken_1.default;
 var Errors = require("./Errors");
@@ -19,35 +19,26 @@ var Class = (function () {
         this.method = null;
         this.context = context;
         this.authenticators = [];
-        this.authenticators.push(new TokenAuthenticator_1.default(this.context));
-        this.authenticators.push(new BasicAuthenticator_1.default());
+        this.authenticators[Method.BASIC] = new BasicAuthenticator_1.default();
+        this.authenticators[Method.TOKEN] = new TokenAuthenticator_1.default(this.context);
     }
     Class.prototype.isAuthenticated = function (askParent) {
         if (askParent === void 0) { askParent = true; }
         return ((this.authenticator && this.authenticator.isAuthenticated()) ||
             (askParent && !!this.context.parentContext && this.context.parentContext.auth.isAuthenticated()));
     };
-    Class.prototype.authenticate = function (usernameOrToken, password) {
-        var _this = this;
-        if (password === void 0) { password = null; }
-        return new Promise(function (resolve, reject) {
-            if (!usernameOrToken)
-                throw new Errors.IllegalArgumentError("Either a username or an authenticationToken are required.");
-            var authenticationToken;
-            if (Utils.isString(usernameOrToken)) {
-                var username = usernameOrToken;
-                if (!password)
-                    throw new Errors.IllegalArgumentError("A password is required when providing a username.");
-                authenticationToken = new UsernameAndPasswordToken_1.default(username, password);
-            }
-            else {
-                authenticationToken = usernameOrToken;
-            }
-            if (_this.authenticator)
-                _this.clearAuthentication();
-            _this.authenticator = _this.getAuthenticator(authenticationToken);
-            resolve(_this.authenticator.authenticate(authenticationToken));
-        });
+    Class.prototype.authenticate = function (username, password) {
+        return this.authenticateUsing("TOKEN", username, password);
+    };
+    Class.prototype.authenticateUsing = function (method, userOrTokenOrCredentials, password) {
+        switch (method) {
+            case "BASIC":
+                return this.authenticateWithBasic(userOrTokenOrCredentials, password);
+            case "TOKEN":
+                return this.authenticateWithToken(userOrTokenOrCredentials, password);
+            default:
+                return Promise.reject(new Errors.IllegalArgumentError("No exists the authentication method '" + method + "'"));
+        }
     };
     Class.prototype.addAuthentication = function (requestOptions) {
         if (this.isAuthenticated(false)) {
@@ -66,13 +57,34 @@ var Class = (function () {
         this.authenticator.clearAuthentication();
         this.authenticator = null;
     };
-    Class.prototype.getAuthenticator = function (authenticationToken) {
-        for (var _i = 0, _a = this.authenticators; _i < _a.length; _i++) {
-            var authenticator = _a[_i];
-            if (authenticator.supports(authenticationToken))
-                return authenticator;
+    Class.prototype.authenticateWithBasic = function (username, password) {
+        var authenticator = this.authenticators[Method.BASIC];
+        var authenticationToken;
+        authenticationToken = new UsernameAndPasswordToken_1.default(username, password);
+        this.clearAuthentication();
+        this.authenticator = authenticator;
+        return this.authenticator.authenticate(authenticationToken);
+    };
+    Class.prototype.authenticateWithToken = function (userOrTokenOrCredentials, password) {
+        var authenticator = this.authenticators[Method.TOKEN];
+        var credentials = null;
+        var authenticationToken = null;
+        if (Utils.isString(userOrTokenOrCredentials) && Utils.isString(password)) {
+            authenticationToken = new UsernameAndPasswordToken_1.default(userOrTokenOrCredentials, password);
         }
-        throw new Errors.IllegalStateError("The configured authentication method isn\'t supported.");
+        else if (Token.Factory.is(userOrTokenOrCredentials)) {
+            credentials = userOrTokenOrCredentials;
+        }
+        else {
+            return Promise.reject(new Errors.IllegalArgumentError("Parameters do not match with the authentication request."));
+        }
+        this.clearAuthentication();
+        this.authenticator = authenticator;
+        if (authenticationToken)
+            return authenticator.authenticate(authenticationToken);
+        if (Utils.isString(credentials.expirationTime))
+            credentials.expirationTime = new Date(credentials.expirationTime);
+        return authenticator.authenticate(credentials);
     };
     return Class;
 }());

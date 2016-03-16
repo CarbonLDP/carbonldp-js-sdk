@@ -1,3 +1,8 @@
+# 0.18.0 (March 16, 2016)
+* By default, the function `authenticate()` of `Auth` class use `TOKEN` method for authentication
+* `Auth` class can be specified with witch method of authentication use `BASIC` or `TOKEN`, using the function  `authenticateUsing()`
+* Also `authenticationUsing()` can be provided with a `Token.Class` object credentials with the `TOKEN` method, for the reuse of a already existing JWT Token
+
 # 0.17.5 (March 15, 2016)
 * Typo
 

@@ -1,9 +1,8 @@
 import * as NS from "./../NS";
 import * as ObjectSchema from "./../ObjectSchema";
 import * as Pointer from "./../Pointer";
-import * as RDF from "./../RDF";
-import SDKContext from "./../SDKContext";
 import * as Utils from "./../Utils";
+import Credentials from "./Credentials";
 
 export const RDF_CLASS:string = NS.CS.Class.Token;
 
@@ -18,7 +17,7 @@ export const CONTEXT:ObjectSchema.Class = {
 	},
 };
 
-export interface Class extends Pointer.Class {
+export interface Class extends Pointer.Class, Credentials {
 	key:string;
 	expirationTime:Date;
 }
