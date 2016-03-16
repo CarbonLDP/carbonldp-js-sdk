@@ -1,24 +1,32 @@
 "use strict";
 
-let del = require( "del" );
+const fs = require( "fs" );
+const del = require( "del" );
+const packageJSON = require( "./package.json" );
 
-let gulp = require( "gulp" );
-let util = require( "gulp-util" );
+const gulp = require( "gulp" );
+const util = require( "gulp-util" );
 
-let karma = require( "karma" );
+const karma = require( "karma" );
 
-let sourcemaps = require( "gulp-sourcemaps" );
-let ts = require( "gulp-typescript" );
-let dts = require( "dts-generator" );
-let tslint = require( "gulp-tslint" );
+const sourcemaps = require( "gulp-sourcemaps" );
+const ts = require( "gulp-typescript" );
 
-let Builder = require( "systemjs-builder" );
+const dts = require( "dts-generator" );
+const glob = require( "glob" );
+const minimatch = require( "minimatch" );
+
+const tslint = require( "gulp-tslint" );
+
+const Builder = require( "systemjs-builder" );
+const jeditor = require( "gulp-json-editor" );
 
 let config = {
 	source: {
 		typescript: [
 			"src/**/*.ts",
-			"!src/**/*.spec.ts"
+			"!src/**/*.spec.ts",
+		    "!src/test/**"
 		],
 		main: "src/Carbon"
 	},
@@ -26,6 +34,15 @@ let config = {
 		sfxBundle: "dist/bundles/Carbon.sfx.js",
 		tsOutput: "dist",
 		all: "dist/**/*"
+	},
+	bundledDefinition: {
+		excludedFiles: [
+			"test",
+		    "tsconfig.json"
+		],
+		definitionFiles: [
+			"../typings/typings.d.ts"
+		]
 	}
 };
 
@@ -46,11 +63,8 @@ gulp.task( "test", ( done ) => {
 });
 
 gulp.task( "compile-library", () => {
-	let tsProject = ts.createProject({
+	let tsProject = ts.createProject( "tsconfig.json", {
 		"declaration": true,
-		"target": "es5",
-		"module": "commonjs",
-		"removeComments": true,
 	});
 
 	let tsResults = gulp.src( config.source.typescript )
@@ -74,7 +88,11 @@ gulp.task( "bundle-sfx", ( done ) => {
 		sourceMaps: true,
 		config: {
 			"transpiler": "typescript",
+			// TODO: Use tsconfig.json (need to update JSPM to 0.17)
 			"typescriptOptions": {
+				"module": "commonjs",
+				"noImplicitAny": false,
+				"removeComments": true,
 				"sourceMap": true,
 				"inlineSourceMap": false,
 			},
@@ -92,24 +110,45 @@ gulp.task( "bundle-sfx", ( done ) => {
 	});
 });
 
-gulp.task( "bundle-definitions", ( done ) => {
+gulp.task( "bundle-definitions", [ "bundle-definitions:tsconfig-creation", "bundle-definitions:bundling", "bundle-definitions:cleaning" ] );
+gulp.task( "bundle-definitions:tsconfig-creation", ( done ) => {
+	glob( "src/**", ( error, files ) => {
+		files = files.filter( ( file ) => {
+			return config.source.typescript.reduce( ( previous, current ) => previous && minimatch( file, current ), true );
+		});
+		files = files.map( ( file ) => file.replace( "src/", "" ) );
+
+		gulp.src( "./tsconfig.json" )
+			.pipe( jeditor( (json) => {
+				delete json.exclude;
+
+				json.files = files;
+
+				return json;
+			} ) )
+			.pipe( gulp.dest( "./src" ) )
+			.on( "end", done )
+		;
+	});
+});
+gulp.task( "bundle-definitions:bundling", [ "bundle-definitions:tsconfig-creation" ], ( done ) => {
 	dts.default({
-		name: "carbon",
+		name: packageJSON.name,
 		project: "src/",
 		out: "dist/bundles/carbon.d.ts"
 	}).then( () => {
 		done();
 	});
 });
+gulp.task( "bundle-definitions:cleaning", [ "bundle-definitions:bundling" ], () => {
+	return del( [ "./src/tsconfig.json" ] );
+});
 
 gulp.task( "clean:dist", ( done ) => {
 	return del( config.dist.all, done );
 });
 
-
 gulp.task( "lint", [ "ts-lint" ] );
-gulp.task( "build", [ "test", "ts-lint" ], () => {
-	return gulp.start( "build:afterTesting" );
-});
-gulp.task( "build:afterTesting", [ "clean:dist" ], () => { return gulp.start( "build:afterCleaning" ); });
+
+gulp.task( "build", [ "clean:dist" ], () => { return gulp.start( "build:afterCleaning" ); });
 gulp.task( "build:afterCleaning", [ "compile-library", "bundle-sfx", "bundle-definitions" ] );

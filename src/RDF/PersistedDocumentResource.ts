@@ -1,5 +1,3 @@
-/// <reference path="./../../typings/typings.d.ts" />
-
 /*
 
 	import * as DocumentResource from './DocumentResource';

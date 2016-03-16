@@ -1,4 +1,3 @@
-/// <reference path="../typings/typings.d.ts" />
 export interface Class {
     _snapshot: Object;
     _syncSnapshot: () => void;

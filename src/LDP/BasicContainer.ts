@@ -1,5 +1,3 @@
-/// <reference path="./../../typings/typings.d.ts" />
-
 import * as NS from "./../NS";
 import * as Pointer from "./../Pointer";
 import * as RDF from "./../RDF";

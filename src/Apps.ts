@@ -1,5 +1,3 @@
-/// <reference path="./../typings/typings.d.ts" />
-
 import * as App from "./App";
 import * as Document from "./Document";
 import Context from "./Context";

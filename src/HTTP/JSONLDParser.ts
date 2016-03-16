@@ -1,5 +1,3 @@
-/// <reference path="../../typings/typings.d.ts" />
-
 import * as jsonld from "jsonld";
 
 import Parser from "./Parser";

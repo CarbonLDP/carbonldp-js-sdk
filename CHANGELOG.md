@@ -1,3 +1,12 @@
+# 0.17.5 (March 15, 2016)
+* Typo
+
+# 0.17.4 (March 15, 2016)
+* Renamed package name in definitions bundle to carbonldp. Imports now need to be `carbonldp/Carbon`, etc.
+
+# 0.17.3 (March 15, 2016)
+* Added `tsconfig.json` and removed unnecessary exports in the definitions bundle (`dist/bundles/carbon.d.ts`)
+
 # 0.17.2 (March 15, 2016)
 * Add missing unit tests.
 

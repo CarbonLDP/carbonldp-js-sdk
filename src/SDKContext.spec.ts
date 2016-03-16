@@ -1,5 +1,3 @@
-/// <reference path="./../typings/typings.d.ts" />
-
 import * as SDKContext from "./SDKContext";
 import DefaultExport from "./SDKContext";
 

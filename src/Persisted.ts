@@ -1,4 +1,3 @@
-/// <reference path="./../typings/typings.d.ts" />
 import * as RDF from "./RDF";
 import * as Utils from "./Utils";
 
