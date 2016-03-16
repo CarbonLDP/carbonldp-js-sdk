@@ -133,7 +133,7 @@ gulp.task( "bundle-definitions:tsconfig-creation", ( done ) => {
 });
 gulp.task( "bundle-definitions:bundling", [ "bundle-definitions:tsconfig-creation" ], ( done ) => {
 	dts.default({
-		name: packageJSON.version,
+		name: packageJSON.name,
 		project: "src/",
 		out: "dist/bundles/carbon.d.ts"
 	}).then( () => {
