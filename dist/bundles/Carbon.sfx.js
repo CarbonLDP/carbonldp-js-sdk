@@ -12697,7 +12697,7 @@ $__System.register("63", ["2", "c", "8", "15", "d", "24", "5", "62", "6"], funct
                     this.apps = new Apps_1.default(this);
                 }
                 Object.defineProperty(Carbon, "version", {
-                    get: function () { return "0.17.5-ALPHA"; },
+                    get: function () { return "0.18.0-ALPHA"; },
                     enumerable: true,
                     configurable: true
                 });
