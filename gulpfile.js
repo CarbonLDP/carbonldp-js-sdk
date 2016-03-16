@@ -2,6 +2,7 @@
 
 const fs = require( "fs" );
 const del = require( "del" );
+const packageJSON = require( "./package.json" );
 
 const gulp = require( "gulp" );
 const util = require( "gulp-util" );
@@ -132,7 +133,7 @@ gulp.task( "bundle-definitions:tsconfig-creation", ( done ) => {
 });
 gulp.task( "bundle-definitions:bundling", [ "bundle-definitions:tsconfig-creation" ], ( done ) => {
 	dts.default({
-		name: "carbon",
+		name: packageJSON.version,
 		project: "src/",
 		out: "dist/bundles/carbon.d.ts"
 	}).then( () => {
