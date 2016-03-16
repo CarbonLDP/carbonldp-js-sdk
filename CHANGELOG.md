@@ -1,3 +1,6 @@
+# 0.17.5 (March 15, 2016)
+* Typo
+
 # 0.17.4 (March 15, 2016)
 * Renamed package name in definitions bundle to carbonldp. Imports now need to be `carbonldp/Carbon`, etc.
 
