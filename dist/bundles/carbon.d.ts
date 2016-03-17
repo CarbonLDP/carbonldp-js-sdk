@@ -1483,25 +1483,18 @@ declare module 'carbonldp/Auth' {
 
 }
 declare module 'carbonldp/App' {
-	import AbstractContext from 'carbonldp/AbstractContext';
-	import Context from 'carbonldp/Context';
 	import * as Document from 'carbonldp/Document';
-	import * as LDP from 'carbonldp/LDP';
 	import * as ObjectSchema from 'carbonldp/ObjectSchema';
 	export interface Class extends Document.Class {
-	    rootContainer: LDP.PersistedContainer.Class;
+	    name: string;
 	}
 	export const RDF_CLASS: string;
-	export const SCHEMA: ObjectSchema.Class; class AppContext extends AbstractContext {
-	    private app;
-	    private base;
-	    constructor(parentContext: Context, app: Class);
-	    resolve(uri: string): string;
-	    private getBase(resource);
-	}
-	export { AppContext as Context };
+	export const SCHEMA: ObjectSchema.Class;
 	export class Factory {
 	    static hasClassProperties(resource: Object): boolean;
+	    static is(object: Object): boolean;
+	    static create(name: string): Class;
+	    static createFrom<T extends Object>(object: T, name: string): T & Class;
 	}
 	export default Class;
 
@@ -1560,13 +1553,39 @@ declare module 'carbonldp/AbstractContext' {
 	export default AbstractContext;
 
 }
-declare module 'carbonldp/Apps' {
+declare module 'carbonldp/PersistedApp' {
+	import * as LDP from 'carbonldp/LDP';
 	import * as App from 'carbonldp/App';
+	export interface Class extends App.Class {
+	    rootContainer: LDP.PersistedContainer.Class;
+	}
+	export class Factory {
+	    static hasClassProperties(resource: Object): boolean;
+	    static is(object: Object): boolean;
+	}
+	export default Class;
+
+}
+declare module 'carbonldp/AppContext' {
+	import AbstractContext from 'carbonldp/AbstractContext';
+	import Context from 'carbonldp/Context';
+	import PersistedApp from 'carbonldp/PersistedApp'; class AppContext extends AbstractContext {
+	    private app;
+	    private base;
+	    constructor(parentContext: Context, app: PersistedApp);
+	    resolve(uri: string): string;
+	    private getBase(resource);
+	}
+	export default AppContext;
+
+}
+declare module 'carbonldp/Apps' {
+	import AppContext from 'carbonldp/AppContext';
 	import Context from 'carbonldp/Context'; class Apps {
 	    private context;
 	    constructor(context: Context);
-	    get(uri: string): Promise<App.Context>;
-	    getAll(): Promise<App.Context[]>;
+	    get(uri: string): Promise<AppContext>;
+	    getAll(): Promise<AppContext[]>;
 	    private getAppsContainerURI();
 	}
 	export default Apps;

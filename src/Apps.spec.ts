@@ -18,7 +18,7 @@ import * as App from "./App";
 
 import Apps from "./Apps";
 
-describe( module( "Carbon/Apps" ), ():void => {
+xdescribe( module( "Carbon/Apps" ), ():void => {
 	let context:AbstractContext;
 
 	describe( clazz(

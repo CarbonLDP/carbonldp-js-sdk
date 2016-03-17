@@ -1,11 +1,11 @@
-import * as App from "./App";
+import AppContext from "./AppContext";
 import * as Document from "./Document";
 import Context from "./Context";
 import * as HTTP from "./HTTP";
 import * as Pointer from "./Pointer";
 import * as RDF from "./RDF";
 import * as Utils from "./Utils";
-import * as CS from "./NS/CS";
+import * as PersistedApp from "./PersistedApp";
 
 class Apps {
 	private context:Context;
@@ -14,7 +14,7 @@ class Apps {
 		this.context = context;
 	}
 
-	get( uri:string ):Promise<App.Context> {
+	get( uri:string ):Promise<AppContext> {
 		let appsContainerURI:string = this.getAppsContainerURI();
 		if ( RDF.URI.Util.isRelative( uri ) ) {
 			if ( ! Utils.S.startsWith( uri, appsContainerURI ) ) uri = RDF.URI.Util.resolve( appsContainerURI, uri );
@@ -23,24 +23,26 @@ class Apps {
 
 		return this.context.documents.get( uri ).then(
 			( [ document, response ]:[ Document.Class, HTTP.Response.Class ] ) => {
-				if ( ! document.types.indexOf( CS.Class.Application ) ) throw new Error( "The resource fetched is not a cs:Application." );
+				if ( ! PersistedApp.Factory.is( document ) ) throw new Error( "The resource fetched is not a cs:Application." );
 
-				return new App.Context( this.context, <any> document );
+				return new AppContext( this.context, <PersistedApp.Class> document );
 			}
 		);
 	}
 
-	getAll():Promise<App.Context[]> {
+	getAll():Promise<AppContext[]> {
 		return this.context.documents.getMembers( this.getAppsContainerURI(), false ).then(
 			( [ members, response ]:[ Pointer.Class[], HTTP.Response.Class ] ) => {
 				return Pointer.Util.resolveAll( members );
 			}
 		).then(
 			( [ members, responses ]:[ Pointer.Class[], HTTP.Response.Class[] ] ) => {
-				return members.map( ( member:Pointer.Class ) => new App.Context( this.context, <any> member ) );
+				return members.map( ( member:Pointer.Class ) => new AppContext( this.context, <any> member ) );
 			}
 		);
 	}
+	
+	
 
 	private getAppsContainerURI():string {
 		if ( ! this.context.hasSetting( "platform.apps.container" ) ) throw new Error( "The apps container URI hasn't been set." );

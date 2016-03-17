@@ -1,9 +1,9 @@
 "use strict";
-var App = require("./App");
+var AppContext_1 = require("./AppContext");
 var Pointer = require("./Pointer");
 var RDF = require("./RDF");
 var Utils = require("./Utils");
-var CS = require("./NS/CS");
+var PersistedApp = require("./PersistedApp");
 var Apps = (function () {
     function Apps(context) {
         this.context = context;
@@ -18,9 +18,9 @@ var Apps = (function () {
         }
         return this.context.documents.get(uri).then(function (_a) {
             var document = _a[0], response = _a[1];
-            if (!document.types.indexOf(CS.Class.Application))
+            if (!PersistedApp.Factory.is(document))
                 throw new Error("The resource fetched is not a cs:Application.");
-            return new App.Context(_this.context, document);
+            return new AppContext_1.default(_this.context, document);
         });
     };
     Apps.prototype.getAll = function () {
@@ -30,7 +30,7 @@ var Apps = (function () {
             return Pointer.Util.resolveAll(members);
         }).then(function (_a) {
             var members = _a[0], responses = _a[1];
-            return members.map(function (member) { return new App.Context(_this.context, member); });
+            return members.map(function (member) { return new AppContext_1.default(_this.context, member); });
         });
     };
     Apps.prototype.getAppsContainerURI = function () {
