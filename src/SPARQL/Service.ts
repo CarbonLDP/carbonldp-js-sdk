@@ -38,7 +38,7 @@ export class Class {
 		return HTTP.Request.Service.post( url, selectQuery, options, Class.resultsParser );
 	}
 
-	static executeSELECTQuery( url:string, selectQuery:string, pointerLibrary:Pointer.Library, options:HTTP.Request.Options ):Promise<[ any, HTTP.Response.Class]> {
+	static executeSELECTQuery( url:string, selectQuery:string, pointerLibrary:Pointer.Library, options?:HTTP.Request.Options ):Promise<[ any, HTTP.Response.Class]> {
 		return Class.executeRawSELECTQuery( url, selectQuery, options ).then( ( [ rawResults, response ]:[ RawResults.Class, HTTP.Response.Class ] ) => {
 			let rawBindings:RawResults.BindingObject[] = rawResults.results.bindings;
 			let bindings:SELECTResults.BindingObject[] = [];

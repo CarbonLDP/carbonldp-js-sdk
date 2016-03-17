@@ -22,7 +22,6 @@ import AuthenticationToken from "./AuthenticationToken";
 import UsernameAndPasswordToken from "./UsernameAndPasswordToken";
 
 import * as Token from "./Token";
-import * as TokenCredentials from "./TokenCredentials";
 
 import * as TokenAuthenticator from "./TokenAuthenticator";
 
@@ -142,7 +141,7 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 					let context:SuccessfulContext = new SuccessfulContext();
 					let authenticator:TokenAuthenticator.Class = new TokenAuthenticator.Class( context );
 
-					promises.push( authenticator.authenticate( new UsernameAndPasswordToken( "user", "pass" ) ).then( ( tokenCredentials:TokenCredentials.Class ):void => {
+					promises.push( authenticator.authenticate( new UsernameAndPasswordToken( "user", "pass" ) ).then( ( tokenCredentials:Token.Class ):void => {
 						expect( authenticator.isAuthenticated() ).toEqual( true );
 
 						expect( tokenCredentials ).toBeDefined();
@@ -224,7 +223,7 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 					let authenticator:TokenAuthenticator.Class = new TokenAuthenticator.Class( context );
 
 					promises.push( authenticator.authenticate( JSON.parse( tokenString ) )
-						.then( ( tokenCredentials:TokenCredentials.Class ):void => {
+						.then( ( tokenCredentials:Token.Class ):void => {
 							expect( authenticator.isAuthenticated() ).toEqual( true );
 	
 							expect( tokenCredentials ).toBeDefined();

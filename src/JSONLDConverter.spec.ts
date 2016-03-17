@@ -3,7 +3,6 @@ import {
 		STATIC,
 
 		module,
-		submodule,
 
 		isDefined,
 
@@ -139,7 +138,7 @@ describe( module( "Carbon/JSONLDConverter" ), ():void => {
 						return true;
 					},
 					getPointer: ( id:string ):Pointer.Class => {
-						return { uri: id, resolve: mockedResolveFunction };
+						return <any> { uri: id, resolve: mockedResolveFunction };
 					},
 				};
 
