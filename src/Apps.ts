@@ -1,11 +1,13 @@
 import AppContext from "./AppContext";
 import * as Document from "./Document";
 import Context from "./Context";
-import * as HTTP from "./HTTP";
+import * as Response from "./HTTP/Response";
 import * as Pointer from "./Pointer";
 import * as RDF from "./RDF";
 import * as Utils from "./Utils";
+import * as App from "./App";
 import * as PersistedApp from "./PersistedApp";
+import * as Errors from "./Errors";
 
 class Apps {
 	private context:Context;
@@ -22,8 +24,8 @@ class Apps {
 		}
 
 		return this.context.documents.get( uri ).then(
-			( [ document, response ]:[ Document.Class, HTTP.Response.Class ] ) => {
-				if ( ! PersistedApp.Factory.is( document ) ) throw new Error( "The resource fetched is not a cs:Application." );
+			( [ document, response ]:[ Document.Class, Response.Class ] ) => {
+				if ( ! PersistedApp.Factory.is( document ) ) throw new Errors.IllegalArgumentError( "The resource fetched is not a cs:Application." );
 
 				return new AppContext( this.context, <PersistedApp.Class> document );
 			}
@@ -32,20 +34,30 @@ class Apps {
 
 	getAll():Promise<AppContext[]> {
 		return this.context.documents.getMembers( this.getAppsContainerURI(), false ).then(
-			( [ members, response ]:[ Pointer.Class[], HTTP.Response.Class ] ) => {
+			( [ members, response ]:[ Pointer.Class[], Response.Class ] ) => {
 				return Pointer.Util.resolveAll( members );
 			}
 		).then(
-			( [ members, responses ]:[ Pointer.Class[], HTTP.Response.Class[] ] ) => {
+			( [ members, responses ]:[ Pointer.Class[], Response.Class[] ] ) => {
 				return members.map( ( member:Pointer.Class ) => new AppContext( this.context, <any> member ) );
 			}
 		);
 	}
-	
-	
+
+	create( appDocument:App.Class ):Promise<[ Pointer.Class, Response.Class]>;
+	create( slug:string, appDocument:App.Class ):Promise<[ Pointer.Class, Response.Class]>;
+	create( slugOrApp:any, appDocument?:App.Class ):Promise<[ Pointer.Class, Response.Class]> {
+		let appsContainerURI:string = this.getAppsContainerURI();
+		let slug:string = Utils.isString( slugOrApp ) ? slugOrApp : null;
+		appDocument = appDocument || slugOrApp;
+
+		if ( ! App.Factory.is( appDocument ) ) return Promise.reject<any>( new Errors.IllegalArgumentError( "The Document is not a `Carbon.App.Class` object." ) );
+
+		return this.context.documents.createChild( appsContainerURI, slug, appDocument );
+	}
 
 	private getAppsContainerURI():string {
-		if ( ! this.context.hasSetting( "platform.apps.container" ) ) throw new Error( "The apps container URI hasn't been set." );
+		if ( ! this.context.hasSetting( "platform.apps.container" ) ) throw new Errors.IllegalStateError( "The apps container URI hasn't been set." );
 		return this.context.getSetting( "platform.apps.container" );
 	}
 }

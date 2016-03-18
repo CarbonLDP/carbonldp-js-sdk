@@ -21,10 +21,8 @@ declare module 'carbonldp/Utils' {
 	    private static regExp;
 	    static is(uuid: string): boolean;
 	    static generate(): string;
-	} class P {
-	    static createRejectedPromise<T extends Error>(error: T): Promise<any>;
 	}
-	export { hasFunction, hasProperty, hasPropertyDefined, isDefined, isNull, isArray, isString, isBoolean, isNumber, isInteger, isDouble, isDate, isObject, isFunction, isMap, parseBoolean, extend, forEachOwnProperty, O, S, A, M, UUID, P };
+	export { hasFunction, hasProperty, hasPropertyDefined, isDefined, isNull, isArray, isString, isBoolean, isNumber, isInteger, isDouble, isDate, isObject, isFunction, isMap, parseBoolean, extend, forEachOwnProperty, O, S, A, M, UUID };
 
 }
 declare module 'carbonldp/Errors/AbstractError' {
@@ -1581,11 +1579,16 @@ declare module 'carbonldp/AppContext' {
 }
 declare module 'carbonldp/Apps' {
 	import AppContext from 'carbonldp/AppContext';
-	import Context from 'carbonldp/Context'; class Apps {
+	import Context from 'carbonldp/Context';
+	import * as Response from 'carbonldp/HTTP/Response';
+	import * as Pointer from 'carbonldp/Pointer';
+	import * as App from 'carbonldp/App'; class Apps {
 	    private context;
 	    constructor(context: Context);
 	    get(uri: string): Promise<AppContext>;
 	    getAll(): Promise<AppContext[]>;
+	    create(appDocument: App.Class): Promise<[Pointer.Class, Response.Class]>;
+	    create(slug: string, appDocument: App.Class): Promise<[Pointer.Class, Response.Class]>;
 	    private getAppsContainerURI();
 	}
 	export default Apps;

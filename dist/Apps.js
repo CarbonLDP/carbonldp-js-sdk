@@ -3,7 +3,9 @@ var AppContext_1 = require("./AppContext");
 var Pointer = require("./Pointer");
 var RDF = require("./RDF");
 var Utils = require("./Utils");
+var App = require("./App");
 var PersistedApp = require("./PersistedApp");
+var Errors = require("./Errors");
 var Apps = (function () {
     function Apps(context) {
         this.context = context;
@@ -19,7 +21,7 @@ var Apps = (function () {
         return this.context.documents.get(uri).then(function (_a) {
             var document = _a[0], response = _a[1];
             if (!PersistedApp.Factory.is(document))
-                throw new Error("The resource fetched is not a cs:Application.");
+                throw new Errors.IllegalArgumentError("The resource fetched is not a cs:Application.");
             return new AppContext_1.default(_this.context, document);
         });
     };
@@ -33,9 +35,17 @@ var Apps = (function () {
             return members.map(function (member) { return new AppContext_1.default(_this.context, member); });
         });
     };
+    Apps.prototype.create = function (slugOrApp, appDocument) {
+        var appsContainerURI = this.getAppsContainerURI();
+        var slug = Utils.isString(slugOrApp) ? slugOrApp : null;
+        appDocument = appDocument || slugOrApp;
+        if (!App.Factory.is(appDocument))
+            return Promise.reject(new Errors.IllegalArgumentError("The Document is not a `Carbon.App.Class` object."));
+        return this.context.documents.createChild(appsContainerURI, slug, appDocument);
+    };
     Apps.prototype.getAppsContainerURI = function () {
         if (!this.context.hasSetting("platform.apps.container"))
-            throw new Error("The apps container URI hasn't been set.");
+            throw new Errors.IllegalStateError("The apps container URI hasn't been set.");
         return this.context.getSetting("platform.apps.container");
     };
     return Apps;

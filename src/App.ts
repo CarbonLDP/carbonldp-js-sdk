@@ -34,7 +34,7 @@ export class Factory {
 			&& Factory.hasClassProperties( object )
 			&& ( <Document.Class> object ).types.indexOf( NS.CS.Class.Application ) !== -1;
 	}
-	
+
 	static create( name:string ):Class {
 		return Factory.createFrom<Object>( {}, name );
 	}
@@ -46,7 +46,7 @@ export class Factory {
 		if ( ! Utils.isString( name ) || ! name )
 			throw new IllegalArgumentError( "The name cannot be empty." );
 
-		let app = <T & Class> object;
+		let app:T & Class = <T & Class> object;
 		app.name = name;
 		app.types.push( NS.CS.Class.Application );
 

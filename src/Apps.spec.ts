@@ -2,23 +2,25 @@ import {
 	INSTANCE,
 	STATIC,
 
+	method,
 	module,
 	clazz,
 
 	isDefined,
 	hasConstructor,
 	hasMethod,
-	hasProperty,
-	extendsClass,
-	hasDefaultExport
+	hasSignature
 } from "./test/JasmineExtender";
 import * as Utils from "./Utils";
 import AbstractContext from "./AbstractContext";
+import AppContext from "./AppContext";
+import * as NS from "./NS";
+import * as Errors from "./Errors";
 import * as App from "./App";
 
 import Apps from "./Apps";
 
-xdescribe( module( "Carbon/Apps" ), ():void => {
+describe( module( "Carbon/Apps" ), ():void => {
 	let context:AbstractContext;
 
 	describe( clazz(
@@ -26,6 +28,7 @@ xdescribe( module( "Carbon/Apps" ), ():void => {
 		"Class for obtaining Carbon Apps."
 	), ():void => {
 		let apps:Apps;
+		let appsContainerURI:string = "http://example.com/platform/apps/";
 
 		beforeEach( ():void => {
 			class MockedContext extends AbstractContext {
@@ -34,7 +37,7 @@ xdescribe( module( "Carbon/Apps" ), ():void => {
 				}
 			}
 			context = new MockedContext();
-			context.setSetting( "platform.apps.container", "http://example.com/platform/apps/" );
+			context.setSetting( "platform.apps.container", appsContainerURI );
 			apps = new Apps( context );
 			jasmine.Ajax.install();
 		});
@@ -58,19 +61,20 @@ xdescribe( module( "Carbon/Apps" ), ():void => {
 		it( hasMethod(
 			INSTANCE,
 			"get",
-			"Obtains an `Carbon.App.Context` object of the specified app URI, if it exists within the context of the Apps instance.", [
+			"Obtains an `Carbon.AppContext` object of the specified app URI, if it exists within the context of the Apps instance.", [
 				{ name: "uri", type: "string" }
 			],
-			{ type: "Promise<Carbon.App.Context>"}
+			{ type: "Promise<Carbon.AppContext>"}
 		), ( done:{ ():void, fail:() => void } ):void => {
 			expect( apps.get ).toBeDefined();
 			expect( Utils.isFunction( apps.get ) ).toBe( true );
 
 			let spies = {
-				success: ( appContext:App.Context ):void => {
-					expect( appContext instanceof App.Context ).toBe( true );
+				success: ( appContext:AppContext ):void => {
+					expect( appContext instanceof AppContext ).toBe( true );
 				},
-				fail: ():void => {
+				fail: ( some ):void => {
+					console.log( some );
 				}
 			};
 			let successSpy = spyOn( spies, "success" ).and.callThrough();
@@ -93,10 +97,13 @@ xdescribe( module( "Carbon/Apps" ), ():void => {
 				        "@type": [
 				          "http://www.w3.org/ns/ldp#RDFSource",
 				          "http://www.w3.org/ns/ldp#BasicContainer",
-				          "https://carbonldp.com/ns/v1/security#Application"
+				          "${NS.CS.Class.Application}"
 				        ],
 				        "https://carbonldp.com/ns/v1/security#rootContainer": [{
 				            "@id": "https://example.com/apps/example-app/"
+				        }],
+				        "${NS.CS.Predicate.name}": [{
+				            "@value": "Example App name"
 				        }]
 				    }]
 				}]`
@@ -112,17 +119,17 @@ xdescribe( module( "Carbon/Apps" ), ():void => {
 		it( hasMethod(
 			INSTANCE,
 			"getAll",
-			"Obtains all the `Carbon.App.Context` objects of every app where the context of the Apps instance can reach.",
-			{ type: "Promise<Carbon.App.Context[]>"}
+			"Obtains all the `Carbon.AppContext` objects of every app where the context of the Apps instance can reach.",
+			{ type: "Promise<Carbon.AppContext[]>"}
 		), ( done:{ ():void, fail:() => void } ):void => {
 			expect( apps.getAll ).toBeDefined();
 			expect( Utils.isFunction( apps.getAll ) ).toBe( true );
 
 			let spies = {
-				success: ( appsContext:App.Context[] ):void => {
+				success: ( appsContext:AppContext[] ):void => {
 					expect( appsContext.length ).toBe( 2 );
 					for( let appContext of appsContext ) {
-						expect( appContext instanceof App.Context ).toBe( true );
+						expect( appContext instanceof AppContext ).toBe( true );
 					}
 				},
 				fail: ():void => {
@@ -171,10 +178,13 @@ xdescribe( module( "Carbon/Apps" ), ():void => {
 				        "@type": [
 				          "http://www.w3.org/ns/ldp#RDFSource",
 				          "http://www.w3.org/ns/ldp#BasicContainer",
-				          "https://carbonldp.com/ns/v1/security#Application"
+				          "${NS.CS.Class.Application}"
 				        ],
 				        "https://carbonldp.com/ns/v1/security#rootContainer": [{
 				            "@id": "https://example.com/apps/example-app/"
+				        }],
+				        "${NS.CS.Predicate.name}": [{
+				            "@value": "Example App name"
 				        }]
 				    }]
 				}]`
@@ -191,10 +201,13 @@ xdescribe( module( "Carbon/Apps" ), ():void => {
 				        "@type": [
 				          "http://www.w3.org/ns/ldp#RDFSource",
 				          "http://www.w3.org/ns/ldp#BasicContainer",
-				          "https://carbonldp.com/ns/v1/security#Application"
+				          "${NS.CS.Class.Application}"
 				        ],
 				        "https://carbonldp.com/ns/v1/security#rootContainer": [{
 				            "@id": "https://example.com/apps/another-app/"
+				        }],
+				        "${NS.CS.Predicate.name}": [{
+				            "@value": "Another App name"
 				        }]
 				    }]
 				}]`
@@ -205,6 +218,85 @@ xdescribe( module( "Carbon/Apps" ), ():void => {
 				expect( failSpy.calls.count() ).toBe( 0 );
 				done();
 			}, done.fail );
+		});
+
+		describe( method(
+			INSTANCE,
+			"create"
+		), ():void => {
+
+			it( hasSignature(
+				"Persists an App Document in the server, generating a unique slug.\n" +
+				"Returns a Pointer for the stored App Document, and the response of the call.", [
+					{ name: "appDocument", type: "Carbon.App.Class" }
+				],
+				{ type: "Promise<Carbon.Pointer.Class, Carbon.HTTP.Response.Class>" }
+			), ( done ):void => {
+				expect( apps.create ).toBeDefined();
+				expect( Utils.isFunction( apps.create ) ).toBe( true );
+
+				let spy = spyOn( context.documents, "createChild" );
+				let app:App.Class = App.Factory.create( "App name" );
+
+				apps.create( app );
+				expect( spy ).toHaveBeenCalledWith( appsContainerURI, null, app );
+
+				let promise:Promise<any> = apps.create( null );
+				expect( promise instanceof Promise ).toBe( true );
+
+				let spies = {
+					onError: function( error ):void {
+						expect( error instanceof Errors.IllegalArgumentError );
+					}
+				};
+				spy = spyOn( spies, "onError" ).and.callThrough();
+				promise = promise.catch( spies.onError );
+
+				Promise.all( [promise] ).then( ():void => {
+					expect( spy ).toHaveBeenCalled();
+					done();
+				});
+			});
+
+			it( hasSignature(
+				"Persists an App Document in the server using the slug specified.\n" +
+				"Returns a Pointer for the stored App Document, and the response of the call.", [
+					{ name: "slug", type: "string" },
+					{ name: "appDocument", type: "Carbon.App.Class" }
+				],
+				{ type: "Promise<Carbon.Pointer.Class, Carbon.HTTP.Response.Class>" }
+			), ( done:() => void ):void => {
+				expect( apps.create ).toBeDefined();
+				expect( Utils.isFunction( apps.create ) ).toBe( true );
+
+				let promise:Promise<any>;
+				let spy = spyOn( context.documents, "createChild" );
+				let app:App.Class = App.Factory.create( "App name" );
+
+				apps.create( "The name of the App", app );
+				expect( spy ).toHaveBeenCalledWith( appsContainerURI, "The name of the App", app );
+
+				spy.calls.reset();
+				apps.create( null, app );
+				expect( spy ).toHaveBeenCalledWith( appsContainerURI, null, app );
+
+				promise = apps.create( "The name of the App", null );
+				expect( promise instanceof Promise ).toBe( true );
+
+				let spies = {
+					onError: function( error ):void {
+						expect( error instanceof Errors.IllegalArgumentError );
+					}
+				};
+				spy = spyOn( spies, "onError" ).and.callThrough();
+				promise = promise.catch( spies.onError );
+
+				Promise.all( [promise] ).then( ():void => {
+					expect( spy ).toHaveBeenCalled();
+					done();
+				});
+			});
+
 		});
 
 	});

@@ -162,10 +162,10 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 		let childDocument:Document.Class = ! Utils.isString( slugOrChildDocument ) ? slugOrChildDocument : childDocumentOrRequestOptions;
 		requestOptions = ! Utils.isString( slugOrChildDocument ) ? childDocumentOrRequestOptions : requestOptions;
 
-		if( PersistedDocument.Factory.is( childDocument ) ) return Utils.P.createRejectedPromise( new Errors.IllegalArgumentError( "The childDocument provided has been already persisted." ) );
+		if( PersistedDocument.Factory.is( childDocument ) ) return Promise.reject<any>( new Errors.IllegalArgumentError( "The Document provided has been already persisted." ) );
 
 		if( childDocument.id ) {
-			if( ! RDF.URI.Util.isBaseOf( parentURI, childDocument.id ) ) return Utils.P.createRejectedPromise( new Errors.IllegalArgumentError( "The childDocument's URI is not relative to the parentURI specified" ) );
+			if( ! RDF.URI.Util.isBaseOf( parentURI, childDocument.id ) ) return Promise.reject<any>( new Errors.IllegalArgumentError( "The childDocument's URI is not relative to the parentURI specified" ) );
 		}
 
 		if ( this.context && this.context.auth.isAuthenticated() ) this.context.auth.addAuthentication( requestOptions );

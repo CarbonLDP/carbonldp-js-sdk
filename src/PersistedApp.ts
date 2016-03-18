@@ -7,18 +7,18 @@ export interface Class extends App.Class {
 }
 
 export class Factory {
-	
+
 	static hasClassProperties( resource:Object ):boolean {
 		return (
 			Utils.hasPropertyDefined( resource, "rootContainer" )
 		);
 	}
-	
+
 	static is( object:Object ):boolean {
 		return App.Factory.is( object )
 			&& Factory.hasClassProperties( object );
 	}
-	
+
 }
 
 export default Class;
