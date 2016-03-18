@@ -1,5 +1,5 @@
-import AbstractContext from "./AbstractContext";
-import Context from "./Context";
+import AbstractContext from "./../AbstractContext";
+import Context from "./../Context";
 import PersistedApp from "./PersistedApp";
 declare class AppContext extends AbstractContext {
     private app;

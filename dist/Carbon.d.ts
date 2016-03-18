@@ -1,5 +1,5 @@
 import * as APIDescription from "./APIDescription";
-import Apps from "./Apps";
+import * as Apps from "./Apps";
 import * as Auth from "./Auth";
 import AbstractContext from "./AbstractContext";
 import * as Document from "./Document";
@@ -16,7 +16,7 @@ declare class Carbon extends AbstractContext {
     static RDF: typeof RDF;
     static Utils: typeof Utils;
     static version: string;
-    apps: Apps;
+    apps: Apps.Class;
     constructor(settings?: any);
     resolve(uri: string): string;
     getAPIDescription(): Promise<APIDescription.Class>;

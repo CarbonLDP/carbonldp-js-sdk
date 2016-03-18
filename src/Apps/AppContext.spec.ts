@@ -8,11 +8,11 @@ import {
 	hasConstructor,
 	hasMethod,
 	extendsClass
-} from "./test/JasmineExtender";
-import * as Utils from "./Utils";
-import * as Pointer from "./Pointer";
+} from "./../test/JasmineExtender";
+import * as Utils from "./../Utils";
+import * as Pointer from "./../Pointer";
 import * as App from "./App";
-import AbstractContext from "./AbstractContext";
+import AbstractContext from "./../AbstractContext";
 import PersistedApp from "./PersistedApp";
 
 import AppContext from "./AppContext";

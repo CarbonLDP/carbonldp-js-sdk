@@ -1,6 +1,6 @@
-import AbstractContext from "./AbstractContext";
-import Context from "./Context";
-import * as RDF from "./RDF";
+import AbstractContext from "./../AbstractContext";
+import Context from "./../Context";
+import * as RDF from "./../RDF";
 import PersistedApp from "./PersistedApp";
 
 class AppContext extends AbstractContext {

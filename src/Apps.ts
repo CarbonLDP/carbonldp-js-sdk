@@ -1,15 +1,15 @@
-import AppContext from "./AppContext";
+import AppContext from "./Apps/AppContext";
 import * as Document from "./Document";
 import Context from "./Context";
 import * as Response from "./HTTP/Response";
 import * as Pointer from "./Pointer";
 import * as RDF from "./RDF";
 import * as Utils from "./Utils";
-import * as App from "./App";
-import * as PersistedApp from "./PersistedApp";
+import * as App from "./Apps/App";
+import * as PersistedApp from "./Apps/PersistedApp";
 import * as Errors from "./Errors";
 
-class Apps {
+export class Class {
 	private context:Context;
 
 	constructor( context:Context ) {
@@ -47,7 +47,7 @@ class Apps {
 	createApp( appDocument:App.Class ):Promise<[ Pointer.Class, Response.Class]>;
 	createApp( slug:string, appDocument:App.Class ):Promise<[ Pointer.Class, Response.Class]>;
 	createApp( slugOrApp:any, appDocument?:App.Class ):Promise<[ Pointer.Class, Response.Class]> {
-		let appsContainerURI:string = this.getAppsContainerURI();
+		let appsContainerURI:string = this.context.resolve( this.getAppsContainerURI() );
 		let slug:string = Utils.isString( slugOrApp ) ? slugOrApp : null;
 		appDocument = appDocument || slugOrApp;
 
@@ -62,4 +62,10 @@ class Apps {
 	}
 }
 
-export default Apps;
+export {
+	App,
+	PersistedApp,
+	AppContext
+};
+
+export default Class;

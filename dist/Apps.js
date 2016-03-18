@@ -1,16 +1,19 @@
 "use strict";
-var AppContext_1 = require("./AppContext");
+var AppContext_1 = require("./Apps/AppContext");
+exports.AppContext = AppContext_1.default;
 var Pointer = require("./Pointer");
 var RDF = require("./RDF");
 var Utils = require("./Utils");
-var App = require("./App");
-var PersistedApp = require("./PersistedApp");
+var App = require("./Apps/App");
+exports.App = App;
+var PersistedApp = require("./Apps/PersistedApp");
+exports.PersistedApp = PersistedApp;
 var Errors = require("./Errors");
-var Apps = (function () {
-    function Apps(context) {
+var Class = (function () {
+    function Class(context) {
         this.context = context;
     }
-    Apps.prototype.getAppContext = function (uri) {
+    Class.prototype.getAppContext = function (uri) {
         var _this = this;
         var appsContainerURI = this.getAppsContainerURI();
         if (RDF.URI.Util.isRelative(uri)) {
@@ -25,7 +28,7 @@ var Apps = (function () {
             return new AppContext_1.default(_this.context, document);
         });
     };
-    Apps.prototype.getAllAppContext = function () {
+    Class.prototype.getAllAppContext = function () {
         var _this = this;
         return this.context.documents.getMembers(this.getAppsContainerURI(), false).then(function (_a) {
             var members = _a[0], response = _a[1];
@@ -35,22 +38,23 @@ var Apps = (function () {
             return members.map(function (member) { return new AppContext_1.default(_this.context, member); });
         });
     };
-    Apps.prototype.createApp = function (slugOrApp, appDocument) {
-        var appsContainerURI = this.getAppsContainerURI();
+    Class.prototype.createApp = function (slugOrApp, appDocument) {
+        var appsContainerURI = this.context.resolve(this.getAppsContainerURI());
         var slug = Utils.isString(slugOrApp) ? slugOrApp : null;
         appDocument = appDocument || slugOrApp;
         if (!App.Factory.is(appDocument))
             return Promise.reject(new Errors.IllegalArgumentError("The Document is not a `Carbon.App.Class` object."));
         return this.context.documents.createChild(appsContainerURI, slug, appDocument);
     };
-    Apps.prototype.getAppsContainerURI = function () {
+    Class.prototype.getAppsContainerURI = function () {
         if (!this.context.hasSetting("platform.apps.container"))
             throw new Errors.IllegalStateError("The apps container URI hasn't been set.");
         return this.context.getSetting("platform.apps.container");
     };
-    return Apps;
+    return Class;
 }());
+exports.Class = Class;
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = Apps;
+exports.default = Class;
 
 //# sourceMappingURL=Apps.js.map

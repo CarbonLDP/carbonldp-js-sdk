@@ -9,11 +9,11 @@ import {
 	isDefined,
 	hasMethod,
 	hasProperty
-} from "./test/JasmineExtender";
-import * as Utils from "./Utils";
-import * as NS from "./NS";
-import * as Errors from "./Errors";
-import * as Document from "./Document";
+} from "./../test/JasmineExtender";
+import * as Utils from "./../Utils";
+import * as NS from "./../NS";
+import * as Errors from "./../Errors";
+import * as Document from "./../Document";
 
 describe( module( "Carbon/App" ), ():void => {
 

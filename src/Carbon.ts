@@ -1,5 +1,5 @@
 import * as APIDescription from "./APIDescription";
-import Apps from "./Apps";
+import * as Apps from "./Apps";
 import * as Auth from "./Auth";
 import AbstractContext from "./AbstractContext";
 import * as Document from "./Document";
@@ -24,7 +24,7 @@ class Carbon extends AbstractContext {
 	// TODO: Get package.json version directly
 	static get version():string { return "0.18.0-ALPHA"; }
 
-	apps:Apps;
+	apps:Apps.Class;
 
 	// TODO: Define settings type
 	constructor( settings?:any ) {
@@ -34,7 +34,7 @@ class Carbon extends AbstractContext {
 
 		Utils.M.extend( this.settings, Utils.M.from( settings ) );
 
-		this.apps = new Apps( this );
+		this.apps = new Apps.Class( this );
 	}
 
 	resolve( uri:string ):string {

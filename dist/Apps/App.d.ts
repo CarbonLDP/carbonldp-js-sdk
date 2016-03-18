@@ -1,5 +1,5 @@
-import * as Document from "./Document";
-import * as ObjectSchema from "./ObjectSchema";
+import * as Document from "./../Document";
+import * as ObjectSchema from "./../ObjectSchema";
 export interface Class extends Document.Class {
     name: string;
 }

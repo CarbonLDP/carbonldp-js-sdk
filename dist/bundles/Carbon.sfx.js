@@ -740,7 +740,7 @@ $__System.register("5", ["6", "7"], function(exports_1) {
 
 $__System.register("8", ["2", "9", "4", "7", "6", "5", "a"], function(exports_1) {
     var AppContext_1, Pointer, RDF, Utils, App, PersistedApp, Errors;
-    var Apps;
+    var Class;
     return {
         setters:[
             function (AppContext_1_1) {
@@ -765,11 +765,11 @@ $__System.register("8", ["2", "9", "4", "7", "6", "5", "a"], function(exports_1)
                 Errors = Errors_1;
             }],
         execute: function() {
-            Apps = (function () {
-                function Apps(context) {
+            Class = (function () {
+                function Class(context) {
                     this.context = context;
                 }
-                Apps.prototype.getAppContext = function (uri) {
+                Class.prototype.getAppContext = function (uri) {
                     var _this = this;
                     var appsContainerURI = this.getAppsContainerURI();
                     if (RDF.URI.Util.isRelative(uri)) {
@@ -784,7 +784,7 @@ $__System.register("8", ["2", "9", "4", "7", "6", "5", "a"], function(exports_1)
                         return new AppContext_1.default(_this.context, document);
                     });
                 };
-                Apps.prototype.getAllAppContext = function () {
+                Class.prototype.getAllAppContext = function () {
                     var _this = this;
                     return this.context.documents.getMembers(this.getAppsContainerURI(), false).then(function (_a) {
                         var members = _a[0], response = _a[1];
@@ -794,22 +794,26 @@ $__System.register("8", ["2", "9", "4", "7", "6", "5", "a"], function(exports_1)
                         return members.map(function (member) { return new AppContext_1.default(_this.context, member); });
                     });
                 };
-                Apps.prototype.createApp = function (slugOrApp, appDocument) {
-                    var appsContainerURI = this.getAppsContainerURI();
+                Class.prototype.createApp = function (slugOrApp, appDocument) {
+                    var appsContainerURI = this.context.resolve(this.getAppsContainerURI());
                     var slug = Utils.isString(slugOrApp) ? slugOrApp : null;
                     appDocument = appDocument || slugOrApp;
                     if (!App.Factory.is(appDocument))
                         return Promise.reject(new Errors.IllegalArgumentError("The Document is not a `Carbon.App.Class` object."));
                     return this.context.documents.createChild(appsContainerURI, slug, appDocument);
                 };
-                Apps.prototype.getAppsContainerURI = function () {
+                Class.prototype.getAppsContainerURI = function () {
                     if (!this.context.hasSetting("platform.apps.container"))
                         throw new Errors.IllegalStateError("The apps container URI hasn't been set.");
                     return this.context.getSetting("platform.apps.container");
                 };
-                return Apps;
+                return Class;
             })();
-            exports_1("default",Apps);
+            exports_1("Class", Class);
+            exports_1("App", App);
+            exports_1("PersistedApp", PersistedApp);
+            exports_1("AppContext", AppContext_1.default);
+            exports_1("default",Class);
         }
     }
 });
@@ -2099,7 +2103,6 @@ $__System.register("b", ["a", "14", "13", "16", "12", "9", "4", "15", "7"], func
                 return Factory;
             })();
             exports_1("Factory", Factory);
-            exports_1("default",Document);
         }
     }
 });
@@ -12722,12 +12725,12 @@ $__System.register("65", ["8", "f", "3", "b", "10", "25", "4", "64", "7"], funct
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
-    var Apps_1, Auth, AbstractContext_1, Document, Documents_1, HTTP, RDF, settings_1, Utils;
+    var Apps, Auth, AbstractContext_1, Document, Documents_1, HTTP, RDF, settings_1, Utils;
     var Carbon;
     return {
         setters:[
-            function (Apps_1_1) {
-                Apps_1 = Apps_1_1;
+            function (Apps_1) {
+                Apps = Apps_1;
             },
             function (Auth_1) {
                 Auth = Auth_1;
@@ -12760,7 +12763,7 @@ $__System.register("65", ["8", "f", "3", "b", "10", "25", "4", "64", "7"], funct
                     _super.call(this);
                     settings = settings ? settings : settings_1.default;
                     Utils.M.extend(this.settings, Utils.M.from(settings));
-                    this.apps = new Apps_1.default(this);
+                    this.apps = new Apps.Class(this);
                 }
                 Object.defineProperty(Carbon, "version", {
                     get: function () { return "0.18.0-ALPHA"; },
@@ -12780,7 +12783,7 @@ $__System.register("65", ["8", "f", "3", "b", "10", "25", "4", "64", "7"], funct
                         return description;
                     });
                 };
-                Carbon.Apps = Apps_1.default;
+                Carbon.Apps = Apps;
                 Carbon.Auth = Auth;
                 Carbon.Document = Document;
                 Carbon.Documents = Documents_1.default;

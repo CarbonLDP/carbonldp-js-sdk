@@ -9,25 +9,34 @@ import {
 	isDefined,
 	hasConstructor,
 	hasMethod,
-	hasSignature
+	hasSignature,
+	reexports,
+	hasDefaultExport
 } from "./test/JasmineExtender";
 import * as Utils from "./Utils";
 import AbstractContext from "./AbstractContext";
-import AppContext from "./AppContext";
+import AppContext from "./Apps/AppContext";
 import * as NS from "./NS";
 import * as Errors from "./Errors";
-import * as App from "./App";
+import * as App from "./Apps/App";
+import * as PersistedApp from "./Apps/PersistedApp";
 
-import Apps from "./Apps";
+import * as Apps from "./Apps";
+import DefaultExport from "./Apps";
 
 describe( module( "Carbon/Apps" ), ():void => {
 	let context:AbstractContext;
 
+	it( isDefined(), ():void => {
+		expect( Apps ).toBeDefined();
+		expect( Utils.isObject( Apps ) ).toBe( true );
+	});
+
 	describe( clazz(
-		"Carbon.Apps",
+		"Carbon.Apps.Class",
 		"Class for obtaining Carbon Apps."
 	), ():void => {
-		let apps:Apps;
+		let apps:Apps.Class;
 		let appsContainerURI:string = "http://example.com/platform/apps/";
 
 		beforeEach( ():void => {
@@ -38,7 +47,7 @@ describe( module( "Carbon/Apps" ), ():void => {
 			}
 			context = new MockedContext();
 			context.setSetting( "platform.apps.container", appsContainerURI );
-			apps = new Apps( context );
+			apps = new Apps.Class( context );
 			jasmine.Ajax.install();
 		});
 
@@ -47,15 +56,15 @@ describe( module( "Carbon/Apps" ), ():void => {
 		});
 
 		it( isDefined(), ():void => {
-			expect( Apps ).toBeDefined();
-			expect( Utils.isFunction( Apps ) ).toBe( true );
+			expect( Apps.Class ).toBeDefined();
+			expect( Utils.isFunction( Apps.Class ) ).toBe( true );
 		});
 
 		it( hasConstructor([
 			{ name: "context", type: "Carbon.Context", description: "A context from where Carbon Apps can be obtained" }
 		]), ():void => {
 			expect( apps ).toBeTruthy();
-			expect( apps instanceof Apps ).toBe( true );
+			expect( apps instanceof Apps.Class ).toBe( true );
 		});
 
 		it( hasMethod(
@@ -299,6 +308,38 @@ describe( module( "Carbon/Apps" ), ():void => {
 
 		});
 
+	});
+
+	it( reexports(
+		STATIC,
+		"App",
+		"Carbon/Apps/App"
+	), ():void => {
+		expect( Apps.App ).toBeDefined();
+		expect( Apps.App ).toBe( App );
+	});
+
+	it( reexports(
+		STATIC,
+		"App",
+		"Carbon/Apps/AppContext"
+	), ():void => {
+		expect( Apps.AppContext ).toBeDefined();
+		expect( Apps.AppContext ).toBe( AppContext );
+	});
+
+	it( reexports(
+		STATIC,
+		"App",
+		"Carbon/Apps/PersistedApp"
+	), ():void => {
+		expect( Apps.PersistedApp ).toBeDefined();
+		expect( Apps.PersistedApp ).toBe( PersistedApp );
+	});
+
+	it( hasDefaultExport( "Carbon.Apps.Class" ), ():void => {
+		expect( DefaultExport ).toBeDefined();
+		expect( Apps.Class ).toBe( DefaultExport );
 	});
 
 });

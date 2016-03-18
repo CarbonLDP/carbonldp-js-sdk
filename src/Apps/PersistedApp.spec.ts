@@ -7,10 +7,10 @@ import {
 
 	isDefined,
 	hasMethod
-} from "./test/JasmineExtender";
-import * as Utils from "./Utils";
-import * as Pointer from "./Pointer";
-import * as Document from "./Document";
+} from "./../test/JasmineExtender";
+import * as Utils from "./../Utils";
+import * as Pointer from "./../Pointer";
+import * as Document from "./../Document";
 import * as App from "./App";
 import * as PersistedApp from "./PersistedApp";
 

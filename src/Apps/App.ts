@@ -1,8 +1,8 @@
-import * as Document from "./Document";
-import * as NS from "./NS";
-import * as ObjectSchema from "./ObjectSchema";
-import * as Utils from "./Utils";
-import {IllegalArgumentError} from "./Errors";
+import * as Document from "./../Document";
+import * as NS from "./../NS";
+import * as ObjectSchema from "./../ObjectSchema";
+import * as Utils from "./../Utils";
+import {IllegalArgumentError} from "./../Errors";
 
 export interface Class extends Document.Class {
 	name:string;

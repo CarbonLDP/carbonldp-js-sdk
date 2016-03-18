@@ -4,7 +4,7 @@ var __extends = (this && this.__extends) || function (d, b) {
     function __() { this.constructor = d; }
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
-var Apps_1 = require("./Apps");
+var Apps = require("./Apps");
 var Auth = require("./Auth");
 var AbstractContext_1 = require("./AbstractContext");
 var Document = require("./Document");
@@ -19,7 +19,7 @@ var Carbon = (function (_super) {
         _super.call(this);
         settings = settings ? settings : settings_1.default;
         Utils.M.extend(this.settings, Utils.M.from(settings));
-        this.apps = new Apps_1.default(this);
+        this.apps = new Apps.Class(this);
     }
     Object.defineProperty(Carbon, "version", {
         get: function () { return "0.18.0-ALPHA"; },
@@ -39,7 +39,7 @@ var Carbon = (function (_super) {
             return description;
         });
     };
-    Carbon.Apps = Apps_1.default;
+    Carbon.Apps = Apps;
     Carbon.Auth = Auth;
     Carbon.Document = Document;
     Carbon.Documents = Documents_1.default;
