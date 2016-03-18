@@ -1,4 +1,4 @@
-import * as LDP from "./LDP";
+import * as LDP from "./../LDP";
 import * as App from "./App";
 export interface Class extends App.Class {
     rootContainer: LDP.PersistedContainer.Class;

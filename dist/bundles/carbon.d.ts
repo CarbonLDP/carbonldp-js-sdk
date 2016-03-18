@@ -1079,7 +1079,7 @@ declare module 'carbonldp/Document' {
 	    static createFrom<T extends Object>(object: T): T & Class;
 	    static decorate<T extends Object>(object: T): T & Class;
 	}
-	export default Document;
+	export default Class;
 
 }
 declare module 'carbonldp/PersistedResource' {
@@ -1480,7 +1480,7 @@ declare module 'carbonldp/Auth' {
 	export default Class;
 
 }
-declare module 'carbonldp/App' {
+declare module 'carbonldp/Apps/App' {
 	import * as Document from 'carbonldp/Document';
 	import * as ObjectSchema from 'carbonldp/ObjectSchema';
 	export interface Class extends Document.Class {
@@ -1551,9 +1551,9 @@ declare module 'carbonldp/AbstractContext' {
 	export default AbstractContext;
 
 }
-declare module 'carbonldp/PersistedApp' {
+declare module 'carbonldp/Apps/PersistedApp' {
 	import * as LDP from 'carbonldp/LDP';
-	import * as App from 'carbonldp/App';
+	import * as App from 'carbonldp/Apps/App';
 	export interface Class extends App.Class {
 	    rootContainer: LDP.PersistedContainer.Class;
 	}
@@ -1564,10 +1564,10 @@ declare module 'carbonldp/PersistedApp' {
 	export default Class;
 
 }
-declare module 'carbonldp/AppContext' {
+declare module 'carbonldp/Apps/AppContext' {
 	import AbstractContext from 'carbonldp/AbstractContext';
 	import Context from 'carbonldp/Context';
-	import PersistedApp from 'carbonldp/PersistedApp'; class AppContext extends AbstractContext {
+	import PersistedApp from 'carbonldp/Apps/PersistedApp'; class AppContext extends AbstractContext {
 	    private app;
 	    private base;
 	    constructor(parentContext: Context, app: PersistedApp);
@@ -1578,11 +1578,13 @@ declare module 'carbonldp/AppContext' {
 
 }
 declare module 'carbonldp/Apps' {
-	import AppContext from 'carbonldp/AppContext';
+	import AppContext from 'carbonldp/Apps/AppContext';
 	import Context from 'carbonldp/Context';
 	import * as Response from 'carbonldp/HTTP/Response';
 	import * as Pointer from 'carbonldp/Pointer';
-	import * as App from 'carbonldp/App'; class Apps {
+	import * as App from 'carbonldp/Apps/App';
+	import * as PersistedApp from 'carbonldp/Apps/PersistedApp';
+	export class Class {
 	    private context;
 	    constructor(context: Context);
 	    getAppContext(uri: string): Promise<AppContext>;
@@ -1591,7 +1593,8 @@ declare module 'carbonldp/Apps' {
 	    createApp(slug: string, appDocument: App.Class): Promise<[Pointer.Class, Response.Class]>;
 	    private getAppsContainerURI();
 	}
-	export default Apps;
+	export { App, PersistedApp, AppContext };
+	export default Class;
 
 }
 declare module 'carbonldp/settings' {
@@ -1608,7 +1611,7 @@ declare module 'carbonldp/settings' {
 }
 declare module 'carbonldp/Carbon' {
 	import * as APIDescription from 'carbonldp/APIDescription';
-	import Apps from 'carbonldp/Apps';
+	import * as Apps from 'carbonldp/Apps';
 	import * as Auth from 'carbonldp/Auth';
 	import AbstractContext from 'carbonldp/AbstractContext';
 	import * as Document from 'carbonldp/Document';
@@ -1624,7 +1627,7 @@ declare module 'carbonldp/Carbon' {
 	    static RDF: typeof RDF;
 	    static Utils: typeof Utils;
 	    static version: string;
-	    apps: Apps;
+	    apps: Apps.Class;
 	    constructor(settings?: any);
 	    resolve(uri: string): string;
 	    getAPIDescription(): Promise<APIDescription.Class>;

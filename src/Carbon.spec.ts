@@ -20,7 +20,7 @@ import * as Utils from "./Utils";
 import * as Auth from "./Auth";
 import setting from "./settings";
 import * as APIDescription from "./APIDescription";
-import Apps from "./Apps";
+import * as Apps from "./Apps";
 import Documents from "./Documents";
 import * as Document from "./Document";
 import * as RDF from "./RDF";
@@ -57,8 +57,8 @@ describe( module( "Carbon" ), ():void => {
 		it( hasProperty(
 			STATIC,
 			"Apps",
-			"Class<Carbon.Apps>",
-			"Static property that set a reference to the Apps Class"
+			"Module<Carbon.Apps>",
+			"Static property that set a reference to the Apps Module"
 		), ():void => {
 			expect( Carbon.Apps ).toBeDefined();
 			expect( Carbon.Apps ).toBe( Apps );
@@ -220,12 +220,12 @@ describe( module( "Carbon" ), ():void => {
 		it( hasProperty(
 			INSTANCE,
 			"apps",
-			"Carbon.Apps",
+			"Carbon.Apps.Class",
 			"Instance of the class `Carbon.Apps` in the context of the Carbon instance."
 		), ():void => {
 			expect( carbon.apps ).toBeDefined();
 			expect( Utils.isObject( carbon.apps ) );
-			expect( carbon.apps instanceof Apps );
+			expect( carbon.apps instanceof Apps.Class );
 		});
 
 	});
