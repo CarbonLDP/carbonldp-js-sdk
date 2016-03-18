@@ -60,14 +60,14 @@ describe( module( "Carbon/Apps" ), ():void => {
 
 		it( hasMethod(
 			INSTANCE,
-			"get",
+			"getAppContext",
 			"Obtains an `Carbon.AppContext` object of the specified app URI, if it exists within the context of the Apps instance.", [
 				{ name: "uri", type: "string" }
 			],
 			{ type: "Promise<Carbon.AppContext>"}
 		), ( done:{ ():void, fail:() => void } ):void => {
-			expect( apps.get ).toBeDefined();
-			expect( Utils.isFunction( apps.get ) ).toBe( true );
+			expect( apps.getAppContext ).toBeDefined();
+			expect( Utils.isFunction( apps.getAppContext ) ).toBe( true );
 
 			let spies = {
 				success: ( appContext:AppContext ):void => {
@@ -82,7 +82,7 @@ describe( module( "Carbon/Apps" ), ():void => {
 
 			let promise:Promise<any>;
 
-			promise = apps.get( 'example-app/' ).then( spies.success, spies.fail );
+			promise = apps.getAppContext( 'example-app/' ).then( spies.success, spies.fail );
 			expect( promise instanceof Promise ).toBe( true );
 
 			jasmine.Ajax.requests.mostRecent().respondWith({
@@ -118,12 +118,12 @@ describe( module( "Carbon/Apps" ), ():void => {
 
 		it( hasMethod(
 			INSTANCE,
-			"getAll",
+			"getAllAppContext",
 			"Obtains all the `Carbon.AppContext` objects of every app where the context of the Apps instance can reach.",
 			{ type: "Promise<Carbon.AppContext[]>"}
 		), ( done:{ ():void, fail:() => void } ):void => {
-			expect( apps.getAll ).toBeDefined();
-			expect( Utils.isFunction( apps.getAll ) ).toBe( true );
+			expect( apps.getAllAppContext ).toBeDefined();
+			expect( Utils.isFunction( apps.getAllAppContext ) ).toBe( true );
 
 			let spies = {
 				success: ( appsContext:AppContext[] ):void => {
@@ -140,7 +140,7 @@ describe( module( "Carbon/Apps" ), ():void => {
 
 			let promise:Promise<any>;
 
-			promise = apps.getAll().then( spies.success, spies.fail );
+			promise = apps.getAllAppContext().then( spies.success, spies.fail );
 			expect( promise instanceof Promise ).toBe( true );
 
 			jasmine.Ajax.requests.at( 0 ).respondWith({
@@ -222,7 +222,7 @@ describe( module( "Carbon/Apps" ), ():void => {
 
 		describe( method(
 			INSTANCE,
-			"create"
+			"createApp"
 		), ():void => {
 
 			it( hasSignature(
@@ -232,16 +232,16 @@ describe( module( "Carbon/Apps" ), ():void => {
 				],
 				{ type: "Promise<Carbon.Pointer.Class, Carbon.HTTP.Response.Class>" }
 			), ( done ):void => {
-				expect( apps.create ).toBeDefined();
-				expect( Utils.isFunction( apps.create ) ).toBe( true );
+				expect( apps.createApp ).toBeDefined();
+				expect( Utils.isFunction( apps.createApp ) ).toBe( true );
 
 				let spy = spyOn( context.documents, "createChild" );
 				let app:App.Class = App.Factory.create( "App name" );
 
-				apps.create( app );
+				apps.createApp( app );
 				expect( spy ).toHaveBeenCalledWith( appsContainerURI, null, app );
 
-				let promise:Promise<any> = apps.create( null );
+				let promise:Promise<any> = apps.createApp( null );
 				expect( promise instanceof Promise ).toBe( true );
 
 				let spies = {
@@ -266,21 +266,21 @@ describe( module( "Carbon/Apps" ), ():void => {
 				],
 				{ type: "Promise<Carbon.Pointer.Class, Carbon.HTTP.Response.Class>" }
 			), ( done:() => void ):void => {
-				expect( apps.create ).toBeDefined();
-				expect( Utils.isFunction( apps.create ) ).toBe( true );
+				expect( apps.createApp ).toBeDefined();
+				expect( Utils.isFunction( apps.createApp ) ).toBe( true );
 
 				let promise:Promise<any>;
 				let spy = spyOn( context.documents, "createChild" );
 				let app:App.Class = App.Factory.create( "App name" );
 
-				apps.create( "The name of the App", app );
+				apps.createApp( "The name of the App", app );
 				expect( spy ).toHaveBeenCalledWith( appsContainerURI, "The name of the App", app );
 
 				spy.calls.reset();
-				apps.create( null, app );
+				apps.createApp( null, app );
 				expect( spy ).toHaveBeenCalledWith( appsContainerURI, null, app );
 
-				promise = apps.create( "The name of the App", null );
+				promise = apps.createApp( "The name of the App", null );
 				expect( promise instanceof Promise ).toBe( true );
 
 				let spies = {

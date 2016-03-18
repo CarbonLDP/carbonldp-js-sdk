@@ -6,10 +6,10 @@ import * as App from "./App";
 declare class Apps {
     private context;
     constructor(context: Context);
-    get(uri: string): Promise<AppContext>;
-    getAll(): Promise<AppContext[]>;
-    create(appDocument: App.Class): Promise<[Pointer.Class, Response.Class]>;
-    create(slug: string, appDocument: App.Class): Promise<[Pointer.Class, Response.Class]>;
+    getAppContext(uri: string): Promise<AppContext>;
+    getAllAppContext(): Promise<AppContext[]>;
+    createApp(appDocument: App.Class): Promise<[Pointer.Class, Response.Class]>;
+    createApp(slug: string, appDocument: App.Class): Promise<[Pointer.Class, Response.Class]>;
     private getAppsContainerURI();
 }
 export default Apps;
