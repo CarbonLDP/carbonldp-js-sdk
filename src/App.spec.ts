@@ -21,6 +21,7 @@ import * as Document from "./Document";
 import * as PersistedDocument from "./PersistedDocument";
 import * as PersistedContainer from "./LDP/PersistedContainer";
 import AbstractContext from "./AbstractContext";
+import * as Agents from "./Agents";
 
 describe( module( "Carbon/App" ), ():void => {
 
@@ -111,6 +112,17 @@ describe( module( "Carbon/App" ), ():void => {
 			expect( appContext.resolve( "http://example.com/apps/another-app/child/" ) )
 				.toBe( "http://example.com/apps/another-app/child/" );
 		});
+
+		it( hasProperty(
+			INSTANCE,
+			"agents",
+			"Carbon.Agents.Class",
+			"Instance of Agents class for manage the agents inside of an application."
+		), ():void => {
+			expect( appContext.agents ).toBeDefined();
+			expect( appContext.agents instanceof Agents.Class ).toBe( true );
+		});
+
 	});
 
 	describe( clazz(

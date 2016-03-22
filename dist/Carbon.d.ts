@@ -1,5 +1,6 @@
 import * as APIDescription from "./APIDescription";
 import Apps from "./Apps";
+import * as Agents from "./Agents";
 import * as Auth from "./Auth";
 import AbstractContext from "./AbstractContext";
 import * as Document from "./Document";
@@ -9,6 +10,7 @@ import * as RDF from "./RDF";
 import * as Utils from "./Utils";
 declare class Carbon extends AbstractContext {
     static Apps: typeof Apps;
+    static Agents: typeof Agents;
     static Auth: typeof Auth;
     static Document: typeof Document;
     static Documents: typeof Documents;

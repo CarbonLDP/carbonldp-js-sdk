@@ -8,6 +8,7 @@ var AbstractContext_1 = require("./AbstractContext");
 var NS = require("./NS");
 var RDF = require("./RDF");
 var Utils = require("./Utils");
+var Agents_1 = require("./Agents");
 exports.RDF_CLASS = NS.CS.Class.Application;
 exports.SCHEMA = {
     "name": {
@@ -28,6 +29,7 @@ var AppContext = (function (_super) {
         _super.call(this, parentContext);
         this.app = app;
         this.base = this.getBase(this.app);
+        this.agents = new Agents_1.default(this);
     }
     AppContext.prototype.resolve = function (uri) {
         if (RDF.URI.Util.isAbsolute(uri))

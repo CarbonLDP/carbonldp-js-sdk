@@ -3,12 +3,14 @@ import Context from "./Context";
 import * as Document from "./Document";
 import * as LDP from "./LDP";
 import * as ObjectSchema from "./ObjectSchema";
+import Agents from "./Agents";
 export interface Class extends Document.Class {
     rootContainer: LDP.PersistedContainer.Class;
 }
 export declare const RDF_CLASS: string;
 export declare const SCHEMA: ObjectSchema.Class;
 declare class AppContext extends AbstractContext {
+    agents: Agents;
     private app;
     private base;
     constructor(parentContext: Context, app: Class);

@@ -6,6 +6,7 @@ import * as NS from "./NS";
 import * as ObjectSchema from "./ObjectSchema";
 import * as RDF from "./RDF";
 import * as Utils from "./Utils";
+import Agents from "./Agents";
 
 export interface Class extends Document.Class {
 	rootContainer:LDP.PersistedContainer.Class;
@@ -28,6 +29,8 @@ export const SCHEMA:ObjectSchema.Class = {
 };
 
 class AppContext extends AbstractContext {
+	agents:Agents;
+	
 	private app:Class;
 	private base:string;
 
@@ -36,6 +39,7 @@ class AppContext extends AbstractContext {
 		this.app = app;
 
 		this.base = this.getBase( this.app );
+		this.agents = new Agents( this );
 	}
 
 	resolve( uri:string ):string {

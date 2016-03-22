@@ -25,6 +25,7 @@ import Documents from "./Documents";
 import * as Document from "./Document";
 import * as RDF from "./RDF";
 import * as HTTP from "./HTTP";
+import * as Agents from "./Agents";
 
 import Carbon from "./Carbon";
 
@@ -62,6 +63,16 @@ describe( module( "Carbon" ), ():void => {
 		), ():void => {
 			expect( Carbon.Apps ).toBeDefined();
 			expect( Carbon.Apps ).toBe( Apps );
+		});
+
+		it( hasProperty(
+			STATIC,
+			"Agents",
+			"Module<Carbon.Agents>",
+			"Static property that set a reference to the Agents Class"
+		), ():void => {
+			expect( Carbon.Agents ).toBeDefined();
+			expect( Carbon.Agents ).toBe( Agents );
 		});
 
 		it( hasProperty(

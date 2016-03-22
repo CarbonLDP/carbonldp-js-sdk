@@ -5,6 +5,7 @@ var __extends = (this && this.__extends) || function (d, b) {
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
 var Apps_1 = require("./Apps");
+var Agents = require("./Agents");
 var Auth = require("./Auth");
 var AbstractContext_1 = require("./AbstractContext");
 var Document = require("./Document");
@@ -40,6 +41,7 @@ var Carbon = (function (_super) {
         });
     };
     Carbon.Apps = Apps_1.default;
+    Carbon.Agents = Agents;
     Carbon.Auth = Auth;
     Carbon.Document = Document;
     Carbon.Documents = Documents_1.default;
