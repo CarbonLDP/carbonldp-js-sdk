@@ -13,6 +13,7 @@ class Predicate {
 	static get rootContainer():string { return namespace + "rootContainer"; }
 	static get tokenKey():string { return namespace + "tokenKey"; }
 	static get expirationTime():string { return namespace + "expirationTime"; }
+	static get password():string { return namespace + "password"; }
 }
 
 export {

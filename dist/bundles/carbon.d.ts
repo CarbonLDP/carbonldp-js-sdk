@@ -707,6 +707,7 @@ declare module 'carbonldp/NS/CS' {
 	    static rootContainer: string;
 	    static tokenKey: string;
 	    static expirationTime: string;
+	    static password: string;
 	}
 	export { namespace, Class, Predicate };
 
@@ -1534,12 +1535,13 @@ declare module 'carbonldp/Agents/Agent' {
 	export interface Class extends Document.Class {
 	    name: string;
 	    email: string;
+	    password: string;
 	}
 	export class Factory {
 	    static hasClassProperties(resource: Object): boolean;
 	    static is(object: Object): boolean;
-	    static create(name: string, email: string): Class;
-	    static createFrom<T extends Object>(object: T, name: string, email: string): T & Class;
+	    static create(name: string, email: string, password: string): Class;
+	    static createFrom<T extends Object>(object: T, name: string, email: string, password: string): T & Class;
 	}
 	export default Class;
 
@@ -1587,6 +1589,22 @@ declare module 'carbonldp/AbstractContext' {
 	export default AbstractContext;
 
 }
+declare module 'carbonldp/Agents' {
+	import Context from 'carbonldp/Context';
+	import * as Agent from 'carbonldp/Agents/Agent';
+	import * as Pointer from 'carbonldp/Pointer';
+	import * as Response from 'carbonldp/HTTP/Response';
+	export class Class {
+	    private context;
+	    constructor(context: Context);
+	    createAgent(agentDocument: Agent.Class): Promise<[Pointer.Class, Response.Class]>;
+	    createAgent(slug: string, agentDocument: Agent.Class): Promise<[Pointer.Class, Response.Class]>;
+	    private getContainerURI();
+	}
+	export { Agent };
+	export default Class;
+
+}
 declare module 'carbonldp/Apps' {
 	import * as App from 'carbonldp/App';
 	import Context from 'carbonldp/Context'; class Apps {
@@ -1607,6 +1625,7 @@ declare module 'carbonldp/settings' {
 	    "auth.method"?: Auth.Method;
 	    "platform.container"?: string;
 	    "platform.apps.container"?: string;
+	    "platform.agents.container"?: string;
 	} let settings: CarbonSettings;
 	export default settings;
 

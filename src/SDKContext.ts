@@ -150,7 +150,22 @@ export class Class implements Context {
 		this.extendObjectSchema( LDP.BasicContainer.RDF_CLASS, LDP.Container.SCHEMA );
 
 		this.extendObjectSchema( APIDescription.RDF_CLASS, APIDescription.SCHEMA );
-		this.extendObjectSchema( App.RDF_CLASS, App.SCHEMA );
+
+		// TODO Fix error of cycle reference because the App module dependency of AbstractClass witch has a dependency with SDKContext. For now add manual data
+		/* this.extendObjectSchema( App.RDF_CLASS, App.SCHEMA ); */
+		this.extendObjectSchema( NS.CS.Class.Application, {
+			"name": {
+				"@id": NS.CS.Predicate.name,
+				"@type": NS.XSD.DataType.string,
+			},
+			"rootContainer": {
+				"@id": NS.CS.Predicate.rootContainer,
+				"@type": "@id",
+			},
+			"allowsOrigin": {
+				"@id": NS.CS.Predicate.allowsOrigin,
+			},
+		});
 
 		this.extendObjectSchema( Auth.Token.RDF_CLASS, Auth.Token.CONTEXT );
 

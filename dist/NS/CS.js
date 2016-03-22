@@ -55,6 +55,11 @@ var Predicate = (function () {
         enumerable: true,
         configurable: true
     });
+    Object.defineProperty(Predicate, "password", {
+        get: function () { return namespace + "password"; },
+        enumerable: true,
+        configurable: true
+    });
     return Predicate;
 }());
 exports.Predicate = Predicate;
