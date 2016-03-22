@@ -6,6 +6,7 @@ var Documents_1 = require("./Documents");
 var Errors = require("./Errors");
 var LDP = require("./LDP");
 var ObjectSchema = require("./ObjectSchema");
+var Agent = require("./Agents/Agent");
 var Class = (function () {
     function Class() {
         this.settings = new Map();
@@ -130,6 +131,7 @@ var Class = (function () {
         this.extendObjectSchema(APIDescription.RDF_CLASS, APIDescription.SCHEMA);
         this.extendObjectSchema(App.RDF_CLASS, App.SCHEMA);
         this.extendObjectSchema(Auth.Token.RDF_CLASS, Auth.Token.CONTEXT);
+        this.extendObjectSchema(Agent.RDF_CLASS, Agent.SCHEMA);
     };
     return Class;
 }());

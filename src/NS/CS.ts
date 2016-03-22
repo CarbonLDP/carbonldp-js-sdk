@@ -4,6 +4,7 @@ class Class {
 	static get Application():string { return namespace + "Application"; }
 	static get Token():string { return namespace + "Token"; }
 	static get AllOrigins():string { return namespace + "AllOrigins"; }
+	static get Agent():string { return namespace + "Agent"; }
 }
 
 class Predicate {

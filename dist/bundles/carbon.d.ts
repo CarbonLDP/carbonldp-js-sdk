@@ -700,6 +700,7 @@ declare module 'carbonldp/NS/CS' {
 	    static Application: string;
 	    static Token: string;
 	    static AllOrigins: string;
+	    static Agent: string;
 	} class Predicate {
 	    static name: string;
 	    static allowsOrigin: string;
@@ -751,6 +752,13 @@ declare module 'carbonldp/NS/RDF' {
 	export { namespace, Predicate };
 
 }
+declare module 'carbonldp/NS/VCARD' {
+	export const namespace: string;
+	export class Predicate {
+	    static email: string;
+	}
+
+}
 declare module 'carbonldp/NS' {
 	import * as C from 'carbonldp/NS/C';
 	import * as CP from 'carbonldp/NS/CP';
@@ -758,7 +766,8 @@ declare module 'carbonldp/NS' {
 	import * as LDP from 'carbonldp/NS/LDP';
 	import * as RDF from 'carbonldp/NS/RDF';
 	import * as XSD from 'carbonldp/NS/XSD';
-	export { C, CP, CS, LDP, RDF, XSD };
+	import * as VCARD from 'carbonldp/NS/VCARD';
+	export { C, CP, CS, LDP, RDF, XSD, VCARD };
 
 }
 declare module 'carbonldp/Pointer' {
@@ -1513,6 +1522,24 @@ declare module 'carbonldp/APIDescription' {
 	export interface Class {
 	    version: string;
 	    buildDate: Date;
+	}
+	export default Class;
+
+}
+declare module 'carbonldp/Agents/Agent' {
+	import * as Document from 'carbonldp/Document';
+	import * as ObjectSchema from 'carbonldp/ObjectSchema';
+	export const RDF_CLASS: string;
+	export const SCHEMA: ObjectSchema.Class;
+	export interface Class extends Document.Class {
+	    name: string;
+	    email: string;
+	}
+	export class Factory {
+	    static hasClassProperties(resource: Object): boolean;
+	    static is(object: Object): boolean;
+	    static create(name: string, email: string): Class;
+	    static createFrom<T extends Object>(object: T, name: string, email: string): T & Class;
 	}
 	export default Class;
 

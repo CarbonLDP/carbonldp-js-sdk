@@ -11,6 +11,7 @@ import * as Pointer from "./Pointer";
 import * as RDF from "./RDF";
 import * as Utils from "./Utils";
 import * as ObjectSchema from "./ObjectSchema";
+import * as Agent from "./Agents/Agent";
 
 export class Class implements Context {
 	auth:Auth.Class;
@@ -152,6 +153,8 @@ export class Class implements Context {
 		this.extendObjectSchema( App.RDF_CLASS, App.SCHEMA );
 
 		this.extendObjectSchema( Auth.Token.RDF_CLASS, Auth.Token.CONTEXT );
+
+		this.extendObjectSchema( Agent.RDF_CLASS, Agent.SCHEMA );
 	}
 }
 
