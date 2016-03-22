@@ -3,6 +3,7 @@ declare class Class {
     static Application: string;
     static Token: string;
     static AllOrigins: string;
+    static AppRole: string;
 }
 declare class Predicate {
     static name: string;

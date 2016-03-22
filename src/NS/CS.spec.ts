@@ -39,7 +39,7 @@ describe( module(
 		it( isDefined(), ():void => {
 			expect( CS.Class ).toBeDefined();
 			expect( Utils.isFunction( CS.Class ) ).toBe( true );
-			expect( Object.keys( CS.Class ).length ).toBe( 3 );
+			expect( Object.keys( CS.Class ).length ).toBe( 4 );
 		});
 
 		it( hasProperty(
@@ -73,6 +73,17 @@ describe( module(
 			expect( Utils.isString( CS.Class.AllOrigins ) ).toBe( true );
 
 			expect( CS.Class.AllOrigins ).toBe( "https://carbonldp.com/ns/v1/security#AllOrigins" );
+		});
+
+		it( hasProperty(
+			STATIC,
+			"AppRole",
+			"string"
+		), ():void => {
+			expect( CS.Class.AppRole ).toBeDefined();
+			expect( Utils.isString( CS.Class.AppRole ) ).toBe( true );
+
+			expect( CS.Class.AppRole ).toBe( "https://carbonldp.com/ns/v1/security#AppRole" );
 		});
 
 	});

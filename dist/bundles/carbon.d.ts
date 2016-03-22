@@ -700,6 +700,7 @@ declare module 'carbonldp/NS/CS' {
 	    static Application: string;
 	    static Token: string;
 	    static AllOrigins: string;
+	    static AppRole: string;
 	} class Predicate {
 	    static name: string;
 	    static allowsOrigin: string;
@@ -1570,6 +1571,23 @@ declare module 'carbonldp/Apps' {
 	    private getAppsContainerURI();
 	}
 	export default Apps;
+
+}
+declare module 'carbonldp/Apps/Roles/Role' {
+	import * as Document from 'carbonldp/Document';
+	import * as ObjectSchema from 'carbonldp/ObjectSchema';
+	export const RDF_CLASS: string;
+	export const SCHEMA: ObjectSchema.Class;
+	export interface Class extends Document.Class {
+	    name: string;
+	}
+	export class Factory {
+	    static hasClassProperties(resource: Object): boolean;
+	    static is(object: Object): boolean;
+	    static create(name: string): Class;
+	    static createFrom<T extends Object>(object: T, name: string): T & Class;
+	}
+	export default Class;
 
 }
 declare module 'carbonldp/settings' {

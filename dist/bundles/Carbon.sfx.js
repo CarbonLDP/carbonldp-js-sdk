@@ -11520,6 +11520,11 @@ $__System.register("7", [], function(exports_1) {
                     enumerable: true,
                     configurable: true
                 });
+                Object.defineProperty(Class, "AppRole", {
+                    get: function () { return namespace + "AppRole"; },
+                    enumerable: true,
+                    configurable: true
+                });
                 return Class;
             })();
             Predicate = (function () {
