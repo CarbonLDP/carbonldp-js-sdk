@@ -56,7 +56,7 @@ describe( module( "Carbon/Agents" ), ():void => {
 
 		describe( method(
 			INSTANCE,
-			"createAgent"
+			"create"
 		), ():void => {
 
 			it( hasSignature(
@@ -77,20 +77,20 @@ describe( module( "Carbon/Agents" ), ():void => {
 				context = new MockedContext();
 				agents = new Agents.Class( context );
 
-				expect( agents.createAgent ).toBeDefined();
-				expect( Utils.isFunction( agents.createAgent ) ).toBe( true );
+				expect( agents.create ).toBeDefined();
+				expect( Utils.isFunction( agents.create ) ).toBe( true );
 
 				let spy = spyOn( context.documents, "createChild" );
 				let agent:Agent.Class = Agent.Factory.create( "Agent name", "email.of.agent@example.com", "myAwesomePassword");
 
-				expect( () => agents.createAgent( agent ) ).toThrowError( Errors.IllegalStateError );
+				expect( () => agents.create( agent ) ).toThrowError( Errors.IllegalStateError );
 				context.setSetting( "platform.agents.container", "agents/" );
 
-				agents.createAgent( agent );
+				agents.create( agent );
 				expect( spy ).toHaveBeenCalledWith( "http://example.com/container/agents/", agent );
 
 				let promise:Promise<any>;
-				promise = agents.createAgent( null );
+				promise = agents.create( null );
 				expect( promise instanceof Promise ).toBe( true );
 
 				let spies = {
@@ -126,24 +126,24 @@ describe( module( "Carbon/Agents" ), ():void => {
 				context = new MockedContext();
 				agents = new Agents.Class( context );
 
-				expect( agents.createAgent ).toBeDefined();
-				expect( Utils.isFunction( agents.createAgent ) ).toBe( true );
+				expect( agents.create ).toBeDefined();
+				expect( Utils.isFunction( agents.create ) ).toBe( true );
 
 				let promise:Promise<any>;
 				let spy = spyOn( context.documents, "createChild" );
 				let agent:Agent.Class = Agent.Factory.create( "Agent name", "email.of.agent@example.com", "myAwesomePassword" );
 
-				expect( () => agents.createAgent( "agentSlug", agent ) ).toThrowError( Errors.IllegalStateError );
+				expect( () => agents.create( "agentSlug", agent ) ).toThrowError( Errors.IllegalStateError );
 				context.setSetting( "platform.agents.container", "agents/" );
 
-				agents.createAgent( "agentSlug", agent );
+				agents.create( "agentSlug", agent );
 				expect( spy ).toHaveBeenCalledWith( "http://example.com/container/agents/", "agentSlug", agent );
 
 				spy.calls.reset();
-				agents.createAgent( null, agent );
+				agents.create( null, agent );
 				expect( spy ).toHaveBeenCalledWith( "http://example.com/container/agents/", agent );
 
-				promise = agents.createAgent( "agentSlug", null );
+				promise = agents.create( "agentSlug", null );
 				expect( promise instanceof Promise ).toBe( true );
 
 				let spies = {

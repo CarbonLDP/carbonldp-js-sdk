@@ -823,7 +823,7 @@ $__System.register("7", ["b", "6", "c"], function(exports_1) {
                 function Class(context) {
                     this.context = context;
                 }
-                Class.prototype.createAgent = function (slugOrAgent, agentDocument) {
+                Class.prototype.create = function (slugOrAgent, agentDocument) {
                     var containerURI = this.context.resolve(this.getContainerURI());
                     var slug = Utils.isString(slugOrAgent) ? slugOrAgent : null;
                     agentDocument = agentDocument || slugOrAgent;

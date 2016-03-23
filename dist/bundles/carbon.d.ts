@@ -1519,8 +1519,8 @@ declare module 'carbonldp/Agents' {
 	export class Class {
 	    private context;
 	    constructor(context: Context);
-	    createAgent(agentDocument: Agent.Class): Promise<[Pointer.Class, Response.Class]>;
-	    createAgent(slug: string, agentDocument: Agent.Class): Promise<[Pointer.Class, Response.Class]>;
+	    create(agentDocument: Agent.Class): Promise<[Pointer.Class, Response.Class]>;
+	    create(slug: string, agentDocument: Agent.Class): Promise<[Pointer.Class, Response.Class]>;
 	    private getContainerURI();
 	}
 	export { Agent };
