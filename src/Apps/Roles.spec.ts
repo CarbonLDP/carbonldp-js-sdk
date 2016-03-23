@@ -71,7 +71,7 @@ describe( module( "Carbon/Roles" ), ():void => {
 
 		describe( method(
 			INSTANCE,
-			"createRole"
+			"create"
 		), ():void => {
 
 			it( hasSignature(
@@ -100,20 +100,20 @@ describe( module( "Carbon/Roles" ), ():void => {
 
 				roles = new Roles.Class( appContext );
 
-				expect( roles.createRole ).toBeDefined();
-				expect( Utils.isFunction( roles.createRole ) ).toBe( true );
+				expect( roles.create ).toBeDefined();
+				expect( Utils.isFunction( roles.create ) ).toBe( true );
 
 				let spy = spyOn( appContext.documents, "createChild" );
 				let role:Role.Class = Role.Factory.create( "Role name" );
 
-				expect( () => roles.createRole( role ) ).toThrowError( Errors.IllegalStateError );
+				expect( () => roles.create( role ) ).toThrowError( Errors.IllegalStateError );
 				context.setSetting( "platform.apps.roles.container", "roles/" );
 
-				roles.createRole( role );
+				roles.create( role );
 				expect( spy ).toHaveBeenCalledWith( "http://example.com/apps/example-app/roles/", role );
 
 				let promise:Promise<any>;
-				promise = roles.createRole( null );
+				promise = roles.create( null );
 				expect( promise instanceof Promise ).toBe( true );
 
 				let spies = {
@@ -157,24 +157,24 @@ describe( module( "Carbon/Roles" ), ():void => {
 
 				roles = new Roles.Class( appContext );
 
-				expect( roles.createRole ).toBeDefined();
-				expect( Utils.isFunction( roles.createRole ) ).toBe( true );
+				expect( roles.create ).toBeDefined();
+				expect( Utils.isFunction( roles.create ) ).toBe( true );
 
 				let promise:Promise<any>;
 				let spy = spyOn( appContext.documents, "createChild" );
 				let role:Role.Class = Role.Factory.create( "Role name" );
 
-				expect( () => roles.createRole( "agentSlug", role ) ).toThrowError( Errors.IllegalStateError );
+				expect( () => roles.create( "agentSlug", role ) ).toThrowError( Errors.IllegalStateError );
 				context.setSetting( "platform.apps.roles.container", "roles/" );
 
-				roles.createRole( "agentSlug", role );
+				roles.create( "agentSlug", role );
 				expect( spy ).toHaveBeenCalledWith( "http://example.com/apps/example-app/roles/", "agentSlug", role );
 
 				spy.calls.reset();
-				roles.createRole( null, role );
+				roles.create( null, role );
 				expect( spy ).toHaveBeenCalledWith( "http://example.com/apps/example-app/roles/", role );
 
-				promise = roles.createRole( "agentSlug", null );
+				promise = roles.create( "agentSlug", null );
 				expect( promise instanceof Promise ).toBe( true );
 
 				let spies = {

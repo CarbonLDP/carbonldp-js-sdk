@@ -7,7 +7,7 @@ var Class = (function () {
     function Class(context) {
         this.context = context;
     }
-    Class.prototype.createRole = function (slugOrAgent, agentDocument) {
+    Class.prototype.create = function (slugOrAgent, agentDocument) {
         var containerURI = this.context.resolve(this.getContainerURI());
         var slug = Utils.isString(slugOrAgent) ? slugOrAgent : null;
         agentDocument = agentDocument || slugOrAgent;

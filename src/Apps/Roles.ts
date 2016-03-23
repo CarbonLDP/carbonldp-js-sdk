@@ -12,9 +12,9 @@ export class Class {
 		this.context = context;
 	}
 
-	createRole( agentDocument:Role.Class ):Promise<[ Pointer.Class, Response.Class]>;
-	createRole( slug:string, agentDocument:Role.Class ):Promise<[ Pointer.Class, Response.Class]>;
-	createRole( slugOrAgent:any, agentDocument?:Role.Class ):Promise<[ Pointer.Class, Response.Class]> {
+	create( agentDocument:Role.Class ):Promise<[ Pointer.Class, Response.Class]>;
+	create( slug:string, agentDocument:Role.Class ):Promise<[ Pointer.Class, Response.Class]>;
+	create( slugOrAgent:any, agentDocument?:Role.Class ):Promise<[ Pointer.Class, Response.Class]> {
 		let containerURI:string = this.context.resolve( this.getContainerURI() );
 		let slug:string = Utils.isString( slugOrAgent ) ? slugOrAgent : null;
 		agentDocument = agentDocument || slugOrAgent;
