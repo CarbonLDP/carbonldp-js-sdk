@@ -14,5 +14,6 @@ settings[ "http.ssl" ] = true;
 settings[ "auth.method" ] = Auth.Method.TOKEN;
 settings[ "platform.container" ] = "platform/";
 settings[ "platform.apps.container" ] = "apps/";
+settings[ "platform.apps.roles.container" ] = "roles/";
 
 export default settings;

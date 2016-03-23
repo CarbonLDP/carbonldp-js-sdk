@@ -12375,6 +12375,7 @@ $__System.register("62", ["c"], function(exports_1) {
             settings["auth.method"] = Auth.Method.TOKEN;
             settings["platform.container"] = "platform/";
             settings["platform.apps.container"] = "apps/";
+            settings["platform.apps.roles.container"] = "roles/";
             exports_1("default",settings);
         }
     }

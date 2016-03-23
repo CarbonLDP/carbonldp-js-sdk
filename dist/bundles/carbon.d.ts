@@ -1590,6 +1590,22 @@ declare module 'carbonldp/Apps/Roles/Role' {
 	export default Class;
 
 }
+declare module 'carbonldp/Apps/Roles' {
+	import { Context as AppContext } from 'carbonldp/App';
+	import * as Role from 'carbonldp/Apps/Roles/Role';
+	import * as Pointer from 'carbonldp/Pointer';
+	import * as Response from 'carbonldp/HTTP/Response';
+	export class Class {
+	    private context;
+	    constructor(context: AppContext);
+	    createRole(agentDocument: Role.Class): Promise<[Pointer.Class, Response.Class]>;
+	    createRole(slug: string, agentDocument: Role.Class): Promise<[Pointer.Class, Response.Class]>;
+	    private getContainerURI();
+	}
+	export { Role };
+	export default Class;
+
+}
 declare module 'carbonldp/settings' {
 	import * as Auth from 'carbonldp/Auth';
 	export interface CarbonSettings {
