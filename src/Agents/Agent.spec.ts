@@ -52,6 +52,12 @@ describe( module( "Carbon/Agents/Agent" ), ():void => {
 			"@id": NS.VCARD.Predicate.email,
 			"@type": NS.XSD.DataType.string
 		});
+
+		expect( Utils.hasProperty( Agent.SCHEMA, "password" ) ).toBe( true );
+		expect( Agent.SCHEMA[ "password" ] ).toEqual({
+			"@id": NS.CS.Predicate.password,
+			"@type": NS.XSD.DataType.string
+		});
 	});
 
 	describe( clazz(

@@ -13,7 +13,9 @@ import {
 
 	isDefined,
 	hasSignature,
-	reexports, hasDefaultExport,
+	reexports,
+	hasDefaultExport,
+	hasConstructor,
 } from "./test/JasmineExtender";
 import * as Utils from "./Utils";
 import * as Errors from "./Errors";
@@ -36,6 +38,21 @@ describe( module( "Carbon/Agents" ), ():void => {
 			expect( Utils.isFunction( Agents.Class ) ).toBe( true );
 		});
 
+		it( hasConstructor(), ():void => {
+			let agents:Agents.Class;
+			let context:AbstractContext;
+
+			class MockedContext extends AbstractContext {
+				resolve( uri:string ) {
+					return "http://example.com/container/" + uri;
+				}
+			}
+			context = new MockedContext();
+			agents = new Agents.Class( context );
+
+			expect( agents ).toBeTruthy();
+			expect( agents instanceof Agents.Class ).toBe( true );
+		});
 
 		describe( method(
 			INSTANCE,
@@ -70,7 +87,7 @@ describe( module( "Carbon/Agents" ), ():void => {
 				context.setSetting( "platform.agents.container", "agents/" );
 
 				agents.createAgent( agent );
-				expect( spy ).toHaveBeenCalledWith( "http://example.com/container/agents/", null, agent );
+				expect( spy ).toHaveBeenCalledWith( "http://example.com/container/agents/", agent );
 
 				let promise:Promise<any>;
 				promise = agents.createAgent( null );
@@ -124,7 +141,7 @@ describe( module( "Carbon/Agents" ), ():void => {
 
 				spy.calls.reset();
 				agents.createAgent( null, agent );
-				expect( spy ).toHaveBeenCalledWith( "http://example.com/container/agents/", null, agent );
+				expect( spy ).toHaveBeenCalledWith( "http://example.com/container/agents/", agent );
 
 				promise = agents.createAgent( "agentSlug", null );
 				expect( promise instanceof Promise ).toBe( true );
@@ -157,8 +174,7 @@ describe( module( "Carbon/Agents" ), ():void => {
 	});
 
 	it( hasDefaultExport(
-		"Agent",
-		"Carbon/Agents/Agent"
+		"Carbon.Agents.Class"
 	), ():void => {
 		expect( DefaultExport ).toBeDefined();
 		expect( DefaultExport ).toBe( Agents.Class );

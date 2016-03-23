@@ -20,7 +20,10 @@ export class Class {
 
 		if ( ! Agent.Factory.is( agentDocument ) ) return Promise.reject<any>( new Errors.IllegalArgumentError( "The Document is not a `Carbon.Agents.Agent.Class` object." ) );
 
-		return this.context.documents.createChild( containerURI, slug, agentDocument );
+		if( slug )
+			return this.context.documents.createChild( containerURI, slug, agentDocument );
+
+		return this.context.documents.createChild( containerURI, agentDocument );
 	}
 
 	private getContainerURI():string {

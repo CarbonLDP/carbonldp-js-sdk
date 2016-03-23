@@ -29,8 +29,8 @@ export const SCHEMA:ObjectSchema.Class = {
 };
 
 class AppContext extends AbstractContext {
-	agents:Agents;
-	
+	public agents:Agents;
+
 	private app:Class;
 	private base:string;
 

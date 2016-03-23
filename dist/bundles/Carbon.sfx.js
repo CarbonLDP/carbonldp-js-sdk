@@ -829,7 +829,9 @@ $__System.register("7", ["b", "6", "c"], function(exports_1) {
                     agentDocument = agentDocument || slugOrAgent;
                     if (!Agent.Factory.is(agentDocument))
                         return Promise.reject(new Errors.IllegalArgumentError("The Document is not a `Carbon.Agents.Agent.Class` object."));
-                    return this.context.documents.createChild(containerURI, slug, agentDocument);
+                    if (slug)
+                        return this.context.documents.createChild(containerURI, slug, agentDocument);
+                    return this.context.documents.createChild(containerURI, agentDocument);
                 };
                 Class.prototype.getContainerURI = function () {
                     if (!this.context.hasSetting("platform.agents.container"))
