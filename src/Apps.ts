@@ -16,7 +16,7 @@ export class Class {
 		this.context = context;
 	}
 
-	getAppContext( uri:string ):Promise<AppContext> {
+	getContext( uri:string ):Promise<AppContext> {
 		let appsContainerURI:string = this.getAppsContainerURI();
 		if ( RDF.URI.Util.isRelative( uri ) ) {
 			if ( ! Utils.S.startsWith( uri, appsContainerURI ) ) uri = RDF.URI.Util.resolve( appsContainerURI, uri );
@@ -32,7 +32,7 @@ export class Class {
 		);
 	}
 
-	getAllAppContext():Promise<AppContext[]> {
+	getAllContext():Promise<AppContext[]> {
 		return this.context.documents.getMembers( this.getAppsContainerURI(), false ).then(
 			( [ members, response ]:[ Pointer.Class[], Response.Class ] ) => {
 				return Pointer.Util.resolveAll( members );
@@ -44,9 +44,9 @@ export class Class {
 		);
 	}
 
-	createApp( appDocument:App.Class ):Promise<[ Pointer.Class, Response.Class]>;
-	createApp( slug:string, appDocument:App.Class ):Promise<[ Pointer.Class, Response.Class]>;
-	createApp( slugOrApp:any, appDocument?:App.Class ):Promise<[ Pointer.Class, Response.Class]> {
+	create( appDocument:App.Class ):Promise<[ Pointer.Class, Response.Class]>;
+	create( slug:string, appDocument:App.Class ):Promise<[ Pointer.Class, Response.Class]>;
+	create( slugOrApp:any, appDocument?:App.Class ):Promise<[ Pointer.Class, Response.Class]> {
 		let appsContainerURI:string = this.context.resolve( this.getAppsContainerURI() );
 		let slug:string = Utils.isString( slugOrApp ) ? slugOrApp : null;
 		appDocument = appDocument || slugOrApp;

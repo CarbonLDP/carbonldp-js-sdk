@@ -7,10 +7,10 @@ import * as PersistedApp from "./Apps/PersistedApp";
 export declare class Class {
     private context;
     constructor(context: Context);
-    getAppContext(uri: string): Promise<AppContext>;
-    getAllAppContext(): Promise<AppContext[]>;
-    createApp(appDocument: App.Class): Promise<[Pointer.Class, Response.Class]>;
-    createApp(slug: string, appDocument: App.Class): Promise<[Pointer.Class, Response.Class]>;
+    getContext(uri: string): Promise<AppContext>;
+    getAllContext(): Promise<AppContext[]>;
+    create(appDocument: App.Class): Promise<[Pointer.Class, Response.Class]>;
+    create(slug: string, appDocument: App.Class): Promise<[Pointer.Class, Response.Class]>;
     private getAppsContainerURI();
 }
 export { App, PersistedApp, AppContext };

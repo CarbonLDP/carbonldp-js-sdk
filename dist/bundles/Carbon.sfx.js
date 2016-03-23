@@ -769,7 +769,7 @@ $__System.register("8", ["2", "9", "4", "7", "6", "5", "a"], function(exports_1)
                 function Class(context) {
                     this.context = context;
                 }
-                Class.prototype.getAppContext = function (uri) {
+                Class.prototype.getContext = function (uri) {
                     var _this = this;
                     var appsContainerURI = this.getAppsContainerURI();
                     if (RDF.URI.Util.isRelative(uri)) {
@@ -784,7 +784,7 @@ $__System.register("8", ["2", "9", "4", "7", "6", "5", "a"], function(exports_1)
                         return new AppContext_1.default(_this.context, document);
                     });
                 };
-                Class.prototype.getAllAppContext = function () {
+                Class.prototype.getAllContext = function () {
                     var _this = this;
                     return this.context.documents.getMembers(this.getAppsContainerURI(), false).then(function (_a) {
                         var members = _a[0], response = _a[1];
@@ -794,7 +794,7 @@ $__System.register("8", ["2", "9", "4", "7", "6", "5", "a"], function(exports_1)
                         return members.map(function (member) { return new AppContext_1.default(_this.context, member); });
                     });
                 };
-                Class.prototype.createApp = function (slugOrApp, appDocument) {
+                Class.prototype.create = function (slugOrApp, appDocument) {
                     var appsContainerURI = this.context.resolve(this.getAppsContainerURI());
                     var slug = Utils.isString(slugOrApp) ? slugOrApp : null;
                     appDocument = appDocument || slugOrApp;

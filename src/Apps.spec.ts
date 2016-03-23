@@ -69,14 +69,14 @@ describe( module( "Carbon/Apps" ), ():void => {
 
 		it( hasMethod(
 			INSTANCE,
-			"getAppContext",
-			"Obtains an `Carbon.AppContext` object of the specified app URI, if it exists within the context of the Apps instance.", [
+			"getContext",
+			"Obtains an `Carbon.Apps.AppContext` object of the specified app URI, if it exists within the context of the Apps instance.", [
 				{ name: "uri", type: "string" }
 			],
-			{ type: "Promise<Carbon.AppContext>"}
+			{ type: "Promise<Carbon.Apps.AppContext>"}
 		), ( done:{ ():void, fail:() => void } ):void => {
-			expect( apps.getAppContext ).toBeDefined();
-			expect( Utils.isFunction( apps.getAppContext ) ).toBe( true );
+			expect( apps.getContext ).toBeDefined();
+			expect( Utils.isFunction( apps.getContext ) ).toBe( true );
 
 			let spies = {
 				success: ( appContext:AppContext ):void => {
@@ -91,7 +91,7 @@ describe( module( "Carbon/Apps" ), ():void => {
 
 			let promise:Promise<any>;
 
-			promise = apps.getAppContext( 'example-app/' ).then( spies.success, spies.fail );
+			promise = apps.getContext( 'example-app/' ).then( spies.success, spies.fail );
 			expect( promise instanceof Promise ).toBe( true );
 
 			jasmine.Ajax.requests.mostRecent().respondWith({
@@ -127,12 +127,12 @@ describe( module( "Carbon/Apps" ), ():void => {
 
 		it( hasMethod(
 			INSTANCE,
-			"getAllAppContext",
-			"Obtains all the `Carbon.AppContext` objects of every app where the context of the Apps instance can reach.",
-			{ type: "Promise<Carbon.AppContext[]>"}
+			"getAllContext",
+			"Obtains all the `Carbon.Apps.AppContext` objects of every app where the context of the Apps instance can reach.",
+			{ type: "Promise<Carbon.Apps.AppContext[]>"}
 		), ( done:{ ():void, fail:() => void } ):void => {
-			expect( apps.getAllAppContext ).toBeDefined();
-			expect( Utils.isFunction( apps.getAllAppContext ) ).toBe( true );
+			expect( apps.getAllContext ).toBeDefined();
+			expect( Utils.isFunction( apps.getAllContext ) ).toBe( true );
 
 			let spies = {
 				success: ( appsContext:AppContext[] ):void => {
@@ -149,7 +149,7 @@ describe( module( "Carbon/Apps" ), ():void => {
 
 			let promise:Promise<any>;
 
-			promise = apps.getAllAppContext().then( spies.success, spies.fail );
+			promise = apps.getAllContext().then( spies.success, spies.fail );
 			expect( promise instanceof Promise ).toBe( true );
 
 			jasmine.Ajax.requests.at( 0 ).respondWith({
@@ -231,26 +231,26 @@ describe( module( "Carbon/Apps" ), ():void => {
 
 		describe( method(
 			INSTANCE,
-			"createApp"
+			"create"
 		), ():void => {
 
 			it( hasSignature(
 				"Persists an App Document in the server, generating a unique slug.\n" +
 				"Returns a Pointer for the stored App Document, and the response of the call.", [
-					{ name: "appDocument", type: "Carbon.App.Class" }
+					{ name: "appDocument", type: "Carbon.Apps.App.Class" }
 				],
 				{ type: "Promise<Carbon.Pointer.Class, Carbon.HTTP.Response.Class>" }
 			), ( done ):void => {
-				expect( apps.createApp ).toBeDefined();
-				expect( Utils.isFunction( apps.createApp ) ).toBe( true );
+				expect( apps.create ).toBeDefined();
+				expect( Utils.isFunction( apps.create ) ).toBe( true );
 
 				let spy = spyOn( context.documents, "createChild" );
 				let app:App.Class = App.Factory.create( "App name" );
 
-				apps.createApp( app );
+				apps.create( app );
 				expect( spy ).toHaveBeenCalledWith( appsContainerURI, null, app );
 
-				let promise:Promise<any> = apps.createApp( null );
+				let promise:Promise<any> = apps.create( null );
 				expect( promise instanceof Promise ).toBe( true );
 
 				let spies = {
@@ -271,25 +271,25 @@ describe( module( "Carbon/Apps" ), ():void => {
 				"Persists an App Document in the server using the slug specified.\n" +
 				"Returns a Pointer for the stored App Document, and the response of the call.", [
 					{ name: "slug", type: "string" },
-					{ name: "appDocument", type: "Carbon.App.Class" }
+					{ name: "appDocument", type: "Carbon.Apps.App.Class" }
 				],
 				{ type: "Promise<Carbon.Pointer.Class, Carbon.HTTP.Response.Class>" }
 			), ( done:() => void ):void => {
-				expect( apps.createApp ).toBeDefined();
-				expect( Utils.isFunction( apps.createApp ) ).toBe( true );
+				expect( apps.create ).toBeDefined();
+				expect( Utils.isFunction( apps.create ) ).toBe( true );
 
 				let promise:Promise<any>;
 				let spy = spyOn( context.documents, "createChild" );
 				let app:App.Class = App.Factory.create( "App name" );
 
-				apps.createApp( "The name of the App", app );
+				apps.create( "The name of the App", app );
 				expect( spy ).toHaveBeenCalledWith( appsContainerURI, "The name of the App", app );
 
 				spy.calls.reset();
-				apps.createApp( null, app );
+				apps.create( null, app );
 				expect( spy ).toHaveBeenCalledWith( appsContainerURI, null, app );
 
-				promise = apps.createApp( "The name of the App", null );
+				promise = apps.create( "The name of the App", null );
 				expect( promise instanceof Promise ).toBe( true );
 
 				let spies = {
