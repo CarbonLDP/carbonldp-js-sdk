@@ -1,5 +1,5 @@
 import AppContext from "./Apps/AppContext";
-import * as Document from "./Document";
+import * as PersistedDocument from "./PersistedDocument";
 import Context from "./Context";
 import * as Response from "./HTTP/Response";
 import * as Pointer from "./Pointer";
@@ -29,7 +29,7 @@ export class Class {
 		}
 
 		return this.context.documents.get( uri ).then(
-			( [ document, response ]:[ Document.Class, Response.Class ] ) => {
+			( [ document, response ]:[ PersistedDocument.Class, Response.Class ] ) => {
 				if ( ! PersistedApp.Factory.is( document ) ) throw new Errors.IllegalArgumentError( "The resource fetched is not a cs:Application." );
 
 				return new AppContext( this.context, <PersistedApp.Class> document );

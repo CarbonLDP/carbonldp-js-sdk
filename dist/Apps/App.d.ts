@@ -1,7 +1,9 @@
 import * as Document from "./../Document";
 import * as ObjectSchema from "./../ObjectSchema";
-export interface Class extends Document.Class {
+export interface Interface {
     name: string;
+}
+export interface Class extends Interface, Document.Class {
 }
 export declare const RDF_CLASS: string;
 export declare const SCHEMA: ObjectSchema.Class;

@@ -4,8 +4,11 @@ import * as ObjectSchema from "./../ObjectSchema";
 import * as Utils from "./../Utils";
 import {IllegalArgumentError} from "./../Errors";
 
-export interface Class extends Document.Class {
+export interface Interface {
 	name:string;
+}
+
+export interface Class extends Interface, Document.Class {
 }
 
 export const RDF_CLASS:string = NS.CS.Class.Application;
