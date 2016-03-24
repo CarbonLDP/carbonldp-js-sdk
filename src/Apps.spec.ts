@@ -20,9 +20,11 @@ import * as NS from "./NS";
 import * as Errors from "./Errors";
 import * as App from "./Apps/App";
 import * as PersistedApp from "./Apps/PersistedApp";
+import * as Pointer from "./Pointer";
 
 import * as Apps from "./Apps";
 import DefaultExport from "./Apps";
+import Spy = jasmine.Spy;
 
 describe( module( "Carbon/Apps" ), ():void => {
 	let context:AbstractContext;
@@ -67,39 +69,45 @@ describe( module( "Carbon/Apps" ), ():void => {
 			expect( apps instanceof Apps.Class ).toBe( true );
 		});
 
-		it( hasMethod(
+		describe( method(
 			INSTANCE,
-			"getContext",
-			"Obtains an `Carbon.Apps.AppContext` object of the specified app URI, if it exists within the context of the Apps instance.", [
-				{ name: "uri", type: "string" }
-			],
-			{ type: "Promise<Carbon.Apps.AppContext>"}
-		), ( done:{ ():void, fail:() => void } ):void => {
-			expect( apps.getContext ).toBeDefined();
-			expect( Utils.isFunction( apps.getContext ) ).toBe( true );
+			"getContext"
+		), ():void => {
 
-			let spies = {
-				success: ( appContext:AppContext ):void => {
-					expect( appContext instanceof AppContext ).toBe( true );
-				},
-				fail: ( some ):void => {
-					console.log( some );
-				}
-			};
-			let successSpy = spyOn( spies, "success" ).and.callThrough();
-			let failSpy = spyOn( spies, "fail" ).and.callThrough();
+			it( hasSignature(
+				"Obtains a `Carbon.Apps.AppContext` object of the specified app URI, if it exists within the context of the Apps instance.", [
+					{ name: "uri", type: "string" }
+				],
+				{ type: "Promise<Carbon.Apps.AppContext>"}
+			), ( done:{ ():void, fail:() => void } ):void => {
+				expect( apps.getContext ).toBeDefined();
+				expect( Utils.isFunction( apps.getContext ) ).toBe( true );
 
-			let promise:Promise<any>;
+				let spies = {
+					success: ( appContext:AppContext ):void => {
+						expect( appContext instanceof AppContext ).toBe( true );
+					},
+					fail: ( some ):void => {
+						console.log( some );
+					}
+				};
+				let successSpy = spyOn( spies, "success" ).and.callThrough();
+				let failSpy = spyOn( spies, "fail" ).and.callThrough();
 
-			promise = apps.getContext( 'example-app/' ).then( spies.success, spies.fail );
-			expect( promise instanceof Promise ).toBe( true );
+				let promise:Promise<any>;
+				let spy:Spy;
 
-			jasmine.Ajax.requests.mostRecent().respondWith({
-				status: 200,
-				responseHeaders: {
-					ETag: 'W/"123456789"'
-				},
-				responseText: `[{
+				spy = spyOn( context.documents, "get" ).and.callThrough();
+
+				promise = apps.getContext( 'example-app/' ).then( spies.success, spies.fail );
+				expect( promise instanceof Promise ).toBe( true );
+
+				jasmine.Ajax.requests.mostRecent().respondWith({
+					status: 200,
+					responseHeaders: {
+						ETag: 'W/"123456789"'
+					},
+					responseText: `[{
 				    "@id": "http://example.com/platform/apps/example-app/",
 				    "@graph": [{
 				        "@id": "http://example.com/platform/apps/example-app/",
@@ -116,13 +124,78 @@ describe( module( "Carbon/Apps" ), ():void => {
 				        }]
 				    }]
 				}]`
+				});
+
+				promise.then( ():void => {
+					expect( spy ).toHaveBeenCalledWith( "http://example.com/platform/apps/example-app/" );
+					expect( successSpy.calls.count() ).toBe( 1 );
+					expect( failSpy.calls.count() ).toBe( 0 );
+					done();
+				}, done.fail );
 			});
 
-			promise.then( ():void => {
-				expect( successSpy.calls.count() ).toBe( 1 );
-				expect( failSpy.calls.count() ).toBe( 0 );
-				done();
-			}, done.fail );
+			it( hasSignature(
+				"Obtains a `Carbon.Apps.AppContext` object of the specified Pointer object, if it exists within the context of the Apps instance.", [
+					{ name: "uri", type: "string" }
+				],
+				{ type: "Promise<Carbon.Apps.AppContext>"}
+			), ( done:{ ():void, fail:() => void } ):void => {
+				expect( apps.getContext ).toBeDefined();
+				expect( Utils.isFunction( apps.getContext ) ).toBe( true );
+
+				let spies = {
+					success: ( appContext:AppContext ):void => {
+						expect( appContext instanceof AppContext ).toBe( true );
+					},
+					fail: ( some ):void => {
+						console.log( some );
+					}
+				};
+				let successSpy = spyOn( spies, "success" ).and.callThrough();
+				let failSpy = spyOn( spies, "fail" ).and.callThrough();
+
+				let promise:Promise<any>;
+				let pointer:Pointer.Class;
+				let spy:Spy;
+
+				spy = spyOn( context.documents, "get" ).and.callThrough();
+				pointer = Pointer.Factory.create( 'example-app/' );
+
+				promise = apps.getContext( pointer ).then( spies.success, spies.fail );
+				expect( promise instanceof Promise ).toBe( true );
+
+				jasmine.Ajax.requests.mostRecent().respondWith({
+					status: 200,
+					responseHeaders: {
+						ETag: 'W/"123456789"'
+					},
+					responseText: `[{
+				    "@id": "http://example.com/platform/apps/example-app/",
+				    "@graph": [{
+				        "@id": "http://example.com/platform/apps/example-app/",
+				        "@type": [
+				          "http://www.w3.org/ns/ldp#RDFSource",
+				          "http://www.w3.org/ns/ldp#BasicContainer",
+				          "${NS.CS.Class.Application}"
+				        ],
+				        "https://carbonldp.com/ns/v1/security#rootContainer": [{
+				            "@id": "https://example.com/apps/example-app/"
+				        }],
+				        "${NS.CS.Predicate.name}": [{
+				            "@value": "Example App name"
+				        }]
+				    }]
+				}]`
+				});
+
+				promise.then( ():void => {
+					expect( spy ).toHaveBeenCalledWith( "http://example.com/platform/apps/example-app/" );
+					expect( successSpy.calls.count() ).toBe( 1 );
+					expect( failSpy.calls.count() ).toBe( 0 );
+					done();
+				}, done.fail );
+			});
+
 		});
 
 		it( hasMethod(

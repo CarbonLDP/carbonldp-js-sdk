@@ -1588,6 +1588,7 @@ declare module 'carbonldp/Apps' {
 	    private context;
 	    constructor(context: Context);
 	    getContext(uri: string): Promise<AppContext>;
+	    getContext(pointer: Pointer.Class): Promise<AppContext>;
 	    getAllContext(): Promise<AppContext[]>;
 	    create(appDocument: App.Class): Promise<[Pointer.Class, Response.Class]>;
 	    create(slug: string, appDocument: App.Class): Promise<[Pointer.Class, Response.Class]>;

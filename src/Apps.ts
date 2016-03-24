@@ -16,8 +16,13 @@ export class Class {
 		this.context = context;
 	}
 
-	getContext( uri:string ):Promise<AppContext> {
+	getContext( uri:string ):Promise<AppContext>;
+	getContext( pointer:Pointer.Class ):Promise<AppContext>;
+	getContext( pointerOrUri:any ):Promise<AppContext> {
 		let appsContainerURI:string = this.getAppsContainerURI();
+		let uri:string;
+		uri = Utils.isString( pointerOrUri ) ? pointerOrUri : ( <Pointer.Class> pointerOrUri ).id;
+
 		if ( RDF.URI.Util.isRelative( uri ) ) {
 			if ( ! Utils.S.startsWith( uri, appsContainerURI ) ) uri = RDF.URI.Util.resolve( appsContainerURI, uri );
 			uri = this.context.resolve( uri );

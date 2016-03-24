@@ -769,9 +769,11 @@ $__System.register("8", ["2", "9", "4", "7", "6", "5", "a"], function(exports_1)
                 function Class(context) {
                     this.context = context;
                 }
-                Class.prototype.getContext = function (uri) {
+                Class.prototype.getContext = function (pointerOrUri) {
                     var _this = this;
                     var appsContainerURI = this.getAppsContainerURI();
+                    var uri;
+                    uri = Utils.isString(pointerOrUri) ? pointerOrUri : pointerOrUri.id;
                     if (RDF.URI.Util.isRelative(uri)) {
                         if (!Utils.S.startsWith(uri, appsContainerURI))
                             uri = RDF.URI.Util.resolve(appsContainerURI, uri);
