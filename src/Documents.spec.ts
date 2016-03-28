@@ -378,7 +378,7 @@ describe( module( "Carbon/Documents", "" ), ():void => {
 			};
 			let spySuccess = spyOn( spy, "success" ).and.callThrough();
 
-			let blob:Blob = new Blob( [ JSON.stringify( { "some content": "for the blob." } ) ], {type : 'application/json'} );
+			let blob:Blob = new Blob( [ JSON.stringify( { "some content": "for the blob." } ) ], { type : "application/json" } );
 
 			jasmine.Ajax.stubRequest( "http://example.com/parent-resource/", null, "POST" ).andReturn( {
 				status: 200,
@@ -426,7 +426,7 @@ describe( module( "Carbon/Documents", "" ), ():void => {
 			};
 			let spySuccess = spyOn( spy, "success" ).and.callThrough();
 
-			let blob:Blob = new Blob( [ JSON.stringify( { "some content": "for the blob." } ) ], {type : 'application/json'} );
+			let blob:Blob = new Blob( [ JSON.stringify( { "some content": "for the blob." } ) ], { type : "application/json" } );
 
 			jasmine.Ajax.stubRequest( "http://example.com/parent-resource/", null, "POST" ).andReturn( {
 				status: 200,

@@ -1,15 +1,12 @@
 "use strict";
 var Utils = require("./../Utils");
-function createChild(slugOrDocument, document) {
-    if (slugOrDocument === void 0) { slugOrDocument = null; }
-    if (document === void 0) { document = null; }
-    var slug = Utils.isString(slugOrDocument) ? slugOrDocument : null;
-    document = !!slugOrDocument && !Utils.isString(slugOrDocument) ? slugOrDocument : (!!document ? document : null);
-    if (slug !== null) {
-        return this._documents.createChild(this.id, slug, document);
-    }
-    else
-        return this._documents.createChild(this.id, document);
+function createChild(slugOrDocumentOrBlob, documentOrBlob) {
+    if (documentOrBlob === void 0) { documentOrBlob = null; }
+    var slug = Utils.isString(slugOrDocumentOrBlob) ? slugOrDocumentOrBlob : null;
+    documentOrBlob = slug ? documentOrBlob : slugOrDocumentOrBlob;
+    if (slug)
+        return this._documents.createChild(this.id, slug, documentOrBlob);
+    return this._documents.createChild(this.id, documentOrBlob);
 }
 var Factory = (function () {
     function Factory() {

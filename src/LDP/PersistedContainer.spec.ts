@@ -145,109 +145,65 @@ describe( module( "Carbon/LDP/PersistedContainer" ), ():void => {
 					{ name: "object", type: "Object" }
 				],
 					{ type: "Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>" }
-				), ( done:{ ():void, fail:() => void } ):void => {
+				), ():void => {
 					expect( container.createChild ).toBeDefined();
 					expect( Utils.isFunction( container.createChild ) ).toBeDefined();
 
-					let promises:Promise<any>[] = [];
-					let promise:Promise<[ Pointer.Class, HTTP.Response.Class ]>;
-					let document:Document.Class;
-					let spies = {
-						success: ( [ pointer, response ]:[ Pointer.Class, HTTP.Response.Class ] ):void => {
-							expect( pointer.id ).toBe( "http://example.com/resource/child/" );
-						},
-						fail: ():void => {
-						}
-					};
-					let successSpy = spyOn( spies, "success").and.callThrough();
-					let failSpy = spyOn( spies, "fail").and.callThrough();
+					let spy = spyOn( container._documents, "createChild" );
 
-					document = Document.Factory.create();
-					promise = container.createChild( 'child', document );
-					expect( promise instanceof Promise ).toBe( true );
-					promises.push( promise.then( spies.success, spies.fail ) );
-
-					jasmine.Ajax.requests.mostRecent().respondWith({
-						status: 201,
-						responseHeaders: {
-							"Location": "http://example.com/resource/child/",
-						},
-						responseText: "{}"
-					});
-
-					Promise.all( promises ).then( ():void => {
-						expect( successSpy.calls.count() ).toBe( 1 );
-						expect( failSpy.calls.count() ).toBe( 0 );
-						done();
-					}, done.fail );
-
-					// TODO wait TODO's from Carbon.LDP.PersistedContainer file.
-				});
-
-				it( hasSignature( [
-					{ name: "slug", type: "string" }
-				],
-					{ type: "Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>" }
-				), ( done:{ ():void, fail:() => void } ):void => {
-					expect( container.createChild ).toBeDefined();
-					expect( Utils.isFunction( container.createChild ) ).toBeDefined();
-
-					done();
-					// TODO wait TODO's from Carbon.LDP.PersistedContainer file.
+					let document:Document.Class = Document.Factory.create();
+					container.createChild( "child", document );
+					
+					expect( spy ).toHaveBeenCalledWith( "http://example.com/resource/", "child", document );
 				});
 
 				it( hasSignature( [
 						{ name: "object", type: "Object" }
 					],
 					{ type: "Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>" }
-				), ( done:{ ():void, fail:() => void } ):void => {
+				), ():void => {
 					expect( container.createChild ).toBeDefined();
 					expect( Utils.isFunction( container.createChild ) ).toBeDefined();
 
-					let promises:Promise<any>[] = [];
-					let promise:Promise<[ Pointer.Class, HTTP.Response.Class ]>;
-					let document:Document.Class;
-					let spies = {
-						success: ( [ pointer, response ]:[ Pointer.Class, HTTP.Response.Class ] ):void => {
-							expect( pointer.id ).toBe( "http://example.com/resource/auto-generated-child-ID/" );
-						},
-						fail: ():void => {
-						}
-					};
-					let successSpy = spyOn( spies, "success").and.callThrough();
-					let failSpy = spyOn( spies, "fail").and.callThrough();
+					let spy = spyOn( container._documents, "createChild" );
 
-					document = Document.Factory.create();
-					promise = container.createChild( document );
-					expect( promise instanceof Promise ).toBe( true );
-					promises.push( promise.then( spies.success, spies.fail ) );
+					let document:Document.Class = Document.Factory.create();
+					container.createChild( document );
 
-					jasmine.Ajax.requests.mostRecent().respondWith({
-						status: 201,
-						responseHeaders: {
-							"Location": "http://example.com/resource/auto-generated-child-ID/",
-						},
-						responseText: "{}"
-					});
-
-					Promise.all( promises ).then( ():void => {
-						expect( successSpy.calls.count() ).toBe( 1 );
-						expect( failSpy.calls.count() ).toBe( 0 );
-						done();
-					}, done.fail );
-
-					// TODO wait TODO's from Carbon.LDP.PersistedContainer file.
+					expect( spy ).toHaveBeenCalledWith( "http://example.com/resource/", document );
 				});
 
-				it( hasSignature(
+				it( hasSignature( [
+					{ name: "slug", type: "string" },
+					{ name: "blob", type: "Blob" }
+				],
 					{ type: "Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>" }
-				), ( done:{ ():void, fail:() => void } ):void => {
+				), ():void => {
 					expect( container.createChild ).toBeDefined();
 					expect( Utils.isFunction( container.createChild ) ).toBeDefined();
 
-					done();
+					let spy = spyOn( container._documents, "createChild" );
 
-					// TODO wait TODO's from Carbon.LDP.PersistedContainer file.
+					let blob:Blob = new Blob( [ JSON.stringify( { "some content": "for the blob." } ) ], { type : "application/json" } );
+					container.createChild( "child", blob );
+
+					expect( spy ).toHaveBeenCalledWith( "http://example.com/resource/", "child", blob );
+				});
+
+				it( hasSignature( [
+						{ name: "blob", type: "Blob" }
+					],
+					{ type: "Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>" }
+				), ():void => {
+					expect( container.createChild ).toBeDefined();
+					expect( Utils.isFunction( container.createChild ) ).toBeDefined();
+
+					let spy = spyOn( container._documents, "createChild" );
+
+					let blob:Blob = new Blob( [ JSON.stringify( { "some content": "for the blob." } ) ], { type : "application/json" } );
+					container.createChild( blob );
+
+					expect( spy ).toHaveBeenCalledWith( "http://example.com/resource/", blob );
 				});
 
 			});
