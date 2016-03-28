@@ -3055,8 +3055,8 @@ $__System.register("26", ["20", "21", "23", "25"], function(exports_1) {
     }
 });
 
-$__System.register("d", ["e", "24", "5", "6", "11", "19", "4", "9", "10", "f", "26"], function(exports_1) {
-    var Errors, HTTP, RDF, Utils, JSONLDConverter, PersistedDocument, Pointer, NS, ObjectSchema, LDP, SPARQL;
+$__System.register("d", ["e", "24", "5", "6", "15", "11", "19", "4", "9", "10", "f", "26"], function(exports_1) {
+    var Errors, HTTP, RDF, Utils, Document, JSONLDConverter, PersistedDocument, Pointer, NS, ObjectSchema, LDP, SPARQL;
     var Documents;
     return {
         setters:[
@@ -3071,6 +3071,9 @@ $__System.register("d", ["e", "24", "5", "6", "11", "19", "4", "9", "10", "f", "
             },
             function (Utils_1) {
                 Utils = Utils_1;
+            },
+            function (Document_1) {
+                Document = Document_1;
             },
             function (JSONLDConverter_1) {
                 JSONLDConverter = JSONLDConverter_1;
@@ -3211,28 +3214,37 @@ $__System.register("d", ["e", "24", "5", "6", "11", "19", "4", "9", "10", "f", "
                         return [document, response];
                     });
                 };
-                Documents.prototype.createChild = function (parentURI, slugOrChildDocument, childDocumentOrRequestOptions, requestOptions) {
+                Documents.prototype.createChild = function (parentURI, slugOrChildDocumentOrFile, childDocumentOrFileOrRequestOptions, requestOptions) {
                     var _this = this;
-                    if (childDocumentOrRequestOptions === void 0) { childDocumentOrRequestOptions = {}; }
+                    if (childDocumentOrFileOrRequestOptions === void 0) { childDocumentOrFileOrRequestOptions = {}; }
                     if (requestOptions === void 0) { requestOptions = {}; }
-                    var slug = Utils.isString(slugOrChildDocument) ? slugOrChildDocument : null;
-                    var childDocument = !Utils.isString(slugOrChildDocument) ? slugOrChildDocument : childDocumentOrRequestOptions;
-                    requestOptions = !Utils.isString(slugOrChildDocument) ? childDocumentOrRequestOptions : requestOptions;
-                    if (PersistedDocument.Factory.is(childDocument))
-                        return Utils.P.createRejectedPromise(new Errors.IllegalArgumentError("The childDocument provided has been already persisted."));
-                    if (childDocument.id) {
-                        if (!RDF.URI.Util.isBaseOf(parentURI, childDocument.id))
-                            return Utils.P.createRejectedPromise(new Errors.IllegalArgumentError("The childDocument's URI is not relative to the parentURI specified"));
+                    var slug = Utils.isString(slugOrChildDocumentOrFile) ? slugOrChildDocumentOrFile : null;
+                    var childDocumentOrBlob = (!slug) ? slugOrChildDocumentOrFile : childDocumentOrFileOrRequestOptions;
+                    requestOptions = (!slug) ? childDocumentOrFileOrRequestOptions : requestOptions;
+                    var body = null;
+                    var blob = null;
+                    if (Document.Factory.hasClassProperties(childDocumentOrBlob)) {
+                        var childDocument = childDocumentOrBlob;
+                        if (PersistedDocument.Factory.is(childDocument))
+                            return Promise.reject(new Errors.IllegalArgumentError("The childDocument provided has been already persisted."));
+                        if (childDocument.id && (!RDF.URI.Util.isBaseOf(parentURI, childDocument.id)))
+                            return Promise.reject(new Errors.IllegalArgumentError("The childDocument's URI is not relative to the parentURI specified"));
+                        HTTP.Request.Util.setContentTypeHeader("application/ld+json", requestOptions);
+                        body = childDocument.toJSON(this, this.jsonldConverter);
+                    }
+                    else {
+                        blob = childDocumentOrBlob;
+                        if (!(blob instanceof Blob))
+                            return Promise.reject(new Errors.IllegalArgumentError("The file is not a valid Blob object."));
+                        HTTP.Request.Util.setContentTypeHeader(blob.type, requestOptions);
                     }
                     if (this.context && this.context.auth.isAuthenticated())
                         this.context.auth.addAuthentication(requestOptions);
                     HTTP.Request.Util.setAcceptHeader("application/ld+json", requestOptions);
-                    HTTP.Request.Util.setContentTypeHeader("application/ld+json", requestOptions);
                     HTTP.Request.Util.setPreferredInteractionModel(NS.LDP.Class.Container, requestOptions);
                     if (slug !== null)
                         HTTP.Request.Util.setSlug(slug, requestOptions);
-                    var body = childDocument.toJSON(this, this.jsonldConverter);
-                    return HTTP.Request.Service.post(parentURI, body, requestOptions).then(function (response) {
+                    var result = function (response) {
                         var locationHeader = response.headers.get("Location");
                         if (locationHeader === null || locationHeader.values.length < 1)
                             throw new HTTP.Errors.BadResponseError("The response is missing a Location header.", response);
@@ -3244,7 +3256,10 @@ $__System.register("d", ["e", "24", "5", "6", "11", "19", "4", "9", "10", "f", "
                             pointer,
                             response,
                         ];
-                    });
+                    };
+                    if (body)
+                        return HTTP.Request.Service.post(parentURI, body, requestOptions).then(result);
+                    return HTTP.Request.Service.post(parentURI, blob, requestOptions).then(result);
                 };
                 Documents.prototype.getMembers = function (uri, includeNonReadableOrRequestOptions, requestOptions) {
                     var _this = this;
