@@ -126,6 +126,7 @@ var Util = (function () {
     }
     Util.getHeader = function (headerName, requestOptions, initialize) {
         if (initialize === void 0) { initialize = false; }
+        headerName = headerName.toLowerCase();
         if (initialize) {
             var headers = requestOptions.headers ? requestOptions.headers : requestOptions.headers = new Map();
             headers.set(headerName, new Header.Class());
@@ -136,26 +137,26 @@ var Util = (function () {
     };
     Util.setAcceptHeader = function (accept, requestOptions) {
         var headers = requestOptions.headers ? requestOptions.headers : requestOptions.headers = new Map();
-        headers.set("Accept", new Header.Class(accept));
+        headers.set("accept", new Header.Class(accept));
         return requestOptions;
     };
     Util.setContentTypeHeader = function (contentType, requestOptions) {
         var headers = requestOptions.headers ? requestOptions.headers : requestOptions.headers = new Map();
-        headers.set("Content-Type", new Header.Class(contentType));
+        headers.set("content-type", new Header.Class(contentType));
         return requestOptions;
     };
     Util.setIfMatchHeader = function (etag, requestOptions) {
         var headers = requestOptions.headers ? requestOptions.headers : requestOptions.headers = new Map();
-        headers.set("If-Match", new Header.Class(etag));
+        headers.set("if-match", new Header.Class(etag));
         return requestOptions;
     };
     Util.setPreferredInteractionModel = function (interactionModelURI, requestOptions) {
-        var prefer = Util.getHeader("Prefer", requestOptions, true);
+        var prefer = Util.getHeader("prefer", requestOptions, true);
         prefer.values.push(new Header.Value(interactionModelURI + "; rel=interaction-model"));
         return requestOptions;
     };
     Util.setContainerRetrievalPreferences = function (preferences, requestOptions) {
-        var prefer = Util.getHeader("Prefer", requestOptions, true);
+        var prefer = Util.getHeader("prefer", requestOptions, true);
         var headerPieces = ["return=representation;"];
         if ("include" in preferences && preferences.include.length > 0)
             headerPieces.push('include="' + preferences.include.join(" ") + '"');
@@ -167,7 +168,7 @@ var Util = (function () {
         return requestOptions;
     };
     Util.setSlug = function (slug, requestOptions) {
-        var slugHeader = Util.getHeader("Slug", requestOptions, true);
+        var slugHeader = Util.getHeader("slug", requestOptions, true);
         slugHeader.values.push(new Header.Value(slug));
         return requestOptions;
     };

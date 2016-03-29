@@ -159,7 +159,7 @@ var Documents = (function () {
         if (slug !== null)
             HTTP.Request.Util.setSlug(slug, requestOptions);
         var result = function (response) {
-            var locationHeader = response.headers.get("Location");
+            var locationHeader = response.getHeader("Location");
             if (locationHeader === null || locationHeader.values.length < 1)
                 throw new HTTP.Errors.BadResponseError("The response is missing a Location header.", response);
             if (locationHeader.values.length !== 1)

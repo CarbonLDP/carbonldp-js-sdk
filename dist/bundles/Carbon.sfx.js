@@ -2953,6 +2953,7 @@ $__System.register("23", ["e", "24", "5", "6", "21"], function(exports_1) {
                     return HTTP.Request.Service.post(url, selectQuery, options, Class.resultsParser);
                 };
                 Class.executeSELECTQuery = function (url, selectQuery, pointerLibrary, options) {
+                    if (options === void 0) { options = {}; }
                     return Class.executeRawSELECTQuery(url, selectQuery, options).then(function (_a) {
                         var rawResults = _a[0], response = _a[1];
                         var rawBindings = rawResults.results.bindings;
@@ -3242,7 +3243,7 @@ $__System.register("d", ["e", "24", "5", "6", "15", "11", "19", "4", "9", "10", 
                     if (slug !== null)
                         HTTP.Request.Util.setSlug(slug, requestOptions);
                     var result = function (response) {
-                        var locationHeader = response.headers.get("Location");
+                        var locationHeader = response.getHeader("Location");
                         if (locationHeader === null || locationHeader.values.length < 1)
                             throw new HTTP.Errors.BadResponseError("The response is missing a Location header.", response);
                         if (locationHeader.values.length !== 1)
@@ -10882,6 +10883,7 @@ $__System.register("4f", ["4d", "50", "4e", "51", "6"], function(exports_1) {
                 }
                 Util.getHeader = function (headerName, requestOptions, initialize) {
                     if (initialize === void 0) { initialize = false; }
+                    headerName = headerName.toLowerCase();
                     if (initialize) {
                         var headers = requestOptions.headers ? requestOptions.headers : requestOptions.headers = new Map();
                         headers.set(headerName, new Header.Class());
@@ -10892,26 +10894,26 @@ $__System.register("4f", ["4d", "50", "4e", "51", "6"], function(exports_1) {
                 };
                 Util.setAcceptHeader = function (accept, requestOptions) {
                     var headers = requestOptions.headers ? requestOptions.headers : requestOptions.headers = new Map();
-                    headers.set("Accept", new Header.Class(accept));
+                    headers.set("accept", new Header.Class(accept));
                     return requestOptions;
                 };
                 Util.setContentTypeHeader = function (contentType, requestOptions) {
                     var headers = requestOptions.headers ? requestOptions.headers : requestOptions.headers = new Map();
-                    headers.set("Content-Type", new Header.Class(contentType));
+                    headers.set("content-type", new Header.Class(contentType));
                     return requestOptions;
                 };
                 Util.setIfMatchHeader = function (etag, requestOptions) {
                     var headers = requestOptions.headers ? requestOptions.headers : requestOptions.headers = new Map();
-                    headers.set("If-Match", new Header.Class(etag));
+                    headers.set("if-match", new Header.Class(etag));
                     return requestOptions;
                 };
                 Util.setPreferredInteractionModel = function (interactionModelURI, requestOptions) {
-                    var prefer = Util.getHeader("Prefer", requestOptions, true);
+                    var prefer = Util.getHeader("prefer", requestOptions, true);
                     prefer.values.push(new Header.Value(interactionModelURI + "; rel=interaction-model"));
                     return requestOptions;
                 };
                 Util.setContainerRetrievalPreferences = function (preferences, requestOptions) {
-                    var prefer = Util.getHeader("Prefer", requestOptions, true);
+                    var prefer = Util.getHeader("prefer", requestOptions, true);
                     var headerPieces = ["return=representation;"];
                     if ("include" in preferences && preferences.include.length > 0)
                         headerPieces.push('include="' + preferences.include.join(" ") + '"');
@@ -10923,7 +10925,7 @@ $__System.register("4f", ["4d", "50", "4e", "51", "6"], function(exports_1) {
                     return requestOptions;
                 };
                 Util.setSlug = function (slug, requestOptions) {
-                    var slugHeader = Util.getHeader("Slug", requestOptions, true);
+                    var slugHeader = Util.getHeader("slug", requestOptions, true);
                     slugHeader.values.push(new Header.Value(slug));
                     return requestOptions;
                 };
@@ -10991,7 +10993,7 @@ $__System.register("50", [], function(exports_1) {
                             throw new Error("ParseError: The header couldn't be parsed.");
                         if (parts.length > 2)
                             parts[1] = parts.slice(1).join(":");
-                        var name = parts[0].trim();
+                        var name = parts[0].trim().toLowerCase();
                         var header = new Class(parts[1].trim());
                         if (headers.has(name)) {
                             var existingHeader = headers.get(name);
@@ -11026,6 +11028,10 @@ $__System.register("51", ["50"], function(exports_1) {
                     this.setHeaders(request);
                     this.request = request;
                 }
+                Class.prototype.getHeader = function (name) {
+                    name = name.toLowerCase();
+                    return this.headers.get(name) || null;
+                };
                 Class.prototype.setHeaders = function (request) {
                     var headersString = request.getAllResponseHeaders();
                     if (headersString) {
@@ -11044,7 +11050,7 @@ $__System.register("51", ["50"], function(exports_1) {
                 Util.getETag = function (response) {
                     if (!response || !response.headers)
                         return null;
-                    var etagHeader = response.headers.get("ETag");
+                    var etagHeader = response.getHeader("ETag");
                     if (!etagHeader)
                         return null;
                     if (!etagHeader.values.length)
@@ -11265,12 +11271,12 @@ $__System.register("55", ["24", "e", "56", "54"], function(exports_1) {
                 };
                 Class.prototype.addBasicAuthenticationHeader = function (headers) {
                     var header;
-                    if (headers.has("Authorization")) {
-                        header = headers.get("Authorization");
+                    if (headers.has("authorization")) {
+                        header = headers.get("authorization");
                     }
                     else {
                         header = new HTTP.Header.Class();
-                        headers.set("Authorization", header);
+                        headers.set("authorization", header);
                     }
                     var authorization = "Basic " + btoa(this.credentials.username + ":" + this.credentials.password);
                     header.values.push(new HTTP.Header.Value(authorization));
@@ -11381,12 +11387,12 @@ $__System.register("57", ["e", "24", "9", "5", "55", "56", "58"], function(expor
                 };
                 Class.prototype.addTokenAuthenticationHeader = function (headers) {
                     var header;
-                    if (headers.has("Authorization")) {
-                        header = headers.get("Authorization");
+                    if (headers.has("authorization")) {
+                        header = headers.get("authorization");
                     }
                     else {
                         header = new HTTP.Header.Class();
-                        headers.set("Authorization", header);
+                        headers.set("authorization", header);
                     }
                     var authorization = "Token " + this._credentials.key;
                     header.values.push(new HTTP.Header.Value(authorization));
@@ -12729,7 +12735,7 @@ $__System.register("63", ["2", "c", "8", "15", "d", "24", "5", "62", "6"], funct
                     this.apps = new Apps_1.default(this);
                 }
                 Object.defineProperty(Carbon, "version", {
-                    get: function () { return "0.18.0-ALPHA"; },
+                    get: function () { return "0.18.1-ALPHA"; },
                     enumerable: true,
                     configurable: true
                 });
