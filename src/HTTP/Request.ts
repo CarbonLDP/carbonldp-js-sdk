@@ -150,6 +150,8 @@ export class Service {
 
 export class Util {
 	static getHeader( headerName:string, requestOptions:Options, initialize:boolean = false ):Header.Class {
+		headerName = headerName.toLowerCase();
+
 		if( initialize ) {
 			let headers:Map<string, Header.Class> = requestOptions.headers ? requestOptions.headers : requestOptions.headers = new Map<string, Header.Class>();
 			headers.set( headerName, new Header.Class() );
@@ -161,31 +163,31 @@ export class Util {
 
 	static setAcceptHeader( accept:string, requestOptions:Options ):Options {
 		let headers:Map<string, Header.Class> = requestOptions.headers ? requestOptions.headers : requestOptions.headers = new Map<string, Header.Class>();
-		headers.set( "Accept", new Header.Class( accept ) );
+		headers.set( "accept", new Header.Class( accept ) );
 		return requestOptions;
 	}
 
 	static setContentTypeHeader( contentType:string, requestOptions:Options ):Options {
 		let headers:Map<string, Header.Class> = requestOptions.headers ? requestOptions.headers : requestOptions.headers = new Map<string, Header.Class>();
-		headers.set( "Content-Type", new Header.Class( contentType ) );
+		headers.set( "content-type", new Header.Class( contentType ) );
 		return requestOptions;
 	}
 
 	static setIfMatchHeader( etag:string, requestOptions:Options ):Options {
 		let headers:Map<string, Header.Class> = requestOptions.headers ? requestOptions.headers : requestOptions.headers = new Map<string, Header.Class>();
-		headers.set( "If-Match", new Header.Class( etag ) );
+		headers.set( "if-match", new Header.Class( etag ) );
 		return requestOptions;
 	}
 
 	static setPreferredInteractionModel( interactionModelURI:string, requestOptions:Options ):Options {
-		let prefer:Header.Class = Util.getHeader( "Prefer", requestOptions, true );
+		let prefer:Header.Class = Util.getHeader( "prefer", requestOptions, true );
 		prefer.values.push( new Header.Value( interactionModelURI + "; rel=interaction-model" ) );
 
 		return requestOptions;
 	}
 
 	static setContainerRetrievalPreferences( preferences:ContainerRetrievalPreferences, requestOptions:Options ):Options {
-		let prefer:Header.Class = Util.getHeader( "Prefer", requestOptions, true );
+		let prefer:Header.Class = Util.getHeader( "prefer", requestOptions, true );
 
 		let headerPieces:string[] = [ "return=representation;" ];
 		if( "include" in preferences && preferences.include.length > 0 ) headerPieces.push( 'include="' + preferences.include.join( " " ) + '"' );
@@ -199,7 +201,7 @@ export class Util {
 	}
 
 	static setSlug( slug:string, requestOptions:Options ):Options {
-		let slugHeader:Header.Class = Util.getHeader( "Slug", requestOptions, true );
+		let slugHeader:Header.Class = Util.getHeader( "slug", requestOptions, true );
 		slugHeader.values.push( new Header.Value( slug ) );
 
 		return requestOptions;

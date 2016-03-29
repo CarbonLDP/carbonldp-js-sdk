@@ -104,11 +104,11 @@ export class Class implements Authenticator<UsernameAndPasswordToken> {
 
 	private addTokenAuthenticationHeader( headers:Map<string, HTTP.Header.Class> ):Map<string, HTTP.Header.Class> {
 		let header:HTTP.Header.Class;
-		if( headers.has( "Authorization" ) ) {
-			header = headers.get( "Authorization" );
+		if( headers.has( "authorization" ) ) {
+			header = headers.get( "authorization" );
 		} else {
 			header = new HTTP.Header.Class();
-			headers.set( "Authorization", header );
+			headers.set( "authorization", header );
 		}
 		let authorization:string = "Token " + this._credentials.key;
 		header.values.push( new HTTP.Header.Value( authorization ) );

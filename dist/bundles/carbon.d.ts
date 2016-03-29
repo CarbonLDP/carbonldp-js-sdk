@@ -65,6 +65,7 @@ declare module 'carbonldp/HTTP/Response' {
 	    data: string;
 	    headers: Map<string, Header.Class>;
 	    request: XMLHttpRequest;
+	    getHeader(name: string): Header.Class;
 	    private setHeaders(request);
 	}
 	export class Util {

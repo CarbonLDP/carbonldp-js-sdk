@@ -37,12 +37,12 @@ var Class = (function () {
     };
     Class.prototype.addBasicAuthenticationHeader = function (headers) {
         var header;
-        if (headers.has("Authorization")) {
-            header = headers.get("Authorization");
+        if (headers.has("authorization")) {
+            header = headers.get("authorization");
         }
         else {
             header = new HTTP.Header.Class();
-            headers.set("Authorization", header);
+            headers.set("authorization", header);
         }
         var authorization = "Basic " + btoa(this.credentials.username + ":" + this.credentials.password);
         header.values.push(new HTTP.Header.Value(authorization));

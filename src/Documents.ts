@@ -180,7 +180,7 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 
 		return HTTP.Request.Service.post( parentURI, body, requestOptions ).then(
 			( response:HTTP.Response.Class ) => {
-				let locationHeader:HTTP.Header.Class = response.headers.get( "Location" );
+				let locationHeader:HTTP.Header.Class = response.getHeader( "Location" );
 				if( locationHeader === null || locationHeader.values.length < 1 ) throw new HTTP.Errors.BadResponseError( "The response is missing a Location header.", response );
 				if( locationHeader.values.length !== 1 ) throw new HTTP.Errors.BadResponseError( "The response contains more than one Location header.", response );
 

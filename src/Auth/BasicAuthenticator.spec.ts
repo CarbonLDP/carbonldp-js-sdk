@@ -160,9 +160,9 @@ describe( module( "Carbon/Auth/BasicAuthenticator" ), ():void => {
 				expect( Utils.isObject( requestOptions ) ).toEqual( true );
 				expect( "headers" in requestOptions ).toEqual( true );
 				expect( requestOptions.headers instanceof Map ).toEqual( true );
-				expect( requestOptions.headers.has( "Authorization" ) ).toEqual( true );
+				expect( requestOptions.headers.has( "authorization" ) ).toEqual( true );
 
-				let authorizationHeader:HTTP.Header.Class = requestOptions.headers.get( "Authorization" );
+				let authorizationHeader:HTTP.Header.Class = requestOptions.headers.get( "authorization" );
 
 				expect( authorizationHeader instanceof HTTP.Header.Class ).toEqual( true );
 				expect( authorizationHeader.values.length ).toEqual( 1 );
