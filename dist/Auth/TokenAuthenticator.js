@@ -76,12 +76,12 @@ var Class = (function () {
     };
     Class.prototype.addTokenAuthenticationHeader = function (headers) {
         var header;
-        if (headers.has("Authorization")) {
-            header = headers.get("Authorization");
+        if (headers.has("authorization")) {
+            header = headers.get("authorization");
         }
         else {
             header = new HTTP.Header.Class();
-            headers.set("Authorization", header);
+            headers.set("authorization", header);
         }
         var authorization = "Token " + this._credentials.key;
         header.values.push(new HTTP.Header.Value(authorization));
