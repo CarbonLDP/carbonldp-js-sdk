@@ -11450,6 +11450,11 @@ $__System.register("59", [], function(exports_1) {
                     enumerable: true,
                     configurable: true
                 });
+                Object.defineProperty(Class, "RDFRepresentation", {
+                    get: function () { return namespace + "RDFRepresentation"; },
+                    enumerable: true,
+                    configurable: true
+                });
                 return Class;
             })();
             exports_1("Class", Class);
@@ -11478,6 +11483,21 @@ $__System.register("59", [], function(exports_1) {
                 });
                 Object.defineProperty(Predicate, "version", {
                     get: function () { return namespace + "version"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(Predicate, "fileIdentifier", {
+                    get: function () { return namespace + "fileIdentifier"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(Predicate, "mediaType", {
+                    get: function () { return namespace + "mediaType"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(Predicate, "size", {
+                    get: function () { return namespace + "size"; },
                     enumerable: true,
                     configurable: true
                 });
