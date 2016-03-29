@@ -11,6 +11,7 @@ var NS = require("./NS");
 var ObjectSchema = require("./ObjectSchema");
 var LDP = require("./LDP");
 var SPARQL = require("./SPARQL");
+var NonRDFSource = require("./NonRDFSource");
 var Documents = (function () {
     function Documents(context) {
         if (context === void 0) { context = null; }
@@ -258,6 +259,20 @@ var Documents = (function () {
         HTTP.Request.Util.setPreferredInteractionModel(NS.LDP.Class.RDFSource, requestOptions);
         HTTP.Request.Util.setIfMatchHeader(persistedDocument._etag, requestOptions);
         return HTTP.Request.Service.delete(persistedDocument.id, persistedDocument.toJSON(), requestOptions);
+    };
+    Documents.prototype.getFile = function (nonRDFSource) {
+        if (!NonRDFSource.Factory.is(nonRDFSource))
+            return Promise.reject(new Errors.IllegalArgumentError("No NonRDFSource Document was provided."));
+        var uri = this.context.resolve(nonRDFSource.id);
+        var requestOptions = {};
+        if (this.context && this.context.auth.isAuthenticated())
+            this.context.auth.addAuthentication(requestOptions);
+        HTTP.Request.Util.setAcceptHeader(nonRDFSource.mediaType, requestOptions);
+        HTTP.Request.Util.setPreferredInteractionModel(NS.LDP.Class.NonRDFSource, requestOptions);
+        return HTTP.Request.Service.get(uri, requestOptions).then(function (response) {
+            var blob = new Blob([response.request.response], { type: nonRDFSource.mediaType });
+            return [blob, response];
+        });
     };
     Documents.prototype.getSchemaFor = function (object) {
         if ("@id" in object) {

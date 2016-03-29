@@ -1,9 +1,6 @@
 "use strict";
 var Pointer = require("./Pointer");
 var Utils = require("./Utils");
-function hasType(type) {
-    return this.types.indexOf(type) !== -1;
-}
 var Factory = (function () {
     function Factory() {
     }

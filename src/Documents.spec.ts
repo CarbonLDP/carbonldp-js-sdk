@@ -30,6 +30,7 @@ import * as ObjectSchema from "./ObjectSchema";
 import * as SPARQL from "./SPARQL";
 import * as Utils from "./Utils";
 import Pointer from "./Pointer";
+import * as NonRDFSource from "./NonRDFSource";
 
 // TODO: Add description
 describe( module( "Carbon/Documents", "" ), ():void => {
@@ -487,6 +488,57 @@ describe( module( "Carbon/Documents", "" ), ():void => {
 		], { type: "Promise<[ Carbon.Pointer.Class[], Carbon.HTTP.Response.Class[] ]>" } ), () => {
 			// TODO
 		});
+	});
+
+	it( hasMethod(
+		INSTANCE,
+		"getFile",
+		"Obtains the Blob object from the server referred by the NonRDFSource Document provided.", [
+			{ name: "nonRDFSource", type: "Carbon.NonRDFSource.Class" }
+		],
+		{ type: "Promise<[ Blob, Carbon.HTTP.Response.Class ]>" }
+	), ( done:{ ():void, fail:() => void } ):void => {
+		class MockedContext extends AbstractContext {
+			resolve( uri:string ):string {
+				return uri;
+			}
+		}
+
+		let context:MockedContext = new MockedContext();
+		let documents:Documents = context.documents;
+
+		let document:PersistedDocument.Class = PersistedDocument.Factory.create( "http://example.com/resource/", documents );
+		document.types.push( NonRDFSource.RDF_CLASS );
+
+		let nonRDFSource:NonRDFSource.Class = NonRDFSource.Factory.decorate( document );
+		nonRDFSource.mediaType = "text/plain";
+		nonRDFSource.fileIdentifier = "00-01";
+		nonRDFSource.size = 68;
+
+		expect( documents.getFile ).toBeDefined();
+		expect( Utils.isFunction( documents.getFile ) ).toBe( true );
+
+		jasmine.Ajax.stubRequest( "http://example.com/resource/", null, "GET" ).andReturn({
+			status: 200,
+			response: "486921aa54686973206973206d7920504c41494e20626f72696e672054455854202028ca0203f21bc29aa4279657e205c2028202225e1202229202f"
+		});
+
+		let spies = {
+			success: ( response:any ):void => {
+				expect( Utils.isArray( response ) ).toBe( true );
+				
+				expect( response[ 0 ] instanceof Blob ).toBe( true );
+				expect( response[ 1 ] instanceof HTTP.Response.Class ).toBe( true );
+			}
+		};
+		let spySuccess = spyOn( spies, "success" ).and.callThrough();
+
+		let promise:Promise<any> = documents.getFile( nonRDFSource ).then( spies.success );
+
+		Promise.all( [ promise ] ).then( ():void => {
+			expect( spySuccess ).toHaveBeenCalled();
+			done();
+		}, done.fail );
 	});
 
 	it( hasMethod( INSTANCE, "executeRawASKQuery", `

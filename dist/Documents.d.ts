@@ -6,6 +6,7 @@ import * as PersistedDocument from "./PersistedDocument";
 import * as Pointer from "./Pointer";
 import * as ObjectSchema from "./ObjectSchema";
 import * as SPARQL from "./SPARQL";
+import * as NonRDFSource from "./NonRDFSource";
 declare class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Resolver {
     _jsonldConverter: JSONLDConverter.Class;
     jsonldConverter: JSONLDConverter.Class;
@@ -27,6 +28,7 @@ declare class Documents implements Pointer.Library, Pointer.Validator, ObjectSch
     getMembers(uri: string): Promise<[Pointer.Class[], HTTP.Response.Class]>;
     save(persistedDocument: PersistedDocument.Class, requestOptions?: HTTP.Request.Options): Promise<[PersistedDocument.Class, HTTP.Response.Class]>;
     delete(persistedDocument: PersistedDocument.Class, requestOptions?: HTTP.Request.Options): Promise<HTTP.Response.Class>;
+    getFile(nonRDFSource: NonRDFSource.Class): Promise<[Blob, HTTP.Response.Class]>;
     getSchemaFor(object: Object): ObjectSchema.DigestedObjectSchema;
     executeRawASKQuery(documentURI: string, askQuery: string, requestOptions?: HTTP.Request.Options): Promise<[SPARQL.RawResults.Class, HTTP.Response.Class]>;
     executeASKQuery(documentURI: string, askQuery: string, requestOptions?: HTTP.Request.Options): Promise<[boolean, HTTP.Response.Class]>;
