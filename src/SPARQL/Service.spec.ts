@@ -56,7 +56,7 @@ describe( module( "Carbon/SPARQL/Service" ), ():void => {
 			{ name: "url", type: "string" },
 			{ name: "askQuery", type: "string" },
 			{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
-		], { type: "Promise<[ Carbon.SPARQL.RawResults.Class, Carbon.HTTP.Response.Class ]>" } ), ( done:( error?:Error ) => void ):void => {
+		], { type: "Promise<[ Carbon.SPARQL.RawResults.Class, Carbon.HTTP.Response.Class ]>" } ), ( done:{ ():void; fail:( error:any ) => void } ):void => {
 			// Property Integrity
 			(() => {
 				expect( "executeRawASKQuery" in Service.Class ).toEqual( true );
@@ -110,7 +110,7 @@ describe( module( "Carbon/SPARQL/Service" ), ():void => {
 			{ name: "url", type: "string" },
 			{ name: "askQuery", type: "string" },
 			{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
-		], { type: "Promise<[ boolean, Carbon.HTTP.Response.Class ]>" } ), ( done:( error?:Error ) => void ):void => {
+		], { type: "Promise<[ boolean, Carbon.HTTP.Response.Class ]>" } ), ( done:{ ():void; fail:( error:any ) => void } ):void => {
 			// Property Integrity
 			(() => {
 				expect( "executeASKQuery" in Service.Class ).toEqual( true );
@@ -157,7 +157,7 @@ describe( module( "Carbon/SPARQL/Service" ), ():void => {
 			{ name: "selectQuery", type: "string" },
 			{ name: "pointerLibrary", type: "Carbon.Pointer.Library" },
 			{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
-		], { type: "Promise<[ Carbon.SPARQL.SELECTResults.Class, Carbon.HTTP.Response.Class ]>" } ), ( done:( error?:Error ) => void ):void => {
+		], { type: "Promise<[ Carbon.SPARQL.SELECTResults.Class, Carbon.HTTP.Response.Class ]>" } ), ( done:{ ():void; fail:( error:any ) => void } ):void => {
 			// Property Integrity
 			(() => {
 				expect( "executeSELECTQuery" in Service.Class ).toEqual( true );
@@ -218,8 +218,8 @@ describe( module( "Carbon/SPARQL/Service" ), ():void => {
 							_id: id,
 							_resolved: false,
 							id: id,
-							isResolved: () => { return false; },
-							resolve: () => { throw new Error(); }
+							isResolved: ():any => { return false; },
+							resolve: ():any => { throw new Error(); }
 						};
 					}
 				}
@@ -244,16 +244,16 @@ describe( module( "Carbon/SPARQL/Service" ), ():void => {
 						expect( Utils.isArray( results.bindings ) ).toEqual( true );
 
 						expect( "literalBinding" in results.bindings[ 0 ] ).toEqual( true );
-						expect( results.bindings[ 0 ].literalBinding ).toEqual( "some string" );
+						expect( (<any> results.bindings[ 0 ] ).literalBinding ).toEqual( "some string" );
 
 						expect( "uriBinding" in results.bindings[ 0 ] ).toEqual( true );
-						expect( results.bindings[ 0 ].uriBinding.id ).toEqual( "http://example.com/document-1/" );
+						expect( (<any> results.bindings[ 0 ] ).uriBinding.id ).toEqual( "http://example.com/document-1/" );
 
 						expect( "literalBinding" in results.bindings[ 1 ] ).toEqual( true );
-						expect( results.bindings[ 1 ].literalBinding ).toEqual( 12 );
+						expect( (<any> results.bindings[ 1 ] ).literalBinding ).toEqual( 12 );
 
 						expect( "uriBinding" in results.bindings[ 1 ] ).toEqual( true );
-						expect( results.bindings[ 1 ].uriBinding.id ).toEqual( "http://example.com/document-2/" );
+						expect( (<any> results.bindings[ 1 ] ).uriBinding.id ).toEqual( "http://example.com/document-2/" );
 					})
 				);
 			})();
@@ -294,8 +294,8 @@ describe( module( "Carbon/SPARQL/Service" ), ():void => {
 							_id: id,
 							_resolved: false,
 							id: id,
-							isResolved: () => { return false; },
-							resolve: () => { throw new Error(); }
+							isResolved: ():any => { return false; },
+							resolve: ():any => { throw new Error(); }
 						};
 					}
 				}
@@ -320,7 +320,7 @@ describe( module( "Carbon/SPARQL/Service" ), ():void => {
 			{ name: "url", type: "string" },
 			{ name: "selectQuery", type: "string" },
 			{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
-		], { type: "Promise<[ Carbon.SPARQL.RawResults.Class, Carbon.HTTP.Response.Class ]>" } ), ( done:( error?:Error ) => void ):void => {
+		], { type: "Promise<[ Carbon.SPARQL.RawResults.Class, Carbon.HTTP.Response.Class ]>" } ), ( done:{ ():void; fail:( error:any ) => void } ):void => {
 			// Property Integrity
 			(() => {
 				expect( "executeRawSELECTQuery" in Service.Class ).toEqual( true );
@@ -459,7 +459,7 @@ describe( module( "Carbon/SPARQL/Service" ), ():void => {
 			{ name: "url", type: "string" },
 			{ name: "constructQuery", type: "string" },
 			{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
-		], { type: "Promise<[ string, Carbon.HTTP.Response.Class ]>" } ), ( done:( error?:Error ) => void ):void => {
+		], { type: "Promise<[ string, Carbon.HTTP.Response.Class ]>" } ), ( done:{ ():void; fail:( error:any ) => void } ):void => {
 			// Property Integrity
 			(() => {
 				expect( "executeRawCONSTRUCTQuery" in Service.Class ).toEqual( true );
@@ -552,7 +552,7 @@ describe( module( "Carbon/SPARQL/Service" ), ():void => {
 			{ name: "url", type: "string" },
 			{ name: "describeQuery", type: "string" },
 			{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
-		], { type: "Promise<[ string, Carbon.HTTP.Response.Class ]>" } ), ( done:( error?:Error ) => void ):void => {
+		], { type: "Promise<[ string, Carbon.HTTP.Response.Class ]>" } ), ( done:{ ():void; fail:( error:any ) => void } ):void => {
 			// Property Integrity
 			(() => {
 				expect( "executeRawDESCRIBEQuery" in Service.Class ).toEqual( true );

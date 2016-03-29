@@ -1,3 +1,7 @@
+# 0.18.1 (March 28, 2016)
+* Fixed case sensitiveness issue with http response/request headers
+* Added `HTTP.Response.getHeader()` method, which helps retrieve a header independently of the header's case
+
 # 0.18.0 (March 16, 2016)
 * By default, the function `authenticate()` of `Auth` class use `TOKEN` method for authentication
 * `Auth` class can be specified with witch method of authentication use `BASIC` or `TOKEN`, using the function  `authenticateUsing()`

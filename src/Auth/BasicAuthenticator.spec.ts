@@ -76,7 +76,7 @@ describe( module( "Carbon/Auth/BasicAuthenticator" ), ():void => {
 			Stores credentials to authenticate future requests.
 		`, [
 			{ name: "authenticationToken", type: "Carbon.Auth.UsernameAndPasswordToken" }
-		], { type: "Promise<void>" } ), ( done:( error?:Error ) => void ):void => {
+		], { type: "Promise<void>" } ), ( done:{ ():void; fail:( error:any ) => void } ):void => {
 
 			// Property Integrity
 			(() => {
@@ -142,7 +142,7 @@ describe( module( "Carbon/Auth/BasicAuthenticator" ), ():void => {
 			Adds the Basic authentication header to the passed request options object.
 		`, [
 			{ name: "requestOptions", type:"Carbon.HTTP.Request.Options", description: "Request options object to add Authentication headers." }
-		], { type: "Carbon.HTTP.Request.Options", description: "The request options with the added authentication headers." } ), ( done:( error?:Error ) => void ):void => {
+		], { type: "Carbon.HTTP.Request.Options", description: "The request options with the added authentication headers." } ), ( done:{ ():void; fail:( error:any ) => void } ):void => {
 			let promises:Promise<void>[] = [];
 			let authenticator:BasicAuthenticator.Class = new BasicAuthenticator.Class();
 
@@ -186,7 +186,7 @@ describe( module( "Carbon/Auth/BasicAuthenticator" ), ():void => {
 
 		it( hasMethod( INSTANCE, "clearAuthentication", `
 			Clears any saved credentials and restores the Authenticator to its initial state.
-		` ), ( done:( error?:Error ) => void ):void => {
+		` ), ( done:{ ():void; fail:( error:any ) => void } ):void => {
 			let promises:Promise<void>[] = [];
 			let authenticator:BasicAuthenticator.Class = new BasicAuthenticator.Class();
 

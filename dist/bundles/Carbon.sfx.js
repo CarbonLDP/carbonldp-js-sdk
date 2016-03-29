@@ -2956,6 +2956,7 @@ $__System.register("23", ["e", "24", "5", "6", "21"], function(exports_1) {
                     return HTTP.Request.Service.post(url, selectQuery, options, Class.resultsParser);
                 };
                 Class.executeSELECTQuery = function (url, selectQuery, pointerLibrary, options) {
+                    if (options === void 0) { options = {}; }
                     return Class.executeRawSELECTQuery(url, selectQuery, options).then(function (_a) {
                         var rawResults = _a[0], response = _a[1];
                         var rawBindings = rawResults.results.bindings;
@@ -12702,7 +12703,7 @@ $__System.register("63", ["2", "c", "8", "15", "d", "24", "5", "62", "6"], funct
                     this.apps = new Apps_1.default(this);
                 }
                 Object.defineProperty(Carbon, "version", {
-                    get: function () { return "0.18.0-ALPHA"; },
+                    get: function () { return "0.18.1-ALPHA"; },
                     enumerable: true,
                     configurable: true
                 });
