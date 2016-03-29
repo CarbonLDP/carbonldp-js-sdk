@@ -290,6 +290,48 @@ describe( module( "Carbon/Documents", "" ), ():void => {
 		});
 	});
 
+	it( hasMethod(
+		INSTANCE,
+		"delete",
+		"Delete a the Resource referred by a PersistedDocument from the server.", [
+			{ name: "persistedDocument", type: "Carbon.PersistedDocument.Class" },
+			{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true }
+		],
+		{ type: "Promise<Carbon.HTTP.Response.Class>" }
+	), ( done:{ ():void, fail:() => void } ):void => {
+		class MockedContext extends AbstractContext {
+			resolve( uri:string ):string {
+				return uri;
+			}
+		}
+
+		let context:MockedContext = new MockedContext();
+		let documents:Documents = context.documents;
+		let document:PersistedDocument.Class = PersistedDocument.Factory.create( "http://example.com/resource/", documents );
+
+		expect( documents.delete ).toBeDefined();
+		expect( Utils.isFunction( documents.delete ) ).toBe( true );
+
+		jasmine.Ajax.stubRequest( "http://example.com/resource/", null, "DELETE" ).andReturn( {
+			status: 200
+		});
+
+		let spies = {
+			success: ( response:any ):void => {
+				expect( response ).toBeDefined();
+				expect( response instanceof HTTP.Response.Class ).toBe( true );
+			}
+		};
+		let spySuccess = spyOn( spies, "success" ).and.callThrough();
+
+		let promise:Promise<any> = documents.delete( document ).then( spies.success );
+
+		Promise.all( [ promise ] ).then( ():void => {
+			expect( spySuccess ).toHaveBeenCalled();
+			done();
+		}, done.fail );
+	});
+
 	it( hasMethod( INSTANCE, "executeRawASKQuery", `
 			Executes an ASK query on a document and returns a raw application/sparql-results+json object
 		`, [

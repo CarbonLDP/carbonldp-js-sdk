@@ -3335,7 +3335,7 @@ $__System.register("d", ["e", "24", "5", "6", "11", "19", "4", "9", "10", "f", "
                     HTTP.Request.Util.setAcceptHeader("application/ld+json", requestOptions);
                     HTTP.Request.Util.setPreferredInteractionModel(NS.LDP.Class.RDFSource, requestOptions);
                     HTTP.Request.Util.setIfMatchHeader(persistedDocument._etag, requestOptions);
-                    return HTTP.Request.Service.delete(persistedDocument.id, persistedDocument.toJSON(), requestOptions);
+                    return HTTP.Request.Service.delete(persistedDocument.id, requestOptions);
                 };
                 Documents.prototype.getSchemaFor = function (object) {
                     if ("@id" in object) {
@@ -10788,11 +10788,13 @@ $__System.register("4f", ["4d", "50", "4e", "51", "6"], function(exports_1) {
             Service = (function () {
                 function Service() {
                 }
-                Service.send = function (method, url, bodyOrOptions, options, parser) {
+                Service.send = function (method, url, bodyOrOptions, optionsOrParser, parser) {
                     if (bodyOrOptions === void 0) { bodyOrOptions = Service.defaultOptions; }
-                    if (options === void 0) { options = Service.defaultOptions; }
+                    if (optionsOrParser === void 0) { optionsOrParser = Service.defaultOptions; }
                     if (parser === void 0) { parser = null; }
                     var body = bodyOrOptions && Utils.isString(bodyOrOptions) ? bodyOrOptions : null;
+                    var options = Utils.hasProperty(optionsOrParser, "parse") ? bodyOrOptions : optionsOrParser;
+                    parser = Utils.hasProperty(optionsOrParser, "parse") ? optionsOrParser : parser;
                     options = !bodyOrOptions || Utils.isString(bodyOrOptions) ? options : bodyOrOptions;
                     options = options ? options : {};
                     options = Utils.extend(options, Service.defaultOptions);
@@ -10854,11 +10856,11 @@ $__System.register("4f", ["4d", "50", "4e", "51", "6"], function(exports_1) {
                     if (parser === void 0) { parser = null; }
                     return Service.send(Method_1.default.PATCH, url, bodyOrOptions, options, parser);
                 };
-                Service.delete = function (url, bodyOrOptions, options, parser) {
+                Service.delete = function (url, bodyOrOptions, optionsOrParser, parser) {
                     if (bodyOrOptions === void 0) { bodyOrOptions = Service.defaultOptions; }
-                    if (options === void 0) { options = Service.defaultOptions; }
+                    if (optionsOrParser === void 0) { optionsOrParser = Service.defaultOptions; }
                     if (parser === void 0) { parser = null; }
-                    return Service.send(Method_1.default.DELETE, url, bodyOrOptions, options, parser);
+                    return Service.send(Method_1.default.DELETE, url, bodyOrOptions, optionsOrParser, parser);
                 };
                 Service.defaultOptions = {
                     sendCredentialsOnCORS: true,
@@ -11278,8 +11280,8 @@ $__System.register("55", ["24", "e", "56", "54"], function(exports_1) {
     }
 });
 
-$__System.register("57", ["e", "24", "9", "5", "55", "56", "58"], function(exports_1) {
-    var Errors, HTTP, NS, RDF, BasicAuthenticator_1, UsernameAndPasswordToken_1, Token;
+$__System.register("57", ["e", "24", "9", "5", "55", "56", "58", "6"], function(exports_1) {
+    var Errors, HTTP, NS, RDF, BasicAuthenticator_1, UsernameAndPasswordToken_1, Token, Utils;
     var Class;
     return {
         setters:[
@@ -11303,6 +11305,9 @@ $__System.register("57", ["e", "24", "9", "5", "55", "56", "58"], function(expor
             },
             function (Token_1) {
                 Token = Token_1;
+            },
+            function (Utils_1) {
+                Utils = Utils_1;
             }],
         execute: function() {
             Class = (function () {
@@ -11318,6 +11323,8 @@ $__System.register("57", ["e", "24", "9", "5", "55", "56", "58"], function(expor
                 Class.prototype.authenticate = function (authenticationOrCredentials) {
                     var _this = this;
                     if (Token.Factory.is(authenticationOrCredentials)) {
+                        if (Utils.isString(authenticationOrCredentials.expirationTime))
+                            authenticationOrCredentials.expirationTime = new Date(authenticationOrCredentials.expirationTime);
                         this._credentials = authenticationOrCredentials;
                         return new Promise(function (resolve, reject) {
                             if (!_this.isAuthenticated()) {
@@ -12349,8 +12356,6 @@ $__System.register("c", ["27", "28", "55", "57", "58", "56", "e", "6"], function
                     this.authenticator = authenticator;
                     if (authenticationToken)
                         return authenticator.authenticate(authenticationToken);
-                    if (Utils.isString(credentials.expirationTime))
-                        credentials.expirationTime = new Date(credentials.expirationTime);
                     return authenticator.authenticate(credentials);
                 };
                 return Class;

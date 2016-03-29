@@ -292,7 +292,7 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 		HTTP.Request.Util.setPreferredInteractionModel( NS.LDP.Class.RDFSource, requestOptions );
 		HTTP.Request.Util.setIfMatchHeader( persistedDocument._etag, requestOptions );
 
-		return HTTP.Request.Service.delete( persistedDocument.id, persistedDocument.toJSON(), requestOptions );
+		return HTTP.Request.Service.delete( persistedDocument.id, requestOptions );
 	}
 
 	getSchemaFor( object:Object ):ObjectSchema.DigestedObjectSchema {

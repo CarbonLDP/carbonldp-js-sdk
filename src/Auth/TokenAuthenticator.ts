@@ -10,6 +10,7 @@ import BasicAuthenticator from "./BasicAuthenticator";
 import UsernameAndPasswordToken from "./UsernameAndPasswordToken";
 import * as Token from "./Token";
 import * as Credentials from "./Credentials";
+import * as Utils from "./../Utils";
 
 export class Class implements Authenticator<UsernameAndPasswordToken> {
 	private static TOKEN_CONTAINER:string = "auth-tokens/";
@@ -33,7 +34,11 @@ export class Class implements Authenticator<UsernameAndPasswordToken> {
 	authenticate( credentials:Token.Class ):Promise<Token.Class>;
 	authenticate( authenticationOrCredentials:any ):Promise<Token.Class> {
 		if ( Token.Factory.is( authenticationOrCredentials ) ) {
+
+			if ( Utils.isString( authenticationOrCredentials.expirationTime ) )
+				authenticationOrCredentials.expirationTime = new Date( <any> authenticationOrCredentials.expirationTime );
 			this._credentials = authenticationOrCredentials;
+
 			return new Promise<Token.Class>( ( resolve:Function, reject:Function ) => {
 				if ( ! this.isAuthenticated() ) {
 					this.clearAuthentication();

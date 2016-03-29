@@ -43,11 +43,13 @@ function rejectRequest(reject, request) {
 var Service = (function () {
     function Service() {
     }
-    Service.send = function (method, url, bodyOrOptions, options, parser) {
+    Service.send = function (method, url, bodyOrOptions, optionsOrParser, parser) {
         if (bodyOrOptions === void 0) { bodyOrOptions = Service.defaultOptions; }
-        if (options === void 0) { options = Service.defaultOptions; }
+        if (optionsOrParser === void 0) { optionsOrParser = Service.defaultOptions; }
         if (parser === void 0) { parser = null; }
         var body = bodyOrOptions && Utils.isString(bodyOrOptions) ? bodyOrOptions : null;
+        var options = Utils.hasProperty(optionsOrParser, "parse") ? bodyOrOptions : optionsOrParser;
+        parser = Utils.hasProperty(optionsOrParser, "parse") ? optionsOrParser : parser;
         options = !bodyOrOptions || Utils.isString(bodyOrOptions) ? options : bodyOrOptions;
         options = options ? options : {};
         options = Utils.extend(options, Service.defaultOptions);
@@ -109,11 +111,11 @@ var Service = (function () {
         if (parser === void 0) { parser = null; }
         return Service.send(Method_1.default.PATCH, url, bodyOrOptions, options, parser);
     };
-    Service.delete = function (url, bodyOrOptions, options, parser) {
+    Service.delete = function (url, bodyOrOptions, optionsOrParser, parser) {
         if (bodyOrOptions === void 0) { bodyOrOptions = Service.defaultOptions; }
-        if (options === void 0) { options = Service.defaultOptions; }
+        if (optionsOrParser === void 0) { optionsOrParser = Service.defaultOptions; }
         if (parser === void 0) { parser = null; }
-        return Service.send(Method_1.default.DELETE, url, bodyOrOptions, options, parser);
+        return Service.send(Method_1.default.DELETE, url, bodyOrOptions, optionsOrParser, parser);
     };
     Service.defaultOptions = {
         sendCredentialsOnCORS: true,

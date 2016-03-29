@@ -771,6 +771,112 @@ describe( module( "Carbon/HTTP/Request" ), function ():void {
 				Promise.all( promises ).then( done, done.fail );
 			});
 
+
+			it( hasSignature(
+				"Simple delete request", [
+					{ name: "url", type: "string" },
+					{ name: "options", type: "object", optional: true, default: "{ sendCredentialsOnCORS: true }" }
+				],
+				{ type: "Promise<Carbon.HTTP.Response>" }
+			), ( done ):void => {
+				expect( Request.Service.delete ).toBeDefined();
+				expect( Utils.isFunction( Request.Service.delete ) ).toBe( true );
+
+				let promises:Promise<any>[] = [];
+				let promise:Promise<any>;
+
+				promise = Request.Service.delete( "/200" );
+				testPromise( promise );
+				promises.push( promise.then( function ( response:Response ):void {
+					testHTTPResponse( response );
+					expect( response.status ).toEqual( 200 );
+					testHTTPResponseHeaders( response, responseFull.responseHeaders );
+					testHTTPResponseData( response, responseFull.responseText );
+				}, done.fail ) );
+
+				promise = Request.Service.delete( "/200", options );
+				testPromise( promise );
+				promises.push( promise.then( function ( response:Response ):void {
+					testHTTPResponse( response );
+					expect( response.status ).toEqual( 200 );
+					testHTTPResponseHeaders( response, responseFull.responseHeaders );
+					testHTTPResponseData( response, responseFull.responseText );
+				}, done.fail ) );
+
+
+				promise = Request.Service.delete( "/404" );
+				testPromise( promise );
+				promise = promise.catch( function ( exception:Error ):void {
+					expect( exception instanceof NotFoundError ).toBe( true );
+				} );
+				promises.push( promise );
+
+				promise = Request.Service.delete( "/500", options );
+				testPromise( promise );
+				promise = promise.catch( function ( exception:Error ):void {
+					expect( exception instanceof InternalServerErrorError ).toBe( true );
+				} );
+				promises.push( promise );
+
+				Promise.all( promises ).then( done, done.fail );
+			});
+
+			it( hasSignature(
+				"Delete request with specified parser", [
+					{ name: "url", type: "string" },
+					{ name: "options", type: "object", optional: true, default: "{ sendCredentialsOnCORS: true }" },
+					{ name: "parser", type: "Carbon.HTTP.Parser<T>", optional: true }
+				],
+				{ type: "Promise<Carbon.HTTP.Response>" }
+			), ( done ):void => {
+				expect( Request.Service.delete ).toBeDefined();
+				expect( Utils.isFunction( Request.Service.delete ) ).toBe( true );
+
+				let promises:Promise<any>[] = [];
+				let promise:Promise<any>;
+
+				promise = Request.Service.delete( "/200", null, parser );
+				testPromise( promise );
+				promises.push( promise.then( function ( [object, response]:[Object, Response] ):Promise<any> {
+					testHTTPResponse( response );
+					expect( response.status ).toEqual( 200 );
+					testHTTPResponseHeaders( response, responseFull.responseHeaders );
+					testHTTPResponseData( response, responseFull.responseText );
+					return parser.parse( responseFull.responseText ).then( ( parsedObject:Object ) => {
+						testDataParsed( object, parsedObject );
+					});
+				}, done.fail ) );
+
+				promise = Request.Service.delete( "/200", options, parser );
+				testPromise( promise );
+				promises.push( promise.then( function ( [object, response]:[Object, Response] ):Promise<any> {
+					testHTTPResponse( response );
+					expect( response.status ).toEqual( 200 );
+					testHTTPResponseHeaders( response, responseFull.responseHeaders );
+					testHTTPResponseData( response, responseFull.responseText );
+					return parser.parse( responseFull.responseText ).then( ( parsedObject:Object ) => {
+						testDataParsed( object, parsedObject );
+					});
+				}, done.fail ) );
+
+
+				promise = Request.Service.delete( "/404", null, parser );
+				testPromise( promise );
+				promise = promise.catch( function ( exception:Error ):void {
+					expect( exception instanceof NotFoundError ).toBe( true );
+				} );
+				promises.push( promise );
+
+				promise = Request.Service.delete( "/500", options, parser );
+				testPromise( promise );
+				promise = promise.catch( function ( exception:Error ):void {
+					expect( exception instanceof InternalServerErrorError ).toBe( true );
+				} );
+				promises.push( promise );
+
+				Promise.all( promises ).then( done, done.fail );
+			});
+
 		});
 
 		function testPromise( promise:any ):void {
