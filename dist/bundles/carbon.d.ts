@@ -21,10 +21,8 @@ declare module 'carbonldp/Utils' {
 	    private static regExp;
 	    static is(uuid: string): boolean;
 	    static generate(): string;
-	} class P {
-	    static createRejectedPromise<T extends Error>(error: T): Promise<any>;
 	}
-	export { hasFunction, hasProperty, hasPropertyDefined, isDefined, isNull, isArray, isString, isBoolean, isNumber, isInteger, isDouble, isDate, isObject, isFunction, isMap, parseBoolean, extend, forEachOwnProperty, O, S, A, M, UUID, P };
+	export { hasFunction, hasProperty, hasPropertyDefined, isDefined, isNull, isArray, isString, isBoolean, isNumber, isInteger, isDouble, isDate, isObject, isFunction, isMap, parseBoolean, extend, forEachOwnProperty, O, S, A, M, UUID };
 
 }
 declare module 'carbonldp/Errors/AbstractError' {
@@ -65,6 +63,7 @@ declare module 'carbonldp/HTTP/Response' {
 	    data: string;
 	    headers: Map<string, Header.Class>;
 	    request: XMLHttpRequest;
+	    getHeader(name: string): Header.Class;
 	    private setHeaders(request);
 	}
 	export class Util {
@@ -704,12 +703,14 @@ declare module 'carbonldp/NS/CS' {
 	    static Application: string;
 	    static Token: string;
 	    static AllOrigins: string;
+	    static Agent: string;
 	} class Predicate {
 	    static name: string;
 	    static allowsOrigin: string;
 	    static rootContainer: string;
 	    static tokenKey: string;
 	    static expirationTime: string;
+	    static password: string;
 	}
 	export { namespace, Class, Predicate };
 
@@ -755,6 +756,13 @@ declare module 'carbonldp/NS/RDF' {
 	export { namespace, Predicate };
 
 }
+declare module 'carbonldp/NS/VCARD' {
+	export const namespace: string;
+	export class Predicate {
+	    static email: string;
+	}
+
+}
 declare module 'carbonldp/NS' {
 	import * as C from 'carbonldp/NS/C';
 	import * as CP from 'carbonldp/NS/CP';
@@ -762,7 +770,8 @@ declare module 'carbonldp/NS' {
 	import * as LDP from 'carbonldp/NS/LDP';
 	import * as RDF from 'carbonldp/NS/RDF';
 	import * as XSD from 'carbonldp/NS/XSD';
-	export { C, CP, CS, LDP, RDF, XSD };
+	import * as VCARD from 'carbonldp/NS/VCARD';
+	export { C, CP, CS, LDP, RDF, XSD, VCARD };
 
 }
 declare module 'carbonldp/Pointer' {
@@ -1085,7 +1094,7 @@ declare module 'carbonldp/Document' {
 	    static createFrom<T extends Object>(object: T): T & Class;
 	    static decorate<T extends Object>(object: T): T & Class;
 	}
-	export default Document;
+	export default Class;
 
 }
 declare module 'carbonldp/PersistedResource' {
@@ -1187,7 +1196,7 @@ declare module 'carbonldp/SPARQL/Service' {
 	    static executeRawASKQuery(url: string, askQuery: string, options?: HTTP.Request.Options): Promise<[RawResults.Class, HTTP.Response.Class]>;
 	    static executeASKQuery(url: string, askQuery: string, options?: HTTP.Request.Options): Promise<[boolean, HTTP.Response.Class]>;
 	    static executeRawSELECTQuery(url: string, selectQuery: string, options?: HTTP.Request.Options): Promise<[RawResults.Class, HTTP.Response.Class]>;
-	    static executeSELECTQuery(url: string, selectQuery: string, pointerLibrary: Pointer.Library, options: HTTP.Request.Options): Promise<[any, HTTP.Response.Class]>;
+	    static executeSELECTQuery(url: string, selectQuery: string, pointerLibrary: Pointer.Library, options?: HTTP.Request.Options): Promise<[any, HTTP.Response.Class]>;
 	    static executeRawCONSTRUCTQuery(url: string, constructQuery: string, options?: HTTP.Request.Options): Promise<[string, HTTP.Response.Class]>;
 	    static executeRawDESCRIBEQuery(url: string, describeQuery: string, options?: HTTP.Request.Options): Promise<[string, HTTP.Response.Class]>;
 	    private static parseRawBindingProperty(rawBindingProperty, pointerLibrary);
@@ -1488,28 +1497,86 @@ declare module 'carbonldp/Auth' {
 	export default Class;
 
 }
-declare module 'carbonldp/App' {
-	import AbstractContext from 'carbonldp/AbstractContext';
-	import Context from 'carbonldp/Context';
+declare module 'carbonldp/Agent' {
 	import * as Document from 'carbonldp/Document';
-	import * as LDP from 'carbonldp/LDP';
 	import * as ObjectSchema from 'carbonldp/ObjectSchema';
+	export const RDF_CLASS: string;
+	export const SCHEMA: ObjectSchema.Class;
 	export interface Class extends Document.Class {
+	    name: string;
+	    email: string;
+	    password?: string;
+	}
+	export class Factory {
+	    static hasClassProperties(resource: Object): boolean;
+	    static is(object: Object): boolean;
+	    static create(name: string, email: string, password: string): Class;
+	    static createFrom<T extends Object>(object: T, name: string, email: string, password: string): T & Class;
+	}
+	export default Class;
+
+}
+declare module 'carbonldp/Agents' {
+	import Context from 'carbonldp/Context';
+	import * as Agent from 'carbonldp/Agent';
+	import * as Pointer from 'carbonldp/Pointer';
+	import * as Response from 'carbonldp/HTTP/Response';
+	export class Class {
+	    private context;
+	    constructor(context: Context);
+	    create(agentDocument: Agent.Class): Promise<[Pointer.Class, Response.Class]>;
+	    create(slug: string, agentDocument: Agent.Class): Promise<[Pointer.Class, Response.Class]>;
+	    private getContainerURI();
+	}
+	export default Class;
+
+}
+declare module 'carbonldp/PersistedApp' {
+	import * as LDP from 'carbonldp/LDP';
+	import * as App from 'carbonldp/App';
+	export interface Class extends App.Class {
 	    rootContainer: LDP.PersistedContainer.Class;
 	}
-	export const RDF_CLASS: string;
-	export const SCHEMA: ObjectSchema.Class; class AppContext extends AbstractContext {
+	export class Factory {
+	    static hasClassProperties(resource: Object): boolean;
+	    static is(object: Object): boolean;
+	}
+	export default Class;
+
+}
+declare module 'carbonldp/App/Context' {
+	import AbstractContext from 'carbonldp/AbstractContext';
+	import Agents from 'carbonldp/Agents';
+	import Context from 'carbonldp/Context';
+	import PersistedApp from 'carbonldp/PersistedApp';
+	export class Class extends AbstractContext {
+	    agents: Agents;
 	    private app;
 	    private base;
-	    constructor(parentContext: Context, app: Class);
+	    constructor(parentContext: Context, app: PersistedApp);
 	    resolve(uri: string): string;
 	    private getBase(resource);
 	}
-	export { AppContext as Context };
+	export default Class;
+
+}
+declare module 'carbonldp/App' {
+	import * as Document from 'carbonldp/Document';
+	import * as ObjectSchema from 'carbonldp/ObjectSchema';
+	import * as Context from 'carbonldp/App/Context';
+	export interface Class extends Document.Class {
+	    name: string;
+	}
+	export const RDF_CLASS: string;
+	export const SCHEMA: ObjectSchema.Class;
 	export class Factory {
 	    static hasClassProperties(resource: Object): boolean;
+	    static is(object: Object): boolean;
+	    static create(name: string): Class;
+	    static createFrom<T extends Object>(object: T, name: string): T & Class;
 	}
 	export default Class;
+	export { Context };
 
 }
 declare module 'carbonldp/APIDescription' {
@@ -1567,53 +1634,22 @@ declare module 'carbonldp/AbstractContext' {
 
 }
 declare module 'carbonldp/Apps' {
+	import AppContext from 'carbonldp/App/Context';
+	import Context from 'carbonldp/Context';
+	import * as Response from 'carbonldp/HTTP/Response';
+	import * as Pointer from 'carbonldp/Pointer';
 	import * as App from 'carbonldp/App';
-	import Context from 'carbonldp/Context'; class Apps {
+	export class Class {
 	    private context;
 	    constructor(context: Context);
-	    get(uri: string): Promise<App.Context>;
-	    getAll(): Promise<App.Context[]>;
+	    getContext(uri: string): Promise<AppContext>;
+	    getContext(pointer: Pointer.Class): Promise<AppContext>;
+	    getAllContexts(): Promise<AppContext[]>;
+	    create(appDocument: App.Class): Promise<[Pointer.Class, Response.Class]>;
+	    create(slug: string, appDocument: App.Class): Promise<[Pointer.Class, Response.Class]>;
 	    private getAppsContainerURI();
 	}
-	export default Apps;
-
-}
-declare module 'carbonldp/settings' {
-	import * as Auth from 'carbonldp/Auth';
-	export interface CarbonSettings {
-	    "domain"?: string;
-	    "http.ssl"?: boolean;
-	    "auth.method"?: Auth.Method;
-	    "platform.container"?: string;
-	    "platform.apps.container"?: string;
-	} let settings: CarbonSettings;
-	export default settings;
-
-}
-declare module 'carbonldp/Carbon' {
-	import * as APIDescription from 'carbonldp/APIDescription';
-	import Apps from 'carbonldp/Apps';
-	import * as Auth from 'carbonldp/Auth';
-	import AbstractContext from 'carbonldp/AbstractContext';
-	import * as Document from 'carbonldp/Document';
-	import Documents from 'carbonldp/Documents';
-	import * as HTTP from 'carbonldp/HTTP';
-	import * as RDF from 'carbonldp/RDF';
-	import * as Utils from 'carbonldp/Utils'; class Carbon extends AbstractContext {
-	    static Apps: typeof Apps;
-	    static Auth: typeof Auth;
-	    static Document: typeof Document;
-	    static Documents: typeof Documents;
-	    static HTTP: typeof HTTP;
-	    static RDF: typeof RDF;
-	    static Utils: typeof Utils;
-	    static version: string;
-	    apps: Apps;
-	    constructor(settings?: any);
-	    resolve(uri: string): string;
-	    getAPIDescription(): Promise<APIDescription.Class>;
-	}
-	export default Carbon;
+	export default Class;
 
 }
 declare module 'carbonldp/Persisted' {
@@ -1638,6 +1674,86 @@ declare module 'carbonldp/Persisted' {
 	    private static injectBehavior(value);
 	}
 	export { Modifications, ModificationType, Persisted as Class, Factory };
+
+}
+declare module 'carbonldp/settings' {
+	import * as Auth from 'carbonldp/Auth';
+	export interface CarbonSettings {
+	    "domain"?: string;
+	    "http.ssl"?: boolean;
+	    "auth.method"?: Auth.Method;
+	    "platform.container"?: string;
+	    "platform.apps.container"?: string;
+	    "platform.agents.container"?: string;
+	} let settings: CarbonSettings;
+	export default settings;
+
+}
+declare module 'carbonldp/Carbon' {
+	import AbstractContext from 'carbonldp/AbstractContext';
+	import * as Agent from 'carbonldp/Agent';
+	import * as Agents from 'carbonldp/Agents';
+	import * as APIDescription from 'carbonldp/APIDescription';
+	import * as App from 'carbonldp/App';
+	import * as Apps from 'carbonldp/Apps';
+	import * as Auth from 'carbonldp/Auth';
+	import * as Document from 'carbonldp/Document';
+	import Documents from 'carbonldp/Documents';
+	import * as Errors from 'carbonldp/Errors';
+	import * as Fragment from 'carbonldp/Fragment';
+	import * as HTTP from 'carbonldp/HTTP';
+	import * as JSONLDConverter from 'carbonldp/JSONLDConverter';
+	import * as LDP from 'carbonldp/LDP';
+	import * as NamedFragment from 'carbonldp/NamedFragment';
+	import * as NS from 'carbonldp/NS';
+	import * as ObjectSchema from 'carbonldp/ObjectSchema';
+	import * as Persisted from 'carbonldp/Persisted';
+	import * as PersistedApp from 'carbonldp/PersistedApp';
+	import * as PersistedDocument from 'carbonldp/PersistedDocument';
+	import * as PersistedFragment from 'carbonldp/PersistedFragment';
+	import * as PersistedNamedFragment from 'carbonldp/PersistedNamedFragment';
+	import * as PersistedResource from 'carbonldp/PersistedResource';
+	import * as Pointer from 'carbonldp/Pointer';
+	import * as RDF from 'carbonldp/RDF';
+	import * as Resource from 'carbonldp/Resource';
+	import * as SDKContext from 'carbonldp/SDKContext';
+	import * as SPARQL from 'carbonldp/SPARQL';
+	import * as Utils from 'carbonldp/Utils'; class Carbon extends AbstractContext {
+	    static Agent: typeof Agent;
+	    static Agents: typeof Agents;
+	    static App: typeof App;
+	    static Apps: typeof Apps;
+	    static Auth: typeof Auth;
+	    static Document: typeof Document;
+	    static Documents: typeof Documents;
+	    static Errors: typeof Errors;
+	    static Fragment: typeof Fragment;
+	    static HTTP: typeof HTTP;
+	    static JSONLDConverter: typeof JSONLDConverter;
+	    static LDP: typeof LDP;
+	    static NamedFragment: typeof NamedFragment;
+	    static NS: typeof NS;
+	    static ObjectSchema: typeof ObjectSchema;
+	    static Persisted: typeof Persisted;
+	    static PersistedApp: typeof PersistedApp;
+	    static PersistedDocument: typeof PersistedDocument;
+	    static PersistedFragment: typeof PersistedFragment;
+	    static PersistedNamedFragment: typeof PersistedNamedFragment;
+	    static PersistedResource: typeof PersistedResource;
+	    static Pointer: typeof Pointer;
+	    static RDF: typeof RDF;
+	    static Resource: typeof Resource;
+	    static SDKContext: typeof SDKContext;
+	    static SPARQL: typeof SPARQL;
+	    static Utils: typeof Utils;
+	    static version: string;
+	    apps: Apps.Class;
+	    version: string;
+	    constructor(settings?: any);
+	    resolve(uri: string): string;
+	    getAPIDescription(): Promise<APIDescription.Class>;
+	}
+	export default Carbon;
 
 }
 /// <reference no-default-lib="true"/>

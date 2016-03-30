@@ -7,7 +7,6 @@ import {
 	STATIC,
 	clazz,
 	module,
-	submodule,
 	isDefined,
 	hasConstructor,
 	hasMethod,

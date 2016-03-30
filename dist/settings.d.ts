@@ -5,6 +5,7 @@ export interface CarbonSettings {
     "auth.method"?: Auth.Method;
     "platform.container"?: string;
     "platform.apps.container"?: string;
+    "platform.agents.container"?: string;
 }
 declare let settings: CarbonSettings;
 export default settings;

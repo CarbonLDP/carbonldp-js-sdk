@@ -194,7 +194,7 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 		if( slug !== null ) HTTP.Request.Util.setSlug( slug, requestOptions );
 
 		let result:any = ( response:HTTP.Response.Class ) => {
-			let locationHeader:HTTP.Header.Class = response.headers.get( "Location" );
+			let locationHeader:HTTP.Header.Class = response.getHeader( "Location" );
 			if( locationHeader === null || locationHeader.values.length < 1 ) throw new HTTP.Errors.BadResponseError( "The response is missing a Location header.", response );
 			if( locationHeader.values.length !== 1 ) throw new HTTP.Errors.BadResponseError( "The response contains more than one Location header.", response );
 
@@ -411,8 +411,7 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 		*/
 
 		if( !! this.context ) {
-			// TODO: Check this, it may be incorrect
-			if( RDF.URI.Util.isRelative( uri ) ) {
+			if( ! RDF.URI.Util.isRelative( uri ) ) {
 				let baseURI:string = this.context.getBaseURI();
 				if( ! RDF.URI.Util.isBaseOf( baseURI, uri ) ) return null;
 

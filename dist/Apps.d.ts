@@ -1,10 +1,16 @@
-import * as App from "./App";
+import AppContext from "./App/Context";
 import Context from "./Context";
-declare class Apps {
+import * as Response from "./HTTP/Response";
+import * as Pointer from "./Pointer";
+import * as App from "./App";
+export declare class Class {
     private context;
     constructor(context: Context);
-    get(uri: string): Promise<App.Context>;
-    getAll(): Promise<App.Context[]>;
+    getContext(uri: string): Promise<AppContext>;
+    getContext(pointer: Pointer.Class): Promise<AppContext>;
+    getAllContexts(): Promise<AppContext[]>;
+    create(appDocument: App.Class): Promise<[Pointer.Class, Response.Class]>;
+    create(slug: string, appDocument: App.Class): Promise<[Pointer.Class, Response.Class]>;
     private getAppsContainerURI();
 }
-export default Apps;
+export default Class;
