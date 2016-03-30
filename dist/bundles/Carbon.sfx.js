@@ -10564,10 +10564,14 @@ $__System.register("4e", ["4c", "4f", "4d", "50", "6"], function(exports_1) {
                     if (bodyOrOptions === void 0) { bodyOrOptions = Service.defaultOptions; }
                     if (options === void 0) { options = Service.defaultOptions; }
                     if (parser === void 0) { parser = null; }
-                    var body = bodyOrOptions && Utils.isString(bodyOrOptions) ? bodyOrOptions : null;
-                    options = !bodyOrOptions || Utils.isString(bodyOrOptions) ? options : bodyOrOptions;
-                    options = options ? options : {};
-                    options = Utils.extend(options, Service.defaultOptions);
+                    var body = null;
+                    if ((bodyOrOptions instanceof Blob) || Utils.isString(bodyOrOptions)) {
+                        body = bodyOrOptions;
+                    }
+                    else {
+                        options = bodyOrOptions ? bodyOrOptions : options;
+                    }
+                    options = Utils.extend(options || {}, Service.defaultOptions);
                     if (Utils.isNumber(method))
                         method = Method_1.default[method];
                     var requestPromise = new Promise(function (resolve, reject) {
