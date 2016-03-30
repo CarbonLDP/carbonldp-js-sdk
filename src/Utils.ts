@@ -226,14 +226,6 @@ class UUID {
 	}
 }
 
-class P {
-	public static createRejectedPromise<T extends Error>( error:T ):Promise<any> {
-		return new Promise<any>( ( resolve:( result:any ) => void, reject:( error:T ) => void ) => {
-			reject( error );
-		} );
-	}
-}
-
 export {
 	hasFunction,
 	hasProperty,
@@ -257,6 +249,5 @@ export {
 	S,
 	A,
 	M,
-	UUID,
-	P
+	UUID
 };

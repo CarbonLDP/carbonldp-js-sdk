@@ -77,11 +77,15 @@ export class Service {
 	static send( method:(Method | string), url:string, body:string, options?:Options ):Promise<Response>;
 	static send<T>( method:(Method | string), url:string, body:string, options?:Options, parser?:Parser<T> ):Promise<[ T, Response ]>;
 	static send<T>( method:any, url:string, bodyOrOptions:any = Service.defaultOptions, options:Options = Service.defaultOptions, parser:Parser<T> = null ):any {
-		let body:string | Blob = bodyOrOptions && Utils.isString( bodyOrOptions ) ? bodyOrOptions : null;
+		let body:string | Blob = null;
 
-		options = ! bodyOrOptions || Utils.isString( bodyOrOptions ) ? options : bodyOrOptions;
-		options = options ? options : {};
-		options = Utils.extend( options, Service.defaultOptions );
+		if ( ( bodyOrOptions instanceof Blob ) || Utils.isString( bodyOrOptions ) ) {
+			body = bodyOrOptions;
+		} else {
+			options = bodyOrOptions ? bodyOrOptions : options;
+		}
+
+		options = Utils.extend( options || {}, Service.defaultOptions );
 
 		if ( Utils.isNumber( method ) ) method = Method[ method ];
 

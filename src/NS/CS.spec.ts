@@ -39,7 +39,7 @@ describe( module(
 		it( isDefined(), ():void => {
 			expect( CS.Class ).toBeDefined();
 			expect( Utils.isFunction( CS.Class ) ).toBe( true );
-			expect( Object.keys( CS.Class ).length ).toBe( 3 );
+			expect( Object.keys( CS.Class ).length ).toBe( 4 );
 		});
 
 		it( hasProperty(
@@ -75,6 +75,17 @@ describe( module(
 			expect( CS.Class.AllOrigins ).toBe( "https://carbonldp.com/ns/v1/security#AllOrigins" );
 		});
 
+		it( hasProperty(
+			STATIC,
+			"AllOrigins",
+			"string"
+		), ():void => {
+			expect( CS.Class.Agent ).toBeDefined();
+			expect( Utils.isString( CS.Class.Agent ) ).toBe( true );
+
+			expect( CS.Class.Agent ).toBe( "https://carbonldp.com/ns/v1/security#Agent" );
+		});
+
 	});
 
 	describe( clazz(
@@ -86,7 +97,7 @@ describe( module(
 			expect( CS.Predicate ).toBeDefined();
 			expect( Utils.isFunction( CS.Predicate ) ).toBe( true );
 
-			expect( Object.keys( CS.Predicate ).length ).toBe( 5 );
+			expect( Object.keys( CS.Predicate ).length ).toBe( 6 );
 		});
 
 		it( hasProperty(
@@ -142,6 +153,17 @@ describe( module(
 			expect( Utils.isString( CS.Predicate.expirationTime ) ).toBe( true );
 
 			expect( CS.Predicate.expirationTime ).toBe( "https://carbonldp.com/ns/v1/security#expirationTime" );
+		});
+
+		it( hasProperty(
+			STATIC,
+			"password",
+			"string"
+		), ():void => {
+			expect( CS.Predicate.password ).toBeDefined();
+			expect( Utils.isString( CS.Predicate.password ) ).toBe( true );
+
+			expect( CS.Predicate.password ).toBe( "https://carbonldp.com/ns/v1/security#password" );
 		});
 
 	});

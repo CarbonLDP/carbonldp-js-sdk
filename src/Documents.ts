@@ -155,45 +155,29 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 		} );
 	}
 
-	createChild( parentURI:string, slug:string, file:Blob, requestOptions?:HTTP.Request.Options ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
-	createChild( parentURI:string, file:Blob, requestOptions?:HTTP.Request.Options ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
-
 	createChild( parentURI:string, slug:string, childDocument:Document.Class, requestOptions?:HTTP.Request.Options ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
 	createChild( parentURI:string, childDocument:Document.Class, requestOptions?:HTTP.Request.Options ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
+	createChild( parentURI:string, slugOrChildDocument:any, childDocumentOrRequestOptions:any = {}, requestOptions:HTTP.Request.Options = {} ):Promise<[ Pointer.Class, HTTP.Response.Class ]> {
+		let slug:string = Utils.isString( slugOrChildDocument ) ? slugOrChildDocument : null;
+		let childDocument:Document.Class = ! Utils.isString(slugOrChildDocument) ? slugOrChildDocument : childDocumentOrRequestOptions;
+		requestOptions = ! Utils.isString(slugOrChildDocument) ? childDocumentOrRequestOptions : requestOptions;
 
-	createChild( parentURI:string, slugOrChildDocumentOrFile:any, childDocumentOrFileOrRequestOptions:any = {}, requestOptions:HTTP.Request.Options = {} ):Promise<[ Pointer.Class, HTTP.Response.Class ]> {
-		let slug:string = Utils.isString( slugOrChildDocumentOrFile ) ? slugOrChildDocumentOrFile : null;
-		let childDocumentOrBlob:any = ( ! slug ) ? slugOrChildDocumentOrFile : childDocumentOrFileOrRequestOptions;
-		requestOptions = ( ! slug ) ? childDocumentOrFileOrRequestOptions : requestOptions;
-		let body:string = null;
-		let blob:Blob = null;
+		if( PersistedDocument.Factory.is( childDocument ) ) return Promise.reject<any>( new Errors.IllegalArgumentError( "The childDocument provided has been already persisted." ) );
 
-		if ( Document.Factory.hasClassProperties( childDocumentOrBlob ) ) {
-			let childDocument:Document.Class = childDocumentOrBlob;
-			if( PersistedDocument.Factory.is( childDocument ) ) return Promise.reject<any>( new Errors.IllegalArgumentError( "The childDocument provided has been already persisted." ) );
+		if( childDocument.id && ( ! RDF.URI.Util.isBaseOf( parentURI, childDocument.id ) ) ) return Promise.reject<any>( new Errors.IllegalArgumentError( "The childDocument's URI is not relative to the parentURI specified" ) );
 
-			if( childDocument.id && ( ! RDF.URI.Util.isBaseOf( parentURI, childDocument.id ) ) ) return Promise.reject<any>( new Errors.IllegalArgumentError( "The childDocument's URI is not relative to the parentURI specified" ) );
-
-			HTTP.Request.Util.setContentTypeHeader( "application/ld+json", requestOptions );
-
-			body = childDocument.toJSON( this, this.jsonldConverter );
-
-		} else {
-			blob = childDocumentOrBlob;
-
-			if( ! ( blob instanceof Blob ) ) return Promise.reject<any>( new Errors.IllegalArgumentError( "The file is not a valid Blob object." ) );
-
-			HTTP.Request.Util.setContentTypeHeader( blob.type, requestOptions );
-		}
 
 		if ( this.context && this.context.auth.isAuthenticated() ) this.context.auth.addAuthentication( requestOptions );
 
+		HTTP.Request.Util.setContentTypeHeader( "application/ld+json", requestOptions );
 		HTTP.Request.Util.setAcceptHeader( "application/ld+json", requestOptions );
 		HTTP.Request.Util.setPreferredInteractionModel( NS.LDP.Class.Container, requestOptions );
 
+		let body:string = childDocument.toJSON( this, this.jsonldConverter );
+
 		if( slug !== null ) HTTP.Request.Util.setSlug( slug, requestOptions );
 
-		let result:any = ( response:HTTP.Response.Class ) => {
+		return HTTP.Request.Service.post( parentURI, body, requestOptions ).then( ( response:HTTP.Response.Class ) => {
 			let locationHeader:HTTP.Header.Class = response.getHeader( "Location" );
 			if( locationHeader === null || locationHeader.values.length < 1 ) throw new HTTP.Errors.BadResponseError( "The response is missing a Location header.", response );
 			if( locationHeader.values.length !== 1 ) throw new HTTP.Errors.BadResponseError( "The response contains more than one Location header.", response );
@@ -207,12 +191,40 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 				pointer,
 				response,
 			];
-		};
+		});
+	}
 
-		if ( body )
-			return HTTP.Request.Service.post( parentURI, body, requestOptions ).then( result );
+	upload( parentURI:string, slug:string, file:Blob, requestOptions?:HTTP.Request.Options ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
+	upload( parentURI:string, file:Blob, requestOptions?:HTTP.Request.Options ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
+	upload( parentURI:string, slugOrBlob:any, blobOrRequestOptions:any = {}, requestOptions:HTTP.Request.Options = {} ):Promise<[ Pointer.Class, HTTP.Response.Class ]> {
+		let slug:string = Utils.isString( slugOrBlob ) ? slugOrBlob : null;
+		let blob:Blob = ! Utils.isString(slugOrBlob) ? slugOrBlob : blobOrRequestOptions;
+		requestOptions = ! Utils.isString(slugOrBlob) ? blobOrRequestOptions : requestOptions;
 
-		return HTTP.Request.Service.post( parentURI, blob, requestOptions ).then( result );
+		if( ! ( blob instanceof Blob ) ) return Promise.reject<any>( new Errors.IllegalArgumentError( "The file is not a valid Blob object." ) );
+
+		if ( this.context && this.context.auth.isAuthenticated() ) this.context.auth.addAuthentication( requestOptions );
+
+		HTTP.Request.Util.setContentTypeHeader( blob.type, requestOptions );
+		HTTP.Request.Util.setAcceptHeader( "application/ld+json", requestOptions );
+		HTTP.Request.Util.setPreferredInteractionModel( NS.LDP.Class.Container, requestOptions );
+
+		if( slug !== null ) HTTP.Request.Util.setSlug( slug, requestOptions );
+
+		return HTTP.Request.Service.post( parentURI, blob, requestOptions ).then( ( response:HTTP.Response.Class ) => {
+			let locationHeader:HTTP.Header.Class = response.getHeader( "Location" );
+			if( locationHeader === null || locationHeader.values.length < 1 ) throw new HTTP.Errors.BadResponseError( "The response is missing a Location header.", response );
+			if( locationHeader.values.length !== 1 ) throw new HTTP.Errors.BadResponseError( "The response contains more than one Location header.", response );
+
+			let locationURI:string = locationHeader.values[0].toString();
+
+			let pointer:Pointer.Class = this.getPointer( locationURI );
+
+			return [
+				pointer,
+				response,
+			];
+		});
 	}
 
 	getMembers( uri:string, includeNonReadable:boolean, requestOptions:HTTP.Request.Options ):Promise<[ Pointer.Class[], HTTP.Response.Class ]>;
@@ -411,8 +423,7 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 		*/
 
 		if( !! this.context ) {
-			// TODO: Check this, it may be incorrect
-			if( RDF.URI.Util.isRelative( uri ) ) {
+			if( ! RDF.URI.Util.isRelative( uri ) ) {
 				let baseURI:string = this.context.getBaseURI();
 				if( ! RDF.URI.Util.isBaseOf( baseURI, uri ) ) return null;
 
