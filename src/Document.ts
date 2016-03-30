@@ -300,4 +300,4 @@ export class Factory {
 	}
 }
 
-export default Document;
+export default Class;
