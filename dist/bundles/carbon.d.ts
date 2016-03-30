@@ -1318,10 +1318,10 @@ declare module 'carbonldp/LDP/PersistedContainer' {
 	import * as PersistedDocument from 'carbonldp/PersistedDocument';
 	import * as Pointer from 'carbonldp/Pointer';
 	export interface Class extends PersistedDocument.Class {
-	    createChild(slug: string, blob: Blob): Promise<[Pointer.Class, HTTP.Response.Class]>;
-	    createChild(blob: Blob): Promise<[Pointer.Class, HTTP.Response.Class]>;
 	    createChild(slug: string, object: Object): Promise<[Pointer.Class, HTTP.Response.Class]>;
 	    createChild(object: Object): Promise<[Pointer.Class, HTTP.Response.Class]>;
+	    upload(slug: string, blob: Blob): Promise<[Pointer.Class, HTTP.Response.Class]>;
+	    upload(blob: Blob): Promise<[Pointer.Class, HTTP.Response.Class]>;
 	}
 	export class Factory {
 	    static hasClassProperties(document: Document.Class): boolean;
@@ -1357,10 +1357,10 @@ declare module 'carbonldp/Documents' {
 	    hasPointer(id: string): boolean;
 	    getPointer(id: string): Pointer.Class;
 	    get(uri: string, requestOptions?: HTTP.Request.Options): Promise<[PersistedDocument.Class, HTTP.Response.Class]>;
-	    createChild(parentURI: string, slug: string, file: Blob, requestOptions?: HTTP.Request.Options): Promise<[Pointer.Class, HTTP.Response.Class]>;
-	    createChild(parentURI: string, file: Blob, requestOptions?: HTTP.Request.Options): Promise<[Pointer.Class, HTTP.Response.Class]>;
 	    createChild(parentURI: string, slug: string, childDocument: Document.Class, requestOptions?: HTTP.Request.Options): Promise<[Pointer.Class, HTTP.Response.Class]>;
 	    createChild(parentURI: string, childDocument: Document.Class, requestOptions?: HTTP.Request.Options): Promise<[Pointer.Class, HTTP.Response.Class]>;
+	    upload(parentURI: string, slug: string, file: Blob, requestOptions?: HTTP.Request.Options): Promise<[Pointer.Class, HTTP.Response.Class]>;
+	    upload(parentURI: string, file: Blob, requestOptions?: HTTP.Request.Options): Promise<[Pointer.Class, HTTP.Response.Class]>;
 	    getMembers(uri: string, includeNonReadable: boolean, requestOptions: HTTP.Request.Options): Promise<[Pointer.Class[], HTTP.Response.Class]>;
 	    getMembers(uri: string, includeNonReadable: boolean): Promise<[Pointer.Class[], HTTP.Response.Class]>;
 	    getMembers(uri: string, requestOptions: HTTP.Request.Options): Promise<[Pointer.Class[], HTTP.Response.Class]>;

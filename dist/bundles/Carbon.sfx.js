@@ -1466,8 +1466,8 @@ $__System.register("16", ["10", "13", "14", "15", "5", "6", "17"], function(expo
     }
 });
 
-$__System.register("18", ["9", "19", "5", "6", "10", "1a", "16", "4", "11", "d", "1b", "1c"], function(exports_1) {
-    var Errors, HTTP, RDF, Utils, Document, JSONLDConverter, PersistedDocument, Pointer, NS, ObjectSchema, LDP, SPARQL;
+$__System.register("18", ["9", "19", "5", "6", "1a", "16", "4", "11", "d", "1b", "1c"], function(exports_1) {
+    var Errors, HTTP, RDF, Utils, JSONLDConverter, PersistedDocument, Pointer, NS, ObjectSchema, LDP, SPARQL;
     var Documents;
     return {
         setters:[
@@ -1482,9 +1482,6 @@ $__System.register("18", ["9", "19", "5", "6", "10", "1a", "16", "4", "11", "d",
             },
             function (Utils_1) {
                 Utils = Utils_1;
-            },
-            function (Document_1) {
-                Document = Document_1;
             },
             function (JSONLDConverter_1) {
                 JSONLDConverter = JSONLDConverter_1;
@@ -1625,37 +1622,26 @@ $__System.register("18", ["9", "19", "5", "6", "10", "1a", "16", "4", "11", "d",
                         return [document, response];
                     });
                 };
-                Documents.prototype.createChild = function (parentURI, slugOrChildDocumentOrFile, childDocumentOrFileOrRequestOptions, requestOptions) {
+                Documents.prototype.createChild = function (parentURI, slugOrChildDocument, childDocumentOrRequestOptions, requestOptions) {
                     var _this = this;
-                    if (childDocumentOrFileOrRequestOptions === void 0) { childDocumentOrFileOrRequestOptions = {}; }
+                    if (childDocumentOrRequestOptions === void 0) { childDocumentOrRequestOptions = {}; }
                     if (requestOptions === void 0) { requestOptions = {}; }
-                    var slug = Utils.isString(slugOrChildDocumentOrFile) ? slugOrChildDocumentOrFile : null;
-                    var childDocumentOrBlob = (!slug) ? slugOrChildDocumentOrFile : childDocumentOrFileOrRequestOptions;
-                    requestOptions = (!slug) ? childDocumentOrFileOrRequestOptions : requestOptions;
-                    var body = null;
-                    var blob = null;
-                    if (Document.Factory.hasClassProperties(childDocumentOrBlob)) {
-                        var childDocument = childDocumentOrBlob;
-                        if (PersistedDocument.Factory.is(childDocument))
-                            return Promise.reject(new Errors.IllegalArgumentError("The childDocument provided has been already persisted."));
-                        if (childDocument.id && (!RDF.URI.Util.isBaseOf(parentURI, childDocument.id)))
-                            return Promise.reject(new Errors.IllegalArgumentError("The childDocument's URI is not relative to the parentURI specified"));
-                        HTTP.Request.Util.setContentTypeHeader("application/ld+json", requestOptions);
-                        body = childDocument.toJSON(this, this.jsonldConverter);
-                    }
-                    else {
-                        blob = childDocumentOrBlob;
-                        if (!(blob instanceof Blob))
-                            return Promise.reject(new Errors.IllegalArgumentError("The file is not a valid Blob object."));
-                        HTTP.Request.Util.setContentTypeHeader(blob.type, requestOptions);
-                    }
+                    var slug = Utils.isString(slugOrChildDocument) ? slugOrChildDocument : null;
+                    var childDocument = !Utils.isString(slugOrChildDocument) ? slugOrChildDocument : childDocumentOrRequestOptions;
+                    requestOptions = !Utils.isString(slugOrChildDocument) ? childDocumentOrRequestOptions : requestOptions;
+                    if (PersistedDocument.Factory.is(childDocument))
+                        return Promise.reject(new Errors.IllegalArgumentError("The childDocument provided has been already persisted."));
+                    if (childDocument.id && (!RDF.URI.Util.isBaseOf(parentURI, childDocument.id)))
+                        return Promise.reject(new Errors.IllegalArgumentError("The childDocument's URI is not relative to the parentURI specified"));
                     if (this.context && this.context.auth.isAuthenticated())
                         this.context.auth.addAuthentication(requestOptions);
+                    HTTP.Request.Util.setContentTypeHeader("application/ld+json", requestOptions);
                     HTTP.Request.Util.setAcceptHeader("application/ld+json", requestOptions);
                     HTTP.Request.Util.setPreferredInteractionModel(NS.LDP.Class.Container, requestOptions);
+                    var body = childDocument.toJSON(this, this.jsonldConverter);
                     if (slug !== null)
                         HTTP.Request.Util.setSlug(slug, requestOptions);
-                    var result = function (response) {
+                    return HTTP.Request.Service.post(parentURI, body, requestOptions).then(function (response) {
                         var locationHeader = response.getHeader("Location");
                         if (locationHeader === null || locationHeader.values.length < 1)
                             throw new HTTP.Errors.BadResponseError("The response is missing a Location header.", response);
@@ -1667,10 +1653,37 @@ $__System.register("18", ["9", "19", "5", "6", "10", "1a", "16", "4", "11", "d",
                             pointer,
                             response,
                         ];
-                    };
-                    if (body)
-                        return HTTP.Request.Service.post(parentURI, body, requestOptions).then(result);
-                    return HTTP.Request.Service.post(parentURI, blob, requestOptions).then(result);
+                    });
+                };
+                Documents.prototype.upload = function (parentURI, slugOrBlob, blobOrRequestOptions, requestOptions) {
+                    var _this = this;
+                    if (blobOrRequestOptions === void 0) { blobOrRequestOptions = {}; }
+                    if (requestOptions === void 0) { requestOptions = {}; }
+                    var slug = Utils.isString(slugOrBlob) ? slugOrBlob : null;
+                    var blob = !Utils.isString(slugOrBlob) ? slugOrBlob : blobOrRequestOptions;
+                    requestOptions = !Utils.isString(slugOrBlob) ? blobOrRequestOptions : requestOptions;
+                    if (!(blob instanceof Blob))
+                        return Promise.reject(new Errors.IllegalArgumentError("The file is not a valid Blob object."));
+                    if (this.context && this.context.auth.isAuthenticated())
+                        this.context.auth.addAuthentication(requestOptions);
+                    HTTP.Request.Util.setContentTypeHeader(blob.type, requestOptions);
+                    HTTP.Request.Util.setAcceptHeader("application/ld+json", requestOptions);
+                    HTTP.Request.Util.setPreferredInteractionModel(NS.LDP.Class.Container, requestOptions);
+                    if (slug !== null)
+                        HTTP.Request.Util.setSlug(slug, requestOptions);
+                    return HTTP.Request.Service.post(parentURI, blob, requestOptions).then(function (response) {
+                        var locationHeader = response.getHeader("Location");
+                        if (locationHeader === null || locationHeader.values.length < 1)
+                            throw new HTTP.Errors.BadResponseError("The response is missing a Location header.", response);
+                        if (locationHeader.values.length !== 1)
+                            throw new HTTP.Errors.BadResponseError("The response contains more than one Location header.", response);
+                        var locationURI = locationHeader.values[0].toString();
+                        var pointer = _this.getPointer(locationURI);
+                        return [
+                            pointer,
+                            response,
+                        ];
+                    });
                 };
                 Documents.prototype.getMembers = function (uri, includeNonReadableOrRequestOptions, requestOptions) {
                     var _this = this;
@@ -2076,13 +2089,27 @@ $__System.register("1f", ["11", "6"], function(exports_1) {
 $__System.register("20", ["6"], function(exports_1) {
     var Utils;
     var Factory;
-    function createChild(slugOrDocumentOrBlob, documentOrBlob) {
-        if (documentOrBlob === void 0) { documentOrBlob = null; }
-        var slug = Utils.isString(slugOrDocumentOrBlob) ? slugOrDocumentOrBlob : null;
-        documentOrBlob = slug ? documentOrBlob : slugOrDocumentOrBlob;
-        if (slug)
-            return this._documents.createChild(this.id, slug, documentOrBlob);
-        return this._documents.createChild(this.id, documentOrBlob);
+    function createChild(slugOrDocument, document) {
+        if (document === void 0) { document = null; }
+        var slug = Utils.isString(slugOrDocument) ? slugOrDocument : null;
+        document = slug ? document : slugOrDocument;
+        if (slug) {
+            return this._documents.createChild(this.id, slug, document);
+        }
+        else {
+            return this._documents.createChild(this.id, document);
+        }
+    }
+    function upload(slugOrBlob, blob) {
+        if (blob === void 0) { blob = null; }
+        var slug = Utils.isString(slugOrBlob) ? slugOrBlob : null;
+        blob = slug ? blob : slugOrBlob;
+        if (slug) {
+            return this._documents.upload(this.id, slug, blob);
+        }
+        else {
+            return this._documents.upload(this.id, blob);
+        }
     }
     return {
         setters:[
@@ -2094,7 +2121,8 @@ $__System.register("20", ["6"], function(exports_1) {
                 function Factory() {
                 }
                 Factory.hasClassProperties = function (document) {
-                    return (Utils.hasFunction(document, "createChild"));
+                    return Utils.hasFunction(document, "createChild")
+                        && Utils.hasFunction(document, "upload");
                 };
                 Factory.decorate = function (persistedDocument) {
                     if (Factory.hasClassProperties(persistedDocument))
@@ -2105,6 +2133,12 @@ $__System.register("20", ["6"], function(exports_1) {
                             enumerable: false,
                             configurable: true,
                             value: createChild,
+                        },
+                        "upload": {
+                            writable: false,
+                            enumerable: false,
+                            configurable: true,
+                            value: upload,
                         },
                     });
                     return persistedDocument;
