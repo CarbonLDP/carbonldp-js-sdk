@@ -1,4 +1,4 @@
-# 0.20.0 (March 20, 2016)
+# 0.20.0 (March 30, 2016)
 * Added `Agents` module
 * Added `Agent` module 
 * Added `Agents.create()` method, which lets you persist an Agent
