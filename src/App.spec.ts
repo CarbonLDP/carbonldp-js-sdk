@@ -8,12 +8,15 @@ import {
 
 	isDefined,
 	hasMethod,
-	hasProperty
-} from "./../test/JasmineExtender";
-import * as Utils from "./../Utils";
-import * as NS from "./../NS";
-import * as Errors from "./../Errors";
-import * as Document from "./../Document";
+	hasProperty,
+	reexports,
+} from "./test/JasmineExtender";
+import * as Utils from "./Utils";
+import * as NS from "./NS";
+import * as Errors from "./Errors";
+import * as Document from "./Document";
+
+import * as Context from "./App/Context";
 
 describe( module( "Carbon/App" ), ():void => {
 
@@ -137,7 +140,7 @@ describe( module( "Carbon/App" ), ():void => {
 			interface TheApp {
 				myProperty?: string;
 			}
-			interface MyApp extends App.Class, TheApp {};
+			interface MyApp extends App.Class, TheApp {}
 
 			let app01:MyApp;
 			app01 = App.Factory.createFrom<TheApp>( {}, 'App name - 01' );
@@ -149,14 +152,23 @@ describe( module( "Carbon/App" ), ():void => {
 			expect( app01.myProperty ).toBeDefined();
 			expect( app01.myProperty ).toBe( 'a property' );
 
-			expect( () => App.Factory.createFrom( {}, '' ) ).toThrowError( Errors.IllegalArgumentError );
-			expect( () => App.Factory.createFrom( { myProperty: "a property" }, '' ) ).toThrowError( Errors.IllegalArgumentError );
+			expect( () => App.Factory.createFrom( {}, "" ) ).toThrowError( Errors.IllegalArgumentError );
+			expect( () => App.Factory.createFrom( { myProperty: "a property" }, "" ) ).toThrowError( Errors.IllegalArgumentError );
 			expect( () => App.Factory.createFrom( {}, <any> {} ) ).toThrowError( Errors.IllegalArgumentError );
 			expect( () => App.Factory.createFrom( {}, <any> 1 ) ).toThrowError( Errors.IllegalArgumentError );
 			expect( () => App.Factory.createFrom( {}, <any> null ) ).toThrowError( Errors.IllegalArgumentError );
 			expect( () => App.Factory.createFrom( {}, <any> undefined ) ).toThrowError( Errors.IllegalArgumentError );
 		});
 
+	});
+
+	it( reexports(
+		STATIC,
+		"App",
+		"Carbon/App/Context"
+	), ():void => {
+		expect( App.Context ).toBeDefined();
+		expect( App.Context ).toBe( Context );
 	});
 
 });

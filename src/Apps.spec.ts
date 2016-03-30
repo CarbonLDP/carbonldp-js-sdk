@@ -15,16 +15,17 @@ import {
 } from "./test/JasmineExtender";
 import * as Utils from "./Utils";
 import AbstractContext from "./AbstractContext";
-import AppContext from "./Apps/AppContext";
+import AppContext from "./App/Context";
 import * as NS from "./NS";
 import * as Errors from "./Errors";
-import * as App from "./Apps/App";
-import * as PersistedApp from "./Apps/PersistedApp";
+import * as App from "./App";
 import * as Pointer from "./Pointer";
+import * as RDF from "./RDF";
 
 import * as Apps from "./Apps";
 import DefaultExport from "./Apps";
 import Spy = jasmine.Spy;
+import {RDF_CLASS} from "../dist/App";
 
 describe( module( "Carbon/Apps" ), ():void => {
 	let context:AbstractContext;
@@ -39,11 +40,13 @@ describe( module( "Carbon/Apps" ), ():void => {
 		"Class for obtaining Carbon Apps."
 	), ():void => {
 		let apps:Apps.Class;
-		let appsContainerURI:string = "http://example.com/platform/apps/";
+		let platformBaseURI:string = "http://example.com/platform/";
+		let appsContainerURI:string = `${platformBaseURI}apps/`;
 
 		beforeEach( ():void => {
 			class MockedContext extends AbstractContext {
 				resolve( uri:string ):string {
+					if( ! RDF.URI.Util.isAbsolute( uri ) ) return RDF.URI.Util.resolve( platformBaseURI, uri );
 					return uri;
 				}
 			}
@@ -136,7 +139,7 @@ describe( module( "Carbon/Apps" ), ():void => {
 
 			it( hasSignature(
 				"Obtains a `Carbon.Apps.AppContext` object of the specified Pointer object, if it exists within the context of the Apps instance.", [
-					{ name: "uri", type: "string" }
+					{ name: "pointer", type: "Carbon.Pointer.Class" }
 				],
 				{ type: "Promise<Carbon.Apps.AppContext>"}
 			), ( done:{ ():void, fail:() => void } ):void => {
@@ -159,7 +162,7 @@ describe( module( "Carbon/Apps" ), ():void => {
 				let spy:Spy;
 
 				spy = spyOn( context.documents, "get" ).and.callThrough();
-				pointer = Pointer.Factory.create( 'example-app/' );
+				pointer = context.documents.getPointer( "apps/example-app/" );
 
 				promise = apps.getContext( pointer ).then( spies.success, spies.fail );
 				expect( promise instanceof Promise ).toBe( true );
@@ -200,12 +203,12 @@ describe( module( "Carbon/Apps" ), ():void => {
 
 		it( hasMethod(
 			INSTANCE,
-			"getAllContext",
+			"getAllContexts",
 			"Obtains all the `Carbon.Apps.AppContext` objects of every app where the context of the Apps instance can reach.",
 			{ type: "Promise<Carbon.Apps.AppContext[]>"}
 		), ( done:{ ():void, fail:() => void } ):void => {
-			expect( apps.getAllContext ).toBeDefined();
-			expect( Utils.isFunction( apps.getAllContext ) ).toBe( true );
+			expect( apps.getAllContexts ).toBeDefined();
+			expect( Utils.isFunction( apps.getAllContexts ) ).toBe( true );
 
 			let spies = {
 				success: ( appsContext:AppContext[] ):void => {
@@ -222,7 +225,7 @@ describe( module( "Carbon/Apps" ), ():void => {
 
 			let promise:Promise<any>;
 
-			promise = apps.getAllContext().then( spies.success, spies.fail );
+			promise = apps.getAllContexts().then( spies.success, spies.fail );
 			expect( promise instanceof Promise ).toBe( true );
 
 			jasmine.Ajax.requests.at( 0 ).respondWith({
@@ -381,33 +384,6 @@ describe( module( "Carbon/Apps" ), ():void => {
 
 		});
 
-	});
-
-	it( reexports(
-		STATIC,
-		"App",
-		"Carbon/Apps/App"
-	), ():void => {
-		expect( Apps.App ).toBeDefined();
-		expect( Apps.App ).toBe( App );
-	});
-
-	it( reexports(
-		STATIC,
-		"App",
-		"Carbon/Apps/AppContext"
-	), ():void => {
-		expect( Apps.AppContext ).toBeDefined();
-		expect( Apps.AppContext ).toBe( AppContext );
-	});
-
-	it( reexports(
-		STATIC,
-		"App",
-		"Carbon/Apps/PersistedApp"
-	), ():void => {
-		expect( Apps.PersistedApp ).toBeDefined();
-		expect( Apps.PersistedApp ).toBe( PersistedApp );
 	});
 
 	it( hasDefaultExport( "Carbon.Apps.Class" ), ():void => {

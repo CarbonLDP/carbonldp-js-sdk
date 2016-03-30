@@ -1,7 +1,7 @@
 "use strict";
 var App = require("./App");
-var PersistedDocument = require("./../PersistedDocument");
-var Utils = require("./../Utils");
+var PersistedDocument = require("./PersistedDocument");
+var Utils = require("./Utils");
 var Factory = (function () {
     function Factory() {
     }

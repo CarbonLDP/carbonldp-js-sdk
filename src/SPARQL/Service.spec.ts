@@ -56,7 +56,7 @@ describe( module( "Carbon/SPARQL/Service" ), ():void => {
 			{ name: "url", type: "string" },
 			{ name: "askQuery", type: "string" },
 			{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
-		], { type: "Promise<[ Carbon.SPARQL.RawResults.Class, Carbon.HTTP.Response.Class ]>" } ), ( done:{ ( error?:any ):void, fail:() => void } ):void => {
+		], { type: "Promise<[ Carbon.SPARQL.RawResults.Class, Carbon.HTTP.Response.Class ]>" } ), ( done:{ ():void; fail:( error:any ) => void } ):void => {
 			// Property Integrity
 			(() => {
 				expect( "executeRawASKQuery" in Service.Class ).toEqual( true );
@@ -85,10 +85,10 @@ describe( module( "Carbon/SPARQL/Service" ), ():void => {
 						let request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
 						expect( request.method ).toEqual( "POST" );
 						expect( request.url ).toEqual( "http://example.com/sparql-endpoint/" );
-						expect( "Accept" in request.requestHeaders ).toEqual( true );
-						expect( request.requestHeaders[ "Accept" ] ).toEqual( "application/sparql-results+json" );
-						expect( "Content-Type" in request.requestHeaders ).toEqual( true );
-						expect( request.requestHeaders[ "Content-Type" ] ).toEqual( "application/sparql-query" );
+						expect( "accept" in request.requestHeaders ).toEqual( true );
+						expect( request.requestHeaders[ "accept" ] ).toEqual( "application/sparql-results+json" );
+						expect( "content-type" in request.requestHeaders ).toEqual( true );
+						expect( request.requestHeaders[ "content-type" ] ).toEqual( "application/sparql-query" );
 
 						// Inspect results
 						expect( results ).toBeDefined();
@@ -110,7 +110,7 @@ describe( module( "Carbon/SPARQL/Service" ), ():void => {
 			{ name: "url", type: "string" },
 			{ name: "askQuery", type: "string" },
 			{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
-		], { type: "Promise<[ boolean, Carbon.HTTP.Response.Class ]>" } ), ( done:{ ( error?:any ):void, fail:() => void } ):void => {
+		], { type: "Promise<[ boolean, Carbon.HTTP.Response.Class ]>" } ), ( done:{ ():void; fail:( error:any ) => void } ):void => {
 			// Property Integrity
 			(() => {
 				expect( "executeASKQuery" in Service.Class ).toEqual( true );
@@ -157,7 +157,7 @@ describe( module( "Carbon/SPARQL/Service" ), ():void => {
 			{ name: "selectQuery", type: "string" },
 			{ name: "pointerLibrary", type: "Carbon.Pointer.Library" },
 			{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
-		], { type: "Promise<[ Carbon.SPARQL.SELECTResults.Class, Carbon.HTTP.Response.Class ]>" } ), ( done:{ ( error?:any ):void, fail:() => void } ):void => {
+		], { type: "Promise<[ Carbon.SPARQL.SELECTResults.Class, Carbon.HTTP.Response.Class ]>" } ), ( done:{ ():void; fail:( error:any ) => void } ):void => {
 			// Property Integrity
 			(() => {
 				expect( "executeSELECTQuery" in Service.Class ).toEqual( true );
@@ -214,12 +214,12 @@ describe( module( "Carbon/SPARQL/Service" ), ():void => {
 						return false;
 					}
 					getPointer( id: string ): Pointer.Class {
-						return <any> {
+						return {
 							_id: id,
 							_resolved: false,
 							id: id,
-							isResolved: () => { return false; },
-							resolve: () => { throw new Error(); }
+							isResolved: ():any => { return false; },
+							resolve: ():any => { throw new Error(); }
 						};
 					}
 				}
@@ -290,12 +290,12 @@ describe( module( "Carbon/SPARQL/Service" ), ():void => {
 						return false;
 					}
 					getPointer( id: string ): Pointer.Class {
-						return <any> {
+						return {
 							_id: id,
 							_resolved: false,
 							id: id,
-							isResolved: () => { return false; },
-							resolve: () => { throw new Error(); }
+							isResolved: ():any => { return false; },
+							resolve: ():any => { throw new Error(); }
 						};
 					}
 				}
@@ -320,7 +320,7 @@ describe( module( "Carbon/SPARQL/Service" ), ():void => {
 			{ name: "url", type: "string" },
 			{ name: "selectQuery", type: "string" },
 			{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
-		], { type: "Promise<[ Carbon.SPARQL.RawResults.Class, Carbon.HTTP.Response.Class ]>" } ), ( done:{ ( error?:any ):void, fail:() => void } ):void => {
+		], { type: "Promise<[ Carbon.SPARQL.RawResults.Class, Carbon.HTTP.Response.Class ]>" } ), ( done:{ ():void; fail:( error:any ) => void } ):void => {
 			// Property Integrity
 			(() => {
 				expect( "executeRawSELECTQuery" in Service.Class ).toEqual( true );
@@ -427,10 +427,10 @@ describe( module( "Carbon/SPARQL/Service" ), ():void => {
 						let request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
 						expect( request.method ).toEqual( "POST" );
 						expect( request.url ).toEqual( "http://example.com/sparql-endpoint/" );
-						expect( "Accept" in request.requestHeaders ).toEqual( true );
-						expect( request.requestHeaders[ "Accept" ] ).toEqual( "application/sparql-results+json" );
-						expect( "Content-Type" in request.requestHeaders ).toEqual( true );
-						expect( request.requestHeaders[ "Content-Type" ] ).toEqual( "application/sparql-query" );
+						expect( "accept" in request.requestHeaders ).toEqual( true );
+						expect( request.requestHeaders[ "accept" ] ).toEqual( "application/sparql-results+json" );
+						expect( "content-type" in request.requestHeaders ).toEqual( true );
+						expect( request.requestHeaders[ "content-type" ] ).toEqual( "application/sparql-query" );
 
 						// Inspect results
 						expect( results ).toBeDefined();
@@ -459,7 +459,7 @@ describe( module( "Carbon/SPARQL/Service" ), ():void => {
 			{ name: "url", type: "string" },
 			{ name: "constructQuery", type: "string" },
 			{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
-		], { type: "Promise<[ string, Carbon.HTTP.Response.Class ]>" } ), ( done:{ ( error?:any ):void, fail:() => void } ):void => {
+		], { type: "Promise<[ string, Carbon.HTTP.Response.Class ]>" } ), ( done:{ ():void; fail:( error:any ) => void } ):void => {
 			// Property Integrity
 			(() => {
 				expect( "executeRawCONSTRUCTQuery" in Service.Class ).toEqual( true );
@@ -493,10 +493,10 @@ describe( module( "Carbon/SPARQL/Service" ), ():void => {
 						let request:JasmineAjaxRequest = jasmine.Ajax.requests.at( 0 );
 						expect( request.method ).toEqual( "POST" );
 						expect( request.url ).toEqual( "http://example.com/sparql-endpoint/json/" );
-						expect( "Accept" in request.requestHeaders ).toEqual( true );
-						expect( request.requestHeaders[ "Accept" ] ).toEqual( "application/ld+json" );
-						expect( "Content-Type" in request.requestHeaders ).toEqual( true );
-						expect( request.requestHeaders[ "Content-Type" ] ).toEqual( "application/sparql-query" );
+						expect( "accept" in request.requestHeaders ).toEqual( true );
+						expect( request.requestHeaders[ "accept" ] ).toEqual( "application/ld+json" );
+						expect( "content-type" in request.requestHeaders ).toEqual( true );
+						expect( request.requestHeaders[ "content-type" ] ).toEqual( "application/sparql-query" );
 
 						// Inspect results
 						expect( resultModel ).toBeDefined();
@@ -532,10 +532,10 @@ describe( module( "Carbon/SPARQL/Service" ), ():void => {
 						let request:JasmineAjaxRequest = jasmine.Ajax.requests.at( 1 );
 						expect( request.method ).toEqual( "POST" );
 						expect( request.url ).toEqual( "http://example.com/sparql-endpoint/turtle/" );
-						expect( "Accept" in request.requestHeaders ).toEqual( true );
-						expect( request.requestHeaders[ "Accept" ] ).toEqual( acceptHeader );
-						expect( "Content-Type" in request.requestHeaders ).toEqual( true );
-						expect( request.requestHeaders[ "Content-Type" ] ).toEqual( "application/sparql-query" );
+						expect( "accept" in request.requestHeaders ).toEqual( true );
+						expect( request.requestHeaders[ "accept" ] ).toEqual( acceptHeader );
+						expect( "content-type" in request.requestHeaders ).toEqual( true );
+						expect( request.requestHeaders[ "content-type" ] ).toEqual( "application/sparql-query" );
 
 						// Inspect results
 						expect( resultModel ).toBeDefined();
@@ -552,7 +552,7 @@ describe( module( "Carbon/SPARQL/Service" ), ():void => {
 			{ name: "url", type: "string" },
 			{ name: "describeQuery", type: "string" },
 			{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
-		], { type: "Promise<[ string, Carbon.HTTP.Response.Class ]>" } ), ( done:{ ( error?:any ):void, fail:() => void } ):void => {
+		], { type: "Promise<[ string, Carbon.HTTP.Response.Class ]>" } ), ( done:{ ():void; fail:( error:any ) => void } ):void => {
 			// Property Integrity
 			(() => {
 				expect( "executeRawDESCRIBEQuery" in Service.Class ).toEqual( true );
@@ -586,10 +586,10 @@ describe( module( "Carbon/SPARQL/Service" ), ():void => {
 						let request:JasmineAjaxRequest = jasmine.Ajax.requests.at( 0 );
 						expect( request.method ).toEqual( "POST" );
 						expect( request.url ).toEqual( "http://example.com/sparql-endpoint/json/" );
-						expect( "Accept" in request.requestHeaders ).toEqual( true );
-						expect( request.requestHeaders[ "Accept" ] ).toEqual( "application/ld+json" );
-						expect( "Content-Type" in request.requestHeaders ).toEqual( true );
-						expect( request.requestHeaders[ "Content-Type" ] ).toEqual( "application/sparql-query" );
+						expect( "accept" in request.requestHeaders ).toEqual( true );
+						expect( request.requestHeaders[ "accept" ] ).toEqual( "application/ld+json" );
+						expect( "content-type" in request.requestHeaders ).toEqual( true );
+						expect( request.requestHeaders[ "content-type" ] ).toEqual( "application/sparql-query" );
 
 						// Inspect results
 						expect( resultModel ).toBeDefined();
@@ -625,10 +625,10 @@ describe( module( "Carbon/SPARQL/Service" ), ():void => {
 						let request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
 						expect( request.method ).toEqual( "POST" );
 						expect( request.url ).toEqual( "http://example.com/sparql-endpoint/turtle/" );
-						expect( "Accept" in request.requestHeaders ).toEqual( true );
-						expect( request.requestHeaders[ "Accept" ] ).toEqual( acceptHeader );
-						expect( "Content-Type" in request.requestHeaders ).toEqual( true );
-						expect( request.requestHeaders[ "Content-Type" ] ).toEqual( "application/sparql-query" );
+						expect( "accept" in request.requestHeaders ).toEqual( true );
+						expect( request.requestHeaders[ "accept" ] ).toEqual( acceptHeader );
+						expect( "content-type" in request.requestHeaders ).toEqual( true );
+						expect( request.requestHeaders[ "content-type" ] ).toEqual( "application/sparql-query" );
 
 						// Inspect results
 						expect( resultModel ).toBeDefined();

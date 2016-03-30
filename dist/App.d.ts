@@ -1,5 +1,6 @@
-import * as Document from "./../Document";
-import * as ObjectSchema from "./../ObjectSchema";
+import * as Document from "./Document";
+import * as ObjectSchema from "./ObjectSchema";
+import * as Context from "./App/Context";
 export interface Interface {
     name: string;
 }
@@ -14,3 +15,4 @@ export declare class Factory {
     static createFrom<T extends Object>(object: T, name: string): T & Class;
 }
 export default Class;
+export { Context };

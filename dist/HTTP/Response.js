@@ -7,6 +7,10 @@ var Class = (function () {
         this.setHeaders(request);
         this.request = request;
     }
+    Class.prototype.getHeader = function (name) {
+        name = name.toLowerCase();
+        return this.headers.get(name) || null;
+    };
     Class.prototype.setHeaders = function (request) {
         var headersString = request.getAllResponseHeaders();
         if (headersString) {
@@ -25,7 +29,7 @@ var Util = (function () {
     Util.getETag = function (response) {
         if (!response || !response.headers)
             return null;
-        var etagHeader = response.headers.get("ETag");
+        var etagHeader = response.getHeader("ETag");
         if (!etagHeader)
             return null;
         if (!etagHeader.values.length)

@@ -1,9 +1,12 @@
 import AbstractContext from "./../AbstractContext";
+import Agents from "./../Agents";
 import Context from "./../Context";
 import * as RDF from "./../RDF";
-import PersistedApp from "./PersistedApp";
+import PersistedApp from "./../PersistedApp";
 
-class AppContext extends AbstractContext {
+export class Class extends AbstractContext {
+	public agents:Agents;
+
 	private app:PersistedApp;
 	private base:string;
 
@@ -12,6 +15,7 @@ class AppContext extends AbstractContext {
 		this.app = app;
 
 		this.base = this.getBase( this.app );
+		this.agents = new Agents( this );
 	}
 
 	resolve( uri:string ):string {
@@ -26,4 +30,4 @@ class AppContext extends AbstractContext {
 	}
 }
 
-export default AppContext;
+export default Class;

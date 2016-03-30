@@ -6,13 +6,13 @@ import {
 
 	isDefined,
 	hasMethod
-} from "./../test/JasmineExtender";
-import * as Utils from "./../Utils";
-import * as Pointer from "./../Pointer";
-import * as PersistedDocument from "./../PersistedDocument";
+} from "./test/JasmineExtender";
+import * as Utils from "./Utils";
+import * as Pointer from "./Pointer";
+import * as PersistedDocument from "./PersistedDocument";
 import * as App from "./App";
 import * as PersistedApp from "./PersistedApp";
-import Documents from "../Documents";
+import Documents from "./Documents";
 
 describe( module( "Carbon/PersistedApp" ), ():void => {
 
@@ -68,16 +68,16 @@ describe( module( "Carbon/PersistedApp" ), ():void => {
 			let app:App.Class;
 			let document:PersistedDocument.Class;
 
-			app = App.Factory.create( 'The App name' );
+			app = App.Factory.create( "The App name" );
 			expect( PersistedApp.Factory.is( app ) ).toBe( false );
 
 			( <PersistedApp.Class> app ).rootContainer = <any> {};
 			expect( PersistedApp.Factory.is( app ) ).toBe( false );
 
-			document = PersistedDocument.Factory.create( 'persistedApp', new Documents() );
+			document = PersistedDocument.Factory.create( "persistedApp", new Documents() );
 			expect( PersistedApp.Factory.is( document ) ).toBe( false );
 
-			document = PersistedDocument.Factory.createFrom( app, 'persistedApp', new Documents() );
+			document = PersistedDocument.Factory.createFrom( app, "persistedApp", new Documents() );
 			expect( PersistedApp.Factory.is( document ) ).toBe( true );
 		});
 

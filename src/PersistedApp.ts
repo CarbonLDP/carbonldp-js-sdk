@@ -1,7 +1,7 @@
-import * as LDP from "./../LDP";
+import * as LDP from "./LDP";
 import * as App from "./App";
-import * as PersistedDocument from "./../PersistedDocument";
-import * as Utils from "./../Utils";
+import * as PersistedDocument from "./PersistedDocument";
+import * as Utils from "./Utils";
 
 export interface Class extends App.Interface, PersistedDocument.Class {
 	rootContainer:LDP.PersistedContainer.Class;

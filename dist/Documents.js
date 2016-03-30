@@ -149,7 +149,7 @@ var Documents = (function () {
             HTTP.Request.Util.setSlug(slug, requestOptions);
         var body = childDocument.toJSON(this, this.jsonldConverter);
         return HTTP.Request.Service.post(parentURI, body, requestOptions).then(function (response) {
-            var locationHeader = response.headers.get("Location");
+            var locationHeader = response.getHeader("Location");
             if (locationHeader === null || locationHeader.values.length < 1)
                 throw new HTTP.Errors.BadResponseError("The response is missing a Location header.", response);
             if (locationHeader.values.length !== 1)
@@ -338,7 +338,7 @@ var Documents = (function () {
         if (RDF.URI.Util.isBNodeID(uri))
             throw new Errors.IllegalArgumentError("BNodes cannot be fetched directly.");
         if (!!this.context) {
-            if (RDF.URI.Util.isRelative(uri)) {
+            if (!RDF.URI.Util.isRelative(uri)) {
                 var baseURI = this.context.getBaseURI();
                 if (!RDF.URI.Util.isBaseOf(baseURI, uri))
                     return null;

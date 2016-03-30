@@ -15,6 +15,7 @@ import * as CS from "./NS/CS";
 import * as LDP from "./NS/LDP";
 import * as RDF from "./NS/RDF";
 import * as XSD from "./NS/XSD";
+import * as VCARD from "./NS/VCARD";
 
 import * as NS from "./NS";
 
@@ -77,6 +78,15 @@ describe( module( "Carbon/NS" ), ():void => {
 	), ():void => {
 		expect( NS.XSD ).toBeDefined();
 		expect( NS.XSD ).toBe( XSD );
+	});
+
+	it( reexports(
+		STATIC,
+		"VCARD",
+		"Carbon/NS/VCARD"
+	), ():void => {
+		expect( NS.VCARD ).toBeDefined();
+		expect( NS.VCARD ).toBe( VCARD );
 	});
 
 });

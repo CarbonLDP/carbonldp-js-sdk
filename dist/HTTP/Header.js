@@ -51,7 +51,7 @@ var Util = (function () {
                 throw new Error("ParseError: The header couldn't be parsed.");
             if (parts.length > 2)
                 parts[1] = parts.slice(1).join(":");
-            var name_1 = parts[0].trim();
+            var name_1 = parts[0].trim().toLowerCase();
             var header = new Class(parts[1].trim());
             if (headers.has(name_1)) {
                 var existingHeader = headers.get(name_1);

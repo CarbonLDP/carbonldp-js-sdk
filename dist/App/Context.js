@@ -5,26 +5,29 @@ var __extends = (this && this.__extends) || function (d, b) {
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
 var AbstractContext_1 = require("./../AbstractContext");
+var Agents_1 = require("./../Agents");
 var RDF = require("./../RDF");
-var AppContext = (function (_super) {
-    __extends(AppContext, _super);
-    function AppContext(parentContext, app) {
+var Class = (function (_super) {
+    __extends(Class, _super);
+    function Class(parentContext, app) {
         _super.call(this, parentContext);
         this.app = app;
         this.base = this.getBase(this.app);
+        this.agents = new Agents_1.default(this);
     }
-    AppContext.prototype.resolve = function (uri) {
+    Class.prototype.resolve = function (uri) {
         if (RDF.URI.Util.isAbsolute(uri))
             return uri;
         var finalURI = this.parentContext.resolve(this.base);
         return RDF.URI.Util.resolve(finalURI, uri);
     };
-    AppContext.prototype.getBase = function (resource) {
+    Class.prototype.getBase = function (resource) {
         return resource.rootContainer.id;
     };
-    return AppContext;
+    return Class;
 }(AbstractContext_1.default));
+exports.Class = Class;
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = AppContext;
+exports.default = Class;
 
-//# sourceMappingURL=AppContext.js.map
+//# sourceMappingURL=Context.js.map

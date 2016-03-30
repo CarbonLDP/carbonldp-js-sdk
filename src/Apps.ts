@@ -1,12 +1,12 @@
-import AppContext from "./Apps/AppContext";
+import AppContext from "./App/Context";
 import * as PersistedDocument from "./PersistedDocument";
 import Context from "./Context";
 import * as Response from "./HTTP/Response";
 import * as Pointer from "./Pointer";
 import * as RDF from "./RDF";
 import * as Utils from "./Utils";
-import * as App from "./Apps/App";
-import * as PersistedApp from "./Apps/PersistedApp";
+import * as App from "./App";
+import * as PersistedApp from "./PersistedApp";
 import * as Errors from "./Errors";
 
 export class Class {
@@ -18,26 +18,32 @@ export class Class {
 
 	getContext( uri:string ):Promise<AppContext>;
 	getContext( pointer:Pointer.Class ):Promise<AppContext>;
-	getContext( pointerOrUri:any ):Promise<AppContext> {
-		let appsContainerURI:string = this.getAppsContainerURI();
-		let uri:string;
-		uri = Utils.isString( pointerOrUri ) ? pointerOrUri : ( <Pointer.Class> pointerOrUri ).id;
+	getContext( pointerOrURI:any ):Promise<AppContext> {
+		let pointer:Pointer.Class = ! Utils.isString( pointerOrURI ) ? pointerOrURI : null;
 
-		if ( RDF.URI.Util.isRelative( uri ) ) {
-			if ( ! Utils.S.startsWith( uri, appsContainerURI ) ) uri = RDF.URI.Util.resolve( appsContainerURI, uri );
-			uri = this.context.resolve( uri );
+		if( ! pointer ) {
+			let appsContainerURI:string = this.getAppsContainerURI();
+			let uri:string = Utils.isString( pointerOrURI ) ? pointerOrURI : null;
+
+			if( ! uri ) return Promise.reject<AppContext>( new Errors.IllegalArgumentError( "The application's URI cannot be null" ) );
+
+			if ( RDF.URI.Util.isRelative( uri ) ) {
+				if ( ! Utils.S.startsWith( uri, appsContainerURI ) ) uri = RDF.URI.Util.resolve( appsContainerURI, uri );
+				uri = this.context.resolve( uri );
+			}
+
+			pointer = this.context.documents.getPointer( uri );
 		}
 
-		return this.context.documents.get( uri ).then(
-			( [ document, response ]:[ PersistedDocument.Class, Response.Class ] ) => {
-				if ( ! PersistedApp.Factory.is( document ) ) throw new Errors.IllegalArgumentError( "The resource fetched is not a cs:Application." );
+		return pointer.resolve().then( ( [ app, response ]:[ PersistedDocument.Class, Response.Class ] ) => {
+			if ( ! PersistedApp.Factory.is( app ) )
+				return Promise.reject<AppContext>( new Errors.IllegalArgumentError( "The resource fetched is not a cs:Application." ) );
 
-				return new AppContext( this.context, <PersistedApp.Class> document );
-			}
-		);
+			return new AppContext( this.context, <PersistedApp.Class> app );
+		});
 	}
 
-	getAllContext():Promise<AppContext[]> {
+	getAllContexts():Promise<AppContext[]> {
 		return this.context.documents.getMembers( this.getAppsContainerURI(), false ).then(
 			( [ members, response ]:[ Pointer.Class[], Response.Class ] ) => {
 				return Pointer.Util.resolveAll( members );
@@ -66,11 +72,5 @@ export class Class {
 		return this.context.getSetting( "platform.apps.container" );
 	}
 }
-
-export {
-	App,
-	PersistedApp,
-	AppContext
-};
 
 export default Class;

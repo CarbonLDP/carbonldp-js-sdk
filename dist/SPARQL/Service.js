@@ -29,6 +29,7 @@ var Class = (function () {
         return HTTP.Request.Service.post(url, selectQuery, options, Class.resultsParser);
     };
     Class.executeSELECTQuery = function (url, selectQuery, pointerLibrary, options) {
+        if (options === void 0) { options = {}; }
         return Class.executeRawSELECTQuery(url, selectQuery, options).then(function (_a) {
             var rawResults = _a[0], response = _a[1];
             var rawBindings = rawResults.results.bindings;
