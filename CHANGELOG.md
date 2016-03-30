@@ -1,3 +1,8 @@
+# 0.20.0 (March 20, 2016)
+* Added `Agents` module
+* Added `Agent` module 
+* Added `Agents.create()` method, which lets you persist an Agent
+
 # 0.19.0 (March 30, 2016)
 * Added `Apps.create()` method, which lets you persist an App
 * Added missing reexports in `Carbon`

@@ -1,4 +1,5 @@
 import AbstractContext from "./AbstractContext";
+import * as Agent from "./Agent";
 import * as Agents from "./Agents";
 import * as APIDescription from "./APIDescription";
 import * as App from "./App";
@@ -27,6 +28,7 @@ import * as SDKContext from "./SDKContext";
 import * as SPARQL from "./SPARQL";
 import * as Utils from "./Utils";
 declare class Carbon extends AbstractContext {
+    static Agent: typeof Agent;
     static Agents: typeof Agents;
     static App: typeof App;
     static Apps: typeof Apps;

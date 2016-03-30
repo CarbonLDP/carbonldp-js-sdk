@@ -1,8 +1,8 @@
-import * as Utils from "./../Utils";
-import * as Document from "./../Document";
-import * as NS from "./../NS";
-import * as ObjectSchema from "./../ObjectSchema";
-import IllegalArgumentError from "./../Errors/IllegalArgumentError";
+import * as Utils from "./Utils";
+import * as Document from "./Document";
+import * as NS from "./NS";
+import * as ObjectSchema from "./ObjectSchema";
+import IllegalArgumentError from "./Errors/IllegalArgumentError";
 
 export const RDF_CLASS:string = NS.CS.Class.Agent;
 
@@ -24,14 +24,13 @@ export const SCHEMA:ObjectSchema.Class = {
 export interface Class extends Document.Class {
 	name:string;
 	email:string;
-	password:string;
+	password?:string;
 }
 
 export class Factory {
 	static hasClassProperties( resource:Object ):boolean {
 		return Utils.hasPropertyDefined( resource, "name" )
-			&& Utils.hasPropertyDefined( resource, "email" )
-			&& Utils.hasPropertyDefined( resource, "password" );
+			&& Utils.hasPropertyDefined( resource, "email" );
 	}
 
 	static is( object:Object ):boolean {

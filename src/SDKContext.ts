@@ -11,7 +11,7 @@ import * as Pointer from "./Pointer";
 import * as RDF from "./RDF";
 import * as Utils from "./Utils";
 import * as ObjectSchema from "./ObjectSchema";
-import * as Agent from "./Agents/Agent";
+import * as Agent from "./Agent";
 
 export class Class implements Context {
 	auth:Auth.Class;

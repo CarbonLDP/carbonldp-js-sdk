@@ -5,6 +5,7 @@ var __extends = (this && this.__extends) || function (d, b) {
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
 var AbstractContext_1 = require("./AbstractContext");
+var Agent = require("./Agent");
 var Agents = require("./Agents");
 var App = require("./App");
 var Apps = require("./Apps");
@@ -41,7 +42,7 @@ var Carbon = (function (_super) {
         this.apps = new Apps.Class(this);
     }
     Object.defineProperty(Carbon, "version", {
-        get: function () { return "0.19.0-ALPHA"; },
+        get: function () { return "0.20.0-ALPHA"; },
         enumerable: true,
         configurable: true
     });
@@ -63,6 +64,7 @@ var Carbon = (function (_super) {
             return description;
         });
     };
+    Carbon.Agent = Agent;
     Carbon.Agents = Agents;
     Carbon.App = App;
     Carbon.Apps = Apps;

@@ -9,11 +9,11 @@ import {
 	isDefined,
 	hasMethod,
 	hasProperty
-} from "./../test/JasmineExtender";
-import * as Utils from "./../Utils";
-import * as NS from "./../NS";
-import * as Errors from "./../Errors";
-import * as Document from "./../Document";
+} from "./test/JasmineExtender";
+import * as Utils from "./Utils";
+import * as NS from "./NS";
+import * as Errors from "./Errors";
+import * as Document from "./Document";
 
 describe( module( "Carbon/Agents/Agent" ), ():void => {
 
@@ -86,7 +86,7 @@ describe( module( "Carbon/Agents/Agent" ), ():void => {
 			object.name = "Agent name";
 			expect( Agent.Factory.hasClassProperties( object ) ).toBe( false );
 			object.email = "email.of.agent@example.com";
-			expect( Agent.Factory.hasClassProperties( object ) ).toBe( false );
+			expect( Agent.Factory.hasClassProperties( object ) ).toBe( true );
 
 			object.password = "myAwesomePassword";
 			expect( Agent.Factory.hasClassProperties( object ) ).toBe( true );

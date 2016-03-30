@@ -1,8 +1,8 @@
 "use strict";
-var Utils = require("./../Utils");
-var Document = require("./../Document");
-var NS = require("./../NS");
-var IllegalArgumentError_1 = require("./../Errors/IllegalArgumentError");
+var Utils = require("./Utils");
+var Document = require("./Document");
+var NS = require("./NS");
+var IllegalArgumentError_1 = require("./Errors/IllegalArgumentError");
 exports.RDF_CLASS = NS.CS.Class.Agent;
 exports.SCHEMA = {
     "name": {
@@ -23,8 +23,7 @@ var Factory = (function () {
     }
     Factory.hasClassProperties = function (resource) {
         return Utils.hasPropertyDefined(resource, "name")
-            && Utils.hasPropertyDefined(resource, "email")
-            && Utils.hasPropertyDefined(resource, "password");
+            && Utils.hasPropertyDefined(resource, "email");
     };
     Factory.is = function (object) {
         return Document.Factory.hasClassProperties(object)

@@ -6,7 +6,7 @@ var Errors = require("./Errors");
 var LDP = require("./LDP");
 var NS = require("./NS");
 var ObjectSchema = require("./ObjectSchema");
-var Agent = require("./Agents/Agent");
+var Agent = require("./Agent");
 var Class = (function () {
     function Class() {
         this.settings = new Map();

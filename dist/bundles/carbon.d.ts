@@ -1491,6 +1491,40 @@ declare module 'carbonldp/Auth' {
 	export default Class;
 
 }
+declare module 'carbonldp/Agent' {
+	import * as Document from 'carbonldp/Document';
+	import * as ObjectSchema from 'carbonldp/ObjectSchema';
+	export const RDF_CLASS: string;
+	export const SCHEMA: ObjectSchema.Class;
+	export interface Class extends Document.Class {
+	    name: string;
+	    email: string;
+	    password?: string;
+	}
+	export class Factory {
+	    static hasClassProperties(resource: Object): boolean;
+	    static is(object: Object): boolean;
+	    static create(name: string, email: string, password: string): Class;
+	    static createFrom<T extends Object>(object: T, name: string, email: string, password: string): T & Class;
+	}
+	export default Class;
+
+}
+declare module 'carbonldp/Agents' {
+	import Context from 'carbonldp/Context';
+	import * as Agent from 'carbonldp/Agent';
+	import * as Pointer from 'carbonldp/Pointer';
+	import * as Response from 'carbonldp/HTTP/Response';
+	export class Class {
+	    private context;
+	    constructor(context: Context);
+	    create(agentDocument: Agent.Class): Promise<[Pointer.Class, Response.Class]>;
+	    create(slug: string, agentDocument: Agent.Class): Promise<[Pointer.Class, Response.Class]>;
+	    private getContainerURI();
+	}
+	export default Class;
+
+}
 declare module 'carbonldp/PersistedApp' {
 	import * as LDP from 'carbonldp/LDP';
 	import * as App from 'carbonldp/App';
@@ -1506,9 +1540,11 @@ declare module 'carbonldp/PersistedApp' {
 }
 declare module 'carbonldp/App/Context' {
 	import AbstractContext from 'carbonldp/AbstractContext';
+	import Agents from 'carbonldp/Agents';
 	import Context from 'carbonldp/Context';
 	import PersistedApp from 'carbonldp/PersistedApp';
 	export class Class extends AbstractContext {
+	    agents: Agents;
 	    private app;
 	    private base;
 	    constructor(parentContext: Context, app: PersistedApp);
@@ -1544,25 +1580,6 @@ declare module 'carbonldp/APIDescription' {
 	export interface Class {
 	    version: string;
 	    buildDate: Date;
-	}
-	export default Class;
-
-}
-declare module 'carbonldp/Agents/Agent' {
-	import * as Document from 'carbonldp/Document';
-	import * as ObjectSchema from 'carbonldp/ObjectSchema';
-	export const RDF_CLASS: string;
-	export const SCHEMA: ObjectSchema.Class;
-	export interface Class extends Document.Class {
-	    name: string;
-	    email: string;
-	    password: string;
-	}
-	export class Factory {
-	    static hasClassProperties(resource: Object): boolean;
-	    static is(object: Object): boolean;
-	    static create(name: string, email: string, password: string): Class;
-	    static createFrom<T extends Object>(object: T, name: string, email: string, password: string): T & Class;
 	}
 	export default Class;
 
@@ -1608,22 +1625,6 @@ declare module 'carbonldp/AbstractContext' {
 	    abstract resolve(relativeURI: string): string;
 	}
 	export default AbstractContext;
-
-}
-declare module 'carbonldp/Agents' {
-	import Context from 'carbonldp/Context';
-	import * as Agent from 'carbonldp/Agents/Agent';
-	import * as Pointer from 'carbonldp/Pointer';
-	import * as Response from 'carbonldp/HTTP/Response';
-	export class Class {
-	    private context;
-	    constructor(context: Context);
-	    create(agentDocument: Agent.Class): Promise<[Pointer.Class, Response.Class]>;
-	    create(slug: string, agentDocument: Agent.Class): Promise<[Pointer.Class, Response.Class]>;
-	    private getContainerURI();
-	}
-	export { Agent };
-	export default Class;
 
 }
 declare module 'carbonldp/Apps' {
@@ -1684,6 +1685,7 @@ declare module 'carbonldp/settings' {
 }
 declare module 'carbonldp/Carbon' {
 	import AbstractContext from 'carbonldp/AbstractContext';
+	import * as Agent from 'carbonldp/Agent';
 	import * as Agents from 'carbonldp/Agents';
 	import * as APIDescription from 'carbonldp/APIDescription';
 	import * as App from 'carbonldp/App';
@@ -1711,6 +1713,7 @@ declare module 'carbonldp/Carbon' {
 	import * as SDKContext from 'carbonldp/SDKContext';
 	import * as SPARQL from 'carbonldp/SPARQL';
 	import * as Utils from 'carbonldp/Utils'; class Carbon extends AbstractContext {
+	    static Agent: typeof Agent;
 	    static Agents: typeof Agents;
 	    static App: typeof App;
 	    static Apps: typeof Apps;

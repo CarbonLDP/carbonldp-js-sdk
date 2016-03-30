@@ -1,5 +1,5 @@
 import Context from "./Context";
-import * as Agent from "./Agents/Agent";
+import * as Agent from "./Agent";
 import * as Pointer from "./Pointer";
 import * as Response from "./HTTP/Response";
 export declare class Class {
@@ -9,5 +9,4 @@ export declare class Class {
     create(slug: string, agentDocument: Agent.Class): Promise<[Pointer.Class, Response.Class]>;
     private getContainerURI();
 }
-export { Agent };
 export default Class;

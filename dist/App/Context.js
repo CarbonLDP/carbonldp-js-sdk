@@ -5,6 +5,7 @@ var __extends = (this && this.__extends) || function (d, b) {
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
 var AbstractContext_1 = require("./../AbstractContext");
+var Agents_1 = require("./../Agents");
 var RDF = require("./../RDF");
 var Class = (function (_super) {
     __extends(Class, _super);
@@ -12,6 +13,7 @@ var Class = (function (_super) {
         _super.call(this, parentContext);
         this.app = app;
         this.base = this.getBase(this.app);
+        this.agents = new Agents_1.default(this);
     }
     Class.prototype.resolve = function (uri) {
         if (RDF.URI.Util.isAbsolute(uri))

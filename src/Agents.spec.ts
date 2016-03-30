@@ -1,7 +1,7 @@
 import * as Agents from "./Agents";
 import DefaultExport from "./Agents";
 
-import * as Agent from "./Agents/Agent";
+import * as Agent from "./Agent";
 
 import {
 	INSTANCE,
@@ -13,7 +13,6 @@ import {
 
 	isDefined,
 	hasSignature,
-	reexports,
 	hasDefaultExport,
 	hasConstructor,
 } from "./test/JasmineExtender";
@@ -162,15 +161,6 @@ describe( module( "Carbon/Agents" ), ():void => {
 
 		});
 
-	});
-
-	it( reexports(
-		STATIC,
-		"Agent",
-		"Carbon/Agents/Agent"
-	), ():void => {
-		expect( Agents.Agent ).toBeDefined();
-		expect( Agents.Agent ).toBe( Agent );
 	});
 
 	it( hasDefaultExport(
