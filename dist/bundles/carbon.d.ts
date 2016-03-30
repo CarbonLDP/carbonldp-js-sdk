@@ -1528,7 +1528,8 @@ declare module 'carbonldp/Agents' {
 declare module 'carbonldp/PersistedApp' {
 	import * as LDP from 'carbonldp/LDP';
 	import * as App from 'carbonldp/App';
-	export interface Class extends App.Class {
+	import * as PersistedDocument from 'carbonldp/PersistedDocument';
+	export interface Class extends App.Interface, PersistedDocument.Class {
 	    rootContainer: LDP.PersistedContainer.Class;
 	}
 	export class Factory {
@@ -1558,8 +1559,10 @@ declare module 'carbonldp/App' {
 	import * as Document from 'carbonldp/Document';
 	import * as ObjectSchema from 'carbonldp/ObjectSchema';
 	import * as Context from 'carbonldp/App/Context';
-	export interface Class extends Document.Class {
+	export interface Interface {
 	    name: string;
+	}
+	export interface Class extends Interface, Document.Class {
 	}
 	export const RDF_CLASS: string;
 	export const SCHEMA: ObjectSchema.Class;
