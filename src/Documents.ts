@@ -1,24 +1,17 @@
-import * as jsonld from "jsonld";
-
-import Committer from "./Committer";
 import * as Errors from "./Errors";
 import * as HTTP from "./HTTP";
 import Context from "./Context";
 import * as RDF from "./RDF";
 import * as Utils from "./Utils";
-
 import * as Document from "./Document";
-import * as Fragment from "./Fragment";
 import * as JSONLDConverter from "./JSONLDConverter";
 import * as PersistedDocument from "./PersistedDocument";
 import * as PersistedFragment from "./PersistedFragment";
 import * as PersistedNamedFragment from "./PersistedNamedFragment";
 import * as Pointer from "./Pointer";
-import * as NamedFragment from "./NamedFragment";
 import * as NS from "./NS";
 import * as ObjectSchema from "./ObjectSchema";
 import * as LDP from "./LDP";
-import * as Resource from "./Resource";
 import * as SPARQL from "./SPARQL";
 import * as NonRDFSource from "./NonRDFSource";
 
@@ -96,9 +89,7 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 		if( this.pointers.has( pointerID ) ) {
 			let pointer:Pointer.Class = this.getPointer( uri );
 			if( pointer.isResolved() ) {
-				return new Promise( ( resolve:( result:[ PersistedDocument.Class, HTTP.Response.Class ]) => void, reject:( error:Error ) => void ) => {
-					resolve( [ <any> pointer, null ] );
-				} );
+				return Promise.resolve<[ PersistedDocument.Class, HTTP.Response.Class ]>( [ <any> pointer, null ] );
 			}
 		}
 
@@ -151,6 +142,7 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 			// TODO: Decorate additional behavior (app, etc.)
 			// TODO: Make it dynamic
 			if( LDP.Container.Factory.hasRDFClass( document ) ) LDP.PersistedContainer.Factory.decorate( document );
+			if( NonRDFSource.Factory.hasRDFClass( document ) ) NonRDFSource.Factory.decorate( document );
 
 			return [ document, response ];
 		} );

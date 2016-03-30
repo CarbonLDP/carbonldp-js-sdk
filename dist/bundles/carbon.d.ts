@@ -549,13 +549,6 @@ declare module 'carbonldp/Auth/BasicAuthenticator' {
 	export default Class;
 
 }
-declare module 'carbonldp/Committer' {
-	interface Committer<E> {
-	    commit(object: E): Promise<any>;
-	}
-	export default Committer;
-
-}
 declare module 'carbonldp/NS/XSD' {
 	export const namespace: string;
 	export class DataType {
@@ -1645,6 +1638,13 @@ declare module 'carbonldp/Carbon' {
 	    getAPIDescription(): Promise<APIDescription.Class>;
 	}
 	export default Carbon;
+
+}
+declare module 'carbonldp/Committer' {
+	interface Committer<E> {
+	    commit(object: E): Promise<any>;
+	}
+	export default Committer;
 
 }
 declare module 'carbonldp/Persisted' {

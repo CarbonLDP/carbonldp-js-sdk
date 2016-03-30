@@ -76,11 +76,9 @@ var Documents = (function () {
         if (!!this.context)
             uri = this.context.resolve(uri);
         if (this.pointers.has(pointerID)) {
-            var pointer_1 = this.getPointer(uri);
-            if (pointer_1.isResolved()) {
-                return new Promise(function (resolve, reject) {
-                    resolve([pointer_1, null]);
-                });
+            var pointer = this.getPointer(uri);
+            if (pointer.isResolved()) {
+                return Promise.resolve([pointer, null]);
             }
         }
         if (this.context && this.context.auth.isAuthenticated())
@@ -126,6 +124,8 @@ var Documents = (function () {
             document._syncSavedFragments();
             if (LDP.Container.Factory.hasRDFClass(document))
                 LDP.PersistedContainer.Factory.decorate(document);
+            if (NonRDFSource.Factory.hasRDFClass(document))
+                NonRDFSource.Factory.decorate(document);
             return [document, response];
         });
     };

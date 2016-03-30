@@ -6,6 +6,7 @@ var Documents_1 = require("./Documents");
 var Errors = require("./Errors");
 var LDP = require("./LDP");
 var ObjectSchema = require("./ObjectSchema");
+var NonRDFSource = require("./NonRDFSource");
 var Class = (function () {
     function Class() {
         this.settings = new Map();
@@ -127,6 +128,7 @@ var Class = (function () {
         this.extendObjectSchema(LDP.RDFSource.RDF_CLASS, LDP.RDFSource.SCHEMA);
         this.extendObjectSchema(LDP.Container.RDF_CLASS, LDP.Container.SCHEMA);
         this.extendObjectSchema(LDP.BasicContainer.RDF_CLASS, LDP.Container.SCHEMA);
+        this.extendObjectSchema(NonRDFSource.RDF_CLASS, NonRDFSource.SCHEMA);
         this.extendObjectSchema(APIDescription.RDF_CLASS, APIDescription.SCHEMA);
         this.extendObjectSchema(App.RDF_CLASS, App.SCHEMA);
         this.extendObjectSchema(Auth.Token.RDF_CLASS, Auth.Token.CONTEXT);
