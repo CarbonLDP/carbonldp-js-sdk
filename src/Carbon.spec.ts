@@ -19,6 +19,8 @@ import {
 } from "./test/JasmineExtender";
 import setting from "./settings";
 
+import * as Agent from "./Agent";
+import * as Agents from "./Agents";
 import * as APIDescription from "./APIDescription";
 import * as App from "./App";
 import * as Apps from "./Apps";
@@ -102,6 +104,24 @@ describe( module( "Carbon" ), ():void => {
 			expect( Utils.isString( carbon.version ) ).toBe( true );
 
 			expect( carbon.version ).toMatch( /\d+\.\d+\.\d+.*/ );
+		});
+
+		it( reexports(
+			STATIC,
+			"Agent",
+			"Carbon/Agent"
+		), ():void => {
+			expect( Carbon.Agent ).toBeDefined();
+			expect( Carbon.Agent ).toBe( Agent );
+		});
+
+		it( reexports(
+			STATIC,
+			"Agents",
+			"Carbon/Agents"
+		), ():void => {
+			expect( Carbon.Agents ).toBeDefined();
+			expect( Carbon.Agents ).toBe( Agents );
 		});
 
 		it( reexports(

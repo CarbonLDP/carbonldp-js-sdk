@@ -699,12 +699,14 @@ declare module 'carbonldp/NS/CS' {
 	    static Application: string;
 	    static Token: string;
 	    static AllOrigins: string;
+	    static Agent: string;
 	} class Predicate {
 	    static name: string;
 	    static allowsOrigin: string;
 	    static rootContainer: string;
 	    static tokenKey: string;
 	    static expirationTime: string;
+	    static password: string;
 	}
 	export { namespace, Class, Predicate };
 
@@ -750,6 +752,13 @@ declare module 'carbonldp/NS/RDF' {
 	export { namespace, Predicate };
 
 }
+declare module 'carbonldp/NS/VCARD' {
+	export const namespace: string;
+	export class Predicate {
+	    static email: string;
+	}
+
+}
 declare module 'carbonldp/NS' {
 	import * as C from 'carbonldp/NS/C';
 	import * as CP from 'carbonldp/NS/CP';
@@ -757,7 +766,8 @@ declare module 'carbonldp/NS' {
 	import * as LDP from 'carbonldp/NS/LDP';
 	import * as RDF from 'carbonldp/NS/RDF';
 	import * as XSD from 'carbonldp/NS/XSD';
-	export { C, CP, CS, LDP, RDF, XSD };
+	import * as VCARD from 'carbonldp/NS/VCARD';
+	export { C, CP, CS, LDP, RDF, XSD, VCARD };
 
 }
 declare module 'carbonldp/Pointer' {
@@ -1481,6 +1491,40 @@ declare module 'carbonldp/Auth' {
 	export default Class;
 
 }
+declare module 'carbonldp/Agent' {
+	import * as Document from 'carbonldp/Document';
+	import * as ObjectSchema from 'carbonldp/ObjectSchema';
+	export const RDF_CLASS: string;
+	export const SCHEMA: ObjectSchema.Class;
+	export interface Class extends Document.Class {
+	    name: string;
+	    email: string;
+	    password?: string;
+	}
+	export class Factory {
+	    static hasClassProperties(resource: Object): boolean;
+	    static is(object: Object): boolean;
+	    static create(name: string, email: string, password: string): Class;
+	    static createFrom<T extends Object>(object: T, name: string, email: string, password: string): T & Class;
+	}
+	export default Class;
+
+}
+declare module 'carbonldp/Agents' {
+	import Context from 'carbonldp/Context';
+	import * as Agent from 'carbonldp/Agent';
+	import * as Pointer from 'carbonldp/Pointer';
+	import * as Response from 'carbonldp/HTTP/Response';
+	export class Class {
+	    private context;
+	    constructor(context: Context);
+	    create(agentDocument: Agent.Class): Promise<[Pointer.Class, Response.Class]>;
+	    create(slug: string, agentDocument: Agent.Class): Promise<[Pointer.Class, Response.Class]>;
+	    private getContainerURI();
+	}
+	export default Class;
+
+}
 declare module 'carbonldp/PersistedApp' {
 	import * as LDP from 'carbonldp/LDP';
 	import * as App from 'carbonldp/App';
@@ -1496,9 +1540,11 @@ declare module 'carbonldp/PersistedApp' {
 }
 declare module 'carbonldp/App/Context' {
 	import AbstractContext from 'carbonldp/AbstractContext';
+	import Agents from 'carbonldp/Agents';
 	import Context from 'carbonldp/Context';
 	import PersistedApp from 'carbonldp/PersistedApp';
 	export class Class extends AbstractContext {
+	    agents: Agents;
 	    private app;
 	    private base;
 	    constructor(parentContext: Context, app: PersistedApp);
@@ -1632,12 +1678,15 @@ declare module 'carbonldp/settings' {
 	    "auth.method"?: Auth.Method;
 	    "platform.container"?: string;
 	    "platform.apps.container"?: string;
+	    "platform.agents.container"?: string;
 	} let settings: CarbonSettings;
 	export default settings;
 
 }
 declare module 'carbonldp/Carbon' {
 	import AbstractContext from 'carbonldp/AbstractContext';
+	import * as Agent from 'carbonldp/Agent';
+	import * as Agents from 'carbonldp/Agents';
 	import * as APIDescription from 'carbonldp/APIDescription';
 	import * as App from 'carbonldp/App';
 	import * as Apps from 'carbonldp/Apps';
@@ -1664,6 +1713,8 @@ declare module 'carbonldp/Carbon' {
 	import * as SDKContext from 'carbonldp/SDKContext';
 	import * as SPARQL from 'carbonldp/SPARQL';
 	import * as Utils from 'carbonldp/Utils'; class Carbon extends AbstractContext {
+	    static Agent: typeof Agent;
+	    static Agents: typeof Agents;
 	    static App: typeof App;
 	    static Apps: typeof Apps;
 	    static Auth: typeof Auth;
