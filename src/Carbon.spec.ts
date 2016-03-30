@@ -57,6 +57,24 @@ describe( module( "Carbon" ), ():void => {
 		let carbon:Carbon;
 		let myCarbon:Carbon;
 
+		beforeEach( ():void => {
+			carbon = new Carbon();
+
+			myCarbon = new Carbon({
+				"domain": "example.com",
+				"http.ssl": false,
+				"auth.method": Auth.Method.TOKEN,
+				"platform.container": "example-platform/",
+				"platform.apps.container": "example-apps/"
+			});
+
+			jasmine.Ajax.install();
+		});
+
+		afterEach( ():void => {
+			jasmine.Ajax.uninstall();
+		});
+
 		it( isDefined(), ():void => {
 			expect( Carbon ).toBeDefined();
 			expect( Utils.isFunction( Carbon ) ).toBe( true );
@@ -72,6 +90,18 @@ describe( module( "Carbon" ), ():void => {
 			expect( Utils.isString( Carbon.version ) ).toBe( true );
 
 			expect( Carbon.version ).toMatch( /\d+\.\d+\.\d+.*/ );
+		});
+
+		it( hasProperty(
+			INSTANCE,
+			"version",
+			"string",
+			"Returns the version of the SDK"
+		), ():void => {
+			expect( carbon.version ).toBeDefined();
+			expect( Utils.isString( carbon.version ) ).toBe( true );
+
+			expect( carbon.version ).toMatch( /\d+\.\d+\.\d+.*/ );
 		});
 
 		it( reexports(
@@ -297,25 +327,6 @@ describe( module( "Carbon" ), ():void => {
 		), ():void => {
 			expect( Carbon.Utils ).toBeDefined();
 			expect( Carbon.Utils ).toBe( Utils );
-		});
-
-
-		beforeEach( ():void => {
-			carbon = new Carbon();
-
-			myCarbon = new Carbon({
-				"domain": "example.com",
-				"http.ssl": false,
-				"auth.method": Auth.Method.TOKEN,
-				"platform.container": "example-platform/",
-				"platform.apps.container": "example-apps/"
-			});
-
-			jasmine.Ajax.install();
-		});
-
-		afterEach( ():void => {
-			jasmine.Ajax.uninstall();
 		});
 
 		it( hasConstructor([

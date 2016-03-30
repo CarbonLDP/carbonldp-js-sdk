@@ -338,7 +338,7 @@ var Documents = (function () {
         if (RDF.URI.Util.isBNodeID(uri))
             throw new Errors.IllegalArgumentError("BNodes cannot be fetched directly.");
         if (!!this.context) {
-            if (RDF.URI.Util.isRelative(uri)) {
+            if (!RDF.URI.Util.isRelative(uri)) {
                 var baseURI = this.context.getBaseURI();
                 if (!RDF.URI.Util.isBaseOf(baseURI, uri))
                     return null;

@@ -700,24 +700,29 @@ $__System.register("2", ["3", "4", "5", "6", "7", "8", "9"], function(exports_1)
                 function Class(context) {
                     this.context = context;
                 }
-                Class.prototype.getContext = function (pointerOrUri) {
+                Class.prototype.getContext = function (pointerOrURI) {
                     var _this = this;
-                    var appsContainerURI = this.getAppsContainerURI();
-                    var uri;
-                    uri = Utils.isString(pointerOrUri) ? pointerOrUri : pointerOrUri.id;
-                    if (RDF.URI.Util.isRelative(uri)) {
-                        if (!Utils.S.startsWith(uri, appsContainerURI))
-                            uri = RDF.URI.Util.resolve(appsContainerURI, uri);
-                        uri = this.context.resolve(uri);
+                    var pointer = !Utils.isString(pointerOrURI) ? pointerOrURI : null;
+                    if (!pointer) {
+                        var appsContainerURI = this.getAppsContainerURI();
+                        var uri = Utils.isString(pointerOrURI) ? pointerOrURI : null;
+                        if (!uri)
+                            return Promise.reject(new Errors.IllegalArgumentError("The application's URI cannot be null"));
+                        if (RDF.URI.Util.isRelative(uri)) {
+                            if (!Utils.S.startsWith(uri, appsContainerURI))
+                                uri = RDF.URI.Util.resolve(appsContainerURI, uri);
+                            uri = this.context.resolve(uri);
+                        }
+                        pointer = this.context.documents.getPointer(uri);
                     }
-                    return this.context.documents.get(uri).then(function (_a) {
-                        var document = _a[0], response = _a[1];
-                        if (!PersistedApp.Factory.is(document))
-                            throw new Errors.IllegalArgumentError("The resource fetched is not a cs:Application.");
-                        return new Context_1.default(_this.context, document);
+                    return pointer.resolve().then(function (_a) {
+                        var app = _a[0], response = _a[1];
+                        if (!PersistedApp.Factory.is(app))
+                            return Promise.reject(new Errors.IllegalArgumentError("The resource fetched is not a cs:Application."));
+                        return new Context_1.default(_this.context, app);
                     });
                 };
-                Class.prototype.getAllContext = function () {
+                Class.prototype.getAllContexts = function () {
                     var _this = this;
                     return this.context.documents.getMembers(this.getAppsContainerURI(), false).then(function (_a) {
                         var members = _a[0], response = _a[1];
@@ -2788,7 +2793,7 @@ $__System.register("1a", ["9", "1b", "5", "6", "11", "18", "4", "f", "d", "1c", 
                     if (RDF.URI.Util.isBNodeID(uri))
                         throw new Errors.IllegalArgumentError("BNodes cannot be fetched directly.");
                     if (!!this.context) {
-                        if (RDF.URI.Util.isRelative(uri)) {
+                        if (!RDF.URI.Util.isRelative(uri)) {
                             var baseURI = this.context.getBaseURI();
                             if (!RDF.URI.Util.isBaseOf(baseURI, uri))
                                 return null;
@@ -12901,7 +12906,12 @@ $__System.register("66", ["b", "7", "2", "23", "e", "1a", "9", "12", "1b", "11",
                     this.apps = new Apps.Class(this);
                 }
                 Object.defineProperty(Carbon, "version", {
-                    get: function () { return "0.18.1-ALPHA"; },
+                    get: function () { return "0.19.0-ALPHA"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(Carbon.prototype, "version", {
+                    get: function () { return Carbon.version; },
                     enumerable: true,
                     configurable: true
                 });

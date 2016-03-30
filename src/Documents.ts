@@ -393,8 +393,7 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 		*/
 
 		if( !! this.context ) {
-			// TODO: Check this, it may be incorrect
-			if( RDF.URI.Util.isRelative( uri ) ) {
+			if( ! RDF.URI.Util.isRelative( uri ) ) {
 				let baseURI:string = this.context.getBaseURI();
 				if( ! RDF.URI.Util.isBaseOf( baseURI, uri ) ) return null;
 

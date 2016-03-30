@@ -10,24 +10,29 @@ var Class = (function () {
     function Class(context) {
         this.context = context;
     }
-    Class.prototype.getContext = function (pointerOrUri) {
+    Class.prototype.getContext = function (pointerOrURI) {
         var _this = this;
-        var appsContainerURI = this.getAppsContainerURI();
-        var uri;
-        uri = Utils.isString(pointerOrUri) ? pointerOrUri : pointerOrUri.id;
-        if (RDF.URI.Util.isRelative(uri)) {
-            if (!Utils.S.startsWith(uri, appsContainerURI))
-                uri = RDF.URI.Util.resolve(appsContainerURI, uri);
-            uri = this.context.resolve(uri);
+        var pointer = !Utils.isString(pointerOrURI) ? pointerOrURI : null;
+        if (!pointer) {
+            var appsContainerURI = this.getAppsContainerURI();
+            var uri = Utils.isString(pointerOrURI) ? pointerOrURI : null;
+            if (!uri)
+                return Promise.reject(new Errors.IllegalArgumentError("The application's URI cannot be null"));
+            if (RDF.URI.Util.isRelative(uri)) {
+                if (!Utils.S.startsWith(uri, appsContainerURI))
+                    uri = RDF.URI.Util.resolve(appsContainerURI, uri);
+                uri = this.context.resolve(uri);
+            }
+            pointer = this.context.documents.getPointer(uri);
         }
-        return this.context.documents.get(uri).then(function (_a) {
-            var document = _a[0], response = _a[1];
-            if (!PersistedApp.Factory.is(document))
-                throw new Errors.IllegalArgumentError("The resource fetched is not a cs:Application.");
-            return new Context_1.default(_this.context, document);
+        return pointer.resolve().then(function (_a) {
+            var app = _a[0], response = _a[1];
+            if (!PersistedApp.Factory.is(app))
+                return Promise.reject(new Errors.IllegalArgumentError("The resource fetched is not a cs:Application."));
+            return new Context_1.default(_this.context, app);
         });
     };
-    Class.prototype.getAllContext = function () {
+    Class.prototype.getAllContexts = function () {
         var _this = this;
         return this.context.documents.getMembers(this.getAppsContainerURI(), false).then(function (_a) {
             var members = _a[0], response = _a[1];
