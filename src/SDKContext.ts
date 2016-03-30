@@ -1,4 +1,4 @@
-import * as App from "./Apps/App";
+import * as App from "./App";
 import * as APIDescription from "./APIDescription";
 import * as Auth from "./Auth";
 import Context from "./Context";

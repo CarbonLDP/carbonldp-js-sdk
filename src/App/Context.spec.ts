@@ -11,16 +11,16 @@ import {
 } from "./../test/JasmineExtender";
 import * as Utils from "./../Utils";
 import * as Pointer from "./../Pointer";
-import * as App from "./App";
+import * as App from "./../App";
 import AbstractContext from "./../AbstractContext";
-import PersistedApp from "./PersistedApp";
+import PersistedApp from "./../PersistedApp";
 
-import AppContext from "./AppContext";
+import AppContext from "./Context";
 
-describe( module( "Carbon/AppContext" ), ():void => {
+describe( module( "Carbon/App/Context" ), ():void => {
 
 	describe( clazz(
-		"Carbon.AppContext",
+		"Carbon.App.Context",
 		"Class that represents a Carbon Application. " +
 		"It centers the scope of several services (Carbon.Auth, Carbon.Resources, etc.) into the Application's scope."
 	), ():void => {
@@ -46,7 +46,7 @@ describe( module( "Carbon/AppContext" ), ():void => {
 
 		it( hasConstructor([
 			{ name: "parentContext", type: "Carbon.Context" },
-			{ name: "app", type: "Carbon.AppContext" },
+			{ name: "app", type: "Carbon.App.Context" },
 		]), ():void => {
 			expect( appContext ).toBeTruthy();
 			expect( appContext instanceof AppContext );

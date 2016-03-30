@@ -15,11 +15,11 @@ import {
 } from "./test/JasmineExtender";
 import * as Utils from "./Utils";
 import AbstractContext from "./AbstractContext";
-import AppContext from "./Apps/AppContext";
+import AppContext from "./App/Context";
 import * as NS from "./NS";
 import * as Errors from "./Errors";
-import * as App from "./Apps/App";
-import * as PersistedApp from "./Apps/PersistedApp";
+import * as App from "./App";
+import * as PersistedApp from "./PersistedApp";
 import * as Pointer from "./Pointer";
 
 import * as Apps from "./Apps";
@@ -381,33 +381,6 @@ describe( module( "Carbon/Apps" ), ():void => {
 
 		});
 
-	});
-
-	it( reexports(
-		STATIC,
-		"App",
-		"Carbon/Apps/App"
-	), ():void => {
-		expect( Apps.App ).toBeDefined();
-		expect( Apps.App ).toBe( App );
-	});
-
-	it( reexports(
-		STATIC,
-		"App",
-		"Carbon/Apps/AppContext"
-	), ():void => {
-		expect( Apps.AppContext ).toBeDefined();
-		expect( Apps.AppContext ).toBe( AppContext );
-	});
-
-	it( reexports(
-		STATIC,
-		"App",
-		"Carbon/Apps/PersistedApp"
-	), ():void => {
-		expect( Apps.PersistedApp ).toBeDefined();
-		expect( Apps.PersistedApp ).toBe( PersistedApp );
 	});
 
 	it( hasDefaultExport( "Carbon.Apps.Class" ), ():void => {

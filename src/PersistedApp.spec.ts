@@ -1,4 +1,3 @@
-
 import {
 	STATIC,
 
@@ -7,10 +6,10 @@ import {
 
 	isDefined,
 	hasMethod
-} from "./../test/JasmineExtender";
-import * as Utils from "./../Utils";
-import * as Pointer from "./../Pointer";
-import * as Document from "./../Document";
+} from "./test/JasmineExtender";
+import * as Utils from "./Utils";
+import * as Pointer from "./Pointer";
+import * as Document from "./Document";
 import * as App from "./App";
 import * as PersistedApp from "./PersistedApp";
 
@@ -68,7 +67,7 @@ describe( module( "Carbon/PersistedApp" ), ():void => {
 			let object:any = Document.Factory.create();
 			expect( PersistedApp.Factory.is( object ) ).toBe( false );
 
-			object = App.Factory.create( 'The App name' );
+			object = App.Factory.create( "The App name" );
 			expect( PersistedApp.Factory.is( object ) ).toBe( false );
 
 			object.rootContainer = {};

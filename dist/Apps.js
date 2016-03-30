@@ -1,13 +1,10 @@
 "use strict";
-var AppContext_1 = require("./Apps/AppContext");
-exports.AppContext = AppContext_1.default;
+var Context_1 = require("./App/Context");
 var Pointer = require("./Pointer");
 var RDF = require("./RDF");
 var Utils = require("./Utils");
-var App = require("./Apps/App");
-exports.App = App;
-var PersistedApp = require("./Apps/PersistedApp");
-exports.PersistedApp = PersistedApp;
+var App = require("./App");
+var PersistedApp = require("./PersistedApp");
 var Errors = require("./Errors");
 var Class = (function () {
     function Class(context) {
@@ -27,7 +24,7 @@ var Class = (function () {
             var document = _a[0], response = _a[1];
             if (!PersistedApp.Factory.is(document))
                 throw new Errors.IllegalArgumentError("The resource fetched is not a cs:Application.");
-            return new AppContext_1.default(_this.context, document);
+            return new Context_1.default(_this.context, document);
         });
     };
     Class.prototype.getAllContext = function () {
@@ -37,7 +34,7 @@ var Class = (function () {
             return Pointer.Util.resolveAll(members);
         }).then(function (_a) {
             var members = _a[0], responses = _a[1];
-            return members.map(function (member) { return new AppContext_1.default(_this.context, member); });
+            return members.map(function (member) { return new Context_1.default(_this.context, member); });
         });
     };
     Class.prototype.create = function (slugOrApp, appDocument) {

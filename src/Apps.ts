@@ -1,12 +1,12 @@
-import AppContext from "./Apps/AppContext";
+import AppContext from "./App/Context";
 import * as Document from "./Document";
 import Context from "./Context";
 import * as Response from "./HTTP/Response";
 import * as Pointer from "./Pointer";
 import * as RDF from "./RDF";
 import * as Utils from "./Utils";
-import * as App from "./Apps/App";
-import * as PersistedApp from "./Apps/PersistedApp";
+import * as App from "./App";
+import * as PersistedApp from "./PersistedApp";
 import * as Errors from "./Errors";
 
 export class Class {
@@ -66,11 +66,5 @@ export class Class {
 		return this.context.getSetting( "platform.apps.container" );
 	}
 }
-
-export {
-	App,
-	PersistedApp,
-	AppContext
-};
 
 export default Class;

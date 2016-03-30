@@ -1,9 +1,8 @@
-import AppContext from "./Apps/AppContext";
+import AppContext from "./App/Context";
 import Context from "./Context";
 import * as Response from "./HTTP/Response";
 import * as Pointer from "./Pointer";
-import * as App from "./Apps/App";
-import * as PersistedApp from "./Apps/PersistedApp";
+import * as App from "./App";
 export declare class Class {
     private context;
     constructor(context: Context);
@@ -14,5 +13,4 @@ export declare class Class {
     create(slug: string, appDocument: App.Class): Promise<[Pointer.Class, Response.Class]>;
     private getAppsContainerURI();
 }
-export { App, PersistedApp, AppContext };
 export default Class;

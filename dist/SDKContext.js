@@ -1,5 +1,5 @@
 "use strict";
-var App = require("./Apps/App");
+var App = require("./App");
 var APIDescription = require("./APIDescription");
 var Auth = require("./Auth");
 var Documents_1 = require("./Documents");

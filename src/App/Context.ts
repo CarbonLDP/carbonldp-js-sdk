@@ -1,9 +1,9 @@
 import AbstractContext from "./../AbstractContext";
 import Context from "./../Context";
 import * as RDF from "./../RDF";
-import PersistedApp from "./PersistedApp";
+import PersistedApp from "./../PersistedApp";
 
-class AppContext extends AbstractContext {
+export class Class extends AbstractContext {
 	private app:PersistedApp;
 	private base:string;
 
@@ -26,4 +26,4 @@ class AppContext extends AbstractContext {
 	}
 }
 
-export default AppContext;
+export default Class;

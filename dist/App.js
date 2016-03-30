@@ -1,8 +1,10 @@
 "use strict";
-var Document = require("./../Document");
-var NS = require("./../NS");
-var Utils = require("./../Utils");
-var Errors_1 = require("./../Errors");
+var Document = require("./Document");
+var NS = require("./NS");
+var Utils = require("./Utils");
+var Errors_1 = require("./Errors");
+var Context = require("./App/Context");
+exports.Context = Context;
 exports.RDF_CLASS = NS.CS.Class.Application;
 exports.SCHEMA = {
     "name": {

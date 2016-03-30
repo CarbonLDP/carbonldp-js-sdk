@@ -1,6 +1,6 @@
 "use strict";
 var App = require("./App");
-var Utils = require("./../Utils");
+var Utils = require("./Utils");
 var Factory = (function () {
     function Factory() {
     }
