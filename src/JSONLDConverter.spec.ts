@@ -21,6 +21,7 @@ import {
 } from "./test/JasmineExtender";
 
 import * as Errors from "./Errors";
+import * as HTTP from "./HTTP";
 import * as Pointer from "./Pointer";
 import * as Utils from "./Utils";
 
@@ -131,14 +132,24 @@ describe( module( "Carbon/JSONLDConverter" ), ():void => {
 					},
 				};
 
-				let mockedResolveFunction:() => Promise<void> = function():Promise<void> { throw Error( "Don't call this method, duh" ); };
+				let mockedResolveFunction:() => Promise<[ Pointer.Class, HTTP.Response.Class ]> = function():Promise<[ Pointer.Class, HTTP.Response.Class ]> { throw Error( "Don't call this method, duh" ); };
 
 				let mockedPointerLibrary:Pointer.Library = {
 					hasPointer: ( id:string ):boolean => {
 						return true;
 					},
 					getPointer: ( id:string ):Pointer.Class => {
-						return <any> { uri: id, resolve: mockedResolveFunction };
+						return {
+							_id: id,
+							_resolved: true,
+							get id() {
+								return this._id;
+							},
+							isResolved: function() {
+								return this._resolved;
+							},
+							resolve: mockedResolveFunction
+						};
 					},
 				};
 
@@ -172,21 +183,21 @@ describe( module( "Carbon/JSONLDConverter" ), ():void => {
 
 				expect( Utils.hasProperty( compactedObject, "pointer" ) ).toEqual( true );
 				expect( Utils.isObject( compactedObject.pointer ) ).toEqual( true );
-				expect( compactedObject.pointer.uri ).toEqual( "http://example.com/pointer" );
+				expect( compactedObject.pointer.id ).toEqual( "http://example.com/pointer" );
 
 				expect( Utils.hasProperty( compactedObject, "pointerList" ) ).toEqual( true );
 				expect( Utils.isArray( compactedObject.pointerList ) ).toEqual( true );
 				expect( compactedObject.pointerList.length ).toEqual( 3 );
-				expect( compactedObject.pointerList[ 0 ].uri ).toEqual( "http://example.com/pointer-1" );
-				expect( compactedObject.pointerList[ 1 ].uri ).toEqual( "http://example.com/pointer-2" );
-				expect( compactedObject.pointerList[ 2 ].uri ).toEqual( "http://example.com/pointer-3" );
+				expect( compactedObject.pointerList[ 0 ].id ).toEqual( "http://example.com/pointer-1" );
+				expect( compactedObject.pointerList[ 1 ].id ).toEqual( "http://example.com/pointer-2" );
+				expect( compactedObject.pointerList[ 2 ].id ).toEqual( "http://example.com/pointer-3" );
 
 				expect( Utils.hasProperty( compactedObject, "pointerSet" ) ).toEqual( true );
 				expect( Utils.isArray( compactedObject.pointerSet ) ).toEqual( true );
 				expect( compactedObject.pointerSet.length ).toEqual( 3 );
-				expect( compactedObject.pointerSet[ 0 ].uri ).toEqual( "http://example.com/pointer-1" );
-				expect( compactedObject.pointerSet[ 1 ].uri ).toEqual( "http://example.com/pointer-2" );
-				expect( compactedObject.pointerSet[ 2 ].uri ).toEqual( "http://example.com/pointer-3" );
+				expect( compactedObject.pointerSet[ 0 ].id ).toEqual( "http://example.com/pointer-1" );
+				expect( compactedObject.pointerSet[ 1 ].id ).toEqual( "http://example.com/pointer-2" );
+				expect( compactedObject.pointerSet[ 2 ].id ).toEqual( "http://example.com/pointer-3" );
 			});
 		});
 

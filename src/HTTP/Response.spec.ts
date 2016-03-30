@@ -113,7 +113,7 @@ describe( module(
 			let objectKeys:Array<string> = Object.keys( rawResponse.responseHeaders );
 			expect( response.headers.size ).toBe( objectKeys.length );
 			for (let header of objectKeys ) {
-				expect( response.headers.get( header) ).toEqual( new Header.Class( rawResponse.responseHeaders[ header ] ) );
+				expect( response.getHeader( header) ).toEqual( new Header.Class( rawResponse.responseHeaders[ header ] ) );
 			}
 		});
 
@@ -129,6 +129,23 @@ describe( module(
 			expect( response.request instanceof XMLHttpRequest ).toBe( true );
 
 			expect( response.request ).toBe( request );
+		});
+		
+		it( hasMethod(
+			INSTANCE,
+			"getHeader",
+			"Return the Header object referred by the name provided.", [
+				{ name: "name", type: "string" }
+			],
+			{ type: "Carbon.HTTP.Header.Class" }
+		), ():void => {
+			response = new Response.Class( request );
+
+			expect( response.getHeader ).toBeDefined();
+			expect( Utils.isFunction( response.getHeader ) ).toBe( true );
+
+			let header:Header.Class = response.getHeader( "Content-Type" );
+			expect( header instanceof Header.Class ).toBe( true );
 		});
 
 	});

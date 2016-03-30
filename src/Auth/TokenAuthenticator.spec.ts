@@ -141,12 +141,12 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 					let context:SuccessfulContext = new SuccessfulContext();
 					let authenticator:TokenAuthenticator.Class = new TokenAuthenticator.Class( context );
 
-					promises.push( authenticator.authenticate( new UsernameAndPasswordToken( "user", "pass" ) ).then( ( tokenCredentials:Token.Class ):void => {
+					promises.push( authenticator.authenticate( new UsernameAndPasswordToken( "user", "pass" ) ).then( ( token:Token.Class ):void => {
 						expect( authenticator.isAuthenticated() ).toEqual( true );
 
-						expect( tokenCredentials ).toBeDefined();
-						expect( tokenCredentials ).not.toBeNull();
-						expect( Token.Factory.is( tokenCredentials ) ).toEqual( true );
+						expect( token ).toBeDefined();
+						expect( token ).not.toBeNull();
+						expect( Token.Factory.is( token ) ).toEqual( true );
 					}) );
 				})();
 
@@ -270,7 +270,7 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 			Adds the Basic authentication header to the passed request options object.
 		`, [
 			{ name: "requestOptions", type:"Carbon.HTTP.Request.Options", description: "Request options object to add Authentication headers." }
-		], { type: "Carbon.HTTP.Request.Options", description: "The request options with the added authentication headers." } ), (  done:( error?:Error ) => void ):void => {
+		], { type: "Carbon.HTTP.Request.Options", description: "The request options with the added authentication headers." } ), (  done:{ ():void; fail:( error:any ) => void } ):void => {
 
 			// Property Integrity
 			(() => {
@@ -355,7 +355,7 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 
 		it( hasMethod( INSTANCE, "clearAuthentication", `
 			Clears any saved credentials and restores the Authenticator to its initial state.
-		` ), ( done:( error?:Error ) => void ):void => {
+		` ), ( done:{ ():void; fail:( error:any ) => void } ):void => {
 			// Property Integrity
 			(() => {
 				class MockedContext extends AbstractContext {

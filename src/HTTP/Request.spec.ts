@@ -786,8 +786,8 @@ describe( module( "Carbon/HTTP/Request" ), function ():void {
 		function testHTTPResponseHeaders( response:Response, originalHeaders:{ [ key:string ]:string } ):void {
 			let headers:Map<string, Header.Class> = response.headers;
 			for ( let header of Object.keys( originalHeaders ) ) {
-				expect( headers.has( header ) ).toBe( true );
-				expect( headers.get( header ) ).toEqual( new Header.Class ( originalHeaders[ header ] ) );
+				expect( headers.has( header.toLowerCase() ) ).toBe( true );
+				expect( headers.get( header.toLowerCase() ) ).toEqual( new Header.Class ( originalHeaders[ header ] ) );
 			}
 		}
 
@@ -817,8 +817,8 @@ describe( module( "Carbon/HTTP/Request" ), function ():void {
 			options = newOptionsObject();
 			optionsWithHeaders = {
 				headers: new Map()
-					.set( "Authorization",   new Header.Class( "Basic QWxhZGRpbjpvcGVuIHNlc2FtZQ==" ) )
-					.set(      "Location",   new Header.Class( "http://example.com/resource/" ) ),
+					.set( "authorization",   new Header.Class( "Basic QWxhZGRpbjpvcGVuIHNlc2FtZQ==" ) )
+					.set(      "location",   new Header.Class( "http://example.com/resource/" ) ),
 				timeout: 5000,
 				sendCredentialsOnCORS: false
 			};

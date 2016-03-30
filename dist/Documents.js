@@ -149,7 +149,7 @@ var Documents = (function () {
             HTTP.Request.Util.setSlug(slug, requestOptions);
         var body = childDocument.toJSON(this, this.jsonldConverter);
         return HTTP.Request.Service.post(parentURI, body, requestOptions).then(function (response) {
-            var locationHeader = response.headers.get("Location");
+            var locationHeader = response.getHeader("Location");
             if (locationHeader === null || locationHeader.values.length < 1)
                 throw new HTTP.Errors.BadResponseError("The response is missing a Location header.", response);
             if (locationHeader.values.length !== 1)
