@@ -1,3 +1,17 @@
+# 0.19.0 (March 30, 2016)
+* Added `Apps.create()` method, which lets you persist an App
+* Added missing reexports in `Carbon`
+* Added signature `Apps.getContext( app:Carbon.Pointer.Class )` to reuse already resolved apps
+* Added `version` property to `Carbon` instances to make it easier to retrieve the SDK version
+## Breaking Changes
+* Renamed `Apps.get()` to `Apps.getContext()`
+* Renamed `Apps.getAll()` to `Apps.getAllContexts()`
+* Moved `App.Context` to its own file in `Carbon/App/Context`
+
+# 0.18.1 (March 28, 2016)
+* Fixed case sensitiveness issue with http response/request headers
+* Added `HTTP.Response.getHeader()` method, which helps retrieve a header independently of the header's case
+
 # 0.18.0 (March 16, 2016)
 * By default, the function `authenticate()` of `Auth` class use `TOKEN` method for authentication
 * `Auth` class can be specified with witch method of authentication use `BASIC` or `TOKEN`, using the function  `authenticateUsing()`
