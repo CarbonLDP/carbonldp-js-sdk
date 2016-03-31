@@ -24,7 +24,7 @@ var Factory = (function () {
         return Utils.hasPropertyDefined(object, "fileIdentifier")
             && Utils.hasPropertyDefined(object, "mediaType")
             && Utils.hasPropertyDefined(object, "size")
-            && Utils.hasPropertyDefined(object, "getFile");
+            && Utils.hasPropertyDefined(object, "download");
     };
     Factory.is = function (object) {
         return PersistedDocument.Factory.is(object)
@@ -35,11 +35,11 @@ var Factory = (function () {
         if (Factory.hasClassProperties(persistedDocument))
             return persistedDocument;
         Object.defineProperties(persistedDocument, {
-            "getFile": {
+            "download": {
                 writable: false,
                 enumerable: false,
                 configurable: true,
-                value: getFile,
+                value: download,
             },
         });
         return persistedDocument;
@@ -58,9 +58,9 @@ var Factory = (function () {
     return Factory;
 }());
 exports.Factory = Factory;
-function getFile() {
+function download() {
     var that = this;
-    return that._documents.getFile(that);
+    return that._documents.download(that);
 }
 
 //# sourceMappingURL=RDFRepresentation.js.map

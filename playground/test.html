@@ -4,6 +4,9 @@
 
 	<input type="file" id="upload" />
 
+	<br>
+	<img src="" id="carbon-img" />
+
 	<script src="../dist/bundles/Carbon.sfx.js"></script>
 	<script>
 		(function() {
@@ -63,6 +66,7 @@
 
 			var appContext;
 			var filesDocument;
+			var rdfRepresentation;
 
 			carbon.auth.authenticate( "admin@carbonldp.com", "hello" ).then( function() {
 				return carbon.apps.getContext( "test-app/" );
@@ -71,6 +75,12 @@
 				return appContext.documents.get( "files/" );
 			}).then( function( [ _document, result ] ) {
 				filesDocument = _document;
+				return appContext.documents.get( "files/4528426164306269680/" );
+			}).then( function( [ _document, result ] ) {
+				rdfRepresentation = _document;
+				return rdfRepresentation.download();
+			}).then( function( [ _blob, result ] ) {
+				img.src = URL.createObjectURL( _blob );
 			});
 
 			var input = document.querySelector( "#upload" );
@@ -79,6 +89,8 @@
 					console.log( result );
 				});
 			});
+
+			var img = document.querySelector( "#carbon-img" );
 		})();
 	</script>
 </body>

@@ -13,7 +13,7 @@ import * as NS from "./NS";
 import * as ObjectSchema from "./ObjectSchema";
 import * as LDP from "./LDP";
 import * as SPARQL from "./SPARQL";
-import * as NonRDFSource from "./NonRDFSource";
+import * as RDFRepresentation from "./RDFRepresentation";
 
 class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Resolver {
 	_jsonldConverter:JSONLDConverter.Class;
@@ -142,7 +142,7 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 			// TODO: Decorate additional behavior (app, etc.)
 			// TODO: Make it dynamic
 			if( LDP.Container.Factory.hasRDFClass( document ) ) LDP.PersistedContainer.Factory.decorate( document );
-			if( NonRDFSource.Factory.hasRDFClass( document ) ) NonRDFSource.Factory.decorate( document );
+			if( RDFRepresentation.Factory.hasRDFClass( document ) ) RDFRepresentation.Factory.decorate( document );
 
 			return [ document, response ];
 		} );
@@ -318,20 +318,19 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 		return HTTP.Request.Service.delete( persistedDocument.id, persistedDocument.toJSON(), requestOptions );
 	}
 
-	getFile( nonRDFSource:NonRDFSource.Class ):Promise<[ Blob, HTTP.Response.Class ]> {
-		if( ! NonRDFSource.Factory.is( nonRDFSource ) ) return Promise.reject<any>( new Errors.IllegalArgumentError( "No NonRDFSource Document was provided." ) );
+	download( rdfRepresentation:RDFRepresentation.Class ):Promise<[ Blob, HTTP.Response.Class ]> {
+		if( ! RDFRepresentation.Factory.is( rdfRepresentation ) ) return Promise.reject<any>( new Errors.IllegalArgumentError( "No RDFRepresentation Document was provided." ) );
 
-		let uri:string = this.context.resolve( nonRDFSource.id );
-		let requestOptions:HTTP.Request.Options = {};
+		let uri:string = this.context.resolve( rdfRepresentation.id );
+		let requestOptions:HTTP.Request.Options = { isFile: true };
 
 		if ( this.context && this.context.auth.isAuthenticated() ) this.context.auth.addAuthentication( requestOptions );
 
-		HTTP.Request.Util.setAcceptHeader( nonRDFSource.mediaType, requestOptions );
+		HTTP.Request.Util.setAcceptHeader( rdfRepresentation.mediaType, requestOptions );
 		HTTP.Request.Util.setPreferredInteractionModel( NS.LDP.Class.NonRDFSource, requestOptions );
 
 		return HTTP.Request.Service.get( uri, requestOptions ).then( ( response:HTTP.Response.Class ) => {
-			let blob:Blob = new Blob( [ response.request.response ], { type: nonRDFSource.mediaType } );
-			return [ blob, response ];
+			return [ response.data, response ];
 		});
 	}
 

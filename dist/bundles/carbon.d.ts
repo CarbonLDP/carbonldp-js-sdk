@@ -60,7 +60,7 @@ declare module 'carbonldp/HTTP/Response' {
 	export class Class {
 	    constructor(request: XMLHttpRequest);
 	    status: number;
-	    data: string;
+	    data: string | Blob;
 	    headers: Map<string, Header.Class>;
 	    request: XMLHttpRequest;
 	    getHeader(name: string): Header.Class;
@@ -332,6 +332,7 @@ declare module 'carbonldp/HTTP/Request' {
 	    sendCredentialsOnCORS?: boolean;
 	    timeout?: number;
 	    request?: XMLHttpRequest;
+	    isFile?: boolean;
 	}
 	export interface ContainerRetrievalPreferences {
 	    include?: string[];
@@ -1336,6 +1337,29 @@ declare module 'carbonldp/LDP' {
 	export { AccessPoint, BasicContainer, Container, PersistedContainer, RDFSource };
 
 }
+declare module 'carbonldp/RDFRepresentation' {
+	import * as ObjectSchema from 'carbonldp/ObjectSchema';
+	import * as PersistedDocument from 'carbonldp/PersistedDocument';
+	import Resource from 'carbonldp/Resource';
+	import * as HTTP from 'carbonldp/HTTP';
+	export const RDF_CLASS: string;
+	export const SCHEMA: ObjectSchema.Class;
+	export interface Class extends PersistedDocument.Class {
+	    fileIdentifier: string;
+	    mediaType: string;
+	    size: number;
+	    download: () => Promise<[Blob, HTTP.Response.Class]>;
+	}
+	export class Factory {
+	    static hasClassProperties(object: Object): boolean;
+	    static is(object: Object): boolean;
+	    static decorate<T extends PersistedDocument.Class>(persistedDocument: T): T & Class;
+	    static hasRDFClass(resource: Resource): boolean;
+	    static hasRDFClass(expandedObject: Object): boolean;
+	}
+	export default Class;
+
+}
 declare module 'carbonldp/Documents' {
 	import * as HTTP from 'carbonldp/HTTP';
 	import Context from 'carbonldp/Context';
@@ -1345,7 +1369,7 @@ declare module 'carbonldp/Documents' {
 	import * as Pointer from 'carbonldp/Pointer';
 	import * as ObjectSchema from 'carbonldp/ObjectSchema';
 	import * as SPARQL from 'carbonldp/SPARQL';
-	import * as NonRDFSource from 'carbonldp/NonRDFSource'; class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Resolver {
+	import * as RDFRepresentation from 'carbonldp/RDFRepresentation'; class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Resolver {
 	    _jsonldConverter: JSONLDConverter.Class;
 	    jsonldConverter: JSONLDConverter.Class;
 	    private context;
@@ -1366,7 +1390,7 @@ declare module 'carbonldp/Documents' {
 	    getMembers(uri: string): Promise<[Pointer.Class[], HTTP.Response.Class]>;
 	    save(persistedDocument: PersistedDocument.Class, requestOptions?: HTTP.Request.Options): Promise<[PersistedDocument.Class, HTTP.Response.Class]>;
 	    delete(persistedDocument: PersistedDocument.Class, requestOptions?: HTTP.Request.Options): Promise<HTTP.Response.Class>;
-	    getFile(nonRDFSource: NonRDFSource.Class): Promise<[Blob, HTTP.Response.Class]>;
+	    download(rdfRepresentation: RDFRepresentation.Class): Promise<[Blob, HTTP.Response.Class]>;
 	    getSchemaFor(object: Object): ObjectSchema.DigestedObjectSchema;
 	    executeRawASKQuery(documentURI: string, askQuery: string, requestOptions?: HTTP.Request.Options): Promise<[SPARQL.RawResults.Class, HTTP.Response.Class]>;
 	    executeASKQuery(documentURI: string, askQuery: string, requestOptions?: HTTP.Request.Options): Promise<[boolean, HTTP.Response.Class]>;
@@ -1586,29 +1610,6 @@ declare module 'carbonldp/APIDescription' {
 	export interface Class {
 	    version: string;
 	    buildDate: Date;
-	}
-	export default Class;
-
-}
-declare module 'carbonldp/RDFRepresentation' {
-	import * as ObjectSchema from 'carbonldp/ObjectSchema';
-	import * as PersistedDocument from 'carbonldp/PersistedDocument';
-	import Resource from 'carbonldp/Resource';
-	import * as HTTP from 'carbonldp/HTTP';
-	export const RDF_CLASS: string;
-	export const SCHEMA: ObjectSchema.Class;
-	export interface Class extends PersistedDocument.Class {
-	    fileIdentifier: string;
-	    mediaType: string;
-	    size: number;
-	    getFile: () => Promise<[Blob, HTTP.Response.Class]>;
-	}
-	export class Factory {
-	    static hasClassProperties(object: Object): boolean;
-	    static is(object: Object): boolean;
-	    static decorate<T extends PersistedDocument.Class>(persistedDocument: T): T & Class;
-	    static hasRDFClass(resource: Resource): boolean;
-	    static hasRDFClass(expandedObject: Object): boolean;
 	}
 	export default Class;
 

@@ -10,7 +10,7 @@ var NS = require("./NS");
 var ObjectSchema = require("./ObjectSchema");
 var LDP = require("./LDP");
 var SPARQL = require("./SPARQL");
-var NonRDFSource = require("./NonRDFSource");
+var RDFRepresentation = require("./RDFRepresentation");
 var Documents = (function () {
     function Documents(context) {
         if (context === void 0) { context = null; }
@@ -123,8 +123,8 @@ var Documents = (function () {
             document._syncSavedFragments();
             if (LDP.Container.Factory.hasRDFClass(document))
                 LDP.PersistedContainer.Factory.decorate(document);
-            if (NonRDFSource.Factory.hasRDFClass(document))
-                NonRDFSource.Factory.decorate(document);
+            if (RDFRepresentation.Factory.hasRDFClass(document))
+                RDFRepresentation.Factory.decorate(document);
             return [document, response];
         });
     };
@@ -275,18 +275,17 @@ var Documents = (function () {
         HTTP.Request.Util.setIfMatchHeader(persistedDocument._etag, requestOptions);
         return HTTP.Request.Service.delete(persistedDocument.id, persistedDocument.toJSON(), requestOptions);
     };
-    Documents.prototype.getFile = function (nonRDFSource) {
-        if (!NonRDFSource.Factory.is(nonRDFSource))
-            return Promise.reject(new Errors.IllegalArgumentError("No NonRDFSource Document was provided."));
-        var uri = this.context.resolve(nonRDFSource.id);
-        var requestOptions = {};
+    Documents.prototype.download = function (rdfRepresentation) {
+        if (!RDFRepresentation.Factory.is(rdfRepresentation))
+            return Promise.reject(new Errors.IllegalArgumentError("No RDFRepresentation Document was provided."));
+        var uri = this.context.resolve(rdfRepresentation.id);
+        var requestOptions = { isFile: true };
         if (this.context && this.context.auth.isAuthenticated())
             this.context.auth.addAuthentication(requestOptions);
-        HTTP.Request.Util.setAcceptHeader(nonRDFSource.mediaType, requestOptions);
+        HTTP.Request.Util.setAcceptHeader(rdfRepresentation.mediaType, requestOptions);
         HTTP.Request.Util.setPreferredInteractionModel(NS.LDP.Class.NonRDFSource, requestOptions);
         return HTTP.Request.Service.get(uri, requestOptions).then(function (response) {
-            var blob = new Blob([response.request.response], { type: nonRDFSource.mediaType });
-            return [blob, response];
+            return [response.data, response];
         });
     };
     Documents.prototype.getSchemaFor = function (object) {

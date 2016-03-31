@@ -11,6 +11,7 @@ export interface Options {
 	sendCredentialsOnCORS?:boolean;
 	timeout?:number;
 	request?:XMLHttpRequest;
+	isFile?:boolean;
 }
 
 export interface ContainerRetrievalPreferences {
@@ -96,6 +97,7 @@ export class Service {
 			if ( options.headers ) setHeaders( request, options.headers );
 			request.withCredentials = options.sendCredentialsOnCORS;
 			if ( options.timeout ) request.timeout = options.timeout;
+			if ( options.isFile ) request.responseType = "blob";
 
 			request.onload = onLoad( resolve, reject, request );
 			request.onerror = onError( reject, request );
@@ -110,7 +112,7 @@ export class Service {
 		if( parser === null ) return requestPromise;
 
 		return requestPromise.then( ( response:Response ) => {
-			return parser.parse( response.data ).then( ( parsedBody:T ) => {
+			return parser.parse( <string> response.data ).then( ( parsedBody:T ) => {
 				return [ parsedBody, response ];
 			});
 		});

@@ -3,7 +3,7 @@ var Header = require("./Header");
 var Class = (function () {
     function Class(request) {
         this.status = request.status;
-        this.data = request.responseText;
+        this.data = request.response || request.responseText;
         this.setHeaders(request);
         this.request = request;
     }

@@ -27,7 +27,7 @@ export interface Class extends PersistedDocument.Class {
 	mediaType:string;
 	size:number;
 
-	getFile:() => Promise<[ Blob, HTTP.Response.Class ]>;
+	download:() => Promise<[ Blob, HTTP.Response.Class ]>;
 }
 
 export class Factory {
@@ -35,7 +35,7 @@ export class Factory {
 		return Utils.hasPropertyDefined( object, "fileIdentifier" )
 			&& Utils.hasPropertyDefined( object, "mediaType" )
 			&& Utils.hasPropertyDefined( object, "size" )
-			&& Utils.hasPropertyDefined( object, "getFile" );
+			&& Utils.hasPropertyDefined( object, "download" );
 	}
 
 	static is( object:Object ):boolean {
@@ -48,11 +48,11 @@ export class Factory {
 		if( Factory.hasClassProperties( persistedDocument ) ) return <any> persistedDocument;
 
 		Object.defineProperties( persistedDocument, {
-			"getFile": {
+			"download": {
 				writable: false,
 				enumerable: false,
 				configurable: true,
-				value: getFile,
+				value: download,
 			},
 		} );
 
@@ -74,9 +74,9 @@ export class Factory {
 	}
 }
 
-function getFile():Promise<[ Blob, HTTP.Response.Class ]> {
+function download():Promise<[ Blob, HTTP.Response.Class ]> {
 	let that:Class = ( <Class> this );
-	return that._documents.getFile( that );
+	return that._documents.download( that );
 }
 
 export default Class;

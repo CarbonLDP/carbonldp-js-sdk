@@ -8,7 +8,7 @@ export interface Class extends PersistedDocument.Class {
     fileIdentifier: string;
     mediaType: string;
     size: number;
-    getFile: () => Promise<[Blob, HTTP.Response.Class]>;
+    download: () => Promise<[Blob, HTTP.Response.Class]>;
 }
 export declare class Factory {
     static hasClassProperties(object: Object): boolean;

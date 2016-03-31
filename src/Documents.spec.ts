@@ -30,7 +30,7 @@ import * as ObjectSchema from "./ObjectSchema";
 import * as SPARQL from "./SPARQL";
 import * as Utils from "./Utils";
 import Pointer from "./Pointer";
-import * as NonRDFSource from "./NonRDFSource";
+import * as RDFRepresentation from "./RDFRepresentation";
 
 // TODO: Add description
 describe( module( "Carbon/Documents", "" ), ():void => {
@@ -499,9 +499,9 @@ describe( module( "Carbon/Documents", "" ), ():void => {
 
 	it( hasMethod(
 		INSTANCE,
-		"getFile",
-		"Obtains the Blob object from the server referred by the NonRDFSource Document provided.", [
-			{ name: "nonRDFSource", type: "Carbon.NonRDFSource.Class" }
+		"download",
+		"Obtains the Blob object from the server referred by the RDFRepresentation Document provided.", [
+			{ name: "rdfRepresentation", type: "Carbon.RDFRepresentation.Class" }
 		],
 		{ type: "Promise<[ Blob, Carbon.HTTP.Response.Class ]>" }
 	), ( done:{ ():void, fail:() => void } ):void => {
@@ -515,19 +515,19 @@ describe( module( "Carbon/Documents", "" ), ():void => {
 		let documents:Documents = context.documents;
 
 		let document:PersistedDocument.Class = PersistedDocument.Factory.create( "http://example.com/resource/", documents );
-		document.types.push( NonRDFSource.RDF_CLASS );
+		document.types.push( RDFRepresentation.RDF_CLASS );
 
-		let nonRDFSource:NonRDFSource.Class = NonRDFSource.Factory.decorate( document );
-		nonRDFSource.mediaType = "text/plain";
-		nonRDFSource.fileIdentifier = "00-01";
-		nonRDFSource.size = 68;
+		let rdfRepresentation:RDFRepresentation.Class = RDFRepresentation.Factory.decorate( document );
+		rdfRepresentation.mediaType = "text/plain";
+		rdfRepresentation.fileIdentifier = "00-01";
+		rdfRepresentation.size = 68;
 
-		expect( documents.getFile ).toBeDefined();
-		expect( Utils.isFunction( documents.getFile ) ).toBe( true );
+		expect( documents.download ).toBeDefined();
+		expect( Utils.isFunction( documents.download ) ).toBe( true );
 
 		jasmine.Ajax.stubRequest( "http://example.com/resource/", null, "GET" ).andReturn({
 			status: 200,
-			response: "486921aa54686973206973206d7920504c41494e20626f72696e672054455854202028ca0203f21bc29aa4279657e205c2028202225e1202229202f"
+			response: <any> new Blob( [ "486921aa54686973206973206d7920504c41494e20626f72696e672054455854202028ca0203f21bc29aa4279657e205c2028202225e1202229202f" ], { type: "text/plain" } )
 		});
 
 		let spies = {
@@ -540,7 +540,7 @@ describe( module( "Carbon/Documents", "" ), ():void => {
 		};
 		let spySuccess = spyOn( spies, "success" ).and.callThrough();
 
-		let promise:Promise<any> = documents.getFile( nonRDFSource ).then( spies.success );
+		let promise:Promise<any> = documents.download( rdfRepresentation ).then( spies.success );
 
 		Promise.all( [ promise ] ).then( ():void => {
 			expect( spySuccess ).toHaveBeenCalled();

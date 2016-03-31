@@ -3,14 +3,14 @@ import * as Header from "./Header";
 export class Class {
 	constructor( request:XMLHttpRequest ) {
 		this.status = request.status;
-		this.data = request.responseText;
+		this.data = request.response || request.responseText;
 		this.setHeaders( request );
 
 		this.request = request;
 	}
 
 	status:number;
-	data:string;
+	data:string | Blob;
 	headers:Map<string, Header.Class>;
 	request:XMLHttpRequest;
 

@@ -7,6 +7,7 @@ export interface Options {
     sendCredentialsOnCORS?: boolean;
     timeout?: number;
     request?: XMLHttpRequest;
+    isFile?: boolean;
 }
 export interface ContainerRetrievalPreferences {
     include?: string[];

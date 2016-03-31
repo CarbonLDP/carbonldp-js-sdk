@@ -2,7 +2,7 @@ import * as Header from "./Header";
 export declare class Class {
     constructor(request: XMLHttpRequest);
     status: number;
-    data: string;
+    data: string | Blob;
     headers: Map<string, Header.Class>;
     request: XMLHttpRequest;
     getHeader(name: string): Header.Class;

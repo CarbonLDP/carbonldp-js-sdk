@@ -65,6 +65,8 @@ var Service = (function () {
             request.withCredentials = options.sendCredentialsOnCORS;
             if (options.timeout)
                 request.timeout = options.timeout;
+            if (options.isFile)
+                request.responseType = "blob";
             request.onload = onLoad(resolve, reject, request);
             request.onerror = onError(reject, request);
             if (body) {
