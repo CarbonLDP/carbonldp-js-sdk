@@ -339,6 +339,8 @@ declare module 'carbonldp/HTTP/Request' {
 	}
 	export class Service {
 	    private static defaultOptions;
+	    static send(method: (Method | string), url: string, body: Blob, options?: Options): Promise<Response>;
+	    static send<T>(method: (Method | string), url: string, body: Blob, options?: Options, parser?: Parser<T>): Promise<[T, Response]>;
 	    static send(method: (Method | string), url: string, options?: Options): Promise<Response>;
 	    static send(method: (Method | string), url: string, body: string, options?: Options): Promise<Response>;
 	    static send(method: (Method | string), url: string, body: string, options?: Options): Promise<Response>;
@@ -347,6 +349,8 @@ declare module 'carbonldp/HTTP/Request' {
 	    static head(url: string, options?: Options): Promise<Response>;
 	    static get(url: string, options?: Options): Promise<Response>;
 	    static get<T>(url: string, options?: Options, parser?: Parser<T>): Promise<[T, Response]>;
+	    static post(url: string, body: Blob, options?: Options): Promise<Response>;
+	    static post<T>(url: string, body: Blob, options?: Options, parser?: Parser<T>): Promise<[T, Response]>;
 	    static post(url: string, body: string, options?: Options): Promise<Response>;
 	    static post<T>(url: string, body: string, options?: Options, parser?: Parser<T>): Promise<[T, Response]>;
 	    static put(url: string, body: string, options?: Options): Promise<Response>;
@@ -1315,9 +1319,9 @@ declare module 'carbonldp/LDP/PersistedContainer' {
 	import * as Pointer from 'carbonldp/Pointer';
 	export interface Class extends PersistedDocument.Class {
 	    createChild(slug: string, object: Object): Promise<[Pointer.Class, HTTP.Response.Class]>;
-	    createChild(slug: string): Promise<[Pointer.Class, HTTP.Response.Class]>;
 	    createChild(object: Object): Promise<[Pointer.Class, HTTP.Response.Class]>;
-	    createChild(): Promise<[Pointer.Class, HTTP.Response.Class]>;
+	    upload(slug: string, blob: Blob): Promise<[Pointer.Class, HTTP.Response.Class]>;
+	    upload(blob: Blob): Promise<[Pointer.Class, HTTP.Response.Class]>;
 	}
 	export class Factory {
 	    static hasClassProperties(document: Document.Class): boolean;
@@ -1355,6 +1359,8 @@ declare module 'carbonldp/Documents' {
 	    get(uri: string, requestOptions?: HTTP.Request.Options): Promise<[PersistedDocument.Class, HTTP.Response.Class]>;
 	    createChild(parentURI: string, slug: string, childDocument: Document.Class, requestOptions?: HTTP.Request.Options): Promise<[Pointer.Class, HTTP.Response.Class]>;
 	    createChild(parentURI: string, childDocument: Document.Class, requestOptions?: HTTP.Request.Options): Promise<[Pointer.Class, HTTP.Response.Class]>;
+	    upload(parentURI: string, slug: string, file: Blob, requestOptions?: HTTP.Request.Options): Promise<[Pointer.Class, HTTP.Response.Class]>;
+	    upload(parentURI: string, file: Blob, requestOptions?: HTTP.Request.Options): Promise<[Pointer.Class, HTTP.Response.Class]>;
 	    getMembers(uri: string, includeNonReadable: boolean, requestOptions: HTTP.Request.Options): Promise<[Pointer.Class[], HTTP.Response.Class]>;
 	    getMembers(uri: string, includeNonReadable: boolean): Promise<[Pointer.Class[], HTTP.Response.Class]>;
 	    getMembers(uri: string, requestOptions: HTTP.Request.Options): Promise<[Pointer.Class[], HTTP.Response.Class]>;

@@ -1630,20 +1630,48 @@ $__System.register("18", ["9", "19", "5", "6", "1a", "16", "4", "11", "d", "1b",
                     var childDocument = !Utils.isString(slugOrChildDocument) ? slugOrChildDocument : childDocumentOrRequestOptions;
                     requestOptions = !Utils.isString(slugOrChildDocument) ? childDocumentOrRequestOptions : requestOptions;
                     if (PersistedDocument.Factory.is(childDocument))
-                        return Promise.reject(new Errors.IllegalArgumentError("The Document provided has been already persisted."));
-                    if (childDocument.id) {
-                        if (!RDF.URI.Util.isBaseOf(parentURI, childDocument.id))
-                            return Promise.reject(new Errors.IllegalArgumentError("The childDocument's URI is not relative to the parentURI specified"));
-                    }
+                        return Promise.reject(new Errors.IllegalArgumentError("The childDocument provided has been already persisted."));
+                    if (childDocument.id && (!RDF.URI.Util.isBaseOf(parentURI, childDocument.id)))
+                        return Promise.reject(new Errors.IllegalArgumentError("The childDocument's URI is not relative to the parentURI specified"));
                     if (this.context && this.context.auth.isAuthenticated())
                         this.context.auth.addAuthentication(requestOptions);
-                    HTTP.Request.Util.setAcceptHeader("application/ld+json", requestOptions);
                     HTTP.Request.Util.setContentTypeHeader("application/ld+json", requestOptions);
+                    HTTP.Request.Util.setAcceptHeader("application/ld+json", requestOptions);
+                    HTTP.Request.Util.setPreferredInteractionModel(NS.LDP.Class.Container, requestOptions);
+                    var body = childDocument.toJSON(this, this.jsonldConverter);
+                    if (slug !== null)
+                        HTTP.Request.Util.setSlug(slug, requestOptions);
+                    return HTTP.Request.Service.post(parentURI, body, requestOptions).then(function (response) {
+                        var locationHeader = response.getHeader("Location");
+                        if (locationHeader === null || locationHeader.values.length < 1)
+                            throw new HTTP.Errors.BadResponseError("The response is missing a Location header.", response);
+                        if (locationHeader.values.length !== 1)
+                            throw new HTTP.Errors.BadResponseError("The response contains more than one Location header.", response);
+                        var locationURI = locationHeader.values[0].toString();
+                        var pointer = _this.getPointer(locationURI);
+                        return [
+                            pointer,
+                            response,
+                        ];
+                    });
+                };
+                Documents.prototype.upload = function (parentURI, slugOrBlob, blobOrRequestOptions, requestOptions) {
+                    var _this = this;
+                    if (blobOrRequestOptions === void 0) { blobOrRequestOptions = {}; }
+                    if (requestOptions === void 0) { requestOptions = {}; }
+                    var slug = Utils.isString(slugOrBlob) ? slugOrBlob : null;
+                    var blob = !Utils.isString(slugOrBlob) ? slugOrBlob : blobOrRequestOptions;
+                    requestOptions = !Utils.isString(slugOrBlob) ? blobOrRequestOptions : requestOptions;
+                    if (!(blob instanceof Blob))
+                        return Promise.reject(new Errors.IllegalArgumentError("The file is not a valid Blob object."));
+                    if (this.context && this.context.auth.isAuthenticated())
+                        this.context.auth.addAuthentication(requestOptions);
+                    HTTP.Request.Util.setContentTypeHeader(blob.type, requestOptions);
+                    HTTP.Request.Util.setAcceptHeader("application/ld+json", requestOptions);
                     HTTP.Request.Util.setPreferredInteractionModel(NS.LDP.Class.Container, requestOptions);
                     if (slug !== null)
                         HTTP.Request.Util.setSlug(slug, requestOptions);
-                    var body = childDocument.toJSON(this, this.jsonldConverter);
-                    return HTTP.Request.Service.post(parentURI, body, requestOptions).then(function (response) {
+                    return HTTP.Request.Service.post(parentURI, blob, requestOptions).then(function (response) {
                         var locationHeader = response.getHeader("Location");
                         if (locationHeader === null || locationHeader.values.length < 1)
                             throw new HTTP.Errors.BadResponseError("The response is missing a Location header.", response);
@@ -2062,15 +2090,26 @@ $__System.register("20", ["6"], function(exports_1) {
     var Utils;
     var Factory;
     function createChild(slugOrDocument, document) {
-        if (slugOrDocument === void 0) { slugOrDocument = null; }
         if (document === void 0) { document = null; }
         var slug = Utils.isString(slugOrDocument) ? slugOrDocument : null;
-        document = !!slugOrDocument && !Utils.isString(slugOrDocument) ? slugOrDocument : (!!document ? document : null);
-        if (slug !== null) {
+        document = slug ? document : slugOrDocument;
+        if (slug) {
             return this._documents.createChild(this.id, slug, document);
         }
-        else
+        else {
             return this._documents.createChild(this.id, document);
+        }
+    }
+    function upload(slugOrBlob, blob) {
+        if (blob === void 0) { blob = null; }
+        var slug = Utils.isString(slugOrBlob) ? slugOrBlob : null;
+        blob = slug ? blob : slugOrBlob;
+        if (slug) {
+            return this._documents.upload(this.id, slug, blob);
+        }
+        else {
+            return this._documents.upload(this.id, blob);
+        }
     }
     return {
         setters:[
@@ -2082,7 +2121,8 @@ $__System.register("20", ["6"], function(exports_1) {
                 function Factory() {
                 }
                 Factory.hasClassProperties = function (document) {
-                    return (Utils.hasFunction(document, "createChild"));
+                    return Utils.hasFunction(document, "createChild")
+                        && Utils.hasFunction(document, "upload");
                 };
                 Factory.decorate = function (persistedDocument) {
                     if (Factory.hasClassProperties(persistedDocument))
@@ -2093,6 +2133,12 @@ $__System.register("20", ["6"], function(exports_1) {
                             enumerable: false,
                             configurable: true,
                             value: createChild,
+                        },
+                        "upload": {
+                            writable: false,
+                            enumerable: false,
+                            configurable: true,
+                            value: upload,
                         },
                     });
                     return persistedDocument;
@@ -10518,10 +10564,14 @@ $__System.register("4e", ["4c", "4f", "4d", "50", "6"], function(exports_1) {
                     if (bodyOrOptions === void 0) { bodyOrOptions = Service.defaultOptions; }
                     if (options === void 0) { options = Service.defaultOptions; }
                     if (parser === void 0) { parser = null; }
-                    var body = bodyOrOptions && Utils.isString(bodyOrOptions) ? bodyOrOptions : null;
-                    options = !bodyOrOptions || Utils.isString(bodyOrOptions) ? options : bodyOrOptions;
-                    options = options ? options : {};
-                    options = Utils.extend(options, Service.defaultOptions);
+                    var body = null;
+                    if ((bodyOrOptions instanceof Blob) || Utils.isString(bodyOrOptions)) {
+                        body = bodyOrOptions;
+                    }
+                    else {
+                        options = bodyOrOptions ? bodyOrOptions : options;
+                    }
+                    options = Utils.extend(options || {}, Service.defaultOptions);
                     if (Utils.isNumber(method))
                         method = Method_1.default[method];
                     var requestPromise = new Promise(function (resolve, reject) {
@@ -13084,7 +13134,7 @@ $__System.register("69", ["b", "f", "e", "7", "2", "26", "10", "18", "9", "22", 
                     this.apps = new Apps.Class(this);
                 }
                 Object.defineProperty(Carbon, "version", {
-                    get: function () { return "0.20.0-ALPHA"; },
+                    get: function () { return "0.21.0-ALPHA"; },
                     enumerable: true,
                     configurable: true
                 });

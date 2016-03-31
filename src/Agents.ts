@@ -11,7 +11,7 @@ export class Class {
 	constructor( context:Context ) {
 		this.context = context;
 	}
-	
+
 	create( agentDocument:Agent.Class ):Promise<[ Pointer.Class, Response.Class]>;
 	create( slug:string, agentDocument:Agent.Class ):Promise<[ Pointer.Class, Response.Class]>;
 	create( slugOrAgent:any, agentDocument?:Agent.Class ):Promise<[ Pointer.Class, Response.Class]> {

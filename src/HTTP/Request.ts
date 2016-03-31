@@ -69,16 +69,23 @@ export class Service {
 		sendCredentialsOnCORS: true,
 	};
 
+	static send( method:(Method | string), url:string, body:Blob, options?:Options ):Promise<Response>;
+	static send<T>( method:(Method | string), url:string, body:Blob, options?:Options, parser?:Parser<T> ):Promise<[ T, Response ]>;
+
 	static send( method:(Method | string), url:string, options?:Options ):Promise<Response>;
 	static send( method:(Method | string), url:string, body:string, options?:Options ):Promise<Response>;
 	static send( method:(Method | string), url:string, body:string, options?:Options ):Promise<Response>;
 	static send<T>( method:(Method | string), url:string, body:string, options?:Options, parser?:Parser<T> ):Promise<[ T, Response ]>;
 	static send<T>( method:any, url:string, bodyOrOptions:any = Service.defaultOptions, options:Options = Service.defaultOptions, parser:Parser<T> = null ):any {
-		let body:string = bodyOrOptions && Utils.isString( bodyOrOptions ) ? bodyOrOptions : null;
+		let body:string | Blob = null;
 
-		options = ! bodyOrOptions || Utils.isString( bodyOrOptions ) ? options : bodyOrOptions;
-		options = options ? options : {};
-		options = Utils.extend( options, Service.defaultOptions );
+		if ( ( bodyOrOptions instanceof Blob ) || Utils.isString( bodyOrOptions ) ) {
+			body = bodyOrOptions;
+		} else {
+			options = bodyOrOptions ? bodyOrOptions : options;
+		}
+
+		options = Utils.extend( options || {}, Service.defaultOptions );
 
 		if ( Utils.isNumber( method ) ) method = Method[ method ];
 
@@ -122,6 +129,9 @@ export class Service {
 	static get<T>( url:string, options:Options = Service.defaultOptions, parser:Parser<T> = null ):any {
 		return Service.send( Method.GET, url, null, options, parser );
 	}
+
+	static post( url:string, body:Blob, options?:Options ):Promise<Response>;
+	static post<T>( url:string, body:Blob, options?:Options, parser?:Parser<T> ):Promise<[ T, Response ] >;
 
 	static post( url:string, body:string, options?:Options ):Promise<Response>;
 	static post<T>( url:string, body:string, options?:Options, parser?:Parser<T> ):Promise<[ T, Response ] >;

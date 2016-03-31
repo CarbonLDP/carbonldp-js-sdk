@@ -1,6 +1,9 @@
 <html>
 <head></head>
 <body>
+
+	<input type="file" id="upload" />
+
 	<script src="../dist/bundles/Carbon.sfx.js"></script>
 	<script>
 		(function() {
@@ -59,14 +62,23 @@
 			} );
 
 			var appContext;
-			var document;
+			var filesDocument;
 
 			carbon.auth.authenticate( "admin@carbonldp.com", "hello" ).then( function() {
-				var app = Carbon.Apps.App.Factory.create( "ASDF App" );
-				return carbon.apps.createApp( "asdf-app/", app );
-			} ).then( function( result ) {
-				console.log( result );
-			})
+				return carbon.apps.getContext( "test-app/" );
+			}).then( function( _appContext ) {
+				appContext = _appContext;
+				return appContext.documents.get( "files/" );
+			}).then( function( [ _document, result ] ) {
+				filesDocument = _document;
+			});
+
+			var input = document.querySelector( "#upload" );
+			input.addEventListener( "change", function( event ) {
+				filesDocument.upload( event.target.files[ 0 ] ).then( function( result ) {
+					console.log( result );
+				});
+			});
 		})();
 	</script>
 </body>
