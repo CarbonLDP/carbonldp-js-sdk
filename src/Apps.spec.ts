@@ -358,14 +358,14 @@ describe( module( "Carbon/Apps" ), ():void => {
 				let spy = spyOn( context.documents, "createChild" );
 				let app:App.Class = App.Factory.create( "App name" );
 
-				apps.create( "The name of the App", app );
-				expect( spy ).toHaveBeenCalledWith( appsContainerURI, "The name of the App", app );
+				apps.create( "slug-of-app", app );
+				expect( spy ).toHaveBeenCalledWith( appsContainerURI, "slug-of-app", app );
 
 				spy.calls.reset();
 				apps.create( null, app );
 				expect( spy ).toHaveBeenCalledWith( appsContainerURI, null, app );
 
-				promise = apps.create( "The name of the App", null );
+				promise = apps.create( "slug-of-app", null );
 				expect( promise instanceof Promise ).toBe( true );
 
 				let spies = {
