@@ -34,4 +34,4 @@ var Factory = (function () {
 }());
 exports.Factory = Factory;
 
-//# sourceMappingURL=NonRDFSource.js.map
+//# sourceMappingURL=RDFRepresentation.js.map

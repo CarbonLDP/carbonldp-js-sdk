@@ -1,4 +1,4 @@
-import * as NonRDFSource from "./NonRDFSource";
+import * as NonRDFSource from "./RDFRepresentation";
 import {module, isDefined, hasProperty, STATIC, clazz, hasMethod} from "./test/JasmineExtender";
 import * as Utils from "./Utils";
 import * as NS from "./NS";

@@ -1760,7 +1760,7 @@ declare module 'carbonldp/Carbon' {
 	export default Carbon;
 
 }
-declare module 'carbonldp/NonRDFSource' {
+declare module 'carbonldp/RDFRepresentation' {
 	import * as ObjectSchema from 'carbonldp/ObjectSchema';
 	import * as PersistedDocument from 'carbonldp/PersistedDocument';
 	export const RDF_CLASS: string;
