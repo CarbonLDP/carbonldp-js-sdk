@@ -1,3 +1,6 @@
+# 0.22.0 (March 31, 2016)
+- Added `PersistedApp.Class` interface
+
 # 0.21.1 (March 31, 2016)
 - Added signature in `HTTP.Request.Service.delete()` to support sending a delete request without a body
 

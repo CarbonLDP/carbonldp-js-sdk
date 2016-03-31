@@ -13143,7 +13143,7 @@ $__System.register("69", ["b", "f", "e", "7", "2", "26", "10", "18", "9", "22", 
                     this.apps = new Apps.Class(this);
                 }
                 Object.defineProperty(Carbon, "version", {
-                    get: function () { return "0.21.1-ALPHA"; },
+                    get: function () { return "0.22.0-ALPHA"; },
                     enumerable: true,
                     configurable: true
                 });
