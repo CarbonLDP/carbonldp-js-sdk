@@ -1773,7 +1773,7 @@ $__System.register("18", ["9", "19", "5", "6", "1a", "16", "4", "11", "d", "1b",
                     HTTP.Request.Util.setAcceptHeader("application/ld+json", requestOptions);
                     HTTP.Request.Util.setPreferredInteractionModel(NS.LDP.Class.RDFSource, requestOptions);
                     HTTP.Request.Util.setIfMatchHeader(persistedDocument._etag, requestOptions);
-                    return HTTP.Request.Service.delete(persistedDocument.id, persistedDocument.toJSON(), requestOptions);
+                    return HTTP.Request.Service.delete(persistedDocument.id, requestOptions);
                 };
                 Documents.prototype.getSchemaFor = function (object) {
                     if ("@id" in object) {
@@ -3761,8 +3761,8 @@ $__System.register("2a", ["19", "9", "2b", "29"], function(exports_1) {
     }
 });
 
-$__System.register("2c", ["9", "19", "11", "5", "2a", "2b", "2d"], function(exports_1) {
-    var Errors, HTTP, NS, RDF, BasicAuthenticator_1, UsernameAndPasswordToken_1, Token;
+$__System.register("2c", ["9", "19", "11", "5", "2a", "2b", "2d", "6"], function(exports_1) {
+    var Errors, HTTP, NS, RDF, BasicAuthenticator_1, UsernameAndPasswordToken_1, Token, Utils;
     var Class;
     return {
         setters:[
@@ -3786,6 +3786,9 @@ $__System.register("2c", ["9", "19", "11", "5", "2a", "2b", "2d"], function(expo
             },
             function (Token_1) {
                 Token = Token_1;
+            },
+            function (Utils_1) {
+                Utils = Utils_1;
             }],
         execute: function() {
             Class = (function () {
@@ -3801,6 +3804,8 @@ $__System.register("2c", ["9", "19", "11", "5", "2a", "2b", "2d"], function(expo
                 Class.prototype.authenticate = function (authenticationOrCredentials) {
                     var _this = this;
                     if (Token.Factory.is(authenticationOrCredentials)) {
+                        if (Utils.isString(authenticationOrCredentials.expirationTime))
+                            authenticationOrCredentials.expirationTime = new Date(authenticationOrCredentials.expirationTime);
                         this._credentials = authenticationOrCredentials;
                         return new Promise(function (resolve, reject) {
                             if (!_this.isAuthenticated()) {
@@ -4185,8 +4190,6 @@ $__System.register("26", ["27", "28", "2a", "2c", "2d", "2b", "9", "6"], functio
                     this.authenticator = authenticator;
                     if (authenticationToken)
                         return authenticator.authenticate(authenticationToken);
-                    if (Utils.isString(credentials.expirationTime))
-                        credentials.expirationTime = new Date(credentials.expirationTime);
                     return authenticator.authenticate(credentials);
                 };
                 return Class;
@@ -10560,11 +10563,13 @@ $__System.register("4e", ["4c", "4f", "4d", "50", "6"], function(exports_1) {
             Service = (function () {
                 function Service() {
                 }
-                Service.send = function (method, url, bodyOrOptions, options, parser) {
+                Service.send = function (method, url, bodyOrOptions, optionsOrParser, parser) {
                     if (bodyOrOptions === void 0) { bodyOrOptions = Service.defaultOptions; }
-                    if (options === void 0) { options = Service.defaultOptions; }
+                    if (optionsOrParser === void 0) { optionsOrParser = Service.defaultOptions; }
                     if (parser === void 0) { parser = null; }
                     var body = null;
+                    var options = Utils.hasProperty(optionsOrParser, "parse") ? bodyOrOptions : optionsOrParser;
+                    parser = Utils.hasProperty(optionsOrParser, "parse") ? optionsOrParser : parser;
                     if ((bodyOrOptions instanceof Blob) || Utils.isString(bodyOrOptions)) {
                         body = bodyOrOptions;
                     }
@@ -10630,11 +10635,11 @@ $__System.register("4e", ["4c", "4f", "4d", "50", "6"], function(exports_1) {
                     if (parser === void 0) { parser = null; }
                     return Service.send(Method_1.default.PATCH, url, bodyOrOptions, options, parser);
                 };
-                Service.delete = function (url, bodyOrOptions, options, parser) {
+                Service.delete = function (url, bodyOrOptions, optionsOrParser, parser) {
                     if (bodyOrOptions === void 0) { bodyOrOptions = Service.defaultOptions; }
-                    if (options === void 0) { options = Service.defaultOptions; }
+                    if (optionsOrParser === void 0) { optionsOrParser = Service.defaultOptions; }
                     if (parser === void 0) { parser = null; }
-                    return Service.send(Method_1.default.DELETE, url, bodyOrOptions, options, parser);
+                    return Service.send(Method_1.default.DELETE, url, bodyOrOptions, optionsOrParser, parser);
                 };
                 Service.defaultOptions = {
                     sendCredentialsOnCORS: true,
@@ -13134,7 +13139,7 @@ $__System.register("69", ["b", "f", "e", "7", "2", "26", "10", "18", "9", "22", 
                     this.apps = new Apps.Class(this);
                 }
                 Object.defineProperty(Carbon, "version", {
-                    get: function () { return "0.21.0-ALPHA"; },
+                    get: function () { return "0.21.1-ALPHA"; },
                     enumerable: true,
                     configurable: true
                 });

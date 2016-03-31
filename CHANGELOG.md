@@ -1,3 +1,6 @@
+# 0.21.1 (March 31, 2016)
+- Added signature in `HTTP.Request.Service.delete()` to support sending a delete request without a body
+
 # 0.21.0 (March 31, 2016)
 - Added `persistedDocument.upload()` method, which lets you upload a file and save it as a child of the document
 - Added `context.documents.upload()` method, same as `persistedDocument.upload()`

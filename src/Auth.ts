@@ -120,8 +120,6 @@ export class Class {
 		if ( authenticationToken )
 			return authenticator.authenticate( authenticationToken );
 
-		if ( Utils.isString( credentials.expirationTime ) )
-			credentials.expirationTime = new Date( <any> credentials.expirationTime );
 		return authenticator.authenticate( credentials );
 	}
 

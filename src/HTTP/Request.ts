@@ -75,9 +75,12 @@ export class Service {
 	static send( method:(Method | string), url:string, options?:Options ):Promise<Response>;
 	static send( method:(Method | string), url:string, body:string, options?:Options ):Promise<Response>;
 	static send( method:(Method | string), url:string, body:string, options?:Options ):Promise<Response>;
+	static send<T>( method:(Method | string), url:string, options?:Options, parser?:Parser<T> ):Promise<[ T, Response ]>;
 	static send<T>( method:(Method | string), url:string, body:string, options?:Options, parser?:Parser<T> ):Promise<[ T, Response ]>;
-	static send<T>( method:any, url:string, bodyOrOptions:any = Service.defaultOptions, options:Options = Service.defaultOptions, parser:Parser<T> = null ):any {
+	static send<T>( method:any, url:string, bodyOrOptions:any = Service.defaultOptions, optionsOrParser:any = Service.defaultOptions, parser:Parser<T> = null ):any {
 		let body:string | Blob = null;
+		let options:Options = Utils.hasProperty( optionsOrParser, "parse" ) ? bodyOrOptions : optionsOrParser;
+		parser = Utils.hasProperty( optionsOrParser, "parse" ) ? optionsOrParser : parser;
 
 		if ( ( bodyOrOptions instanceof Blob ) || Utils.isString( bodyOrOptions ) ) {
 			body = bodyOrOptions;
@@ -151,10 +154,12 @@ export class Service {
 		return Service.send( Method.PATCH, url, bodyOrOptions, options, parser );
 	}
 
+	static delete( url:string, options?:Options ):Promise<Response>;
 	static delete( url:string, body:string, options?:Options ):Promise<Response>;
+	static delete<T>( url:string, options?:Options, parser?:Parser<T> ):Promise<[ T, Response ]>;
 	static delete<T>( url:string, body:string, options?:Options, parser?:Parser<T> ):Promise<[ T, Response ]>;
-	static delete<T>( url:string, bodyOrOptions:any = Service.defaultOptions, options:Options = Service.defaultOptions, parser:Parser<T> = null ):any {
-		return Service.send( Method.DELETE, url, bodyOrOptions, options, parser );
+	static delete<T>( url:string, bodyOrOptions:any = Service.defaultOptions, optionsOrParser:any = Service.defaultOptions, parser:Parser<T> = null ):any {
+		return Service.send( Method.DELETE, url, bodyOrOptions, optionsOrParser, parser );
 	}
 }
 
