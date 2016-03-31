@@ -47,12 +47,16 @@ var Service = (function () {
         if (bodyOrOptions === void 0) { bodyOrOptions = Service.defaultOptions; }
         if (optionsOrParser === void 0) { optionsOrParser = Service.defaultOptions; }
         if (parser === void 0) { parser = null; }
-        var body = bodyOrOptions && Utils.isString(bodyOrOptions) ? bodyOrOptions : null;
+        var body = null;
         var options = Utils.hasProperty(optionsOrParser, "parse") ? bodyOrOptions : optionsOrParser;
         parser = Utils.hasProperty(optionsOrParser, "parse") ? optionsOrParser : parser;
-        options = !bodyOrOptions || Utils.isString(bodyOrOptions) ? options : bodyOrOptions;
-        options = options ? options : {};
-        options = Utils.extend(options, Service.defaultOptions);
+        if ((bodyOrOptions instanceof Blob) || Utils.isString(bodyOrOptions)) {
+            body = bodyOrOptions;
+        }
+        else {
+            options = bodyOrOptions ? bodyOrOptions : options;
+        }
+        options = Utils.extend(options || {}, Service.defaultOptions);
         if (Utils.isNumber(method))
             method = Method_1.default[method];
         var requestPromise = new Promise(function (resolve, reject) {

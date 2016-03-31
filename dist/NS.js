@@ -11,5 +11,7 @@ var RDF = require("./NS/RDF");
 exports.RDF = RDF;
 var XSD = require("./NS/XSD");
 exports.XSD = XSD;
+var VCARD = require("./NS/VCARD");
+exports.VCARD = VCARD;
 
 //# sourceMappingURL=NS.js.map

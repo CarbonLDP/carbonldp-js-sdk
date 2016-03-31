@@ -19,6 +19,11 @@ var Class = (function () {
         enumerable: true,
         configurable: true
     });
+    Object.defineProperty(Class, "Agent", {
+        get: function () { return namespace + "Agent"; },
+        enumerable: true,
+        configurable: true
+    });
     return Class;
 }());
 exports.Class = Class;
@@ -47,6 +52,11 @@ var Predicate = (function () {
     });
     Object.defineProperty(Predicate, "expirationTime", {
         get: function () { return namespace + "expirationTime"; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Predicate, "password", {
+        get: function () { return namespace + "password"; },
         enumerable: true,
         configurable: true
     });

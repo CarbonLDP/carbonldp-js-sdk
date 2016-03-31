@@ -246,7 +246,5 @@ var Factory = (function () {
     return Factory;
 }());
 exports.Factory = Factory;
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = Document;
 
 //# sourceMappingURL=Document.js.map

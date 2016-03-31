@@ -28,6 +28,7 @@ describe( module( "Carbon/settings" ), ():void => {
 		* auth.method: \`Carbon.Auth.Method.TOKEN\`
 		* platform.container: \`"platform/"\`
 		* platform.apps.container: \`"apps/"\`
+		* platform.agents.container: \`"agents/"\`
 		`
 	), ():void => {
 		expect( defaultExport ).toBeDefined();
@@ -47,6 +48,9 @@ describe( module( "Carbon/settings" ), ():void => {
 
 		expect( defaultExport[ "platform.apps.container" ] ).toBeDefined();
 		expect( defaultExport[ "platform.apps.container" ] ).toBe( "apps/" );
+
+		expect( defaultExport[ "platform.agents.container" ] ).toBeDefined();
+		expect( defaultExport[ "platform.agents.container" ] ).toBe( "agents/" );
 	});
 
 });

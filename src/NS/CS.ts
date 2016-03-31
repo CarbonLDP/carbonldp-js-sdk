@@ -4,6 +4,7 @@ class Class {
 	static get Application():string { return namespace + "Application"; }
 	static get Token():string { return namespace + "Token"; }
 	static get AllOrigins():string { return namespace + "AllOrigins"; }
+	static get Agent():string { return namespace + "Agent"; }
 }
 
 class Predicate {
@@ -12,6 +13,7 @@ class Predicate {
 	static get rootContainer():string { return namespace + "rootContainer"; }
 	static get tokenKey():string { return namespace + "tokenKey"; }
 	static get expirationTime():string { return namespace + "expirationTime"; }
+	static get password():string { return namespace + "password"; }
 }
 
 export {
