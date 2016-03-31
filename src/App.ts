@@ -6,11 +6,8 @@ import {IllegalArgumentError} from "./Errors";
 
 import * as Context from "./App/Context";
 
-export interface Interface {
+export interface Class extends Document.Class {
 	name:string;
-}
-
-export interface Class extends Interface, Document.Class {
 }
 
 export const RDF_CLASS:string = NS.CS.Class.Application;

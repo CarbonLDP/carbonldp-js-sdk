@@ -3,7 +3,9 @@ import * as App from "./App";
 import * as PersistedDocument from "./PersistedDocument";
 import * as Utils from "./Utils";
 
-export interface Class extends App.Interface, PersistedDocument.Class {
+// TODO Mark as error if it extends from App.Class
+export interface Class extends PersistedDocument.Class {
+	name:string;
 	rootContainer:LDP.PersistedContainer.Class;
 }
 
