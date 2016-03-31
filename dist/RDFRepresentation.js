@@ -63,4 +63,4 @@ function getFile() {
     return that._documents.getFile(that);
 }
 
-//# sourceMappingURL=NonRDFSource.js.map
+//# sourceMappingURL=RDFRepresentation.js.map

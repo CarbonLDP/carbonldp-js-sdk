@@ -14,17 +14,39 @@ import {
 	hasProperty,
 	hasInterface,
 	extendsClass,
+	reexports,
 
 } from "./test/JasmineExtender";
-import * as Utils from "./Utils";
-import * as Auth from "./Auth";
 import setting from "./settings";
+
+import * as Agent from "./Agent";
+import * as Agents from "./Agents";
 import * as APIDescription from "./APIDescription";
-import Apps from "./Apps";
-import Documents from "./Documents";
+import * as App from "./App";
+import * as Apps from "./Apps";
+import * as Auth from "./Auth";
 import * as Document from "./Document";
-import * as RDF from "./RDF";
+import Documents from "./Documents";
+import * as Errors from "./Errors";
+import * as Fragment from "./Fragment";
 import * as HTTP from "./HTTP";
+import * as JSONLDConverter from "./JSONLDConverter";
+import * as LDP from "./LDP";
+import * as NamedFragment from "./NamedFragment";
+import * as NS from "./NS";
+import * as ObjectSchema from "./ObjectSchema";
+import * as Persisted from "./Persisted";
+import * as PersistedApp from "./PersistedApp";
+import * as PersistedDocument from "./PersistedDocument";
+import * as PersistedFragment from "./PersistedFragment";
+import * as PersistedNamedFragment from "./PersistedNamedFragment";
+import * as PersistedResource from "./PersistedResource";
+import * as Pointer from "./Pointer";
+import * as RDF from "./RDF";
+import * as Resource from "./Resource";
+import * as SDKContext from "./SDKContext";
+import * as SPARQL from "./SPARQL";
+import * as Utils from "./Utils";
 
 import Carbon from "./Carbon";
 
@@ -36,6 +58,24 @@ describe( module( "Carbon" ), ():void => {
 	), ():void => {
 		let carbon:Carbon;
 		let myCarbon:Carbon;
+
+		beforeEach( ():void => {
+			carbon = new Carbon();
+
+			myCarbon = new Carbon({
+				"domain": "example.com",
+				"http.ssl": false,
+				"auth.method": Auth.Method.TOKEN,
+				"platform.container": "example-platform/",
+				"platform.apps.container": "example-apps/"
+			});
+
+			jasmine.Ajax.install();
+		});
+
+		afterEach( ():void => {
+			jasmine.Ajax.uninstall();
+		});
 
 		it( isDefined(), ():void => {
 			expect( Carbon ).toBeDefined();
@@ -55,91 +95,258 @@ describe( module( "Carbon" ), ():void => {
 		});
 
 		it( hasProperty(
+			INSTANCE,
+			"version",
+			"string",
+			"Returns the version of the SDK"
+		), ():void => {
+			expect( carbon.version ).toBeDefined();
+			expect( Utils.isString( carbon.version ) ).toBe( true );
+
+			expect( carbon.version ).toMatch( /\d+\.\d+\.\d+.*/ );
+		});
+
+		it( reexports(
+			STATIC,
+			"Agent",
+			"Carbon/Agent"
+		), ():void => {
+			expect( Carbon.Agent ).toBeDefined();
+			expect( Carbon.Agent ).toBe( Agent );
+		});
+
+		it( reexports(
+			STATIC,
+			"Agents",
+			"Carbon/Agents"
+		), ():void => {
+			expect( Carbon.Agents ).toBeDefined();
+			expect( Carbon.Agents ).toBe( Agents );
+		});
+
+		it( reexports(
+			STATIC,
+			"App",
+			"Carbon/App"
+		), ():void => {
+			expect( Carbon.App ).toBeDefined();
+			expect( Carbon.App ).toBe( App );
+		});
+
+		it( reexports(
 			STATIC,
 			"Apps",
-			"Class<Carbon.Apps>",
-			"Static property that set a reference to the Apps Class"
+			"Carbon/Apps"
 		), ():void => {
 			expect( Carbon.Apps ).toBeDefined();
 			expect( Carbon.Apps ).toBe( Apps );
 		});
 
-		it( hasProperty(
+		it( reexports(
 			STATIC,
 			"Auth",
-			"Module<Carbon.Auth>",
-			"Static property that set a reference to the Auth Module"
+			"Carbon/Auth"
 		), ():void => {
 			expect( Carbon.Auth ).toBeDefined();
 			expect( Carbon.Auth ).toBe( Auth );
 		});
 
-		it( hasProperty(
+		it( reexports(
 			STATIC,
 			"Document",
-			"Module<Carbon.Document>",
-			"Static property that set a reference to the Document Module"
+			"Carbon/Document"
 		), ():void => {
 			expect( Carbon.Document ).toBeDefined();
 			expect( Carbon.Document ).toBe( Document );
 		});
 
-		it( hasProperty(
+		it( reexports(
 			STATIC,
 			"Documents",
-			"Class<Carbon.Documents>",
-			"Static property that set a reference to the Documents Class"
+			"Carbon/Documents"
 		), ():void => {
 			expect( Carbon.Documents ).toBeDefined();
 			expect( Carbon.Documents ).toBe( Documents );
 		});
 
-		it( hasProperty(
+		it( reexports(
+			STATIC,
+			"Errors",
+			"Carbon/Errors"
+		), ():void => {
+			expect( Carbon.Errors ).toBeDefined();
+			expect( Carbon.Errors ).toBe( Errors );
+		});
+
+		it( reexports(
+			STATIC,
+			"Fragment",
+			"Carbon/Fragment"
+		), ():void => {
+			expect( Carbon.Fragment ).toBeDefined();
+			expect( Carbon.Fragment ).toBe( Fragment );
+		});
+
+		it( reexports(
 			STATIC,
 			"HTTP",
-			"Module<Carbon.HTTP>",
-			"Static property that set a reference to the HTTP Module"
+			"Carbon/HTTP"
 		), ():void => {
 			expect( Carbon.HTTP ).toBeDefined();
 			expect( Carbon.HTTP ).toBe( HTTP );
 		});
 
-		it( hasProperty(
+		it( reexports(
+			STATIC,
+			"JSONLDConverter",
+			"Carbon/JSONLDConverter"
+		), ():void => {
+			expect( Carbon.JSONLDConverter ).toBeDefined();
+			expect( Carbon.JSONLDConverter ).toBe( JSONLDConverter );
+		});
+
+		it( reexports(
+			STATIC,
+			"LDP",
+			"Carbon/LDP"
+		), ():void => {
+			expect( Carbon.LDP ).toBeDefined();
+			expect( Carbon.LDP ).toBe( LDP );
+		});
+
+		it( reexports(
+			STATIC,
+			"NamedFragment",
+			"Carbon/NamedFragment"
+		), ():void => {
+			expect( Carbon.NamedFragment ).toBeDefined();
+			expect( Carbon.NamedFragment ).toBe( NamedFragment );
+		});
+
+		it( reexports(
+			STATIC,
+			"NS",
+			"Carbon/NS"
+		), ():void => {
+			expect( Carbon.NS ).toBeDefined();
+			expect( Carbon.NS ).toBe( NS );
+		});
+
+		it( reexports(
+			STATIC,
+			"ObjectSchema",
+			"Carbon/ObjectSchema"
+		), ():void => {
+			expect( Carbon.ObjectSchema ).toBeDefined();
+			expect( Carbon.ObjectSchema ).toBe( ObjectSchema );
+		});
+
+		it( reexports(
+			STATIC,
+			"Persisted",
+			"Carbon/Persisted"
+		), ():void => {
+			expect( Carbon.Persisted ).toBeDefined();
+			expect( Carbon.Persisted ).toBe( Persisted );
+		});
+
+		it( reexports(
+			STATIC,
+			"PersistedApp",
+			"Carbon/PersistedApp"
+		), ():void => {
+			expect( Carbon.PersistedApp ).toBeDefined();
+			expect( Carbon.PersistedApp ).toBe( PersistedApp );
+		});
+
+		it( reexports(
+			STATIC,
+			"PersistedDocument",
+			"Carbon/PersistedDocument"
+		), ():void => {
+			expect( Carbon.PersistedDocument ).toBeDefined();
+			expect( Carbon.PersistedDocument ).toBe( PersistedDocument );
+		});
+
+		it( reexports(
+			STATIC,
+			"PersistedFragment",
+			"Carbon/PersistedFragment"
+		), ():void => {
+			expect( Carbon.PersistedFragment ).toBeDefined();
+			expect( Carbon.PersistedFragment ).toBe( PersistedFragment );
+		});
+
+		it( reexports(
+			STATIC,
+			"PersistedNamedFragment",
+			"Carbon/PersistedNamedFragment"
+		), ():void => {
+			expect( Carbon.PersistedNamedFragment ).toBeDefined();
+			expect( Carbon.PersistedNamedFragment ).toBe( PersistedNamedFragment );
+		});
+
+		it( reexports(
+			STATIC,
+			"PersistedResource",
+			"Carbon/PersistedResource"
+		), ():void => {
+			expect( Carbon.PersistedResource ).toBeDefined();
+			expect( Carbon.PersistedResource ).toBe( PersistedResource );
+		});
+
+		it( reexports(
+			STATIC,
+			"Pointer",
+			"Carbon/Pointer"
+		), ():void => {
+			expect( Carbon.Pointer ).toBeDefined();
+			expect( Carbon.Pointer ).toBe( Pointer );
+		});
+
+		it( reexports(
 			STATIC,
 			"RDF",
-			"Module<Carbon.RDF>",
-			"Static property that set a reference to the RDF Module"
+			"Carbon/RDF"
 		), ():void => {
 			expect( Carbon.RDF ).toBeDefined();
 			expect( Carbon.RDF ).toBe( RDF );
 		});
 
-		it( hasProperty(
+		it( reexports(
+			STATIC,
+			"Resource",
+			"Carbon/Resource"
+		), ():void => {
+			expect( Carbon.Resource ).toBeDefined();
+			expect( Carbon.Resource ).toBe( Resource );
+		});
+
+		it( reexports(
+			STATIC,
+			"SDKContext",
+			"Carbon/SDKContext"
+		), ():void => {
+			expect( Carbon.SDKContext ).toBeDefined();
+			expect( Carbon.SDKContext ).toBe( SDKContext );
+		});
+
+		it( reexports(
+			STATIC,
+			"SPARQL",
+			"Carbon/SPARQL"
+		), ():void => {
+			expect( Carbon.SPARQL ).toBeDefined();
+			expect( Carbon.SPARQL ).toBe( SPARQL );
+		});
+
+		it( reexports(
 			STATIC,
 			"Utils",
-			"Module<Carbon.Utils>",
-			"Static property that set a reference to the Utils Module"
+			"Carbon/Utils"
 		), ():void => {
 			expect( Carbon.Utils ).toBeDefined();
 			expect( Carbon.Utils ).toBe( Utils );
-		});
-
-		beforeEach( ():void => {
-			carbon = new Carbon();
-
-			myCarbon = new Carbon({
-				"domain": "example.com",
-				"http.ssl": false,
-				"auth.method": Auth.Method.TOKEN,
-				"platform.container": "example-platform/",
-				"platform.apps.container": "example-apps/"
-			});
-
-			jasmine.Ajax.install();
-		});
-
-		afterEach( ():void => {
-			jasmine.Ajax.uninstall();
 		});
 
 		it( hasConstructor([
@@ -220,12 +427,12 @@ describe( module( "Carbon" ), ():void => {
 		it( hasProperty(
 			INSTANCE,
 			"apps",
-			"Carbon.Apps",
+			"Carbon.Apps.Class",
 			"Instance of the class `Carbon.Apps` in the context of the Carbon instance."
 		), ():void => {
 			expect( carbon.apps ).toBeDefined();
 			expect( Utils.isObject( carbon.apps ) );
-			expect( carbon.apps instanceof Apps );
+			expect( carbon.apps instanceof Apps.Class );
 		});
 
 	});

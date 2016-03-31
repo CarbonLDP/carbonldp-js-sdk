@@ -244,16 +244,16 @@ describe( module( "Carbon/SPARQL/Service" ), ():void => {
 						expect( Utils.isArray( results.bindings ) ).toEqual( true );
 
 						expect( "literalBinding" in results.bindings[ 0 ] ).toEqual( true );
-						expect( (<any> results.bindings[ 0 ] ).literalBinding ).toEqual( "some string" );
+						expect( results.bindings[ 0 ][ "literalBinding" ] ).toEqual( "some string" );
 
 						expect( "uriBinding" in results.bindings[ 0 ] ).toEqual( true );
-						expect( (<any> results.bindings[ 0 ] ).uriBinding.id ).toEqual( "http://example.com/document-1/" );
+						expect( results.bindings[ 0 ][ "uriBinding" ].id ).toEqual( "http://example.com/document-1/" );
 
 						expect( "literalBinding" in results.bindings[ 1 ] ).toEqual( true );
-						expect( (<any> results.bindings[ 1 ] ).literalBinding ).toEqual( 12 );
+						expect( results.bindings[ 1 ][ "literalBinding" ] ).toEqual( 12 );
 
 						expect( "uriBinding" in results.bindings[ 1 ] ).toEqual( true );
-						expect( (<any> results.bindings[ 1 ] ).uriBinding.id ).toEqual( "http://example.com/document-2/" );
+						expect( results.bindings[ 1 ][ "uriBinding" ].id ).toEqual( "http://example.com/document-2/" );
 					})
 				);
 			})();

@@ -349,8 +349,15 @@ describe( module( "Carbon/Documents", "" ), ():void => {
 			});
 		});
 
+	});
+
+	describe( method(
+		INSTANCE,
+		"upload"
+	), ():void => {
+
 		it( hasSignature(
-			"Create a child document for the respective parent source.", [
+			"Upload a File to the server, creating a child for the parent specified.", [
 				{ name: "parentURI", type: "string" },
 				{ name: "blob", type: "Blob" },
 				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
@@ -388,7 +395,7 @@ describe( module( "Carbon/Documents", "" ), ():void => {
 				},
 			} );
 
-			promises.push( documents.createChild( "http://example.com/parent-resource/", blob ).then( spy.success ) );
+			promises.push( documents.upload( "http://example.com/parent-resource/", blob ).then( spy.success ) );
 
 			Promise.all( promises ).then( ():void => {
 				expect( spySuccess ).toHaveBeenCalled();
@@ -397,7 +404,7 @@ describe( module( "Carbon/Documents", "" ), ():void => {
 		});
 
 		it( hasSignature(
-			"Create a child document for the respective parent source.", [
+			"Upload a File to the server, creating a child for the parent specified.", [
 				{ name: "parentURI", type: "string" },
 				{ name: "slug", type: "string" },
 				{ name: "blob", type: "Blob" },
@@ -436,7 +443,7 @@ describe( module( "Carbon/Documents", "" ), ():void => {
 				},
 			});
 
-			promises.push( documents.createChild( "http://example.com/parent-resource/", 'slug-id', blob ).then( spy.success ) );
+			promises.push( documents.upload( "http://example.com/parent-resource/", 'slug-id', blob ).then( spy.success ) );
 
 			Promise.all( promises ).then( ():void => {
 				expect( spySuccess ).toHaveBeenCalled();

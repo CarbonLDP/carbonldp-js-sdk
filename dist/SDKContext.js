@@ -1,12 +1,13 @@
 "use strict";
-var App = require("./App");
 var APIDescription = require("./APIDescription");
 var Auth = require("./Auth");
 var Documents_1 = require("./Documents");
 var Errors = require("./Errors");
 var LDP = require("./LDP");
+var NS = require("./NS");
 var ObjectSchema = require("./ObjectSchema");
-var NonRDFSource = require("./NonRDFSource");
+var Agent = require("./Agent");
+var RDFRepresentation = require("./RDFRepresentation");
 var Class = (function () {
     function Class() {
         this.settings = new Map();
@@ -128,10 +129,23 @@ var Class = (function () {
         this.extendObjectSchema(LDP.RDFSource.RDF_CLASS, LDP.RDFSource.SCHEMA);
         this.extendObjectSchema(LDP.Container.RDF_CLASS, LDP.Container.SCHEMA);
         this.extendObjectSchema(LDP.BasicContainer.RDF_CLASS, LDP.Container.SCHEMA);
-        this.extendObjectSchema(NonRDFSource.RDF_CLASS, NonRDFSource.SCHEMA);
+        this.extendObjectSchema(RDFRepresentation.RDF_CLASS, RDFRepresentation.SCHEMA);
         this.extendObjectSchema(APIDescription.RDF_CLASS, APIDescription.SCHEMA);
-        this.extendObjectSchema(App.RDF_CLASS, App.SCHEMA);
+        this.extendObjectSchema(NS.CS.Class.Application, {
+            "name": {
+                "@id": NS.CS.Predicate.name,
+                "@type": NS.XSD.DataType.string,
+            },
+            "rootContainer": {
+                "@id": NS.CS.Predicate.rootContainer,
+                "@type": "@id",
+            },
+            "allowsOrigin": {
+                "@id": NS.CS.Predicate.allowsOrigin,
+            },
+        });
         this.extendObjectSchema(Auth.Token.RDF_CLASS, Auth.Token.CONTEXT);
+        this.extendObjectSchema(Agent.RDF_CLASS, Agent.SCHEMA);
     };
     return Class;
 }());
