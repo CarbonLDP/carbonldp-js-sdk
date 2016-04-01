@@ -1,3 +1,6 @@
+# 0.21.2 (March 31, 2016)
+- Fixed incorrect export in App module
+
 # 0.21.1 (March 31, 2016)
 - Added signature in `HTTP.Request.Service.delete()` to support sending a delete request without a body
 

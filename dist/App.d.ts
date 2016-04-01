@@ -1,6 +1,6 @@
 import * as Document from "./Document";
 import * as ObjectSchema from "./ObjectSchema";
-import * as Context from "./App/Context";
+import Context from "./App/Context";
 export interface Class extends Document.Class {
     name: string;
 }

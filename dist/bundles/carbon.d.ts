@@ -1566,7 +1566,7 @@ declare module 'carbonldp/App/Context' {
 declare module 'carbonldp/App' {
 	import * as Document from 'carbonldp/Document';
 	import * as ObjectSchema from 'carbonldp/ObjectSchema';
-	import * as Context from 'carbonldp/App/Context';
+	import Context from 'carbonldp/App/Context';
 	export interface Class extends Document.Class {
 	    name: string;
 	}

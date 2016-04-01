@@ -16,7 +16,7 @@ import * as NS from "./NS";
 import * as Errors from "./Errors";
 import * as Document from "./Document";
 
-import * as Context from "./App/Context";
+import Context from "./App/Context";
 
 describe( module( "Carbon/App" ), ():void => {
 
@@ -168,7 +168,7 @@ describe( module( "Carbon/App" ), ():void => {
 		"Carbon/App/Context"
 	), ():void => {
 		expect( App.Context ).toBeDefined();
-		expect( App.Context ).toBe( Context );
+		expect( App.Context ).toEqual( Context );
 	});
 
 });
