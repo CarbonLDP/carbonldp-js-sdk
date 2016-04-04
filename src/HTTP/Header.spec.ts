@@ -1,5 +1,3 @@
-/// <reference path="../../typings/typings.d.ts" />
-
 import {
 	INSTANCE,
 	STATIC,
@@ -15,7 +13,7 @@ import {
 	hasSignature,
 	hasDefaultExport
 } from "./../test/JasmineExtender";
-import * as Utils from "../Utils";
+import * as Utils from "./../Utils";
 
 import * as Header from "./Header";
 import DefaultExport from "./Header";
@@ -184,10 +182,10 @@ describe( module(
 
 			expect( Utils.isMap( headersMap ) ).toBe( true );
 			expect( headersMap.size ).toBe( 4 );
-			expect( headersMap.get( "Host" ).toString() ).toEqual( "http://example.com" );
-			expect( headersMap.get( "User-Agent" ).toString() ).toBe( "Mozilla/5.0 (Windows; U; Windows NT 6.1; en-US; rv:1.9.1.5) Gecko/20091102 Firefox/3.5.5 (.NET CLR 3.5.30729)" );
-			expect( headersMap.get( "Cache-Control").toString() ).toBe( "no-cache" );
-			expect( headersMap.get( "Accept" ) ).toEqual(  new Header.Class("text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8") );
+			expect( headersMap.get( "host" ).toString() ).toEqual( "http://example.com" );
+			expect( headersMap.get( "user-agent" ).toString() ).toBe( "Mozilla/5.0 (Windows; U; Windows NT 6.1; en-US; rv:1.9.1.5) Gecko/20091102 Firefox/3.5.5 (.NET CLR 3.5.30729)" );
+			expect( headersMap.get( "cache-control").toString() ).toBe( "no-cache" );
+			expect( headersMap.get( "accept" ) ).toEqual(  new Header.Class("text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8") );
 		});
 	});
 

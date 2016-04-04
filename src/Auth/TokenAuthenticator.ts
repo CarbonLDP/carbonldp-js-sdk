@@ -4,22 +4,20 @@ import * as HTTP from "./../HTTP";
 import * as NS from "./../NS";
 import * as ObjectSchema from "./../ObjectSchema";
 import * as RDF from "./../RDF";
-import * as Utils from "./../Utils";
-
 import Authenticator from "./Authenticator";
 import AuthenticationToken from "./AuthenticationToken";
 import BasicAuthenticator from "./BasicAuthenticator";
 import UsernameAndPasswordToken from "./UsernameAndPasswordToken";
 import * as Token from "./Token";
-import * as TokenCredentials from "./TokenCredentials";
 import * as Credentials from "./Credentials";
+import * as Utils from "./../Utils";
 
 export class Class implements Authenticator<UsernameAndPasswordToken> {
 	private static TOKEN_CONTAINER:string = "auth-tokens/";
 
 	private context:Context;
 	private basicAuthenticator:BasicAuthenticator;
-	private credentials:TokenCredentials.Class;
+	private _credentials:Token.Class;
 
 	constructor( context:Context ) {
 		if( context === null ) throw new Errors.IllegalArgumentError( "context cannot be null" );
@@ -29,23 +27,40 @@ export class Class implements Authenticator<UsernameAndPasswordToken> {
 	}
 
 	isAuthenticated():boolean {
-		return !! this.credentials && this.credentials.token.expirationTime > new Date();
+		return !! this._credentials && this._credentials.expirationTime > new Date();
 	}
 
-	authenticate( authenticationToken:UsernameAndPasswordToken ):Promise<TokenCredentials.Class> {
-		return this.basicAuthenticator.authenticate( authenticationToken ).then(
-			( credentials:Credentials.Class ):Promise<[ Token.Class, HTTP.Response.Class ]> => {
-				return this.createToken();
-			}
-		).then(
-			( [ token, response ]:[ Token.Class, HTTP.Response.Class ] ):TokenCredentials.Class => {
-				this.credentials = new TokenCredentials.Class( token );
+	authenticate( authenticationToken:UsernameAndPasswordToken ):Promise<Token.Class>;
+	authenticate( credentials:Token.Class ):Promise<Token.Class>;
+	authenticate( authenticationOrCredentials:any ):Promise<Token.Class> {
+		if ( Token.Factory.is( authenticationOrCredentials ) ) {
 
-				this.basicAuthenticator.clearAuthentication();
+			if ( Utils.isString( authenticationOrCredentials.expirationTime ) )
+				authenticationOrCredentials.expirationTime = new Date( <any> authenticationOrCredentials.expirationTime );
+			this._credentials = authenticationOrCredentials;
 
-				return this.credentials;
-			}
-		);
+			return new Promise<Token.Class>( ( resolve:Function, reject:Function ) => {
+				if ( ! this.isAuthenticated() ) {
+					this.clearAuthentication();
+					throw new Errors.IllegalArgumentError( "The token provided in not valid." );
+				}
+				resolve( this._credentials );
+			});
+
+		} else {
+			return this.basicAuthenticator.authenticate( authenticationOrCredentials )
+				.then( ( credentials:Credentials.Class ):Promise<[ Token.Class, HTTP.Response.Class ]> => {
+					return this.createToken();
+				})
+				.then( ( [ token, response ]:[ Token.Class, HTTP.Response.Class ] ):Token.Class => {
+					this._credentials = token;
+
+					this.basicAuthenticator.clearAuthentication();
+
+					return this._credentials;
+				}
+			);
+		}
 	}
 
 	addAuthentication( requestOptions:HTTP.Request.Options ):HTTP.Request.Options {
@@ -57,7 +72,7 @@ export class Class implements Authenticator<UsernameAndPasswordToken> {
 	}
 
 	clearAuthentication():void {
-		this.credentials = null;
+		this._credentials = null;
 	}
 
 	supports( authenticationToken:AuthenticationToken ):boolean {
@@ -94,13 +109,13 @@ export class Class implements Authenticator<UsernameAndPasswordToken> {
 
 	private addTokenAuthenticationHeader( headers:Map<string, HTTP.Header.Class> ):Map<string, HTTP.Header.Class> {
 		let header:HTTP.Header.Class;
-		if( headers.has( "Authorization" ) ) {
-			header = headers.get( "Authorization" );
+		if( headers.has( "authorization" ) ) {
+			header = headers.get( "authorization" );
 		} else {
 			header = new HTTP.Header.Class();
-			headers.set( "Authorization", header );
+			headers.set( "authorization", header );
 		}
-		let authorization:string = "Token " + this.credentials.token.key;
+		let authorization:string = "Token " + this._credentials.key;
 		header.values.push( new HTTP.Header.Value( authorization ) );
 
 		return headers;

@@ -1,6 +1,6 @@
 {
   "ambientDependencies": {
-    "jasmine": "github:DefinitelyTyped/DefinitelyTyped/jasmine/jasmine.d.ts#26c98c8a9530c44f8c801ccc3b2057e2101187ee",
-    "jasmine-ajax": "github:DefinitelyTyped/DefinitelyTyped/jasmine-ajax/jasmine-ajax.d.ts#16c5267ec4c4611949ce77e381a9b416cb5a3f36"
+    "jasmine": "registry:dt/jasmine#2.2.0+20160317120654",
+    "jasmine-ajax": "registry:dt/jasmine-ajax#3.1.1+20160317120654"
   }
 }

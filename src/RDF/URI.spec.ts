@@ -1,5 +1,3 @@
-/// <reference path="../../typings/typings.d.ts" />
-
 import {
 	STATIC,
 	INSTANCE,
@@ -12,10 +10,10 @@ import {
 	isDefined,
 	hasMethod,
 	hasSignature
-} from "../test/JasmineExtender";
-import * as Utils from "../Utils";
+} from "./../test/JasmineExtender";
+import * as Utils from "./../Utils";
 import * as URI from "./URI";
-import * as ObjectSchema from "../ObjectSchema";
+import * as ObjectSchema from "./../ObjectSchema";
 
 describe( module( "Carbon/RDF/URI" ), ():void => {
 
@@ -58,7 +56,7 @@ describe( module( "Carbon/RDF/URI" ), ():void => {
 
 	});
 
-	describe( clazz( "Util", "CLass with useful functions for managing URI's" ), ():void => {
+	describe( clazz( "Carbon.RDF.URI.Util", "CLass with useful functions for managing URI's" ), ():void => {
 
 		it( isDefined(), ():void => {
 			expect( URI.Util ).toBeDefined();
@@ -231,6 +229,7 @@ describe( module( "Carbon/RDF/URI" ), ():void => {
 			expect( "isBaseOf" in URI.Util ).toBe( true );
 			expect( Utils.isFunction( URI.Util.isBaseOf ) ).toBe( true );
 
+			let namespaceURI = "http://example.com/resource/#";
 			let fragmentURI = "http://example.com/resource/#fragment";
 			let childURI = "http://example.com/resource/child/";
 			let resourceURI = "http://example.com/resource/";
@@ -240,6 +239,7 @@ describe( module( "Carbon/RDF/URI" ), ():void => {
 			let anotherURI = "http://another_example.com/resource/";
 			let prefixAnotherURI = "another_prefix:resource";
 
+			expect( URI.Util.isBaseOf( namespaceURI, fragmentURI ) ).toBe( true );
 			expect( URI.Util.isBaseOf( resourceURI, fragmentURI) ).toBe( true );
 			expect( URI.Util.isBaseOf( resourceURI, childURI) ).toBe( true );
 			expect( URI.Util.isBaseOf( prefixResourceURI, prefixFragmentURI ) ).toBe( true );
@@ -425,8 +425,7 @@ describe( module( "Carbon/RDF/URI" ), ():void => {
 		), ():void => {
 
 			it( hasSignature(
-				`Replace a base of a URI with the prefix provided.
-				 If the prefix can not be resolved, the URI provided will be returned`, [
+				"Replace a base of a URI with the prefix provided. If the prefix can not be resolved, the URI provided will be returned", [
 					{ name: "uri", type: "string" },
 					{ name: "prefix", type: "string" },
 					{ name: "prefixURI", type: "string" }
@@ -453,8 +452,7 @@ describe( module( "Carbon/RDF/URI" ), ():void => {
 			});
 
 			it( hasSignature(
-				`Replace the base of a URI with a prefix in accordance with the ObjectSchema provided.
-				 If the prefix can not be resolved, the URI provided will be returned`, [
+				"Replace the base of a URI with a prefix in accordance with the ObjectSchema provided. If the prefix can not be resolved, the URI provided will be returned", [
 					{ name: "uri", type: "string" },
 					{ name: "objectSchema", type: "Carbon.ObjectSchema.DigestedObjectSchema" }
 				],

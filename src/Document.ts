@@ -1,5 +1,3 @@
-/// <reference path="./../typings/typings.d.ts" />
-
 import * as Errors from "./Errors";
 import * as Fragment from "./Fragment";
 import JSONLDConverter from "./JSONLDConverter";
@@ -35,9 +33,11 @@ export interface Class extends Resource.Class, Pointer.Library, Pointer.Validato
 function hasPointer( id:string ):boolean {
 	let document:Class = <Class> this;
 
+	if( id === document.id ) return true;
+
 	if( ! document.inScope( id ) ) return false;
 
-	return !! document.getFragment( id );
+	return document.hasFragment( id );
 }
 
 function getPointer( id:string ):Pointer.Class {
@@ -64,26 +64,27 @@ function inScope( idOrPointer:any ):boolean {
 
 	if( RDF.URI.Util.isBNodeID( id ) ) return true;
 
-	if( RDF.URI.Util.isAbsolute( id ) && RDF.URI.Util.isFragmentOf( id, document.id ) ) return true;
+	if( RDF.URI.Util.isFragmentOf( id, document.id ) ) return true;
 
-	if( ! RDF.URI.Util.isAbsolute( document.id ) && ! RDF.URI.Util.isAbsolute( id ) && RDF.URI.Util.isFragmentOf( id, document.id ) ) return true;
-
-	return false;
+	return RDF.URI.Util.isRelative( id );
 }
 
 function hasFragment( id:string ):boolean {
 	let document:Class = <Class> this;
 
-	if( ! document.inScope( id ) ) return false;
+	if( RDF.URI.Util.isAbsolute( id ) ) {
+		if( ! RDF.URI.Util.isFragmentOf( id, document.id ) ) return false;
+		id = RDF.URI.Util.hasFragment( id ) ? RDF.URI.Util.getFragment( id ) : id;
+	} else if( Utils.S.startsWith( id, "#" ) ) id = id.substring( 1 );
 
-	return !! document._fragmentsIndex.has( id );
+	return document._fragmentsIndex.has( id );
 }
 function getFragment( id:string ):Fragment.Class {
 	let document:Class = <Class> this;
 
 	if( ! RDF.URI.Util.isBNodeID( id ) ) return document.getNamedFragment( id );
 
-	return document._fragmentsIndex.get( id );
+	return document._fragmentsIndex.get( id ) || null;
 }
 function getNamedFragment( id:string ):NamedFragment.Class {
 	let document:Class = <Class> this;
@@ -94,7 +95,7 @@ function getNamedFragment( id:string ):NamedFragment.Class {
 		id = RDF.URI.Util.hasFragment( id ) ? RDF.URI.Util.getFragment( id ) : id;
 	} else if( Utils.S.startsWith( id, "#" ) ) id = id.substring( 1 );
 
-	return <NamedFragment.Class> document._fragmentsIndex.get( id );
+	return <NamedFragment.Class> document._fragmentsIndex.get( id ) || null;
 }
 function getFragments():Fragment.Class[] {
 	let document:Class = <Class> this;
@@ -103,19 +104,19 @@ function getFragments():Fragment.Class[] {
 
 function createFragment( slug:string ):NamedFragment.Class;
 function createFragment( slug?:string ):Fragment.Class;
-function createFragment( slug:any ):any {
+function createFragment( slug:any = null ):any {
 	let document:Class = <Class> this;
 
 	let id:string;
 	if( slug ) {
 		if( ! RDF.URI.Util.isBNodeID( slug ) ) return document.createNamedFragment( slug );
 		id = slug;
-		if( this._fragmentsIndex.has( id ) ) return this.getFragment( id );
+		if( this._fragmentsIndex.has( id ) ) throw new Errors.IDAlreadyInUseError( "The slug provided is already being used by a fragment." );
 	} else {
 		id = Fragment.Util.generateID();
 	}
 
-	let fragment:Fragment.Class = Fragment.factory.create( id, document );
+	let fragment:Fragment.Class = Fragment.Factory.create( id, document );
 
 	document._fragmentsIndex.set( id, fragment );
 
@@ -133,7 +134,7 @@ function createNamedFragment( slug:string ):NamedFragment.Class {
 
 	if( document._fragmentsIndex.has( slug ) ) throw new Errors.IDAlreadyInUseError( "The slug provided is already being used by a fragment." );
 
-	let fragment:NamedFragment.Class = <NamedFragment.Class> NamedFragment.factory.create( slug, document );
+	let fragment:NamedFragment.Class = <NamedFragment.Class> NamedFragment.Factory.create( slug, document );
 
 	document._fragmentsIndex.set( slug, fragment );
 
@@ -144,7 +145,16 @@ function removeFragment( fragment:NamedFragment.Class ):void;
 function removeFragment( fragment:Fragment.Class ):void;
 function removeFragment( slug:string ):void;
 function removeFragment( fragmentOrSlug:any ):void {
-	// TODO: FT
+	let document:Class = <Class> this;
+
+	let id:string = Utils.isString( fragmentOrSlug ) ? fragmentOrSlug : <Fragment.Class> fragmentOrSlug.id;
+
+	if( RDF.URI.Util.isAbsolute( id ) ) {
+		if( ! RDF.URI.Util.isFragmentOf( id, document.id ) ) return;
+		id = RDF.URI.Util.hasFragment( id ) ? RDF.URI.Util.getFragment( id ) : id;
+	} else if( Utils.S.startsWith( id, "#" ) ) id = id.substring( 1 );
+
+	document._fragmentsIndex.delete( id );
 }
 
 function toJSON( objectSchemaResolver:ObjectSchema.Resolver, jsonLDConverter:JSONLDConverter ):string;
@@ -173,7 +183,7 @@ function toJSON( objectSchemaResolver:ObjectSchema.Resolver = null, jsonldConver
 }
 
 export class Factory {
-	hasClassProperties( documentResource:Object ):boolean {
+	static hasClassProperties( documentResource:Object ):boolean {
 		return (
 			Utils.isObject( documentResource ) &&
 
@@ -190,26 +200,26 @@ export class Factory {
 		);
 	}
 
-	create( uri:string ):Class;
-	create():Class;
-	create( uri:string = null ):Class {
-		return this.createFrom( {}, uri );
+	static create( uri:string ):Class;
+	static create():Class;
+	static create( uri:string = null ):Class {
+		return Factory.createFrom( {}, uri );
 	}
 
-	createFrom<T extends Object>( object:T, uri:string ):T & Class;
-	createFrom<T extends Object>( object:T ):T & Class;
-	createFrom<T extends Object>( object:T, uri:string = null ):T & Class {
+	static createFrom<T extends Object>( object:T, uri:string ):T & Class;
+	static createFrom<T extends Object>( object:T ):T & Class;
+	static createFrom<T extends Object>( object:T, uri:string = null ):T & Class {
 		if( !! uri && RDF.URI.Util.isBNodeID( uri ) ) throw new Errors.IllegalArgumentError( "Documents cannot have a BNodeID as a uri." );
 
 		let resource:Resource.Class = Resource.Factory.createFrom( object, uri );
 
-		let document:Class = this.decorate( resource );
+		let document:Class = Factory.decorate( resource );
 
 		return <any> document;
 	}
 
-	decorate<T extends Object>( object:T ):T & Class {
-		if( this.hasClassProperties( object ) ) return <any> object;
+	static decorate<T extends Object>( object:T ):T & Class {
+		if( Factory.hasClassProperties( object ) ) return <any> object;
 
 		Object.defineProperties( object, {
 			"_fragmentsIndex": {
@@ -290,6 +300,4 @@ export class Factory {
 	}
 }
 
-export var factory:Factory = new Factory();
-
-export default Document;
+export default Class;

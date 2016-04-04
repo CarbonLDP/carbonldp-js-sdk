@@ -1,5 +1,3 @@
-/// <reference path="./../../typings/typings.d.ts" />
-
 import * as Errors from "./Errors";
 import * as Header from "./Header";
 import Method from "./Method";
@@ -68,19 +66,29 @@ function rejectRequest( reject:( error:any ) => void, request:XMLHttpRequest ):v
 export class Service {
 
 	private static defaultOptions:Options = {
-		sendCredentialsOnCORS: true
+		sendCredentialsOnCORS: true,
 	};
+
+	static send( method:(Method | string), url:string, body:Blob, options?:Options ):Promise<Response>;
+	static send<T>( method:(Method | string), url:string, body:Blob, options?:Options, parser?:Parser<T> ):Promise<[ T, Response ]>;
 
 	static send( method:(Method | string), url:string, options?:Options ):Promise<Response>;
 	static send( method:(Method | string), url:string, body:string, options?:Options ):Promise<Response>;
 	static send( method:(Method | string), url:string, body:string, options?:Options ):Promise<Response>;
+	static send<T>( method:(Method | string), url:string, options?:Options, parser?:Parser<T> ):Promise<[ T, Response ]>;
 	static send<T>( method:(Method | string), url:string, body:string, options?:Options, parser?:Parser<T> ):Promise<[ T, Response ]>;
-	static send<T>( method:any, url:string, bodyOrOptions:any = Service.defaultOptions, options:Options = Service.defaultOptions, parser:Parser<T> = null ):any {
-		let body:string = bodyOrOptions && Utils.isString( bodyOrOptions ) ? bodyOrOptions : null;
+	static send<T>( method:any, url:string, bodyOrOptions:any = Service.defaultOptions, optionsOrParser:any = Service.defaultOptions, parser:Parser<T> = null ):any {
+		let body:string | Blob = null;
+		let options:Options = Utils.hasProperty( optionsOrParser, "parse" ) ? bodyOrOptions : optionsOrParser;
+		parser = Utils.hasProperty( optionsOrParser, "parse" ) ? optionsOrParser : parser;
 
-		options = ! bodyOrOptions || Utils.isString( bodyOrOptions ) ? options : bodyOrOptions;
-		options = options ? options : {};
-		options = Utils.extend( options, Service.defaultOptions );
+		if ( ( bodyOrOptions instanceof Blob ) || Utils.isString( bodyOrOptions ) ) {
+			body = bodyOrOptions;
+		} else {
+			options = bodyOrOptions ? bodyOrOptions : options;
+		}
+
+		options = Utils.extend( options || {}, Service.defaultOptions );
 
 		if ( Utils.isNumber( method ) ) method = Method[ method ];
 
@@ -125,6 +133,9 @@ export class Service {
 		return Service.send( Method.GET, url, null, options, parser );
 	}
 
+	static post( url:string, body:Blob, options?:Options ):Promise<Response>;
+	static post<T>( url:string, body:Blob, options?:Options, parser?:Parser<T> ):Promise<[ T, Response ] >;
+
 	static post( url:string, body:string, options?:Options ):Promise<Response>;
 	static post<T>( url:string, body:string, options?:Options, parser?:Parser<T> ):Promise<[ T, Response ] >;
 	static post<T>( url:string, bodyOrOptions:any = Service.defaultOptions, options:Options = Service.defaultOptions, parser:Parser<T> = null ):any {
@@ -143,55 +154,59 @@ export class Service {
 		return Service.send( Method.PATCH, url, bodyOrOptions, options, parser );
 	}
 
+	static delete( url:string, options?:Options ):Promise<Response>;
 	static delete( url:string, body:string, options?:Options ):Promise<Response>;
+	static delete<T>( url:string, options?:Options, parser?:Parser<T> ):Promise<[ T, Response ]>;
 	static delete<T>( url:string, body:string, options?:Options, parser?:Parser<T> ):Promise<[ T, Response ]>;
-	static delete<T>( url:string, bodyOrOptions:any = Service.defaultOptions, options:Options = Service.defaultOptions, parser:Parser<T> = null ):any {
-		return Service.send( Method.DELETE, url, bodyOrOptions, options, parser );
+	static delete<T>( url:string, bodyOrOptions:any = Service.defaultOptions, optionsOrParser:any = Service.defaultOptions, parser:Parser<T> = null ):any {
+		return Service.send( Method.DELETE, url, bodyOrOptions, optionsOrParser, parser );
 	}
 }
 
 export class Util {
 	static getHeader( headerName:string, requestOptions:Options, initialize:boolean = false ):Header.Class {
+		headerName = headerName.toLowerCase();
+
 		if( initialize ) {
 			let headers:Map<string, Header.Class> = requestOptions.headers ? requestOptions.headers : requestOptions.headers = new Map<string, Header.Class>();
 			headers.set( headerName, new Header.Class() );
 		}
 
-		if( ! requestOptions.headers  ) return null;
+		if( ! requestOptions.headers  ) return undefined;
 		return requestOptions.headers.get( headerName );
 	}
 
 	static setAcceptHeader( accept:string, requestOptions:Options ):Options {
 		let headers:Map<string, Header.Class> = requestOptions.headers ? requestOptions.headers : requestOptions.headers = new Map<string, Header.Class>();
-		headers.set( "Accept", new Header.Class( accept ) );
+		headers.set( "accept", new Header.Class( accept ) );
 		return requestOptions;
 	}
 
 	static setContentTypeHeader( contentType:string, requestOptions:Options ):Options {
 		let headers:Map<string, Header.Class> = requestOptions.headers ? requestOptions.headers : requestOptions.headers = new Map<string, Header.Class>();
-		headers.set( "Content-Type", new Header.Class( contentType ) );
+		headers.set( "content-type", new Header.Class( contentType ) );
 		return requestOptions;
 	}
 
 	static setIfMatchHeader( etag:string, requestOptions:Options ):Options {
 		let headers:Map<string, Header.Class> = requestOptions.headers ? requestOptions.headers : requestOptions.headers = new Map<string, Header.Class>();
-		headers.set( "If-Match", new Header.Class( etag ) );
+		headers.set( "if-match", new Header.Class( etag ) );
 		return requestOptions;
 	}
 
 	static setPreferredInteractionModel( interactionModelURI:string, requestOptions:Options ):Options {
-		let prefer:Header.Class = Util.getHeader( "Prefer", requestOptions, true );
+		let prefer:Header.Class = Util.getHeader( "prefer", requestOptions, true );
 		prefer.values.push( new Header.Value( interactionModelURI + "; rel=interaction-model" ) );
 
 		return requestOptions;
 	}
 
 	static setContainerRetrievalPreferences( preferences:ContainerRetrievalPreferences, requestOptions:Options ):Options {
-		let prefer:Header.Class = Util.getHeader( "Prefer", requestOptions, true );
+		let prefer:Header.Class = Util.getHeader( "prefer", requestOptions, true );
 
 		let headerPieces:string[] = [ "return=representation;" ];
-		if( "include" in preferences ) headerPieces.push( 'include="' + preferences.include.join( " " ) + '"' );
-		if( "omit" in preferences ) headerPieces.push( 'omit="' + preferences.omit.join( " " ) + '"' );
+		if( "include" in preferences && preferences.include.length > 0 ) headerPieces.push( 'include="' + preferences.include.join( " " ) + '"' );
+		if( "omit" in preferences && preferences.omit.length > 0 ) headerPieces.push( 'omit="' + preferences.omit.join( " " ) + '"' );
 
 		if( headerPieces.length === 1 ) return requestOptions;
 
@@ -201,7 +216,7 @@ export class Util {
 	}
 
 	static setSlug( slug:string, requestOptions:Options ):Options {
-		let slugHeader:Header.Class = Util.getHeader( "Slug", requestOptions, true );
+		let slugHeader:Header.Class = Util.getHeader( "slug", requestOptions, true );
 		slugHeader.values.push( new Header.Value( slug ) );
 
 		return requestOptions;

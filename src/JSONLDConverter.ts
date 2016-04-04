@@ -1,12 +1,12 @@
-/// <reference path="./../typings/typings.d.ts" />
-
 import * as Errors from "./Errors";
 import * as ObjectSchema from "./ObjectSchema";
 import * as NS from "./NS";
 import * as Pointer from "./Pointer";
 import * as RDF from "./RDF";
 import * as Utils from "./Utils";
+import ContainerType from "./ObjectSchema";
 
+// TODO: Use Literal.Parsers to parse literals
 export class Class {
 	private _literalSerializers:Map<string, RDF.Literal.Serializer>;
 
@@ -78,6 +78,12 @@ export class Class {
 				if( ! expandedValue ) return;
 
 				expandedObject[ definition.uri.toString() ] = expandedValue;
+			} else if( RDF.URI.Util.isAbsolute( propertyName ) ) {
+				let expandedValue:any = this.expandPropertyValues( value, pointerValidator );
+
+				if( ! expandedValue ) return;
+
+				expandedObject[ propertyName ] = expandedValue;
 			} else {
 				// TODO: Do your best. Use the default vocabulary
 			}
@@ -97,7 +103,6 @@ export class Class {
 				} else {
 					return this.expandPropertyValue( propertyValue, pointerValidator );
 				}
-				break;
 			case ObjectSchema.ContainerType.LIST:
 				if( propertyDefinition.literal ) {
 					return this.expandPropertyLiteralList( propertyValue, propertyDefinition.literalType.toString() );
@@ -106,7 +111,6 @@ export class Class {
 				} else {
 					return this.expandPropertyList( propertyValue, pointerValidator );
 				}
-				break;
 			case ObjectSchema.ContainerType.SET:
 				if( propertyDefinition.literal ) {
 					return this.expandPropertyLiterals( propertyValue, propertyDefinition.literalType.toString() );
@@ -115,7 +119,6 @@ export class Class {
 				} else {
 					return this.expandPropertyValues( propertyValue, pointerValidator );
 				}
-				break;
 			case ObjectSchema.ContainerType.LANGUAGE:
 				return this.expandPropertyLanguageMap( propertyValue );
 			default:
@@ -150,7 +153,7 @@ export class Class {
 		if( serializedValue === null ) return null;
 
 		return [
-			{ "@value": serializedValue, "@type": literalType }
+			{ "@value": serializedValue, "@type": literalType },
 		];
 	}
 
@@ -162,7 +165,7 @@ export class Class {
 		if( ! expandedArray ) return null;
 
 		return [
-			{ "@list": expandedArray }
+			{ "@list": expandedArray },
 		];
 	}
 
@@ -170,7 +173,7 @@ export class Class {
 		let listValues:Array<any> = this.expandPropertyPointers( propertyValues, pointerValidator );
 
 		return [
-			{ "@list": listValues }
+			{ "@list": listValues },
 		];
 	}
 
@@ -178,12 +181,14 @@ export class Class {
 		let listValues:Array<any> = this.expandPropertyLiterals( propertyValues, literalType );
 
 		return [
-			{ "@list": listValues }
+			{ "@list": listValues },
 		];
 	}
 
-	private expandPropertyValues( propertyValue:any, pointerValidator:Pointer.Validator ):any {
-		let expandedArray:any = this.expandArray( propertyValue, pointerValidator );
+	private expandPropertyValues( propertyValues:any, pointerValidator:Pointer.Validator ):any {
+		propertyValues = Utils.isArray( propertyValues ) ? propertyValues : [ propertyValues ];
+
+		let expandedArray:any = this.expandArray( propertyValues, pointerValidator );
 
 		if( ! expandedArray ) return null;
 
@@ -380,7 +385,6 @@ export class Class {
 				} else {
 					return this.getProperty( expandedObject, propertyURI, pointerLibrary );
 				}
-				break;
 			case ObjectSchema.ContainerType.LIST:
 				if( propertyDefinition.literal ) {
 					return this.getPropertyLiteralList( expandedObject, propertyURI, propertyDefinition.literalType.toString() );
@@ -389,7 +393,6 @@ export class Class {
 				} else {
 					return this.getPropertyList( expandedObject, propertyURI, pointerLibrary );
 				}
-				break;
 			case ObjectSchema.ContainerType.SET:
 				if( propertyDefinition.literal ) {
 					return this.getPropertyLiterals( expandedObject, propertyURI, propertyDefinition.literalType.toString() );
@@ -398,7 +401,6 @@ export class Class {
 				} else {
 					return this.getProperties( expandedObject, propertyURI, pointerLibrary );
 				}
-				break;
 			case ObjectSchema.ContainerType.LANGUAGE:
 				return this.getPropertyLanguageMap( expandedObject, propertyURI );
 			default:

@@ -1,5 +1,3 @@
-/// <reference path="../../typings/typings.d.ts" />
-
 import IllegalStateError from "./IllegalStateError";
 import AbstractError from "./AbstractError";
 import * as Utils from "./../Utils";
@@ -9,7 +7,6 @@ import {
 	STATIC,
 	clazz,
 	module,
-	submodule,
 	isDefined,
 	hasConstructor,
 	hasMethod,

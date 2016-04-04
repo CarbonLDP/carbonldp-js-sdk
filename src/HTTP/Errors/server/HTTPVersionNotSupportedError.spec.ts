@@ -1,5 +1,3 @@
-/// <reference path="../../../../typings/typings.d.ts" />
-
 import {
 	INSTANCE,
 	STATIC,
@@ -12,13 +10,13 @@ import {
 	hasConstructor,
 	hasProperty,
 	hasMethod
-} from "../../../test/JasmineExtender";
-import * as Utils from "../../../Utils";
+} from "./../../../test/JasmineExtender";
+import * as Utils from "./../../../Utils";
 
-import Response from "../../Response";
+import Response from "./../../Response";
 
 import HTTPVersionNotSupportedError from "./HTTPVersionNotSupportedError";
-import HTTPError from "../HTTPError";
+import HTTPError from "./../HTTPError";
 
 describe( module(
 	"Carbon/HTTP/Errors/server/HTTPVersionNotSupportedError"

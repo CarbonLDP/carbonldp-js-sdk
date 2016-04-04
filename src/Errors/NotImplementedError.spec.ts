@@ -1,5 +1,3 @@
-/// <reference path="../../typings/typings.d.ts" />
-
 import {
 	INSTANCE,
 
@@ -11,8 +9,8 @@ import {
 	extendsClass,
 	hasConstructor,
 	hasMethod
-} from "../test/JasmineExtender";
-import * as Utils from "../Utils";
+} from "./../test/JasmineExtender";
+import * as Utils from "./../Utils";
 
 import NotImplementedError from "./NotImplementedError";
 import AbstractError from "./AbstractError";

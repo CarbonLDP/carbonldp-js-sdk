@@ -1,5 +1,3 @@
-/// <reference path="./../typings/typings.d.ts" />
-
 import {
 	INSTANCE,
 	STATIC,
@@ -31,6 +29,7 @@ import * as PersistedDocument from "./PersistedDocument";
 import * as ObjectSchema from "./ObjectSchema";
 import * as SPARQL from "./SPARQL";
 import * as Utils from "./Utils";
+import Pointer from "./Pointer";
 
 // TODO: Add description
 describe( module( "Carbon/Documents", "" ), ():void => {
@@ -161,91 +160,296 @@ describe( module( "Carbon/Documents", "" ), ():void => {
 		});
 	});
 
-	it( hasMethod( INSTANCE, "createChild", [
-		{ name: "parentURI", type: "string" },
-		{ name: "childDocument", type: "Carbon.Document.Class" },
-	], { type:"Promise<HTTP.Response.Class>"}), ( done:(() => void) & { fail:( error?:any ) => void } ):void => {
-		let promises:Promise<any>[] = [];
+	describe( method(
+		INSTANCE,
+		"createChild"
+	), ():void => {
 
-		class MockedContext extends AbstractContext {
-			resolve( uri:string ):string {
-				return uri;
+		it( hasSignature(
+			"Create a child document for the respective parent source.", [
+				{ name: "parentURI", type: "string" },
+				{ name: "childDocument", type: "Carbon.Document.Class" },
+				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
+			],
+			{ type:"Promise<[Carbon.Pointer.Class, Carbon.HTTP.Response.Class]>" }
+		), ( done:(() => void) & { fail:( error?:any ) => void } ):void => {
+			let promises:Promise<any>[] = [];
+
+			class MockedContext extends AbstractContext {
+				resolve( uri:string ):string {
+					return uri;
+				}
 			}
-		}
 
-		let context:MockedContext = new MockedContext();
-		let documents:Documents = context.documents;
+			let context:MockedContext = new MockedContext();
+			let documents:Documents = context.documents;
 
-		let objectSchema:ObjectSchema.Class = {
-			"ex": "http://example.com/ns#",
-			"xsd": "http://www.w3.org/2001/XMLSchema#",
-			"string": {
-				"@id": "ex:string",
-				"@type": "xsd:string",
-			},
-			"date": {
-				"@id": "ex:date",
-				"@type": "xsd:dateTime",
-			},
-			"numberList": {
-				"@id": "ex:numberList",
-				"@type": "xsd:integer",
-				"@container": "@list",
-			},
-			"languageMap": {
-				"@id": "ex:languageMap",
-				"@container": "@language",
-			},
-			"pointer": {
-				"@id": "ex:pointer",
-				"@type": "@id",
-			},
-			"pointerList": {
-				"@id": "ex:pointerList",
-				"@type": "@id",
-				"@container": "@list",
-			},
-			"pointerSet": {
-				"@id": "ex:pointerSet",
-				"@type": "@id",
-				"@container": "@set",
-			},
-		};
+			let objectSchema:ObjectSchema.Class = {
+				"ex": "http://example.com/ns#",
+				"xsd": "http://www.w3.org/2001/XMLSchema#",
+				"string": {
+					"@id": "ex:string",
+					"@type": "xsd:string",
+				},
+				"date": {
+					"@id": "ex:date",
+					"@type": "xsd:dateTime",
+				},
+				"numberList": {
+					"@id": "ex:numberList",
+					"@type": "xsd:integer",
+					"@container": "@list",
+				},
+				"languageMap": {
+					"@id": "ex:languageMap",
+					"@container": "@language",
+				},
+				"pointer": {
+					"@id": "ex:pointer",
+					"@type": "@id",
+				},
+				"pointerList": {
+					"@id": "ex:pointerList",
+					"@type": "@id",
+					"@container": "@list",
+				},
+				"pointerSet": {
+					"@id": "ex:pointerSet",
+					"@type": "@id",
+					"@container": "@set",
+				},
+			};
 
-		let childDocument:Document.Class = Document.factory.create();
-		let fragment1:Fragment.Class = childDocument.createFragment();
-		let fragment2:Fragment.Class = childDocument.createFragment();
-		let namedFragment1:Fragment.Class = childDocument.createFragment( "1" );
-		let namedFragment2:Fragment.Class = childDocument.createFragment( "2" );
+			let childDocument:Document.Class = Document.Factory.create();
+			let fragment1:Fragment.Class = childDocument.createFragment();
+			let fragment2:Fragment.Class = childDocument.createFragment();
+			let namedFragment1:Fragment.Class = childDocument.createFragment( "1" );
+			let namedFragment2:Fragment.Class = childDocument.createFragment( "2" );
 
-		(<any> childDocument).string = "Some string";
-		(<any> childDocument).date = new Date();
-		(<any> childDocument).pointerList = [ fragment1, fragment2 ];
-		(<any> childDocument).pointerSet = [ fragment1, namedFragment1 ];
+			(<any> childDocument).string = "Some string";
+			(<any> childDocument).date = new Date();
+			(<any> childDocument).pointerList = [ fragment1, fragment2 ];
+			(<any> childDocument).pointerSet = [ fragment1, namedFragment1 ];
 
-		(<any> namedFragment2).pointer = childDocument;
+			(<any> namedFragment2).pointer = childDocument;
 
-		context.extendObjectSchema( objectSchema );
+			context.extendObjectSchema( objectSchema );
 
-		jasmine.Ajax.stubRequest( "http://example.com/parent-resource/", null, "POST" ).andReturn( {
-			status: 200,
-			responseHeaders: {
-				"Location": "http://example.com/parent-resource/new-resource/",
-			},
-		} );
+			jasmine.Ajax.stubRequest( "http://example.com/parent-resource/", null, "POST" ).andReturn( {
+				status: 200,
+				responseHeaders: {
+					"Location": "http://example.com/parent-resource/new-resource/",
+				},
+			} );
 
-		promises.push( documents.createChild( "http://example.com/parent-resource/", childDocument ).then( ( response:any ):void => {
-			expect( response ).toBeDefined();
+			promises.push( documents.createChild( "http://example.com/parent-resource/", childDocument ).then( ( response:any ):void => {
+				expect( response ).toBeDefined();
 
-			// TODO: Finish assertions
-		}) );
+				// TODO: Finish assertions
+			}) );
 
-		Promise.all( promises ).then( ():void => {
-			done();
-		}, ( error:Error ):void => {
-			error = !! error ? error : new Error( "Unknown error" );
-			done.fail( error );
+			Promise.all( promises ).then( ():void => {
+				done();
+			}, ( error:Error ):void => {
+				error = !! error ? error : new Error( "Unknown error" );
+				done.fail( error );
+			});
 		});
+
+		it( hasSignature(
+			"Create a child document for the respective parent source.", [
+				{ name: "parentURI", type: "string" },
+				{ name: "slug", type: "string" },
+				{ name: "childDocument", type: "Carbon.Document.Class" },
+				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
+			],
+			{ type:"Promise<[Carbon.Pointer.Class, Carbon.HTTP.Response.Class]>" }
+		), ( done:(() => void) & { fail:( error?:any ) => void } ):void => {
+			let promises:Promise<any>[] = [];
+
+			class MockedContext extends AbstractContext {
+				resolve( uri:string ):string {
+					return uri;
+				}
+			}
+
+			let context:MockedContext = new MockedContext();
+			let documents:Documents = context.documents;
+
+			let objectSchema:ObjectSchema.Class = {
+				"ex": "http://example.com/ns#",
+				"xsd": "http://www.w3.org/2001/XMLSchema#",
+				"string": {
+					"@id": "ex:string",
+					"@type": "xsd:string",
+				},
+				"date": {
+					"@id": "ex:date",
+					"@type": "xsd:dateTime",
+				},
+				"numberList": {
+					"@id": "ex:numberList",
+					"@type": "xsd:integer",
+					"@container": "@list",
+				},
+				"languageMap": {
+					"@id": "ex:languageMap",
+					"@container": "@language",
+				},
+				"pointer": {
+					"@id": "ex:pointer",
+					"@type": "@id",
+				},
+				"pointerList": {
+					"@id": "ex:pointerList",
+					"@type": "@id",
+					"@container": "@list",
+				},
+				"pointerSet": {
+					"@id": "ex:pointerSet",
+					"@type": "@id",
+					"@container": "@set",
+				},
+			};
+
+			let childDocument:Document.Class = Document.Factory.create();
+			let fragment1:Fragment.Class = childDocument.createFragment();
+			let fragment2:Fragment.Class = childDocument.createFragment();
+			let namedFragment1:Fragment.Class = childDocument.createFragment( "1" );
+			let namedFragment2:Fragment.Class = childDocument.createFragment( "2" );
+
+			(<any> childDocument).string = "Some string";
+			(<any> childDocument).date = new Date();
+			(<any> childDocument).pointerList = [ fragment1, fragment2 ];
+			(<any> childDocument).pointerSet = [ fragment1, namedFragment1 ];
+
+			(<any> namedFragment2).pointer = childDocument;
+
+			context.extendObjectSchema( objectSchema );
+
+			jasmine.Ajax.stubRequest( "http://example.com/parent-resource/", null, "POST" ).andReturn( {
+				status: 200,
+				responseHeaders: {
+					"Location": "http://example.com/parent-resource/new-resource/",
+				},
+			} );
+
+			promises.push( documents.createChild( "http://example.com/parent-resource/", "child-document", childDocument ).then( ( response:any ):void => {
+				expect( response ).toBeDefined();
+
+				// TODO: Finish assertions
+			}) );
+
+			Promise.all( promises ).then( ():void => {
+				done();
+			}, ( error:Error ):void => {
+				error = !! error ? error : new Error( "Unknown error" );
+				done.fail( error );
+			});
+		});
+
+	});
+
+	describe( method(
+		INSTANCE,
+		"upload"
+	), ():void => {
+
+		it( hasSignature(
+			"Upload a File to the server, creating a child for the parent specified.", [
+				{ name: "parentURI", type: "string" },
+				{ name: "blob", type: "Blob" },
+				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
+			],
+			{ type:"Promise<[Carbon.Pointer.Class, Carbon.HTTP.Response.Class]>" }
+		), ( done:{ ():void, fail:() => void } ):void => {
+			let promises:Promise<any>[] = [];
+
+			class MockedContext extends AbstractContext {
+				resolve( uri:string ):string {
+					return uri;
+				}
+			}
+
+			let context:MockedContext = new MockedContext();
+			let documents:Documents = context.documents;
+			let spy = {
+				success: ( response:[Pointer, HTTP.Response.Class] ):void => {
+					expect( response ).toBeDefined();
+					expect( Utils.isArray( response ) ).toBe( true );
+					expect( response.length ).toBe( 2 );
+
+					let pointer:Pointer = response[ 0 ];
+					expect( pointer.id ).toBe( "http://example.com/parent-resource/new-auto-generated-id/" );
+				}
+			};
+			let spySuccess = spyOn( spy, "success" ).and.callThrough();
+
+			let blob:Blob = new Blob( [ JSON.stringify( { "some content": "for the blob." } ) ], { type : "application/json" } );
+
+			jasmine.Ajax.stubRequest( "http://example.com/parent-resource/", null, "POST" ).andReturn( {
+				status: 200,
+				responseHeaders: {
+					"Location": "http://example.com/parent-resource/new-auto-generated-id/",
+				},
+			} );
+
+			promises.push( documents.upload( "http://example.com/parent-resource/", blob ).then( spy.success ) );
+
+			Promise.all( promises ).then( ():void => {
+				expect( spySuccess ).toHaveBeenCalled();
+				done();
+			}, done.fail );
+		});
+
+		it( hasSignature(
+			"Upload a File to the server, creating a child for the parent specified.", [
+				{ name: "parentURI", type: "string" },
+				{ name: "slug", type: "string" },
+				{ name: "blob", type: "Blob" },
+				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
+			],
+			{ type:"Promise<[Carbon.Pointer.Class, Carbon.HTTP.Response.Class]>" }
+		), ( done:{ ():void, fail:() => void } ):void => {
+			let promises:Promise<any>[] = [];
+
+			class MockedContext extends AbstractContext {
+				resolve( uri:string ):string {
+					return uri;
+				}
+			}
+
+			let context:MockedContext = new MockedContext();
+			let documents:Documents = context.documents;
+			let spy = {
+				success: ( response:[Pointer, HTTP.Response.Class] ):void => {
+					expect( response ).toBeDefined();
+					expect( Utils.isArray( response ) ).toBe( true );
+					expect( response.length ).toBe( 2 );
+
+					let pointer:Pointer = response[ 0 ];
+					expect( pointer.id ).toBe( "http://example.com/parent-resource/slug-id/" );
+				}
+			};
+			let spySuccess = spyOn( spy, "success" ).and.callThrough();
+
+			let blob:Blob = new Blob( [ JSON.stringify( { "some content": "for the blob." } ) ], { type : "application/json" } );
+
+			jasmine.Ajax.stubRequest( "http://example.com/parent-resource/", null, "POST" ).andReturn( {
+				status: 200,
+				responseHeaders: {
+					"Location": "http://example.com/parent-resource/slug-id/",
+				},
+			});
+
+			promises.push( documents.upload( "http://example.com/parent-resource/", 'slug-id', blob ).then( spy.success ) );
+
+			Promise.all( promises ).then( ():void => {
+				expect( spySuccess ).toHaveBeenCalled();
+				done();
+			}, done.fail );
+		});
+
 	});
 
 	describe( method( INSTANCE, "getMembers", "Retrieves (but doesn't resolve) all the members of the document" ), () => {
@@ -290,6 +494,48 @@ describe( module( "Carbon/Documents", "" ), ():void => {
 		], { type: "Promise<[ Carbon.Pointer.Class[], Carbon.HTTP.Response.Class[] ]>" } ), () => {
 			// TODO
 		});
+	});
+
+	it( hasMethod(
+		INSTANCE,
+		"delete",
+		"Delete a the Resource referred by a PersistedDocument from the server.", [
+			{ name: "persistedDocument", type: "Carbon.PersistedDocument.Class" },
+			{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true }
+		],
+		{ type: "Promise<Carbon.HTTP.Response.Class>" }
+	), ( done:{ ():void, fail:() => void } ):void => {
+		class MockedContext extends AbstractContext {
+			resolve( uri:string ):string {
+				return uri;
+			}
+		}
+
+		let context:MockedContext = new MockedContext();
+		let documents:Documents = context.documents;
+		let document:PersistedDocument.Class = PersistedDocument.Factory.create( "http://example.com/resource/", documents );
+
+		expect( documents.delete ).toBeDefined();
+		expect( Utils.isFunction( documents.delete ) ).toBe( true );
+
+		jasmine.Ajax.stubRequest( "http://example.com/resource/", null, "DELETE" ).andReturn( {
+			status: 200
+		});
+
+		let spies = {
+			success: ( response:any ):void => {
+				expect( response ).toBeDefined();
+				expect( response instanceof HTTP.Response.Class ).toBe( true );
+			}
+		};
+		let spySuccess = spyOn( spies, "success" ).and.callThrough();
+
+		let promise:Promise<any> = documents.delete( document ).then( spies.success );
+
+		Promise.all( [ promise ] ).then( ():void => {
+			expect( spySuccess ).toHaveBeenCalled();
+			done();
+		}, done.fail );
 	});
 
 	it( hasMethod( INSTANCE, "executeRawASKQuery", `

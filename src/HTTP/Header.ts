@@ -1,5 +1,3 @@
-/// <reference path="../../typings/typings.d.ts" />
-
 import * as Utils from "./../Utils";
 
 export class Class {
@@ -58,7 +56,7 @@ export class Util {
 			if ( parts.length < 2 ) throw new Error( "ParseError: The header couldn't be parsed." );
 			if ( parts.length > 2 ) parts[ 1 ] = parts.slice( 1 ).join( ":" );
 
-			let name:string = parts[ 0 ].trim();
+			let name:string = parts[ 0 ].trim().toLowerCase();
 			let header:Class = new Class( parts[ 1 ].trim() );
 			if ( headers.has( name ) ) {
 				let existingHeader:Class = headers.get( name );

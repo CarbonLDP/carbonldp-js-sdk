@@ -1,17 +1,13 @@
-/// <reference path="./../typings/typings.d.ts" />
-
-import AbstractContext from "./AbstractContext";
-import Context from "./Context";
 import * as Document from "./Document";
-import Documents from "./Documents";
-import * as LDP from "./LDP";
 import * as NS from "./NS";
 import * as ObjectSchema from "./ObjectSchema";
-import * as RDF from "./RDF";
 import * as Utils from "./Utils";
+import {IllegalArgumentError} from "./Errors";
+
+import Context from "./App/Context";
 
 export interface Class extends Document.Class {
-	rootContainer:LDP.PersistedContainer.Class;
+	name:string;
 }
 
 export const RDF_CLASS:string = NS.CS.Class.Application;
@@ -26,45 +22,43 @@ export const SCHEMA:ObjectSchema.Class = {
 		"@type": "@id",
 	},
 	"allowsOrigin": {
-		"@id": NS.CS.Predicate.allowsOrigin
+		"@id": NS.CS.Predicate.allowsOrigin,
 	},
 };
 
-class AppContext extends AbstractContext {
-	private app:Class;
-	private base:string;
-
-	constructor( parentContext:Context, app:Class ) {
-		super( parentContext );
-		this.app = app;
-
-		this.base = this.getBase( this.app );
-	}
-
-	resolve( uri:string ):string {
-		if ( RDF.URI.Util.isAbsolute( uri ) ) return uri;
-
-		let finalURI:string = this.parentContext.resolve( this.base );
-		return RDF.URI.Util.resolve( finalURI, uri );
-	}
-
-	private getBase( resource:Class ):string {
-		return resource.rootContainer.id;
-	}
-}
-
-export {
-	AppContext as Context
-};
-
 export class Factory {
-	hasClassProperties( resource:Object ):boolean {
-		return (
-			Utils.hasPropertyDefined( resource, "rootContainer" )
-		);
+	static hasClassProperties( resource:Object ):boolean {
+		return Utils.hasPropertyDefined( resource, "name" );
 	}
-}
 
-export let factory:Factory = new Factory();
+	static is( object:Object ):boolean {
+		return Document.Factory.hasClassProperties( object )
+			&& Factory.hasClassProperties( object )
+			&& ( <Document.Class> object ).types.indexOf( NS.CS.Class.Application ) !== -1;
+	}
+
+	static create( name:string ):Class {
+		return Factory.createFrom<Object>( {}, name );
+	}
+
+	static createFrom<T extends Object>( object:T, name:string ):T & Class {
+		if ( ! Document.Factory.hasClassProperties( object ) )
+			object = Document.Factory.createFrom( object );
+
+		if ( ! Utils.isString( name ) || ! name )
+			throw new IllegalArgumentError( "The name cannot be empty." );
+
+		let app:T & Class = <T & Class> object;
+		app.name = name;
+		app.types.push( NS.CS.Class.Application );
+
+		return app;
+	}
+
+}
 
 export default Class;
+
+export {
+	Context
+};

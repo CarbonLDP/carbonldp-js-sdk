@@ -1,5 +1,3 @@
-/// <reference path="./../typings/typings.d.ts" />
-
 import * as Utils from "./Utils";
 
 import {
@@ -7,8 +5,6 @@ import {
 	STATIC,
 	clazz,
 	module,
-	submodule,
-	property,
 	isDefined,
 	hasMethod,
 	hasProperty,
@@ -20,7 +16,7 @@ interface Dummy {
 	doSomething?():void;
 }
 
-describe( module( "Carbon/Utils", "The description of Carbon/Utils" ), function ():void {
+describe( module( "Carbon/Utils", "The description of Carbon/Utils" ), ():void => {
 
 	it( isDefined(), function():void {
 		expect( Utils ).toBeDefined();
@@ -30,14 +26,14 @@ describe( module( "Carbon/Utils", "The description of Carbon/Utils" ), function 
 	it( hasMethod( STATIC, "hasFunction", "Checks if the object has a property with that name and if it that property is a function.", [
 		{ name: "object", type: "object" },
 		{ name: "name", type: "string" },
-	], { type: "boolean" } ), function ():void {
+	], { type: "boolean" } ), ():void => {
 		expect( Utils.hasFunction ).toBeDefined();
 
 		let myObject:Dummy = {};
 		expect( Utils.hasFunction( myObject, "hasOwnProperty" ) ).toBe( true );
 		expect( Utils.hasFunction( myObject, "doSomething" ) ).toBe( false );
 
-		myObject.doSomething = function ():void {};
+		myObject.doSomething = ():void => {};
 		expect( Utils.hasFunction( myObject, "doSomething" ) ).toBe( true );
 
 		myObject.something = "something";
@@ -46,7 +42,7 @@ describe( module( "Carbon/Utils", "The description of Carbon/Utils" ), function 
 	it( hasMethod( STATIC, "hasProperty", "Checks if the object has a property with that name.", [
 		{ name: "object", type: "object" },
 		{ name: "name", type: "string" },
-	], { type: "boolean" } ), function ():void {
+	], { type: "boolean" } ), ():void => {
 		expect( Utils.hasProperty ).toBeDefined();
 
 		let postPrototype:any = {};
@@ -63,7 +59,7 @@ describe( module( "Carbon/Utils", "The description of Carbon/Utils" ), function 
 	it( hasMethod( STATIC, "hasPropertyDefined", "Checks if an object has a property defined under that name (even if its value is undefined).", [
 		{ name: "object", type: "object" },
 		{ name: "name", type: "string" },
-	], { type: "boolean" } ), function ():void {
+	], { type: "boolean" } ), ():void => {
 		expect( Utils.hasPropertyDefined ).toBeDefined();
 
 		let postPrototype:any = {};
@@ -92,9 +88,27 @@ describe( module( "Carbon/Utils", "The description of Carbon/Utils" ), function 
 
 	} );
 
-	it( hasMethod( STATIC, "isNull", "Checks if the value passed is null.", [
+	it( hasMethod( STATIC, "isDefined", "Checks if the value passed is defined.", [
 		{ name: "value", type: "any" },
 	], { type: "boolean" } ), function ():void {
+		expect( Utils.isDefined ).toBeDefined();
+
+		expect( Utils.isDefined( null ) ).toBe( true );
+		expect( Utils.isDefined( "something" ) ).toBe( true );
+		expect( Utils.isDefined( true ) ).toBe( true );
+		expect( Utils.isDefined( false ) ).toBe( true );
+		expect( Utils.isDefined( 9 ) ).toBe( true );
+		expect( Utils.isDefined( {} ) ).toBe( true );
+		expect( Utils.isDefined( [] ) ).toBe( true );
+
+		let somethingUndefined;
+		expect( Utils.isDefined( undefined ) ).toBe( false );
+		expect( Utils.isDefined( somethingUndefined ) ).toBe( false );
+	} );
+
+	it( hasMethod( STATIC, "isNull", "Checks if the value passed is null.", [
+		{ name: "value", type: "any" },
+	], { type: "boolean" } ), ():void => {
 		expect( Utils.isNull ).toBeDefined();
 
 		expect( Utils.isNull( null ) ).toBe( true );
@@ -108,7 +122,7 @@ describe( module( "Carbon/Utils", "The description of Carbon/Utils" ), function 
 
 	it( hasMethod( STATIC, "isArray", "Checks if the value passed is an array.", [
 		{ name: "value", type: "any" },
-	], { type: "boolean" } ), function ():void {
+	], { type: "boolean" } ), ():void => {
 		expect( Utils.isArray ).toBeDefined();
 
 		expect( Utils.isArray( null ) ).toBe( false );
@@ -122,7 +136,7 @@ describe( module( "Carbon/Utils", "The description of Carbon/Utils" ), function 
 
 	it( hasMethod( STATIC, "isString", "Checks if the value passed is a string.", [
 		{ name: "value", type: "any" },
-	], { type: "boolean" } ), function ():void {
+	], { type: "boolean" } ), ():void => {
 		expect( Utils.isString ).toBeDefined();
 
 		expect( Utils.isString( null ) ).toBe( false );
@@ -136,7 +150,7 @@ describe( module( "Carbon/Utils", "The description of Carbon/Utils" ), function 
 
 	it( hasMethod( STATIC, "isBoolean", "Checks if the value passed is a boolean.", [
 		{ name: "value", type: "any" },
-	], { type: "boolean" } ), function ():void {
+	], { type: "boolean" } ), ():void => {
 		expect( Utils.isBoolean ).toBeDefined();
 
 		expect( Utils.isBoolean( null ) ).toBe( false );
@@ -150,7 +164,7 @@ describe( module( "Carbon/Utils", "The description of Carbon/Utils" ), function 
 
 	it( hasMethod( STATIC, "isNumber", "Checks if the value passed is a number", [
 		{ name: "value", type: "any" },
-	], { type: "boolean" } ), function ():void {
+	], { type: "boolean" } ), ():void => {
 		expect( Utils.isNumber ).toBeDefined();
 
 		expect( Utils.isNumber( null ) ).toBe( false );
@@ -167,7 +181,7 @@ describe( module( "Carbon/Utils", "The description of Carbon/Utils" ), function 
 
 	it( hasMethod( STATIC, "isInteger", "Checks if the value passed is an integer.", [
 		{ name: "value", type: "any" },
-	], { type: "boolean" } ), function ():void {
+	], { type: "boolean" } ), ():void => {
 		expect( Utils.isInteger ).toBeDefined();
 
 		expect( Utils.isInteger( null ) ).toBe( false );
@@ -184,7 +198,7 @@ describe( module( "Carbon/Utils", "The description of Carbon/Utils" ), function 
 
 	it( hasMethod( STATIC, "isDouble", "Checks if the value passed is a double.", [
 		{ name: "value", type: "any" },
-	], { type: "boolean" } ), function ():void {
+	], { type: "boolean" } ), ():void => {
 		expect( Utils.isNumber ).toBeDefined();
 
 		expect( Utils.isNumber( null ) ).toBe( false );
@@ -201,7 +215,7 @@ describe( module( "Carbon/Utils", "The description of Carbon/Utils" ), function 
 
 	it( hasMethod( STATIC, "isDate", "Checks if the value passed is a Date object.", [
 		{ name: "value", type: "any" },
-	], { type: "boolean" } ), function ():void {
+	], { type: "boolean" } ), ():void => {
 		expect( Utils.isDate ).toBeDefined();
 
 		expect( Utils.isDate( null ) ).toBe( false );
@@ -216,7 +230,7 @@ describe( module( "Carbon/Utils", "The description of Carbon/Utils" ), function 
 
 	it( hasMethod( STATIC, "isObject", "Checks if the value passed is an object (doesn\"t include null).", [
 		{ name: "value", type: "any" },
-	], { type: "boolean" } ), function ():void {
+	], { type: "boolean" } ), ():void => {
 		expect( Utils.isObject ).toBeDefined();
 
 		expect( Utils.isObject( null ) ).toBe( false );
@@ -231,7 +245,7 @@ describe( module( "Carbon/Utils", "The description of Carbon/Utils" ), function 
 
 	it( hasMethod( STATIC, "isFunction", "Checks if the value passed is a function.", [
 		{ name: "value", type: "any" },
-	], { type: "boolean" } ), function ():void {
+	], { type: "boolean" } ), ():void => {
 		expect( Utils.isFunction ).toBeDefined();
 
 		expect( Utils.isFunction( null ) ).toBe( false );
@@ -242,12 +256,12 @@ describe( module( "Carbon/Utils", "The description of Carbon/Utils" ), function 
 		expect( Utils.isFunction( {} ) ).toBe( false );
 		expect( Utils.isFunction( [] ) ).toBe( false );
 		expect( Utils.isFunction( new Date() ) ).toBe( false );
-		expect( Utils.isFunction( function ():void {} ) ).toBe( true );
+		expect( Utils.isFunction( ():void => {} ) ).toBe( true );
 	} );
 
 	it( hasMethod( STATIC, "isMap", "Checks if the value passed is an ES6 Map.", [
 		{ name: "value", type: "any" },
-	], { type: "boolean" } ), function ():void {
+	], { type: "boolean" } ), ():void => {
 		expect( Utils.isMap ).toBeDefined();
 
 		expect( Utils.isMap( null ) ).toBe( false );
@@ -258,13 +272,13 @@ describe( module( "Carbon/Utils", "The description of Carbon/Utils" ), function 
 		expect( Utils.isMap( {} ) ).toBe( false );
 		expect( Utils.isMap( [] ) ).toBe( false );
 		expect( Utils.isMap( new Date() ) ).toBe( false );
-		expect( Utils.isMap( function ():void {} ) ).toBe( false );
+		expect( Utils.isMap( ():void => {} ) ).toBe( false );
 		expect( Utils.isMap( new Map<any, any>() ) ).toBe( true );
 	} );
 
 	it( hasMethod( STATIC, "parseBoolean", "Parses a string into a boolean.", [
 		{ name: "value", type: "string" },
-	], { type: "boolean" } ), function ():void {
+	], { type: "boolean" } ), ():void => {
 		expect( Utils.parseBoolean ).toBeDefined();
 
 		expect( Utils.parseBoolean( "true" ) ).toBe( true );
@@ -280,14 +294,14 @@ describe( module( "Carbon/Utils", "The description of Carbon/Utils" ), function 
 		expect( Utils.parseBoolean( "an invalid string" ) ).toBe( false );
 	} );
 
-	it( hasMethod( STATIC, "extend", "", [] ), function ():void {
+	it( hasMethod( STATIC, "extend", "", [] ), ():void => {
 		// TODO: Test
 	} );
 
 	it( hasMethod( STATIC, "forEachOwnProperty", "Executes an action for each own property of the object.", [
 		{ name: "object", type: "object" },
 		{ name: "action", type: "function", description: "action( name, value )" },
-	] ), function ():void {
+	] ), ():void => {
 		expect( Utils.forEachOwnProperty ).toBeDefined();
 
 		let postPrototype:any = {};
@@ -309,15 +323,71 @@ describe( module( "Carbon/Utils", "The description of Carbon/Utils" ), function 
 		expect( anotherPost.three ).toBe( 3 );
 	} );
 
+	describe( clazz( "Carbon.Utils.O", "Utility functions related to strings." ), ():void => {
+		it( isDefined(), ():void => {
+			expect( Utils.O ).toBeDefined();
+		} );
 
-	describe( clazz( "Carbon.Utils.S", "Utility functions related to strings." ), function ():void {
-		it( isDefined(), function ():void {
+		it( hasMethod( STATIC, "areShallowlyEqual", "Checks if an object has the same enumerable properties with the same values as another object.", [
+			{ name: "object1", type: "object" },
+			{ name: "object2", type: "object" },
+		], { type: "boolean" } ), ():void => {
+			expect( Utils.O.areShallowlyEqual ).toBeDefined();
+
+			let sharedObject:Object = {};
+
+			expect( Utils.O.areShallowlyEqual( sharedObject, sharedObject ) ).toBe( true );
+			expect( Utils.O.areShallowlyEqual( {}, {} ) ).toBe( true );
+			expect( Utils.O.areShallowlyEqual( {
+				stringProperty: "something",
+				numberProperty: 1,
+				objectProperty: sharedObject,
+				functionProperty: () => {},
+			}, {
+				stringProperty: "something",
+				numberProperty: 1,
+				objectProperty: sharedObject,
+				functionProperty: () => {},
+			} ) ).toBe( true );
+			// Object values not the same reference
+			expect( Utils.O.areShallowlyEqual( {
+				stringProperty: "something",
+				numberProperty: 1,
+				objectProperty: {},
+			}, {
+				stringProperty: "something",
+				numberProperty: 1,
+				objectProperty: {},
+			} ) ).toBe( false );
+			// Missing property object1
+			expect( Utils.O.areShallowlyEqual( {
+				stringProperty: "something",
+				numberProperty: 1,
+			}, {
+				stringProperty: "something",
+				numberProperty: 1,
+				objectProperty: sharedObject,
+			} ) ).toBe( false );
+			// Missing property object2
+			expect( Utils.O.areShallowlyEqual( {
+				stringProperty: "something",
+				numberProperty: 1,
+				objectProperty: sharedObject,
+			}, {
+				stringProperty: "something",
+				objectProperty: sharedObject,
+			} ) ).toBe( false );
+		} );
+	} );
+
+	describe( clazz( "Carbon.Utils.S", "Utility functions related to strings." ), ():void => {
+		it( isDefined(), ():void => {
 			expect( Utils.S ).toBeDefined();
 		} );
 		it( hasMethod( STATIC, "startsWith", "Checks if a string starts with a substring.", [
 			{ name: "string", type: "string" },
 			{ name: "substring", type: "string" },
-		], { type: "boolean" } ), function ():void {
+		], { type: "boolean" } ), ():void => {
 			expect( Utils.S.startsWith ).toBeDefined();
 
 			expect( Utils.S.startsWith( "hello", "he" ) ).toBe( true );
@@ -335,7 +405,7 @@ describe( module( "Carbon/Utils", "The description of Carbon/Utils" ), function 
 		it( hasMethod( STATIC, "endsWith", "Checks if a string ends with a substring.", [
 			{ name: "string", type: "string" },
 			{ name: "substring", type: "string" },
-		], { type: "boolean" } ), function ():void {
+		], { type: "boolean" } ), ():void => {
 			expect( Utils.S.endsWith ).toBeDefined();
 
 			expect( Utils.S.endsWith( "hello", "he" ) ).toBe( false );
@@ -353,7 +423,7 @@ describe( module( "Carbon/Utils", "The description of Carbon/Utils" ), function 
 		it( hasMethod( STATIC, "contains", "Checks if a string contains a substring (in any part).", [
 			{ name: "string", type: "string" },
 			{ name: "substring", type: "string" },
-		], { type: "boolean" } ), function ():void {
+		], { type: "boolean" } ), ():void => {
 			expect( Utils.S.contains ).toBeDefined();
 
 			expect( Utils.S.contains( "hello", "he" ) ).toBe( true );
@@ -369,14 +439,14 @@ describe( module( "Carbon/Utils", "The description of Carbon/Utils" ), function 
 			expect( Utils.S.contains( "hello", " " ) ).toBe( false );
 		} );
 	} );
-	describe( clazz( "Carbon.Utils.A", "Utility functions related to Arrays" ), function ():void {
-		it( isDefined(), function ():void {
+	describe( clazz( "Carbon.Utils.A", "Utility functions related to Arrays" ), ():void => {
+		it( isDefined(), ():void => {
 			expect( Utils.A ).toBeDefined();
 		} );
 
 		it( hasMethod( STATIC, "from", "Collects the values of an ES6 iterator and returns an array.", [
 			{ name: "iterator", type: "iterator" },
-		], { type: "array" } ), function ():void {
+		], { type: "array" } ), ():void => {
 			expect( Utils.A.from ).toBeDefined();
 
 			let iterator:Iterator<string> & { current:number, values:Array<string>} = {
@@ -410,7 +480,7 @@ describe( module( "Carbon/Utils", "The description of Carbon/Utils" ), function 
 		it( hasMethod( STATIC, "joinWithoutDuplicates", "Takes two or more arrays and joins them while removing duplicates", [
 			// TODO: Describe multiple arguments
 			{ name: "array", type: "array" },
-		], { type: "array" } ), function ():void {
+		], { type: "array" } ), ():void => {
 			expect( Utils.A.joinWithoutDuplicates ).toBeDefined();
 
 			let array1:Array<number> = [ 5, 3, 1 ];
@@ -429,14 +499,14 @@ describe( module( "Carbon/Utils", "The description of Carbon/Utils" ), function 
 			expect( result.indexOf( 4 ) ).not.toBe( - 1 );
 		} );
 	} );
-	describe( clazz( "Carbon.Utils.M", "Utility functions related to ES6 Maps." ), function ():void {
-		it( isDefined(), function ():void {
+	describe( clazz( "Carbon.Utils.M", "Utility functions related to ES6 Maps." ), ():void => {
+		it( isDefined(), ():void => {
 			expect( Utils.M ).toBeDefined();
 		} );
 
 		it( hasMethod( STATIC, "from", "Takes an object and creates a map from its properties.", [
 			{ name: "object", type: "object" },
-		], { type: "map" } ), function ():void {
+		], { type: "map" } ), ():void => {
 			expect( Utils.M.from ).toBeDefined();
 
 			let post:Object = {
@@ -454,14 +524,14 @@ describe( module( "Carbon/Utils", "The description of Carbon/Utils" ), function 
 		} );
 	} );
 
-	describe( clazz( "Carbon.Utils.UUID", "Utility functions related to UUIDs" ), function ():void {
-		it( isDefined(), function ():void {
+	describe( clazz( "Carbon.Utils.UUID", "Utility functions related to UUIDs" ), ():void => {
+		it( isDefined(), ():void => {
 			expect( Utils.UUID ).toBeDefined();
 		} );
 
 		it( hasMethod( STATIC, "is", "Returns true if the string provided is a UUID (version 1 to 5).", [
 			{ name: "uuid", type: "string" },
-		], { type: "string" } ), function ():void {
+		], { type: "string" } ), ():void => {
 			expect( Utils.UUID.is ).toBeDefined();
 
 			expect( Utils.UUID.is( null ) ).toEqual( false );
@@ -471,7 +541,7 @@ describe( module( "Carbon/Utils", "The description of Carbon/Utils" ), function 
 			expect( Utils.UUID.is( "8cef9ec9-32b6-4beb-ba11-fb8a1d8f67cd" ) ).toEqual( true );
 		} );
 
-		it( hasMethod( STATIC, "generate", "Generates a new, version 4, UUID.", { type: "string" } ), function ():void {
+		it( hasMethod( STATIC, "generate", "Generates a new, version 4, UUID.", { type: "string" } ), ():void => {
 			expect( Utils.UUID.generate ).toBeDefined();
 
 			let uuid:string = Utils.UUID.generate();

@@ -47,6 +47,9 @@ export interface ReexportsDescriptor extends SpecDescriptor {
 	originalLocation: string;
 }
 
+export interface EnumDescriptor extends SpecDescriptor {
+}
+
 export interface MethodArgument {
 	name:string;
 	type:string;
@@ -58,6 +61,10 @@ export interface MethodArgument {
 export interface MethodReturn {
 	type:string;
 	description?:string;
+}
+
+export interface DecorateDescriptor extends SuiteDescriptor {
+	type:string[];
 }
 
 export function serialize( descriptor:SuiteDescriptor ):string
@@ -87,6 +94,8 @@ export const PROPERTY:string = "property";
 export const SUPER_CLASS:string = "super-class";
 export const REEXPORTS:string = "reexports";
 export const DEFAULTEXPORT:string = "defaultExport";
+export const ENUM:string = "enum";
+export const DECORATED:string = "decoratedObject";
 
 export function module( name:string, description:string = null ):string {
 	let descriptor:SuiteDescriptor = {
@@ -121,6 +130,16 @@ export function interfaze( name:string, description:string, parent:string = null
 	return toJSON( descriptor );
 }
 
+export function enumeration( name:string, description:string = null ):string {
+	let descriptor:SuiteDescriptor = {
+		suiteType: ENUM,
+		name: name,
+		description: description,
+	};
+
+	return toJSON( descriptor );
+}
+
 export function constructor( description:string = null ):string {
 	let descriptor:SuiteDescriptor = {
 		suiteType: CONSTRUCTOR,
@@ -136,6 +155,16 @@ export function reexports( access: string, name: string, originalLocation: strin
 		access: access,
 		name: name,
 		originalLocation: originalLocation,
+	};
+
+	return toJSON( descriptor );
+}
+
+export function decoratedObject( description:string, type: string[] ):string {
+	let descriptor:DecorateDescriptor = {
+		suiteType: DECORATED,
+		type: type,
+		description: description,
 	};
 
 	return toJSON( descriptor );
@@ -235,6 +264,7 @@ export function method( access:string, name:string, description:string = null ):
 
 export function hasSignature():string;
 export function hasSignature( description:string ):string;
+export function hasSignature( description:string, returns:MethodReturn ):string;
 export function hasSignature( description:string, methodArguments:MethodArgument[] ):string;
 export function hasSignature( description:string, methodArguments:MethodArgument[], returns:MethodReturn ):string;
 export function hasSignature( methodArguments:MethodArgument[] ):string;
@@ -293,10 +323,21 @@ export function extendsClass( name:string ):string {
 	return toJSON( descriptor );
 }
 
-export function hasDefaultExport( exportName: string ): string {
+export function hasDefaultExport( exportName: string, description:string = null ):string {
 	let descriptor:SpecDescriptor = {
 		specType: DEFAULTEXPORT,
 		name: exportName,
+		description: description,
+	};
+
+	return toJSON( descriptor );
+}
+
+export function hasEnumeral( name:string, description:string = null ):string {
+	let descriptor:EnumDescriptor = {
+		specType: ENUM,
+		name: name,
+		description: description,
 	};
 
 	return toJSON( descriptor );

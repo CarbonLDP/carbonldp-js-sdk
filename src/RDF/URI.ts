@@ -52,7 +52,7 @@ export class Util {
 		if( baseURI === "" ) return true;
 
 		if( uri.startsWith( baseURI ) ) {
-			if( Utils.S.endsWith( baseURI, "/" ) ) return true;
+			if( Utils.S.endsWith( baseURI, "/" ) || Utils.S.endsWith( baseURI, "#" ) ) return true;
 
 			let relativeURI:string = uri.substring( baseURI.length );
 			if( Utils.S.startsWith( relativeURI, "/" ) || Utils.S.startsWith( relativeURI, "#" ) ) return true;

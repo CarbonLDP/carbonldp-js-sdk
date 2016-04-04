@@ -1,5 +1,3 @@
-/// <reference path="../../typings/typings.d.ts" />
-
 import {
 	INSTANCE,
 	STATIC,
@@ -9,13 +7,10 @@ import {
 	constructor,
 
 	isDefined,
-	hasConstructor,
-	hasProperty,
 	hasMethod,
-	hasSignature,
 	hasDefaultExport
 } from "./../test/JasmineExtender";
-import * as Utils from "../Utils";
+import * as Utils from "./../Utils";
 
 import * as JSONParser from "./JSONParser";
 import DefaultExport from "./JSONParser";
@@ -37,11 +32,6 @@ describe( module(
 		it( isDefined(), ():void => {
 			expect( JSONParser.Class ).toBeDefined();
 			expect( Utils.isFunction( JSONParser.Class ) ).toBe( true );
-		});
-
-		it( hasConstructor([
-			{ name: "value", type: "string" }
-		]), ():void => {
 			let value: JSONParser.Class = new JSONParser.Class();
 
 			expect( value ).toBeTruthy();
@@ -54,7 +44,7 @@ describe( module(
 				{ name: "body", type: "string", description: "A JSON string to parse" }
 			],
 			{ type: "Promise <Object>" }
-		), ( done: () => void ):void => {
+		), ( done ):void => {
 			let parser: JSONParser.Class = new JSONParser.Class();
 			let jsonString = `{
 			   "anObject": {
@@ -120,8 +110,8 @@ describe( module(
 					expect( errorObject instanceof Error ).toBe( true );
 				}
 			};
-			spyOn(spy, 'success').and.callThrough();
-			spyOn(spy, 'error').and.callThrough();
+			let success = spyOn(spy, 'success').and.callThrough();
+			let error = spyOn(spy, 'error').and.callThrough();
 
 			let promises: Promise<any>[] = [];
 
@@ -129,10 +119,10 @@ describe( module(
 			promises.push( parser.parse( "some String /12121/ that is not JSON ))(*&^%$#@!" ).then( spy.success, spy.error ) );
 
 			Promise.all( promises ).then( ():void => {
-				expect( spy.success.calls.count() ).toBe( 1 );
-				expect( spy.error.calls.count() ).toBe( 1 );
+				expect( success.calls.count() ).toBe( 1 );
+				expect( error.calls.count() ).toBe( 1 );
 				done();
-			}, done );
+			}, done.fail );
 		});
 
 	});

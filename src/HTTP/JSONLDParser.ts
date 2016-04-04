@@ -1,5 +1,3 @@
-/// <reference path="../../typings/typings.d.ts" />
-
 import * as jsonld from "jsonld";
 
 import Parser from "./Parser";
@@ -18,7 +16,7 @@ export class Class implements Parser<any> {
 			jsonld.expand( parsedObject, options, ( error:any, expanded:Object ):void => {
 				if ( error ) {
 					// TODO: Handle jsonld.expand error
-					throw error;
+					reject( error );
 				}
 
 				parsedObject = expanded;

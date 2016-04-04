@@ -1,5 +1,3 @@
-/// <reference path="../../../typings/typings.d.ts" />
-
 import {
 	INSTANCE,
 	STATIC,
@@ -12,13 +10,13 @@ import {
 	hasConstructor,
 	hasProperty,
 	hasMethod
-} from "../../test/JasmineExtender";
-import * as Utils from "../../Utils";
+} from "./../../test/JasmineExtender";
+import * as Utils from "./../../Utils";
 
-import Response from "../Response";
+import Response from "./../Response";
 
 import HTTPError from "./HTTPError";
-import AbstractError from "../../Errors/AbstractError";
+import AbstractError from "./../../Errors/AbstractError";
 
 describe( module(
 	"Carbon/HTTP/Errors/HTTPError"

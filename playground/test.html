@@ -1,6 +1,9 @@
 <html>
 <head></head>
 <body>
+
+	<input type="file" id="upload" />
+
 	<script src="../dist/bundles/Carbon.sfx.js"></script>
 	<script>
 		(function() {
@@ -48,33 +51,34 @@
 			} );
 
 			carbon.extendObjectSchema( {
-				"counter": {
-					"@id": "ex:counter",
-					"@type": "xsd:integer"
+				"stringProperty": {
+					"@id": "ex:stringProperty",
+					"@type": "xsd:string"
+				},
+				"something": {
+					"@id": "ex:something",
+					"@type": "xsd:string"
 				}
 			} );
 
 			var appContext;
-			var resource;
+			var filesDocument;
 
 			carbon.auth.authenticate( "admin@carbonldp.com", "hello" ).then( function() {
-				return carbon.apps.getAll();
-			} ).then( function( appContexts ) {
-				console.log( "%o", appContexts );
-			} );
+				return carbon.apps.getContext( "test-app/" );
+			}).then( function( _appContext ) {
+				appContext = _appContext;
+				return appContext.documents.get( "files/" );
+			}).then( function( [ _document, result ] ) {
+				filesDocument = _document;
+			});
 
-			function executeSELECTQuery( document ) {
-				return document.executeSELECTQuery( "SELECT ?c ?s ?p ?o WHERE { GRAPH ?c { ?s ?p ?o } }" );
-			}
-
-			function incrementCounter( resource ) {
-				resource = result[ 0 ];
-				resource.counter = "counter" in resource ? resource.counter + 1 : 1;
-
-				console.log( "%o", resource );
-
-				return appContext.documents.save( resource );
-			}
+			var input = document.querySelector( "#upload" );
+			input.addEventListener( "change", function( event ) {
+				filesDocument.upload( event.target.files[ 0 ] ).then( function( result ) {
+					console.log( result );
+				});
+			});
 		})();
 	</script>
 </body>

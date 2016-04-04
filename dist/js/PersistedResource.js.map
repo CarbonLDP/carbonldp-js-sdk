@@ -1,1 +1,0 @@
-{"version":3,"sources":["PersistedResource.ts"],"names":[],"mappings":"AAAA,kDAAkD","file":"PersistedResource.js","sourcesContent":["/// <reference path=\"./../typings/typings.d.ts\" />\n\nexport interface Class {\n\tisDirty():boolean;\n}\n\nexport default Class;\n"],"sourceRoot":"/source/"}

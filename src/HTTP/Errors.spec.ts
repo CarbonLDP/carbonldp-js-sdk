@@ -1,5 +1,3 @@
-/// <reference path="../../typings/typings.d.ts" />
-
 import {
 	INSTANCE,
 	STATIC,
@@ -10,7 +8,7 @@ import {
 	isDefined,
 	hasProperty,
 } from "./../test/JasmineExtender";
-import * as Utils from "../Utils";
+import * as Utils from "./../Utils";
 
 import HTTPError from "./Errors/HTTPError";
 
@@ -33,7 +31,7 @@ import BadResponseError from "./Errors/server/BadResponseError";
 import BadGatewayError from "./Errors/server/BadGatewayError";
 import GatewayTimeoutError from "./Errors/server/GatewayTimeoutError";
 import HTTPVersionNotSupportedError from "./Errors/server/HTTPVersionNotSupportedError";
-import InternalServerError from "./Errors/server/InternalServerError";
+import InternalServerErrorError from "./Errors/server/InternalServerErrorError";
 import NotImplementedError from "./Errors/server/NotImplementedError";
 import ServiceUnavailableError from "./Errors/server/ServiceUnavailableError";
 
@@ -224,11 +222,11 @@ describe( module(
 
 	it( reexports(
 		STATIC,
-		"InternalServerError",
-		"Carbon/HTTP/Errors/client/InternalServerError"
+		"InternalServerErrorError",
+		"Carbon/HTTP/Errors/client/InternalServerErrorError"
 	), ():void => {
-		expect( Errors.InternalServerError ).toBeDefined();
-		expect( Errors.InternalServerError ).toBe( InternalServerError );
+		expect( Errors.InternalServerErrorError ).toBeDefined();
+		expect( Errors.InternalServerErrorError ).toBe( InternalServerErrorError );
 	});
 
 	it( reexports(
@@ -298,7 +296,7 @@ describe( module(
 		expect( Errors.server.indexOf( BadGatewayError ) ).not.toBe( -1 );
 		expect( Errors.server.indexOf( GatewayTimeoutError ) ).not.toBe( -1 );
 		expect( Errors.server.indexOf( HTTPVersionNotSupportedError ) ).not.toBe( -1 );
-		expect( Errors.server.indexOf( InternalServerError ) ).not.toBe( -1 );
+		expect( Errors.server.indexOf( InternalServerErrorError ) ).not.toBe( -1 );
 		expect( Errors.server.indexOf( NotImplementedError ) ).not.toBe( -1 );
 		expect( Errors.server.indexOf( ServiceUnavailableError ) ).not.toBe( -1 );
 	});
@@ -331,7 +329,7 @@ describe( module(
 		expect( Errors.statusCodeMap.get( BadGatewayError.statusCode ) ).toBe( BadGatewayError );
 		expect( Errors.statusCodeMap.get( GatewayTimeoutError.statusCode ) ).toBe( GatewayTimeoutError );
 		expect( Errors.statusCodeMap.get( HTTPVersionNotSupportedError.statusCode ) ).toBe( HTTPVersionNotSupportedError );
-		expect( Errors.statusCodeMap.get( InternalServerError.statusCode ) ).toBe( InternalServerError );
+		expect( Errors.statusCodeMap.get( InternalServerErrorError.statusCode ) ).toBe( InternalServerErrorError );
 		expect( Errors.statusCodeMap.get( NotImplementedError.statusCode ) ).toBe( NotImplementedError );
 		expect( Errors.statusCodeMap.get( ServiceUnavailableError.statusCode ) ).toBe( ServiceUnavailableError );
 	});
