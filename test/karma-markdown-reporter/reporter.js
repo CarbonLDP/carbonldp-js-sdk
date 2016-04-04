@@ -1,7 +1,12 @@
 "use strict";
 
+var fs = require('fs');
+var Handlebars = require('handlebars');
+
 let MarkdownReporter = (() => {
 	let docsData;
+	let template;
+	let destFile;
 
 	function isJSON( description ) {
 		return description && description.indexOf( "JSON" ) === 0;
@@ -41,7 +46,7 @@ let MarkdownReporter = (() => {
 				break;
 
 			case "class":
-				parent = parent[ "classes" ] || ( parent[ "classes" ] = new Map() );
+				parent = parent[ "classes" ] || ( parent[ "classes" ] = {} );
 				break;
 
 			case "interface":
@@ -52,24 +57,21 @@ let MarkdownReporter = (() => {
 				return parent[ "constructors" ] || ( parent[ "constructors" ] = suite );
 
 			case "method":
-				parent = parent[ "methods" ] || ( parent[ "methods" ] || new Map() );
+				parent = parent[ "methods" ] || ( parent[ "methods" ] || {} );
 				break;
 
 			case "decoratedObject":
 				return parent[ "decorated-object" ] || ( parent[ "decorated-object" ] = suite );
 
 			case "enum":
-				parent = parent[ "enums" ] || ( parent[ "enums" ] = new Map() );
+				parent = parent[ "enums" ] || ( parent[ "enums" ] = {} );
 				break;
 
 			default:
 				name = name.replace( " ", "-" );
 		}
 
-		if ( parent instanceof Map )
-			return parent.has( name ) ? parent.get( name ) : ( parent.set( name, suite ).get( name ) );
-		else
-			return parent[ name ] = suite;
+		return parent[ name ] ? parent[ name ] : ( parent[ name ] = suite );
 	}
 
 	function composeSpec( parent, spec ) {
@@ -86,16 +88,16 @@ let MarkdownReporter = (() => {
 				break;
 
 			case "method":
-				let methods = parent[ "methods" ] || ( parent[ "methods" ] = new Map() );
+				let methods = parent[ "methods" ] || ( parent[ "methods" ] = {} );
 				signatures = spec[ "signatures" ] || ( spec[ "signatures" ] = [] );
 
-				methods.set( spec.name, { access: spec.access, name: spec.name } );
+				methods[ spec.name ] = { access: spec.access, name: spec.name };
 				signatures.push( spec );
 				break;
 
 			case "property":
-				let properties = parent[ "methods" ] || ( parent[ "methods" ] = new Map() );
-				properties.set( spec.name,  spec );
+				let properties = parent[ "methods" ] || ( parent[ "methods" ] = {} );
+				properties[ spec.name ] =  spec;
 				break;
 
 			case "signature":
@@ -132,12 +134,7 @@ let MarkdownReporter = (() => {
 
 			default:
 				let name = spec.name.replace( " ", "-" );
-
-				if ( parent instanceof  Map )
-					parent.set( name, true );
-				else
-					parent[ name ] = true;
-
+				parent[ name ] = true;
 				break;
 		}
 
@@ -181,7 +178,7 @@ let MarkdownReporter = (() => {
 	}
 
 	function onRunStart( browsers, server ) {
-		docsData = new Map();
+		docsData = {};
 	}
 
 	/**
@@ -208,7 +205,19 @@ let MarkdownReporter = (() => {
 	 * @param server
 	 */
 	function onRunComplete( browsers, overallResults, server ) {
-		console.log( docsData );
+		let data = sortObject( docsData );
+		let outData = template( { modules: data } );
+		console.log( outData );
+		fs.writeFileSync( destFile, outData, "utf8" );
+	}
+
+	function sortObject( object ) {
+		let keys = Object.keys( object ).sort();
+		let result = [];
+		for ( let key of keys ) {
+			result.push( object[ key ] );
+		}
+		return result;
 	}
 
 	function obtainConfig( config, name ) {
@@ -220,6 +229,11 @@ let MarkdownReporter = (() => {
 
 	let MarkdownReporter = function( config ) {
 		config = config.markdownReporter || {};
+		let src = obtainConfig( config, "src" );
+		destFile = obtainConfig( config, "dest" );
+
+		src = fs.readFileSync( src, "utf8" );
+		template = Handlebars.compile( src );
 
 		this.specSuccess = specSuccess;
 		this.specSkipped = specSkipped;

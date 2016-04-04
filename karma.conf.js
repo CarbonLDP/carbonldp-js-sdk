@@ -25,6 +25,11 @@ module.exports = function( config ) {
 
 		reporters: [ "markdown" ],
 
+		markdownReporter: {
+			src: "docs/templates/template.hbs",
+			dest: "docs/api.md"
+		},
+
 		// web server port
 		port: 9876,
 
