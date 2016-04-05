@@ -1,6 +1,7 @@
 # [CarbonLDP JavaScript SDK](http://carbonldp.com/)
 
 [![Join the chat at https://gitter.im/CarbonLDP/CarbonLDP-JS-SDK](https://badges.gitter.im/CarbonLDP/CarbonLDP-JS-SDK.svg)](https://gitter.im/CarbonLDP/CarbonLDP-JS-SDK?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 JavaScript SDK that simplifies the use of CarbonLDP's REST API.
 
 ## Development Setup
