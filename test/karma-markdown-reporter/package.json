@@ -8,5 +8,9 @@
   },
   "author": "MiguelAraCo <miguel.aragon@base22.com>",
   "license": "UNLICENSED",
-  "private": true
+  "private": true,
+  "dependencies": {
+    "handlebars": "^4.0.5",
+    "swag": "^0.7.0"
+  }
 }

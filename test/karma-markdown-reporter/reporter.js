@@ -1,7 +1,10 @@
 "use strict";
 
-var fs = require('fs');
-var Handlebars = require('handlebars');
+var fs = require( "fs" );
+var Handlebars = require( "handlebars" );
+var swag = require( "swag" );
+swag.registerHelpers( Handlebars );
+
 
 let MarkdownReporter = (() => {
 	let docsData;
@@ -43,10 +46,18 @@ let MarkdownReporter = (() => {
 
 		switch( type ) {
 			case "module":
+				suite.path = suite.name;
+				suite.name = suite.path.split( "/" ).pop();
 				break;
 
 			case "class":
-				parent = parent[ "classes" ] || ( parent[ "classes" ] = {} );
+				if ( parent[ "classes" ] ) {
+					parent = parent[ "classes" ];
+				} else {
+					parent = parent[ "classes" ] = {};
+					suite.path = suite.name;
+					suite.name = suite.path.split( "." ).pop();
+				}
 				break;
 
 			case "interface":
@@ -58,6 +69,7 @@ let MarkdownReporter = (() => {
 
 			case "method":
 				parent = parent[ "methods" ] || ( parent[ "methods" ] || {} );
+				parent = parent[ suite.access ] || ( parent[ suite.access ] = {} );
 				break;
 
 			case "decoratedObject":
@@ -89,14 +101,18 @@ let MarkdownReporter = (() => {
 
 			case "method":
 				let methods = parent[ "methods" ] || ( parent[ "methods" ] = {} );
-				signatures = spec[ "signatures" ] || ( spec[ "signatures" ] = [] );
+				methods = methods[ spec.access ] || ( methods[ spec.access ] = {} );
 
-				methods[ spec.name ] = { access: spec.access, name: spec.name };
+				let method = methods[ spec.name ] = { access: spec.access, name: spec.name };
+
+				signatures = method[ "signatures" ] || ( method[ "signatures" ] = [] );
 				signatures.push( spec );
 				break;
 
 			case "property":
-				let properties = parent[ "methods" ] || ( parent[ "methods" ] = {} );
+				let properties = parent[ "properties" ] || ( parent[ "properties" ] = {} );
+				properties = properties[ spec.access ] || ( properties[ spec.access ] = {} );
+
 				properties[ spec.name ] =  spec;
 				break;
 
@@ -205,9 +221,10 @@ let MarkdownReporter = (() => {
 	 * @param server
 	 */
 	function onRunComplete( browsers, overallResults, server ) {
-		let data = sortObject( docsData );
+		let data = sortObject( docsData ); console.log( data[ 2 ] );
 		let outData = template( { modules: data } );
-		console.log( outData );
+		// console.log( outData );
+		// fs.writeFileSync( destFile, JSON.stringify({ modules: data, "new-line": "\n", level: Handlebars.logger.DEBUG }), "utf8" );
 		fs.writeFileSync( destFile, outData, "utf8" );
 	}
 
@@ -224,7 +241,7 @@ let MarkdownReporter = (() => {
 		if ( config[ name ] )
 			return config[ name ];
 
-		throw new Error( `No ${src} configuration provided.` );
+		throw new Error( `No ${name} configuration provided.` );
 	}
 
 	let MarkdownReporter = function( config ) {

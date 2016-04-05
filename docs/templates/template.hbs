@@ -2,9 +2,138 @@
 
 {{#each modules}}
 
-## {{ name }}
-{{#description}}
->{{this}}
-{{/description}}
+## {{path}}
+
+{{#if description}}> {{{description}}}{{/if}}
+
+{{#if reexports}}
+### Reexports
+
+| Export name | Original Location |
+| --- | --- |
+{{#each reexports ~}}
+| {{../name}}.{{name}} | [{{originalLocation}}](#{{originalLocation}}) |
+{{/each}}
+{{/if}}
+
+{{#each classes}}
+
+### Class {{path}}
+
+{{#if description}}> {{{description}}}{{/if}}
+
+{{#if reexports}}
+#### Reexports
+
+| Export name | Original Location |
+| --- | --- |
+{{#each reexports ~}}
+| {{../name}}.{{name}}  | [{{originalLocation}}](#{{originalLocation}}) |
+{{/each}}
+{{/if}}
+
+{{~#with constructors~}}
+	##### Constructors
+
+	{{#each signatures~}}
+```typescript
+{{../../name}}({{#each arguments}} {{name}}{{#if optional}}?{{/if}}:{{{type}}}{{^if @last}},{{/if}} {{/each}})
+```
+		{{#with description}}{{{this}}}{{/with}}
+		{{#if arguments~}}
+			**Parameters**
+			{{#each arguments~}}
+				- {{name}} {{#with description}}: {{this}}{{/with}}
+			{{/each}}
+		{{/if~}}
+
+	{{/each~}}
+
+{{/with}}
+
+{{#if properties.static}}
+##### Properties
+
+{{#each properties.static~}}
+```typescript
+{{../name}}.{{name}}: {{{type}}}
+```
+
+{{#with description}} {{{this}}} {{/with}}
+
+{{/each~}}
+
+{{/if~}}
+
+	{{#if methods.static~}}
+		##### Methods
+
+		{{#each methods.static~}}
+			###### {{name}}
+
+			{{#each signatures~}}
+```typescript
+{{../../name}}.{{../name}}({{#each arguments}} {{name}}{{#if optional}}?{{/if}}:{{{type}}}{{^if @last}},{{/if}} {{/each}}):{{{returns.type}}}
+```
+
+{{#if description}}{{{description}}}  {{/if}}
+
+				{{#if arguments~}}
+					**Parameters**
+					{{#each arguments~}}
+						- {{name}} {{#with description}}: {{this}}{{/with}}
+					{{/each}}
+				{{/if}}
+
+			{{/each~}}
+		{{/each}}
+
+	{{/if}}
+
+{{#or properties.instance methods.instance ~}}
+	#### Instance
+
+	{{#if properties.instance ~}}
+		##### Properties
+
+		{{#each properties.instance ~}}
+```typescript
+{{../name}}.prototype.{{name}}: {{{type}}}
+```
+
+{{#with description~}} {{{this}}} {{/with}}
+
+		{{/each~}}
+
+	{{/if~}}
+
+	{{#if methods.instance~}}
+		##### Methods
+
+		{{#each methods.instance~}}
+			###### {{name}}
+
+			{{#each signatures~}}
+```typescript
+{{../../name}}.prototype.{{../name}}({{#each arguments}} {{name}}{{#if optional}}?{{/if}}:{{{type}}}{{^if @last}},{{/if}} {{/each}}):{{{returns.type}}}
+```
+
+{{#if description}}{{{description}}}  {{/if}}
+
+				{{#if arguments~}}
+					**Parameters**
+					{{#each arguments~}}
+						- {{name}} {{#with description}}: {{this}}{{/with}}
+					{{/each}}
+				{{/if}}
+
+			{{/each~}}
+		{{/each}}
+
+	{{/if}}
+
+{{/or}}
+
+{{/each}}
 
 {{/each}}
