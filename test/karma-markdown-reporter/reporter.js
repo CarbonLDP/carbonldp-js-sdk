@@ -1,6 +1,8 @@
 "use strict";
 
 var fs = require( "fs" );
+var glob = require("glob");
+var path = require('path');
 var Handlebars = require( "handlebars" );
 var swag = require( "swag" );
 swag.registerHelpers( Handlebars );
@@ -8,6 +10,10 @@ swag.registerHelpers( Handlebars );
 (() => {
 	Handlebars.registerHelper( "new-line", () => {
 		return "\n";
+	});
+	Handlebars.registerHelper( "trim", str => {
+		str = str || "";
+		return str.replace(/\t/g, '');
 	});
 })();
 
@@ -224,10 +230,9 @@ let MarkdownReporter = (() => {
 	 * @param server
 	 */
 	function onRunComplete( browsers, overallResults, server ) {
-		let data = sortObject( docsData ); console.log( data[ 2 ] );
+		let data = sortObject( docsData );
 		let outData = template( { modules: data } );
-		// console.log( outData );
-		// fs.writeFileSync( destFile, JSON.stringify({ modules: data, "new-line": "\n", level: Handlebars.logger.DEBUG }), "utf8" );
+		// fs.writeFileSync( destFile, JSON.stringify({ modules: data }), "utf8" );
 		fs.writeFileSync( destFile, outData, "utf8" );
 	}
 
@@ -247,6 +252,32 @@ let MarkdownReporter = (() => {
 		throw new Error( `No ${name} configuration provided.` );
 	}
 
+	function addPartials( partials ) {
+		let partial;
+
+		if ( typeof partials === "object" ) {
+			for ( let key of Object.keys( partials ) ) {
+				partial = partials[ key ];
+				if ( partial.src ) {
+					partial = fs.readFileSync( partial.src , "utf8" );
+				}
+				Handlebars.registerPartial( key, partial );
+			}
+
+		} else if ( typeof partials === "string" ) {
+			glob( partials, function (err, files) {
+				if ( err ) throw  err;
+
+				for ( let file of files ) {
+					partial = fs.readFileSync( file , "utf8" );
+					Handlebars.registerPartial( path.basename( file, ".hbs" ), partial );
+				}
+			});
+		} else {
+			throw new Error( "Partials configuration malformed. Partial no recognized: " + partials );
+		}
+	}
+
 	let MarkdownReporter = function( config ) {
 		config = config.markdownReporter || {};
 		let src = obtainConfig( config, "src" );
@@ -254,6 +285,11 @@ let MarkdownReporter = (() => {
 
 		src = fs.readFileSync( src, "utf8" );
 		template = Handlebars.compile( src );
+
+		let partials = Array.isArray( config.partials ) ? config.partials : [ config.partials ];
+		for ( let partial of partials ) {
+			addPartials( partial );
+		}
 
 		this.specSuccess = specSuccess;
 		this.specSkipped = specSkipped;

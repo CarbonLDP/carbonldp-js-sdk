@@ -10,6 +10,7 @@
   "license": "UNLICENSED",
   "private": true,
   "dependencies": {
+    "glob": "^7.0.3",
     "handlebars": "^4.0.5",
     "swag": "^0.7.0"
   }

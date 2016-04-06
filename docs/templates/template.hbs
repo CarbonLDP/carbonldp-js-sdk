@@ -1,4 +1,4 @@
-# CarbonLDP SDK API description
+# CarbonLDP SDK API Description
 
 {{#each modules}}
 
@@ -7,134 +7,100 @@
 	{{/with}}
 
 	{{#with description~}}
-		> {{{this}}}
+		> {{{trim this}}}
 	{{/with}}
 
-	{{#if reexports~}}
-		### Reexports
+	{{#with default-export~}}
+		**Default export:** [{{name}}](#{{sanitize name}})
+		{{#with description~}}
+			> {{{trim this}}}
+		{{/with}}
+	{{/with}}
 
-		{{new-line~}}
-		| Export name | Original Location | {{new-line~}}
-		| --- | --- |
-		{{#each reexports~}}
-			| {{name}} | [{{originalLocation}}](#{{sanitize originalLocation}}) |
+	{{~> reexports}}
+
+	{{#if enums~}}
+		### Enums
+		{{#each enums}}
+			{{~>enum this}}
 		{{/each}}
+	{{/if}}
+
+	{{#if properties~}}
+		### Module Properties
+
+		{{~> properties properties=properties.static access="static " }}
+
+		{{~> properties properties=properties.instance access="" }}
+	{{/if}}
+
+	{{#if methods~}}
+		### Module Methods
+
+		{{~>methods methods=methods.static access="static " }}
+
+		{{~>methods methods=methods.instance access="" }}
 	{{/if}}
 
 	{{#each classes}}
 
 		{{#with path~}}
-			### Class {{this}}
+			### <a name="{{sanitize this}}" />Class {{this}}
 		{{/with}}
+
+		{{#if super-classes~}}
+			**Extends:** {{#each super-classes}}[{{name}}](#{{sanitize name}}){{^if @last}}, {{/if}}{{/each}}
+		{{/if}}
 
 		{{#with description~}}
-			> {{{this}}}
+			> {{{trim this}}}
 		{{/with}}
 
-		{{#if reexports~}}
-			#### Reexports
-
-			{{new-line~}}
-			| Export name | Original Location | {{new-line~}}
-			| --- | --- |
-			{{#each reexports ~}}
-				| {{name}} | [{{originalLocation}}](#{{sanitize originalLocation}}) |
-			{{/each}}
-		{{/if}}
+		{{~> reexports}}
 
 		{{#with constructors~}}
 			#### Constructor
 
-			{{#each signatures~}}
-				```typescript {{new-line~}}
-				{{../../name}}({{#each arguments}} {{name}}{{#if optional}}?{{/if}}:{{{type}}}{{^if @last}},{{/if}} {{/each}}) {{new-line~}}
-				```
-				{{#with description~}}
-					{{{this}}}
-				{{/with}}
-
-				{{#if arguments~}}
-					**Parameters**
-
-					{{#each arguments~}}
-						- {{name}} {{#with description}}: {{this}}{{/with}}
-					{{/each}}
-				{{/if~}}
-			{{/each~}}
+			{{~>signatures name=../name }}
 		{{/with}}
 
 		{{#if properties~}}
 			#### Properties
 
-			{{#each properties.static~}}
-				```typescript {{new-line~}}
-				static {{name}}:{{{type}}} {{new-line~}}
-				```
+			{{~>properties properties=properties.static access="static " }}
 
-				{{#with description~}}
-					{{{this}}}
-				{{/with}}
-			{{/each}}
-
-			{{#each properties.static~}}
-				```typescript {{new-line~}}
-				{{name}}:{{{type}}} {{new-line~}}
-				```
-
-				{{#with description~}}
-					{{{this}}}
-				{{/with}}
-			{{/each}}
+			{{~>properties properties=properties.instance access="" }}
 		{{/if}}
 
 		{{#if methods~}}
 			#### Methods
 
-			{{#each methods.static~}}
-				##### {{name}}
+			{{~>methods methods=methods.static access="static " }}
 
-				{{#each signatures~}}
-					```typescript {{new-line~}}
-					static {{../name}}({{#each arguments}} {{name}}{{#if optional}}?{{/if}}:{{{type}}}{{^if @last}},{{/if}} {{/each}}):{{{returns.type}}} {{new-line~}}
-					```
-
-					{{#with description~}}
-						{{{this}}}
-					{{/with}}
-
-					{{#if arguments~}}
-						**Parameters**
-
-						{{#each arguments~}}
-							- {{name}} {{#with description}}: {{this}}{{/with}}
-						{{/each}}
-
-					{{/if}}
-				{{/each}}
-			{{/each}}
-
-			{{#each methods.instance~}}
-				##### {{name}}
-
-				{{#each signatures~}}
-					```typescript {{new-line~}}
-					{{../name}}({{#each arguments}} {{name}}{{#if optional}}?{{/if}}:{{{type}}}{{^if @last}},{{/if}} {{/each}}):{{{returns.type}}} {{new-line~}}
-					```
-
-					{{#with description~}}
-						{{{this}}}
-					{{/with}}
-
-					{{#if arguments~}}
-						**Parameters**
-
-						{{#each arguments~}}
-							- {{name}} {{#with description}}: {{this}}{{/with}}
-						{{/each}}
-
-					{{/if}}
-				{{/each}}
-			{{/each}}
+			{{~>methods methods=methods.instance access="" }}
 		{{/if}}
+
+		{{#with decorated-object~}}
+			#### Decorated Object
+			{{#if type~}}
+				**Interfaces:** {{#each type}}[{{this}}](#{{sanitize this}}){{^if @last}}, {{/if}}{{/each}}
+			{{/if}}
+
+			{{#with description~}}
+				> {{{trim this}}}
+			{{/with}}
+
+			{{#if properties ~}}
+				##### Properties
+
+				{{~>properties properties=properties.instance access=""}}
+			{{/if}}
+
+			{{#if methods~}}
+				##### Methods
+
+				{{~>methods methods=methods.instance access=""}}
+			{{/if}}
+		{{/with}}
 	{{/each}}
 {{/each}}

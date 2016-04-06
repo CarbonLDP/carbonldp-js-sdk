@@ -1,0 +1,6 @@
+{{~new-line~}}
+{{#each methods~}}
+	#####{{#if ../one-more}}#{{/if}} {{name}}
+
+	{{~>signatures access=../access}}
+{{/each}}

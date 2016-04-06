@@ -27,7 +27,8 @@ module.exports = function( config ) {
 
 		markdownReporter: {
 			src: "docs/templates/template.hbs",
-			dest: "docs/api.md"
+			partials: "docs/templates/partials/*.hbs",
+			dest: "docs/README.md"
 		},
 
 		// web server port
