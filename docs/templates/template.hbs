@@ -2,138 +2,139 @@
 
 {{#each modules}}
 
-## {{path}}
+	{{#with path~}}
+		## <a name="{{sanitize this}}" />{{this}}
+	{{/with}}
 
-{{#if description}}> {{{description}}}{{/if}}
+	{{#with description~}}
+		> {{{this}}}
+	{{/with}}
 
-{{#if reexports}}
-### Reexports
+	{{#if reexports~}}
+		### Reexports
 
-| Export name | Original Location |
-| --- | --- |
-{{#each reexports ~}}
-| {{../name}}.{{name}} | [{{originalLocation}}](#{{originalLocation}}) |
-{{/each}}
-{{/if}}
+		{{new-line~}}
+		| Export name | Original Location | {{new-line~}}
+		| --- | --- |
+		{{#each reexports~}}
+			| {{name}} | [{{originalLocation}}](#{{sanitize originalLocation}}) |
+		{{/each}}
+	{{/if}}
 
-{{#each classes}}
+	{{#each classes}}
 
-### Class {{path}}
+		{{#with path~}}
+			### Class {{this}}
+		{{/with}}
 
-{{#if description}}> {{{description}}}{{/if}}
+		{{#with description~}}
+			> {{{this}}}
+		{{/with}}
 
-{{#if reexports}}
-#### Reexports
+		{{#if reexports~}}
+			#### Reexports
 
-| Export name | Original Location |
-| --- | --- |
-{{#each reexports ~}}
-| {{../name}}.{{name}}  | [{{originalLocation}}](#{{originalLocation}}) |
-{{/each}}
-{{/if}}
-
-{{~#with constructors~}}
-	##### Constructors
-
-	{{#each signatures~}}
-```typescript
-{{../../name}}({{#each arguments}} {{name}}{{#if optional}}?{{/if}}:{{{type}}}{{^if @last}},{{/if}} {{/each}})
-```
-		{{#with description}}{{{this}}}{{/with}}
-		{{#if arguments~}}
-			**Parameters**
-			{{#each arguments~}}
-				- {{name}} {{#with description}}: {{this}}{{/with}}
+			{{new-line~}}
+			| Export name | Original Location | {{new-line~}}
+			| --- | --- |
+			{{#each reexports ~}}
+				| {{name}} | [{{originalLocation}}](#{{sanitize originalLocation}}) |
 			{{/each}}
-		{{/if~}}
+		{{/if}}
 
-	{{/each~}}
-
-{{/with}}
-
-{{#if properties.static}}
-##### Properties
-
-{{#each properties.static~}}
-```typescript
-{{../name}}.{{name}}: {{{type}}}
-```
-
-{{#with description}} {{{this}}} {{/with}}
-
-{{/each~}}
-
-{{/if~}}
-
-	{{#if methods.static~}}
-		##### Methods
-
-		{{#each methods.static~}}
-			###### {{name}}
+		{{#with constructors~}}
+			#### Constructor
 
 			{{#each signatures~}}
-```typescript
-{{../../name}}.{{../name}}({{#each arguments}} {{name}}{{#if optional}}?{{/if}}:{{{type}}}{{^if @last}},{{/if}} {{/each}}):{{{returns.type}}}
-```
-
-{{#if description}}{{{description}}}  {{/if}}
+				```typescript {{new-line~}}
+				{{../../name}}({{#each arguments}} {{name}}{{#if optional}}?{{/if}}:{{{type}}}{{^if @last}},{{/if}} {{/each}}) {{new-line~}}
+				```
+				{{#with description~}}
+					{{{this}}}
+				{{/with}}
 
 				{{#if arguments~}}
 					**Parameters**
+
 					{{#each arguments~}}
 						- {{name}} {{#with description}}: {{this}}{{/with}}
 					{{/each}}
-				{{/if}}
-
+				{{/if~}}
 			{{/each~}}
-		{{/each}}
+		{{/with}}
 
-	{{/if}}
+		{{#if properties~}}
+			#### Properties
 
-{{#or properties.instance methods.instance ~}}
-	#### Instance
+			{{#each properties.static~}}
+				```typescript {{new-line~}}
+				static {{name}}:{{{type}}} {{new-line~}}
+				```
 
-	{{#if properties.instance ~}}
-		##### Properties
+				{{#with description~}}
+					{{{this}}}
+				{{/with}}
+			{{/each}}
 
-		{{#each properties.instance ~}}
-```typescript
-{{../name}}.prototype.{{name}}: {{{type}}}
-```
+			{{#each properties.static~}}
+				```typescript {{new-line~}}
+				{{name}}:{{{type}}} {{new-line~}}
+				```
 
-{{#with description~}} {{{this}}} {{/with}}
+				{{#with description~}}
+					{{{this}}}
+				{{/with}}
+			{{/each}}
+		{{/if}}
 
-		{{/each~}}
+		{{#if methods~}}
+			#### Methods
 
-	{{/if~}}
+			{{#each methods.static~}}
+				##### {{name}}
 
-	{{#if methods.instance~}}
-		##### Methods
+				{{#each signatures~}}
+					```typescript {{new-line~}}
+					static {{../name}}({{#each arguments}} {{name}}{{#if optional}}?{{/if}}:{{{type}}}{{^if @last}},{{/if}} {{/each}}):{{{returns.type}}} {{new-line~}}
+					```
 
-		{{#each methods.instance~}}
-			###### {{name}}
+					{{#with description~}}
+						{{{this}}}
+					{{/with}}
 
-			{{#each signatures~}}
-```typescript
-{{../../name}}.prototype.{{../name}}({{#each arguments}} {{name}}{{#if optional}}?{{/if}}:{{{type}}}{{^if @last}},{{/if}} {{/each}}):{{{returns.type}}}
-```
+					{{#if arguments~}}
+						**Parameters**
 
-{{#if description}}{{{description}}}  {{/if}}
+						{{#each arguments~}}
+							- {{name}} {{#with description}}: {{this}}{{/with}}
+						{{/each}}
 
-				{{#if arguments~}}
-					**Parameters**
-					{{#each arguments~}}
-						- {{name}} {{#with description}}: {{this}}{{/with}}
-					{{/each}}
-				{{/if}}
+					{{/if}}
+				{{/each}}
+			{{/each}}
 
-			{{/each~}}
-		{{/each}}
+			{{#each methods.instance~}}
+				##### {{name}}
 
-	{{/if}}
+				{{#each signatures~}}
+					```typescript {{new-line~}}
+					{{../name}}({{#each arguments}} {{name}}{{#if optional}}?{{/if}}:{{{type}}}{{^if @last}},{{/if}} {{/each}}):{{{returns.type}}} {{new-line~}}
+					```
 
-{{/or}}
+					{{#with description~}}
+						{{{this}}}
+					{{/with}}
 
-{{/each}}
+					{{#if arguments~}}
+						**Parameters**
 
+						{{#each arguments~}}
+							- {{name}} {{#with description}}: {{this}}{{/with}}
+						{{/each}}
+
+					{{/if}}
+				{{/each}}
+			{{/each}}
+		{{/if}}
+	{{/each}}
 {{/each}}

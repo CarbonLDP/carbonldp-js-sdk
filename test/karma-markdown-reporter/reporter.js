@@ -5,6 +5,11 @@ var Handlebars = require( "handlebars" );
 var swag = require( "swag" );
 swag.registerHelpers( Handlebars );
 
+(() => {
+	Handlebars.registerHelper( "new-line", () => {
+		return "\n";
+	});
+})();
 
 let MarkdownReporter = (() => {
 	let docsData;
@@ -22,12 +27,10 @@ let MarkdownReporter = (() => {
 			try {
 				return JSON.parse( data );
 			} catch( error ) {
-				// TODO: Handle error
-				throw error;
+				console.warn( error );
 			}
-		} else {
-			return { name: data };
 		}
+		return { name: data };
 	}
 
 	// Obtains or generate the object for store and arrange the specs data
