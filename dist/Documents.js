@@ -272,7 +272,7 @@ var Documents = (function () {
         HTTP.Request.Util.setAcceptHeader("application/ld+json", requestOptions);
         HTTP.Request.Util.setPreferredInteractionModel(NS.LDP.Class.RDFSource, requestOptions);
         HTTP.Request.Util.setIfMatchHeader(persistedDocument._etag, requestOptions);
-        return HTTP.Request.Service.delete(persistedDocument.id, persistedDocument.toJSON(), requestOptions);
+        return HTTP.Request.Service.delete(persistedDocument.id, requestOptions);
     };
     Documents.prototype.getSchemaFor = function (object) {
         if ("@id" in object) {

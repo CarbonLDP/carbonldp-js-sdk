@@ -4,7 +4,7 @@ import * as ObjectSchema from "./ObjectSchema";
 import * as Utils from "./Utils";
 import {IllegalArgumentError} from "./Errors";
 
-import * as Context from "./App/Context";
+import Context from "./App/Context";
 
 export interface Class extends Document.Class {
 	name:string;

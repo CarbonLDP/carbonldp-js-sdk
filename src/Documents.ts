@@ -159,8 +159,8 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 	createChild( parentURI:string, childDocument:Document.Class, requestOptions?:HTTP.Request.Options ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
 	createChild( parentURI:string, slugOrChildDocument:any, childDocumentOrRequestOptions:any = {}, requestOptions:HTTP.Request.Options = {} ):Promise<[ Pointer.Class, HTTP.Response.Class ]> {
 		let slug:string = Utils.isString( slugOrChildDocument ) ? slugOrChildDocument : null;
-		let childDocument:Document.Class = ! Utils.isString(slugOrChildDocument) ? slugOrChildDocument : childDocumentOrRequestOptions;
-		requestOptions = ! Utils.isString(slugOrChildDocument) ? childDocumentOrRequestOptions : requestOptions;
+		let childDocument:Document.Class = ! Utils.isString( slugOrChildDocument ) ? slugOrChildDocument : childDocumentOrRequestOptions;
+		requestOptions = ! Utils.isString( slugOrChildDocument ) ? childDocumentOrRequestOptions : requestOptions;
 
 		if( PersistedDocument.Factory.is( childDocument ) ) return Promise.reject<any>( new Errors.IllegalArgumentError( "The childDocument provided has been already persisted." ) );
 
@@ -322,7 +322,7 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 		HTTP.Request.Util.setPreferredInteractionModel( NS.LDP.Class.RDFSource, requestOptions );
 		HTTP.Request.Util.setIfMatchHeader( persistedDocument._etag, requestOptions );
 
-		return HTTP.Request.Service.delete( persistedDocument.id, persistedDocument.toJSON(), requestOptions );
+		return HTTP.Request.Service.delete( persistedDocument.id, requestOptions );
 	}
 
 	getSchemaFor( object:Object ):ObjectSchema.DigestedObjectSchema {

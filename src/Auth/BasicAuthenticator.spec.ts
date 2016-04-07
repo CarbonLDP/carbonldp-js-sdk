@@ -122,7 +122,7 @@ describe( module( "Carbon/Auth/BasicAuthenticator" ), ():void => {
 				expect( promise instanceof Promise ).toEqual( true );
 
 				promises.push( promise.then( ():void => {
-					done( new Error( "Promise should have failed." ) );
+					done.fail( new Error( "Promise should have failed." ) );
 				}, ( error:Error ):void => {
 					expect( error instanceof Errors.IllegalArgumentError ).toEqual( true );
 
@@ -134,7 +134,7 @@ describe( module( "Carbon/Auth/BasicAuthenticator" ), ():void => {
 			Promise.all( promises ).then( ():void => {
 				done();
 			}, ( error:Error ):void => {
-				done( error );
+				done.fail( error );
 			});
 		});
 
@@ -180,7 +180,7 @@ describe( module( "Carbon/Auth/BasicAuthenticator" ), ():void => {
 			Promise.all( promises ).then( ():void => {
 				done();
 			}, ( error:Error ):void => {
-				done( error );
+				done.fail( error );
 			});
 		});
 
@@ -207,7 +207,7 @@ describe( module( "Carbon/Auth/BasicAuthenticator" ), ():void => {
 			Promise.all( promises ).then( ():void => {
 				done();
 			}, ( error:Error ):void => {
-				done( error );
+				done.fail( error );
 			});
 		});
 
