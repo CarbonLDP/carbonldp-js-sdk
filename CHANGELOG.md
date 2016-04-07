@@ -1,3 +1,6 @@
+# 0.23.0 (April 7, 2016)
+- Added `RDFRepresentation` module
+
 # 0.22.0 (March 31, 2016)
 - Added `PersistedApp.Class` interface
 

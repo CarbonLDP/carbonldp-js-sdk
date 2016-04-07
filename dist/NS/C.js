@@ -43,6 +43,11 @@ var Class = (function () {
         enumerable: true,
         configurable: true
     });
+    Object.defineProperty(Class, "RDFRepresentation", {
+        get: function () { return exports.namespace + "RDFRepresentation"; },
+        enumerable: true,
+        configurable: true
+    });
     return Class;
 }());
 exports.Class = Class;
@@ -71,6 +76,16 @@ var Predicate = (function () {
     });
     Object.defineProperty(Predicate, "version", {
         get: function () { return exports.namespace + "version"; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Predicate, "mediaType", {
+        get: function () { return exports.namespace + "mediaType"; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Predicate, "size", {
+        get: function () { return exports.namespace + "size"; },
         enumerable: true,
         configurable: true
     });
