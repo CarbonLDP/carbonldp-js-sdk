@@ -25,12 +25,6 @@ module.exports = function( config ) {
 
 		reporters: [ "documentation" ],
 
-		markdownReporter: {
-			src: "build/doc-templates/template.hbs",
-			partials: "build/doc-templates/partials/*.hbs",
-			dest: "doc/README.md"
-		},
-
 		// web server port
 		port: 9876,
 

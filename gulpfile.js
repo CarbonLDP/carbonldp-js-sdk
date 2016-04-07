@@ -68,6 +68,11 @@ gulp.task( "generate-doc", ( done ) => {
 	new karma.Server({
 		configFile: __dirname + "/karma.conf.js",
 		reporters: [ "markdown" ],
+		markdownReporter: {
+			src: "build/doc-templates/template.hbs",
+			partials: "build/doc-templates/partials/*.hbs",
+			dest: "doc/README.md"
+		},
 		singleRun: true
 	}, done ).start();
 });
