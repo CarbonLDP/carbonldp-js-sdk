@@ -20,6 +20,10 @@ export const SCHEMA:ObjectSchema.Class = {
 		"@container": "@set",
 		"@type": "@id",
 	},
+	"membershipResource": {
+		"@id": NS.LDP.Predicate.membershipResource,
+		"@type": "@id",
+	},
 	"memberOfRelation": {
 		"@id": NS.LDP.Predicate.memberOfRelation,
 		"@type": "@id",
@@ -35,8 +39,8 @@ export const SCHEMA:ObjectSchema.Class = {
 };
 
 export interface Class extends RDFSource.Class {
-	memberOfRelation:Pointer.Class;
-	hasMemberRelation:Pointer.Class;
+	memberOfRelation?:Pointer.Class;
+	hasMemberRelation?:Pointer.Class;
 }
 
 export class Factory {

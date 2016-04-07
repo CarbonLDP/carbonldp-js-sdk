@@ -19,6 +19,12 @@ export class Factory {
 		);
 	}
 
+	static is( object:Object ):boolean {
+		return (
+			Factory.hasClassProperties( object )
+		);
+	}
+
 	static create( id:string = null, types:string[] = null ):Class {
 		return Factory.createFrom( {}, id, types );
 	}

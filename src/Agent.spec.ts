@@ -15,7 +15,7 @@ import * as NS from "./NS";
 import * as Errors from "./Errors";
 import * as Document from "./Document";
 
-describe( module( "Carbon/Agents/Agent" ), ():void => {
+describe( module( "Carbon/Agent" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( Agent ).toBeDefined();
@@ -61,8 +61,8 @@ describe( module( "Carbon/Agents/Agent" ), ():void => {
 	});
 
 	describe( clazz(
-		"Carbon.Agents.Agent.Factory",
-		"Factory class for `Carbon.Agents.Agent.Class` objects"
+		"Carbon.Agent.Factory",
+		"Factory class for `Carbon.Agent.Class` objects"
 	), ():void => {
 
 		it( isDefined(), ():void => {
@@ -73,7 +73,7 @@ describe( module( "Carbon/Agents/Agent" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"hasClassProperties",
-			"Returns true if the object provided has the properties that defines a `Carbon.Agents.Agent.Class` object", [
+			"Returns true if the object provided has the properties that defines a `Carbon.Agent.Class` object", [
 				{ name: "resource", type: "Object" }
 			],
 			{ type: "boolean" }
@@ -95,7 +95,7 @@ describe( module( "Carbon/Agents/Agent" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"is",
-			"Returns true if the object provided is considered as an `Carbon.Agents.Agent.Class` object", [
+			"Returns true if the object provided is considered as an `Carbon.Agent.Class` object", [
 				{ name: "object", type: "Object" }
 			],
 			{ type: "boolean" }
@@ -129,34 +129,34 @@ describe( module( "Carbon/Agents/Agent" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"create",
-			"Create a `Carbon.Agents.Agent.Class` object with the name and email specified.", [
+			"Create a `Carbon.Agent.Class` object with the name and email specified.", [
 				{ name: "name", type: "string" },
 				{ name: "email", type: "string" }
 			],
-			{ type: "Carbon.Agents.Agent.Class" }
+			{ type: "Carbon.Agent.Class" }
 		), ():void => {
 			expect( Agent.Factory.create ).toBeDefined();
 			expect( Utils.isFunction( Agent.Factory.create ) ).toBe( true );
 
-			let spy = spyOn( Agent.Factory, 'createFrom');
+			let spy = spyOn( Agent.Factory, "createFrom");
 
-			Agent.Factory.create( 'Agent name', "email.of.agent@example.com", "myAwesomePassword" );
-			expect( spy ).toHaveBeenCalledWith( {}, 'Agent name', "email.of.agent@example.com", "myAwesomePassword" );
+			Agent.Factory.create( "Agent name", "email.of.agent@example.com", "myAwesomePassword" );
+			expect( spy ).toHaveBeenCalledWith( {}, "Agent name", "email.of.agent@example.com", "myAwesomePassword" );
 
-			Agent.Factory.create( 'Another Agent name', "another.email.of.agent@example.com", "myAwesomePassword" );
-			expect( spy ).toHaveBeenCalledWith( {}, 'Another Agent name', "another.email.of.agent@example.com", "myAwesomePassword" );
+			Agent.Factory.create( "Another Agent name", "another.email.of.agent@example.com", "myAwesomePassword" );
+			expect( spy ).toHaveBeenCalledWith( {}, "Another Agent name", "another.email.of.agent@example.com", "myAwesomePassword" );
 
-			Agent.Factory.create( '', '', '' );
-			expect( spy ).toHaveBeenCalledWith( {}, '', '', '' );
+			Agent.Factory.create( "", "", "" );
+			expect( spy ).toHaveBeenCalledWith( {}, "", "", "" );
 		});
 
 		it( hasMethod(
 			STATIC,
 			"createFrom",
-			"Create a `Carbon.Agents.Agent.Class` object with the object provided.", [
+			"Create a `Carbon.Agent.Class` object with the object provided.", [
 				{ name: "object", type: "T extends Object" }
 			],
-			{ type: "T & Carbon.Agents.Agent.Class" }
+			{ type: "T & Carbon.Agent.Class" }
 		), ():void => {
 			expect( Agent.Factory.createFrom ).toBeDefined();
 			expect( Utils.isFunction( Agent.Factory.createFrom ) ).toBe( true );
@@ -167,27 +167,27 @@ describe( module( "Carbon/Agents/Agent" ), ():void => {
 			interface MyAgent extends Agent.Class, TheAgent {}
 
 			let agent:MyAgent;
-			agent = Agent.Factory.createFrom<TheAgent>( {}, 'Agent name', 'email.of.agent@example.com', 'myAwesomePassword' );
+			agent = Agent.Factory.createFrom<TheAgent>( {}, "Agent name", "email.of.agent@example.com", "myAwesomePassword" );
 			expect( Agent.Factory.is( agent ) ).toBe( true );
 			expect( agent.myProperty ).toBeUndefined();
-			expect( agent.name ).toBe( 'Agent name');
-			expect( agent.email ).toBe( 'email.of.agent@example.com' );
-			expect( agent.password ).toBe( 'myAwesomePassword' );
+			expect( agent.name ).toBe( "Agent name");
+			expect( agent.email ).toBe( "email.of.agent@example.com" );
+			expect( agent.password ).toBe( "myAwesomePassword" );
 			expect( agent.types ).toContain( NS.CS.Class.Agent );
 
-			agent = Agent.Factory.createFrom<TheAgent>( { myProperty: "a property" }, 'Agent name', 'email.of.agent@example.com', 'myAwesomePassword' );
+			agent = Agent.Factory.createFrom<TheAgent>( { myProperty: "a property" }, "Agent name", "email.of.agent@example.com", "myAwesomePassword" );
 			expect( Agent.Factory.is( agent ) ).toBe( true );
 			expect( agent.myProperty ).toBeDefined();
-			expect( agent.myProperty ).toBe( 'a property' );
-			expect( agent.name ).toBe( 'Agent name');
-			expect( agent.email ).toBe( 'email.of.agent@example.com' );
-			expect( agent.password ).toBe( 'myAwesomePassword' );
+			expect( agent.myProperty ).toBe( "a property" );
+			expect( agent.name ).toBe( "Agent name");
+			expect( agent.email ).toBe( "email.of.agent@example.com" );
+			expect( agent.password ).toBe( "myAwesomePassword" );
 			expect( agent.types ).toContain( NS.CS.Class.Agent );
 
-			expect( () => Agent.Factory.createFrom( {}, 'Agent name', 'email.of.agent@example.com', '' ) ).toThrowError( Errors.IllegalArgumentError );
-			expect( () => Agent.Factory.createFrom( {}, 'Agent name', '', 'myAwesomePassword' ) ).toThrowError( Errors.IllegalArgumentError );
-			expect( () => Agent.Factory.createFrom( {}, '', 'email.of.agent@example.com', 'myAwesomePassword' ) ).toThrowError( Errors.IllegalArgumentError );
-			expect( () => Agent.Factory.createFrom( {}, '', '', '' ) ).toThrowError( Errors.IllegalArgumentError );
+			expect( () => Agent.Factory.createFrom( {}, "Agent name", "email.of.agent@example.com", "" ) ).toThrowError( Errors.IllegalArgumentError );
+			expect( () => Agent.Factory.createFrom( {}, "Agent name", "", "myAwesomePassword" ) ).toThrowError( Errors.IllegalArgumentError );
+			expect( () => Agent.Factory.createFrom( {}, "", "email.of.agent@example.com", "myAwesomePassword" ) ).toThrowError( Errors.IllegalArgumentError );
+			expect( () => Agent.Factory.createFrom( {}, "", "", "" ) ).toThrowError( Errors.IllegalArgumentError );
 		});
 
 	});

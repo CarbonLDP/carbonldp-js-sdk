@@ -9,9 +9,9 @@ import {
 } from "./test/JasmineExtender";
 import * as Utils from "./Utils";
 
-import * as AccessPoint from "./LDP/AccessPoint";
 import * as BasicContainer from "./LDP/BasicContainer";
 import * as Container from "./LDP/Container";
+import * as DirectContainer from "./LDP/DirectContainer";
 import * as PersistedContainer from "./LDP/PersistedContainer";
 import * as RDFSource from "./LDP/RDFSource";
 
@@ -22,15 +22,6 @@ describe( module( "Carbon/LDP" ), ():void => {
 	it( isDefined(), ():void => {
 		expect( LDP ).toBeDefined();
 		expect( Utils.isObject( LDP ) ).toBe( true );
-	});
-
-	it( reexports(
-		STATIC,
-		"AccessPoint",
-		"Carbon/LDP/AccessPoint"
-	), ():void => {
-		expect( LDP.AccessPoint ).toBeDefined();
-		expect( LDP.AccessPoint ).toBe( AccessPoint );
 	});
 
 	it( reexports(
@@ -49,6 +40,24 @@ describe( module( "Carbon/LDP" ), ():void => {
 	), ():void => {
 		expect( LDP.Container ).toBeDefined();
 		expect( LDP.Container ).toBe( Container );
+	});
+
+	it( reexports(
+		STATIC,
+		"DirectContainer",
+		"Carbon/LDP/DirectContainer"
+	), ():void => {
+		expect( LDP.DirectContainer ).toBeDefined();
+		expect( LDP.DirectContainer ).toBe( Container );
+	});
+
+	it( reexports(
+		STATIC,
+		"IndirectContainer",
+		"Carbon/LDP/IndirectContainer"
+	), ():void => {
+		expect( LDP.IndirectContainer ).toBeDefined();
+		expect( LDP.IndirectContainer ).toBe( Container );
 	});
 
 	it( reexports(

@@ -19,6 +19,7 @@ import {
 } from "./test/JasmineExtender";
 import setting from "./settings";
 
+import * as AccessPoint from "./AccessPoint";
 import * as Agent from "./Agent";
 import * as Agents from "./Agents";
 import * as APIDescription from "./APIDescription";
@@ -113,6 +114,15 @@ describe( module( "Carbon" ), ():void => {
 		), ():void => {
 			expect( Carbon.Agent ).toBeDefined();
 			expect( Carbon.Agent ).toBe( Agent );
+		});
+
+		it( reexports(
+			STATIC,
+			"AccessPoint",
+			"Carbon/AccessPoint"
+		), ():void => {
+			expect( Carbon.AccessPoint ).toBeDefined();
+			expect( Carbon.AccessPoint ).toBe( AccessPoint );
 		});
 
 		it( reexports(

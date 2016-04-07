@@ -105,12 +105,14 @@ var Factory = (function () {
     };
     Factory.create = function (uri, documents, snapshot) {
         if (snapshot === void 0) { snapshot = {}; }
-        var document = Document.Factory.create(uri);
+        var document = Document.Factory.create();
+        document.id = uri;
         return Factory.decorate(document, documents, snapshot);
     };
     Factory.createFrom = function (object, uri, documents, snapshot) {
         if (snapshot === void 0) { snapshot = {}; }
-        var document = Document.Factory.createFrom(object, uri);
+        var document = Document.Factory.createFrom(object);
+        document.id = uri;
         return Factory.decorate(document, documents, snapshot);
     };
     Factory.decorate = function (document, documents, snapshot) {

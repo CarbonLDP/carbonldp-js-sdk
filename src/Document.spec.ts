@@ -86,21 +86,6 @@ describe( module( "Carbon/Document" ), ():void => {
 		), ():void => {
 
 			it( hasSignature(
-				"Creates an empty Document object which reference to the URI provided.", [
-				{ name: "uri", type: "string" }
-			],
-				{ type: "Carbon.Document.Class" }
-			), ():void => {
-				expect( Document.Factory.create ).toBeDefined();
-				expect( Utils.isFunction( Document.Factory.create ) ).toBe( true );
-
-				let document:Document.Class;
-				document = Document.Factory.create( "http://example.com/resource/" );
-				expect( document.id ).toBe( "http://example.com/resource/" );
-				expect( Document.Factory.hasClassProperties( document ) ).toBe( true );
-			});
-
-			it( hasSignature(
 				"Creates an empty Document object.",
 				{ type: "Carbon.Document.Class" }
 			), ():void => {
@@ -120,27 +105,6 @@ describe( module( "Carbon/Document" ), ():void => {
 			STATIC,
 			"createFrom"
 		), ():void => {
-
-			it( hasSignature(
-				"Creates a Document object from the object provided and will reference to the URI provided.", [
-					{ name: "object", type: "T extends Object" },
-					{ name: "uri", type: "string" }
-				],
-				{ type: "Carbon.Document.Class" }
-			), ():void => {
-				expect( Document.Factory.createFrom ).toBeDefined();
-				expect( Utils.isFunction( Document.Factory.createFrom ) ).toBe( true );
-
-				let document:Document.Class;
-				document = Document.Factory.createFrom( {}, "http://example.com/resource/" );
-				expect( Document.Factory.hasClassProperties( document ) ).toBe( true );
-				expect( document.id ).toBe( "http://example.com/resource/" );
-
-				document = Document.Factory.createFrom( { myProperty: "a property" }, "http://example.com/resource/" );
-				expect( Document.Factory.hasClassProperties( document ) ).toBe( true );
-				expect( document.id ).toBe( "http://example.com/resource/" );
-				expect( document[ "myProperty" ] ).toBe( "a property" );
-			});
 
 			it( hasSignature(
 				"Creates a Document object from the object provided.",
@@ -196,7 +160,8 @@ describe( module( "Carbon/Document" ), ():void => {
 			let document:Document.Class;
 
 			beforeEach( ():void => {
-				document = Document.Factory.create( "http://example.com/document/" );
+				document = Document.Factory.create();
+				document.id = "http://example.com/document/";
 			});
 
 			it( hasProperty(

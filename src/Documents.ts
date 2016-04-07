@@ -1,24 +1,19 @@
-import * as jsonld from "jsonld";
-
-import Committer from "./Committer";
 import * as Errors from "./Errors";
 import * as HTTP from "./HTTP";
 import Context from "./Context";
 import * as RDF from "./RDF";
 import * as Utils from "./Utils";
 
+import * as AccessPoint from "./AccessPoint";
 import * as Document from "./Document";
-import * as Fragment from "./Fragment";
 import * as JSONLDConverter from "./JSONLDConverter";
 import * as PersistedDocument from "./PersistedDocument";
 import * as PersistedFragment from "./PersistedFragment";
 import * as PersistedNamedFragment from "./PersistedNamedFragment";
 import * as Pointer from "./Pointer";
-import * as NamedFragment from "./NamedFragment";
 import * as NS from "./NS";
 import * as ObjectSchema from "./ObjectSchema";
 import * as LDP from "./LDP";
-import * as Resource from "./Resource";
 import * as SPARQL from "./SPARQL";
 
 class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Resolver {
@@ -162,10 +157,17 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 		let childDocument:Document.Class = ! Utils.isString( slugOrChildDocument ) ? slugOrChildDocument : childDocumentOrRequestOptions;
 		requestOptions = ! Utils.isString( slugOrChildDocument ) ? childDocumentOrRequestOptions : requestOptions;
 
+		if( !! this.context ) parentURI = this.context.resolve( parentURI );
+
 		if( PersistedDocument.Factory.is( childDocument ) ) return Promise.reject<any>( new Errors.IllegalArgumentError( "The childDocument provided has been already persisted." ) );
 
-		if( childDocument.id && ( ! RDF.URI.Util.isBaseOf( parentURI, childDocument.id ) ) ) return Promise.reject<any>( new Errors.IllegalArgumentError( "The childDocument's URI is not relative to the parentURI specified" ) );
-
+		if( childDocument.id ) {
+			let childURI:string = childDocument.id;
+			if( !! this.context ) childURI = this.context.resolve( childURI );
+			if ( ! RDF.URI.Util.isBaseOf( parentURI, childURI ) ) {
+				return Promise.reject<any>( new Errors.IllegalArgumentError( "The childDocument's URI is not relative to the parentURI specified" ) );
+			}
+		}
 
 		if ( this.context && this.context.auth.isAuthenticated() ) this.context.auth.addAuthentication( requestOptions );
 
@@ -178,6 +180,57 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 		if( slug !== null ) HTTP.Request.Util.setSlug( slug, requestOptions );
 
 		return HTTP.Request.Service.post( parentURI, body, requestOptions ).then( ( response:HTTP.Response.Class ) => {
+			let locationHeader:HTTP.Header.Class = response.getHeader( "Location" );
+			if( locationHeader === null || locationHeader.values.length < 1 ) throw new HTTP.Errors.BadResponseError( "The response is missing a Location header.", response );
+			if( locationHeader.values.length !== 1 ) throw new HTTP.Errors.BadResponseError( "The response contains more than one Location header.", response );
+
+			let locationURI:string = locationHeader.values[0].toString();
+
+			// TODO: If a Document was supplied, use it to create the pointer instead of creating a new one
+			let pointer:Pointer.Class = this.getPointer( locationURI );
+
+			return [
+				pointer,
+				response,
+			];
+		});
+	}
+
+	createAccessPoint( documentURI:string, accessPoint:AccessPoint.Class, slug?:string, requestOptions?:HTTP.Request.Options );
+	createAccessPoint( accessPoint:AccessPoint.Class, slug?:string, requestOptions?:HTTP.Request.Options );
+	createAccessPoint( documentURIOrAccessPoint:any, accessPointOrSlug:any, slugOrRequestOptions:any = null, requestOptions:HTTP.Request.Options = {} ) {
+		let documentURI:string = Utils.isString( documentURIOrAccessPoint ) ? documentURIOrAccessPoint : null;
+		let accessPoint:AccessPoint.Class = ! Utils.isString( documentURIOrAccessPoint ) ? documentURIOrAccessPoint : accessPointOrSlug;
+		let slug:string = Utils.isString( accessPointOrSlug ) ? accessPointOrSlug : slugOrRequestOptions;
+		requestOptions = ! Utils.isString( slugOrRequestOptions ) && slugOrRequestOptions !== null ? slugOrRequestOptions : requestOptions;
+
+		if( documentURI === null ) documentURI = accessPoint.membershipResource.id;
+
+		if( !! this.context ) documentURI = this.context.resolve( documentURI );
+
+		if( accessPoint.membershipResource.id !== documentURI ) throw new Errors.IllegalArgumentError( "The documentURI must be the same as the accessPoint's membershipResource" );
+		if( PersistedDocument.Factory.is( accessPoint ) ) return Promise.reject<any>( new Errors.IllegalArgumentError( "The accessPoint provided has been already persisted." ) );
+
+		// TODO: Reuse logic with createChild
+		if( accessPoint.id ) {
+			let childURI:string = accessPoint.id;
+			if( !! this.context ) childURI = this.context.resolve( childURI );
+			if ( ! RDF.URI.Util.isBaseOf( documentURI, childURI ) ) {
+				return Promise.reject<any>( new Errors.IllegalArgumentError( "The accessPoint's URI is not relative to the parentURI specified" ) );
+			}
+		}
+
+		if ( this.context && this.context.auth.isAuthenticated() ) this.context.auth.addAuthentication( requestOptions );
+
+		HTTP.Request.Util.setContentTypeHeader( "application/ld+json", requestOptions );
+		HTTP.Request.Util.setAcceptHeader( "application/ld+json", requestOptions );
+		HTTP.Request.Util.setPreferredInteractionModel( NS.LDP.Class.RDFSource, requestOptions );
+
+		let body:string = accessPoint.toJSON( this, this.jsonldConverter );
+
+		if( slug !== null ) HTTP.Request.Util.setSlug( slug, requestOptions );
+
+		return HTTP.Request.Service.post( documentURI, body, requestOptions ).then( ( response:HTTP.Response.Class ) => {
 			let locationHeader:HTTP.Header.Class = response.getHeader( "Location" );
 			if( locationHeader === null || locationHeader.values.length < 1 ) throw new HTTP.Errors.BadResponseError( "The response is missing a Location header.", response );
 			if( locationHeader.values.length !== 1 ) throw new HTTP.Errors.BadResponseError( "The response contains more than one Location header.", response );

@@ -223,9 +223,6 @@ var Class = (function () {
         if (!Pointer.Factory.is(propertyValue)) {
             return null;
         }
-        if (!!pointerValidator && !pointerValidator.inScope(propertyValue)) {
-            return null;
-        }
         return { "@id": propertyValue.id };
     };
     Class.prototype.expandArray = function (propertyValue, pointerValidator) {

@@ -10,6 +10,9 @@ var Factory = (function () {
     Factory.hasClassProperties = function (resource) {
         return (Utils.hasPropertyDefined(resource, "types"));
     };
+    Factory.is = function (object) {
+        return (Factory.hasClassProperties(object));
+    };
     Factory.create = function (id, types) {
         if (id === void 0) { id = null; }
         if (types === void 0) { types = null; }

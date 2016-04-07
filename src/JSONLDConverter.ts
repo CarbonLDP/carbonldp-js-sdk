@@ -265,11 +265,6 @@ export class Class {
 			return null;
 		}
 
-		if( !! pointerValidator && ! pointerValidator.inScope( propertyValue ) ) {
-			// TODO: Warn of data loss
-			return null;
-		}
-
 		return { "@id": propertyValue.id };
 	}
 

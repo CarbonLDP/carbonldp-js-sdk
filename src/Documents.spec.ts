@@ -160,6 +160,7 @@ describe( module( "Carbon/Documents", "" ), ():void => {
 		});
 	});
 
+	// TODO: Test that it handles relative parentURIs and childDocuments with relativeURIs
 	describe( method(
 		INSTANCE,
 		"createChild"
@@ -347,7 +348,35 @@ describe( module( "Carbon/Documents", "" ), ():void => {
 				done.fail( error );
 			});
 		});
+	});
 
+	describe( method(
+		INSTANCE,
+		"createAccessPoint"
+	), ():void => {
+
+		it( hasSignature(
+			"Create an AccessPoint of the document.", [
+				{ name: "documentURI", type: "string" },
+				{ name: "accessPoint", type: "Carbon.AccessPoint.Class" },
+				{ name: "slug", type: "string", optional: true },
+				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
+			],
+			{ type:"Promise<[Carbon.Pointer.Class, Carbon.HTTP.Response.Class]>" }
+		), ( done:(() => void) & { fail:( error?:any ) => void } ):void => {
+			// TODO
+		});
+
+		it( hasSignature(
+			"Create an AccessPoint of the document.", [
+				{ name: "accessPoint", type: "Carbon.AccessPoint.Class" },
+				{ name: "slug", type: "string", optional: true },
+				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
+			],
+			{ type:"Promise<[Carbon.Pointer.Class, Carbon.HTTP.Response.Class]>" }
+		), ( done:(() => void) & { fail:( error?:any ) => void } ):void => {
+			// TODO
+		});
 	});
 
 	describe( method(

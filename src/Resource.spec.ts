@@ -34,6 +34,17 @@ describe( module( "Carbon/Resource" ), ():void => {
 
 		it( hasMethod(
 			STATIC,
+			"is",
+			"Returns true if the object is a Resource.Class (by duck type)", [
+				{ name: "resource", type: "Object" }
+			],
+			{ type: "boolean" }
+		), ():void => {
+			// TODO
+		});
+
+		it( hasMethod(
+			STATIC,
 			"hasClassProperties",
 			"Returns true if the object provided has the properties and functions of a Resource object", [
 				{ name: "resource", type: "Object" }

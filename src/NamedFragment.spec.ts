@@ -8,12 +8,11 @@ import {
 
 	isDefined,
 	hasMethod,
-	hasSignature
+	hasSignature,
 } from "./test/JasmineExtender";
 import * as Utils from "./Utils";
 import * as Document from "./Document";
 import * as Fragment from "./Fragment";
-import * as URI from "./RDF/URI";
 
 import * as NamedFragment from "./NamedFragment";
 
@@ -37,7 +36,8 @@ describe( module( "Carbon/NamedFragment" ), ():void => {
 		let document:Document.Class;
 
 		beforeAll( ():void => {
-			document = Document.Factory.create( "http://example.com/document/" );
+			document = Document.Factory.create();
+			document.id = "http://example.com/document/";
 		});
 
 		it( hasMethod(
@@ -93,7 +93,7 @@ describe( module( "Carbon/NamedFragment" ), ():void => {
 			"Creates a NamedFragment from an Object with the Slug provided for the document specified.", [
 				{ name: "object", type: "T extends Object" },
 				{ name: "slug", type: "string" },
-				{ name: "document", type: "Carbon.Document.Class" }
+				{ name: "document", type: "Carbon.Document.Class" },
 			],
 			{ type: "T & Carbon.NamedFragment.Class" }
 		), ():void => {
@@ -120,7 +120,7 @@ describe( module( "Carbon/NamedFragment" ), ():void => {
 			expect( fragment.id ).toBe( "http://example.com/document/#another-fragment" );
 			expect( fragment.property ).toBe( "my property 2" );
 
-			let anotherFragment = NamedFragment.Factory.createFrom<Object>( {}, "some-fragment", document );
+			let anotherFragment:NamedFragment.Class = NamedFragment.Factory.createFrom<Object>( {}, "some-fragment", document );
 			expect( anotherFragment ).toBeTruthy();
 			expect( NamedFragment.Factory.hasClassProperties( anotherFragment ) ).toBe( true );
 			expect( anotherFragment.document ).toBe( document );

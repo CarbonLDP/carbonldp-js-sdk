@@ -23,9 +23,8 @@ export interface Class extends Resource.Class, Pointer.Library, Pointer.Validato
 }
 export declare class Factory {
     static hasClassProperties(documentResource: Object): boolean;
-    static create(uri: string): Class;
+    static is(object: Object): boolean;
     static create(): Class;
-    static createFrom<T extends Object>(object: T, uri: string): T & Class;
     static createFrom<T extends Object>(object: T): T & Class;
     static decorate<T extends Object>(object: T): T & Class;
 }

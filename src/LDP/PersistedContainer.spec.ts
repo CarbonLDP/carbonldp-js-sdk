@@ -64,7 +64,9 @@ describe( module( "Carbon/LDP/PersistedContainer" ), ():void => {
 
 			document = Document.Factory.create();
 			expect( PersistedContainer.Factory.hasClassProperties( document ) ).toBe( false );
-			document = Document.Factory.create( "http://example.com/resource/" );
+
+			document = Document.Factory.create();
+			document.id = "http://example.com/resource/";
 			expect( PersistedContainer.Factory.hasClassProperties( document ) ).toBe( false );
 
 			document = PersistedDocument.Factory.create( "http://example.com/resource/", context.documents );
@@ -127,7 +129,7 @@ describe( module( "Carbon/LDP/PersistedContainer" ), ():void => {
 
 		describe( decoratedObject(
 			"Object decorated by the Carbon.LDP.PersistedContainer.Factory.decorate function.", [
-				"Carbon.LDP.PersistedContainer.Class"
+				"Carbon.LDP.PersistedContainer.Class",
 			]
 		), ():void => {
 
