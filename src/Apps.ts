@@ -1,5 +1,5 @@
 import AppContext from "./App/Context";
-import * as Document from "./Document";
+import * as PersistedDocument from "./PersistedDocument";
 import Context from "./Context";
 import * as Response from "./HTTP/Response";
 import * as Pointer from "./Pointer";
@@ -35,7 +35,7 @@ export class Class {
 			pointer = this.context.documents.getPointer( uri );
 		}
 
-		return pointer.resolve().then( ( [ app, response ]:[ Document.Class, Response.Class ] ) => {
+		return pointer.resolve().then( ( [ app, response ]:[ PersistedDocument.Class, Response.Class ] ) => {
 			if ( ! PersistedApp.Factory.is( app ) )
 				return Promise.reject<AppContext>( new Errors.IllegalArgumentError( "The resource fetched is not a cs:Application." ) );
 
