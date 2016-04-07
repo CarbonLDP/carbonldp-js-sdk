@@ -478,7 +478,7 @@ Carbon( settings?:any )
 ```
 
 
-**Parameters**
+*Parameters*
 
 - settings 
 
@@ -510,7 +510,7 @@ resolve( uri:string ):string
 
 Resolve the URI provided in the context of the instance, this information is provided in the settings object.
 
-**Parameters**
+*Parameters*
 
 - uri 
 
@@ -582,7 +582,7 @@ resolve( relativeURI:string ):string
 
 Abstract method which implementation must resolve the URI provided in the scope of the application.
 
-**Parameters**
+*Parameters*
 
 - relativeURI 
 
@@ -622,7 +622,7 @@ create( agentDocument:Carbon.Agents.Agent.Class ):Promise<Carbon.Pointer.Class, 
 Persists an Agent Document in the server, generating a random unique slug.
 Returns a Promise with a Pointer for the stored Agent, and the response of the call.
 
-**Parameters**
+*Parameters*
 
 - agentDocument 
 
@@ -633,7 +633,7 @@ create( slug:string,  agentDocument:Carbon.Agents.Agent.Class ):Promise<Carbon.P
 Persists an Agent Document in the server using the slug specified.
 Returns a Promise with a Pointer for the stored Agent, and the response of the call.
 
-**Parameters**
+*Parameters*
 
 - slug 
 - agentDocument 
@@ -675,7 +675,7 @@ static hasClassProperties( resource:Object ):boolean
 
 Returns true if the object provided has the properties that defines a `Carbon.Agents.Agent.Class` object
 
-**Parameters**
+*Parameters*
 
 - resource 
 
@@ -686,7 +686,7 @@ static is( object:Object ):boolean
 
 Returns true if the object provided is considered as an `Carbon.Agents.Agent.Class` object
 
-**Parameters**
+*Parameters*
 
 - object 
 
@@ -697,7 +697,7 @@ static create( name:string,  email:string ):Carbon.Agents.Agent.Class
 
 Create a `Carbon.Agents.Agent.Class` object with the name and email specified.
 
-**Parameters**
+*Parameters*
 
 - name 
 - email 
@@ -709,7 +709,7 @@ static createFrom( object:T extends Object ):T & Carbon.Agents.Agent.Class
 
 Create a `Carbon.Agents.Agent.Class` object with the object provided.
 
-**Parameters**
+*Parameters*
 
 - object 
 
@@ -755,7 +755,7 @@ static hasClassProperties( resource:Object ):boolean
 
 Returns true if the object provided has the properties that defines a `Carbon.App.Class` object
 
-**Parameters**
+*Parameters*
 
 - resource 
 
@@ -766,7 +766,7 @@ static is( object:Object ):boolean
 
 Returns true if the object provided is considered as an `Carbon.App.Class` object
 
-**Parameters**
+*Parameters*
 
 - object 
 
@@ -777,7 +777,7 @@ static create( name:string ):Carbon.App.Class
 
 Create a empty `Carbon.App.Class` object.
 
-**Parameters**
+*Parameters*
 
 - name 
 
@@ -788,7 +788,7 @@ static createFrom( object:T extends Object ):T & Carbon.App.Class
 
 Create a `Carbon.App.Class` object with the object provided.
 
-**Parameters**
+*Parameters*
 
 - object 
 
@@ -817,7 +817,7 @@ Context( parentContext:Carbon.Context,  app:Carbon.App.Context )
 ```
 
 
-**Parameters**
+*Parameters*
 
 - parentContext 
 - app 
@@ -840,7 +840,7 @@ resolve( uri:string ):string
 
 Resolve the URI provided in the scope of the application
 
-**Parameters**
+*Parameters*
 
 - uri 
 
@@ -868,7 +868,7 @@ Class( context:Carbon.Context )
 ```
 
 
-**Parameters**
+*Parameters*
 
 - context : A context from where Carbon Apps can be obtained
 
@@ -890,7 +890,7 @@ getContext( uri:string ):Promise<Carbon.Apps.AppContext>
 
 Obtains a `Carbon.Apps.AppContext` object of the specified app URI, if it exists within the context of the Apps instance.
 
-**Parameters**
+*Parameters*
 
 - uri 
 
@@ -900,7 +900,7 @@ getContext( pointer:Carbon.Pointer.Class ):Promise<Carbon.Apps.AppContext>
 
 Obtains a `Carbon.Apps.AppContext` object of the specified Pointer object, if it exists within the context of the Apps instance.
 
-**Parameters**
+*Parameters*
 
 - pointer 
 
@@ -912,7 +912,7 @@ create( appDocument:Carbon.Apps.App.Class ):Promise<Carbon.Pointer.Class, Carbon
 Persists an App Document in the server, generating a unique slug.
 Returns a Pointer for the stored App Document, and the response of the call.
 
-**Parameters**
+*Parameters*
 
 - appDocument 
 
@@ -923,7 +923,7 @@ create( slug:string,  appDocument:Carbon.Apps.App.Class ):Promise<Carbon.Pointer
 Persists an App Document in the server using the slug specified.
 Returns a Pointer for the stored App Document, and the response of the call.
 
-**Parameters**
+*Parameters*
 
 - slug 
 - appDocument 
@@ -981,7 +981,7 @@ isAuthenticated( askParent?:boolean ):boolean
 
 Returns true the user is authenticated.
 
-**Parameters**
+*Parameters*
 
 - askParent 
 
@@ -992,7 +992,7 @@ authenticate( username:string,  password:string ):Promise<Carbon.Auth.Credential
 
 Authenticate the user with an `username` and `password`. Uses the `TOKEN` method for the authentication.
 
-**Parameters**
+*Parameters*
 
 - username 
 - password 
@@ -1004,7 +1004,7 @@ addAuthentication( options:Carbon.HTTP.Request.Options )
 
 Add the authentication header to a `Carbon.HTTP.Request.Options` object.
 
-**Parameters**
+*Parameters*
 
 - options 
 
@@ -1022,7 +1022,7 @@ authenticateUsing( method:'BASIC',  username:string,  password:string ):Promise<
 
 Authenticates the user with Basic HTTP Authentication, witch uses encoded username and password.
 
-**Parameters**
+*Parameters*
 
 - method 
 - username 
@@ -1034,7 +1034,7 @@ authenticateUsing( method:'TOKEN',  username:string,  password:string ):Promise<
 
 Authenticates the user with username and password, and generates a JSON Web Token (JWT) credentials.
 
-**Parameters**
+*Parameters*
 
 - method 
 - username 
@@ -1046,7 +1046,7 @@ authenticateUsing( method:'TOKEN',  token:Carbon.Auth.Token.Class ):Promise<Carb
 
 Authenticates the user with a JSON Web Token (JWT), i.e. the credentials generated by TokenAuthenticator.
 
-**Parameters**
+*Parameters*
 
 - method 
 - token 
@@ -1098,7 +1098,7 @@ authenticate( authenticationToken:Carbon.Auth.UsernameAndPasswordToken ):Promise
 Stores credentials to authenticate future requests.
 
 
-**Parameters**
+*Parameters*
 
 - authenticationToken 
 
@@ -1111,7 +1111,7 @@ addAuthentication( requestOptions:Carbon.HTTP.Request.Options ):Carbon.HTTP.Requ
 Adds the Basic authentication header to the passed request options object.
 
 
-**Parameters**
+*Parameters*
 
 - requestOptions : Request options object to add Authentication headers.
 
@@ -1131,7 +1131,7 @@ supports( authenticationToken:Carbon.Auth.AuthenticationToken ):boolean
 
 Returns true if the Authenticator supports the AuthenticationToken.
 
-**Parameters**
+*Parameters*
 
 - authenticationToken 
 
@@ -1161,7 +1161,7 @@ static is( value:any ):boolean
 
 Duck tape tests if the value sent is a Token object
 
-**Parameters**
+*Parameters*
 
 - value 
 
@@ -1172,7 +1172,7 @@ static hasClassProperties( object:Object ):boolean
 
 Returns true if the object provided has the necessary information to be utilized as a object of type `Carbon.Auth.Token.Class`
 
-**Parameters**
+*Parameters*
 
 - object 
 
@@ -1184,7 +1184,7 @@ decorate( object:T extends Object ):Carbon.Auth.Token.Class
 
 Adds any necessary data to the object provided to be utilized as a type `Carbon.Auth.Token.Class`
 
-**Parameters**
+*Parameters*
 
 - object 
 
@@ -1195,7 +1195,7 @@ hasRDFClass( pointer:Carbon.Pointer.Class ):boolean
 
 Description
 
-**Parameters**
+*Parameters*
 
 - pointer 
 
@@ -1205,7 +1205,7 @@ hasRDFClass( expandedObject:Object ):boolean
 
 Description
 
-**Parameters**
+*Parameters*
 
 - expandedObject 
 
@@ -1234,7 +1234,7 @@ Class( context:Carbon.Context )
 ```
 
 
-**Parameters**
+*Parameters*
 
 - context : The context where to authenticate the agent.
 
@@ -1260,7 +1260,7 @@ addAuthentication( requestOptions:Carbon.HTTP.Request.Options ):Carbon.HTTP.Requ
 Adds the Basic authentication header to the passed request options object.
 
 
-**Parameters**
+*Parameters*
 
 - requestOptions : Request options object to add Authentication headers.
 
@@ -1280,7 +1280,7 @@ supports( authenticationToken:Carbon.Auth.AuthenticationToken ):boolean
 
 Returns true if the Authenticator supports the AuthenticationToken.
 
-**Parameters**
+*Parameters*
 
 - authenticationToken 
 
@@ -1291,7 +1291,7 @@ authenticate( authenticationToken:Carbon.Auth.UsernameAndPasswordToken ):Promise
 
 Stores credentials to authenticate future requests.
 
-**Parameters**
+*Parameters*
 
 - authenticationToken 
 
@@ -1301,7 +1301,7 @@ authenticate( token:Carbon.Auth.Token.Class ):Promise<Carbon.Auth.Token.Class>
 
 Stores credentials to authenticate future requests.
 
-**Parameters**
+*Parameters*
 
 - token 
 
@@ -1328,7 +1328,7 @@ Class( username:string,  password:string )
 ```
 
 
-**Parameters**
+*Parameters*
 
 - username 
 - password 
@@ -1372,7 +1372,7 @@ static hasClassProperties( documentResource:Object ):boolean
 
 Returns true if the object provided has the properties and functions of a Document object
 
-**Parameters**
+*Parameters*
 
 - documentResource 
 
@@ -1383,7 +1383,7 @@ static decorate( object:T extends Object ):T & Carbon.Document.Class
 
 Adds the properties and method necessary for a Document object.
 
-**Parameters**
+*Parameters*
 
 - object 
 
@@ -1394,7 +1394,7 @@ static create( uri:string ):Carbon.Document.Class
 
 Creates an empty Document object which reference to the URI provided.
 
-**Parameters**
+*Parameters*
 
 - uri 
 
@@ -1411,7 +1411,7 @@ static createFrom( object:T extends Object,  uri:string ):Carbon.Document.Class
 
 Creates a Document object from the object provided and will reference to the URI provided.
 
-**Parameters**
+*Parameters*
 
 - object 
 - uri 
@@ -1444,7 +1444,7 @@ hasPointer( id:string ):boolean
 
 Returns true if the Document object has a pointer referenced by the URI provided.
 
-**Parameters**
+*Parameters*
 
 - id 
 
@@ -1456,7 +1456,7 @@ getPointer( id:string ):boolean
 Returns the pointer referenced by the URI provided. If not exists a pointer is created.
 Returns null if the URI is not inside scope of the document.
 
-**Parameters**
+*Parameters*
 
 - id 
 
@@ -1467,7 +1467,7 @@ hasFragment( id:string ):boolean
 
 Returns true if the document has the fragment id provided
 
-**Parameters**
+*Parameters*
 
 - id 
 
@@ -1479,7 +1479,7 @@ getFragment( id:string ):Carbon.Fragment.Class
 Returns the fragment referenced by the URI provided.
 Returns null if no fragment exists in the document.
 
-**Parameters**
+*Parameters*
 
 - id 
 
@@ -1491,7 +1491,7 @@ getNamedFragment( id:string ):Carbon.Fragment.Class
 Returns the fragment referenced by the URI provided.
 Returns null if no fragment exists in the document.
 
-**Parameters**
+*Parameters*
 
 - id 
 
@@ -1509,7 +1509,7 @@ createNamedFragment( slug:string ):Carbon.NamedFragment.Class
 
 Create a Named Fragment with the slug provided
 
-**Parameters**
+*Parameters*
 
 - slug 
 
@@ -1520,7 +1520,7 @@ inScope( pointer:Carbon.Pointer.Class ):boolean
 
 Returns true if the pointer provided is in the scope of the document.
 
-**Parameters**
+*Parameters*
 
 - pointer 
 
@@ -1530,7 +1530,7 @@ inScope( id:string ):boolean
 
 Returns true if the URI provided is in the scope of the document.
 
-**Parameters**
+*Parameters*
 
 - id 
 
@@ -1541,7 +1541,7 @@ createFragment( slug:string ):Carbon.Fragment.Class
 
 Creates a Fragment with the slug provided.
 
-**Parameters**
+*Parameters*
 
 - slug 
 
@@ -1558,7 +1558,7 @@ removeFragment( fragment:Carbon.NamedFragment.Class )
 
 Remove the fragment referenced by the NamedFragment object provided from the Document.
 
-**Parameters**
+*Parameters*
 
 - fragment 
 
@@ -1568,7 +1568,7 @@ removeFragment( fragment:Carbon.Fragment.Class )
 
 Remove the fragment referenced by the Fragment object provided from the Document.
 
-**Parameters**
+*Parameters*
 
 - fragment 
 
@@ -1578,7 +1578,7 @@ removeFragment( slug:string )
 
 Remove the fragment referenced by the Slug string provided from the Document.
 
-**Parameters**
+*Parameters*
 
 - slug 
 
@@ -1589,7 +1589,7 @@ toJSON( objectSchemaResolver:Carbon.ObjectSchema.Resolver,  jsonLDConverter:JSON
 
 Returns a JSON string from the document using an ObjectSchema and a JSONLDConverter
 
-**Parameters**
+*Parameters*
 
 - objectSchemaResolver 
 - jsonLDConverter 
@@ -1600,7 +1600,7 @@ toJSON( objectSchemaResolver:Carbon.ObjectSchema.Resolver ):string
 
 Returns a JSON string from the document using an ObjectSchema
 
-**Parameters**
+*Parameters*
 
 - objectSchemaResolver 
 
@@ -1626,7 +1626,7 @@ get( uri:string ):Promise<[ Carbon.PersistedDocument.Class, HTTP.Response.Class 
 ```
 
 
-**Parameters**
+*Parameters*
 
 - uri 
 
@@ -1637,7 +1637,7 @@ delete( persistedDocument:Carbon.PersistedDocument.Class,  requestOptions?:Carbo
 
 Delete a the Resource referred by a PersistedDocument from the server.
 
-**Parameters**
+*Parameters*
 
 - persistedDocument 
 - requestOptions 
@@ -1651,7 +1651,7 @@ executeRawASKQuery( documentURI:string,  askQuery:string,  requestOptions?:Carbo
 Executes an ASK query on a document and returns a raw application/sparql-results+json object
 
 
-**Parameters**
+*Parameters*
 
 - documentURI 
 - askQuery 
@@ -1664,7 +1664,7 @@ executeRawSELECTQuery( documentURI:string,  selectQuery:string,  requestOptions?
 
 Executes a SELECT query on a document and returns a raw application/sparql-results+json object
 
-**Parameters**
+*Parameters*
 
 - documentURI 
 - selectQuery 
@@ -1679,7 +1679,7 @@ executeRawCONSTRUCTQuery( documentURI:string,  constructQuery:string,  requestOp
 Executes a CONSTRUCT query on a document and returns a string with the resulting model
 
 
-**Parameters**
+*Parameters*
 
 - documentURI 
 - constructQuery 
@@ -1694,7 +1694,7 @@ executeRawDESCRIBEQuery( documentURI:string,  describeQuery:string,  requestOpti
 Executes a DESCRIBE Query and returns a string with the resulting model
 
 
-**Parameters**
+*Parameters*
 
 - documentURI 
 - describeQuery 
@@ -1707,7 +1707,7 @@ createChild( parentURI:string,  childDocument:Carbon.Document.Class,  requestOpt
 
 Create a child document for the respective parent source.
 
-**Parameters**
+*Parameters*
 
 - parentURI 
 - childDocument 
@@ -1719,7 +1719,7 @@ createChild( parentURI:string,  slug:string,  childDocument:Carbon.Document.Clas
 
 Create a child document for the respective parent source.
 
-**Parameters**
+*Parameters*
 
 - parentURI 
 - slug 
@@ -1733,7 +1733,7 @@ upload( parentURI:string,  blob:Blob,  requestOptions?:Carbon.HTTP.Request.Optio
 
 Upload a File to the server, creating a child for the parent specified.
 
-**Parameters**
+*Parameters*
 
 - parentURI 
 - blob 
@@ -1745,7 +1745,7 @@ upload( parentURI:string,  slug:string,  blob:Blob,  requestOptions?:Carbon.HTTP
 
 Upload a File to the server, creating a child for the parent specified.
 
-**Parameters**
+*Parameters*
 
 - parentURI 
 - slug 
@@ -1759,7 +1759,7 @@ getMembers( uri:string,  includeNonReadable:boolean,  requestOptions?:Carbon.HTT
 
 Retrieves (but doesn't resolve) all the members of the document
 
-**Parameters**
+*Parameters*
 
 - uri 
 - includeNonReadable 
@@ -1771,7 +1771,7 @@ getMembers( uri:string,  includeNonReadable?:boolean ):Promise<[ Carbon.Pointer.
 
 Retrieves (but doesn't resolve) all the members of the document
 
-**Parameters**
+*Parameters*
 
 - uri 
 - includeNonReadable 
@@ -1782,7 +1782,7 @@ getMembers( uri:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[
 
 Retrieves (but doesn't resolve) all the members of the document
 
-**Parameters**
+*Parameters*
 
 - uri 
 - requestOptions 
@@ -1793,7 +1793,7 @@ getMembers( uri:string ):Promise<[ Carbon.Pointer.Class[], Carbon.HTTP.Response.
 
 Retrieves (but doesn't resolve) all the members of the document
 
-**Parameters**
+*Parameters*
 
 - uri 
 
@@ -1836,7 +1836,7 @@ AbstractError( message:string )
 ```
 
 
-**Parameters**
+*Parameters*
 
 - message 
 
@@ -1963,7 +1963,7 @@ IllegalStateError( message?:string )
 ```
 
 
-**Parameters**
+*Parameters*
 
 - message 
 
@@ -2007,7 +2007,7 @@ NotImplementedError( message?:string )
 ```
 
 
-**Parameters**
+*Parameters*
 
 - message 
 
@@ -2054,7 +2054,7 @@ static hasClassProperties( resource:Object ):boolean
 
 Returns true if the object provided has the properties and functions of a Fragment object
 
-**Parameters**
+*Parameters*
 
 - resource 
 
@@ -2065,7 +2065,7 @@ static create( id:string,  document:Carbon.Document.Class ):Carbon.Fragment.Clas
 
 Creates a Fragment with the ID provided for the document specified.
 
-**Parameters**
+*Parameters*
 
 - id 
 - document 
@@ -2076,7 +2076,7 @@ static create( document:Carbon.Document.Class ):Carbon.Fragment.Class
 
 Create a Blank Node Fragment since no ID is provided for the specified document.
 
-**Parameters**
+*Parameters*
 
 - document 
 
@@ -2087,7 +2087,7 @@ static createFrom( object:T extends Object,  id:string,  document:Carbon.Documen
 
 Creates a Fragment from an Object with the ID provided for the document specified.
 
-**Parameters**
+*Parameters*
 
 - object 
 - id 
@@ -2099,7 +2099,7 @@ static createFrom( object:T extends Object,  document:Carbon.Document.Class ):Ca
 
 Create a Blank Node Fragment since no ID is provided for the specified document.
 
-**Parameters**
+*Parameters*
 
 - object 
 - document 
@@ -2222,7 +2222,7 @@ BadRequestError( message:string,  response:Carbon.HTTP.Response )
 ```
 
 
-**Parameters**
+*Parameters*
 
 - message 
 - response 
@@ -2271,7 +2271,7 @@ ConflictError( message:string,  response:Carbon.HTTP.Response )
 ```
 
 
-**Parameters**
+*Parameters*
 
 - message 
 - response 
@@ -2320,7 +2320,7 @@ ForbiddenError( message:string,  response:Carbon.HTTP.Response )
 ```
 
 
-**Parameters**
+*Parameters*
 
 - message 
 - response 
@@ -2369,7 +2369,7 @@ HTTPError( message:string,  response:Carbon.HTTP.Response )
 ```
 
 
-**Parameters**
+*Parameters*
 
 - message 
 - response 
@@ -2418,7 +2418,7 @@ UnknownError( message:string,  response:Carbon.HTTP.Response )
 ```
 
 
-**Parameters**
+*Parameters*
 
 - message 
 - response 
@@ -2467,7 +2467,7 @@ MethodNotAllowedError( message:string,  response:Carbon.HTTP.Response )
 ```
 
 
-**Parameters**
+*Parameters*
 
 - message 
 - response 
@@ -2516,7 +2516,7 @@ NotAcceptableError( message:string,  response:Carbon.HTTP.Response )
 ```
 
 
-**Parameters**
+*Parameters*
 
 - message 
 - response 
@@ -2565,7 +2565,7 @@ NotFoundError( message:string,  response:Carbon.HTTP.Response )
 ```
 
 
-**Parameters**
+*Parameters*
 
 - message 
 - response 
@@ -2614,7 +2614,7 @@ PreconditionFailedError( message:string,  response:Carbon.HTTP.Response )
 ```
 
 
-**Parameters**
+*Parameters*
 
 - message 
 - response 
@@ -2663,7 +2663,7 @@ PreconditionRequiredError( message:string,  response:Carbon.HTTP.Response )
 ```
 
 
-**Parameters**
+*Parameters*
 
 - message 
 - response 
@@ -2712,7 +2712,7 @@ RequestEntityTooLargeError( message:string,  response:Carbon.HTTP.Response )
 ```
 
 
-**Parameters**
+*Parameters*
 
 - message 
 - response 
@@ -2761,7 +2761,7 @@ RequestHeaderFieldsTooLargeError( message:string,  response:Carbon.HTTP.Response
 ```
 
 
-**Parameters**
+*Parameters*
 
 - message 
 - response 
@@ -2810,7 +2810,7 @@ RequestURITooLongError( message:string,  response:Carbon.HTTP.Response )
 ```
 
 
-**Parameters**
+*Parameters*
 
 - message 
 - response 
@@ -2859,7 +2859,7 @@ TooManyRequestsError( message:string,  response:Carbon.HTTP.Response )
 ```
 
 
-**Parameters**
+*Parameters*
 
 - message 
 - response 
@@ -2908,7 +2908,7 @@ UnauthorizedError( message:string,  response:Carbon.HTTP.Response )
 ```
 
 
-**Parameters**
+*Parameters*
 
 - message 
 - response 
@@ -2957,7 +2957,7 @@ UnsupportedMediaTypeError( message:string,  response:Carbon.HTTP.Response )
 ```
 
 
-**Parameters**
+*Parameters*
 
 - message 
 - response 
@@ -3006,7 +3006,7 @@ BadGatewayError( message:string,  response:Carbon.HTTP.Response )
 ```
 
 
-**Parameters**
+*Parameters*
 
 - message 
 - response 
@@ -3055,7 +3055,7 @@ BadResponseError( message:string,  response:Carbon.HTTP.Response )
 ```
 
 
-**Parameters**
+*Parameters*
 
 - message 
 - response 
@@ -3104,7 +3104,7 @@ GatewayTimeoutError( message:string,  response:Carbon.HTTP.Response )
 ```
 
 
-**Parameters**
+*Parameters*
 
 - message 
 - response 
@@ -3153,7 +3153,7 @@ HTTPVersionNotSupportedError( message:string,  response:Carbon.HTTP.Response )
 ```
 
 
-**Parameters**
+*Parameters*
 
 - message 
 - response 
@@ -3202,7 +3202,7 @@ InternalServerErrorError( message:string,  response:Carbon.HTTP.Response )
 ```
 
 
-**Parameters**
+*Parameters*
 
 - message 
 - response 
@@ -3251,7 +3251,7 @@ NotImplementedError( message:string,  response:Carbon.HTTP.Response )
 ```
 
 
-**Parameters**
+*Parameters*
 
 - message 
 - response 
@@ -3300,7 +3300,7 @@ ServiceUnavailableError( message:string,  response:Carbon.HTTP.Response )
 ```
 
 
-**Parameters**
+*Parameters*
 
 - message 
 - response 
@@ -3349,7 +3349,7 @@ Value( value:string )
 ```
 
 
-**Parameters**
+*Parameters*
 
 - value 
 
@@ -3377,7 +3377,7 @@ Class( values:Array <Carbon.HTTP.Header.Value> )
 ```
 
 
-**Parameters**
+*Parameters*
 
 - values 
 
@@ -3386,7 +3386,7 @@ Class( value:string )
 ```
 
 
-**Parameters**
+*Parameters*
 
 - value 
 
@@ -3426,7 +3426,7 @@ static parseHeaders( headersString:string ):Map <string, Carbon.HTTP.Header.Clas
 
 Returns an Map object, witch relates the all header-names with a `Carbon.HTTP.Header.Class` containing their values
 
-**Parameters**
+*Parameters*
 
 - headersString 
 
@@ -3459,7 +3459,7 @@ parse( body:string ):Promise <Object>
 ```
 
 
-**Parameters**
+*Parameters*
 
 - body : A JSON string to parse
 
@@ -3491,7 +3491,7 @@ parse( body:string ):Promise <Object>
 ```
 
 
-**Parameters**
+*Parameters*
 
 - body : A JSON string to parse
 
@@ -3545,7 +3545,7 @@ static send( url:string,  body:string,  options:object ):Promise<Carbon.HTTP.Res
 
 Generic send method, to be used by the others methods in the class
 
-**Parameters**
+*Parameters*
 
 - url 
 - body 
@@ -3557,7 +3557,7 @@ static head( url:string,  options?:object ):Promise<Carbon.HTTP.Response>
 ```
 
 
-**Parameters**
+*Parameters*
 
 - url 
 - options 
@@ -3568,7 +3568,7 @@ static options( url:string,  options?:object ):Promise<Carbon.HTTP.Response>
 ```
 
 
-**Parameters**
+*Parameters*
 
 - url 
 - options 
@@ -3580,7 +3580,7 @@ static get( url:string,  options?:object ):Promise<Carbon.HTTP.Response>
 
 Simple get request
 
-**Parameters**
+*Parameters*
 
 - url 
 - options 
@@ -3591,7 +3591,7 @@ static get( url:string,  options?:object,  parser?:Carbon.HTTP.Parser<T> ):Promi
 
 Get request with specified parser
 
-**Parameters**
+*Parameters*
 
 - url 
 - options 
@@ -3604,7 +3604,7 @@ static post( url:string,  body:string,  options?:object ):Promise<Carbon.HTTP.Re
 
 Simple post request
 
-**Parameters**
+*Parameters*
 
 - url 
 - body 
@@ -3616,7 +3616,7 @@ static post( url:string,  options?:object,  parser?:Carbon.HTTP.Parser<T> ):Prom
 
 Post request with specified parser
 
-**Parameters**
+*Parameters*
 
 - url 
 - options 
@@ -3629,7 +3629,7 @@ static put( url:string,  body:string,  options?:object ):Promise<Carbon.HTTP.Res
 
 Simple put request
 
-**Parameters**
+*Parameters*
 
 - url 
 - body 
@@ -3641,7 +3641,7 @@ static put( url:string,  options?:object,  parser?:Carbon.HTTP.Parser<T> ):Promi
 
 Put request with specified parser
 
-**Parameters**
+*Parameters*
 
 - url 
 - options 
@@ -3654,7 +3654,7 @@ static patch( url:string,  body:string,  options?:object ):Promise<Carbon.HTTP.R
 
 Simple patch request
 
-**Parameters**
+*Parameters*
 
 - url 
 - body 
@@ -3666,7 +3666,7 @@ static patch( url:string,  options?:object,  parser?:Carbon.HTTP.Parser<T> ):Pro
 
 Patch request with specified parser
 
-**Parameters**
+*Parameters*
 
 - url 
 - options 
@@ -3679,7 +3679,7 @@ static delete( url:string,  body:string,  options?:object ):Promise<Carbon.HTTP.
 
 Simple delete request
 
-**Parameters**
+*Parameters*
 
 - url 
 - body 
@@ -3691,7 +3691,7 @@ static delete( url:string,  options?:object,  parser?:Carbon.HTTP.Parser<T> ):Pr
 
 Delete request with specified parser
 
-**Parameters**
+*Parameters*
 
 - url 
 - options 
@@ -3703,7 +3703,7 @@ static delete( url:string,  options?:object ):Promise<Carbon.HTTP.Response>
 
 Simple delete request
 
-**Parameters**
+*Parameters*
 
 - url 
 - options 
@@ -3714,7 +3714,7 @@ static delete( url:string,  options?:object,  parser?:Carbon.HTTP.Parser<T> ):Pr
 
 Delete request with specified parser
 
-**Parameters**
+*Parameters*
 
 - url 
 - options 
@@ -3739,7 +3739,7 @@ static getHeader( headerName:string,  requestOptions:Object,  initialize?:boolea
 
 Returns the header object of a header-name inside an options object request. Returns `undefined` if the header not exists. If `initialize` flag is provided with true, a empty header will be created even if it already exits
 
-**Parameters**
+*Parameters*
 
 - headerName 
 - requestOptions 
@@ -3752,7 +3752,7 @@ static setAcceptHeader( accept:string,  requestOptions:Object ):Object
 
 Set an Accept header in an options object request
 
-**Parameters**
+*Parameters*
 
 - accept 
 - requestOptions 
@@ -3764,7 +3764,7 @@ static setContentTypeHeader( contentType:string,  requestOptions:Object ):Object
 
 Set an Content-Type header in an options object request
 
-**Parameters**
+*Parameters*
 
 - contentType 
 - requestOptions 
@@ -3776,7 +3776,7 @@ static setIfMatchHeader( etag:string,  requestOptions:Object ):Object
 
 Set a If-Match header in an options object request
 
-**Parameters**
+*Parameters*
 
 - etag 
 - requestOptions 
@@ -3788,7 +3788,7 @@ static setPreferredInteractionModel( interactionModelURI:string,  requestOptions
 
 Set a Prefer header with `rel=interaction-model` in an options object request
 
-**Parameters**
+*Parameters*
 
 - interactionModelURI 
 - requestOptions 
@@ -3800,7 +3800,7 @@ static setSlug( slug:string,  requestOptions:Object ):Object
 
 Set a Slug header in an options object request
 
-**Parameters**
+*Parameters*
 
 - slug 
 - requestOptions 
@@ -3812,7 +3812,7 @@ static setContainerRetrievalPreferences( preference:Carbon.HTTP.Request.Containe
 
 Set a Prefer header with `return=representation` in an options object request
 
-**Parameters**
+*Parameters*
 
 - preference 
 - requestOptions 
@@ -3842,7 +3842,7 @@ Class( request:XMLHttpRequest )
 ```
 
 
-**Parameters**
+*Parameters*
 
 - request 
 
@@ -3879,7 +3879,7 @@ getHeader( name:string ):Carbon.HTTP.Header.Class
 
 Return the Header object referred by the name provided.
 
-**Parameters**
+*Parameters*
 
 - name 
 
@@ -3901,7 +3901,7 @@ static getETag( response:Carbon.HTTP.Response.Class ):string
 
 Return the ETag string header of a `Carbon.HTTP.Response.Class` object. Returns null if no ETag exists
 
-**Parameters**
+*Parameters*
 
 - response 
 
@@ -3990,7 +3990,7 @@ parse( body:Carbon.HTTP.Response.Class ):Promise<string>
 
 Gets a string and returns a promise with the same string
 
-**Parameters**
+*Parameters*
 
 - body 
 
@@ -4020,7 +4020,7 @@ compact( expandedObject:Object,  targetObject:Object,  digestedSchema:Carbon.Obj
 ```
 
 
-**Parameters**
+*Parameters*
 
 - expandedObject 
 - targetObject 
@@ -4033,7 +4033,7 @@ expand( compactedObject:Object,  digestedSchema:Carbon.ObjectSchema.DigestedObje
 ```
 
 
-**Parameters**
+*Parameters*
 
 - compactedObject 
 - digestedSchema 
@@ -4092,7 +4092,7 @@ static hasClassProperties( resource:Object ):boolean
 
 Returns true if the object has the properties to be defined as a AccessPoint
 
-**Parameters**
+*Parameters*
 
 - resource 
 
@@ -4130,7 +4130,7 @@ static hasRDFClass( pointer:Carbon.Pointer.Class ):boolean
 
 Returns true if the Pointer provided is an LDP BasicContainer.
 
-**Parameters**
+*Parameters*
 
 - pointer 
 
@@ -4140,7 +4140,7 @@ static hasRDFClass( pointer:Carbon.Pointer.Class ):boolean
 
 Returns true if the Pointer provided is an LDP BasicContainer.
 
-**Parameters**
+*Parameters*
 
 - pointer 
 
@@ -4182,7 +4182,7 @@ static hasClassProperties( resource:Carbon.RDF.Node.Class ):boolean
 
 Returns true if the object has the properties to be defined as a LDP Container
 
-**Parameters**
+*Parameters*
 
 - resource 
 
@@ -4193,7 +4193,7 @@ static hasRDFClass( pointer:Carbon.Pointer.Class ):boolean
 
 Returns true if the Pointer provided is an LDP Container.
 
-**Parameters**
+*Parameters*
 
 - pointer 
 
@@ -4203,7 +4203,7 @@ static hasRDFClass( expandedObject:Object ):boolean
 
 Returns true if the Object provided is an LDP Container.
 
-**Parameters**
+*Parameters*
 
 - expandedObject 
 
@@ -4235,7 +4235,7 @@ static hasClassProperties( document:Carbon.Document.Class ):boolean
 
 Returns true if the object has the properties to be defined as a PersistedContainer
 
-**Parameters**
+*Parameters*
 
 - document 
 
@@ -4246,7 +4246,7 @@ static decorate( persistedDocument:T extends Carbon.PersistedDocument.Class ):T 
 
 Returns the PersistedDocuments decorated as a PersistedContainer
 
-**Parameters**
+*Parameters*
 
 - persistedDocument 
 
@@ -4265,7 +4265,7 @@ createChild( slug:string,  object:Object ):Promise<[ Carbon.Pointer.Class, Carbo
 ```
 
 
-**Parameters**
+*Parameters*
 
 - slug 
 - object 
@@ -4275,7 +4275,7 @@ createChild( object:Object ):Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Respons
 ```
 
 
-**Parameters**
+*Parameters*
 
 - object 
 
@@ -4286,7 +4286,7 @@ upload( slug:string,  blob:Blob ):Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Re
 
 Upload a File to the server as a child of the Container.
 
-**Parameters**
+*Parameters*
 
 - slug 
 - blob 
@@ -4297,7 +4297,7 @@ upload( blob:Blob ):Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]
 
 Upload a File to the server as a child of the Container.
 
-**Parameters**
+*Parameters*
 
 - blob 
 
@@ -5040,7 +5040,7 @@ static hasClassProperties( resource:Carbon.Fragment.Class ):boolean
 
 Returns true if the object provided has the properties and functions of a NamedFragment object
 
-**Parameters**
+*Parameters*
 
 - resource 
 
@@ -5051,7 +5051,7 @@ static create( slug:string,  document:Carbon.Document.Class ):Carbon.NamedFragme
 
 Creates a NamedFragment with the Slug provided for the document specified.
 
-**Parameters**
+*Parameters*
 
 - slug 
 - document 
@@ -5063,7 +5063,7 @@ static createFrom( object:T extends Object,  slug:string,  document:Carbon.Docum
 
 Creates a NamedFragment from an Object with the Slug provided for the document specified.
 
-**Parameters**
+*Parameters*
 
 - object 
 - slug 
@@ -5188,7 +5188,7 @@ static combineDigestedObjectSchemas( digestedSchemas:Carbon.ObjectSchema.Digeste
 
 Combine several standardized schemas in one.
 
-**Parameters**
+*Parameters*
 
 - digestedSchemas 
 
@@ -5201,7 +5201,7 @@ static digestSchema( schema:Carbon.ObjectSchema.Class ):Carbon.ObjectSchema.Dige
 Processes a schema to standardize it before using it.
 
 
-**Parameters**
+*Parameters*
 
 - schema 
 
@@ -5213,7 +5213,7 @@ static digestSchema( schemas:Array<Carbon.ObjectSchema.Class> ):Carbon.ObjectSch
 Processes several schemas to standardize and combine them before using them.
 
 
-**Parameters**
+*Parameters*
 
 - schemas 
 
@@ -5245,7 +5245,7 @@ static hasClassProperties( resource:Object ):boolean
 
 Returns true if the object provided has the properties that defines a `Carbon.PersistedApp.Class` object
 
-**Parameters**
+*Parameters*
 
 - resource 
 
@@ -5256,7 +5256,7 @@ static is( object:Object ):boolean
 
 Returns true if the object provided is considered as an `Carbon.PersistedApp.Class` object
 
-**Parameters**
+*Parameters*
 
 - object 
 
@@ -5288,7 +5288,7 @@ static hasClassProperties( document:Carbon.Document.Class ):boolean
 
 Returns true if the Document provided has the properties and functions of a PersistedDocument object
 
-**Parameters**
+*Parameters*
 
 - document 
 
@@ -5299,7 +5299,7 @@ static is( object:Object ):boolean
 
 Returns true if the element provided is a PersistedDocument object.
 
-**Parameters**
+*Parameters*
 
 - object 
 
@@ -5310,7 +5310,7 @@ static create( uri:string,  documents:Carbon.Documents ):Carbon.PersistedDocumen
 
 Creates an empty PersistedDocument object with the URI provided and contained by the Documents object specified.
 
-**Parameters**
+*Parameters*
 
 - uri 
 - documents 
@@ -5322,7 +5322,7 @@ static createFrom( object:T extends Object,  uri:string ):Carbon.PersistedDocume
 
 Creates a PersistedDocument object from the object and URI provided, with the Documents object specified as container.
 
-**Parameters**
+*Parameters*
 
 - object 
 - uri 
@@ -5334,7 +5334,7 @@ static decorate( object:T extends Object,  documents:Carbon.Documents ):T & Carb
 
 Adds the properties and methods necessary for a PersistedDocument object.
 
-**Parameters**
+*Parameters*
 
 - object 
 - documents 
@@ -5366,7 +5366,7 @@ hasPointer( id:string ):boolean
 
 Returns true if the PersistedDocument object has a pointer referenced by the URI provided.
 
-**Parameters**
+*Parameters*
 
 - id 
 
@@ -5378,7 +5378,7 @@ getPointer( id:string ):boolean
 Returns the pointer referenced by the URI provided. If not exists a pointer is created.
 Returns null if the URI is not inside scope of the PersistedDocument.
 
-**Parameters**
+*Parameters*
 
 - id 
 
@@ -5410,7 +5410,7 @@ executeRawASKQuery( askQuery:string,  requestOptions?:Carbon.HTTP.Request.Option
 
 Executes an ASK query in the document and returns a raw application/sparql-results+json object.
 
-**Parameters**
+*Parameters*
 
 - askQuery 
 - requestOptions 
@@ -5422,7 +5422,7 @@ executeASKQuery( askQuery:string,  requestOptions?:Carbon.HTTP.Request.Options )
 
 Executes an ASK query in the document and returns a boolean of th result.
 
-**Parameters**
+*Parameters*
 
 - askQuery 
 - requestOptions 
@@ -5434,7 +5434,7 @@ executeRawSELECTQuery( selectQuery:string,  requestOptions?:Carbon.HTTP.Request.
 
 Executes an SELECT query in the document and returns a raw application/sparql-results+json object.
 
-**Parameters**
+*Parameters*
 
 - selectQuery 
 - requestOptions 
@@ -5446,7 +5446,7 @@ executeSELECTQuery( selectQuery:string,  requestOptions?:Carbon.HTTP.Request.Opt
 
 Executes an SELECT query in the document and returns the results as a `Carbon.SPARQL.SELECTResults.Class` object.
 
-**Parameters**
+*Parameters*
 
 - selectQuery 
 - requestOptions 
@@ -5458,7 +5458,7 @@ executeRawCONSTRUCTQuery( constructQuery:string,  requestOptions?:Carbon.HTTP.Re
 
 Executes an CONSTRUCT query in the document and returns a string with the resulting model.
 
-**Parameters**
+*Parameters*
 
 - constructQuery 
 - requestOptions 
@@ -5470,7 +5470,7 @@ executeRawDESCRIBEQuery( constructQuery:string,  requestOptions?:Carbon.HTTP.Req
 
 Executes an DESCRIBE query in the document and returns a string with the resulting model.
 
-**Parameters**
+*Parameters*
 
 - constructQuery 
 - requestOptions 
@@ -5482,7 +5482,7 @@ inScope( pointer:Carbon.Pointer.Class ):boolean
 
 Returns true if the pointer provided is in the scope of the PersistedDocument.
 
-**Parameters**
+*Parameters*
 
 - pointer 
 
@@ -5492,7 +5492,7 @@ inScope( id:string ):boolean
 
 Returns true if the URI provided is in the scope of the PersistedDocument.
 
-**Parameters**
+*Parameters*
 
 - id 
 
@@ -5522,7 +5522,7 @@ static hasClassProperties( resource:Object ):boolean
 
 Returns true if the object provided has the properties and functions of a Pointer object
 
-**Parameters**
+*Parameters*
 
 - resource 
 
@@ -5533,7 +5533,7 @@ static is( value:any ):boolean
 
 Returns true if the value provided is a Pinter object.
 
-**Parameters**
+*Parameters*
 
 - value 
 
@@ -5544,7 +5544,7 @@ static create( id?:string ):Carbon.Pointer.Class
 
 Create a Pointer object with id if provided.
 
-**Parameters**
+*Parameters*
 
 - id 
 
@@ -5555,7 +5555,7 @@ static decorate( object:T extends Object ):T & Carbon.Pointer.Class
 
 Decorates the object provided with the elements of a Pointer object.
 
-**Parameters**
+*Parameters*
 
 - object 
 
@@ -5642,7 +5642,7 @@ static is( object:Object ):boolean
 
 Returns true if the object is an RDFDocument object
 
-**Parameters**
+*Parameters*
 
 - object 
 
@@ -5653,7 +5653,7 @@ static create( resources:Carbon.RDF.RDFNode.Class[],  uri?:string ):Carbon.RDF.R
 
 Return an RDFDocument object created with the parameters provided
 
-**Parameters**
+*Parameters*
 
 - resources 
 - uri 
@@ -5678,7 +5678,7 @@ static getBNodeResources( document:Carbon.RDF.Document.Class ):Carbon.RDF.RDFNod
 Returns all the resources that refers to blank nodes from a document.
 Throw an `Carbon.Errors.IllegalArgumentError` if the object is not RDF like
 
-**Parameters**
+*Parameters*
 
 - document 
 
@@ -5690,7 +5690,7 @@ static getDocuments( objects:Object[] ):Carbon.RDF.Document.Class[]
 Returns an array of documents from an array of resources or documents.
 Throw an `Carbon.Errors.IllegalArgumentError` if the objects are not RDF like
 
-**Parameters**
+*Parameters*
 
 - objects 
 
@@ -5701,7 +5701,7 @@ static getDocuments( object:Object ):Carbon.RDF.Document.Class[]
 Returns an array of documents from a document or resource.
 Throw an `Carbon.Errors.IllegalArgumentError` if the object is not RDF like
 
-**Parameters**
+*Parameters*
 
 - object 
 
@@ -5713,7 +5713,7 @@ static getResources( objects:Object[] ):Carbon.RDF.RDFNode.Class
 Returns all the resources from a array of documents or resources.
 Throw an `Carbon.Errors.IllegalArgumentError` if the objects are not RDF like
 
-**Parameters**
+*Parameters*
 
 - objects 
 
@@ -5724,7 +5724,7 @@ static getResources( object:Object ):Carbon.RDF.RDFNode.Class
 Returns all the resources from a document or resource.
 Throw an `Carbon.Errors.IllegalArgumentError` if the object is not RDF like
 
-**Parameters**
+*Parameters*
 
 - object 
 
@@ -5736,7 +5736,7 @@ static getDocumentResources( document:Carbon.RDF.Document.Class ):Carbon.RDF.RDF
 Returns all the resources that refers to documents from a document.
 Throw an `Carbon.Errors.IllegalArgumentError` if the object is not RDF like
 
-**Parameters**
+*Parameters*
 
 - document 
 
@@ -5747,7 +5747,7 @@ static getDocumentResources( document:Carbon.RDF.RDFNode.Class[] ):Carbon.RDF.RD
 Returns all the resources that refers to documents from an array of resources.
 Throw an `Carbon.Errors.IllegalArgumentError` if the object is not RDF like
 
-**Parameters**
+*Parameters*
 
 - document 
 
@@ -5759,7 +5759,7 @@ static getFragmentResources( document:Carbon.RDF.Document.Class,  documentResour
 Returns all the resources that refers to fragments from a document. If documentResource is provided, it will return the fragments of the specified document.
 Throw an `Carbon.Errors.IllegalArgumentError` if the object is not RDF like
 
-**Parameters**
+*Parameters*
 
 - document 
 - documentResource 
@@ -5771,7 +5771,7 @@ static getFragmentResources( document:Carbon.RDF.Document.Class,  documentResour
 Returns all the resources that refers to fragments from a document. If documentResourceURI is provided, it will return the fragments of the specified URI.
 Throw an `Carbon.Errors.IllegalArgumentError` if the object is not RDF like
 
-**Parameters**
+*Parameters*
 
 - document 
 - documentResourceURI 
@@ -5783,7 +5783,7 @@ static getFragmentResources( document:Carbon.RDF.Document.Class,  documentResour
 Returns all the resources that refers to fragments from an array of resources. If documentResource is provided, it will return the fragments of the specified document.
 Throw an `Carbon.Errors.IllegalArgumentError` if the object is not RDF like
 
-**Parameters**
+*Parameters*
 
 - document 
 - documentResource 
@@ -5795,7 +5795,7 @@ static getFragmentResources( document:Carbon.RDF.Document.Class,  documentResour
 Returns all the resources that refers to fragments from a document. If documentResourceURI is provided, it will return the fragments of the specified URI.
 Throw an `Carbon.Errors.IllegalArgumentError` if the object is not RDF like
 
-**Parameters**
+*Parameters*
 
 - document 
 - documentResourceURI 
@@ -5820,7 +5820,7 @@ parse( input:string ):Promise<any>
 
 Parse the a JSON-LD string to an array of RDFDocuments
 
-**Parameters**
+*Parameters*
 
 - input 
 
@@ -5851,7 +5851,7 @@ static is( value:any ):boolean
 
 Returns true if the object provided can be called a RDF List
 
-**Parameters**
+*Parameters*
 
 - value 
 
@@ -5895,7 +5895,7 @@ static parse( literal:Carbon.RDF.Literal.Class ):any
 Parse the Literal object to the respective JavaScript type.
 Returns null if cannot be parsed.
 
-**Parameters**
+*Parameters*
 
 - literal 
 
@@ -5906,7 +5906,7 @@ static is( value:any ):boolean
 
 Returns true if the object provided can be called a RDF Literal
 
-**Parameters**
+*Parameters*
 
 - value 
 
@@ -5917,7 +5917,7 @@ static hasType( value:Carbon.RDF.Literal.Class,  type:string ):boolean
 
 Returns true if the Literal has the type indicated
 
-**Parameters**
+*Parameters*
 
 - value 
 - type 
@@ -5941,7 +5941,7 @@ static areEqual( literal1:Carbon.RDF.Literal.Class,  literal2:Carbon.RDF.Literal
 
 Returns true if two Literals are equal
 
-**Parameters**
+*Parameters*
 
 - literal1 
 - literal2 
@@ -6030,7 +6030,7 @@ serialize( value:any ):string
 
 Returns the string with format `YYY-MM-DD`, of the Date object
 
-**Parameters**
+*Parameters*
 
 - value 
 
@@ -6053,7 +6053,7 @@ serialize( value:any ):string
 
 Returns the simplified extended ISO format (ISO 8601) of the Date object
 
-**Parameters**
+*Parameters*
 
 - value 
 
@@ -6076,7 +6076,7 @@ serialize( value:any ):string
 
 Returns a string representing the Date object with format `HH:mm:ss.sssZ`
 
-**Parameters**
+*Parameters*
 
 - value 
 
@@ -6099,7 +6099,7 @@ serialize( value:any ):string
 
 Returns a string representing a integer from the Number provided
 
-**Parameters**
+*Parameters*
 
 - value 
 
@@ -6122,7 +6122,7 @@ serialize( value:any ):string
 
 Returns a string representing an unsigned integer from the Number provided
 
-**Parameters**
+*Parameters*
 
 - value 
 
@@ -6145,7 +6145,7 @@ serialize( value:any ):string
 
 Returns a string representing a float from the Number provided
 
-**Parameters**
+*Parameters*
 
 - value 
 
@@ -6168,7 +6168,7 @@ serialize( value:any ):string
 
 Returns a string representing the truth value from the variable provided
 
-**Parameters**
+*Parameters*
 
 - value 
 
@@ -6191,7 +6191,7 @@ serialize( value:any ):string
 
 Returns a string representing the truth value from the variable provided
 
-**Parameters**
+*Parameters*
 
 - value 
 
@@ -6222,7 +6222,7 @@ static is( object:Object ):boolean
 
 Returns true when an object can be called an RDFNode
 
-**Parameters**
+*Parameters*
 
 - object 
 
@@ -6233,7 +6233,7 @@ static create( uri:string ):Carbon.RDF.RDFNode.Class
 
 Create a RDFNode object providing an URI string
 
-**Parameters**
+*Parameters*
 
 - uri 
 
@@ -6256,7 +6256,7 @@ static areEqual( node1:Carbon.RDF.RDFDocument.Class,  node2:Carbon.RDF.RDFDocume
 
 Returns true if the objects represent the same resource
 
-**Parameters**
+*Parameters*
 
 - node1 
 - node2 
@@ -6269,7 +6269,7 @@ static getPropertyURI( node:Carbon.RDF.RDFNode.Class,  predicate:string ):string
 Returns the URI from a property resource in the RDFNode object.
 Returns null if the property not exists or the URI is not found
 
-**Parameters**
+*Parameters*
 
 - node 
 - predicate 
@@ -6298,7 +6298,7 @@ Class( stringValue:string )
 ```
 
 
-**Parameters**
+*Parameters*
 
 - stringValue : The string that represents an URI
 
@@ -6331,7 +6331,7 @@ static hasFragment( uri:string ):boolean
 
 Returns true if the URI provided contains a fragment
 
-**Parameters**
+*Parameters*
 
 - uri 
 
@@ -6342,7 +6342,7 @@ static hasProtocol( uri:string ):boolean
 
 Returns true if the URI provided has a protocol
 
-**Parameters**
+*Parameters*
 
 - uri 
 
@@ -6353,7 +6353,7 @@ static isAbsolute( uri:string ):boolean
 
 Returns true if the URI provided is absolute
 
-**Parameters**
+*Parameters*
 
 - uri 
 
@@ -6364,7 +6364,7 @@ static isRelative( uri:string ):boolean
 
 Returns true if the URI provided is relative
 
-**Parameters**
+*Parameters*
 
 - uri 
 
@@ -6375,7 +6375,7 @@ static isBNodeID( uri:string ):boolean
 
 Returns true if the URI provided reference to a Blank Node
 
-**Parameters**
+*Parameters*
 
 - uri 
 
@@ -6386,7 +6386,7 @@ static isPrefixed( uri:string ):boolean
 
 Returns true if the URI provided has a prefix
 
-**Parameters**
+*Parameters*
 
 - uri 
 
@@ -6397,7 +6397,7 @@ static isFragmentOf( fragmentURI:string,  uri:string ):boolean
 
 Returns true if the first URI is a fragment od the second URI provided
 
-**Parameters**
+*Parameters*
 
 - fragmentURI 
 - uri 
@@ -6409,7 +6409,7 @@ static isBaseOf( baseURI:string,  uri:string ):boolean
 
 Return true if the first URI is parent of the second URI provided
 
-**Parameters**
+*Parameters*
 
 - baseURI 
 - uri 
@@ -6421,7 +6421,7 @@ static getRelativeURI( absoluteURI:string,  base:string ):string
 
 Returns the relative URI from a base URI provided
 
-**Parameters**
+*Parameters*
 
 - absoluteURI 
 - base 
@@ -6433,7 +6433,7 @@ static getDocumentURI( uri:string )
 
 Returns the URI that just reference to the Document of the URI provided
 
-**Parameters**
+*Parameters*
 
 - uri 
 
@@ -6444,7 +6444,7 @@ static getFragment( uri:string ):string
 
 Returns the name of the fragment in the URI provided. If no fragment exists in the URI, null will be returned
 
-**Parameters**
+*Parameters*
 
 - uri 
 
@@ -6455,7 +6455,7 @@ static getSlug( uri:string ):string
 
 Returns the slug of the URI. It takes an ending slash as part as the slug.
 
-**Parameters**
+*Parameters*
 
 - uri 
 
@@ -6466,7 +6466,7 @@ static resolve( parentURI:string,  childURI:string ):string
 
 Return a URI formed from a parent URI and a relative child URI
 
-**Parameters**
+*Parameters*
 
 - parentURI 
 - childURI 
@@ -6478,7 +6478,7 @@ static removeProtocol( uri:string ):string
 
 Removes the protocol of the URI provided
 
-**Parameters**
+*Parameters*
 
 - uri 
 
@@ -6489,7 +6489,7 @@ static prefix( uri:string,  prefix:string,  prefixURI:string ):string
 
 Replace a base of a URI with the prefix provided. If the prefix can not be resolved, the URI provided will be returned
 
-**Parameters**
+*Parameters*
 
 - uri 
 - prefix 
@@ -6501,7 +6501,7 @@ static prefix( uri:string,  objectSchema:Carbon.ObjectSchema.DigestedObjectSchem
 
 Replace the base of a URI with a prefix in accordance with the ObjectSchema provided. If the prefix can not be resolved, the URI provided will be returned
 
-**Parameters**
+*Parameters*
 
 - uri 
 - objectSchema 
@@ -6534,7 +6534,7 @@ static areEqual( value1:Carbon.RDF.Value.Class,  value2:Carbon.RDF.Value.Class )
 
 Returns true if the two Values are considered equal.
 
-**Parameters**
+*Parameters*
 
 - value1 
 - value2 
@@ -6547,7 +6547,7 @@ static getProperty( expandedObject:any,  propertyURI:string,  pointerLibrary:Car
 Returns the property searched, parsed in accordance to the RDF object it is.
 Returns null if the property is not found or cannot be parsed.
 
-**Parameters**
+*Parameters*
 
 - expandedObject 
 - propertyURI 
@@ -6561,7 +6561,7 @@ static getPropertyPointer( expandedObject:any,  propertyURI:string,  pointerLibr
 Returns the property searched as a Pointer.
 Returns null if the property is not found or cannot be parsed as a Pointer.
 
-**Parameters**
+*Parameters*
 
 - expandedObject 
 - propertyURI 
@@ -6575,7 +6575,7 @@ static getPropertyLiteral( expandedObject:any,  propertyURI:string,  literalType
 Returns the property searched as a javascript variable. The property must be an RDF Literal.
 Returns null if the property is not found, the type provided not match with the type of the Literal, or cannot be parsed from a Literal.
 
-**Parameters**
+*Parameters*
 
 - expandedObject 
 - propertyURI 
@@ -6589,7 +6589,7 @@ static getPropertyList( expandedObject:any,  propertyURI:string,  pointerLibrary
 Returns the property searched as an Array with every element parsed to its respective type of element.
 Returns null if the property is not found or cannot be parsed.
 
-**Parameters**
+*Parameters*
 
 - expandedObject 
 - propertyURI 
@@ -6603,7 +6603,7 @@ static getPropertyPointerList( expandedObject:any,  propertyURI:string,  pointer
 Returns the property list searched as an Array of Pointers. It will be filtered no pointer values.
 Returns null if the property is not found or is not a List.
 
-**Parameters**
+*Parameters*
 
 - expandedObject 
 - propertyURI 
@@ -6617,7 +6617,7 @@ static getPropertyLiteralList( expandedObject:any,  propertyURI:string,  pointer
 Returns the property list searched as an Array of parsed Literals. It will be filtered no Literal values with the type specified.
 Returns null if the property is not found or is not a List.
 
-**Parameters**
+*Parameters*
 
 - expandedObject 
 - propertyURI 
@@ -6631,7 +6631,7 @@ static getProperties( expandedObject:any,  propertyURI:string,  pointerLibrary:C
 Returns the property searched as an Array with the parsed Literal, Pointer or List.
 Returns null if the property is not found, or an empty array if cannot be parsed.
 
-**Parameters**
+*Parameters*
 
 - expandedObject 
 - propertyURI 
@@ -6645,7 +6645,7 @@ static getPropertyPointers( expandedObject:any,  propertyURI:string,  pointerLib
 Returns the property searched as an Array with the parsed Pointer.
 Returns null if the property is not found, or an empty array if the property cannot be parsed as a pointer.
 
-**Parameters**
+*Parameters*
 
 - expandedObject 
 - propertyURI 
@@ -6659,7 +6659,7 @@ static getPropertyURIs( expandedObject:any,  propertyURI:string ):any
 Returns the URIs of the property searched.
 Returns null if the property is not found or an empty array if no URI was found.
 
-**Parameters**
+*Parameters*
 
 - expandedObject 
 - propertyURI 
@@ -6672,7 +6672,7 @@ static getPropertyLiterals( expandedObject:any,  propertyURI:string,  literalTyp
 Returns the property searched as an Array with the parsed Literal.
 Returns null if the property is not found, or an empty array if cannot be parsed.
 
-**Parameters**
+*Parameters*
 
 - expandedObject 
 - propertyURI 
@@ -6686,7 +6686,7 @@ static getPropertyLanguageMap( expandedObject:any,  propertyURI:string,  pointer
 Returns an object associating the language with the parsed string literal.
 Returns null if the property is not found, or an empty object if not is a property with language.
 
-**Parameters**
+*Parameters*
 
 - expandedObject 
 - propertyURI 
@@ -6700,7 +6700,7 @@ static getList( propertyValues:Array<any> ):Carbon.RDF.List.Class
 Returns the List object from the provided property of an expanded JSON-LD object.
 Returns null if no List object is found.
 
-**Parameters**
+*Parameters*
 
 - propertyValues 
 
@@ -6712,7 +6712,7 @@ static parseValue( propertyValue:Carbon.RDF.Value.Class,  pointerLibrary:Carbon.
 Returns the parsed object from an Literal, Node, or List.
 Returns null if cannot be parsed
 
-**Parameters**
+*Parameters*
 
 - propertyValue 
 - pointerLibrary 
@@ -6745,7 +6745,7 @@ static hasClassProperties( resource:Object ):boolean
 
 Returns true if the object provided has the properties and functions of a Resource object
 
-**Parameters**
+*Parameters*
 
 - resource 
 
@@ -6756,7 +6756,7 @@ static create( id?:string,  types?:string[] ):Carbon.Resource.Class
 
 Create a Resource object with id and types if provided.
 
-**Parameters**
+*Parameters*
 
 - id 
 - types 
@@ -6768,7 +6768,7 @@ static createFrom( object:T extends Object,  id?:string,  types?:string[] ):T & 
 
 Create a Resource object with id and types if provided.
 
-**Parameters**
+*Parameters*
 
 - object 
 - id 
@@ -6781,7 +6781,7 @@ static decorate( object:T extends Object ):T & Carbon.Resource.Class
 
 Decorates the object provided with the elements of a Resource object.
 
-**Parameters**
+*Parameters*
 
 - object 
 
@@ -6852,7 +6852,7 @@ resolve( relativeURI:string ):string
 
 Returns URI provided resolved in this context, witch is the same URI provided.
 
-**Parameters**
+*Parameters*
 
 - relativeURI 
 
@@ -6863,7 +6863,7 @@ hasSetting( name:string ):boolean
 
 Returns true if the setting looked for is established in the context.
 
-**Parameters**
+*Parameters*
 
 - name 
 
@@ -6875,7 +6875,7 @@ getSetting( name:string ):string
 Returns the value of the setting looked for.
 Returns `null` if no settign with the name specified exists.
 
-**Parameters**
+*Parameters*
 
 - name 
 
@@ -6886,7 +6886,7 @@ setSetting( name:string,  value:any )
 
 Set a setting in the the context.
 
-**Parameters**
+*Parameters*
 
 - name 
 - value 
@@ -6898,7 +6898,7 @@ deleteSetting( name:string )
 
 Deletes the setting specified from the the context.
 
-**Parameters**
+*Parameters*
 
 - name 
 
@@ -6909,7 +6909,7 @@ hasObjectSchema( type:string ):boolean
 
 Returns true if the is an ObjectSchema for the specified type.
 
-**Parameters**
+*Parameters*
 
 - type 
 
@@ -6921,7 +6921,7 @@ getObjectSchema( type?:string ):Carbon.ObjectSchema.DigestedObjectSchema
 Returns the ObjectSchema for the specified type or null if not exits.
 If no type specified the general object schema of the context is returned. This is an schema that applies for all the types.
 
-**Parameters**
+*Parameters*
 
 - type 
 
@@ -6932,7 +6932,7 @@ clearObjectSchema( type?:string )
 
 Remove the Schema of the type specified, if not provided empty the General Schema.
 
-**Parameters**
+*Parameters*
 
 - type 
 
@@ -6943,7 +6943,7 @@ extendObjectSchema( type:string,  objectSchema:Carbon.ObjectSchema.DigestedObjec
 
 Extends an Schema for a specified type of Resource
 
-**Parameters**
+*Parameters*
 
 - type 
 - objectSchema 
@@ -6954,7 +6954,7 @@ extendObjectSchema( objectSchema:Carbon.ObjectSchema.DigestedObjectSchema )
 
 Extends the General Schema of the context.
 
-**Parameters**
+*Parameters*
 
 - objectSchema 
 
@@ -7024,7 +7024,7 @@ static hasClassProperties( value:Object ):boolean
 
 Returns true if the object provided contains the properties required to be a `Carbon.SPARQL.RawResult.Class` object
 
-**Parameters**
+*Parameters*
 
 - value 
 
@@ -7035,7 +7035,7 @@ static is( value:any ):boolean
 
 Returns true if the object provided is a `Carbon.SPARQL.RawResult.Class` object
 
-**Parameters**
+*Parameters*
 
 - value 
 
@@ -7069,7 +7069,7 @@ parse( input:string ):Promise<Carbon.SPARQL.RawResult.Class>
 
 Parse the SPARQL Query string result to a `Carbon.SPARQL.RawResult.Class` object
 
-**Parameters**
+*Parameters*
 
 - input 
 
@@ -7100,7 +7100,7 @@ static executeRawASKQuery( url:string,  askQuery:string,  requestOptions?:Carbon
 
 Executes an ASK Query and returns a raw application/sparql-results+json object
 
-**Parameters**
+*Parameters*
 
 - url 
 - askQuery 
@@ -7113,7 +7113,7 @@ static executeASKQuery( url:string,  askQuery:string,  requestOptions?:Carbon.HT
 
 Executes an ASK Query and returns a boolean
 
-**Parameters**
+*Parameters*
 
 - url 
 - askQuery 
@@ -7126,7 +7126,7 @@ static executeSELECTQuery( url:string,  selectQuery:string,  pointerLibrary:Carb
 
 Executes a SELECT Query and parses the results
 
-**Parameters**
+*Parameters*
 
 - url 
 - selectQuery 
@@ -7140,7 +7140,7 @@ static executeRawSELECTQuery( url:string,  selectQuery:string,  requestOptions?:
 
 Executes a SELECT Query and returns a raw application/sparql-results+json object
 
-**Parameters**
+*Parameters*
 
 - url 
 - selectQuery 
@@ -7153,7 +7153,7 @@ static executeRawCONSTRUCTQuery( url:string,  constructQuery:string,  requestOpt
 
 Executes a CONSTRUCT Query and returns a string with the resulting model
 
-**Parameters**
+*Parameters*
 
 - url 
 - constructQuery 
@@ -7166,7 +7166,7 @@ static executeRawDESCRIBEQuery( url:string,  describeQuery:string,  requestOptio
 
 Executes a DESCRIBE Query and returns a string with the resulting model
 
-**Parameters**
+*Parameters*
 
 - url 
 - describeQuery 
@@ -7191,7 +7191,7 @@ static hasFunction( object:object,  name:string ):boolean
 
 Checks if the object has a property with that name and if it that property is a function.
 
-**Parameters**
+*Parameters*
 
 - object 
 - name 
@@ -7203,7 +7203,7 @@ static hasProperty( object:object,  name:string ):boolean
 
 Checks if the object has a property with that name.
 
-**Parameters**
+*Parameters*
 
 - object 
 - name 
@@ -7215,7 +7215,7 @@ static hasPropertyDefined( object:object,  name:string ):boolean
 
 Checks if an object has a property defined under that name (even if its value is undefined).
 
-**Parameters**
+*Parameters*
 
 - object 
 - name 
@@ -7227,7 +7227,7 @@ static isDefined( value:any ):boolean
 
 Checks if the value passed is defined.
 
-**Parameters**
+*Parameters*
 
 - value 
 
@@ -7238,7 +7238,7 @@ static isNull( value:any ):boolean
 
 Checks if the value passed is null.
 
-**Parameters**
+*Parameters*
 
 - value 
 
@@ -7249,7 +7249,7 @@ static isArray( value:any ):boolean
 
 Checks if the value passed is an array.
 
-**Parameters**
+*Parameters*
 
 - value 
 
@@ -7260,7 +7260,7 @@ static isString( value:any ):boolean
 
 Checks if the value passed is a string.
 
-**Parameters**
+*Parameters*
 
 - value 
 
@@ -7271,7 +7271,7 @@ static isBoolean( value:any ):boolean
 
 Checks if the value passed is a boolean.
 
-**Parameters**
+*Parameters*
 
 - value 
 
@@ -7282,7 +7282,7 @@ static isNumber( value:any ):boolean
 
 Checks if the value passed is a number
 
-**Parameters**
+*Parameters*
 
 - value 
 
@@ -7293,7 +7293,7 @@ static isInteger( value:any ):boolean
 
 Checks if the value passed is an integer.
 
-**Parameters**
+*Parameters*
 
 - value 
 
@@ -7304,7 +7304,7 @@ static isDouble( value:any ):boolean
 
 Checks if the value passed is a double.
 
-**Parameters**
+*Parameters*
 
 - value 
 
@@ -7315,7 +7315,7 @@ static isDate( value:any ):boolean
 
 Checks if the value passed is a Date object.
 
-**Parameters**
+*Parameters*
 
 - value 
 
@@ -7326,7 +7326,7 @@ static isObject( value:any ):boolean
 
 Checks if the value passed is an object (doesn"t include null).
 
-**Parameters**
+*Parameters*
 
 - value 
 
@@ -7337,7 +7337,7 @@ static isFunction( value:any ):boolean
 
 Checks if the value passed is a function.
 
-**Parameters**
+*Parameters*
 
 - value 
 
@@ -7348,7 +7348,7 @@ static isMap( value:any ):boolean
 
 Checks if the value passed is an ES6 Map.
 
-**Parameters**
+*Parameters*
 
 - value 
 
@@ -7359,7 +7359,7 @@ static parseBoolean( value:string ):boolean
 
 Parses a string into a boolean.
 
-**Parameters**
+*Parameters*
 
 - value 
 
@@ -7376,7 +7376,7 @@ static forEachOwnProperty( object:object,  action:function )
 
 Executes an action for each own property of the object.
 
-**Parameters**
+*Parameters*
 
 - object 
 - action : action( name, value )
@@ -7400,7 +7400,7 @@ static areShallowlyEqual( object1:object,  object2:object ):boolean
 
 Checks if an object has the same enumerable properties with the same values as another object.
 
-**Parameters**
+*Parameters*
 
 - object1 
 - object2 
@@ -7424,7 +7424,7 @@ static startsWith( string:string,  substring:string ):boolean
 
 Checks if a string starts with a substring.
 
-**Parameters**
+*Parameters*
 
 - string 
 - substring 
@@ -7436,7 +7436,7 @@ static endsWith( string:string,  substring:string ):boolean
 
 Checks if a string ends with a substring.
 
-**Parameters**
+*Parameters*
 
 - string 
 - substring 
@@ -7448,7 +7448,7 @@ static contains( string:string,  substring:string ):boolean
 
 Checks if a string contains a substring (in any part).
 
-**Parameters**
+*Parameters*
 
 - string 
 - substring 
@@ -7472,7 +7472,7 @@ static from( iterator:iterator ):array
 
 Collects the values of an ES6 iterator and returns an array.
 
-**Parameters**
+*Parameters*
 
 - iterator 
 
@@ -7483,7 +7483,7 @@ static joinWithoutDuplicates( array:array ):array
 
 Takes two or more arrays and joins them while removing duplicates
 
-**Parameters**
+*Parameters*
 
 - array 
 
@@ -7506,7 +7506,7 @@ static from( object:object ):map
 
 Takes an object and creates a map from its properties.
 
-**Parameters**
+*Parameters*
 
 - object 
 
@@ -7529,7 +7529,7 @@ static is( uuid:string ):string
 
 Returns true if the string provided is a UUID (version 1 to 5).
 
-**Parameters**
+*Parameters*
 
 - uuid 
 
