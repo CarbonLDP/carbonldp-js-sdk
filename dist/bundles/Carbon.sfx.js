@@ -953,7 +953,7 @@ $__System.register("3", ["b", "e", "5"], function(exports_1) {
 });
 
 $__System.register("7", ["10", "11", "6", "9", "3"], function(exports_1) {
-    var Document, NS, Utils, Errors_1, Context;
+    var Document, NS, Utils, Errors_1, Context_1;
     var RDF_CLASS, SCHEMA, Factory;
     return {
         setters:[
@@ -969,8 +969,8 @@ $__System.register("7", ["10", "11", "6", "9", "3"], function(exports_1) {
             function (Errors_1_1) {
                 Errors_1 = Errors_1_1;
             },
-            function (Context_1) {
-                Context = Context_1;
+            function (Context_1_1) {
+                Context_1 = Context_1_1;
             }],
         execute: function() {
             exports_1("RDF_CLASS", RDF_CLASS = NS.CS.Class.Application);
@@ -1014,7 +1014,7 @@ $__System.register("7", ["10", "11", "6", "9", "3"], function(exports_1) {
                 return Factory;
             })();
             exports_1("Factory", Factory);
-            exports_1("Context", Context);
+            exports_1("Context", Context_1.default);
         }
     }
 });
