@@ -32,8 +32,8 @@ describe( module( "Carbon/RDFRepresentation" ), ():void => {
 		expect( RDFRepresentation.SCHEMA ).toBeDefined();
 		expect( Utils.isObject( RDFRepresentation.SCHEMA ) ).toBe( true );
 
-		expect( Utils.hasProperty( NonRDFSource.SCHEMA, "mediaType" ) ).toBe( true );
-		expect( NonRDFSource.SCHEMA[ "mediaType" ] ).toEqual({
+		expect( Utils.hasProperty( RDFRepresentation.SCHEMA, "mediaType" ) ).toBe( true );
+		expect( RDFRepresentation.SCHEMA[ "mediaType" ] ).toEqual({
 			"@id": NS.C.Predicate.mediaType,
 			"@type": NS.XSD.DataType.string
 		});
@@ -92,7 +92,7 @@ describe( module( "Carbon/RDFRepresentation" ), ():void => {
 			let object:any;
 
 			object = {};
-			expect( NonRDFSource.Factory.is( object ) ).toBe( false );
+			expect( RDFRepresentation.Factory.is( object ) ).toBe( false );
 			object.mediaType = "application/pdf";
 			expect( RDFRepresentation.Factory.is( object ) ).toBe( false );
 			object.size = 1000;
@@ -108,7 +108,7 @@ describe( module( "Carbon/RDFRepresentation" ), ():void => {
 			let context:AbstractContext = new MockedContext();
 
 			object = PersistedDocument.Factory.create( "", context.documents );
-			expect( NonRDFSource.Factory.is( object ) ).toBe( false );
+			expect( RDFRepresentation.Factory.is( object ) ).toBe( false );
 			object.mediaType = "application/pdf";
 			expect( RDFRepresentation.Factory.is( object ) ).toBe( false );
 			object.size = 1000;
