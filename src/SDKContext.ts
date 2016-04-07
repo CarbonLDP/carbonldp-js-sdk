@@ -158,6 +158,10 @@ export class Class implements Context {
 				"@id": NS.CS.Predicate.name,
 				"@type": NS.XSD.DataType.string,
 			},
+			"description": {
+				"@id": NS.CS.Predicate.description,
+				"@type": NS.XSD.DataType.string,
+			},
 			"rootContainer": {
 				"@id": NS.CS.Predicate.rootContainer,
 				"@type": "@id",

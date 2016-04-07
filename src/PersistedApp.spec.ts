@@ -67,7 +67,7 @@ describe( module( "Carbon/PersistedApp" ), ():void => {
 			let object:any = Document.Factory.create();
 			expect( PersistedApp.Factory.is( object ) ).toBe( false );
 
-			object = App.Factory.create( "The App name" );
+			object = App.Factory.create( "The App name", "The App description" );
 			expect( PersistedApp.Factory.is( object ) ).toBe( false );
 
 			object.rootContainer = {};

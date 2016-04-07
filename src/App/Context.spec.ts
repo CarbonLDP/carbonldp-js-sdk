@@ -37,7 +37,7 @@ describe( module( "Carbon/App/Context" ), ():void => {
 				}
 			}
 			let parentContext = new MockedContext();
-			let app:PersistedApp = <any> App.Factory.create( "http://example.com/platform/apps/example-app/" );
+			let app:PersistedApp = <any> App.Factory.create( "App name", "App description" );
 			app.rootContainer = <any> Pointer.Factory.create( "http://example.com/apps/example-app/" );
 			appContext = new AppContext( parentContext, app );
 		});

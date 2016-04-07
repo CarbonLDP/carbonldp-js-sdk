@@ -979,6 +979,10 @@ $__System.register("7", ["10", "11", "6", "9", "3"], function(exports_1) {
                     "@id": NS.CS.Predicate.name,
                     "@type": NS.XSD.DataType.string,
                 },
+                "description": {
+                    "@id": NS.CS.Predicate.description,
+                    "@type": NS.XSD.DataType.string,
+                },
                 "rootContainer": {
                     "@id": NS.CS.Predicate.rootContainer,
                     "@type": "@id",
@@ -991,23 +995,27 @@ $__System.register("7", ["10", "11", "6", "9", "3"], function(exports_1) {
                 function Factory() {
                 }
                 Factory.hasClassProperties = function (resource) {
-                    return Utils.hasPropertyDefined(resource, "name");
+                    return Utils.hasPropertyDefined(resource, "name")
+                        && Utils.hasPropertyDefined(resource, "description");
                 };
                 Factory.is = function (object) {
                     return Document.Factory.hasClassProperties(object)
                         && Factory.hasClassProperties(object)
                         && object.types.indexOf(NS.CS.Class.Application) !== -1;
                 };
-                Factory.create = function (name) {
-                    return Factory.createFrom({}, name);
+                Factory.create = function (name, description) {
+                    return Factory.createFrom({}, name, description);
                 };
-                Factory.createFrom = function (object, name) {
+                Factory.createFrom = function (object, name, description) {
                     if (!Document.Factory.hasClassProperties(object))
                         object = Document.Factory.createFrom(object);
                     if (!Utils.isString(name) || !name)
                         throw new Errors_1.IllegalArgumentError("The name cannot be empty.");
+                    if (!Utils.isString(description) || !description)
+                        throw new Errors_1.IllegalArgumentError("The description cannot be empty.");
                     var app = object;
                     app.name = name;
+                    app.description = description;
                     app.types.push(NS.CS.Class.Application);
                     return app;
                 };
@@ -3624,6 +3632,10 @@ $__System.register("c", ["12", "26", "18", "9", "1b", "11", "d", "f"], function(
                             "@id": NS.CS.Predicate.name,
                             "@type": NS.XSD.DataType.string,
                         },
+                        "description": {
+                            "@id": NS.CS.Predicate.description,
+                            "@type": NS.XSD.DataType.string,
+                        },
                         "rootContainer": {
                             "@id": NS.CS.Predicate.rootContainer,
                             "@type": "@id",
@@ -5411,13 +5423,18 @@ var _removeDefine = $__System.get("@@amd-helpers").createDefine();
       options = options || {};
       var strictSSL = ('strictSSL' in options) ? options.strictSSL : true;
       var maxRedirects = ('maxRedirects' in options) ? options.maxRedirects : -1;
-      var request = require('request');
+      var request = ('request' in options) ? options.request : require('request');
+      var acceptHeader = 'application/ld+json, application/json';
       var http = require('http');
       var queue = new jsonld.RequestQueue();
       if (options.usePromise) {
         return queue.wrapLoader(function(url) {
           return jsonld.promisify(loadDocument, url, []);
         });
+      }
+      var headers = options.headers || {};
+      if ('Accept' in headers || 'accept' in headers) {
+        throw new RangeError('Accept header may not be specified as an option; only "' + acceptHeader + '" is supported.');
       }
       return queue.wrapLoader(function(url, callback) {
         loadDocument(url, [], callback);
@@ -5447,9 +5464,13 @@ var _removeDefine = $__System.get("@@amd-helpers").createDefine();
         if (doc !== null) {
           return callback(null, doc);
         }
+        var headers = {'Accept': acceptHeader};
+        for (var k in options.headers) {
+          headers[k] = options.headers[k];
+        }
         request({
           url: url,
-          headers: {'Accept': 'application/ld+json, application/json'},
+          headers: headers,
           strictSSL: strictSSL,
           followRedirect: false
         }, handleResponse);
@@ -11964,6 +11985,11 @@ $__System.register("61", [], function(exports_1) {
                 });
                 Object.defineProperty(Predicate, "password", {
                     get: function () { return namespace + "password"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(Predicate, "description", {
+                    get: function () { return namespace + "description"; },
                     enumerable: true,
                     configurable: true
                 });

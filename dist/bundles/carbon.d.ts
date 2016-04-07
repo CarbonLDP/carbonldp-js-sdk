@@ -714,6 +714,7 @@ declare module 'carbonldp/NS/CS' {
 	    static tokenKey: string;
 	    static expirationTime: string;
 	    static password: string;
+	    static description: string;
 	}
 	export { namespace, Class, Predicate };
 
@@ -1569,14 +1570,15 @@ declare module 'carbonldp/App' {
 	import Context from 'carbonldp/App/Context';
 	export interface Class extends Document.Class {
 	    name: string;
+	    description: string;
 	}
 	export const RDF_CLASS: string;
 	export const SCHEMA: ObjectSchema.Class;
 	export class Factory {
 	    static hasClassProperties(resource: Object): boolean;
 	    static is(object: Object): boolean;
-	    static create(name: string): Class;
-	    static createFrom<T extends Object>(object: T, name: string): T & Class;
+	    static create(name: string, description: string): Class;
+	    static createFrom<T extends Object>(object: T, name: string, description: string): T & Class;
 	}
 	export default Class;
 	export { Context };

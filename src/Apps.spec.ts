@@ -124,6 +124,9 @@ describe( module( "Carbon/Apps" ), ():void => {
 				        }],
 				        "${NS.CS.Predicate.name}": [{
 				            "@value": "Example App name"
+				        }],
+				        "${NS.CS.Predicate.description}": [{
+				            "@value": "Example App description"
 				        }]
 				    }]
 				}]`
@@ -186,6 +189,9 @@ describe( module( "Carbon/Apps" ), ():void => {
 				        }],
 				        "${NS.CS.Predicate.name}": [{
 				            "@value": "Example App name"
+				        }],
+				        "${NS.CS.Predicate.description}": [{
+				            "@value": "Example App description"
 				        }]
 				    }]
 				}]`
@@ -270,6 +276,9 @@ describe( module( "Carbon/Apps" ), ():void => {
 				        }],
 				        "${NS.CS.Predicate.name}": [{
 				            "@value": "Example App name"
+				        }],
+				        "${NS.CS.Predicate.description}": [{
+				            "@value": "Example App description"
 				        }]
 				    }]
 				}]`
@@ -321,7 +330,7 @@ describe( module( "Carbon/Apps" ), ():void => {
 				expect( Utils.isFunction( apps.create ) ).toBe( true );
 
 				let spy = spyOn( context.documents, "createChild" );
-				let app:App.Class = App.Factory.create( "App name" );
+				let app:App.Class = App.Factory.create( "App name", "App description" );
 
 				apps.create( app );
 				expect( spy ).toHaveBeenCalledWith( appsContainerURI, null, app );
@@ -356,7 +365,7 @@ describe( module( "Carbon/Apps" ), ():void => {
 
 				let promise:Promise<any>;
 				let spy = spyOn( context.documents, "createChild" );
-				let app:App.Class = App.Factory.create( "App name" );
+				let app:App.Class = App.Factory.create( "App name", "App description" );
 
 				apps.create( "slug-of-app", app );
 				expect( spy ).toHaveBeenCalledWith( appsContainerURI, "slug-of-app", app );
