@@ -5411,13 +5411,18 @@ var _removeDefine = $__System.get("@@amd-helpers").createDefine();
       options = options || {};
       var strictSSL = ('strictSSL' in options) ? options.strictSSL : true;
       var maxRedirects = ('maxRedirects' in options) ? options.maxRedirects : -1;
-      var request = require('request');
+      var request = ('request' in options) ? options.request : require('request');
+      var acceptHeader = 'application/ld+json, application/json';
       var http = require('http');
       var queue = new jsonld.RequestQueue();
       if (options.usePromise) {
         return queue.wrapLoader(function(url) {
           return jsonld.promisify(loadDocument, url, []);
         });
+      }
+      var headers = options.headers || {};
+      if ('Accept' in headers || 'accept' in headers) {
+        throw new RangeError('Accept header may not be specified as an option; only "' + acceptHeader + '" is supported.');
       }
       return queue.wrapLoader(function(url, callback) {
         loadDocument(url, [], callback);
@@ -5447,9 +5452,13 @@ var _removeDefine = $__System.get("@@amd-helpers").createDefine();
         if (doc !== null) {
           return callback(null, doc);
         }
+        var headers = {'Accept': acceptHeader};
+        for (var k in options.headers) {
+          headers[k] = options.headers[k];
+        }
         request({
           url: url,
-          headers: {'Accept': 'application/ld+json, application/json'},
+          headers: headers,
           strictSSL: strictSSL,
           followRedirect: false
         }, handleResponse);
