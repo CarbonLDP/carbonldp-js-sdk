@@ -1,6 +1,7 @@
 import * as LDP from "./LDP";
-import * as App from "./App";
-export interface Class extends App.Class {
+import * as PersistedDocument from "./PersistedDocument";
+export interface Class extends PersistedDocument.Class {
+    name: string;
     rootContainer: LDP.PersistedContainer.Class;
 }
 export declare class Factory {

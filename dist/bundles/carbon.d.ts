@@ -1539,8 +1539,9 @@ declare module 'carbonldp/Agents' {
 }
 declare module 'carbonldp/PersistedApp' {
 	import * as LDP from 'carbonldp/LDP';
-	import * as App from 'carbonldp/App';
-	export interface Class extends App.Class {
+	import * as PersistedDocument from 'carbonldp/PersistedDocument';
+	export interface Class extends PersistedDocument.Class {
+	    name: string;
 	    rootContainer: LDP.PersistedContainer.Class;
 	}
 	export class Factory {

@@ -1,3 +1,6 @@
+# 0.22.0 (March 31, 2016)
+- Added `PersistedApp.Class` interface
+
 # 0.21.2 (March 31, 2016)
 - Fixed incorrect export in App module
 
