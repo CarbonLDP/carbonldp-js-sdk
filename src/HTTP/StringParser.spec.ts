@@ -63,7 +63,7 @@ describe( module( "Carbon/HTTP/StringParser" ), ():void => {
 			Promise.all( promises ).then( ():void => {
 				done();
 			}, ( error:Error ):void => {
-				done( error );
+				done.fail( error );
 			});
 		});
 	});

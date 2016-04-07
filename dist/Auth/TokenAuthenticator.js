@@ -6,6 +6,7 @@ var RDF = require("./../RDF");
 var BasicAuthenticator_1 = require("./BasicAuthenticator");
 var UsernameAndPasswordToken_1 = require("./UsernameAndPasswordToken");
 var Token = require("./Token");
+var Utils = require("./../Utils");
 var Class = (function () {
     function Class(context) {
         if (context === null)
@@ -19,6 +20,8 @@ var Class = (function () {
     Class.prototype.authenticate = function (authenticationOrCredentials) {
         var _this = this;
         if (Token.Factory.is(authenticationOrCredentials)) {
+            if (Utils.isString(authenticationOrCredentials.expirationTime))
+                authenticationOrCredentials.expirationTime = new Date(authenticationOrCredentials.expirationTime);
             this._credentials = authenticationOrCredentials;
             return new Promise(function (resolve, reject) {
                 if (!_this.isAuthenticated()) {

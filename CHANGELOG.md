@@ -1,4 +1,15 @@
-## 0.20.0 (March 30, 2016)
+# 0.21.2 (March 31, 2016)
+- Fixed incorrect export in App module
+
+# 0.21.1 (March 31, 2016)
+- Added signature in `HTTP.Request.Service.delete()` to support sending a delete request without a body
+
+# 0.21.0 (March 31, 2016)
+- Added `persistedDocument.upload()` method, which lets you upload a file and save it as a child of the document
+- Added `context.documents.upload()` method, same as `persistedDocument.upload()`
+- Added a signature to `HTTP.Request.Service.send()` to support sending Blobs as the request's body
+
+# 0.20.0 (March 30, 2016)
 - Added `Agents` module
 - Added `Agent` module 
 - Added `Agents.create()` method, which lets you persist an Agent

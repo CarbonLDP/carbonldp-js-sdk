@@ -82,8 +82,6 @@ var Class = (function () {
         this.authenticator = authenticator;
         if (authenticationToken)
             return authenticator.authenticate(authenticationToken);
-        if (Utils.isString(credentials.expirationTime))
-            credentials.expirationTime = new Date(credentials.expirationTime);
         return authenticator.authenticate(credentials);
     };
     return Class;

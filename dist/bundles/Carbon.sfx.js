@@ -953,7 +953,7 @@ $__System.register("3", ["b", "e", "5"], function(exports_1) {
 });
 
 $__System.register("7", ["10", "11", "6", "9", "3"], function(exports_1) {
-    var Document, NS, Utils, Errors_1, Context;
+    var Document, NS, Utils, Errors_1, Context_1;
     var RDF_CLASS, SCHEMA, Factory;
     return {
         setters:[
@@ -969,8 +969,8 @@ $__System.register("7", ["10", "11", "6", "9", "3"], function(exports_1) {
             function (Errors_1_1) {
                 Errors_1 = Errors_1_1;
             },
-            function (Context_1) {
-                Context = Context_1;
+            function (Context_1_1) {
+                Context_1 = Context_1_1;
             }],
         execute: function() {
             exports_1("RDF_CLASS", RDF_CLASS = NS.CS.Class.Application);
@@ -1014,7 +1014,7 @@ $__System.register("7", ["10", "11", "6", "9", "3"], function(exports_1) {
                 return Factory;
             })();
             exports_1("Factory", Factory);
-            exports_1("Context", Context);
+            exports_1("Context", Context_1.default);
         }
     }
 });
@@ -1382,7 +1382,7 @@ $__System.register("13", ["9", "14", "5", "6", "15", "16", "4", "11", "d", "17",
                     HTTP.Request.Util.setAcceptHeader("application/ld+json", requestOptions);
                     HTTP.Request.Util.setPreferredInteractionModel(NS.LDP.Class.RDFSource, requestOptions);
                     HTTP.Request.Util.setIfMatchHeader(persistedDocument._etag, requestOptions);
-                    return HTTP.Request.Service.delete(persistedDocument.id, persistedDocument.toJSON(), requestOptions);
+                    return HTTP.Request.Service.delete(persistedDocument.id, requestOptions);
                 };
                 Documents.prototype.download = function (rdfRepresentation) {
                     if (!RDFRepresentation.Factory.is(rdfRepresentation))
@@ -3857,8 +3857,8 @@ $__System.register("2b", ["14", "9", "2c", "2a"], function(exports_1) {
     }
 });
 
-$__System.register("2d", ["9", "14", "11", "5", "2b", "2c", "2e"], function(exports_1) {
-    var Errors, HTTP, NS, RDF, BasicAuthenticator_1, UsernameAndPasswordToken_1, Token;
+$__System.register("2d", ["9", "14", "11", "5", "2b", "2c", "2e", "6"], function(exports_1) {
+    var Errors, HTTP, NS, RDF, BasicAuthenticator_1, UsernameAndPasswordToken_1, Token, Utils;
     var Class;
     return {
         setters:[
@@ -3882,6 +3882,9 @@ $__System.register("2d", ["9", "14", "11", "5", "2b", "2c", "2e"], function(expo
             },
             function (Token_1) {
                 Token = Token_1;
+            },
+            function (Utils_1) {
+                Utils = Utils_1;
             }],
         execute: function() {
             Class = (function () {
@@ -3897,6 +3900,8 @@ $__System.register("2d", ["9", "14", "11", "5", "2b", "2c", "2e"], function(expo
                 Class.prototype.authenticate = function (authenticationOrCredentials) {
                     var _this = this;
                     if (Token.Factory.is(authenticationOrCredentials)) {
+                        if (Utils.isString(authenticationOrCredentials.expirationTime))
+                            authenticationOrCredentials.expirationTime = new Date(authenticationOrCredentials.expirationTime);
                         this._credentials = authenticationOrCredentials;
                         return new Promise(function (resolve, reject) {
                             if (!_this.isAuthenticated()) {
@@ -4281,8 +4286,6 @@ $__System.register("27", ["28", "29", "2b", "2d", "2e", "2c", "9", "6"], functio
                     this.authenticator = authenticator;
                     if (authenticationToken)
                         return authenticator.authenticate(authenticationToken);
-                    if (Utils.isString(credentials.expirationTime))
-                        credentials.expirationTime = new Date(credentials.expirationTime);
                     return authenticator.authenticate(credentials);
                 };
                 return Class;
@@ -5504,13 +5507,18 @@ var _removeDefine = $__System.get("@@amd-helpers").createDefine();
       options = options || {};
       var strictSSL = ('strictSSL' in options) ? options.strictSSL : true;
       var maxRedirects = ('maxRedirects' in options) ? options.maxRedirects : -1;
-      var request = require('request');
+      var request = ('request' in options) ? options.request : require('request');
+      var acceptHeader = 'application/ld+json, application/json';
       var http = require('http');
       var queue = new jsonld.RequestQueue();
       if (options.usePromise) {
         return queue.wrapLoader(function(url) {
           return jsonld.promisify(loadDocument, url, []);
         });
+      }
+      var headers = options.headers || {};
+      if ('Accept' in headers || 'accept' in headers) {
+        throw new RangeError('Accept header may not be specified as an option; only "' + acceptHeader + '" is supported.');
       }
       return queue.wrapLoader(function(url, callback) {
         loadDocument(url, [], callback);
@@ -5540,9 +5548,13 @@ var _removeDefine = $__System.get("@@amd-helpers").createDefine();
         if (doc !== null) {
           return callback(null, doc);
         }
+        var headers = {'Accept': acceptHeader};
+        for (var k in options.headers) {
+          headers[k] = options.headers[k];
+        }
         request({
           url: url,
-          headers: {'Accept': 'application/ld+json, application/json'},
+          headers: headers,
           strictSSL: strictSSL,
           followRedirect: false
         }, handleResponse);
@@ -10656,11 +10668,13 @@ $__System.register("4f", ["4d", "50", "4e", "51", "6"], function(exports_1) {
             Service = (function () {
                 function Service() {
                 }
-                Service.send = function (method, url, bodyOrOptions, options, parser) {
+                Service.send = function (method, url, bodyOrOptions, optionsOrParser, parser) {
                     if (bodyOrOptions === void 0) { bodyOrOptions = Service.defaultOptions; }
-                    if (options === void 0) { options = Service.defaultOptions; }
+                    if (optionsOrParser === void 0) { optionsOrParser = Service.defaultOptions; }
                     if (parser === void 0) { parser = null; }
                     var body = null;
+                    var options = Utils.hasProperty(optionsOrParser, "parse") ? bodyOrOptions : optionsOrParser;
+                    parser = Utils.hasProperty(optionsOrParser, "parse") ? optionsOrParser : parser;
                     if ((bodyOrOptions instanceof Blob) || Utils.isString(bodyOrOptions)) {
                         body = bodyOrOptions;
                     }
@@ -10728,11 +10742,11 @@ $__System.register("4f", ["4d", "50", "4e", "51", "6"], function(exports_1) {
                     if (parser === void 0) { parser = null; }
                     return Service.send(Method_1.default.PATCH, url, bodyOrOptions, options, parser);
                 };
-                Service.delete = function (url, bodyOrOptions, options, parser) {
+                Service.delete = function (url, bodyOrOptions, optionsOrParser, parser) {
                     if (bodyOrOptions === void 0) { bodyOrOptions = Service.defaultOptions; }
-                    if (options === void 0) { options = Service.defaultOptions; }
+                    if (optionsOrParser === void 0) { optionsOrParser = Service.defaultOptions; }
                     if (parser === void 0) { parser = null; }
-                    return Service.send(Method_1.default.DELETE, url, bodyOrOptions, options, parser);
+                    return Service.send(Method_1.default.DELETE, url, bodyOrOptions, optionsOrParser, parser);
                 };
                 Service.defaultOptions = {
                     sendCredentialsOnCORS: true,
@@ -13252,7 +13266,7 @@ $__System.register("6a", ["b", "f", "e", "7", "2", "27", "10", "13", "9", "20", 
                     this.apps = new Apps.Class(this);
                 }
                 Object.defineProperty(Carbon, "version", {
-                    get: function () { return "0.20.0-ALPHA"; },
+                    get: function () { return "0.21.2-ALPHA"; },
                     enumerable: true,
                     configurable: true
                 });

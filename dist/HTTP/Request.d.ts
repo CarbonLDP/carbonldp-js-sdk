@@ -20,6 +20,7 @@ export declare class Service {
     static send(method: (Method | string), url: string, options?: Options): Promise<Response>;
     static send(method: (Method | string), url: string, body: string, options?: Options): Promise<Response>;
     static send(method: (Method | string), url: string, body: string, options?: Options): Promise<Response>;
+    static send<T>(method: (Method | string), url: string, options?: Options, parser?: Parser<T>): Promise<[T, Response]>;
     static send<T>(method: (Method | string), url: string, body: string, options?: Options, parser?: Parser<T>): Promise<[T, Response]>;
     static options(url: string, options?: Options): Promise<Response>;
     static head(url: string, options?: Options): Promise<Response>;
@@ -33,7 +34,9 @@ export declare class Service {
     static put<T>(url: string, body: string, options?: Options, parser?: Parser<T>): Promise<[T, Response]>;
     static patch(url: string, body: string, options?: Options): Promise<Response>;
     static patch<T>(url: string, body: string, options?: Options, parser?: Parser<T>): Promise<[T, Response]>;
+    static delete(url: string, options?: Options): Promise<Response>;
     static delete(url: string, body: string, options?: Options): Promise<Response>;
+    static delete<T>(url: string, options?: Options, parser?: Parser<T>): Promise<[T, Response]>;
     static delete<T>(url: string, body: string, options?: Options, parser?: Parser<T>): Promise<[T, Response]>;
 }
 export declare class Util {
