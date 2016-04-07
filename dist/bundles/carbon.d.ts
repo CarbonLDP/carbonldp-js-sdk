@@ -675,6 +675,7 @@ declare module 'carbonldp/NS/C' {
 	    static PreferMembershipResources: string;
 	    static PreferMembershipTriples: string;
 	    static VolatileResource: string;
+	    static RDFRepresentation: string;
 	}
 	export class Predicate {
 	    static accessPoint: string;
@@ -682,6 +683,8 @@ declare module 'carbonldp/NS/C' {
 	    static created: string;
 	    static modified: string;
 	    static version: string;
+	    static mediaType: string;
+	    static size: string;
 	}
 
 }
@@ -1568,8 +1571,9 @@ declare module 'carbonldp/Agents' {
 }
 declare module 'carbonldp/PersistedApp' {
 	import * as LDP from 'carbonldp/LDP';
-	import * as App from 'carbonldp/App';
-	export interface Class extends App.Class {
+	import * as PersistedDocument from 'carbonldp/PersistedDocument';
+	export interface Class extends PersistedDocument.Class {
+	    name: string;
 	    rootContainer: LDP.PersistedContainer.Class;
 	}
 	export class Factory {
@@ -1621,6 +1625,22 @@ declare module 'carbonldp/APIDescription' {
 	export interface Class {
 	    version: string;
 	    buildDate: Date;
+	}
+	export default Class;
+
+}
+declare module 'carbonldp/RDFRepresentation' {
+	import * as ObjectSchema from 'carbonldp/ObjectSchema';
+	import * as PersistedDocument from 'carbonldp/PersistedDocument';
+	export const RDF_CLASS: string;
+	export const SCHEMA: ObjectSchema.Class;
+	export interface Class extends PersistedDocument.Class {
+	    mediaType: string;
+	    size: number;
+	}
+	export class Factory {
+	    static hasClassProperties(object: Object): boolean;
+	    static is(object: Object): boolean;
 	}
 	export default Class;
 

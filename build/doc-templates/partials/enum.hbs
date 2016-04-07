@@ -1,0 +1,12 @@
+{{~new-line~}}
+#### <a name"{{sanitize name}} />{{name}}
+{{#with description~}}
+	> {{{trim this}}}
+{{/with}}
+
+{{~new-line~}}
+| Name | Description | {{new-line~}}
+| --- | --- |
+{{#each enumerals~}}
+	| {{name}} | {{{trim description}}} |
+{{/each}}
