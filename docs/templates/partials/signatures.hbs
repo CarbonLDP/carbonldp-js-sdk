@@ -1,7 +1,7 @@
 {{~new-line~}}
 {{#each signatures~}}
 	```typescript {{new-line~}}
-	{{../access}}{{../name}}({{#each arguments}} {{name}}{{#if optional}}?{{/if}}:{{{type}}}{{^if @last}},{{/if}} {{/each}}):{{{returns.type}}} {{new-line~}}
+	{{../access}}{{../name}}({{#each arguments}} {{name}}{{#if optional}}?{{/if}}:{{{type}}}{{^if @last}},{{/if}} {{/each}}){{#with returns}}:{{{type}}}{{/with}} {{~new-line~}}
 	```
 
 	{{#with description~}}

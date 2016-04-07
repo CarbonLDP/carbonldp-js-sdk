@@ -1,0 +1,39 @@
+{{#each modules}}
+- [Module {{path}}](#{{sanitize path}})
+{{#if reexports}}
+	- [Reexports](#{{sanitize path}}-Reexports)
+{{/if}}
+{{#if enums}}
+	- [Enums](#{{sanitize path}}-Enums)
+{{/if}}
+{{#if properties}}
+	- [Properties](#{{sanitize path}}-Properties)
+{{/if}}
+{{#if methods}}
+	- [Methods](#{{sanitize path}}-Methods)
+{{/if}}
+{{#each classes}}
+	- [Class {{path}}](#{{sanitize path}})
+	{{#if reexports}}
+		- [Reexports](#{{sanitize path}}-Reexports)
+	{{/if}}
+	{{#if constructors}}
+		- [Constructor](#{{sanitize path}}-Constructor)
+	{{/if}}
+	{{#if properties}}
+		- [Properties](#{{sanitize path}}-Properties)
+	{{/if}}
+	{{#if methods}}
+		- [Methods](#{{sanitize path}}-Methods)
+	{{/if}}
+	{{#if decorated-object}}
+		- [Decorated Object](#{{sanitize path}}-Decorated-Object)
+		{{#if properties}}
+			- [Properties](#{{sanitize path}}-Decorated-Object-Properties)
+		{{/if}}
+		{{#if methods}}
+			- [Methods](#{{sanitize path}}-Decorated-Object-Methods)
+		{{/if}}
+	{{/if}}
+{{/each}}
+{{/each}}

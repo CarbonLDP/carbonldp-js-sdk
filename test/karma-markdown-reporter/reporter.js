@@ -17,10 +17,10 @@ swag.registerHelpers( Handlebars );
 	});
 })();
 
-let MarkdownReporter = (() => {
-	let docsData;
-	let template;
-	let destFile;
+var MarkdownReporter = (() => {
+	var docsData;
+	var template;
+	var destFile;
 
 	function isJSON( description ) {
 		return description && description.indexOf( "JSON" ) === 0;
@@ -49,8 +49,8 @@ let MarkdownReporter = (() => {
 	}
 
 	function composeSuite( parent, suite ) {
-		let name = suite.name;
-		let type = suite.suiteType;
+		var name = suite.name;
+		var type = suite.suiteType;
 		delete suite.suiteType;
 
 		switch( type ) {
@@ -60,13 +60,9 @@ let MarkdownReporter = (() => {
 				break;
 
 			case "class":
-				if ( parent[ "classes" ] ) {
-					parent = parent[ "classes" ];
-				} else {
-					parent = parent[ "classes" ] = {};
-					suite.path = suite.name;
-					suite.name = suite.path.split( "." ).pop();
-				}
+				parent = parent[ "classes" ] || ( parent[ "classes" ] = {} );
+				suite.path = suite.name;
+				suite.name = suite.path.split( "." ).pop();
 				break;
 
 			case "interface":
@@ -77,7 +73,7 @@ let MarkdownReporter = (() => {
 				return parent[ "constructors" ] || ( parent[ "constructors" ] = suite );
 
 			case "method":
-				parent = parent[ "methods" ] || ( parent[ "methods" ] || {} );
+				parent = parent[ "methods" ] || ( parent[ "methods" ] = {} );
 				parent = parent[ suite.access ] || ( parent[ suite.access ] = {} );
 				break;
 
@@ -92,34 +88,34 @@ let MarkdownReporter = (() => {
 				name = name.replace( " ", "-" );
 		}
 
-		return parent[ name ] ? parent[ name ] : ( parent[ name ] = suite );
+		return parent[ name ] || ( parent[ name ] = suite );
 	}
 
 	function composeSpec( parent, spec ) {
-		let signatures;
-		let type = spec.specType;
+		var signatures;
+		var type = spec.specType;
 		delete spec.specType;
 
 		switch( type ) {
 			case "constructor":
-				let constructors = parent[ "constructors" ] || ( parent[ "constructors" ] = {} );
+				var constructors = parent[ "constructors" ] || ( parent[ "constructors" ] = {} );
 				signatures = constructors[ "signatures" ] || ( constructors[ "signatures" ] = [] );
 
 				signatures.push( spec );
 				break;
 
 			case "method":
-				let methods = parent[ "methods" ] || ( parent[ "methods" ] = {} );
+				var methods = parent[ "methods" ] || ( parent[ "methods" ] = {} );
 				methods = methods[ spec.access ] || ( methods[ spec.access ] = {} );
 
-				let method = methods[ spec.name ] = { access: spec.access, name: spec.name };
+				var method = methods[ spec.name ] = { access: spec.access, name: spec.name };
 
 				signatures = method[ "signatures" ] || ( method[ "signatures" ] = [] );
 				signatures.push( spec );
 				break;
 
 			case "property":
-				let properties = parent[ "properties" ] || ( parent[ "properties" ] = {} );
+				var properties = parent[ "properties" ] || ( parent[ "properties" ] = {} );
 				properties = properties[ spec.access ] || ( properties[ spec.access ] = {} );
 
 				properties[ spec.name ] =  spec;
@@ -135,7 +131,7 @@ let MarkdownReporter = (() => {
 				break;
 
 			case "super-class":
-				let superClasses = parent[ "super-classes" ] || ( parent[ "super-classes" ] = [] );
+				var superClasses = parent[ "super-classes" ] || ( parent[ "super-classes" ] = [] );
 				superClasses.push( spec );
 				break;
 
@@ -144,7 +140,7 @@ let MarkdownReporter = (() => {
 				return null;
 
 			case "reexports":
-				let reexports = parent[ "reexports" ] || ( parent[ "reexports" ] = [] );
+				var reexports = parent[ "reexports" ] || ( parent[ "reexports" ] = [] );
 				reexports.push( spec );
 				break;
 
@@ -153,12 +149,12 @@ let MarkdownReporter = (() => {
 				break;
 
 			case "enum":
-				let enumerals = parent[ "enumerals" ] || ( parent[ "enumerals"] = [] );
+				var enumerals = parent[ "enumerals" ] || ( parent[ "enumerals"] = [] );
 				enumerals.push( spec );
 				break;
 
 			default:
-				let name = spec.name.replace( " ", "-" );
+				var name = spec.name.replace( " ", "-" );
 				parent[ name ] = true;
 				break;
 		}
@@ -189,17 +185,17 @@ let MarkdownReporter = (() => {
 	 * @param {string[]} result.suite - Suites the spec belongs to, from top to bottom
 	 */
 	function onSpecComplete( browser, result ) {
-		let container;
-		let path = [].concat( result.suite, result.description );
-		let maxDepth = path.length - 1;
-
-		path.reduce( function ( previous, current, depth ) {
-			current = parseData( current );
-
-			container = getContainer( previous, current, depth < maxDepth );
-
-			return container;
-		}, docsData );
+		// var container;
+		// var path = [].concat( result.suite, result.description );
+		// var maxDepth = path.length - 1;
+		//
+		// path.reduce( function ( previous, current, depth ) {
+		// 	current = parseData( current );
+		//
+		// 	container = getContainer( previous, current, depth < maxDepth );
+		//
+		// 	return container;
+		// }, docsData );
 	}
 
 	function onRunStart( browsers, server ) {
@@ -215,7 +211,22 @@ let MarkdownReporter = (() => {
 	 * @param server
 	 */
 	function onBrowserStart( browser, results, server ) {
+		parseSpecs( docsData, results.specs );
+	}
 
+	function parseSpecs( parent, specs ) {
+		let container;
+		let data;
+		for( let key of Object.keys( specs ) ) {
+			data = parseData( key );
+			container = getContainer( parent, data, true );
+			for ( let spec of specs[ key ]._ ) {
+				data = parseData( spec );
+				getContainer( container, data, false );
+			}
+			delete specs[ key ]._;
+			parseSpecs( container, specs[ key ] );
+		}
 	}
 
 	/**
@@ -230,16 +241,16 @@ let MarkdownReporter = (() => {
 	 * @param server
 	 */
 	function onRunComplete( browsers, overallResults, server ) {
-		let data = sortObject( docsData );
-		let outData = template( { modules: data } );
+		var data = sortObject( docsData );// console.log( docsData );
+		var outData = template( { modules: data } );
 		// fs.writeFileSync( destFile, JSON.stringify({ modules: data }), "utf8" );
 		fs.writeFileSync( destFile, outData, "utf8" );
 	}
 
 	function sortObject( object ) {
-		let keys = Object.keys( object ).sort();
-		let result = [];
-		for ( let key of keys ) {
+		var keys = Object.keys( object ).sort();
+		var result = [];
+		for ( var key of keys ) {
 			result.push( object[ key ] );
 		}
 		return result;
@@ -253,10 +264,10 @@ let MarkdownReporter = (() => {
 	}
 
 	function addPartials( partials ) {
-		let partial;
+		var partial;
 
 		if ( typeof partials === "object" ) {
-			for ( let key of Object.keys( partials ) ) {
+			for ( var key of Object.keys( partials ) ) {
 				partial = partials[ key ];
 				if ( partial.src ) {
 					partial = fs.readFileSync( partial.src , "utf8" );
@@ -268,7 +279,7 @@ let MarkdownReporter = (() => {
 			glob( partials, function (err, files) {
 				if ( err ) throw  err;
 
-				for ( let file of files ) {
+				for ( var file of files ) {
 					partial = fs.readFileSync( file , "utf8" );
 					Handlebars.registerPartial( path.basename( file, ".hbs" ), partial );
 				}
@@ -278,23 +289,23 @@ let MarkdownReporter = (() => {
 		}
 	}
 
-	let MarkdownReporter = function( config ) {
+	var MarkdownReporter = function( config ) {
 		config = config.markdownReporter || {};
-		let src = obtainConfig( config, "src" );
+		var src = obtainConfig( config, "src" );
 		destFile = obtainConfig( config, "dest" );
 
 		src = fs.readFileSync( src, "utf8" );
 		template = Handlebars.compile( src );
 
-		let partials = Array.isArray( config.partials ) ? config.partials : [ config.partials ];
-		for ( let partial of partials ) {
+		var partials = Array.isArray( config.partials ) ? config.partials : [ config.partials ];
+		for ( var partial of partials ) {
 			addPartials( partial );
 		}
 
-		this.specSuccess = specSuccess;
-		this.specSkipped = specSkipped;
-		this.specFailure = specFailure;
-		this.onSpecComplete = onSpecComplete;
+		// this.specSuccess = specSuccess;
+		// this.specSkipped = specSkipped;
+		// this.specFailure = specFailure;
+		// this.onSpecComplete = onSpecComplete;
 		this.onRunStart = onRunStart;
 		this.onBrowserStart = onBrowserStart;
 		this.onRunComplete = onRunComplete;
