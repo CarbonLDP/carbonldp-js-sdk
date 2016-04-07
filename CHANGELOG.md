@@ -1,3 +1,6 @@
+# 0.23.1 (April 7, 2016)
+- Added API documentation in `doc/README.md`
+
 # 0.23.0 (April 7, 2016)
 - Added `RDFRepresentation` module
 

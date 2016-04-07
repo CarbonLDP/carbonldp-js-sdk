@@ -13216,7 +13216,7 @@ $__System.register("6a", ["b", "f", "e", "7", "2", "27", "10", "14", "9", "1f", 
                     this.apps = new Apps.Class(this);
                 }
                 Object.defineProperty(Carbon, "version", {
-                    get: function () { return "0.23.0-ALPHA"; },
+                    get: function () { return "0.23.1-ALPHA"; },
                     enumerable: true,
                     configurable: true
                 });

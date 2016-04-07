@@ -33,7 +33,8 @@ let config = {
 	dist: {
 		sfxBundle: "dist/bundles/Carbon.sfx.js",
 		tsOutput: "dist",
-		all: "dist/**/*"
+		all: "dist/**/*",
+		doc: "doc/*"
 	},
 	bundledDefinition: {
 		excludedFiles: [
@@ -58,6 +59,15 @@ gulp.task( "ts-lint", () => {
 gulp.task( "test", ( done ) => {
 	new karma.Server({
 		configFile: __dirname + "/karma.conf.js",
+		singleRun: true
+	}, done ).start();
+});
+
+
+gulp.task( "generate-doc", ( done ) => {
+	new karma.Server({
+		configFile: __dirname + "/karma.conf.js",
+		reporters: [ "markdown" ],
 		singleRun: true
 	}, done ).start();
 });
@@ -145,10 +155,10 @@ gulp.task( "bundle-definitions:cleaning", [ "bundle-definitions:bundling" ], () 
 });
 
 gulp.task( "clean:dist", ( done ) => {
-	return del( config.dist.all, done );
+	return del( [ config.dist.all, config.dist.doc ], done );
 });
 
 gulp.task( "lint", [ "ts-lint" ] );
 
 gulp.task( "build", [ "clean:dist" ], () => { return gulp.start( "build:afterCleaning" ); });
-gulp.task( "build:afterCleaning", [ "compile-library", "bundle-sfx", "bundle-definitions" ] );
+gulp.task( "build:afterCleaning", [ "compile-library", "generate-doc", "bundle-sfx", "bundle-definitions" ] );

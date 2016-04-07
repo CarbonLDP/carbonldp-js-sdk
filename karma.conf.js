@@ -23,12 +23,12 @@ module.exports = function( config ) {
 			]
 		},
 
-		reporters: [ "markdown" ],
+		reporters: [ "documentation" ],
 
 		markdownReporter: {
-			src: "docs/templates/template.hbs",
-			partials: "docs/templates/partials/*.hbs",
-			dest: "docs/README.md"
+			src: "build/doc-templates/template.hbs",
+			partials: "build/doc-templates/partials/*.hbs",
+			dest: "doc/README.md"
 		},
 
 		// web server port

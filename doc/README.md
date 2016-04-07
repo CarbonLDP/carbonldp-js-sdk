@@ -313,6 +313,10 @@
 - [Module Carbon/NamedFragment](#Carbon-NamedFragment)
 	- [Class Carbon.NamedFragment.Factory](#Carbon-NamedFragment-Factory)
 		- [Methods](#Carbon-NamedFragment-Factory-Methods)
+- [Module Carbon/NonRDFSource](#Carbon-NonRDFSource)
+	- [Properties](#Carbon-NonRDFSource-Properties)
+	- [Class Carbon.NonRDFSource.Factory](#Carbon-NonRDFSource-Factory)
+		- [Methods](#Carbon-NonRDFSource-Factory-Methods)
 - [Module Carbon/ObjectSchema](#Carbon-ObjectSchema)
 	- [Enums](#Carbon-ObjectSchema-Enums)
 	- [Class Carbon.ObjectSchema.DigestedObjectSchema](#Carbon-ObjectSchema-DigestedObjectSchema)
@@ -878,27 +882,27 @@ Class( context:Carbon.Context )
 
 ##### getAllContexts
 ```typescript 
-getAllContexts():Promise<Carbon.Apps.AppContext[]>
+getAllContexts():Promise<Carbon.App.Context[]>
 ```
 
-Obtains all the `Carbon.Apps.AppContext` objects of every app where the context of the Apps instance can reach.
+Obtains all the `Carbon.App.Context` objects of every app where the context of the Apps instance can reach.
 
 ##### getContext
 ```typescript 
-getContext( uri:string ):Promise<Carbon.Apps.AppContext>
+getContext( uri:string ):Promise<Carbon.App.Context>
 ```
 
-Obtains a `Carbon.Apps.AppContext` object of the specified app URI, if it exists within the context of the Apps instance.
+Obtains a `Carbon.App.Context` object of the specified app URI, if it exists within the context of the Apps instance.
 
 *Parameters*
 
 - uri 
 
 ```typescript 
-getContext( pointer:Carbon.Pointer.Class ):Promise<Carbon.Apps.AppContext>
+getContext( pointer:Carbon.Pointer.Class ):Promise<Carbon.App.Context>
 ```
 
-Obtains a `Carbon.Apps.AppContext` object of the specified Pointer object, if it exists within the context of the Apps instance.
+Obtains a `Carbon.App.Context` object of the specified Pointer object, if it exists within the context of the Apps instance.
 
 *Parameters*
 
@@ -906,7 +910,7 @@ Obtains a `Carbon.Apps.AppContext` object of the specified Pointer object, if it
 
 ##### create
 ```typescript 
-create( appDocument:Carbon.Apps.App.Class ):Promise<Carbon.Pointer.Class, Carbon.HTTP.Response.Class>
+create( appDocument:Carbon.App.Class ):Promise<Carbon.Pointer.Class, Carbon.HTTP.Response.Class>
 ```
 
 Persists an App Document in the server, generating a unique slug.
@@ -917,7 +921,7 @@ Returns a Pointer for the stored App Document, and the response of the call.
 - appDocument 
 
 ```typescript 
-create( slug:string,  appDocument:Carbon.Apps.App.Class ):Promise<Carbon.Pointer.Class, Carbon.HTTP.Response.Class>
+create( slug:string,  appDocument:Carbon.App.Class ):Promise<Carbon.Pointer.Class, Carbon.HTTP.Response.Class>
 ```
 
 Persists an App Document in the server using the slug specified.
@@ -4405,6 +4409,10 @@ static PreferMembershipTriples:string
 static VolatileResource:string 
 ```
 
+```typescript 
+static RDFRepresentation:string 
+```
+
 
 
 
@@ -4435,6 +4443,14 @@ static modified:string
 
 ```typescript 
 static version:string 
+```
+
+```typescript 
+static mediaType:string 
+```
+
+```typescript 
+static size:string 
 ```
 
 
@@ -5068,6 +5084,59 @@ Creates a NamedFragment from an Object with the Slug provided for the document s
 - object 
 - slug 
 - document 
+
+
+
+
+## <a name="Carbon-NonRDFSource" />Module Carbon/NonRDFSource
+
+
+
+
+
+### <a name="Carbon-NonRDFSource-Properties" />Properties
+```typescript 
+static RDF_CLASS:string 
+```
+
+```typescript 
+static SCHEMA:Carbon.ObjectSchema.Class 
+```
+
+
+
+
+
+### <a name="Carbon-NonRDFSource-Factory" />Class Carbon.NonRDFSource.Factory
+
+
+> Factory class for `Carbon.NonRDFSource.Class` objects
+
+
+
+
+#### <a name="Carbon-NonRDFSource-Factory-Methods" />Methods
+##### hasClassProperties
+```typescript 
+static hasClassProperties( resource:Object ):boolean
+```
+
+Returns true if the object provided has the properties that defines a `Carbon.NonRDFSource.Class` object
+
+*Parameters*
+
+- resource 
+
+##### is
+```typescript 
+static is( object:Object ):boolean
+```
+
+Returns true if the object provided is considered as an `Carbon.NonRDFSource.Class` object
+
+*Parameters*
+
+- object 
 
 
 
