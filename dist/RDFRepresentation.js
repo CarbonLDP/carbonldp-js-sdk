@@ -4,10 +4,6 @@ var PersistedDocument = require("./PersistedDocument");
 var Utils = require("./Utils");
 exports.RDF_CLASS = NS.C.Class.RDFRepresentation;
 exports.SCHEMA = {
-    "fileIdentifier": {
-        "@id": NS.C.Predicate.fileIdentifier,
-        "@type": NS.XSD.DataType.string,
-    },
     "mediaType": {
         "@id": NS.C.Predicate.mediaType,
         "@type": NS.XSD.DataType.string,
@@ -21,8 +17,7 @@ var Factory = (function () {
     function Factory() {
     }
     Factory.hasClassProperties = function (object) {
-        return Utils.hasPropertyDefined(object, "fileIdentifier")
-            && Utils.hasPropertyDefined(object, "mediaType")
+        return Utils.hasPropertyDefined(object, "mediaType")
             && Utils.hasPropertyDefined(object, "size");
     };
     Factory.is = function (object) {

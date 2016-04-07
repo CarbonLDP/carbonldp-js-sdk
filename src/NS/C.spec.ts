@@ -152,7 +152,7 @@ describe( module(
 			expect( C.Predicate ).toBeDefined();
 			expect( Utils.isFunction( C.Predicate ) ).toBe( true );
 
-			expect( Object.keys( C.Predicate ).length ).toBe( 8 );
+			expect( Object.keys( C.Predicate ).length ).toBe( 7 );
 		});
 
 		it( hasProperty(
@@ -208,18 +208,6 @@ describe( module(
 			expect( Utils.isString( C.Predicate.version ) ).toBe( true );
 
 			expect( C.Predicate.version ).toBe( "https://carbonldp.com/ns/v1/platform#version" );
-		});
-
-
-		it( hasProperty(
-			STATIC,
-			"fileIdentifier",
-			"string"
-		), ():void => {
-			expect( C.Predicate.fileIdentifier ).toBeDefined();
-			expect( Utils.isString( C.Predicate.fileIdentifier ) ).toBe( true );
-
-			expect( C.Predicate.fileIdentifier ).toBe( "https://carbonldp.com/ns/v1/platform#fileIdentifier" );
 		});
 
 

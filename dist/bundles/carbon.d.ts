@@ -690,7 +690,6 @@ declare module 'carbonldp/NS/C' {
 	    static created: string;
 	    static modified: string;
 	    static version: string;
-	    static fileIdentifier: string;
 	    static mediaType: string;
 	    static size: string;
 	}
@@ -1597,6 +1596,22 @@ declare module 'carbonldp/APIDescription' {
 	export default Class;
 
 }
+declare module 'carbonldp/RDFRepresentation' {
+	import * as ObjectSchema from 'carbonldp/ObjectSchema';
+	import * as PersistedDocument from 'carbonldp/PersistedDocument';
+	export const RDF_CLASS: string;
+	export const SCHEMA: ObjectSchema.Class;
+	export interface Class extends PersistedDocument.Class {
+	    mediaType: string;
+	    size: number;
+	}
+	export class Factory {
+	    static hasClassProperties(object: Object): boolean;
+	    static is(object: Object): boolean;
+	}
+	export default Class;
+
+}
 declare module 'carbonldp/SDKContext' {
 	import * as Auth from 'carbonldp/Auth';
 	import Context from 'carbonldp/Context';
@@ -1761,23 +1776,6 @@ declare module 'carbonldp/Carbon' {
 	    getAPIDescription(): Promise<APIDescription.Class>;
 	}
 	export default Carbon;
-
-}
-declare module 'carbonldp/RDFRepresentation' {
-	import * as ObjectSchema from 'carbonldp/ObjectSchema';
-	import * as PersistedDocument from 'carbonldp/PersistedDocument';
-	export const RDF_CLASS: string;
-	export const SCHEMA: ObjectSchema.Class;
-	export interface Class extends PersistedDocument.Class {
-	    fileIdentifier: string;
-	    mediaType: string;
-	    size: number;
-	}
-	export class Factory {
-	    static hasClassProperties(object: Object): boolean;
-	    static is(object: Object): boolean;
-	}
-	export default Class;
 
 }
 /// <reference no-default-lib="true"/>

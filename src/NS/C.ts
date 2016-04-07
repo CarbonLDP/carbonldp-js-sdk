@@ -18,7 +18,6 @@ export class Predicate {
 	static get created():string { return namespace + "created"; }
 	static get modified():string { return namespace + "modified"; }
 	static get version():string { return namespace + "version"; }
-	static get fileIdentifier():string { return namespace + "fileIdentifier"; }
 	static get mediaType():string { return namespace + "mediaType"; }
 	static get size():string { return namespace + "size"; }
 }

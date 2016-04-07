@@ -31,12 +31,6 @@ describe( module( "Carbon/NonRDFSource" ), ():void => {
 		expect( NonRDFSource.SCHEMA ).toBeDefined();
 		expect( Utils.isObject( NonRDFSource.SCHEMA ) ).toBe( true );
 
-		expect( Utils.hasProperty( NonRDFSource.SCHEMA, "fileIdentifier" ) ).toBe( true );
-		expect( NonRDFSource.SCHEMA[ "fileIdentifier" ] ).toEqual({
-			"@id": NS.C.Predicate.fileIdentifier,
-			"@type": NS.XSD.DataType.string
-		});
-
 		expect( Utils.hasProperty( NonRDFSource.SCHEMA, "mediaType" ) ).toBe( true );
 		expect( NonRDFSource.SCHEMA[ "mediaType" ] ).toEqual({
 			"@id": NS.C.Predicate.mediaType,
@@ -74,8 +68,6 @@ describe( module( "Carbon/NonRDFSource" ), ():void => {
 			let object:any = {};
 			expect( NonRDFSource.Factory.hasClassProperties( object ) ).toBe( false );
 
-			object.fileIdentifier = "Identifier-of-the-file";
-			expect( NonRDFSource.Factory.hasClassProperties( object ) ).toBe( false );
 			object.mediaType = "application/pdf";
 			expect( NonRDFSource.Factory.hasClassProperties( object ) ).toBe( false );
 
@@ -98,8 +90,6 @@ describe( module( "Carbon/NonRDFSource" ), ():void => {
 
 			object = {};
 			expect( NonRDFSource.Factory.is( object ) ).toBe( false );
-			object.fileIdentifier = "Identifier-of-the-file";
-			expect( NonRDFSource.Factory.is( object ) ).toBe( false );
 			object.mediaType = "application/pdf";
 			expect( NonRDFSource.Factory.is( object ) ).toBe( false );
 			object.size = 1000;
@@ -113,8 +103,6 @@ describe( module( "Carbon/NonRDFSource" ), ():void => {
 			let context:AbstractContext = new MockedContext();
 
 			object = PersistedDocument.Factory.create( "", context.documents );
-			expect( NonRDFSource.Factory.is( object ) ).toBe( false );
-			object.fileIdentifier = "Identifier-of-the-file";
 			expect( NonRDFSource.Factory.is( object ) ).toBe( false );
 			object.mediaType = "application/pdf";
 			expect( NonRDFSource.Factory.is( object ) ).toBe( false );

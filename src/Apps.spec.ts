@@ -24,8 +24,6 @@ import * as RDF from "./RDF";
 
 import * as Apps from "./Apps";
 import DefaultExport from "./Apps";
-import Spy = jasmine.Spy;
-import {RDF_CLASS} from "../dist/App";
 
 describe( module( "Carbon/Apps" ), ():void => {
 	let context:AbstractContext;
@@ -98,7 +96,7 @@ describe( module( "Carbon/Apps" ), ():void => {
 				let failSpy = spyOn( spies, "fail" ).and.callThrough();
 
 				let promise:Promise<any>;
-				let spy:Spy;
+				let spy:jasmine.Spy;
 
 				spy = spyOn( context.documents, "get" ).and.callThrough();
 
