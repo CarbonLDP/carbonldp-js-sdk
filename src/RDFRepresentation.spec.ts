@@ -32,14 +32,8 @@ describe( module( "Carbon/RDFRepresentation" ), ():void => {
 		expect( RDFRepresentation.SCHEMA ).toBeDefined();
 		expect( Utils.isObject( RDFRepresentation.SCHEMA ) ).toBe( true );
 
-		expect( Utils.hasProperty( RDFRepresentation.SCHEMA, "fileIdentifier" ) ).toBe( true );
-		expect( RDFRepresentation.SCHEMA[ "fileIdentifier" ] ).toEqual({
-			"@id": NS.C.Predicate.fileIdentifier,
-			"@type": NS.XSD.DataType.string
-		});
-
-		expect( Utils.hasProperty( RDFRepresentation.SCHEMA, "mediaType" ) ).toBe( true );
-		expect( RDFRepresentation.SCHEMA[ "mediaType" ] ).toEqual({
+		expect( Utils.hasProperty( NonRDFSource.SCHEMA, "mediaType" ) ).toBe( true );
+		expect( NonRDFSource.SCHEMA[ "mediaType" ] ).toEqual({
 			"@id": NS.C.Predicate.mediaType,
 			"@type": NS.XSD.DataType.string
 		});
@@ -75,8 +69,6 @@ describe( module( "Carbon/RDFRepresentation" ), ():void => {
 			let object:any = {};
 			expect( RDFRepresentation.Factory.hasClassProperties( object ) ).toBe( false );
 
-			object.fileIdentifier = "Identifier-of-the-file";
-			expect( RDFRepresentation.Factory.hasClassProperties( object ) ).toBe( false );
 			object.mediaType = "application/pdf";
 			expect( RDFRepresentation.Factory.hasClassProperties( object ) ).toBe( false );
 			object.size = 1000;
@@ -100,9 +92,7 @@ describe( module( "Carbon/RDFRepresentation" ), ():void => {
 			let object:any;
 
 			object = {};
-			expect( RDFRepresentation.Factory.is( object ) ).toBe( false );
-			object.fileIdentifier = "Identifier-of-the-file";
-			expect( RDFRepresentation.Factory.is( object ) ).toBe( false );
+			expect( NonRDFSource.Factory.is( object ) ).toBe( false );
 			object.mediaType = "application/pdf";
 			expect( RDFRepresentation.Factory.is( object ) ).toBe( false );
 			object.size = 1000;
@@ -118,9 +108,7 @@ describe( module( "Carbon/RDFRepresentation" ), ():void => {
 			let context:AbstractContext = new MockedContext();
 
 			object = PersistedDocument.Factory.create( "", context.documents );
-			expect( RDFRepresentation.Factory.is( object ) ).toBe( false );
-			object.fileIdentifier = "Identifier-of-the-file";
-			expect( RDFRepresentation.Factory.is( object ) ).toBe( false );
+			expect( NonRDFSource.Factory.is( object ) ).toBe( false );
 			object.mediaType = "application/pdf";
 			expect( RDFRepresentation.Factory.is( object ) ).toBe( false );
 			object.size = 1000;

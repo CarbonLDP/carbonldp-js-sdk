@@ -5,7 +5,6 @@ import * as HTTP from "./HTTP";
 export declare const RDF_CLASS: string;
 export declare const SCHEMA: ObjectSchema.Class;
 export interface Class extends PersistedDocument.Class {
-    fileIdentifier: string;
     mediaType: string;
     size: number;
     download: () => Promise<[Blob, HTTP.Response.Class]>;

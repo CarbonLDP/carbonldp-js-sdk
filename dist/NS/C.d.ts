@@ -16,7 +16,6 @@ export declare class Predicate {
     static created: string;
     static modified: string;
     static version: string;
-    static fileIdentifier: string;
     static mediaType: string;
     static size: string;
 }

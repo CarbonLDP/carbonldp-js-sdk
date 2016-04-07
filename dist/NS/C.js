@@ -79,11 +79,6 @@ var Predicate = (function () {
         enumerable: true,
         configurable: true
     });
-    Object.defineProperty(Predicate, "fileIdentifier", {
-        get: function () { return exports.namespace + "fileIdentifier"; },
-        enumerable: true,
-        configurable: true
-    });
     Object.defineProperty(Predicate, "mediaType", {
         get: function () { return exports.namespace + "mediaType"; },
         enumerable: true,

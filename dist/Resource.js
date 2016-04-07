@@ -15,8 +15,8 @@ var Factory = (function () {
     Factory.createFrom = function (object, id, types) {
         if (id === void 0) { id = null; }
         if (types === void 0) { types = null; }
-        id = !!id ? id : "";
-        types = !!types ? types : [];
+        id = !!id ? id : (object.id || "");
+        types = !!types ? types : (object.types || []);
         var resource = Factory.decorate(object);
         resource.id = id;
         resource.types = types;

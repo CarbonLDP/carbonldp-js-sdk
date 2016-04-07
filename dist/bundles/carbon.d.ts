@@ -684,7 +684,6 @@ declare module 'carbonldp/NS/C' {
 	    static created: string;
 	    static modified: string;
 	    static version: string;
-	    static fileIdentifier: string;
 	    static mediaType: string;
 	    static size: string;
 	}
@@ -1348,7 +1347,6 @@ declare module 'carbonldp/RDFRepresentation' {
 	export const RDF_CLASS: string;
 	export const SCHEMA: ObjectSchema.Class;
 	export interface Class extends PersistedDocument.Class {
-	    fileIdentifier: string;
 	    mediaType: string;
 	    size: number;
 	    download: () => Promise<[Blob, HTTP.Response.Class]>;
@@ -1560,8 +1558,9 @@ declare module 'carbonldp/Agents' {
 }
 declare module 'carbonldp/PersistedApp' {
 	import * as LDP from 'carbonldp/LDP';
-	import * as App from 'carbonldp/App';
-	export interface Class extends App.Class {
+	import * as PersistedDocument from 'carbonldp/PersistedDocument';
+	export interface Class extends PersistedDocument.Class {
+	    name: string;
 	    rootContainer: LDP.PersistedContainer.Class;
 	}
 	export class Factory {
