@@ -4567,6 +4567,10 @@ static expirationTime:string
 static password:string 
 ```
 
+```typescript 
+static description:string 
+```
+
 
 
 

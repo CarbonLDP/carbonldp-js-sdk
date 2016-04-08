@@ -1543,6 +1543,7 @@ declare module 'carbonldp/PersistedApp' {
 	import * as PersistedDocument from 'carbonldp/PersistedDocument';
 	export interface Class extends PersistedDocument.Class {
 	    name: string;
+	    description: string;
 	    rootContainer: LDP.PersistedContainer.Class;
 	}
 	export class Factory {

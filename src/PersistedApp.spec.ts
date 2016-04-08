@@ -63,13 +63,14 @@ describe( module( "Carbon/PersistedApp" ), ():void => {
 
 			expect( PersistedApp.Factory.is( {} ) ).toBe( false );
 			expect( PersistedApp.Factory.is( { name: "App name" } ) ).toBe( false );
-			expect( PersistedApp.Factory.is( { name: "App name", rootContainer: {} } ) ).toBe( false );
+			expect( PersistedApp.Factory.is( { name: "App name", description: "App description" } ) ).toBe( false );
+			expect( PersistedApp.Factory.is( { name: "App name", description: "App description", rootContainer: {} } ) ).toBe( false );
 
 			let app:App.Class;
 			let document:PersistedDocument.Class;
 
-			object = App.Factory.create( "The App name", "The App description" );
-			expect( PersistedApp.Factory.is( object ) ).toBe( false );
+			app = App.Factory.create( "The App name", "The App description" );
+			expect( PersistedApp.Factory.is( app ) ).toBe( false );
 
 			( <PersistedApp.Class> app ).rootContainer = <any> {};
 			expect( PersistedApp.Factory.is( app ) ).toBe( false );

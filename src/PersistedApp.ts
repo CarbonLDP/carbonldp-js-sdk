@@ -6,6 +6,7 @@ import * as Utils from "./Utils";
 // TODO Mark as error if it extends from App.Class
 export interface Class extends PersistedDocument.Class {
 	name:string;
+	description:string;
 	rootContainer:LDP.PersistedContainer.Class;
 }
 

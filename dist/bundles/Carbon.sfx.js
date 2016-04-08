@@ -1335,6 +1335,7 @@ $__System.register("14", ["9", "15", "5", "6", "16", "12", "4", "11", "d", "17",
                     else {
                         containerRetrievalPreferences.omit.push(NS.C.Class.NonReadableMembershipResourceTriples);
                     }
+                    HTTP.Request.Util.setContainerRetrievalPreferences(containerRetrievalPreferences, requestOptions);
                     return HTTP.Request.Service.get(uri, requestOptions, new RDF.Document.Parser()).then(function (_a) {
                         var rdfDocuments = _a[0], response = _a[1];
                         var rdfDocument = _this.getRDFDocument(uri, rdfDocuments, response);
