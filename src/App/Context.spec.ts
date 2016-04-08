@@ -71,6 +71,16 @@ describe( module( "Carbon/App/Context" ), ():void => {
 			expect( appContext.agents instanceof Agents.Class ).toBe( true );
 		});
 
+		it( hasProperty(
+			INSTANCE,
+			"app",
+			"Carbon.App.Class",
+			"Object of type `Carbon.App.Class` witch is the Document that represents the actual Application."
+		), ():void => {
+			expect( appContext.app ).toBeDefined();
+			expect( App.Factory.is( appContext.app ) ).toBe( true );
+		});
+
 		it( hasMethod(
 			INSTANCE,
 			"resolve",

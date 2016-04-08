@@ -776,7 +776,7 @@ Returns true if the object provided is considered as an `Carbon.App.Class` objec
 
 ##### create
 ```typescript 
-static create( name:string ):Carbon.App.Class
+static create( name:string,  description?:string ):Carbon.App.Class
 ```
 
 Create a empty `Carbon.App.Class` object.
@@ -784,10 +784,11 @@ Create a empty `Carbon.App.Class` object.
 *Parameters*
 
 - name 
+- description 
 
 ##### createFrom
 ```typescript 
-static createFrom( object:T extends Object ):T & Carbon.App.Class
+static createFrom( object:T extends Object,  name:string,  description?:string ):T & Carbon.App.Class
 ```
 
 Create a `Carbon.App.Class` object with the object provided.
@@ -795,6 +796,8 @@ Create a `Carbon.App.Class` object with the object provided.
 *Parameters*
 
 - object 
+- name 
+- description 
 
 
 

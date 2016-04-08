@@ -1560,7 +1560,8 @@ declare module 'carbonldp/App/Context' {
 	import PersistedApp from 'carbonldp/PersistedApp';
 	export class Class extends AbstractContext {
 	    agents: Agents;
-	    private app;
+	    app: PersistedApp;
+	    private _app;
 	    private base;
 	    constructor(parentContext: Context, app: PersistedApp);
 	    resolve(uri: string): string;

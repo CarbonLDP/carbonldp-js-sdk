@@ -931,10 +931,16 @@ $__System.register("3", ["b", "e", "5"], function(exports_1) {
                 __extends(Class, _super);
                 function Class(parentContext, app) {
                     _super.call(this, parentContext);
-                    this.app = app;
+                    this._app = app;
                     this.base = this.getBase(this.app);
                     this.agents = new Agents_1.default(this);
                 }
+                Object.defineProperty(Class.prototype, "app", {
+                    get: function () { return this._app; },
+                    enumerable: true,
+                    configurable: true
+                });
+                ;
                 Class.prototype.resolve = function (uri) {
                     if (RDF.URI.Util.isAbsolute(uri))
                         return uri;
