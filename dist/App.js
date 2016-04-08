@@ -27,8 +27,7 @@ var Factory = (function () {
     function Factory() {
     }
     Factory.hasClassProperties = function (resource) {
-        return Utils.hasPropertyDefined(resource, "name")
-            && Utils.hasPropertyDefined(resource, "description");
+        return Utils.hasPropertyDefined(resource, "name");
     };
     Factory.is = function (object) {
         return Document.Factory.hasClassProperties(object)
@@ -43,12 +42,11 @@ var Factory = (function () {
             object = Document.Factory.createFrom(object);
         if (!Utils.isString(name) || !name)
             throw new Errors_1.IllegalArgumentError("The name cannot be empty.");
-        if (!Utils.isString(description) || !description)
-            throw new Errors_1.IllegalArgumentError("The description cannot be empty.");
         var app = object;
         app.name = name;
-        app.description = description;
         app.types.push(NS.CS.Class.Application);
+        if (!!description)
+            app.description = description;
         return app;
     };
     return Factory;

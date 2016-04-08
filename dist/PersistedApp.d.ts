@@ -2,7 +2,7 @@ import * as LDP from "./LDP";
 import * as PersistedDocument from "./PersistedDocument";
 export interface Class extends PersistedDocument.Class {
     name: string;
-    description: string;
+    description?: string;
     rootContainer: LDP.PersistedContainer.Class;
 }
 export declare class Factory {

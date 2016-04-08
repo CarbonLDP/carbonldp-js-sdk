@@ -74,9 +74,9 @@ describe( module( "Carbon/App" ), ():void => {
 
 			let object:any = {};
 			expect( App.Factory.hasClassProperties( object ) ).toBe( false );
+
 			object.name = "A name";
-			expect( App.Factory.hasClassProperties( object ) ).toBe( false );
-			
+			expect( App.Factory.hasClassProperties( object ) ).toBe( true );
 			object.description = "A description";
 			expect( App.Factory.hasClassProperties( object ) ).toBe( true );
 		});
@@ -104,12 +104,12 @@ describe( module( "Carbon/App" ), ():void => {
 			object = Document.Factory.create();
 			expect( App.Factory.is( object ) ).toBe( false );
 
-			object.name = "A name";
-			expect( App.Factory.is( object ) ).toBe( false );
-			object.description = "A description";
-			expect( App.Factory.is( object ) ).toBe( false );
-			
 			object.types.push( NS.CS.Class.Application );
+			expect( App.Factory.is( object ) ).toBe( false );
+
+			object.name = "A name";
+			expect( App.Factory.is( object ) ).toBe( true );
+			object.description = "A description";
 			expect( App.Factory.is( object ) ).toBe( true );
 		});
 
@@ -117,7 +117,8 @@ describe( module( "Carbon/App" ), ():void => {
 			STATIC,
 			"create",
 			"Create a empty `Carbon.App.Class` object.", [
-				{ name: "name", type: "string" }
+				{ name: "name", type: "string" },
+				{ name: "description", type: "string", optional: true }
 			],
 			{ type: "Carbon.App.Class" }
 		), ():void => {
@@ -129,19 +130,18 @@ describe( module( "Carbon/App" ), ():void => {
 			App.Factory.create( "The App name", "The App description" );
 			expect( spy ).toHaveBeenCalledWith( {}, "The App name", "The App description" );
 
-			App.Factory.create( "Another App name", "Another App description" );
-			expect( spy ).toHaveBeenCalledWith( {}, "Another App name", "Another App description" );
-
-			App.Factory.create( "", "" );
-			expect( spy ).toHaveBeenCalledWith( {}, "", "" );
+			App.Factory.create( "Another App name" );
+			expect( spy ).toHaveBeenCalledWith( {}, "Another App name", undefined );
 		});
 		
 		it( hasMethod(
 			STATIC,
 			"createFrom",
 			"Create a `Carbon.App.Class` object with the object provided.", [
-				{ name: "object", type: "T extends Object" }
-			], 
+				{ name: "object", type: "T extends Object" },
+				{ name: "name", type: "string" },
+				{ name: "description", type: "string", optional: true }
+			],
 			{ type: "T & Carbon.App.Class" }
 		), ():void => {
 			expect( App.Factory.createFrom ).toBeDefined();
@@ -152,26 +152,41 @@ describe( module( "Carbon/App" ), ():void => {
 			}
 			interface MyApp extends App.Class, TheApp {}
 
-			let app01:MyApp;
-			app01 = App.Factory.createFrom<TheApp>( {}, "App name", "App description" );
-			expect( App.Factory.is( app01 ) ).toBe( true );
-			expect( app01.myProperty ).toBeUndefined();
+			let app:MyApp;
+			app = App.Factory.createFrom<TheApp>( {}, "App name" );
+			expect( App.Factory.is( app ) ).toBe( true );
+			expect( app.myProperty ).toBeUndefined();
+			expect( app.name ).toBe( "App name" );
+			expect( app.description ).toBeUndefined();
 
-			app01 = App.Factory.createFrom<TheApp>( { myProperty: "a property" }, "App name", "App description" );
-			expect( App.Factory.is( app01 ) ).toBe( true );
-			expect( app01.myProperty ).toBeDefined();
-			expect( app01.myProperty ).toBe( "a property" );
+			app = App.Factory.createFrom<TheApp>( {}, "App name", "App description" );
+			expect( App.Factory.is( app ) ).toBe( true );
+			expect( app.myProperty ).toBeUndefined();
+			expect( app.name ).toBe( "App name" );
+			expect( app.description ).toBe( "App description" );
 
-			expect( () => App.Factory.createFrom( {}, "", "" ) ).toThrowError( Errors.IllegalArgumentError );
-			expect( () => App.Factory.createFrom( {}, "App name", "" ) ).toThrowError( Errors.IllegalArgumentError );
+			app = App.Factory.createFrom<TheApp>( { myProperty: "a property" }, "App name" );
+			expect( App.Factory.is( app ) ).toBe( true );
+			expect( app.myProperty ).toBeDefined();
+			expect( app.myProperty ).toBe( "a property" );
+			expect( app.name ).toBe( "App name" );
+			expect( app.description ).toBeUndefined();
+
+			app = App.Factory.createFrom<TheApp>( { myProperty: "a property" }, "App name", "App description" );
+			expect( App.Factory.is( app ) ).toBe( true );
+			expect( app.myProperty ).toBeDefined();
+			expect( app.myProperty ).toBe( "a property" );
+			expect( app.name ).toBe( "App name" );
+			expect( app.description ).toBe( "App description" );
+
+			expect( () => App.Factory.createFrom( {}, "" ) ).toThrowError( Errors.IllegalArgumentError );
 			expect( () => App.Factory.createFrom( {}, "", "App description" ) ).toThrowError( Errors.IllegalArgumentError );
-			expect( () => App.Factory.createFrom( { myProperty: "a property" }, "", "" ) ).toThrowError( Errors.IllegalArgumentError );
-			expect( () => App.Factory.createFrom( { myProperty: "a property" }, "App name", "" ) ).toThrowError( Errors.IllegalArgumentError );
+			expect( () => App.Factory.createFrom( { myProperty: "a property" }, "" ) ).toThrowError( Errors.IllegalArgumentError );
 			expect( () => App.Factory.createFrom( { myProperty: "a property" }, "", "App description" ) ).toThrowError( Errors.IllegalArgumentError );
-			expect( () => App.Factory.createFrom( {}, <any> {}, <any> {} ) ).toThrowError( Errors.IllegalArgumentError );
-			expect( () => App.Factory.createFrom( {}, <any> 1, <any> 1 ) ).toThrowError( Errors.IllegalArgumentError );
-			expect( () => App.Factory.createFrom( {}, <any> null, <any> null ) ).toThrowError( Errors.IllegalArgumentError );
-			expect( () => App.Factory.createFrom( {}, <any> undefined, <any> undefined ) ).toThrowError( Errors.IllegalArgumentError );
+			expect( () => App.Factory.createFrom( {}, <any> {} ) ).toThrowError( Errors.IllegalArgumentError );
+			expect( () => App.Factory.createFrom( {}, <any> 1 ) ).toThrowError( Errors.IllegalArgumentError );
+			expect( () => App.Factory.createFrom( {}, <any> null ) ).toThrowError( Errors.IllegalArgumentError );
+			expect( () => App.Factory.createFrom( {}, <any> undefined ) ).toThrowError( Errors.IllegalArgumentError );
 		});
 
 	});
