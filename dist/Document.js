@@ -152,17 +152,20 @@ var Factory = (function () {
             Utils.hasFunction(documentResource, "removeFragment") &&
             Utils.hasFunction(documentResource, "toJSON"));
     };
-    Factory.create = function (uri) {
-        if (uri === void 0) { uri = null; }
-        return Factory.createFrom({}, uri);
+    Factory.is = function (object) {
+        return (Resource.Factory.is(object) &&
+            Factory.hasClassProperties(object));
     };
-    Factory.createFrom = function (object, uri) {
-        if (uri === void 0) { uri = null; }
-        if (!!uri && RDF.URI.Util.isBNodeID(uri))
-            throw new Errors.IllegalArgumentError("Documents cannot have a BNodeID as a uri.");
-        var resource = Resource.Factory.createFrom(object, uri);
-        var document = Factory.decorate(resource);
-        return document;
+    Factory.create = function () {
+        return Factory.createFrom({});
+    };
+    Factory.createFrom = function (object) {
+        if (Factory.is(object))
+            throw new Errors.IllegalArgumentError("The object passed is already a Document");
+        var resource = object;
+        if (!Resource.Factory.is(object))
+            resource = Resource.Factory.createFrom(object);
+        return Factory.decorate(resource);
     };
     Factory.decorate = function (object) {
         if (Factory.hasClassProperties(object))

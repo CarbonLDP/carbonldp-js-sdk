@@ -13,6 +13,7 @@ import * as PersistedDocument from "./PersistedDocument";
 import * as App from "./App";
 import * as PersistedApp from "./PersistedApp";
 import Documents from "./Documents";
+import * as NS from "./NS";
 
 describe( module( "Carbon/PersistedApp" ), ():void => {
 
@@ -61,9 +62,14 @@ describe( module( "Carbon/PersistedApp" ), ():void => {
 			expect( PersistedApp.Factory.is ).toBeDefined();
 			expect( Utils.isFunction( PersistedApp.Factory.is ) ).toBe( true );
 
-			expect( PersistedApp.Factory.is( {} ) ).toBe( false );
-			expect( PersistedApp.Factory.is( { name: "App name" } ) ).toBe( false );
-			expect( PersistedApp.Factory.is( { name: "App name", rootContainer: {} } ) ).toBe( false );
+			let object:any = {};
+			expect( PersistedApp.Factory.is( object ) ).toBe( false );
+			object.name = "App name";
+			expect( PersistedApp.Factory.is( object ) ).toBe( false );
+			object.rootContainer = {};
+			expect( PersistedApp.Factory.is( object ) ).toBe( false );
+			object.types = [ NS.CS.Class.Application ];
+			expect( PersistedApp.Factory.is( object ) ).toBe( false );
 
 			let app:App.Class;
 			let document:PersistedDocument.Class;
@@ -77,7 +83,7 @@ describe( module( "Carbon/PersistedApp" ), ():void => {
 			document = PersistedDocument.Factory.create( "persistedApp", new Documents() );
 			expect( PersistedApp.Factory.is( document ) ).toBe( false );
 
-			document = PersistedDocument.Factory.createFrom( app, "persistedApp", new Documents() );
+			document = PersistedDocument.Factory.createFrom( object, "persistedApp", new Documents() );
 			expect( PersistedApp.Factory.is( document ) ).toBe( true );
 		});
 

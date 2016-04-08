@@ -63,6 +63,13 @@ gulp.task( "test", ( done ) => {
 	}, done ).start();
 });
 
+gulp.task( "test:debug", ( done ) => {
+	new karma.Server({
+		configFile: __dirname + "/karma.conf.js",
+		singleRun: false
+	}, done ).start();
+});
+
 
 gulp.task( "generate-doc", ( done ) => {
 	new karma.Server({

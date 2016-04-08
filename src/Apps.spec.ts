@@ -160,7 +160,7 @@ describe( module( "Carbon/Apps" ), ():void => {
 
 				let promise:Promise<any>;
 				let pointer:Pointer.Class;
-				let spy:Spy;
+				let spy:jasmine.Spy;
 
 				spy = spyOn( context.documents, "get" ).and.callThrough();
 				pointer = context.documents.getPointer( "apps/example-app/" );

@@ -17,7 +17,9 @@ import {
 import * as Utils from "./Utils";
 import * as Document from "./Document";
 import AbstractContext from "./AbstractContext";
+import * as AccessPoint from "./AccessPoint";
 import Documents from "./Documents";
+import * as HTTP from "./HTTP";
 import * as Pointer from "./Pointer";
 import * as URI from "./RDF/URI";
 
@@ -72,6 +74,8 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 			expect( PersistedDocument.Factory.hasClassProperties( document ) ).toBe( false );
 			document["destroy"] = ():void => {};
 			expect( PersistedDocument.Factory.hasClassProperties( document ) ).toBe( false );
+			document["createAccessPoint"] = ():void => {};
+			expect( PersistedDocument.Factory.hasClassProperties( document ) ).toBe( false );
 			document["executeRawASKQuery"] = ():void => {};
 			expect( PersistedDocument.Factory.hasClassProperties( document ) ).toBe( false );
 			document["executeASKQuery"] = ():void => {};
@@ -110,6 +114,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 			object["refresh"] = ():void => {};
 			object["save"] = ():void => {};
 			object["destroy"] = ():void => {};
+			object["createAccessPoint"] = ():void => {};
 			object["executeRawASKQuery"] = ():void => {};
 			object["executeASKQuery"] = ():void => {};
 			object["executeRawSELECTQuery"] = ():void => {};
@@ -409,6 +414,23 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 				let spy = spyOn( context.documents, "delete" );
 				document.destroy();
 				expect( spy ).toHaveBeenCalledWith( document );
+			});
+
+			it( hasMethod(
+				INSTANCE,
+				"createAccessPoint",
+				"Creates an AccessPoint for the PersistedDocument.",
+				{ type: "Promise<[Carbon.Pointer.Class, Carbon.HTTP.Response.Class]>" }
+			), ():void => {
+				expect( document.createAccessPoint ).toBeDefined();
+				expect( Utils.isFunction( document.createAccessPoint ) ).toBe( true );
+
+				let accessPoint:AccessPoint.Class = AccessPoint.Factory.create( document, "http://example.com/" );
+				let requestOptions:HTTP.Request.Options = {};
+
+				let spy = spyOn( context.documents, "createAccessPoint" );
+				document.createAccessPoint( accessPoint, "slug", requestOptions );
+				expect( spy ).toHaveBeenCalledWith( accessPoint, "slug", requestOptions );
 			});
 
 			it( hasMethod(

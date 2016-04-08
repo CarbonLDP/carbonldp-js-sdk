@@ -200,22 +200,24 @@ export class Factory {
 		);
 	}
 
-	static create( uri:string ):Class;
-	static create():Class;
-	static create( uri:string = null ):Class {
-		return Factory.createFrom( {}, uri );
+	static is( object:Object ):boolean {
+		return (
+			Resource.Factory.is( object ) &&
+			Factory.hasClassProperties( object )
+		);
 	}
 
-	static createFrom<T extends Object>( object:T, uri:string ):T & Class;
-	static createFrom<T extends Object>( object:T ):T & Class;
-	static createFrom<T extends Object>( object:T, uri:string = null ):T & Class {
-		if( !! uri && RDF.URI.Util.isBNodeID( uri ) ) throw new Errors.IllegalArgumentError( "Documents cannot have a BNodeID as a uri." );
+	static create():Class {
+		return Factory.createFrom( {} );
+	}
 
-		let resource:Resource.Class = Resource.Factory.createFrom( object, uri );
+	static createFrom<T extends Object>( object:T ):T & Class {
+		if( Factory.is( object ) ) throw new Errors.IllegalArgumentError( "The object passed is already a Document" );
 
-		let document:Class = Factory.decorate( resource );
+		let resource:Resource.Class = <any> object;
+		if( ! Resource.Factory.is( object ) ) resource = Resource.Factory.createFrom( object );
 
-		return <any> document;
+		return <any> Factory.decorate( resource );
 	}
 
 	static decorate<T extends Object>( object:T ):T & Class {

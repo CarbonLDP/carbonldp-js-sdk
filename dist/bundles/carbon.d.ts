@@ -550,13 +550,6 @@ declare module 'carbonldp/Auth/BasicAuthenticator' {
 	export default Class;
 
 }
-declare module 'carbonldp/Committer' {
-	interface Committer<E> {
-	    commit(object: E): Promise<any>;
-	}
-	export default Committer;
-
-}
 declare module 'carbonldp/NS/XSD' {
 	export const namespace: string;
 	export class DataType {
@@ -976,6 +969,7 @@ declare module 'carbonldp/Resource' {
 	}
 	export class Factory {
 	    static hasClassProperties(resource: Object): boolean;
+	    static is(object: Object): boolean;
 	    static create(id?: string, types?: string[]): Class;
 	    static createFrom<T extends Object>(object: T, id?: string, types?: string[]): T & Class;
 	    static decorate<T extends Object>(object: T): T & Class;
@@ -1095,11 +1089,89 @@ declare module 'carbonldp/Document' {
 	}
 	export class Factory {
 	    static hasClassProperties(documentResource: Object): boolean;
-	    static create(uri: string): Class;
+	    static is(object: Object): boolean;
 	    static create(): Class;
-	    static createFrom<T extends Object>(object: T, uri: string): T & Class;
 	    static createFrom<T extends Object>(object: T): T & Class;
 	    static decorate<T extends Object>(object: T): T & Class;
+	}
+	export default Class;
+
+}
+declare module 'carbonldp/LDP/RDFSource' {
+	import * as Document from 'carbonldp/Document';
+	import * as ObjectSchema from 'carbonldp/ObjectSchema';
+	export const RDF_CLASS: string;
+	export const SCHEMA: ObjectSchema.Class;
+	export interface Class extends Document.Class {
+	    created: Date;
+	    modified: Date;
+	}
+	export class Factory {
+	}
+	export default Class;
+
+}
+declare module 'carbonldp/LDP/Container' {
+	import * as ObjectSchema from 'carbonldp/ObjectSchema';
+	import * as Pointer from 'carbonldp/Pointer';
+	import * as RDF from 'carbonldp/RDF';
+	import * as Resource from 'carbonldp/Resource';
+	import * as RDFSource from 'carbonldp/LDP/RDFSource';
+	export const RDF_CLASS: string;
+	export const SCHEMA: ObjectSchema.Class;
+	export interface Class extends RDFSource.Class {
+	    memberOfRelation?: Pointer.Class;
+	    hasMemberRelation?: Pointer.Class;
+	}
+	export class Factory {
+	    static hasClassProperties(resource: RDF.Node.Class): boolean;
+	    static hasRDFClass(resource: Resource.Class): boolean;
+	    static hasRDFClass(expandedObject: Object): boolean;
+	}
+	export default Class;
+
+}
+declare module 'carbonldp/LDP/BasicContainer' {
+	import * as Pointer from 'carbonldp/Pointer';
+	import * as Container from 'carbonldp/LDP/Container';
+	export const RDF_CLASS: string;
+	export interface Class extends Container.Class {
+	}
+	export class Factory {
+	    static hasRDFClass(pointer: Pointer.Class): boolean;
+	    static hasRDFClass(expandedObject: Object): boolean;
+	}
+	export default Class;
+
+}
+declare module 'carbonldp/LDP/DirectContainer' {
+	import * as Container from 'carbonldp/LDP/Container';
+	import * as Pointer from 'carbonldp/Pointer';
+	import * as Resource from 'carbonldp/Resource';
+	export const RDF_CLASS: string;
+	export interface Class extends Container.Class {
+	    membershipResource: Pointer.Class;
+	}
+	export class Factory {
+	    static hasClassProperties(resource: Object): boolean;
+	    static hasRDFClass(resource: Resource.Class): boolean;
+	    static hasRDFClass(expandedObject: Object): boolean;
+	    static is(object: Object): boolean;
+	    static create(membershipResource: Pointer.Class, hasMemberRelation: string | Pointer.Class, memberOfRelation?: string | Pointer.Class): Class;
+	    static createFrom<T extends Object>(object: T, membershipResource: Pointer.Class, hasMemberRelation: string | Pointer.Class, memberOfRelation?: string | Pointer.Class): T & Class;
+	}
+	export default Class;
+
+}
+declare module 'carbonldp/LDP/IndirectContainer' {
+	import * as DirectContainer from 'carbonldp/LDP/DirectContainer';
+	import * as Pointer from 'carbonldp/Pointer';
+	export const RDF_CLASS: string;
+	export interface Class extends DirectContainer.Class {
+	    insertedContentRelation: Pointer.Class;
+	}
+	export class Factory {
+	    static hasClassProperties(resource: Object): boolean;
 	}
 	export default Class;
 
@@ -1220,6 +1292,7 @@ declare module 'carbonldp/SPARQL' {
 
 }
 declare module 'carbonldp/PersistedDocument' {
+	import * as AccessPoint from 'carbonldp/AccessPoint';
 	import * as Document from 'carbonldp/Document';
 	import Documents from 'carbonldp/Documents';
 	import * as HTTP from 'carbonldp/HTTP';
@@ -1243,6 +1316,7 @@ declare module 'carbonldp/PersistedDocument' {
 	    refresh(): Promise<void>;
 	    save(): Promise<[Class, HTTP.Response.Class]>;
 	    destroy(): Promise<HTTP.Response.Class>;
+	    createAccessPoint(accessPoint: AccessPoint.Class, slug?: string, requestOptions?: HTTP.Request.Options): Promise<[Pointer.Class, HTTP.Response.Class]>;
 	    executeRawASKQuery(askQuery: string, requestOptions?: HTTP.Request.Options): Promise<[SPARQL.RawResults.Class, HTTP.Response.Class]>;
 	    executeASKQuery(askQuery: string, requestOptions?: HTTP.Request.Options): Promise<[boolean, HTTP.Response.Class]>;
 	    executeRawSELECTQuery(selectQuery: string, requestOptions?: HTTP.Request.Options): Promise<[SPARQL.RawResults.Class, HTTP.Response.Class]>;
@@ -1256,65 +1330,6 @@ declare module 'carbonldp/PersistedDocument' {
 	    static create(uri: string, documents: Documents, snapshot?: Object): Class;
 	    static createFrom<T extends Object>(object: T, uri: string, documents: Documents, snapshot?: Object): Class;
 	    static decorate<T extends Document.Class>(document: T, documents: Documents, snapshot?: Object): T & Class;
-	}
-	export default Class;
-
-}
-declare module 'carbonldp/LDP/RDFSource' {
-	import * as ObjectSchema from 'carbonldp/ObjectSchema';
-	import * as Resource from 'carbonldp/Resource';
-	export const RDF_CLASS: string;
-	export const SCHEMA: ObjectSchema.Class;
-	export interface Class extends Resource.Class {
-	}
-	export class Factory {
-	}
-	export default Class;
-
-}
-declare module 'carbonldp/LDP/Container' {
-	import * as ObjectSchema from 'carbonldp/ObjectSchema';
-	import * as Pointer from 'carbonldp/Pointer';
-	import * as RDF from 'carbonldp/RDF';
-	import * as Resource from 'carbonldp/Resource';
-	import * as RDFSource from 'carbonldp/LDP/RDFSource';
-	export const RDF_CLASS: string;
-	export const SCHEMA: ObjectSchema.Class;
-	export interface Class extends RDFSource.Class {
-	    memberOfRelation: Pointer.Class;
-	    hasMemberRelation: Pointer.Class;
-	}
-	export class Factory {
-	    static hasClassProperties(resource: RDF.Node.Class): boolean;
-	    static hasRDFClass(resource: Resource.Class): boolean;
-	    static hasRDFClass(expandedObject: Object): boolean;
-	}
-	export default Class;
-
-}
-declare module 'carbonldp/LDP/AccessPoint' {
-	import * as Container from 'carbonldp/LDP/Container';
-	import * as ObjectSchema from 'carbonldp/ObjectSchema';
-	export const RDF_CLASS: string;
-	export interface Class extends Container.Class {
-	    membershipResource: string;
-	}
-	export const SCHEMA: ObjectSchema.Class;
-	export class Factory {
-	    static hasClassProperties(resource: Object): boolean;
-	}
-	export default Class;
-
-}
-declare module 'carbonldp/LDP/BasicContainer' {
-	import * as Pointer from 'carbonldp/Pointer';
-	import * as Container from 'carbonldp/LDP/Container';
-	export const RDF_CLASS: string;
-	export interface Class extends Container.Class {
-	}
-	export class Factory {
-	    static hasRDFClass(pointer: Pointer.Class): boolean;
-	    static hasRDFClass(expandedObject: Object): boolean;
 	}
 	export default Class;
 
@@ -1337,17 +1352,34 @@ declare module 'carbonldp/LDP/PersistedContainer' {
 
 }
 declare module 'carbonldp/LDP' {
-	import * as AccessPoint from 'carbonldp/LDP/AccessPoint';
 	import * as BasicContainer from 'carbonldp/LDP/BasicContainer';
 	import * as Container from 'carbonldp/LDP/Container';
+	import * as DirectContainer from 'carbonldp/LDP/DirectContainer';
+	import * as IndirectContainer from 'carbonldp/LDP/IndirectContainer';
 	import * as PersistedContainer from 'carbonldp/LDP/PersistedContainer';
 	import * as RDFSource from 'carbonldp/LDP/RDFSource';
-	export { AccessPoint, BasicContainer, Container, PersistedContainer, RDFSource };
+	export { BasicContainer, Container, DirectContainer, IndirectContainer, PersistedContainer, RDFSource };
+
+}
+declare module 'carbonldp/AccessPoint' {
+	import * as LDP from 'carbonldp/LDP';
+	import * as Pointer from 'carbonldp/Pointer';
+	export const RDF_CLASS: string;
+	export interface Class extends LDP.DirectContainer.Class {
+	    insertedContentRelation?: Pointer.Class;
+	}
+	export class Factory {
+	    static hasClassProperties(resource: Object): boolean;
+	    static create(membershipResource: Pointer.Class, hasMemberRelation: string | Pointer.Class, memberOfRelation?: string | Pointer.Class): Class;
+	    static createFrom<T extends Object>(object: T, membershipResource: Pointer.Class, hasMemberRelation: string | Pointer.Class, memberOfRelation?: string | Pointer.Class): T & Class;
+	}
+	export default Class;
 
 }
 declare module 'carbonldp/Documents' {
 	import * as HTTP from 'carbonldp/HTTP';
 	import Context from 'carbonldp/Context';
+	import * as AccessPoint from 'carbonldp/AccessPoint';
 	import * as Document from 'carbonldp/Document';
 	import * as JSONLDConverter from 'carbonldp/JSONLDConverter';
 	import * as PersistedDocument from 'carbonldp/PersistedDocument';
@@ -1366,6 +1398,8 @@ declare module 'carbonldp/Documents' {
 	    get(uri: string, requestOptions?: HTTP.Request.Options): Promise<[PersistedDocument.Class, HTTP.Response.Class]>;
 	    createChild(parentURI: string, slug: string, childDocument: Document.Class, requestOptions?: HTTP.Request.Options): Promise<[Pointer.Class, HTTP.Response.Class]>;
 	    createChild(parentURI: string, childDocument: Document.Class, requestOptions?: HTTP.Request.Options): Promise<[Pointer.Class, HTTP.Response.Class]>;
+	    createAccessPoint(documentURI: string, accessPoint: AccessPoint.Class, slug?: string, requestOptions?: HTTP.Request.Options): Promise<[Pointer.Class, HTTP.Response.Class]>;
+	    createAccessPoint(accessPoint: AccessPoint.Class, slug?: string, requestOptions?: HTTP.Request.Options): Promise<[Pointer.Class, HTTP.Response.Class]>;
 	    upload(parentURI: string, slug: string, file: Blob, requestOptions?: HTTP.Request.Options): Promise<[Pointer.Class, HTTP.Response.Class]>;
 	    upload(parentURI: string, file: Blob, requestOptions?: HTTP.Request.Options): Promise<[Pointer.Class, HTTP.Response.Class]>;
 	    getMembers(uri: string, includeNonReadable: boolean, requestOptions: HTTP.Request.Options): Promise<[Pointer.Class[], HTTP.Response.Class]>;
@@ -1718,6 +1752,7 @@ declare module 'carbonldp/settings' {
 }
 declare module 'carbonldp/Carbon' {
 	import AbstractContext from 'carbonldp/AbstractContext';
+	import * as AccessPoint from 'carbonldp/AccessPoint';
 	import * as Agent from 'carbonldp/Agent';
 	import * as Agents from 'carbonldp/Agents';
 	import * as APIDescription from 'carbonldp/APIDescription';
@@ -1746,6 +1781,7 @@ declare module 'carbonldp/Carbon' {
 	import * as SDKContext from 'carbonldp/SDKContext';
 	import * as SPARQL from 'carbonldp/SPARQL';
 	import * as Utils from 'carbonldp/Utils'; class Carbon extends AbstractContext {
+	    static AccessPoint: typeof AccessPoint;
 	    static Agent: typeof Agent;
 	    static Agents: typeof Agents;
 	    static App: typeof App;
@@ -1781,6 +1817,13 @@ declare module 'carbonldp/Carbon' {
 	    getAPIDescription(): Promise<APIDescription.Class>;
 	}
 	export default Carbon;
+
+}
+declare module 'carbonldp/Committer' {
+	interface Committer<E> {
+	    commit(object: E): Promise<any>;
+	}
+	export default Committer;
 
 }
 /// <reference no-default-lib="true"/>
