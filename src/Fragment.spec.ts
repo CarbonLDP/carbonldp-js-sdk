@@ -56,7 +56,8 @@ describe( module( "Carbon/Fragment" ), ():void => {
 		let document:Document.Class;
 
 		beforeAll( ():void => {
-			document = Document.Factory.create( "http://example.com/document/" );
+			document = Document.Factory.create();
+			document.id = "http://example.com/document/";
 		});
 
 		describe( method(

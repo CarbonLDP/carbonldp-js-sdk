@@ -8,6 +8,7 @@ import Context from "./App/Context";
 
 export interface Class extends Document.Class {
 	name:string;
+	description?:string;
 }
 
 export const RDF_CLASS:string = NS.CS.Class.Application;
@@ -15,6 +16,10 @@ export const RDF_CLASS:string = NS.CS.Class.Application;
 export const SCHEMA:ObjectSchema.Class = {
 	"name": {
 		"@id": NS.CS.Predicate.name,
+		"@type": NS.XSD.DataType.string,
+	},
+	"description": {
+		"@id": NS.CS.Predicate.description,
 		"@type": NS.XSD.DataType.string,
 	},
 	"rootContainer": {
@@ -37,11 +42,11 @@ export class Factory {
 			&& ( <Document.Class> object ).types.indexOf( NS.CS.Class.Application ) !== -1;
 	}
 
-	static create( name:string ):Class {
-		return Factory.createFrom<Object>( {}, name );
+	static create( name:string, description?:string ):Class {
+		return Factory.createFrom<Object>( {}, name, description );
 	}
 
-	static createFrom<T extends Object>( object:T, name:string ):T & Class {
+	static createFrom<T extends Object>( object:T, name:string, description?:string ):T & Class {
 		if ( ! Document.Factory.hasClassProperties( object ) )
 			object = Document.Factory.createFrom( object );
 
@@ -51,6 +56,8 @@ export class Factory {
 		let app:T & Class = <T & Class> object;
 		app.name = name;
 		app.types.push( NS.CS.Class.Application );
+
+		if ( !! description) app.description = description;
 
 		return app;
 	}

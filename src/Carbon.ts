@@ -1,4 +1,5 @@
 import AbstractContext from "./AbstractContext";
+import * as AccessPoint from "./AccessPoint";
 import * as Agent from "./Agent";
 import * as Agents from "./Agents";
 import * as APIDescription from "./APIDescription";
@@ -32,6 +33,7 @@ import * as Utils from "./Utils";
 class Carbon extends AbstractContext {
 
 	/* tslint:disable: variable-name */
+	static AccessPoint:typeof AccessPoint = AccessPoint;
 	static Agent:typeof Agent = Agent;
 	static Agents:typeof Agents = Agents;
 	static App:typeof App = App;
@@ -62,7 +64,7 @@ class Carbon extends AbstractContext {
 	/* tslint:enable: variable-name */
 
 	// TODO: Get package.json version directly
-	static get version():string { return "0.23.1-ALPHA"; }
+	static get version():string { return "0.24.0"; }
 
 	apps:Apps.Class;
 	get version():string { return Carbon.version; }

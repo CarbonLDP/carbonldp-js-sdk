@@ -13,14 +13,18 @@
 		- [Constructor](#Carbon-AbstractContext-Constructor)
 		- [Properties](#Carbon-AbstractContext-Properties)
 		- [Methods](#Carbon-AbstractContext-Methods)
+- [Module Carbon/AccessPoints](#Carbon-AccessPoints)
+	- [Properties](#Carbon-AccessPoints-Properties)
+	- [Class Carbon.AccessPoint.Factory](#Carbon-AccessPoint-Factory)
+		- [Methods](#Carbon-AccessPoint-Factory-Methods)
+- [Module Carbon/Agent](#Carbon-Agent)
+	- [Properties](#Carbon-Agent-Properties)
+	- [Class Carbon.Agent.Factory](#Carbon-Agent-Factory)
+		- [Methods](#Carbon-Agent-Factory-Methods)
 - [Module Carbon/Agents](#Carbon-Agents)
 	- [Class Carbon.Agents.Class](#Carbon-Agents-Class)
 		- [Constructor](#Carbon-Agents-Class-Constructor)
 		- [Methods](#Carbon-Agents-Class-Methods)
-- [Module Carbon/Agents/Agent](#Carbon-Agents-Agent)
-	- [Properties](#Carbon-Agents-Agent-Properties)
-	- [Class Carbon.Agents.Agent.Factory](#Carbon-Agents-Agent-Factory)
-		- [Methods](#Carbon-Agents-Agent-Factory-Methods)
 - [Module Carbon/App](#Carbon-App)
 	- [Reexports](#Carbon-App-Reexports)
 	- [Properties](#Carbon-App-Properties)
@@ -254,10 +258,6 @@
 		- [Methods](#Carbon-JSONLDConverter-Class-Methods)
 - [Module Carbon/LDP](#Carbon-LDP)
 	- [Reexports](#Carbon-LDP-Reexports)
-- [Module Carbon/LDP/AccessPoint](#Carbon-LDP-AccessPoint)
-	- [Properties](#Carbon-LDP-AccessPoint-Properties)
-	- [Class Carbon.LDP.AccessPoint.Factory](#Carbon-LDP-AccessPoint-Factory)
-		- [Methods](#Carbon-LDP-AccessPoint-Factory-Methods)
 - [Module Carbon/LDP/BasicContainer](#Carbon-LDP-BasicContainer)
 	- [Properties](#Carbon-LDP-BasicContainer-Properties)
 	- [Class Carbon.LDP.BasicContainer.Factory](#Carbon-LDP-BasicContainer-Factory)
@@ -266,6 +266,14 @@
 	- [Properties](#Carbon-LDP-Container-Properties)
 	- [Class Carbon.LDP.Container.Factory](#Carbon-LDP-Container-Factory)
 		- [Methods](#Carbon-LDP-Container-Factory-Methods)
+- [Module Carbon/LDP/DirectContainer](#Carbon-LDP-DirectContainer)
+	- [Properties](#Carbon-LDP-DirectContainer-Properties)
+	- [Class Carbon.DirectContainer.Factory](#Carbon-DirectContainer-Factory)
+		- [Methods](#Carbon-DirectContainer-Factory-Methods)
+- [Module Carbon/LDP/IndirectContainer](#Carbon-LDP-IndirectContainer)
+	- [Properties](#Carbon-LDP-IndirectContainer-Properties)
+	- [Class Carbon.IndirectContainer.Factory](#Carbon-IndirectContainer-Factory)
+		- [Methods](#Carbon-IndirectContainer-Factory-Methods)
 - [Module Carbon/LDP/PersistedContainer](#Carbon-LDP-PersistedContainer)
 	- [Class Carbon.LDP.PersistedContainer.Factory](#Carbon-LDP-PersistedContainer-Factory)
 		- [Methods](#Carbon-LDP-PersistedContainer-Factory-Methods)
@@ -449,6 +457,7 @@
 | Export name | Original Location | 
 | --- | --- |
 | Agent | [Carbon/Agent](#Carbon-Agent) |
+| AccessPoint | [Carbon/AccessPoint](#Carbon-AccessPoint) |
 | Agents | [Carbon/Agents](#Carbon-Agents) |
 | App | [Carbon/App](#Carbon-App) |
 | Apps | [Carbon/Apps](#Carbon-Apps) |
@@ -592,6 +601,147 @@ Abstract method which implementation must resolve the URI provided in the scope 
 
 
 
+## <a name="Carbon-AccessPoints" />Module Carbon/AccessPoints
+
+
+
+
+
+### <a name="Carbon-AccessPoints-Properties" />Properties
+```typescript 
+static RDF_CLASS:string 
+```
+
+
+
+
+
+### <a name="Carbon-AccessPoint-Factory" />Class Carbon.AccessPoint.Factory
+
+
+> Factory class for `Carbon.AccessPoint.Class` objects
+
+
+
+
+#### <a name="Carbon-AccessPoint-Factory-Methods" />Methods
+##### hasClassProperties
+```typescript 
+static hasClassProperties( resource:Object ):boolean
+```
+
+Returns true if the object provided has the properties that defines a `Carbon.AccessPoint.Class` object
+
+*Parameters*
+
+- resource 
+
+##### create
+```typescript 
+static create( membershipResource:Carbon.Pointer.Class,  hasMemberRelation:string | Carbon.Pointer.Class,  memberOfRelation?:string | Carbon.Pointer.Class ):Carbon.AccessPoint.Class
+```
+
+Create a `Carbon.AccessPoint.Class` object with the parameters specified.
+
+*Parameters*
+
+- membershipResource 
+- hasMemberRelation 
+- memberOfRelation 
+
+##### createFrom
+```typescript 
+static createFrom( object:T extends Object,  membershipResource:Carbon.Pointer.Class,  hasMemberRelation:string | Carbon.Pointer.Class,  memberOfRelation?:string | Carbon.Pointer.Class ):T & Carbon.AccessPoint.Class
+```
+
+Create a `Carbon.AccessPoint.Class` object with the object provided.
+
+*Parameters*
+
+- object 
+- membershipResource 
+- hasMemberRelation 
+- memberOfRelation 
+
+
+
+
+## <a name="Carbon-Agent" />Module Carbon/Agent
+
+
+
+
+
+### <a name="Carbon-Agent-Properties" />Properties
+```typescript 
+static RDF_CLASS:string 
+```
+
+```typescript 
+static SCHEMA:Carbon.ObjectSchema.Class 
+```
+
+
+
+
+
+### <a name="Carbon-Agent-Factory" />Class Carbon.Agent.Factory
+
+
+> Factory class for `Carbon.Agent.Class` objects
+
+
+
+
+#### <a name="Carbon-Agent-Factory-Methods" />Methods
+##### hasClassProperties
+```typescript 
+static hasClassProperties( resource:Object ):boolean
+```
+
+Returns true if the object provided has the properties that defines a `Carbon.Agent.Class` object
+
+*Parameters*
+
+- resource 
+
+##### is
+```typescript 
+static is( object:Object ):boolean
+```
+
+Returns true if the object provided is considered as an `Carbon.Agent.Class` object
+
+*Parameters*
+
+- object 
+
+##### create
+```typescript 
+static create( name:string,  email:string ):Carbon.Agent.Class
+```
+
+Create a `Carbon.Agent.Class` object with the name and email specified.
+
+*Parameters*
+
+- name 
+- email 
+
+##### createFrom
+```typescript 
+static createFrom( object:T extends Object ):T & Carbon.Agent.Class
+```
+
+Create a `Carbon.Agent.Class` object with the object provided.
+
+*Parameters*
+
+- object 
+
+
+
+
 ## <a name="Carbon-Agents" />Module Carbon/Agents
 
 
@@ -641,82 +791,6 @@ Returns a Promise with a Pointer for the stored Agent, and the response of the c
 
 - slug 
 - agentDocument 
-
-
-
-## <a name="Carbon-Agents-Agent" />Module Carbon/Agents/Agent
-
-
-
-
-
-### <a name="Carbon-Agents-Agent-Properties" />Properties
-```typescript 
-static RDF_CLASS:string 
-```
-
-```typescript 
-static SCHEMA:Carbon.ObjectSchema.Class 
-```
-
-
-
-
-
-### <a name="Carbon-Agents-Agent-Factory" />Class Carbon.Agents.Agent.Factory
-
-
-> Factory class for `Carbon.Agents.Agent.Class` objects
-
-
-
-
-#### <a name="Carbon-Agents-Agent-Factory-Methods" />Methods
-##### hasClassProperties
-```typescript 
-static hasClassProperties( resource:Object ):boolean
-```
-
-Returns true if the object provided has the properties that defines a `Carbon.Agents.Agent.Class` object
-
-*Parameters*
-
-- resource 
-
-##### is
-```typescript 
-static is( object:Object ):boolean
-```
-
-Returns true if the object provided is considered as an `Carbon.Agents.Agent.Class` object
-
-*Parameters*
-
-- object 
-
-##### create
-```typescript 
-static create( name:string,  email:string ):Carbon.Agents.Agent.Class
-```
-
-Create a `Carbon.Agents.Agent.Class` object with the name and email specified.
-
-*Parameters*
-
-- name 
-- email 
-
-##### createFrom
-```typescript 
-static createFrom( object:T extends Object ):T & Carbon.Agents.Agent.Class
-```
-
-Create a `Carbon.Agents.Agent.Class` object with the object provided.
-
-*Parameters*
-
-- object 
-
 
 
 
@@ -776,7 +850,7 @@ Returns true if the object provided is considered as an `Carbon.App.Class` objec
 
 ##### create
 ```typescript 
-static create( name:string ):Carbon.App.Class
+static create( name:string,  description?:string ):Carbon.App.Class
 ```
 
 Create a empty `Carbon.App.Class` object.
@@ -784,10 +858,11 @@ Create a empty `Carbon.App.Class` object.
 *Parameters*
 
 - name 
+- description 
 
 ##### createFrom
 ```typescript 
-static createFrom( object:T extends Object ):T & Carbon.App.Class
+static createFrom( object:T extends Object,  name:string,  description?:string ):T & Carbon.App.Class
 ```
 
 Create a `Carbon.App.Class` object with the object provided.
@@ -795,6 +870,8 @@ Create a `Carbon.App.Class` object with the object provided.
 *Parameters*
 
 - object 
+- name 
+- description 
 
 
 
@@ -834,6 +911,11 @@ agents:Carbon.Agents.Class
 ```
 
 Instance of Agents class for manage the agents inside of an application.
+```typescript 
+app:Carbon.App.Class 
+```
+
+Object of type `Carbon.App.Class` witch is the Document that represents the actual Application.
 
 #### <a name="Carbon-App-Context-Methods" />Methods
 
@@ -1380,6 +1462,17 @@ Returns true if the object provided has the properties and functions of a Docume
 
 - documentResource 
 
+##### is
+```typescript 
+static is( object:Object ):boolean
+```
+
+Returns true if the object is considered a Document object
+
+*Parameters*
+
+- object 
+
 ##### decorate
 ```typescript 
 static decorate( object:T extends Object ):T & Carbon.Document.Class
@@ -1393,16 +1486,6 @@ Adds the properties and method necessary for a Document object.
 
 ##### create
 ```typescript 
-static create( uri:string ):Carbon.Document.Class
-```
-
-Creates an empty Document object which reference to the URI provided.
-
-*Parameters*
-
-- uri 
-
-```typescript 
 static create():Carbon.Document.Class
 ```
 
@@ -1410,21 +1493,14 @@ Creates an empty Document object.
 
 ##### createFrom
 ```typescript 
-static createFrom( object:T extends Object,  uri:string ):Carbon.Document.Class
+static createFrom( object:T extends Object ):Carbon.Document.Class
 ```
 
-Creates a Document object from the object provided and will reference to the URI provided.
+Creates a Document object from the object provided.
 
 *Parameters*
 
 - object 
-- uri 
-
-```typescript 
-static createFrom():Carbon.Document.Class
-```
-
-Creates a Document object from the object provided.
 
 
 
@@ -1740,6 +1816,32 @@ Create a child document for the respective parent source.
 - parentURI 
 - slug 
 - childDocument 
+- requestOptions 
+
+##### createAccessPoint
+```typescript 
+createAccessPoint( documentURI:string,  accessPoint:Carbon.AccessPoint.Class,  slug?:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[Carbon.Pointer.Class, Carbon.HTTP.Response.Class]>
+```
+
+Create an AccessPoint of the document.
+
+*Parameters*
+
+- documentURI 
+- accessPoint 
+- slug 
+- requestOptions 
+
+```typescript 
+createAccessPoint( accessPoint:Carbon.AccessPoint.Class,  slug?:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[Carbon.Pointer.Class, Carbon.HTTP.Response.Class]>
+```
+
+Create an AccessPoint of the document.
+
+*Parameters*
+
+- accessPoint 
+- slug 
 - requestOptions 
 
 ##### upload
@@ -4063,54 +4165,13 @@ expand( compactedObject:Object,  digestedSchema:Carbon.ObjectSchema.DigestedObje
 #### <a name="Carbon-LDP-Reexports" />Reexports 
 | Export name | Original Location | 
 | --- | --- |
-| AccessPoint | [Carbon/LDP/AccessPoint](#Carbon-LDP-AccessPoint) |
 | BasicContainer | [Carbon/LDP/BasicContainer](#Carbon-LDP-BasicContainer) |
 | Container | [Carbon/LDP/Container](#Carbon-LDP-Container) |
+| DirectContainer | [Carbon/LDP/DirectContainer](#Carbon-LDP-DirectContainer) |
+| IndirectContainer | [Carbon/LDP/IndirectContainer](#Carbon-LDP-IndirectContainer) |
 | PersistedContainer | [Carbon/LDP/PersistedContainer](#Carbon-LDP-PersistedContainer) |
 | RDFSource | [Carbon/LDP/RDFSource](#Carbon-LDP-RDFSource) |
 
-
-
-
-
-## <a name="Carbon-LDP-AccessPoint" />Module Carbon/LDP/AccessPoint
-
-
-
-
-
-### <a name="Carbon-LDP-AccessPoint-Properties" />Properties
-```typescript 
-static RDF_CLASS:string 
-```
-
-```typescript 
-static SCHEMA:Carbon.ObjectSchema.Class 
-```
-
-
-
-
-
-### <a name="Carbon-LDP-AccessPoint-Factory" />Class Carbon.LDP.AccessPoint.Factory
-
-
-> Factory class for AccessPoint objects
-
-
-
-
-#### <a name="Carbon-LDP-AccessPoint-Factory-Methods" />Methods
-##### hasClassProperties
-```typescript 
-static hasClassProperties( resource:Object ):boolean
-```
-
-Returns true if the object has the properties to be defined as a AccessPoint
-
-*Parameters*
-
-- resource 
 
 
 
@@ -4222,6 +4283,141 @@ Returns true if the Object provided is an LDP Container.
 *Parameters*
 
 - expandedObject 
+
+
+
+
+## <a name="Carbon-LDP-DirectContainer" />Module Carbon/LDP/DirectContainer
+
+
+
+
+
+### <a name="Carbon-LDP-DirectContainer-Properties" />Properties
+```typescript 
+static RDF_CLASS:string 
+```
+
+
+
+
+
+### <a name="Carbon-DirectContainer-Factory" />Class Carbon.DirectContainer.Factory
+
+
+> Factory class for `Carbon.LDP.DirectContainer.Class` objects
+
+
+
+
+#### <a name="Carbon-DirectContainer-Factory-Methods" />Methods
+##### hasClassProperties
+```typescript 
+static hasClassProperties( resource:Object ):boolean
+```
+
+Returns true if the object provided has the properties that defines a `Carbon.LDP.DirectContainer.Class` object
+
+*Parameters*
+
+- resource 
+
+##### is
+```typescript 
+static is( object:Object ):boolean
+```
+
+Returns true if the object provided is considered as an `Carbon.LDP.DirectContainer.Class` object
+
+*Parameters*
+
+- object 
+
+##### create
+```typescript 
+static create( membershipResource:Carbon.Pointer.Class,  hasMemberRelation:string | Carbon.Pointer.Class,  memberOfRelation?:string | Carbon.Pointer.Class ):Carbon.LDP.DirectContainer.Class
+```
+
+Create a `Carbon.LDP.DirectContainer.Class` object with the parameters specified.
+
+*Parameters*
+
+- membershipResource 
+- hasMemberRelation 
+- memberOfRelation 
+
+##### createFrom
+```typescript 
+static createFrom( object:T extends Object,  membershipResource:Carbon.Pointer.Class,  hasMemberRelation:string | Carbon.Pointer.Class,  memberOfRelation?:string | Carbon.Pointer.Class ):T & Carbon.LDP.DirectContainer.Class
+```
+
+Create a `Carbon.LDP.DirectContainer.Class` object with the object provided and the parameters specified.
+
+*Parameters*
+
+- object 
+- membershipResource 
+- hasMemberRelation 
+- memberOfRelation 
+
+##### hasRDFClass
+```typescript 
+static hasRDFClass( pointer:Carbon.Pointer.Class ):boolean
+```
+
+Returns true if the Pointer provided is an LDP DirectContainer.
+
+*Parameters*
+
+- pointer 
+
+```typescript 
+static hasRDFClass( expandedObject:Object ):boolean
+```
+
+Returns true if the Object provided is an LDP DirectContainer.
+
+*Parameters*
+
+- expandedObject 
+
+
+
+
+## <a name="Carbon-LDP-IndirectContainer" />Module Carbon/LDP/IndirectContainer
+
+
+
+
+
+### <a name="Carbon-LDP-IndirectContainer-Properties" />Properties
+```typescript 
+static RDF_CLASS:string 
+```
+
+
+
+
+
+### <a name="Carbon-IndirectContainer-Factory" />Class Carbon.IndirectContainer.Factory
+
+
+> Factory class for `Carbon.LDP.IndirectContainer.Class` objects
+
+
+
+
+#### <a name="Carbon-IndirectContainer-Factory-Methods" />Methods
+##### hasClassProperties
+```typescript 
+static hasClassProperties( resource:Object ):boolean
+```
+
+Returns true if the object provided has the properties that defines a `Carbon.LDP.IndirectContainer.Class` object
+
+*Parameters*
+
+- resource 
 
 
 
@@ -4577,6 +4773,10 @@ static expirationTime:string
 
 ```typescript 
 static password:string 
+```
+
+```typescript 
+static description:string 
 ```
 
 
@@ -5483,6 +5683,13 @@ destroy():Promise<Carbon.HTTP.Response.Class>
 ```
 
 Remove the data in the server referred by the id of the PersistedDocument.
+
+##### createAccessPoint
+```typescript 
+createAccessPoint():Promise<[Carbon.Pointer.Class, Carbon.HTTP.Response.Class]>
+```
+
+Creates an AccessPoint for the PersistedDocument.
 
 ##### executeRawASKQuery
 ```typescript 
@@ -6825,6 +7032,17 @@ static hasClassProperties( resource:Object ):boolean
 ```
 
 Returns true if the object provided has the properties and functions of a Resource object
+
+*Parameters*
+
+- resource 
+
+##### is
+```typescript 
+static is( resource:Object ):boolean
+```
+
+Returns true if the object is a `Carbon.Resource.Class` (by duck type)
 
 *Parameters*
 

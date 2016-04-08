@@ -6,8 +6,8 @@ import * as RDFSource from "./RDFSource";
 export declare const RDF_CLASS: string;
 export declare const SCHEMA: ObjectSchema.Class;
 export interface Class extends RDFSource.Class {
-    memberOfRelation: Pointer.Class;
-    hasMemberRelation: Pointer.Class;
+    memberOfRelation?: Pointer.Class;
+    hasMemberRelation?: Pointer.Class;
 }
 export declare class Factory {
     static hasClassProperties(resource: RDF.Node.Class): boolean;

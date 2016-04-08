@@ -1,3 +1,16 @@
+# 0.24.0 (April 8, 2016)
+- Added `AccessPoint` module
+- Added `LDP/DirectContainer` module
+- Added `LDP/IndirectContainer` module
+- Added `context.documents.createAccessPoint()` method, which lets you create an AccessPoint for a document
+- Added `context.documents.createAccessPoint()` method, same as `persistedDocument.createAccessPoint()`
+- `context.documents.createChile()` now accepts relative URIs
+- `jsonLDConverter` now expands pointers even if they are out of the context's scope
+
+# 0.23.2 (April 8, 2016)
+- Added optional description property in `App`
+- Added getter for app document in `App.Context`
+
 # 0.23.1 (April 7, 2016)
 - Added API documentation in `doc/README.md`
 

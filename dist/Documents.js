@@ -149,10 +149,18 @@ var Documents = (function () {
         var slug = Utils.isString(slugOrChildDocument) ? slugOrChildDocument : null;
         var childDocument = !Utils.isString(slugOrChildDocument) ? slugOrChildDocument : childDocumentOrRequestOptions;
         requestOptions = !Utils.isString(slugOrChildDocument) ? childDocumentOrRequestOptions : requestOptions;
+        if (!!this.context)
+            parentURI = this.context.resolve(parentURI);
         if (PersistedDocument.Factory.is(childDocument))
             return Promise.reject(new Errors.IllegalArgumentError("The childDocument provided has been already persisted."));
-        if (childDocument.id && (!RDF.URI.Util.isBaseOf(parentURI, childDocument.id)))
-            return Promise.reject(new Errors.IllegalArgumentError("The childDocument's URI is not relative to the parentURI specified"));
+        if (childDocument.id) {
+            var childURI = childDocument.id;
+            if (!!this.context)
+                childURI = this.context.resolve(childURI);
+            if (!RDF.URI.Util.isBaseOf(parentURI, childURI)) {
+                return Promise.reject(new Errors.IllegalArgumentError("The childDocument's URI is not relative to the parentURI specified"));
+            }
+        }
         if (this.context && this.context.auth.isAuthenticated())
             this.context.auth.addAuthentication(requestOptions);
         HTTP.Request.Util.setContentTypeHeader("application/ld+json", requestOptions);
@@ -162,6 +170,52 @@ var Documents = (function () {
         if (slug !== null)
             HTTP.Request.Util.setSlug(slug, requestOptions);
         return HTTP.Request.Service.post(parentURI, body, requestOptions).then(function (response) {
+            var locationHeader = response.getHeader("Location");
+            if (locationHeader === null || locationHeader.values.length < 1)
+                throw new HTTP.Errors.BadResponseError("The response is missing a Location header.", response);
+            if (locationHeader.values.length !== 1)
+                throw new HTTP.Errors.BadResponseError("The response contains more than one Location header.", response);
+            var locationURI = locationHeader.values[0].toString();
+            var pointer = _this.getPointer(locationURI);
+            return [
+                pointer,
+                response,
+            ];
+        });
+    };
+    Documents.prototype.createAccessPoint = function (documentURIOrAccessPoint, accessPointOrSlug, slugOrRequestOptions, requestOptions) {
+        var _this = this;
+        if (slugOrRequestOptions === void 0) { slugOrRequestOptions = null; }
+        if (requestOptions === void 0) { requestOptions = {}; }
+        var documentURI = Utils.isString(documentURIOrAccessPoint) ? documentURIOrAccessPoint : null;
+        var accessPoint = !Utils.isString(documentURIOrAccessPoint) ? documentURIOrAccessPoint : accessPointOrSlug;
+        var slug = Utils.isString(accessPointOrSlug) ? accessPointOrSlug : slugOrRequestOptions;
+        requestOptions = !Utils.isString(slugOrRequestOptions) && slugOrRequestOptions !== null ? slugOrRequestOptions : requestOptions;
+        if (documentURI === null)
+            documentURI = accessPoint.membershipResource.id;
+        if (!!this.context)
+            documentURI = this.context.resolve(documentURI);
+        if (accessPoint.membershipResource.id !== documentURI)
+            return Promise.reject(new Errors.IllegalArgumentError("The documentURI must be the same as the accessPoint's membershipResource"));
+        if (PersistedDocument.Factory.is(accessPoint))
+            return Promise.reject(new Errors.IllegalArgumentError("The accessPoint provided has been already persisted."));
+        if (accessPoint.id) {
+            var childURI = accessPoint.id;
+            if (!!this.context)
+                childURI = this.context.resolve(childURI);
+            if (!RDF.URI.Util.isBaseOf(documentURI, childURI)) {
+                return Promise.reject(new Errors.IllegalArgumentError("The accessPoint's URI is not relative to the parentURI specified"));
+            }
+        }
+        if (this.context && this.context.auth.isAuthenticated())
+            this.context.auth.addAuthentication(requestOptions);
+        HTTP.Request.Util.setContentTypeHeader("application/ld+json", requestOptions);
+        HTTP.Request.Util.setAcceptHeader("application/ld+json", requestOptions);
+        HTTP.Request.Util.setPreferredInteractionModel(NS.LDP.Class.RDFSource, requestOptions);
+        var body = accessPoint.toJSON(this, this.jsonldConverter);
+        if (slug !== null)
+            HTTP.Request.Util.setSlug(slug, requestOptions);
+        return HTTP.Request.Service.post(documentURI, body, requestOptions).then(function (response) {
             var locationHeader = response.getHeader("Location");
             if (locationHeader === null || locationHeader.values.length < 1)
                 throw new HTTP.Errors.BadResponseError("The response is missing a Location header.", response);
@@ -237,6 +291,7 @@ var Documents = (function () {
         else {
             containerRetrievalPreferences.omit.push(NS.C.Class.NonReadableMembershipResourceTriples);
         }
+        HTTP.Request.Util.setContainerRetrievalPreferences(containerRetrievalPreferences, requestOptions);
         return HTTP.Request.Service.get(uri, requestOptions, new RDF.Document.Parser()).then(function (_a) {
             var rdfDocuments = _a[0], response = _a[1];
             var rdfDocument = _this.getRDFDocument(uri, rdfDocuments, response);

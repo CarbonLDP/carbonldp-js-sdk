@@ -1,15 +1,8 @@
-import * as Document from "./Document";
-import * as Errors from "./Errors";
 import * as Pointer from "./Pointer";
-import * as RDF from "./RDF";
 import * as Utils from "./Utils";
 
 export interface Class extends Pointer.Class {
 	types:string[];
-}
-
-function hasType( type:string ):boolean {
-	return this.types.indexOf( type ) !== -1;
 }
 
 export class Factory {
@@ -17,6 +10,11 @@ export class Factory {
 		return (
 			Utils.hasPropertyDefined( resource, "types" )
 		);
+	}
+
+	static is( object:Object ):boolean {
+		return Pointer.Factory.is( object )
+			&& Factory.hasClassProperties( object );
 	}
 
 	static create( id:string = null, types:string[] = null ):Class {

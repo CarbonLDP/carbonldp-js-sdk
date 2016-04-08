@@ -64,52 +64,63 @@ describe( module( "Carbon/LDP/BasicContainer" ), ():void => {
 				pointer = Document.Factory.create();
 				expect( BasicContainer.Factory.hasRDFClass( pointer ) ).toBe( false );
 
-				pointer = Document.Factory.create( "http://example.com/resource/" );
+				pointer = Document.Factory.create();
+				pointer.id = "http://example.com/resource/";
 				expect( BasicContainer.Factory.hasRDFClass( pointer ) ).toBe( false );
 
-				pointer = Document.Factory.create( "http://example.com/resource/" );
+				pointer = Document.Factory.create();
+				pointer.id = "http://example.com/resource/";
 				(<Document.Class> pointer).types.push( NS.LDP.Class.RDFSource );
 				expect( BasicContainer.Factory.hasRDFClass( pointer ) ).toBe( false );
 
-				pointer = Document.Factory.create( "http://example.com/resource/" );
+				pointer = Document.Factory.create();
+				pointer.id = "http://example.com/resource/";
 				(<Document.Class> pointer).types.push( NS.LDP.Class.RDFSource );
 				expect( BasicContainer.Factory.hasRDFClass( pointer ) ).toBe( false );
 
-				pointer = Document.Factory.create( "http://example.com/resource/" );
+				pointer = Document.Factory.create();
+				pointer.id = "http://example.com/resource/";
 				(<Document.Class> pointer).types.push( NS.LDP.Class.Container );
 				expect( BasicContainer.Factory.hasRDFClass( pointer ) ).toBe( false );
 
-				pointer = Document.Factory.create( "http://example.com/resource/" );
+				pointer = Document.Factory.create();
+				pointer.id = "http://example.com/resource/";
 				(<Document.Class> pointer).types.push( NS.LDP.Class.DirectContainer );
 				expect( BasicContainer.Factory.hasRDFClass( pointer ) ).toBe( false );
 
-				pointer = Document.Factory.create( "http://example.com/resource/" );
+				pointer = Document.Factory.create();
+				pointer.id = "http://example.com/resource/";
 				(<Document.Class> pointer).types.push( NS.LDP.Class.IndirectContainer );
 				expect( BasicContainer.Factory.hasRDFClass( pointer ) ).toBe( false );
 
-				pointer = Document.Factory.create( "http://example.com/resource/" );
+				pointer = Document.Factory.create();
+				pointer.id = "http://example.com/resource/";
 				(<Document.Class> pointer).types.push( NS.LDP.Class.RDFSource );
 				(<Document.Class> pointer).types.push( NS.LDP.Class.Container );
 				(<Document.Class> pointer).types.push( NS.LDP.Class.DirectContainer );
 				expect( BasicContainer.Factory.hasRDFClass( pointer ) ).toBe( false );
 
-				pointer = Document.Factory.create( "http://example.com/resource/" );
+				pointer = Document.Factory.create();
+				pointer.id = "http://example.com/resource/";
 				(<Document.Class> pointer).types.push( NS.LDP.Class.RDFSource );
 				(<Document.Class> pointer).types.push( NS.LDP.Class.Container );
 				(<Document.Class> pointer).types.push( NS.LDP.Class.IndirectContainer );
 				expect( BasicContainer.Factory.hasRDFClass( pointer ) ).toBe( false );
 
 
-				pointer = Document.Factory.create( "http://example.com/resource/" );
+				pointer = Document.Factory.create();
+				pointer.id = "http://example.com/resource/";
 				(<Document.Class> pointer).types.push( NS.LDP.Class.BasicContainer );
 				expect( BasicContainer.Factory.hasRDFClass( pointer ) ).toBe( true );
 
-				pointer = Document.Factory.create( "http://example.com/resource/" );
+				pointer = Document.Factory.create();
+				pointer.id = "http://example.com/resource/";
 				(<Document.Class> pointer).types.push( NS.LDP.Class.Container );
 				(<Document.Class> pointer).types.push( NS.LDP.Class.BasicContainer );
 				expect( BasicContainer.Factory.hasRDFClass( pointer ) ).toBe( true );
 
-				pointer = Document.Factory.create( "http://example.com/resource/" );
+				pointer = Document.Factory.create();
+				pointer.id = "http://example.com/resource/";
 				(<Document.Class> pointer).types.push( NS.LDP.Class.RDFSource );
 				(<Document.Class> pointer).types.push( NS.LDP.Class.Container );
 				(<Document.Class> pointer).types.push( NS.LDP.Class.BasicContainer );

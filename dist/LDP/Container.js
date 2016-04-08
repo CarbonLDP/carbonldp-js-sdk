@@ -13,6 +13,10 @@ exports.SCHEMA = {
         "@container": "@set",
         "@type": "@id",
     },
+    "membershipResource": {
+        "@id": NS.LDP.Predicate.membershipResource,
+        "@type": "@id",
+    },
     "memberOfRelation": {
         "@id": NS.LDP.Predicate.memberOfRelation,
         "@type": "@id",
