@@ -1232,6 +1232,21 @@ $__System.register("14", ["9", "15", "5", "6", "16", "12", "4", "11", "d", "17",
                         return [document, response];
                     });
                 };
+                Documents.prototype.exists = function (documentURI, requestOptions) {
+                    if (requestOptions === void 0) { requestOptions = {}; }
+                    if (!!this.context) {
+                        documentURI = this.context.resolve(documentURI);
+                        if (this.context.auth.isAuthenticated())
+                            this.context.auth.addAuthentication(requestOptions);
+                    }
+                    HTTP.Request.Util.setAcceptHeader("application/ld+json", requestOptions);
+                    HTTP.Request.Util.setPreferredInteractionModel(NS.LDP.Class.RDFSource, requestOptions);
+                    return HTTP.Request.Service.head(documentURI, requestOptions).then(function (response) { return [true, response]; }, function (error) {
+                        if (error.response.status === 404)
+                            return [false, error.response];
+                        return Promise.reject(error);
+                    });
+                };
                 Documents.prototype.createChild = function (parentURI, slugOrChildDocument, childDocumentOrRequestOptions, requestOptions) {
                     var _this = this;
                     if (childDocumentOrRequestOptions === void 0) { childDocumentOrRequestOptions = {}; }

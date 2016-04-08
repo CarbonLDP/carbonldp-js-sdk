@@ -160,6 +160,75 @@ describe( module( "Carbon/Documents", "" ), ():void => {
 		});
 	});
 
+	it( hasMethod(
+		INSTANCE,
+		"exists",
+		"Returns a Promise with a boolean indicating if the resource exists or not.", [
+			{ name: "documentURI", type: "string" },
+			{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
+		],
+		{ type: "Promise<[ boolean, Carbon.HTTP.Response.Class ]>" }
+	), ( done:{ ():void, fail:() => void } ):void => {
+		let promises:Promise<any>[] = [];
+
+		class MockedContext extends AbstractContext {
+			resolve( uri:string ):string {
+				return uri;
+			}
+		}
+
+		let context:MockedContext = new MockedContext();
+		let documents:Documents = context.documents;
+
+		let spies = {
+			exists: ( [ exists, response ]:[ boolean, HTTP.Response.Class ] ):void => {
+				expect( exists ).toBe( true );
+				expect( response instanceof  HTTP.Response.Class ).toBe( true );
+			},
+			notExists: ( [ exists, response ]:[ boolean, HTTP.Response.Class ] ):void => {
+				expect( exists ).toBe( false );
+				expect( response instanceof  HTTP.Response.Class ).toBe( true );
+			},
+			fail: ( error:HTTP.Errors.Error ):void => {
+				expect( error instanceof HTTP.Errors.Error ).toBe( true );
+			}
+		};
+		let spyExists = spyOn( spies, "exists" ).and.callThrough();
+		let spyNotExists = spyOn( spies, "notExists" ).and.callThrough();
+		let spyFail = spyOn( spies, "fail" ).and.callThrough();
+
+		jasmine.Ajax.stubRequest( "http://example.com/resource/exists/", null, "HEAD" ).andReturn( {
+			status: 200
+		});
+		jasmine.Ajax.stubRequest( "http://example.com/resource/not-exists/", null, "HEAD" ).andReturn( {
+			status: 404
+		});
+		jasmine.Ajax.stubRequest( "http://example.com/resource/error/", null, "HEAD" ).andReturn( {
+			status: 500
+		});
+
+		let promise:Promise<any>;
+
+		promise = documents.exists( "http://example.com/resource/exists/" );
+		expect( promise instanceof Promise ).toBe( true );
+		promises.push( promise.then( spies.exists ) );
+
+		promise = documents.exists( "http://example.com/resource/not-exists/" );
+		expect( promise instanceof Promise ).toBe( true );
+		promises.push( promise.then( spies.notExists ) );
+
+		promise = documents.exists( "http://example.com/resource/error/" );
+		expect( promise instanceof Promise ).toBe( true );
+		promises.push( promise.catch( spies.fail ) );
+
+		Promise.all( promises ).then( ():void => {
+			expect( spyExists ).toHaveBeenCalledTimes( 1 );
+			expect( spyNotExists ).toHaveBeenCalledTimes( 1 );
+			expect( spyFail ).toHaveBeenCalledTimes( 1 );
+			done();
+		}, done.fail );
+	});
+
 	describe( method(
 		INSTANCE,
 		"createChild"
