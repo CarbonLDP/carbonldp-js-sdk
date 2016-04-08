@@ -850,7 +850,7 @@ Returns true if the object provided is considered as an `Carbon.App.Class` objec
 
 ##### create
 ```typescript 
-static create( name:string ):Carbon.App.Class
+static create( name:string,  description?:string ):Carbon.App.Class
 ```
 
 Create a empty `Carbon.App.Class` object.
@@ -858,10 +858,11 @@ Create a empty `Carbon.App.Class` object.
 *Parameters*
 
 - name 
+- description 
 
 ##### createFrom
 ```typescript 
-static createFrom( object:T extends Object ):T & Carbon.App.Class
+static createFrom( object:T extends Object,  name:string,  description?:string ):T & Carbon.App.Class
 ```
 
 Create a `Carbon.App.Class` object with the object provided.
@@ -869,6 +870,8 @@ Create a `Carbon.App.Class` object with the object provided.
 *Parameters*
 
 - object 
+- name 
+- description 
 
 
 
@@ -908,6 +911,11 @@ agents:Carbon.Agents.Class
 ```
 
 Instance of Agents class for manage the agents inside of an application.
+```typescript 
+app:Carbon.App.Class 
+```
+
+Object of type `Carbon.App.Class` witch is the Document that represents the actual Application.
 
 #### <a name="Carbon-App-Context-Methods" />Methods
 
@@ -4753,6 +4761,10 @@ static expirationTime:string
 
 ```typescript 
 static password:string 
+```
+
+```typescript 
+static description:string 
 ```
 
 

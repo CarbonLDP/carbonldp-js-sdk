@@ -315,6 +315,7 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 		} else {
 			containerRetrievalPreferences.omit.push( NS.C.Class.NonReadableMembershipResourceTriples );
 		}
+		HTTP.Request.Util.setContainerRetrievalPreferences( containerRetrievalPreferences, requestOptions );
 
 		return HTTP.Request.Service.get( uri, requestOptions, new RDF.Document.Parser() ).then( ( [ rdfDocuments, response ]:[ RDF.Document.Class[], HTTP.Response.Class ] ) => {
 			let rdfDocument:RDF.Document.Class = this.getRDFDocument( uri, rdfDocuments, response );

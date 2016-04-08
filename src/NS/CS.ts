@@ -14,6 +14,7 @@ class Predicate {
 	static get tokenKey():string { return namespace + "tokenKey"; }
 	static get expirationTime():string { return namespace + "expirationTime"; }
 	static get password():string { return namespace + "password"; }
+	static get description():string { return namespace + "description"; }
 }
 
 export {
