@@ -1710,6 +1710,18 @@ get( uri:string ):Promise<[ Carbon.PersistedDocument.Class, HTTP.Response.Class 
 
 - uri 
 
+##### exists
+```typescript 
+exists( documentURI:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ boolean, Carbon.HTTP.Response.Class ]>
+```
+
+Returns a Promise with a boolean indicating if the resource exists or not.
+
+*Parameters*
+
+- documentURI 
+- requestOptions 
+
 ##### delete
 ```typescript 
 delete( persistedDocument:Carbon.PersistedDocument.Class,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<Carbon.HTTP.Response.Class>

@@ -1279,6 +1279,21 @@ $__System.register("16", ["c", "17", "9", "5", "18", "14", "8", "4", "10", "3", 
                         return [document, response];
                     });
                 };
+                Documents.prototype.exists = function (documentURI, requestOptions) {
+                    if (requestOptions === void 0) { requestOptions = {}; }
+                    if (!!this.context) {
+                        documentURI = this.context.resolve(documentURI);
+                        if (this.context.auth.isAuthenticated())
+                            this.context.auth.addAuthentication(requestOptions);
+                    }
+                    HTTP.Request.Util.setAcceptHeader("application/ld+json", requestOptions);
+                    HTTP.Request.Util.setPreferredInteractionModel(NS.LDP.Class.RDFSource, requestOptions);
+                    return HTTP.Request.Service.head(documentURI, requestOptions).then(function (response) { return [true, response]; }, function (error) {
+                        if (error.response.status === 404)
+                            return [false, error.response];
+                        return Promise.reject(error);
+                    });
+                };
                 Documents.prototype.createChild = function (parentURI, slugOrChildDocument, childDocumentOrRequestOptions, requestOptions) {
                     var _this = this;
                     if (childDocumentOrRequestOptions === void 0) { childDocumentOrRequestOptions = {}; }
@@ -13420,7 +13435,7 @@ $__System.register("6c", ["e", "2", "12", "11", "a", "6", "29", "13", "16", "c",
                     this.apps = new Apps.Class(this);
                 }
                 Object.defineProperty(Carbon, "version", {
-                    get: function () { return "0.24.0"; },
+                    get: function () { return "0.25.0"; },
                     enumerable: true,
                     configurable: true
                 });

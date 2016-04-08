@@ -1,3 +1,6 @@
+# 0.25.0 (April 8, 2016)
+- Added `context.documents.exists()` method, which lets you verify if a determined resource exists in the server
+
 # 0.24.0 (April 8, 2016)
 - Added `AccessPoint` module
 - Added `LDP/DirectContainer` module
