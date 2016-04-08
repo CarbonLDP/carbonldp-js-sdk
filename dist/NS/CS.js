@@ -60,6 +60,11 @@ var Predicate = (function () {
         enumerable: true,
         configurable: true
     });
+    Object.defineProperty(Predicate, "description", {
+        get: function () { return namespace + "description"; },
+        enumerable: true,
+        configurable: true
+    });
     return Predicate;
 }());
 exports.Predicate = Predicate;

@@ -222,6 +222,7 @@ var Documents = (function () {
         else {
             containerRetrievalPreferences.omit.push(NS.C.Class.NonReadableMembershipResourceTriples);
         }
+        HTTP.Request.Util.setContainerRetrievalPreferences(containerRetrievalPreferences, requestOptions);
         return HTTP.Request.Service.get(uri, requestOptions, new RDF.Document.Parser()).then(function (_a) {
             var rdfDocuments = _a[0], response = _a[1];
             var rdfDocument = _this.getRDFDocument(uri, rdfDocuments, response);

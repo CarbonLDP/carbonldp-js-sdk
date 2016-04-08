@@ -931,10 +931,16 @@ $__System.register("3", ["b", "e", "5"], function(exports_1) {
                 __extends(Class, _super);
                 function Class(parentContext, app) {
                     _super.call(this, parentContext);
-                    this.app = app;
+                    this._app = app;
                     this.base = this.getBase(this.app);
                     this.agents = new Agents_1.default(this);
                 }
+                Object.defineProperty(Class.prototype, "app", {
+                    get: function () { return this._app; },
+                    enumerable: true,
+                    configurable: true
+                });
+                ;
                 Class.prototype.resolve = function (uri) {
                     if (RDF.URI.Util.isAbsolute(uri))
                         return uri;
@@ -979,6 +985,10 @@ $__System.register("7", ["10", "11", "6", "9", "3"], function(exports_1) {
                     "@id": NS.CS.Predicate.name,
                     "@type": NS.XSD.DataType.string,
                 },
+                "description": {
+                    "@id": NS.CS.Predicate.description,
+                    "@type": NS.XSD.DataType.string,
+                },
                 "rootContainer": {
                     "@id": NS.CS.Predicate.rootContainer,
                     "@type": "@id",
@@ -998,10 +1008,10 @@ $__System.register("7", ["10", "11", "6", "9", "3"], function(exports_1) {
                         && Factory.hasClassProperties(object)
                         && object.types.indexOf(NS.CS.Class.Application) !== -1;
                 };
-                Factory.create = function (name) {
-                    return Factory.createFrom({}, name);
+                Factory.create = function (name, description) {
+                    return Factory.createFrom({}, name, description);
                 };
-                Factory.createFrom = function (object, name) {
+                Factory.createFrom = function (object, name, description) {
                     if (!Document.Factory.hasClassProperties(object))
                         object = Document.Factory.createFrom(object);
                     if (!Utils.isString(name) || !name)
@@ -1009,6 +1019,8 @@ $__System.register("7", ["10", "11", "6", "9", "3"], function(exports_1) {
                     var app = object;
                     app.name = name;
                     app.types.push(NS.CS.Class.Application);
+                    if (!!description)
+                        app.description = description;
                     return app;
                 };
                 return Factory;
@@ -1327,6 +1339,7 @@ $__System.register("14", ["9", "15", "5", "6", "16", "12", "4", "11", "d", "17",
                     else {
                         containerRetrievalPreferences.omit.push(NS.C.Class.NonReadableMembershipResourceTriples);
                     }
+                    HTTP.Request.Util.setContainerRetrievalPreferences(containerRetrievalPreferences, requestOptions);
                     return HTTP.Request.Service.get(uri, requestOptions, new RDF.Document.Parser()).then(function (_a) {
                         var rdfDocuments = _a[0], response = _a[1];
                         var rdfDocument = _this.getRDFDocument(uri, rdfDocuments, response);
@@ -3675,6 +3688,10 @@ $__System.register("c", ["13", "27", "14", "9", "17", "11", "d", "f", "26"], fun
                     this.extendObjectSchema(NS.CS.Class.Application, {
                         "name": {
                             "@id": NS.CS.Predicate.name,
+                            "@type": NS.XSD.DataType.string,
+                        },
+                        "description": {
+                            "@id": NS.CS.Predicate.description,
                             "@type": NS.XSD.DataType.string,
                         },
                         "rootContainer": {
@@ -12044,6 +12061,11 @@ $__System.register("62", [], function(exports_1) {
                     enumerable: true,
                     configurable: true
                 });
+                Object.defineProperty(Predicate, "description", {
+                    get: function () { return namespace + "description"; },
+                    enumerable: true,
+                    configurable: true
+                });
                 return Predicate;
             })();
             exports_1("namespace", namespace);
@@ -13216,7 +13238,7 @@ $__System.register("6a", ["b", "f", "e", "7", "2", "27", "10", "14", "9", "1f", 
                     this.apps = new Apps.Class(this);
                 }
                 Object.defineProperty(Carbon, "version", {
-                    get: function () { return "0.23.1-ALPHA"; },
+                    get: function () { return "0.23.2-ALPHA"; },
                     enumerable: true,
                     configurable: true
                 });

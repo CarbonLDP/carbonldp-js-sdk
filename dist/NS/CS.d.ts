@@ -12,5 +12,6 @@ declare class Predicate {
     static tokenKey: string;
     static expirationTime: string;
     static password: string;
+    static description: string;
 }
 export { namespace, Class, Predicate };

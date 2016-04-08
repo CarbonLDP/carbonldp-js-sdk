@@ -6,13 +6,14 @@ import PersistedApp from "./../PersistedApp";
 
 export class Class extends AbstractContext {
 	public agents:Agents;
+	public get app():PersistedApp { return this._app; };
 
-	private app:PersistedApp;
+	private _app:PersistedApp;
 	private base:string;
 
 	constructor( parentContext:Context, app:PersistedApp ) {
 		super( parentContext );
-		this.app = app;
+		this._app = app;
 
 		this.base = this.getBase( this.app );
 		this.agents = new Agents( this );

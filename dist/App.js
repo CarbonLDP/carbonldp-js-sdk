@@ -11,6 +11,10 @@ exports.SCHEMA = {
         "@id": NS.CS.Predicate.name,
         "@type": NS.XSD.DataType.string,
     },
+    "description": {
+        "@id": NS.CS.Predicate.description,
+        "@type": NS.XSD.DataType.string,
+    },
     "rootContainer": {
         "@id": NS.CS.Predicate.rootContainer,
         "@type": "@id",
@@ -30,10 +34,10 @@ var Factory = (function () {
             && Factory.hasClassProperties(object)
             && object.types.indexOf(NS.CS.Class.Application) !== -1;
     };
-    Factory.create = function (name) {
-        return Factory.createFrom({}, name);
+    Factory.create = function (name, description) {
+        return Factory.createFrom({}, name, description);
     };
-    Factory.createFrom = function (object, name) {
+    Factory.createFrom = function (object, name, description) {
         if (!Document.Factory.hasClassProperties(object))
             object = Document.Factory.createFrom(object);
         if (!Utils.isString(name) || !name)
@@ -41,6 +45,8 @@ var Factory = (function () {
         var app = object;
         app.name = name;
         app.types.push(NS.CS.Class.Application);
+        if (!!description)
+            app.description = description;
         return app;
     };
     return Factory;

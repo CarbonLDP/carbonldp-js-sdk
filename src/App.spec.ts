@@ -72,10 +72,13 @@ describe( module( "Carbon/App" ), ():void => {
 			expect( App.Factory.hasClassProperties ).toBeDefined();
 			expect( Utils.isFunction( App.Factory.hasClassProperties ) ).toBe( true );
 
-			expect( App.Factory.hasClassProperties( { name: "App name" } ) ).toBe( true );
-			expect( App.Factory.hasClassProperties( { name: 1 } ) ).toBe( true );
+			let object:any = {};
+			expect( App.Factory.hasClassProperties( object ) ).toBe( false );
 
-			expect( App.Factory.hasClassProperties( {} ) ).toBe( false );
+			object.name = "A name";
+			expect( App.Factory.hasClassProperties( object ) ).toBe( true );
+			object.description = "A description";
+			expect( App.Factory.hasClassProperties( object ) ).toBe( true );
 		});
 		
 		it( hasMethod(
@@ -89,17 +92,24 @@ describe( module( "Carbon/App" ), ():void => {
 			expect( App.Factory.is ).toBeDefined();
 			expect( Utils.isFunction( App.Factory.is ) ).toBe( true );
 
-			expect( App.Factory.is( { name: "App name" } ) ).toBe( false );
-			expect( App.Factory.is( { name: 1 } ) ).toBe( false );
-			expect( App.Factory.is( {} ) ).toBe( false );
+			let object:any = {};
+			expect( App.Factory.is( object ) ).toBe( false );
+			object.name = "A name";
+			expect( App.Factory.is( object ) ).toBe( false );
+			object.description = "A description";
+			expect( App.Factory.is( object ) ).toBe( false );
+			object.types = [ NS.CS.Class.Application ];
+			expect( App.Factory.is( object ) ).toBe( false );
 
-			let object:any = Document.Factory.create();
+			object = Document.Factory.create();
+			expect( App.Factory.is( object ) ).toBe( false );
+
+			object.types.push( NS.CS.Class.Application );
 			expect( App.Factory.is( object ) ).toBe( false );
 
 			object.name = "A name";
-			expect( App.Factory.is( object ) ).toBe( false );
-			
-			object.types.push( NS.CS.Class.Application );
+			expect( App.Factory.is( object ) ).toBe( true );
+			object.description = "A description";
 			expect( App.Factory.is( object ) ).toBe( true );
 		});
 
@@ -107,31 +117,31 @@ describe( module( "Carbon/App" ), ():void => {
 			STATIC,
 			"create",
 			"Create a empty `Carbon.App.Class` object.", [
-				{ name: "name", type: "string" }
+				{ name: "name", type: "string" },
+				{ name: "description", type: "string", optional: true }
 			],
 			{ type: "Carbon.App.Class" }
 		), ():void => {
 			expect( App.Factory.create ).toBeDefined();
 			expect( Utils.isFunction( App.Factory.create ) ).toBe( true );
 
-			let spy = spyOn( App.Factory, 'createFrom');
+			let spy = spyOn( App.Factory, "createFrom");
 
-			App.Factory.create( 'The App name' );
-			expect( spy ).toHaveBeenCalledWith( {}, 'The App name' );
+			App.Factory.create( "The App name", "The App description" );
+			expect( spy ).toHaveBeenCalledWith( {}, "The App name", "The App description" );
 
-			App.Factory.create( 'Another App name' );
-			expect( spy ).toHaveBeenCalledWith( {}, 'Another App name' );
-
-			App.Factory.create( '' );
-			expect( spy ).toHaveBeenCalledWith( {}, '' );
+			App.Factory.create( "Another App name" );
+			expect( spy ).toHaveBeenCalledWith( {}, "Another App name", undefined );
 		});
 		
 		it( hasMethod(
 			STATIC,
 			"createFrom",
 			"Create a `Carbon.App.Class` object with the object provided.", [
-				{ name: "object", type: "T extends Object" }
-			], 
+				{ name: "object", type: "T extends Object" },
+				{ name: "name", type: "string" },
+				{ name: "description", type: "string", optional: true }
+			],
 			{ type: "T & Carbon.App.Class" }
 		), ():void => {
 			expect( App.Factory.createFrom ).toBeDefined();
@@ -142,18 +152,37 @@ describe( module( "Carbon/App" ), ():void => {
 			}
 			interface MyApp extends App.Class, TheApp {}
 
-			let app01:MyApp;
-			app01 = App.Factory.createFrom<TheApp>( {}, 'App name - 01' );
-			expect( App.Factory.is( app01 ) ).toBe( true );
-			expect( app01.myProperty ).toBeUndefined();
+			let app:MyApp;
+			app = App.Factory.createFrom<TheApp>( {}, "App name" );
+			expect( App.Factory.is( app ) ).toBe( true );
+			expect( app.myProperty ).toBeUndefined();
+			expect( app.name ).toBe( "App name" );
+			expect( app.description ).toBeUndefined();
 
-			app01 = App.Factory.createFrom<TheApp>( { myProperty: "a property" }, 'App name - 01' );
-			expect( App.Factory.is( app01 ) ).toBe( true );
-			expect( app01.myProperty ).toBeDefined();
-			expect( app01.myProperty ).toBe( 'a property' );
+			app = App.Factory.createFrom<TheApp>( {}, "App name", "App description" );
+			expect( App.Factory.is( app ) ).toBe( true );
+			expect( app.myProperty ).toBeUndefined();
+			expect( app.name ).toBe( "App name" );
+			expect( app.description ).toBe( "App description" );
+
+			app = App.Factory.createFrom<TheApp>( { myProperty: "a property" }, "App name" );
+			expect( App.Factory.is( app ) ).toBe( true );
+			expect( app.myProperty ).toBeDefined();
+			expect( app.myProperty ).toBe( "a property" );
+			expect( app.name ).toBe( "App name" );
+			expect( app.description ).toBeUndefined();
+
+			app = App.Factory.createFrom<TheApp>( { myProperty: "a property" }, "App name", "App description" );
+			expect( App.Factory.is( app ) ).toBe( true );
+			expect( app.myProperty ).toBeDefined();
+			expect( app.myProperty ).toBe( "a property" );
+			expect( app.name ).toBe( "App name" );
+			expect( app.description ).toBe( "App description" );
 
 			expect( () => App.Factory.createFrom( {}, "" ) ).toThrowError( Errors.IllegalArgumentError );
+			expect( () => App.Factory.createFrom( {}, "", "App description" ) ).toThrowError( Errors.IllegalArgumentError );
 			expect( () => App.Factory.createFrom( { myProperty: "a property" }, "" ) ).toThrowError( Errors.IllegalArgumentError );
+			expect( () => App.Factory.createFrom( { myProperty: "a property" }, "", "App description" ) ).toThrowError( Errors.IllegalArgumentError );
 			expect( () => App.Factory.createFrom( {}, <any> {} ) ).toThrowError( Errors.IllegalArgumentError );
 			expect( () => App.Factory.createFrom( {}, <any> 1 ) ).toThrowError( Errors.IllegalArgumentError );
 			expect( () => App.Factory.createFrom( {}, <any> null ) ).toThrowError( Errors.IllegalArgumentError );
