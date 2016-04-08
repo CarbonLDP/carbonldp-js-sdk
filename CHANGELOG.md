@@ -1,3 +1,7 @@
+# 0.23.2 (April 8, 2016)
+- Added optional description property in `App`
+- Added getter for app document in `App.Context`
+
 # 0.23.1 (April 7, 2016)
 - Added API documentation in `doc/README.md`
 

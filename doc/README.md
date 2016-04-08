@@ -837,6 +837,11 @@ agents:Carbon.Agents.Class
 ```
 
 Instance of Agents class for manage the agents inside of an application.
+```typescript 
+app:Carbon.App.Class 
+```
+
+Object of type `Carbon.App.Class` witch is the Document that represents the actual Application.
 
 #### <a name="Carbon-App-Context-Methods" />Methods
 
