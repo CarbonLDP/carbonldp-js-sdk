@@ -12,6 +12,7 @@ import * as Utils from "./Utils";
 import * as BasicContainer from "./LDP/BasicContainer";
 import * as Container from "./LDP/Container";
 import * as DirectContainer from "./LDP/DirectContainer";
+import * as IndirectContainer from "./LDP/IndirectContainer";
 import * as PersistedContainer from "./LDP/PersistedContainer";
 import * as RDFSource from "./LDP/RDFSource";
 
@@ -48,7 +49,7 @@ describe( module( "Carbon/LDP" ), ():void => {
 		"Carbon/LDP/DirectContainer"
 	), ():void => {
 		expect( LDP.DirectContainer ).toBeDefined();
-		expect( LDP.DirectContainer ).toBe( Container );
+		expect( LDP.DirectContainer ).toBe( DirectContainer );
 	});
 
 	it( reexports(
@@ -57,7 +58,7 @@ describe( module( "Carbon/LDP" ), ():void => {
 		"Carbon/LDP/IndirectContainer"
 	), ():void => {
 		expect( LDP.IndirectContainer ).toBeDefined();
-		expect( LDP.IndirectContainer ).toBe( Container );
+		expect( LDP.IndirectContainer ).toBe( IndirectContainer );
 	});
 
 	it( reexports(

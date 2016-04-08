@@ -961,6 +961,20 @@ declare module 'carbonldp/RDF' {
 	export { Literal, Document, List, Node, URI, Value };
 
 }
+declare module 'carbonldp/Resource' {
+	import * as Pointer from 'carbonldp/Pointer';
+	export interface Class extends Pointer.Class {
+	    types: string[];
+	}
+	export class Factory {
+	    static hasClassProperties(resource: Object): boolean;
+	    static is(object: Object): boolean;
+	    static create(id?: string, types?: string[]): Class;
+	    static createFrom<T extends Object>(object: T, id?: string, types?: string[]): T & Class;
+	    static decorate<T extends Object>(object: T): T & Class;
+	}
+
+}
 declare module 'carbonldp/Fragment' {
 	import * as Document from 'carbonldp/Document';
 	import * as Resource from 'carbonldp/Resource';
@@ -1080,20 +1094,6 @@ declare module 'carbonldp/Document' {
 	    static decorate<T extends Object>(object: T): T & Class;
 	}
 	export default Class;
-
-}
-declare module 'carbonldp/Resource' {
-	import * as Pointer from 'carbonldp/Pointer';
-	export interface Class extends Pointer.Class {
-	    types: string[];
-	}
-	export class Factory {
-	    static hasClassProperties(resource: Object): boolean;
-	    static is(object: Object): boolean;
-	    static create(id?: string, types?: string[]): Class;
-	    static createFrom<T extends Object>(object: T, id?: string, types?: string[]): T & Class;
-	    static decorate<T extends Object>(object: T): T & Class;
-	}
 
 }
 declare module 'carbonldp/LDP/RDFSource' {
@@ -1291,6 +1291,7 @@ declare module 'carbonldp/SPARQL' {
 
 }
 declare module 'carbonldp/PersistedDocument' {
+	import * as AccessPoint from 'carbonldp/AccessPoint';
 	import * as Document from 'carbonldp/Document';
 	import Documents from 'carbonldp/Documents';
 	import * as HTTP from 'carbonldp/HTTP';
@@ -1314,6 +1315,7 @@ declare module 'carbonldp/PersistedDocument' {
 	    refresh(): Promise<void>;
 	    save(): Promise<[Class, HTTP.Response.Class]>;
 	    destroy(): Promise<HTTP.Response.Class>;
+	    createAccessPoint(accessPoint: AccessPoint.Class, slug?: string, requestOptions?: HTTP.Request.Options): Promise<[Pointer.Class, HTTP.Response.Class]>;
 	    executeRawASKQuery(askQuery: string, requestOptions?: HTTP.Request.Options): Promise<[SPARQL.RawResults.Class, HTTP.Response.Class]>;
 	    executeASKQuery(askQuery: string, requestOptions?: HTTP.Request.Options): Promise<[boolean, HTTP.Response.Class]>;
 	    executeRawSELECTQuery(selectQuery: string, requestOptions?: HTTP.Request.Options): Promise<[SPARQL.RawResults.Class, HTTP.Response.Class]>;
@@ -1395,8 +1397,8 @@ declare module 'carbonldp/Documents' {
 	    get(uri: string, requestOptions?: HTTP.Request.Options): Promise<[PersistedDocument.Class, HTTP.Response.Class]>;
 	    createChild(parentURI: string, slug: string, childDocument: Document.Class, requestOptions?: HTTP.Request.Options): Promise<[Pointer.Class, HTTP.Response.Class]>;
 	    createChild(parentURI: string, childDocument: Document.Class, requestOptions?: HTTP.Request.Options): Promise<[Pointer.Class, HTTP.Response.Class]>;
-	    createAccessPoint(documentURI: string, accessPoint: AccessPoint.Class, slug?: string, requestOptions?: HTTP.Request.Options): any;
-	    createAccessPoint(accessPoint: AccessPoint.Class, slug?: string, requestOptions?: HTTP.Request.Options): any;
+	    createAccessPoint(documentURI: string, accessPoint: AccessPoint.Class, slug?: string, requestOptions?: HTTP.Request.Options): Promise<[Pointer.Class, HTTP.Response.Class]>;
+	    createAccessPoint(accessPoint: AccessPoint.Class, slug?: string, requestOptions?: HTTP.Request.Options): Promise<[Pointer.Class, HTTP.Response.Class]>;
 	    upload(parentURI: string, slug: string, file: Blob, requestOptions?: HTTP.Request.Options): Promise<[Pointer.Class, HTTP.Response.Class]>;
 	    upload(parentURI: string, file: Blob, requestOptions?: HTTP.Request.Options): Promise<[Pointer.Class, HTTP.Response.Class]>;
 	    getMembers(uri: string, includeNonReadable: boolean, requestOptions: HTTP.Request.Options): Promise<[Pointer.Class[], HTTP.Response.Class]>;
@@ -1746,6 +1748,7 @@ declare module 'carbonldp/settings' {
 }
 declare module 'carbonldp/Carbon' {
 	import AbstractContext from 'carbonldp/AbstractContext';
+	import * as AccessPoint from 'carbonldp/AccessPoint';
 	import * as Agent from 'carbonldp/Agent';
 	import * as Agents from 'carbonldp/Agents';
 	import * as APIDescription from 'carbonldp/APIDescription';
@@ -1774,6 +1777,7 @@ declare module 'carbonldp/Carbon' {
 	import * as SDKContext from 'carbonldp/SDKContext';
 	import * as SPARQL from 'carbonldp/SPARQL';
 	import * as Utils from 'carbonldp/Utils'; class Carbon extends AbstractContext {
+	    static AccessPoint: typeof AccessPoint;
 	    static Agent: typeof Agent;
 	    static Agents: typeof Agents;
 	    static App: typeof App;

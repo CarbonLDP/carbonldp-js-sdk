@@ -24,7 +24,7 @@ import * as NamedFragment from "./NamedFragment";
 import * as URI from "./RDF/URI";
 import AbstractContext from "./AbstractContext";
 import JSONLDConverter from "./JSONLDConverter";
-import * as NS from "./NS";
+import * as Resource from "./Resource";
 
 import * as Document from "./Document";
 
@@ -80,6 +80,44 @@ describe( module( "Carbon/Document" ), ():void => {
 			expect( Document.Factory.hasClassProperties( resource ) ).toBe( true );
 		});
 
+		it( hasMethod(
+			STATIC,
+			"is",
+			"Returns true if the object is considered a Document object", [
+				{ name: "object", type: "Object" }
+			],
+			{ type: "boolean" }
+		), ():void => {
+			expect( Document.Factory.hasClassProperties ).toBeDefined();
+			expect( Utils.isFunction( Document.Factory.hasClassProperties ) ).toBe( true );
+
+			let resource:Object = undefined;
+			expect( Document.Factory.is( resource ) ).toBe( false );
+			resource = {};
+			expect( Document.Factory.is( resource ) ).toBe( false );
+			resource["_fragmentsIndex"] = null;
+			expect( Document.Factory.is( resource ) ).toBe( false );
+			resource["hasFragment"] = ():void => {};
+			expect( Document.Factory.is( resource ) ).toBe( false );
+			resource["getFragment"] = ():void => {};
+			expect( Document.Factory.is( resource ) ).toBe( false );
+			resource["getNamedFragment"] = ():void => {};
+			expect( Document.Factory.is( resource ) ).toBe( false );
+			resource["getFragments"] = ():void => {};
+			expect( Document.Factory.is( resource ) ).toBe( false );
+			resource["createFragment"] = ():void => {};
+			expect( Document.Factory.is( resource ) ).toBe( false );
+			resource["createNamedFragment"] = ():void => {};
+			expect( Document.Factory.is( resource ) ).toBe( false );
+			resource["removeFragment"] = ():void => {};
+			expect( Document.Factory.is( resource ) ).toBe( false );
+			resource["toJSON"] = ():void => {};
+			expect( Document.Factory.is( resource ) ).toBe( false );
+
+			let document = Resource.Factory.createFrom( resource );
+			expect( Document.Factory.is( document ) ).toBe( true );
+		});
+
 		describe( method(
 			STATIC,
 			"create"
@@ -107,7 +145,9 @@ describe( module( "Carbon/Document" ), ():void => {
 		), ():void => {
 
 			it( hasSignature(
-				"Creates a Document object from the object provided.",
+				"Creates a Document object from the object provided.", [
+					{ name: "object", type: "T extends Object" }
+				],
 				{ type: "Carbon.Document.Class" }
 			), ():void => {
 				expect( Document.Factory.createFrom ).toBeDefined();

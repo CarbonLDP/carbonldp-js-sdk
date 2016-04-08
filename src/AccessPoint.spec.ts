@@ -12,6 +12,8 @@ import {
 } from "./test/JasmineExtender";
 import * as Utils from "./Utils";
 import * as NS from "./NS";
+import * as Pointer from "./Pointer";
+import * as DirectContainer from "./LDP/DirectContainer";
 
 describe( module( "Carbon/AccessPoints" ), ():void => {
 
@@ -45,9 +47,9 @@ describe( module( "Carbon/AccessPoints" ), ():void => {
 			STATIC,
 			"hasClassProperties",
 			"Returns true if the object provided has the properties that defines a `Carbon.AccessPoint.Class` object", [
-				{name: "resource", type: "Object"}
+				{ name: "resource", type: "Object" }
 			],
-			{type: "boolean"}
+			{ type: "boolean" }
 		), ():void => {
 			expect( AccessPoint.Factory.hasClassProperties ).toBeDefined();
 			expect( Utils.isFunction( AccessPoint.Factory.hasClassProperties ) ).toBe( true );
@@ -61,31 +63,68 @@ describe( module( "Carbon/AccessPoints" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"create",
-			"Create a `Carbon.AccessPoint.Class` object with the name and email specified.", [
-				{name: "name", type: "string"},
-				{name: "email", type: "string"}
+			"Create a `Carbon.AccessPoint.Class` object with the parameters specified.", [
+				{ name: "membershipResource", type: "Carbon.Pointer.Class" },
+				{ name: "hasMemberRelation", type: "string | Carbon.Pointer.Class" },
+				{ name: "memberOfRelation", type: "string | Carbon.Pointer.Class", optional: true }
 			],
-			{type: "Carbon.AccessPoint.Class"}
+			{ type: "Carbon.AccessPoint.Class" }
 		), ():void => {
 			expect( AccessPoint.Factory.create ).toBeDefined();
 			expect( Utils.isFunction( AccessPoint.Factory.create ) ).toBe( true );
 
-			let spy = spyOn( AccessPoint.Factory, "createFrom" );
+			let spy:jasmine.Spy = spyOn( AccessPoint.Factory, "createFrom" );
+			let pointer:Pointer.Class = Pointer.Factory.create();
 
-			// TODO
-		} );
+			AccessPoint.Factory.create( pointer, "http://example.com/myNamespace#some-relation" );
+			expect( spy ).toHaveBeenCalledWith( {}, pointer, "http://example.com/myNamespace#some-relation", undefined );
+			spy.calls.reset();
+
+			AccessPoint.Factory.create( pointer, pointer );
+			expect( spy ).toHaveBeenCalledWith( {}, pointer, pointer, undefined );
+			spy.calls.reset();
+
+			AccessPoint.Factory.create( pointer, "http://example.com/myNamespace#some-relation", "http://example.com/myNamespace#some-inverted-relation" );
+			expect( spy ).toHaveBeenCalledWith( {}, pointer, "http://example.com/myNamespace#some-relation", "http://example.com/myNamespace#some-inverted-relation" );
+			spy.calls.reset();
+
+			AccessPoint.Factory.create( pointer, pointer, pointer );
+			expect( spy ).toHaveBeenCalledWith( {}, pointer, pointer, pointer );
+		});
 
 		it( hasMethod(
 			STATIC,
 			"createFrom",
 			"Create a `Carbon.AccessPoint.Class` object with the object provided.", [
-				{name: "object", type: "T extends Object"}
+				{ name: "object", type: "T extends Object" },
+				{ name: "membershipResource", type: "Carbon.Pointer.Class" },
+				{ name: "hasMemberRelation", type: "string | Carbon.Pointer.Class" },
+				{ name: "memberOfRelation", type: "string | Carbon.Pointer.Class", optional: true }
 			],
-			{type: "T & Carbon.AccessPoint.Class"}
+			{ type: "T & Carbon.AccessPoint.Class" }
 		), ():void => {
-			// TODO
-		} );
+			expect( AccessPoint.Factory.createFrom ).toBeDefined();
+			expect( Utils.isFunction( AccessPoint.Factory.createFrom ) ).toBe( true );
 
-	} );
+			let spy:jasmine.Spy = spyOn( DirectContainer.Factory, "createFrom" );
+			let pointer:Pointer.Class = Pointer.Factory.create();
 
-} );
+			AccessPoint.Factory.createFrom( {}, pointer, "http://example.com/myNamespace#some-relation" );
+			expect( spy ).toHaveBeenCalledWith( {}, pointer, "http://example.com/myNamespace#some-relation", undefined );
+			spy.calls.reset();
+
+			AccessPoint.Factory.createFrom( {}, pointer, pointer );
+			expect( spy ).toHaveBeenCalledWith( {}, pointer, pointer, undefined );
+			spy.calls.reset();
+
+			AccessPoint.Factory.createFrom( {}, pointer, "http://example.com/myNamespace#some-relation", "http://example.com/myNamespace#some-inverted-relation" );
+			expect( spy ).toHaveBeenCalledWith( {}, pointer, "http://example.com/myNamespace#some-relation", "http://example.com/myNamespace#some-inverted-relation" );
+			spy.calls.reset();
+
+			AccessPoint.Factory.createFrom( {}, pointer, pointer, pointer );
+			expect( spy ).toHaveBeenCalledWith( {}, pointer, pointer, pointer );
+		});
+
+	});
+
+});

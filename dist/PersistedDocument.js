@@ -58,6 +58,11 @@ function save() {
 function destroy() {
     return this._documents.delete(this);
 }
+function createAccessPoint(accessPoint, slug, requestOptions) {
+    if (slug === void 0) { slug = null; }
+    if (requestOptions === void 0) { requestOptions = {}; }
+    return this._documents.createAccessPoint(accessPoint, slug, requestOptions);
+}
 function executeRawASKQuery(askQuery, requestOptions) {
     if (requestOptions === void 0) { requestOptions = {}; }
     return this._documents.executeRawASKQuery(this.id, askQuery, requestOptions);
@@ -91,6 +96,7 @@ var Factory = (function () {
             Utils.hasFunction(document, "refresh") &&
             Utils.hasFunction(document, "save") &&
             Utils.hasFunction(document, "destroy") &&
+            Utils.hasFunction(document, "createAccessPoint") &&
             Utils.hasFunction(document, "executeRawASKQuery") &&
             Utils.hasFunction(document, "executeASKQuery") &&
             Utils.hasFunction(document, "executeRawSELECTQuery") &&
@@ -203,6 +209,12 @@ var Factory = (function () {
                 enumerable: false,
                 configurable: true,
                 value: destroy,
+            },
+            "createAccessPoint": {
+                writable: false,
+                enumerable: false,
+                configurable: true,
+                value: createAccessPoint,
             },
             "executeRawASKQuery": {
                 writable: false,

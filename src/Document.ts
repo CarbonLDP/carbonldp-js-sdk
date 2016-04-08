@@ -199,7 +199,7 @@ export class Factory {
 			Utils.hasFunction( documentResource, "toJSON" )
 		);
 	}
-	
+
 	static is( object:Object ):boolean {
 		return (
 			Resource.Factory.is( object ) &&
