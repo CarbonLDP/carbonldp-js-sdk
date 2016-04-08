@@ -24,8 +24,6 @@ import * as RDF from "./RDF";
 
 import * as Apps from "./Apps";
 import DefaultExport from "./Apps";
-import Spy = jasmine.Spy;
-import {RDF_CLASS} from "../dist/App";
 
 describe( module( "Carbon/Apps" ), ():void => {
 	let context:AbstractContext;
@@ -78,10 +76,10 @@ describe( module( "Carbon/Apps" ), ():void => {
 		), ():void => {
 
 			it( hasSignature(
-				"Obtains a `Carbon.Apps.AppContext` object of the specified app URI, if it exists within the context of the Apps instance.", [
+				"Obtains a `Carbon.App.Context` object of the specified app URI, if it exists within the context of the Apps instance.", [
 					{ name: "uri", type: "string" }
 				],
-				{ type: "Promise<Carbon.Apps.AppContext>"}
+				{ type: "Promise<Carbon.App.Context>"}
 			), ( done:{ ():void, fail:() => void } ):void => {
 				expect( apps.getContext ).toBeDefined();
 				expect( Utils.isFunction( apps.getContext ) ).toBe( true );
@@ -98,7 +96,7 @@ describe( module( "Carbon/Apps" ), ():void => {
 				let failSpy = spyOn( spies, "fail" ).and.callThrough();
 
 				let promise:Promise<any>;
-				let spy:Spy;
+				let spy:jasmine.Spy;
 
 				spy = spyOn( context.documents, "get" ).and.callThrough();
 
@@ -141,10 +139,10 @@ describe( module( "Carbon/Apps" ), ():void => {
 			});
 
 			it( hasSignature(
-				"Obtains a `Carbon.Apps.AppContext` object of the specified Pointer object, if it exists within the context of the Apps instance.", [
+				"Obtains a `Carbon.App.Context` object of the specified Pointer object, if it exists within the context of the Apps instance.", [
 					{ name: "pointer", type: "Carbon.Pointer.Class" }
 				],
-				{ type: "Promise<Carbon.Apps.AppContext>"}
+				{ type: "Promise<Carbon.App.Context>"}
 			), ( done:{ ():void, fail:() => void } ):void => {
 				expect( apps.getContext ).toBeDefined();
 				expect( Utils.isFunction( apps.getContext ) ).toBe( true );
@@ -210,8 +208,8 @@ describe( module( "Carbon/Apps" ), ():void => {
 		it( hasMethod(
 			INSTANCE,
 			"getAllContexts",
-			"Obtains all the `Carbon.Apps.AppContext` objects of every app where the context of the Apps instance can reach.",
-			{ type: "Promise<Carbon.Apps.AppContext[]>"}
+			"Obtains all the `Carbon.App.Context` objects of every app where the context of the Apps instance can reach.",
+			{ type: "Promise<Carbon.App.Context[]>"}
 		), ( done:{ ():void, fail:() => void } ):void => {
 			expect( apps.getAllContexts ).toBeDefined();
 			expect( Utils.isFunction( apps.getAllContexts ) ).toBe( true );
@@ -322,7 +320,7 @@ describe( module( "Carbon/Apps" ), ():void => {
 			it( hasSignature(
 				"Persists an App Document in the server, generating a unique slug.\n" +
 				"Returns a Pointer for the stored App Document, and the response of the call.", [
-					{ name: "appDocument", type: "Carbon.Apps.App.Class" }
+					{ name: "appDocument", type: "Carbon.App.Class" }
 				],
 				{ type: "Promise<Carbon.Pointer.Class, Carbon.HTTP.Response.Class>" }
 			), ( done ):void => {
@@ -356,7 +354,7 @@ describe( module( "Carbon/Apps" ), ():void => {
 				"Persists an App Document in the server using the slug specified.\n" +
 				"Returns a Pointer for the stored App Document, and the response of the call.", [
 					{ name: "slug", type: "string" },
-					{ name: "appDocument", type: "Carbon.Apps.App.Class" }
+					{ name: "appDocument", type: "Carbon.App.Class" }
 				],
 				{ type: "Promise<Carbon.Pointer.Class, Carbon.HTTP.Response.Class>" }
 			), ( done:() => void ):void => {

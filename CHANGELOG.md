@@ -1,3 +1,12 @@
+# 0.23.1 (April 7, 2016)
+- Added API documentation in `doc/README.md`
+
+# 0.23.0 (April 7, 2016)
+- Added `RDFRepresentation` module
+
+# 0.22.0 (March 31, 2016)
+- Added `PersistedApp.Class` interface
+
 # 0.21.2 (March 31, 2016)
 - Fixed incorrect export in App module
 

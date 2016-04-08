@@ -9,9 +9,10 @@ import {
 } from "./test/JasmineExtender";
 import * as Utils from "./Utils";
 import * as Pointer from "./Pointer";
-import * as Document from "./Document";
+import * as PersistedDocument from "./PersistedDocument";
 import * as App from "./App";
 import * as PersistedApp from "./PersistedApp";
+import Documents from "./Documents";
 
 describe( module( "Carbon/PersistedApp" ), ():void => {
 
@@ -64,14 +65,20 @@ describe( module( "Carbon/PersistedApp" ), ():void => {
 			expect( PersistedApp.Factory.is( { name: "App name" } ) ).toBe( false );
 			expect( PersistedApp.Factory.is( { name: "App name", rootContainer: {} } ) ).toBe( false );
 
-			let object:any = Document.Factory.create();
-			expect( PersistedApp.Factory.is( object ) ).toBe( false );
+			let app:App.Class;
+			let document:PersistedDocument.Class;
 
 			object = App.Factory.create( "The App name", "The App description" );
 			expect( PersistedApp.Factory.is( object ) ).toBe( false );
 
-			object.rootContainer = {};
-			expect( PersistedApp.Factory.is( object ) ).toBe( true );
+			( <PersistedApp.Class> app ).rootContainer = <any> {};
+			expect( PersistedApp.Factory.is( app ) ).toBe( false );
+
+			document = PersistedDocument.Factory.create( "persistedApp", new Documents() );
+			expect( PersistedApp.Factory.is( document ) ).toBe( false );
+
+			document = PersistedDocument.Factory.createFrom( app, "persistedApp", new Documents() );
+			expect( PersistedApp.Factory.is( document ) ).toBe( true );
 		});
 
 	});

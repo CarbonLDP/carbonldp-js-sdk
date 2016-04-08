@@ -12,6 +12,7 @@ import * as RDF from "./RDF";
 import * as Utils from "./Utils";
 import * as ObjectSchema from "./ObjectSchema";
 import * as Agent from "./Agent";
+import * as RDFRepresentation from "./RDFRepresentation";
 
 export class Class implements Context {
 	auth:Auth.Class;
@@ -149,6 +150,7 @@ export class Class implements Context {
 		this.extendObjectSchema( LDP.Container.RDF_CLASS, LDP.Container.SCHEMA );
 		this.extendObjectSchema( LDP.BasicContainer.RDF_CLASS, LDP.Container.SCHEMA );
 
+		this.extendObjectSchema( RDFRepresentation.RDF_CLASS, RDFRepresentation.SCHEMA );
 		this.extendObjectSchema( APIDescription.RDF_CLASS, APIDescription.SCHEMA );
 
 		// TODO Fix error of cycle reference because the App module dependency of AbstractClass witch has a dependency with SDKContext. For now add manual data

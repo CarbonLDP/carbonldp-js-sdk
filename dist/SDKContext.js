@@ -7,6 +7,7 @@ var LDP = require("./LDP");
 var NS = require("./NS");
 var ObjectSchema = require("./ObjectSchema");
 var Agent = require("./Agent");
+var RDFRepresentation = require("./RDFRepresentation");
 var Class = (function () {
     function Class() {
         this.settings = new Map();
@@ -128,6 +129,7 @@ var Class = (function () {
         this.extendObjectSchema(LDP.RDFSource.RDF_CLASS, LDP.RDFSource.SCHEMA);
         this.extendObjectSchema(LDP.Container.RDF_CLASS, LDP.Container.SCHEMA);
         this.extendObjectSchema(LDP.BasicContainer.RDF_CLASS, LDP.Container.SCHEMA);
+        this.extendObjectSchema(RDFRepresentation.RDF_CLASS, RDFRepresentation.SCHEMA);
         this.extendObjectSchema(APIDescription.RDF_CLASS, APIDescription.SCHEMA);
         this.extendObjectSchema(NS.CS.Class.Application, {
             "name": {
