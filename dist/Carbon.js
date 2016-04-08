@@ -43,7 +43,7 @@ var Carbon = (function (_super) {
         this.apps = new Apps.Class(this);
     }
     Object.defineProperty(Carbon, "version", {
-        get: function () { return "0.24.0-ALPHA"; },
+        get: function () { return "0.24.0"; },
         enumerable: true,
         configurable: true
     });
