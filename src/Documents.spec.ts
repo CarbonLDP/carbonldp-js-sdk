@@ -419,6 +419,200 @@ describe( module( "Carbon/Documents", "" ), ():void => {
 				done.fail( error );
 			});
 		});
+
+		it( hasSignature(
+			"Create a child document for the respective parent source.", [
+				{ name: "parentURI", type: "string" },
+				{ name: "childObject", type: "Object" },
+				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
+			],
+			{ type:"Promise<[Carbon.Pointer.Class, Carbon.HTTP.Response.Class]>" }
+		), ( done:(() => void) & { fail:( error?:any ) => void } ):void => {
+			let promises:Promise<any>[] = [];
+
+			class MockedContext extends AbstractContext {
+				resolve( uri:string ):string {
+					return uri;
+				}
+			}
+
+			let context:MockedContext = new MockedContext();
+			let documents:Documents = context.documents;
+
+			let objectSchema:ObjectSchema.Class = {
+				"ex": "http://example.com/ns#",
+				"xsd": "http://www.w3.org/2001/XMLSchema#",
+				"string": {
+					"@id": "ex:string",
+					"@type": "xsd:string",
+				},
+				"date": {
+					"@id": "ex:date",
+					"@type": "xsd:dateTime",
+				},
+				"numberList": {
+					"@id": "ex:numberList",
+					"@type": "xsd:integer",
+					"@container": "@list",
+				},
+				"languageMap": {
+					"@id": "ex:languageMap",
+					"@container": "@language",
+				},
+				"pointer": {
+					"@id": "ex:pointer",
+					"@type": "@id",
+				},
+				"pointerList": {
+					"@id": "ex:pointerList",
+					"@type": "@id",
+					"@container": "@list",
+				},
+				"pointerSet": {
+					"@id": "ex:pointerSet",
+					"@type": "@id",
+					"@container": "@set",
+				},
+			};
+
+			let childObject = {
+				string: "The ONE string",
+				date: new Date(),
+				pointerList: [
+					{
+						slug: "Fragment_1",
+						string: "The Named Fragment"
+					},
+					{
+						id: "_:Fragment_2",
+						string: "The Blank Node"
+					}
+				],
+				pointer: {
+					id: "#Fragment_1",
+					string: "The real Named Fragment"
+				}
+			};
+
+			context.extendObjectSchema( objectSchema );
+
+			jasmine.Ajax.stubRequest( "http://example.com/parent-resource/", null, "POST" ).andReturn( {
+				status: 200,
+				responseHeaders: {
+					"Location": "http://example.com/parent-resource/new-resource/",
+				},
+			} );
+
+			promises.push( documents.createChild( "http://example.com/parent-resource/", childObject ).then( ( [ pointer, response ]:[Pointer.Class, HTTP.Response.Class] ):void => {
+				expect( Pointer.Factory.is( pointer ) ).toBe( true );
+
+				// TODO: Finish assertions
+			}) );
+
+			Promise.all( promises ).then( ():void => {
+				done();
+			}, ( error:Error ):void => {
+				error = !! error ? error : new Error( "Unknown error" );
+				done.fail( error );
+			});
+		});
+
+		it( hasSignature(
+			"Create a child document for the respective parent source.", [
+				{ name: "parentURI", type: "string" },
+				{ name: "slug", type: "string" },
+				{ name: "childObject", type: "Object" },
+				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
+			],
+			{ type:"Promise<[Carbon.Pointer.Class, Carbon.HTTP.Response.Class]>" }
+		), ( done:(() => void) & { fail:( error?:any ) => void } ):void => {
+			let promises:Promise<any>[] = [];
+
+			class MockedContext extends AbstractContext {
+				resolve( uri:string ):string {
+					return uri;
+				}
+			}
+
+			let context:MockedContext = new MockedContext();
+			let documents:Documents = context.documents;
+
+			let objectSchema:ObjectSchema.Class = {
+				"ex": "http://example.com/ns#",
+				"xsd": "http://www.w3.org/2001/XMLSchema#",
+				"string": {
+					"@id": "ex:string",
+					"@type": "xsd:string",
+				},
+				"date": {
+					"@id": "ex:date",
+					"@type": "xsd:dateTime",
+				},
+				"numberList": {
+					"@id": "ex:numberList",
+					"@type": "xsd:integer",
+					"@container": "@list",
+				},
+				"languageMap": {
+					"@id": "ex:languageMap",
+					"@container": "@language",
+				},
+				"pointer": {
+					"@id": "ex:pointer",
+					"@type": "@id",
+				},
+				"pointerList": {
+					"@id": "ex:pointerList",
+					"@type": "@id",
+					"@container": "@list",
+				},
+				"pointerSet": {
+					"@id": "ex:pointerSet",
+					"@type": "@id",
+					"@container": "@set",
+				},
+			};
+
+			let childObject = {
+				string: "The ONE string",
+				date: new Date(),
+				pointerList: [
+					{
+						slug: "Fragment_1",
+						string: "The Named Fragment"
+					},
+					{
+						id: "_:Fragment_2",
+						string: "The Blank Node"
+					}
+				],
+				pointer: {
+					id: "#Fragment_1",
+					string: "The real Named Fragment"
+				}
+			};
+
+			context.extendObjectSchema( objectSchema );
+
+			jasmine.Ajax.stubRequest( "http://example.com/parent-resource/", null, "POST" ).andReturn( {
+				status: 200,
+				responseHeaders: {
+					"Location": "http://example.com/parent-resource/new-resource/",
+				},
+			} );
+
+			promises.push( documents.createChild( "http://example.com/parent-resource/", "child-document", childObject ).then( ( response:any ):void => {
+				expect( response ).toBeDefined();
+				// TODO: Finish assertions
+			}) );
+
+			Promise.all( promises ).then( ():void => {
+				done();
+			}, ( error:Error ):void => {
+				error = !! error ? error : new Error( "Unknown error" );
+				done.fail( error );
+			});
+		});
 	});
 
 	describe( method(

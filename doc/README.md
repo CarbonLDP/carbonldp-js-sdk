@@ -1818,6 +1818,31 @@ Create a child document for the respective parent source.
 - childDocument 
 - requestOptions 
 
+```typescript 
+createChild( parentURI:string,  childObject:Object,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[Carbon.Pointer.Class, Carbon.HTTP.Response.Class]>
+```
+
+Create a child document for the respective parent source.
+
+*Parameters*
+
+- parentURI 
+- childObject 
+- requestOptions 
+
+```typescript 
+createChild( parentURI:string,  slug:string,  childObject:Object,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[Carbon.Pointer.Class, Carbon.HTTP.Response.Class]>
+```
+
+Create a child document for the respective parent source.
+
+*Parameters*
+
+- parentURI 
+- slug 
+- childObject 
+- requestOptions 
+
 ##### createAccessPoint
 ```typescript 
 createAccessPoint( documentURI:string,  accessPoint:Carbon.AccessPoint.Class,  slug?:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[Carbon.Pointer.Class, Carbon.HTTP.Response.Class]>

@@ -3,6 +3,7 @@ var Errors = require("./Errors");
 var HTTP = require("./HTTP");
 var RDF = require("./RDF");
 var Utils = require("./Utils");
+var Document = require("./Document");
 var JSONLDConverter = require("./JSONLDConverter");
 var PersistedDocument = require("./PersistedDocument");
 var Pointer = require("./Pointer");
@@ -149,6 +150,8 @@ var Documents = (function () {
         var slug = Utils.isString(slugOrChildDocument) ? slugOrChildDocument : null;
         var childDocument = !Utils.isString(slugOrChildDocument) ? slugOrChildDocument : childDocumentOrRequestOptions;
         requestOptions = !Utils.isString(slugOrChildDocument) ? childDocumentOrRequestOptions : requestOptions;
+        if (!Document.Factory.is(childDocument))
+            childDocument = Document.Factory.createFrom(childDocument);
         if (!!this.context)
             parentURI = this.context.resolve(parentURI);
         if (PersistedDocument.Factory.is(childDocument))

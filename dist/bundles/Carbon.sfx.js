@@ -1123,8 +1123,8 @@ $__System.register("15", ["4"], function(exports_1) {
     }
 });
 
-$__System.register("16", ["c", "17", "9", "5", "18", "14", "8", "4", "10", "3", "19"], function(exports_1) {
-    var Errors, HTTP, RDF, Utils, JSONLDConverter, PersistedDocument, Pointer, NS, ObjectSchema, LDP, SPARQL;
+$__System.register("16", ["c", "17", "9", "5", "13", "18", "14", "8", "4", "10", "3", "19"], function(exports_1) {
+    var Errors, HTTP, RDF, Utils, Document, JSONLDConverter, PersistedDocument, Pointer, NS, ObjectSchema, LDP, SPARQL;
     var Documents;
     return {
         setters:[
@@ -1139,6 +1139,9 @@ $__System.register("16", ["c", "17", "9", "5", "18", "14", "8", "4", "10", "3", 
             },
             function (Utils_1) {
                 Utils = Utils_1;
+            },
+            function (Document_1) {
+                Document = Document_1;
             },
             function (JSONLDConverter_1) {
                 JSONLDConverter = JSONLDConverter_1;
@@ -1301,6 +1304,8 @@ $__System.register("16", ["c", "17", "9", "5", "18", "14", "8", "4", "10", "3", 
                     var slug = Utils.isString(slugOrChildDocument) ? slugOrChildDocument : null;
                     var childDocument = !Utils.isString(slugOrChildDocument) ? slugOrChildDocument : childDocumentOrRequestOptions;
                     requestOptions = !Utils.isString(slugOrChildDocument) ? childDocumentOrRequestOptions : requestOptions;
+                    if (!Document.Factory.is(childDocument))
+                        childDocument = Document.Factory.createFrom(childDocument);
                     if (!!this.context)
                         parentURI = this.context.resolve(parentURI);
                     if (PersistedDocument.Factory.is(childDocument))
@@ -3124,6 +3129,45 @@ $__System.register("13", ["c", "21", "18", "23", "10", "8", "9", "22", "5"], fun
         };
         return JSON.stringify(graph);
     }
+    function convertNestedObjects(parent, actual) {
+        var next;
+        var id, slug;
+        var fragment;
+        var keys = Object.keys(actual);
+        for (var _i = 0; _i < keys.length; _i++) {
+            var key = keys[_i];
+            next = actual[key];
+            if (isPlainObject(next)) {
+                id = ("id" in next) ? next.id : "";
+                slug = ("slug" in next) ? next.slug : (RDF.URI.Util.getFragment(id) || "");
+                if (parent.inScope(id)) {
+                    var parentFragment = parent.getFragment(id || slug);
+                    if (!parentFragment) {
+                        id = id || Fragment.Util.generateID();
+                        fragment = slug
+                            ? NamedFragment.Factory.createFrom(next, slug, parent)
+                            : Fragment.Factory.createFrom(next, id, parent);
+                        parent._fragmentsIndex.set(slug || id, fragment);
+                        convertNestedObjects(parent, fragment);
+                    }
+                    else if (parentFragment !== next) {
+                        Object.assign(parentFragment, next);
+                        actual[key] = parentFragment;
+                        convertNestedObjects(parent, parentFragment);
+                    }
+                }
+            }
+            else if (Utils.isArray(next)) {
+                convertNestedObjects(parent, next);
+            }
+        }
+    }
+    function isPlainObject(object) {
+        return Utils.isObject(object)
+            && !Utils.isArray(object)
+            && !Utils.isDate(object)
+            && !Utils.isMap(object);
+    }
     return {
         setters:[
             function (Errors_1) {
@@ -3182,7 +3226,9 @@ $__System.register("13", ["c", "21", "18", "23", "10", "8", "9", "22", "5"], fun
                     var resource = object;
                     if (!Resource.Factory.is(object))
                         resource = Resource.Factory.createFrom(object);
-                    return Factory.decorate(resource);
+                    var document = Factory.decorate(resource);
+                    convertNestedObjects(document, document);
+                    return document;
                 };
                 Factory.decorate = function (object) {
                     if (Factory.hasClassProperties(object))

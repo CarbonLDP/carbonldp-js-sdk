@@ -217,7 +217,10 @@ export class Factory {
 		let resource:Resource.Class = <any> object;
 		if( ! Resource.Factory.is( object ) ) resource = Resource.Factory.createFrom( object );
 
-		return <any> Factory.decorate( resource );
+		let document:T & Class = Factory.decorate<T>( <any> resource );
+		convertNestedObjects( document, document );
+
+		return document;
 	}
 
 	static decorate<T extends Object>( object:T ):T & Class {
@@ -300,6 +303,55 @@ export class Factory {
 
 		return <any> object;
 	}
+}
+
+function convertNestedObjects( parent:Class, actual:any ):void {
+	let next:any;
+	let id:string, slug:string;
+	let fragment:Fragment.Class;
+	let keys:string[] = Object.keys( actual );
+
+	for( let key of keys ) {
+		next = actual[ key ];
+		if ( isPlainObject( next ) ) {
+			id = ( "id" in next ) ?  next.id : "";
+			slug = ( "slug" in next ) ? next.slug : ( RDF.URI.Util.getFragment( id ) || "" );
+
+			if ( parent.inScope( id ) ) {
+				let parentFragment:Fragment.Class = parent.getFragment( id || slug );
+
+				if ( ! parentFragment ) {
+					id = id || Fragment.Util.generateID();
+
+					fragment = slug
+						? NamedFragment.Factory.createFrom( next, slug, parent )
+						: Fragment.Factory.createFrom( next, id, parent );
+
+					parent._fragmentsIndex.set( slug || id, fragment );
+					convertNestedObjects( parent, fragment );
+
+				} else if ( parentFragment !== next ) {
+					Object.assign( parentFragment, next );
+					actual[ key ] = parentFragment;
+
+					convertNestedObjects( parent, parentFragment );
+				}
+
+			}
+
+		} else if ( Utils.isArray( next ) ) {
+			convertNestedObjects( parent, next );
+		}
+
+	}
+
+}
+
+function isPlainObject( object:Object ) {
+	return Utils.isObject( object )
+		&& ! Utils.isArray( object )
+		&& ! Utils.isDate( object )
+		&& ! Utils.isMap( object );
 }
 
 export default Class;

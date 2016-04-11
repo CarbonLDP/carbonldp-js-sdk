@@ -165,7 +165,9 @@ var Factory = (function () {
         var resource = object;
         if (!Resource.Factory.is(object))
             resource = Resource.Factory.createFrom(object);
-        return Factory.decorate(resource);
+        var document = Factory.decorate(resource);
+        convertNestedObjects(document, document);
+        return document;
     };
     Factory.decorate = function (object) {
         if (Factory.hasClassProperties(object))
@@ -249,5 +251,44 @@ var Factory = (function () {
     return Factory;
 }());
 exports.Factory = Factory;
+function convertNestedObjects(parent, actual) {
+    var next;
+    var id, slug;
+    var fragment;
+    var keys = Object.keys(actual);
+    for (var _i = 0, keys_1 = keys; _i < keys_1.length; _i++) {
+        var key = keys_1[_i];
+        next = actual[key];
+        if (isPlainObject(next)) {
+            id = ("id" in next) ? next.id : "";
+            slug = ("slug" in next) ? next.slug : (RDF.URI.Util.getFragment(id) || "");
+            if (parent.inScope(id)) {
+                var parentFragment = parent.getFragment(id || slug);
+                if (!parentFragment) {
+                    id = id || Fragment.Util.generateID();
+                    fragment = slug
+                        ? NamedFragment.Factory.createFrom(next, slug, parent)
+                        : Fragment.Factory.createFrom(next, id, parent);
+                    parent._fragmentsIndex.set(slug || id, fragment);
+                    convertNestedObjects(parent, fragment);
+                }
+                else if (parentFragment !== next) {
+                    Object.assign(parentFragment, next);
+                    actual[key] = parentFragment;
+                    convertNestedObjects(parent, parentFragment);
+                }
+            }
+        }
+        else if (Utils.isArray(next)) {
+            convertNestedObjects(parent, next);
+        }
+    }
+}
+function isPlainObject(object) {
+    return Utils.isObject(object)
+        && !Utils.isArray(object)
+        && !Utils.isDate(object)
+        && !Utils.isMap(object);
+}
 
 //# sourceMappingURL=Document.js.map
