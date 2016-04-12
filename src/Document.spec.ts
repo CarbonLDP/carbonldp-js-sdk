@@ -742,6 +742,73 @@ describe( module( "Carbon/Document" ), ():void => {
 			), ():void => {
 
 				it( hasSignature(
+					"Creates a NamedFragment from the object provided and the slug specified.", [
+						{ name: "slug", type: "string" },
+						{ name: "object", type: "Object" }
+					],
+					{ type: "Carbon.NamedFragment.Class" }
+				), ():void => {
+					expect( document.createFragment ).toBeDefined();
+					expect( Utils.isFunction( document.createFragment ) ).toBe( true );
+
+					interface MyInterface { myProperty?:string }
+
+					let object:MyInterface;
+					let fragment:Fragment.Class & MyInterface;
+
+					object = {};
+					fragment = document.createFragment<MyInterface>( "fragment", object );
+					expect( object ).toBe( fragment );
+					expect( Fragment.Factory.hasClassProperties( fragment ) ).toBe( true );
+					expect( fragment.id ).toBe( "http://example.com/document/#fragment" );
+					expect( fragment.myProperty ).toBeUndefined();
+
+					object = { myProperty: "The property" };
+					fragment = document.createFragment<MyInterface>( "http://example.com/document/#another-fragment", object );
+					expect( Fragment.Factory.hasClassProperties( fragment ) ).toBe( true );
+					expect( fragment.id ).toBe( "http://example.com/document/#another-fragment" );
+					expect( fragment.myProperty ).toBe( "The property" );
+
+					object = { myProperty: "The BlankNode property" };
+					fragment = document.createFragment<MyInterface>( "_:BlankNode", object );
+					expect( Fragment.Factory.hasClassProperties( fragment ) ).toBe( true );
+					expect( fragment.id ).toBe( "_:BlankNode" );
+					expect( fragment.myProperty ).toBe( "The BlankNode property" );
+
+					expect( document.createFragment.bind( document, "http://example.com/another-document/#fragment", {} ) ).toThrowError( Errors.IllegalArgumentError );
+					expect( document.createFragment.bind( document, "fragment", {} ) ).toThrowError( Errors.IDAlreadyInUseError );
+					expect( document.createFragment.bind( document, "_:BlankNode", {} ) ).toThrowError( Errors.IDAlreadyInUseError );
+				});
+
+				it( hasSignature(
+					"Creates a BlankNode from the object provided, sing no slug was specififed.", [
+						{ name: "object", type: "Object" }
+					],
+					{ type: "Carbon.Fragment.Class" }
+				), ():void => {
+					expect( document.createFragment ).toBeDefined();
+					expect( Utils.isFunction( document.createFragment ) ).toBe( true );
+
+					interface MyInterface { myProperty?:string }
+
+					let object:MyInterface;
+					let fragment:Fragment.Class & MyInterface;
+
+					object = {};
+					fragment = document.createFragment<MyInterface>( object );
+					expect( object ).toBe( fragment );
+					expect( Fragment.Factory.hasClassProperties( fragment ) ).toBe( true );
+					expect( URI.Util.isBNodeID( fragment.id ) ).toBe( true );
+					expect( fragment.myProperty ).toBeUndefined();
+
+					object = { myProperty: "The property" };
+					fragment = document.createFragment<MyInterface>( object );
+					expect( Fragment.Factory.hasClassProperties( fragment ) ).toBe( true );
+					expect( URI.Util.isBNodeID( fragment.id ) ).toBe( true );
+					expect( fragment.myProperty ).toBe( "The property" );
+				});
+
+				it( hasSignature(
 					"Creates a Fragment with the slug provided.", [
 						{ name: "slug", type: "string" }
 					],
@@ -754,11 +821,11 @@ describe( module( "Carbon/Document" ), ():void => {
 
 					fragment = document.createFragment( "fragment" );
 					expect( Fragment.Factory.hasClassProperties( fragment ) ).toBe( true );
-					expect( fragment.id ).toBe( "http://example.com/document/#fragment");
+					expect( fragment.id ).toBe( "http://example.com/document/#fragment" );
 
 					fragment = document.createFragment( "http://example.com/document/#another-fragment" );
 					expect( Fragment.Factory.hasClassProperties( fragment ) ).toBe( true );
-					expect( fragment.id ).toBe( "http://example.com/document/#another-fragment");
+					expect( fragment.id ).toBe( "http://example.com/document/#another-fragment" );
 
 					fragment = document.createFragment( "_:BlankNode" );
 					expect( Fragment.Factory.hasClassProperties( fragment ) ).toBe( true );
@@ -810,12 +877,12 @@ describe( module( "Carbon/Document" ), ():void => {
 				fragment = document.createNamedFragment( "fragment" );
 				expect( NamedFragment.Factory.hasClassProperties( fragment ) ).toBe( true );
 				expect( fragment.slug ).toBe( "fragment" );
-				expect( fragment.id ).toBe( "http://example.com/document/#fragment");
+				expect( fragment.id ).toBe( "http://example.com/document/#fragment" );
 
 				fragment = document.createNamedFragment( "http://example.com/document/#another-fragment" );
 				expect( Fragment.Factory.hasClassProperties( fragment ) ).toBe( true );
 				expect( fragment.slug ).toBe( "another-fragment" );
-				expect( fragment.id ).toBe( "http://example.com/document/#another-fragment");
+				expect( fragment.id ).toBe( "http://example.com/document/#another-fragment" );
 
 				expect( document.createNamedFragment.bind( document, "_:BlankNode" ) ).toThrowError( Errors.IllegalArgumentError );
 

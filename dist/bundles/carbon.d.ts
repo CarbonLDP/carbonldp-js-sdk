@@ -1076,8 +1076,11 @@ declare module 'carbonldp/Document' {
 	    getFragment(slug: string): Fragment.Class;
 	    getNamedFragment(slug: string): NamedFragment.Class;
 	    getFragments(): Fragment.Class[];
+	    createFragment<T extends Object>(slug: string, object: T): NamedFragment.Class & T;
+	    createFragment<T extends Object>(object: T): Fragment.Class & T;
 	    createFragment(): Fragment.Class;
 	    createFragment(slug: string): NamedFragment.Class;
+	    createNamedFragment<T extends Object>(slug: string, object: T): NamedFragment.Class & T;
 	    createNamedFragment(slug: string): NamedFragment.Class;
 	    removeFragment(fragment: NamedFragment.Class): void;
 	    removeFragment(fragment: Fragment.Class): void;

@@ -63,7 +63,7 @@
     "dependencies": {},
     "devDependencies": {
       "jsonld": "npm:jsonld@^0.4.2",
-      "typescript": "npm:typescript@^1.8.7"
+      "typescript": "npm:typescript@^1.8.10"
     }
   }
 }

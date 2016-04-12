@@ -71,13 +71,15 @@ function getFragments() {
     var document = this;
     return Utils.A.from(document._fragmentsIndex.values());
 }
-function createFragment(slug) {
-    if (slug === void 0) { slug = null; }
+function createFragment(slugOrObject, object) {
     var document = this;
+    var slug = Utils.isString(slugOrObject) ? slugOrObject : null;
+    object = Utils.isString(slugOrObject) ? object : slugOrObject;
+    object = object || {};
     var id;
     if (slug) {
         if (!RDF.URI.Util.isBNodeID(slug))
-            return document.createNamedFragment(slug);
+            return document.createNamedFragment(slug, object);
         id = slug;
         if (this._fragmentsIndex.has(id))
             throw new Errors.IDAlreadyInUseError("The slug provided is already being used by a fragment.");
@@ -85,11 +87,12 @@ function createFragment(slug) {
     else {
         id = Fragment.Util.generateID();
     }
-    var fragment = Fragment.Factory.create(id, document);
+    var fragment = Fragment.Factory.createFrom(object, id, document);
     document._fragmentsIndex.set(id, fragment);
     return fragment;
 }
-function createNamedFragment(slug) {
+function createNamedFragment(slug, object) {
+    if (object === void 0) { object = {}; }
     var document = this;
     if (RDF.URI.Util.isBNodeID(slug))
         throw new Errors.IllegalArgumentError("Named fragments can't have a slug that starts with '_:'.");
@@ -102,7 +105,7 @@ function createNamedFragment(slug) {
         slug = slug.substring(1);
     if (document._fragmentsIndex.has(slug))
         throw new Errors.IDAlreadyInUseError("The slug provided is already being used by a fragment.");
-    var fragment = NamedFragment.Factory.create(slug, document);
+    var fragment = NamedFragment.Factory.createFrom(object, slug, document);
     document._fragmentsIndex.set(slug, fragment);
     return fragment;
 }
@@ -253,7 +256,7 @@ var Factory = (function () {
 exports.Factory = Factory;
 function convertNestedObjects(parent, actual) {
     var next;
-    var id, slug;
+    var idOrSlug;
     var fragment;
     var keys = Object.keys(actual);
     for (var _i = 0, keys_1 = keys; _i < keys_1.length; _i++) {
@@ -265,23 +268,18 @@ function convertNestedObjects(parent, actual) {
         }
         if (!isPlainObject(next))
             continue;
-        id = ("id" in next) ? next.id : "";
-        slug = ("slug" in next) ? next.slug : (RDF.URI.Util.getFragment(id) || "");
-        if (!parent.inScope(id))
+        idOrSlug = ("id" in next) ? next.id : (("slug" in next) ? next.slug : "");
+        if (!parent.inScope(idOrSlug))
             continue;
-        var parentFragment = parent.getFragment(id || slug);
+        var parentFragment = parent.getFragment(idOrSlug);
         if (!parentFragment) {
-            id = id || Fragment.Util.generateID();
-            fragment = slug
-                ? NamedFragment.Factory.createFrom(next, slug, parent)
-                : Fragment.Factory.createFrom(next, id, parent);
-            parent._fragmentsIndex.set(slug || id, fragment);
+            fragment = parent.createFragment(idOrSlug, next);
             convertNestedObjects(parent, fragment);
         }
         else if (parentFragment !== next) {
             Object.assign(parentFragment, next);
-            actual[key] = parentFragment;
-            convertNestedObjects(parent, parentFragment);
+            fragment = actual[key] = parentFragment;
+            convertNestedObjects(parent, fragment);
         }
     }
 }

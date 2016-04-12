@@ -1616,6 +1616,27 @@ Returns true if the URI provided is in the scope of the document.
 
 ##### createFragment
 ```typescript 
+createFragment( slug:string,  object:Object ):Carbon.NamedFragment.Class
+```
+
+Creates a NamedFragment from the object provided and the slug specified.
+
+*Parameters*
+
+- slug 
+- object 
+
+```typescript 
+createFragment( object:Object ):Carbon.Fragment.Class
+```
+
+Creates a BlankNode from the object provided, sing no slug was specififed.
+
+*Parameters*
+
+- object 
+
+```typescript 
 createFragment( slug:string ):Carbon.Fragment.Class
 ```
 
