@@ -1470,7 +1470,7 @@ $__System.register("16", ["c", "17", "9", "5", "18", "14", "8", "4", "10", "3", 
                             membershipResource = _this.getDocumentResource(membershipResourceDocument, response);
                         }
                         var hasMemberRelation = RDF.Node.Util.getPropertyURI(documentResource, NS.LDP.Predicate.hasMemberRelation);
-                        var memberPointers = RDF.Value.Util.getPropertyPointers(membershipResource, hasMemberRelation, _this);
+                        var memberPointers = RDF.Value.Util.getPropertyPointers(membershipResource, hasMemberRelation, _this) || [];
                         return [memberPointers, response];
                     });
                 };
