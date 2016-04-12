@@ -4504,8 +4504,8 @@ createChild( slug:string,  object:Object ):Promise<[ Carbon.Pointer.Class, Carbo
 
 *Parameters*
 
-- slug 
-- object 
+- slug : The slug name for the children URI.
+- object : The object from where create the child. If it&#x27;s a non &#x60;Carbon.Document.Class&#x60; object, it is transformed into one.
 
 ```typescript 
 createChild( object:Object ):Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>
@@ -4514,7 +4514,21 @@ createChild( object:Object ):Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Respons
 
 *Parameters*
 
-- object 
+- object : The object from where create the child. If it&#x27;s a non &#x60;Carbon.Document.Class&#x60; object, it is transformed into one.
+
+```typescript 
+createChild( slug:string ):Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>
+```
+
+
+*Parameters*
+
+- slug : The slug name for the children URI.
+
+```typescript 
+createChild():Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>
+```
+
 
 ##### upload
 ```typescript 
@@ -4525,8 +4539,8 @@ Upload a File to the server as a child of the Container.
 
 *Parameters*
 
-- slug 
-- blob 
+- slug : The slug name for the file URI.
+- blob : Binary data to store in the server.
 
 ```typescript 
 upload( blob:Blob ):Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>
@@ -4536,7 +4550,7 @@ Upload a File to the server as a child of the Container.
 
 *Parameters*
 
-- blob 
+- blob : Binary data to store in the server.
 
 
 ## <a name="Carbon-LDP-RDFSource" />Module Carbon/LDP/RDFSource
