@@ -1,3 +1,8 @@
+# 0.25.1 (April 12, 2016)
+- `Document.Factory.createFrom()` now accepts a object with nested object properties and structures it as a Document with fragments
+- `context.documents.createChild()` same ^
+- `persistedDocument.createChild()` same ^
+
 # 0.25.0 (April 8, 2016)
 - Added `context.documents.exists()` method, which lets you verify if a determined resource exists in the server
 

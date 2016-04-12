@@ -3137,28 +3137,29 @@ $__System.register("13", ["c", "21", "18", "23", "10", "8", "9", "22", "5"], fun
         for (var _i = 0; _i < keys.length; _i++) {
             var key = keys[_i];
             next = actual[key];
-            if (isPlainObject(next)) {
-                id = ("id" in next) ? next.id : "";
-                slug = ("slug" in next) ? next.slug : (RDF.URI.Util.getFragment(id) || "");
-                if (parent.inScope(id)) {
-                    var parentFragment = parent.getFragment(id || slug);
-                    if (!parentFragment) {
-                        id = id || Fragment.Util.generateID();
-                        fragment = slug
-                            ? NamedFragment.Factory.createFrom(next, slug, parent)
-                            : Fragment.Factory.createFrom(next, id, parent);
-                        parent._fragmentsIndex.set(slug || id, fragment);
-                        convertNestedObjects(parent, fragment);
-                    }
-                    else if (parentFragment !== next) {
-                        Object.assign(parentFragment, next);
-                        actual[key] = parentFragment;
-                        convertNestedObjects(parent, parentFragment);
-                    }
-                }
-            }
-            else if (Utils.isArray(next)) {
+            if (Utils.isArray(next)) {
                 convertNestedObjects(parent, next);
+                continue;
+            }
+            if (!isPlainObject(next))
+                continue;
+            id = ("id" in next) ? next.id : "";
+            slug = ("slug" in next) ? next.slug : (RDF.URI.Util.getFragment(id) || "");
+            if (!parent.inScope(id))
+                continue;
+            var parentFragment = parent.getFragment(id || slug);
+            if (!parentFragment) {
+                id = id || Fragment.Util.generateID();
+                fragment = slug
+                    ? NamedFragment.Factory.createFrom(next, slug, parent)
+                    : Fragment.Factory.createFrom(next, id, parent);
+                parent._fragmentsIndex.set(slug || id, fragment);
+                convertNestedObjects(parent, fragment);
+            }
+            else if (parentFragment !== next) {
+                Object.assign(parentFragment, next);
+                actual[key] = parentFragment;
+                convertNestedObjects(parent, parentFragment);
             }
         }
     }
@@ -13481,7 +13482,7 @@ $__System.register("6c", ["e", "2", "12", "11", "a", "6", "29", "13", "16", "c",
                     this.apps = new Apps.Class(this);
                 }
                 Object.defineProperty(Carbon, "version", {
-                    get: function () { return "0.25.0"; },
+                    get: function () { return "0.25.1"; },
                     enumerable: true,
                     configurable: true
                 });
