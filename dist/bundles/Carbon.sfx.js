@@ -1909,6 +1909,10 @@ $__System.register("1e", ["5"], function(exports_1) {
             return this._documents.upload(this.id, blob);
         }
     }
+    function getMembers(includeNonReadable) {
+        if (includeNonReadable === void 0) { includeNonReadable = true; }
+        return this._documents.getMembers(this.id, includeNonReadable);
+    }
     return {
         setters:[
             function (Utils_1) {
@@ -1920,7 +1924,8 @@ $__System.register("1e", ["5"], function(exports_1) {
                 }
                 Factory.hasClassProperties = function (document) {
                     return Utils.hasFunction(document, "createChild")
-                        && Utils.hasFunction(document, "upload");
+                        && Utils.hasFunction(document, "upload")
+                        && Utils.hasFunction(document, "getMembers");
                 };
                 Factory.decorate = function (persistedDocument) {
                     if (Factory.hasClassProperties(persistedDocument))
@@ -1937,6 +1942,12 @@ $__System.register("1e", ["5"], function(exports_1) {
                             enumerable: false,
                             configurable: true,
                             value: upload,
+                        },
+                        "getMembers": {
+                            writable: false,
+                            enumerable: false,
+                            configurable: true,
+                            value: getMembers,
                         },
                     });
                     return persistedDocument;
