@@ -21,7 +21,7 @@ export interface Class extends Fragment.Class {
 
 export class Factory {
 	static hasClassProperties( object:Object ):boolean {
-		return Utils.hasPropertyDefined( object, "addMemberAction" );
+		return Utils.hasPropertyDefined( object, "targetMember" );
 	}
 
 	static createDocument( targetMember:Pointer.Class ):Document.Class {

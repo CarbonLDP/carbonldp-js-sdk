@@ -1362,6 +1362,8 @@ declare module 'carbonldp/LDP/PersistedContainer' {
 	import * as PersistedDocument from 'carbonldp/PersistedDocument';
 	import * as Pointer from 'carbonldp/Pointer';
 	export interface Class extends PersistedDocument.Class {
+	    addMember(member: Pointer.Class): Promise<HTTP.Response.Class>;
+	    addMember(memberURI: string): Promise<HTTP.Response.Class>;
 	    createChild(slug: string, object: Object): Promise<[Pointer.Class, HTTP.Response.Class]>;
 	    createChild(slug: string): Promise<[Pointer.Class, HTTP.Response.Class]>;
 	    createChild(object: Object): Promise<[Pointer.Class, HTTP.Response.Class]>;
@@ -1373,6 +1375,7 @@ declare module 'carbonldp/LDP/PersistedContainer' {
 	    static hasClassProperties(document: Document.Class): boolean;
 	    static decorate<T extends PersistedDocument.Class>(persistedDocument: T): T & Class;
 	}
+	export default Class;
 
 }
 declare module 'carbonldp/LDP' {

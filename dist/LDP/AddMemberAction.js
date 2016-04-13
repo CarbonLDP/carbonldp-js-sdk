@@ -14,7 +14,7 @@ var Factory = (function () {
     function Factory() {
     }
     Factory.hasClassProperties = function (object) {
-        return Utils.hasPropertyDefined(object, "addMemberAction");
+        return Utils.hasPropertyDefined(object, "targetMember");
     };
     Factory.createDocument = function (targetMember) {
         var document = Document.Factory.create();

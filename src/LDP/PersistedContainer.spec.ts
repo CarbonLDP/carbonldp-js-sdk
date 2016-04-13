@@ -153,6 +153,46 @@ describe( module( "Carbon/LDP/PersistedContainer" ), ():void => {
 
 			describe( method(
 				INSTANCE,
+				"addMember"
+			), ():void => {
+
+				it( hasSignature(
+					"Add the specified resource Pointer as a member of the container.", [
+						{ name: "member", type: "Carbon.Pointer.Class", description: "Pointer object that references the resource to add as a member." },
+					],
+					{ type: "Promise<Carbon.HTTP.Response.Class>" }
+				), ():void => {
+					expect( container.addMember ).toBeDefined();
+					expect( Utils.isFunction( container.addMember ) ).toBeDefined();
+
+					let spy = spyOn( container._documents, "addMember" );
+
+					let pointer:Pointer.Class = context.documents.getPointer( "new-member/" );
+					container.addMember( pointer );
+
+					expect( spy ).toHaveBeenCalledWith( "http://example.com/resource/", pointer );
+				});
+
+				it( hasSignature(
+					"Add the specified resource URI as a member of the container.", [
+						{ name: "memberURI", type: "string", description: "URI of the resource to add as a member." },
+					],
+					{ type: "Promise<Carbon.HTTP.Response.Class>" }
+				), ():void => {
+					expect( container.addMember ).toBeDefined();
+					expect( Utils.isFunction( container.addMember ) ).toBeDefined();
+
+					let spy = spyOn( container._documents, "addMember" );
+
+					container.addMember( "new-member/" );
+
+					expect( spy ).toHaveBeenCalledWith( "http://example.com/resource/", "new-member/" );
+				});
+
+			});
+
+			describe( method(
+				INSTANCE,
 				"createChild"
 			), ():void => {
 

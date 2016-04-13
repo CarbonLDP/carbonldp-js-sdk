@@ -964,7 +964,7 @@ describe( module( "Carbon/Documents", "" ), ():void => {
 		});
 
 		it( hasSignature(
-			"Add the specified resource Pointer as a member of the document container specified.", [
+			"Add the specified resource URI as a member of the document container specified.", [
 				{ name: "documentURI", type: "string", description: "URI of the document container where to add the member." },
 				{ name: "memberURI", type: "string", description: "URI of the resource to add as a member." },
 				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options" }

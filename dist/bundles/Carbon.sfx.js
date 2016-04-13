@@ -1734,7 +1734,7 @@ $__System.register("1a", ["13", "4", "5"], function(exports_1) {
                 function Factory() {
                 }
                 Factory.hasClassProperties = function (object) {
-                    return Utils.hasPropertyDefined(object, "addMemberAction");
+                    return Utils.hasPropertyDefined(object, "targetMember");
                 };
                 Factory.createDocument = function (targetMember) {
                     var document = Document.Factory.create();
@@ -1950,6 +1950,10 @@ $__System.register("1e", ["4", "5"], function(exports_1) {
 $__System.register("1f", ["5"], function(exports_1) {
     var Utils;
     var Factory;
+    function addMember(memberOrUri) {
+        var that = this;
+        return that._documents.addMember(that.id, memberOrUri);
+    }
     function createChild(slugOrObject, object) {
         var slug = Utils.isString(slugOrObject) ? slugOrObject : null;
         object = Utils.isString(slugOrObject) ? object : slugOrObject;
@@ -1989,6 +1993,12 @@ $__System.register("1f", ["5"], function(exports_1) {
                     if (Factory.hasClassProperties(persistedDocument))
                         return persistedDocument;
                     Object.defineProperties(persistedDocument, {
+                        "addMember": {
+                            writable: false,
+                            enumerable: false,
+                            configurable: true,
+                            value: addMember,
+                        },
                         "createChild": {
                             writable: false,
                             enumerable: false,

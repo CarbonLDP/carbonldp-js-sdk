@@ -5,6 +5,9 @@ import * as Pointer from "./../Pointer";
 import * as Utils from "./../Utils";
 
 export interface Class extends PersistedDocument.Class {
+	addMember( member:Pointer.Class ): Promise<HTTP.Response.Class>;
+	addMember( memberURI:string ): Promise<HTTP.Response.Class>;
+
 	createChild( slug:string, object:Object ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
 	createChild( slug:string ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
 	createChild( object:Object ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
@@ -12,6 +15,13 @@ export interface Class extends PersistedDocument.Class {
 
 	upload( slug:string, blob:Blob ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
 	upload( blob:Blob ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
+}
+
+function addMember( member:Pointer.Class ): Promise<HTTP.Response.Class>;
+function addMember( memberURI:string ): Promise<HTTP.Response.Class>;
+function addMember( memberOrUri:any ): Promise<HTTP.Response.Class> {
+	let that:PersistedDocument.Class = <PersistedDocument.Class> this;
+	return that._documents.addMember( that.id, memberOrUri );
 }
 
 function createChild( slug:string, object:Object ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
@@ -53,6 +63,12 @@ export class Factory {
 		if( Factory.hasClassProperties( persistedDocument ) ) return <any> persistedDocument;
 
 		Object.defineProperties( persistedDocument, {
+			"addMember": {
+				writable: false,
+				enumerable: false,
+				configurable: true,
+				value: addMember,
+			},
 			"createChild": {
 				writable: false,
 				enumerable: false,
@@ -70,3 +86,5 @@ export class Factory {
 		return <any> persistedDocument;
 	}
 }
+
+export default Class;

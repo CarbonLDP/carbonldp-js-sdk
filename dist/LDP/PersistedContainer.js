@@ -1,5 +1,9 @@
 "use strict";
 var Utils = require("./../Utils");
+function addMember(memberOrUri) {
+    var that = this;
+    return that._documents.addMember(that.id, memberOrUri);
+}
 function createChild(slugOrObject, object) {
     var slug = Utils.isString(slugOrObject) ? slugOrObject : null;
     object = Utils.isString(slugOrObject) ? object : slugOrObject;
@@ -33,6 +37,12 @@ var Factory = (function () {
         if (Factory.hasClassProperties(persistedDocument))
             return persistedDocument;
         Object.defineProperties(persistedDocument, {
+            "addMember": {
+                writable: false,
+                enumerable: false,
+                configurable: true,
+                value: addMember,
+            },
             "createChild": {
                 writable: false,
                 enumerable: false,
