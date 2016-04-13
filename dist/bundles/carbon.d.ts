@@ -1370,6 +1370,7 @@ declare module 'carbonldp/LDP/PersistedContainer' {
 	    createChild(): Promise<[Pointer.Class, HTTP.Response.Class]>;
 	    upload(slug: string, blob: Blob): Promise<[Pointer.Class, HTTP.Response.Class]>;
 	    upload(blob: Blob): Promise<[Pointer.Class, HTTP.Response.Class]>;
+	    getMembers(includeNonReadable?: boolean): Promise<[Pointer.Class[], HTTP.Response.Class]>;
 	}
 	export class Factory {
 	    static hasClassProperties(document: Document.Class): boolean;
