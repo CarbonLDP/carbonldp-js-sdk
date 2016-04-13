@@ -112,7 +112,7 @@ function createFragment( slug:string ):NamedFragment.Class;
 function createFragment():Fragment.Class;
 function createFragment( slugOrObject?:any, object?:any ):any {
 	let document:Class = <Class> this;
-	let slug = Utils.isString( slugOrObject ) ? slugOrObject : null;
+	let slug:string = Utils.isString( slugOrObject ) ? slugOrObject : null;
 	object = Utils.isString( slugOrObject ) ? object : slugOrObject;
 	object = object || {};
 
@@ -352,7 +352,7 @@ function convertNestedObjects( parent:Class, actual:any ):void {
 
 }
 
-function isPlainObject( object:Object ) {
+function isPlainObject( object:Object ):boolean {
 	return Utils.isObject( object )
 		&& ! Utils.isArray( object )
 		&& ! Utils.isDate( object )

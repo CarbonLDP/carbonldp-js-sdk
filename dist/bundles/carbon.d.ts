@@ -676,6 +676,7 @@ declare module 'carbonldp/NS/C' {
 	    static PreferMembershipTriples: string;
 	    static VolatileResource: string;
 	    static RDFRepresentation: string;
+	    static AddMemberAction: string;
 	}
 	export class Predicate {
 	    static accessPoint: string;
@@ -685,6 +686,7 @@ declare module 'carbonldp/NS/C' {
 	    static version: string;
 	    static mediaType: string;
 	    static size: string;
+	    static targetMember: string;
 	}
 
 }
@@ -1100,6 +1102,23 @@ declare module 'carbonldp/Document' {
 	export default Class;
 
 }
+declare module 'carbonldp/LDP/AddMemberAction' {
+	import * as Document from 'carbonldp/Document';
+	import * as Fragment from 'carbonldp/Fragment';
+	import * as ObjectSchema from 'carbonldp/ObjectSchema';
+	import * as Pointer from 'carbonldp/Pointer';
+	export const RDF_CLASS: string;
+	export const SCHEMA: ObjectSchema.Class;
+	export interface Class extends Fragment.Class {
+	    targetMember: Pointer.Class;
+	}
+	export class Factory {
+	    static hasClassProperties(object: Object): boolean;
+	    static createDocument(targetMember: Pointer.Class): Document.Class;
+	}
+	export default Class;
+
+}
 declare module 'carbonldp/LDP/RDFSource' {
 	import * as Document from 'carbonldp/Document';
 	import * as ObjectSchema from 'carbonldp/ObjectSchema';
@@ -1357,13 +1376,14 @@ declare module 'carbonldp/LDP/PersistedContainer' {
 
 }
 declare module 'carbonldp/LDP' {
+	import * as AddMemberAction from 'carbonldp/LDP/AddMemberAction';
 	import * as BasicContainer from 'carbonldp/LDP/BasicContainer';
 	import * as Container from 'carbonldp/LDP/Container';
 	import * as DirectContainer from 'carbonldp/LDP/DirectContainer';
 	import * as IndirectContainer from 'carbonldp/LDP/IndirectContainer';
 	import * as PersistedContainer from 'carbonldp/LDP/PersistedContainer';
 	import * as RDFSource from 'carbonldp/LDP/RDFSource';
-	export { BasicContainer, Container, DirectContainer, IndirectContainer, PersistedContainer, RDFSource };
+	export { AddMemberAction, BasicContainer, Container, DirectContainer, IndirectContainer, PersistedContainer, RDFSource };
 
 }
 declare module 'carbonldp/AccessPoint' {
@@ -1414,6 +1434,8 @@ declare module 'carbonldp/Documents' {
 	    getMembers(uri: string, includeNonReadable: boolean): Promise<[Pointer.Class[], HTTP.Response.Class]>;
 	    getMembers(uri: string, requestOptions: HTTP.Request.Options): Promise<[Pointer.Class[], HTTP.Response.Class]>;
 	    getMembers(uri: string): Promise<[Pointer.Class[], HTTP.Response.Class]>;
+	    addMember(documentURI: string, member: Pointer.Class, requestOptions?: HTTP.Request.Options): Promise<HTTP.Response.Class>;
+	    addMember(documentURI: string, memberURI: string, requestOptions?: HTTP.Request.Options): Promise<HTTP.Response.Class>;
 	    save(persistedDocument: PersistedDocument.Class, requestOptions?: HTTP.Request.Options): Promise<[PersistedDocument.Class, HTTP.Response.Class]>;
 	    delete(persistedDocument: PersistedDocument.Class, requestOptions?: HTTP.Request.Options): Promise<HTTP.Response.Class>;
 	    getSchemaFor(object: Object): ObjectSchema.DigestedObjectSchema;

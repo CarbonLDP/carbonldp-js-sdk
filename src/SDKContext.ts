@@ -1,3 +1,4 @@
+import * as AddMemberAction from "./LDP/AddMemberAction";
 import * as App from "./App";
 import * as APIDescription from "./APIDescription";
 import * as Auth from "./Auth";
@@ -173,6 +174,7 @@ export class Class implements Context {
 			},
 		});
 
+		this.extendObjectSchema( AddMemberAction.RDF_CLASS, AddMemberAction.SCHEMA );
 		this.extendObjectSchema( Auth.Token.RDF_CLASS, Auth.Token.CONTEXT );
 
 		this.extendObjectSchema( Agent.RDF_CLASS, Agent.SCHEMA );

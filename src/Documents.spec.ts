@@ -913,6 +913,89 @@ describe( module( "Carbon/Documents", "" ), ():void => {
 		});
 	});
 
+	describe( method(
+		INSTANCE,
+		"addMember"
+	), ():void => {
+
+		class MockedContext extends AbstractContext {
+			resolve( uri:string ):string {
+				return "http://example.com/" + uri;
+			}
+		}
+		let context:MockedContext;
+		let documents:Documents;
+
+		beforeEach( ():void => {
+			context = new MockedContext();
+			documents = context.documents;
+		});
+
+		it( hasSignature(
+			"Add the specified resource Pointer as a member of the document container specified.", [
+				{ name: "documentURI", type: "string", description: "URI of the document container where to add the member." },
+				{ name: "member", type: "Carbon.Pointer.Class", description: "Pointer object that references the resource to add as a member." },
+				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options" }
+			],
+			{ type: "Promise<Carbon.HTTP.Response>"}
+		), ( done:{ ():void, fail:() => void } ):void => {
+			expect( documents.addMember ).toBeDefined();
+			expect( Utils.isFunction( documents.addMember ) ).toBe( true );
+
+			jasmine.Ajax.stubRequest( "http://example.com/resource/", null, "PUT" ).andReturn( {
+				status: 200
+			});
+
+			let spies = {
+				success: ( response:any ):void => {
+					expect( response ).toBeDefined();
+					expect( response instanceof HTTP.Response.Class ).toBe( true );
+				}
+			};
+			let spySuccess = spyOn( spies, "success" ).and.callThrough();
+
+			let pointer:Pointer.Class = documents.getPointer( "member/" );
+			let promise:Promise<any> = documents.addMember( "resource/", pointer ).then( spies.success );
+
+			Promise.all( [ promise ] ).then( ():void => {
+				expect( spySuccess ).toHaveBeenCalled();
+				done();
+			}, done.fail );
+		});
+
+		it( hasSignature(
+			"Add the specified resource Pointer as a member of the document container specified.", [
+				{ name: "documentURI", type: "string", description: "URI of the document container where to add the member." },
+				{ name: "memberURI", type: "string", description: "URI of the resource to add as a member." },
+				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options" }
+			],
+			{ type: "Promise<Carbon.HTTP.Response>"}
+		), ( done:{ ():void, fail:() => void } ):void => {
+			expect( documents.addMember ).toBeDefined();
+			expect( Utils.isFunction( documents.addMember ) ).toBe( true );
+
+			jasmine.Ajax.stubRequest( "http://example.com/resource/", null, "PUT" ).andReturn( {
+				status: 200
+			});
+
+			let spies = {
+				success: ( response:any ):void => {
+					expect( response ).toBeDefined();
+					expect( response instanceof HTTP.Response.Class ).toBe( true );
+				}
+			};
+			let spySuccess = spyOn( spies, "success" ).and.callThrough();
+
+			let promise:Promise<any> = documents.addMember( "resource/", "member/" ).then( spies.success );
+
+			Promise.all( [ promise ] ).then( ():void => {
+				expect( spySuccess ).toHaveBeenCalled();
+				done();
+			}, done.fail );
+		});
+
+	});
+
 	it( hasMethod(
 		INSTANCE,
 		"delete",

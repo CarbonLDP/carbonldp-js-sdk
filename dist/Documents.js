@@ -241,6 +241,8 @@ var Documents = (function () {
         requestOptions = !Utils.isString(slugOrBlob) ? blobOrRequestOptions : requestOptions;
         if (!(blob instanceof Blob))
             return Promise.reject(new Errors.IllegalArgumentError("The file is not a valid Blob object."));
+        if (!!this.context)
+            parentURI = this.context.resolve(parentURI);
         if (this.context && this.context.auth.isAuthenticated())
             this.context.auth.addAuthentication(requestOptions);
         HTTP.Request.Util.setContentTypeHeader(blob.type, requestOptions);
@@ -324,6 +326,20 @@ var Documents = (function () {
             var memberPointers = RDF.Value.Util.getPropertyPointers(membershipResource, hasMemberRelation, _this);
             return [memberPointers, response];
         });
+    };
+    Documents.prototype.addMember = function (documentURI, memberORUri, requestOptions) {
+        if (requestOptions === void 0) { requestOptions = {}; }
+        var memberPointer = Utils.isString(memberORUri) ? this.getPointer(memberORUri) : memberORUri;
+        if (!!this.context)
+            documentURI = this.context.resolve(documentURI);
+        var document = LDP.AddMemberAction.Factory.createDocument(memberPointer);
+        if (this.context && this.context.auth.isAuthenticated())
+            this.context.auth.addAuthentication(requestOptions);
+        HTTP.Request.Util.setAcceptHeader("application/ld+json", requestOptions);
+        HTTP.Request.Util.setContentTypeHeader("application/ld+json", requestOptions);
+        HTTP.Request.Util.setPreferredInteractionModel(NS.LDP.Class.Container, requestOptions);
+        var body = document.toJSON(this, this.jsonldConverter);
+        return HTTP.Request.Service.put(documentURI, body, requestOptions);
     };
     Documents.prototype.save = function (persistedDocument, requestOptions) {
         if (requestOptions === void 0) { requestOptions = {}; }

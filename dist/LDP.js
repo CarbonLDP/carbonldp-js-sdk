@@ -1,4 +1,6 @@
 "use strict";
+var AddMemberAction = require("./LDP/AddMemberAction");
+exports.AddMemberAction = AddMemberAction;
 var BasicContainer = require("./LDP/BasicContainer");
 exports.BasicContainer = BasicContainer;
 var Container = require("./LDP/Container");

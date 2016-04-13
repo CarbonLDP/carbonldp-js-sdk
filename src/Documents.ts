@@ -15,6 +15,7 @@ import * as NS from "./NS";
 import * as ObjectSchema from "./ObjectSchema";
 import * as LDP from "./LDP";
 import * as SPARQL from "./SPARQL";
+import * as Fragment from "./Fragment";
 
 class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Resolver {
 	_jsonldConverter:JSONLDConverter.Class;
@@ -279,6 +280,7 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 
 		if( ! ( blob instanceof Blob ) ) return Promise.reject<any>( new Errors.IllegalArgumentError( "The file is not a valid Blob object." ) );
 
+		if( !! this.context ) parentURI = this.context.resolve( parentURI );
 		if ( this.context && this.context.auth.isAuthenticated() ) this.context.auth.addAuthentication( requestOptions );
 
 		HTTP.Request.Util.setContentTypeHeader( blob.type, requestOptions );
@@ -368,6 +370,25 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 
 			return [ memberPointers, response ];
 		});
+	}
+
+	addMember( documentURI:string, member:Pointer.Class, requestOptions?:HTTP.Request.Options ): Promise<HTTP.Response.Class>;
+	addMember( documentURI:string, memberURI:string, requestOptions?:HTTP.Request.Options ): Promise<HTTP.Response.Class>;
+	addMember( documentURI:string, memberORUri:any, requestOptions:HTTP.Request.Options = {} ): Promise<HTTP.Response.Class> {
+		let memberPointer:Pointer.Class = Utils.isString( memberORUri ) ? this.getPointer( memberORUri ) : memberORUri;
+
+		if( !! this.context ) documentURI = this.context.resolve( documentURI );
+
+		let document:Document.Class = LDP.AddMemberAction.Factory.createDocument( memberPointer );
+
+		if ( this.context && this.context.auth.isAuthenticated() ) this.context.auth.addAuthentication( requestOptions );
+		HTTP.Request.Util.setAcceptHeader( "application/ld+json", requestOptions );
+		HTTP.Request.Util.setContentTypeHeader( "application/ld+json", requestOptions );
+		HTTP.Request.Util.setPreferredInteractionModel( NS.LDP.Class.Container, requestOptions );
+
+		let body:string = document.toJSON( this, this.jsonldConverter );
+
+		return HTTP.Request.Service.put( documentURI, body, requestOptions );
 	}
 
 	save( persistedDocument:PersistedDocument.Class, requestOptions:HTTP.Request.Options = {} ):Promise<[ PersistedDocument.Class, HTTP.Response.Class ]> {

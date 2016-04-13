@@ -9,6 +9,7 @@ export declare class Class {
     static PreferMembershipTriples: string;
     static VolatileResource: string;
     static RDFRepresentation: string;
+    static AddMemberAction: string;
 }
 export declare class Predicate {
     static accessPoint: string;
@@ -18,4 +19,5 @@ export declare class Predicate {
     static version: string;
     static mediaType: string;
     static size: string;
+    static targetMember: string;
 }

@@ -9,6 +9,7 @@ import {
 } from "./test/JasmineExtender";
 import * as Utils from "./Utils";
 
+import * as AddMemberAction from "./LDP/AddMemberAction";
 import * as BasicContainer from "./LDP/BasicContainer";
 import * as Container from "./LDP/Container";
 import * as DirectContainer from "./LDP/DirectContainer";
@@ -23,6 +24,15 @@ describe( module( "Carbon/LDP" ), ():void => {
 	it( isDefined(), ():void => {
 		expect( LDP ).toBeDefined();
 		expect( Utils.isObject( LDP ) ).toBe( true );
+	});
+
+	it( reexports(
+		STATIC,
+		"AddMemberAction",
+		"Carbon/LDP/AddMemberAction"
+	), ():void => {
+		expect( LDP.AddMemberAction ).toBeDefined();
+		expect( LDP.AddMemberAction ).toBe( AddMemberAction );
 	});
 
 	it( reexports(

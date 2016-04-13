@@ -1,7 +1,8 @@
+import * as AddMemberAction from "./LDP/AddMemberAction";
 import * as BasicContainer from "./LDP/BasicContainer";
 import * as Container from "./LDP/Container";
 import * as DirectContainer from "./LDP/DirectContainer";
 import * as IndirectContainer from "./LDP/IndirectContainer";
 import * as PersistedContainer from "./LDP/PersistedContainer";
 import * as RDFSource from "./LDP/RDFSource";
-export { BasicContainer, Container, DirectContainer, IndirectContainer, PersistedContainer, RDFSource };
+export { AddMemberAction, BasicContainer, Container, DirectContainer, IndirectContainer, PersistedContainer, RDFSource };

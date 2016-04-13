@@ -1,4 +1,5 @@
 "use strict";
+var AddMemberAction = require("./LDP/AddMemberAction");
 var APIDescription = require("./APIDescription");
 var Auth = require("./Auth");
 var Documents_1 = require("./Documents");
@@ -148,6 +149,7 @@ var Class = (function () {
                 "@id": NS.CS.Predicate.allowsOrigin,
             },
         });
+        this.extendObjectSchema(AddMemberAction.RDF_CLASS, AddMemberAction.SCHEMA);
         this.extendObjectSchema(Auth.Token.RDF_CLASS, Auth.Token.CONTEXT);
         this.extendObjectSchema(Agent.RDF_CLASS, Agent.SCHEMA);
     };

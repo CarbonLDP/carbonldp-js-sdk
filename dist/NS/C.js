@@ -48,6 +48,11 @@ var Class = (function () {
         enumerable: true,
         configurable: true
     });
+    Object.defineProperty(Class, "AddMemberAction", {
+        get: function () { return exports.namespace + "AddMemberAction"; },
+        enumerable: true,
+        configurable: true
+    });
     return Class;
 }());
 exports.Class = Class;
@@ -86,6 +91,11 @@ var Predicate = (function () {
     });
     Object.defineProperty(Predicate, "size", {
         get: function () { return exports.namespace + "size"; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Predicate, "targetMember", {
+        get: function () { return exports.namespace + "targetMember"; },
         enumerable: true,
         configurable: true
     });

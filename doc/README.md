@@ -1961,6 +1961,31 @@ Retrieves (but doesn't resolve) all the members of the document
 
 - uri 
 
+##### addMember
+```typescript 
+addMember( documentURI:string,  member:Carbon.Pointer.Class,  requestOptions:Carbon.HTTP.Request.Options ):Promise<Carbon.HTTP.Response>
+```
+
+Add the specified resource Pointer as a member of the document container specified.
+
+*Parameters*
+
+- documentURI : URI of the document container where to add the member.
+- member : Pointer object that references the resource to add as a member.
+- requestOptions 
+
+```typescript 
+addMember( documentURI:string,  memberURI:string,  requestOptions:Carbon.HTTP.Request.Options ):Promise<Carbon.HTTP.Response>
+```
+
+Add the specified resource Pointer as a member of the document container specified.
+
+*Parameters*
+
+- documentURI : URI of the document container where to add the member.
+- memberURI : URI of the resource to add as a member.
+- requestOptions 
+
 
 
 ## <a name="Carbon-Errors" />Module Carbon/Errors
@@ -4211,6 +4236,7 @@ expand( compactedObject:Object,  digestedSchema:Carbon.ObjectSchema.DigestedObje
 #### <a name="Carbon-LDP-Reexports" />Reexports 
 | Export name | Original Location | 
 | --- | --- |
+| AddMemberAction | [Carbon/LDP/AddMemberAction](#Carbon-LDP-AddMemberAction) |
 | BasicContainer | [Carbon/LDP/BasicContainer](#Carbon-LDP-BasicContainer) |
 | Container | [Carbon/LDP/Container](#Carbon-LDP-Container) |
 | DirectContainer | [Carbon/LDP/DirectContainer](#Carbon-LDP-DirectContainer) |
@@ -4681,6 +4707,10 @@ static VolatileResource:string
 static RDFRepresentation:string 
 ```
 
+```typescript 
+static AddMemberAction:string 
+```
+
 
 
 
@@ -4719,6 +4749,10 @@ static mediaType:string
 
 ```typescript 
 static size:string 
+```
+
+```typescript 
+static targetMember:string 
 ```
 
 
