@@ -8,7 +8,7 @@ import * as Utils from "./../Utils";
 export const RDF_CLASS:string = NS.C.Class.AddMemberAction;
 
 export const SCHEMA:ObjectSchema.Class = {
-	"targetMember": {
+	"targetMembers": {
 		"@id": NS.C.Predicate.targetMember,
 		"@type": "@id",
 		"@container": "@set",
@@ -16,18 +16,18 @@ export const SCHEMA:ObjectSchema.Class = {
 };
 
 export interface Class extends Fragment.Class {
-	targetMember:Pointer.Class;
+	targetMembers:Pointer.Class[];
 }
 
 export class Factory {
 	static hasClassProperties( object:Object ):boolean {
-		return Utils.hasPropertyDefined( object, "targetMember" );
+		return Utils.hasPropertyDefined( object, "targetMembers" );
 	}
 
-	static createDocument( targetMember:Pointer.Class ):Document.Class {
+	static createDocument( targetMembers:Pointer.Class[] ):Document.Class {
 		let document:Document.Class = Document.Factory.create();
 
-		let fragment:Class = document.createFragment( { targetMember: targetMember } );
+		let fragment:Class = document.createFragment( { targetMembers: targetMembers } );
 		fragment.types.push( RDF_CLASS );
 
 		return document;

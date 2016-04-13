@@ -13,12 +13,10 @@ import {
 	decoratedObject
 } from "./../test/JasmineExtender";
 import * as Utils from "./../Utils";
-import * as NS from "./../NS";
 import * as Pointer from "./../Pointer";
 import * as Document from "./../Document";
 import * as PersistedDocument from "./../PersistedDocument";
 import AbstractContext from "./../AbstractContext";
-import * as HTTP from "./../HTTP";
 
 import * as PersistedContainer from "./PersistedContainer";
 
@@ -60,7 +58,7 @@ describe( module( "Carbon/LDP/PersistedContainer" ), ():void => {
 			expect( PersistedContainer.Factory.hasClassProperties ).toBeDefined();
 			expect( Utils.isFunction( PersistedContainer.Factory.hasClassProperties ) ).toBe( true );
 
-			let document:Document.Class;
+			let document:any;
 
 			document = Document.Factory.create();
 			expect( PersistedContainer.Factory.hasClassProperties( document ) ).toBe( false );
@@ -72,12 +70,16 @@ describe( module( "Carbon/LDP/PersistedContainer" ), ():void => {
 			document = PersistedDocument.Factory.create( "http://example.com/resource/", context.documents );
 			expect( PersistedContainer.Factory.hasClassProperties( document ) ).toBe( false );
 
-			( <PersistedContainer.Class> document ).createChild = () => {};
+			document.addMember = () => {};
 			expect( PersistedContainer.Factory.hasClassProperties( document ) ).toBe( false );
-			( <PersistedContainer.Class> document ).upload = () => {};
+			document.addMembers = () => {};
+			expect( PersistedContainer.Factory.hasClassProperties( document ) ).toBe( false );
+			document.createChild = () => {};
+			expect( PersistedContainer.Factory.hasClassProperties( document ) ).toBe( false );
+			document.getMembers = () => {};
 			expect( PersistedContainer.Factory.hasClassProperties( document ) ).toBe( false );
 
-			( <PersistedContainer.Class> document ).getMembers = () => {};
+			document.upload = () => {};
 			expect( PersistedContainer.Factory.hasClassProperties( document ) ).toBe( true );
 		});
 
@@ -92,22 +94,26 @@ describe( module( "Carbon/LDP/PersistedContainer" ), ():void => {
 			expect( PersistedContainer.Factory.decorate ).toBeDefined();
 			expect( Utils.isFunction( PersistedContainer.Factory.decorate ) ).toBe( true );
 
-			let document:PersistedDocument.Class;
+			let document:any;
 			document = PersistedDocument.Factory.create( "http://example.com/resource/", context.documents );
 
 			let persistedContainer:PersistedContainer.Class = PersistedContainer.Factory.decorate( document );
 			expect( PersistedContainer.Factory.hasClassProperties( persistedContainer ) ).toBe( true );
 
 			document = PersistedDocument.Factory.create( "http://example.com/resource/", context.documents );
-			( <PersistedContainer.Class> document ).createChild = () => {};
-			( <PersistedContainer.Class> document ).upload = () => {};
-			( <PersistedContainer.Class> document ).getMembers = () => {};
+			document.addMember = () => {};
+			document.addMembers = () => {};
+			document.createChild = () => {};
+			document.getMembers = () => {};
+			document.upload = () => {};
 			let anotherContainer:PersistedContainer.Class = PersistedContainer.Factory.decorate( document );
 
 			expect( PersistedContainer.Factory.hasClassProperties( anotherContainer ) ).toBe( true );
+			expect( anotherContainer.addMember ).not.toBe( persistedContainer.addMember );
+			expect( anotherContainer.addMembers ).not.toBe( persistedContainer.addMembers );
 			expect( anotherContainer.createChild ).not.toBe( persistedContainer.createChild );
-			expect( anotherContainer.upload ).not.toBe( persistedContainer.upload );
 			expect( anotherContainer.getMembers ).not.toBe( persistedContainer.getMembers );
+			expect( anotherContainer.upload ).not.toBe( persistedContainer.upload );
 		});
 
 		describe( decoratedObject(
@@ -167,6 +173,26 @@ describe( module( "Carbon/LDP/PersistedContainer" ), ():void => {
 					expect( spy ).toHaveBeenCalledWith( "http://example.com/resource/", "new-member/" );
 				});
 
+			});
+
+			it( hasMethod(
+				INSTANCE,
+				"addMember",
+				"Add the specified resources URI or Pointers as members of the container.", [
+					{ name: "members", type: "(Carbon.Pointer.Class | string)[]", description: "Array of string URIs or Pointers to add as members" },
+				],
+				{ type: "Promise<Carbon.HTTP.Response.Class>" }
+			), ():void => {
+				expect( container.addMembers ).toBeDefined();
+				expect( Utils.isFunction( container.addMembers ) ).toBeDefined();
+
+				let spy = spyOn( container._documents, "addMembers" );
+
+				let pointers:Pointer.Class[] = [];
+				pointers.push( context.documents.getPointer( "new-member/" ) );
+				container.addMembers( pointers );
+
+				expect( spy ).toHaveBeenCalledWith( "http://example.com/resource/", pointers );
 			});
 
 			describe( method(

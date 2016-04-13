@@ -4,6 +4,10 @@ function addMember(memberOrUri) {
     var that = this;
     return that._documents.addMember(that.id, memberOrUri);
 }
+function addMembers(members) {
+    var that = this;
+    return that._documents.addMembers(that.id, members);
+}
 function createChild(slugOrObject, object) {
     var slug = Utils.isString(slugOrObject) ? slugOrObject : null;
     object = Utils.isString(slugOrObject) ? object : slugOrObject;
@@ -14,6 +18,10 @@ function createChild(slugOrObject, object) {
     else {
         return this._documents.createChild(this.id, object);
     }
+}
+function getMembers(includeNonReadable) {
+    if (includeNonReadable === void 0) { includeNonReadable = true; }
+    return this._documents.getMembers(this.id, includeNonReadable);
 }
 function upload(slugOrBlob, blob) {
     if (blob === void 0) { blob = null; }
@@ -26,15 +34,13 @@ function upload(slugOrBlob, blob) {
         return this._documents.upload(this.id, blob);
     }
 }
-function getMembers(includeNonReadable) {
-    if (includeNonReadable === void 0) { includeNonReadable = true; }
-    return this._documents.getMembers(this.id, includeNonReadable);
-}
 var Factory = (function () {
     function Factory() {
     }
     Factory.hasClassProperties = function (document) {
         return Utils.hasFunction(document, "createChild")
+            && Utils.hasFunction(document, "addMember")
+            && Utils.hasFunction(document, "addMembers")
             && Utils.hasFunction(document, "upload")
             && Utils.hasFunction(document, "getMembers");
     };
@@ -48,23 +54,29 @@ var Factory = (function () {
                 configurable: true,
                 value: addMember,
             },
+            "addMembers": {
+                writable: false,
+                enumerable: false,
+                configurable: true,
+                value: addMembers,
+            },
             "createChild": {
                 writable: false,
                 enumerable: false,
                 configurable: true,
                 value: createChild,
             },
-            "upload": {
-                writable: false,
-                enumerable: false,
-                configurable: true,
-                value: upload,
-            },
             "getMembers": {
                 writable: false,
                 enumerable: false,
                 configurable: true,
                 value: getMembers,
+            },
+            "upload": {
+                writable: false,
+                enumerable: false,
+                configurable: true,
+                value: upload,
             },
         });
         return persistedDocument;

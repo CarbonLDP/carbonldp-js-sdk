@@ -33,6 +33,7 @@ declare class Documents implements Pointer.Library, Pointer.Validator, ObjectSch
     getMembers(uri: string): Promise<[Pointer.Class[], HTTP.Response.Class]>;
     addMember(documentURI: string, member: Pointer.Class, requestOptions?: HTTP.Request.Options): Promise<HTTP.Response.Class>;
     addMember(documentURI: string, memberURI: string, requestOptions?: HTTP.Request.Options): Promise<HTTP.Response.Class>;
+    addMembers(documentURI: string, members: (Pointer.Class | string)[], requestOptions?: HTTP.Request.Options): Promise<HTTP.Response.Class>;
     save(persistedDocument: PersistedDocument.Class, requestOptions?: HTTP.Request.Options): Promise<[PersistedDocument.Class, HTTP.Response.Class]>;
     delete(persistedDocument: PersistedDocument.Class, requestOptions?: HTTP.Request.Options): Promise<HTTP.Response.Class>;
     getSchemaFor(object: Object): ObjectSchema.DigestedObjectSchema;

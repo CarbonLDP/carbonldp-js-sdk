@@ -8,16 +8,17 @@ export interface Class extends PersistedDocument.Class {
 	addMember( member:Pointer.Class ): Promise<HTTP.Response.Class>;
 	addMember( memberURI:string ): Promise<HTTP.Response.Class>;
 
+	addMembers( members:(Pointer.Class | string)[] ): Promise<HTTP.Response.Class>;
+
 	createChild( slug:string, object:Object ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
 	createChild( slug:string ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
 	createChild( object:Object ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
 	createChild():Promise<[ Pointer.Class, HTTP.Response.Class ]>;
 
+	getMembers( includeNonReadable?:boolean ):Promise<[ Pointer.Class[], HTTP.Response.Class ]>;
+
 	upload( slug:string, blob:Blob ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
 	upload( blob:Blob ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
-
-
-	getMembers( includeNonReadable?:boolean ):Promise<[ Pointer.Class[], HTTP.Response.Class ]>;
 }
 
 function addMember( member:Pointer.Class ): Promise<HTTP.Response.Class>;
@@ -25,6 +26,11 @@ function addMember( memberURI:string ): Promise<HTTP.Response.Class>;
 function addMember( memberOrUri:any ): Promise<HTTP.Response.Class> {
 	let that:PersistedDocument.Class = <PersistedDocument.Class> this;
 	return that._documents.addMember( that.id, memberOrUri );
+}
+
+function addMembers( members:(Pointer.Class | string)[] ): Promise<HTTP.Response.Class> {
+	let that:PersistedDocument.Class = <PersistedDocument.Class> this;
+	return that._documents.addMembers( that.id, members );
 }
 
 function createChild( slug:string, object:Object ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
@@ -43,6 +49,10 @@ function createChild( slugOrObject?:any, object?:Object ):Promise<[ Pointer.Clas
 	}
 }
 
+function getMembers( includeNonReadable:boolean = true ):Promise<[ Pointer.Class[], HTTP.Response.Class ]> {
+	return this._documents.getMembers( this.id, includeNonReadable );
+}
+
 function upload( slug:string, blob:Blob ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
 function upload( blob:Blob ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
 function upload( slugOrBlob:any, blob:any = null ):Promise<[ Pointer.Class, HTTP.Response.Class ]> {
@@ -56,13 +66,11 @@ function upload( slugOrBlob:any, blob:any = null ):Promise<[ Pointer.Class, HTTP
 	}
 }
 
-function getMembers( includeNonReadable:boolean = true ):Promise<[ Pointer.Class[], HTTP.Response.Class ]> {
-	return this._documents.getMembers( this.id, includeNonReadable );
-}
-
 	export class Factory {
 	static hasClassProperties( document:Document.Class ):boolean {
 		return Utils.hasFunction( document, "createChild" )
+			&& Utils.hasFunction( document, "addMember" )
+			&& Utils.hasFunction( document, "addMembers" )
 			&& Utils.hasFunction( document, "upload" )
 			&& Utils.hasFunction( document, "getMembers" );
 	}
@@ -77,23 +85,29 @@ function getMembers( includeNonReadable:boolean = true ):Promise<[ Pointer.Class
 				configurable: true,
 				value: addMember,
 			},
+			"addMembers": {
+				writable: false,
+				enumerable: false,
+				configurable: true,
+				value: addMembers,
+			},
 			"createChild": {
 				writable: false,
 				enumerable: false,
 				configurable: true,
 				value: createChild,
 			},
-			"upload": {
-				writable: false,
-				enumerable: false,
-				configurable: true,
-				value: upload,
-			},
 			"getMembers": {
 				writable: false,
 				enumerable: false,
 				configurable: true,
 				value: getMembers,
+			},
+			"upload": {
+				writable: false,
+				enumerable: false,
+				configurable: true,
+				value: upload,
 			},
 		} );
 

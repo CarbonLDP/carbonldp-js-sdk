@@ -329,10 +329,21 @@ var Documents = (function () {
     };
     Documents.prototype.addMember = function (documentURI, memberORUri, requestOptions) {
         if (requestOptions === void 0) { requestOptions = {}; }
-        var memberPointer = Utils.isString(memberORUri) ? this.getPointer(memberORUri) : memberORUri;
+        return this.addMembers(documentURI, [memberORUri], requestOptions);
+    };
+    Documents.prototype.addMembers = function (documentURI, members, requestOptions) {
+        if (requestOptions === void 0) { requestOptions = {}; }
+        var pointers = [];
+        for (var _i = 0, members_1 = members; _i < members_1.length; _i++) {
+            var member = members_1[_i];
+            member = Utils.isString(member) ? this.getPointer(member) : member;
+            if (!Pointer.Factory.is(member))
+                Promise.reject(new Errors.IllegalArgumentError("No Carbon.Pointer or string URI provided."));
+            pointers.push(member);
+        }
         if (!!this.context)
             documentURI = this.context.resolve(documentURI);
-        var document = LDP.AddMemberAction.Factory.createDocument(memberPointer);
+        var document = LDP.AddMemberAction.Factory.createDocument(pointers);
         if (this.context && this.context.auth.isAuthenticated())
             this.context.auth.addAuthentication(requestOptions);
         HTTP.Request.Util.setAcceptHeader("application/ld+json", requestOptions);

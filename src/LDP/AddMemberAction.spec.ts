@@ -41,8 +41,8 @@ describe( module( "Carbon/LDP/AddMemberAction" ), ():void => {
 		expect( AddMemberAction.SCHEMA ).toBeDefined();
 		expect( Utils.isObject( AddMemberAction.SCHEMA ) ).toBe( true );
 
-		expect( Utils.hasProperty( AddMemberAction.SCHEMA, "targetMember" ) ).toBe( true );
-		expect( AddMemberAction.SCHEMA[ "targetMember" ] ).toEqual({
+		expect( Utils.hasProperty( AddMemberAction.SCHEMA, "targetMembers" ) ).toBe( true );
+		expect( AddMemberAction.SCHEMA[ "targetMembers" ] ).toEqual({
 			"@id": NS.C.Predicate.targetMember,
 			"@container": "@set",
 			"@type": "@id"
@@ -74,23 +74,24 @@ describe( module( "Carbon/LDP/AddMemberAction" ), ():void => {
 			let object:any = {};
 			expect( AddMemberAction.Factory.hasClassProperties( object ) ).toBe( false );
 
-			object.targetMember = {};
+			object.targetMembers = {};
 			expect( AddMemberAction.Factory.hasClassProperties( object ) ).toBe( true );
 		});
 
 		it( hasMethod(
 			STATIC,
 			"createDocument",
-			"Create and returns a `Carbon.Document.Class` object with a AddMemberAction fragment for the specified targetMember.", [
-				{ name: "targetMember", type: "Carbon.Pointer.Class", description: "The target member to add in a `addMember` request." }
+			"Create and returns a `Carbon.Document.Class` object with a AddMemberAction fragment for the specified targetMembers.", [
+				{ name: "targetMembers", type: "Carbon.Pointer.Class", description: "The target member to add in a `addMember` request." }
 			],
 			{ type: "Carbon.Document.Class" }
 		), ():void => {
 			expect( AddMemberAction.Factory.createDocument ).toBeDefined();
 			expect( Utils.isFunction( AddMemberAction.Factory.createDocument ) ).toBe( true );
 
-			let pointer:Pointer.Class = Pointer.Factory.create( "the-pointer/" );
-			let document:Document.Class = AddMemberAction.Factory.createDocument( pointer );
+			let pointers:Pointer.Class[] = [];
+			pointers.push( Pointer.Factory.create( "the-pointer/" ) );
+			let document:Document.Class = AddMemberAction.Factory.createDocument( pointers );
 
 			expect( Document.Factory.is( document ) ).toBe( true );
 
@@ -99,7 +100,7 @@ describe( module( "Carbon/LDP/AddMemberAction" ), ():void => {
 
 			let addMemberAction:AddMemberAction.Class = <AddMemberAction.Class> fragments[ 0 ];
 			expect( AddMemberAction.Factory.hasClassProperties( addMemberAction ) ).toBe( true );
-			expect( addMemberAction.targetMember ).toBe( pointer );
+			expect( addMemberAction.targetMembers ).toEqual( pointers );
 			expect( addMemberAction.types ).toContain( AddMemberAction.RDF_CLASS );
 		});
 		

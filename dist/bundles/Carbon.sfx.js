@@ -1483,10 +1483,21 @@ $__System.register("16", ["c", "17", "9", "5", "13", "18", "14", "8", "4", "10",
                 };
                 Documents.prototype.addMember = function (documentURI, memberORUri, requestOptions) {
                     if (requestOptions === void 0) { requestOptions = {}; }
-                    var memberPointer = Utils.isString(memberORUri) ? this.getPointer(memberORUri) : memberORUri;
+                    return this.addMembers(documentURI, [memberORUri], requestOptions);
+                };
+                Documents.prototype.addMembers = function (documentURI, members, requestOptions) {
+                    if (requestOptions === void 0) { requestOptions = {}; }
+                    var pointers = [];
+                    for (var _i = 0; _i < members.length; _i++) {
+                        var member = members[_i];
+                        member = Utils.isString(member) ? this.getPointer(member) : member;
+                        if (!Pointer.Factory.is(member))
+                            Promise.reject(new Errors.IllegalArgumentError("No Carbon.Pointer or string URI provided."));
+                        pointers.push(member);
+                    }
                     if (!!this.context)
                         documentURI = this.context.resolve(documentURI);
-                    var document = LDP.AddMemberAction.Factory.createDocument(memberPointer);
+                    var document = LDP.AddMemberAction.Factory.createDocument(pointers);
                     if (this.context && this.context.auth.isAuthenticated())
                         this.context.auth.addAuthentication(requestOptions);
                     HTTP.Request.Util.setAcceptHeader("application/ld+json", requestOptions);
@@ -1724,7 +1735,7 @@ $__System.register("1a", ["13", "4", "5"], function(exports_1) {
         execute: function() {
             exports_1("RDF_CLASS", RDF_CLASS = NS.C.Class.AddMemberAction);
             exports_1("SCHEMA", SCHEMA = {
-                "targetMember": {
+                "targetMembers": {
                     "@id": NS.C.Predicate.targetMember,
                     "@type": "@id",
                     "@container": "@set",
@@ -1734,11 +1745,11 @@ $__System.register("1a", ["13", "4", "5"], function(exports_1) {
                 function Factory() {
                 }
                 Factory.hasClassProperties = function (object) {
-                    return Utils.hasPropertyDefined(object, "targetMember");
+                    return Utils.hasPropertyDefined(object, "targetMembers");
                 };
-                Factory.createDocument = function (targetMember) {
+                Factory.createDocument = function (targetMembers) {
                     var document = Document.Factory.create();
-                    var fragment = document.createFragment({ targetMember: targetMember });
+                    var fragment = document.createFragment({ targetMembers: targetMembers });
                     fragment.types.push(RDF_CLASS);
                     return document;
                 };
@@ -1954,6 +1965,10 @@ $__System.register("1f", ["5"], function(exports_1) {
         var that = this;
         return that._documents.addMember(that.id, memberOrUri);
     }
+    function addMembers(members) {
+        var that = this;
+        return that._documents.addMembers(that.id, members);
+    }
     function createChild(slugOrObject, object) {
         var slug = Utils.isString(slugOrObject) ? slugOrObject : null;
         object = Utils.isString(slugOrObject) ? object : slugOrObject;
@@ -1964,6 +1979,10 @@ $__System.register("1f", ["5"], function(exports_1) {
         else {
             return this._documents.createChild(this.id, object);
         }
+    }
+    function getMembers(includeNonReadable) {
+        if (includeNonReadable === void 0) { includeNonReadable = true; }
+        return this._documents.getMembers(this.id, includeNonReadable);
     }
     function upload(slugOrBlob, blob) {
         if (blob === void 0) { blob = null; }
@@ -1976,10 +1995,6 @@ $__System.register("1f", ["5"], function(exports_1) {
             return this._documents.upload(this.id, blob);
         }
     }
-    function getMembers(includeNonReadable) {
-        if (includeNonReadable === void 0) { includeNonReadable = true; }
-        return this._documents.getMembers(this.id, includeNonReadable);
-    }
     return {
         setters:[
             function (Utils_1) {
@@ -1991,6 +2006,8 @@ $__System.register("1f", ["5"], function(exports_1) {
                 }
                 Factory.hasClassProperties = function (document) {
                     return Utils.hasFunction(document, "createChild")
+                        && Utils.hasFunction(document, "addMember")
+                        && Utils.hasFunction(document, "addMembers")
                         && Utils.hasFunction(document, "upload")
                         && Utils.hasFunction(document, "getMembers");
                 };
@@ -2004,23 +2021,29 @@ $__System.register("1f", ["5"], function(exports_1) {
                             configurable: true,
                             value: addMember,
                         },
+                        "addMembers": {
+                            writable: false,
+                            enumerable: false,
+                            configurable: true,
+                            value: addMembers,
+                        },
                         "createChild": {
                             writable: false,
                             enumerable: false,
                             configurable: true,
                             value: createChild,
                         },
-                        "upload": {
-                            writable: false,
-                            enumerable: false,
-                            configurable: true,
-                            value: upload,
-                        },
                         "getMembers": {
                             writable: false,
                             enumerable: false,
                             configurable: true,
                             value: getMembers,
+                        },
+                        "upload": {
+                            writable: false,
+                            enumerable: false,
+                            configurable: true,
+                            value: upload,
                         },
                     });
                     return persistedDocument;

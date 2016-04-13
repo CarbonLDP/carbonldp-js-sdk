@@ -1110,11 +1110,11 @@ declare module 'carbonldp/LDP/AddMemberAction' {
 	export const RDF_CLASS: string;
 	export const SCHEMA: ObjectSchema.Class;
 	export interface Class extends Fragment.Class {
-	    targetMember: Pointer.Class;
+	    targetMembers: Pointer.Class[];
 	}
 	export class Factory {
 	    static hasClassProperties(object: Object): boolean;
-	    static createDocument(targetMember: Pointer.Class): Document.Class;
+	    static createDocument(targetMembers: Pointer.Class[]): Document.Class;
 	}
 	export default Class;
 
@@ -1364,13 +1364,14 @@ declare module 'carbonldp/LDP/PersistedContainer' {
 	export interface Class extends PersistedDocument.Class {
 	    addMember(member: Pointer.Class): Promise<HTTP.Response.Class>;
 	    addMember(memberURI: string): Promise<HTTP.Response.Class>;
+	    addMembers(members: (Pointer.Class | string)[]): Promise<HTTP.Response.Class>;
 	    createChild(slug: string, object: Object): Promise<[Pointer.Class, HTTP.Response.Class]>;
 	    createChild(slug: string): Promise<[Pointer.Class, HTTP.Response.Class]>;
 	    createChild(object: Object): Promise<[Pointer.Class, HTTP.Response.Class]>;
 	    createChild(): Promise<[Pointer.Class, HTTP.Response.Class]>;
+	    getMembers(includeNonReadable?: boolean): Promise<[Pointer.Class[], HTTP.Response.Class]>;
 	    upload(slug: string, blob: Blob): Promise<[Pointer.Class, HTTP.Response.Class]>;
 	    upload(blob: Blob): Promise<[Pointer.Class, HTTP.Response.Class]>;
-	    getMembers(includeNonReadable?: boolean): Promise<[Pointer.Class[], HTTP.Response.Class]>;
 	}
 	export class Factory {
 	    static hasClassProperties(document: Document.Class): boolean;
@@ -1440,6 +1441,7 @@ declare module 'carbonldp/Documents' {
 	    getMembers(uri: string): Promise<[Pointer.Class[], HTTP.Response.Class]>;
 	    addMember(documentURI: string, member: Pointer.Class, requestOptions?: HTTP.Request.Options): Promise<HTTP.Response.Class>;
 	    addMember(documentURI: string, memberURI: string, requestOptions?: HTTP.Request.Options): Promise<HTTP.Response.Class>;
+	    addMembers(documentURI: string, members: (Pointer.Class | string)[], requestOptions?: HTTP.Request.Options): Promise<HTTP.Response.Class>;
 	    save(persistedDocument: PersistedDocument.Class, requestOptions?: HTTP.Request.Options): Promise<[PersistedDocument.Class, HTTP.Response.Class]>;
 	    delete(persistedDocument: PersistedDocument.Class, requestOptions?: HTTP.Request.Options): Promise<HTTP.Response.Class>;
 	    getSchemaFor(object: Object): ObjectSchema.DigestedObjectSchema;

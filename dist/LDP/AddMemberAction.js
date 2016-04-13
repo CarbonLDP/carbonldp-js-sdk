@@ -4,7 +4,7 @@ var NS = require("./../NS");
 var Utils = require("./../Utils");
 exports.RDF_CLASS = NS.C.Class.AddMemberAction;
 exports.SCHEMA = {
-    "targetMember": {
+    "targetMembers": {
         "@id": NS.C.Predicate.targetMember,
         "@type": "@id",
         "@container": "@set",
@@ -14,11 +14,11 @@ var Factory = (function () {
     function Factory() {
     }
     Factory.hasClassProperties = function (object) {
-        return Utils.hasPropertyDefined(object, "targetMember");
+        return Utils.hasPropertyDefined(object, "targetMembers");
     };
-    Factory.createDocument = function (targetMember) {
+    Factory.createDocument = function (targetMembers) {
         var document = Document.Factory.create();
-        var fragment = document.createFragment({ targetMember: targetMember });
+        var fragment = document.createFragment({ targetMembers: targetMembers });
         fragment.types.push(exports.RDF_CLASS);
         return document;
     };

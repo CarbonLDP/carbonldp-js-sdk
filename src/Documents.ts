@@ -374,12 +374,23 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 
 	addMember( documentURI:string, member:Pointer.Class, requestOptions?:HTTP.Request.Options ): Promise<HTTP.Response.Class>;
 	addMember( documentURI:string, memberURI:string, requestOptions?:HTTP.Request.Options ): Promise<HTTP.Response.Class>;
-	addMember( documentURI:string, memberORUri:any, requestOptions:HTTP.Request.Options = {} ): Promise<HTTP.Response.Class> {
-		let memberPointer:Pointer.Class = Utils.isString( memberORUri ) ? this.getPointer( memberORUri ) : memberORUri;
+	addMember( documentURI:string, memberORUri:Pointer.Class | string, requestOptions:HTTP.Request.Options = {} ): Promise<HTTP.Response.Class> {
+		return this.addMembers( documentURI, [ memberORUri ], requestOptions );
+	}
+
+	addMembers( documentURI:string, members:(Pointer.Class | string)[], requestOptions?:HTTP.Request.Options ): Promise<HTTP.Response.Class>;
+	addMembers( documentURI:string, members:(Pointer.Class | string)[], requestOptions:HTTP.Request.Options = {} ): Promise<HTTP.Response.Class> {
+		let pointers:Pointer.Class[] = [];
+		for ( let member  of members ) {
+			member = Utils.isString( member ) ? this.getPointer( <string> member ) : member;
+			if ( ! Pointer.Factory.is( member ) ) Promise.reject<any>( new Errors.IllegalArgumentError( "No Carbon.Pointer or string URI provided.") );
+
+			pointers.push( <Pointer.Class> member );
+		}
 
 		if( !! this.context ) documentURI = this.context.resolve( documentURI );
 
-		let document:Document.Class = LDP.AddMemberAction.Factory.createDocument( memberPointer );
+		let document:Document.Class = LDP.AddMemberAction.Factory.createDocument( pointers );
 
 		if ( this.context && this.context.auth.isAuthenticated() ) this.context.auth.addAuthentication( requestOptions );
 		HTTP.Request.Util.setAcceptHeader( "application/ld+json", requestOptions );
