@@ -427,6 +427,8 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 	delete( documentURI:string, requestOptions:HTTP.Request.Options = {} ):Promise<HTTP.Response.Class> {
 		if ( this.context && this.context.auth.isAuthenticated() ) this.context.auth.addAuthentication( requestOptions );
 
+		if( !! this.context ) documentURI = this.context.resolve( documentURI );
+
 		HTTP.Request.Util.setAcceptHeader( "application/ld+json", requestOptions );
 		HTTP.Request.Util.setPreferredInteractionModel( NS.LDP.Class.RDFSource, requestOptions );
 
