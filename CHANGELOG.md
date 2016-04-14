@@ -1,6 +1,9 @@
 # 0.26.0 (April 12, 2016)
 - Added `persistedContainer.getMembers()` method, which lets you obtain the members of the Container
 
+#### Breaking Changes
+- Renamed `app.allowsOrigin` property to `app.allowsOrigins`, and now it is an array of `Pointer.Class` or `string`.
+
 # 0.25.1 (April 12, 2016)
 - `Document.Factory.createFrom()` now accepts a object with nested object properties and structures it as a Document with fragments
 - `context.documents.createChild()` same ^

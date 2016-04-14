@@ -1584,10 +1584,12 @@ declare module 'carbonldp/Agents' {
 declare module 'carbonldp/PersistedApp' {
 	import * as LDP from 'carbonldp/LDP';
 	import * as PersistedDocument from 'carbonldp/PersistedDocument';
+	import Pointer from 'carbonldp/Pointer';
 	export interface Class extends PersistedDocument.Class {
 	    name: string;
 	    description?: string;
 	    rootContainer: LDP.PersistedContainer.Class;
+	    allowsOrigins: (Pointer | string)[];
 	}
 	export class Factory {
 	    static hasClassProperties(resource: Object): boolean;
@@ -1616,10 +1618,12 @@ declare module 'carbonldp/App/Context' {
 declare module 'carbonldp/App' {
 	import * as Document from 'carbonldp/Document';
 	import * as ObjectSchema from 'carbonldp/ObjectSchema';
+	import Pointer from 'carbonldp/Pointer';
 	import Context from 'carbonldp/App/Context';
 	export interface Class extends Document.Class {
 	    name: string;
 	    description?: string;
+	    allowsOrigins: (Pointer | string)[];
 	}
 	export const RDF_CLASS: string;
 	export const SCHEMA: ObjectSchema.Class;

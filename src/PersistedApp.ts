@@ -1,13 +1,15 @@
 import * as LDP from "./LDP";
 import * as App from "./App";
 import * as PersistedDocument from "./PersistedDocument";
+import Pointer from "./Pointer";
 import * as Utils from "./Utils";
 
-// TODO Mark as error if it extends from App.Class
+// TODO Mark an error if it extends from App.Class
 export interface Class extends PersistedDocument.Class {
 	name:string;
 	description?:string;
 	rootContainer:LDP.PersistedContainer.Class;
+	allowsOrigins:(Pointer | string)[];
 }
 
 export class Factory {
