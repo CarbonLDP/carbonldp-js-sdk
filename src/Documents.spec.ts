@@ -935,7 +935,7 @@ describe( module( "Carbon/Documents", "" ), ():void => {
 			"Add the specified resource Pointer as a member of the document container specified.", [
 				{ name: "documentURI", type: "string", description: "URI of the document container where to add the member." },
 				{ name: "member", type: "Carbon.Pointer.Class", description: "Pointer object that references the resource to add as a member." },
-				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options" }
+				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true }
 			],
 			{ type: "Promise<Carbon.HTTP.Response>"}
 		), ():void => {
@@ -953,7 +953,7 @@ describe( module( "Carbon/Documents", "" ), ():void => {
 			"Add the specified resource URI as a member of the document container specified.", [
 				{ name: "documentURI", type: "string", description: "URI of the document container where to add the member." },
 				{ name: "memberURI", type: "string", description: "URI of the resource to add as a member." },
-				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options" }
+				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true }
 			],
 			{ type: "Promise<Carbon.HTTP.Response>"}
 		), ():void => {
@@ -974,7 +974,7 @@ describe( module( "Carbon/Documents", "" ), ():void => {
 		"Add the specified resources URI or Pointers as members of the document container specified.", [
 			{ name: "documentURI", type: "string", description: "URI of the document container where to add the members." },
 			{ name: "members", type: "(Carbon.Pointer.Class | string)[]", description: "Array of string URIs or Pointers to add as members" },
-			{ name: "requestOptions", type: "Carbon.HTTP.Request.Options" }
+			{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true }
 		],
 		{ type: "Promise<Carbon.HTTP.Response>"}
 	), ( done:{ ():void, fail:() => void } ):void => {
@@ -1017,6 +1017,120 @@ describe( module( "Carbon/Documents", "" ), ():void => {
 
 		members = [ documents.getPointer( "new-member-01/" ), "new-member-02/", <any> { "something": "nor string or Pointer" } ];
 		promise = documents.addMembers( "resource/", members );
+		expect( promise instanceof Promise ).toBe( true );
+		promises.push( promise.catch( spies.fail ) );
+
+		Promise.all( promises ).then( ():void => {
+			expect( spySuccess ).toHaveBeenCalledTimes( 1 );
+			expect( spyFail ).toHaveBeenCalledTimes( 1 );
+			done();
+		}, done.fail );
+	});
+
+	describe( method(
+		INSTANCE,
+		"removeMember"
+	), ():void => {
+
+		class MockedContext extends AbstractContext {
+			resolve( uri:string ):string {
+				return "http://example.com/" + uri;
+			}
+		}
+		let context:MockedContext;
+		let documents:Documents;
+
+		beforeEach( ():void => {
+			context = new MockedContext();
+			documents = context.documents;
+		});
+
+		it( hasSignature(
+			"Remove the specified resource Pointer member of the resource container specified.", [
+				{ name: "documentURI", type: "string", description: "URI of the resource container where to remove the member." },
+				{ name: "member", type: "Carbon.Pointer.Class", description: "Pointer object that references the resource to remove as a member." },
+				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true }
+			],
+			{ type: "Promise<Carbon.HTTP.Response>"}
+		), ():void => {
+			expect( documents.removeMember ).toBeDefined();
+			expect( Utils.isFunction( documents.removeMember ) ).toBe( true );
+
+			let spy = spyOn( documents, "removeMembers" );
+
+			let pointer:Pointer.Class = documents.getPointer( "remove-member/" );
+			documents.removeMember( "resource/", pointer );
+			expect( spy ).toHaveBeenCalledWith( "resource/", [ pointer ], {} );
+		});
+
+		it( hasSignature(
+			"Remove the specified resource URI member of the resource container specified.", [
+				{ name: "documentURI", type: "string", description: "URI of the resource container where to remove the member." },
+				{ name: "memberURI", type: "string", description: "URI of the resource to remvoe as a member." },
+				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true }
+			],
+			{ type: "Promise<Carbon.HTTP.Response>"}
+		), ():void => {
+			expect( documents.removeMember ).toBeDefined();
+			expect( Utils.isFunction( documents.removeMember ) ).toBe( true );
+
+			let spy = spyOn( documents, "removeMembers" );
+
+			documents.removeMember( "resource/", "remove-member/" );
+			expect( spy ).toHaveBeenCalledWith( "resource/", [ "remove-member/" ], {} );
+		});
+
+	});
+
+	it( hasMethod(
+		INSTANCE,
+		"removeMembers",
+		"Remove the specified resources URI or Pointers as members of the document container specified.", [
+			{ name: "documentURI", type: "string", description: "URI of the document container where to add the members." },
+			{ name: "members", type: "(Carbon.Pointer.Class | string)[]", description: "Array of string URIs or Pointers to add as members" },
+			{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true }
+		],
+		{ type: "Promise<Carbon.HTTP.Response>"}
+	), ( done:{ ():void, fail:() => void } ):void => {
+		class MockedContext extends AbstractContext {
+			resolve( uri:string ):string {
+				return "http://example.com/" + uri;
+			}
+		}
+		let context:MockedContext = new MockedContext();
+		let documents:Documents = context.documents;
+
+		expect( documents.removeMembers ).toBeDefined();
+		expect( Utils.isFunction( documents.removeMembers ) ).toBe( true );
+
+		jasmine.Ajax.stubRequest( "http://example.com/resource/", null, "DELETE" ).andReturn( {
+			status: 200
+		});
+
+		let spies = {
+			success: ( response:any ):void => {
+				expect( response ).toBeDefined();
+				expect( response instanceof HTTP.Response.Class ).toBe( true );
+			},
+			fail: ( error:Error ):void => {
+				expect( error ).toBeDefined();
+				expect( error instanceof Errors.IllegalArgumentError ).toBe( true );
+			}
+		};
+		let spySuccess = spyOn( spies, "success" ).and.callThrough();
+		let spyFail = spyOn( spies, "fail" ).and.callThrough();
+
+		let promises:Promise<any>[] = [];
+		let promise:Promise<any>;
+		let members:(Pointer.Class | string)[];
+
+		members = [ documents.getPointer( "remove-member-01/" ), "remove-member-02/" ];
+		promise = documents.removeMembers( "resource/", members );
+		expect( promise instanceof Promise ).toBe( true );
+		promises.push( promise.then( spies.success ) );
+
+		members = [ documents.getPointer( "remove-member-01/" ), "remove-member-02/", <any> { "something": "nor string or Pointer" } ];
+		promise = documents.removeMembers( "resource/", members );
 		expect( promise instanceof Promise ).toBe( true );
 		promises.push( promise.catch( spies.fail ) );
 

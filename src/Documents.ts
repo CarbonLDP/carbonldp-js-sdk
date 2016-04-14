@@ -402,6 +402,40 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 		return HTTP.Request.Service.put( documentURI, body, requestOptions );
 	}
 
+	removeMember( documentURI:string, member:Pointer.Class, requestOptions?:HTTP.Request.Options ): Promise<HTTP.Response.Class>;
+	removeMember( documentURI:string, memberURI:string, requestOptions?:HTTP.Request.Options ): Promise<HTTP.Response.Class>;
+	removeMember( documentURI:string, memberORUri:Pointer.Class | string, requestOptions:HTTP.Request.Options = {} ): Promise<HTTP.Response.Class> {
+		return this.removeMembers( documentURI, [ memberORUri ], requestOptions );
+	}
+
+	removeMembers( documentURI:string, members:(Pointer.Class | string)[], requestOptions:HTTP.Request.Options = {} ):Promise<HTTP.Response.Class> {
+		let pointers:Pointer.Class[] = [];
+		for ( let member of members ) {
+			member = Utils.isString( member ) ? this.getPointer( <string> member ) : member;
+			if ( ! Pointer.Factory.is( member ) ) return Promise.reject<any>( new Errors.IllegalArgumentError( "No Carbon.Pointer or string URI provided.") );
+
+			pointers.push( <Pointer.Class> member );
+		}
+
+		if( !! this.context ) documentURI = this.context.resolve( documentURI );
+
+		let document:Document.Class = LDP.RemoveMemberAction.Factory.createDocument( pointers );
+		let containerRetrievalPreferences:HTTP.Request.ContainerRetrievalPreferences = {
+			include: [ NS.C.Class.PreferSelectedMembershipTriples ],
+			omit: [ NS.C.Class.PreferMembershipTriples ],
+		};
+
+		if ( this.context && this.context.auth.isAuthenticated() ) this.context.auth.addAuthentication( requestOptions );
+		HTTP.Request.Util.setAcceptHeader( "application/ld+json", requestOptions );
+		HTTP.Request.Util.setContentTypeHeader( "application/ld+json", requestOptions );
+		HTTP.Request.Util.setPreferredInteractionModel( NS.LDP.Class.Container, requestOptions );
+		HTTP.Request.Util.setContainerRetrievalPreferences( containerRetrievalPreferences, requestOptions, false );
+
+		let body:string = document.toJSON( this, this.jsonldConverter );
+
+		return HTTP.Request.Service.delete( documentURI, body, requestOptions );
+	}
+
 	save( persistedDocument:PersistedDocument.Class, requestOptions:HTTP.Request.Options = {} ):Promise<[ PersistedDocument.Class, HTTP.Response.Class ]> {
 		// TODO: Check if the document isDirty
 		/*

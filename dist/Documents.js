@@ -352,6 +352,36 @@ var Documents = (function () {
         var body = document.toJSON(this, this.jsonldConverter);
         return HTTP.Request.Service.put(documentURI, body, requestOptions);
     };
+    Documents.prototype.removeMember = function (documentURI, memberORUri, requestOptions) {
+        if (requestOptions === void 0) { requestOptions = {}; }
+        return this.removeMembers(documentURI, [memberORUri], requestOptions);
+    };
+    Documents.prototype.removeMembers = function (documentURI, members, requestOptions) {
+        if (requestOptions === void 0) { requestOptions = {}; }
+        var pointers = [];
+        for (var _i = 0, members_2 = members; _i < members_2.length; _i++) {
+            var member = members_2[_i];
+            member = Utils.isString(member) ? this.getPointer(member) : member;
+            if (!Pointer.Factory.is(member))
+                return Promise.reject(new Errors.IllegalArgumentError("No Carbon.Pointer or string URI provided."));
+            pointers.push(member);
+        }
+        if (!!this.context)
+            documentURI = this.context.resolve(documentURI);
+        var document = LDP.RemoveMemberAction.Factory.createDocument(pointers);
+        var containerRetrievalPreferences = {
+            include: [NS.C.Class.PreferSelectedMembershipTriples],
+            omit: [NS.C.Class.PreferMembershipTriples],
+        };
+        if (this.context && this.context.auth.isAuthenticated())
+            this.context.auth.addAuthentication(requestOptions);
+        HTTP.Request.Util.setAcceptHeader("application/ld+json", requestOptions);
+        HTTP.Request.Util.setContentTypeHeader("application/ld+json", requestOptions);
+        HTTP.Request.Util.setPreferredInteractionModel(NS.LDP.Class.Container, requestOptions);
+        HTTP.Request.Util.setContainerRetrievalPreferences(containerRetrievalPreferences, requestOptions, false);
+        var body = document.toJSON(this, this.jsonldConverter);
+        return HTTP.Request.Service.delete(documentURI, body, requestOptions);
+    };
     Documents.prototype.save = function (persistedDocument, requestOptions) {
         if (requestOptions === void 0) { requestOptions = {}; }
         if (this.context && this.context.auth.isAuthenticated())

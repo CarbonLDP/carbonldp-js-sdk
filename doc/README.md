@@ -286,6 +286,10 @@
 - [Module Carbon/LDP/RDFSource](#Carbon-LDP-RDFSource)
 	- [Properties](#Carbon-LDP-RDFSource-Properties)
 	- [Class Carbon.LDP.RDFSource.Factory](#Carbon-LDP-RDFSource-Factory)
+- [Module Carbon/LDP/RemoveMemberAction](#Carbon-LDP-RemoveMemberAction)
+	- [Properties](#Carbon-LDP-RemoveMemberAction-Properties)
+	- [Class Carbon.LDP.RemoveMemberAction.Factory](#Carbon-LDP-RemoveMemberAction-Factory)
+		- [Methods](#Carbon-LDP-RemoveMemberAction-Factory-Methods)
 - [Module Carbon/NS](#Carbon-NS)
 	- [Reexports](#Carbon-NS-Reexports)
 - [Module Carbon/NS/C](#Carbon-NS-C)
@@ -1749,10 +1753,23 @@ Returns a Promise with a boolean indicating if the resource exists or not.
 
 ##### addMembers
 ```typescript 
-addMembers( documentURI:string,  members:(Carbon.Pointer.Class | string)[],  requestOptions:Carbon.HTTP.Request.Options ):Promise<Carbon.HTTP.Response>
+addMembers( documentURI:string,  members:(Carbon.Pointer.Class | string)[],  requestOptions?:Carbon.HTTP.Request.Options ):Promise<Carbon.HTTP.Response>
 ```
 
 Add the specified resources URI or Pointers as members of the document container specified.
+
+*Parameters*
+
+- documentURI: URI of the document container where to add the members.
+- members: Array of string URIs or Pointers to add as members
+- requestOptions
+
+##### removeMembers
+```typescript 
+removeMembers( documentURI:string,  members:(Carbon.Pointer.Class | string)[],  requestOptions?:Carbon.HTTP.Request.Options ):Promise<Carbon.HTTP.Response>
+```
+
+Remove the specified resources URI or Pointers as members of the document container specified.
 
 *Parameters*
 
@@ -1980,7 +1997,7 @@ Retrieves (but doesn't resolve) all the members of the document
 
 ##### addMember
 ```typescript 
-addMember( documentURI:string,  member:Carbon.Pointer.Class,  requestOptions:Carbon.HTTP.Request.Options ):Promise<Carbon.HTTP.Response>
+addMember( documentURI:string,  member:Carbon.Pointer.Class,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<Carbon.HTTP.Response>
 ```
 
 Add the specified resource Pointer as a member of the document container specified.
@@ -1992,7 +2009,7 @@ Add the specified resource Pointer as a member of the document container specifi
 - requestOptions
 
 ```typescript 
-addMember( documentURI:string,  memberURI:string,  requestOptions:Carbon.HTTP.Request.Options ):Promise<Carbon.HTTP.Response>
+addMember( documentURI:string,  memberURI:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<Carbon.HTTP.Response>
 ```
 
 Add the specified resource URI as a member of the document container specified.
@@ -2001,6 +2018,31 @@ Add the specified resource URI as a member of the document container specified.
 
 - documentURI: URI of the document container where to add the member.
 - memberURI: URI of the resource to add as a member.
+- requestOptions
+
+##### removeMember
+```typescript 
+removeMember( documentURI:string,  member:Carbon.Pointer.Class,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<Carbon.HTTP.Response>
+```
+
+Remove the specified resource Pointer member of the resource container specified.
+
+*Parameters*
+
+- documentURI: URI of the resource container where to remove the member.
+- member: Pointer object that references the resource to remove as a member.
+- requestOptions
+
+```typescript 
+removeMember( documentURI:string,  memberURI:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<Carbon.HTTP.Response>
+```
+
+Remove the specified resource URI member of the resource container specified.
+
+*Parameters*
+
+- documentURI: URI of the resource container where to remove the member.
+- memberURI: URI of the resource to remvoe as a member.
 - requestOptions
 
 
@@ -4013,7 +4055,7 @@ Set a Slug header in an options object request
 
 ##### setContainerRetrievalPreferences
 ```typescript 
-static setContainerRetrievalPreferences( preference:Carbon.HTTP.Request.ContainerRetrievalPreferences,  requestOptions:Carbon.HTTP.Request.Options ):Object
+static setContainerRetrievalPreferences( preference:Carbon.HTTP.Request.ContainerRetrievalPreferences,  requestOptions:Carbon.HTTP.Request.Options,  returnRepresentation?:boolean ):Object
 ```
 
 Set a Prefer header with `return=representation` in an options object request
@@ -4022,6 +4064,7 @@ Set a Prefer header with `return=representation` in an options object request
 
 - preference
 - requestOptions
+- returnRepresentation: If set to true, add `return=representation;` before include and/or omit. Default value is set to `true`.
 
 
 
@@ -4260,6 +4303,7 @@ expand( compactedObject:Object,  digestedSchema:Carbon.ObjectSchema.DigestedObje
 | IndirectContainer | [Carbon/LDP/IndirectContainer](#Carbon-LDP-IndirectContainer) |
 | PersistedContainer | [Carbon/LDP/PersistedContainer](#Carbon-LDP-PersistedContainer) |
 | RDFSource | [Carbon/LDP/RDFSource](#Carbon-LDP-RDFSource) |
+| RemoveMemberAction | [Carbon/LDP/RemoveMemberAction](#Carbon-LDP-RemoveMemberAction) |
 
 
 
@@ -4654,6 +4698,17 @@ getMembers( includeNonReadable?:boolean ):Promise<[ Carbon.Pointer.Class[], Carb
 
 - includeNonReadable: By default this option is set to `true`.
 
+##### removeMembers
+```typescript 
+removeMembers( members:(Carbon.Pointer.Class | string)[] ):Promise<Carbon.HTTP.Response.Class>
+```
+
+Remove the specified resources URI or Pointers as members of the container.
+
+*Parameters*
+
+- members: Array of string URIs or Pointers to remove as members
+
 ##### createChild
 ```typescript 
 createChild( slug:string,  object:Object ):Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>
@@ -4687,6 +4742,27 @@ createChild( slug:string ):Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.
 createChild():Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>
 ```
 
+
+##### removeMember
+```typescript 
+removeMember( member:Carbon.Pointer.Class ):Promise<Carbon.HTTP.Response.Class>
+```
+
+Remove the specified resource Pointer as a member of the container.
+
+*Parameters*
+
+- member: Pointer object that references the resource to remove as a member.
+
+```typescript 
+removeMember( memberURI:string ):Promise<Carbon.HTTP.Response.Class>
+```
+
+Remove the specified resource URI as a member of the container.
+
+*Parameters*
+
+- memberURI: URI of the resource to remove as a member.
 
 ##### upload
 ```typescript 
@@ -4736,6 +4812,59 @@ static SCHEMA:Carbon.ObjectSchema.Class
 > Factory class for RDFSource objects
 
 
+
+
+
+
+## <a name="Carbon-LDP-RemoveMemberAction" />Module Carbon/LDP/RemoveMemberAction
+
+
+
+
+
+### <a name="Carbon-LDP-RemoveMemberAction-Properties" />Properties
+```typescript 
+static RDF_CLASS:string 
+```
+
+```typescript 
+static SCHEMA:Carbon.ObjectSchema.Class 
+```
+
+
+
+
+
+### <a name="Carbon-LDP-RemoveMemberAction-Factory" />Class Carbon.LDP.RemoveMemberAction.Factory
+
+
+> Factory class for LDP RemoveMemberAction objects
+
+
+
+
+#### <a name="Carbon-LDP-RemoveMemberAction-Factory-Methods" />Methods
+##### hasClassProperties
+```typescript 
+static hasClassProperties( resource:Carbon.RDF.Node.Class ):boolean
+```
+
+Returns true if the object has the properties to be defined as a LDP RemoveMemberAction
+
+*Parameters*
+
+- resource
+
+##### createDocument
+```typescript 
+static createDocument( targetMembers:Carbon.Pointer.Class ):Carbon.Document.Class
+```
+
+Create and returns a `Carbon.Document.Class` object with a RemoveMemberAction fragment for the specified targetMembers.
+
+*Parameters*
+
+- targetMembers: The target members of the remove action.
 
 
 
@@ -4820,6 +4949,10 @@ static RDFRepresentation:string
 
 ```typescript 
 static AddMemberAction:string 
+```
+
+```typescript 
+static RemoveMemberAction:string 
 ```
 
 

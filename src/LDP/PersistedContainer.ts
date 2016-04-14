@@ -17,6 +17,11 @@ export interface Class extends PersistedDocument.Class {
 
 	getMembers( includeNonReadable?:boolean ):Promise<[ Pointer.Class[], HTTP.Response.Class ]>;
 
+	removeMember( member:Pointer.Class ): Promise<HTTP.Response.Class>;
+	removeMember( memberURI:string ): Promise<HTTP.Response.Class>;
+
+	removeMembers( members:(Pointer.Class | string)[] ): Promise<HTTP.Response.Class>;
+
 	upload( slug:string, blob:Blob ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
 	upload( blob:Blob ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
 }
@@ -52,6 +57,17 @@ function createChild( slugOrObject?:any, object?:Object ):Promise<[ Pointer.Clas
 function getMembers( includeNonReadable:boolean = true ):Promise<[ Pointer.Class[], HTTP.Response.Class ]> {
 	return this._documents.getMembers( this.id, includeNonReadable );
 }
+function removeMember( member:Pointer.Class ): Promise<HTTP.Response.Class>;
+function removeMember( memberURI:string ): Promise<HTTP.Response.Class>;
+function removeMember( memberOrUri:any ): Promise<HTTP.Response.Class> {
+	let that:PersistedDocument.Class = <PersistedDocument.Class> this;
+	return that._documents.removeMember( that.id, memberOrUri );
+}
+
+function removeMembers( members:(Pointer.Class | string)[] ): Promise<HTTP.Response.Class> {
+	let that:PersistedDocument.Class = <PersistedDocument.Class> this;
+	return that._documents.removeMembers( that.id, members );
+}
 
 function upload( slug:string, blob:Blob ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
 function upload( blob:Blob ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
@@ -72,6 +88,8 @@ function upload( slugOrBlob:any, blob:any = null ):Promise<[ Pointer.Class, HTTP
 			&& Utils.hasFunction( document, "addMember" )
 			&& Utils.hasFunction( document, "addMembers" )
 			&& Utils.hasFunction( document, "upload" )
+			&& Utils.hasFunction( document, "removeMember" )
+			&& Utils.hasFunction( document, "removeMembers" )
 			&& Utils.hasFunction( document, "getMembers" );
 	}
 
@@ -102,6 +120,18 @@ function upload( slugOrBlob:any, blob:any = null ):Promise<[ Pointer.Class, HTTP
 				enumerable: false,
 				configurable: true,
 				value: getMembers,
+			},
+			"removeMember": {
+				writable: false,
+				enumerable: false,
+				configurable: true,
+				value: removeMember,
+			},
+			"removeMembers": {
+				writable: false,
+				enumerable: false,
+				configurable: true,
+				value: removeMembers,
 			},
 			"upload": {
 				writable: false,

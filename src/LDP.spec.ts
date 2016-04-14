@@ -16,6 +16,7 @@ import * as DirectContainer from "./LDP/DirectContainer";
 import * as IndirectContainer from "./LDP/IndirectContainer";
 import * as PersistedContainer from "./LDP/PersistedContainer";
 import * as RDFSource from "./LDP/RDFSource";
+import * as RemoveMemberAction from "./LDP/RemoveMemberAction";
 
 import * as LDP from "./LDP";
 
@@ -87,6 +88,15 @@ describe( module( "Carbon/LDP" ), ():void => {
 	), ():void => {
 		expect( LDP.RDFSource ).toBeDefined();
 		expect( LDP.RDFSource ).toBe( RDFSource );
+	});
+
+	it( reexports(
+		STATIC,
+		"RemoveMemberAction",
+		"Carbon/LDP/RemoveMemberAction"
+	), ():void => {
+		expect( LDP.RemoveMemberAction ).toBeDefined();
+		expect( LDP.RemoveMemberAction ).toBe( RemoveMemberAction );
 	});
 
 });

@@ -7,7 +7,6 @@ import {
 	method,
 
 	isDefined,
-	hasProperty,
 	hasMethod,
 	hasSignature,
 	decoratedObject
@@ -78,6 +77,10 @@ describe( module( "Carbon/LDP/PersistedContainer" ), ():void => {
 			expect( PersistedContainer.Factory.hasClassProperties( document ) ).toBe( false );
 			document.getMembers = () => {};
 			expect( PersistedContainer.Factory.hasClassProperties( document ) ).toBe( false );
+			document.removeMember = () => {};
+			expect( PersistedContainer.Factory.hasClassProperties( document ) ).toBe( false );
+			document.removeMembers = () => {};
+			expect( PersistedContainer.Factory.hasClassProperties( document ) ).toBe( false );
 
 			document.upload = () => {};
 			expect( PersistedContainer.Factory.hasClassProperties( document ) ).toBe( true );
@@ -105,6 +108,8 @@ describe( module( "Carbon/LDP/PersistedContainer" ), ():void => {
 			document.addMembers = () => {};
 			document.createChild = () => {};
 			document.getMembers = () => {};
+			document.removeMember = () => {};
+			document.removeMembers = () => {};
 			document.upload = () => {};
 			let anotherContainer:PersistedContainer.Class = PersistedContainer.Factory.decorate( document );
 
@@ -113,6 +118,8 @@ describe( module( "Carbon/LDP/PersistedContainer" ), ():void => {
 			expect( anotherContainer.addMembers ).not.toBe( persistedContainer.addMembers );
 			expect( anotherContainer.createChild ).not.toBe( persistedContainer.createChild );
 			expect( anotherContainer.getMembers ).not.toBe( persistedContainer.getMembers );
+			expect( anotherContainer.removeMember ).not.toBe( persistedContainer.removeMember );
+			expect( anotherContainer.removeMembers ).not.toBe( persistedContainer.removeMembers );
 			expect( anotherContainer.upload ).not.toBe( persistedContainer.upload );
 		});
 
@@ -271,6 +278,86 @@ describe( module( "Carbon/LDP/PersistedContainer" ), ():void => {
 
 			});
 
+			it( hasMethod(
+				INSTANCE,
+				"getMembers", [
+					{ name: "includeNonReadable", type: "boolean", optional: true, description: "By default this option is set to `true`." },
+				],
+				{ type: "Promise<[ Carbon.Pointer.Class[], Carbon.HTTP.Response.Class ]>" }
+			), ():void => {
+				expect( container.getMembers ).toBeDefined();
+				expect( Utils.isFunction( container.getMembers ) ).toBeDefined();
+
+				let spy = spyOn( container._documents, "getMembers" );
+
+				container.getMembers();
+				expect( spy ).toHaveBeenCalledWith( "http://example.com/resource/", true );
+				spy.calls.reset();
+
+				container.getMembers( false );
+				expect( spy ).toHaveBeenCalledWith( "http://example.com/resource/", false );
+			});
+
+			describe( method(
+				INSTANCE,
+				"removeMember"
+			), ():void => {
+
+				it( hasSignature(
+					"Remove the specified resource Pointer as a member of the container.", [
+						{ name: "member", type: "Carbon.Pointer.Class", description: "Pointer object that references the resource to remove as a member." },
+					],
+					{ type: "Promise<Carbon.HTTP.Response.Class>" }
+				), ():void => {
+					expect( container.removeMember ).toBeDefined();
+					expect( Utils.isFunction( container.removeMember ) ).toBeDefined();
+
+					let spy = spyOn( container._documents, "removeMember" );
+
+					let pointer:Pointer.Class = context.documents.getPointer( "remove-member/" );
+					container.removeMember( pointer );
+
+					expect( spy ).toHaveBeenCalledWith( "http://example.com/resource/", pointer );
+				});
+
+				it( hasSignature(
+					"Remove the specified resource URI as a member of the container.", [
+						{ name: "memberURI", type: "string", description: "URI of the resource to remove as a member." },
+					],
+					{ type: "Promise<Carbon.HTTP.Response.Class>" }
+				), ():void => {
+					expect( container.removeMember ).toBeDefined();
+					expect( Utils.isFunction( container.removeMember ) ).toBeDefined();
+
+					let spy = spyOn( container._documents, "removeMember" );
+
+					container.removeMember( "remove-member/" );
+
+					expect( spy ).toHaveBeenCalledWith( "http://example.com/resource/", "remove-member/" );
+				});
+
+			});
+
+			it( hasMethod(
+				INSTANCE,
+				"removeMembers",
+				"Remove the specified resources URI or Pointers as members of the container.", [
+					{ name: "members", type: "(Carbon.Pointer.Class | string)[]", description: "Array of string URIs or Pointers to remove as members" },
+				],
+				{ type: "Promise<Carbon.HTTP.Response.Class>" }
+			), ():void => {
+				expect( container.removeMembers ).toBeDefined();
+				expect( Utils.isFunction( container.removeMembers ) ).toBeDefined();
+
+				let spy = spyOn( container._documents, "removeMembers" );
+
+				let pointers:Pointer.Class[] = [];
+				pointers.push( context.documents.getPointer( "remove-member/" ) );
+				container.removeMembers( pointers );
+
+				expect( spy ).toHaveBeenCalledWith( "http://example.com/resource/", pointers );
+			});
+
 			describe( method(
 				INSTANCE,
 				"upload",
@@ -310,26 +397,6 @@ describe( module( "Carbon/LDP/PersistedContainer" ), ():void => {
 					expect( spy ).toHaveBeenCalledWith( "http://example.com/resource/", blob );
 				});
 
-			});
-
-			it( hasMethod(
-				INSTANCE,
-				"getMembers", [
-					{ name: "includeNonReadable", type: "boolean", optional: true, description: "By default this option is set to `true`." },
-				],
-				{ type: "Promise<[ Carbon.Pointer.Class[], Carbon.HTTP.Response.Class ]>" }
-			), ():void => {
-				expect( container.getMembers ).toBeDefined();
-				expect( Utils.isFunction( container.getMembers ) ).toBeDefined();
-
-				let spy = spyOn( container._documents, "getMembers" );
-
-				container.getMembers();
-				expect( spy ).toHaveBeenCalledWith( "http://example.com/resource/", true );
-				spy.calls.reset();
-
-				container.getMembers( false );
-				expect( spy ).toHaveBeenCalledWith( "http://example.com/resource/", false );
 			});
 
 		});
