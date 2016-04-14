@@ -956,7 +956,7 @@ describe( module( "Carbon/HTTP/Request" ), function ():void {
 
 			expect( Request.Util.getHeader( "Other-header", optionsWithHeaders, true ) ).toEqual( new Header.Class() );
 			expect( Request.Util.getHeader( "Authorization", options, true ) ).toEqual( new Header.Class() );
-			expect( Request.Util.getHeader( "Authorization", optionsWithHeaders, true )  ).toEqual( new Header.Class() );
+			expect( Request.Util.getHeader( "Authorization", optionsWithHeaders, true )  ).toEqual( new Header.Class( "Basic QWxhZGRpbjpvcGVuIHNlc2FtZQ==" ) );
 		});
 
 		it( hasMethod(

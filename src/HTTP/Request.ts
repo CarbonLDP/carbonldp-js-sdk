@@ -169,7 +169,8 @@ export class Util {
 
 		if( initialize ) {
 			let headers:Map<string, Header.Class> = requestOptions.headers ? requestOptions.headers : requestOptions.headers = new Map<string, Header.Class>();
-			headers.set( headerName, new Header.Class() );
+			if ( ! headers.has( headerName ) )
+				headers.set( headerName, new Header.Class() );
 		}
 
 		if( ! requestOptions.headers  ) return undefined;
@@ -202,7 +203,7 @@ export class Util {
 	}
 
 	static setContainerRetrievalPreferences( preferences:ContainerRetrievalPreferences, requestOptions:Options, returnRepresentation:boolean = true ):Options {
-		let prefer:Header.Class = Util.getHeader( "prefer", requestOptions ) || Util.getHeader( "prefer", requestOptions, true );
+		let prefer:Header.Class = Util.getHeader( "prefer", requestOptions, true );
 		let representation:string = returnRepresentation ? "return=representation; " : "";
 
 		let keys:string[] = [ "include", "omit" ];
