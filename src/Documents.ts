@@ -169,10 +169,16 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 
 	createChild( parentURI:string, slug:string, childDocument:Document.Class, requestOptions?:HTTP.Request.Options ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
 	createChild( parentURI:string, childDocument:Document.Class, requestOptions?:HTTP.Request.Options ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
+
+	createChild( parentURI:string, slug:string, childObject:Object, requestOptions?:HTTP.Request.Options ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
+	createChild( parentURI:string, childObject:Object, requestOptions?:HTTP.Request.Options ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
+
 	createChild( parentURI:string, slugOrChildDocument:any, childDocumentOrRequestOptions:any = {}, requestOptions:HTTP.Request.Options = {} ):Promise<[ Pointer.Class, HTTP.Response.Class ]> {
 		let slug:string = Utils.isString( slugOrChildDocument ) ? slugOrChildDocument : null;
 		let childDocument:Document.Class = ! Utils.isString( slugOrChildDocument ) ? slugOrChildDocument : childDocumentOrRequestOptions;
 		requestOptions = ! Utils.isString( slugOrChildDocument ) ? childDocumentOrRequestOptions : requestOptions;
+
+		if ( ! Document.Factory.is( childDocument ) ) childDocument = Document.Factory.createFrom( childDocument );
 
 		if( !! this.context ) parentURI = this.context.resolve( parentURI );
 

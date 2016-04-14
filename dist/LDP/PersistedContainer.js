@@ -1,14 +1,14 @@
 "use strict";
 var Utils = require("./../Utils");
-function createChild(slugOrDocument, document) {
-    if (document === void 0) { document = null; }
-    var slug = Utils.isString(slugOrDocument) ? slugOrDocument : null;
-    document = slug ? document : slugOrDocument;
+function createChild(slugOrObject, object) {
+    var slug = Utils.isString(slugOrObject) ? slugOrObject : null;
+    object = Utils.isString(slugOrObject) ? object : slugOrObject;
+    object = object || {};
     if (slug) {
-        return this._documents.createChild(this.id, slug, document);
+        return this._documents.createChild(this.id, slug, object);
     }
     else {
-        return this._documents.createChild(this.id, document);
+        return this._documents.createChild(this.id, object);
     }
 }
 function upload(slugOrBlob, blob) {
