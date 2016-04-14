@@ -22,12 +22,17 @@ function upload(slugOrBlob, blob) {
         return this._documents.upload(this.id, blob);
     }
 }
+function getMembers(includeNonReadable) {
+    if (includeNonReadable === void 0) { includeNonReadable = true; }
+    return this._documents.getMembers(this.id, includeNonReadable);
+}
 var Factory = (function () {
     function Factory() {
     }
     Factory.hasClassProperties = function (document) {
         return Utils.hasFunction(document, "createChild")
-            && Utils.hasFunction(document, "upload");
+            && Utils.hasFunction(document, "upload")
+            && Utils.hasFunction(document, "getMembers");
     };
     Factory.decorate = function (persistedDocument) {
         if (Factory.hasClassProperties(persistedDocument))
@@ -44,6 +49,12 @@ var Factory = (function () {
                 enumerable: false,
                 configurable: true,
                 value: upload,
+            },
+            "getMembers": {
+                writable: false,
+                enumerable: false,
+                configurable: true,
+                value: getMembers,
             },
         });
         return persistedDocument;

@@ -72,18 +72,12 @@ describe( module( "Carbon/LDP/PersistedContainer" ), ():void => {
 			document = PersistedDocument.Factory.create( "http://example.com/resource/", context.documents );
 			expect( PersistedContainer.Factory.hasClassProperties( document ) ).toBe( false );
 
-			document = <PersistedDocument.Class> Utils.extend( document, {
-				createChild: ():Promise<boolean> => {
-					return new Promise( ( resolve:( result:boolean ) => void ) => {
-						resolve( true );
-					});
-				},
-				upload: ():Promise<boolean> => {
-					return new Promise( ( resolve:( result:boolean ) => void ) => {
-						resolve( true );
-					});
-				}
-			});
+			( <PersistedContainer.Class> document ).createChild = () => {};
+			expect( PersistedContainer.Factory.hasClassProperties( document ) ).toBe( false );
+			( <PersistedContainer.Class> document ).upload = () => {};
+			expect( PersistedContainer.Factory.hasClassProperties( document ) ).toBe( false );
+
+			( <PersistedContainer.Class> document ).getMembers = () => {};
 			expect( PersistedContainer.Factory.hasClassProperties( document ) ).toBe( true );
 		});
 
@@ -99,32 +93,21 @@ describe( module( "Carbon/LDP/PersistedContainer" ), ():void => {
 			expect( Utils.isFunction( PersistedContainer.Factory.decorate ) ).toBe( true );
 
 			let document:PersistedDocument.Class;
-			let createChild:Function = ():Promise<boolean> => {
-				return new Promise( ( resolve:( result:boolean ) => void ) => {
-					resolve( true );
-				});
-			};
-			let upload:Function = ():Promise<boolean> => {
-				return new Promise( ( resolve:( result:boolean ) => void ) => {
-					resolve( true );
-				});
-			};
+			document = PersistedDocument.Factory.create( "http://example.com/resource/", context.documents );
+
+			let persistedContainer:PersistedContainer.Class = PersistedContainer.Factory.decorate( document );
+			expect( PersistedContainer.Factory.hasClassProperties( persistedContainer ) ).toBe( true );
 
 			document = PersistedDocument.Factory.create( "http://example.com/resource/", context.documents );
-			document = <PersistedDocument.Class> Utils.extend( document, {
-				createChild: createChild,
-				upload: upload
-			});
-			let persistedDocument:PersistedContainer.Class = PersistedContainer.Factory.decorate( document );
-			expect( PersistedContainer.Factory.hasClassProperties( persistedDocument ) ).toBe( true );
-			expect( persistedDocument.createChild ).toBe( createChild );
-			expect( persistedDocument.upload ).toBe( upload );
+			( <PersistedContainer.Class> document ).createChild = () => {};
+			( <PersistedContainer.Class> document ).upload = () => {};
+			( <PersistedContainer.Class> document ).getMembers = () => {};
+			let anotherContainer:PersistedContainer.Class = PersistedContainer.Factory.decorate( document );
 
-			document = PersistedDocument.Factory.create( "http://example.com/resource/", context.documents );
-			persistedDocument = PersistedContainer.Factory.decorate( document );
-			expect( PersistedContainer.Factory.hasClassProperties( persistedDocument ) ).toBe( true );
-			expect( persistedDocument.createChild ).not.toBe( createChild );
-			expect( persistedDocument.upload ).not.toBe( upload );
+			expect( PersistedContainer.Factory.hasClassProperties( anotherContainer ) ).toBe( true );
+			expect( anotherContainer.createChild ).not.toBe( persistedContainer.createChild );
+			expect( anotherContainer.upload ).not.toBe( persistedContainer.upload );
+			expect( anotherContainer.getMembers ).not.toBe( persistedContainer.getMembers );
 		});
 
 		describe( decoratedObject(
@@ -144,11 +127,6 @@ describe( module( "Carbon/LDP/PersistedContainer" ), ():void => {
 				context = new MockedContext();
 				let document = PersistedDocument.Factory.create( "http://example.com/resource/", context.documents );
 				container = PersistedContainer.Factory.decorate( document );
-				jasmine.Ajax.install();
-			});
-
-			afterEach( ():void => {
-				jasmine.Ajax.uninstall();
 			});
 
 			describe( method(
@@ -266,6 +244,26 @@ describe( module( "Carbon/LDP/PersistedContainer" ), ():void => {
 					expect( spy ).toHaveBeenCalledWith( "http://example.com/resource/", blob );
 				});
 
+			});
+
+			it( hasMethod(
+				INSTANCE,
+				"getMembers", [
+					{ name: "includeNonReadable", type: "boolean", optional: true, description: "By default this option is set to `true`." },
+				],
+				{ type: "Promise<[ Carbon.Pointer.Class[], Carbon.HTTP.Response.Class ]>" }
+			), ():void => {
+				expect( container.getMembers ).toBeDefined();
+				expect( Utils.isFunction( container.getMembers ) ).toBeDefined();
+
+				let spy = spyOn( container._documents, "getMembers" );
+
+				container.getMembers();
+				expect( spy ).toHaveBeenCalledWith( "http://example.com/resource/", true );
+				spy.calls.reset();
+
+				container.getMembers( false );
+				expect( spy ).toHaveBeenCalledWith( "http://example.com/resource/", false );
 			});
 
 		});

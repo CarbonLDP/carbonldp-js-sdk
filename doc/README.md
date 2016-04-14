@@ -493,7 +493,7 @@ Carbon( settings?:any )
 
 *Parameters*
 
-- settings 
+- settings
 
 
 #### <a name="Carbon-Properties" />Properties
@@ -525,7 +525,7 @@ Resolve the URI provided in the context of the instance, this information is pro
 
 *Parameters*
 
-- uri 
+- uri
 
 ##### getAPIDescription
 ```typescript 
@@ -597,7 +597,7 @@ Abstract method which implementation must resolve the URI provided in the scope 
 
 *Parameters*
 
-- relativeURI 
+- relativeURI
 
 
 
@@ -634,7 +634,7 @@ Returns true if the object provided has the properties that defines a `Carbon.Ac
 
 *Parameters*
 
-- resource 
+- resource
 
 ##### create
 ```typescript 
@@ -645,9 +645,9 @@ Create a `Carbon.AccessPoint.Class` object with the parameters specified.
 
 *Parameters*
 
-- membershipResource 
-- hasMemberRelation 
-- memberOfRelation 
+- membershipResource
+- hasMemberRelation
+- memberOfRelation
 
 ##### createFrom
 ```typescript 
@@ -658,10 +658,10 @@ Create a `Carbon.AccessPoint.Class` object with the object provided.
 
 *Parameters*
 
-- object 
-- membershipResource 
-- hasMemberRelation 
-- memberOfRelation 
+- object
+- membershipResource
+- hasMemberRelation
+- memberOfRelation
 
 
 
@@ -703,7 +703,7 @@ Returns true if the object provided has the properties that defines a `Carbon.Ag
 
 *Parameters*
 
-- resource 
+- resource
 
 ##### is
 ```typescript 
@@ -714,7 +714,7 @@ Returns true if the object provided is considered as an `Carbon.Agent.Class` obj
 
 *Parameters*
 
-- object 
+- object
 
 ##### create
 ```typescript 
@@ -725,8 +725,8 @@ Create a `Carbon.Agent.Class` object with the name and email specified.
 
 *Parameters*
 
-- name 
-- email 
+- name
+- email
 
 ##### createFrom
 ```typescript 
@@ -737,7 +737,7 @@ Create a `Carbon.Agent.Class` object with the object provided.
 
 *Parameters*
 
-- object 
+- object
 
 
 
@@ -778,7 +778,7 @@ Returns a Promise with a Pointer for the stored Agent, and the response of the c
 
 *Parameters*
 
-- agentDocument 
+- agentDocument
 
 ```typescript 
 create( slug:string,  agentDocument:Carbon.Agents.Agent.Class ):Promise<Carbon.Pointer.Class, Carbon.HTTP.Response.Class>
@@ -789,8 +789,8 @@ Returns a Promise with a Pointer for the stored Agent, and the response of the c
 
 *Parameters*
 
-- slug 
-- agentDocument 
+- slug
+- agentDocument
 
 
 
@@ -835,7 +835,7 @@ Returns true if the object provided has the properties that defines a `Carbon.Ap
 
 *Parameters*
 
-- resource 
+- resource
 
 ##### is
 ```typescript 
@@ -846,7 +846,7 @@ Returns true if the object provided is considered as an `Carbon.App.Class` objec
 
 *Parameters*
 
-- object 
+- object
 
 ##### create
 ```typescript 
@@ -857,8 +857,8 @@ Create a empty `Carbon.App.Class` object.
 
 *Parameters*
 
-- name 
-- description 
+- name
+- description
 
 ##### createFrom
 ```typescript 
@@ -869,9 +869,9 @@ Create a `Carbon.App.Class` object with the object provided.
 
 *Parameters*
 
-- object 
-- name 
-- description 
+- object
+- name
+- description
 
 
 
@@ -900,8 +900,8 @@ Context( parentContext:Carbon.Context,  app:Carbon.App.Context )
 
 *Parameters*
 
-- parentContext 
-- app 
+- parentContext
+- app
 
 
 #### <a name="Carbon-App-Context-Properties" />Properties
@@ -928,7 +928,7 @@ Resolve the URI provided in the scope of the application
 
 *Parameters*
 
-- uri 
+- uri
 
 
 
@@ -956,7 +956,7 @@ Class( context:Carbon.Context )
 
 *Parameters*
 
-- context : A context from where Carbon Apps can be obtained
+- context: A context from where Carbon Apps can be obtained
 
 
 
@@ -978,7 +978,7 @@ Obtains a `Carbon.App.Context` object of the specified app URI, if it exists wit
 
 *Parameters*
 
-- uri 
+- uri
 
 ```typescript 
 getContext( pointer:Carbon.Pointer.Class ):Promise<Carbon.App.Context>
@@ -988,7 +988,7 @@ Obtains a `Carbon.App.Context` object of the specified Pointer object, if it exi
 
 *Parameters*
 
-- pointer 
+- pointer
 
 ##### create
 ```typescript 
@@ -1000,7 +1000,7 @@ Returns a Pointer for the stored App Document, and the response of the call.
 
 *Parameters*
 
-- appDocument 
+- appDocument
 
 ```typescript 
 create( slug:string,  appDocument:Carbon.App.Class ):Promise<Carbon.Pointer.Class, Carbon.HTTP.Response.Class>
@@ -1011,8 +1011,8 @@ Returns a Pointer for the stored App Document, and the response of the call.
 
 *Parameters*
 
-- slug 
-- appDocument 
+- slug
+- appDocument
 
 
 
@@ -1069,7 +1069,7 @@ Returns true the user is authenticated.
 
 *Parameters*
 
-- askParent 
+- askParent
 
 ##### authenticate
 ```typescript 
@@ -1080,8 +1080,8 @@ Authenticate the user with an `username` and `password`. Uses the `TOKEN` method
 
 *Parameters*
 
-- username 
-- password 
+- username
+- password
 
 ##### addAuthentication
 ```typescript 
@@ -1092,7 +1092,7 @@ Add the authentication header to a `Carbon.HTTP.Request.Options` object.
 
 *Parameters*
 
-- options 
+- options
 
 ##### clearAuthentication
 ```typescript 
@@ -1110,9 +1110,9 @@ Authenticates the user with Basic HTTP Authentication, witch uses encoded userna
 
 *Parameters*
 
-- method 
-- username 
-- password 
+- method
+- username
+- password
 
 ```typescript 
 authenticateUsing( method:'TOKEN',  username:string,  password:string ):Promise<Carbon.Auth.Token.Class>
@@ -1122,9 +1122,9 @@ Authenticates the user with username and password, and generates a JSON Web Toke
 
 *Parameters*
 
-- method 
-- username 
-- password 
+- method
+- username
+- password
 
 ```typescript 
 authenticateUsing( method:'TOKEN',  token:Carbon.Auth.Token.Class ):Promise<Carbon.Auth.Token.Class>
@@ -1134,8 +1134,8 @@ Authenticates the user with a JSON Web Token (JWT), i.e. the credentials generat
 
 *Parameters*
 
-- method 
-- token 
+- method
+- token
 
 
 
@@ -1186,7 +1186,7 @@ Stores credentials to authenticate future requests.
 
 *Parameters*
 
-- authenticationToken 
+- authenticationToken
 
 ##### addAuthentication
 ```typescript 
@@ -1199,7 +1199,7 @@ Adds the Basic authentication header to the passed request options object.
 
 *Parameters*
 
-- requestOptions : Request options object to add Authentication headers.
+- requestOptions: Request options object to add Authentication headers.
 
 ##### clearAuthentication
 ```typescript 
@@ -1219,7 +1219,7 @@ Returns true if the Authenticator supports the AuthenticationToken.
 
 *Parameters*
 
-- authenticationToken 
+- authenticationToken
 
 
 
@@ -1249,7 +1249,7 @@ Duck tape tests if the value sent is a Token object
 
 *Parameters*
 
-- value 
+- value
 
 ##### hasClassProperties
 ```typescript 
@@ -1260,7 +1260,7 @@ Returns true if the object provided has the necessary information to be utilized
 
 *Parameters*
 
-- object 
+- object
 
 
 ##### decorate
@@ -1272,7 +1272,7 @@ Adds any necessary data to the object provided to be utilized as a type `Carbon.
 
 *Parameters*
 
-- object 
+- object
 
 ##### hasRDFClass
 ```typescript 
@@ -1283,7 +1283,7 @@ Description
 
 *Parameters*
 
-- pointer 
+- pointer
 
 ```typescript 
 hasRDFClass( expandedObject:Object ):boolean
@@ -1293,7 +1293,7 @@ Description
 
 *Parameters*
 
-- expandedObject 
+- expandedObject
 
 
 
@@ -1322,7 +1322,7 @@ Class( context:Carbon.Context )
 
 *Parameters*
 
-- context : The context where to authenticate the agent.
+- context: The context where to authenticate the agent.
 
 
 
@@ -1348,7 +1348,7 @@ Adds the Basic authentication header to the passed request options object.
 
 *Parameters*
 
-- requestOptions : Request options object to add Authentication headers.
+- requestOptions: Request options object to add Authentication headers.
 
 ##### clearAuthentication
 ```typescript 
@@ -1368,7 +1368,7 @@ Returns true if the Authenticator supports the AuthenticationToken.
 
 *Parameters*
 
-- authenticationToken 
+- authenticationToken
 
 ##### authenticate
 ```typescript 
@@ -1379,7 +1379,7 @@ Stores credentials to authenticate future requests.
 
 *Parameters*
 
-- authenticationToken 
+- authenticationToken
 
 ```typescript 
 authenticate( token:Carbon.Auth.Token.Class ):Promise<Carbon.Auth.Token.Class>
@@ -1389,7 +1389,7 @@ Stores credentials to authenticate future requests.
 
 *Parameters*
 
-- token 
+- token
 
 
 
@@ -1416,8 +1416,8 @@ Class( username:string,  password:string )
 
 *Parameters*
 
-- username 
-- password 
+- username
+- password
 
 
 #### <a name="Carbon-Auth-UsernameAndPasswordToken-Class-Properties" />Properties
@@ -1460,7 +1460,7 @@ Returns true if the object provided has the properties and functions of a Docume
 
 *Parameters*
 
-- documentResource 
+- documentResource
 
 ##### is
 ```typescript 
@@ -1471,7 +1471,7 @@ Returns true if the object is considered a Document object
 
 *Parameters*
 
-- object 
+- object
 
 ##### decorate
 ```typescript 
@@ -1482,7 +1482,7 @@ Adds the properties and method necessary for a Document object.
 
 *Parameters*
 
-- object 
+- object
 
 ##### create
 ```typescript 
@@ -1500,7 +1500,7 @@ Creates a Document object from the object provided.
 
 *Parameters*
 
-- object 
+- object
 
 
 
@@ -1526,7 +1526,7 @@ Returns true if the Document object has a pointer referenced by the URI provided
 
 *Parameters*
 
-- id 
+- id
 
 ##### getPointer
 ```typescript 
@@ -1538,7 +1538,7 @@ Returns null if the URI is not inside scope of the document.
 
 *Parameters*
 
-- id 
+- id
 
 ##### hasFragment
 ```typescript 
@@ -1549,7 +1549,7 @@ Returns true if the document has the fragment id provided
 
 *Parameters*
 
-- id 
+- id
 
 ##### getFragment
 ```typescript 
@@ -1561,7 +1561,7 @@ Returns null if no fragment exists in the document.
 
 *Parameters*
 
-- id 
+- id
 
 ##### getNamedFragment
 ```typescript 
@@ -1573,7 +1573,7 @@ Returns null if no fragment exists in the document.
 
 *Parameters*
 
-- id 
+- id
 
 ##### getFragments
 ```typescript 
@@ -1591,7 +1591,7 @@ Create a Named Fragment with the slug provided
 
 *Parameters*
 
-- slug 
+- slug
 
 ##### inScope
 ```typescript 
@@ -1602,7 +1602,7 @@ Returns true if the pointer provided is in the scope of the document.
 
 *Parameters*
 
-- pointer 
+- pointer
 
 ```typescript 
 inScope( id:string ):boolean
@@ -1612,7 +1612,7 @@ Returns true if the URI provided is in the scope of the document.
 
 *Parameters*
 
-- id 
+- id
 
 ##### createFragment
 ```typescript 
@@ -1623,8 +1623,8 @@ Creates a NamedFragment from the object provided and the slug specified.
 
 *Parameters*
 
-- slug 
-- object 
+- slug
+- object
 
 ```typescript 
 createFragment( object:Object ):Carbon.Fragment.Class
@@ -1634,7 +1634,7 @@ Creates a BlankNode from the object provided, sing no slug was specififed.
 
 *Parameters*
 
-- object 
+- object
 
 ```typescript 
 createFragment( slug:string ):Carbon.Fragment.Class
@@ -1644,7 +1644,7 @@ Creates a Fragment with the slug provided.
 
 *Parameters*
 
-- slug 
+- slug
 
 ```typescript 
 createFragment():Carbon.Fragment.Class
@@ -1661,7 +1661,7 @@ Remove the fragment referenced by the NamedFragment object provided from the Doc
 
 *Parameters*
 
-- fragment 
+- fragment
 
 ```typescript 
 removeFragment( fragment:Carbon.Fragment.Class )
@@ -1671,7 +1671,7 @@ Remove the fragment referenced by the Fragment object provided from the Document
 
 *Parameters*
 
-- fragment 
+- fragment
 
 ```typescript 
 removeFragment( slug:string )
@@ -1681,7 +1681,7 @@ Remove the fragment referenced by the Slug string provided from the Document.
 
 *Parameters*
 
-- slug 
+- slug
 
 ##### toJSON
 ```typescript 
@@ -1692,8 +1692,8 @@ Returns a JSON string from the document using an ObjectSchema and a JSONLDConver
 
 *Parameters*
 
-- objectSchemaResolver 
-- jsonLDConverter 
+- objectSchemaResolver
+- jsonLDConverter
 
 ```typescript 
 toJSON( objectSchemaResolver:Carbon.ObjectSchema.Resolver ):string
@@ -1703,7 +1703,7 @@ Returns a JSON string from the document using an ObjectSchema
 
 *Parameters*
 
-- objectSchemaResolver 
+- objectSchemaResolver
 
 ```typescript 
 toJSON():string
@@ -1729,7 +1729,7 @@ get( uri:string ):Promise<[ Carbon.PersistedDocument.Class, HTTP.Response.Class 
 
 *Parameters*
 
-- uri 
+- uri
 
 ##### exists
 ```typescript 
@@ -1740,8 +1740,8 @@ Returns a Promise with a boolean indicating if the resource exists or not.
 
 *Parameters*
 
-- documentURI 
-- requestOptions 
+- documentURI
+- requestOptions
 
 ##### delete
 ```typescript 
@@ -1752,8 +1752,8 @@ Delete a the Resource referred by a PersistedDocument from the server.
 
 *Parameters*
 
-- persistedDocument 
-- requestOptions 
+- persistedDocument
+- requestOptions
 
 ##### executeRawASKQuery
 ```typescript 
@@ -1766,9 +1766,9 @@ Executes an ASK query on a document and returns a raw application/sparql-results
 
 *Parameters*
 
-- documentURI 
-- askQuery 
-- requestOptions 
+- documentURI
+- askQuery
+- requestOptions
 
 ##### executeRawSELECTQuery
 ```typescript 
@@ -1779,9 +1779,9 @@ Executes a SELECT query on a document and returns a raw application/sparql-resul
 
 *Parameters*
 
-- documentURI 
-- selectQuery 
-- requestOptions 
+- documentURI
+- selectQuery
+- requestOptions
 
 ##### executeRawCONSTRUCTQuery
 ```typescript 
@@ -1794,9 +1794,9 @@ Executes a CONSTRUCT query on a document and returns a string with the resulting
 
 *Parameters*
 
-- documentURI 
-- constructQuery 
-- requestOptions 
+- documentURI
+- constructQuery
+- requestOptions
 
 ##### executeRawDESCRIBEQuery
 ```typescript 
@@ -1809,9 +1809,9 @@ Executes a DESCRIBE Query and returns a string with the resulting model
 
 *Parameters*
 
-- documentURI 
-- describeQuery 
-- requestOptions 
+- documentURI
+- describeQuery
+- requestOptions
 
 ##### createChild
 ```typescript 
@@ -1822,9 +1822,9 @@ Create a child document for the respective parent source.
 
 *Parameters*
 
-- parentURI 
-- childDocument 
-- requestOptions 
+- parentURI
+- childDocument
+- requestOptions
 
 ```typescript 
 createChild( parentURI:string,  slug:string,  childDocument:Carbon.Document.Class,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[Carbon.Pointer.Class, Carbon.HTTP.Response.Class]>
@@ -1834,10 +1834,10 @@ Create a child document for the respective parent source.
 
 *Parameters*
 
-- parentURI 
-- slug 
-- childDocument 
-- requestOptions 
+- parentURI
+- slug
+- childDocument
+- requestOptions
 
 ```typescript 
 createChild( parentURI:string,  childObject:Object,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[Carbon.Pointer.Class, Carbon.HTTP.Response.Class]>
@@ -1847,9 +1847,9 @@ Create a child document for the respective parent source.
 
 *Parameters*
 
-- parentURI 
-- childObject 
-- requestOptions 
+- parentURI
+- childObject
+- requestOptions
 
 ```typescript 
 createChild( parentURI:string,  slug:string,  childObject:Object,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[Carbon.Pointer.Class, Carbon.HTTP.Response.Class]>
@@ -1859,10 +1859,10 @@ Create a child document for the respective parent source.
 
 *Parameters*
 
-- parentURI 
-- slug 
-- childObject 
-- requestOptions 
+- parentURI
+- slug
+- childObject
+- requestOptions
 
 ##### createAccessPoint
 ```typescript 
@@ -1873,10 +1873,10 @@ Create an AccessPoint of the document.
 
 *Parameters*
 
-- documentURI 
-- accessPoint 
-- slug 
-- requestOptions 
+- documentURI
+- accessPoint
+- slug
+- requestOptions
 
 ```typescript 
 createAccessPoint( accessPoint:Carbon.AccessPoint.Class,  slug?:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[Carbon.Pointer.Class, Carbon.HTTP.Response.Class]>
@@ -1886,9 +1886,9 @@ Create an AccessPoint of the document.
 
 *Parameters*
 
-- accessPoint 
-- slug 
-- requestOptions 
+- accessPoint
+- slug
+- requestOptions
 
 ##### upload
 ```typescript 
@@ -1899,9 +1899,9 @@ Upload a File to the server, creating a child for the parent specified.
 
 *Parameters*
 
-- parentURI 
-- blob 
-- requestOptions 
+- parentURI
+- blob
+- requestOptions
 
 ```typescript 
 upload( parentURI:string,  slug:string,  blob:Blob,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[Carbon.Pointer.Class, Carbon.HTTP.Response.Class]>
@@ -1911,10 +1911,10 @@ Upload a File to the server, creating a child for the parent specified.
 
 *Parameters*
 
-- parentURI 
-- slug 
-- blob 
-- requestOptions 
+- parentURI
+- slug
+- blob
+- requestOptions
 
 ##### getMembers
 ```typescript 
@@ -1925,9 +1925,9 @@ Retrieves (but doesn't resolve) all the members of the document
 
 *Parameters*
 
-- uri 
-- includeNonReadable 
-- requestOptions 
+- uri
+- includeNonReadable
+- requestOptions
 
 ```typescript 
 getMembers( uri:string,  includeNonReadable?:boolean ):Promise<[ Carbon.Pointer.Class[], Carbon.HTTP.Response.Class[] ]>
@@ -1937,8 +1937,8 @@ Retrieves (but doesn't resolve) all the members of the document
 
 *Parameters*
 
-- uri 
-- includeNonReadable 
+- uri
+- includeNonReadable
 
 ```typescript 
 getMembers( uri:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.Pointer.Class[], Carbon.HTTP.Response.Class[] ]>
@@ -1948,8 +1948,8 @@ Retrieves (but doesn't resolve) all the members of the document
 
 *Parameters*
 
-- uri 
-- requestOptions 
+- uri
+- requestOptions
 
 ```typescript 
 getMembers( uri:string ):Promise<[ Carbon.Pointer.Class[], Carbon.HTTP.Response.Class[] ]>
@@ -1959,7 +1959,7 @@ Retrieves (but doesn't resolve) all the members of the document
 
 *Parameters*
 
-- uri 
+- uri
 
 
 
@@ -2002,7 +2002,7 @@ AbstractError( message:string )
 
 *Parameters*
 
-- message 
+- message
 
 
 #### <a name="Carbon-Errors-AbstractError-Properties" />Properties
@@ -2129,7 +2129,7 @@ IllegalStateError( message?:string )
 
 *Parameters*
 
-- message 
+- message
 
 
 #### <a name="Carbon-Errors-IllegalStateError-Properties" />Properties
@@ -2173,7 +2173,7 @@ NotImplementedError( message?:string )
 
 *Parameters*
 
-- message 
+- message
 
 
 #### <a name="Carbon-Errors-NotImplementedError-Properties" />Properties
@@ -2220,7 +2220,7 @@ Returns true if the object provided has the properties and functions of a Fragme
 
 *Parameters*
 
-- resource 
+- resource
 
 ##### create
 ```typescript 
@@ -2231,8 +2231,8 @@ Creates a Fragment with the ID provided for the document specified.
 
 *Parameters*
 
-- id 
-- document 
+- id
+- document
 
 ```typescript 
 static create( document:Carbon.Document.Class ):Carbon.Fragment.Class
@@ -2242,7 +2242,7 @@ Create a Blank Node Fragment since no ID is provided for the specified document.
 
 *Parameters*
 
-- document 
+- document
 
 ##### createFrom
 ```typescript 
@@ -2253,9 +2253,9 @@ Creates a Fragment from an Object with the ID provided for the document specifie
 
 *Parameters*
 
-- object 
-- id 
-- document 
+- object
+- id
+- document
 
 ```typescript 
 static createFrom( object:T extends Object,  document:Carbon.Document.Class ):Carbon.Fragment.Class
@@ -2265,8 +2265,8 @@ Create a Blank Node Fragment since no ID is provided for the specified document.
 
 *Parameters*
 
-- object 
-- document 
+- object
+- document
 
 
 
@@ -2388,8 +2388,8 @@ BadRequestError( message:string,  response:Carbon.HTTP.Response )
 
 *Parameters*
 
-- message 
-- response 
+- message
+- response
 
 
 #### <a name="Carbon-HTTP-Errors-BadRequestError-Properties" />Properties
@@ -2437,8 +2437,8 @@ ConflictError( message:string,  response:Carbon.HTTP.Response )
 
 *Parameters*
 
-- message 
-- response 
+- message
+- response
 
 
 #### <a name="Carbon-HTTP-Errors-ConflictError-Properties" />Properties
@@ -2486,8 +2486,8 @@ ForbiddenError( message:string,  response:Carbon.HTTP.Response )
 
 *Parameters*
 
-- message 
-- response 
+- message
+- response
 
 
 #### <a name="Carbon-HTTP-Errors-client-ForbiddenError-Properties" />Properties
@@ -2535,8 +2535,8 @@ HTTPError( message:string,  response:Carbon.HTTP.Response )
 
 *Parameters*
 
-- message 
-- response 
+- message
+- response
 
 
 #### <a name="Carbon-HTTP-Errors-HTTPError-Properties" />Properties
@@ -2584,8 +2584,8 @@ UnknownError( message:string,  response:Carbon.HTTP.Response )
 
 *Parameters*
 
-- message 
-- response 
+- message
+- response
 
 
 #### <a name="Carbon-HTTP-Errors-UnknownError-Properties" />Properties
@@ -2633,8 +2633,8 @@ MethodNotAllowedError( message:string,  response:Carbon.HTTP.Response )
 
 *Parameters*
 
-- message 
-- response 
+- message
+- response
 
 
 #### <a name="Carbon-HTTP-Errors-client-MethodNotAllowedError-Properties" />Properties
@@ -2682,8 +2682,8 @@ NotAcceptableError( message:string,  response:Carbon.HTTP.Response )
 
 *Parameters*
 
-- message 
-- response 
+- message
+- response
 
 
 #### <a name="Carbon-HTTP-Errors-client-NotAcceptableError-Properties" />Properties
@@ -2731,8 +2731,8 @@ NotFoundError( message:string,  response:Carbon.HTTP.Response )
 
 *Parameters*
 
-- message 
-- response 
+- message
+- response
 
 
 #### <a name="Carbon-HTTP-Errors-client-NotFoundError-Properties" />Properties
@@ -2780,8 +2780,8 @@ PreconditionFailedError( message:string,  response:Carbon.HTTP.Response )
 
 *Parameters*
 
-- message 
-- response 
+- message
+- response
 
 
 #### <a name="Carbon-HTTP-Errors-client-PreconditionFailedError-Properties" />Properties
@@ -2829,8 +2829,8 @@ PreconditionRequiredError( message:string,  response:Carbon.HTTP.Response )
 
 *Parameters*
 
-- message 
-- response 
+- message
+- response
 
 
 #### <a name="Carbon-HTTP-Errors-client-PreconditionRequiredError-Properties" />Properties
@@ -2878,8 +2878,8 @@ RequestEntityTooLargeError( message:string,  response:Carbon.HTTP.Response )
 
 *Parameters*
 
-- message 
-- response 
+- message
+- response
 
 
 #### <a name="Carbon-HTTP-Errors-client-RequestEntityTooLargeError-Properties" />Properties
@@ -2927,8 +2927,8 @@ RequestHeaderFieldsTooLargeError( message:string,  response:Carbon.HTTP.Response
 
 *Parameters*
 
-- message 
-- response 
+- message
+- response
 
 
 #### <a name="Carbon-HTTP-Errors-client-RequestHeaderFieldsTooLargeError-Properties" />Properties
@@ -2976,8 +2976,8 @@ RequestURITooLongError( message:string,  response:Carbon.HTTP.Response )
 
 *Parameters*
 
-- message 
-- response 
+- message
+- response
 
 
 #### <a name="Carbon-HTTP-Errors-client-RequestURITooLongError-Properties" />Properties
@@ -3025,8 +3025,8 @@ TooManyRequestsError( message:string,  response:Carbon.HTTP.Response )
 
 *Parameters*
 
-- message 
-- response 
+- message
+- response
 
 
 #### <a name="Carbon-HTTP-Errors-client-TooManyRequestsError-Properties" />Properties
@@ -3074,8 +3074,8 @@ UnauthorizedError( message:string,  response:Carbon.HTTP.Response )
 
 *Parameters*
 
-- message 
-- response 
+- message
+- response
 
 
 #### <a name="Carbon-HTTP-Errors-client-UnauthorizedError-Properties" />Properties
@@ -3123,8 +3123,8 @@ UnsupportedMediaTypeError( message:string,  response:Carbon.HTTP.Response )
 
 *Parameters*
 
-- message 
-- response 
+- message
+- response
 
 
 #### <a name="Carbon-HTTP-Errors-client-UnsupportedMediaTypeError-Properties" />Properties
@@ -3172,8 +3172,8 @@ BadGatewayError( message:string,  response:Carbon.HTTP.Response )
 
 *Parameters*
 
-- message 
-- response 
+- message
+- response
 
 
 #### <a name="Carbon-HTTP-Errors-server-BadGatewayError-Properties" />Properties
@@ -3221,8 +3221,8 @@ BadResponseError( message:string,  response:Carbon.HTTP.Response )
 
 *Parameters*
 
-- message 
-- response 
+- message
+- response
 
 
 #### <a name="Carbon-HTTP-Errors-server-BadResponseError-Properties" />Properties
@@ -3270,8 +3270,8 @@ GatewayTimeoutError( message:string,  response:Carbon.HTTP.Response )
 
 *Parameters*
 
-- message 
-- response 
+- message
+- response
 
 
 #### <a name="Carbon-HTTP-Errors-server-GatewayTimeoutError-Properties" />Properties
@@ -3319,8 +3319,8 @@ HTTPVersionNotSupportedError( message:string,  response:Carbon.HTTP.Response )
 
 *Parameters*
 
-- message 
-- response 
+- message
+- response
 
 
 #### <a name="Carbon-HTTP-Errors-server-HTTPVersionNotSupportedError-Properties" />Properties
@@ -3368,8 +3368,8 @@ InternalServerErrorError( message:string,  response:Carbon.HTTP.Response )
 
 *Parameters*
 
-- message 
-- response 
+- message
+- response
 
 
 #### <a name="Carbon-HTTP-Errors-server-InternalServerErrorError-Properties" />Properties
@@ -3417,8 +3417,8 @@ NotImplementedError( message:string,  response:Carbon.HTTP.Response )
 
 *Parameters*
 
-- message 
-- response 
+- message
+- response
 
 
 #### <a name="Carbon-HTTP-Errors-server-NotImplementedError-Properties" />Properties
@@ -3466,8 +3466,8 @@ ServiceUnavailableError( message:string,  response:Carbon.HTTP.Response )
 
 *Parameters*
 
-- message 
-- response 
+- message
+- response
 
 
 #### <a name="Carbon-HTTP-Errors-server-ServiceUnavailableError-Properties" />Properties
@@ -3515,7 +3515,7 @@ Value( value:string )
 
 *Parameters*
 
-- value 
+- value
 
 
 
@@ -3543,7 +3543,7 @@ Class( values:Array <Carbon.HTTP.Header.Value> )
 
 *Parameters*
 
-- values 
+- values
 
 ```typescript 
 Class( value:string )
@@ -3552,7 +3552,7 @@ Class( value:string )
 
 *Parameters*
 
-- value 
+- value
 
 
 #### <a name="Carbon-HTTP-Header-Class-Properties" />Properties
@@ -3592,7 +3592,7 @@ Returns an Map object, witch relates the all header-names with a `Carbon.HTTP.He
 
 *Parameters*
 
-- headersString 
+- headersString
 
 
 
@@ -3625,7 +3625,7 @@ parse( body:string ):Promise <Object>
 
 *Parameters*
 
-- body : A JSON string to parse
+- body: A JSON string to parse
 
 
 
@@ -3657,7 +3657,7 @@ parse( body:string ):Promise <Object>
 
 *Parameters*
 
-- body : A JSON string to parse
+- body: A JSON string to parse
 
 
 
@@ -3711,9 +3711,9 @@ Generic send method, to be used by the others methods in the class
 
 *Parameters*
 
-- url 
-- body 
-- options 
+- url
+- body
+- options
 
 ##### head
 ```typescript 
@@ -3723,8 +3723,8 @@ static head( url:string,  options?:object ):Promise<Carbon.HTTP.Response>
 
 *Parameters*
 
-- url 
-- options 
+- url
+- options
 
 ##### options
 ```typescript 
@@ -3734,8 +3734,8 @@ static options( url:string,  options?:object ):Promise<Carbon.HTTP.Response>
 
 *Parameters*
 
-- url 
-- options 
+- url
+- options
 
 ##### get
 ```typescript 
@@ -3746,8 +3746,8 @@ Simple get request
 
 *Parameters*
 
-- url 
-- options 
+- url
+- options
 
 ```typescript 
 static get( url:string,  options?:object,  parser?:Carbon.HTTP.Parser<T> ):Promise<[Object, Carbon.HTTP.Response]>
@@ -3757,9 +3757,9 @@ Get request with specified parser
 
 *Parameters*
 
-- url 
-- options 
-- parser 
+- url
+- options
+- parser
 
 ##### post
 ```typescript 
@@ -3770,9 +3770,9 @@ Simple post request
 
 *Parameters*
 
-- url 
-- body 
-- options 
+- url
+- body
+- options
 
 ```typescript 
 static post( url:string,  options?:object,  parser?:Carbon.HTTP.Parser<T> ):Promise<Carbon.HTTP.Response>
@@ -3782,9 +3782,9 @@ Post request with specified parser
 
 *Parameters*
 
-- url 
-- options 
-- parser 
+- url
+- options
+- parser
 
 ##### put
 ```typescript 
@@ -3795,9 +3795,9 @@ Simple put request
 
 *Parameters*
 
-- url 
-- body 
-- options 
+- url
+- body
+- options
 
 ```typescript 
 static put( url:string,  options?:object,  parser?:Carbon.HTTP.Parser<T> ):Promise<Carbon.HTTP.Response>
@@ -3807,9 +3807,9 @@ Put request with specified parser
 
 *Parameters*
 
-- url 
-- options 
-- parser 
+- url
+- options
+- parser
 
 ##### patch
 ```typescript 
@@ -3820,9 +3820,9 @@ Simple patch request
 
 *Parameters*
 
-- url 
-- body 
-- options 
+- url
+- body
+- options
 
 ```typescript 
 static patch( url:string,  options?:object,  parser?:Carbon.HTTP.Parser<T> ):Promise<Carbon.HTTP.Response>
@@ -3832,9 +3832,9 @@ Patch request with specified parser
 
 *Parameters*
 
-- url 
-- options 
-- parser 
+- url
+- options
+- parser
 
 ##### delete
 ```typescript 
@@ -3845,9 +3845,9 @@ Simple delete request
 
 *Parameters*
 
-- url 
-- body 
-- options 
+- url
+- body
+- options
 
 ```typescript 
 static delete( url:string,  options?:object,  parser?:Carbon.HTTP.Parser<T> ):Promise<Carbon.HTTP.Response>
@@ -3857,9 +3857,9 @@ Delete request with specified parser
 
 *Parameters*
 
-- url 
-- options 
-- parser 
+- url
+- options
+- parser
 
 ```typescript 
 static delete( url:string,  options?:object ):Promise<Carbon.HTTP.Response>
@@ -3869,8 +3869,8 @@ Simple delete request
 
 *Parameters*
 
-- url 
-- options 
+- url
+- options
 
 ```typescript 
 static delete( url:string,  options?:object,  parser?:Carbon.HTTP.Parser<T> ):Promise<Carbon.HTTP.Response>
@@ -3880,9 +3880,9 @@ Delete request with specified parser
 
 *Parameters*
 
-- url 
-- options 
-- parser 
+- url
+- options
+- parser
 
 
 
@@ -3905,9 +3905,9 @@ Returns the header object of a header-name inside an options object request. Ret
 
 *Parameters*
 
-- headerName 
-- requestOptions 
-- initialize 
+- headerName
+- requestOptions
+- initialize
 
 ##### setAcceptHeader
 ```typescript 
@@ -3918,8 +3918,8 @@ Set an Accept header in an options object request
 
 *Parameters*
 
-- accept 
-- requestOptions 
+- accept
+- requestOptions
 
 ##### setContentTypeHeader
 ```typescript 
@@ -3930,8 +3930,8 @@ Set an Content-Type header in an options object request
 
 *Parameters*
 
-- contentType 
-- requestOptions 
+- contentType
+- requestOptions
 
 ##### setIfMatchHeader
 ```typescript 
@@ -3942,8 +3942,8 @@ Set a If-Match header in an options object request
 
 *Parameters*
 
-- etag 
-- requestOptions 
+- etag
+- requestOptions
 
 ##### setPreferredInteractionModel
 ```typescript 
@@ -3954,8 +3954,8 @@ Set a Prefer header with `rel=interaction-model` in an options object request
 
 *Parameters*
 
-- interactionModelURI 
-- requestOptions 
+- interactionModelURI
+- requestOptions
 
 ##### setSlug
 ```typescript 
@@ -3966,8 +3966,8 @@ Set a Slug header in an options object request
 
 *Parameters*
 
-- slug 
-- requestOptions 
+- slug
+- requestOptions
 
 ##### setContainerRetrievalPreferences
 ```typescript 
@@ -3978,8 +3978,8 @@ Set a Prefer header with `return=representation` in an options object request
 
 *Parameters*
 
-- preference 
-- requestOptions 
+- preference
+- requestOptions
 
 
 
@@ -4008,7 +4008,7 @@ Class( request:XMLHttpRequest )
 
 *Parameters*
 
-- request 
+- request
 
 
 #### <a name="Carbon-HTTP-Response-Class-Properties" />Properties
@@ -4045,7 +4045,7 @@ Return the Header object referred by the name provided.
 
 *Parameters*
 
-- name 
+- name
 
 
 
@@ -4067,7 +4067,7 @@ Return the ETag string header of a `Carbon.HTTP.Response.Class` object. Returns 
 
 *Parameters*
 
-- response 
+- response
 
 
 
@@ -4156,7 +4156,7 @@ Gets a string and returns a promise with the same string
 
 *Parameters*
 
-- body 
+- body
 
 
 
@@ -4186,10 +4186,10 @@ compact( expandedObject:Object,  targetObject:Object,  digestedSchema:Carbon.Obj
 
 *Parameters*
 
-- expandedObject 
-- targetObject 
-- digestedSchema 
-- pointerLibrary 
+- expandedObject
+- targetObject
+- digestedSchema
+- pointerLibrary
 
 ##### expand
 ```typescript 
@@ -4199,8 +4199,8 @@ expand( compactedObject:Object,  digestedSchema:Carbon.ObjectSchema.DigestedObje
 
 *Parameters*
 
-- compactedObject 
-- digestedSchema 
+- compactedObject
+- digestedSchema
 
 
 
@@ -4255,7 +4255,7 @@ Returns true if the Pointer provided is an LDP BasicContainer.
 
 *Parameters*
 
-- pointer 
+- pointer
 
 ```typescript 
 static hasRDFClass( pointer:Carbon.Pointer.Class ):boolean
@@ -4265,7 +4265,7 @@ Returns true if the Pointer provided is an LDP BasicContainer.
 
 *Parameters*
 
-- pointer 
+- pointer
 
 
 
@@ -4307,7 +4307,7 @@ Returns true if the object has the properties to be defined as a LDP Container
 
 *Parameters*
 
-- resource 
+- resource
 
 ##### hasRDFClass
 ```typescript 
@@ -4318,7 +4318,7 @@ Returns true if the Pointer provided is an LDP Container.
 
 *Parameters*
 
-- pointer 
+- pointer
 
 ```typescript 
 static hasRDFClass( expandedObject:Object ):boolean
@@ -4328,7 +4328,7 @@ Returns true if the Object provided is an LDP Container.
 
 *Parameters*
 
-- expandedObject 
+- expandedObject
 
 
 
@@ -4366,7 +4366,7 @@ Returns true if the object provided has the properties that defines a `Carbon.LD
 
 *Parameters*
 
-- resource 
+- resource
 
 ##### is
 ```typescript 
@@ -4377,7 +4377,7 @@ Returns true if the object provided is considered as an `Carbon.LDP.DirectContai
 
 *Parameters*
 
-- object 
+- object
 
 ##### create
 ```typescript 
@@ -4388,9 +4388,9 @@ Create a `Carbon.LDP.DirectContainer.Class` object with the parameters specified
 
 *Parameters*
 
-- membershipResource 
-- hasMemberRelation 
-- memberOfRelation 
+- membershipResource
+- hasMemberRelation
+- memberOfRelation
 
 ##### createFrom
 ```typescript 
@@ -4401,10 +4401,10 @@ Create a `Carbon.LDP.DirectContainer.Class` object with the object provided and 
 
 *Parameters*
 
-- object 
-- membershipResource 
-- hasMemberRelation 
-- memberOfRelation 
+- object
+- membershipResource
+- hasMemberRelation
+- memberOfRelation
 
 ##### hasRDFClass
 ```typescript 
@@ -4415,7 +4415,7 @@ Returns true if the Pointer provided is an LDP DirectContainer.
 
 *Parameters*
 
-- pointer 
+- pointer
 
 ```typescript 
 static hasRDFClass( expandedObject:Object ):boolean
@@ -4425,7 +4425,7 @@ Returns true if the Object provided is an LDP DirectContainer.
 
 *Parameters*
 
-- expandedObject 
+- expandedObject
 
 
 
@@ -4463,7 +4463,7 @@ Returns true if the object provided has the properties that defines a `Carbon.LD
 
 *Parameters*
 
-- resource 
+- resource
 
 
 
@@ -4495,7 +4495,7 @@ Returns true if the object has the properties to be defined as a PersistedContai
 
 *Parameters*
 
-- document 
+- document
 
 ##### decorate
 ```typescript 
@@ -4506,7 +4506,7 @@ Returns the PersistedDocuments decorated as a PersistedContainer
 
 *Parameters*
 
-- persistedDocument 
+- persistedDocument
 
 
 
@@ -4517,6 +4517,16 @@ Returns the PersistedDocuments decorated as a PersistedContainer
 
 
 ##### <a name="Carbon-LDP-PersistedContainer-Factory-Decorated-Object-Methods" />Methods
+##### getMembers
+```typescript 
+getMembers( includeNonReadable?:boolean ):Promise<[ Carbon.Pointer.Class[], Carbon.HTTP.Response.Class ]>
+```
+
+
+*Parameters*
+
+- includeNonReadable: By default this option is set to `true`.
+
 ##### createChild
 ```typescript 
 createChild( slug:string,  object:Object ):Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>
@@ -4525,8 +4535,8 @@ createChild( slug:string,  object:Object ):Promise<[ Carbon.Pointer.Class, Carbo
 
 *Parameters*
 
-- slug : The slug name for the children URI.
-- object : The object from where create the child. If it&#x27;s a non &#x60;Carbon.Document.Class&#x60; object, it is transformed into one.
+- slug: The slug name for the children URI.
+- object: The object from where create the child. If it's a non `Carbon.Document.Class` object, it is transformed into one.
 
 ```typescript 
 createChild( object:Object ):Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>
@@ -4535,7 +4545,7 @@ createChild( object:Object ):Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Respons
 
 *Parameters*
 
-- object : The object from where create the child. If it&#x27;s a non &#x60;Carbon.Document.Class&#x60; object, it is transformed into one.
+- object: The object from where create the child. If it's a non `Carbon.Document.Class` object, it is transformed into one.
 
 ```typescript 
 createChild( slug:string ):Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>
@@ -4544,7 +4554,7 @@ createChild( slug:string ):Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.
 
 *Parameters*
 
-- slug : The slug name for the children URI.
+- slug: The slug name for the children URI.
 
 ```typescript 
 createChild():Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>
@@ -4560,8 +4570,8 @@ Upload a File to the server as a child of the Container.
 
 *Parameters*
 
-- slug : The slug name for the file URI.
-- blob : Binary data to store in the server.
+- slug: The slug name for the file URI.
+- blob: Binary data to store in the server.
 
 ```typescript 
 upload( blob:Blob ):Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>
@@ -4571,7 +4581,7 @@ Upload a File to the server as a child of the Container.
 
 *Parameters*
 
-- blob : Binary data to store in the server.
+- blob: Binary data to store in the server.
 
 
 ## <a name="Carbon-LDP-RDFSource" />Module Carbon/LDP/RDFSource
@@ -5330,7 +5340,7 @@ Returns true if the object provided has the properties and functions of a NamedF
 
 *Parameters*
 
-- resource 
+- resource
 
 ##### create
 ```typescript 
@@ -5341,8 +5351,8 @@ Creates a NamedFragment with the Slug provided for the document specified.
 
 *Parameters*
 
-- slug 
-- document 
+- slug
+- document
 
 ##### createFrom
 ```typescript 
@@ -5353,9 +5363,9 @@ Creates a NamedFragment from an Object with the Slug provided for the document s
 
 *Parameters*
 
-- object 
-- slug 
-- document 
+- object
+- slug
+- document
 
 
 
@@ -5397,7 +5407,7 @@ Returns true if the object provided has the properties that defines a `Carbon.No
 
 *Parameters*
 
-- resource 
+- resource
 
 ##### is
 ```typescript 
@@ -5408,7 +5418,7 @@ Returns true if the object provided is considered as an `Carbon.NonRDFSource.Cla
 
 *Parameters*
 
-- object 
+- object
 
 
 
@@ -5531,7 +5541,7 @@ Combine several standardized schemas in one.
 
 *Parameters*
 
-- digestedSchemas 
+- digestedSchemas
 
 ##### digestSchema
 ```typescript 
@@ -5544,7 +5554,7 @@ Processes a schema to standardize it before using it.
 
 *Parameters*
 
-- schema 
+- schema
 
 ```typescript 
 static digestSchema( schemas:Array<Carbon.ObjectSchema.Class> ):Carbon.ObjectSchema.DigestedObjectSchema
@@ -5556,7 +5566,7 @@ Processes several schemas to standardize and combine them before using them.
 
 *Parameters*
 
-- schemas 
+- schemas
 
 
 
@@ -5588,7 +5598,7 @@ Returns true if the object provided has the properties that defines a `Carbon.Pe
 
 *Parameters*
 
-- resource 
+- resource
 
 ##### is
 ```typescript 
@@ -5599,7 +5609,7 @@ Returns true if the object provided is considered as an `Carbon.PersistedApp.Cla
 
 *Parameters*
 
-- object 
+- object
 
 
 
@@ -5631,7 +5641,7 @@ Returns true if the Document provided has the properties and functions of a Pers
 
 *Parameters*
 
-- document 
+- document
 
 ##### is
 ```typescript 
@@ -5642,7 +5652,7 @@ Returns true if the element provided is a PersistedDocument object.
 
 *Parameters*
 
-- object 
+- object
 
 ##### create
 ```typescript 
@@ -5653,8 +5663,8 @@ Creates an empty PersistedDocument object with the URI provided and contained by
 
 *Parameters*
 
-- uri 
-- documents 
+- uri
+- documents
 
 ##### createFrom
 ```typescript 
@@ -5665,8 +5675,8 @@ Creates a PersistedDocument object from the object and URI provided, with the Do
 
 *Parameters*
 
-- object 
-- uri 
+- object
+- uri
 
 ##### decorate
 ```typescript 
@@ -5677,8 +5687,8 @@ Adds the properties and methods necessary for a PersistedDocument object.
 
 *Parameters*
 
-- object 
-- documents 
+- object
+- documents
 
 
 
@@ -5709,7 +5719,7 @@ Returns true if the PersistedDocument object has a pointer referenced by the URI
 
 *Parameters*
 
-- id 
+- id
 
 ##### getPointer
 ```typescript 
@@ -5721,7 +5731,7 @@ Returns null if the URI is not inside scope of the PersistedDocument.
 
 *Parameters*
 
-- id 
+- id
 
 ##### refresh
 ```typescript 
@@ -5760,8 +5770,8 @@ Executes an ASK query in the document and returns a raw application/sparql-resul
 
 *Parameters*
 
-- askQuery 
-- requestOptions 
+- askQuery
+- requestOptions
 
 ##### executeASKQuery
 ```typescript 
@@ -5772,8 +5782,8 @@ Executes an ASK query in the document and returns a boolean of th result.
 
 *Parameters*
 
-- askQuery 
-- requestOptions 
+- askQuery
+- requestOptions
 
 ##### executeRawSELECTQuery
 ```typescript 
@@ -5784,8 +5794,8 @@ Executes an SELECT query in the document and returns a raw application/sparql-re
 
 *Parameters*
 
-- selectQuery 
-- requestOptions 
+- selectQuery
+- requestOptions
 
 ##### executeSELECTQuery
 ```typescript 
@@ -5796,8 +5806,8 @@ Executes an SELECT query in the document and returns the results as a `Carbon.SP
 
 *Parameters*
 
-- selectQuery 
-- requestOptions 
+- selectQuery
+- requestOptions
 
 ##### executeRawCONSTRUCTQuery
 ```typescript 
@@ -5808,8 +5818,8 @@ Executes an CONSTRUCT query in the document and returns a string with the result
 
 *Parameters*
 
-- constructQuery 
-- requestOptions 
+- constructQuery
+- requestOptions
 
 ##### executeRawDESCRIBEQuery
 ```typescript 
@@ -5820,8 +5830,8 @@ Executes an DESCRIBE query in the document and returns a string with the resulti
 
 *Parameters*
 
-- constructQuery 
-- requestOptions 
+- constructQuery
+- requestOptions
 
 ##### inScope
 ```typescript 
@@ -5832,7 +5842,7 @@ Returns true if the pointer provided is in the scope of the PersistedDocument.
 
 *Parameters*
 
-- pointer 
+- pointer
 
 ```typescript 
 inScope( id:string ):boolean
@@ -5842,7 +5852,7 @@ Returns true if the URI provided is in the scope of the PersistedDocument.
 
 *Parameters*
 
-- id 
+- id
 
 
 ## <a name="Carbon-Pointer" />Module Carbon/Pointer
@@ -5872,7 +5882,7 @@ Returns true if the object provided has the properties and functions of a Pointe
 
 *Parameters*
 
-- resource 
+- resource
 
 ##### is
 ```typescript 
@@ -5883,7 +5893,7 @@ Returns true if the value provided is a Pinter object.
 
 *Parameters*
 
-- value 
+- value
 
 ##### create
 ```typescript 
@@ -5894,7 +5904,7 @@ Create a Pointer object with id if provided.
 
 *Parameters*
 
-- id 
+- id
 
 ##### decorate
 ```typescript 
@@ -5905,7 +5915,7 @@ Decorates the object provided with the elements of a Pointer object.
 
 *Parameters*
 
-- object 
+- object
 
 
 
@@ -5992,7 +6002,7 @@ Returns true if the object is an RDFDocument object
 
 *Parameters*
 
-- object 
+- object
 
 ##### create
 ```typescript 
@@ -6003,8 +6013,8 @@ Return an RDFDocument object created with the parameters provided
 
 *Parameters*
 
-- resources 
-- uri 
+- resources
+- uri
 
 
 
@@ -6028,7 +6038,7 @@ Throw an `Carbon.Errors.IllegalArgumentError` if the object is not RDF like
 
 *Parameters*
 
-- document 
+- document
 
 ##### getDocuments
 ```typescript 
@@ -6040,7 +6050,7 @@ Throw an `Carbon.Errors.IllegalArgumentError` if the objects are not RDF like
 
 *Parameters*
 
-- objects 
+- objects
 
 ```typescript 
 static getDocuments( object:Object ):Carbon.RDF.Document.Class[]
@@ -6051,7 +6061,7 @@ Throw an `Carbon.Errors.IllegalArgumentError` if the object is not RDF like
 
 *Parameters*
 
-- object 
+- object
 
 ##### getResources
 ```typescript 
@@ -6063,7 +6073,7 @@ Throw an `Carbon.Errors.IllegalArgumentError` if the objects are not RDF like
 
 *Parameters*
 
-- objects 
+- objects
 
 ```typescript 
 static getResources( object:Object ):Carbon.RDF.RDFNode.Class
@@ -6074,7 +6084,7 @@ Throw an `Carbon.Errors.IllegalArgumentError` if the object is not RDF like
 
 *Parameters*
 
-- object 
+- object
 
 ##### getDocumentResources
 ```typescript 
@@ -6086,7 +6096,7 @@ Throw an `Carbon.Errors.IllegalArgumentError` if the object is not RDF like
 
 *Parameters*
 
-- document 
+- document
 
 ```typescript 
 static getDocumentResources( document:Carbon.RDF.RDFNode.Class[] ):Carbon.RDF.RDFNode.Class[]
@@ -6097,7 +6107,7 @@ Throw an `Carbon.Errors.IllegalArgumentError` if the object is not RDF like
 
 *Parameters*
 
-- document 
+- document
 
 ##### getFragmentResources
 ```typescript 
@@ -6109,8 +6119,8 @@ Throw an `Carbon.Errors.IllegalArgumentError` if the object is not RDF like
 
 *Parameters*
 
-- document 
-- documentResource 
+- document
+- documentResource
 
 ```typescript 
 static getFragmentResources( document:Carbon.RDF.Document.Class,  documentResourceURI?:string ):Carbon.RDF.RDFNode.Class[]
@@ -6121,8 +6131,8 @@ Throw an `Carbon.Errors.IllegalArgumentError` if the object is not RDF like
 
 *Parameters*
 
-- document 
-- documentResourceURI 
+- document
+- documentResourceURI
 
 ```typescript 
 static getFragmentResources( document:Carbon.RDF.Document.Class,  documentResource?:Carbon.RDF.RDFNode.Class ):Carbon.RDF.RDFNode.Class[]
@@ -6133,8 +6143,8 @@ Throw an `Carbon.Errors.IllegalArgumentError` if the object is not RDF like
 
 *Parameters*
 
-- document 
-- documentResource 
+- document
+- documentResource
 
 ```typescript 
 static getFragmentResources( document:Carbon.RDF.Document.Class,  documentResourceURI?:string ):Carbon.RDF.RDFNode.Class[]
@@ -6145,8 +6155,8 @@ Throw an `Carbon.Errors.IllegalArgumentError` if the object is not RDF like
 
 *Parameters*
 
-- document 
-- documentResourceURI 
+- document
+- documentResourceURI
 
 
 
@@ -6170,7 +6180,7 @@ Parse the a JSON-LD string to an array of RDFDocuments
 
 *Parameters*
 
-- input 
+- input
 
 
 
@@ -6201,7 +6211,7 @@ Returns true if the object provided can be called a RDF List
 
 *Parameters*
 
-- value 
+- value
 
 
 
@@ -6245,7 +6255,7 @@ Returns null if cannot be parsed.
 
 *Parameters*
 
-- literal 
+- literal
 
 ##### is
 ```typescript 
@@ -6256,7 +6266,7 @@ Returns true if the object provided can be called a RDF Literal
 
 *Parameters*
 
-- value 
+- value
 
 ##### hasType
 ```typescript 
@@ -6267,8 +6277,8 @@ Returns true if the Literal has the type indicated
 
 *Parameters*
 
-- value 
-- type 
+- value
+- type
 
 
 
@@ -6291,8 +6301,8 @@ Returns true if two Literals are equal
 
 *Parameters*
 
-- literal1 
-- literal2 
+- literal1
+- literal2
 
 
 
@@ -6380,7 +6390,7 @@ Returns the string with format `YYY-MM-DD`, of the Date object
 
 *Parameters*
 
-- value 
+- value
 
 
 
@@ -6403,7 +6413,7 @@ Returns the simplified extended ISO format (ISO 8601) of the Date object
 
 *Parameters*
 
-- value 
+- value
 
 
 
@@ -6426,7 +6436,7 @@ Returns a string representing the Date object with format `HH:mm:ss.sssZ`
 
 *Parameters*
 
-- value 
+- value
 
 
 
@@ -6449,7 +6459,7 @@ Returns a string representing a integer from the Number provided
 
 *Parameters*
 
-- value 
+- value
 
 
 
@@ -6472,7 +6482,7 @@ Returns a string representing an unsigned integer from the Number provided
 
 *Parameters*
 
-- value 
+- value
 
 
 
@@ -6495,7 +6505,7 @@ Returns a string representing a float from the Number provided
 
 *Parameters*
 
-- value 
+- value
 
 
 
@@ -6518,7 +6528,7 @@ Returns a string representing the truth value from the variable provided
 
 *Parameters*
 
-- value 
+- value
 
 
 
@@ -6541,7 +6551,7 @@ Returns a string representing the truth value from the variable provided
 
 *Parameters*
 
-- value 
+- value
 
 
 
@@ -6572,7 +6582,7 @@ Returns true when an object can be called an RDFNode
 
 *Parameters*
 
-- object 
+- object
 
 ##### create
 ```typescript 
@@ -6583,7 +6593,7 @@ Create a RDFNode object providing an URI string
 
 *Parameters*
 
-- uri 
+- uri
 
 
 
@@ -6606,8 +6616,8 @@ Returns true if the objects represent the same resource
 
 *Parameters*
 
-- node1 
-- node2 
+- node1
+- node2
 
 ##### getPropertyURI
 ```typescript 
@@ -6619,8 +6629,8 @@ Returns null if the property not exists or the URI is not found
 
 *Parameters*
 
-- node 
-- predicate 
+- node
+- predicate
 
 
 
@@ -6648,7 +6658,7 @@ Class( stringValue:string )
 
 *Parameters*
 
-- stringValue : The string that represents an URI
+- stringValue: The string that represents an URI
 
 
 
@@ -6681,7 +6691,7 @@ Returns true if the URI provided contains a fragment
 
 *Parameters*
 
-- uri 
+- uri
 
 ##### hasProtocol
 ```typescript 
@@ -6692,7 +6702,7 @@ Returns true if the URI provided has a protocol
 
 *Parameters*
 
-- uri 
+- uri
 
 ##### isAbsolute
 ```typescript 
@@ -6703,7 +6713,7 @@ Returns true if the URI provided is absolute
 
 *Parameters*
 
-- uri 
+- uri
 
 ##### isRelative
 ```typescript 
@@ -6714,7 +6724,7 @@ Returns true if the URI provided is relative
 
 *Parameters*
 
-- uri 
+- uri
 
 ##### isBNodeID
 ```typescript 
@@ -6725,7 +6735,7 @@ Returns true if the URI provided reference to a Blank Node
 
 *Parameters*
 
-- uri 
+- uri
 
 ##### isPrefixed
 ```typescript 
@@ -6736,7 +6746,7 @@ Returns true if the URI provided has a prefix
 
 *Parameters*
 
-- uri 
+- uri
 
 ##### isFragmentOf
 ```typescript 
@@ -6747,8 +6757,8 @@ Returns true if the first URI is a fragment od the second URI provided
 
 *Parameters*
 
-- fragmentURI 
-- uri 
+- fragmentURI
+- uri
 
 ##### isBaseOf
 ```typescript 
@@ -6759,8 +6769,8 @@ Return true if the first URI is parent of the second URI provided
 
 *Parameters*
 
-- baseURI 
-- uri 
+- baseURI
+- uri
 
 ##### getRelativeURI
 ```typescript 
@@ -6771,8 +6781,8 @@ Returns the relative URI from a base URI provided
 
 *Parameters*
 
-- absoluteURI 
-- base 
+- absoluteURI
+- base
 
 ##### getDocumentURI
 ```typescript 
@@ -6783,7 +6793,7 @@ Returns the URI that just reference to the Document of the URI provided
 
 *Parameters*
 
-- uri 
+- uri
 
 ##### getFragment
 ```typescript 
@@ -6794,7 +6804,7 @@ Returns the name of the fragment in the URI provided. If no fragment exists in t
 
 *Parameters*
 
-- uri 
+- uri
 
 ##### getSlug
 ```typescript 
@@ -6805,7 +6815,7 @@ Returns the slug of the URI. It takes an ending slash as part as the slug.
 
 *Parameters*
 
-- uri 
+- uri
 
 ##### resolve
 ```typescript 
@@ -6816,8 +6826,8 @@ Return a URI formed from a parent URI and a relative child URI
 
 *Parameters*
 
-- parentURI 
-- childURI 
+- parentURI
+- childURI
 
 ##### removeProtocol
 ```typescript 
@@ -6828,7 +6838,7 @@ Removes the protocol of the URI provided
 
 *Parameters*
 
-- uri 
+- uri
 
 ##### prefix
 ```typescript 
@@ -6839,9 +6849,9 @@ Replace a base of a URI with the prefix provided. If the prefix can not be resol
 
 *Parameters*
 
-- uri 
-- prefix 
-- prefixURI 
+- uri
+- prefix
+- prefixURI
 
 ```typescript 
 static prefix( uri:string,  objectSchema:Carbon.ObjectSchema.DigestedObjectSchema ):string
@@ -6851,8 +6861,8 @@ Replace the base of a URI with a prefix in accordance with the ObjectSchema prov
 
 *Parameters*
 
-- uri 
-- objectSchema 
+- uri
+- objectSchema
 
 
 
@@ -6884,8 +6894,8 @@ Returns true if the two Values are considered equal.
 
 *Parameters*
 
-- value1 
-- value2 
+- value1
+- value2
 
 ##### getProperty
 ```typescript 
@@ -6897,9 +6907,9 @@ Returns null if the property is not found or cannot be parsed.
 
 *Parameters*
 
-- expandedObject 
-- propertyURI 
-- pointerLibrary 
+- expandedObject
+- propertyURI
+- pointerLibrary
 
 ##### getPropertyPointer
 ```typescript 
@@ -6911,9 +6921,9 @@ Returns null if the property is not found or cannot be parsed as a Pointer.
 
 *Parameters*
 
-- expandedObject 
-- propertyURI 
-- pointerLibrary 
+- expandedObject
+- propertyURI
+- pointerLibrary
 
 ##### getPropertyLiteral
 ```typescript 
@@ -6925,9 +6935,9 @@ Returns null if the property is not found, the type provided not match with the 
 
 *Parameters*
 
-- expandedObject 
-- propertyURI 
-- literalType 
+- expandedObject
+- propertyURI
+- literalType
 
 ##### getPropertyList
 ```typescript 
@@ -6939,9 +6949,9 @@ Returns null if the property is not found or cannot be parsed.
 
 *Parameters*
 
-- expandedObject 
-- propertyURI 
-- pointerLibrary 
+- expandedObject
+- propertyURI
+- pointerLibrary
 
 ##### getPropertyPointerList
 ```typescript 
@@ -6953,9 +6963,9 @@ Returns null if the property is not found or is not a List.
 
 *Parameters*
 
-- expandedObject 
-- propertyURI 
-- pointerLibrary 
+- expandedObject
+- propertyURI
+- pointerLibrary
 
 ##### getPropertyLiteralList
 ```typescript 
@@ -6967,9 +6977,9 @@ Returns null if the property is not found or is not a List.
 
 *Parameters*
 
-- expandedObject 
-- propertyURI 
-- pointerLibrary 
+- expandedObject
+- propertyURI
+- pointerLibrary
 
 ##### getProperties
 ```typescript 
@@ -6981,9 +6991,9 @@ Returns null if the property is not found, or an empty array if cannot be parsed
 
 *Parameters*
 
-- expandedObject 
-- propertyURI 
-- pointerLibrary 
+- expandedObject
+- propertyURI
+- pointerLibrary
 
 ##### getPropertyPointers
 ```typescript 
@@ -6991,13 +7001,13 @@ static getPropertyPointers( expandedObject:any,  propertyURI:string,  pointerLib
 ```
 
 Returns the property searched as an Array with the parsed Pointer.
-Returns null if the property is not found, or an empty array if the property cannot be parsed as a pointer.
+Returns an empty array if the property is not found, or the property cannot be parsed as a pointer.
 
 *Parameters*
 
-- expandedObject 
-- propertyURI 
-- pointerLibrary 
+- expandedObject
+- propertyURI
+- pointerLibrary
 
 ##### getPropertyURIs
 ```typescript 
@@ -7009,8 +7019,8 @@ Returns null if the property is not found or an empty array if no URI was found.
 
 *Parameters*
 
-- expandedObject 
-- propertyURI 
+- expandedObject
+- propertyURI
 
 ##### getPropertyLiterals
 ```typescript 
@@ -7022,9 +7032,9 @@ Returns null if the property is not found, or an empty array if cannot be parsed
 
 *Parameters*
 
-- expandedObject 
-- propertyURI 
-- literalType 
+- expandedObject
+- propertyURI
+- literalType
 
 ##### getPropertyLanguageMap
 ```typescript 
@@ -7036,9 +7046,9 @@ Returns null if the property is not found, or an empty object if not is a proper
 
 *Parameters*
 
-- expandedObject 
-- propertyURI 
-- pointerLibrary 
+- expandedObject
+- propertyURI
+- pointerLibrary
 
 ##### getList
 ```typescript 
@@ -7050,7 +7060,7 @@ Returns null if no List object is found.
 
 *Parameters*
 
-- propertyValues 
+- propertyValues
 
 ##### parseValue
 ```typescript 
@@ -7062,8 +7072,8 @@ Returns null if cannot be parsed
 
 *Parameters*
 
-- propertyValue 
-- pointerLibrary 
+- propertyValue
+- pointerLibrary
 
 
 
@@ -7095,7 +7105,7 @@ Returns true if the object provided has the properties and functions of a Resour
 
 *Parameters*
 
-- resource 
+- resource
 
 ##### is
 ```typescript 
@@ -7106,7 +7116,7 @@ Returns true if the object is a `Carbon.Resource.Class` (by duck type)
 
 *Parameters*
 
-- resource 
+- resource
 
 ##### create
 ```typescript 
@@ -7117,8 +7127,8 @@ Create a Resource object with id and types if provided.
 
 *Parameters*
 
-- id 
-- types 
+- id
+- types
 
 ##### createFrom
 ```typescript 
@@ -7129,9 +7139,9 @@ Create a Resource object with id and types if provided.
 
 *Parameters*
 
-- object 
-- id 
-- types 
+- object
+- id
+- types
 
 ##### decorate
 ```typescript 
@@ -7142,7 +7152,7 @@ Decorates the object provided with the elements of a Resource object.
 
 *Parameters*
 
-- object 
+- object
 
 
 
@@ -7213,7 +7223,7 @@ Returns URI provided resolved in this context, witch is the same URI provided.
 
 *Parameters*
 
-- relativeURI 
+- relativeURI
 
 ##### hasSetting
 ```typescript 
@@ -7224,7 +7234,7 @@ Returns true if the setting looked for is established in the context.
 
 *Parameters*
 
-- name 
+- name
 
 ##### getSetting
 ```typescript 
@@ -7236,7 +7246,7 @@ Returns `null` if no settign with the name specified exists.
 
 *Parameters*
 
-- name 
+- name
 
 ##### setSetting
 ```typescript 
@@ -7247,8 +7257,8 @@ Set a setting in the the context.
 
 *Parameters*
 
-- name 
-- value 
+- name
+- value
 
 ##### deleteSetting
 ```typescript 
@@ -7259,7 +7269,7 @@ Deletes the setting specified from the the context.
 
 *Parameters*
 
-- name 
+- name
 
 ##### hasObjectSchema
 ```typescript 
@@ -7270,7 +7280,7 @@ Returns true if the is an ObjectSchema for the specified type.
 
 *Parameters*
 
-- type 
+- type
 
 ##### getObjectSchema
 ```typescript 
@@ -7282,7 +7292,7 @@ If no type specified the general object schema of the context is returned. This 
 
 *Parameters*
 
-- type 
+- type
 
 ##### clearObjectSchema
 ```typescript 
@@ -7293,7 +7303,7 @@ Remove the Schema of the type specified, if not provided empty the General Schem
 
 *Parameters*
 
-- type 
+- type
 
 ##### extendObjectSchema
 ```typescript 
@@ -7304,8 +7314,8 @@ Extends an Schema for a specified type of Resource
 
 *Parameters*
 
-- type 
-- objectSchema 
+- type
+- objectSchema
 
 ```typescript 
 extendObjectSchema( objectSchema:Carbon.ObjectSchema.DigestedObjectSchema )
@@ -7315,7 +7325,7 @@ Extends the General Schema of the context.
 
 *Parameters*
 
-- objectSchema 
+- objectSchema
 
 
 
@@ -7385,7 +7395,7 @@ Returns true if the object provided contains the properties required to be a `Ca
 
 *Parameters*
 
-- value 
+- value
 
 ##### is
 ```typescript 
@@ -7396,7 +7406,7 @@ Returns true if the object provided is a `Carbon.SPARQL.RawResult.Class` object
 
 *Parameters*
 
-- value 
+- value
 
 
 
@@ -7430,7 +7440,7 @@ Parse the SPARQL Query string result to a `Carbon.SPARQL.RawResult.Class` object
 
 *Parameters*
 
-- input 
+- input
 
 
 
@@ -7461,9 +7471,9 @@ Executes an ASK Query and returns a raw application/sparql-results+json object
 
 *Parameters*
 
-- url 
-- askQuery 
-- requestOptions 
+- url
+- askQuery
+- requestOptions
 
 ##### executeASKQuery
 ```typescript 
@@ -7474,9 +7484,9 @@ Executes an ASK Query and returns a boolean
 
 *Parameters*
 
-- url 
-- askQuery 
-- requestOptions 
+- url
+- askQuery
+- requestOptions
 
 ##### executeSELECTQuery
 ```typescript 
@@ -7487,10 +7497,10 @@ Executes a SELECT Query and parses the results
 
 *Parameters*
 
-- url 
-- selectQuery 
-- pointerLibrary 
-- requestOptions 
+- url
+- selectQuery
+- pointerLibrary
+- requestOptions
 
 ##### executeRawSELECTQuery
 ```typescript 
@@ -7501,9 +7511,9 @@ Executes a SELECT Query and returns a raw application/sparql-results+json object
 
 *Parameters*
 
-- url 
-- selectQuery 
-- requestOptions 
+- url
+- selectQuery
+- requestOptions
 
 ##### executeRawCONSTRUCTQuery
 ```typescript 
@@ -7514,9 +7524,9 @@ Executes a CONSTRUCT Query and returns a string with the resulting model
 
 *Parameters*
 
-- url 
-- constructQuery 
-- requestOptions 
+- url
+- constructQuery
+- requestOptions
 
 ##### executeRawDESCRIBEQuery
 ```typescript 
@@ -7527,9 +7537,9 @@ Executes a DESCRIBE Query and returns a string with the resulting model
 
 *Parameters*
 
-- url 
-- describeQuery 
-- requestOptions 
+- url
+- describeQuery
+- requestOptions
 
 
 
@@ -7552,8 +7562,8 @@ Checks if the object has a property with that name and if it that property is a 
 
 *Parameters*
 
-- object 
-- name 
+- object
+- name
 
 ##### hasProperty
 ```typescript 
@@ -7564,8 +7574,8 @@ Checks if the object has a property with that name.
 
 *Parameters*
 
-- object 
-- name 
+- object
+- name
 
 ##### hasPropertyDefined
 ```typescript 
@@ -7576,8 +7586,8 @@ Checks if an object has a property defined under that name (even if its value is
 
 *Parameters*
 
-- object 
-- name 
+- object
+- name
 
 ##### isDefined
 ```typescript 
@@ -7588,7 +7598,7 @@ Checks if the value passed is defined.
 
 *Parameters*
 
-- value 
+- value
 
 ##### isNull
 ```typescript 
@@ -7599,7 +7609,7 @@ Checks if the value passed is null.
 
 *Parameters*
 
-- value 
+- value
 
 ##### isArray
 ```typescript 
@@ -7610,7 +7620,7 @@ Checks if the value passed is an array.
 
 *Parameters*
 
-- value 
+- value
 
 ##### isString
 ```typescript 
@@ -7621,7 +7631,7 @@ Checks if the value passed is a string.
 
 *Parameters*
 
-- value 
+- value
 
 ##### isBoolean
 ```typescript 
@@ -7632,7 +7642,7 @@ Checks if the value passed is a boolean.
 
 *Parameters*
 
-- value 
+- value
 
 ##### isNumber
 ```typescript 
@@ -7643,7 +7653,7 @@ Checks if the value passed is a number
 
 *Parameters*
 
-- value 
+- value
 
 ##### isInteger
 ```typescript 
@@ -7654,7 +7664,7 @@ Checks if the value passed is an integer.
 
 *Parameters*
 
-- value 
+- value
 
 ##### isDouble
 ```typescript 
@@ -7665,7 +7675,7 @@ Checks if the value passed is a double.
 
 *Parameters*
 
-- value 
+- value
 
 ##### isDate
 ```typescript 
@@ -7676,7 +7686,7 @@ Checks if the value passed is a Date object.
 
 *Parameters*
 
-- value 
+- value
 
 ##### isObject
 ```typescript 
@@ -7687,7 +7697,7 @@ Checks if the value passed is an object (doesn"t include null).
 
 *Parameters*
 
-- value 
+- value
 
 ##### isFunction
 ```typescript 
@@ -7698,7 +7708,7 @@ Checks if the value passed is a function.
 
 *Parameters*
 
-- value 
+- value
 
 ##### isMap
 ```typescript 
@@ -7709,7 +7719,7 @@ Checks if the value passed is an ES6 Map.
 
 *Parameters*
 
-- value 
+- value
 
 ##### parseBoolean
 ```typescript 
@@ -7720,7 +7730,7 @@ Parses a string into a boolean.
 
 *Parameters*
 
-- value 
+- value
 
 ##### extend
 ```typescript 
@@ -7737,8 +7747,8 @@ Executes an action for each own property of the object.
 
 *Parameters*
 
-- object 
-- action : action( name, value )
+- object
+- action: action( name, value )
 
 
 
@@ -7761,8 +7771,8 @@ Checks if an object has the same enumerable properties with the same values as a
 
 *Parameters*
 
-- object1 
-- object2 
+- object1
+- object2
 
 
 
@@ -7785,8 +7795,8 @@ Checks if a string starts with a substring.
 
 *Parameters*
 
-- string 
-- substring 
+- string
+- substring
 
 ##### endsWith
 ```typescript 
@@ -7797,8 +7807,8 @@ Checks if a string ends with a substring.
 
 *Parameters*
 
-- string 
-- substring 
+- string
+- substring
 
 ##### contains
 ```typescript 
@@ -7809,8 +7819,8 @@ Checks if a string contains a substring (in any part).
 
 *Parameters*
 
-- string 
-- substring 
+- string
+- substring
 
 
 
@@ -7833,7 +7843,7 @@ Collects the values of an ES6 iterator and returns an array.
 
 *Parameters*
 
-- iterator 
+- iterator
 
 ##### joinWithoutDuplicates
 ```typescript 
@@ -7844,7 +7854,7 @@ Takes two or more arrays and joins them while removing duplicates
 
 *Parameters*
 
-- array 
+- array
 
 
 
@@ -7867,7 +7877,7 @@ Takes an object and creates a map from its properties.
 
 *Parameters*
 
-- object 
+- object
 
 
 
@@ -7890,7 +7900,7 @@ Returns true if the string provided is a UUID (version 1 to 5).
 
 *Parameters*
 
-- uuid 
+- uuid
 
 ##### generate
 ```typescript 

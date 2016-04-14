@@ -118,9 +118,9 @@ var Util = (function () {
     Util.getPropertyPointers = function (expandedObject, propertyURI, pointerLibrary) {
         var propertyValues = expandedObject[propertyURI];
         if (!propertyValues)
-            return null;
+            return [];
         if (!propertyValues.length)
-            return null;
+            return [];
         var propertyPointers = [];
         for (var _i = 0, propertyValues_4 = propertyValues; _i < propertyValues_4.length; _i++) {
             var propertyValue = propertyValues_4[_i];

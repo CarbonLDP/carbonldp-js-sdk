@@ -12,6 +12,9 @@ export interface Class extends PersistedDocument.Class {
 
 	upload( slug:string, blob:Blob ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
 	upload( blob:Blob ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
+
+
+	getMembers( includeNonReadable?:boolean ):Promise<[ Pointer.Class[], HTTP.Response.Class ]>;
 }
 
 function createChild( slug:string, object:Object ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
@@ -43,10 +46,15 @@ function upload( slugOrBlob:any, blob:any = null ):Promise<[ Pointer.Class, HTTP
 	}
 }
 
-export class Factory {
+function getMembers( includeNonReadable:boolean = true ):Promise<[ Pointer.Class[], HTTP.Response.Class ]> {
+	return this._documents.getMembers( this.id, includeNonReadable );
+}
+
+	export class Factory {
 	static hasClassProperties( document:Document.Class ):boolean {
 		return Utils.hasFunction( document, "createChild" )
-			&& Utils.hasFunction( document, "upload" );
+			&& Utils.hasFunction( document, "upload" )
+			&& Utils.hasFunction( document, "getMembers" );
 	}
 
 	static decorate<T extends PersistedDocument.Class>( persistedDocument:T ):T & Class {
@@ -64,6 +72,12 @@ export class Factory {
 				enumerable: false,
 				configurable: true,
 				value: upload,
+			},
+			"getMembers": {
+				writable: false,
+				enumerable: false,
+				configurable: true,
+				value: getMembers,
 			},
 		} );
 
