@@ -7136,7 +7136,7 @@ static getPropertyPointers( expandedObject:any,  propertyURI:string,  pointerLib
 ```
 
 Returns the property searched as an Array with the parsed Pointer.
-Returns null if the property is not found, or an empty array if the property cannot be parsed as a pointer.
+Returns an empty array if the property is not found, or the property cannot be parsed as a pointer.
 
 *Parameters*
 

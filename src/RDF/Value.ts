@@ -125,8 +125,8 @@ export class Util {
 
 	static getPropertyPointers( expandedObject:any, propertyURI:string, pointerLibrary:Pointer.Library ):any {
 		let propertyValues:Array<any> = expandedObject[ propertyURI ];
-		if( ! propertyValues ) return null;
-		if( ! propertyValues.length ) return null;
+		if( ! propertyValues ) return [];
+		if( ! propertyValues.length ) return [];
 
 		let propertyPointers:Array<any> = [];
 		for( let propertyValue of propertyValues ) {
