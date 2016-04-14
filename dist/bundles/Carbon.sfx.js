@@ -1028,8 +1028,9 @@ $__System.register("a", ["13", "4", "5", "c", "7"], function(exports_1) {
                     "@id": NS.CS.Predicate.rootContainer,
                     "@type": "@id",
                 },
-                "allowsOrigin": {
+                "allowsOrigins": {
                     "@id": NS.CS.Predicate.allowsOrigin,
+                    "@container": "@set",
                 },
             });
             Factory = (function () {
@@ -1475,7 +1476,7 @@ $__System.register("16", ["c", "17", "9", "5", "13", "18", "14", "8", "4", "10",
                             membershipResource = _this.getDocumentResource(membershipResourceDocument, response);
                         }
                         var hasMemberRelation = RDF.Node.Util.getPropertyURI(documentResource, NS.LDP.Predicate.hasMemberRelation);
-                        var memberPointers = RDF.Value.Util.getPropertyPointers(membershipResource, hasMemberRelation, _this) || [];
+                        var memberPointers = RDF.Value.Util.getPropertyPointers(membershipResource, hasMemberRelation, _this);
                         return [memberPointers, response];
                     });
                 };
@@ -12788,9 +12789,9 @@ $__System.register("68", ["58", "60", "4", "57"], function(exports_1) {
                 Util.getPropertyPointers = function (expandedObject, propertyURI, pointerLibrary) {
                     var propertyValues = expandedObject[propertyURI];
                     if (!propertyValues)
-                        return null;
+                        return [];
                     if (!propertyValues.length)
-                        return null;
+                        return [];
                     var propertyPointers = [];
                     for (var _i = 0; _i < propertyValues.length; _i++) {
                         var propertyValue = propertyValues[_i];
@@ -13491,7 +13492,7 @@ $__System.register("6c", ["e", "2", "12", "11", "a", "6", "29", "13", "16", "c",
                     this.apps = new Apps.Class(this);
                 }
                 Object.defineProperty(Carbon, "version", {
-                    get: function () { return "0.25.1"; },
+                    get: function () { return "0.26.0"; },
                     enumerable: true,
                     configurable: true
                 });

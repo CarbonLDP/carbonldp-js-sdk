@@ -364,7 +364,7 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 
 			let hasMemberRelation:string = RDF.Node.Util.getPropertyURI( documentResource, NS.LDP.Predicate.hasMemberRelation );
 
-			let memberPointers:Pointer.Class[] = RDF.Value.Util.getPropertyPointers( membershipResource, hasMemberRelation, this ) || [];
+			let memberPointers:Pointer.Class[] = RDF.Value.Util.getPropertyPointers( membershipResource, hasMemberRelation, this );
 
 			return [ memberPointers, response ];
 		});

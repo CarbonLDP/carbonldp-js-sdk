@@ -321,7 +321,7 @@ var Documents = (function () {
                 membershipResource = _this.getDocumentResource(membershipResourceDocument, response);
             }
             var hasMemberRelation = RDF.Node.Util.getPropertyURI(documentResource, NS.LDP.Predicate.hasMemberRelation);
-            var memberPointers = RDF.Value.Util.getPropertyPointers(membershipResource, hasMemberRelation, _this) || [];
+            var memberPointers = RDF.Value.Util.getPropertyPointers(membershipResource, hasMemberRelation, _this);
             return [memberPointers, response];
         });
     };
