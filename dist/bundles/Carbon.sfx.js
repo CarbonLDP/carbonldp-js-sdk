@@ -1492,7 +1492,7 @@ $__System.register("16", ["c", "17", "9", "5", "13", "18", "14", "8", "4", "10",
                         var member = members[_i];
                         member = Utils.isString(member) ? this.getPointer(member) : member;
                         if (!Pointer.Factory.is(member))
-                            Promise.reject(new Errors.IllegalArgumentError("No Carbon.Pointer or string URI provided."));
+                            return Promise.reject(new Errors.IllegalArgumentError("No Carbon.Pointer or string URI provided."));
                         pointers.push(member);
                     }
                     if (!!this.context)
