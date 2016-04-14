@@ -1372,6 +1372,9 @@ declare module 'carbonldp/LDP/PersistedContainer' {
 	    createChild(object: Object): Promise<[Pointer.Class, HTTP.Response.Class]>;
 	    createChild(): Promise<[Pointer.Class, HTTP.Response.Class]>;
 	    getMembers(includeNonReadable?: boolean): Promise<[Pointer.Class[], HTTP.Response.Class]>;
+	    removeMember(member: Pointer.Class): Promise<HTTP.Response.Class>;
+	    removeMember(memberURI: string): Promise<HTTP.Response.Class>;
+	    removeMembers(members: (Pointer.Class | string)[]): Promise<HTTP.Response.Class>;
 	    upload(slug: string, blob: Blob): Promise<[Pointer.Class, HTTP.Response.Class]>;
 	    upload(blob: Blob): Promise<[Pointer.Class, HTTP.Response.Class]>;
 	}

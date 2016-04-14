@@ -4698,6 +4698,17 @@ getMembers( includeNonReadable?:boolean ):Promise<[ Carbon.Pointer.Class[], Carb
 
 - includeNonReadable: By default this option is set to `true`.
 
+##### removeMembers
+```typescript 
+removeMembers( members:(Carbon.Pointer.Class | string)[] ):Promise<Carbon.HTTP.Response.Class>
+```
+
+Remove the specified resources URI or Pointers as members of the container.
+
+*Parameters*
+
+- members: Array of string URIs or Pointers to remove as members
+
 ##### createChild
 ```typescript 
 createChild( slug:string,  object:Object ):Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>
@@ -4731,6 +4742,27 @@ createChild( slug:string ):Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.
 createChild():Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>
 ```
 
+
+##### removeMember
+```typescript 
+removeMember( member:Carbon.Pointer.Class ):Promise<Carbon.HTTP.Response.Class>
+```
+
+Remove the specified resource Pointer as a member of the container.
+
+*Parameters*
+
+- member: Pointer object that references the resource to remove as a member.
+
+```typescript 
+removeMember( memberURI:string ):Promise<Carbon.HTTP.Response.Class>
+```
+
+Remove the specified resource URI as a member of the container.
+
+*Parameters*
+
+- memberURI: URI of the resource to remove as a member.
 
 ##### upload
 ```typescript 
