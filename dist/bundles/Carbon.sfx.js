@@ -1506,6 +1506,10 @@ $__System.register("16", ["c", "17", "9", "5", "13", "18", "14", "8", "4", "10",
                     var body = document.toJSON(this, this.jsonldConverter);
                     return HTTP.Request.Service.put(documentURI, body, requestOptions);
                 };
+                Documents.prototype.removeMember = function (documentURI, memberORUri, requestOptions) {
+                    if (requestOptions === void 0) { requestOptions = {}; }
+                    return this.removeMembers(documentURI, [memberORUri], requestOptions);
+                };
                 Documents.prototype.removeMembers = function (documentURI, members, requestOptions) {
                     if (requestOptions === void 0) { requestOptions = {}; }
                     var pointers = [];

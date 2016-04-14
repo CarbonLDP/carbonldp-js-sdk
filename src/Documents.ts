@@ -402,6 +402,12 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 		return HTTP.Request.Service.put( documentURI, body, requestOptions );
 	}
 
+	removeMember( documentURI:string, member:Pointer.Class, requestOptions?:HTTP.Request.Options ): Promise<HTTP.Response.Class>;
+	removeMember( documentURI:string, memberURI:string, requestOptions?:HTTP.Request.Options ): Promise<HTTP.Response.Class>;
+	removeMember( documentURI:string, memberORUri:Pointer.Class | string, requestOptions:HTTP.Request.Options = {} ): Promise<HTTP.Response.Class> {
+		return this.removeMembers( documentURI, [ memberORUri ], requestOptions );
+	}
+
 	removeMembers( documentURI:string, members:(Pointer.Class | string)[], requestOptions:HTTP.Request.Options = {} ):Promise<HTTP.Response.Class> {
 		let pointers:Pointer.Class[] = [];
 		for ( let member of members ) {

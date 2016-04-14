@@ -935,7 +935,7 @@ describe( module( "Carbon/Documents", "" ), ():void => {
 			"Add the specified resource Pointer as a member of the document container specified.", [
 				{ name: "documentURI", type: "string", description: "URI of the document container where to add the member." },
 				{ name: "member", type: "Carbon.Pointer.Class", description: "Pointer object that references the resource to add as a member." },
-				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options" }
+				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true }
 			],
 			{ type: "Promise<Carbon.HTTP.Response>"}
 		), ():void => {
@@ -953,7 +953,7 @@ describe( module( "Carbon/Documents", "" ), ():void => {
 			"Add the specified resource URI as a member of the document container specified.", [
 				{ name: "documentURI", type: "string", description: "URI of the document container where to add the member." },
 				{ name: "memberURI", type: "string", description: "URI of the resource to add as a member." },
-				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options" }
+				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true }
 			],
 			{ type: "Promise<Carbon.HTTP.Response>"}
 		), ():void => {
@@ -974,7 +974,7 @@ describe( module( "Carbon/Documents", "" ), ():void => {
 		"Add the specified resources URI or Pointers as members of the document container specified.", [
 			{ name: "documentURI", type: "string", description: "URI of the document container where to add the members." },
 			{ name: "members", type: "(Carbon.Pointer.Class | string)[]", description: "Array of string URIs or Pointers to add as members" },
-			{ name: "requestOptions", type: "Carbon.HTTP.Request.Options" }
+			{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true }
 		],
 		{ type: "Promise<Carbon.HTTP.Response>"}
 	), ( done:{ ():void, fail:() => void } ):void => {
@@ -1027,13 +1027,68 @@ describe( module( "Carbon/Documents", "" ), ():void => {
 		}, done.fail );
 	});
 
+	describe( method(
+		INSTANCE,
+		"removeMember"
+	), ():void => {
+
+		class MockedContext extends AbstractContext {
+			resolve( uri:string ):string {
+				return "http://example.com/" + uri;
+			}
+		}
+		let context:MockedContext;
+		let documents:Documents;
+
+		beforeEach( ():void => {
+			context = new MockedContext();
+			documents = context.documents;
+		});
+
+		it( hasSignature(
+			"Remove the specified resource Pointer member of the resource container specified.", [
+				{ name: "documentURI", type: "string", description: "URI of the resource container where to remove the member." },
+				{ name: "member", type: "Carbon.Pointer.Class", description: "Pointer object that references the resource to remove as a member." },
+				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true }
+			],
+			{ type: "Promise<Carbon.HTTP.Response>"}
+		), ():void => {
+			expect( documents.removeMember ).toBeDefined();
+			expect( Utils.isFunction( documents.removeMember ) ).toBe( true );
+
+			let spy = spyOn( documents, "removeMembers" );
+
+			let pointer:Pointer.Class = documents.getPointer( "remove-member/" );
+			documents.removeMember( "resource/", pointer );
+			expect( spy ).toHaveBeenCalledWith( "resource/", [ pointer ], {} );
+		});
+
+		it( hasSignature(
+			"Remove the specified resource URI member of the resource container specified.", [
+				{ name: "documentURI", type: "string", description: "URI of the resource container where to remove the member." },
+				{ name: "memberURI", type: "string", description: "URI of the resource to remvoe as a member." },
+				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true }
+			],
+			{ type: "Promise<Carbon.HTTP.Response>"}
+		), ():void => {
+			expect( documents.removeMember ).toBeDefined();
+			expect( Utils.isFunction( documents.removeMember ) ).toBe( true );
+
+			let spy = spyOn( documents, "removeMembers" );
+
+			documents.removeMember( "resource/", "remove-member/" );
+			expect( spy ).toHaveBeenCalledWith( "resource/", [ "remove-member/" ], {} );
+		});
+
+	});
+
 	it( hasMethod(
 		INSTANCE,
 		"removeMembers",
 		"Remove the specified resources URI or Pointers as members of the document container specified.", [
 			{ name: "documentURI", type: "string", description: "URI of the document container where to add the members." },
 			{ name: "members", type: "(Carbon.Pointer.Class | string)[]", description: "Array of string URIs or Pointers to add as members" },
-			{ name: "requestOptions", type: "Carbon.HTTP.Request.Options" }
+			{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true }
 		],
 		{ type: "Promise<Carbon.HTTP.Response>"}
 	), ( done:{ ():void, fail:() => void } ):void => {

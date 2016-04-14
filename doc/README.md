@@ -1753,7 +1753,7 @@ Returns a Promise with a boolean indicating if the resource exists or not.
 
 ##### addMembers
 ```typescript 
-addMembers( documentURI:string,  members:(Carbon.Pointer.Class | string)[],  requestOptions:Carbon.HTTP.Request.Options ):Promise<Carbon.HTTP.Response>
+addMembers( documentURI:string,  members:(Carbon.Pointer.Class | string)[],  requestOptions?:Carbon.HTTP.Request.Options ):Promise<Carbon.HTTP.Response>
 ```
 
 Add the specified resources URI or Pointers as members of the document container specified.
@@ -1766,7 +1766,7 @@ Add the specified resources URI or Pointers as members of the document container
 
 ##### removeMembers
 ```typescript 
-removeMembers( documentURI:string,  members:(Carbon.Pointer.Class | string)[],  requestOptions:Carbon.HTTP.Request.Options ):Promise<Carbon.HTTP.Response>
+removeMembers( documentURI:string,  members:(Carbon.Pointer.Class | string)[],  requestOptions?:Carbon.HTTP.Request.Options ):Promise<Carbon.HTTP.Response>
 ```
 
 Remove the specified resources URI or Pointers as members of the document container specified.
@@ -1997,7 +1997,7 @@ Retrieves (but doesn't resolve) all the members of the document
 
 ##### addMember
 ```typescript 
-addMember( documentURI:string,  member:Carbon.Pointer.Class,  requestOptions:Carbon.HTTP.Request.Options ):Promise<Carbon.HTTP.Response>
+addMember( documentURI:string,  member:Carbon.Pointer.Class,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<Carbon.HTTP.Response>
 ```
 
 Add the specified resource Pointer as a member of the document container specified.
@@ -2009,7 +2009,7 @@ Add the specified resource Pointer as a member of the document container specifi
 - requestOptions
 
 ```typescript 
-addMember( documentURI:string,  memberURI:string,  requestOptions:Carbon.HTTP.Request.Options ):Promise<Carbon.HTTP.Response>
+addMember( documentURI:string,  memberURI:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<Carbon.HTTP.Response>
 ```
 
 Add the specified resource URI as a member of the document container specified.
@@ -2018,6 +2018,31 @@ Add the specified resource URI as a member of the document container specified.
 
 - documentURI: URI of the document container where to add the member.
 - memberURI: URI of the resource to add as a member.
+- requestOptions
+
+##### removeMember
+```typescript 
+removeMember( documentURI:string,  member:Carbon.Pointer.Class,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<Carbon.HTTP.Response>
+```
+
+Remove the specified resource Pointer member of the resource container specified.
+
+*Parameters*
+
+- documentURI: URI of the resource container where to remove the member.
+- member: Pointer object that references the resource to remove as a member.
+- requestOptions
+
+```typescript 
+removeMember( documentURI:string,  memberURI:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<Carbon.HTTP.Response>
+```
+
+Remove the specified resource URI member of the resource container specified.
+
+*Parameters*
+
+- documentURI: URI of the resource container where to remove the member.
+- memberURI: URI of the resource to remvoe as a member.
 - requestOptions
 
 
