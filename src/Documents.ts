@@ -424,14 +424,13 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 		});
 	}
 
-	delete( persistedDocument:PersistedDocument.Class, requestOptions:HTTP.Request.Options = {} ):Promise<HTTP.Response.Class> {
+	delete( documentURI:string, requestOptions:HTTP.Request.Options = {} ):Promise<HTTP.Response.Class> {
 		if ( this.context && this.context.auth.isAuthenticated() ) this.context.auth.addAuthentication( requestOptions );
 
 		HTTP.Request.Util.setAcceptHeader( "application/ld+json", requestOptions );
 		HTTP.Request.Util.setPreferredInteractionModel( NS.LDP.Class.RDFSource, requestOptions );
-		HTTP.Request.Util.setIfMatchHeader( persistedDocument._etag, requestOptions );
 
-		return HTTP.Request.Service.delete( persistedDocument.id, requestOptions );
+		return HTTP.Request.Service.delete( documentURI, requestOptions );
 	}
 
 	getSchemaFor( object:Object ):ObjectSchema.DigestedObjectSchema {

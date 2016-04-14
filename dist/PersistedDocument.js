@@ -56,7 +56,7 @@ function save() {
     return this._documents.save(this);
 }
 function destroy() {
-    return this._documents.delete(this);
+    return this._documents.delete(this.id);
 }
 function createAccessPoint(accessPoint, slug, requestOptions) {
     if (slug === void 0) { slug = null; }

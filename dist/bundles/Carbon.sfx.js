@@ -1526,14 +1526,13 @@ $__System.register("17", ["c", "18", "9", "5", "13", "19", "15", "8", "4", "10",
                         return [persistedDocument, response];
                     });
                 };
-                Documents.prototype.delete = function (persistedDocument, requestOptions) {
+                Documents.prototype.delete = function (documentURI, requestOptions) {
                     if (requestOptions === void 0) { requestOptions = {}; }
                     if (this.context && this.context.auth.isAuthenticated())
                         this.context.auth.addAuthentication(requestOptions);
                     HTTP.Request.Util.setAcceptHeader("application/ld+json", requestOptions);
                     HTTP.Request.Util.setPreferredInteractionModel(NS.LDP.Class.RDFSource, requestOptions);
-                    HTTP.Request.Util.setIfMatchHeader(persistedDocument._etag, requestOptions);
-                    return HTTP.Request.Service.delete(persistedDocument.id, requestOptions);
+                    return HTTP.Request.Service.delete(documentURI, requestOptions);
                 };
                 Documents.prototype.getSchemaFor = function (object) {
                     if ("@id" in object) {
@@ -3582,7 +3581,7 @@ $__System.register("15", ["13", "25", "26", "27", "9", "5", "28"], function(expo
         return this._documents.save(this);
     }
     function destroy() {
-        return this._documents.delete(this);
+        return this._documents.delete(this.id);
     }
     function createAccessPoint(accessPoint, slug, requestOptions) {
         if (slug === void 0) { slug = null; }
@@ -4047,8 +4046,9 @@ $__System.register("f", ["1b", "16", "2a", "17", "c", "3", "4", "10", "12", "29"
                             "@id": NS.CS.Predicate.rootContainer,
                             "@type": "@id",
                         },
-                        "allowsOrigin": {
+                        "allowsOrigins": {
                             "@id": NS.CS.Predicate.allowsOrigin,
+                            "@container": "@set",
                         },
                     });
                     this.extendObjectSchema(AddMemberAction.RDF_CLASS, AddMemberAction.SCHEMA);
@@ -13601,7 +13601,7 @@ $__System.register("6d", ["e", "2", "12", "11", "a", "6", "2a", "13", "17", "c",
                     this.apps = new Apps.Class(this);
                 }
                 Object.defineProperty(Carbon, "version", {
-                    get: function () { return "0.26.0"; },
+                    get: function () { return "0.27.0"; },
                     enumerable: true,
                     configurable: true
                 });

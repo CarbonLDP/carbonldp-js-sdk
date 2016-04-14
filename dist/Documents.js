@@ -365,14 +365,13 @@ var Documents = (function () {
             return [persistedDocument, response];
         });
     };
-    Documents.prototype.delete = function (persistedDocument, requestOptions) {
+    Documents.prototype.delete = function (documentURI, requestOptions) {
         if (requestOptions === void 0) { requestOptions = {}; }
         if (this.context && this.context.auth.isAuthenticated())
             this.context.auth.addAuthentication(requestOptions);
         HTTP.Request.Util.setAcceptHeader("application/ld+json", requestOptions);
         HTTP.Request.Util.setPreferredInteractionModel(NS.LDP.Class.RDFSource, requestOptions);
-        HTTP.Request.Util.setIfMatchHeader(persistedDocument._etag, requestOptions);
-        return HTTP.Request.Service.delete(persistedDocument.id, requestOptions);
+        return HTTP.Request.Service.delete(documentURI, requestOptions);
     };
     Documents.prototype.getSchemaFor = function (object) {
         if ("@id" in object) {

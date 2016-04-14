@@ -413,7 +413,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 
 				let spy = spyOn( context.documents, "delete" );
 				document.destroy();
-				expect( spy ).toHaveBeenCalledWith( document );
+				expect( spy ).toHaveBeenCalledWith( document.id );
 			});
 
 			it( hasMethod(

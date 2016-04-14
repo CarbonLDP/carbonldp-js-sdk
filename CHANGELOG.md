@@ -1,3 +1,12 @@
+# 0.27.0 (April 12, 2016)
+- Added `context.documents.getMember()` method, which lets you add a single member reference to a Container
+- Added `context.documents.getMember()` method, same as `persistedContainer.getMember()`
+- Added `context.documents.getMembers()` method, which lets you add a multiple members references to a Container
+- Added `context.documents.getMembers()` method, same as `persistedContainer.getMembers()`
+
+#### Breaking Changes
+- Changed `context.documents.delete()` method, now it accepts a document URI and not a PersistedDocument object
+
 # 0.26.0 (April 12, 2016)
 - Added `persistedContainer.getMembers()` method, which lets you obtain the members of the Container
 

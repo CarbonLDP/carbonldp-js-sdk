@@ -1762,14 +1762,14 @@ Add the specified resources URI or Pointers as members of the document container
 
 ##### delete
 ```typescript 
-delete( persistedDocument:Carbon.PersistedDocument.Class,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<Carbon.HTTP.Response.Class>
+delete( documentURI:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<Carbon.HTTP.Response.Class>
 ```
 
 Delete a the Resource referred by a PersistedDocument from the server.
 
 *Parameters*
 
-- persistedDocument
+- documentURI
 - requestOptions
 
 ##### executeRawASKQuery
