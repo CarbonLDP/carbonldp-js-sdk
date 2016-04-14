@@ -5,6 +5,7 @@ import * as DirectContainer from "./LDP/DirectContainer";
 import * as IndirectContainer from "./LDP/IndirectContainer";
 import * as PersistedContainer from "./LDP/PersistedContainer";
 import * as RDFSource from "./LDP/RDFSource";
+import * as RemoveMemberAction from "./LDP/RemoveMemberAction";
 
 export {
 	AddMemberAction,
@@ -14,4 +15,5 @@ export {
 	IndirectContainer,
 	PersistedContainer,
 	RDFSource,
+	RemoveMemberAction,
 };

@@ -39,7 +39,7 @@ describe( module(
 		it( isDefined(), ():void => {
 			expect( C.Class ).toBeDefined();
 			expect( Utils.isFunction( C.Class ) ).toBe( true );
-			expect( Object.keys( C.Class ).length ).toBe( 10 );
+			expect( Object.keys( C.Class ).length ).toBe( 12 );
 		});
 
 		it( hasProperty(
@@ -150,6 +150,17 @@ describe( module(
 			expect( Utils.isString( C.Class.AddMemberAction ) ).toBe( true );
 
 			expect( C.Class.AddMemberAction ).toBe( "https://carbonldp.com/ns/v1/platform#AddMemberAction" );
+		});
+
+		it( hasProperty(
+			STATIC,
+			"RemoveMemberAction",
+			"string"
+		), ():void => {
+			expect( C.Class.RemoveMemberAction ).toBeDefined();
+			expect( Utils.isString( C.Class.RemoveMemberAction ) ).toBe( true );
+
+			expect( C.Class.RemoveMemberAction ).toBe( "https://carbonldp.com/ns/v1/platform#RemoveMemberAction" );
 		});
 
 	});

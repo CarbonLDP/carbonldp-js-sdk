@@ -1028,6 +1028,65 @@ describe( module( "Carbon/Documents", "" ), ():void => {
 
 	it( hasMethod(
 		INSTANCE,
+		"removeMembers",
+		"Remove the specified resources URI or Pointers as members of the document container specified.", [
+			{ name: "documentURI", type: "string", description: "URI of the document container where to add the members." },
+			{ name: "members", type: "(Carbon.Pointer.Class | string)[]", description: "Array of string URIs or Pointers to add as members" },
+			{ name: "requestOptions", type: "Carbon.HTTP.Request.Options" }
+		],
+		{ type: "Promise<Carbon.HTTP.Response>"}
+	), ( done:{ ():void, fail:() => void } ):void => {
+		class MockedContext extends AbstractContext {
+			resolve( uri:string ):string {
+				return "http://example.com/" + uri;
+			}
+		}
+		let context:MockedContext = new MockedContext();
+		let documents:Documents = context.documents;
+
+		expect( documents.removeMembers ).toBeDefined();
+		expect( Utils.isFunction( documents.removeMembers ) ).toBe( true );
+
+		jasmine.Ajax.stubRequest( "http://example.com/resource/", null, "DELETE" ).andReturn( {
+			status: 200
+		});
+
+		let spies = {
+			success: ( response:any ):void => {
+				expect( response ).toBeDefined();
+				expect( response instanceof HTTP.Response.Class ).toBe( true );
+			},
+			fail: ( error:Error ):void => {
+				expect( error ).toBeDefined();
+				expect( error instanceof Errors.IllegalArgumentError ).toBe( true );
+			}
+		};
+		let spySuccess = spyOn( spies, "success" ).and.callThrough();
+		let spyFail = spyOn( spies, "fail" ).and.callThrough();
+
+		let promises:Promise<any>[] = [];
+		let promise:Promise<any>;
+		let members:(Pointer.Class | string)[];
+
+		members = [ documents.getPointer( "remove-member-01/" ), "remove-member-02/" ];
+		promise = documents.removeMembers( "resource/", members );
+		expect( promise instanceof Promise ).toBe( true );
+		promises.push( promise.then( spies.success ) );
+
+		members = [ documents.getPointer( "remove-member-01/" ), "remove-member-02/", <any> { "something": "nor string or Pointer" } ];
+		promise = documents.removeMembers( "resource/", members );
+		expect( promise instanceof Promise ).toBe( true );
+		promises.push( promise.catch( spies.fail ) );
+
+		Promise.all( promises ).then( ():void => {
+			expect( spySuccess ).toHaveBeenCalledTimes( 1 );
+			expect( spyFail ).toHaveBeenCalledTimes( 1 );
+			done();
+		}, done.fail );
+	});
+
+	it( hasMethod(
+		INSTANCE,
 		"delete",
 		"Delete a the Resource referred by a PersistedDocument from the server.", [
 			{ name: "persistedDocument", type: "Carbon.PersistedDocument.Class" },

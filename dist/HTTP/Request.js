@@ -161,16 +161,17 @@ var Util = (function () {
         prefer.values.push(new Header.Value(interactionModelURI + "; rel=interaction-model"));
         return requestOptions;
     };
-    Util.setContainerRetrievalPreferences = function (preferences, requestOptions) {
-        var prefer = Util.getHeader("prefer", requestOptions, true);
-        var headerPieces = ["return=representation;"];
-        if ("include" in preferences && preferences.include.length > 0)
-            headerPieces.push('include="' + preferences.include.join(" ") + '"');
-        if ("omit" in preferences && preferences.omit.length > 0)
-            headerPieces.push('omit="' + preferences.omit.join(" ") + '"');
-        if (headerPieces.length === 1)
-            return requestOptions;
-        prefer.values.push(new Header.Value(headerPieces.join(" ")));
+    Util.setContainerRetrievalPreferences = function (preferences, requestOptions, returnRepresentation) {
+        if (returnRepresentation === void 0) { returnRepresentation = true; }
+        var prefer = Util.getHeader("prefer", requestOptions) || Util.getHeader("prefer", requestOptions, true);
+        var representation = returnRepresentation ? "return=representation; " : "";
+        var keys = ["include", "omit"];
+        for (var _i = 0, keys_1 = keys; _i < keys_1.length; _i++) {
+            var key = keys_1[_i];
+            if (key in preferences && preferences[key].length > 0) {
+                prefer.values.push(new Header.Value("" + representation + key + "=\"" + preferences[key].join(" ") + "\""));
+            }
+        }
         return requestOptions;
     };
     Util.setSlug = function (slug, requestOptions) {

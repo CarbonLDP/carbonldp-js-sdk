@@ -369,7 +369,7 @@ declare module 'carbonldp/HTTP/Request' {
 	    static setContentTypeHeader(contentType: string, requestOptions: Options): Options;
 	    static setIfMatchHeader(etag: string, requestOptions: Options): Options;
 	    static setPreferredInteractionModel(interactionModelURI: string, requestOptions: Options): Options;
-	    static setContainerRetrievalPreferences(preferences: ContainerRetrievalPreferences, requestOptions: Options): Options;
+	    static setContainerRetrievalPreferences(preferences: ContainerRetrievalPreferences, requestOptions: Options, returnRepresentation?: boolean): Options;
 	    static setSlug(slug: string, requestOptions: Options): Options;
 	}
 
@@ -668,15 +668,17 @@ declare module 'carbonldp/NS/C' {
 	export let namespace: string;
 	export class Class {
 	    static AccessPoint: string;
+	    static AddMemberAction: string;
 	    static API: string;
 	    static NonReadableMembershipResourceTriples: string;
 	    static PreferContainmentResources: string;
 	    static PreferContainmentTriples: string;
 	    static PreferMembershipResources: string;
 	    static PreferMembershipTriples: string;
+	    static PreferSelectedMembershipTriples: string;
 	    static VolatileResource: string;
 	    static RDFRepresentation: string;
-	    static AddMemberAction: string;
+	    static RemoveMemberAction: string;
 	}
 	export class Predicate {
 	    static accessPoint: string;
@@ -1380,6 +1382,23 @@ declare module 'carbonldp/LDP/PersistedContainer' {
 	export default Class;
 
 }
+declare module 'carbonldp/LDP/RemoveMemberAction' {
+	import * as Document from 'carbonldp/Document';
+	import * as Fragment from 'carbonldp/Fragment';
+	import * as ObjectSchema from 'carbonldp/ObjectSchema';
+	import * as Pointer from 'carbonldp/Pointer';
+	export const RDF_CLASS: string;
+	export const SCHEMA: ObjectSchema.Class;
+	export interface Class extends Fragment.Class {
+	    targetMembers: Pointer.Class[];
+	}
+	export class Factory {
+	    static hasClassProperties(object: Object): boolean;
+	    static createDocument(targetMembers: Pointer.Class[]): Document.Class;
+	}
+	export default Class;
+
+}
 declare module 'carbonldp/LDP' {
 	import * as AddMemberAction from 'carbonldp/LDP/AddMemberAction';
 	import * as BasicContainer from 'carbonldp/LDP/BasicContainer';
@@ -1388,7 +1407,8 @@ declare module 'carbonldp/LDP' {
 	import * as IndirectContainer from 'carbonldp/LDP/IndirectContainer';
 	import * as PersistedContainer from 'carbonldp/LDP/PersistedContainer';
 	import * as RDFSource from 'carbonldp/LDP/RDFSource';
-	export { AddMemberAction, BasicContainer, Container, DirectContainer, IndirectContainer, PersistedContainer, RDFSource };
+	import * as RemoveMemberAction from 'carbonldp/LDP/RemoveMemberAction';
+	export { AddMemberAction, BasicContainer, Container, DirectContainer, IndirectContainer, PersistedContainer, RDFSource, RemoveMemberAction };
 
 }
 declare module 'carbonldp/AccessPoint' {
@@ -1442,6 +1462,7 @@ declare module 'carbonldp/Documents' {
 	    addMember(documentURI: string, member: Pointer.Class, requestOptions?: HTTP.Request.Options): Promise<HTTP.Response.Class>;
 	    addMember(documentURI: string, memberURI: string, requestOptions?: HTTP.Request.Options): Promise<HTTP.Response.Class>;
 	    addMembers(documentURI: string, members: (Pointer.Class | string)[], requestOptions?: HTTP.Request.Options): Promise<HTTP.Response.Class>;
+	    removeMembers(documentURI: string, members: (Pointer.Class | string)[], requestOptions?: HTTP.Request.Options): Promise<HTTP.Response.Class>;
 	    save(persistedDocument: PersistedDocument.Class, requestOptions?: HTTP.Request.Options): Promise<[PersistedDocument.Class, HTTP.Response.Class]>;
 	    delete(persistedDocument: PersistedDocument.Class, requestOptions?: HTTP.Request.Options): Promise<HTTP.Response.Class>;
 	    getSchemaFor(object: Object): ObjectSchema.DigestedObjectSchema;

@@ -68,9 +68,9 @@
 				return carbon.apps.getContext( "test-app/" );
 			}).then( function( _appContext ) {
 				appContext = _appContext;
-				return appContext.documents.get( "files/" );
-			}).then( function( [ _document, result ] ) {
-				filesDocument = _document;
+				return appContext.documents.removeMembers( "posts/first-post/tags/", [ "tags/semantic/", "tags/semantic-4/" ] );
+			}).then( function( result ) {
+				console.log( result );
 			});
 
 			var input = document.querySelector( "#upload" );

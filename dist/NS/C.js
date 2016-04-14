@@ -8,6 +8,11 @@ var Class = (function () {
         enumerable: true,
         configurable: true
     });
+    Object.defineProperty(Class, "AddMemberAction", {
+        get: function () { return exports.namespace + "AddMemberAction"; },
+        enumerable: true,
+        configurable: true
+    });
     Object.defineProperty(Class, "API", {
         get: function () { return exports.namespace + "API"; },
         enumerable: true,
@@ -38,6 +43,11 @@ var Class = (function () {
         enumerable: true,
         configurable: true
     });
+    Object.defineProperty(Class, "PreferSelectedMembershipTriples", {
+        get: function () { return exports.namespace + "PreferSelectedMembershipTriples"; },
+        enumerable: true,
+        configurable: true
+    });
     Object.defineProperty(Class, "VolatileResource", {
         get: function () { return exports.namespace + "VolatileResource"; },
         enumerable: true,
@@ -48,8 +58,8 @@ var Class = (function () {
         enumerable: true,
         configurable: true
     });
-    Object.defineProperty(Class, "AddMemberAction", {
-        get: function () { return exports.namespace + "AddMemberAction"; },
+    Object.defineProperty(Class, "RemoveMemberAction", {
+        get: function () { return exports.namespace + "RemoveMemberAction"; },
         enumerable: true,
         configurable: true
     });

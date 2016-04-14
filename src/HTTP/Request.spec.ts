@@ -1069,7 +1069,8 @@ describe( module( "Carbon/HTTP/Request" ), function ():void {
 			"setContainerRetrievalPreferences",
 			"Set a Prefer header with `return=representation` in an options object request", [
 				{ name: "preference", type: "Carbon.HTTP.Request.ContainerRetrievalPreferences" },
-				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options" }
+				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options" },
+				{ name: "returnRepresentation", type: "boolean", optional: true, description: "If set to true, add `return=representation;` before include and/or omit. Default value is set to `true`." }
 			], {
 				type: "Object"
 			}
@@ -1085,6 +1086,7 @@ describe( module( "Carbon/HTTP/Request" ), function ():void {
 				]
 			};
 			let preferencesIncludeString: string = `return=representation; include="${NS.LDP.Class.PreferMinimalContainer} ${NS.LDP.Class.PreferMembership}"`;
+			let preferencesIncludeStringNoRepresentatation: string = `include="${NS.LDP.Class.PreferMinimalContainer} ${NS.LDP.Class.PreferMembership}"`;
 			let preferencesIncludeEmpty: Request.ContainerRetrievalPreferences = {
 				include: []
 			};
@@ -1096,6 +1098,7 @@ describe( module( "Carbon/HTTP/Request" ), function ():void {
 				]
 			};
 			let preferencesOmitString: string = `return=representation; omit="${NS.LDP.Class.PreferContainment} ${NS.C.Class.PreferContainmentResources} ${NS.C.Class.PreferMembershipResources}"`;
+			let preferencesOmitStringNoRepresentatation: string = `omit="${NS.LDP.Class.PreferContainment} ${NS.C.Class.PreferContainmentResources} ${NS.C.Class.PreferMembershipResources}"`;
 			let preferencesOmitEmpty: Request.ContainerRetrievalPreferences = {
 				omit: []
 			};
@@ -1110,7 +1113,8 @@ describe( module( "Carbon/HTTP/Request" ), function ():void {
 					NS.C.Class.PreferMembershipResources,
 				]
 			};
-			let preferencesFullString: string = `return=representation; include="${NS.LDP.Class.PreferMinimalContainer} ${NS.LDP.Class.PreferMembership}" omit="${NS.LDP.Class.PreferContainment} ${NS.C.Class.PreferContainmentResources} ${NS.C.Class.PreferMembershipResources}"`;
+			let preferencesFullString: string = `return=representation; include="${NS.LDP.Class.PreferMinimalContainer} ${NS.LDP.Class.PreferMembership}", return=representation; omit="${NS.LDP.Class.PreferContainment} ${NS.C.Class.PreferContainmentResources} ${NS.C.Class.PreferMembershipResources}"`;
+			let preferencesFullStringNoRepresentatation: string = `include="${NS.LDP.Class.PreferMinimalContainer} ${NS.LDP.Class.PreferMembership}", omit="${NS.LDP.Class.PreferContainment} ${NS.C.Class.PreferContainmentResources} ${NS.C.Class.PreferMembershipResources}"`;
 			let preferencesFullEmpty: Request.ContainerRetrievalPreferences = {
 				include: [],
 				omit: []
@@ -1131,6 +1135,13 @@ describe( module( "Carbon/HTTP/Request" ), function ():void {
 			expect( Request.Util.getHeader( "Prefer", options ).toString() ).toEqual( preferencesOmitString );
 			options = Request.Util.setContainerRetrievalPreferences( preferencesFullNormal, newOptionsObject() );
 			expect( Request.Util.getHeader( "Prefer", options ).toString() ).toEqual( preferencesFullString );
+
+			options = Request.Util.setContainerRetrievalPreferences( preferencesIncludeNormal, newOptionsObject(), false );
+			expect( Request.Util.getHeader( "Prefer", options ).toString() ).toEqual( preferencesIncludeStringNoRepresentatation );
+			options = Request.Util.setContainerRetrievalPreferences( preferencesOmitNormal, newOptionsObject(), false );
+			expect( Request.Util.getHeader( "Prefer", options ).toString() ).toEqual( preferencesOmitStringNoRepresentatation );
+			options = Request.Util.setContainerRetrievalPreferences( preferencesFullNormal, newOptionsObject(), false );
+			expect( Request.Util.getHeader( "Prefer", options ).toString() ).toEqual( preferencesFullStringNoRepresentatation );
 
 		});
 

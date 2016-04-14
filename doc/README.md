@@ -286,6 +286,10 @@
 - [Module Carbon/LDP/RDFSource](#Carbon-LDP-RDFSource)
 	- [Properties](#Carbon-LDP-RDFSource-Properties)
 	- [Class Carbon.LDP.RDFSource.Factory](#Carbon-LDP-RDFSource-Factory)
+- [Module Carbon/LDP/RemoveMemberAction](#Carbon-LDP-RemoveMemberAction)
+	- [Properties](#Carbon-LDP-RemoveMemberAction-Properties)
+	- [Class Carbon.LDP.RemoveMemberAction.Factory](#Carbon-LDP-RemoveMemberAction-Factory)
+		- [Methods](#Carbon-LDP-RemoveMemberAction-Factory-Methods)
 - [Module Carbon/NS](#Carbon-NS)
 	- [Reexports](#Carbon-NS-Reexports)
 - [Module Carbon/NS/C](#Carbon-NS-C)
@@ -1753,6 +1757,19 @@ addMembers( documentURI:string,  members:(Carbon.Pointer.Class | string)[],  req
 ```
 
 Add the specified resources URI or Pointers as members of the document container specified.
+
+*Parameters*
+
+- documentURI: URI of the document container where to add the members.
+- members: Array of string URIs or Pointers to add as members
+- requestOptions
+
+##### removeMembers
+```typescript 
+removeMembers( documentURI:string,  members:(Carbon.Pointer.Class | string)[],  requestOptions:Carbon.HTTP.Request.Options ):Promise<Carbon.HTTP.Response>
+```
+
+Remove the specified resources URI or Pointers as members of the document container specified.
 
 *Parameters*
 
@@ -4013,7 +4030,7 @@ Set a Slug header in an options object request
 
 ##### setContainerRetrievalPreferences
 ```typescript 
-static setContainerRetrievalPreferences( preference:Carbon.HTTP.Request.ContainerRetrievalPreferences,  requestOptions:Carbon.HTTP.Request.Options ):Object
+static setContainerRetrievalPreferences( preference:Carbon.HTTP.Request.ContainerRetrievalPreferences,  requestOptions:Carbon.HTTP.Request.Options,  returnRepresentation?:boolean ):Object
 ```
 
 Set a Prefer header with `return=representation` in an options object request
@@ -4022,6 +4039,7 @@ Set a Prefer header with `return=representation` in an options object request
 
 - preference
 - requestOptions
+- returnRepresentation: If set to true, add `return=representation;` before include and/or omit. Default value is set to `true`.
 
 
 
@@ -4260,6 +4278,7 @@ expand( compactedObject:Object,  digestedSchema:Carbon.ObjectSchema.DigestedObje
 | IndirectContainer | [Carbon/LDP/IndirectContainer](#Carbon-LDP-IndirectContainer) |
 | PersistedContainer | [Carbon/LDP/PersistedContainer](#Carbon-LDP-PersistedContainer) |
 | RDFSource | [Carbon/LDP/RDFSource](#Carbon-LDP-RDFSource) |
+| RemoveMemberAction | [Carbon/LDP/RemoveMemberAction](#Carbon-LDP-RemoveMemberAction) |
 
 
 
@@ -4740,6 +4759,59 @@ static SCHEMA:Carbon.ObjectSchema.Class
 
 
 
+## <a name="Carbon-LDP-RemoveMemberAction" />Module Carbon/LDP/RemoveMemberAction
+
+
+
+
+
+### <a name="Carbon-LDP-RemoveMemberAction-Properties" />Properties
+```typescript 
+static RDF_CLASS:string 
+```
+
+```typescript 
+static SCHEMA:Carbon.ObjectSchema.Class 
+```
+
+
+
+
+
+### <a name="Carbon-LDP-RemoveMemberAction-Factory" />Class Carbon.LDP.RemoveMemberAction.Factory
+
+
+> Factory class for LDP RemoveMemberAction objects
+
+
+
+
+#### <a name="Carbon-LDP-RemoveMemberAction-Factory-Methods" />Methods
+##### hasClassProperties
+```typescript 
+static hasClassProperties( resource:Carbon.RDF.Node.Class ):boolean
+```
+
+Returns true if the object has the properties to be defined as a LDP RemoveMemberAction
+
+*Parameters*
+
+- resource
+
+##### createDocument
+```typescript 
+static createDocument( targetMembers:Carbon.Pointer.Class ):Carbon.Document.Class
+```
+
+Create and returns a `Carbon.Document.Class` object with a RemoveMemberAction fragment for the specified targetMembers.
+
+*Parameters*
+
+- targetMembers: The target members of the remove action.
+
+
+
+
 ## <a name="Carbon-NS" />Module Carbon/NS
 
 
@@ -4820,6 +4892,10 @@ static RDFRepresentation:string
 
 ```typescript 
 static AddMemberAction:string 
+```
+
+```typescript 
+static RemoveMemberAction:string 
 ```
 
 

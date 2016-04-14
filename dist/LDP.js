@@ -13,5 +13,7 @@ var PersistedContainer = require("./LDP/PersistedContainer");
 exports.PersistedContainer = PersistedContainer;
 var RDFSource = require("./LDP/RDFSource");
 exports.RDFSource = RDFSource;
+var RemoveMemberAction = require("./LDP/RemoveMemberAction");
+exports.RemoveMemberAction = RemoveMemberAction;
 
 //# sourceMappingURL=LDP.js.map

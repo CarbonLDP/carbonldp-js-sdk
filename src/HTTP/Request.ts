@@ -201,16 +201,16 @@ export class Util {
 		return requestOptions;
 	}
 
-	static setContainerRetrievalPreferences( preferences:ContainerRetrievalPreferences, requestOptions:Options ):Options {
-		let prefer:Header.Class = Util.getHeader( "prefer", requestOptions, true );
+	static setContainerRetrievalPreferences( preferences:ContainerRetrievalPreferences, requestOptions:Options, returnRepresentation:boolean = true ):Options {
+		let prefer:Header.Class = Util.getHeader( "prefer", requestOptions ) || Util.getHeader( "prefer", requestOptions, true );
+		let representation:string = returnRepresentation ? "return=representation; " : "";
 
-		let headerPieces:string[] = [ "return=representation;" ];
-		if( "include" in preferences && preferences.include.length > 0 ) headerPieces.push( 'include="' + preferences.include.join( " " ) + '"' );
-		if( "omit" in preferences && preferences.omit.length > 0 ) headerPieces.push( 'omit="' + preferences.omit.join( " " ) + '"' );
-
-		if( headerPieces.length === 1 ) return requestOptions;
-
-		prefer.values.push( new Header.Value( headerPieces.join( " " ) ) );
+		let keys:string[] = [ "include", "omit" ];
+		for ( let key of keys ) {
+			if ( key in preferences && preferences[ key ].length > 0 ) {
+				prefer.values.push( new Header.Value( `${ representation }${ key }="${ preferences[ key ].join( " " ) }"` ) );
+			}
+		}
 
 		return requestOptions;
 	}

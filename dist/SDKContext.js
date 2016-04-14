@@ -9,6 +9,7 @@ var NS = require("./NS");
 var ObjectSchema = require("./ObjectSchema");
 var Agent = require("./Agent");
 var RDFRepresentation = require("./RDFRepresentation");
+var RemoveMemberAction = require("./LDP/RemoveMemberAction");
 var Class = (function () {
     function Class() {
         this.settings = new Map();
@@ -150,6 +151,7 @@ var Class = (function () {
             },
         });
         this.extendObjectSchema(AddMemberAction.RDF_CLASS, AddMemberAction.SCHEMA);
+        this.extendObjectSchema(RemoveMemberAction.RDF_CLASS, RemoveMemberAction.SCHEMA);
         this.extendObjectSchema(Auth.Token.RDF_CLASS, Auth.Token.CONTEXT);
         this.extendObjectSchema(Agent.RDF_CLASS, Agent.SCHEMA);
     };
