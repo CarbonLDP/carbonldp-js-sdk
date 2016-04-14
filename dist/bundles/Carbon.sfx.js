@@ -1123,8 +1123,8 @@ $__System.register("15", ["4"], function(exports_1) {
     }
 });
 
-$__System.register("16", ["c", "17", "9", "5", "18", "14", "8", "4", "10", "3", "19"], function(exports_1) {
-    var Errors, HTTP, RDF, Utils, JSONLDConverter, PersistedDocument, Pointer, NS, ObjectSchema, LDP, SPARQL;
+$__System.register("16", ["c", "17", "9", "5", "13", "18", "14", "8", "4", "10", "3", "19"], function(exports_1) {
+    var Errors, HTTP, RDF, Utils, Document, JSONLDConverter, PersistedDocument, Pointer, NS, ObjectSchema, LDP, SPARQL;
     var Documents;
     return {
         setters:[
@@ -1139,6 +1139,9 @@ $__System.register("16", ["c", "17", "9", "5", "18", "14", "8", "4", "10", "3", 
             },
             function (Utils_1) {
                 Utils = Utils_1;
+            },
+            function (Document_1) {
+                Document = Document_1;
             },
             function (JSONLDConverter_1) {
                 JSONLDConverter = JSONLDConverter_1;
@@ -1301,6 +1304,8 @@ $__System.register("16", ["c", "17", "9", "5", "18", "14", "8", "4", "10", "3", 
                     var slug = Utils.isString(slugOrChildDocument) ? slugOrChildDocument : null;
                     var childDocument = !Utils.isString(slugOrChildDocument) ? slugOrChildDocument : childDocumentOrRequestOptions;
                     requestOptions = !Utils.isString(slugOrChildDocument) ? childDocumentOrRequestOptions : requestOptions;
+                    if (!Document.Factory.is(childDocument))
+                        childDocument = Document.Factory.createFrom(childDocument);
                     if (!!this.context)
                         parentURI = this.context.resolve(parentURI);
                     if (PersistedDocument.Factory.is(childDocument))
@@ -1887,15 +1892,15 @@ $__System.register("1d", ["4", "5"], function(exports_1) {
 $__System.register("1e", ["5"], function(exports_1) {
     var Utils;
     var Factory;
-    function createChild(slugOrDocument, document) {
-        if (document === void 0) { document = null; }
-        var slug = Utils.isString(slugOrDocument) ? slugOrDocument : null;
-        document = slug ? document : slugOrDocument;
+    function createChild(slugOrObject, object) {
+        var slug = Utils.isString(slugOrObject) ? slugOrObject : null;
+        object = Utils.isString(slugOrObject) ? object : slugOrObject;
+        object = object || {};
         if (slug) {
-            return this._documents.createChild(this.id, slug, document);
+            return this._documents.createChild(this.id, slug, object);
         }
         else {
-            return this._documents.createChild(this.id, document);
+            return this._documents.createChild(this.id, object);
         }
     }
     function upload(slugOrBlob, blob) {
@@ -3069,13 +3074,15 @@ $__System.register("13", ["c", "21", "18", "23", "10", "8", "9", "22", "5"], fun
         var document = this;
         return Utils.A.from(document._fragmentsIndex.values());
     }
-    function createFragment(slug) {
-        if (slug === void 0) { slug = null; }
+    function createFragment(slugOrObject, object) {
         var document = this;
+        var slug = Utils.isString(slugOrObject) ? slugOrObject : null;
+        object = Utils.isString(slugOrObject) ? object : slugOrObject;
+        object = object || {};
         var id;
         if (slug) {
             if (!RDF.URI.Util.isBNodeID(slug))
-                return document.createNamedFragment(slug);
+                return document.createNamedFragment(slug, object);
             id = slug;
             if (this._fragmentsIndex.has(id))
                 throw new Errors.IDAlreadyInUseError("The slug provided is already being used by a fragment.");
@@ -3083,11 +3090,12 @@ $__System.register("13", ["c", "21", "18", "23", "10", "8", "9", "22", "5"], fun
         else {
             id = Fragment.Util.generateID();
         }
-        var fragment = Fragment.Factory.create(id, document);
+        var fragment = Fragment.Factory.createFrom(object, id, document);
         document._fragmentsIndex.set(id, fragment);
         return fragment;
     }
-    function createNamedFragment(slug) {
+    function createNamedFragment(slug, object) {
+        if (object === void 0) { object = {}; }
         var document = this;
         if (RDF.URI.Util.isBNodeID(slug))
             throw new Errors.IllegalArgumentError("Named fragments can't have a slug that starts with '_:'.");
@@ -3100,7 +3108,7 @@ $__System.register("13", ["c", "21", "18", "23", "10", "8", "9", "22", "5"], fun
             slug = slug.substring(1);
         if (document._fragmentsIndex.has(slug))
             throw new Errors.IDAlreadyInUseError("The slug provided is already being used by a fragment.");
-        var fragment = NamedFragment.Factory.create(slug, document);
+        var fragment = NamedFragment.Factory.createFrom(object, slug, document);
         document._fragmentsIndex.set(slug, fragment);
         return fragment;
     }
@@ -3134,6 +3142,41 @@ $__System.register("13", ["c", "21", "18", "23", "10", "8", "9", "22", "5"], fun
             "@graph": expandedResources,
         };
         return JSON.stringify(graph);
+    }
+    function convertNestedObjects(parent, actual) {
+        var next;
+        var idOrSlug;
+        var fragment;
+        var keys = Object.keys(actual);
+        for (var _i = 0; _i < keys.length; _i++) {
+            var key = keys[_i];
+            next = actual[key];
+            if (Utils.isArray(next)) {
+                convertNestedObjects(parent, next);
+                continue;
+            }
+            if (!isPlainObject(next))
+                continue;
+            idOrSlug = ("id" in next) ? next.id : (("slug" in next) ? next.slug : "");
+            if (!parent.inScope(idOrSlug))
+                continue;
+            var parentFragment = parent.getFragment(idOrSlug);
+            if (!parentFragment) {
+                fragment = parent.createFragment(idOrSlug, next);
+                convertNestedObjects(parent, fragment);
+            }
+            else if (parentFragment !== next) {
+                Object.assign(parentFragment, next);
+                fragment = actual[key] = parentFragment;
+                convertNestedObjects(parent, fragment);
+            }
+        }
+    }
+    function isPlainObject(object) {
+        return Utils.isObject(object)
+            && !Utils.isArray(object)
+            && !Utils.isDate(object)
+            && !Utils.isMap(object);
     }
     return {
         setters:[
@@ -3193,7 +3236,9 @@ $__System.register("13", ["c", "21", "18", "23", "10", "8", "9", "22", "5"], fun
                     var resource = object;
                     if (!Resource.Factory.is(object))
                         resource = Resource.Factory.createFrom(object);
-                    return Factory.decorate(resource);
+                    var document = Factory.decorate(resource);
+                    convertNestedObjects(document, document);
+                    return document;
                 };
                 Factory.decorate = function (object) {
                     if (Factory.hasClassProperties(object))
@@ -13446,7 +13491,7 @@ $__System.register("6c", ["e", "2", "12", "11", "a", "6", "29", "13", "16", "c",
                     this.apps = new Apps.Class(this);
                 }
                 Object.defineProperty(Carbon, "version", {
-                    get: function () { return "0.25.0"; },
+                    get: function () { return "0.25.1"; },
                     enumerable: true,
                     configurable: true
                 });

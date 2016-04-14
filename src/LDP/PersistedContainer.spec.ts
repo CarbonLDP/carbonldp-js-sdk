@@ -135,8 +135,8 @@ describe( module( "Carbon/LDP/PersistedContainer" ), ():void => {
 			), ():void => {
 
 				it( hasSignature( [
-					{ name: "slug", type: "string" },
-					{ name: "object", type: "Object" }
+					{ name: "slug", type: "string", description: "The slug name for the children URI." },
+					{ name: "object", type: "Object", description: "The object from where create the child. If it's a non `Carbon.Document.Class` object, it is transformed into one." }
 				],
 					{ type: "Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>" }
 				), ():void => {
@@ -149,10 +149,15 @@ describe( module( "Carbon/LDP/PersistedContainer" ), ():void => {
 					container.createChild( "child", document );
 
 					expect( spy ).toHaveBeenCalledWith( "http://example.com/resource/", "child", document );
+					spy.calls.reset();
+
+					let object:Object = { my: "object" };
+					container.createChild( "child", object );
+					expect( spy ).toHaveBeenCalledWith( "http://example.com/resource/", "child", object );
 				});
 
 				it( hasSignature( [
-						{ name: "object", type: "Object" }
+						{ name: "object", type: "Object", description: "The object from where create the child. If it's a non `Carbon.Document.Class` object, it is transformed into one." }
 					],
 					{ type: "Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>" }
 				), ():void => {
@@ -165,6 +170,37 @@ describe( module( "Carbon/LDP/PersistedContainer" ), ():void => {
 					container.createChild( document );
 
 					expect( spy ).toHaveBeenCalledWith( "http://example.com/resource/", document );
+					spy.calls.reset();
+
+					let object:Object = { my: "object" };
+					container.createChild( object );
+					expect( spy ).toHaveBeenCalledWith( "http://example.com/resource/", object );
+				});
+
+				it( hasSignature( [
+					{ name: "slug", type: "string", description: "The slug name for the children URI." }
+				],
+					{ type: "Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>" }
+				), ():void => {
+					expect( container.createChild ).toBeDefined();
+					expect( Utils.isFunction( container.createChild ) ).toBeDefined();
+
+					let spy = spyOn( container._documents, "createChild" );
+
+					container.createChild( "child" );
+					expect( spy ).toHaveBeenCalledWith( "http://example.com/resource/", "child", {} );
+				});
+
+				it( hasSignature(
+					{ type: "Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>" }
+				), ():void => {
+					expect( container.createChild ).toBeDefined();
+					expect( Utils.isFunction( container.createChild ) ).toBeDefined();
+
+					let spy = spyOn( container._documents, "createChild" );
+
+					container.createChild();
+					expect( spy ).toHaveBeenCalledWith( "http://example.com/resource/", {} );
 				});
 
 			});
@@ -176,8 +212,8 @@ describe( module( "Carbon/LDP/PersistedContainer" ), ():void => {
 			), ():void => {
 
 				it( hasSignature( [
-						{ name: "slug", type: "string" },
-						{ name: "blob", type: "Blob" }
+						{ name: "slug", type: "string", description: "The slug name for the file URI." },
+						{ name: "blob", type: "Blob", description: "Binary data to store in the server." }
 					],
 					{ type: "Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>" }
 				), ():void => {
@@ -193,7 +229,7 @@ describe( module( "Carbon/LDP/PersistedContainer" ), ():void => {
 				});
 
 				it( hasSignature( [
-						{ name: "blob", type: "Blob" }
+						{ name: "blob", type: "Blob", description: "Binary data to store in the server." }
 					],
 					{ type: "Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>" }
 				), ():void => {

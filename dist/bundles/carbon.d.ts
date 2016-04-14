@@ -1076,8 +1076,11 @@ declare module 'carbonldp/Document' {
 	    getFragment(slug: string): Fragment.Class;
 	    getNamedFragment(slug: string): NamedFragment.Class;
 	    getFragments(): Fragment.Class[];
+	    createFragment<T extends Object>(slug: string, object: T): NamedFragment.Class & T;
+	    createFragment<T extends Object>(object: T): Fragment.Class & T;
 	    createFragment(): Fragment.Class;
 	    createFragment(slug: string): NamedFragment.Class;
+	    createNamedFragment<T extends Object>(slug: string, object: T): NamedFragment.Class & T;
 	    createNamedFragment(slug: string): NamedFragment.Class;
 	    removeFragment(fragment: NamedFragment.Class): void;
 	    removeFragment(fragment: Fragment.Class): void;
@@ -1341,7 +1344,9 @@ declare module 'carbonldp/LDP/PersistedContainer' {
 	import * as Pointer from 'carbonldp/Pointer';
 	export interface Class extends PersistedDocument.Class {
 	    createChild(slug: string, object: Object): Promise<[Pointer.Class, HTTP.Response.Class]>;
+	    createChild(slug: string): Promise<[Pointer.Class, HTTP.Response.Class]>;
 	    createChild(object: Object): Promise<[Pointer.Class, HTTP.Response.Class]>;
+	    createChild(): Promise<[Pointer.Class, HTTP.Response.Class]>;
 	    upload(slug: string, blob: Blob): Promise<[Pointer.Class, HTTP.Response.Class]>;
 	    upload(blob: Blob): Promise<[Pointer.Class, HTTP.Response.Class]>;
 	    getMembers(includeNonReadable?: boolean): Promise<[Pointer.Class[], HTTP.Response.Class]>;
@@ -1400,6 +1405,8 @@ declare module 'carbonldp/Documents' {
 	    exists(documentURI: string, requestOptions?: HTTP.Request.Options): Promise<[boolean, HTTP.Response.Class]>;
 	    createChild(parentURI: string, slug: string, childDocument: Document.Class, requestOptions?: HTTP.Request.Options): Promise<[Pointer.Class, HTTP.Response.Class]>;
 	    createChild(parentURI: string, childDocument: Document.Class, requestOptions?: HTTP.Request.Options): Promise<[Pointer.Class, HTTP.Response.Class]>;
+	    createChild(parentURI: string, slug: string, childObject: Object, requestOptions?: HTTP.Request.Options): Promise<[Pointer.Class, HTTP.Response.Class]>;
+	    createChild(parentURI: string, childObject: Object, requestOptions?: HTTP.Request.Options): Promise<[Pointer.Class, HTTP.Response.Class]>;
 	    createAccessPoint(documentURI: string, accessPoint: AccessPoint.Class, slug?: string, requestOptions?: HTTP.Request.Options): Promise<[Pointer.Class, HTTP.Response.Class]>;
 	    createAccessPoint(accessPoint: AccessPoint.Class, slug?: string, requestOptions?: HTTP.Request.Options): Promise<[Pointer.Class, HTTP.Response.Class]>;
 	    upload(parentURI: string, slug: string, file: Blob, requestOptions?: HTTP.Request.Options): Promise<[Pointer.Class, HTTP.Response.Class]>;

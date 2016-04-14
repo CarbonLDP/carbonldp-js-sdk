@@ -153,15 +153,299 @@ describe( module( "Carbon/Document" ), ():void => {
 				expect( Document.Factory.createFrom ).toBeDefined();
 				expect( Utils.isFunction( Document.Factory.createFrom ) ).toBe( true );
 
-				let document:Document.Class;
-				document = Document.Factory.createFrom( {} );
-				expect( Document.Factory.hasClassProperties( document ) ).toBe( true );
-				expect( document.id ).toBe( "" );
+				interface myInterface {
+					myProperty?:string;
+				}
+				let document:Document.Class & myInterface;
 
-				document = Document.Factory.createFrom( { myProperty: "a property" } );
+				document = Document.Factory.createFrom<myInterface>( {} );
 				expect( Document.Factory.hasClassProperties( document ) ).toBe( true );
 				expect( document.id ).toBe( "" );
-				expect( document[ "myProperty" ] ).toBe( "a property" );
+				expect( document.myProperty ).toBeUndefined();
+
+
+				document = Document.Factory.createFrom<myInterface>( { myProperty: "a property" } );
+				expect( Document.Factory.hasClassProperties( document ) ).toBe( true );
+				expect( document.id ).toBe( "" );
+				expect( document.myProperty ).toBe( "a property" );
+
+				(() => {
+					let object = {
+						myProperty: "THE property",
+						myBlankNode: {
+							myProperty: "A BlankNode property"
+						},
+						myNamedFragment: {
+							slug: "namedFragment",
+							myProperty: "A NamedFragment property"
+						}
+					};
+					document = Document.Factory.createFrom<myInterface>( object );
+					expect( object ).toBe( document );
+					expect( document.id ).toBe( "" );
+					expect( document.myProperty ).toBe( "THE property" );
+					expect( document.hasFragment( "namedFragment" ) ).toBe( true );
+
+					let fragments:Fragment.Class[] = document.getFragments();
+					expect( fragments.length ).toBe( 2 );
+
+					let theBNode:Fragment.Class & myInterface,
+						theNFragment:NamedFragment.Class & myInterface;
+
+					theBNode = <Fragment.Class & myInterface> fragments[ 0 ];
+					theNFragment = <NamedFragment.Class & myInterface> fragments[ 1 ];
+
+					expect( URI.Util.isBNodeID( theBNode.id ) ).toBe( true );
+					expect( theBNode.myProperty ).toBe( "A BlankNode property" );
+					expect( document[ "myBlankNode" ] ).toBe( theBNode );
+					expect( object[ "myBlankNode" ] ).toBe( document[ "myBlankNode" ] );
+
+					expect( URI.Util.getFragment( theNFragment.id ) ).toEqual( theNFragment.slug );
+					expect( theNFragment.slug ).toBe( "namedFragment" );
+					expect( theNFragment.myProperty ).toBe( "A NamedFragment property" );
+					expect( document[ "myNamedFragment" ] ).toBe( theNFragment );
+					expect( object[ "myNamedFragment" ] ).toBe( document[ "myNamedFragment" ] );
+				})();
+
+				(() => {
+					let object:any = {
+						myProperty: "THE property",
+						myBlankNode: {
+							myProperty: "A BlankNode property"
+						},
+						myNamedFragment: {
+							slug: "namedFragment",
+							myProperty: "A NamedFragment property",
+							anotherFragment: {
+								myProperty: "A nested BlankNode property"
+							}
+						}
+					};
+					document = Document.Factory.createFrom<myInterface>( object );
+					expect( object ).toBe( document );
+					expect( document.id ).toBe( "" );
+					expect( document.myProperty ).toBe( "THE property" );
+					expect( document.hasFragment( "namedFragment" ) ).toBe( true );
+
+					let fragments:Fragment.Class[] = document.getFragments();
+					expect( fragments.length ).toBe( 3 );
+
+					let theBNode:Fragment.Class & myInterface,
+						theNestedBNode:Fragment.Class & myInterface,
+						theNFragment:NamedFragment.Class & myInterface;
+					theBNode = <Fragment.Class & myInterface> fragments[ 0 ];
+					theNFragment = <NamedFragment.Class & myInterface> fragments[ 1 ];
+					theNestedBNode = <Fragment.Class & myInterface> fragments[ 2 ];
+
+					expect( URI.Util.isBNodeID( theBNode.id ) ).toBe( true );
+					expect( theBNode.myProperty ).toBe( "A BlankNode property" );
+					expect( document[ "myBlankNode" ] ).toBe( theBNode );
+					expect( object[ "myBlankNode" ] ).toBe( document[ "myBlankNode" ] );
+
+					expect( URI.Util.getFragment( theNFragment.id ) ).toEqual( theNFragment.slug );
+					expect( theNFragment.slug ).toBe( "namedFragment" );
+					expect( theNFragment.myProperty ).toBe( "A NamedFragment property" );
+					expect( document[ "myNamedFragment" ] ).toBe( theNFragment );
+					expect( object[ "myNamedFragment" ] ).toBe( document[ "myNamedFragment" ] );
+
+					expect( URI.Util.isBNodeID( theNestedBNode.id ) ).toBe( true );
+					expect( theNestedBNode.myProperty ).toBe( "A nested BlankNode property" );
+					expect( theNFragment[ "anotherFragment" ] ).toBe( theNestedBNode );
+					expect( object[ "anotherFragment" ] ).toBe( document[ "anotherFragment" ] );
+				})();
+
+				(() => {
+					let fragment:any = {
+						myProperty: "A BlankNode property"
+					};
+					let object:any = {
+						myProperty: "THE property",
+						myBlankNode: fragment,
+						myNamedFragment: {
+							slug: "namedFragment",
+							myProperty: "A NamedFragment property",
+							sameBlankNode: fragment
+						}
+					};
+					document = Document.Factory.createFrom<myInterface>( object );
+					expect( object ).toBe( document );
+					expect( document.id ).toBe( "" );
+					expect( document.myProperty ).toBe( "THE property" );
+					expect( document.hasFragment( "namedFragment" ) ).toBe( true );
+
+					let fragments:Fragment.Class[] = document.getFragments();
+					expect( fragments.length ).toBe( 2 );
+
+					let theBNode:Fragment.Class & myInterface,
+						theNFragment:NamedFragment.Class & myInterface;
+					theBNode = <Fragment.Class & myInterface> fragments[ 0 ];
+					theNFragment = <NamedFragment.Class & myInterface> fragments[ 1 ];
+
+					expect( URI.Util.isBNodeID( theBNode.id ) ).toBe( true );
+					expect( theBNode.myProperty ).toBe( "A BlankNode property" );
+					expect( document[ "myBlankNode" ] ).toBe( theBNode );
+					expect( document[ "myBlankNode" ] ).toBe( document[ "myNamedFragment" ][ "sameBlankNode" ] );
+					expect( object[ "myBlankNode" ] ).toBe( document[ "myBlankNode" ] );
+
+					expect( URI.Util.getFragment( theNFragment.id ) ).toEqual( theNFragment.slug );
+					expect( theNFragment.slug ).toBe( "namedFragment" );
+					expect( theNFragment.myProperty ).toBe( "A NamedFragment property" );
+					expect( document[ "myNamedFragment" ] ).toBe( theNFragment );
+					expect( object[ "myNamedFragment" ] ).toBe( document[ "myNamedFragment" ] );
+
+					expect( theNFragment[ "sameBlankNode" ] ).toBe( theBNode );
+					expect( object[ "myNamedFragment" ][ "sameBlankNode" ] ).toBe( document[ "myNamedFragment" ][ "sameBlankNode" ] );
+					expect( fragment ).toBe( document[ "myBlankNode" ] );
+				})();
+
+				(() => {
+					let anotherBlankNode_1:any = {
+						id: "_:2",
+						myProperty: "Another BNode property",
+					};
+					let anotherBlankNode_2:any = {
+						id: "_:2",
+						newProperty: "New property",
+					};
+					let object:any = {
+						id: "http://example.org/resource/",
+						myProperty: "THE property",
+						myNamedFragment: {
+							id: "http://example.org/resource/#namedFragment",
+							myProperty: "A NamedFragment property",
+							anotherBlankNode: anotherBlankNode_1
+						},
+						myBlankNode: {
+							id: "_:1",
+							myProperty: "A BNode property",
+							myNamedFragment: {
+								slug: "namedFragment",
+								myProperty: "A replace of the NamedFragment property",
+								anotherBlankNode: anotherBlankNode_2
+							}
+						}
+					};
+					document = Document.Factory.createFrom<myInterface>( object );
+					expect( object ).toBe( document );
+					expect( document.id ).toBe( "http://example.org/resource/" );
+					expect( document.myProperty ).toBe( "THE property" );
+					expect( document.hasFragment( "namedFragment" ) ).toBe( true );
+
+					let fragments:Fragment.Class[] = document.getFragments();
+					expect( fragments.length ).toBe( 3 );
+
+					let theBNode:Fragment.Class & myInterface,
+						anotherBNode:Fragment.Class & myInterface,
+						theNFragment:NamedFragment.Class & myInterface;
+					theNFragment = <NamedFragment.Class & myInterface> fragments[ 0 ];
+					anotherBNode = <Fragment.Class & myInterface> fragments[ 1 ];
+					theBNode = <Fragment.Class & myInterface> fragments[ 2 ];
+
+					expect( URI.Util.getDocumentURI( theNFragment.id ) ).toEqual( "http://example.org/resource/" );
+					expect( URI.Util.getFragment( theNFragment.id ) ).toEqual( theNFragment.slug );
+					expect( theNFragment.slug ).toBe( "namedFragment" );
+					expect( theNFragment.myProperty ).toBe( "A replace of the NamedFragment property" );
+					expect( theNFragment[ "anotherBlankNode" ] ).toBe( anotherBNode );
+					expect( document[ "myNamedFragment" ] ).toBe( theNFragment );
+					expect( object[ "myNamedFragment" ] ).toBe( document[ "myNamedFragment" ] );
+					expect( object[ "myNamedFragment" ][ "anotherBlankNode" ] ).toBe( document[ "myNamedFragment" ][ "anotherBlankNode" ] );
+
+					expect( URI.Util.isBNodeID( theBNode.id ) ).toBe( true );
+					expect( theBNode.id ).toBe( "_:1" );
+					expect( theBNode.myProperty ).toBe( "A BNode property" );
+					expect( document[ "myBlankNode" ] ).toBe( theBNode );
+					expect( object[ "myBlankNode" ] ).toBe( document[ "myBlankNode" ] );
+
+					expect( URI.Util.isBNodeID( anotherBNode.id ) ).toBe( true );
+					expect( anotherBNode.id ).toBe( "_:2" );
+					expect( anotherBNode.myProperty ).toBe( "Another BNode property" );
+					expect( anotherBNode[ "newProperty" ] ).toBe( "New property" );
+
+					expect( document[ "myNamedFragment" ][ "anotherBlankNode" ] ).toBe( anotherBlankNode_1 );
+					expect( document[ "myNamedFragment" ][ "anotherBlankNode" ] ).toBe( document[ "myBlankNode" ][ "myNamedFragment" ][ "anotherBlankNode" ] );
+					expect( document[ "myBlankNode" ][ "myNamedFragment" ][ "anotherBlankNode" ] ).not.toBe( anotherBlankNode_2 );
+					expect( document[ "myBlankNode" ][ "myNamedFragment" ][ "anotherBlankNode" ] ).toBe( anotherBlankNode_1 );
+				})();
+
+				(() => {
+					let object:any = {
+						id: "http://example.org/resource/",
+						myProperty: "THE property",
+						myNamedFragment: {
+							id: "http://example.org/no-parent-resource/#namedFragment",
+							myProperty: "A NamedFragment property",
+							anotherBlankNode: {
+								id: "_:2",
+								myProperty: "Another BNode property",
+							}
+						}
+					};
+					document = Document.Factory.createFrom<myInterface>( object );
+					expect( object ).toBe( document );
+					expect( document.id ).toBe( "http://example.org/resource/" );
+					expect( document.myProperty ).toBe( "THE property" );
+					expect( document.hasFragment( "namedFragment" ) ).toBe( false );
+
+					let fragments:Fragment.Class[] = document.getFragments();
+					expect( Utils.isArray( fragments ) ).toBe( true );
+					expect( fragments.length ).toBe( 0 );
+					expect( object[ "myNamedFragment" ] ).toBe( document[ "myNamedFragment" ] );
+					expect( object[ "myNamedFragment" ][ "anotherBlankNode" ] ).toBe( document[ "myNamedFragment" ][ "anotherBlankNode" ] );
+				})();
+
+				(() => {
+					let object:any = {
+						myProperty: "The ONE property",
+						date: new Date(),
+						pointerList: [
+							{
+								slug: "Fragment_1",
+								myProperty: "The Named Fragment"
+							},
+							{
+								id: "_:Fragment_2",
+								myProperty: "The Blank Node"
+							}
+						],
+						pointer: {
+							id: "#Fragment_1",
+							myProperty: "The real Named Fragment"
+						}
+					};
+
+					document = Document.Factory.createFrom<myInterface>( object );
+					expect( object ).toBe( document );
+					expect( document.id ).toBe( "" );
+					expect( document.myProperty ).toBe( "The ONE property" );
+					expect( document.hasFragment( "Fragment_1" ) ).toBe( true );
+					expect( document.hasFragment( "_:Fragment_2" ) ).toBe( true );
+
+					let fragments:Fragment.Class[] = document.getFragments();
+					expect( Utils.isArray( fragments ) ).toBe( true );
+					expect( fragments.length ).toBe( 2 );
+
+					let theBNode:Fragment.Class & myInterface,
+						theNFragment:NamedFragment.Class & myInterface;
+					theNFragment = <NamedFragment.Class & myInterface> fragments[ 0 ];
+					theBNode = <Fragment.Class & myInterface> fragments[ 1 ];
+
+					expect( theNFragment.id ).toEqual( "#Fragment_1" );
+					expect( theNFragment.slug ).toBe( "Fragment_1" );
+					expect( theNFragment.myProperty ).toBe( "The real Named Fragment" );
+
+					expect( URI.Util.isBNodeID( theBNode.id ) ).toBe( true );
+					expect( theBNode.id ).toBe( "_:Fragment_2" );
+					expect( theBNode.myProperty ).toBe( "The Blank Node" );
+
+					expect( document[ "pointerList" ][ 0 ] ).toBe( fragments[ 0 ] );
+					expect( document[ "pointerList" ][ 1 ] ).toBe( fragments[ 1 ] );
+					expect( document[ "pointer" ] ).toBe( theNFragment );
+
+					expect( object[ "pointer" ] ).toBe( document[ "pointer" ] );
+					expect( object[ "pointerList" ][ 0 ] ).toBe( document[ "pointerList" ][ 0 ] );
+					expect( object[ "pointerList" ][ 1 ] ).toBe( document[ "pointerList" ][ 1 ] );
+				})();
+
 			});
 
 		});
@@ -458,6 +742,73 @@ describe( module( "Carbon/Document" ), ():void => {
 			), ():void => {
 
 				it( hasSignature(
+					"Creates a NamedFragment from the object provided and the slug specified.", [
+						{ name: "slug", type: "string" },
+						{ name: "object", type: "Object" }
+					],
+					{ type: "Carbon.NamedFragment.Class" }
+				), ():void => {
+					expect( document.createFragment ).toBeDefined();
+					expect( Utils.isFunction( document.createFragment ) ).toBe( true );
+
+					interface MyInterface { myProperty?:string }
+
+					let object:MyInterface;
+					let fragment:Fragment.Class & MyInterface;
+
+					object = {};
+					fragment = document.createFragment<MyInterface>( "fragment", object );
+					expect( object ).toBe( fragment );
+					expect( Fragment.Factory.hasClassProperties( fragment ) ).toBe( true );
+					expect( fragment.id ).toBe( "http://example.com/document/#fragment" );
+					expect( fragment.myProperty ).toBeUndefined();
+
+					object = { myProperty: "The property" };
+					fragment = document.createFragment<MyInterface>( "http://example.com/document/#another-fragment", object );
+					expect( Fragment.Factory.hasClassProperties( fragment ) ).toBe( true );
+					expect( fragment.id ).toBe( "http://example.com/document/#another-fragment" );
+					expect( fragment.myProperty ).toBe( "The property" );
+
+					object = { myProperty: "The BlankNode property" };
+					fragment = document.createFragment<MyInterface>( "_:BlankNode", object );
+					expect( Fragment.Factory.hasClassProperties( fragment ) ).toBe( true );
+					expect( fragment.id ).toBe( "_:BlankNode" );
+					expect( fragment.myProperty ).toBe( "The BlankNode property" );
+
+					expect( document.createFragment.bind( document, "http://example.com/another-document/#fragment", {} ) ).toThrowError( Errors.IllegalArgumentError );
+					expect( document.createFragment.bind( document, "fragment", {} ) ).toThrowError( Errors.IDAlreadyInUseError );
+					expect( document.createFragment.bind( document, "_:BlankNode", {} ) ).toThrowError( Errors.IDAlreadyInUseError );
+				});
+
+				it( hasSignature(
+					"Creates a BlankNode from the object provided, sing no slug was specififed.", [
+						{ name: "object", type: "Object" }
+					],
+					{ type: "Carbon.Fragment.Class" }
+				), ():void => {
+					expect( document.createFragment ).toBeDefined();
+					expect( Utils.isFunction( document.createFragment ) ).toBe( true );
+
+					interface MyInterface { myProperty?:string }
+
+					let object:MyInterface;
+					let fragment:Fragment.Class & MyInterface;
+
+					object = {};
+					fragment = document.createFragment<MyInterface>( object );
+					expect( object ).toBe( fragment );
+					expect( Fragment.Factory.hasClassProperties( fragment ) ).toBe( true );
+					expect( URI.Util.isBNodeID( fragment.id ) ).toBe( true );
+					expect( fragment.myProperty ).toBeUndefined();
+
+					object = { myProperty: "The property" };
+					fragment = document.createFragment<MyInterface>( object );
+					expect( Fragment.Factory.hasClassProperties( fragment ) ).toBe( true );
+					expect( URI.Util.isBNodeID( fragment.id ) ).toBe( true );
+					expect( fragment.myProperty ).toBe( "The property" );
+				});
+
+				it( hasSignature(
 					"Creates a Fragment with the slug provided.", [
 						{ name: "slug", type: "string" }
 					],
@@ -470,11 +821,11 @@ describe( module( "Carbon/Document" ), ():void => {
 
 					fragment = document.createFragment( "fragment" );
 					expect( Fragment.Factory.hasClassProperties( fragment ) ).toBe( true );
-					expect( fragment.id ).toBe( "http://example.com/document/#fragment");
+					expect( fragment.id ).toBe( "http://example.com/document/#fragment" );
 
 					fragment = document.createFragment( "http://example.com/document/#another-fragment" );
 					expect( Fragment.Factory.hasClassProperties( fragment ) ).toBe( true );
-					expect( fragment.id ).toBe( "http://example.com/document/#another-fragment");
+					expect( fragment.id ).toBe( "http://example.com/document/#another-fragment" );
 
 					fragment = document.createFragment( "_:BlankNode" );
 					expect( Fragment.Factory.hasClassProperties( fragment ) ).toBe( true );
@@ -526,12 +877,12 @@ describe( module( "Carbon/Document" ), ():void => {
 				fragment = document.createNamedFragment( "fragment" );
 				expect( NamedFragment.Factory.hasClassProperties( fragment ) ).toBe( true );
 				expect( fragment.slug ).toBe( "fragment" );
-				expect( fragment.id ).toBe( "http://example.com/document/#fragment");
+				expect( fragment.id ).toBe( "http://example.com/document/#fragment" );
 
 				fragment = document.createNamedFragment( "http://example.com/document/#another-fragment" );
 				expect( Fragment.Factory.hasClassProperties( fragment ) ).toBe( true );
 				expect( fragment.slug ).toBe( "another-fragment" );
-				expect( fragment.id ).toBe( "http://example.com/document/#another-fragment");
+				expect( fragment.id ).toBe( "http://example.com/document/#another-fragment" );
 
 				expect( document.createNamedFragment.bind( document, "_:BlankNode" ) ).toThrowError( Errors.IllegalArgumentError );
 
