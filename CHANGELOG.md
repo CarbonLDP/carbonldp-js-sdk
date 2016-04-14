@@ -1,4 +1,10 @@
-# 0.27.0 (April 12, 2016)
+# 0.28.0 (April 14, 2016)
+- Added `context.documents.removeMember()` method, which lets you remove a single member reference to a Container
+- Added `context.documents.removeMember()` method, same as `persistedContainer.removeMember()`
+- Added `context.documents.removeMembers()` method, which lets you remove a multiple members references to a Container
+- Added `context.documents.removeMembers()` method, same as `persistedContainer.removeMembers()`
+
+# 0.27.0 (April 14, 2016)
 - Added `context.documents.addMember()` method, which lets you add a single member reference to a Container
 - Added `context.documents.addMember()` method, same as `persistedContainer.addMember()`
 - Added `context.documents.addMembers()` method, which lets you add a multiple members references to a Container
@@ -7,7 +13,7 @@
 #### Breaking Changes
 - Changed `context.documents.delete()` method, now it accepts a document URI and not a PersistedDocument object
 
-# 0.26.0 (April 12, 2016)
+# 0.26.0 (April 14, 2016)
 - Added `persistedContainer.getMembers()` method, which lets you obtain the members of the Container
 
 #### Breaking Changes
