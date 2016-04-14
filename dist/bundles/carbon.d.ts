@@ -1469,7 +1469,7 @@ declare module 'carbonldp/Documents' {
 	    removeMember(documentURI: string, memberURI: string, requestOptions?: HTTP.Request.Options): Promise<HTTP.Response.Class>;
 	    removeMembers(documentURI: string, members: (Pointer.Class | string)[], requestOptions?: HTTP.Request.Options): Promise<HTTP.Response.Class>;
 	    save(persistedDocument: PersistedDocument.Class, requestOptions?: HTTP.Request.Options): Promise<[PersistedDocument.Class, HTTP.Response.Class]>;
-	    delete(persistedDocument: PersistedDocument.Class, requestOptions?: HTTP.Request.Options): Promise<HTTP.Response.Class>;
+	    delete(documentURI: string, requestOptions?: HTTP.Request.Options): Promise<HTTP.Response.Class>;
 	    getSchemaFor(object: Object): ObjectSchema.DigestedObjectSchema;
 	    executeRawASKQuery(documentURI: string, askQuery: string, requestOptions?: HTTP.Request.Options): Promise<[SPARQL.RawResults.Class, HTTP.Response.Class]>;
 	    executeASKQuery(documentURI: string, askQuery: string, requestOptions?: HTTP.Request.Options): Promise<[boolean, HTTP.Response.Class]>;
@@ -1637,10 +1637,12 @@ declare module 'carbonldp/Agents' {
 declare module 'carbonldp/PersistedApp' {
 	import * as LDP from 'carbonldp/LDP';
 	import * as PersistedDocument from 'carbonldp/PersistedDocument';
+	import Pointer from 'carbonldp/Pointer';
 	export interface Class extends PersistedDocument.Class {
 	    name: string;
 	    description?: string;
 	    rootContainer: LDP.PersistedContainer.Class;
+	    allowsOrigins?: (Pointer | string)[];
 	}
 	export class Factory {
 	    static hasClassProperties(resource: Object): boolean;
@@ -1669,10 +1671,12 @@ declare module 'carbonldp/App/Context' {
 declare module 'carbonldp/App' {
 	import * as Document from 'carbonldp/Document';
 	import * as ObjectSchema from 'carbonldp/ObjectSchema';
+	import Pointer from 'carbonldp/Pointer';
 	import Context from 'carbonldp/App/Context';
 	export interface Class extends Document.Class {
 	    name: string;
 	    description?: string;
+	    allowsOrigins?: (Pointer | string)[];
 	}
 	export const RDF_CLASS: string;
 	export const SCHEMA: ObjectSchema.Class;

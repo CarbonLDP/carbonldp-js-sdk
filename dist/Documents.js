@@ -323,7 +323,7 @@ var Documents = (function () {
                 membershipResource = _this.getDocumentResource(membershipResourceDocument, response);
             }
             var hasMemberRelation = RDF.Node.Util.getPropertyURI(documentResource, NS.LDP.Predicate.hasMemberRelation);
-            var memberPointers = RDF.Value.Util.getPropertyPointers(membershipResource, hasMemberRelation, _this) || [];
+            var memberPointers = RDF.Value.Util.getPropertyPointers(membershipResource, hasMemberRelation, _this);
             return [memberPointers, response];
         });
     };
@@ -395,14 +395,15 @@ var Documents = (function () {
             return [persistedDocument, response];
         });
     };
-    Documents.prototype.delete = function (persistedDocument, requestOptions) {
+    Documents.prototype.delete = function (documentURI, requestOptions) {
         if (requestOptions === void 0) { requestOptions = {}; }
         if (this.context && this.context.auth.isAuthenticated())
             this.context.auth.addAuthentication(requestOptions);
+        if (!!this.context)
+            documentURI = this.context.resolve(documentURI);
         HTTP.Request.Util.setAcceptHeader("application/ld+json", requestOptions);
         HTTP.Request.Util.setPreferredInteractionModel(NS.LDP.Class.RDFSource, requestOptions);
-        HTTP.Request.Util.setIfMatchHeader(persistedDocument._etag, requestOptions);
-        return HTTP.Request.Service.delete(persistedDocument.id, requestOptions);
+        return HTTP.Request.Service.delete(documentURI, requestOptions);
     };
     Documents.prototype.getSchemaFor = function (object) {
         if ("@id" in object) {

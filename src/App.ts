@@ -1,18 +1,21 @@
 import * as Document from "./Document";
 import * as NS from "./NS";
 import * as ObjectSchema from "./ObjectSchema";
+import Pointer from "./Pointer";
 import * as Utils from "./Utils";
-import {IllegalArgumentError} from "./Errors";
+import IllegalArgumentError from "./Errors/IllegalArgumentError";
 
 import Context from "./App/Context";
 
 export interface Class extends Document.Class {
 	name:string;
 	description?:string;
+	allowsOrigins?:(Pointer | string)[];
 }
 
 export const RDF_CLASS:string = NS.CS.Class.Application;
 
+// TODO Problem in circular reference: the SCHEMA is hardcoded in SDKContext
 export const SCHEMA:ObjectSchema.Class = {
 	"name": {
 		"@id": NS.CS.Predicate.name,
@@ -26,8 +29,9 @@ export const SCHEMA:ObjectSchema.Class = {
 		"@id": NS.CS.Predicate.rootContainer,
 		"@type": "@id",
 	},
-	"allowsOrigin": {
+	"allowsOrigins": {
 		"@id": NS.CS.Predicate.allowsOrigin,
+		"@container": "@set",
 	},
 };
 

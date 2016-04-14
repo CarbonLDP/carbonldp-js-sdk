@@ -1145,7 +1145,7 @@ describe( module( "Carbon/Documents", "" ), ():void => {
 		INSTANCE,
 		"delete",
 		"Delete a the Resource referred by a PersistedDocument from the server.", [
-			{ name: "persistedDocument", type: "Carbon.PersistedDocument.Class" },
+			{ name: "documentURI", type: "string" },
 			{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true }
 		],
 		{ type: "Promise<Carbon.HTTP.Response.Class>" }
@@ -1158,7 +1158,6 @@ describe( module( "Carbon/Documents", "" ), ():void => {
 
 		let context:MockedContext = new MockedContext();
 		let documents:Documents = context.documents;
-		let document:PersistedDocument.Class = PersistedDocument.Factory.create( "http://example.com/resource/", documents );
 
 		expect( documents.delete ).toBeDefined();
 		expect( Utils.isFunction( documents.delete ) ).toBe( true );
@@ -1175,7 +1174,7 @@ describe( module( "Carbon/Documents", "" ), ():void => {
 		};
 		let spySuccess = spyOn( spies, "success" ).and.callThrough();
 
-		let promise:Promise<any> = documents.delete( document ).then( spies.success );
+		let promise:Promise<any> = documents.delete( "http://example.com/resource/" ).then( spies.success );
 
 		Promise.all( [ promise ] ).then( ():void => {
 			expect( spySuccess ).toHaveBeenCalled();

@@ -146,8 +146,9 @@ var Class = (function () {
                 "@id": NS.CS.Predicate.rootContainer,
                 "@type": "@id",
             },
-            "allowsOrigin": {
+            "allowsOrigins": {
                 "@id": NS.CS.Predicate.allowsOrigin,
+                "@container": "@set",
             },
         });
         this.extendObjectSchema(AddMemberAction.RDF_CLASS, AddMemberAction.SCHEMA);

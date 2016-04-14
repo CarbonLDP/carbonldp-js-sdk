@@ -424,7 +424,7 @@ describe( module( "Carbon/RDF/Value" ), ():void => {
 			STATIC,
 			"getPropertyPointers",
 			"Returns the property searched as an Array with the parsed Pointer.\n" +
-			"Returns null if the property is not found, or an empty array if the property cannot be parsed as a pointer.", [
+			"Returns an empty array if the property is not found, or the property cannot be parsed as a pointer.", [
 				{ name: "expandedObject", type: "any" },
 				{ name: "propertyURI", type: "string" },
 				{ name: "pointerLibrary", type: "Carbon.Pointer.Library" }
@@ -458,7 +458,7 @@ describe( module( "Carbon/RDF/Value" ), ():void => {
 			expect( result.length ).toBe( 0 );
 
 			result = Value.Util.getPropertyPointers( documentResource, "http://example.com/ns#no-property", pointerLibrary );
-			expect( result ).toBeNull();
+			expect( result ).toEqual( [] );
 		});
 
 		it( hasMethod(

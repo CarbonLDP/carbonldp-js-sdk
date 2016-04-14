@@ -170,8 +170,9 @@ export class Class implements Context {
 				"@id": NS.CS.Predicate.rootContainer,
 				"@type": "@id",
 			},
-			"allowsOrigin": {
+			"allowsOrigins": {
 				"@id": NS.CS.Predicate.allowsOrigin,
+				"@container": "@set",
 			},
 		});
 
