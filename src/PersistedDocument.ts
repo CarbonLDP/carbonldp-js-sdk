@@ -94,7 +94,7 @@ function save():Promise<void> {
 	return this._documents.save( this );
 }
 function destroy():Promise<HTTP.Response.Class> {
-	return this._documents.delete( this );
+	return this._documents.delete( this.id );
 }
 
 function createAccessPoint( accessPoint:AccessPoint.Class, slug:string = null, requestOptions:HTTP.Request.Options = {}):Promise<[ Pointer.Class, HTTP.Response.Class ]> {

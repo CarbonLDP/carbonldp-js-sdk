@@ -5,7 +5,7 @@ export interface Class extends PersistedDocument.Class {
     name: string;
     description?: string;
     rootContainer: LDP.PersistedContainer.Class;
-    allowsOrigins: (Pointer | string)[];
+    allowsOrigins?: (Pointer | string)[];
 }
 export declare class Factory {
     static hasClassProperties(resource: Object): boolean;

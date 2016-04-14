@@ -241,6 +241,8 @@ var Documents = (function () {
         requestOptions = !Utils.isString(slugOrBlob) ? blobOrRequestOptions : requestOptions;
         if (!(blob instanceof Blob))
             return Promise.reject(new Errors.IllegalArgumentError("The file is not a valid Blob object."));
+        if (!!this.context)
+            parentURI = this.context.resolve(parentURI);
         if (this.context && this.context.auth.isAuthenticated())
             this.context.auth.addAuthentication(requestOptions);
         HTTP.Request.Util.setContentTypeHeader(blob.type, requestOptions);
@@ -325,6 +327,31 @@ var Documents = (function () {
             return [memberPointers, response];
         });
     };
+    Documents.prototype.addMember = function (documentURI, memberORUri, requestOptions) {
+        if (requestOptions === void 0) { requestOptions = {}; }
+        return this.addMembers(documentURI, [memberORUri], requestOptions);
+    };
+    Documents.prototype.addMembers = function (documentURI, members, requestOptions) {
+        if (requestOptions === void 0) { requestOptions = {}; }
+        var pointers = [];
+        for (var _i = 0, members_1 = members; _i < members_1.length; _i++) {
+            var member = members_1[_i];
+            member = Utils.isString(member) ? this.getPointer(member) : member;
+            if (!Pointer.Factory.is(member))
+                return Promise.reject(new Errors.IllegalArgumentError("No Carbon.Pointer or string URI provided."));
+            pointers.push(member);
+        }
+        if (!!this.context)
+            documentURI = this.context.resolve(documentURI);
+        var document = LDP.AddMemberAction.Factory.createDocument(pointers);
+        if (this.context && this.context.auth.isAuthenticated())
+            this.context.auth.addAuthentication(requestOptions);
+        HTTP.Request.Util.setAcceptHeader("application/ld+json", requestOptions);
+        HTTP.Request.Util.setContentTypeHeader("application/ld+json", requestOptions);
+        HTTP.Request.Util.setPreferredInteractionModel(NS.LDP.Class.Container, requestOptions);
+        var body = document.toJSON(this, this.jsonldConverter);
+        return HTTP.Request.Service.put(documentURI, body, requestOptions);
+    };
     Documents.prototype.save = function (persistedDocument, requestOptions) {
         if (requestOptions === void 0) { requestOptions = {}; }
         if (this.context && this.context.auth.isAuthenticated())
@@ -338,14 +365,15 @@ var Documents = (function () {
             return [persistedDocument, response];
         });
     };
-    Documents.prototype.delete = function (persistedDocument, requestOptions) {
+    Documents.prototype.delete = function (documentURI, requestOptions) {
         if (requestOptions === void 0) { requestOptions = {}; }
         if (this.context && this.context.auth.isAuthenticated())
             this.context.auth.addAuthentication(requestOptions);
+        if (!!this.context)
+            documentURI = this.context.resolve(documentURI);
         HTTP.Request.Util.setAcceptHeader("application/ld+json", requestOptions);
         HTTP.Request.Util.setPreferredInteractionModel(NS.LDP.Class.RDFSource, requestOptions);
-        HTTP.Request.Util.setIfMatchHeader(persistedDocument._etag, requestOptions);
-        return HTTP.Request.Service.delete(persistedDocument.id, requestOptions);
+        return HTTP.Request.Service.delete(documentURI, requestOptions);
     };
     Documents.prototype.getSchemaFor = function (object) {
         if ("@id" in object) {

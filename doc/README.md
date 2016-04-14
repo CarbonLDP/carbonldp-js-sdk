@@ -258,6 +258,10 @@
 		- [Methods](#Carbon-JSONLDConverter-Class-Methods)
 - [Module Carbon/LDP](#Carbon-LDP)
 	- [Reexports](#Carbon-LDP-Reexports)
+- [Module Carbon/LDP/AddMemberAction](#Carbon-LDP-AddMemberAction)
+	- [Properties](#Carbon-LDP-AddMemberAction-Properties)
+	- [Class Carbon.LDP.AddMemberAction.Factory](#Carbon-LDP-AddMemberAction-Factory)
+		- [Methods](#Carbon-LDP-AddMemberAction-Factory-Methods)
 - [Module Carbon/LDP/BasicContainer](#Carbon-LDP-BasicContainer)
 	- [Properties](#Carbon-LDP-BasicContainer-Properties)
 	- [Class Carbon.LDP.BasicContainer.Factory](#Carbon-LDP-BasicContainer-Factory)
@@ -1743,16 +1747,29 @@ Returns a Promise with a boolean indicating if the resource exists or not.
 - documentURI
 - requestOptions
 
+##### addMembers
+```typescript 
+addMembers( documentURI:string,  members:(Carbon.Pointer.Class | string)[],  requestOptions:Carbon.HTTP.Request.Options ):Promise<Carbon.HTTP.Response>
+```
+
+Add the specified resources URI or Pointers as members of the document container specified.
+
+*Parameters*
+
+- documentURI: URI of the document container where to add the members.
+- members: Array of string URIs or Pointers to add as members
+- requestOptions
+
 ##### delete
 ```typescript 
-delete( persistedDocument:Carbon.PersistedDocument.Class,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<Carbon.HTTP.Response.Class>
+delete( documentURI:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<Carbon.HTTP.Response.Class>
 ```
 
 Delete a the Resource referred by a PersistedDocument from the server.
 
 *Parameters*
 
-- persistedDocument
+- documentURI
 - requestOptions
 
 ##### executeRawASKQuery
@@ -1960,6 +1977,31 @@ Retrieves (but doesn't resolve) all the members of the document
 *Parameters*
 
 - uri
+
+##### addMember
+```typescript 
+addMember( documentURI:string,  member:Carbon.Pointer.Class,  requestOptions:Carbon.HTTP.Request.Options ):Promise<Carbon.HTTP.Response>
+```
+
+Add the specified resource Pointer as a member of the document container specified.
+
+*Parameters*
+
+- documentURI: URI of the document container where to add the member.
+- member: Pointer object that references the resource to add as a member.
+- requestOptions
+
+```typescript 
+addMember( documentURI:string,  memberURI:string,  requestOptions:Carbon.HTTP.Request.Options ):Promise<Carbon.HTTP.Response>
+```
+
+Add the specified resource URI as a member of the document container specified.
+
+*Parameters*
+
+- documentURI: URI of the document container where to add the member.
+- memberURI: URI of the resource to add as a member.
+- requestOptions
 
 
 
@@ -4211,6 +4253,7 @@ expand( compactedObject:Object,  digestedSchema:Carbon.ObjectSchema.DigestedObje
 #### <a name="Carbon-LDP-Reexports" />Reexports 
 | Export name | Original Location | 
 | --- | --- |
+| AddMemberAction | [Carbon/LDP/AddMemberAction](#Carbon-LDP-AddMemberAction) |
 | BasicContainer | [Carbon/LDP/BasicContainer](#Carbon-LDP-BasicContainer) |
 | Container | [Carbon/LDP/Container](#Carbon-LDP-Container) |
 | DirectContainer | [Carbon/LDP/DirectContainer](#Carbon-LDP-DirectContainer) |
@@ -4218,6 +4261,59 @@ expand( compactedObject:Object,  digestedSchema:Carbon.ObjectSchema.DigestedObje
 | PersistedContainer | [Carbon/LDP/PersistedContainer](#Carbon-LDP-PersistedContainer) |
 | RDFSource | [Carbon/LDP/RDFSource](#Carbon-LDP-RDFSource) |
 
+
+
+
+
+## <a name="Carbon-LDP-AddMemberAction" />Module Carbon/LDP/AddMemberAction
+
+
+
+
+
+### <a name="Carbon-LDP-AddMemberAction-Properties" />Properties
+```typescript 
+static RDF_CLASS:string 
+```
+
+```typescript 
+static SCHEMA:Carbon.ObjectSchema.Class 
+```
+
+
+
+
+
+### <a name="Carbon-LDP-AddMemberAction-Factory" />Class Carbon.LDP.AddMemberAction.Factory
+
+
+> Factory class for LDP AddMemberAction objects
+
+
+
+
+#### <a name="Carbon-LDP-AddMemberAction-Factory-Methods" />Methods
+##### hasClassProperties
+```typescript 
+static hasClassProperties( resource:Carbon.RDF.Node.Class ):boolean
+```
+
+Returns true if the object has the properties to be defined as a LDP AddMemberAction
+
+*Parameters*
+
+- resource
+
+##### createDocument
+```typescript 
+static createDocument( targetMembers:Carbon.Pointer.Class ):Carbon.Document.Class
+```
+
+Create and returns a `Carbon.Document.Class` object with a AddMemberAction fragment for the specified targetMembers.
+
+*Parameters*
+
+- targetMembers: The target member to add in a `addMember` request.
 
 
 
@@ -4517,6 +4613,37 @@ Returns the PersistedDocuments decorated as a PersistedContainer
 
 
 ##### <a name="Carbon-LDP-PersistedContainer-Factory-Decorated-Object-Methods" />Methods
+##### addMember
+```typescript 
+addMember( members:(Carbon.Pointer.Class | string)[] ):Promise<Carbon.HTTP.Response.Class>
+```
+
+Add the specified resources URI or Pointers as members of the container.
+
+*Parameters*
+
+- members: Array of string URIs or Pointers to add as members
+
+```typescript 
+addMember( member:Carbon.Pointer.Class ):Promise<Carbon.HTTP.Response.Class>
+```
+
+Add the specified resource Pointer as a member of the container.
+
+*Parameters*
+
+- member: Pointer object that references the resource to add as a member.
+
+```typescript 
+addMember( memberURI:string ):Promise<Carbon.HTTP.Response.Class>
+```
+
+Add the specified resource URI as a member of the container.
+
+*Parameters*
+
+- memberURI: URI of the resource to add as a member.
+
 ##### getMembers
 ```typescript 
 getMembers( includeNonReadable?:boolean ):Promise<[ Carbon.Pointer.Class[], Carbon.HTTP.Response.Class ]>
@@ -4691,6 +4818,10 @@ static VolatileResource:string
 static RDFRepresentation:string 
 ```
 
+```typescript 
+static AddMemberAction:string 
+```
+
 
 
 
@@ -4729,6 +4860,10 @@ static mediaType:string
 
 ```typescript 
 static size:string 
+```
+
+```typescript 
+static targetMember:string 
 ```
 
 

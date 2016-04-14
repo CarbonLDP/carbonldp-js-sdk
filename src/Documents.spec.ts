@@ -913,11 +913,125 @@ describe( module( "Carbon/Documents", "" ), ():void => {
 		});
 	});
 
+	describe( method(
+		INSTANCE,
+		"addMember"
+	), ():void => {
+
+		class MockedContext extends AbstractContext {
+			resolve( uri:string ):string {
+				return "http://example.com/" + uri;
+			}
+		}
+		let context:MockedContext;
+		let documents:Documents;
+
+		beforeEach( ():void => {
+			context = new MockedContext();
+			documents = context.documents;
+		});
+
+		it( hasSignature(
+			"Add the specified resource Pointer as a member of the document container specified.", [
+				{ name: "documentURI", type: "string", description: "URI of the document container where to add the member." },
+				{ name: "member", type: "Carbon.Pointer.Class", description: "Pointer object that references the resource to add as a member." },
+				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options" }
+			],
+			{ type: "Promise<Carbon.HTTP.Response>"}
+		), ():void => {
+			expect( documents.addMember ).toBeDefined();
+			expect( Utils.isFunction( documents.addMember ) ).toBe( true );
+
+			let spy = spyOn( documents, "addMembers" );
+
+			let pointer:Pointer.Class = documents.getPointer( "new-member/" );
+			documents.addMember( "resource/", pointer );
+			expect( spy ).toHaveBeenCalledWith( "resource/", [ pointer ], {} );
+		});
+
+		it( hasSignature(
+			"Add the specified resource URI as a member of the document container specified.", [
+				{ name: "documentURI", type: "string", description: "URI of the document container where to add the member." },
+				{ name: "memberURI", type: "string", description: "URI of the resource to add as a member." },
+				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options" }
+			],
+			{ type: "Promise<Carbon.HTTP.Response>"}
+		), ():void => {
+			expect( documents.addMember ).toBeDefined();
+			expect( Utils.isFunction( documents.addMember ) ).toBe( true );
+
+			let spy = spyOn( documents, "addMembers" );
+
+			documents.addMember( "resource/", "new-member/" );
+			expect( spy ).toHaveBeenCalledWith( "resource/", [ "new-member/" ], {} );
+		});
+
+	});
+
+	it( hasMethod(
+		INSTANCE,
+		"addMembers",
+		"Add the specified resources URI or Pointers as members of the document container specified.", [
+			{ name: "documentURI", type: "string", description: "URI of the document container where to add the members." },
+			{ name: "members", type: "(Carbon.Pointer.Class | string)[]", description: "Array of string URIs or Pointers to add as members" },
+			{ name: "requestOptions", type: "Carbon.HTTP.Request.Options" }
+		],
+		{ type: "Promise<Carbon.HTTP.Response>"}
+	), ( done:{ ():void, fail:() => void } ):void => {
+		class MockedContext extends AbstractContext {
+			resolve( uri:string ):string {
+				return "http://example.com/" + uri;
+			}
+		}
+		let context:MockedContext = new MockedContext();
+		let documents:Documents = context.documents;
+
+		expect( documents.addMembers ).toBeDefined();
+		expect( Utils.isFunction( documents.addMembers ) ).toBe( true );
+
+		jasmine.Ajax.stubRequest( "http://example.com/resource/", null, "PUT" ).andReturn( {
+			status: 200
+		});
+
+		let spies = {
+			success: ( response:any ):void => {
+				expect( response ).toBeDefined();
+				expect( response instanceof HTTP.Response.Class ).toBe( true );
+			},
+			fail: ( error:Error ):void => {
+				expect( error ).toBeDefined();
+				expect( error instanceof Errors.IllegalArgumentError );
+			}
+		};
+		let spySuccess = spyOn( spies, "success" ).and.callThrough();
+		let spyFail = spyOn( spies, "fail" ).and.callThrough();
+
+		let promises:Promise<any>[] = [];
+		let promise:Promise<any>;
+		let members:(Pointer.Class | string)[];
+
+		members = [ documents.getPointer( "new-member-01/" ), "new-member-02/" ];
+		promise = documents.addMembers( "resource/", members );
+		expect( promise instanceof Promise ).toBe( true );
+		promises.push( promise.then( spies.success ) );
+
+		members = [ documents.getPointer( "new-member-01/" ), "new-member-02/", <any> { "something": "nor string or Pointer" } ];
+		promise = documents.addMembers( "resource/", members );
+		expect( promise instanceof Promise ).toBe( true );
+		promises.push( promise.catch( spies.fail ) );
+
+		Promise.all( promises ).then( ():void => {
+			expect( spySuccess ).toHaveBeenCalledTimes( 1 );
+			expect( spyFail ).toHaveBeenCalledTimes( 1 );
+			done();
+		}, done.fail );
+	});
+
 	it( hasMethod(
 		INSTANCE,
 		"delete",
 		"Delete a the Resource referred by a PersistedDocument from the server.", [
-			{ name: "persistedDocument", type: "Carbon.PersistedDocument.Class" },
+			{ name: "documentURI", type: "string" },
 			{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true }
 		],
 		{ type: "Promise<Carbon.HTTP.Response.Class>" }
@@ -930,7 +1044,6 @@ describe( module( "Carbon/Documents", "" ), ():void => {
 
 		let context:MockedContext = new MockedContext();
 		let documents:Documents = context.documents;
-		let document:PersistedDocument.Class = PersistedDocument.Factory.create( "http://example.com/resource/", documents );
 
 		expect( documents.delete ).toBeDefined();
 		expect( Utils.isFunction( documents.delete ) ).toBe( true );
@@ -947,7 +1060,7 @@ describe( module( "Carbon/Documents", "" ), ():void => {
 		};
 		let spySuccess = spyOn( spies, "success" ).and.callThrough();
 
-		let promise:Promise<any> = documents.delete( document ).then( spies.success );
+		let promise:Promise<any> = documents.delete( "http://example.com/resource/" ).then( spies.success );
 
 		Promise.all( [ promise ] ).then( ():void => {
 			expect( spySuccess ).toHaveBeenCalled();

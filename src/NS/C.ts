@@ -10,6 +10,7 @@ export class Class {
 	static get PreferMembershipTriples():string { return namespace + "PreferMembershipTriples"; }
 	static get VolatileResource():string { return namespace + "VolatileResource"; }
 	static get RDFRepresentation():string { return namespace + "RDFRepresentation"; }
+	static get AddMemberAction():string { return namespace + "AddMemberAction"; }
 }
 
 export class Predicate {
@@ -20,4 +21,5 @@ export class Predicate {
 	static get version():string { return namespace + "version"; }
 	static get mediaType():string { return namespace + "mediaType"; }
 	static get size():string { return namespace + "size"; }
+	static get targetMember():string { return namespace + "targetMember"; }
 }
