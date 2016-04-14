@@ -383,7 +383,7 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 		let pointers:Pointer.Class[] = [];
 		for ( let member  of members ) {
 			member = Utils.isString( member ) ? this.getPointer( <string> member ) : member;
-			if ( ! Pointer.Factory.is( member ) ) Promise.reject<any>( new Errors.IllegalArgumentError( "No Carbon.Pointer or string URI provided.") );
+			if ( ! Pointer.Factory.is( member ) ) return Promise.reject<any>( new Errors.IllegalArgumentError( "No Carbon.Pointer or string URI provided.") );
 
 			pointers.push( <Pointer.Class> member );
 		}

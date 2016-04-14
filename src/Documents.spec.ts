@@ -1015,13 +1015,14 @@ describe( module( "Carbon/Documents", "" ), ():void => {
 		expect( promise instanceof Promise ).toBe( true );
 		promises.push( promise.then( spies.success ) );
 
-		members = [ documents.getPointer( "new-member-01/" ), "new-member-02", <any> { "something": "nor string or Pointer" } ];
+		members = [ documents.getPointer( "new-member-01/" ), "new-member-02/", <any> { "something": "nor string or Pointer" } ];
 		promise = documents.addMembers( "resource/", members );
 		expect( promise instanceof Promise ).toBe( true );
 		promises.push( promise.catch( spies.fail ) );
 
 		Promise.all( promises ).then( ():void => {
-			expect( spySuccess ).toHaveBeenCalled();
+			expect( spySuccess ).toHaveBeenCalledTimes( 1 );
+			expect( spyFail ).toHaveBeenCalledTimes( 1 );
 			done();
 		}, done.fail );
 	});
