@@ -1371,6 +1371,7 @@ declare module 'carbonldp/LDP/PersistedContainer' {
 	    createChild(slug: string): Promise<[Pointer.Class, HTTP.Response.Class]>;
 	    createChild(object: Object): Promise<[Pointer.Class, HTTP.Response.Class]>;
 	    createChild(): Promise<[Pointer.Class, HTTP.Response.Class]>;
+	    getChildren(): Promise<[Pointer.Class[], HTTP.Response.Class]>;
 	    getMembers(includeNonReadable?: boolean): Promise<[Pointer.Class[], HTTP.Response.Class]>;
 	    removeMember(member: Pointer.Class): Promise<HTTP.Response.Class>;
 	    removeMember(memberURI: string): Promise<HTTP.Response.Class>;

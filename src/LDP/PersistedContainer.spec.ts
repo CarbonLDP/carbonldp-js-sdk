@@ -75,6 +75,8 @@ describe( module( "Carbon/LDP/PersistedContainer" ), ():void => {
 			expect( PersistedContainer.Factory.hasClassProperties( document ) ).toBe( false );
 			document.createChild = () => {};
 			expect( PersistedContainer.Factory.hasClassProperties( document ) ).toBe( false );
+			document.getChildren = () => {};
+			expect( PersistedContainer.Factory.hasClassProperties( document ) ).toBe( false );
 			document.getMembers = () => {};
 			expect( PersistedContainer.Factory.hasClassProperties( document ) ).toBe( false );
 			document.removeMember = () => {};
@@ -109,6 +111,7 @@ describe( module( "Carbon/LDP/PersistedContainer" ), ():void => {
 			document.addMember = () => {};
 			document.addMembers = () => {};
 			document.createChild = () => {};
+			document.getChildren = () => {};
 			document.getMembers = () => {};
 			document.removeMember = () => {};
 			document.removeMembers = () => {};
@@ -120,6 +123,7 @@ describe( module( "Carbon/LDP/PersistedContainer" ), ():void => {
 			expect( anotherContainer.addMember ).not.toBe( persistedContainer.addMember );
 			expect( anotherContainer.addMembers ).not.toBe( persistedContainer.addMembers );
 			expect( anotherContainer.createChild ).not.toBe( persistedContainer.createChild );
+			expect( anotherContainer.getChildren ).not.toBe( persistedContainer.getChildren );
 			expect( anotherContainer.getMembers ).not.toBe( persistedContainer.getMembers );
 			expect( anotherContainer.removeMember ).not.toBe( persistedContainer.removeMember );
 			expect( anotherContainer.removeMembers ).not.toBe( persistedContainer.removeMembers );
@@ -188,7 +192,7 @@ describe( module( "Carbon/LDP/PersistedContainer" ), ():void => {
 
 			it( hasMethod(
 				INSTANCE,
-				"addMember",
+				"addMembers",
 				"Add the specified resources URI or Pointers as members of the container.", [
 					{ name: "members", type: "(Carbon.Pointer.Class | string)[]", description: "Array of string URIs or Pointers to add as members" },
 				],
@@ -280,6 +284,21 @@ describe( module( "Carbon/LDP/PersistedContainer" ), ():void => {
 					expect( spy ).toHaveBeenCalledWith( "http://example.com/resource/", {} );
 				});
 
+			});
+
+			it( hasMethod(
+				INSTANCE,
+				"getChildren",
+				"Return all the children of the container.",
+				{ type: "Promise<[ Carbon.Pointer.Class[], Carbon.HTTP.Response ]>" }
+			), ():void => {
+				expect( container.getChildren ).toBeDefined();
+				expect( Utils.isFunction( container.getChildren ) ).toBeDefined();
+
+				let spy = spyOn( container._documents, "getChildren" );
+
+				container.getChildren();
+				expect( spy ).toHaveBeenCalledWith( "http://example.com/resource/" );
 			});
 
 			it( hasMethod(

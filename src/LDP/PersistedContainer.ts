@@ -15,6 +15,8 @@ export interface Class extends PersistedDocument.Class {
 	createChild( object:Object ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
 	createChild():Promise<[ Pointer.Class, HTTP.Response.Class ]>;
 
+	getChildren():Promise<[ Pointer.Class[], HTTP.Response.Class ]>;
+
 	getMembers( includeNonReadable?:boolean ):Promise<[ Pointer.Class[], HTTP.Response.Class ]>;
 
 	removeMember( member:Pointer.Class ): Promise<HTTP.Response.Class>;
@@ -55,6 +57,11 @@ function createChild( slugOrObject?:any, object?:Object ):Promise<[ Pointer.Clas
 	}
 }
 
+function getChildren():Promise<[ Pointer.Class[], HTTP.Response.Class ]> {
+	let that:PersistedDocument.Class = <PersistedDocument.Class> this;
+	return this._documents.getChildren( that.id );
+}
+
 function getMembers( includeNonReadable:boolean = true ):Promise<[ Pointer.Class[], HTTP.Response.Class ]> {
 	return this._documents.getMembers( this.id, includeNonReadable );
 }
@@ -91,14 +98,15 @@ function upload( slugOrBlob:any, blob:any = null ):Promise<[ Pointer.Class, HTTP
 
 	export class Factory {
 	static hasClassProperties( document:Document.Class ):boolean {
-		return Utils.hasFunction( document, "createChild" )
-			&& Utils.hasFunction( document, "addMember" )
+		return Utils.hasFunction( document, "addMember" )
 			&& Utils.hasFunction( document, "addMembers" )
-			&& Utils.hasFunction( document, "upload" )
+			&& Utils.hasFunction( document, "createChild" )
+			&& Utils.hasFunction( document, "getChildren" )
+			&& Utils.hasFunction( document, "getMembers" )
 			&& Utils.hasFunction( document, "removeMember" )
 			&& Utils.hasFunction( document, "removeMembers" )
 			&& Utils.hasFunction( document, "removeAllMembers" )
-			&& Utils.hasFunction( document, "getMembers" );
+			&& Utils.hasFunction( document, "upload" );
 	}
 
 	static decorate<T extends PersistedDocument.Class>( persistedDocument:T ):T & Class {
@@ -122,6 +130,12 @@ function upload( slugOrBlob:any, blob:any = null ):Promise<[ Pointer.Class, HTTP
 				enumerable: false,
 				configurable: true,
 				value: createChild,
+			},
+			"getChildren": {
+				writable: false,
+				enumerable: false,
+				configurable: true,
+				value: getChildren,
 			},
 			"getMembers": {
 				writable: false,

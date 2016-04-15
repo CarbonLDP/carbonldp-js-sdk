@@ -2057,6 +2057,10 @@ $__System.register("20", ["5"], function(exports_1) {
             return this._documents.createChild(this.id, object);
         }
     }
+    function getChildren() {
+        var that = this;
+        return this._documents.getChildren(that.id);
+    }
     function getMembers(includeNonReadable) {
         if (includeNonReadable === void 0) { includeNonReadable = true; }
         return this._documents.getMembers(this.id, includeNonReadable);
@@ -2094,14 +2098,15 @@ $__System.register("20", ["5"], function(exports_1) {
                 function Factory() {
                 }
                 Factory.hasClassProperties = function (document) {
-                    return Utils.hasFunction(document, "createChild")
-                        && Utils.hasFunction(document, "addMember")
+                    return Utils.hasFunction(document, "addMember")
                         && Utils.hasFunction(document, "addMembers")
-                        && Utils.hasFunction(document, "upload")
+                        && Utils.hasFunction(document, "createChild")
+                        && Utils.hasFunction(document, "getChildren")
+                        && Utils.hasFunction(document, "getMembers")
                         && Utils.hasFunction(document, "removeMember")
                         && Utils.hasFunction(document, "removeMembers")
                         && Utils.hasFunction(document, "removeAllMembers")
-                        && Utils.hasFunction(document, "getMembers");
+                        && Utils.hasFunction(document, "upload");
                 };
                 Factory.decorate = function (persistedDocument) {
                     if (Factory.hasClassProperties(persistedDocument))
@@ -2124,6 +2129,12 @@ $__System.register("20", ["5"], function(exports_1) {
                             enumerable: false,
                             configurable: true,
                             value: createChild,
+                        },
+                        "getChildren": {
+                            writable: false,
+                            enumerable: false,
+                            configurable: true,
+                            value: getChildren,
                         },
                         "getMembers": {
                             writable: false,
