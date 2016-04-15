@@ -1375,6 +1375,7 @@ declare module 'carbonldp/LDP/PersistedContainer' {
 	    removeMember(member: Pointer.Class): Promise<HTTP.Response.Class>;
 	    removeMember(memberURI: string): Promise<HTTP.Response.Class>;
 	    removeMembers(members: (Pointer.Class | string)[]): Promise<HTTP.Response.Class>;
+	    removeAllMembers(): Promise<HTTP.Response.Class>;
 	    upload(slug: string, blob: Blob): Promise<[Pointer.Class, HTTP.Response.Class]>;
 	    upload(blob: Blob): Promise<[Pointer.Class, HTTP.Response.Class]>;
 	}
@@ -1468,6 +1469,7 @@ declare module 'carbonldp/Documents' {
 	    removeMember(documentURI: string, member: Pointer.Class, requestOptions?: HTTP.Request.Options): Promise<HTTP.Response.Class>;
 	    removeMember(documentURI: string, memberURI: string, requestOptions?: HTTP.Request.Options): Promise<HTTP.Response.Class>;
 	    removeMembers(documentURI: string, members: (Pointer.Class | string)[], requestOptions?: HTTP.Request.Options): Promise<HTTP.Response.Class>;
+	    removeAllMembers(documentURI: string, requestOptions?: HTTP.Request.Options): Promise<HTTP.Response.Class>;
 	    save(persistedDocument: PersistedDocument.Class, requestOptions?: HTTP.Request.Options): Promise<[PersistedDocument.Class, HTTP.Response.Class]>;
 	    delete(documentURI: string, requestOptions?: HTTP.Request.Options): Promise<HTTP.Response.Class>;
 	    getSchemaFor(object: Object): ObjectSchema.DigestedObjectSchema;

@@ -31,6 +31,10 @@ function removeMembers(members) {
     var that = this;
     return that._documents.removeMembers(that.id, members);
 }
+function removeAllMembers() {
+    var that = this;
+    return that._documents.removeAllMembers(that.id);
+}
 function upload(slugOrBlob, blob) {
     if (blob === void 0) { blob = null; }
     var slug = Utils.isString(slugOrBlob) ? slugOrBlob : null;
@@ -52,6 +56,7 @@ var Factory = (function () {
             && Utils.hasFunction(document, "upload")
             && Utils.hasFunction(document, "removeMember")
             && Utils.hasFunction(document, "removeMembers")
+            && Utils.hasFunction(document, "removeAllMembers")
             && Utils.hasFunction(document, "getMembers");
     };
     Factory.decorate = function (persistedDocument) {
@@ -93,6 +98,12 @@ var Factory = (function () {
                 enumerable: false,
                 configurable: true,
                 value: removeMembers,
+            },
+            "removeAllMembers": {
+                writable: false,
+                enumerable: false,
+                configurable: true,
+                value: removeAllMembers,
             },
             "upload": {
                 writable: false,

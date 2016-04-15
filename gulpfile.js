@@ -71,7 +71,6 @@ gulp.task( "test:debug", ( done ) => {
 	}, done ).start();
 });
 
-
 gulp.task( "generate-doc", ( done ) => {
 	new karma.Server({
 		configFile: __dirname + "/karma.conf.js",

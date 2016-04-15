@@ -1773,8 +1773,20 @@ Remove the specified resources URI or Pointers as members of the document contai
 
 *Parameters*
 
-- documentURI: URI of the document container where to add the members.
-- members: Array of string URIs or Pointers to add as members
+- documentURI: URI of the document container where to remove the members.
+- members: Array of string URIs or Pointers to remove as members
+- requestOptions
+
+##### removeAllMembers
+```typescript 
+removeAllMembers( documentURI:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<Carbon.HTTP.Response>
+```
+
+Remove all the members of the document container specified.
+
+*Parameters*
+
+- documentURI: URI of the document container where to remove the members.
 - requestOptions
 
 ##### delete
@@ -2042,7 +2054,7 @@ Remove the specified resource URI member of the resource container specified.
 *Parameters*
 
 - documentURI: URI of the resource container where to remove the member.
-- memberURI: URI of the resource to remvoe as a member.
+- memberURI: URI of the resource to remove as a member.
 - requestOptions
 
 
@@ -4701,6 +4713,17 @@ getMembers( includeNonReadable?:boolean ):Promise<[ Carbon.Pointer.Class[], Carb
 ##### removeMembers
 ```typescript 
 removeMembers( members:(Carbon.Pointer.Class | string)[] ):Promise<Carbon.HTTP.Response.Class>
+```
+
+Remove the specified resources URI or Pointers as members of the container.
+
+*Parameters*
+
+- members: Array of string URIs or Pointers to remove as members
+
+##### removeAllMembers
+```typescript 
+removeAllMembers( members:(Carbon.Pointer.Class | string)[] ):Promise<Carbon.HTTP.Response.Class>
 ```
 
 Remove the specified resources URI or Pointers as members of the container.
