@@ -1751,6 +1751,18 @@ Returns a Promise with a boolean indicating if the resource exists or not.
 - documentURI
 - requestOptions
 
+##### getChildren
+```typescript 
+getChildren( parentURI:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.Pointer.Class[], Carbon.HTTP.Response ]>
+```
+
+Return all the children of the container specified.
+
+*Parameters*
+
+- parentURI: URI of the document container to look for their children.
+- requestOptions
+
 ##### addMembers
 ```typescript 
 addMembers( documentURI:string,  members:(Carbon.Pointer.Class | string)[],  requestOptions?:Carbon.HTTP.Request.Options ):Promise<Carbon.HTTP.Response>
@@ -4669,9 +4681,9 @@ Returns the PersistedDocuments decorated as a PersistedContainer
 
 
 ##### <a name="Carbon-LDP-PersistedContainer-Factory-Decorated-Object-Methods" />Methods
-##### addMember
+##### addMembers
 ```typescript 
-addMember( members:(Carbon.Pointer.Class | string)[] ):Promise<Carbon.HTTP.Response.Class>
+addMembers( members:(Carbon.Pointer.Class | string)[] ):Promise<Carbon.HTTP.Response.Class>
 ```
 
 Add the specified resources URI or Pointers as members of the container.
@@ -4680,25 +4692,12 @@ Add the specified resources URI or Pointers as members of the container.
 
 - members: Array of string URIs or Pointers to add as members
 
+##### getChildren
 ```typescript 
-addMember( member:Carbon.Pointer.Class ):Promise<Carbon.HTTP.Response.Class>
+getChildren():Promise<[ Carbon.Pointer.Class[], Carbon.HTTP.Response ]>
 ```
 
-Add the specified resource Pointer as a member of the container.
-
-*Parameters*
-
-- member: Pointer object that references the resource to add as a member.
-
-```typescript 
-addMember( memberURI:string ):Promise<Carbon.HTTP.Response.Class>
-```
-
-Add the specified resource URI as a member of the container.
-
-*Parameters*
-
-- memberURI: URI of the resource to add as a member.
+Return all the children of the container.
 
 ##### getMembers
 ```typescript 
@@ -4731,6 +4730,27 @@ Remove the specified resources URI or Pointers as members of the container.
 *Parameters*
 
 - members: Array of string URIs or Pointers to remove as members
+
+##### addMember
+```typescript 
+addMember( member:Carbon.Pointer.Class ):Promise<Carbon.HTTP.Response.Class>
+```
+
+Add the specified resource Pointer as a member of the container.
+
+*Parameters*
+
+- member: Pointer object that references the resource to add as a member.
+
+```typescript 
+addMember( memberURI:string ):Promise<Carbon.HTTP.Response.Class>
+```
+
+Add the specified resource URI as a member of the container.
+
+*Parameters*
+
+- memberURI: URI of the resource to add as a member.
 
 ##### createChild
 ```typescript 

@@ -622,7 +622,7 @@ describe( module( "Carbon/Documents", "" ), ():void => {
 			{ name: "parentURI", type: "string", description: "URI of the document container to look for their children." },
 			{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true }
 		],
-		{ type: "Promise<Carbon.HTTP.Response>"}
+		{ type: "Promise<[ Carbon.Pointer.Class[], Carbon.HTTP.Response ]>" }
 	), ( done:{ ():void, fail:() => void } ):void => {
 		class MockedContext extends AbstractContext {
 			resolve( uri:string ):string {
