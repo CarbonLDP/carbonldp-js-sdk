@@ -92,8 +92,8 @@ function createFragment(slugOrObject, object) {
     return fragment;
 }
 function createNamedFragment(slug, object) {
-    if (object === void 0) { object = {}; }
     var document = this;
+    object = object || {};
     if (RDF.URI.Util.isBNodeID(slug))
         throw new Errors.IllegalArgumentError("Named fragments can't have a slug that starts with '_:'.");
     if (RDF.URI.Util.isAbsolute(slug)) {

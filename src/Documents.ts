@@ -7,6 +7,7 @@ import * as Utils from "./Utils";
 import * as AccessPoint from "./AccessPoint";
 import * as Document from "./Document";
 import * as JSONLDConverter from "./JSONLDConverter";
+import * as PersistedResource from "./PersistedResource";
 import * as PersistedDocument from "./PersistedDocument";
 import * as PersistedFragment from "./PersistedFragment";
 import * as PersistedNamedFragment from "./PersistedNamedFragment";
@@ -15,7 +16,6 @@ import * as NS from "./NS";
 import * as ObjectSchema from "./ObjectSchema";
 import * as LDP from "./LDP";
 import * as SPARQL from "./SPARQL";
-import * as Fragment from "./Fragment";
 
 class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Resolver {
 	_jsonldConverter:JSONLDConverter.Class;
@@ -70,7 +70,7 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 	getPointer( id:string ):Pointer.Class {
 		let localID:string = this.getPointerID( id );
 
-		if( ! localID ) {
+		if( Utils.isNull( localID ) ) {
 			if( !! this.context && !! this.context.parentContext ) return this.context.parentContext.documents.getPointer( id );
 			throw new Errors.IllegalArgumentError( "The pointer id is not supported by this module." );
 		}
@@ -137,14 +137,14 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 			this.compact( fragmentResources, fragments, document );
 			this.compact( namedFragmentResources, namedFragments, document );
 
-			// TODO: Move this to a more appropriate place
+			// TODO: Move this to a more appropriate place. See also refresh() method
 			document._syncSnapshot();
 			fragments.forEach( ( fragment:PersistedFragment.Class ) => fragment._syncSnapshot() );
 			namedFragments.forEach( ( fragment:PersistedNamedFragment.Class ) => fragment._syncSnapshot() );
 			document._syncSavedFragments();
 
-			// TODO: Decorate additional behavior (app, etc.)
-			// TODO: Make it dynamic
+			// TODO: Decorate additional behavior (app, etc.). See also refresh() method
+			// TODO: Make it dynamic. See also refresh() method
 			if( LDP.Container.Factory.hasRDFClass( document ) ) LDP.PersistedContainer.Factory.decorate( document );
 
 			return [ document, response ];
@@ -458,6 +458,60 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 		});
 	}
 
+	refresh( persistedDocument:PersistedDocument.Class, requestOptions:HTTP.Request.Options = {} ):Promise<[ PersistedDocument.Class, HTTP.Response.Class ]> {
+		if ( this.context && this.context.auth.isAuthenticated() ) this.context.auth.addAuthentication( requestOptions );
+
+		HTTP.Request.Util.setAcceptHeader( "application/ld+json", requestOptions );
+		HTTP.Request.Util.setContentTypeHeader( "application/ld+json", requestOptions );
+		HTTP.Request.Util.setPreferredInteractionModel( NS.LDP.Class.RDFSource, requestOptions );
+
+		return HTTP.Request.Service.head( persistedDocument.id, requestOptions ).then( ( headerResponse:HTTP.Response.Class ) => {
+			let eTag:string = HTTP.Response.Util.getETag( headerResponse );
+			if ( eTag === persistedDocument._etag ) return [ persistedDocument, headerResponse ];
+
+			return HTTP.Request.Service.get( persistedDocument.id, requestOptions, new RDF.Document.Parser() ).then( ( [ rdfDocuments, response ]:[ RDF.Document.Class[], HTTP.Response.Class ] ) => {
+				eTag = HTTP.Response.Util.getETag( response );
+				if( eTag === null ) throw new HTTP.Errors.BadResponseError( "The response doesn't contain an ETag", response );
+
+				let rdfDocument:RDF.Document.Class = this.getRDFDocument( persistedDocument.id, rdfDocuments, response );
+				if ( rdfDocument === null ) throw new HTTP.Errors.BadResponseError( "No document was returned.", response );
+				persistedDocument._etag = eTag;
+
+				let documentResources:RDF.Node.Class[] = RDF.Document.Util.getDocumentResources( rdfDocument );
+				if( documentResources.length > 1 ) throw new HTTP.Errors.BadResponseError( "The RDFDocument contains more than one document resource.", response );
+				if( documentResources.length === 0 ) throw new HTTP.Errors.BadResponseError( "The RDFDocument doesn\'t contain a document resource.", response );
+
+				let documentResource:RDF.Node.Class = documentResources[ 0 ];
+				let fragmentResources:RDF.Node.Class[] = RDF.Document.Util.getBNodeResources( rdfDocument );
+				fragmentResources.concat( RDF.Document.Util.getFragmentResources( rdfDocument ) );
+
+				let updatedData:Object = {};
+				this.compact( documentResource, updatedData, persistedDocument );
+				this.mix( persistedDocument, updatedData );
+				persistedDocument._syncSnapshot();
+
+				let id:string;
+				let fragment:PersistedFragment.Class;
+				for( let fragmentResource of fragmentResources ) {
+					updatedData = this.compact( fragmentResource, {}, persistedDocument );
+
+					id = updatedData[ "id" ] || "";
+					if ( persistedDocument.hasFragment( id ) ) {
+						fragment = this.mix( persistedDocument.getFragment( id ), updatedData );
+					} else {
+						fragment = persistedDocument.createFragment( id, updatedData );
+					}
+
+					fragment._syncSnapshot();
+				}
+
+				persistedDocument._syncSavedFragments();
+
+				return [ persistedDocument, response ];
+			});
+		});
+	}
+
 	delete( documentURI:string, requestOptions:HTTP.Request.Options = {} ):Promise<HTTP.Response.Class> {
 		if ( this.context && this.context.auth.isAuthenticated() ) this.context.auth.addAuthentication( requestOptions );
 
@@ -661,6 +715,36 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 		if( ! document.types ) return [];
 		return document.types;
 	}
+
+	private mix( target:any, source:any ):any {
+		if ( ! isPlainObject( target ) || ! isPlainObject( source ) ) return;
+
+		let keys:Set<string> = new Set( Object.keys( source ).concat(  Object.keys( target ) ) );
+
+		for ( let key of Array.from( keys ) ) {
+			if ( Utils.hasProperty( source, key ) ) {
+				if ( PersistedResource.Factory.hasClassProperties( target[ key ] ) ) continue;
+
+				this.mix( target[ key ], source[ key ] );
+				target[ key ] = source[ key ];
+			} else {
+				if ( Utils.isArray( target ) ) {
+					(< Array<any> > target).splice( parseFloat( key ), 1 );
+				} else {
+					delete target[ key ];
+				}
+			}
+		}
+
+		return target;
+	}
+
+}
+
+function isPlainObject( element:any ):boolean {
+	return Utils.isObject( element )
+		&& ! Utils.isMap( element )
+		&& ! Utils.isDate( element );
 }
 
 export default Documents;

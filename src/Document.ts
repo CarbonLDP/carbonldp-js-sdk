@@ -134,8 +134,9 @@ function createFragment( slugOrObject?:any, object?:any ):any {
 
 function createNamedFragment<T extends Object>( slug:string, object:T ):NamedFragment.Class & T;
 function createNamedFragment( slug:string ):NamedFragment.Class;
-function createNamedFragment( slug:string, object:any = {} ):any {
+function createNamedFragment( slug:string, object?:any ):any {
 	let document:Class = <Class> this;
+	object = object || {};
 
 	if( RDF.URI.Util.isBNodeID( slug ) ) throw new Errors.IllegalArgumentError( "Named fragments can't have a slug that starts with '_:'." );
 

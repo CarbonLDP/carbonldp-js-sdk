@@ -5,6 +5,7 @@ var RDF = require("./RDF");
 var Utils = require("./Utils");
 var Document = require("./Document");
 var JSONLDConverter = require("./JSONLDConverter");
+var PersistedResource = require("./PersistedResource");
 var PersistedDocument = require("./PersistedDocument");
 var Pointer = require("./Pointer");
 var NS = require("./NS");
@@ -56,7 +57,7 @@ var Documents = (function () {
     };
     Documents.prototype.getPointer = function (id) {
         var localID = this.getPointerID(id);
-        if (!localID) {
+        if (Utils.isNull(localID)) {
             if (!!this.context && !!this.context.parentContext)
                 return this.context.parentContext.documents.getPointer(id);
             throw new Errors.IllegalArgumentError("The pointer id is not supported by this module.");
@@ -395,6 +396,58 @@ var Documents = (function () {
             return [persistedDocument, response];
         });
     };
+    Documents.prototype.refresh = function (persistedDocument, requestOptions) {
+        var _this = this;
+        if (requestOptions === void 0) { requestOptions = {}; }
+        if (this.context && this.context.auth.isAuthenticated())
+            this.context.auth.addAuthentication(requestOptions);
+        HTTP.Request.Util.setAcceptHeader("application/ld+json", requestOptions);
+        HTTP.Request.Util.setContentTypeHeader("application/ld+json", requestOptions);
+        HTTP.Request.Util.setPreferredInteractionModel(NS.LDP.Class.RDFSource, requestOptions);
+        return HTTP.Request.Service.head(persistedDocument.id, requestOptions).then(function (headerResponse) {
+            var eTag = HTTP.Response.Util.getETag(headerResponse);
+            if (eTag === persistedDocument._etag)
+                return [persistedDocument, headerResponse];
+            return HTTP.Request.Service.get(persistedDocument.id, requestOptions, new RDF.Document.Parser()).then(function (_a) {
+                var rdfDocuments = _a[0], response = _a[1];
+                eTag = HTTP.Response.Util.getETag(response);
+                if (eTag === null)
+                    throw new HTTP.Errors.BadResponseError("The response doesn't contain an ETag", response);
+                var rdfDocument = _this.getRDFDocument(persistedDocument.id, rdfDocuments, response);
+                if (rdfDocument === null)
+                    throw new HTTP.Errors.BadResponseError("No document was returned.", response);
+                persistedDocument._etag = eTag;
+                var documentResources = RDF.Document.Util.getDocumentResources(rdfDocument);
+                if (documentResources.length > 1)
+                    throw new HTTP.Errors.BadResponseError("The RDFDocument contains more than one document resource.", response);
+                if (documentResources.length === 0)
+                    throw new HTTP.Errors.BadResponseError("The RDFDocument doesn\'t contain a document resource.", response);
+                var documentResource = documentResources[0];
+                var fragmentResources = RDF.Document.Util.getBNodeResources(rdfDocument);
+                fragmentResources.concat(RDF.Document.Util.getFragmentResources(rdfDocument));
+                var updatedData = {};
+                _this.compact(documentResource, updatedData, persistedDocument);
+                _this.mix(persistedDocument, updatedData);
+                persistedDocument._syncSnapshot();
+                var id;
+                var fragment;
+                for (var _i = 0, fragmentResources_2 = fragmentResources; _i < fragmentResources_2.length; _i++) {
+                    var fragmentResource = fragmentResources_2[_i];
+                    updatedData = _this.compact(fragmentResource, {}, persistedDocument);
+                    id = updatedData["id"] || "";
+                    if (persistedDocument.hasFragment(id)) {
+                        fragment = _this.mix(persistedDocument.getFragment(id), updatedData);
+                    }
+                    else {
+                        fragment = persistedDocument.createFragment(id, updatedData);
+                    }
+                    fragment._syncSnapshot();
+                }
+                persistedDocument._syncSavedFragments();
+                return [persistedDocument, response];
+            });
+        });
+    };
     Documents.prototype.delete = function (documentURI, requestOptions) {
         if (requestOptions === void 0) { requestOptions = {}; }
         if (this.context && this.context.auth.isAuthenticated())
@@ -582,8 +635,36 @@ var Documents = (function () {
             return [];
         return document.types;
     };
+    Documents.prototype.mix = function (target, source) {
+        if (!isPlainObject(target) || !isPlainObject(source))
+            return;
+        var keys = new Set(Object.keys(source).concat(Object.keys(target)));
+        for (var _i = 0, _a = Array.from(keys); _i < _a.length; _i++) {
+            var key = _a[_i];
+            if (Utils.hasProperty(source, key)) {
+                if (PersistedResource.Factory.hasClassProperties(target[key]))
+                    continue;
+                this.mix(target[key], source[key]);
+                target[key] = source[key];
+            }
+            else {
+                if (Utils.isArray(target)) {
+                    target.splice(parseFloat(key), 1);
+                }
+                else {
+                    delete target[key];
+                }
+            }
+        }
+        return target;
+    };
     return Documents;
 }());
+function isPlainObject(element) {
+    return Utils.isObject(element)
+        && !Utils.isMap(element)
+        && !Utils.isDate(element);
+}
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = Documents;
 

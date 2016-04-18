@@ -39,7 +39,10 @@ export class Class {
 			if ( ! PersistedApp.Factory.is( app ) )
 				return Promise.reject<AppContext>( new Errors.IllegalArgumentError( "The resource fetched is not a cs:Application." ) );
 
-			return new AppContext( this.context, <PersistedApp.Class> app );
+			let appContext:AppContext = new AppContext( this.context, <PersistedApp.Class> app );
+			( <PersistedApp.Class> app).rootContainer = <any> appContext.documents.getPointer( ( <PersistedApp.Class> app).rootContainer.id );
+
+			return appContext;
 		});
 	}
 

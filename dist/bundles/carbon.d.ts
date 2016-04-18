@@ -1336,8 +1336,11 @@ declare module 'carbonldp/PersistedDocument' {
 	    getFragments(): PersistedFragment.Class[];
 	    createFragment(): PersistedFragment.Class;
 	    createFragment(slug: string): PersistedNamedFragment.Class;
+	    createFragment<T extends Object>(slug: string, object: T): PersistedNamedFragment.Class & T;
+	    createFragment<T extends Object>(object: T): PersistedFragment.Class & T;
 	    createNamedFragment(slug: string): PersistedNamedFragment.Class;
-	    refresh(): Promise<void>;
+	    createNamedFragment<T extends Object>(slug: string, object: T): PersistedNamedFragment.Class & T;
+	    refresh(): Promise<[Class, HTTP.Response.Class]>;
 	    save(): Promise<[Class, HTTP.Response.Class]>;
 	    destroy(): Promise<HTTP.Response.Class>;
 	    createAccessPoint(accessPoint: AccessPoint.Class, slug?: string, requestOptions?: HTTP.Request.Options): Promise<[Pointer.Class, HTTP.Response.Class]>;
@@ -1469,6 +1472,7 @@ declare module 'carbonldp/Documents' {
 	    removeMember(documentURI: string, memberURI: string, requestOptions?: HTTP.Request.Options): Promise<HTTP.Response.Class>;
 	    removeMembers(documentURI: string, members: (Pointer.Class | string)[], requestOptions?: HTTP.Request.Options): Promise<HTTP.Response.Class>;
 	    save(persistedDocument: PersistedDocument.Class, requestOptions?: HTTP.Request.Options): Promise<[PersistedDocument.Class, HTTP.Response.Class]>;
+	    refresh(persistedDocument: PersistedDocument.Class, requestOptions?: HTTP.Request.Options): Promise<[PersistedDocument.Class, HTTP.Response.Class]>;
 	    delete(documentURI: string, requestOptions?: HTTP.Request.Options): Promise<HTTP.Response.Class>;
 	    getSchemaFor(object: Object): ObjectSchema.DigestedObjectSchema;
 	    executeRawASKQuery(documentURI: string, askQuery: string, requestOptions?: HTTP.Request.Options): Promise<[SPARQL.RawResults.Class, HTTP.Response.Class]>;
@@ -1489,6 +1493,7 @@ declare module 'carbonldp/Documents' {
 	    private getDigestedObjectSchema(objectTypes);
 	    private getExpandedObjectTypes(expandedObject);
 	    private getDocumentTypes(document);
+	    private mix(target, source);
 	}
 	export default Documents;
 
