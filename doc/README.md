@@ -1777,6 +1777,18 @@ Remove the specified resources URI or Pointers as members of the document contai
 - members: Array of string URIs or Pointers to add as members
 - requestOptions
 
+##### refresh
+```typescript 
+refresh( persistedDocument:Carbon.PersistedDocument.Class,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.PersistedDocument.Class, Carbon.HTTP.Response ]>
+```
+
+Update the document with the data of the server, if there is a diferent version on it.
+
+*Parameters*
+
+- persistedDocument: The persisted document to update.
+- requestOptions
+
 ##### delete
 ```typescript 
 delete( documentURI:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<Carbon.HTTP.Response.Class>

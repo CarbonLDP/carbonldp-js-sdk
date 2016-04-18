@@ -467,7 +467,7 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 
 		return HTTP.Request.Service.head( persistedDocument.id, requestOptions ).then( ( headerResponse:HTTP.Response.Class ) => {
 			let eTag:string = HTTP.Response.Util.getETag( headerResponse );
-			if ( eTag === persistedDocument._etag ) return [ persistedDocument, headerResponse ];
+			if ( eTag === persistedDocument._etag ) return [ persistedDocument, null ];
 
 			return HTTP.Request.Service.get( persistedDocument.id, requestOptions, new RDF.Document.Parser() ).then( ( [ rdfDocuments, response ]:[ RDF.Document.Class[], HTTP.Response.Class ] ) => {
 				eTag = HTTP.Response.Util.getETag( response );

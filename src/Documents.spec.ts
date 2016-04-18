@@ -28,6 +28,7 @@ import * as Errors from "./Errors";
 import * as Fragment from "./Fragment";
 import * as HTTP from "./HTTP";
 import * as PersistedDocument from "./PersistedDocument";
+import * as PersistedFragment from "./PersistedFragment";
 import * as ObjectSchema from "./ObjectSchema";
 import * as SPARQL from "./SPARQL";
 import * as Utils from "./Utils";
@@ -1090,7 +1091,7 @@ describe( module( "Carbon/Documents", "" ), ():void => {
 			{ name: "members", type: "(Carbon.Pointer.Class | string)[]", description: "Array of string URIs or Pointers to add as members" },
 			{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true }
 		],
-		{ type: "Promise<Carbon.HTTP.Response>"}
+		{ type: "Promise<Carbon.HTTP.Response>" }
 	), ( done:{ ():void, fail:() => void } ):void => {
 		class MockedContext extends AbstractContext {
 			resolve( uri:string ):string {
@@ -1139,6 +1140,212 @@ describe( module( "Carbon/Documents", "" ), ():void => {
 			expect( spyFail ).toHaveBeenCalledTimes( 1 );
 			done();
 		}, done.fail );
+	});
+
+	it( hasMethod(
+		INSTANCE,
+		"refresh",
+		"Update the document with the data of the server, if there is a diferent version on it.", [
+			{ name: "persistedDocument", type: "Carbon.PersistedDocument.Class", description: "The persisted document to update." },
+			{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true }
+		],
+		{ type: "Promise<[ Carbon.PersistedDocument.Class, Carbon.HTTP.Response ]>" }
+	), ( done:{ ():void, fail:() => void } ):void => {
+		class MockedContext extends AbstractContext {
+			resolve( uri:string ):string {
+				return uri;
+			}
+		}
+		let context:MockedContext = new MockedContext();
+		let documents:Documents = context.documents;
+
+		expect( documents.refresh ).toBeDefined();
+		expect( Utils.isFunction( documents.refresh ) ).toBe( true );
+
+		let objectSchema:ObjectSchema.Class = {
+			"ex": "http://example.com/ns#",
+			"xsd": "http://www.w3.org/2001/XMLSchema#",
+			"string": {
+				"@id": "ex:string",
+				"@type": "xsd:string",
+			},
+			"date": {
+				"@id": "ex:date",
+				"@type": "xsd:dateTime",
+			},
+			"numberList": {
+				"@id": "ex:numberList",
+				"@type": "xsd:integer",
+				"@container": "@list",
+			},
+			"languageMap": {
+				"@id": "ex:languageMap",
+				"@container": "@language",
+			},
+			"pointer": {
+				"@id": "ex:pointer",
+				"@type": "@id",
+			},
+			"pointerList": {
+				"@id": "ex:pointerList",
+				"@type": "@id",
+				"@container": "@list",
+			},
+			"pointerSet": {
+				"@id": "ex:pointerSet",
+				"@type": "@id",
+				"@container": "@set",
+			},
+		};
+
+		context.extendObjectSchema( objectSchema );
+
+
+		jasmine.Ajax.stubRequest( "http://example.com/resource/", null, "HEAD" ).andReturn( {
+			status: 200,
+			responseHeaders: {
+				"ETag": `"0123456789"`
+			}
+		});
+		jasmine.Ajax.stubRequest( "http://example.com/resource/", null, "GET" ).andReturn( {
+			status: 200,
+			responseText: `[{
+				"@id": "http://example.com/resource/",
+				"@graph": [
+					{
+						"@id": "http://example.com/resource/",
+						"http://example.com/ns#string": [{ "@value": "Document Resource" }],
+						"http://example.com/ns#pointerSet": [
+							{ "@id": "_:1" },
+							{ "@id": "_:2" },
+							{ "@id": "http://example.com/resource/#1" },
+							{ "@id": "http://example.com/external-resource/" }
+						]
+					},
+					{
+						"@id": "_:1",
+						"http://example.com/ns#string": [{ "@value": "Fragment 1" }],
+						"http://example.com/ns#pointerSet": [
+							{ "@id": "http://example.com/resource/" },
+							{ "@id": "http://example.com/resource/#1" }
+						]
+					},
+					{
+						"@id": "_:2",
+						"http://example.com/ns#string": [{ "@value": "Fragment 2" }]
+					},
+					{
+						"@id": "http://example.com/resource/#1",
+						"http://example.com/ns#string": [{ "@value": "NamedFragment 1" }]
+					},
+					{
+						"@id": "http://example.com/resource/#2",
+						"http://example.com/ns#string": [{ "@value": "NamedFragment 1" }]
+					}
+				]
+			}]`,
+			responseHeaders: {
+				"ETag": `"0123456789"`
+			}
+		});
+
+		let document:PersistedDocument.Class;
+		let fragment:PersistedFragment.Class;
+
+		let promises:Promise<any>[] = [];
+
+		let spies = {
+			init: ( [ persistedDoc, response ]:[ PersistedDocument.Class, HTTP.Response.Class ] ):any => {
+				document = persistedDoc;
+				fragment = persistedDoc.getFragment( "_:1" );
+
+				expect( document[ "string" ] ).toBe( "Document Resource" );
+				expect( fragment[ "string" ] ).toBe( "Fragment 1" );
+
+				let promise:Promise<any> = documents.refresh( document );
+				expect( promise instanceof Promise ).toBe( true );
+
+				return promise.then( spies.same );
+			},
+			same: ( [ persistedDoc, response ]:[ PersistedDocument.Class, HTTP.Response.Class ] ):any => {
+				expect( persistedDoc ).toBe( document );
+				expect( response ).toBeNull();
+
+				jasmine.Ajax.stubRequest( "http://example.com/resource/", null, "HEAD" ).andReturn( {
+					status: 200,
+					responseHeaders: {
+						"ETag": `"dif0123456789"`
+					}
+				});
+				jasmine.Ajax.stubRequest( "http://example.com/resource/", null, "GET" ).andReturn( {
+					status: 200,
+					responseText: `[{
+						"@id": "http://example.com/resource/",
+						"@graph": [
+							{
+								"@id": "http://example.com/resource/",
+								"http://example.com/ns#string": [{ "@value": "Changed Document Resource" }],
+								"http://example.com/ns#pointerSet": [
+									{ "@id": "_:1" },
+									{ "@id": "_:2" },
+									{ "@id": "http://example.com/resource/#1" },
+									{ "@id": "http://example.com/external-resource/" }
+								]
+							},
+							{
+								"@id": "_:1",
+								"http://example.com/ns#string": [{ "@value": "Changed Fragment 1" }],
+								"http://example.com/ns#pointerSet": [
+									{ "@id": "http://example.com/resource/" },
+									{ "@id": "http://example.com/resource/#1" }
+								]
+							},
+							{
+								"@id": "_:2",
+								"http://example.com/ns#string": [{ "@value": "Fragment 2" }]
+							},
+							{
+								"@id": "http://example.com/resource/#1",
+								"http://example.com/ns#string": [{ "@value": "NamedFragment 1" }]
+							},
+							{
+								"@id": "http://example.com/resource/#2",
+								"http://example.com/ns#string": [{ "@value": "NamedFragment 1" }]
+							}
+						]
+					}]`,
+					responseHeaders: {
+						"ETag": `"dif0123456789"`
+					}
+				});
+
+				let promise:Promise<any> = documents.refresh( document );
+				expect( promise instanceof Promise ).toBe( true );
+
+				return promise.then( spies.success );
+			},
+			success: ( [ persistedDoc, response ]:[ PersistedDocument.Class, HTTP.Response.Class ] ):any => {
+				expect( persistedDoc ).toBe( document );
+				expect( document[ "string" ] ).toBe( "Changed Document Resource" );
+				expect( fragment[ "string" ] ).toBe( "Changed Fragment 1" );
+
+				expect( response ).toBeDefined();
+				expect( response instanceof HTTP.Response.Class ).toBe( true );
+			}
+		};
+
+		let spySuccess = spyOn( spies, "success" ).and.callThrough();
+		let spySame = spyOn( spies, "same" ).and.callThrough();
+
+		let promise:Promise<any> = documents.get( "http://example.com/resource/" );
+		expect( promise instanceof Promise ).toBe( true );
+		promises.push( promise.then( spies.init ) );
+
+		Promise.all( promises ).then( ():void => {
+			expect( spySame ).toHaveBeenCalledTimes( 1 );
+			expect( spySuccess ).toHaveBeenCalledTimes( 1 );
+			done();
+		}).catch( done.fail );
 	});
 
 	it( hasMethod(

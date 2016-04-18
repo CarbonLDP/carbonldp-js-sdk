@@ -1577,7 +1577,7 @@ $__System.register("17", ["c", "18", "9", "5", "13", "19", "1a", "15", "8", "4",
                     return HTTP.Request.Service.head(persistedDocument.id, requestOptions).then(function (headerResponse) {
                         var eTag = HTTP.Response.Util.getETag(headerResponse);
                         if (eTag === persistedDocument._etag)
-                            return [persistedDocument, headerResponse];
+                            return [persistedDocument, null];
                         return HTTP.Request.Service.get(persistedDocument.id, requestOptions, new RDF.Document.Parser()).then(function (_a) {
                             var rdfDocuments = _a[0], response = _a[1];
                             eTag = HTTP.Response.Util.getETag(response);
