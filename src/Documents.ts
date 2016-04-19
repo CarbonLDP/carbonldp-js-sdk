@@ -475,15 +475,18 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 
 				let rdfDocument:RDF.Document.Class = this.getRDFDocument( persistedDocument.id, rdfDocuments, response );
 				if ( rdfDocument === null ) throw new HTTP.Errors.BadResponseError( "No document was returned.", response );
-				persistedDocument._etag = eTag;
 
 				let documentResources:RDF.Node.Class[] = RDF.Document.Util.getDocumentResources( rdfDocument );
 				if( documentResources.length > 1 ) throw new HTTP.Errors.BadResponseError( "The RDFDocument contains more than one document resource.", response );
 				if( documentResources.length === 0 ) throw new HTTP.Errors.BadResponseError( "The RDFDocument doesn\'t contain a document resource.", response );
 
+				persistedDocument._etag = eTag;
 				let documentResource:RDF.Node.Class = documentResources[ 0 ];
 				let fragmentResources:RDF.Node.Class[] = RDF.Document.Util.getBNodeResources( rdfDocument );
-				fragmentResources.concat( RDF.Document.Util.getFragmentResources( rdfDocument ) );
+				fragmentResources = fragmentResources.concat( RDF.Document.Util.getFragmentResources( rdfDocument ) );
+
+				let originalFragments:PersistedFragment.Class[] = persistedDocument.getFragments();
+				let setFragments:Set<string> = new Set( originalFragments.map( fragment => fragment.id ) );
 
 				let updatedData:Object = {};
 				this.compact( documentResource, updatedData, persistedDocument );
@@ -495,8 +498,9 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 				for( let fragmentResource of fragmentResources ) {
 					updatedData = this.compact( fragmentResource, {}, persistedDocument );
 
-					id = updatedData[ "id" ] || "";
+					id = updatedData[ "id" ];
 					if ( persistedDocument.hasFragment( id ) ) {
+						setFragments.delete( id );
 						fragment = this.mix( persistedDocument.getFragment( id ), updatedData );
 					} else {
 						fragment = persistedDocument.createFragment( id, updatedData );
@@ -505,6 +509,7 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 					fragment._syncSnapshot();
 				}
 
+				Array.from( setFragments ).map( id => persistedDocument.removeFragment( id ) );
 				persistedDocument._syncSavedFragments();
 
 				return [ persistedDocument, response ];

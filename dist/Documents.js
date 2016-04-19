@@ -416,15 +416,17 @@ var Documents = (function () {
                 var rdfDocument = _this.getRDFDocument(persistedDocument.id, rdfDocuments, response);
                 if (rdfDocument === null)
                     throw new HTTP.Errors.BadResponseError("No document was returned.", response);
-                persistedDocument._etag = eTag;
                 var documentResources = RDF.Document.Util.getDocumentResources(rdfDocument);
                 if (documentResources.length > 1)
                     throw new HTTP.Errors.BadResponseError("The RDFDocument contains more than one document resource.", response);
                 if (documentResources.length === 0)
                     throw new HTTP.Errors.BadResponseError("The RDFDocument doesn\'t contain a document resource.", response);
+                persistedDocument._etag = eTag;
                 var documentResource = documentResources[0];
                 var fragmentResources = RDF.Document.Util.getBNodeResources(rdfDocument);
-                fragmentResources.concat(RDF.Document.Util.getFragmentResources(rdfDocument));
+                fragmentResources = fragmentResources.concat(RDF.Document.Util.getFragmentResources(rdfDocument));
+                var originalFragments = persistedDocument.getFragments();
+                var setFragments = new Set(originalFragments.map(function (fragment) { return fragment.id; }));
                 var updatedData = {};
                 _this.compact(documentResource, updatedData, persistedDocument);
                 _this.mix(persistedDocument, updatedData);
@@ -434,8 +436,9 @@ var Documents = (function () {
                 for (var _i = 0, fragmentResources_2 = fragmentResources; _i < fragmentResources_2.length; _i++) {
                     var fragmentResource = fragmentResources_2[_i];
                     updatedData = _this.compact(fragmentResource, {}, persistedDocument);
-                    id = updatedData["id"] || "";
+                    id = updatedData["id"];
                     if (persistedDocument.hasFragment(id)) {
+                        setFragments.delete(id);
                         fragment = _this.mix(persistedDocument.getFragment(id), updatedData);
                     }
                     else {
@@ -443,6 +446,7 @@ var Documents = (function () {
                     }
                     fragment._syncSnapshot();
                 }
+                Array.from(setFragments).map(function (id) { return persistedDocument.removeFragment(id); });
                 persistedDocument._syncSavedFragments();
                 return [persistedDocument, response];
             });

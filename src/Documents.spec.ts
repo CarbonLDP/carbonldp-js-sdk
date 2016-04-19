@@ -1240,7 +1240,7 @@ describe( module( "Carbon/Documents", "" ), ():void => {
 					},
 					{
 						"@id": "http://example.com/resource/#2",
-						"http://example.com/ns#string": [{ "@value": "NamedFragment 1" }]
+						"http://example.com/ns#string": [{ "@value": "NamedFragment 2" }]
 					}
 				]
 			}]`,
@@ -1309,8 +1309,8 @@ describe( module( "Carbon/Documents", "" ), ():void => {
 								"http://example.com/ns#string": [{ "@value": "NamedFragment 1" }]
 							},
 							{
-								"@id": "http://example.com/resource/#2",
-								"http://example.com/ns#string": [{ "@value": "NamedFragment 1" }]
+								"@id": "http://example.com/resource/#3",
+								"http://example.com/ns#string": [{ "@value": "NamedFragment 3" }]
 							}
 						]
 					}]`,
@@ -1328,6 +1328,8 @@ describe( module( "Carbon/Documents", "" ), ():void => {
 				expect( persistedDoc ).toBe( document );
 				expect( document[ "string" ] ).toBe( "Changed Document Resource" );
 				expect( fragment[ "string" ] ).toBe( "Changed Fragment 1" );
+				expect( document.hasFragment( "#2" ) ).toBe( false );
+				expect( document.hasFragment( "#3" ) ).toBe( true );
 
 				expect( response ).toBeDefined();
 				expect( response instanceof HTTP.Response.Class ).toBe( true );
