@@ -46,12 +46,12 @@ declare class Documents implements Pointer.Library, Pointer.Validator, ObjectSch
     executeSELECTQuery(documentURI: string, selectQuery: string, requestOptions?: HTTP.Request.Options): Promise<[SPARQL.SELECTResults.Class, HTTP.Response.Class]>;
     executeRawCONSTRUCTQuery(documentURI: string, constructQuery: string, requestOptions?: HTTP.Request.Options): Promise<[string, HTTP.Response.Class]>;
     executeRawDESCRIBEQuery(documentURI: string, constructQuery: string, requestOptions?: HTTP.Request.Options): Promise<[string, HTTP.Response.Class]>;
+    compact(expandedObjects: Object[], targetObjects: Object[], pointerLibrary: Pointer.Library): Object[];
+    compact(expandedObject: Object, targetObject: Object, pointerLibrary: Pointer.Library): Object;
     private getRDFDocument(requestURL, rdfDocuments, response);
     private getDocumentResource(rdfDocument, response);
     private getPointerID(uri);
     private createPointer(localID);
-    private compact(expandedObjects, targetObjects, pointerLibrary);
-    private compact(expandedObject, targetObject, pointerLibrary);
     private compactSingle(expandedObject, targetObject, pointerLibrary);
     private getDigestedObjectSchemaForExpandedObject(expandedObject);
     private getDigestedObjectSchemaForDocument(document);

@@ -2633,6 +2633,14 @@ static statusCode:number
 name:string 
 ```
 
+```typescript 
+response:number 
+```
+
+```typescript 
+errorResponse:number 
+```
+
 
 #### <a name="Carbon-HTTP-Errors-HTTPError-Methods" />Methods
 
@@ -4300,10 +4308,12 @@ expand( compactedObject:Object,  digestedSchema:Carbon.ObjectSchema.DigestedObje
 | BasicContainer | [Carbon/LDP/BasicContainer](#Carbon-LDP-BasicContainer) |
 | Container | [Carbon/LDP/Container](#Carbon-LDP-Container) |
 | DirectContainer | [Carbon/LDP/DirectContainer](#Carbon-LDP-DirectContainer) |
+| Error | [Carbon/LDP/Error](#Carbon-LDP-Error) |
 | IndirectContainer | [Carbon/LDP/IndirectContainer](#Carbon-LDP-IndirectContainer) |
 | PersistedContainer | [Carbon/LDP/PersistedContainer](#Carbon-LDP-PersistedContainer) |
 | RDFSource | [Carbon/LDP/RDFSource](#Carbon-LDP-RDFSource) |
 | RemoveMemberAction | [Carbon/LDP/RemoveMemberAction](#Carbon-LDP-RemoveMemberAction) |
+| ErrorResponse | [Carbon/LDP/ErrorResponse](#Carbon-LDP-ErrorResponse) |
 
 
 
@@ -4955,6 +4965,14 @@ static AddMemberAction:string
 static RemoveMemberAction:string 
 ```
 
+```typescript 
+static ErrorResponse:string 
+```
+
+```typescript 
+static Error:string 
+```
+
 
 
 
@@ -4997,6 +5015,22 @@ static size:string
 
 ```typescript 
 static targetMember:string 
+```
+
+```typescript 
+static error:string 
+```
+
+```typescript 
+static httpStatusCode:string 
+```
+
+```typescript 
+static carbonCode:string 
+```
+
+```typescript 
+static message:string 
 ```
 
 

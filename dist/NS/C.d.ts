@@ -12,6 +12,8 @@ export declare class Class {
     static VolatileResource: string;
     static RDFRepresentation: string;
     static RemoveMemberAction: string;
+    static ErrorResponse: string;
+    static Error: string;
 }
 export declare class Predicate {
     static accessPoint: string;
@@ -22,4 +24,8 @@ export declare class Predicate {
     static mediaType: string;
     static size: string;
     static targetMember: string;
+    static error: string;
+    static httpStatusCode: string;
+    static carbonCode: string;
+    static message: string;
 }

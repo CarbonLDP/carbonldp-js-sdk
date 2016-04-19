@@ -13,10 +13,12 @@ import * as AddMemberAction from "./LDP/AddMemberAction";
 import * as BasicContainer from "./LDP/BasicContainer";
 import * as Container from "./LDP/Container";
 import * as DirectContainer from "./LDP/DirectContainer";
+import * as Error from "./LDP/Error";
 import * as IndirectContainer from "./LDP/IndirectContainer";
 import * as PersistedContainer from "./LDP/PersistedContainer";
 import * as RDFSource from "./LDP/RDFSource";
 import * as RemoveMemberAction from "./LDP/RemoveMemberAction";
+import * as ErrorResponse from "./LDP/ErrorResponse";
 
 import * as LDP from "./LDP";
 
@@ -65,6 +67,15 @@ describe( module( "Carbon/LDP" ), ():void => {
 
 	it( reexports(
 		STATIC,
+		"Error",
+		"Carbon/LDP/Error"
+	), ():void => {
+		expect( LDP.Error ).toBeDefined();
+		expect( LDP.Error ).toBe( Error );
+	});
+
+	it( reexports(
+		STATIC,
 		"IndirectContainer",
 		"Carbon/LDP/IndirectContainer"
 	), ():void => {
@@ -97,6 +108,15 @@ describe( module( "Carbon/LDP" ), ():void => {
 	), ():void => {
 		expect( LDP.RemoveMemberAction ).toBeDefined();
 		expect( LDP.RemoveMemberAction ).toBe( RemoveMemberAction );
+	});
+
+	it( reexports(
+		STATIC,
+		"ErrorResponse",
+		"Carbon/LDP/ErrorResponse"
+	), ():void => {
+		expect( LDP.ErrorResponse ).toBeDefined();
+		expect( LDP.ErrorResponse ).toBe( ErrorResponse );
 	});
 
 });

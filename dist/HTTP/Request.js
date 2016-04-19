@@ -3,6 +3,7 @@ var Errors = require("./Errors");
 var Header = require("./Header");
 var Method_1 = require("./Method");
 var Response_1 = require("./Response");
+var ErrorResponse = require("./../LDP/ErrorResponse");
 var Utils = require("./../Utils");
 function setHeaders(request, headers) {
     var namesIterator = headers.keys();
@@ -34,8 +35,14 @@ function rejectRequest(reject, request) {
     var response = new Response_1.default(request);
     if (response.status >= 400 && response.status < 600) {
         if (Errors.statusCodeMap.has(response.status)) {
-            var error = Errors.statusCodeMap.get(response.status);
-            reject(new error("", response));
+            var errorClass = Errors.statusCodeMap.get(response.status);
+            var error_1 = new errorClass("", response);
+            ErrorResponse.Factory.create(response.data).then(function (errorResponse) {
+                error_1.errorResponse = errorResponse;
+                error_1.message = ErrorResponse.Utils.getMessage(errorResponse);
+                throw error_1;
+            }).catch(function () { return reject(error_1); });
+            return;
         }
     }
     reject(new Errors.UnknownError("", response));

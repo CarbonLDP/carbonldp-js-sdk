@@ -13,6 +13,8 @@ export class Class {
 	static get VolatileResource():string { return namespace + "VolatileResource"; }
 	static get RDFRepresentation():string { return namespace + "RDFRepresentation"; }
 	static get RemoveMemberAction():string { return namespace + "RemoveMemberAction"; }
+	static get ErrorResponse():string { return namespace + "ErrorResponse"; }
+	static get Error():string { return namespace + "Error"; }
 }
 
 export class Predicate {
@@ -24,4 +26,8 @@ export class Predicate {
 	static get mediaType():string { return namespace + "mediaType"; }
 	static get size():string { return namespace + "size"; }
 	static get targetMember():string { return namespace + "targetMember"; }
+	static get error():string { return namespace + "error"; }
+	static get httpStatusCode():string { return namespace + "httpStatusCode"; }
+	static get carbonCode():string { return namespace + "carbonCode"; }
+	static get message():string { return namespace + "message"; }
 }

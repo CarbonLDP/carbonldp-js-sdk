@@ -63,6 +63,16 @@ var Class = (function () {
         enumerable: true,
         configurable: true
     });
+    Object.defineProperty(Class, "ErrorResponse", {
+        get: function () { return exports.namespace + "ErrorResponse"; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Class, "Error", {
+        get: function () { return exports.namespace + "Error"; },
+        enumerable: true,
+        configurable: true
+    });
     return Class;
 }());
 exports.Class = Class;
@@ -106,6 +116,26 @@ var Predicate = (function () {
     });
     Object.defineProperty(Predicate, "targetMember", {
         get: function () { return exports.namespace + "targetMember"; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Predicate, "error", {
+        get: function () { return exports.namespace + "error"; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Predicate, "httpStatusCode", {
+        get: function () { return exports.namespace + "httpStatusCode"; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Predicate, "carbonCode", {
+        get: function () { return exports.namespace + "carbonCode"; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Predicate, "message", {
+        get: function () { return exports.namespace + "message"; },
         enumerable: true,
         configurable: true
     });

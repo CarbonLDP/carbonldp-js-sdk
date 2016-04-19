@@ -106,6 +106,28 @@ describe( module(
 			expect( HTTPError.statusCode ).toBeNull();
 		});
 
+		it( hasProperty(
+			INSTANCE,
+			"response",
+			"number"
+		), ():void => {
+			let error: HTTPError = new HTTPError( "Message of the error", response );
+
+			expect( error.response ).toBeDefined();
+			expect( error.response instanceof Response );
+			expect( error.response ).toBe( response );
+		});
+
+		it( hasProperty(
+			INSTANCE,
+			"errorResponse",
+			"number"
+		), ():void => {
+			let error: HTTPError = new HTTPError( "Message of the error", response );
+
+			expect( error.errorResponse ).toBeUndefined();
+		});
+
 	});
 
 });

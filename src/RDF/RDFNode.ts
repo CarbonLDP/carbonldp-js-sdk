@@ -31,3 +31,5 @@ export class Util {
 		return typeof uri !== "undefined" ? uri[ "@id" ] : null;
 	}
 }
+
+export default Class;

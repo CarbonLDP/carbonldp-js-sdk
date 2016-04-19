@@ -3,6 +3,8 @@ import * as Header from "./Header";
 import Method from "./Method";
 import Parser from "./Parser";
 import Response from "./Response";
+import * as ErrorResponse from "./../LDP/ErrorResponse";
+import HTTPError from "./Errors/HTTPError";
 
 import * as Utils from "./../Utils";
 
@@ -54,9 +56,15 @@ function rejectRequest( reject:( error:any ) => void, request:XMLHttpRequest ):v
 
 	if ( response.status >= 400 && response.status < 600 ) {
 		if ( Errors.statusCodeMap.has( response.status ) ) {
-			let error:typeof Errors.Error = Errors.statusCodeMap.get( response.status );
-			// TODO: Set error message
-			reject( new error( "", response ) );
+			let errorClass:typeof Errors.Error = Errors.statusCodeMap.get( response.status );
+			let error:HTTPError = new errorClass( "", response );
+
+			ErrorResponse.Factory.create( response.data ).then( ( errorResponse:ErrorResponse.Class ) => {
+				error.errorResponse = errorResponse;
+				error.message = ErrorResponse.Utils.getMessage( errorResponse );
+				throw error;
+			}).catch( () => reject( error ) );
+			return;
 		}
 	}
 
