@@ -39,7 +39,7 @@ function rejectRequest(reject, request) {
             var error_1 = new errorClass("", response);
             ErrorResponse.Factory.create(response.data).then(function (errorResponse) {
                 error_1.errorResponse = errorResponse;
-                error_1.message = ErrorResponse.Utils.getMessage(errorResponse);
+                error_1.message = ErrorResponse.Util.getMessage(errorResponse);
                 throw error_1;
             }).catch(function () { return reject(error_1); });
             return;

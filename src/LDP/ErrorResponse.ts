@@ -58,7 +58,7 @@ export class Factory {
 	}
 }
 
-export class Utils {
+export class Util {
 	static getMessage( errorResponse:Class ):string {
 		let messages:string[] = [];
 		for ( let error of errorResponse.errors ) {

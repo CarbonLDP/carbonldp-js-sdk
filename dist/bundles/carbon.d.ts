@@ -1283,7 +1283,7 @@ declare module 'carbonldp/LDP/ErrorResponse' {
 	export class Factory {
 	    static create(data: string): Promise<Class>;
 	}
-	export class Utils {
+	export class Util {
 	    static getMessage(errorResponse: Class): string;
 	}
 	export default Class;

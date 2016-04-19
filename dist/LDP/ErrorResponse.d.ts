@@ -9,7 +9,7 @@ export interface Class {
 export declare class Factory {
     static create(data: string): Promise<Class>;
 }
-export declare class Utils {
+export declare class Util {
     static getMessage(errorResponse: Class): string;
 }
 export default Class;

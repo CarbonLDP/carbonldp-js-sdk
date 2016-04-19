@@ -11078,7 +11078,7 @@ $__System.register("f", ["43", "37", "17", "40", "c", "3", "4", "10", "12", "51"
 
 $__System.register("4c", ["13", "4", "55", "f"], function(exports_1) {
     var Document, NS, RDFDocument, SDKContext_1;
-    var RDF_CLASS, SCHEMA, Factory, Utils;
+    var RDF_CLASS, SCHEMA, Factory, Util;
     return {
         setters:[
             function (Document_1) {
@@ -11138,10 +11138,10 @@ $__System.register("4c", ["13", "4", "55", "f"], function(exports_1) {
                 return Factory;
             })();
             exports_1("Factory", Factory);
-            Utils = (function () {
-                function Utils() {
+            Util = (function () {
+                function Util() {
                 }
-                Utils.getMessage = function (errorResponse) {
+                Util.getMessage = function (errorResponse) {
                     var messages = [];
                     for (var _i = 0, _a = errorResponse.errors; _i < _a.length; _i++) {
                         var error = _a[_i];
@@ -11149,9 +11149,9 @@ $__System.register("4c", ["13", "4", "55", "f"], function(exports_1) {
                     }
                     return messages.join(", ");
                 };
-                return Utils;
+                return Util;
             })();
-            exports_1("Utils", Utils);
+            exports_1("Util", Util);
         }
     }
 });
@@ -11193,7 +11193,7 @@ $__System.register("56", ["35", "57", "36", "58", "4c", "5"], function(exports_1
                 var error = new errorClass("", response);
                 ErrorResponse.Factory.create(response.data).then(function (errorResponse) {
                     error.errorResponse = errorResponse;
-                    error.message = ErrorResponse.Utils.getMessage(errorResponse);
+                    error.message = ErrorResponse.Util.getMessage(errorResponse);
                     throw error;
                 }).catch(function () { return reject(error); });
                 return;

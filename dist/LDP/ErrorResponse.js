@@ -47,10 +47,10 @@ var Factory = (function () {
     return Factory;
 }());
 exports.Factory = Factory;
-var Utils = (function () {
-    function Utils() {
+var Util = (function () {
+    function Util() {
     }
-    Utils.getMessage = function (errorResponse) {
+    Util.getMessage = function (errorResponse) {
         var messages = [];
         for (var _i = 0, _a = errorResponse.errors; _i < _a.length; _i++) {
             var error = _a[_i];
@@ -58,8 +58,8 @@ var Utils = (function () {
         }
         return messages.join(", ");
     };
-    return Utils;
+    return Util;
 }());
-exports.Utils = Utils;
+exports.Util = Util;
 
 //# sourceMappingURL=ErrorResponse.js.map

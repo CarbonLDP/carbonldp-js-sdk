@@ -61,7 +61,7 @@ function rejectRequest( reject:( error:any ) => void, request:XMLHttpRequest ):v
 
 			ErrorResponse.Factory.create( response.data ).then( ( errorResponse:ErrorResponse.Class ) => {
 				error.errorResponse = errorResponse;
-				error.message = ErrorResponse.Utils.getMessage( errorResponse );
+				error.message = ErrorResponse.Util.getMessage( errorResponse );
 				throw error;
 			}).catch( () => reject( error ) );
 			return;
