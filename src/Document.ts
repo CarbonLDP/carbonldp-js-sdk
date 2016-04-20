@@ -332,7 +332,7 @@ function convertNestedObjects( parent:Class, actual:any ):void {
 			continue;
 		}
 
-		if ( ! isPlainObject( next ) ) continue;
+		if ( ! Utils.isPlainObject( next ) ) continue;
 
 		idOrSlug = ( "id" in next ) ?  next.id : ( ( "slug" in next ) ? next.slug : "" );
 		if ( ! parent.inScope( idOrSlug ) ) continue;
@@ -351,13 +351,6 @@ function convertNestedObjects( parent:Class, actual:any ):void {
 
 	}
 
-}
-
-function isPlainObject( object:Object ):boolean {
-	return Utils.isObject( object )
-		&& ! Utils.isArray( object )
-		&& ! Utils.isDate( object )
-		&& ! Utils.isMap( object );
 }
 
 export default Class;

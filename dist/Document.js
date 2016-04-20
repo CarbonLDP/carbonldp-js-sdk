@@ -266,7 +266,7 @@ function convertNestedObjects(parent, actual) {
             convertNestedObjects(parent, next);
             continue;
         }
-        if (!isPlainObject(next))
+        if (!Utils.isPlainObject(next))
             continue;
         idOrSlug = ("id" in next) ? next.id : (("slug" in next) ? next.slug : "");
         if (!parent.inScope(idOrSlug))
@@ -282,12 +282,6 @@ function convertNestedObjects(parent, actual) {
             convertNestedObjects(parent, fragment);
         }
     }
-}
-function isPlainObject(object) {
-    return Utils.isObject(object)
-        && !Utils.isArray(object)
-        && !Utils.isDate(object)
-        && !Utils.isMap(object);
 }
 
 //# sourceMappingURL=Document.js.map

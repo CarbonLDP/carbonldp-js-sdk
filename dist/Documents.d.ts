@@ -59,6 +59,6 @@ declare class Documents implements Pointer.Library, Pointer.Validator, ObjectSch
     private getDigestedObjectSchema(objectTypes);
     private getExpandedObjectTypes(expandedObject);
     private getDocumentTypes(document);
-    private mix(target, source);
+    private updateObject(target, source);
 }
 export default Documents;

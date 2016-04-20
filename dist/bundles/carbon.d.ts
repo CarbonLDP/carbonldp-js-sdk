@@ -5,7 +5,7 @@ declare module 'carbonldp/Auth/AuthenticationToken' {
 
 }
 declare module 'carbonldp/Utils' {
-	 function hasFunction(object: Object, functionName: string): boolean; function hasProperty(object: Object, property: string): boolean; function hasPropertyDefined(object: Object, property: string): boolean; function isDefined(value: any): boolean; function isNull(value: any): boolean; function isArray(object: any): boolean; function isString(value: any): boolean; function isBoolean(value: any): boolean; function isNumber(value: any): boolean; function isInteger(value: any): boolean; function isDouble(value: any): boolean; function isDate(date: any): boolean; function isObject(object: any): boolean; function isFunction(value: any): boolean; function isMap(value: any): boolean; function parseBoolean(value: string): boolean; function extend(target: Object, ...objects: Object[]): Object; function forEachOwnProperty(object: Object, action: (name: string, value: any) => (boolean | void)): void; class O {
+	 function hasFunction(object: Object, functionName: string): boolean; function hasProperty(object: Object, property: string): boolean; function hasPropertyDefined(object: Object, property: string): boolean; function isDefined(value: any): boolean; function isNull(value: any): boolean; function isArray(object: any): boolean; function isString(value: any): boolean; function isBoolean(value: any): boolean; function isNumber(value: any): boolean; function isInteger(value: any): boolean; function isDouble(value: any): boolean; function isDate(date: any): boolean; function isObject(object: any): boolean; function isPlainObject(object: Object): boolean; function isFunction(value: any): boolean; function isMap(value: any): boolean; function parseBoolean(value: string): boolean; function extend(target: Object, ...objects: Object[]): Object; function forEachOwnProperty(object: Object, action: (name: string, value: any) => (boolean | void)): void; class O {
 	    static areShallowlyEqual(object1: Object, object2: Object): boolean;
 	} class S {
 	    static startsWith(str: string, substring: string): boolean;
@@ -22,7 +22,7 @@ declare module 'carbonldp/Utils' {
 	    static is(uuid: string): boolean;
 	    static generate(): string;
 	}
-	export { hasFunction, hasProperty, hasPropertyDefined, isDefined, isNull, isArray, isString, isBoolean, isNumber, isInteger, isDouble, isDate, isObject, isFunction, isMap, parseBoolean, extend, forEachOwnProperty, O, S, A, M, UUID };
+	export { hasFunction, hasProperty, hasPropertyDefined, isDefined, isNull, isArray, isString, isBoolean, isNumber, isInteger, isDouble, isDate, isObject, isPlainObject, isFunction, isMap, parseBoolean, extend, forEachOwnProperty, O, S, A, M, UUID };
 
 }
 declare module 'carbonldp/Errors/AbstractError' {
@@ -1493,7 +1493,7 @@ declare module 'carbonldp/Documents' {
 	    private getDigestedObjectSchema(objectTypes);
 	    private getExpandedObjectTypes(expandedObject);
 	    private getDocumentTypes(document);
-	    private mix(target, source);
+	    private updateObject(target, source);
 	}
 	export default Documents;
 

@@ -1215,6 +1215,7 @@ describe( module( "Carbon/Documents", "" ), ():void => {
 					{
 						"@id": "http://example.com/resource/",
 						"http://example.com/ns#string": [{ "@value": "Document Resource" }],
+						"http://example.com/ns#pointer": [{ "@id": "_:1" }],
 						"http://example.com/ns#pointerSet": [
 							{ "@id": "_:1" },
 							{ "@id": "_:2" },
@@ -1261,6 +1262,9 @@ describe( module( "Carbon/Documents", "" ), ():void => {
 
 				expect( document[ "string" ] ).toBe( "Document Resource" );
 				expect( fragment[ "string" ] ).toBe( "Fragment 1" );
+				expect( document[ "pointer" ] ).toBe( fragment );
+
+				document[ "new-property" ] = "A new property that will be erased at refresh";
 
 				let promise:Promise<any> = documents.refresh( document );
 				expect( promise instanceof Promise ).toBe( true );
@@ -1285,6 +1289,7 @@ describe( module( "Carbon/Documents", "" ), ():void => {
 							{
 								"@id": "http://example.com/resource/",
 								"http://example.com/ns#string": [{ "@value": "Changed Document Resource" }],
+								"http://example.com/ns#pointer": [{ "@id": "_:1" }],
 								"http://example.com/ns#pointerSet": [
 									{ "@id": "_:1" },
 									{ "@id": "_:2" },
@@ -1328,8 +1333,13 @@ describe( module( "Carbon/Documents", "" ), ():void => {
 				expect( persistedDoc ).toBe( document );
 				expect( document[ "string" ] ).toBe( "Changed Document Resource" );
 				expect( fragment[ "string" ] ).toBe( "Changed Fragment 1" );
+				expect( document[ "pointer" ] ).toBe( fragment );
+				expect( document[ "pointer" ][ "string" ] ).toBe( "Changed Fragment 1" );
+
 				expect( document.hasFragment( "#2" ) ).toBe( false );
 				expect( document.hasFragment( "#3" ) ).toBe( true );
+
+				expect( document[ "new-property" ] ).toBeUndefined();
 
 				expect( response ).toBeDefined();
 				expect( response instanceof HTTP.Response.Class ).toBe( true );

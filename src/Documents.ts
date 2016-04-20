@@ -467,53 +467,56 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 
 		return HTTP.Request.Service.head( persistedDocument.id, requestOptions ).then( ( headerResponse:HTTP.Response.Class ) => {
 			let eTag:string = HTTP.Response.Util.getETag( headerResponse );
-			if ( eTag === persistedDocument._etag ) return [ persistedDocument, null ];
+			if ( eTag === persistedDocument._etag ) return <any> [ persistedDocument, null ];
 
-			return HTTP.Request.Service.get( persistedDocument.id, requestOptions, new RDF.Document.Parser() ).then( ( [ rdfDocuments, response ]:[ RDF.Document.Class[], HTTP.Response.Class ] ) => {
-				eTag = HTTP.Response.Util.getETag( response );
-				if( eTag === null ) throw new HTTP.Errors.BadResponseError( "The response doesn't contain an ETag", response );
+			return HTTP.Request.Service.get( persistedDocument.id, requestOptions, new RDF.Document.Parser() );
 
-				let rdfDocument:RDF.Document.Class = this.getRDFDocument( persistedDocument.id, rdfDocuments, response );
-				if ( rdfDocument === null ) throw new HTTP.Errors.BadResponseError( "No document was returned.", response );
+		}).then( ( [ rdfDocuments, response ]:[ RDF.Document.Class[], HTTP.Response.Class ] ) => {
+			if ( response === null ) return <any> [ rdfDocuments, response ];
 
-				let documentResources:RDF.Node.Class[] = RDF.Document.Util.getDocumentResources( rdfDocument );
-				if( documentResources.length > 1 ) throw new HTTP.Errors.BadResponseError( "The RDFDocument contains more than one document resource.", response );
-				if( documentResources.length === 0 ) throw new HTTP.Errors.BadResponseError( "The RDFDocument doesn\'t contain a document resource.", response );
+			let eTag:string = HTTP.Response.Util.getETag( response );
+			if( eTag === null ) throw new HTTP.Errors.BadResponseError( "The response doesn't contain an ETag", response );
 
-				persistedDocument._etag = eTag;
-				let documentResource:RDF.Node.Class = documentResources[ 0 ];
-				let fragmentResources:RDF.Node.Class[] = RDF.Document.Util.getBNodeResources( rdfDocument );
-				fragmentResources = fragmentResources.concat( RDF.Document.Util.getFragmentResources( rdfDocument ) );
+			let rdfDocument:RDF.Document.Class = this.getRDFDocument( persistedDocument.id, rdfDocuments, response );
+			if ( rdfDocument === null ) throw new HTTP.Errors.BadResponseError( "No document was returned.", response );
 
-				let originalFragments:PersistedFragment.Class[] = persistedDocument.getFragments();
-				let setFragments:Set<string> = new Set( originalFragments.map( fragment => fragment.id ) );
+			let documentResources:RDF.Node.Class[] = RDF.Document.Util.getDocumentResources( rdfDocument );
+			if( documentResources.length > 1 ) throw new HTTP.Errors.BadResponseError( "The RDFDocument contains more than one document resource.", response );
+			if( documentResources.length === 0 ) throw new HTTP.Errors.BadResponseError( "The RDFDocument doesn\'t contain a document resource.", response );
 
-				let updatedData:Object = {};
-				this.compact( documentResource, updatedData, persistedDocument );
-				this.mix( persistedDocument, updatedData );
-				persistedDocument._syncSnapshot();
+			persistedDocument._etag = eTag;
+			let documentResource:RDF.Node.Class = documentResources[ 0 ];
+			let fragmentResources:RDF.Node.Class[] = RDF.Document.Util.getBNodeResources( rdfDocument );
+			fragmentResources = fragmentResources.concat( RDF.Document.Util.getFragmentResources( rdfDocument ) );
 
-				let id:string;
-				let fragment:PersistedFragment.Class;
-				for( let fragmentResource of fragmentResources ) {
-					updatedData = this.compact( fragmentResource, {}, persistedDocument );
+			let originalFragments:PersistedFragment.Class[] = persistedDocument.getFragments();
+			let setFragments:Set<string> = new Set( originalFragments.map( fragment => fragment.id ) );
 
-					id = updatedData[ "id" ];
-					if ( persistedDocument.hasFragment( id ) ) {
-						setFragments.delete( id );
-						fragment = this.mix( persistedDocument.getFragment( id ), updatedData );
-					} else {
-						fragment = persistedDocument.createFragment( id, updatedData );
-					}
+			let updatedData:Object = {};
+			this.compact( documentResource, updatedData, persistedDocument );
+			this.updateObject( persistedDocument, updatedData );
+			persistedDocument._syncSnapshot();
 
-					fragment._syncSnapshot();
+			let id:string;
+			let fragment:PersistedFragment.Class;
+			for( let fragmentResource of fragmentResources ) {
+				updatedData = this.compact( fragmentResource, {}, persistedDocument );
+
+				id = updatedData[ "id" ];
+				if ( persistedDocument.hasFragment( id ) ) {
+					setFragments.delete( id );
+					fragment = this.updateObject( persistedDocument.getFragment( id ), updatedData );
+				} else {
+					fragment = persistedDocument.createFragment( id, updatedData );
 				}
 
-				Array.from( setFragments ).map( id => persistedDocument.removeFragment( id ) );
-				persistedDocument._syncSavedFragments();
+				fragment._syncSnapshot();
+			}
 
-				return [ persistedDocument, response ];
-			});
+			Array.from( setFragments ).map( id => persistedDocument.removeFragment( id ) );
+			persistedDocument._syncSavedFragments();
+
+			return [ persistedDocument, response ];
 		});
 	}
 
@@ -721,35 +724,20 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 		return document.types;
 	}
 
-	private mix( target:any, source:any ):any {
-		if ( ! isPlainObject( target ) || ! isPlainObject( source ) ) return;
+	private updateObject( target:Object, source:Object ):any {
+		let keys:string[] = Array.from<string>( new Set( Object.keys( source ).concat(  Object.keys( target ) ) ) );
 
-		let keys:Set<string> = new Set( Object.keys( source ).concat(  Object.keys( target ) ) );
-
-		for ( let key of Array.from( keys ) ) {
+		for ( let key of keys ) {
 			if ( Utils.hasProperty( source, key ) ) {
-				if ( PersistedResource.Factory.hasClassProperties( target[ key ] ) ) continue;
-
-				this.mix( target[ key ], source[ key ] );
 				target[ key ] = source[ key ];
 			} else {
-				if ( Utils.isArray( target ) ) {
-					(< Array<any> > target).splice( parseFloat( key ), 1 );
-				} else {
-					delete target[ key ];
-				}
+				delete target[ key ];
 			}
 		}
 
 		return target;
 	}
 
-}
-
-function isPlainObject( element:any ):boolean {
-	return Utils.isObject( element )
-		&& ! Utils.isMap( element )
-		&& ! Utils.isDate( element );
 }
 
 export default Documents;

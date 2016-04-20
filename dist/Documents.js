@@ -5,7 +5,6 @@ var RDF = require("./RDF");
 var Utils = require("./Utils");
 var Document = require("./Document");
 var JSONLDConverter = require("./JSONLDConverter");
-var PersistedResource = require("./PersistedResource");
 var PersistedDocument = require("./PersistedDocument");
 var Pointer = require("./Pointer");
 var NS = require("./NS");
@@ -408,48 +407,50 @@ var Documents = (function () {
             var eTag = HTTP.Response.Util.getETag(headerResponse);
             if (eTag === persistedDocument._etag)
                 return [persistedDocument, null];
-            return HTTP.Request.Service.get(persistedDocument.id, requestOptions, new RDF.Document.Parser()).then(function (_a) {
-                var rdfDocuments = _a[0], response = _a[1];
-                eTag = HTTP.Response.Util.getETag(response);
-                if (eTag === null)
-                    throw new HTTP.Errors.BadResponseError("The response doesn't contain an ETag", response);
-                var rdfDocument = _this.getRDFDocument(persistedDocument.id, rdfDocuments, response);
-                if (rdfDocument === null)
-                    throw new HTTP.Errors.BadResponseError("No document was returned.", response);
-                var documentResources = RDF.Document.Util.getDocumentResources(rdfDocument);
-                if (documentResources.length > 1)
-                    throw new HTTP.Errors.BadResponseError("The RDFDocument contains more than one document resource.", response);
-                if (documentResources.length === 0)
-                    throw new HTTP.Errors.BadResponseError("The RDFDocument doesn\'t contain a document resource.", response);
-                persistedDocument._etag = eTag;
-                var documentResource = documentResources[0];
-                var fragmentResources = RDF.Document.Util.getBNodeResources(rdfDocument);
-                fragmentResources = fragmentResources.concat(RDF.Document.Util.getFragmentResources(rdfDocument));
-                var originalFragments = persistedDocument.getFragments();
-                var setFragments = new Set(originalFragments.map(function (fragment) { return fragment.id; }));
-                var updatedData = {};
-                _this.compact(documentResource, updatedData, persistedDocument);
-                _this.mix(persistedDocument, updatedData);
-                persistedDocument._syncSnapshot();
-                var id;
-                var fragment;
-                for (var _i = 0, fragmentResources_2 = fragmentResources; _i < fragmentResources_2.length; _i++) {
-                    var fragmentResource = fragmentResources_2[_i];
-                    updatedData = _this.compact(fragmentResource, {}, persistedDocument);
-                    id = updatedData["id"];
-                    if (persistedDocument.hasFragment(id)) {
-                        setFragments.delete(id);
-                        fragment = _this.mix(persistedDocument.getFragment(id), updatedData);
-                    }
-                    else {
-                        fragment = persistedDocument.createFragment(id, updatedData);
-                    }
-                    fragment._syncSnapshot();
+            return HTTP.Request.Service.get(persistedDocument.id, requestOptions, new RDF.Document.Parser());
+        }).then(function (_a) {
+            var rdfDocuments = _a[0], response = _a[1];
+            if (response === null)
+                return [rdfDocuments, response];
+            var eTag = HTTP.Response.Util.getETag(response);
+            if (eTag === null)
+                throw new HTTP.Errors.BadResponseError("The response doesn't contain an ETag", response);
+            var rdfDocument = _this.getRDFDocument(persistedDocument.id, rdfDocuments, response);
+            if (rdfDocument === null)
+                throw new HTTP.Errors.BadResponseError("No document was returned.", response);
+            var documentResources = RDF.Document.Util.getDocumentResources(rdfDocument);
+            if (documentResources.length > 1)
+                throw new HTTP.Errors.BadResponseError("The RDFDocument contains more than one document resource.", response);
+            if (documentResources.length === 0)
+                throw new HTTP.Errors.BadResponseError("The RDFDocument doesn\'t contain a document resource.", response);
+            persistedDocument._etag = eTag;
+            var documentResource = documentResources[0];
+            var fragmentResources = RDF.Document.Util.getBNodeResources(rdfDocument);
+            fragmentResources = fragmentResources.concat(RDF.Document.Util.getFragmentResources(rdfDocument));
+            var originalFragments = persistedDocument.getFragments();
+            var setFragments = new Set(originalFragments.map(function (fragment) { return fragment.id; }));
+            var updatedData = {};
+            _this.compact(documentResource, updatedData, persistedDocument);
+            _this.updateObject(persistedDocument, updatedData);
+            persistedDocument._syncSnapshot();
+            var id;
+            var fragment;
+            for (var _i = 0, fragmentResources_2 = fragmentResources; _i < fragmentResources_2.length; _i++) {
+                var fragmentResource = fragmentResources_2[_i];
+                updatedData = _this.compact(fragmentResource, {}, persistedDocument);
+                id = updatedData["id"];
+                if (persistedDocument.hasFragment(id)) {
+                    setFragments.delete(id);
+                    fragment = _this.updateObject(persistedDocument.getFragment(id), updatedData);
                 }
-                Array.from(setFragments).map(function (id) { return persistedDocument.removeFragment(id); });
-                persistedDocument._syncSavedFragments();
-                return [persistedDocument, response];
-            });
+                else {
+                    fragment = persistedDocument.createFragment(id, updatedData);
+                }
+                fragment._syncSnapshot();
+            }
+            Array.from(setFragments).map(function (id) { return persistedDocument.removeFragment(id); });
+            persistedDocument._syncSavedFragments();
+            return [persistedDocument, response];
         });
     };
     Documents.prototype.delete = function (documentURI, requestOptions) {
@@ -639,36 +640,21 @@ var Documents = (function () {
             return [];
         return document.types;
     };
-    Documents.prototype.mix = function (target, source) {
-        if (!isPlainObject(target) || !isPlainObject(source))
-            return;
-        var keys = new Set(Object.keys(source).concat(Object.keys(target)));
-        for (var _i = 0, _a = Array.from(keys); _i < _a.length; _i++) {
-            var key = _a[_i];
+    Documents.prototype.updateObject = function (target, source) {
+        var keys = Array.from(new Set(Object.keys(source).concat(Object.keys(target))));
+        for (var _i = 0, keys_1 = keys; _i < keys_1.length; _i++) {
+            var key = keys_1[_i];
             if (Utils.hasProperty(source, key)) {
-                if (PersistedResource.Factory.hasClassProperties(target[key]))
-                    continue;
-                this.mix(target[key], source[key]);
                 target[key] = source[key];
             }
             else {
-                if (Utils.isArray(target)) {
-                    target.splice(parseFloat(key), 1);
-                }
-                else {
-                    delete target[key];
-                }
+                delete target[key];
             }
         }
         return target;
     };
     return Documents;
 }());
-function isPlainObject(element) {
-    return Utils.isObject(element)
-        && !Utils.isMap(element)
-        && !Utils.isDate(element);
-}
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = Documents;
 

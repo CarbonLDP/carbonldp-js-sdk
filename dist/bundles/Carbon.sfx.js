@@ -1126,14 +1126,9 @@ $__System.register("16", ["4"], function(exports_1) {
     }
 });
 
-$__System.register("17", ["c", "18", "9", "5", "13", "19", "1a", "15", "8", "4", "10", "3", "1b"], function(exports_1) {
-    var Errors, HTTP, RDF, Utils, Document, JSONLDConverter, PersistedResource, PersistedDocument, Pointer, NS, ObjectSchema, LDP, SPARQL;
+$__System.register("17", ["c", "18", "9", "5", "13", "19", "15", "8", "4", "10", "3", "1a"], function(exports_1) {
+    var Errors, HTTP, RDF, Utils, Document, JSONLDConverter, PersistedDocument, Pointer, NS, ObjectSchema, LDP, SPARQL;
     var Documents;
-    function isPlainObject(element) {
-        return Utils.isObject(element)
-            && !Utils.isMap(element)
-            && !Utils.isDate(element);
-    }
     return {
         setters:[
             function (Errors_1) {
@@ -1153,9 +1148,6 @@ $__System.register("17", ["c", "18", "9", "5", "13", "19", "1a", "15", "8", "4",
             },
             function (JSONLDConverter_1) {
                 JSONLDConverter = JSONLDConverter_1;
-            },
-            function (PersistedResource_1) {
-                PersistedResource = PersistedResource_1;
             },
             function (PersistedDocument_1) {
                 PersistedDocument = PersistedDocument_1;
@@ -1578,48 +1570,50 @@ $__System.register("17", ["c", "18", "9", "5", "13", "19", "1a", "15", "8", "4",
                         var eTag = HTTP.Response.Util.getETag(headerResponse);
                         if (eTag === persistedDocument._etag)
                             return [persistedDocument, null];
-                        return HTTP.Request.Service.get(persistedDocument.id, requestOptions, new RDF.Document.Parser()).then(function (_a) {
-                            var rdfDocuments = _a[0], response = _a[1];
-                            eTag = HTTP.Response.Util.getETag(response);
-                            if (eTag === null)
-                                throw new HTTP.Errors.BadResponseError("The response doesn't contain an ETag", response);
-                            var rdfDocument = _this.getRDFDocument(persistedDocument.id, rdfDocuments, response);
-                            if (rdfDocument === null)
-                                throw new HTTP.Errors.BadResponseError("No document was returned.", response);
-                            var documentResources = RDF.Document.Util.getDocumentResources(rdfDocument);
-                            if (documentResources.length > 1)
-                                throw new HTTP.Errors.BadResponseError("The RDFDocument contains more than one document resource.", response);
-                            if (documentResources.length === 0)
-                                throw new HTTP.Errors.BadResponseError("The RDFDocument doesn\'t contain a document resource.", response);
-                            persistedDocument._etag = eTag;
-                            var documentResource = documentResources[0];
-                            var fragmentResources = RDF.Document.Util.getBNodeResources(rdfDocument);
-                            fragmentResources = fragmentResources.concat(RDF.Document.Util.getFragmentResources(rdfDocument));
-                            var originalFragments = persistedDocument.getFragments();
-                            var setFragments = new Set(originalFragments.map(function (fragment) { return fragment.id; }));
-                            var updatedData = {};
-                            _this.compact(documentResource, updatedData, persistedDocument);
-                            _this.mix(persistedDocument, updatedData);
-                            persistedDocument._syncSnapshot();
-                            var id;
-                            var fragment;
-                            for (var _i = 0; _i < fragmentResources.length; _i++) {
-                                var fragmentResource = fragmentResources[_i];
-                                updatedData = _this.compact(fragmentResource, {}, persistedDocument);
-                                id = updatedData["id"];
-                                if (persistedDocument.hasFragment(id)) {
-                                    setFragments.delete(id);
-                                    fragment = _this.mix(persistedDocument.getFragment(id), updatedData);
-                                }
-                                else {
-                                    fragment = persistedDocument.createFragment(id, updatedData);
-                                }
-                                fragment._syncSnapshot();
+                        return HTTP.Request.Service.get(persistedDocument.id, requestOptions, new RDF.Document.Parser());
+                    }).then(function (_a) {
+                        var rdfDocuments = _a[0], response = _a[1];
+                        if (response === null)
+                            return [rdfDocuments, response];
+                        var eTag = HTTP.Response.Util.getETag(response);
+                        if (eTag === null)
+                            throw new HTTP.Errors.BadResponseError("The response doesn't contain an ETag", response);
+                        var rdfDocument = _this.getRDFDocument(persistedDocument.id, rdfDocuments, response);
+                        if (rdfDocument === null)
+                            throw new HTTP.Errors.BadResponseError("No document was returned.", response);
+                        var documentResources = RDF.Document.Util.getDocumentResources(rdfDocument);
+                        if (documentResources.length > 1)
+                            throw new HTTP.Errors.BadResponseError("The RDFDocument contains more than one document resource.", response);
+                        if (documentResources.length === 0)
+                            throw new HTTP.Errors.BadResponseError("The RDFDocument doesn\'t contain a document resource.", response);
+                        persistedDocument._etag = eTag;
+                        var documentResource = documentResources[0];
+                        var fragmentResources = RDF.Document.Util.getBNodeResources(rdfDocument);
+                        fragmentResources = fragmentResources.concat(RDF.Document.Util.getFragmentResources(rdfDocument));
+                        var originalFragments = persistedDocument.getFragments();
+                        var setFragments = new Set(originalFragments.map(function (fragment) { return fragment.id; }));
+                        var updatedData = {};
+                        _this.compact(documentResource, updatedData, persistedDocument);
+                        _this.updateObject(persistedDocument, updatedData);
+                        persistedDocument._syncSnapshot();
+                        var id;
+                        var fragment;
+                        for (var _i = 0; _i < fragmentResources.length; _i++) {
+                            var fragmentResource = fragmentResources[_i];
+                            updatedData = _this.compact(fragmentResource, {}, persistedDocument);
+                            id = updatedData["id"];
+                            if (persistedDocument.hasFragment(id)) {
+                                setFragments.delete(id);
+                                fragment = _this.updateObject(persistedDocument.getFragment(id), updatedData);
                             }
-                            Array.from(setFragments).map(function (id) { return persistedDocument.removeFragment(id); });
-                            persistedDocument._syncSavedFragments();
-                            return [persistedDocument, response];
-                        });
+                            else {
+                                fragment = persistedDocument.createFragment(id, updatedData);
+                            }
+                            fragment._syncSnapshot();
+                        }
+                        Array.from(setFragments).map(function (id) { return persistedDocument.removeFragment(id); });
+                        persistedDocument._syncSavedFragments();
+                        return [persistedDocument, response];
                     });
                 };
                 Documents.prototype.delete = function (documentURI, requestOptions) {
@@ -1809,25 +1803,15 @@ $__System.register("17", ["c", "18", "9", "5", "13", "19", "1a", "15", "8", "4",
                         return [];
                     return document.types;
                 };
-                Documents.prototype.mix = function (target, source) {
-                    if (!isPlainObject(target) || !isPlainObject(source))
-                        return;
-                    var keys = new Set(Object.keys(source).concat(Object.keys(target)));
-                    for (var _i = 0, _a = Array.from(keys); _i < _a.length; _i++) {
-                        var key = _a[_i];
+                Documents.prototype.updateObject = function (target, source) {
+                    var keys = Array.from(new Set(Object.keys(source).concat(Object.keys(target))));
+                    for (var _i = 0; _i < keys.length; _i++) {
+                        var key = keys[_i];
                         if (Utils.hasProperty(source, key)) {
-                            if (PersistedResource.Factory.hasClassProperties(target[key]))
-                                continue;
-                            this.mix(target[key], source[key]);
                             target[key] = source[key];
                         }
                         else {
-                            if (Utils.isArray(target)) {
-                                target.splice(parseFloat(key), 1);
-                            }
-                            else {
-                                delete target[key];
-                            }
+                            delete target[key];
                         }
                     }
                     return target;
@@ -1839,7 +1823,7 @@ $__System.register("17", ["c", "18", "9", "5", "13", "19", "1a", "15", "8", "4",
     }
 });
 
-$__System.register("1c", ["13", "4", "5"], function(exports_1) {
+$__System.register("1b", ["13", "4", "5"], function(exports_1) {
     var Document, NS, Utils;
     var RDF_CLASS, SCHEMA, Factory;
     return {
@@ -1881,7 +1865,7 @@ $__System.register("1c", ["13", "4", "5"], function(exports_1) {
     }
 });
 
-$__System.register("1d", ["4"], function(exports_1) {
+$__System.register("1c", ["4"], function(exports_1) {
     var NS;
     var RDF_CLASS, Factory;
     return {
@@ -1911,7 +1895,7 @@ $__System.register("1d", ["4"], function(exports_1) {
     }
 });
 
-$__System.register("1e", ["4", "5"], function(exports_1) {
+$__System.register("1d", ["4", "5"], function(exports_1) {
     var NS, Utils;
     var RDF_CLASS, SCHEMA, Factory;
     return {
@@ -1980,7 +1964,7 @@ $__System.register("1e", ["4", "5"], function(exports_1) {
     }
 });
 
-$__System.register("1f", ["13", "c", "4", "8", "5"], function(exports_1) {
+$__System.register("1e", ["13", "c", "4", "8", "5"], function(exports_1) {
     var Document, Errors, NS, Pointer, Utils;
     var RDF_CLASS, Factory;
     return {
@@ -2053,7 +2037,7 @@ $__System.register("1f", ["13", "c", "4", "8", "5"], function(exports_1) {
     }
 });
 
-$__System.register("20", ["4", "5"], function(exports_1) {
+$__System.register("1f", ["4", "5"], function(exports_1) {
     var NS, Utils;
     var RDF_CLASS, Factory;
     return {
@@ -2079,7 +2063,7 @@ $__System.register("20", ["4", "5"], function(exports_1) {
     }
 });
 
-$__System.register("21", ["5"], function(exports_1) {
+$__System.register("20", ["5"], function(exports_1) {
     var Utils;
     var Factory;
     function addMember(memberOrUri) {
@@ -2198,7 +2182,7 @@ $__System.register("21", ["5"], function(exports_1) {
     }
 });
 
-$__System.register("22", ["4"], function(exports_1) {
+$__System.register("21", ["4"], function(exports_1) {
     var NS;
     var RDF_CLASS, SCHEMA, Factory;
     return {
@@ -2228,7 +2212,7 @@ $__System.register("22", ["4"], function(exports_1) {
     }
 });
 
-$__System.register("3", ["1c", "1d", "1e", "1f", "20", "21", "22", "23"], function(exports_1) {
+$__System.register("3", ["1b", "1c", "1d", "1e", "1f", "20", "21", "22"], function(exports_1) {
     var AddMemberAction, BasicContainer, Container, DirectContainer, IndirectContainer, PersistedContainer, RDFSource, RemoveMemberAction;
     return {
         setters:[
@@ -2340,7 +2324,7 @@ $__System.register("12", ["5", "13", "4", "14"], function(exports_1) {
     }
 });
 
-$__System.register("1a", ["5"], function(exports_1) {
+$__System.register("23", ["5"], function(exports_1) {
     var Utils;
     var Factory;
     function syncSnapshot() {
@@ -2399,7 +2383,7 @@ $__System.register("1a", ["5"], function(exports_1) {
     }
 });
 
-$__System.register("24", ["1a"], function(exports_1) {
+$__System.register("24", ["23"], function(exports_1) {
     var PersistedResource;
     var Factory;
     return {
@@ -2447,7 +2431,7 @@ $__System.register("25", ["24"], function(exports_1) {
     }
 });
 
-$__System.register("15", ["13", "1a", "24", "25", "9", "5", "26"], function(exports_1) {
+$__System.register("15", ["13", "23", "24", "25", "9", "5", "26"], function(exports_1) {
     var Document, PersistedResource, PersistedFragment, PersistedNamedFragment, RDF, Utils, URI;
     var Factory;
     function extendIsDirty(superFunction) {
@@ -3852,7 +3836,7 @@ $__System.register("13", ["c", "28", "19", "2a", "10", "8", "9", "29", "5"], fun
                 convertNestedObjects(parent, next);
                 continue;
             }
-            if (!isPlainObject(next))
+            if (!Utils.isPlainObject(next))
                 continue;
             idOrSlug = ("id" in next) ? next.id : (("slug" in next) ? next.slug : "");
             if (!parent.inScope(idOrSlug))
@@ -3868,12 +3852,6 @@ $__System.register("13", ["c", "28", "19", "2a", "10", "8", "9", "29", "5"], fun
                 convertNestedObjects(parent, fragment);
             }
         }
-    }
-    function isPlainObject(object) {
-        return Utils.isObject(object)
-            && !Utils.isArray(object)
-            && !Utils.isDate(object)
-            && !Utils.isMap(object);
     }
     return {
         setters:[
@@ -4023,7 +4001,7 @@ $__System.register("13", ["c", "28", "19", "2a", "10", "8", "9", "29", "5"], fun
     }
 });
 
-$__System.register("23", ["13", "4", "5"], function(exports_1) {
+$__System.register("22", ["13", "4", "5"], function(exports_1) {
     var Document, NS, Utils;
     var RDF_CLASS, SCHEMA, Factory;
     return {
@@ -4065,7 +4043,7 @@ $__System.register("23", ["13", "4", "5"], function(exports_1) {
     }
 });
 
-$__System.register("f", ["1c", "16", "2b", "17", "c", "3", "4", "10", "12", "27", "23"], function(exports_1) {
+$__System.register("f", ["1b", "16", "2b", "17", "c", "3", "4", "10", "12", "27", "22"], function(exports_1) {
     var AddMemberAction, APIDescription, Auth, Documents_1, Errors, LDP, NS, ObjectSchema, Agent, RDFRepresentation, RemoveMemberAction;
     var Class, instance;
     return {
@@ -13409,7 +13387,7 @@ $__System.register("6d", [], function(exports_1) {
     }
 });
 
-$__System.register("1b", ["34", "6b", "6c", "6d"], function(exports_1) {
+$__System.register("1a", ["34", "6b", "6c", "6d"], function(exports_1) {
     var RawResults, RawResultsParser, Service_1, SELECTResults;
     return {
         setters:[
@@ -13482,6 +13460,14 @@ $__System.register("5", [], function(exports_1) {
     }
     function isObject(object) {
         return typeof object === "object" && (!!object);
+    }
+    function isPlainObject(object) {
+        return isObject(object)
+            && !isArray(object)
+            && !isDate(object)
+            && !isMap(object)
+            && !(object instanceof Blob)
+            && !((object + "") === "[object Set]");
     }
     function isFunction(value) {
         return typeof value === "function";
@@ -13684,6 +13670,7 @@ $__System.register("5", [], function(exports_1) {
             exports_1("isDouble", isDouble);
             exports_1("isDate", isDate);
             exports_1("isObject", isObject);
+            exports_1("isPlainObject", isPlainObject);
             exports_1("isFunction", isFunction);
             exports_1("isMap", isMap);
             exports_1("parseBoolean", parseBoolean);
@@ -13698,7 +13685,7 @@ $__System.register("5", [], function(exports_1) {
     }
 });
 
-$__System.register("6e", ["e", "2", "12", "11", "a", "6", "2b", "13", "17", "c", "28", "18", "19", "3", "2a", "4", "10", "d", "b", "15", "24", "25", "1a", "8", "9", "29", "f", "33", "1b", "5"], function(exports_1) {
+$__System.register("6e", ["e", "2", "12", "11", "a", "6", "2b", "13", "17", "c", "28", "18", "19", "3", "2a", "4", "10", "d", "b", "15", "24", "25", "23", "8", "9", "29", "f", "33", "1a", "5"], function(exports_1) {
     var __extends = (this && this.__extends) || function (d, b) {
         for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
         function __() { this.constructor = d; }
