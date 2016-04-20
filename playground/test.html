@@ -69,7 +69,7 @@
 				return carbon.apps.getContext( "test-app/" );
 			}).then( function( _appContext ) {
 				appContext = _appContext;
-				return appContext.documents.getChildren( "/" );
+				return appContext.documents.getChildren( "posts/" );
 			}).then( function( result ) {
 				console.log( result );
 			});

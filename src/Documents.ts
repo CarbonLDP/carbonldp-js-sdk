@@ -226,13 +226,12 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 
 		let containerRetrievalPreferences:HTTP.Request.ContainerRetrievalPreferences = {
 			include: [
-				NS.LDP.Class.PreferContainment,
-				NS.C.Class.PreferContainmentTriples,
+				NS.LDP.Class.PreferContainment
 			],
 			omit: [
 				NS.LDP.Class.PreferMembership,
 				NS.LDP.Class.PreferMinimalContainer,
-				NS.C.Class.PreferMembershipTriples,
+				NS.C.Class.PreferContainmentResources,
 				NS.C.Class.PreferMembershipResources,
 			],
 		};

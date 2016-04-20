@@ -1350,13 +1350,12 @@ $__System.register("17", ["c", "18", "9", "5", "13", "19", "15", "8", "4", "10",
                         this.context.auth.addAuthentication(requestOptions);
                     var containerRetrievalPreferences = {
                         include: [
-                            NS.LDP.Class.PreferContainment,
-                            NS.C.Class.PreferContainmentTriples,
+                            NS.LDP.Class.PreferContainment
                         ],
                         omit: [
                             NS.LDP.Class.PreferMembership,
                             NS.LDP.Class.PreferMinimalContainer,
-                            NS.C.Class.PreferMembershipTriples,
+                            NS.C.Class.PreferContainmentResources,
                             NS.C.Class.PreferMembershipResources,
                         ],
                     };
