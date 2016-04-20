@@ -386,11 +386,22 @@ var Documents = (function () {
         if (requestOptions === void 0) { requestOptions = {}; }
         if (!!this.context)
             documentURI = this.context.resolve(documentURI);
+        var containerRetrievalPreferences = {
+            include: [
+                NS.C.Class.PreferMembershipTriples
+            ],
+            omit: [
+                NS.C.Class.PreferMembershipResources,
+                NS.C.Class.PreferContainmentTriples,
+                NS.C.Class.PreferContainmentResources,
+            ],
+        };
         if (this.context && this.context.auth.isAuthenticated())
             this.context.auth.addAuthentication(requestOptions);
         HTTP.Request.Util.setAcceptHeader("application/ld+json", requestOptions);
         HTTP.Request.Util.setContentTypeHeader("application/ld+json", requestOptions);
         HTTP.Request.Util.setPreferredInteractionModel(NS.LDP.Class.Container, requestOptions);
+        HTTP.Request.Util.setContainerRetrievalPreferences(containerRetrievalPreferences, requestOptions, false);
         return HTTP.Request.Service.delete(documentURI, requestOptions);
     };
     Documents.prototype.save = function (persistedDocument, requestOptions) {

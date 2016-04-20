@@ -438,11 +438,22 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 
 	removeAllMembers( documentURI:string, requestOptions:HTTP.Request.Options = {} ): Promise<HTTP.Response.Class> {
 		if( !! this.context ) documentURI = this.context.resolve( documentURI );
+		let containerRetrievalPreferences:HTTP.Request.ContainerRetrievalPreferences = {
+			include: [
+				NS.C.Class.PreferMembershipTriples
+			],
+			omit: [
+				NS.C.Class.PreferMembershipResources,
+				NS.C.Class.PreferContainmentTriples,
+				NS.C.Class.PreferContainmentResources,
+			],
+		};
 
 		if ( this.context && this.context.auth.isAuthenticated() ) this.context.auth.addAuthentication( requestOptions );
 		HTTP.Request.Util.setAcceptHeader( "application/ld+json", requestOptions );
 		HTTP.Request.Util.setContentTypeHeader( "application/ld+json", requestOptions );
 		HTTP.Request.Util.setPreferredInteractionModel( NS.LDP.Class.Container, requestOptions );
+		HTTP.Request.Util.setContainerRetrievalPreferences( containerRetrievalPreferences, requestOptions, false );
 
 		return HTTP.Request.Service.delete( documentURI, requestOptions );
 	}
