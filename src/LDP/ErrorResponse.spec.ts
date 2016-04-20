@@ -174,7 +174,7 @@ describe( module( "Carbon/LDP/ErrorResponse" ), ():void => {
 			STATIC,
 			"getMessage",
 			"Returns a string with the message of all the errors in the ErrorResponse.", [
-				{ name: "errorResponse", type: "Carbon.LDP.ErrorResponse.Class", descripton: "The ErrorResponse object to obtain the message from." }
+				{ name: "errorResponse", type: "Carbon.LDP.ErrorResponse.Class", description: "The ErrorResponse object to obtain the message from." }
 			],
 			{ type: "string" }
 		), ():void => {

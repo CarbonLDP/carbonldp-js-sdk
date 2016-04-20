@@ -4667,7 +4667,7 @@ Returns a string with the message of all the errors in the ErrorResponse.
 
 *Parameters*
 
-- errorResponse
+- errorResponse: The ErrorResponse object to obtain the message from.
 
 
 
