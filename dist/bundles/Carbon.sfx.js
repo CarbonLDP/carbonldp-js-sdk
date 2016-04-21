@@ -1949,10 +1949,10 @@ $__System.register("1e", ["13", "c", "4", "8", "5"], function(exports_1) {
                     container.types.push(NS.LDP.Class.Container);
                     container.types.push(NS.LDP.Class.DirectContainer);
                     container.membershipResource = membershipResource;
-                    if (hasMemberRelation !== null) {
+                    if (!!hasMemberRelation) {
                         container.hasMemberRelation = Pointer.Factory.is(hasMemberRelation) ? hasMemberRelation : Pointer.Factory.create(hasMemberRelation);
                     }
-                    if (memberOfRelation !== null) {
+                    if (!!memberOfRelation) {
                         container.memberOfRelation = Pointer.Factory.is(memberOfRelation) ? memberOfRelation : Pointer.Factory.create(memberOfRelation);
                     }
                     return container;
