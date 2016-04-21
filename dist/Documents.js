@@ -388,12 +388,13 @@ var Documents = (function () {
             documentURI = this.context.resolve(documentURI);
         var containerRetrievalPreferences = {
             include: [
-                NS.C.Class.PreferMembershipTriples
+                NS.C.Class.PreferMembershipTriples,
             ],
             omit: [
                 NS.C.Class.PreferMembershipResources,
                 NS.C.Class.PreferContainmentTriples,
                 NS.C.Class.PreferContainmentResources,
+                NS.C.Class.PreferContainer,
             ],
         };
         if (this.context && this.context.auth.isAuthenticated())

@@ -440,12 +440,13 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 		if( !! this.context ) documentURI = this.context.resolve( documentURI );
 		let containerRetrievalPreferences:HTTP.Request.ContainerRetrievalPreferences = {
 			include: [
-				NS.C.Class.PreferMembershipTriples
+				NS.C.Class.PreferMembershipTriples,
 			],
 			omit: [
 				NS.C.Class.PreferMembershipResources,
 				NS.C.Class.PreferContainmentTriples,
 				NS.C.Class.PreferContainmentResources,
+				NS.C.Class.PreferContainer,
 			],
 		};
 

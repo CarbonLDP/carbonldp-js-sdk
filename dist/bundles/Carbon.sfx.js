@@ -1543,12 +1543,13 @@ $__System.register("17", ["c", "18", "9", "5", "13", "19", "15", "8", "4", "10",
                         documentURI = this.context.resolve(documentURI);
                     var containerRetrievalPreferences = {
                         include: [
-                            NS.C.Class.PreferMembershipTriples
+                            NS.C.Class.PreferMembershipTriples,
                         ],
                         omit: [
                             NS.C.Class.PreferMembershipResources,
                             NS.C.Class.PreferContainmentTriples,
                             NS.C.Class.PreferContainmentResources,
+                            NS.C.Class.PreferContainer,
                         ],
                     };
                     if (this.context && this.context.auth.isAuthenticated())
@@ -12390,6 +12391,11 @@ $__System.register("64", [], function(exports_1) {
                 });
                 Object.defineProperty(Class, "NonReadableMembershipResourceTriples", {
                     get: function () { return namespace + "NonReadableMembershipResourceTriples"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(Class, "PreferContainer", {
+                    get: function () { return namespace + "PreferContainer"; },
                     enumerable: true,
                     configurable: true
                 });
