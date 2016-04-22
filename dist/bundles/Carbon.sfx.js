@@ -755,7 +755,7 @@ $__System.register("6", ["7", "8", "9", "5", "a", "b", "c"], function(exports_1)
                         if (!PersistedApp.Factory.is(app))
                             return Promise.reject(new Errors.IllegalArgumentError("The resource fetched is not a cs:Application."));
                         var appContext = new Context_1.default(_this.context, app);
-                        app.rootContainer = appContext.documents.getPointer(app.rootContainer.id);
+                        appContext.app.rootContainer = appContext.documents.getPointer(app.rootContainer.id);
                         return appContext;
                     });
                 };

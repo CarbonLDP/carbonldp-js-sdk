@@ -40,7 +40,9 @@ export class Class {
 				return Promise.reject<AppContext>( new Errors.IllegalArgumentError( "The resource fetched is not a cs:Application." ) );
 
 			let appContext:AppContext = new AppContext( this.context, <PersistedApp.Class> app );
-			( <PersistedApp.Class> app).rootContainer = <any> appContext.documents.getPointer( ( <PersistedApp.Class> app).rootContainer.id );
+			// Reassign the rootContainer pointer, because the previous one was created in the SDKContext, and this one must resolve in this context.
+			// TODO delete previous pointer from the SDKContext
+			appContext.app.rootContainer = <any> appContext.documents.getPointer( ( <PersistedApp.Class> app).rootContainer.id );
 
 			return appContext;
 		});
