@@ -616,6 +616,136 @@ describe( module( "Carbon/Documents", "" ), ():void => {
 		});
 	});
 
+	it( hasMethod(
+		INSTANCE,
+		"getChildren",
+		"Return all the children of the container specified.", [
+			{ name: "parentURI", type: "string", description: "URI of the document container to look for their children." },
+			{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true }
+		],
+		{ type: "Promise<[ Carbon.Pointer.Class[], Carbon.HTTP.Response ]>" }
+	), ( done:{ ():void, fail:() => void } ):void => {
+		class MockedContext extends AbstractContext {
+			resolve( uri:string ):string {
+				return "http://example.com/" + uri;
+			}
+		}
+		let context:MockedContext = new MockedContext();
+		let documents:Documents = context.documents;
+
+		expect( documents.getChildren ).toBeDefined();
+		expect( Utils.isFunction( documents.getChildren ) ).toBe( true );
+
+		jasmine.Ajax.stubRequest( "http://example.com/empty-resource/", null, "GET" ).andReturn( {
+			status: 200,
+			responseText: "[]"
+		});
+		jasmine.Ajax.stubRequest( "http://example.com/another-empty-resource/", null, "GET" ).andReturn( {
+			status: 200,
+			responseText: `[
+			  {
+			    "@graph": [
+			      {
+			        "@id": "http://example.com/resource/",
+			        "http://www.w3.org/ns/ldp#contains": []
+			      }
+			    ],
+			    "@id": "http://example.com/resource/"
+			  }
+			]`
+		});
+		jasmine.Ajax.stubRequest( "http://example.com/another-another-empty-resource/", null, "GET" ).andReturn( {
+			status: 200,
+			responseText: `[
+			  {
+			    "@graph": [
+			      {
+			        "@id": "http://example.com/resource/"
+			      }
+			    ],
+			    "@id": "http://example.com/resource/"
+			  }
+			]`
+		});
+		jasmine.Ajax.stubRequest( "http://example.com/resource/", null, "GET" ).andReturn( {
+			status: 200,
+			responseText: `[
+			  {
+			    "@graph": [
+			      {
+			        "@id": "http://example.com/resource/",
+			        "http://www.w3.org/ns/ldp#contains": [
+			          {
+			            "@id": "http://example.com/resource/pointer-01/"
+			          },
+			          {
+			            "@id": "http://example.com/resource/pointer-02/"
+			          }
+			        ]
+			      }
+			    ],
+			    "@id": "http://example.com/resource/"
+			  }
+			]`
+		});
+
+		let spies = {
+			success: ( [ pointers, response ]:[ Pointer.Class[], HTTP.Response.Class ]  ):void => {
+				expect( pointers ).toBeDefined();
+				expect( Utils.isArray( pointers ) ).toBe( true );
+				expect( pointers.length ).toBe( 2 );
+				expect( Pointer.Factory.is( pointers[ 0 ] ) ).toBe( true );
+				expect( pointers[ 0 ].id ).toBe( "http://example.com/resource/pointer-01/" );
+				expect( Pointer.Factory.is( pointers[ 1 ] ) ).toBe( true );
+				expect( pointers[ 1 ].id ).toBe( "http://example.com/resource/pointer-02/" );
+
+				expect( response ).toBeDefined();
+				expect( response instanceof HTTP.Response.Class ).toBe( true );
+			},
+			successEmpty: ( [ pointers, response ]:[ Pointer.Class[], HTTP.Response.Class ]  ):void => {
+				expect( pointers ).toBeDefined();
+				expect( Utils.isArray( pointers ) ).toBe( true );
+				expect( pointers.length ).toBe( 0 );
+
+				expect( response ).toBeDefined();
+				expect( response instanceof HTTP.Response.Class ).toBe( true );
+			},
+			fail: ( error:Error ):void => {
+				expect( error ).toBeDefined();
+				expect( error instanceof Errors.IllegalArgumentError ).toBe( true );
+			}
+		};
+		let spySuccess = spyOn( spies, "success" ).and.callThrough();
+		let spyEmpty = spyOn( spies, "successEmpty" ).and.callThrough();
+		let spyFail = spyOn( spies, "fail" ).and.callThrough();
+
+		let promises:Promise<any>[] = [];
+		let promise:Promise<any>;
+
+		promise = documents.getChildren( "resource/" );
+		expect( promise instanceof Promise ).toBe( true );
+		promises.push( promise.then( spies.success ) );
+
+		promise = documents.getChildren( "empty-resource/" );
+		expect( promise instanceof Promise ).toBe( true );
+		promises.push( promise.then( spies.successEmpty ) );
+
+		promise = documents.getChildren( "another-empty-resource/" );
+		expect( promise instanceof Promise ).toBe( true );
+		promises.push( promise.then( spies.successEmpty ) );
+
+		promise = documents.getChildren( "another-another-empty-resource/" );
+		expect( promise instanceof Promise ).toBe( true );
+		promises.push( promise.then( spies.successEmpty ) );
+
+		Promise.all( promises ).then( ():void => {
+			expect( spySuccess ).toHaveBeenCalledTimes( 1 );
+			expect( spyEmpty ).toHaveBeenCalledTimes( 3 );
+			expect( spyFail ).not.toHaveBeenCalled();
+			done();
+		}).catch( done.fail );
+	});
+
 	describe( method(
 		INSTANCE,
 		"createAccessPoint"
@@ -1067,7 +1197,7 @@ describe( module( "Carbon/Documents", "" ), ():void => {
 		it( hasSignature(
 			"Remove the specified resource URI member of the resource container specified.", [
 				{ name: "documentURI", type: "string", description: "URI of the resource container where to remove the member." },
-				{ name: "memberURI", type: "string", description: "URI of the resource to remvoe as a member." },
+				{ name: "memberURI", type: "string", description: "URI of the resource to remove as a member." },
 				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true }
 			],
 			{ type: "Promise<Carbon.HTTP.Response>"}
@@ -1087,8 +1217,8 @@ describe( module( "Carbon/Documents", "" ), ():void => {
 		INSTANCE,
 		"removeMembers",
 		"Remove the specified resources URI or Pointers as members of the document container specified.", [
-			{ name: "documentURI", type: "string", description: "URI of the document container where to add the members." },
-			{ name: "members", type: "(Carbon.Pointer.Class | string)[]", description: "Array of string URIs or Pointers to add as members" },
+			{ name: "documentURI", type: "string", description: "URI of the document container where to remove the members." },
+			{ name: "members", type: "(Carbon.Pointer.Class | string)[]", description: "Array of string URIs or Pointers to remove as members" },
 			{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true }
 		],
 		{ type: "Promise<Carbon.HTTP.Response>" }
@@ -1140,6 +1270,57 @@ describe( module( "Carbon/Documents", "" ), ():void => {
 			expect( spyFail ).toHaveBeenCalledTimes( 1 );
 			done();
 		}, done.fail );
+	});
+
+	it( hasMethod(
+		INSTANCE,
+		"removeAllMembers",
+		"Remove all the members of the document container specified.", [
+			{ name: "documentURI", type: "string", description: "URI of the document container where to remove the members." },
+			{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true }
+		],
+		{ type: "Promise<Carbon.HTTP.Response>"}
+	), ( done:{ ():void, fail:() => void } ):void => {
+		class MockedContext extends AbstractContext {
+			resolve( uri:string ):string {
+				return "http://example.com/" + uri;
+			}
+		}
+		let context:MockedContext = new MockedContext();
+		let documents:Documents = context.documents;
+
+		expect( documents.removeAllMembers ).toBeDefined();
+		expect( Utils.isFunction( documents.removeAllMembers ) ).toBe( true );
+
+		jasmine.Ajax.stubRequest( "http://example.com/resource/", null, "DELETE" ).andReturn( {
+			status: 200
+		});
+
+		let spies = {
+			success: ( response:any ):void => {
+				expect( response ).toBeDefined();
+				expect( response instanceof HTTP.Response.Class ).toBe( true );
+			},
+			fail: ( error:Error ):void => {
+				expect( error ).toBeDefined();
+				expect( error instanceof Errors.IllegalArgumentError ).toBe( true );
+			}
+		};
+		let spySuccess = spyOn( spies, "success" ).and.callThrough();
+		let spyFail = spyOn( spies, "fail" ).and.callThrough();
+
+		let promises:Promise<any>[] = [];
+		let promise:Promise<any>;
+
+		promise = documents.removeAllMembers( "resource/" );
+		expect( promise instanceof Promise ).toBe( true );
+		promises.push( promise.then( spies.success ) );
+
+		Promise.all( promises ).then( ():void => {
+			expect( spySuccess ).toHaveBeenCalledTimes( 1 );
+			expect( spyFail ).not.toHaveBeenCalled();
+			done();
+		}).catch( done.fail );
 	});
 
 	it( hasMethod(

@@ -50,14 +50,15 @@
 				"xsd": "http://www.w3.org/2001/XMLSchema#"
 			} );
 
-			carbon.extendObjectSchema( {
-				"stringProperty": {
-					"@id": "ex:stringProperty",
+			carbon.extendObjectSchema( "http://example.org/ns#BlogPost" , {
+				"title": {
+					"@id": "ex:title",
 					"@type": "xsd:string"
 				},
-				"something": {
-					"@id": "ex:something",
-					"@type": "xsd:string"
+				"tags": {
+					"@id": "ex:tag",
+					"@type": "@id",
+					"@container": "@set"
 				}
 			} );
 
@@ -68,7 +69,7 @@
 				return carbon.apps.getContext( "test-app/" );
 			}).then( function( _appContext ) {
 				appContext = _appContext;
-				return appContext.documents.removeMembers( "posts/first-post/tags/", [ "tags/semantic/", "tags/semantic-4/" ] );
+				return appContext.documents.getChildren( "posts/" );
 			}).then( function( result ) {
 				console.log( result );
 			});
