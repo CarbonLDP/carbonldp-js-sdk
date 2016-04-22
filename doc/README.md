@@ -1751,6 +1751,18 @@ Returns a Promise with a boolean indicating if the resource exists or not.
 - documentURI
 - requestOptions
 
+##### getChildren
+```typescript 
+getChildren( parentURI:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.Pointer.Class[], Carbon.HTTP.Response ]>
+```
+
+Return all the children of the container specified.
+
+*Parameters*
+
+- parentURI: URI of the document container to look for their children.
+- requestOptions
+
 ##### addMembers
 ```typescript 
 addMembers( documentURI:string,  members:(Carbon.Pointer.Class | string)[],  requestOptions?:Carbon.HTTP.Request.Options ):Promise<Carbon.HTTP.Response>
@@ -1773,8 +1785,20 @@ Remove the specified resources URI or Pointers as members of the document contai
 
 *Parameters*
 
-- documentURI: URI of the document container where to add the members.
-- members: Array of string URIs or Pointers to add as members
+- documentURI: URI of the document container where to remove the members.
+- members: Array of string URIs or Pointers to remove as members
+- requestOptions
+
+##### removeAllMembers
+```typescript 
+removeAllMembers( documentURI:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<Carbon.HTTP.Response>
+```
+
+Remove all the members of the document container specified.
+
+*Parameters*
+
+- documentURI: URI of the document container where to remove the members.
 - requestOptions
 
 ##### delete
@@ -2042,7 +2066,7 @@ Remove the specified resource URI member of the resource container specified.
 *Parameters*
 
 - documentURI: URI of the resource container where to remove the member.
-- memberURI: URI of the resource to remvoe as a member.
+- memberURI: URI of the resource to remove as a member.
 - requestOptions
 
 
@@ -4657,9 +4681,9 @@ Returns the PersistedDocuments decorated as a PersistedContainer
 
 
 ##### <a name="Carbon-LDP-PersistedContainer-Factory-Decorated-Object-Methods" />Methods
-##### addMember
+##### addMembers
 ```typescript 
-addMember( members:(Carbon.Pointer.Class | string)[] ):Promise<Carbon.HTTP.Response.Class>
+addMembers( members:(Carbon.Pointer.Class | string)[] ):Promise<Carbon.HTTP.Response.Class>
 ```
 
 Add the specified resources URI or Pointers as members of the container.
@@ -4668,25 +4692,12 @@ Add the specified resources URI or Pointers as members of the container.
 
 - members: Array of string URIs or Pointers to add as members
 
+##### getChildren
 ```typescript 
-addMember( member:Carbon.Pointer.Class ):Promise<Carbon.HTTP.Response.Class>
+getChildren():Promise<[ Carbon.Pointer.Class[], Carbon.HTTP.Response ]>
 ```
 
-Add the specified resource Pointer as a member of the container.
-
-*Parameters*
-
-- member: Pointer object that references the resource to add as a member.
-
-```typescript 
-addMember( memberURI:string ):Promise<Carbon.HTTP.Response.Class>
-```
-
-Add the specified resource URI as a member of the container.
-
-*Parameters*
-
-- memberURI: URI of the resource to add as a member.
+Return all the children of the container.
 
 ##### getMembers
 ```typescript 
@@ -4708,6 +4719,38 @@ Remove the specified resources URI or Pointers as members of the container.
 *Parameters*
 
 - members: Array of string URIs or Pointers to remove as members
+
+##### removeAllMembers
+```typescript 
+removeAllMembers( members:(Carbon.Pointer.Class | string)[] ):Promise<Carbon.HTTP.Response.Class>
+```
+
+Remove the specified resources URI or Pointers as members of the container.
+
+*Parameters*
+
+- members: Array of string URIs or Pointers to remove as members
+
+##### addMember
+```typescript 
+addMember( member:Carbon.Pointer.Class ):Promise<Carbon.HTTP.Response.Class>
+```
+
+Add the specified resource Pointer as a member of the container.
+
+*Parameters*
+
+- member: Pointer object that references the resource to add as a member.
+
+```typescript 
+addMember( memberURI:string ):Promise<Carbon.HTTP.Response.Class>
+```
+
+Add the specified resource URI as a member of the container.
+
+*Parameters*
+
+- memberURI: URI of the resource to add as a member.
 
 ##### createChild
 ```typescript 
@@ -4921,6 +4964,10 @@ static API:string
 
 ```typescript 
 static NonReadableMembershipResourceTriples:string 
+```
+
+```typescript 
+static PreferContainer:string 
 ```
 
 ```typescript 

@@ -39,7 +39,7 @@ describe( module(
 		it( isDefined(), ():void => {
 			expect( C.Class ).toBeDefined();
 			expect( Utils.isFunction( C.Class ) ).toBe( true );
-			expect( Object.keys( C.Class ).length ).toBe( 12 );
+			expect( Object.keys( C.Class ).length ).toBe( 13 );
 		});
 
 		it( hasProperty(
@@ -73,6 +73,17 @@ describe( module(
 			expect( Utils.isString( C.Class.NonReadableMembershipResourceTriples ) ).toBe( true );
 
 			expect( C.Class.NonReadableMembershipResourceTriples ).toBe( "https://carbonldp.com/ns/v1/platform#NonReadableMembershipResourceTriples" );
+		});
+
+		it( hasProperty(
+			STATIC,
+			"PreferContainer",
+			"string"
+		), ():void => {
+			expect( C.Class.PreferContainer ).toBeDefined();
+			expect( Utils.isString( C.Class.PreferContainer ) ).toBe( true );
+
+			expect( C.Class.PreferContainer ).toBe( "https://carbonldp.com/ns/v1/platform#PreferContainer" );
 		});
 
 		it( hasProperty(

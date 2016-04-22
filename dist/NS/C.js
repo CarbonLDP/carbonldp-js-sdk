@@ -23,6 +23,11 @@ var Class = (function () {
         enumerable: true,
         configurable: true
     });
+    Object.defineProperty(Class, "PreferContainer", {
+        get: function () { return exports.namespace + "PreferContainer"; },
+        enumerable: true,
+        configurable: true
+    });
     Object.defineProperty(Class, "PreferContainmentResources", {
         get: function () { return exports.namespace + "PreferContainmentResources"; },
         enumerable: true,

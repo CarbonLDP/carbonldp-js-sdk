@@ -5,6 +5,7 @@ export class Class {
 	static get AddMemberAction():string { return namespace + "AddMemberAction"; }
 	static get API():string { return namespace + "API"; }
 	static get NonReadableMembershipResourceTriples():string { return namespace + "NonReadableMembershipResourceTriples"; }
+	static get PreferContainer():string { return namespace + "PreferContainer"; }
 	static get PreferContainmentResources():string { return namespace + "PreferContainmentResources"; }
 	static get PreferContainmentTriples():string { return namespace + "PreferContainmentTriples"; }
 	static get PreferMembershipResources():string { return namespace + "PreferMembershipResources"; }

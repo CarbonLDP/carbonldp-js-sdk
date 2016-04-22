@@ -186,6 +186,39 @@ var Documents = (function () {
             ];
         });
     };
+    Documents.prototype.getChildren = function (parentURI, requestOptions) {
+        var _this = this;
+        if (requestOptions === void 0) { requestOptions = {}; }
+        if (!!this.context)
+            parentURI = this.context.resolve(parentURI);
+        if (this.context && this.context.auth.isAuthenticated())
+            this.context.auth.addAuthentication(requestOptions);
+        var containerRetrievalPreferences = {
+            include: [
+                NS.LDP.Class.PreferContainment
+            ],
+            omit: [
+                NS.LDP.Class.PreferMembership,
+                NS.LDP.Class.PreferMinimalContainer,
+                NS.C.Class.PreferContainmentResources,
+                NS.C.Class.PreferMembershipResources,
+            ],
+        };
+        HTTP.Request.Util.setContentTypeHeader("application/ld+json", requestOptions);
+        HTTP.Request.Util.setAcceptHeader("application/ld+json", requestOptions);
+        HTTP.Request.Util.setPreferredInteractionModel(NS.LDP.Class.Container, requestOptions);
+        HTTP.Request.Util.setContainerRetrievalPreferences(containerRetrievalPreferences, requestOptions);
+        return HTTP.Request.Service.get(parentURI, requestOptions, new RDF.Document.Parser())
+            .then(function (_a) {
+            var rdfDocuments = _a[0], response = _a[1];
+            var rdfDocument = _this.getRDFDocument(parentURI, rdfDocuments, response);
+            if (rdfDocument === null)
+                return [[], response];
+            var documentResource = _this.getDocumentResource(rdfDocument, response);
+            var childPointers = RDF.Value.Util.getPropertyPointers(documentResource, NS.LDP.Predicate.contains, _this);
+            return [childPointers, response];
+        });
+    };
     Documents.prototype.createAccessPoint = function (documentURIOrAccessPoint, accessPointOrSlug, slugOrRequestOptions, requestOptions) {
         var _this = this;
         if (slugOrRequestOptions === void 0) { slugOrRequestOptions = null; }
@@ -381,6 +414,29 @@ var Documents = (function () {
         HTTP.Request.Util.setContainerRetrievalPreferences(containerRetrievalPreferences, requestOptions, false);
         var body = document.toJSON(this, this.jsonldConverter);
         return HTTP.Request.Service.delete(documentURI, body, requestOptions);
+    };
+    Documents.prototype.removeAllMembers = function (documentURI, requestOptions) {
+        if (requestOptions === void 0) { requestOptions = {}; }
+        if (!!this.context)
+            documentURI = this.context.resolve(documentURI);
+        var containerRetrievalPreferences = {
+            include: [
+                NS.C.Class.PreferMembershipTriples,
+            ],
+            omit: [
+                NS.C.Class.PreferMembershipResources,
+                NS.C.Class.PreferContainmentTriples,
+                NS.C.Class.PreferContainmentResources,
+                NS.C.Class.PreferContainer,
+            ],
+        };
+        if (this.context && this.context.auth.isAuthenticated())
+            this.context.auth.addAuthentication(requestOptions);
+        HTTP.Request.Util.setAcceptHeader("application/ld+json", requestOptions);
+        HTTP.Request.Util.setContentTypeHeader("application/ld+json", requestOptions);
+        HTTP.Request.Util.setPreferredInteractionModel(NS.LDP.Class.Container, requestOptions);
+        HTTP.Request.Util.setContainerRetrievalPreferences(containerRetrievalPreferences, requestOptions, false);
+        return HTTP.Request.Service.delete(documentURI, requestOptions);
     };
     Documents.prototype.save = function (persistedDocument, requestOptions) {
         if (requestOptions === void 0) { requestOptions = {}; }
