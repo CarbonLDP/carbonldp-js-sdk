@@ -1341,6 +1341,39 @@ $__System.register("17", ["c", "18", "9", "5", "13", "19", "15", "8", "4", "10",
                         ];
                     });
                 };
+                Documents.prototype.getChildren = function (parentURI, requestOptions) {
+                    var _this = this;
+                    if (requestOptions === void 0) { requestOptions = {}; }
+                    if (!!this.context)
+                        parentURI = this.context.resolve(parentURI);
+                    if (this.context && this.context.auth.isAuthenticated())
+                        this.context.auth.addAuthentication(requestOptions);
+                    var containerRetrievalPreferences = {
+                        include: [
+                            NS.LDP.Class.PreferContainment
+                        ],
+                        omit: [
+                            NS.LDP.Class.PreferMembership,
+                            NS.LDP.Class.PreferMinimalContainer,
+                            NS.C.Class.PreferContainmentResources,
+                            NS.C.Class.PreferMembershipResources,
+                        ],
+                    };
+                    HTTP.Request.Util.setContentTypeHeader("application/ld+json", requestOptions);
+                    HTTP.Request.Util.setAcceptHeader("application/ld+json", requestOptions);
+                    HTTP.Request.Util.setPreferredInteractionModel(NS.LDP.Class.Container, requestOptions);
+                    HTTP.Request.Util.setContainerRetrievalPreferences(containerRetrievalPreferences, requestOptions);
+                    return HTTP.Request.Service.get(parentURI, requestOptions, new RDF.Document.Parser())
+                        .then(function (_a) {
+                        var rdfDocuments = _a[0], response = _a[1];
+                        var rdfDocument = _this.getRDFDocument(parentURI, rdfDocuments, response);
+                        if (rdfDocument === null)
+                            return [[], response];
+                        var documentResource = _this.getDocumentResource(rdfDocument, response);
+                        var childPointers = RDF.Value.Util.getPropertyPointers(documentResource, NS.LDP.Predicate.contains, _this);
+                        return [childPointers, response];
+                    });
+                };
                 Documents.prototype.createAccessPoint = function (documentURIOrAccessPoint, accessPointOrSlug, slugOrRequestOptions, requestOptions) {
                     var _this = this;
                     if (slugOrRequestOptions === void 0) { slugOrRequestOptions = null; }
@@ -2035,6 +2068,10 @@ $__System.register("20", ["5"], function(exports_1) {
             return this._documents.createChild(this.id, object);
         }
     }
+    function getChildren() {
+        var that = this;
+        return this._documents.getChildren(that.id);
+    }
     function getMembers(includeNonReadable) {
         if (includeNonReadable === void 0) { includeNonReadable = true; }
         return this._documents.getMembers(this.id, includeNonReadable);
@@ -2072,14 +2109,15 @@ $__System.register("20", ["5"], function(exports_1) {
                 function Factory() {
                 }
                 Factory.hasClassProperties = function (document) {
-                    return Utils.hasFunction(document, "createChild")
-                        && Utils.hasFunction(document, "addMember")
+                    return Utils.hasFunction(document, "addMember")
                         && Utils.hasFunction(document, "addMembers")
-                        && Utils.hasFunction(document, "upload")
+                        && Utils.hasFunction(document, "createChild")
+                        && Utils.hasFunction(document, "getChildren")
+                        && Utils.hasFunction(document, "getMembers")
                         && Utils.hasFunction(document, "removeMember")
                         && Utils.hasFunction(document, "removeMembers")
                         && Utils.hasFunction(document, "removeAllMembers")
-                        && Utils.hasFunction(document, "getMembers");
+                        && Utils.hasFunction(document, "upload");
                 };
                 Factory.decorate = function (persistedDocument) {
                     if (Factory.hasClassProperties(persistedDocument))
@@ -2102,6 +2140,12 @@ $__System.register("20", ["5"], function(exports_1) {
                             enumerable: false,
                             configurable: true,
                             value: createChild,
+                        },
+                        "getChildren": {
+                            writable: false,
+                            enumerable: false,
+                            configurable: true,
+                            value: getChildren,
                         },
                         "getMembers": {
                             writable: false,

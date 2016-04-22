@@ -220,6 +220,39 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 		});
 	}
 
+	getChildren( parentURI:string, requestOptions:HTTP.Request.Options = {} ): Promise<[ Pointer.Class[], HTTP.Response.Class ]> {
+		if( !! this.context ) parentURI = this.context.resolve( parentURI );
+		if ( this.context && this.context.auth.isAuthenticated() ) this.context.auth.addAuthentication( requestOptions );
+
+		let containerRetrievalPreferences:HTTP.Request.ContainerRetrievalPreferences = {
+			include: [
+				NS.LDP.Class.PreferContainment
+			],
+			omit: [
+				NS.LDP.Class.PreferMembership,
+				NS.LDP.Class.PreferMinimalContainer,
+				NS.C.Class.PreferContainmentResources,
+				NS.C.Class.PreferMembershipResources,
+			],
+		};
+
+		HTTP.Request.Util.setContentTypeHeader( "application/ld+json", requestOptions );
+		HTTP.Request.Util.setAcceptHeader( "application/ld+json", requestOptions );
+		HTTP.Request.Util.setPreferredInteractionModel( NS.LDP.Class.Container, requestOptions );
+		HTTP.Request.Util.setContainerRetrievalPreferences( containerRetrievalPreferences, requestOptions );
+
+		return HTTP.Request.Service.get( parentURI, requestOptions, new RDF.Document.Parser() )
+			.then( ( [ rdfDocuments, response ]:[ RDF.Document.Class[], HTTP.Response.Class ] ) => {
+				let rdfDocument:RDF.Document.Class = this.getRDFDocument( parentURI, rdfDocuments, response );
+				if ( rdfDocument === null ) return [ [], response ];
+
+				let documentResource:RDF.Node.Class = this.getDocumentResource( rdfDocument, response );
+				let childPointers:Pointer.Class[] = RDF.Value.Util.getPropertyPointers( documentResource, NS.LDP.Predicate.contains, this );
+
+				return [ childPointers, response ];
+			} );
+	}
+
 	createAccessPoint( documentURI:string, accessPoint:AccessPoint.Class, slug?:string, requestOptions?:HTTP.Request.Options ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
 	createAccessPoint( accessPoint:AccessPoint.Class, slug?:string, requestOptions?:HTTP.Request.Options ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
 	createAccessPoint( documentURIOrAccessPoint:any, accessPointOrSlug:any, slugOrRequestOptions:any = null, requestOptions:HTTP.Request.Options = {} ):Promise<[ Pointer.Class, HTTP.Response.Class ]> {
