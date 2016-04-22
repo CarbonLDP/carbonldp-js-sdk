@@ -81,6 +81,8 @@ describe( module( "Carbon/LDP/PersistedContainer" ), ():void => {
 			expect( PersistedContainer.Factory.hasClassProperties( document ) ).toBe( false );
 			document.removeMembers = () => {};
 			expect( PersistedContainer.Factory.hasClassProperties( document ) ).toBe( false );
+			document.removeAllMembers = () => {};
+			expect( PersistedContainer.Factory.hasClassProperties( document ) ).toBe( false );
 
 			document.upload = () => {};
 			expect( PersistedContainer.Factory.hasClassProperties( document ) ).toBe( true );
@@ -110,6 +112,7 @@ describe( module( "Carbon/LDP/PersistedContainer" ), ():void => {
 			document.getMembers = () => {};
 			document.removeMember = () => {};
 			document.removeMembers = () => {};
+			document.removeAllMembers = () => {};
 			document.upload = () => {};
 			let anotherContainer:PersistedContainer.Class = PersistedContainer.Factory.decorate( document );
 
@@ -120,6 +123,7 @@ describe( module( "Carbon/LDP/PersistedContainer" ), ():void => {
 			expect( anotherContainer.getMembers ).not.toBe( persistedContainer.getMembers );
 			expect( anotherContainer.removeMember ).not.toBe( persistedContainer.removeMember );
 			expect( anotherContainer.removeMembers ).not.toBe( persistedContainer.removeMembers );
+			expect( anotherContainer.removeAllMembers ).not.toBe( persistedContainer.removeAllMembers );
 			expect( anotherContainer.upload ).not.toBe( persistedContainer.upload );
 		});
 
@@ -356,6 +360,24 @@ describe( module( "Carbon/LDP/PersistedContainer" ), ():void => {
 				container.removeMembers( pointers );
 
 				expect( spy ).toHaveBeenCalledWith( "http://example.com/resource/", pointers );
+			});
+
+			it( hasMethod(
+				INSTANCE,
+				"removeAllMembers",
+				"Remove the specified resources URI or Pointers as members of the container.", [
+					{ name: "members", type: "(Carbon.Pointer.Class | string)[]", description: "Array of string URIs or Pointers to remove as members" },
+				],
+				{ type: "Promise<Carbon.HTTP.Response.Class>" }
+			), ():void => {
+				expect( container.removeAllMembers ).toBeDefined();
+				expect( Utils.isFunction( container.removeAllMembers ) ).toBeDefined();
+
+				let spy = spyOn( container._documents, "removeAllMembers" );
+
+				container.removeAllMembers();
+
+				expect( spy ).toHaveBeenCalledWith( "http://example.com/resource/" );
 			});
 
 			describe( method(

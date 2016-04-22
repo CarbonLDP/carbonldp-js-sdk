@@ -1537,6 +1537,29 @@ $__System.register("17", ["c", "18", "9", "5", "13", "19", "15", "8", "4", "10",
                     var body = document.toJSON(this, this.jsonldConverter);
                     return HTTP.Request.Service.delete(documentURI, body, requestOptions);
                 };
+                Documents.prototype.removeAllMembers = function (documentURI, requestOptions) {
+                    if (requestOptions === void 0) { requestOptions = {}; }
+                    if (!!this.context)
+                        documentURI = this.context.resolve(documentURI);
+                    var containerRetrievalPreferences = {
+                        include: [
+                            NS.C.Class.PreferMembershipTriples,
+                        ],
+                        omit: [
+                            NS.C.Class.PreferMembershipResources,
+                            NS.C.Class.PreferContainmentTriples,
+                            NS.C.Class.PreferContainmentResources,
+                            NS.C.Class.PreferContainer,
+                        ],
+                    };
+                    if (this.context && this.context.auth.isAuthenticated())
+                        this.context.auth.addAuthentication(requestOptions);
+                    HTTP.Request.Util.setAcceptHeader("application/ld+json", requestOptions);
+                    HTTP.Request.Util.setContentTypeHeader("application/ld+json", requestOptions);
+                    HTTP.Request.Util.setPreferredInteractionModel(NS.LDP.Class.Container, requestOptions);
+                    HTTP.Request.Util.setContainerRetrievalPreferences(containerRetrievalPreferences, requestOptions, false);
+                    return HTTP.Request.Service.delete(documentURI, requestOptions);
+                };
                 Documents.prototype.save = function (persistedDocument, requestOptions) {
                     // TODO: Check if the document isDirty
                     /*
@@ -2024,6 +2047,10 @@ $__System.register("20", ["5"], function(exports_1) {
         var that = this;
         return that._documents.removeMembers(that.id, members);
     }
+    function removeAllMembers() {
+        var that = this;
+        return that._documents.removeAllMembers(that.id);
+    }
     function upload(slugOrBlob, blob) {
         if (blob === void 0) { blob = null; }
         var slug = Utils.isString(slugOrBlob) ? slugOrBlob : null;
@@ -2051,6 +2078,7 @@ $__System.register("20", ["5"], function(exports_1) {
                         && Utils.hasFunction(document, "upload")
                         && Utils.hasFunction(document, "removeMember")
                         && Utils.hasFunction(document, "removeMembers")
+                        && Utils.hasFunction(document, "removeAllMembers")
                         && Utils.hasFunction(document, "getMembers");
                 };
                 Factory.decorate = function (persistedDocument) {
@@ -2092,6 +2120,12 @@ $__System.register("20", ["5"], function(exports_1) {
                             enumerable: false,
                             configurable: true,
                             value: removeMembers,
+                        },
+                        "removeAllMembers": {
+                            writable: false,
+                            enumerable: false,
+                            configurable: true,
+                            value: removeAllMembers,
                         },
                         "upload": {
                             writable: false,
@@ -12357,6 +12391,11 @@ $__System.register("64", [], function(exports_1) {
                 });
                 Object.defineProperty(Class, "NonReadableMembershipResourceTriples", {
                     get: function () { return namespace + "NonReadableMembershipResourceTriples"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(Class, "PreferContainer", {
+                    get: function () { return namespace + "PreferContainer"; },
                     enumerable: true,
                     configurable: true
                 });
