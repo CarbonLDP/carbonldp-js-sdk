@@ -671,6 +671,7 @@ declare module 'carbonldp/NS/C' {
 	    static AddMemberAction: string;
 	    static API: string;
 	    static NonReadableMembershipResourceTriples: string;
+	    static PreferContainer: string;
 	    static PreferContainmentResources: string;
 	    static PreferContainmentTriples: string;
 	    static PreferMembershipResources: string;

@@ -4967,6 +4967,10 @@ static NonReadableMembershipResourceTriples:string
 ```
 
 ```typescript 
+static PreferContainer:string 
+```
+
+```typescript 
 static PreferContainmentResources:string 
 ```
 
