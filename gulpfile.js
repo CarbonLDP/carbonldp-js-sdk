@@ -6,6 +6,7 @@ const packageJSON = require( "./package.json" );
 
 const gulp = require( "gulp" );
 const util = require( "gulp-util" );
+const runSequence = require( "run-sequence" );
 
 const karma = require( "karma" );
 
@@ -172,5 +173,10 @@ gulp.task( "clean:dist", ( done ) => {
 
 gulp.task( "lint", [ "ts-lint" ] );
 
-gulp.task( "build", [ "clean:dist" ], () => { return gulp.start( "build:afterCleaning" ); });
-gulp.task( "build:afterCleaning", [ "compile-library", "generate-doc", "bundle-sfx", "bundle-definitions" ] );
+gulp.task( "build", ( done ) => {
+	runSequence(
+		"clean:dist",
+		[ "compile-library", "generate-doc", "bundle-sfx", "bundle-definitions" ],
+		done
+	);
+});

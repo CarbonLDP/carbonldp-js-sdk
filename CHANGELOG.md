@@ -1,3 +1,8 @@
+# 0.29.0 (April 22, 2016)
+- Added `context.documents.removeAllMembers()`
+- Added `context.documents.getChildren()` method, which lets you obtain all the children of a container
+- Fixed a bug in `LDP.DirectContainer.Factory.createFrom` where sending an undefined `hasMemberRelation` would trigger unexpected behaviour
+
 # 0.28.0 (April 14, 2016)
 - Added `context.documents.removeMember()` method, which lets you remove a single member reference to a Container
 - Added `context.documents.removeMember()` method, same as `persistedContainer.removeMember()`
