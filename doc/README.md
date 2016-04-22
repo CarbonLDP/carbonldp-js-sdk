@@ -1801,6 +1801,18 @@ Remove all the members of the document container specified.
 - documentURI: URI of the document container where to remove the members.
 - requestOptions
 
+##### refresh
+```typescript 
+refresh( persistedDocument:Carbon.PersistedDocument.Class,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.PersistedDocument.Class, Carbon.HTTP.Response ]>
+```
+
+Update the document with the data of the server, if there is a diferent version on it.
+
+*Parameters*
+
+- persistedDocument: The persisted document to update.
+- requestOptions
+
 ##### delete
 ```typescript 
 delete( documentURI:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<Carbon.HTTP.Response.Class>

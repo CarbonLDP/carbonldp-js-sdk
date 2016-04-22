@@ -1234,9 +1234,7 @@ $__System.register("17", ["c", "18", "9", "5", "13", "19", "15", "8", "4", "10",
                     if (this.pointers.has(pointerID)) {
                         var pointer = this.getPointer(uri);
                         if (pointer.isResolved()) {
-                            return new Promise(function (resolve, reject) {
-                                resolve([pointer, null]);
-                            });
+                            return this.refresh(pointer);
                         }
                     }
                     if (this.context && this.context.auth.isAuthenticated())
