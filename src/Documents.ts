@@ -91,9 +91,7 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 		if( this.pointers.has( pointerID ) ) {
 			let pointer:Pointer.Class = this.getPointer( uri );
 			if( pointer.isResolved() ) {
-				return new Promise( ( resolve:( result:[ PersistedDocument.Class, HTTP.Response.Class ]) => void, reject:( error:Error ) => void ) => {
-					resolve( [ <any> pointer, null ] );
-				} );
+				return this.refresh( <PersistedDocument.Class> pointer );
 			}
 		}
 
