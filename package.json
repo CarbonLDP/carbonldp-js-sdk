@@ -17,6 +17,7 @@
     "lib": "dist"
   },
   "dependencies": {
+    "file-type": "^3.8.0",
     "jsonld": "^0.4.2"
   },
   "devDependencies": {

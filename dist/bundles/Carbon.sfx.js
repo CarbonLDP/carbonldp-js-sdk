@@ -1350,7 +1350,7 @@ $__System.register("17", ["c", "18", "9", "5", "13", "19", "15", "8", "4", "10",
                         this.context.auth.addAuthentication(requestOptions);
                     var containerRetrievalPreferences = {
                         include: [
-                            NS.LDP.Class.PreferContainment
+                            NS.LDP.Class.PreferContainment,
                         ],
                         omit: [
                             NS.LDP.Class.PreferMembership,
@@ -1420,25 +1420,33 @@ $__System.register("17", ["c", "18", "9", "5", "13", "19", "15", "8", "4", "10",
                         ];
                     });
                 };
-                Documents.prototype.upload = function (parentURI, slugOrBlob, blobOrRequestOptions, requestOptions) {
+                Documents.prototype.upload = function (parentURI, slugOrData, dataOrRequestOptions, requestOptions) {
                     var _this = this;
-                    if (blobOrRequestOptions === void 0) { blobOrRequestOptions = {}; }
+                    if (dataOrRequestOptions === void 0) { dataOrRequestOptions = {}; }
                     if (requestOptions === void 0) { requestOptions = {}; }
-                    var slug = Utils.isString(slugOrBlob) ? slugOrBlob : null;
-                    var blob = !Utils.isString(slugOrBlob) ? slugOrBlob : blobOrRequestOptions;
-                    requestOptions = !Utils.isString(slugOrBlob) ? blobOrRequestOptions : requestOptions;
-                    if (!(blob instanceof Blob))
-                        return Promise.reject(new Errors.IllegalArgumentError("The file is not a valid Blob object."));
+                    var slug = Utils.isString(slugOrData) ? slugOrData : null;
+                    var data = !Utils.isString(slugOrData) ? slugOrData : dataOrRequestOptions;
+                    requestOptions = !Utils.isString(slugOrData) ? dataOrRequestOptions : requestOptions;
+                    if (typeof Blob !== "undefined") {
+                        if (!(data instanceof Blob))
+                            return Promise.reject(new Errors.IllegalArgumentError("The data is not a valid Blob object."));
+                        HTTP.Request.Util.setContentTypeHeader(data.type, requestOptions);
+                    }
+                    else {
+                        if (!(data instanceof Buffer))
+                            return Promise.reject(new Errors.IllegalArgumentError("The data is not a valid Buffer object."));
+                        var fileType = require("file-type");
+                        HTTP.Request.Util.setContentTypeHeader(fileType(data).mime, requestOptions);
+                    }
                     if (!!this.context)
                         parentURI = this.context.resolve(parentURI);
                     if (this.context && this.context.auth.isAuthenticated())
                         this.context.auth.addAuthentication(requestOptions);
-                    HTTP.Request.Util.setContentTypeHeader(blob.type, requestOptions);
                     HTTP.Request.Util.setAcceptHeader("application/ld+json", requestOptions);
                     HTTP.Request.Util.setPreferredInteractionModel(NS.LDP.Class.Container, requestOptions);
                     if (slug !== null)
                         HTTP.Request.Util.setSlug(slug, requestOptions);
-                    return HTTP.Request.Service.post(parentURI, blob, requestOptions).then(function (response) {
+                    return HTTP.Request.Service.post(parentURI, data, requestOptions).then(function (response) {
                         var locationHeader = response.getHeader("Location");
                         if (locationHeader === null || locationHeader.values.length < 1)
                             throw new HTTP.Errors.BadResponseError("The response is missing a Location header.", response);
@@ -2088,15 +2096,15 @@ $__System.register("20", ["5"], function(exports_1) {
         var that = this;
         return that._documents.removeAllMembers(that.id);
     }
-    function upload(slugOrBlob, blob) {
-        if (blob === void 0) { blob = null; }
-        var slug = Utils.isString(slugOrBlob) ? slugOrBlob : null;
-        blob = slug ? blob : slugOrBlob;
+    function upload(slugOrData, data) {
+        if (data === void 0) { data = null; }
+        var slug = Utils.isString(slugOrData) ? slugOrData : null;
+        data = slug ? data : slugOrData;
         if (slug) {
-            return this._documents.upload(this.id, slug, blob);
+            return this._documents.upload(this.id, slug, data);
         }
         else {
-            return this._documents.upload(this.id, blob);
+            return this._documents.upload(this.id, data);
         }
     }
     return {
@@ -4295,6 +4303,9 @@ $__System.register("2e", [], function(exports_1) {
 $__System.register("2f", ["18", "c", "30", "2e"], function(exports_1) {
     var HTTP, Errors, UsernameAndPasswordToken_1, UsernameAndPasswordCredentials;
     var Class;
+    function toB64(str) {
+        return (typeof btoa !== "undefined") ? btoa(str) : new Buffer(str).toString("base64");
+    }
     return {
         setters:[
             function (HTTP_1) {
@@ -4351,7 +4362,7 @@ $__System.register("2f", ["18", "c", "30", "2e"], function(exports_1) {
                         header = new HTTP.Header.Class();
                         headers.set("authorization", header);
                     }
-                    var authorization = "Basic " + btoa(this.credentials.username + ":" + this.credentials.password);
+                    var authorization = "Basic " + toB64(this.credentials.username + ":" + this.credentials.password);
                     header.values.push(new HTTP.Header.Value(authorization));
                     return headers;
                 };
@@ -11117,41 +11128,88 @@ $__System.register("52", [], function(exports_1) {
 $__System.register("53", ["51", "54", "52", "55", "5"], function(exports_1) {
     var Errors, Header, Method_1, Response_1, Utils;
     var Service, Util;
-    function setHeaders(request, headers) {
+    function forEachHeaders(headers, setHeader) {
         var namesIterator = headers.keys();
         var next = namesIterator.next();
         while (!next.done) {
             var name = next.value;
             var value = headers.get(name);
-            request.setRequestHeader(name, value.toString());
+            setHeader(name, value.toString());
             next = namesIterator.next();
         }
     }
-    function onLoad(resolve, reject, request) {
-        return function () {
-            var response = new Response_1.default(request);
-            if (request.status >= 200 && request.status <= 299) {
-                resolve(response);
+    function onResolve(resolve, reject, response) {
+        if (response.status >= 200 && response.status <= 299) {
+            resolve(response);
+        }
+        else if (response.status >= 400 && response.status < 600 && Errors.statusCodeMap.has(response.status)) {
+            var error = Errors.statusCodeMap.get(response.status);
+            reject(new error("", response));
+        }
+        else {
+            reject(new Errors.UnknownError(response.data, response));
+        }
+    }
+    function sendWithBrowser(method, url, body, options) {
+        return new Promise(function (resolve, reject) {
+            var request = options.request ? options.request : new XMLHttpRequest();
+            request.open(method, url, true);
+            if (options.headers)
+                forEachHeaders(options.headers, function (name, value) { return request.setRequestHeader(name, value); });
+            request.withCredentials = options.sendCredentialsOnCORS;
+            if (options.timeout)
+                request.timeout = options.timeout;
+            request.onload = request.onerror = function () {
+                var response = new Response_1.default(request);
+                onResolve(resolve, reject, response);
+            };
+            if (body) {
+                request.send(body);
             }
             else {
-                rejectRequest(reject, request);
+                request.send();
             }
-        };
+        });
     }
-    function onError(reject, request) {
-        return function () {
-            rejectRequest(reject, request);
-        };
+    function sendWithNode(method, url, body, options) {
+        return new Promise(function (resolve, reject) {
+            var URL = require("url");
+            var parsedURL = URL.parse(url);
+            var HTTP = parsedURL.protocol === "http:" ? require("http") : require("https");
+            var requestOptions = {
+                protocol: parsedURL.protocol,
+                hostname: parsedURL.hostname,
+                path: parsedURL.path,
+                method: method,
+                headers: {},
+                withCredentials: options.sendCredentialsOnCORS,
+            };
+            if (options.headers)
+                forEachHeaders(options.headers, function (name, value) { return requestOptions.headers[name] = value; });
+            var request = HTTP.request(requestOptions, function (res) {
+                var data = "";
+                res.setEncoding("utf8");
+                res.on("data", function (chunk) {
+                    data = chunk;
+                });
+                res.on("end", function () {
+                    var response = new Response_1.default(request, data);
+                    onResolve(resolve, reject, response);
+                });
+            });
+            if (options.timeout)
+                request.setTimeout(options.timeout);
+            request.on("error", function (error) {
+                var response = new Response_1.default(request, error.message);
+                onResolve(resolve, reject, response);
+            });
+            request.end(body);
+        });
     }
-    function rejectRequest(reject, request) {
-        var response = new Response_1.default(request);
-        if (response.status >= 400 && response.status < 600) {
-            if (Errors.statusCodeMap.has(response.status)) {
-                var error = Errors.statusCodeMap.get(response.status);
-                reject(new error("", response));
-            }
-        }
-        reject(new Errors.UnknownError("", response));
+    function isBody(data) {
+        return Utils.isString(data)
+            || typeof Blob !== "undefined" && data instanceof Blob
+            || typeof Buffer !== "undefined" && data instanceof Buffer;
     }
     return {
         setters:[
@@ -11181,7 +11239,7 @@ $__System.register("53", ["51", "54", "52", "55", "5"], function(exports_1) {
                     var body = null;
                     var options = Utils.hasProperty(optionsOrParser, "parse") ? bodyOrOptions : optionsOrParser;
                     parser = Utils.hasProperty(optionsOrParser, "parse") ? optionsOrParser : parser;
-                    if ((bodyOrOptions instanceof Blob) || Utils.isString(bodyOrOptions)) {
+                    if (isBody(bodyOrOptions)) {
                         body = bodyOrOptions;
                     }
                     else {
@@ -11190,23 +11248,13 @@ $__System.register("53", ["51", "54", "52", "55", "5"], function(exports_1) {
                     options = Utils.extend(options || {}, Service.defaultOptions);
                     if (Utils.isNumber(method))
                         method = Method_1.default[method];
-                    var requestPromise = new Promise(function (resolve, reject) {
-                        var request = options.request ? options.request : new XMLHttpRequest();
-                        request.open(method, url, true);
-                        if (options.headers)
-                            setHeaders(request, options.headers);
-                        request.withCredentials = options.sendCredentialsOnCORS;
-                        if (options.timeout)
-                            request.timeout = options.timeout;
-                        request.onload = onLoad(resolve, reject, request);
-                        request.onerror = onError(reject, request);
-                        if (body) {
-                            request.send(body);
-                        }
-                        else {
-                            request.send();
-                        }
-                    });
+                    var requestPromise;
+                    if (typeof XMLHttpRequest !== "undefined") {
+                        requestPromise = sendWithBrowser(method, url, body, options);
+                    }
+                    else {
+                        requestPromise = sendWithNode(method, url, body, options);
+                    }
                     if (parser === null)
                         return requestPromise;
                     return requestPromise.then(function (response) {
@@ -11394,30 +11442,47 @@ $__System.register("54", [], function(exports_1) {
     }
 });
 
-$__System.register("55", ["54"], function(exports_1) {
-    var Header;
+$__System.register("55", ["54", "5"], function(exports_1) {
+    var Header, Utils_1;
     var Class, Util;
     return {
         setters:[
             function (Header_1) {
                 Header = Header_1;
+            },
+            function (Utils_1_1) {
+                Utils_1 = Utils_1_1;
             }],
         execute: function() {
             Class = (function () {
-                function Class(request) {
-                    this.status = request.status;
-                    this.data = request.responseText;
-                    this.setHeaders(request);
+                function Class(request, data) {
+                    if (typeof XMLHttpRequest !== "undefined" && request instanceof XMLHttpRequest) {
+                        this.status = request.status;
+                        this.data = request.responseText;
+                        this.setHeaders(request.getAllResponseHeaders());
+                    }
+                    else {
+                        var response = request.res || {};
+                        this.status = response.statusCode;
+                        this.data = data || "";
+                        this.setHeaders(response.headers);
+                    }
                     this.request = request;
                 }
                 Class.prototype.getHeader = function (name) {
                     name = name.toLowerCase();
                     return this.headers.get(name) || null;
                 };
-                Class.prototype.setHeaders = function (request) {
-                    var headersString = request.getAllResponseHeaders();
-                    if (headersString) {
-                        this.headers = Header.Util.parseHeaders(headersString);
+                Class.prototype.setHeaders = function (headers) {
+                    if (Utils_1.isString(headers)) {
+                        this.headers = Header.Util.parseHeaders(headers);
+                    }
+                    else if (Utils_1.isObject(headers)) {
+                        this.headers = new Map();
+                        for (var _i = 0, _a = Object.keys(headers); _i < _a.length; _i++) {
+                            var name = _a[_i];
+                            this.headers.set(name, new Header.Class(headers[name]));
+                        }
                     }
                     else {
                         this.headers = new Map();

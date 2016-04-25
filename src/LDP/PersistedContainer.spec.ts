@@ -406,8 +406,8 @@ describe( module( "Carbon/LDP/PersistedContainer" ), ():void => {
 			), ():void => {
 
 				it( hasSignature( [
-						{ name: "slug", type: "string", description: "The slug name for the file URI." },
-						{ name: "blob", type: "Blob", description: "Binary data to store in the server." }
+						{ name: "slug", type: "string", description: "The slug that will be used in the URI of the data." },
+						{ name: "data", type: "Blob", description: "Binary data to store in the server. The Blob works in a Browser." }
 					],
 					{ type: "Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>" }
 				), ():void => {
@@ -423,7 +423,7 @@ describe( module( "Carbon/LDP/PersistedContainer" ), ():void => {
 				});
 
 				it( hasSignature( [
-						{ name: "blob", type: "Blob", description: "Binary data to store in the server." }
+						{ name: "data", type: "Blob", description: "Binary data to store in the server. The Blob works in a Browser." }
 					],
 					{ type: "Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>" }
 				), ():void => {
@@ -437,6 +437,25 @@ describe( module( "Carbon/LDP/PersistedContainer" ), ():void => {
 
 					expect( spy ).toHaveBeenCalledWith( "http://example.com/resource/", blob );
 				});
+
+				// it( hasSignature( [
+				// 		{ name: "slug", type: "string", description: "The slug that will be used in the URI of the data." },
+				// 		{ name: "data", type: "Buffer", description: "Binary data to store in the server. The Buffer only works in Node.js." }
+				// 	],
+				// 	{ type: "Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>" }
+				// ), ():void => {
+				// 	expect( container.upload ).toBeDefined();
+				// 	expect( Utils.isFunction( container.upload ) ).toBeDefined();
+				// });
+				//
+				// it( hasSignature( [
+				// 		{ name: "data", type: "Buffer", description: "Binary data to store in the server. The Buffer only works in Node.js." }
+				// 	],
+				// 	{ type: "Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>" }
+				// ), ():void => {
+				// 	expect( container.upload ).toBeDefined();
+				// 	expect( Utils.isFunction( container.upload ) ).toBeDefined();
+				// });
 
 			});
 

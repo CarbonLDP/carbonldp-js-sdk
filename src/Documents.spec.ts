@@ -780,8 +780,6 @@ describe( module( "Carbon/Documents", "" ), ():void => {
 			let spySuccess = spyOn( spy, "success" ).and.callThrough();
 			let spyFail = spyOn( spy, "fail" ).and.callThrough();
 
-			let blob:Blob = new Blob( [ JSON.stringify( { "some content": "for the blob." } ) ], { type : "application/json" } );
-
 			jasmine.Ajax.stubRequest( "http://example.com/parent-resource/", null, "POST" ).andReturn( {
 				status: 200,
 				responseHeaders: {
@@ -855,8 +853,6 @@ describe( module( "Carbon/Documents", "" ), ():void => {
 			let spySuccess = spyOn( spy, "success" ).and.callThrough();
 			let spyFail = spyOn( spy, "fail" ).and.callThrough();
 
-			let blob:Blob = new Blob( [ JSON.stringify( { "some content": "for the blob." } ) ], { type : "application/json" } );
-
 			jasmine.Ajax.stubRequest( "http://example.com/parent-resource/", null, "POST" ).andReturn( {
 				status: 200,
 				responseHeaders: {
@@ -903,9 +899,9 @@ describe( module( "Carbon/Documents", "" ), ():void => {
 	), ():void => {
 
 		it( hasSignature(
-			"Upload a File to the server, creating a child for the parent specified.", [
+			"Upload a binary data to the server, creating a child for the parent specified. This signature it's only when working in a Browser.", [
 				{ name: "parentURI", type: "string" },
-				{ name: "blob", type: "Blob" },
+				{ name: "data", type: "Blob" },
 				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
 			],
 			{ type:"Promise<[Carbon.Pointer.Class, Carbon.HTTP.Response.Class]>" }
@@ -950,10 +946,10 @@ describe( module( "Carbon/Documents", "" ), ():void => {
 		});
 
 		it( hasSignature(
-			"Upload a File to the server, creating a child for the parent specified.", [
+			"Upload a binary data to the server, creating a child for the parent specified. This signature it's only when working in a Browser.", [
 				{ name: "parentURI", type: "string" },
 				{ name: "slug", type: "string" },
-				{ name: "blob", type: "Blob" },
+				{ name: "data", type: "Blob" },
 				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
 			],
 			{ type:"Promise<[Carbon.Pointer.Class, Carbon.HTTP.Response.Class]>" }
@@ -996,6 +992,27 @@ describe( module( "Carbon/Documents", "" ), ():void => {
 				done();
 			}, done.fail );
 		});
+
+		// it( hasSignature(
+		// 	"Upload a binary data to the server, creating a child for the parent specified. This signature it's only when working in Node.js.", [
+		// 		{ name: "parentURI", type: "string" },
+		// 		{ name: "data", type: "Buffer" },
+		// 		{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
+		// 	],
+		// 	{ type:"Promise<[Carbon.Pointer.Class, Carbon.HTTP.Response.Class]>" }
+		// ), ():void => {
+		// });
+		//
+		// it( hasSignature(
+		// 	"Upload a binary data to the server, creating a child for the parent specified. This signature it's only when working in Node.js.", [
+		// 		{ name: "parentURI", type: "string" },
+		// 		{ name: "slug", type: "string" },
+		// 		{ name: "data", type: "Buffer" },
+		// 		{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
+		// 	],
+		// 	{ type:"Promise<[Carbon.Pointer.Class, Carbon.HTTP.Response.Class]>" }
+		// ), ():void => {
+		// });
 
 	});
 
