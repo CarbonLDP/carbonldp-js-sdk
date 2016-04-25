@@ -25,10 +25,14 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 	private context:Context;
 	private pointers:Map<string, Pointer.Class>;
 
+	// Map for know if a GET request is in progress, with the purpose of avoid the the same request
+	private _inProgress:Map<string, Promise<[ PersistedDocument.Class, HTTP.Response.Class ]>>;
+
 	constructor( context:Context = null ) {
 		this.context = context;
 
 		this.pointers = new Map<string, Pointer.Class>();
+		this._inProgress = new Map<string, Promise<[ PersistedDocument.Class, HTTP.Response.Class ]>>();
 
 		if( !! this.context && !! this.context.parentContext ) {
 			let contextJSONLDConverter:JSONLDConverter.Class = this.context.parentContext.documents.jsonldConverter;
@@ -102,7 +106,9 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 		HTTP.Request.Util.setAcceptHeader( "application/ld+json", requestOptions );
 		HTTP.Request.Util.setPreferredInteractionModel( NS.LDP.Class.RDFSource, requestOptions );
 
-		return HTTP.Request.Service.get( uri, requestOptions, new RDF.Document.Parser() ).then( ( [ rdfDocuments, response ]:[ RDF.Document.Class[], HTTP.Response.Class ] ) => {
+		if ( this._inProgress.has( pointerID ) ) return this._inProgress.get( pointerID );
+
+		let promise:Promise<[ PersistedDocument.Class, HTTP.Response.Class ]> = HTTP.Request.Service.get( uri, requestOptions, new RDF.Document.Parser() ).then( ( [ rdfDocuments, response ]:[ RDF.Document.Class[], HTTP.Response.Class ] ) => {
 			let etag:string = HTTP.Response.Util.getETag( response );
 			if( etag === null ) throw new HTTP.Errors.BadResponseError( "The response doesn't contain an ETag", response );
 
@@ -147,8 +153,12 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 			// TODO: Make it dynamic
 			if( LDP.Container.Factory.hasRDFClass( document ) ) LDP.PersistedContainer.Factory.decorate( document );
 
+			this._inProgress.delete( pointerID );
 			return [ document, response ];
 		} );
+
+		this._inProgress.set( pointerID, promise );
+		return promise;
 	}
 
 	exists( documentURI:string, requestOptions:HTTP.Request.Options = {} ):Promise<[ boolean, HTTP.Response.Class ]> {
@@ -226,7 +236,7 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 
 		let containerRetrievalPreferences:HTTP.Request.ContainerRetrievalPreferences = {
 			include: [
-				NS.LDP.Class.PreferContainment
+				NS.LDP.Class.PreferContainment,
 			],
 			omit: [
 				NS.LDP.Class.PreferMembership,
