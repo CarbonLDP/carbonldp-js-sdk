@@ -25,10 +25,14 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 	private context:Context;
 	private pointers:Map<string, Pointer.Class>;
 
+	// Tracks the documents that are being resolved to avoid triggering repeated requests
+	private documentsBeingResolved:Map<string, Promise<[ PersistedDocument.Class, HTTP.Response.Class ]>>;
+
 	constructor( context:Context = null ) {
 		this.context = context;
 
 		this.pointers = new Map<string, Pointer.Class>();
+		this.documentsBeingResolved = new Map<string, Promise<[ PersistedDocument.Class, HTTP.Response.Class ]>>();
 
 		if( !! this.context && !! this.context.parentContext ) {
 			let contextJSONLDConverter:JSONLDConverter.Class = this.context.parentContext.documents.jsonldConverter;
@@ -97,12 +101,14 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 			}
 		}
 
+		if ( this.documentsBeingResolved.has( pointerID ) ) return this.documentsBeingResolved.get( pointerID );
+
 		if ( this.context && this.context.auth.isAuthenticated() ) this.context.auth.addAuthentication( requestOptions );
 
 		HTTP.Request.Util.setAcceptHeader( "application/ld+json", requestOptions );
 		HTTP.Request.Util.setPreferredInteractionModel( NS.LDP.Class.RDFSource, requestOptions );
 
-		return HTTP.Request.Service.get( uri, requestOptions, new RDF.Document.Parser() ).then( ( [ rdfDocuments, response ]:[ RDF.Document.Class[], HTTP.Response.Class ] ) => {
+		let promise:Promise<[ PersistedDocument.Class, HTTP.Response.Class ]> = HTTP.Request.Service.get( uri, requestOptions, new RDF.Document.Parser() ).then( ( [ rdfDocuments, response ]:[ RDF.Document.Class[], HTTP.Response.Class ] ) => {
 			let etag:string = HTTP.Response.Util.getETag( response );
 			if( etag === null ) throw new HTTP.Errors.BadResponseError( "The response doesn't contain an ETag", response );
 
@@ -147,8 +153,12 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 			// TODO: Make it dynamic
 			if( LDP.Container.Factory.hasRDFClass( document ) ) LDP.PersistedContainer.Factory.decorate( document );
 
+			this.documentsBeingResolved.delete( pointerID );
 			return [ document, response ];
 		} );
+
+		this.documentsBeingResolved.set( pointerID, promise );
+		return promise;
 	}
 
 	exists( documentURI:string, requestOptions:HTTP.Request.Options = {} ):Promise<[ boolean, HTTP.Response.Class ]> {
@@ -226,7 +236,7 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 
 		let containerRetrievalPreferences:HTTP.Request.ContainerRetrievalPreferences = {
 			include: [
-				NS.LDP.Class.PreferContainment
+				NS.LDP.Class.PreferContainment,
 			],
 			omit: [
 				NS.LDP.Class.PreferMembership,

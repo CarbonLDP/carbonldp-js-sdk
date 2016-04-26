@@ -12,6 +12,7 @@ declare class Documents implements Pointer.Library, Pointer.Validator, ObjectSch
     jsonldConverter: JSONLDConverter.Class;
     private context;
     private pointers;
+    private _inProgress;
     constructor(context?: Context);
     inScope(pointer: Pointer.Class): boolean;
     inScope(id: string): boolean;
