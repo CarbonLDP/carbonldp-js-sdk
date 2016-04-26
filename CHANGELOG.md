@@ -1,3 +1,7 @@
+# 0.29.1 (April 26, 2016)
+- Fixed [LDP-630](https://jira.base22.com/browse/LDP-630), resolving the same resource at the same time throws an error
+- Fixed [LDP-629](https://jira.base22.com/browse/LDP-629), IllegalArgumentError when resolving a document that was already resolved
+
 # 0.29.0 (April 22, 2016)
 - Added `context.documents.removeAllMembers()`
 - Added `context.documents.getChildren()` method, which lets you obtain all the children of a container

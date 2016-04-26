@@ -1449,6 +1449,7 @@ declare module 'carbonldp/Documents' {
 	    jsonldConverter: JSONLDConverter.Class;
 	    private context;
 	    private pointers;
+	    private documentsBeingResolved;
 	    constructor(context?: Context);
 	    inScope(pointer: Pointer.Class): boolean;
 	    inScope(id: string): boolean;

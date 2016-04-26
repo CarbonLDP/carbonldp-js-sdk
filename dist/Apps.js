@@ -30,7 +30,7 @@ var Class = (function () {
             if (!PersistedApp.Factory.is(app))
                 return Promise.reject(new Errors.IllegalArgumentError("The resource fetched is not a cs:Application."));
             var appContext = new Context_1.default(_this.context, app);
-            appContext.app.rootContainer = appContext.documents.getPointer(app.rootContainer.id);
+            app.rootContainer = appContext.documents.getPointer(app.rootContainer.id);
             return appContext;
         });
     };
