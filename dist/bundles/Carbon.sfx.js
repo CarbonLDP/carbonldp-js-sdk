@@ -1173,7 +1173,7 @@ $__System.register("17", ["c", "18", "9", "5", "13", "19", "15", "8", "4", "10",
                     if (context === void 0) { context = null; }
                     this.context = context;
                     this.pointers = new Map();
-                    this._inProgress = new Map();
+                    this.documentsBeingResolved = new Map();
                     if (!!this.context && !!this.context.parentContext) {
                         var contextJSONLDConverter = this.context.parentContext.documents.jsonldConverter;
                         this._jsonldConverter = new JSONLDConverter.Class(contextJSONLDConverter.literalSerializers);
@@ -1240,12 +1240,12 @@ $__System.register("17", ["c", "18", "9", "5", "13", "19", "15", "8", "4", "10",
                             });
                         }
                     }
+                    if (this.documentsBeingResolved.has(pointerID))
+                        return this.documentsBeingResolved.get(pointerID);
                     if (this.context && this.context.auth.isAuthenticated())
                         this.context.auth.addAuthentication(requestOptions);
                     HTTP.Request.Util.setAcceptHeader("application/ld+json", requestOptions);
                     HTTP.Request.Util.setPreferredInteractionModel(NS.LDP.Class.RDFSource, requestOptions);
-                    if (this._inProgress.has(pointerID))
-                        return this._inProgress.get(pointerID);
                     var promise = HTTP.Request.Service.get(uri, requestOptions, new RDF.Document.Parser()).then(function (_a) {
                         var rdfDocuments = _a[0], response = _a[1];
                         var etag = HTTP.Response.Util.getETag(response);
@@ -1285,10 +1285,10 @@ $__System.register("17", ["c", "18", "9", "5", "13", "19", "15", "8", "4", "10",
                         document._syncSavedFragments();
                         if (LDP.Container.Factory.hasRDFClass(document))
                             LDP.PersistedContainer.Factory.decorate(document);
-                        _this._inProgress.delete(pointerID);
+                        _this.documentsBeingResolved.delete(pointerID);
                         return [document, response];
                     });
-                    this._inProgress.set(pointerID, promise);
+                    this.documentsBeingResolved.set(pointerID, promise);
                     return promise;
                 };
                 Documents.prototype.exists = function (documentURI, requestOptions) {
@@ -13808,7 +13808,7 @@ $__System.register("6e", ["e", "2", "12", "11", "a", "6", "2b", "13", "17", "c",
                     this.apps = new Apps.Class(this);
                 }
                 Object.defineProperty(Carbon, "version", {
-                    get: function () { return "0.29.0"; },
+                    get: function () { return "0.29.1"; },
                     enumerable: true,
                     configurable: true
                 });
