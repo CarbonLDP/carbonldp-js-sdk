@@ -25,14 +25,14 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 	private context:Context;
 	private pointers:Map<string, Pointer.Class>;
 
-	// Map for know if a GET request is in progress, with the purpose of avoid the the same request
-	private _inProgress:Map<string, Promise<[ PersistedDocument.Class, HTTP.Response.Class ]>>;
+	// Tracks the documents that are being resolved to avoid triggering repeated requests
+	private documentsBeingResolved:Map<string, Promise<[ PersistedDocument.Class, HTTP.Response.Class ]>>;
 
 	constructor( context:Context = null ) {
 		this.context = context;
 
 		this.pointers = new Map<string, Pointer.Class>();
-		this._inProgress = new Map<string, Promise<[ PersistedDocument.Class, HTTP.Response.Class ]>>();
+		this.documentsBeingResolved = new Map<string, Promise<[ PersistedDocument.Class, HTTP.Response.Class ]>>();
 
 		if( !! this.context && !! this.context.parentContext ) {
 			let contextJSONLDConverter:JSONLDConverter.Class = this.context.parentContext.documents.jsonldConverter;
@@ -101,12 +101,12 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 			}
 		}
 
+		if ( this.documentsBeingResolved.has( pointerID ) ) return this.documentsBeingResolved.get( pointerID );
+
 		if ( this.context && this.context.auth.isAuthenticated() ) this.context.auth.addAuthentication( requestOptions );
 
 		HTTP.Request.Util.setAcceptHeader( "application/ld+json", requestOptions );
 		HTTP.Request.Util.setPreferredInteractionModel( NS.LDP.Class.RDFSource, requestOptions );
-
-		if ( this._inProgress.has( pointerID ) ) return this._inProgress.get( pointerID );
 
 		let promise:Promise<[ PersistedDocument.Class, HTTP.Response.Class ]> = HTTP.Request.Service.get( uri, requestOptions, new RDF.Document.Parser() ).then( ( [ rdfDocuments, response ]:[ RDF.Document.Class[], HTTP.Response.Class ] ) => {
 			let etag:string = HTTP.Response.Util.getETag( response );
@@ -153,11 +153,11 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 			// TODO: Make it dynamic
 			if( LDP.Container.Factory.hasRDFClass( document ) ) LDP.PersistedContainer.Factory.decorate( document );
 
-			this._inProgress.delete( pointerID );
+			this.documentsBeingResolved.delete( pointerID );
 			return [ document, response ];
 		} );
 
-		this._inProgress.set( pointerID, promise );
+		this.documentsBeingResolved.set( pointerID, promise );
 		return promise;
 	}
 
