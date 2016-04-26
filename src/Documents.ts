@@ -561,12 +561,11 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 			this.updateObject( persistedDocument, updatedData );
 			persistedDocument._syncSnapshot();
 
-			let id:string;
-			let fragment:PersistedFragment.Class;
 			for( let fragmentResource of fragmentResources ) {
 				updatedData = this.compact( fragmentResource, {}, persistedDocument );
 
-				id = updatedData[ "id" ];
+				let id:string = updatedData[ "id" ];
+				let fragment:PersistedFragment.Class;
 				if ( persistedDocument.hasFragment( id ) ) {
 					setFragments.delete( id );
 					fragment = this.updateObject( persistedDocument.getFragment( id ), updatedData );
@@ -577,7 +576,7 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 				fragment._syncSnapshot();
 			}
 
-			Array.from( setFragments ).map( id => persistedDocument.removeFragment( id ) );
+			Array.from( setFragments ).forEach( id => persistedDocument.removeFragment( id ) );
 			persistedDocument._syncSavedFragments();
 
 			return [ persistedDocument, response ];
