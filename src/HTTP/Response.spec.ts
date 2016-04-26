@@ -19,6 +19,7 @@ import * as Response from "./Response";
 import DefaultExport from "./Response";
 import construct = Reflect.construct;
 import {ClientRequest, IncomingMessage} from "http";
+import {resolve} from "url";
 
 describe( module(
 	"Carbon/HTTP/Response"
@@ -267,58 +268,58 @@ describe( module(
 			expect( Response.Util.getETag ).toBeDefined();
 			expect( Utils.isFunction( Response.Util.getETag ) ).toBe( true );
 
-			let promises:Promise<void>[] = [
+			let promises:Promise<void>[] = [];
 
-			createResponse( "full/", ( response:Response.Class ):Promise<any> => {
+			promises.push( createResponse( "full/", ( response:Response.Class ):void => {
 				expect( Response.Util.getETag( response ) ).toBe( rawResponse.responseHeaders[ "ETag" ] );
-				return Promise.resolve();
-			}, done.fail ),
+			} ) );
 
-			createResponse( "empty/", ( response:Response.Class ):Promise<any> => {
+			promises.push( createResponse( "empty/", ( response:Response.Class ):void => {
 				expect( Response.Util.getETag( response ) ).toBeNull();
-				return Promise.resolve();
-			}, done.fail )
-
-			]
+			} ) );
 
 			Promise.all( promises ).then( done ).catch( done.fail );
 		});
 
-		function createResponse( type:string, callback:( response:Response.Class ) => void, fail:( any?:any) =>  void ):Promise<any>{
-			if ( inXMLHttpRequest ) {
-				let request:XMLHttpRequest = new XMLHttpRequest();
-				request.open( "GET", "http://example.com/request/" + type );
-				request.onerror = fail;
+		function createResponse( type:string, callback:( response:Response.Class ) => void ):Promise<void> {
+			return new Promise<void>( ( resolve, reject ) => {
+				if ( inXMLHttpRequest ) {
+					let request:XMLHttpRequest = new XMLHttpRequest();
+					request.open( "GET", "http://example.com/request/" + type );
+					request.onerror = reject;
 
-				request.onload = () => {
-					let response = new Response.Class( <XMLHttpRequest> request );
-					return callback( response );
-				};
+					request.onload = () => {
+						let response = new Response.Class( <XMLHttpRequest> request );
+						callback( response );
+						resolve();
+					};
 
-				request.send();
+					request.send();
 
-			} else {
-				let http:any = require( "http" );
-				let request:ClientRequest = http.request( {
-					method: "GET",
-					protocol: "http:",
-					host: "example.com",
-					path: "/request/" + type
-				}, ( res:IncomingMessage ) => {
-					let data:string = "";
-					res.setEncoding( "utf8" );
-					res.on( "data", ( chunk ) => {
-						data = chunk;
+				} else {
+					let http:any = require( "http" );
+					let request:ClientRequest = http.request( {
+						method: "GET",
+						protocol: "http:",
+						host: "example.com",
+						path: "/request/" + type
+					}, ( res:IncomingMessage ) => {
+						let data:string = "";
+						res.setEncoding( "utf8" );
+						res.on( "data", ( chunk ) => {
+							data = chunk;
+						});
+						res.on( "end", () => {
+							let response = new Response.Class( <ClientRequest> request, data, res );
+							callback( response );
+							resolve();
+						});
 					});
-					res.on( "end", () => {
-						let response = new Response.Class( <ClientRequest> request, data, res );
-						return callback( response );
-					});
-				});
 
-				request.on( "error", fail );
-				request.end();
-			}
+					request.on( "error", reject );
+					request.end();
+				}
+			} );
 		}
 
 	});
