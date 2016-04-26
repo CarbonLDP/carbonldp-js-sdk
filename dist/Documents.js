@@ -57,7 +57,7 @@ var Documents = (function () {
     };
     Documents.prototype.getPointer = function (id) {
         var localID = this.getPointerID(id);
-        if (!localID) {
+        if (localID === null) {
             if (!!this.context && !!this.context.parentContext)
                 return this.context.parentContext.documents.getPointer(id);
             throw new Errors.IllegalArgumentError("The pointer id is not supported by this module.");
