@@ -17,6 +17,7 @@ import Response from "./../../Response";
 
 import BadResponseError from "./BadResponseError";
 import HTTPError from "./../HTTPError";
+import {Service} from "../../Request";
 
 describe( module(
 	"Carbon/HTTP/Errors/server/BadResponseError"
@@ -29,21 +30,21 @@ describe( module(
 
 		let response: Response;
 
-		beforeEach(function() {
+		beforeAll( ( done:{ ():void, fail:() => void } ) => {
 			jasmine.Ajax.install();
-			jasmine.Ajax.stubRequest( "/a/request/" ).andReturn({
+			jasmine.Ajax.stubRequest( "http://example.com/request/" ).andReturn({
 				"status": 200,
 				"responseText": "A response"
 			});
 
-			let request = new XMLHttpRequest();
-			request.open( "GET", "/a/request/" );
-			request.send();
+			Service.send( "GET", "http://example.com/request/" ).then( ( _response ) => {
+				response = _response;
+				done();
+			}).catch( done.fail );
 
-			response = new Response( request );
 		});
 
-		afterEach(function() {
+		afterAll( () => {
 			jasmine.Ajax.uninstall();
 		});
 

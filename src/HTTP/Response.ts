@@ -4,14 +4,14 @@ import {isString, isObject} from "../Utils";
 
 export class Class {
 	constructor( request:XMLHttpRequest );
-	constructor( request:ClientRequest, data:string );
-	constructor( request:XMLHttpRequest | ClientRequest, data?:string ) {
+	constructor( request:ClientRequest, data:string, response?:IncomingMessage );
+	constructor( request:XMLHttpRequest | ClientRequest, data?:string, response:IncomingMessage = <any>{} ) {
 		if ( typeof XMLHttpRequest !== "undefined" && request instanceof XMLHttpRequest ) {
-			this.status = (<XMLHttpRequest> request).status;
-			this.data = (<XMLHttpRequest> request).responseText;
-			this.setHeaders( (<XMLHttpRequest> request).getAllResponseHeaders() );
+			let res:XMLHttpRequest = request;
+			this.status = res.status;
+			this.data = res.responseText;
+			this.setHeaders( res.getAllResponseHeaders() );
 		} else {
-			let response:IncomingMessage = (<any> request).res || {};
 			this.status = response.statusCode;
 			this.data = data || "";
 			this.setHeaders( <Object> response.headers );
@@ -35,13 +35,13 @@ export class Class {
 	private setHeaders( headers:any ):void {
 		if ( isString( headers ) ) {
 			this.headers = Header.Util.parseHeaders( headers );
-		} else if ( isObject( headers ) ) {
-			this.headers = new Map<string, Header.Class>();
-			for ( let name of Object.keys( headers ) ) {
-				this.headers.set( name, new Header.Class( headers[ name ] ) );
-			}
 		} else {
 			this.headers = new Map<string, Header.Class>();
+			if ( isObject( headers ) ) {
+				for ( let name of Object.keys( headers ) ) {
+					this.headers.set( name, new Header.Class( headers[ name ] ) );
+				}
+			}
 		}
 	}
 }

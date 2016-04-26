@@ -1,3 +1,5 @@
+import {IncomingMessage} from "http";
+import {Url} from "url";
 export interface SuiteDescriptor {
 	access?:string;
 	suiteType:string;
@@ -341,4 +343,80 @@ export function hasEnumeral( name:string, description:string = null ):string {
 	};
 
 	return toJSON( descriptor );
+}
+
+if ( typeof XMLHttpRequest === "undefined" ) {
+	const nock:any = require('nock');
+	const URL:any = require( "url" );
+	let methods:string[] = [ "OPTIONS", "HEAD", "GET", "POST", "PUT", "PATCH", "DELETE" ];
+
+	jasmine.Ajax = <any> ( () => {
+
+		let scopes:Map<string, any> = new Map();
+
+		function install() {
+			nock.disableNetConnect();
+		}
+
+		function uninstall() {
+			scopes.clear();
+			nock.cleanAll();
+			nock.enableNetConnect();
+		}
+
+		function andReturn( request ) {
+			return ( options:JasmineAjaxRequestStubReturnOptions ) => {
+				// console.log( options.status || 200, options.responseText || options.response || "", options.responseHeaders || {} );
+				if ( Array.isArray( request ) ) {
+					for ( let req of request ) {
+						req.reply( options.status || 200, options.responseText || options.response || "", options.responseHeaders || {} );
+					}
+				} else {
+					request.reply( options.status || 200, options.responseText || options.response || "", options.responseHeaders || {} );
+				}
+			};
+		}
+
+		function stubRequest( url:string, data:string, method:string = "*" ):any {
+			let parsedURL:Url = URL.parse( url );
+
+			let host:string = `${ parsedURL.protocol }//${ parsedURL.hostname}`;
+			if ( ! host ) throw new Error( "The URL must contains a hostname." );
+
+			let scope:any;
+			if ( scopes.has( host ) ) {
+				scope = scopes.get( host );
+			} else {
+				scope = nock( host );
+				scopes.set( host, scope );
+			}
+
+			let request:any;
+			if ( method === "*" ) {
+				request = [];
+				for ( let key of methods ) {
+					request.push( scope.persist().intercept( parsedURL.path, key, data || undefined ) );
+				}
+			} else {
+				request = scope.persist().intercept( parsedURL.path, method, data || undefined );
+			}
+			// console.log( scope );
+
+			return {
+				method: method,
+				andReturn: andReturn( request )
+			};
+		}
+
+		return {
+			install: install,
+			uninstall: uninstall,
+			stubRequest: stubRequest
+		};
+	})();
+	// stubRequest(url: RegExp, data?: string, method?: string): JasmineAjaxRequestStub;
+	//
+	// requests: JasmineAjaxRequestTracker;
+	// stubs: JasmineAjaxStubTracker;
+
 }

@@ -93,12 +93,14 @@ function sendWithNode( method:string, url:string, body:string | Buffer, options:
 
 		let request:ClientRequest = HTTP.request( requestOptions, ( res:IncomingMessage ) => {
 			let data:string = "";
+
 			res.setEncoding( "utf8" );
 			res.on( "data", ( chunk ) => {
 				data = chunk;
 			});
+
 			res.on( "end", () => {
-				let response:Response = new Response( request, data );
+				let response:Response = new Response( request, data, res );
 				onResolve( resolve, reject, response );
 			});
 		});

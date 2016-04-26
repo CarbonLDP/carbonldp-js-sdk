@@ -1,8 +1,8 @@
 import * as Header from "./Header";
-import { ClientRequest } from "http";
+import { ClientRequest, IncomingMessage } from "http";
 export declare class Class {
     constructor(request: XMLHttpRequest);
-    constructor(request: ClientRequest, data: string);
+    constructor(request: ClientRequest, data: string, response?: IncomingMessage);
     status: number;
     data: string;
     headers: Map<string, Header.Class>;

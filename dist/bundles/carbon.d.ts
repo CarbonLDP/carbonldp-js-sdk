@@ -57,10 +57,10 @@ declare module 'carbonldp/HTTP/Header' {
 }
 declare module 'carbonldp/HTTP/Response' {
 	import * as Header from 'carbonldp/HTTP/Header';
-	import { ClientRequest } from "http";
+	import { ClientRequest, IncomingMessage } from "http";
 	export class Class {
 	    constructor(request: XMLHttpRequest);
-	    constructor(request: ClientRequest, data: string);
+	    constructor(request: ClientRequest, data: string, response?: IncomingMessage);
 	    status: number;
 	    data: string;
 	    headers: Map<string, Header.Class>;

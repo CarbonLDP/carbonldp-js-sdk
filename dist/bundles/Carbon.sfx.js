@@ -11193,7 +11193,7 @@ $__System.register("53", ["51", "54", "52", "55", "5"], function(exports_1) {
                     data = chunk;
                 });
                 res.on("end", function () {
-                    var response = new Response_1.default(request, data);
+                    var response = new Response_1.default(request, data, res);
                     onResolve(resolve, reject, response);
                 });
             });
@@ -11455,14 +11455,15 @@ $__System.register("55", ["54", "5"], function(exports_1) {
             }],
         execute: function() {
             Class = (function () {
-                function Class(request, data) {
+                function Class(request, data, response) {
+                    if (response === void 0) { response = {}; }
                     if (typeof XMLHttpRequest !== "undefined" && request instanceof XMLHttpRequest) {
-                        this.status = request.status;
-                        this.data = request.responseText;
-                        this.setHeaders(request.getAllResponseHeaders());
+                        var res = request;
+                        this.status = res.status;
+                        this.data = res.responseText;
+                        this.setHeaders(res.getAllResponseHeaders());
                     }
                     else {
-                        var response = request.res || {};
                         this.status = response.statusCode;
                         this.data = data || "";
                         this.setHeaders(response.headers);
@@ -11477,15 +11478,14 @@ $__System.register("55", ["54", "5"], function(exports_1) {
                     if (Utils_1.isString(headers)) {
                         this.headers = Header.Util.parseHeaders(headers);
                     }
-                    else if (Utils_1.isObject(headers)) {
-                        this.headers = new Map();
-                        for (var _i = 0, _a = Object.keys(headers); _i < _a.length; _i++) {
-                            var name = _a[_i];
-                            this.headers.set(name, new Header.Class(headers[name]));
-                        }
-                    }
                     else {
                         this.headers = new Map();
+                        if (Utils_1.isObject(headers)) {
+                            for (var _i = 0, _a = Object.keys(headers); _i < _a.length; _i++) {
+                                var name = _a[_i];
+                                this.headers.set(name, new Header.Class(headers[name]));
+                            }
+                        }
                     }
                 };
                 return Class;

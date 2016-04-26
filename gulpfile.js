@@ -22,6 +22,8 @@ const tslint = require( "gulp-tslint" );
 const Builder = require( "systemjs-builder" );
 const jeditor = require( "gulp-json-editor" );
 
+const jasmine = require( "gulp-jasmine" );
+
 let config = {
 	source: {
 		typescript: [
@@ -29,6 +31,7 @@ let config = {
 			"!src/**/*.spec.ts",
 		    "!src/test/**"
 		],
+		test: "src/**.spec.ts",
 		main: "src/Carbon"
 	},
 	dist: {
@@ -70,6 +73,11 @@ gulp.task( "test:debug", ( done ) => {
 		autoWatch: true,
 		singleRun: false
 	}, done ).start();
+});
+
+gulp.task("test:node", () => {
+	return gulp.src( [ "src/HTTP/*.spec.js" ] )
+		.pipe( jasmine() );
 });
 
 gulp.task( "generate-doc", ( done ) => {

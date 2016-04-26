@@ -69,7 +69,7 @@ function sendWithNode(method, url, body, options) {
                 data = chunk;
             });
             res.on("end", function () {
-                var response = new Response_1.default(request, data);
+                var response = new Response_1.default(request, data, res);
                 onResolve(resolve, reject, response);
             });
         });
