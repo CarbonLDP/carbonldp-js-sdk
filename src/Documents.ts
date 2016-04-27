@@ -7,7 +7,7 @@ import * as Utils from "./Utils";
 import * as AccessPoint from "./AccessPoint";
 import * as Document from "./Document";
 import * as JSONLDConverter from "./JSONLDConverter";
-import * as PersistedResource from "./PersistedResource";
+import * as PersistedBlankNode from "./PersistedBlankNode";
 import * as PersistedDocument from "./PersistedDocument";
 import * as PersistedFragment from "./PersistedFragment";
 import * as PersistedNamedFragment from "./PersistedNamedFragment";
@@ -556,28 +556,30 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 			let originalFragments:PersistedFragment.Class[] = persistedDocument.getFragments();
 			let setFragments:Set<string> = new Set( originalFragments.map( fragment => fragment.id ) );
 
-			let updatedData:Object = {};
-			this.compact( documentResource, updatedData, persistedDocument );
-			this.updateObject( persistedDocument, updatedData );
-			persistedDocument._syncSnapshot();
-
+			let updatedData:Pointer.Class;
 			for( let fragmentResource of fragmentResources ) {
-				updatedData = this.compact( fragmentResource, {}, persistedDocument );
+				updatedData = <Pointer.Class> this.compact( fragmentResource, {}, persistedDocument );
 
-				let id:string = updatedData[ "id" ];
-				let fragment:PersistedFragment.Class;
-				if ( persistedDocument.hasFragment( id ) ) {
-					setFragments.delete( id );
-					fragment = this.updateObject( persistedDocument.getFragment( id ), updatedData );
+				let fragment:PersistedFragment.Class = this.getAssociatedFragment( persistedDocument, updatedData );
+				if ( fragment ) {
+					fragment = this.updateObject( fragment, updatedData );
+					if ( ! persistedDocument.hasFragment( fragment.id ) ) {
+						persistedDocument.createFragment( fragment.id, fragment );
+					}
 				} else {
-					fragment = persistedDocument.createFragment( id, updatedData );
+					fragment = persistedDocument.createFragment( updatedData.id, updatedData );
 				}
+				setFragments.delete( fragment.id );
 
 				fragment._syncSnapshot();
 			}
-
 			Array.from( setFragments ).forEach( id => persistedDocument.removeFragment( id ) );
 			persistedDocument._syncSavedFragments();
+
+			updatedData = <Pointer.Class> this.compact( documentResource, {}, persistedDocument );
+			this.updateObject( persistedDocument, updatedData );
+
+			persistedDocument._syncSnapshot();
 
 			return [ persistedDocument, response ];
 		});
@@ -799,6 +801,21 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 		}
 
 		return target;
+	}
+
+	private getAssociatedFragment( persistedDocument:PersistedDocument.Class, fragment:Pointer.Class ):PersistedFragment.Class {
+		if ( RDF.URI.Util.isBNodeID( fragment.id ) ) {
+			let blankNode:PersistedBlankNode.Class = <PersistedBlankNode.Class> fragment;
+			let fragments:PersistedFragment.Class[] = persistedDocument.getFragments();
+			for ( let frag of fragments ) {
+				if ( RDF.URI.Util.isBNodeID( frag.id ) && (<PersistedBlankNode.Class> frag).bNodeIdentifier === blankNode.bNodeIdentifier ) {
+					return frag;
+				}
+			}
+			persistedDocument.removeFragment( fragment.id );
+			return null;
+		}
+		return persistedDocument.getFragment( fragment.id );
 	}
 
 }

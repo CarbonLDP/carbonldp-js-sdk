@@ -683,6 +683,7 @@ declare module 'carbonldp/NS/C' {
 	}
 	export class Predicate {
 	    static accessPoint: string;
+	    static bNodeIdentifier: string;
 	    static buildDate: string;
 	    static created: string;
 	    static modified: string;
@@ -1435,6 +1436,16 @@ declare module 'carbonldp/AccessPoint' {
 	export default Class;
 
 }
+declare module 'carbonldp/PersistedBlankNode' {
+	import * as PersistedFragment from 'carbonldp/PersistedFragment';
+	import * as ObjectSchema from 'carbonldp/ObjectSchema';
+	export const SCHEMA: ObjectSchema.Class;
+	export interface Class extends PersistedFragment.Class {
+	    bNodeIdentifier: string;
+	}
+	export default Class;
+
+}
 declare module 'carbonldp/Documents' {
 	import * as HTTP from 'carbonldp/HTTP';
 	import Context from 'carbonldp/Context';
@@ -1500,6 +1511,7 @@ declare module 'carbonldp/Documents' {
 	    private getExpandedObjectTypes(expandedObject);
 	    private getDocumentTypes(document);
 	    private updateObject(target, source);
+	    private getAssociatedFragment(persistedDocument, fragment);
 	}
 	export default Documents;
 

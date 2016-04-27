@@ -27,9 +27,11 @@ import Documents from "./Documents";
 import * as Errors from "./Errors";
 import * as Fragment from "./Fragment";
 import * as HTTP from "./HTTP";
-import * as PersistedDocument from "./PersistedDocument";
-import * as PersistedFragment from "./PersistedFragment";
+import * as NS from "./NS";
 import * as ObjectSchema from "./ObjectSchema";
+import * as PersistedBlankNode from "./PersistedBlankNode";
+import * as PersistedDocument from "./PersistedDocument";
+import * as PersistedNamedFragment from "./PersistedNamedFragment";
 import * as SPARQL from "./SPARQL";
 import * as Utils from "./Utils";
 import * as Pointer from "./Pointer";
@@ -1396,7 +1398,7 @@ describe( module( "Carbon/Documents", "" ), ():void => {
 					{
 						"@id": "http://example.com/resource/",
 						"http://example.com/ns#string": [{ "@value": "Document Resource" }],
-						"http://example.com/ns#pointer": [{ "@id": "_:1" }],
+						"http://example.com/ns#pointer": [{ "@id": "http://example.com/resource/#1" }],
 						"http://example.com/ns#pointerSet": [
 							{ "@id": "_:1" },
 							{ "@id": "_:2" },
@@ -1406,6 +1408,7 @@ describe( module( "Carbon/Documents", "" ), ():void => {
 					},
 					{
 						"@id": "_:1",
+						"${NS.C.Predicate.bNodeIdentifier}": "UUID fo _:1",
 						"http://example.com/ns#string": [{ "@value": "Fragment 1" }],
 						"http://example.com/ns#pointerSet": [
 							{ "@id": "http://example.com/resource/" },
@@ -1414,6 +1417,7 @@ describe( module( "Carbon/Documents", "" ), ():void => {
 					},
 					{
 						"@id": "_:2",
+						"${NS.C.Predicate.bNodeIdentifier}": "UUID fo _:2",
 						"http://example.com/ns#string": [{ "@value": "Fragment 2" }]
 					},
 					{
@@ -1432,18 +1436,24 @@ describe( module( "Carbon/Documents", "" ), ():void => {
 		});
 
 		let document:PersistedDocument.Class;
-		let fragment:PersistedFragment.Class;
+		let fragment:PersistedNamedFragment.Class;
+		let blankNode01:PersistedBlankNode.Class;
+		let blankNode02:PersistedBlankNode.Class;
 
 		let promises:Promise<any>[] = [];
 
 		let spies = {
 			init: ( [ persistedDoc, response ]:[ PersistedDocument.Class, HTTP.Response.Class ] ):any => {
 				document = persistedDoc;
-				fragment = persistedDoc.getFragment( "_:1" );
+				fragment = persistedDoc.getNamedFragment( "#1" );
+				blankNode01 = <PersistedBlankNode.Class> persistedDoc.getFragment( "_:1" );
+				blankNode02 = <PersistedBlankNode.Class> persistedDoc.getFragment( "_:2" );
 
 				expect( document[ "string" ] ).toBe( "Document Resource" );
-				expect( fragment[ "string" ] ).toBe( "Fragment 1" );
+				expect( fragment[ "string" ] ).toBe( "NamedFragment 1" );
 				expect( document[ "pointer" ] ).toBe( fragment );
+				expect( blankNode01[ "string" ] ).toBe( "Fragment 1" );
+				expect( blankNode02[ "string" ] ).toBe( "Fragment 2" );
 
 				document[ "new-property" ] = "A new property that will be erased at refresh";
 
@@ -1470,16 +1480,17 @@ describe( module( "Carbon/Documents", "" ), ():void => {
 							{
 								"@id": "http://example.com/resource/",
 								"http://example.com/ns#string": [{ "@value": "Changed Document Resource" }],
-								"http://example.com/ns#pointer": [{ "@id": "_:1" }],
+								"http://example.com/ns#pointer": [{ "@id": "_:0001" }],
 								"http://example.com/ns#pointerSet": [
-									{ "@id": "_:1" },
+									{ "@id": "_:0001" },
 									{ "@id": "_:2" },
 									{ "@id": "http://example.com/resource/#1" },
 									{ "@id": "http://example.com/external-resource/" }
 								]
 							},
 							{
-								"@id": "_:1",
+								"@id": "_:0001",
+								"${NS.C.Predicate.bNodeIdentifier}": "UUID fo _:1",
 								"http://example.com/ns#string": [{ "@value": "Changed Fragment 1" }],
 								"http://example.com/ns#pointerSet": [
 									{ "@id": "http://example.com/resource/" },
@@ -1488,11 +1499,12 @@ describe( module( "Carbon/Documents", "" ), ():void => {
 							},
 							{
 								"@id": "_:2",
+								"${NS.C.Predicate.bNodeIdentifier}": "NOT the UUID fo _:2",
 								"http://example.com/ns#string": [{ "@value": "Fragment 2" }]
 							},
 							{
 								"@id": "http://example.com/resource/#1",
-								"http://example.com/ns#string": [{ "@value": "NamedFragment 1" }]
+								"http://example.com/ns#string": [{ "@value": "Changed NamedFragment 1" }]
 							},
 							{
 								"@id": "http://example.com/resource/#3",
@@ -1513,9 +1525,19 @@ describe( module( "Carbon/Documents", "" ), ():void => {
 			success: ( [ persistedDoc, response ]:[ PersistedDocument.Class, HTTP.Response.Class ] ):any => {
 				expect( persistedDoc ).toBe( document );
 				expect( document[ "string" ] ).toBe( "Changed Document Resource" );
-				expect( fragment[ "string" ] ).toBe( "Changed Fragment 1" );
-				expect( document[ "pointer" ] ).toBe( fragment );
+				expect( fragment[ "string" ] ).toBe( "Changed NamedFragment 1" );
+
+				expect( document[ "pointer" ] ).toBe( blankNode01 );
 				expect( document[ "pointer" ][ "string" ] ).toBe( "Changed Fragment 1" );
+				expect( blankNode01[ "string"] ).toBe( "Changed Fragment 1" );
+				expect( blankNode01.id ).toBe( "_:0001" );
+				expect( blankNode01 ).toBe( document.getFragment( "_:0001" ) );
+				expect( document[ "pointerSet" ][ 0 ] ).toBe( blankNode01 );
+				expect( document.hasFragment( "_:1") ).toBe( false );
+
+				expect( blankNode02.id ).toBe( "_:2" );
+				expect( blankNode02.id ).not.toBe( document.getFragment( "_:2" ) );
+				expect( document[ "pointerSet" ][ 1 ] ).not.toBe( blankNode02 );
 
 				expect( document.hasFragment( "#2" ) ).toBe( false );
 				expect( document.hasFragment( "#3" ) ).toBe( true );

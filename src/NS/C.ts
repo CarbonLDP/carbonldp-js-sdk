@@ -18,6 +18,7 @@ export class Class {
 
 export class Predicate {
 	static get accessPoint():string { return namespace + "accessPoint"; }
+	static get bNodeIdentifier():string { return namespace + "bNodeIdentifier"; }
 	static get buildDate():string { return namespace + "buildDate"; }
 	static get created():string { return namespace + "created"; }
 	static get modified():string { return namespace + "modified"; }

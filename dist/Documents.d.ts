@@ -63,5 +63,6 @@ declare class Documents implements Pointer.Library, Pointer.Validator, ObjectSch
     private getExpandedObjectTypes(expandedObject);
     private getDocumentTypes(document);
     private updateObject(target, source);
+    private getAssociatedFragment(persistedDocument, fragment);
 }
 export default Documents;
