@@ -385,7 +385,9 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 				expect( document.refresh ).toBeDefined();
 				expect( Utils.isFunction( document.refresh ) ).toBe( true );
 
-				// TODO wait implementation in PersistedDocument
+				let spy = spyOn( context.documents, "refresh" );
+				document.refresh();
+				expect( spy ).toHaveBeenCalledWith( document );
 			});
 
 			it( hasMethod(

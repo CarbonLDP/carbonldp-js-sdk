@@ -1,3 +1,13 @@
+# 0.30.0 (April 28, 2016)
+- [LDP-498](https://jira.base22.com/browse/LDP-498)
+    - Added `persistedDocument.refresh()` method, which lets you refresh a document with the latest version on the server
+- Fixed bug, changes to the object schema were not reflected unless they were tied to a type
+- Fixed bug, extending the object schema specifying a type polluted the general object schema
+
+# 0.29.1 (April 26, 2016)
+- Fixed [LDP-630](https://jira.base22.com/browse/LDP-630), resolving the same resource at the same time throws an error
+- Fixed [LDP-629](https://jira.base22.com/browse/LDP-629), IllegalArgumentError when resolving a document that was already resolved
+
 # 0.29.0 (April 22, 2016)
 - Added `context.documents.removeAllMembers()`
 - Added `context.documents.getChildren()` method, which lets you obtain all the children of a container

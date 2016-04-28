@@ -16,6 +16,7 @@ export declare class Class {
 }
 export declare class Predicate {
     static accessPoint: string;
+    static bNodeIdentifier: string;
     static buildDate: string;
     static created: string;
     static modified: string;

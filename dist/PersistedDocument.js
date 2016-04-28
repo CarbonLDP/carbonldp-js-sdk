@@ -30,27 +30,29 @@ function syncSavedFragments() {
     document._savedFragments = Utils.A.from(document._fragmentsIndex.values());
 }
 function extendCreateFragment(superFunction) {
-    return function (slug) {
-        if (slug === void 0) { slug = null; }
-        var fragment = superFunction.call(this, slug);
-        if (slug !== null) {
-            if (RDF.URI.Util.isBNodeID(slug))
-                return PersistedFragment.Factory.decorate(fragment);
-            return PersistedNamedFragment.Factory.decorate(fragment);
+    return function (slugOrObject, object) {
+        if (slugOrObject === void 0) { slugOrObject = null; }
+        if (object === void 0) { object = null; }
+        var fragment = superFunction.call(this, slugOrObject, object);
+        var id = fragment.id;
+        if (RDF.URI.Util.isBNodeID(id)) {
+            PersistedFragment.Factory.decorate(fragment);
         }
         else {
-            return PersistedFragment.Factory.decorate(fragment);
+            PersistedNamedFragment.Factory.decorate(fragment);
         }
+        return fragment;
     };
 }
 function extendCreateNamedFragment(superFunction) {
-    return function (slug) {
-        var fragment = superFunction.call(this, slug);
+    return function (slug, object) {
+        if (object === void 0) { object = null; }
+        var fragment = superFunction.call(this, slug, object);
         return PersistedFragment.Factory.decorate(fragment);
     };
 }
 function refresh() {
-    return null;
+    return this._documents.refresh(this);
 }
 function save() {
     return this._documents.save(this);

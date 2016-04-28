@@ -12,6 +12,7 @@ declare class Documents implements Pointer.Library, Pointer.Validator, ObjectSch
     jsonldConverter: JSONLDConverter.Class;
     private context;
     private pointers;
+    private documentsBeingResolved;
     constructor(context?: Context);
     inScope(pointer: Pointer.Class): boolean;
     inScope(id: string): boolean;
@@ -42,6 +43,7 @@ declare class Documents implements Pointer.Library, Pointer.Validator, ObjectSch
     removeMembers(documentURI: string, members: (Pointer.Class | string)[], requestOptions?: HTTP.Request.Options): Promise<HTTP.Response.Class>;
     removeAllMembers(documentURI: string, requestOptions?: HTTP.Request.Options): Promise<HTTP.Response.Class>;
     save(persistedDocument: PersistedDocument.Class, requestOptions?: HTTP.Request.Options): Promise<[PersistedDocument.Class, HTTP.Response.Class]>;
+    refresh(persistedDocument: PersistedDocument.Class, requestOptions?: HTTP.Request.Options): Promise<[PersistedDocument.Class, HTTP.Response.Class]>;
     delete(documentURI: string, requestOptions?: HTTP.Request.Options): Promise<HTTP.Response.Class>;
     getSchemaFor(object: Object): ObjectSchema.DigestedObjectSchema;
     executeRawASKQuery(documentURI: string, askQuery: string, requestOptions?: HTTP.Request.Options): Promise<[SPARQL.RawResults.Class, HTTP.Response.Class]>;
@@ -62,5 +64,7 @@ declare class Documents implements Pointer.Library, Pointer.Validator, ObjectSch
     private getDigestedObjectSchema(objectTypes);
     private getExpandedObjectTypes(expandedObject);
     private getDocumentTypes(document);
+    private updateObject(target, source);
+    private getAssociatedFragment(persistedDocument, fragment);
 }
 export default Documents;

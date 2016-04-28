@@ -45,7 +45,7 @@ var Digester = (function () {
     Digester.combineDigestedObjectSchemas = function (digestedSchemas) {
         if (digestedSchemas.length === 0)
             throw new Errors.IllegalArgumentError("At least one DigestedObjectSchema needs to be specified.");
-        var combinedSchema = digestedSchemas.shift();
+        var combinedSchema = new DigestedObjectSchema();
         for (var _i = 0, digestedSchemas_1 = digestedSchemas; _i < digestedSchemas_1.length; _i++) {
             var digestedSchema = digestedSchemas_1[_i];
             Utils.M.extend(combinedSchema.prefixes, digestedSchema.prefixes);

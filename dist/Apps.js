@@ -29,7 +29,9 @@ var Class = (function () {
             var app = _a[0], response = _a[1];
             if (!PersistedApp.Factory.is(app))
                 return Promise.reject(new Errors.IllegalArgumentError("The resource fetched is not a cs:Application."));
-            return new Context_1.default(_this.context, app);
+            var appContext = new Context_1.default(_this.context, app);
+            app.rootContainer = appContext.documents.getPointer(app.rootContainer.id);
+            return appContext;
         });
     };
     Class.prototype.getAllContexts = function () {

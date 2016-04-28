@@ -5,7 +5,7 @@ declare module 'carbonldp/Auth/AuthenticationToken' {
 
 }
 declare module 'carbonldp/Utils' {
-	 function hasFunction(object: Object, functionName: string): boolean; function hasProperty(object: Object, property: string): boolean; function hasPropertyDefined(object: Object, property: string): boolean; function isDefined(value: any): boolean; function isNull(value: any): boolean; function isArray(object: any): boolean; function isString(value: any): boolean; function isBoolean(value: any): boolean; function isNumber(value: any): boolean; function isInteger(value: any): boolean; function isDouble(value: any): boolean; function isDate(date: any): boolean; function isObject(object: any): boolean; function isFunction(value: any): boolean; function isMap(value: any): boolean; function parseBoolean(value: string): boolean; function extend(target: Object, ...objects: Object[]): Object; function forEachOwnProperty(object: Object, action: (name: string, value: any) => (boolean | void)): void; class O {
+	 function hasFunction(object: Object, functionName: string): boolean; function hasProperty(object: Object, property: string): boolean; function hasPropertyDefined(object: Object, property: string): boolean; function isDefined(value: any): boolean; function isNull(value: any): boolean; function isArray(object: any): boolean; function isString(value: any): boolean; function isBoolean(value: any): boolean; function isNumber(value: any): boolean; function isInteger(value: any): boolean; function isDouble(value: any): boolean; function isDate(date: any): boolean; function isObject(object: any): boolean; function isPlainObject(object: Object): boolean; function isFunction(value: any): boolean; function isMap(value: any): boolean; function parseBoolean(value: string): boolean; function extend(target: Object, ...objects: Object[]): Object; function forEachOwnProperty(object: Object, action: (name: string, value: any) => (boolean | void)): void; class O {
 	    static areShallowlyEqual(object1: Object, object2: Object): boolean;
 	} class S {
 	    static startsWith(str: string, substring: string): boolean;
@@ -22,7 +22,7 @@ declare module 'carbonldp/Utils' {
 	    static is(uuid: string): boolean;
 	    static generate(): string;
 	}
-	export { hasFunction, hasProperty, hasPropertyDefined, isDefined, isNull, isArray, isString, isBoolean, isNumber, isInteger, isDouble, isDate, isObject, isFunction, isMap, parseBoolean, extend, forEachOwnProperty, O, S, A, M, UUID };
+	export { hasFunction, hasProperty, hasPropertyDefined, isDefined, isNull, isArray, isString, isBoolean, isNumber, isInteger, isDouble, isDate, isObject, isPlainObject, isFunction, isMap, parseBoolean, extend, forEachOwnProperty, O, S, A, M, UUID };
 
 }
 declare module 'carbonldp/Errors/AbstractError' {
@@ -690,6 +690,7 @@ declare module 'carbonldp/NS/C' {
 	}
 	export class Predicate {
 	    static accessPoint: string;
+	    static bNodeIdentifier: string;
 	    static buildDate: string;
 	    static created: string;
 	    static modified: string;
@@ -1344,8 +1345,11 @@ declare module 'carbonldp/PersistedDocument' {
 	    getFragments(): PersistedFragment.Class[];
 	    createFragment(): PersistedFragment.Class;
 	    createFragment(slug: string): PersistedNamedFragment.Class;
+	    createFragment<T extends Object>(slug: string, object: T): PersistedNamedFragment.Class & T;
+	    createFragment<T extends Object>(object: T): PersistedFragment.Class & T;
 	    createNamedFragment(slug: string): PersistedNamedFragment.Class;
-	    refresh(): Promise<void>;
+	    createNamedFragment<T extends Object>(slug: string, object: T): PersistedNamedFragment.Class & T;
+	    refresh(): Promise<[Class, HTTP.Response.Class]>;
 	    save(): Promise<[Class, HTTP.Response.Class]>;
 	    destroy(): Promise<HTTP.Response.Class>;
 	    createAccessPoint(accessPoint: AccessPoint.Class, slug?: string, requestOptions?: HTTP.Request.Options): Promise<[Pointer.Class, HTTP.Response.Class]>;
@@ -1441,6 +1445,16 @@ declare module 'carbonldp/AccessPoint' {
 	export default Class;
 
 }
+declare module 'carbonldp/PersistedBlankNode' {
+	import * as PersistedFragment from 'carbonldp/PersistedFragment';
+	import * as ObjectSchema from 'carbonldp/ObjectSchema';
+	export const SCHEMA: ObjectSchema.Class;
+	export interface Class extends PersistedFragment.Class {
+	    bNodeIdentifier: string;
+	}
+	export default Class;
+
+}
 declare module 'carbonldp/Documents' {
 	import * as HTTP from 'carbonldp/HTTP';
 	import Context from 'carbonldp/Context';
@@ -1455,6 +1469,7 @@ declare module 'carbonldp/Documents' {
 	    jsonldConverter: JSONLDConverter.Class;
 	    private context;
 	    private pointers;
+	    private documentsBeingResolved;
 	    constructor(context?: Context);
 	    inScope(pointer: Pointer.Class): boolean;
 	    inScope(id: string): boolean;
@@ -1485,6 +1500,7 @@ declare module 'carbonldp/Documents' {
 	    removeMembers(documentURI: string, members: (Pointer.Class | string)[], requestOptions?: HTTP.Request.Options): Promise<HTTP.Response.Class>;
 	    removeAllMembers(documentURI: string, requestOptions?: HTTP.Request.Options): Promise<HTTP.Response.Class>;
 	    save(persistedDocument: PersistedDocument.Class, requestOptions?: HTTP.Request.Options): Promise<[PersistedDocument.Class, HTTP.Response.Class]>;
+	    refresh(persistedDocument: PersistedDocument.Class, requestOptions?: HTTP.Request.Options): Promise<[PersistedDocument.Class, HTTP.Response.Class]>;
 	    delete(documentURI: string, requestOptions?: HTTP.Request.Options): Promise<HTTP.Response.Class>;
 	    getSchemaFor(object: Object): ObjectSchema.DigestedObjectSchema;
 	    executeRawASKQuery(documentURI: string, askQuery: string, requestOptions?: HTTP.Request.Options): Promise<[SPARQL.RawResults.Class, HTTP.Response.Class]>;
@@ -1505,6 +1521,8 @@ declare module 'carbonldp/Documents' {
 	    private getDigestedObjectSchema(objectTypes);
 	    private getExpandedObjectTypes(expandedObject);
 	    private getDocumentTypes(document);
+	    private updateObject(target, source);
+	    private getAssociatedFragment(persistedDocument, fragment);
 	}
 	export default Documents;
 

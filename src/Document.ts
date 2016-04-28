@@ -134,8 +134,9 @@ function createFragment( slugOrObject?:any, object?:any ):any {
 
 function createNamedFragment<T extends Object>( slug:string, object:T ):NamedFragment.Class & T;
 function createNamedFragment( slug:string ):NamedFragment.Class;
-function createNamedFragment( slug:string, object:any = {} ):any {
+function createNamedFragment( slug:string, object?:any ):any {
 	let document:Class = <Class> this;
+	object = object || {};
 
 	if( RDF.URI.Util.isBNodeID( slug ) ) throw new Errors.IllegalArgumentError( "Named fragments can't have a slug that starts with '_:'." );
 
@@ -331,7 +332,7 @@ function convertNestedObjects( parent:Class, actual:any ):void {
 			continue;
 		}
 
-		if ( ! isPlainObject( next ) ) continue;
+		if ( ! Utils.isPlainObject( next ) ) continue;
 
 		idOrSlug = ( "id" in next ) ?  next.id : ( ( "slug" in next ) ? next.slug : "" );
 		if ( ! parent.inScope( idOrSlug ) ) continue;
@@ -350,13 +351,6 @@ function convertNestedObjects( parent:Class, actual:any ):void {
 
 	}
 
-}
-
-function isPlainObject( object:Object ):boolean {
-	return Utils.isObject( object )
-		&& ! Utils.isArray( object )
-		&& ! Utils.isDate( object )
-		&& ! Utils.isMap( object );
 }
 
 export default Class;

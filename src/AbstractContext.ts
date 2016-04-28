@@ -18,7 +18,8 @@ abstract class AbstractContext extends SDKContext.Class {
 
 		this._parentContext = !! parentContext ? parentContext : SDKContext.instance;
 
-		this.generalObjectSchema = !! parentContext ? null : new ObjectSchema.DigestedObjectSchema();
+		this.generalObjectSchema = null;
+		this.typeObjectSchemaMap = new Map<string, ObjectSchema.DigestedObjectSchema>();
 	}
 
 	abstract resolve( relativeURI:string ):string;

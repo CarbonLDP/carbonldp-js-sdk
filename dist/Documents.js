@@ -16,6 +16,7 @@ var Documents = (function () {
         if (context === void 0) { context = null; }
         this.context = context;
         this.pointers = new Map();
+        this.documentsBeingResolved = new Map();
         if (!!this.context && !!this.context.parentContext) {
             var contextJSONLDConverter = this.context.parentContext.documents.jsonldConverter;
             this._jsonldConverter = new JSONLDConverter.Class(contextJSONLDConverter.literalSerializers);
@@ -56,7 +57,7 @@ var Documents = (function () {
     };
     Documents.prototype.getPointer = function (id) {
         var localID = this.getPointerID(id);
-        if (!localID) {
+        if (localID === null) {
             if (!!this.context && !!this.context.parentContext)
                 return this.context.parentContext.documents.getPointer(id);
             throw new Errors.IllegalArgumentError("The pointer id is not supported by this module.");
@@ -75,18 +76,18 @@ var Documents = (function () {
         if (!!this.context)
             uri = this.context.resolve(uri);
         if (this.pointers.has(pointerID)) {
-            var pointer_1 = this.getPointer(uri);
-            if (pointer_1.isResolved()) {
-                return new Promise(function (resolve, reject) {
-                    resolve([pointer_1, null]);
-                });
+            var pointer = this.getPointer(uri);
+            if (pointer.isResolved()) {
+                return this.refresh(pointer);
             }
         }
+        if (this.documentsBeingResolved.has(pointerID))
+            return this.documentsBeingResolved.get(pointerID);
         if (this.context && this.context.auth.isAuthenticated())
             this.context.auth.addAuthentication(requestOptions);
         HTTP.Request.Util.setAcceptHeader("application/ld+json", requestOptions);
         HTTP.Request.Util.setPreferredInteractionModel(NS.LDP.Class.RDFSource, requestOptions);
-        return HTTP.Request.Service.get(uri, requestOptions, new RDF.Document.Parser()).then(function (_a) {
+        var promise = HTTP.Request.Service.get(uri, requestOptions, new RDF.Document.Parser()).then(function (_a) {
             var rdfDocuments = _a[0], response = _a[1];
             var etag = HTTP.Response.Util.getETag(response);
             if (etag === null)
@@ -125,8 +126,11 @@ var Documents = (function () {
             document._syncSavedFragments();
             if (LDP.Container.Factory.hasRDFClass(document))
                 LDP.PersistedContainer.Factory.decorate(document);
+            _this.documentsBeingResolved.delete(pointerID);
             return [document, response];
         });
+        this.documentsBeingResolved.set(pointerID, promise);
+        return promise;
     };
     Documents.prototype.exists = function (documentURI, requestOptions) {
         if (requestOptions === void 0) { requestOptions = {}; }
@@ -460,6 +464,65 @@ var Documents = (function () {
             return [persistedDocument, response];
         });
     };
+    Documents.prototype.refresh = function (persistedDocument, requestOptions) {
+        var _this = this;
+        if (requestOptions === void 0) { requestOptions = {}; }
+        if (this.context && this.context.auth.isAuthenticated())
+            this.context.auth.addAuthentication(requestOptions);
+        HTTP.Request.Util.setAcceptHeader("application/ld+json", requestOptions);
+        HTTP.Request.Util.setContentTypeHeader("application/ld+json", requestOptions);
+        HTTP.Request.Util.setPreferredInteractionModel(NS.LDP.Class.RDFSource, requestOptions);
+        return HTTP.Request.Service.head(persistedDocument.id, requestOptions).then(function (headerResponse) {
+            var eTag = HTTP.Response.Util.getETag(headerResponse);
+            if (eTag === persistedDocument._etag)
+                return [persistedDocument, null];
+            return HTTP.Request.Service.get(persistedDocument.id, requestOptions, new RDF.Document.Parser());
+        }).then(function (_a) {
+            var rdfDocuments = _a[0], response = _a[1];
+            if (response === null)
+                return [rdfDocuments, response];
+            var eTag = HTTP.Response.Util.getETag(response);
+            if (eTag === null)
+                throw new HTTP.Errors.BadResponseError("The response doesn't contain an ETag", response);
+            var rdfDocument = _this.getRDFDocument(persistedDocument.id, rdfDocuments, response);
+            if (rdfDocument === null)
+                throw new HTTP.Errors.BadResponseError("No document was returned.", response);
+            var documentResources = RDF.Document.Util.getDocumentResources(rdfDocument);
+            if (documentResources.length > 1)
+                throw new HTTP.Errors.BadResponseError("The RDFDocument contains more than one document resource.", response);
+            if (documentResources.length === 0)
+                throw new HTTP.Errors.BadResponseError("The RDFDocument doesn\'t contain a document resource.", response);
+            persistedDocument._etag = eTag;
+            var documentResource = documentResources[0];
+            var fragmentResources = RDF.Document.Util.getBNodeResources(rdfDocument);
+            fragmentResources = fragmentResources.concat(RDF.Document.Util.getFragmentResources(rdfDocument));
+            var originalFragments = persistedDocument.getFragments();
+            var setFragments = new Set(originalFragments.map(function (fragment) { return fragment.id; }));
+            var updatedData;
+            for (var _i = 0, fragmentResources_2 = fragmentResources; _i < fragmentResources_2.length; _i++) {
+                var fragmentResource = fragmentResources_2[_i];
+                updatedData = _this.compact(fragmentResource, {}, persistedDocument);
+                var fragment = _this.getAssociatedFragment(persistedDocument, updatedData);
+                if (fragment) {
+                    fragment = _this.updateObject(fragment, updatedData);
+                    if (!persistedDocument.hasFragment(fragment.id)) {
+                        persistedDocument.createFragment(fragment.id, fragment);
+                    }
+                }
+                else {
+                    fragment = persistedDocument.createFragment(updatedData.id, updatedData);
+                }
+                setFragments.delete(fragment.id);
+                fragment._syncSnapshot();
+            }
+            Array.from(setFragments).forEach(function (id) { return persistedDocument.removeFragment(id); });
+            persistedDocument._syncSavedFragments();
+            updatedData = _this.compact(documentResource, {}, persistedDocument);
+            _this.updateObject(persistedDocument, updatedData);
+            persistedDocument._syncSnapshot();
+            return [persistedDocument, response];
+        });
+    };
     Documents.prototype.delete = function (documentURI, requestOptions) {
         if (requestOptions === void 0) { requestOptions = {}; }
         if (this.context && this.context.auth.isAuthenticated())
@@ -646,6 +709,34 @@ var Documents = (function () {
         if (!document.types)
             return [];
         return document.types;
+    };
+    Documents.prototype.updateObject = function (target, source) {
+        var keys = Array.from(new Set(Object.keys(source).concat(Object.keys(target))));
+        for (var _i = 0, keys_1 = keys; _i < keys_1.length; _i++) {
+            var key = keys_1[_i];
+            if (Utils.hasProperty(source, key)) {
+                target[key] = source[key];
+            }
+            else {
+                delete target[key];
+            }
+        }
+        return target;
+    };
+    Documents.prototype.getAssociatedFragment = function (persistedDocument, fragment) {
+        if (RDF.URI.Util.isBNodeID(fragment.id)) {
+            var blankNode = fragment;
+            var fragments = persistedDocument.getFragments();
+            for (var _i = 0, fragments_1 = fragments; _i < fragments_1.length; _i++) {
+                var frag = fragments_1[_i];
+                if (RDF.URI.Util.isBNodeID(frag.id) && frag.bNodeIdentifier === blankNode.bNodeIdentifier) {
+                    return frag;
+                }
+            }
+            persistedDocument.removeFragment(fragment.id);
+            return null;
+        }
+        return persistedDocument.getFragment(fragment.id);
     };
     return Documents;
 }());
