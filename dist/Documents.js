@@ -281,7 +281,8 @@ var Documents = (function () {
             if (!(data instanceof Buffer))
                 return Promise.reject(new Errors.IllegalArgumentError("The data is not a valid Buffer object."));
             var fileType = require("file-type");
-            HTTP.Request.Util.setContentTypeHeader(fileType(data).mime, requestOptions);
+            var bufferType = fileType(data);
+            HTTP.Request.Util.setContentTypeHeader(bufferType ? bufferType.mime : "application/octet-stream", requestOptions);
         }
         if (!!this.context)
             parentURI = this.context.resolve(parentURI);

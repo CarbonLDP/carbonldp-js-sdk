@@ -319,7 +319,9 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 		} else {
 			if( ! ( data instanceof Buffer ) ) return Promise.reject<any>( new Errors.IllegalArgumentError( "The data is not a valid Buffer object." ) );
 			const fileType:( buffer:Buffer ) => { ext:string, mime:string } = require( "file-type" );
-			HTTP.Request.Util.setContentTypeHeader( fileType( <Buffer> data ).mime, requestOptions );
+
+			let bufferType:{ ext:string, mime:string } = fileType( <Buffer> data );
+			HTTP.Request.Util.setContentTypeHeader( bufferType ? bufferType.mime : "application/octet-stream", requestOptions );
 		}
 
 		if( !! this.context ) parentURI = this.context.resolve( parentURI );

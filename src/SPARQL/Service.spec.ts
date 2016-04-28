@@ -84,7 +84,7 @@ describe( module( "Carbon/SPARQL/Service" ), ():void => {
 						// Inspect request sent
 						let request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
 						expect( request.method ).toEqual( "POST" );
-						expect( request.url ).toEqual( "http://example.com/sparql-endpoint/" );
+						expect( request.url ).toMatch( "/sparql-endpoint/" );
 						expect( "accept" in request.requestHeaders ).toEqual( true );
 						expect( request.requestHeaders[ "accept" ] ).toEqual( "application/sparql-results+json" );
 						expect( "content-type" in request.requestHeaders ).toEqual( true );
@@ -426,7 +426,7 @@ describe( module( "Carbon/SPARQL/Service" ), ():void => {
 						// Inspect request sent
 						let request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
 						expect( request.method ).toEqual( "POST" );
-						expect( request.url ).toEqual( "http://example.com/sparql-endpoint/" );
+						expect( request.url ).toMatch( "/sparql-endpoint/" );
 						expect( "accept" in request.requestHeaders ).toEqual( true );
 						expect( request.requestHeaders[ "accept" ] ).toEqual( "application/sparql-results+json" );
 						expect( "content-type" in request.requestHeaders ).toEqual( true );
@@ -492,7 +492,7 @@ describe( module( "Carbon/SPARQL/Service" ), ():void => {
 						// Inspect request sent
 						let request:JasmineAjaxRequest = jasmine.Ajax.requests.at( 0 );
 						expect( request.method ).toEqual( "POST" );
-						expect( request.url ).toEqual( "http://example.com/sparql-endpoint/json/" );
+						expect( request.url ).toMatch( "/sparql-endpoint/json/" );
 						expect( "accept" in request.requestHeaders ).toEqual( true );
 						expect( request.requestHeaders[ "accept" ] ).toEqual( "application/ld+json" );
 						expect( "content-type" in request.requestHeaders ).toEqual( true );
@@ -531,7 +531,7 @@ describe( module( "Carbon/SPARQL/Service" ), ():void => {
 						// Inspect request sent
 						let request:JasmineAjaxRequest = jasmine.Ajax.requests.at( 1 );
 						expect( request.method ).toEqual( "POST" );
-						expect( request.url ).toEqual( "http://example.com/sparql-endpoint/turtle/" );
+						expect( request.url ).toMatch( "/sparql-endpoint/turtle/" );
 						expect( "accept" in request.requestHeaders ).toEqual( true );
 						expect( request.requestHeaders[ "accept" ] ).toEqual( acceptHeader );
 						expect( "content-type" in request.requestHeaders ).toEqual( true );
@@ -585,7 +585,7 @@ describe( module( "Carbon/SPARQL/Service" ), ():void => {
 						// Inspect request sent
 						let request:JasmineAjaxRequest = jasmine.Ajax.requests.at( 0 );
 						expect( request.method ).toEqual( "POST" );
-						expect( request.url ).toEqual( "http://example.com/sparql-endpoint/json/" );
+						expect( request.url ).toMatch( "/sparql-endpoint/json/" );
 						expect( "accept" in request.requestHeaders ).toEqual( true );
 						expect( request.requestHeaders[ "accept" ] ).toEqual( "application/ld+json" );
 						expect( "content-type" in request.requestHeaders ).toEqual( true );
@@ -624,7 +624,7 @@ describe( module( "Carbon/SPARQL/Service" ), ():void => {
 						// Inspect request sent
 						let request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
 						expect( request.method ).toEqual( "POST" );
-						expect( request.url ).toEqual( "http://example.com/sparql-endpoint/turtle/" );
+						expect( request.url ).toMatch( "/sparql-endpoint/turtle/" );
 						expect( "accept" in request.requestHeaders ).toEqual( true );
 						expect( request.requestHeaders[ "accept" ] ).toEqual( acceptHeader );
 						expect( "content-type" in request.requestHeaders ).toEqual( true );

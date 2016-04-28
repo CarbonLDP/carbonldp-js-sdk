@@ -60,7 +60,7 @@ gulp.task( "ts-lint", () => {
 	;
 });
 
-gulp.task( "test", ( done ) => {
+gulp.task( "test:browser", ( done ) => {
 	new karma.Server({
 		configFile: __dirname + "/karma.conf.js",
 		singleRun: true
@@ -75,10 +75,12 @@ gulp.task( "test:debug", ( done ) => {
 	}, done ).start();
 });
 
-gulp.task("test:node", () => {
-	return gulp.src( [ "src/HTTP/*.spec.js" ] )
+gulp.task( "test:node", () => {
+	return gulp.src( [ "src/**/*.spec.js" ] )
 		.pipe( jasmine() );
 });
+
+gulp.task( "test", [ "test:browser", "test:node" ] );
 
 gulp.task( "generate-doc", ( done ) => {
 	new karma.Server({

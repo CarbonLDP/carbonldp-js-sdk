@@ -1,5 +1,7 @@
 import {IncomingMessage} from "http";
 import {Url} from "url";
+import {ClientRequest} from "http";
+import {isString} from "../Utils";
 export interface SuiteDescriptor {
 	access?:string;
 	suiteType:string;
@@ -352,66 +354,88 @@ if ( typeof XMLHttpRequest === "undefined" ) {
 
 	jasmine.Ajax = <any> ( () => {
 
-		let scopes:Map<string, any> = new Map();
+		let requests:any[] = [];
+
+		let scope:any =  nock( /.*/ );
+		scope.persist();
+		scope.on( "request", updateRequests );
+		// scope.get( /\/.* / ).reply( 200 );
+		// for ( let key of methods ) {
+		// 	scope.intercept( /.*/, key ).reply( 200 );
+		// }
+		// console.log( scope );
 
 		function install() {
 			nock.disableNetConnect();
 		}
 
 		function uninstall() {
-			scopes.clear();
+			requests = [];
 			nock.cleanAll();
 			nock.enableNetConnect();
 		}
 
-		function andReturn( request ) {
+		function andReturn( requests:any[] ) {
 			return ( options:JasmineAjaxRequestStubReturnOptions ) => {
 				// console.log( options.status || 200, options.responseText || options.response || "", options.responseHeaders || {} );
-				if ( Array.isArray( request ) ) {
-					for ( let req of request ) {
-						req.reply( options.status || 200, options.responseText || options.response || "", options.responseHeaders || {} );
-					}
-				} else {
-					request.reply( options.status || 200, options.responseText || options.response || "", options.responseHeaders || {} );
+				for ( let req of requests ) {
+					req.reply( options.status || 200, options.responseText || options.response || "", options.responseHeaders || {} );
 				}
 			};
 		}
 
-		function stubRequest( url:string, data:string, method:string = "*" ):any {
-			let parsedURL:Url = URL.parse( url );
+		function stubRequest( url:string , data:string, method:string = "*" ):any {
+			let path:any = url;
+			if ( isString( url ) ) {
+				let parsedURL:Url = URL.parse( url );
 
-			let host:string = `${ parsedURL.protocol }//${ parsedURL.hostname}`;
-			if ( ! host ) throw new Error( "The URL must contains a hostname." );
+				// let host:string = `${ parsedURL.protocol }//${ parsedURL.hostname}`;
+				// if ( ! host.match( /http:\/\/example\.(com|org)/ ) ) throw new Error( "Only hosts allowed in Node.js are: 'http://example.com' and 'http://example.org'." );
 
-			let scope:any;
-			if ( scopes.has( host ) ) {
-				scope = scopes.get( host );
-			} else {
-				scope = nock( host );
-				scopes.set( host, scope );
+				path = parsedURL.path;
 			}
 
-			let request:any;
-			if ( method === "*" ) {
-				request = [];
-				for ( let key of methods ) {
-					request.push( scope.persist().intercept( parsedURL.path, key, data || undefined ) );
-				}
-			} else {
-				request = scope.persist().intercept( parsedURL.path, method, data || undefined );
+			let currentRequests:any[] = [];
+			let currentMethods:string[] = [ method ];
+			if ( method === "*" ) currentMethods = methods;
+
+			for ( let key of currentMethods ) {
+				currentRequests.push( scope.intercept( path, key, data || undefined ) );
 			}
-			// console.log( scope );
 
 			return {
 				method: method,
-				andReturn: andReturn( request )
+				andReturn: andReturn( currentRequests )
 			};
+		}
+
+		function updateRequests( req:any, interceptor:any  ) {
+			// console.log( "####", interceptor );
+			requests.push( {
+				url: interceptor.uri,
+				method: interceptor.method,
+				// username: string,
+				// password: string,
+				requestHeaders: req.headers,
+				// overriddenMimeType: string,
+			} );
+		}
+
+		function requestMostRecent() {
+			return requests[ requests.length - 1 ];
+		}
+		function requestAt ( index ) {
+			return requests[ index ];
 		}
 
 		return {
 			install: install,
 			uninstall: uninstall,
-			stubRequest: stubRequest
+			stubRequest: stubRequest,
+			requests: {
+				mostRecent: requestMostRecent,
+				at: requestAt,
+			},
 		};
 	})();
 	// stubRequest(url: RegExp, data?: string, method?: string): JasmineAjaxRequestStub;

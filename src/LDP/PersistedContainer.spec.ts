@@ -414,12 +414,14 @@ describe( module( "Carbon/LDP/PersistedContainer" ), ():void => {
 					expect( container.upload ).toBeDefined();
 					expect( Utils.isFunction( container.upload ) ).toBeDefined();
 
-					let spy = spyOn( container._documents, "upload" );
+					if ( typeof Blob !== "undefined" ) {
+						let spy = spyOn( container._documents, "upload" );
 
-					let blob:Blob = new Blob( [ JSON.stringify( { "some content": "for the blob." } ) ], { type : "application/json" } );
-					container.upload( "child", blob );
+						let blob:Blob = new Blob( [ JSON.stringify( { "some content": "for the blob." } ) ], { type : "application/json" } );
+						container.upload( "child", blob );
 
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/resource/", "child", blob );
+						expect( spy ).toHaveBeenCalledWith( "http://example.com/resource/", "child", blob );
+					}
 				});
 
 				it( hasSignature( [
@@ -430,32 +432,52 @@ describe( module( "Carbon/LDP/PersistedContainer" ), ():void => {
 					expect( container.upload ).toBeDefined();
 					expect( Utils.isFunction( container.upload ) ).toBeDefined();
 
-					let spy = spyOn( container._documents, "upload" );
+					if ( typeof Blob !== "undefined" ) {
+						let spy = spyOn( container._documents, "upload" );
 
-					let blob:Blob = new Blob( [ JSON.stringify( { "some content": "for the blob." } ) ], { type : "application/json" } );
-					container.upload( blob );
+						let blob:Blob = new Blob( [ JSON.stringify( { "some content": "for the blob." } ) ], { type : "application/json" } );
+						container.upload( blob );
 
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/resource/", blob );
+						expect( spy ).toHaveBeenCalledWith( "http://example.com/resource/", blob );
+					}
 				});
 
-				// it( hasSignature( [
-				// 		{ name: "slug", type: "string", description: "The slug that will be used in the URI of the data." },
-				// 		{ name: "data", type: "Buffer", description: "Binary data to store in the server. The Buffer only works in Node.js." }
-				// 	],
-				// 	{ type: "Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>" }
-				// ), ():void => {
-				// 	expect( container.upload ).toBeDefined();
-				// 	expect( Utils.isFunction( container.upload ) ).toBeDefined();
-				// });
-				//
-				// it( hasSignature( [
-				// 		{ name: "data", type: "Buffer", description: "Binary data to store in the server. The Buffer only works in Node.js." }
-				// 	],
-				// 	{ type: "Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>" }
-				// ), ():void => {
-				// 	expect( container.upload ).toBeDefined();
-				// 	expect( Utils.isFunction( container.upload ) ).toBeDefined();
-				// });
+				it( hasSignature( [
+						{ name: "slug", type: "string", description: "The slug that will be used in the URI of the data." },
+						{ name: "data", type: "Buffer", description: "Binary data to store in the server. The Buffer only works in Node.js." }
+					],
+					{ type: "Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>" }
+				), ():void => {
+					expect( container.upload ).toBeDefined();
+					expect( Utils.isFunction( container.upload ) ).toBeDefined();
+
+					if ( typeof Buffer !== "undefined" ) {
+						let spy = spyOn( container._documents, "upload" );
+
+						let buffer:Buffer = new Buffer( JSON.stringify( { "some content": "for the buffer." } ) );
+						container.upload( "child", buffer );
+
+						expect( spy ).toHaveBeenCalledWith( "http://example.com/resource/", "child", buffer );
+					}
+				});
+
+				it( hasSignature( [
+						{ name: "data", type: "Buffer", description: "Binary data to store in the server. The Buffer only works in Node.js." }
+					],
+					{ type: "Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>" }
+				), ():void => {
+					expect( container.upload ).toBeDefined();
+					expect( Utils.isFunction( container.upload ) ).toBeDefined();
+
+					if ( typeof Buffer !== "undefined" ) {
+						let spy = spyOn( container._documents, "upload" );
+
+						let buffer:Buffer = new Buffer( JSON.stringify( { "some content": "for the buffer." } ) );
+						container.upload( buffer );
+
+						expect( spy ).toHaveBeenCalledWith( "http://example.com/resource/", buffer );
+					}
+				});
 
 			});
 

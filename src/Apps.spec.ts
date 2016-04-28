@@ -84,6 +84,33 @@ describe( module( "Carbon/Apps" ), ():void => {
 				expect( apps.getContext ).toBeDefined();
 				expect( Utils.isFunction( apps.getContext ) ).toBe( true );
 
+				jasmine.Ajax.stubRequest( "http://example.com/platform/apps/example-app/", null, "GET" ).andReturn({
+					status: 200,
+					responseHeaders: {
+						ETag: 'W/"123456789"'
+					},
+					responseText: `[{
+					    "@id": "http://example.com/platform/apps/example-app/",
+					    "@graph": [{
+					        "@id": "http://example.com/platform/apps/example-app/",
+					        "@type": [
+					          "http://www.w3.org/ns/ldp#RDFSource",
+					          "http://www.w3.org/ns/ldp#BasicContainer",
+					          "${NS.CS.Class.Application}"
+					        ],
+					        "https://carbonldp.com/ns/v1/security#rootContainer": [{
+					            "@id": "https://example.com/apps/example-app/"
+					        }],
+					        "${NS.CS.Predicate.name}": [{
+					            "@value": "Example App name"
+					        }],
+					        "${NS.CS.Predicate.description}": [{
+					            "@value": "Example App description"
+					        }]
+					    }]
+					}]`
+				});
+
 				let spies = {
 					success: ( appContext:AppContext ):void => {
 						expect( appContext instanceof AppContext ).toBe( true );
@@ -103,33 +130,6 @@ describe( module( "Carbon/Apps" ), ():void => {
 				promise = apps.getContext( 'example-app/' ).then( spies.success, spies.fail );
 				expect( promise instanceof Promise ).toBe( true );
 
-				jasmine.Ajax.requests.mostRecent().respondWith({
-					status: 200,
-					responseHeaders: {
-						ETag: 'W/"123456789"'
-					},
-					responseText: `[{
-				    "@id": "http://example.com/platform/apps/example-app/",
-				    "@graph": [{
-				        "@id": "http://example.com/platform/apps/example-app/",
-				        "@type": [
-				          "http://www.w3.org/ns/ldp#RDFSource",
-				          "http://www.w3.org/ns/ldp#BasicContainer",
-				          "${NS.CS.Class.Application}"
-				        ],
-				        "https://carbonldp.com/ns/v1/security#rootContainer": [{
-				            "@id": "https://example.com/apps/example-app/"
-				        }],
-				        "${NS.CS.Predicate.name}": [{
-				            "@value": "Example App name"
-				        }],
-				        "${NS.CS.Predicate.description}": [{
-				            "@value": "Example App description"
-				        }]
-				    }]
-				}]`
-				});
-
 				promise.then( ():void => {
 					expect( spy ).toHaveBeenCalledWith( "http://example.com/platform/apps/example-app/" );
 					expect( successSpy.calls.count() ).toBe( 1 );
@@ -146,6 +146,33 @@ describe( module( "Carbon/Apps" ), ():void => {
 			), ( done:{ ():void, fail:() => void } ):void => {
 				expect( apps.getContext ).toBeDefined();
 				expect( Utils.isFunction( apps.getContext ) ).toBe( true );
+
+				jasmine.Ajax.stubRequest( "http://example.com/platform/apps/example-app/", null, "GET" ).andReturn({
+					status: 200,
+					responseHeaders: {
+						ETag: 'W/"123456789"'
+					},
+					responseText: `[{
+					    "@id": "http://example.com/platform/apps/example-app/",
+					    "@graph": [{
+					        "@id": "http://example.com/platform/apps/example-app/",
+					        "@type": [
+					          "http://www.w3.org/ns/ldp#RDFSource",
+					          "http://www.w3.org/ns/ldp#BasicContainer",
+					          "${NS.CS.Class.Application}"
+					        ],
+					        "https://carbonldp.com/ns/v1/security#rootContainer": [{
+					            "@id": "https://example.com/apps/example-app/"
+					        }],
+					        "${NS.CS.Predicate.name}": [{
+					            "@value": "Example App name"
+					        }],
+					        "${NS.CS.Predicate.description}": [{
+					            "@value": "Example App description"
+					        }]
+					    }]
+					}]`
+				});
 
 				let spies = {
 					success: ( appContext:AppContext ):void => {
@@ -168,33 +195,6 @@ describe( module( "Carbon/Apps" ), ():void => {
 				promise = apps.getContext( pointer ).then( spies.success, spies.fail );
 				expect( promise instanceof Promise ).toBe( true );
 
-				jasmine.Ajax.requests.mostRecent().respondWith({
-					status: 200,
-					responseHeaders: {
-						ETag: 'W/"123456789"'
-					},
-					responseText: `[{
-				    "@id": "http://example.com/platform/apps/example-app/",
-				    "@graph": [{
-				        "@id": "http://example.com/platform/apps/example-app/",
-				        "@type": [
-				          "http://www.w3.org/ns/ldp#RDFSource",
-				          "http://www.w3.org/ns/ldp#BasicContainer",
-				          "${NS.CS.Class.Application}"
-				        ],
-				        "https://carbonldp.com/ns/v1/security#rootContainer": [{
-				            "@id": "https://example.com/apps/example-app/"
-				        }],
-				        "${NS.CS.Predicate.name}": [{
-				            "@value": "Example App name"
-				        }],
-				        "${NS.CS.Predicate.description}": [{
-				            "@value": "Example App description"
-				        }]
-				    }]
-				}]`
-				});
-
 				promise.then( ():void => {
 					expect( spy ).toHaveBeenCalledWith( "http://example.com/platform/apps/example-app/" );
 					expect( successSpy.calls.count() ).toBe( 1 );
@@ -214,25 +214,7 @@ describe( module( "Carbon/Apps" ), ():void => {
 			expect( apps.getAllContexts ).toBeDefined();
 			expect( Utils.isFunction( apps.getAllContexts ) ).toBe( true );
 
-			let spies = {
-				success: ( appsContext:AppContext[] ):void => {
-					expect( appsContext.length ).toBe( 2 );
-					for( let appContext of appsContext ) {
-						expect( appContext instanceof AppContext ).toBe( true );
-					}
-				},
-				fail: ():void => {
-				}
-			};
-			let successSpy = spyOn( spies, "success" ).and.callThrough();
-			let failSpy = spyOn( spies, "fail" ).and.callThrough();
-
-			let promise:Promise<any>;
-
-			promise = apps.getAllContexts().then( spies.success, spies.fail );
-			expect( promise instanceof Promise ).toBe( true );
-
-			jasmine.Ajax.requests.at( 0 ).respondWith({
+			jasmine.Ajax.stubRequest( "http://example.com/platform/apps/", null, "GET" ).andReturn({
 				status: 200,
 				responseHeaders: {
 					ETag: 'W/"123456789"'
@@ -255,7 +237,7 @@ describe( module( "Carbon/Apps" ), ():void => {
 				    }]
 				}]`
 			});
-			jasmine.Ajax.stubRequest( /example-app/ ).andReturn({
+			jasmine.Ajax.stubRequest( /example-app/, null, "GET" ).andReturn({
 				status: 200,
 				responseHeaders: {
 					ETag: 'W/"123456789"'
@@ -281,7 +263,7 @@ describe( module( "Carbon/Apps" ), ():void => {
 				    }]
 				}]`
 			});
-			jasmine.Ajax.stubRequest( /another-app/ ).andReturn({
+			jasmine.Ajax.stubRequest( /another-app/, null, "GET" ).andReturn({
 				status: 200,
 				responseHeaders: {
 					ETag: 'W/"123456789"'
@@ -304,6 +286,24 @@ describe( module( "Carbon/Apps" ), ():void => {
 				    }]
 				}]`
 			});
+
+			let spies = {
+				success: ( appsContext:AppContext[] ):void => {
+					expect( appsContext.length ).toBe( 2 );
+					for( let appContext of appsContext ) {
+						expect( appContext instanceof AppContext ).toBe( true );
+					}
+				},
+				fail: ():void => {
+				}
+			};
+			let successSpy = spyOn( spies, "success" ).and.callThrough();
+			let failSpy = spyOn( spies, "fail" ).and.callThrough();
+
+			let promise:Promise<any>;
+
+			promise = apps.getAllContexts().then( spies.success, spies.fail );
+			expect( promise instanceof Promise ).toBe( true );
 
 			promise.then( ():void => {
 				expect( successSpy.calls.count() ).toBe( 1 );

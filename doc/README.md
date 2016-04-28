@@ -1974,6 +1974,31 @@ Upload a binary data to the server, creating a child for the parent specified. T
 - data
 - requestOptions
 
+```typescript 
+upload( parentURI:string,  data:Buffer,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[Carbon.Pointer.Class, Carbon.HTTP.Response.Class]>
+```
+
+Upload a binary data to the server, creating a child for the parent specified. This signature it's only when working in Node.js.
+
+*Parameters*
+
+- parentURI
+- data
+- requestOptions
+
+```typescript 
+upload( parentURI:string,  slug:string,  data:Buffer,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[Carbon.Pointer.Class, Carbon.HTTP.Response.Class]>
+```
+
+Upload a binary data to the server, creating a child for the parent specified. This signature it's only when working in Node.js.
+
+*Parameters*
+
+- parentURI
+- slug
+- data
+- requestOptions
+
 ##### getMembers
 ```typescript 
 getMembers( uri:string,  includeNonReadable:boolean,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.Pointer.Class[], Carbon.HTTP.Response.Class[] ]>
@@ -4841,6 +4866,27 @@ Upload a File to the server as a child of the Container.
 *Parameters*
 
 - data: Binary data to store in the server. The Blob works in a Browser.
+
+```typescript 
+upload( slug:string,  data:Buffer ):Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>
+```
+
+Upload a File to the server as a child of the Container.
+
+*Parameters*
+
+- slug: The slug that will be used in the URI of the data.
+- data: Binary data to store in the server. The Buffer only works in Node.js.
+
+```typescript 
+upload( data:Buffer ):Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>
+```
+
+Upload a File to the server as a child of the Container.
+
+*Parameters*
+
+- data: Binary data to store in the server. The Buffer only works in Node.js.
 
 
 ## <a name="Carbon-LDP-RDFSource" />Module Carbon/LDP/RDFSource

@@ -1436,7 +1436,8 @@ $__System.register("17", ["c", "18", "9", "5", "13", "19", "15", "8", "4", "10",
                         if (!(data instanceof Buffer))
                             return Promise.reject(new Errors.IllegalArgumentError("The data is not a valid Buffer object."));
                         var fileType = require("file-type");
-                        HTTP.Request.Util.setContentTypeHeader(fileType(data).mime, requestOptions);
+                        var bufferType = fileType(data);
+                        HTTP.Request.Util.setContentTypeHeader(bufferType ? bufferType.mime : "application/octet-stream", requestOptions);
                     }
                     if (!!this.context)
                         parentURI = this.context.resolve(parentURI);
