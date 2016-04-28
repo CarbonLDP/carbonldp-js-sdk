@@ -356,6 +356,7 @@ if ( typeof XMLHttpRequest === "undefined" ) {
 
 		let requests:any[] = [];
 
+		// let scope:any =  nock( /.*/ , { allowUnmocked: true } );
 		let scope:any =  nock( /.*/ );
 		scope.persist();
 		scope.on( "request", updateRequests );
@@ -375,10 +376,13 @@ if ( typeof XMLHttpRequest === "undefined" ) {
 			nock.enableNetConnect();
 		}
 
-		function andReturn( requests:any[] ) {
+		function andReturn( requests:any[] ) { //console.log( requests );
 			return ( options:JasmineAjaxRequestStubReturnOptions ) => {
 				// console.log( options.status || 200, options.responseText || options.response || "", options.responseHeaders || {} );
 				for ( let req of requests ) {
+					// nock.removeInterceptor({
+					// 	path : '/mockedResource'
+					// });
 					req.reply( options.status || 200, options.responseText || options.response || "", options.responseHeaders || {} );
 				}
 			};
@@ -400,6 +404,9 @@ if ( typeof XMLHttpRequest === "undefined" ) {
 			if ( method === "*" ) currentMethods = methods;
 
 			for ( let key of currentMethods ) {
+				let interceptor = scope.keyedInterceptors[ `${key} /.*/${path}` ];
+				if ( interceptor ) nock.removeInterceptor( interceptor[ 0 ] );
+
 				currentRequests.push( scope.intercept( path, key, data || undefined ) );
 			}
 
@@ -438,9 +445,5 @@ if ( typeof XMLHttpRequest === "undefined" ) {
 			},
 		};
 	})();
-	// stubRequest(url: RegExp, data?: string, method?: string): JasmineAjaxRequestStub;
-	//
-	// requests: JasmineAjaxRequestTracker;
-	// stubs: JasmineAjaxStubTracker;
 
 }

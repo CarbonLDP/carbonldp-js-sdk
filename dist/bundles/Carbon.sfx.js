@@ -13661,7 +13661,7 @@ $__System.register("5", [], function(exports_1) {
             && !isArray(object)
             && !isDate(object)
             && !isMap(object)
-            && !(object instanceof Blob)
+            && !(typeof Blob !== "undefined" && object instanceof Blob)
             && !((object + "") === "[object Set]");
     }
     function isFunction(value) {
