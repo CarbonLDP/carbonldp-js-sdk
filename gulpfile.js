@@ -31,14 +31,16 @@ let config = {
 			"!src/**/*.spec.ts",
 		    "!src/test/**"
 		],
-		test: "src/**.spec.ts",
+		all: "src/**/*.ts",
+		test: "/**/*.spec.js",
 		main: "src/Carbon"
 	},
 	dist: {
 		sfxBundle: "dist/bundles/Carbon.sfx.js",
 		tsOutput: "dist",
 		all: "dist/**/*",
-		doc: "doc/*"
+		doc: "doc/*",
+		temp: "temp"
 	},
 	bundledDefinition: {
 		excludedFiles: [
@@ -75,9 +77,30 @@ gulp.task( "test:debug", ( done ) => {
 	}, done ).start();
 });
 
-gulp.task( "test:node", () => {
-	return gulp.src( [ "src/**/*.spec.js" ] )
+gulp.task( "clean:temp", () => {
+	del.sync( config.dist.temp );
+});
+
+gulp.task( "test:node:compile", [ "clean:temp" ], () => {
+	let tsProject = ts.createProject( "tsconfig.json" );
+	let tsResults = gulp.src( config.source.all )
+		.pipe( ts( tsProject ) );
+
+	return tsResults.js
+		.pipe( gulp.dest( config.dist.temp ) );
+});
+
+gulp.task( "test:node:exec", [ "test:node:compile" ], () => {
+	return gulp.src( config.dist.temp + config.source.test )
 		.pipe( jasmine() );
+});
+
+gulp.task( "test:node", ( done ) => {
+	runSequence(
+		"test:node:exec",
+		"clean:temp",
+		done
+	);
 });
 
 gulp.task( "test", [ "test:browser", "test:node" ] );
