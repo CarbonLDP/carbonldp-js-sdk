@@ -185,7 +185,7 @@ describe( module(
 			expect( C.Predicate ).toBeDefined();
 			expect( Utils.isFunction( C.Predicate ) ).toBe( true );
 
-			expect( Object.keys( C.Predicate ).length ).toBe( 8 );
+			expect( Object.keys( C.Predicate ).length ).toBe( 9 );
 		});
 
 		it( hasProperty(
@@ -197,6 +197,17 @@ describe( module(
 			expect( Utils.isString( C.Predicate.accessPoint ) ).toBe( true );
 
 			expect( C.Predicate.accessPoint ).toBe( "https://carbonldp.com/ns/v1/platform#accessPoint" );
+		});
+
+		it( hasProperty(
+			STATIC,
+			"bNodeIdentifier",
+			"string"
+		), ():void => {
+			expect( C.Predicate.bNodeIdentifier ).toBeDefined();
+			expect( Utils.isString( C.Predicate.bNodeIdentifier ) ).toBe( true );
+
+			expect( C.Predicate.bNodeIdentifier ).toBe( "https://carbonldp.com/ns/v1/platform#bNodeIdentifier" );
 		});
 
 		it( hasProperty(

@@ -291,7 +291,7 @@ describe( module( "Carbon/SDKContext" ), ():void => {
 			// General Schema
 			returnedSchema = context.getObjectSchema();
 			expect( returnedSchema instanceof ObjectSchema.DigestedObjectSchema ).toBe( true );
-			expect( returnedSchema ).toEqual( new ObjectSchema.DigestedObjectSchema() );
+			expect( returnedSchema ).toEqual( SDKContext.instance.getObjectSchema() );
 
 			returnedSchema = mockedContext.getObjectSchema();
 			expect( returnedSchema instanceof ObjectSchema.DigestedObjectSchema ).toBe( true );
@@ -360,7 +360,12 @@ describe( module( "Carbon/SDKContext" ), ():void => {
 				expect( digestedSchema instanceof ObjectSchema.DigestedObjectSchema ).toBe( true );
 				let some = new ObjectSchema.DigestedObjectSchema();
 				expect( digestedSchema.properties ).not.toEqual( some.properties );
-				expect( digestedSchema ).toEqual( ObjectSchema.Digester.digestSchema( objectSchema ) );
+
+				let expectedDigestedSchema:ObjectSchema.DigestedObjectSchema = ObjectSchema.Digester.combineDigestedObjectSchemas([
+					ObjectSchema.Digester.digestSchema( objectSchema ),
+					SDKContext.instance.getObjectSchema(),
+				]);
+				expect( digestedSchema ).toEqual( expectedDigestedSchema );
 			});
 
 		});

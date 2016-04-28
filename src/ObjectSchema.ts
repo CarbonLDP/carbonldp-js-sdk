@@ -69,7 +69,7 @@ export class Digester {
 	static combineDigestedObjectSchemas( digestedSchemas:DigestedObjectSchema[] ):DigestedObjectSchema {
 		if( digestedSchemas.length === 0 ) throw new Errors.IllegalArgumentError( "At least one DigestedObjectSchema needs to be specified." );
 
-		let combinedSchema:DigestedObjectSchema = digestedSchemas.shift();
+		let combinedSchema:DigestedObjectSchema = new DigestedObjectSchema();
 
 		for( let digestedSchema of digestedSchemas ) {
 			Utils.M.extend( combinedSchema.prefixes, digestedSchema.prefixes );

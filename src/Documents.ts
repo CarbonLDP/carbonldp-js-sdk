@@ -7,6 +7,7 @@ import * as Utils from "./Utils";
 import * as AccessPoint from "./AccessPoint";
 import * as Document from "./Document";
 import * as JSONLDConverter from "./JSONLDConverter";
+import * as PersistedBlankNode from "./PersistedBlankNode";
 import * as PersistedDocument from "./PersistedDocument";
 import * as PersistedFragment from "./PersistedFragment";
 import * as PersistedNamedFragment from "./PersistedNamedFragment";
@@ -15,7 +16,6 @@ import * as NS from "./NS";
 import * as ObjectSchema from "./ObjectSchema";
 import * as LDP from "./LDP";
 import * as SPARQL from "./SPARQL";
-import * as Fragment from "./Fragment";
 
 class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Resolver {
 	_jsonldConverter:JSONLDConverter.Class;
@@ -95,9 +95,7 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 		if( this.pointers.has( pointerID ) ) {
 			let pointer:Pointer.Class = this.getPointer( uri );
 			if( pointer.isResolved() ) {
-				return new Promise( ( resolve:( result:[ PersistedDocument.Class, HTTP.Response.Class ]) => void, reject:( error:Error ) => void ) => {
-					resolve( [ <any> pointer, null ] );
-				} );
+				return this.refresh( <PersistedDocument.Class> pointer );
 			}
 		}
 
@@ -143,14 +141,14 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 			this.compact( fragmentResources, fragments, document );
 			this.compact( namedFragmentResources, namedFragments, document );
 
-			// TODO: Move this to a more appropriate place
+			// TODO: Move this to a more appropriate place. See also refresh() method
 			document._syncSnapshot();
 			fragments.forEach( ( fragment:PersistedFragment.Class ) => fragment._syncSnapshot() );
 			namedFragments.forEach( ( fragment:PersistedNamedFragment.Class ) => fragment._syncSnapshot() );
 			document._syncSavedFragments();
 
-			// TODO: Decorate additional behavior (app, etc.)
-			// TODO: Make it dynamic
+			// TODO: Decorate additional behavior (app, etc.). See also refresh() method
+			// TODO: Make it dynamic. See also refresh() method
 			if( LDP.Container.Factory.hasRDFClass( document ) ) LDP.PersistedContainer.Factory.decorate( document );
 
 			this.documentsBeingResolved.delete( pointerID );
@@ -524,6 +522,69 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 		});
 	}
 
+	refresh( persistedDocument:PersistedDocument.Class, requestOptions:HTTP.Request.Options = {} ):Promise<[ PersistedDocument.Class, HTTP.Response.Class ]> {
+		if ( this.context && this.context.auth.isAuthenticated() ) this.context.auth.addAuthentication( requestOptions );
+
+		HTTP.Request.Util.setAcceptHeader( "application/ld+json", requestOptions );
+		HTTP.Request.Util.setContentTypeHeader( "application/ld+json", requestOptions );
+		HTTP.Request.Util.setPreferredInteractionModel( NS.LDP.Class.RDFSource, requestOptions );
+
+		return HTTP.Request.Service.head( persistedDocument.id, requestOptions ).then( ( headerResponse:HTTP.Response.Class ) => {
+			let eTag:string = HTTP.Response.Util.getETag( headerResponse );
+			if ( eTag === persistedDocument._etag ) return <any> [ persistedDocument, null ];
+
+			return HTTP.Request.Service.get( persistedDocument.id, requestOptions, new RDF.Document.Parser() );
+
+		}).then( ( [ rdfDocuments, response ]:[ RDF.Document.Class[], HTTP.Response.Class ] ) => {
+			if ( response === null ) return <any> [ rdfDocuments, response ];
+
+			let eTag:string = HTTP.Response.Util.getETag( response );
+			if( eTag === null ) throw new HTTP.Errors.BadResponseError( "The response doesn't contain an ETag", response );
+
+			let rdfDocument:RDF.Document.Class = this.getRDFDocument( persistedDocument.id, rdfDocuments, response );
+			if ( rdfDocument === null ) throw new HTTP.Errors.BadResponseError( "No document was returned.", response );
+
+			let documentResources:RDF.Node.Class[] = RDF.Document.Util.getDocumentResources( rdfDocument );
+			if( documentResources.length > 1 ) throw new HTTP.Errors.BadResponseError( "The RDFDocument contains more than one document resource.", response );
+			if( documentResources.length === 0 ) throw new HTTP.Errors.BadResponseError( "The RDFDocument doesn\'t contain a document resource.", response );
+
+			persistedDocument._etag = eTag;
+			let documentResource:RDF.Node.Class = documentResources[ 0 ];
+			let fragmentResources:RDF.Node.Class[] = RDF.Document.Util.getBNodeResources( rdfDocument );
+			fragmentResources = fragmentResources.concat( RDF.Document.Util.getFragmentResources( rdfDocument ) );
+
+			let originalFragments:PersistedFragment.Class[] = persistedDocument.getFragments();
+			let setFragments:Set<string> = new Set( originalFragments.map( fragment => fragment.id ) );
+
+			let updatedData:Pointer.Class;
+			for( let fragmentResource of fragmentResources ) {
+				updatedData = <Pointer.Class> this.compact( fragmentResource, {}, persistedDocument );
+
+				let fragment:PersistedFragment.Class = this.getAssociatedFragment( persistedDocument, updatedData );
+				if ( fragment ) {
+					fragment = this.updateObject( fragment, updatedData );
+					if ( ! persistedDocument.hasFragment( fragment.id ) ) {
+						persistedDocument.createFragment( fragment.id, fragment );
+					}
+				} else {
+					fragment = persistedDocument.createFragment( updatedData.id, updatedData );
+				}
+				setFragments.delete( fragment.id );
+
+				fragment._syncSnapshot();
+			}
+			Array.from( setFragments ).forEach( id => persistedDocument.removeFragment( id ) );
+			persistedDocument._syncSavedFragments();
+
+			updatedData = <Pointer.Class> this.compact( documentResource, {}, persistedDocument );
+			this.updateObject( persistedDocument, updatedData );
+
+			persistedDocument._syncSnapshot();
+
+			return [ persistedDocument, response ];
+		});
+	}
+
 	delete( documentURI:string, requestOptions:HTTP.Request.Options = {} ):Promise<HTTP.Response.Class> {
 		if ( this.context && this.context.auth.isAuthenticated() ) this.context.auth.addAuthentication( requestOptions );
 
@@ -727,6 +788,36 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 		if( ! document.types ) return [];
 		return document.types;
 	}
+
+	private updateObject( target:Object, source:Object ):any {
+		let keys:string[] = Array.from<string>( new Set( Object.keys( source ).concat(  Object.keys( target ) ) ) );
+
+		for ( let key of keys ) {
+			if ( Utils.hasProperty( source, key ) ) {
+				target[ key ] = source[ key ];
+			} else {
+				delete target[ key ];
+			}
+		}
+
+		return target;
+	}
+
+	private getAssociatedFragment( persistedDocument:PersistedDocument.Class, fragment:Pointer.Class ):PersistedFragment.Class {
+		if ( RDF.URI.Util.isBNodeID( fragment.id ) ) {
+			let blankNode:PersistedBlankNode.Class = <PersistedBlankNode.Class> fragment;
+			let fragments:PersistedFragment.Class[] = persistedDocument.getFragments();
+			for ( let frag of fragments ) {
+				if ( RDF.URI.Util.isBNodeID( frag.id ) && (<PersistedBlankNode.Class> frag).bNodeIdentifier === blankNode.bNodeIdentifier ) {
+					return frag;
+				}
+			}
+			persistedDocument.removeFragment( fragment.id );
+			return null;
+		}
+		return persistedDocument.getFragment( fragment.id );
+	}
+
 }
 
 export default Documents;

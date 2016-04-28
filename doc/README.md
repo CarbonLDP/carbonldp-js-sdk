@@ -278,6 +278,8 @@
 	- [Properties](#Carbon-LDP-IndirectContainer-Properties)
 	- [Class Carbon.IndirectContainer.Factory](#Carbon-IndirectContainer-Factory)
 		- [Methods](#Carbon-IndirectContainer-Factory-Methods)
+- [Module Carbon/LDP/PersistedBlankNode](#Carbon-LDP-PersistedBlankNode)
+	- [Properties](#Carbon-LDP-PersistedBlankNode-Properties)
 - [Module Carbon/LDP/PersistedContainer](#Carbon-LDP-PersistedContainer)
 	- [Class Carbon.LDP.PersistedContainer.Factory](#Carbon-LDP-PersistedContainer-Factory)
 		- [Methods](#Carbon-LDP-PersistedContainer-Factory-Methods)
@@ -1799,6 +1801,18 @@ Remove all the members of the document container specified.
 *Parameters*
 
 - documentURI: URI of the document container where to remove the members.
+- requestOptions
+
+##### refresh
+```typescript 
+refresh( persistedDocument:Carbon.PersistedDocument.Class,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.PersistedDocument.Class, Carbon.HTTP.Response ]>
+```
+
+Update the document with the data of the server, if there is a diferent version on it.
+
+*Parameters*
+
+- persistedDocument: The persisted document to update.
 - requestOptions
 
 ##### delete
@@ -4632,6 +4646,21 @@ Returns true if the object provided has the properties that defines a `Carbon.LD
 
 
 
+## <a name="Carbon-LDP-PersistedBlankNode" />Module Carbon/LDP/PersistedBlankNode
+
+
+
+
+
+### <a name="Carbon-LDP-PersistedBlankNode-Properties" />Properties
+```typescript 
+static SCHEMA:Carbon.ObjectSchema.Class 
+```
+
+
+
+
+
 ## <a name="Carbon-LDP-PersistedContainer" />Module Carbon/LDP/PersistedContainer
 
 
@@ -5016,6 +5045,10 @@ static RemoveMemberAction:string
 #### <a name="Carbon-NS-C-Predicate-Properties" />Properties
 ```typescript 
 static accessPoint:string 
+```
+
+```typescript 
+static bNodeIdentifier:string 
 ```
 
 ```typescript 

@@ -18,8 +18,11 @@ export interface Class extends Pointer.Class, PersistedResource.Class, Document.
     getFragments(): PersistedFragment.Class[];
     createFragment(): PersistedFragment.Class;
     createFragment(slug: string): PersistedNamedFragment.Class;
+    createFragment<T extends Object>(slug: string, object: T): PersistedNamedFragment.Class & T;
+    createFragment<T extends Object>(object: T): PersistedFragment.Class & T;
     createNamedFragment(slug: string): PersistedNamedFragment.Class;
-    refresh(): Promise<void>;
+    createNamedFragment<T extends Object>(slug: string, object: T): PersistedNamedFragment.Class & T;
+    refresh(): Promise<[Class, HTTP.Response.Class]>;
     save(): Promise<[Class, HTTP.Response.Class]>;
     destroy(): Promise<HTTP.Response.Class>;
     createAccessPoint(accessPoint: AccessPoint.Class, slug?: string, requestOptions?: HTTP.Request.Options): Promise<[Pointer.Class, HTTP.Response.Class]>;

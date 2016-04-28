@@ -8,6 +8,7 @@ import * as Errors from "./Errors";
 import * as JSONLDConverter from "./JSONLDConverter";
 import * as LDP from "./LDP";
 import * as NS from "./NS";
+import * as PersistedBlankNode from "./PersistedBlankNode";
 import * as Pointer from "./Pointer";
 import * as RDF from "./RDF";
 import * as Utils from "./Utils";
@@ -148,6 +149,8 @@ export class Class implements Context {
 	}
 
 	private registerDefaultObjectSchemas():void {
+		this.extendObjectSchema( PersistedBlankNode.SCHEMA );
+
 		this.extendObjectSchema( LDP.RDFSource.RDF_CLASS, LDP.RDFSource.SCHEMA );
 		this.extendObjectSchema( LDP.Container.RDF_CLASS, LDP.Container.SCHEMA );
 		this.extendObjectSchema( LDP.BasicContainer.RDF_CLASS, LDP.Container.SCHEMA );
