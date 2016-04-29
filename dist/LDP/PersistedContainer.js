@@ -19,13 +19,13 @@ function createChild(slugOrObject, object) {
         return this._documents.createChild(this.id, object);
     }
 }
-function getChildren() {
+function listChildren() {
     var that = this;
-    return this._documents.getChildren(that.id);
+    return this._documents.listChildren(that.id);
 }
-function getMembers(includeNonReadable) {
+function listMembers(includeNonReadable) {
     if (includeNonReadable === void 0) { includeNonReadable = true; }
-    return this._documents.getMembers(this.id, includeNonReadable);
+    return this._documents.listMembers(this.id, includeNonReadable);
 }
 function removeMember(memberOrUri) {
     var that = this;
@@ -57,8 +57,8 @@ var Factory = (function () {
         return Utils.hasFunction(document, "addMember")
             && Utils.hasFunction(document, "addMembers")
             && Utils.hasFunction(document, "createChild")
-            && Utils.hasFunction(document, "getChildren")
-            && Utils.hasFunction(document, "getMembers")
+            && Utils.hasFunction(document, "listChildren")
+            && Utils.hasFunction(document, "listMembers")
             && Utils.hasFunction(document, "removeMember")
             && Utils.hasFunction(document, "removeMembers")
             && Utils.hasFunction(document, "removeAllMembers")
@@ -86,17 +86,17 @@ var Factory = (function () {
                 configurable: true,
                 value: createChild,
             },
-            "getChildren": {
+            "listChildren": {
                 writable: false,
                 enumerable: false,
                 configurable: true,
-                value: getChildren,
+                value: listChildren,
             },
-            "getMembers": {
+            "listMembers": {
                 writable: false,
                 enumerable: false,
                 configurable: true,
-                value: getMembers,
+                value: listMembers,
             },
             "removeMember": {
                 writable: false,

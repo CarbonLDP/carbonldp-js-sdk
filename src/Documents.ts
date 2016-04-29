@@ -228,7 +228,7 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 		});
 	}
 
-	getChildren( parentURI:string, requestOptions:HTTP.Request.Options = {} ): Promise<[ Pointer.Class[], HTTP.Response.Class ]> {
+	listChildren( parentURI:string, requestOptions:HTTP.Request.Options = {} ): Promise<[ Pointer.Class[], HTTP.Response.Class ]> {
 		if( !! this.context ) parentURI = this.context.resolve( parentURI );
 		if ( this.context && this.context.auth.isAuthenticated() ) this.context.auth.addAuthentication( requestOptions );
 
@@ -346,11 +346,11 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 		});
 	}
 
-	getMembers( uri:string, includeNonReadable:boolean, requestOptions:HTTP.Request.Options ):Promise<[ Pointer.Class[], HTTP.Response.Class ]>;
-	getMembers( uri:string, includeNonReadable:boolean ):Promise<[ Pointer.Class[], HTTP.Response.Class ]>;
-	getMembers( uri:string, requestOptions:HTTP.Request.Options ):Promise<[ Pointer.Class[], HTTP.Response.Class ]>;
-	getMembers( uri:string ):Promise<[ Pointer.Class[], HTTP.Response.Class ]>;
-	getMembers( uri:string, includeNonReadableOrRequestOptions:any = null, requestOptions:HTTP.Request.Options = {} ):Promise<[ Pointer.Class[], HTTP.Response.Class ]> {
+	listMembers( uri:string, includeNonReadable:boolean, requestOptions:HTTP.Request.Options ):Promise<[ Pointer.Class[], HTTP.Response.Class ]>;
+	listMembers( uri:string, includeNonReadable:boolean ):Promise<[ Pointer.Class[], HTTP.Response.Class ]>;
+	listMembers( uri:string, requestOptions:HTTP.Request.Options ):Promise<[ Pointer.Class[], HTTP.Response.Class ]>;
+	listMembers( uri:string ):Promise<[ Pointer.Class[], HTTP.Response.Class ]>;
+	listMembers( uri:string, includeNonReadableOrRequestOptions:any = null, requestOptions:HTTP.Request.Options = {} ):Promise<[ Pointer.Class[], HTTP.Response.Class ]> {
 		let includeNonReadable:boolean = Utils.isBoolean( includeNonReadableOrRequestOptions ) ? includeNonReadableOrRequestOptions : true;
 		requestOptions = Utils.isObject( includeNonReadableOrRequestOptions ) && includeNonReadableOrRequestOptions !== null ? includeNonReadableOrRequestOptions : requestOptions;
 

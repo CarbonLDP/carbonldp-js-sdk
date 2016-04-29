@@ -620,7 +620,7 @@ describe( module( "Carbon/Documents", "" ), ():void => {
 
 	it( hasMethod(
 		INSTANCE,
-		"getChildren",
+		"listChildren",
 		"Return all the children of the container specified.", [
 			{ name: "parentURI", type: "string", description: "URI of the document container to look for their children." },
 			{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true }
@@ -635,8 +635,8 @@ describe( module( "Carbon/Documents", "" ), ():void => {
 		let context:MockedContext = new MockedContext();
 		let documents:Documents = context.documents;
 
-		expect( documents.getChildren ).toBeDefined();
-		expect( Utils.isFunction( documents.getChildren ) ).toBe( true );
+		expect( documents.listChildren ).toBeDefined();
+		expect( Utils.isFunction( documents.listChildren ) ).toBe( true );
 
 		jasmine.Ajax.stubRequest( "http://example.com/empty-resource/", null, "GET" ).andReturn( {
 			status: 200,
@@ -724,19 +724,19 @@ describe( module( "Carbon/Documents", "" ), ():void => {
 		let promises:Promise<any>[] = [];
 		let promise:Promise<any>;
 
-		promise = documents.getChildren( "resource/" );
+		promise = documents.listChildren( "resource/" );
 		expect( promise instanceof Promise ).toBe( true );
 		promises.push( promise.then( spies.success ) );
 
-		promise = documents.getChildren( "empty-resource/" );
+		promise = documents.listChildren( "empty-resource/" );
 		expect( promise instanceof Promise ).toBe( true );
 		promises.push( promise.then( spies.successEmpty ) );
 
-		promise = documents.getChildren( "another-empty-resource/" );
+		promise = documents.listChildren( "another-empty-resource/" );
 		expect( promise instanceof Promise ).toBe( true );
 		promises.push( promise.then( spies.successEmpty ) );
 
-		promise = documents.getChildren( "another-another-empty-resource/" );
+		promise = documents.listChildren( "another-another-empty-resource/" );
 		expect( promise instanceof Promise ).toBe( true );
 		promises.push( promise.then( spies.successEmpty ) );
 
@@ -1002,7 +1002,7 @@ describe( module( "Carbon/Documents", "" ), ():void => {
 
 	});
 
-	describe( method( INSTANCE, "getMembers", "Retrieves (but doesn't resolve) all the members of the document" ), () => {
+	describe( method( INSTANCE, "listMembers", "Retrieves (but doesn't resolve) all the members of the document" ), () => {
 		it( isDefined(), () => {
 			class MockedContext extends AbstractContext {
 				resolve( uri:string ):string {
@@ -1015,8 +1015,8 @@ describe( module( "Carbon/Documents", "" ), ():void => {
 
 			// Property Integrity
 			(() => {
-				expect( "getMembers" in documents ).toEqual( true );
-				expect( Utils.isFunction( documents.getMembers ) ).toEqual( true );
+				expect( "listMembers" in documents ).toEqual( true );
+				expect( Utils.isFunction( documents.listMembers ) ).toEqual( true );
 			})();
 		});
 

@@ -761,7 +761,7 @@ $__System.register("6", ["7", "8", "9", "5", "a", "b", "c"], function(exports_1)
                 };
                 Class.prototype.getAllContexts = function () {
                     var _this = this;
-                    return this.context.documents.getMembers(this.getAppsContainerURI(), false).then(function (_a) {
+                    return this.context.documents.listMembers(this.getAppsContainerURI(), false).then(function (_a) {
                         var members = _a[0], response = _a[1];
                         return Pointer.Util.resolveAll(members);
                     }).then(function (_a) {
@@ -1345,7 +1345,7 @@ $__System.register("16", ["c", "17", "9", "5", "12", "18", "14", "8", "4", "19",
                         ];
                     });
                 };
-                Documents.prototype.getChildren = function (parentURI, requestOptions) {
+                Documents.prototype.listChildren = function (parentURI, requestOptions) {
                     var _this = this;
                     if (requestOptions === void 0) { requestOptions = {}; }
                     if (!!this.context)
@@ -1456,7 +1456,7 @@ $__System.register("16", ["c", "17", "9", "5", "12", "18", "14", "8", "4", "19",
                         ];
                     });
                 };
-                Documents.prototype.getMembers = function (uri, includeNonReadableOrRequestOptions, requestOptions) {
+                Documents.prototype.listMembers = function (uri, includeNonReadableOrRequestOptions, requestOptions) {
                     var _this = this;
                     if (includeNonReadableOrRequestOptions === void 0) { includeNonReadableOrRequestOptions = null; }
                     if (requestOptions === void 0) { requestOptions = {}; }
@@ -2159,13 +2159,13 @@ $__System.register("20", ["5"], function(exports_1) {
             return this._documents.createChild(this.id, object);
         }
     }
-    function getChildren() {
+    function listChildren() {
         var that = this;
-        return this._documents.getChildren(that.id);
+        return this._documents.listChildren(that.id);
     }
-    function getMembers(includeNonReadable) {
+    function listMembers(includeNonReadable) {
         if (includeNonReadable === void 0) { includeNonReadable = true; }
-        return this._documents.getMembers(this.id, includeNonReadable);
+        return this._documents.listMembers(this.id, includeNonReadable);
     }
     function removeMember(memberOrUri) {
         var that = this;
@@ -2203,8 +2203,8 @@ $__System.register("20", ["5"], function(exports_1) {
                     return Utils.hasFunction(document, "addMember")
                         && Utils.hasFunction(document, "addMembers")
                         && Utils.hasFunction(document, "createChild")
-                        && Utils.hasFunction(document, "getChildren")
-                        && Utils.hasFunction(document, "getMembers")
+                        && Utils.hasFunction(document, "listChildren")
+                        && Utils.hasFunction(document, "listMembers")
                         && Utils.hasFunction(document, "removeMember")
                         && Utils.hasFunction(document, "removeMembers")
                         && Utils.hasFunction(document, "removeAllMembers")
@@ -2232,17 +2232,17 @@ $__System.register("20", ["5"], function(exports_1) {
                             configurable: true,
                             value: createChild,
                         },
-                        "getChildren": {
+                        "listChildren": {
                             writable: false,
                             enumerable: false,
                             configurable: true,
-                            value: getChildren,
+                            value: listChildren,
                         },
-                        "getMembers": {
+                        "listMembers": {
                             writable: false,
                             enumerable: false,
                             configurable: true,
-                            value: getMembers,
+                            value: listMembers,
                         },
                         "removeMember": {
                             writable: false,

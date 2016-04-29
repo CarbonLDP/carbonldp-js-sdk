@@ -15,9 +15,9 @@ export interface Class extends PersistedDocument.Class {
 	createChild( object:Object ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
 	createChild():Promise<[ Pointer.Class, HTTP.Response.Class ]>;
 
-	getChildren():Promise<[ Pointer.Class[], HTTP.Response.Class ]>;
+	listChildren():Promise<[ Pointer.Class[], HTTP.Response.Class ]>;
 
-	getMembers( includeNonReadable?:boolean ):Promise<[ Pointer.Class[], HTTP.Response.Class ]>;
+	listMembers( includeNonReadable?:boolean ):Promise<[ Pointer.Class[], HTTP.Response.Class ]>;
 
 	removeMember( member:Pointer.Class ): Promise<HTTP.Response.Class>;
 	removeMember( memberURI:string ): Promise<HTTP.Response.Class>;
@@ -57,13 +57,13 @@ function createChild( slugOrObject?:any, object?:Object ):Promise<[ Pointer.Clas
 	}
 }
 
-function getChildren():Promise<[ Pointer.Class[], HTTP.Response.Class ]> {
+function listChildren():Promise<[ Pointer.Class[], HTTP.Response.Class ]> {
 	let that:PersistedDocument.Class = <PersistedDocument.Class> this;
-	return this._documents.getChildren( that.id );
+	return this._documents.listChildren( that.id );
 }
 
-function getMembers( includeNonReadable:boolean = true ):Promise<[ Pointer.Class[], HTTP.Response.Class ]> {
-	return this._documents.getMembers( this.id, includeNonReadable );
+function listMembers( includeNonReadable:boolean = true ):Promise<[ Pointer.Class[], HTTP.Response.Class ]> {
+	return this._documents.listMembers( this.id, includeNonReadable );
 }
 
 function removeMember( member:Pointer.Class ): Promise<HTTP.Response.Class>;
@@ -101,8 +101,8 @@ function upload( slugOrBlob:any, blob:any = null ):Promise<[ Pointer.Class, HTTP
 		return Utils.hasFunction( document, "addMember" )
 			&& Utils.hasFunction( document, "addMembers" )
 			&& Utils.hasFunction( document, "createChild" )
-			&& Utils.hasFunction( document, "getChildren" )
-			&& Utils.hasFunction( document, "getMembers" )
+			&& Utils.hasFunction( document, "listChildren" )
+			&& Utils.hasFunction( document, "listMembers" )
 			&& Utils.hasFunction( document, "removeMember" )
 			&& Utils.hasFunction( document, "removeMembers" )
 			&& Utils.hasFunction( document, "removeAllMembers" )
@@ -131,17 +131,17 @@ function upload( slugOrBlob:any, blob:any = null ):Promise<[ Pointer.Class, HTTP
 				configurable: true,
 				value: createChild,
 			},
-			"getChildren": {
+			"listChildren": {
 				writable: false,
 				enumerable: false,
 				configurable: true,
-				value: getChildren,
+				value: listChildren,
 			},
-			"getMembers": {
+			"listMembers": {
 				writable: false,
 				enumerable: false,
 				configurable: true,
-				value: getMembers,
+				value: listMembers,
 			},
 			"removeMember": {
 				writable: false,

@@ -49,7 +49,7 @@ export class Class {
 	}
 
 	getAllContexts():Promise<AppContext[]> {
-		return this.context.documents.getMembers( this.getAppsContainerURI(), false ).then(
+		return this.context.documents.listMembers( this.getAppsContainerURI(), false ).then(
 			( [ members, response ]:[ Pointer.Class[], Response.Class ] ) => {
 				return Pointer.Util.resolveAll( members );
 			}

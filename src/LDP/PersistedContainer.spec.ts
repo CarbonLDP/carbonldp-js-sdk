@@ -75,9 +75,9 @@ describe( module( "Carbon/LDP/PersistedContainer" ), ():void => {
 			expect( PersistedContainer.Factory.hasClassProperties( document ) ).toBe( false );
 			document.createChild = () => {};
 			expect( PersistedContainer.Factory.hasClassProperties( document ) ).toBe( false );
-			document.getChildren = () => {};
+			document.listChildren = () => {};
 			expect( PersistedContainer.Factory.hasClassProperties( document ) ).toBe( false );
-			document.getMembers = () => {};
+			document.listMembers = () => {};
 			expect( PersistedContainer.Factory.hasClassProperties( document ) ).toBe( false );
 			document.removeMember = () => {};
 			expect( PersistedContainer.Factory.hasClassProperties( document ) ).toBe( false );
@@ -111,8 +111,8 @@ describe( module( "Carbon/LDP/PersistedContainer" ), ():void => {
 			document.addMember = () => {};
 			document.addMembers = () => {};
 			document.createChild = () => {};
-			document.getChildren = () => {};
-			document.getMembers = () => {};
+			document.listChildren = () => {};
+			document.listMembers = () => {};
 			document.removeMember = () => {};
 			document.removeMembers = () => {};
 			document.removeAllMembers = () => {};
@@ -123,8 +123,8 @@ describe( module( "Carbon/LDP/PersistedContainer" ), ():void => {
 			expect( anotherContainer.addMember ).not.toBe( persistedContainer.addMember );
 			expect( anotherContainer.addMembers ).not.toBe( persistedContainer.addMembers );
 			expect( anotherContainer.createChild ).not.toBe( persistedContainer.createChild );
-			expect( anotherContainer.getChildren ).not.toBe( persistedContainer.getChildren );
-			expect( anotherContainer.getMembers ).not.toBe( persistedContainer.getMembers );
+			expect( anotherContainer.listChildren ).not.toBe( persistedContainer.listChildren );
+			expect( anotherContainer.listMembers ).not.toBe( persistedContainer.listMembers );
 			expect( anotherContainer.removeMember ).not.toBe( persistedContainer.removeMember );
 			expect( anotherContainer.removeMembers ).not.toBe( persistedContainer.removeMembers );
 			expect( anotherContainer.removeAllMembers ).not.toBe( persistedContainer.removeAllMembers );
@@ -288,36 +288,36 @@ describe( module( "Carbon/LDP/PersistedContainer" ), ():void => {
 
 			it( hasMethod(
 				INSTANCE,
-				"getChildren",
+				"listChildren",
 				"Return all the children of the container.",
 				{ type: "Promise<[ Carbon.Pointer.Class[], Carbon.HTTP.Response ]>" }
 			), ():void => {
-				expect( container.getChildren ).toBeDefined();
-				expect( Utils.isFunction( container.getChildren ) ).toBeDefined();
+				expect( container.listChildren ).toBeDefined();
+				expect( Utils.isFunction( container.listChildren ) ).toBeDefined();
 
-				let spy = spyOn( container._documents, "getChildren" );
+				let spy = spyOn( container._documents, "listChildren" );
 
-				container.getChildren();
+				container.listChildren();
 				expect( spy ).toHaveBeenCalledWith( "http://example.com/resource/" );
 			});
 
 			it( hasMethod(
 				INSTANCE,
-				"getMembers", [
+				"listMembers", [
 					{ name: "includeNonReadable", type: "boolean", optional: true, description: "By default this option is set to `true`." },
 				],
 				{ type: "Promise<[ Carbon.Pointer.Class[], Carbon.HTTP.Response.Class ]>" }
 			), ():void => {
-				expect( container.getMembers ).toBeDefined();
-				expect( Utils.isFunction( container.getMembers ) ).toBeDefined();
+				expect( container.listMembers ).toBeDefined();
+				expect( Utils.isFunction( container.listMembers ) ).toBeDefined();
 
-				let spy = spyOn( container._documents, "getMembers" );
+				let spy = spyOn( container._documents, "listMembers" );
 
-				container.getMembers();
+				container.listMembers();
 				expect( spy ).toHaveBeenCalledWith( "http://example.com/resource/", true );
 				spy.calls.reset();
 
-				container.getMembers( false );
+				container.listMembers( false );
 				expect( spy ).toHaveBeenCalledWith( "http://example.com/resource/", false );
 			});
 

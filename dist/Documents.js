@@ -190,7 +190,7 @@ var Documents = (function () {
             ];
         });
     };
-    Documents.prototype.getChildren = function (parentURI, requestOptions) {
+    Documents.prototype.listChildren = function (parentURI, requestOptions) {
         var _this = this;
         if (requestOptions === void 0) { requestOptions = {}; }
         if (!!this.context)
@@ -301,7 +301,7 @@ var Documents = (function () {
             ];
         });
     };
-    Documents.prototype.getMembers = function (uri, includeNonReadableOrRequestOptions, requestOptions) {
+    Documents.prototype.listMembers = function (uri, includeNonReadableOrRequestOptions, requestOptions) {
         var _this = this;
         if (includeNonReadableOrRequestOptions === void 0) { includeNonReadableOrRequestOptions = null; }
         if (requestOptions === void 0) { requestOptions = {}; }
