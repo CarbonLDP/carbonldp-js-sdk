@@ -128,10 +128,12 @@ function toJSON(objectSchemaResolver, jsonldConverter) {
     var resources = [];
     resources.push(this);
     resources = resources.concat(this.getFragments());
+    var documentSchema = objectSchemaResolver ? objectSchemaResolver.getSchemaFor(this) : new ObjectSchema.DigestedObjectSchema();
     var expandedResources = [];
     for (var _i = 0, resources_1 = resources; _i < resources_1.length; _i++) {
         var resource = resources_1[_i];
         var digestedContext = objectSchemaResolver ? objectSchemaResolver.getSchemaFor(resource) : new ObjectSchema.DigestedObjectSchema();
+        digestedContext = ObjectSchema.Digester.combineDigestedObjectSchemas([digestedContext, documentSchema]);
         expandedResources.push(jsonldConverter.expand(resource, digestedContext, this));
     }
     var graph = {

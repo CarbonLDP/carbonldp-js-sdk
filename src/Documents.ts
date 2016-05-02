@@ -6,6 +6,7 @@ import * as Utils from "./Utils";
 
 import * as AccessPoint from "./AccessPoint";
 import * as Document from "./Document";
+import * as Fragment from "./Fragment";
 import * as JSONLDConverter from "./JSONLDConverter";
 import * as PersistedBlankNode from "./PersistedBlankNode";
 import * as PersistedDocument from "./PersistedDocument";
@@ -742,6 +743,10 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 
 	private compactSingle( expandedObject:Object, targetObject:Object, pointerLibrary:Pointer.Library ):Object {
 		let digestedSchema:ObjectSchema.DigestedObjectSchema = this.getDigestedObjectSchemaForExpandedObject( expandedObject );
+		if ( Fragment.Factory.hasClassProperties( targetObject ) ) {
+			let parentSchema:ObjectSchema.DigestedObjectSchema = this.getDigestedObjectSchemaForDocument( (<Fragment.Class> targetObject).document );
+			digestedSchema = ObjectSchema.Digester.combineDigestedObjectSchemas( [ digestedSchema, parentSchema ] );
+		}
 
 		return this.jsonldConverter.compact( expandedObject, targetObject, digestedSchema, pointerLibrary );
 	}
