@@ -176,13 +176,15 @@ function toJSON():string;
 function toJSON( objectSchemaResolver:ObjectSchema.Resolver = null, jsonldConverter:JSONLDConverter = null ):string {
 	jsonldConverter = !! jsonldConverter ? jsonldConverter : new JSONLDConverter();
 
-	let resources:{ toJSON:() => string }[] = [];
+	let resources:Resource.Class[] = [];
 	resources.push( this );
 	resources = resources.concat( this.getFragments() );
 
+	let documentSchema:ObjectSchema.DigestedObjectSchema = objectSchemaResolver ? objectSchemaResolver.getSchemaFor( this ) : new ObjectSchema.DigestedObjectSchema();
 	let expandedResources:RDF.Node.Class[] = [];
 	for( let resource of resources ) {
 		let digestedContext:ObjectSchema.DigestedObjectSchema = objectSchemaResolver ? objectSchemaResolver.getSchemaFor( resource ) : new ObjectSchema.DigestedObjectSchema();
+		digestedContext = ObjectSchema.Digester.combineDigestedObjectSchemas( [ digestedContext, documentSchema ] );
 
 		expandedResources.push( jsonldConverter.expand( resource, digestedContext, this ) );
 	}

@@ -4,6 +4,7 @@ var HTTP = require("./HTTP");
 var RDF = require("./RDF");
 var Utils = require("./Utils");
 var Document = require("./Document");
+var Fragment = require("./Fragment");
 var JSONLDConverter = require("./JSONLDConverter");
 var PersistedDocument = require("./PersistedDocument");
 var Pointer = require("./Pointer");
@@ -660,6 +661,10 @@ var Documents = (function () {
     };
     Documents.prototype.compactSingle = function (expandedObject, targetObject, pointerLibrary) {
         var digestedSchema = this.getDigestedObjectSchemaForExpandedObject(expandedObject);
+        if (Fragment.Factory.hasClassProperties(targetObject)) {
+            var parentSchema = this.getDigestedObjectSchemaForDocument(targetObject.document);
+            digestedSchema = ObjectSchema.Digester.combineDigestedObjectSchemas([digestedSchema, parentSchema]);
+        }
         return this.jsonldConverter.compact(expandedObject, targetObject, digestedSchema, pointerLibrary);
     };
     Documents.prototype.getDigestedObjectSchemaForExpandedObject = function (expandedObject) {
