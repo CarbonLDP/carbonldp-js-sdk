@@ -356,15 +356,10 @@ if ( typeof XMLHttpRequest === "undefined" ) {
 
 		let requests:any[] = [];
 
-		// let scope:any =  nock( /.*/ , { allowUnmocked: true } );
+		// TODO Allow unmocked request with: `nock( /.*/ , { allowUnmocked: true } )`
 		let scope:any =  nock( /.*/ );
 		scope.persist();
 		scope.on( "request", updateRequests );
-		// scope.get( /\/.* / ).reply( 200 );
-		// for ( let key of methods ) {
-		// 	scope.intercept( /.*/, key ).reply( 200 );
-		// }
-		// console.log( scope );
 
 		function install() {
 			nock.disableNetConnect();
@@ -376,13 +371,9 @@ if ( typeof XMLHttpRequest === "undefined" ) {
 			nock.enableNetConnect();
 		}
 
-		function andReturn( requests:any[] ) { //console.log( requests );
+		function andReturn( requests:any[] ) {
 			return ( options:JasmineAjaxRequestStubReturnOptions ) => {
-				// console.log( options.status || 200, options.responseText || options.response || "", options.responseHeaders || {} );
 				for ( let req of requests ) {
-					// nock.removeInterceptor({
-					// 	path : '/mockedResource'
-					// });
 					req.reply( options.status || 200, options.responseText || options.response || "", options.responseHeaders || {} );
 				}
 			};
@@ -392,10 +383,6 @@ if ( typeof XMLHttpRequest === "undefined" ) {
 			let path:any = url;
 			if ( isString( url ) ) {
 				let parsedURL:Url = URL.parse( url );
-
-				// let host:string = `${ parsedURL.protocol }//${ parsedURL.hostname}`;
-				// if ( ! host.match( /http:\/\/example\.(com|org)/ ) ) throw new Error( "Only hosts allowed in Node.js are: 'http://example.com' and 'http://example.org'." );
-
 				path = parsedURL.path;
 			}
 
@@ -417,14 +404,10 @@ if ( typeof XMLHttpRequest === "undefined" ) {
 		}
 
 		function updateRequests( req:any, interceptor:any  ) {
-			// console.log( "####", interceptor );
 			requests.push( {
 				url: interceptor.uri,
 				method: interceptor.method,
-				// username: string,
-				// password: string,
 				requestHeaders: req.headers,
-				// overriddenMimeType: string,
 			} );
 		}
 
