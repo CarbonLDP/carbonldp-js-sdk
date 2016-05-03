@@ -413,6 +413,11 @@
 - [Module Carbon/Resource](#Carbon-Resource)
 	- [Class Carbon.Resource.Factory](#Carbon-Resource-Factory)
 		- [Methods](#Carbon-Resource-Factory-Methods)
+- [Module Carbon/RetrievalPreferences](#Carbon-RetrievalPreferences)
+	- [Class Carbon.RetrievalPreferences.Factory](#Carbon-RetrievalPreferences-Factory)
+		- [Methods](#Carbon-RetrievalPreferences-Factory-Methods)
+	- [Class Carbon.RetrievalPreferences.Util](#Carbon-RetrievalPreferences-Util)
+		- [Methods](#Carbon-RetrievalPreferences-Util-Methods)
 - [Module Carbon/SDKContext](#Carbon-SDKContext)
 	- [Properties](#Carbon-SDKContext-Properties)
 	- [Class Carbon.SDKContext.Class](#Carbon-SDKContext-Class)
@@ -1753,9 +1758,9 @@ Returns a Promise with a boolean indicating if the resource exists or not.
 - documentURI
 - requestOptions
 
-##### getChildren
+##### listChildren
 ```typescript 
-getChildren( parentURI:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.Pointer.Class[], Carbon.HTTP.Response ]>
+listChildren( parentURI:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.Pointer.Class[], Carbon.HTTP.Response ]>
 ```
 
 Return all the children of the container specified.
@@ -1988,9 +1993,9 @@ Upload a File to the server, creating a child for the parent specified.
 - blob
 - requestOptions
 
-##### getMembers
+##### listMembers
 ```typescript 
-getMembers( uri:string,  includeNonReadable:boolean,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.Pointer.Class[], Carbon.HTTP.Response.Class[] ]>
+listMembers( uri:string,  includeNonReadable:boolean,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.Pointer.Class[], Carbon.HTTP.Response.Class[] ]>
 ```
 
 Retrieves (but doesn't resolve) all the members of the document
@@ -2002,7 +2007,7 @@ Retrieves (but doesn't resolve) all the members of the document
 - requestOptions
 
 ```typescript 
-getMembers( uri:string,  includeNonReadable?:boolean ):Promise<[ Carbon.Pointer.Class[], Carbon.HTTP.Response.Class[] ]>
+listMembers( uri:string,  includeNonReadable?:boolean ):Promise<[ Carbon.Pointer.Class[], Carbon.HTTP.Response.Class[] ]>
 ```
 
 Retrieves (but doesn't resolve) all the members of the document
@@ -2013,7 +2018,7 @@ Retrieves (but doesn't resolve) all the members of the document
 - includeNonReadable
 
 ```typescript 
-getMembers( uri:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.Pointer.Class[], Carbon.HTTP.Response.Class[] ]>
+listMembers( uri:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.Pointer.Class[], Carbon.HTTP.Response.Class[] ]>
 ```
 
 Retrieves (but doesn't resolve) all the members of the document
@@ -2024,7 +2029,7 @@ Retrieves (but doesn't resolve) all the members of the document
 - requestOptions
 
 ```typescript 
-getMembers( uri:string ):Promise<[ Carbon.Pointer.Class[], Carbon.HTTP.Response.Class[] ]>
+listMembers( uri:string ):Promise<[ Carbon.Pointer.Class[], Carbon.HTTP.Response.Class[] ]>
 ```
 
 Retrieves (but doesn't resolve) all the members of the document
@@ -4721,16 +4726,16 @@ Add the specified resources URI or Pointers as members of the container.
 
 - members: Array of string URIs or Pointers to add as members
 
-##### getChildren
+##### listChildren
 ```typescript 
-getChildren():Promise<[ Carbon.Pointer.Class[], Carbon.HTTP.Response ]>
+listChildren():Promise<[ Carbon.Pointer.Class[], Carbon.HTTP.Response ]>
 ```
 
 Return all the children of the container.
 
-##### getMembers
+##### listMembers
 ```typescript 
-getMembers( includeNonReadable?:boolean ):Promise<[ Carbon.Pointer.Class[], Carbon.HTTP.Response.Class ]>
+listMembers( includeNonReadable?:boolean ):Promise<[ Carbon.Pointer.Class[], Carbon.HTTP.Response.Class ]>
 ```
 
 
@@ -7501,6 +7506,61 @@ Decorates the object provided with the elements of a Resource object.
 *Parameters*
 
 - object
+
+
+
+
+## <a name="Carbon-RetrievalPreferences" />Module Carbon/RetrievalPreferences
+
+
+
+
+
+
+
+
+### <a name="Carbon-RetrievalPreferences-Factory" />Class Carbon.RetrievalPreferences.Factory
+
+
+> Factory class for `Carbon.RetrievalPreferences.Class` object.
+
+
+
+
+#### <a name="Carbon-RetrievalPreferences-Factory-Methods" />Methods
+##### is
+```typescript 
+static is( object:Object ):boolean
+```
+
+Returns true if the object provided has the properties of a `Carbon.RetrievalPreferences.Class` object.
+
+*Parameters*
+
+- object: The object to check.
+
+
+
+
+### <a name="Carbon-RetrievalPreferences-Util" />Class Carbon.RetrievalPreferences.Util
+
+
+> Useful function when working with `Carbon.RetrievalPreferences.Class` objects.
+
+
+
+
+#### <a name="Carbon-RetrievalPreferences-Util-Methods" />Methods
+##### stringifyRetrievalPreferences
+```typescript 
+static stringifyRetrievalPreferences( retrievalPreferences:Carbon.RetrievalPreferences.Class ):string
+```
+
+Convert the `Carbon.RetrievalPreferences.Class` object to a URL query string.
+
+*Parameters*
+
+- retrievalPreferences: The preferences to stringify.
 
 
 

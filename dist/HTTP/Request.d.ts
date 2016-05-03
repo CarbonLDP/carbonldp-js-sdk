@@ -46,4 +46,5 @@ export declare class Util {
     static setPreferredInteractionModel(interactionModelURI: string, requestOptions: Options): Options;
     static setContainerRetrievalPreferences(preferences: ContainerRetrievalPreferences, requestOptions: Options, returnRepresentation?: boolean): Options;
     static setSlug(slug: string, requestOptions: Options): Options;
+    static isOptions(object: Object): boolean;
 }

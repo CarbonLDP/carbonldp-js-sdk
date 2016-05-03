@@ -164,6 +164,7 @@ export class Service {
 }
 
 export class Util {
+
 	static getHeader( headerName:string, requestOptions:Options, initialize:boolean = false ):Header.Class {
 		headerName = headerName.toLowerCase();
 
@@ -222,4 +223,12 @@ export class Util {
 
 		return requestOptions;
 	}
+
+	static isOptions( object:Object ):boolean {
+		return Utils.hasPropertyDefined( object, "headers" )
+			|| Utils.hasPropertyDefined( object, "sendCredentialsOnCORS" )
+			|| Utils.hasPropertyDefined( object, "timeout" )
+			|| Utils.hasPropertyDefined( object, "request" );
+	}
+
 }

@@ -371,6 +371,7 @@ declare module 'carbonldp/HTTP/Request' {
 	    static setPreferredInteractionModel(interactionModelURI: string, requestOptions: Options): Options;
 	    static setContainerRetrievalPreferences(preferences: ContainerRetrievalPreferences, requestOptions: Options, returnRepresentation?: boolean): Options;
 	    static setSlug(slug: string, requestOptions: Options): Options;
+	    static isOptions(object: Object): boolean;
 	}
 
 }
@@ -1446,6 +1447,27 @@ declare module 'carbonldp/PersistedBlankNode' {
 	export default Class;
 
 }
+declare module 'carbonldp/RetrievalPreferences' {
+	export interface Class {
+	    orderBy?: OrderByProperty[];
+	    limit?: number;
+	    offset?: number;
+	}
+	export type orderByType = "numeric" | "string" | "boolean" | "dateTime";
+	export interface OrderByProperty {
+	    "@id": string;
+	    "@type"?: orderByType;
+	    "@language"?: string;
+	}
+	export class Factory {
+	    static is(object: Object): boolean;
+	}
+	export class Util {
+	    static stringifyRetrievalPreferences(retrievalPreferences: Class): string;
+	}
+	export default Class;
+
+}
 declare module 'carbonldp/Documents' {
 	import * as HTTP from 'carbonldp/HTTP';
 	import Context from 'carbonldp/Context';
@@ -1455,7 +1477,8 @@ declare module 'carbonldp/Documents' {
 	import * as PersistedDocument from 'carbonldp/PersistedDocument';
 	import * as Pointer from 'carbonldp/Pointer';
 	import * as ObjectSchema from 'carbonldp/ObjectSchema';
-	import * as SPARQL from 'carbonldp/SPARQL'; class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Resolver {
+	import * as SPARQL from 'carbonldp/SPARQL';
+	import * as RetrievalPreferences from 'carbonldp/RetrievalPreferences'; class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Resolver {
 	    _jsonldConverter: JSONLDConverter.Class;
 	    jsonldConverter: JSONLDConverter.Class;
 	    private context;
@@ -1477,8 +1500,12 @@ declare module 'carbonldp/Documents' {
 	    createAccessPoint(accessPoint: AccessPoint.Class, slug?: string, requestOptions?: HTTP.Request.Options): Promise<[Pointer.Class, HTTP.Response.Class]>;
 	    upload(parentURI: string, slug: string, file: Blob, requestOptions?: HTTP.Request.Options): Promise<[Pointer.Class, HTTP.Response.Class]>;
 	    upload(parentURI: string, file: Blob, requestOptions?: HTTP.Request.Options): Promise<[Pointer.Class, HTTP.Response.Class]>;
+	    listMembers(uri: string, includeNonReadable: boolean, retrievalPreferences: RetrievalPreferences.Class, requestOptions: HTTP.Request.Options): Promise<[Pointer.Class[], HTTP.Response.Class]>;
+	    listMembers(uri: string, includeNonReadable: boolean, retrievalPreferences: RetrievalPreferences.Class): Promise<[Pointer.Class[], HTTP.Response.Class]>;
 	    listMembers(uri: string, includeNonReadable: boolean, requestOptions: HTTP.Request.Options): Promise<[Pointer.Class[], HTTP.Response.Class]>;
 	    listMembers(uri: string, includeNonReadable: boolean): Promise<[Pointer.Class[], HTTP.Response.Class]>;
+	    listMembers(uri: string, retrievalPreferences: RetrievalPreferences.Class, requestOptions: HTTP.Request.Options): Promise<[Pointer.Class[], HTTP.Response.Class]>;
+	    listMembers(uri: string, retrievalPreferences: RetrievalPreferences.Class): Promise<[Pointer.Class[], HTTP.Response.Class]>;
 	    listMembers(uri: string, requestOptions: HTTP.Request.Options): Promise<[Pointer.Class[], HTTP.Response.Class]>;
 	    listMembers(uri: string): Promise<[Pointer.Class[], HTTP.Response.Class]>;
 	    addMember(documentURI: string, member: Pointer.Class, requestOptions?: HTTP.Request.Options): Promise<HTTP.Response.Class>;

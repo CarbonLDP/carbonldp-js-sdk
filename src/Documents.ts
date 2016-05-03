@@ -16,6 +16,7 @@ import * as NS from "./NS";
 import * as ObjectSchema from "./ObjectSchema";
 import * as LDP from "./LDP";
 import * as SPARQL from "./SPARQL";
+import * as RetrievalPreferences from "./RetrievalPreferences";
 
 class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Resolver {
 	_jsonldConverter:JSONLDConverter.Class;
@@ -346,13 +347,18 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 		});
 	}
 
+	listMembers( uri:string, includeNonReadable:boolean, retrievalPreferences:RetrievalPreferences.Class, requestOptions:HTTP.Request.Options ):Promise<[ Pointer.Class[], HTTP.Response.Class ]>;
+	listMembers( uri:string, includeNonReadable:boolean, retrievalPreferences:RetrievalPreferences.Class ):Promise<[ Pointer.Class[], HTTP.Response.Class ]>;
 	listMembers( uri:string, includeNonReadable:boolean, requestOptions:HTTP.Request.Options ):Promise<[ Pointer.Class[], HTTP.Response.Class ]>;
 	listMembers( uri:string, includeNonReadable:boolean ):Promise<[ Pointer.Class[], HTTP.Response.Class ]>;
+	listMembers( uri:string, retrievalPreferences:RetrievalPreferences.Class, requestOptions:HTTP.Request.Options ):Promise<[ Pointer.Class[], HTTP.Response.Class ]>;
+	listMembers( uri:string, retrievalPreferences:RetrievalPreferences.Class ):Promise<[ Pointer.Class[], HTTP.Response.Class ]>;
 	listMembers( uri:string, requestOptions:HTTP.Request.Options ):Promise<[ Pointer.Class[], HTTP.Response.Class ]>;
 	listMembers( uri:string ):Promise<[ Pointer.Class[], HTTP.Response.Class ]>;
-	listMembers( uri:string, includeNonReadableOrRequestOptions:any = null, requestOptions:HTTP.Request.Options = {} ):Promise<[ Pointer.Class[], HTTP.Response.Class ]> {
-		let includeNonReadable:boolean = Utils.isBoolean( includeNonReadableOrRequestOptions ) ? includeNonReadableOrRequestOptions : true;
-		requestOptions = Utils.isObject( includeNonReadableOrRequestOptions ) && includeNonReadableOrRequestOptions !== null ? includeNonReadableOrRequestOptions : requestOptions;
+	listMembers( uri:string, nonReadRetPrefReqOpt?:any, retPrefReqOpt?:any, reqOpt?:HTTP.Request.Options ):Promise<[ Pointer.Class[], HTTP.Response.Class ]> {
+		let includeNonReadable:boolean = Utils.isBoolean( nonReadRetPrefReqOpt ) ? nonReadRetPrefReqOpt : true;
+		let retrievalPreferences:RetrievalPreferences.Class = RetrievalPreferences.Factory.is( nonReadRetPrefReqOpt ) ? nonReadRetPrefReqOpt : ( RetrievalPreferences.Factory.is( retPrefReqOpt ) ? retPrefReqOpt : null );
+		let requestOptions:HTTP.Request.Options = HTTP.Request.Util.isOptions( nonReadRetPrefReqOpt ) ? nonReadRetPrefReqOpt : ( HTTP.Request.Util.isOptions( retPrefReqOpt ) ? retPrefReqOpt : ( HTTP.Request.Util.isOptions( reqOpt ) ? reqOpt : {} ) );
 
 		if( ! RDF.URI.Util.isAbsolute( uri ) ) {
 			if( ! this.context ) throw new Errors.IllegalArgumentError( "This Documents instance doesn't support relative URIs." );

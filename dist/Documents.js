@@ -11,6 +11,7 @@ var NS = require("./NS");
 var ObjectSchema = require("./ObjectSchema");
 var LDP = require("./LDP");
 var SPARQL = require("./SPARQL");
+var RetrievalPreferences = require("./RetrievalPreferences");
 var Documents = (function () {
     function Documents(context) {
         if (context === void 0) { context = null; }
@@ -301,12 +302,11 @@ var Documents = (function () {
             ];
         });
     };
-    Documents.prototype.listMembers = function (uri, includeNonReadableOrRequestOptions, requestOptions) {
+    Documents.prototype.listMembers = function (uri, nonReadRetPrefReqOpt, retPrefReqOpt, reqOpt) {
         var _this = this;
-        if (includeNonReadableOrRequestOptions === void 0) { includeNonReadableOrRequestOptions = null; }
-        if (requestOptions === void 0) { requestOptions = {}; }
-        var includeNonReadable = Utils.isBoolean(includeNonReadableOrRequestOptions) ? includeNonReadableOrRequestOptions : true;
-        requestOptions = Utils.isObject(includeNonReadableOrRequestOptions) && includeNonReadableOrRequestOptions !== null ? includeNonReadableOrRequestOptions : requestOptions;
+        var includeNonReadable = Utils.isBoolean(nonReadRetPrefReqOpt) ? nonReadRetPrefReqOpt : true;
+        var retrievalPreferences = RetrievalPreferences.Factory.is(nonReadRetPrefReqOpt) ? nonReadRetPrefReqOpt : (RetrievalPreferences.Factory.is(retPrefReqOpt) ? retPrefReqOpt : null);
+        var requestOptions = HTTP.Request.Util.isOptions(nonReadRetPrefReqOpt) ? nonReadRetPrefReqOpt : (HTTP.Request.Util.isOptions(retPrefReqOpt) ? retPrefReqOpt : (HTTP.Request.Util.isOptions(reqOpt) ? reqOpt : {}));
         if (!RDF.URI.Util.isAbsolute(uri)) {
             if (!this.context)
                 throw new Errors.IllegalArgumentError("This Documents instance doesn't support relative URIs.");

@@ -1124,8 +1124,86 @@ $__System.register("15", ["4"], function(exports_1) {
     }
 });
 
-$__System.register("16", ["c", "17", "9", "5", "12", "18", "14", "8", "4", "19", "3", "1a"], function(exports_1) {
-    var Errors, HTTP, RDF, Utils, Document, JSONLDConverter, PersistedDocument, Pointer, NS, ObjectSchema, LDP, SPARQL;
+$__System.register("16", ["5", "13", "17"], function(exports_1) {
+    var Utils_1, IllegalArgumentError_1, XSD;
+    var allowedTypes, Factory, Util;
+    return {
+        setters:[
+            function (Utils_1_1) {
+                Utils_1 = Utils_1_1;
+            },
+            function (IllegalArgumentError_1_1) {
+                IllegalArgumentError_1 = IllegalArgumentError_1_1;
+            },
+            function (XSD_1) {
+                XSD = XSD_1;
+            }],
+        execute: function() {
+            allowedTypes = ["numeric", "string", "boolean", "dateTime"];
+            "numeric" | "string" | "boolean" | "dateTime";
+            Factory = (function () {
+                function Factory() {
+                }
+                Factory.is = function (object) {
+                    return Utils_1.hasPropertyDefined(object, "orderBy")
+                        || Utils_1.hasPropertyDefined(object, "limit")
+                        || Utils_1.hasPropertyDefined(object, "offset");
+                };
+                return Factory;
+            })();
+            exports_1("Factory", Factory);
+            Util = (function () {
+                function Util() {
+                }
+                Util.stringifyRetrievalPreferences = function (retrievalPreferences) {
+                    var stringPreferences = "";
+                    if ("limit" in retrievalPreferences) {
+                        stringPreferences += "limit=" + retrievalPreferences.limit;
+                    }
+                    if ("offset" in retrievalPreferences) {
+                        stringPreferences += (stringPreferences ? "&" : "") + "offset=" + retrievalPreferences.offset;
+                    }
+                    if ("orderBy" in retrievalPreferences && retrievalPreferences.orderBy.length > 0) {
+                        stringPreferences += (stringPreferences ? "&" : "") + "orderBy=";
+                        var stringOrders = [];
+                        for (var _i = 0, _a = retrievalPreferences.orderBy; _i < _a.length; _i++) {
+                            var orderBy = _a[_i];
+                            var stringOrder = "";
+                            if ("@id" in orderBy) {
+                                var id = orderBy["@id"];
+                                var descending = id.startsWith("-");
+                                stringOrder += (descending ? "-" : "") + "<" + (descending ? id.substr(1) : id) + ">";
+                            }
+                            if ("@type" in orderBy) {
+                                if (!stringOrder)
+                                    throw new IllegalArgumentError_1.default("The @id property is missing in OrderBy property.");
+                                var type = orderBy["@type"];
+                                if (allowedTypes.indexOf(type) === -1)
+                                    throw new IllegalArgumentError_1.default("The @type value specified is not valid.");
+                                if (type !== "numeric")
+                                    type = XSD.DataType[type];
+                                stringOrder += ";" + type;
+                            }
+                            if ("@language" in orderBy) {
+                                if (!stringOrder)
+                                    throw new IllegalArgumentError_1.default("The @id property is missing in OrderBy property.");
+                                stringOrder += ";" + orderBy["@language"];
+                            }
+                            stringOrders.push(stringOrder);
+                        }
+                        stringPreferences += stringOrders.join(",");
+                    }
+                    return stringPreferences ? "?" + stringPreferences : stringPreferences;
+                };
+                return Util;
+            })();
+            exports_1("Util", Util);
+        }
+    }
+});
+
+$__System.register("18", ["c", "19", "9", "5", "12", "1a", "14", "8", "4", "1b", "3", "1c", "16"], function(exports_1) {
+    var Errors, HTTP, RDF, Utils, Document, JSONLDConverter, PersistedDocument, Pointer, NS, ObjectSchema, LDP, SPARQL, RetrievalPreferences;
     var Documents;
     return {
         setters:[
@@ -1164,6 +1242,9 @@ $__System.register("16", ["c", "17", "9", "5", "12", "18", "14", "8", "4", "19",
             },
             function (SPARQL_1) {
                 SPARQL = SPARQL_1;
+            },
+            function (RetrievalPreferences_1) {
+                RetrievalPreferences = RetrievalPreferences_1;
             }],
         execute: function() {
             Documents = (function () {
@@ -1456,12 +1537,11 @@ $__System.register("16", ["c", "17", "9", "5", "12", "18", "14", "8", "4", "19",
                         ];
                     });
                 };
-                Documents.prototype.listMembers = function (uri, includeNonReadableOrRequestOptions, requestOptions) {
+                Documents.prototype.listMembers = function (uri, nonReadRetPrefReqOpt, retPrefReqOpt, reqOpt) {
                     var _this = this;
-                    if (includeNonReadableOrRequestOptions === void 0) { includeNonReadableOrRequestOptions = null; }
-                    if (requestOptions === void 0) { requestOptions = {}; }
-                    var includeNonReadable = Utils.isBoolean(includeNonReadableOrRequestOptions) ? includeNonReadableOrRequestOptions : true;
-                    requestOptions = Utils.isObject(includeNonReadableOrRequestOptions) && includeNonReadableOrRequestOptions !== null ? includeNonReadableOrRequestOptions : requestOptions;
+                    var includeNonReadable = Utils.isBoolean(nonReadRetPrefReqOpt) ? nonReadRetPrefReqOpt : true;
+                    var retrievalPreferences = RetrievalPreferences.Factory.is(nonReadRetPrefReqOpt) ? nonReadRetPrefReqOpt : (RetrievalPreferences.Factory.is(retPrefReqOpt) ? retPrefReqOpt : null);
+                    var requestOptions = HTTP.Request.Util.isOptions(nonReadRetPrefReqOpt) ? nonReadRetPrefReqOpt : (HTTP.Request.Util.isOptions(retPrefReqOpt) ? retPrefReqOpt : (HTTP.Request.Util.isOptions(reqOpt) ? reqOpt : {}));
                     if (!RDF.URI.Util.isAbsolute(uri)) {
                         if (!this.context)
                             throw new Errors.IllegalArgumentError("This Documents instance doesn't support relative URIs.");
@@ -1897,7 +1977,7 @@ $__System.register("16", ["c", "17", "9", "5", "12", "18", "14", "8", "4", "19",
     }
 });
 
-$__System.register("1b", ["12", "4", "5"], function(exports_1) {
+$__System.register("1d", ["12", "4", "5"], function(exports_1) {
     var Document, NS, Utils;
     var RDF_CLASS, SCHEMA, Factory;
     return {
@@ -1939,7 +2019,7 @@ $__System.register("1b", ["12", "4", "5"], function(exports_1) {
     }
 });
 
-$__System.register("1c", ["4"], function(exports_1) {
+$__System.register("1e", ["4"], function(exports_1) {
     var NS;
     var RDF_CLASS, Factory;
     return {
@@ -1969,7 +2049,7 @@ $__System.register("1c", ["4"], function(exports_1) {
     }
 });
 
-$__System.register("1d", ["4", "5"], function(exports_1) {
+$__System.register("1f", ["4", "5"], function(exports_1) {
     var NS, Utils;
     var RDF_CLASS, SCHEMA, Factory;
     return {
@@ -2038,7 +2118,7 @@ $__System.register("1d", ["4", "5"], function(exports_1) {
     }
 });
 
-$__System.register("1e", ["12", "c", "4", "8", "5"], function(exports_1) {
+$__System.register("20", ["12", "c", "4", "8", "5"], function(exports_1) {
     var Document, Errors, NS, Pointer, Utils;
     var RDF_CLASS, Factory;
     return {
@@ -2111,7 +2191,7 @@ $__System.register("1e", ["12", "c", "4", "8", "5"], function(exports_1) {
     }
 });
 
-$__System.register("1f", ["4", "5"], function(exports_1) {
+$__System.register("21", ["4", "5"], function(exports_1) {
     var NS, Utils;
     var RDF_CLASS, Factory;
     return {
@@ -2137,7 +2217,7 @@ $__System.register("1f", ["4", "5"], function(exports_1) {
     }
 });
 
-$__System.register("20", ["5"], function(exports_1) {
+$__System.register("22", ["5"], function(exports_1) {
     var Utils;
     var Factory;
     function addMember(memberOrUri) {
@@ -2278,7 +2358,7 @@ $__System.register("20", ["5"], function(exports_1) {
     }
 });
 
-$__System.register("21", ["4"], function(exports_1) {
+$__System.register("23", ["4"], function(exports_1) {
     var NS;
     var RDF_CLASS, SCHEMA, Factory;
     return {
@@ -2308,7 +2388,7 @@ $__System.register("21", ["4"], function(exports_1) {
     }
 });
 
-$__System.register("3", ["1b", "1c", "1d", "1e", "1f", "20", "21", "22"], function(exports_1) {
+$__System.register("3", ["1d", "1e", "1f", "20", "21", "22", "23", "24"], function(exports_1) {
     var AddMemberAction, BasicContainer, Container, DirectContainer, IndirectContainer, PersistedContainer, RDFSource, RemoveMemberAction;
     return {
         setters:[
@@ -2349,7 +2429,7 @@ $__System.register("3", ["1b", "1c", "1d", "1e", "1f", "20", "21", "22"], functi
     }
 });
 
-$__System.register("23", ["4"], function(exports_1) {
+$__System.register("25", ["4"], function(exports_1) {
     var NS;
     var SCHEMA;
     return {
@@ -2439,7 +2519,7 @@ $__System.register("11", ["5", "12", "4", "13"], function(exports_1) {
     }
 });
 
-$__System.register("24", ["5"], function(exports_1) {
+$__System.register("26", ["5"], function(exports_1) {
     var Utils;
     var Factory;
     function syncSnapshot() {
@@ -2498,7 +2578,7 @@ $__System.register("24", ["5"], function(exports_1) {
     }
 });
 
-$__System.register("25", ["24"], function(exports_1) {
+$__System.register("27", ["26"], function(exports_1) {
     var PersistedResource;
     var Factory;
     return {
@@ -2522,7 +2602,7 @@ $__System.register("25", ["24"], function(exports_1) {
     }
 });
 
-$__System.register("26", ["25"], function(exports_1) {
+$__System.register("28", ["27"], function(exports_1) {
     var PersistedFragment;
     var Factory;
     return {
@@ -2546,7 +2626,7 @@ $__System.register("26", ["25"], function(exports_1) {
     }
 });
 
-$__System.register("14", ["12", "24", "25", "26", "9", "5", "27"], function(exports_1) {
+$__System.register("14", ["12", "26", "27", "28", "9", "5", "29"], function(exports_1) {
     var Document, PersistedResource, PersistedFragment, PersistedNamedFragment, RDF, Utils, URI;
     var Factory;
     function extendIsDirty(superFunction) {
@@ -2849,7 +2929,7 @@ $__System.register("14", ["12", "24", "25", "26", "9", "5", "27"], function(expo
     }
 });
 
-$__System.register("28", ["4", "14", "5"], function(exports_1) {
+$__System.register("2a", ["4", "14", "5"], function(exports_1) {
     var NS, PersistedDocument, Utils;
     var RDF_CLASS, SCHEMA, Factory;
     return {
@@ -2894,7 +2974,7 @@ $__System.register("28", ["4", "14", "5"], function(exports_1) {
     }
 });
 
-$__System.register("18", ["c", "19", "4", "8", "9", "5"], function(exports_1) {
+$__System.register("1a", ["c", "1b", "4", "8", "9", "5"], function(exports_1) {
     var Errors, ObjectSchema, NS, Pointer, RDF, Utils;
     var Class;
     return {
@@ -3457,7 +3537,7 @@ $__System.register("18", ["c", "19", "4", "8", "9", "5"], function(exports_1) {
     }
 });
 
-$__System.register("29", ["2a", "5"], function(exports_1) {
+$__System.register("2b", ["2c", "5"], function(exports_1) {
     var Resource, Utils;
     var Factory, Util;
     return {
@@ -3512,7 +3592,7 @@ $__System.register("29", ["2a", "5"], function(exports_1) {
     }
 });
 
-$__System.register("2b", ["29", "9", "5"], function(exports_1) {
+$__System.register("2d", ["2b", "9", "5"], function(exports_1) {
     var Fragment, RDF, Utils;
     var Factory;
     return {
@@ -3562,7 +3642,7 @@ $__System.register("2b", ["29", "9", "5"], function(exports_1) {
     }
 });
 
-$__System.register("19", ["c", "9", "5"], function(exports_1) {
+$__System.register("1b", ["c", "9", "5"], function(exports_1) {
     var Errors, RDF, Utils;
     var ContainerType, DigestedObjectSchema, DigestedPropertyDefinition, Digester;
     return {
@@ -3746,7 +3826,7 @@ $__System.register("19", ["c", "9", "5"], function(exports_1) {
     }
 });
 
-$__System.register("2a", ["8", "5"], function(exports_1) {
+$__System.register("2c", ["8", "5"], function(exports_1) {
     var Pointer, Utils;
     var Factory;
     return {
@@ -3804,7 +3884,7 @@ $__System.register("2a", ["8", "5"], function(exports_1) {
     }
 });
 
-$__System.register("12", ["c", "29", "18", "2b", "19", "8", "9", "2a", "5"], function(exports_1) {
+$__System.register("12", ["c", "2b", "1a", "2d", "1b", "8", "9", "2c", "5"], function(exports_1) {
     var Errors, Fragment, JSONLDConverter_1, NamedFragment, ObjectSchema, Pointer, RDF, Resource, Utils;
     var Factory;
     function hasPointer(id) {
@@ -4116,7 +4196,7 @@ $__System.register("12", ["c", "29", "18", "2b", "19", "8", "9", "2a", "5"], fun
     }
 });
 
-$__System.register("22", ["12", "4", "5"], function(exports_1) {
+$__System.register("24", ["12", "4", "5"], function(exports_1) {
     var Document, NS, Utils;
     var RDF_CLASS, SCHEMA, Factory;
     return {
@@ -4158,7 +4238,7 @@ $__System.register("22", ["12", "4", "5"], function(exports_1) {
     }
 });
 
-$__System.register("f", ["1b", "15", "2c", "16", "c", "3", "4", "23", "19", "11", "28", "22"], function(exports_1) {
+$__System.register("f", ["1d", "15", "2e", "18", "c", "3", "4", "25", "1b", "11", "2a", "24"], function(exports_1) {
     var AddMemberAction, APIDescription, Auth, Documents_1, Errors, LDP, NS, PersistedBlankNode, ObjectSchema, Agent, RDFRepresentation, RemoveMemberAction;
     var Class, instance;
     return {
@@ -4356,23 +4436,23 @@ $__System.register("f", ["1b", "15", "2c", "16", "c", "3", "4", "23", "19", "11"
     }
 });
 
-$__System.register("2d", [], function(exports_1) {
-    return {
-        setters:[],
-        execute: function() {
-        }
-    }
-});
-
-$__System.register("2e", [], function(exports_1) {
-    return {
-        setters:[],
-        execute: function() {
-        }
-    }
-});
-
 $__System.register("2f", [], function(exports_1) {
+    return {
+        setters:[],
+        execute: function() {
+        }
+    }
+});
+
+$__System.register("30", [], function(exports_1) {
+    return {
+        setters:[],
+        execute: function() {
+        }
+    }
+});
+
+$__System.register("31", [], function(exports_1) {
     var Class;
     return {
         setters:[],
@@ -4402,7 +4482,7 @@ $__System.register("2f", [], function(exports_1) {
     }
 });
 
-$__System.register("30", ["17", "c", "31", "2f"], function(exports_1) {
+$__System.register("32", ["19", "c", "33", "31"], function(exports_1) {
     var HTTP, Errors, UsernameAndPasswordToken_1, UsernameAndPasswordCredentials;
     var Class;
     return {
@@ -4473,7 +4553,7 @@ $__System.register("30", ["17", "c", "31", "2f"], function(exports_1) {
     }
 });
 
-$__System.register("32", ["c", "17", "4", "9", "30", "31", "33", "5"], function(exports_1) {
+$__System.register("34", ["c", "19", "4", "9", "32", "33", "35", "5"], function(exports_1) {
     var Errors, HTTP, NS, RDF, BasicAuthenticator_1, UsernameAndPasswordToken_1, Token, Utils;
     var Class;
     return {
@@ -4705,7 +4785,7 @@ $__System.register("8", ["5", "c"], function(exports_1) {
     }
 });
 
-$__System.register("33", ["4", "8", "5"], function(exports_1) {
+$__System.register("35", ["4", "8", "5"], function(exports_1) {
     var NS, Pointer, Utils;
     var RDF_CLASS, CONTEXT, Factory;
     return {
@@ -4765,7 +4845,7 @@ $__System.register("33", ["4", "8", "5"], function(exports_1) {
     }
 });
 
-$__System.register("31", [], function(exports_1) {
+$__System.register("33", [], function(exports_1) {
     var Class;
     return {
         setters:[],
@@ -4793,7 +4873,7 @@ $__System.register("31", [], function(exports_1) {
     }
 });
 
-$__System.register("2c", ["2d", "2e", "30", "32", "33", "31", "c", "5"], function(exports_1) {
+$__System.register("2e", ["2f", "30", "32", "34", "35", "33", "c", "5"], function(exports_1) {
     var AuthenticationToken_1, Authenticator_1, BasicAuthenticator_1, TokenAuthenticator_1, Token, UsernameAndPasswordToken_1, Errors, Utils;
     var Method, Class;
     return {
@@ -4912,7 +4992,7 @@ $__System.register("2c", ["2d", "2e", "30", "32", "33", "31", "c", "5"], functio
     }
 });
 
-$__System.register("34", ["2c"], function(exports_1) {
+$__System.register("36", ["2e"], function(exports_1) {
     var Auth;
     var settings;
     return {
@@ -4933,7 +5013,7 @@ $__System.register("34", ["2c"], function(exports_1) {
     }
 });
 
-$__System.register("35", ["5"], function(exports_1) {
+$__System.register("37", ["5"], function(exports_1) {
     var Utils;
     var ValueTypes, Factory;
     return {
@@ -10132,7 +10212,7 @@ var _removeDefine = $__System.get("@@amd-helpers").createDefine();
     });
   };
   if (!_nodejs && (typeof define === 'function' && define.amd)) {
-    define("36", [], function() {
+    define("38", [], function() {
       wrapper(factory);
       return factory;
     });
@@ -10154,7 +10234,7 @@ var _removeDefine = $__System.get("@@amd-helpers").createDefine();
 
 _removeDefine();
 })();
-$__System.register("37", ["36", "38"], function(exports_1) {
+$__System.register("39", ["38", "3a"], function(exports_1) {
     var jsonld, JSONParser_1;
     var Class;
     return {
@@ -10195,7 +10275,7 @@ $__System.register("37", ["36", "38"], function(exports_1) {
     }
 });
 
-$__System.register("39", [], function(exports_1) {
+$__System.register("3b", [], function(exports_1) {
     return {
         setters:[],
         execute: function() {
@@ -10203,7 +10283,7 @@ $__System.register("39", [], function(exports_1) {
     }
 });
 
-$__System.register("3a", ["3b"], function(exports_1) {
+$__System.register("3c", ["3d"], function(exports_1) {
     var __extends = (this && this.__extends) || function (d, b) {
         for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
         function __() { this.constructor = d; }
@@ -10241,7 +10321,7 @@ $__System.register("3a", ["3b"], function(exports_1) {
     }
 });
 
-$__System.register("3c", ["3b"], function(exports_1) {
+$__System.register("3e", ["3d"], function(exports_1) {
     var __extends = (this && this.__extends) || function (d, b) {
         for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
         function __() { this.constructor = d; }
@@ -10279,7 +10359,7 @@ $__System.register("3c", ["3b"], function(exports_1) {
     }
 });
 
-$__System.register("3d", ["3b"], function(exports_1) {
+$__System.register("3f", ["3d"], function(exports_1) {
     var __extends = (this && this.__extends) || function (d, b) {
         for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
         function __() { this.constructor = d; }
@@ -10317,7 +10397,7 @@ $__System.register("3d", ["3b"], function(exports_1) {
     }
 });
 
-$__System.register("3e", ["3b"], function(exports_1) {
+$__System.register("40", ["3d"], function(exports_1) {
     var __extends = (this && this.__extends) || function (d, b) {
         for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
         function __() { this.constructor = d; }
@@ -10355,7 +10435,7 @@ $__System.register("3e", ["3b"], function(exports_1) {
     }
 });
 
-$__System.register("3f", ["3b"], function(exports_1) {
+$__System.register("41", ["3d"], function(exports_1) {
     var __extends = (this && this.__extends) || function (d, b) {
         for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
         function __() { this.constructor = d; }
@@ -10393,7 +10473,7 @@ $__System.register("3f", ["3b"], function(exports_1) {
     }
 });
 
-$__System.register("40", ["3b"], function(exports_1) {
+$__System.register("42", ["3d"], function(exports_1) {
     var __extends = (this && this.__extends) || function (d, b) {
         for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
         function __() { this.constructor = d; }
@@ -10431,7 +10511,7 @@ $__System.register("40", ["3b"], function(exports_1) {
     }
 });
 
-$__System.register("41", ["3b"], function(exports_1) {
+$__System.register("43", ["3d"], function(exports_1) {
     var __extends = (this && this.__extends) || function (d, b) {
         for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
         function __() { this.constructor = d; }
@@ -10469,7 +10549,7 @@ $__System.register("41", ["3b"], function(exports_1) {
     }
 });
 
-$__System.register("42", ["3b"], function(exports_1) {
+$__System.register("44", ["3d"], function(exports_1) {
     var __extends = (this && this.__extends) || function (d, b) {
         for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
         function __() { this.constructor = d; }
@@ -10507,7 +10587,7 @@ $__System.register("42", ["3b"], function(exports_1) {
     }
 });
 
-$__System.register("43", ["3b"], function(exports_1) {
+$__System.register("45", ["3d"], function(exports_1) {
     var __extends = (this && this.__extends) || function (d, b) {
         for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
         function __() { this.constructor = d; }
@@ -10545,7 +10625,7 @@ $__System.register("43", ["3b"], function(exports_1) {
     }
 });
 
-$__System.register("44", ["3b"], function(exports_1) {
+$__System.register("46", ["3d"], function(exports_1) {
     var __extends = (this && this.__extends) || function (d, b) {
         for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
         function __() { this.constructor = d; }
@@ -10583,7 +10663,7 @@ $__System.register("44", ["3b"], function(exports_1) {
     }
 });
 
-$__System.register("45", ["3b"], function(exports_1) {
+$__System.register("47", ["3d"], function(exports_1) {
     var __extends = (this && this.__extends) || function (d, b) {
         for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
         function __() { this.constructor = d; }
@@ -10621,7 +10701,7 @@ $__System.register("45", ["3b"], function(exports_1) {
     }
 });
 
-$__System.register("46", ["3b"], function(exports_1) {
+$__System.register("48", ["3d"], function(exports_1) {
     var __extends = (this && this.__extends) || function (d, b) {
         for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
         function __() { this.constructor = d; }
@@ -10659,7 +10739,7 @@ $__System.register("46", ["3b"], function(exports_1) {
     }
 });
 
-$__System.register("47", ["3b"], function(exports_1) {
+$__System.register("49", ["3d"], function(exports_1) {
     var __extends = (this && this.__extends) || function (d, b) {
         for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
         function __() { this.constructor = d; }
@@ -10697,7 +10777,7 @@ $__System.register("47", ["3b"], function(exports_1) {
     }
 });
 
-$__System.register("48", ["3b"], function(exports_1) {
+$__System.register("4a", ["3d"], function(exports_1) {
     var __extends = (this && this.__extends) || function (d, b) {
         for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
         function __() { this.constructor = d; }
@@ -10735,7 +10815,7 @@ $__System.register("48", ["3b"], function(exports_1) {
     }
 });
 
-$__System.register("49", ["3b"], function(exports_1) {
+$__System.register("4b", ["3d"], function(exports_1) {
     var __extends = (this && this.__extends) || function (d, b) {
         for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
         function __() { this.constructor = d; }
@@ -10773,7 +10853,7 @@ $__System.register("49", ["3b"], function(exports_1) {
     }
 });
 
-$__System.register("4a", ["3b"], function(exports_1) {
+$__System.register("4c", ["3d"], function(exports_1) {
     var __extends = (this && this.__extends) || function (d, b) {
         for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
         function __() { this.constructor = d; }
@@ -10811,7 +10891,7 @@ $__System.register("4a", ["3b"], function(exports_1) {
     }
 });
 
-$__System.register("4b", ["3b"], function(exports_1) {
+$__System.register("4d", ["3d"], function(exports_1) {
     var __extends = (this && this.__extends) || function (d, b) {
         for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
         function __() { this.constructor = d; }
@@ -10849,7 +10929,7 @@ $__System.register("4b", ["3b"], function(exports_1) {
     }
 });
 
-$__System.register("4c", ["3b"], function(exports_1) {
+$__System.register("4e", ["3d"], function(exports_1) {
     var __extends = (this && this.__extends) || function (d, b) {
         for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
         function __() { this.constructor = d; }
@@ -10887,7 +10967,7 @@ $__System.register("4c", ["3b"], function(exports_1) {
     }
 });
 
-$__System.register("4d", ["3b"], function(exports_1) {
+$__System.register("4f", ["3d"], function(exports_1) {
     var __extends = (this && this.__extends) || function (d, b) {
         for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
         function __() { this.constructor = d; }
@@ -10925,7 +11005,7 @@ $__System.register("4d", ["3b"], function(exports_1) {
     }
 });
 
-$__System.register("4e", ["3b"], function(exports_1) {
+$__System.register("50", ["3d"], function(exports_1) {
     var __extends = (this && this.__extends) || function (d, b) {
         for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
         function __() { this.constructor = d; }
@@ -10963,7 +11043,7 @@ $__System.register("4e", ["3b"], function(exports_1) {
     }
 });
 
-$__System.register("4f", ["3b"], function(exports_1) {
+$__System.register("51", ["3d"], function(exports_1) {
     var __extends = (this && this.__extends) || function (d, b) {
         for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
         function __() { this.constructor = d; }
@@ -11001,7 +11081,7 @@ $__System.register("4f", ["3b"], function(exports_1) {
     }
 });
 
-$__System.register("3b", ["50"], function(exports_1) {
+$__System.register("3d", ["52"], function(exports_1) {
     var __extends = (this && this.__extends) || function (d, b) {
         for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
         function __() { this.constructor = d; }
@@ -11038,7 +11118,7 @@ $__System.register("3b", ["50"], function(exports_1) {
     }
 });
 
-$__System.register("51", ["3b"], function(exports_1) {
+$__System.register("53", ["3d"], function(exports_1) {
     var __extends = (this && this.__extends) || function (d, b) {
         for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
         function __() { this.constructor = d; }
@@ -11070,7 +11150,7 @@ $__System.register("51", ["3b"], function(exports_1) {
     }
 });
 
-$__System.register("52", ["3b", "3a", "3c", "3d", "3e", "3f", "40", "41", "42", "43", "44", "45", "46", "47", "48", "49", "4a", "4b", "4c", "4d", "4e", "4f", "51"], function(exports_1) {
+$__System.register("54", ["3d", "3c", "3e", "3f", "40", "41", "42", "43", "44", "45", "46", "47", "48", "49", "4a", "4b", "4c", "4d", "4e", "4f", "50", "51", "53"], function(exports_1) {
     var HTTPError_1, BadRequestError_1, ConflictError_1, ForbiddenError_1, MethodNotAllowedError_1, NotAcceptableError_1, NotFoundError_1, PreconditionFailedError_1, PreconditionRequiredError_1, RequestEntityTooLargeError_1, RequestHeaderFieldsTooLargeError_1, RequestURITooLongError_1, TooManyRequestsError_1, UnauthorizedError_1, UnsupportedMediaTypeError_1, BadResponseError_1, BadGatewayError_1, GatewayTimeoutError_1, HTTPVersionNotSupportedError_1, InternalServerErrorError_1, NotImplementedError_1, ServiceUnavailableError_1, UnknownError_1;
     var client, server, statusCodeMap;
     return {
@@ -11205,7 +11285,7 @@ $__System.register("52", ["3b", "3a", "3c", "3d", "3e", "3f", "40", "41", "42", 
     }
 });
 
-$__System.register("53", [], function(exports_1) {
+$__System.register("55", [], function(exports_1) {
     var Method;
     return {
         setters:[],
@@ -11224,7 +11304,7 @@ $__System.register("53", [], function(exports_1) {
     }
 });
 
-$__System.register("54", ["52", "55", "53", "56", "5"], function(exports_1) {
+$__System.register("56", ["54", "57", "55", "58", "5"], function(exports_1) {
     var Errors, Header, Method_1, Response_1, Utils;
     var Service, Util;
     function setHeaders(request, headers) {
@@ -11421,6 +11501,12 @@ $__System.register("54", ["52", "55", "53", "56", "5"], function(exports_1) {
                     slugHeader.values.push(new Header.Value(slug));
                     return requestOptions;
                 };
+                Util.isOptions = function (object) {
+                    return Utils.hasPropertyDefined(object, "headers")
+                        || Utils.hasPropertyDefined(object, "sendCredentialsOnCORS")
+                        || Utils.hasPropertyDefined(object, "timeout")
+                        || Utils.hasPropertyDefined(object, "request");
+                };
                 return Util;
             })();
             exports_1("Util", Util);
@@ -11428,7 +11514,7 @@ $__System.register("54", ["52", "55", "53", "56", "5"], function(exports_1) {
     }
 });
 
-$__System.register("55", [], function(exports_1) {
+$__System.register("57", [], function(exports_1) {
     var Class, Value, Util;
     return {
         setters:[],
@@ -11504,7 +11590,7 @@ $__System.register("55", [], function(exports_1) {
     }
 });
 
-$__System.register("56", ["55"], function(exports_1) {
+$__System.register("58", ["57"], function(exports_1) {
     var Header;
     var Class, Util;
     return {
@@ -11559,7 +11645,7 @@ $__System.register("56", ["55"], function(exports_1) {
     }
 });
 
-$__System.register("57", [], function(exports_1) {
+$__System.register("59", [], function(exports_1) {
     var StatusCode;
     return {
         setters:[],
@@ -11611,7 +11697,7 @@ $__System.register("57", [], function(exports_1) {
     }
 });
 
-$__System.register("58", [], function(exports_1) {
+$__System.register("5a", [], function(exports_1) {
     var Class;
     return {
         setters:[],
@@ -11632,7 +11718,7 @@ $__System.register("58", [], function(exports_1) {
     }
 });
 
-$__System.register("17", ["52", "55", "38", "37", "53", "39", "54", "56", "57", "58"], function(exports_1) {
+$__System.register("19", ["54", "57", "3a", "39", "55", "3b", "56", "58", "59", "5a"], function(exports_1) {
     var Errors, Header, JSONParser, JSONLDParser, Method_1, Parser, Request, Response, StatusCode_1, StringParser;
     return {
         setters:[
@@ -11681,7 +11767,7 @@ $__System.register("17", ["52", "55", "38", "37", "53", "39", "54", "56", "57", 
     }
 });
 
-$__System.register("59", ["17", "5a", "5", "27", "c"], function(exports_1) {
+$__System.register("5b", ["19", "5c", "5", "29", "c"], function(exports_1) {
     var HTTP, RDFNode, Utils, URI, Errors;
     var Factory, Util, Parser;
     return {
@@ -11817,7 +11903,7 @@ $__System.register("59", ["17", "5a", "5", "27", "c"], function(exports_1) {
     }
 });
 
-$__System.register("27", ["c", "5"], function(exports_1) {
+$__System.register("29", ["c", "5"], function(exports_1) {
     var Errors, Utils;
     var Class, Util;
     function prefixWithObjectSchema(uri, objectSchema) {
@@ -11971,7 +12057,7 @@ $__System.register("27", ["c", "5"], function(exports_1) {
     }
 });
 
-$__System.register("5b", ["5"], function(exports_1) {
+$__System.register("5d", ["5"], function(exports_1) {
     var Utils;
     var Factory;
     return {
@@ -11995,7 +12081,7 @@ $__System.register("5b", ["5"], function(exports_1) {
     }
 });
 
-$__System.register("5c", [], function(exports_1) {
+$__System.register("5e", [], function(exports_1) {
     return {
         setters:[],
         execute: function() {
@@ -12003,7 +12089,7 @@ $__System.register("5c", [], function(exports_1) {
     }
 });
 
-$__System.register("5d", ["50"], function(exports_1) {
+$__System.register("5f", ["52"], function(exports_1) {
     var __extends = (this && this.__extends) || function (d, b) {
         for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
         function __() { this.constructor = d; }
@@ -12034,7 +12120,7 @@ $__System.register("5d", ["50"], function(exports_1) {
     }
 });
 
-$__System.register("5e", ["50"], function(exports_1) {
+$__System.register("60", ["52"], function(exports_1) {
     var __extends = (this && this.__extends) || function (d, b) {
         for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
         function __() { this.constructor = d; }
@@ -12065,7 +12151,7 @@ $__System.register("5e", ["50"], function(exports_1) {
     }
 });
 
-$__System.register("13", ["50"], function(exports_1) {
+$__System.register("13", ["52"], function(exports_1) {
     var __extends = (this && this.__extends) || function (d, b) {
         for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
         function __() { this.constructor = d; }
@@ -12096,7 +12182,7 @@ $__System.register("13", ["50"], function(exports_1) {
     }
 });
 
-$__System.register("5f", ["50"], function(exports_1) {
+$__System.register("61", ["52"], function(exports_1) {
     var __extends = (this && this.__extends) || function (d, b) {
         for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
         function __() { this.constructor = d; }
@@ -12128,7 +12214,7 @@ $__System.register("5f", ["50"], function(exports_1) {
     }
 });
 
-$__System.register("50", [], function(exports_1) {
+$__System.register("52", [], function(exports_1) {
     var __extends = (this && this.__extends) || function (d, b) {
         for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
         function __() { this.constructor = d; }
@@ -12159,7 +12245,7 @@ $__System.register("50", [], function(exports_1) {
     }
 });
 
-$__System.register("60", ["50"], function(exports_1) {
+$__System.register("62", ["52"], function(exports_1) {
     var __extends = (this && this.__extends) || function (d, b) {
         for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
         function __() { this.constructor = d; }
@@ -12191,7 +12277,7 @@ $__System.register("60", ["50"], function(exports_1) {
     }
 });
 
-$__System.register("c", ["5d", "5e", "13", "5f", "60"], function(exports_1) {
+$__System.register("c", ["5f", "60", "13", "61", "62"], function(exports_1) {
     var IDAlreadyInUseError_1, IllegalActionError_1, IllegalArgumentError_1, IllegalStateError_1, NotImplementedError_1;
     return {
         setters:[
@@ -12220,7 +12306,7 @@ $__System.register("c", ["5d", "5e", "13", "5f", "60"], function(exports_1) {
     }
 });
 
-$__System.register("61", ["c", "5"], function(exports_1) {
+$__System.register("63", ["c", "5"], function(exports_1) {
     var __extends = (this && this.__extends) || function (d, b) {
         for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
         function __() { this.constructor = d; }
@@ -12349,7 +12435,7 @@ $__System.register("61", ["c", "5"], function(exports_1) {
     }
 });
 
-$__System.register("62", ["61"], function(exports_1) {
+$__System.register("64", ["63"], function(exports_1) {
     var XSD;
     return {
         setters:[
@@ -12362,7 +12448,7 @@ $__System.register("62", ["61"], function(exports_1) {
     }
 });
 
-$__System.register("63", ["5", "64", "c", "5c", "62"], function(exports_1) {
+$__System.register("65", ["5", "17", "c", "5e", "64"], function(exports_1) {
     var Utils, XSD, Errors, Serializer_1, Serializers;
     var Factory, Util;
     return {
@@ -12519,7 +12605,7 @@ $__System.register("63", ["5", "64", "c", "5c", "62"], function(exports_1) {
     }
 });
 
-$__System.register("65", [], function(exports_1) {
+$__System.register("66", [], function(exports_1) {
     var namespace, Class, Predicate;
     return {
         setters:[],
@@ -12651,7 +12737,7 @@ $__System.register("65", [], function(exports_1) {
     }
 });
 
-$__System.register("66", [], function(exports_1) {
+$__System.register("67", [], function(exports_1) {
     var namespace, Predicate;
     return {
         setters:[],
@@ -12671,7 +12757,7 @@ $__System.register("66", [], function(exports_1) {
     }
 });
 
-$__System.register("67", [], function(exports_1) {
+$__System.register("68", [], function(exports_1) {
     var namespace, Class, Predicate;
     return {
         setters:[],
@@ -12749,7 +12835,7 @@ $__System.register("67", [], function(exports_1) {
     }
 });
 
-$__System.register("68", [], function(exports_1) {
+$__System.register("69", [], function(exports_1) {
     var namespace, Class, Predicate;
     return {
         setters:[],
@@ -12907,7 +12993,7 @@ $__System.register("68", [], function(exports_1) {
     }
 });
 
-$__System.register("69", [], function(exports_1) {
+$__System.register("6a", [], function(exports_1) {
     var namespace, Predicate;
     return {
         setters:[],
@@ -12925,7 +13011,7 @@ $__System.register("69", [], function(exports_1) {
     }
 });
 
-$__System.register("64", ["5"], function(exports_1) {
+$__System.register("17", ["5"], function(exports_1) {
     var Utils;
     var namespace, DataType;
     return {
@@ -12976,7 +13062,7 @@ $__System.register("64", ["5"], function(exports_1) {
     }
 });
 
-$__System.register("6a", [], function(exports_1) {
+$__System.register("6b", [], function(exports_1) {
     var namespace, Predicate;
     return {
         setters:[],
@@ -12997,7 +13083,7 @@ $__System.register("6a", [], function(exports_1) {
     }
 });
 
-$__System.register("4", ["65", "66", "67", "68", "69", "64", "6a"], function(exports_1) {
+$__System.register("4", ["66", "67", "68", "69", "6a", "17", "6b"], function(exports_1) {
     var C, CP, CS, LDP, RDF, XSD, VCARD;
     return {
         setters:[
@@ -13034,7 +13120,7 @@ $__System.register("4", ["65", "66", "67", "68", "69", "64", "6a"], function(exp
     }
 });
 
-$__System.register("5a", ["5"], function(exports_1) {
+$__System.register("5c", ["5"], function(exports_1) {
     var Utils;
     var Factory, Util;
     return {
@@ -13079,7 +13165,7 @@ $__System.register("5a", ["5"], function(exports_1) {
     }
 });
 
-$__System.register("6b", ["5b", "63", "4", "5a"], function(exports_1) {
+$__System.register("6c", ["5d", "65", "4", "5c"], function(exports_1) {
     var List, Literal, NS, RDFNode;
     var Util;
     return {
@@ -13310,7 +13396,7 @@ $__System.register("6b", ["5b", "63", "4", "5a"], function(exports_1) {
     }
 });
 
-$__System.register("9", ["63", "59", "5b", "5a", "27", "6b"], function(exports_1) {
+$__System.register("9", ["65", "5b", "5d", "5c", "29", "6c"], function(exports_1) {
     var Literal, Document, List, Node, URI, Value;
     return {
         setters:[
@@ -13343,7 +13429,7 @@ $__System.register("9", ["63", "59", "5b", "5a", "27", "6b"], function(exports_1
     }
 });
 
-$__System.register("38", [], function(exports_1) {
+$__System.register("3a", [], function(exports_1) {
     var Class;
     return {
         setters:[],
@@ -13369,7 +13455,7 @@ $__System.register("38", [], function(exports_1) {
     }
 });
 
-$__System.register("6c", ["38"], function(exports_1) {
+$__System.register("6d", ["3a"], function(exports_1) {
     var JSONParser_1;
     var Class;
     return {
@@ -13395,7 +13481,7 @@ $__System.register("6c", ["38"], function(exports_1) {
     }
 });
 
-$__System.register("6d", ["c", "17", "9", "5", "6c"], function(exports_1) {
+$__System.register("6e", ["c", "19", "9", "5", "6d"], function(exports_1) {
     var Errors, HTTP, RDF, Utils, RawResultsParser_1;
     var Class;
     return {
@@ -13508,7 +13594,7 @@ $__System.register("6d", ["c", "17", "9", "5", "6c"], function(exports_1) {
     }
 });
 
-$__System.register("6e", [], function(exports_1) {
+$__System.register("6f", [], function(exports_1) {
     return {
         setters:[],
         execute: function() {
@@ -13516,7 +13602,7 @@ $__System.register("6e", [], function(exports_1) {
     }
 });
 
-$__System.register("1a", ["35", "6c", "6d", "6e"], function(exports_1) {
+$__System.register("1c", ["37", "6d", "6e", "6f"], function(exports_1) {
     var RawResults, RawResultsParser, Service_1, SELECTResults;
     return {
         setters:[
@@ -13814,7 +13900,7 @@ $__System.register("5", [], function(exports_1) {
     }
 });
 
-$__System.register("6f", ["e", "2", "11", "10", "a", "6", "2c", "12", "16", "c", "29", "17", "18", "3", "2b", "4", "19", "d", "b", "14", "25", "26", "24", "8", "9", "2a", "f", "34", "1a", "5"], function(exports_1) {
+$__System.register("70", ["e", "2", "11", "10", "a", "6", "2e", "12", "18", "c", "2b", "19", "1a", "3", "2d", "4", "1b", "d", "b", "14", "27", "28", "26", "8", "9", "2c", "f", "36", "1c", "5"], function(exports_1) {
     var __extends = (this && this.__extends) || function (d, b) {
         for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
         function __() { this.constructor = d; }
@@ -13981,12 +14067,12 @@ $__System.register("6f", ["e", "2", "11", "10", "a", "6", "2c", "12", "16", "c",
     }
 });
 
-$__System.registerDynamic("1", ["6f"], true, function($__require, exports, module) {
+$__System.registerDynamic("1", ["70"], true, function($__require, exports, module) {
   ;
   var global = this,
       __define = global.define;
   global.define = undefined;
-  var Carbon = $__require('6f');
+  var Carbon = $__require('70');
   global.Carbon = Carbon.default;
   global.define = __define;
   return module.exports;

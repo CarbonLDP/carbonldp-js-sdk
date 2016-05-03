@@ -7,6 +7,7 @@ import * as PersistedDocument from "./PersistedDocument";
 import * as Pointer from "./Pointer";
 import * as ObjectSchema from "./ObjectSchema";
 import * as SPARQL from "./SPARQL";
+import * as RetrievalPreferences from "./RetrievalPreferences";
 declare class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Resolver {
     _jsonldConverter: JSONLDConverter.Class;
     jsonldConverter: JSONLDConverter.Class;
@@ -29,8 +30,12 @@ declare class Documents implements Pointer.Library, Pointer.Validator, ObjectSch
     createAccessPoint(accessPoint: AccessPoint.Class, slug?: string, requestOptions?: HTTP.Request.Options): Promise<[Pointer.Class, HTTP.Response.Class]>;
     upload(parentURI: string, slug: string, file: Blob, requestOptions?: HTTP.Request.Options): Promise<[Pointer.Class, HTTP.Response.Class]>;
     upload(parentURI: string, file: Blob, requestOptions?: HTTP.Request.Options): Promise<[Pointer.Class, HTTP.Response.Class]>;
+    listMembers(uri: string, includeNonReadable: boolean, retrievalPreferences: RetrievalPreferences.Class, requestOptions: HTTP.Request.Options): Promise<[Pointer.Class[], HTTP.Response.Class]>;
+    listMembers(uri: string, includeNonReadable: boolean, retrievalPreferences: RetrievalPreferences.Class): Promise<[Pointer.Class[], HTTP.Response.Class]>;
     listMembers(uri: string, includeNonReadable: boolean, requestOptions: HTTP.Request.Options): Promise<[Pointer.Class[], HTTP.Response.Class]>;
     listMembers(uri: string, includeNonReadable: boolean): Promise<[Pointer.Class[], HTTP.Response.Class]>;
+    listMembers(uri: string, retrievalPreferences: RetrievalPreferences.Class, requestOptions: HTTP.Request.Options): Promise<[Pointer.Class[], HTTP.Response.Class]>;
+    listMembers(uri: string, retrievalPreferences: RetrievalPreferences.Class): Promise<[Pointer.Class[], HTTP.Response.Class]>;
     listMembers(uri: string, requestOptions: HTTP.Request.Options): Promise<[Pointer.Class[], HTTP.Response.Class]>;
     listMembers(uri: string): Promise<[Pointer.Class[], HTTP.Response.Class]>;
     addMember(documentURI: string, member: Pointer.Class, requestOptions?: HTTP.Request.Options): Promise<HTTP.Response.Class>;
