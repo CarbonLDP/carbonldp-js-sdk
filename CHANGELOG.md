@@ -1,3 +1,6 @@
+# 0.31.0 (May 4th, 2016) :rocket::star:
+- [LDP-608](https://jira.base22.com/browse/LDP-498) Initial support for Node.js
+
 # 0.30.0 (April 28, 2016)
 - [LDP-498](https://jira.base22.com/browse/LDP-498)
     - Added `persistedDocument.refresh()` method, which lets you refresh a document with the latest version on the server
