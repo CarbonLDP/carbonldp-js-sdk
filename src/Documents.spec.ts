@@ -783,8 +783,6 @@ describe( module( "Carbon/Documents", "" ), ():void => {
 			let spySuccess = spyOn( spy, "success" ).and.callThrough();
 			let spyFail = spyOn( spy, "fail" ).and.callThrough();
 
-			let blob:Blob = new Blob( [ JSON.stringify( { "some content": "for the blob." } ) ], { type : "application/json" } );
-
 			jasmine.Ajax.stubRequest( "http://example.com/parent-resource/", null, "POST" ).andReturn( {
 				status: 200,
 				responseHeaders: {
@@ -858,8 +856,6 @@ describe( module( "Carbon/Documents", "" ), ():void => {
 			let spySuccess = spyOn( spy, "success" ).and.callThrough();
 			let spyFail = spyOn( spy, "fail" ).and.callThrough();
 
-			let blob:Blob = new Blob( [ JSON.stringify( { "some content": "for the blob." } ) ], { type : "application/json" } );
-
 			jasmine.Ajax.stubRequest( "http://example.com/parent-resource/", null, "POST" ).andReturn( {
 				status: 200,
 				responseHeaders: {
@@ -906,9 +902,9 @@ describe( module( "Carbon/Documents", "" ), ():void => {
 	), ():void => {
 
 		it( hasSignature(
-			"Upload a File to the server, creating a child for the parent specified.", [
+			"Upload a binary data to the server, creating a child for the parent specified. This signature it's only when working in a Browser.", [
 				{ name: "parentURI", type: "string" },
-				{ name: "blob", type: "Blob" },
+				{ name: "data", type: "Blob" },
 				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
 			],
 			{ type:"Promise<[Carbon.Pointer.Class, Carbon.HTTP.Response.Class]>" }
@@ -923,40 +919,48 @@ describe( module( "Carbon/Documents", "" ), ():void => {
 
 			let context:MockedContext = new MockedContext();
 			let documents:Documents = context.documents;
-			let spy = {
-				success: ( response:[Pointer.Class, HTTP.Response.Class] ):void => {
-					expect( response ).toBeDefined();
-					expect( Utils.isArray( response ) ).toBe( true );
-					expect( response.length ).toBe( 2 );
 
-					let pointer:Pointer.Class = response[ 0 ];
-					expect( pointer.id ).toBe( "http://example.com/parent-resource/new-auto-generated-id/" );
-				}
-			};
-			let spySuccess = spyOn( spy, "success" ).and.callThrough();
+			expect( documents.upload ).toBeDefined();
+			expect( Utils.isFunction( documents.upload ) ).toBe( true );
 
-			let blob:Blob = new Blob( [ JSON.stringify( { "some content": "for the blob." } ) ], { type : "application/json" } );
+			if ( typeof Blob !== "undefined" ) {
 
-			jasmine.Ajax.stubRequest( "http://example.com/parent-resource/", null, "POST" ).andReturn( {
-				status: 200,
-				responseHeaders: {
-					"Location": "http://example.com/parent-resource/new-auto-generated-id/",
-				},
-			} );
+				let spy = {
+					success: ( response:[Pointer.Class, HTTP.Response.Class] ):void => {
+						expect( response ).toBeDefined();
+						expect( Utils.isArray( response ) ).toBe( true );
+						expect( response.length ).toBe( 2 );
 
-			promises.push( documents.upload( "http://example.com/parent-resource/", blob ).then( spy.success ) );
+						let pointer:Pointer.Class = response[ 0 ];
+						expect( pointer.id ).toBe( "http://example.com/parent-resource/new-auto-generated-id/" );
+					}
+				};
+				let spySuccess = spyOn( spy, "success" ).and.callThrough();
 
-			Promise.all( promises ).then( ():void => {
-				expect( spySuccess ).toHaveBeenCalled();
-				done();
-			}, done.fail );
+				let blob:Blob = new Blob( [ JSON.stringify( { "some content": "for the blob." } ) ], { type : "application/json" } );
+
+				jasmine.Ajax.stubRequest( "http://example.com/parent-resource/", null, "POST" ).andReturn( {
+					status: 200,
+					responseHeaders: {
+						"Location": "http://example.com/parent-resource/new-auto-generated-id/",
+					},
+				} );
+
+				promises.push( documents.upload( "http://example.com/parent-resource/", blob ).then( spy.success ) );
+
+				Promise.all( promises ).then( ():void => {
+					expect( spySuccess ).toHaveBeenCalled();
+					done();
+				}, done.fail );
+
+			} else { done(); }
 		});
 
 		it( hasSignature(
-			"Upload a File to the server, creating a child for the parent specified.", [
+			"Upload a binary data to the server, creating a child for the parent specified. This signature it's only when working in a Browser.", [
 				{ name: "parentURI", type: "string" },
 				{ name: "slug", type: "string" },
-				{ name: "blob", type: "Blob" },
+				{ name: "data", type: "Blob" },
 				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
 			],
 			{ type:"Promise<[Carbon.Pointer.Class, Carbon.HTTP.Response.Class]>" }
@@ -971,33 +975,152 @@ describe( module( "Carbon/Documents", "" ), ():void => {
 
 			let context:MockedContext = new MockedContext();
 			let documents:Documents = context.documents;
-			let spy = {
-				success: ( response:[Pointer.Class, HTTP.Response.Class] ):void => {
-					expect( response ).toBeDefined();
-					expect( Utils.isArray( response ) ).toBe( true );
-					expect( response.length ).toBe( 2 );
 
-					let pointer:Pointer.Class = response[ 0 ];
-					expect( pointer.id ).toBe( "http://example.com/parent-resource/slug-id/" );
+			expect( documents.upload ).toBeDefined();
+			expect( Utils.isFunction( documents.upload ) ).toBe( true );
+
+			if ( typeof Blob !== "undefined" ) {
+
+					let spy = {
+						success: ( response:[Pointer.Class, HTTP.Response.Class] ):void => {
+							expect( response ).toBeDefined();
+							expect( Utils.isArray( response ) ).toBe( true );
+							expect( response.length ).toBe( 2 );
+
+							let pointer:Pointer.Class = response[ 0 ];
+							expect( pointer.id ).toBe( "http://example.com/parent-resource/slug-id/" );
+						}
+					};
+					let spySuccess = spyOn( spy, "success" ).and.callThrough();
+
+					let blob:Blob = new Blob( [ JSON.stringify( { "some content": "for the blob." } ) ], { type : "application/json" } );
+
+					jasmine.Ajax.stubRequest( "http://example.com/parent-resource/", null, "POST" ).andReturn( {
+						status: 200,
+						responseHeaders: {
+							"Location": "http://example.com/parent-resource/slug-id/",
+						},
+					});
+
+					promises.push( documents.upload( "http://example.com/parent-resource/", "slug-id", blob ).then( spy.success ) );
+
+					Promise.all( promises ).then( ():void => {
+						expect( spySuccess ).toHaveBeenCalled();
+						done();
+				}, done.fail );
+
+			} else { done(); }
+		});
+
+		it( hasSignature(
+			"Upload a binary data to the server, creating a child for the parent specified. This signature it's only when working in Node.js.", [
+				{ name: "parentURI", type: "string" },
+				{ name: "data", type: "Buffer" },
+				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
+			],
+			{ type:"Promise<[Carbon.Pointer.Class, Carbon.HTTP.Response.Class]>" }
+		), ( done:{ ():void, fail:() => void } ):void => {
+			let promises:Promise<any>[] = [];
+
+			class MockedContext extends AbstractContext {
+				resolve( uri:string ):string {
+					return uri;
 				}
-			};
-			let spySuccess = spyOn( spy, "success" ).and.callThrough();
+			}
 
-			let blob:Blob = new Blob( [ JSON.stringify( { "some content": "for the blob." } ) ], { type : "application/json" } );
+			let context:MockedContext = new MockedContext();
+			let documents:Documents = context.documents;
 
-			jasmine.Ajax.stubRequest( "http://example.com/parent-resource/", null, "POST" ).andReturn( {
-				status: 200,
-				responseHeaders: {
-					"Location": "http://example.com/parent-resource/slug-id/",
-				},
-			});
+			expect( documents.upload ).toBeDefined();
+			expect( Utils.isFunction( documents.upload ) ).toBe( true );
 
-			promises.push( documents.upload( "http://example.com/parent-resource/", 'slug-id', blob ).then( spy.success ) );
+			if ( typeof Buffer !== "undefined" ) {
 
-			Promise.all( promises ).then( ():void => {
-				expect( spySuccess ).toHaveBeenCalled();
-				done();
-			}, done.fail );
+				let spy = {
+					success: ( response:[Pointer.Class, HTTP.Response.Class] ):void => {
+						expect( response ).toBeDefined();
+						expect( Utils.isArray( response ) ).toBe( true );
+						expect( response.length ).toBe( 2 );
+
+						let pointer:Pointer.Class = response[ 0 ];
+						expect( pointer.id ).toBe( "http://example.com/parent-resource/new-auto-generated-id/" );
+					}
+				};
+				let spySuccess = spyOn( spy, "success" ).and.callThrough();
+
+				let buffer:Buffer = new Buffer( JSON.stringify( { "some content": "for the buffer." } ) );
+
+				jasmine.Ajax.stubRequest( "http://example.com/parent-resource/", null, "POST" ).andReturn( {
+					status: 200,
+					responseHeaders: {
+						"Location": "http://example.com/parent-resource/new-auto-generated-id/",
+					},
+				} );
+
+				promises.push( documents.upload( "http://example.com/parent-resource/", buffer ).then( spy.success ) );
+
+				Promise.all( promises ).then( ():void => {
+					expect( spySuccess ).toHaveBeenCalled();
+					done();
+				}, done.fail );
+
+			} else { done(); }
+		});
+
+		it( hasSignature(
+			"Upload a binary data to the server, creating a child for the parent specified. This signature it's only when working in Node.js.", [
+				{ name: "parentURI", type: "string" },
+				{ name: "slug", type: "string" },
+				{ name: "data", type: "Buffer" },
+				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
+			],
+			{ type:"Promise<[Carbon.Pointer.Class, Carbon.HTTP.Response.Class]>" }
+		), ( done:{ ():void, fail:() => void } ):void => {
+			let promises:Promise<any>[] = [];
+
+			class MockedContext extends AbstractContext {
+				resolve( uri:string ):string {
+					return uri;
+				}
+			}
+
+			let context:MockedContext = new MockedContext();
+			let documents:Documents = context.documents;
+
+			expect( documents.upload ).toBeDefined();
+			expect( Utils.isFunction( documents.upload ) ).toBe( true );
+
+			if ( typeof Buffer !== "undefined" ) {
+
+				let spy = {
+					success: ( response:[Pointer.Class, HTTP.Response.Class] ):void => {
+						expect( response ).toBeDefined();
+						expect( Utils.isArray( response ) ).toBe( true );
+						expect( response.length ).toBe( 2 );
+
+						let pointer:Pointer.Class = response[ 0 ];
+						expect( pointer.id ).toBe( "http://example.com/parent-resource/new-auto-generated-id/" );
+					}
+				};
+				let spySuccess = spyOn( spy, "success" ).and.callThrough();
+
+				let buffer:Buffer = new Buffer( JSON.stringify( { "some content": "for the buffer." } ) );
+
+				jasmine.Ajax.stubRequest( "http://example.com/parent-resource/", null, "POST" ).andReturn( {
+					status: 200,
+					responseHeaders: {
+						"Location": "http://example.com/parent-resource/new-auto-generated-id/",
+					},
+				} );
+
+				promises.push( documents.upload( "http://example.com/parent-resource/", "slug-id", buffer ).then( spy.success ) );
+
+				Promise.all( promises ).then( ():void => {
+					expect( spySuccess ).toHaveBeenCalled();
+					done();
+				}, done.fail );
+
+			} else { done(); }
 		});
 
 	});

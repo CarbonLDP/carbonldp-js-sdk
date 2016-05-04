@@ -269,25 +269,34 @@ var Documents = (function () {
             ];
         });
     };
-    Documents.prototype.upload = function (parentURI, slugOrBlob, blobOrRequestOptions, requestOptions) {
+    Documents.prototype.upload = function (parentURI, slugOrData, dataOrRequestOptions, requestOptions) {
         var _this = this;
-        if (blobOrRequestOptions === void 0) { blobOrRequestOptions = {}; }
+        if (dataOrRequestOptions === void 0) { dataOrRequestOptions = {}; }
         if (requestOptions === void 0) { requestOptions = {}; }
-        var slug = Utils.isString(slugOrBlob) ? slugOrBlob : null;
-        var blob = !Utils.isString(slugOrBlob) ? slugOrBlob : blobOrRequestOptions;
-        requestOptions = !Utils.isString(slugOrBlob) ? blobOrRequestOptions : requestOptions;
-        if (!(blob instanceof Blob))
-            return Promise.reject(new Errors.IllegalArgumentError("The file is not a valid Blob object."));
+        var slug = Utils.isString(slugOrData) ? slugOrData : null;
+        var data = !Utils.isString(slugOrData) ? slugOrData : dataOrRequestOptions;
+        requestOptions = !Utils.isString(slugOrData) ? dataOrRequestOptions : requestOptions;
+        if (typeof Blob !== "undefined") {
+            if (!(data instanceof Blob))
+                return Promise.reject(new Errors.IllegalArgumentError("The data is not a valid Blob object."));
+            HTTP.Request.Util.setContentTypeHeader(data.type, requestOptions);
+        }
+        else {
+            if (!(data instanceof Buffer))
+                return Promise.reject(new Errors.IllegalArgumentError("The data is not a valid Buffer object."));
+            var fileType = require("file-type");
+            var bufferType = fileType(data);
+            HTTP.Request.Util.setContentTypeHeader(bufferType ? bufferType.mime : "application/octet-stream", requestOptions);
+        }
         if (!!this.context)
             parentURI = this.context.resolve(parentURI);
         if (this.context && this.context.auth.isAuthenticated())
             this.context.auth.addAuthentication(requestOptions);
-        HTTP.Request.Util.setContentTypeHeader(blob.type, requestOptions);
         HTTP.Request.Util.setAcceptHeader("application/ld+json", requestOptions);
         HTTP.Request.Util.setPreferredInteractionModel(NS.LDP.Class.Container, requestOptions);
         if (slug !== null)
             HTTP.Request.Util.setSlug(slug, requestOptions);
-        return HTTP.Request.Service.post(parentURI, blob, requestOptions).then(function (response) {
+        return HTTP.Request.Service.post(parentURI, data, requestOptions).then(function (response) {
             var locationHeader = response.getHeader("Location");
             if (locationHeader === null || locationHeader.values.length < 1)
                 throw new HTTP.Errors.BadResponseError("The response is missing a Location header.", response);

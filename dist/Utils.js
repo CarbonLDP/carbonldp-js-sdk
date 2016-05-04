@@ -64,7 +64,7 @@ function isPlainObject(object) {
         && !isArray(object)
         && !isDate(object)
         && !isMap(object)
-        && !(object instanceof Blob)
+        && !(typeof Blob !== "undefined" && object instanceof Blob)
         && !((object + "") === "[object Set]");
 }
 exports.isPlainObject = isPlainObject;

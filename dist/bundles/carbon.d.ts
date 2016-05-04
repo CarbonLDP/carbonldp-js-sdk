@@ -57,14 +57,17 @@ declare module 'carbonldp/HTTP/Header' {
 }
 declare module 'carbonldp/HTTP/Response' {
 	import * as Header from 'carbonldp/HTTP/Header';
+	import { ClientRequest, IncomingMessage } from "http";
 	export class Class {
 	    constructor(request: XMLHttpRequest);
+	    constructor(request: ClientRequest, data: string, response?: IncomingMessage);
 	    status: number;
 	    data: string;
 	    headers: Map<string, Header.Class>;
-	    request: XMLHttpRequest;
+	    request: XMLHttpRequest | ClientRequest;
 	    getHeader(name: string): Header.Class;
-	    private setHeaders(request);
+	    private setHeaders(headersString);
+	    private setHeaders(headerObject);
 	}
 	export class Util {
 	    static getETag(response: Class): string;
@@ -341,6 +344,8 @@ declare module 'carbonldp/HTTP/Request' {
 	    private static defaultOptions;
 	    static send(method: (Method | string), url: string, body: Blob, options?: Options): Promise<Response>;
 	    static send<T>(method: (Method | string), url: string, body: Blob, options?: Options, parser?: Parser<T>): Promise<[T, Response]>;
+	    static send(method: (Method | string), url: string, body: Buffer, options?: Options): Promise<Response>;
+	    static send<T>(method: (Method | string), url: string, body: Buffer, options?: Options, parser?: Parser<T>): Promise<[T, Response]>;
 	    static send(method: (Method | string), url: string, options?: Options): Promise<Response>;
 	    static send(method: (Method | string), url: string, body: string, options?: Options): Promise<Response>;
 	    static send(method: (Method | string), url: string, body: string, options?: Options): Promise<Response>;
@@ -350,6 +355,8 @@ declare module 'carbonldp/HTTP/Request' {
 	    static head(url: string, options?: Options): Promise<Response>;
 	    static get(url: string, options?: Options): Promise<Response>;
 	    static get<T>(url: string, options?: Options, parser?: Parser<T>): Promise<[T, Response]>;
+	    static post(url: string, body: Buffer, options?: Options): Promise<Response>;
+	    static post<T>(url: string, body: Buffer, options?: Options, parser?: Parser<T>): Promise<[T, Response]>;
 	    static post(url: string, body: Blob, options?: Options): Promise<Response>;
 	    static post<T>(url: string, body: Blob, options?: Options, parser?: Parser<T>): Promise<[T, Response]>;
 	    static post(url: string, body: string, options?: Options): Promise<Response>;
@@ -1384,6 +1391,8 @@ declare module 'carbonldp/LDP/PersistedContainer' {
 	    removeAllMembers(): Promise<HTTP.Response.Class>;
 	    upload(slug: string, blob: Blob): Promise<[Pointer.Class, HTTP.Response.Class]>;
 	    upload(blob: Blob): Promise<[Pointer.Class, HTTP.Response.Class]>;
+	    upload(slug: string, blob: Buffer): Promise<[Pointer.Class, HTTP.Response.Class]>;
+	    upload(blob: Buffer): Promise<[Pointer.Class, HTTP.Response.Class]>;
 	}
 	export class Factory {
 	    static hasClassProperties(document: Document.Class): boolean;
@@ -1475,8 +1484,10 @@ declare module 'carbonldp/Documents' {
 	    getChildren(parentURI: string, requestOptions?: HTTP.Request.Options): Promise<[Pointer.Class[], HTTP.Response.Class]>;
 	    createAccessPoint(documentURI: string, accessPoint: AccessPoint.Class, slug?: string, requestOptions?: HTTP.Request.Options): Promise<[Pointer.Class, HTTP.Response.Class]>;
 	    createAccessPoint(accessPoint: AccessPoint.Class, slug?: string, requestOptions?: HTTP.Request.Options): Promise<[Pointer.Class, HTTP.Response.Class]>;
-	    upload(parentURI: string, slug: string, file: Blob, requestOptions?: HTTP.Request.Options): Promise<[Pointer.Class, HTTP.Response.Class]>;
-	    upload(parentURI: string, file: Blob, requestOptions?: HTTP.Request.Options): Promise<[Pointer.Class, HTTP.Response.Class]>;
+	    upload(parentURI: string, slug: string, data: Buffer, requestOptions?: HTTP.Request.Options): Promise<[Pointer.Class, HTTP.Response.Class]>;
+	    upload(parentURI: string, data: Buffer, requestOptions?: HTTP.Request.Options): Promise<[Pointer.Class, HTTP.Response.Class]>;
+	    upload(parentURI: string, slug: string, data: Blob, requestOptions?: HTTP.Request.Options): Promise<[Pointer.Class, HTTP.Response.Class]>;
+	    upload(parentURI: string, data: Blob, requestOptions?: HTTP.Request.Options): Promise<[Pointer.Class, HTTP.Response.Class]>;
 	    getMembers(uri: string, includeNonReadable: boolean, requestOptions: HTTP.Request.Options): Promise<[Pointer.Class[], HTTP.Response.Class]>;
 	    getMembers(uri: string, includeNonReadable: boolean): Promise<[Pointer.Class[], HTTP.Response.Class]>;
 	    getMembers(uri: string, requestOptions: HTTP.Request.Options): Promise<[Pointer.Class[], HTTP.Response.Class]>;

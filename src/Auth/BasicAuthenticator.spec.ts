@@ -170,7 +170,14 @@ describe( module( "Carbon/Auth/BasicAuthenticator" ), ():void => {
 				let authorization:string = authorizationHeader.toString();
 
 				expect( Utils.S.startsWith( authorization, "Basic " ) ).toEqual( true );
-				expect( atob( authorization.substring( 6 ) ) ).toEqual( "user:pass" );
+
+				let auth:string;
+				if ( typeof atob !== "undefined" )
+					auth = atob( authorization.substring( 6 ) );
+				else
+					auth = ( new Buffer( authorization.substring( 6 ), 'base64') ).toString( "utf8" );
+
+				expect( auth ).toEqual( "user:pass" );
 			}, done ));
 
 			// TODO: Test case where other headers are already provided

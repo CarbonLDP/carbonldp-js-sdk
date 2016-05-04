@@ -39,15 +39,15 @@ function removeAllMembers() {
     var that = this;
     return that._documents.removeAllMembers(that.id);
 }
-function upload(slugOrBlob, blob) {
-    if (blob === void 0) { blob = null; }
-    var slug = Utils.isString(slugOrBlob) ? slugOrBlob : null;
-    blob = slug ? blob : slugOrBlob;
+function upload(slugOrData, data) {
+    if (data === void 0) { data = null; }
+    var slug = Utils.isString(slugOrData) ? slugOrData : null;
+    data = slug ? data : slugOrData;
     if (slug) {
-        return this._documents.upload(this.id, slug, blob);
+        return this._documents.upload(this.id, slug, data);
     }
     else {
-        return this._documents.upload(this.id, blob);
+        return this._documents.upload(this.id, data);
     }
 }
 var Factory = (function () {
