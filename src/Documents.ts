@@ -213,7 +213,6 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 			],
 		};
 
-		HTTP.Request.Util.setContentTypeHeader( "application/ld+json", requestOptions );
 		HTTP.Request.Util.setAcceptHeader( "application/ld+json", requestOptions );
 		HTTP.Request.Util.setPreferredInteractionModel( NS.LDP.Class.Container, requestOptions );
 		HTTP.Request.Util.setContainerRetrievalPreferences( containerRetrievalPreferences, requestOptions );
@@ -228,6 +227,50 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 
 				return [ childPointers, response ];
 			} );
+	}
+
+	getChildren( parentURI:string, retrievalPreferences?:RetrievalPreferences.Class, requestOptions?:HTTP.Request.Options ): Promise<[ PersistedDocument.Class[], HTTP.Response.Class ]>;
+	getChildren( parentURI:string, requestOptions?:HTTP.Request.Options ): Promise<[ PersistedDocument.Class[], HTTP.Response.Class ]>;
+	getChildren( parentURI:string, retPrefReqOpt?:any, reqOpt?:HTTP.Request.Options ): Promise<[ PersistedDocument.Class[], HTTP.Response.Class ]> {
+		let retrievalPreferences:RetrievalPreferences.Class = RetrievalPreferences.Factory.is( retPrefReqOpt ) ? retPrefReqOpt : null;
+		let requestOptions:HTTP.Request.Options = HTTP.Request.Util.isOptions( retPrefReqOpt ) ? retPrefReqOpt : ( HTTP.Request.Util.isOptions( reqOpt ) ? reqOpt : {} );
+
+		let uri:string = ( !! this.context ) ? this.context.resolve( parentURI ) : parentURI;
+		if ( this.context && this.context.auth.isAuthenticated() ) this.context.auth.addAuthentication( requestOptions );
+
+		if ( !! retrievalPreferences ) uri += RetrievalPreferences.Util.stringifyRetrievalPreferences( retrievalPreferences );
+
+		let containerRetrievalPreferences:HTTP.Request.ContainerRetrievalPreferences = {
+			include: [
+				NS.LDP.Class.PreferContainment,
+				NS.C.Class.PreferContainmentResources,
+			],
+			omit: [
+				NS.LDP.Class.PreferMembership,
+				NS.LDP.Class.PreferMinimalContainer,
+				NS.C.Class.PreferMembershipResources,
+			],
+		};
+
+		HTTP.Request.Util.setAcceptHeader( "application/ld+json", requestOptions );
+		HTTP.Request.Util.setPreferredInteractionModel( NS.LDP.Class.Container, requestOptions );
+		HTTP.Request.Util.setContainerRetrievalPreferences( containerRetrievalPreferences, requestOptions );
+
+		return HTTP.Request.Service.get( uri, requestOptions, new RDF.Document.Parser() ).then( ( [ rdfResource, response ]:[ RDF.Node.Class[], HTTP.Response.Class ] ) => {
+			let rdfResources:RDF.Node.Class[] = RDF.Document.Util.getResources( rdfResource );
+			let volatileResources:VolatileResource.Class[] = this.parseMultipleResources( rdfResources, response );
+
+			let responseDescription:ResponseDescription.Class = this.getResponseDescription( volatileResources );
+			if ( ! responseDescription ) return [ [], response ];
+
+			for ( let responseMetaData of responseDescription.responseProperties ) {
+				let document:PersistedDocument.Class = <any> responseMetaData.responsePropertyResource;
+				document._etag = responseMetaData.eTag;
+			}
+
+			let persistedDocuments:PersistedDocument.Class[] = responseDescription.responseProperties.map( ( responseMetaData:ResponseMetaData.Class ) => <any> responseMetaData.responsePropertyResource );
+			return [ persistedDocuments, response ];
+		} );
 	}
 
 	createAccessPoint( documentURI:string, accessPoint:AccessPoint.Class, slug?:string, requestOptions?:HTTP.Request.Options ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;

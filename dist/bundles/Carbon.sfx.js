@@ -1418,7 +1418,6 @@ $__System.register("18", ["c", "19", "9", "5", "12", "1a", "14", "8", "4", "1b",
                             NS.C.Class.PreferMembershipResources,
                         ],
                     };
-                    HTTP.Request.Util.setContentTypeHeader("application/ld+json", requestOptions);
                     HTTP.Request.Util.setAcceptHeader("application/ld+json", requestOptions);
                     HTTP.Request.Util.setPreferredInteractionModel(NS.LDP.Class.Container, requestOptions);
                     HTTP.Request.Util.setContainerRetrievalPreferences(containerRetrievalPreferences, requestOptions);
@@ -1431,6 +1430,45 @@ $__System.register("18", ["c", "19", "9", "5", "12", "1a", "14", "8", "4", "1b",
                         var documentResource = _this.getDocumentResource(rdfDocument, response);
                         var childPointers = RDF.Value.Util.getPropertyPointers(documentResource, NS.LDP.Predicate.contains, _this);
                         return [childPointers, response];
+                    });
+                };
+                Documents.prototype.getChildren = function (parentURI, retPrefReqOpt, reqOpt) {
+                    var _this = this;
+                    var retrievalPreferences = RetrievalPreferences.Factory.is(retPrefReqOpt) ? retPrefReqOpt : null;
+                    var requestOptions = HTTP.Request.Util.isOptions(retPrefReqOpt) ? retPrefReqOpt : (HTTP.Request.Util.isOptions(reqOpt) ? reqOpt : {});
+                    var uri = (!!this.context) ? this.context.resolve(parentURI) : parentURI;
+                    if (this.context && this.context.auth.isAuthenticated())
+                        this.context.auth.addAuthentication(requestOptions);
+                    if (!!retrievalPreferences)
+                        uri += RetrievalPreferences.Util.stringifyRetrievalPreferences(retrievalPreferences);
+                    var containerRetrievalPreferences = {
+                        include: [
+                            NS.LDP.Class.PreferContainment,
+                            NS.C.Class.PreferContainmentResources,
+                        ],
+                        omit: [
+                            NS.LDP.Class.PreferMembership,
+                            NS.LDP.Class.PreferMinimalContainer,
+                            NS.C.Class.PreferMembershipResources,
+                        ],
+                    };
+                    HTTP.Request.Util.setAcceptHeader("application/ld+json", requestOptions);
+                    HTTP.Request.Util.setPreferredInteractionModel(NS.LDP.Class.Container, requestOptions);
+                    HTTP.Request.Util.setContainerRetrievalPreferences(containerRetrievalPreferences, requestOptions);
+                    return HTTP.Request.Service.get(uri, requestOptions, new RDF.Document.Parser()).then(function (_a) {
+                        var rdfResource = _a[0], response = _a[1];
+                        var rdfResources = RDF.Document.Util.getResources(rdfResource);
+                        var volatileResources = _this.parseMultipleResources(rdfResources, response);
+                        var responseDescription = _this.getResponseDescription(volatileResources);
+                        if (!responseDescription)
+                            return [[], response];
+                        for (var _i = 0, _b = responseDescription.responseProperties; _i < _b.length; _i++) {
+                            var responseMetaData = _b[_i];
+                            var document = responseMetaData.responsePropertyResource;
+                            document._etag = responseMetaData.eTag;
+                        }
+                        var persistedDocuments = responseDescription.responseProperties.map(function (responseMetaData) { return responseMetaData.responsePropertyResource; });
+                        return [persistedDocuments, response];
                     });
                 };
                 Documents.prototype.createAccessPoint = function (documentURIOrAccessPoint, accessPointOrSlug, slugOrRequestOptions, requestOptions) {

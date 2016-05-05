@@ -1953,6 +1953,30 @@ Create a child document for the respective parent source.
 - childObject
 - requestOptions
 
+##### getChildren
+```typescript 
+getChildren( parentURI:string,  retrievalPreferences?:Carbon.RetrievalPreferences.Class,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.PersistedDocument.Class[], Carbon.HTTP.Response.Class ]>
+```
+
+Retrieves all the children of a document and their content, where you can specify the retrieval preferences and the options for the request.
+
+*Parameters*
+
+- parentURI: URI of the document to ask its children.
+- retrievalPreferences: An object for specify the retrieval preferences for the request.
+- requestOptions: Options that can be specified for change the behavior of the request.
+
+```typescript 
+getChildren( parentURI:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.PersistedDocument.Class[], Carbon.HTTP.Response.Class ]>
+```
+
+Retrieves all the children of a document and their content, where you can specify options for the request.
+
+*Parameters*
+
+- parentURI: URI of the document to ask its children.
+- requestOptions: Options that can be specified for change the behavior of the request.
+
 ##### createAccessPoint
 ```typescript 
 createAccessPoint( documentURI:string,  accessPoint:Carbon.AccessPoint.Class,  slug?:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[Carbon.Pointer.Class, Carbon.HTTP.Response.Class]>
@@ -2034,7 +2058,7 @@ Retrieves all the members of a document with out resolving them, where you can s
 getMembers( uri:string,  includeNonReadable?:boolean,  retrievalPreferences?:Carbon.RetrievalPreferences.Class,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.Pointer.Class[], Carbon.HTTP.Response.Class ]>
 ```
 
-Retrieves all the members of a document with out resolving them, where you can specify if the response should include the Non Readable resources, the retrieval preferences and the options for the request.
+Retrieves all the members of a document and their contents, where you can specify if the response should include the Non Readable resources, the retrieval preferences and the options for the request.
 
 *Parameters*
 
@@ -2047,7 +2071,7 @@ Retrieves all the members of a document with out resolving them, where you can s
 getMembers( uri:string,  includeNonReadable?:boolean,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.Pointer.Class[], Carbon.HTTP.Response.Class ]>
 ```
 
-Retrieves all the members of a document with out resolving them, where you can specify if the response should include the Non Readable resources and options for the request.
+Retrieves all the members of a document and their contents, where you can specify if the response should include the Non Readable resources and options for the request.
 
 *Parameters*
 
@@ -2059,7 +2083,7 @@ Retrieves all the members of a document with out resolving them, where you can s
 getMembers( uri:string,  retrievalPreferences?:Carbon.RetrievalPreferences.Class,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.Pointer.Class[], Carbon.HTTP.Response.Class ]>
 ```
 
-Retrieves all the members of a document with out resolving them, where you can specify the retrieval preferences and the options for the request.
+Retrieves all the members of a document and their content, where you can specify the retrieval preferences and the options for the request.
 
 *Parameters*
 
@@ -2071,7 +2095,7 @@ Retrieves all the members of a document with out resolving them, where you can s
 getMembers( uri:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.Pointer.Class[], Carbon.HTTP.Response.Class ]>
 ```
 
-Retrieves all the members of a document with out resolving them, where you can specify options for the request.
+Retrieves all the members of a document and their contents, where you can specify options for the request.
 
 *Parameters*
 
