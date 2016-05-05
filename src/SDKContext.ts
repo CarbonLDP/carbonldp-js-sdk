@@ -1,4 +1,3 @@
-import * as AddMemberAction from "./LDP/AddMemberAction";
 import * as App from "./App";
 import * as APIDescription from "./APIDescription";
 import * as Auth from "./Auth";
@@ -15,7 +14,6 @@ import * as Utils from "./Utils";
 import * as ObjectSchema from "./ObjectSchema";
 import * as Agent from "./Agent";
 import * as RDFRepresentation from "./RDFRepresentation";
-import * as RemoveMemberAction from "./LDP/RemoveMemberAction";
 
 export class Class implements Context {
 	auth:Auth.Class;
@@ -179,8 +177,10 @@ export class Class implements Context {
 			},
 		});
 
-		this.extendObjectSchema( AddMemberAction.RDF_CLASS, AddMemberAction.SCHEMA );
-		this.extendObjectSchema( RemoveMemberAction.RDF_CLASS, RemoveMemberAction.SCHEMA );
+		this.extendObjectSchema( LDP.ResponseDescription.RDF_CLASS, LDP.ResponseDescription.SCHEMA );
+		this.extendObjectSchema( LDP.ResponseMetaData.RDF_CLASS, LDP.ResponseMetaData.SCHEMA );
+		this.extendObjectSchema( LDP.AddMemberAction.RDF_CLASS,  LDP.AddMemberAction.SCHEMA );
+		this.extendObjectSchema( LDP.RemoveMemberAction.RDF_CLASS, LDP.RemoveMemberAction.SCHEMA );
 		this.extendObjectSchema( Auth.Token.RDF_CLASS, Auth.Token.CONTEXT );
 
 		this.extendObjectSchema( Agent.RDF_CLASS, Agent.SCHEMA );

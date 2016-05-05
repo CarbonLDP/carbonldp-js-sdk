@@ -12,6 +12,7 @@ var ObjectSchema = require("./ObjectSchema");
 var LDP = require("./LDP");
 var SPARQL = require("./SPARQL");
 var RetrievalPreferences = require("./RetrievalPreferences");
+var ResponseDescription = require("./LDP/ResponseDescription");
 var Documents = (function () {
     function Documents(context) {
         if (context === void 0) { context = null; }
@@ -90,43 +91,14 @@ var Documents = (function () {
         HTTP.Request.Util.setPreferredInteractionModel(NS.LDP.Class.RDFSource, requestOptions);
         var promise = HTTP.Request.Service.get(uri, requestOptions, new RDF.Document.Parser()).then(function (_a) {
             var rdfDocuments = _a[0], response = _a[1];
-            var etag = HTTP.Response.Util.getETag(response);
-            if (etag === null)
+            var eTag = HTTP.Response.Util.getETag(response);
+            if (eTag === null)
                 throw new HTTP.Errors.BadResponseError("The response doesn't contain an ETag", response);
             var rdfDocument = _this.getRDFDocument(uri, rdfDocuments, response);
             if (rdfDocument === null)
                 throw new HTTP.Errors.BadResponseError("No document was returned.", response);
-            var documentResources = RDF.Document.Util.getDocumentResources(rdfDocument);
-            if (documentResources.length > 1)
-                throw new HTTP.Errors.BadResponseError("The RDFDocument contains more than one document resource.", response);
-            if (documentResources.length === 0)
-                throw new HTTP.Errors.BadResponseError("The RDFDocument doesn\'t contain a document resource.", response);
-            var documentResource = documentResources[0];
-            var fragmentResources = RDF.Document.Util.getBNodeResources(rdfDocument);
-            var namedFragmentResources = RDF.Document.Util.getFragmentResources(rdfDocument);
-            var documentPointer = _this.getPointer(uri);
-            documentPointer._resolved = true;
-            var document = PersistedDocument.Factory.createFrom(documentPointer, uri, _this);
-            document._etag = etag;
-            var fragments = [];
-            for (var _i = 0, fragmentResources_1 = fragmentResources; _i < fragmentResources_1.length; _i++) {
-                var fragmentResource = fragmentResources_1[_i];
-                fragments.push(document.createFragment(fragmentResource["@id"]));
-            }
-            var namedFragments = [];
-            for (var _b = 0, namedFragmentResources_1 = namedFragmentResources; _b < namedFragmentResources_1.length; _b++) {
-                var namedFragmentResource = namedFragmentResources_1[_b];
-                namedFragments.push(document.createNamedFragment(namedFragmentResource["@id"]));
-            }
-            _this.compact(documentResource, document, document);
-            _this.compact(fragmentResources, fragments, document);
-            _this.compact(namedFragmentResources, namedFragments, document);
-            document._syncSnapshot();
-            fragments.forEach(function (fragment) { return fragment._syncSnapshot(); });
-            namedFragments.forEach(function (fragment) { return fragment._syncSnapshot(); });
-            document._syncSavedFragments();
-            if (LDP.Container.Factory.hasRDFClass(document))
-                LDP.PersistedContainer.Factory.decorate(document);
+            var document = _this.getPersistedDocument(rdfDocument, response);
+            document._etag = eTag;
             _this.documentsBeingResolved.delete(pointerID);
             return [document, response];
         });
@@ -302,11 +274,10 @@ var Documents = (function () {
             ];
         });
     };
-    Documents.prototype.listMembers = function (uri, nonReadRetPrefReqOpt, retPrefReqOpt, reqOpt) {
+    Documents.prototype.listMembers = function (uri, nonReadReqOpt, reqOpt) {
         var _this = this;
-        var includeNonReadable = Utils.isBoolean(nonReadRetPrefReqOpt) ? nonReadRetPrefReqOpt : true;
-        var retrievalPreferences = RetrievalPreferences.Factory.is(nonReadRetPrefReqOpt) ? nonReadRetPrefReqOpt : (RetrievalPreferences.Factory.is(retPrefReqOpt) ? retPrefReqOpt : null);
-        var requestOptions = HTTP.Request.Util.isOptions(nonReadRetPrefReqOpt) ? nonReadRetPrefReqOpt : (HTTP.Request.Util.isOptions(retPrefReqOpt) ? retPrefReqOpt : (HTTP.Request.Util.isOptions(reqOpt) ? reqOpt : {}));
+        var includeNonReadable = Utils.isBoolean(nonReadReqOpt) ? nonReadReqOpt : true;
+        var requestOptions = HTTP.Request.Util.isOptions(nonReadReqOpt) ? nonReadReqOpt : (HTTP.Request.Util.isOptions(reqOpt) ? reqOpt : {});
         if (!RDF.URI.Util.isAbsolute(uri)) {
             if (!this.context)
                 throw new Errors.IllegalArgumentError("This Documents instance doesn't support relative URIs.");
@@ -362,6 +333,56 @@ var Documents = (function () {
             var hasMemberRelation = RDF.Node.Util.getPropertyURI(documentResource, NS.LDP.Predicate.hasMemberRelation);
             var memberPointers = RDF.Value.Util.getPropertyPointers(membershipResource, hasMemberRelation, _this);
             return [memberPointers, response];
+        });
+    };
+    Documents.prototype.getMembers = function (uri, nonReadRetPrefReqOpt, retPrefReqOpt, reqOpt) {
+        var _this = this;
+        var includeNonReadable = Utils.isBoolean(nonReadRetPrefReqOpt) ? nonReadRetPrefReqOpt : true;
+        var retrievalPreferences = RetrievalPreferences.Factory.is(nonReadRetPrefReqOpt) ? nonReadRetPrefReqOpt : (RetrievalPreferences.Factory.is(retPrefReqOpt) ? retPrefReqOpt : null);
+        var requestOptions = HTTP.Request.Util.isOptions(nonReadRetPrefReqOpt) ? nonReadRetPrefReqOpt : (HTTP.Request.Util.isOptions(retPrefReqOpt) ? retPrefReqOpt : (HTTP.Request.Util.isOptions(reqOpt) ? reqOpt : {}));
+        if (!RDF.URI.Util.isAbsolute(uri)) {
+            if (!this.context)
+                throw new Errors.IllegalArgumentError("This Documents instance doesn't support relative URIs.");
+            uri = this.context.resolve(uri);
+        }
+        if (!!retrievalPreferences)
+            uri += RetrievalPreferences.Util.stringifyRetrievalPreferences(retrievalPreferences);
+        if (this.context && this.context.auth.isAuthenticated())
+            this.context.auth.addAuthentication(requestOptions);
+        HTTP.Request.Util.setAcceptHeader("application/ld+json", requestOptions);
+        HTTP.Request.Util.setPreferredInteractionModel(NS.LDP.Class.Container, requestOptions);
+        var containerRetrievalPreferences = {
+            include: [
+                NS.LDP.Class.PreferMinimalContainer,
+                NS.LDP.Class.PreferMembership,
+                NS.C.Class.PreferMembershipResources,
+            ],
+            omit: [
+                NS.LDP.Class.PreferContainment,
+                NS.C.Class.PreferContainmentResources,
+            ],
+        };
+        if (includeNonReadable) {
+            containerRetrievalPreferences.include.push(NS.C.Class.NonReadableMembershipResourceTriples);
+        }
+        else {
+            containerRetrievalPreferences.omit.push(NS.C.Class.NonReadableMembershipResourceTriples);
+        }
+        HTTP.Request.Util.setContainerRetrievalPreferences(containerRetrievalPreferences, requestOptions);
+        return HTTP.Request.Service.get(uri, requestOptions, new RDF.Document.Parser()).then(function (_a) {
+            var rdfResource = _a[0], response = _a[1];
+            var rdfResources = RDF.Document.Util.getResources(rdfResource);
+            var volatileResources = _this.parseMultipleResources(rdfResources, response);
+            var responseDescription = _this.getResponseDescription(volatileResources);
+            if (!responseDescription)
+                return [[], response];
+            for (var _i = 0, _b = responseDescription.responseProperties; _i < _b.length; _i++) {
+                var responseMetaData = _b[_i];
+                var document_1 = responseMetaData.responsePropertyResource;
+                document_1._etag = responseMetaData.eTag;
+            }
+            var persistedDocuments = responseDescription.responseProperties.map(function (responseMetaData) { return responseMetaData.responsePropertyResource; });
+            return [persistedDocuments, response];
         });
     };
     Documents.prototype.addMember = function (documentURI, memberORUri, requestOptions) {
@@ -478,40 +499,9 @@ var Documents = (function () {
             var rdfDocument = _this.getRDFDocument(persistedDocument.id, rdfDocuments, response);
             if (rdfDocument === null)
                 throw new HTTP.Errors.BadResponseError("No document was returned.", response);
-            var documentResources = RDF.Document.Util.getDocumentResources(rdfDocument);
-            if (documentResources.length > 1)
-                throw new HTTP.Errors.BadResponseError("The RDFDocument contains more than one document resource.", response);
-            if (documentResources.length === 0)
-                throw new HTTP.Errors.BadResponseError("The RDFDocument doesn\'t contain a document resource.", response);
-            persistedDocument._etag = eTag;
-            var documentResource = documentResources[0];
-            var fragmentResources = RDF.Document.Util.getBNodeResources(rdfDocument);
-            fragmentResources = fragmentResources.concat(RDF.Document.Util.getFragmentResources(rdfDocument));
-            var originalFragments = persistedDocument.getFragments();
-            var setFragments = new Set(originalFragments.map(function (fragment) { return fragment.id; }));
-            var updatedData;
-            for (var _i = 0, fragmentResources_2 = fragmentResources; _i < fragmentResources_2.length; _i++) {
-                var fragmentResource = fragmentResources_2[_i];
-                updatedData = _this.compact(fragmentResource, {}, persistedDocument);
-                var fragment = _this.getAssociatedFragment(persistedDocument, updatedData);
-                if (fragment) {
-                    fragment = _this.updateObject(fragment, updatedData);
-                    if (!persistedDocument.hasFragment(fragment.id)) {
-                        persistedDocument.createFragment(fragment.id, fragment);
-                    }
-                }
-                else {
-                    fragment = persistedDocument.createFragment(updatedData.id, updatedData);
-                }
-                setFragments.delete(fragment.id);
-                fragment._syncSnapshot();
-            }
-            Array.from(setFragments).forEach(function (id) { return persistedDocument.removeFragment(id); });
-            persistedDocument._syncSavedFragments();
-            updatedData = _this.compact(documentResource, {}, persistedDocument);
-            _this.updateObject(persistedDocument, updatedData);
-            persistedDocument._syncSnapshot();
-            return [persistedDocument, response];
+            var updatedPersistedDocument = _this.getPersistedDocument(rdfDocument, response);
+            updatedPersistedDocument._etag = eTag;
+            return [updatedPersistedDocument, response];
         });
     };
     Documents.prototype.delete = function (documentURI, requestOptions) {
@@ -728,6 +718,93 @@ var Documents = (function () {
             return null;
         }
         return persistedDocument.getFragment(fragment.id);
+    };
+    Documents.prototype.getPersistedDocument = function (rdfDocument, response) {
+        var documentResources = RDF.Document.Util.getDocumentResources(rdfDocument);
+        if (documentResources.length > 1)
+            throw new HTTP.Errors.BadResponseError("The RDFDocument contains more than one document resource.", response);
+        if (documentResources.length === 0)
+            throw new HTTP.Errors.BadResponseError("The RDFDocument doesn\'t contain a document resource.", response);
+        var documentResource = documentResources[0];
+        var fragmentResources = RDF.Document.Util.getBNodeResources(rdfDocument);
+        fragmentResources = fragmentResources.concat(RDF.Document.Util.getFragmentResources(rdfDocument));
+        var uri = documentResource["@id"];
+        var documentPointer = this.getPointer(uri);
+        if (documentPointer.isResolved()) {
+            this.updatePersistedDocument(documentPointer, documentResource, fragmentResources);
+        }
+        else {
+            this.createPersistedDocument(documentPointer, documentResource, fragmentResources);
+        }
+        return documentPointer;
+    };
+    Documents.prototype.createPersistedDocument = function (documentPointer, documentResource, fragmentResources) {
+        var document = PersistedDocument.Factory.createFrom(documentPointer, documentPointer.id, this);
+        var fragments = [];
+        for (var _i = 0, fragmentResources_1 = fragmentResources; _i < fragmentResources_1.length; _i++) {
+            var fragmentResource = fragmentResources_1[_i];
+            fragments.push(document.createFragment(fragmentResource["@id"]));
+        }
+        this.compact(documentResource, document, document);
+        this.compact(fragmentResources, fragments, document);
+        document._syncSnapshot();
+        fragments.forEach(function (fragment) { return fragment._syncSnapshot(); });
+        document._syncSavedFragments();
+        document._resolved = true;
+        if (LDP.Container.Factory.hasRDFClass(document))
+            LDP.PersistedContainer.Factory.decorate(document);
+        return document;
+    };
+    Documents.prototype.updatePersistedDocument = function (persistedDocument, documentResource, fragmentResources) {
+        var originalFragments = persistedDocument.getFragments();
+        var setFragments = new Set(originalFragments.map(function (fragment) { return fragment.id; }));
+        var updatedData;
+        for (var _i = 0, fragmentResources_2 = fragmentResources; _i < fragmentResources_2.length; _i++) {
+            var fragmentResource = fragmentResources_2[_i];
+            updatedData = this.compact(fragmentResource, {}, persistedDocument);
+            var fragment = this.getAssociatedFragment(persistedDocument, updatedData);
+            if (fragment) {
+                fragment = this.updateObject(fragment, updatedData);
+                if (!persistedDocument.hasFragment(fragment.id)) {
+                    persistedDocument.createFragment(fragment.id, fragment);
+                }
+            }
+            else {
+                fragment = persistedDocument.createFragment(updatedData.id, updatedData);
+            }
+            setFragments.delete(fragment.id);
+            fragment._syncSnapshot();
+        }
+        Array.from(setFragments).forEach(function (id) { return persistedDocument.removeFragment(id); });
+        persistedDocument._syncSavedFragments();
+        updatedData = this.compact(documentResource, {}, persistedDocument);
+        this.updateObject(persistedDocument, updatedData);
+        persistedDocument._syncSnapshot();
+        return persistedDocument;
+    };
+    Documents.prototype.parseMultipleResources = function (rdfResources, response) {
+        var volatiles = [];
+        var tempDocument = PersistedDocument.Factory.create("", this);
+        for (var _i = 0, rdfResources_1 = rdfResources; _i < rdfResources_1.length; _i++) {
+            var rdfResource = rdfResources_1[_i];
+            if (RDF.Document.Factory.is(rdfResource)) {
+                this.getPersistedDocument(rdfResource, response);
+            }
+            else {
+                var volatile = tempDocument.getPointer(rdfResource["@id"]);
+                this.compact(rdfResource, volatile, tempDocument);
+                volatiles.push(volatile);
+            }
+        }
+        return volatiles;
+    };
+    Documents.prototype.getResponseDescription = function (volatiles) {
+        for (var _i = 0, volatiles_1 = volatiles; _i < volatiles_1.length; _i++) {
+            var volatile = volatiles_1[_i];
+            if (ResponseDescription.Factory.is(volatile))
+                return volatile;
+        }
+        return null;
     };
     return Documents;
 }());

@@ -51,7 +51,7 @@ export class Util {
 				if ( "@id" in orderBy ) {
 					let id:string = orderBy[ "@id" ];
 					let descending:boolean = id.startsWith( "-" );
-					stringOrder += `${ descending ? "-" : "" }<${ descending ? id.substr(1) : id }>`;
+					stringOrder += `${ descending ? "-" : "" }<${ encodeURI( descending ? id.substr(1) : id ).replace( "#", "%23" ) }>`;
 				}
 
 				if ( "@type" in orderBy ) {
@@ -60,7 +60,7 @@ export class Util {
 					let type:string = orderBy[ "@type" ];
 					if ( allowedTypes.indexOf( type ) === -1 ) throw new IllegalArgumentError( "The @type value specified is not valid." );
 
-					if ( type !== "numeric" ) type = XSD.DataType[ type ];
+					if ( type !== "numeric" ) type = `<${ encodeURI( XSD.DataType[ type ] ).replace( "#", "%23" ) }>`;
 					stringOrder += `;${ type }`;
 				}
 

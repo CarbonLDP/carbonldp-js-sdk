@@ -8,7 +8,7 @@
 	<script>
 		(function() {
 			var carbon = new Carbon();
-			carbon.setSetting( "domain", "local.carbonldp.com" );
+			carbon.setSetting( "domain", "dev.carbonldp.com" );
 
 			carbon.extendObjectSchema( {
 				"acl": "http://www.w3.org/ns/auth/acl#",
@@ -69,7 +69,7 @@
 				return carbon.apps.getContext( "test-app/" );
 			}).then( function( _appContext ) {
 				appContext = _appContext;
-				return appContext.documents.getChildren( "posts/" );
+				return appContext.documents.getMembers( "posts/", { limit: 1, offset:0, orderBy: [{ "@id": "-" + Carbon.NS.C.Predicate.created, "@type": "dateTime" }] } );
 			}).then( function( result ) {
 				console.log( result );
 			});

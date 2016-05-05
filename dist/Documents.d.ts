@@ -30,14 +30,12 @@ declare class Documents implements Pointer.Library, Pointer.Validator, ObjectSch
     createAccessPoint(accessPoint: AccessPoint.Class, slug?: string, requestOptions?: HTTP.Request.Options): Promise<[Pointer.Class, HTTP.Response.Class]>;
     upload(parentURI: string, slug: string, file: Blob, requestOptions?: HTTP.Request.Options): Promise<[Pointer.Class, HTTP.Response.Class]>;
     upload(parentURI: string, file: Blob, requestOptions?: HTTP.Request.Options): Promise<[Pointer.Class, HTTP.Response.Class]>;
-    listMembers(uri: string, includeNonReadable: boolean, retrievalPreferences: RetrievalPreferences.Class, requestOptions: HTTP.Request.Options): Promise<[Pointer.Class[], HTTP.Response.Class]>;
-    listMembers(uri: string, includeNonReadable: boolean, retrievalPreferences: RetrievalPreferences.Class): Promise<[Pointer.Class[], HTTP.Response.Class]>;
-    listMembers(uri: string, includeNonReadable: boolean, requestOptions: HTTP.Request.Options): Promise<[Pointer.Class[], HTTP.Response.Class]>;
-    listMembers(uri: string, includeNonReadable: boolean): Promise<[Pointer.Class[], HTTP.Response.Class]>;
-    listMembers(uri: string, retrievalPreferences: RetrievalPreferences.Class, requestOptions: HTTP.Request.Options): Promise<[Pointer.Class[], HTTP.Response.Class]>;
-    listMembers(uri: string, retrievalPreferences: RetrievalPreferences.Class): Promise<[Pointer.Class[], HTTP.Response.Class]>;
-    listMembers(uri: string, requestOptions: HTTP.Request.Options): Promise<[Pointer.Class[], HTTP.Response.Class]>;
-    listMembers(uri: string): Promise<[Pointer.Class[], HTTP.Response.Class]>;
+    listMembers(uri: string, includeNonReadable?: boolean, requestOptions?: HTTP.Request.Options): Promise<[Pointer.Class[], HTTP.Response.Class]>;
+    listMembers(uri: string, requestOptions?: HTTP.Request.Options): Promise<[Pointer.Class[], HTTP.Response.Class]>;
+    getMembers(uri: string, includeNonReadable?: boolean, retrievalPreferences?: RetrievalPreferences.Class, requestOptions?: HTTP.Request.Options): Promise<[PersistedDocument.Class[], HTTP.Response.Class]>;
+    getMembers(uri: string, includeNonReadable?: boolean, requestOptions?: HTTP.Request.Options): Promise<[PersistedDocument.Class[], HTTP.Response.Class]>;
+    getMembers(uri: string, retrievalPreferences?: RetrievalPreferences.Class, requestOptions?: HTTP.Request.Options): Promise<[PersistedDocument.Class[], HTTP.Response.Class]>;
+    getMembers(uri: string, requestOptions?: HTTP.Request.Options): Promise<[PersistedDocument.Class[], HTTP.Response.Class]>;
     addMember(documentURI: string, member: Pointer.Class, requestOptions?: HTTP.Request.Options): Promise<HTTP.Response.Class>;
     addMember(documentURI: string, memberURI: string, requestOptions?: HTTP.Request.Options): Promise<HTTP.Response.Class>;
     addMembers(documentURI: string, members: (Pointer.Class | string)[], requestOptions?: HTTP.Request.Options): Promise<HTTP.Response.Class>;
@@ -69,5 +67,10 @@ declare class Documents implements Pointer.Library, Pointer.Validator, ObjectSch
     private getDocumentTypes(document);
     private updateObject(target, source);
     private getAssociatedFragment(persistedDocument, fragment);
+    private getPersistedDocument(rdfDocument, response);
+    private createPersistedDocument(documentPointer, documentResource, fragmentResources);
+    private updatePersistedDocument(persistedDocument, documentResource, fragmentResources);
+    private parseMultipleResources(rdfResources, response);
+    private getResponseDescription(volatiles);
 }
 export default Documents;

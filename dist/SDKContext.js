@@ -1,5 +1,4 @@
 "use strict";
-var AddMemberAction = require("./LDP/AddMemberAction");
 var APIDescription = require("./APIDescription");
 var Auth = require("./Auth");
 var Documents_1 = require("./Documents");
@@ -10,7 +9,6 @@ var PersistedBlankNode = require("./PersistedBlankNode");
 var ObjectSchema = require("./ObjectSchema");
 var Agent = require("./Agent");
 var RDFRepresentation = require("./RDFRepresentation");
-var RemoveMemberAction = require("./LDP/RemoveMemberAction");
 var Class = (function () {
     function Class() {
         this.settings = new Map();
@@ -153,8 +151,10 @@ var Class = (function () {
                 "@container": "@set",
             },
         });
-        this.extendObjectSchema(AddMemberAction.RDF_CLASS, AddMemberAction.SCHEMA);
-        this.extendObjectSchema(RemoveMemberAction.RDF_CLASS, RemoveMemberAction.SCHEMA);
+        this.extendObjectSchema(LDP.ResponseDescription.RDF_CLASS, LDP.ResponseDescription.SCHEMA);
+        this.extendObjectSchema(LDP.ResponseMetaData.RDF_CLASS, LDP.ResponseMetaData.SCHEMA);
+        this.extendObjectSchema(LDP.AddMemberAction.RDF_CLASS, LDP.AddMemberAction.SCHEMA);
+        this.extendObjectSchema(LDP.RemoveMemberAction.RDF_CLASS, LDP.RemoveMemberAction.SCHEMA);
         this.extendObjectSchema(Auth.Token.RDF_CLASS, Auth.Token.CONTEXT);
         this.extendObjectSchema(Agent.RDF_CLASS, Agent.SCHEMA);
     };

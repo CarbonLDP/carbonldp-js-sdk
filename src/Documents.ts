@@ -17,6 +17,9 @@ import * as ObjectSchema from "./ObjectSchema";
 import * as LDP from "./LDP";
 import * as SPARQL from "./SPARQL";
 import * as RetrievalPreferences from "./RetrievalPreferences";
+import * as VolatileResource from "./LDP/VolatileResource";
+import * as ResponseDescription from "./LDP/ResponseDescription";
+import * as ResponseMetaData from "./LDP/ResponseMetaData";
 
 class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Resolver {
 	_jsonldConverter:JSONLDConverter.Class;
@@ -108,49 +111,14 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 		HTTP.Request.Util.setPreferredInteractionModel( NS.LDP.Class.RDFSource, requestOptions );
 
 		let promise:Promise<[ PersistedDocument.Class, HTTP.Response.Class ]> = HTTP.Request.Service.get( uri, requestOptions, new RDF.Document.Parser() ).then( ( [ rdfDocuments, response ]:[ RDF.Document.Class[], HTTP.Response.Class ] ) => {
-			let etag:string = HTTP.Response.Util.getETag( response );
-			if( etag === null ) throw new HTTP.Errors.BadResponseError( "The response doesn't contain an ETag", response );
+			let eTag:string = HTTP.Response.Util.getETag( response );
+			if( eTag === null ) throw new HTTP.Errors.BadResponseError( "The response doesn't contain an ETag", response );
 
 			let rdfDocument:RDF.Document.Class = this.getRDFDocument( uri, rdfDocuments, response );
 			if ( rdfDocument === null ) throw new HTTP.Errors.BadResponseError( "No document was returned.", response );
 
-			let documentResources:RDF.Node.Class[] = RDF.Document.Util.getDocumentResources( rdfDocument );
-			if( documentResources.length > 1 ) throw new HTTP.Errors.BadResponseError( "The RDFDocument contains more than one document resource.", response );
-			if( documentResources.length === 0 ) throw new HTTP.Errors.BadResponseError( "The RDFDocument doesn\'t contain a document resource.", response );
-
-			let documentResource:RDF.Node.Class = documentResources[ 0 ];
-			let fragmentResources:RDF.Node.Class[] = RDF.Document.Util.getBNodeResources( rdfDocument );
-			let namedFragmentResources:RDF.Node.Class[] = RDF.Document.Util.getFragmentResources( rdfDocument );
-
-			let documentPointer:Pointer.Class = this.getPointer( uri );
-			documentPointer._resolved = true;
-
-			let document:PersistedDocument.Class = PersistedDocument.Factory.createFrom( documentPointer, uri, this );
-			document._etag = etag;
-
-			let fragments:PersistedFragment.Class[] = [];
-			for( let fragmentResource of fragmentResources ) {
-				fragments.push( document.createFragment( fragmentResource[ "@id" ] ) );
-			}
-
-			let namedFragments:PersistedNamedFragment.Class[] = [];
-			for( let namedFragmentResource of namedFragmentResources ) {
-				namedFragments.push( document.createNamedFragment( namedFragmentResource[ "@id" ] ) );
-			}
-
-			this.compact( documentResource, document, document );
-			this.compact( fragmentResources, fragments, document );
-			this.compact( namedFragmentResources, namedFragments, document );
-
-			// TODO: Move this to a more appropriate place. See also refresh() method
-			document._syncSnapshot();
-			fragments.forEach( ( fragment:PersistedFragment.Class ) => fragment._syncSnapshot() );
-			namedFragments.forEach( ( fragment:PersistedNamedFragment.Class ) => fragment._syncSnapshot() );
-			document._syncSavedFragments();
-
-			// TODO: Decorate additional behavior (app, etc.). See also refresh() method
-			// TODO: Make it dynamic. See also refresh() method
-			if( LDP.Container.Factory.hasRDFClass( document ) ) LDP.PersistedContainer.Factory.decorate( document );
+			let document:PersistedDocument.Class = this.getPersistedDocument( rdfDocument, response );
+			document._etag = eTag;
 
 			this.documentsBeingResolved.delete( pointerID );
 			return [ document, response ];
@@ -347,18 +315,11 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 		});
 	}
 
-	listMembers( uri:string, includeNonReadable:boolean, retrievalPreferences:RetrievalPreferences.Class, requestOptions:HTTP.Request.Options ):Promise<[ Pointer.Class[], HTTP.Response.Class ]>;
-	listMembers( uri:string, includeNonReadable:boolean, retrievalPreferences:RetrievalPreferences.Class ):Promise<[ Pointer.Class[], HTTP.Response.Class ]>;
-	listMembers( uri:string, includeNonReadable:boolean, requestOptions:HTTP.Request.Options ):Promise<[ Pointer.Class[], HTTP.Response.Class ]>;
-	listMembers( uri:string, includeNonReadable:boolean ):Promise<[ Pointer.Class[], HTTP.Response.Class ]>;
-	listMembers( uri:string, retrievalPreferences:RetrievalPreferences.Class, requestOptions:HTTP.Request.Options ):Promise<[ Pointer.Class[], HTTP.Response.Class ]>;
-	listMembers( uri:string, retrievalPreferences:RetrievalPreferences.Class ):Promise<[ Pointer.Class[], HTTP.Response.Class ]>;
-	listMembers( uri:string, requestOptions:HTTP.Request.Options ):Promise<[ Pointer.Class[], HTTP.Response.Class ]>;
-	listMembers( uri:string ):Promise<[ Pointer.Class[], HTTP.Response.Class ]>;
-	listMembers( uri:string, nonReadRetPrefReqOpt?:any, retPrefReqOpt?:any, reqOpt?:HTTP.Request.Options ):Promise<[ Pointer.Class[], HTTP.Response.Class ]> {
-		let includeNonReadable:boolean = Utils.isBoolean( nonReadRetPrefReqOpt ) ? nonReadRetPrefReqOpt : true;
-		let retrievalPreferences:RetrievalPreferences.Class = RetrievalPreferences.Factory.is( nonReadRetPrefReqOpt ) ? nonReadRetPrefReqOpt : ( RetrievalPreferences.Factory.is( retPrefReqOpt ) ? retPrefReqOpt : null );
-		let requestOptions:HTTP.Request.Options = HTTP.Request.Util.isOptions( nonReadRetPrefReqOpt ) ? nonReadRetPrefReqOpt : ( HTTP.Request.Util.isOptions( retPrefReqOpt ) ? retPrefReqOpt : ( HTTP.Request.Util.isOptions( reqOpt ) ? reqOpt : {} ) );
+	listMembers( uri:string, includeNonReadable?:boolean, requestOptions?:HTTP.Request.Options ):Promise<[ Pointer.Class[], HTTP.Response.Class ]>;
+	listMembers( uri:string, requestOptions?:HTTP.Request.Options ):Promise<[ Pointer.Class[], HTTP.Response.Class ]>;
+	listMembers( uri:string, nonReadReqOpt?:any, reqOpt?:HTTP.Request.Options ):Promise<[ Pointer.Class[], HTTP.Response.Class ]> {
+		let includeNonReadable:boolean = Utils.isBoolean( nonReadReqOpt ) ? nonReadReqOpt : true;
+		let requestOptions:HTTP.Request.Options = HTTP.Request.Util.isOptions( nonReadReqOpt ) ? nonReadReqOpt : ( HTTP.Request.Util.isOptions( reqOpt ) ? reqOpt : {} );
 
 		if( ! RDF.URI.Util.isAbsolute( uri ) ) {
 			if( ! this.context ) throw new Errors.IllegalArgumentError( "This Documents instance doesn't support relative URIs." );
@@ -416,6 +377,63 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 			let memberPointers:Pointer.Class[] = RDF.Value.Util.getPropertyPointers( membershipResource, hasMemberRelation, this );
 
 			return [ memberPointers, response ];
+		});
+	}
+
+	getMembers( uri:string, includeNonReadable?:boolean, retrievalPreferences?:RetrievalPreferences.Class, requestOptions?:HTTP.Request.Options ):Promise<[ PersistedDocument.Class[], HTTP.Response.Class ]>;
+	getMembers( uri:string, includeNonReadable?:boolean, requestOptions?:HTTP.Request.Options ):Promise<[ PersistedDocument.Class[], HTTP.Response.Class ]>;
+	getMembers( uri:string, retrievalPreferences?:RetrievalPreferences.Class, requestOptions?:HTTP.Request.Options ):Promise<[ PersistedDocument.Class[], HTTP.Response.Class ]>;
+	getMembers( uri:string, requestOptions?:HTTP.Request.Options ):Promise<[ PersistedDocument.Class[], HTTP.Response.Class ]>;
+	getMembers( uri:string, nonReadRetPrefReqOpt?:any, retPrefReqOpt?:any, reqOpt?:HTTP.Request.Options ):Promise<[ PersistedDocument.Class[], HTTP.Response.Class ]> {
+		let includeNonReadable:boolean = Utils.isBoolean( nonReadRetPrefReqOpt ) ? nonReadRetPrefReqOpt : true;
+		let retrievalPreferences:RetrievalPreferences.Class = RetrievalPreferences.Factory.is( nonReadRetPrefReqOpt ) ? nonReadRetPrefReqOpt : ( RetrievalPreferences.Factory.is( retPrefReqOpt ) ? retPrefReqOpt : null );
+		let requestOptions:HTTP.Request.Options = HTTP.Request.Util.isOptions( nonReadRetPrefReqOpt ) ? nonReadRetPrefReqOpt : ( HTTP.Request.Util.isOptions( retPrefReqOpt ) ? retPrefReqOpt : ( HTTP.Request.Util.isOptions( reqOpt ) ? reqOpt : {} ) );
+
+		if( ! RDF.URI.Util.isAbsolute( uri ) ) {
+			if( ! this.context ) throw new Errors.IllegalArgumentError( "This Documents instance doesn't support relative URIs." );
+			uri = this.context.resolve( uri );
+		}
+		if ( !! retrievalPreferences ) uri += RetrievalPreferences.Util.stringifyRetrievalPreferences( retrievalPreferences );
+
+		if ( this.context && this.context.auth.isAuthenticated() ) this.context.auth.addAuthentication( requestOptions );
+
+		HTTP.Request.Util.setAcceptHeader( "application/ld+json", requestOptions );
+		HTTP.Request.Util.setPreferredInteractionModel( NS.LDP.Class.Container, requestOptions );
+
+		let containerRetrievalPreferences:HTTP.Request.ContainerRetrievalPreferences = {
+			include: [
+				NS.LDP.Class.PreferMinimalContainer,
+				NS.LDP.Class.PreferMembership,
+				NS.C.Class.PreferMembershipResources,
+			],
+			omit: [
+				NS.LDP.Class.PreferContainment,
+				NS.C.Class.PreferContainmentResources,
+			],
+		};
+
+		if( includeNonReadable ) {
+			containerRetrievalPreferences.include.push( NS.C.Class.NonReadableMembershipResourceTriples );
+		} else {
+			containerRetrievalPreferences.omit.push( NS.C.Class.NonReadableMembershipResourceTriples );
+		}
+		HTTP.Request.Util.setContainerRetrievalPreferences( containerRetrievalPreferences, requestOptions );
+
+		return HTTP.Request.Service.get( uri, requestOptions, new RDF.Document.Parser() ).then( ( [ rdfResource, response ]:[ RDF.Node.Class[], HTTP.Response.Class ] ) => {
+
+			let rdfResources:RDF.Node.Class[] = RDF.Document.Util.getResources( rdfResource );
+			let volatileResources:VolatileResource.Class[] = this.parseMultipleResources( rdfResources, response );
+
+			let responseDescription:ResponseDescription.Class = this.getResponseDescription( volatileResources );
+			if ( ! responseDescription ) return [ [], response ];
+
+			for ( let responseMetaData of responseDescription.responseProperties ) {
+				let document:PersistedDocument.Class = <any> responseMetaData.responsePropertyResource;
+				document._etag = responseMetaData.eTag;
+			}
+
+			let persistedDocuments:PersistedDocument.Class[] = responseDescription.responseProperties.map( ( responseMetaData:ResponseMetaData.Class ) => <any> responseMetaData.responsePropertyResource );
+			return [ persistedDocuments, response ];
 		});
 	}
 
@@ -550,44 +568,10 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 			let rdfDocument:RDF.Document.Class = this.getRDFDocument( persistedDocument.id, rdfDocuments, response );
 			if ( rdfDocument === null ) throw new HTTP.Errors.BadResponseError( "No document was returned.", response );
 
-			let documentResources:RDF.Node.Class[] = RDF.Document.Util.getDocumentResources( rdfDocument );
-			if( documentResources.length > 1 ) throw new HTTP.Errors.BadResponseError( "The RDFDocument contains more than one document resource.", response );
-			if( documentResources.length === 0 ) throw new HTTP.Errors.BadResponseError( "The RDFDocument doesn\'t contain a document resource.", response );
+			let updatedPersistedDocument:PersistedDocument.Class = this.getPersistedDocument( rdfDocument, response );
+			updatedPersistedDocument._etag = eTag;
 
-			persistedDocument._etag = eTag;
-			let documentResource:RDF.Node.Class = documentResources[ 0 ];
-			let fragmentResources:RDF.Node.Class[] = RDF.Document.Util.getBNodeResources( rdfDocument );
-			fragmentResources = fragmentResources.concat( RDF.Document.Util.getFragmentResources( rdfDocument ) );
-
-			let originalFragments:PersistedFragment.Class[] = persistedDocument.getFragments();
-			let setFragments:Set<string> = new Set( originalFragments.map( fragment => fragment.id ) );
-
-			let updatedData:Pointer.Class;
-			for( let fragmentResource of fragmentResources ) {
-				updatedData = <Pointer.Class> this.compact( fragmentResource, {}, persistedDocument );
-
-				let fragment:PersistedFragment.Class = this.getAssociatedFragment( persistedDocument, updatedData );
-				if ( fragment ) {
-					fragment = this.updateObject( fragment, updatedData );
-					if ( ! persistedDocument.hasFragment( fragment.id ) ) {
-						persistedDocument.createFragment( fragment.id, fragment );
-					}
-				} else {
-					fragment = persistedDocument.createFragment( updatedData.id, updatedData );
-				}
-				setFragments.delete( fragment.id );
-
-				fragment._syncSnapshot();
-			}
-			Array.from( setFragments ).forEach( id => persistedDocument.removeFragment( id ) );
-			persistedDocument._syncSavedFragments();
-
-			updatedData = <Pointer.Class> this.compact( documentResource, {}, persistedDocument );
-			this.updateObject( persistedDocument, updatedData );
-
-			persistedDocument._syncSnapshot();
-
-			return [ persistedDocument, response ];
+			return [ updatedPersistedDocument, response ];
 		});
 	}
 
@@ -822,6 +806,107 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 			return null;
 		}
 		return persistedDocument.getFragment( fragment.id );
+	}
+
+	private getPersistedDocument( rdfDocument:RDF.Document.Class, response:HTTP.Response.Class ):PersistedDocument.Class {
+		let documentResources:RDF.Node.Class[] = RDF.Document.Util.getDocumentResources( rdfDocument );
+		if( documentResources.length > 1 ) throw new HTTP.Errors.BadResponseError( "The RDFDocument contains more than one document resource.", response );
+		if( documentResources.length === 0 ) throw new HTTP.Errors.BadResponseError( "The RDFDocument doesn\'t contain a document resource.", response );
+
+		let documentResource:RDF.Node.Class = documentResources[ 0 ];
+		let fragmentResources:RDF.Node.Class[] = RDF.Document.Util.getBNodeResources( rdfDocument );
+		fragmentResources = fragmentResources.concat( RDF.Document.Util.getFragmentResources( rdfDocument ) );
+
+		let uri:string = documentResource[ "@id" ];
+		let documentPointer:Pointer.Class = this.getPointer( uri );
+
+		if ( documentPointer.isResolved() ) {
+			this.updatePersistedDocument( <PersistedDocument.Class> documentPointer, documentResource, fragmentResources );
+		} else {
+			this.createPersistedDocument( documentPointer, documentResource, fragmentResources );
+		}
+
+		return <PersistedDocument.Class> documentPointer;
+	}
+
+	private createPersistedDocument( documentPointer:Pointer.Class, documentResource:RDF.Node.Class, fragmentResources:RDF.Node.Class[] ):PersistedDocument.Class {
+		let document:PersistedDocument.Class = PersistedDocument.Factory.createFrom( documentPointer, documentPointer.id, this );
+
+		let fragments:PersistedFragment.Class[] = [];
+		for( let fragmentResource of fragmentResources ) {
+			fragments.push( document.createFragment( fragmentResource[ "@id" ] ) );
+		}
+
+		this.compact( documentResource, document, document );
+		this.compact( fragmentResources, fragments, document );
+
+		// TODO: Move this to a more appropriate place. See also updatePersistedDocument() method
+		document._syncSnapshot();
+		fragments.forEach( ( fragment:PersistedFragment.Class ) => fragment._syncSnapshot() );
+		document._syncSavedFragments();
+		document._resolved = true;
+
+		// TODO: Decorate additional behavior (app, etc.). See also updatePersistedDocument() method
+		// TODO: Make it dynamic. See also updatePersistedDocument() method
+		if( LDP.Container.Factory.hasRDFClass( document ) ) LDP.PersistedContainer.Factory.decorate( document );
+
+		return document;
+	}
+
+	private updatePersistedDocument( persistedDocument:PersistedDocument.Class, documentResource:RDF.Node.Class, fragmentResources:RDF.Node.Class[] ):PersistedDocument.Class {
+		let originalFragments:PersistedFragment.Class[] = persistedDocument.getFragments();
+		let setFragments:Set<string> = new Set( originalFragments.map( fragment => fragment.id ) );
+
+		let updatedData:Pointer.Class;
+		for( let fragmentResource of fragmentResources ) {
+			updatedData = <Pointer.Class> this.compact( fragmentResource, {}, persistedDocument );
+
+			let fragment:PersistedFragment.Class = this.getAssociatedFragment( persistedDocument, updatedData );
+			if ( fragment ) {
+				fragment = this.updateObject( fragment, updatedData );
+				if ( ! persistedDocument.hasFragment( fragment.id ) ) {
+					persistedDocument.createFragment( fragment.id, fragment );
+				}
+			} else {
+				fragment = persistedDocument.createFragment( updatedData.id, updatedData );
+			}
+			setFragments.delete( fragment.id );
+
+			fragment._syncSnapshot();
+		}
+		Array.from( setFragments ).forEach( id => persistedDocument.removeFragment( id ) );
+		persistedDocument._syncSavedFragments();
+
+		updatedData = <Pointer.Class> this.compact( documentResource, {}, persistedDocument );
+		this.updateObject( persistedDocument, updatedData );
+
+		persistedDocument._syncSnapshot();
+
+		return persistedDocument;
+	}
+
+	private parseMultipleResources( rdfResources:RDF.Node.Class[], response:HTTP.Response.Class ):VolatileResource.Class[] {
+		let volatiles:VolatileResource.Class[] = [];
+
+		let tempDocument:PersistedDocument.Class = PersistedDocument.Factory.create( "", this );
+		for ( let rdfResource of rdfResources ) {
+			if ( RDF.Document.Factory.is( rdfResource ) ) {
+				this.getPersistedDocument( <any> rdfResource, response );
+			} else {
+				let volatile:VolatileResource.Class = <VolatileResource.Class> tempDocument.getPointer( rdfResource[ "@id" ] );
+				this.compact( rdfResource, volatile, tempDocument );
+				volatiles.push( volatile );
+			}
+		}
+
+		return volatiles;
+	}
+
+	private getResponseDescription( volatiles:VolatileResource.Class[] ):ResponseDescription.Class {
+		for ( let volatile of volatiles ){
+			if ( ResponseDescription.Factory.is( volatile ) ) return <any> volatile;
+		}
+		return null;
 	}
 
 }

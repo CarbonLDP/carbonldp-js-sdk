@@ -39,7 +39,7 @@ describe( module(
 		it( isDefined(), ():void => {
 			expect( C.Class ).toBeDefined();
 			expect( Utils.isFunction( C.Class ) ).toBe( true );
-			expect( Object.keys( C.Class ).length ).toBe( 13 );
+			expect( Object.keys( C.Class ).length ).toBe( 15 );
 		});
 
 		it( hasProperty(
@@ -174,6 +174,28 @@ describe( module(
 			expect( C.Class.RemoveMemberAction ).toBe( "https://carbonldp.com/ns/v1/platform#RemoveMemberAction" );
 		});
 
+		it( hasProperty(
+			STATIC,
+			"ResponseDescription",
+			"string"
+		), ():void => {
+			expect( C.Class.ResponseDescription ).toBeDefined();
+			expect( Utils.isString( C.Class.ResponseDescription ) ).toBe( true );
+
+			expect( C.Class.ResponseDescription ).toBe( "https://carbonldp.com/ns/v1/platform#ResponseDescription" );
+		});
+
+		it( hasProperty(
+			STATIC,
+			"ResponseMetaData",
+			"string"
+		), ():void => {
+			expect( C.Class.ResponseMetaData ).toBeDefined();
+			expect( Utils.isString( C.Class.ResponseMetaData ) ).toBe( true );
+
+			expect( C.Class.ResponseMetaData ).toBe( "https://carbonldp.com/ns/v1/platform#ResponseMetaData" );
+		});
+
 	});
 
 	describe( clazz(
@@ -185,7 +207,7 @@ describe( module(
 			expect( C.Predicate ).toBeDefined();
 			expect( Utils.isFunction( C.Predicate ) ).toBe( true );
 
-			expect( Object.keys( C.Predicate ).length ).toBe( 9 );
+			expect( Object.keys( C.Predicate ).length ).toBe( 12 );
 		});
 
 		it( hasProperty(
@@ -287,6 +309,39 @@ describe( module(
 			expect( Utils.isString( C.Predicate.targetMember ) ).toBe( true );
 
 			expect( C.Predicate.targetMember ).toBe( "https://carbonldp.com/ns/v1/platform#targetMember" );
+		});
+
+		it( hasProperty(
+			STATIC,
+			"responseProperty",
+			"string"
+		), ():void => {
+			expect( C.Predicate.responseProperty ).toBeDefined();
+			expect( Utils.isString( C.Predicate.responseProperty ) ).toBe( true );
+
+			expect( C.Predicate.responseProperty ).toBe( "https://carbonldp.com/ns/v1/platform#responseProperty" );
+		});
+
+		it( hasProperty(
+			STATIC,
+			"responsePropertyResource",
+			"string"
+		), ():void => {
+			expect( C.Predicate.responsePropertyResource ).toBeDefined();
+			expect( Utils.isString( C.Predicate.responsePropertyResource ) ).toBe( true );
+
+			expect( C.Predicate.responsePropertyResource ).toBe( "https://carbonldp.com/ns/v1/platform#responsePropertyResource" );
+		});
+
+		it( hasProperty(
+			STATIC,
+			"eTag",
+			"string"
+		), ():void => {
+			expect( C.Predicate.eTag ).toBeDefined();
+			expect( Utils.isString( C.Predicate.eTag ) ).toBe( true );
+
+			expect( C.Predicate.eTag ).toBe( "https://carbonldp.com/ns/v1/platform#eTag" );
 		});
 
 	});

@@ -15,5 +15,9 @@ var RDFSource = require("./LDP/RDFSource");
 exports.RDFSource = RDFSource;
 var RemoveMemberAction = require("./LDP/RemoveMemberAction");
 exports.RemoveMemberAction = RemoveMemberAction;
+var ResponseDescription = require("./LDP/ResponseDescription");
+exports.ResponseDescription = ResponseDescription;
+var ResponseMetaData = require("./LDP/ResponseMetaData");
+exports.ResponseMetaData = ResponseMetaData;
 
 //# sourceMappingURL=LDP.js.map

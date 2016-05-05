@@ -292,6 +292,18 @@
 	- [Properties](#Carbon-LDP-RemoveMemberAction-Properties)
 	- [Class Carbon.LDP.RemoveMemberAction.Factory](#Carbon-LDP-RemoveMemberAction-Factory)
 		- [Methods](#Carbon-LDP-RemoveMemberAction-Factory-Methods)
+- [Module Carbon/LDP/ResponseDescription](#Carbon-LDP-ResponseDescription)
+	- [Properties](#Carbon-LDP-ResponseDescription-Properties)
+	- [Class Carbon.LDP.ResponseDescription.Factory](#Carbon-LDP-ResponseDescription-Factory)
+		- [Methods](#Carbon-LDP-ResponseDescription-Factory-Methods)
+- [Module Carbon/LDP/ResponseMetaData](#Carbon-LDP-ResponseMetaData)
+	- [Properties](#Carbon-LDP-ResponseMetaData-Properties)
+	- [Class Carbon.LDP.ResponseMetaData.Factory](#Carbon-LDP-ResponseMetaData-Factory)
+		- [Methods](#Carbon-LDP-ResponseMetaData-Factory-Methods)
+- [Module Carbon/LDP/VolatileResource](#Carbon-LDP-VolatileResource)
+	- [Properties](#Carbon-LDP-VolatileResource-Properties)
+	- [Class Carbon.LDP.VolatileResource.Factory](#Carbon-LDP-VolatileResource-Factory)
+		- [Methods](#Carbon-LDP-VolatileResource-Factory-Methods)
 - [Module Carbon/NS](#Carbon-NS)
 	- [Reexports](#Carbon-NS-Reexports)
 - [Module Carbon/NS/C](#Carbon-NS-C)
@@ -1995,48 +2007,76 @@ Upload a File to the server, creating a child for the parent specified.
 
 ##### listMembers
 ```typescript 
-listMembers( uri:string,  includeNonReadable:boolean,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.Pointer.Class[], Carbon.HTTP.Response.Class[] ]>
+listMembers( uri:string,  includeNonReadable?:boolean,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.Pointer.Class[], Carbon.HTTP.Response.Class ]>
 ```
 
-Retrieves (but doesn't resolve) all the members of the document
+Retrieves all the members of a document with out resolving them, where you can specify if the response should include the Non Readable resources and options for the request.
 
 *Parameters*
 
-- uri
-- includeNonReadable
-- requestOptions
+- uri: URI of the document to ask its members.
+- includeNonReadable: Specify if the the response should include the Non Readable resources. By default this is set to `true`.
+- requestOptions: Options that can be specified for change the behavior of the request.
 
 ```typescript 
-listMembers( uri:string,  includeNonReadable?:boolean ):Promise<[ Carbon.Pointer.Class[], Carbon.HTTP.Response.Class[] ]>
+listMembers( uri:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.Pointer.Class[], Carbon.HTTP.Response.Class ]>
 ```
 
-Retrieves (but doesn't resolve) all the members of the document
+Retrieves all the members of a document with out resolving them, where you can specify options for the request.
 
 *Parameters*
 
-- uri
-- includeNonReadable
+- uri: URI of the document to ask its members.
+- requestOptions: Options that can be specified for change the behavior of the request.
+
+##### getMembers
+```typescript 
+getMembers( uri:string,  includeNonReadable?:boolean,  retrievalPreferences?:Carbon.RetrievalPreferences.Class,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.Pointer.Class[], Carbon.HTTP.Response.Class ]>
+```
+
+Retrieves all the members of a document with out resolving them, where you can specify if the response should include the Non Readable resources, the retrieval preferences and the options for the request.
+
+*Parameters*
+
+- uri: URI of the document to ask its members.
+- includeNonReadable: Specify if the the response should include the Non Readable resources. By default this is set to `true`.
+- retrievalPreferences: An object for specify the retrieval preferences for the request.
+- requestOptions: Options that can be specified for change the behavior of the request.
 
 ```typescript 
-listMembers( uri:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.Pointer.Class[], Carbon.HTTP.Response.Class[] ]>
+getMembers( uri:string,  includeNonReadable?:boolean,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.Pointer.Class[], Carbon.HTTP.Response.Class ]>
 ```
 
-Retrieves (but doesn't resolve) all the members of the document
+Retrieves all the members of a document with out resolving them, where you can specify if the response should include the Non Readable resources and options for the request.
 
 *Parameters*
 
-- uri
-- requestOptions
+- uri: URI of the document to ask its members.
+- includeNonReadable: Specify if the the response should include the Non Readable resources. By default this is set to `true`.
+- requestOptions: Options that can be specified for change the behavior of the request.
 
 ```typescript 
-listMembers( uri:string ):Promise<[ Carbon.Pointer.Class[], Carbon.HTTP.Response.Class[] ]>
+getMembers( uri:string,  retrievalPreferences?:Carbon.RetrievalPreferences.Class,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.Pointer.Class[], Carbon.HTTP.Response.Class ]>
 ```
 
-Retrieves (but doesn't resolve) all the members of the document
+Retrieves all the members of a document with out resolving them, where you can specify the retrieval preferences and the options for the request.
 
 *Parameters*
 
-- uri
+- uri: URI of the document to ask its members.
+- retrievalPreferences: An object for specify the retrieval preferences for the request.
+- requestOptions: Options that can be specified for change the behavior of the request.
+
+```typescript 
+getMembers( uri:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.Pointer.Class[], Carbon.HTTP.Response.Class ]>
+```
+
+Retrieves all the members of a document with out resolving them, where you can specify options for the request.
+
+*Parameters*
+
+- uri: URI of the document to ask its members.
+- requestOptions: Options that can be specified for change the behavior of the request.
 
 ##### addMember
 ```typescript 
@@ -4347,6 +4387,8 @@ expand( compactedObject:Object,  digestedSchema:Carbon.ObjectSchema.DigestedObje
 | PersistedContainer | [Carbon/LDP/PersistedContainer](#Carbon-LDP-PersistedContainer) |
 | RDFSource | [Carbon/LDP/RDFSource](#Carbon-LDP-RDFSource) |
 | RemoveMemberAction | [Carbon/LDP/RemoveMemberAction](#Carbon-LDP-RemoveMemberAction) |
+| ResponseDescription | [Carbon/LDP/ResponseDescription](#Carbon-LDP-ResponseDescription) |
+| ResponseMetaData | [Carbon/LDP/ResponseMetaData](#Carbon-LDP-ResponseMetaData) |
 
 
 
@@ -4946,6 +4988,183 @@ Create and returns a `Carbon.Document.Class` object with a RemoveMemberAction fr
 
 
 
+## <a name="Carbon-LDP-ResponseDescription" />Module Carbon/LDP/ResponseDescription
+
+
+
+
+
+### <a name="Carbon-LDP-ResponseDescription-Properties" />Properties
+```typescript 
+static RDF_CLASS:string 
+```
+
+```typescript 
+static SCHEMA:Carbon.ObjectSchema.Class 
+```
+
+
+
+
+
+### <a name="Carbon-LDP-ResponseDescription-Factory" />Class Carbon.LDP.ResponseDescription.Factory
+
+
+> Factory class form `Carbon.LDP.ResponseDescription.Class` objects.
+
+
+
+
+#### <a name="Carbon-LDP-ResponseDescription-Factory-Methods" />Methods
+##### hasClassProperties
+```typescript 
+static hasClassProperties( object:Object ):boolean
+```
+
+Return true if the object provided has the properties of a `Carbon.LDP.ResponseDescription.Class` object.
+
+*Parameters*
+
+- object: Object to check.
+
+##### is
+```typescript 
+static is( object:Object ):boolean
+```
+
+Return true if the object provided can be classified as a `Carbon.LDP.ResponseDescription.Class` object.
+
+*Parameters*
+
+- object: Object to check
+
+##### hasRDFClass
+```typescript 
+static hasRDFClass( object:Object ):boolean
+```
+
+Return true if the object provided have the RDF_CLASS of a ResponseDescription, either if it's a Resource or a RDF object.
+
+*Parameters*
+
+- object: Object to check.
+
+
+
+
+## <a name="Carbon-LDP-ResponseMetaData" />Module Carbon/LDP/ResponseMetaData
+
+
+
+
+
+### <a name="Carbon-LDP-ResponseMetaData-Properties" />Properties
+```typescript 
+static RDF_CLASS:string 
+```
+
+```typescript 
+static SCHEMA:Carbon.ObjectSchema.Class 
+```
+
+
+
+
+
+### <a name="Carbon-LDP-ResponseMetaData-Factory" />Class Carbon.LDP.ResponseMetaData.Factory
+
+
+> Factory class form `Carbon.LDP.ResponseMetaData.Class` objects.
+
+
+
+
+#### <a name="Carbon-LDP-ResponseMetaData-Factory-Methods" />Methods
+##### hasClassProperties
+```typescript 
+static hasClassProperties( object:Object ):boolean
+```
+
+Return true if the object provided has the properties of a `Carbon.LDP.ResponseMetaData.Class` object.
+
+*Parameters*
+
+- object: Object to check.
+
+##### is
+```typescript 
+static is( object:Object ):boolean
+```
+
+Return true if the object provided can be classified as a `Carbon.LDP.ResponseMetaData.Class` object.
+
+*Parameters*
+
+- object: Object to check.
+
+##### hasRDFClass
+```typescript 
+static hasRDFClass( object:Object ):boolean
+```
+
+Return true if the object provided have the RDF_CLASS of a ResponseMetaData, either if it's a Resource or a RDF object.
+
+*Parameters*
+
+- object: Object to check.
+
+
+
+
+## <a name="Carbon-LDP-VolatileResource" />Module Carbon/LDP/VolatileResource
+
+
+
+
+
+### <a name="Carbon-LDP-VolatileResource-Properties" />Properties
+```typescript 
+static RDF_CLASS:string 
+```
+
+
+
+
+
+### <a name="Carbon-LDP-VolatileResource-Factory" />Class Carbon.LDP.VolatileResource.Factory
+
+
+> Factory class form `Carbon.LDP.VolatileResource.Class` objects.
+
+
+
+
+#### <a name="Carbon-LDP-VolatileResource-Factory-Methods" />Methods
+##### is
+```typescript 
+static is( object:Object ):boolean
+```
+
+Return true if the object provided can be classified as a `Carbon.LDP.VolatileResource.Class` object.
+
+*Parameters*
+
+- object: Object to check.
+
+##### hasRDFClass
+```typescript 
+static hasRDFClass( object:Object ):boolean
+```
+
+Return true if the object provided have the RDF_CLASS of a VolatileResource, either if it's a Resource or a RDF object.
+
+*Parameters*
+
+- object: Object to check.
+
+
+
+
 ## <a name="Carbon-NS" />Module Carbon/NS
 
 
@@ -5036,6 +5255,14 @@ static AddMemberAction:string
 static RemoveMemberAction:string 
 ```
 
+```typescript 
+static ResponseDescription:string 
+```
+
+```typescript 
+static ResponseMetaData:string 
+```
+
 
 
 
@@ -5082,6 +5309,18 @@ static size:string
 
 ```typescript 
 static targetMember:string 
+```
+
+```typescript 
+static responseProperty:string 
+```
+
+```typescript 
+static responsePropertyResource:string 
+```
+
+```typescript 
+static eTag:string 
 ```
 
 

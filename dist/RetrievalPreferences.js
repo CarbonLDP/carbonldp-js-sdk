@@ -34,7 +34,7 @@ var Util = (function () {
                 if ("@id" in orderBy) {
                     var id = orderBy["@id"];
                     var descending = id.startsWith("-");
-                    stringOrder += (descending ? "-" : "") + "<" + (descending ? id.substr(1) : id) + ">";
+                    stringOrder += (descending ? "-" : "") + "<" + encodeURI(descending ? id.substr(1) : id).replace("#", "%23") + ">";
                 }
                 if ("@type" in orderBy) {
                     if (!stringOrder)
@@ -43,7 +43,7 @@ var Util = (function () {
                     if (allowedTypes.indexOf(type) === -1)
                         throw new IllegalArgumentError_1.default("The @type value specified is not valid.");
                     if (type !== "numeric")
-                        type = XSD.DataType[type];
+                        type = "<" + encodeURI(XSD.DataType[type]).replace("#", "%23") + ">";
                     stringOrder += ";" + type;
                 }
                 if ("@language" in orderBy) {

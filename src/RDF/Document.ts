@@ -47,7 +47,7 @@ export class Util {
 		let resources:RDFNode.Class[] = [];
 
 		for( let document of documents ) {
-			resources = resources.concat( document[ "@graph"] );
+			resources = resources.concat( document[ "@graph" ] );
 		}
 
 		return resources;

@@ -95,58 +95,58 @@ describe( module( "Carbon/RetrievalPreferences"), ():void => {
 
 			preferences = { orderBy: [ { "@id": "http://example.com/ns#property" } ] };
 			stringPreferences = RetrievalPreferences.Util.stringifyRetrievalPreferences( preferences );
-			expect( stringPreferences ).toBe( "?orderBy=<http://example.com/ns#property>" );
+			expect( stringPreferences ).toBe( `?orderBy=<http://example.com/ns%23property>` );
 
 			preferences = { orderBy: [ { "@id": "-http://example.com/ns#property" } ] };
 			stringPreferences = RetrievalPreferences.Util.stringifyRetrievalPreferences( preferences );
-			expect( stringPreferences ).toBe( "?orderBy=-<http://example.com/ns#property>" );
+			expect( stringPreferences ).toBe( `?orderBy=-<http://example.com/ns%23property>` );
 
 
 			preferences = { orderBy: [ { "@id": "http://example.com/ns#property", "@type": "numeric" } ] };
 			stringPreferences = RetrievalPreferences.Util.stringifyRetrievalPreferences( preferences );
-			expect( stringPreferences ).toBe( "?orderBy=<http://example.com/ns#property>;numeric" );
+			expect( stringPreferences ).toBe( `?orderBy=<http://example.com/ns%23property>;numeric` );
 
 			preferences = { orderBy: [ { "@id": "http://example.com/ns#property", "@type": "string" } ] };
 			stringPreferences = RetrievalPreferences.Util.stringifyRetrievalPreferences( preferences );
-			expect( stringPreferences ).toBe( "?orderBy=<http://example.com/ns#property>;http://www.w3.org/2001/XMLSchema#string" );
+			expect( stringPreferences ).toBe( `?orderBy=<http://example.com/ns%23property>;<http://www.w3.org/2001/XMLSchema%23string>` );
 
 			preferences = { orderBy: [ { "@id": "http://example.com/ns#property", "@type": "boolean" } ] };
 			stringPreferences = RetrievalPreferences.Util.stringifyRetrievalPreferences( preferences );
-			expect( stringPreferences ).toBe( "?orderBy=<http://example.com/ns#property>;http://www.w3.org/2001/XMLSchema#boolean" );
+			expect( stringPreferences ).toBe( `?orderBy=<http://example.com/ns%23property>;<http://www.w3.org/2001/XMLSchema%23boolean>` );
 
 			preferences = { orderBy: [ { "@id": "http://example.com/ns#property", "@type": "dateTime" } ] };
 			stringPreferences = RetrievalPreferences.Util.stringifyRetrievalPreferences( preferences );
-			expect( stringPreferences ).toBe( "?orderBy=<http://example.com/ns#property>;http://www.w3.org/2001/XMLSchema#dateTime" );
+			expect( stringPreferences ).toBe( `?orderBy=<http://example.com/ns%23property>;<http://www.w3.org/2001/XMLSchema%23dateTime>` );
 
 			preferences = { orderBy: [ { "@id": "-http://example.com/ns#property", "@type": "numeric" } ] };
 			stringPreferences = RetrievalPreferences.Util.stringifyRetrievalPreferences( preferences );
-			expect( stringPreferences ).toBe( "?orderBy=-<http://example.com/ns#property>;numeric" );
+			expect( stringPreferences ).toBe( `?orderBy=-<http://example.com/ns%23property>;numeric` );
 
 
 			preferences = { orderBy: [ { "@id": "http://example.com/ns#property", "@language": "es" } ] };
 			stringPreferences = RetrievalPreferences.Util.stringifyRetrievalPreferences( preferences );
-			expect( stringPreferences ).toBe( "?orderBy=<http://example.com/ns#property>;es" );
+			expect( stringPreferences ).toBe( `?orderBy=<http://example.com/ns%23property>;es` );
 
 			preferences = { orderBy: [ { "@id": "-http://example.com/ns#property", "@language": "es" } ] };
 			stringPreferences = RetrievalPreferences.Util.stringifyRetrievalPreferences( preferences );
-			expect( stringPreferences ).toBe( "?orderBy=-<http://example.com/ns#property>;es" );
+			expect( stringPreferences ).toBe( `?orderBy=-<http://example.com/ns%23property>;es` );
 
 			preferences = { orderBy: [ { "@id": "http://example.com/ns#property", "@language": "en" } ] };
 			stringPreferences = RetrievalPreferences.Util.stringifyRetrievalPreferences( preferences );
-			expect( stringPreferences ).toBe( "?orderBy=<http://example.com/ns#property>;en" );
+			expect( stringPreferences ).toBe( `?orderBy=<http://example.com/ns%23property>;en` );
 
 
 			preferences = { orderBy: [ { "@id": "http://example.com/ns#property", "@type": "numeric", "@language": "es" } ] };
 			stringPreferences = RetrievalPreferences.Util.stringifyRetrievalPreferences( preferences );
-			expect( stringPreferences ).toBe( "?orderBy=<http://example.com/ns#property>;numeric;es" );
+			expect( stringPreferences ).toBe( `?orderBy=<http://example.com/ns%23property>;numeric;es` );
 
 			preferences = { orderBy: [ { "@id": "-http://example.com/ns#property", "@type": "numeric", "@language": "es" } ] };
 			stringPreferences = RetrievalPreferences.Util.stringifyRetrievalPreferences( preferences );
-			expect( stringPreferences ).toBe( "?orderBy=-<http://example.com/ns#property>;numeric;es" );
+			expect( stringPreferences ).toBe( `?orderBy=-<http://example.com/ns%23property>;numeric;es` );
 
 			preferences = { orderBy: [ { "@id": "http://example.com/ns#property", "@language": "en", "@type": "boolean" } ] };
 			stringPreferences = RetrievalPreferences.Util.stringifyRetrievalPreferences( preferences );
-			expect( stringPreferences ).toBe( "?orderBy=<http://example.com/ns#property>;http://www.w3.org/2001/XMLSchema#boolean;en" );
+			expect( stringPreferences ).toBe( `?orderBy=<http://example.com/ns%23property>;<http://www.w3.org/2001/XMLSchema%23boolean>;en` );
 
 
 			preferences = { orderBy: [
@@ -154,7 +154,7 @@ describe( module( "Carbon/RetrievalPreferences"), ():void => {
 				{ "@id": "-http://example.com/ns#another-property", "@language": "en", "@type": "boolean" }
 			] };
 			stringPreferences = RetrievalPreferences.Util.stringifyRetrievalPreferences( preferences );
-			expect( stringPreferences ).toBe( "?orderBy=<http://example.com/ns#property>;numeric;es,-<http://example.com/ns#another-property>;http://www.w3.org/2001/XMLSchema#boolean;en" );
+			expect( stringPreferences ).toBe( `?orderBy=<http://example.com/ns%23property>;numeric;es,-<http://example.com/ns%23another-property>;<http://www.w3.org/2001/XMLSchema%23boolean>;en` );
 
 
 			preferences = { limit: 10, orderBy: [
@@ -162,21 +162,21 @@ describe( module( "Carbon/RetrievalPreferences"), ():void => {
 				{ "@id": "-http://example.com/ns#another-property", "@language": "en", "@type": "boolean" }
 			] };
 			stringPreferences = RetrievalPreferences.Util.stringifyRetrievalPreferences( preferences );
-			expect( stringPreferences ).toBe( "?limit=10&orderBy=<http://example.com/ns#property>;numeric;es,-<http://example.com/ns#another-property>;http://www.w3.org/2001/XMLSchema#boolean;en" );
+			expect( stringPreferences ).toBe( `?limit=10&orderBy=<http://example.com/ns%23property>;numeric;es,-<http://example.com/ns%23another-property>;<http://www.w3.org/2001/XMLSchema%23boolean>;en` );
 
 			preferences = { offset: 5, orderBy: [
 				{ "@id": "http://example.com/ns#property", "@type": "numeric", "@language": "es" },
 				{ "@id": "-http://example.com/ns#another-property", "@language": "en", "@type": "boolean" }
 			] };
 			stringPreferences = RetrievalPreferences.Util.stringifyRetrievalPreferences( preferences );
-			expect( stringPreferences ).toBe( "?offset=5&orderBy=<http://example.com/ns#property>;numeric;es,-<http://example.com/ns#another-property>;http://www.w3.org/2001/XMLSchema#boolean;en" );
+			expect( stringPreferences ).toBe( `?offset=5&orderBy=<http://example.com/ns%23property>;numeric;es,-<http://example.com/ns%23another-property>;<http://www.w3.org/2001/XMLSchema%23boolean>;en` );
 
 			preferences = { limit: 10, offset: 5, orderBy: [
 				{ "@id": "http://example.com/ns#property", "@type": "numeric", "@language": "es" },
 				{ "@id": "-http://example.com/ns#another-property", "@language": "en", "@type": "boolean" }
 			] };
 			stringPreferences = RetrievalPreferences.Util.stringifyRetrievalPreferences( preferences );
-			expect( stringPreferences ).toBe( "?limit=10&offset=5&orderBy=<http://example.com/ns#property>;numeric;es,-<http://example.com/ns#another-property>;http://www.w3.org/2001/XMLSchema#boolean;en" );
+			expect( stringPreferences ).toBe( `?limit=10&offset=5&orderBy=<http://example.com/ns%23property>;numeric;es,-<http://example.com/ns%23another-property>;<http://www.w3.org/2001/XMLSchema%23boolean>;en` );
 
 
 			preferences = <any> { orderBy: [ { "@type": "numeric" } ] };
