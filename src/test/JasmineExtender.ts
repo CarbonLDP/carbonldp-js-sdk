@@ -1,3 +1,7 @@
+import {IncomingMessage} from "http";
+import {Url} from "url";
+import {ClientRequest} from "http";
+import {isString} from "../Utils";
 export interface SuiteDescriptor {
 	access?:string;
 	suiteType:string;
@@ -341,4 +345,88 @@ export function hasEnumeral( name:string, description:string = null ):string {
 	};
 
 	return toJSON( descriptor );
+}
+
+if ( typeof XMLHttpRequest === "undefined" ) {
+	const nock:any = require('nock');
+	const URL:any = require( "url" );
+	let methods:string[] = [ "OPTIONS", "HEAD", "GET", "POST", "PUT", "PATCH", "DELETE" ];
+
+	jasmine.Ajax = <any> ( () => {
+
+		let requests:any[] = [];
+
+		// TODO Allow unmocked request with: `nock( /.*/ , { allowUnmocked: true } )`
+		let scope:any =  nock( /.*/ );
+		scope.persist();
+		scope.on( "request", updateRequests );
+
+		function install() {
+			nock.disableNetConnect();
+		}
+
+		function uninstall() {
+			requests = [];
+			nock.cleanAll();
+			nock.enableNetConnect();
+		}
+
+		function andReturn( requests:any[] ) {
+			return ( options:JasmineAjaxRequestStubReturnOptions ) => {
+				for ( let req of requests ) {
+					req.reply( options.status || 200, options.responseText || options.response || "", options.responseHeaders || {} );
+				}
+			};
+		}
+
+		function stubRequest( url:string , data:string, method:string = "*" ):any {
+			let path:any = url;
+			if ( isString( url ) ) {
+				let parsedURL:Url = URL.parse( url );
+				path = parsedURL.path;
+			}
+
+			let currentRequests:any[] = [];
+			let currentMethods:string[] = [ method ];
+			if ( method === "*" ) currentMethods = methods;
+
+			for ( let key of currentMethods ) {
+				let interceptor = scope.keyedInterceptors[ `${key} /.*/${path}` ];
+				if ( interceptor ) nock.removeInterceptor( interceptor[ 0 ] );
+
+				currentRequests.push( scope.intercept( path, key, data || undefined ) );
+			}
+
+			return {
+				method: method,
+				andReturn: andReturn( currentRequests )
+			};
+		}
+
+		function updateRequests( req:any, interceptor:any  ) {
+			requests.push( {
+				url: interceptor.uri,
+				method: interceptor.method,
+				requestHeaders: req.headers,
+			} );
+		}
+
+		function requestMostRecent() {
+			return requests[ requests.length - 1 ];
+		}
+		function requestAt ( index ) {
+			return requests[ index ];
+		}
+
+		return {
+			install: install,
+			uninstall: uninstall,
+			stubRequest: stubRequest,
+			requests: {
+				mostRecent: requestMostRecent,
+				at: requestAt,
+			},
+		};
+	})();
+
 }

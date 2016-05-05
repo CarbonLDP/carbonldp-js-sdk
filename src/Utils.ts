@@ -59,7 +59,7 @@ function isPlainObject( object:Object ):boolean {
 		&& ! isArray( object )
 		&& ! isDate( object )
 		&& ! isMap( object )
-		&& ! ( object instanceof Blob )
+		&& ! ( typeof Blob !== "undefined" && object instanceof Blob )
 		&& ! ( ( object + "" ) === "[object Set]" );
 }
 

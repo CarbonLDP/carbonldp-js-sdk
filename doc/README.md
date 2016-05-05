@@ -2005,28 +2005,53 @@ Create an AccessPoint of the document.
 
 ##### upload
 ```typescript 
-upload( parentURI:string,  blob:Blob,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[Carbon.Pointer.Class, Carbon.HTTP.Response.Class]>
+upload( parentURI:string,  data:Blob,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[Carbon.Pointer.Class, Carbon.HTTP.Response.Class]>
 ```
 
-Upload a File to the server, creating a child for the parent specified.
+Upload a binary data to the server, creating a child for the parent specified. This signature it's only when working in a Browser.
 
 *Parameters*
 
 - parentURI
-- blob
+- data
 - requestOptions
 
 ```typescript 
-upload( parentURI:string,  slug:string,  blob:Blob,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[Carbon.Pointer.Class, Carbon.HTTP.Response.Class]>
+upload( parentURI:string,  slug:string,  data:Blob,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[Carbon.Pointer.Class, Carbon.HTTP.Response.Class]>
 ```
 
-Upload a File to the server, creating a child for the parent specified.
+Upload a binary data to the server, creating a child for the parent specified. This signature it's only when working in a Browser.
 
 *Parameters*
 
 - parentURI
 - slug
-- blob
+- data
+- requestOptions
+
+```typescript 
+upload( parentURI:string,  data:Buffer,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[Carbon.Pointer.Class, Carbon.HTTP.Response.Class]>
+```
+
+Upload a binary data to the server, creating a child for the parent specified. This signature it's only when working in Node.js.
+
+*Parameters*
+
+- parentURI
+- data
+- requestOptions
+
+```typescript 
+upload( parentURI:string,  slug:string,  data:Buffer,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[Carbon.Pointer.Class, Carbon.HTTP.Response.Class]>
+```
+
+Upload a binary data to the server, creating a child for the parent specified. This signature it's only when working in Node.js.
+
+*Parameters*
+
+- parentURI
+- slug
+- data
 - requestOptions
 
 ##### listMembers
@@ -4197,10 +4222,23 @@ Set a Prefer header with `return=representation` in an options object request
 Class( request:XMLHttpRequest )
 ```
 
+Signature that only works when working in a Browser.
 
 *Parameters*
 
 - request
+
+```typescript 
+Class( request:ClientRequest,  data:string,  response:IncomingMessage )
+```
+
+Signature that only works when working in Node.js.
+
+*Parameters*
+
+- request
+- data
+- response
 
 
 #### <a name="Carbon-HTTP-Response-Class-Properties" />Properties
@@ -4221,10 +4259,10 @@ headers:Map<string, Carbon.HTTP.Header.Class>
 
 A map object containing the headers returned by the request
 ```typescript 
-request:XMLHttpRequest 
+request:XMLHttpRequest | ClientRequest 
 ```
 
-The XMLHttpRequest object that was provided in the constructor
+The XMLHttpRequest object that was provided in the constructor when working in a Browser, or The ClientRequest object when working with Node.js.
 
 #### <a name="Carbon-HTTP-Response-Class-Methods" />Methods
 
@@ -4909,25 +4947,46 @@ Remove the specified resource URI as a member of the container.
 
 ##### upload
 ```typescript 
-upload( slug:string,  blob:Blob ):Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>
+upload( slug:string,  data:Blob ):Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>
 ```
 
 Upload a File to the server as a child of the Container.
 
 *Parameters*
 
-- slug: The slug name for the file URI.
-- blob: Binary data to store in the server.
+- slug: The slug that will be used in the URI of the data.
+- data: Binary data to store in the server. The Blob works in a Browser.
 
 ```typescript 
-upload( blob:Blob ):Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>
+upload( data:Blob ):Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>
 ```
 
 Upload a File to the server as a child of the Container.
 
 *Parameters*
 
-- blob: Binary data to store in the server.
+- data: Binary data to store in the server. The Blob works in a Browser.
+
+```typescript 
+upload( slug:string,  data:Buffer ):Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>
+```
+
+Upload a File to the server as a child of the Container.
+
+*Parameters*
+
+- slug: The slug that will be used in the URI of the data.
+- data: Binary data to store in the server. The Buffer only works in Node.js.
+
+```typescript 
+upload( data:Buffer ):Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>
+```
+
+Upload a File to the server as a child of the Container.
+
+*Parameters*
+
+- data: Binary data to store in the server. The Buffer only works in Node.js.
 
 
 ## <a name="Carbon-LDP-RDFSource" />Module Carbon/LDP/RDFSource

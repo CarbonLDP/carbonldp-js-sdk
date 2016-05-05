@@ -397,11 +397,7 @@ describe( module( "Carbon" ), ():void => {
 			expect( carbon.getAPIDescription ).toBeDefined();
 			expect( Utils.isFunction( carbon.getAPIDescription ) ).toBe( true );
 
-			let promise:Promise<any>;
-			promise = carbon.getAPIDescription();
-			expect( promise instanceof Promise ).toBe( true );
-
-			jasmine.Ajax.requests.mostRecent().respondWith({
+			jasmine.Ajax.stubRequest( /api/, null, "GET" ).andReturn({
 				status: 200,
 				responseHeaders: {
 					"ETag": 'W/"123456789"'
@@ -426,6 +422,10 @@ describe( module( "Carbon" ), ():void => {
 				    "@id": "https://carbonldp.com/platform/api/"
 				}]`
 			});
+
+			let promise:Promise<any>;
+			promise = carbon.getAPIDescription();
+			expect( promise instanceof Promise ).toBe( true );
 
 			promise.then( ( description:APIDescription.Class ):void => {
 				expect( description ).toBeTruthy();

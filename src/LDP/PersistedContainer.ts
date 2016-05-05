@@ -27,6 +27,8 @@ export interface Class extends PersistedDocument.Class {
 
 	upload( slug:string, blob:Blob ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
 	upload( blob:Blob ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
+	upload( slug:string, blob:Buffer ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
+	upload( blob:Buffer ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
 }
 
 function addMember( member:Pointer.Class ): Promise<HTTP.Response.Class>;
@@ -83,16 +85,18 @@ function removeAllMembers(): Promise<HTTP.Response.Class> {
 	return that._documents.removeAllMembers( that.id );
 }
 
-function upload( slug:string, blob:Blob ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
-function upload( blob:Blob ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
-function upload( slugOrBlob:any, blob:any = null ):Promise<[ Pointer.Class, HTTP.Response.Class ]> {
-	let slug:string = Utils.isString( slugOrBlob ) ? slugOrBlob : null;
-	blob =  slug ? blob : slugOrBlob;
+function upload( slug:string, data:Buffer ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
+function upload( data:Buffer ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
+function upload( slug:string, data:Blob ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
+function upload( data:Blob ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
+function upload( slugOrData:any, data:any = null ):Promise<[ Pointer.Class, HTTP.Response.Class ]> {
+	let slug:string = Utils.isString( slugOrData ) ? slugOrData : null;
+	data =  slug ? data : slugOrData;
 
 	if( slug ) {
-		return this._documents.upload( this.id, slug, blob );
+		return this._documents.upload( this.id, slug, data );
 	} else {
-		return this._documents.upload( this.id, blob );
+		return this._documents.upload( this.id, data );
 	}
 }
 

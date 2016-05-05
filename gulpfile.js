@@ -22,6 +22,8 @@ const tslint = require( "gulp-tslint" );
 const Builder = require( "systemjs-builder" );
 const jeditor = require( "gulp-json-editor" );
 
+const jasmine = require( "gulp-jasmine" );
+
 let config = {
 	source: {
 		typescript: [
@@ -29,13 +31,16 @@ let config = {
 			"!src/**/*.spec.ts",
 		    "!src/test/**"
 		],
+		all: "src/**/*.ts",
+		test: "/**/*.spec.js",
 		main: "src/Carbon"
 	},
 	dist: {
 		sfxBundle: "dist/bundles/Carbon.sfx.js",
 		tsOutput: "dist",
 		all: "dist/**/*",
-		doc: "doc/*"
+		doc: "doc/*",
+		temp: "temp"
 	},
 	bundledDefinition: {
 		excludedFiles: [
@@ -57,7 +62,7 @@ gulp.task( "ts-lint", () => {
 	;
 });
 
-gulp.task( "test", ( done ) => {
+gulp.task( "test:browser", ( done ) => {
 	new karma.Server({
 		configFile: __dirname + "/karma.conf.js",
 		singleRun: true
@@ -71,6 +76,34 @@ gulp.task( "test:debug", ( done ) => {
 		singleRun: false
 	}, done ).start();
 });
+
+gulp.task( "clean:temp", () => {
+	del.sync( config.dist.temp );
+});
+
+gulp.task( "test:node:compile", [ "clean:temp" ], () => {
+	let tsProject = ts.createProject( "tsconfig.json" );
+	let tsResults = gulp.src( config.source.all )
+		.pipe( ts( tsProject ) );
+
+	return tsResults.js
+		.pipe( gulp.dest( config.dist.temp ) );
+});
+
+gulp.task( "test:node:exec", [ "test:node:compile" ], () => {
+	return gulp.src( config.dist.temp + config.source.test )
+		.pipe( jasmine() );
+});
+
+gulp.task( "test:node", ( done ) => {
+	runSequence(
+		"test:node:exec",
+		"clean:temp",
+		done
+	);
+});
+
+gulp.task( "test", [ "test:browser", "test:node" ] );
 
 gulp.task( "generate-doc", ( done ) => {
 	new karma.Server({

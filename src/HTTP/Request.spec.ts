@@ -21,7 +21,6 @@ import Parser from "./JSONParser";
 import * as NS from "./../NS";
 
 import * as Request from "./Request";
-import {hasInterface} from "./../test/JasmineExtender";
 
 describe( module( "Carbon/HTTP/Request" ), function ():void {
 
@@ -82,15 +81,15 @@ describe( module( "Carbon/HTTP/Request" ), function ():void {
 
 		beforeEach( ():void => {
 			jasmine.Ajax.install();
-			jasmine.Ajax.stubRequest( "/200", null, "OPTIONS" ).andReturn( responseOptions );
-			jasmine.Ajax.stubRequest( "/200", null, "HEAD" ).andReturn( responseHeaders );
-			jasmine.Ajax.stubRequest( "/200", null, "GET" ).andReturn( responseFull );
-			jasmine.Ajax.stubRequest( "/200", null, "POST" ).andReturn( responseFull );
-			jasmine.Ajax.stubRequest( "/200", null, "PUT" ).andReturn( responseFull );
-			jasmine.Ajax.stubRequest( "/200", null, "PATCH" ).andReturn( responseFull );
-			jasmine.Ajax.stubRequest( "/200", null, "DELETE" ).andReturn( responseFull );
-			jasmine.Ajax.stubRequest( "/404", null ).andReturn( { status: 404 } );
-			jasmine.Ajax.stubRequest( "/500", null ).andReturn( { status: 500 } );
+			jasmine.Ajax.stubRequest( "http://example.com/200", null, "OPTIONS" ).andReturn( responseOptions );
+			jasmine.Ajax.stubRequest( "http://example.com/200", null, "HEAD" ).andReturn( responseHeaders );
+			jasmine.Ajax.stubRequest( "http://example.com/200", null, "GET" ).andReturn( responseFull );
+			jasmine.Ajax.stubRequest( "http://example.com/200", null, "POST" ).andReturn( responseFull );
+			jasmine.Ajax.stubRequest( "http://example.com/200", null, "PUT" ).andReturn( responseFull );
+			jasmine.Ajax.stubRequest( "http://example.com/200", null, "PATCH" ).andReturn( responseFull );
+			jasmine.Ajax.stubRequest( "http://example.com/200", null, "DELETE" ).andReturn( responseFull );
+			jasmine.Ajax.stubRequest( "http://example.com/404", null ).andReturn( { status: 404 } );
+			jasmine.Ajax.stubRequest( "http://example.com/500", null ).andReturn( { status: 500 } );
 		} );
 
 		afterEach( function ():void {
@@ -125,39 +124,39 @@ describe( module( "Carbon/HTTP/Request" ), function ():void {
 			let promises:Promise<any>[] = [];
 			let promise:Promise<any>;
 
-			promise = Request.Service.head( "/200" );
+			promise = Request.Service.head( "http://example.com/200" );
 			testPromise( promise );
 			promises.push( promise.then( function ( response:Response ):void {
 				testHTTPResponse( response );
 				expect( response.status ).toEqual( 200 );
 				expect( response.data ).toEqual( "" );
 				testHTTPResponseHeaders( response, responseHeaders.responseHeaders );
-			}, done.fail ) );
+			} ) );
 
-			promise = Request.Service.head( "/200", options );
+			promise = Request.Service.head( "http://example.com/200", options );
 			testPromise( promise );
 			promises.push( promise.then( function ( response:Response ):void {
 				testHTTPResponse( response );
 				expect( response.status ).toEqual( 200 );
 				expect( response.data ).toEqual( "" );
 				testHTTPResponseHeaders( response, responseHeaders.responseHeaders );
-			}, done ) );
+			} ) );
 
-			promise = Request.Service.head( "/404" );
+			promise = Request.Service.head( "http://example.com/404" );
 			testPromise( promise );
 			promise = promise.catch( function ( exception:Error ):void {
 				expect( exception instanceof NotFoundError ).toBe( true );
 			} );
 			promises.push( promise );
 
-			promise = Request.Service.head( "/500", options );
+			promise = Request.Service.head( "http://example.com/500", options );
 			testPromise( promise );
 			promise = promise.catch( function ( exception:Error ):void {
 				expect( exception instanceof InternalServerErrorError ).toBe( true );
 			} );
 			promises.push( promise );
 
-			Promise.all( promises ).then( done, done.fail );
+			Promise.all( promises ).then( done ).catch( done.fail );
 		} );
 
 		it( hasMethod(
@@ -167,46 +166,46 @@ describe( module( "Carbon/HTTP/Request" ), function ():void {
 				{ name: "options", type: "object", optional: true, default: "{ sendCredentialsOnCORS: true }" }
 			],
 			{ type: "Promise<Carbon.HTTP.Response>" }
-		), ( done ):void => {
+		), ( done:{ ():void, fail:() => void } ):void => {
 			expect( Request.Service.head ).toBeDefined();
 			expect( Utils.isFunction( Request.Service.head ) ).toBe( true );
 
 			let promises:Promise<any>[] = [];
 			let promise:Promise<any>;
 
-			promise = Request.Service.options( "/200" );
+			promise = Request.Service.options( "http://example.com/200" );
 			testPromise( promise );
 			promises.push( promise.then( function ( response:Response ):void {
 				testHTTPResponse( response );
 				expect( response.status ).toEqual( 200 );
 				testHTTPResponseData( response, responseOptions.responseText );
 				testHTTPResponseHeaders( response, responseOptions.responseHeaders );
-			}, done.fail ) );
+			} ) );
 
-			promise = Request.Service.options( "/200", options );
+			promise = Request.Service.options( "http://example.com/200", options );
 			testPromise( promise );
 			promises.push( promise.then( function ( response:Response ):void {
 				testHTTPResponse( response );
 				expect( response.status ).toEqual( 200 );
 				testHTTPResponseData( response, responseOptions.responseText );
 				testHTTPResponseHeaders( response, responseOptions.responseHeaders );
-			}, done.fail ) );
+			} ) );
 
-			promise = Request.Service.options( "/404" );
+			promise = Request.Service.options( "http://example.com/404" );
 			testPromise( promise );
 			promise = promise.catch( function ( exception:Error ):void {
 				expect( exception instanceof NotFoundError ).toBe( true );
 			} );
 			promises.push( promise );
 
-			promise = Request.Service.options( "/500", options );
+			promise = Request.Service.options( "http://example.com/500", options );
 			testPromise( promise );
 			promise = promise.catch( function ( exception:Error ):void {
 				expect( exception instanceof InternalServerErrorError ).toBe( true );
 			} );
 			promises.push( promise );
 
-			Promise.all( promises ).then( done, done.fail );
+			Promise.all( promises ).then( done ).catch( done.fail );
 		} );
 
 		describe( method(
@@ -220,47 +219,47 @@ describe( module( "Carbon/HTTP/Request" ), function ():void {
 					{ name: "options", type: "object", optional: true, default: "{ sendCredentialsOnCORS: true }" }
 				],
 				{ type: "Promise<Carbon.HTTP.Response>" }
-			), ( done ):void => {
+			), ( done:{ ():void, fail:() => void } ):void => {
 				expect( Request.Service.get ).toBeDefined();
 				expect( Utils.isFunction( Request.Service.get ) ).toBe( true );
 
 				let promises:Promise<any>[] = [];
 				let promise:Promise<any>;
 
-				promise = Request.Service.get( "/200" );
+				promise = Request.Service.get( "http://example.com/200" );
 				testPromise( promise );
 				promises.push( promise.then( function ( response:Response ):void {
 					testHTTPResponse( response );
 					expect( response.status ).toEqual( 200 );
 					testHTTPResponseHeaders( response, responseFull.responseHeaders );
 					testHTTPResponseData( response, responseFull.responseText );
-				}, done.fail ) );
+				} ) );
 
-				promise = Request.Service.get( "/200", options );
+				promise = Request.Service.get( "http://example.com/200", options );
 				testPromise( promise );
 				promises.push( promise.then( function ( response:Response ):void {
 					testHTTPResponse( response );
 					expect( response.status ).toEqual( 200 );
 					testHTTPResponseHeaders( response, responseFull.responseHeaders );
 					testHTTPResponseData( response, responseFull.responseText );
-				}, done.fail ) );
+				} ) );
 
 
-				promise = Request.Service.get( "/404" );
+				promise = Request.Service.get( "http://example.com/404" );
 				testPromise( promise );
 				promise = promise.catch( function ( exception:Error ):void {
 					expect( exception instanceof NotFoundError ).toBe( true );
 				} );
 				promises.push( promise );
 
-				promise = Request.Service.get( "/500", options );
+				promise = Request.Service.get( "http://example.com/500", options );
 				testPromise( promise );
 				promise = promise.catch( function ( exception:Error ):void {
 					expect( exception instanceof InternalServerErrorError ).toBe( true );
 				} );
 				promises.push( promise );
 
-				Promise.all( promises ).then( done, done.fail );
+				Promise.all( promises ).then( done ).catch( done.fail );
 			});
 
 			it( hasSignature(
@@ -270,14 +269,14 @@ describe( module( "Carbon/HTTP/Request" ), function ():void {
 					{ name: "parser", type: "Carbon.HTTP.Parser<T>", optional: true }
 				],
 				{ type: "Promise<[Object, Carbon.HTTP.Response]>" }
-			), ( done ):void => {
+			), ( done:{ ():void, fail:() => void } ):void => {
 				expect( Request.Service.get ).toBeDefined();
 				expect( Utils.isFunction( Request.Service.get ) ).toBe( true );
 
 				let promises:Promise<any>[] = [];
 				let promise:Promise<any>;
 
-				promise = Request.Service.get( "/200", null, parser );
+				promise = Request.Service.get( "http://example.com/200", null, parser );
 				testPromise( promise );
 				promises.push( promise.then( function ( [object, response]:[Object, Response] ):Promise<any> {
 					testHTTPResponse( response );
@@ -287,9 +286,9 @@ describe( module( "Carbon/HTTP/Request" ), function ():void {
 					return parser.parse( responseFull.responseText ).then( ( parsedObject:Object ) => {
 						testDataParsed( object, parsedObject );
 					});
-				}, done.fail ) );
+				} ) );
 
-				promise = Request.Service.get( "/200", options, parser );
+				promise = Request.Service.get( "http://example.com/200", options, parser );
 				testPromise( promise );
 				promises.push( promise.then( function ( [object, response]:[Object, Response] ):Promise<any> {
 					testHTTPResponse( response );
@@ -299,24 +298,24 @@ describe( module( "Carbon/HTTP/Request" ), function ():void {
 					return parser.parse( responseFull.responseText ).then( ( parsedObject:Object ) => {
 						testDataParsed( object, parsedObject );
 					});
-				}, done.fail ) );
+				} ) );
 
 
-				promise = Request.Service.get( "/404", null, parser );
+				promise = Request.Service.get( "http://example.com/404", null, parser );
 				testPromise( promise );
 				promise = promise.catch( function ( exception:Error ):void {
 					expect( exception instanceof NotFoundError ).toBe( true );
 				} );
 				promises.push( promise );
 
-				promise = Request.Service.get( "/500", options, parser );
+				promise = Request.Service.get( "http://example.com/500", options, parser );
 				testPromise( promise );
 				promise = promise.catch( function ( exception:Error ):void {
 					expect( exception instanceof InternalServerErrorError ).toBe( true );
 				} );
 				promises.push( promise );
 
-				Promise.all( promises ).then( done, done.fail );
+				Promise.all( promises ).then( done ).catch( done.fail );
 			});
 
 		});
@@ -333,47 +332,47 @@ describe( module( "Carbon/HTTP/Request" ), function ():void {
 					{ name: "options", type: "object", optional: true, default: "{ sendCredentialsOnCORS: true }" }
 				],
 				{ type: "Promise<Carbon.HTTP.Response>" }
-			), ( done ):void => {
+			), ( done:{ ():void, fail:() => void } ):void => {
 				expect( Request.Service.post ).toBeDefined();
 				expect( Utils.isFunction( Request.Service.post ) ).toBe( true );
 
 				let promises:Promise<any>[] = [];
 				let promise:Promise<any>;
 
-				promise = Request.Service.post( "/200", "some body data" );
+				promise = Request.Service.post( "http://example.com/200", "some body data" );
 				testPromise( promise );
 				promises.push( promise.then( function ( response:Response ):void {
 					testHTTPResponse( response );
 					expect( response.status ).toEqual( 200 );
 					testHTTPResponseHeaders( response, responseFull.responseHeaders );
 					testHTTPResponseData( response, responseFull.responseText );
-				}, done.fail ) );
+				} ) );
 
-				promise = Request.Service.post( "/200", "some body data", options );
+				promise = Request.Service.post( "http://example.com/200", "some body data", options );
 				testPromise( promise );
 				promises.push( promise.then( function ( response:Response ):void {
 					testHTTPResponse( response );
 					expect( response.status ).toEqual( 200 );
 					testHTTPResponseHeaders( response, responseFull.responseHeaders );
 					testHTTPResponseData( response, responseFull.responseText );
-				}, done.fail ) );
+				} ) );
 
 
-				promise = Request.Service.post( "/404", "some body data" );
+				promise = Request.Service.post( "http://example.com/404", "some body data" );
 				testPromise( promise );
 				promise = promise.catch( function ( exception:Error ):void {
 					expect( exception instanceof NotFoundError ).toBe( true );
 				} );
 				promises.push( promise );
 
-				promise = Request.Service.post( "/500", "some body data", options );
+				promise = Request.Service.post( "http://example.com/500", "some body data", options );
 				testPromise( promise );
 				promise = promise.catch( function ( exception:Error ):void {
 					expect( exception instanceof InternalServerErrorError ).toBe( true );
 				} );
 				promises.push( promise );
 
-				Promise.all( promises ).then( done, done.fail );
+				Promise.all( promises ).then( done ).catch( done.fail );
 			});
 
 			it( hasSignature(
@@ -383,14 +382,14 @@ describe( module( "Carbon/HTTP/Request" ), function ():void {
 					{ name: "parser", type: "Carbon.HTTP.Parser<T>", optional: true }
 				],
 				{ type: "Promise<Carbon.HTTP.Response>" }
-			), ( done ):void => {
+			), ( done:{ ():void, fail:() => void } ):void => {
 				expect( Request.Service.post ).toBeDefined();
 				expect( Utils.isFunction( Request.Service.post ) ).toBe( true );
 
 				let promises:Promise<any>[] = [];
 				let promise:Promise<any>;
 
-				promise = Request.Service.post( "/200", "some body data", null, parser );
+				promise = Request.Service.post( "http://example.com/200", "some body data", null, parser );
 				testPromise( promise );
 				promises.push( promise.then( function ( [object, response]:[Object, Response] ):Promise<any> {
 					testHTTPResponse( response );
@@ -400,9 +399,9 @@ describe( module( "Carbon/HTTP/Request" ), function ():void {
 					return parser.parse( responseFull.responseText ).then( ( parsedObject:Object ) => {
 						testDataParsed( object, parsedObject );
 					});
-				}, done.fail ) );
+				} ) );
 
-				promise = Request.Service.post( "/200", "some body data", options, parser );
+				promise = Request.Service.post( "http://example.com/200", "some body data", options, parser );
 				testPromise( promise );
 				promises.push( promise.then( function ( [object, response]:[Object, Response] ):Promise<any> {
 					testHTTPResponse( response );
@@ -412,24 +411,24 @@ describe( module( "Carbon/HTTP/Request" ), function ():void {
 					return parser.parse( responseFull.responseText ).then( ( parsedObject:Object ) => {
 						testDataParsed( object, parsedObject );
 					});
-				}, done.fail ) );
+				} ) );
 
 
-				promise = Request.Service.post( "/404", "some body data", null, parser );
+				promise = Request.Service.post( "http://example.com/404", "some body data", null, parser );
 				testPromise( promise );
 				promise = promise.catch( function ( exception:Error ):void {
 					expect( exception instanceof NotFoundError ).toBe( true );
 				} );
 				promises.push( promise );
 
-				promise = Request.Service.post( "/500", "some body data", options, parser );
+				promise = Request.Service.post( "http://example.com/500", "some body data", options, parser );
 				testPromise( promise );
 				promise = promise.catch( function ( exception:Error ):void {
 					expect( exception instanceof InternalServerErrorError ).toBe( true );
 				} );
 				promises.push( promise );
 
-				Promise.all( promises ).then( done, done.fail );
+				Promise.all( promises ).then( done ).catch( done.fail );
 			});
 
 		});
@@ -446,47 +445,47 @@ describe( module( "Carbon/HTTP/Request" ), function ():void {
 					{ name: "options", type: "object", optional: true, default: "{ sendCredentialsOnCORS: true }" }
 				],
 				{ type: "Promise<Carbon.HTTP.Response>" }
-			), ( done ):void => {
+			), ( done:{ ():void, fail:() => void } ):void => {
 				expect( Request.Service.put ).toBeDefined();
 				expect( Utils.isFunction( Request.Service.put ) ).toBe( true );
 
 				let promises:Promise<any>[] = [];
 				let promise:Promise<any>;
 
-				promise = Request.Service.put( "/200", "some body data" );
+				promise = Request.Service.put( "http://example.com/200", "some body data" );
 				testPromise( promise );
 				promises.push( promise.then( function ( response:Response ):void {
 					testHTTPResponse( response );
 					expect( response.status ).toEqual( 200 );
 					testHTTPResponseHeaders( response, responseFull.responseHeaders );
 					testHTTPResponseData( response, responseFull.responseText );
-				}, done.fail ) );
+				} ) );
 
-				promise = Request.Service.put( "/200", "some body data", options );
+				promise = Request.Service.put( "http://example.com/200", "some body data", options );
 				testPromise( promise );
 				promises.push( promise.then( function ( response:Response ):void {
 					testHTTPResponse( response );
 					expect( response.status ).toEqual( 200 );
 					testHTTPResponseHeaders( response, responseFull.responseHeaders );
 					testHTTPResponseData( response, responseFull.responseText );
-				}, done.fail ) );
+				} ) );
 
 
-				promise = Request.Service.put( "/404", "some body data" );
+				promise = Request.Service.put( "http://example.com/404", "some body data" );
 				testPromise( promise );
 				promise = promise.catch( function ( exception:Error ):void {
 					expect( exception instanceof NotFoundError ).toBe( true );
 				} );
 				promises.push( promise );
 
-				promise = Request.Service.put( "/500", "some body data", options );
+				promise = Request.Service.put( "http://example.com/500", "some body data", options );
 				testPromise( promise );
 				promise = promise.catch( function ( exception:Error ):void {
 					expect( exception instanceof InternalServerErrorError ).toBe( true );
 				} );
 				promises.push( promise );
 
-				Promise.all( promises ).then( done, done.fail );
+				Promise.all( promises ).then( done ).catch( done.fail );
 			});
 
 			it( hasSignature(
@@ -496,14 +495,14 @@ describe( module( "Carbon/HTTP/Request" ), function ():void {
 					{ name: "parser", type: "Carbon.HTTP.Parser<T>", optional: true }
 				],
 				{ type: "Promise<Carbon.HTTP.Response>" }
-			), ( done ):void => {
+			), ( done:{ ():void, fail:() => void } ):void => {
 				expect( Request.Service.put ).toBeDefined();
 				expect( Utils.isFunction( Request.Service.put ) ).toBe( true );
 
 				let promises:Promise<any>[] = [];
 				let promise:Promise<any>;
 
-				promise = Request.Service.put( "/200", "some body data", null, parser );
+				promise = Request.Service.put( "http://example.com/200", "some body data", null, parser );
 				testPromise( promise );
 				promises.push( promise.then( function ( [object, response]:[Object, Response] ):Promise<any> {
 					testHTTPResponse( response );
@@ -513,9 +512,9 @@ describe( module( "Carbon/HTTP/Request" ), function ():void {
 					return parser.parse( responseFull.responseText ).then( ( parsedObject:Object ) => {
 						testDataParsed( object, parsedObject );
 					});
-				}, done.fail ) );
+				} ) );
 
-				promise = Request.Service.put( "/200", "some body data", options, parser );
+				promise = Request.Service.put( "http://example.com/200", "some body data", options, parser );
 				testPromise( promise );
 				promises.push( promise.then( function ( [object, response]:[Object, Response] ):Promise<any> {
 					testHTTPResponse( response );
@@ -525,24 +524,24 @@ describe( module( "Carbon/HTTP/Request" ), function ():void {
 					return parser.parse( responseFull.responseText ).then( ( parsedObject:Object ) => {
 						testDataParsed( object, parsedObject );
 					});
-				}, done.fail ) );
+				} ) );
 
 
-				promise = Request.Service.put( "/404", "some body data", null, parser );
+				promise = Request.Service.put( "http://example.com/404", "some body data", null, parser );
 				testPromise( promise );
 				promise = promise.catch( function ( exception:Error ):void {
 					expect( exception instanceof NotFoundError ).toBe( true );
 				} );
 				promises.push( promise );
 
-				promise = Request.Service.put( "/500", "some body data", options, parser );
+				promise = Request.Service.put( "http://example.com/500", "some body data", options, parser );
 				testPromise( promise );
 				promise = promise.catch( function ( exception:Error ):void {
 					expect( exception instanceof InternalServerErrorError ).toBe( true );
 				} );
 				promises.push( promise );
 
-				Promise.all( promises ).then( done, done.fail );
+				Promise.all( promises ).then( done ).catch( done.fail );
 			});
 
 		});
@@ -559,47 +558,47 @@ describe( module( "Carbon/HTTP/Request" ), function ():void {
 					{ name: "options", type: "object", optional: true, default: "{ sendCredentialsOnCORS: true }" }
 				],
 				{ type: "Promise<Carbon.HTTP.Response>" }
-			), ( done ):void => {
+			), ( done:{ ():void, fail:() => void } ):void => {
 				expect( Request.Service.patch ).toBeDefined();
 				expect( Utils.isFunction( Request.Service.patch ) ).toBe( true );
 
 				let promises:Promise<any>[] = [];
 				let promise:Promise<any>;
 
-				promise = Request.Service.patch( "/200", "some body data" );
+				promise = Request.Service.patch( "http://example.com/200", "some body data" );
 				testPromise( promise );
 				promises.push( promise.then( function ( response:Response ):void {
 					testHTTPResponse( response );
 					expect( response.status ).toEqual( 200 );
 					testHTTPResponseHeaders( response, responseFull.responseHeaders );
 					testHTTPResponseData( response, responseFull.responseText );
-				}, done.fail ) );
+				} ) );
 
-				promise = Request.Service.patch( "/200", "some body data", options );
+				promise = Request.Service.patch( "http://example.com/200", "some body data", options );
 				testPromise( promise );
 				promises.push( promise.then( function ( response:Response ):void {
 					testHTTPResponse( response );
 					expect( response.status ).toEqual( 200 );
 					testHTTPResponseHeaders( response, responseFull.responseHeaders );
 					testHTTPResponseData( response, responseFull.responseText );
-				}, done.fail ) );
+				} ) );
 
 
-				promise = Request.Service.patch( "/404", "some body data" );
+				promise = Request.Service.patch( "http://example.com/404", "some body data" );
 				testPromise( promise );
 				promise = promise.catch( function ( exception:Error ):void {
 					expect( exception instanceof NotFoundError ).toBe( true );
 				} );
 				promises.push( promise );
 
-				promise = Request.Service.patch( "/500", "some body data", options );
+				promise = Request.Service.patch( "http://example.com/500", "some body data", options );
 				testPromise( promise );
 				promise = promise.catch( function ( exception:Error ):void {
 					expect( exception instanceof InternalServerErrorError ).toBe( true );
 				} );
 				promises.push( promise );
 
-				Promise.all( promises ).then( done, done.fail );
+				Promise.all( promises ).then( done ).catch( done.fail );
 			});
 
 			it( hasSignature(
@@ -609,14 +608,14 @@ describe( module( "Carbon/HTTP/Request" ), function ():void {
 					{ name: "parser", type: "Carbon.HTTP.Parser<T>", optional: true }
 				],
 				{ type: "Promise<Carbon.HTTP.Response>" }
-			), ( done ):void => {
+			), ( done:{ ():void, fail:() => void } ):void => {
 				expect( Request.Service.patch ).toBeDefined();
 				expect( Utils.isFunction( Request.Service.patch ) ).toBe( true );
 
 				let promises:Promise<any>[] = [];
 				let promise:Promise<any>;
 
-				promise = Request.Service.patch( "/200", "some body data", null, parser );
+				promise = Request.Service.patch( "http://example.com/200", "some body data", null, parser );
 				testPromise( promise );
 				promises.push( promise.then( function ( [object, response]:[Object, Response] ):Promise<any> {
 					testHTTPResponse( response );
@@ -626,9 +625,9 @@ describe( module( "Carbon/HTTP/Request" ), function ():void {
 					return parser.parse( responseFull.responseText ).then( ( parsedObject:Object ) => {
 						testDataParsed( object, parsedObject );
 					});
-				}, done.fail ) );
+				} ) );
 
-				promise = Request.Service.patch( "/200", "some body data", options, parser );
+				promise = Request.Service.patch( "http://example.com/200", "some body data", options, parser );
 				testPromise( promise );
 				promises.push( promise.then( function ( [object, response]:[Object, Response] ):Promise<any> {
 					testHTTPResponse( response );
@@ -638,24 +637,24 @@ describe( module( "Carbon/HTTP/Request" ), function ():void {
 					return parser.parse( responseFull.responseText ).then( ( parsedObject:Object ) => {
 						testDataParsed( object, parsedObject );
 					});
-				}, done.fail ) );
+				} ) );
 
 
-				promise = Request.Service.patch( "/404", "some body data", null, parser );
+				promise = Request.Service.patch( "http://example.com/404", "some body data", null, parser );
 				testPromise( promise );
 				promise = promise.catch( function ( exception:Error ):void {
 					expect( exception instanceof NotFoundError ).toBe( true );
 				} );
 				promises.push( promise );
 
-				promise = Request.Service.patch( "/500", "some body data", options, parser );
+				promise = Request.Service.patch( "http://example.com/500", "some body data", options, parser );
 				testPromise( promise );
 				promise = promise.catch( function ( exception:Error ):void {
 					expect( exception instanceof InternalServerErrorError ).toBe( true );
 				} );
 				promises.push( promise );
 
-				Promise.all( promises ).then( done, done.fail );
+				Promise.all( promises ).then( done ).catch( done.fail );
 			});
 
 		});
@@ -672,47 +671,47 @@ describe( module( "Carbon/HTTP/Request" ), function ():void {
 					{ name: "options", type: "object", optional: true, default: "{ sendCredentialsOnCORS: true }" }
 				],
 				{ type: "Promise<Carbon.HTTP.Response>" }
-			), ( done ):void => {
+			), ( done:{ ():void, fail:() => void } ):void => {
 				expect( Request.Service.delete ).toBeDefined();
 				expect( Utils.isFunction( Request.Service.delete ) ).toBe( true );
 
 				let promises:Promise<any>[] = [];
 				let promise:Promise<any>;
 
-				promise = Request.Service.delete( "/200", "some body data" );
+				promise = Request.Service.delete( "http://example.com/200", "some body data" );
 				testPromise( promise );
 				promises.push( promise.then( function ( response:Response ):void {
 					testHTTPResponse( response );
 					expect( response.status ).toEqual( 200 );
 					testHTTPResponseHeaders( response, responseFull.responseHeaders );
 					testHTTPResponseData( response, responseFull.responseText );
-				}, done.fail ) );
+				} ) );
 
-				promise = Request.Service.delete( "/200", "some body data", options );
+				promise = Request.Service.delete( "http://example.com/200", "some body data", options );
 				testPromise( promise );
 				promises.push( promise.then( function ( response:Response ):void {
 					testHTTPResponse( response );
 					expect( response.status ).toEqual( 200 );
 					testHTTPResponseHeaders( response, responseFull.responseHeaders );
 					testHTTPResponseData( response, responseFull.responseText );
-				}, done.fail ) );
+				} ) );
 
 
-				promise = Request.Service.delete( "/404", "some body data" );
+				promise = Request.Service.delete( "http://example.com/404", "some body data" );
 				testPromise( promise );
 				promise = promise.catch( function ( exception:Error ):void {
 					expect( exception instanceof NotFoundError ).toBe( true );
 				} );
 				promises.push( promise );
 
-				promise = Request.Service.delete( "/500", "some body data", options );
+				promise = Request.Service.delete( "http://example.com/500", "some body data", options );
 				testPromise( promise );
 				promise = promise.catch( function ( exception:Error ):void {
 					expect( exception instanceof InternalServerErrorError ).toBe( true );
 				} );
 				promises.push( promise );
 
-				Promise.all( promises ).then( done, done.fail );
+				Promise.all( promises ).then( done ).catch( done.fail );
 			});
 
 			it( hasSignature(
@@ -722,14 +721,14 @@ describe( module( "Carbon/HTTP/Request" ), function ():void {
 					{ name: "parser", type: "Carbon.HTTP.Parser<T>", optional: true }
 				],
 				{ type: "Promise<Carbon.HTTP.Response>" }
-			), ( done ):void => {
+			), ( done:{ ():void, fail:() => void } ):void => {
 				expect( Request.Service.delete ).toBeDefined();
 				expect( Utils.isFunction( Request.Service.delete ) ).toBe( true );
 
 				let promises:Promise<any>[] = [];
 				let promise:Promise<any>;
 
-				promise = Request.Service.delete( "/200", "some body data", null, parser );
+				promise = Request.Service.delete( "http://example.com/200", "some body data", null, parser );
 				testPromise( promise );
 				promises.push( promise.then( function ( [object, response]:[Object, Response] ):Promise<any> {
 					testHTTPResponse( response );
@@ -739,9 +738,9 @@ describe( module( "Carbon/HTTP/Request" ), function ():void {
 					return parser.parse( responseFull.responseText ).then( ( parsedObject:Object ) => {
 						testDataParsed( object, parsedObject );
 					});
-				}, done.fail ) );
+				} ) );
 
-				promise = Request.Service.delete( "/200", "some body data", options, parser );
+				promise = Request.Service.delete( "http://example.com/200", "some body data", options, parser );
 				testPromise( promise );
 				promises.push( promise.then( function ( [object, response]:[Object, Response] ):Promise<any> {
 					testHTTPResponse( response );
@@ -751,24 +750,24 @@ describe( module( "Carbon/HTTP/Request" ), function ():void {
 					return parser.parse( responseFull.responseText ).then( ( parsedObject:Object ) => {
 						testDataParsed( object, parsedObject );
 					});
-				}, done.fail ) );
+				} ) );
 
 
-				promise = Request.Service.delete( "/404", "some body data", null, parser );
+				promise = Request.Service.delete( "http://example.com/404", "some body data", null, parser );
 				testPromise( promise );
 				promise = promise.catch( function ( exception:Error ):void {
 					expect( exception instanceof NotFoundError ).toBe( true );
 				} );
 				promises.push( promise );
 
-				promise = Request.Service.delete( "/500", "some body data", options, parser );
+				promise = Request.Service.delete( "http://example.com/500", "some body data", options, parser );
 				testPromise( promise );
 				promise = promise.catch( function ( exception:Error ):void {
 					expect( exception instanceof InternalServerErrorError ).toBe( true );
 				} );
 				promises.push( promise );
 
-				Promise.all( promises ).then( done, done.fail );
+				Promise.all( promises ).then( done ).catch( done.fail );
 			});
 
 
@@ -778,47 +777,47 @@ describe( module( "Carbon/HTTP/Request" ), function ():void {
 					{ name: "options", type: "object", optional: true, default: "{ sendCredentialsOnCORS: true }" }
 				],
 				{ type: "Promise<Carbon.HTTP.Response>" }
-			), ( done ):void => {
+			), ( done:{ ():void, fail:() => void } ):void => {
 				expect( Request.Service.delete ).toBeDefined();
 				expect( Utils.isFunction( Request.Service.delete ) ).toBe( true );
 
 				let promises:Promise<any>[] = [];
 				let promise:Promise<any>;
 
-				promise = Request.Service.delete( "/200" );
+				promise = Request.Service.delete( "http://example.com/200" );
 				testPromise( promise );
 				promises.push( promise.then( function ( response:Response ):void {
 					testHTTPResponse( response );
 					expect( response.status ).toEqual( 200 );
 					testHTTPResponseHeaders( response, responseFull.responseHeaders );
 					testHTTPResponseData( response, responseFull.responseText );
-				}, done.fail ) );
+				} ) );
 
-				promise = Request.Service.delete( "/200", options );
+				promise = Request.Service.delete( "http://example.com/200", options );
 				testPromise( promise );
 				promises.push( promise.then( function ( response:Response ):void {
 					testHTTPResponse( response );
 					expect( response.status ).toEqual( 200 );
 					testHTTPResponseHeaders( response, responseFull.responseHeaders );
 					testHTTPResponseData( response, responseFull.responseText );
-				}, done.fail ) );
+				} ) );
 
 
-				promise = Request.Service.delete( "/404" );
+				promise = Request.Service.delete( "http://example.com/404" );
 				testPromise( promise );
 				promise = promise.catch( function ( exception:Error ):void {
 					expect( exception instanceof NotFoundError ).toBe( true );
 				} );
 				promises.push( promise );
 
-				promise = Request.Service.delete( "/500", options );
+				promise = Request.Service.delete( "http://example.com/500", options );
 				testPromise( promise );
 				promise = promise.catch( function ( exception:Error ):void {
 					expect( exception instanceof InternalServerErrorError ).toBe( true );
 				} );
 				promises.push( promise );
 
-				Promise.all( promises ).then( done, done.fail );
+				Promise.all( promises ).then( done ).catch( done.fail );
 			});
 
 			it( hasSignature(
@@ -828,14 +827,14 @@ describe( module( "Carbon/HTTP/Request" ), function ():void {
 					{ name: "parser", type: "Carbon.HTTP.Parser<T>", optional: true }
 				],
 				{ type: "Promise<Carbon.HTTP.Response>" }
-			), ( done ):void => {
+			), ( done:{ ():void, fail:() => void } ):void => {
 				expect( Request.Service.delete ).toBeDefined();
 				expect( Utils.isFunction( Request.Service.delete ) ).toBe( true );
 
 				let promises:Promise<any>[] = [];
 				let promise:Promise<any>;
 
-				promise = Request.Service.delete( "/200", null, parser );
+				promise = Request.Service.delete( "http://example.com/200", null, parser );
 				testPromise( promise );
 				promises.push( promise.then( function ( [object, response]:[Object, Response] ):Promise<any> {
 					testHTTPResponse( response );
@@ -845,9 +844,9 @@ describe( module( "Carbon/HTTP/Request" ), function ():void {
 					return parser.parse( responseFull.responseText ).then( ( parsedObject:Object ) => {
 						testDataParsed( object, parsedObject );
 					});
-				}, done.fail ) );
+				} ) );
 
-				promise = Request.Service.delete( "/200", options, parser );
+				promise = Request.Service.delete( "http://example.com/200", options, parser );
 				testPromise( promise );
 				promises.push( promise.then( function ( [object, response]:[Object, Response] ):Promise<any> {
 					testHTTPResponse( response );
@@ -857,24 +856,24 @@ describe( module( "Carbon/HTTP/Request" ), function ():void {
 					return parser.parse( responseFull.responseText ).then( ( parsedObject:Object ) => {
 						testDataParsed( object, parsedObject );
 					});
-				}, done.fail ) );
+				} ) );
 
 
-				promise = Request.Service.delete( "/404", null, parser );
+				promise = Request.Service.delete( "http://example.com/404", null, parser );
 				testPromise( promise );
 				promise = promise.catch( function ( exception:Error ):void {
 					expect( exception instanceof NotFoundError ).toBe( true );
 				} );
 				promises.push( promise );
 
-				promise = Request.Service.delete( "/500", options, parser );
+				promise = Request.Service.delete( "http://example.com/500", options, parser );
 				testPromise( promise );
 				promise = promise.catch( function ( exception:Error ):void {
 					expect( exception instanceof InternalServerErrorError ).toBe( true );
 				} );
 				promises.push( promise );
 
-				Promise.all( promises ).then( done, done.fail );
+				Promise.all( promises ).then( done ).catch( done.fail );
 			});
 
 		});
@@ -900,8 +899,6 @@ describe( module( "Carbon/HTTP/Request" ), function ():void {
 		function testHTTPResponseData( response:Response, originalData:string ):void {
 			expect( response.data ).toBeDefined();
 			expect( response.data ).toBe( originalData );
-			expect( response.request.responseText ).toBeDefined();
-			expect( response.request.responseText ).toBe( originalData );
 		}
 
 		function testDataParsed( object:any, originalObject:Object ):void {

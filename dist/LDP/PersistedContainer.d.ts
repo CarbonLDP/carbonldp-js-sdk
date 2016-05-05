@@ -18,6 +18,8 @@ export interface Class extends PersistedDocument.Class {
     removeAllMembers(): Promise<HTTP.Response.Class>;
     upload(slug: string, blob: Blob): Promise<[Pointer.Class, HTTP.Response.Class]>;
     upload(blob: Blob): Promise<[Pointer.Class, HTTP.Response.Class]>;
+    upload(slug: string, blob: Buffer): Promise<[Pointer.Class, HTTP.Response.Class]>;
+    upload(blob: Buffer): Promise<[Pointer.Class, HTTP.Response.Class]>;
 }
 export declare class Factory {
     static hasClassProperties(document: Document.Class): boolean;
