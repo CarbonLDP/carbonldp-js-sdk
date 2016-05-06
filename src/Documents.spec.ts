@@ -782,7 +782,7 @@ describe( module( "Carbon/Documents", "" ), ():void => {
 		});
 
 		function stubListRequest( resource:string ):void {
-			jasmine.Ajax.stubRequest( new RegExp( `http://example.com/${ resource }/` ), null, "GET" ).andReturn( {
+			jasmine.Ajax.stubRequest( new RegExp( resource ), null, "GET" ).andReturn( {
 				status: 200,
 				responseText: `[
 					{
@@ -933,7 +933,7 @@ describe( module( "Carbon/Documents", "" ), ():void => {
 			let promises:Promise<any> [] = [];
 
 			(() => {
-				stubListRequest( "resource-1" );
+				stubListRequest( "resource-1/" );
 
 				let options:HTTP.Request.Options = { timeout: 12345 };
 				let retrievalPreferences:RetrievalPreferences.Class = {
@@ -953,13 +953,14 @@ describe( module( "Carbon/Documents", "" ), ():void => {
 					expect( options.headers ).toBeDefined();
 
 					let request:JasmineAjaxRequest = jasmine.Ajax.requests.filter( /resource-1/ )[ 0 ];
-					expect( request.url.indexOf( "resource-1/?limit=10&offset=0&orderBy=<http://example.com/ns%23string>;<http://www.w3.org/2001/XMLSchema%23string>" ) ).not.toBe( -1 );
+					let url:string = decodeURI( request.url );
+					expect( url.indexOf( "resource-1/?limit=10&offset=0&orderBy=<http://example.com/ns%23string>;<http://www.w3.org/2001/XMLSchema%23string>" ) ).not.toBe( -1 );
 					checkPrefer( request );
 				}) );
 			})();
 
 			(() => {
-				stubListRequest( "resource-2" );
+				stubListRequest( "resource-2/" );
 
 				let retrievalPreferences:RetrievalPreferences.Class = {
 					limit: 10,
@@ -975,13 +976,14 @@ describe( module( "Carbon/Documents", "" ), ():void => {
 					checkResponse( pointers, response );
 
 					let request:JasmineAjaxRequest = jasmine.Ajax.requests.filter( /resource-2/ )[ 0 ];
-					expect( request.url.indexOf( "resource-2/?limit=10&offset=0&orderBy=<http://example.com/ns%23string>;<http://www.w3.org/2001/XMLSchema%23string>" ) ).not.toBe( -1 );
+					let url:string = decodeURI( request.url );
+					expect( url.indexOf( "resource-2/?limit=10&offset=0&orderBy=<http://example.com/ns%23string>;<http://www.w3.org/2001/XMLSchema%23string>" ) ).not.toBe( -1 );
 					checkPrefer( request );
 				}) );
 			})();
 
 			(() => {
-				jasmine.Ajax.stubRequest( new RegExp( "http://example.com/resource-3/" ), null, "GET" ).andReturn( {
+				jasmine.Ajax.stubRequest( new RegExp( "resource-3/" ), null, "GET" ).andReturn( {
 					status: 200,
 					responseText: `[]`
 				});
@@ -1004,13 +1006,14 @@ describe( module( "Carbon/Documents", "" ), ():void => {
 					expect( response ).toBeDefined();
 
 					let request:JasmineAjaxRequest = jasmine.Ajax.requests.filter( /resource-3/ )[ 0 ];
-					expect( request.url.indexOf( "resource-3/?limit=10&offset=0&orderBy=<http://example.com/ns%23string>;<http://www.w3.org/2001/XMLSchema%23string>" ) ).not.toBe( -1 );
+					let url:string = decodeURI( request.url );
+					expect( url.indexOf( "resource-3/?limit=10&offset=0&orderBy=<http://example.com/ns%23string>;<http://www.w3.org/2001/XMLSchema%23string>" ) ).not.toBe( -1 );
 					checkPrefer( request );
 				}) );
 			})();
 
 			(() => {
-				jasmine.Ajax.stubRequest( new RegExp( "http://example.com/resource-4/" ), null, "GET" ).andReturn( {
+				jasmine.Ajax.stubRequest( new RegExp( "resource-4/" ), null, "GET" ).andReturn( {
 					status: 200,
 					responseText: `{}`
 				});
@@ -1033,7 +1036,8 @@ describe( module( "Carbon/Documents", "" ), ():void => {
 					expect( response ).toBeDefined();
 
 					let request:JasmineAjaxRequest = jasmine.Ajax.requests.filter( /resource-4/ )[ 0 ];
-					expect( request.url.indexOf( "resource-4/?limit=10&offset=0&orderBy=<http://example.com/ns%23string>;<http://www.w3.org/2001/XMLSchema%23string>" ) ).not.toBe( -1 );
+					let url:string = decodeURI( request.url );
+					expect( url.indexOf( "resource-4/?limit=10&offset=0&orderBy=<http://example.com/ns%23string>;<http://www.w3.org/2001/XMLSchema%23string>" ) ).not.toBe( -1 );
 					checkPrefer( request );
 				}) );
 			})();
@@ -1051,7 +1055,7 @@ describe( module( "Carbon/Documents", "" ), ():void => {
 			let promises:Promise<any> [] = [];
 
 			(() => {
-				stubListRequest( "resource-1" );
+				stubListRequest( "resource-1/" );
 
 				let options:HTTP.Request.Options = { timeout: 12345 };
 				let promise:Promise<[ PersistedDocument.Class[], HTTP.Response.Class ]> = documents.getChildren( "resource-1/", options );
@@ -1071,7 +1075,7 @@ describe( module( "Carbon/Documents", "" ), ():void => {
 			})();
 
 			(() => {
-				stubListRequest( "resource-2" );
+				stubListRequest( "resource-2/" );
 
 				let promise:Promise<[ PersistedDocument.Class[], HTTP.Response.Class ]> = documents.getChildren( "resource-2/" );
 
@@ -1087,7 +1091,7 @@ describe( module( "Carbon/Documents", "" ), ():void => {
 			})();
 
 			(() => {
-				jasmine.Ajax.stubRequest( new RegExp( "http://example.com/resource-3/" ), null, "GET" ).andReturn( {
+				jasmine.Ajax.stubRequest( new RegExp( "resource-3/" ), null, "GET" ).andReturn( {
 					status: 200,
 					responseText: `[]`
 				});
@@ -1110,7 +1114,7 @@ describe( module( "Carbon/Documents", "" ), ():void => {
 			})();
 
 			(() => {
-				jasmine.Ajax.stubRequest( new RegExp( "http://example.com/resource-4/" ), null, "GET" ).andReturn( {
+				jasmine.Ajax.stubRequest( new RegExp( "resource-4/" ), null, "GET" ).andReturn( {
 					status: 200,
 					responseText: `{}`
 				});
@@ -1544,7 +1548,7 @@ describe( module( "Carbon/Documents", "" ), ():void => {
 			let promises:Promise<any> [] = [];
 
 			(() => {
-				stubListRequest( "resource-1" );
+				stubListRequest( "resource-1/" );
 
 				let options:HTTP.Request.Options = { timeout: 12345 };
 				let promise:Promise<[ Pointer.Class[], HTTP.Response.Class ]> = documents.listMembers( "resource-1/", true, options );
@@ -1564,7 +1568,7 @@ describe( module( "Carbon/Documents", "" ), ():void => {
 			})();
 
 			(() => {
-				stubListRequest( "resource-2" );
+				stubListRequest( "resource-2/" );
 
 				let options:HTTP.Request.Options = { timeout: 12345 };
 				let promise:Promise<[ Pointer.Class[], HTTP.Response.Class ]> = documents.listMembers( "resource-2/", false, options );
@@ -1584,7 +1588,7 @@ describe( module( "Carbon/Documents", "" ), ():void => {
 			})();
 
 			(() => {
-				stubListRequest( "resource-3" );
+				stubListRequest( "resource-3/" );
 
 				let promise:Promise<[ Pointer.Class[], HTTP.Response.Class ]> = documents.listMembers( "resource-3/", true );
 
@@ -1600,7 +1604,7 @@ describe( module( "Carbon/Documents", "" ), ():void => {
 			})();
 
 			(() => {
-				stubListRequest( "resource-4" );
+				stubListRequest( "resource-4/" );
 
 				let promise:Promise<[ Pointer.Class[], HTTP.Response.Class ]> = documents.listMembers( "resource-4/", false );
 
@@ -1616,7 +1620,7 @@ describe( module( "Carbon/Documents", "" ), ():void => {
 			})();
 
 			(() => {
-				stubListRequest( "resource-5" );
+				stubListRequest( "resource-5/" );
 
 				let promise:Promise<[ Pointer.Class[], HTTP.Response.Class ]> = documents.listMembers( "resource-5/" );
 
@@ -1644,7 +1648,7 @@ describe( module( "Carbon/Documents", "" ), ():void => {
 			let promises:Promise<any> [] = [];
 
 			(() => {
-				stubListRequest( "resource-1" );
+				stubListRequest( "resource-1/" );
 
 				let options:HTTP.Request.Options = { timeout: 12345 };
 				let promise:Promise<[ Pointer.Class[], HTTP.Response.Class ]> = documents.listMembers( "resource-1/", options );
@@ -1664,7 +1668,7 @@ describe( module( "Carbon/Documents", "" ), ():void => {
 			})();
 
 			(() => {
-				stubListRequest( "resource-2" );
+				stubListRequest( "resource-2/" );
 
 				let promise:Promise<[ Pointer.Class[], HTTP.Response.Class ]> = documents.listMembers( "resource-2/" );
 
@@ -1683,12 +1687,12 @@ describe( module( "Carbon/Documents", "" ), ():void => {
 		});
 
 		function stubListRequest( resource:string ):void {
-			jasmine.Ajax.stubRequest( `http://example.com/${ resource }/`, null, "GET" ).andReturn( {
+			jasmine.Ajax.stubRequest( new RegExp( resource ), null, "GET" ).andReturn( {
 				status: 200,
 				responseText: `[{
-						"@id": "http://example.com/${ resource }/",
+						"@id": "http://example.com/${ resource }",
 						"@graph": [{
-							"@id": "http://example.com/${ resource }/",
+							"@id": "http://example.com/${ resource }",
 							"@type": [ "http://www.w3.org/ns/ldp#BasicContainer" ],
 							"http://www.w3.org/ns/ldp#hasMemberRelation": [{
 					            "@id": "http://www.w3.org/ns/ldp#my-member"
@@ -1761,7 +1765,7 @@ describe( module( "Carbon/Documents", "" ), ():void => {
 		});
 
 		function stubListRequest( resource:string ):void {
-			jasmine.Ajax.stubRequest( new RegExp( `http://example.com/${ resource }/` ), null, "GET" ).andReturn( {
+			jasmine.Ajax.stubRequest( new RegExp( resource ), null, "GET" ).andReturn( {
 				status: 200,
 				responseText: `[
 					{
@@ -1922,7 +1926,7 @@ describe( module( "Carbon/Documents", "" ), ():void => {
 			let promises:Promise<any> [] = [];
 
 			(() => {
-				stubListRequest( "resource-1" );
+				stubListRequest( "resource-1/" );
 
 				let options:HTTP.Request.Options = { timeout: 12345 };
 				let retrievalPreferences:RetrievalPreferences.Class = {
@@ -1942,13 +1946,14 @@ describe( module( "Carbon/Documents", "" ), ():void => {
 					expect( options.headers ).toBeDefined();
 
 					let request:JasmineAjaxRequest = jasmine.Ajax.requests.filter( /resource-1/ )[ 0 ];
-					expect( request.url.indexOf( "resource-1/?limit=10&offset=0&orderBy=<http://example.com/ns%23string>;<http://www.w3.org/2001/XMLSchema%23string>" ) ).not.toBe( -1 );
+					let url:string = decodeURI( request.url );
+					expect( url.indexOf( "resource-1/?limit=10&offset=0&orderBy=<http://example.com/ns%23string>;<http://www.w3.org/2001/XMLSchema%23string>" ) ).not.toBe( -1 );
 					checkPrefer( request, true );
 				}) );
 			})();
 
 			(() => {
-				stubListRequest( "resource-2" );
+				stubListRequest( "resource-2/" );
 
 				let options:HTTP.Request.Options = { timeout: 12345 };
 				let retrievalPreferences:RetrievalPreferences.Class = {
@@ -1968,13 +1973,14 @@ describe( module( "Carbon/Documents", "" ), ():void => {
 					expect( options.headers ).toBeDefined();
 
 					let request:JasmineAjaxRequest = jasmine.Ajax.requests.filter( /resource-2/ )[ 0 ];
-					expect( request.url.indexOf( "resource-2/?limit=10&offset=0&orderBy=<http://example.com/ns%23string>;<http://www.w3.org/2001/XMLSchema%23string>" ) ).not.toBe( -1 );
+					let url:string = decodeURI( request.url );
+					expect( url.indexOf( "resource-2/?limit=10&offset=0&orderBy=<http://example.com/ns%23string>;<http://www.w3.org/2001/XMLSchema%23string>" ) ).not.toBe( -1 );
 					checkPrefer( request, false );
 				}) );
 			})();
 
 			(() => {
-				stubListRequest( "resource-3" );
+				stubListRequest( "resource-3/" );
 
 				let retrievalPreferences:RetrievalPreferences.Class = {
 					limit: 10,
@@ -1990,13 +1996,14 @@ describe( module( "Carbon/Documents", "" ), ():void => {
 					checkResponse( pointers, response );
 
 					let request:JasmineAjaxRequest = jasmine.Ajax.requests.filter( /resource-3/ )[ 0 ];
-					expect( request.url.indexOf( "resource-3/?limit=10&offset=0&orderBy=<http://example.com/ns%23string>;<http://www.w3.org/2001/XMLSchema%23string>" ) ).not.toBe( -1 );
+					let url:string = decodeURI( request.url );
+					expect( url.indexOf( "resource-3/?limit=10&offset=0&orderBy=<http://example.com/ns%23string>;<http://www.w3.org/2001/XMLSchema%23string>" ) ).not.toBe( -1 );
 					checkPrefer( request, true );
 				}) );
 			})();
 
 			(() => {
-				stubListRequest( "resource-4" );
+				stubListRequest( "resource-4/" );
 
 				let retrievalPreferences:RetrievalPreferences.Class = {
 					limit: 10,
@@ -2012,7 +2019,8 @@ describe( module( "Carbon/Documents", "" ), ():void => {
 					checkResponse( pointers, response );
 
 					let request:JasmineAjaxRequest = jasmine.Ajax.requests.filter( /resource-4/ )[ 0 ];
-					expect( request.url.indexOf( "resource-4/?limit=10&offset=0&orderBy=<http://example.com/ns%23string>;<http://www.w3.org/2001/XMLSchema%23string>" ) ).not.toBe( -1 );
+					let url:string = decodeURI( request.url );
+					expect( url.indexOf( "resource-4/?limit=10&offset=0&orderBy=<http://example.com/ns%23string>;<http://www.w3.org/2001/XMLSchema%23string>" ) ).not.toBe( -1 );
 					checkPrefer( request, false );
 				}) );
 			})();
@@ -2031,7 +2039,7 @@ describe( module( "Carbon/Documents", "" ), ():void => {
 			let promises:Promise<any> [] = [];
 
 			(() => {
-				stubListRequest( "resource-1" );
+				stubListRequest( "resource-1/" );
 
 				let options:HTTP.Request.Options = { timeout: 12345 };
 				let promise:Promise<[ PersistedDocument.Class[], HTTP.Response.Class ]> = documents.getMembers( "resource-1/", true, options );
@@ -2051,7 +2059,7 @@ describe( module( "Carbon/Documents", "" ), ():void => {
 			})();
 
 			(() => {
-				stubListRequest( "resource-2" );
+				stubListRequest( "resource-2/" );
 
 				let options:HTTP.Request.Options = { timeout: 12345 };
 				let promise:Promise<[ PersistedDocument.Class[], HTTP.Response.Class ]> = documents.getMembers( "resource-2/", false, options );
@@ -2071,7 +2079,7 @@ describe( module( "Carbon/Documents", "" ), ():void => {
 			})();
 
 			(() => {
-				stubListRequest( "resource-3" );
+				stubListRequest( "resource-3/" );
 
 				let promise:Promise<[ PersistedDocument.Class[], HTTP.Response.Class ]> = documents.getMembers( "resource-3/", true );
 
@@ -2087,7 +2095,7 @@ describe( module( "Carbon/Documents", "" ), ():void => {
 			})();
 
 			(() => {
-				stubListRequest( "resource-4" );
+				stubListRequest( "resource-4/" );
 
 				let promise:Promise<[ PersistedDocument.Class[], HTTP.Response.Class ]> = documents.getMembers( "resource-4/", false );
 
@@ -2116,7 +2124,7 @@ describe( module( "Carbon/Documents", "" ), ():void => {
 			let promises:Promise<any> [] = [];
 
 			(() => {
-				stubListRequest( "resource-1" );
+				stubListRequest( "resource-1/" );
 
 				let options:HTTP.Request.Options = { timeout: 12345 };
 				let retrievalPreferences:RetrievalPreferences.Class = {
@@ -2136,13 +2144,14 @@ describe( module( "Carbon/Documents", "" ), ():void => {
 					expect( options.headers ).toBeDefined();
 
 					let request:JasmineAjaxRequest = jasmine.Ajax.requests.filter( /resource-1/ )[ 0 ];
-					expect( request.url.indexOf( "resource-1/?limit=10&offset=0&orderBy=<http://example.com/ns%23string>;<http://www.w3.org/2001/XMLSchema%23string>" ) ).not.toBe( -1 );
+					let url:string = decodeURI( request.url );
+					expect( url.indexOf( "resource-1/?limit=10&offset=0&orderBy=<http://example.com/ns%23string>;<http://www.w3.org/2001/XMLSchema%23string>" ) ).not.toBe( -1 );
 					checkPrefer( request );
 				}) );
 			})();
 
 			(() => {
-				stubListRequest( "resource-2" );
+				stubListRequest( "resource-2/" );
 
 				let retrievalPreferences:RetrievalPreferences.Class = {
 					limit: 10,
@@ -2158,7 +2167,8 @@ describe( module( "Carbon/Documents", "" ), ():void => {
 					checkResponse( pointers, response );
 
 					let request:JasmineAjaxRequest = jasmine.Ajax.requests.filter( /resource-2/ )[ 0 ];
-					expect( request.url.indexOf( "resource-2/?limit=10&offset=0&orderBy=<http://example.com/ns%23string>;<http://www.w3.org/2001/XMLSchema%23string>" ) ).not.toBe( -1 );
+					let url:string = decodeURI( request.url );
+					expect( url.indexOf( "resource-2/?limit=10&offset=0&orderBy=<http://example.com/ns%23string>;<http://www.w3.org/2001/XMLSchema%23string>" ) ).not.toBe( -1 );
 					checkPrefer( request );
 				}) );
 			})();
@@ -2176,7 +2186,7 @@ describe( module( "Carbon/Documents", "" ), ():void => {
 			let promises:Promise<any> [] = [];
 
 			(() => {
-				stubListRequest( "resource-1" );
+				stubListRequest( "resource-1/" );
 
 				let options:HTTP.Request.Options = { timeout: 12345 };
 				let promise:Promise<[ PersistedDocument.Class[], HTTP.Response.Class ]> = documents.getMembers( "resource-1/", options );
@@ -2196,7 +2206,7 @@ describe( module( "Carbon/Documents", "" ), ():void => {
 			})();
 
 			(() => {
-				stubListRequest( "resource-2" );
+				stubListRequest( "resource-2/" );
 
 				let promise:Promise<[ PersistedDocument.Class[], HTTP.Response.Class ]> = documents.getMembers( "resource-2/" );
 

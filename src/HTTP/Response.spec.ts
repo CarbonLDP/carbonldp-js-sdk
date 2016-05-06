@@ -171,7 +171,7 @@ describe( module(
 				if ( inXMLHttpRequest)
 					expect( response.request instanceof XMLHttpRequest ).toBe( true );
 				else
-					expect( response.request instanceof require( "http").ClientRequest ).toBe( true );
+					expect( response.request instanceof require( "http" ).ClientRequest ).toBe( true );
 
 				expect( response.request ).toBe( request );
 
