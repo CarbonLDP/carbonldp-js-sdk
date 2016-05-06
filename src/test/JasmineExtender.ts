@@ -1,7 +1,6 @@
-import {IncomingMessage} from "http";
 import {Url} from "url";
-import {ClientRequest} from "http";
 import {isString} from "../Utils";
+
 export interface SuiteDescriptor {
 	access?:string;
 	suiteType:string;
@@ -348,7 +347,7 @@ export function hasEnumeral( name:string, description:string = null ):string {
 }
 
 if ( typeof XMLHttpRequest === "undefined" ) {
-	const nock:any = require('nock');
+	const nock:any = require( "nock" );
 	const URL:any = require( "url" );
 	let methods:string[] = [ "OPTIONS", "HEAD", "GET", "POST", "PUT", "PATCH", "DELETE" ];
 

@@ -19,10 +19,12 @@ const minimatch = require( "minimatch" );
 
 const tslint = require( "gulp-tslint" );
 
-const Builder = require( "systemjs-builder" );
+// const Builder = require( "systemjs-builder" );
 const jeditor = require( "gulp-json-editor" );
 
 const jasmine = require( "gulp-jasmine" );
+
+const Builder = require( "jspm" ).Builder;
 
 let config = {
 	source: {
@@ -139,31 +141,38 @@ gulp.task( "compile-library", () => {
 
 gulp.task( "bundle-sfx", ( done ) => {
 	let builder = new Builder();
-
 	builder.buildStatic( "build/sfx.js", config.dist.sfxBundle, {
-		sourceMaps: true,
-		config: {
-			"transpiler": "typescript",
-			// TODO: Use tsconfig.json (need to update JSPM to 0.17)
-			"typescriptOptions": {
-				"module": "commonjs",
-				"noImplicitAny": false,
-				"removeComments": true,
-				"sourceMap": true,
-				"inlineSourceMap": false,
-			},
-			"paths": {
-				"build/sfx.js": "build/sfx.js",
-				"Carbon": "src/Carbon.ts",
-				"jsonld": "node_modules/jsonld/js/jsonld.js",
-				"*": "*.ts"
-			}
-		}
+		"sourceMaps": true,
+		"mangle": false,
+		"lowResSourceMaps": false,
 	}).then( () => {
 		done();
 	}).catch( ( error ) => {
 		util.log( error );
 	});
+
+	// let builder = new Builder();
+	//
+	// builder.buildStatic( "build/sfx.js", config.dist.sfxBundle, {
+	// 	sourceMaps: true,
+	// 	config: {
+	// 		"transpiler": "typescript",
+	// 		// TODO: Use tsconfig.json (need to update JSPM to 0.17)
+	// 		"typescriptOptions": {
+	// 			"tsconfig": true
+	// 		},
+	// 		"paths": {
+	// 			"build/sfx.js": "build/sfx.js",
+	// 			"Carbon": "src/Carbon.ts",
+	// 			"jsonld": "node_modules/jsonld/js/jsonld.js",
+	// 			"*": "*.ts"
+	// 		}
+	// 	}
+	// }).then( () => {
+	// 	done();
+	// }).catch( ( error ) => {
+	// 	util.log( error );
+	// });
 });
 
 gulp.task( "bundle-definitions", [ "bundle-definitions:tsconfig-creation", "bundle-definitions:bundling", "bundle-definitions:cleaning" ] );

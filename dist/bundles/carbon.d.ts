@@ -1517,10 +1517,9 @@ declare module 'carbonldp/RetrievalPreferences' {
 	    limit?: number;
 	    offset?: number;
 	}
-	export type orderByType = "numeric" | "string" | "boolean" | "dateTime";
 	export interface OrderByProperty {
 	    "@id": string;
-	    "@type"?: orderByType;
+	    "@type"?: "numeric" | "string" | "boolean" | "dateTime";
 	    "@language"?: string;
 	}
 	export class Factory {

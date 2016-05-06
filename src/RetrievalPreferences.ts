@@ -14,7 +14,7 @@ const allowedTypes:string[] = [ "numeric", "string", "boolean", "dateTime" ];
 export type orderByType = "numeric" | "string" | "boolean" | "dateTime";
 export interface OrderByProperty {
 	"@id":string;
-	"@type"?:orderByType;
+	"@type"?:"numeric" | "string" | "boolean" | "dateTime";
 	"@language"?:string;
 }
 

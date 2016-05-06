@@ -3,10 +3,9 @@ export interface Class {
     limit?: number;
     offset?: number;
 }
-export declare type orderByType = "numeric" | "string" | "boolean" | "dateTime";
 export interface OrderByProperty {
     "@id": string;
-    "@type"?: orderByType;
+    "@type"?: "numeric" | "string" | "boolean" | "dateTime";
     "@language"?: string;
 }
 export declare class Factory {
