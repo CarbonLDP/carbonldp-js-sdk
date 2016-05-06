@@ -3490,7 +3490,7 @@ $__System.register("29", ["2a", "5"], function(exports_1) {
                 };
                 Factory.createFrom = function (object, idOrDocument, document) {
                     if (document === void 0) { document = null; }
-                    var id = !!document ? idOrDocument : Util.generateID();
+                    var id = !!idOrDocument && Utils.isString(idOrDocument) ? idOrDocument : Util.generateID();
                     document = document || idOrDocument;
                     var resource = Resource.Factory.createFrom(object, id);
                     if (Factory.hasClassProperties(resource))
@@ -3884,19 +3884,15 @@ $__System.register("12", ["c", "29", "18", "2b", "19", "8", "9", "2a", "5"], fun
         var slug = Utils.isString(slugOrObject) ? slugOrObject : null;
         object = Utils.isString(slugOrObject) ? object : slugOrObject;
         object = object || {};
-        var id;
         if (slug) {
             if (!RDF.URI.Util.isBNodeID(slug))
                 return document.createNamedFragment(slug, object);
-            id = slug;
-            if (this._fragmentsIndex.has(id))
+            if (this._fragmentsIndex.has(slug))
                 throw new Errors.IDAlreadyInUseError("The slug provided is already being used by a fragment.");
         }
-        else {
-            id = Fragment.Util.generateID();
-        }
-        var fragment = Fragment.Factory.createFrom(object, id, document);
-        document._fragmentsIndex.set(id, fragment);
+        var fragment = Fragment.Factory.createFrom(object, slug, document);
+        document._fragmentsIndex.set(fragment.id, fragment);
+        convertNestedObjects(document, fragment);
         return fragment;
     }
     function createNamedFragment(slug, object) {
@@ -3915,6 +3911,7 @@ $__System.register("12", ["c", "29", "18", "2b", "19", "8", "9", "2a", "5"], fun
             throw new Errors.IDAlreadyInUseError("The slug provided is already being used by a fragment.");
         var fragment = NamedFragment.Factory.createFrom(object, slug, document);
         document._fragmentsIndex.set(slug, fragment);
+        convertNestedObjects(document, fragment);
         return fragment;
     }
     function removeFragment(fragmentOrSlug) {
@@ -3960,7 +3957,7 @@ $__System.register("12", ["c", "29", "18", "2b", "19", "8", "9", "2a", "5"], fun
                 convertNestedObjects(parent, next);
                 continue;
             }
-            if (!Utils.isPlainObject(next))
+            if (!Utils.isPlainObject(next) || Pointer.Factory.is(next))
                 continue;
             idOrSlug = ("id" in next) ? next.id : (("slug" in next) ? next.slug : "");
             if (!parent.inScope(idOrSlug))
@@ -5052,12 +5049,12 @@ var _removeDefine = $__System.get("@@amd-helpers").createDefine();
         options.skipExpansion = true;
       }
       var expand = function(input, options, callback) {
-        jsonld.nextTick(function() {
-          if (options.skipExpansion) {
-            return callback(null, input);
-          }
-          jsonld.expand(input, options, callback);
-        });
+        if (options.skipExpansion) {
+          return jsonld.nextTick(function() {
+            callback(null, input);
+          });
+        }
+        jsonld.expand(input, options, callback);
       };
       expand(input, options, function(err, expanded) {
         if (err) {
@@ -8489,10 +8486,14 @@ var _removeDefine = $__System.get("@@amd-helpers").createDefine();
         reverse = false;
       }
       relativeTo = relativeTo || {};
+      var inverseCtx = activeCtx.getInverse();
       if (_isKeyword(iri)) {
-        relativeTo.vocab = true;
+        if (iri in inverseCtx) {
+          return inverseCtx[iri]['@none']['@type']['@none'];
+        }
+        return iri;
       }
-      if (relativeTo.vocab && iri in activeCtx.getInverse()) {
+      if (relativeTo.vocab && iri in inverseCtx) {
         var defaultLanguage = activeCtx['@language'] || '@none';
         var containers = [];
         if (_isObject(value) && '@index' in value) {
@@ -8581,18 +8582,25 @@ var _removeDefine = $__System.get("@@amd-helpers").createDefine();
         }
       }
       var choice = null;
-      for (var term in activeCtx.mappings) {
-        if (term.indexOf(':') !== -1) {
-          continue;
+      var idx = 0;
+      var partialMatches = [];
+      var iriMap = activeCtx.fastCurieMap;
+      var maxPartialLength = iri.length - 1;
+      for (; idx < maxPartialLength && iri[idx] in iriMap; ++idx) {
+        iriMap = iriMap[iri[idx]];
+        if ('' in iriMap) {
+          partialMatches.push(iriMap[''][0]);
         }
-        var definition = activeCtx.mappings[term];
-        if (!definition || definition['@id'] === iri || iri.indexOf(definition['@id']) !== 0) {
-          continue;
-        }
-        var curie = term + ':' + iri.substr(definition['@id'].length);
-        var isUsableCurie = (!(curie in activeCtx.mappings) || (value === null && activeCtx.mappings[curie] && activeCtx.mappings[curie]['@id'] === iri));
-        if (isUsableCurie && (choice === null || _compareShortestLeast(curie, choice) < 0)) {
-          choice = curie;
+      }
+      for (var i = partialMatches.length - 1; i >= 0; --i) {
+        var entry = partialMatches[i];
+        var terms = entry.terms;
+        for (var ti = 0; ti < terms.length; ++ti) {
+          var curie = terms[ti] + ':' + iri.substr(entry.iri.length);
+          var isUsableCurie = (!(curie in activeCtx.mappings) || (value === null && activeCtx.mappings[curie]['@id'] === iri));
+          if (isUsableCurie && (choice === null || _compareShortestLeast(curie, choice) < 0)) {
+            choice = curie;
+          }
         }
       }
       if (choice !== null) {
@@ -8737,9 +8745,10 @@ var _removeDefine = $__System.get("@@amd-helpers").createDefine();
           mapping['@id'] = id;
         }
       }
+      var colon = term.indexOf(':');
+      mapping._termHasColon = (colon !== -1);
       if (!('@id' in mapping)) {
-        var colon = term.indexOf(':');
-        if (colon !== -1) {
+        if (mapping._termHasColon) {
           var prefix = term.substr(0, colon);
           if (prefix in localCtx) {
             _createTermDefinition(activeCtx, localCtx, prefix, defined);
@@ -8990,6 +8999,8 @@ var _removeDefine = $__System.get("@@amd-helpers").createDefine();
           return activeCtx.inverse;
         }
         var inverse = activeCtx.inverse = {};
+        var fastCurieMap = activeCtx.fastCurieMap = {};
+        var irisToTerms = {};
         var defaultLanguage = activeCtx['@language'] || '@none';
         var mappings = activeCtx.mappings;
         var terms = Object.keys(mappings).sort(_compareShortestLeast);
@@ -9007,8 +9018,23 @@ var _removeDefine = $__System.get("@@amd-helpers").createDefine();
           for (var ii = 0; ii < ids.length; ++ii) {
             var iri = ids[ii];
             var entry = inverse[iri];
+            var isKeyword = _isKeyword(iri);
             if (!entry) {
               inverse[iri] = entry = {};
+              if (!isKeyword && !mapping._termHasColon) {
+                irisToTerms[iri] = [term];
+                var fastCurieEntry = {
+                  iri: iri,
+                  terms: irisToTerms[iri]
+                };
+                if (iri[0] in fastCurieMap) {
+                  fastCurieMap[iri[0]].push(fastCurieEntry);
+                } else {
+                  fastCurieMap[iri[0]] = [fastCurieEntry];
+                }
+              }
+            } else if (!isKeyword && !mapping._termHasColon) {
+              irisToTerms[iri].push(term);
             }
             if (!entry[container]) {
               entry[container] = {
@@ -9031,7 +9057,35 @@ var _removeDefine = $__System.get("@@amd-helpers").createDefine();
             }
           }
         }
+        for (var key in fastCurieMap) {
+          _buildIriMap(fastCurieMap, key, 1);
+        }
         return inverse;
+      }
+      function _buildIriMap(iriMap, key, idx) {
+        var entries = iriMap[key];
+        var next = iriMap[key] = {};
+        var iri;
+        var letter;
+        for (var i = 0; i < entries.length; ++i) {
+          iri = entries[i].iri;
+          if (idx >= iri.length) {
+            letter = '';
+          } else {
+            letter = iri[idx];
+          }
+          if (letter in next) {
+            next[letter].push(entries[i]);
+          } else {
+            next[letter] = [entries[i]];
+          }
+        }
+        for (var key in next) {
+          if (key === '') {
+            continue;
+          }
+          _buildIriMap(next, key, idx + 1);
+        }
       }
       function _addPreferredTerm(mapping, term, entry, typeOrLanguageValue) {
         if (!(typeOrLanguageValue in entry)) {
