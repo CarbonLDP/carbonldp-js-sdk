@@ -35,6 +35,7 @@ import * as PersistedNamedFragment from "./PersistedNamedFragment";
 import * as Pointer from "./Pointer";
 import * as RetrievalPreferences from "./RetrievalPreferences";
 import * as SPARQL from "./SPARQL";
+import * as URI from "./RDF/URI";
 import * as Utils from "./Utils";
 
 // TODO: Add description

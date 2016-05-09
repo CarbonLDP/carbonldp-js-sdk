@@ -860,7 +860,10 @@ declare module 'carbonldp/RDF/RDFNode' {
 	}
 	export class Util {
 	    static areEqual(node1: Class, node2: Class): boolean;
+	    static hasType(node: Class, type: string): boolean;
+	    static getTypes(node: Class): string[];
 	    static getPropertyURI(node: Class, predicate: string): string;
+	    static getFreeNodes<T extends Object>(value: T): Class[];
 	}
 
 }
@@ -926,6 +929,7 @@ declare module 'carbonldp/RDF/URI' {
 	    static isAbsolute(uri: string): boolean;
 	    static isRelative(uri: string): boolean;
 	    static isBNodeID(uri: string): boolean;
+	    static generateBNodeID(): string;
 	    static isPrefixed(uri: string): boolean;
 	    static isFragmentOf(fragmentURI: string, uri: string): boolean;
 	    static isBaseOf(baseURI: string, uri: string): boolean;
@@ -1008,9 +1012,6 @@ declare module 'carbonldp/Fragment' {
 	    static create(document: Document.Class): Class;
 	    static createFrom<T extends Object>(object: T, id: string, document: Document.Class): T & Class;
 	    static createFrom<T extends Object>(object: T, document: Document.Class): T & Class;
-	}
-	export class Util {
-	    static generateID(): string;
 	}
 	export default Class;
 
@@ -1501,6 +1502,27 @@ declare module 'carbonldp/AccessPoint' {
 	export default Class;
 
 }
+declare module 'carbonldp/FreeResources' {
+	import Documents from 'carbonldp/Documents';
+	import * as Pointer from 'carbonldp/Pointer';
+	import * as Resource from 'carbonldp/Resource';
+	export interface Class extends Pointer.Library, Pointer.Validator {
+	    _documents: Documents;
+	    _resourcesIndex: Map<string, Resource.Class>;
+	    hasResource(id: string): boolean;
+	    getResource(id: string): Resource.Class;
+	    getResources(): Resource.Class[];
+	    createResource(id?: string): Resource.Class;
+	}
+	export class Factory {
+	    static hasClassProperties(value: Object): boolean;
+	    static create(documents: Documents): Class;
+	    static createFrom<T extends Object>(object: T, documents: Documents): T & Class;
+	    static decorate<T extends Object>(object: T): T & Class;
+	}
+	export default Class;
+
+}
 declare module 'carbonldp/PersistedBlankNode' {
 	import * as PersistedFragment from 'carbonldp/PersistedFragment';
 	import * as ObjectSchema from 'carbonldp/ObjectSchema';
@@ -1601,15 +1623,15 @@ declare module 'carbonldp/Documents' {
 	    private getDigestedObjectSchemaForExpandedObject(expandedObject);
 	    private getDigestedObjectSchemaForDocument(document);
 	    private getDigestedObjectSchema(objectTypes);
-	    private getExpandedObjectTypes(expandedObject);
 	    private getDocumentTypes(document);
 	    private updateObject(target, source);
 	    private getAssociatedFragment(persistedDocument, fragment);
+	    private setDataRequest(uri, requestOptions, asContainer);
 	    private getPersistedDocument(rdfDocument, response);
 	    private createPersistedDocument(documentPointer, documentResource, fragmentResources);
 	    private updatePersistedDocument(persistedDocument, documentResource, fragmentResources);
-	    private parseMultipleResources(rdfResources, response);
-	    private getResponseDescription(volatiles);
+	    private sendRequestForMultipleResponse(uri, requestOptions);
+	    private getFreeResourcesDocument(nodes);
 	}
 	export default Documents;
 

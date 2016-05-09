@@ -1,8 +1,10 @@
 import Documents from "./Documents";
+import IllegalArgumentError from "./Errors/IllegalArgumentError";
 import * as Pointer from "./Pointer";
 import * as RDF from "./RDF";
 import * as Resource from "./Resource";
 import * as Utils from "./Utils";
+import IDAlreadyInUseError from "./Errors/IDAlreadyInUseError";
 
 export interface Class extends Pointer.Library, Pointer.Validator {
 	_documents:Documents;
@@ -18,7 +20,7 @@ export interface Class extends Pointer.Library, Pointer.Validator {
 function hasPointer( id:string ):boolean {
 	let freeResources:Class = <Class> this;
 
-	if( ! freeResources.inScope( id ) ) {
+	if( ! inLocalScope( id ) ) {
 		return freeResources._documents.hasPointer( id );
 	}
 
@@ -28,7 +30,7 @@ function hasPointer( id:string ):boolean {
 function getPointer( id:string ):Pointer.Class {
 	let freeResources:Class = <Class> this;
 
-	if( ! freeResources.inScope( id ) ) {
+	if( ! inLocalScope( id ) ) {
 		return freeResources._documents.getPointer( id );
 	}
 
@@ -37,24 +39,52 @@ function getPointer( id:string ):Pointer.Class {
 	return ! resource ? freeResources.createResource( id ) : resource;
 }
 
-function inScope( pointer:Pointer.Class ):boolean;
-function inScope( id:string ):boolean;
-function inScope( idOrPointer:any ):boolean {
-	let id:string = Pointer.Factory.is( idOrPointer ) ? idOrPointer.id : idOrPointer;
-
+function inLocalScope( id:string ):boolean {
 	return RDF.URI.Util.isBNodeID( id );
 }
 
+function inScope( pointer:Pointer.Class ):boolean;
+function inScope( id:string ):boolean;
+function inScope( idOrPointer:any ):boolean {
+	let freeResources:Class = <Class> this;
+	let id:string = Pointer.Factory.is( idOrPointer ) ? idOrPointer.id : idOrPointer;
+
+	if ( inLocalScope( id ) ) return true;
+	return freeResources._documents.inScope( id );
+}
+
+function hasResource( id:string ):boolean {
+	let freeResources:Class = <Class> this;
+
+	return freeResources._resourcesIndex.has( id );
+}
+
 function getResource( id:string ):Resource.Class {
-	// TODO
+	let freeResources:Class = <Class> this;
+
+	return freeResources._resourcesIndex.get( id ) || null;
 }
 
 function getResources():Resource.Class[] {
-	// TODO
+	let freeResources:Class = <Class> this;
+
+	return Utils.A.from( freeResources._resourcesIndex.values() );
 }
 
 function createResource( id?:string ):Resource.Class {
-	// TODO
+	let freeResources:Class = <Class> this;
+
+	if ( id ) {
+		if ( ! inLocalScope( id ) ) throw new IllegalArgumentError( `The id "${ id }" is out of scope.` );
+		if ( freeResources._resourcesIndex.has( id ) ) throw new IDAlreadyInUseError( `The id "${ id }" is already in use by another resource.`);
+	} else {
+		id = RDF.URI.Util.generateBNodeID();
+	}
+
+	let resource:Resource.Class = Resource.Factory.create( id );
+	freeResources._resourcesIndex.set( id, resource );
+
+	return resource;
 }
 
 export class Factory {
@@ -80,14 +110,67 @@ export class Factory {
 	}
 
 	static createFrom<T extends Object>( object:T, documents:Documents ):T & Class {
-		let freeResources:FreeResources = Factory.decorate( object );
+		let freeResources:T & Class = Factory.decorate<T>( object );
 		freeResources._documents = documents;
 
 		return freeResources;
 	}
 
 	static decorate<T extends Object>( object:T ):T & Class {
+		if ( Factory.hasClassProperties( object ) ) return <any> object;
 
+		Object.defineProperties( object, {
+			"_resourcesIndex": {
+				writable: false,
+				enumerable: false,
+				configurable: true,
+				value: new Map<string, Resource.Class>(),
+			},
+			"hasPointer": {
+				writable: true,
+				enumerable: false,
+				configurable: true,
+				value: hasPointer,
+			},
+			"getPointer": {
+				writable: true,
+				enumerable: false,
+				configurable: true,
+				value: getPointer,
+			},
+			"inScope": {
+				writable: true,
+				enumerable: false,
+				configurable: true,
+				value: inScope,
+			},
+			"hasResource": {
+				writable: true,
+				enumerable: false,
+				configurable: true,
+				value: hasResource,
+			},
+			"getResource": {
+				writable: true,
+				enumerable: false,
+				configurable: true,
+				value: getResource,
+			},
+			"getResources": {
+				writable: true,
+				enumerable: false,
+				configurable: true,
+				value: getResources,
+			},
+			"createResource": {
+				writable: true,
+				enumerable: false,
+				configurable: true,
+				value: createResource,
+			},
+		} );
+
+		return <any> object;
 	}
 }
 

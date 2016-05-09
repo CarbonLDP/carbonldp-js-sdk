@@ -31,6 +31,9 @@ var Util = (function () {
     Util.isBNodeID = function (uri) {
         return Utils.S.startsWith(uri, "_:");
     };
+    Util.generateBNodeID = function () {
+        return "_:" + Utils.UUID.generate();
+    };
     Util.isPrefixed = function (uri) {
         return !Util.isAbsolute(uri) && !Util.isBNodeID(uri) && Utils.S.contains(uri, ":");
     };

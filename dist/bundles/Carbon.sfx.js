@@ -1124,7 +1124,167 @@ $__System.register("15", ["4"], function(exports_1) {
     }
 });
 
-$__System.register("16", ["5", "13", "17"], function(exports_1) {
+$__System.register("16", ["13", "8", "9", "17", "5", "18"], function(exports_1) {
+    var IllegalArgumentError_1, Pointer, RDF, Resource, Utils, IDAlreadyInUseError_1;
+    var Factory;
+    function hasPointer(id) {
+        var freeResources = this;
+        if (!inLocalScope(id)) {
+            return freeResources._documents.hasPointer(id);
+        }
+        return freeResources.hasResource(id);
+    }
+    function getPointer(id) {
+        var freeResources = this;
+        if (!inLocalScope(id)) {
+            return freeResources._documents.getPointer(id);
+        }
+        var resource = freeResources.getResource(id);
+        return !resource ? freeResources.createResource(id) : resource;
+    }
+    function inLocalScope(id) {
+        return RDF.URI.Util.isBNodeID(id);
+    }
+    function inScope(idOrPointer) {
+        var freeResources = this;
+        var id = Pointer.Factory.is(idOrPointer) ? idOrPointer.id : idOrPointer;
+        if (inLocalScope(id))
+            return true;
+        return freeResources._documents.inScope(id);
+    }
+    function hasResource(id) {
+        var freeResources = this;
+        return freeResources._resourcesIndex.has(id);
+    }
+    function getResource(id) {
+        var freeResources = this;
+        return freeResources._resourcesIndex.get(id) || null;
+    }
+    function getResources() {
+        var freeResources = this;
+        return Utils.A.from(freeResources._resourcesIndex.values());
+    }
+    function createResource(id) {
+        var freeResources = this;
+        if (id) {
+            if (!inLocalScope(id))
+                throw new IllegalArgumentError_1.default("The id \"" + id + "\" is out of scope.");
+            if (freeResources._resourcesIndex.has(id))
+                throw new IDAlreadyInUseError_1.default("The id \"" + id + "\" is already in use by another resource.");
+        }
+        else {
+            id = RDF.URI.Util.generateBNodeID();
+        }
+        var resource = Resource.Factory.create(id);
+        freeResources._resourcesIndex.set(id, resource);
+        return resource;
+    }
+    return {
+        setters:[
+            function (IllegalArgumentError_1_1) {
+                IllegalArgumentError_1 = IllegalArgumentError_1_1;
+            },
+            function (Pointer_1) {
+                Pointer = Pointer_1;
+            },
+            function (RDF_1) {
+                RDF = RDF_1;
+            },
+            function (Resource_1) {
+                Resource = Resource_1;
+            },
+            function (Utils_1) {
+                Utils = Utils_1;
+            },
+            function (IDAlreadyInUseError_1_1) {
+                IDAlreadyInUseError_1 = IDAlreadyInUseError_1_1;
+            }],
+        execute: function() {
+            Factory = (function () {
+                function Factory() {
+                }
+                Factory.hasClassProperties = function (value) {
+                    return (Utils.hasFunction(value, "hasPointer") &&
+                        Utils.hasFunction(value, "getPointer") &&
+                        Utils.hasFunction(value, "inScope") &&
+                        Utils.hasPropertyDefined(value, "_documents") &&
+                        Utils.hasPropertyDefined(value, "_resourcesIndex") &&
+                        Utils.hasFunction(value, "hasResource") &&
+                        Utils.hasFunction(value, "getResource") &&
+                        Utils.hasFunction(value, "getResources") &&
+                        Utils.hasFunction(value, "createResource"));
+                };
+                Factory.create = function (documents) {
+                    return Factory.createFrom({}, documents);
+                };
+                Factory.createFrom = function (object, documents) {
+                    var freeResources = Factory.decorate(object);
+                    freeResources._documents = documents;
+                    return freeResources;
+                };
+                Factory.decorate = function (object) {
+                    if (Factory.hasClassProperties(object))
+                        return object;
+                    Object.defineProperties(object, {
+                        "_resourcesIndex": {
+                            writable: false,
+                            enumerable: false,
+                            configurable: true,
+                            value: new Map(),
+                        },
+                        "hasPointer": {
+                            writable: true,
+                            enumerable: false,
+                            configurable: true,
+                            value: hasPointer,
+                        },
+                        "getPointer": {
+                            writable: true,
+                            enumerable: false,
+                            configurable: true,
+                            value: getPointer,
+                        },
+                        "inScope": {
+                            writable: true,
+                            enumerable: false,
+                            configurable: true,
+                            value: inScope,
+                        },
+                        "hasResource": {
+                            writable: true,
+                            enumerable: false,
+                            configurable: true,
+                            value: hasResource,
+                        },
+                        "getResource": {
+                            writable: true,
+                            enumerable: false,
+                            configurable: true,
+                            value: getResource,
+                        },
+                        "getResources": {
+                            writable: true,
+                            enumerable: false,
+                            configurable: true,
+                            value: getResources,
+                        },
+                        "createResource": {
+                            writable: true,
+                            enumerable: false,
+                            configurable: true,
+                            value: createResource,
+                        },
+                    });
+                    return object;
+                };
+                return Factory;
+            })();
+            exports_1("Factory", Factory);
+        }
+    }
+});
+
+$__System.register("19", ["5", "13", "1a"], function(exports_1) {
     var Utils_1, IllegalArgumentError_1, XSD;
     var allowedTypes, Factory, Util;
     return {
@@ -1202,8 +1362,8 @@ $__System.register("16", ["5", "13", "17"], function(exports_1) {
     }
 });
 
-$__System.register("18", ["c", "19", "9", "5", "12", "1a", "14", "8", "4", "1b", "3", "1c", "16", "1d"], function(exports_1) {
-    var Errors, HTTP, RDF, Utils, Document, JSONLDConverter, PersistedDocument, Pointer, NS, ObjectSchema, LDP, SPARQL, RetrievalPreferences, ResponseDescription;
+$__System.register("1b", ["c", "1c", "9", "5", "12", "16", "1d", "14", "8", "4", "1e", "3", "1f", "19", "20"], function(exports_1) {
+    var Errors, HTTP, RDF, Utils, Document, FreeResources, JSONLDConverter, PersistedDocument, Pointer, NS, ObjectSchema, LDP, SPARQL, RetrievalPreferences, ResponseDescription;
     var Documents;
     return {
         setters:[
@@ -1221,6 +1381,9 @@ $__System.register("18", ["c", "19", "9", "5", "12", "1a", "14", "8", "4", "1b",
             },
             function (Document_1) {
                 Document = Document_1;
+            },
+            function (FreeResources_1) {
+                FreeResources = FreeResources_1;
             },
             function (JSONLDConverter_1) {
                 JSONLDConverter = JSONLDConverter_1;
@@ -1312,8 +1475,7 @@ $__System.register("18", ["c", "19", "9", "5", "12", "1a", "14", "8", "4", "1b",
                     var _this = this;
                     if (requestOptions === void 0) { requestOptions = {}; }
                     var pointerID = this.getPointerID(uri);
-                    if (!!this.context)
-                        uri = this.context.resolve(uri);
+                    uri = this.setDataRequest(uri, requestOptions, false);
                     if (this.pointers.has(pointerID)) {
                         var pointer = this.getPointer(uri);
                         if (pointer.isResolved()) {
@@ -1322,10 +1484,6 @@ $__System.register("18", ["c", "19", "9", "5", "12", "1a", "14", "8", "4", "1b",
                     }
                     if (this.documentsBeingResolved.has(pointerID))
                         return this.documentsBeingResolved.get(pointerID);
-                    if (this.context && this.context.auth.isAuthenticated())
-                        this.context.auth.addAuthentication(requestOptions);
-                    HTTP.Request.Util.setAcceptHeader("application/ld+json", requestOptions);
-                    HTTP.Request.Util.setPreferredInteractionModel(NS.LDP.Class.RDFSource, requestOptions);
                     var promise = HTTP.Request.Service.get(uri, requestOptions, new RDF.Document.Parser()).then(function (_a) {
                         var rdfDocuments = _a[0], response = _a[1];
                         var eTag = HTTP.Response.Util.getETag(response);
@@ -1344,13 +1502,7 @@ $__System.register("18", ["c", "19", "9", "5", "12", "1a", "14", "8", "4", "1b",
                 };
                 Documents.prototype.exists = function (documentURI, requestOptions) {
                     if (requestOptions === void 0) { requestOptions = {}; }
-                    if (!!this.context) {
-                        documentURI = this.context.resolve(documentURI);
-                        if (this.context.auth.isAuthenticated())
-                            this.context.auth.addAuthentication(requestOptions);
-                    }
-                    HTTP.Request.Util.setAcceptHeader("application/ld+json", requestOptions);
-                    HTTP.Request.Util.setPreferredInteractionModel(NS.LDP.Class.RDFSource, requestOptions);
+                    documentURI = this.setDataRequest(documentURI, requestOptions, false);
                     return HTTP.Request.Service.head(documentURI, requestOptions).then(function (response) { return [true, response]; }, function (error) {
                         if (error.response.status === 404)
                             return [false, error.response];
@@ -1364,12 +1516,11 @@ $__System.register("18", ["c", "19", "9", "5", "12", "1a", "14", "8", "4", "1b",
                     var slug = Utils.isString(slugOrChildDocument) ? slugOrChildDocument : null;
                     var childDocument = !Utils.isString(slugOrChildDocument) ? slugOrChildDocument : childDocumentOrRequestOptions;
                     requestOptions = !Utils.isString(slugOrChildDocument) ? childDocumentOrRequestOptions : requestOptions;
-                    if (!Document.Factory.is(childDocument))
-                        childDocument = Document.Factory.createFrom(childDocument);
-                    if (!!this.context)
-                        parentURI = this.context.resolve(parentURI);
                     if (PersistedDocument.Factory.is(childDocument))
                         return Promise.reject(new Errors.IllegalArgumentError("The childDocument provided has been already persisted."));
+                    if (!Document.Factory.is(childDocument))
+                        childDocument = Document.Factory.createFrom(childDocument);
+                    parentURI = this.setDataRequest(parentURI, requestOptions, true);
                     if (childDocument.id) {
                         var childURI = childDocument.id;
                         if (!!this.context)
@@ -1378,11 +1529,6 @@ $__System.register("18", ["c", "19", "9", "5", "12", "1a", "14", "8", "4", "1b",
                             return Promise.reject(new Errors.IllegalArgumentError("The childDocument's URI is not relative to the parentURI specified"));
                         }
                     }
-                    if (this.context && this.context.auth.isAuthenticated())
-                        this.context.auth.addAuthentication(requestOptions);
-                    HTTP.Request.Util.setContentTypeHeader("application/ld+json", requestOptions);
-                    HTTP.Request.Util.setAcceptHeader("application/ld+json", requestOptions);
-                    HTTP.Request.Util.setPreferredInteractionModel(NS.LDP.Class.Container, requestOptions);
                     var body = childDocument.toJSON(this, this.jsonldConverter);
                     if (slug !== null)
                         HTTP.Request.Util.setSlug(slug, requestOptions);
@@ -1403,10 +1549,7 @@ $__System.register("18", ["c", "19", "9", "5", "12", "1a", "14", "8", "4", "1b",
                 Documents.prototype.listChildren = function (parentURI, requestOptions) {
                     var _this = this;
                     if (requestOptions === void 0) { requestOptions = {}; }
-                    if (!!this.context)
-                        parentURI = this.context.resolve(parentURI);
-                    if (this.context && this.context.auth.isAuthenticated())
-                        this.context.auth.addAuthentication(requestOptions);
+                    parentURI = this.setDataRequest(parentURI, requestOptions, true);
                     var containerRetrievalPreferences = {
                         include: [
                             NS.LDP.Class.PreferContainment,
@@ -1418,8 +1561,6 @@ $__System.register("18", ["c", "19", "9", "5", "12", "1a", "14", "8", "4", "1b",
                             NS.C.Class.PreferMembershipResources,
                         ],
                     };
-                    HTTP.Request.Util.setAcceptHeader("application/ld+json", requestOptions);
-                    HTTP.Request.Util.setPreferredInteractionModel(NS.LDP.Class.Container, requestOptions);
                     HTTP.Request.Util.setContainerRetrievalPreferences(containerRetrievalPreferences, requestOptions);
                     return HTTP.Request.Service.get(parentURI, requestOptions, new RDF.Document.Parser())
                         .then(function (_a) {
@@ -1433,14 +1574,11 @@ $__System.register("18", ["c", "19", "9", "5", "12", "1a", "14", "8", "4", "1b",
                     });
                 };
                 Documents.prototype.getChildren = function (parentURI, retPrefReqOpt, requestOptions) {
-                    var _this = this;
                     var retrievalPreferences = RetrievalPreferences.Factory.is(retPrefReqOpt) ? retPrefReqOpt : null;
                     requestOptions = HTTP.Request.Util.isOptions(retPrefReqOpt) ? retPrefReqOpt : (HTTP.Request.Util.isOptions(requestOptions) ? requestOptions : {});
-                    var uri = (!!this.context) ? this.context.resolve(parentURI) : parentURI;
-                    if (this.context && this.context.auth.isAuthenticated())
-                        this.context.auth.addAuthentication(requestOptions);
+                    parentURI = this.setDataRequest(parentURI, requestOptions, true);
                     if (!!retrievalPreferences)
-                        uri += RetrievalPreferences.Util.stringifyRetrievalPreferences(retrievalPreferences);
+                        parentURI += RetrievalPreferences.Util.stringifyRetrievalPreferences(retrievalPreferences);
                     var containerRetrievalPreferences = {
                         include: [
                             NS.LDP.Class.PreferContainment,
@@ -1452,29 +1590,8 @@ $__System.register("18", ["c", "19", "9", "5", "12", "1a", "14", "8", "4", "1b",
                             NS.C.Class.PreferMembershipResources,
                         ],
                     };
-                    HTTP.Request.Util.setAcceptHeader("application/ld+json", requestOptions);
-                    HTTP.Request.Util.setPreferredInteractionModel(NS.LDP.Class.Container, requestOptions);
                     HTTP.Request.Util.setContainerRetrievalPreferences(containerRetrievalPreferences, requestOptions);
-                    return HTTP.Request.Service.get(uri, requestOptions, new HTTP.JSONLDParser.Class()).then(function (_a) {
-                        var expandedResult = _a[0], response = _a[1];
-                        var freeNodes = RDF.Node.Util.getFreeNodes(expandedResult);
-                        var rdfDocuments = RDF.Document.Util.getDocuments(expandedResult);
-                        console.log("ExpandedResult: %o", expandedResult);
-                        console.log("FreeNodes: %o", freeNodes);
-                        console.log("RDFDocuments: %o", rdfDocuments);
-                        var rdfResources = RDF.Document.Util.getResources(rdfDocuments);
-                        var volatileResources = _this.parseMultipleResources(rdfResources, response);
-                        var responseDescription = _this.getResponseDescription(volatileResources);
-                        if (!responseDescription)
-                            return [[], response];
-                        for (var _i = 0, _b = responseDescription.responseProperties; _i < _b.length; _i++) {
-                            var responseMetaData = _b[_i];
-                            var document = responseMetaData.responsePropertyResource;
-                            document._etag = responseMetaData.eTag;
-                        }
-                        var persistedDocuments = responseDescription.responseProperties.map(function (responseMetaData) { return responseMetaData.responsePropertyResource; });
-                        return [persistedDocuments, response];
-                    });
+                    return this.sendRequestForMultipleResponse(parentURI, requestOptions);
                 };
                 Documents.prototype.createAccessPoint = function (documentURIOrAccessPoint, accessPointOrSlug, slugOrRequestOptions, requestOptions) {
                     var _this = this;
@@ -1486,8 +1603,7 @@ $__System.register("18", ["c", "19", "9", "5", "12", "1a", "14", "8", "4", "1b",
                     requestOptions = !Utils.isString(slugOrRequestOptions) && slugOrRequestOptions !== null ? slugOrRequestOptions : requestOptions;
                     if (documentURI === null)
                         documentURI = accessPoint.membershipResource.id;
-                    if (!!this.context)
-                        documentURI = this.context.resolve(documentURI);
+                    documentURI = this.setDataRequest(documentURI, requestOptions, true);
                     if (accessPoint.membershipResource.id !== documentURI)
                         return Promise.reject(new Errors.IllegalArgumentError("The documentURI must be the same as the accessPoint's membershipResource"));
                     if (PersistedDocument.Factory.is(accessPoint))
@@ -1500,11 +1616,6 @@ $__System.register("18", ["c", "19", "9", "5", "12", "1a", "14", "8", "4", "1b",
                             return Promise.reject(new Errors.IllegalArgumentError("The accessPoint's URI is not relative to the parentURI specified"));
                         }
                     }
-                    if (this.context && this.context.auth.isAuthenticated())
-                        this.context.auth.addAuthentication(requestOptions);
-                    HTTP.Request.Util.setContentTypeHeader("application/ld+json", requestOptions);
-                    HTTP.Request.Util.setAcceptHeader("application/ld+json", requestOptions);
-                    HTTP.Request.Util.setPreferredInteractionModel(NS.LDP.Class.RDFSource, requestOptions);
                     var body = accessPoint.toJSON(this, this.jsonldConverter);
                     if (slug !== null)
                         HTTP.Request.Util.setSlug(slug, requestOptions);
@@ -1541,12 +1652,7 @@ $__System.register("18", ["c", "19", "9", "5", "12", "1a", "14", "8", "4", "1b",
                         var bufferType = fileType(data);
                         HTTP.Request.Util.setContentTypeHeader(bufferType ? bufferType.mime : "application/octet-stream", requestOptions);
                     }
-                    if (!!this.context)
-                        parentURI = this.context.resolve(parentURI);
-                    if (this.context && this.context.auth.isAuthenticated())
-                        this.context.auth.addAuthentication(requestOptions);
-                    HTTP.Request.Util.setAcceptHeader("application/ld+json", requestOptions);
-                    HTTP.Request.Util.setPreferredInteractionModel(NS.LDP.Class.Container, requestOptions);
+                    parentURI = this.setDataRequest(parentURI, requestOptions, true);
                     if (slug !== null)
                         HTTP.Request.Util.setSlug(slug, requestOptions);
                     return HTTP.Request.Service.post(parentURI, data, requestOptions).then(function (response) {
@@ -1567,15 +1673,7 @@ $__System.register("18", ["c", "19", "9", "5", "12", "1a", "14", "8", "4", "1b",
                     var _this = this;
                     var includeNonReadable = Utils.isBoolean(nonReadReqOpt) ? nonReadReqOpt : true;
                     var requestOptions = HTTP.Request.Util.isOptions(nonReadReqOpt) ? nonReadReqOpt : (HTTP.Request.Util.isOptions(reqOpt) ? reqOpt : {});
-                    if (!RDF.URI.Util.isAbsolute(uri)) {
-                        if (!this.context)
-                            throw new Errors.IllegalArgumentError("This Documents instance doesn't support relative URIs.");
-                        uri = this.context.resolve(uri);
-                    }
-                    if (this.context && this.context.auth.isAuthenticated())
-                        this.context.auth.addAuthentication(requestOptions);
-                    HTTP.Request.Util.setAcceptHeader("application/ld+json", requestOptions);
-                    HTTP.Request.Util.setPreferredInteractionModel(NS.LDP.Class.Container, requestOptions);
+                    uri = this.setDataRequest(uri, requestOptions, true);
                     var containerRetrievalPreferences = {
                         include: [
                             NS.LDP.Class.PreferMinimalContainer,
@@ -1625,21 +1723,12 @@ $__System.register("18", ["c", "19", "9", "5", "12", "1a", "14", "8", "4", "1b",
                     });
                 };
                 Documents.prototype.getMembers = function (uri, nonReadRetPrefReqOpt, retPrefReqOpt, reqOpt) {
-                    var _this = this;
                     var includeNonReadable = Utils.isBoolean(nonReadRetPrefReqOpt) ? nonReadRetPrefReqOpt : true;
                     var retrievalPreferences = RetrievalPreferences.Factory.is(nonReadRetPrefReqOpt) ? nonReadRetPrefReqOpt : (RetrievalPreferences.Factory.is(retPrefReqOpt) ? retPrefReqOpt : null);
                     var requestOptions = HTTP.Request.Util.isOptions(nonReadRetPrefReqOpt) ? nonReadRetPrefReqOpt : (HTTP.Request.Util.isOptions(retPrefReqOpt) ? retPrefReqOpt : (HTTP.Request.Util.isOptions(reqOpt) ? reqOpt : {}));
-                    if (!RDF.URI.Util.isAbsolute(uri)) {
-                        if (!this.context)
-                            throw new Errors.IllegalArgumentError("This Documents instance doesn't support relative URIs.");
-                        uri = this.context.resolve(uri);
-                    }
+                    uri = this.setDataRequest(uri, requestOptions, true);
                     if (!!retrievalPreferences)
                         uri += RetrievalPreferences.Util.stringifyRetrievalPreferences(retrievalPreferences);
-                    if (this.context && this.context.auth.isAuthenticated())
-                        this.context.auth.addAuthentication(requestOptions);
-                    HTTP.Request.Util.setAcceptHeader("application/ld+json", requestOptions);
-                    HTTP.Request.Util.setPreferredInteractionModel(NS.LDP.Class.Container, requestOptions);
                     var containerRetrievalPreferences = {
                         include: [
                             NS.LDP.Class.PreferMinimalContainer,
@@ -1658,21 +1747,7 @@ $__System.register("18", ["c", "19", "9", "5", "12", "1a", "14", "8", "4", "1b",
                         containerRetrievalPreferences.omit.push(NS.C.Class.NonReadableMembershipResourceTriples);
                     }
                     HTTP.Request.Util.setContainerRetrievalPreferences(containerRetrievalPreferences, requestOptions);
-                    return HTTP.Request.Service.get(uri, requestOptions, new RDF.Document.Parser()).then(function (_a) {
-                        var rdfResource = _a[0], response = _a[1];
-                        var rdfResources = RDF.Document.Util.getResources(rdfResource);
-                        var volatileResources = _this.parseMultipleResources(rdfResources, response);
-                        var responseDescription = _this.getResponseDescription(volatileResources);
-                        if (!responseDescription)
-                            return [[], response];
-                        for (var _i = 0, _b = responseDescription.responseProperties; _i < _b.length; _i++) {
-                            var responseMetaData = _b[_i];
-                            var document = responseMetaData.responsePropertyResource;
-                            document._etag = responseMetaData.eTag;
-                        }
-                        var persistedDocuments = responseDescription.responseProperties.map(function (responseMetaData) { return responseMetaData.responsePropertyResource; });
-                        return [persistedDocuments, response];
-                    });
+                    return this.sendRequestForMultipleResponse(uri, requestOptions);
                 };
                 Documents.prototype.addMember = function (documentURI, memberORUri, requestOptions) {
                     if (requestOptions === void 0) { requestOptions = {}; }
@@ -1688,14 +1763,8 @@ $__System.register("18", ["c", "19", "9", "5", "12", "1a", "14", "8", "4", "1b",
                             return Promise.reject(new Errors.IllegalArgumentError("No Carbon.Pointer or string URI provided."));
                         pointers.push(member);
                     }
-                    if (!!this.context)
-                        documentURI = this.context.resolve(documentURI);
+                    documentURI = this.setDataRequest(documentURI, requestOptions, true);
                     var document = LDP.AddMemberAction.Factory.createDocument(pointers);
-                    if (this.context && this.context.auth.isAuthenticated())
-                        this.context.auth.addAuthentication(requestOptions);
-                    HTTP.Request.Util.setAcceptHeader("application/ld+json", requestOptions);
-                    HTTP.Request.Util.setContentTypeHeader("application/ld+json", requestOptions);
-                    HTTP.Request.Util.setPreferredInteractionModel(NS.LDP.Class.Container, requestOptions);
                     var body = document.toJSON(this, this.jsonldConverter);
                     return HTTP.Request.Service.put(documentURI, body, requestOptions);
                 };
@@ -1713,26 +1782,19 @@ $__System.register("18", ["c", "19", "9", "5", "12", "1a", "14", "8", "4", "1b",
                             return Promise.reject(new Errors.IllegalArgumentError("No Carbon.Pointer or string URI provided."));
                         pointers.push(member);
                     }
-                    if (!!this.context)
-                        documentURI = this.context.resolve(documentURI);
+                    documentURI = this.setDataRequest(documentURI, requestOptions, true);
                     var document = LDP.RemoveMemberAction.Factory.createDocument(pointers);
                     var containerRetrievalPreferences = {
                         include: [NS.C.Class.PreferSelectedMembershipTriples],
                         omit: [NS.C.Class.PreferMembershipTriples],
                     };
-                    if (this.context && this.context.auth.isAuthenticated())
-                        this.context.auth.addAuthentication(requestOptions);
-                    HTTP.Request.Util.setAcceptHeader("application/ld+json", requestOptions);
-                    HTTP.Request.Util.setContentTypeHeader("application/ld+json", requestOptions);
-                    HTTP.Request.Util.setPreferredInteractionModel(NS.LDP.Class.Container, requestOptions);
                     HTTP.Request.Util.setContainerRetrievalPreferences(containerRetrievalPreferences, requestOptions, false);
                     var body = document.toJSON(this, this.jsonldConverter);
                     return HTTP.Request.Service.delete(documentURI, body, requestOptions);
                 };
                 Documents.prototype.removeAllMembers = function (documentURI, requestOptions) {
                     if (requestOptions === void 0) { requestOptions = {}; }
-                    if (!!this.context)
-                        documentURI = this.context.resolve(documentURI);
+                    documentURI = this.setDataRequest(documentURI, requestOptions, true);
                     var containerRetrievalPreferences = {
                         include: [
                             NS.C.Class.PreferMembershipTriples,
@@ -1744,46 +1806,27 @@ $__System.register("18", ["c", "19", "9", "5", "12", "1a", "14", "8", "4", "1b",
                             NS.C.Class.PreferContainer,
                         ],
                     };
-                    if (this.context && this.context.auth.isAuthenticated())
-                        this.context.auth.addAuthentication(requestOptions);
-                    HTTP.Request.Util.setAcceptHeader("application/ld+json", requestOptions);
-                    HTTP.Request.Util.setContentTypeHeader("application/ld+json", requestOptions);
-                    HTTP.Request.Util.setPreferredInteractionModel(NS.LDP.Class.Container, requestOptions);
                     HTTP.Request.Util.setContainerRetrievalPreferences(containerRetrievalPreferences, requestOptions, false);
                     return HTTP.Request.Service.delete(documentURI, requestOptions);
                 };
                 Documents.prototype.save = function (persistedDocument, requestOptions) {
-                    // TODO: Check if the document isDirty
-                    /*
-                    if( ! persistedDocument.isDirty() ) return new Promise<HTTP.Response.Class>( ( resolve:( result:HTTP.Response.Class ) => void ) => {
-                        resolve( null );
-                    });
-                    */
                     if (requestOptions === void 0) { requestOptions = {}; }
-                    if (this.context && this.context.auth.isAuthenticated())
-                        this.context.auth.addAuthentication(requestOptions);
-                    HTTP.Request.Util.setAcceptHeader("application/ld+json", requestOptions);
-                    HTTP.Request.Util.setContentTypeHeader("application/ld+json", requestOptions);
-                    HTTP.Request.Util.setPreferredInteractionModel(NS.LDP.Class.RDFSource, requestOptions);
+                    var uri = this.setDataRequest(persistedDocument.id, requestOptions, false);
                     HTTP.Request.Util.setIfMatchHeader(persistedDocument._etag, requestOptions);
                     var body = persistedDocument.toJSON(this, this.jsonldConverter);
-                    return HTTP.Request.Service.put(persistedDocument.id, body, requestOptions).then(function (response) {
+                    return HTTP.Request.Service.put(uri, body, requestOptions).then(function (response) {
                         return [persistedDocument, response];
                     });
                 };
                 Documents.prototype.refresh = function (persistedDocument, requestOptions) {
                     var _this = this;
                     if (requestOptions === void 0) { requestOptions = {}; }
-                    if (this.context && this.context.auth.isAuthenticated())
-                        this.context.auth.addAuthentication(requestOptions);
-                    HTTP.Request.Util.setAcceptHeader("application/ld+json", requestOptions);
-                    HTTP.Request.Util.setContentTypeHeader("application/ld+json", requestOptions);
-                    HTTP.Request.Util.setPreferredInteractionModel(NS.LDP.Class.RDFSource, requestOptions);
-                    return HTTP.Request.Service.head(persistedDocument.id, requestOptions).then(function (headerResponse) {
+                    var uri = this.setDataRequest(persistedDocument.id, requestOptions, false);
+                    return HTTP.Request.Service.head(uri, requestOptions).then(function (headerResponse) {
                         var eTag = HTTP.Response.Util.getETag(headerResponse);
                         if (eTag === persistedDocument._etag)
                             return [persistedDocument, null];
-                        return HTTP.Request.Service.get(persistedDocument.id, requestOptions, new RDF.Document.Parser());
+                        return HTTP.Request.Service.get(uri, requestOptions, new RDF.Document.Parser());
                     }).then(function (_a) {
                         var rdfDocuments = _a[0], response = _a[1];
                         if (response === null)
@@ -1791,7 +1834,7 @@ $__System.register("18", ["c", "19", "9", "5", "12", "1a", "14", "8", "4", "1b",
                         var eTag = HTTP.Response.Util.getETag(response);
                         if (eTag === null)
                             throw new HTTP.Errors.BadResponseError("The response doesn't contain an ETag", response);
-                        var rdfDocument = _this.getRDFDocument(persistedDocument.id, rdfDocuments, response);
+                        var rdfDocument = _this.getRDFDocument(uri, rdfDocuments, response);
                         if (rdfDocument === null)
                             throw new HTTP.Errors.BadResponseError("No document was returned.", response);
                         var updatedPersistedDocument = _this.getPersistedDocument(rdfDocument, response);
@@ -1801,12 +1844,7 @@ $__System.register("18", ["c", "19", "9", "5", "12", "1a", "14", "8", "4", "1b",
                 };
                 Documents.prototype.delete = function (documentURI, requestOptions) {
                     if (requestOptions === void 0) { requestOptions = {}; }
-                    if (this.context && this.context.auth.isAuthenticated())
-                        this.context.auth.addAuthentication(requestOptions);
-                    if (!!this.context)
-                        documentURI = this.context.resolve(documentURI);
-                    HTTP.Request.Util.setAcceptHeader("application/ld+json", requestOptions);
-                    HTTP.Request.Util.setPreferredInteractionModel(NS.LDP.Class.RDFSource, requestOptions);
+                    documentURI = this.setDataRequest(documentURI, requestOptions, false);
                     return HTTP.Request.Service.delete(documentURI, requestOptions);
                 };
                 Documents.prototype.getSchemaFor = function (object) {
@@ -1948,7 +1986,7 @@ $__System.register("18", ["c", "19", "9", "5", "12", "1a", "14", "8", "4", "1b",
                     return this.jsonldConverter.compact(expandedObject, targetObject, digestedSchema, pointerLibrary);
                 };
                 Documents.prototype.getDigestedObjectSchemaForExpandedObject = function (expandedObject) {
-                    var types = this.getExpandedObjectTypes(expandedObject);
+                    var types = RDF.Node.Util.getTypes(expandedObject);
                     return this.getDigestedObjectSchema(types);
                 };
                 Documents.prototype.getDigestedObjectSchemaForDocument = function (document) {
@@ -1975,11 +2013,6 @@ $__System.register("18", ["c", "19", "9", "5", "12", "1a", "14", "8", "4", "1b",
                         digestedSchema = new ObjectSchema.DigestedObjectSchema();
                     }
                     return digestedSchema;
-                };
-                Documents.prototype.getExpandedObjectTypes = function (expandedObject) {
-                    if (!expandedObject["@type"])
-                        return [];
-                    return expandedObject["@type"];
                 };
                 Documents.prototype.getDocumentTypes = function (document) {
                     if (!document.types)
@@ -2013,6 +2046,20 @@ $__System.register("18", ["c", "19", "9", "5", "12", "1a", "14", "8", "4", "1b",
                         return null;
                     }
                     return persistedDocument.getFragment(fragment.id);
+                };
+                Documents.prototype.setDataRequest = function (uri, requestOptions, asContainer) {
+                    if (RDF.URI.Util.isRelative(uri) && !this.context)
+                        throw new Errors.IllegalArgumentError("This Documents instance doesn't support relative URIs.");
+                    if (this.context) {
+                        if (this.context.auth.isAuthenticated())
+                            this.context.auth.addAuthentication(requestOptions);
+                        uri = this.context.resolve(uri);
+                    }
+                    HTTP.Request.Util.setContentTypeHeader("application/ld+json", requestOptions);
+                    HTTP.Request.Util.setAcceptHeader("application/ld+json", requestOptions);
+                    var interactionModel = asContainer ? NS.LDP.Class.Container : NS.LDP.Class.RDFSource;
+                    HTTP.Request.Util.setPreferredInteractionModel(interactionModel, requestOptions);
+                    return uri;
                 };
                 Documents.prototype.getPersistedDocument = function (rdfDocument, response) {
                     var documentResources = RDF.Document.Util.getDocumentResources(rdfDocument);
@@ -2077,29 +2124,34 @@ $__System.register("18", ["c", "19", "9", "5", "12", "1a", "14", "8", "4", "1b",
                     persistedDocument._syncSnapshot();
                     return persistedDocument;
                 };
-                Documents.prototype.parseMultipleResources = function (rdfResources, response) {
-                    var volatiles = [];
-                    var tempDocument = PersistedDocument.Factory.create("", this);
-                    for (var _i = 0; _i < rdfResources.length; _i++) {
-                        var rdfResource = rdfResources[_i];
-                        if (RDF.Document.Factory.is(rdfResource)) {
-                            this.getPersistedDocument(rdfResource, response);
+                Documents.prototype.sendRequestForMultipleResponse = function (uri, requestOptions) {
+                    var _this = this;
+                    return HTTP.Request.Service.get(uri, requestOptions, new HTTP.JSONLDParser.Class()).then(function (_a) {
+                        var expandedResult = _a[0], response = _a[1];
+                        var freeNodes = RDF.Node.Util.getFreeNodes(expandedResult);
+                        var rdfDocuments = RDF.Document.Util.getDocuments(expandedResult);
+                        rdfDocuments.forEach(function (rdfDocument) { return _this.getPersistedDocument(rdfDocument, response); });
+                        var freeResources = _this.getFreeResourcesDocument(freeNodes);
+                        var descriptionResources = freeResources.getResources().filter(function (resource) { return ResponseDescription.Factory.hasRDFClass(resource); });
+                        if (descriptionResources.length === 0)
+                            return [[], response];
+                        if (descriptionResources.length > 1)
+                            throw new HTTP.Errors.BadResponseError("The response contained multiple c:ResponseDescription objects", response);
+                        var responseDescription = descriptionResources[0];
+                        for (var _i = 0, _b = responseDescription.responseProperties; _i < _b.length; _i++) {
+                            var responseMetaData = _b[_i];
+                            var document = responseMetaData.responsePropertyResource;
+                            document._etag = responseMetaData.eTag;
                         }
-                        else {
-                            var volatile = tempDocument.getPointer(rdfResource["@id"]);
-                            this.compact(rdfResource, volatile, tempDocument);
-                            volatiles.push(volatile);
-                        }
-                    }
-                    return volatiles;
+                        var persistedDocuments = responseDescription.responseProperties.map(function (responseMetaData) { return responseMetaData.responsePropertyResource; });
+                        return [persistedDocuments, response];
+                    });
                 };
-                Documents.prototype.getResponseDescription = function (volatiles) {
-                    for (var _i = 0; _i < volatiles.length; _i++) {
-                        var volatile = volatiles[_i];
-                        if (ResponseDescription.Factory.is(volatile))
-                            return volatile;
-                    }
-                    return null;
+                Documents.prototype.getFreeResourcesDocument = function (nodes) {
+                    var freeResourcesDocument = FreeResources.Factory.create(this);
+                    var resources = nodes.map(function (node) { return freeResourcesDocument.createResource(node["@id"]); });
+                    this.compact(nodes, resources, freeResourcesDocument);
+                    return freeResourcesDocument;
                 };
                 return Documents;
             })();
@@ -2108,7 +2160,7 @@ $__System.register("18", ["c", "19", "9", "5", "12", "1a", "14", "8", "4", "1b",
     }
 });
 
-$__System.register("1e", ["12", "4", "5"], function(exports_1) {
+$__System.register("21", ["12", "4", "5"], function(exports_1) {
     var Document, NS, Utils;
     var RDF_CLASS, SCHEMA, Factory;
     return {
@@ -2150,7 +2202,7 @@ $__System.register("1e", ["12", "4", "5"], function(exports_1) {
     }
 });
 
-$__System.register("1f", ["4"], function(exports_1) {
+$__System.register("22", ["4"], function(exports_1) {
     var NS;
     var RDF_CLASS, Factory;
     return {
@@ -2180,7 +2232,7 @@ $__System.register("1f", ["4"], function(exports_1) {
     }
 });
 
-$__System.register("20", ["4", "5"], function(exports_1) {
+$__System.register("23", ["4", "5"], function(exports_1) {
     var NS, Utils;
     var RDF_CLASS, SCHEMA, Factory;
     return {
@@ -2249,7 +2301,7 @@ $__System.register("20", ["4", "5"], function(exports_1) {
     }
 });
 
-$__System.register("21", ["12", "c", "4", "8", "5"], function(exports_1) {
+$__System.register("24", ["12", "c", "4", "8", "5"], function(exports_1) {
     var Document, Errors, NS, Pointer, Utils;
     var RDF_CLASS, Factory;
     return {
@@ -2322,7 +2374,7 @@ $__System.register("21", ["12", "c", "4", "8", "5"], function(exports_1) {
     }
 });
 
-$__System.register("22", ["4", "5"], function(exports_1) {
+$__System.register("25", ["4", "5"], function(exports_1) {
     var NS, Utils;
     var RDF_CLASS, Factory;
     return {
@@ -2348,7 +2400,7 @@ $__System.register("22", ["4", "5"], function(exports_1) {
     }
 });
 
-$__System.register("23", ["5"], function(exports_1) {
+$__System.register("26", ["5"], function(exports_1) {
     var Utils;
     var Factory;
     function addMember(memberOrUri) {
@@ -2489,7 +2541,7 @@ $__System.register("23", ["5"], function(exports_1) {
     }
 });
 
-$__System.register("24", ["4"], function(exports_1) {
+$__System.register("27", ["4"], function(exports_1) {
     var NS;
     var RDF_CLASS, SCHEMA, Factory;
     return {
@@ -2519,7 +2571,7 @@ $__System.register("24", ["4"], function(exports_1) {
     }
 });
 
-$__System.register("25", ["12", "4", "5"], function(exports_1) {
+$__System.register("28", ["12", "4", "5"], function(exports_1) {
     var Document, NS, Utils;
     var RDF_CLASS, SCHEMA, Factory;
     return {
@@ -2561,7 +2613,7 @@ $__System.register("25", ["12", "4", "5"], function(exports_1) {
     }
 });
 
-$__System.register("1d", ["4", "5", "26"], function(exports_1) {
+$__System.register("20", ["4", "5", "29"], function(exports_1) {
     var NS, Utils, VolatileResource;
     var RDF_CLASS, SCHEMA, Factory;
     return {
@@ -2608,7 +2660,7 @@ $__System.register("1d", ["4", "5", "26"], function(exports_1) {
     }
 });
 
-$__System.register("26", ["4", "27"], function(exports_1) {
+$__System.register("29", ["4", "17"], function(exports_1) {
     var NS, Resource;
     var RDF_CLASS, Factory;
     return {
@@ -2641,7 +2693,7 @@ $__System.register("26", ["4", "27"], function(exports_1) {
     }
 });
 
-$__System.register("28", ["4", "5", "26"], function(exports_1) {
+$__System.register("2a", ["4", "5", "29"], function(exports_1) {
     var NS, Utils, VolatileResource;
     var RDF_CLASS, SCHEMA, Factory;
     return {
@@ -2692,7 +2744,7 @@ $__System.register("28", ["4", "5", "26"], function(exports_1) {
     }
 });
 
-$__System.register("3", ["1e", "1f", "20", "21", "22", "23", "24", "25", "1d", "28"], function(exports_1) {
+$__System.register("3", ["21", "22", "23", "24", "25", "26", "27", "28", "20", "2a"], function(exports_1) {
     var AddMemberAction, BasicContainer, Container, DirectContainer, IndirectContainer, PersistedContainer, RDFSource, RemoveMemberAction, ResponseDescription, ResponseMetaData;
     return {
         setters:[
@@ -2741,7 +2793,7 @@ $__System.register("3", ["1e", "1f", "20", "21", "22", "23", "24", "25", "1d", "
     }
 });
 
-$__System.register("29", ["4"], function(exports_1) {
+$__System.register("2b", ["4"], function(exports_1) {
     var NS;
     var SCHEMA;
     return {
@@ -2831,7 +2883,7 @@ $__System.register("11", ["5", "12", "4", "13"], function(exports_1) {
     }
 });
 
-$__System.register("1a", ["c", "1b", "4", "8", "9", "5"], function(exports_1) {
+$__System.register("1d", ["c", "1e", "4", "8", "9", "5"], function(exports_1) {
     var Errors, ObjectSchema, NS, Pointer, RDF, Utils;
     var Class;
     return {
@@ -3394,11 +3446,14 @@ $__System.register("1a", ["c", "1b", "4", "8", "9", "5"], function(exports_1) {
     }
 });
 
-$__System.register("2a", ["27", "5"], function(exports_1) {
-    var Resource, Utils;
-    var Factory, Util;
+$__System.register("2c", ["9", "17", "5"], function(exports_1) {
+    var RDF, Resource, Utils;
+    var Factory;
     return {
         setters:[
+            function (RDF_1) {
+                RDF = RDF_1;
+            },
             function (Resource_1) {
                 Resource = Resource_1;
             },
@@ -3418,7 +3473,7 @@ $__System.register("2a", ["27", "5"], function(exports_1) {
                 };
                 Factory.createFrom = function (object, idOrDocument, document) {
                     if (document === void 0) { document = null; }
-                    var id = !!document ? idOrDocument : Util.generateID();
+                    var id = !!document ? idOrDocument : RDF.URI.Util.generateBNodeID();
                     document = document || idOrDocument;
                     var resource = Resource.Factory.createFrom(object, id);
                     if (Factory.hasClassProperties(resource))
@@ -3436,20 +3491,11 @@ $__System.register("2a", ["27", "5"], function(exports_1) {
                 return Factory;
             })();
             exports_1("Factory", Factory);
-            Util = (function () {
-                function Util() {
-                }
-                Util.generateID = function () {
-                    return "_:" + Utils.UUID.generate();
-                };
-                return Util;
-            })();
-            exports_1("Util", Util);
         }
     }
 });
 
-$__System.register("2b", ["2a", "9", "5"], function(exports_1) {
+$__System.register("2d", ["2c", "9", "5"], function(exports_1) {
     var Fragment, RDF, Utils;
     var Factory;
     return {
@@ -3499,7 +3545,7 @@ $__System.register("2b", ["2a", "9", "5"], function(exports_1) {
     }
 });
 
-$__System.register("1b", ["c", "9", "5"], function(exports_1) {
+$__System.register("1e", ["c", "9", "5"], function(exports_1) {
     var Errors, RDF, Utils;
     var ContainerType, DigestedObjectSchema, DigestedPropertyDefinition, Digester;
     return {
@@ -3683,7 +3729,7 @@ $__System.register("1b", ["c", "9", "5"], function(exports_1) {
     }
 });
 
-$__System.register("27", ["8", "5"], function(exports_1) {
+$__System.register("17", ["8", "5"], function(exports_1) {
     var Pointer, Utils;
     var Factory;
     return {
@@ -3741,7 +3787,7 @@ $__System.register("27", ["8", "5"], function(exports_1) {
     }
 });
 
-$__System.register("12", ["c", "2a", "1a", "2b", "1b", "8", "9", "27", "5"], function(exports_1) {
+$__System.register("12", ["c", "2c", "1d", "2d", "1e", "8", "9", "17", "5"], function(exports_1) {
     var Errors, Fragment, JSONLDConverter_1, NamedFragment, ObjectSchema, Pointer, RDF, Resource, Utils;
     var Factory;
     function hasPointer(id) {
@@ -3821,7 +3867,7 @@ $__System.register("12", ["c", "2a", "1a", "2b", "1b", "8", "9", "27", "5"], fun
                 throw new Errors.IDAlreadyInUseError("The slug provided is already being used by a fragment.");
         }
         else {
-            id = Fragment.Util.generateID();
+            id = RDF.URI.Util.generateBNodeID();
         }
         var fragment = Fragment.Factory.createFrom(object, id, document);
         document._fragmentsIndex.set(id, fragment);
@@ -4053,7 +4099,7 @@ $__System.register("12", ["c", "2a", "1a", "2b", "1b", "8", "9", "27", "5"], fun
     }
 });
 
-$__System.register("2c", ["5"], function(exports_1) {
+$__System.register("2e", ["5"], function(exports_1) {
     var Utils;
     var Factory;
     function syncSnapshot() {
@@ -4112,7 +4158,7 @@ $__System.register("2c", ["5"], function(exports_1) {
     }
 });
 
-$__System.register("2d", ["2c"], function(exports_1) {
+$__System.register("2f", ["2e"], function(exports_1) {
     var PersistedResource;
     var Factory;
     return {
@@ -4136,7 +4182,7 @@ $__System.register("2d", ["2c"], function(exports_1) {
     }
 });
 
-$__System.register("2e", ["2d"], function(exports_1) {
+$__System.register("30", ["2f"], function(exports_1) {
     var PersistedFragment;
     var Factory;
     return {
@@ -4160,7 +4206,7 @@ $__System.register("2e", ["2d"], function(exports_1) {
     }
 });
 
-$__System.register("14", ["12", "2c", "2d", "2e", "9", "5", "2f"], function(exports_1) {
+$__System.register("14", ["12", "2e", "2f", "30", "9", "5", "31"], function(exports_1) {
     var Document, PersistedResource, PersistedFragment, PersistedNamedFragment, RDF, Utils, URI;
     var Factory;
     function extendIsDirty(superFunction) {
@@ -4463,7 +4509,7 @@ $__System.register("14", ["12", "2c", "2d", "2e", "9", "5", "2f"], function(expo
     }
 });
 
-$__System.register("30", ["4", "14", "5"], function(exports_1) {
+$__System.register("32", ["4", "14", "5"], function(exports_1) {
     var NS, PersistedDocument, Utils;
     var RDF_CLASS, SCHEMA, Factory;
     return {
@@ -4508,7 +4554,7 @@ $__System.register("30", ["4", "14", "5"], function(exports_1) {
     }
 });
 
-$__System.register("f", ["15", "31", "18", "c", "3", "4", "29", "1b", "11", "30"], function(exports_1) {
+$__System.register("f", ["15", "33", "1b", "c", "3", "4", "2b", "1e", "11", "32"], function(exports_1) {
     var APIDescription, Auth, Documents_1, Errors, LDP, NS, PersistedBlankNode, ObjectSchema, Agent, RDFRepresentation;
     var Class, instance;
     return {
@@ -4702,23 +4748,23 @@ $__System.register("f", ["15", "31", "18", "c", "3", "4", "29", "1b", "11", "30"
     }
 });
 
-$__System.register("32", [], function(exports_1) {
-    return {
-        setters:[],
-        execute: function() {
-        }
-    }
-});
-
-$__System.register("33", [], function(exports_1) {
-    return {
-        setters:[],
-        execute: function() {
-        }
-    }
-});
-
 $__System.register("34", [], function(exports_1) {
+    return {
+        setters:[],
+        execute: function() {
+        }
+    }
+});
+
+$__System.register("35", [], function(exports_1) {
+    return {
+        setters:[],
+        execute: function() {
+        }
+    }
+});
+
+$__System.register("36", [], function(exports_1) {
     var Class;
     return {
         setters:[],
@@ -4748,7 +4794,7 @@ $__System.register("34", [], function(exports_1) {
     }
 });
 
-$__System.register("35", ["19", "c", "36", "34"], function(exports_1) {
+$__System.register("37", ["1c", "c", "38", "36"], function(exports_1) {
     var HTTP, Errors, UsernameAndPasswordToken_1, UsernameAndPasswordCredentials;
     var Class;
     function toB64(str) {
@@ -4822,7 +4868,7 @@ $__System.register("35", ["19", "c", "36", "34"], function(exports_1) {
     }
 });
 
-$__System.register("37", ["c", "19", "4", "9", "35", "36", "38", "5"], function(exports_1) {
+$__System.register("39", ["c", "1c", "4", "9", "37", "38", "3a", "5"], function(exports_1) {
     var Errors, HTTP, NS, RDF, BasicAuthenticator_1, UsernameAndPasswordToken_1, Token, Utils;
     var Class;
     return {
@@ -5054,7 +5100,7 @@ $__System.register("8", ["5", "c"], function(exports_1) {
     }
 });
 
-$__System.register("38", ["4", "8", "5"], function(exports_1) {
+$__System.register("3a", ["4", "8", "5"], function(exports_1) {
     var NS, Pointer, Utils;
     var RDF_CLASS, CONTEXT, Factory;
     return {
@@ -5114,7 +5160,7 @@ $__System.register("38", ["4", "8", "5"], function(exports_1) {
     }
 });
 
-$__System.register("36", [], function(exports_1) {
+$__System.register("38", [], function(exports_1) {
     var Class;
     return {
         setters:[],
@@ -5142,7 +5188,7 @@ $__System.register("36", [], function(exports_1) {
     }
 });
 
-$__System.register("31", ["32", "33", "35", "37", "38", "36", "c", "5"], function(exports_1) {
+$__System.register("33", ["34", "35", "37", "39", "3a", "38", "c", "5"], function(exports_1) {
     var AuthenticationToken_1, Authenticator_1, BasicAuthenticator_1, TokenAuthenticator_1, Token, UsernameAndPasswordToken_1, Errors, Utils;
     var Method, Class;
     return {
@@ -5261,7 +5307,7 @@ $__System.register("31", ["32", "33", "35", "37", "38", "36", "c", "5"], functio
     }
 });
 
-$__System.register("39", ["31"], function(exports_1) {
+$__System.register("3b", ["33"], function(exports_1) {
     var Auth;
     var settings;
     return {
@@ -5282,7 +5328,7 @@ $__System.register("39", ["31"], function(exports_1) {
     }
 });
 
-$__System.register("3a", ["5"], function(exports_1) {
+$__System.register("3c", ["5"], function(exports_1) {
     var Utils;
     var ValueTypes, Factory;
     return {
@@ -5329,7 +5375,7 @@ $__System.register("3a", ["5"], function(exports_1) {
     }
 });
 
-$__System.register("3b", ["5"], function(exports_1) {
+$__System.register("3d", ["5"], function(exports_1) {
     var Utils;
     var Factory;
     return {
@@ -5353,7 +5399,7 @@ $__System.register("3b", ["5"], function(exports_1) {
     }
 });
 
-$__System.register("3c", [], function(exports_1) {
+$__System.register("3e", [], function(exports_1) {
     return {
         setters:[],
         execute: function() {
@@ -5361,7 +5407,7 @@ $__System.register("3c", [], function(exports_1) {
     }
 });
 
-$__System.register("3d", ["c", "5"], function(exports_1) {
+$__System.register("3f", ["c", "5"], function(exports_1) {
     var __extends = (this && this.__extends) || function (d, b) {
         for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
         function __() { this.constructor = d; }
@@ -5490,7 +5536,7 @@ $__System.register("3d", ["c", "5"], function(exports_1) {
     }
 });
 
-$__System.register("3e", ["3d"], function(exports_1) {
+$__System.register("40", ["3f"], function(exports_1) {
     var XSD;
     return {
         setters:[
@@ -5503,7 +5549,7 @@ $__System.register("3e", ["3d"], function(exports_1) {
     }
 });
 
-$__System.register("3f", ["5", "17", "c", "3c", "3e"], function(exports_1) {
+$__System.register("41", ["5", "1a", "c", "3e", "40"], function(exports_1) {
     var Utils, XSD, Errors, Serializer_1, Serializers;
     var Factory, Util;
     return {
@@ -5660,7 +5706,7 @@ $__System.register("3f", ["5", "17", "c", "3c", "3e"], function(exports_1) {
     }
 });
 
-$__System.register("40", [], function(exports_1) {
+$__System.register("42", [], function(exports_1) {
     var namespace, Class, Predicate;
     return {
         setters:[],
@@ -5817,7 +5863,7 @@ $__System.register("40", [], function(exports_1) {
     }
 });
 
-$__System.register("41", [], function(exports_1) {
+$__System.register("43", [], function(exports_1) {
     var namespace, Predicate;
     return {
         setters:[],
@@ -5837,7 +5883,7 @@ $__System.register("41", [], function(exports_1) {
     }
 });
 
-$__System.register("42", [], function(exports_1) {
+$__System.register("44", [], function(exports_1) {
     var namespace, Class, Predicate;
     return {
         setters:[],
@@ -5915,7 +5961,7 @@ $__System.register("42", [], function(exports_1) {
     }
 });
 
-$__System.register("43", [], function(exports_1) {
+$__System.register("45", [], function(exports_1) {
     var namespace, Class, Predicate;
     return {
         setters:[],
@@ -6073,7 +6119,7 @@ $__System.register("43", [], function(exports_1) {
     }
 });
 
-$__System.register("44", [], function(exports_1) {
+$__System.register("46", [], function(exports_1) {
     var namespace, Predicate;
     return {
         setters:[],
@@ -6091,7 +6137,7 @@ $__System.register("44", [], function(exports_1) {
     }
 });
 
-$__System.register("17", ["5"], function(exports_1) {
+$__System.register("1a", ["5"], function(exports_1) {
     var Utils;
     var namespace, DataType;
     return {
@@ -6142,7 +6188,7 @@ $__System.register("17", ["5"], function(exports_1) {
     }
 });
 
-$__System.register("45", [], function(exports_1) {
+$__System.register("47", [], function(exports_1) {
     var namespace, Predicate;
     return {
         setters:[],
@@ -6163,7 +6209,7 @@ $__System.register("45", [], function(exports_1) {
     }
 });
 
-$__System.register("4", ["40", "41", "42", "43", "44", "17", "45"], function(exports_1) {
+$__System.register("4", ["42", "43", "44", "45", "46", "1a", "47"], function(exports_1) {
     var C, CP, CS, LDP, RDF, XSD, VCARD;
     return {
         setters:[
@@ -11409,7 +11455,7 @@ var _removeDefine = $__System.get("@@amd-helpers").createDefine();
     });
   };
   if (!_nodejs && (typeof define === 'function' && define.amd)) {
-    define("46", [], function() {
+    define("48", [], function() {
       wrapper(factory);
       return factory;
     });
@@ -11431,7 +11477,7 @@ var _removeDefine = $__System.get("@@amd-helpers").createDefine();
 
 _removeDefine();
 })();
-$__System.register("47", ["46", "48"], function(exports_1) {
+$__System.register("49", ["48", "4a"], function(exports_1) {
     var jsonld, JSONParser_1;
     var Class;
     return {
@@ -11472,7 +11518,7 @@ $__System.register("47", ["46", "48"], function(exports_1) {
     }
 });
 
-$__System.register("49", [], function(exports_1) {
+$__System.register("4b", [], function(exports_1) {
     return {
         setters:[],
         execute: function() {
@@ -11480,7 +11526,7 @@ $__System.register("49", [], function(exports_1) {
     }
 });
 
-$__System.register("4a", ["4b"], function(exports_1) {
+$__System.register("4c", ["4d"], function(exports_1) {
     var __extends = (this && this.__extends) || function (d, b) {
         for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
         function __() { this.constructor = d; }
@@ -11518,7 +11564,7 @@ $__System.register("4a", ["4b"], function(exports_1) {
     }
 });
 
-$__System.register("4c", ["4b"], function(exports_1) {
+$__System.register("4e", ["4d"], function(exports_1) {
     var __extends = (this && this.__extends) || function (d, b) {
         for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
         function __() { this.constructor = d; }
@@ -11556,7 +11602,7 @@ $__System.register("4c", ["4b"], function(exports_1) {
     }
 });
 
-$__System.register("4d", ["4b"], function(exports_1) {
+$__System.register("4f", ["4d"], function(exports_1) {
     var __extends = (this && this.__extends) || function (d, b) {
         for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
         function __() { this.constructor = d; }
@@ -11594,7 +11640,7 @@ $__System.register("4d", ["4b"], function(exports_1) {
     }
 });
 
-$__System.register("4e", ["4b"], function(exports_1) {
+$__System.register("50", ["4d"], function(exports_1) {
     var __extends = (this && this.__extends) || function (d, b) {
         for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
         function __() { this.constructor = d; }
@@ -11632,7 +11678,7 @@ $__System.register("4e", ["4b"], function(exports_1) {
     }
 });
 
-$__System.register("4f", ["4b"], function(exports_1) {
+$__System.register("51", ["4d"], function(exports_1) {
     var __extends = (this && this.__extends) || function (d, b) {
         for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
         function __() { this.constructor = d; }
@@ -11670,7 +11716,7 @@ $__System.register("4f", ["4b"], function(exports_1) {
     }
 });
 
-$__System.register("50", ["4b"], function(exports_1) {
+$__System.register("52", ["4d"], function(exports_1) {
     var __extends = (this && this.__extends) || function (d, b) {
         for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
         function __() { this.constructor = d; }
@@ -11708,7 +11754,7 @@ $__System.register("50", ["4b"], function(exports_1) {
     }
 });
 
-$__System.register("51", ["4b"], function(exports_1) {
+$__System.register("53", ["4d"], function(exports_1) {
     var __extends = (this && this.__extends) || function (d, b) {
         for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
         function __() { this.constructor = d; }
@@ -11746,7 +11792,7 @@ $__System.register("51", ["4b"], function(exports_1) {
     }
 });
 
-$__System.register("52", ["4b"], function(exports_1) {
+$__System.register("54", ["4d"], function(exports_1) {
     var __extends = (this && this.__extends) || function (d, b) {
         for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
         function __() { this.constructor = d; }
@@ -11784,7 +11830,7 @@ $__System.register("52", ["4b"], function(exports_1) {
     }
 });
 
-$__System.register("53", ["4b"], function(exports_1) {
+$__System.register("55", ["4d"], function(exports_1) {
     var __extends = (this && this.__extends) || function (d, b) {
         for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
         function __() { this.constructor = d; }
@@ -11822,7 +11868,7 @@ $__System.register("53", ["4b"], function(exports_1) {
     }
 });
 
-$__System.register("54", ["4b"], function(exports_1) {
+$__System.register("56", ["4d"], function(exports_1) {
     var __extends = (this && this.__extends) || function (d, b) {
         for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
         function __() { this.constructor = d; }
@@ -11860,7 +11906,7 @@ $__System.register("54", ["4b"], function(exports_1) {
     }
 });
 
-$__System.register("55", ["4b"], function(exports_1) {
+$__System.register("57", ["4d"], function(exports_1) {
     var __extends = (this && this.__extends) || function (d, b) {
         for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
         function __() { this.constructor = d; }
@@ -11898,7 +11944,7 @@ $__System.register("55", ["4b"], function(exports_1) {
     }
 });
 
-$__System.register("56", ["4b"], function(exports_1) {
+$__System.register("58", ["4d"], function(exports_1) {
     var __extends = (this && this.__extends) || function (d, b) {
         for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
         function __() { this.constructor = d; }
@@ -11936,7 +11982,7 @@ $__System.register("56", ["4b"], function(exports_1) {
     }
 });
 
-$__System.register("57", ["4b"], function(exports_1) {
+$__System.register("59", ["4d"], function(exports_1) {
     var __extends = (this && this.__extends) || function (d, b) {
         for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
         function __() { this.constructor = d; }
@@ -11974,7 +12020,7 @@ $__System.register("57", ["4b"], function(exports_1) {
     }
 });
 
-$__System.register("58", ["4b"], function(exports_1) {
+$__System.register("5a", ["4d"], function(exports_1) {
     var __extends = (this && this.__extends) || function (d, b) {
         for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
         function __() { this.constructor = d; }
@@ -12012,7 +12058,7 @@ $__System.register("58", ["4b"], function(exports_1) {
     }
 });
 
-$__System.register("59", ["4b"], function(exports_1) {
+$__System.register("5b", ["4d"], function(exports_1) {
     var __extends = (this && this.__extends) || function (d, b) {
         for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
         function __() { this.constructor = d; }
@@ -12050,7 +12096,7 @@ $__System.register("59", ["4b"], function(exports_1) {
     }
 });
 
-$__System.register("5a", ["4b"], function(exports_1) {
+$__System.register("5c", ["4d"], function(exports_1) {
     var __extends = (this && this.__extends) || function (d, b) {
         for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
         function __() { this.constructor = d; }
@@ -12088,7 +12134,7 @@ $__System.register("5a", ["4b"], function(exports_1) {
     }
 });
 
-$__System.register("5b", ["4b"], function(exports_1) {
+$__System.register("5d", ["4d"], function(exports_1) {
     var __extends = (this && this.__extends) || function (d, b) {
         for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
         function __() { this.constructor = d; }
@@ -12126,7 +12172,7 @@ $__System.register("5b", ["4b"], function(exports_1) {
     }
 });
 
-$__System.register("5c", ["4b"], function(exports_1) {
+$__System.register("5e", ["4d"], function(exports_1) {
     var __extends = (this && this.__extends) || function (d, b) {
         for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
         function __() { this.constructor = d; }
@@ -12164,7 +12210,7 @@ $__System.register("5c", ["4b"], function(exports_1) {
     }
 });
 
-$__System.register("5d", ["4b"], function(exports_1) {
+$__System.register("5f", ["4d"], function(exports_1) {
     var __extends = (this && this.__extends) || function (d, b) {
         for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
         function __() { this.constructor = d; }
@@ -12202,7 +12248,7 @@ $__System.register("5d", ["4b"], function(exports_1) {
     }
 });
 
-$__System.register("5e", ["4b"], function(exports_1) {
+$__System.register("60", ["4d"], function(exports_1) {
     var __extends = (this && this.__extends) || function (d, b) {
         for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
         function __() { this.constructor = d; }
@@ -12240,7 +12286,7 @@ $__System.register("5e", ["4b"], function(exports_1) {
     }
 });
 
-$__System.register("5f", ["4b"], function(exports_1) {
+$__System.register("61", ["4d"], function(exports_1) {
     var __extends = (this && this.__extends) || function (d, b) {
         for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
         function __() { this.constructor = d; }
@@ -12278,7 +12324,7 @@ $__System.register("5f", ["4b"], function(exports_1) {
     }
 });
 
-$__System.register("4b", ["60"], function(exports_1) {
+$__System.register("4d", ["62"], function(exports_1) {
     var __extends = (this && this.__extends) || function (d, b) {
         for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
         function __() { this.constructor = d; }
@@ -12315,7 +12361,7 @@ $__System.register("4b", ["60"], function(exports_1) {
     }
 });
 
-$__System.register("61", ["4b"], function(exports_1) {
+$__System.register("63", ["4d"], function(exports_1) {
     var __extends = (this && this.__extends) || function (d, b) {
         for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
         function __() { this.constructor = d; }
@@ -12347,7 +12393,7 @@ $__System.register("61", ["4b"], function(exports_1) {
     }
 });
 
-$__System.register("62", ["4b", "4a", "4c", "4d", "4e", "4f", "50", "51", "52", "53", "54", "55", "56", "57", "58", "59", "5a", "5b", "5c", "5d", "5e", "5f", "61"], function(exports_1) {
+$__System.register("64", ["4d", "4c", "4e", "4f", "50", "51", "52", "53", "54", "55", "56", "57", "58", "59", "5a", "5b", "5c", "5d", "5e", "5f", "60", "61", "63"], function(exports_1) {
     var HTTPError_1, BadRequestError_1, ConflictError_1, ForbiddenError_1, MethodNotAllowedError_1, NotAcceptableError_1, NotFoundError_1, PreconditionFailedError_1, PreconditionRequiredError_1, RequestEntityTooLargeError_1, RequestHeaderFieldsTooLargeError_1, RequestURITooLongError_1, TooManyRequestsError_1, UnauthorizedError_1, UnsupportedMediaTypeError_1, BadResponseError_1, BadGatewayError_1, GatewayTimeoutError_1, HTTPVersionNotSupportedError_1, InternalServerErrorError_1, NotImplementedError_1, ServiceUnavailableError_1, UnknownError_1;
     var client, server, statusCodeMap;
     return {
@@ -12482,7 +12528,7 @@ $__System.register("62", ["4b", "4a", "4c", "4d", "4e", "4f", "50", "51", "52", 
     }
 });
 
-$__System.register("63", [], function(exports_1) {
+$__System.register("65", [], function(exports_1) {
     var Method;
     return {
         setters:[],
@@ -12501,7 +12547,7 @@ $__System.register("63", [], function(exports_1) {
     }
 });
 
-$__System.register("64", ["62", "65", "63", "66", "5"], function(exports_1) {
+$__System.register("66", ["64", "67", "65", "68", "5"], function(exports_1) {
     var Errors, Header, Method_1, Response_1, Utils;
     var Service, Util;
     function forEachHeaders(headers, setHeader) {
@@ -12748,7 +12794,7 @@ $__System.register("64", ["62", "65", "63", "66", "5"], function(exports_1) {
     }
 });
 
-$__System.register("65", [], function(exports_1) {
+$__System.register("67", [], function(exports_1) {
     var Class, Value, Util;
     return {
         setters:[],
@@ -12824,7 +12870,7 @@ $__System.register("65", [], function(exports_1) {
     }
 });
 
-$__System.register("66", ["65", "5"], function(exports_1) {
+$__System.register("68", ["67", "5"], function(exports_1) {
     var Header, Utils_1;
     var Class, Util;
     return {
@@ -12896,7 +12942,7 @@ $__System.register("66", ["65", "5"], function(exports_1) {
     }
 });
 
-$__System.register("67", [], function(exports_1) {
+$__System.register("69", [], function(exports_1) {
     var StatusCode;
     return {
         setters:[],
@@ -12948,7 +12994,7 @@ $__System.register("67", [], function(exports_1) {
     }
 });
 
-$__System.register("68", [], function(exports_1) {
+$__System.register("6a", [], function(exports_1) {
     var Class;
     return {
         setters:[],
@@ -12969,7 +13015,7 @@ $__System.register("68", [], function(exports_1) {
     }
 });
 
-$__System.register("19", ["62", "65", "48", "47", "63", "49", "64", "66", "67", "68"], function(exports_1) {
+$__System.register("1c", ["64", "67", "4a", "49", "65", "4b", "66", "68", "69", "6a"], function(exports_1) {
     var Errors, Header, JSONParser, JSONLDParser, Method_1, Parser, Request, Response, StatusCode_1, StringParser;
     return {
         setters:[
@@ -13018,7 +13064,7 @@ $__System.register("19", ["62", "65", "48", "47", "63", "49", "64", "66", "67", 
     }
 });
 
-$__System.register("69", ["60"], function(exports_1) {
+$__System.register("18", ["62"], function(exports_1) {
     var __extends = (this && this.__extends) || function (d, b) {
         for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
         function __() { this.constructor = d; }
@@ -13049,7 +13095,7 @@ $__System.register("69", ["60"], function(exports_1) {
     }
 });
 
-$__System.register("6a", ["60"], function(exports_1) {
+$__System.register("6b", ["62"], function(exports_1) {
     var __extends = (this && this.__extends) || function (d, b) {
         for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
         function __() { this.constructor = d; }
@@ -13080,7 +13126,7 @@ $__System.register("6a", ["60"], function(exports_1) {
     }
 });
 
-$__System.register("13", ["60"], function(exports_1) {
+$__System.register("13", ["62"], function(exports_1) {
     var __extends = (this && this.__extends) || function (d, b) {
         for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
         function __() { this.constructor = d; }
@@ -13111,7 +13157,7 @@ $__System.register("13", ["60"], function(exports_1) {
     }
 });
 
-$__System.register("6b", ["60"], function(exports_1) {
+$__System.register("6c", ["62"], function(exports_1) {
     var __extends = (this && this.__extends) || function (d, b) {
         for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
         function __() { this.constructor = d; }
@@ -13143,7 +13189,7 @@ $__System.register("6b", ["60"], function(exports_1) {
     }
 });
 
-$__System.register("60", [], function(exports_1) {
+$__System.register("62", [], function(exports_1) {
     var __extends = (this && this.__extends) || function (d, b) {
         for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
         function __() { this.constructor = d; }
@@ -13174,7 +13220,7 @@ $__System.register("60", [], function(exports_1) {
     }
 });
 
-$__System.register("6c", ["60"], function(exports_1) {
+$__System.register("6d", ["62"], function(exports_1) {
     var __extends = (this && this.__extends) || function (d, b) {
         for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
         function __() { this.constructor = d; }
@@ -13206,7 +13252,7 @@ $__System.register("6c", ["60"], function(exports_1) {
     }
 });
 
-$__System.register("c", ["69", "6a", "13", "6b", "6c"], function(exports_1) {
+$__System.register("c", ["18", "6b", "13", "6c", "6d"], function(exports_1) {
     var IDAlreadyInUseError_1, IllegalActionError_1, IllegalArgumentError_1, IllegalStateError_1, NotImplementedError_1;
     return {
         setters:[
@@ -13235,7 +13281,7 @@ $__System.register("c", ["69", "6a", "13", "6b", "6c"], function(exports_1) {
     }
 });
 
-$__System.register("2f", ["c", "5"], function(exports_1) {
+$__System.register("31", ["c", "5"], function(exports_1) {
     var Errors, Utils;
     var Class, Util;
     function prefixWithObjectSchema(uri, objectSchema) {
@@ -13290,6 +13336,9 @@ $__System.register("2f", ["c", "5"], function(exports_1) {
                 };
                 Util.isBNodeID = function (uri) {
                     return Utils.S.startsWith(uri, "_:");
+                };
+                Util.generateBNodeID = function () {
+                    return "_:" + Utils.UUID.generate();
                 };
                 Util.isPrefixed = function (uri) {
                     return !Util.isAbsolute(uri) && !Util.isBNodeID(uri) && Utils.S.contains(uri, ":");
@@ -13389,7 +13438,7 @@ $__System.register("2f", ["c", "5"], function(exports_1) {
     }
 });
 
-$__System.register("6d", ["19", "6e", "5", "2f"], function(exports_1) {
+$__System.register("6e", ["1c", "6f", "5", "31"], function(exports_1) {
     var HTTP, RDFNode, Utils, URI;
     var Factory, Util, Parser;
     return {
@@ -13517,7 +13566,7 @@ $__System.register("6d", ["19", "6e", "5", "2f"], function(exports_1) {
     }
 });
 
-$__System.register("6e", ["5", "6d"], function(exports_1) {
+$__System.register("6f", ["5", "6e"], function(exports_1) {
     var Utils, Document;
     var Factory, Util;
     return {
@@ -13550,6 +13599,14 @@ $__System.register("6e", ["5", "6d"], function(exports_1) {
                 Util.areEqual = function (node1, node2) {
                     return node1["@id"] === node2["@id"];
                 };
+                Util.hasType = function (node, type) {
+                    return Util.getTypes(node).indexOf(type) !== -1;
+                };
+                Util.getTypes = function (node) {
+                    if (!("@type" in node))
+                        return [];
+                    return node["@type"];
+                };
                 Util.getPropertyURI = function (node, predicate) {
                     if (!(predicate in node))
                         return null;
@@ -13573,7 +13630,7 @@ $__System.register("6e", ["5", "6d"], function(exports_1) {
     }
 });
 
-$__System.register("6f", ["3b", "3f", "4", "6e"], function(exports_1) {
+$__System.register("70", ["3d", "41", "4", "6f"], function(exports_1) {
     var List, Literal, NS, RDFNode;
     var Util;
     return {
@@ -13804,7 +13861,7 @@ $__System.register("6f", ["3b", "3f", "4", "6e"], function(exports_1) {
     }
 });
 
-$__System.register("9", ["3f", "6d", "3b", "6e", "2f", "6f"], function(exports_1) {
+$__System.register("9", ["41", "6e", "3d", "6f", "31", "70"], function(exports_1) {
     var Literal, Document, List, Node, URI, Value;
     return {
         setters:[
@@ -13837,7 +13894,7 @@ $__System.register("9", ["3f", "6d", "3b", "6e", "2f", "6f"], function(exports_1
     }
 });
 
-$__System.register("48", [], function(exports_1) {
+$__System.register("4a", [], function(exports_1) {
     var Class;
     return {
         setters:[],
@@ -13863,7 +13920,7 @@ $__System.register("48", [], function(exports_1) {
     }
 });
 
-$__System.register("70", ["48"], function(exports_1) {
+$__System.register("71", ["4a"], function(exports_1) {
     var JSONParser_1;
     var Class;
     return {
@@ -13889,7 +13946,7 @@ $__System.register("70", ["48"], function(exports_1) {
     }
 });
 
-$__System.register("71", ["c", "19", "9", "5", "70"], function(exports_1) {
+$__System.register("72", ["c", "1c", "9", "5", "71"], function(exports_1) {
     var Errors, HTTP, RDF, Utils, RawResultsParser_1;
     var Class;
     return {
@@ -14002,7 +14059,7 @@ $__System.register("71", ["c", "19", "9", "5", "70"], function(exports_1) {
     }
 });
 
-$__System.register("72", [], function(exports_1) {
+$__System.register("73", [], function(exports_1) {
     return {
         setters:[],
         execute: function() {
@@ -14010,7 +14067,7 @@ $__System.register("72", [], function(exports_1) {
     }
 });
 
-$__System.register("1c", ["3a", "70", "71", "72"], function(exports_1) {
+$__System.register("1f", ["3c", "71", "72", "73"], function(exports_1) {
     var RawResults, RawResultsParser, Service_1, SELECTResults;
     return {
         setters:[
@@ -14308,7 +14365,7 @@ $__System.register("5", [], function(exports_1) {
     }
 });
 
-$__System.register("73", ["e", "2", "11", "10", "a", "6", "31", "12", "18", "c", "2a", "19", "1a", "3", "2b", "4", "1b", "d", "b", "14", "2d", "2e", "2c", "8", "9", "27", "f", "39", "1c", "5"], function(exports_1) {
+$__System.register("74", ["e", "2", "11", "10", "a", "6", "33", "12", "1b", "c", "2c", "1c", "1d", "3", "2d", "4", "1e", "d", "b", "14", "2f", "30", "2e", "8", "9", "17", "f", "3b", "1f", "5"], function(exports_1) {
     var __extends = (this && this.__extends) || function (d, b) {
         for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
         function __() { this.constructor = d; }
@@ -14475,12 +14532,12 @@ $__System.register("73", ["e", "2", "11", "10", "a", "6", "31", "12", "18", "c",
     }
 });
 
-$__System.registerDynamic("1", ["73"], true, function($__require, exports, module) {
+$__System.registerDynamic("1", ["74"], true, function($__require, exports, module) {
   ;
   var global = this,
       __define = global.define;
   global.define = undefined;
-  var Carbon = $__require('73');
+  var Carbon = $__require('74');
   global.Carbon = Carbon.default;
   global.define = __define;
   return module.exports;

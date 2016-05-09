@@ -96,8 +96,6 @@
 - [Module Carbon/Fragment](#Carbon-Fragment)
 	- [Class Carbon.Fragment.Factory](#Carbon-Fragment-Factory)
 		- [Methods](#Carbon-Fragment-Factory-Methods)
-	- [Class Carbon.Fragment.Util](#Carbon-Fragment-Util)
-		- [Methods](#Carbon-Fragment-Util-Methods)
 - [Module Carbon/HTTP](#Carbon-HTTP)
 	- [Reexports](#Carbon-HTTP-Reexports)
 - [Module Carbon/HTTP/Errors](#Carbon-HTTP-Errors)
@@ -2483,25 +2481,6 @@ Create a Blank Node Fragment since no ID is provided for the specified document.
 
 - object
 - document
-
-
-
-
-### <a name="Carbon-Fragment-Util" />Class Carbon.Fragment.Util
-
-
-> Class with useful options for Fragment objects
-
-
-
-
-#### <a name="Carbon-Fragment-Util-Methods" />Methods
-##### generateID
-```typescript 
-static generateID()
-```
-
-Returns an ID for a BlankNode using an universally unique identifier (UUID).
 
 
 
@@ -6709,7 +6688,6 @@ static getBNodeResources( document:Carbon.RDF.Document.Class ):Carbon.RDF.RDFNod
 ```
 
 Returns all the resources that refers to blank nodes from a document.
-Throw an `Carbon.Errors.IllegalArgumentError` if the object is not RDF like
 
 *Parameters*
 
@@ -6720,8 +6698,7 @@ Throw an `Carbon.Errors.IllegalArgumentError` if the object is not RDF like
 static getDocuments( objects:Object[] ):Carbon.RDF.Document.Class[]
 ```
 
-Returns an array of documents from an array of resources or documents.
-Throw an `Carbon.Errors.IllegalArgumentError` if the objects are not RDF like
+Returns the objects that represents a RDF Document of an array of RDF like objects.
 
 *Parameters*
 
@@ -6731,8 +6708,7 @@ Throw an `Carbon.Errors.IllegalArgumentError` if the objects are not RDF like
 static getDocuments( object:Object ):Carbon.RDF.Document.Class[]
 ```
 
-Returns an array of documents from a document or resource.
-Throw an `Carbon.Errors.IllegalArgumentError` if the object is not RDF like
+Returns an array of with the object provided, if it is an RDF Document.
 
 *Parameters*
 
@@ -6743,8 +6719,7 @@ Throw an `Carbon.Errors.IllegalArgumentError` if the object is not RDF like
 static getResources( objects:Object[] ):Carbon.RDF.RDFNode.Class
 ```
 
-Returns all the resources from a array of documents or resources.
-Throw an `Carbon.Errors.IllegalArgumentError` if the objects are not RDF like
+Returns all the resources that not are RDF Documents from the array of RDF like objects provided.
 
 *Parameters*
 
@@ -6754,8 +6729,7 @@ Throw an `Carbon.Errors.IllegalArgumentError` if the objects are not RDF like
 static getResources( object:Object ):Carbon.RDF.RDFNode.Class
 ```
 
-Returns all the resources from a document or resource.
-Throw an `Carbon.Errors.IllegalArgumentError` if the object is not RDF like
+Returns all the resources that not are RDF Documents from the RDF like object provided.
 
 *Parameters*
 
@@ -6767,7 +6741,6 @@ static getDocumentResources( document:Carbon.RDF.Document.Class ):Carbon.RDF.RDF
 ```
 
 Returns all the resources that refers to documents from a document.
-Throw an `Carbon.Errors.IllegalArgumentError` if the object is not RDF like
 
 *Parameters*
 
@@ -6778,7 +6751,6 @@ static getDocumentResources( document:Carbon.RDF.RDFNode.Class[] ):Carbon.RDF.RD
 ```
 
 Returns all the resources that refers to documents from an array of resources.
-Throw an `Carbon.Errors.IllegalArgumentError` if the object is not RDF like
 
 *Parameters*
 
@@ -6790,7 +6762,6 @@ static getFragmentResources( document:Carbon.RDF.Document.Class,  documentResour
 ```
 
 Returns all the resources that refers to fragments from a document. If documentResource is provided, it will return the fragments of the specified document.
-Throw an `Carbon.Errors.IllegalArgumentError` if the object is not RDF like
 
 *Parameters*
 
@@ -6802,7 +6773,6 @@ static getFragmentResources( document:Carbon.RDF.Document.Class,  documentResour
 ```
 
 Returns all the resources that refers to fragments from a document. If documentResourceURI is provided, it will return the fragments of the specified URI.
-Throw an `Carbon.Errors.IllegalArgumentError` if the object is not RDF like
 
 *Parameters*
 
@@ -6814,7 +6784,6 @@ static getFragmentResources( document:Carbon.RDF.Document.Class,  documentResour
 ```
 
 Returns all the resources that refers to fragments from an array of resources. If documentResource is provided, it will return the fragments of the specified document.
-Throw an `Carbon.Errors.IllegalArgumentError` if the object is not RDF like
 
 *Parameters*
 
@@ -6826,7 +6795,6 @@ static getFragmentResources( document:Carbon.RDF.Document.Class,  documentResour
 ```
 
 Returns all the resources that refers to fragments from a document. If documentResourceURI is provided, it will return the fragments of the specified URI.
-Throw an `Carbon.Errors.IllegalArgumentError` if the object is not RDF like
 
 *Parameters*
 
@@ -7411,6 +7379,13 @@ Returns true if the URI provided reference to a Blank Node
 *Parameters*
 
 - uri
+
+##### generateBNodeID
+```typescript 
+static generateBNodeID()
+```
+
+Returns an ID for a BlankNode using an universally unique identifier (UUID).
 
 ##### isPrefixed
 ```typescript 

@@ -37,6 +37,10 @@ export class Util {
 		return Utils.S.startsWith( uri, "_:" );
 	}
 
+	static generateBNodeID():string {
+		return "_:" + Utils.UUID.generate();
+	}
+
 	static isPrefixed( uri:string ):boolean {
 		return ! Util.isAbsolute( uri ) && ! Util.isBNodeID( uri ) && Utils.S.contains( uri, ":" );
 	}

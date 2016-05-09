@@ -85,7 +85,7 @@ function createFragment(slugOrObject, object) {
             throw new Errors.IDAlreadyInUseError("The slug provided is already being used by a fragment.");
     }
     else {
-        id = Fragment.Util.generateID();
+        id = RDF.URI.Util.generateBNodeID();
     }
     var fragment = Fragment.Factory.createFrom(object, id, document);
     document._fragmentsIndex.set(id, fragment);

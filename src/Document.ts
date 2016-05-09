@@ -122,7 +122,7 @@ function createFragment( slugOrObject?:any, object?:any ):any {
 		id = slug;
 		if( this._fragmentsIndex.has( id ) ) throw new Errors.IDAlreadyInUseError( "The slug provided is already being used by a fragment." );
 	} else {
-		id = Fragment.Util.generateID();
+		id = RDF.URI.Util.generateBNodeID();
 	}
 
 	let fragment:Fragment.Class = Fragment.Factory.createFrom( object, id, document );

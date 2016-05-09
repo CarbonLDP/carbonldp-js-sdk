@@ -220,33 +220,4 @@ describe( module( "Carbon/Fragment" ), ():void => {
 
 	});
 
-	describe( clazz(
-		"Carbon.Fragment.Util",
-		"Class with useful options for Fragment objects"
-	), ():void => {
-
-		it( isDefined(), ():void => {
-			expect( Fragment.Util ).toBeDefined();
-			expect( Utils.isFunction( Fragment.Util ) ).toBe( true );
-		});
-
-		it( hasMethod(
-			STATIC,
-			"generateID",
-			"Returns an ID for a BlankNode using an universally unique identifier (UUID)."
-		), ():void => {
-			let id1:string;
-			let id2:string;
-
-			id1 = Fragment.Util.generateID();
-			expect( URI.Util.isBNodeID( id1 ) ).toBe( true );
-
-			id2 = Fragment.Util.generateID();
-			expect( URI.Util.isBNodeID( id2 ) ).toBe( true );
-
-			expect( id1 ).not.toEqual( id2 );
-		});
-
-	});
-
 });
