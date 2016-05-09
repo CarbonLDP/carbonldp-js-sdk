@@ -881,6 +881,7 @@ declare module 'carbonldp/ObjectSchema' {
 	}
 	export class DigestedObjectSchema {
 	    base: string;
+	    vocab: string;
 	    prefixes: Map<string, RDF.URI.Class>;
 	    properties: Map<string, DigestedPropertyDefinition>;
 	    prefixedURIs: Map<string, RDF.URI.Class[]>;
@@ -1846,6 +1847,7 @@ declare module 'carbonldp/settings' {
 	    "platform.container"?: string;
 	    "platform.apps.container"?: string;
 	    "platform.agents.container"?: string;
+	    "vocabulary"?: string;
 	} let settings: CarbonSettings;
 	export default settings;
 

@@ -60,21 +60,22 @@ var Class = (function () {
         Utils.forEachOwnProperty(compactedObject, function (propertyName, value) {
             if (propertyName === "id")
                 return;
+            var expandedValue;
             if (digestedSchema.properties.has(propertyName)) {
                 var definition = digestedSchema.properties.get(propertyName);
-                var expandedValue = _this.expandProperty(value, definition, pointerValidator);
-                if (!expandedValue)
-                    return;
-                expandedObject[definition.uri.toString()] = expandedValue;
+                expandedValue = _this.expandProperty(value, definition, pointerValidator);
+                propertyName = definition.uri.toString();
             }
             else if (RDF.URI.Util.isAbsolute(propertyName)) {
-                var expandedValue = _this.expandPropertyValues(value, pointerValidator);
-                if (!expandedValue)
-                    return;
-                expandedObject[propertyName] = expandedValue;
+                expandedValue = _this.expandPropertyValues(value, pointerValidator);
             }
-            else {
+            else if (digestedSchema.vocab) {
+                expandedValue = _this.expandPropertyValue(value, pointerValidator);
+                propertyName = digestedSchema.vocab + propertyName;
             }
+            if (!expandedValue)
+                return;
+            expandedObject[propertyName] = expandedValue;
         });
         return expandedObject;
     };

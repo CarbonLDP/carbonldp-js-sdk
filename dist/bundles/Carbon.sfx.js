@@ -1849,11 +1849,10 @@ $__System.register("16", ["c", "17", "9", "5", "12", "18", "14", "8", "4", "19",
                             if (this.context.getObjectSchema(type))
                                 typesDigestedObjectSchemas.push(this.context.getObjectSchema(type));
                         }
-                        if (typesDigestedObjectSchemas.length > 1) {
-                            digestedSchema = ObjectSchema.Digester.combineDigestedObjectSchemas(typesDigestedObjectSchemas);
-                        }
-                        else {
-                            digestedSchema = typesDigestedObjectSchemas[0];
+                        digestedSchema = ObjectSchema.Digester.combineDigestedObjectSchemas(typesDigestedObjectSchemas);
+                        var vocab = this.context.getSetting("vocabulary");
+                        if (vocab) {
+                            digestedSchema.vocab = this.context.resolve("") + vocab;
                         }
                     }
                     else {
@@ -2982,21 +2981,22 @@ $__System.register("18", ["c", "19", "4", "8", "9", "5"], function(exports_1) {
                     Utils.forEachOwnProperty(compactedObject, function (propertyName, value) {
                         if (propertyName === "id")
                             return;
+                        var expandedValue;
                         if (digestedSchema.properties.has(propertyName)) {
                             var definition = digestedSchema.properties.get(propertyName);
-                            var expandedValue = _this.expandProperty(value, definition, pointerValidator);
-                            if (!expandedValue)
-                                return;
-                            expandedObject[definition.uri.toString()] = expandedValue;
+                            expandedValue = _this.expandProperty(value, definition, pointerValidator);
+                            propertyName = definition.uri.toString();
                         }
                         else if (RDF.URI.Util.isAbsolute(propertyName)) {
-                            var expandedValue = _this.expandPropertyValues(value, pointerValidator);
-                            if (!expandedValue)
-                                return;
-                            expandedObject[propertyName] = expandedValue;
+                            expandedValue = _this.expandPropertyValues(value, pointerValidator);
                         }
-                        else {
+                        else if (digestedSchema.vocab) {
+                            expandedValue = _this.expandPropertyValue(value, pointerValidator);
+                            propertyName = digestedSchema.vocab + propertyName;
                         }
+                        if (!expandedValue)
+                            return;
+                        expandedObject[propertyName] = expandedValue;
                     });
                     return expandedObject;
                 };
@@ -3595,6 +3595,7 @@ $__System.register("19", ["c", "9", "5"], function(exports_1) {
             DigestedObjectSchema = (function () {
                 function DigestedObjectSchema() {
                     this.base = "";
+                    this.vocab = "";
                     this.prefixes = new Map();
                     this.properties = new Map();
                     this.prefixedURIs = new Map();
@@ -3650,8 +3651,6 @@ $__System.register("19", ["c", "9", "5"], function(exports_1) {
                             continue;
                         if (propertyName === "@base")
                             continue;
-                        if (propertyName === "@vocab")
-                            continue;
                         var propertyValue = schema[propertyName];
                         if (Utils.isString(propertyValue)) {
                             if (RDF.URI.Util.isPrefixed(propertyName))
@@ -3659,7 +3658,12 @@ $__System.register("19", ["c", "9", "5"], function(exports_1) {
                             var uri = new RDF.URI.Class(propertyValue);
                             if (RDF.URI.Util.isPrefixed(uri.stringValue))
                                 uri = Digester.resolvePrefixedURI(uri, digestedSchema);
-                            digestedSchema.prefixes.set(propertyName, uri);
+                            if (propertyName === "@vocab") {
+                                digestedSchema.vocab = uri.toString();
+                            }
+                            else {
+                                digestedSchema.prefixes.set(propertyName, uri);
+                            }
                         }
                         else if (!!propertyValue && Utils.isObject(propertyValue)) {
                             var schemaDefinition = propertyValue;
@@ -4940,6 +4944,7 @@ $__System.register("34", ["2c"], function(exports_1) {
             settings["platform.container"] = "platform/";
             settings["platform.apps.container"] = "apps/";
             settings["platform.agents.container"] = "agents/";
+            settings["vocabulary"] = "vocabulary/#";
             exports_1("default",settings);
         }
     }
@@ -5052,12 +5057,12 @@ var _removeDefine = $__System.get("@@amd-helpers").createDefine();
         options.skipExpansion = true;
       }
       var expand = function(input, options, callback) {
-        jsonld.nextTick(function() {
-          if (options.skipExpansion) {
-            return callback(null, input);
-          }
-          jsonld.expand(input, options, callback);
-        });
+        if (options.skipExpansion) {
+          return jsonld.nextTick(function() {
+            callback(null, input);
+          });
+        }
+        jsonld.expand(input, options, callback);
       };
       expand(input, options, function(err, expanded) {
         if (err) {
@@ -8489,10 +8494,14 @@ var _removeDefine = $__System.get("@@amd-helpers").createDefine();
         reverse = false;
       }
       relativeTo = relativeTo || {};
+      var inverseCtx = activeCtx.getInverse();
       if (_isKeyword(iri)) {
-        relativeTo.vocab = true;
+        if (iri in inverseCtx) {
+          return inverseCtx[iri]['@none']['@type']['@none'];
+        }
+        return iri;
       }
-      if (relativeTo.vocab && iri in activeCtx.getInverse()) {
+      if (relativeTo.vocab && iri in inverseCtx) {
         var defaultLanguage = activeCtx['@language'] || '@none';
         var containers = [];
         if (_isObject(value) && '@index' in value) {
@@ -8581,18 +8590,25 @@ var _removeDefine = $__System.get("@@amd-helpers").createDefine();
         }
       }
       var choice = null;
-      for (var term in activeCtx.mappings) {
-        if (term.indexOf(':') !== -1) {
-          continue;
+      var idx = 0;
+      var partialMatches = [];
+      var iriMap = activeCtx.fastCurieMap;
+      var maxPartialLength = iri.length - 1;
+      for (; idx < maxPartialLength && iri[idx] in iriMap; ++idx) {
+        iriMap = iriMap[iri[idx]];
+        if ('' in iriMap) {
+          partialMatches.push(iriMap[''][0]);
         }
-        var definition = activeCtx.mappings[term];
-        if (!definition || definition['@id'] === iri || iri.indexOf(definition['@id']) !== 0) {
-          continue;
-        }
-        var curie = term + ':' + iri.substr(definition['@id'].length);
-        var isUsableCurie = (!(curie in activeCtx.mappings) || (value === null && activeCtx.mappings[curie] && activeCtx.mappings[curie]['@id'] === iri));
-        if (isUsableCurie && (choice === null || _compareShortestLeast(curie, choice) < 0)) {
-          choice = curie;
+      }
+      for (var i = partialMatches.length - 1; i >= 0; --i) {
+        var entry = partialMatches[i];
+        var terms = entry.terms;
+        for (var ti = 0; ti < terms.length; ++ti) {
+          var curie = terms[ti] + ':' + iri.substr(entry.iri.length);
+          var isUsableCurie = (!(curie in activeCtx.mappings) || (value === null && activeCtx.mappings[curie]['@id'] === iri));
+          if (isUsableCurie && (choice === null || _compareShortestLeast(curie, choice) < 0)) {
+            choice = curie;
+          }
         }
       }
       if (choice !== null) {
@@ -8737,9 +8753,10 @@ var _removeDefine = $__System.get("@@amd-helpers").createDefine();
           mapping['@id'] = id;
         }
       }
+      var colon = term.indexOf(':');
+      mapping._termHasColon = (colon !== -1);
       if (!('@id' in mapping)) {
-        var colon = term.indexOf(':');
-        if (colon !== -1) {
+        if (mapping._termHasColon) {
           var prefix = term.substr(0, colon);
           if (prefix in localCtx) {
             _createTermDefinition(activeCtx, localCtx, prefix, defined);
@@ -8990,6 +9007,8 @@ var _removeDefine = $__System.get("@@amd-helpers").createDefine();
           return activeCtx.inverse;
         }
         var inverse = activeCtx.inverse = {};
+        var fastCurieMap = activeCtx.fastCurieMap = {};
+        var irisToTerms = {};
         var defaultLanguage = activeCtx['@language'] || '@none';
         var mappings = activeCtx.mappings;
         var terms = Object.keys(mappings).sort(_compareShortestLeast);
@@ -9007,8 +9026,23 @@ var _removeDefine = $__System.get("@@amd-helpers").createDefine();
           for (var ii = 0; ii < ids.length; ++ii) {
             var iri = ids[ii];
             var entry = inverse[iri];
+            var isKeyword = _isKeyword(iri);
             if (!entry) {
               inverse[iri] = entry = {};
+              if (!isKeyword && !mapping._termHasColon) {
+                irisToTerms[iri] = [term];
+                var fastCurieEntry = {
+                  iri: iri,
+                  terms: irisToTerms[iri]
+                };
+                if (iri[0] in fastCurieMap) {
+                  fastCurieMap[iri[0]].push(fastCurieEntry);
+                } else {
+                  fastCurieMap[iri[0]] = [fastCurieEntry];
+                }
+              }
+            } else if (!isKeyword && !mapping._termHasColon) {
+              irisToTerms[iri].push(term);
             }
             if (!entry[container]) {
               entry[container] = {
@@ -9031,7 +9065,35 @@ var _removeDefine = $__System.get("@@amd-helpers").createDefine();
             }
           }
         }
+        for (var key in fastCurieMap) {
+          _buildIriMap(fastCurieMap, key, 1);
+        }
         return inverse;
+      }
+      function _buildIriMap(iriMap, key, idx) {
+        var entries = iriMap[key];
+        var next = iriMap[key] = {};
+        var iri;
+        var letter;
+        for (var i = 0; i < entries.length; ++i) {
+          iri = entries[i].iri;
+          if (idx >= iri.length) {
+            letter = '';
+          } else {
+            letter = iri[idx];
+          }
+          if (letter in next) {
+            next[letter].push(entries[i]);
+          } else {
+            next[letter] = [entries[i]];
+          }
+        }
+        for (var key in next) {
+          if (key === '') {
+            continue;
+          }
+          _buildIriMap(next, key, idx + 1);
+        }
       }
       function _addPreferredTerm(mapping, term, entry, typeOrLanguageValue) {
         if (!(typeOrLanguageValue in entry)) {

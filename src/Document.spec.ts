@@ -1065,6 +1065,36 @@ describe( module( "Carbon/Document" ), ():void => {
 					});
 					json = document.toJSON( context.documents );
 					expect( json ).toEqual( jsonFullDocument );
+
+					context.clearObjectSchema();
+					context.setSetting( "vocabulary", "vocabulary/#" );
+					json = document.toJSON( context.documents );
+					expect( json ).toEqual( JSON.stringify( {
+						"@id": "http://example.com/document/",
+						"@graph": [{
+							"@id": "http://example.com/document/",
+							"@type": [],
+							"vocabulary/#myProperty": [{
+								"@value": "a property",
+								"@type": "http://www.w3.org/2001/XMLSchema#string"
+							}],
+							"vocabulary/#myDate": [{
+								"@value": "2016-06-01T00:00:00.000Z",
+								"@type": "http://www.w3.org/2001/XMLSchema#dateTime"
+							}],
+							"vocabulary/#myFragment": [{
+								"@id": "_:BlankNode"
+							}, {
+								"@id": "http://example.com/document/#fragment"
+							}]
+						},{
+							"@id": "_:BlankNode",
+							"@type": []
+						},{
+							"@id": "http://example.com/document/#fragment",
+							"@type": []
+						}]
+					}) );
 				});
 
 				it( hasSignature(

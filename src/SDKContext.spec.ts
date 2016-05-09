@@ -158,7 +158,7 @@ describe( module( "Carbon/SDKContext" ), ():void => {
 			INSTANCE,
 			"getSetting",
 			`Returns the value of the setting looked for.
-			Returns \`null\` if no settign with the name specified exists.`, [
+			Returns \`null\` if no setting with the name specified exists.`, [
 				{ name: "name", type: "string" }
 			],
 			{ type: "string" }

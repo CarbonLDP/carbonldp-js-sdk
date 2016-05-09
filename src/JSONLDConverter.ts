@@ -71,22 +71,22 @@ export class Class {
 		Utils.forEachOwnProperty( compactedObject, ( propertyName:string, value:any ):void => {
 			if( propertyName === "id" ) return;
 
+			let expandedValue:any;
 			if( digestedSchema.properties.has( propertyName ) ) {
 				let definition:ObjectSchema.DigestedPropertyDefinition = digestedSchema.properties.get( propertyName );
-				let expandedValue:any = this.expandProperty( value, definition, pointerValidator );
+				expandedValue = this.expandProperty( value, definition, pointerValidator );
+				propertyName = definition.uri.toString();
 
-				if( ! expandedValue ) return;
-
-				expandedObject[ definition.uri.toString() ] = expandedValue;
 			} else if( RDF.URI.Util.isAbsolute( propertyName ) ) {
-				let expandedValue:any = this.expandPropertyValues( value, pointerValidator );
+				expandedValue = this.expandPropertyValues( value, pointerValidator );
 
-				if( ! expandedValue ) return;
-
-				expandedObject[ propertyName ] = expandedValue;
-			} else {
-				// TODO: Do your best. Use the default vocabulary
+			} else if ( digestedSchema.vocab ) {
+				expandedValue = this.expandPropertyValue( value, pointerValidator );
+				propertyName  = digestedSchema.vocab + propertyName;
 			}
+
+			if( ! expandedValue ) return;
+			expandedObject[ propertyName ] = expandedValue;
 		});
 
 		return expandedObject;
