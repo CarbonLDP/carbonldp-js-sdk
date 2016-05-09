@@ -1432,10 +1432,10 @@ $__System.register("18", ["c", "19", "9", "5", "12", "1a", "14", "8", "4", "1b",
                         return [childPointers, response];
                     });
                 };
-                Documents.prototype.getChildren = function (parentURI, retPrefReqOpt, reqOpt) {
+                Documents.prototype.getChildren = function (parentURI, retPrefReqOpt, requestOptions) {
                     var _this = this;
                     var retrievalPreferences = RetrievalPreferences.Factory.is(retPrefReqOpt) ? retPrefReqOpt : null;
-                    var requestOptions = HTTP.Request.Util.isOptions(retPrefReqOpt) ? retPrefReqOpt : (HTTP.Request.Util.isOptions(reqOpt) ? reqOpt : {});
+                    requestOptions = HTTP.Request.Util.isOptions(retPrefReqOpt) ? retPrefReqOpt : (HTTP.Request.Util.isOptions(requestOptions) ? requestOptions : {});
                     var uri = (!!this.context) ? this.context.resolve(parentURI) : parentURI;
                     if (this.context && this.context.auth.isAuthenticated())
                         this.context.auth.addAuthentication(requestOptions);
@@ -1455,9 +1455,14 @@ $__System.register("18", ["c", "19", "9", "5", "12", "1a", "14", "8", "4", "1b",
                     HTTP.Request.Util.setAcceptHeader("application/ld+json", requestOptions);
                     HTTP.Request.Util.setPreferredInteractionModel(NS.LDP.Class.Container, requestOptions);
                     HTTP.Request.Util.setContainerRetrievalPreferences(containerRetrievalPreferences, requestOptions);
-                    return HTTP.Request.Service.get(uri, requestOptions, new RDF.Document.Parser()).then(function (_a) {
-                        var rdfResource = _a[0], response = _a[1];
-                        var rdfResources = RDF.Document.Util.getResources(rdfResource);
+                    return HTTP.Request.Service.get(uri, requestOptions, new HTTP.JSONLDParser.Class()).then(function (_a) {
+                        var expandedResult = _a[0], response = _a[1];
+                        var freeNodes = RDF.Node.Util.getFreeNodes(expandedResult);
+                        var rdfDocuments = RDF.Document.Util.getDocuments(expandedResult);
+                        console.log("ExpandedResult: %o", expandedResult);
+                        console.log("FreeNodes: %o", freeNodes);
+                        console.log("RDFDocuments: %o", rdfDocuments);
+                        var rdfResources = RDF.Document.Util.getResources(rdfDocuments);
                         var volatileResources = _this.parseMultipleResources(rdfResources, response);
                         var responseDescription = _this.getResponseDescription(volatileResources);
                         if (!responseDescription)
@@ -5320,6 +5325,877 @@ $__System.register("3a", ["5"], function(exports_1) {
                 return Factory;
             })();
             exports_1("Factory", Factory);
+        }
+    }
+});
+
+$__System.register("3b", ["5"], function(exports_1) {
+    var Utils;
+    var Factory;
+    return {
+        setters:[
+            function (Utils_1) {
+                Utils = Utils_1;
+            }],
+        execute: function() {
+            Factory = (function () {
+                function Factory() {
+                }
+                Factory.is = function (value) {
+                    return Utils.isObject(value)
+                        && Utils.hasProperty(value, "@list")
+                        && Utils.isArray(value["@list"]);
+                };
+                return Factory;
+            })();
+            exports_1("Factory", Factory);
+        }
+    }
+});
+
+$__System.register("3c", [], function(exports_1) {
+    return {
+        setters:[],
+        execute: function() {
+        }
+    }
+});
+
+$__System.register("3d", ["c", "5"], function(exports_1) {
+    var __extends = (this && this.__extends) || function (d, b) {
+        for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+    var Errors, Utils;
+    var DateSerializer, dateSerializer, DateTimeSerializer, dateTimeSerializer, TimeSerializer, timeSerializer, IntegerSerializer, integerSerializer, UnsignedIntegerSerializer, unsignedIntegerSerializer, FloatSerializer, floatSerializer, BooleanSerializer, booleanSerializer, StringSerializer, stringSerializer;
+    function pad(value) {
+        var paddedValue = String(value);
+        if (paddedValue.length === 1)
+            paddedValue = "0" + paddedValue;
+        return paddedValue;
+    }
+    return {
+        setters:[
+            function (Errors_1) {
+                Errors = Errors_1;
+            },
+            function (Utils_1) {
+                Utils = Utils_1;
+            }],
+        execute: function() {
+            DateSerializer = (function () {
+                function DateSerializer() {
+                }
+                DateSerializer.prototype.serialize = function (value) {
+                    if (!Utils.isDate(value))
+                        throw new Errors.IllegalArgumentError("The value is not a Date object.");
+                    return value.getUTCFullYear() + "-" + pad((value.getUTCMonth() + 1)) + "-" + pad(value.getUTCDate());
+                };
+                return DateSerializer;
+            })();
+            exports_1("DateSerializer", DateSerializer);
+            exports_1("dateSerializer", dateSerializer = new DateSerializer());
+            DateTimeSerializer = (function () {
+                function DateTimeSerializer() {
+                }
+                DateTimeSerializer.prototype.serialize = function (value) {
+                    if (!Utils.isDate(value))
+                        throw new Errors.IllegalArgumentError("The value is not a Date object.");
+                    return value.toISOString();
+                };
+                return DateTimeSerializer;
+            })();
+            exports_1("DateTimeSerializer", DateTimeSerializer);
+            exports_1("dateTimeSerializer", dateTimeSerializer = new DateTimeSerializer());
+            TimeSerializer = (function () {
+                function TimeSerializer() {
+                }
+                TimeSerializer.prototype.serialize = function (value) {
+                    if (!Utils.isDate(value))
+                        throw new Errors.IllegalArgumentError("The value is not a Date object.");
+                    return pad(value.getUTCHours())
+                        + ":" + pad(value.getUTCMinutes())
+                        + ":" + pad(value.getUTCSeconds())
+                        + "." + String((value.getUTCMilliseconds() / 1000).toFixed(3)).slice(2, 5)
+                        + "Z";
+                };
+                return TimeSerializer;
+            })();
+            exports_1("TimeSerializer", TimeSerializer);
+            exports_1("timeSerializer", timeSerializer = new TimeSerializer());
+            IntegerSerializer = (function () {
+                function IntegerSerializer() {
+                }
+                IntegerSerializer.prototype.serialize = function (value) {
+                    if (!Utils.isNumber(value))
+                        throw new Errors.IllegalArgumentError("The value is not a number.");
+                    return (~~value).toString();
+                };
+                return IntegerSerializer;
+            })();
+            exports_1("IntegerSerializer", IntegerSerializer);
+            exports_1("integerSerializer", integerSerializer = new IntegerSerializer());
+            UnsignedIntegerSerializer = (function (_super) {
+                __extends(UnsignedIntegerSerializer, _super);
+                function UnsignedIntegerSerializer() {
+                    _super.apply(this, arguments);
+                }
+                UnsignedIntegerSerializer.prototype.serialize = function (value) {
+                    var stringValue = _super.prototype.serialize.call(this, value);
+                    stringValue = Utils.S.startsWith(stringValue, "-") ? stringValue.substring(1) : stringValue;
+                    return stringValue;
+                };
+                return UnsignedIntegerSerializer;
+            })(IntegerSerializer);
+            exports_1("UnsignedIntegerSerializer", UnsignedIntegerSerializer);
+            exports_1("unsignedIntegerSerializer", unsignedIntegerSerializer = new UnsignedIntegerSerializer());
+            FloatSerializer = (function () {
+                function FloatSerializer() {
+                }
+                FloatSerializer.prototype.serialize = function (value) {
+                    if (!Utils.isNumber(value))
+                        throw new Errors.IllegalArgumentError("The value is not a number.");
+                    if (value === Number.POSITIVE_INFINITY)
+                        return "INF";
+                    if (value === Number.NEGATIVE_INFINITY)
+                        return "-INF";
+                    return value.toString();
+                };
+                return FloatSerializer;
+            })();
+            exports_1("FloatSerializer", FloatSerializer);
+            exports_1("floatSerializer", floatSerializer = new FloatSerializer());
+            BooleanSerializer = (function () {
+                function BooleanSerializer() {
+                }
+                BooleanSerializer.prototype.serialize = function (value) {
+                    return (!!value).toString();
+                };
+                return BooleanSerializer;
+            })();
+            exports_1("BooleanSerializer", BooleanSerializer);
+            exports_1("booleanSerializer", booleanSerializer = new BooleanSerializer());
+            StringSerializer = (function () {
+                function StringSerializer() {
+                }
+                StringSerializer.prototype.serialize = function (value) {
+                    return String(value);
+                };
+                return StringSerializer;
+            })();
+            exports_1("StringSerializer", StringSerializer);
+            exports_1("stringSerializer", stringSerializer = new StringSerializer());
+        }
+    }
+});
+
+$__System.register("3e", ["3d"], function(exports_1) {
+    var XSD;
+    return {
+        setters:[
+            function (XSD_1) {
+                XSD = XSD_1;
+            }],
+        execute: function() {
+            exports_1("XSD", XSD);
+        }
+    }
+});
+
+$__System.register("3f", ["5", "17", "c", "3c", "3e"], function(exports_1) {
+    var Utils, XSD, Errors, Serializer_1, Serializers;
+    var Factory, Util;
+    return {
+        setters:[
+            function (Utils_1) {
+                Utils = Utils_1;
+            },
+            function (XSD_1) {
+                XSD = XSD_1;
+            },
+            function (Errors_1) {
+                Errors = Errors_1;
+            },
+            function (Serializer_1_1) {
+                Serializer_1 = Serializer_1_1;
+            },
+            function (Serializers_1) {
+                Serializers = Serializers_1;
+            }],
+        execute: function() {
+            Factory = (function () {
+                function Factory() {
+                }
+                Factory.from = function (value) {
+                    if (Utils.isNull(value))
+                        throw new Errors.IllegalArgumentError("Null cannot be converted into a Literal");
+                    if (!Utils.isDefined(value))
+                        throw new Errors.IllegalArgumentError("The value is undefined");
+                    var type;
+                    switch (true) {
+                        case Utils.isDate(value):
+                            type = XSD.DataType.dateTime;
+                            value = value.toISOString();
+                            break;
+                        case Utils.isNumber(value):
+                            if (Utils.isInteger(value)) {
+                                type = XSD.DataType.integer;
+                            }
+                            else {
+                                type = XSD.DataType.double;
+                            }
+                            break;
+                        case Utils.isString(value):
+                            type = XSD.DataType.string;
+                            break;
+                        case Utils.isBoolean(value):
+                            type = XSD.DataType.boolean;
+                            break;
+                        default:
+                            type = XSD.DataType.object;
+                            value = JSON.stringify(value);
+                            break;
+                    }
+                    var literal = { "@value": value.toString() };
+                    if (type)
+                        literal["@type"] = type;
+                    return literal;
+                };
+                Factory.parse = function (literalValueOrLiteral, literalDataType) {
+                    if (literalDataType === void 0) { literalDataType = null; }
+                    var literalValue;
+                    if (Utils.isString(literalValueOrLiteral)) {
+                        literalValue = literalValueOrLiteral;
+                    }
+                    else {
+                        var literal = literalValueOrLiteral;
+                        if (!literal)
+                            return null;
+                        if (!Utils.hasProperty(literal, "@value"))
+                            return null;
+                        literalDataType = "@type" in literal ? literal["@type"] : null;
+                        literalValue = literal["@value"];
+                    }
+                    if (literalDataType === null)
+                        return literalValue;
+                    if (!Utils.hasProperty(XSD.DataType, literalDataType))
+                        return literalValue;
+                    var value;
+                    var parts;
+                    switch (literalDataType) {
+                        case XSD.DataType.date:
+                        case XSD.DataType.dateTime:
+                            value = new Date(literalValue);
+                            break;
+                        case XSD.DataType.time:
+                            parts = literalValue.match(/(\d+):(\d+):(\d+)\.(\d+)Z/);
+                            value = new Date();
+                            value.setUTCHours(parseFloat(parts[1]), parseFloat(parts[2]), parseFloat(parts[3]), parseFloat(parts[4]));
+                            break;
+                        case XSD.DataType.duration:
+                            break;
+                        case XSD.DataType.gDay:
+                        case XSD.DataType.gMonth:
+                        case XSD.DataType.gMonthDay:
+                        case XSD.DataType.gYear:
+                        case XSD.DataType.gYearMonth:
+                            break;
+                        case XSD.DataType.byte:
+                        case XSD.DataType.decimal:
+                        case XSD.DataType.int:
+                        case XSD.DataType.integer:
+                        case XSD.DataType.long:
+                        case XSD.DataType.negativeInteger:
+                        case XSD.DataType.nonNegativeInteger:
+                        case XSD.DataType.nonPositiveInteger:
+                        case XSD.DataType.positiveInteger:
+                        case XSD.DataType.short:
+                        case XSD.DataType.unsignedLong:
+                        case XSD.DataType.unsignedInt:
+                        case XSD.DataType.unsignedShort:
+                        case XSD.DataType.unsignedByte:
+                        case XSD.DataType.double:
+                        case XSD.DataType.float:
+                            value = parseFloat(literalValue);
+                            break;
+                        case XSD.DataType.boolean:
+                            value = Utils.parseBoolean(literalValue);
+                            break;
+                        case XSD.DataType.string:
+                            value = literalValue;
+                            break;
+                        case XSD.DataType.object:
+                            value = JSON.parse(literalValue);
+                            break;
+                        default:
+                            break;
+                    }
+                    return value;
+                };
+                Factory.is = function (value) {
+                    return Utils.hasProperty(value, "@value")
+                        && Utils.isString(value["@value"]);
+                };
+                Factory.hasType = function (value, type) {
+                    if (!value["@type"] && type === XSD.DataType.string)
+                        return true;
+                    return value["@type"] === type;
+                };
+                return Factory;
+            })();
+            exports_1("Factory", Factory);
+            Util = (function () {
+                function Util() {
+                }
+                Util.areEqual = function (literal1, literal2) {
+                    return false;
+                };
+                return Util;
+            })();
+            exports_1("Util", Util);
+            exports_1("Serializer", Serializer_1.default);
+            exports_1("Serializers", Serializers);
+        }
+    }
+});
+
+$__System.register("40", [], function(exports_1) {
+    var namespace, Class, Predicate;
+    return {
+        setters:[],
+        execute: function() {
+            exports_1("namespace", namespace = "https://carbonldp.com/ns/v1/platform#");
+            Class = (function () {
+                function Class() {
+                }
+                Object.defineProperty(Class, "AccessPoint", {
+                    get: function () { return namespace + "AccessPoint"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(Class, "AddMemberAction", {
+                    get: function () { return namespace + "AddMemberAction"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(Class, "API", {
+                    get: function () { return namespace + "API"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(Class, "NonReadableMembershipResourceTriples", {
+                    get: function () { return namespace + "NonReadableMembershipResourceTriples"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(Class, "PreferContainer", {
+                    get: function () { return namespace + "PreferContainer"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(Class, "PreferContainmentResources", {
+                    get: function () { return namespace + "PreferContainmentResources"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(Class, "PreferContainmentTriples", {
+                    get: function () { return namespace + "PreferContainmentTriples"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(Class, "PreferMembershipResources", {
+                    get: function () { return namespace + "PreferMembershipResources"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(Class, "PreferMembershipTriples", {
+                    get: function () { return namespace + "PreferMembershipTriples"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(Class, "PreferSelectedMembershipTriples", {
+                    get: function () { return namespace + "PreferSelectedMembershipTriples"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(Class, "VolatileResource", {
+                    get: function () { return namespace + "VolatileResource"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(Class, "RDFRepresentation", {
+                    get: function () { return namespace + "RDFRepresentation"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(Class, "RemoveMemberAction", {
+                    get: function () { return namespace + "RemoveMemberAction"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(Class, "ResponseDescription", {
+                    get: function () { return namespace + "ResponseDescription"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(Class, "ResponseMetaData", {
+                    get: function () { return namespace + "ResponseMetaData"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                return Class;
+            })();
+            exports_1("Class", Class);
+            Predicate = (function () {
+                function Predicate() {
+                }
+                Object.defineProperty(Predicate, "accessPoint", {
+                    get: function () { return namespace + "accessPoint"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(Predicate, "bNodeIdentifier", {
+                    get: function () { return namespace + "bNodeIdentifier"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(Predicate, "buildDate", {
+                    get: function () { return namespace + "buildDate"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(Predicate, "created", {
+                    get: function () { return namespace + "created"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(Predicate, "modified", {
+                    get: function () { return namespace + "modified"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(Predicate, "version", {
+                    get: function () { return namespace + "version"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(Predicate, "mediaType", {
+                    get: function () { return namespace + "mediaType"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(Predicate, "size", {
+                    get: function () { return namespace + "size"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(Predicate, "targetMember", {
+                    get: function () { return namespace + "targetMember"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(Predicate, "responseProperty", {
+                    get: function () { return namespace + "responseProperty"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(Predicate, "responsePropertyResource", {
+                    get: function () { return namespace + "responsePropertyResource"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(Predicate, "eTag", {
+                    get: function () { return namespace + "eTag"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                return Predicate;
+            })();
+            exports_1("Predicate", Predicate);
+        }
+    }
+});
+
+$__System.register("41", [], function(exports_1) {
+    var namespace, Predicate;
+    return {
+        setters:[],
+        execute: function() {
+            namespace = "https://carbonldp.com/ns/v1/patch#";
+            Predicate = (function () {
+                function Predicate() {
+                }
+                Predicate.ADD_ACTION = namespace + "addAction";
+                Predicate.SET_ACTION = namespace + "setAction";
+                Predicate.DELETE_ACTION = namespace + "deleteAction";
+                return Predicate;
+            })();
+            exports_1("namespace", namespace);
+            exports_1("Predicate", Predicate);
+        }
+    }
+});
+
+$__System.register("42", [], function(exports_1) {
+    var namespace, Class, Predicate;
+    return {
+        setters:[],
+        execute: function() {
+            namespace = "https://carbonldp.com/ns/v1/security#";
+            Class = (function () {
+                function Class() {
+                }
+                Object.defineProperty(Class, "Application", {
+                    get: function () { return namespace + "Application"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(Class, "Token", {
+                    get: function () { return namespace + "Token"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(Class, "AllOrigins", {
+                    get: function () { return namespace + "AllOrigins"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(Class, "Agent", {
+                    get: function () { return namespace + "Agent"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                return Class;
+            })();
+            Predicate = (function () {
+                function Predicate() {
+                }
+                Object.defineProperty(Predicate, "name", {
+                    get: function () { return namespace + "name"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(Predicate, "allowsOrigin", {
+                    get: function () { return namespace + "allowsOrigin"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(Predicate, "rootContainer", {
+                    get: function () { return namespace + "rootContainer"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(Predicate, "tokenKey", {
+                    get: function () { return namespace + "tokenKey"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(Predicate, "expirationTime", {
+                    get: function () { return namespace + "expirationTime"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(Predicate, "password", {
+                    get: function () { return namespace + "password"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(Predicate, "description", {
+                    get: function () { return namespace + "description"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                return Predicate;
+            })();
+            exports_1("namespace", namespace);
+            exports_1("Class", Class);
+            exports_1("Predicate", Predicate);
+        }
+    }
+});
+
+$__System.register("43", [], function(exports_1) {
+    var namespace, Class, Predicate;
+    return {
+        setters:[],
+        execute: function() {
+            namespace = "http://www.w3.org/ns/ldp#";
+            Class = (function () {
+                function Class() {
+                }
+                Object.defineProperty(Class, "Resource", {
+                    get: function () { return namespace + "Resource"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(Class, "RDFSource", {
+                    get: function () { return namespace + "RDFSource"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(Class, "Container", {
+                    get: function () { return namespace + "Container"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(Class, "BasicContainer", {
+                    get: function () { return namespace + "BasicContainer"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(Class, "DirectContainer", {
+                    get: function () { return namespace + "DirectContainer"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(Class, "IndirectContainer", {
+                    get: function () { return namespace + "IndirectContainer"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(Class, "NonRDFSource", {
+                    get: function () { return namespace + "NonRDFSource"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(Class, "MemberSubject", {
+                    get: function () { return namespace + "MemberSubject"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(Class, "PreferContainment", {
+                    get: function () { return namespace + "PreferContainment"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(Class, "PreferMembership", {
+                    get: function () { return namespace + "PreferMembership"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(Class, "PreferEmptyContainer", {
+                    get: function () { return namespace + "PreferEmptyContainer"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(Class, "PreferMinimalContainer", {
+                    get: function () { return namespace + "PreferMinimalContainer"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(Class, "Page", {
+                    get: function () { return namespace + "Page"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(Class, "PageSortCriterion", {
+                    get: function () { return namespace + "PageSortCriterion"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(Class, "Ascending", {
+                    get: function () { return namespace + "Ascending"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(Class, "Descending", {
+                    get: function () { return namespace + "Descending"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                return Class;
+            })();
+            Predicate = (function () {
+                function Predicate() {
+                }
+                Object.defineProperty(Predicate, "contains", {
+                    get: function () { return namespace + "contains"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(Predicate, "member", {
+                    get: function () { return namespace + "member"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(Predicate, "hasMemberRelation", {
+                    get: function () { return namespace + "hasMemberRelation"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(Predicate, "memberOfRelation", {
+                    get: function () { return namespace + "memberOfRelation"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(Predicate, "membershipResource", {
+                    get: function () { return namespace + "membershipResource"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(Predicate, "insertedContentRelation", {
+                    get: function () { return namespace + "insertedContentRelation"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(Predicate, "constrainedBy", {
+                    get: function () { return namespace + "constrainedBy"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(Predicate, "pageSortCriteria", {
+                    get: function () { return namespace + "pageSortCriteria"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(Predicate, "pageSortOrder", {
+                    get: function () { return namespace + "pageSortOrder"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(Predicate, "pageSortCollation", {
+                    get: function () { return namespace + "pageSortCollation"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(Predicate, "pageSequence", {
+                    get: function () { return namespace + "pageSequence"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                return Predicate;
+            })();
+            exports_1("namespace", namespace);
+            exports_1("Class", Class);
+            exports_1("Predicate", Predicate);
+        }
+    }
+});
+
+$__System.register("44", [], function(exports_1) {
+    var namespace, Predicate;
+    return {
+        setters:[],
+        execute: function() {
+            namespace = "http://www.w3.org/1999/02/22-rdf-syntax-ns#";
+            Predicate = (function () {
+                function Predicate() {
+                }
+                Predicate.type = namespace + "type";
+                return Predicate;
+            })();
+            exports_1("namespace", namespace);
+            exports_1("Predicate", Predicate);
+        }
+    }
+});
+
+$__System.register("17", ["5"], function(exports_1) {
+    var Utils;
+    var namespace, DataType;
+    return {
+        setters:[
+            function (Utils_1) {
+                Utils = Utils_1;
+            }],
+        execute: function() {
+            exports_1("namespace", namespace = "http://www.w3.org/2001/XMLSchema#");
+            DataType = (function () {
+                function DataType() {
+                }
+                DataType.date = namespace + "date";
+                DataType.dateTime = namespace + "dateTime";
+                DataType.duration = namespace + "duration";
+                DataType.gDay = namespace + "gDay";
+                DataType.gMonth = namespace + "gMonth";
+                DataType.gMonthDay = namespace + "gMonthDay";
+                DataType.gYear = namespace + "gYear";
+                DataType.gYearMonth = namespace + "gYearMonth";
+                DataType.time = namespace + "time";
+                DataType.byte = namespace + "byte";
+                DataType.decimal = namespace + "decimal";
+                DataType.int = namespace + "int";
+                DataType.integer = namespace + "integer";
+                DataType.long = namespace + "long";
+                DataType.negativeInteger = namespace + "negativeInteger";
+                DataType.nonNegativeInteger = namespace + "nonNegativeInteger";
+                DataType.nonPositiveInteger = namespace + "nonPositiveInteger";
+                DataType.positiveInteger = namespace + "positiveInteger";
+                DataType.short = namespace + "short";
+                DataType.unsignedLong = namespace + "unsignedLong";
+                DataType.unsignedInt = namespace + "unsignedInt";
+                DataType.unsignedShort = namespace + "unsignedShort";
+                DataType.unsignedByte = namespace + "unsignedByte";
+                DataType.double = namespace + "double";
+                DataType.float = namespace + "float";
+                DataType.boolean = namespace + "boolean";
+                DataType.string = namespace + "string";
+                DataType.object = namespace + "object";
+                return DataType;
+            })();
+            exports_1("DataType", DataType);
+            Utils.forEachOwnProperty(DataType, function (key, value) {
+                DataType[value] = key;
+            });
+        }
+    }
+});
+
+$__System.register("45", [], function(exports_1) {
+    var namespace, Predicate;
+    return {
+        setters:[],
+        execute: function() {
+            exports_1("namespace", namespace = "http://www.w3.org/2001/vcard-rdf/3.0#");
+            Predicate = (function () {
+                function Predicate() {
+                }
+                Object.defineProperty(Predicate, "email", {
+                    get: function () { return namespace + "email"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                return Predicate;
+            })();
+            exports_1("Predicate", Predicate);
+        }
+    }
+});
+
+$__System.register("4", ["40", "41", "42", "43", "44", "17", "45"], function(exports_1) {
+    var C, CP, CS, LDP, RDF, XSD, VCARD;
+    return {
+        setters:[
+            function (C_1) {
+                C = C_1;
+            },
+            function (CP_1) {
+                CP = CP_1;
+            },
+            function (CS_1) {
+                CS = CS_1;
+            },
+            function (LDP_1) {
+                LDP = LDP_1;
+            },
+            function (RDF_1) {
+                RDF = RDF_1;
+            },
+            function (XSD_1) {
+                XSD = XSD_1;
+            },
+            function (VCARD_1) {
+                VCARD = VCARD_1;
+            }],
+        execute: function() {
+            exports_1("C", C);
+            exports_1("CP", CP);
+            exports_1("CS", CS);
+            exports_1("LDP", LDP);
+            exports_1("RDF", RDF);
+            exports_1("XSD", XSD);
+            exports_1("VCARD", VCARD);
         }
     }
 });
@@ -10533,7 +11409,7 @@ var _removeDefine = $__System.get("@@amd-helpers").createDefine();
     });
   };
   if (!_nodejs && (typeof define === 'function' && define.amd)) {
-    define("3b", [], function() {
+    define("46", [], function() {
       wrapper(factory);
       return factory;
     });
@@ -10555,7 +11431,7 @@ var _removeDefine = $__System.get("@@amd-helpers").createDefine();
 
 _removeDefine();
 })();
-$__System.register("3c", ["3b", "3d"], function(exports_1) {
+$__System.register("47", ["46", "48"], function(exports_1) {
     var jsonld, JSONParser_1;
     var Class;
     return {
@@ -10596,7 +11472,7 @@ $__System.register("3c", ["3b", "3d"], function(exports_1) {
     }
 });
 
-$__System.register("3e", [], function(exports_1) {
+$__System.register("49", [], function(exports_1) {
     return {
         setters:[],
         execute: function() {
@@ -10604,7 +11480,7 @@ $__System.register("3e", [], function(exports_1) {
     }
 });
 
-$__System.register("3f", ["40"], function(exports_1) {
+$__System.register("4a", ["4b"], function(exports_1) {
     var __extends = (this && this.__extends) || function (d, b) {
         for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
         function __() { this.constructor = d; }
@@ -10642,7 +11518,7 @@ $__System.register("3f", ["40"], function(exports_1) {
     }
 });
 
-$__System.register("41", ["40"], function(exports_1) {
+$__System.register("4c", ["4b"], function(exports_1) {
     var __extends = (this && this.__extends) || function (d, b) {
         for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
         function __() { this.constructor = d; }
@@ -10680,7 +11556,7 @@ $__System.register("41", ["40"], function(exports_1) {
     }
 });
 
-$__System.register("42", ["40"], function(exports_1) {
+$__System.register("4d", ["4b"], function(exports_1) {
     var __extends = (this && this.__extends) || function (d, b) {
         for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
         function __() { this.constructor = d; }
@@ -10718,7 +11594,7 @@ $__System.register("42", ["40"], function(exports_1) {
     }
 });
 
-$__System.register("43", ["40"], function(exports_1) {
+$__System.register("4e", ["4b"], function(exports_1) {
     var __extends = (this && this.__extends) || function (d, b) {
         for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
         function __() { this.constructor = d; }
@@ -10756,7 +11632,7 @@ $__System.register("43", ["40"], function(exports_1) {
     }
 });
 
-$__System.register("44", ["40"], function(exports_1) {
+$__System.register("4f", ["4b"], function(exports_1) {
     var __extends = (this && this.__extends) || function (d, b) {
         for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
         function __() { this.constructor = d; }
@@ -10794,7 +11670,7 @@ $__System.register("44", ["40"], function(exports_1) {
     }
 });
 
-$__System.register("45", ["40"], function(exports_1) {
+$__System.register("50", ["4b"], function(exports_1) {
     var __extends = (this && this.__extends) || function (d, b) {
         for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
         function __() { this.constructor = d; }
@@ -10832,7 +11708,7 @@ $__System.register("45", ["40"], function(exports_1) {
     }
 });
 
-$__System.register("46", ["40"], function(exports_1) {
+$__System.register("51", ["4b"], function(exports_1) {
     var __extends = (this && this.__extends) || function (d, b) {
         for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
         function __() { this.constructor = d; }
@@ -10870,7 +11746,7 @@ $__System.register("46", ["40"], function(exports_1) {
     }
 });
 
-$__System.register("47", ["40"], function(exports_1) {
+$__System.register("52", ["4b"], function(exports_1) {
     var __extends = (this && this.__extends) || function (d, b) {
         for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
         function __() { this.constructor = d; }
@@ -10908,7 +11784,7 @@ $__System.register("47", ["40"], function(exports_1) {
     }
 });
 
-$__System.register("48", ["40"], function(exports_1) {
+$__System.register("53", ["4b"], function(exports_1) {
     var __extends = (this && this.__extends) || function (d, b) {
         for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
         function __() { this.constructor = d; }
@@ -10946,7 +11822,7 @@ $__System.register("48", ["40"], function(exports_1) {
     }
 });
 
-$__System.register("49", ["40"], function(exports_1) {
+$__System.register("54", ["4b"], function(exports_1) {
     var __extends = (this && this.__extends) || function (d, b) {
         for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
         function __() { this.constructor = d; }
@@ -10984,7 +11860,7 @@ $__System.register("49", ["40"], function(exports_1) {
     }
 });
 
-$__System.register("4a", ["40"], function(exports_1) {
+$__System.register("55", ["4b"], function(exports_1) {
     var __extends = (this && this.__extends) || function (d, b) {
         for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
         function __() { this.constructor = d; }
@@ -11022,7 +11898,7 @@ $__System.register("4a", ["40"], function(exports_1) {
     }
 });
 
-$__System.register("4b", ["40"], function(exports_1) {
+$__System.register("56", ["4b"], function(exports_1) {
     var __extends = (this && this.__extends) || function (d, b) {
         for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
         function __() { this.constructor = d; }
@@ -11060,7 +11936,7 @@ $__System.register("4b", ["40"], function(exports_1) {
     }
 });
 
-$__System.register("4c", ["40"], function(exports_1) {
+$__System.register("57", ["4b"], function(exports_1) {
     var __extends = (this && this.__extends) || function (d, b) {
         for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
         function __() { this.constructor = d; }
@@ -11098,7 +11974,7 @@ $__System.register("4c", ["40"], function(exports_1) {
     }
 });
 
-$__System.register("4d", ["40"], function(exports_1) {
+$__System.register("58", ["4b"], function(exports_1) {
     var __extends = (this && this.__extends) || function (d, b) {
         for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
         function __() { this.constructor = d; }
@@ -11136,7 +12012,7 @@ $__System.register("4d", ["40"], function(exports_1) {
     }
 });
 
-$__System.register("4e", ["40"], function(exports_1) {
+$__System.register("59", ["4b"], function(exports_1) {
     var __extends = (this && this.__extends) || function (d, b) {
         for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
         function __() { this.constructor = d; }
@@ -11174,7 +12050,7 @@ $__System.register("4e", ["40"], function(exports_1) {
     }
 });
 
-$__System.register("4f", ["40"], function(exports_1) {
+$__System.register("5a", ["4b"], function(exports_1) {
     var __extends = (this && this.__extends) || function (d, b) {
         for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
         function __() { this.constructor = d; }
@@ -11212,7 +12088,7 @@ $__System.register("4f", ["40"], function(exports_1) {
     }
 });
 
-$__System.register("50", ["40"], function(exports_1) {
+$__System.register("5b", ["4b"], function(exports_1) {
     var __extends = (this && this.__extends) || function (d, b) {
         for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
         function __() { this.constructor = d; }
@@ -11250,7 +12126,7 @@ $__System.register("50", ["40"], function(exports_1) {
     }
 });
 
-$__System.register("51", ["40"], function(exports_1) {
+$__System.register("5c", ["4b"], function(exports_1) {
     var __extends = (this && this.__extends) || function (d, b) {
         for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
         function __() { this.constructor = d; }
@@ -11288,7 +12164,7 @@ $__System.register("51", ["40"], function(exports_1) {
     }
 });
 
-$__System.register("52", ["40"], function(exports_1) {
+$__System.register("5d", ["4b"], function(exports_1) {
     var __extends = (this && this.__extends) || function (d, b) {
         for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
         function __() { this.constructor = d; }
@@ -11326,7 +12202,7 @@ $__System.register("52", ["40"], function(exports_1) {
     }
 });
 
-$__System.register("53", ["40"], function(exports_1) {
+$__System.register("5e", ["4b"], function(exports_1) {
     var __extends = (this && this.__extends) || function (d, b) {
         for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
         function __() { this.constructor = d; }
@@ -11364,7 +12240,7 @@ $__System.register("53", ["40"], function(exports_1) {
     }
 });
 
-$__System.register("54", ["40"], function(exports_1) {
+$__System.register("5f", ["4b"], function(exports_1) {
     var __extends = (this && this.__extends) || function (d, b) {
         for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
         function __() { this.constructor = d; }
@@ -11402,7 +12278,7 @@ $__System.register("54", ["40"], function(exports_1) {
     }
 });
 
-$__System.register("40", ["55"], function(exports_1) {
+$__System.register("4b", ["60"], function(exports_1) {
     var __extends = (this && this.__extends) || function (d, b) {
         for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
         function __() { this.constructor = d; }
@@ -11439,7 +12315,7 @@ $__System.register("40", ["55"], function(exports_1) {
     }
 });
 
-$__System.register("56", ["40"], function(exports_1) {
+$__System.register("61", ["4b"], function(exports_1) {
     var __extends = (this && this.__extends) || function (d, b) {
         for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
         function __() { this.constructor = d; }
@@ -11471,7 +12347,7 @@ $__System.register("56", ["40"], function(exports_1) {
     }
 });
 
-$__System.register("57", ["40", "3f", "41", "42", "43", "44", "45", "46", "47", "48", "49", "4a", "4b", "4c", "4d", "4e", "4f", "50", "51", "52", "53", "54", "56"], function(exports_1) {
+$__System.register("62", ["4b", "4a", "4c", "4d", "4e", "4f", "50", "51", "52", "53", "54", "55", "56", "57", "58", "59", "5a", "5b", "5c", "5d", "5e", "5f", "61"], function(exports_1) {
     var HTTPError_1, BadRequestError_1, ConflictError_1, ForbiddenError_1, MethodNotAllowedError_1, NotAcceptableError_1, NotFoundError_1, PreconditionFailedError_1, PreconditionRequiredError_1, RequestEntityTooLargeError_1, RequestHeaderFieldsTooLargeError_1, RequestURITooLongError_1, TooManyRequestsError_1, UnauthorizedError_1, UnsupportedMediaTypeError_1, BadResponseError_1, BadGatewayError_1, GatewayTimeoutError_1, HTTPVersionNotSupportedError_1, InternalServerErrorError_1, NotImplementedError_1, ServiceUnavailableError_1, UnknownError_1;
     var client, server, statusCodeMap;
     return {
@@ -11606,7 +12482,7 @@ $__System.register("57", ["40", "3f", "41", "42", "43", "44", "45", "46", "47", 
     }
 });
 
-$__System.register("58", [], function(exports_1) {
+$__System.register("63", [], function(exports_1) {
     var Method;
     return {
         setters:[],
@@ -11625,7 +12501,7 @@ $__System.register("58", [], function(exports_1) {
     }
 });
 
-$__System.register("59", ["57", "5a", "58", "5b", "5"], function(exports_1) {
+$__System.register("64", ["62", "65", "63", "66", "5"], function(exports_1) {
     var Errors, Header, Method_1, Response_1, Utils;
     var Service, Util;
     function forEachHeaders(headers, setHeader) {
@@ -11872,7 +12748,7 @@ $__System.register("59", ["57", "5a", "58", "5b", "5"], function(exports_1) {
     }
 });
 
-$__System.register("5a", [], function(exports_1) {
+$__System.register("65", [], function(exports_1) {
     var Class, Value, Util;
     return {
         setters:[],
@@ -11948,7 +12824,7 @@ $__System.register("5a", [], function(exports_1) {
     }
 });
 
-$__System.register("5b", ["5a", "5"], function(exports_1) {
+$__System.register("66", ["65", "5"], function(exports_1) {
     var Header, Utils_1;
     var Class, Util;
     return {
@@ -12020,7 +12896,7 @@ $__System.register("5b", ["5a", "5"], function(exports_1) {
     }
 });
 
-$__System.register("5c", [], function(exports_1) {
+$__System.register("67", [], function(exports_1) {
     var StatusCode;
     return {
         setters:[],
@@ -12072,7 +12948,7 @@ $__System.register("5c", [], function(exports_1) {
     }
 });
 
-$__System.register("5d", [], function(exports_1) {
+$__System.register("68", [], function(exports_1) {
     var Class;
     return {
         setters:[],
@@ -12093,7 +12969,7 @@ $__System.register("5d", [], function(exports_1) {
     }
 });
 
-$__System.register("19", ["57", "5a", "3d", "3c", "58", "3e", "59", "5b", "5c", "5d"], function(exports_1) {
+$__System.register("19", ["62", "65", "48", "47", "63", "49", "64", "66", "67", "68"], function(exports_1) {
     var Errors, Header, JSONParser, JSONLDParser, Method_1, Parser, Request, Response, StatusCode_1, StringParser;
     return {
         setters:[
@@ -12142,138 +13018,219 @@ $__System.register("19", ["57", "5a", "3d", "3c", "58", "3e", "59", "5b", "5c", 
     }
 });
 
-$__System.register("5e", ["19", "5f", "5", "2f", "c"], function(exports_1) {
-    var HTTP, RDFNode, Utils, URI, Errors;
-    var Factory, Util, Parser;
+$__System.register("69", ["60"], function(exports_1) {
+    var __extends = (this && this.__extends) || function (d, b) {
+        for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+    var AbstractError_1;
+    var IDAlreadyInUseError;
     return {
         setters:[
-            function (HTTP_1) {
-                HTTP = HTTP_1;
-            },
-            function (RDFNode_1) {
-                RDFNode = RDFNode_1;
-            },
-            function (Utils_1) {
-                Utils = Utils_1;
-            },
-            function (URI_1) {
-                URI = URI_1;
-            },
-            function (Errors_1) {
-                Errors = Errors_1;
+            function (AbstractError_1_1) {
+                AbstractError_1 = AbstractError_1_1;
             }],
         execute: function() {
-            Factory = (function () {
-                function Factory() {
+            IDAlreadyInUseError = (function (_super) {
+                __extends(IDAlreadyInUseError, _super);
+                function IDAlreadyInUseError() {
+                    _super.apply(this, arguments);
                 }
-                Factory.is = function (object) {
-                    return Utils.hasProperty(object, "@graph")
-                        && Utils.isArray(object["@graph"]);
-                };
-                Factory.create = function (resources, uri) {
-                    var document = uri ? RDFNode.Factory.create(uri) : {};
-                    document["@graph"] = resources;
-                    return document;
-                };
-                return Factory;
-            })();
-            exports_1("Factory", Factory);
-            Util = (function () {
-                function Util() {
+                Object.defineProperty(IDAlreadyInUseError.prototype, "name", {
+                    get: function () { return "IDAlreadyInUseError"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                return IDAlreadyInUseError;
+            })(AbstractError_1.default);
+            exports_1("default",IDAlreadyInUseError);
+        }
+    }
+});
+
+$__System.register("6a", ["60"], function(exports_1) {
+    var __extends = (this && this.__extends) || function (d, b) {
+        for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+    var AbstractError_1;
+    var IllegalActionError;
+    return {
+        setters:[
+            function (AbstractError_1_1) {
+                AbstractError_1 = AbstractError_1_1;
+            }],
+        execute: function() {
+            IllegalActionError = (function (_super) {
+                __extends(IllegalActionError, _super);
+                function IllegalActionError() {
+                    _super.apply(this, arguments);
                 }
-                Util.getDocuments = function (value) {
-                    if (Utils.isArray(value)) {
-                        if (value.length === 0)
-                            return value;
-                        if (Factory.is(value[0]))
-                            return value;
-                        if (RDFNode.Factory.is(value[0]))
-                            return [Factory.create(value)];
-                    }
-                    else if (Utils.isObject(value)) {
-                        if (Factory.is(value))
-                            return [value];
-                        if (RDFNode.Factory.is(value))
-                            return [Factory.create([value])];
-                    }
-                    throw new Errors.IllegalArgumentError("The value structure isn't valid.");
-                };
-                Util.getResources = function (value) {
-                    var documents = Util.getDocuments(value);
-                    var resources = [];
-                    for (var _i = 0; _i < documents.length; _i++) {
-                        var document = documents[_i];
-                        resources = resources.concat(document["@graph"]);
-                    }
-                    return resources;
-                };
-                Util.getDocumentResources = function (document) {
-                    var resources = Util.getResources(document);
-                    var documentResources = [];
-                    for (var i = 0, length = resources.length; i < length; i++) {
-                        var resource = resources[i];
-                        var uri = resource["@id"];
-                        if (!uri)
-                            continue;
-                        if (!URI.Util.hasFragment(uri) && !URI.Util.isBNodeID(uri))
-                            documentResources.push(resource);
-                    }
-                    return documentResources;
-                };
-                Util.getFragmentResources = function (document, documentResource) {
-                    var resources = Util.getResources(document);
-                    var documentURIToMatch = null;
-                    if (documentResource) {
-                        if (Utils.isString(documentResource)) {
-                            documentURIToMatch = documentResource;
-                        }
-                        else
-                            documentURIToMatch = documentResource["@id"];
-                    }
-                    var fragmentResources = [];
-                    for (var i = 0, length = resources.length; i < length; i++) {
-                        var resource = resources[i];
-                        var uri = resource["@id"];
-                        if (!uri)
-                            continue;
-                        if (!URI.Util.hasFragment(uri))
-                            continue;
-                        if (!documentURIToMatch) {
-                            fragmentResources.push(resource);
-                        }
-                        else {
-                            var documentURI = URI.Util.getDocumentURI(uri);
-                            if (documentURI === documentURIToMatch)
-                                fragmentResources.push(resource);
-                        }
-                    }
-                    return fragmentResources;
-                };
-                Util.getBNodeResources = function (document) {
-                    var resources = Util.getResources(document);
-                    var bnodes = [];
-                    for (var i = 0, length = resources.length; i < length; i++) {
-                        var resource = resources[i];
-                        if (!("@id" in resource) || URI.Util.isBNodeID(resource["@id"]))
-                            bnodes.push(resource);
-                    }
-                    return bnodes;
-                };
-                return Util;
-            })();
-            exports_1("Util", Util);
-            Parser = (function () {
-                function Parser() {
+                Object.defineProperty(IllegalActionError.prototype, "name", {
+                    get: function () { return "IllegalActionError"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                return IllegalActionError;
+            })(AbstractError_1.default);
+            exports_1("default",IllegalActionError);
+        }
+    }
+});
+
+$__System.register("13", ["60"], function(exports_1) {
+    var __extends = (this && this.__extends) || function (d, b) {
+        for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+    var AbstractError_1;
+    var IllegalArgumentError;
+    return {
+        setters:[
+            function (AbstractError_1_1) {
+                AbstractError_1 = AbstractError_1_1;
+            }],
+        execute: function() {
+            IllegalArgumentError = (function (_super) {
+                __extends(IllegalArgumentError, _super);
+                function IllegalArgumentError() {
+                    _super.apply(this, arguments);
                 }
-                Parser.prototype.parse = function (input) {
-                    var jsonLDParser = new HTTP.JSONLDParser.Class();
-                    return jsonLDParser.parse(input).then(function (expandedResult) {
-                        return Util.getDocuments(expandedResult);
-                    });
+                Object.defineProperty(IllegalArgumentError.prototype, "name", {
+                    get: function () { return "IllegalArgumentError"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                return IllegalArgumentError;
+            })(AbstractError_1.default);
+            exports_1("default",IllegalArgumentError);
+        }
+    }
+});
+
+$__System.register("6b", ["60"], function(exports_1) {
+    var __extends = (this && this.__extends) || function (d, b) {
+        for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+    var AbstractError_1;
+    var IllegalStateError;
+    return {
+        setters:[
+            function (AbstractError_1_1) {
+                AbstractError_1 = AbstractError_1_1;
+            }],
+        execute: function() {
+            IllegalStateError = (function (_super) {
+                __extends(IllegalStateError, _super);
+                function IllegalStateError(message) {
+                    if (message === void 0) { message = ""; }
+                    _super.call(this, message);
+                }
+                Object.defineProperty(IllegalStateError.prototype, "name", {
+                    get: function () { return "IllegalStateError"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                return IllegalStateError;
+            })(AbstractError_1.default);
+            exports_1("default",IllegalStateError);
+        }
+    }
+});
+
+$__System.register("60", [], function(exports_1) {
+    var __extends = (this && this.__extends) || function (d, b) {
+        for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+    var AbstractError;
+    return {
+        setters:[],
+        execute: function() {
+            AbstractError = (function (_super) {
+                __extends(AbstractError, _super);
+                function AbstractError(message) {
+                    _super.call(this, message);
+                    this.message = message;
+                }
+                Object.defineProperty(AbstractError.prototype, "name", {
+                    get: function () { return "AbstractError"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                AbstractError.prototype.toString = function () {
+                    return this.name + ": " + this.message;
                 };
-                return Parser;
-            })();
-            exports_1("Parser", Parser);
+                return AbstractError;
+            })(Error);
+            exports_1("default",AbstractError);
+        }
+    }
+});
+
+$__System.register("6c", ["60"], function(exports_1) {
+    var __extends = (this && this.__extends) || function (d, b) {
+        for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+    var AbstractError_1;
+    var NotImplementedError;
+    return {
+        setters:[
+            function (AbstractError_1_1) {
+                AbstractError_1 = AbstractError_1_1;
+            }],
+        execute: function() {
+            NotImplementedError = (function (_super) {
+                __extends(NotImplementedError, _super);
+                function NotImplementedError(message) {
+                    if (message === void 0) { message = ""; }
+                    _super.call(this, message);
+                }
+                Object.defineProperty(NotImplementedError.prototype, "name", {
+                    get: function () { return "NotImplementedError"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                return NotImplementedError;
+            })(AbstractError_1.default);
+            exports_1("default",NotImplementedError);
+        }
+    }
+});
+
+$__System.register("c", ["69", "6a", "13", "6b", "6c"], function(exports_1) {
+    var IDAlreadyInUseError_1, IllegalActionError_1, IllegalArgumentError_1, IllegalStateError_1, NotImplementedError_1;
+    return {
+        setters:[
+            function (IDAlreadyInUseError_1_1) {
+                IDAlreadyInUseError_1 = IDAlreadyInUseError_1_1;
+            },
+            function (IllegalActionError_1_1) {
+                IllegalActionError_1 = IllegalActionError_1_1;
+            },
+            function (IllegalArgumentError_1_1) {
+                IllegalArgumentError_1 = IllegalArgumentError_1_1;
+            },
+            function (IllegalStateError_1_1) {
+                IllegalStateError_1 = IllegalStateError_1_1;
+            },
+            function (NotImplementedError_1_1) {
+                NotImplementedError_1 = NotImplementedError_1_1;
+            }],
+        execute: function() {
+            exports_1("IDAlreadyInUseError", IDAlreadyInUseError_1.default);
+            exports_1("IllegalActionError", IllegalActionError_1.default);
+            exports_1("IllegalArgumentError", IllegalArgumentError_1.default);
+            exports_1("IllegalStateError", IllegalStateError_1.default);
+            exports_1("NotImplementedError", NotImplementedError_1.default);
         }
     }
 });
@@ -12432,535 +13389,35 @@ $__System.register("2f", ["c", "5"], function(exports_1) {
     }
 });
 
-$__System.register("60", ["5"], function(exports_1) {
-    var Utils;
-    var Factory;
+$__System.register("6d", ["19", "6e", "5", "2f"], function(exports_1) {
+    var HTTP, RDFNode, Utils, URI;
+    var Factory, Util, Parser;
     return {
         setters:[
+            function (HTTP_1) {
+                HTTP = HTTP_1;
+            },
+            function (RDFNode_1) {
+                RDFNode = RDFNode_1;
+            },
             function (Utils_1) {
                 Utils = Utils_1;
+            },
+            function (URI_1) {
+                URI = URI_1;
             }],
         execute: function() {
             Factory = (function () {
                 function Factory() {
                 }
-                Factory.is = function (value) {
-                    return Utils.isObject(value)
-                        && Utils.hasProperty(value, "@list")
-                        && Utils.isArray(value["@list"]);
+                Factory.is = function (object) {
+                    return Utils.hasProperty(object, "@graph")
+                        && Utils.isArray(object["@graph"]);
                 };
-                return Factory;
-            })();
-            exports_1("Factory", Factory);
-        }
-    }
-});
-
-$__System.register("61", [], function(exports_1) {
-    return {
-        setters:[],
-        execute: function() {
-        }
-    }
-});
-
-$__System.register("62", ["55"], function(exports_1) {
-    var __extends = (this && this.__extends) || function (d, b) {
-        for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-    var AbstractError_1;
-    var IDAlreadyInUseError;
-    return {
-        setters:[
-            function (AbstractError_1_1) {
-                AbstractError_1 = AbstractError_1_1;
-            }],
-        execute: function() {
-            IDAlreadyInUseError = (function (_super) {
-                __extends(IDAlreadyInUseError, _super);
-                function IDAlreadyInUseError() {
-                    _super.apply(this, arguments);
-                }
-                Object.defineProperty(IDAlreadyInUseError.prototype, "name", {
-                    get: function () { return "IDAlreadyInUseError"; },
-                    enumerable: true,
-                    configurable: true
-                });
-                return IDAlreadyInUseError;
-            })(AbstractError_1.default);
-            exports_1("default",IDAlreadyInUseError);
-        }
-    }
-});
-
-$__System.register("63", ["55"], function(exports_1) {
-    var __extends = (this && this.__extends) || function (d, b) {
-        for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-    var AbstractError_1;
-    var IllegalActionError;
-    return {
-        setters:[
-            function (AbstractError_1_1) {
-                AbstractError_1 = AbstractError_1_1;
-            }],
-        execute: function() {
-            IllegalActionError = (function (_super) {
-                __extends(IllegalActionError, _super);
-                function IllegalActionError() {
-                    _super.apply(this, arguments);
-                }
-                Object.defineProperty(IllegalActionError.prototype, "name", {
-                    get: function () { return "IllegalActionError"; },
-                    enumerable: true,
-                    configurable: true
-                });
-                return IllegalActionError;
-            })(AbstractError_1.default);
-            exports_1("default",IllegalActionError);
-        }
-    }
-});
-
-$__System.register("13", ["55"], function(exports_1) {
-    var __extends = (this && this.__extends) || function (d, b) {
-        for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-    var AbstractError_1;
-    var IllegalArgumentError;
-    return {
-        setters:[
-            function (AbstractError_1_1) {
-                AbstractError_1 = AbstractError_1_1;
-            }],
-        execute: function() {
-            IllegalArgumentError = (function (_super) {
-                __extends(IllegalArgumentError, _super);
-                function IllegalArgumentError() {
-                    _super.apply(this, arguments);
-                }
-                Object.defineProperty(IllegalArgumentError.prototype, "name", {
-                    get: function () { return "IllegalArgumentError"; },
-                    enumerable: true,
-                    configurable: true
-                });
-                return IllegalArgumentError;
-            })(AbstractError_1.default);
-            exports_1("default",IllegalArgumentError);
-        }
-    }
-});
-
-$__System.register("64", ["55"], function(exports_1) {
-    var __extends = (this && this.__extends) || function (d, b) {
-        for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-    var AbstractError_1;
-    var IllegalStateError;
-    return {
-        setters:[
-            function (AbstractError_1_1) {
-                AbstractError_1 = AbstractError_1_1;
-            }],
-        execute: function() {
-            IllegalStateError = (function (_super) {
-                __extends(IllegalStateError, _super);
-                function IllegalStateError(message) {
-                    if (message === void 0) { message = ""; }
-                    _super.call(this, message);
-                }
-                Object.defineProperty(IllegalStateError.prototype, "name", {
-                    get: function () { return "IllegalStateError"; },
-                    enumerable: true,
-                    configurable: true
-                });
-                return IllegalStateError;
-            })(AbstractError_1.default);
-            exports_1("default",IllegalStateError);
-        }
-    }
-});
-
-$__System.register("55", [], function(exports_1) {
-    var __extends = (this && this.__extends) || function (d, b) {
-        for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-    var AbstractError;
-    return {
-        setters:[],
-        execute: function() {
-            AbstractError = (function (_super) {
-                __extends(AbstractError, _super);
-                function AbstractError(message) {
-                    _super.call(this, message);
-                    this.message = message;
-                }
-                Object.defineProperty(AbstractError.prototype, "name", {
-                    get: function () { return "AbstractError"; },
-                    enumerable: true,
-                    configurable: true
-                });
-                AbstractError.prototype.toString = function () {
-                    return this.name + ": " + this.message;
-                };
-                return AbstractError;
-            })(Error);
-            exports_1("default",AbstractError);
-        }
-    }
-});
-
-$__System.register("65", ["55"], function(exports_1) {
-    var __extends = (this && this.__extends) || function (d, b) {
-        for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-    var AbstractError_1;
-    var NotImplementedError;
-    return {
-        setters:[
-            function (AbstractError_1_1) {
-                AbstractError_1 = AbstractError_1_1;
-            }],
-        execute: function() {
-            NotImplementedError = (function (_super) {
-                __extends(NotImplementedError, _super);
-                function NotImplementedError(message) {
-                    if (message === void 0) { message = ""; }
-                    _super.call(this, message);
-                }
-                Object.defineProperty(NotImplementedError.prototype, "name", {
-                    get: function () { return "NotImplementedError"; },
-                    enumerable: true,
-                    configurable: true
-                });
-                return NotImplementedError;
-            })(AbstractError_1.default);
-            exports_1("default",NotImplementedError);
-        }
-    }
-});
-
-$__System.register("c", ["62", "63", "13", "64", "65"], function(exports_1) {
-    var IDAlreadyInUseError_1, IllegalActionError_1, IllegalArgumentError_1, IllegalStateError_1, NotImplementedError_1;
-    return {
-        setters:[
-            function (IDAlreadyInUseError_1_1) {
-                IDAlreadyInUseError_1 = IDAlreadyInUseError_1_1;
-            },
-            function (IllegalActionError_1_1) {
-                IllegalActionError_1 = IllegalActionError_1_1;
-            },
-            function (IllegalArgumentError_1_1) {
-                IllegalArgumentError_1 = IllegalArgumentError_1_1;
-            },
-            function (IllegalStateError_1_1) {
-                IllegalStateError_1 = IllegalStateError_1_1;
-            },
-            function (NotImplementedError_1_1) {
-                NotImplementedError_1 = NotImplementedError_1_1;
-            }],
-        execute: function() {
-            exports_1("IDAlreadyInUseError", IDAlreadyInUseError_1.default);
-            exports_1("IllegalActionError", IllegalActionError_1.default);
-            exports_1("IllegalArgumentError", IllegalArgumentError_1.default);
-            exports_1("IllegalStateError", IllegalStateError_1.default);
-            exports_1("NotImplementedError", NotImplementedError_1.default);
-        }
-    }
-});
-
-$__System.register("66", ["c", "5"], function(exports_1) {
-    var __extends = (this && this.__extends) || function (d, b) {
-        for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-    var Errors, Utils;
-    var DateSerializer, dateSerializer, DateTimeSerializer, dateTimeSerializer, TimeSerializer, timeSerializer, IntegerSerializer, integerSerializer, UnsignedIntegerSerializer, unsignedIntegerSerializer, FloatSerializer, floatSerializer, BooleanSerializer, booleanSerializer, StringSerializer, stringSerializer;
-    function pad(value) {
-        var paddedValue = String(value);
-        if (paddedValue.length === 1)
-            paddedValue = "0" + paddedValue;
-        return paddedValue;
-    }
-    return {
-        setters:[
-            function (Errors_1) {
-                Errors = Errors_1;
-            },
-            function (Utils_1) {
-                Utils = Utils_1;
-            }],
-        execute: function() {
-            DateSerializer = (function () {
-                function DateSerializer() {
-                }
-                DateSerializer.prototype.serialize = function (value) {
-                    if (!Utils.isDate(value))
-                        throw new Errors.IllegalArgumentError("The value is not a Date object.");
-                    return value.getUTCFullYear() + "-" + pad((value.getUTCMonth() + 1)) + "-" + pad(value.getUTCDate());
-                };
-                return DateSerializer;
-            })();
-            exports_1("DateSerializer", DateSerializer);
-            exports_1("dateSerializer", dateSerializer = new DateSerializer());
-            DateTimeSerializer = (function () {
-                function DateTimeSerializer() {
-                }
-                DateTimeSerializer.prototype.serialize = function (value) {
-                    if (!Utils.isDate(value))
-                        throw new Errors.IllegalArgumentError("The value is not a Date object.");
-                    return value.toISOString();
-                };
-                return DateTimeSerializer;
-            })();
-            exports_1("DateTimeSerializer", DateTimeSerializer);
-            exports_1("dateTimeSerializer", dateTimeSerializer = new DateTimeSerializer());
-            TimeSerializer = (function () {
-                function TimeSerializer() {
-                }
-                TimeSerializer.prototype.serialize = function (value) {
-                    if (!Utils.isDate(value))
-                        throw new Errors.IllegalArgumentError("The value is not a Date object.");
-                    return pad(value.getUTCHours())
-                        + ":" + pad(value.getUTCMinutes())
-                        + ":" + pad(value.getUTCSeconds())
-                        + "." + String((value.getUTCMilliseconds() / 1000).toFixed(3)).slice(2, 5)
-                        + "Z";
-                };
-                return TimeSerializer;
-            })();
-            exports_1("TimeSerializer", TimeSerializer);
-            exports_1("timeSerializer", timeSerializer = new TimeSerializer());
-            IntegerSerializer = (function () {
-                function IntegerSerializer() {
-                }
-                IntegerSerializer.prototype.serialize = function (value) {
-                    if (!Utils.isNumber(value))
-                        throw new Errors.IllegalArgumentError("The value is not a number.");
-                    return (~~value).toString();
-                };
-                return IntegerSerializer;
-            })();
-            exports_1("IntegerSerializer", IntegerSerializer);
-            exports_1("integerSerializer", integerSerializer = new IntegerSerializer());
-            UnsignedIntegerSerializer = (function (_super) {
-                __extends(UnsignedIntegerSerializer, _super);
-                function UnsignedIntegerSerializer() {
-                    _super.apply(this, arguments);
-                }
-                UnsignedIntegerSerializer.prototype.serialize = function (value) {
-                    var stringValue = _super.prototype.serialize.call(this, value);
-                    stringValue = Utils.S.startsWith(stringValue, "-") ? stringValue.substring(1) : stringValue;
-                    return stringValue;
-                };
-                return UnsignedIntegerSerializer;
-            })(IntegerSerializer);
-            exports_1("UnsignedIntegerSerializer", UnsignedIntegerSerializer);
-            exports_1("unsignedIntegerSerializer", unsignedIntegerSerializer = new UnsignedIntegerSerializer());
-            FloatSerializer = (function () {
-                function FloatSerializer() {
-                }
-                FloatSerializer.prototype.serialize = function (value) {
-                    if (!Utils.isNumber(value))
-                        throw new Errors.IllegalArgumentError("The value is not a number.");
-                    if (value === Number.POSITIVE_INFINITY)
-                        return "INF";
-                    if (value === Number.NEGATIVE_INFINITY)
-                        return "-INF";
-                    return value.toString();
-                };
-                return FloatSerializer;
-            })();
-            exports_1("FloatSerializer", FloatSerializer);
-            exports_1("floatSerializer", floatSerializer = new FloatSerializer());
-            BooleanSerializer = (function () {
-                function BooleanSerializer() {
-                }
-                BooleanSerializer.prototype.serialize = function (value) {
-                    return (!!value).toString();
-                };
-                return BooleanSerializer;
-            })();
-            exports_1("BooleanSerializer", BooleanSerializer);
-            exports_1("booleanSerializer", booleanSerializer = new BooleanSerializer());
-            StringSerializer = (function () {
-                function StringSerializer() {
-                }
-                StringSerializer.prototype.serialize = function (value) {
-                    return String(value);
-                };
-                return StringSerializer;
-            })();
-            exports_1("StringSerializer", StringSerializer);
-            exports_1("stringSerializer", stringSerializer = new StringSerializer());
-        }
-    }
-});
-
-$__System.register("67", ["66"], function(exports_1) {
-    var XSD;
-    return {
-        setters:[
-            function (XSD_1) {
-                XSD = XSD_1;
-            }],
-        execute: function() {
-            exports_1("XSD", XSD);
-        }
-    }
-});
-
-$__System.register("68", ["5", "17", "c", "61", "67"], function(exports_1) {
-    var Utils, XSD, Errors, Serializer_1, Serializers;
-    var Factory, Util;
-    return {
-        setters:[
-            function (Utils_1) {
-                Utils = Utils_1;
-            },
-            function (XSD_1) {
-                XSD = XSD_1;
-            },
-            function (Errors_1) {
-                Errors = Errors_1;
-            },
-            function (Serializer_1_1) {
-                Serializer_1 = Serializer_1_1;
-            },
-            function (Serializers_1) {
-                Serializers = Serializers_1;
-            }],
-        execute: function() {
-            Factory = (function () {
-                function Factory() {
-                }
-                Factory.from = function (value) {
-                    if (Utils.isNull(value))
-                        throw new Errors.IllegalArgumentError("Null cannot be converted into a Literal");
-                    if (!Utils.isDefined(value))
-                        throw new Errors.IllegalArgumentError("The value is undefined");
-                    var type;
-                    switch (true) {
-                        case Utils.isDate(value):
-                            type = XSD.DataType.dateTime;
-                            value = value.toISOString();
-                            break;
-                        case Utils.isNumber(value):
-                            if (Utils.isInteger(value)) {
-                                type = XSD.DataType.integer;
-                            }
-                            else {
-                                type = XSD.DataType.double;
-                            }
-                            break;
-                        case Utils.isString(value):
-                            type = XSD.DataType.string;
-                            break;
-                        case Utils.isBoolean(value):
-                            type = XSD.DataType.boolean;
-                            break;
-                        default:
-                            type = XSD.DataType.object;
-                            value = JSON.stringify(value);
-                            break;
-                    }
-                    var literal = { "@value": value.toString() };
-                    if (type)
-                        literal["@type"] = type;
-                    return literal;
-                };
-                Factory.parse = function (literalValueOrLiteral, literalDataType) {
-                    if (literalDataType === void 0) { literalDataType = null; }
-                    var literalValue;
-                    if (Utils.isString(literalValueOrLiteral)) {
-                        literalValue = literalValueOrLiteral;
-                    }
-                    else {
-                        var literal = literalValueOrLiteral;
-                        if (!literal)
-                            return null;
-                        if (!Utils.hasProperty(literal, "@value"))
-                            return null;
-                        literalDataType = "@type" in literal ? literal["@type"] : null;
-                        literalValue = literal["@value"];
-                    }
-                    if (literalDataType === null)
-                        return literalValue;
-                    if (!Utils.hasProperty(XSD.DataType, literalDataType))
-                        return literalValue;
-                    var value;
-                    var parts;
-                    switch (literalDataType) {
-                        case XSD.DataType.date:
-                        case XSD.DataType.dateTime:
-                            value = new Date(literalValue);
-                            break;
-                        case XSD.DataType.time:
-                            parts = literalValue.match(/(\d+):(\d+):(\d+)\.(\d+)Z/);
-                            value = new Date();
-                            value.setUTCHours(parseFloat(parts[1]), parseFloat(parts[2]), parseFloat(parts[3]), parseFloat(parts[4]));
-                            break;
-                        case XSD.DataType.duration:
-                            break;
-                        case XSD.DataType.gDay:
-                        case XSD.DataType.gMonth:
-                        case XSD.DataType.gMonthDay:
-                        case XSD.DataType.gYear:
-                        case XSD.DataType.gYearMonth:
-                            break;
-                        case XSD.DataType.byte:
-                        case XSD.DataType.decimal:
-                        case XSD.DataType.int:
-                        case XSD.DataType.integer:
-                        case XSD.DataType.long:
-                        case XSD.DataType.negativeInteger:
-                        case XSD.DataType.nonNegativeInteger:
-                        case XSD.DataType.nonPositiveInteger:
-                        case XSD.DataType.positiveInteger:
-                        case XSD.DataType.short:
-                        case XSD.DataType.unsignedLong:
-                        case XSD.DataType.unsignedInt:
-                        case XSD.DataType.unsignedShort:
-                        case XSD.DataType.unsignedByte:
-                        case XSD.DataType.double:
-                        case XSD.DataType.float:
-                            value = parseFloat(literalValue);
-                            break;
-                        case XSD.DataType.boolean:
-                            value = Utils.parseBoolean(literalValue);
-                            break;
-                        case XSD.DataType.string:
-                            value = literalValue;
-                            break;
-                        case XSD.DataType.object:
-                            value = JSON.parse(literalValue);
-                            break;
-                        default:
-                            break;
-                    }
-                    return value;
-                };
-                Factory.is = function (value) {
-                    return Utils.hasProperty(value, "@value")
-                        && Utils.isString(value["@value"]);
-                };
-                Factory.hasType = function (value, type) {
-                    if (!value["@type"] && type === XSD.DataType.string)
-                        return true;
-                    return value["@type"] === type;
+                Factory.create = function (resources, uri) {
+                    var document = uri ? RDFNode.Factory.create(uri) : {};
+                    document["@graph"] = resources;
+                    return document;
                 };
                 return Factory;
             })();
@@ -12968,565 +13425,108 @@ $__System.register("68", ["5", "17", "c", "61", "67"], function(exports_1) {
             Util = (function () {
                 function Util() {
                 }
-                Util.areEqual = function (literal1, literal2) {
-                    return false;
+                Util.getDocuments = function (value) {
+                    if (Utils.isArray(value)) {
+                        var array = value;
+                        return array.filter(function (element) { return Factory.is(element); });
+                    }
+                    else if (Utils.isObject(value)) {
+                        if (Factory.is(value))
+                            return [value];
+                    }
+                    return [];
+                };
+                Util.getResources = function (value) {
+                    var freeNodes = RDFNode.Util.getFreeNodes(value);
+                    var documents = Util.getDocuments(value);
+                    var resources = [].concat(freeNodes);
+                    for (var _i = 0; _i < documents.length; _i++) {
+                        var document = documents[_i];
+                        resources = resources.concat(document["@graph"]);
+                    }
+                    return resources;
+                };
+                Util.getDocumentResources = function (document) {
+                    var resources = Util.getResources(document);
+                    var documentResources = [];
+                    for (var i = 0, length = resources.length; i < length; i++) {
+                        var resource = resources[i];
+                        var uri = resource["@id"];
+                        if (!uri)
+                            continue;
+                        if (!URI.Util.hasFragment(uri) && !URI.Util.isBNodeID(uri))
+                            documentResources.push(resource);
+                    }
+                    return documentResources;
+                };
+                Util.getFragmentResources = function (document, documentResource) {
+                    var resources = Util.getResources(document);
+                    var documentURIToMatch = null;
+                    if (documentResource) {
+                        if (Utils.isString(documentResource)) {
+                            documentURIToMatch = documentResource;
+                        }
+                        else
+                            documentURIToMatch = documentResource["@id"];
+                    }
+                    var fragmentResources = [];
+                    for (var i = 0, length = resources.length; i < length; i++) {
+                        var resource = resources[i];
+                        var uri = resource["@id"];
+                        if (!uri)
+                            continue;
+                        if (!URI.Util.hasFragment(uri))
+                            continue;
+                        if (!documentURIToMatch) {
+                            fragmentResources.push(resource);
+                        }
+                        else {
+                            var documentURI = URI.Util.getDocumentURI(uri);
+                            if (documentURI === documentURIToMatch)
+                                fragmentResources.push(resource);
+                        }
+                    }
+                    return fragmentResources;
+                };
+                Util.getBNodeResources = function (document) {
+                    var resources = Util.getResources(document);
+                    var bnodes = [];
+                    for (var i = 0, length = resources.length; i < length; i++) {
+                        var resource = resources[i];
+                        if (!("@id" in resource) || URI.Util.isBNodeID(resource["@id"]))
+                            bnodes.push(resource);
+                    }
+                    return bnodes;
                 };
                 return Util;
             })();
             exports_1("Util", Util);
-            exports_1("Serializer", Serializer_1.default);
-            exports_1("Serializers", Serializers);
+            Parser = (function () {
+                function Parser() {
+                }
+                Parser.prototype.parse = function (input) {
+                    var jsonLDParser = new HTTP.JSONLDParser.Class();
+                    return jsonLDParser.parse(input).then(function (expandedResult) {
+                        return Util.getDocuments(expandedResult);
+                    });
+                };
+                return Parser;
+            })();
+            exports_1("Parser", Parser);
         }
     }
 });
 
-$__System.register("69", [], function(exports_1) {
-    var namespace, Class, Predicate;
-    return {
-        setters:[],
-        execute: function() {
-            exports_1("namespace", namespace = "https://carbonldp.com/ns/v1/platform#");
-            Class = (function () {
-                function Class() {
-                }
-                Object.defineProperty(Class, "AccessPoint", {
-                    get: function () { return namespace + "AccessPoint"; },
-                    enumerable: true,
-                    configurable: true
-                });
-                Object.defineProperty(Class, "AddMemberAction", {
-                    get: function () { return namespace + "AddMemberAction"; },
-                    enumerable: true,
-                    configurable: true
-                });
-                Object.defineProperty(Class, "API", {
-                    get: function () { return namespace + "API"; },
-                    enumerable: true,
-                    configurable: true
-                });
-                Object.defineProperty(Class, "NonReadableMembershipResourceTriples", {
-                    get: function () { return namespace + "NonReadableMembershipResourceTriples"; },
-                    enumerable: true,
-                    configurable: true
-                });
-                Object.defineProperty(Class, "PreferContainer", {
-                    get: function () { return namespace + "PreferContainer"; },
-                    enumerable: true,
-                    configurable: true
-                });
-                Object.defineProperty(Class, "PreferContainmentResources", {
-                    get: function () { return namespace + "PreferContainmentResources"; },
-                    enumerable: true,
-                    configurable: true
-                });
-                Object.defineProperty(Class, "PreferContainmentTriples", {
-                    get: function () { return namespace + "PreferContainmentTriples"; },
-                    enumerable: true,
-                    configurable: true
-                });
-                Object.defineProperty(Class, "PreferMembershipResources", {
-                    get: function () { return namespace + "PreferMembershipResources"; },
-                    enumerable: true,
-                    configurable: true
-                });
-                Object.defineProperty(Class, "PreferMembershipTriples", {
-                    get: function () { return namespace + "PreferMembershipTriples"; },
-                    enumerable: true,
-                    configurable: true
-                });
-                Object.defineProperty(Class, "PreferSelectedMembershipTriples", {
-                    get: function () { return namespace + "PreferSelectedMembershipTriples"; },
-                    enumerable: true,
-                    configurable: true
-                });
-                Object.defineProperty(Class, "VolatileResource", {
-                    get: function () { return namespace + "VolatileResource"; },
-                    enumerable: true,
-                    configurable: true
-                });
-                Object.defineProperty(Class, "RDFRepresentation", {
-                    get: function () { return namespace + "RDFRepresentation"; },
-                    enumerable: true,
-                    configurable: true
-                });
-                Object.defineProperty(Class, "RemoveMemberAction", {
-                    get: function () { return namespace + "RemoveMemberAction"; },
-                    enumerable: true,
-                    configurable: true
-                });
-                Object.defineProperty(Class, "ResponseDescription", {
-                    get: function () { return namespace + "ResponseDescription"; },
-                    enumerable: true,
-                    configurable: true
-                });
-                Object.defineProperty(Class, "ResponseMetaData", {
-                    get: function () { return namespace + "ResponseMetaData"; },
-                    enumerable: true,
-                    configurable: true
-                });
-                return Class;
-            })();
-            exports_1("Class", Class);
-            Predicate = (function () {
-                function Predicate() {
-                }
-                Object.defineProperty(Predicate, "accessPoint", {
-                    get: function () { return namespace + "accessPoint"; },
-                    enumerable: true,
-                    configurable: true
-                });
-                Object.defineProperty(Predicate, "bNodeIdentifier", {
-                    get: function () { return namespace + "bNodeIdentifier"; },
-                    enumerable: true,
-                    configurable: true
-                });
-                Object.defineProperty(Predicate, "buildDate", {
-                    get: function () { return namespace + "buildDate"; },
-                    enumerable: true,
-                    configurable: true
-                });
-                Object.defineProperty(Predicate, "created", {
-                    get: function () { return namespace + "created"; },
-                    enumerable: true,
-                    configurable: true
-                });
-                Object.defineProperty(Predicate, "modified", {
-                    get: function () { return namespace + "modified"; },
-                    enumerable: true,
-                    configurable: true
-                });
-                Object.defineProperty(Predicate, "version", {
-                    get: function () { return namespace + "version"; },
-                    enumerable: true,
-                    configurable: true
-                });
-                Object.defineProperty(Predicate, "mediaType", {
-                    get: function () { return namespace + "mediaType"; },
-                    enumerable: true,
-                    configurable: true
-                });
-                Object.defineProperty(Predicate, "size", {
-                    get: function () { return namespace + "size"; },
-                    enumerable: true,
-                    configurable: true
-                });
-                Object.defineProperty(Predicate, "targetMember", {
-                    get: function () { return namespace + "targetMember"; },
-                    enumerable: true,
-                    configurable: true
-                });
-                Object.defineProperty(Predicate, "responseProperty", {
-                    get: function () { return namespace + "responseProperty"; },
-                    enumerable: true,
-                    configurable: true
-                });
-                Object.defineProperty(Predicate, "responsePropertyResource", {
-                    get: function () { return namespace + "responsePropertyResource"; },
-                    enumerable: true,
-                    configurable: true
-                });
-                Object.defineProperty(Predicate, "eTag", {
-                    get: function () { return namespace + "eTag"; },
-                    enumerable: true,
-                    configurable: true
-                });
-                return Predicate;
-            })();
-            exports_1("Predicate", Predicate);
-        }
-    }
-});
-
-$__System.register("6a", [], function(exports_1) {
-    var namespace, Predicate;
-    return {
-        setters:[],
-        execute: function() {
-            namespace = "https://carbonldp.com/ns/v1/patch#";
-            Predicate = (function () {
-                function Predicate() {
-                }
-                Predicate.ADD_ACTION = namespace + "addAction";
-                Predicate.SET_ACTION = namespace + "setAction";
-                Predicate.DELETE_ACTION = namespace + "deleteAction";
-                return Predicate;
-            })();
-            exports_1("namespace", namespace);
-            exports_1("Predicate", Predicate);
-        }
-    }
-});
-
-$__System.register("6b", [], function(exports_1) {
-    var namespace, Class, Predicate;
-    return {
-        setters:[],
-        execute: function() {
-            namespace = "https://carbonldp.com/ns/v1/security#";
-            Class = (function () {
-                function Class() {
-                }
-                Object.defineProperty(Class, "Application", {
-                    get: function () { return namespace + "Application"; },
-                    enumerable: true,
-                    configurable: true
-                });
-                Object.defineProperty(Class, "Token", {
-                    get: function () { return namespace + "Token"; },
-                    enumerable: true,
-                    configurable: true
-                });
-                Object.defineProperty(Class, "AllOrigins", {
-                    get: function () { return namespace + "AllOrigins"; },
-                    enumerable: true,
-                    configurable: true
-                });
-                Object.defineProperty(Class, "Agent", {
-                    get: function () { return namespace + "Agent"; },
-                    enumerable: true,
-                    configurable: true
-                });
-                return Class;
-            })();
-            Predicate = (function () {
-                function Predicate() {
-                }
-                Object.defineProperty(Predicate, "name", {
-                    get: function () { return namespace + "name"; },
-                    enumerable: true,
-                    configurable: true
-                });
-                Object.defineProperty(Predicate, "allowsOrigin", {
-                    get: function () { return namespace + "allowsOrigin"; },
-                    enumerable: true,
-                    configurable: true
-                });
-                Object.defineProperty(Predicate, "rootContainer", {
-                    get: function () { return namespace + "rootContainer"; },
-                    enumerable: true,
-                    configurable: true
-                });
-                Object.defineProperty(Predicate, "tokenKey", {
-                    get: function () { return namespace + "tokenKey"; },
-                    enumerable: true,
-                    configurable: true
-                });
-                Object.defineProperty(Predicate, "expirationTime", {
-                    get: function () { return namespace + "expirationTime"; },
-                    enumerable: true,
-                    configurable: true
-                });
-                Object.defineProperty(Predicate, "password", {
-                    get: function () { return namespace + "password"; },
-                    enumerable: true,
-                    configurable: true
-                });
-                Object.defineProperty(Predicate, "description", {
-                    get: function () { return namespace + "description"; },
-                    enumerable: true,
-                    configurable: true
-                });
-                return Predicate;
-            })();
-            exports_1("namespace", namespace);
-            exports_1("Class", Class);
-            exports_1("Predicate", Predicate);
-        }
-    }
-});
-
-$__System.register("6c", [], function(exports_1) {
-    var namespace, Class, Predicate;
-    return {
-        setters:[],
-        execute: function() {
-            namespace = "http://www.w3.org/ns/ldp#";
-            Class = (function () {
-                function Class() {
-                }
-                Object.defineProperty(Class, "Resource", {
-                    get: function () { return namespace + "Resource"; },
-                    enumerable: true,
-                    configurable: true
-                });
-                Object.defineProperty(Class, "RDFSource", {
-                    get: function () { return namespace + "RDFSource"; },
-                    enumerable: true,
-                    configurable: true
-                });
-                Object.defineProperty(Class, "Container", {
-                    get: function () { return namespace + "Container"; },
-                    enumerable: true,
-                    configurable: true
-                });
-                Object.defineProperty(Class, "BasicContainer", {
-                    get: function () { return namespace + "BasicContainer"; },
-                    enumerable: true,
-                    configurable: true
-                });
-                Object.defineProperty(Class, "DirectContainer", {
-                    get: function () { return namespace + "DirectContainer"; },
-                    enumerable: true,
-                    configurable: true
-                });
-                Object.defineProperty(Class, "IndirectContainer", {
-                    get: function () { return namespace + "IndirectContainer"; },
-                    enumerable: true,
-                    configurable: true
-                });
-                Object.defineProperty(Class, "NonRDFSource", {
-                    get: function () { return namespace + "NonRDFSource"; },
-                    enumerable: true,
-                    configurable: true
-                });
-                Object.defineProperty(Class, "MemberSubject", {
-                    get: function () { return namespace + "MemberSubject"; },
-                    enumerable: true,
-                    configurable: true
-                });
-                Object.defineProperty(Class, "PreferContainment", {
-                    get: function () { return namespace + "PreferContainment"; },
-                    enumerable: true,
-                    configurable: true
-                });
-                Object.defineProperty(Class, "PreferMembership", {
-                    get: function () { return namespace + "PreferMembership"; },
-                    enumerable: true,
-                    configurable: true
-                });
-                Object.defineProperty(Class, "PreferEmptyContainer", {
-                    get: function () { return namespace + "PreferEmptyContainer"; },
-                    enumerable: true,
-                    configurable: true
-                });
-                Object.defineProperty(Class, "PreferMinimalContainer", {
-                    get: function () { return namespace + "PreferMinimalContainer"; },
-                    enumerable: true,
-                    configurable: true
-                });
-                Object.defineProperty(Class, "Page", {
-                    get: function () { return namespace + "Page"; },
-                    enumerable: true,
-                    configurable: true
-                });
-                Object.defineProperty(Class, "PageSortCriterion", {
-                    get: function () { return namespace + "PageSortCriterion"; },
-                    enumerable: true,
-                    configurable: true
-                });
-                Object.defineProperty(Class, "Ascending", {
-                    get: function () { return namespace + "Ascending"; },
-                    enumerable: true,
-                    configurable: true
-                });
-                Object.defineProperty(Class, "Descending", {
-                    get: function () { return namespace + "Descending"; },
-                    enumerable: true,
-                    configurable: true
-                });
-                return Class;
-            })();
-            Predicate = (function () {
-                function Predicate() {
-                }
-                Object.defineProperty(Predicate, "contains", {
-                    get: function () { return namespace + "contains"; },
-                    enumerable: true,
-                    configurable: true
-                });
-                Object.defineProperty(Predicate, "member", {
-                    get: function () { return namespace + "member"; },
-                    enumerable: true,
-                    configurable: true
-                });
-                Object.defineProperty(Predicate, "hasMemberRelation", {
-                    get: function () { return namespace + "hasMemberRelation"; },
-                    enumerable: true,
-                    configurable: true
-                });
-                Object.defineProperty(Predicate, "memberOfRelation", {
-                    get: function () { return namespace + "memberOfRelation"; },
-                    enumerable: true,
-                    configurable: true
-                });
-                Object.defineProperty(Predicate, "membershipResource", {
-                    get: function () { return namespace + "membershipResource"; },
-                    enumerable: true,
-                    configurable: true
-                });
-                Object.defineProperty(Predicate, "insertedContentRelation", {
-                    get: function () { return namespace + "insertedContentRelation"; },
-                    enumerable: true,
-                    configurable: true
-                });
-                Object.defineProperty(Predicate, "constrainedBy", {
-                    get: function () { return namespace + "constrainedBy"; },
-                    enumerable: true,
-                    configurable: true
-                });
-                Object.defineProperty(Predicate, "pageSortCriteria", {
-                    get: function () { return namespace + "pageSortCriteria"; },
-                    enumerable: true,
-                    configurable: true
-                });
-                Object.defineProperty(Predicate, "pageSortOrder", {
-                    get: function () { return namespace + "pageSortOrder"; },
-                    enumerable: true,
-                    configurable: true
-                });
-                Object.defineProperty(Predicate, "pageSortCollation", {
-                    get: function () { return namespace + "pageSortCollation"; },
-                    enumerable: true,
-                    configurable: true
-                });
-                Object.defineProperty(Predicate, "pageSequence", {
-                    get: function () { return namespace + "pageSequence"; },
-                    enumerable: true,
-                    configurable: true
-                });
-                return Predicate;
-            })();
-            exports_1("namespace", namespace);
-            exports_1("Class", Class);
-            exports_1("Predicate", Predicate);
-        }
-    }
-});
-
-$__System.register("6d", [], function(exports_1) {
-    var namespace, Predicate;
-    return {
-        setters:[],
-        execute: function() {
-            namespace = "http://www.w3.org/1999/02/22-rdf-syntax-ns#";
-            Predicate = (function () {
-                function Predicate() {
-                }
-                Predicate.type = namespace + "type";
-                return Predicate;
-            })();
-            exports_1("namespace", namespace);
-            exports_1("Predicate", Predicate);
-        }
-    }
-});
-
-$__System.register("17", ["5"], function(exports_1) {
-    var Utils;
-    var namespace, DataType;
-    return {
-        setters:[
-            function (Utils_1) {
-                Utils = Utils_1;
-            }],
-        execute: function() {
-            exports_1("namespace", namespace = "http://www.w3.org/2001/XMLSchema#");
-            DataType = (function () {
-                function DataType() {
-                }
-                DataType.date = namespace + "date";
-                DataType.dateTime = namespace + "dateTime";
-                DataType.duration = namespace + "duration";
-                DataType.gDay = namespace + "gDay";
-                DataType.gMonth = namespace + "gMonth";
-                DataType.gMonthDay = namespace + "gMonthDay";
-                DataType.gYear = namespace + "gYear";
-                DataType.gYearMonth = namespace + "gYearMonth";
-                DataType.time = namespace + "time";
-                DataType.byte = namespace + "byte";
-                DataType.decimal = namespace + "decimal";
-                DataType.int = namespace + "int";
-                DataType.integer = namespace + "integer";
-                DataType.long = namespace + "long";
-                DataType.negativeInteger = namespace + "negativeInteger";
-                DataType.nonNegativeInteger = namespace + "nonNegativeInteger";
-                DataType.nonPositiveInteger = namespace + "nonPositiveInteger";
-                DataType.positiveInteger = namespace + "positiveInteger";
-                DataType.short = namespace + "short";
-                DataType.unsignedLong = namespace + "unsignedLong";
-                DataType.unsignedInt = namespace + "unsignedInt";
-                DataType.unsignedShort = namespace + "unsignedShort";
-                DataType.unsignedByte = namespace + "unsignedByte";
-                DataType.double = namespace + "double";
-                DataType.float = namespace + "float";
-                DataType.boolean = namespace + "boolean";
-                DataType.string = namespace + "string";
-                DataType.object = namespace + "object";
-                return DataType;
-            })();
-            exports_1("DataType", DataType);
-            Utils.forEachOwnProperty(DataType, function (key, value) {
-                DataType[value] = key;
-            });
-        }
-    }
-});
-
-$__System.register("6e", [], function(exports_1) {
-    var namespace, Predicate;
-    return {
-        setters:[],
-        execute: function() {
-            exports_1("namespace", namespace = "http://www.w3.org/2001/vcard-rdf/3.0#");
-            Predicate = (function () {
-                function Predicate() {
-                }
-                Object.defineProperty(Predicate, "email", {
-                    get: function () { return namespace + "email"; },
-                    enumerable: true,
-                    configurable: true
-                });
-                return Predicate;
-            })();
-            exports_1("Predicate", Predicate);
-        }
-    }
-});
-
-$__System.register("4", ["69", "6a", "6b", "6c", "6d", "17", "6e"], function(exports_1) {
-    var C, CP, CS, LDP, RDF, XSD, VCARD;
-    return {
-        setters:[
-            function (C_1) {
-                C = C_1;
-            },
-            function (CP_1) {
-                CP = CP_1;
-            },
-            function (CS_1) {
-                CS = CS_1;
-            },
-            function (LDP_1) {
-                LDP = LDP_1;
-            },
-            function (RDF_1) {
-                RDF = RDF_1;
-            },
-            function (XSD_1) {
-                XSD = XSD_1;
-            },
-            function (VCARD_1) {
-                VCARD = VCARD_1;
-            }],
-        execute: function() {
-            exports_1("C", C);
-            exports_1("CP", CP);
-            exports_1("CS", CS);
-            exports_1("LDP", LDP);
-            exports_1("RDF", RDF);
-            exports_1("XSD", XSD);
-            exports_1("VCARD", VCARD);
-        }
-    }
-});
-
-$__System.register("5f", ["5"], function(exports_1) {
-    var Utils;
+$__System.register("6e", ["5", "6d"], function(exports_1) {
+    var Utils, Document;
     var Factory, Util;
     return {
         setters:[
             function (Utils_1) {
                 Utils = Utils_1;
+            },
+            function (Document_1) {
+                Document = Document_1;
             }],
         execute: function() {
             Factory = (function () {
@@ -13558,6 +13558,14 @@ $__System.register("5f", ["5"], function(exports_1) {
                     var uri = node[predicate].find(function (value) { return Factory.is(value); });
                     return typeof uri !== "undefined" ? uri["@id"] : null;
                 };
+                Util.getFreeNodes = function (value) {
+                    if (!Utils.isArray(value))
+                        return [];
+                    var array = value;
+                    return array
+                        .filter(function (element) { return !Document.Factory.is(element); })
+                        .filter(function (element) { return Factory.is(element); });
+                };
                 return Util;
             })();
             exports_1("Util", Util);
@@ -13565,7 +13573,7 @@ $__System.register("5f", ["5"], function(exports_1) {
     }
 });
 
-$__System.register("6f", ["60", "68", "4", "5f"], function(exports_1) {
+$__System.register("6f", ["3b", "3f", "4", "6e"], function(exports_1) {
     var List, Literal, NS, RDFNode;
     var Util;
     return {
@@ -13796,7 +13804,7 @@ $__System.register("6f", ["60", "68", "4", "5f"], function(exports_1) {
     }
 });
 
-$__System.register("9", ["68", "5e", "60", "5f", "2f", "6f"], function(exports_1) {
+$__System.register("9", ["3f", "6d", "3b", "6e", "2f", "6f"], function(exports_1) {
     var Literal, Document, List, Node, URI, Value;
     return {
         setters:[
@@ -13829,7 +13837,7 @@ $__System.register("9", ["68", "5e", "60", "5f", "2f", "6f"], function(exports_1
     }
 });
 
-$__System.register("3d", [], function(exports_1) {
+$__System.register("48", [], function(exports_1) {
     var Class;
     return {
         setters:[],
@@ -13855,7 +13863,7 @@ $__System.register("3d", [], function(exports_1) {
     }
 });
 
-$__System.register("70", ["3d"], function(exports_1) {
+$__System.register("70", ["48"], function(exports_1) {
     var JSONParser_1;
     var Class;
     return {

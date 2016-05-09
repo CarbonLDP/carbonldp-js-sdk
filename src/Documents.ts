@@ -231,9 +231,9 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 
 	getChildren( parentURI:string, retrievalPreferences?:RetrievalPreferences.Class, requestOptions?:HTTP.Request.Options ): Promise<[ PersistedDocument.Class[], HTTP.Response.Class ]>;
 	getChildren( parentURI:string, requestOptions?:HTTP.Request.Options ): Promise<[ PersistedDocument.Class[], HTTP.Response.Class ]>;
-	getChildren( parentURI:string, retPrefReqOpt?:any, reqOpt?:HTTP.Request.Options ): Promise<[ PersistedDocument.Class[], HTTP.Response.Class ]> {
+	getChildren( parentURI:string, retPrefReqOpt?:any, requestOptions?:HTTP.Request.Options ): Promise<[ PersistedDocument.Class[], HTTP.Response.Class ]> {
 		let retrievalPreferences:RetrievalPreferences.Class = RetrievalPreferences.Factory.is( retPrefReqOpt ) ? retPrefReqOpt : null;
-		let requestOptions:HTTP.Request.Options = HTTP.Request.Util.isOptions( retPrefReqOpt ) ? retPrefReqOpt : ( HTTP.Request.Util.isOptions( reqOpt ) ? reqOpt : {} );
+		requestOptions = HTTP.Request.Util.isOptions( retPrefReqOpt ) ? retPrefReqOpt : ( HTTP.Request.Util.isOptions( requestOptions ) ? requestOptions : {} );
 
 		let uri:string = ( !! this.context ) ? this.context.resolve( parentURI ) : parentURI;
 		if ( this.context && this.context.auth.isAuthenticated() ) this.context.auth.addAuthentication( requestOptions );
@@ -256,8 +256,17 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 		HTTP.Request.Util.setPreferredInteractionModel( NS.LDP.Class.Container, requestOptions );
 		HTTP.Request.Util.setContainerRetrievalPreferences( containerRetrievalPreferences, requestOptions );
 
-		return HTTP.Request.Service.get( uri, requestOptions, new RDF.Document.Parser() ).then( ( [ rdfResource, response ]:[ RDF.Node.Class[], HTTP.Response.Class ] ) => {
-			let rdfResources:RDF.Node.Class[] = RDF.Document.Util.getResources( rdfResource );
+		return HTTP.Request.Service.get( uri, requestOptions, new HTTP.JSONLDParser.Class() ).then( ( [ expandedResult, response ]:[ any, HTTP.Response.Class ] ) => {
+			let freeNodes:RDF.Node.Class[] = RDF.Node.Util.getFreeNodes( expandedResult );
+			let rdfDocuments:RDF.Document.Class[] = RDF.Document.Util.getDocuments( expandedResult );
+
+			console.log( "ExpandedResult: %o", expandedResult );
+			console.log( "FreeNodes: %o", freeNodes );
+			console.log( "RDFDocuments: %o", rdfDocuments );
+
+			// TODO: Continue work
+
+			let rdfResources:RDF.Node.Class[] = RDF.Document.Util.getResources( rdfDocuments );
 			let volatileResources:VolatileResource.Class[] = this.parseMultipleResources( rdfResources, response );
 
 			let responseDescription:ResponseDescription.Class = this.getResponseDescription( volatileResources );
@@ -956,7 +965,19 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 		return volatiles;
 	}
 
-	private getResponseDescription( volatiles:VolatileResource.Class[] ):ResponseDescription.Class {
+	private getFreeNodesDocument( nodes:RDF.Node.Class[] ):Document.Class {
+		let freeNodeDocument:Document.Class = Document.Factory.create( );
+	}
+
+	private getResponseDescription( nodes:RDF.Node.Class[], response:HTTP.Response.Class ):ResponseDescription.Class {
+		let descriptionNodes:RDF.Node.Class[] = nodes.filter( ( node:RDF.Node.Class ) => RDF.Node.Util.hasType( node, ResponseDescription.RDF_CLASS ) );
+		if( descriptionNodes.length === 0 ) return null;
+		if( descriptionNodes.length > 1 ) throw new HTTP.Errors.BadResponseError( "The response contained multiple c:ResponseDescription objects", response );
+
+		let descriptionNode:RDF.Node.Class = descriptionNodes[ 0 ];
+
+		// TODO: Finish
+
 		for ( let volatile of volatiles ){
 			if ( ResponseDescription.Factory.is( volatile ) ) return <any> volatile;
 		}
