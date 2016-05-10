@@ -10,7 +10,7 @@ export interface Class extends Pointer.Library, Pointer.Validator {
     createResource(id?: string): Resource.Class;
 }
 export declare class Factory {
-    static hasClassProperties(value: Object): boolean;
+    static hasClassProperties(object: Object): boolean;
     static create(documents: Documents): Class;
     static createFrom<T extends Object>(object: T, documents: Documents): T & Class;
     static decorate<T extends Object>(object: T): T & Class;

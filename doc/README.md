@@ -96,6 +96,11 @@
 - [Module Carbon/Fragment](#Carbon-Fragment)
 	- [Class Carbon.Fragment.Factory](#Carbon-Fragment-Factory)
 		- [Methods](#Carbon-Fragment-Factory-Methods)
+- [Module Carbon/FreeResources](#Carbon-FreeResources)
+	- [Class Carbon.FreeResources.Factory](#Carbon-FreeResources-Factory)
+		- [Methods](#Carbon-FreeResources-Factory-Methods)
+		- [Decorated Object](#Carbon-FreeResources-Factory-Decorated-Object)
+			- [Methods](#Carbon-FreeResources-Factory-Decorated-Object-Methods)
 - [Module Carbon/HTTP](#Carbon-HTTP)
 	- [Reexports](#Carbon-HTTP-Reexports)
 - [Module Carbon/HTTP/Errors](#Carbon-HTTP-Errors)
@@ -2483,6 +2488,169 @@ Create a Blank Node Fragment since no ID is provided for the specified document.
 - document
 
 
+
+
+## <a name="Carbon-FreeResources" />Module Carbon/FreeResources
+
+
+
+
+
+
+
+
+### <a name="Carbon-FreeResources-Factory" />Class Carbon.FreeResources.Factory
+
+
+> Factory class for `Carbon.FreeResources.Class` objects.
+
+
+
+
+#### <a name="Carbon-FreeResources-Factory-Methods" />Methods
+##### hasClassProperties
+```typescript 
+static hasClassProperties( object:Object ):boolean
+```
+
+Returns true if the object provided has the properties of a `Carbon.FreeResources.Class` object.
+
+*Parameters*
+
+- object
+
+##### create
+```typescript 
+static create( documents:Carbon.Documents ):Carbon.FreeResources.Class
+```
+
+Creates a empty `Carbon.FreeResources.Class` object.
+
+*Parameters*
+
+- documents: A `Carbon.Documents` object where the FreeResources scope is.
+
+##### createFrom
+```typescript 
+static createFrom( object:T extends Object,  documents:Carbon.Documents.Class ):Carbon.FreeResources.Class & T
+```
+
+Create a `Carbon.FreeResources.Class` object from the plain object provided.
+
+*Parameters*
+
+- object: The object that wants be converted in a `Carbon.FreeResources.Class`.
+- documents: A `Carbon.Documents` object where the FreeResource scope is.
+
+##### decorate
+```typescript 
+static decorate( object:T extends Object ):Carbon.FreeResources.Class & T
+```
+
+Decorate the object provided with the methods and properties of a `Carbon.FreeResources.Class` object.
+
+*Parameters*
+
+- object
+
+
+
+#### <a name="Carbon-FreeResources-Factory-Decorated-Object" />Decorated Object
+**Interfaces:** [Carbon.FreeResources.Class](#Carbon-FreeResources-Class)
+
+> Object decorated by the Carbon.FreeResources.Factory.decorate function.
+
+##### <a name="Carbon-FreeResources-Factory-Decorated-Object-Properties" />Properties
+```typescript 
+_documents:Private property that contains the Documents class where the object scope is. 
+```
+
+Carbon.Documents
+```typescript 
+_resourcesIndex:Private property that contains the references of every free resource in a map form. 
+```
+
+Map<string, Carbon.Resource.Class>
+
+##### <a name="Carbon-FreeResources-Factory-Decorated-Object-Methods" />Methods
+##### hasResource
+```typescript 
+hasResource( id:string ):boolean
+```
+
+Returns true if exists a resource with the ID specified.
+
+*Parameters*
+
+- id: The ID of the resource to seek for.
+
+##### getResource
+```typescript 
+getResource( id:string ):Carbon.Resource.Class
+```
+
+Returns the resource referred by the ID provided. If no resource exists with the ID specified `null` is returned.
+
+*Parameters*
+
+- id: The ID of the resource to seek for.
+
+##### getResources
+```typescript 
+getResources():Carbon.Resource.Class[]
+```
+
+Returns an array with all the resources inside the FreeResources object
+
+##### createResource
+```typescript 
+createResource( id?:string ):Carbon.Resource.Class
+```
+
+Create an returns a new Free Resource. Throw an Error if no valid id if provided or if it is already in use.
+
+*Parameters*
+
+- id: The ID of the resource to create. It should be an ID as a BlankNode.
+
+##### hasPointer
+```typescript 
+hasPointer():boolean
+```
+
+Returns true if exists a pointer in the scope of the FreeResources object and its parents.
+
+##### getPointer
+```typescript 
+getPointer( id:string ):Carbon.Pointer.Class
+```
+
+Returns the pointer referred by the id specified, or creates one if no pointer exists in the scope.
+
+*Parameters*
+
+- id: The ID of the pointer seek for or the one to create.
+
+##### inScope
+```typescript 
+inScope( id:string ):boolean
+```
+
+Returns true if the the ID provided is in the scope of the object.
+
+*Parameters*
+
+- id: The ID to evaluate if is in the scope.
+
+```typescript 
+inScope( pointer:Carbon.Pointer.Class ):boolean
+```
+
+Returns true if the the Pointer provided can be in the scope of the object.
+
+*Parameters*
+
+- pointer: The Pointer to evaluate if can be in the scope.
 
 
 ## <a name="Carbon-HTTP" />Module Carbon/HTTP

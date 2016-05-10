@@ -1,10 +1,9 @@
 "use strict";
-var IllegalArgumentError_1 = require("./Errors/IllegalArgumentError");
+var Errors = require("./Errors");
 var Pointer = require("./Pointer");
 var RDF = require("./RDF");
 var Resource = require("./Resource");
 var Utils = require("./Utils");
-var IDAlreadyInUseError_1 = require("./Errors/IDAlreadyInUseError");
 function hasPointer(id) {
     var freeResources = this;
     if (!inLocalScope(id)) {
@@ -26,9 +25,8 @@ function inLocalScope(id) {
 function inScope(idOrPointer) {
     var freeResources = this;
     var id = Pointer.Factory.is(idOrPointer) ? idOrPointer.id : idOrPointer;
-    if (inLocalScope(id))
-        return true;
-    return freeResources._documents.inScope(id);
+    return inLocalScope(id)
+        || freeResources._documents.inScope(id);
 }
 function hasResource(id) {
     var freeResources = this;
@@ -46,9 +44,9 @@ function createResource(id) {
     var freeResources = this;
     if (id) {
         if (!inLocalScope(id))
-            throw new IllegalArgumentError_1.default("The id \"" + id + "\" is out of scope.");
+            throw new Errors.IllegalArgumentError("The id \"" + id + "\" is out of scope.");
         if (freeResources._resourcesIndex.has(id))
-            throw new IDAlreadyInUseError_1.default("The id \"" + id + "\" is already in use by another resource.");
+            throw new Errors.IDAlreadyInUseError("The id \"" + id + "\" is already in use by another resource.");
     }
     else {
         id = RDF.URI.Util.generateBNodeID();
@@ -60,16 +58,16 @@ function createResource(id) {
 var Factory = (function () {
     function Factory() {
     }
-    Factory.hasClassProperties = function (value) {
-        return (Utils.hasFunction(value, "hasPointer") &&
-            Utils.hasFunction(value, "getPointer") &&
-            Utils.hasFunction(value, "inScope") &&
-            Utils.hasPropertyDefined(value, "_documents") &&
-            Utils.hasPropertyDefined(value, "_resourcesIndex") &&
-            Utils.hasFunction(value, "hasResource") &&
-            Utils.hasFunction(value, "getResource") &&
-            Utils.hasFunction(value, "getResources") &&
-            Utils.hasFunction(value, "createResource"));
+    Factory.hasClassProperties = function (object) {
+        return (Utils.hasPropertyDefined(object, "_documents") &&
+            Utils.hasPropertyDefined(object, "_resourcesIndex") &&
+            Utils.hasFunction(object, "hasResource") &&
+            Utils.hasFunction(object, "getResource") &&
+            Utils.hasFunction(object, "getResources") &&
+            Utils.hasFunction(object, "createResource") &&
+            Utils.hasFunction(object, "hasPointer") &&
+            Utils.hasFunction(object, "getPointer") &&
+            Utils.hasFunction(object, "inScope"));
     };
     Factory.create = function (documents) {
         return Factory.createFrom({}, documents);

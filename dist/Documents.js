@@ -323,10 +323,10 @@ var Documents = (function () {
             return [memberPointers, response];
         });
     };
-    Documents.prototype.getMembers = function (uri, nonReadRetPrefReqOpt, retPrefReqOpt, reqOpt) {
+    Documents.prototype.getMembers = function (uri, nonReadRetPrefReqOpt, retPrefReqOpt, requestOptions) {
         var includeNonReadable = Utils.isBoolean(nonReadRetPrefReqOpt) ? nonReadRetPrefReqOpt : true;
         var retrievalPreferences = RetrievalPreferences.Factory.is(nonReadRetPrefReqOpt) ? nonReadRetPrefReqOpt : (RetrievalPreferences.Factory.is(retPrefReqOpt) ? retPrefReqOpt : null);
-        var requestOptions = HTTP.Request.Util.isOptions(nonReadRetPrefReqOpt) ? nonReadRetPrefReqOpt : (HTTP.Request.Util.isOptions(retPrefReqOpt) ? retPrefReqOpt : (HTTP.Request.Util.isOptions(reqOpt) ? reqOpt : {}));
+        requestOptions = HTTP.Request.Util.isOptions(nonReadRetPrefReqOpt) ? nonReadRetPrefReqOpt : (HTTP.Request.Util.isOptions(retPrefReqOpt) ? retPrefReqOpt : (HTTP.Request.Util.isOptions(requestOptions) ? requestOptions : {}));
         uri = this.setDataRequest(uri, requestOptions, true);
         if (!!retrievalPreferences)
             uri += RetrievalPreferences.Util.stringifyRetrievalPreferences(retrievalPreferences);
@@ -663,12 +663,7 @@ var Documents = (function () {
         return uri;
     };
     Documents.prototype.getPersistedDocument = function (rdfDocument, response) {
-        var documentResources = RDF.Document.Util.getDocumentResources(rdfDocument);
-        if (documentResources.length > 1)
-            throw new HTTP.Errors.BadResponseError("The RDFDocument contains more than one document resource.", response);
-        if (documentResources.length === 0)
-            throw new HTTP.Errors.BadResponseError("The RDFDocument doesn\'t contain a document resource.", response);
-        var documentResource = documentResources[0];
+        var documentResource = this.getDocumentResource(rdfDocument, response);
         var fragmentResources = RDF.Document.Util.getBNodeResources(rdfDocument);
         fragmentResources = fragmentResources.concat(RDF.Document.Util.getFragmentResources(rdfDocument));
         var uri = documentResource["@id"];

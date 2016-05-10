@@ -1,10 +1,9 @@
 import Documents from "./Documents";
-import IllegalArgumentError from "./Errors/IllegalArgumentError";
+import * as Errors from "./Errors";
 import * as Pointer from "./Pointer";
 import * as RDF from "./RDF";
 import * as Resource from "./Resource";
 import * as Utils from "./Utils";
-import IDAlreadyInUseError from "./Errors/IDAlreadyInUseError";
 
 export interface Class extends Pointer.Library, Pointer.Validator {
 	_documents:Documents;
@@ -49,8 +48,8 @@ function inScope( idOrPointer:any ):boolean {
 	let freeResources:Class = <Class> this;
 	let id:string = Pointer.Factory.is( idOrPointer ) ? idOrPointer.id : idOrPointer;
 
-	if ( inLocalScope( id ) ) return true;
-	return freeResources._documents.inScope( id );
+	return inLocalScope( id )
+		|| freeResources._documents.inScope( id );
 }
 
 function hasResource( id:string ):boolean {
@@ -75,8 +74,8 @@ function createResource( id?:string ):Resource.Class {
 	let freeResources:Class = <Class> this;
 
 	if ( id ) {
-		if ( ! inLocalScope( id ) ) throw new IllegalArgumentError( `The id "${ id }" is out of scope.` );
-		if ( freeResources._resourcesIndex.has( id ) ) throw new IDAlreadyInUseError( `The id "${ id }" is already in use by another resource.`);
+		if ( ! inLocalScope( id ) ) throw new Errors.IllegalArgumentError( `The id "${ id }" is out of scope.` );
+		if ( freeResources._resourcesIndex.has( id ) ) throw new Errors.IDAlreadyInUseError( `The id "${ id }" is already in use by another resource.`);
 	} else {
 		id = RDF.URI.Util.generateBNodeID();
 	}
@@ -88,20 +87,20 @@ function createResource( id?:string ):Resource.Class {
 }
 
 export class Factory {
-	static hasClassProperties( value:Object ):boolean {
+	static hasClassProperties( object:Object ):boolean {
 		return (
-			Utils.hasFunction( value, "hasPointer" ) &&
-			Utils.hasFunction( value, "getPointer" ) &&
+			Utils.hasPropertyDefined( object, "_documents" ) &&
+			Utils.hasPropertyDefined( object, "_resourcesIndex" ) &&
 
-			Utils.hasFunction( value, "inScope" ) &&
+			Utils.hasFunction( object, "hasResource" ) &&
+			Utils.hasFunction( object, "getResource" ) &&
+			Utils.hasFunction( object, "getResources" ) &&
+			Utils.hasFunction( object, "createResource" ) &&
 
-			Utils.hasPropertyDefined( value, "_documents" ) &&
-			Utils.hasPropertyDefined( value, "_resourcesIndex" ) &&
+			Utils.hasFunction( object, "hasPointer" ) &&
+			Utils.hasFunction( object, "getPointer" ) &&
 
-			Utils.hasFunction( value, "hasResource" ) &&
-			Utils.hasFunction( value, "getResource" ) &&
-			Utils.hasFunction( value, "getResources" ) &&
-			Utils.hasFunction( value, "createResource" )
+			Utils.hasFunction( object, "inScope" )
 		);
 	}
 
