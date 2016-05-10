@@ -229,7 +229,7 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 		};
 		HTTP.Request.Util.setContainerRetrievalPreferences( containerRetrievalPreferences, requestOptions );
 
-		return this.sendRequestForMultipleResponse( parentURI, requestOptions );
+		return this.sendRequestForResponseDescription( parentURI, requestOptions );
 	}
 
 	createAccessPoint( documentURI:string, accessPoint:AccessPoint.Class, slug?:string, requestOptions?:HTTP.Request.Options ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
@@ -406,7 +406,7 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 		}
 		HTTP.Request.Util.setContainerRetrievalPreferences( containerRetrievalPreferences, requestOptions );
 
-		return this.sendRequestForMultipleResponse( uri, requestOptions );
+		return this.sendRequestForResponseDescription( uri, requestOptions );
 	}
 
 	addMember( documentURI:string, member:Pointer.Class, requestOptions?:HTTP.Request.Options ): Promise<HTTP.Response.Class>;
@@ -836,7 +836,7 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 		return persistedDocument;
 	}
 
-	private sendRequestForMultipleResponse( uri:string, requestOptions:HTTP.Request.Options ):Promise<[ PersistedDocument.Class[], HTTP.Response.Class ]> {
+	private sendRequestForResponseDescription( uri:string, requestOptions:HTTP.Request.Options ):Promise<[ PersistedDocument.Class[], HTTP.Response.Class ]> {
 		return HTTP.Request.Service.get( uri, requestOptions, new HTTP.JSONLDParser.Class() ).then( ( [ expandedResult, response ]:[ any, HTTP.Response.Class ] ) => {
 			let freeNodes:RDF.Node.Class[] = RDF.Node.Util.getFreeNodes( expandedResult );
 			let rdfDocuments:RDF.Document.Class[] = RDF.Document.Util.getDocuments( expandedResult );

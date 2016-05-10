@@ -192,7 +192,7 @@ var Documents = (function () {
             ],
         };
         HTTP.Request.Util.setContainerRetrievalPreferences(containerRetrievalPreferences, requestOptions);
-        return this.sendRequestForMultipleResponse(parentURI, requestOptions);
+        return this.sendRequestForResponseDescription(parentURI, requestOptions);
     };
     Documents.prototype.createAccessPoint = function (documentURIOrAccessPoint, accessPointOrSlug, slugOrRequestOptions, requestOptions) {
         var _this = this;
@@ -348,7 +348,7 @@ var Documents = (function () {
             containerRetrievalPreferences.omit.push(NS.C.Class.NonReadableMembershipResourceTriples);
         }
         HTTP.Request.Util.setContainerRetrievalPreferences(containerRetrievalPreferences, requestOptions);
-        return this.sendRequestForMultipleResponse(uri, requestOptions);
+        return this.sendRequestForResponseDescription(uri, requestOptions);
     };
     Documents.prototype.addMember = function (documentURI, memberORUri, requestOptions) {
         if (requestOptions === void 0) { requestOptions = {}; }
@@ -720,7 +720,7 @@ var Documents = (function () {
         persistedDocument._syncSnapshot();
         return persistedDocument;
     };
-    Documents.prototype.sendRequestForMultipleResponse = function (uri, requestOptions) {
+    Documents.prototype.sendRequestForResponseDescription = function (uri, requestOptions) {
         var _this = this;
         return HTTP.Request.Service.get(uri, requestOptions, new HTTP.JSONLDParser.Class()).then(function (_a) {
             var expandedResult = _a[0], response = _a[1];
