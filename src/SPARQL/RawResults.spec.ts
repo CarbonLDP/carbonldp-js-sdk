@@ -85,25 +85,29 @@ describe( module( "Carbon/SPARQL/RawResults" ), ():void => {
 			expect( RawResults.Factory.hasClassProperties ).toBeDefined();
 			expect( Utils.isFunction( RawResults.Factory.hasClassProperties ) ).toBe( true );
 
-			let object:Object;
-
-			object = {};
+			let object:any;
 			expect( RawResults.Factory.hasClassProperties( object ) ).toBe( false );
-			object = { "head":  {} };
+
+			object = {
+				head: null,
+				results: null,
+				boolean: null,
+			};
 			expect( RawResults.Factory.hasClassProperties( object ) ).toBe( true );
 
-			object = { "results": {} };
+			delete object.head;
 			expect( RawResults.Factory.hasClassProperties( object ) ).toBe( false );
-			object = { "head": {}, results: {} };
-			expect( RawResults.Factory.hasClassProperties( object ) ).toBe( true );
+			object.head = null;
 
-			object = { "boolean": {} };
-			expect( RawResults.Factory.hasClassProperties( object ) ).toBe( false );
-			object = { "head": {}, boolean: {} };
+			delete object.results;
 			expect( RawResults.Factory.hasClassProperties( object ) ).toBe( true );
+			object.results = null;
+
+			delete object.boolean;
+			expect( RawResults.Factory.hasClassProperties( object ) ).toBe( true );
+			object.boolean = null;
 
 			expect( RawResults.Factory.hasClassProperties( null ) ).toBe( false );
-			expect( RawResults.Factory.hasClassProperties( undefined ) ).toBe( false );
 		});
 
 		it( hasMethod(

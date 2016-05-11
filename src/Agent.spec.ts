@@ -81,15 +81,27 @@ describe( module( "Carbon/Agent" ), ():void => {
 			expect( Agent.Factory.hasClassProperties ).toBeDefined();
 			expect( Utils.isFunction( Agent.Factory.hasClassProperties ) ).toBe( true );
 
-			let object:any = {};
+			let object:any;
 			expect( Agent.Factory.hasClassProperties( object ) ).toBe( false );
-			object.name = "Agent name";
-			expect( Agent.Factory.hasClassProperties( object ) ).toBe( false );
-			object.email = "email.of.agent@example.com";
+
+			object = {
+				name: null,
+				email: null,
+				password: null,
+			};
 			expect( Agent.Factory.hasClassProperties( object ) ).toBe( true );
 
-			object.password = "myAwesomePassword";
+			delete object.name;
+			expect( Agent.Factory.hasClassProperties( object ) ).toBe( false );
+			object.name = null;
+
+			delete object.email;
+			expect( Agent.Factory.hasClassProperties( object ) ).toBe( false );
+			object.email = null;
+
+			delete object.password;
 			expect( Agent.Factory.hasClassProperties( object ) ).toBe( true );
+			object.password = null;
 		});
 
 		it( hasMethod(

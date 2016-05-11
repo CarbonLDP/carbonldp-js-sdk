@@ -98,21 +98,21 @@ describe( module( "Carbon/LDP/Container" ), ():void => {
 			expect( Utils.isFunction( Container.Factory.hasClassProperties ) ).toBe( true );
 
 			let object:any;
+			expect( Container.Factory.hasClassProperties( object ) ).toBe( false );
 
 			object = {
-				hasMemberRelation: Pointer.Factory.create( "http://example.com/memberOf/" ),
-				memberOfRelation: Pointer.Factory.create( "http://example.com/isAMemberOf/" )
+				hasMemberRelation: null,
+				memberOfRelation: null
 			};
 			expect( Container.Factory.hasClassProperties( object ) ).toBe( true );
 
-			object = {
-				hasMemberRelation: Pointer.Factory.create( "http://example.com/memberOf/" )
-			};
+			delete object.hasMemberRelation;
 			expect( Container.Factory.hasClassProperties( object ) ).toBe( false );
-			object = {
-				memberOfRelation: Pointer.Factory.create( "http://example.com/isAMemberOf/" )
-			};
+			object.hasMemberRelation = null;
+
+			delete object.memberOfRelation;
 			expect( Container.Factory.hasClassProperties( object ) ).toBe( false );
+			object.memberOfRelation = null;
 		});
 
 		describe( method(

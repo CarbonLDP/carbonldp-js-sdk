@@ -51,13 +51,17 @@ describe( module( "Carbon/NamedFragment" ), ():void => {
 			expect( NamedFragment.Factory.hasClassProperties ).toBeDefined();
 			expect( Utils.isFunction( NamedFragment.Factory.hasClassProperties ) ).toBe( true );
 
-			let resource:Fragment.Class = undefined;
-			expect( NamedFragment.Factory.hasClassProperties( resource ) ).toBe( false );
-			resource = Fragment.Factory.create( document );
+			let resource:any = undefined;
 			expect( NamedFragment.Factory.hasClassProperties( resource ) ).toBe( false );
 
-			resource["slug"] = null;
+			resource = {
+				slug: null,
+			};
 			expect( NamedFragment.Factory.hasClassProperties( resource ) ).toBe( true );
+
+			delete resource.slug;
+			expect( NamedFragment.Factory.hasClassProperties( resource ) ).toBe( false );
+			resource.slug = null;
 		});
 
 		it( hasMethod(

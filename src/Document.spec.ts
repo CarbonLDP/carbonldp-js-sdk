@@ -56,28 +56,57 @@ describe( module( "Carbon/Document" ), ():void => {
 			expect( Document.Factory.hasClassProperties ).toBeDefined();
 			expect( Utils.isFunction( Document.Factory.hasClassProperties ) ).toBe( true );
 
-			let resource:Object = undefined;
+			let resource:any;
 			expect( Document.Factory.hasClassProperties( resource ) ).toBe( false );
-			resource = {};
-			expect( Document.Factory.hasClassProperties( resource ) ).toBe( false );
-			resource["_fragmentsIndex"] = null;
-			expect( Document.Factory.hasClassProperties( resource ) ).toBe( false );
-			resource["hasFragment"] = ():void => {};
-			expect( Document.Factory.hasClassProperties( resource ) ).toBe( false );
-			resource["getFragment"] = ():void => {};
-			expect( Document.Factory.hasClassProperties( resource ) ).toBe( false );
-			resource["getNamedFragment"] = ():void => {};
-			expect( Document.Factory.hasClassProperties( resource ) ).toBe( false );
-			resource["getFragments"] = ():void => {};
-			expect( Document.Factory.hasClassProperties( resource ) ).toBe( false );
-			resource["createFragment"] = ():void => {};
-			expect( Document.Factory.hasClassProperties( resource ) ).toBe( false );
-			resource["createNamedFragment"] = ():void => {};
-			expect( Document.Factory.hasClassProperties( resource ) ).toBe( false );
-			resource["removeFragment"] = ():void => {};
-			expect( Document.Factory.hasClassProperties( resource ) ).toBe( false );
-			resource["toJSON"] = ():void => {};
+
+			resource = {
+				_fragmentsIndex: null,
+				hasFragment: () => {},
+				getFragment: () => {},
+				getNamedFragment: () => {},
+				getFragments: () => {},
+				createFragment: () => {},
+				createNamedFragment: () => {},
+				removeFragment: () => {},
+				toJSON: () => {},
+			};
 			expect( Document.Factory.hasClassProperties( resource ) ).toBe( true );
+
+			delete resource._fragmentsIndex;
+			expect( Document.Factory.hasClassProperties( resource ) ).toBe( false );
+			resource._fragmentsIndex = null;
+
+			delete resource.hasFragment;
+			expect( Document.Factory.hasClassProperties( resource ) ).toBe( false );
+			resource.hasFragment = () => {};
+
+			delete resource.getFragment;
+			expect( Document.Factory.hasClassProperties( resource ) ).toBe( false );
+			resource.getFragment = () => {};
+
+			delete resource.getNamedFragment;
+			expect( Document.Factory.hasClassProperties( resource ) ).toBe( false );
+			resource.getNamedFragment = () => {};
+
+			delete resource.getFragments;
+			expect( Document.Factory.hasClassProperties( resource ) ).toBe( false );
+			resource.getFragments = () => {};
+
+			delete resource.createFragment;
+			expect( Document.Factory.hasClassProperties( resource ) ).toBe( false );
+			resource.createFragment = () => {};
+
+			delete resource.createNamedFragment;
+			expect( Document.Factory.hasClassProperties( resource ) ).toBe( false );
+			resource.createNamedFragment = () => {};
+
+			delete resource.removeFragment;
+			expect( Document.Factory.hasClassProperties( resource ) ).toBe( false );
+			resource.removeFragment = () => {};
+
+			delete resource.toJSON;
+			expect( Document.Factory.hasClassProperties( resource ) ).toBe( false );
+			resource.toJSON = () => {};
 		});
 
 		it( hasMethod(

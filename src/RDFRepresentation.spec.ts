@@ -65,14 +65,22 @@ describe( module( "Carbon/NonRDFSource" ), ():void => {
 			expect( NonRDFSource.Factory.hasClassProperties ).toBeDefined();
 			expect( Utils.isFunction( NonRDFSource.Factory.hasClassProperties ) ).toBe( true );
 
-			let object:any = {};
+			let object:any;
 			expect( NonRDFSource.Factory.hasClassProperties( object ) ).toBe( false );
 
-			object.mediaType = "application/pdf";
-			expect( NonRDFSource.Factory.hasClassProperties( object ) ).toBe( false );
-
-			object.size = 1000;
+			object = {
+				mediaType: null,
+				size: null,
+			};
 			expect( NonRDFSource.Factory.hasClassProperties( object ) ).toBe( true );
+
+			delete object.mediaType;
+			expect( NonRDFSource.Factory.hasClassProperties( object ) ).toBe( false );
+			object.mediaType = null;
+
+			delete object.size;
+			expect( NonRDFSource.Factory.hasClassProperties( object ) ).toBe( false );
+			object.size = null;
 		});
 
 		it( hasMethod(

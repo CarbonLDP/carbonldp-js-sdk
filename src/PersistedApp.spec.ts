@@ -43,12 +43,17 @@ describe( module( "Carbon/PersistedApp" ), ():void => {
 			expect( PersistedApp.Factory.hasClassProperties ).toBeDefined();
 			expect( Utils.isFunction( PersistedApp.Factory.hasClassProperties ) ).toBe( true );
 
-			expect( PersistedApp.Factory.hasClassProperties( { rootContainer: {} } ) ).toBe( true );
-			expect( PersistedApp.Factory.hasClassProperties( { rootContainer: Pointer.Factory.create( "http://example.com/apps/example-app/" ) } ) ).toBe( true );
+			let object:any;
+			expect( PersistedApp.Factory.hasClassProperties( object ) ).toBe( false );
 
-			expect( PersistedApp.Factory.hasClassProperties( {} ) ).toBe( false );
-			expect( PersistedApp.Factory.hasClassProperties( null ) ).toBe( false );
-			expect( PersistedApp.Factory.hasClassProperties( undefined ) ).toBe( false );
+			object = {
+				rootContainer: null
+			};
+			expect( PersistedApp.Factory.hasClassProperties( object ) ).toBe( true );
+
+			delete object.rootContainer;
+			expect( PersistedApp.Factory.hasClassProperties( object ) ).toBe( false );
+			object.rootContainer = null;
 		});
 
 		it( hasMethod(

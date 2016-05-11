@@ -1471,7 +1471,8 @@ $__System.register("1a", ["c", "1b", "9", "5", "12", "16", "1c", "14", "8", "4",
                     var _this = this;
                     if (requestOptions === void 0) { requestOptions = {}; }
                     var pointerID = this.getPointerID(uri);
-                    uri = this.setDataRequest(uri, requestOptions, false);
+                    uri = this.getRequestURI(uri);
+                    this.setDefaultRequestOptions(requestOptions, NS.LDP.Class.RDFSource);
                     if (this.pointers.has(pointerID)) {
                         var pointer = this.getPointer(uri);
                         if (pointer.isResolved()) {
@@ -1498,7 +1499,8 @@ $__System.register("1a", ["c", "1b", "9", "5", "12", "16", "1c", "14", "8", "4",
                 };
                 Documents.prototype.exists = function (documentURI, requestOptions) {
                     if (requestOptions === void 0) { requestOptions = {}; }
-                    documentURI = this.setDataRequest(documentURI, requestOptions, false);
+                    documentURI = this.getRequestURI(documentURI);
+                    this.setDefaultRequestOptions(requestOptions, NS.LDP.Class.RDFSource);
                     return HTTP.Request.Service.head(documentURI, requestOptions).then(function (response) { return [true, response]; }, function (error) {
                         if (error.response.status === 404)
                             return [false, error.response];
@@ -1516,7 +1518,9 @@ $__System.register("1a", ["c", "1b", "9", "5", "12", "16", "1c", "14", "8", "4",
                         return Promise.reject(new Errors.IllegalArgumentError("The childDocument provided has been already persisted."));
                     if (!Document.Factory.is(childDocument))
                         childDocument = Document.Factory.createFrom(childDocument);
-                    parentURI = this.setDataRequest(parentURI, requestOptions, true);
+                    parentURI = this.getRequestURI(parentURI);
+                    this.setDefaultRequestOptions(requestOptions, NS.LDP.Class.Container);
+                    HTTP.Request.Util.setContentTypeHeader("application/ld+json", requestOptions);
                     if (childDocument.id) {
                         var childURI = childDocument.id;
                         if (!!this.context)
@@ -1545,7 +1549,8 @@ $__System.register("1a", ["c", "1b", "9", "5", "12", "16", "1c", "14", "8", "4",
                 Documents.prototype.listChildren = function (parentURI, requestOptions) {
                     var _this = this;
                     if (requestOptions === void 0) { requestOptions = {}; }
-                    parentURI = this.setDataRequest(parentURI, requestOptions, true);
+                    parentURI = this.getRequestURI(parentURI);
+                    this.setDefaultRequestOptions(requestOptions, NS.LDP.Class.Container);
                     var containerRetrievalPreferences = {
                         include: [
                             NS.LDP.Class.PreferContainment,
@@ -1572,7 +1577,8 @@ $__System.register("1a", ["c", "1b", "9", "5", "12", "16", "1c", "14", "8", "4",
                 Documents.prototype.getChildren = function (parentURI, retPrefReqOpt, requestOptions) {
                     var retrievalPreferences = RetrievalPreferences.Factory.is(retPrefReqOpt) ? retPrefReqOpt : null;
                     requestOptions = HTTP.Request.Util.isOptions(retPrefReqOpt) ? retPrefReqOpt : (HTTP.Request.Util.isOptions(requestOptions) ? requestOptions : {});
-                    parentURI = this.setDataRequest(parentURI, requestOptions, true);
+                    parentURI = this.getRequestURI(parentURI);
+                    this.setDefaultRequestOptions(requestOptions, NS.LDP.Class.Container);
                     if (!!retrievalPreferences)
                         parentURI += RetrievalPreferences.Util.stringifyRetrievalPreferences(retrievalPreferences);
                     var containerRetrievalPreferences = {
@@ -1599,7 +1605,9 @@ $__System.register("1a", ["c", "1b", "9", "5", "12", "16", "1c", "14", "8", "4",
                     requestOptions = !Utils.isString(slugOrRequestOptions) && slugOrRequestOptions !== null ? slugOrRequestOptions : requestOptions;
                     if (documentURI === null)
                         documentURI = accessPoint.membershipResource.id;
-                    documentURI = this.setDataRequest(documentURI, requestOptions, true);
+                    documentURI = this.getRequestURI(documentURI);
+                    this.setDefaultRequestOptions(requestOptions, NS.LDP.Class.Container);
+                    HTTP.Request.Util.setContentTypeHeader("application/ld+json", requestOptions);
                     if (accessPoint.membershipResource.id !== documentURI)
                         return Promise.reject(new Errors.IllegalArgumentError("The documentURI must be the same as the accessPoint's membershipResource"));
                     if (PersistedDocument.Factory.is(accessPoint))
@@ -1648,7 +1656,8 @@ $__System.register("1a", ["c", "1b", "9", "5", "12", "16", "1c", "14", "8", "4",
                         var bufferType = fileType(data);
                         HTTP.Request.Util.setContentTypeHeader(bufferType ? bufferType.mime : "application/octet-stream", requestOptions);
                     }
-                    parentURI = this.setDataRequest(parentURI, requestOptions, true);
+                    parentURI = this.getRequestURI(parentURI);
+                    this.setDefaultRequestOptions(requestOptions, NS.LDP.Class.Container);
                     if (slug !== null)
                         HTTP.Request.Util.setSlug(slug, requestOptions);
                     return HTTP.Request.Service.post(parentURI, data, requestOptions).then(function (response) {
@@ -1669,7 +1678,8 @@ $__System.register("1a", ["c", "1b", "9", "5", "12", "16", "1c", "14", "8", "4",
                     var _this = this;
                     var includeNonReadable = Utils.isBoolean(nonReadReqOpt) ? nonReadReqOpt : true;
                     var requestOptions = HTTP.Request.Util.isOptions(nonReadReqOpt) ? nonReadReqOpt : (HTTP.Request.Util.isOptions(reqOpt) ? reqOpt : {});
-                    uri = this.setDataRequest(uri, requestOptions, true);
+                    uri = this.getRequestURI(uri);
+                    this.setDefaultRequestOptions(requestOptions, NS.LDP.Class.Container);
                     var containerRetrievalPreferences = {
                         include: [
                             NS.LDP.Class.PreferMinimalContainer,
@@ -1722,7 +1732,8 @@ $__System.register("1a", ["c", "1b", "9", "5", "12", "16", "1c", "14", "8", "4",
                     var includeNonReadable = Utils.isBoolean(nonReadRetPrefReqOpt) ? nonReadRetPrefReqOpt : true;
                     var retrievalPreferences = RetrievalPreferences.Factory.is(nonReadRetPrefReqOpt) ? nonReadRetPrefReqOpt : (RetrievalPreferences.Factory.is(retPrefReqOpt) ? retPrefReqOpt : null);
                     requestOptions = HTTP.Request.Util.isOptions(nonReadRetPrefReqOpt) ? nonReadRetPrefReqOpt : (HTTP.Request.Util.isOptions(retPrefReqOpt) ? retPrefReqOpt : (HTTP.Request.Util.isOptions(requestOptions) ? requestOptions : {}));
-                    uri = this.setDataRequest(uri, requestOptions, true);
+                    uri = this.getRequestURI(uri);
+                    this.setDefaultRequestOptions(requestOptions, NS.LDP.Class.Container);
                     if (!!retrievalPreferences)
                         uri += RetrievalPreferences.Util.stringifyRetrievalPreferences(retrievalPreferences);
                     var containerRetrievalPreferences = {
@@ -1759,7 +1770,9 @@ $__System.register("1a", ["c", "1b", "9", "5", "12", "16", "1c", "14", "8", "4",
                             return Promise.reject(new Errors.IllegalArgumentError("No Carbon.Pointer or string URI provided."));
                         pointers.push(member);
                     }
-                    documentURI = this.setDataRequest(documentURI, requestOptions, true);
+                    documentURI = this.getRequestURI(documentURI);
+                    this.setDefaultRequestOptions(requestOptions, NS.LDP.Class.Container);
+                    HTTP.Request.Util.setContentTypeHeader("application/ld+json", requestOptions);
                     var document = LDP.AddMemberAction.Factory.createDocument(pointers);
                     var body = document.toJSON(this, this.jsonldConverter);
                     return HTTP.Request.Service.put(documentURI, body, requestOptions);
@@ -1778,7 +1791,9 @@ $__System.register("1a", ["c", "1b", "9", "5", "12", "16", "1c", "14", "8", "4",
                             return Promise.reject(new Errors.IllegalArgumentError("No Carbon.Pointer or string URI provided."));
                         pointers.push(member);
                     }
-                    documentURI = this.setDataRequest(documentURI, requestOptions, true);
+                    documentURI = this.getRequestURI(documentURI);
+                    this.setDefaultRequestOptions(requestOptions, NS.LDP.Class.Container);
+                    HTTP.Request.Util.setContentTypeHeader("application/ld+json", requestOptions);
                     var document = LDP.RemoveMemberAction.Factory.createDocument(pointers);
                     var containerRetrievalPreferences = {
                         include: [NS.C.Class.PreferSelectedMembershipTriples],
@@ -1790,7 +1805,8 @@ $__System.register("1a", ["c", "1b", "9", "5", "12", "16", "1c", "14", "8", "4",
                 };
                 Documents.prototype.removeAllMembers = function (documentURI, requestOptions) {
                     if (requestOptions === void 0) { requestOptions = {}; }
-                    documentURI = this.setDataRequest(documentURI, requestOptions, true);
+                    documentURI = this.getRequestURI(documentURI);
+                    this.setDefaultRequestOptions(requestOptions, NS.LDP.Class.Container);
                     var containerRetrievalPreferences = {
                         include: [
                             NS.C.Class.PreferMembershipTriples,
@@ -1807,7 +1823,9 @@ $__System.register("1a", ["c", "1b", "9", "5", "12", "16", "1c", "14", "8", "4",
                 };
                 Documents.prototype.save = function (persistedDocument, requestOptions) {
                     if (requestOptions === void 0) { requestOptions = {}; }
-                    var uri = this.setDataRequest(persistedDocument.id, requestOptions, false);
+                    var uri = this.getRequestURI(persistedDocument.id);
+                    this.setDefaultRequestOptions(requestOptions, NS.LDP.Class.RDFSource);
+                    HTTP.Request.Util.setContentTypeHeader("application/ld+json", requestOptions);
                     HTTP.Request.Util.setIfMatchHeader(persistedDocument._etag, requestOptions);
                     var body = persistedDocument.toJSON(this, this.jsonldConverter);
                     return HTTP.Request.Service.put(uri, body, requestOptions).then(function (response) {
@@ -1817,7 +1835,8 @@ $__System.register("1a", ["c", "1b", "9", "5", "12", "16", "1c", "14", "8", "4",
                 Documents.prototype.refresh = function (persistedDocument, requestOptions) {
                     var _this = this;
                     if (requestOptions === void 0) { requestOptions = {}; }
-                    var uri = this.setDataRequest(persistedDocument.id, requestOptions, false);
+                    var uri = this.getRequestURI(persistedDocument.id);
+                    this.setDefaultRequestOptions(requestOptions, NS.LDP.Class.RDFSource);
                     return HTTP.Request.Service.head(uri, requestOptions).then(function (headerResponse) {
                         var eTag = HTTP.Response.Util.getETag(headerResponse);
                         if (eTag === persistedDocument._etag)
@@ -1840,7 +1859,8 @@ $__System.register("1a", ["c", "1b", "9", "5", "12", "16", "1c", "14", "8", "4",
                 };
                 Documents.prototype.delete = function (documentURI, requestOptions) {
                     if (requestOptions === void 0) { requestOptions = {}; }
-                    documentURI = this.setDataRequest(documentURI, requestOptions, false);
+                    documentURI = this.getRequestURI(documentURI);
+                    this.setDefaultRequestOptions(requestOptions, NS.LDP.Class.RDFSource);
                     return HTTP.Request.Service.delete(documentURI, requestOptions);
                 };
                 Documents.prototype.getSchemaFor = function (object) {
@@ -2043,19 +2063,19 @@ $__System.register("1a", ["c", "1b", "9", "5", "12", "16", "1c", "14", "8", "4",
                     }
                     return persistedDocument.getFragment(fragment.id);
                 };
-                Documents.prototype.setDataRequest = function (uri, requestOptions, asContainer) {
-                    if (RDF.URI.Util.isRelative(uri) && !this.context)
-                        throw new Errors.IllegalArgumentError("This Documents instance doesn't support relative URIs.");
-                    if (this.context) {
-                        if (this.context.auth.isAuthenticated())
-                            this.context.auth.addAuthentication(requestOptions);
+                Documents.prototype.getRequestURI = function (uri) {
+                    if (RDF.URI.Util.isRelative(uri)) {
+                        if (!this.context)
+                            throw new Errors.IllegalArgumentError("This Documents instance doesn't support relative URIs.");
                         uri = this.context.resolve(uri);
                     }
-                    HTTP.Request.Util.setContentTypeHeader("application/ld+json", requestOptions);
-                    HTTP.Request.Util.setAcceptHeader("application/ld+json", requestOptions);
-                    var interactionModel = asContainer ? NS.LDP.Class.Container : NS.LDP.Class.RDFSource;
-                    HTTP.Request.Util.setPreferredInteractionModel(interactionModel, requestOptions);
                     return uri;
+                };
+                Documents.prototype.setDefaultRequestOptions = function (requestOptions, interactionModel) {
+                    if (this.context && this.context.auth.isAuthenticated())
+                        this.context.auth.addAuthentication(requestOptions);
+                    HTTP.Request.Util.setAcceptHeader("application/ld+json", requestOptions);
+                    HTTP.Request.Util.setPreferredInteractionModel(interactionModel, requestOptions);
                 };
                 Documents.prototype.getPersistedDocument = function (rdfDocument, response) {
                     var documentResource = this.getDocumentResource(rdfDocument, response);
@@ -2122,7 +2142,7 @@ $__System.register("1a", ["c", "1b", "9", "5", "12", "16", "1c", "14", "8", "4",
                         var freeNodes = RDF.Node.Util.getFreeNodes(expandedResult);
                         var rdfDocuments = RDF.Document.Util.getDocuments(expandedResult);
                         rdfDocuments.forEach(function (rdfDocument) { return _this.getPersistedDocument(rdfDocument, response); });
-                        var freeResources = _this.getFreeResourcesDocument(freeNodes);
+                        var freeResources = _this.getFreeResources(freeNodes);
                         var descriptionResources = freeResources.getResources().filter(function (resource) { return ResponseDescription.Factory.hasRDFClass(resource); });
                         if (descriptionResources.length === 0)
                             return [[], response];
@@ -2138,7 +2158,7 @@ $__System.register("1a", ["c", "1b", "9", "5", "12", "16", "1c", "14", "8", "4",
                         return [persistedDocuments, response];
                     });
                 };
-                Documents.prototype.getFreeResourcesDocument = function (nodes) {
+                Documents.prototype.getFreeResources = function (nodes) {
                     var freeResourcesDocument = FreeResources.Factory.create(this);
                     var resources = nodes.map(function (node) { return freeResourcesDocument.createResource(node["@id"]); });
                     this.compact(nodes, resources, freeResourcesDocument);
@@ -2417,9 +2437,17 @@ $__System.register("25", ["5"], function(exports_1) {
         var that = this;
         return this._documents.listChildren(that.id);
     }
+    function getChildren(retrievalPreferences) {
+        var that = this;
+        return this._documents.getChildren(that.id, retrievalPreferences);
+    }
     function listMembers(includeNonReadable) {
         if (includeNonReadable === void 0) { includeNonReadable = true; }
         return this._documents.listMembers(this.id, includeNonReadable);
+    }
+    function getMembers(nonReadRetPref, retrievalPreferences) {
+        if (nonReadRetPref === void 0) { nonReadRetPref = true; }
+        return this._documents.getMembers(this.id, nonReadRetPref, retrievalPreferences);
     }
     function removeMember(memberOrUri) {
         var that = this;
@@ -2454,11 +2482,14 @@ $__System.register("25", ["5"], function(exports_1) {
                 function Factory() {
                 }
                 Factory.hasClassProperties = function (document) {
-                    return Utils.hasFunction(document, "addMember")
+                    return Utils.isObject(document)
+                        && Utils.hasFunction(document, "addMember")
                         && Utils.hasFunction(document, "addMembers")
                         && Utils.hasFunction(document, "createChild")
                         && Utils.hasFunction(document, "listChildren")
+                        && Utils.hasFunction(document, "getChildren")
                         && Utils.hasFunction(document, "listMembers")
+                        && Utils.hasFunction(document, "getMembers")
                         && Utils.hasFunction(document, "removeMember")
                         && Utils.hasFunction(document, "removeMembers")
                         && Utils.hasFunction(document, "removeAllMembers")
@@ -2492,11 +2523,23 @@ $__System.register("25", ["5"], function(exports_1) {
                             configurable: true,
                             value: listChildren,
                         },
+                        "getChildren": {
+                            writable: false,
+                            enumerable: false,
+                            configurable: true,
+                            value: getChildren,
+                        },
                         "listMembers": {
                             writable: false,
                             enumerable: false,
                             configurable: true,
                             value: listMembers,
+                        },
+                        "getMembers": {
+                            writable: false,
+                            enumerable: false,
+                            configurable: true,
+                            value: getMembers,
                         },
                         "removeMember": {
                             writable: false,

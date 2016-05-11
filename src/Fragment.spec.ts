@@ -44,13 +44,17 @@ describe( module( "Carbon/Fragment" ), ():void => {
 			expect( Fragment.Factory.hasClassProperties ).toBeDefined();
 			expect( Utils.isFunction( Fragment.Factory.hasClassProperties ) ).toBe( true );
 
-			let resource:Object = undefined;
-			expect( Fragment.Factory.hasClassProperties( resource ) ).toBe( false );
-			resource = {};
+			let resource:any = undefined;
 			expect( Fragment.Factory.hasClassProperties( resource ) ).toBe( false );
 
-			resource["document"] = null;
+			resource = {
+				document: null
+			};
 			expect( Fragment.Factory.hasClassProperties( resource ) ).toBe( true );
+
+			delete resource.document;
+			expect( Fragment.Factory.hasClassProperties( resource ) ).toBe( false );
+			resource.document = null;
 		});
 
 		let document:Document.Class;

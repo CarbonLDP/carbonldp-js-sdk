@@ -4984,6 +4984,17 @@ listChildren():Promise<[ Carbon.Pointer.Class[], Carbon.HTTP.Response ]>
 
 Return all the children of the container.
 
+##### getChildren
+```typescript 
+getChildren( retrievalPreferences?:Carbon.RetrievalPreferences.Class ):Promise<[ Carbon.Pointer.Class[], Carbon.HTTP.Response ]>
+```
+
+Return all the children of the container.
+
+*Parameters*
+
+- retrievalPreferences
+
 ##### listMembers
 ```typescript 
 listMembers( includeNonReadable?:boolean ):Promise<[ Carbon.Pointer.Class[], Carbon.HTTP.Response.Class ]>
@@ -5070,6 +5081,17 @@ createChild( slug:string ):Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.
 createChild():Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>
 ```
 
+
+##### getMembers
+```typescript 
+getMembers( includeNonReadable?:boolean,  retrievalPreferences?:Carbon.RetrievalPreferences.Class ):Promise<[ Carbon.Pointer.Class[], Carbon.HTTP.Response.Class ]>
+```
+
+
+*Parameters*
+
+- includeNonReadable: By default this option is set to `true`.
+- retrievalPreferences
 
 ##### removeMember
 ```typescript 

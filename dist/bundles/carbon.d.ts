@@ -1378,11 +1378,33 @@ declare module 'carbonldp/PersistedDocument' {
 	export default Class;
 
 }
+declare module 'carbonldp/RetrievalPreferences' {
+	export interface Class {
+	    orderBy?: OrderByProperty[];
+	    limit?: number;
+	    offset?: number;
+	}
+	export type orderByType = "numeric" | "string" | "boolean" | "dateTime";
+	export interface OrderByProperty {
+	    "@id": string;
+	    "@type"?: orderByType;
+	    "@language"?: string;
+	}
+	export class Factory {
+	    static is(object: Object): boolean;
+	}
+	export class Util {
+	    static stringifyRetrievalPreferences(retrievalPreferences: Class): string;
+	}
+	export default Class;
+
+}
 declare module 'carbonldp/LDP/PersistedContainer' {
 	import * as Document from 'carbonldp/Document';
 	import * as HTTP from 'carbonldp/HTTP';
 	import * as PersistedDocument from 'carbonldp/PersistedDocument';
 	import * as Pointer from 'carbonldp/Pointer';
+	import * as RetrievalPreferences from 'carbonldp/RetrievalPreferences';
 	export interface Class extends PersistedDocument.Class {
 	    addMember(member: Pointer.Class): Promise<HTTP.Response.Class>;
 	    addMember(memberURI: string): Promise<HTTP.Response.Class>;
@@ -1392,7 +1414,10 @@ declare module 'carbonldp/LDP/PersistedContainer' {
 	    createChild(object: Object): Promise<[Pointer.Class, HTTP.Response.Class]>;
 	    createChild(): Promise<[Pointer.Class, HTTP.Response.Class]>;
 	    listChildren(): Promise<[Pointer.Class[], HTTP.Response.Class]>;
+	    getChildren(retrievalPreferences?: RetrievalPreferences.Class): Promise<[Pointer.Class[], HTTP.Response.Class]>;
 	    listMembers(includeNonReadable?: boolean): Promise<[Pointer.Class[], HTTP.Response.Class]>;
+	    getMembers(includeNonReadable?: boolean, retrievalPreferences?: RetrievalPreferences.Class): Promise<[Pointer.Class[], HTTP.Response.Class]>;
+	    getMembers(retrievalPreferences?: RetrievalPreferences.Class): Promise<[Pointer.Class[], HTTP.Response.Class]>;
 	    removeMember(member: Pointer.Class): Promise<HTTP.Response.Class>;
 	    removeMember(memberURI: string): Promise<HTTP.Response.Class>;
 	    removeMembers(members: (Pointer.Class | string)[]): Promise<HTTP.Response.Class>;
@@ -1533,27 +1558,6 @@ declare module 'carbonldp/PersistedBlankNode' {
 	export default Class;
 
 }
-declare module 'carbonldp/RetrievalPreferences' {
-	export interface Class {
-	    orderBy?: OrderByProperty[];
-	    limit?: number;
-	    offset?: number;
-	}
-	export type orderByType = "numeric" | "string" | "boolean" | "dateTime";
-	export interface OrderByProperty {
-	    "@id": string;
-	    "@type"?: orderByType;
-	    "@language"?: string;
-	}
-	export class Factory {
-	    static is(object: Object): boolean;
-	}
-	export class Util {
-	    static stringifyRetrievalPreferences(retrievalPreferences: Class): string;
-	}
-	export default Class;
-
-}
 declare module 'carbonldp/Documents' {
 	import * as HTTP from 'carbonldp/HTTP';
 	import Context from 'carbonldp/Context';
@@ -1626,12 +1630,13 @@ declare module 'carbonldp/Documents' {
 	    private getDocumentTypes(document);
 	    private updateObject(target, source);
 	    private getAssociatedFragment(persistedDocument, fragment);
-	    private setDataRequest(uri, requestOptions, asContainer);
+	    private getRequestURI(uri);
+	    private setDefaultRequestOptions(requestOptions, interactionModel);
 	    private getPersistedDocument(rdfDocument, response);
 	    private createPersistedDocument(documentPointer, documentResource, fragmentResources);
 	    private updatePersistedDocument(persistedDocument, documentResource, fragmentResources);
 	    private sendRequestForResponseDescription(uri, requestOptions);
-	    private getFreeResourcesDocument(nodes);
+	    private getFreeResources(nodes);
 	}
 	export default Documents;
 

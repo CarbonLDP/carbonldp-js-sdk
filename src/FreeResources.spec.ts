@@ -34,28 +34,58 @@ describe( module( "Carbon/FreeResources" ), ():void => {
 			expect( FreeResources.Factory.hasClassProperties ).toBeDefined();
 			expect( Utils.isFunction( FreeResources.Factory.hasClassProperties ) ).toBe( true );
 
-			let object:any;
+			let object:any; 
 			expect( FreeResources.Factory.hasClassProperties( object ) ).toBe( false );
-			object = {};
+
+			let fx:Function = () => {};
+			object = {
+				_documents: null,
+				_resourcesIndex: null,
+				hasResource: fx,
+				getResource: fx,
+				getResources: fx,
+				createResource: fx,
+				hasPointer: fx,
+				getPointer: fx,
+				inScope: fx
+			};
+			expect( FreeResources.Factory.hasClassProperties( object ) ).toBe( true );
+
+			delete object._documents;
 			expect( FreeResources.Factory.hasClassProperties( object ) ).toBe( false );
 			object._documents = null;
+
+			delete object._resourcesIndex;
 			expect( FreeResources.Factory.hasClassProperties( object ) ).toBe( false );
 			object._resourcesIndex = null;
+
+			delete object.hasResource;
 			expect( FreeResources.Factory.hasClassProperties( object ) ).toBe( false );
-			object.hasResource = () => {};
+			object.hasResource = fx;
+
+			delete object.getResource;
 			expect( FreeResources.Factory.hasClassProperties( object ) ).toBe( false );
-			object.getResource = () => {};
+			object.getResource = fx;
+
+			delete object.getResources;
 			expect( FreeResources.Factory.hasClassProperties( object ) ).toBe( false );
-			object.getResources = () => {};
+			object.getResources = fx;
+
+			delete object.createResource;
 			expect( FreeResources.Factory.hasClassProperties( object ) ).toBe( false );
-			object.createResource = () => {};
+			object.createResource = fx;
+
+			delete object.hasPointer;
 			expect( FreeResources.Factory.hasClassProperties( object ) ).toBe( false );
-			object.hasPointer = () => {};
+			object.hasPointer = fx;
+
+			delete object.getPointer;
 			expect( FreeResources.Factory.hasClassProperties( object ) ).toBe( false );
-			object.getPointer = () => {};
+			object.getPointer = fx;
+
+			delete object.inScope;
 			expect( FreeResources.Factory.hasClassProperties( object ) ).toBe( false );
-			object.inScope = () => {};
-			expect( FreeResources.Factory.hasClassProperties( object ) ).toBe( true );
+			object.inScope = fx;
 		});
 
 		it( hasMethod(

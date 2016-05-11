@@ -61,15 +61,17 @@ describe( module( "Carbon/LDP/ResponseDescription"), ():void => {
 			expect( ResponseDescription.Factory.hasClassProperties ).toBeDefined();
 			expect( Utils.isFunction( ResponseDescription.Factory.hasClassProperties ) ).toBe( true );
 
-			let object:Object;
-			expect( ResponseDescription.Factory.hasClassProperties( object ) ).toBe( false );
-			object = null;
-			expect( ResponseDescription.Factory.hasClassProperties( object ) ).toBe( false );
-			object = {};
+			let object:any;
 			expect( ResponseDescription.Factory.hasClassProperties( object ) ).toBe( false );
 
-			object[ "responseProperties" ] = null;
+			object = {
+				responseProperties: null,
+			};
 			expect( ResponseDescription.Factory.hasClassProperties( object ) ).toBe( true );
+
+			delete object.responseProperties;
+			expect( ResponseDescription.Factory.hasClassProperties( object ) ).toBe( false );
+			object.responseProperties = null;
 		});
 
 		it( hasMethod(

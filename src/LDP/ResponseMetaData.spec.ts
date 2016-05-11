@@ -66,17 +66,22 @@ describe( module( "Carbon/LDP/ResponseMetaData"), ():void => {
 			expect( ResponseMetaData.Factory.hasClassProperties ).toBeDefined();
 			expect( Utils.isFunction( ResponseMetaData.Factory.hasClassProperties ) ).toBe( true );
 
-			let object:Object;
-			expect( ResponseMetaData.Factory.hasClassProperties( object ) ).toBe( false );
-			object = null;
-			expect( ResponseMetaData.Factory.hasClassProperties( object ) ).toBe( false );
-			object = {};
+			let object:any;
 			expect( ResponseMetaData.Factory.hasClassProperties( object ) ).toBe( false );
 
-			object[ "responsePropertyResource" ] = null;
-			expect( ResponseMetaData.Factory.hasClassProperties( object ) ).toBe( false );
-			object[ "eTag" ] = null;
+			object = {
+				responsePropertyResource: null,
+				eTag: null,
+			};
 			expect( ResponseMetaData.Factory.hasClassProperties( object ) ).toBe( true );
+
+			delete object.responsePropertyResource ;
+			expect( ResponseMetaData.Factory.hasClassProperties( object ) ).toBe( false );
+			object.responsePropertyResource = null;
+
+			delete object.eTag;
+			expect( ResponseMetaData.Factory.hasClassProperties( object ) ).toBe( false );
+			object.eTag = null;
 		});
 
 		it( hasMethod(
