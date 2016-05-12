@@ -95,7 +95,7 @@ var Util = (function () {
         if (Util.isAbsolute(childURI) || Util.isPrefixed(childURI))
             return childURI;
         var finalURI = parentURI;
-        if (!Utils.S.endsWith(parentURI, "/"))
+        if (!Utils.S.endsWith(parentURI, "#") && !Utils.S.endsWith(parentURI, "/"))
             finalURI += "/";
         if (Utils.S.startsWith(childURI, "/")) {
             finalURI = finalURI + childURI.substr(1, childURI.length);

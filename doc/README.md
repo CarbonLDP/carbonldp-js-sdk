@@ -7660,7 +7660,7 @@ getSetting( name:string ):string
 ```
 
 Returns the value of the setting looked for.
-Returns `null` if no settign with the name specified exists.
+Returns `null` if no setting with the name specified exists.
 
 *Parameters*
 
@@ -8342,6 +8342,7 @@ A object of type `Carbon.settings.CarbonSettings`, whitch is the default setting
 * platform.container: `"platform/"`
 * platform.apps.container: `"apps/"`
 * platform.agents.container: `"agents/"`
+* vocabulary: `"vocabulary/#"`
 
 
 

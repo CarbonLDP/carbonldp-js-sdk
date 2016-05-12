@@ -881,6 +881,7 @@ declare module 'carbonldp/ObjectSchema' {
 	}
 	export class DigestedObjectSchema {
 	    base: string;
+	    vocab: string;
 	    prefixes: Map<string, RDF.URI.Class>;
 	    properties: Map<string, DigestedPropertyDefinition>;
 	    prefixedURIs: Map<string, RDF.URI.Class[]>;
@@ -1042,7 +1043,7 @@ declare module 'carbonldp/JSONLDConverter' {
 	    private expandLiteral(literalValue);
 	    private compactSingle(expandedObject, targetObject, digestedSchema, pointerLibrary);
 	    private assignProperty(compactedObject, expandedObject, propertyName, digestedSchema, pointerLibrary);
-	    private assignURIProperty(compactedObject, expandedObject, propertyURI, pointerLibrary);
+	    private assignURIProperty(compactedObject, expandedObject, propertyURI, propertyName, pointerLibrary);
 	    private getPropertyContainerType(propertyValues);
 	    private getPropertyValue(expandedObject, propertyDefinition, pointerLibrary);
 	    private getProperty(expandedObject, propertyURI, pointerLibrary);
@@ -1846,6 +1847,7 @@ declare module 'carbonldp/settings' {
 	    "platform.container"?: string;
 	    "platform.apps.container"?: string;
 	    "platform.agents.container"?: string;
+	    "vocabulary"?: string;
 	} let settings: CarbonSettings;
 	export default settings;
 

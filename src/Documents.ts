@@ -776,11 +776,11 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 			for( let type of objectTypes ) {
 				if( this.context.getObjectSchema( type ) ) typesDigestedObjectSchemas.push( this.context.getObjectSchema( type ) );
 			}
+			digestedSchema = ObjectSchema.Digester.combineDigestedObjectSchemas( typesDigestedObjectSchemas );
 
-			if( typesDigestedObjectSchemas.length > 1 ) {
-				digestedSchema = ObjectSchema.Digester.combineDigestedObjectSchemas( typesDigestedObjectSchemas );
-			} else {
-				digestedSchema = typesDigestedObjectSchemas[ 0 ];
+			let vocab:string = this.context.getSetting( "vocabulary" );
+			if ( vocab ) {
+				digestedSchema.vocab = this.context.resolve( vocab );
 			}
 		} else {
 			digestedSchema = new ObjectSchema.DigestedObjectSchema();

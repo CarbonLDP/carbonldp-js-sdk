@@ -1849,11 +1849,10 @@ $__System.register("16", ["c", "17", "9", "5", "12", "18", "14", "8", "4", "19",
                             if (this.context.getObjectSchema(type))
                                 typesDigestedObjectSchemas.push(this.context.getObjectSchema(type));
                         }
-                        if (typesDigestedObjectSchemas.length > 1) {
-                            digestedSchema = ObjectSchema.Digester.combineDigestedObjectSchemas(typesDigestedObjectSchemas);
-                        }
-                        else {
-                            digestedSchema = typesDigestedObjectSchemas[0];
+                        digestedSchema = ObjectSchema.Digester.combineDigestedObjectSchemas(typesDigestedObjectSchemas);
+                        var vocab = this.context.getSetting("vocabulary");
+                        if (vocab) {
+                            digestedSchema.vocab = this.context.resolve(vocab);
                         }
                     }
                     else {
@@ -2982,21 +2981,22 @@ $__System.register("18", ["c", "19", "4", "8", "9", "5"], function(exports_1) {
                     Utils.forEachOwnProperty(compactedObject, function (propertyName, value) {
                         if (propertyName === "id")
                             return;
+                        var expandedValue;
                         if (digestedSchema.properties.has(propertyName)) {
                             var definition = digestedSchema.properties.get(propertyName);
-                            var expandedValue = _this.expandProperty(value, definition, pointerValidator);
-                            if (!expandedValue)
-                                return;
-                            expandedObject[definition.uri.toString()] = expandedValue;
+                            expandedValue = _this.expandProperty(value, definition, pointerValidator);
+                            propertyName = definition.uri.toString();
                         }
                         else if (RDF.URI.Util.isAbsolute(propertyName)) {
-                            var expandedValue = _this.expandPropertyValues(value, pointerValidator);
-                            if (!expandedValue)
-                                return;
-                            expandedObject[propertyName] = expandedValue;
+                            expandedValue = _this.expandPropertyValues(value, pointerValidator);
                         }
-                        else {
+                        else if (digestedSchema.vocab) {
+                            expandedValue = _this.expandPropertyValue(value, pointerValidator);
+                            propertyName = RDF.URI.Util.resolve(digestedSchema.vocab, propertyName);
                         }
+                        if (!expandedValue)
+                            return;
+                        expandedObject[propertyName] = expandedValue;
                     });
                     return expandedObject;
                 };
@@ -3213,7 +3213,8 @@ $__System.register("18", ["c", "19", "4", "8", "9", "5"], function(exports_1) {
                             _this.assignProperty(targetObject, expandedObject, propertyName, digestedSchema, pointerLibrary);
                         }
                         else {
-                            _this.assignURIProperty(targetObject, expandedObject, propertyURI, pointerLibrary);
+                            var propertyName = digestedSchema.vocab ? RDF.URI.Util.getRelativeURI(propertyURI, digestedSchema.vocab) : propertyURI;
+                            _this.assignURIProperty(targetObject, expandedObject, propertyURI, propertyName, pointerLibrary);
                         }
                     });
                     return targetObject;
@@ -3222,11 +3223,11 @@ $__System.register("18", ["c", "19", "4", "8", "9", "5"], function(exports_1) {
                     var propertyDefinition = digestedSchema.properties.get(propertyName);
                     compactedObject[propertyName] = this.getPropertyValue(expandedObject, propertyDefinition, pointerLibrary);
                 };
-                Class.prototype.assignURIProperty = function (compactedObject, expandedObject, propertyURI, pointerLibrary) {
+                Class.prototype.assignURIProperty = function (compactedObject, expandedObject, propertyURI, propertyName, pointerLibrary) {
                     var guessedDefinition = new ObjectSchema.DigestedPropertyDefinition();
                     guessedDefinition.uri = new RDF.URI.Class(propertyURI);
                     guessedDefinition.containerType = this.getPropertyContainerType(expandedObject[propertyURI]);
-                    compactedObject[propertyURI] = this.getPropertyValue(expandedObject, guessedDefinition, pointerLibrary);
+                    compactedObject[propertyName] = this.getPropertyValue(expandedObject, guessedDefinition, pointerLibrary);
                 };
                 Class.prototype.getPropertyContainerType = function (propertyValues) {
                     if (propertyValues.length === 1) {
@@ -3595,6 +3596,7 @@ $__System.register("19", ["c", "9", "5"], function(exports_1) {
             DigestedObjectSchema = (function () {
                 function DigestedObjectSchema() {
                     this.base = "";
+                    this.vocab = "";
                     this.prefixes = new Map();
                     this.properties = new Map();
                     this.prefixedURIs = new Map();
@@ -3650,8 +3652,6 @@ $__System.register("19", ["c", "9", "5"], function(exports_1) {
                             continue;
                         if (propertyName === "@base")
                             continue;
-                        if (propertyName === "@vocab")
-                            continue;
                         var propertyValue = schema[propertyName];
                         if (Utils.isString(propertyValue)) {
                             if (RDF.URI.Util.isPrefixed(propertyName))
@@ -3659,7 +3659,12 @@ $__System.register("19", ["c", "9", "5"], function(exports_1) {
                             var uri = new RDF.URI.Class(propertyValue);
                             if (RDF.URI.Util.isPrefixed(uri.stringValue))
                                 uri = Digester.resolvePrefixedURI(uri, digestedSchema);
-                            digestedSchema.prefixes.set(propertyName, uri);
+                            if (propertyName === "@vocab") {
+                                digestedSchema.vocab = uri.toString();
+                            }
+                            else {
+                                digestedSchema.prefixes.set(propertyName, uri);
+                            }
                         }
                         else if (!!propertyValue && Utils.isObject(propertyValue)) {
                             var schemaDefinition = propertyValue;
@@ -4937,6 +4942,7 @@ $__System.register("34", ["2c"], function(exports_1) {
             settings["platform.container"] = "platform/";
             settings["platform.apps.container"] = "apps/";
             settings["platform.agents.container"] = "agents/";
+            settings["vocabulary"] = "vocabulary/#";
             exports_1("default",settings);
         }
     }
@@ -12057,7 +12063,7 @@ $__System.register("27", ["c", "5"], function(exports_1) {
                     if (Util.isAbsolute(childURI) || Util.isPrefixed(childURI))
                         return childURI;
                     var finalURI = parentURI;
-                    if (!Utils.S.endsWith(parentURI, "/"))
+                    if (!Utils.S.endsWith(parentURI, "#") && !Utils.S.endsWith(parentURI, "/"))
                         finalURI += "/";
                     if (Utils.S.startsWith(childURI, "/")) {
                         finalURI = finalURI + childURI.substr(1, childURI.length);

@@ -71,22 +71,22 @@ export class Class {
 		Utils.forEachOwnProperty( compactedObject, ( propertyName:string, value:any ):void => {
 			if( propertyName === "id" ) return;
 
+			let expandedValue:any;
 			if( digestedSchema.properties.has( propertyName ) ) {
 				let definition:ObjectSchema.DigestedPropertyDefinition = digestedSchema.properties.get( propertyName );
-				let expandedValue:any = this.expandProperty( value, definition, pointerValidator );
+				expandedValue = this.expandProperty( value, definition, pointerValidator );
+				propertyName = definition.uri.toString();
 
-				if( ! expandedValue ) return;
-
-				expandedObject[ definition.uri.toString() ] = expandedValue;
 			} else if( RDF.URI.Util.isAbsolute( propertyName ) ) {
-				let expandedValue:any = this.expandPropertyValues( value, pointerValidator );
+				expandedValue = this.expandPropertyValues( value, pointerValidator );
 
-				if( ! expandedValue ) return;
-
-				expandedObject[ propertyName ] = expandedValue;
-			} else {
-				// TODO: Do your best. Use the default vocabulary
+			} else if ( digestedSchema.vocab ) {
+				expandedValue = this.expandPropertyValue( value, pointerValidator );
+				propertyName  = RDF.URI.Util.resolve( digestedSchema.vocab, propertyName );
 			}
+
+			if( ! expandedValue ) return;
+			expandedObject[ propertyName ] = expandedValue;
 		});
 
 		return expandedObject;
@@ -337,7 +337,8 @@ export class Class {
 				let propertyName:string = propertyURINameMap.get( propertyURI );
 				this.assignProperty( targetObject, expandedObject, propertyName, digestedSchema, pointerLibrary );
 			} else {
-				this.assignURIProperty( targetObject, expandedObject, propertyURI, pointerLibrary );
+				let propertyName:string = digestedSchema.vocab ? RDF.URI.Util.getRelativeURI( propertyURI, digestedSchema.vocab ) : propertyURI;
+				this.assignURIProperty( targetObject, expandedObject, propertyURI, propertyName, pointerLibrary );
 			}
 		});
 
@@ -349,12 +350,12 @@ export class Class {
 		compactedObject[ propertyName ] = this.getPropertyValue( expandedObject, propertyDefinition, pointerLibrary );
 	}
 
-	private assignURIProperty( compactedObject:any, expandedObject:any, propertyURI:string, pointerLibrary:Pointer.Library ):void {
+	private assignURIProperty( compactedObject:any, expandedObject:any, propertyURI:string, propertyName:string, pointerLibrary:Pointer.Library ):void {
 		let guessedDefinition:ObjectSchema.DigestedPropertyDefinition = new ObjectSchema.DigestedPropertyDefinition();
 		guessedDefinition.uri = new RDF.URI.Class( propertyURI );
 		guessedDefinition.containerType = this.getPropertyContainerType( expandedObject[ propertyURI ] );
 
-		compactedObject[ propertyURI ] = this.getPropertyValue( expandedObject, guessedDefinition, pointerLibrary );
+		compactedObject[ propertyName ] = this.getPropertyValue( expandedObject, guessedDefinition, pointerLibrary );
 	}
 
 	private getPropertyContainerType( propertyValues:any ):ObjectSchema.ContainerType {
