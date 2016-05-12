@@ -105,7 +105,7 @@ export class Util {
 			return childURI;
 
 		let finalURI:string = parentURI;
-		if ( ! Utils.S.endsWith( parentURI, "/" ) ) finalURI += "/";
+		if ( ! Utils.S.endsWith( parentURI, "#" ) && ! Utils.S.endsWith( parentURI, "/" ) ) finalURI += "/";
 
 		if ( Utils.S.startsWith( childURI, "/" ) ) {
 			finalURI = finalURI + childURI.substr( 1, childURI.length );

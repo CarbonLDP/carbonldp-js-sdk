@@ -20,6 +20,7 @@ export declare enum ContainerType {
 }
 export declare class DigestedObjectSchema {
     base: string;
+    vocab: string;
     prefixes: Map<string, RDF.URI.Class>;
     properties: Map<string, DigestedPropertyDefinition>;
     prefixedURIs: Map<string, RDF.URI.Class[]>;
