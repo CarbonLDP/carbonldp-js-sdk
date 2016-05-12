@@ -42,6 +42,6 @@ export declare class Digester {
     static combineDigestedObjectSchemas(digestedSchemas: DigestedObjectSchema[]): DigestedObjectSchema;
     private static digestSingleSchema(schema);
     private static resolvePrefixedURIs(digestedSchema);
-    private static resolvePrefixedURI(uri, digestedSchema);
+    static resolvePrefixedURI(uri: RDF.URI.Class, digestedSchema: DigestedObjectSchema): RDF.URI.Class;
 }
 export default Class;

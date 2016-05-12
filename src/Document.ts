@@ -184,7 +184,7 @@ function toJSON( objectSchemaResolver:ObjectSchema.Resolver = null, jsonldConver
 	for( let resource of resources ) {
 		let digestedContext:ObjectSchema.DigestedObjectSchema = objectSchemaResolver ? objectSchemaResolver.getSchemaFor( resource ) : new ObjectSchema.DigestedObjectSchema();
 
-		expandedResources.push( jsonldConverter.expand( resource, digestedContext, this ) );
+		expandedResources.push( jsonldConverter.expand( resource, digestedContext ) );
 	}
 
 	let graph:RDF.Document.Class = {

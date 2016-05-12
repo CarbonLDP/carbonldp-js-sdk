@@ -101,7 +101,7 @@ export class Util {
 	}
 
 	static resolve( parentURI:string, childURI:string ):string {
-		if ( Util.isAbsolute( childURI ) || Util.isPrefixed( childURI ) )
+		if ( Util.isAbsolute( childURI ) || Util.isBNodeID( childURI) || Util.isPrefixed( childURI ) )
 			return childURI;
 
 		let finalURI:string = parentURI;
