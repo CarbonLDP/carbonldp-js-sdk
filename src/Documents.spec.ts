@@ -1451,7 +1451,7 @@ describe( module( "Carbon/Documents", "" ), ():void => {
 	it( hasMethod(
 		INSTANCE,
 		"refresh",
-		"Update the document with the data of the server, if there is a diferent version on it.", [
+		"Update the document with the data of the server, if there is a different version on it.", [
 			{ name: "persistedDocument", type: "Carbon.PersistedDocument.Class", description: "The persisted document to update." },
 			{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true }
 		],
