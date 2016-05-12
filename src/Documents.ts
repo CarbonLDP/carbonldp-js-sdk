@@ -780,7 +780,7 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 
 			let vocab:string = this.context.getSetting( "vocabulary" );
 			if ( vocab ) {
-				digestedSchema.vocab = this.context.resolve( "" ) + vocab;
+				digestedSchema.vocab = this.context.resolve( vocab );
 			}
 		} else {
 			digestedSchema = new ObjectSchema.DigestedObjectSchema();

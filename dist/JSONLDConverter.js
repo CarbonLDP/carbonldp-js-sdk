@@ -71,7 +71,7 @@ var Class = (function () {
             }
             else if (digestedSchema.vocab) {
                 expandedValue = _this.expandPropertyValue(value, pointerValidator);
-                propertyName = digestedSchema.vocab + propertyName;
+                propertyName = RDF.URI.Util.resolve(digestedSchema.vocab, propertyName);
             }
             if (!expandedValue)
                 return;
@@ -291,7 +291,8 @@ var Class = (function () {
                 _this.assignProperty(targetObject, expandedObject, propertyName, digestedSchema, pointerLibrary);
             }
             else {
-                _this.assignURIProperty(targetObject, expandedObject, propertyURI, pointerLibrary);
+                var propertyName = digestedSchema.vocab ? RDF.URI.Util.getRelativeURI(propertyURI, digestedSchema.vocab) : propertyURI;
+                _this.assignURIProperty(targetObject, expandedObject, propertyURI, propertyName, pointerLibrary);
             }
         });
         return targetObject;
@@ -300,11 +301,11 @@ var Class = (function () {
         var propertyDefinition = digestedSchema.properties.get(propertyName);
         compactedObject[propertyName] = this.getPropertyValue(expandedObject, propertyDefinition, pointerLibrary);
     };
-    Class.prototype.assignURIProperty = function (compactedObject, expandedObject, propertyURI, pointerLibrary) {
+    Class.prototype.assignURIProperty = function (compactedObject, expandedObject, propertyURI, propertyName, pointerLibrary) {
         var guessedDefinition = new ObjectSchema.DigestedPropertyDefinition();
         guessedDefinition.uri = new RDF.URI.Class(propertyURI);
         guessedDefinition.containerType = this.getPropertyContainerType(expandedObject[propertyURI]);
-        compactedObject[propertyURI] = this.getPropertyValue(expandedObject, guessedDefinition, pointerLibrary);
+        compactedObject[propertyName] = this.getPropertyValue(expandedObject, guessedDefinition, pointerLibrary);
     };
     Class.prototype.getPropertyContainerType = function (propertyValues) {
         if (propertyValues.length === 1) {

@@ -1852,7 +1852,7 @@ $__System.register("16", ["c", "17", "9", "5", "12", "18", "14", "8", "4", "19",
                         digestedSchema = ObjectSchema.Digester.combineDigestedObjectSchemas(typesDigestedObjectSchemas);
                         var vocab = this.context.getSetting("vocabulary");
                         if (vocab) {
-                            digestedSchema.vocab = this.context.resolve("") + vocab;
+                            digestedSchema.vocab = this.context.resolve(vocab);
                         }
                     }
                     else {
@@ -2992,7 +2992,7 @@ $__System.register("18", ["c", "19", "4", "8", "9", "5"], function(exports_1) {
                         }
                         else if (digestedSchema.vocab) {
                             expandedValue = _this.expandPropertyValue(value, pointerValidator);
-                            propertyName = digestedSchema.vocab + propertyName;
+                            propertyName = RDF.URI.Util.resolve(digestedSchema.vocab, propertyName);
                         }
                         if (!expandedValue)
                             return;
@@ -3213,7 +3213,8 @@ $__System.register("18", ["c", "19", "4", "8", "9", "5"], function(exports_1) {
                             _this.assignProperty(targetObject, expandedObject, propertyName, digestedSchema, pointerLibrary);
                         }
                         else {
-                            _this.assignURIProperty(targetObject, expandedObject, propertyURI, pointerLibrary);
+                            var propertyName = digestedSchema.vocab ? RDF.URI.Util.getRelativeURI(propertyURI, digestedSchema.vocab) : propertyURI;
+                            _this.assignURIProperty(targetObject, expandedObject, propertyURI, propertyName, pointerLibrary);
                         }
                     });
                     return targetObject;
@@ -3222,11 +3223,11 @@ $__System.register("18", ["c", "19", "4", "8", "9", "5"], function(exports_1) {
                     var propertyDefinition = digestedSchema.properties.get(propertyName);
                     compactedObject[propertyName] = this.getPropertyValue(expandedObject, propertyDefinition, pointerLibrary);
                 };
-                Class.prototype.assignURIProperty = function (compactedObject, expandedObject, propertyURI, pointerLibrary) {
+                Class.prototype.assignURIProperty = function (compactedObject, expandedObject, propertyURI, propertyName, pointerLibrary) {
                     var guessedDefinition = new ObjectSchema.DigestedPropertyDefinition();
                     guessedDefinition.uri = new RDF.URI.Class(propertyURI);
                     guessedDefinition.containerType = this.getPropertyContainerType(expandedObject[propertyURI]);
-                    compactedObject[propertyURI] = this.getPropertyValue(expandedObject, guessedDefinition, pointerLibrary);
+                    compactedObject[propertyName] = this.getPropertyValue(expandedObject, guessedDefinition, pointerLibrary);
                 };
                 Class.prototype.getPropertyContainerType = function (propertyValues) {
                     if (propertyValues.length === 1) {
@@ -12065,7 +12066,7 @@ $__System.register("27", ["c", "5"], function(exports_1) {
                     if (Util.isAbsolute(childURI) || Util.isPrefixed(childURI))
                         return childURI;
                     var finalURI = parentURI;
-                    if (!Utils.S.endsWith(parentURI, "/"))
+                    if (!Utils.S.endsWith(parentURI, "#") && !Utils.S.endsWith(parentURI, "/"))
                         finalURI += "/";
                     if (Utils.S.startsWith(childURI, "/")) {
                         finalURI = finalURI + childURI.substr(1, childURI.length);

@@ -82,7 +82,7 @@ export class Class {
 
 			} else if ( digestedSchema.vocab ) {
 				expandedValue = this.expandPropertyValue( value, pointerValidator );
-				propertyName  = digestedSchema.vocab + propertyName;
+				propertyName  = RDF.URI.Util.resolve( digestedSchema.vocab, propertyName );
 			}
 
 			if( ! expandedValue ) return;
@@ -337,7 +337,8 @@ export class Class {
 				let propertyName:string = propertyURINameMap.get( propertyURI );
 				this.assignProperty( targetObject, expandedObject, propertyName, digestedSchema, pointerLibrary );
 			} else {
-				this.assignURIProperty( targetObject, expandedObject, propertyURI, pointerLibrary );
+				let propertyName:string = digestedSchema.vocab ? RDF.URI.Util.getRelativeURI( propertyURI, digestedSchema.vocab ) : propertyURI;
+				this.assignURIProperty( targetObject, expandedObject, propertyURI, propertyName, pointerLibrary );
 			}
 		});
 
@@ -349,12 +350,12 @@ export class Class {
 		compactedObject[ propertyName ] = this.getPropertyValue( expandedObject, propertyDefinition, pointerLibrary );
 	}
 
-	private assignURIProperty( compactedObject:any, expandedObject:any, propertyURI:string, pointerLibrary:Pointer.Library ):void {
+	private assignURIProperty( compactedObject:any, expandedObject:any, propertyURI:string, propertyName:string, pointerLibrary:Pointer.Library ):void {
 		let guessedDefinition:ObjectSchema.DigestedPropertyDefinition = new ObjectSchema.DigestedPropertyDefinition();
 		guessedDefinition.uri = new RDF.URI.Class( propertyURI );
 		guessedDefinition.containerType = this.getPropertyContainerType( expandedObject[ propertyURI ] );
 
-		compactedObject[ propertyURI ] = this.getPropertyValue( expandedObject, guessedDefinition, pointerLibrary );
+		compactedObject[ propertyName ] = this.getPropertyValue( expandedObject, guessedDefinition, pointerLibrary );
 	}
 
 	private getPropertyContainerType( propertyValues:any ):ObjectSchema.ContainerType {

@@ -691,7 +691,7 @@ var Documents = (function () {
             digestedSchema = ObjectSchema.Digester.combineDigestedObjectSchemas(typesDigestedObjectSchemas);
             var vocab = this.context.getSetting("vocabulary");
             if (vocab) {
-                digestedSchema.vocab = this.context.resolve("") + vocab;
+                digestedSchema.vocab = this.context.resolve(vocab);
             }
         }
         else {

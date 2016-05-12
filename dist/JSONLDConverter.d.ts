@@ -31,7 +31,7 @@ export declare class Class {
     private expandLiteral(literalValue);
     private compactSingle(expandedObject, targetObject, digestedSchema, pointerLibrary);
     private assignProperty(compactedObject, expandedObject, propertyName, digestedSchema, pointerLibrary);
-    private assignURIProperty(compactedObject, expandedObject, propertyURI, pointerLibrary);
+    private assignURIProperty(compactedObject, expandedObject, propertyURI, propertyName, pointerLibrary);
     private getPropertyContainerType(propertyValues);
     private getPropertyValue(expandedObject, propertyDefinition, pointerLibrary);
     private getProperty(expandedObject, propertyURI, pointerLibrary);
