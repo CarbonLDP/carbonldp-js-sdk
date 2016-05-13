@@ -5,7 +5,7 @@ import {
 	module,
 
 	isDefined,
-	reexports
+	reexports,
 } from "./test/JasmineExtender";
 import * as Utils from "./Utils";
 
@@ -17,8 +17,8 @@ import * as IndirectContainer from "./LDP/IndirectContainer";
 import * as PersistedContainer from "./LDP/PersistedContainer";
 import * as RDFSource from "./LDP/RDFSource";
 import * as RemoveMemberAction from "./LDP/RemoveMemberAction";
-import * as ResponseDescription from "./LDP/ResponseDescription";
-import * as ResponseMetaData from "./LDP/ResponseMetaData";
+import * as ResponseMetadata from "./LDP/ResponseMetadata";
+import * as ResourceMetadata from "./LDP/ResourceMetadata";
 
 import * as LDP from "./LDP";
 
@@ -103,20 +103,20 @@ describe( module( "Carbon/LDP" ), ():void => {
 
 	it( reexports(
 		STATIC,
-		"ResponseDescription",
-		"Carbon/LDP/ResponseDescription"
+		"ResponseMetadata",
+		"Carbon/LDP/ResponseMetadata"
 	), ():void => {
-		expect( LDP.ResponseDescription ).toBeDefined();
-		expect( LDP.ResponseDescription ).toBe( ResponseDescription );
+		expect( LDP.ResponseMetadata ).toBeDefined();
+		expect( LDP.ResponseMetadata ).toBe( ResponseMetadata );
 	});
 
 	it( reexports(
 		STATIC,
-		"ResponseMetaData",
-		"Carbon/LDP/ResponseMetaData"
+		"ResourceMetadata",
+		"Carbon/LDP/ResourceMetadata"
 	), ():void => {
-		expect( LDP.ResponseMetaData ).toBeDefined();
-		expect( LDP.ResponseMetaData ).toBe( ResponseMetaData );
+		expect( LDP.ResourceMetadata ).toBeDefined();
+		expect( LDP.ResourceMetadata ).toBe( ResourceMetadata );
 	});
 
 });

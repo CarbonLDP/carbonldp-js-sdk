@@ -75,7 +75,7 @@ declare class Documents implements Pointer.Library, Pointer.Validator, ObjectSch
     private getPersistedDocument(rdfDocument, response);
     private createPersistedDocument(documentPointer, documentResource, fragmentResources);
     private updatePersistedDocument(persistedDocument, documentResource, fragmentResources);
-    private sendRequestForResponseDescription(uri, requestOptions);
+    private sendRequestForResponseWithMetadata(uri, requestOptions);
     private getFreeResources(nodes);
 }
 export default Documents;

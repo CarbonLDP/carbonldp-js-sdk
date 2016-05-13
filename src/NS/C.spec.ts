@@ -5,7 +5,7 @@ import {
 	clazz,
 
 	isDefined,
-	hasProperty
+	hasProperty,
 } from "./../test/JasmineExtender";
 import * as Utils from "./../Utils";
 
@@ -28,7 +28,7 @@ describe( module(
 		expect( C.namespace ).toBeDefined();
 		expect( Utils.isString( C.namespace ) ).toBe( true );
 
-		expect( C.namespace ).toBe( "https://carbonldp.com/ns/v1/platform#" )
+		expect( C.namespace ).toBe( "https://carbonldp.com/ns/v1/platform#" );
 	});
 
 	describe( clazz(
@@ -176,24 +176,24 @@ describe( module(
 
 		it( hasProperty(
 			STATIC,
-			"ResponseDescription",
+			"ResponseMetadata",
 			"string"
 		), ():void => {
-			expect( C.Class.ResponseDescription ).toBeDefined();
-			expect( Utils.isString( C.Class.ResponseDescription ) ).toBe( true );
+			expect( C.Class.ResponseMetadata ).toBeDefined();
+			expect( Utils.isString( C.Class.ResponseMetadata ) ).toBe( true );
 
-			expect( C.Class.ResponseDescription ).toBe( "https://carbonldp.com/ns/v1/platform#ResponseDescription" );
+			expect( C.Class.ResponseMetadata ).toBe( "https://carbonldp.com/ns/v1/platform#ResponseMetadata" );
 		});
 
 		it( hasProperty(
 			STATIC,
-			"ResponseMetaData",
+			"ResourceMetadata",
 			"string"
 		), ():void => {
-			expect( C.Class.ResponseMetaData ).toBeDefined();
-			expect( Utils.isString( C.Class.ResponseMetaData ) ).toBe( true );
+			expect( C.Class.ResourceMetadata ).toBeDefined();
+			expect( Utils.isString( C.Class.ResourceMetadata ) ).toBe( true );
 
-			expect( C.Class.ResponseMetaData ).toBe( "https://carbonldp.com/ns/v1/platform#ResponseMetaData" );
+			expect( C.Class.ResourceMetadata ).toBe( "https://carbonldp.com/ns/v1/platform#ResourceMetadata" );
 		});
 
 	});
@@ -313,24 +313,24 @@ describe( module(
 
 		it( hasProperty(
 			STATIC,
-			"responseProperty",
+			"resourceMetadata",
 			"string"
 		), ():void => {
-			expect( C.Predicate.responseProperty ).toBeDefined();
-			expect( Utils.isString( C.Predicate.responseProperty ) ).toBe( true );
+			expect( C.Predicate.resourceMetadata ).toBeDefined();
+			expect( Utils.isString( C.Predicate.resourceMetadata ) ).toBe( true );
 
-			expect( C.Predicate.responseProperty ).toBe( "https://carbonldp.com/ns/v1/platform#responseProperty" );
+			expect( C.Predicate.resourceMetadata ).toBe( "https://carbonldp.com/ns/v1/platform#resourceMetadata" );
 		});
 
 		it( hasProperty(
 			STATIC,
-			"responsePropertyResource",
+			"resource",
 			"string"
 		), ():void => {
-			expect( C.Predicate.responsePropertyResource ).toBeDefined();
-			expect( Utils.isString( C.Predicate.responsePropertyResource ) ).toBe( true );
+			expect( C.Predicate.resource ).toBeDefined();
+			expect( Utils.isString( C.Predicate.resource ) ).toBe( true );
 
-			expect( C.Predicate.responsePropertyResource ).toBe( "https://carbonldp.com/ns/v1/platform#responsePropertyResource" );
+			expect( C.Predicate.resource ).toBe( "https://carbonldp.com/ns/v1/platform#resource" );
 		});
 
 		it( hasProperty(

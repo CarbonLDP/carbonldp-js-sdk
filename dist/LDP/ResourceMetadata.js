@@ -1,20 +1,24 @@
 "use strict";
 var NS = require("./../NS");
-var Utils = require("../Utils");
+var Utils = require("./../Utils");
 var VolatileResource = require("./VolatileResource");
-exports.RDF_CLASS = NS.C.Class.ResponseDescription;
+exports.RDF_CLASS = NS.C.Class.ResourceMetadata;
 exports.SCHEMA = {
-    "responseProperties": {
-        "@id": NS.C.Predicate.responseProperty,
+    "eTag": {
+        "@id": NS.C.Predicate.eTag,
+        "@type": NS.XSD.DataType.string,
+    },
+    "resource": {
+        "@id": NS.C.Predicate.resource,
         "@type": "@id",
-        "@container": "@set",
     },
 };
 var Factory = (function () {
     function Factory() {
     }
     Factory.hasClassProperties = function (object) {
-        return Utils.hasPropertyDefined(object, "responseProperties");
+        return Utils.hasPropertyDefined(object, "eTag")
+            && Utils.hasPropertyDefined(object, "resource");
     };
     Factory.is = function (object) {
         return VolatileResource.Factory.is(object)
@@ -31,4 +35,4 @@ var Factory = (function () {
 }());
 exports.Factory = Factory;
 
-//# sourceMappingURL=ResponseDescription.js.map
+//# sourceMappingURL=ResourceMetadata.js.map

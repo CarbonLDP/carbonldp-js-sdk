@@ -1358,8 +1358,8 @@ $__System.register("18", ["5", "13", "19"], function(exports_1) {
     }
 });
 
-$__System.register("1a", ["c", "1b", "9", "5", "12", "16", "1c", "14", "8", "4", "1d", "3", "1e", "18", "1f"], function(exports_1) {
-    var Errors, HTTP, RDF, Utils, Document, FreeResources, JSONLDConverter, PersistedDocument, Pointer, NS, ObjectSchema, LDP, SPARQL, RetrievalPreferences, ResponseDescription;
+$__System.register("1a", ["c", "1b", "9", "5", "12", "16", "1c", "14", "8", "4", "1d", "3", "1e", "18"], function(exports_1) {
+    var Errors, HTTP, RDF, Utils, Document, FreeResources, JSONLDConverter, PersistedDocument, Pointer, NS, ObjectSchema, LDP, SPARQL, RetrievalPreferences;
     var Documents;
     return {
         setters:[
@@ -1404,9 +1404,6 @@ $__System.register("1a", ["c", "1b", "9", "5", "12", "16", "1c", "14", "8", "4",
             },
             function (RetrievalPreferences_1) {
                 RetrievalPreferences = RetrievalPreferences_1;
-            },
-            function (ResponseDescription_1) {
-                ResponseDescription = ResponseDescription_1;
             }],
         execute: function() {
             Documents = (function () {
@@ -1593,7 +1590,7 @@ $__System.register("1a", ["c", "1b", "9", "5", "12", "16", "1c", "14", "8", "4",
                         ],
                     };
                     HTTP.Request.Util.setContainerRetrievalPreferences(containerRetrievalPreferences, requestOptions);
-                    return this.sendRequestForResponseDescription(parentURI, requestOptions);
+                    return this.sendRequestForResponseWithMetadata(parentURI, requestOptions);
                 };
                 Documents.prototype.createAccessPoint = function (documentURIOrAccessPoint, accessPointOrSlug, slugOrRequestOptions, requestOptions) {
                     var _this = this;
@@ -1754,7 +1751,7 @@ $__System.register("1a", ["c", "1b", "9", "5", "12", "16", "1c", "14", "8", "4",
                         containerRetrievalPreferences.omit.push(NS.C.Class.NonReadableMembershipResourceTriples);
                     }
                     HTTP.Request.Util.setContainerRetrievalPreferences(containerRetrievalPreferences, requestOptions);
-                    return this.sendRequestForResponseDescription(uri, requestOptions);
+                    return this.sendRequestForResponseWithMetadata(uri, requestOptions);
                 };
                 Documents.prototype.addMember = function (documentURI, memberORUri, requestOptions) {
                     if (requestOptions === void 0) { requestOptions = {}; }
@@ -2135,7 +2132,7 @@ $__System.register("1a", ["c", "1b", "9", "5", "12", "16", "1c", "14", "8", "4",
                     persistedDocument._syncSnapshot();
                     return persistedDocument;
                 };
-                Documents.prototype.sendRequestForResponseDescription = function (uri, requestOptions) {
+                Documents.prototype.sendRequestForResponseWithMetadata = function (uri, requestOptions) {
                     var _this = this;
                     return HTTP.Request.Service.get(uri, requestOptions, new HTTP.JSONLDParser.Class()).then(function (_a) {
                         var expandedResult = _a[0], response = _a[1];
@@ -2143,18 +2140,18 @@ $__System.register("1a", ["c", "1b", "9", "5", "12", "16", "1c", "14", "8", "4",
                         var rdfDocuments = RDF.Document.Util.getDocuments(expandedResult);
                         rdfDocuments.forEach(function (rdfDocument) { return _this.getPersistedDocument(rdfDocument, response); });
                         var freeResources = _this.getFreeResources(freeNodes);
-                        var descriptionResources = freeResources.getResources().filter(function (resource) { return ResponseDescription.Factory.hasRDFClass(resource); });
+                        var descriptionResources = freeResources.getResources().filter(function (resource) { return LDP.ResponseMetadata.Factory.hasRDFClass(resource); });
                         if (descriptionResources.length === 0)
                             return [[], response];
                         if (descriptionResources.length > 1)
-                            throw new HTTP.Errors.BadResponseError("The response contained multiple c:ResponseDescription objects", response);
-                        var responseDescription = descriptionResources[0];
-                        for (var _i = 0, _b = responseDescription.responseProperties; _i < _b.length; _i++) {
-                            var responseMetaData = _b[_i];
-                            var document = responseMetaData.responsePropertyResource;
-                            document._etag = responseMetaData.eTag;
+                            throw new HTTP.Errors.BadResponseError("The response contained multiple c:ResponseMetadata objects", response);
+                        var responseMetadata = descriptionResources[0];
+                        for (var _i = 0, _b = responseMetadata.resourcesMetadata; _i < _b.length; _i++) {
+                            var resourceMetadata = _b[_i];
+                            var document = resourceMetadata.resource;
+                            document._etag = resourceMetadata.eTag;
                         }
-                        var persistedDocuments = responseDescription.responseProperties.map(function (responseMetaData) { return responseMetaData.responsePropertyResource; });
+                        var persistedDocuments = responseMetadata.resourcesMetadata.map(function (resourceMetadata) { return resourceMetadata.resource; });
                         return [persistedDocuments, response];
                     });
                 };
@@ -2171,7 +2168,7 @@ $__System.register("1a", ["c", "1b", "9", "5", "12", "16", "1c", "14", "8", "4",
     }
 });
 
-$__System.register("20", ["12", "4", "5"], function(exports_1) {
+$__System.register("1f", ["12", "4", "5"], function(exports_1) {
     var Document, NS, Utils;
     var RDF_CLASS, SCHEMA, Factory;
     return {
@@ -2213,7 +2210,7 @@ $__System.register("20", ["12", "4", "5"], function(exports_1) {
     }
 });
 
-$__System.register("21", ["4"], function(exports_1) {
+$__System.register("20", ["4"], function(exports_1) {
     var NS;
     var RDF_CLASS, Factory;
     return {
@@ -2243,7 +2240,7 @@ $__System.register("21", ["4"], function(exports_1) {
     }
 });
 
-$__System.register("22", ["4", "5"], function(exports_1) {
+$__System.register("21", ["4", "5"], function(exports_1) {
     var NS, Utils;
     var RDF_CLASS, SCHEMA, Factory;
     return {
@@ -2312,7 +2309,7 @@ $__System.register("22", ["4", "5"], function(exports_1) {
     }
 });
 
-$__System.register("23", ["12", "c", "4", "8", "5"], function(exports_1) {
+$__System.register("22", ["12", "c", "4", "8", "5"], function(exports_1) {
     var Document, Errors, NS, Pointer, Utils;
     var RDF_CLASS, Factory;
     return {
@@ -2385,7 +2382,7 @@ $__System.register("23", ["12", "c", "4", "8", "5"], function(exports_1) {
     }
 });
 
-$__System.register("24", ["4", "5"], function(exports_1) {
+$__System.register("23", ["4", "5"], function(exports_1) {
     var NS, Utils;
     var RDF_CLASS, Factory;
     return {
@@ -2411,7 +2408,7 @@ $__System.register("24", ["4", "5"], function(exports_1) {
     }
 });
 
-$__System.register("25", ["5"], function(exports_1) {
+$__System.register("24", ["5"], function(exports_1) {
     var Utils;
     var Factory;
     function addMember(memberOrUri) {
@@ -2575,7 +2572,7 @@ $__System.register("25", ["5"], function(exports_1) {
     }
 });
 
-$__System.register("26", ["4"], function(exports_1) {
+$__System.register("25", ["4"], function(exports_1) {
     var NS;
     var RDF_CLASS, SCHEMA, Factory;
     return {
@@ -2605,7 +2602,7 @@ $__System.register("26", ["4"], function(exports_1) {
     }
 });
 
-$__System.register("27", ["12", "4", "5"], function(exports_1) {
+$__System.register("26", ["12", "4", "5"], function(exports_1) {
     var Document, NS, Utils;
     var RDF_CLASS, SCHEMA, Factory;
     return {
@@ -2647,7 +2644,7 @@ $__System.register("27", ["12", "4", "5"], function(exports_1) {
     }
 });
 
-$__System.register("1f", ["4", "5", "28"], function(exports_1) {
+$__System.register("27", ["4", "5", "28"], function(exports_1) {
     var NS, Utils, VolatileResource;
     var RDF_CLASS, SCHEMA, Factory;
     return {
@@ -2662,10 +2659,10 @@ $__System.register("1f", ["4", "5", "28"], function(exports_1) {
                 VolatileResource = VolatileResource_1;
             }],
         execute: function() {
-            exports_1("RDF_CLASS", RDF_CLASS = NS.C.Class.ResponseDescription);
+            exports_1("RDF_CLASS", RDF_CLASS = NS.C.Class.ResponseMetadata);
             exports_1("SCHEMA", SCHEMA = {
-                "responseProperties": {
-                    "@id": NS.C.Predicate.responseProperty,
+                "resourcesMetadata": {
+                    "@id": NS.C.Predicate.resourceMetadata,
                     "@type": "@id",
                     "@container": "@set",
                 },
@@ -2674,7 +2671,7 @@ $__System.register("1f", ["4", "5", "28"], function(exports_1) {
                 function Factory() {
                 }
                 Factory.hasClassProperties = function (object) {
-                    return Utils.hasPropertyDefined(object, "responseProperties");
+                    return Utils.hasPropertyDefined(object, "resourcesMetadata");
                 };
                 Factory.is = function (object) {
                     return VolatileResource.Factory.is(object)
@@ -2742,14 +2739,14 @@ $__System.register("29", ["4", "5", "28"], function(exports_1) {
                 VolatileResource = VolatileResource_1;
             }],
         execute: function() {
-            exports_1("RDF_CLASS", RDF_CLASS = NS.C.Class.ResponseMetaData);
+            exports_1("RDF_CLASS", RDF_CLASS = NS.C.Class.ResourceMetadata);
             exports_1("SCHEMA", SCHEMA = {
                 "eTag": {
                     "@id": NS.C.Predicate.eTag,
                     "@type": NS.XSD.DataType.string,
                 },
-                "responsePropertyResource": {
-                    "@id": NS.C.Predicate.responsePropertyResource,
+                "resource": {
+                    "@id": NS.C.Predicate.resource,
                     "@type": "@id",
                 },
             });
@@ -2758,7 +2755,7 @@ $__System.register("29", ["4", "5", "28"], function(exports_1) {
                 }
                 Factory.hasClassProperties = function (object) {
                     return Utils.hasPropertyDefined(object, "eTag")
-                        && Utils.hasPropertyDefined(object, "responsePropertyResource");
+                        && Utils.hasPropertyDefined(object, "resource");
                 };
                 Factory.is = function (object) {
                     return VolatileResource.Factory.is(object)
@@ -2778,8 +2775,8 @@ $__System.register("29", ["4", "5", "28"], function(exports_1) {
     }
 });
 
-$__System.register("3", ["20", "21", "22", "23", "24", "25", "26", "27", "1f", "29"], function(exports_1) {
-    var AddMemberAction, BasicContainer, Container, DirectContainer, IndirectContainer, PersistedContainer, RDFSource, RemoveMemberAction, ResponseDescription, ResponseMetaData;
+$__System.register("3", ["1f", "20", "21", "22", "23", "24", "25", "26", "27", "29"], function(exports_1) {
+    var AddMemberAction, BasicContainer, Container, DirectContainer, IndirectContainer, PersistedContainer, RDFSource, RemoveMemberAction, ResponseMetadata, ResourceMetadata;
     return {
         setters:[
             function (AddMemberAction_1) {
@@ -2806,11 +2803,11 @@ $__System.register("3", ["20", "21", "22", "23", "24", "25", "26", "27", "1f", "
             function (RemoveMemberAction_1) {
                 RemoveMemberAction = RemoveMemberAction_1;
             },
-            function (ResponseDescription_1) {
-                ResponseDescription = ResponseDescription_1;
+            function (ResponseMetadata_1) {
+                ResponseMetadata = ResponseMetadata_1;
             },
-            function (ResponseMetaData_1) {
-                ResponseMetaData = ResponseMetaData_1;
+            function (ResourceMetadata_1) {
+                ResourceMetadata = ResourceMetadata_1;
             }],
         execute: function() {
             exports_1("AddMemberAction", AddMemberAction);
@@ -2821,8 +2818,8 @@ $__System.register("3", ["20", "21", "22", "23", "24", "25", "26", "27", "1f", "
             exports_1("PersistedContainer", PersistedContainer);
             exports_1("RDFSource", RDFSource);
             exports_1("RemoveMemberAction", RemoveMemberAction);
-            exports_1("ResponseDescription", ResponseDescription);
-            exports_1("ResponseMetaData", ResponseMetaData);
+            exports_1("ResponseMetadata", ResponseMetadata);
+            exports_1("ResourceMetadata", ResourceMetadata);
         }
     }
 });
@@ -4766,8 +4763,8 @@ $__System.register("f", ["15", "32", "1a", "c", "3", "4", "2a", "1d", "11", "31"
                             "@container": "@set",
                         },
                     });
-                    this.extendObjectSchema(LDP.ResponseDescription.RDF_CLASS, LDP.ResponseDescription.SCHEMA);
-                    this.extendObjectSchema(LDP.ResponseMetaData.RDF_CLASS, LDP.ResponseMetaData.SCHEMA);
+                    this.extendObjectSchema(LDP.ResponseMetadata.RDF_CLASS, LDP.ResponseMetadata.SCHEMA);
+                    this.extendObjectSchema(LDP.ResourceMetadata.RDF_CLASS, LDP.ResourceMetadata.SCHEMA);
                     this.extendObjectSchema(LDP.AddMemberAction.RDF_CLASS, LDP.AddMemberAction.SCHEMA);
                     this.extendObjectSchema(LDP.RemoveMemberAction.RDF_CLASS, LDP.RemoveMemberAction.SCHEMA);
                     this.extendObjectSchema(Auth.Token.RDF_CLASS, Auth.Token.CONTEXT);
@@ -5814,13 +5811,13 @@ $__System.register("41", [], function(exports_1) {
                     enumerable: true,
                     configurable: true
                 });
-                Object.defineProperty(Class, "ResponseDescription", {
-                    get: function () { return namespace + "ResponseDescription"; },
+                Object.defineProperty(Class, "ResponseMetadata", {
+                    get: function () { return namespace + "ResponseMetadata"; },
                     enumerable: true,
                     configurable: true
                 });
-                Object.defineProperty(Class, "ResponseMetaData", {
-                    get: function () { return namespace + "ResponseMetaData"; },
+                Object.defineProperty(Class, "ResourceMetadata", {
+                    get: function () { return namespace + "ResourceMetadata"; },
                     enumerable: true,
                     configurable: true
                 });
@@ -5875,13 +5872,13 @@ $__System.register("41", [], function(exports_1) {
                     enumerable: true,
                     configurable: true
                 });
-                Object.defineProperty(Predicate, "responseProperty", {
-                    get: function () { return namespace + "responseProperty"; },
+                Object.defineProperty(Predicate, "resourceMetadata", {
+                    get: function () { return namespace + "resourceMetadata"; },
                     enumerable: true,
                     configurable: true
                 });
-                Object.defineProperty(Predicate, "responsePropertyResource", {
-                    get: function () { return namespace + "responsePropertyResource"; },
+                Object.defineProperty(Predicate, "resource", {
+                    get: function () { return namespace + "resource"; },
                     enumerable: true,
                     configurable: true
                 });

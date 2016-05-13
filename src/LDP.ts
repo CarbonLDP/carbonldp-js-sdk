@@ -6,8 +6,8 @@ import * as IndirectContainer from "./LDP/IndirectContainer";
 import * as PersistedContainer from "./LDP/PersistedContainer";
 import * as RDFSource from "./LDP/RDFSource";
 import * as RemoveMemberAction from "./LDP/RemoveMemberAction";
-import * as ResponseDescription from "./LDP/ResponseDescription";
-import * as ResponseMetaData from "./LDP/ResponseMetaData";
+import * as ResponseMetadata from "./LDP/ResponseMetadata";
+import * as ResourceMetadata from "./LDP/ResourceMetadata";
 
 export {
 	AddMemberAction,
@@ -18,6 +18,6 @@ export {
 	PersistedContainer,
 	RDFSource,
 	RemoveMemberAction,
-	ResponseDescription,
-	ResponseMetaData,
+	ResponseMetadata,
+	ResourceMetadata,
 };

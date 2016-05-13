@@ -66,7 +66,8 @@
 		- [Decorated Object](#Carbon-Document-Factory-Decorated-Object)
 			- [Methods](#Carbon-Document-Factory-Decorated-Object-Methods)
 - [Module Carbon/Documents](#Carbon-Documents)
-	- [Methods](#Carbon-Documents-Methods)
+	- [Class Carbon.Documents](#Carbon-Documents)
+		- [Methods](#Carbon-Documents-Methods)
 - [Module Carbon/Errors](#Carbon-Errors)
 	- [Reexports](#Carbon-Errors-Reexports)
 - [Module Carbon/Errors/AbstractError](#Carbon-Errors-AbstractError)
@@ -295,14 +296,14 @@
 	- [Properties](#Carbon-LDP-RemoveMemberAction-Properties)
 	- [Class Carbon.LDP.RemoveMemberAction.Factory](#Carbon-LDP-RemoveMemberAction-Factory)
 		- [Methods](#Carbon-LDP-RemoveMemberAction-Factory-Methods)
-- [Module Carbon/LDP/ResponseDescription](#Carbon-LDP-ResponseDescription)
-	- [Properties](#Carbon-LDP-ResponseDescription-Properties)
-	- [Class Carbon.LDP.ResponseDescription.Factory](#Carbon-LDP-ResponseDescription-Factory)
-		- [Methods](#Carbon-LDP-ResponseDescription-Factory-Methods)
-- [Module Carbon/LDP/ResponseMetaData](#Carbon-LDP-ResponseMetaData)
-	- [Properties](#Carbon-LDP-ResponseMetaData-Properties)
-	- [Class Carbon.LDP.ResponseMetaData.Factory](#Carbon-LDP-ResponseMetaData-Factory)
-		- [Methods](#Carbon-LDP-ResponseMetaData-Factory-Methods)
+- [Module Carbon/LDP/ResourceMetadata](#Carbon-LDP-ResourceMetadata)
+	- [Properties](#Carbon-LDP-ResourceMetadata-Properties)
+	- [Class Carbon.LDP.ResourceMetadata.Factory](#Carbon-LDP-ResourceMetadata-Factory)
+		- [Methods](#Carbon-LDP-ResourceMetadata-Factory-Methods)
+- [Module Carbon/LDP/ResponseMetadata](#Carbon-LDP-ResponseMetadata)
+	- [Properties](#Carbon-LDP-ResponseMetadata-Properties)
+	- [Class Carbon.LDP.ResponseMetadata.Factory](#Carbon-LDP-ResponseMetadata-Factory)
+		- [Methods](#Carbon-LDP-ResponseMetadata-Factory-Methods)
 - [Module Carbon/LDP/VolatileResource](#Carbon-LDP-VolatileResource)
 	- [Properties](#Carbon-LDP-VolatileResource-Properties)
 	- [Class Carbon.LDP.VolatileResource.Factory](#Carbon-LDP-VolatileResource-Factory)
@@ -1749,7 +1750,17 @@ Returns a JSON string from the document using the default ObjectSchema
 
 
 
-### <a name="Carbon-Documents-Methods" />Methods
+
+
+### <a name="Carbon-Documents" />Class Carbon.Documents
+
+
+> Class that contains 
+
+
+
+
+#### <a name="Carbon-Documents-Methods" />Methods
 
 ##### get
 ```typescript 
@@ -4596,8 +4607,8 @@ expand( compactedObject:Object,  digestedSchema:Carbon.ObjectSchema.DigestedObje
 | PersistedContainer | [Carbon/LDP/PersistedContainer](#Carbon-LDP-PersistedContainer) |
 | RDFSource | [Carbon/LDP/RDFSource](#Carbon-LDP-RDFSource) |
 | RemoveMemberAction | [Carbon/LDP/RemoveMemberAction](#Carbon-LDP-RemoveMemberAction) |
-| ResponseDescription | [Carbon/LDP/ResponseDescription](#Carbon-LDP-ResponseDescription) |
-| ResponseMetaData | [Carbon/LDP/ResponseMetaData](#Carbon-LDP-ResponseMetaData) |
+| ResponseMetadata | [Carbon/LDP/ResponseMetadata](#Carbon-LDP-ResponseMetadata) |
+| ResourceMetadata | [Carbon/LDP/ResourceMetadata](#Carbon-LDP-ResourceMetadata) |
 
 
 
@@ -5240,13 +5251,13 @@ Create and returns a `Carbon.Document.Class` object with a RemoveMemberAction fr
 
 
 
-## <a name="Carbon-LDP-ResponseDescription" />Module Carbon/LDP/ResponseDescription
+## <a name="Carbon-LDP-ResourceMetadata" />Module Carbon/LDP/ResourceMetadata
 
 
 
 
 
-### <a name="Carbon-LDP-ResponseDescription-Properties" />Properties
+### <a name="Carbon-LDP-ResourceMetadata-Properties" />Properties
 ```typescript 
 static RDF_CLASS:string 
 ```
@@ -5259,21 +5270,21 @@ static SCHEMA:Carbon.ObjectSchema.Class
 
 
 
-### <a name="Carbon-LDP-ResponseDescription-Factory" />Class Carbon.LDP.ResponseDescription.Factory
+### <a name="Carbon-LDP-ResourceMetadata-Factory" />Class Carbon.LDP.ResourceMetadata.Factory
 
 
-> Factory class form `Carbon.LDP.ResponseDescription.Class` objects.
+> Factory class form `Carbon.LDP.ResourceMetadata.Class` objects.
 
 
 
 
-#### <a name="Carbon-LDP-ResponseDescription-Factory-Methods" />Methods
+#### <a name="Carbon-LDP-ResourceMetadata-Factory-Methods" />Methods
 ##### hasClassProperties
 ```typescript 
 static hasClassProperties( object:Object ):boolean
 ```
 
-Return true if the object provided has the properties of a `Carbon.LDP.ResponseDescription.Class` object.
+Return true if the object provided has the properties of a `Carbon.LDP.ResourceMetadata.Class` object.
 
 *Parameters*
 
@@ -5284,7 +5295,71 @@ Return true if the object provided has the properties of a `Carbon.LDP.ResponseD
 static is( object:Object ):boolean
 ```
 
-Return true if the object provided can be classified as a `Carbon.LDP.ResponseDescription.Class` object.
+Return true if the object provided can be classified as a `Carbon.LDP.ResourceMetadata.Class` object.
+
+*Parameters*
+
+- object: Object to check.
+
+##### hasRDFClass
+```typescript 
+static hasRDFClass( object:Object ):boolean
+```
+
+Return true if the object provided have the RDF_CLASS of a ResourceMetadata, either if it's a Resource or a RDF object.
+
+*Parameters*
+
+- object: Object to check.
+
+
+
+
+## <a name="Carbon-LDP-ResponseMetadata" />Module Carbon/LDP/ResponseMetadata
+
+
+
+
+
+### <a name="Carbon-LDP-ResponseMetadata-Properties" />Properties
+```typescript 
+static RDF_CLASS:string 
+```
+
+```typescript 
+static SCHEMA:Carbon.ObjectSchema.Class 
+```
+
+
+
+
+
+### <a name="Carbon-LDP-ResponseMetadata-Factory" />Class Carbon.LDP.ResponseMetadata.Factory
+
+
+> Factory class form `Carbon.LDP.ResponseMetadata.Class` objects.
+
+
+
+
+#### <a name="Carbon-LDP-ResponseMetadata-Factory-Methods" />Methods
+##### hasClassProperties
+```typescript 
+static hasClassProperties( object:Object ):boolean
+```
+
+Return true if the object provided has the properties of a `Carbon.LDP.ResponseMetadata.Class` object.
+
+*Parameters*
+
+- object: Object to check.
+
+##### is
+```typescript 
+static is( object:Object ):boolean
+```
+
+Return true if the object provided can be classified as a `Carbon.LDP.ResponseMetadata.Class` object.
 
 *Parameters*
 
@@ -5295,71 +5370,7 @@ Return true if the object provided can be classified as a `Carbon.LDP.ResponseDe
 static hasRDFClass( object:Object ):boolean
 ```
 
-Return true if the object provided have the RDF_CLASS of a ResponseDescription, either if it's a Resource or a RDF object.
-
-*Parameters*
-
-- object: Object to check.
-
-
-
-
-## <a name="Carbon-LDP-ResponseMetaData" />Module Carbon/LDP/ResponseMetaData
-
-
-
-
-
-### <a name="Carbon-LDP-ResponseMetaData-Properties" />Properties
-```typescript 
-static RDF_CLASS:string 
-```
-
-```typescript 
-static SCHEMA:Carbon.ObjectSchema.Class 
-```
-
-
-
-
-
-### <a name="Carbon-LDP-ResponseMetaData-Factory" />Class Carbon.LDP.ResponseMetaData.Factory
-
-
-> Factory class form `Carbon.LDP.ResponseMetaData.Class` objects.
-
-
-
-
-#### <a name="Carbon-LDP-ResponseMetaData-Factory-Methods" />Methods
-##### hasClassProperties
-```typescript 
-static hasClassProperties( object:Object ):boolean
-```
-
-Return true if the object provided has the properties of a `Carbon.LDP.ResponseMetaData.Class` object.
-
-*Parameters*
-
-- object: Object to check.
-
-##### is
-```typescript 
-static is( object:Object ):boolean
-```
-
-Return true if the object provided can be classified as a `Carbon.LDP.ResponseMetaData.Class` object.
-
-*Parameters*
-
-- object: Object to check.
-
-##### hasRDFClass
-```typescript 
-static hasRDFClass( object:Object ):boolean
-```
-
-Return true if the object provided have the RDF_CLASS of a ResponseMetaData, either if it's a Resource or a RDF object.
+Return true if the object provided have the RDF_CLASS of a ResponseMetadata, either if it's a Resource or a RDF object.
 
 *Parameters*
 
@@ -5508,11 +5519,11 @@ static RemoveMemberAction:string
 ```
 
 ```typescript 
-static ResponseDescription:string 
+static ResponseMetadata:string 
 ```
 
 ```typescript 
-static ResponseMetaData:string 
+static ResourceMetadata:string 
 ```
 
 
@@ -5564,11 +5575,11 @@ static targetMember:string
 ```
 
 ```typescript 
-static responseProperty:string 
+static resourceMetadata:string 
 ```
 
 ```typescript 
-static responsePropertyResource:string 
+static resource:string 
 ```
 
 ```typescript 

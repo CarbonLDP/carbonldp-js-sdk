@@ -78,11 +78,11 @@ describe( module( "Carbon/LDP/VolatileResource"), ():void => {
 
 			object = { types: [] };
 			expect( VolatileResource.Factory.hasRDFClass( object ) ).toBe( false );
-			object = { types: [ NS.C.Class.ResponseMetaData ] };
+			object = { types: [ NS.C.Class.ResourceMetadata ] };
 			expect( VolatileResource.Factory.hasRDFClass( object ) ).toBe( false );
 			object = { types: [ NS.C.Class.VolatileResource ] };
 			expect( VolatileResource.Factory.hasRDFClass( object ) ).toBe( true );
-			object = { types: [ NS.C.Class.VolatileResource, NS.C.Class.ResponseDescription ] };
+			object = { types: [ NS.C.Class.VolatileResource, NS.C.Class.ResponseMetadata ] };
 			expect( VolatileResource.Factory.hasRDFClass( object ) ).toBe( true );
 			object = { types: [ NS.CS.Class.Token, NS.C.Class.VolatileResource ] };
 			expect( VolatileResource.Factory.hasRDFClass( object ) ).toBe( true );
@@ -95,7 +95,7 @@ describe( module( "Carbon/LDP/VolatileResource"), ():void => {
 			expect( VolatileResource.Factory.hasRDFClass( object ) ).toBe( true );
 			object = { "@type": [ NS.CS.Class.Token, NS.C.Class.VolatileResource ] };
 			expect( VolatileResource.Factory.hasRDFClass( object ) ).toBe( true );
-			object = { "@type": [ NS.C.Class.VolatileResource, NS.C.Class.ResponseMetaData ] };
+			object = { "@type": [ NS.C.Class.VolatileResource, NS.C.Class.ResourceMetadata ] };
 			expect( VolatileResource.Factory.hasRDFClass( object ) ).toBe( true );
 		});
 

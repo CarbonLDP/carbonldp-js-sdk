@@ -688,8 +688,8 @@ declare module 'carbonldp/NS/C' {
 	    static VolatileResource: string;
 	    static RDFRepresentation: string;
 	    static RemoveMemberAction: string;
-	    static ResponseDescription: string;
-	    static ResponseMetaData: string;
+	    static ResponseMetadata: string;
+	    static ResourceMetadata: string;
 	}
 	export class Predicate {
 	    static accessPoint: string;
@@ -701,8 +701,8 @@ declare module 'carbonldp/NS/C' {
 	    static mediaType: string;
 	    static size: string;
 	    static targetMember: string;
-	    static responseProperty: string;
-	    static responsePropertyResource: string;
+	    static resourceMetadata: string;
+	    static resource: string;
 	    static eTag: string;
 	}
 
@@ -1463,7 +1463,7 @@ declare module 'carbonldp/LDP/VolatileResource' {
 	export default Class;
 
 }
-declare module 'carbonldp/LDP/ResponseMetaData' {
+declare module 'carbonldp/LDP/ResourceMetadata' {
 	import * as ObjectSchema from 'carbonldp/ObjectSchema';
 	import * as Pointer from 'carbonldp/Pointer';
 	import * as VolatileResource from 'carbonldp/LDP/VolatileResource';
@@ -1471,7 +1471,7 @@ declare module 'carbonldp/LDP/ResponseMetaData' {
 	export const SCHEMA: ObjectSchema.Class;
 	export interface Class extends VolatileResource.Class {
 	    eTag: string;
-	    responsePropertyResource: Pointer.Class;
+	    resource: Pointer.Class;
 	}
 	export class Factory {
 	    static hasClassProperties(object: Object): boolean;
@@ -1481,14 +1481,14 @@ declare module 'carbonldp/LDP/ResponseMetaData' {
 	export default Class;
 
 }
-declare module 'carbonldp/LDP/ResponseDescription' {
+declare module 'carbonldp/LDP/ResponseMetadata' {
 	import * as ObjectSchema from 'carbonldp/ObjectSchema';
-	import * as ResponseMetaData from 'carbonldp/LDP/ResponseMetaData';
+	import * as ResourceMetadata from 'carbonldp/LDP/ResourceMetadata';
 	import * as VolatileResource from 'carbonldp/LDP/VolatileResource';
 	export const RDF_CLASS: string;
 	export const SCHEMA: ObjectSchema.Class;
 	export interface Class extends VolatileResource.Class {
-	    responseProperties: ResponseMetaData.Class[];
+	    resourcesMetadata: ResourceMetadata.Class[];
 	}
 	export class Factory {
 	    static hasClassProperties(object: Object): boolean;
@@ -1507,9 +1507,9 @@ declare module 'carbonldp/LDP' {
 	import * as PersistedContainer from 'carbonldp/LDP/PersistedContainer';
 	import * as RDFSource from 'carbonldp/LDP/RDFSource';
 	import * as RemoveMemberAction from 'carbonldp/LDP/RemoveMemberAction';
-	import * as ResponseDescription from 'carbonldp/LDP/ResponseDescription';
-	import * as ResponseMetaData from 'carbonldp/LDP/ResponseMetaData';
-	export { AddMemberAction, BasicContainer, Container, DirectContainer, IndirectContainer, PersistedContainer, RDFSource, RemoveMemberAction, ResponseDescription, ResponseMetaData };
+	import * as ResponseMetadata from 'carbonldp/LDP/ResponseMetadata';
+	import * as ResourceMetadata from 'carbonldp/LDP/ResourceMetadata';
+	export { AddMemberAction, BasicContainer, Container, DirectContainer, IndirectContainer, PersistedContainer, RDFSource, RemoveMemberAction, ResponseMetadata, ResourceMetadata };
 
 }
 declare module 'carbonldp/AccessPoint' {
@@ -1635,7 +1635,7 @@ declare module 'carbonldp/Documents' {
 	    private getPersistedDocument(rdfDocument, response);
 	    private createPersistedDocument(documentPointer, documentResource, fragmentResources);
 	    private updatePersistedDocument(persistedDocument, documentResource, fragmentResources);
-	    private sendRequestForResponseDescription(uri, requestOptions);
+	    private sendRequestForResponseWithMetadata(uri, requestOptions);
 	    private getFreeResources(nodes);
 	}
 	export default Documents;

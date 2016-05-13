@@ -177,8 +177,8 @@ export class Class implements Context {
 			},
 		});
 
-		this.extendObjectSchema( LDP.ResponseDescription.RDF_CLASS, LDP.ResponseDescription.SCHEMA );
-		this.extendObjectSchema( LDP.ResponseMetaData.RDF_CLASS, LDP.ResponseMetaData.SCHEMA );
+		this.extendObjectSchema( LDP.ResponseMetadata.RDF_CLASS, LDP.ResponseMetadata.SCHEMA );
+		this.extendObjectSchema( LDP.ResourceMetadata.RDF_CLASS, LDP.ResourceMetadata.SCHEMA );
 		this.extendObjectSchema( LDP.AddMemberAction.RDF_CLASS,  LDP.AddMemberAction.SCHEMA );
 		this.extendObjectSchema( LDP.RemoveMemberAction.RDF_CLASS, LDP.RemoveMemberAction.SCHEMA );
 		this.extendObjectSchema( Auth.Token.RDF_CLASS, Auth.Token.CONTEXT );

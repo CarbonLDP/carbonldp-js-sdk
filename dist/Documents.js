@@ -13,7 +13,6 @@ var ObjectSchema = require("./ObjectSchema");
 var LDP = require("./LDP");
 var SPARQL = require("./SPARQL");
 var RetrievalPreferences = require("./RetrievalPreferences");
-var ResponseDescription = require("./LDP/ResponseDescription");
 var Documents = (function () {
     function Documents(context) {
         if (context === void 0) { context = null; }
@@ -198,7 +197,7 @@ var Documents = (function () {
             ],
         };
         HTTP.Request.Util.setContainerRetrievalPreferences(containerRetrievalPreferences, requestOptions);
-        return this.sendRequestForResponseDescription(parentURI, requestOptions);
+        return this.sendRequestForResponseWithMetadata(parentURI, requestOptions);
     };
     Documents.prototype.createAccessPoint = function (documentURIOrAccessPoint, accessPointOrSlug, slugOrRequestOptions, requestOptions) {
         var _this = this;
@@ -359,7 +358,7 @@ var Documents = (function () {
             containerRetrievalPreferences.omit.push(NS.C.Class.NonReadableMembershipResourceTriples);
         }
         HTTP.Request.Util.setContainerRetrievalPreferences(containerRetrievalPreferences, requestOptions);
-        return this.sendRequestForResponseDescription(uri, requestOptions);
+        return this.sendRequestForResponseWithMetadata(uri, requestOptions);
     };
     Documents.prototype.addMember = function (documentURI, memberORUri, requestOptions) {
         if (requestOptions === void 0) { requestOptions = {}; }
@@ -740,7 +739,7 @@ var Documents = (function () {
         persistedDocument._syncSnapshot();
         return persistedDocument;
     };
-    Documents.prototype.sendRequestForResponseDescription = function (uri, requestOptions) {
+    Documents.prototype.sendRequestForResponseWithMetadata = function (uri, requestOptions) {
         var _this = this;
         return HTTP.Request.Service.get(uri, requestOptions, new HTTP.JSONLDParser.Class()).then(function (_a) {
             var expandedResult = _a[0], response = _a[1];
@@ -748,18 +747,18 @@ var Documents = (function () {
             var rdfDocuments = RDF.Document.Util.getDocuments(expandedResult);
             rdfDocuments.forEach(function (rdfDocument) { return _this.getPersistedDocument(rdfDocument, response); });
             var freeResources = _this.getFreeResources(freeNodes);
-            var descriptionResources = freeResources.getResources().filter(function (resource) { return ResponseDescription.Factory.hasRDFClass(resource); });
+            var descriptionResources = freeResources.getResources().filter(function (resource) { return LDP.ResponseMetadata.Factory.hasRDFClass(resource); });
             if (descriptionResources.length === 0)
                 return [[], response];
             if (descriptionResources.length > 1)
-                throw new HTTP.Errors.BadResponseError("The response contained multiple c:ResponseDescription objects", response);
-            var responseDescription = descriptionResources[0];
-            for (var _i = 0, _b = responseDescription.responseProperties; _i < _b.length; _i++) {
-                var responseMetaData = _b[_i];
-                var document_1 = responseMetaData.responsePropertyResource;
-                document_1._etag = responseMetaData.eTag;
+                throw new HTTP.Errors.BadResponseError("The response contained multiple c:ResponseMetadata objects", response);
+            var responseMetadata = descriptionResources[0];
+            for (var _i = 0, _b = responseMetadata.resourcesMetadata; _i < _b.length; _i++) {
+                var resourceMetadata = _b[_i];
+                var document_1 = resourceMetadata.resource;
+                document_1._etag = resourceMetadata.eTag;
             }
-            var persistedDocuments = responseDescription.responseProperties.map(function (responseMetaData) { return responseMetaData.responsePropertyResource; });
+            var persistedDocuments = responseMetadata.resourcesMetadata.map(function (resourceMetadata) { return resourceMetadata.resource; });
             return [persistedDocuments, response];
         });
     };

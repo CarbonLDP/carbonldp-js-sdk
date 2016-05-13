@@ -18,8 +18,6 @@ import * as LDP from "./LDP";
 import * as SPARQL from "./SPARQL";
 import * as Resource from "./Resource";
 import * as RetrievalPreferences from "./RetrievalPreferences";
-import * as ResponseDescription from "./LDP/ResponseDescription";
-import * as ResponseMetaData from "./LDP/ResponseMetaData";
 
 class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Resolver {
 	_jsonldConverter:JSONLDConverter.Class;
@@ -236,7 +234,7 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 		};
 		HTTP.Request.Util.setContainerRetrievalPreferences( containerRetrievalPreferences, requestOptions );
 
-		return this.sendRequestForResponseDescription( parentURI, requestOptions );
+		return this.sendRequestForResponseWithMetadata( parentURI, requestOptions );
 	}
 
 	createAccessPoint( documentURI:string, accessPoint:AccessPoint.Class, slug?:string, requestOptions?:HTTP.Request.Options ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
@@ -418,7 +416,7 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 		}
 		HTTP.Request.Util.setContainerRetrievalPreferences( containerRetrievalPreferences, requestOptions );
 
-		return this.sendRequestForResponseDescription( uri, requestOptions );
+		return this.sendRequestForResponseWithMetadata( uri, requestOptions );
 	}
 
 	addMember( documentURI:string, member:Pointer.Class, requestOptions?:HTTP.Request.Options ): Promise<HTTP.Response.Class>;
@@ -855,7 +853,7 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 		return persistedDocument;
 	}
 
-	private sendRequestForResponseDescription( uri:string, requestOptions:HTTP.Request.Options ):Promise<[ PersistedDocument.Class[], HTTP.Response.Class ]> {
+	private sendRequestForResponseWithMetadata( uri:string, requestOptions:HTTP.Request.Options ):Promise<[ PersistedDocument.Class[], HTTP.Response.Class ]> {
 		return HTTP.Request.Service.get( uri, requestOptions, new HTTP.JSONLDParser.Class() ).then( ( [ expandedResult, response ]:[ any, HTTP.Response.Class ] ) => {
 			let freeNodes:RDF.Node.Class[] = RDF.Node.Util.getFreeNodes( expandedResult );
 			let rdfDocuments:RDF.Document.Class[] = RDF.Document.Util.getDocuments( expandedResult );
@@ -863,17 +861,17 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 			rdfDocuments.forEach( rdfDocument => this.getPersistedDocument( rdfDocument, response ) );
 			let freeResources:FreeResources.Class = this.getFreeResources( freeNodes );
 
-			let descriptionResources:ResponseDescription.Class[] = <any> freeResources.getResources().filter( resource => ResponseDescription.Factory.hasRDFClass( resource ) );
+			let descriptionResources:LDP.ResponseMetadata.Class[] = <any> freeResources.getResources().filter( resource => LDP.ResponseMetadata.Factory.hasRDFClass( resource ) );
 			if( descriptionResources.length === 0 ) return [ [], response ];
-			if( descriptionResources.length > 1 ) throw new HTTP.Errors.BadResponseError( "The response contained multiple c:ResponseDescription objects", response );
+			if( descriptionResources.length > 1 ) throw new HTTP.Errors.BadResponseError( "The response contained multiple c:ResponseMetadata objects", response );
 
-			let responseDescription:ResponseDescription.Class = descriptionResources[ 0 ];
-			for ( let responseMetaData of responseDescription.responseProperties ) {
-				let document:PersistedDocument.Class = <any> responseMetaData.responsePropertyResource;
-				document._etag = responseMetaData.eTag;
+			let responseMetadata:LDP.ResponseMetadata.Class = descriptionResources[ 0 ];
+			for ( let resourceMetadata of responseMetadata.resourcesMetadata ) {
+				let document:PersistedDocument.Class = <any> resourceMetadata.resource;
+				document._etag = resourceMetadata.eTag;
 			}
 
-			let persistedDocuments:PersistedDocument.Class[] = responseDescription.responseProperties.map( ( responseMetaData:ResponseMetaData.Class ) => <any> responseMetaData.responsePropertyResource );
+			let persistedDocuments:PersistedDocument.Class[] = responseMetadata.resourcesMetadata.map( ( resourceMetadata:LDP.ResourceMetadata.Class ) => <any> resourceMetadata.resource );
 			return [ persistedDocuments, response ];
 		} );
 	}
