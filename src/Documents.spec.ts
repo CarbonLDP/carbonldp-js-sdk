@@ -41,7 +41,7 @@ import * as Utils from "./Utils";
 // TODO: Add description
 describe( module( "Carbon/Documents" ), ():void => {
 
-	describe( clazz( "Carbon.Documents", "Class that contains "), ():void => {
+	describe( clazz( "Carbon.Documents", "Class that contains methods for retrieving, saving and updating documents from the server." ), ():void => {
 
 		beforeEach( ():void => {
 			jasmine.Ajax.install();

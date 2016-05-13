@@ -1766,7 +1766,7 @@ Returns a JSON string from the document using the default ObjectSchema
 ### <a name="Carbon-Documents" />Class Carbon.Documents
 
 
-> Class that contains 
+> Class that contains methods for retrieving, saving and updating documents from the server.
 
 
 
