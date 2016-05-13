@@ -31,4 +31,4 @@ var Factory = (function () {
 }());
 exports.Factory = Factory;
 
-//# sourceMappingURL=ResponseMetaData.js.map
+//# sourceMappingURL=ResponseMetadata.js.map

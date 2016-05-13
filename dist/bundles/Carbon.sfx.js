@@ -3478,11 +3478,14 @@ $__System.register("1c", ["c", "1d", "4", "8", "9", "5"], function(exports_1) {
     }
 });
 
-$__System.register("2b", ["17", "5"], function(exports_1) {
-    var Resource, Utils;
+$__System.register("2b", ["9", "17", "5"], function(exports_1) {
+    var RDF, Resource, Utils;
     var Factory;
     return {
         setters:[
+            function (RDF_1) {
+                RDF = RDF_1;
+            },
             function (Resource_1) {
                 Resource = Resource_1;
             },
@@ -3502,7 +3505,7 @@ $__System.register("2b", ["17", "5"], function(exports_1) {
                 };
                 Factory.createFrom = function (object, idOrDocument, document) {
                     if (document === void 0) { document = null; }
-                    var id = !!idOrDocument && Utils.isString(idOrDocument) ? idOrDocument : Util.generateID();
+                    var id = !!idOrDocument && Utils.isString(idOrDocument) ? idOrDocument : RDF.URI.Util.generateBNodeID();
                     document = document || idOrDocument;
                     var resource = Resource.Factory.createFrom(object, id);
                     if (Factory.hasClassProperties(resource))
