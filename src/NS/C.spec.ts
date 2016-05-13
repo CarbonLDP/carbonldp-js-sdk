@@ -5,7 +5,7 @@ import {
 	clazz,
 
 	isDefined,
-	hasProperty
+	hasProperty,
 } from "./../test/JasmineExtender";
 import * as Utils from "./../Utils";
 
@@ -28,7 +28,7 @@ describe( module(
 		expect( C.namespace ).toBeDefined();
 		expect( Utils.isString( C.namespace ) ).toBe( true );
 
-		expect( C.namespace ).toBe( "https://carbonldp.com/ns/v1/platform#" )
+		expect( C.namespace ).toBe( "https://carbonldp.com/ns/v1/platform#" );
 	});
 
 	describe( clazz(
@@ -39,7 +39,7 @@ describe( module(
 		it( isDefined(), ():void => {
 			expect( C.Class ).toBeDefined();
 			expect( Utils.isFunction( C.Class ) ).toBe( true );
-			expect( Object.keys( C.Class ).length ).toBe( 13 );
+			expect( Object.keys( C.Class ).length ).toBe( 15 );
 		});
 
 		it( hasProperty(
@@ -174,6 +174,28 @@ describe( module(
 			expect( C.Class.RemoveMemberAction ).toBe( "https://carbonldp.com/ns/v1/platform#RemoveMemberAction" );
 		});
 
+		it( hasProperty(
+			STATIC,
+			"ResponseMetadata",
+			"string"
+		), ():void => {
+			expect( C.Class.ResponseMetadata ).toBeDefined();
+			expect( Utils.isString( C.Class.ResponseMetadata ) ).toBe( true );
+
+			expect( C.Class.ResponseMetadata ).toBe( "https://carbonldp.com/ns/v1/platform#ResponseMetadata" );
+		});
+
+		it( hasProperty(
+			STATIC,
+			"ResourceMetadata",
+			"string"
+		), ():void => {
+			expect( C.Class.ResourceMetadata ).toBeDefined();
+			expect( Utils.isString( C.Class.ResourceMetadata ) ).toBe( true );
+
+			expect( C.Class.ResourceMetadata ).toBe( "https://carbonldp.com/ns/v1/platform#ResourceMetadata" );
+		});
+
 	});
 
 	describe( clazz(
@@ -185,7 +207,7 @@ describe( module(
 			expect( C.Predicate ).toBeDefined();
 			expect( Utils.isFunction( C.Predicate ) ).toBe( true );
 
-			expect( Object.keys( C.Predicate ).length ).toBe( 9 );
+			expect( Object.keys( C.Predicate ).length ).toBe( 12 );
 		});
 
 		it( hasProperty(
@@ -287,6 +309,39 @@ describe( module(
 			expect( Utils.isString( C.Predicate.targetMember ) ).toBe( true );
 
 			expect( C.Predicate.targetMember ).toBe( "https://carbonldp.com/ns/v1/platform#targetMember" );
+		});
+
+		it( hasProperty(
+			STATIC,
+			"resourceMetadata",
+			"string"
+		), ():void => {
+			expect( C.Predicate.resourceMetadata ).toBeDefined();
+			expect( Utils.isString( C.Predicate.resourceMetadata ) ).toBe( true );
+
+			expect( C.Predicate.resourceMetadata ).toBe( "https://carbonldp.com/ns/v1/platform#resourceMetadata" );
+		});
+
+		it( hasProperty(
+			STATIC,
+			"resource",
+			"string"
+		), ():void => {
+			expect( C.Predicate.resource ).toBeDefined();
+			expect( Utils.isString( C.Predicate.resource ) ).toBe( true );
+
+			expect( C.Predicate.resource ).toBe( "https://carbonldp.com/ns/v1/platform#resource" );
+		});
+
+		it( hasProperty(
+			STATIC,
+			"eTag",
+			"string"
+		), ():void => {
+			expect( C.Predicate.eTag ).toBeDefined();
+			expect( Utils.isString( C.Predicate.eTag ) ).toBe( true );
+
+			expect( C.Predicate.eTag ).toBe( "https://carbonldp.com/ns/v1/platform#eTag" );
 		});
 
 	});

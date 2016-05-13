@@ -378,6 +378,7 @@ declare module 'carbonldp/HTTP/Request' {
 	    static setPreferredInteractionModel(interactionModelURI: string, requestOptions: Options): Options;
 	    static setContainerRetrievalPreferences(preferences: ContainerRetrievalPreferences, requestOptions: Options, returnRepresentation?: boolean): Options;
 	    static setSlug(slug: string, requestOptions: Options): Options;
+	    static isOptions(object: Object): boolean;
 	}
 
 }
@@ -687,6 +688,8 @@ declare module 'carbonldp/NS/C' {
 	    static VolatileResource: string;
 	    static RDFRepresentation: string;
 	    static RemoveMemberAction: string;
+	    static ResponseMetadata: string;
+	    static ResourceMetadata: string;
 	}
 	export class Predicate {
 	    static accessPoint: string;
@@ -698,6 +701,9 @@ declare module 'carbonldp/NS/C' {
 	    static mediaType: string;
 	    static size: string;
 	    static targetMember: string;
+	    static resourceMetadata: string;
+	    static resource: string;
+	    static eTag: string;
 	}
 
 }
@@ -854,7 +860,10 @@ declare module 'carbonldp/RDF/RDFNode' {
 	}
 	export class Util {
 	    static areEqual(node1: Class, node2: Class): boolean;
+	    static hasType(node: Class, type: string): boolean;
+	    static getTypes(node: Class): string[];
 	    static getPropertyURI(node: Class, predicate: string): string;
+	    static getFreeNodes<T extends Object>(value: T): Class[];
 	}
 
 }
@@ -921,6 +930,7 @@ declare module 'carbonldp/RDF/URI' {
 	    static isAbsolute(uri: string): boolean;
 	    static isRelative(uri: string): boolean;
 	    static isBNodeID(uri: string): boolean;
+	    static generateBNodeID(): string;
 	    static isPrefixed(uri: string): boolean;
 	    static isFragmentOf(fragmentURI: string, uri: string): boolean;
 	    static isBaseOf(baseURI: string, uri: string): boolean;
@@ -988,6 +998,7 @@ declare module 'carbonldp/Resource' {
 	    static createFrom<T extends Object>(object: T, id?: string, types?: string[]): T & Class;
 	    static decorate<T extends Object>(object: T): T & Class;
 	}
+	export default Class;
 
 }
 declare module 'carbonldp/Fragment' {
@@ -1002,9 +1013,6 @@ declare module 'carbonldp/Fragment' {
 	    static create(document: Document.Class): Class;
 	    static createFrom<T extends Object>(object: T, id: string, document: Document.Class): T & Class;
 	    static createFrom<T extends Object>(object: T, document: Document.Class): T & Class;
-	}
-	export class Util {
-	    static generateID(): string;
 	}
 	export default Class;
 
@@ -1371,11 +1379,33 @@ declare module 'carbonldp/PersistedDocument' {
 	export default Class;
 
 }
+declare module 'carbonldp/RetrievalPreferences' {
+	export interface Class {
+	    orderBy?: OrderByProperty[];
+	    limit?: number;
+	    offset?: number;
+	}
+	export type orderByType = "numeric" | "string" | "boolean" | "dateTime";
+	export interface OrderByProperty {
+	    "@id": string;
+	    "@type"?: orderByType;
+	    "@language"?: string;
+	}
+	export class Factory {
+	    static is(object: Object): boolean;
+	}
+	export class Util {
+	    static stringifyRetrievalPreferences(retrievalPreferences: Class): string;
+	}
+	export default Class;
+
+}
 declare module 'carbonldp/LDP/PersistedContainer' {
 	import * as Document from 'carbonldp/Document';
 	import * as HTTP from 'carbonldp/HTTP';
 	import * as PersistedDocument from 'carbonldp/PersistedDocument';
 	import * as Pointer from 'carbonldp/Pointer';
+	import * as RetrievalPreferences from 'carbonldp/RetrievalPreferences';
 	export interface Class extends PersistedDocument.Class {
 	    addMember(member: Pointer.Class): Promise<HTTP.Response.Class>;
 	    addMember(memberURI: string): Promise<HTTP.Response.Class>;
@@ -1384,8 +1414,11 @@ declare module 'carbonldp/LDP/PersistedContainer' {
 	    createChild(slug: string): Promise<[Pointer.Class, HTTP.Response.Class]>;
 	    createChild(object: Object): Promise<[Pointer.Class, HTTP.Response.Class]>;
 	    createChild(): Promise<[Pointer.Class, HTTP.Response.Class]>;
-	    getChildren(): Promise<[Pointer.Class[], HTTP.Response.Class]>;
-	    getMembers(includeNonReadable?: boolean): Promise<[Pointer.Class[], HTTP.Response.Class]>;
+	    listChildren(): Promise<[Pointer.Class[], HTTP.Response.Class]>;
+	    getChildren(retrievalPreferences?: RetrievalPreferences.Class): Promise<[Pointer.Class[], HTTP.Response.Class]>;
+	    listMembers(includeNonReadable?: boolean): Promise<[Pointer.Class[], HTTP.Response.Class]>;
+	    getMembers(includeNonReadable?: boolean, retrievalPreferences?: RetrievalPreferences.Class): Promise<[Pointer.Class[], HTTP.Response.Class]>;
+	    getMembers(retrievalPreferences?: RetrievalPreferences.Class): Promise<[Pointer.Class[], HTTP.Response.Class]>;
 	    removeMember(member: Pointer.Class): Promise<HTTP.Response.Class>;
 	    removeMember(memberURI: string): Promise<HTTP.Response.Class>;
 	    removeMembers(members: (Pointer.Class | string)[]): Promise<HTTP.Response.Class>;
@@ -1419,6 +1452,53 @@ declare module 'carbonldp/LDP/RemoveMemberAction' {
 	export default Class;
 
 }
+declare module 'carbonldp/LDP/VolatileResource' {
+	import * as Resource from 'carbonldp/Resource';
+	export const RDF_CLASS: string;
+	export interface Class extends Resource.Class {
+	}
+	export class Factory {
+	    static is(object: Object): boolean;
+	    static hasRDFClass(object: Object): boolean;
+	}
+	export default Class;
+
+}
+declare module 'carbonldp/LDP/ResourceMetadata' {
+	import * as ObjectSchema from 'carbonldp/ObjectSchema';
+	import * as Pointer from 'carbonldp/Pointer';
+	import * as VolatileResource from 'carbonldp/LDP/VolatileResource';
+	export const RDF_CLASS: string;
+	export const SCHEMA: ObjectSchema.Class;
+	export interface Class extends VolatileResource.Class {
+	    eTag: string;
+	    resource: Pointer.Class;
+	}
+	export class Factory {
+	    static hasClassProperties(object: Object): boolean;
+	    static is(object: Object): boolean;
+	    static hasRDFClass(object: Object): boolean;
+	}
+	export default Class;
+
+}
+declare module 'carbonldp/LDP/ResponseMetadata' {
+	import * as ObjectSchema from 'carbonldp/ObjectSchema';
+	import * as ResourceMetadata from 'carbonldp/LDP/ResourceMetadata';
+	import * as VolatileResource from 'carbonldp/LDP/VolatileResource';
+	export const RDF_CLASS: string;
+	export const SCHEMA: ObjectSchema.Class;
+	export interface Class extends VolatileResource.Class {
+	    resourcesMetadata: ResourceMetadata.Class[];
+	}
+	export class Factory {
+	    static hasClassProperties(object: Object): boolean;
+	    static is(object: Object): boolean;
+	    static hasRDFClass(object: Object): boolean;
+	}
+	export default Class;
+
+}
 declare module 'carbonldp/LDP' {
 	import * as AddMemberAction from 'carbonldp/LDP/AddMemberAction';
 	import * as BasicContainer from 'carbonldp/LDP/BasicContainer';
@@ -1428,7 +1508,9 @@ declare module 'carbonldp/LDP' {
 	import * as PersistedContainer from 'carbonldp/LDP/PersistedContainer';
 	import * as RDFSource from 'carbonldp/LDP/RDFSource';
 	import * as RemoveMemberAction from 'carbonldp/LDP/RemoveMemberAction';
-	export { AddMemberAction, BasicContainer, Container, DirectContainer, IndirectContainer, PersistedContainer, RDFSource, RemoveMemberAction };
+	import * as ResponseMetadata from 'carbonldp/LDP/ResponseMetadata';
+	import * as ResourceMetadata from 'carbonldp/LDP/ResourceMetadata';
+	export { AddMemberAction, BasicContainer, Container, DirectContainer, IndirectContainer, PersistedContainer, RDFSource, RemoveMemberAction, ResponseMetadata, ResourceMetadata };
 
 }
 declare module 'carbonldp/AccessPoint' {
@@ -1442,6 +1524,27 @@ declare module 'carbonldp/AccessPoint' {
 	    static hasClassProperties(resource: Object): boolean;
 	    static create(membershipResource: Pointer.Class, hasMemberRelation: string | Pointer.Class, memberOfRelation?: string | Pointer.Class): Class;
 	    static createFrom<T extends Object>(object: T, membershipResource: Pointer.Class, hasMemberRelation: string | Pointer.Class, memberOfRelation?: string | Pointer.Class): T & Class;
+	}
+	export default Class;
+
+}
+declare module 'carbonldp/FreeResources' {
+	import Documents from 'carbonldp/Documents';
+	import * as Pointer from 'carbonldp/Pointer';
+	import * as Resource from 'carbonldp/Resource';
+	export interface Class extends Pointer.Library, Pointer.Validator {
+	    _documents: Documents;
+	    _resourcesIndex: Map<string, Resource.Class>;
+	    hasResource(id: string): boolean;
+	    getResource(id: string): Resource.Class;
+	    getResources(): Resource.Class[];
+	    createResource(id?: string): Resource.Class;
+	}
+	export class Factory {
+	    static hasClassProperties(object: Object): boolean;
+	    static create(documents: Documents): Class;
+	    static createFrom<T extends Object>(object: T, documents: Documents): T & Class;
+	    static decorate<T extends Object>(object: T): T & Class;
 	}
 	export default Class;
 
@@ -1465,7 +1568,8 @@ declare module 'carbonldp/Documents' {
 	import * as PersistedDocument from 'carbonldp/PersistedDocument';
 	import * as Pointer from 'carbonldp/Pointer';
 	import * as ObjectSchema from 'carbonldp/ObjectSchema';
-	import * as SPARQL from 'carbonldp/SPARQL'; class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Resolver {
+	import * as SPARQL from 'carbonldp/SPARQL';
+	import * as RetrievalPreferences from 'carbonldp/RetrievalPreferences'; class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Resolver {
 	    _jsonldConverter: JSONLDConverter.Class;
 	    jsonldConverter: JSONLDConverter.Class;
 	    private context;
@@ -1482,17 +1586,21 @@ declare module 'carbonldp/Documents' {
 	    createChild(parentURI: string, childDocument: Document.Class, requestOptions?: HTTP.Request.Options): Promise<[Pointer.Class, HTTP.Response.Class]>;
 	    createChild(parentURI: string, slug: string, childObject: Object, requestOptions?: HTTP.Request.Options): Promise<[Pointer.Class, HTTP.Response.Class]>;
 	    createChild(parentURI: string, childObject: Object, requestOptions?: HTTP.Request.Options): Promise<[Pointer.Class, HTTP.Response.Class]>;
-	    getChildren(parentURI: string, requestOptions?: HTTP.Request.Options): Promise<[Pointer.Class[], HTTP.Response.Class]>;
+	    listChildren(parentURI: string, requestOptions?: HTTP.Request.Options): Promise<[Pointer.Class[], HTTP.Response.Class]>;
+	    getChildren(parentURI: string, retrievalPreferences?: RetrievalPreferences.Class, requestOptions?: HTTP.Request.Options): Promise<[PersistedDocument.Class[], HTTP.Response.Class]>;
+	    getChildren(parentURI: string, requestOptions?: HTTP.Request.Options): Promise<[PersistedDocument.Class[], HTTP.Response.Class]>;
 	    createAccessPoint(documentURI: string, accessPoint: AccessPoint.Class, slug?: string, requestOptions?: HTTP.Request.Options): Promise<[Pointer.Class, HTTP.Response.Class]>;
 	    createAccessPoint(accessPoint: AccessPoint.Class, slug?: string, requestOptions?: HTTP.Request.Options): Promise<[Pointer.Class, HTTP.Response.Class]>;
 	    upload(parentURI: string, slug: string, data: Buffer, requestOptions?: HTTP.Request.Options): Promise<[Pointer.Class, HTTP.Response.Class]>;
 	    upload(parentURI: string, data: Buffer, requestOptions?: HTTP.Request.Options): Promise<[Pointer.Class, HTTP.Response.Class]>;
 	    upload(parentURI: string, slug: string, data: Blob, requestOptions?: HTTP.Request.Options): Promise<[Pointer.Class, HTTP.Response.Class]>;
 	    upload(parentURI: string, data: Blob, requestOptions?: HTTP.Request.Options): Promise<[Pointer.Class, HTTP.Response.Class]>;
-	    getMembers(uri: string, includeNonReadable: boolean, requestOptions: HTTP.Request.Options): Promise<[Pointer.Class[], HTTP.Response.Class]>;
-	    getMembers(uri: string, includeNonReadable: boolean): Promise<[Pointer.Class[], HTTP.Response.Class]>;
-	    getMembers(uri: string, requestOptions: HTTP.Request.Options): Promise<[Pointer.Class[], HTTP.Response.Class]>;
-	    getMembers(uri: string): Promise<[Pointer.Class[], HTTP.Response.Class]>;
+	    listMembers(uri: string, includeNonReadable?: boolean, requestOptions?: HTTP.Request.Options): Promise<[Pointer.Class[], HTTP.Response.Class]>;
+	    listMembers(uri: string, requestOptions?: HTTP.Request.Options): Promise<[Pointer.Class[], HTTP.Response.Class]>;
+	    getMembers(uri: string, includeNonReadable?: boolean, retrievalPreferences?: RetrievalPreferences.Class, requestOptions?: HTTP.Request.Options): Promise<[PersistedDocument.Class[], HTTP.Response.Class]>;
+	    getMembers(uri: string, includeNonReadable?: boolean, requestOptions?: HTTP.Request.Options): Promise<[PersistedDocument.Class[], HTTP.Response.Class]>;
+	    getMembers(uri: string, retrievalPreferences?: RetrievalPreferences.Class, requestOptions?: HTTP.Request.Options): Promise<[PersistedDocument.Class[], HTTP.Response.Class]>;
+	    getMembers(uri: string, requestOptions?: HTTP.Request.Options): Promise<[PersistedDocument.Class[], HTTP.Response.Class]>;
 	    addMember(documentURI: string, member: Pointer.Class, requestOptions?: HTTP.Request.Options): Promise<HTTP.Response.Class>;
 	    addMember(documentURI: string, memberURI: string, requestOptions?: HTTP.Request.Options): Promise<HTTP.Response.Class>;
 	    addMembers(documentURI: string, members: (Pointer.Class | string)[], requestOptions?: HTTP.Request.Options): Promise<HTTP.Response.Class>;
@@ -1520,10 +1628,16 @@ declare module 'carbonldp/Documents' {
 	    private getDigestedObjectSchemaForExpandedObject(expandedObject);
 	    private getDigestedObjectSchemaForDocument(document);
 	    private getDigestedObjectSchema(objectTypes);
-	    private getExpandedObjectTypes(expandedObject);
 	    private getDocumentTypes(document);
 	    private updateObject(target, source);
 	    private getAssociatedFragment(persistedDocument, fragment);
+	    private getRequestURI(uri);
+	    private setDefaultRequestOptions(requestOptions, interactionModel);
+	    private getPersistedDocument(rdfDocument, response);
+	    private createPersistedDocument(documentPointer, documentResource, fragmentResources);
+	    private updatePersistedDocument(persistedDocument, documentResource, fragmentResources);
+	    private sendRequestForResponseWithMetadata(uri, requestOptions);
+	    private getFreeResources(nodes);
 	}
 	export default Documents;
 

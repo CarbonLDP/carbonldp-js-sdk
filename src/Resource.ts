@@ -49,3 +49,5 @@ export class Factory {
 		return <any> object;
 	}
 }
+
+export default Class;

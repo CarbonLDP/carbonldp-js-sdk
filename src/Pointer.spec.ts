@@ -44,22 +44,37 @@ describe( module( "Carbon/Pointer" ), ():void => {
 			expect( Pointer.Factory.hasClassProperties ).toBeDefined();
 			expect( Utils.isFunction( Pointer.Factory.hasClassProperties ) ).toBe( true );
 
-			let pointer:Object = undefined;
-			expect( Pointer.Factory.hasClassProperties( pointer ) ).toBe( false );
-			pointer = {};
+			let pointer:any = undefined;
 			expect( Pointer.Factory.hasClassProperties( pointer ) ).toBe( false );
 
-			pointer["_id"] = null;
-			expect( Pointer.Factory.hasClassProperties( pointer ) ).toBe( false );
-			pointer["_resolved"] = null;
-			expect( Pointer.Factory.hasClassProperties( pointer ) ).toBe( false );
-			pointer["id"] = null;
-			expect( Pointer.Factory.hasClassProperties( pointer ) ).toBe( false );
-			pointer["isResolved"] = () => null;
-			expect( Pointer.Factory.hasClassProperties( pointer ) ).toBe( false );
-			pointer["resolve"] = () => null;
-
+			pointer = {
+				_id: null,
+				_resolved: null,
+				id: null,
+				isResolved: () => {},
+				resolve: () => {},
+			};
 			expect( Pointer.Factory.hasClassProperties( pointer ) ).toBe( true );
+
+			delete pointer._id;
+			expect( Pointer.Factory.hasClassProperties( pointer ) ).toBe( false );
+			pointer._id = null;
+
+			delete pointer._resolved;
+			expect( Pointer.Factory.hasClassProperties( pointer ) ).toBe( false );
+			pointer._resolved = null;
+
+			delete pointer.id;
+			expect( Pointer.Factory.hasClassProperties( pointer ) ).toBe( false );
+			pointer.id = null;
+
+			delete pointer.isResolved;
+			expect( Pointer.Factory.hasClassProperties( pointer ) ).toBe( false );
+			pointer.isResolved = () => null;
+
+			delete pointer.resolve;
+			expect( Pointer.Factory.hasClassProperties( pointer ) ).toBe( false );
+			pointer.resolve = () => null;
 		});
 
 		it( hasMethod(

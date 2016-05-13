@@ -10,6 +10,7 @@ export declare class Util {
     static isAbsolute(uri: string): boolean;
     static isRelative(uri: string): boolean;
     static isBNodeID(uri: string): boolean;
+    static generateBNodeID(): string;
     static isPrefixed(uri: string): boolean;
     static isFragmentOf(fragmentURI: string, uri: string): boolean;
     static isBaseOf(baseURI: string, uri: string): boolean;

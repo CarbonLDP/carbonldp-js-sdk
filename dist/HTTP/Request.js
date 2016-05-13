@@ -217,6 +217,12 @@ var Util = (function () {
         slugHeader.values.push(new Header.Value(slug));
         return requestOptions;
     };
+    Util.isOptions = function (object) {
+        return Utils.hasPropertyDefined(object, "headers")
+            || Utils.hasPropertyDefined(object, "sendCredentialsOnCORS")
+            || Utils.hasPropertyDefined(object, "timeout")
+            || Utils.hasPropertyDefined(object, "request");
+    };
     return Util;
 }());
 exports.Util = Util;
