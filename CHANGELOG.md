@@ -1,5 +1,16 @@
+# 0.32.0 (May 13, 2016)
+- [LDP-631](https://jira.base22.com/browse/LDP-631) Retrieve document members and/or children in the same request
+    - Added `persistedDocument.getMembers()` method
+    - Added `persistedDocument.getChildren()` method
+- [LDP-634](https://jira.base22.com/browse/LDP-634) Create fragments/namedFragments from an object with nested objects
+- [LDP-635](https://jira.base22.com/browse/LDP-635) Use the app's default vocabulary for unknown properties (not defined in the objectSchema)
+
+#### Breaking Changes
+- `persistedDocument.getMembers()` has been renamed to `persistedDocument.listMembers()`
+- `persistedDocument.getChildren()` has been renamed to `persistedDocument.listChildren()`
+
 # 0.31.0 (May 4th, 2016) :rocket::star:
-- [LDP-608](https://jira.base22.com/browse/LDP-498) Initial support for Node.js
+- [LDP-608](https://jira.base22.com/browse/LDP-608) Initial support for Node.js
 
 # 0.30.0 (April 28, 2016)
 - [LDP-498](https://jira.base22.com/browse/LDP-498)

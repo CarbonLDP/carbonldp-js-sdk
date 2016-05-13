@@ -41,13 +41,16 @@ describe( module( "Carbon/Resource" ), ():void => {
 			expect( Resource.Factory.hasClassProperties ).toBeDefined();
 			expect( Utils.isFunction( Resource.Factory.hasClassProperties ) ).toBe( true );
 
-			let resource:Object = undefined;
+			let resource:any = undefined;
 			expect( Resource.Factory.hasClassProperties( resource ) ).toBe( false );
-			resource = {};
-			expect( Resource.Factory.hasClassProperties( resource ) ).toBe( false );
-
-			resource["types"] = null;
+			resource = {
+				types: null,
+			};
 			expect( Resource.Factory.hasClassProperties( resource ) ).toBe( true );
+
+			delete resource.types;
+			expect( Resource.Factory.hasClassProperties( resource ) ).toBe( false );
+			resource.types = null;
 		});
 
 		it( hasMethod(

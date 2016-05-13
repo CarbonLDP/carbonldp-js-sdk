@@ -14,6 +14,8 @@ export class Class {
 	static get VolatileResource():string { return namespace + "VolatileResource"; }
 	static get RDFRepresentation():string { return namespace + "RDFRepresentation"; }
 	static get RemoveMemberAction():string { return namespace + "RemoveMemberAction"; }
+	static get ResponseMetadata():string { return namespace + "ResponseMetadata"; }
+	static get ResourceMetadata():string { return namespace + "ResourceMetadata"; }
 }
 
 export class Predicate {
@@ -26,4 +28,7 @@ export class Predicate {
 	static get mediaType():string { return namespace + "mediaType"; }
 	static get size():string { return namespace + "size"; }
 	static get targetMember():string { return namespace + "targetMember"; }
+	static get resourceMetadata():string { return namespace + "resourceMetadata"; }
+	static get resource():string { return namespace + "resource"; }
+	static get eTag():string { return namespace + "eTag"; }
 }

@@ -19,13 +19,21 @@ function createChild(slugOrObject, object) {
         return this._documents.createChild(this.id, object);
     }
 }
-function getChildren() {
+function listChildren() {
     var that = this;
-    return this._documents.getChildren(that.id);
+    return this._documents.listChildren(that.id);
 }
-function getMembers(includeNonReadable) {
+function getChildren(retrievalPreferences) {
+    var that = this;
+    return this._documents.getChildren(that.id, retrievalPreferences);
+}
+function listMembers(includeNonReadable) {
     if (includeNonReadable === void 0) { includeNonReadable = true; }
-    return this._documents.getMembers(this.id, includeNonReadable);
+    return this._documents.listMembers(this.id, includeNonReadable);
+}
+function getMembers(nonReadRetPref, retrievalPreferences) {
+    if (nonReadRetPref === void 0) { nonReadRetPref = true; }
+    return this._documents.getMembers(this.id, nonReadRetPref, retrievalPreferences);
 }
 function removeMember(memberOrUri) {
     var that = this;
@@ -54,10 +62,13 @@ var Factory = (function () {
     function Factory() {
     }
     Factory.hasClassProperties = function (document) {
-        return Utils.hasFunction(document, "addMember")
+        return Utils.isObject(document)
+            && Utils.hasFunction(document, "addMember")
             && Utils.hasFunction(document, "addMembers")
             && Utils.hasFunction(document, "createChild")
+            && Utils.hasFunction(document, "listChildren")
             && Utils.hasFunction(document, "getChildren")
+            && Utils.hasFunction(document, "listMembers")
             && Utils.hasFunction(document, "getMembers")
             && Utils.hasFunction(document, "removeMember")
             && Utils.hasFunction(document, "removeMembers")
@@ -86,11 +97,23 @@ var Factory = (function () {
                 configurable: true,
                 value: createChild,
             },
+            "listChildren": {
+                writable: false,
+                enumerable: false,
+                configurable: true,
+                value: listChildren,
+            },
             "getChildren": {
                 writable: false,
                 enumerable: false,
                 configurable: true,
                 value: getChildren,
+            },
+            "listMembers": {
+                writable: false,
+                enumerable: false,
+                configurable: true,
+                value: listMembers,
             },
             "getMembers": {
                 writable: false,

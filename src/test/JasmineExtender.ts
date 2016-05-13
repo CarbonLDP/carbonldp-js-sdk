@@ -405,17 +405,32 @@ if ( typeof XMLHttpRequest === "undefined" ) {
 
 		function updateRequests( req:any, interceptor:any  ) {
 			requests.push( {
-				url: interceptor.uri,
+				url: req.path,
 				method: interceptor.method,
 				requestHeaders: req.headers,
 			} );
 		}
+
 
 		function requestMostRecent() {
 			return requests[ requests.length - 1 ];
 		}
 		function requestAt ( index ) {
 			return requests[ index ];
+		}
+		function requestFilter( urlToMatch: string | RegExp | Function ):any[] {
+			let results:any[] = [];
+
+			for ( let request of requests ) {
+				let url = request.url;
+				if (   urlToMatch instanceof RegExp && urlToMatch.test( url )
+					|| urlToMatch instanceof Function && (<Function> urlToMatch)( request )
+					|| urlToMatch === url ) {
+					results.push( request );
+				}
+			}
+
+			return results;
 		}
 
 		return {
@@ -425,6 +440,7 @@ if ( typeof XMLHttpRequest === "undefined" ) {
 			requests: {
 				mostRecent: requestMostRecent,
 				at: requestAt,
+				filter: requestFilter,
 			},
 		};
 	})();

@@ -76,19 +76,15 @@ function createFragment(slugOrObject, object) {
     var slug = Utils.isString(slugOrObject) ? slugOrObject : null;
     object = Utils.isString(slugOrObject) ? object : slugOrObject;
     object = object || {};
-    var id;
     if (slug) {
         if (!RDF.URI.Util.isBNodeID(slug))
             return document.createNamedFragment(slug, object);
-        id = slug;
-        if (this._fragmentsIndex.has(id))
+        if (this._fragmentsIndex.has(slug))
             throw new Errors.IDAlreadyInUseError("The slug provided is already being used by a fragment.");
     }
-    else {
-        id = Fragment.Util.generateID();
-    }
-    var fragment = Fragment.Factory.createFrom(object, id, document);
-    document._fragmentsIndex.set(id, fragment);
+    var fragment = Fragment.Factory.createFrom(object, slug, document);
+    document._fragmentsIndex.set(fragment.id, fragment);
+    convertNestedObjects(document, fragment);
     return fragment;
 }
 function createNamedFragment(slug, object) {
@@ -107,6 +103,7 @@ function createNamedFragment(slug, object) {
         throw new Errors.IDAlreadyInUseError("The slug provided is already being used by a fragment.");
     var fragment = NamedFragment.Factory.createFrom(object, slug, document);
     document._fragmentsIndex.set(slug, fragment);
+    convertNestedObjects(document, fragment);
     return fragment;
 }
 function removeFragment(fragmentOrSlug) {
@@ -266,7 +263,7 @@ function convertNestedObjects(parent, actual) {
             convertNestedObjects(parent, next);
             continue;
         }
-        if (!Utils.isPlainObject(next))
+        if (!Utils.isPlainObject(next) || Pointer.Factory.is(next))
             continue;
         idOrSlug = ("id" in next) ? next.id : (("slug" in next) ? next.slug : "");
         if (!parent.inScope(idOrSlug))

@@ -57,11 +57,17 @@ describe( module( "Carbon/LDP/DirectContainer" ), ():void => {
 			expect( DirectContainer.Factory.hasClassProperties ).toBeDefined();
 			expect( Utils.isFunction( DirectContainer.Factory.hasClassProperties ) ).toBe( true );
 
-			let object:any = {};
+			let object:any;
 			expect( DirectContainer.Factory.hasClassProperties( object ) ).toBe( false );
-			
-			object.membershipResource =  "http://example.com/myNamespace#some-relation";
+
+			object = {
+				membershipResource: null,
+			};
 			expect( DirectContainer.Factory.hasClassProperties( object ) ).toBe( true );
+
+			delete object.membershipResource;
+			expect( DirectContainer.Factory.hasClassProperties( object ) ).toBe( false );
+			object.membershipResource = null;
 		});
 
 		it( hasMethod(

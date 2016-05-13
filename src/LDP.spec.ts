@@ -5,7 +5,7 @@ import {
 	module,
 
 	isDefined,
-	reexports
+	reexports,
 } from "./test/JasmineExtender";
 import * as Utils from "./Utils";
 
@@ -17,6 +17,8 @@ import * as IndirectContainer from "./LDP/IndirectContainer";
 import * as PersistedContainer from "./LDP/PersistedContainer";
 import * as RDFSource from "./LDP/RDFSource";
 import * as RemoveMemberAction from "./LDP/RemoveMemberAction";
+import * as ResponseMetadata from "./LDP/ResponseMetadata";
+import * as ResourceMetadata from "./LDP/ResourceMetadata";
 
 import * as LDP from "./LDP";
 
@@ -97,6 +99,24 @@ describe( module( "Carbon/LDP" ), ():void => {
 	), ():void => {
 		expect( LDP.RemoveMemberAction ).toBeDefined();
 		expect( LDP.RemoveMemberAction ).toBe( RemoveMemberAction );
+	});
+
+	it( reexports(
+		STATIC,
+		"ResponseMetadata",
+		"Carbon/LDP/ResponseMetadata"
+	), ():void => {
+		expect( LDP.ResponseMetadata ).toBeDefined();
+		expect( LDP.ResponseMetadata ).toBe( ResponseMetadata );
+	});
+
+	it( reexports(
+		STATIC,
+		"ResourceMetadata",
+		"Carbon/LDP/ResourceMetadata"
+	), ():void => {
+		expect( LDP.ResourceMetadata ).toBeDefined();
+		expect( LDP.ResourceMetadata ).toBe( ResourceMetadata );
 	});
 
 });

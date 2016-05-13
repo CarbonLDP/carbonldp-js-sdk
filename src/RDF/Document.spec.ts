@@ -158,8 +158,7 @@ describe( module( "Carbon/RDF/Document" ), ():void => {
 			});
 
 			it( hasSignature(
-				"Returns an array of documents from an array of resources or documents.\n" +
-				"Throw an `Carbon.Errors.IllegalArgumentError` if the objects are not RDF like", [
+				"Returns the objects that represents a RDF Document of an array of RDF like objects.", [
 					{ name: "objects", type: "Object[]" }
 				],
 				{ type: "Carbon.RDF.Document.Class[]" }
@@ -175,22 +174,17 @@ describe( module( "Carbon/RDF/Document" ), ():void => {
 				expect( documents.length ).toBe( 3 );
 				expect( documents[ 0 ] ).toEqual( document );
 
-				documents = RDFDocument.Util.getDocuments( [ node, fragment, bNode ] );
+				documents = RDFDocument.Util.getDocuments( [ node, fragment, bNode, document ] );
 				expect( Utils.isArray( documents ) ).toBe( true );
 				expect( documents.length ).toBe( 1 );
-				expect( RDFDocument.Factory.is( documents[ 0 ] ) ).toBe( true );
-				expect( documents[ 0 ][ "@graph" ] ).toBeDefined();
-				expect( Utils.isArray( documents[ 0 ][ "@graph" ] ) ).toBe( true );
-				expect( documents[ 0 ][ "@graph" ].length ).toBe( 3 );
-				expect( documents[ 0 ][ "@graph" ] ).toEqual( [ node, fragment, bNode ] );
+				expect( documents[ 0 ] ).toBe( document );
 
-				expect( RDFDocument.Util.getDocuments.bind( null, [ {},  {},  {} ] ) ).toThrowError( Errors.IllegalArgumentError );
-				expect( RDFDocument.Util.getDocuments.bind( null, [ null, null, null ] ) ).toThrowError( Errors.IllegalArgumentError );
+				expect( RDFDocument.Util.getDocuments( [ {},  {},  {} ] ) ).toEqual( [] );
+				expect( RDFDocument.Util.getDocuments( [ null, null, null ] ) ).toEqual( [] );
 			});
 
 			it( hasSignature(
-				"Returns an array of documents from a document or resource.\n" +
-				"Throw an `Carbon.Errors.IllegalArgumentError` if the object is not RDF like", [
+				"Returns an array of with the object provided, if it is an RDF Document.", [
 					{ name: "object", type: "Object"}
 				],
 				{ type: "Carbon.RDF.Document.Class[]" }
@@ -210,14 +204,10 @@ describe( module( "Carbon/RDF/Document" ), ():void => {
 
 				documents = RDFDocument.Util.getDocuments( node );
 				expect( Utils.isArray( documents ) ).toBe( true );
-				expect( documents.length ).toBe( 1 );
-				expect( documents[ 0 ][ "@graph" ] ).toBeDefined();
-				expect( Utils.isArray( documents[ 0 ][ "@graph" ] ) ).toBe( true );
-				expect( documents[ 0 ][ "@graph" ].length ).toBe( 1 );
-				expect( documents[ 0 ]["@graph"][ 0 ] ).toEqual( node );
+				expect( documents.length ).toBe( 0 );
 
-				expect( RDFDocument.Util.getDocuments.bind( null, {} ) ).toThrowError( Errors.IllegalArgumentError );
-				expect( RDFDocument.Util.getDocuments.bind( null, null ) ).toThrowError( Errors.IllegalArgumentError );
+				expect( RDFDocument.Util.getDocuments( {} ) ).toEqual( [] );
+				expect( RDFDocument.Util.getDocuments( null ) ).toEqual( [] );
 			});
 
 		});
@@ -233,8 +223,7 @@ describe( module( "Carbon/RDF/Document" ), ():void => {
 			});
 
 			it( hasSignature(
-				"Returns all the resources from a array of documents or resources.\n" +
-				"Throw an `Carbon.Errors.IllegalArgumentError` if the objects are not RDF like", [
+				"Returns all the resources that not are RDF Documents from the array of RDF like objects provided.", [
 					{ name: "objects", type: "Object[]" }
 				],
 				{ type: "Carbon.RDF.RDFNode.Class" }
@@ -259,13 +248,12 @@ describe( module( "Carbon/RDF/Document" ), ():void => {
 				expect( nodes[ 0 ] ).toEqual( node );
 				expect( RDFNode.Util.areEqual( nodes[ 0 ], node ) ).toBe( true );
 
-				expect( RDFDocument.Util.getResources.bind( null, [ {}, {}] ) ).toThrowError( Errors.IllegalArgumentError );
-				expect( RDFDocument.Util.getResources.bind( null, [ null, null ] ) ).toThrowError( Errors.IllegalArgumentError );
+				expect( RDFDocument.Util.getResources( [ {}, {}] ) ).toEqual( [] );
+				expect( RDFDocument.Util.getResources( [ null, null ] ) ).toEqual( [] );
 			});
 
 			it( hasSignature(
-				"Returns all the resources from a document or resource.\n" +
-				"Throw an `Carbon.Errors.IllegalArgumentError` if the object is not RDF like", [
+				"Returns all the resources that not are RDF Documents from the RDF like object provided.", [
 					{ name: "object", type: "Object" }
 				],
 				{ type: "Carbon.RDF.RDFNode.Class" }
@@ -285,13 +273,10 @@ describe( module( "Carbon/RDF/Document" ), ():void => {
 
 				nodes = RDFDocument.Util.getResources( node );
 				expect( Utils.isArray( nodes ) ).toBe( true );
-				expect( nodes.length ).toBe( 1 );
-				expect( RDFNode.Factory.is( nodes[ 0 ] ) ).toBe( true );
-				expect( nodes[ 0 ] ).toEqual( node );
-				expect( RDFNode.Util.areEqual( nodes[ 0 ], node ) ).toBe( true );
+				expect( nodes.length ).toBe( 0 );
 
-				expect( RDFDocument.Util.getResources.bind( null, {} ) ).toThrowError( Errors.IllegalArgumentError );
-				expect( RDFDocument.Util.getResources.bind( null, null ) ).toThrowError( Errors.IllegalArgumentError );
+				expect( RDFDocument.Util.getResources( {} ) ).toEqual( [] );
+				expect( RDFDocument.Util.getResources( null ) ).toEqual( [] );
 			});
 
 		});
@@ -307,8 +292,7 @@ describe( module( "Carbon/RDF/Document" ), ():void => {
 			});
 
 			it( hasSignature(
-				"Returns all the resources that refers to documents from a document.\n" +
-				"Throw an `Carbon.Errors.IllegalArgumentError` if the object is not RDF like", [
+				"Returns all the resources that refers to documents from a document.", [
 					{ name: "document", type: "Carbon.RDF.Document.Class" }
 				],
 				{ type: "Carbon.RDF.RDFNode.Class[]" }
@@ -320,14 +304,13 @@ describe( module( "Carbon/RDF/Document" ), ():void => {
 				expect( documentResources.length ).toBe( 1 );
 				expect( documentResources ).toEqual( [ node ] );
 
-				expect( RDFDocument.Util.getDocumentResources.bind( null, {} ) ).toThrowError( Errors.IllegalArgumentError );
-				expect( RDFDocument.Util.getDocumentResources.bind( null, null ) ).toThrowError( Errors.IllegalArgumentError );
+				expect( RDFDocument.Util.getDocumentResources( <any> {} ) ).toEqual( [] );
+				expect( RDFDocument.Util.getDocumentResources( null ) ).toEqual( [] );
 
 			});
 
 			it( hasSignature(
-				"Returns all the resources that refers to documents from an array of resources.\n" +
-				"Throw an `Carbon.Errors.IllegalArgumentError` if the object is not RDF like", [
+				"Returns all the resources that refers to documents from an array of resources.", [
 					{ name: "document", type: "Carbon.RDF.RDFNode.Class[]" }
 				],
 				{ type: "Carbon.RDF.RDFNode.Class[]" }
@@ -339,8 +322,8 @@ describe( module( "Carbon/RDF/Document" ), ():void => {
 				expect( documentResources.length ).toBe( 2 );
 				expect( documentResources ).toEqual( [ node, node ] );
 
-				expect( RDFDocument.Util.getDocumentResources.bind( null, [ {}, {} ] ) ).toThrowError( Errors.IllegalArgumentError );
-				expect( RDFDocument.Util.getDocumentResources.bind( null, [ null, null ] ) ).toThrowError( Errors.IllegalArgumentError );
+				expect( RDFDocument.Util.getDocumentResources( <any> [ {}, {} ] ) ).toEqual( [] );
+				expect( RDFDocument.Util.getDocumentResources( [ null, null ] ) ).toEqual( [] );
 			});
 
 		});
@@ -357,8 +340,7 @@ describe( module( "Carbon/RDF/Document" ), ():void => {
 
 			it( hasSignature(
 				"Returns all the resources that refers to fragments from a document. " +
-				"If documentResource is provided, it will return the fragments of the specified document.\n" +
-				"Throw an `Carbon.Errors.IllegalArgumentError` if the object is not RDF like", [
+				"If documentResource is provided, it will return the fragments of the specified document.", [
 					{ name: "document", type: "Carbon.RDF.Document.Class" },
 					{ name: "documentResource", type: "Carbon.RDF.RDFNode.Class", optional: true }
 				],
@@ -404,14 +386,13 @@ describe( module( "Carbon/RDF/Document" ), ():void => {
 				expect( fragmentResources.length ).toBe( 0 );
 
 
-				expect( RDFDocument.Util.getFragmentResources.bind( null, {} ) ).toThrowError( Errors.IllegalArgumentError );
-				expect( RDFDocument.Util.getFragmentResources.bind( null, null ) ).toThrowError( Errors.IllegalArgumentError );
+				expect( RDFDocument.Util.getFragmentResources( <any> {} ) ).toEqual( [] );
+				expect( RDFDocument.Util.getFragmentResources( null ) ).toEqual( [] );
 			});
 
 			it( hasSignature(
 				"Returns all the resources that refers to fragments from a document. " +
-				"If documentResourceURI is provided, it will return the fragments of the specified URI.\n" +
-				"Throw an `Carbon.Errors.IllegalArgumentError` if the object is not RDF like", [
+				"If documentResourceURI is provided, it will return the fragments of the specified URI.", [
 					{ name: "document", type: "Carbon.RDF.Document.Class" },
 					{ name: "documentResourceURI", type: "string", optional: true }
 				],
@@ -452,15 +433,14 @@ describe( module( "Carbon/RDF/Document" ), ():void => {
 				expect( fragmentResources.length ).toBe( 0 );
 
 
-				expect( RDFDocument.Util.getFragmentResources.bind( null, {} ) ).toThrowError( Errors.IllegalArgumentError );
-				expect( RDFDocument.Util.getFragmentResources.bind( null, null ) ).toThrowError( Errors.IllegalArgumentError );
+				expect( RDFDocument.Util.getFragmentResources( <any> {} ) ).toEqual( [] );
+				expect( RDFDocument.Util.getFragmentResources( null ) ).toEqual( [] );
 			});
 
 
 			it( hasSignature(
 				"Returns all the resources that refers to fragments from an array of resources. " +
-				"If documentResource is provided, it will return the fragments of the specified document.\n" +
-				"Throw an `Carbon.Errors.IllegalArgumentError` if the object is not RDF like", [
+				"If documentResource is provided, it will return the fragments of the specified document.", [
 					{ name: "document", type: "Carbon.RDF.Document.Class" },
 					{ name: "documentResource", type: "Carbon.RDF.RDFNode.Class", optional: true }
 				],
@@ -499,14 +479,13 @@ describe( module( "Carbon/RDF/Document" ), ():void => {
 				expect( fragmentResources.length ).toBe( 0 );
 
 
-				expect( RDFDocument.Util.getFragmentResources.bind( null, [ {}, {} ] ) ).toThrowError( Errors.IllegalArgumentError );
-				expect( RDFDocument.Util.getFragmentResources.bind( null, [ null, null ] ) ).toThrowError( Errors.IllegalArgumentError );
+				expect( RDFDocument.Util.getFragmentResources( <any> [ {}, {} ] ) ).toEqual( [] );
+				expect( RDFDocument.Util.getFragmentResources( [ null, null ] ) ).toEqual( [] );
 			});
 
 			it( hasSignature(
 				"Returns all the resources that refers to fragments from a document. " +
-				"If documentResourceURI is provided, it will return the fragments of the specified URI.\n" +
-				"Throw an `Carbon.Errors.IllegalArgumentError` if the object is not RDF like", [
+				"If documentResourceURI is provided, it will return the fragments of the specified URI.", [
 					{ name: "document", type: "Carbon.RDF.Document.Class" },
 					{ name: "documentResourceURI", type: "string", optional: true }
 				],
@@ -542,8 +521,8 @@ describe( module( "Carbon/RDF/Document" ), ():void => {
 				expect( fragmentResources.length ).toBe( 0 );
 
 
-				expect( RDFDocument.Util.getFragmentResources.bind( null, [ {}, {} ] ) ).toThrowError( Errors.IllegalArgumentError );
-				expect( RDFDocument.Util.getFragmentResources.bind( null, [ null, null ] ) ).toThrowError( Errors.IllegalArgumentError );
+				expect( RDFDocument.Util.getFragmentResources( <any> [ {}, {} ] ) ).toEqual( [] );
+				expect( RDFDocument.Util.getFragmentResources( [ null, null ] ) ).toEqual( [] );
 			});
 
 		});
@@ -551,8 +530,7 @@ describe( module( "Carbon/RDF/Document" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"getBNodeResources",
-			"Returns all the resources that refers to blank nodes from a document.\n" +
-			"Throw an `Carbon.Errors.IllegalArgumentError` if the object is not RDF like", [
+			"Returns all the resources that refers to blank nodes from a document.", [
 				{ name: "document", type: "Carbon.RDF.Document.Class" }
 			],
 			{ type: "Carbon.RDF.RDFNode.Class[]" }
@@ -567,8 +545,8 @@ describe( module( "Carbon/RDF/Document" ), ():void => {
 			expect( bNodeResources.length ).toBe( 1 );
 			expect( bNodeResources[ 0 ] ).toEqual( bNode );
 
-			expect( RDFDocument.Util.getBNodeResources.bind( null, {} ) ).toThrowError( Errors.IllegalArgumentError );
-			expect( RDFDocument.Util.getBNodeResources.bind( null, null ) ).toThrowError( Errors.IllegalArgumentError );
+			expect( RDFDocument.Util.getBNodeResources( <any> {} ) ).toEqual( [] );
+			expect( RDFDocument.Util.getBNodeResources( null ) ).toEqual( [] );
 		});
 
 	});

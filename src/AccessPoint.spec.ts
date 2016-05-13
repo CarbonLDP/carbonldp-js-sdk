@@ -54,10 +54,16 @@ describe( module( "Carbon/AccessPoints" ), ():void => {
 			expect( AccessPoint.Factory.hasClassProperties ).toBeDefined();
 			expect( Utils.isFunction( AccessPoint.Factory.hasClassProperties ) ).toBe( true );
 
-			let object:any = {};
+			let object:any;
 			expect( AccessPoint.Factory.hasClassProperties( object ) ).toBe( false );
-			object.membershipResource = "http://some-membership-resource.com";
+
+			object = {
+				membershipResource: null
+			};
 			expect( AccessPoint.Factory.hasClassProperties( object ) ).toBe( true );
+
+			delete  object.membershipResource;
+			expect( AccessPoint.Factory.hasClassProperties( object ) ).toBe( false );
 		} );
 
 		it( hasMethod(
