@@ -3,49 +3,89 @@ var Errors = require("./Errors");
 var Header = require("./Header");
 var Method_1 = require("./Method");
 var Response_1 = require("./Response");
-var ErrorResponse = require("./../LDP/ErrorResponse");
 var Utils = require("./../Utils");
-function setHeaders(request, headers) {
+function forEachHeaders(headers, setHeader) {
     var namesIterator = headers.keys();
     var next = namesIterator.next();
     while (!next.done) {
         var name_1 = next.value;
         var value = headers.get(name_1);
-        request.setRequestHeader(name_1, value.toString());
+        setHeader(name_1, value.toString());
         next = namesIterator.next();
     }
 }
-function onLoad(resolve, reject, request) {
-    return function () {
-        var response = new Response_1.default(request);
-        if (request.status >= 200 && request.status <= 299) {
-            resolve(response);
+function onResolve(resolve, reject, response) {
+    if (response.status >= 200 && response.status <= 299) {
+        resolve(response);
+    }
+    else if (response.status >= 400 && response.status < 600 && Errors.statusCodeMap.has(response.status)) {
+        var error = Errors.statusCodeMap.get(response.status);
+        reject(new error("", response));
+    }
+    else {
+        reject(new Errors.UnknownError(response.data, response));
+    }
+}
+function sendWithBrowser(method, url, body, options) {
+    return new Promise(function (resolve, reject) {
+        var request = options.request ? options.request : new XMLHttpRequest();
+        request.open(method, url, true);
+        if (options.headers)
+            forEachHeaders(options.headers, function (name, value) { return request.setRequestHeader(name, value); });
+        request.withCredentials = options.sendCredentialsOnCORS;
+        if (options.timeout)
+            request.timeout = options.timeout;
+        request.onload = request.onerror = function () {
+            var response = new Response_1.default(request);
+            onResolve(resolve, reject, response);
+        };
+        if (body) {
+            request.send(body);
         }
         else {
-            rejectRequest(reject, request);
+            request.send();
         }
-    };
+    });
 }
-function onError(reject, request) {
-    return function () {
-        rejectRequest(reject, request);
-    };
+function sendWithNode(method, url, body, options) {
+    return new Promise(function (resolve, reject) {
+        var URL = require("url");
+        var parsedURL = URL.parse(url);
+        var HTTP = parsedURL.protocol === "http:" ? require("http") : require("https");
+        var requestOptions = {
+            protocol: parsedURL.protocol,
+            hostname: parsedURL.hostname,
+            path: parsedURL.path,
+            method: method,
+            headers: {},
+            withCredentials: options.sendCredentialsOnCORS,
+        };
+        if (options.headers)
+            forEachHeaders(options.headers, function (name, value) { return requestOptions.headers[name] = value; });
+        var request = HTTP.request(requestOptions, function (res) {
+            var data = "";
+            res.setEncoding("utf8");
+            res.on("data", function (chunk) {
+                data = chunk;
+            });
+            res.on("end", function () {
+                var response = new Response_1.default(request, data, res);
+                onResolve(resolve, reject, response);
+            });
+        });
+        if (options.timeout)
+            request.setTimeout(options.timeout);
+        request.on("error", function (error) {
+            var response = new Response_1.default(request, error.message);
+            onResolve(resolve, reject, response);
+        });
+        request.end(body);
+    });
 }
-function rejectRequest(reject, request) {
-    var response = new Response_1.default(request);
-    if (response.status >= 400 && response.status < 600) {
-        if (Errors.statusCodeMap.has(response.status)) {
-            var errorClass = Errors.statusCodeMap.get(response.status);
-            var error_1 = new errorClass("", response);
-            ErrorResponse.Factory.create(response.data).then(function (errorResponse) {
-                error_1.errorResponse = errorResponse;
-                error_1.message = ErrorResponse.Util.getMessage(errorResponse);
-                throw error_1;
-            }).catch(function () { return reject(error_1); });
-            return;
-        }
-    }
-    reject(new Errors.UnknownError("", response));
+function isBody(data) {
+    return Utils.isString(data)
+        || typeof Blob !== "undefined" && data instanceof Blob
+        || typeof Buffer !== "undefined" && data instanceof Buffer;
 }
 var Service = (function () {
     function Service() {
@@ -57,7 +97,7 @@ var Service = (function () {
         var body = null;
         var options = Utils.hasProperty(optionsOrParser, "parse") ? bodyOrOptions : optionsOrParser;
         parser = Utils.hasProperty(optionsOrParser, "parse") ? optionsOrParser : parser;
-        if ((bodyOrOptions instanceof Blob) || Utils.isString(bodyOrOptions)) {
+        if (isBody(bodyOrOptions)) {
             body = bodyOrOptions;
         }
         else {
@@ -66,23 +106,13 @@ var Service = (function () {
         options = Utils.extend(options || {}, Service.defaultOptions);
         if (Utils.isNumber(method))
             method = Method_1.default[method];
-        var requestPromise = new Promise(function (resolve, reject) {
-            var request = options.request ? options.request : new XMLHttpRequest();
-            request.open(method, url, true);
-            if (options.headers)
-                setHeaders(request, options.headers);
-            request.withCredentials = options.sendCredentialsOnCORS;
-            if (options.timeout)
-                request.timeout = options.timeout;
-            request.onload = onLoad(resolve, reject, request);
-            request.onerror = onError(reject, request);
-            if (body) {
-                request.send(body);
-            }
-            else {
-                request.send();
-            }
-        });
+        var requestPromise;
+        if (typeof XMLHttpRequest !== "undefined") {
+            requestPromise = sendWithBrowser(method, url, body, options);
+        }
+        else {
+            requestPromise = sendWithNode(method, url, body, options);
+        }
         if (parser === null)
             return requestPromise;
         return requestPromise.then(function (response) {
@@ -186,6 +216,12 @@ var Util = (function () {
         var slugHeader = Util.getHeader("slug", requestOptions, true);
         slugHeader.values.push(new Header.Value(slug));
         return requestOptions;
+    };
+    Util.isOptions = function (object) {
+        return Utils.hasPropertyDefined(object, "headers")
+            || Utils.hasPropertyDefined(object, "sendCredentialsOnCORS")
+            || Utils.hasPropertyDefined(object, "timeout")
+            || Utils.hasPropertyDefined(object, "request");
     };
     return Util;
 }());

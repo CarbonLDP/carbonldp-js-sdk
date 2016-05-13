@@ -71,11 +71,17 @@ describe( module( "Carbon/LDP/AddMemberAction" ), ():void => {
 			expect( AddMemberAction.Factory.hasClassProperties ).toBeDefined();
 			expect( Utils.isFunction( AddMemberAction.Factory.hasClassProperties ) ).toBe( true );
 
-			let object:any = {};
+			let object:any;
 			expect( AddMemberAction.Factory.hasClassProperties( object ) ).toBe( false );
 
-			object.targetMembers = {};
+			object = {
+				targetMembers: null,
+			};
 			expect( AddMemberAction.Factory.hasClassProperties( object ) ).toBe( true );
+
+			delete object.targetMembers;
+			expect( AddMemberAction.Factory.hasClassProperties( object ) ).toBe( false );
+			object.targetMembers = null;
 		});
 
 		it( hasMethod(

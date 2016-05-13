@@ -35,16 +35,21 @@ export class Class {
 			pointer = this.context.documents.getPointer( uri );
 		}
 
-		return pointer.resolve().then( ( [ app, response ]:[ PersistedDocument.Class, Response.Class ] ) => {
+		return pointer.resolve().then( ( [ app, response ]:[ PersistedApp.Class, Response.Class ] ) => {
 			if ( ! PersistedApp.Factory.is( app ) )
 				return Promise.reject<AppContext>( new Errors.IllegalArgumentError( "The resource fetched is not a cs:Application." ) );
 
-			return new AppContext( this.context, <PersistedApp.Class> app );
+			let appContext:App.Context = new AppContext( this.context, <PersistedApp.Class> app );
+			// Reassign the rootContainer pointer because the previous one was created in the SDKContext and this one must be resolved by this context.
+			// TODO: Delete previous pointer from the SDKContext
+			app.rootContainer = <any> appContext.documents.getPointer( app.rootContainer.id );
+
+			return appContext;
 		});
 	}
 
 	getAllContexts():Promise<AppContext[]> {
-		return this.context.documents.getMembers( this.getAppsContainerURI(), false ).then(
+		return this.context.documents.listMembers( this.getAppsContainerURI(), false ).then(
 			( [ members, response ]:[ Pointer.Class[], Response.Class ] ) => {
 				return Pointer.Util.resolveAll( members );
 			}

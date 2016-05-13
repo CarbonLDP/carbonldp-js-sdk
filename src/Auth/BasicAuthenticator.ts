@@ -52,11 +52,15 @@ export class Class implements Authenticator<UsernameAndPasswordToken> {
 			header = new HTTP.Header.Class();
 			headers.set( "authorization", header );
 		}
-		let authorization:string = "Basic " + btoa( this.credentials.username + ":" + this.credentials.password );
+		let authorization:string = "Basic " + toB64( this.credentials.username + ":" + this.credentials.password );
 		header.values.push( new HTTP.Header.Value( authorization ) );
 
 		return headers;
 	}
+}
+
+function toB64( str:string ):string {
+	return  ( typeof btoa !== "undefined" ) ? btoa( str ) : new Buffer( str ).toString( "base64" );
 }
 
 export default Class;

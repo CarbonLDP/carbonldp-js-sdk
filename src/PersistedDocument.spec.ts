@@ -60,35 +60,72 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 			expect( PersistedDocument.Factory.hasClassProperties ).toBeDefined();
 			expect( Utils.isFunction( PersistedDocument.Factory.hasClassProperties ) ).toBe( true );
 
-			let document:Document.Class = undefined;
+			let document:any = undefined;
 			expect( PersistedDocument.Factory.hasClassProperties( document ) ).toBe( false );
-			document = Document.Factory.create();
-			expect( PersistedDocument.Factory.hasClassProperties( document ) ).toBe( false );
-			document["_documents"] = null;
-			expect( PersistedDocument.Factory.hasClassProperties( document ) ).toBe( false );
-			document["_etag"] = null;
-			expect( PersistedDocument.Factory.hasClassProperties( document ) ).toBe( false );
-			document["refresh"] = ():void => {};
-			expect( PersistedDocument.Factory.hasClassProperties( document ) ).toBe( false );
-			document["save"] = ():void => {};
-			expect( PersistedDocument.Factory.hasClassProperties( document ) ).toBe( false );
-			document["destroy"] = ():void => {};
-			expect( PersistedDocument.Factory.hasClassProperties( document ) ).toBe( false );
-			document["createAccessPoint"] = ():void => {};
-			expect( PersistedDocument.Factory.hasClassProperties( document ) ).toBe( false );
-			document["executeRawASKQuery"] = ():void => {};
-			expect( PersistedDocument.Factory.hasClassProperties( document ) ).toBe( false );
-			document["executeASKQuery"] = ():void => {};
-			expect( PersistedDocument.Factory.hasClassProperties( document ) ).toBe( false );
-			document["executeRawSELECTQuery"] = ():void => {};
-			expect( PersistedDocument.Factory.hasClassProperties( document ) ).toBe( false );
-			document["executeSELECTQuery"] = ():void => {};
-			expect( PersistedDocument.Factory.hasClassProperties( document ) ).toBe( false );
-			document["executeRawDESCRIBEQuery"] = ():void => {};
-			expect( PersistedDocument.Factory.hasClassProperties( document ) ).toBe( false );
-			document["executeRawCONSTRUCTQuery"] = ():void => {};
-
+			
+			document = {
+				_documents: null,
+				_etag: null,
+				refresh: () => {},
+				save: () => {},
+				destroy: () => {},
+				createAccessPoint: () => {},
+				executeRawASKQuery: () => {},
+				executeASKQuery: () => {},
+				executeRawSELECTQuery: () => {},
+				executeSELECTQuery: () => {},
+				executeRawDESCRIBEQuery: () => {},
+				executeRawCONSTRUCTQuery: () => {},
+			};
 			expect( PersistedDocument.Factory.hasClassProperties( document ) ).toBe( true );
+			
+			delete document._documents;
+			expect( PersistedDocument.Factory.hasClassProperties( document ) ).toBe( false );
+			document._documents = null;
+			
+			delete document._etag;
+			expect( PersistedDocument.Factory.hasClassProperties( document ) ).toBe( false );
+			document._etag = null;
+			
+			delete document.refresh;
+			expect( PersistedDocument.Factory.hasClassProperties( document ) ).toBe( false );
+			document.refresh = ():void => {};
+			
+			delete document.save;
+			expect( PersistedDocument.Factory.hasClassProperties( document ) ).toBe( false );
+			document.save = ():void => {};
+			
+			delete document.destroy;
+			expect( PersistedDocument.Factory.hasClassProperties( document ) ).toBe( false );
+			document.destroy = ():void => {};
+			
+			delete document.createAccessPoint;
+			expect( PersistedDocument.Factory.hasClassProperties( document ) ).toBe( false );
+			document.createAccessPoint = ():void => {};
+			
+			delete document.executeRawASKQuery;
+			expect( PersistedDocument.Factory.hasClassProperties( document ) ).toBe( false );
+			document.executeRawASKQuery = ():void => {};
+			
+			delete document.executeASKQuery;
+			expect( PersistedDocument.Factory.hasClassProperties( document ) ).toBe( false );
+			document.executeASKQuery = ():void => {};
+			
+			delete document.executeRawSELECTQuery;
+			expect( PersistedDocument.Factory.hasClassProperties( document ) ).toBe( false );
+			document.executeRawSELECTQuery = ():void => {};
+			
+			delete document.executeSELECTQuery;
+			expect( PersistedDocument.Factory.hasClassProperties( document ) ).toBe( false );
+			document.executeSELECTQuery = ():void => {};
+			
+			delete document.executeRawDESCRIBEQuery;
+			expect( PersistedDocument.Factory.hasClassProperties( document ) ).toBe( false );
+			document.executeRawDESCRIBEQuery = ():void => {};
+			
+			delete document.executeRawCONSTRUCTQuery;
+			expect( PersistedDocument.Factory.hasClassProperties( document ) ).toBe( false );
+			document.executeRawCONSTRUCTQuery = ():void => {};
 		});
 
 		it( hasMethod(
@@ -385,7 +422,9 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 				expect( document.refresh ).toBeDefined();
 				expect( Utils.isFunction( document.refresh ) ).toBe( true );
 
-				// TODO wait implementation in PersistedDocument
+				let spy = spyOn( context.documents, "refresh" );
+				document.refresh();
+				expect( spy ).toHaveBeenCalledWith( document );
 			});
 
 			it( hasMethod(

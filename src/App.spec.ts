@@ -72,13 +72,22 @@ describe( module( "Carbon/App" ), ():void => {
 			expect( App.Factory.hasClassProperties ).toBeDefined();
 			expect( Utils.isFunction( App.Factory.hasClassProperties ) ).toBe( true );
 
-			let object:any = {};
+			let object:any;
 			expect( App.Factory.hasClassProperties( object ) ).toBe( false );
+			
+			object = {
+				name: null,
+				description: null,
+			};
+			expect( App.Factory.hasClassProperties( object ) ).toBe( true );
 
-			object.name = "A name";
+			delete object.name;
+			expect( App.Factory.hasClassProperties( object ) ).toBe( false );
+			object.name = null;
+
+			delete object.description;
 			expect( App.Factory.hasClassProperties( object ) ).toBe( true );
-			object.description = "A description";
-			expect( App.Factory.hasClassProperties( object ) ).toBe( true );
+			object.description = null;
 		});
 		
 		it( hasMethod(

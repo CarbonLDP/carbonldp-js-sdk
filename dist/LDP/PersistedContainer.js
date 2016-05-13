@@ -19,9 +19,21 @@ function createChild(slugOrObject, object) {
         return this._documents.createChild(this.id, object);
     }
 }
-function getMembers(includeNonReadable) {
+function listChildren() {
+    var that = this;
+    return this._documents.listChildren(that.id);
+}
+function getChildren(retrievalPreferences) {
+    var that = this;
+    return this._documents.getChildren(that.id, retrievalPreferences);
+}
+function listMembers(includeNonReadable) {
     if (includeNonReadable === void 0) { includeNonReadable = true; }
-    return this._documents.getMembers(this.id, includeNonReadable);
+    return this._documents.listMembers(this.id, includeNonReadable);
+}
+function getMembers(nonReadRetPref, retrievalPreferences) {
+    if (nonReadRetPref === void 0) { nonReadRetPref = true; }
+    return this._documents.getMembers(this.id, nonReadRetPref, retrievalPreferences);
 }
 function removeMember(memberOrUri) {
     var that = this;
@@ -31,28 +43,37 @@ function removeMembers(members) {
     var that = this;
     return that._documents.removeMembers(that.id, members);
 }
-function upload(slugOrBlob, blob) {
-    if (blob === void 0) { blob = null; }
-    var slug = Utils.isString(slugOrBlob) ? slugOrBlob : null;
-    blob = slug ? blob : slugOrBlob;
+function removeAllMembers() {
+    var that = this;
+    return that._documents.removeAllMembers(that.id);
+}
+function upload(slugOrData, data) {
+    if (data === void 0) { data = null; }
+    var slug = Utils.isString(slugOrData) ? slugOrData : null;
+    data = slug ? data : slugOrData;
     if (slug) {
-        return this._documents.upload(this.id, slug, blob);
+        return this._documents.upload(this.id, slug, data);
     }
     else {
-        return this._documents.upload(this.id, blob);
+        return this._documents.upload(this.id, data);
     }
 }
 var Factory = (function () {
     function Factory() {
     }
     Factory.hasClassProperties = function (document) {
-        return Utils.hasFunction(document, "createChild")
+        return Utils.isObject(document)
             && Utils.hasFunction(document, "addMember")
             && Utils.hasFunction(document, "addMembers")
-            && Utils.hasFunction(document, "upload")
+            && Utils.hasFunction(document, "createChild")
+            && Utils.hasFunction(document, "listChildren")
+            && Utils.hasFunction(document, "getChildren")
+            && Utils.hasFunction(document, "listMembers")
+            && Utils.hasFunction(document, "getMembers")
             && Utils.hasFunction(document, "removeMember")
             && Utils.hasFunction(document, "removeMembers")
-            && Utils.hasFunction(document, "getMembers");
+            && Utils.hasFunction(document, "removeAllMembers")
+            && Utils.hasFunction(document, "upload");
     };
     Factory.decorate = function (persistedDocument) {
         if (Factory.hasClassProperties(persistedDocument))
@@ -76,6 +97,24 @@ var Factory = (function () {
                 configurable: true,
                 value: createChild,
             },
+            "listChildren": {
+                writable: false,
+                enumerable: false,
+                configurable: true,
+                value: listChildren,
+            },
+            "getChildren": {
+                writable: false,
+                enumerable: false,
+                configurable: true,
+                value: getChildren,
+            },
+            "listMembers": {
+                writable: false,
+                enumerable: false,
+                configurable: true,
+                value: listMembers,
+            },
             "getMembers": {
                 writable: false,
                 enumerable: false,
@@ -93,6 +132,12 @@ var Factory = (function () {
                 enumerable: false,
                 configurable: true,
                 value: removeMembers,
+            },
+            "removeAllMembers": {
+                writable: false,
+                enumerable: false,
+                configurable: true,
+                value: removeAllMembers,
             },
             "upload": {
                 writable: false,

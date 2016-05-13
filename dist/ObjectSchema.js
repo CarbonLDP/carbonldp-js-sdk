@@ -11,6 +11,7 @@ var ContainerType = exports.ContainerType;
 var DigestedObjectSchema = (function () {
     function DigestedObjectSchema() {
         this.base = "";
+        this.vocab = "";
         this.prefixes = new Map();
         this.properties = new Map();
         this.prefixedURIs = new Map();
@@ -45,7 +46,7 @@ var Digester = (function () {
     Digester.combineDigestedObjectSchemas = function (digestedSchemas) {
         if (digestedSchemas.length === 0)
             throw new Errors.IllegalArgumentError("At least one DigestedObjectSchema needs to be specified.");
-        var combinedSchema = digestedSchemas.shift();
+        var combinedSchema = new DigestedObjectSchema();
         for (var _i = 0, digestedSchemas_1 = digestedSchemas; _i < digestedSchemas_1.length; _i++) {
             var digestedSchema = digestedSchemas_1[_i];
             Utils.M.extend(combinedSchema.prefixes, digestedSchema.prefixes);
@@ -66,8 +67,6 @@ var Digester = (function () {
                 continue;
             if (propertyName === "@base")
                 continue;
-            if (propertyName === "@vocab")
-                continue;
             var propertyValue = schema[propertyName];
             if (Utils.isString(propertyValue)) {
                 if (RDF.URI.Util.isPrefixed(propertyName))
@@ -75,7 +74,12 @@ var Digester = (function () {
                 var uri = new RDF.URI.Class(propertyValue);
                 if (RDF.URI.Util.isPrefixed(uri.stringValue))
                     uri = Digester.resolvePrefixedURI(uri, digestedSchema);
-                digestedSchema.prefixes.set(propertyName, uri);
+                if (propertyName === "@vocab") {
+                    digestedSchema.vocab = uri.toString();
+                }
+                else {
+                    digestedSchema.prefixes.set(propertyName, uri);
+                }
             }
             else if (!!propertyValue && Utils.isObject(propertyValue)) {
                 var schemaDefinition = propertyValue;

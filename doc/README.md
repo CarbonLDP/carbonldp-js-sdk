@@ -66,7 +66,8 @@
 		- [Decorated Object](#Carbon-Document-Factory-Decorated-Object)
 			- [Methods](#Carbon-Document-Factory-Decorated-Object-Methods)
 - [Module Carbon/Documents](#Carbon-Documents)
-	- [Methods](#Carbon-Documents-Methods)
+	- [Class Carbon.Documents](#Carbon-Documents)
+		- [Methods](#Carbon-Documents-Methods)
 - [Module Carbon/Errors](#Carbon-Errors)
 	- [Reexports](#Carbon-Errors-Reexports)
 - [Module Carbon/Errors/AbstractError](#Carbon-Errors-AbstractError)
@@ -96,8 +97,11 @@
 - [Module Carbon/Fragment](#Carbon-Fragment)
 	- [Class Carbon.Fragment.Factory](#Carbon-Fragment-Factory)
 		- [Methods](#Carbon-Fragment-Factory-Methods)
-	- [Class Carbon.Fragment.Util](#Carbon-Fragment-Util)
-		- [Methods](#Carbon-Fragment-Util-Methods)
+- [Module Carbon/FreeResources](#Carbon-FreeResources)
+	- [Class Carbon.FreeResources.Factory](#Carbon-FreeResources-Factory)
+		- [Methods](#Carbon-FreeResources-Factory-Methods)
+		- [Decorated Object](#Carbon-FreeResources-Factory-Decorated-Object)
+			- [Methods](#Carbon-FreeResources-Factory-Decorated-Object-Methods)
 - [Module Carbon/HTTP](#Carbon-HTTP)
 	- [Reexports](#Carbon-HTTP-Reexports)
 - [Module Carbon/HTTP/Errors](#Carbon-HTTP-Errors)
@@ -274,18 +278,12 @@
 	- [Properties](#Carbon-LDP-DirectContainer-Properties)
 	- [Class Carbon.DirectContainer.Factory](#Carbon-DirectContainer-Factory)
 		- [Methods](#Carbon-DirectContainer-Factory-Methods)
-- [Module Carbon/LDP/Error](#Carbon-LDP-Error)
-	- [Properties](#Carbon-LDP-Error-Properties)
-- [Module Carbon/LDP/ErrorResponse](#Carbon-LDP-ErrorResponse)
-	- [Properties](#Carbon-LDP-ErrorResponse-Properties)
-	- [Class Carbon.LDP.ErrorResponse.Factory](#Carbon-LDP-ErrorResponse-Factory)
-		- [Methods](#Carbon-LDP-ErrorResponse-Factory-Methods)
-	- [Class Carbon.LDP.ErrorResponse.Util](#Carbon-LDP-ErrorResponse-Util)
-		- [Methods](#Carbon-LDP-ErrorResponse-Util-Methods)
 - [Module Carbon/LDP/IndirectContainer](#Carbon-LDP-IndirectContainer)
 	- [Properties](#Carbon-LDP-IndirectContainer-Properties)
 	- [Class Carbon.IndirectContainer.Factory](#Carbon-IndirectContainer-Factory)
 		- [Methods](#Carbon-IndirectContainer-Factory-Methods)
+- [Module Carbon/LDP/PersistedBlankNode](#Carbon-LDP-PersistedBlankNode)
+	- [Properties](#Carbon-LDP-PersistedBlankNode-Properties)
 - [Module Carbon/LDP/PersistedContainer](#Carbon-LDP-PersistedContainer)
 	- [Class Carbon.LDP.PersistedContainer.Factory](#Carbon-LDP-PersistedContainer-Factory)
 		- [Methods](#Carbon-LDP-PersistedContainer-Factory-Methods)
@@ -298,6 +296,18 @@
 	- [Properties](#Carbon-LDP-RemoveMemberAction-Properties)
 	- [Class Carbon.LDP.RemoveMemberAction.Factory](#Carbon-LDP-RemoveMemberAction-Factory)
 		- [Methods](#Carbon-LDP-RemoveMemberAction-Factory-Methods)
+- [Module Carbon/LDP/ResourceMetadata](#Carbon-LDP-ResourceMetadata)
+	- [Properties](#Carbon-LDP-ResourceMetadata-Properties)
+	- [Class Carbon.LDP.ResourceMetadata.Factory](#Carbon-LDP-ResourceMetadata-Factory)
+		- [Methods](#Carbon-LDP-ResourceMetadata-Factory-Methods)
+- [Module Carbon/LDP/ResponseMetadata](#Carbon-LDP-ResponseMetadata)
+	- [Properties](#Carbon-LDP-ResponseMetadata-Properties)
+	- [Class Carbon.LDP.ResponseMetadata.Factory](#Carbon-LDP-ResponseMetadata-Factory)
+		- [Methods](#Carbon-LDP-ResponseMetadata-Factory-Methods)
+- [Module Carbon/LDP/VolatileResource](#Carbon-LDP-VolatileResource)
+	- [Properties](#Carbon-LDP-VolatileResource-Properties)
+	- [Class Carbon.LDP.VolatileResource.Factory](#Carbon-LDP-VolatileResource-Factory)
+		- [Methods](#Carbon-LDP-VolatileResource-Factory-Methods)
 - [Module Carbon/NS](#Carbon-NS)
 	- [Reexports](#Carbon-NS-Reexports)
 - [Module Carbon/NS/C](#Carbon-NS-C)
@@ -419,6 +429,11 @@
 - [Module Carbon/Resource](#Carbon-Resource)
 	- [Class Carbon.Resource.Factory](#Carbon-Resource-Factory)
 		- [Methods](#Carbon-Resource-Factory-Methods)
+- [Module Carbon/RetrievalPreferences](#Carbon-RetrievalPreferences)
+	- [Class Carbon.RetrievalPreferences.Factory](#Carbon-RetrievalPreferences-Factory)
+		- [Methods](#Carbon-RetrievalPreferences-Factory-Methods)
+	- [Class Carbon.RetrievalPreferences.Util](#Carbon-RetrievalPreferences-Util)
+		- [Methods](#Carbon-RetrievalPreferences-Util-Methods)
 - [Module Carbon/SDKContext](#Carbon-SDKContext)
 	- [Properties](#Carbon-SDKContext-Properties)
 	- [Class Carbon.SDKContext.Class](#Carbon-SDKContext-Class)
@@ -1598,17 +1613,6 @@ getFragments():Carbon.Fragment.Class[]
 
 Returns an array of the fragments in the document
 
-##### createNamedFragment
-```typescript 
-createNamedFragment( slug:string ):Carbon.NamedFragment.Class
-```
-
-Create a Named Fragment with the slug provided
-
-*Parameters*
-
-- slug
-
 ##### inScope
 ```typescript 
 inScope( pointer:Carbon.Pointer.Class ):boolean
@@ -1667,6 +1671,28 @@ createFragment():Carbon.Fragment.Class
 ```
 
 Creates a Blank Node Fragment, since no slug is provided
+
+##### createNamedFragment
+```typescript 
+createNamedFragment( slug:string ):Carbon.NamedFragment.Class
+```
+
+Creates a NamedFragment with the slug provided
+
+*Parameters*
+
+- slug
+
+```typescript 
+createNamedFragment( slug:string,  object:Object ):Carbon.NamedFragment.Class
+```
+
+Creates a NamedFragment from the object provided and the slug specified.
+
+*Parameters*
+
+- slug
+- object
 
 ##### removeFragment
 ```typescript 
@@ -1735,7 +1761,17 @@ Returns a JSON string from the document using the default ObjectSchema
 
 
 
-### <a name="Carbon-Documents-Methods" />Methods
+
+
+### <a name="Carbon-Documents" />Class Carbon.Documents
+
+
+> Class that contains methods for retrieving, saving and updating documents from the server.
+
+
+
+
+#### <a name="Carbon-Documents-Methods" />Methods
 
 ##### get
 ```typescript 
@@ -1757,6 +1793,18 @@ Returns a Promise with a boolean indicating if the resource exists or not.
 *Parameters*
 
 - documentURI
+- requestOptions
+
+##### listChildren
+```typescript 
+listChildren( parentURI:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.Pointer.Class[], Carbon.HTTP.Response ]>
+```
+
+Return all the children of the container specified.
+
+*Parameters*
+
+- parentURI: URI of the document container to look for their children.
 - requestOptions
 
 ##### addMembers
@@ -1781,8 +1829,32 @@ Remove the specified resources URI or Pointers as members of the document contai
 
 *Parameters*
 
-- documentURI: URI of the document container where to add the members.
-- members: Array of string URIs or Pointers to add as members
+- documentURI: URI of the document container where to remove the members.
+- members: Array of string URIs or Pointers to remove as members
+- requestOptions
+
+##### removeAllMembers
+```typescript 
+removeAllMembers( documentURI:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<Carbon.HTTP.Response>
+```
+
+Remove all the members of the document container specified.
+
+*Parameters*
+
+- documentURI: URI of the document container where to remove the members.
+- requestOptions
+
+##### refresh
+```typescript 
+refresh( persistedDocument:Carbon.PersistedDocument.Class,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.PersistedDocument.Class, Carbon.HTTP.Response ]>
+```
+
+Update the document with the data of the server, if there is a different version on it.
+
+*Parameters*
+
+- persistedDocument: The persisted document to update.
 - requestOptions
 
 ##### delete
@@ -1906,6 +1978,30 @@ Create a child document for the respective parent source.
 - childObject
 - requestOptions
 
+##### getChildren
+```typescript 
+getChildren( parentURI:string,  retrievalPreferences?:Carbon.RetrievalPreferences.Class,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.PersistedDocument.Class[], Carbon.HTTP.Response.Class ]>
+```
+
+Retrieves all the children of a document and their content, where you can specify the retrieval preferences and the options for the request.
+
+*Parameters*
+
+- parentURI: URI of the document to ask its children.
+- retrievalPreferences: An object for specify the retrieval preferences for the request.
+- requestOptions: Options that can be specified for change the behavior of the request.
+
+```typescript 
+getChildren( parentURI:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.PersistedDocument.Class[], Carbon.HTTP.Response.Class ]>
+```
+
+Retrieves all the children of a document and their content, where you can specify options for the request.
+
+*Parameters*
+
+- parentURI: URI of the document to ask its children.
+- requestOptions: Options that can be specified for change the behavior of the request.
+
 ##### createAccessPoint
 ```typescript 
 createAccessPoint( documentURI:string,  accessPoint:Carbon.AccessPoint.Class,  slug?:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[Carbon.Pointer.Class, Carbon.HTTP.Response.Class]>
@@ -1934,74 +2030,127 @@ Create an AccessPoint of the document.
 
 ##### upload
 ```typescript 
-upload( parentURI:string,  blob:Blob,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[Carbon.Pointer.Class, Carbon.HTTP.Response.Class]>
+upload( parentURI:string,  data:Blob,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[Carbon.Pointer.Class, Carbon.HTTP.Response.Class]>
 ```
 
-Upload a File to the server, creating a child for the parent specified.
+Upload a binary data to the server, creating a child for the parent specified. This signature it's only when working in a Browser.
 
 *Parameters*
 
 - parentURI
-- blob
+- data
 - requestOptions
 
 ```typescript 
-upload( parentURI:string,  slug:string,  blob:Blob,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[Carbon.Pointer.Class, Carbon.HTTP.Response.Class]>
+upload( parentURI:string,  slug:string,  data:Blob,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[Carbon.Pointer.Class, Carbon.HTTP.Response.Class]>
 ```
 
-Upload a File to the server, creating a child for the parent specified.
+Upload a binary data to the server, creating a child for the parent specified. This signature it's only when working in a Browser.
 
 *Parameters*
 
 - parentURI
 - slug
-- blob
+- data
 - requestOptions
+
+```typescript 
+upload( parentURI:string,  data:Buffer,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[Carbon.Pointer.Class, Carbon.HTTP.Response.Class]>
+```
+
+Upload a binary data to the server, creating a child for the parent specified. This signature it's only when working in Node.js.
+
+*Parameters*
+
+- parentURI
+- data
+- requestOptions
+
+```typescript 
+upload( parentURI:string,  slug:string,  data:Buffer,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[Carbon.Pointer.Class, Carbon.HTTP.Response.Class]>
+```
+
+Upload a binary data to the server, creating a child for the parent specified. This signature it's only when working in Node.js.
+
+*Parameters*
+
+- parentURI
+- slug
+- data
+- requestOptions
+
+##### listMembers
+```typescript 
+listMembers( uri:string,  includeNonReadable?:boolean,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.Pointer.Class[], Carbon.HTTP.Response.Class ]>
+```
+
+Retrieves all the members of a document with out resolving them, where you can specify if the response should include the Non Readable resources and options for the request.
+
+*Parameters*
+
+- uri: URI of the document to ask its members.
+- includeNonReadable: Specify if the the response should include the Non Readable resources. By default this is set to `true`.
+- requestOptions: Options that can be specified for change the behavior of the request.
+
+```typescript 
+listMembers( uri:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.Pointer.Class[], Carbon.HTTP.Response.Class ]>
+```
+
+Retrieves all the members of a document with out resolving them, where you can specify options for the request.
+
+*Parameters*
+
+- uri: URI of the document to ask its members.
+- requestOptions: Options that can be specified for change the behavior of the request.
 
 ##### getMembers
 ```typescript 
-getMembers( uri:string,  includeNonReadable:boolean,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.Pointer.Class[], Carbon.HTTP.Response.Class[] ]>
+getMembers( uri:string,  includeNonReadable?:boolean,  retrievalPreferences?:Carbon.RetrievalPreferences.Class,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.Pointer.Class[], Carbon.HTTP.Response.Class ]>
 ```
 
-Retrieves (but doesn't resolve) all the members of the document
+Retrieves all the members of a document and their contents, where you can specify if the response should include the Non Readable resources, the retrieval preferences and the options for the request.
 
 *Parameters*
 
-- uri
-- includeNonReadable
-- requestOptions
+- uri: URI of the document to ask its members.
+- includeNonReadable: Specify if the the response should include the Non Readable resources. By default this is set to `true`.
+- retrievalPreferences: An object for specify the retrieval preferences for the request.
+- requestOptions: Options that can be specified for change the behavior of the request.
 
 ```typescript 
-getMembers( uri:string,  includeNonReadable?:boolean ):Promise<[ Carbon.Pointer.Class[], Carbon.HTTP.Response.Class[] ]>
+getMembers( uri:string,  includeNonReadable?:boolean,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.Pointer.Class[], Carbon.HTTP.Response.Class ]>
 ```
 
-Retrieves (but doesn't resolve) all the members of the document
+Retrieves all the members of a document and their contents, where you can specify if the response should include the Non Readable resources and options for the request.
 
 *Parameters*
 
-- uri
-- includeNonReadable
+- uri: URI of the document to ask its members.
+- includeNonReadable: Specify if the the response should include the Non Readable resources. By default this is set to `true`.
+- requestOptions: Options that can be specified for change the behavior of the request.
 
 ```typescript 
-getMembers( uri:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.Pointer.Class[], Carbon.HTTP.Response.Class[] ]>
+getMembers( uri:string,  retrievalPreferences?:Carbon.RetrievalPreferences.Class,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.Pointer.Class[], Carbon.HTTP.Response.Class ]>
 ```
 
-Retrieves (but doesn't resolve) all the members of the document
+Retrieves all the members of a document and their content, where you can specify the retrieval preferences and the options for the request.
 
 *Parameters*
 
-- uri
-- requestOptions
+- uri: URI of the document to ask its members.
+- retrievalPreferences: An object for specify the retrieval preferences for the request.
+- requestOptions: Options that can be specified for change the behavior of the request.
 
 ```typescript 
-getMembers( uri:string ):Promise<[ Carbon.Pointer.Class[], Carbon.HTTP.Response.Class[] ]>
+getMembers( uri:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.Pointer.Class[], Carbon.HTTP.Response.Class ]>
 ```
 
-Retrieves (but doesn't resolve) all the members of the document
+Retrieves all the members of a document and their contents, where you can specify options for the request.
 
 *Parameters*
 
-- uri
+- uri: URI of the document to ask its members.
+- requestOptions: Options that can be specified for change the behavior of the request.
 
 ##### addMember
 ```typescript 
@@ -2050,7 +2199,7 @@ Remove the specified resource URI member of the resource container specified.
 *Parameters*
 
 - documentURI: URI of the resource container where to remove the member.
-- memberURI: URI of the resource to remvoe as a member.
+- memberURI: URI of the resource to remove as a member.
 - requestOptions
 
 
@@ -2363,23 +2512,167 @@ Create a Blank Node Fragment since no ID is provided for the specified document.
 
 
 
-### <a name="Carbon-Fragment-Util" />Class Carbon.Fragment.Util
-
-
-> Class with useful options for Fragment objects
+## <a name="Carbon-FreeResources" />Module Carbon/FreeResources
 
 
 
 
-#### <a name="Carbon-Fragment-Util-Methods" />Methods
-##### generateID
+
+
+
+
+### <a name="Carbon-FreeResources-Factory" />Class Carbon.FreeResources.Factory
+
+
+> Factory class for `Carbon.FreeResources.Class` objects.
+
+
+
+
+#### <a name="Carbon-FreeResources-Factory-Methods" />Methods
+##### hasClassProperties
 ```typescript 
-static generateID()
+static hasClassProperties( object:Object ):boolean
 ```
 
-Returns an ID for a BlankNode using an universally unique identifier (UUID).
+Returns true if the object provided has the properties of a `Carbon.FreeResources.Class` object.
+
+*Parameters*
+
+- object
+
+##### create
+```typescript 
+static create( documents:Carbon.Documents ):Carbon.FreeResources.Class
+```
+
+Creates a empty `Carbon.FreeResources.Class` object.
+
+*Parameters*
+
+- documents: A `Carbon.Documents` object where the FreeResources scope is.
+
+##### createFrom
+```typescript 
+static createFrom( object:T extends Object,  documents:Carbon.Documents.Class ):Carbon.FreeResources.Class & T
+```
+
+Create a `Carbon.FreeResources.Class` object from the plain object provided.
+
+*Parameters*
+
+- object: The object that wants be converted in a `Carbon.FreeResources.Class`.
+- documents: A `Carbon.Documents` object where the FreeResource scope is.
+
+##### decorate
+```typescript 
+static decorate( object:T extends Object ):Carbon.FreeResources.Class & T
+```
+
+Decorate the object provided with the methods and properties of a `Carbon.FreeResources.Class` object.
+
+*Parameters*
+
+- object
 
 
+
+#### <a name="Carbon-FreeResources-Factory-Decorated-Object" />Decorated Object
+**Interfaces:** [Carbon.FreeResources.Class](#Carbon-FreeResources-Class)
+
+> Object decorated by the Carbon.FreeResources.Factory.decorate function.
+
+##### <a name="Carbon-FreeResources-Factory-Decorated-Object-Properties" />Properties
+```typescript 
+_documents:Private property that contains the Documents class where the object scope is. 
+```
+
+Carbon.Documents
+```typescript 
+_resourcesIndex:Private property that contains the references of every free resource in a map form. 
+```
+
+Map<string, Carbon.Resource.Class>
+
+##### <a name="Carbon-FreeResources-Factory-Decorated-Object-Methods" />Methods
+##### hasResource
+```typescript 
+hasResource( id:string ):boolean
+```
+
+Returns true if exists a resource with the ID specified.
+
+*Parameters*
+
+- id: The ID of the resource to seek for.
+
+##### getResource
+```typescript 
+getResource( id:string ):Carbon.Resource.Class
+```
+
+Returns the resource referred by the ID provided. If no resource exists with the ID specified `null` is returned.
+
+*Parameters*
+
+- id: The ID of the resource to seek for.
+
+##### getResources
+```typescript 
+getResources():Carbon.Resource.Class[]
+```
+
+Returns an array with all the resources inside the FreeResources object
+
+##### createResource
+```typescript 
+createResource( id?:string ):Carbon.Resource.Class
+```
+
+Create an returns a new Free Resource. Throw an Error if no valid id if provided or if it is already in use.
+
+*Parameters*
+
+- id: The ID of the resource to create. It should be an ID as a BlankNode.
+
+##### hasPointer
+```typescript 
+hasPointer():boolean
+```
+
+Returns true if exists a pointer in the scope of the FreeResources object and its parents.
+
+##### getPointer
+```typescript 
+getPointer( id:string ):Carbon.Pointer.Class
+```
+
+Returns the pointer referred by the id specified, or creates one if no pointer exists in the scope.
+
+*Parameters*
+
+- id: The ID of the pointer seek for or the one to create.
+
+##### inScope
+```typescript 
+inScope( id:string ):boolean
+```
+
+Returns true if the the ID provided is in the scope of the object.
+
+*Parameters*
+
+- id: The ID to evaluate if is in the scope.
+
+```typescript 
+inScope( pointer:Carbon.Pointer.Class ):boolean
+```
+
+Returns true if the the Pointer provided can be in the scope of the object.
+
+*Parameters*
+
+- pointer: The Pointer to evaluate if can be in the scope.
 
 
 ## <a name="Carbon-HTTP" />Module Carbon/HTTP
@@ -2639,14 +2932,6 @@ static statusCode:number
 
 ```typescript 
 name:string 
-```
-
-```typescript 
-response:number 
-```
-
-```typescript 
-errorResponse:number 
 ```
 
 
@@ -4106,10 +4391,23 @@ Set a Prefer header with `return=representation` in an options object request
 Class( request:XMLHttpRequest )
 ```
 
+Signature that only works when working in a Browser.
 
 *Parameters*
 
 - request
+
+```typescript 
+Class( request:ClientRequest,  data:string,  response:IncomingMessage )
+```
+
+Signature that only works when working in Node.js.
+
+*Parameters*
+
+- request
+- data
+- response
 
 
 #### <a name="Carbon-HTTP-Response-Class-Properties" />Properties
@@ -4130,10 +4428,10 @@ headers:Map<string, Carbon.HTTP.Header.Class>
 
 A map object containing the headers returned by the request
 ```typescript 
-request:XMLHttpRequest 
+request:XMLHttpRequest | ClientRequest 
 ```
 
-The XMLHttpRequest object that was provided in the constructor
+The XMLHttpRequest object that was provided in the constructor when working in a Browser, or The ClientRequest object when working with Node.js.
 
 #### <a name="Carbon-HTTP-Response-Class-Methods" />Methods
 
@@ -4316,12 +4614,12 @@ expand( compactedObject:Object,  digestedSchema:Carbon.ObjectSchema.DigestedObje
 | BasicContainer | [Carbon/LDP/BasicContainer](#Carbon-LDP-BasicContainer) |
 | Container | [Carbon/LDP/Container](#Carbon-LDP-Container) |
 | DirectContainer | [Carbon/LDP/DirectContainer](#Carbon-LDP-DirectContainer) |
-| Error | [Carbon/LDP/Error](#Carbon-LDP-Error) |
 | IndirectContainer | [Carbon/LDP/IndirectContainer](#Carbon-LDP-IndirectContainer) |
 | PersistedContainer | [Carbon/LDP/PersistedContainer](#Carbon-LDP-PersistedContainer) |
 | RDFSource | [Carbon/LDP/RDFSource](#Carbon-LDP-RDFSource) |
 | RemoveMemberAction | [Carbon/LDP/RemoveMemberAction](#Carbon-LDP-RemoveMemberAction) |
-| ErrorResponse | [Carbon/LDP/ErrorResponse](#Carbon-LDP-ErrorResponse) |
+| ResponseMetadata | [Carbon/LDP/ResponseMetadata](#Carbon-LDP-ResponseMetadata) |
+| ResourceMetadata | [Carbon/LDP/ResourceMetadata](#Carbon-LDP-ResourceMetadata) |
 
 
 
@@ -4588,90 +4886,6 @@ Returns true if the Object provided is an LDP DirectContainer.
 
 
 
-## <a name="Carbon-LDP-Error" />Module Carbon/LDP/Error
-
-
-
-
-
-### <a name="Carbon-LDP-Error-Properties" />Properties
-```typescript 
-static RDF_CLASS:string 
-```
-
-```typescript 
-static SCHEMA:Carbon.ObjectSchema.Class 
-```
-
-
-
-
-
-## <a name="Carbon-LDP-ErrorResponse" />Module Carbon/LDP/ErrorResponse
-
-
-
-
-
-### <a name="Carbon-LDP-ErrorResponse-Properties" />Properties
-```typescript 
-static RDF_CLASS:string 
-```
-
-```typescript 
-static SCHEMA:Carbon.ObjectSchema.Class 
-```
-
-
-
-
-
-### <a name="Carbon-LDP-ErrorResponse-Factory" />Class Carbon.LDP.ErrorResponse.Factory
-
-
-> Factory class for `Carbon.LDP.ErrorResponse.Class` objects.
-
-
-
-
-#### <a name="Carbon-LDP-ErrorResponse-Factory-Methods" />Methods
-##### create
-```typescript 
-static create( data:string ):Promise<Carbon.LDP.ErrorResponse.Class>
-```
-
-Parse the string data provided and create an `Carbon.LDP.ResponseError.Class` object.
-
-*Parameters*
-
-- data: The json-ld string which represents an error response from a Carbon server.
-
-
-
-
-### <a name="Carbon-LDP-ErrorResponse-Util" />Class Carbon.LDP.ErrorResponse.Util
-
-
-> Useful functions for managing `Carbon.LDP.ErrorResponse.Class` objects.
-
-
-
-
-#### <a name="Carbon-LDP-ErrorResponse-Util-Methods" />Methods
-##### getMessage
-```typescript 
-static getMessage( errorResponse:Carbon.LDP.ErrorResponse.Class ):string
-```
-
-Returns a string with the message of all the errors in the ErrorResponse.
-
-*Parameters*
-
-- errorResponse: The ErrorResponse object to obtain the message from.
-
-
-
-
 ## <a name="Carbon-LDP-IndirectContainer" />Module Carbon/LDP/IndirectContainer
 
 
@@ -4706,6 +4920,21 @@ Returns true if the object provided has the properties that defines a `Carbon.LD
 *Parameters*
 
 - resource
+
+
+
+
+## <a name="Carbon-LDP-PersistedBlankNode" />Module Carbon/LDP/PersistedBlankNode
+
+
+
+
+
+### <a name="Carbon-LDP-PersistedBlankNode-Properties" />Properties
+```typescript 
+static SCHEMA:Carbon.ObjectSchema.Class 
+```
+
 
 
 
@@ -4759,9 +4988,9 @@ Returns the PersistedDocuments decorated as a PersistedContainer
 
 
 ##### <a name="Carbon-LDP-PersistedContainer-Factory-Decorated-Object-Methods" />Methods
-##### addMember
+##### addMembers
 ```typescript 
-addMember( members:(Carbon.Pointer.Class | string)[] ):Promise<Carbon.HTTP.Response.Class>
+addMembers( members:(Carbon.Pointer.Class | string)[] ):Promise<Carbon.HTTP.Response.Class>
 ```
 
 Add the specified resources URI or Pointers as members of the container.
@@ -4770,6 +4999,57 @@ Add the specified resources URI or Pointers as members of the container.
 
 - members: Array of string URIs or Pointers to add as members
 
+##### listChildren
+```typescript 
+listChildren():Promise<[ Carbon.Pointer.Class[], Carbon.HTTP.Response ]>
+```
+
+Return all the children of the container.
+
+##### getChildren
+```typescript 
+getChildren( retrievalPreferences?:Carbon.RetrievalPreferences.Class ):Promise<[ Carbon.Pointer.Class[], Carbon.HTTP.Response ]>
+```
+
+Return all the children of the container.
+
+*Parameters*
+
+- retrievalPreferences
+
+##### listMembers
+```typescript 
+listMembers( includeNonReadable?:boolean ):Promise<[ Carbon.Pointer.Class[], Carbon.HTTP.Response.Class ]>
+```
+
+
+*Parameters*
+
+- includeNonReadable: By default this option is set to `true`.
+
+##### removeMembers
+```typescript 
+removeMembers( members:(Carbon.Pointer.Class | string)[] ):Promise<Carbon.HTTP.Response.Class>
+```
+
+Remove the specified resources URI or Pointers as members of the container.
+
+*Parameters*
+
+- members: Array of string URIs or Pointers to remove as members
+
+##### removeAllMembers
+```typescript 
+removeAllMembers( members:(Carbon.Pointer.Class | string)[] ):Promise<Carbon.HTTP.Response.Class>
+```
+
+Remove the specified resources URI or Pointers as members of the container.
+
+*Parameters*
+
+- members: Array of string URIs or Pointers to remove as members
+
+##### addMember
 ```typescript 
 addMember( member:Carbon.Pointer.Class ):Promise<Carbon.HTTP.Response.Class>
 ```
@@ -4789,27 +5069,6 @@ Add the specified resource URI as a member of the container.
 *Parameters*
 
 - memberURI: URI of the resource to add as a member.
-
-##### getMembers
-```typescript 
-getMembers( includeNonReadable?:boolean ):Promise<[ Carbon.Pointer.Class[], Carbon.HTTP.Response.Class ]>
-```
-
-
-*Parameters*
-
-- includeNonReadable: By default this option is set to `true`.
-
-##### removeMembers
-```typescript 
-removeMembers( members:(Carbon.Pointer.Class | string)[] ):Promise<Carbon.HTTP.Response.Class>
-```
-
-Remove the specified resources URI or Pointers as members of the container.
-
-*Parameters*
-
-- members: Array of string URIs or Pointers to remove as members
 
 ##### createChild
 ```typescript 
@@ -4845,6 +5104,17 @@ createChild():Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>
 ```
 
 
+##### getMembers
+```typescript 
+getMembers( includeNonReadable?:boolean,  retrievalPreferences?:Carbon.RetrievalPreferences.Class ):Promise<[ Carbon.Pointer.Class[], Carbon.HTTP.Response.Class ]>
+```
+
+
+*Parameters*
+
+- includeNonReadable: By default this option is set to `true`.
+- retrievalPreferences
+
 ##### removeMember
 ```typescript 
 removeMember( member:Carbon.Pointer.Class ):Promise<Carbon.HTTP.Response.Class>
@@ -4868,25 +5138,46 @@ Remove the specified resource URI as a member of the container.
 
 ##### upload
 ```typescript 
-upload( slug:string,  blob:Blob ):Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>
+upload( slug:string,  data:Blob ):Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>
 ```
 
 Upload a File to the server as a child of the Container.
 
 *Parameters*
 
-- slug: The slug name for the file URI.
-- blob: Binary data to store in the server.
+- slug: The slug that will be used in the URI of the data.
+- data: Binary data to store in the server. The Blob works in a Browser.
 
 ```typescript 
-upload( blob:Blob ):Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>
+upload( data:Blob ):Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>
 ```
 
 Upload a File to the server as a child of the Container.
 
 *Parameters*
 
-- blob: Binary data to store in the server.
+- data: Binary data to store in the server. The Blob works in a Browser.
+
+```typescript 
+upload( slug:string,  data:Buffer ):Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>
+```
+
+Upload a File to the server as a child of the Container.
+
+*Parameters*
+
+- slug: The slug that will be used in the URI of the data.
+- data: Binary data to store in the server. The Buffer only works in Node.js.
+
+```typescript 
+upload( data:Buffer ):Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>
+```
+
+Upload a File to the server as a child of the Container.
+
+*Parameters*
+
+- data: Binary data to store in the server. The Buffer only works in Node.js.
 
 
 ## <a name="Carbon-LDP-RDFSource" />Module Carbon/LDP/RDFSource
@@ -4971,6 +5262,183 @@ Create and returns a `Carbon.Document.Class` object with a RemoveMemberAction fr
 
 
 
+## <a name="Carbon-LDP-ResourceMetadata" />Module Carbon/LDP/ResourceMetadata
+
+
+
+
+
+### <a name="Carbon-LDP-ResourceMetadata-Properties" />Properties
+```typescript 
+static RDF_CLASS:string 
+```
+
+```typescript 
+static SCHEMA:Carbon.ObjectSchema.Class 
+```
+
+
+
+
+
+### <a name="Carbon-LDP-ResourceMetadata-Factory" />Class Carbon.LDP.ResourceMetadata.Factory
+
+
+> Factory class form `Carbon.LDP.ResourceMetadata.Class` objects.
+
+
+
+
+#### <a name="Carbon-LDP-ResourceMetadata-Factory-Methods" />Methods
+##### hasClassProperties
+```typescript 
+static hasClassProperties( object:Object ):boolean
+```
+
+Return true if the object provided has the properties of a `Carbon.LDP.ResourceMetadata.Class` object.
+
+*Parameters*
+
+- object: Object to check.
+
+##### is
+```typescript 
+static is( object:Object ):boolean
+```
+
+Return true if the object provided can be classified as a `Carbon.LDP.ResourceMetadata.Class` object.
+
+*Parameters*
+
+- object: Object to check.
+
+##### hasRDFClass
+```typescript 
+static hasRDFClass( object:Object ):boolean
+```
+
+Return true if the object provided have the RDF_CLASS of a ResourceMetadata, either if it's a Resource or a RDF object.
+
+*Parameters*
+
+- object: Object to check.
+
+
+
+
+## <a name="Carbon-LDP-ResponseMetadata" />Module Carbon/LDP/ResponseMetadata
+
+
+
+
+
+### <a name="Carbon-LDP-ResponseMetadata-Properties" />Properties
+```typescript 
+static RDF_CLASS:string 
+```
+
+```typescript 
+static SCHEMA:Carbon.ObjectSchema.Class 
+```
+
+
+
+
+
+### <a name="Carbon-LDP-ResponseMetadata-Factory" />Class Carbon.LDP.ResponseMetadata.Factory
+
+
+> Factory class form `Carbon.LDP.ResponseMetadata.Class` objects.
+
+
+
+
+#### <a name="Carbon-LDP-ResponseMetadata-Factory-Methods" />Methods
+##### hasClassProperties
+```typescript 
+static hasClassProperties( object:Object ):boolean
+```
+
+Return true if the object provided has the properties of a `Carbon.LDP.ResponseMetadata.Class` object.
+
+*Parameters*
+
+- object: Object to check.
+
+##### is
+```typescript 
+static is( object:Object ):boolean
+```
+
+Return true if the object provided can be classified as a `Carbon.LDP.ResponseMetadata.Class` object.
+
+*Parameters*
+
+- object: Object to check
+
+##### hasRDFClass
+```typescript 
+static hasRDFClass( object:Object ):boolean
+```
+
+Return true if the object provided have the RDF_CLASS of a ResponseMetadata, either if it's a Resource or a RDF object.
+
+*Parameters*
+
+- object: Object to check.
+
+
+
+
+## <a name="Carbon-LDP-VolatileResource" />Module Carbon/LDP/VolatileResource
+
+
+
+
+
+### <a name="Carbon-LDP-VolatileResource-Properties" />Properties
+```typescript 
+static RDF_CLASS:string 
+```
+
+
+
+
+
+### <a name="Carbon-LDP-VolatileResource-Factory" />Class Carbon.LDP.VolatileResource.Factory
+
+
+> Factory class form `Carbon.LDP.VolatileResource.Class` objects.
+
+
+
+
+#### <a name="Carbon-LDP-VolatileResource-Factory-Methods" />Methods
+##### is
+```typescript 
+static is( object:Object ):boolean
+```
+
+Return true if the object provided can be classified as a `Carbon.LDP.VolatileResource.Class` object.
+
+*Parameters*
+
+- object: Object to check.
+
+##### hasRDFClass
+```typescript 
+static hasRDFClass( object:Object ):boolean
+```
+
+Return true if the object provided have the RDF_CLASS of a VolatileResource, either if it's a Resource or a RDF object.
+
+*Parameters*
+
+- object: Object to check.
+
+
+
+
 ## <a name="Carbon-NS" />Module Carbon/NS
 
 
@@ -5026,6 +5494,10 @@ static NonReadableMembershipResourceTriples:string
 ```
 
 ```typescript 
+static PreferContainer:string 
+```
+
+```typescript 
 static PreferContainmentResources:string 
 ```
 
@@ -5058,11 +5530,11 @@ static RemoveMemberAction:string
 ```
 
 ```typescript 
-static ErrorResponse:string 
+static ResponseMetadata:string 
 ```
 
 ```typescript 
-static Error:string 
+static ResourceMetadata:string 
 ```
 
 
@@ -5079,6 +5551,10 @@ static Error:string
 #### <a name="Carbon-NS-C-Predicate-Properties" />Properties
 ```typescript 
 static accessPoint:string 
+```
+
+```typescript 
+static bNodeIdentifier:string 
 ```
 
 ```typescript 
@@ -5110,19 +5586,15 @@ static targetMember:string
 ```
 
 ```typescript 
-static error:string 
+static resourceMetadata:string 
 ```
 
 ```typescript 
-static httpStatusCode:string 
+static resource:string 
 ```
 
 ```typescript 
-static carbonCode:string 
-```
-
-```typescript 
-static message:string 
+static eTag:string 
 ```
 
 
@@ -6428,7 +6900,6 @@ static getBNodeResources( document:Carbon.RDF.Document.Class ):Carbon.RDF.RDFNod
 ```
 
 Returns all the resources that refers to blank nodes from a document.
-Throw an `Carbon.Errors.IllegalArgumentError` if the object is not RDF like
 
 *Parameters*
 
@@ -6439,8 +6910,7 @@ Throw an `Carbon.Errors.IllegalArgumentError` if the object is not RDF like
 static getDocuments( objects:Object[] ):Carbon.RDF.Document.Class[]
 ```
 
-Returns an array of documents from an array of resources or documents.
-Throw an `Carbon.Errors.IllegalArgumentError` if the objects are not RDF like
+Returns the objects that represents a RDF Document of an array of RDF like objects.
 
 *Parameters*
 
@@ -6450,8 +6920,7 @@ Throw an `Carbon.Errors.IllegalArgumentError` if the objects are not RDF like
 static getDocuments( object:Object ):Carbon.RDF.Document.Class[]
 ```
 
-Returns an array of documents from a document or resource.
-Throw an `Carbon.Errors.IllegalArgumentError` if the object is not RDF like
+Returns an array of with the object provided, if it is an RDF Document.
 
 *Parameters*
 
@@ -6462,8 +6931,7 @@ Throw an `Carbon.Errors.IllegalArgumentError` if the object is not RDF like
 static getResources( objects:Object[] ):Carbon.RDF.RDFNode.Class
 ```
 
-Returns all the resources from a array of documents or resources.
-Throw an `Carbon.Errors.IllegalArgumentError` if the objects are not RDF like
+Returns all the resources that not are RDF Documents from the array of RDF like objects provided.
 
 *Parameters*
 
@@ -6473,8 +6941,7 @@ Throw an `Carbon.Errors.IllegalArgumentError` if the objects are not RDF like
 static getResources( object:Object ):Carbon.RDF.RDFNode.Class
 ```
 
-Returns all the resources from a document or resource.
-Throw an `Carbon.Errors.IllegalArgumentError` if the object is not RDF like
+Returns all the resources that not are RDF Documents from the RDF like object provided.
 
 *Parameters*
 
@@ -6486,7 +6953,6 @@ static getDocumentResources( document:Carbon.RDF.Document.Class ):Carbon.RDF.RDF
 ```
 
 Returns all the resources that refers to documents from a document.
-Throw an `Carbon.Errors.IllegalArgumentError` if the object is not RDF like
 
 *Parameters*
 
@@ -6497,7 +6963,6 @@ static getDocumentResources( document:Carbon.RDF.RDFNode.Class[] ):Carbon.RDF.RD
 ```
 
 Returns all the resources that refers to documents from an array of resources.
-Throw an `Carbon.Errors.IllegalArgumentError` if the object is not RDF like
 
 *Parameters*
 
@@ -6509,7 +6974,6 @@ static getFragmentResources( document:Carbon.RDF.Document.Class,  documentResour
 ```
 
 Returns all the resources that refers to fragments from a document. If documentResource is provided, it will return the fragments of the specified document.
-Throw an `Carbon.Errors.IllegalArgumentError` if the object is not RDF like
 
 *Parameters*
 
@@ -6521,7 +6985,6 @@ static getFragmentResources( document:Carbon.RDF.Document.Class,  documentResour
 ```
 
 Returns all the resources that refers to fragments from a document. If documentResourceURI is provided, it will return the fragments of the specified URI.
-Throw an `Carbon.Errors.IllegalArgumentError` if the object is not RDF like
 
 *Parameters*
 
@@ -6533,7 +6996,6 @@ static getFragmentResources( document:Carbon.RDF.Document.Class,  documentResour
 ```
 
 Returns all the resources that refers to fragments from an array of resources. If documentResource is provided, it will return the fragments of the specified document.
-Throw an `Carbon.Errors.IllegalArgumentError` if the object is not RDF like
 
 *Parameters*
 
@@ -6545,7 +7007,6 @@ static getFragmentResources( document:Carbon.RDF.Document.Class,  documentResour
 ```
 
 Returns all the resources that refers to fragments from a document. If documentResourceURI is provided, it will return the fragments of the specified URI.
-Throw an `Carbon.Errors.IllegalArgumentError` if the object is not RDF like
 
 *Parameters*
 
@@ -7131,6 +7592,13 @@ Returns true if the URI provided reference to a Blank Node
 
 - uri
 
+##### generateBNodeID
+```typescript 
+static generateBNodeID()
+```
+
+Returns an ID for a BlankNode using an universally unique identifier (UUID).
+
 ##### isPrefixed
 ```typescript 
 static isPrefixed( uri:string ):boolean
@@ -7551,6 +8019,61 @@ Decorates the object provided with the elements of a Resource object.
 
 
 
+## <a name="Carbon-RetrievalPreferences" />Module Carbon/RetrievalPreferences
+
+
+
+
+
+
+
+
+### <a name="Carbon-RetrievalPreferences-Factory" />Class Carbon.RetrievalPreferences.Factory
+
+
+> Factory class for `Carbon.RetrievalPreferences.Class` object.
+
+
+
+
+#### <a name="Carbon-RetrievalPreferences-Factory-Methods" />Methods
+##### is
+```typescript 
+static is( object:Object ):boolean
+```
+
+Returns true if the object provided has the properties of a `Carbon.RetrievalPreferences.Class` object.
+
+*Parameters*
+
+- object: The object to check.
+
+
+
+
+### <a name="Carbon-RetrievalPreferences-Util" />Class Carbon.RetrievalPreferences.Util
+
+
+> Useful function when working with `Carbon.RetrievalPreferences.Class` objects.
+
+
+
+
+#### <a name="Carbon-RetrievalPreferences-Util-Methods" />Methods
+##### stringifyRetrievalPreferences
+```typescript 
+static stringifyRetrievalPreferences( retrievalPreferences:Carbon.RetrievalPreferences.Class ):string
+```
+
+Convert the `Carbon.RetrievalPreferences.Class` object to a URL query string.
+
+*Parameters*
+
+- retrievalPreferences: The preferences to stringify.
+
+
+
+
 ## <a name="Carbon-SDKContext" />Module Carbon/SDKContext
 
 
@@ -7636,7 +8159,7 @@ getSetting( name:string ):string
 ```
 
 Returns the value of the setting looked for.
-Returns `null` if no settign with the name specified exists.
+Returns `null` if no setting with the name specified exists.
 
 *Parameters*
 
@@ -8318,6 +8841,7 @@ A object of type `Carbon.settings.CarbonSettings`, whitch is the default setting
 * platform.container: `"platform/"`
 * platform.apps.container: `"apps/"`
 * platform.agents.container: `"agents/"`
+* vocabulary: `"vocabulary/#"`
 
 
 

@@ -185,7 +185,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 			beforeEach( ():void => {
 				class MockedContext extends AbstractContext {
 					resolve( uri:string ) {
-						return uri;
+						return "http://example.com/" + uri;
 					}
 				}
 				context = new MockedContext();
@@ -294,20 +294,20 @@ describe( module( "Carbon/Auth" ), ():void => {
 						expect( credentials.key ).toEqual( token[0]["https://carbonldp.com/ns/v1/security#tokenKey"][0]["@value"] );
 					},
 					fail: ( error ):void => {
-						expect( error.name ).toBe( Errors.IllegalArgumentError.name );
+						expect( error instanceof Errors.IllegalArgumentError ).toBe( true );
 					}
 				};
 				let spySuccess = spyOn( spies, "success" ).and.callThrough();
 				let spyFail = spyOn( spies, "fail" ).and.callThrough();
 
-				promise = auth01.authenticateUsing( "TOKEN", "myUser@user.con", "myAwesomePassword" );
-				expect( promise instanceof Promise ).toBe( true );
-				promises.push( promise.then( spies.success, spies.fail ) );
-
 				jasmine.Ajax.stubRequest( /token/ ).andReturn({
 					status: 200,
 					responseText: JSON.stringify( token )
 				});
+
+				promise = auth01.authenticateUsing( "TOKEN", "myUser@user.con", "myAwesomePassword" );
+				expect( promise instanceof Promise ).toBe( true );
+				promises.push( promise.then( spies.success, spies.fail ) );
 
 				let auth02:Auth.Class = new Auth.Class( context );
 				promise = auth02.authenticateUsing( "TOKEN", {} );

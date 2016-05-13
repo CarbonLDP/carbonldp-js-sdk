@@ -54,6 +54,15 @@ function isObject( object:any ):boolean {
 	return typeof object === "object" && ( ! ! object );
 }
 
+function isPlainObject( object:Object ):boolean {
+	return isObject( object )
+		&& ! isArray( object )
+		&& ! isDate( object )
+		&& ! isMap( object )
+		&& ! ( typeof Blob !== "undefined" && object instanceof Blob )
+		&& ! ( ( object + "" ) === "[object Set]" );
+}
+
 function isFunction( value:any ):boolean {
 	return typeof value === "function";
 }
@@ -240,6 +249,7 @@ export {
 	isDouble,
 	isDate,
 	isObject,
+	isPlainObject,
 	isFunction,
 	isMap,
 	parseBoolean,

@@ -57,11 +57,17 @@ describe( module( "Carbon/LDP/DirectContainer" ), ():void => {
 			expect( DirectContainer.Factory.hasClassProperties ).toBeDefined();
 			expect( Utils.isFunction( DirectContainer.Factory.hasClassProperties ) ).toBe( true );
 
-			let object:any = {};
+			let object:any;
 			expect( DirectContainer.Factory.hasClassProperties( object ) ).toBe( false );
-			
-			object.membershipResource =  "http://example.com/myNamespace#some-relation";
+
+			object = {
+				membershipResource: null,
+			};
 			expect( DirectContainer.Factory.hasClassProperties( object ) ).toBe( true );
+
+			delete object.membershipResource;
+			expect( DirectContainer.Factory.hasClassProperties( object ) ).toBe( false );
+			object.membershipResource = null;
 		});
 
 		it( hasMethod(
@@ -269,6 +275,7 @@ describe( module( "Carbon/LDP/DirectContainer" ), ():void => {
 			expect( directContainer.myProperty ).toBeUndefined();
 			expect( directContainer.membershipResource ).toBe( membershipResource );
 			expect( directContainer.hasMemberRelation ).toEqual( hasMemberRelation );
+			expect( directContainer.memberOfRelation ).toBeUndefined();
 			expect( directContainer.types ).toContain( NS.LDP.Class.DirectContainer );
 			
 			directContainer = DirectContainer.Factory.createFrom( {}, membershipResource, hasMemberRelation );
@@ -276,6 +283,7 @@ describe( module( "Carbon/LDP/DirectContainer" ), ():void => {
 			expect( directContainer.myProperty ).toBeUndefined();
 			expect( directContainer.membershipResource ).toBe( membershipResource );
 			expect( directContainer.hasMemberRelation ).toBe( hasMemberRelation );
+			expect( directContainer.memberOfRelation ).toBeUndefined();
 			expect( directContainer.types ).toContain( NS.LDP.Class.DirectContainer );
 
 			directContainer = DirectContainer.Factory.createFrom( {}, membershipResource, "http://example.com/myNamespace#some-relation", "http://example.com/myNamesape#some-inverted-relation" );
@@ -307,6 +315,7 @@ describe( module( "Carbon/LDP/DirectContainer" ), ():void => {
 			expect( directContainer.myProperty ).toBe( "The property" );
 			expect( directContainer.membershipResource ).toBe( membershipResource );
 			expect( directContainer.hasMemberRelation ).toEqual( hasMemberRelation );
+			expect( directContainer.memberOfRelation ).toBeUndefined();
 			expect( directContainer.types ).toContain( NS.LDP.Class.DirectContainer );
 
 			directContainer = DirectContainer.Factory.createFrom<TheDirectContainer>( { myProperty: "The property"}, membershipResource, hasMemberRelation );
@@ -314,6 +323,7 @@ describe( module( "Carbon/LDP/DirectContainer" ), ():void => {
 			expect( directContainer.myProperty ).toBe( "The property" );
 			expect( directContainer.membershipResource ).toBe( membershipResource );
 			expect( directContainer.hasMemberRelation ).toBe( hasMemberRelation );
+			expect( directContainer.memberOfRelation ).toBeUndefined();
 			expect( directContainer.types ).toContain( NS.LDP.Class.DirectContainer );
 
 			directContainer = DirectContainer.Factory.createFrom<TheDirectContainer>( { myProperty: "The property"}, membershipResource, "http://example.com/myNamespace#some-relation", "http://example.com/myNamesape#some-inverted-relation" );

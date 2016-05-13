@@ -23,6 +23,11 @@ var Class = (function () {
         enumerable: true,
         configurable: true
     });
+    Object.defineProperty(Class, "PreferContainer", {
+        get: function () { return exports.namespace + "PreferContainer"; },
+        enumerable: true,
+        configurable: true
+    });
     Object.defineProperty(Class, "PreferContainmentResources", {
         get: function () { return exports.namespace + "PreferContainmentResources"; },
         enumerable: true,
@@ -73,6 +78,16 @@ var Class = (function () {
         enumerable: true,
         configurable: true
     });
+    Object.defineProperty(Class, "ResponseMetadata", {
+        get: function () { return exports.namespace + "ResponseMetadata"; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Class, "ResourceMetadata", {
+        get: function () { return exports.namespace + "ResourceMetadata"; },
+        enumerable: true,
+        configurable: true
+    });
     return Class;
 }());
 exports.Class = Class;
@@ -81,6 +96,11 @@ var Predicate = (function () {
     }
     Object.defineProperty(Predicate, "accessPoint", {
         get: function () { return exports.namespace + "accessPoint"; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Predicate, "bNodeIdentifier", {
+        get: function () { return exports.namespace + "bNodeIdentifier"; },
         enumerable: true,
         configurable: true
     });
@@ -136,6 +156,21 @@ var Predicate = (function () {
     });
     Object.defineProperty(Predicate, "message", {
         get: function () { return exports.namespace + "message"; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Predicate, "resourceMetadata", {
+        get: function () { return exports.namespace + "resourceMetadata"; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Predicate, "resource", {
+        get: function () { return exports.namespace + "resource"; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Predicate, "eTag", {
+        get: function () { return exports.namespace + "eTag"; },
         enumerable: true,
         configurable: true
     });

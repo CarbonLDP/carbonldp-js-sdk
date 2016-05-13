@@ -59,6 +59,15 @@ function isObject(object) {
     return typeof object === "object" && (!!object);
 }
 exports.isObject = isObject;
+function isPlainObject(object) {
+    return isObject(object)
+        && !isArray(object)
+        && !isDate(object)
+        && !isMap(object)
+        && !(typeof Blob !== "undefined" && object instanceof Blob)
+        && !((object + "") === "[object Set]");
+}
+exports.isPlainObject = isPlainObject;
 function isFunction(value) {
     return typeof value === "function";
 }

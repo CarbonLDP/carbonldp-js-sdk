@@ -5,6 +5,7 @@ export class Class {
 	static get AddMemberAction():string { return namespace + "AddMemberAction"; }
 	static get API():string { return namespace + "API"; }
 	static get NonReadableMembershipResourceTriples():string { return namespace + "NonReadableMembershipResourceTriples"; }
+	static get PreferContainer():string { return namespace + "PreferContainer"; }
 	static get PreferContainmentResources():string { return namespace + "PreferContainmentResources"; }
 	static get PreferContainmentTriples():string { return namespace + "PreferContainmentTriples"; }
 	static get PreferMembershipResources():string { return namespace + "PreferMembershipResources"; }
@@ -15,10 +16,13 @@ export class Class {
 	static get RemoveMemberAction():string { return namespace + "RemoveMemberAction"; }
 	static get ErrorResponse():string { return namespace + "ErrorResponse"; }
 	static get Error():string { return namespace + "Error"; }
+	static get ResponseMetadata():string { return namespace + "ResponseMetadata"; }
+	static get ResourceMetadata():string { return namespace + "ResourceMetadata"; }
 }
 
 export class Predicate {
 	static get accessPoint():string { return namespace + "accessPoint"; }
+	static get bNodeIdentifier():string { return namespace + "bNodeIdentifier"; }
 	static get buildDate():string { return namespace + "buildDate"; }
 	static get created():string { return namespace + "created"; }
 	static get modified():string { return namespace + "modified"; }
@@ -30,4 +34,7 @@ export class Predicate {
 	static get httpStatusCode():string { return namespace + "httpStatusCode"; }
 	static get carbonCode():string { return namespace + "carbonCode"; }
 	static get message():string { return namespace + "message"; }
+	static get resourceMetadata():string { return namespace + "resourceMetadata"; }
+	static get resource():string { return namespace + "resource"; }
+	static get eTag():string { return namespace + "eTag"; }
 }

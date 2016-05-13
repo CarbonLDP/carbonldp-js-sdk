@@ -5,14 +5,14 @@ var __extends = (this && this.__extends) || function (d, b) {
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
 var SDKContext = require("./SDKContext");
-var ObjectSchema = require("./ObjectSchema");
 var AbstractContext = (function (_super) {
     __extends(AbstractContext, _super);
     function AbstractContext(parentContext) {
         if (parentContext === void 0) { parentContext = null; }
         _super.call(this);
         this._parentContext = !!parentContext ? parentContext : SDKContext.instance;
-        this.generalObjectSchema = !!parentContext ? null : new ObjectSchema.DigestedObjectSchema();
+        this.generalObjectSchema = null;
+        this.typeObjectSchemaMap = new Map();
     }
     Object.defineProperty(AbstractContext.prototype, "parentContext", {
         get: function () { return this._parentContext; },

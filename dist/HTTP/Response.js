@@ -1,23 +1,38 @@
 "use strict";
 var Header = require("./Header");
+var Utils_1 = require("../Utils");
 var Class = (function () {
-    function Class(request) {
-        this.status = request.status;
-        this.data = request.responseText;
-        this.setHeaders(request);
+    function Class(request, data, response) {
+        if (response === void 0) { response = {}; }
+        if (typeof XMLHttpRequest !== "undefined" && request instanceof XMLHttpRequest) {
+            var res = request;
+            this.status = res.status;
+            this.data = res.responseText;
+            this.setHeaders(res.getAllResponseHeaders());
+        }
+        else {
+            this.status = response.statusCode;
+            this.data = data || "";
+            this.setHeaders(response.headers);
+        }
         this.request = request;
     }
     Class.prototype.getHeader = function (name) {
         name = name.toLowerCase();
         return this.headers.get(name) || null;
     };
-    Class.prototype.setHeaders = function (request) {
-        var headersString = request.getAllResponseHeaders();
-        if (headersString) {
-            this.headers = Header.Util.parseHeaders(headersString);
+    Class.prototype.setHeaders = function (headers) {
+        if (Utils_1.isString(headers)) {
+            this.headers = Header.Util.parseHeaders(headers);
         }
         else {
             this.headers = new Map();
+            if (Utils_1.isObject(headers)) {
+                for (var _i = 0, _a = Object.keys(headers); _i < _a.length; _i++) {
+                    var name_1 = _a[_i];
+                    this.headers.set(name_1, new Header.Class(headers[name_1]));
+                }
+            }
         }
     };
     return Class;

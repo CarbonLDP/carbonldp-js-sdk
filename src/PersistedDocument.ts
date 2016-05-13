@@ -23,11 +23,16 @@ export interface Class extends Pointer.Class, PersistedResource.Class, Document.
 	getFragment( slug:string ):PersistedFragment.Class;
 	getNamedFragment( slug:string ):PersistedNamedFragment.Class;
 	getFragments():PersistedFragment.Class[];
+
 	createFragment():PersistedFragment.Class;
 	createFragment( slug:string ):PersistedNamedFragment.Class;
-	createNamedFragment( slug:string ):PersistedNamedFragment.Class;
+	createFragment<T extends Object>( slug:string, object:T ):PersistedNamedFragment.Class & T;
+	createFragment<T extends Object>( object:T ):PersistedFragment.Class & T;
 
-	refresh():Promise<void>;
+	createNamedFragment( slug:string ):PersistedNamedFragment.Class;
+	createNamedFragment<T extends Object>( slug:string, object:T ):PersistedNamedFragment.Class & T;
+
+	refresh():Promise<[Class, HTTP.Response.Class]>;
 	save():Promise<[Class, HTTP.Response.Class]>;
 	destroy():Promise<HTTP.Response.Class>;
 
@@ -67,28 +72,33 @@ function syncSavedFragments():void {
 }
 
 function extendCreateFragment( superFunction:( slug:string ) => NamedFragment.Class ):( slug:string ) => PersistedNamedFragment.Class;
-function extendCreateFragment( superFunction:( slug?:string ) => Fragment.Class ):( slug?:string ) => PersistedFragment.Class;
-function extendCreateFragment( superFunction:( slug:string ) => any ):any {
-	return function( slug:string = null ):any {
-		let fragment:Fragment.Class = superFunction.call( this, slug );
-		if( slug !== null ) {
-			if( RDF.URI.Util.isBNodeID( slug ) ) return PersistedFragment.Factory.decorate( fragment );
-			return PersistedNamedFragment.Factory.decorate( fragment );
+function extendCreateFragment( superFunction:() => Fragment.Class ):() => PersistedFragment.Class;
+function extendCreateFragment( superFunction:( slug:string, object:Object ) => NamedFragment.Class ):( slug:string, object:Object ) => PersistedNamedFragment.Class;
+function extendCreateFragment( superFunction:( object:Object ) => Fragment.Class ):( object:Object ) => PersistedFragment.Class;
+function extendCreateFragment( superFunction:( slug?:string, object?:Object ) => any ):any {
+	return function( slugOrObject:string = null, object:Object = null ):any {
+		let fragment:Fragment.Class = superFunction.call( this, slugOrObject, object );
+		let id:string = fragment.id;
+
+		if( RDF.URI.Util.isBNodeID( id ) ) {
+			PersistedFragment.Factory.decorate( fragment );
 		} else {
-			return PersistedFragment.Factory.decorate( fragment );
+			PersistedNamedFragment.Factory.decorate( fragment );
 		}
+		return fragment;
 	};
 }
-function extendCreateNamedFragment( superFunction:( slug:string ) => NamedFragment.Class ):( slug:string ) => PersistedNamedFragment.Class {
-	return function( slug:string ):PersistedNamedFragment.Class {
-		let fragment:NamedFragment.Class = superFunction.call( this, slug );
+function extendCreateNamedFragment( superFunction:( slug:string ) => NamedFragment.Class ):( slug:string ) => PersistedNamedFragment.Class;
+function extendCreateNamedFragment( superFunction:( slug:string, object:Object ) => NamedFragment.Class ):( slug:string, object:Object ) => PersistedNamedFragment.Class;
+function extendCreateNamedFragment( superFunction:( slug:string, object?:Object ) => NamedFragment.Class ):any {
+	return function( slug:string, object:Object = null ):PersistedNamedFragment.Class {
+		let fragment:NamedFragment.Class = superFunction.call( this, slug, object );
 		return PersistedFragment.Factory.decorate( fragment );
 	};
 }
 
-function refresh():Promise<void> {
-	// TODO
-	return null;
+function refresh():Promise<[Class, HTTP.Response.Class]> {
+	return this._documents.refresh( this );
 }
 function save():Promise<void> {
 	return this._documents.save( this );

@@ -1,3 +1,32 @@
+# 0.32.0 (May 13, 2016)
+- [LDP-631](https://jira.base22.com/browse/LDP-631) Retrieve document members and/or children in the same request
+    - Added `persistedDocument.getMembers()` method
+    - Added `persistedDocument.getChildren()` method
+- [LDP-634](https://jira.base22.com/browse/LDP-634) Create fragments/namedFragments from an object with nested objects
+- [LDP-635](https://jira.base22.com/browse/LDP-635) Use the app's default vocabulary for unknown properties (not defined in the objectSchema)
+
+#### Breaking Changes
+- `persistedDocument.getMembers()` has been renamed to `persistedDocument.listMembers()`
+- `persistedDocument.getChildren()` has been renamed to `persistedDocument.listChildren()`
+
+# 0.31.0 (May 4th, 2016) :rocket::star:
+- [LDP-608](https://jira.base22.com/browse/LDP-608) Initial support for Node.js
+
+# 0.30.0 (April 28, 2016)
+- [LDP-498](https://jira.base22.com/browse/LDP-498)
+    - Added `persistedDocument.refresh()` method, which lets you refresh a document with the latest version on the server
+- Fixed bug, changes to the object schema were not reflected unless they were tied to a type
+- Fixed bug, extending the object schema specifying a type polluted the general object schema
+
+# 0.29.1 (April 26, 2016)
+- Fixed [LDP-630](https://jira.base22.com/browse/LDP-630), resolving the same resource at the same time throws an error
+- Fixed [LDP-629](https://jira.base22.com/browse/LDP-629), IllegalArgumentError when resolving a document that was already resolved
+
+# 0.29.0 (April 22, 2016)
+- Added `context.documents.removeAllMembers()`
+- Added `context.documents.getChildren()` method, which lets you obtain all the children of a container
+- Fixed a bug in `LDP.DirectContainer.Factory.createFrom` where sending an undefined `hasMemberRelation` would trigger unexpected behaviour
+
 # 0.28.0 (April 14, 2016)
 - Added `context.documents.removeMember()` method, which lets you remove a single member reference to a Container
 - Added `context.documents.removeMember()` method, same as `persistedContainer.removeMember()`

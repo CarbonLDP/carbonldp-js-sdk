@@ -116,26 +116,23 @@ function createFragment( slugOrObject?:any, object?:any ):any {
 	object = Utils.isString( slugOrObject ) ? object : slugOrObject;
 	object = object || {};
 
-	let id:string;
 	if( slug ) {
 		if( ! RDF.URI.Util.isBNodeID( slug ) ) return document.createNamedFragment( slug, object );
-		id = slug;
-		if( this._fragmentsIndex.has( id ) ) throw new Errors.IDAlreadyInUseError( "The slug provided is already being used by a fragment." );
-	} else {
-		id = Fragment.Util.generateID();
+		if( this._fragmentsIndex.has( slug ) ) throw new Errors.IDAlreadyInUseError( "The slug provided is already being used by a fragment." );
 	}
 
-	let fragment:Fragment.Class = Fragment.Factory.createFrom( object, id, document );
+	let fragment:Fragment.Class = Fragment.Factory.createFrom( object, slug, document );
+	document._fragmentsIndex.set( fragment.id, fragment );
 
-	document._fragmentsIndex.set( id, fragment );
-
+	convertNestedObjects( document, fragment );
 	return fragment;
 }
 
 function createNamedFragment<T extends Object>( slug:string, object:T ):NamedFragment.Class & T;
 function createNamedFragment( slug:string ):NamedFragment.Class;
-function createNamedFragment( slug:string, object:any = {} ):any {
+function createNamedFragment( slug:string, object?:any ):any {
 	let document:Class = <Class> this;
+	object = object || {};
 
 	if( RDF.URI.Util.isBNodeID( slug ) ) throw new Errors.IllegalArgumentError( "Named fragments can't have a slug that starts with '_:'." );
 
@@ -147,9 +144,9 @@ function createNamedFragment( slug:string, object:any = {} ):any {
 	if( document._fragmentsIndex.has( slug ) ) throw new Errors.IDAlreadyInUseError( "The slug provided is already being used by a fragment." );
 
 	let fragment:NamedFragment.Class = <NamedFragment.Class> NamedFragment.Factory.createFrom( object, slug, document );
-
 	document._fragmentsIndex.set( slug, fragment );
 
+	convertNestedObjects( document, fragment );
 	return fragment;
 }
 
@@ -331,7 +328,7 @@ function convertNestedObjects( parent:Class, actual:any ):void {
 			continue;
 		}
 
-		if ( ! isPlainObject( next ) ) continue;
+		if ( ! Utils.isPlainObject( next ) || Pointer.Factory.is( next ) ) continue;
 
 		idOrSlug = ( "id" in next ) ?  next.id : ( ( "slug" in next ) ? next.slug : "" );
 		if ( ! parent.inScope( idOrSlug ) ) continue;
@@ -350,13 +347,6 @@ function convertNestedObjects( parent:Class, actual:any ):void {
 
 	}
 
-}
-
-function isPlainObject( object:Object ):boolean {
-	return Utils.isObject( object )
-		&& ! Utils.isArray( object )
-		&& ! Utils.isDate( object )
-		&& ! Utils.isMap( object );
 }
 
 export default Class;
