@@ -14509,7 +14509,7 @@ $__System.register("74", ["e", "2", "11", "10", "a", "6", "32", "12", "1a", "c",
                     this.apps = new Apps.Class(this);
                 }
                 Object.defineProperty(Carbon, "version", {
-                    get: function () { return "0.31.0"; },
+                    get: function () { return "0.32.0"; },
                     enumerable: true,
                     configurable: true
                 });
