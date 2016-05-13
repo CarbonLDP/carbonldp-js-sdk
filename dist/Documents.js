@@ -622,11 +622,10 @@ var Documents = (function () {
                 if (this.context.getObjectSchema(type))
                     typesDigestedObjectSchemas.push(this.context.getObjectSchema(type));
             }
-            if (typesDigestedObjectSchemas.length > 1) {
-                digestedSchema = ObjectSchema.Digester.combineDigestedObjectSchemas(typesDigestedObjectSchemas);
-            }
-            else {
-                digestedSchema = typesDigestedObjectSchemas[0];
+            digestedSchema = ObjectSchema.Digester.combineDigestedObjectSchemas(typesDigestedObjectSchemas);
+            var vocab = this.context.getSetting("vocabulary");
+            if (vocab) {
+                digestedSchema.vocab = this.context.resolve(vocab);
             }
         }
         else {

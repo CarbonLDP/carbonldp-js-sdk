@@ -1613,17 +1613,6 @@ getFragments():Carbon.Fragment.Class[]
 
 Returns an array of the fragments in the document
 
-##### createNamedFragment
-```typescript 
-createNamedFragment( slug:string ):Carbon.NamedFragment.Class
-```
-
-Create a Named Fragment with the slug provided
-
-*Parameters*
-
-- slug
-
 ##### inScope
 ```typescript 
 inScope( pointer:Carbon.Pointer.Class ):boolean
@@ -1682,6 +1671,28 @@ createFragment():Carbon.Fragment.Class
 ```
 
 Creates a Blank Node Fragment, since no slug is provided
+
+##### createNamedFragment
+```typescript 
+createNamedFragment( slug:string ):Carbon.NamedFragment.Class
+```
+
+Creates a NamedFragment with the slug provided
+
+*Parameters*
+
+- slug
+
+```typescript 
+createNamedFragment( slug:string,  object:Object ):Carbon.NamedFragment.Class
+```
+
+Creates a NamedFragment from the object provided and the slug specified.
+
+*Parameters*
+
+- slug
+- object
 
 ##### removeFragment
 ```typescript 
@@ -1839,7 +1850,7 @@ Remove all the members of the document container specified.
 refresh( persistedDocument:Carbon.PersistedDocument.Class,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.PersistedDocument.Class, Carbon.HTTP.Response ]>
 ```
 
-Update the document with the data of the server, if there is a diferent version on it.
+Update the document with the data of the server, if there is a different version on it.
 
 *Parameters*
 
@@ -8148,7 +8159,7 @@ getSetting( name:string ):string
 ```
 
 Returns the value of the setting looked for.
-Returns `null` if no settign with the name specified exists.
+Returns `null` if no setting with the name specified exists.
 
 *Parameters*
 
@@ -8830,6 +8841,7 @@ A object of type `Carbon.settings.CarbonSettings`, whitch is the default setting
 * platform.container: `"platform/"`
 * platform.apps.container: `"apps/"`
 * platform.agents.container: `"agents/"`
+* vocabulary: `"vocabulary/#"`
 
 
 

@@ -2508,22 +2508,22 @@ describe( module( "Carbon/Documents" ), ():void => {
 			}).catch( done.fail );
 		});
 
-		it( hasMethod(
-			INSTANCE,
-			"refresh",
-			"Update the document with the data of the server, if there is a diferent version on it.", [
-				{ name: "persistedDocument", type: "Carbon.PersistedDocument.Class", description: "The persisted document to update." },
-				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true }
-			],
-			{ type: "Promise<[ Carbon.PersistedDocument.Class, Carbon.HTTP.Response ]>" }
-		), ( done:{ ():void, fail:() => void } ):void => {
-			class MockedContext extends AbstractContext {
-				resolve( uri:string ):string {
-					return uri;
-				}
+	it( hasMethod(
+		INSTANCE,
+		"refresh",
+		"Update the document with the data of the server, if there is a different version on it.", [
+			{ name: "persistedDocument", type: "Carbon.PersistedDocument.Class", description: "The persisted document to update." },
+			{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true }
+		],
+		{ type: "Promise<[ Carbon.PersistedDocument.Class, Carbon.HTTP.Response ]>" }
+	), ( done:{ ():void, fail:() => void } ):void => {
+		class MockedContext extends AbstractContext {
+			resolve( uri:string ):string {
+				return uri;
 			}
-			let context:MockedContext = new MockedContext();
-			let documents:Documents = context.documents;
+		}
+		let context:MockedContext = new MockedContext();
+		let documents:Documents = context.documents;
 
 			expect( documents.refresh ).toBeDefined();
 			expect( Utils.isFunction( documents.refresh ) ).toBe( true );
