@@ -1,8 +1,10 @@
 "use strict";
-var Document = require("./../Document");
+var FreeResources = require("./../FreeResources");
+var JSONLDParser_1 = require("./../HTTP/JSONLDParser");
 var NS = require("./../NS");
-var RDFDocument = require("./../RDF/Document");
+var RDF = require("./../RDF");
 var SDKContext_1 = require("./../SDKContext");
+var IllegalArgumentError_1 = require("../Errors/IllegalArgumentError");
 exports.RDF_CLASS = NS.C.Class.ErrorResponse;
 exports.SCHEMA = {
     "errors": {
@@ -15,38 +17,6 @@ exports.SCHEMA = {
         "@type": NS.XSD.DataType.int,
     },
 };
-var Factory = (function () {
-    function Factory() {
-    }
-    Factory.create = function (data) {
-        var errorResponse;
-        var errors = [];
-        var parser = new RDFDocument.Parser();
-        var pointerLib = Document.Factory.create();
-        return parser.parse(data).then(function (parsedData) {
-            if (parsedData.length === 0)
-                return null;
-            var nodes = parsedData[0]["@graph"];
-            for (var _i = 0, nodes_1 = nodes; _i < nodes_1.length; _i++) {
-                var node = nodes_1[_i];
-                var compacted = {};
-                SDKContext_1.default.documents.compact(node, compacted, pointerLib);
-                if (compacted.types.indexOf(exports.RDF_CLASS) !== -1) {
-                    errorResponse = compacted;
-                }
-                else {
-                    errors.push(compacted);
-                }
-                delete compacted.id;
-                delete compacted.types;
-            }
-            errorResponse.errors = errors;
-            return errorResponse;
-        });
-    };
-    return Factory;
-}());
-exports.Factory = Factory;
 var Util = (function () {
     function Util() {
     }
@@ -61,5 +31,32 @@ var Util = (function () {
     return Util;
 }());
 exports.Util = Util;
+var Parser = (function () {
+    function Parser() {
+    }
+    Parser.prototype.parse = function (input) {
+        var documents = SDKContext_1.default.documents;
+        var parser = new JSONLDParser_1.default();
+        return parser.parse(input).then(function (freeNodes) {
+            var errorResponse = null;
+            var freeResources = FreeResources.Factory.create(documents);
+            for (var _i = 0, freeNodes_1 = freeNodes; _i < freeNodes_1.length; _i++) {
+                var node = freeNodes_1[_i];
+                var resource = freeResources.getPointer(node["@id"]);
+                documents.jsonldConverter.compact(node, resource, documents.getSchemaFor(node), freeResources);
+                if (RDF.Node.Util.hasType(node, exports.RDF_CLASS)) {
+                    if (errorResponse)
+                        throw new IllegalArgumentError_1.default("The input string contains more than once c:ErrorResponse.");
+                    errorResponse = resource;
+                }
+            }
+            if (!errorResponse)
+                throw new IllegalArgumentError_1.default("The input string does not contains a c:ErrorResponse.");
+            return errorResponse;
+        });
+    };
+    return Parser;
+}());
+exports.Parser = Parser;
 
 //# sourceMappingURL=ErrorResponse.js.map

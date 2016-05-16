@@ -623,23 +623,6 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 		return SPARQL.Service.executeRawDESCRIBEQuery( documentURI, constructQuery, requestOptions );
 	}
 
-	public compact( expandedObjects:Object[], targetObjects:Object[], pointerLibrary:Pointer.Library ):Object[];
-	public compact( expandedObject:Object, targetObject:Object, pointerLibrary:Pointer.Library ):Object;
-	public compact( expandedObjectOrObjects:any, targetObjectOrObjects:any, pointerLibrary:Pointer.Library ):any {
-		if( ! Utils.isArray( expandedObjectOrObjects ) ) return this.compactSingle( expandedObjectOrObjects, targetObjectOrObjects, pointerLibrary );
-
-		let expandedObjects:Object[] = expandedObjectOrObjects;
-		let targetObjects:Object[] = !! targetObjectOrObjects ? targetObjectOrObjects : [];
-		for( let i:number = 0, length:number = expandedObjects.length; i < length; i++ ) {
-			let expandedObject:Object = expandedObjects[ i ];
-			let targetObject:Object = targetObjects[ i ] = !! targetObjects[ i ] ? targetObjects[ i ] : {};
-
-			this.compactSingle( expandedObject, targetObject, pointerLibrary );
-		}
-
-		return targetObjects;
-	}
-
 	private getRDFDocument( requestURL:string, rdfDocuments:RDF.Document.Class[], response:HTTP.Response.Class ):RDF.Document.Class {
 		rdfDocuments = rdfDocuments.filter( ( rdfDocument:RDF.Document.Class ) => rdfDocument[ "@id" ] === requestURL );
 
@@ -691,6 +674,23 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 		});
 
 		return pointer;
+	}
+
+	private compact( expandedObjects:Object[], targetObjects:Object[], pointerLibrary:Pointer.Library ):Object[];
+	private compact( expandedObject:Object, targetObject:Object, pointerLibrary:Pointer.Library ):Object;
+	private compact( expandedObjectOrObjects:any, targetObjectOrObjects:any, pointerLibrary:Pointer.Library ):any {
+		if( ! Utils.isArray( expandedObjectOrObjects ) ) return this.compactSingle( expandedObjectOrObjects, targetObjectOrObjects, pointerLibrary );
+
+		let expandedObjects:Object[] = expandedObjectOrObjects;
+		let targetObjects:Object[] = !! targetObjectOrObjects ? targetObjectOrObjects : [];
+		for( let i:number = 0, length:number = expandedObjects.length; i < length; i++ ) {
+			let expandedObject:Object = expandedObjects[ i ];
+			let targetObject:Object = targetObjects[ i ] = !! targetObjects[ i ] ? targetObjects[ i ] : {};
+
+			this.compactSingle( expandedObject, targetObject, pointerLibrary );
+		}
+
+		return targetObjects;
 	}
 
 	private compactSingle( expandedObject:Object, targetObject:Object, pointerLibrary:Pointer.Library ):Object {

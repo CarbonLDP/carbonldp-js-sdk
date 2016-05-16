@@ -278,6 +278,14 @@
 	- [Properties](#Carbon-LDP-DirectContainer-Properties)
 	- [Class Carbon.DirectContainer.Factory](#Carbon-DirectContainer-Factory)
 		- [Methods](#Carbon-DirectContainer-Factory-Methods)
+- [Module Carbon/LDP/Error](#Carbon-LDP-Error)
+	- [Properties](#Carbon-LDP-Error-Properties)
+- [Module Carbon/LDP/ErrorResponse](#Carbon-LDP-ErrorResponse)
+	- [Properties](#Carbon-LDP-ErrorResponse-Properties)
+	- [Class Carbon.LDP.ErrorResponse.Parser](#Carbon-LDP-ErrorResponse-Parser)
+		- [Methods](#Carbon-LDP-ErrorResponse-Parser-Methods)
+	- [Class Carbon.LDP.ErrorResponse.Util](#Carbon-LDP-ErrorResponse-Util)
+		- [Methods](#Carbon-LDP-ErrorResponse-Util-Methods)
 - [Module Carbon/LDP/IndirectContainer](#Carbon-LDP-IndirectContainer)
 	- [Properties](#Carbon-LDP-IndirectContainer-Properties)
 	- [Class Carbon.IndirectContainer.Factory](#Carbon-IndirectContainer-Factory)
@@ -2934,6 +2942,14 @@ static statusCode:number
 name:string 
 ```
 
+```typescript 
+response:number 
+```
+
+```typescript 
+errorResponse:number 
+```
+
 
 #### <a name="Carbon-HTTP-Errors-HTTPError-Methods" />Methods
 
@@ -4614,10 +4630,12 @@ expand( compactedObject:Object,  digestedSchema:Carbon.ObjectSchema.DigestedObje
 | BasicContainer | [Carbon/LDP/BasicContainer](#Carbon-LDP-BasicContainer) |
 | Container | [Carbon/LDP/Container](#Carbon-LDP-Container) |
 | DirectContainer | [Carbon/LDP/DirectContainer](#Carbon-LDP-DirectContainer) |
+| Error | [Carbon/LDP/Error](#Carbon-LDP-Error) |
 | IndirectContainer | [Carbon/LDP/IndirectContainer](#Carbon-LDP-IndirectContainer) |
 | PersistedContainer | [Carbon/LDP/PersistedContainer](#Carbon-LDP-PersistedContainer) |
 | RDFSource | [Carbon/LDP/RDFSource](#Carbon-LDP-RDFSource) |
 | RemoveMemberAction | [Carbon/LDP/RemoveMemberAction](#Carbon-LDP-RemoveMemberAction) |
+| ErrorResponse | [Carbon/LDP/ErrorResponse](#Carbon-LDP-ErrorResponse) |
 | ResponseMetadata | [Carbon/LDP/ResponseMetadata](#Carbon-LDP-ResponseMetadata) |
 | ResourceMetadata | [Carbon/LDP/ResourceMetadata](#Carbon-LDP-ResourceMetadata) |
 
@@ -4882,6 +4900,90 @@ Returns true if the Object provided is an LDP DirectContainer.
 *Parameters*
 
 - expandedObject
+
+
+
+
+## <a name="Carbon-LDP-Error" />Module Carbon/LDP/Error
+
+
+
+
+
+### <a name="Carbon-LDP-Error-Properties" />Properties
+```typescript 
+static RDF_CLASS:string 
+```
+
+```typescript 
+static SCHEMA:Carbon.ObjectSchema.Class 
+```
+
+
+
+
+
+## <a name="Carbon-LDP-ErrorResponse" />Module Carbon/LDP/ErrorResponse
+
+
+
+
+
+### <a name="Carbon-LDP-ErrorResponse-Properties" />Properties
+```typescript 
+static RDF_CLASS:string 
+```
+
+```typescript 
+static SCHEMA:Carbon.ObjectSchema.Class 
+```
+
+
+
+
+
+### <a name="Carbon-LDP-ErrorResponse-Parser" />Class Carbon.LDP.ErrorResponse.Parser
+
+
+> Parser class for `Carbon.LDP.ErrorResponse.Class` objects.
+
+
+
+
+#### <a name="Carbon-LDP-ErrorResponse-Parser-Methods" />Methods
+##### create
+```typescript 
+static create( data:string ):Promise<Carbon.LDP.ErrorResponse.Class>
+```
+
+Parse the string data provided and create an `Carbon.LDP.ResponseError.Class` object.
+
+*Parameters*
+
+- data: The json-ld string, which represents an error response from a Carbon server.
+
+
+
+
+### <a name="Carbon-LDP-ErrorResponse-Util" />Class Carbon.LDP.ErrorResponse.Util
+
+
+> Useful functions for managing `Carbon.LDP.ErrorResponse.Class` objects.
+
+
+
+
+#### <a name="Carbon-LDP-ErrorResponse-Util-Methods" />Methods
+##### getMessage
+```typescript 
+static getMessage( errorResponse:Carbon.LDP.ErrorResponse.Class ):string
+```
+
+Returns a string with the message of all the errors in the ErrorResponse.
+
+*Parameters*
+
+- errorResponse: The ErrorResponse object to obtain the message from.
 
 
 
@@ -5530,6 +5632,14 @@ static RemoveMemberAction:string
 ```
 
 ```typescript 
+static ErrorResponse:string 
+```
+
+```typescript 
+static Error:string 
+```
+
+```typescript 
 static ResponseMetadata:string 
 ```
 
@@ -5583,6 +5693,22 @@ static size:string
 
 ```typescript 
 static targetMember:string 
+```
+
+```typescript 
+static error:string 
+```
+
+```typescript 
+static httpStatusCode:string 
+```
+
+```typescript 
+static carbonCode:string 
+```
+
+```typescript 
+static message:string 
 ```
 
 ```typescript 

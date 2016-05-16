@@ -75,6 +75,14 @@ declare module 'carbonldp/HTTP/Response' {
 	export default Class;
 
 }
+declare module 'carbonldp/HTTP/Errors/server/BadResponseError' {
+	import HTTPError from 'carbonldp/HTTP/Errors/HTTPError'; class Class extends HTTPError {
+	    static statusCode: number;
+	    name: string;
+	}
+	export default Class;
+
+}
 declare module 'carbonldp/Errors/IDAlreadyInUseError' {
 	import AbstractError from 'carbonldp/Errors/AbstractError'; class IDAlreadyInUseError extends AbstractError {
 	    name: string;
@@ -119,150 +127,6 @@ declare module 'carbonldp/Errors' {
 	import IllegalStateError from 'carbonldp/Errors/IllegalStateError';
 	import NotImplementedError from 'carbonldp/Errors/NotImplementedError';
 	export { IDAlreadyInUseError, IllegalActionError, IllegalArgumentError, IllegalStateError, NotImplementedError };
-
-}
-declare module 'carbonldp/Pointer' {
-	import * as HTTP from 'carbonldp/HTTP';
-	export interface Class {
-	    _id: string;
-	    _resolved: boolean;
-	    id: string;
-	    isResolved(): boolean;
-	    resolve(): Promise<[Class, HTTP.Response.Class]>;
-	}
-	export interface Library {
-	    hasPointer(id: string): boolean;
-	    getPointer(id: string): Class;
-	}
-	export class Factory {
-	    static hasClassProperties(object: Object): boolean;
-	    static is(value: any): boolean;
-	    static create(id?: string): Class;
-	    static decorate<T extends Object>(object: T): Class;
-	}
-	export class Util {
-	    static getIDs(pointers: Class[]): string[];
-	    static resolveAll(pointers: Class[]): Promise<[Class[], HTTP.Response.Class[]]>;
-	}
-	export interface Validator {
-	    inScope(id: string): boolean;
-	    inScope(pointer: Class): boolean;
-	}
-	export default Class;
-
-}
-declare module 'carbonldp/NS/XSD' {
-	export const namespace: string;
-	export class DataType {
-	    static date: string;
-	    static dateTime: string;
-	    static duration: string;
-	    static gDay: string;
-	    static gMonth: string;
-	    static gMonthDay: string;
-	    static gYear: string;
-	    static gYearMonth: string;
-	    static time: string;
-	    static byte: string;
-	    static decimal: string;
-	    static int: string;
-	    static integer: string;
-	    static long: string;
-	    static negativeInteger: string;
-	    static nonNegativeInteger: string;
-	    static nonPositiveInteger: string;
-	    static positiveInteger: string;
-	    static short: string;
-	    static unsignedLong: string;
-	    static unsignedInt: string;
-	    static unsignedShort: string;
-	    static unsignedByte: string;
-	    static double: string;
-	    static float: string;
-	    static boolean: string;
-	    static string: string;
-	    static object: string;
-	}
-
-}
-declare module 'carbonldp/RDF/Literal/Serializer' {
-	export interface Serializer {
-	    serialize(value: any): string;
-	}
-	export default Serializer;
-
-}
-declare module 'carbonldp/RDF/Literal/Serializers/XSD' {
-	import Serializer from 'carbonldp/RDF/Literal/Serializer';
-	export class DateSerializer implements Serializer {
-	    serialize(value: any): string;
-	}
-	export let dateSerializer: DateSerializer;
-	export class DateTimeSerializer implements Serializer {
-	    serialize(value: any): string;
-	}
-	export let dateTimeSerializer: DateTimeSerializer;
-	export class TimeSerializer implements Serializer {
-	    serialize(value: any): string;
-	}
-	export let timeSerializer: TimeSerializer;
-	export class IntegerSerializer implements Serializer {
-	    serialize(value: any): string;
-	}
-	export let integerSerializer: IntegerSerializer;
-	export class UnsignedIntegerSerializer extends IntegerSerializer {
-	    serialize(value: any): string;
-	}
-	export let unsignedIntegerSerializer: UnsignedIntegerSerializer;
-	export class FloatSerializer implements Serializer {
-	    serialize(value: any): string;
-	}
-	export let floatSerializer: FloatSerializer;
-	export class BooleanSerializer implements Serializer {
-	    serialize(value: any): string;
-	}
-	export let booleanSerializer: BooleanSerializer;
-	export class StringSerializer implements Serializer {
-	    serialize(value: any): string;
-	}
-	export let stringSerializer: StringSerializer;
-
-}
-declare module 'carbonldp/RDF/Literal/Serializers' {
-	import * as XSD from 'carbonldp/RDF/Literal/Serializers/XSD';
-	export { XSD };
-
-}
-declare module 'carbonldp/RDF/Literal' {
-	import Serializer from 'carbonldp/RDF/Literal/Serializer';
-	import * as Serializers from 'carbonldp/RDF/Literal/Serializers';
-	export interface Class {
-	    "@type"?: string;
-	    "@value": string;
-	}
-	export class Factory {
-	    static from(value: any): Class;
-	    static parse(literalValue: string, literalDataType?: string): any;
-	    static parse(literal: Class): any;
-	    static is(value: any): boolean;
-	    static hasType(value: Class, type: string): boolean;
-	}
-	export class Util {
-	    static areEqual(literal1: Class, literal2: Class): boolean;
-	}
-	export default Class;
-	export { Serializer, Serializers };
-
-}
-declare module 'carbonldp/RDF/List' {
-	import Value from 'carbonldp/RDF/Value';
-	export interface Class {
-	    "@list": Array<Value>;
-	}
-	export class Factory {
-	    static is(value: any): boolean;
-	}
-	export default Class;
 
 }
 declare module 'carbonldp/NS/C' {
@@ -374,6 +238,40 @@ declare module 'carbonldp/NS/RDF' {
 	export { namespace, Predicate };
 
 }
+declare module 'carbonldp/NS/XSD' {
+	export const namespace: string;
+	export class DataType {
+	    static date: string;
+	    static dateTime: string;
+	    static duration: string;
+	    static gDay: string;
+	    static gMonth: string;
+	    static gMonthDay: string;
+	    static gYear: string;
+	    static gYearMonth: string;
+	    static time: string;
+	    static byte: string;
+	    static decimal: string;
+	    static int: string;
+	    static integer: string;
+	    static long: string;
+	    static negativeInteger: string;
+	    static nonNegativeInteger: string;
+	    static nonPositiveInteger: string;
+	    static positiveInteger: string;
+	    static short: string;
+	    static unsignedLong: string;
+	    static unsignedInt: string;
+	    static unsignedShort: string;
+	    static unsignedByte: string;
+	    static double: string;
+	    static float: string;
+	    static boolean: string;
+	    static string: string;
+	    static object: string;
+	}
+
+}
 declare module 'carbonldp/NS/VCARD' {
 	export const namespace: string;
 	export class Predicate {
@@ -390,6 +288,116 @@ declare module 'carbonldp/NS' {
 	import * as XSD from 'carbonldp/NS/XSD';
 	import * as VCARD from 'carbonldp/NS/VCARD';
 	export { C, CP, CS, LDP, RDF, XSD, VCARD };
+
+}
+declare module 'carbonldp/Pointer' {
+	import * as HTTP from 'carbonldp/HTTP';
+	export interface Class {
+	    _id: string;
+	    _resolved: boolean;
+	    id: string;
+	    isResolved(): boolean;
+	    resolve(): Promise<[Class, HTTP.Response.Class]>;
+	}
+	export interface Library {
+	    hasPointer(id: string): boolean;
+	    getPointer(id: string): Class;
+	}
+	export class Factory {
+	    static hasClassProperties(object: Object): boolean;
+	    static is(value: any): boolean;
+	    static create(id?: string): Class;
+	    static decorate<T extends Object>(object: T): Class;
+	}
+	export class Util {
+	    static getIDs(pointers: Class[]): string[];
+	    static resolveAll(pointers: Class[]): Promise<[Class[], HTTP.Response.Class[]]>;
+	}
+	export interface Validator {
+	    inScope(id: string): boolean;
+	    inScope(pointer: Class): boolean;
+	}
+	export default Class;
+
+}
+declare module 'carbonldp/RDF/Literal/Serializer' {
+	export interface Serializer {
+	    serialize(value: any): string;
+	}
+	export default Serializer;
+
+}
+declare module 'carbonldp/RDF/Literal/Serializers/XSD' {
+	import Serializer from 'carbonldp/RDF/Literal/Serializer';
+	export class DateSerializer implements Serializer {
+	    serialize(value: any): string;
+	}
+	export let dateSerializer: DateSerializer;
+	export class DateTimeSerializer implements Serializer {
+	    serialize(value: any): string;
+	}
+	export let dateTimeSerializer: DateTimeSerializer;
+	export class TimeSerializer implements Serializer {
+	    serialize(value: any): string;
+	}
+	export let timeSerializer: TimeSerializer;
+	export class IntegerSerializer implements Serializer {
+	    serialize(value: any): string;
+	}
+	export let integerSerializer: IntegerSerializer;
+	export class UnsignedIntegerSerializer extends IntegerSerializer {
+	    serialize(value: any): string;
+	}
+	export let unsignedIntegerSerializer: UnsignedIntegerSerializer;
+	export class FloatSerializer implements Serializer {
+	    serialize(value: any): string;
+	}
+	export let floatSerializer: FloatSerializer;
+	export class BooleanSerializer implements Serializer {
+	    serialize(value: any): string;
+	}
+	export let booleanSerializer: BooleanSerializer;
+	export class StringSerializer implements Serializer {
+	    serialize(value: any): string;
+	}
+	export let stringSerializer: StringSerializer;
+
+}
+declare module 'carbonldp/RDF/Literal/Serializers' {
+	import * as XSD from 'carbonldp/RDF/Literal/Serializers/XSD';
+	export { XSD };
+
+}
+declare module 'carbonldp/RDF/Literal' {
+	import Serializer from 'carbonldp/RDF/Literal/Serializer';
+	import * as Serializers from 'carbonldp/RDF/Literal/Serializers';
+	export interface Class {
+	    "@type"?: string;
+	    "@value": string;
+	}
+	export class Factory {
+	    static from(value: any): Class;
+	    static parse(literalValue: string, literalDataType?: string): any;
+	    static parse(literal: Class): any;
+	    static is(value: any): boolean;
+	    static hasType(value: Class, type: string): boolean;
+	}
+	export class Util {
+	    static areEqual(literal1: Class, literal2: Class): boolean;
+	}
+	export default Class;
+	export { Serializer, Serializers };
+
+}
+declare module 'carbonldp/RDF/List' {
+	import Value from 'carbonldp/RDF/Value';
+	export interface Class {
+	    "@list": Array<Value>;
+	}
+	export class Factory {
+	    static is(value: any): boolean;
+	}
+	export default Class;
 
 }
 declare module 'carbonldp/RDF/Value' {
@@ -433,56 +441,6 @@ declare module 'carbonldp/RDF/RDFNode' {
 	    static getTypes(node: Class): string[];
 	    static getPropertyURI(node: Class, predicate: string): string;
 	    static getFreeNodes<T extends Object>(value: T): Class[];
-	}
-	export default Class;
-
-}
-declare module 'carbonldp/ObjectSchema' {
-	import * as RDF from 'carbonldp/RDF';
-	export interface PropertyDefinition {
-	    "@id"?: string;
-	    "@type"?: string;
-	    "@language"?: string;
-	    "@container"?: string;
-	}
-	export interface Class {
-	    "@base"?: string;
-	    "@index"?: Object;
-	    "@language"?: string;
-	    "@reverse"?: Object;
-	    "@vocab"?: string;
-	    [name: string]: (string | PropertyDefinition);
-	}
-	export enum ContainerType {
-	    SET = 0,
-	    LIST = 1,
-	    LANGUAGE = 2,
-	}
-	export class DigestedObjectSchema {
-	    base: string;
-	    vocab: string;
-	    prefixes: Map<string, RDF.URI.Class>;
-	    properties: Map<string, DigestedPropertyDefinition>;
-	    prefixedURIs: Map<string, RDF.URI.Class[]>;
-	    constructor();
-	}
-	export class DigestedPropertyDefinition {
-	    uri: RDF.URI.Class;
-	    literal: boolean;
-	    literalType: RDF.URI.Class;
-	    language: string;
-	    containerType: ContainerType;
-	}
-	export interface Resolver {
-	    getSchemaFor(object: Object): DigestedObjectSchema;
-	}
-	export class Digester {
-	    static digestSchema(schemas: Class[]): DigestedObjectSchema;
-	    static digestSchema(schema: Class): DigestedObjectSchema;
-	    static combineDigestedObjectSchemas(digestedSchemas: DigestedObjectSchema[]): DigestedObjectSchema;
-	    private static digestSingleSchema(schema);
-	    private static resolvePrefixedURIs(digestedSchema);
-	    private static resolvePrefixedURI(uri, digestedSchema);
 	}
 	export default Class;
 
@@ -556,33 +514,52 @@ declare module 'carbonldp/RDF' {
 	export { Literal, Document, List, Node, URI, Value };
 
 }
-declare module 'carbonldp/Resource' {
-	import * as Pointer from 'carbonldp/Pointer';
-	export interface Class extends Pointer.Class {
-	    types: string[];
+declare module 'carbonldp/ObjectSchema' {
+	import * as RDF from 'carbonldp/RDF';
+	export interface PropertyDefinition {
+	    "@id"?: string;
+	    "@type"?: string;
+	    "@language"?: string;
+	    "@container"?: string;
 	}
-	export class Factory {
-	    static hasClassProperties(resource: Object): boolean;
-	    static is(object: Object): boolean;
-	    static create(id?: string, types?: string[]): Class;
-	    static createFrom<T extends Object>(object: T, id?: string, types?: string[]): T & Class;
-	    static decorate<T extends Object>(object: T): T & Class;
+	export interface Class {
+	    "@base"?: string;
+	    "@index"?: Object;
+	    "@language"?: string;
+	    "@reverse"?: Object;
+	    "@vocab"?: string;
+	    [name: string]: (string | PropertyDefinition);
 	}
-	export default Class;
-
-}
-declare module 'carbonldp/Fragment' {
-	import * as Document from 'carbonldp/Document';
-	import * as Resource from 'carbonldp/Resource';
-	export interface Class extends Resource.Class {
-	    document: Document.Class;
+	export enum ContainerType {
+	    SET = 0,
+	    LIST = 1,
+	    LANGUAGE = 2,
 	}
-	export class Factory {
-	    static hasClassProperties(resource: Object): boolean;
-	    static create(id: string, document: Document.Class): Class;
-	    static create(document: Document.Class): Class;
-	    static createFrom<T extends Object>(object: T, id: string, document: Document.Class): T & Class;
-	    static createFrom<T extends Object>(object: T, document: Document.Class): T & Class;
+	export class DigestedObjectSchema {
+	    base: string;
+	    vocab: string;
+	    prefixes: Map<string, RDF.URI.Class>;
+	    properties: Map<string, DigestedPropertyDefinition>;
+	    prefixedURIs: Map<string, RDF.URI.Class[]>;
+	    constructor();
+	}
+	export class DigestedPropertyDefinition {
+	    uri: RDF.URI.Class;
+	    literal: boolean;
+	    literalType: RDF.URI.Class;
+	    language: string;
+	    containerType: ContainerType;
+	}
+	export interface Resolver {
+	    getSchemaFor(object: Object): DigestedObjectSchema;
+	}
+	export class Digester {
+	    static digestSchema(schemas: Class[]): DigestedObjectSchema;
+	    static digestSchema(schema: Class): DigestedObjectSchema;
+	    static combineDigestedObjectSchemas(digestedSchemas: DigestedObjectSchema[]): DigestedObjectSchema;
+	    private static digestSingleSchema(schema);
+	    private static resolvePrefixedURIs(digestedSchema);
+	    private static resolvePrefixedURI(uri, digestedSchema);
 	}
 	export default Class;
 
@@ -641,6 +618,62 @@ declare module 'carbonldp/JSONLDConverter' {
 	export default Class;
 
 }
+declare module 'carbonldp/Context' {
+	import Auth from 'carbonldp/Auth';
+	import Documents from 'carbonldp/Documents';
+	import * as ObjectSchema from 'carbonldp/ObjectSchema';
+	interface Context {
+	    auth: Auth;
+	    documents: Documents;
+	    parentContext: Context;
+	    getBaseURI(): string;
+	    resolve(relativeURI: string): string;
+	    hasSetting(name: string): boolean;
+	    getSetting(name: string): any;
+	    setSetting(name: string, value: any): any;
+	    deleteSetting(name: string): any;
+	    hasObjectSchema(type: string): boolean;
+	    getObjectSchema(type: string): ObjectSchema.DigestedObjectSchema;
+	    getObjectSchema(): ObjectSchema.DigestedObjectSchema;
+	    extendObjectSchema(type: string, objectSchema: ObjectSchema.Class): void;
+	    extendObjectSchema(objectSchema: ObjectSchema.Class): void;
+	    clearObjectSchema(type: string): void;
+	    clearObjectSchema(): void;
+	}
+	export default Context;
+
+}
+declare module 'carbonldp/Resource' {
+	import * as Pointer from 'carbonldp/Pointer';
+	export interface Class extends Pointer.Class {
+	    types: string[];
+	}
+	export class Factory {
+	    static hasClassProperties(resource: Object): boolean;
+	    static is(object: Object): boolean;
+	    static create(id?: string, types?: string[]): Class;
+	    static createFrom<T extends Object>(object: T, id?: string, types?: string[]): T & Class;
+	    static decorate<T extends Object>(object: T): T & Class;
+	}
+	export default Class;
+
+}
+declare module 'carbonldp/Fragment' {
+	import * as Document from 'carbonldp/Document';
+	import * as Resource from 'carbonldp/Resource';
+	export interface Class extends Resource.Class {
+	    document: Document.Class;
+	}
+	export class Factory {
+	    static hasClassProperties(resource: Object): boolean;
+	    static create(id: string, document: Document.Class): Class;
+	    static create(document: Document.Class): Class;
+	    static createFrom<T extends Object>(object: T, id: string, document: Document.Class): T & Class;
+	    static createFrom<T extends Object>(object: T, document: Document.Class): T & Class;
+	}
+	export default Class;
+
+}
 declare module 'carbonldp/NamedFragment' {
 	import * as Document from 'carbonldp/Document';
 	import * as Fragment from 'carbonldp/Fragment';
@@ -688,17 +721,6 @@ declare module 'carbonldp/Document' {
 	    static create(): Class;
 	    static createFrom<T extends Object>(object: T): T & Class;
 	    static decorate<T extends Object>(object: T): T & Class;
-	}
-	export default Class;
-
-}
-declare module 'carbonldp/LDP/Error' {
-	import ObjectSchema from 'carbonldp/ObjectSchema';
-	export const RDF_CLASS: string;
-	export const SCHEMA: ObjectSchema;
-	export interface Class {
-	    carbonCode: string;
-	    message: string;
 	}
 	export default Class;
 
@@ -782,6 +804,18 @@ declare module 'carbonldp/LDP/DirectContainer' {
 	    static is(object: Object): boolean;
 	    static create(membershipResource: Pointer.Class, hasMemberRelation: string | Pointer.Class, memberOfRelation?: string | Pointer.Class): Class;
 	    static createFrom<T extends Object>(object: T, membershipResource: Pointer.Class, hasMemberRelation: string | Pointer.Class, memberOfRelation?: string | Pointer.Class): T & Class;
+	}
+	export default Class;
+
+}
+declare module 'carbonldp/LDP/Error' {
+	import ObjectSchema from 'carbonldp/ObjectSchema';
+	import Resource from 'carbonldp/Resource';
+	export const RDF_CLASS: string;
+	export const SCHEMA: ObjectSchema;
+	export interface Class extends Resource {
+	    carbonCode: string;
+	    message: string;
 	}
 	export default Class;
 
@@ -1216,12 +1250,12 @@ declare module 'carbonldp/Documents' {
 	    executeSELECTQuery(documentURI: string, selectQuery: string, requestOptions?: HTTP.Request.Options): Promise<[SPARQL.SELECTResults.Class, HTTP.Response.Class]>;
 	    executeRawCONSTRUCTQuery(documentURI: string, constructQuery: string, requestOptions?: HTTP.Request.Options): Promise<[string, HTTP.Response.Class]>;
 	    executeRawDESCRIBEQuery(documentURI: string, constructQuery: string, requestOptions?: HTTP.Request.Options): Promise<[string, HTTP.Response.Class]>;
-	    compact(expandedObjects: Object[], targetObjects: Object[], pointerLibrary: Pointer.Library): Object[];
-	    compact(expandedObject: Object, targetObject: Object, pointerLibrary: Pointer.Library): Object;
 	    private getRDFDocument(requestURL, rdfDocuments, response);
 	    private getDocumentResource(rdfDocument, response);
 	    private getPointerID(uri);
 	    private createPointer(localID);
+	    private compact(expandedObjects, targetObjects, pointerLibrary);
+	    private compact(expandedObject, targetObject, pointerLibrary);
 	    private compactSingle(expandedObject, targetObject, pointerLibrary);
 	    private getDigestedObjectSchemaForExpandedObject(expandedObject);
 	    private getDigestedObjectSchemaForDocument(document);
@@ -1240,29 +1274,13 @@ declare module 'carbonldp/Documents' {
 	export default Documents;
 
 }
-declare module 'carbonldp/Context' {
-	import Auth from 'carbonldp/Auth';
-	import Documents from 'carbonldp/Documents';
-	import * as ObjectSchema from 'carbonldp/ObjectSchema';
-	interface Context {
-	    auth: Auth;
-	    documents: Documents;
-	    parentContext: Context;
-	    getBaseURI(): string;
-	    resolve(relativeURI: string): string;
-	    hasSetting(name: string): boolean;
-	    getSetting(name: string): any;
-	    setSetting(name: string, value: any): any;
-	    deleteSetting(name: string): any;
-	    hasObjectSchema(type: string): boolean;
-	    getObjectSchema(type: string): ObjectSchema.DigestedObjectSchema;
-	    getObjectSchema(): ObjectSchema.DigestedObjectSchema;
-	    extendObjectSchema(type: string, objectSchema: ObjectSchema.Class): void;
-	    extendObjectSchema(objectSchema: ObjectSchema.Class): void;
-	    clearObjectSchema(type: string): void;
-	    clearObjectSchema(): void;
+declare module 'carbonldp/HTTP/JSONLDParser' {
+	import Parser from 'carbonldp/HTTP/Parser';
+	export class Class implements Parser<any> {
+	    parse(input: string): Promise<any>;
+	    private expandJSON(parsedObject, options?);
 	}
-	export default Context;
+	export default Class;
 
 }
 declare module 'carbonldp/Agent' {
@@ -1416,18 +1434,20 @@ declare module 'carbonldp/SDKContext' {
 }
 declare module 'carbonldp/LDP/ErrorResponse' {
 	import Error from 'carbonldp/LDP/Error';
+	import HTTPParser from 'carbonldp/HTTP/Parser';
 	import ObjectSchema from 'carbonldp/ObjectSchema';
+	import Resource from 'carbonldp/Resource';
 	export const RDF_CLASS: string;
 	export const SCHEMA: ObjectSchema;
-	export interface Class {
+	export interface Class extends Resource {
 	    errors: Error[];
 	    statusCode: number;
 	}
-	export class Factory {
-	    static create(data: string): Promise<Class>;
-	}
 	export class Util {
 	    static getMessage(errorResponse: Class): string;
+	}
+	export class Parser implements HTTPParser<Class> {
+	    parse(input: string): Promise<Class>;
 	}
 	export default Class;
 
@@ -1557,14 +1577,6 @@ declare module 'carbonldp/HTTP/Errors/client/UnsupportedMediaTypeError' {
 	export default UnsupportedMediaTypeError;
 
 }
-declare module 'carbonldp/HTTP/Errors/server/BadResponseError' {
-	import HTTPError from 'carbonldp/HTTP/Errors/HTTPError'; class Class extends HTTPError {
-	    static statusCode: number;
-	    name: string;
-	}
-	export default Class;
-
-}
 declare module 'carbonldp/HTTP/Errors/server/BadGatewayError' {
 	import HTTPError from 'carbonldp/HTTP/Errors/HTTPError'; class BadGatewayError extends HTTPError {
 	    static statusCode: number;
@@ -1645,15 +1657,6 @@ declare module 'carbonldp/HTTP/Errors' {
 	import ServiceUnavailableError from 'carbonldp/HTTP/Errors/server/ServiceUnavailableError';
 	import UnknownError from 'carbonldp/HTTP/Errors/UnknownError'; let client: Array<typeof HTTPError>; let server: Array<typeof HTTPError>; let statusCodeMap: Map<number, typeof HTTPError>;
 	export { HTTPError as Error, BadRequestError, ConflictError, ForbiddenError, MethodNotAllowedError, NotAcceptableError, NotFoundError, PreconditionFailedError, PreconditionRequiredError, RequestEntityTooLargeError, RequestHeaderFieldsTooLargeError, RequestURITooLongError, TooManyRequestsError, UnauthorizedError, UnsupportedMediaTypeError, BadResponseError, BadGatewayError, GatewayTimeoutError, HTTPVersionNotSupportedError, InternalServerErrorError, NotImplementedError, ServiceUnavailableError, UnknownError, client, server, statusCodeMap };
-
-}
-declare module 'carbonldp/HTTP/JSONLDParser' {
-	import Parser from 'carbonldp/HTTP/Parser';
-	export class Class implements Parser<any> {
-	    parse(input: string): Promise<any>;
-	    private expandJSON(parsedObject, options?);
-	}
-	export default Class;
 
 }
 declare module 'carbonldp/HTTP/Method' {

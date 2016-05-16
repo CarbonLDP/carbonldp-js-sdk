@@ -1,7 +1,12 @@
+import Documents from "./../Documents";
 import * as Errors from "./Errors";
+import * as FreeResources from "./../FreeResources";
 import * as Header from "./Header";
+import JSONLDParser from "./JSONLDParser";
 import Method from "./Method";
 import Parser from "./Parser";
+import * as RDF from "./../RDF";
+import * as Resource from "./../Resource";
 import Response from "./Response";
 import * as ErrorResponse from "./../LDP/ErrorResponse";
 import HTTPError from "./Errors/HTTPError";
@@ -46,9 +51,19 @@ function onResolve( resolve:Resolve, reject:Reject, response:Response ):void {
 		resolve( response );
 
 	} else if ( response.status >= 400 && response.status < 600 && Errors.statusCodeMap.has( response.status ) ) {
-		let error:typeof Errors.Error = Errors.statusCodeMap.get( response.status );
-		// TODO: Set error message
-		reject( new error( "", response ) );
+		let Error:typeof HTTPError = Errors.statusCodeMap.get( response.status );
+		let error:HTTPError = new Error( "", response );
+
+		let parser:ErrorResponse.Parser = new ErrorResponse.Parser();
+		parser.parse( response.data ).then( ( errorResponse:ErrorResponse.Class ) => {
+			let message:string = ErrorResponse.Util.getMessage( errorResponse );
+			error.message = message;
+			reject( error );
+
+		}).catch( () => {
+			error.message = response.data;
+			reject( error );
+		});
 
 	} else {
 		reject( new Errors.UnknownError( response.data, response ) );

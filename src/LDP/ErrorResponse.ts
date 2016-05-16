@@ -1,11 +1,15 @@
-import * as Document from "./../Document";
+import BadResponseError from "./../HTTP/Errors/server/BadResponseError";
+import Documents from "./../Documents";
 import Error from "./Error";
+import * as FreeResources from "./../FreeResources";
+import HTTPParser from "./../HTTP/Parser";
+import JSONLDParser from "./../HTTP/JSONLDParser";
 import * as NS from "./../NS";
 import ObjectSchema from "./../ObjectSchema";
-import * as RDFDocument from "./../RDF/Document";
-import RDFNode from "./../RDF/RDFNode";
+import * as RDF from "./../RDF";
 import Resource from "./../Resource";
 import SDKContext from "./../SDKContext";
+import IllegalArgumentError from "../Errors/IllegalArgumentError";
 
 export const RDF_CLASS:string = NS.C.Class.ErrorResponse;
 
@@ -21,41 +25,9 @@ export const SCHEMA:ObjectSchema = {
 	},
 };
 
-export interface Class {
+export interface Class extends Resource{
 	errors: Error[];
 	statusCode: number;
-}
-
-export class Factory {
-	static create( data:string ):Promise<Class> {
-		let errorResponse:Class;
-		let errors:Error[] = [];
-		let parser:RDFDocument.Parser = new RDFDocument.Parser();
-		let pointerLib:Document.Class = Document.Factory.create();
-
-		return parser.parse( data ).then( ( parsedData:RDFDocument.Class[] ) => {
-			if ( parsedData.length === 0 ) return null;
-
-			let nodes:RDFNode[] = parsedData[ 0 ][ "@graph" ];
-			for ( let node of nodes ) {
-
-				let compacted:Resource = <any> {};
-				SDKContext.documents.compact( node, compacted, pointerLib );
-
-				if ( compacted.types.indexOf( RDF_CLASS ) !== -1 ) {
-					errorResponse = <any> compacted;
-				} else {
-					errors.push( <any> compacted );
-				}
-
-				delete compacted.id;
-				delete compacted.types;
-			}
-
-			errorResponse.errors = errors;
-			return errorResponse;
-		});
-	}
 }
 
 export class Util {
@@ -65,6 +37,32 @@ export class Util {
 			messages.push( error.message );
 		}
 		return messages.join( ", " );
+	}
+}
+
+export class Parser implements HTTPParser<Class> {
+	parse( input:string ):Promise<Class> {
+		let documents:Documents = SDKContext.documents;
+		let parser:JSONLDParser = new JSONLDParser();
+
+		return parser.parse( input ).then( ( freeNodes:RDF.Node.Class[] ) => {
+			let errorResponse:Class = null;
+			let freeResources:FreeResources.Class = FreeResources.Factory.create( documents );
+
+			for( let node of freeNodes ) {
+				let resource:Resource = <Resource> freeResources.getPointer( node[ "@id" ] );
+				documents.jsonldConverter.compact( node, resource, documents.getSchemaFor( node ), freeResources );
+
+				if ( RDF.Node.Util.hasType( node, RDF_CLASS ) ) {
+					if ( errorResponse ) throw new IllegalArgumentError( "The input string contains more than once c:ErrorResponse." );
+					errorResponse = <Class> resource;
+				}
+			}
+
+			if ( ! errorResponse ) throw new IllegalArgumentError( "The input string does not contains a c:ErrorResponse." );
+
+			return errorResponse;
+		});
 	}
 }
 
