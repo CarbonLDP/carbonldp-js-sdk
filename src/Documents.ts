@@ -96,10 +96,10 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 		uri = this.getRequestURI( uri );
 		this.setDefaultRequestOptions( requestOptions, NS.LDP.Class.RDFSource );
 
-		if( this.pointers.has( pointerID ) ) {
+		if( this.hasPointer( uri ) ) {
 			let pointer:Pointer.Class = this.getPointer( uri );
 			if( pointer.isResolved() ) {
-				return this.refresh( <PersistedDocument.Class> pointer );
+				return Promise.resolve<[ PersistedDocument.Class, HTTP.Response.Class ]>( [ <PersistedDocument.Class> pointer, null ] );
 			}
 		}
 
