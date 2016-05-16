@@ -5688,7 +5688,7 @@ static AllOrigins:string
 
 #### <a name="Carbon-NS-CS-Predicate-Properties" />Properties
 ```typescript 
-static name:string 
+static namae:string 
 ```
 
 ```typescript 

@@ -248,7 +248,7 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 		if( documentURI === null ) documentURI = accessPoint.membershipResource.id;
 
 		documentURI = this.getRequestURI( documentURI );
-		this.setDefaultRequestOptions( requestOptions, NS.LDP.Class.Container );
+		this.setDefaultRequestOptions( requestOptions, NS.LDP.Class.RDFSource );
 		HTTP.Request.Util.setContentTypeHeader( "application/ld+json", requestOptions );
 
 		if( accessPoint.membershipResource.id !== documentURI ) return Promise.reject<any>( new Errors.IllegalArgumentError( "The documentURI must be the same as the accessPoint's membershipResource" ) );

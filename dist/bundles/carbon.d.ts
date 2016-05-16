@@ -723,7 +723,7 @@ declare module 'carbonldp/NS/CS' {
 	    static AllOrigins: string;
 	    static Agent: string;
 	} class Predicate {
-	    static name: string;
+	    static namae: string;
 	    static allowsOrigin: string;
 	    static rootContainer: string;
 	    static tokenKey: string;

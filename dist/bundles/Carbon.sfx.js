@@ -1017,7 +1017,7 @@ $__System.register("a", ["12", "4", "5", "13", "7"], function(exports_1) {
             exports_1("RDF_CLASS", RDF_CLASS = NS.CS.Class.Application);
             exports_1("SCHEMA", SCHEMA = {
                 "name": {
-                    "@id": NS.CS.Predicate.name,
+                    "@id": NS.CS.Predicate.namae,
                     "@type": NS.XSD.DataType.string,
                 },
                 "description": {
@@ -1603,7 +1603,7 @@ $__System.register("1a", ["c", "1b", "9", "5", "12", "16", "1c", "14", "8", "4",
                     if (documentURI === null)
                         documentURI = accessPoint.membershipResource.id;
                     documentURI = this.getRequestURI(documentURI);
-                    this.setDefaultRequestOptions(requestOptions, NS.LDP.Class.Container);
+                    this.setDefaultRequestOptions(requestOptions, NS.LDP.Class.RDFSource);
                     HTTP.Request.Util.setContentTypeHeader("application/ld+json", requestOptions);
                     if (accessPoint.membershipResource.id !== documentURI)
                         return Promise.reject(new Errors.IllegalArgumentError("The documentURI must be the same as the accessPoint's membershipResource"));
@@ -2863,7 +2863,7 @@ $__System.register("11", ["5", "12", "4", "13"], function(exports_1) {
             exports_1("RDF_CLASS", RDF_CLASS = NS.CS.Class.Agent);
             exports_1("SCHEMA", SCHEMA = {
                 "name": {
-                    "@id": NS.CS.Predicate.name,
+                    "@id": NS.CS.Predicate.namae,
                     "@type": NS.XSD.DataType.string,
                 },
                 "email": {
@@ -4749,7 +4749,7 @@ $__System.register("f", ["15", "32", "1a", "c", "3", "4", "2a", "1d", "11", "31"
                     this.extendObjectSchema(APIDescription.RDF_CLASS, APIDescription.SCHEMA);
                     this.extendObjectSchema(NS.CS.Class.Application, {
                         "name": {
-                            "@id": NS.CS.Predicate.name,
+                            "@id": NS.CS.Predicate.namae,
                             "@type": NS.XSD.DataType.string,
                         },
                         "description": {
@@ -5951,7 +5951,7 @@ $__System.register("43", [], function(exports_1) {
             Predicate = (function () {
                 function Predicate() {
                 }
-                Object.defineProperty(Predicate, "name", {
+                Object.defineProperty(Predicate, "namae", {
                     get: function () { return namespace + "name"; },
                     enumerable: true,
                     configurable: true

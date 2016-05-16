@@ -101,7 +101,7 @@ describe( module( "Carbon/Apps" ), ():void => {
 					        "https://carbonldp.com/ns/v1/security#rootContainer": [{
 					            "@id": "https://example.com/apps/example-app/"
 					        }],
-					        "${NS.CS.Predicate.name}": [{
+					        "${NS.CS.Predicate.namae}": [{
 					            "@value": "Example App name"
 					        }],
 					        "${NS.CS.Predicate.description}": [{
@@ -164,7 +164,7 @@ describe( module( "Carbon/Apps" ), ():void => {
 					        "https://carbonldp.com/ns/v1/security#rootContainer": [{
 					            "@id": "https://example.com/apps/example-app/"
 					        }],
-					        "${NS.CS.Predicate.name}": [{
+					        "${NS.CS.Predicate.namae}": [{
 					            "@value": "Example App name"
 					        }],
 					        "${NS.CS.Predicate.description}": [{
@@ -254,7 +254,7 @@ describe( module( "Carbon/Apps" ), ():void => {
 				        "https://carbonldp.com/ns/v1/security#rootContainer": [{
 				            "@id": "https://example.com/apps/example-app/"
 				        }],
-				        "${NS.CS.Predicate.name}": [{
+				        "${NS.CS.Predicate.namae}": [{
 				            "@value": "Example App name"
 				        }],
 				        "${NS.CS.Predicate.description}": [{
@@ -280,7 +280,7 @@ describe( module( "Carbon/Apps" ), ():void => {
 				        "https://carbonldp.com/ns/v1/security#rootContainer": [{
 				            "@id": "https://example.com/apps/another-app/"
 				        }],
-				        "${NS.CS.Predicate.name}": [{
+				        "${NS.CS.Predicate.namae}": [{
 				            "@value": "Another App name"
 				        }]
 				    }]
