@@ -16,6 +16,7 @@ import {
 	extendsClass,
 	decoratedObject,
 } from "./test/JasmineExtender";
+import Container from "./LDP/Container";
 import * as Utils from "./Utils";
 import * as Errors from "./Errors";
 import * as Pointer from "./Pointer";
@@ -248,12 +249,15 @@ describe( module( "Carbon/Document" ), ():void => {
 							anotherFragment: {
 								myProperty: "A nested BlankNode property"
 							}
-						}
+						},
+						hasMemberRelation: "http://example.com/ns#my-member"
 					};
 					document = Document.Factory.createFrom<myInterface>( object );
 					expect( object ).toBe( document );
 					expect( document.id ).toBe( "" );
 					expect( document.myProperty ).toBe( "THE property" );
+					expect( (<Container> document).hasMemberRelation ).toBeDefined();
+					expect( (<Container> document).hasMemberRelation.id ).toBe( "http://example.com/ns#my-member" );
 					expect( document.hasFragment( "namedFragment" ) ).toBe( true );
 
 					let fragments:Fragment.Class[] = document.getFragments();
@@ -294,12 +298,15 @@ describe( module( "Carbon/Document" ), ():void => {
 							slug: "namedFragment",
 							myProperty: "A NamedFragment property",
 							sameBlankNode: fragment
-						}
+						},
+						memberOfRelation: "http://example.com/ns#is-member-of"
 					};
 					document = Document.Factory.createFrom<myInterface>( object );
 					expect( object ).toBe( document );
 					expect( document.id ).toBe( "" );
 					expect( document.myProperty ).toBe( "THE property" );
+					expect( (<Container> document).memberOfRelation ).toBeDefined();
+					expect( (<Container> document).memberOfRelation.id ).toBe( "http://example.com/ns#is-member-of" );
 					expect( document.hasFragment( "namedFragment" ) ).toBe( true );
 
 					let fragments:Fragment.Class[] = document.getFragments();
@@ -352,12 +359,18 @@ describe( module( "Carbon/Document" ), ():void => {
 								myProperty: "A replace of the NamedFragment property",
 								anotherBlankNode: anotherBlankNode_2
 							}
-						}
+						},
+						hasMemberRelation: "http://example.com/ns#my-member",
+						memberOfRelation: "http://example.com/ns#is-member-of"
 					};
 					document = Document.Factory.createFrom<myInterface>( object );
 					expect( object ).toBe( document );
 					expect( document.id ).toBe( "http://example.org/resource/" );
 					expect( document.myProperty ).toBe( "THE property" );
+					expect( (<Container> document).hasMemberRelation ).toBeDefined();
+					expect( (<Container> document).hasMemberRelation.id ).toBe( "http://example.com/ns#my-member" );
+					expect( (<Container> document).memberOfRelation ).toBeDefined();
+					expect( (<Container> document).memberOfRelation.id ).toBe( "http://example.com/ns#is-member-of" );
 					expect( document.hasFragment( "namedFragment" ) ).toBe( true );
 
 					let fragments:Fragment.Class[] = document.getFragments();

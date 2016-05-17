@@ -10,10 +10,11 @@ import {
 	hasMethod,
 	hasSignature
 } from "./../test/JasmineExtender";
-import * as Utils from "./../Utils";
+import * as Document from "./../Document";
 import * as NS from "./../NS";
 import * as Pointer from "./../Pointer";
-import * as Document from "./../Document";
+import * as Resource from "./../Resource";
+import * as Utils from "./../Utils";
 
 import * as Container from "./Container";
 
@@ -90,7 +91,7 @@ describe( module( "Carbon/LDP/Container" ), ():void => {
 			STATIC,
 			"hasClassProperties",
 			"Returns true if the object has the properties to be defined as a LDP Container", [
-				{ name: "resource", type: "Carbon.RDF.Node.Class" }
+				{ name: "object", type: "Object" }
 			],
 			{ type: "boolean" }
 		), ():void => {
@@ -107,12 +108,61 @@ describe( module( "Carbon/LDP/Container" ), ():void => {
 			expect( Container.Factory.hasClassProperties( object ) ).toBe( true );
 
 			delete object.hasMemberRelation;
-			expect( Container.Factory.hasClassProperties( object ) ).toBe( false );
+			expect( Container.Factory.hasClassProperties( object ) ).toBe( true );
 			object.hasMemberRelation = null;
 
 			delete object.memberOfRelation;
-			expect( Container.Factory.hasClassProperties( object ) ).toBe( false );
+			expect( Container.Factory.hasClassProperties( object ) ).toBe( true );
 			object.memberOfRelation = null;
+		});
+
+		it( hasMethod(
+			STATIC,
+			"decorate",
+			"Decorate the object with the properties and functions of a LDP Container", [
+				{ name: "object", type: "Object" },
+				{ name: "hasMemberRelation", type: "string | Carbon.Pointer.Class", optional: true },
+				{ name: "memberOfRelation", type: "string | Carbon.Pointer.Class", optional: true },
+			],
+			{ type: "Carbon.LDP.Container.Class" }
+		), ():void => {
+			expect( Container.Factory.decorate ).toBeDefined();
+			expect( Utils.isFunction( Container.Factory.decorate ) ).toBe( true );
+
+			let object:any;
+			let container:Container.Class;
+
+			object = {
+				hasMemberRelation: "http://example.com/ns#my-member",
+				memberOfRelation: "http://example.com/ns#is-member-of"
+			};
+			container = Container.Factory.decorate( object );
+			expect( Container.Factory.hasClassProperties( container ) ).toBe( true );
+			expect( container.types ).toContain( NS.LDP.Class.Container );
+			expect( Pointer.Factory.is( container.hasMemberRelation ) ).toBe( true );
+			expect( container.hasMemberRelation.id ).toBe( "http://example.com/ns#my-member" );
+			expect( Pointer.Factory.is( container.memberOfRelation ) ).toBe( true );
+			expect( container.memberOfRelation.id ).toBe( "http://example.com/ns#is-member-of" );
+
+			object = {
+				hasMemberRelation: "http://example.com/ns#my-member",
+			};
+			container = Container.Factory.decorate( object );
+			expect( Container.Factory.hasClassProperties( container ) ).toBe( true );
+			expect( container.types ).toContain( NS.LDP.Class.Container );
+			expect( Pointer.Factory.is( container.hasMemberRelation ) ).toBe( true );
+			expect( container.hasMemberRelation.id ).toBe( "http://example.com/ns#my-member" );
+			expect( container.memberOfRelation ).toBeUndefined();
+
+			object = {
+				memberOfRelation: "http://example.com/ns#is-member-of"
+			};
+			container = Container.Factory.decorate( object );
+			expect( Container.Factory.hasClassProperties( container ) ).toBe( true );
+			expect( container.types ).toContain( NS.LDP.Class.Container );
+			expect( container.hasMemberRelation ).toBeUndefined();
+			expect( Pointer.Factory.is( container.memberOfRelation ) ).toBe( true );
+			expect( container.memberOfRelation.id ).toBe( "http://example.com/ns#is-member-of" );
 		});
 
 		describe( method(
