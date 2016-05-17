@@ -3306,7 +3306,7 @@ $__System.register("1c", ["c", "1d", "4", "8", "9", "5"], function(exports_1) {
                         var propertyValue = propertyValues[_i];
                         if (!RDF.Node.Factory.is(propertyValue))
                             continue;
-                        return pointerLibrary.getPointer(propertyValue["@id"]);
+                        return pointerLibrary.getPointer(propertyValue["@id"].trim());
                     }
                     return null;
                 };
@@ -3350,7 +3350,7 @@ $__System.register("1c", ["c", "1d", "4", "8", "9", "5"], function(exports_1) {
                         var listValue = _a[_i];
                         if (!RDF.Node.Factory.is(listValue))
                             continue;
-                        var pointer = pointerLibrary.getPointer(listValue["@id"]);
+                        var pointer = pointerLibrary.getPointer(listValue["@id"].trim());
                         listPointers.push(pointer);
                     }
                     return listPointers;
@@ -3397,7 +3397,7 @@ $__System.register("1c", ["c", "1d", "4", "8", "9", "5"], function(exports_1) {
                         var propertyValue = propertyValues[_i];
                         if (!RDF.Node.Factory.is(propertyValue))
                             continue;
-                        var pointer = pointerLibrary.getPointer(propertyValue["@id"]);
+                        var pointer = pointerLibrary.getPointer(propertyValue["@id"].trim());
                         propertyPointers.push(pointer);
                     }
                     return propertyPointers;
@@ -3456,7 +3456,7 @@ $__System.register("1c", ["c", "1d", "4", "8", "9", "5"], function(exports_1) {
                         return RDF.Literal.Factory.parse(propertyValue);
                     }
                     else if (RDF.Node.Factory.is(propertyValue)) {
-                        return pointerLibrary.getPointer(propertyValue["@id"]);
+                        return pointerLibrary.getPointer(propertyValue["@id"].trim());
                     }
                     else if (RDF.List.Factory.is(propertyValue)) {
                         var parsedValue = [];

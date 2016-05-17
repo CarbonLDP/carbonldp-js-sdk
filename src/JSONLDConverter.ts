@@ -421,7 +421,7 @@ export class Class {
 		for( let propertyValue of propertyValues ) {
 			if( ! RDF.Node.Factory.is( propertyValue ) ) continue;
 
-			return pointerLibrary.getPointer( propertyValue[ "@id" ] );
+			return pointerLibrary.getPointer( propertyValue[ "@id" ].trim() );
 		}
 
 		return null;
@@ -467,7 +467,7 @@ export class Class {
 		for( let listValue of propertyList[ "@list" ] ) {
 			if( ! RDF.Node.Factory.is( listValue ) ) continue;
 
-			let pointer:Pointer.Class = pointerLibrary.getPointer( listValue[ "@id" ] );
+			let pointer:Pointer.Class = pointerLibrary.getPointer( listValue[ "@id" ].trim() );
 			listPointers.push( pointer );
 		}
 
@@ -514,7 +514,7 @@ export class Class {
 		for( let propertyValue of propertyValues ) {
 			if( ! RDF.Node.Factory.is( propertyValue ) ) continue;
 
-			let pointer:Pointer.Class = pointerLibrary.getPointer( propertyValue[ "@id" ] );
+			let pointer:Pointer.Class = pointerLibrary.getPointer( propertyValue[ "@id" ].trim() );
 			propertyPointers.push( pointer );
 		}
 
@@ -575,7 +575,7 @@ export class Class {
 		if( RDF.Literal.Factory.is( propertyValue ) ) {
 			return RDF.Literal.Factory.parse( <any> propertyValue );
 		} else if( RDF.Node.Factory.is( propertyValue ) ) {
-			return pointerLibrary.getPointer( propertyValue[ "@id" ] );
+			return pointerLibrary.getPointer( propertyValue[ "@id" ].trim() );
 		} else if( RDF.List.Factory.is( propertyValue ) ) {
 			let parsedValue:Array<any> = [];
 			let listValues:Array<any> = propertyValue[ "@list" ];
