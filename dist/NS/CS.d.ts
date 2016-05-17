@@ -6,7 +6,7 @@ declare class Class {
     static Agent: string;
 }
 declare class Predicate {
-    static name: string;
+    static namae: string;
     static allowsOrigin: string;
     static rootContainer: string;
     static tokenKey: string;

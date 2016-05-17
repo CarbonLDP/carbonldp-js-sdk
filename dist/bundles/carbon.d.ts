@@ -723,7 +723,7 @@ declare module 'carbonldp/NS/CS' {
 	    static AllOrigins: string;
 	    static Agent: string;
 	} class Predicate {
-	    static name: string;
+	    static namae: string;
 	    static allowsOrigin: string;
 	    static rootContainer: string;
 	    static tokenKey: string;
@@ -910,9 +910,9 @@ declare module 'carbonldp/ObjectSchema' {
 	    static digestSchema(schemas: Class[]): DigestedObjectSchema;
 	    static digestSchema(schema: Class): DigestedObjectSchema;
 	    static combineDigestedObjectSchemas(digestedSchemas: DigestedObjectSchema[]): DigestedObjectSchema;
+	    static resolvePrefixedURI(uri: RDF.URI.Class, digestedSchema: DigestedObjectSchema): RDF.URI.Class;
 	    private static digestSingleSchema(schema);
 	    private static resolvePrefixedURIs(digestedSchema);
-	    static resolvePrefixedURI(uri: RDF.URI.Class, digestedSchema: DigestedObjectSchema): RDF.URI.Class;
 	}
 	export default Class;
 

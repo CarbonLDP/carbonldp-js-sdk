@@ -135,7 +135,7 @@ var Class = (function () {
         this.extendObjectSchema(APIDescription.RDF_CLASS, APIDescription.SCHEMA);
         this.extendObjectSchema(NS.CS.Class.Application, {
             "name": {
-                "@id": NS.CS.Predicate.name,
+                "@id": NS.CS.Predicate.namae,
                 "@type": NS.XSD.DataType.string,
             },
             "description": {
