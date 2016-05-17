@@ -182,7 +182,7 @@ export class Digester {
 		return digestedSchema;
 	}
 
-	private static resolvePrefixedURI( uri:RDF.URI.Class, digestedSchema:DigestedObjectSchema ):RDF.URI.Class {
+	static resolvePrefixedURI( uri:RDF.URI.Class, digestedSchema:DigestedObjectSchema ):RDF.URI.Class {
 		if( ! RDF.URI.Util.isPrefixed( uri.stringValue ) ) return uri;
 
 		let uriParts:string[] = uri.stringValue.split( ":" );

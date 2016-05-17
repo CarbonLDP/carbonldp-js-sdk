@@ -1463,10 +1463,10 @@ $__System.register("1a", ["b", "1b", "8", "5", "11", "15", "1c", "13", "16", "4"
                     var pointerID = this.getPointerID(uri);
                     uri = this.getRequestURI(uri);
                     this.setDefaultRequestOptions(requestOptions, NS.LDP.Class.RDFSource);
-                    if (this.pointers.has(pointerID)) {
+                    if (this.hasPointer(uri)) {
                         var pointer = this.getPointer(uri);
                         if (pointer.isResolved()) {
-                            return this.refresh(pointer);
+                            return Promise.resolve([pointer, null]);
                         }
                     }
                     if (this.documentsBeingResolved.has(pointerID))
@@ -2971,12 +2971,11 @@ $__System.register("1c", ["b", "1d", "4", "16", "8", "5"], function(exports_1) {
                     }
                     return targetObjects;
                 };
-                Class.prototype.expand = function (compactedObjectOrObjects, digestedSchema, pointerValidator) {
-                    if (pointerValidator === void 0) { pointerValidator = null; }
+                Class.prototype.expand = function (compactedObjectOrObjects, digestedSchema) {
                     if (!Utils.isArray(compactedObjectOrObjects))
-                        return this.expandSingle(compactedObjectOrObjects, digestedSchema, pointerValidator);
+                        return this.expandSingle(compactedObjectOrObjects, digestedSchema);
                 };
-                Class.prototype.expandSingle = function (compactedObject, digestedSchema, pointerValidator) {
+                Class.prototype.expandSingle = function (compactedObject, digestedSchema) {
                     var _this = this;
                     var expandedObject = {};
                     expandedObject["@id"] = !!compactedObject["id"] ? compactedObject["id"] : "";
@@ -2988,14 +2987,14 @@ $__System.register("1c", ["b", "1d", "4", "16", "8", "5"], function(exports_1) {
                         var expandedValue;
                         if (digestedSchema.properties.has(propertyName)) {
                             var definition = digestedSchema.properties.get(propertyName);
-                            expandedValue = _this.expandProperty(value, definition, pointerValidator);
+                            expandedValue = _this.expandProperty(value, definition, digestedSchema);
                             propertyName = definition.uri.toString();
                         }
                         else if (RDF.URI.Util.isAbsolute(propertyName)) {
-                            expandedValue = _this.expandPropertyValues(value, pointerValidator);
+                            expandedValue = _this.expandPropertyValues(value, digestedSchema);
                         }
                         else if (digestedSchema.vocab) {
-                            expandedValue = _this.expandPropertyValue(value, pointerValidator);
+                            expandedValue = _this.expandPropertyValue(value, digestedSchema);
                             propertyName = RDF.URI.Util.resolve(digestedSchema.vocab, propertyName);
                         }
                         if (!expandedValue)
@@ -3004,37 +3003,37 @@ $__System.register("1c", ["b", "1d", "4", "16", "8", "5"], function(exports_1) {
                     });
                     return expandedObject;
                 };
-                Class.prototype.expandProperty = function (propertyValue, propertyDefinition, pointerValidator) {
+                Class.prototype.expandProperty = function (propertyValue, propertyDefinition, digestedSchema) {
                     switch (propertyDefinition.containerType) {
                         case null:
                             if (propertyDefinition.literal) {
                                 return this.expandPropertyLiteral(propertyValue, propertyDefinition.literalType.toString());
                             }
                             else if (propertyDefinition.literal === false) {
-                                return this.expandPropertyPointer(propertyValue, pointerValidator);
+                                return this.expandPropertyPointer(propertyValue, digestedSchema);
                             }
                             else {
-                                return this.expandPropertyValue(propertyValue, pointerValidator);
+                                return this.expandPropertyValue(propertyValue, digestedSchema);
                             }
                         case ObjectSchema.ContainerType.LIST:
                             if (propertyDefinition.literal) {
                                 return this.expandPropertyLiteralList(propertyValue, propertyDefinition.literalType.toString());
                             }
                             else if (propertyDefinition.literal === false) {
-                                return this.expandPropertyPointerList(propertyValue, pointerValidator);
+                                return this.expandPropertyPointerList(propertyValue, digestedSchema);
                             }
                             else {
-                                return this.expandPropertyList(propertyValue, pointerValidator);
+                                return this.expandPropertyList(propertyValue, digestedSchema);
                             }
                         case ObjectSchema.ContainerType.SET:
                             if (propertyDefinition.literal) {
                                 return this.expandPropertyLiterals(propertyValue, propertyDefinition.literalType.toString());
                             }
                             else if (propertyDefinition.literal === false) {
-                                return this.expandPropertyPointers(propertyValue, pointerValidator);
+                                return this.expandPropertyPointers(propertyValue, digestedSchema);
                             }
                             else {
-                                return this.expandPropertyValues(propertyValue, pointerValidator);
+                                return this.expandPropertyValues(propertyValue, digestedSchema);
                             }
                         case ObjectSchema.ContainerType.LANGUAGE:
                             return this.expandPropertyLanguageMap(propertyValue);
@@ -3042,19 +3041,19 @@ $__System.register("1c", ["b", "1d", "4", "16", "8", "5"], function(exports_1) {
                             throw new Errors.IllegalArgumentError("The containerType specified is not supported.");
                     }
                 };
-                Class.prototype.expandPropertyValue = function (propertyValue, pointerValidator) {
+                Class.prototype.expandPropertyValue = function (propertyValue, digestedSchema) {
                     if (Utils.isArray(propertyValue)) {
-                        return this.expandPropertyValues(propertyValue, pointerValidator);
+                        return this.expandPropertyValues(propertyValue, digestedSchema);
                     }
                     else {
-                        var expandedValue = this.expandValue(propertyValue, pointerValidator);
+                        var expandedValue = this.expandValue(propertyValue, digestedSchema);
                         if (!expandedValue)
                             return null;
                         return [expandedValue];
                     }
                 };
-                Class.prototype.expandPropertyPointer = function (propertyValue, pointerValidator) {
-                    var expandedPointer = this.expandPointer(propertyValue, pointerValidator);
+                Class.prototype.expandPropertyPointer = function (propertyValue, digestedSchema) {
+                    var expandedPointer = this.expandPointer(propertyValue, digestedSchema);
                     if (!expandedPointer)
                         return null;
                     return [expandedPointer];
@@ -3067,17 +3066,17 @@ $__System.register("1c", ["b", "1d", "4", "16", "8", "5"], function(exports_1) {
                         { "@value": serializedValue, "@type": literalType },
                     ];
                 };
-                Class.prototype.expandPropertyList = function (propertyValues, pointerValidator) {
+                Class.prototype.expandPropertyList = function (propertyValues, digestedSchema) {
                     propertyValues = Utils.isArray(propertyValues) ? propertyValues : [propertyValues];
-                    var expandedArray = this.expandArray(propertyValues, pointerValidator);
+                    var expandedArray = this.expandArray(propertyValues, digestedSchema);
                     if (!expandedArray)
                         return null;
                     return [
                         { "@list": expandedArray },
                     ];
                 };
-                Class.prototype.expandPropertyPointerList = function (propertyValues, pointerValidator) {
-                    var listValues = this.expandPropertyPointers(propertyValues, pointerValidator);
+                Class.prototype.expandPropertyPointerList = function (propertyValues, digestedSchema) {
+                    var listValues = this.expandPropertyPointers(propertyValues, digestedSchema);
                     return [
                         { "@list": listValues },
                     ];
@@ -3088,19 +3087,19 @@ $__System.register("1c", ["b", "1d", "4", "16", "8", "5"], function(exports_1) {
                         { "@list": listValues },
                     ];
                 };
-                Class.prototype.expandPropertyValues = function (propertyValues, pointerValidator) {
+                Class.prototype.expandPropertyValues = function (propertyValues, digestedSchema) {
                     propertyValues = Utils.isArray(propertyValues) ? propertyValues : [propertyValues];
-                    var expandedArray = this.expandArray(propertyValues, pointerValidator);
+                    var expandedArray = this.expandArray(propertyValues, digestedSchema);
                     if (!expandedArray)
                         return null;
                     return expandedArray;
                 };
-                Class.prototype.expandPropertyPointers = function (propertyValues, pointerValidator) {
+                Class.prototype.expandPropertyPointers = function (propertyValues, digestedSchema) {
                     propertyValues = Utils.isArray(propertyValues) ? propertyValues : [propertyValues];
                     var expandedPointers = [];
                     for (var _i = 0; _i < propertyValues.length; _i++) {
                         var propertyValue = propertyValues[_i];
-                        var expandedPointer = this.expandPointer(propertyValue, pointerValidator);
+                        var expandedPointer = this.expandPointer(propertyValue, digestedSchema);
                         if (!expandedPointer)
                             continue;
                         expandedPointers.push(expandedPointer);
@@ -3146,17 +3145,20 @@ $__System.register("1c", ["b", "1d", "4", "16", "8", "5"], function(exports_1) {
                         return null;
                     }
                 };
-                Class.prototype.expandPointer = function (propertyValue, pointerValidator) {
-                    if (!Pointer.Factory.is(propertyValue)) {
+                Class.prototype.expandPointer = function (propertyValue, digestedSchema) {
+                    var id = Pointer.Factory.is(propertyValue) ? propertyValue.id : Utils.isString(propertyValue) ? propertyValue : null;
+                    if (!id) {
                         return null;
                     }
-                    return { "@id": propertyValue.id };
+                    id = ObjectSchema.Digester.resolvePrefixedURI(new RDF.URI.Class(id), digestedSchema).stringValue;
+                    id = digestedSchema.vocab ? RDF.URI.Util.resolve(digestedSchema.vocab, id) : id;
+                    return { "@id": id };
                 };
-                Class.prototype.expandArray = function (propertyValue, pointerValidator) {
+                Class.prototype.expandArray = function (propertyValue, digestedSchema) {
                     var listValues = [];
                     for (var _i = 0; _i < propertyValue.length; _i++) {
                         var listValue = propertyValue[_i];
-                        var expandedValue = this.expandValue(listValue, pointerValidator);
+                        var expandedValue = this.expandValue(listValue, digestedSchema);
                         if (!expandedValue)
                             continue;
                         listValues.push(expandedValue);
@@ -3165,12 +3167,12 @@ $__System.register("1c", ["b", "1d", "4", "16", "8", "5"], function(exports_1) {
                         return null;
                     return listValues;
                 };
-                Class.prototype.expandValue = function (propertyValue, pointerValidator) {
+                Class.prototype.expandValue = function (propertyValue, digestedSchema) {
                     if (Utils.isArray(propertyValue)) {
                         return null;
                     }
                     else if (Pointer.Factory.is(propertyValue)) {
-                        return this.expandPointer(propertyValue, pointerValidator);
+                        return this.expandPointer(propertyValue, digestedSchema);
                     }
                     else {
                         return this.expandLiteral(propertyValue);
@@ -3940,7 +3942,7 @@ $__System.register("11", ["b", "2b", "1c", "2c", "1d", "16", "8", "17", "5"], fu
         for (var _i = 0; _i < resources.length; _i++) {
             var resource = resources[_i];
             var digestedContext = objectSchemaResolver ? objectSchemaResolver.getSchemaFor(resource) : new ObjectSchema.DigestedObjectSchema();
-            expandedResources.push(jsonldConverter.expand(resource, digestedContext, this));
+            expandedResources.push(jsonldConverter.expand(resource, digestedContext));
         }
         var graph = {
             "@id": this.id,
@@ -13428,7 +13430,7 @@ $__System.register("30", ["b", "5"], function(exports_1) {
                     }
                 };
                 Util.resolve = function (parentURI, childURI) {
-                    if (Util.isAbsolute(childURI) || Util.isPrefixed(childURI))
+                    if (Util.isAbsolute(childURI) || Util.isBNodeID(childURI) || Util.isPrefixed(childURI))
                         return childURI;
                     var finalURI = parentURI;
                     if (!Utils.S.endsWith(parentURI, "#") && !Utils.S.endsWith(parentURI, "/"))

@@ -77,10 +77,10 @@ var Documents = (function () {
         var pointerID = this.getPointerID(uri);
         uri = this.getRequestURI(uri);
         this.setDefaultRequestOptions(requestOptions, NS.LDP.Class.RDFSource);
-        if (this.pointers.has(pointerID)) {
+        if (this.hasPointer(uri)) {
             var pointer = this.getPointer(uri);
             if (pointer.isResolved()) {
-                return this.refresh(pointer);
+                return Promise.resolve([pointer, null]);
             }
         }
         if (this.documentsBeingResolved.has(pointerID))
