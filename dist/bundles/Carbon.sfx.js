@@ -2949,6 +2949,8 @@ $__System.register("1c", ["b", "1d", "4", "16", "8", "5"], function(exports_1) {
                     literalSerializers.set(NS.XSD.DataType.integer, RDF.Literal.Serializers.XSD.integerSerializer);
                     literalSerializers.set(NS.XSD.DataType.int, RDF.Literal.Serializers.XSD.integerSerializer);
                     literalSerializers.set(NS.XSD.DataType.unsignedInt, RDF.Literal.Serializers.XSD.unsignedIntegerSerializer);
+                    literalSerializers.set(NS.XSD.DataType.long, RDF.Literal.Serializers.XSD.integerSerializer);
+                    literalSerializers.set(NS.XSD.DataType.unsignedLong, RDF.Literal.Serializers.XSD.unsignedIntegerSerializer);
                     literalSerializers.set(NS.XSD.DataType.float, RDF.Literal.Serializers.XSD.floatSerializer);
                     literalSerializers.set(NS.XSD.DataType.double, RDF.Literal.Serializers.XSD.floatSerializer);
                     literalSerializers.set(NS.XSD.DataType.boolean, RDF.Literal.Serializers.XSD.booleanSerializer);
@@ -14504,7 +14506,7 @@ $__System.register("74", ["d", "2", "10", "f", "9", "6", "32", "11", "1a", "b", 
                     this.apps = new Apps.Class(this);
                 }
                 Object.defineProperty(Carbon, "version", {
-                    get: function () { return "0.32.0"; },
+                    get: function () { return "0.33.0"; },
                     enumerable: true,
                     configurable: true
                 });

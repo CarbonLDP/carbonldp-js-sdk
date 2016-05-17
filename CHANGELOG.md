@@ -1,3 +1,9 @@
+# 0.33.0 (May 17, 2016)
+- [LDP-637](https://jira.base22.com/browse/LDP-637) Resolve URI strings when property is configured as "@id"
+- [LDP-635](https://jira.base22.com/browse/LDP-635) Use default app vocabulary for unknown properties
+- [LDP-607](https://jira.base22.com/browse/LDP-607) Fix compatibility with Safari
+- Fix minor issue where literals with long @type were ignored
+
 # 0.32.0 (May 13, 2016)
 - [LDP-631](https://jira.base22.com/browse/LDP-631) Retrieve document members and/or children in the same request
     - Added `persistedDocument.getMembers()` method

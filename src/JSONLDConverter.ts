@@ -4,7 +4,6 @@ import * as NS from "./NS";
 import * as Pointer from "./Pointer";
 import * as RDF from "./RDF";
 import * as Utils from "./Utils";
-import ContainerType from "./ObjectSchema";
 
 // TODO: Use Literal.Parsers to parse literals
 export class Class {
@@ -21,6 +20,8 @@ export class Class {
 		literalSerializers.set( NS.XSD.DataType.integer, RDF.Literal.Serializers.XSD.integerSerializer );
 		literalSerializers.set( NS.XSD.DataType.int, RDF.Literal.Serializers.XSD.integerSerializer );
 		literalSerializers.set( NS.XSD.DataType.unsignedInt, RDF.Literal.Serializers.XSD.unsignedIntegerSerializer );
+		literalSerializers.set( NS.XSD.DataType.long, RDF.Literal.Serializers.XSD.integerSerializer );
+		literalSerializers.set( NS.XSD.DataType.unsignedLong, RDF.Literal.Serializers.XSD.unsignedIntegerSerializer );
 		literalSerializers.set( NS.XSD.DataType.float, RDF.Literal.Serializers.XSD.floatSerializer );
 		literalSerializers.set( NS.XSD.DataType.double, RDF.Literal.Serializers.XSD.floatSerializer );
 		literalSerializers.set( NS.XSD.DataType.boolean, RDF.Literal.Serializers.XSD.booleanSerializer );
