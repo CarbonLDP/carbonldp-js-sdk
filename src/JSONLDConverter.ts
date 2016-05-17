@@ -267,7 +267,7 @@ export class Class {
 		}
 
 		id = ObjectSchema.Digester.resolvePrefixedURI( new RDF.URI.Class( id ), digestedSchema ).stringValue;
-		id = digestedSchema.vocab ? RDF.URI.Util.resolve( digestedSchema.vocab, id ): id;
+		id = digestedSchema.vocab ? RDF.URI.Util.resolve( digestedSchema.vocab, id ) : id;
 		return { "@id": id };
 	}
 
