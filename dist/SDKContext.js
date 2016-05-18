@@ -155,7 +155,9 @@ var Class = (function () {
         this.extendObjectSchema(LDP.ResourceMetadata.RDF_CLASS, LDP.ResourceMetadata.SCHEMA);
         this.extendObjectSchema(LDP.AddMemberAction.RDF_CLASS, LDP.AddMemberAction.SCHEMA);
         this.extendObjectSchema(LDP.RemoveMemberAction.RDF_CLASS, LDP.RemoveMemberAction.SCHEMA);
-        this.extendObjectSchema(Auth.Token.RDF_CLASS, Auth.Token.CONTEXT);
+        this.extendObjectSchema(Auth.Token.RDF_CLASS, Auth.Token.SCHEMA);
+        this.extendObjectSchema(Auth.ACE.RDF_CLASS, Auth.ACE.SCHEMA);
+        this.extendObjectSchema(Auth.ACL.RDF_CLASS, Auth.ACL.SCHEMA);
         this.extendObjectSchema(Agent.RDF_CLASS, Agent.SCHEMA);
     };
     return Class;

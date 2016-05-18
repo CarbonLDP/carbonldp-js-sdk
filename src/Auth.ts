@@ -1,3 +1,5 @@
+import * as ACE from "./Auth/ACE";
+import * as ACL from "./Auth/ACL";
 import AuthenticationToken from "./Auth/AuthenticationToken";
 import Authenticator from "./Auth/Authenticator";
 import BasicAuthenticator from "./Auth/BasicAuthenticator";
@@ -13,6 +15,8 @@ import Context from "./Context";
 import * as Utils from "./Utils";
 
 export {
+	ACE,
+	ACL,
 	AuthenticationToken,
 	Authenticator,
 	BasicAuthenticator,

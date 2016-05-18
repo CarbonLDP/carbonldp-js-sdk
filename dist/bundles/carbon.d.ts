@@ -1,7 +1,113 @@
-declare module 'carbonldp/Auth/AuthenticationToken' {
-	export interface Class {
+declare module 'carbonldp/NS/C' {
+	export let namespace: string;
+	export class Class {
+	    static AccessPoint: string;
+	    static AddMemberAction: string;
+	    static API: string;
+	    static NonReadableMembershipResourceTriples: string;
+	    static PreferContainer: string;
+	    static PreferContainmentResources: string;
+	    static PreferContainmentTriples: string;
+	    static PreferMembershipResources: string;
+	    static PreferMembershipTriples: string;
+	    static PreferSelectedMembershipTriples: string;
+	    static VolatileResource: string;
+	    static RDFRepresentation: string;
+	    static RemoveMemberAction: string;
+	    static ResponseMetadata: string;
+	    static ResourceMetadata: string;
 	}
-	export default Class;
+	export class Predicate {
+	    static accessPoint: string;
+	    static bNodeIdentifier: string;
+	    static buildDate: string;
+	    static created: string;
+	    static modified: string;
+	    static version: string;
+	    static mediaType: string;
+	    static size: string;
+	    static targetMember: string;
+	    static resourceMetadata: string;
+	    static resource: string;
+	    static eTag: string;
+	}
+
+}
+declare module 'carbonldp/NS/CP' {
+	 const namespace: string; class Predicate {
+	    static ADD_ACTION: string;
+	    static SET_ACTION: string;
+	    static DELETE_ACTION: string;
+	}
+	export { namespace, Predicate };
+
+}
+declare module 'carbonldp/NS/CS' {
+	 const namespace: string; class Class {
+	    static AccessControlEntry: string;
+	    static AccessControlList: string;
+	    static Agent: string;
+	    static AllOrigins: string;
+	    static Application: string;
+	    static Token: string;
+	} class Predicate {
+	    static name: string;
+	    static accessControlEntry: string;
+	    static accessTo: string;
+	    static allowsOrigin: string;
+	    static description: string;
+	    static expirationTime: string;
+	    static granting: string;
+	    static inheritableEntry: string;
+	    static password: string;
+	    static permission: string;
+	    static rootContainer: string;
+	    static subject: string;
+	    static subjectClass: string;
+	    static tokenKey: string;
+	}
+	export { namespace, Class, Predicate };
+
+}
+declare module 'carbonldp/NS/LDP' {
+	 const namespace: string; class Class {
+	    static Resource: string;
+	    static RDFSource: string;
+	    static Container: string;
+	    static BasicContainer: string;
+	    static DirectContainer: string;
+	    static IndirectContainer: string;
+	    static NonRDFSource: string;
+	    static MemberSubject: string;
+	    static PreferContainment: string;
+	    static PreferMembership: string;
+	    static PreferEmptyContainer: string;
+	    static PreferMinimalContainer: string;
+	    static Page: string;
+	    static PageSortCriterion: string;
+	    static Ascending: string;
+	    static Descending: string;
+	} class Predicate {
+	    static contains: string;
+	    static member: string;
+	    static hasMemberRelation: string;
+	    static memberOfRelation: string;
+	    static membershipResource: string;
+	    static insertedContentRelation: string;
+	    static constrainedBy: string;
+	    static pageSortCriteria: string;
+	    static pageSortOrder: string;
+	    static pageSortCollation: string;
+	    static pageSequence: string;
+	}
+	export { namespace, Class, Predicate };
+
+}
+declare module 'carbonldp/NS/RDF' {
+	 const namespace: string; class Predicate {
+	    static type: string;
+	}
+	export { namespace, Predicate };
 
 }
 declare module 'carbonldp/Utils' {
@@ -25,6 +131,58 @@ declare module 'carbonldp/Utils' {
 	export { hasFunction, hasProperty, hasPropertyDefined, isDefined, isNull, isArray, isString, isBoolean, isNumber, isInteger, isDouble, isDate, isObject, isPlainObject, isFunction, isMap, parseBoolean, extend, forEachOwnProperty, O, S, A, M, UUID };
 
 }
+declare module 'carbonldp/NS/XSD' {
+	export const namespace: string;
+	export class DataType {
+	    static date: string;
+	    static dateTime: string;
+	    static duration: string;
+	    static gDay: string;
+	    static gMonth: string;
+	    static gMonthDay: string;
+	    static gYear: string;
+	    static gYearMonth: string;
+	    static time: string;
+	    static byte: string;
+	    static decimal: string;
+	    static int: string;
+	    static integer: string;
+	    static long: string;
+	    static negativeInteger: string;
+	    static nonNegativeInteger: string;
+	    static nonPositiveInteger: string;
+	    static positiveInteger: string;
+	    static short: string;
+	    static unsignedLong: string;
+	    static unsignedInt: string;
+	    static unsignedShort: string;
+	    static unsignedByte: string;
+	    static double: string;
+	    static float: string;
+	    static boolean: string;
+	    static string: string;
+	    static object: string;
+	}
+
+}
+declare module 'carbonldp/NS/VCARD' {
+	export const namespace: string;
+	export class Predicate {
+	    static email: string;
+	}
+
+}
+declare module 'carbonldp/NS' {
+	import * as C from 'carbonldp/NS/C';
+	import * as CP from 'carbonldp/NS/CP';
+	import * as CS from 'carbonldp/NS/CS';
+	import * as LDP from 'carbonldp/NS/LDP';
+	import * as RDF from 'carbonldp/NS/RDF';
+	import * as XSD from 'carbonldp/NS/XSD';
+	import * as VCARD from 'carbonldp/NS/VCARD';
+	export { C, CP, CS, LDP, RDF, XSD, VCARD };
+
+}
 declare module 'carbonldp/Errors/AbstractError' {
 	 abstract class AbstractError extends Error {
 	    message: string;
@@ -33,6 +191,52 @@ declare module 'carbonldp/Errors/AbstractError' {
 	    toString(): string;
 	}
 	export default AbstractError;
+
+}
+declare module 'carbonldp/Errors/IDAlreadyInUseError' {
+	import AbstractError from 'carbonldp/Errors/AbstractError'; class IDAlreadyInUseError extends AbstractError {
+	    name: string;
+	}
+	export default IDAlreadyInUseError;
+
+}
+declare module 'carbonldp/Errors/IllegalActionError' {
+	import AbstractError from 'carbonldp/Errors/AbstractError'; class IllegalActionError extends AbstractError {
+	    name: string;
+	}
+	export default IllegalActionError;
+
+}
+declare module 'carbonldp/Errors/IllegalArgumentError' {
+	import AbstractError from 'carbonldp/Errors/AbstractError'; class IllegalArgumentError extends AbstractError {
+	    name: string;
+	}
+	export default IllegalArgumentError;
+
+}
+declare module 'carbonldp/Errors/IllegalStateError' {
+	import AbstractError from 'carbonldp/Errors/AbstractError'; class IllegalStateError extends AbstractError {
+	    name: string;
+	    constructor(message?: string);
+	}
+	export default IllegalStateError;
+
+}
+declare module 'carbonldp/Errors/NotImplementedError' {
+	import AbstractError from 'carbonldp/Errors/AbstractError'; class NotImplementedError extends AbstractError {
+	    name: string;
+	    constructor(message?: string);
+	}
+	export default NotImplementedError;
+
+}
+declare module 'carbonldp/Errors' {
+	import IDAlreadyInUseError from 'carbonldp/Errors/IDAlreadyInUseError';
+	import IllegalActionError from 'carbonldp/Errors/IllegalActionError';
+	import IllegalArgumentError from 'carbonldp/Errors/IllegalArgumentError';
+	import IllegalStateError from 'carbonldp/Errors/IllegalStateError';
+	import NotImplementedError from 'carbonldp/Errors/NotImplementedError';
+	export { IDAlreadyInUseError, IllegalActionError, IllegalArgumentError, IllegalStateError, NotImplementedError };
 
 }
 declare module 'carbonldp/HTTP/Header' {
@@ -450,146 +654,34 @@ declare module 'carbonldp/HTTP' {
 	export { Errors, Header, JSONParser, JSONLDParser, Method, Parser, Request, Response, StatusCode, StringParser };
 
 }
-declare module 'carbonldp/Auth/Credentials' {
+declare module 'carbonldp/Pointer' {
+	import * as HTTP from 'carbonldp/HTTP';
 	export interface Class {
+	    _id: string;
+	    _resolved: boolean;
+	    id: string;
+	    isResolved(): boolean;
+	    resolve(): Promise<[Class, HTTP.Response.Class]>;
+	}
+	export interface Library {
+	    hasPointer(id: string): boolean;
+	    getPointer(id: string): Class;
+	}
+	export class Factory {
+	    static hasClassProperties(object: Object): boolean;
+	    static is(value: any): boolean;
+	    static create(id?: string): Class;
+	    static decorate<T extends Object>(object: T): Class;
+	}
+	export class Util {
+	    static getIDs(pointers: Class[]): string[];
+	    static resolveAll(pointers: Class[]): Promise<[Class[], HTTP.Response.Class[]]>;
+	}
+	export interface Validator {
+	    inScope(id: string): boolean;
+	    inScope(pointer: Class): boolean;
 	}
 	export default Class;
-
-}
-declare module 'carbonldp/Auth/Authenticator' {
-	import * as HTTP from 'carbonldp/HTTP';
-	import AuthenticationToken from 'carbonldp/Auth/AuthenticationToken';
-	import * as Credentials from 'carbonldp/Auth/Credentials';
-	export interface Class<T extends AuthenticationToken> {
-	    isAuthenticated(): boolean;
-	    authenticate(authenticationToken: T): Promise<Credentials.Class>;
-	    clearAuthentication(): void;
-	    addAuthentication(requestOptions: HTTP.Request.Options): HTTP.Request.Options;
-	    supports(authenticationToken: AuthenticationToken): boolean;
-	}
-	export default Class;
-
-}
-declare module 'carbonldp/Errors/IDAlreadyInUseError' {
-	import AbstractError from 'carbonldp/Errors/AbstractError'; class IDAlreadyInUseError extends AbstractError {
-	    name: string;
-	}
-	export default IDAlreadyInUseError;
-
-}
-declare module 'carbonldp/Errors/IllegalActionError' {
-	import AbstractError from 'carbonldp/Errors/AbstractError'; class IllegalActionError extends AbstractError {
-	    name: string;
-	}
-	export default IllegalActionError;
-
-}
-declare module 'carbonldp/Errors/IllegalArgumentError' {
-	import AbstractError from 'carbonldp/Errors/AbstractError'; class IllegalArgumentError extends AbstractError {
-	    name: string;
-	}
-	export default IllegalArgumentError;
-
-}
-declare module 'carbonldp/Errors/IllegalStateError' {
-	import AbstractError from 'carbonldp/Errors/AbstractError'; class IllegalStateError extends AbstractError {
-	    name: string;
-	    constructor(message?: string);
-	}
-	export default IllegalStateError;
-
-}
-declare module 'carbonldp/Errors/NotImplementedError' {
-	import AbstractError from 'carbonldp/Errors/AbstractError'; class NotImplementedError extends AbstractError {
-	    name: string;
-	    constructor(message?: string);
-	}
-	export default NotImplementedError;
-
-}
-declare module 'carbonldp/Errors' {
-	import IDAlreadyInUseError from 'carbonldp/Errors/IDAlreadyInUseError';
-	import IllegalActionError from 'carbonldp/Errors/IllegalActionError';
-	import IllegalArgumentError from 'carbonldp/Errors/IllegalArgumentError';
-	import IllegalStateError from 'carbonldp/Errors/IllegalStateError';
-	import NotImplementedError from 'carbonldp/Errors/NotImplementedError';
-	export { IDAlreadyInUseError, IllegalActionError, IllegalArgumentError, IllegalStateError, NotImplementedError };
-
-}
-declare module 'carbonldp/Auth/UsernameAndPasswordToken' {
-	import AuthenticationToken from 'carbonldp/Auth/AuthenticationToken';
-	export class Class implements AuthenticationToken {
-	    private _username;
-	    private _password;
-	    constructor(username: string, password: string);
-	    username: string;
-	    password: string;
-	}
-	export default Class;
-
-}
-declare module 'carbonldp/Auth/UsernameAndPasswordCredentials' {
-	import * as Credentials from 'carbonldp/Auth/Credentials';
-	export class Class implements Credentials.Class {
-	    private _username;
-	    private _password;
-	    username: string;
-	    password: string;
-	    constructor(username: string, password: string);
-	}
-	export default Class;
-
-}
-declare module 'carbonldp/Auth/BasicAuthenticator' {
-	import * as HTTP from 'carbonldp/HTTP';
-	import Authenticator from 'carbonldp/Auth/Authenticator';
-	import AuthenticationToken from 'carbonldp/Auth/AuthenticationToken';
-	import UsernameAndPasswordToken from 'carbonldp/Auth/UsernameAndPasswordToken';
-	import * as UsernameAndPasswordCredentials from 'carbonldp/Auth/UsernameAndPasswordCredentials';
-	export class Class implements Authenticator<UsernameAndPasswordToken> {
-	    private credentials;
-	    isAuthenticated(): boolean;
-	    authenticate(authenticationToken: UsernameAndPasswordToken): Promise<UsernameAndPasswordCredentials.Class>;
-	    addAuthentication(requestOptions: HTTP.Request.Options): HTTP.Request.Options;
-	    clearAuthentication(): void;
-	    supports(authenticationToken: AuthenticationToken): boolean;
-	    private addBasicAuthenticationHeader(headers);
-	}
-	export default Class;
-
-}
-declare module 'carbonldp/NS/XSD' {
-	export const namespace: string;
-	export class DataType {
-	    static date: string;
-	    static dateTime: string;
-	    static duration: string;
-	    static gDay: string;
-	    static gMonth: string;
-	    static gMonthDay: string;
-	    static gYear: string;
-	    static gYearMonth: string;
-	    static time: string;
-	    static byte: string;
-	    static decimal: string;
-	    static int: string;
-	    static integer: string;
-	    static long: string;
-	    static negativeInteger: string;
-	    static nonNegativeInteger: string;
-	    static nonPositiveInteger: string;
-	    static positiveInteger: string;
-	    static short: string;
-	    static unsignedLong: string;
-	    static unsignedInt: string;
-	    static unsignedShort: string;
-	    static unsignedByte: string;
-	    static double: string;
-	    static float: string;
-	    static boolean: string;
-	    static string: string;
-	    static object: string;
-	}
 
 }
 declare module 'carbonldp/RDF/Literal/Serializer' {
@@ -672,157 +764,6 @@ declare module 'carbonldp/RDF/List' {
 	export default Class;
 
 }
-declare module 'carbonldp/NS/C' {
-	export let namespace: string;
-	export class Class {
-	    static AccessPoint: string;
-	    static AddMemberAction: string;
-	    static API: string;
-	    static NonReadableMembershipResourceTriples: string;
-	    static PreferContainer: string;
-	    static PreferContainmentResources: string;
-	    static PreferContainmentTriples: string;
-	    static PreferMembershipResources: string;
-	    static PreferMembershipTriples: string;
-	    static PreferSelectedMembershipTriples: string;
-	    static VolatileResource: string;
-	    static RDFRepresentation: string;
-	    static RemoveMemberAction: string;
-	    static ResponseMetadata: string;
-	    static ResourceMetadata: string;
-	}
-	export class Predicate {
-	    static accessPoint: string;
-	    static bNodeIdentifier: string;
-	    static buildDate: string;
-	    static created: string;
-	    static modified: string;
-	    static version: string;
-	    static mediaType: string;
-	    static size: string;
-	    static targetMember: string;
-	    static resourceMetadata: string;
-	    static resource: string;
-	    static eTag: string;
-	}
-
-}
-declare module 'carbonldp/NS/CP' {
-	 const namespace: string; class Predicate {
-	    static ADD_ACTION: string;
-	    static SET_ACTION: string;
-	    static DELETE_ACTION: string;
-	}
-	export { namespace, Predicate };
-
-}
-declare module 'carbonldp/NS/CS' {
-	 const namespace: string; class Class {
-	    static Application: string;
-	    static Token: string;
-	    static AllOrigins: string;
-	    static Agent: string;
-	} class Predicate {
-	    static name: string;
-	    static allowsOrigin: string;
-	    static rootContainer: string;
-	    static tokenKey: string;
-	    static expirationTime: string;
-	    static password: string;
-	    static description: string;
-	}
-	export { namespace, Class, Predicate };
-
-}
-declare module 'carbonldp/NS/LDP' {
-	 const namespace: string; class Class {
-	    static Resource: string;
-	    static RDFSource: string;
-	    static Container: string;
-	    static BasicContainer: string;
-	    static DirectContainer: string;
-	    static IndirectContainer: string;
-	    static NonRDFSource: string;
-	    static MemberSubject: string;
-	    static PreferContainment: string;
-	    static PreferMembership: string;
-	    static PreferEmptyContainer: string;
-	    static PreferMinimalContainer: string;
-	    static Page: string;
-	    static PageSortCriterion: string;
-	    static Ascending: string;
-	    static Descending: string;
-	} class Predicate {
-	    static contains: string;
-	    static member: string;
-	    static hasMemberRelation: string;
-	    static memberOfRelation: string;
-	    static membershipResource: string;
-	    static insertedContentRelation: string;
-	    static constrainedBy: string;
-	    static pageSortCriteria: string;
-	    static pageSortOrder: string;
-	    static pageSortCollation: string;
-	    static pageSequence: string;
-	}
-	export { namespace, Class, Predicate };
-
-}
-declare module 'carbonldp/NS/RDF' {
-	 const namespace: string; class Predicate {
-	    static type: string;
-	}
-	export { namespace, Predicate };
-
-}
-declare module 'carbonldp/NS/VCARD' {
-	export const namespace: string;
-	export class Predicate {
-	    static email: string;
-	}
-
-}
-declare module 'carbonldp/NS' {
-	import * as C from 'carbonldp/NS/C';
-	import * as CP from 'carbonldp/NS/CP';
-	import * as CS from 'carbonldp/NS/CS';
-	import * as LDP from 'carbonldp/NS/LDP';
-	import * as RDF from 'carbonldp/NS/RDF';
-	import * as XSD from 'carbonldp/NS/XSD';
-	import * as VCARD from 'carbonldp/NS/VCARD';
-	export { C, CP, CS, LDP, RDF, XSD, VCARD };
-
-}
-declare module 'carbonldp/Pointer' {
-	import * as HTTP from 'carbonldp/HTTP';
-	export interface Class {
-	    _id: string;
-	    _resolved: boolean;
-	    id: string;
-	    isResolved(): boolean;
-	    resolve(): Promise<[Class, HTTP.Response.Class]>;
-	}
-	export interface Library {
-	    hasPointer(id: string): boolean;
-	    getPointer(id: string): Class;
-	}
-	export class Factory {
-	    static hasClassProperties(object: Object): boolean;
-	    static is(value: any): boolean;
-	    static create(id?: string): Class;
-	    static decorate<T extends Object>(object: T): Class;
-	}
-	export class Util {
-	    static getIDs(pointers: Class[]): string[];
-	    static resolveAll(pointers: Class[]): Promise<[Class[], HTTP.Response.Class[]]>;
-	}
-	export interface Validator {
-	    inScope(id: string): boolean;
-	    inScope(pointer: Class): boolean;
-	}
-	export default Class;
-
-}
 declare module 'carbonldp/RDF/Value' {
 	import * as List from 'carbonldp/RDF/List';
 	import * as Pointer from 'carbonldp/Pointer';
@@ -865,56 +806,6 @@ declare module 'carbonldp/RDF/RDFNode' {
 	    static getPropertyURI(node: Class, predicate: string): string;
 	    static getFreeNodes<T extends Object>(value: T): Class[];
 	}
-
-}
-declare module 'carbonldp/ObjectSchema' {
-	import * as RDF from 'carbonldp/RDF';
-	export interface PropertyDefinition {
-	    "@id"?: string;
-	    "@type"?: string;
-	    "@language"?: string;
-	    "@container"?: string;
-	}
-	export interface Class {
-	    "@base"?: string;
-	    "@index"?: Object;
-	    "@language"?: string;
-	    "@reverse"?: Object;
-	    "@vocab"?: string;
-	    [name: string]: (string | PropertyDefinition);
-	}
-	export enum ContainerType {
-	    SET = 0,
-	    LIST = 1,
-	    LANGUAGE = 2,
-	}
-	export class DigestedObjectSchema {
-	    base: string;
-	    vocab: string;
-	    prefixes: Map<string, RDF.URI.Class>;
-	    properties: Map<string, DigestedPropertyDefinition>;
-	    prefixedURIs: Map<string, RDF.URI.Class[]>;
-	    constructor();
-	}
-	export class DigestedPropertyDefinition {
-	    uri: RDF.URI.Class;
-	    literal: boolean;
-	    literalType: RDF.URI.Class;
-	    language: string;
-	    containerType: ContainerType;
-	}
-	export interface Resolver {
-	    getSchemaFor(object: Object): DigestedObjectSchema;
-	}
-	export class Digester {
-	    static digestSchema(schemas: Class[]): DigestedObjectSchema;
-	    static digestSchema(schema: Class): DigestedObjectSchema;
-	    static combineDigestedObjectSchemas(digestedSchemas: DigestedObjectSchema[]): DigestedObjectSchema;
-	    private static digestSingleSchema(schema);
-	    private static resolvePrefixedURIs(digestedSchema);
-	    private static resolvePrefixedURI(uri, digestedSchema);
-	}
-	export default Class;
 
 }
 declare module 'carbonldp/RDF/URI' {
@@ -986,33 +877,52 @@ declare module 'carbonldp/RDF' {
 	export { Literal, Document, List, Node, URI, Value };
 
 }
-declare module 'carbonldp/Resource' {
-	import * as Pointer from 'carbonldp/Pointer';
-	export interface Class extends Pointer.Class {
-	    types: string[];
+declare module 'carbonldp/ObjectSchema' {
+	import * as RDF from 'carbonldp/RDF';
+	export interface PropertyDefinition {
+	    "@id"?: string;
+	    "@type"?: string;
+	    "@language"?: string;
+	    "@container"?: string;
 	}
-	export class Factory {
-	    static hasClassProperties(resource: Object): boolean;
-	    static is(object: Object): boolean;
-	    static create(id?: string, types?: string[]): Class;
-	    static createFrom<T extends Object>(object: T, id?: string, types?: string[]): T & Class;
-	    static decorate<T extends Object>(object: T): T & Class;
+	export interface Class {
+	    "@base"?: string;
+	    "@index"?: Object;
+	    "@language"?: string;
+	    "@reverse"?: Object;
+	    "@vocab"?: string;
+	    [name: string]: (string | PropertyDefinition);
 	}
-	export default Class;
-
-}
-declare module 'carbonldp/Fragment' {
-	import * as Document from 'carbonldp/Document';
-	import * as Resource from 'carbonldp/Resource';
-	export interface Class extends Resource.Class {
-	    document: Document.Class;
+	export enum ContainerType {
+	    SET = 0,
+	    LIST = 1,
+	    LANGUAGE = 2,
 	}
-	export class Factory {
-	    static hasClassProperties(resource: Object): boolean;
-	    static create(id: string, document: Document.Class): Class;
-	    static create(document: Document.Class): Class;
-	    static createFrom<T extends Object>(object: T, id: string, document: Document.Class): T & Class;
-	    static createFrom<T extends Object>(object: T, document: Document.Class): T & Class;
+	export class DigestedObjectSchema {
+	    base: string;
+	    vocab: string;
+	    prefixes: Map<string, RDF.URI.Class>;
+	    properties: Map<string, DigestedPropertyDefinition>;
+	    prefixedURIs: Map<string, RDF.URI.Class[]>;
+	    constructor();
+	}
+	export class DigestedPropertyDefinition {
+	    uri: RDF.URI.Class;
+	    literal: boolean;
+	    literalType: RDF.URI.Class;
+	    language: string;
+	    containerType: ContainerType;
+	}
+	export interface Resolver {
+	    getSchemaFor(object: Object): DigestedObjectSchema;
+	}
+	export class Digester {
+	    static digestSchema(schemas: Class[]): DigestedObjectSchema;
+	    static digestSchema(schema: Class): DigestedObjectSchema;
+	    static combineDigestedObjectSchemas(digestedSchemas: DigestedObjectSchema[]): DigestedObjectSchema;
+	    private static digestSingleSchema(schema);
+	    private static resolvePrefixedURIs(digestedSchema);
+	    private static resolvePrefixedURI(uri, digestedSchema);
 	}
 	export default Class;
 
@@ -1085,6 +995,25 @@ declare module 'carbonldp/NamedFragment' {
 	export default Class;
 
 }
+declare module 'carbonldp/Resource' {
+	import * as Pointer from 'carbonldp/Pointer';
+	export interface Class extends Pointer.Class {
+	    types: string[];
+	}
+	export class Factory {
+	    static hasClassProperties(resource: Object): boolean;
+	    static is(object: Object): boolean;
+	    static create(id?: string, types?: string[]): Class;
+	    static createFrom<T extends Object>(object: T, id?: string, types?: string[]): T & Class;
+	    static decorate<T extends Object>(object: T): T & Class;
+	}
+	export class Util {
+	    static hasType(resource: Class, type: string): boolean;
+	    static getTypes(resource: Class): string[];
+	}
+	export default Class;
+
+}
 declare module 'carbonldp/Document' {
 	import * as Fragment from 'carbonldp/Fragment';
 	import JSONLDConverter from 'carbonldp/JSONLDConverter';
@@ -1118,6 +1047,61 @@ declare module 'carbonldp/Document' {
 	    static create(): Class;
 	    static createFrom<T extends Object>(object: T): T & Class;
 	    static decorate<T extends Object>(object: T): T & Class;
+	}
+	export default Class;
+
+}
+declare module 'carbonldp/Fragment' {
+	import * as Document from 'carbonldp/Document';
+	import * as Resource from 'carbonldp/Resource';
+	export interface Class extends Resource.Class {
+	    document: Document.Class;
+	}
+	export class Factory {
+	    static hasClassProperties(resource: Object): boolean;
+	    static create(id: string, document: Document.Class): Class;
+	    static create(document: Document.Class): Class;
+	    static createFrom<T extends Object>(object: T, id: string, document: Document.Class): T & Class;
+	    static createFrom<T extends Object>(object: T, document: Document.Class): T & Class;
+	}
+	export default Class;
+
+}
+declare module 'carbonldp/PersistedResource' {
+	export interface Class {
+	    _snapshot: Object;
+	    _syncSnapshot: () => void;
+	    isDirty(): boolean;
+	}
+	export class Factory {
+	    static hasClassProperties(object: Object): boolean;
+	    static decorate<T extends Object>(object: T, snapshot?: Object): T & Class;
+	}
+	export default Class;
+
+}
+declare module 'carbonldp/PersistedFragment' {
+	import * as Fragment from 'carbonldp/Fragment';
+	import * as PersistedResource from 'carbonldp/PersistedResource';
+	export interface Class extends PersistedResource.Class, Fragment.Class {
+	}
+	export class Factory {
+	    static decorate<T extends Fragment.Class>(fragment: T, snapshot?: Object): T & Class;
+	}
+	export default Class;
+
+}
+declare module 'carbonldp/Auth/ACE' {
+	import * as ObjectSchema from 'carbonldp/ObjectSchema';
+	import * as PersistedFragment from 'carbonldp/PersistedFragment';
+	import * as Pointer from 'carbonldp/Pointer';
+	export const RDF_CLASS: string;
+	export const SCHEMA: ObjectSchema.Class;
+	export interface Class extends PersistedFragment.Class {
+	    granting: boolean;
+	    permissions: Pointer.Class[];
+	    subject: Pointer.Class;
+	    subjectClass: Pointer.Class;
 	}
 	export default Class;
 
@@ -1214,167 +1198,6 @@ declare module 'carbonldp/LDP/IndirectContainer' {
 	}
 	export class Factory {
 	    static hasClassProperties(resource: Object): boolean;
-	}
-	export default Class;
-
-}
-declare module 'carbonldp/PersistedResource' {
-	export interface Class {
-	    _snapshot: Object;
-	    _syncSnapshot: () => void;
-	    isDirty(): boolean;
-	}
-	export class Factory {
-	    static hasClassProperties(object: Object): boolean;
-	    static decorate<T extends Object>(object: T, snapshot?: Object): T & Class;
-	}
-	export default Class;
-
-}
-declare module 'carbonldp/PersistedFragment' {
-	import * as Fragment from 'carbonldp/Fragment';
-	import * as PersistedResource from 'carbonldp/PersistedResource';
-	export interface Class extends PersistedResource.Class, Fragment.Class {
-	}
-	export class Factory {
-	    static decorate<T extends Fragment.Class>(fragment: T, snapshot?: Object): T & Class;
-	}
-	export default Class;
-
-}
-declare module 'carbonldp/PersistedNamedFragment' {
-	import * as Fragment from 'carbonldp/Fragment';
-	import * as NamedFragment from 'carbonldp/NamedFragment';
-	import * as PersistedFragment from 'carbonldp/PersistedFragment';
-	export interface Class extends PersistedFragment.Class, NamedFragment.Class {
-	}
-	export class Factory {
-	    static decorate<T extends Fragment.Class>(fragment: T, snapshot?: Object): T & Class;
-	}
-	export default Class;
-
-}
-declare module 'carbonldp/SPARQL/RawResults' {
-	export class ValueTypes {
-	    static URI: string;
-	    static LITERAL: string;
-	    static BNODE: string;
-	}
-	export interface BindingObject {
-	    [name: string]: BindingProperty;
-	}
-	export interface BindingProperty {
-	    "type": string;
-	    "value": string;
-	    "datatype"?: string;
-	    "xml:lang"?: string;
-	}
-	export interface Class {
-	    "head": {
-	        "vars"?: string[];
-	        "links"?: string[];
-	    };
-	    "results"?: {
-	        "bindings": BindingObject[];
-	    };
-	    "boolean"?: boolean;
-	}
-	export class Factory {
-	    static hasClassProperties(value: Object): boolean;
-	    static is(value: any): boolean;
-	}
-	export default Class;
-
-}
-declare module 'carbonldp/SPARQL/RawResultsParser' {
-	import Parser from 'carbonldp/HTTP/Parser';
-	import RawResults from 'carbonldp/SPARQL/RawResults';
-	export class Class implements Parser<RawResults> {
-	    parse(input: string): Promise<any>;
-	}
-	export default Class;
-
-}
-declare module 'carbonldp/SPARQL/SELECTResults' {
-	export interface BindingObject {
-	    [binding: string]: any;
-	}
-	export interface Class {
-	    vars: string[];
-	    bindings: BindingObject[];
-	}
-	export default Class;
-
-}
-declare module 'carbonldp/SPARQL/Service' {
-	import * as HTTP from 'carbonldp/HTTP';
-	import * as Pointer from 'carbonldp/Pointer';
-	import * as RawResults from 'carbonldp/SPARQL/RawResults';
-	export class Class {
-	    private static defaultOptions;
-	    private static resultsParser;
-	    private static stringParser;
-	    static executeRawASKQuery(url: string, askQuery: string, options?: HTTP.Request.Options): Promise<[RawResults.Class, HTTP.Response.Class]>;
-	    static executeASKQuery(url: string, askQuery: string, options?: HTTP.Request.Options): Promise<[boolean, HTTP.Response.Class]>;
-	    static executeRawSELECTQuery(url: string, selectQuery: string, options?: HTTP.Request.Options): Promise<[RawResults.Class, HTTP.Response.Class]>;
-	    static executeSELECTQuery(url: string, selectQuery: string, pointerLibrary: Pointer.Library, options?: HTTP.Request.Options): Promise<[any, HTTP.Response.Class]>;
-	    static executeRawCONSTRUCTQuery(url: string, constructQuery: string, options?: HTTP.Request.Options): Promise<[string, HTTP.Response.Class]>;
-	    static executeRawDESCRIBEQuery(url: string, describeQuery: string, options?: HTTP.Request.Options): Promise<[string, HTTP.Response.Class]>;
-	    private static parseRawBindingProperty(rawBindingProperty, pointerLibrary);
-	}
-	export default Class;
-
-}
-declare module 'carbonldp/SPARQL' {
-	import * as RawResults from 'carbonldp/SPARQL/RawResults';
-	import * as RawResultsParser from 'carbonldp/SPARQL/RawResultsParser';
-	import Service from 'carbonldp/SPARQL/Service';
-	import * as SELECTResults from 'carbonldp/SPARQL/SELECTResults';
-	export { RawResults, RawResultsParser, Service, SELECTResults };
-
-}
-declare module 'carbonldp/PersistedDocument' {
-	import * as AccessPoint from 'carbonldp/AccessPoint';
-	import * as Document from 'carbonldp/Document';
-	import Documents from 'carbonldp/Documents';
-	import * as HTTP from 'carbonldp/HTTP';
-	import * as PersistedResource from 'carbonldp/PersistedResource';
-	import * as PersistedFragment from 'carbonldp/PersistedFragment';
-	import * as PersistedNamedFragment from 'carbonldp/PersistedNamedFragment';
-	import * as Pointer from 'carbonldp/Pointer';
-	import * as SPARQL from 'carbonldp/SPARQL';
-	export interface Class extends Pointer.Class, PersistedResource.Class, Document.Class {
-	    _documents: Documents;
-	    _etag: string;
-	    _fragmentsIndex: Map<string, PersistedFragment.Class>;
-	    _savedFragments: PersistedFragment.Class[];
-	    _syncSavedFragments(): void;
-	    getFragment(slug: string): PersistedFragment.Class;
-	    getNamedFragment(slug: string): PersistedNamedFragment.Class;
-	    getFragments(): PersistedFragment.Class[];
-	    createFragment(): PersistedFragment.Class;
-	    createFragment(slug: string): PersistedNamedFragment.Class;
-	    createFragment<T extends Object>(slug: string, object: T): PersistedNamedFragment.Class & T;
-	    createFragment<T extends Object>(object: T): PersistedFragment.Class & T;
-	    createNamedFragment(slug: string): PersistedNamedFragment.Class;
-	    createNamedFragment<T extends Object>(slug: string, object: T): PersistedNamedFragment.Class & T;
-	    refresh(): Promise<[Class, HTTP.Response.Class]>;
-	    save(): Promise<[Class, HTTP.Response.Class]>;
-	    destroy(): Promise<HTTP.Response.Class>;
-	    createAccessPoint(accessPoint: AccessPoint.Class, slug?: string, requestOptions?: HTTP.Request.Options): Promise<[Pointer.Class, HTTP.Response.Class]>;
-	    executeRawASKQuery(askQuery: string, requestOptions?: HTTP.Request.Options): Promise<[SPARQL.RawResults.Class, HTTP.Response.Class]>;
-	    executeASKQuery(askQuery: string, requestOptions?: HTTP.Request.Options): Promise<[boolean, HTTP.Response.Class]>;
-	    executeRawSELECTQuery(selectQuery: string, requestOptions?: HTTP.Request.Options): Promise<[SPARQL.RawResults.Class, HTTP.Response.Class]>;
-	    executeSELECTQuery(selectQuery: string, requestOptions?: HTTP.Request.Options): Promise<[SPARQL.SELECTResults.Class, HTTP.Response.Class]>;
-	    executeRawCONSTRUCTQuery(constructQuery: string, requestOptions?: HTTP.Request.Options): Promise<[string, HTTP.Response.Class]>;
-	    executeRawDESCRIBEQuery(describeQuery: string, requestOptions?: HTTP.Request.Options): Promise<[string, HTTP.Response.Class]>;
-	}
-	export class Factory {
-	    static hasClassProperties(document: Document.Class): boolean;
-	    static is(object: Object): boolean;
-	    static create(uri: string, documents: Documents, snapshot?: Object): Class;
-	    static createFrom<T extends Object>(object: T, uri: string, documents: Documents, snapshot?: Object): Class;
-	    static decorate<T extends Document.Class>(document: T, documents: Documents, snapshot?: Object): T & Class;
 	}
 	export default Class;
 
@@ -1528,6 +1351,31 @@ declare module 'carbonldp/AccessPoint' {
 	export default Class;
 
 }
+declare module 'carbonldp/Context' {
+	import Auth from 'carbonldp/Auth';
+	import Documents from 'carbonldp/Documents';
+	import * as ObjectSchema from 'carbonldp/ObjectSchema';
+	interface Context {
+	    auth: Auth;
+	    documents: Documents;
+	    parentContext: Context;
+	    getBaseURI(): string;
+	    resolve(relativeURI: string): string;
+	    hasSetting(name: string): boolean;
+	    getSetting(name: string): any;
+	    setSetting(name: string, value: any): any;
+	    deleteSetting(name: string): any;
+	    hasObjectSchema(type: string): boolean;
+	    getObjectSchema(type: string): ObjectSchema.DigestedObjectSchema;
+	    getObjectSchema(): ObjectSchema.DigestedObjectSchema;
+	    extendObjectSchema(type: string, objectSchema: ObjectSchema.Class): void;
+	    extendObjectSchema(objectSchema: ObjectSchema.Class): void;
+	    clearObjectSchema(type: string): void;
+	    clearObjectSchema(): void;
+	}
+	export default Context;
+
+}
 declare module 'carbonldp/FreeResources' {
 	import Documents from 'carbonldp/Documents';
 	import * as Pointer from 'carbonldp/Pointer';
@@ -1559,10 +1407,90 @@ declare module 'carbonldp/PersistedBlankNode' {
 	export default Class;
 
 }
+declare module 'carbonldp/SPARQL/RawResults' {
+	export class ValueTypes {
+	    static URI: string;
+	    static LITERAL: string;
+	    static BNODE: string;
+	}
+	export interface BindingObject {
+	    [name: string]: BindingProperty;
+	}
+	export interface BindingProperty {
+	    "type": string;
+	    "value": string;
+	    "datatype"?: string;
+	    "xml:lang"?: string;
+	}
+	export interface Class {
+	    "head": {
+	        "vars"?: string[];
+	        "links"?: string[];
+	    };
+	    "results"?: {
+	        "bindings": BindingObject[];
+	    };
+	    "boolean"?: boolean;
+	}
+	export class Factory {
+	    static hasClassProperties(value: Object): boolean;
+	    static is(value: any): boolean;
+	}
+	export default Class;
+
+}
+declare module 'carbonldp/SPARQL/RawResultsParser' {
+	import Parser from 'carbonldp/HTTP/Parser';
+	import RawResults from 'carbonldp/SPARQL/RawResults';
+	export class Class implements Parser<RawResults> {
+	    parse(input: string): Promise<any>;
+	}
+	export default Class;
+
+}
+declare module 'carbonldp/SPARQL/SELECTResults' {
+	export interface BindingObject {
+	    [binding: string]: any;
+	}
+	export interface Class {
+	    vars: string[];
+	    bindings: BindingObject[];
+	}
+	export default Class;
+
+}
+declare module 'carbonldp/SPARQL/Service' {
+	import * as HTTP from 'carbonldp/HTTP';
+	import * as Pointer from 'carbonldp/Pointer';
+	import * as RawResults from 'carbonldp/SPARQL/RawResults';
+	export class Class {
+	    private static defaultOptions;
+	    private static resultsParser;
+	    private static stringParser;
+	    static executeRawASKQuery(url: string, askQuery: string, options?: HTTP.Request.Options): Promise<[RawResults.Class, HTTP.Response.Class]>;
+	    static executeASKQuery(url: string, askQuery: string, options?: HTTP.Request.Options): Promise<[boolean, HTTP.Response.Class]>;
+	    static executeRawSELECTQuery(url: string, selectQuery: string, options?: HTTP.Request.Options): Promise<[RawResults.Class, HTTP.Response.Class]>;
+	    static executeSELECTQuery(url: string, selectQuery: string, pointerLibrary: Pointer.Library, options?: HTTP.Request.Options): Promise<[any, HTTP.Response.Class]>;
+	    static executeRawCONSTRUCTQuery(url: string, constructQuery: string, options?: HTTP.Request.Options): Promise<[string, HTTP.Response.Class]>;
+	    static executeRawDESCRIBEQuery(url: string, describeQuery: string, options?: HTTP.Request.Options): Promise<[string, HTTP.Response.Class]>;
+	    private static parseRawBindingProperty(rawBindingProperty, pointerLibrary);
+	}
+	export default Class;
+
+}
+declare module 'carbonldp/SPARQL' {
+	import * as RawResults from 'carbonldp/SPARQL/RawResults';
+	import * as RawResultsParser from 'carbonldp/SPARQL/RawResultsParser';
+	import Service from 'carbonldp/SPARQL/Service';
+	import * as SELECTResults from 'carbonldp/SPARQL/SELECTResults';
+	export { RawResults, RawResultsParser, Service, SELECTResults };
+
+}
 declare module 'carbonldp/Documents' {
 	import * as HTTP from 'carbonldp/HTTP';
 	import Context from 'carbonldp/Context';
 	import * as AccessPoint from 'carbonldp/AccessPoint';
+	import * as ACL from 'carbonldp/Auth/ACL';
 	import * as Document from 'carbonldp/Document';
 	import * as JSONLDConverter from 'carbonldp/JSONLDConverter';
 	import * as PersistedDocument from 'carbonldp/PersistedDocument';
@@ -1581,6 +1509,7 @@ declare module 'carbonldp/Documents' {
 	    hasPointer(id: string): boolean;
 	    getPointer(id: string): Pointer.Class;
 	    get(uri: string, requestOptions?: HTTP.Request.Options): Promise<[PersistedDocument.Class, HTTP.Response.Class]>;
+	    getACL(documentURI: string, requestOptions?: HTTP.Request.Options): Promise<[ACL.Class, HTTP.Response.Class]>;
 	    exists(documentURI: string, requestOptions?: HTTP.Request.Options): Promise<[boolean, HTTP.Response.Class]>;
 	    createChild(parentURI: string, slug: string, childDocument: Document.Class, requestOptions?: HTTP.Request.Options): Promise<[Pointer.Class, HTTP.Response.Class]>;
 	    createChild(parentURI: string, childDocument: Document.Class, requestOptions?: HTTP.Request.Options): Promise<[Pointer.Class, HTTP.Response.Class]>;
@@ -1642,29 +1571,151 @@ declare module 'carbonldp/Documents' {
 	export default Documents;
 
 }
-declare module 'carbonldp/Context' {
-	import Auth from 'carbonldp/Auth';
-	import Documents from 'carbonldp/Documents';
-	import * as ObjectSchema from 'carbonldp/ObjectSchema';
-	interface Context {
-	    auth: Auth;
-	    documents: Documents;
-	    parentContext: Context;
-	    getBaseURI(): string;
-	    resolve(relativeURI: string): string;
-	    hasSetting(name: string): boolean;
-	    getSetting(name: string): any;
-	    setSetting(name: string, value: any): any;
-	    deleteSetting(name: string): any;
-	    hasObjectSchema(type: string): boolean;
-	    getObjectSchema(type: string): ObjectSchema.DigestedObjectSchema;
-	    getObjectSchema(): ObjectSchema.DigestedObjectSchema;
-	    extendObjectSchema(type: string, objectSchema: ObjectSchema.Class): void;
-	    extendObjectSchema(objectSchema: ObjectSchema.Class): void;
-	    clearObjectSchema(type: string): void;
-	    clearObjectSchema(): void;
+declare module 'carbonldp/PersistedNamedFragment' {
+	import * as Fragment from 'carbonldp/Fragment';
+	import * as NamedFragment from 'carbonldp/NamedFragment';
+	import * as PersistedFragment from 'carbonldp/PersistedFragment';
+	export interface Class extends PersistedFragment.Class, NamedFragment.Class {
 	}
-	export default Context;
+	export class Factory {
+	    static decorate<T extends Fragment.Class>(fragment: T, snapshot?: Object): T & Class;
+	}
+	export default Class;
+
+}
+declare module 'carbonldp/PersistedDocument' {
+	import * as AccessPoint from 'carbonldp/AccessPoint';
+	import * as ACL from 'carbonldp/Auth/ACL';
+	import * as Document from 'carbonldp/Document';
+	import Documents from 'carbonldp/Documents';
+	import * as HTTP from 'carbonldp/HTTP';
+	import * as PersistedResource from 'carbonldp/PersistedResource';
+	import * as PersistedFragment from 'carbonldp/PersistedFragment';
+	import * as PersistedNamedFragment from 'carbonldp/PersistedNamedFragment';
+	import * as Pointer from 'carbonldp/Pointer';
+	import * as SPARQL from 'carbonldp/SPARQL';
+	export interface Class extends Pointer.Class, PersistedResource.Class, Document.Class {
+	    _documents: Documents;
+	    _etag: string;
+	    _fragmentsIndex: Map<string, PersistedFragment.Class>;
+	    _savedFragments: PersistedFragment.Class[];
+	    _syncSavedFragments(): void;
+	    getFragment(slug: string): PersistedFragment.Class;
+	    getNamedFragment(slug: string): PersistedNamedFragment.Class;
+	    getFragments(): PersistedFragment.Class[];
+	    createFragment(): PersistedFragment.Class;
+	    createFragment(slug: string): PersistedNamedFragment.Class;
+	    createFragment<T extends Object>(slug: string, object: T): PersistedNamedFragment.Class & T;
+	    createFragment<T extends Object>(object: T): PersistedFragment.Class & T;
+	    createNamedFragment(slug: string): PersistedNamedFragment.Class;
+	    createNamedFragment<T extends Object>(slug: string, object: T): PersistedNamedFragment.Class & T;
+	    getACL(requestOptions?: HTTP.Request.Options): Promise<[ACL.Class, HTTP.Response.Class]>;
+	    refresh(): Promise<[Class, HTTP.Response.Class]>;
+	    save(): Promise<[Class, HTTP.Response.Class]>;
+	    destroy(): Promise<HTTP.Response.Class>;
+	    createAccessPoint(accessPoint: AccessPoint.Class, slug?: string, requestOptions?: HTTP.Request.Options): Promise<[Pointer.Class, HTTP.Response.Class]>;
+	    executeRawASKQuery(askQuery: string, requestOptions?: HTTP.Request.Options): Promise<[SPARQL.RawResults.Class, HTTP.Response.Class]>;
+	    executeASKQuery(askQuery: string, requestOptions?: HTTP.Request.Options): Promise<[boolean, HTTP.Response.Class]>;
+	    executeRawSELECTQuery(selectQuery: string, requestOptions?: HTTP.Request.Options): Promise<[SPARQL.RawResults.Class, HTTP.Response.Class]>;
+	    executeSELECTQuery(selectQuery: string, requestOptions?: HTTP.Request.Options): Promise<[SPARQL.SELECTResults.Class, HTTP.Response.Class]>;
+	    executeRawCONSTRUCTQuery(constructQuery: string, requestOptions?: HTTP.Request.Options): Promise<[string, HTTP.Response.Class]>;
+	    executeRawDESCRIBEQuery(describeQuery: string, requestOptions?: HTTP.Request.Options): Promise<[string, HTTP.Response.Class]>;
+	}
+	export class Factory {
+	    static hasClassProperties(document: Document.Class): boolean;
+	    static is(object: Object): boolean;
+	    static create(uri: string, documents: Documents, snapshot?: Object): Class;
+	    static createFrom<T extends Object>(object: T, uri: string, documents: Documents, snapshot?: Object): Class;
+	    static decorate<T extends Document.Class>(document: T, documents: Documents, snapshot?: Object): T & Class;
+	}
+	export default Class;
+
+}
+declare module 'carbonldp/Auth/ACL' {
+	import * as ACE from 'carbonldp/Auth/ACE';
+	import * as ObjectSchema from 'carbonldp/ObjectSchema';
+	import * as PersistedDocument from 'carbonldp/PersistedDocument';
+	import * as Pointer from 'carbonldp/Pointer';
+	export const RDF_CLASS: string;
+	export const SCHEMA: ObjectSchema.Class;
+	export interface Class extends PersistedDocument.Class {
+	    accessTo: Pointer.Class;
+	    accessControlEntries?: ACE.Class[];
+	    inheritableEntries?: ACE.Class[];
+	}
+	export class Factory {
+	    static hasClassProperties(object: Object): boolean;
+	    static decorate<T extends PersistedDocument.Class>(document: T): T & Class;
+	}
+	export default Class;
+
+}
+declare module 'carbonldp/Auth/AuthenticationToken' {
+	export interface Class {
+	}
+	export default Class;
+
+}
+declare module 'carbonldp/Auth/Credentials' {
+	export interface Class {
+	}
+	export default Class;
+
+}
+declare module 'carbonldp/Auth/Authenticator' {
+	import * as HTTP from 'carbonldp/HTTP';
+	import AuthenticationToken from 'carbonldp/Auth/AuthenticationToken';
+	import * as Credentials from 'carbonldp/Auth/Credentials';
+	export interface Class<T extends AuthenticationToken> {
+	    isAuthenticated(): boolean;
+	    authenticate(authenticationToken: T): Promise<Credentials.Class>;
+	    clearAuthentication(): void;
+	    addAuthentication(requestOptions: HTTP.Request.Options): HTTP.Request.Options;
+	    supports(authenticationToken: AuthenticationToken): boolean;
+	}
+	export default Class;
+
+}
+declare module 'carbonldp/Auth/UsernameAndPasswordToken' {
+	import AuthenticationToken from 'carbonldp/Auth/AuthenticationToken';
+	export class Class implements AuthenticationToken {
+	    private _username;
+	    private _password;
+	    constructor(username: string, password: string);
+	    username: string;
+	    password: string;
+	}
+	export default Class;
+
+}
+declare module 'carbonldp/Auth/UsernameAndPasswordCredentials' {
+	import * as Credentials from 'carbonldp/Auth/Credentials';
+	export class Class implements Credentials.Class {
+	    private _username;
+	    private _password;
+	    username: string;
+	    password: string;
+	    constructor(username: string, password: string);
+	}
+	export default Class;
+
+}
+declare module 'carbonldp/Auth/BasicAuthenticator' {
+	import * as HTTP from 'carbonldp/HTTP';
+	import Authenticator from 'carbonldp/Auth/Authenticator';
+	import AuthenticationToken from 'carbonldp/Auth/AuthenticationToken';
+	import UsernameAndPasswordToken from 'carbonldp/Auth/UsernameAndPasswordToken';
+	import * as UsernameAndPasswordCredentials from 'carbonldp/Auth/UsernameAndPasswordCredentials';
+	export class Class implements Authenticator<UsernameAndPasswordToken> {
+	    private credentials;
+	    isAuthenticated(): boolean;
+	    authenticate(authenticationToken: UsernameAndPasswordToken): Promise<UsernameAndPasswordCredentials.Class>;
+	    addAuthentication(requestOptions: HTTP.Request.Options): HTTP.Request.Options;
+	    clearAuthentication(): void;
+	    supports(authenticationToken: AuthenticationToken): boolean;
+	    private addBasicAuthenticationHeader(headers);
+	}
+	export default Class;
 
 }
 declare module 'carbonldp/Auth/Token' {
@@ -1672,7 +1723,7 @@ declare module 'carbonldp/Auth/Token' {
 	import * as Pointer from 'carbonldp/Pointer';
 	import Credentials from 'carbonldp/Auth/Credentials';
 	export const RDF_CLASS: string;
-	export const CONTEXT: ObjectSchema.Class;
+	export const SCHEMA: ObjectSchema.Class;
 	export interface Class extends Pointer.Class, Credentials {
 	    key: string;
 	    expirationTime: Date;
@@ -1713,6 +1764,8 @@ declare module 'carbonldp/Auth/TokenAuthenticator' {
 
 }
 declare module 'carbonldp/Auth' {
+	import * as ACE from 'carbonldp/Auth/ACE';
+	import * as ACL from 'carbonldp/Auth/ACL';
 	import AuthenticationToken from 'carbonldp/Auth/AuthenticationToken';
 	import Authenticator from 'carbonldp/Auth/Authenticator';
 	import BasicAuthenticator from 'carbonldp/Auth/BasicAuthenticator';
@@ -1723,7 +1776,7 @@ declare module 'carbonldp/Auth' {
 	import Credentials from 'carbonldp/Auth/Credentials';
 	import * as HTTP from 'carbonldp/HTTP';
 	import Context from 'carbonldp/Context';
-	export { AuthenticationToken, Authenticator, BasicAuthenticator, Token, TokenAuthenticator, UsernameAndPasswordToken };
+	export { ACE, ACL, AuthenticationToken, Authenticator, BasicAuthenticator, Token, TokenAuthenticator, UsernameAndPasswordToken };
 	export enum Method {
 	    BASIC = 0,
 	    TOKEN = 1,

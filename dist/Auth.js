@@ -1,4 +1,8 @@
 "use strict";
+var ACE = require("./Auth/ACE");
+exports.ACE = ACE;
+var ACL = require("./Auth/ACL");
+exports.ACL = ACL;
 var BasicAuthenticator_1 = require("./Auth/BasicAuthenticator");
 exports.BasicAuthenticator = BasicAuthenticator_1.default;
 var TokenAuthenticator_1 = require("./Auth/TokenAuthenticator");

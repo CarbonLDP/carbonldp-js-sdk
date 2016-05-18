@@ -17,6 +17,8 @@ import {
 } from "./test/JasmineExtender";
 import * as Utils from "./Utils";
 import AbstractContext from "./AbstractContext";
+import * as ACE from "./Auth/ACE";
+import * as ACL from "./Auth/ACL";
 import AuthenticationToken from "./Auth/AuthenticationToken";
 import Authenticator from "./Auth/Authenticator";
 import BasicAuthenticator from "./Auth/BasicAuthenticator";
@@ -34,6 +36,24 @@ describe( module( "Carbon/Auth" ), ():void => {
 	it( isDefined(), ():void => {
 		expect( Auth ).toBeDefined();
 		expect( Utils.isObject( Auth ) ).toBe( true );
+	});
+
+	it( reexports(
+		STATIC,
+		"ACE",
+		"Carbon.Auth.ACE"
+	), ():void => {
+		expect( Auth.ACE ).toBeDefined();
+		expect( Auth.ACE ).toBe( ACE );
+	});
+
+	it( reexports(
+		STATIC,
+		"ACL",
+		"Carbon.Auth.ACL"
+	), ():void => {
+		expect( Auth.ACL ).toBeDefined();
+		expect( Auth.ACL ).toBe( ACL );
 	});
 
 	it( reexports(

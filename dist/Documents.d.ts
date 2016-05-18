@@ -1,6 +1,7 @@
 import * as HTTP from "./HTTP";
 import Context from "./Context";
 import * as AccessPoint from "./AccessPoint";
+import * as ACL from "./Auth/ACL";
 import * as Document from "./Document";
 import * as JSONLDConverter from "./JSONLDConverter";
 import * as PersistedDocument from "./PersistedDocument";
@@ -20,6 +21,7 @@ declare class Documents implements Pointer.Library, Pointer.Validator, ObjectSch
     hasPointer(id: string): boolean;
     getPointer(id: string): Pointer.Class;
     get(uri: string, requestOptions?: HTTP.Request.Options): Promise<[PersistedDocument.Class, HTTP.Response.Class]>;
+    getACL(documentURI: string, requestOptions?: HTTP.Request.Options): Promise<[ACL.Class, HTTP.Response.Class]>;
     exists(documentURI: string, requestOptions?: HTTP.Request.Options): Promise<[boolean, HTTP.Response.Class]>;
     createChild(parentURI: string, slug: string, childDocument: Document.Class, requestOptions?: HTTP.Request.Options): Promise<[Pointer.Class, HTTP.Response.Class]>;
     createChild(parentURI: string, childDocument: Document.Class, requestOptions?: HTTP.Request.Options): Promise<[Pointer.Class, HTTP.Response.Class]>;

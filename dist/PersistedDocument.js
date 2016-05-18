@@ -51,6 +51,10 @@ function extendCreateNamedFragment(superFunction) {
         return PersistedFragment.Factory.decorate(fragment);
     };
 }
+function getACL(requestOptions) {
+    var that = this;
+    return this._documents.getACL(that.id, requestOptions);
+}
 function refresh() {
     return this._documents.refresh(this);
 }
@@ -193,6 +197,12 @@ var Factory = (function () {
                         return this._documents.inScope(idOrPointer);
                     };
                 })(),
+            },
+            "getACL": {
+                writable: false,
+                enumerable: false,
+                configurable: true,
+                value: getACL,
             },
             "refresh": {
                 writable: false,

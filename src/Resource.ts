@@ -50,4 +50,16 @@ export class Factory {
 	}
 }
 
+export class Util {
+
+	static hasType( resource:Class, type:string ):boolean {
+		return Util.getTypes( resource ).indexOf( type ) !== -1;
+	}
+
+	static getTypes( resource:Class ):string[] {
+		return resource.types || [];
+	}
+
+}
+
 export default Class;

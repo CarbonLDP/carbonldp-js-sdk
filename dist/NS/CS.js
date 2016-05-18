@@ -4,13 +4,18 @@ exports.namespace = namespace;
 var Class = (function () {
     function Class() {
     }
-    Object.defineProperty(Class, "Application", {
-        get: function () { return namespace + "Application"; },
+    Object.defineProperty(Class, "AccessControlEntry", {
+        get: function () { return namespace + "AccessControlEntry"; },
         enumerable: true,
         configurable: true
     });
-    Object.defineProperty(Class, "Token", {
-        get: function () { return namespace + "Token"; },
+    Object.defineProperty(Class, "AccessControlList", {
+        get: function () { return namespace + "AccessControlList"; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Class, "Agent", {
+        get: function () { return namespace + "Agent"; },
         enumerable: true,
         configurable: true
     });
@@ -19,8 +24,13 @@ var Class = (function () {
         enumerable: true,
         configurable: true
     });
-    Object.defineProperty(Class, "Agent", {
-        get: function () { return namespace + "Agent"; },
+    Object.defineProperty(Class, "Application", {
+        get: function () { return namespace + "Application"; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Class, "Token", {
+        get: function () { return namespace + "Token"; },
         enumerable: true,
         configurable: true
     });
@@ -35,18 +45,23 @@ var Predicate = (function () {
         enumerable: true,
         configurable: true
     });
+    Object.defineProperty(Predicate, "accessControlEntry", {
+        get: function () { return namespace + "accessControlEntry"; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Predicate, "accessTo", {
+        get: function () { return namespace + "accessTo"; },
+        enumerable: true,
+        configurable: true
+    });
     Object.defineProperty(Predicate, "allowsOrigin", {
         get: function () { return namespace + "allowsOrigin"; },
         enumerable: true,
         configurable: true
     });
-    Object.defineProperty(Predicate, "rootContainer", {
-        get: function () { return namespace + "rootContainer"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Predicate, "tokenKey", {
-        get: function () { return namespace + "tokenKey"; },
+    Object.defineProperty(Predicate, "description", {
+        get: function () { return namespace + "description"; },
         enumerable: true,
         configurable: true
     });
@@ -55,13 +70,43 @@ var Predicate = (function () {
         enumerable: true,
         configurable: true
     });
+    Object.defineProperty(Predicate, "granting", {
+        get: function () { return namespace + "granting"; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Predicate, "inheritableEntry", {
+        get: function () { return namespace + "inheritableEntry"; },
+        enumerable: true,
+        configurable: true
+    });
     Object.defineProperty(Predicate, "password", {
         get: function () { return namespace + "password"; },
         enumerable: true,
         configurable: true
     });
-    Object.defineProperty(Predicate, "description", {
-        get: function () { return namespace + "description"; },
+    Object.defineProperty(Predicate, "permission", {
+        get: function () { return namespace + "permission"; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Predicate, "rootContainer", {
+        get: function () { return namespace + "rootContainer"; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Predicate, "subject", {
+        get: function () { return namespace + "subject"; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Predicate, "subjectClass", {
+        get: function () { return namespace + "subjectClass"; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Predicate, "tokenKey", {
+        get: function () { return namespace + "tokenKey"; },
         enumerable: true,
         configurable: true
     });

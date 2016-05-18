@@ -45,6 +45,12 @@
 	- [Class Carbon.Auth.Class](#Carbon-Auth-Class)
 		- [Constructor](#Carbon-Auth-Class-Constructor)
 		- [Methods](#Carbon-Auth-Class-Methods)
+- [Module Carbon/Auth/ACE](#Carbon-Auth-ACE)
+	- [Properties](#Carbon-Auth-ACE-Properties)
+- [Module Carbon/Auth/ACL](#Carbon-Auth-ACL)
+	- [Properties](#Carbon-Auth-ACL-Properties)
+	- [Class Carbon.Auth.ACL.Factory](#Carbon-Auth-ACL-Factory)
+		- [Methods](#Carbon-Auth-ACL-Factory-Methods)
 - [Module Carbon/Auth/BasicAuthenticator](#Carbon-Auth-BasicAuthenticator)
 	- [Class Carbon.Auth.BasicAuthenticator.Class](#Carbon-Auth-BasicAuthenticator-Class)
 		- [Constructor](#Carbon-Auth-BasicAuthenticator-Class-Constructor)
@@ -1055,6 +1061,8 @@ Returns a Pointer for the stored App Document, and the response of the call.
 #### <a name="Carbon-Auth-Reexports" />Reexports 
 | Export name | Original Location | 
 | --- | --- |
+| ACE | [Carbon.Auth.ACE](#Carbon-Auth-ACE) |
+| ACL | [Carbon.Auth.ACL](#Carbon-Auth-ACL) |
 | AuthenticationToken | [Carbon.Auth.AuthenticationToken](#Carbon-Auth-AuthenticationToken) |
 | Authenticator | [Carbon.Auth.Authenticator](#Carbon-Auth-Authenticator) |
 | BasicAuthenticator | [Carbon.Auth.BasicAuthenticator](#Carbon-Auth-BasicAuthenticator) |
@@ -1167,6 +1175,78 @@ Authenticates the user with a JSON Web Token (JWT), i.e. the credentials generat
 
 - method
 - token
+
+
+
+## <a name="Carbon-Auth-ACE" />Module Carbon/Auth/ACE
+
+
+
+
+
+### <a name="Carbon-Auth-ACE-Properties" />Properties
+```typescript 
+static RDF_Class:string 
+```
+
+```typescript 
+static SCHEMA:Carbon.ObjectSchema.Class 
+```
+
+
+
+
+
+## <a name="Carbon-Auth-ACL" />Module Carbon/Auth/ACL
+
+
+
+
+
+### <a name="Carbon-Auth-ACL-Properties" />Properties
+```typescript 
+static RDF_Class:string 
+```
+
+```typescript 
+static SCHEMA:Carbon.ObjectSchema.Class 
+```
+
+
+
+
+
+### <a name="Carbon-Auth-ACL-Factory" />Class Carbon.Auth.ACL.Factory
+
+
+> Factory class for `Carbon.Auth.ACL.Class` objects.
+
+
+
+
+#### <a name="Carbon-Auth-ACL-Factory-Methods" />Methods
+##### hasClassProperties
+```typescript 
+static hasClassProperties( object:Object ):boolean
+```
+
+Return true if the object provided has the properties and methods of a `Carbon.Auth.ACL.Class` object.
+
+*Parameters*
+
+- object: The object to analise.
+
+##### decorate
+```typescript 
+static decorate( document:T extends Carbon.PersistedDocument.Class ):T & Carbon.Auth.ACl.Class
+```
+
+Decorate the object with the properties and methods o a `Carbon.Auth.ACL.Class` object.
+
+*Parameters*
+
+- document: The persisted document to decorate.
+
 
 
 
@@ -5664,15 +5744,27 @@ static namespace:string
 
 #### <a name="Carbon-NS-CS-Class-Properties" />Properties
 ```typescript 
+static AccessControlEntry:string 
+```
+
+```typescript 
+static AccessControlList:string 
+```
+
+```typescript 
+static Agent:string 
+```
+
+```typescript 
+static AllOrigins:string 
+```
+
+```typescript 
 static Application:string 
 ```
 
 ```typescript 
 static Token:string 
-```
-
-```typescript 
-static AllOrigins:string 
 ```
 
 
@@ -5692,15 +5784,19 @@ static name:string
 ```
 
 ```typescript 
+static accessControlEntry:string 
+```
+
+```typescript 
+static accessTo:string 
+```
+
+```typescript 
 static allowsOrigin:string 
 ```
 
 ```typescript 
-static rootContainer:string 
-```
-
-```typescript 
-static tokenKey:string 
+static description:string 
 ```
 
 ```typescript 
@@ -5708,11 +5804,35 @@ static expirationTime:string
 ```
 
 ```typescript 
+static granting:string 
+```
+
+```typescript 
+static inheritableEntry:string 
+```
+
+```typescript 
 static password:string 
 ```
 
 ```typescript 
-static description:string 
+static permission:string 
+```
+
+```typescript 
+static rootContainer:string 
+```
+
+```typescript 
+static subject:string 
+```
+
+```typescript 
+static subjectClass:string 
+```
+
+```typescript 
+static tokenKey:string 
 ```
 
 

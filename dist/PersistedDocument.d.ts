@@ -1,4 +1,5 @@
 import * as AccessPoint from "./AccessPoint";
+import * as ACL from "./Auth/ACL";
 import * as Document from "./Document";
 import Documents from "./Documents";
 import * as HTTP from "./HTTP";
@@ -22,6 +23,7 @@ export interface Class extends Pointer.Class, PersistedResource.Class, Document.
     createFragment<T extends Object>(object: T): PersistedFragment.Class & T;
     createNamedFragment(slug: string): PersistedNamedFragment.Class;
     createNamedFragment<T extends Object>(slug: string, object: T): PersistedNamedFragment.Class & T;
+    getACL(requestOptions?: HTTP.Request.Options): Promise<[ACL.Class, HTTP.Response.Class]>;
     refresh(): Promise<[Class, HTTP.Response.Class]>;
     save(): Promise<[Class, HTTP.Response.Class]>;
     destroy(): Promise<HTTP.Response.Class>;

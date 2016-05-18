@@ -3,6 +3,7 @@ var Errors = require("./Errors");
 var HTTP = require("./HTTP");
 var RDF = require("./RDF");
 var Utils = require("./Utils");
+var ACL = require("./Auth/ACL");
 var Document = require("./Document");
 var FreeResources = require("./FreeResources");
 var JSONLDConverter = require("./JSONLDConverter");
@@ -12,6 +13,7 @@ var NS = require("./NS");
 var ObjectSchema = require("./ObjectSchema");
 var LDP = require("./LDP");
 var SPARQL = require("./SPARQL");
+var Resource = require("./Resource");
 var RetrievalPreferences = require("./RetrievalPreferences");
 var Documents = (function () {
     function Documents(context) {
@@ -100,6 +102,15 @@ var Documents = (function () {
         });
         this.documentsBeingResolved.set(pointerID, promise);
         return promise;
+    };
+    Documents.prototype.getACL = function (documentURI, requestOptions) {
+        var uri = RDF.URI.Util.resolve(documentURI, "~acl/");
+        return this.get(uri, requestOptions).then(function (_a) {
+            var acl = _a[0], response = _a[1];
+            if (!Resource.Util.hasType(acl, ACL.RDF_CLASS))
+                throw new HTTP.Errors.BadResponseError("The response does not contains a cs:AccessControlList object.", response);
+            return [acl, response];
+        });
     };
     Documents.prototype.exists = function (documentURI, requestOptions) {
         if (requestOptions === void 0) { requestOptions = {}; }
@@ -709,6 +720,8 @@ var Documents = (function () {
         document._resolved = true;
         if (LDP.Container.Factory.hasRDFClass(document))
             LDP.PersistedContainer.Factory.decorate(document);
+        if (Resource.Util.hasType(document, ACL.RDF_CLASS))
+            ACL.Factory.decorate(document);
         return document;
     };
     Documents.prototype.updatePersistedDocument = function (persistedDocument, documentResource, fragmentResources) {
