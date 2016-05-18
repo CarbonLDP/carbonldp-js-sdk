@@ -1,6 +1,5 @@
 import {
 	INSTANCE,
-	STATIC,
 
 	method,
 	module,
@@ -10,7 +9,6 @@ import {
 	hasConstructor,
 	hasMethod,
 	hasSignature,
-	reexports,
 	hasDefaultExport
 } from "./test/JasmineExtender";
 import * as Utils from "./Utils";
@@ -101,7 +99,7 @@ describe( module( "Carbon/Apps" ), ():void => {
 					        "https://carbonldp.com/ns/v1/security#rootContainer": [{
 					            "@id": "https://example.com/apps/example-app/"
 					        }],
-					        "${NS.CS.Predicate.name}": [{
+					        "${NS.CS.Predicate.namae}": [{
 					            "@value": "Example App name"
 					        }],
 					        "${NS.CS.Predicate.description}": [{
@@ -164,7 +162,7 @@ describe( module( "Carbon/Apps" ), ():void => {
 					        "https://carbonldp.com/ns/v1/security#rootContainer": [{
 					            "@id": "https://example.com/apps/example-app/"
 					        }],
-					        "${NS.CS.Predicate.name}": [{
+					        "${NS.CS.Predicate.namae}": [{
 					            "@value": "Example App name"
 					        }],
 					        "${NS.CS.Predicate.description}": [{
@@ -217,75 +215,104 @@ describe( module( "Carbon/Apps" ), ():void => {
 			jasmine.Ajax.stubRequest( "http://example.com/platform/apps/", null, "GET" ).andReturn({
 				status: 200,
 				responseHeaders: {
-					ETag: 'W/"123456789"'
+					ETag: '"123456789"'
 				},
-				responseText: `[{
-				    "@id": "http://example.com/platform/apps/",
-				    "@graph": [{
-				        "@id": "http://example.com/platform/apps/",
-				        "@type": [
-				          "http://www.w3.org/ns/ldp#BasicContainer"
-				        ],
-				        "http://www.w3.org/ns/ldp#hasMemberRelation": [{
-				            "@id": "http://www.w3.org/ns/ldp#member"
-				        }],
-				        "http://www.w3.org/ns/ldp#member": [{
-				            "@id": "http://example.com/platform/apps/example-app/"
-				        }, {
-				            "@id": "http://example.com/platform/apps/another-app/"
-				        }]
-				    }]
-				}]`
+				responseText: `[
+					{
+					    "@id": "_:00",
+					    "@type": [
+					      "https://carbonldp.com/ns/v1/platform#ResponseMetadata",
+					      "https://carbonldp.com/ns/v1/platform#VolatileResource"
+					    ],
+					    "https://carbonldp.com/ns/v1/platform#resourceMetadata": [{
+							"@id": "_:01"
+						}, {
+							"@id": "_:02"
+						}]
+					},
+					{
+					    "@id": "_:01",
+					    "@type": [
+					        "https://carbonldp.com/ns/v1/platform#ResourceMetadata",
+					        "https://carbonldp.com/ns/v1/platform#VolatileResource"
+					    ],
+					    "https://carbonldp.com/ns/v1/platform#eTag": [{
+					        "@value": "\\"1234567890\\""
+					    }],
+					    "https://carbonldp.com/ns/v1/platform#resource": [{
+					        "@id": "http://example.com/platform/apps/example-app/"
+					    }]
+					},
+					{
+						"@id": "_:02",
+						"@type": [
+							"https://carbonldp.com/ns/v1/platform#ResourceMetadata",
+							"https://carbonldp.com/ns/v1/platform#VolatileResource"
+						],
+						"https://carbonldp.com/ns/v1/platform#eTag": [{
+							"@value": "\\"0987654321\\""
+						}],
+						"https://carbonldp.com/ns/v1/platform#resource": [{
+							"@id": "http://example.com/platform/apps/another-app/"
+						}]
+					},
+					{
+					    "@id": "http://example.com/platform/apps/",
+					    "@graph": [{
+					        "@id": "http://example.com/platform/apps/",
+					        "@type": [
+					          "http://www.w3.org/ns/ldp#BasicContainer"
+					        ],
+					        "http://www.w3.org/ns/ldp#hasMemberRelation": [{
+					            "@id": "http://www.w3.org/ns/ldp#member"
+					        }],
+					        "http://www.w3.org/ns/ldp#member": [{
+					            "@id": "http://example.com/platform/apps/example-app/"
+					        }, {
+					            "@id": "http://example.com/platform/apps/another-app/"
+					        }]
+					    }]
+					},
+					{
+					    "@id": "http://example.com/platform/apps/another-app/",
+					    "@graph": [{
+					        "@id": "http://example.com/platform/apps/another-app/",
+					        "@type": [
+					          "http://www.w3.org/ns/ldp#RDFSource",
+					          "http://www.w3.org/ns/ldp#BasicContainer",
+					          "${NS.CS.Class.Application}"
+					        ],
+					        "https://carbonldp.com/ns/v1/security#rootContainer": [{
+					            "@id": "https://example.com/apps/another-app/"
+					        }],
+					        "${NS.CS.Predicate.namae}": [{
+					            "@value": "Another App name"
+					        }]
+					    }]
+					},
+					{
+					    "@id": "http://example.com/platform/apps/example-app/",
+					    "@graph": [{
+					        "@id": "http://example.com/platform/apps/example-app/",
+					        "@type": [
+					          "http://www.w3.org/ns/ldp#RDFSource",
+					          "http://www.w3.org/ns/ldp#BasicContainer",
+					          "${NS.CS.Class.Application}"
+					        ],
+					        "https://carbonldp.com/ns/v1/security#rootContainer": [{
+					            "@id": "https://example.com/apps/example-app/"
+					        }],
+					        "${NS.CS.Predicate.namae}": [{
+					            "@value": "Example App name"
+					        }],
+					        "${NS.CS.Predicate.description}": [{
+					            "@value": "Example App description"
+					        }]
+					    }]
+					}
+				]`
 			});
-			jasmine.Ajax.stubRequest( /example-app/, null, "GET" ).andReturn({
-				status: 200,
-				responseHeaders: {
-					ETag: 'W/"123456789"'
-				},
-				responseText: `[{
-				    "@id": "http://example.com/platform/apps/example-app/",
-				    "@graph": [{
-				        "@id": "http://example.com/platform/apps/example-app/",
-				        "@type": [
-				          "http://www.w3.org/ns/ldp#RDFSource",
-				          "http://www.w3.org/ns/ldp#BasicContainer",
-				          "${NS.CS.Class.Application}"
-				        ],
-				        "https://carbonldp.com/ns/v1/security#rootContainer": [{
-				            "@id": "https://example.com/apps/example-app/"
-				        }],
-				        "${NS.CS.Predicate.name}": [{
-				            "@value": "Example App name"
-				        }],
-				        "${NS.CS.Predicate.description}": [{
-				            "@value": "Example App description"
-				        }]
-				    }]
-				}]`
-			});
-			jasmine.Ajax.stubRequest( /another-app/, null, "GET" ).andReturn({
-				status: 200,
-				responseHeaders: {
-					ETag: 'W/"123456789"'
-				},
-				responseText: `[{
-				    "@id": "http://example.com/platform/apps/another-app/",
-				    "@graph": [{
-				        "@id": "http://example.com/platform/apps/another-app/",
-				        "@type": [
-				          "http://www.w3.org/ns/ldp#RDFSource",
-				          "http://www.w3.org/ns/ldp#BasicContainer",
-				          "${NS.CS.Class.Application}"
-				        ],
-				        "https://carbonldp.com/ns/v1/security#rootContainer": [{
-				            "@id": "https://example.com/apps/another-app/"
-				        }],
-				        "${NS.CS.Predicate.name}": [{
-				            "@value": "Another App name"
-				        }]
-				    }]
-				}]`
-			});
+
 
 			let spies = {
 				success: ( appsContext:AppContext[] ):void => {
@@ -309,7 +336,7 @@ describe( module( "Carbon/Apps" ), ():void => {
 				expect( successSpy.calls.count() ).toBe( 1 );
 				expect( failSpy.calls.count() ).toBe( 0 );
 				done();
-			}, done.fail );
+			}).catch( done.fail );
 		});
 
 		describe( method(

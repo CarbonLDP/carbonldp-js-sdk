@@ -56,6 +56,22 @@ var Digester = (function () {
         Digester.resolvePrefixedURIs(combinedSchema);
         return combinedSchema;
     };
+    Digester.resolvePrefixedURI = function (uri, digestedSchema) {
+        if (!RDF.URI.Util.isPrefixed(uri.stringValue))
+            return uri;
+        var uriParts = uri.stringValue.split(":");
+        var prefix = uriParts[0];
+        var slug = uriParts[1];
+        if (digestedSchema.prefixes.has(prefix)) {
+            uri.stringValue = digestedSchema.prefixes.get(prefix) + slug;
+        }
+        else {
+            if (!digestedSchema.prefixedURIs.has(prefix))
+                digestedSchema.prefixedURIs.set(prefix, []);
+            digestedSchema.prefixedURIs.get(prefix).push(uri);
+        }
+        return uri;
+    };
     Digester.digestSingleSchema = function (schema) {
         var digestedSchema = new DigestedObjectSchema();
         for (var propertyName in schema) {
@@ -151,22 +167,6 @@ var Digester = (function () {
             digestedSchema.prefixedURIs.delete(prefixName);
         });
         return digestedSchema;
-    };
-    Digester.resolvePrefixedURI = function (uri, digestedSchema) {
-        if (!RDF.URI.Util.isPrefixed(uri.stringValue))
-            return uri;
-        var uriParts = uri.stringValue.split(":");
-        var prefix = uriParts[0];
-        var slug = uriParts[1];
-        if (digestedSchema.prefixes.has(prefix)) {
-            uri.stringValue = digestedSchema.prefixes.get(prefix) + slug;
-        }
-        else {
-            if (!digestedSchema.prefixedURIs.has(prefix))
-                digestedSchema.prefixedURIs.set(prefix, []);
-            digestedSchema.prefixedURIs.get(prefix).push(uri);
-        }
-        return uri;
     };
     return Digester;
 }());

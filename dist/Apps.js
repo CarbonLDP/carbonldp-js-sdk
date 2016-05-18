@@ -1,6 +1,5 @@
 "use strict";
 var Context_1 = require("./App/Context");
-var Pointer = require("./Pointer");
 var RDF = require("./RDF");
 var Utils = require("./Utils");
 var App = require("./App");
@@ -29,18 +28,13 @@ var Class = (function () {
             var app = _a[0], response = _a[1];
             if (!PersistedApp.Factory.is(app))
                 return Promise.reject(new Errors.IllegalArgumentError("The resource fetched is not a cs:Application."));
-            var appContext = new Context_1.default(_this.context, app);
-            app.rootContainer = appContext.documents.getPointer(app.rootContainer.id);
-            return appContext;
+            return new Context_1.default(_this.context, app);
         });
     };
     Class.prototype.getAllContexts = function () {
         var _this = this;
-        return this.context.documents.listMembers(this.getAppsContainerURI(), false).then(function (_a) {
+        return this.context.documents.getMembers(this.getAppsContainerURI(), false).then(function (_a) {
             var members = _a[0], response = _a[1];
-            return Pointer.Util.resolveAll(members);
-        }).then(function (_a) {
-            var members = _a[0], responses = _a[1];
             return members.map(function (member) { return new Context_1.default(_this.context, member); });
         });
     };
