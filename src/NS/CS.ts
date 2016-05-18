@@ -8,7 +8,7 @@ class Class {
 }
 
 class Predicate {
-	static get name():string { return namespace + "name"; }
+	static get namae():string { return namespace + "name"; }
 	static get allowsOrigin():string { return namespace + "allowsOrigin"; }
 	static get rootContainer():string { return namespace + "rootContainer"; }
 	static get tokenKey():string { return namespace + "tokenKey"; }

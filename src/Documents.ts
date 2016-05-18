@@ -96,10 +96,10 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 		uri = this.getRequestURI( uri );
 		this.setDefaultRequestOptions( requestOptions, NS.LDP.Class.RDFSource );
 
-		if( this.pointers.has( pointerID ) ) {
+		if( this.hasPointer( uri ) ) {
 			let pointer:Pointer.Class = this.getPointer( uri );
 			if( pointer.isResolved() ) {
-				return this.refresh( <PersistedDocument.Class> pointer );
+				return Promise.resolve<[ PersistedDocument.Class, HTTP.Response.Class ]>( [ <PersistedDocument.Class> pointer, null ] );
 			}
 		}
 
@@ -248,7 +248,7 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 		if( documentURI === null ) documentURI = accessPoint.membershipResource.id;
 
 		documentURI = this.getRequestURI( documentURI );
-		this.setDefaultRequestOptions( requestOptions, NS.LDP.Class.Container );
+		this.setDefaultRequestOptions( requestOptions, NS.LDP.Class.RDFSource );
 		HTTP.Request.Util.setContentTypeHeader( "application/ld+json", requestOptions );
 
 		if( accessPoint.membershipResource.id !== documentURI ) return Promise.reject<any>( new Errors.IllegalArgumentError( "The documentURI must be the same as the accessPoint's membershipResource" ) );

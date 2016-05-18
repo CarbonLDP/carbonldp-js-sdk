@@ -1,6 +1,6 @@
 {
   "name": "carbonldp",
-  "version": "0.32.0",
+  "version": "0.33.0",
   "description": "JavaScript/TypeScript SDK to create CarbonLDP's Applications",
   "homepage": "https://github.com/CarbonLDP/CarbonLDP-JS-SDK",
   "contributors": [
@@ -68,6 +68,9 @@
     "devDependencies": {
       "jsonld": "npm:jsonld@^0.4.2",
       "typescript": "npm:typescript@^1.8.10"
+    },
+    "map": {
+      "file-type": "@empty"
     }
   }
 }

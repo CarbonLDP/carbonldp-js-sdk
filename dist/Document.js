@@ -129,7 +129,7 @@ function toJSON(objectSchemaResolver, jsonldConverter) {
     for (var _i = 0, resources_1 = resources; _i < resources_1.length; _i++) {
         var resource = resources_1[_i];
         var digestedContext = objectSchemaResolver ? objectSchemaResolver.getSchemaFor(resource) : new ObjectSchema.DigestedObjectSchema();
-        expandedResources.push(jsonldConverter.expand(resource, digestedContext, this));
+        expandedResources.push(jsonldConverter.expand(resource, digestedContext));
     }
     var graph = {
         "@id": this.id,
