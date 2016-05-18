@@ -8,7 +8,6 @@ declare class Class {
     static Token: string;
 }
 declare class Predicate {
-    static namae: string;
     static accessControlEntry: string;
     static accessTo: string;
     static allowsOrigin: string;
@@ -16,6 +15,7 @@ declare class Predicate {
     static expirationTime: string;
     static granting: string;
     static inheritableEntry: string;
+    static namae: string;
     static password: string;
     static permission: string;
     static rootContainer: string;

@@ -40,11 +40,6 @@ exports.Class = Class;
 var Predicate = (function () {
     function Predicate() {
     }
-    Object.defineProperty(Predicate, "namae", {
-        get: function () { return namespace + "name"; },
-        enumerable: true,
-        configurable: true
-    });
     Object.defineProperty(Predicate, "accessControlEntry", {
         get: function () { return namespace + "accessControlEntry"; },
         enumerable: true,
@@ -77,6 +72,11 @@ var Predicate = (function () {
     });
     Object.defineProperty(Predicate, "inheritableEntry", {
         get: function () { return namespace + "inheritableEntry"; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Predicate, "namae", {
+        get: function () { return namespace + "name"; },
         enumerable: true,
         configurable: true
     });

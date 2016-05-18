@@ -6096,11 +6096,6 @@ $__System.register("45", [], function(exports_1) {
             Predicate = (function () {
                 function Predicate() {
                 }
-                Object.defineProperty(Predicate, "namae", {
-                    get: function () { return namespace + "name"; },
-                    enumerable: true,
-                    configurable: true
-                });
                 Object.defineProperty(Predicate, "accessControlEntry", {
                     get: function () { return namespace + "accessControlEntry"; },
                     enumerable: true,
@@ -6133,6 +6128,11 @@ $__System.register("45", [], function(exports_1) {
                 });
                 Object.defineProperty(Predicate, "inheritableEntry", {
                     get: function () { return namespace + "inheritableEntry"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(Predicate, "namae", {
+                    get: function () { return namespace + "name"; },
                     enumerable: true,
                     configurable: true
                 });

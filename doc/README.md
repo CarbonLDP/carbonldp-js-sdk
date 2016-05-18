@@ -5780,10 +5780,6 @@ static Token:string
 
 #### <a name="Carbon-NS-CS-Predicate-Properties" />Properties
 ```typescript 
-static namae:string 
-```
-
-```typescript 
 static accessControlEntry:string 
 ```
 
@@ -5809,6 +5805,10 @@ static granting:string
 
 ```typescript 
 static inheritableEntry:string 
+```
+
+```typescript 
+static namae:string 
 ```
 
 ```typescript 

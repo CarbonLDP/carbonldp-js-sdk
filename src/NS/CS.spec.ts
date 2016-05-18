@@ -124,17 +124,6 @@ describe( module(
 
 		it( hasProperty(
 			STATIC,
-			"namae",
-			"string"
-		), ():void => {
-			expect( CS.Predicate.namae ).toBeDefined();
-			expect( Utils.isString( CS.Predicate.namae ) ).toBe( true );
-
-			expect( CS.Predicate.namae ).toBe( "https://carbonldp.com/ns/v1/security#name" );
-		});
-
-		it( hasProperty(
-			STATIC,
 			"accessControlEntry",
 			"string"
 		), ():void => {
@@ -208,6 +197,17 @@ describe( module(
 			expect( Utils.isString( CS.Predicate.inheritableEntry ) ).toBe( true );
 
 			expect( CS.Predicate.inheritableEntry ).toBe( "https://carbonldp.com/ns/v1/security#inheritableEntry" );
+		});
+
+		it( hasProperty(
+			STATIC,
+			"namae",
+			"string"
+		), ():void => {
+			expect( CS.Predicate.namae ).toBeDefined();
+			expect( Utils.isString( CS.Predicate.namae ) ).toBe( true );
+
+			expect( CS.Predicate.namae ).toBe( "https://carbonldp.com/ns/v1/security#name" );
 		});
 
 		it( hasProperty(
