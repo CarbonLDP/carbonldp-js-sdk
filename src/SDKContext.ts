@@ -164,7 +164,7 @@ export class Class implements Context {
 		/* this.extendObjectSchema( App.RDF_CLASS, App.SCHEMA ); */
 		this.extendObjectSchema( NS.CS.Class.Application, {
 			"name": {
-				"@id": NS.CS.Predicate.name,
+				"@id": NS.CS.Predicate.namae,
 				"@type": NS.XSD.DataType.string,
 			},
 			"description": {

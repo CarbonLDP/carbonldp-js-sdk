@@ -84,6 +84,23 @@ export class Digester {
 		return combinedSchema;
 	}
 
+	static resolvePrefixedURI( uri:RDF.URI.Class, digestedSchema:DigestedObjectSchema ):RDF.URI.Class {
+		if( ! RDF.URI.Util.isPrefixed( uri.stringValue ) ) return uri;
+
+		let uriParts:string[] = uri.stringValue.split( ":" );
+		let prefix:string = uriParts[ 0 ];
+		let slug:string = uriParts[ 1 ];
+
+		if( digestedSchema.prefixes.has( prefix ) ) {
+			uri.stringValue = digestedSchema.prefixes.get( prefix ) + slug;
+		} else {
+			if( ! digestedSchema.prefixedURIs.has( prefix ) ) digestedSchema.prefixedURIs.set( prefix, [] );
+			digestedSchema.prefixedURIs.get( prefix ).push( uri );
+		}
+
+		return uri;
+	}
+
 	private static digestSingleSchema( schema:Class ):DigestedObjectSchema {
 		let digestedSchema:DigestedObjectSchema = new DigestedObjectSchema();
 
@@ -180,23 +197,6 @@ export class Digester {
 		} );
 
 		return digestedSchema;
-	}
-
-	private static resolvePrefixedURI( uri:RDF.URI.Class, digestedSchema:DigestedObjectSchema ):RDF.URI.Class {
-		if( ! RDF.URI.Util.isPrefixed( uri.stringValue ) ) return uri;
-
-		let uriParts:string[] = uri.stringValue.split( ":" );
-		let prefix:string = uriParts[ 0 ];
-		let slug:string = uriParts[ 1 ];
-
-		if( digestedSchema.prefixes.has( prefix ) ) {
-			uri.stringValue = digestedSchema.prefixes.get( prefix ) + slug;
-		} else {
-			if( ! digestedSchema.prefixedURIs.has( prefix ) ) digestedSchema.prefixedURIs.set( prefix, [] );
-			digestedSchema.prefixedURIs.get( prefix ).push( uri );
-		}
-
-		return uri;
 	}
 }
 

@@ -139,7 +139,7 @@ var Class = (function () {
         this.extendObjectSchema(ErrorResponse.RDF_CLASS, ErrorResponse.SCHEMA);
         this.extendObjectSchema(NS.CS.Class.Application, {
             "name": {
-                "@id": NS.CS.Predicate.name,
+                "@id": NS.CS.Predicate.namae,
                 "@type": NS.XSD.DataType.string,
             },
             "description": {

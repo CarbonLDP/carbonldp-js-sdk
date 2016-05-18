@@ -186,7 +186,7 @@ declare module 'carbonldp/NS/CS' {
 	    static AllOrigins: string;
 	    static Agent: string;
 	} class Predicate {
-	    static name: string;
+	    static namae: string;
 	    static allowsOrigin: string;
 	    static rootContainer: string;
 	    static tokenKey: string;
@@ -557,9 +557,9 @@ declare module 'carbonldp/ObjectSchema' {
 	    static digestSchema(schemas: Class[]): DigestedObjectSchema;
 	    static digestSchema(schema: Class): DigestedObjectSchema;
 	    static combineDigestedObjectSchemas(digestedSchemas: DigestedObjectSchema[]): DigestedObjectSchema;
+	    static resolvePrefixedURI(uri: RDF.URI.Class, digestedSchema: DigestedObjectSchema): RDF.URI.Class;
 	    private static digestSingleSchema(schema);
 	    private static resolvePrefixedURIs(digestedSchema);
-	    private static resolvePrefixedURI(uri, digestedSchema);
 	}
 	export default Class;
 
@@ -577,24 +577,24 @@ declare module 'carbonldp/JSONLDConverter' {
 	    compact(expandedObject: Object, targetObject: Object, digestedSchema: ObjectSchema.DigestedObjectSchema, pointerLibrary: Pointer.Library): Object;
 	    compact(expandedObjects: Object[], digestedSchema: ObjectSchema.DigestedObjectSchema, pointerLibrary: Pointer.Library): Object[];
 	    compact(expandedObject: Object, digestedSchema: ObjectSchema.DigestedObjectSchema, pointerLibrary: Pointer.Library): Object;
-	    expand(compactedObjects: Object[], digestedSchema: ObjectSchema.DigestedObjectSchema, pointerValidator?: Pointer.Validator): RDF.Node.Class[];
-	    expand(compactedObject: Object, digestedSchema: ObjectSchema.DigestedObjectSchema, pointerValidator?: Pointer.Validator): RDF.Node.Class;
-	    private expandSingle(compactedObject, digestedSchema, pointerValidator);
-	    private expandProperty(propertyValue, propertyDefinition, pointerValidator);
-	    private expandPropertyValue(propertyValue, pointerValidator);
-	    private expandPropertyPointer(propertyValue, pointerValidator);
+	    expand(compactedObjects: Object[], digestedSchema: ObjectSchema.DigestedObjectSchema): RDF.Node.Class[];
+	    expand(compactedObject: Object, digestedSchema: ObjectSchema.DigestedObjectSchema): RDF.Node.Class;
+	    private expandSingle(compactedObject, digestedSchema);
+	    private expandProperty(propertyValue, propertyDefinition, digestedSchema);
+	    private expandPropertyValue(propertyValue, digestedSchema);
+	    private expandPropertyPointer(propertyValue, digestedSchema);
 	    private expandPropertyLiteral(propertyValue, literalType);
-	    private expandPropertyList(propertyValues, pointerValidator);
-	    private expandPropertyPointerList(propertyValues, pointerValidator);
+	    private expandPropertyList(propertyValues, digestedSchema);
+	    private expandPropertyPointerList(propertyValues, digestedSchema);
 	    private expandPropertyLiteralList(propertyValues, literalType);
-	    private expandPropertyValues(propertyValues, pointerValidator);
-	    private expandPropertyPointers(propertyValues, pointerValidator);
+	    private expandPropertyValues(propertyValues, digestedSchema);
+	    private expandPropertyPointers(propertyValues, digestedSchema);
 	    private expandPropertyLiterals(propertyValues, literalType);
 	    private expandPropertyLanguageMap(propertyValue);
 	    private serializeLiteral(propertyValue, literalType);
-	    private expandPointer(propertyValue, pointerValidator);
-	    private expandArray(propertyValue, pointerValidator);
-	    private expandValue(propertyValue, pointerValidator);
+	    private expandPointer(propertyValue, digestedSchema);
+	    private expandArray(propertyValue, digestedSchema);
+	    private expandValue(propertyValue, digestedSchema);
 	    private expandLiteral(literalValue);
 	    private compactSingle(expandedObject, targetObject, digestedSchema, pointerLibrary);
 	    private assignProperty(compactedObject, expandedObject, propertyName, digestedSchema, pointerLibrary);

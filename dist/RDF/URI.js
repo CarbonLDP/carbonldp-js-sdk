@@ -95,7 +95,7 @@ var Util = (function () {
         }
     };
     Util.resolve = function (parentURI, childURI) {
-        if (Util.isAbsolute(childURI) || Util.isPrefixed(childURI))
+        if (Util.isAbsolute(childURI) || Util.isBNodeID(childURI) || Util.isPrefixed(childURI))
             return childURI;
         var finalURI = parentURI;
         if (!Utils.S.endsWith(parentURI, "#") && !Utils.S.endsWith(parentURI, "/"))
