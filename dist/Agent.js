@@ -6,7 +6,7 @@ var IllegalArgumentError_1 = require("./Errors/IllegalArgumentError");
 exports.RDF_CLASS = NS.CS.Class.Agent;
 exports.SCHEMA = {
     "name": {
-        "@id": NS.CS.Predicate.name,
+        "@id": NS.CS.Predicate.namae,
         "@type": NS.XSD.DataType.string,
     },
     "email": {

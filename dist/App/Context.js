@@ -14,6 +14,7 @@ var Class = (function (_super) {
         this._app = app;
         this.base = this.getBase(this.app);
         this.agents = new Agents_1.default(this);
+        app.rootContainer = this.documents.getPointer(app.rootContainer.id);
     }
     Object.defineProperty(Class.prototype, "app", {
         get: function () { return this._app; },

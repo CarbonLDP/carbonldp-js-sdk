@@ -10,7 +10,7 @@ class Class {
 }
 
 class Predicate {
-	static get name():string { return namespace + "name"; }
+	static get namae():string { return namespace + "name"; }
 	static get accessControlEntry():string { return namespace + "accessControlEntry"; }
 	static get accessTo():string { return namespace + "accessTo"; }
 	static get allowsOrigin():string { return namespace + "allowsOrigin"; }

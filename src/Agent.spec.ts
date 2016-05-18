@@ -43,7 +43,7 @@ describe( module( "Carbon/Agent" ), ():void => {
 
 		expect( Utils.hasProperty( Agent.SCHEMA, "name" ) ).toBe( true );
 		expect( Agent.SCHEMA[ "name" ] ).toEqual({
-			"@id": NS.CS.Predicate.name,
+			"@id": NS.CS.Predicate.namae,
 			"@type": NS.XSD.DataType.string
 		});
 

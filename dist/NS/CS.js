@@ -40,7 +40,7 @@ exports.Class = Class;
 var Predicate = (function () {
     function Predicate() {
     }
-    Object.defineProperty(Predicate, "name", {
+    Object.defineProperty(Predicate, "namae", {
         get: function () { return namespace + "name"; },
         enumerable: true,
         configurable: true

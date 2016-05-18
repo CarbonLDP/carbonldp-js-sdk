@@ -66,10 +66,10 @@
 			var filesDocument;
 
 			carbon.auth.authenticate( "admin@carbonldp.com", "hello" ).then( function() {
-				return carbon.apps.getContext( "test-app/" );
-			}).then( function( _appContext ) {
-				appContext = _appContext;
-				return appContext.documents.get( "posts/node-post-01/" );
+				return carbon.apps.getAllContexts();
+//			}).then( function( _appContext ) {
+//				appContext = _appContext;
+//				return appContext.documents.get( "posts/node-post-01/" );
 			}).then( function( result ) {
 				console.log( result );
 			});

@@ -124,13 +124,13 @@ describe( module(
 
 		it( hasProperty(
 			STATIC,
-			"name",
+			"namae",
 			"string"
 		), ():void => {
-			expect( CS.Predicate.name ).toBeDefined();
-			expect( Utils.isString( CS.Predicate.name ) ).toBe( true );
+			expect( CS.Predicate.namae ).toBeDefined();
+			expect( Utils.isString( CS.Predicate.namae ) ).toBe( true );
 
-			expect( CS.Predicate.name ).toBe( "https://carbonldp.com/ns/v1/security#name" );
+			expect( CS.Predicate.namae ).toBe( "https://carbonldp.com/ns/v1/security#name" );
 		});
 
 		it( hasProperty(

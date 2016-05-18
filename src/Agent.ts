@@ -8,7 +8,7 @@ export const RDF_CLASS:string = NS.CS.Class.Agent;
 
 export const SCHEMA:ObjectSchema.Class = {
 	"name": {
-		"@id": NS.CS.Predicate.name,
+		"@id": NS.CS.Predicate.namae,
 		"@type": NS.XSD.DataType.string,
 	},
 	"email": {

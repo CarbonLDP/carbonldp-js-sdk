@@ -8,7 +8,7 @@ exports.Context = Context_1.default;
 exports.RDF_CLASS = NS.CS.Class.Application;
 exports.SCHEMA = {
     "name": {
-        "@id": NS.CS.Predicate.name,
+        "@id": NS.CS.Predicate.namae,
         "@type": NS.XSD.DataType.string,
     },
     "description": {
