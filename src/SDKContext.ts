@@ -1,16 +1,12 @@
-import * as App from "./App";
 import * as APIDescription from "./APIDescription";
 import * as Auth from "./Auth";
 import Context from "./Context";
 import Documents from "./Documents";
 import * as Errors from "./Errors";
-import * as JSONLDConverter from "./JSONLDConverter";
 import * as LDP from "./LDP";
 import * as NS from "./NS";
 import * as PersistedBlankNode from "./PersistedBlankNode";
-import * as Pointer from "./Pointer";
-import * as RDF from "./RDF";
-import * as Utils from "./Utils";
+import * as RDFSource from "./RDFSource";
 import * as ObjectSchema from "./ObjectSchema";
 import * as Agent from "./Agent";
 import * as RDFRepresentation from "./RDFRepresentation";
@@ -153,6 +149,7 @@ export class Class implements Context {
 		this.extendObjectSchema( LDP.Container.RDF_CLASS, LDP.Container.SCHEMA );
 		this.extendObjectSchema( LDP.BasicContainer.RDF_CLASS, LDP.Container.SCHEMA );
 
+		this.extendObjectSchema( RDFSource.RDF_CLASS, RDFSource.SCHEMA );
 		this.extendObjectSchema( RDFRepresentation.RDF_CLASS, RDFRepresentation.SCHEMA );
 		this.extendObjectSchema( APIDescription.RDF_CLASS, APIDescription.SCHEMA );
 

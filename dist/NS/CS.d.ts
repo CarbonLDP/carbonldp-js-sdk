@@ -9,6 +9,7 @@ declare class Class {
 }
 declare class Predicate {
     static accessControlEntry: string;
+    static accessControlList: string;
     static accessTo: string;
     static allowsOrigin: string;
     static description: string;

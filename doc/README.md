@@ -377,6 +377,9 @@
 		- [Methods](#Carbon-PersistedDocument-Factory-Methods)
 		- [Decorated Object](#Carbon-PersistedDocument-Factory-Decorated-Object)
 			- [Methods](#Carbon-PersistedDocument-Factory-Decorated-Object-Methods)
+- [Module Carbon/PersistedRDFSource](#Carbon-PersistedRDFSource)
+	- [Class Carbon.PersistedRDFSource.Factory](#Carbon-PersistedRDFSource-Factory)
+		- [Decorated Object](#Carbon-PersistedRDFSource-Factory-Decorated-Object)
 - [Module Carbon/Pointer](#Carbon-Pointer)
 	- [Class Carbon.Pointer.Factory](#Carbon-Pointer-Factory)
 		- [Methods](#Carbon-Pointer-Factory-Methods)
@@ -434,6 +437,8 @@
 - [Module Carbon/RDF/Value](#Carbon-RDF-Value)
 	- [Class Carbon.RDF.Value.Util](#Carbon-RDF-Value-Util)
 		- [Methods](#Carbon-RDF-Value-Util-Methods)
+- [Module Carbon/RDFSource](#Carbon-RDFSource)
+	- [Properties](#Carbon-RDFSource-Properties)
 - [Module Carbon/Resource](#Carbon-Resource)
 	- [Class Carbon.Resource.Factory](#Carbon-Resource-Factory)
 		- [Methods](#Carbon-Resource-Factory-Methods)
@@ -5891,6 +5896,10 @@ static created:string
 ```
 
 ```typescript 
+static defaultInteractionModel:string 
+```
+
+```typescript 
 static modified:string 
 ```
 
@@ -6026,6 +6035,10 @@ static Token:string
 #### <a name="Carbon-NS-CS-Predicate-Properties" />Properties
 ```typescript 
 static accessControlEntry:string 
+```
+
+```typescript 
+static accessControlList:string 
 ```
 
 ```typescript 
@@ -6985,13 +6998,6 @@ destroy():Promise<Carbon.HTTP.Response.Class>
 
 Remove the data in the server referred by the id of the PersistedDocument.
 
-##### createAccessPoint
-```typescript 
-createAccessPoint():Promise<[Carbon.Pointer.Class, Carbon.HTTP.Response.Class]>
-```
-
-Creates an AccessPoint for the PersistedDocument.
-
 ##### executeRawASKQuery
 ```typescript 
 executeRawASKQuery( askQuery:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.SPARQL.RawResults.Class, Carbon.HTTP.Response.Class ]>
@@ -7084,6 +7090,46 @@ Returns true if the URI provided is in the scope of the PersistedDocument.
 *Parameters*
 
 - id
+
+
+## <a name="Carbon-PersistedRDFSource" />Module Carbon/PersistedRDFSource
+
+
+
+
+
+
+
+
+### <a name="Carbon-PersistedRDFSource-Factory" />Class Carbon.PersistedRDFSource.Factory
+
+
+> Factory class for `Carbon.PersistedRDFSource.Class` objects.
+
+
+
+
+
+#### <a name="Carbon-PersistedRDFSource-Factory-Decorated-Object" />Decorated Object
+**Interfaces:** [Carbon.PersistedRDFSource.Class](#Carbon-PersistedRDFSource-Class)
+
+> The object decorated by `Carbon.PersistedRDFSource.Factory.decorate()` method.
+
+
+##### <a name="Carbon-PersistedRDFSource-Factory-Decorated-Object-Methods" />Methods
+##### createAccessPoint
+```typescript 
+createAccessPoint():Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>
+```
+
+Creates an AccessPoint for the PersistedDocument.
+
+##### getACL
+```typescript 
+getACL():Promise<[ Carbon.Auth.ACL.Class, Carbon.HTTP.Response.Class ]>
+```
+
+Obtains and resolve the ACL of the actual document.
 
 
 ## <a name="Carbon-Pointer" />Module Carbon/Pointer
@@ -8301,6 +8347,25 @@ Returns null if cannot be parsed
 
 - propertyValue
 - pointerLibrary
+
+
+
+
+## <a name="Carbon-RDFSource" />Module Carbon/RDFSource
+
+
+
+
+
+### <a name="Carbon-RDFSource-Properties" />Properties
+```typescript 
+static RDF_Class:string 
+```
+
+```typescript 
+static SCHEMA:Carbon.ObjectSchema.Class 
+```
+
 
 
 

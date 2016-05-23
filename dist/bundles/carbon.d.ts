@@ -22,6 +22,7 @@ declare module 'carbonldp/NS/C' {
 	    static bNodeIdentifier: string;
 	    static buildDate: string;
 	    static created: string;
+	    static defaultInteractionModel: string;
 	    static modified: string;
 	    static version: string;
 	    static mediaType: string;
@@ -52,6 +53,7 @@ declare module 'carbonldp/NS/CS' {
 	    static Token: string;
 	} class Predicate {
 	    static accessControlEntry: string;
+	    static accessControlList: string;
 	    static accessTo: string;
 	    static allowsOrigin: string;
 	    static description: string;
@@ -1106,6 +1108,31 @@ declare module 'carbonldp/Auth/ACE' {
 	export default Class;
 
 }
+declare module 'carbonldp/Context' {
+	import Auth from 'carbonldp/Auth';
+	import Documents from 'carbonldp/Documents';
+	import * as ObjectSchema from 'carbonldp/ObjectSchema';
+	interface Context {
+	    auth: Auth;
+	    documents: Documents;
+	    parentContext: Context;
+	    getBaseURI(): string;
+	    resolve(relativeURI: string): string;
+	    hasSetting(name: string): boolean;
+	    getSetting(name: string): any;
+	    setSetting(name: string, value: any): any;
+	    deleteSetting(name: string): any;
+	    hasObjectSchema(type: string): boolean;
+	    getObjectSchema(type: string): ObjectSchema.DigestedObjectSchema;
+	    getObjectSchema(): ObjectSchema.DigestedObjectSchema;
+	    extendObjectSchema(type: string, objectSchema: ObjectSchema.Class): void;
+	    extendObjectSchema(objectSchema: ObjectSchema.Class): void;
+	    clearObjectSchema(type: string): void;
+	    clearObjectSchema(): void;
+	}
+	export default Context;
+
+}
 declare module 'carbonldp/LDP/AddMemberAction' {
 	import * as Document from 'carbonldp/Document';
 	import * as Fragment from 'carbonldp/Fragment';
@@ -1351,31 +1378,6 @@ declare module 'carbonldp/AccessPoint' {
 	export default Class;
 
 }
-declare module 'carbonldp/Context' {
-	import Auth from 'carbonldp/Auth';
-	import Documents from 'carbonldp/Documents';
-	import * as ObjectSchema from 'carbonldp/ObjectSchema';
-	interface Context {
-	    auth: Auth;
-	    documents: Documents;
-	    parentContext: Context;
-	    getBaseURI(): string;
-	    resolve(relativeURI: string): string;
-	    hasSetting(name: string): boolean;
-	    getSetting(name: string): any;
-	    setSetting(name: string, value: any): any;
-	    deleteSetting(name: string): any;
-	    hasObjectSchema(type: string): boolean;
-	    getObjectSchema(type: string): ObjectSchema.DigestedObjectSchema;
-	    getObjectSchema(): ObjectSchema.DigestedObjectSchema;
-	    extendObjectSchema(type: string, objectSchema: ObjectSchema.Class): void;
-	    extendObjectSchema(objectSchema: ObjectSchema.Class): void;
-	    clearObjectSchema(type: string): void;
-	    clearObjectSchema(): void;
-	}
-	export default Context;
-
-}
 declare module 'carbonldp/FreeResources' {
 	import Documents from 'carbonldp/Documents';
 	import * as Pointer from 'carbonldp/Pointer';
@@ -1405,6 +1407,25 @@ declare module 'carbonldp/PersistedBlankNode' {
 	    bNodeIdentifier: string;
 	}
 	export default Class;
+
+}
+declare module 'carbonldp/PersistedRDFSource' {
+	import * as AccessPoint from 'carbonldp/AccessPoint';
+	import * as ACL from 'carbonldp/Auth/ACL';
+	import * as HTTP from 'carbonldp/HTTP';
+	import * as PersistedDocument from 'carbonldp/PersistedDocument';
+	import * as Pointer from 'carbonldp/Pointer';
+	export interface Class extends PersistedDocument.Class {
+	    defaultInteractionModel: Pointer.Class;
+	    accessPoints: Pointer.Class[];
+	    accessControlList: Pointer.Class;
+	    createAccessPoint(accessPoint: AccessPoint.Class, slug?: string, requestOptions?: HTTP.Request.Options): Promise<[Pointer.Class, HTTP.Response.Class]>;
+	    getACL(requestOptions?: HTTP.Request.Options): Promise<[ACL.Class, HTTP.Response.Class]>;
+	}
+	export class Factory {
+	    static hasClassProperties(object: Object): boolean;
+	    static decorate<T extends Object>(document: T): T & Class;
+	}
 
 }
 declare module 'carbonldp/SPARQL/RawResults' {
@@ -1486,11 +1507,23 @@ declare module 'carbonldp/SPARQL' {
 	export { RawResults, RawResultsParser, Service, SELECTResults };
 
 }
+declare module 'carbonldp/RDFSource' {
+	import * as Document from 'carbonldp/Document';
+	import ObjectSchema from 'carbonldp/ObjectSchema';
+	import * as Pointer from 'carbonldp/Pointer';
+	export const RDF_CLASS: string;
+	export const SCHEMA: ObjectSchema;
+	export interface Class extends Document.Class {
+	    defaultInteractionModel: Pointer.Class;
+	    accessPoints: Pointer.Class[];
+	    accessControlList: Pointer.Class;
+	}
+
+}
 declare module 'carbonldp/Documents' {
 	import * as HTTP from 'carbonldp/HTTP';
 	import Context from 'carbonldp/Context';
 	import * as AccessPoint from 'carbonldp/AccessPoint';
-	import * as ACL from 'carbonldp/Auth/ACL';
 	import * as Document from 'carbonldp/Document';
 	import * as JSONLDConverter from 'carbonldp/JSONLDConverter';
 	import * as PersistedDocument from 'carbonldp/PersistedDocument';
@@ -1509,7 +1542,6 @@ declare module 'carbonldp/Documents' {
 	    hasPointer(id: string): boolean;
 	    getPointer(id: string): Pointer.Class;
 	    get(uri: string, requestOptions?: HTTP.Request.Options): Promise<[PersistedDocument.Class, HTTP.Response.Class]>;
-	    getACL(documentURI: string, requestOptions?: HTTP.Request.Options): Promise<[ACL.Class, HTTP.Response.Class]>;
 	    exists(documentURI: string, requestOptions?: HTTP.Request.Options): Promise<[boolean, HTTP.Response.Class]>;
 	    createChild(parentURI: string, slug: string, childDocument: Document.Class, requestOptions?: HTTP.Request.Options): Promise<[Pointer.Class, HTTP.Response.Class]>;
 	    createChild(parentURI: string, childDocument: Document.Class, requestOptions?: HTTP.Request.Options): Promise<[Pointer.Class, HTTP.Response.Class]>;
@@ -1584,8 +1616,6 @@ declare module 'carbonldp/PersistedNamedFragment' {
 
 }
 declare module 'carbonldp/PersistedDocument' {
-	import * as AccessPoint from 'carbonldp/AccessPoint';
-	import * as ACL from 'carbonldp/Auth/ACL';
 	import * as Document from 'carbonldp/Document';
 	import Documents from 'carbonldp/Documents';
 	import * as HTTP from 'carbonldp/HTTP';
@@ -1609,11 +1639,9 @@ declare module 'carbonldp/PersistedDocument' {
 	    createFragment<T extends Object>(object: T): PersistedFragment.Class & T;
 	    createNamedFragment(slug: string): PersistedNamedFragment.Class;
 	    createNamedFragment<T extends Object>(slug: string, object: T): PersistedNamedFragment.Class & T;
-	    getACL(requestOptions?: HTTP.Request.Options): Promise<[ACL.Class, HTTP.Response.Class]>;
 	    refresh(): Promise<[Class, HTTP.Response.Class]>;
 	    save(): Promise<[Class, HTTP.Response.Class]>;
 	    destroy(): Promise<HTTP.Response.Class>;
-	    createAccessPoint(accessPoint: AccessPoint.Class, slug?: string, requestOptions?: HTTP.Request.Options): Promise<[Pointer.Class, HTTP.Response.Class]>;
 	    executeRawASKQuery(askQuery: string, requestOptions?: HTTP.Request.Options): Promise<[SPARQL.RawResults.Class, HTTP.Response.Class]>;
 	    executeASKQuery(askQuery: string, requestOptions?: HTTP.Request.Options): Promise<[boolean, HTTP.Response.Class]>;
 	    executeRawSELECTQuery(selectQuery: string, requestOptions?: HTTP.Request.Options): Promise<[SPARQL.RawResults.Class, HTTP.Response.Class]>;
@@ -1822,6 +1850,17 @@ declare module 'carbonldp/Auth' {
 	export default Class;
 
 }
+declare module 'carbonldp/APIDescription' {
+	import * as ObjectSchema from 'carbonldp/ObjectSchema';
+	export const RDF_CLASS: string;
+	export const SCHEMA: ObjectSchema.Class;
+	export interface Class {
+	    version: string;
+	    buildDate: Date;
+	}
+	export default Class;
+
+}
 declare module 'carbonldp/Agent' {
 	import * as Document from 'carbonldp/Document';
 	import * as ObjectSchema from 'carbonldp/ObjectSchema';
@@ -1839,6 +1878,65 @@ declare module 'carbonldp/Agent' {
 	    static createFrom<T extends Object>(object: T, name: string, email: string, password: string): T & Class;
 	}
 	export default Class;
+
+}
+declare module 'carbonldp/RDFRepresentation' {
+	import * as ObjectSchema from 'carbonldp/ObjectSchema';
+	import * as PersistedDocument from 'carbonldp/PersistedDocument';
+	export const RDF_CLASS: string;
+	export const SCHEMA: ObjectSchema.Class;
+	export interface Class extends PersistedDocument.Class {
+	    mediaType: string;
+	    size: number;
+	}
+	export class Factory {
+	    static hasClassProperties(object: Object): boolean;
+	    static is(object: Object): boolean;
+	}
+	export default Class;
+
+}
+declare module 'carbonldp/SDKContext' {
+	import * as Auth from 'carbonldp/Auth';
+	import Context from 'carbonldp/Context';
+	import Documents from 'carbonldp/Documents';
+	import * as ObjectSchema from 'carbonldp/ObjectSchema';
+	export class Class implements Context {
+	    auth: Auth.Class;
+	    documents: Documents;
+	    parentContext: Context;
+	    protected settings: Map<string, any>;
+	    protected generalObjectSchema: ObjectSchema.DigestedObjectSchema;
+	    protected typeObjectSchemaMap: Map<string, ObjectSchema.DigestedObjectSchema>;
+	    constructor();
+	    getBaseURI(): string;
+	    resolve(relativeURI: string): string;
+	    hasSetting(name: string): boolean;
+	    getSetting(name: string): any;
+	    setSetting(name: string, value: any): void;
+	    deleteSetting(name: string): void;
+	    hasObjectSchema(type: string): boolean;
+	    getObjectSchema(type?: string): ObjectSchema.DigestedObjectSchema;
+	    extendObjectSchema(type: string, objectSchema: ObjectSchema.Class): void;
+	    extendObjectSchema(objectSchema: ObjectSchema.Class): void;
+	    clearObjectSchema(type?: string): void;
+	    protected extendGeneralObjectSchema(digestedSchema: ObjectSchema.DigestedObjectSchema): void;
+	    protected extendTypeObjectSchema(digestedSchema: ObjectSchema.DigestedObjectSchema, type: string): void;
+	    private registerDefaultObjectSchemas();
+	}
+	export const instance: Class;
+	export default instance;
+
+}
+declare module 'carbonldp/AbstractContext' {
+	import Context from 'carbonldp/Context';
+	import * as SDKContext from 'carbonldp/SDKContext'; abstract class AbstractContext extends SDKContext.Class {
+	    _parentContext: Context;
+	    parentContext: Context;
+	    constructor(parentContext?: Context);
+	    abstract resolve(relativeURI: string): string;
+	}
+	export default AbstractContext;
 
 }
 declare module 'carbonldp/Agents' {
@@ -1910,76 +2008,6 @@ declare module 'carbonldp/App' {
 	}
 	export default Class;
 	export { Context };
-
-}
-declare module 'carbonldp/APIDescription' {
-	import * as ObjectSchema from 'carbonldp/ObjectSchema';
-	export const RDF_CLASS: string;
-	export const SCHEMA: ObjectSchema.Class;
-	export interface Class {
-	    version: string;
-	    buildDate: Date;
-	}
-	export default Class;
-
-}
-declare module 'carbonldp/RDFRepresentation' {
-	import * as ObjectSchema from 'carbonldp/ObjectSchema';
-	import * as PersistedDocument from 'carbonldp/PersistedDocument';
-	export const RDF_CLASS: string;
-	export const SCHEMA: ObjectSchema.Class;
-	export interface Class extends PersistedDocument.Class {
-	    mediaType: string;
-	    size: number;
-	}
-	export class Factory {
-	    static hasClassProperties(object: Object): boolean;
-	    static is(object: Object): boolean;
-	}
-	export default Class;
-
-}
-declare module 'carbonldp/SDKContext' {
-	import * as Auth from 'carbonldp/Auth';
-	import Context from 'carbonldp/Context';
-	import Documents from 'carbonldp/Documents';
-	import * as ObjectSchema from 'carbonldp/ObjectSchema';
-	export class Class implements Context {
-	    auth: Auth.Class;
-	    documents: Documents;
-	    parentContext: Context;
-	    protected settings: Map<string, any>;
-	    protected generalObjectSchema: ObjectSchema.DigestedObjectSchema;
-	    protected typeObjectSchemaMap: Map<string, ObjectSchema.DigestedObjectSchema>;
-	    constructor();
-	    getBaseURI(): string;
-	    resolve(relativeURI: string): string;
-	    hasSetting(name: string): boolean;
-	    getSetting(name: string): any;
-	    setSetting(name: string, value: any): void;
-	    deleteSetting(name: string): void;
-	    hasObjectSchema(type: string): boolean;
-	    getObjectSchema(type?: string): ObjectSchema.DigestedObjectSchema;
-	    extendObjectSchema(type: string, objectSchema: ObjectSchema.Class): void;
-	    extendObjectSchema(objectSchema: ObjectSchema.Class): void;
-	    clearObjectSchema(type?: string): void;
-	    protected extendGeneralObjectSchema(digestedSchema: ObjectSchema.DigestedObjectSchema): void;
-	    protected extendTypeObjectSchema(digestedSchema: ObjectSchema.DigestedObjectSchema, type: string): void;
-	    private registerDefaultObjectSchemas();
-	}
-	export const instance: Class;
-	export default instance;
-
-}
-declare module 'carbonldp/AbstractContext' {
-	import Context from 'carbonldp/Context';
-	import * as SDKContext from 'carbonldp/SDKContext'; abstract class AbstractContext extends SDKContext.Class {
-	    _parentContext: Context;
-	    parentContext: Context;
-	    constructor(parentContext?: Context);
-	    abstract resolve(relativeURI: string): string;
-	}
-	export default AbstractContext;
 
 }
 declare module 'carbonldp/Apps' {

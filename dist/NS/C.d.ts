@@ -21,6 +21,7 @@ export declare class Predicate {
     static bNodeIdentifier: string;
     static buildDate: string;
     static created: string;
+    static defaultInteractionModel: string;
     static modified: string;
     static version: string;
     static mediaType: string;
