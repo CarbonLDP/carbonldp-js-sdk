@@ -11,11 +11,12 @@ exports.SCHEMA = {
         "@type": "@id",
         "@container": "@set",
     },
-    "subject": {
+    "subjects": {
         "@id": NS.CS.Predicate.subject,
         "@type": "@id",
+        "@container": "@set",
     },
-    "subjectClass": {
+    "subjectsClass": {
         "@id": NS.CS.Predicate.subjectClass,
         "@type": "@id",
     },

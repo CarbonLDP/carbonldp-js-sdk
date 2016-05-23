@@ -6,7 +6,7 @@ export declare const SCHEMA: ObjectSchema.Class;
 export interface Class extends PersistedFragment.Class {
     granting: boolean;
     permissions: Pointer.Class[];
-    subject: Pointer.Class;
-    subjectClass: Pointer.Class;
+    subjects: Pointer.Class[];
+    subjectsClass: Pointer.Class;
 }
 export default Class;

@@ -16,11 +16,12 @@ export const SCHEMA:ObjectSchema.Class = {
 		"@type": "@id",
 		"@container": "@set",
 	},
-	"subject": {
+	"subjects": {
 		"@id": NS.CS.Predicate.subject,
 		"@type": "@id",
+		"@container": "@set",
 	},
-	"subjectClass": {
+	"subjectsClass": {
 		"@id": NS.CS.Predicate.subjectClass,
 		"@type": "@id",
 	},
@@ -29,8 +30,8 @@ export const SCHEMA:ObjectSchema.Class = {
 export interface Class extends PersistedFragment.Class {
 	granting: boolean;
 	permissions: Pointer.Class[];
-	subject: Pointer.Class;
-	subjectClass: Pointer.Class;
+	subjects: Pointer.Class[];
+	subjectsClass: Pointer.Class;
 }
 
 export default Class;
