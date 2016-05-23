@@ -17,7 +17,6 @@ export declare class Class {
     static ResourceMetadata: string;
 }
 export declare class Predicate {
-    static accessControlList: string;
     static accessPoint: string;
     static bNodeIdentifier: string;
     static buildDate: string;

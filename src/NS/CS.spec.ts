@@ -119,7 +119,7 @@ describe( module(
 			expect( CS.Predicate ).toBeDefined();
 			expect( Utils.isFunction( CS.Predicate ) ).toBe( true );
 
-			expect( Object.keys( CS.Predicate ).length ).toBe( 14 );
+			expect( Object.keys( CS.Predicate ).length ).toBe( 15 );
 		});
 
 		it( hasProperty(
@@ -131,6 +131,17 @@ describe( module(
 			expect( Utils.isString( CS.Predicate.accessControlEntry ) ).toBe( true );
 
 			expect( CS.Predicate.accessControlEntry ).toBe( "https://carbonldp.com/ns/v1/security#accessControlEntry" );
+		});
+
+		it( hasProperty(
+			STATIC,
+			"accessControlList",
+			"string"
+		), ():void => {
+			expect( CS.Predicate.accessControlList ).toBeDefined();
+			expect( Utils.isString( CS.Predicate.accessControlList ) ).toBe( true );
+
+			expect( CS.Predicate.accessControlList ).toBe( "https://carbonldp.com/ns/v1/security#accessControlList" );
 		});
 
 		it( hasProperty(

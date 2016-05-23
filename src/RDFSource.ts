@@ -16,7 +16,7 @@ export const SCHEMA:ObjectSchema = {
 		"@container": "@set",
 	},
 	"accessControlList": {
-		"@id": NS.C.Predicate.accessControlList,
+		"@id": NS.CS.Predicate.accessControlList,
 		"@type": "@id",
 	},
 };

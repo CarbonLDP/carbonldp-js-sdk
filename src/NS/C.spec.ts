@@ -207,18 +207,7 @@ describe( module(
 			expect( C.Predicate ).toBeDefined();
 			expect( Utils.isFunction( C.Predicate ) ).toBe( true );
 
-			expect( Object.keys( C.Predicate ).length ).toBe( 14 );
-		});
-
-		it( hasProperty(
-			STATIC,
-			"accessControlList",
-			"string"
-		), ():void => {
-			expect( C.Predicate.accessControlList ).toBeDefined();
-			expect( Utils.isString( C.Predicate.accessControlList ) ).toBe( true );
-
-			expect( C.Predicate.accessControlList ).toBe( "https://carbonldp.com/ns/v1/platform#accessControlList" );
+			expect( Object.keys( C.Predicate ).length ).toBe( 13 );
 		});
 
 		it( hasProperty(

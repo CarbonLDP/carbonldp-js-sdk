@@ -84,11 +84,6 @@ exports.Class = Class;
 var Predicate = (function () {
     function Predicate() {
     }
-    Object.defineProperty(Predicate, "accessControlList", {
-        get: function () { return exports.namespace + "accessControlList"; },
-        enumerable: true,
-        configurable: true
-    });
     Object.defineProperty(Predicate, "accessPoint", {
         get: function () { return exports.namespace + "accessPoint"; },
         enumerable: true,

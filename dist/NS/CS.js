@@ -45,6 +45,11 @@ var Predicate = (function () {
         enumerable: true,
         configurable: true
     });
+    Object.defineProperty(Predicate, "accessControlList", {
+        get: function () { return namespace + "accessControlList"; },
+        enumerable: true,
+        configurable: true
+    });
     Object.defineProperty(Predicate, "accessTo", {
         get: function () { return namespace + "accessTo"; },
         enumerable: true,

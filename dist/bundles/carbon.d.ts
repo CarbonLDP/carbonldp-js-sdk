@@ -18,7 +18,6 @@ declare module 'carbonldp/NS/C' {
 	    static ResourceMetadata: string;
 	}
 	export class Predicate {
-	    static accessControlList: string;
 	    static accessPoint: string;
 	    static bNodeIdentifier: string;
 	    static buildDate: string;
@@ -54,6 +53,7 @@ declare module 'carbonldp/NS/CS' {
 	    static Token: string;
 	} class Predicate {
 	    static accessControlEntry: string;
+	    static accessControlList: string;
 	    static accessTo: string;
 	    static allowsOrigin: string;
 	    static description: string;

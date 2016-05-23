@@ -2939,7 +2939,7 @@ $__System.register("21", ["4"], function(exports_1) {
                     "@container": "@set",
                 },
                 "accessControlList": {
-                    "@id": NS.C.Predicate.accessControlList,
+                    "@id": NS.CS.Predicate.accessControlList,
                     "@type": "@id",
                 },
             });
@@ -6042,11 +6042,6 @@ $__System.register("45", [], function(exports_1) {
             Predicate = (function () {
                 function Predicate() {
                 }
-                Object.defineProperty(Predicate, "accessControlList", {
-                    get: function () { return namespace + "accessControlList"; },
-                    enumerable: true,
-                    configurable: true
-                });
                 Object.defineProperty(Predicate, "accessPoint", {
                     get: function () { return namespace + "accessPoint"; },
                     enumerable: true,
@@ -6185,6 +6180,11 @@ $__System.register("47", [], function(exports_1) {
                 }
                 Object.defineProperty(Predicate, "accessControlEntry", {
                     get: function () { return namespace + "accessControlEntry"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(Predicate, "accessControlList", {
+                    get: function () { return namespace + "accessControlList"; },
                     enumerable: true,
                     configurable: true
                 });

@@ -11,6 +11,7 @@ class Class {
 
 class Predicate {
 	static get accessControlEntry():string { return namespace + "accessControlEntry"; }
+	static get accessControlList():string { return namespace + "accessControlList"; }
 	static get accessTo():string { return namespace + "accessTo"; }
 	static get allowsOrigin():string { return namespace + "allowsOrigin"; }
 	static get description():string { return namespace + "description"; }

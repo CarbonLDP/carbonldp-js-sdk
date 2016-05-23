@@ -5635,10 +5635,6 @@ static ResourceMetadata:string
 
 #### <a name="Carbon-NS-C-Predicate-Properties" />Properties
 ```typescript 
-static accessControlList:string 
-```
-
-```typescript 
 static accessPoint:string 
 ```
 
@@ -5794,6 +5790,10 @@ static Token:string
 #### <a name="Carbon-NS-CS-Predicate-Properties" />Properties
 ```typescript 
 static accessControlEntry:string 
+```
+
+```typescript 
+static accessControlList:string 
 ```
 
 ```typescript 

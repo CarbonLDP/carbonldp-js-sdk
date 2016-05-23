@@ -46,7 +46,7 @@ describe( module( "Carbon/RDFSource" ), ():void => {
 
 		expect( Utils.hasProperty( RDFSource.SCHEMA, "accessControlList" ) ).toBe( true );
 		expect( RDFSource.SCHEMA[ "accessControlList" ] ).toEqual({
-			"@id": NS.C.Predicate.accessControlList,
+			"@id": NS.CS.Predicate.accessControlList,
 			"@type": "@id",
 		});
 
