@@ -19,10 +19,12 @@ export class Class {
 }
 
 export class Predicate {
+	static get accessControlList():string { return namespace + "accessControlList"; }
 	static get accessPoint():string { return namespace + "accessPoint"; }
 	static get bNodeIdentifier():string { return namespace + "bNodeIdentifier"; }
 	static get buildDate():string { return namespace + "buildDate"; }
 	static get created():string { return namespace + "created"; }
+	static get defaultInteractionModel():string { return namespace + "defaultInteractionModel"; }
 	static get modified():string { return namespace + "modified"; }
 	static get version():string { return namespace + "version"; }
 	static get mediaType():string { return namespace + "mediaType"; }

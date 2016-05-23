@@ -51,10 +51,6 @@ function extendCreateNamedFragment(superFunction) {
         return PersistedFragment.Factory.decorate(fragment);
     };
 }
-function getACL(requestOptions) {
-    var that = this;
-    return this._documents.getACL(that.id, requestOptions);
-}
 function refresh() {
     return this._documents.refresh(this);
 }
@@ -63,11 +59,6 @@ function save() {
 }
 function destroy() {
     return this._documents.delete(this.id);
-}
-function createAccessPoint(accessPoint, slug, requestOptions) {
-    if (slug === void 0) { slug = null; }
-    if (requestOptions === void 0) { requestOptions = {}; }
-    return this._documents.createAccessPoint(accessPoint, slug, requestOptions);
 }
 function executeRawASKQuery(askQuery, requestOptions) {
     if (requestOptions === void 0) { requestOptions = {}; }
@@ -102,7 +93,6 @@ var Factory = (function () {
             Utils.hasFunction(document, "refresh") &&
             Utils.hasFunction(document, "save") &&
             Utils.hasFunction(document, "destroy") &&
-            Utils.hasFunction(document, "createAccessPoint") &&
             Utils.hasFunction(document, "executeRawASKQuery") &&
             Utils.hasFunction(document, "executeASKQuery") &&
             Utils.hasFunction(document, "executeRawSELECTQuery") &&
@@ -198,12 +188,6 @@ var Factory = (function () {
                     };
                 })(),
             },
-            "getACL": {
-                writable: false,
-                enumerable: false,
-                configurable: true,
-                value: getACL,
-            },
             "refresh": {
                 writable: false,
                 enumerable: false,
@@ -221,12 +205,6 @@ var Factory = (function () {
                 enumerable: false,
                 configurable: true,
                 value: destroy,
-            },
-            "createAccessPoint": {
-                writable: false,
-                enumerable: false,
-                configurable: true,
-                value: createAccessPoint,
             },
             "executeRawASKQuery": {
                 writable: false,

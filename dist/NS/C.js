@@ -84,6 +84,11 @@ exports.Class = Class;
 var Predicate = (function () {
     function Predicate() {
     }
+    Object.defineProperty(Predicate, "accessControlList", {
+        get: function () { return exports.namespace + "accessControlList"; },
+        enumerable: true,
+        configurable: true
+    });
     Object.defineProperty(Predicate, "accessPoint", {
         get: function () { return exports.namespace + "accessPoint"; },
         enumerable: true,
@@ -101,6 +106,11 @@ var Predicate = (function () {
     });
     Object.defineProperty(Predicate, "created", {
         get: function () { return exports.namespace + "created"; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Predicate, "defaultInteractionModel", {
+        get: function () { return exports.namespace + "defaultInteractionModel"; },
         enumerable: true,
         configurable: true
     });

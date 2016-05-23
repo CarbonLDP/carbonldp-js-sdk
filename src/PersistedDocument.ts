@@ -1,5 +1,3 @@
-import * as AccessPoint from "./AccessPoint";
-import * as ACL from "./Auth/ACL";
 import * as Document from "./Document";
 import Documents from "./Documents";
 import * as HTTP from "./HTTP";
@@ -33,12 +31,9 @@ export interface Class extends Pointer.Class, PersistedResource.Class, Document.
 	createNamedFragment( slug:string ):PersistedNamedFragment.Class;
 	createNamedFragment<T extends Object>( slug:string, object:T ):PersistedNamedFragment.Class & T;
 
-	getACL( requestOptions?:HTTP.Request.Options ):Promise<[ ACL.Class, HTTP.Response.Class ]>;
 	refresh():Promise<[Class, HTTP.Response.Class]>;
 	save():Promise<[Class, HTTP.Response.Class]>;
 	destroy():Promise<HTTP.Response.Class>;
-
-	createAccessPoint( accessPoint:AccessPoint.Class, slug?:string, requestOptions?:HTTP.Request.Options ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
 
 	executeRawASKQuery( askQuery:string, requestOptions?:HTTP.Request.Options ):Promise<[ SPARQL.RawResults.Class, HTTP.Response.Class ]>;
 	executeASKQuery( askQuery:string, requestOptions?:HTTP.Request.Options ):Promise<[ boolean, HTTP.Response.Class ]>;
@@ -99,10 +94,6 @@ function extendCreateNamedFragment( superFunction:( slug:string, object?:Object 
 	};
 }
 
-function getACL( requestOptions?:HTTP.Request.Options ):Promise<[Class, HTTP.Response.Class]> {
-	let that:Class = <any> this;
-	return this._documents.getACL( that.id, requestOptions );
-}
 function refresh():Promise<[Class, HTTP.Response.Class]> {
 	return this._documents.refresh( this );
 }
@@ -111,10 +102,6 @@ function save():Promise<void> {
 }
 function destroy():Promise<HTTP.Response.Class> {
 	return this._documents.delete( this.id );
-}
-
-function createAccessPoint( accessPoint:AccessPoint.Class, slug:string = null, requestOptions:HTTP.Request.Options = {}):Promise<[ Pointer.Class, HTTP.Response.Class ]> {
-	return this._documents.createAccessPoint( accessPoint, slug, requestOptions );
 }
 
 function executeRawASKQuery( askQuery:string, requestOptions:HTTP.Request.Options = {} ):Promise<[ SPARQL.RawResults.Class, HTTP.Response.Class ]> {
@@ -149,8 +136,6 @@ export class Factory {
 			Utils.hasFunction( document, "refresh" ) &&
 			Utils.hasFunction( document, "save" ) &&
 			Utils.hasFunction( document, "destroy" ) &&
-
-			Utils.hasFunction( document, "createAccessPoint" ) &&
 
 			Utils.hasFunction( document, "executeRawASKQuery" ) &&
 			Utils.hasFunction( document, "executeASKQuery" ) &&
@@ -254,13 +239,6 @@ export class Factory {
 					};
 				})(),
 			},
-
-			"getACL": {
-				writable: false,
-				enumerable: false,
-				configurable: true,
-				value: getACL,
-			},
 			"refresh": {
 				writable: false,
 				enumerable: false,
@@ -278,13 +256,6 @@ export class Factory {
 				enumerable: false,
 				configurable: true,
 				value: destroy,
-			},
-
-			"createAccessPoint": {
-				writable: false,
-				enumerable: false,
-				configurable: true,
-				value: createAccessPoint,
 			},
 
 			"executeRawASKQuery": {
