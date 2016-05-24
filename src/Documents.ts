@@ -55,6 +55,10 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 		if( RDF.URI.Util.isBNodeID( id ) ) return false;
 
 		if( !! this.context ) {
+			if( RDF.URI.Util.isPrefixed( id ) ) {
+				id = ObjectSchema.Digester.resolvePrefixedURI( new RDF.URI.Class( id ), this.context.getObjectSchema() ).stringValue;
+			}
+
 			let baseURI:string = this.context.getBaseURI();
 			if( RDF.URI.Util.isAbsolute( id ) && RDF.URI.Util.isBaseOf( baseURI, id ) ) return true;
 		} else {
@@ -63,7 +67,7 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 
 		if( !! this.context && !! this.context.parentContext ) return this.context.parentContext.documents.inScope( id );
 
-		return false;
+		return RDF.URI.Util.isRelative( id );
 	}
 
 	hasPointer( id:string ):boolean {
@@ -650,6 +654,10 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 		*/
 
 		if( !! this.context ) {
+			if ( RDF.URI.Util.isPrefixed( uri ) ) {
+				uri = ObjectSchema.Digester.resolvePrefixedURI( new RDF.URI.Class( uri ), this.context.getObjectSchema() ).stringValue;
+			}
+
 			if( ! RDF.URI.Util.isRelative( uri ) ) {
 				let baseURI:string = this.context.getBaseURI();
 				if( ! RDF.URI.Util.isBaseOf( baseURI, uri ) ) return null;
@@ -660,6 +668,7 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 			}
 		} else {
 			if( RDF.URI.Util.isRelative( uri ) ) throw new Errors.IllegalArgumentError( "This Documents instance doesn't support relative URIs." );
+			if( RDF.URI.Util.isPrefixed( uri ) ) throw new Errors.IllegalArgumentError( "This Documents instance doesn't support prefixed URIs." );
 			return uri;
 		}
 	}
@@ -772,6 +781,11 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 		if( RDF.URI.Util.isRelative( uri ) ) {
 			if ( ! this.context ) throw new Errors.IllegalArgumentError( "This Documents instance doesn't support relative URIs." );
 			uri = this.context.resolve( uri );
+		} else if ( RDF.URI.Util.isPrefixed( uri ) ) {
+			if ( ! this.context ) throw new Errors.IllegalArgumentError( "This Documents instance doesn't support prefixed URIs." );
+			uri = ObjectSchema.Digester.resolvePrefixedURI( new RDF.URI.Class( uri ), this.context.getObjectSchema() ).stringValue;
+
+			if ( RDF.URI.Util.isPrefixed( uri ) ) throw new Errors.IllegalArgumentError( `The prefixed URI "${ uri }" could not be resolved.` );
 		}
 		return uri;
 	}

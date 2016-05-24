@@ -70,7 +70,7 @@ function inScope( idOrPointer:any ):boolean {
 
 	if( RDF.URI.Util.isFragmentOf( id, document.id ) ) return true;
 
-	return RDF.URI.Util.isRelative( id );
+	return Utils.S.startsWith( id, "#" );
 }
 
 function hasFragment( id:string ):boolean {
@@ -330,8 +330,8 @@ function convertNestedObjects( parent:Class, actual:any ):void {
 
 		if ( ! Utils.isPlainObject( next ) || Pointer.Factory.is( next ) ) continue;
 
-		idOrSlug = ( "id" in next ) ?  next.id : ( ( "slug" in next ) ? next.slug : "" );
-		if ( ! parent.inScope( idOrSlug ) ) continue;
+		idOrSlug = ( "id" in next ) ?  next.id : ( ( "slug" in next ) ? "#" + next.slug : "" );
+		if ( !! idOrSlug && ! parent.inScope( idOrSlug ) ) continue;
 
 		let parentFragment:Fragment.Class = parent.getFragment( idOrSlug );
 

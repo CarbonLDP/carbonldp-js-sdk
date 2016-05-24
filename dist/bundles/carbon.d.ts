@@ -1105,6 +1105,10 @@ declare module 'carbonldp/Auth/ACE' {
 	    subjects: Pointer.Class[];
 	    subjectsClass: Pointer.Class;
 	}
+	export class Factory {
+	    static hasClassProperties(object: Object): boolean;
+	    static decorate<T extends Object>(object: T, granting: boolean, subjects: Pointer.Class[], subjectClass: Pointer.Class, permissions: Pointer.Class[]): T & Class;
+	}
 	export default Class;
 
 }

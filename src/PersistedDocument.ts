@@ -11,6 +11,7 @@ import * as RDF from "./RDF";
 import * as SPARQL from "./SPARQL";
 import * as Utils from "./Utils";
 import * as URI from "./RDF/URI";
+import { Digester } from "./ObjectSchema";
 
 export interface Class extends Pointer.Class, PersistedResource.Class, Document.Class {
 	_documents:Documents;
@@ -206,6 +207,10 @@ export class Factory {
 				value: ( function():( id:string ) => boolean {
 					let superFunction:( id:string ) => boolean = persistedDocument.hasPointer;
 					return function( id:string ):boolean {
+						if ( RDF.URI.Util.isPrefixed( id ) ) {
+							id = Digester.resolvePrefixedURI( new RDF.URI.Class( id ), (<Class> this)._documents.getSchemaFor( this ) ).stringValue;
+						}
+
 						if( superFunction.call( this, id ) ) return true;
 
 						return ! URI.Util.isBNodeID( id ) && (<Class> this)._documents.hasPointer( id );
@@ -220,6 +225,10 @@ export class Factory {
 					let superFunction:( id:string ) => Pointer.Class = persistedDocument.getPointer;
 					let inScopeFunction:( id:string ) => boolean = persistedDocument.inScope;
 					return function( id:string ):Pointer.Class {
+						if ( RDF.URI.Util.isPrefixed( id ) ) {
+							id = Digester.resolvePrefixedURI( new RDF.URI.Class( id ), (<Class> this)._documents.getSchemaFor( this ) ).stringValue;
+						}
+
 						if( inScopeFunction.call( this, id ) ) return superFunction.call( this, id );
 
 						return (<Class> this)._documents.getPointer( id );
@@ -233,9 +242,14 @@ export class Factory {
 				value: ( function():( idOrPointer:any ) => boolean {
 					let superFunction:( idOrPointer:any ) => boolean = persistedDocument.inScope;
 					return function( idOrPointer:any ):boolean {
-						if( superFunction.call( this, idOrPointer ) ) return true;
+						let uri:string = Pointer.Factory.is( idOrPointer ) ? idOrPointer.id : idOrPointer;
+						if ( RDF.URI.Util.isPrefixed( uri ) ) {
+							uri = Digester.resolvePrefixedURI( new RDF.URI.Class( uri ), (<Class> this)._documents.getSchemaFor( this ) ).stringValue;
+						}
 
-						return (<Class> this)._documents.inScope( idOrPointer );
+						if( superFunction.call( this, uri ) ) return true;
+
+						return (<Class> this)._documents.inScope( uri );
 					};
 				})(),
 			},

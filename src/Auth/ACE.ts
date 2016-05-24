@@ -34,4 +34,32 @@ export interface Class extends PersistedFragment.Class {
 	subjectsClass: Pointer.Class;
 }
 
+export class Factory {
+
+	static hasClassProperties( object:Object ):boolean {
+		return Utils.hasPropertyDefined( object, "granting" )
+			&& Utils.hasPropertyDefined( object, "permissions" )
+			&& Utils.hasPropertyDefined( object, "subjects" )
+			&& Utils.hasPropertyDefined( object, "subjectsClass" )
+		;
+	}
+
+	static decorate<T extends Object>( object:T, granting:boolean, subjects:Pointer.Class[], subjectClass:Pointer.Class, permissions:Pointer.Class[] ):T & Class {
+		if ( Factory.hasClassProperties( object ) ) return <any> object;
+
+		let ace:T & Class = <any> object;
+
+		if ( ! ace.types ) ace.types = [];
+		ace.types.push( RDF_CLASS );
+
+		ace.granting = granting;
+		ace.subjects = subjects;
+		ace.subjectsClass = subjectClass;
+		ace.permissions = permissions;
+
+		return ace;
+	}
+
+}
+
 export default Class;

@@ -331,6 +331,7 @@ describe( module( "Carbon/FreeResources" ), ():void => {
 
 				documents.getPointer( "http://example.com/some/" );
 				expect( freeResources.hasPointer( "http://example.com/some/" ) ).toBe( true );
+				expect( freeResources.hasPointer( "some/" ) ).toBe( true );
 			});
 
 			it( hasMethod(
@@ -356,6 +357,15 @@ describe( module( "Carbon/FreeResources" ), ():void => {
 				pointer = freeResources.getPointer( "http://example.com/some/" );
 				expect( pointer ).toBeTruthy();
 				expect( documents.getPointer( "http://example.com/some/" ) ).toBe( pointer );
+
+				let another:Pointer.Class = freeResources.getPointer( "some/" );
+				expect( another ).toBeTruthy();
+				expect( another.id ).toBe( "http://example.com/some/" );
+				expect( another ).toBe( pointer );
+
+				pointer = freeResources.getPointer( "relative-uri/" );
+				expect( pointer ).toBeTruthy();
+				expect( documents.getPointer( "http://example.com/relative-uri/" ) ).toBe( pointer );
 			});
 
 			describe( method(
@@ -376,8 +386,7 @@ describe( module( "Carbon/FreeResources" ), ():void => {
 				), ():void => {
 					expect( freeResources.inScope( "_:some" ) ).toBe( true );
 					expect( freeResources.inScope( "http://example.com/some/" ) ).toBe( true );
-
-					expect( freeResources.inScope( "some/" ) ).toBe( false );
+					expect( freeResources.inScope( "relative-uri/" ) ).toBe( true );
 				});
 
 				it( hasSignature(
@@ -388,8 +397,7 @@ describe( module( "Carbon/FreeResources" ), ():void => {
 				), ():void => {
 					expect( freeResources.inScope( Pointer.Factory.create( "_:some" ) ) ).toBe( true );
 					expect( freeResources.inScope( Pointer.Factory.create( "http://example.com/some/" ) ) ).toBe( true );
-
-					expect( freeResources.inScope( Pointer.Factory.create( "some/" ) ) ).toBe( false );
+					expect( freeResources.inScope( Pointer.Factory.create( "relative-uri/" ) ) ).toBe( true );
 				});
 
 			});

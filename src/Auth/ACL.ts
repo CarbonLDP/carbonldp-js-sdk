@@ -146,14 +146,10 @@ function parsePointers( elements:string | Pointer.Class | (string | Pointer.Clas
 
 function configACE( granting:boolean, subject:Pointer.Class, subjectClass:Pointer.Class, permissions:Pointer.Class[], aces:ACE.Class[] ):ACE.Class {
 	let subjectACEs:ACE.Class[] = aces.filter( ace => ace.subjects.length === 1 && ace.subjects.indexOf( subject ) !== -1 && ace.granting === granting );
-	
+
 	let ace:ACE.Class;
 	if ( subjectACEs.length === 0 ) {
-		ace = <ACE.Class> (<Class> this).createFragment();
-		ace.granting = granting;
-		ace.subjects = [ subject ];
-		ace.subjectsClass = subjectClass;
-		ace.permissions = [];
+		ace = ACE.Factory.decorate( (<Class> this).createFragment(), granting, [ subject ], subjectClass, [] );
 		aces.push( ace );
 	} else {
 		ace = subjectACEs[ 0 ];

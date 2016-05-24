@@ -47,6 +47,8 @@
 		- [Methods](#Carbon-Auth-Class-Methods)
 - [Module Carbon/Auth/ACE](#Carbon-Auth-ACE)
 	- [Properties](#Carbon-Auth-ACE-Properties)
+	- [Class Carbon.Auth.ACE.Factory](#Carbon-Auth-ACE-Factory)
+		- [Methods](#Carbon-Auth-ACE-Factory-Methods)
 - [Module Carbon/Auth/ACL](#Carbon-Auth-ACL)
 	- [Properties](#Carbon-Auth-ACL-Properties)
 	- [Class Carbon.Auth.ACL.Factory](#Carbon-Auth-ACL-Factory)
@@ -1200,6 +1202,36 @@ static RDF_Class:string
 static SCHEMA:Carbon.ObjectSchema.Class 
 ```
 
+
+
+
+
+### <a name="Carbon-Auth-ACE-Factory" />Class Carbon.Auth.ACE.Factory
+
+
+> Factory class for `Carbon.Auth.ACE.Class` objects.
+
+
+
+
+#### <a name="Carbon-Auth-ACE-Factory-Methods" />Methods
+##### hasClassProperties
+```typescript 
+static hasClassProperties( object:Object ):boolean
+```
+
+Returns true if the object provided has the properties of a `Carbon.Auth.ACE.Class` object.
+
+*Parameters*
+
+- object: The object to evaluate its properties.
+
+##### decorate
+```typescript 
+static decorate()
+```
+
+Decorates the object provided with the properties and data necessary for a `Carbon.Auth.ACE.Class` object.
 
 
 

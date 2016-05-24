@@ -290,9 +290,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 				expect( document.hasPointer( "_:BlankNode" ) ).toBe( true );
 				expect( document.hasPointer( "http://example.com/in/documents/" ) ).toBe( true );
 
-				// TODO fix throw null error
-				//expect( document.hasPointer( "this-is-considered-a-fragment/" ) ).toBe( false );
-
+				expect( document.hasPointer( "this-uri-is-resolved-relative/" ) ).toBe( false );
 				expect( document.hasPointer( "http://example.com/document/#another-fragment" ) ).toBe( false );
 				expect( document.hasPointer( "_:AnotherBlankNode" ) ).toBe( false );
 				expect( document.hasPointer( "http://example.com/another-document/" ) ).toBe( false );
@@ -325,10 +323,10 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 				expect( pointer.id ).toBe( "http://example.com/document/#another-fragment" );
 				pointer = document.getPointer( "_:AnotherBlankNode" );
 				expect( pointer.id ).toBe( "_:AnotherBlankNode" );
-				pointer = document.getPointer( "this-is-considered-a-fragment/" );
-				expect( pointer.id ).toBe( "http://example.com/document/#this-is-considered-a-fragment/" );
 
 				// Ask to the Documents container.
+				pointer = document.getPointer( "this-uri-is-resolved-relative/" );
+				expect( pointer.id ).toBe( "http://example.com/this-uri-is-resolved-relative/" );
 				pointer = document.getPointer( "http://example.com/in/documents/" );
 				expect( pointer.id ).toBe( "http://example.com/in/documents/" );
 				pointer = document.getPointer( "http://example.com/another-document/" );
@@ -365,10 +363,10 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 					expect( document.inScope( pointer ) ).toBe( true );
 					pointer = Pointer.Factory.create( "#fragment" );
 					expect( document.inScope( pointer ) ).toBe( true );
-					pointer = Pointer.Factory.create( "this-is-considered-a-fragment/" );
-					expect( document.inScope( pointer ) ).toBe( true );
 
 					// In Documents
+					pointer = Pointer.Factory.create( "this-uri-is-resolved-relative/" );
+					expect( document.inScope( pointer ) ).toBe( true );
 					pointer = Pointer.Factory.create( "http://example.com/in/documents/" );
 					expect( document.inScope( pointer ) ).toBe( true );
 					pointer = Pointer.Factory.create( "http://example.com/document/child/" );
@@ -394,9 +392,9 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 					expect( document.inScope( "http://example.com/document/#another-fragment" ) ).toBe( true );
 					expect( document.inScope( "_:BlankNode" ) ).toBe( true );
 					expect( document.inScope( "#fragment" ) ).toBe( true );
-					expect( document.inScope( "this-is-considered-a-fragment/" ) ).toBe( true );
 
 					// In Documents
+					expect( document.inScope( "this-uri-is-resolved-relative/" ) ).toBe( true );
 					expect( document.inScope( "http://example.com/in/documents/" ) ).toBe( true );
 					expect( document.inScope( "http://example.com/document/child/" ) ).toBe( true );
 					expect( document.inScope( "http://example.com/another-document/" ) ).toBe( true );

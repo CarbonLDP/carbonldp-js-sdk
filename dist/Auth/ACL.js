@@ -1,4 +1,5 @@
 "use strict";
+var ACE = require("./ACE");
 var IllegalArgumentError_1 = require("../Errors/IllegalArgumentError");
 var NS = require("./../NS");
 var PersistedDocument = require("./../PersistedDocument");
@@ -109,11 +110,7 @@ function configACE(granting, subject, subjectClass, permissions, aces) {
     var subjectACEs = aces.filter(function (ace) { return ace.subjects.length === 1 && ace.subjects.indexOf(subject) !== -1 && ace.granting === granting; });
     var ace;
     if (subjectACEs.length === 0) {
-        ace = this.createFragment();
-        ace.granting = granting;
-        ace.subjects = [subject];
-        ace.subjectsClass = subjectClass;
-        ace.permissions = [];
+        ace = ACE.Factory.decorate(this.createFragment(), granting, [subject], subjectClass, []);
         aces.push(ace);
     }
     else {

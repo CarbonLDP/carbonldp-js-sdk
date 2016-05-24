@@ -35,7 +35,7 @@ function inScope(idOrPointer) {
         return true;
     if (RDF.URI.Util.isFragmentOf(id, document.id))
         return true;
-    return RDF.URI.Util.isRelative(id);
+    return Utils.S.startsWith(id, "#");
 }
 function hasFragment(id) {
     var document = this;
@@ -265,8 +265,8 @@ function convertNestedObjects(parent, actual) {
         }
         if (!Utils.isPlainObject(next) || Pointer.Factory.is(next))
             continue;
-        idOrSlug = ("id" in next) ? next.id : (("slug" in next) ? next.slug : "");
-        if (!parent.inScope(idOrSlug))
+        idOrSlug = ("id" in next) ? next.id : (("slug" in next) ? "#" + next.slug : "");
+        if (!!idOrSlug && !parent.inScope(idOrSlug))
             continue;
         var parentFragment = parent.getFragment(idOrSlug);
         if (!parentFragment) {
