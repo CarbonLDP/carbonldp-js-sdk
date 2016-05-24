@@ -1,7 +1,5 @@
 "use strict";
-var IllegalArgumentError_1 = require("../Errors/IllegalArgumentError");
 var NS = require("./../NS");
-var PersistedDocument = require("./../PersistedDocument");
 var Utils = require("./../Utils");
 exports.RDF_CLASS = NS.CS.Class.AccessControlList;
 exports.SCHEMA = {
@@ -26,10 +24,8 @@ var Factory = (function () {
     Factory.hasClassProperties = function (object) {
         return Utils.hasPropertyDefined(object, "accessTo");
     };
-    Factory.decorate = function (document) {
-        if (!PersistedDocument.Factory.is(document))
-            throw new IllegalArgumentError_1.default("The object provided must be a PersistedDocument.");
-        var acl = document;
+    Factory.decorate = function (object) {
+        var acl = object;
         if (Factory.hasClassProperties(acl))
             return acl;
         return acl;

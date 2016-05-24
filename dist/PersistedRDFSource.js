@@ -7,7 +7,9 @@ var Factory = (function () {
     function Factory() {
     }
     Factory.hasClassProperties = function (object) {
-        return Utils.isObject(object)
+        return Utils.hasPropertyDefined(object, "defaultInteractionModel")
+            && Utils.hasPropertyDefined(object, "accessPoints")
+            && Utils.hasPropertyDefined(object, "accessControlList")
             && Utils.hasFunction(object, "createAccessPoint")
             && Utils.hasFunction(object, "getACL");
     };
