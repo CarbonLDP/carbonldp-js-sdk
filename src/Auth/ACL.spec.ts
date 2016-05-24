@@ -1,8 +1,6 @@
 import {module, isDefined, clazz, hasProperty, STATIC, hasMethod} from "../test/JasmineExtender";
 
-import Documents from "../Documents";
 import * as NS from "./../NS";
-import * as PersistedDocument from "./../PersistedDocument";
 import * as Utils from "./../Utils";
 
 import * as ACL from "./ACL";
@@ -93,23 +91,6 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 			delete object.inheritableEntries;
 			expect( ACL.Factory.hasClassProperties( object ) ).toBe( true );
 			object.inheritableEntries = null;
-		});
-
-		it( hasMethod(
-			STATIC,
-			"decorate",
-			"Decorate the object with the properties and methods o a `Carbon.Auth.ACL.Class` object.", [
-				{ name: "document", type: "T extends Carbon.PersistedDocument.Class", description: "The persisted document to decorate." }
-			],
-			{ type: "T & Carbon.Auth.ACl.Class" }
-		), ():void => {
-			expect( ACL.Factory.decorate ).toBeDefined();
-			expect( Utils.isFunction( ACL.Factory.decorate ) ).toBe( true );
-			
-			let document:PersistedDocument.Class = PersistedDocument.Factory.create( "", new Documents() );
-			let acl:ACL.Class = ACL.Factory.decorate( document );
-
-
 		});
 
 	});

@@ -1,6 +1,7 @@
 import * as AccessPoint from "./AccessPoint";
 import * as ACL from "./Auth/ACL";
 import * as HTTP from "./HTTP";
+import * as PersistedACL from "./Auth/PersistedACL";
 import * as PersistedDocument from "./PersistedDocument";
 import * as Pointer from "./Pointer";
 import * as Resource from "./Resource";
@@ -13,13 +14,15 @@ export interface Class extends PersistedDocument.Class {
 
 	createAccessPoint( accessPoint:AccessPoint.Class, slug?:string, requestOptions?:HTTP.Request.Options ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
 
-	getACL( requestOptions?:HTTP.Request.Options ):Promise<[ ACL.Class, HTTP.Response.Class ]>;
+	getACL( requestOptions?:HTTP.Request.Options ):Promise<[ PersistedACL.Class, HTTP.Response.Class ]>;
 }
 
 export class Factory {
 
 	static hasClassProperties( object:Object ):boolean {
-		return Utils.isObject( object )
+		return Utils.hasPropertyDefined( object, "defaultInteractionModel" )
+			&& Utils.hasPropertyDefined( object, "accessPoints" )
+			&& Utils.hasPropertyDefined( object, "accessControlList" )
 			&& Utils.hasFunction( object, "createAccessPoint" )
 			&& Utils.hasFunction( object, "getACL" )
 		;
@@ -50,9 +53,9 @@ export class Factory {
 
 }
 
-function getACL( requestOptions?:HTTP.Request.Options ):Promise<[ ACL.Class, HTTP.Response.Class ]> {
+function getACL( requestOptions?:HTTP.Request.Options ):Promise<[ PersistedACL.Class, HTTP.Response.Class ]> {
 	let that:Class = <Class> this;
-	return that._documents.get( that.accessControlList.id, requestOptions ).then( ( [ acl, response ]:[ ACL.Class, HTTP.Response.Class ] ) => {
+	return that._documents.get( that.accessControlList.id, requestOptions ).then( ( [ acl, response ]:[ PersistedACL.Class, HTTP.Response.Class ] ) => {
 		if ( ! Resource.Util.hasType( acl, ACL.RDF_CLASS ) ) throw new HTTP.Errors.BadResponseError( "The response does not contains a cs:AccessControlList object.", response );
 		return [ acl, response ];
 	});

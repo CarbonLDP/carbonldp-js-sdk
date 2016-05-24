@@ -9,6 +9,7 @@ import * as ACL from "./Auth/ACL";
 import * as Document from "./Document";
 import * as FreeResources from "./FreeResources";
 import * as JSONLDConverter from "./JSONLDConverter";
+import * as PersistedACL from "./Auth/PersistedACL";
 import * as PersistedBlankNode from "./PersistedBlankNode";
 import * as PersistedDocument from "./PersistedDocument";
 import * as PersistedFragment from "./PersistedFragment";
@@ -821,7 +822,7 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 		// TODO: Make it dynamic. See also updatePersistedDocument() method
 		if( LDP.Container.Factory.hasRDFClass( document ) ) LDP.PersistedContainer.Factory.decorate( document );
 		if ( Resource.Util.hasType( document, RDFSource.RDF_CLASS ) ) PersistedRDFSource.Factory.decorate( document );
-		if ( Resource.Util.hasType( document, ACL.RDF_CLASS ) ) ACL.Factory.decorate( document );
+		if ( Resource.Util.hasType( document, ACL.RDF_CLASS ) ) PersistedACL.Factory.decorate( document );
 
 		return document;
 	}
