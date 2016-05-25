@@ -389,6 +389,8 @@
 		- [Methods](#Carbon-Pointer-Factory-Methods)
 		- [Decorated Object](#Carbon-Pointer-Factory-Decorated-Object)
 			- [Methods](#Carbon-Pointer-Factory-Decorated-Object-Methods)
+	- [Class Carbon.Pointer.Util](#Carbon-Pointer-Util)
+		- [Methods](#Carbon-Pointer-Util-Methods)
 - [Module Carbon/RDF](#Carbon-RDF)
 	- [Reexports](#Carbon-RDF-Reexports)
 - [Module Carbon/RDF/Document](#Carbon-RDF-Document)
@@ -7282,6 +7284,52 @@ resolve()
 ```
 
 Resolve the pointer. This function throw an Error, it should be reimplemented for the respective type of pointer.
+
+
+### <a name="Carbon-Pointer-Util" />Class Carbon.Pointer.Util
+
+
+> Class with useful methods when working with `Carbon.Pointer.Class` objects.
+
+
+
+
+#### <a name="Carbon-Pointer-Util-Methods" />Methods
+##### areEqual
+```typescript 
+static areEqual( pointer1:Carbon.Pointer.Class,  pointer2:Carbon.Pointer.Class ):boolean
+```
+
+Returns true if both pointers refers to the same resource.
+
+*Parameters*
+
+- pointer1
+- pointer2
+
+##### getIDs
+```typescript 
+static getIDs( pointers:Carbon.Pointer.Class[] ):string[]
+```
+
+Returns an array of string with the IDs of every pointer in the array of pointers provided.
+
+*Parameters*
+
+- pointers: The array of pointers to obtains theirs IDs.
+
+##### resolveAll
+```typescript 
+static resolveAll( pointers:Carbon.Pointer.Class[] ):[ Carbon.Pointers.Class[], Carbon.HTTP.Response.Class[] ]
+```
+
+Resolve all the pointers of the array of pointers provided.
+
+*Parameters*
+
+- pointers: The array of pointers to be resolved
+
+
 
 
 ## <a name="Carbon-RDF" />Module Carbon/RDF

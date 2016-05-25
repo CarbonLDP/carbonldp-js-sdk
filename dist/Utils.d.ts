@@ -28,6 +28,7 @@ declare class S {
 declare class A {
     static from<T>(iterator: Iterator<T>): Array<T>;
     static joinWithoutDuplicates<T>(...arrays: Array<Array<T>>): Array<T>;
+    static indexOf<T>(array: Array<T>, searchElement: T, comparator?: (searchElement: T, element: T) => boolean): number;
 }
 declare class M {
     static from<V>(object: Object): Map<string, V>;

@@ -11,6 +11,7 @@ import {
 	hasProperty,
 	decoratedObject
 } from "./test/JasmineExtender";
+import Documents from "./Documents";
 import * as Utils from "./Utils";
 import NotImplementedError from "./HTTP/Errors/server/NotImplementedError";
 
@@ -241,6 +242,98 @@ describe( module( "Carbon/Pointer" ), ():void => {
 				});
 			});
 
+		});
+
+	});
+
+	describe( clazz( "Carbon.Pointer.Util" , "Class with useful methods when working with `Carbon.Pointer.Class` objects." ), ():void => {
+
+		it( isDefined(), ():void => {
+			expect( Pointer.Util ).toBeDefined();
+			expect( Utils.isFunction( Pointer.Util ) ).toBe( true );
+		});
+
+		it( hasMethod(
+			STATIC,
+			"areEqual",
+			"Returns true if both pointers refers to the same resource.", [
+				{ name: "pointer1", type: "Carbon.Pointer.Class" },
+				{ name: "pointer2", type: "Carbon.Pointer.Class" },
+			],
+			{ type: "boolean" }
+		), ():void => {
+			expect( Pointer.Util.areEqual ).toBeDefined();
+			expect( Utils.isFunction( Pointer.Util.areEqual ) ).toBe( true );
+
+			let pointer:Pointer.Class;
+			let another:Pointer.Class;
+
+			pointer = Pointer.Factory.create( "http://example.com/some/id" );
+			another = Pointer.Factory.create( "http://example.com/some/id" );
+			expect( pointer ).not.toBe( another );
+			expect( Pointer.Util.areEqual( pointer, another ) ).toBe( true );
+
+			another = Pointer.Factory.create( "http://example.com/another/id" );
+			expect( pointer ).not.toBe( another );
+			expect( Pointer.Util.areEqual( pointer, another ) ).toBe( false );
+		});
+
+		it( hasMethod(
+			STATIC,
+			"getIDs",
+			"Returns an array of string with the IDs of every pointer in the array of pointers provided.", [
+				{ name: "pointers", type: "Carbon.Pointer.Class[]", description: "The array of pointers to obtains theirs IDs." }
+			],
+			{ type: "string[]" }
+		), ():void => {
+			expect( Pointer.Util.getIDs ).toBeDefined();
+			expect( Utils.isFunction( Pointer.Util.getIDs ) ).toBe( true );
+
+			let pointers:Pointer.Class[];
+			let ids:string[];
+
+			pointers = [ Pointer.Factory.create( "http://example.com/some/id/" ), Pointer.Factory.create( "http://example.com/another/id/" ), Pointer.Factory.create( "http://example.com/random/id/1234567890/" ) ];
+			ids = Pointer.Util.getIDs( pointers );
+			expect( ids.length ).toBe( 3 );
+			expect( ids ).toContain( "http://example.com/some/id/" );
+			expect( ids ).toContain( "http://example.com/another/id/" );
+			expect( ids ).toContain( "http://example.com/random/id/1234567890/" );
+		});
+		
+		it( hasMethod(
+			STATIC,
+			"resolveAll",
+			"Resolve all the pointers of the array of pointers provided.", [
+				{ name: "pointers", type: "Carbon.Pointer.Class[]", description: "The array of pointers to be resolved" }
+			],
+			{ type: "[ Carbon.Pointers.Class[], Carbon.HTTP.Response.Class[] ]" }
+		), ( done:{ ():void, fail:() => void } ):void => {
+			expect( Pointer.Util.resolveAll ).toBeDefined();
+			expect( Utils.isFunction( Pointer.Util.resolveAll ) ).toBe( true );
+
+			let documents:Documents = new Documents();
+			let pointers:Pointer.Class[];
+
+			pointers = [ documents.getPointer( "http://example.com/some/id/" ), documents.getPointer( "http://example.com/another/id/" ), documents.getPointer( "http://example.com/random/id/1234567890/" ) ];
+			spyOn( documents, "get" ).and.returnValue( Promise.resolve( [ Pointer.Factory.create( "http://example.com/resolved/pointer/" ), null ] ) );
+
+			let promise:Promise<[ Pointer.Class[], any[] ]> = Pointer.Util.resolveAll( pointers );
+			expect( promise instanceof Promise ).toBe( true );
+
+			promise.then( ( [ pointers, responses ]:[ Pointer.Class[], any[] ] ) => {
+				expect( pointers.length ).toBe( 3 );
+				expect( responses.length ).toBe( 3 );
+
+				expect( pointers[ 0 ].id ).toBe( "http://example.com/resolved/pointer/" );
+				expect( pointers[ 1 ].id ).toBe( "http://example.com/resolved/pointer/" );
+				expect( pointers[ 2 ].id ).toBe( "http://example.com/resolved/pointer/" );
+
+				expect( responses[ 0 ] ).toBeNull();
+				expect( responses[ 1 ] ).toBeNull();
+				expect( responses[ 2 ] ).toBeNull();
+
+				done();
+			} ).catch( done.fail );
 		});
 
 	});

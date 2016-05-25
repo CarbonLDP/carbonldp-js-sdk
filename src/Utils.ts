@@ -189,6 +189,13 @@ class A {
 
 		return result;
 	}
+
+	static indexOf<T>( array:Array<T>, searchElement:T, comparator:( searchElement:T, element:T ) => boolean = ( a:T, b:T ) => a === b ):number {
+		for( let i:number = 0, length:number = array.length; i < length; ++i ) {
+			if ( comparator( searchElement, array[ i ] ) ) return i;
+		}
+		return -1;
+	}
 }
 
 class M {

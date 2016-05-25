@@ -76,6 +76,9 @@ exports.Factory = Factory;
 var Util = (function () {
     function Util() {
     }
+    Util.areEqual = function (pointer1, pointer2) {
+        return pointer1.id === pointer2.id;
+    };
     Util.getIDs = function (pointers) {
         var ids = [];
         for (var _i = 0, pointers_1 = pointers; _i < pointers_1.length; _i++) {

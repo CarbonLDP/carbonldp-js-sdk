@@ -178,6 +178,7 @@ declare module 'carbonldp/Utils' {
 	} class A {
 	    static from<T>(iterator: Iterator<T>): Array<T>;
 	    static joinWithoutDuplicates<T>(...arrays: Array<Array<T>>): Array<T>;
+	    static indexOf<T>(array: Array<T>, searchElement: T, comparator?: (searchElement: T, element: T) => boolean): number;
 	} class M {
 	    static from<V>(object: Object): Map<string, V>;
 	    static extend<K, V>(toExtend: Map<K, V>, ...extenders: Map<K, V>[]): Map<K, V>;
@@ -676,6 +677,7 @@ declare module 'carbonldp/Pointer' {
 	    static decorate<T extends Object>(object: T): Class;
 	}
 	export class Util {
+	    static areEqual(pointer1: Class, pointer2: Class): boolean;
 	    static getIDs(pointers: Class[]): string[];
 	    static resolveAll(pointers: Class[]): Promise<[Class[], HTTP.Response.Class[]]>;
 	}

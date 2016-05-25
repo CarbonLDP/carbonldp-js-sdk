@@ -2081,7 +2081,7 @@ $__System.register("1e", ["b", "1b", "8", "5", "19", "11", "15", "1f", "18", "13
                             return uri.substring(baseURI.length);
                         }
                         else {
-                            return uri;
+                            return uri[0] === "/" ? uri.substr(1) : uri;
                         }
                     }
                     else {
@@ -5086,10 +5086,10 @@ $__System.register("19", ["37", "4", "16", "5"], function(exports_1) {
         configACEs.call(this, granting, subjects, subjectsClass, permissions, that.inheritableEntries);
     }
     function grantingFrom(subject, permission, aces) {
-        var subjectACEs = aces.filter(function (ace) { return ace.subjects.indexOf(subject) !== -1; });
+        var subjectACEs = aces.filter(function (ace) { return Utils.A.indexOf(ace.subjects, subject, Pointer.Util.areEqual) !== -1; });
         for (var _i = 0; _i < subjectACEs.length; _i++) {
             var ace = subjectACEs[_i];
-            if (ace.permissions.indexOf(permission) !== -1)
+            if (Utils.A.indexOf(ace.permissions, permission, Pointer.Util.areEqual) !== -1)
                 return ace.granting;
         }
         return null;
@@ -5119,30 +5119,30 @@ $__System.register("19", ["37", "4", "16", "5"], function(exports_1) {
             return;
         var that = this;
         var opposedAces = that.accessControlEntries === aces ? that.inheritableEntries : that.accessControlEntries;
-        var subjectACEs = aces.filter(function (ace) { return ace.subjects.indexOf(subject) !== -1; });
+        var subjectACEs = aces.filter(function (ace) { return Utils.A.indexOf(ace.subjects, subject, Pointer.Util.areEqual) !== -1; });
         for (var _i = 0; _i < subjectACEs.length; _i++) {
             var ace = subjectACEs[_i];
-            if (opposedAces && opposedAces.indexOf(ace) !== -1) {
-                aces.splice(aces.indexOf(ace), 1);
+            if (opposedAces && Utils.A.indexOf(opposedAces, ace, Pointer.Util.areEqual) !== -1) {
+                aces.splice(Utils.A.indexOf(aces, ace, Pointer.Util.areEqual), 1);
                 var newACE = configACE.call(this, ace.granting, subject, ace.subjectsClass, ace.permissions, aces);
                 subjectACEs.push(newACE);
                 continue;
             }
             if (ace.subjects.length > 1) {
-                ace.subjects.splice(ace.subjects.indexOf(subject), 1);
+                ace.subjects.splice(Utils.A.indexOf(ace.subjects, subject, Pointer.Util.areEqual), 1);
                 var newACE = configACE.call(this, ace.granting, subject, ace.subjectsClass, ace.permissions, aces);
                 subjectACEs.push(newACE);
                 continue;
             }
             for (var _a = 0; _a < permissions.length; _a++) {
                 var permission = permissions[_a];
-                var index = ace.permissions.indexOf(permission);
+                var index = Utils.A.indexOf(ace.permissions, permission, Pointer.Util.areEqual);
                 if (index === -1)
                     continue;
                 ace.permissions.splice(index, 1);
             }
             if (ace.permissions.length === 0) {
-                aces.splice(aces.indexOf(ace), 1);
+                aces.splice(Utils.A.indexOf(aces, ace, Pointer.Util.areEqual), 1);
                 that.removeFragment(ace);
             }
         }
@@ -5598,6 +5598,9 @@ $__System.register("16", ["5", "b"], function(exports_1) {
             Util = (function () {
                 function Util() {
                 }
+                Util.areEqual = function (pointer1, pointer2) {
+                    return pointer1.id === pointer2.id;
+                };
                 Util.getIDs = function (pointers) {
                     var ids = [];
                     for (var _i = 0; _i < pointers.length; _i++) {
@@ -14871,6 +14874,14 @@ $__System.register("5", [], function(exports_1) {
                         }));
                     }
                     return result;
+                };
+                A.indexOf = function (array, searchElement, comparator) {
+                    if (comparator === void 0) { comparator = function (a, b) { return a === b; }; }
+                    for (var i = 0, length = array.length; i < length; ++i) {
+                        if (comparator(searchElement, array[i]))
+                            return i;
+                    }
+                    return -1;
                 };
                 return A;
             })();

@@ -193,10 +193,10 @@ function configureChildInheritance( granting:boolean, subjects:string | Pointer.
 }
 
 function grantingFrom( subject:Pointer.Class, permission:Pointer.Class, aces:ACE.Class[] ):boolean {
-	let subjectACEs:ACE.Class[] = aces.filter( ace  => ace.subjects.indexOf( subject ) !== -1 );
+	let subjectACEs:ACE.Class[] = aces.filter( ace  => Utils.A.indexOf( ace.subjects, subject, Pointer.Util.areEqual ) !== -1 );
 
 	for ( let ace of subjectACEs ) {
-		if ( ace.permissions.indexOf( permission ) !== -1 )
+		if ( Utils.A.indexOf( ace.permissions, permission, Pointer.Util.areEqual ) !== -1 )
 			return ace.granting;
 	}
 	return null;
@@ -229,10 +229,10 @@ function removePermissionsFrom( subject:Pointer.Class, permissions:Pointer.Class
 	let that:Class = <Class> this;
 	let opposedAces:ACE.Class[] = that.accessControlEntries === aces ? that.inheritableEntries : that.accessControlEntries;
 
-	let subjectACEs:ACE.Class[] = aces.filter( ace => ace.subjects.indexOf( subject ) !== -1 );
+	let subjectACEs:ACE.Class[] = aces.filter( ace => Utils.A.indexOf( ace.subjects, subject, Pointer.Util.areEqual ) !== -1 );
 	for ( let ace of subjectACEs ) {
-		if ( opposedAces && opposedAces.indexOf( ace ) !== -1 ) {
-			aces.splice( aces.indexOf( ace ), 1 );
+		if ( opposedAces && Utils.A.indexOf( opposedAces, ace, Pointer.Util.areEqual ) !== -1 ) {
+			aces.splice( Utils.A.indexOf( aces, ace, Pointer.Util.areEqual ), 1 );
 
 			let newACE:ACE.Class = configACE.call( this, ace.granting, subject, ace.subjectsClass, ace.permissions, aces );
 			subjectACEs.push( newACE );
@@ -240,7 +240,7 @@ function removePermissionsFrom( subject:Pointer.Class, permissions:Pointer.Class
 		}
 
 		if ( ace.subjects.length > 1 ) {
-			ace.subjects.splice( ace.subjects.indexOf( subject ), 1 );
+			ace.subjects.splice( Utils.A.indexOf( ace.subjects, subject, Pointer.Util.areEqual ), 1 );
 
 			let newACE:ACE.Class = configACE.call( this, ace.granting, subject, ace.subjectsClass, ace.permissions, aces );
 			subjectACEs.push( newACE );
@@ -248,14 +248,14 @@ function removePermissionsFrom( subject:Pointer.Class, permissions:Pointer.Class
 		}
 
 		for ( let permission of permissions ) {
-			let index:number = ace.permissions.indexOf( permission );
+			let index:number = Utils.A.indexOf( ace.permissions, permission, Pointer.Util.areEqual );
 
 			if ( index === -1 ) continue;
 			ace.permissions.splice( index, 1 );
 		}
 
 		if ( ace.permissions.length === 0 ) {
-			aces.splice( aces.indexOf( ace ), 1 );
+			aces.splice( Utils.A.indexOf( aces, ace, Pointer.Util.areEqual ), 1 );
 			that.removeFragment( ace );
 		}
 	}

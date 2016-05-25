@@ -577,7 +577,7 @@ var Documents = (function () {
                 return uri.substring(baseURI.length);
             }
             else {
-                return uri;
+                return uri[0] === "/" ? uri.substr(1) : uri;
             }
         }
         else {

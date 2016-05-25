@@ -17,6 +17,7 @@ export declare class Factory {
     static decorate<T extends Object>(object: T): Class;
 }
 export declare class Util {
+    static areEqual(pointer1: Class, pointer2: Class): boolean;
     static getIDs(pointers: Class[]): string[];
     static resolveAll(pointers: Class[]): Promise<[Class[], HTTP.Response.Class[]]>;
 }

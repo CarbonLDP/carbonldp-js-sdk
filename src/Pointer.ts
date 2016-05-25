@@ -96,6 +96,10 @@ export class Factory {
 }
 
 export class Util {
+	static areEqual( pointer1:Class, pointer2:Class ):boolean {
+		return pointer1.id === pointer2.id;
+	}
+
 	static getIDs( pointers:Class[] ):string[] {
 		let ids:string[] = [];
 		for( let pointer of pointers ) {
