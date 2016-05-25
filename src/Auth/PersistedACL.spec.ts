@@ -1,5 +1,6 @@
 import {module, isDefined, clazz, STATIC, hasMethod} from "../test/JasmineExtender";
 
+import * as ACL from "./ACL";
 import Documents from "../Documents";
 import * as PersistedDocument from "./../PersistedDocument";
 import * as Utils from "./../Utils";
@@ -68,13 +69,12 @@ describe( module( "Carbon/Auth/PersistedACL" ), ():void => {
 
 			expect( () => PersistedACL.Factory.decorate( <any> {} ) ).toThrowError( IllegalArgumentError );
 
+			let spy = spyOn( ACL.Factory, "decorate" );
 			let document:PersistedDocument.Class = PersistedDocument.Factory.create( "http://example.com/some/acl/", new Documents() );
-			expect( () => PersistedACL.Factory.decorate( document ) ).toThrowError( IllegalArgumentError );
-
 			document[ "accessTo" ] = document.getPointer( "http://example.com/some/" );
-			let acl:PersistedACL.Class = PersistedACL.Factory.decorate( document );
 
-			// TODO continue test decorate when totally implemented
+			let acl:PersistedACL.Class = PersistedACL.Factory.decorate( document );
+			expect( spy ).toHaveBeenCalledTimes( 1 );
 		});
 
 	});

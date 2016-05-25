@@ -19,7 +19,6 @@ export class Factory {
 
 	static decorate<T extends PersistedDocument.Class>( document:T ):T & Class {
 		if ( ! PersistedDocument.Factory.is( document ) ) throw new IllegalArgumentError( "The object provided must be a PersistedDocument." );
-		if ( ! ACL.Factory.hasClassProperties( document ) ) throw new IllegalArgumentError( "The object provided must contains the form of an ACL." );
 
 		let acl:T & Class = <any> ACL.Factory.decorate( document );
 

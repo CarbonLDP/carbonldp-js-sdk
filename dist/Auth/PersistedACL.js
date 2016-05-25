@@ -12,8 +12,6 @@ var Factory = (function () {
     Factory.decorate = function (document) {
         if (!PersistedDocument.Factory.is(document))
             throw new IllegalArgumentError_1.default("The object provided must be a PersistedDocument.");
-        if (!ACL.Factory.hasClassProperties(document))
-            throw new IllegalArgumentError_1.default("The object provided must contains the form of an ACL.");
         var acl = ACL.Factory.decorate(document);
         if (Factory.hasClassProperties(acl))
             return acl;
