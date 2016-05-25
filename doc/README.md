@@ -46,19 +46,17 @@
 		- [Constructor](#Carbon-Auth-Class-Constructor)
 		- [Methods](#Carbon-Auth-Class-Methods)
 - [Module Carbon/Auth/ACE](#Carbon-Auth-ACE)
-	- [Properties](#Carbon-Auth-ACE-Properties)
-	- [Class Carbon.Auth.ACE.Factory](#Carbon-Auth-ACE-Factory)
-		- [Methods](#Carbon-Auth-ACE-Factory-Methods)
 - [Module Carbon/Auth/ACL](#Carbon-Auth-ACL)
 	- [Properties](#Carbon-Auth-ACL-Properties)
 	- [Class Carbon.Auth.ACL.Factory](#Carbon-Auth-ACL-Factory)
 		- [Methods](#Carbon-Auth-ACL-Factory-Methods)
-		- [Decorated Object](#Carbon-Auth-ACL-Factory-Decorated-Object)
-			- [Methods](#Carbon-Auth-ACL-Factory-Decorated-Object-Methods)
 - [Module Carbon/Auth/BasicAuthenticator](#Carbon-Auth-BasicAuthenticator)
 	- [Class Carbon.Auth.BasicAuthenticator.Class](#Carbon-Auth-BasicAuthenticator-Class)
 		- [Constructor](#Carbon-Auth-BasicAuthenticator-Class-Constructor)
 		- [Methods](#Carbon-Auth-BasicAuthenticator-Class-Methods)
+- [Module Carbon/Auth/PersistedACL](#Carbon-Auth-PersistedACL)
+	- [Class Carbon.Auth.PersistedACL.Factory](#Carbon-Auth-PersistedACL-Factory)
+		- [Methods](#Carbon-Auth-PersistedACL-Factory-Methods)
 - [Module Carbon/Auth/Token](#Carbon-Auth-Token)
 	- [Class Carbon.Auth.Token.Factory](#Carbon-Auth-Token-Factory)
 		- [Methods](#Carbon-Auth-Token-Factory-Methods)
@@ -381,7 +379,9 @@
 			- [Methods](#Carbon-PersistedDocument-Factory-Decorated-Object-Methods)
 - [Module Carbon/PersistedRDFSource](#Carbon-PersistedRDFSource)
 	- [Class Carbon.PersistedRDFSource.Factory](#Carbon-PersistedRDFSource-Factory)
+		- [Methods](#Carbon-PersistedRDFSource-Factory-Methods)
 		- [Decorated Object](#Carbon-PersistedRDFSource-Factory-Decorated-Object)
+			- [Methods](#Carbon-PersistedRDFSource-Factory-Decorated-Object-Methods)
 - [Module Carbon/Pointer](#Carbon-Pointer)
 	- [Class Carbon.Pointer.Factory](#Carbon-Pointer-Factory)
 		- [Methods](#Carbon-Pointer-Factory-Methods)
@@ -1193,46 +1193,6 @@ Authenticates the user with a JSON Web Token (JWT), i.e. the credentials generat
 
 
 
-### <a name="Carbon-Auth-ACE-Properties" />Properties
-```typescript 
-static RDF_Class:string 
-```
-
-```typescript 
-static SCHEMA:Carbon.ObjectSchema.Class 
-```
-
-
-
-
-
-### <a name="Carbon-Auth-ACE-Factory" />Class Carbon.Auth.ACE.Factory
-
-
-> Factory class for `Carbon.Auth.ACE.Class` objects.
-
-
-
-
-#### <a name="Carbon-Auth-ACE-Factory-Methods" />Methods
-##### hasClassProperties
-```typescript 
-static hasClassProperties( object:Object ):boolean
-```
-
-Returns true if the object provided has the properties of a `Carbon.Auth.ACE.Class` object.
-
-*Parameters*
-
-- object: The object to evaluate its properties.
-
-##### decorate
-```typescript 
-static decorate()
-```
-
-Decorates the object provided with the properties and data necessary for a `Carbon.Auth.ACE.Class` object.
-
 
 
 
@@ -1275,261 +1235,7 @@ Return true if the object provided has the properties and methods of a `Carbon.A
 
 - object: The object to analise.
 
-##### decorate
-```typescript 
-static decorate( document:T extends Carbon.PersistedDocument.Class ):T & Carbon.Auth.ACl.Class
-```
 
-Decorate the object with the methods o a `Carbon.Auth.ACL.Class` object.
-
-*Parameters*
-
-- document: The persisted document to decorate.
-
-
-
-#### <a name="Carbon-Auth-ACL-Factory-Decorated-Object" />Decorated Object
-**Interfaces:** [Carbon.Auth.ACL.Class](#Carbon-Auth-ACL-Class)
-
-> Object decorated for the Carbon.Auth.ACL.Factory.decorate method.
-
-
-##### <a name="Carbon-Auth-ACL-Factory-Decorated-Object-Methods" />Methods
-##### grants
-```typescript 
-grants( subject:string | Carbon.Pointer.Class,  permission:string | Carbon.Pointer.Class ):boolean
-```
-
-Returns true if the subject has a configuration where it grants the permission specified for the document related to de ACL.
-Returns `null` if no configuration of the subject and permission exists in the ACL.
-
-*Parameters*
-
-- subject: The subject to look for its configuration.
-- permission: The permission to check if it has a granting configuration.
-
-##### denies
-```typescript 
-denies( subject:string | Carbon.Pointer.Class,  permission:string | Carbon.Pointer.Class ):boolean
-```
-
-Returns true if the subject has a configuration where it denies the permission specified for the document related to de ACL.
-Returns `null` if no configuration of the subject and permission exists in the ACL.
-
-*Parameters*
-
-- subject: The subject to look for its configuration.
-- permission: The permission to check if it has a granting configuration.
-
-##### getChildInheritance
-```typescript 
-getChildInheritance( subject:string | Carbon.Pointer.Class,  permission:string | Carbon.Pointer.Class ):boolean
-```
-
-Returns if grants or denies a configuration of the subject and the permission specified for the children of document related to de ACL.
-Returns `null` if no configuration of the subject and permission exists in the ACL.
-
-*Parameters*
-
-- subject: The subject to look for its configuration.
-- permission: The permission to check if it has a granting configuration.
-
-##### grant
-```typescript 
-grant( subject:string | Carbon.Pointer.Class,  subjectClass:string | Carbon.Pointer.Class,  permission:string | Carbon.Pointer.Class )
-```
-
-Grant the permission specified to the subject provided for the document related to the ACL.
-
-*Parameters*
-
-- subject: The subject which will be assigned the permission specified.
-- subjectClass: The type of subject provided.
-- permission: The permission that will be granted to the subject specified.
-
-```typescript 
-grant( subject:string | Carbon.Pointer.Class,  subjectClass:string | Carbon.Pointer.Class,  permissions:(string | Carbon.Pointer.Class)[] )
-```
-
-Grant several permissions to the subject provided for the document related to the ACL.
-
-*Parameters*
-
-- subject: The subject which will be assigned the permission specified.
-- subjectClass: The type of subject provided.
-- permissions: The permissions that will be granted to the subject specified.
-
-```typescript 
-grant( subjects:(string | Carbon.Pointer.Class)[],  subjectClass:string | Carbon.Pointer.Class,  permission:string | Carbon.Pointer.Class )
-```
-
-Grant the permission specified to the every subject provided for the document related to the ACL.
-
-*Parameters*
-
-- subjects: The subjects which will be assigned the every permissions specified.
-- subjectClass: The type of subjects provided.
-- permission: The permission that will be granted to the every subject.
-
-```typescript 
-grant( subjects:(string | Carbon.Pointer.Class)[],  subjectClass:string | Carbon.Pointer.Class,  permissions:(string | Carbon.Pointer.Class)[] )
-```
-
-Grant several permissions to the every subject provided for the document related to the ACL.
-
-*Parameters*
-
-- subjects: The subjects which will be assigned the every permissions specified.
-- subjectClass: The type of subjects provided.
-- permissions: The permissions that will be granted to the every subject.
-
-##### deny
-```typescript 
-deny( subject:string | Carbon.Pointer.Class,  subjectClass:string | Carbon.Pointer.Class,  permission:string | Carbon.Pointer.Class )
-```
-
-Grant the permission specified to the subject provided for the document related to the ACL.
-
-*Parameters*
-
-- subject: The subject which will be assigned the permission specified.
-- subjectClass: The type of subject provided.
-- permission: The permission that will be granted to the subject specified.
-
-```typescript 
-deny( subject:string | Carbon.Pointer.Class,  subjectClass:string | Carbon.Pointer.Class,  permissions:(string | Carbon.Pointer.Class)[] )
-```
-
-Grant several permissions to the subject provided for the document related to the ACL.
-
-*Parameters*
-
-- subject: The subject which will be assigned the permission specified.
-- subjectClass: The type of subject provided.
-- permissions: The permissions that will be granted to the subject specified.
-
-```typescript 
-deny( subjects:(string | Carbon.Pointer.Class)[],  subjectClass:string | Carbon.Pointer.Class,  permission:string | Carbon.Pointer.Class )
-```
-
-Grant the permission specified to the every subject provided for the document related to the ACL.
-
-*Parameters*
-
-- subjects: The subjects which will be assigned the every permissions specified.
-- subjectClass: The type of subjects provided.
-- permission: The permission that will be granted to the every subject.
-
-```typescript 
-deny( subjects:(string | Carbon.Pointer.Class)[],  subjectClass:string | Carbon.Pointer.Class,  permissions:(string | Carbon.Pointer.Class)[] )
-```
-
-Grant several permissions to the every subject provided for the document related to the ACL.
-
-*Parameters*
-
-- subjects: The subjects which will be assigned the every permissions specified.
-- subjectClass: The type of subjects provided.
-- permissions: The permissions that will be granted to the every subject.
-
-##### configureChildInheritance
-```typescript 
-configureChildInheritance( granting:boolean,  subject:string | Carbon.Pointer.Class,  subjectClass:string | Carbon.Pointer.Class,  permission:string | Carbon.Pointer.Class )
-```
-
-Configures the permission specified to the subject provided either granting or denying it for the children of the document related to the ACL.
-
-*Parameters*
-
-- granting: Boolean to indicate if the permission will be granted o denied.
-- subject: The subject which will be assigned the permission specified.
-- subjectClass: The type of subject provided.
-- permission: The permission that will be granted to the subject specified.
-
-```typescript 
-configureChildInheritance( granting:boolean,  subject:string | Carbon.Pointer.Class,  subjectClass:string | Carbon.Pointer.Class,  permissions:(string | Carbon.Pointer.Class)[] )
-```
-
-Configure several permissions to the subject provided either granting or denying them for the children of the document related to the ACL.
-
-*Parameters*
-
-- granting: Boolean to indicate if the permission will be granted o denied.
-- subject: The subject which will be assigned the permission specified.
-- subjectClass: The type of subject provided.
-- permissions: The permissions that will be granted to the subject specified.
-
-```typescript 
-configureChildInheritance( granting:boolean,  subjects:(string | Carbon.Pointer.Class)[],  subjectClass:string | Carbon.Pointer.Class,  permission:string | Carbon.Pointer.Class )
-```
-
-Configure the permission specified to the every subject provided either granting or denying it for the children of the document related to the ACL.
-
-*Parameters*
-
-- granting: Boolean to indicate if the permission will be granted o denied.
-- subjects: The subjects which will be assigned the every permissions specified.
-- subjectClass: The type of subjects provided.
-- permission: The permission that will be granted to the every subject.
-
-```typescript 
-configureChildInheritance( granting:boolean,  subjects:(string | Carbon.Pointer.Class)[],  subjectClass:string | Carbon.Pointer.Class,  permissions:(string | Carbon.Pointer.Class)[] )
-```
-
-Configure several permissions to the every subject provided either granting or denying them for the children of the document related to the ACL.
-
-*Parameters*
-
-- granting: Boolean to indicate if the permission will be granted o denied.
-- subjects: The subjects which will be assigned the every permissions specified.
-- subjectClass: The type of subjects provided.
-- permissions: The permissions that will be granted to the every subject.
-
-##### remove
-```typescript 
-remove( subject:string | Carbon.Pointer.Class,  permission:string | Carbon.Pointer.Class )
-```
-
-Remove the configuration of a permission from a subject for the document related to the ACL.
-
-*Parameters*
-
-- subject: The subject from will be removed the permission.
-- permission: The permission to remove from the subject configuration.
-
-```typescript 
-remove( subject:string | Carbon.Pointer.Class,  permissions:(string | Carbon.Pointer.Class)[] )
-```
-
-Remove the configuration of several permissions from a subject for the document related to the ACL.
-
-*Parameters*
-
-- subject: The subject from will removed the permission.
-- permissions: The permissions to remove from the subject configuration.
-
-##### removeChildInheritance
-```typescript 
-removeChildInheritance( subject:string | Carbon.Pointer.Class,  permission:string | Carbon.Pointer.Class )
-```
-
-Remove the configuration of a permission from a subject for the children of the document related to the ACL.
-
-*Parameters*
-
-- subject: The subject from will be removed the permission.
-- permission: The permission to remove from the subject configuration.
-
-```typescript 
-removeChildInheritance( subject:string | Carbon.Pointer.Class,  permissions:(string | Carbon.Pointer.Class)[] )
-```
-
-Remove the configuration of several permissions from a subject for the children of the document related to the ACL.
-
-*Parameters*
-
-- subject: The subject from will removed the permission.
-- permissions: The permissions to remove from the subject configuration.
 
 
 ## <a name="Carbon-Auth-BasicAuthenticator" />Module Carbon/Auth/BasicAuthenticator
@@ -1613,6 +1319,49 @@ Returns true if the Authenticator supports the AuthenticationToken.
 *Parameters*
 
 - authenticationToken
+
+
+
+## <a name="Carbon-Auth-PersistedACL" />Module Carbon/Auth/PersistedACL
+
+
+
+
+
+
+
+
+### <a name="Carbon-Auth-PersistedACL-Factory" />Class Carbon.Auth.PersistedACL.Factory
+
+
+> Factory class for `Carbon.Auth.PersistedACL.Class` objects.
+
+
+
+
+#### <a name="Carbon-Auth-PersistedACL-Factory-Methods" />Methods
+##### hasClassProperties
+```typescript 
+static hasClassProperties( object:Object ):boolean
+```
+
+Return true if the object provided has the properties and methods of a `Carbon.Auth.PersistedACL.Class` object.
+
+*Parameters*
+
+- object: The object to analise.
+
+##### decorate
+```typescript 
+static decorate( document:T extends Carbon.PersistedDocument.Class ):T & Carbon.Auth.ACl.Class
+```
+
+Decorate the object with the properties and methods o a `Carbon.Auth.PersistedACL.Class` object.
+
+*Parameters*
+
+- document: The persisted document to decorate.
+
 
 
 
@@ -7141,6 +6890,19 @@ Returns true if the URI provided is in the scope of the PersistedDocument.
 
 
 
+#### <a name="Carbon-PersistedRDFSource-Factory-Methods" />Methods
+##### hasClassProperties
+```typescript 
+static hasClassProperties( object:Object ):boolean
+```
+
+Returns true if the object provided contains the properties and methods of a `Carbon.PersistedRDFSource.Class` object.
+
+*Parameters*
+
+- object: The object to analise.
+
+
 
 #### <a name="Carbon-PersistedRDFSource-Factory-Decorated-Object" />Decorated Object
 **Interfaces:** [Carbon.PersistedRDFSource.Class](#Carbon-PersistedRDFSource-Class)
@@ -7158,7 +6920,7 @@ Creates an AccessPoint for the PersistedDocument.
 
 ##### getACL
 ```typescript 
-getACL():Promise<[ Carbon.Auth.ACL.Class, Carbon.HTTP.Response.Class ]>
+getACL():Promise<[ Carbon.Auth.PersistedACL.Class, Carbon.HTTP.Response.Class ]>
 ```
 
 Obtains and resolve the ACL of the actual document.

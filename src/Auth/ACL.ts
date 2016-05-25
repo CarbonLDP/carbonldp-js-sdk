@@ -2,7 +2,7 @@ import * as ACE from "./ACE";
 import IllegalArgumentError from "../Errors/IllegalArgumentError";
 import * as NS from "./../NS";
 import * as ObjectSchema from "./../ObjectSchema";
-import * as PersistedDocument from "./../PersistedDocument";
+import * as Document from "./../Document";
 import * as Pointer from "./../Pointer";
 import * as Utils from "./../Utils";
 
@@ -25,7 +25,7 @@ export const SCHEMA:ObjectSchema.Class = {
 	},
 };
 
-export interface Class extends PersistedDocument.Class {
+export interface Class extends Document.Class {
 	accessTo: Pointer.Class;
 	accessControlEntries?: ACE.Class[];
 	inheritableEntries?: ACE.Class[];
@@ -71,10 +71,8 @@ export class Factory {
 			&& Utils.hasFunction( object, "removeChildInheritance" );
 	}
 
-	static decorate<T extends PersistedDocument.Class>( document:T ):T & Class {
-		if ( ! PersistedDocument.Factory.is( document ) ) throw new IllegalArgumentError( "The object provided must be a PersistedDocument." );
-
-		let acl:T & Class = <any> document;
+	static decorate<T extends Object>( object:T ):T & Class {
+		let acl:T & Class = <any> object;
 
 		if ( Factory.hasClassProperties( acl ) ) return acl;
 

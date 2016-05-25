@@ -7,6 +7,7 @@ var ACL = require("./Auth/ACL");
 var Document = require("./Document");
 var FreeResources = require("./FreeResources");
 var JSONLDConverter = require("./JSONLDConverter");
+var PersistedACL = require("./Auth/PersistedACL");
 var PersistedDocument = require("./PersistedDocument");
 var PersistedRDFSource = require("./PersistedRDFSource");
 var Pointer = require("./Pointer");
@@ -731,7 +732,7 @@ var Documents = (function () {
         if (Resource.Util.hasType(document, RDFSource.RDF_CLASS))
             PersistedRDFSource.Factory.decorate(document);
         if (Resource.Util.hasType(document, ACL.RDF_CLASS))
-            ACL.Factory.decorate(document);
+            PersistedACL.Factory.decorate(document);
         return document;
     };
     Documents.prototype.updatePersistedDocument = function (persistedDocument, documentResource, fragmentResources) {

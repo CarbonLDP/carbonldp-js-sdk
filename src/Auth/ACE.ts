@@ -1,6 +1,6 @@
+import * as Fragment from "./../Fragment";
 import * as NS from "./../NS";
 import * as ObjectSchema from "./../ObjectSchema";
-import * as PersistedFragment from "./../PersistedFragment";
 import * as Pointer from "./../Pointer";
 import * as Utils from "./../Utils";
 
@@ -27,7 +27,7 @@ export const SCHEMA:ObjectSchema.Class = {
 	},
 };
 
-export interface Class extends PersistedFragment.Class {
+export interface Class extends Fragment.Class {
 	granting: boolean;
 	permissions: Pointer.Class[];
 	subjects: Pointer.Class[];
