@@ -61,6 +61,8 @@ var Class = (function () {
         Utils.forEachOwnProperty(compactedObject, function (propertyName, value) {
             if (propertyName === "id")
                 return;
+            if (propertyName === "types")
+                return;
             var expandedValue;
             if (digestedSchema.properties.has(propertyName)) {
                 var definition = digestedSchema.properties.get(propertyName);

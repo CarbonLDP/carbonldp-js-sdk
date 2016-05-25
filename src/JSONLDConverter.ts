@@ -71,6 +71,7 @@ export class Class {
 
 		Utils.forEachOwnProperty( compactedObject, ( propertyName:string, value:any ):void => {
 			if( propertyName === "id" ) return;
+			if( propertyName === "types" ) return;
 
 			let expandedValue:any;
 			if( digestedSchema.properties.has( propertyName ) ) {

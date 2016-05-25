@@ -3157,6 +3157,8 @@ $__System.register("1f", ["b", "20", "4", "16", "8", "5"], function(exports_1) {
                     Utils.forEachOwnProperty(compactedObject, function (propertyName, value) {
                         if (propertyName === "id")
                             return;
+                        if (propertyName === "types")
+                            return;
                         var expandedValue;
                         if (digestedSchema.properties.has(propertyName)) {
                             var definition = digestedSchema.properties.get(propertyName);
