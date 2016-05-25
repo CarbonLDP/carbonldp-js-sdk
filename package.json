@@ -12,17 +12,14 @@
     "type": "git",
     "url": "https://github.com/CarbonLDP/CarbonLDP-JS-SDK.git"
   },
-  "main": "dist/Carbon.js",
-  "directories": {
-    "lib": "dist"
-  },
+  "main": "./Carbon.js",
+  "typings": "./Carbon.d.ts",
   "dependencies": {
     "file-type": "^3.8.0",
     "jsonld": "^0.4.2"
   },
   "devDependencies": {
     "del": "^2.0.2",
-    "dts-generator": "^1.7.0",
     "es6-shim": "^0.33.10",
     "gulp": "^3.9.1",
     "gulp-jasmine": "^2.3.0",
@@ -42,9 +39,7 @@
     "karma-jspm": "^2.0.2",
     "karma-markdown-reporter": "file:test/karma-markdown-reporter",
     "karma-sourcemap-loader": "^0.3.4",
-    "minimatch": "^3.0.0",
     "nock": "^8.0.0",
-    "node-glob": "^1.2.0",
     "run-sequence": "^1.1.5",
     "systemjs": "github:CarbonLDP/systemjs#typescript-source-maps",
     "systemjs-builder": "github:CarbonLDP/builder#typescript-source-maps",
@@ -72,5 +67,6 @@
     "map": {
       "file-type": "@empty"
     }
-  }
+  },
+  "private": true
 }

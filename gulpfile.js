@@ -2,7 +2,6 @@
 
 const fs = require( "fs" );
 const del = require( "del" );
-const packageJSON = require( "./package.json" );
 
 const gulp = require( "gulp" );
 const util = require( "gulp-util" );
@@ -12,10 +11,6 @@ const karma = require( "karma" );
 
 const sourcemaps = require( "gulp-sourcemaps" );
 const ts = require( "gulp-typescript" );
-
-const dts = require( "dts-generator" );
-const glob = require( "glob" );
-const minimatch = require( "minimatch" );
 
 const tslint = require( "gulp-tslint" );
 
@@ -29,7 +24,7 @@ let config = {
 		typescript: [
 			"src/**/*.ts",
 			"!src/**/*.spec.ts",
-		    "!src/test/**"
+			"!src/test/**"
 		],
 		all: "src/**/*.ts",
 		test: "/**/*.spec.js",
@@ -42,44 +37,35 @@ let config = {
 		doc: "doc/*",
 		temp: "temp"
 	},
-	bundledDefinition: {
-		excludedFiles: [
-			"test",
-		    "tsconfig.json"
-		],
-		definitionFiles: [
-			"../typings/typings.d.ts"
-		]
-	}
 };
 
 gulp.task( "ts-lint", () => {
 	return gulp.src( config.source.typescript )
-		.pipe( tslint({
+		.pipe( tslint( {
 			tslint: require( "tslint" )
-		}) )
+		} ) )
 		.pipe( tslint.report( "prose" ) )
-	;
-});
+		;
+} );
 
 gulp.task( "test:browser", ( done ) => {
-	new karma.Server({
+	new karma.Server( {
 		configFile: __dirname + "/karma.conf.js",
 		singleRun: true
 	}, done ).start();
-});
+} );
 
 gulp.task( "test:debug", ( done ) => {
-	new karma.Server({
+	new karma.Server( {
 		configFile: __dirname + "/karma.conf.js",
 		autoWatch: true,
 		singleRun: false
 	}, done ).start();
-});
+} );
 
 gulp.task( "clean:temp", () => {
 	del.sync( config.dist.temp );
-});
+} );
 
 gulp.task( "test:node:compile", [ "clean:temp" ], () => {
 	let tsProject = ts.createProject( "tsconfig.json" );
@@ -88,12 +74,12 @@ gulp.task( "test:node:compile", [ "clean:temp" ], () => {
 
 	return tsResults.js
 		.pipe( gulp.dest( config.dist.temp ) );
-});
+} );
 
 gulp.task( "test:node:exec", [ "test:node:compile" ], () => {
 	return gulp.src( config.dist.temp + config.source.test )
 		.pipe( jasmine() );
-});
+} );
 
 gulp.task( "test:node", ( done ) => {
 	runSequence(
@@ -101,12 +87,12 @@ gulp.task( "test:node", ( done ) => {
 		"clean:temp",
 		done
 	);
-});
+} );
 
 gulp.task( "test", [ "test:browser", "test:node" ] );
 
 gulp.task( "generate-doc", ( done ) => {
-	new karma.Server({
+	new karma.Server( {
 		configFile: __dirname + "/karma.conf.js",
 		reporters: [ "markdown" ],
 		markdownReporter: {
@@ -116,26 +102,26 @@ gulp.task( "generate-doc", ( done ) => {
 		},
 		singleRun: true
 	}, done ).start();
-});
+} );
 
 gulp.task( "compile-library", () => {
 	let tsProject = ts.createProject( "tsconfig.json", {
 		"declaration": true,
-	});
+	} );
 
 	let tsResults = gulp.src( config.source.typescript )
-			.pipe( sourcemaps.init() )
-			.pipe( ts( tsProject ) );
+		.pipe( sourcemaps.init() )
+		.pipe( ts( tsProject ) );
 
 	tsResults.dts
-			.pipe( gulp.dest( config.dist.tsOutput ) )
+		.pipe( gulp.dest( config.dist.tsOutput ) )
 	;
 
 	return tsResults.js
 		.pipe( sourcemaps.write( "." ) )
 		.pipe( gulp.dest( config.dist.tsOutput ) )
-	;
-});
+		;
+} );
 
 gulp.task( "bundle-sfx", ( done ) => {
 	let builder = new Builder();
@@ -159,57 +145,56 @@ gulp.task( "bundle-sfx", ( done ) => {
 				"*": "*.ts"
 			}
 		}
-	}).then( () => {
+	} ).then( () => {
 		done();
-	}).catch( ( error ) => {
+	} ).catch( ( error ) => {
 		util.log( error );
-	});
+	} );
+} );
+
+gulp.task( "prepare-npm-package", ( done ) => {
+	runSequence(
+		[ "prepare-npm-package:copy-docs", "prepare-npm-package:copy-package-json" ],
+		done
+	);
 });
 
-gulp.task( "bundle-definitions", [ "bundle-definitions:tsconfig-creation", "bundle-definitions:bundling", "bundle-definitions:cleaning" ] );
-gulp.task( "bundle-definitions:tsconfig-creation", ( done ) => {
-	glob( "src/**", ( error, files ) => {
-		files = files.filter( ( file ) => {
-			return config.source.typescript.reduce( ( previous, current ) => previous && minimatch( file, current ), true );
-		});
-		files = files.map( ( file ) => file.replace( "src/", "" ) );
-
-		gulp.src( "./tsconfig.json" )
-			.pipe( jeditor( (json) => {
-				delete json.exclude;
-
-				json.files = files;
-
-				return json;
-			} ) )
-			.pipe( gulp.dest( "./src" ) )
-			.on( "end", done )
-		;
-	});
+gulp.task( "prepare-npm-package:copy-docs", () => {
+	return gulp.src( [
+		"README.md",
+		"CHANGELOG.md",
+		"LICENSE",
+	] ).pipe( gulp.dest( config.dist.tsOutput ) );
 });
-gulp.task( "bundle-definitions:bundling", [ "bundle-definitions:tsconfig-creation" ], ( done ) => {
-	dts.default({
-		name: packageJSON.name,
-		project: "src/",
-		out: "dist/bundles/carbon.d.ts"
-	}).then( () => {
-		done();
-	});
-});
-gulp.task( "bundle-definitions:cleaning", [ "bundle-definitions:bundling" ], () => {
-	return del( [ "./src/tsconfig.json" ] );
+
+gulp.task( "prepare-npm-package:copy-package-json", () => {
+	return gulp.src( "package.json" )
+		.pipe( jeditor( (json) => {
+			delete json.private;
+			delete json.scripts;
+			delete json.devDependencies;
+
+			json.jspm = {
+				dependencies: json.jspm.dependencies,
+				map: json.jspm.map,
+			};
+
+			return json;
+		} ) )
+		.pipe( gulp.dest( config.dist.tsOutput ) );
+	;
 });
 
 gulp.task( "clean:dist", ( done ) => {
 	return del( [ config.dist.all, config.dist.doc ], done );
-});
+} );
 
 gulp.task( "lint", [ "ts-lint" ] );
 
 gulp.task( "build", ( done ) => {
 	runSequence(
 		"clean:dist",
-		[ "compile-library", "generate-doc", "bundle-sfx", "bundle-definitions" ],
+		[ "compile-library", "generate-doc", "bundle-sfx", "prepare-npm-package" ],
 		done
 	);
-});
+} );
