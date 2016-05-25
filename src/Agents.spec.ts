@@ -29,7 +29,7 @@ describe( module( "Carbon/Agents" ), ():void => {
 
 	describe( clazz(
 		"Carbon.Agents.Class",
-		"Class for manage Agents of a determined context."
+		"Class to manage Agents of a determined context."
 	), ():void => {
 
 		it( isDefined(), ():void => {

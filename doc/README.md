@@ -481,8 +481,9 @@
 
 ### <a name="Carbon" />Class Carbon
 
+**Extends:** [Carbon.AbstractContext](#Carbon-AbstractContext)
 
-> Principal class that contains all references for use the SDK.
+> The main class of the SDK, which contains all the references of the modules used in the the SDK.
 
 #### <a name="Carbon-Reexports" />Reexports 
 | Export name | Original Location | 
@@ -543,7 +544,7 @@ Returns the version of the SDK
 apps:Carbon.Apps.Class 
 ```
 
-Instance of the class `Carbon.Apps` in the context of the Carbon instance.
+Instance of the class `Carbon.Apps` in the context of the instanced Carbon class.
 
 #### <a name="Carbon-Methods" />Methods
 
@@ -615,7 +616,7 @@ AbstractContext()
 parentContext:Carbon.Context 
 ```
 
-The parent context provided in the constructor. If no context has provided, the property will be the singleton `Carbon.SDKContext.instance` of the class `Carbon.SDKContext.Class`.
+The parent context provided in the constructor. If no context was provided, this property will be the singleton `Carbon.SDKContext.instance` of the class `Carbon.SDKContext.Class`.
 
 #### <a name="Carbon-AbstractContext-Methods" />Methods
 
@@ -786,7 +787,7 @@ Create a `Carbon.Agent.Class` object with the object provided.
 ### <a name="Carbon-Agents-Class" />Class Carbon.Agents.Class
 
 
-> Class for manage Agents of a determined context.
+> Class to manage Agents of a determined context.
 
 
 #### <a name="Carbon-Agents-Class-Constructor" />Constructor
@@ -941,12 +942,12 @@ Context( parentContext:Carbon.Context,  app:Carbon.App.Context )
 agents:Carbon.Agents.Class 
 ```
 
-Instance of Agents class for manage the agents inside of an application.
+Instance of Agents class to manage the agents inside of an application.
 ```typescript 
 app:Carbon.App.Class 
 ```
 
-Object of type `Carbon.App.Class` witch is the Document that represents the actual Application.
+Object of type `Carbon.App.Class` which is the Document that represents the actual Application.
 
 #### <a name="Carbon-App-Context-Methods" />Methods
 
@@ -1078,7 +1079,7 @@ Returns a Pointer for the stored App Document, and the response of the call.
 ### <a name="Carbon-Auth-Class" />Class Carbon.Auth.Class
 
 
-> Class for manage all the methods of authentication.
+> Class to manage all the methods of authentication.
 
 
 #### <a name="Carbon-Auth-Class-Constructor" />Constructor
@@ -1137,7 +1138,7 @@ Deletes the current authentication
 authenticateUsing( method:'BASIC',  username:string,  password:string ):Promise<Carbon.Auth.UsernameAndPasswordCredentials.Class>
 ```
 
-Authenticates the user with Basic HTTP Authentication, witch uses encoded username and password.
+Authenticates the user with Basic HTTP Authentication, which uses encoded username and password.
 
 *Parameters*
 
@@ -3973,7 +3974,7 @@ string
 static parseHeaders( headersString:string ):Map <string, Carbon.HTTP.Header.Class>
 ```
 
-Returns an Map object, witch relates the all header-names with a `Carbon.HTTP.Header.Class` containing their values
+Returns an Map object, which relates the all header-names with a `Carbon.HTTP.Header.Class` containing their values
 
 *Parameters*
 
@@ -8086,7 +8087,7 @@ Convert the `Carbon.RetrievalPreferences.Class` object to a URL query string.
 static instance:Carbon.SDKContext.Class 
 ```
 
-Instance of SDKContext.Class for be used as a singleton and for base parent in every context.
+Instance of `Carbon.SDKContext.Class` that its used as the root parent in every context.
 
 
 
@@ -8094,7 +8095,7 @@ Instance of SDKContext.Class for be used as a singleton and for base parent in e
 ### <a name="Carbon-SDKContext-Class" />Class Carbon.SDKContext.Class
 
 
-> Base class for every Context in the SDK.
+> Base class of every Context in the SDK.
 
 
 #### <a name="Carbon-SDKContext-Class-Constructor" />Constructor
@@ -8110,17 +8111,17 @@ Class()
 auth:Carbon.Auth.Class 
 ```
 
-Instance of Auth class for manage all the authentications in the context.
+Instance of Auth class to manage all the authentications in the context.
 ```typescript 
 documents:Carbon.Documents 
 ```
 
-Instance of Documents class for manage all the documents in the context.
+Instance of Documents class to manage all the documents in the context.
 ```typescript 
 parentContext:Carbon.Context 
 ```
 
-Accessor for the parent context of the context. It is null since SDKContext.Class its the base of all context.
+Parent context of the actual context. For a instance of `Carbon.SDKContext.Class`, this is set to null since it is the root parent of every context in the SDK.
 
 #### <a name="Carbon-SDKContext-Class-Methods" />Methods
 
@@ -8129,14 +8130,14 @@ Accessor for the parent context of the context. It is null since SDKContext.Clas
 getBaseURI():string
 ```
 
-Returns the base URI of the context, witch for is an empty string for this context.
+Returns the base URI of the context. For a instance of `Carbon.SDKContext.Class`, this is an empty string.
 
 ##### resolve
 ```typescript 
 resolve( relativeURI:string ):string
 ```
 
-Returns URI provided resolved in this context, witch is the same URI provided.
+Returns URI provided resolved in this context, which is the same URI provided.
 
 *Parameters*
 
@@ -8147,7 +8148,7 @@ Returns URI provided resolved in this context, witch is the same URI provided.
 hasSetting( name:string ):boolean
 ```
 
-Returns true if the setting looked for is established in the context.
+Returns true if the setting looked for has been assign.
 
 *Parameters*
 
@@ -8170,7 +8171,7 @@ Returns `null` if no setting with the name specified exists.
 setSetting( name:string,  value:any )
 ```
 
-Set a setting in the the context.
+Set a setting in the actual context.
 
 *Parameters*
 
@@ -8182,7 +8183,7 @@ Set a setting in the the context.
 deleteSetting( name:string )
 ```
 
-Deletes the setting specified from the the context.
+Deletes the setting specified by the name, from the actual context.
 
 *Parameters*
 
@@ -8193,7 +8194,7 @@ Deletes the setting specified from the the context.
 hasObjectSchema( type:string ):boolean
 ```
 
-Returns true if the is an ObjectSchema for the specified type.
+Returns true if there is an ObjectSchema for the specified type.
 
 *Parameters*
 
@@ -8204,8 +8205,8 @@ Returns true if the is an ObjectSchema for the specified type.
 getObjectSchema( type?:string ):Carbon.ObjectSchema.DigestedObjectSchema
 ```
 
-Returns the ObjectSchema for the specified type or null if not exits.
-If no type specified the general object schema of the context is returned. This is an schema that applies for all the types.
+Returns the ObjectSchema for the specified type or `null` if it not exists.
+If no type is specified, the general object schema of the context is returned. This is an schema that applies for all the Resources.
 
 *Parameters*
 
@@ -8216,7 +8217,7 @@ If no type specified the general object schema of the context is returned. This 
 clearObjectSchema( type?:string )
 ```
 
-Remove the Schema of the type specified, if not provided empty the General Schema.
+Remove the schema of the type specified, or the general schema if no type is provided.
 
 *Parameters*
 
@@ -8227,7 +8228,8 @@ Remove the Schema of the type specified, if not provided empty the General Schem
 extendObjectSchema( type:string,  objectSchema:Carbon.ObjectSchema.DigestedObjectSchema )
 ```
 
-Extends an Schema for a specified type of Resource
+Extends the schema for a specified type of Resource.
+If a schema for the type exists in the parent context, this is duplicated for the actual context, but only the first time this schema is extended.
 
 *Parameters*
 
@@ -8238,7 +8240,8 @@ Extends an Schema for a specified type of Resource
 extendObjectSchema( objectSchema:Carbon.ObjectSchema.DigestedObjectSchema )
 ```
 
-Extends the General Schema of the context.
+Extends the general schema of the actual context.
+If a general schema exists in the parent context, this is duplicated for the actual context, but only the first time this schema is extended. 
 
 *Parameters*
 

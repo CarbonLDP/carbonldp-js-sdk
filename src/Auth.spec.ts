@@ -114,7 +114,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 
 	describe( clazz(
 		"Carbon.Auth.Class",
-		"Class for manage all the methods of authentication."
+		"Class to manage all the methods of authentication."
 	), ():void => {
 
 		it( isDefined(), ():void => {
@@ -198,7 +198,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 			});
 
 			it( hasSignature(
-				"Authenticates the user with Basic HTTP Authentication, witch uses encoded username and password.", [
+				"Authenticates the user with Basic HTTP Authentication, which uses encoded username and password.", [
 					{ name: "method", type: "'BASIC'" },
 					{ name: "username", type: "string" },
 					{ name: "password", type: "string" }

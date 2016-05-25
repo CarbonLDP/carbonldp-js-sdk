@@ -68,7 +68,7 @@ describe( module( "Carbon/AbstractContext" ), ():void => {
 			"parentContext",
 			"Carbon.Context",
 			"The parent context provided in the constructor. " +
-			"If no context has provided, the property will be the singleton `Carbon.SDKContext.instance` of the class `Carbon.SDKContext.Class`."
+			"If no context was provided, this property will be the singleton `Carbon.SDKContext.instance` of the class `Carbon.SDKContext.Class`."
 		), ():void => {
 			expect( context.parentContext ).toBeDefined();
 

@@ -66,7 +66,7 @@ describe( module( "Carbon/App/Context" ), ():void => {
 			INSTANCE,
 			"agents",
 			"Carbon.Agents.Class",
-			"Instance of Agents class for manage the agents inside of an application."
+			"Instance of Agents class to manage the agents inside of an application."
 		), ():void => {
 			expect( appContext.agents ).toBeDefined();
 			expect( appContext.agents instanceof Agents.Class ).toBe( true );
@@ -76,7 +76,7 @@ describe( module( "Carbon/App/Context" ), ():void => {
 			INSTANCE,
 			"app",
 			"Carbon.App.Class",
-			"Object of type `Carbon.App.Class` witch is the Document that represents the actual Application."
+			"Object of type `Carbon.App.Class` which is the Document that represents the actual Application."
 		), ():void => {
 			expect( appContext.app ).toBeDefined();
 			expect( App.Factory.is( appContext.app ) ).toBe( true );

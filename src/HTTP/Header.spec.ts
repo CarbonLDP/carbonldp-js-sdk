@@ -164,7 +164,7 @@ describe( module(
 		it( hasMethod(
 			STATIC,
 			"parseHeaders",
-			"Returns an Map object, witch relates the all header-names with a `Carbon.HTTP.Header.Class` containing their values", [
+			"Returns an Map object, which relates the all header-names with a `Carbon.HTTP.Header.Class` containing their values", [
 				{ name: "headersString", type: "string" }
 			],
 			{ type: "Map <string, Carbon.HTTP.Header.Class>" }

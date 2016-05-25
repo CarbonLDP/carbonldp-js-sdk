@@ -156,7 +156,7 @@ export class Class implements Context {
 		this.extendObjectSchema( RDFRepresentation.RDF_CLASS, RDFRepresentation.SCHEMA );
 		this.extendObjectSchema( APIDescription.RDF_CLASS, APIDescription.SCHEMA );
 
-		// TODO Fix error of cycle reference because the App module dependency of AbstractClass witch has a dependency with SDKContext. For now add manual data
+		// TODO Fix error of cycle reference because the App module dependency of AbstractClass which has a dependency with SDKContext. For now add manual data
 		/* this.extendObjectSchema( App.RDF_CLASS, App.SCHEMA ); */
 		this.extendObjectSchema( NS.CS.Class.Application, {
 			"name": {
