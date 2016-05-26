@@ -1,8 +1,8 @@
 SystemJS.config({
-  baseURL: "/base/",
+  baseURL: "/base",
   paths: {
-    "github:*": "test/jspm_packages/github/*",
-    "npm:*": "test/jspm_packages/npm/*",
+    "github:": "test/jspm_packages/github/",
+    "npm:": "test/jspm_packages/npm/",
     "carbonldp/": "dist/"
   },
   packages: {
@@ -21,6 +21,6 @@ SystemJS.config({
         "request": "@empty",
         "xmldom": "npm:xmldom@0.1.19"
       }
-    },
+    }
   }
 });

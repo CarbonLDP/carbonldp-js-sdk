@@ -12,8 +12,8 @@
     "type": "git",
     "url": "https://github.com/CarbonLDP/CarbonLDP-JS-SDK.git"
   },
-  "main": "./Carbon.js",
-  "typings": "./Carbon.d.ts",
+  "main": "./dist/Carbon.js",
+  "typings": "./dist/Carbon.d.ts",
   "dependencies": {
     "file-type": "^3.8.0",
     "jsonld": "^0.4.11"
@@ -67,29 +67,16 @@
       "child_process": "github:jspm/nodelibs-child_process@^0.2.0-alpha",
       "constants": "github:jspm/nodelibs-constants@^0.2.0-alpha",
       "crypto": "github:jspm/nodelibs-crypto@^0.2.0-alpha",
-      "dgram": "github:jspm/nodelibs-dgram@^0.2.0-alpha",
-      "dns": "github:jspm/nodelibs-dns@^0.2.0-alpha",
-      "ecc-jsbn": "npm:ecc-jsbn@~0.1.1",
       "events": "github:jspm/nodelibs-events@^0.2.0-alpha",
       "fs": "github:jspm/nodelibs-fs@^0.2.0-alpha",
       "http": "github:jspm/nodelibs-http@^0.2.0-alpha",
-      "https": "github:jspm/nodelibs-https@^0.2.0-alpha",
-      "jodid25519": "npm:jodid25519@^1.0.0",
-      "jsbn": "npm:jsbn@0.1",
-      "net": "github:jspm/nodelibs-net@^0.2.0-alpha",
       "path": "github:jspm/nodelibs-path@^0.2.0-alpha",
       "process": "github:jspm/nodelibs-process@^0.2.0-alpha",
-      "punycode": "github:jspm/nodelibs-punycode@^0.2.0-alpha",
-      "querystring": "github:jspm/nodelibs-querystring@^0.2.0-alpha",
       "stream": "github:jspm/nodelibs-stream@^0.2.0-alpha",
       "string_decoder": "github:jspm/nodelibs-string_decoder@^0.2.0-alpha",
-      "tls": "github:jspm/nodelibs-tls@^0.2.0-alpha",
-      "tty": "github:jspm/nodelibs-tty@^0.2.0-alpha",
-      "tweetnacl": "npm:tweetnacl@0.13",
       "url": "github:jspm/nodelibs-url@^0.2.0-alpha",
       "util": "github:jspm/nodelibs-util@^0.2.0-alpha",
-      "vm": "github:jspm/nodelibs-vm@^0.2.0-alpha",
-      "zlib": "github:jspm/nodelibs-zlib@^0.2.0-alpha"
+      "vm": "github:jspm/nodelibs-vm@^0.2.0-alpha"
     },
     "overrides": {
       "npm:browserify-zlib@0.1.4": {
@@ -124,21 +111,6 @@
     "lint": "./node_modules/.bin/gulp lint",
     "prepare": "node scripts/copy-hooks.js && ./node_modules/.bin/jspm install && ./node_modules/.bin/typings install",
     "test": "./node_modules/.bin/gulp test"
-  },
-  "jspm_backup": {
-    "directories": {
-      "lib": "dist",
-      "packages": "test/jspm_packages"
-    },
-    "configFile": "jspm.config.js",
-    "map": {
-      "file-type": "@empty"
-    },
-    "dependencies": {},
-    "devDependencies": {
-      "jsonld": "npm:jsonld@^0.4.2",
-      "typescript": "npm:typescript@^1.8.10"
-    }
   },
   "private": true
 }

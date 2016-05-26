@@ -16,12 +16,11 @@
   "typings": "./Carbon.d.ts",
   "dependencies": {
     "file-type": "^3.8.0",
-    "jsonld": "^0.4.2"
+    "jsonld": "^0.4.11"
   },
   "jspm": {
-    "dependencies": {},
-    "map": {
-      "file-type": "@empty"
+    "dependencies": {
+      "jsonld": "npm:jsonld@^0.4.11"
     }
   }
 }

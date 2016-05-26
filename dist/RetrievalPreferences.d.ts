@@ -3,6 +3,7 @@ export interface Class {
     limit?: number;
     offset?: number;
 }
+export declare type orderByType = "numeric" | "string" | "boolean" | "dateTime";
 export interface OrderByProperty {
     "@id": string;
     "@type"?: "numeric" | "string" | "boolean" | "dateTime";

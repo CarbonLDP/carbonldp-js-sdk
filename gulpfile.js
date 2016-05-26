@@ -14,7 +14,6 @@ const ts = require( "gulp-typescript" );
 
 const tslint = require( "gulp-tslint" );
 
-// const Builder = require( "systemjs-builder" );
 const jeditor = require( "gulp-json-editor" );
 
 const jasmine = require( "gulp-jasmine" );
@@ -128,7 +127,7 @@ gulp.task( "compile-library", () => {
 gulp.task( "bundle-sfx", ( done ) => {
 	let builder = new Builder();
 	builder.buildStatic( "build/sfx.js", config.dist.sfxBundle, {
-		"sourceMaps": true,
+		"sourceMaps": "inline",
 		"mangle": false,
 		"lowResSourceMaps": false,
 	}).then( () => {
@@ -137,29 +136,6 @@ gulp.task( "bundle-sfx", ( done ) => {
 		util.log( error );
 		done( error );
 	});
-
-	// let builder = new Builder();
-	//
-	// builder.buildStatic( "build/sfx.js", config.dist.sfxBundle, {
-	// 	sourceMaps: true,
-	// 	config: {
-	// 		"transpiler": "typescript",
-	// 		// TODO: Use tsconfig.json (need to update JSPM to 0.17)
-	// 		"typescriptOptions": {
-	// 			"tsconfig": true
-	// 		},
-	// 		"paths": {
-	// 			"build/sfx.js": "build/sfx.js",
-	// 			"Carbon": "src/Carbon.ts",
-	// 			"jsonld": "node_modules/jsonld/js/jsonld.js",
-	// 			"*": "*.ts"
-	// 		}
-	// 	}
-	// }).then( () => {
-	// 	done();
-	// }).catch( ( error ) => {
-	// 	util.log( error );
-	// });
 });
 
 gulp.task( "prepare-npm-package", ( done ) => {
@@ -183,6 +159,9 @@ gulp.task( "prepare-npm-package:copy-package-json", () => {
 			delete json.private;
 			delete json.scripts;
 			delete json.devDependencies;
+
+			json.main = json.main.replace( "dist/", "" );
+			json.typings = json.typings.replace( "dist/", "" );
 
 			json.jspm = {
 				dependencies: json.jspm.dependencies,
