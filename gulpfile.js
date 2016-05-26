@@ -149,6 +149,7 @@ gulp.task( "bundle-sfx", ( done ) => {
 		done();
 	} ).catch( ( error ) => {
 		util.log( error );
+		done( error );
 	} );
 } );
 

@@ -8,10 +8,8 @@ src/**/*.js
 src/**/*.map
 
 # Typings
-**/typings/browser/
-**/typings/main/
-**/typings/browser.d.ts
-**/typings/main.d.ts
+**/typings/globals/
+**/typings/index.d.ts
 
 # JSPM
 **/jspm_packages/
