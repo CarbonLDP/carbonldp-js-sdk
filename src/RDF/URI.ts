@@ -37,6 +37,10 @@ export class Util {
 		return Utils.S.startsWith( uri, "_:" );
 	}
 
+	static generateBNodeID():string {
+		return "_:" + Utils.UUID.generate();
+	}
+
 	static isPrefixed( uri:string ):boolean {
 		return ! Util.isAbsolute( uri ) && ! Util.isBNodeID( uri ) && Utils.S.contains( uri, ":" );
 	}
@@ -101,11 +105,11 @@ export class Util {
 	}
 
 	static resolve( parentURI:string, childURI:string ):string {
-		if ( Util.isAbsolute( childURI ) || Util.isPrefixed( childURI ) )
+		if ( Util.isAbsolute( childURI ) || Util.isBNodeID( childURI) || Util.isPrefixed( childURI ) )
 			return childURI;
 
 		let finalURI:string = parentURI;
-		if ( ! Utils.S.endsWith( parentURI, "/" ) ) finalURI += "/";
+		if ( ! Utils.S.endsWith( parentURI, "#" ) && ! Utils.S.endsWith( parentURI, "/" ) ) finalURI += "/";
 
 		if ( Utils.S.startsWith( childURI, "/" ) ) {
 			finalURI = finalURI + childURI.substr( 1, childURI.length );

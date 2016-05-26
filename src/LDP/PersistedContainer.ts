@@ -3,6 +3,7 @@ import * as HTTP from "./../HTTP";
 import * as PersistedDocument from "./../PersistedDocument";
 import * as Pointer from "./../Pointer";
 import * as Utils from "./../Utils";
+import * as RetrievalPreferences from "./../RetrievalPreferences";
 
 export interface Class extends PersistedDocument.Class {
 	addMember( member:Pointer.Class ): Promise<HTTP.Response.Class>;
@@ -17,7 +18,12 @@ export interface Class extends PersistedDocument.Class {
 
 	listChildren():Promise<[ Pointer.Class[], HTTP.Response.Class ]>;
 
+	getChildren( retrievalPreferences?:RetrievalPreferences.Class ):Promise<[ Pointer.Class[], HTTP.Response.Class ]>;
+
 	listMembers( includeNonReadable?:boolean ):Promise<[ Pointer.Class[], HTTP.Response.Class ]>;
+
+	getMembers( includeNonReadable?:boolean, retrievalPreferences?:RetrievalPreferences.Class ):Promise<[ Pointer.Class[], HTTP.Response.Class ]>;
+	getMembers( retrievalPreferences?:RetrievalPreferences.Class ):Promise<[ Pointer.Class[], HTTP.Response.Class ]>;
 
 	removeMember( member:Pointer.Class ): Promise<HTTP.Response.Class>;
 	removeMember( memberURI:string ): Promise<HTTP.Response.Class>;
@@ -64,8 +70,19 @@ function listChildren():Promise<[ Pointer.Class[], HTTP.Response.Class ]> {
 	return this._documents.listChildren( that.id );
 }
 
+function getChildren( retrievalPreferences?:RetrievalPreferences.Class ):Promise<[ Pointer.Class[], HTTP.Response.Class ]> {
+	let that:PersistedDocument.Class = <PersistedDocument.Class> this;
+	return this._documents.getChildren( that.id, retrievalPreferences );
+}
+
 function listMembers( includeNonReadable:boolean = true ):Promise<[ Pointer.Class[], HTTP.Response.Class ]> {
 	return this._documents.listMembers( this.id, includeNonReadable );
+}
+
+function getMembers( includeNonReadable:boolean, retrievalPreferences?:RetrievalPreferences.Class ):Promise<[ Pointer.Class[], HTTP.Response.Class ]>;
+function getMembers( retrievalPreferences?:RetrievalPreferences.Class ):Promise<[ Pointer.Class[], HTTP.Response.Class ]>;
+function getMembers( nonReadRetPref:boolean = true, retrievalPreferences?:RetrievalPreferences.Class ):Promise<[ Pointer.Class[], HTTP.Response.Class ]> {
+	return this._documents.getMembers( this.id, nonReadRetPref, retrievalPreferences );
 }
 
 function removeMember( member:Pointer.Class ): Promise<HTTP.Response.Class>;
@@ -102,11 +119,14 @@ function upload( slugOrData:any, data:any = null ):Promise<[ Pointer.Class, HTTP
 
 	export class Factory {
 	static hasClassProperties( document:Document.Class ):boolean {
-		return Utils.hasFunction( document, "addMember" )
+		return Utils.isObject( document )
+			&& Utils.hasFunction( document, "addMember" )
 			&& Utils.hasFunction( document, "addMembers" )
 			&& Utils.hasFunction( document, "createChild" )
 			&& Utils.hasFunction( document, "listChildren" )
+			&& Utils.hasFunction( document, "getChildren" )
 			&& Utils.hasFunction( document, "listMembers" )
+			&& Utils.hasFunction( document, "getMembers" )
 			&& Utils.hasFunction( document, "removeMember" )
 			&& Utils.hasFunction( document, "removeMembers" )
 			&& Utils.hasFunction( document, "removeAllMembers" )
@@ -141,11 +161,23 @@ function upload( slugOrData:any, data:any = null ):Promise<[ Pointer.Class, HTTP
 				configurable: true,
 				value: listChildren,
 			},
+			"getChildren": {
+				writable: false,
+				enumerable: false,
+				configurable: true,
+				value: getChildren,
+			},
 			"listMembers": {
 				writable: false,
 				enumerable: false,
 				configurable: true,
 				value: listMembers,
+			},
+			"getMembers": {
+				writable: false,
+				enumerable: false,
+				configurable: true,
+				value: getMembers,
 			},
 			"removeMember": {
 				writable: false,

@@ -1,6 +1,6 @@
 {
   "name": "carbonldp",
-  "version": "0.31.0",
+  "version": "0.33.0",
   "description": "JavaScript/TypeScript SDK to create CarbonLDP's Applications",
   "homepage": "https://github.com/CarbonLDP/CarbonLDP-JS-SDK",
   "contributors": [
@@ -12,24 +12,21 @@
     "type": "git",
     "url": "https://github.com/CarbonLDP/CarbonLDP-JS-SDK.git"
   },
-  "main": "dist/Carbon.js",
-  "directories": {
-    "lib": "dist"
-  },
+  "main": "./Carbon.js",
+  "typings": "./Carbon.d.ts",
   "dependencies": {
     "file-type": "^3.8.0",
     "jsonld": "^0.4.11"
   },
   "devDependencies": {
     "del": "^2.0.2",
-    "dts-generator": "^1.7.0",
-    "es6-shim": "^0.35.0",
+    "es6-shim": "^0.35.1",
     "gulp": "^3.9.1",
     "gulp-jasmine": "^2.3.0",
     "gulp-json-editor": "^2.2.1",
     "gulp-sourcemaps": "^1.6.0",
     "gulp-tslint": "^5.0.0",
-    "gulp-typescript": "^2.13.3",
+    "gulp-typescript": "^2.13.4",
     "gulp-util": "^3.0.7",
     "jasmine-ajax": "^3.2.0",
     "jasmine-core": "^2.3.4",
@@ -39,18 +36,16 @@
     "karma-documentation-runner": "file:test/console-reporter",
     "karma-firefox-launcher": "^1.0.0",
     "karma-jasmine": "^1.0.2",
-    "karma-jspm": "^2.1.0",
+    "karma-jspm": "^2.1.1",
     "karma-markdown-reporter": "file:test/karma-markdown-reporter",
     "karma-sourcemap-loader": "^0.3.4",
-    "minimatch": "^3.0.0",
     "nock": "^8.0.0",
-    "node-glob": "^1.2.0",
-    "run-sequence": "^1.1.5",
+    "run-sequence": "^1.2.1",
     "systemjs": "^0.19.27",
     "systemjs-builder": "^0.15.16",
-    "tslint": "^3.9.0",
+    "tslint": "^3.10.2",
     "typescript": "^1.8.10",
-    "typings": "^0.8.1"
+    "typings": "^1.0.4"
   },
   "jspm": {
     "name": "carbonldp",
@@ -136,10 +131,14 @@
       "packages": "test/jspm_packages"
     },
     "configFile": "jspm.config.js",
+    "map": {
+      "file-type": "@empty"
+    },
     "dependencies": {},
     "devDependencies": {
       "jsonld": "npm:jsonld@^0.4.2",
       "typescript": "npm:typescript@^1.8.10"
     }
-  }
+  },
+  "private": true
 }

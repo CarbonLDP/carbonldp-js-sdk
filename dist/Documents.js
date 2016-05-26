@@ -4,6 +4,7 @@ var HTTP = require("./HTTP");
 var RDF = require("./RDF");
 var Utils = require("./Utils");
 var Document = require("./Document");
+var FreeResources = require("./FreeResources");
 var JSONLDConverter = require("./JSONLDConverter");
 var PersistedDocument = require("./PersistedDocument");
 var Pointer = require("./Pointer");
@@ -12,7 +13,6 @@ var ObjectSchema = require("./ObjectSchema");
 var LDP = require("./LDP");
 var SPARQL = require("./SPARQL");
 var RetrievalPreferences = require("./RetrievalPreferences");
-var ResponseDescription = require("./LDP/ResponseDescription");
 var Documents = (function () {
     function Documents(context) {
         if (context === void 0) { context = null; }
@@ -75,20 +75,16 @@ var Documents = (function () {
         var _this = this;
         if (requestOptions === void 0) { requestOptions = {}; }
         var pointerID = this.getPointerID(uri);
-        if (!!this.context)
-            uri = this.context.resolve(uri);
-        if (this.pointers.has(pointerID)) {
+        uri = this.getRequestURI(uri);
+        this.setDefaultRequestOptions(requestOptions, NS.LDP.Class.RDFSource);
+        if (this.hasPointer(uri)) {
             var pointer = this.getPointer(uri);
             if (pointer.isResolved()) {
-                return this.refresh(pointer);
+                return Promise.resolve([pointer, null]);
             }
         }
         if (this.documentsBeingResolved.has(pointerID))
             return this.documentsBeingResolved.get(pointerID);
-        if (this.context && this.context.auth.isAuthenticated())
-            this.context.auth.addAuthentication(requestOptions);
-        HTTP.Request.Util.setAcceptHeader("application/ld+json", requestOptions);
-        HTTP.Request.Util.setPreferredInteractionModel(NS.LDP.Class.RDFSource, requestOptions);
         var promise = HTTP.Request.Service.get(uri, requestOptions, new RDF.Document.Parser()).then(function (_a) {
             var rdfDocuments = _a[0], response = _a[1];
             var eTag = HTTP.Response.Util.getETag(response);
@@ -107,13 +103,8 @@ var Documents = (function () {
     };
     Documents.prototype.exists = function (documentURI, requestOptions) {
         if (requestOptions === void 0) { requestOptions = {}; }
-        if (!!this.context) {
-            documentURI = this.context.resolve(documentURI);
-            if (this.context.auth.isAuthenticated())
-                this.context.auth.addAuthentication(requestOptions);
-        }
-        HTTP.Request.Util.setAcceptHeader("application/ld+json", requestOptions);
-        HTTP.Request.Util.setPreferredInteractionModel(NS.LDP.Class.RDFSource, requestOptions);
+        documentURI = this.getRequestURI(documentURI);
+        this.setDefaultRequestOptions(requestOptions, NS.LDP.Class.RDFSource);
         return HTTP.Request.Service.head(documentURI, requestOptions).then(function (response) { return [true, response]; }, function (error) {
             if (error.response.status === 404)
                 return [false, error.response];
@@ -127,12 +118,13 @@ var Documents = (function () {
         var slug = Utils.isString(slugOrChildDocument) ? slugOrChildDocument : null;
         var childDocument = !Utils.isString(slugOrChildDocument) ? slugOrChildDocument : childDocumentOrRequestOptions;
         requestOptions = !Utils.isString(slugOrChildDocument) ? childDocumentOrRequestOptions : requestOptions;
-        if (!Document.Factory.is(childDocument))
-            childDocument = Document.Factory.createFrom(childDocument);
-        if (!!this.context)
-            parentURI = this.context.resolve(parentURI);
         if (PersistedDocument.Factory.is(childDocument))
             return Promise.reject(new Errors.IllegalArgumentError("The childDocument provided has been already persisted."));
+        if (!Document.Factory.is(childDocument))
+            childDocument = Document.Factory.createFrom(childDocument);
+        parentURI = this.getRequestURI(parentURI);
+        this.setDefaultRequestOptions(requestOptions, NS.LDP.Class.Container);
+        HTTP.Request.Util.setContentTypeHeader("application/ld+json", requestOptions);
         if (childDocument.id) {
             var childURI = childDocument.id;
             if (!!this.context)
@@ -141,11 +133,6 @@ var Documents = (function () {
                 return Promise.reject(new Errors.IllegalArgumentError("The childDocument's URI is not relative to the parentURI specified"));
             }
         }
-        if (this.context && this.context.auth.isAuthenticated())
-            this.context.auth.addAuthentication(requestOptions);
-        HTTP.Request.Util.setContentTypeHeader("application/ld+json", requestOptions);
-        HTTP.Request.Util.setAcceptHeader("application/ld+json", requestOptions);
-        HTTP.Request.Util.setPreferredInteractionModel(NS.LDP.Class.Container, requestOptions);
         var body = childDocument.toJSON(this, this.jsonldConverter);
         if (slug !== null)
             HTTP.Request.Util.setSlug(slug, requestOptions);
@@ -166,10 +153,8 @@ var Documents = (function () {
     Documents.prototype.listChildren = function (parentURI, requestOptions) {
         var _this = this;
         if (requestOptions === void 0) { requestOptions = {}; }
-        if (!!this.context)
-            parentURI = this.context.resolve(parentURI);
-        if (this.context && this.context.auth.isAuthenticated())
-            this.context.auth.addAuthentication(requestOptions);
+        parentURI = this.getRequestURI(parentURI);
+        this.setDefaultRequestOptions(requestOptions, NS.LDP.Class.Container);
         var containerRetrievalPreferences = {
             include: [
                 NS.LDP.Class.PreferContainment,
@@ -181,8 +166,6 @@ var Documents = (function () {
                 NS.C.Class.PreferMembershipResources,
             ],
         };
-        HTTP.Request.Util.setAcceptHeader("application/ld+json", requestOptions);
-        HTTP.Request.Util.setPreferredInteractionModel(NS.LDP.Class.Container, requestOptions);
         HTTP.Request.Util.setContainerRetrievalPreferences(containerRetrievalPreferences, requestOptions);
         return HTTP.Request.Service.get(parentURI, requestOptions, new RDF.Document.Parser())
             .then(function (_a) {
@@ -195,15 +178,13 @@ var Documents = (function () {
             return [childPointers, response];
         });
     };
-    Documents.prototype.getChildren = function (parentURI, retPrefReqOpt, reqOpt) {
-        var _this = this;
+    Documents.prototype.getChildren = function (parentURI, retPrefReqOpt, requestOptions) {
         var retrievalPreferences = RetrievalPreferences.Factory.is(retPrefReqOpt) ? retPrefReqOpt : null;
-        var requestOptions = HTTP.Request.Util.isOptions(retPrefReqOpt) ? retPrefReqOpt : (HTTP.Request.Util.isOptions(reqOpt) ? reqOpt : {});
-        var uri = (!!this.context) ? this.context.resolve(parentURI) : parentURI;
-        if (this.context && this.context.auth.isAuthenticated())
-            this.context.auth.addAuthentication(requestOptions);
+        requestOptions = HTTP.Request.Util.isOptions(retPrefReqOpt) ? retPrefReqOpt : (HTTP.Request.Util.isOptions(requestOptions) ? requestOptions : {});
+        parentURI = this.getRequestURI(parentURI);
+        this.setDefaultRequestOptions(requestOptions, NS.LDP.Class.Container);
         if (!!retrievalPreferences)
-            uri += RetrievalPreferences.Util.stringifyRetrievalPreferences(retrievalPreferences);
+            parentURI += RetrievalPreferences.Util.stringifyRetrievalPreferences(retrievalPreferences);
         var containerRetrievalPreferences = {
             include: [
                 NS.LDP.Class.PreferContainment,
@@ -215,24 +196,8 @@ var Documents = (function () {
                 NS.C.Class.PreferMembershipResources,
             ],
         };
-        HTTP.Request.Util.setAcceptHeader("application/ld+json", requestOptions);
-        HTTP.Request.Util.setPreferredInteractionModel(NS.LDP.Class.Container, requestOptions);
         HTTP.Request.Util.setContainerRetrievalPreferences(containerRetrievalPreferences, requestOptions);
-        return HTTP.Request.Service.get(uri, requestOptions, new RDF.Document.Parser()).then(function (_a) {
-            var rdfResource = _a[0], response = _a[1];
-            var rdfResources = RDF.Document.Util.getResources(rdfResource);
-            var volatileResources = _this.parseMultipleResources(rdfResources, response);
-            var responseDescription = _this.getResponseDescription(volatileResources);
-            if (!responseDescription)
-                return [[], response];
-            for (var _i = 0, _b = responseDescription.responseProperties; _i < _b.length; _i++) {
-                var responseMetaData = _b[_i];
-                var document_1 = responseMetaData.responsePropertyResource;
-                document_1._etag = responseMetaData.eTag;
-            }
-            var persistedDocuments = responseDescription.responseProperties.map(function (responseMetaData) { return responseMetaData.responsePropertyResource; });
-            return [persistedDocuments, response];
-        });
+        return this.sendRequestForResponseWithMetadata(parentURI, requestOptions);
     };
     Documents.prototype.createAccessPoint = function (documentURIOrAccessPoint, accessPointOrSlug, slugOrRequestOptions, requestOptions) {
         var _this = this;
@@ -244,8 +209,9 @@ var Documents = (function () {
         requestOptions = !Utils.isString(slugOrRequestOptions) && slugOrRequestOptions !== null ? slugOrRequestOptions : requestOptions;
         if (documentURI === null)
             documentURI = accessPoint.membershipResource.id;
-        if (!!this.context)
-            documentURI = this.context.resolve(documentURI);
+        documentURI = this.getRequestURI(documentURI);
+        this.setDefaultRequestOptions(requestOptions, NS.LDP.Class.RDFSource);
+        HTTP.Request.Util.setContentTypeHeader("application/ld+json", requestOptions);
         if (accessPoint.membershipResource.id !== documentURI)
             return Promise.reject(new Errors.IllegalArgumentError("The documentURI must be the same as the accessPoint's membershipResource"));
         if (PersistedDocument.Factory.is(accessPoint))
@@ -258,11 +224,6 @@ var Documents = (function () {
                 return Promise.reject(new Errors.IllegalArgumentError("The accessPoint's URI is not relative to the parentURI specified"));
             }
         }
-        if (this.context && this.context.auth.isAuthenticated())
-            this.context.auth.addAuthentication(requestOptions);
-        HTTP.Request.Util.setContentTypeHeader("application/ld+json", requestOptions);
-        HTTP.Request.Util.setAcceptHeader("application/ld+json", requestOptions);
-        HTTP.Request.Util.setPreferredInteractionModel(NS.LDP.Class.RDFSource, requestOptions);
         var body = accessPoint.toJSON(this, this.jsonldConverter);
         if (slug !== null)
             HTTP.Request.Util.setSlug(slug, requestOptions);
@@ -299,12 +260,8 @@ var Documents = (function () {
             var bufferType = fileType(data);
             HTTP.Request.Util.setContentTypeHeader(bufferType ? bufferType.mime : "application/octet-stream", requestOptions);
         }
-        if (!!this.context)
-            parentURI = this.context.resolve(parentURI);
-        if (this.context && this.context.auth.isAuthenticated())
-            this.context.auth.addAuthentication(requestOptions);
-        HTTP.Request.Util.setAcceptHeader("application/ld+json", requestOptions);
-        HTTP.Request.Util.setPreferredInteractionModel(NS.LDP.Class.Container, requestOptions);
+        parentURI = this.getRequestURI(parentURI);
+        this.setDefaultRequestOptions(requestOptions, NS.LDP.Class.Container);
         if (slug !== null)
             HTTP.Request.Util.setSlug(slug, requestOptions);
         return HTTP.Request.Service.post(parentURI, data, requestOptions).then(function (response) {
@@ -325,15 +282,8 @@ var Documents = (function () {
         var _this = this;
         var includeNonReadable = Utils.isBoolean(nonReadReqOpt) ? nonReadReqOpt : true;
         var requestOptions = HTTP.Request.Util.isOptions(nonReadReqOpt) ? nonReadReqOpt : (HTTP.Request.Util.isOptions(reqOpt) ? reqOpt : {});
-        if (!RDF.URI.Util.isAbsolute(uri)) {
-            if (!this.context)
-                throw new Errors.IllegalArgumentError("This Documents instance doesn't support relative URIs.");
-            uri = this.context.resolve(uri);
-        }
-        if (this.context && this.context.auth.isAuthenticated())
-            this.context.auth.addAuthentication(requestOptions);
-        HTTP.Request.Util.setAcceptHeader("application/ld+json", requestOptions);
-        HTTP.Request.Util.setPreferredInteractionModel(NS.LDP.Class.Container, requestOptions);
+        uri = this.getRequestURI(uri);
+        this.setDefaultRequestOptions(requestOptions, NS.LDP.Class.Container);
         var containerRetrievalPreferences = {
             include: [
                 NS.LDP.Class.PreferMinimalContainer,
@@ -382,22 +332,14 @@ var Documents = (function () {
             return [memberPointers, response];
         });
     };
-    Documents.prototype.getMembers = function (uri, nonReadRetPrefReqOpt, retPrefReqOpt, reqOpt) {
-        var _this = this;
+    Documents.prototype.getMembers = function (uri, nonReadRetPrefReqOpt, retPrefReqOpt, requestOptions) {
         var includeNonReadable = Utils.isBoolean(nonReadRetPrefReqOpt) ? nonReadRetPrefReqOpt : true;
         var retrievalPreferences = RetrievalPreferences.Factory.is(nonReadRetPrefReqOpt) ? nonReadRetPrefReqOpt : (RetrievalPreferences.Factory.is(retPrefReqOpt) ? retPrefReqOpt : null);
-        var requestOptions = HTTP.Request.Util.isOptions(nonReadRetPrefReqOpt) ? nonReadRetPrefReqOpt : (HTTP.Request.Util.isOptions(retPrefReqOpt) ? retPrefReqOpt : (HTTP.Request.Util.isOptions(reqOpt) ? reqOpt : {}));
-        if (!RDF.URI.Util.isAbsolute(uri)) {
-            if (!this.context)
-                throw new Errors.IllegalArgumentError("This Documents instance doesn't support relative URIs.");
-            uri = this.context.resolve(uri);
-        }
+        requestOptions = HTTP.Request.Util.isOptions(nonReadRetPrefReqOpt) ? nonReadRetPrefReqOpt : (HTTP.Request.Util.isOptions(retPrefReqOpt) ? retPrefReqOpt : (HTTP.Request.Util.isOptions(requestOptions) ? requestOptions : {}));
+        uri = this.getRequestURI(uri);
+        this.setDefaultRequestOptions(requestOptions, NS.LDP.Class.Container);
         if (!!retrievalPreferences)
             uri += RetrievalPreferences.Util.stringifyRetrievalPreferences(retrievalPreferences);
-        if (this.context && this.context.auth.isAuthenticated())
-            this.context.auth.addAuthentication(requestOptions);
-        HTTP.Request.Util.setAcceptHeader("application/ld+json", requestOptions);
-        HTTP.Request.Util.setPreferredInteractionModel(NS.LDP.Class.Container, requestOptions);
         var containerRetrievalPreferences = {
             include: [
                 NS.LDP.Class.PreferMinimalContainer,
@@ -416,21 +358,7 @@ var Documents = (function () {
             containerRetrievalPreferences.omit.push(NS.C.Class.NonReadableMembershipResourceTriples);
         }
         HTTP.Request.Util.setContainerRetrievalPreferences(containerRetrievalPreferences, requestOptions);
-        return HTTP.Request.Service.get(uri, requestOptions, new RDF.Document.Parser()).then(function (_a) {
-            var rdfResource = _a[0], response = _a[1];
-            var rdfResources = RDF.Document.Util.getResources(rdfResource);
-            var volatileResources = _this.parseMultipleResources(rdfResources, response);
-            var responseDescription = _this.getResponseDescription(volatileResources);
-            if (!responseDescription)
-                return [[], response];
-            for (var _i = 0, _b = responseDescription.responseProperties; _i < _b.length; _i++) {
-                var responseMetaData = _b[_i];
-                var document_2 = responseMetaData.responsePropertyResource;
-                document_2._etag = responseMetaData.eTag;
-            }
-            var persistedDocuments = responseDescription.responseProperties.map(function (responseMetaData) { return responseMetaData.responsePropertyResource; });
-            return [persistedDocuments, response];
-        });
+        return this.sendRequestForResponseWithMetadata(uri, requestOptions);
     };
     Documents.prototype.addMember = function (documentURI, memberORUri, requestOptions) {
         if (requestOptions === void 0) { requestOptions = {}; }
@@ -446,14 +374,10 @@ var Documents = (function () {
                 return Promise.reject(new Errors.IllegalArgumentError("No Carbon.Pointer or string URI provided."));
             pointers.push(member);
         }
-        if (!!this.context)
-            documentURI = this.context.resolve(documentURI);
-        var document = LDP.AddMemberAction.Factory.createDocument(pointers);
-        if (this.context && this.context.auth.isAuthenticated())
-            this.context.auth.addAuthentication(requestOptions);
-        HTTP.Request.Util.setAcceptHeader("application/ld+json", requestOptions);
+        documentURI = this.getRequestURI(documentURI);
+        this.setDefaultRequestOptions(requestOptions, NS.LDP.Class.Container);
         HTTP.Request.Util.setContentTypeHeader("application/ld+json", requestOptions);
-        HTTP.Request.Util.setPreferredInteractionModel(NS.LDP.Class.Container, requestOptions);
+        var document = LDP.AddMemberAction.Factory.createDocument(pointers);
         var body = document.toJSON(this, this.jsonldConverter);
         return HTTP.Request.Service.put(documentURI, body, requestOptions);
     };
@@ -471,26 +395,22 @@ var Documents = (function () {
                 return Promise.reject(new Errors.IllegalArgumentError("No Carbon.Pointer or string URI provided."));
             pointers.push(member);
         }
-        if (!!this.context)
-            documentURI = this.context.resolve(documentURI);
+        documentURI = this.getRequestURI(documentURI);
+        this.setDefaultRequestOptions(requestOptions, NS.LDP.Class.Container);
+        HTTP.Request.Util.setContentTypeHeader("application/ld+json", requestOptions);
         var document = LDP.RemoveMemberAction.Factory.createDocument(pointers);
         var containerRetrievalPreferences = {
             include: [NS.C.Class.PreferSelectedMembershipTriples],
             omit: [NS.C.Class.PreferMembershipTriples],
         };
-        if (this.context && this.context.auth.isAuthenticated())
-            this.context.auth.addAuthentication(requestOptions);
-        HTTP.Request.Util.setAcceptHeader("application/ld+json", requestOptions);
-        HTTP.Request.Util.setContentTypeHeader("application/ld+json", requestOptions);
-        HTTP.Request.Util.setPreferredInteractionModel(NS.LDP.Class.Container, requestOptions);
         HTTP.Request.Util.setContainerRetrievalPreferences(containerRetrievalPreferences, requestOptions, false);
         var body = document.toJSON(this, this.jsonldConverter);
         return HTTP.Request.Service.delete(documentURI, body, requestOptions);
     };
     Documents.prototype.removeAllMembers = function (documentURI, requestOptions) {
         if (requestOptions === void 0) { requestOptions = {}; }
-        if (!!this.context)
-            documentURI = this.context.resolve(documentURI);
+        documentURI = this.getRequestURI(documentURI);
+        this.setDefaultRequestOptions(requestOptions, NS.LDP.Class.Container);
         var containerRetrievalPreferences = {
             include: [
                 NS.C.Class.PreferMembershipTriples,
@@ -502,40 +422,30 @@ var Documents = (function () {
                 NS.C.Class.PreferContainer,
             ],
         };
-        if (this.context && this.context.auth.isAuthenticated())
-            this.context.auth.addAuthentication(requestOptions);
-        HTTP.Request.Util.setAcceptHeader("application/ld+json", requestOptions);
-        HTTP.Request.Util.setContentTypeHeader("application/ld+json", requestOptions);
-        HTTP.Request.Util.setPreferredInteractionModel(NS.LDP.Class.Container, requestOptions);
         HTTP.Request.Util.setContainerRetrievalPreferences(containerRetrievalPreferences, requestOptions, false);
         return HTTP.Request.Service.delete(documentURI, requestOptions);
     };
     Documents.prototype.save = function (persistedDocument, requestOptions) {
         if (requestOptions === void 0) { requestOptions = {}; }
-        if (this.context && this.context.auth.isAuthenticated())
-            this.context.auth.addAuthentication(requestOptions);
-        HTTP.Request.Util.setAcceptHeader("application/ld+json", requestOptions);
+        var uri = this.getRequestURI(persistedDocument.id);
+        this.setDefaultRequestOptions(requestOptions, NS.LDP.Class.RDFSource);
         HTTP.Request.Util.setContentTypeHeader("application/ld+json", requestOptions);
-        HTTP.Request.Util.setPreferredInteractionModel(NS.LDP.Class.RDFSource, requestOptions);
         HTTP.Request.Util.setIfMatchHeader(persistedDocument._etag, requestOptions);
         var body = persistedDocument.toJSON(this, this.jsonldConverter);
-        return HTTP.Request.Service.put(persistedDocument.id, body, requestOptions).then(function (response) {
+        return HTTP.Request.Service.put(uri, body, requestOptions).then(function (response) {
             return [persistedDocument, response];
         });
     };
     Documents.prototype.refresh = function (persistedDocument, requestOptions) {
         var _this = this;
         if (requestOptions === void 0) { requestOptions = {}; }
-        if (this.context && this.context.auth.isAuthenticated())
-            this.context.auth.addAuthentication(requestOptions);
-        HTTP.Request.Util.setAcceptHeader("application/ld+json", requestOptions);
-        HTTP.Request.Util.setContentTypeHeader("application/ld+json", requestOptions);
-        HTTP.Request.Util.setPreferredInteractionModel(NS.LDP.Class.RDFSource, requestOptions);
-        return HTTP.Request.Service.head(persistedDocument.id, requestOptions).then(function (headerResponse) {
+        var uri = this.getRequestURI(persistedDocument.id);
+        this.setDefaultRequestOptions(requestOptions, NS.LDP.Class.RDFSource);
+        return HTTP.Request.Service.head(uri, requestOptions).then(function (headerResponse) {
             var eTag = HTTP.Response.Util.getETag(headerResponse);
             if (eTag === persistedDocument._etag)
                 return [persistedDocument, null];
-            return HTTP.Request.Service.get(persistedDocument.id, requestOptions, new RDF.Document.Parser());
+            return HTTP.Request.Service.get(uri, requestOptions, new RDF.Document.Parser());
         }).then(function (_a) {
             var rdfDocuments = _a[0], response = _a[1];
             if (response === null)
@@ -543,7 +453,7 @@ var Documents = (function () {
             var eTag = HTTP.Response.Util.getETag(response);
             if (eTag === null)
                 throw new HTTP.Errors.BadResponseError("The response doesn't contain an ETag", response);
-            var rdfDocument = _this.getRDFDocument(persistedDocument.id, rdfDocuments, response);
+            var rdfDocument = _this.getRDFDocument(uri, rdfDocuments, response);
             if (rdfDocument === null)
                 throw new HTTP.Errors.BadResponseError("No document was returned.", response);
             var updatedPersistedDocument = _this.getPersistedDocument(rdfDocument, response);
@@ -553,12 +463,8 @@ var Documents = (function () {
     };
     Documents.prototype.delete = function (documentURI, requestOptions) {
         if (requestOptions === void 0) { requestOptions = {}; }
-        if (this.context && this.context.auth.isAuthenticated())
-            this.context.auth.addAuthentication(requestOptions);
-        if (!!this.context)
-            documentURI = this.context.resolve(documentURI);
-        HTTP.Request.Util.setAcceptHeader("application/ld+json", requestOptions);
-        HTTP.Request.Util.setPreferredInteractionModel(NS.LDP.Class.RDFSource, requestOptions);
+        documentURI = this.getRequestURI(documentURI);
+        this.setDefaultRequestOptions(requestOptions, NS.LDP.Class.RDFSource);
         return HTTP.Request.Service.delete(documentURI, requestOptions);
     };
     Documents.prototype.getSchemaFor = function (object) {
@@ -700,7 +606,7 @@ var Documents = (function () {
         return this.jsonldConverter.compact(expandedObject, targetObject, digestedSchema, pointerLibrary);
     };
     Documents.prototype.getDigestedObjectSchemaForExpandedObject = function (expandedObject) {
-        var types = this.getExpandedObjectTypes(expandedObject);
+        var types = RDF.Node.Util.getTypes(expandedObject);
         return this.getDigestedObjectSchema(types);
     };
     Documents.prototype.getDigestedObjectSchemaForDocument = function (document) {
@@ -716,22 +622,16 @@ var Documents = (function () {
                 if (this.context.getObjectSchema(type))
                     typesDigestedObjectSchemas.push(this.context.getObjectSchema(type));
             }
-            if (typesDigestedObjectSchemas.length > 1) {
-                digestedSchema = ObjectSchema.Digester.combineDigestedObjectSchemas(typesDigestedObjectSchemas);
-            }
-            else {
-                digestedSchema = typesDigestedObjectSchemas[0];
+            digestedSchema = ObjectSchema.Digester.combineDigestedObjectSchemas(typesDigestedObjectSchemas);
+            var vocab = this.context.getSetting("vocabulary");
+            if (vocab) {
+                digestedSchema.vocab = this.context.resolve(vocab);
             }
         }
         else {
             digestedSchema = new ObjectSchema.DigestedObjectSchema();
         }
         return digestedSchema;
-    };
-    Documents.prototype.getExpandedObjectTypes = function (expandedObject) {
-        if (!expandedObject["@type"])
-            return [];
-        return expandedObject["@type"];
     };
     Documents.prototype.getDocumentTypes = function (document) {
         if (!document.types)
@@ -766,13 +666,22 @@ var Documents = (function () {
         }
         return persistedDocument.getFragment(fragment.id);
     };
+    Documents.prototype.getRequestURI = function (uri) {
+        if (RDF.URI.Util.isRelative(uri)) {
+            if (!this.context)
+                throw new Errors.IllegalArgumentError("This Documents instance doesn't support relative URIs.");
+            uri = this.context.resolve(uri);
+        }
+        return uri;
+    };
+    Documents.prototype.setDefaultRequestOptions = function (requestOptions, interactionModel) {
+        if (this.context && this.context.auth.isAuthenticated())
+            this.context.auth.addAuthentication(requestOptions);
+        HTTP.Request.Util.setAcceptHeader("application/ld+json", requestOptions);
+        HTTP.Request.Util.setPreferredInteractionModel(interactionModel, requestOptions);
+    };
     Documents.prototype.getPersistedDocument = function (rdfDocument, response) {
-        var documentResources = RDF.Document.Util.getDocumentResources(rdfDocument);
-        if (documentResources.length > 1)
-            throw new HTTP.Errors.BadResponseError("The RDFDocument contains more than one document resource.", response);
-        if (documentResources.length === 0)
-            throw new HTTP.Errors.BadResponseError("The RDFDocument doesn\'t contain a document resource.", response);
-        var documentResource = documentResources[0];
+        var documentResource = this.getDocumentResource(rdfDocument, response);
         var fragmentResources = RDF.Document.Util.getBNodeResources(rdfDocument);
         fragmentResources = fragmentResources.concat(RDF.Document.Util.getFragmentResources(rdfDocument));
         var uri = documentResource["@id"];
@@ -829,29 +738,34 @@ var Documents = (function () {
         persistedDocument._syncSnapshot();
         return persistedDocument;
     };
-    Documents.prototype.parseMultipleResources = function (rdfResources, response) {
-        var volatiles = [];
-        var tempDocument = PersistedDocument.Factory.create("", this);
-        for (var _i = 0, rdfResources_1 = rdfResources; _i < rdfResources_1.length; _i++) {
-            var rdfResource = rdfResources_1[_i];
-            if (RDF.Document.Factory.is(rdfResource)) {
-                this.getPersistedDocument(rdfResource, response);
+    Documents.prototype.sendRequestForResponseWithMetadata = function (uri, requestOptions) {
+        var _this = this;
+        return HTTP.Request.Service.get(uri, requestOptions, new HTTP.JSONLDParser.Class()).then(function (_a) {
+            var expandedResult = _a[0], response = _a[1];
+            var freeNodes = RDF.Node.Util.getFreeNodes(expandedResult);
+            var rdfDocuments = RDF.Document.Util.getDocuments(expandedResult);
+            rdfDocuments.forEach(function (rdfDocument) { return _this.getPersistedDocument(rdfDocument, response); });
+            var freeResources = _this.getFreeResources(freeNodes);
+            var descriptionResources = freeResources.getResources().filter(function (resource) { return LDP.ResponseMetadata.Factory.hasRDFClass(resource); });
+            if (descriptionResources.length === 0)
+                return [[], response];
+            if (descriptionResources.length > 1)
+                throw new HTTP.Errors.BadResponseError("The response contained multiple c:ResponseMetadata objects", response);
+            var responseMetadata = descriptionResources[0];
+            for (var _i = 0, _b = responseMetadata.resourcesMetadata; _i < _b.length; _i++) {
+                var resourceMetadata = _b[_i];
+                var document_1 = resourceMetadata.resource;
+                document_1._etag = resourceMetadata.eTag;
             }
-            else {
-                var volatile = tempDocument.getPointer(rdfResource["@id"]);
-                this.compact(rdfResource, volatile, tempDocument);
-                volatiles.push(volatile);
-            }
-        }
-        return volatiles;
+            var persistedDocuments = responseMetadata.resourcesMetadata.map(function (resourceMetadata) { return resourceMetadata.resource; });
+            return [persistedDocuments, response];
+        });
     };
-    Documents.prototype.getResponseDescription = function (volatiles) {
-        for (var _i = 0, volatiles_1 = volatiles; _i < volatiles_1.length; _i++) {
-            var volatile = volatiles_1[_i];
-            if (ResponseDescription.Factory.is(volatile))
-                return volatile;
-        }
-        return null;
+    Documents.prototype.getFreeResources = function (nodes) {
+        var freeResourcesDocument = FreeResources.Factory.create(this);
+        var resources = nodes.map(function (node) { return freeResourcesDocument.createResource(node["@id"]); });
+        this.compact(nodes, resources, freeResourcesDocument);
+        return freeResourcesDocument;
     };
     return Documents;
 }());

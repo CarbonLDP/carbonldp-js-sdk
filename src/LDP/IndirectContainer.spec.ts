@@ -52,11 +52,17 @@ describe( module( "Carbon/LDP/IndirectContainer" ), ():void => {
 			expect( IndirectContainer.Factory.hasClassProperties ).toBeDefined();
 			expect( Utils.isFunction( IndirectContainer.Factory.hasClassProperties ) ).toBe( true );
 
-			let object:any = {};
+			let object:any;
 			expect( IndirectContainer.Factory.hasClassProperties( object ) ).toBe( false );
 
-			object.insertedContentRelation =  "http://example.com/myNamespace#some-wrapper-relation";
+			object = {
+				insertedContentRelation: null,
+			};
 			expect( IndirectContainer.Factory.hasClassProperties( object ) ).toBe( true );
+
+			delete object.insertedContentRelation;
+			expect( IndirectContainer.Factory.hasClassProperties( object ) ).toBe( false );
+			object.insertedContentRelation = null;
 		});
 		
 	});

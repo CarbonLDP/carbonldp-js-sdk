@@ -15,6 +15,7 @@ import * as Utils from "./../Utils";
 import * as Pointer from "./../Pointer";
 import * as Document from "./../Document";
 import * as PersistedDocument from "./../PersistedDocument";
+import * as RetrievalPreferences from "./../RetrievalPreferences";
 import AbstractContext from "./../AbstractContext";
 
 import * as PersistedContainer from "./PersistedContainer";
@@ -58,36 +59,66 @@ describe( module( "Carbon/LDP/PersistedContainer" ), ():void => {
 			expect( Utils.isFunction( PersistedContainer.Factory.hasClassProperties ) ).toBe( true );
 
 			let document:any;
-
-			document = Document.Factory.create();
 			expect( PersistedContainer.Factory.hasClassProperties( document ) ).toBe( false );
 
-			document = Document.Factory.create();
-			document.id = "http://example.com/resource/";
-			expect( PersistedContainer.Factory.hasClassProperties( document ) ).toBe( false );
+			document = {
+				addMember: () => {},
+				addMembers: () => {},
+				createChild: () => {},
+				listChildren: () => {},
+				getChildren: () => {},
+				listMembers: () => {},
+				getMembers: () => {},
+				removeMember: () => {},
+				removeMembers: () => {},
+				removeAllMembers: () => {},
+				upload: () => {},
+			};
+			expect( PersistedContainer.Factory.hasClassProperties( document ) ).toBe( true );
 
-			document = PersistedDocument.Factory.create( "http://example.com/resource/", context.documents );
+			delete document.addMember;
 			expect( PersistedContainer.Factory.hasClassProperties( document ) ).toBe( false );
-
 			document.addMember = () => {};
+
+			delete document.addMembers;
 			expect( PersistedContainer.Factory.hasClassProperties( document ) ).toBe( false );
 			document.addMembers = () => {};
+
+			delete document.createChild;
 			expect( PersistedContainer.Factory.hasClassProperties( document ) ).toBe( false );
 			document.createChild = () => {};
+
+			delete document.listChildren;
 			expect( PersistedContainer.Factory.hasClassProperties( document ) ).toBe( false );
 			document.listChildren = () => {};
+
+			delete document.getChildren;
+			expect( PersistedContainer.Factory.hasClassProperties( document ) ).toBe( false );
+			document.getChildren = () => {};
+
+			delete document.listMembers;
 			expect( PersistedContainer.Factory.hasClassProperties( document ) ).toBe( false );
 			document.listMembers = () => {};
+
+			delete document.getMembers;
+			expect( PersistedContainer.Factory.hasClassProperties( document ) ).toBe( false );
+			document.getMembers = () => {};
+
+			delete document.removeMember;
 			expect( PersistedContainer.Factory.hasClassProperties( document ) ).toBe( false );
 			document.removeMember = () => {};
+
+			delete document.removeMembers;
 			expect( PersistedContainer.Factory.hasClassProperties( document ) ).toBe( false );
 			document.removeMembers = () => {};
+
+			delete document.removeAllMembers;
 			expect( PersistedContainer.Factory.hasClassProperties( document ) ).toBe( false );
 			document.removeAllMembers = () => {};
-			expect( PersistedContainer.Factory.hasClassProperties( document ) ).toBe( false );
 
+			delete document.upload;
+			expect( PersistedContainer.Factory.hasClassProperties( document ) ).toBe( false );
 			document.upload = () => {};
-			expect( PersistedContainer.Factory.hasClassProperties( document ) ).toBe( true );
 		});
 
 		it( hasMethod(
@@ -107,28 +138,51 @@ describe( module( "Carbon/LDP/PersistedContainer" ), ():void => {
 			let persistedContainer:PersistedContainer.Class = PersistedContainer.Factory.decorate( document );
 			expect( PersistedContainer.Factory.hasClassProperties( persistedContainer ) ).toBe( true );
 
+			let fx = () => {};
 			document = PersistedDocument.Factory.create( "http://example.com/resource/", context.documents );
-			document.addMember = () => {};
-			document.addMembers = () => {};
-			document.createChild = () => {};
-			document.listChildren = () => {};
-			document.listMembers = () => {};
-			document.removeMember = () => {};
-			document.removeMembers = () => {};
-			document.removeAllMembers = () => {};
-			document.upload = () => {};
-			let anotherContainer:PersistedContainer.Class = PersistedContainer.Factory.decorate( document );
+			document.addMember = fx;
+			document.addMembers = fx;
+			document.createChild = fx;
+			document.listChildren = fx;
+			document.getChildren = fx;
+			document.listMembers = fx;
+			document.getMembers = fx;
+			document.removeMember = fx;
+			document.removeMembers = fx;
+			document.removeAllMembers = fx;
+			document.upload = fx;
 
+			expect( PersistedContainer.Factory.hasClassProperties( document ) ).toBe( true );
+			let anotherContainer:PersistedContainer.Class = PersistedContainer.Factory.decorate( document );
 			expect( PersistedContainer.Factory.hasClassProperties( anotherContainer ) ).toBe( true );
-			expect( anotherContainer.addMember ).not.toBe( persistedContainer.addMember );
-			expect( anotherContainer.addMembers ).not.toBe( persistedContainer.addMembers );
-			expect( anotherContainer.createChild ).not.toBe( persistedContainer.createChild );
-			expect( anotherContainer.listChildren ).not.toBe( persistedContainer.listChildren );
-			expect( anotherContainer.listMembers ).not.toBe( persistedContainer.listMembers );
-			expect( anotherContainer.removeMember ).not.toBe( persistedContainer.removeMember );
-			expect( anotherContainer.removeMembers ).not.toBe( persistedContainer.removeMembers );
-			expect( anotherContainer.removeAllMembers ).not.toBe( persistedContainer.removeAllMembers );
-			expect( anotherContainer.upload ).not.toBe( persistedContainer.upload );
+			expect( anotherContainer.addMember ).toBe( fx );
+			expect( anotherContainer.addMembers ).toBe( fx );
+			expect( anotherContainer.createChild ).toBe( fx );
+			expect( anotherContainer.listChildren ).toBe( fx );
+			expect( anotherContainer.getChildren ).toBe( fx );
+			expect( anotherContainer.listMembers ).toBe( fx );
+			expect( anotherContainer.getMembers ).toBe( fx );
+			expect( anotherContainer.removeMember ).toBe( fx );
+			expect( anotherContainer.removeMembers ).toBe( fx );
+			expect( anotherContainer.removeAllMembers ).toBe( fx );
+			expect( anotherContainer.upload ).toBe( fx );
+
+
+			delete document.addMember;
+			expect( PersistedContainer.Factory.hasClassProperties( document ) ).toBe( false );
+			let anotherAnotherContainer:PersistedContainer.Class = PersistedContainer.Factory.decorate( document );
+			expect( PersistedContainer.Factory.hasClassProperties( anotherAnotherContainer ) ).toBe( true );
+			expect( anotherAnotherContainer.addMember ).not.toBe( fx );
+			expect( anotherAnotherContainer.addMembers ).not.toBe( fx );
+			expect( anotherAnotherContainer.createChild ).not.toBe( fx );
+			expect( anotherAnotherContainer.listChildren ).not.toBe( fx );
+			expect( anotherAnotherContainer.getChildren ).not.toBe( fx );
+			expect( anotherAnotherContainer.listMembers ).not.toBe( fx );
+			expect( anotherAnotherContainer.getMembers ).not.toBe( fx );
+			expect( anotherAnotherContainer.removeMember ).not.toBe( fx );
+			expect( anotherAnotherContainer.removeMembers ).not.toBe( fx );
+			expect( anotherAnotherContainer.removeAllMembers ).not.toBe( fx );
+			expect( anotherAnotherContainer.upload ).not.toBe( fx );
 		});
 
 		describe( decoratedObject(
@@ -303,6 +357,33 @@ describe( module( "Carbon/LDP/PersistedContainer" ), ():void => {
 
 			it( hasMethod(
 				INSTANCE,
+				"getChildren",
+				"Return all the children of the container.", [
+					{ name: "retrievalPreferences", type: "Carbon.RetrievalPreferences.Class", optional: true },
+				],
+				{ type: "Promise<[ Carbon.Pointer.Class[], Carbon.HTTP.Response ]>" }
+			), ():void => {
+				expect( container.getChildren ).toBeDefined();
+				expect( Utils.isFunction( container.getChildren ) ).toBeDefined();
+
+				let spy = spyOn( container._documents, "getChildren" );
+
+				container.getChildren();
+				expect( spy ).toHaveBeenCalledWith( "http://example.com/resource/", undefined );
+				spy.calls.reset();
+
+
+				let retrievalPreferences:RetrievalPreferences.Class = {
+					limit: 10,
+					offset: 0,
+					orderBy: [ { "@id": "http://example.com/ns#string", "@type": "string" } ]
+				};
+				container.getChildren( retrievalPreferences );
+				expect( spy ).toHaveBeenCalledWith( "http://example.com/resource/", retrievalPreferences );
+			});
+
+			it( hasMethod(
+				INSTANCE,
 				"listMembers", [
 					{ name: "includeNonReadable", type: "boolean", optional: true, description: "By default this option is set to `true`." },
 				],
@@ -319,6 +400,51 @@ describe( module( "Carbon/LDP/PersistedContainer" ), ():void => {
 
 				container.listMembers( false );
 				expect( spy ).toHaveBeenCalledWith( "http://example.com/resource/", false );
+			});
+
+			describe( method(
+				INSTANCE,
+				"getMembers"
+			), ():void => {
+
+				it( hasSignature( [
+						{ name: "includeNonReadable", type: "boolean", optional: true, description: "By default this option is set to `true`." },
+						{ name: "retrievalPreferences", type: "Carbon.RetrievalPreferences.Class", optional: true },
+					],
+					{ type: "Promise<[ Carbon.Pointer.Class[], Carbon.HTTP.Response.Class ]>" }
+				), ():void => {
+					expect( container.getMembers ).toBeDefined();
+					expect( Utils.isFunction( container.getMembers ) ).toBeDefined();
+
+					let spy = spyOn( container._documents, "getMembers" );
+
+					container.getMembers();
+					expect( spy ).toHaveBeenCalledWith( "http://example.com/resource/", true, undefined );
+					spy.calls.reset();
+
+					container.getMembers( false );
+					expect( spy ).toHaveBeenCalledWith( "http://example.com/resource/", false, undefined );
+					spy.calls.reset();
+
+					let retrievalPreferences:RetrievalPreferences.Class = {
+						limit: 10,
+						offset: 0,
+						orderBy: [ { "@id": "http://example.com/ns#string", "@type": "string" } ]
+					};
+
+					container.getMembers( false, retrievalPreferences );
+					expect( spy ).toHaveBeenCalledWith( "http://example.com/resource/", false, retrievalPreferences );
+					spy.calls.reset();
+
+					container.getMembers( true, retrievalPreferences );
+					expect( spy ).toHaveBeenCalledWith( "http://example.com/resource/", true, retrievalPreferences );
+					spy.calls.reset();
+
+					container.getMembers( retrievalPreferences );
+					expect( spy ).toHaveBeenCalledWith( "http://example.com/resource/", retrievalPreferences, undefined );
+					spy.calls.reset();
+				});
+
 			});
 
 			describe( method(

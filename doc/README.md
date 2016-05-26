@@ -66,7 +66,8 @@
 		- [Decorated Object](#Carbon-Document-Factory-Decorated-Object)
 			- [Methods](#Carbon-Document-Factory-Decorated-Object-Methods)
 - [Module Carbon/Documents](#Carbon-Documents)
-	- [Methods](#Carbon-Documents-Methods)
+	- [Class Carbon.Documents](#Carbon-Documents)
+		- [Methods](#Carbon-Documents-Methods)
 - [Module Carbon/Errors](#Carbon-Errors)
 	- [Reexports](#Carbon-Errors-Reexports)
 - [Module Carbon/Errors/AbstractError](#Carbon-Errors-AbstractError)
@@ -96,8 +97,11 @@
 - [Module Carbon/Fragment](#Carbon-Fragment)
 	- [Class Carbon.Fragment.Factory](#Carbon-Fragment-Factory)
 		- [Methods](#Carbon-Fragment-Factory-Methods)
-	- [Class Carbon.Fragment.Util](#Carbon-Fragment-Util)
-		- [Methods](#Carbon-Fragment-Util-Methods)
+- [Module Carbon/FreeResources](#Carbon-FreeResources)
+	- [Class Carbon.FreeResources.Factory](#Carbon-FreeResources-Factory)
+		- [Methods](#Carbon-FreeResources-Factory-Methods)
+		- [Decorated Object](#Carbon-FreeResources-Factory-Decorated-Object)
+			- [Methods](#Carbon-FreeResources-Factory-Decorated-Object-Methods)
 - [Module Carbon/HTTP](#Carbon-HTTP)
 	- [Reexports](#Carbon-HTTP-Reexports)
 - [Module Carbon/HTTP/Errors](#Carbon-HTTP-Errors)
@@ -292,14 +296,14 @@
 	- [Properties](#Carbon-LDP-RemoveMemberAction-Properties)
 	- [Class Carbon.LDP.RemoveMemberAction.Factory](#Carbon-LDP-RemoveMemberAction-Factory)
 		- [Methods](#Carbon-LDP-RemoveMemberAction-Factory-Methods)
-- [Module Carbon/LDP/ResponseDescription](#Carbon-LDP-ResponseDescription)
-	- [Properties](#Carbon-LDP-ResponseDescription-Properties)
-	- [Class Carbon.LDP.ResponseDescription.Factory](#Carbon-LDP-ResponseDescription-Factory)
-		- [Methods](#Carbon-LDP-ResponseDescription-Factory-Methods)
-- [Module Carbon/LDP/ResponseMetaData](#Carbon-LDP-ResponseMetaData)
-	- [Properties](#Carbon-LDP-ResponseMetaData-Properties)
-	- [Class Carbon.LDP.ResponseMetaData.Factory](#Carbon-LDP-ResponseMetaData-Factory)
-		- [Methods](#Carbon-LDP-ResponseMetaData-Factory-Methods)
+- [Module Carbon/LDP/ResourceMetadata](#Carbon-LDP-ResourceMetadata)
+	- [Properties](#Carbon-LDP-ResourceMetadata-Properties)
+	- [Class Carbon.LDP.ResourceMetadata.Factory](#Carbon-LDP-ResourceMetadata-Factory)
+		- [Methods](#Carbon-LDP-ResourceMetadata-Factory-Methods)
+- [Module Carbon/LDP/ResponseMetadata](#Carbon-LDP-ResponseMetadata)
+	- [Properties](#Carbon-LDP-ResponseMetadata-Properties)
+	- [Class Carbon.LDP.ResponseMetadata.Factory](#Carbon-LDP-ResponseMetadata-Factory)
+		- [Methods](#Carbon-LDP-ResponseMetadata-Factory-Methods)
 - [Module Carbon/LDP/VolatileResource](#Carbon-LDP-VolatileResource)
 	- [Properties](#Carbon-LDP-VolatileResource-Properties)
 	- [Class Carbon.LDP.VolatileResource.Factory](#Carbon-LDP-VolatileResource-Factory)
@@ -1609,17 +1613,6 @@ getFragments():Carbon.Fragment.Class[]
 
 Returns an array of the fragments in the document
 
-##### createNamedFragment
-```typescript 
-createNamedFragment( slug:string ):Carbon.NamedFragment.Class
-```
-
-Create a Named Fragment with the slug provided
-
-*Parameters*
-
-- slug
-
 ##### inScope
 ```typescript 
 inScope( pointer:Carbon.Pointer.Class ):boolean
@@ -1678,6 +1671,28 @@ createFragment():Carbon.Fragment.Class
 ```
 
 Creates a Blank Node Fragment, since no slug is provided
+
+##### createNamedFragment
+```typescript 
+createNamedFragment( slug:string ):Carbon.NamedFragment.Class
+```
+
+Creates a NamedFragment with the slug provided
+
+*Parameters*
+
+- slug
+
+```typescript 
+createNamedFragment( slug:string,  object:Object ):Carbon.NamedFragment.Class
+```
+
+Creates a NamedFragment from the object provided and the slug specified.
+
+*Parameters*
+
+- slug
+- object
 
 ##### removeFragment
 ```typescript 
@@ -1746,7 +1761,17 @@ Returns a JSON string from the document using the default ObjectSchema
 
 
 
-### <a name="Carbon-Documents-Methods" />Methods
+
+
+### <a name="Carbon-Documents" />Class Carbon.Documents
+
+
+> Class that contains methods for retrieving, saving and updating documents from the server.
+
+
+
+
+#### <a name="Carbon-Documents-Methods" />Methods
 
 ##### get
 ```typescript 
@@ -1825,7 +1850,7 @@ Remove all the members of the document container specified.
 refresh( persistedDocument:Carbon.PersistedDocument.Class,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.PersistedDocument.Class, Carbon.HTTP.Response ]>
 ```
 
-Update the document with the data of the server, if there is a diferent version on it.
+Update the document with the data of the server, if there is a different version on it.
 
 *Parameters*
 
@@ -2487,23 +2512,167 @@ Create a Blank Node Fragment since no ID is provided for the specified document.
 
 
 
-### <a name="Carbon-Fragment-Util" />Class Carbon.Fragment.Util
-
-
-> Class with useful options for Fragment objects
+## <a name="Carbon-FreeResources" />Module Carbon/FreeResources
 
 
 
 
-#### <a name="Carbon-Fragment-Util-Methods" />Methods
-##### generateID
+
+
+
+
+### <a name="Carbon-FreeResources-Factory" />Class Carbon.FreeResources.Factory
+
+
+> Factory class for `Carbon.FreeResources.Class` objects.
+
+
+
+
+#### <a name="Carbon-FreeResources-Factory-Methods" />Methods
+##### hasClassProperties
 ```typescript 
-static generateID()
+static hasClassProperties( object:Object ):boolean
 ```
 
-Returns an ID for a BlankNode using an universally unique identifier (UUID).
+Returns true if the object provided has the properties of a `Carbon.FreeResources.Class` object.
+
+*Parameters*
+
+- object
+
+##### create
+```typescript 
+static create( documents:Carbon.Documents ):Carbon.FreeResources.Class
+```
+
+Creates a empty `Carbon.FreeResources.Class` object.
+
+*Parameters*
+
+- documents: A `Carbon.Documents` object where the FreeResources scope is.
+
+##### createFrom
+```typescript 
+static createFrom( object:T extends Object,  documents:Carbon.Documents.Class ):Carbon.FreeResources.Class & T
+```
+
+Create a `Carbon.FreeResources.Class` object from the plain object provided.
+
+*Parameters*
+
+- object: The object that wants be converted in a `Carbon.FreeResources.Class`.
+- documents: A `Carbon.Documents` object where the FreeResource scope is.
+
+##### decorate
+```typescript 
+static decorate( object:T extends Object ):Carbon.FreeResources.Class & T
+```
+
+Decorate the object provided with the methods and properties of a `Carbon.FreeResources.Class` object.
+
+*Parameters*
+
+- object
 
 
+
+#### <a name="Carbon-FreeResources-Factory-Decorated-Object" />Decorated Object
+**Interfaces:** [Carbon.FreeResources.Class](#Carbon-FreeResources-Class)
+
+> Object decorated by the Carbon.FreeResources.Factory.decorate function.
+
+##### <a name="Carbon-FreeResources-Factory-Decorated-Object-Properties" />Properties
+```typescript 
+_documents:Private property that contains the Documents class where the object scope is. 
+```
+
+Carbon.Documents
+```typescript 
+_resourcesIndex:Private property that contains the references of every free resource in a map form. 
+```
+
+Map<string, Carbon.Resource.Class>
+
+##### <a name="Carbon-FreeResources-Factory-Decorated-Object-Methods" />Methods
+##### hasResource
+```typescript 
+hasResource( id:string ):boolean
+```
+
+Returns true if exists a resource with the ID specified.
+
+*Parameters*
+
+- id: The ID of the resource to seek for.
+
+##### getResource
+```typescript 
+getResource( id:string ):Carbon.Resource.Class
+```
+
+Returns the resource referred by the ID provided. If no resource exists with the ID specified `null` is returned.
+
+*Parameters*
+
+- id: The ID of the resource to seek for.
+
+##### getResources
+```typescript 
+getResources():Carbon.Resource.Class[]
+```
+
+Returns an array with all the resources inside the FreeResources object
+
+##### createResource
+```typescript 
+createResource( id?:string ):Carbon.Resource.Class
+```
+
+Create an returns a new Free Resource. Throw an Error if no valid id if provided or if it is already in use.
+
+*Parameters*
+
+- id: The ID of the resource to create. It should be an ID as a BlankNode.
+
+##### hasPointer
+```typescript 
+hasPointer():boolean
+```
+
+Returns true if exists a pointer in the scope of the FreeResources object and its parents.
+
+##### getPointer
+```typescript 
+getPointer( id:string ):Carbon.Pointer.Class
+```
+
+Returns the pointer referred by the id specified, or creates one if no pointer exists in the scope.
+
+*Parameters*
+
+- id: The ID of the pointer seek for or the one to create.
+
+##### inScope
+```typescript 
+inScope( id:string ):boolean
+```
+
+Returns true if the the ID provided is in the scope of the object.
+
+*Parameters*
+
+- id: The ID to evaluate if is in the scope.
+
+```typescript 
+inScope( pointer:Carbon.Pointer.Class ):boolean
+```
+
+Returns true if the the Pointer provided can be in the scope of the object.
+
+*Parameters*
+
+- pointer: The Pointer to evaluate if can be in the scope.
 
 
 ## <a name="Carbon-HTTP" />Module Carbon/HTTP
@@ -4449,8 +4618,8 @@ expand( compactedObject:Object,  digestedSchema:Carbon.ObjectSchema.DigestedObje
 | PersistedContainer | [Carbon/LDP/PersistedContainer](#Carbon-LDP-PersistedContainer) |
 | RDFSource | [Carbon/LDP/RDFSource](#Carbon-LDP-RDFSource) |
 | RemoveMemberAction | [Carbon/LDP/RemoveMemberAction](#Carbon-LDP-RemoveMemberAction) |
-| ResponseDescription | [Carbon/LDP/ResponseDescription](#Carbon-LDP-ResponseDescription) |
-| ResponseMetaData | [Carbon/LDP/ResponseMetaData](#Carbon-LDP-ResponseMetaData) |
+| ResponseMetadata | [Carbon/LDP/ResponseMetadata](#Carbon-LDP-ResponseMetadata) |
+| ResourceMetadata | [Carbon/LDP/ResourceMetadata](#Carbon-LDP-ResourceMetadata) |
 
 
 
@@ -4837,6 +5006,17 @@ listChildren():Promise<[ Carbon.Pointer.Class[], Carbon.HTTP.Response ]>
 
 Return all the children of the container.
 
+##### getChildren
+```typescript 
+getChildren( retrievalPreferences?:Carbon.RetrievalPreferences.Class ):Promise<[ Carbon.Pointer.Class[], Carbon.HTTP.Response ]>
+```
+
+Return all the children of the container.
+
+*Parameters*
+
+- retrievalPreferences
+
 ##### listMembers
 ```typescript 
 listMembers( includeNonReadable?:boolean ):Promise<[ Carbon.Pointer.Class[], Carbon.HTTP.Response.Class ]>
@@ -4923,6 +5103,17 @@ createChild( slug:string ):Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.
 createChild():Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>
 ```
 
+
+##### getMembers
+```typescript 
+getMembers( includeNonReadable?:boolean,  retrievalPreferences?:Carbon.RetrievalPreferences.Class ):Promise<[ Carbon.Pointer.Class[], Carbon.HTTP.Response.Class ]>
+```
+
+
+*Parameters*
+
+- includeNonReadable: By default this option is set to `true`.
+- retrievalPreferences
 
 ##### removeMember
 ```typescript 
@@ -5071,13 +5262,13 @@ Create and returns a `Carbon.Document.Class` object with a RemoveMemberAction fr
 
 
 
-## <a name="Carbon-LDP-ResponseDescription" />Module Carbon/LDP/ResponseDescription
+## <a name="Carbon-LDP-ResourceMetadata" />Module Carbon/LDP/ResourceMetadata
 
 
 
 
 
-### <a name="Carbon-LDP-ResponseDescription-Properties" />Properties
+### <a name="Carbon-LDP-ResourceMetadata-Properties" />Properties
 ```typescript 
 static RDF_CLASS:string 
 ```
@@ -5090,21 +5281,21 @@ static SCHEMA:Carbon.ObjectSchema.Class
 
 
 
-### <a name="Carbon-LDP-ResponseDescription-Factory" />Class Carbon.LDP.ResponseDescription.Factory
+### <a name="Carbon-LDP-ResourceMetadata-Factory" />Class Carbon.LDP.ResourceMetadata.Factory
 
 
-> Factory class form `Carbon.LDP.ResponseDescription.Class` objects.
+> Factory class form `Carbon.LDP.ResourceMetadata.Class` objects.
 
 
 
 
-#### <a name="Carbon-LDP-ResponseDescription-Factory-Methods" />Methods
+#### <a name="Carbon-LDP-ResourceMetadata-Factory-Methods" />Methods
 ##### hasClassProperties
 ```typescript 
 static hasClassProperties( object:Object ):boolean
 ```
 
-Return true if the object provided has the properties of a `Carbon.LDP.ResponseDescription.Class` object.
+Return true if the object provided has the properties of a `Carbon.LDP.ResourceMetadata.Class` object.
 
 *Parameters*
 
@@ -5115,7 +5306,71 @@ Return true if the object provided has the properties of a `Carbon.LDP.ResponseD
 static is( object:Object ):boolean
 ```
 
-Return true if the object provided can be classified as a `Carbon.LDP.ResponseDescription.Class` object.
+Return true if the object provided can be classified as a `Carbon.LDP.ResourceMetadata.Class` object.
+
+*Parameters*
+
+- object: Object to check.
+
+##### hasRDFClass
+```typescript 
+static hasRDFClass( object:Object ):boolean
+```
+
+Return true if the object provided have the RDF_CLASS of a ResourceMetadata, either if it's a Resource or a RDF object.
+
+*Parameters*
+
+- object: Object to check.
+
+
+
+
+## <a name="Carbon-LDP-ResponseMetadata" />Module Carbon/LDP/ResponseMetadata
+
+
+
+
+
+### <a name="Carbon-LDP-ResponseMetadata-Properties" />Properties
+```typescript 
+static RDF_CLASS:string 
+```
+
+```typescript 
+static SCHEMA:Carbon.ObjectSchema.Class 
+```
+
+
+
+
+
+### <a name="Carbon-LDP-ResponseMetadata-Factory" />Class Carbon.LDP.ResponseMetadata.Factory
+
+
+> Factory class form `Carbon.LDP.ResponseMetadata.Class` objects.
+
+
+
+
+#### <a name="Carbon-LDP-ResponseMetadata-Factory-Methods" />Methods
+##### hasClassProperties
+```typescript 
+static hasClassProperties( object:Object ):boolean
+```
+
+Return true if the object provided has the properties of a `Carbon.LDP.ResponseMetadata.Class` object.
+
+*Parameters*
+
+- object: Object to check.
+
+##### is
+```typescript 
+static is( object:Object ):boolean
+```
+
+Return true if the object provided can be classified as a `Carbon.LDP.ResponseMetadata.Class` object.
 
 *Parameters*
 
@@ -5126,71 +5381,7 @@ Return true if the object provided can be classified as a `Carbon.LDP.ResponseDe
 static hasRDFClass( object:Object ):boolean
 ```
 
-Return true if the object provided have the RDF_CLASS of a ResponseDescription, either if it's a Resource or a RDF object.
-
-*Parameters*
-
-- object: Object to check.
-
-
-
-
-## <a name="Carbon-LDP-ResponseMetaData" />Module Carbon/LDP/ResponseMetaData
-
-
-
-
-
-### <a name="Carbon-LDP-ResponseMetaData-Properties" />Properties
-```typescript 
-static RDF_CLASS:string 
-```
-
-```typescript 
-static SCHEMA:Carbon.ObjectSchema.Class 
-```
-
-
-
-
-
-### <a name="Carbon-LDP-ResponseMetaData-Factory" />Class Carbon.LDP.ResponseMetaData.Factory
-
-
-> Factory class form `Carbon.LDP.ResponseMetaData.Class` objects.
-
-
-
-
-#### <a name="Carbon-LDP-ResponseMetaData-Factory-Methods" />Methods
-##### hasClassProperties
-```typescript 
-static hasClassProperties( object:Object ):boolean
-```
-
-Return true if the object provided has the properties of a `Carbon.LDP.ResponseMetaData.Class` object.
-
-*Parameters*
-
-- object: Object to check.
-
-##### is
-```typescript 
-static is( object:Object ):boolean
-```
-
-Return true if the object provided can be classified as a `Carbon.LDP.ResponseMetaData.Class` object.
-
-*Parameters*
-
-- object: Object to check.
-
-##### hasRDFClass
-```typescript 
-static hasRDFClass( object:Object ):boolean
-```
-
-Return true if the object provided have the RDF_CLASS of a ResponseMetaData, either if it's a Resource or a RDF object.
+Return true if the object provided have the RDF_CLASS of a ResponseMetadata, either if it's a Resource or a RDF object.
 
 *Parameters*
 
@@ -5339,11 +5530,11 @@ static RemoveMemberAction:string
 ```
 
 ```typescript 
-static ResponseDescription:string 
+static ResponseMetadata:string 
 ```
 
 ```typescript 
-static ResponseMetaData:string 
+static ResourceMetadata:string 
 ```
 
 
@@ -5395,11 +5586,11 @@ static targetMember:string
 ```
 
 ```typescript 
-static responseProperty:string 
+static resourceMetadata:string 
 ```
 
 ```typescript 
-static responsePropertyResource:string 
+static resource:string 
 ```
 
 ```typescript 
@@ -5497,7 +5688,7 @@ static AllOrigins:string
 
 #### <a name="Carbon-NS-CS-Predicate-Properties" />Properties
 ```typescript 
-static name:string 
+static namae:string 
 ```
 
 ```typescript 
@@ -6709,7 +6900,6 @@ static getBNodeResources( document:Carbon.RDF.Document.Class ):Carbon.RDF.RDFNod
 ```
 
 Returns all the resources that refers to blank nodes from a document.
-Throw an `Carbon.Errors.IllegalArgumentError` if the object is not RDF like
 
 *Parameters*
 
@@ -6720,8 +6910,7 @@ Throw an `Carbon.Errors.IllegalArgumentError` if the object is not RDF like
 static getDocuments( objects:Object[] ):Carbon.RDF.Document.Class[]
 ```
 
-Returns an array of documents from an array of resources or documents.
-Throw an `Carbon.Errors.IllegalArgumentError` if the objects are not RDF like
+Returns the objects that represents a RDF Document of an array of RDF like objects.
 
 *Parameters*
 
@@ -6731,8 +6920,7 @@ Throw an `Carbon.Errors.IllegalArgumentError` if the objects are not RDF like
 static getDocuments( object:Object ):Carbon.RDF.Document.Class[]
 ```
 
-Returns an array of documents from a document or resource.
-Throw an `Carbon.Errors.IllegalArgumentError` if the object is not RDF like
+Returns an array of with the object provided, if it is an RDF Document.
 
 *Parameters*
 
@@ -6743,8 +6931,7 @@ Throw an `Carbon.Errors.IllegalArgumentError` if the object is not RDF like
 static getResources( objects:Object[] ):Carbon.RDF.RDFNode.Class
 ```
 
-Returns all the resources from a array of documents or resources.
-Throw an `Carbon.Errors.IllegalArgumentError` if the objects are not RDF like
+Returns all the resources that not are RDF Documents from the array of RDF like objects provided.
 
 *Parameters*
 
@@ -6754,8 +6941,7 @@ Throw an `Carbon.Errors.IllegalArgumentError` if the objects are not RDF like
 static getResources( object:Object ):Carbon.RDF.RDFNode.Class
 ```
 
-Returns all the resources from a document or resource.
-Throw an `Carbon.Errors.IllegalArgumentError` if the object is not RDF like
+Returns all the resources that not are RDF Documents from the RDF like object provided.
 
 *Parameters*
 
@@ -6767,7 +6953,6 @@ static getDocumentResources( document:Carbon.RDF.Document.Class ):Carbon.RDF.RDF
 ```
 
 Returns all the resources that refers to documents from a document.
-Throw an `Carbon.Errors.IllegalArgumentError` if the object is not RDF like
 
 *Parameters*
 
@@ -6778,7 +6963,6 @@ static getDocumentResources( document:Carbon.RDF.RDFNode.Class[] ):Carbon.RDF.RD
 ```
 
 Returns all the resources that refers to documents from an array of resources.
-Throw an `Carbon.Errors.IllegalArgumentError` if the object is not RDF like
 
 *Parameters*
 
@@ -6790,7 +6974,6 @@ static getFragmentResources( document:Carbon.RDF.Document.Class,  documentResour
 ```
 
 Returns all the resources that refers to fragments from a document. If documentResource is provided, it will return the fragments of the specified document.
-Throw an `Carbon.Errors.IllegalArgumentError` if the object is not RDF like
 
 *Parameters*
 
@@ -6802,7 +6985,6 @@ static getFragmentResources( document:Carbon.RDF.Document.Class,  documentResour
 ```
 
 Returns all the resources that refers to fragments from a document. If documentResourceURI is provided, it will return the fragments of the specified URI.
-Throw an `Carbon.Errors.IllegalArgumentError` if the object is not RDF like
 
 *Parameters*
 
@@ -6814,7 +6996,6 @@ static getFragmentResources( document:Carbon.RDF.Document.Class,  documentResour
 ```
 
 Returns all the resources that refers to fragments from an array of resources. If documentResource is provided, it will return the fragments of the specified document.
-Throw an `Carbon.Errors.IllegalArgumentError` if the object is not RDF like
 
 *Parameters*
 
@@ -6826,7 +7007,6 @@ static getFragmentResources( document:Carbon.RDF.Document.Class,  documentResour
 ```
 
 Returns all the resources that refers to fragments from a document. If documentResourceURI is provided, it will return the fragments of the specified URI.
-Throw an `Carbon.Errors.IllegalArgumentError` if the object is not RDF like
 
 *Parameters*
 
@@ -7412,6 +7592,13 @@ Returns true if the URI provided reference to a Blank Node
 
 - uri
 
+##### generateBNodeID
+```typescript 
+static generateBNodeID()
+```
+
+Returns an ID for a BlankNode using an universally unique identifier (UUID).
+
 ##### isPrefixed
 ```typescript 
 static isPrefixed( uri:string ):boolean
@@ -7972,7 +8159,7 @@ getSetting( name:string ):string
 ```
 
 Returns the value of the setting looked for.
-Returns `null` if no settign with the name specified exists.
+Returns `null` if no setting with the name specified exists.
 
 *Parameters*
 
@@ -8654,6 +8841,7 @@ A object of type `Carbon.settings.CarbonSettings`, whitch is the default setting
 * platform.container: `"platform/"`
 * platform.apps.container: `"apps/"`
 * platform.agents.container: `"agents/"`
+* vocabulary: `"vocabulary/#"`
 
 
 

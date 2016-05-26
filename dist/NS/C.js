@@ -68,13 +68,13 @@ var Class = (function () {
         enumerable: true,
         configurable: true
     });
-    Object.defineProperty(Class, "ResponseDescription", {
-        get: function () { return exports.namespace + "ResponseDescription"; },
+    Object.defineProperty(Class, "ResponseMetadata", {
+        get: function () { return exports.namespace + "ResponseMetadata"; },
         enumerable: true,
         configurable: true
     });
-    Object.defineProperty(Class, "ResponseMetaData", {
-        get: function () { return exports.namespace + "ResponseMetaData"; },
+    Object.defineProperty(Class, "ResourceMetadata", {
+        get: function () { return exports.namespace + "ResourceMetadata"; },
         enumerable: true,
         configurable: true
     });
@@ -129,13 +129,13 @@ var Predicate = (function () {
         enumerable: true,
         configurable: true
     });
-    Object.defineProperty(Predicate, "responseProperty", {
-        get: function () { return exports.namespace + "responseProperty"; },
+    Object.defineProperty(Predicate, "resourceMetadata", {
+        get: function () { return exports.namespace + "resourceMetadata"; },
         enumerable: true,
         configurable: true
     });
-    Object.defineProperty(Predicate, "responsePropertyResource", {
-        get: function () { return exports.namespace + "responsePropertyResource"; },
+    Object.defineProperty(Predicate, "resource", {
+        get: function () { return exports.namespace + "resource"; },
         enumerable: true,
         configurable: true
     });

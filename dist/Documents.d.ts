@@ -67,14 +67,15 @@ declare class Documents implements Pointer.Library, Pointer.Validator, ObjectSch
     private getDigestedObjectSchemaForExpandedObject(expandedObject);
     private getDigestedObjectSchemaForDocument(document);
     private getDigestedObjectSchema(objectTypes);
-    private getExpandedObjectTypes(expandedObject);
     private getDocumentTypes(document);
     private updateObject(target, source);
     private getAssociatedFragment(persistedDocument, fragment);
+    private getRequestURI(uri);
+    private setDefaultRequestOptions(requestOptions, interactionModel);
     private getPersistedDocument(rdfDocument, response);
     private createPersistedDocument(documentPointer, documentResource, fragmentResources);
     private updatePersistedDocument(persistedDocument, documentResource, fragmentResources);
-    private parseMultipleResources(rdfResources, response);
-    private getResponseDescription(volatiles);
+    private sendRequestForResponseWithMetadata(uri, requestOptions);
+    private getFreeResources(nodes);
 }
 export default Documents;

@@ -1,11 +1,10 @@
 import * as ObjectSchema from "./../ObjectSchema";
-import * as Pointer from "./../Pointer";
+import * as ResourceMetadata from "./ResourceMetadata";
 import * as VolatileResource from "./VolatileResource";
 export declare const RDF_CLASS: string;
 export declare const SCHEMA: ObjectSchema.Class;
 export interface Class extends VolatileResource.Class {
-    eTag: string;
-    responsePropertyResource: Pointer.Class;
+    resourcesMetadata: ResourceMetadata.Class[];
 }
 export declare class Factory {
     static hasClassProperties(object: Object): boolean;

@@ -5,29 +5,29 @@ import Resource from "./../Resource";
 import * as Utils from "./../Utils";
 import * as VolatileResource from "./VolatileResource";
 
-export const RDF_CLASS:string = NS.C.Class.ResponseMetaData;
+export const RDF_CLASS:string = NS.C.Class.ResourceMetadata;
 
 export const SCHEMA:ObjectSchema.Class = {
 	"eTag": {
 		"@id": NS.C.Predicate.eTag,
 		"@type": NS.XSD.DataType.string,
 	},
-	"responsePropertyResource": {
-		"@id": NS.C.Predicate.responsePropertyResource,
+	"resource": {
+		"@id": NS.C.Predicate.resource,
 		"@type": "@id",
 	},
 };
 
 export interface Class extends VolatileResource.Class {
 	eTag: string;
-	responsePropertyResource: Pointer.Class;
+	resource: Pointer.Class;
 }
 
 export class Factory {
 
 	static hasClassProperties( object:Object ):boolean {
 		return Utils.hasPropertyDefined( object, "eTag" )
-			&& Utils.hasPropertyDefined( object, "responsePropertyResource" );
+			&& Utils.hasPropertyDefined( object, "resource" );
 	}
 
 	static is( object:Object ):boolean {

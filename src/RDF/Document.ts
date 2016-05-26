@@ -29,22 +29,21 @@ export class Util {
 	static getDocuments( object:Object ):Class[];
 	static getDocuments( value:any ):Class[] {
 		if ( Utils.isArray( value ) ) {
-			if ( value.length === 0 ) return value;
-			if ( Factory.is( value[ 0 ] ) ) return value;
-			if ( RDFNode.Factory.is( value[ 0 ] ) ) return [ Factory.create( value ) ];
+			let array:any[] = <any> value;
+			return array.filter( ( element:any ) => Factory.is( element ) );
 		} else if ( Utils.isObject( value ) ) {
 			if ( Factory.is( value ) ) return [ value ];
-			if ( RDFNode.Factory.is( value ) ) return [ Factory.create( [ value ] ) ];
 		}
-		throw new Errors.IllegalArgumentError( "The value structure isn't valid." );
+		return [];
 	}
 
 	static getResources( objects:Object[] ):RDFNode.Class[];
 	static getResources( object:Object ):RDFNode.Class[];
 	static getResources( value:any ):RDFNode.Class[] {
+		let freeNodes:RDFNode.Class[] = RDFNode.Util.getFreeNodes( value );
 		let documents:Class[] = Util.getDocuments( value );
 
-		let resources:RDFNode.Class[] = [];
+		let resources:RDFNode.Class[] = [].concat( freeNodes );
 
 		for( let document of documents ) {
 			resources = resources.concat( document[ "@graph" ] );

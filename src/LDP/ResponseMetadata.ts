@@ -1,28 +1,28 @@
 import * as NS from "./../NS";
 import * as ObjectSchema from "./../ObjectSchema";
-import * as ResponseMetaData from "./ResponseMetaData";
+import * as ResourceMetadata from "./ResourceMetadata";
 import Resource from "./../Resource";
 import * as Utils from "../Utils";
 import * as VolatileResource from "./VolatileResource";
 
-export const RDF_CLASS:string = NS.C.Class.ResponseDescription;
+export const RDF_CLASS:string = NS.C.Class.ResponseMetadata;
 
 export const SCHEMA:ObjectSchema.Class = {
-	"responseProperties": {
-		"@id": NS.C.Predicate.responseProperty,
+	"resourcesMetadata": {
+		"@id": NS.C.Predicate.resourceMetadata,
 		"@type": "@id",
 		"@container": "@set",
 	},
 };
 
 export interface Class extends VolatileResource.Class {
-	responseProperties: ResponseMetaData.Class[];
+	resourcesMetadata: ResourceMetadata.Class[];
 }
 
 export class Factory {
 
 	static hasClassProperties( object:Object ):boolean {
-		return Utils.hasPropertyDefined( object, "responseProperties" );
+		return Utils.hasPropertyDefined( object, "resourcesMetadata" );
 	}
 
 	static is( object:Object ):boolean {

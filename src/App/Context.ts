@@ -17,6 +17,10 @@ export class Class extends AbstractContext {
 
 		this.base = this.getBase( this.app );
 		this.agents = new Agents( this );
+
+		// Reassign the rootContainer pointer because the previous one was created in the SDKContext and this one must be resolved by this context.
+		// TODO: Delete previous pointer from the SDKContext
+		app.rootContainer = <any> this.documents.getPointer( app.rootContainer.id );
 	}
 
 	resolve( uri:string ):string {

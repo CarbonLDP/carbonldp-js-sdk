@@ -1,4 +1,5 @@
 "use strict";
+var RDF = require("./RDF");
 var Resource = require("./Resource");
 var Utils = require("./Utils");
 var Factory = (function () {
@@ -13,7 +14,7 @@ var Factory = (function () {
     };
     Factory.createFrom = function (object, idOrDocument, document) {
         if (document === void 0) { document = null; }
-        var id = !!document ? idOrDocument : Util.generateID();
+        var id = !!idOrDocument && Utils.isString(idOrDocument) ? idOrDocument : RDF.URI.Util.generateBNodeID();
         document = document || idOrDocument;
         var resource = Resource.Factory.createFrom(object, id);
         if (Factory.hasClassProperties(resource))
@@ -31,14 +32,5 @@ var Factory = (function () {
     return Factory;
 }());
 exports.Factory = Factory;
-var Util = (function () {
-    function Util() {
-    }
-    Util.generateID = function () {
-        return "_:" + Utils.UUID.generate();
-    };
-    return Util;
-}());
-exports.Util = Util;
 
 //# sourceMappingURL=Fragment.js.map

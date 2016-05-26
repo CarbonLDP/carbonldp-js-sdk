@@ -18,7 +18,7 @@ export const RDF_CLASS:string = NS.CS.Class.Application;
 // TODO Problem in circular reference: the SCHEMA is hardcoded in SDKContext
 export const SCHEMA:ObjectSchema.Class = {
 	"name": {
-		"@id": NS.CS.Predicate.name,
+		"@id": NS.CS.Predicate.namae,
 		"@type": NS.XSD.DataType.string,
 	},
 	"description": {
