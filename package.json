@@ -1,6 +1,6 @@
 {
   "name": "carbonldp",
-  "version": "0.34.0-beta.0",
+  "version": "0.34.0-beta.1",
   "description": "JavaScript/TypeScript SDK to create CarbonLDP's Applications",
   "homepage": "https://github.com/CarbonLDP/CarbonLDP-JS-SDK",
   "contributors": [
@@ -54,10 +54,8 @@
       "lib": "dist",
       "packages": "test/jspm_packages"
     },
-    "dependencies": {
-      "jsonld": "npm:jsonld@^0.4.11"
-    },
     "devDependencies": {
+      "jsonld": "npm:jsonld@^0.4.11",
       "os": "github:jspm/nodelibs-os@^0.2.0-alpha",
       "plugin-typescript": "github:frankwallis/plugin-typescript@^4.0.9"
     },
