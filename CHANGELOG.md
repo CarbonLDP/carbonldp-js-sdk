@@ -1,3 +1,10 @@
+# 0.34.0 (May 26, 2016)
+- [LDP-637](https://jira.base22.com/browse/LDP-637) Update test and build workflows to latest JSPM version
+- [LDP-662](https://jira.base22.com/browse/LDP-662) Definitions are no longer being bundled. Instead the npm package has been refactored so all definition files work with a node moduleResolution
+
+#### Breaking Changes
+- The definition file `dist/bundles/carbon.d.ts` no longer exists. Configure typescript to have a `moduleResolution: "node"` and the definition files should be included automatically
+
 # 0.33.0 (May 17, 2016)
 - [LDP-637](https://jira.base22.com/browse/LDP-637) Resolve URI strings when property is configured as "@id"
 - [LDP-635](https://jira.base22.com/browse/LDP-635) Use default app vocabulary for unknown properties
