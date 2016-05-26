@@ -1,46 +1,60 @@
 "use strict";
-var App = require("./App");
-var Pointer = require("./Pointer");
+var Context_1 = require("./App/Context");
 var RDF = require("./RDF");
 var Utils = require("./Utils");
-var CS = require("./NS/CS");
-var Apps = (function () {
-    function Apps(context) {
+var App = require("./App");
+var PersistedApp = require("./PersistedApp");
+var Errors = require("./Errors");
+var Class = (function () {
+    function Class(context) {
         this.context = context;
     }
-    Apps.prototype.get = function (uri) {
+    Class.prototype.getContext = function (pointerOrURI) {
         var _this = this;
-        var appsContainerURI = this.getAppsContainerURI();
-        if (RDF.URI.Util.isRelative(uri)) {
-            if (!Utils.S.startsWith(uri, appsContainerURI))
-                uri = RDF.URI.Util.resolve(appsContainerURI, uri);
-            uri = this.context.resolve(uri);
+        var pointer = !Utils.isString(pointerOrURI) ? pointerOrURI : null;
+        if (!pointer) {
+            var appsContainerURI = this.getAppsContainerURI();
+            var uri = Utils.isString(pointerOrURI) ? pointerOrURI : null;
+            if (!uri)
+                return Promise.reject(new Errors.IllegalArgumentError("The application's URI cannot be null"));
+            if (RDF.URI.Util.isRelative(uri)) {
+                if (!Utils.S.startsWith(uri, appsContainerURI))
+                    uri = RDF.URI.Util.resolve(appsContainerURI, uri);
+                uri = this.context.resolve(uri);
+            }
+            pointer = this.context.documents.getPointer(uri);
         }
-        return this.context.documents.get(uri).then(function (_a) {
-            var document = _a[0], response = _a[1];
-            if (!document.types.indexOf(CS.Class.Application))
-                throw new Error("The resource fetched is not a cs:Application.");
-            return new App.Context(_this.context, document);
+        return pointer.resolve().then(function (_a) {
+            var app = _a[0], response = _a[1];
+            if (!PersistedApp.Factory.is(app))
+                return Promise.reject(new Errors.IllegalArgumentError("The resource fetched is not a cs:Application."));
+            return new Context_1.default(_this.context, app);
         });
     };
-    Apps.prototype.getAll = function () {
+    Class.prototype.getAllContexts = function () {
         var _this = this;
         return this.context.documents.getMembers(this.getAppsContainerURI(), false).then(function (_a) {
             var members = _a[0], response = _a[1];
-            return Pointer.Util.resolveAll(members);
-        }).then(function (_a) {
-            var members = _a[0], responses = _a[1];
-            return members.map(function (member) { return new App.Context(_this.context, member); });
+            return members.map(function (member) { return new Context_1.default(_this.context, member); });
         });
     };
-    Apps.prototype.getAppsContainerURI = function () {
+    Class.prototype.create = function (slugOrApp, appDocument) {
+        var appsContainerURI = this.context.resolve(this.getAppsContainerURI());
+        var slug = Utils.isString(slugOrApp) ? slugOrApp : null;
+        appDocument = appDocument || slugOrApp;
+        if (!App.Factory.is(appDocument))
+            return Promise.reject(new Errors.IllegalArgumentError("The Document is not a `Carbon.App.Class` object."));
+        return this.context.documents.createChild(appsContainerURI, slug, appDocument);
+    };
+    Class.prototype.getAppsContainerURI = function () {
         if (!this.context.hasSetting("platform.apps.container"))
-            throw new Error("The apps container URI hasn't been set.");
+            throw new Errors.IllegalStateError("The apps container URI hasn't been set.");
         return this.context.getSetting("platform.apps.container");
     };
-    return Apps;
+    return Class;
 }());
+exports.Class = Class;
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = Apps;
+exports.default = Class;
 
 //# sourceMappingURL=Apps.js.map

@@ -1,6 +1,9 @@
 <html>
 <head></head>
 <body>
+
+	<input type="file" id="upload" />
+
 	<script src="../dist/bundles/Carbon.sfx.js"></script>
 	<script>
 		(function() {
@@ -47,89 +50,36 @@
 				"xsd": "http://www.w3.org/2001/XMLSchema#"
 			} );
 
-			carbon.extendObjectSchema( {
-				"stringProperty": {
-					"@id": "ex:stringProperty",
+			carbon.extendObjectSchema( "http://example.org/ns#BlogPost" , {
+				"title": {
+					"@id": "ex:title",
 					"@type": "xsd:string"
 				},
-				"something": {
-					"@id": "ex:something",
-					"@type": "xsd:string"
+				"tags": {
+					"@id": "ex:tag",
+					"@type": "@id",
+					"@container": "@set"
 				}
 			} );
 
 			var appContext;
-			var document;
+			var filesDocument;
 
 			carbon.auth.authenticate( "admin@carbonldp.com", "hello" ).then( function() {
-				return carbon.apps.get( "test-app/" );
-			} ).then( function( fetchedAppContext ) {
-				appContext = fetchedAppContext;
+				return carbon.apps.getAllContexts();
+//			}).then( function( _appContext ) {
+//				appContext = _appContext;
+//				return appContext.documents.get( "posts/node-post-01/" );
+			}).then( function( result ) {
+				console.log( result );
+			});
 
-				return appContext.documents.get( "resource/" );
-			} ).then( function( result ) {
-				document = result[ 0 ];
-
-				var newDocument = Carbon.Document.Factory.create();
-				newDocument.stringProperty = "My title!";
-				newDocument.types = [ "ex:FreshDocument" ];
-
-				return document.createChild( "My supa new document", newDocument );
-			} ).then( function( results ) {
-				return results[ 0 ].resolve();
-			} ).then( function( result ) {
-				document = result[ 0 ];
-
-				console.log( "%o", document );
-			} );
-
-//			carbon.auth.authenticate( "admin@carbonldp.com", "hello" ).then( function() {
-//				return carbon.documents.executeSELECTQuery( "apps/", "SELECT ?c ?s ?p ?o WHERE { GRAPH ?c { ?s ?p ?o. FILTER ( ! isBlank( ?s ) && ! isBlank( ?o ) ) } }" );
-//			} ).then( function( result ) {
-//				var sparqlResults = result[ 0 ];
-//				sparqlResults.bindings.forEach( function( binding ) {
-//					for( var bindingName in binding ) {
-//						if( ! binding.hasOwnProperty( bindingName ) ) continue;
-//						if( typeof binding[ bindingName ] === "object" ) binding[ bindingName ] = binding[ bindingName ].id;
-//					}
-//				});
-//				console.table( sparqlResults.bindings );
-//			} ).catch( function( error ) {
-//				console.error( error );
-//			} );
-
-//			carbon.auth.authenticate( "admin@carbonldp.com", "hello" ).then( function() {
-//				return carbon.apps.get( "test-app/" );
-//			} ).then( function( fetchedAppContext ) {
-//				appContext = fetchedAppContext;
-//
-//				return appContext.documents.get( "/" );
-//			} ).then( function( result ) {
-//				resource = result[ 0 ];
-//				return populate( resource.id );
-//			} ).then( function( results ) {
-//				console.log( "%o", results );
-//			} );
-
-			function populate( resourceURI ) {
-				console.log( "Populating: " + resourceURI );
-				var promises = [];
-				while( getRandom( 10 ) !== 0 ) {
-					promises.push( appContext.documents.createChild( resourceURI, Carbon.Document.factory.create() ).then( function( result ) {
-						var pointer = result[ 0 ];
-						console.log( "Created: " + pointer.id );
-						return populate( pointer.id );
-					}) );
-				}
-
-				return Promise.all( promises ).then( function() {
-					console.log( "Finished populating: " + resourceURI );
+			var input = document.querySelector( "#upload" );
+			input.addEventListener( "change", function( event ) {
+				filesDocument.upload( event.target.files[ 0 ] ).then( function( result ) {
+					console.log( result );
 				});
-			}
-
-			function getRandom( max ) {
-				return Math.floor(Math.random() * max);
-			}
+			});
 		})();
 	</script>
 </body>

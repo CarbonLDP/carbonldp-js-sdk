@@ -39,7 +39,7 @@ describe( module(
 		it( isDefined(), ():void => {
 			expect( CS.Class ).toBeDefined();
 			expect( Utils.isFunction( CS.Class ) ).toBe( true );
-			expect( Object.keys( CS.Class ).length ).toBe( 4 );
+			expect( Object.keys( CS.Class ).length ).toBe( 5 );
 		});
 
 		it( hasProperty(
@@ -77,6 +77,17 @@ describe( module(
 
 		it( hasProperty(
 			STATIC,
+			"AllOrigins",
+			"string"
+		), ():void => {
+			expect( CS.Class.Agent ).toBeDefined();
+			expect( Utils.isString( CS.Class.Agent ) ).toBe( true );
+
+			expect( CS.Class.Agent ).toBe( "https://carbonldp.com/ns/v1/security#Agent" );
+		});
+
+		it( hasProperty(
+			STATIC,
 			"AppRole",
 			"string"
 		), ():void => {
@@ -97,18 +108,18 @@ describe( module(
 			expect( CS.Predicate ).toBeDefined();
 			expect( Utils.isFunction( CS.Predicate ) ).toBe( true );
 
-			expect( Object.keys( CS.Predicate ).length ).toBe( 5 );
+			expect( Object.keys( CS.Predicate ).length ).toBe( 7 );
 		});
 
 		it( hasProperty(
 			STATIC,
-			"name",
+			"namae",
 			"string"
 		), ():void => {
-			expect( CS.Predicate.name ).toBeDefined();
-			expect( Utils.isString( CS.Predicate.name ) ).toBe( true );
+			expect( CS.Predicate.namae ).toBeDefined();
+			expect( Utils.isString( CS.Predicate.namae ) ).toBe( true );
 
-			expect( CS.Predicate.name ).toBe( "https://carbonldp.com/ns/v1/security#name" );
+			expect( CS.Predicate.namae ).toBe( "https://carbonldp.com/ns/v1/security#name" );
 		});
 
 		it( hasProperty(
@@ -153,6 +164,28 @@ describe( module(
 			expect( Utils.isString( CS.Predicate.expirationTime ) ).toBe( true );
 
 			expect( CS.Predicate.expirationTime ).toBe( "https://carbonldp.com/ns/v1/security#expirationTime" );
+		});
+
+		it( hasProperty(
+			STATIC,
+			"password",
+			"string"
+		), ():void => {
+			expect( CS.Predicate.password ).toBeDefined();
+			expect( Utils.isString( CS.Predicate.password ) ).toBe( true );
+
+			expect( CS.Predicate.password ).toBe( "https://carbonldp.com/ns/v1/security#password" );
+		});
+
+		it( hasProperty(
+			STATIC,
+			"description",
+			"string"
+		), ():void => {
+			expect( CS.Predicate.description ).toBeDefined();
+			expect( Utils.isString( CS.Predicate.description ) ).toBe( true );
+
+			expect( CS.Predicate.description ).toBe( "https://carbonldp.com/ns/v1/security#description" );
 		});
 
 	});

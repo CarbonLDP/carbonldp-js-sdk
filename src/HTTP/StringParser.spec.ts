@@ -36,7 +36,7 @@ describe( module( "Carbon/HTTP/StringParser" ), ():void => {
 	describe( clazz( "Carbon.HTTP.StringParser.Class", "Parses a Carbon.HTTP.Response.Class and returns a String" ), ():void => {
 		it( hasMethod( INSTANCE, "parse", "Gets a string and returns a promise with the same string", [
 			{ name: "body", type: "Carbon.HTTP.Response.Class" }
-		], { type: "Promise<string>" } ), ( done:( error?:Error ) => void ):void => {
+		], { type: "Promise<string>" } ), ( done:{ ():void; fail:( error:any ) => void } ):void => {
 			let stringParser:StringParser.Class = new StringParser.Class();
 
 			// Property Integrity
@@ -63,7 +63,7 @@ describe( module( "Carbon/HTTP/StringParser" ), ():void => {
 			Promise.all( promises ).then( ():void => {
 				done();
 			}, ( error:Error ):void => {
-				done( error );
+				done.fail( error );
 			});
 		});
 	});

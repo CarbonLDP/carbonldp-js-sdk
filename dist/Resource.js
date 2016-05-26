@@ -1,14 +1,15 @@
 "use strict";
 var Pointer = require("./Pointer");
 var Utils = require("./Utils");
-function hasType(type) {
-    return this.types.indexOf(type) !== -1;
-}
 var Factory = (function () {
     function Factory() {
     }
     Factory.hasClassProperties = function (resource) {
         return (Utils.hasPropertyDefined(resource, "types"));
+    };
+    Factory.is = function (object) {
+        return Pointer.Factory.is(object)
+            && Factory.hasClassProperties(object);
     };
     Factory.create = function (id, types) {
         if (id === void 0) { id = null; }
@@ -18,8 +19,8 @@ var Factory = (function () {
     Factory.createFrom = function (object, id, types) {
         if (id === void 0) { id = null; }
         if (types === void 0) { types = null; }
-        id = !!id ? id : "";
-        types = !!types ? types : [];
+        id = !!id ? id : (object.id || "");
+        types = !!types ? types : (object.types || []);
         var resource = Factory.decorate(object);
         resource.id = id;
         resource.types = types;

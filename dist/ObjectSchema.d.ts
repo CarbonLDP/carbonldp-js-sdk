@@ -20,6 +20,7 @@ export declare enum ContainerType {
 }
 export declare class DigestedObjectSchema {
     base: string;
+    vocab: string;
     prefixes: Map<string, RDF.URI.Class>;
     properties: Map<string, DigestedPropertyDefinition>;
     prefixedURIs: Map<string, RDF.URI.Class[]>;
@@ -39,8 +40,8 @@ export declare class Digester {
     static digestSchema(schemas: Class[]): DigestedObjectSchema;
     static digestSchema(schema: Class): DigestedObjectSchema;
     static combineDigestedObjectSchemas(digestedSchemas: DigestedObjectSchema[]): DigestedObjectSchema;
+    static resolvePrefixedURI(uri: RDF.URI.Class, digestedSchema: DigestedObjectSchema): RDF.URI.Class;
     private static digestSingleSchema(schema);
     private static resolvePrefixedURIs(digestedSchema);
-    private static resolvePrefixedURI(uri, digestedSchema);
 }
 export default Class;

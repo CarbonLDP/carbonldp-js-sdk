@@ -8,6 +8,11 @@ var Class = (function () {
         enumerable: true,
         configurable: true
     });
+    Object.defineProperty(Class, "AddMemberAction", {
+        get: function () { return exports.namespace + "AddMemberAction"; },
+        enumerable: true,
+        configurable: true
+    });
     Object.defineProperty(Class, "API", {
         get: function () { return exports.namespace + "API"; },
         enumerable: true,
@@ -15,6 +20,11 @@ var Class = (function () {
     });
     Object.defineProperty(Class, "NonReadableMembershipResourceTriples", {
         get: function () { return exports.namespace + "NonReadableMembershipResourceTriples"; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Class, "PreferContainer", {
+        get: function () { return exports.namespace + "PreferContainer"; },
         enumerable: true,
         configurable: true
     });
@@ -38,8 +48,33 @@ var Class = (function () {
         enumerable: true,
         configurable: true
     });
+    Object.defineProperty(Class, "PreferSelectedMembershipTriples", {
+        get: function () { return exports.namespace + "PreferSelectedMembershipTriples"; },
+        enumerable: true,
+        configurable: true
+    });
     Object.defineProperty(Class, "VolatileResource", {
         get: function () { return exports.namespace + "VolatileResource"; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Class, "RDFRepresentation", {
+        get: function () { return exports.namespace + "RDFRepresentation"; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Class, "RemoveMemberAction", {
+        get: function () { return exports.namespace + "RemoveMemberAction"; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Class, "ResponseMetadata", {
+        get: function () { return exports.namespace + "ResponseMetadata"; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Class, "ResourceMetadata", {
+        get: function () { return exports.namespace + "ResourceMetadata"; },
         enumerable: true,
         configurable: true
     });
@@ -51,6 +86,11 @@ var Predicate = (function () {
     }
     Object.defineProperty(Predicate, "accessPoint", {
         get: function () { return exports.namespace + "accessPoint"; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Predicate, "bNodeIdentifier", {
+        get: function () { return exports.namespace + "bNodeIdentifier"; },
         enumerable: true,
         configurable: true
     });
@@ -71,6 +111,36 @@ var Predicate = (function () {
     });
     Object.defineProperty(Predicate, "version", {
         get: function () { return exports.namespace + "version"; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Predicate, "mediaType", {
+        get: function () { return exports.namespace + "mediaType"; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Predicate, "size", {
+        get: function () { return exports.namespace + "size"; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Predicate, "targetMember", {
+        get: function () { return exports.namespace + "targetMember"; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Predicate, "resourceMetadata", {
+        get: function () { return exports.namespace + "resourceMetadata"; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Predicate, "resource", {
+        get: function () { return exports.namespace + "resource"; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Predicate, "eTag", {
+        get: function () { return exports.namespace + "eTag"; },
         enumerable: true,
         configurable: true
     });

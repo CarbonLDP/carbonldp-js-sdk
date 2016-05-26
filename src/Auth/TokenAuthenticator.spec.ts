@@ -22,7 +22,6 @@ import AuthenticationToken from "./AuthenticationToken";
 import UsernameAndPasswordToken from "./UsernameAndPasswordToken";
 
 import * as Token from "./Token";
-import * as TokenCredentials from "./TokenCredentials";
 
 import * as TokenAuthenticator from "./TokenAuthenticator";
 
@@ -93,7 +92,7 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 					{ name: "authenticationToken", type: "Carbon.Auth.UsernameAndPasswordToken" }
 				],
 				{ type: "Promise<Carbon.Auth.Token.Class>"}
-			), ( done:{ ( response?:any ):void, fail:() => void } ):void => {
+			), ( done:{ ():void, fail:( error:Error ) => void } ):void => {
 				
 				// Property Integrity
 				(() => {
@@ -142,12 +141,12 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 					let context:SuccessfulContext = new SuccessfulContext();
 					let authenticator:TokenAuthenticator.Class = new TokenAuthenticator.Class( context );
 
-					promises.push( authenticator.authenticate( new UsernameAndPasswordToken( "user", "pass" ) ).then( ( tokenCredentials:TokenCredentials.Class ):void => {
+					promises.push( authenticator.authenticate( new UsernameAndPasswordToken( "user", "pass" ) ).then( ( token:Token.Class ):void => {
 						expect( authenticator.isAuthenticated() ).toEqual( true );
 
-						expect( tokenCredentials ).toBeDefined();
-						expect( tokenCredentials ).not.toBeNull();
-						expect( Token.Factory.is( tokenCredentials ) ).toEqual( true );
+						expect( token ).toBeDefined();
+						expect( token ).not.toBeNull();
+						expect( Token.Factory.is( token ) ).toEqual( true );
 					}) );
 				})();
 
@@ -169,7 +168,7 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 					let authenticator:TokenAuthenticator.Class = new TokenAuthenticator.Class( context );
 
 					promises.push( authenticator.authenticate( new UsernameAndPasswordToken( "user", "pass" ) ).then( () => {
-							done( new Error( "The authentication should have been unsuccessful." ) );
+							done.fail( new Error( "The authentication should have been unsuccessful." ) );
 					}, ( error:Error ) => {
 						expect( error instanceof HTTP.Errors.UnauthorizedError ).toEqual( true );
 
@@ -180,7 +179,7 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 				Promise.all( promises ).then( ():void => {
 					done();
 				}, ( error:Error ):void => {
-					done( error );
+					done.fail( error );
 				});
 			});
 
@@ -189,7 +188,7 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 					{ name: "token", type: "Carbon.Auth.Token.Class" }
 				],
 				{ type: "Promise<Carbon.Auth.Token.Class>" }
-			), ( done:{ ( response?:any ):void, fail:() => void } ):void => {
+			), ( done:{ ():void, fail:( error:Error ) => void } ):void => {
 
 				class MockedContext extends AbstractContext {
 					resolve( uri:string ) {
@@ -224,7 +223,7 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 					let authenticator:TokenAuthenticator.Class = new TokenAuthenticator.Class( context );
 
 					promises.push( authenticator.authenticate( JSON.parse( tokenString ) )
-						.then( ( tokenCredentials:TokenCredentials.Class ):void => {
+						.then( ( tokenCredentials:Token.Class ):void => {
 							expect( authenticator.isAuthenticated() ).toEqual( true );
 	
 							expect( tokenCredentials ).toBeDefined();
@@ -250,7 +249,7 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 					let authenticator:TokenAuthenticator.Class = new TokenAuthenticator.Class( context );
 
 					promises.push( authenticator.authenticate( JSON.parse( tokenString ) ).then( () => {
-						done( new Error( "The authentication should have been unsuccessful." ) );
+						done.fail( new Error( "The authentication should have been unsuccessful." ) );
 					}, ( error:Error ) => {
 						expect( error instanceof Errors.IllegalArgumentError ).toEqual( true );
 
@@ -261,7 +260,7 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 				Promise.all( promises ).then( ():void => {
 					done();
 				}, ( error:Error ):void => {
-					done( error );
+					done.fail( error );
 				});
 			});
 			
@@ -271,7 +270,7 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 			Adds the Basic authentication header to the passed request options object.
 		`, [
 			{ name: "requestOptions", type:"Carbon.HTTP.Request.Options", description: "Request options object to add Authentication headers." }
-		], { type: "Carbon.HTTP.Request.Options", description: "The request options with the added authentication headers." } ), (  done:( error?:Error ) => void ):void => {
+		], { type: "Carbon.HTTP.Request.Options", description: "The request options with the added authentication headers." } ), (  done:{ ():void; fail:( error:any ) => void } ):void => {
 
 			// Property Integrity
 			(() => {
@@ -302,21 +301,17 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 				expirationTime.setDate( expirationTime.getDate() + 1 );
 				jasmine.Ajax.stubRequest( "http://example.com/successful/auth-tokens/", null, "POST" ).andReturn( {
 					status: 200,
-					// TODO: Change this line to a multi line (right now its throwing ParseError on PhantomJS
-					/* tslint:disable: quotemark */
-					responseText: '' +
-						'{' +
-						'	"@id": "",' +
-						'	"@type": [' +
-						'		"https://carbonldp.com/ns/v1/security#Token"' +
-						'	],' +
-						'	"https://carbonldp.com/ns/v1/security#tokenKey": "token-value",' +
-						'	"https://carbonldp.com/ns/v1/security#expirationTime": {' +
-						'		"@value": "' + expirationTime.toISOString() + ',' +
-						'		"@type": "http://www.w3.org/2001/XMLSchema#dateTime"' +
-						'	}' +
-						'}',
-					/* tslint:enable: quotemark */
+					responseText: `[{
+						"@id": "", 
+						"@type": [ 
+							"https://carbonldp.com/ns/v1/security#Token" 
+						], 
+						"https://carbonldp.com/ns/v1/security#tokenKey": "token-value", 
+						"https://carbonldp.com/ns/v1/security#expirationTime": { 
+							"@value": "${expirationTime.toISOString()}"  , 
+							"@type": "http://www.w3.org/2001/XMLSchema#dateTime" 
+						} 
+					}]`,
 				} );
 
 				let context:SuccessfulContext = new SuccessfulContext();
@@ -329,9 +324,9 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 					expect( Utils.isObject( requestOptions ) ).toEqual( true );
 					expect( "headers" in requestOptions ).toEqual( true );
 					expect( requestOptions.headers instanceof Map ).toEqual( true );
-					expect( requestOptions.headers.has( "Authorization" ) ).toEqual( true );
+					expect( requestOptions.headers.has( "authorization" ) ).toEqual( true );
 
-					let authorizationHeader:HTTP.Header.Class = requestOptions.headers.get( "Authorization" );
+					let authorizationHeader:HTTP.Header.Class = requestOptions.headers.get( "authorization" );
 
 					expect( authorizationHeader instanceof HTTP.Header.Class ).toEqual( true );
 					expect( authorizationHeader.values.length ).toEqual( 1 );
@@ -339,7 +334,7 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 					let authorization:string = authorizationHeader.toString();
 
 					expect( Utils.S.startsWith( authorization, "Token " ) ).toEqual( true );
-					expect( atob( authorization.substring( 6 ) ) ).toEqual( "token-value" );
+					expect( authorization.substring( 6 ) ).toEqual( "token-value" );
 				}) );
 			})();
 
@@ -350,13 +345,13 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 			Promise.all( promises ).then( ():void => {
 				done();
 			}, ( error:Error ):void => {
-				done( error );
+				done.fail( error );
 			});
 		});
 
 		it( hasMethod( INSTANCE, "clearAuthentication", `
 			Clears any saved credentials and restores the Authenticator to its initial state.
-		` ), ( done:( error?:Error ) => void ):void => {
+		` ), ( done:{ ():void; fail:( error:any ) => void } ):void => {
 			// Property Integrity
 			(() => {
 				class MockedContext extends AbstractContext {
@@ -384,21 +379,17 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 				expirationTime.setDate( expirationTime.getDate() + 1 );
 				jasmine.Ajax.stubRequest( "http://example.com/successful/auth-tokens/", null, "POST" ).andReturn( {
 					status: 200,
-					// TODO: Change this line to a multi line (right now its throwing ParseError on PhantomJS
-					/* tslint:disable: quotemark */
-					responseText: '' +
-					'{' +
-					'	"@id": "",' +
-					'	"@type": [' +
-					'		"https://carbonldp.com/ns/v1/security#Token"' +
-					'	],' +
-					'	"https://carbonldp.com/ns/v1/security#tokenKey": "token-value",' +
-					'	"https://carbonldp.com/ns/v1/security#expirationTime": {' +
-					'		"@value": "' + expirationTime.toISOString() + ',' +
-					'		"@type": "http://www.w3.org/2001/XMLSchema#dateTime"' +
-					'	}' +
-					'}',
-					/* tslint:enable: quotemark */
+					responseText:`[{
+						"@id": "", 
+						"@type": [ 
+							"https://carbonldp.com/ns/v1/security#Token" 
+						], 
+						"https://carbonldp.com/ns/v1/security#tokenKey": "token-value", 
+						"https://carbonldp.com/ns/v1/security#expirationTime": { 
+							"@value": "${expirationTime.toISOString()}"  , 
+							"@type": "http://www.w3.org/2001/XMLSchema#dateTime" 
+						} 
+					}]`,
 				} );
 
 				let context:SuccessfulContext = new SuccessfulContext();
@@ -416,7 +407,7 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 			Promise.all( promises ).then( ():void => {
 				done();
 			}, ( error:Error ):void => {
-				done( error );
+				done.fail( error );
 			});
 		});
 

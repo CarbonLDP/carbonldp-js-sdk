@@ -1,26 +1,22 @@
 import * as App from "./App";
 
 import {
-	INSTANCE,
 	STATIC,
 
 	module,
 	clazz,
 
 	isDefined,
-	hasConstructor,
 	hasMethod,
 	hasProperty,
-	extendsClass,
-	hasDefaultExport
+	reexports,
 } from "./test/JasmineExtender";
 import * as Utils from "./Utils";
 import * as NS from "./NS";
-import * as Pointer from "./Pointer";
+import * as Errors from "./Errors";
 import * as Document from "./Document";
-import * as PersistedDocument from "./PersistedDocument";
-import * as PersistedContainer from "./LDP/PersistedContainer";
-import AbstractContext from "./AbstractContext";
+
+import Context from "./App/Context";
 
 describe( module( "Carbon/App" ), ():void => {
 
@@ -56,64 +52,6 @@ describe( module( "Carbon/App" ), ():void => {
 	});
 
 	describe( clazz(
-		"Carbon.App.Context",
-		"Class that represents a Carbon Application. " +
-		"It centers the scope of several services (Carbon.Auth, Carbon.Resources, etc.) into the Application's scope."
-	), ():void => {
-		let parentContext:AbstractContext;
-		let appContext:App.Context;
-
-		beforeEach( ():void => {
-			class MockedContext extends AbstractContext {
-				resolve( uri:string ):string {
-					return uri;
-				}
-			}
-			let parentContext = new MockedContext();
-			let app = <App.Class> Document.Factory.create( "http://example.com/platform/apps/example-app/" );
-			app.rootContainer = PersistedContainer.Factory.decorate(
-				<PersistedDocument.Class> Pointer.Factory.create( "http://example.com/apps/example-app/" )
-			);
-			appContext = new App.Context( parentContext, app );
-		});
-
-		it( isDefined(), ():void => {
-			expect( App.Context ).toBeDefined();
-			expect( Utils.isFunction( App.Context ) );
-		});
-
-		it( hasConstructor([
-			{ name: "parentContext", type: "Carbon.Context" },
-			{ name: "app", type: "Carbon.App.Context" },
-		]), ():void => {
-			expect( appContext ).toBeTruthy();
-			expect( appContext instanceof App.Context );
-		});
-
-		it( extendsClass(
-			"Carbon.AbstractContext"
-		), ():void => {
-			expect( appContext instanceof AbstractContext );
-		});
-
-		it( hasMethod(
-			INSTANCE,
-			"resolve",
-			"Resolve the URI provided in the scope of the application", [
-				{ name: "uri", type: "string" }
-			],
-			{ type: "string" }
-		), ():void => {
-			expect( appContext.resolve( "/child/" ) ).toBe( "http://example.com/apps/example-app/child/" );
-
-			expect( appContext.resolve( "/child-another/grandchild/" ) )
-				.toBe( "http://example.com/apps/example-app/child-another/grandchild/" );
-			expect( appContext.resolve( "http://example.com/apps/another-app/child/" ) )
-				.toBe( "http://example.com/apps/another-app/child/" );
-		});
-	});
-
-	describe( clazz(
 		"Carbon.App.Factory",
 		"Factory class for `Carbon.App.Class` objects"
 	), ():void => {
@@ -134,14 +72,141 @@ describe( module( "Carbon/App" ), ():void => {
 			expect( App.Factory.hasClassProperties ).toBeDefined();
 			expect( Utils.isFunction( App.Factory.hasClassProperties ) ).toBe( true );
 
-			expect( App.Factory.hasClassProperties( { rootContainer: {} } ) ).toBe( true );
-			expect( App.Factory.hasClassProperties( { rootContainer: Pointer.Factory.create( "http://example.com/apps/example-app/" ) } ) ).toBe( true );
+			let object:any;
+			expect( App.Factory.hasClassProperties( object ) ).toBe( false );
+			
+			object = {
+				name: null,
+				description: null,
+			};
+			expect( App.Factory.hasClassProperties( object ) ).toBe( true );
 
-			expect( App.Factory.hasClassProperties( {} ) ).toBe( false );
-			expect( App.Factory.hasClassProperties( null ) ).toBe( false );
-			expect( App.Factory.hasClassProperties( undefined ) ).toBe( false );
+			delete object.name;
+			expect( App.Factory.hasClassProperties( object ) ).toBe( false );
+			object.name = null;
+
+			delete object.description;
+			expect( App.Factory.hasClassProperties( object ) ).toBe( true );
+			object.description = null;
+		});
+		
+		it( hasMethod(
+			STATIC,
+			"is",
+			"Returns true if the object provided is considered as an `Carbon.App.Class` object", [
+				{ name: "object", type: "Object" }
+			],
+			{ type: "boolean" }
+		), ():void => {
+			expect( App.Factory.is ).toBeDefined();
+			expect( Utils.isFunction( App.Factory.is ) ).toBe( true );
+
+			let object:any = {};
+			expect( App.Factory.is( object ) ).toBe( false );
+			object.name = "A name";
+			expect( App.Factory.is( object ) ).toBe( false );
+			object.description = "A description";
+			expect( App.Factory.is( object ) ).toBe( false );
+			object.types = [ NS.CS.Class.Application ];
+			expect( App.Factory.is( object ) ).toBe( false );
+
+			object = Document.Factory.create();
+			expect( App.Factory.is( object ) ).toBe( false );
+
+			object.types.push( NS.CS.Class.Application );
+			expect( App.Factory.is( object ) ).toBe( false );
+
+			object.name = "A name";
+			expect( App.Factory.is( object ) ).toBe( true );
+			object.description = "A description";
+			expect( App.Factory.is( object ) ).toBe( true );
 		});
 
+		it( hasMethod(
+			STATIC,
+			"create",
+			"Create a empty `Carbon.App.Class` object.", [
+				{ name: "name", type: "string" },
+				{ name: "description", type: "string", optional: true }
+			],
+			{ type: "Carbon.App.Class" }
+		), ():void => {
+			expect( App.Factory.create ).toBeDefined();
+			expect( Utils.isFunction( App.Factory.create ) ).toBe( true );
+
+			let spy = spyOn( App.Factory, "createFrom");
+
+			App.Factory.create( "The App name", "The App description" );
+			expect( spy ).toHaveBeenCalledWith( {}, "The App name", "The App description" );
+
+			App.Factory.create( "Another App name" );
+			expect( spy ).toHaveBeenCalledWith( {}, "Another App name", undefined );
+		});
+		
+		it( hasMethod(
+			STATIC,
+			"createFrom",
+			"Create a `Carbon.App.Class` object with the object provided.", [
+				{ name: "object", type: "T extends Object" },
+				{ name: "name", type: "string" },
+				{ name: "description", type: "string", optional: true }
+			],
+			{ type: "T & Carbon.App.Class" }
+		), ():void => {
+			expect( App.Factory.createFrom ).toBeDefined();
+			expect( Utils.isFunction( App.Factory.createFrom ) ).toBe( true );
+
+			interface TheApp {
+				myProperty?: string;
+			}
+			interface MyApp extends App.Class, TheApp {}
+
+			let app:MyApp;
+			app = App.Factory.createFrom<TheApp>( {}, "App name" );
+			expect( App.Factory.is( app ) ).toBe( true );
+			expect( app.myProperty ).toBeUndefined();
+			expect( app.name ).toBe( "App name" );
+			expect( app.description ).toBeUndefined();
+
+			app = App.Factory.createFrom<TheApp>( {}, "App name", "App description" );
+			expect( App.Factory.is( app ) ).toBe( true );
+			expect( app.myProperty ).toBeUndefined();
+			expect( app.name ).toBe( "App name" );
+			expect( app.description ).toBe( "App description" );
+
+			app = App.Factory.createFrom<TheApp>( { myProperty: "a property" }, "App name" );
+			expect( App.Factory.is( app ) ).toBe( true );
+			expect( app.myProperty ).toBeDefined();
+			expect( app.myProperty ).toBe( "a property" );
+			expect( app.name ).toBe( "App name" );
+			expect( app.description ).toBeUndefined();
+
+			app = App.Factory.createFrom<TheApp>( { myProperty: "a property" }, "App name", "App description" );
+			expect( App.Factory.is( app ) ).toBe( true );
+			expect( app.myProperty ).toBeDefined();
+			expect( app.myProperty ).toBe( "a property" );
+			expect( app.name ).toBe( "App name" );
+			expect( app.description ).toBe( "App description" );
+
+			expect( () => App.Factory.createFrom( {}, "" ) ).toThrowError( Errors.IllegalArgumentError );
+			expect( () => App.Factory.createFrom( {}, "", "App description" ) ).toThrowError( Errors.IllegalArgumentError );
+			expect( () => App.Factory.createFrom( { myProperty: "a property" }, "" ) ).toThrowError( Errors.IllegalArgumentError );
+			expect( () => App.Factory.createFrom( { myProperty: "a property" }, "", "App description" ) ).toThrowError( Errors.IllegalArgumentError );
+			expect( () => App.Factory.createFrom( {}, <any> {} ) ).toThrowError( Errors.IllegalArgumentError );
+			expect( () => App.Factory.createFrom( {}, <any> 1 ) ).toThrowError( Errors.IllegalArgumentError );
+			expect( () => App.Factory.createFrom( {}, <any> null ) ).toThrowError( Errors.IllegalArgumentError );
+			expect( () => App.Factory.createFrom( {}, <any> undefined ) ).toThrowError( Errors.IllegalArgumentError );
+		});
+
+	});
+
+	it( reexports(
+		STATIC,
+		"App",
+		"Carbon/App/Context"
+	), ():void => {
+		expect( App.Context ).toBeDefined();
+		expect( App.Context ).toEqual( Context );
 	});
 
 });

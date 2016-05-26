@@ -3,7 +3,6 @@ var HTTP = require("./../HTTP");
 var RDFNode = require("./RDFNode");
 var Utils = require("./../Utils");
 var URI = require("./URI");
-var Errors = require("./../Errors");
 var Factory = (function () {
     function Factory() {
     }
@@ -24,24 +23,19 @@ var Util = (function () {
     }
     Util.getDocuments = function (value) {
         if (Utils.isArray(value)) {
-            if (value.length === 0)
-                return value;
-            if (Factory.is(value[0]))
-                return value;
-            if (RDFNode.Factory.is(value[0]))
-                return [Factory.create(value)];
+            var array = value;
+            return array.filter(function (element) { return Factory.is(element); });
         }
         else if (Utils.isObject(value)) {
             if (Factory.is(value))
                 return [value];
-            if (RDFNode.Factory.is(value))
-                return [Factory.create([value])];
         }
-        throw new Errors.IllegalArgumentError("The value structure isn't valid.");
+        return [];
     };
     Util.getResources = function (value) {
+        var freeNodes = RDFNode.Util.getFreeNodes(value);
         var documents = Util.getDocuments(value);
-        var resources = [];
+        var resources = [].concat(freeNodes);
         for (var _i = 0, documents_1 = documents; _i < documents_1.length; _i++) {
             var document_1 = documents_1[_i];
             resources = resources.concat(document_1["@graph"]);

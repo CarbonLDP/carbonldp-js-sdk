@@ -7,7 +7,6 @@ import {
 	STATIC,
 	clazz,
 	module,
-	submodule,
 	isDefined,
 	hasConstructor,
 	hasMethod,
@@ -73,7 +72,7 @@ describe( module( "Carbon/Errors/IllegalStateError" ), function ():void {
 			let error: IllegalStateError = new IllegalStateError( "Message of the error" );
 
 			expect( error.name ).toBeDefined();
-			expect( Utils.isString( name ) ).toBe( true );
+			expect( Utils.isString( error.name ) ).toBe( true );
 
 			expect( error.name ).toBe( "IllegalStateError" );
 		});

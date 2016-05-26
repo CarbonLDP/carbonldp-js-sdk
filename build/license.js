@@ -1,5 +1,5 @@
 /**
- * CarbonLDP JavaScript SDK v0.17.5-ALPHA
+ * CarbonLDP JavaScript SDK v0.33.0
  *
  * @license BSD-3-Clause
  * Copyright (c) 2015-present, Base22 Technology Group, LLC.

@@ -31,6 +31,9 @@ var Util = (function () {
     Util.isBNodeID = function (uri) {
         return Utils.S.startsWith(uri, "_:");
     };
+    Util.generateBNodeID = function () {
+        return "_:" + Utils.UUID.generate();
+    };
     Util.isPrefixed = function (uri) {
         return !Util.isAbsolute(uri) && !Util.isBNodeID(uri) && Utils.S.contains(uri, ":");
     };
@@ -92,10 +95,10 @@ var Util = (function () {
         }
     };
     Util.resolve = function (parentURI, childURI) {
-        if (Util.isAbsolute(childURI) || Util.isPrefixed(childURI))
+        if (Util.isAbsolute(childURI) || Util.isBNodeID(childURI) || Util.isPrefixed(childURI))
             return childURI;
         var finalURI = parentURI;
-        if (!Utils.S.endsWith(parentURI, "/"))
+        if (!Utils.S.endsWith(parentURI, "#") && !Utils.S.endsWith(parentURI, "/"))
             finalURI += "/";
         if (Utils.S.startsWith(childURI, "/")) {
             finalURI = finalURI + childURI.substr(1, childURI.length);

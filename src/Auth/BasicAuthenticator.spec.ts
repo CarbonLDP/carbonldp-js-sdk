@@ -76,7 +76,7 @@ describe( module( "Carbon/Auth/BasicAuthenticator" ), ():void => {
 			Stores credentials to authenticate future requests.
 		`, [
 			{ name: "authenticationToken", type: "Carbon.Auth.UsernameAndPasswordToken" }
-		], { type: "Promise<void>" } ), ( done:( error?:Error ) => void ):void => {
+		], { type: "Promise<void>" } ), ( done:{ ():void; fail:( error:any ) => void } ):void => {
 
 			// Property Integrity
 			(() => {
@@ -122,7 +122,7 @@ describe( module( "Carbon/Auth/BasicAuthenticator" ), ():void => {
 				expect( promise instanceof Promise ).toEqual( true );
 
 				promises.push( promise.then( ():void => {
-					done( new Error( "Promise should have failed." ) );
+					done.fail( new Error( "Promise should have failed." ) );
 				}, ( error:Error ):void => {
 					expect( error instanceof Errors.IllegalArgumentError ).toEqual( true );
 
@@ -134,7 +134,7 @@ describe( module( "Carbon/Auth/BasicAuthenticator" ), ():void => {
 			Promise.all( promises ).then( ():void => {
 				done();
 			}, ( error:Error ):void => {
-				done( error );
+				done.fail( error );
 			});
 		});
 
@@ -142,7 +142,7 @@ describe( module( "Carbon/Auth/BasicAuthenticator" ), ():void => {
 			Adds the Basic authentication header to the passed request options object.
 		`, [
 			{ name: "requestOptions", type:"Carbon.HTTP.Request.Options", description: "Request options object to add Authentication headers." }
-		], { type: "Carbon.HTTP.Request.Options", description: "The request options with the added authentication headers." } ), ( done:( error?:Error ) => void ):void => {
+		], { type: "Carbon.HTTP.Request.Options", description: "The request options with the added authentication headers." } ), ( done:{ ():void; fail:( error:any ) => void } ):void => {
 			let promises:Promise<void>[] = [];
 			let authenticator:BasicAuthenticator.Class = new BasicAuthenticator.Class();
 
@@ -160,9 +160,9 @@ describe( module( "Carbon/Auth/BasicAuthenticator" ), ():void => {
 				expect( Utils.isObject( requestOptions ) ).toEqual( true );
 				expect( "headers" in requestOptions ).toEqual( true );
 				expect( requestOptions.headers instanceof Map ).toEqual( true );
-				expect( requestOptions.headers.has( "Authorization" ) ).toEqual( true );
+				expect( requestOptions.headers.has( "authorization" ) ).toEqual( true );
 
-				let authorizationHeader:HTTP.Header.Class = requestOptions.headers.get( "Authorization" );
+				let authorizationHeader:HTTP.Header.Class = requestOptions.headers.get( "authorization" );
 
 				expect( authorizationHeader instanceof HTTP.Header.Class ).toEqual( true );
 				expect( authorizationHeader.values.length ).toEqual( 1 );
@@ -170,7 +170,14 @@ describe( module( "Carbon/Auth/BasicAuthenticator" ), ():void => {
 				let authorization:string = authorizationHeader.toString();
 
 				expect( Utils.S.startsWith( authorization, "Basic " ) ).toEqual( true );
-				expect( atob( authorization.substring( 6 ) ) ).toEqual( "user:pass" );
+
+				let auth:string;
+				if ( typeof atob !== "undefined" )
+					auth = atob( authorization.substring( 6 ) );
+				else
+					auth = ( new Buffer( authorization.substring( 6 ), 'base64') ).toString( "utf8" );
+
+				expect( auth ).toEqual( "user:pass" );
 			}, done ));
 
 			// TODO: Test case where other headers are already provided
@@ -180,13 +187,13 @@ describe( module( "Carbon/Auth/BasicAuthenticator" ), ():void => {
 			Promise.all( promises ).then( ():void => {
 				done();
 			}, ( error:Error ):void => {
-				done( error );
+				done.fail( error );
 			});
 		});
 
 		it( hasMethod( INSTANCE, "clearAuthentication", `
 			Clears any saved credentials and restores the Authenticator to its initial state.
-		` ), ( done:( error?:Error ) => void ):void => {
+		` ), ( done:{ ():void; fail:( error:any ) => void } ):void => {
 			let promises:Promise<void>[] = [];
 			let authenticator:BasicAuthenticator.Class = new BasicAuthenticator.Class();
 
@@ -207,7 +214,7 @@ describe( module( "Carbon/Auth/BasicAuthenticator" ), ():void => {
 			Promise.all( promises ).then( ():void => {
 				done();
 			}, ( error:Error ):void => {
-				done( error );
+				done.fail( error );
 			});
 		});
 

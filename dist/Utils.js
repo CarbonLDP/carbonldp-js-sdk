@@ -59,6 +59,15 @@ function isObject(object) {
     return typeof object === "object" && (!!object);
 }
 exports.isObject = isObject;
+function isPlainObject(object) {
+    return isObject(object)
+        && !isArray(object)
+        && !isDate(object)
+        && !isMap(object)
+        && !(typeof Blob !== "undefined" && object instanceof Blob)
+        && !((object + "") === "[object Set]");
+}
+exports.isPlainObject = isPlainObject;
 function isFunction(value) {
     return typeof value === "function";
 }
@@ -254,16 +263,5 @@ var UUID = (function () {
     return UUID;
 }());
 exports.UUID = UUID;
-var P = (function () {
-    function P() {
-    }
-    P.createRejectedPromise = function (error) {
-        return new Promise(function (resolve, reject) {
-            reject(error);
-        });
-    };
-    return P;
-}());
-exports.P = P;
 
 //# sourceMappingURL=Utils.js.map

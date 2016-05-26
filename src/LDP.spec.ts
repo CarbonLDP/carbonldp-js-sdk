@@ -5,15 +5,20 @@ import {
 	module,
 
 	isDefined,
-	reexports
+	reexports,
 } from "./test/JasmineExtender";
 import * as Utils from "./Utils";
 
-import * as AccessPoint from "./LDP/AccessPoint";
+import * as AddMemberAction from "./LDP/AddMemberAction";
 import * as BasicContainer from "./LDP/BasicContainer";
 import * as Container from "./LDP/Container";
+import * as DirectContainer from "./LDP/DirectContainer";
+import * as IndirectContainer from "./LDP/IndirectContainer";
 import * as PersistedContainer from "./LDP/PersistedContainer";
 import * as RDFSource from "./LDP/RDFSource";
+import * as RemoveMemberAction from "./LDP/RemoveMemberAction";
+import * as ResponseMetadata from "./LDP/ResponseMetadata";
+import * as ResourceMetadata from "./LDP/ResourceMetadata";
 
 import * as LDP from "./LDP";
 
@@ -26,11 +31,11 @@ describe( module( "Carbon/LDP" ), ():void => {
 
 	it( reexports(
 		STATIC,
-		"AccessPoint",
-		"Carbon/LDP/AccessPoint"
+		"AddMemberAction",
+		"Carbon/LDP/AddMemberAction"
 	), ():void => {
-		expect( LDP.AccessPoint ).toBeDefined();
-		expect( LDP.AccessPoint ).toBe( AccessPoint );
+		expect( LDP.AddMemberAction ).toBeDefined();
+		expect( LDP.AddMemberAction ).toBe( AddMemberAction );
 	});
 
 	it( reexports(
@@ -53,6 +58,24 @@ describe( module( "Carbon/LDP" ), ():void => {
 
 	it( reexports(
 		STATIC,
+		"DirectContainer",
+		"Carbon/LDP/DirectContainer"
+	), ():void => {
+		expect( LDP.DirectContainer ).toBeDefined();
+		expect( LDP.DirectContainer ).toBe( DirectContainer );
+	});
+
+	it( reexports(
+		STATIC,
+		"IndirectContainer",
+		"Carbon/LDP/IndirectContainer"
+	), ():void => {
+		expect( LDP.IndirectContainer ).toBeDefined();
+		expect( LDP.IndirectContainer ).toBe( IndirectContainer );
+	});
+
+	it( reexports(
+		STATIC,
 		"PersistedContainer",
 		"Carbon/LDP/PersistedContainer"
 	), ():void => {
@@ -67,6 +90,33 @@ describe( module( "Carbon/LDP" ), ():void => {
 	), ():void => {
 		expect( LDP.RDFSource ).toBeDefined();
 		expect( LDP.RDFSource ).toBe( RDFSource );
+	});
+
+	it( reexports(
+		STATIC,
+		"RemoveMemberAction",
+		"Carbon/LDP/RemoveMemberAction"
+	), ():void => {
+		expect( LDP.RemoveMemberAction ).toBeDefined();
+		expect( LDP.RemoveMemberAction ).toBe( RemoveMemberAction );
+	});
+
+	it( reexports(
+		STATIC,
+		"ResponseMetadata",
+		"Carbon/LDP/ResponseMetadata"
+	), ():void => {
+		expect( LDP.ResponseMetadata ).toBeDefined();
+		expect( LDP.ResponseMetadata ).toBe( ResponseMetadata );
+	});
+
+	it( reexports(
+		STATIC,
+		"ResourceMetadata",
+		"Carbon/LDP/ResourceMetadata"
+	), ():void => {
+		expect( LDP.ResourceMetadata ).toBeDefined();
+		expect( LDP.ResourceMetadata ).toBe( ResourceMetadata );
 	});
 
 });

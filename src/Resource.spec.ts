@@ -1,17 +1,15 @@
 import {
-	INSTANCE,
 	STATIC,
 
 	module,
 	clazz,
-	method,
 
 	isDefined,
-	hasMethod,
-	hasSignature
+	hasMethod
 } from "./test/JasmineExtender";
-import * as Utils from "./Utils";
 import * as NS from "./NS";
+import * as Pointer from "./Pointer";
+import * as Utils from "./Utils";
 
 import * as Resource from "./Resource";
 
@@ -43,13 +41,40 @@ describe( module( "Carbon/Resource" ), ():void => {
 			expect( Resource.Factory.hasClassProperties ).toBeDefined();
 			expect( Utils.isFunction( Resource.Factory.hasClassProperties ) ).toBe( true );
 
-			let resource:Object = undefined;
+			let resource:any = undefined;
 			expect( Resource.Factory.hasClassProperties( resource ) ).toBe( false );
-			resource = {};
-			expect( Resource.Factory.hasClassProperties( resource ) ).toBe( false );
-
-			resource["types"] = null;
+			resource = {
+				types: null,
+			};
 			expect( Resource.Factory.hasClassProperties( resource ) ).toBe( true );
+
+			delete resource.types;
+			expect( Resource.Factory.hasClassProperties( resource ) ).toBe( false );
+			resource.types = null;
+		});
+
+		it( hasMethod(
+			STATIC,
+			"is",
+			"Returns true if the object is a `Carbon.Resource.Class` (by duck type)", [
+				{ name: "resource", type: "Object" }
+			],
+			{ type: "boolean" }
+		), ():void => {
+			let object:Object = undefined;
+			expect( Resource.Factory.is( object ) ).toBe( false );
+			object = {};
+			expect( Resource.Factory.is( object ) ).toBe( false );
+			object["types"] = null;
+			expect( Resource.Factory.is( object ) ).toBe( false );
+
+			let resource = Pointer.Factory.decorate( object );
+			expect( Resource.Factory.is( resource ) ).toBe( true );
+
+			resource = Pointer.Factory.create();
+			resource["types"] = null;
+			expect( Resource.Factory.is( resource ) ).toBe( true );
+
 		});
 
 		it( hasMethod(

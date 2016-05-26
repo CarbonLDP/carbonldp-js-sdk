@@ -54,6 +54,15 @@ function isObject( object:any ):boolean {
 	return typeof object === "object" && ( ! ! object );
 }
 
+function isPlainObject( object:Object ):boolean {
+	return isObject( object )
+		&& ! isArray( object )
+		&& ! isDate( object )
+		&& ! isMap( object )
+		&& ! ( typeof Blob !== "undefined" && object instanceof Blob )
+		&& ! ( ( object + "" ) === "[object Set]" );
+}
+
 function isFunction( value:any ):boolean {
 	return typeof value === "function";
 }
@@ -226,14 +235,6 @@ class UUID {
 	}
 }
 
-class P {
-	public static createRejectedPromise<T extends Error>( error:T ):Promise<any> {
-		return new Promise<any>( ( resolve:( result:any ) => void, reject:( error:T ) => void ) => {
-			reject( error );
-		} );
-	}
-}
-
 export {
 	hasFunction,
 	hasProperty,
@@ -248,6 +249,7 @@ export {
 	isDouble,
 	isDate,
 	isObject,
+	isPlainObject,
 	isFunction,
 	isMap,
 	parseBoolean,
@@ -257,6 +259,5 @@ export {
 	S,
 	A,
 	M,
-	UUID,
-	P
+	UUID
 };

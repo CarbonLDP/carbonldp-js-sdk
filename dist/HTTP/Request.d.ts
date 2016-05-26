@@ -14,21 +14,32 @@ export interface ContainerRetrievalPreferences {
 }
 export declare class Service {
     private static defaultOptions;
+    static send(method: (Method | string), url: string, body: Blob, options?: Options): Promise<Response>;
+    static send<T>(method: (Method | string), url: string, body: Blob, options?: Options, parser?: Parser<T>): Promise<[T, Response]>;
+    static send(method: (Method | string), url: string, body: Buffer, options?: Options): Promise<Response>;
+    static send<T>(method: (Method | string), url: string, body: Buffer, options?: Options, parser?: Parser<T>): Promise<[T, Response]>;
     static send(method: (Method | string), url: string, options?: Options): Promise<Response>;
     static send(method: (Method | string), url: string, body: string, options?: Options): Promise<Response>;
     static send(method: (Method | string), url: string, body: string, options?: Options): Promise<Response>;
+    static send<T>(method: (Method | string), url: string, options?: Options, parser?: Parser<T>): Promise<[T, Response]>;
     static send<T>(method: (Method | string), url: string, body: string, options?: Options, parser?: Parser<T>): Promise<[T, Response]>;
     static options(url: string, options?: Options): Promise<Response>;
     static head(url: string, options?: Options): Promise<Response>;
     static get(url: string, options?: Options): Promise<Response>;
     static get<T>(url: string, options?: Options, parser?: Parser<T>): Promise<[T, Response]>;
+    static post(url: string, body: Buffer, options?: Options): Promise<Response>;
+    static post<T>(url: string, body: Buffer, options?: Options, parser?: Parser<T>): Promise<[T, Response]>;
+    static post(url: string, body: Blob, options?: Options): Promise<Response>;
+    static post<T>(url: string, body: Blob, options?: Options, parser?: Parser<T>): Promise<[T, Response]>;
     static post(url: string, body: string, options?: Options): Promise<Response>;
     static post<T>(url: string, body: string, options?: Options, parser?: Parser<T>): Promise<[T, Response]>;
     static put(url: string, body: string, options?: Options): Promise<Response>;
     static put<T>(url: string, body: string, options?: Options, parser?: Parser<T>): Promise<[T, Response]>;
     static patch(url: string, body: string, options?: Options): Promise<Response>;
     static patch<T>(url: string, body: string, options?: Options, parser?: Parser<T>): Promise<[T, Response]>;
+    static delete(url: string, options?: Options): Promise<Response>;
     static delete(url: string, body: string, options?: Options): Promise<Response>;
+    static delete<T>(url: string, options?: Options, parser?: Parser<T>): Promise<[T, Response]>;
     static delete<T>(url: string, body: string, options?: Options, parser?: Parser<T>): Promise<[T, Response]>;
 }
 export declare class Util {
@@ -37,6 +48,7 @@ export declare class Util {
     static setContentTypeHeader(contentType: string, requestOptions: Options): Options;
     static setIfMatchHeader(etag: string, requestOptions: Options): Options;
     static setPreferredInteractionModel(interactionModelURI: string, requestOptions: Options): Options;
-    static setContainerRetrievalPreferences(preferences: ContainerRetrievalPreferences, requestOptions: Options): Options;
+    static setContainerRetrievalPreferences(preferences: ContainerRetrievalPreferences, requestOptions: Options, returnRepresentation?: boolean): Options;
     static setSlug(slug: string, requestOptions: Options): Options;
+    static isOptions(object: Object): boolean;
 }
