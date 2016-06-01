@@ -7,9 +7,7 @@ JavaScript SDK that simplifies the use of CarbonLDP's REST API.
 ## Development Setup
 1. Install Dependencies
     - [node.js](https://nodejs.org/en/)
-    - gulp: `npm install gulp -g` (you may need to run it as root)
-    - jspm: `npm install jspm@beta -g` (you may need to run it as root)
-    - typings: `npm install typings -g` (you may need to run it as root)
+    - gulp: `npm install gulp -g`
 2. cd into the project's root directory
 3. Run `npm install`
 4. Run `npm run-script install-dev`
@@ -34,12 +32,8 @@ JavaScript SDK that simplifies the use of CarbonLDP's REST API.
     - **pre-commit**: Builds Carbon and adds the dist folder to the commit. Makes sure there's a fresh build in each commit.
 - **src**: Source files
 - **test**: Test framework related files (not the real tests)
-- **typings**: TypeScript definition files (See [typings](https://github.com/typings/typings))
-    - **custom**: Custom definition files can be added here
-    - **global**: Definition files are installed here. This folder is managed by [typings](https://github.com/typings/typings)
-    - **index.d.ts**: Definition file managed by [typings](https://github.com/typings/typings)
-    - **typings.d.ts**: Main definitions file
-- **.gitignore**: Git configuration file to mark which files to ignore
+- **typings**: TypeScript description files
+- **.gitignore**: Git configuration file to mark which files to ingore
 - **CHANGELOG.md**: File to track changes. Any new addition needs to be added here
 - **gulpfile.js**: Gulp configuration file
 - **karma.conf.js**: Karma test runner configuration file
@@ -47,8 +41,8 @@ JavaScript SDK that simplifies the use of CarbonLDP's REST API.
 - **package.json**: npm configuration file
 - **README.md**: === this
 - **test-main.js**: RequireJS configuration file to be loaded by karma
+- **tsd.json**: tsd configuration file
 - **tslint.json**: tslint configuration file
-- **typings.json**: [typings](https://github.com/typings/typings) configuration file
 
 ## License
 
