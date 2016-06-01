@@ -123,7 +123,7 @@ describe( module( "Carbon/RDF/Document" ), ():void => {
 
 	describe( clazz(
 		"Carbon.RDF.Document.Util",
-		"Class with useful functions for manage RDF Documents"
+		"Class with useful functions to manage RDF Documents"
 	), ():void => {
 		let document:RDFDocument.Class;
 		let node:RDFNode.Class, fragment:RDFNode.Class, bNode:RDFNode.Class;

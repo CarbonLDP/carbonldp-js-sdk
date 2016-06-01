@@ -22,7 +22,7 @@ describe( module( "Carbon/Auth/UsernameAndPasswordToken" ), ():void => {
 
 	describe( clazz(
 		"Carbon.Auth.UsernameAndPasswordToken.Class",
-		"Wrapper for manage an Authentication Token in form of Username/Password."
+		"Wrapper to manage an Authentication Token in form of Username/Password."
 	), ():void => {
 
 		it( isDefined(), ():void => {

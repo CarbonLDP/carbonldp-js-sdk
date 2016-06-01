@@ -16,7 +16,7 @@ export interface Class extends Resource.Class, Pointer.Library, Pointer.Validato
 	getNamedFragment( slug:string ):NamedFragment.Class;
 	getFragments():Fragment.Class[];
 
-	createFragment<T extends Object>( slug:string, object:T ):NamedFragment.Class & T;
+	createFragment<T extends Object>( slug:string, object:T ):Fragment.Class & T;
 	createFragment<T extends Object>( object:T ):Fragment.Class & T;
 	createFragment():Fragment.Class;
 	createFragment( slug:string ):NamedFragment.Class;
@@ -106,9 +106,9 @@ function getFragments():Fragment.Class[] {
 	return Utils.A.from( document._fragmentsIndex.values() );
 }
 
-function createFragment<T extends Object>( slug:string, object:T ):NamedFragment.Class & T;
+function createFragment<T extends Object>( slug:string, object:T ):Fragment.Class & T;
 function createFragment<T extends Object>( object:T ):Fragment.Class & T;
-function createFragment( slug:string ):NamedFragment.Class;
+function createFragment( slug:string ):Fragment.Class;
 function createFragment():Fragment.Class;
 function createFragment( slugOrObject?:any, object?:any ):any {
 	let document:Class = <Class> this;

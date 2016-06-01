@@ -153,7 +153,7 @@ describe( module(
 
 	describe( clazz(
 		"Carbon.HTTP.Header.Util",
-		"Class with useful options for manage headers"
+		"Class with useful options to manage headers"
 	), ():void => {
 
 		it( isDefined(), ():void => {

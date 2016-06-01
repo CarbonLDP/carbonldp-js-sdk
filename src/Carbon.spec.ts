@@ -91,7 +91,7 @@ describe( module( "Carbon" ), ():void => {
 			STATIC,
 			"version",
 			"string",
-			"Returns the version of the SDK"
+			"Returns the version of the SDK."
 		), ():void => {
 			expect( Carbon.version ).toBeDefined();
 			expect( Utils.isString( Carbon.version ) ).toBe( true );
@@ -103,7 +103,7 @@ describe( module( "Carbon" ), ():void => {
 			INSTANCE,
 			"version",
 			"string",
-			"Returns the version of the SDK"
+			"Returns the version of the SDK."
 		), ():void => {
 			expect( carbon.version ).toBeDefined();
 			expect( Utils.isString( carbon.version ) ).toBe( true );
@@ -377,7 +377,7 @@ describe( module( "Carbon" ), ():void => {
 		it( hasMethod(
 			INSTANCE,
 			"resolve",
-			"Resolve the URI provided in the context of the instance, this information is provided in the settings object.", [
+			"Resolve the URI provided in the scope of the CarbonLDP Platform.", [
 				{ name: "uri", type: "string" }
 			],
 			{ type: "string" }
@@ -395,7 +395,7 @@ describe( module( "Carbon" ), ():void => {
 		it( hasMethod(
 			INSTANCE,
 			"getAPIDescription",
-			"Returns the API description of the connected platform in the instance of Carbon",
+			"Returns the API description of the related CarbonLDP Platform.",
 			{ type: "Promise<Carbon.APIDescription.Class>"}
 		), ( done:{ ():void, fail:() => void }):void => {
 			expect( carbon.getAPIDescription ).toBeDefined();

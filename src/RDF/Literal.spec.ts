@@ -391,7 +391,7 @@ describe( module( "Carbon/RDF/Literal" ), ():void => {
 
 	describe( clazz(
 		"Carbon.RDF.Literal.Util",
-		"Class with useful functions for manage RDF Literals"
+		"Class with useful functions to manage RDF Literals"
 	), ():void => {
 
 		it( isDefined(), ():void => {

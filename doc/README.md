@@ -533,13 +533,13 @@ Carbon( settings?:any )
 static version:string 
 ```
 
-Returns the version of the SDK
+Returns the version of the SDK.
 
 ```typescript 
 version:string 
 ```
 
-Returns the version of the SDK
+Returns the version of the SDK.
 ```typescript 
 apps:Carbon.Apps.Class 
 ```
@@ -553,7 +553,7 @@ Instance of the class `Carbon.Apps` in the context of the instanced Carbon class
 resolve( uri:string ):string
 ```
 
-Resolve the URI provided in the context of the instance, this information is provided in the settings object.
+Resolve the URI provided in the scope of the CarbonLDP Platform.
 
 *Parameters*
 
@@ -564,7 +564,7 @@ Resolve the URI provided in the context of the instance, this information is pro
 getAPIDescription():Promise<Carbon.APIDescription.Class>
 ```
 
-Returns the API description of the connected platform in the instance of Carbon
+Returns the API description of the related CarbonLDP Platform.
 
 
 
@@ -789,7 +789,7 @@ Create a `Carbon.Agent.Class` object from the object and parameters specified.
 ### <a name="Carbon-Agents-Class" />Class Carbon.Agents.Class
 
 
-> Class for manage the Agents of a determined context.
+> Class to manage the Agents of a determined context.
 
 
 #### <a name="Carbon-Agents-Class-Constructor" />Constructor
@@ -1404,7 +1404,7 @@ Stores credentials to authenticate future requests.
 ### <a name="Carbon-Auth-UsernameAndPasswordToken-Class" />Class Carbon.Auth.UsernameAndPasswordToken.Class
 
 
-> Wrapper for manage an Authentication Token in form of Username/Password.
+> Wrapper to manage an Authentication Token in form of Username/Password.
 
 
 #### <a name="Carbon-Auth-UsernameAndPasswordToken-Class-Constructor" />Constructor
@@ -1444,7 +1444,7 @@ password:string
 ### <a name="Carbon-Document-Factory" />Class Carbon.Document.Factory
 
 
-> Factory class for Document objects.
+> Factory class for `Carbon.Document.Class` objects.
 
 
 
@@ -1455,7 +1455,7 @@ password:string
 static hasClassProperties( documentResource:Object ):boolean
 ```
 
-Returns true if the object provided has the properties and functions of a Document object
+Returns true if the object provided has the properties and functions of a `Carbon.Document.Class` object.
 
 *Parameters*
 
@@ -1466,7 +1466,7 @@ Returns true if the object provided has the properties and functions of a Docume
 static is( object:Object ):boolean
 ```
 
-Returns true if the object is considered a Document object
+Returns true if the object is considered a `Carbon.Document.Class` object.
 
 *Parameters*
 
@@ -1477,7 +1477,7 @@ Returns true if the object is considered a Document object
 static decorate( object:T extends Object ):T & Carbon.Document.Class
 ```
 
-Adds the properties and method necessary for a Document object.
+Decorate the object provided with the properties and methods of a `Carbon.Document.Class` object.
 
 *Parameters*
 
@@ -1488,14 +1488,14 @@ Adds the properties and method necessary for a Document object.
 static create():Carbon.Document.Class
 ```
 
-Creates an empty Document object.
+Creates a `Carbon.Document.Class` object.
 
 ##### createFrom
 ```typescript 
 static createFrom( object:T extends Object ):Carbon.Document.Class
 ```
 
-Creates a Document object from the object provided.
+Creates a `Carbon.Document.Class` object from the object provided.
 
 *Parameters*
 
@@ -1506,14 +1506,14 @@ Creates a Document object from the object provided.
 #### <a name="Carbon-Document-Factory-Decorated-Object" />Decorated Object
 **Interfaces:** [Carbon.LDP.PersistedContainer.Class](#Carbon-LDP-PersistedContainer-Class)
 
-> Object decorated by the Carbon.LDP.PersistedContainer.Factory.decorate function.
+> Object decorated by the `Carbon.LDP.PersistedContainer.Factory.decorate()` function.
 
 ##### <a name="Carbon-Document-Factory-Decorated-Object-Properties" />Properties
 ```typescript 
 _fragmentsIndex:Map<string, Carbon.Fragment.Class> 
 ```
 
-Map object for store the fragment pointers (named fragments and blank nodes) of the document.
+Map that stores the fragments (named fragments and blank nodes) of the Document.
 
 ##### <a name="Carbon-Document-Factory-Decorated-Object-Methods" />Methods
 ##### hasPointer
@@ -1521,7 +1521,7 @@ Map object for store the fragment pointers (named fragments and blank nodes) of 
 hasPointer( id:string ):boolean
 ```
 
-Returns true if the Document object has a pointer referenced by the URI provided.
+Returns true if the Document has a pointer referenced by the URI provided.
 
 *Parameters*
 
@@ -1532,8 +1532,8 @@ Returns true if the Document object has a pointer referenced by the URI provided
 getPointer( id:string ):boolean
 ```
 
-Returns the pointer referenced by the URI provided. If not exists a pointer is created.
-Returns null if the URI is not inside scope of the document.
+Returns the pointer referenced by the URI provided. If no pointer exists, one is created and then returned.
+Returns `null` if the URI is outside the scope of the Document.
 
 *Parameters*
 
@@ -1544,7 +1544,7 @@ Returns null if the URI is not inside scope of the document.
 hasFragment( id:string ):boolean
 ```
 
-Returns true if the document has the fragment id provided
+Returns true if the Document has the fragment referenced by the ID provided.
 
 *Parameters*
 
@@ -1555,8 +1555,8 @@ Returns true if the document has the fragment id provided
 getFragment( id:string ):Carbon.Fragment.Class
 ```
 
-Returns the fragment referenced by the URI provided.
-Returns null if no fragment exists in the document.
+Returns the fragment referenced by the ID provided.
+Returns `null` if no fragment exists in the Document.
 
 *Parameters*
 
@@ -1567,8 +1567,8 @@ Returns null if no fragment exists in the document.
 getNamedFragment( id:string ):Carbon.Fragment.Class
 ```
 
-Returns the fragment referenced by the URI provided.
-Returns null if no fragment exists in the document.
+Returns the fragment referenced by the ID provided.
+Returns `null` if no fragment exists in the Document.
 
 *Parameters*
 
@@ -1579,14 +1579,14 @@ Returns null if no fragment exists in the document.
 getFragments():Carbon.Fragment.Class[]
 ```
 
-Returns an array of the fragments in the document
+Returns an array with all the fragments in the Document.
 
 ##### inScope
 ```typescript 
 inScope( pointer:Carbon.Pointer.Class ):boolean
 ```
 
-Returns true if the pointer provided is in the scope of the document.
+Returns true if the pointer provided is inside the scope of the Document.
 
 *Parameters*
 
@@ -1596,7 +1596,7 @@ Returns true if the pointer provided is in the scope of the document.
 inScope( id:string ):boolean
 ```
 
-Returns true if the URI provided is in the scope of the document.
+Returns true if the URI provided is inside the scope of the Document.
 
 *Parameters*
 
@@ -1604,10 +1604,11 @@ Returns true if the URI provided is in the scope of the document.
 
 ##### createFragment
 ```typescript 
-createFragment( slug:string,  object:Object ):Carbon.NamedFragment.Class
+createFragment( slug:string,  object:Object ):Carbon.Fragment.Class
 ```
 
-Creates a NamedFragment from the object provided and the slug specified.
+Creates a `Carbon.NamedFragment.Class` from the object provided and the slug specified.
+If the slug have the form of a BlankNode id, a `Carbon.Fragment.Class` is created instead.
 
 *Parameters*
 
@@ -1618,7 +1619,7 @@ Creates a NamedFragment from the object provided and the slug specified.
 createFragment( object:Object ):Carbon.Fragment.Class
 ```
 
-Creates a BlankNode from the object provided, sing no slug was specififed.
+Creates a `Carbon.Fragment.Class` from the object provided, since no slug is specified.
 
 *Parameters*
 
@@ -1628,7 +1629,7 @@ Creates a BlankNode from the object provided, sing no slug was specififed.
 createFragment( slug:string ):Carbon.Fragment.Class
 ```
 
-Creates a Fragment with the slug provided.
+Creates a `Carbon.Fragment.Class` with the slug provided.
 
 *Parameters*
 
@@ -1638,14 +1639,14 @@ Creates a Fragment with the slug provided.
 createFragment():Carbon.Fragment.Class
 ```
 
-Creates a Blank Node Fragment, since no slug is provided
+Creates a `Carbon.Fragment.Class`, since no slug is provided
 
 ##### createNamedFragment
 ```typescript 
 createNamedFragment( slug:string ):Carbon.NamedFragment.Class
 ```
 
-Creates a NamedFragment with the slug provided
+Creates a `Carbon.NamedFragment.Class` with the slug provided.
 
 *Parameters*
 
@@ -1655,7 +1656,7 @@ Creates a NamedFragment with the slug provided
 createNamedFragment( slug:string,  object:Object ):Carbon.NamedFragment.Class
 ```
 
-Creates a NamedFragment from the object provided and the slug specified.
+Creates a `Carbon.NamedFragment.Class` from the object provided and the slug specified.
 
 *Parameters*
 
@@ -1667,7 +1668,7 @@ Creates a NamedFragment from the object provided and the slug specified.
 removeFragment( fragment:Carbon.NamedFragment.Class )
 ```
 
-Remove the fragment referenced by the NamedFragment object provided from the Document.
+Remove the fragment referenced by the `Carbon.NamedFragment.Class` object provided from the Document.
 
 *Parameters*
 
@@ -1677,7 +1678,7 @@ Remove the fragment referenced by the NamedFragment object provided from the Doc
 removeFragment( fragment:Carbon.Fragment.Class )
 ```
 
-Remove the fragment referenced by the Fragment object provided from the Document.
+Remove the fragment referenced by the `Carbon.Fragment.Class` object provided from the Document.
 
 *Parameters*
 
@@ -1698,7 +1699,7 @@ Remove the fragment referenced by the Slug string provided from the Document.
 toJSON( objectSchemaResolver:Carbon.ObjectSchema.Resolver,  jsonLDConverter:JSONLDConverter ):string
 ```
 
-Returns a JSON string from the document using an ObjectSchema and a JSONLDConverter
+Returns a JSON string from the Document using an ObjectSchema and a JSONLDConverter.
 
 *Parameters*
 
@@ -1709,7 +1710,7 @@ Returns a JSON string from the document using an ObjectSchema and a JSONLDConver
 toJSON( objectSchemaResolver:Carbon.ObjectSchema.Resolver ):string
 ```
 
-Returns a JSON string from the document using an ObjectSchema
+Returns a JSON string from the Document using an ObjectSchema
 
 *Parameters*
 
@@ -1719,7 +1720,7 @@ Returns a JSON string from the document using an ObjectSchema
 toJSON():string
 ```
 
-Returns a JSON string from the document using the default ObjectSchema
+Returns a JSON string from the Document using the default ObjectSchema.
 
 
 ## <a name="Carbon-Documents" />Module Carbon/Documents
@@ -3930,7 +3931,7 @@ string
 ### <a name="Carbon-HTTP-Header-Util" />Class Carbon.HTTP.Header.Util
 
 
-> Class with useful options for manage headers
+> Class with useful options to manage headers
 
 
 
@@ -4243,7 +4244,7 @@ Delete request with specified parser
 ### <a name="Carbon-HTTP-Request-Util" />Class Carbon.HTTP.Request.Util
 
 
-> Useful functions for manage the options object of a request
+> Useful functions to manage the options object of a request
 
 
 
@@ -6856,7 +6857,7 @@ Return an RDFDocument object created with the parameters provided
 ### <a name="Carbon-RDF-Document-Util" />Class Carbon.RDF.Document.Util
 
 
-> Class with useful functions for manage RDF Documents
+> Class with useful functions to manage RDF Documents
 
 
 
@@ -7109,7 +7110,7 @@ Returns true if the Literal has the type indicated
 ### <a name="Carbon-RDF-Literal-Util" />Class Carbon.RDF.Literal.Util
 
 
-> Class with useful functions for manage RDF Literals
+> Class with useful functions to manage RDF Literals
 
 
 
@@ -7424,7 +7425,7 @@ Create a RDFNode object providing an URI string
 ### <a name="Carbon-RDF-RDFNode-Util" />Class Carbon.RDF.RDFNode.Util
 
 
-> Class with useful functions for manage RDFNode objects
+> Class with useful functions to manage RDFNode objects
 
 
 
@@ -7709,7 +7710,7 @@ Replace the base of a URI with a prefix in accordance with the ObjectSchema prov
 ### <a name="Carbon-RDF-Value-Util" />Class Carbon.RDF.Value.Util
 
 
-> Class with useful functions for manage RDF Values.
+> Class with useful functions to manage RDF Values.
 
 
 

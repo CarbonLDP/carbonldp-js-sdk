@@ -911,7 +911,7 @@ describe( module( "Carbon/HTTP/Request" ), function ():void {
 
 	describe( clazz(
 		"Carbon.HTTP.Request.Util",
-		"Useful functions for manage the options object of a request"
+		"Useful functions to manage the options object of a request"
 	), ():void => {
 		let options:Request.Options,
 			optionsWithHeaders:Request.Options;

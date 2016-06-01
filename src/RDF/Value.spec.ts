@@ -26,7 +26,7 @@ describe( module( "Carbon/RDF/Value" ), ():void => {
 
 	describe( clazz(
 		"Carbon.RDF.Value.Util",
-		"Class with useful functions for manage RDF Values."
+		"Class with useful functions to manage RDF Values."
 	), ():void => {
 		let expandedObject:any;
 		let documentResource:any;

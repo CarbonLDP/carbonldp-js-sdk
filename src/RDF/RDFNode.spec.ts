@@ -69,7 +69,7 @@ describe( module( "Carbon/RDF/RDFNode" ), ():void => {
 
 	describe( clazz(
 		"Carbon.RDF.RDFNode.Util",
-		"Class with useful functions for manage RDFNode objects"
+		"Class with useful functions to manage RDFNode objects"
 	), ():void => {
 
 		it( isDefined(), ():void => {
