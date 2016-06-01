@@ -11,7 +11,7 @@ var Class = (function () {
         var _this = this;
         var containerUri = this.context.resolve(this.getContainerURI());
         var parentUri = Utils.isString(parentRole) ? parentRole : parentRole.id;
-        parentUri = this.context.resolve(parentUri);
+        parentUri = URI.Util.resolve(containerUri, parentUri);
         var slug = Utils.isString(slugOrRequestOptions) ? slugOrRequestOptions : null;
         requestOptions = HTTP.Request.Util.isOptions(slugOrRequestOptions) ? slugOrRequestOptions : requestOptions;
         if (!URI.Util.isBaseOf(containerUri, parentUri))

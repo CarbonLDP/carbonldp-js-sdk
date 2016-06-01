@@ -126,15 +126,15 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 				let promises:Promise<any>[] = [];
 				let promise:Promise<any>;
 
-				promise = roles.createChild( "roles/parent/", Role.Factory.create( "Role name" ), "new-role" );
+				promise = roles.createChild( "parent/", Role.Factory.create( "Role name" ), "new-role" );
 				expect( promise instanceof Promise ).toBe( true );
 				promises.push( promise.then( spies.success ) );
 
-				promise = roles.createChild( "roles/parent/", Role.Factory.create( "Role name" ) );
+				promise = roles.createChild( "http://example.com/roles/parent/", Role.Factory.create( "Role name" ) );
 				expect( promise instanceof Promise ).toBe( true );
 				promises.push( promise.then( spies.success ) );
 
-				promise = roles.createChild( "roles/parent/no-found/", Role.Factory.create( "Role name" ), "new-role" );
+				promise = roles.createChild( "parent/no-found/", Role.Factory.create( "Role name" ), "new-role" );
 				expect( promise instanceof Promise ).toBe( true );
 				promises.push( promise.catch( spies.error ) );
 
@@ -206,15 +206,15 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 					timeout: 5555
 				};
 
-				promise = roles.createChild( "roles/parent/", Role.Factory.create( "Role name" ), options );
+				promise = roles.createChild( "parent/", Role.Factory.create( "Role name" ), options );
 				expect( promise instanceof Promise ).toBe( true );
 				promises.push( promise.then( spies.success ) );
 
-				promise = roles.createChild( "roles/parent/", Role.Factory.create( "Role name" ) );
+				promise = roles.createChild( "http://example.com/roles/parent/", Role.Factory.create( "Role name" ) );
 				expect( promise instanceof Promise ).toBe( true );
 				promises.push( promise.then( spies.success ) );
 
-				promise = roles.createChild( "roles/parent/no-found/", Role.Factory.create( "Role name" ), options );
+				promise = roles.createChild( "parent/no-found/", Role.Factory.create( "Role name" ), options );
 				expect( promise instanceof Promise ).toBe( true );
 				promises.push( promise.catch( spies.error ) );
 
