@@ -22,6 +22,8 @@ import * as ACL from "./Auth/ACL";
 import AuthenticationToken from "./Auth/AuthenticationToken";
 import Authenticator from "./Auth/Authenticator";
 import BasicAuthenticator from "./Auth/BasicAuthenticator";
+import * as PersistedACE from "./Auth/PersistedACE";
+import * as PersistedACL from "./Auth/PersistedACL";
 import * as Token from "./Auth/Token";
 import TokenAuthenticator from "./Auth/TokenAuthenticator";
 import UsernameAndPasswordToken from "./Auth/UsernameAndPasswordToken";
@@ -77,6 +79,24 @@ describe( module( "Carbon/Auth" ), ():void => {
 	), ():void => {
 		expect( Auth.BasicAuthenticator ).toBeDefined();
 		expect( Auth.BasicAuthenticator ).toBe( BasicAuthenticator );
+	});
+
+	it( reexports(
+		STATIC,
+		"PersistedACE",
+		"Carbon.Auth.PersistedACE"
+	), ():void => {
+		expect( Auth.PersistedACE ).toBeDefined();
+		expect( Auth.PersistedACE ).toBe( PersistedACE );
+	});
+
+	it( reexports(
+		STATIC,
+		"PersistedACL",
+		"Carbon.Auth.PersistedACL"
+	), ():void => {
+		expect( Auth.PersistedACL ).toBeDefined();
+		expect( Auth.PersistedACL ).toBe( PersistedACL );
 	});
 
 	it( reexports(

@@ -1,3 +1,3 @@
-var Carbon = require( 'Carbon' );
+import Carbon from "src/Carbon";
 
-global.Carbon = Carbon.default;
+window.Carbon = Carbon;

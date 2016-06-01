@@ -1079,6 +1079,8 @@ Returns a Pointer for the stored App Document, and the response of the call.
 | AuthenticationToken | [Carbon.Auth.AuthenticationToken](#Carbon-Auth-AuthenticationToken) |
 | Authenticator | [Carbon.Auth.Authenticator](#Carbon-Auth-Authenticator) |
 | BasicAuthenticator | [Carbon.Auth.BasicAuthenticator](#Carbon-Auth-BasicAuthenticator) |
+| PersistedACE | [Carbon.Auth.PersistedACE](#Carbon-Auth-PersistedACE) |
+| PersistedACL | [Carbon.Auth.PersistedACL](#Carbon-Auth-PersistedACL) |
 | Token | [Carbon.Auth.Token](#Carbon-Auth-Token) |
 | TokenAuthenticator | [Carbon.Auth.TokenAuthenticator](#Carbon-Auth-TokenAuthenticator) |
 | UsernameAndPasswordToken | [Carbon.Auth.UsernameAndPasswordToken](#Carbon-Auth-UsernameAndPasswordToken) |
