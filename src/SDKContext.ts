@@ -1,16 +1,12 @@
-import * as App from "./App";
+import * as AppRole from "./App/Role";
 import * as APIDescription from "./APIDescription";
 import * as Auth from "./Auth";
 import Context from "./Context";
 import Documents from "./Documents";
 import * as Errors from "./Errors";
-import * as JSONLDConverter from "./JSONLDConverter";
 import * as LDP from "./LDP";
 import * as NS from "./NS";
 import * as PersistedBlankNode from "./PersistedBlankNode";
-import * as Pointer from "./Pointer";
-import * as RDF from "./RDF";
-import * as Utils from "./Utils";
 import * as ObjectSchema from "./ObjectSchema";
 import * as Agent from "./Agent";
 import * as RDFRepresentation from "./RDFRepresentation";
@@ -32,7 +28,7 @@ export class Class implements Context {
 		this.generalObjectSchema = new ObjectSchema.DigestedObjectSchema();
 		this.typeObjectSchemaMap = new Map<string, ObjectSchema.DigestedObjectSchema>();
 
-		this.auth = new Auth.Class( this );
+		this.auth = null;
 		this.documents = new Documents( this );
 
 		this.registerDefaultObjectSchemas();
@@ -176,11 +172,14 @@ export class Class implements Context {
 				"@container": "@set",
 			},
 		});
+		this.extendObjectSchema( AppRole.RDF_CLASS, Auth.Role.SCHEMA );
+		this.extendObjectSchema( AppRole.RDF_CLASS, AppRole.SCHEMA );
 
 		this.extendObjectSchema( LDP.ResponseMetadata.RDF_CLASS, LDP.ResponseMetadata.SCHEMA );
 		this.extendObjectSchema( LDP.ResourceMetadata.RDF_CLASS, LDP.ResourceMetadata.SCHEMA );
 		this.extendObjectSchema( LDP.AddMemberAction.RDF_CLASS,  LDP.AddMemberAction.SCHEMA );
 		this.extendObjectSchema( LDP.RemoveMemberAction.RDF_CLASS, LDP.RemoveMemberAction.SCHEMA );
+
 		this.extendObjectSchema( Auth.Token.RDF_CLASS, Auth.Token.CONTEXT );
 
 		this.extendObjectSchema( Agent.RDF_CLASS, Agent.SCHEMA );

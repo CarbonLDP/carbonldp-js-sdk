@@ -8,10 +8,13 @@ declare class Class {
 }
 declare class Predicate {
     static namae: string;
+    static agent: string;
     static allowsOrigin: string;
+    static childRole: string;
     static rootContainer: string;
     static tokenKey: string;
     static expirationTime: string;
+    static parentRole: string;
     static password: string;
     static description: string;
 }

@@ -1,6 +1,10 @@
 "use strict";
 var BasicAuthenticator_1 = require("./Auth/BasicAuthenticator");
 exports.BasicAuthenticator = BasicAuthenticator_1.default;
+var Role = require("./Auth/Role");
+exports.Role = Role;
+var Roles = require("./Auth/Roles");
+exports.Roles = Roles;
 var TokenAuthenticator_1 = require("./Auth/TokenAuthenticator");
 exports.TokenAuthenticator = TokenAuthenticator_1.default;
 var Token = require("./Auth/Token");
@@ -16,8 +20,9 @@ var Utils = require("./Utils");
 var Method = exports.Method;
 var Class = (function () {
     function Class(context) {
-        this.method = null;
+        this.roles = null;
         this.context = context;
+        this.method = context.getSetting("auth.method") || Method.TOKEN;
         this.authenticators = [];
         this.authenticators[Method.BASIC] = new BasicAuthenticator_1.default();
         this.authenticators[Method.TOKEN] = new TokenAuthenticator_1.default(this.context);
@@ -25,10 +30,10 @@ var Class = (function () {
     Class.prototype.isAuthenticated = function (askParent) {
         if (askParent === void 0) { askParent = true; }
         return ((this.authenticator && this.authenticator.isAuthenticated()) ||
-            (askParent && !!this.context.parentContext && this.context.parentContext.auth.isAuthenticated()));
+            (askParent && !!this.context.parentContext && !!this.context.parentContext.auth && this.context.parentContext.auth.isAuthenticated()));
     };
     Class.prototype.authenticate = function (username, password) {
-        return this.authenticateUsing("TOKEN", username, password);
+        return this.authenticateUsing(Method[this.method], username, password);
     };
     Class.prototype.authenticateUsing = function (method, userOrTokenOrCredentials, password) {
         switch (method) {
@@ -44,7 +49,7 @@ var Class = (function () {
         if (this.isAuthenticated(false)) {
             this.authenticator.addAuthentication(requestOptions);
         }
-        else if (!!this.context.parentContext) {
+        else if (!!this.context.parentContext && !!this.context.parentContext.auth) {
             this.context.parentContext.auth.addAuthentication(requestOptions);
         }
         else {

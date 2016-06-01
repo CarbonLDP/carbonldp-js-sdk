@@ -86,7 +86,7 @@ describe( module( "Carbon/NonRDFSource" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"is",
-			"Returns true if the object provided is considered as an `Carbon.NonRDFSource.Class` object", [
+			"Returns true if the object provided is considered a `Carbon.NonRDFSource.Class` object", [
 				{ name: "object", type: "Object" }
 			],
 			{ type: "boolean" }

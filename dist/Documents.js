@@ -482,7 +482,7 @@ var Documents = (function () {
                 throw new Errors.IllegalArgumentError("This Documents instance doesn't support relative URIs.");
             documentURI = this.context.resolve(documentURI);
         }
-        if (this.context && this.context.auth.isAuthenticated())
+        if (this.context && this.context.auth && this.context.auth.isAuthenticated())
             this.context.auth.addAuthentication(requestOptions);
         return SPARQL.Service.executeRawASKQuery(documentURI, askQuery, requestOptions);
     };
@@ -493,7 +493,7 @@ var Documents = (function () {
                 throw new Errors.IllegalArgumentError("This Documents instance doesn't support relative URIs.");
             documentURI = this.context.resolve(documentURI);
         }
-        if (this.context && this.context.auth.isAuthenticated())
+        if (this.context && this.context.auth && this.context.auth.isAuthenticated())
             this.context.auth.addAuthentication(requestOptions);
         return SPARQL.Service.executeASKQuery(documentURI, askQuery, requestOptions);
     };
@@ -504,7 +504,7 @@ var Documents = (function () {
                 throw new Errors.IllegalArgumentError("This Documents instance doesn't support relative URIs.");
             documentURI = this.context.resolve(documentURI);
         }
-        if (this.context && this.context.auth.isAuthenticated())
+        if (this.context && this.context.auth && this.context.auth.isAuthenticated())
             this.context.auth.addAuthentication(requestOptions);
         return SPARQL.Service.executeRawSELECTQuery(documentURI, selectQuery, requestOptions);
     };
@@ -515,7 +515,7 @@ var Documents = (function () {
                 throw new Errors.IllegalArgumentError("This Documents instance doesn't support relative URIs.");
             documentURI = this.context.resolve(documentURI);
         }
-        if (this.context && this.context.auth.isAuthenticated())
+        if (this.context && this.context.auth && this.context.auth.isAuthenticated())
             this.context.auth.addAuthentication(requestOptions);
         return SPARQL.Service.executeSELECTQuery(documentURI, selectQuery, this, requestOptions);
     };
@@ -526,7 +526,7 @@ var Documents = (function () {
                 throw new Errors.IllegalArgumentError("This Documents instance doesn't support relative URIs.");
             documentURI = this.context.resolve(documentURI);
         }
-        if (this.context && this.context.auth.isAuthenticated())
+        if (this.context && this.context.auth && this.context.auth.isAuthenticated())
             this.context.auth.addAuthentication(requestOptions);
         return SPARQL.Service.executeRawCONSTRUCTQuery(documentURI, constructQuery, requestOptions);
     };
@@ -537,7 +537,7 @@ var Documents = (function () {
                 throw new Errors.IllegalArgumentError("This Documents instance doesn't support relative URIs.");
             documentURI = this.context.resolve(documentURI);
         }
-        if (this.context && this.context.auth.isAuthenticated())
+        if (this.context && this.context.auth && this.context.auth.isAuthenticated())
             this.context.auth.addAuthentication(requestOptions);
         return SPARQL.Service.executeRawDESCRIBEQuery(documentURI, constructQuery, requestOptions);
     };
@@ -675,7 +675,7 @@ var Documents = (function () {
         return uri;
     };
     Documents.prototype.setDefaultRequestOptions = function (requestOptions, interactionModel) {
-        if (this.context && this.context.auth.isAuthenticated())
+        if (this.context && this.context.auth && this.context.auth.isAuthenticated())
             this.context.auth.addAuthentication(requestOptions);
         HTTP.Request.Util.setAcceptHeader("application/ld+json", requestOptions);
         HTTP.Request.Util.setPreferredInteractionModel(interactionModel, requestOptions);

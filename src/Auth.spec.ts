@@ -10,6 +10,7 @@ import {
 	isDefined,
 	hasConstructor,
 	hasMethod,
+	hasProperty,
 	hasDefaultExport,
 	reexports,
 	hasEnumeral,
@@ -20,6 +21,8 @@ import AbstractContext from "./AbstractContext";
 import AuthenticationToken from "./Auth/AuthenticationToken";
 import Authenticator from "./Auth/Authenticator";
 import BasicAuthenticator from "./Auth/BasicAuthenticator";
+import * as Role from "./Auth/Role";
+import * as Roles from "./Auth/Roles";
 import * as Token from "./Auth/Token";
 import TokenAuthenticator from "./Auth/TokenAuthenticator";
 import UsernameAndPasswordToken from "./Auth/UsernameAndPasswordToken";
@@ -57,6 +60,24 @@ describe( module( "Carbon/Auth" ), ():void => {
 	), ():void => {
 		expect( Auth.BasicAuthenticator ).toBeDefined();
 		expect( Auth.BasicAuthenticator ).toBe( BasicAuthenticator );
+	});
+
+	it( reexports(
+		STATIC,
+		"Role",
+		"Carbon.Auth.Role"
+	), ():void => {
+		expect( Auth.Role ).toBeDefined();
+		expect( Auth.Role ).toBe( Role );
+	});
+
+	it( reexports(
+		STATIC,
+		"Roles",
+		"Carbon.Auth.Roles"
+	), ():void => {
+		expect( Auth.Roles ).toBeDefined();
+		expect( Auth.Roles ).toBe( Roles );
 	});
 
 	it( reexports(
@@ -114,7 +135,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 
 	describe( clazz(
 		"Carbon.Auth.Class",
-		"Class for manage all the methods of authentication."
+		"Abstract class that will manage the authentication and authorization of a context."
 	), ():void => {
 
 		it( isDefined(), ():void => {
@@ -122,7 +143,9 @@ describe( module( "Carbon/Auth" ), ():void => {
 			expect( Utils.isFunction( Auth.Class ) ).toBe( true );
 		});
 
-		it( hasConstructor(), ():void => {
+		it( hasConstructor( [
+			{ name: "context", type: "Carbon.Context" }
+		] ), ():void => {
 			let context:AbstractContext;
 			class MockedContext extends AbstractContext {
 				resolve( uri:string ) {
@@ -131,10 +154,33 @@ describe( module( "Carbon/Auth" ), ():void => {
 			}
 			context = new MockedContext();
 
-			let auth = new Auth.Class( context );
+			class MockedAuth extends Auth.Class {}
+			let auth = new MockedAuth( context );
 
 			expect( auth ).toBeTruthy();
 			expect( auth instanceof Auth.Class ).toBe( true );
+		});
+
+		it( hasProperty(
+			INSTANCE,
+			"roles",
+			"Carbon.Auth.Roles.Class",
+			"Instance of a implementation of the `Carbon.Auth.Roles.Class` abstract class, that help managing the roles of the current context.\n" +
+			"In this class the property is set to `null`, and implementations of this class set it to their respective role model using a valid instance of `Carbon.Auth.Roles.Class`."
+		), ():void => {
+			let context:AbstractContext;
+			class MockedContext extends AbstractContext {
+				resolve( uri:string ) {
+					return uri;
+				}
+			}
+			context = new MockedContext();
+
+			class MockedAuth extends Auth.Class {}
+			let auth = new MockedAuth( context );
+
+			expect( auth.roles ).toBeDefined();
+			expect( auth.roles ).toBeNull();
 		});
 
 		it( hasMethod(
@@ -164,7 +210,8 @@ describe( module( "Carbon/Auth" ), ():void => {
 			}
 			let context = new MockedContext();
 
-			let auth = new Auth.Class( context );
+			class MockedAuth extends Auth.Class {}
+			let auth = new MockedAuth( context );
 
 			expect( auth.authenticate ).toBeDefined();
 			expect( Utils.isFunction( auth.authenticate ) ).toBe( true );
@@ -205,7 +252,8 @@ describe( module( "Carbon/Auth" ), ():void => {
 				],
 				{ type: "Promise<Carbon.Auth.UsernameAndPasswordCredentials.Class>"}
 			), ( done:{ ():void, fail:() => void } ):void => {
-				let auth01 = new Auth.Class( context );
+				class MockedAuth extends Auth.Class {}
+				let auth01 = new MockedAuth( context );
 				
 				expect( auth01.authenticateUsing ).toBeDefined();
 				expect( Utils.isFunction( auth01.authenticateUsing ) ).toBe( true );
@@ -233,12 +281,12 @@ describe( module( "Carbon/Auth" ), ():void => {
 				promises.push( promise.then( spies.success, spies.fail ) );
 
 
-				let auth02 = new Auth.Class( context );
+				let auth02 = new MockedAuth( context );
 				promise = auth02.authenticateUsing( "BASIC", {} );
 				expect( promise instanceof Promise ).toBe( true );
 				promises.push( promise.then( spies.success, spies.fail ) );
 
-				let auth03 = new Auth.Class( context );
+				let auth03 = new MockedAuth( context );
 				promise = auth03.authenticateUsing( "Error", username, password );
 				expect( promise instanceof Promise ).toBe( true );
 				promises.push( promise.then( spies.success, spies.fail ) );
@@ -258,7 +306,8 @@ describe( module( "Carbon/Auth" ), ():void => {
 				],
 				{ type: "Promise<Carbon.Auth.Token.Class>"}
 			), ( done:{ ():void, fail:() => void } ):void => {
-				let auth01 = new Auth.Class( context );
+				class MockedAuth extends Auth.Class {}
+				let auth01 = new MockedAuth( context );
 
 				expect( auth01.authenticateUsing ).toBeDefined();
 				expect( Utils.isFunction( auth01.authenticateUsing ) ).toBe( true );
@@ -309,12 +358,12 @@ describe( module( "Carbon/Auth" ), ():void => {
 				expect( promise instanceof Promise ).toBe( true );
 				promises.push( promise.then( spies.success, spies.fail ) );
 
-				let auth02:Auth.Class = new Auth.Class( context );
+				let auth02:Auth.Class = new MockedAuth( context );
 				promise = auth02.authenticateUsing( "TOKEN", {} );
 				expect( promise instanceof Promise ).toBe( true );
 				promises.push( promise.then( spies.success, spies.fail ) );
 
-				let auth03:Auth.Class = new Auth.Class( context );
+				let auth03:Auth.Class = new MockedAuth( context );
 				promise = auth03.authenticateUsing( "Error", "myUser@user.con", "myAwesomePassword" );
 				expect( promise instanceof Promise ).toBe( true );
 				promises.push( promise.then( spies.success, spies.fail ) );
@@ -333,8 +382,9 @@ describe( module( "Carbon/Auth" ), ():void => {
 				],
 				{ type: "Promise<Carbon.Auth.Token.Class>" }
 			), ( done:{ ():void, fail:() => void } ):void => {
-				let auth01 = new Auth.Class( context );
-				let auth02 = new Auth.Class( context );
+				class MockedAuth extends Auth.Class {}
+				let auth01 = new MockedAuth( context );
+				let auth02 = new MockedAuth( context );
 				
 				expect( auth01.authenticateUsing ).toBeDefined();
 				expect( Utils.isFunction( auth01.authenticateUsing ) ).toBe( true );
@@ -398,7 +448,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 				promises.push( promise.then( spies.success02, spies.fail ) );
 
 				// Will fail, because expirationDate has been reached
-				let auth03:Auth.Class = new Auth.Class( context );
+				let auth03:Auth.Class = new MockedAuth( context );
 				date = new Date();
 				date.setDate( date.getDate() - 1 );
 				token = <any> {

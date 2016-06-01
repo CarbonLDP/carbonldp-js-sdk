@@ -108,7 +108,7 @@ describe( module(
 			expect( CS.Predicate ).toBeDefined();
 			expect( Utils.isFunction( CS.Predicate ) ).toBe( true );
 
-			expect( Object.keys( CS.Predicate ).length ).toBe( 7 );
+			expect( Object.keys( CS.Predicate ).length ).toBe( 10 );
 		});
 
 		it( hasProperty(
@@ -124,6 +124,17 @@ describe( module(
 
 		it( hasProperty(
 			STATIC,
+			"agent",
+			"string"
+		), ():void => {
+			expect( CS.Predicate.agent ).toBeDefined();
+			expect( Utils.isString( CS.Predicate.agent ) ).toBe( true );
+
+			expect( CS.Predicate.agent ).toBe( "https://carbonldp.com/ns/v1/security#agent" );
+		});
+
+		it( hasProperty(
+			STATIC,
 			"allowsOrigin",
 			"string"
 		), ():void => {
@@ -131,6 +142,17 @@ describe( module(
 			expect( Utils.isString( CS.Predicate.allowsOrigin ) ).toBe( true );
 
 			expect( CS.Predicate.allowsOrigin ).toBe( "https://carbonldp.com/ns/v1/security#allowsOrigin" );
+		});
+
+		it( hasProperty(
+			STATIC,
+			"childRole",
+			"string"
+		), ():void => {
+			expect( CS.Predicate.childRole ).toBeDefined();
+			expect( Utils.isString( CS.Predicate.childRole ) ).toBe( true );
+
+			expect( CS.Predicate.childRole ).toBe( "https://carbonldp.com/ns/v1/security#childRole" );
 		});
 
 		it( hasProperty(
@@ -164,6 +186,17 @@ describe( module(
 			expect( Utils.isString( CS.Predicate.expirationTime ) ).toBe( true );
 
 			expect( CS.Predicate.expirationTime ).toBe( "https://carbonldp.com/ns/v1/security#expirationTime" );
+		});
+
+		it( hasProperty(
+			STATIC,
+			"parentRole",
+			"string"
+		), ():void => {
+			expect( CS.Predicate.parentRole ).toBeDefined();
+			expect( Utils.isString( CS.Predicate.parentRole ) ).toBe( true );
+
+			expect( CS.Predicate.parentRole ).toBe( "https://carbonldp.com/ns/v1/security#parentRole" );
 		});
 
 		it( hasProperty(

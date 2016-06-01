@@ -22,6 +22,7 @@ import * as PersistedDocument from "./PersistedDocument";
 import * as PersistedFragment from "./PersistedFragment";
 import * as PersistedNamedFragment from "./PersistedNamedFragment";
 import * as PersistedResource from "./PersistedResource";
+import * as Platform from "./Platform";
 import * as Pointer from "./Pointer";
 import * as RDF from "./RDF";
 import * as Resource from "./Resource";
@@ -51,6 +52,7 @@ declare class Carbon extends AbstractContext {
     static PersistedFragment: typeof PersistedFragment;
     static PersistedNamedFragment: typeof PersistedNamedFragment;
     static PersistedResource: typeof PersistedResource;
+    static Platform: typeof Platform;
     static Pointer: typeof Pointer;
     static RDF: typeof RDF;
     static Resource: typeof Resource;

@@ -1,6 +1,8 @@
 import AuthenticationToken from "./Auth/AuthenticationToken";
 import Authenticator from "./Auth/Authenticator";
 import BasicAuthenticator from "./Auth/BasicAuthenticator";
+import * as Role from "./Auth/Role";
+import * as Roles from "./Auth/Roles";
 import TokenAuthenticator from "./Auth/TokenAuthenticator";
 import * as Token from "./Auth/Token";
 import UsernameAndPasswordToken from "./Auth/UsernameAndPasswordToken";
@@ -8,12 +10,13 @@ import UsernameAndPasswordCredentials from "./Auth/UsernameAndPasswordCredential
 import Credentials from "./Auth/Credentials";
 import * as HTTP from "./HTTP";
 import Context from "./Context";
-export { AuthenticationToken, Authenticator, BasicAuthenticator, Token, TokenAuthenticator, UsernameAndPasswordToken };
+export { AuthenticationToken, Authenticator, BasicAuthenticator, Role, Roles, Token, TokenAuthenticator, UsernameAndPasswordToken };
 export declare enum Method {
     BASIC = 0,
     TOKEN = 1,
 }
-export declare class Class {
+export declare abstract class Class {
+    roles: Roles.Class;
     private context;
     private method;
     private authenticators;

@@ -1,5 +1,3 @@
-import * as App from "./App";
-
 import {
 	STATIC,
 
@@ -16,7 +14,10 @@ import * as NS from "./NS";
 import * as Errors from "./Errors";
 import * as Document from "./Document";
 
+import * as Role from "./App/Role";
 import Context from "./App/Context";
+
+import * as App from "./App";
 
 describe( module( "Carbon/App" ), ():void => {
 
@@ -93,7 +94,7 @@ describe( module( "Carbon/App" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"is",
-			"Returns true if the object provided is considered as an `Carbon.App.Class` object", [
+			"Returns true if the object provided is considered a `Carbon.App.Class` object", [
 				{ name: "object", type: "Object" }
 			],
 			{ type: "boolean" }
@@ -202,11 +203,20 @@ describe( module( "Carbon/App" ), ():void => {
 
 	it( reexports(
 		STATIC,
-		"App",
+		"Context",
 		"Carbon/App/Context"
 	), ():void => {
 		expect( App.Context ).toBeDefined();
 		expect( App.Context ).toEqual( Context );
+	});
+
+	it( reexports(
+		STATIC,
+		"Role",
+		"Carbon/App/Role"
+	), ():void => {
+		expect( App.Role ).toBeDefined();
+		expect( App.Role ).toEqual( Role );
 	});
 
 });

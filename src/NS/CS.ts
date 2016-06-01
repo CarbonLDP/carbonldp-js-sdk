@@ -10,10 +10,13 @@ class Class {
 
 class Predicate {
 	static get namae():string { return namespace + "name"; }
+	static get agent():string { return namespace + "agent"; }
 	static get allowsOrigin():string { return namespace + "allowsOrigin"; }
+	static get childRole():string { return namespace + "childRole"; }
 	static get rootContainer():string { return namespace + "rootContainer"; }
 	static get tokenKey():string { return namespace + "tokenKey"; }
 	static get expirationTime():string { return namespace + "expirationTime"; }
+	static get parentRole():string { return namespace + "parentRole"; }
 	static get password():string { return namespace + "password"; }
 	static get description():string { return namespace + "description"; }
 }

@@ -1,6 +1,8 @@
 import AuthenticationToken from "./Auth/AuthenticationToken";
 import Authenticator from "./Auth/Authenticator";
 import BasicAuthenticator from "./Auth/BasicAuthenticator";
+import * as Role from "./Auth/Role";
+import * as Roles from "./Auth/Roles";
 import TokenAuthenticator from "./Auth/TokenAuthenticator";
 import * as Token from "./Auth/Token";
 import UsernameAndPasswordToken from "./Auth/UsernameAndPasswordToken";
@@ -16,6 +18,8 @@ export {
 	AuthenticationToken,
 	Authenticator,
 	BasicAuthenticator,
+	Role,
+	Roles,
 	Token,
 	TokenAuthenticator,
 	UsernameAndPasswordToken
@@ -26,15 +30,19 @@ export enum Method {
 	TOKEN
 }
 
-export class Class {
-	private context:Context;
+export abstract class Class {
+	public roles:Roles.Class;
 
-	private method:Method = null;
+	private context:Context;
+	private method:Method;
 	private authenticators:Array<Authenticator<AuthenticationToken>>;
 	private authenticator:Authenticator<AuthenticationToken>;
 
 	constructor( context:Context ) {
+		this.roles = null;
+
 		this.context = context;
+		this.method = context.getSetting( "auth.method" ) || Method.TOKEN;
 
 		this.authenticators = [];
 		this.authenticators[ Method.BASIC ] = new BasicAuthenticator();
@@ -44,12 +52,12 @@ export class Class {
 	isAuthenticated( askParent:boolean = true ):boolean {
 		return (
 			( this.authenticator && this.authenticator.isAuthenticated() ) ||
-			( askParent && !! this.context.parentContext && this.context.parentContext.auth.isAuthenticated() )
+			( askParent && !! this.context.parentContext && !! this.context.parentContext.auth && this.context.parentContext.auth.isAuthenticated() )
 		);
 	}
 
 	authenticate( username:string, password:string ):Promise<Credentials> {
-		return this.authenticateUsing( "TOKEN", username, password );
+		return this.authenticateUsing( Method[ this.method ], username, password );
 	}
 
 	authenticateUsing( method:"BASIC", username:string, password:string ):Promise<UsernameAndPasswordCredentials>;
@@ -75,7 +83,7 @@ export class Class {
 	addAuthentication( requestOptions:HTTP.Request.Options ):void {
 		if( this.isAuthenticated( false ) ) {
 			this.authenticator.addAuthentication( requestOptions );
-		} else if( !! this.context.parentContext ) {
+		} else if( !! this.context.parentContext && !! this.context.parentContext.auth ) {
 			this.context.parentContext.auth.addAuthentication( requestOptions );
 		} else {
 			console.warn( "There is no authentication to add to the request." );

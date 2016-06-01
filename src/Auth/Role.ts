@@ -1,14 +1,12 @@
-import * as Utils from "./../../Utils";
-import * as Document from "./../../Document";
-import * as NS from "./../../NS";
-import * as ObjectSchema from "./../../ObjectSchema";
-import IllegalArgumentError from "./../../Errors/IllegalArgumentError";
-
-export const RDF_CLASS:string = NS.CS.Class.AppRole;
+import * as Utils from "./../Utils";
+import * as Document from "./../Document";
+import * as NS from "./../NS";
+import * as ObjectSchema from "./../ObjectSchema";
+import IllegalArgumentError from "./../Errors/IllegalArgumentError";
 
 export const SCHEMA:ObjectSchema.Class = {
 	"name": {
-		"@id": NS.CS.Predicate.name,
+		"@id": NS.CS.Predicate.namae,
 		"@type": NS.XSD.DataType.string,
 	},
 };
@@ -18,14 +16,14 @@ export interface Class extends Document.Class {
 }
 
 export class Factory {
-	static hasClassProperties( resource:Object ):boolean {
-		return Utils.hasPropertyDefined( resource, "name" );
+	static hasClassProperties( object:Object ):boolean {
+		return Utils.hasPropertyDefined( object, "name" );
 	}
 
 	static is( object:Object ):boolean {
-		return Document.Factory.hasClassProperties( object )
-			&& Factory.hasClassProperties( object )
-			&& ( <Document.Class> object ).types.indexOf( NS.CS.Class.AppRole ) !== -1;
+		return Factory.hasClassProperties( object )
+			&& Document.Factory.is( object )
+			;
 	}
 
 	static create( name:string ):Class {
@@ -40,7 +38,6 @@ export class Factory {
 
 		let app:T & Class = <T & Class> object;
 		app.name = name;
-		app.types.push( NS.CS.Class.AppRole );
 
 		return app;
 	}
