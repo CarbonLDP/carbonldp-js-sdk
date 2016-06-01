@@ -3,6 +3,8 @@ import * as ACL from "./Auth/ACL";
 import AuthenticationToken from "./Auth/AuthenticationToken";
 import Authenticator from "./Auth/Authenticator";
 import BasicAuthenticator from "./Auth/BasicAuthenticator";
+import * as PersistedACE from "./Auth/PersistedACE";
+import * as PersistedACL from "./Auth/PersistedACL";
 import TokenAuthenticator from "./Auth/TokenAuthenticator";
 import * as Token from "./Auth/Token";
 import UsernameAndPasswordToken from "./Auth/UsernameAndPasswordToken";
@@ -10,7 +12,7 @@ import UsernameAndPasswordCredentials from "./Auth/UsernameAndPasswordCredential
 import Credentials from "./Auth/Credentials";
 import * as HTTP from "./HTTP";
 import Context from "./Context";
-export { ACE, ACL, AuthenticationToken, Authenticator, BasicAuthenticator, Token, TokenAuthenticator, UsernameAndPasswordToken };
+export { ACE, ACL, AuthenticationToken, Authenticator, BasicAuthenticator, PersistedACE, PersistedACL, Token, TokenAuthenticator, UsernameAndPasswordToken };
 export declare enum Method {
     BASIC = 0,
     TOKEN = 1,
