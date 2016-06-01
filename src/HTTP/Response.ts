@@ -3,6 +3,11 @@ import {ClientRequest, IncomingMessage} from "http";
 import {isString, isObject} from "../Utils";
 
 export class Class {
+	status:number;
+	data:string;
+	headers:Map<string, Header.Class>;
+	request:XMLHttpRequest | ClientRequest;
+
 	constructor( request:XMLHttpRequest );
 	constructor( request:ClientRequest, data:string, response?:IncomingMessage );
 	constructor( request:XMLHttpRequest | ClientRequest, data?:string, response:IncomingMessage = <any>{} ) {
@@ -19,11 +24,6 @@ export class Class {
 
 		this.request = request;
 	}
-
-	status:number;
-	data:string;
-	headers:Map<string, Header.Class>;
-	request:XMLHttpRequest | ClientRequest;
 
 	public getHeader( name:string ):Header.Class {
 		name = name.toLowerCase();
