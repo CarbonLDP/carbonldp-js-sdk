@@ -25,8 +25,7 @@ describe( module( "Carbon/App/Context" ), ():void => {
 
 	describe( clazz(
 		"Carbon.App.Context",
-		"Class that represents a Carbon Application. " +
-		"It centers the scope of several services (Carbon.Auth, Carbon.Resources, etc.) into the Application's scope."
+		"Class that represents de scope of a CarbonLDP Application."
 	), ():void => {
 		let parentContext:AbstractContext;
 		let appContext:AppContext;
@@ -66,7 +65,7 @@ describe( module( "Carbon/App/Context" ), ():void => {
 			INSTANCE,
 			"agents",
 			"Carbon.Agents.Class",
-			"Instance of Agents class to manage the agents inside of an application."
+			"Instance of Agents class, that helps manage the agents inside of an application."
 		), ():void => {
 			expect( appContext.agents ).toBeDefined();
 			expect( appContext.agents instanceof Agents.Class ).toBe( true );
@@ -76,7 +75,7 @@ describe( module( "Carbon/App/Context" ), ():void => {
 			INSTANCE,
 			"app",
 			"Carbon.App.Class",
-			"Object of type `Carbon.App.Class` which is the Document that represents the actual Application."
+			"The Document that represents the actual CarbonLDP Application in the server."
 		), ():void => {
 			expect( appContext.app ).toBeDefined();
 			expect( App.Factory.is( appContext.app ) ).toBe( true );
@@ -85,7 +84,7 @@ describe( module( "Carbon/App/Context" ), ():void => {
 		it( hasMethod(
 			INSTANCE,
 			"resolve",
-			"Resolve the URI provided in the scope of the application", [
+			"Resolve the URI provided in the scope of the application.", [
 				{ name: "uri", type: "string" }
 			],
 			{ type: "string" }

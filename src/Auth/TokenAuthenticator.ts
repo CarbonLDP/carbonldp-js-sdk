@@ -75,10 +75,6 @@ export class Class implements Authenticator<UsernameAndPasswordToken> {
 		this._credentials = null;
 	}
 
-	supports( authenticationToken:AuthenticationToken ):boolean {
-		return authenticationToken instanceof UsernameAndPasswordToken;
-	}
-
 	private createToken():Promise<[ Token.Class, HTTP.Response.Class ]> {
 		let uri:string = this.context.resolve( Class.TOKEN_CONTAINER );
 		let requestOptions:HTTP.Request.Options = {};

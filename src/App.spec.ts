@@ -53,7 +53,7 @@ describe( module( "Carbon/App" ), ():void => {
 
 	describe( clazz(
 		"Carbon.App.Factory",
-		"Factory class for `Carbon.App.Class` objects"
+		"Factory class for `Carbon.App.Class` objects."
 	), ():void => {
 
 		it( isDefined(), ():void => {
@@ -93,7 +93,7 @@ describe( module( "Carbon/App" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"is",
-			"Returns true if the object provided is considered as an `Carbon.App.Class` object", [
+			"Returns true if the object provided is considered a `Carbon.App.Class` object", [
 				{ name: "object", type: "Object" }
 			],
 			{ type: "boolean" }
@@ -125,7 +125,7 @@ describe( module( "Carbon/App" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"create",
-			"Create a empty `Carbon.App.Class` object.", [
+			"Create a `Carbon.App.Class` object with the parameters specified.", [
 				{ name: "name", type: "string" },
 				{ name: "description", type: "string", optional: true }
 			],
@@ -146,7 +146,7 @@ describe( module( "Carbon/App" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"createFrom",
-			"Create a `Carbon.App.Class` object with the object provided.", [
+			"Create a `Carbon.App.Class` object from the object and parameters specified.", [
 				{ name: "object", type: "T extends Object" },
 				{ name: "name", type: "string" },
 				{ name: "description", type: "string", optional: true }

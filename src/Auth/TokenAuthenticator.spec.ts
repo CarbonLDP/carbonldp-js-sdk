@@ -18,7 +18,6 @@ import * as Errors from "./../Errors";
 import * as HTTP from "./../HTTP";
 import * as Utils from "./../Utils";
 
-import AuthenticationToken from "./AuthenticationToken";
 import UsernameAndPasswordToken from "./UsernameAndPasswordToken";
 
 import * as Token from "./Token";
@@ -31,9 +30,7 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 		expect( Utils.isObject( TokenAuthenticator ) ).toEqual( true );
 	});
 
-	describe( clazz( "Carbon.Auth.TokenAuthenticator.Class", `
-		Authenticates requests using Basic Authentication
-	`), ():void => {
+	describe( clazz( "Carbon.Auth.TokenAuthenticator.Class", "Authenticates requests using JSON Web Token (JWT) Authentication" ), ():void => {
 
 		beforeEach( function ():void {
 			jasmine.Ajax.install();
@@ -48,11 +45,9 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 			expect( Utils.isFunction( TokenAuthenticator.Class ) ).toEqual( true );
 		});
 
-		it( hasConstructor(
-			[
+		it( hasConstructor( [
 				{ name: "context", type: "Carbon.Context", description: "The context where to authenticate the agent." }
-			]
-		), ():void => {
+		] ), ():void => {
 			class MockedContext extends AbstractContext {
 				resolve( uri:string ):string {
 					return uri;
@@ -65,9 +60,12 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 			expect( authenticator instanceof TokenAuthenticator.Class ).toEqual( true );
 		});
 
-		it( hasMethod( INSTANCE, "isAuthenticated", `
-			returns true if the instance contains stored credentials.
-		`, { type: "boolean" } ), ():void => {
+		it( hasMethod(
+			INSTANCE,
+			"isAuthenticated",
+			"Returns true if the instance contains stored credentials." ,
+			{ type: "boolean" }
+		), ():void => {
 			class MockedContext extends AbstractContext {
 				resolve( uri:string ):string {
 					return uri;
@@ -267,7 +265,7 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 		});
 
 		it( hasMethod( INSTANCE, "addAuthentication", `
-			Adds the Basic authentication header to the passed request options object.
+			Adds the Token Authentication header to the passed request options object.
 		`, [
 			{ name: "requestOptions", type:"Carbon.HTTP.Request.Options", description: "Request options object to add Authentication headers." }
 		], { type: "Carbon.HTTP.Request.Options", description: "The request options with the added authentication headers." } ), (  done:{ ():void; fail:( error:any ) => void } ):void => {
@@ -411,27 +409,6 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 			});
 		});
 
-		it( hasMethod( INSTANCE, "supports",
-			`Returns true if the Authenticator supports the AuthenticationToken.`,
-			[
-				{ name: "authenticationToken", type: "Carbon.Auth.AuthenticationToken" }
-			],
-			{ type: "boolean" }
-		), ():void => {
-			class MockedContext extends AbstractContext {
-				resolve( uri:string ):string {
-					return uri;
-				}
-			}
-			let authenticator:TokenAuthenticator.Class = new TokenAuthenticator.Class( new MockedContext() );
-
-			expect( authenticator.supports ).toBeDefined();
-			expect( Utils.isFunction( authenticator.supports ) ).toEqual( true );
-
-			class DummyToken implements AuthenticationToken {}
-
-			expect( authenticator.supports( new UsernameAndPasswordToken( "user", "pass" ) ) ).toEqual( true );
-			expect( authenticator.supports( new DummyToken() ) ).toEqual( false );
-		});
 	});
+
 });

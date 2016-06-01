@@ -600,7 +600,7 @@ static SCHEMA:Carbon.ObjectSchema.Class
 
 **Extends:** [Carbon.SDKContext.Class](#Carbon-SDKContext-Class)
 
-> Abstract class for defining contexts
+> Abstract class for defining contexts.
 
 
 #### <a name="Carbon-AbstractContext-Constructor" />Constructor
@@ -625,7 +625,7 @@ The parent context provided in the constructor. If no context was provided, this
 resolve( relativeURI:string ):string
 ```
 
-Abstract method which implementation must resolve the URI provided in the scope of the application.
+Abstract method that from the URI provided, must return an absolute URI in accordance to the context scope.
 
 *Parameters*
 
@@ -651,7 +651,7 @@ static RDF_CLASS:string
 ### <a name="Carbon-AccessPoint-Factory" />Class Carbon.AccessPoint.Factory
 
 
-> Factory class for `Carbon.AccessPoint.Class` objects
+> Factory class for `Carbon.AccessPoint.Class` objects.
 
 
 
@@ -686,7 +686,7 @@ Create a `Carbon.AccessPoint.Class` object with the parameters specified.
 static createFrom( object:T extends Object,  membershipResource:Carbon.Pointer.Class,  hasMemberRelation:string | Carbon.Pointer.Class,  memberOfRelation?:string | Carbon.Pointer.Class ):T & Carbon.AccessPoint.Class
 ```
 
-Create a `Carbon.AccessPoint.Class` object with the object provided.
+Create a `Carbon.AccessPoint.Class` object from the object and parameters specified.
 
 *Parameters*
 
@@ -720,7 +720,7 @@ static SCHEMA:Carbon.ObjectSchema.Class
 ### <a name="Carbon-Agent-Factory" />Class Carbon.Agent.Factory
 
 
-> Factory class for `Carbon.Agent.Class` objects
+> Factory class for `Carbon.Agent.Class` objects.
 
 
 
@@ -731,7 +731,7 @@ static SCHEMA:Carbon.ObjectSchema.Class
 static hasClassProperties( resource:Object ):boolean
 ```
 
-Returns true if the object provided has the properties that defines a `Carbon.Agent.Class` object
+Returns true if the object provided has the properties that defines a `Carbon.Agent.Class` object.
 
 *Parameters*
 
@@ -742,7 +742,7 @@ Returns true if the object provided has the properties that defines a `Carbon.Ag
 static is( object:Object ):boolean
 ```
 
-Returns true if the object provided is considered as an `Carbon.Agent.Class` object
+Returns true if the object provided is considered a `Carbon.Agent.Class` object.
 
 *Parameters*
 
@@ -762,14 +762,16 @@ Create a `Carbon.Agent.Class` object with the name and email specified.
 
 ##### createFrom
 ```typescript 
-static createFrom( object:T extends Object ):T & Carbon.Agent.Class
+static createFrom( object:T extends Object,  name:string,  email:string ):T & Carbon.Agent.Class
 ```
 
-Create a `Carbon.Agent.Class` object with the object provided.
+Create a `Carbon.Agent.Class` object from the object and parameters specified.
 
 *Parameters*
 
 - object
+- name
+- email
 
 
 
@@ -787,7 +789,7 @@ Create a `Carbon.Agent.Class` object with the object provided.
 ### <a name="Carbon-Agents-Class" />Class Carbon.Agents.Class
 
 
-> Class to manage Agents of a determined context.
+> Class for manage the Agents of a determined context.
 
 
 #### <a name="Carbon-Agents-Class-Constructor" />Constructor
@@ -805,8 +807,8 @@ Class()
 create( agentDocument:Carbon.Agents.Agent.Class ):Promise<Carbon.Pointer.Class, Carbon.HTTP.Response.Class>
 ```
 
-Persists an Agent Document in the server, generating a random unique slug.
-Returns a Promise with a Pointer for the stored Agent, and the response of the call.
+Persists a `Carbon.Agent.Class` object generating a random unique slug.
+Returns a Promise with a Pointer to the stored Agent, and the response of the request.
 
 *Parameters*
 
@@ -816,8 +818,8 @@ Returns a Promise with a Pointer for the stored Agent, and the response of the c
 create( slug:string,  agentDocument:Carbon.Agents.Agent.Class ):Promise<Carbon.Pointer.Class, Carbon.HTTP.Response.Class>
 ```
 
-Persists an Agent Document in the server using the slug specified.
-Returns a Promise with a Pointer for the stored Agent, and the response of the call.
+Persists a `Carbon.Agent.Class` object using the slug specified.
+Returns a Promise with a Pointer to the stored Agent, and the response of the request.
 
 *Parameters*
 
@@ -852,7 +854,7 @@ static SCHEMA:Carbon.ObjectSchema.Class
 ### <a name="Carbon-App-Factory" />Class Carbon.App.Factory
 
 
-> Factory class for `Carbon.App.Class` objects
+> Factory class for `Carbon.App.Class` objects.
 
 
 
@@ -874,7 +876,7 @@ Returns true if the object provided has the properties that defines a `Carbon.Ap
 static is( object:Object ):boolean
 ```
 
-Returns true if the object provided is considered as an `Carbon.App.Class` object
+Returns true if the object provided is considered a `Carbon.App.Class` object
 
 *Parameters*
 
@@ -885,7 +887,7 @@ Returns true if the object provided is considered as an `Carbon.App.Class` objec
 static create( name:string,  description?:string ):Carbon.App.Class
 ```
 
-Create a empty `Carbon.App.Class` object.
+Create a `Carbon.App.Class` object with the parameters specified.
 
 *Parameters*
 
@@ -897,7 +899,7 @@ Create a empty `Carbon.App.Class` object.
 static createFrom( object:T extends Object,  name:string,  description?:string ):T & Carbon.App.Class
 ```
 
-Create a `Carbon.App.Class` object with the object provided.
+Create a `Carbon.App.Class` object from the object and parameters specified.
 
 *Parameters*
 
@@ -921,7 +923,7 @@ Create a `Carbon.App.Class` object with the object provided.
 
 **Extends:** [Carbon.AbstractContext](#Carbon-AbstractContext)
 
-> Class that represents a Carbon Application. It centers the scope of several services (Carbon.Auth, Carbon.Resources, etc.) into the Application's scope.
+> Class that represents de scope of a CarbonLDP Application.
 
 
 #### <a name="Carbon-App-Context-Constructor" />Constructor
@@ -942,12 +944,12 @@ Context( parentContext:Carbon.Context,  app:Carbon.App.Context )
 agents:Carbon.Agents.Class 
 ```
 
-Instance of Agents class to manage the agents inside of an application.
+Instance of Agents class, that helps manage the agents inside of an application.
 ```typescript 
 app:Carbon.App.Class 
 ```
 
-Object of type `Carbon.App.Class` which is the Document that represents the actual Application.
+The Document that represents the actual CarbonLDP Application in the server.
 
 #### <a name="Carbon-App-Context-Methods" />Methods
 
@@ -956,7 +958,7 @@ Object of type `Carbon.App.Class` which is the Document that represents the actu
 resolve( uri:string ):string
 ```
 
-Resolve the URI provided in the scope of the application
+Resolve the URI provided in the scope of the application.
 
 *Parameters*
 
@@ -977,7 +979,7 @@ Resolve the URI provided in the scope of the application
 ### <a name="Carbon-Apps-Class" />Class Carbon.Apps.Class
 
 
-> Class for obtaining Carbon Apps.
+> Class for managing Carbon Apps.
 
 
 #### <a name="Carbon-Apps-Class-Constructor" />Constructor
@@ -988,7 +990,7 @@ Class( context:Carbon.Context )
 
 *Parameters*
 
-- context: A context from where Carbon Apps can be obtained
+- context: A context from where Carbon Apps can be administrated.
 
 
 
@@ -999,14 +1001,14 @@ Class( context:Carbon.Context )
 getAllContexts():Promise<Carbon.App.Context[]>
 ```
 
-Obtains all the `Carbon.App.Context` objects of every app where the context of the Apps instance can reach.
+Obtains an array of `Carbon.App.Context` objects, of every app within the context of the Apps instance.
 
 ##### getContext
 ```typescript 
 getContext( uri:string ):Promise<Carbon.App.Context>
 ```
 
-Obtains a `Carbon.App.Context` object of the specified app URI, if it exists within the context of the Apps instance.
+Obtains a `Carbon.App.Context` object from the specified app URI, if it exists within the context of the Apps instance.
 
 *Parameters*
 
@@ -1016,7 +1018,7 @@ Obtains a `Carbon.App.Context` object of the specified app URI, if it exists wit
 getContext( pointer:Carbon.Pointer.Class ):Promise<Carbon.App.Context>
 ```
 
-Obtains a `Carbon.App.Context` object of the specified Pointer object, if it exists within the context of the Apps instance.
+Obtains a `Carbon.App.Context` object from the specified Pointer object, if it exists within the context of the Apps instance.
 
 *Parameters*
 
@@ -1024,22 +1026,22 @@ Obtains a `Carbon.App.Context` object of the specified Pointer object, if it exi
 
 ##### create
 ```typescript 
-create( appDocument:Carbon.App.Class ):Promise<Carbon.Pointer.Class, Carbon.HTTP.Response.Class>
+create( appDocument:Carbon.App.Class ):Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>
 ```
 
-Persists an App Document in the server, generating a unique slug.
-Returns a Pointer for the stored App Document, and the response of the call.
+Persists a `Carbon.App.Class` object generating a unique slug.
+Returns a Promise with a Pointer to the stored App, and the response of the request.
 
 *Parameters*
 
 - appDocument
 
 ```typescript 
-create( slug:string,  appDocument:Carbon.App.Class ):Promise<Carbon.Pointer.Class, Carbon.HTTP.Response.Class>
+create( slug:string,  appDocument:Carbon.App.Class ):Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>
 ```
 
-Persists an App Document in the server using the slug specified.
-Returns a Pointer for the stored App Document, and the response of the call.
+Persists a `Carbon.App.Class` object using the slug specified.
+Returns a Promise with a Pointer to the stored App, and the response of the request.
 
 *Parameters*
 
@@ -1066,7 +1068,7 @@ Returns a Pointer for the stored App Document, and the response of the call.
 ### <a name="Carbon-Auth-Enums" />Enums
 
 #### <a name"Carbon-Auth-Method />Carbon.Auth.Method
-> Enum with for the methods of authentication supported
+> Enum with the methods of authentication supported by CarbonLDP.
 
 | Name | Description | 
 | --- | --- |
@@ -1079,7 +1081,7 @@ Returns a Pointer for the stored App Document, and the response of the call.
 ### <a name="Carbon-Auth-Class" />Class Carbon.Auth.Class
 
 
-> Class to manage all the methods of authentication.
+> Class that manage authentications and authorizations.
 
 
 #### <a name="Carbon-Auth-Class-Constructor" />Constructor
@@ -1097,7 +1099,7 @@ Class()
 isAuthenticated( askParent?:boolean ):boolean
 ```
 
-Returns true the user is authenticated.
+Returns true if the user is authenticated.
 
 *Parameters*
 
@@ -1108,7 +1110,7 @@ Returns true the user is authenticated.
 authenticate( username:string,  password:string ):Promise<Carbon.Auth.Credentials>
 ```
 
-Authenticate the user with an `username` and `password`. Uses the `TOKEN` method for the authentication.
+Authenticate the user with a `username` and `password`. Uses the `TOKEN` method for the authentication.
 
 *Parameters*
 
@@ -1131,14 +1133,14 @@ Add the authentication header to a `Carbon.HTTP.Request.Options` object.
 clearAuthentication()
 ```
 
-Deletes the current authentication
+Deletes the current authentication.
 
 ##### authenticateUsing
 ```typescript 
 authenticateUsing( method:'BASIC',  username:string,  password:string ):Promise<Carbon.Auth.UsernameAndPasswordCredentials.Class>
 ```
 
-Authenticates the user with Basic HTTP Authentication, which uses encoded username and password.
+Authenticates the user with Basic HTTP Authentication, which uses an encoded string with username and password in every request.
 
 *Parameters*
 
@@ -1150,7 +1152,7 @@ Authenticates the user with Basic HTTP Authentication, which uses encoded userna
 authenticateUsing( method:'TOKEN',  username:string,  password:string ):Promise<Carbon.Auth.Token.Class>
 ```
 
-Authenticates the user with username and password, and generates a JSON Web Token (JWT) credentials.
+Authenticates the user with an username and password, and generates a JSON Web Token (JWT) credential that will be used in every request.
 
 *Parameters*
 
@@ -1162,7 +1164,7 @@ Authenticates the user with username and password, and generates a JSON Web Toke
 authenticateUsing( method:'TOKEN',  token:Carbon.Auth.Token.Class ):Promise<Carbon.Auth.Token.Class>
 ```
 
-Authenticates the user with a JSON Web Token (JWT), i.e. the credentials generated by TokenAuthenticator.
+Authenticates the user with a `Carbon.Auth.Token.Class`, which contains a JSON Web Token (JWT) that will be used in every request.
 
 *Parameters*
 
@@ -1183,9 +1185,7 @@ Authenticates the user with a JSON Web Token (JWT), i.e. the credentials generat
 ### <a name="Carbon-Auth-BasicAuthenticator-Class" />Class Carbon.Auth.BasicAuthenticator.Class
 
 
-> 
-Authenticates requests using Basic Authentication
-
+> Authenticates requests using HTTP Basic Authentication.
 
 
 #### <a name="Carbon-Auth-BasicAuthenticator-Class-Constructor" />Constructor
@@ -1203,18 +1203,14 @@ Class()
 isAuthenticated():boolean
 ```
 
-
-returns true if the instance contains stored credentials.
-
+Returns true if the instance contains stored credentials.
 
 ##### authenticate
 ```typescript 
-authenticate( authenticationToken:Carbon.Auth.UsernameAndPasswordToken ):Promise<void>
+authenticate( authenticationToken:Carbon.Auth.UsernameAndPasswordToken ):Promise< Carbon.Auth.UsernameAndPasswordCredentials.Class >
 ```
 
-
 Stores credentials to authenticate future requests.
-
 
 *Parameters*
 
@@ -1225,9 +1221,7 @@ Stores credentials to authenticate future requests.
 addAuthentication( requestOptions:Carbon.HTTP.Request.Options ):Carbon.HTTP.Request.Options
 ```
 
-
 Adds the Basic authentication header to the passed request options object.
-
 
 *Parameters*
 
@@ -1238,20 +1232,7 @@ Adds the Basic authentication header to the passed request options object.
 clearAuthentication()
 ```
 
-
 Clears any saved credentials and restores the Authenticator to its initial state.
-
-
-##### supports
-```typescript 
-supports( authenticationToken:Carbon.Auth.AuthenticationToken ):boolean
-```
-
-Returns true if the Authenticator supports the AuthenticationToken.
-
-*Parameters*
-
-- authenticationToken
 
 
 
@@ -1267,6 +1248,7 @@ Returns true if the Authenticator supports the AuthenticationToken.
 ### <a name="Carbon-Auth-Token-Factory" />Class Carbon.Auth.Token.Factory
 
 
+> Factory class for `Carbon.Auth.Token.Class` objects.
 
 
 
@@ -1277,7 +1259,7 @@ Returns true if the Authenticator supports the AuthenticationToken.
 static is( value:any ):boolean
 ```
 
-Duck tape tests if the value sent is a Token object
+Returns true if the object provided is considered a `Carbon.Auth.Token.Class` object.
 
 *Parameters*
 
@@ -1288,7 +1270,7 @@ Duck tape tests if the value sent is a Token object
 static hasClassProperties( object:Object ):boolean
 ```
 
-Returns true if the object provided has the necessary information to be utilized as a object of type `Carbon.Auth.Token.Class`
+Returns true if the object provided has the properties of a `Carbon.Auth.Token.Class` object.
 
 *Parameters*
 
@@ -1300,7 +1282,7 @@ Returns true if the object provided has the necessary information to be utilized
 decorate( object:T extends Object ):Carbon.Auth.Token.Class
 ```
 
-Adds any necessary data to the object provided to be utilized as a type `Carbon.Auth.Token.Class`
+Decorated the object provided with the methods and properties of a `Carbon.Auth.Token.Class` object.
 
 *Parameters*
 
@@ -1311,7 +1293,7 @@ Adds any necessary data to the object provided to be utilized as a type `Carbon.
 hasRDFClass( pointer:Carbon.Pointer.Class ):boolean
 ```
 
-Description
+Returns true if the pointer provided has the RDF Type of a `Carbon.Auth.Token.Class` object.
 
 *Parameters*
 
@@ -1321,7 +1303,7 @@ Description
 hasRDFClass( expandedObject:Object ):boolean
 ```
 
-Description
+Returns true if the expanded object provided has the RDF Type of a `Carbon.Auth.Token.Class` object.
 
 *Parameters*
 
@@ -1341,9 +1323,7 @@ Description
 ### <a name="Carbon-Auth-TokenAuthenticator-Class" />Class Carbon.Auth.TokenAuthenticator.Class
 
 
-> 
-Authenticates requests using Basic Authentication
-
+> Authenticates requests using JSON Web Token (JWT) Authentication
 
 
 #### <a name="Carbon-Auth-TokenAuthenticator-Class-Constructor" />Constructor
@@ -1365,9 +1345,7 @@ Class( context:Carbon.Context )
 isAuthenticated():boolean
 ```
 
-
-returns true if the instance contains stored credentials.
-
+Returns true if the instance contains stored credentials.
 
 ##### addAuthentication
 ```typescript 
@@ -1375,7 +1353,7 @@ addAuthentication( requestOptions:Carbon.HTTP.Request.Options ):Carbon.HTTP.Requ
 ```
 
 
-Adds the Basic authentication header to the passed request options object.
+Adds the Token Authentication header to the passed request options object.
 
 
 *Parameters*
@@ -1390,17 +1368,6 @@ clearAuthentication()
 
 Clears any saved credentials and restores the Authenticator to its initial state.
 
-
-##### supports
-```typescript 
-supports( authenticationToken:Carbon.Auth.AuthenticationToken ):boolean
-```
-
-Returns true if the Authenticator supports the AuthenticationToken.
-
-*Parameters*
-
-- authenticationToken
 
 ##### authenticate
 ```typescript 
@@ -1437,7 +1404,7 @@ Stores credentials to authenticate future requests.
 ### <a name="Carbon-Auth-UsernameAndPasswordToken-Class" />Class Carbon.Auth.UsernameAndPasswordToken.Class
 
 
-> Wrapper for manage an Authentication Token in form of UserName/Password
+> Wrapper for manage an Authentication Token in form of Username/Password.
 
 
 #### <a name="Carbon-Auth-UsernameAndPasswordToken-Class-Constructor" />Constructor

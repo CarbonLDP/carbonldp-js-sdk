@@ -13,17 +13,14 @@ import {
 import * as Token from "./Token";
 import * as Utils from "./../Utils";
 
-describe( module(
-	"Carbon/Auth/Token",
-	""
-), ():void => {
+describe( module( "Carbon/Auth/Token" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( Token ).toBeDefined();
 		expect( Utils.isObject( Token ) ).toBe( true );
 	});
 
-	describe( clazz( "Carbon.Auth.Token.Factory", "" ), ():void => {
+	describe( clazz( "Carbon.Auth.Token.Factory", "Factory class for `Carbon.Auth.Token.Class` objects." ), ():void => {
 
 		it( isDefined(), ():void => {
 			expect( Token.Factory ).toBeDefined();
@@ -31,7 +28,7 @@ describe( module(
 		});
 
 		it( hasMethod( STATIC, "is",
-			"Duck tape tests if the value sent is a Token object", [
+			"Returns true if the object provided is considered a `Carbon.Auth.Token.Class` object.", [
 				{ name: "value", type: "any" }
 			],
 			{ type: "boolean" }
@@ -68,7 +65,7 @@ describe( module(
 		});
 
 		it( hasMethod( STATIC, "hasClassProperties",
-			"Returns true if the object provided has the necessary information to be utilized as a object of type `Carbon.Auth.Token.Class`", [
+			"Returns true if the object provided has the properties of a `Carbon.Auth.Token.Class` object.", [
 				{ name: "object", type: "Object" }
 			],
 			{ type: "boolean" }
@@ -105,7 +102,7 @@ describe( module(
 		it( hasMethod(
 			INSTANCE,
 			"decorate",
-			"Adds any necessary data to the object provided to be utilized as a type `Carbon.Auth.Token.Class`", [
+			"Decorated the object provided with the methods and properties of a `Carbon.Auth.Token.Class` object.", [
 				{ name: "object", type: "T extends Object" }
 			],
 			{ type: "Carbon.Auth.Token.Class" }
@@ -118,12 +115,11 @@ describe( module(
 
 		describe( method(
 			INSTANCE,
-			"hasRDFClass",
-			"Description"
+			"hasRDFClass"
 		), ():void => {
 
 			it( hasSignature(
-				"Description", [
+				"Returns true if the pointer provided has the RDF Type of a `Carbon.Auth.Token.Class` object.", [
 					{ name: "pointer", type: "Carbon.Pointer.Class" }
 				],
 				{ type: "boolean" }
@@ -135,7 +131,7 @@ describe( module(
 			});
 
 			it( hasSignature(
-				"Description", [
+				"Returns true if the expanded object provided has the RDF Type of a `Carbon.Auth.Token.Class` object.", [
 					{ name: "expandedObject", type: "Object" }
 				],
 				{ type: "boolean" }

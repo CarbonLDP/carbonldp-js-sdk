@@ -29,7 +29,7 @@ describe( module( "Carbon/Agents" ), ():void => {
 
 	describe( clazz(
 		"Carbon.Agents.Class",
-		"Class to manage Agents of a determined context."
+		"Class for manage the Agents of a determined context."
 	), ():void => {
 
 		it( isDefined(), ():void => {
@@ -59,8 +59,8 @@ describe( module( "Carbon/Agents" ), ():void => {
 		), ():void => {
 
 			it( hasSignature(
-				"Persists an Agent Document in the server, generating a random unique slug.\n" +
-				"Returns a Promise with a Pointer for the stored Agent, and the response of the call.", [
+				"Persists a `Carbon.Agent.Class` object generating a random unique slug.\n" +
+				"Returns a Promise with a Pointer to the stored Agent, and the response of the request.", [
 					{ name: "agentDocument", type: "Carbon.Agents.Agent.Class" }
 				],
 				{ type: "Promise<Carbon.Pointer.Class, Carbon.HTTP.Response.Class>" }
@@ -107,8 +107,8 @@ describe( module( "Carbon/Agents" ), ():void => {
 			});
 
 			it( hasSignature(
-				"Persists an Agent Document in the server using the slug specified.\n" +
-				"Returns a Promise with a Pointer for the stored Agent, and the response of the call.", [
+				"Persists a `Carbon.Agent.Class` object using the slug specified.\n" +
+				"Returns a Promise with a Pointer to the stored Agent, and the response of the request.", [
 					{ name: "slug", type: "string" },
 					{ name: "agentDocument", type: "Carbon.Agents.Agent.Class" }
 				],

@@ -33,7 +33,7 @@ describe( module( "Carbon/Apps" ), ():void => {
 
 	describe( clazz(
 		"Carbon.Apps.Class",
-		"Class for obtaining Carbon Apps."
+		"Class for managing Carbon Apps."
 	), ():void => {
 		let apps:Apps.Class;
 		let platformBaseURI:string = "http://example.com/platform/";
@@ -62,7 +62,7 @@ describe( module( "Carbon/Apps" ), ():void => {
 		});
 
 		it( hasConstructor([
-			{ name: "context", type: "Carbon.Context", description: "A context from where Carbon Apps can be obtained" }
+			{ name: "context", type: "Carbon.Context", description: "A context from where Carbon Apps can be administrated." }
 		]), ():void => {
 			expect( apps ).toBeTruthy();
 			expect( apps instanceof Apps.Class ).toBe( true );
@@ -74,10 +74,10 @@ describe( module( "Carbon/Apps" ), ():void => {
 		), ():void => {
 
 			it( hasSignature(
-				"Obtains a `Carbon.App.Context` object of the specified app URI, if it exists within the context of the Apps instance.", [
+				"Obtains a `Carbon.App.Context` object from the specified app URI, if it exists within the context of the Apps instance.", [
 					{ name: "uri", type: "string" }
 				],
-				{ type: "Promise<Carbon.App.Context>"}
+				{ type: "Promise<Carbon.App.Context>" }
 			), ( done:{ ():void, fail:() => void } ):void => {
 				expect( apps.getContext ).toBeDefined();
 				expect( Utils.isFunction( apps.getContext ) ).toBe( true );
@@ -137,10 +137,10 @@ describe( module( "Carbon/Apps" ), ():void => {
 			});
 
 			it( hasSignature(
-				"Obtains a `Carbon.App.Context` object of the specified Pointer object, if it exists within the context of the Apps instance.", [
+				"Obtains a `Carbon.App.Context` object from the specified Pointer object, if it exists within the context of the Apps instance.", [
 					{ name: "pointer", type: "Carbon.Pointer.Class" }
 				],
-				{ type: "Promise<Carbon.App.Context>"}
+				{ type: "Promise<Carbon.App.Context>" }
 			), ( done:{ ():void, fail:() => void } ):void => {
 				expect( apps.getContext ).toBeDefined();
 				expect( Utils.isFunction( apps.getContext ) ).toBe( true );
@@ -206,7 +206,7 @@ describe( module( "Carbon/Apps" ), ():void => {
 		it( hasMethod(
 			INSTANCE,
 			"getAllContexts",
-			"Obtains all the `Carbon.App.Context` objects of every app where the context of the Apps instance can reach.",
+			"Obtains an array of `Carbon.App.Context` objects, of every app within the context of the Apps instance.",
 			{ type: "Promise<Carbon.App.Context[]>"}
 		), ( done:{ ():void, fail:() => void } ):void => {
 			expect( apps.getAllContexts ).toBeDefined();
@@ -320,21 +320,17 @@ describe( module( "Carbon/Apps" ), ():void => {
 					for( let appContext of appsContext ) {
 						expect( appContext instanceof AppContext ).toBe( true );
 					}
-				},
-				fail: ():void => {
 				}
 			};
 			let successSpy = spyOn( spies, "success" ).and.callThrough();
-			let failSpy = spyOn( spies, "fail" ).and.callThrough();
 
 			let promise:Promise<any>;
 
-			promise = apps.getAllContexts().then( spies.success, spies.fail );
+			promise = apps.getAllContexts().then( spies.success );
 			expect( promise instanceof Promise ).toBe( true );
 
 			promise.then( ():void => {
 				expect( successSpy.calls.count() ).toBe( 1 );
-				expect( failSpy.calls.count() ).toBe( 0 );
 				done();
 			}).catch( done.fail );
 		});
@@ -345,12 +341,12 @@ describe( module( "Carbon/Apps" ), ():void => {
 		), ():void => {
 
 			it( hasSignature(
-				"Persists an App Document in the server, generating a unique slug.\n" +
-				"Returns a Pointer for the stored App Document, and the response of the call.", [
+				"Persists a `Carbon.App.Class` object generating a unique slug.\n" +
+				"Returns a Promise with a Pointer to the stored App, and the response of the request.", [
 					{ name: "appDocument", type: "Carbon.App.Class" }
 				],
-				{ type: "Promise<Carbon.Pointer.Class, Carbon.HTTP.Response.Class>" }
-			), ( done ):void => {
+				{ type: "Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>" }
+			), ( done:{ ():void, fail:() => void } ):void => {
 				expect( apps.create ).toBeDefined();
 				expect( Utils.isFunction( apps.create ) ).toBe( true );
 
@@ -378,12 +374,12 @@ describe( module( "Carbon/Apps" ), ():void => {
 			});
 
 			it( hasSignature(
-				"Persists an App Document in the server using the slug specified.\n" +
-				"Returns a Pointer for the stored App Document, and the response of the call.", [
+				"Persists a `Carbon.App.Class` object using the slug specified.\n" +
+				"Returns a Promise with a Pointer to the stored App, and the response of the request.", [
 					{ name: "slug", type: "string" },
 					{ name: "appDocument", type: "Carbon.App.Class" }
 				],
-				{ type: "Promise<Carbon.Pointer.Class, Carbon.HTTP.Response.Class>" }
+				{ type: "Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>" }
 			), ( done:() => void ):void => {
 				expect( apps.create ).toBeDefined();
 				expect( Utils.isFunction( apps.create ) ).toBe( true );

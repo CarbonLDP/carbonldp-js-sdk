@@ -35,7 +35,7 @@ describe( module( "Carbon/AccessPoints" ), ():void => {
 
 	describe( clazz(
 		"Carbon.AccessPoint.Factory",
-		"Factory class for `Carbon.AccessPoint.Class` objects"
+		"Factory class for `Carbon.AccessPoint.Class` objects."
 	), ():void => {
 
 		it( isDefined(), ():void => {
@@ -101,7 +101,7 @@ describe( module( "Carbon/AccessPoints" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"createFrom",
-			"Create a `Carbon.AccessPoint.Class` object with the object provided.", [
+			"Create a `Carbon.AccessPoint.Class` object from the object and parameters specified.", [
 				{ name: "object", type: "T extends Object" },
 				{ name: "membershipResource", type: "Carbon.Pointer.Class" },
 				{ name: "hasMemberRelation", type: "string | Carbon.Pointer.Class" },

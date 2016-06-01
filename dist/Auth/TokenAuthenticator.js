@@ -4,7 +4,6 @@ var HTTP = require("./../HTTP");
 var NS = require("./../NS");
 var RDF = require("./../RDF");
 var BasicAuthenticator_1 = require("./BasicAuthenticator");
-var UsernameAndPasswordToken_1 = require("./UsernameAndPasswordToken");
 var Token = require("./Token");
 var Utils = require("./../Utils");
 var Class = (function () {
@@ -51,9 +50,6 @@ var Class = (function () {
     };
     Class.prototype.clearAuthentication = function () {
         this._credentials = null;
-    };
-    Class.prototype.supports = function (authenticationToken) {
-        return authenticationToken instanceof UsernameAndPasswordToken_1.default;
     };
     Class.prototype.createToken = function () {
         var _this = this;

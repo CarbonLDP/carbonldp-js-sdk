@@ -40,10 +40,6 @@ export class Class implements Authenticator<UsernameAndPasswordToken> {
 		this.credentials = null;
 	}
 
-	supports( authenticationToken:AuthenticationToken ):boolean {
-		return authenticationToken instanceof UsernameAndPasswordToken;
-	}
-
 	private addBasicAuthenticationHeader( headers:Map<string, HTTP.Header.Class> ):Map<string, HTTP.Header.Class> {
 		let header:HTTP.Header.Class;
 		if ( headers.has( "authorization" ) ) {

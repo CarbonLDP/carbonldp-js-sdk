@@ -24,7 +24,6 @@ import * as Errors from "./../Errors";
 import * as HTTP from "./../HTTP";
 import * as Utils from "./../Utils";
 
-import AuthenticationToken from "./AuthenticationToken";
 import UsernameAndPasswordToken from "./UsernameAndPasswordToken";
 import * as UsernameAndPasswordCredentials from "./UsernameAndPasswordCredentials";
 
@@ -36,9 +35,7 @@ describe( module( "Carbon/Auth/BasicAuthenticator" ), ():void => {
 		expect( Utils.isObject( BasicAuthenticator ) ).toEqual( true );
 	});
 
-	describe( clazz( "Carbon.Auth.BasicAuthenticator.Class", `
-		Authenticates requests using Basic Authentication
-	`), ():void => {
+	describe( clazz( "Carbon.Auth.BasicAuthenticator.Class", "Authenticates requests using HTTP Basic Authentication." ), ():void => {
 		it( isDefined(), ():void => {
 			expect( BasicAuthenticator.Class ).toBeDefined();
 			expect( Utils.isFunction( BasicAuthenticator.Class ) ).toEqual( true );
@@ -51,9 +48,12 @@ describe( module( "Carbon/Auth/BasicAuthenticator" ), ():void => {
 			expect( authenticator instanceof BasicAuthenticator.Class ).toEqual( true );
 		});
 
-		it( hasMethod( INSTANCE, "isAuthenticated", `
-			returns true if the instance contains stored credentials.
-		`, { type: "boolean" } ), ( done:() => void ):void => {
+		it( hasMethod(
+			INSTANCE,
+			"isAuthenticated",
+			"Returns true if the instance contains stored credentials.",
+			{ type: "boolean" }
+		), ( done:() => void ):void => {
 			let authenticator:BasicAuthenticator.Class = new BasicAuthenticator.Class();
 
 			expect( authenticator.isAuthenticated ).toBeDefined();
@@ -72,11 +72,14 @@ describe( module( "Carbon/Auth/BasicAuthenticator" ), ():void => {
 			});
 		});
 
-		it( hasMethod( INSTANCE, "authenticate", `
-			Stores credentials to authenticate future requests.
-		`, [
-			{ name: "authenticationToken", type: "Carbon.Auth.UsernameAndPasswordToken" }
-		], { type: "Promise<void>" } ), ( done:{ ():void; fail:( error:any ) => void } ):void => {
+		it( hasMethod(
+			INSTANCE,
+			"authenticate",
+			"Stores credentials to authenticate future requests.", [
+				{ name: "authenticationToken", type: "Carbon.Auth.UsernameAndPasswordToken" }
+			], 
+			{ type: "Promise< Carbon.Auth.UsernameAndPasswordCredentials.Class >" }
+		), ( done:{ ():void; fail:( error:any ) => void } ):void => {
 
 			// Property Integrity
 			(() => {
@@ -138,11 +141,14 @@ describe( module( "Carbon/Auth/BasicAuthenticator" ), ():void => {
 			});
 		});
 
-		it( hasMethod( INSTANCE, "addAuthentication", `
-			Adds the Basic authentication header to the passed request options object.
-		`, [
-			{ name: "requestOptions", type:"Carbon.HTTP.Request.Options", description: "Request options object to add Authentication headers." }
-		], { type: "Carbon.HTTP.Request.Options", description: "The request options with the added authentication headers." } ), ( done:{ ():void; fail:( error:any ) => void } ):void => {
+		it( hasMethod( 
+			INSTANCE,
+			"addAuthentication",
+			"Adds the Basic authentication header to the passed request options object.", [
+				{ name: "requestOptions", type:"Carbon.HTTP.Request.Options", description: "Request options object to add Authentication headers." }
+			], 
+			{ type: "Carbon.HTTP.Request.Options", description: "The request options with the added authentication headers." } 
+		), ( done:{ ():void; fail:( error:any ) => void } ):void => {
 			let promises:Promise<void>[] = [];
 			let authenticator:BasicAuthenticator.Class = new BasicAuthenticator.Class();
 
@@ -191,9 +197,11 @@ describe( module( "Carbon/Auth/BasicAuthenticator" ), ():void => {
 			});
 		});
 
-		it( hasMethod( INSTANCE, "clearAuthentication", `
-			Clears any saved credentials and restores the Authenticator to its initial state.
-		` ), ( done:{ ():void; fail:( error:any ) => void } ):void => {
+		it( hasMethod( 
+			INSTANCE, 
+			"clearAuthentication",
+			"Clears any saved credentials and restores the Authenticator to its initial state."
+		), ( done:{ ():void; fail:( error:any ) => void } ):void => {
 			let promises:Promise<void>[] = [];
 			let authenticator:BasicAuthenticator.Class = new BasicAuthenticator.Class();
 
@@ -218,22 +226,6 @@ describe( module( "Carbon/Auth/BasicAuthenticator" ), ():void => {
 			});
 		});
 
-		it( hasMethod( INSTANCE, "supports",
-			`Returns true if the Authenticator supports the AuthenticationToken.`,
-			[
-				{ name: "authenticationToken", type: "Carbon.Auth.AuthenticationToken" }
-			],
-			{ type: "boolean" }
-		), ():void => {
-			let authenticator:BasicAuthenticator.Class = new BasicAuthenticator.Class();
-
-			expect( authenticator.supports ).toBeDefined();
-			expect( Utils.isFunction( authenticator.supports ) ).toEqual( true );
-
-			class DummyToken implements AuthenticationToken {}
-
-			expect( authenticator.supports( new UsernameAndPasswordToken( "user", "pass" ) ) ).toEqual( true );
-			expect( authenticator.supports( new DummyToken() ) ).toEqual( false );
-		});
 	});
+
 });

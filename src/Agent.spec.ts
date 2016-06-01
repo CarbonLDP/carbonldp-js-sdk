@@ -62,7 +62,7 @@ describe( module( "Carbon/Agent" ), ():void => {
 
 	describe( clazz(
 		"Carbon.Agent.Factory",
-		"Factory class for `Carbon.Agent.Class` objects"
+		"Factory class for `Carbon.Agent.Class` objects."
 	), ():void => {
 
 		it( isDefined(), ():void => {
@@ -73,7 +73,7 @@ describe( module( "Carbon/Agent" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"hasClassProperties",
-			"Returns true if the object provided has the properties that defines a `Carbon.Agent.Class` object", [
+			"Returns true if the object provided has the properties that defines a `Carbon.Agent.Class` object.", [
 				{ name: "resource", type: "Object" }
 			],
 			{ type: "boolean" }
@@ -107,7 +107,7 @@ describe( module( "Carbon/Agent" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"is",
-			"Returns true if the object provided is considered as an `Carbon.Agent.Class` object", [
+			"Returns true if the object provided is considered a `Carbon.Agent.Class` object.", [
 				{ name: "object", type: "Object" }
 			],
 			{ type: "boolean" }
@@ -165,8 +165,10 @@ describe( module( "Carbon/Agent" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"createFrom",
-			"Create a `Carbon.Agent.Class` object with the object provided.", [
-				{ name: "object", type: "T extends Object" }
+			"Create a `Carbon.Agent.Class` object from the object and parameters specified.", [
+				{ name: "object", type: "T extends Object" },
+				{ name: "name", type: "string" },
+				{ name: "email", type: "string" }
 			],
 			{ type: "T & Carbon.Agent.Class" }
 		), ():void => {
