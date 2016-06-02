@@ -23,7 +23,9 @@ var Factory = (function () {
     function Factory() {
     }
     Factory.hasClassProperties = function (resource) {
-        return Utils.isObject(resource);
+        return Utils.hasPropertyDefined(resource, "parentRole")
+            && Utils.hasPropertyDefined(resource, "childRoles")
+            && Utils.hasPropertyDefined(resource, "agents");
     };
     Factory.is = function (object) {
         return Role.Factory.is(object)
@@ -41,4 +43,4 @@ var Factory = (function () {
 }());
 exports.Factory = Factory;
 
-//# sourceMappingURL=Role.js.map
+//# sourceMappingURL=PersistedRole.js.map

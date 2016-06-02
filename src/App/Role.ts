@@ -25,17 +25,13 @@ export const SCHEMA:ObjectSchema.Class = {
 };
 
 export interface Class extends Role.Class {
-	parentRole?: Pointer.Class;
-	childRoles?: Pointer.Class[];
-	agents?: Pointer.Class[];
+
 }
 
 export class Factory {
+
 	static hasClassProperties( resource:Object ):boolean {
-		return Utils.hasPropertyDefined( resource, "parentRole" )
-			&& Utils.hasPropertyDefined( resource, "childRoles" )
-			&& Utils.hasPropertyDefined( resource, "agents" )
-			;
+		return Utils.isObject( resource );
 	}
 
 	static is( object:Object ):boolean {

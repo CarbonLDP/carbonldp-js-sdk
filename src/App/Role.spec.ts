@@ -89,23 +89,8 @@ describe( module( "Carbon/Apps/Role" ), ():void => {
 			expect( AppRole.Factory.hasClassProperties( object ) ).toBe( false );
 
 			object = {
-				parentRole: null,
-				childRoles: null,
-				agents: null,
 			};
 			expect( AppRole.Factory.hasClassProperties( object ) ).toBe( true );
-
-			delete object.parentRole;
-			expect( AppRole.Factory.hasClassProperties( object ) ).toBe( false );
-			object.parentRole = null;
-
-			delete object.childRoles;
-			expect( AppRole.Factory.hasClassProperties( object ) ).toBe( false );
-			object.childRoles = null;
-
-			delete object.agents;
-			expect( AppRole.Factory.hasClassProperties( object ) ).toBe( false );
-			object.agents = null;
 		});
 
 		it( hasMethod(
@@ -126,10 +111,6 @@ describe( module( "Carbon/Apps/Role" ), ():void => {
 			expect( AppRole.Factory.is( object ) ).toBe( false );
 
 			object = {
-				name: null,
-				parentRole: null,
-				childRoles: null,
-				agents: null,
 			};
 			expect( AppRole.Factory.is( object ) ).toBe( false );
 			object.types = [ NS.CS.Class.AppRole ];
