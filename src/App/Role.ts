@@ -1,6 +1,5 @@
 import * as ObjectSchema from "./../ObjectSchema";
 import * as NS from "./../NS";
-import * as Pointer from "./../Pointer";
 import * as Resource from "./../Resource";
 import * as Role from "./../Auth/Role";
 import * as Utils from "./../Utils";
@@ -14,11 +13,6 @@ export const SCHEMA:ObjectSchema.Class = {
 	},
 	"childRoles": {
 		"@id": NS.CS.Predicate.childRole,
-		"@type": "@id",
-		"@container": "@set",
-	},
-	"agents": {
-		"@id": NS.CS.Predicate.agent,
 		"@type": "@id",
 		"@container": "@set",
 	},
@@ -46,10 +40,10 @@ export class Factory {
 	}
 
 	static createFrom<T extends Object>( object:T, name:string ):T & Class {
-		let app:T & Class = <T & Class> Role.Factory.createFrom( object, name );
-		app.types.push( NS.CS.Class.AppRole );
+		let role:T & Class = <T & Class> Role.Factory.createFrom( object, name );
+		role.types.push( NS.CS.Class.AppRole );
 
-		return app;
+		return role;
 	}
 
 }

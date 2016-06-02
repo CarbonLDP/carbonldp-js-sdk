@@ -35,6 +35,13 @@ describe( module( "Carbon/Auth/Role" ), ():void => {
 			"@id": NS.CS.Predicate.namae,
 			"@type": NS.XSD.DataType.string
 		});
+
+		expect( Utils.hasProperty( Role.SCHEMA, "agents" ) ).toBe( true );
+		expect( Role.SCHEMA[ "agents" ] ).toEqual({
+			"@id": NS.CS.Predicate.agent,
+			"@type": "@id",
+			"@container": "@set",
+		});
 	});
 
 	describe( clazz(

@@ -6,6 +6,7 @@ import * as Utils from "./Utils";
 import IllegalArgumentError from "./Errors/IllegalArgumentError";
 
 import * as Role from "./App/Role";
+import * as Roles from "./App/Roles";
 import Context from "./App/Context";
 
 export interface Class extends Document.Class {
@@ -73,5 +74,6 @@ export default Class;
 
 export {
 	Context,
-	Role
+	Role,
+	Roles,
 };

@@ -2,6 +2,7 @@ import * as Document from "./Document";
 import * as ObjectSchema from "./ObjectSchema";
 import Pointer from "./Pointer";
 import * as Role from "./App/Role";
+import * as Roles from "./App/Roles";
 import Context from "./App/Context";
 export interface Class extends Document.Class {
     name: string;
@@ -17,4 +18,4 @@ export declare class Factory {
     static createFrom<T extends Object>(object: T, name: string, description?: string): T & Class;
 }
 export default Class;
-export { Context, Role };
+export { Context, Role, Roles };

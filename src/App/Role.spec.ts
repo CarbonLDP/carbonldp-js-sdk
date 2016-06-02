@@ -54,13 +54,6 @@ describe( module( "Carbon/Apps/Role" ), ():void => {
 			"@type": "@id",
 			"@container": "@set",
 		});
-
-		expect( Utils.hasProperty( AppRole.SCHEMA, "agents" ) ).toBe( true );
-		expect( AppRole.SCHEMA[ "agents" ] ).toEqual({
-			"@id": NS.CS.Predicate.agent,
-			"@type": "@id",
-			"@container": "@set",
-		});
 	});
 
 	describe( clazz(

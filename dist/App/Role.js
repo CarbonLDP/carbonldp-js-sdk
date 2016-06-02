@@ -13,11 +13,6 @@ exports.SCHEMA = {
         "@type": "@id",
         "@container": "@set",
     },
-    "agents": {
-        "@id": NS.CS.Predicate.agent,
-        "@type": "@id",
-        "@container": "@set",
-    },
 };
 var Factory = (function () {
     function Factory() {
@@ -33,9 +28,9 @@ var Factory = (function () {
         return Factory.createFrom({}, name);
     };
     Factory.createFrom = function (object, name) {
-        var app = Role.Factory.createFrom(object, name);
-        app.types.push(NS.CS.Class.AppRole);
-        return app;
+        var role = Role.Factory.createFrom(object, name);
+        role.types.push(NS.CS.Class.AppRole);
+        return role;
     };
     return Factory;
 }());

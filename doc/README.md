@@ -865,6 +865,7 @@ Returns a Promise with a Pointer for the stored Agent, and the response of the c
 | --- | --- |
 | Context | [Carbon/App/Context](#Carbon-App-Context) |
 | Role | [Carbon/App/Role](#Carbon-App-Role) |
+| Roles | [Carbon/App/Roles](#Carbon-App-Roles) |
 
 
 ### <a name="Carbon-App-Properties" />Properties

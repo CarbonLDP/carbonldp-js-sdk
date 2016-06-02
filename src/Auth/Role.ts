@@ -9,6 +9,11 @@ export const SCHEMA:ObjectSchema.Class = {
 		"@id": NS.CS.Predicate.namae,
 		"@type": NS.XSD.DataType.string,
 	},
+	"agents": {
+		"@id": NS.CS.Predicate.agent,
+		"@type": "@id",
+		"@container": "@set",
+	},
 };
 
 export interface Class extends Document.Class {
@@ -36,10 +41,10 @@ export class Factory {
 
 		if ( ! name ) throw new IllegalArgumentError( "The name cannot be empty." );
 
-		let app:T & Class = <T & Class> object;
-		app.name = name;
+		let role:T & Class = <T & Class> object;
+		role.name = name;
 
-		return app;
+		return role;
 	}
 
 }
