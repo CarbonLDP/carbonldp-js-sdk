@@ -8,21 +8,25 @@ import {
 	isDefined,
 	hasSignature,
 	hasDefaultExport,
-	hasConstructor, extendsClass,
+	hasConstructor, 
+	extendsClass,
+	hasMethod,
 } from "./../test/JasmineExtender";
 import * as Utils from "./../Utils";
 import AbstractContext from "./../AbstractContext";
 import * as Errors from "./../Errors";
+import * as HTTP from "./../HTTP";
 import * as PersistedApp from "./../PersistedApp";
 
 import AppContext from "./Context";
 import * as AppRole from "./Role";
+import * as PersistedRole from "./PersistedRole";
 import * as AuthRoles from "./../Auth/Roles";
 
 import * as Roles from "./Roles";
 import DefaultExport from "./Roles";
 
-describe( module( "Carbon/App/Roles" ), ():void => {
+fdescribe( module( "Carbon/App/Roles" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( Roles ).toBeDefined();
@@ -144,6 +148,59 @@ describe( module( "Carbon/App/Roles" ), ():void => {
 				});
 			});
 
+		});
+
+		it( hasMethod(
+			INSTANCE,
+			"get",
+			"Retrieves a role from the current context."
+		), ( done:{ ():void, fail:() => void } ):void => {
+			expect( roles.get ).toBeDefined();
+			expect( Utils.isFunction( roles.get ) );
+
+			let falseRole:PersistedRole.Class;
+			let spy = spyOn( AuthRoles.Class.prototype, "get" ).and.callFake( () => {
+				return Promise.resolve( [ falseRole, null ] );
+			});
+
+			let spies = {
+				success: ( [ pointer, response ]:[ PersistedRole.Class, HTTP.Response.Class ] ):void => {
+					expect( pointer ).toBeTruthy();
+					expect( PersistedRole.Factory.is( pointer ) ).toBe( true );
+					expect( pointer.id ).toBe( "http://example.com/roles/a-role/" );
+				},
+				error: function( error:Error ):void {
+					expect( error instanceof Errors.IllegalArgumentError );
+				}
+			};
+
+			let spySuccess = spyOn( spies, "success" ).and.callThrough();
+			let spyError = spyOn( spies, "error" ).and.callThrough();
+
+			let promises:Promise<any>[] = [];
+			let promise:Promise<any>;
+
+			falseRole = PersistedRole.Factory.decorate( AppRole.Factory.create( "Role Name" ) );
+			falseRole.id = "http://example.com/roles/a-role/";
+
+			promise = roles.get( "http://example.com/roles/a-role/" );
+			expect( promise instanceof Promise ).toBe( true );
+			promise.then( spies.success ).then( () => {
+
+				falseRole = PersistedRole.Factory.decorate( AppRole.Factory.create( "Role Name" ) );
+				falseRole.types = [];
+
+				promise = roles.get( "http://example.com/roles/a-role/" );
+				expect( promise instanceof Promise ).toBe( true );
+				promises.push( promise.catch( spies.error ) );
+
+				Promise.all( promises ).then( ():void => {
+					expect( spySuccess ).toHaveBeenCalledTimes( 1 );
+					expect( spyError ).toHaveBeenCalledTimes( 1 );
+					expect( spy ).toHaveBeenCalledTimes( 2 );
+					done();
+				}).catch( done.fail );
+			});
 		});
 
 	});

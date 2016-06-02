@@ -3,15 +3,18 @@ var Errors = require("./Errors");
 var HTTP = require("./HTTP");
 var RDF = require("./RDF");
 var Utils = require("./Utils");
+var AppRole = require("./App/Role");
 var Document = require("./Document");
 var FreeResources = require("./FreeResources");
 var JSONLDConverter = require("./JSONLDConverter");
+var PersistedAppRole = require("./App/PersistedRole");
 var PersistedDocument = require("./PersistedDocument");
 var Pointer = require("./Pointer");
 var NS = require("./NS");
 var ObjectSchema = require("./ObjectSchema");
 var LDP = require("./LDP");
 var SPARQL = require("./SPARQL");
+var Resource = require("./Resource");
 var RetrievalPreferences = require("./RetrievalPreferences");
 var Documents = (function () {
     function Documents(context) {
@@ -709,6 +712,8 @@ var Documents = (function () {
         document._resolved = true;
         if (LDP.Container.Factory.hasRDFClass(document))
             LDP.PersistedContainer.Factory.decorate(document);
+        if (Resource.Util.hasType(document, AppRole.RDF_CLASS))
+            PersistedAppRole.Factory.decorate(document);
         return document;
     };
     Documents.prototype.updatePersistedDocument = function (persistedDocument, documentResource, fragmentResources) {

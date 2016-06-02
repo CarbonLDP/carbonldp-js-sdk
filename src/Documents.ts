@@ -5,9 +5,11 @@ import * as RDF from "./RDF";
 import * as Utils from "./Utils";
 
 import * as AccessPoint from "./AccessPoint";
+import * as AppRole from "./App/Role";
 import * as Document from "./Document";
 import * as FreeResources from "./FreeResources";
 import * as JSONLDConverter from "./JSONLDConverter";
+import * as PersistedAppRole from "./App/PersistedRole";
 import * as PersistedBlankNode from "./PersistedBlankNode";
 import * as PersistedDocument from "./PersistedDocument";
 import * as PersistedFragment from "./PersistedFragment";
@@ -817,6 +819,7 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 		// TODO: Decorate additional behavior (app, etc.). See also updatePersistedDocument() method
 		// TODO: Make it dynamic. See also updatePersistedDocument() method
 		if( LDP.Container.Factory.hasRDFClass( document ) ) LDP.PersistedContainer.Factory.decorate( document );
+		if ( Resource.Util.hasType( document, AppRole.RDF_CLASS ) ) PersistedAppRole.Factory.decorate( document );
 
 		return document;
 	}

@@ -32,6 +32,13 @@ var Class = (function () {
             return [rolePointer, [responseCreated, response]];
         });
     };
+    Class.prototype.get = function (roleURI, requestOptions) {
+        var containerUri = this.context.resolve(this.getContainerURI());
+        var uri = URI.Util.resolve(containerUri, roleURI);
+        if (!URI.Util.isBaseOf(containerUri, uri))
+            return Promise.reject(new Errors.IllegalArgumentError("The URI provided is not a valid role of the current context."));
+        return this.context.documents.get(uri, requestOptions);
+    };
     Class.prototype.getContainerURI = function () {
         if (!this.context.hasSetting("platform.roles.container"))
             throw new Errors.IllegalStateError("The roles container setting hasn't been declared.");

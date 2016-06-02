@@ -8,6 +8,11 @@ exports.SCHEMA = {
         "@id": NS.CS.Predicate.namae,
         "@type": NS.XSD.DataType.string,
     },
+    "agents": {
+        "@id": NS.CS.Predicate.agent,
+        "@type": "@id",
+        "@container": "@set",
+    },
 };
 var Factory = (function () {
     function Factory() {
@@ -27,9 +32,9 @@ var Factory = (function () {
             object = Document.Factory.createFrom(object);
         if (!name)
             throw new IllegalArgumentError_1.default("The name cannot be empty.");
-        var app = object;
-        app.name = name;
-        return app;
+        var role = object;
+        role.name = name;
+        return role;
     };
     return Factory;
 }());

@@ -2,6 +2,8 @@ import AppContext from "./Context";
 import * as AppRole from "./Role";
 import * as Errors from "./../Errors";
 import * as HTTP from "./../HTTP";
+import * as PersistedAppRole from "./PersistedRole";
+import * as PersistedRole from "./../Auth/PersistedRole";
 import * as Pointer from "./../Pointer";
 import AuthRoles from "./../Auth/Roles";
 
@@ -18,6 +20,14 @@ export class Class extends AuthRoles {
 		if ( ! AppRole.Factory.is( role ) ) return Promise.reject<any>( new Errors.IllegalArgumentError( "The role is not a valid `Carbon.App.Role.Class` object." ) );
 
 		return super.createChild( parentRole, role, slugOrRequestOptions, requestOptions );
+	}
+
+	get( roleURI:string, requestOptions?:HTTP.Request.Options ):Promise<[ PersistedAppRole.Class, HTTP.Response.Class ]> {
+		return super.get( roleURI, requestOptions ).then( ( [ role, response ]:[ PersistedRole.Class, HTTP.Response.Class ] ) => {
+			if ( ! PersistedAppRole.Factory.is( role ) ) throw new Errors.IllegalArgumentError( "The resource fetched is not a cs:AppRole" );
+
+			return [ role, response ];
+		});
 	}
 
 }

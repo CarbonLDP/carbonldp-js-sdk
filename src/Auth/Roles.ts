@@ -3,6 +3,7 @@ import * as Errors from "./../Errors";
 import * as Pointer from "./../Pointer";
 import * as HTTP from "./../HTTP";
 import * as Role from "./Role";
+import * as PersistedRole from "./PersistedRole";
 import * as URI from "./../RDF/URI";
 import * as Utils from "./../Utils";
 
@@ -38,6 +39,15 @@ export abstract class Class {
 		}).then( ( response ) => {
 			return [ rolePointer, [ responseCreated, response ] ];
 		});
+	}
+
+	get( roleURI, requestOptions?:HTTP.Request.Options ):Promise<[ PersistedRole.Class, HTTP.Response.Class ]> {
+		let containerUri:string = this.context.resolve( this.getContainerURI() );
+		let uri:string = URI.Util.resolve( containerUri, roleURI );
+
+		if ( ! URI.Util.isBaseOf( containerUri, uri ) ) return Promise.reject<any>( new Errors.IllegalArgumentError( "The URI provided is not a valid role of the current context." ) );
+
+		return this.context.documents.get( uri, requestOptions );
 	}
 
 	private getContainerURI():string {

@@ -5,7 +5,9 @@ import Pointer from "./Pointer";
 import * as Utils from "./Utils";
 import IllegalArgumentError from "./Errors/IllegalArgumentError";
 
+import * as PersistedRole from "./App/PersistedRole";
 import * as Role from "./App/Role";
+import * as Roles from "./App/Roles";
 import Context from "./App/Context";
 
 export interface Class extends Document.Class {
@@ -73,5 +75,7 @@ export default Class;
 
 export {
 	Context,
-	Role
+	PersistedRole,
+	Role,
+	Roles,
 };

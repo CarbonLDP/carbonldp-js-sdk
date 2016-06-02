@@ -2,12 +2,18 @@ import * as Utils from "./../Utils";
 import * as Document from "./../Document";
 import * as NS from "./../NS";
 import * as ObjectSchema from "./../ObjectSchema";
+import * as Pointer from "./../Pointer";
 import IllegalArgumentError from "./../Errors/IllegalArgumentError";
 
 export const SCHEMA:ObjectSchema.Class = {
 	"name": {
 		"@id": NS.CS.Predicate.namae,
 		"@type": NS.XSD.DataType.string,
+	},
+	"agents": {
+		"@id": NS.CS.Predicate.agent,
+		"@type": "@id",
+		"@container": "@set",
 	},
 };
 
@@ -36,10 +42,10 @@ export class Factory {
 
 		if ( ! name ) throw new IllegalArgumentError( "The name cannot be empty." );
 
-		let app:T & Class = <T & Class> object;
-		app.name = name;
+		let role:T & Class = <T & Class> object;
+		role.name = name;
 
-		return app;
+		return role;
 	}
 
 }
