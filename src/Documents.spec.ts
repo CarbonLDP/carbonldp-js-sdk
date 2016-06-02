@@ -55,9 +55,14 @@ describe( module( "Carbon/Documents" ), ():void => {
 			expect( Documents ).toBeDefined();
 		});
 
-		it( hasMethod( INSTANCE, "get", [
-			{ name: "uri", type: "string" },
-		], { type: "Promise<[ Carbon.PersistedDocument.Class, HTTP.Response.Class ]>"}), ( done:(() => void) & { fail:( error?:any ) => void } ):void => {
+		it( hasMethod(
+			INSTANCE,
+			"get",
+			"Obtains a Document from the CarbonLDP server, returning a Promise with a `Carbon.PersistedDocument.Class` and the Response of the request.", [
+				{ name: "uri", type: "string" },
+			],
+			{ type: "Promise<[ Carbon.PersistedDocument.Class, HTTP.Response.Class ]>" }
+		), ( done:(() => void) & { fail:( error?:any ) => void } ):void => {
 			let promises:Promise<any>[] = [];
 
 			class MockedContext extends AbstractContext {
@@ -172,7 +177,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 		it( hasMethod(
 			INSTANCE,
 			"exists",
-			"Returns a Promise with a boolean indicating if the resource exists or not.", [
+			"Retrieves a boolean indicating if the resource exists or not in the CarbonLDP server.", [
 				{ name: "documentURI", type: "string" },
 				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
 			],
@@ -245,7 +250,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 		), ():void => {
 
 			it( hasSignature(
-				"Create a child document for the respective parent source.", [
+				"Persists a child document in the CarbonLDP server, for the respective parent source.", [
 					{ name: "parentURI", type: "string" },
 					{ name: "childDocument", type: "Carbon.Document.Class" },
 					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
@@ -336,7 +341,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 			});
 
 			it( hasSignature(
-				"Create a child document for the respective parent source.", [
+				"Persists a child document in the CarbonLDP server, for the respective parent source.", [
 					{ name: "parentURI", type: "string" },
 					{ name: "slug", type: "string" },
 					{ name: "childDocument", type: "Carbon.Document.Class" },
@@ -428,7 +433,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 			});
 
 			it( hasSignature(
-				"Create a child document for the respective parent source.", [
+				"Persists a child document in the CarbonLDP server, for the respective parent source.", [
 					{ name: "parentURI", type: "string" },
 					{ name: "childObject", type: "Object" },
 					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
@@ -525,7 +530,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 			});
 
 			it( hasSignature(
-				"Create a child document for the respective parent source.", [
+				"Persists a child document in the CarbonLDP server, for the respective parent source.", [
 					{ name: "parentURI", type: "string" },
 					{ name: "slug", type: "string" },
 					{ name: "childObject", type: "Object" },
@@ -625,8 +630,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 		it( hasMethod(
 			INSTANCE,
 			"listChildren",
-			"Return all the children of the container specified.", [
-				{ name: "parentURI", type: "string", description: "URI of the document container to look for their children." },
+			"Retrieves an array of unresolved pointers that refers to all children of the container specified.", [
+				{ name: "parentURI", type: "string", description: "URI of the document container from where to look for its children." },
 				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true }
 			],
 			{ type: "Promise<[ Carbon.Pointer.Class[], Carbon.HTTP.Response ]>" }
@@ -752,7 +757,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 			}).catch( done.fail );
 		});
 
-		describe( method( INSTANCE, "getChildren", "Retrieves and resolve all the children of a specified document." ), () => {
+		describe( method(
+			INSTANCE,
+			"getChildren"
+		), () => {
 			let documents:Documents;
 
 			beforeEach( () => {
@@ -926,10 +934,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 			}
 
 			it( hasSignature(
-				"Retrieves all the children of a document and their content, where you can specify the retrieval preferences and the options for the request.", [
-					{ name: "parentURI", type: "string", description: "URI of the document to ask its children." },
-					{ name: "retrievalPreferences", type: "Carbon.RetrievalPreferences.Class", optional: true, description: "An object for specify the retrieval preferences for the request." },
-					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Options that can be specified for change the behavior of the request." },
+				"Retrieves an array of resolved Documents that refers the all children of the container specified, or a part of them in accordance of the retrieval preferences if specified.", [
+					{ name: "parentURI", type: "string", description: "URI of the document from where to look for its children." },
+					{ name: "retrievalPreferences", type: "Carbon.RetrievalPreferences.Class", optional: true, description: "An object that specify the retrieval preferences for the request." },
+					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Options that can be specified to change the behavior of the request." },
 				],
 				{ type: "Promise<[ Carbon.PersistedDocument.Class[], Carbon.HTTP.Response.Class ]>" }
 			), ( done:{ ():void, fail:() => void }) => {
@@ -1049,9 +1057,9 @@ describe( module( "Carbon/Documents" ), ():void => {
 			});
 
 			it( hasSignature(
-				"Retrieves all the children of a document and their content, where you can specify options for the request.", [
-					{ name: "parentURI", type: "string", description: "URI of the document to ask its children." },
-					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Options that can be specified for change the behavior of the request." },
+				"Retrieves an array of resolved Documents that refers the all children of the container specified.", [
+					{ name: "parentURI", type: "string", description: "URI of the document from where to look for its children." },
+					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Options that can be specified to change the behavior of the request." },
 				],
 				{ type: "Promise<[ Carbon.PersistedDocument.Class[], Carbon.HTTP.Response.Class ]>" }
 			), ( done:{ ():void, fail:() => void } ) => {
@@ -1150,7 +1158,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 		), ():void => {
 
 			it( hasSignature(
-				"Create an AccessPoint of the document.", [
+				"Persists an AccessPoint in the CarbonLDP server, in the document specified.", [
 					{ name: "documentURI", type: "string" },
 					{ name: "accessPoint", type: "Carbon.AccessPoint.Class" },
 					{ name: "slug", type: "string", optional: true },
@@ -1223,7 +1231,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 			});
 
 			it( hasSignature(
-				"Create an AccessPoint of the document.", [
+				"Persists an AccessPoint in the CarbonLDP server, in the document specified.", [
 					{ name: "accessPoint", type: "Carbon.AccessPoint.Class" },
 					{ name: "slug", type: "string", optional: true },
 					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
@@ -1298,7 +1306,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 		), ():void => {
 
 			it( hasSignature(
-				"Upload a binary data to the server, creating a child for the parent specified. This signature it's only when working in a Browser.", [
+				"Upload a binary data to the CarbonLDP server, creating a child for the parent specified. This signature only works in a Browser.", [
 					{ name: "parentURI", type: "string" },
 					{ name: "data", type: "Blob" },
 					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
@@ -1353,7 +1361,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 			});
 
 			it( hasSignature(
-				"Upload a binary data to the server, creating a child for the parent specified. This signature it's only when working in a Browser.", [
+				"Upload a binary data to the CarbonLDP server, creating a child for the parent specified. This signature only works in a Browser.", [
 					{ name: "parentURI", type: "string" },
 					{ name: "slug", type: "string" },
 					{ name: "data", type: "Blob" },
@@ -1409,7 +1417,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 			});
 
 			it( hasSignature(
-				"Upload a binary data to the server, creating a child for the parent specified. This signature it's only when working in Node.js.", [
+				"Upload a binary data to the CarbonLDP server, creating a child for the parent specified. This signature only works in Node.js.", [
 					{ name: "parentURI", type: "string" },
 					{ name: "data", type: "Buffer" },
 					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
@@ -1464,7 +1472,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 			});
 
 			it( hasSignature(
-				"Upload a binary data to the server, creating a child for the parent specified. This signature it's only when working in Node.js.", [
+				"Upload a binary data to the CarbonLDP server, creating a child for the parent specified. This signature only works in Node.js.", [
 					{ name: "parentURI", type: "string" },
 					{ name: "slug", type: "string" },
 					{ name: "data", type: "Buffer" },
@@ -1521,7 +1529,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 		});
 
-		describe( method( INSTANCE, "listMembers", "Retrieves (but doesn't resolve) all the members of the document." ), () => {
+		describe( method( INSTANCE, "listMembers" ), () => {
 			let documents:Documents;
 
 			beforeEach( () => {
@@ -1542,7 +1550,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 			it( hasSignature(
 				"Retrieves all the members of a document with out resolving them, where you can specify if the response should include the Non Readable resources and options for the request.", [
-					{ name: "uri", type: "string", description: "URI of the document to ask its members." },
+					{ name: "uri", type: "string", description: "URI of the document from where to look for its members." },
 					{ name: "includeNonReadable", type: "boolean", optional: true, description: "Specify if the the response should include the Non Readable resources. By default this is set to `true`." },
 					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Options that can be specified for change the behavior of the request." },
 				],
@@ -1643,7 +1651,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 			it( hasSignature(
 				"Retrieves all the members of a document with out resolving them, where you can specify options for the request.", [
-					{ name: "uri", type: "string", description: "URI of the document to ask its members." },
+					{ name: "uri", type: "string", description: "URI of the document from where to look for its members." },
 					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Options that can be specified for change the behavior of the request." },
 				],
 				{ type: "Promise<[ Carbon.Pointer.Class[], Carbon.HTTP.Response.Class ]>" }
@@ -1919,7 +1927,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 			it( hasSignature(
 				"Retrieves all the members of a document and their contents, where you can specify if the response should include the Non Readable resources, the retrieval preferences and the options for the request.", [
-					{ name: "uri", type: "string", description: "URI of the document to ask its members." },
+					{ name: "uri", type: "string", description: "URI of the document from where to look for its members." },
 					{ name: "includeNonReadable", type: "boolean", optional: true, description: "Specify if the the response should include the Non Readable resources. By default this is set to `true`." },
 					{ name: "retrievalPreferences", type: "Carbon.RetrievalPreferences.Class", optional: true, description: "An object for specify the retrieval preferences for the request." },
 					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Options that can be specified for change the behavior of the request." },
@@ -2033,7 +2041,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 			it( hasSignature(
 				"Retrieves all the members of a document and their contents, where you can specify if the response should include the Non Readable resources and options for the request.", [
-					{ name: "uri", type: "string", description: "URI of the document to ask its members." },
+					{ name: "uri", type: "string", description: "URI of the document from where to look for its members." },
 					{ name: "includeNonReadable", type: "boolean", optional: true, description: "Specify if the the response should include the Non Readable resources. By default this is set to `true`." },
 					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Options that can be specified for change the behavior of the request." },
 				],
@@ -2118,7 +2126,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 			it( hasSignature(
 				"Retrieves all the members of a document and their content, where you can specify the retrieval preferences and the options for the request.", [
-					{ name: "uri", type: "string", description: "URI of the document to ask its members." },
+					{ name: "uri", type: "string", description: "URI of the document from where to look for its members." },
 					{ name: "retrievalPreferences", type: "Carbon.RetrievalPreferences.Class", optional: true, description: "An object for specify the retrieval preferences for the request." },
 					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Options that can be specified for change the behavior of the request." },
 				],
@@ -2181,7 +2189,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 			it( hasSignature(
 				"Retrieves all the members of a document and their contents, where you can specify options for the request.", [
-					{ name: "uri", type: "string", description: "URI of the document to ask its members." },
+					{ name: "uri", type: "string", description: "URI of the document from where to look for its members." },
 					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Options that can be specified for change the behavior of the request." },
 				],
 				{ type: "Promise<[ Carbon.Pointer.Class[], Carbon.HTTP.Response.Class ]>" }
@@ -2248,8 +2256,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 			});
 
 			it( hasSignature(
-				"Add the specified resource Pointer as a member of the document container specified.", [
-					{ name: "documentURI", type: "string", description: "URI of the document container where to add the member." },
+				"Add a member relation to the resource Pointer in the document container specified.", [
+					{ name: "documentURI", type: "string", description: "URI of the document container from where the member will be added." },
 					{ name: "member", type: "Carbon.Pointer.Class", description: "Pointer object that references the resource to add as a member." },
 					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true }
 				],
@@ -2266,8 +2274,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 			});
 
 			it( hasSignature(
-				"Add the specified resource URI as a member of the document container specified.", [
-					{ name: "documentURI", type: "string", description: "URI of the document container where to add the member." },
+				"Add a member relation to the resource URI in the document container specified.", [
+					{ name: "documentURI", type: "string", description: "URI of the document container from where the member will be added." },
 					{ name: "memberURI", type: "string", description: "URI of the resource to add as a member." },
 					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true }
 				],
@@ -2287,9 +2295,9 @@ describe( module( "Carbon/Documents" ), ():void => {
 		it( hasMethod(
 			INSTANCE,
 			"addMembers",
-			"Add the specified resources URI or Pointers as members of the document container specified.", [
-				{ name: "documentURI", type: "string", description: "URI of the document container where to add the members." },
-				{ name: "members", type: "(Carbon.Pointer.Class | string)[]", description: "Array of string URIs or Pointers to add as members" },
+			"Add a member relation to every resources URI or Pointer provided in the document container specified.", [
+				{ name: "documentURI", type: "string", description: "URI of the document container from where the members will be added." },
+				{ name: "members", type: "(Carbon.Pointer.Class | string)[]", description: "Array of string URIs or Pointers to add as members." },
 				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true }
 			],
 			{ type: "Promise<Carbon.HTTP.Response>"}
@@ -2362,8 +2370,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 			});
 
 			it( hasSignature(
-				"Remove the specified resource Pointer member of the resource container specified.", [
-					{ name: "documentURI", type: "string", description: "URI of the resource container where to remove the member." },
+				"Remove the member relation to the Pointer provided from the resource container specified.", [
+					{ name: "documentURI", type: "string", description: "URI of the resource container from where the member will be removed." },
 					{ name: "member", type: "Carbon.Pointer.Class", description: "Pointer object that references the resource to remove as a member." },
 					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true }
 				],
@@ -2380,8 +2388,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 			});
 
 			it( hasSignature(
-				"Remove the specified resource URI member of the resource container specified.", [
-					{ name: "documentURI", type: "string", description: "URI of the resource container where to remove the member." },
+				"Remove the member relation to the resource URI from the resource container specified.", [
+					{ name: "documentURI", type: "string", description: "URI of the resource container from where the member will be removed." },
 					{ name: "memberURI", type: "string", description: "URI of the resource to remove as a member." },
 					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true }
 				],
@@ -2401,8 +2409,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 		it( hasMethod(
 			INSTANCE,
 			"removeMembers",
-			"Remove the specified resources URI or Pointers as members of the document container specified.", [
-				{ name: "documentURI", type: "string", description: "URI of the document container where to remove the members." },
+			"Remove the member relation to every specified resources URI or Pointer form the document container specified.", [
+				{ name: "documentURI", type: "string", description: "URI of the document container from where the members will be removed." },
 				{ name: "members", type: "(Carbon.Pointer.Class | string)[]", description: "Array of string URIs or Pointers to remove as members" },
 				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true }
 			],
@@ -2460,8 +2468,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 		it( hasMethod(
 			INSTANCE,
 			"removeAllMembers",
-			"Remove all the members of the document container specified.", [
-				{ name: "documentURI", type: "string", description: "URI of the document container where to remove the members." },
+			"Remove all the member relations form the document container specified.", [
+				{ name: "documentURI", type: "string", description: "URI of the document container from where the members will be removed." },
 				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true }
 			],
 			{ type: "Promise<Carbon.HTTP.Response>"}
@@ -2508,15 +2516,15 @@ describe( module( "Carbon/Documents" ), ():void => {
 			}).catch( done.fail );
 		});
 
-	it( hasMethod(
-		INSTANCE,
-		"refresh",
-		"Update the document with the data of the server, if there is a different version on it.", [
-			{ name: "persistedDocument", type: "Carbon.PersistedDocument.Class", description: "The persisted document to update." },
-			{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true }
-		],
-		{ type: "Promise<[ Carbon.PersistedDocument.Class, Carbon.HTTP.Response ]>" }
-	), ( done:{ ():void, fail:() => void } ):void => {
+		it( hasMethod(
+			INSTANCE,
+			"refresh",
+			"Update the document with the data of the CarbonLDP server, if there is a newest version.", [
+				{ name: "persistedDocument", type: "Carbon.PersistedDocument.Class", description: "The persisted document to update." },
+				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true }
+			],
+			{ type: "Promise<[ Carbon.PersistedDocument.Class, Carbon.HTTP.Response ]>" }
+		), ( done:{ ():void, fail:() => void } ):void => {
 		class MockedContext extends AbstractContext {
 			resolve( uri:string ):string {
 				return uri;
@@ -2748,8 +2756,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 		it( hasMethod(
 			INSTANCE,
 			"delete",
-			"Delete a the Resource referred by a PersistedDocument from the server.", [
-				{ name: "documentURI", type: "string" },
+			"Delete the resource in the CarbonLDP server referred by the URI provided.", [
+				{ name: "documentURI", type: "string", description: "The resource to delete from the server." },
 				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true }
 			],
 			{ type: "Promise<Carbon.HTTP.Response.Class>" }
