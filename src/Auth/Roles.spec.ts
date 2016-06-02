@@ -247,18 +247,21 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 					"@id": "http://example.com/roles/a-role/",
 					"@graph": [{
 						"@id": "http://example.com/roles/a-role/",
-						"@type": [ ],
+						"@type": [ "https://carbonldp.com/ns/v1/security#AppRole" ],
 				        "https://carbonldp.com/ns/v1/platform#accessPoint": [{
 				            "@id": "https://dev.carbonldp.com/apps/test-app/roles/blog-editor/agents/"
-				        }]
+				        }],
 						"https://carbonldp.com/ns/v1/security#name": [{
 				            "@value": "A Role"
 				        }],
 				        "https://carbonldp.com/ns/v1/security#parentRole": [{
 				            "@id": "https://example.com/roles/root-role/"
 				        }]
-					}],
-				}]`
+					}]
+				}]`,
+				responseHeaders: {
+					"ETag": `"1234567890"`
+				}
 			} );
 
 			let spies = {
