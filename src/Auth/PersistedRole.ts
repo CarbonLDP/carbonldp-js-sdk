@@ -1,18 +1,32 @@
-import * as Role from "./Role";
+import * as HTTP from "./../HTTP";
+import * as Errors from "./../Errors";
 import * as PersistedDocument from "./../PersistedDocument";
 import * as Pointer from "./../Pointer";
+import * as RetrievalPreferences from "./../RetrievalPreferences";
+import * as Role from "./Role";
+import * as Roles from "./Roles";
 import * as Utils from "./../Utils";
+import IllegalStateError from "../Errors/IllegalStateError";
 
 export interface Class extends PersistedDocument.Class {
+	_roles:Roles.Class;
+
 	name: string;
 	agents?: Pointer.Class;
+
+	listAgents( requestOptions?:HTTP.Request.Options ):Promise<[ Pointer.Class[], HTTP.Response.Class ]>;
+
+	getAgents( requestOptions?:HTTP.Request.Options ):Promise<[ Pointer.Class[], HTTP.Response.Class ]>;
+	getAgents( retrievalPreferencesOrRequestOptions?:RetrievalPreferences.Class, requestOptions?:HTTP.Request.Options ):Promise<[ Pointer.Class[], HTTP.Response.Class ]>;
 }
 
 export class Factory {
 
 	static hasClassProperties( object:Object ):boolean {
-		return Utils.hasPropertyDefined( object, "name" )
-			// && Utils.hasPropertyDefined( object, "agents" )
+		return Utils.hasPropertyDefined( object, "_roles" ) 
+			&& Utils.hasPropertyDefined( object, "name" )
+			&& Utils.hasFunction( object, "listAgents" )
+			&& Utils.hasFunction( object, "getAgents" )
 			;
 	}
 
@@ -21,13 +35,50 @@ export class Factory {
 			&& Role.Factory.is( object );
 	}
 
-	static decorate<T extends Object>( object:T ):T & Class {
-		let role:Class & T= <any> object;
+	static decorate<T extends Object>( object:T, roles:Roles.Class ):T & Class {
+		let role:Class & T = <any> object;
 		if ( Factory.hasClassProperties( role ) ) return role;
+
+		Object.defineProperties( role, {
+			"_roles": {
+				writable: false,
+				enumerable: false,
+				configurable: true,
+				value: roles,
+			},
+			"listAgents": {
+				writable: true,
+				enumerable: false,
+				configurable: true,
+				value: listAgents,
+			},
+			"getAgents": {
+				writable: true,
+				enumerable: false,
+				configurable: true,
+				value: getAgents,
+			},
+		});
 
 		return role;
 	}
 
+}
+
+
+function listAgents( requestOptions?:HTTP.Request.Options ):Promise<[ Pointer.Class[], HTTP.Response.Class ]> {
+	checkState.call( this );
+	return (<Class> this)._roles.listAgents( (<Class> this).id, requestOptions );
+}
+
+function getAgents( requestOptions?:HTTP.Request.Options ):Promise<[ Pointer.Class[], HTTP.Response.Class ]>;
+function getAgents( retrievalPreferencesOrRequestOptions?:RetrievalPreferences.Class, requestOptions?:HTTP.Request.Options ):Promise<[ Pointer.Class[], HTTP.Response.Class ]> {
+	checkState.call( this );
+	return (<Class> this)._roles.getAgents( (<Class> this).id, retrievalPreferencesOrRequestOptions, requestOptions );
+}
+
+function checkState():void {
+	if (! (<Class> this)._roles ) throw new IllegalStateError( "The context of the current role, does not support roles management." );
 }
 
 export default Class;

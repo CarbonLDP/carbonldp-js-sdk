@@ -6,17 +6,17 @@ var Factory = (function () {
     function Factory() {
     }
     Factory.hasClassProperties = function (object) {
-        return Utils.isObject(object);
+        return Utils.hasPropertyDefined(object, "_roles");
     };
     Factory.is = function (object) {
         return Factory.hasClassProperties(object)
             && AppRole.Factory.is(object);
     };
-    Factory.decorate = function (object) {
+    Factory.decorate = function (object, roles) {
         var role = object;
         if (Factory.hasClassProperties(role))
             return role;
-        PersistedRole.Factory.decorate(role);
+        PersistedRole.Factory.decorate(role, roles);
         return role;
     };
     return Factory;

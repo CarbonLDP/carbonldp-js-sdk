@@ -180,14 +180,14 @@ describe( module( "Carbon/App/Roles" ), ():void => {
 			let promises:Promise<any>[] = [];
 			let promise:Promise<any>;
 
-			falseRole = PersistedRole.Factory.decorate( AppRole.Factory.create( "Role Name" ) );
+			falseRole = PersistedRole.Factory.decorate( AppRole.Factory.create( "Role Name" ), roles );
 			falseRole.id = "http://example.com/roles/a-role/";
 
 			promise = roles.get( "http://example.com/roles/a-role/" );
 			expect( promise instanceof Promise ).toBe( true );
 			promise.then( spies.success ).then( () => {
 
-				falseRole = PersistedRole.Factory.decorate( AppRole.Factory.create( "Role Name" ) );
+				falseRole = PersistedRole.Factory.decorate( AppRole.Factory.create( "Role Name" ), roles );
 				falseRole.types = [];
 
 				promise = roles.get( "http://example.com/roles/a-role/" );

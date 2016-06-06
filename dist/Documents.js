@@ -713,7 +713,7 @@ var Documents = (function () {
         if (LDP.Container.Factory.hasRDFClass(document))
             LDP.PersistedContainer.Factory.decorate(document);
         if (Resource.Util.hasType(document, AppRole.RDF_CLASS))
-            PersistedAppRole.Factory.decorate(document);
+            PersistedAppRole.Factory.decorate(document, this.context.auth ? this.context.auth.roles : null);
         return document;
     };
     Documents.prototype.updatePersistedDocument = function (persistedDocument, documentResource, fragmentResources) {

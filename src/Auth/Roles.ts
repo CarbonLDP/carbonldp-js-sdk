@@ -4,6 +4,8 @@ import * as Pointer from "./../Pointer";
 import * as HTTP from "./../HTTP";
 import * as Role from "./Role";
 import * as PersistedRole from "./PersistedRole";
+import * as RetrievalPreferences from "./../RetrievalPreferences";
+import * as SPARQL from "./../SPARQL";
 import * as URI from "./../RDF/URI";
 import * as Utils from "./../Utils";
 
@@ -41,19 +43,51 @@ export abstract class Class {
 		});
 	}
 
-	get( roleURI, requestOptions?:HTTP.Request.Options ):Promise<[ PersistedRole.Class, HTTP.Response.Class ]> {
-		let containerUri:string = this.context.resolve( this.getContainerURI() );
-		let uri:string = URI.Util.resolve( containerUri, roleURI );
+	get( roleURI:string, requestOptions?:HTTP.Request.Options ):Promise<[ PersistedRole.Class, HTTP.Response.Class ]> {
+		return this.resolveRoleURI( roleURI ).then( ( uri:string ) => {
+			return this.context.documents.get( uri, requestOptions );
+		});
+	}
 
-		if ( ! URI.Util.isBaseOf( containerUri, uri ) ) return Promise.reject<any>( new Errors.IllegalArgumentError( "The URI provided is not a valid role of the current context." ) );
+	listAgents( roleURI:string, requestOptions?:HTTP.Request.Options ):Promise<[ Pointer.Class[], HTTP.Response.Class ]> {
+		return this.getAgentsAccessPoint( roleURI).then( ( agentsAccessPoint:Pointer.Class ) => {
+			return this.context.documents.listMembers( agentsAccessPoint.id, requestOptions );
+		});
+	}
 
-		return this.context.documents.get( uri, requestOptions );
+	getAgents( roleURI:string, requestOptions?:HTTP.Request.Options ):Promise<[ Pointer.Class[], HTTP.Response.Class ]>;
+	getAgents( roleURI:string, retrievalPreferences?:RetrievalPreferences.Class, requestOptions?:HTTP.Request.Options ):Promise<[ Pointer.Class[], HTTP.Response.Class ]>;
+	getAgents( roleURI:string, retrievalPreferencesOrRequestOptions?:RetrievalPreferences.Class, requestOptions?:HTTP.Request.Options ):Promise<[ Pointer.Class[], HTTP.Response.Class ]> {
+		return this.getAgentsAccessPoint( roleURI).then( ( agentsAccessPoint:Pointer.Class ) => {
+			return this.context.documents.getMembers( agentsAccessPoint.id, retrievalPreferencesOrRequestOptions, requestOptions );
+		}); 
 	}
 
 	private getContainerURI():string {
 		if ( ! this.context.hasSetting( "platform.roles.container" ) ) throw new Errors.IllegalStateError( "The roles container setting hasn't been declared." );
 		return this.context.getSetting( "platform.roles.container" );
 	}
+
+	private resolveRoleURI( roleURI:string ):Promise<string> {
+		let containerUri:string = this.context.resolve( this.getContainerURI() );
+		let uri:string = URI.Util.resolve( containerUri, roleURI );
+
+		if ( ! URI.Util.isBaseOf( containerUri, uri ) ) return Promise.reject<any>( new Errors.IllegalArgumentError( "The URI provided is not a valid role of the current context." ) );
+
+		return Promise.resolve<string>( uri );
+	}
+
+	private getAgentsAccessPoint( roleURI:string ):Promise<Pointer.Class> {
+		return this.resolveRoleURI( roleURI ).then( ( uri:string ) => {
+			return this.context.documents.executeSELECTQuery( uri, ` select distinct ?agentsAccessPoint where {
+				<${ uri }> <https://carbonldp.com/ns/v1/platform#accessPoint> ?agentsAccessPoint .
+				?agentsAccessPoint <http://www.w3.org/ns/ldp#hasMemberRelation> <https://carbonldp.com/ns/v1/security#agent> .
+			}` );
+		}).then( ( [ selectResults, response ]:[ SPARQL.SELECTResults.Class, HTTP.Response.Class ] ) => {
+			return <Pointer.Class> selectResults.bindings[ 0 ][ "agentsAccessPoint" ];
+		});
+	}
+
 }
 
 export default Class;
