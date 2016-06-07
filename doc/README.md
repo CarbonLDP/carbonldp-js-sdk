@@ -1131,10 +1131,15 @@ Class( appContext:Carbon.App.Context )
 
 ##### get
 ```typescript 
-get()
+get( roleURI:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.PersistedRole.Class, Carbon.HTTP.Response.Class ]>
 ```
 
 Retrieves a role from the current context.
+
+*Parameters*
+
+- roleURI: The URI of the app role to retrieve.
+- requestOptions
 
 ##### createChild
 ```typescript 
@@ -1704,10 +1709,15 @@ Class( context:Carbon.Context )
 
 ##### get
 ```typescript 
-get()
+get( roleURI:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.PersistedRole.Class, Carbon.HTTP.Response.Class ]>
 ```
 
 Retrieves a role from the current context.
+
+*Parameters*
+
+- roleURI: The URI of the role to retrieve.
+- requestOptions
 
 ##### createChild
 ```typescript 
