@@ -1,7 +1,7 @@
 "use strict";
 var Agent = require("./Agent");
-var Utils = require("./Utils");
-var Errors = require("./Errors");
+var Errors = require("./../Errors");
+var Utils = require("./../Utils");
 var Class = (function () {
     function Class(context) {
         this.context = context;
@@ -11,7 +11,7 @@ var Class = (function () {
         var slug = Utils.isString(slugOrAgent) ? slugOrAgent : null;
         agentDocument = agentDocument || slugOrAgent;
         if (!Agent.Factory.is(agentDocument))
-            return Promise.reject(new Errors.IllegalArgumentError("The Document is not a `Carbon.Agents.Agent.Class` object."));
+            return Promise.reject(new Errors.IllegalArgumentError("The Document is not a cs:Agent object."));
         if (slug) {
             return this.context.documents.createChild(containerURI, slug, agentDocument);
         }

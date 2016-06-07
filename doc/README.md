@@ -17,14 +17,6 @@
 	- [Properties](#Carbon-AccessPoints-Properties)
 	- [Class Carbon.AccessPoint.Factory](#Carbon-AccessPoint-Factory)
 		- [Methods](#Carbon-AccessPoint-Factory-Methods)
-- [Module Carbon/Agent](#Carbon-Agent)
-	- [Properties](#Carbon-Agent-Properties)
-	- [Class Carbon.Agent.Factory](#Carbon-Agent-Factory)
-		- [Methods](#Carbon-Agent-Factory-Methods)
-- [Module Carbon/Agents](#Carbon-Agents)
-	- [Class Carbon.Agents.Class](#Carbon-Agents-Class)
-		- [Constructor](#Carbon-Agents-Class-Constructor)
-		- [Methods](#Carbon-Agents-Class-Methods)
 - [Module Carbon/App](#Carbon-App)
 	- [Reexports](#Carbon-App-Reexports)
 	- [Properties](#Carbon-App-Properties)
@@ -44,7 +36,16 @@
 	- [Enums](#Carbon-Auth-Enums)
 	- [Class Carbon.Auth.Class](#Carbon-Auth-Class)
 		- [Constructor](#Carbon-Auth-Class-Constructor)
+		- [Properties](#Carbon-Auth-Class-Properties)
 		- [Methods](#Carbon-Auth-Class-Methods)
+- [Module Carbon/Auth/Agent](#Carbon-Auth-Agent)
+	- [Properties](#Carbon-Auth-Agent-Properties)
+	- [Class Carbon.Auth.Agent.Factory](#Carbon-Auth-Agent-Factory)
+		- [Methods](#Carbon-Auth-Agent-Factory-Methods)
+- [Module Carbon/Auth/Agents](#Carbon-Auth-Agents)
+	- [Class Carbon.Auth.Agents.Class](#Carbon-Auth-Agents-Class)
+		- [Constructor](#Carbon-Auth-Agents-Class-Constructor)
+		- [Methods](#Carbon-Auth-Agents-Class-Methods)
 - [Module Carbon/Auth/BasicAuthenticator](#Carbon-Auth-BasicAuthenticator)
 	- [Class Carbon.Auth.BasicAuthenticator.Class](#Carbon-Auth-BasicAuthenticator-Class)
 		- [Constructor](#Carbon-Auth-BasicAuthenticator-Class-Constructor)
@@ -487,9 +488,7 @@
 #### <a name="Carbon-Reexports" />Reexports 
 | Export name | Original Location | 
 | --- | --- |
-| Agent | [Carbon/Agent](#Carbon-Agent) |
 | AccessPoint | [Carbon/AccessPoint](#Carbon-AccessPoint) |
-| Agents | [Carbon/Agents](#Carbon-Agents) |
 | App | [Carbon/App](#Carbon-App) |
 | Apps | [Carbon/Apps](#Carbon-Apps) |
 | Auth | [Carbon/Auth](#Carbon-Auth) |
@@ -697,134 +696,6 @@ Create a `Carbon.AccessPoint.Class` object with the object provided.
 
 
 
-## <a name="Carbon-Agent" />Module Carbon/Agent
-
-
-
-
-
-### <a name="Carbon-Agent-Properties" />Properties
-```typescript 
-static RDF_CLASS:string 
-```
-
-```typescript 
-static SCHEMA:Carbon.ObjectSchema.Class 
-```
-
-
-
-
-
-### <a name="Carbon-Agent-Factory" />Class Carbon.Agent.Factory
-
-
-> Factory class for `Carbon.Agent.Class` objects
-
-
-
-
-#### <a name="Carbon-Agent-Factory-Methods" />Methods
-##### hasClassProperties
-```typescript 
-static hasClassProperties( resource:Object ):boolean
-```
-
-Returns true if the object provided has the properties that defines a `Carbon.Agent.Class` object
-
-*Parameters*
-
-- resource
-
-##### is
-```typescript 
-static is( object:Object ):boolean
-```
-
-Returns true if the object provided is considered as an `Carbon.Agent.Class` object
-
-*Parameters*
-
-- object
-
-##### create
-```typescript 
-static create( name:string,  email:string ):Carbon.Agent.Class
-```
-
-Create a `Carbon.Agent.Class` object with the name and email specified.
-
-*Parameters*
-
-- name
-- email
-
-##### createFrom
-```typescript 
-static createFrom( object:T extends Object ):T & Carbon.Agent.Class
-```
-
-Create a `Carbon.Agent.Class` object with the object provided.
-
-*Parameters*
-
-- object
-
-
-
-
-## <a name="Carbon-Agents" />Module Carbon/Agents
-
-
-**Default export:** [Carbon.Agents.Class](#Carbon-Agents-Class)
-
-
-
-
-
-
-### <a name="Carbon-Agents-Class" />Class Carbon.Agents.Class
-
-
-> Class for manage Agents of a determined context.
-
-
-#### <a name="Carbon-Agents-Class-Constructor" />Constructor
-```typescript 
-Class()
-```
-
-
-
-
-#### <a name="Carbon-Agents-Class-Methods" />Methods
-
-##### create
-```typescript 
-create( agentDocument:Carbon.Agents.Agent.Class ):Promise<Carbon.Pointer.Class, Carbon.HTTP.Response.Class>
-```
-
-Persists an Agent Document in the server, generating a random unique slug.
-Returns a Promise with a Pointer for the stored Agent, and the response of the call.
-
-*Parameters*
-
-- agentDocument
-
-```typescript 
-create( slug:string,  agentDocument:Carbon.Agents.Agent.Class ):Promise<Carbon.Pointer.Class, Carbon.HTTP.Response.Class>
-```
-
-Persists an Agent Document in the server using the slug specified.
-Returns a Promise with a Pointer for the stored Agent, and the response of the call.
-
-*Parameters*
-
-- slug
-- agentDocument
-
-
-
 ## <a name="Carbon-App" />Module Carbon/App
 
 
@@ -938,11 +809,6 @@ Context( parentContext:Carbon.Context,  app:Carbon.App.Context )
 #### <a name="Carbon-App-Context-Properties" />Properties
 
 ```typescript 
-agents:Carbon.Agents.Class 
-```
-
-Instance of Agents class for manage the agents inside of an application.
-```typescript 
 app:Carbon.App.Class 
 ```
 
@@ -1055,6 +921,8 @@ Returns a Pointer for the stored App Document, and the response of the call.
 #### <a name="Carbon-Auth-Reexports" />Reexports 
 | Export name | Original Location | 
 | --- | --- |
+| Agent | [Carbon.Auth.Agent](#Carbon-Auth-Agent) |
+| Agents | [Carbon.Auth.Agents](#Carbon-Auth-Agents) |
 | AuthenticationToken | [Carbon.Auth.AuthenticationToken](#Carbon-Auth-AuthenticationToken) |
 | Authenticator | [Carbon.Auth.Authenticator](#Carbon-Auth-Authenticator) |
 | BasicAuthenticator | [Carbon.Auth.BasicAuthenticator](#Carbon-Auth-BasicAuthenticator) |
@@ -1088,6 +956,13 @@ Class()
 
 
 
+#### <a name="Carbon-Auth-Class-Properties" />Properties
+
+```typescript 
+agents:Carbon.Auth.Agents.Class 
+```
+
+Instance of `Carbon.Auth.Agents.Class` that helps you manage the agents of the current context.
 
 #### <a name="Carbon-Auth-Class-Methods" />Methods
 
@@ -1167,6 +1042,134 @@ Authenticates the user with a JSON Web Token (JWT), i.e. the credentials generat
 
 - method
 - token
+
+
+
+## <a name="Carbon-Auth-Agent" />Module Carbon/Auth/Agent
+
+
+
+
+
+### <a name="Carbon-Auth-Agent-Properties" />Properties
+```typescript 
+static RDF_CLASS:string 
+```
+
+```typescript 
+static SCHEMA:Carbon.ObjectSchema.Class 
+```
+
+
+
+
+
+### <a name="Carbon-Auth-Agent-Factory" />Class Carbon.Auth.Agent.Factory
+
+
+> Factory class for `Carbon.Auth.Agent.Class` objects
+
+
+
+
+#### <a name="Carbon-Auth-Agent-Factory-Methods" />Methods
+##### hasClassProperties
+```typescript 
+static hasClassProperties( resource:Object ):boolean
+```
+
+Returns true if the object provided has the properties that defines a `Carbon.Auth.Agent.Class` object
+
+*Parameters*
+
+- resource
+
+##### is
+```typescript 
+static is( object:Object ):boolean
+```
+
+Returns true if the object provided is considered as an `Carbon.Auth.Agent.Class` object
+
+*Parameters*
+
+- object
+
+##### create
+```typescript 
+static create( name:string,  email:string ):Carbon.Auth.Agent.Class
+```
+
+Create a `Carbon.Auth.Agent.Class` object with the name and email specified.
+
+*Parameters*
+
+- name
+- email
+
+##### createFrom
+```typescript 
+static createFrom( object:T extends Object ):T & Carbon.Auth.Agent.Class
+```
+
+Create a `Carbon.Auth.Agent.Class` object with the object provided.
+
+*Parameters*
+
+- object
+
+
+
+
+## <a name="Carbon-Auth-Agents" />Module Carbon/Auth/Agents
+
+
+**Default export:** [Carbon.Auth.Agents.Class](#Carbon-Auth-Agents-Class)
+
+
+
+
+
+
+### <a name="Carbon-Auth-Agents-Class" />Class Carbon.Auth.Agents.Class
+
+
+> Class for manage Agents of a determined context.
+
+
+#### <a name="Carbon-Auth-Agents-Class-Constructor" />Constructor
+```typescript 
+Class()
+```
+
+
+
+
+#### <a name="Carbon-Auth-Agents-Class-Methods" />Methods
+
+##### create
+```typescript 
+create( agentDocument:Carbon.Auth.Agents.Agent.Class ):Promise<Carbon.Pointer.Class, Carbon.HTTP.Response.Class>
+```
+
+Persists an Agent Document in the server, generating a random unique slug.
+Returns a Promise with a Pointer for the stored Agent, and the response of the call.
+
+*Parameters*
+
+- agentDocument
+
+```typescript 
+create( slug:string,  agentDocument:Carbon.Auth.Agents.Agent.Class ):Promise<Carbon.Pointer.Class, Carbon.HTTP.Response.Class>
+```
+
+Persists an Agent Document in the server using the slug specified.
+Returns a Promise with a Pointer for the stored Agent, and the response of the call.
+
+*Parameters*
+
+- slug
+- agentDocument
 
 
 

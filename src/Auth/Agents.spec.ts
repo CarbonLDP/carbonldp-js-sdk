@@ -15,12 +15,12 @@ import {
 	hasSignature,
 	hasDefaultExport,
 	hasConstructor,
-} from "./test/JasmineExtender";
-import * as Utils from "./Utils";
-import * as Errors from "./Errors";
-import AbstractContext from "./AbstractContext";
+} from "./../test/JasmineExtender";
+import * as Utils from "./../Utils";
+import * as Errors from "./../Errors";
+import AbstractContext from "./../AbstractContext";
 
-describe( module( "Carbon/Agents" ), ():void => {
+describe( module( "Carbon/Auth/Agents" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( Agents ).toBeDefined();
@@ -28,7 +28,7 @@ describe( module( "Carbon/Agents" ), ():void => {
 	});
 
 	describe( clazz(
-		"Carbon.Agents.Class",
+		"Carbon.Auth.Agents.Class",
 		"Class for manage Agents of a determined context."
 	), ():void => {
 
@@ -61,7 +61,7 @@ describe( module( "Carbon/Agents" ), ():void => {
 			it( hasSignature(
 				"Persists an Agent Document in the server, generating a random unique slug.\n" +
 				"Returns a Promise with a Pointer for the stored Agent, and the response of the call.", [
-					{ name: "agentDocument", type: "Carbon.Agents.Agent.Class" }
+					{ name: "agentDocument", type: "Carbon.Auth.Agents.Agent.Class" }
 				],
 				{ type: "Promise<Carbon.Pointer.Class, Carbon.HTTP.Response.Class>" }
 			), ( done ):void => {
@@ -110,7 +110,7 @@ describe( module( "Carbon/Agents" ), ():void => {
 				"Persists an Agent Document in the server using the slug specified.\n" +
 				"Returns a Promise with a Pointer for the stored Agent, and the response of the call.", [
 					{ name: "slug", type: "string" },
-					{ name: "agentDocument", type: "Carbon.Agents.Agent.Class" }
+					{ name: "agentDocument", type: "Carbon.Auth.Agents.Agent.Class" }
 				],
 				{ type: "Promise<Carbon.Pointer.Class, Carbon.HTTP.Response.Class>" }
 			), ( done:() => void ):void => {
@@ -164,7 +164,7 @@ describe( module( "Carbon/Agents" ), ():void => {
 	});
 
 	it( hasDefaultExport(
-		"Carbon.Agents.Class"
+		"Carbon.Auth.Agents.Class"
 	), ():void => {
 		expect( DefaultExport ).toBeDefined();
 		expect( DefaultExport ).toBe( Agents.Class );

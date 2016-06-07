@@ -20,8 +20,6 @@ import {
 import setting from "./settings";
 
 import * as AccessPoint from "./AccessPoint";
-import * as Agent from "./Agent";
-import * as Agents from "./Agents";
 import * as APIDescription from "./APIDescription";
 import * as App from "./App";
 import * as Apps from "./Apps";
@@ -109,29 +107,11 @@ describe( module( "Carbon" ), ():void => {
 
 		it( reexports(
 			STATIC,
-			"Agent",
-			"Carbon/Agent"
-		), ():void => {
-			expect( Carbon.Agent ).toBeDefined();
-			expect( Carbon.Agent ).toBe( Agent );
-		});
-
-		it( reexports(
-			STATIC,
 			"AccessPoint",
 			"Carbon/AccessPoint"
 		), ():void => {
 			expect( Carbon.AccessPoint ).toBeDefined();
 			expect( Carbon.AccessPoint ).toBe( AccessPoint );
-		});
-
-		it( reexports(
-			STATIC,
-			"Agents",
-			"Carbon/Agents"
-		), ():void => {
-			expect( Carbon.Agents ).toBeDefined();
-			expect( Carbon.Agents ).toBe( Agents );
 		});
 
 		it( reexports(

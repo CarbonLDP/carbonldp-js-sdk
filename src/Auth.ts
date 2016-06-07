@@ -1,3 +1,5 @@
+import * as Agent from "./Auth/Agent";
+import * as Agents from "./Auth/Agents";
 import AuthenticationToken from "./Auth/AuthenticationToken";
 import Authenticator from "./Auth/Authenticator";
 import BasicAuthenticator from "./Auth/BasicAuthenticator";
@@ -13,6 +15,8 @@ import Context from "./Context";
 import * as Utils from "./Utils";
 
 export {
+	Agent,
+	Agents,
 	AuthenticationToken,
 	Authenticator,
 	BasicAuthenticator,
@@ -27,14 +31,17 @@ export enum Method {
 }
 
 export class Class {
-	private context:Context;
+	public agents:Agents.Class;
 
+	private context:Context;
 	private method:Method = null;
 	private authenticators:Array<Authenticator<AuthenticationToken>>;
 	private authenticator:Authenticator<AuthenticationToken>;
 
 	constructor( context:Context ) {
 		this.context = context;
+
+		this.agents = new Agents.Class( this.context );
 
 		this.authenticators = [];
 		this.authenticators[ Method.BASIC ] = new BasicAuthenticator();

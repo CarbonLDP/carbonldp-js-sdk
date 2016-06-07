@@ -1,9 +1,9 @@
-import Context from "./Context";
 import * as Agent from "./Agent";
-import * as Pointer from "./Pointer";
-import * as Response from "./HTTP/Response";
-import * as Utils from "./Utils";
-import * as Errors from "./Errors";
+import Context from "./../Context";
+import * as Errors from "./../Errors";
+import * as Pointer from "./../Pointer";
+import * as Response from "./../HTTP/Response";
+import * as Utils from "./../Utils";
 
 export class Class {
 	private context:Context;
@@ -19,7 +19,7 @@ export class Class {
 		let slug:string = Utils.isString( slugOrAgent ) ? slugOrAgent : null;
 		agentDocument = agentDocument || slugOrAgent;
 
-		if ( ! Agent.Factory.is( agentDocument ) ) return Promise.reject<any>( new Errors.IllegalArgumentError( "The Document is not a `Carbon.Agents.Agent.Class` object." ) );
+		if ( ! Agent.Factory.is( agentDocument ) ) return Promise.reject<any>( new Errors.IllegalArgumentError( "The Document is not a cs:Agent object." ) );
 
 		if( slug ) {
 			return this.context.documents.createChild( containerURI, slug, agentDocument );

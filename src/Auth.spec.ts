@@ -13,9 +13,11 @@ import {
 	hasDefaultExport,
 	reexports,
 	hasEnumeral,
-	hasSignature
+	hasSignature, hasProperty
 } from "./test/JasmineExtender";
 import * as Utils from "./Utils";
+import * as Agent from "./Auth/Agent";
+import * as Agents from "./Auth/Agents";
 import AbstractContext from "./AbstractContext";
 import AuthenticationToken from "./Auth/AuthenticationToken";
 import Authenticator from "./Auth/Authenticator";
@@ -34,6 +36,24 @@ describe( module( "Carbon/Auth" ), ():void => {
 	it( isDefined(), ():void => {
 		expect( Auth ).toBeDefined();
 		expect( Utils.isObject( Auth ) ).toBe( true );
+	});
+
+	it( reexports(
+		STATIC,
+		"Agent",
+		"Carbon.Auth.Agent"
+	), ():void => {
+		expect( Auth.Agent ).toBeDefined();
+		expect( Auth.Agent ).toBe( Agent );
+	});
+
+	it( reexports(
+		STATIC,
+		"Agents",
+		"Carbon.Auth.Agents"
+	), ():void => {
+		expect( Auth.Agents ).toBeDefined();
+		expect( Auth.Agents ).toBe( Agents );
 	});
 
 	it( reexports(
@@ -135,6 +155,26 @@ describe( module( "Carbon/Auth" ), ():void => {
 
 			expect( auth ).toBeTruthy();
 			expect( auth instanceof Auth.Class ).toBe( true );
+		});
+
+		it( hasProperty(
+			INSTANCE,
+			"agents",
+			"Carbon.Auth.Agents.Class",
+			"Instance of `Carbon.Auth.Agents.Class` that helps you manage the agents of the current context."
+		), ():void => {
+			let context:AbstractContext;
+			class MockedContext extends AbstractContext {
+				resolve( uri:string ) {
+					return uri;
+				}
+			}
+			context = new MockedContext();
+
+			let auth = new Auth.Class( context );
+			
+			expect( auth.agents ).toBeDefined();
+			expect( auth.agents instanceof Agents.Class ).toBe( true );
 		});
 
 		it( hasMethod(

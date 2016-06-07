@@ -6,8 +6,6 @@ var __extends = (this && this.__extends) || function (d, b) {
 };
 var AbstractContext_1 = require("./AbstractContext");
 var AccessPoint = require("./AccessPoint");
-var Agent = require("./Agent");
-var Agents = require("./Agents");
 var App = require("./App");
 var Apps = require("./Apps");
 var Auth = require("./Auth");
@@ -66,8 +64,6 @@ var Carbon = (function (_super) {
         });
     };
     Carbon.AccessPoint = AccessPoint;
-    Carbon.Agent = Agent;
-    Carbon.Agents = Agents;
     Carbon.App = App;
     Carbon.Apps = Apps;
     Carbon.Auth = Auth;

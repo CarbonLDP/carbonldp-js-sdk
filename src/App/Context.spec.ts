@@ -12,12 +12,10 @@ import {
 } from "./../test/JasmineExtender";
 
 import AbstractContext from "./../AbstractContext";
-import * as Agents from "./../Agents";
 import * as App from "./../App";
 import PersistedApp from "./../PersistedApp";
 import * as Pointer from "./../Pointer";
 import * as Utils from "./../Utils";
-import {DigestedObjectSchema} from "../ObjectSchema";
 
 import AppContext from "./Context";
 
@@ -60,16 +58,6 @@ describe( module( "Carbon/App/Context" ), ():void => {
 			"Carbon.AbstractContext"
 		), ():void => {
 			expect( appContext instanceof AbstractContext );
-		});
-
-		it( hasProperty(
-			INSTANCE,
-			"agents",
-			"Carbon.Agents.Class",
-			"Instance of Agents class for manage the agents inside of an application."
-		), ():void => {
-			expect( appContext.agents ).toBeDefined();
-			expect( appContext.agents instanceof Agents.Class ).toBe( true );
 		});
 
 		it( hasProperty(

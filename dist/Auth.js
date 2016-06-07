@@ -1,4 +1,8 @@
 "use strict";
+var Agent = require("./Auth/Agent");
+exports.Agent = Agent;
+var Agents = require("./Auth/Agents");
+exports.Agents = Agents;
 var BasicAuthenticator_1 = require("./Auth/BasicAuthenticator");
 exports.BasicAuthenticator = BasicAuthenticator_1.default;
 var TokenAuthenticator_1 = require("./Auth/TokenAuthenticator");
@@ -18,6 +22,7 @@ var Class = (function () {
     function Class(context) {
         this.method = null;
         this.context = context;
+        this.agents = new Agents.Class(this.context);
         this.authenticators = [];
         this.authenticators[Method.BASIC] = new BasicAuthenticator_1.default();
         this.authenticators[Method.TOKEN] = new TokenAuthenticator_1.default(this.context);

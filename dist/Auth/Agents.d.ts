@@ -1,7 +1,7 @@
-import Context from "./Context";
 import * as Agent from "./Agent";
-import * as Pointer from "./Pointer";
-import * as Response from "./HTTP/Response";
+import Context from "./../Context";
+import * as Pointer from "./../Pointer";
+import * as Response from "./../HTTP/Response";
 export declare class Class {
     private context;
     constructor(context: Context);

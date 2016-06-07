@@ -1,5 +1,3 @@
-import * as Agent from "./Agent";
-
 import {
 	STATIC,
 
@@ -9,13 +7,15 @@ import {
 	isDefined,
 	hasMethod,
 	hasProperty
-} from "./test/JasmineExtender";
-import * as Utils from "./Utils";
-import * as NS from "./NS";
-import * as Errors from "./Errors";
-import * as Document from "./Document";
+} from "./../test/JasmineExtender";
+import * as Document from "./../Document";
+import * as Errors from "./../Errors";
+import * as NS from "./../NS";
+import * as Utils from "./../Utils";
 
-describe( module( "Carbon/Agent" ), ():void => {
+import * as Agent from "./Agent";
+
+describe( module( "Carbon/Auth/Agent" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( Agent ).toBeDefined();
@@ -61,8 +61,8 @@ describe( module( "Carbon/Agent" ), ():void => {
 	});
 
 	describe( clazz(
-		"Carbon.Agent.Factory",
-		"Factory class for `Carbon.Agent.Class` objects"
+		"Carbon.Auth.Agent.Factory",
+		"Factory class for `Carbon.Auth.Agent.Class` objects"
 	), ():void => {
 
 		it( isDefined(), ():void => {
@@ -73,7 +73,7 @@ describe( module( "Carbon/Agent" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"hasClassProperties",
-			"Returns true if the object provided has the properties that defines a `Carbon.Agent.Class` object", [
+			"Returns true if the object provided has the properties that defines a `Carbon.Auth.Agent.Class` object", [
 				{ name: "resource", type: "Object" }
 			],
 			{ type: "boolean" }
@@ -107,7 +107,7 @@ describe( module( "Carbon/Agent" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"is",
-			"Returns true if the object provided is considered as an `Carbon.Agent.Class` object", [
+			"Returns true if the object provided is considered as an `Carbon.Auth.Agent.Class` object", [
 				{ name: "object", type: "Object" }
 			],
 			{ type: "boolean" }
@@ -141,11 +141,11 @@ describe( module( "Carbon/Agent" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"create",
-			"Create a `Carbon.Agent.Class` object with the name and email specified.", [
+			"Create a `Carbon.Auth.Agent.Class` object with the name and email specified.", [
 				{ name: "name", type: "string" },
 				{ name: "email", type: "string" }
 			],
-			{ type: "Carbon.Agent.Class" }
+			{ type: "Carbon.Auth.Agent.Class" }
 		), ():void => {
 			expect( Agent.Factory.create ).toBeDefined();
 			expect( Utils.isFunction( Agent.Factory.create ) ).toBe( true );
@@ -165,10 +165,10 @@ describe( module( "Carbon/Agent" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"createFrom",
-			"Create a `Carbon.Agent.Class` object with the object provided.", [
+			"Create a `Carbon.Auth.Agent.Class` object with the object provided.", [
 				{ name: "object", type: "T extends Object" }
 			],
-			{ type: "T & Carbon.Agent.Class" }
+			{ type: "T & Carbon.Auth.Agent.Class" }
 		), ():void => {
 			expect( Agent.Factory.createFrom ).toBeDefined();
 			expect( Utils.isFunction( Agent.Factory.createFrom ) ).toBe( true );

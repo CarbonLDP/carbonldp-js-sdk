@@ -1,7 +1,5 @@
 import AbstractContext from "./AbstractContext";
 import * as AccessPoint from "./AccessPoint";
-import * as Agent from "./Agent";
-import * as Agents from "./Agents";
 import * as APIDescription from "./APIDescription";
 import * as App from "./App";
 import * as Apps from "./Apps";
@@ -34,8 +32,6 @@ class Carbon extends AbstractContext {
 
 	/* tslint:disable: variable-name */
 	static AccessPoint:typeof AccessPoint = AccessPoint;
-	static Agent:typeof Agent = Agent;
-	static Agents:typeof Agents = Agents;
 	static App:typeof App = App;
 	static Apps:typeof Apps = Apps;
 	static Auth:typeof Auth = Auth;

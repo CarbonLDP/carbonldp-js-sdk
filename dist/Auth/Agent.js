@@ -1,8 +1,8 @@
 "use strict";
-var Utils = require("./Utils");
-var Document = require("./Document");
-var NS = require("./NS");
-var IllegalArgumentError_1 = require("./Errors/IllegalArgumentError");
+var Utils = require("./../Utils");
+var Document = require("./../Document");
+var NS = require("./../NS");
+var IllegalArgumentError_1 = require("./../Errors/IllegalArgumentError");
 exports.RDF_CLASS = NS.CS.Class.Agent;
 exports.SCHEMA = {
     "name": {

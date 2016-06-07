@@ -1,3 +1,5 @@
+import * as Agent from "./Auth/Agent";
+import * as Agents from "./Auth/Agents";
 import AuthenticationToken from "./Auth/AuthenticationToken";
 import Authenticator from "./Auth/Authenticator";
 import BasicAuthenticator from "./Auth/BasicAuthenticator";
@@ -8,12 +10,13 @@ import UsernameAndPasswordCredentials from "./Auth/UsernameAndPasswordCredential
 import Credentials from "./Auth/Credentials";
 import * as HTTP from "./HTTP";
 import Context from "./Context";
-export { AuthenticationToken, Authenticator, BasicAuthenticator, Token, TokenAuthenticator, UsernameAndPasswordToken };
+export { Agent, Agents, AuthenticationToken, Authenticator, BasicAuthenticator, Token, TokenAuthenticator, UsernameAndPasswordToken };
 export declare enum Method {
     BASIC = 0,
     TOKEN = 1,
 }
 export declare class Class {
+    agents: Agents.Class;
     private context;
     private method;
     private authenticators;
