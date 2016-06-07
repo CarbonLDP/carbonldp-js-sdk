@@ -9,7 +9,9 @@ var Factory = (function () {
         return Utils.hasPropertyDefined(object, "_roles")
             && Utils.hasPropertyDefined(object, "name")
             && Utils.hasFunction(object, "listAgents")
-            && Utils.hasFunction(object, "getAgents");
+            && Utils.hasFunction(object, "getAgents")
+            && Utils.hasFunction(object, "addAgent")
+            && Utils.hasFunction(object, "addAgents");
     };
     Factory.is = function (object) {
         return Factory.hasClassProperties(object)
@@ -38,6 +40,18 @@ var Factory = (function () {
                 configurable: true,
                 value: getAgents,
             },
+            "addAgent": {
+                writable: true,
+                enumerable: false,
+                configurable: true,
+                value: addAgent,
+            },
+            "addAgents": {
+                writable: true,
+                enumerable: false,
+                configurable: true,
+                value: addAgents,
+            },
         });
         return role;
     };
@@ -51,6 +65,14 @@ function listAgents(requestOptions) {
 function getAgents(retrievalPreferencesOrRequestOptions, requestOptions) {
     checkState.call(this);
     return this._roles.getAgents(this.id, retrievalPreferencesOrRequestOptions, requestOptions);
+}
+function addAgent(agent, requestOptions) {
+    checkState.call(this);
+    return this._roles.addAgents(this.id, [agent], requestOptions);
+}
+function addAgents(agents, requestOptions) {
+    checkState.call(this);
+    return this._roles.addAgents(this.id, agents, requestOptions);
 }
 function checkState() {
     if (!this._roles)

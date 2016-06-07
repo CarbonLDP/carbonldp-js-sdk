@@ -50,6 +50,15 @@ var Class = (function () {
             return _this.context.documents.getMembers(agentsAccessPoint.id, retrievalPreferencesOrRequestOptions, requestOptions);
         });
     };
+    Class.prototype.addAgent = function (roleURI, agent, requestOptions) {
+        return this.addAgents(roleURI, [agent], requestOptions);
+    };
+    Class.prototype.addAgents = function (roleURI, agents, requestOptions) {
+        var _this = this;
+        return this.getAgentsAccessPoint(roleURI).then(function (agentsAccessPoint) {
+            return _this.context.documents.addMembers(agentsAccessPoint.id, agents, requestOptions);
+        });
+    };
     Class.prototype.getContainerURI = function () {
         if (!this.context.hasSetting("platform.roles.container"))
             throw new Errors.IllegalStateError("The roles container setting hasn't been declared.");

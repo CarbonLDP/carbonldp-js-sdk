@@ -59,6 +59,8 @@ describe( module( "Carbon/Auth/PersistedRole" ), ():void => {
 				agents: null,
 				listAgents: () => {},
 				getAgents: () => {},
+				addAgent: () => {},
+				addAgents: () => {},
 			};
 			expect( PersistedRole.Factory.hasClassProperties( object ) ).toBe( true );
 
@@ -81,6 +83,14 @@ describe( module( "Carbon/Auth/PersistedRole" ), ():void => {
 			delete object.getAgents;
 			expect( PersistedRole.Factory.hasClassProperties( object ) ).toBe( false );
 			object.getAgents = () => {};
+
+			delete object.addAgent;
+			expect( PersistedRole.Factory.hasClassProperties( object ) ).toBe( false );
+			object.addAgent = () => {};
+
+			delete object.addAgents;
+			expect( PersistedRole.Factory.hasClassProperties( object ) ).toBe( false );
+			object.addAgents = () => {};
 		});
 
 		it( hasMethod(
@@ -106,6 +116,8 @@ describe( module( "Carbon/Auth/PersistedRole" ), ():void => {
 				agents: null,
 				listAgents: () => {},
 				getAgents: () => {},
+				addAgent: () => {},
+				addAgents: () => {},
 			};
 			expect( PersistedRole.Factory.is( object ) ).toBe( false );
 
@@ -247,6 +259,57 @@ describe( module( "Carbon/Auth/PersistedRole" ), ():void => {
 					expect( spy ).toHaveBeenCalledWith( "http://example.com/roles/a-role/", retrievalPreferences, options );
 
 				});
+			});
+
+			it( hasMethod(
+				INSTANCE,
+				"addAgent",
+				"Makes a relation in the role towards the agents specified.", [
+					{ name: "agent", type: "string | Carbon.Pointer.Class", description: "The agents that wants to add to the role." },
+					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true }
+				],
+				{ type: "Promise<Carbon.HTTP.Response.Class>"}
+			), ():void => {
+				expect( role.addAgent ).toBeDefined();
+				expect( Utils.isFunction( role.addAgent ) ).toBe( true );
+
+				let spy = spyOn( roles, "addAgents" );
+
+				role.addAgent( "http://example.com/agents/an-agent/" );
+				expect( spy ).toHaveBeenCalledWith( "http://example.com/roles/a-role/", [ "http://example.com/agents/an-agent/" ], undefined );
+
+				let options = { timeout: 5050 };
+				role.addAgent( role.getPointer( "http://example.com/agents/another-agent/" ), options );
+				expect( spy ).toHaveBeenCalledWith( "http://example.com/roles/a-role/", [ role.getPointer( "http://example.com/agents/another-agent/" ) ], options );
+
+				role = PersistedRole.Factory.decorate( Role.Factory.create( "Role Name" ), null );
+				expect( () => role.addAgent( "http://example.com/agents/an-agent/" ) ).toThrowError( Errors.IllegalStateError );
+			});
+
+			it( hasMethod(
+				INSTANCE,
+				"addAgents",
+				"Makes a relation in the role towards the agents specified.", [
+					{ name: "agents", type: "(string | Carbon.Pointer.Class)[]", description: "An array with strings or Pointers that refers to the agents that wants to add to the role." },
+					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true }
+				],
+				{ type: "Promise<Carbon.HTTP.Response.Class>"}
+			), ():void => {
+				expect( role.addAgents ).toBeDefined();
+				expect( Utils.isFunction( role.addAgents ) ).toBe( true );
+
+				let spy = spyOn( roles, "addAgents" );
+				let agents = [ "http://example.com/agents/an-agent/", role.getPointer( "http://example.com/agents/another-agent/" ) ];
+
+				role.addAgents( agents );
+				expect( spy ).toHaveBeenCalledWith( "http://example.com/roles/a-role/", agents, undefined );
+
+				let options = { timeout: 5050 };
+				role.addAgents( agents, options );
+				expect( spy ).toHaveBeenCalledWith( "http://example.com/roles/a-role/", agents, options );
+
+				role = PersistedRole.Factory.decorate( Role.Factory.create( "Role Name" ), null );
+				expect( () => role.addAgents( agents ) ).toThrowError( Errors.IllegalStateError );
 			});
 
 		})
