@@ -61,6 +61,8 @@ describe( module( "Carbon/Auth/PersistedRole" ), ():void => {
 				getAgents: () => {},
 				addAgent: () => {},
 				addAgents: () => {},
+				removeAgent: () => {},
+				removeAgents: () => {},
 			};
 			expect( PersistedRole.Factory.hasClassProperties( object ) ).toBe( true );
 
@@ -91,6 +93,14 @@ describe( module( "Carbon/Auth/PersistedRole" ), ():void => {
 			delete object.addAgents;
 			expect( PersistedRole.Factory.hasClassProperties( object ) ).toBe( false );
 			object.addAgents = () => {};
+
+			delete object.removeAgent;
+			expect( PersistedRole.Factory.hasClassProperties( object ) ).toBe( false );
+			object.removeAgent = () => {};
+
+			delete object.removeAgents;
+			expect( PersistedRole.Factory.hasClassProperties( object ) ).toBe( false );
+			object.removeAgents = () => {};
 		});
 
 		it( hasMethod(
@@ -118,6 +128,8 @@ describe( module( "Carbon/Auth/PersistedRole" ), ():void => {
 				getAgents: () => {},
 				addAgent: () => {},
 				addAgents: () => {},
+				removeAgent: () => {},
+				removeAgents: () => {},
 			};
 			expect( PersistedRole.Factory.is( object ) ).toBe( false );
 
@@ -306,6 +318,57 @@ describe( module( "Carbon/Auth/PersistedRole" ), ():void => {
 
 				let options = { timeout: 5050 };
 				role.addAgents( agents, options );
+				expect( spy ).toHaveBeenCalledWith( "http://example.com/roles/a-role/", agents, options );
+
+				role = PersistedRole.Factory.decorate( Role.Factory.create( "Role Name" ), null );
+				expect( () => role.addAgents( agents ) ).toThrowError( Errors.IllegalStateError );
+			});
+
+			it( hasMethod(
+				INSTANCE,
+				"removeAgent",
+				"Removes the relation in the role towards the agents specified.", [
+					{ name: "agent", type: "string | Carbon.Pointer.Class", description: "The agents that wants to be removed from the role." },
+					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true }
+				],
+				{ type: "Promise<Carbon.HTTP.Response.Class>"}
+			), ():void => {
+				expect( role.removeAgent ).toBeDefined();
+				expect( Utils.isFunction( role.removeAgent ) ).toBe( true );
+
+				let spy = spyOn( roles, "removeAgents" );
+
+				role.removeAgent( "http://example.com/agents/an-agent/" );
+				expect( spy ).toHaveBeenCalledWith( "http://example.com/roles/a-role/", [ "http://example.com/agents/an-agent/" ], undefined );
+
+				let options = { timeout: 5050 };
+				role.removeAgent( role.getPointer( "http://example.com/agents/another-agent/" ), options );
+				expect( spy ).toHaveBeenCalledWith( "http://example.com/roles/a-role/", [ role.getPointer( "http://example.com/agents/another-agent/" ) ], options );
+
+				role = PersistedRole.Factory.decorate( Role.Factory.create( "Role Name" ), null );
+				expect( () => role.removeAgent( "http://example.com/agents/an-agent/" ) ).toThrowError( Errors.IllegalStateError );
+			});
+
+			it( hasMethod(
+				INSTANCE,
+				"removeAgents",
+				"Remove the relation in the role towards the agents specified.", [
+					{ name: "agents", type: "(string | Carbon.Pointer.Class)[]", description: "An array with strings or Pointers that refers to the agents that wants to be removed from the role." },
+					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true }
+				],
+				{ type: "Promise<Carbon.HTTP.Response.Class>"}
+			), ():void => {
+				expect( role.removeAgents ).toBeDefined();
+				expect( Utils.isFunction( role.removeAgents ) ).toBe( true );
+
+				let spy = spyOn( roles, "removeAgents" );
+				let agents = [ "http://example.com/agents/an-agent/", role.getPointer( "http://example.com/agents/another-agent/" ) ];
+
+				role.removeAgents( agents );
+				expect( spy ).toHaveBeenCalledWith( "http://example.com/roles/a-role/", agents, undefined );
+
+				let options = { timeout: 5050 };
+				role.removeAgents( agents, options );
 				expect( spy ).toHaveBeenCalledWith( "http://example.com/roles/a-role/", agents, options );
 
 				role = PersistedRole.Factory.decorate( Role.Factory.create( "Role Name" ), null );

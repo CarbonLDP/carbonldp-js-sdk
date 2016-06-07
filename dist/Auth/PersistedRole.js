@@ -11,7 +11,9 @@ var Factory = (function () {
             && Utils.hasFunction(object, "listAgents")
             && Utils.hasFunction(object, "getAgents")
             && Utils.hasFunction(object, "addAgent")
-            && Utils.hasFunction(object, "addAgents");
+            && Utils.hasFunction(object, "addAgents")
+            && Utils.hasFunction(object, "removeAgent")
+            && Utils.hasFunction(object, "removeAgents");
     };
     Factory.is = function (object) {
         return Factory.hasClassProperties(object)
@@ -52,6 +54,18 @@ var Factory = (function () {
                 configurable: true,
                 value: addAgents,
             },
+            "removeAgent": {
+                writable: true,
+                enumerable: false,
+                configurable: true,
+                value: removeAgent,
+            },
+            "removeAgents": {
+                writable: true,
+                enumerable: false,
+                configurable: true,
+                value: removeAgents,
+            },
         });
         return role;
     };
@@ -73,6 +87,14 @@ function addAgent(agent, requestOptions) {
 function addAgents(agents, requestOptions) {
     checkState.call(this);
     return this._roles.addAgents(this.id, agents, requestOptions);
+}
+function removeAgent(agent, requestOptions) {
+    checkState.call(this);
+    return this._roles.removeAgents(this.id, [agent], requestOptions);
+}
+function removeAgents(agents, requestOptions) {
+    checkState.call(this);
+    return this._roles.removeAgents(this.id, agents, requestOptions);
 }
 function checkState() {
     if (!this._roles)

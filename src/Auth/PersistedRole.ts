@@ -21,6 +21,9 @@ export interface Class extends PersistedDocument.Class {
 
 	addAgent( agent:Pointer.Class | string, requestOptions?:HTTP.Request.Options ):Promise<HTTP.Response.Class>;
 	addAgents( agents:(Pointer.Class | string)[], requestOptions?:HTTP.Request.Options ):Promise<HTTP.Response.Class>;
+
+	removeAgent( agent:Pointer.Class | string, requestOptions?:HTTP.Request.Options ):Promise<HTTP.Response.Class>;
+	removeAgents( agents:(Pointer.Class | string)[], requestOptions?:HTTP.Request.Options ):Promise<HTTP.Response.Class>;
 }
 
 export class Factory {
@@ -32,6 +35,8 @@ export class Factory {
 			&& Utils.hasFunction( object, "getAgents" )
 			&& Utils.hasFunction( object, "addAgent" )
 			&& Utils.hasFunction( object, "addAgents" )
+			&& Utils.hasFunction( object, "removeAgent" )
+			&& Utils.hasFunction( object, "removeAgents" )
 			;
 	}
 
@@ -75,6 +80,18 @@ export class Factory {
 				configurable: true,
 				value: addAgents,
 			},
+			"removeAgent": {
+				writable: true,
+				enumerable: false,
+				configurable: true,
+				value: removeAgent,
+			},
+			"removeAgents": {
+				writable: true,
+				enumerable: false,
+				configurable: true,
+				value: removeAgents,
+			},
 		});
 
 		return role;
@@ -102,6 +119,15 @@ function addAgent( agent:Pointer.Class | string, requestOptions?:HTTP.Request.Op
 function addAgents( agents:(Pointer.Class | string)[], requestOptions?:HTTP.Request.Options ):Promise<HTTP.Response.Class> {
 	checkState.call( this );
 	return (<Class> this)._roles.addAgents( (<Class> this).id, agents, requestOptions );
+}
+
+function removeAgent( agent:Pointer.Class | string, requestOptions?:HTTP.Request.Options ):Promise<HTTP.Response.Class> {
+	checkState.call( this );
+	return (<Class> this)._roles.removeAgents( (<Class> this).id, [ agent ], requestOptions );
+}
+function removeAgents( agents:(Pointer.Class | string)[], requestOptions?:HTTP.Request.Options ):Promise<HTTP.Response.Class> {
+	checkState.call( this );
+	return (<Class> this)._roles.removeAgents( (<Class> this).id, agents, requestOptions );
 }
 
 function checkState():void {

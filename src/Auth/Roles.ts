@@ -73,6 +73,16 @@ export abstract class Class {
 		});
 	}
 
+	removeAgent( roleURI:string, agent:Pointer.Class | string, requestOptions?:HTTP.Request.Options ):Promise<HTTP.Response.Class> {
+		return this.removeAgents( roleURI, [ agent ], requestOptions );
+	}
+
+	removeAgents( roleURI:string, agents:(Pointer.Class | string)[], requestOptions?:HTTP.Request.Options ):Promise<HTTP.Response.Class> {
+		return this.getAgentsAccessPoint( roleURI).then( ( agentsAccessPoint:Pointer.Class ) => {
+			return this.context.documents.removeMembers( agentsAccessPoint.id, agents, requestOptions );
+		});
+	}
+
 	private getContainerURI():string {
 		if ( ! this.context.hasSetting( "platform.roles.container" ) ) throw new Errors.IllegalStateError( "The roles container setting hasn't been declared." );
 		return this.context.getSetting( "platform.roles.container" );

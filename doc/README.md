@@ -1644,6 +1644,30 @@ Makes a relation in the role towards the agents specified.
 - agents: An array with strings or Pointers that refers to the agents that wants to add to the role.
 - requestOptions
 
+##### removeAgent
+```typescript 
+removeAgent( agent:string | Carbon.Pointer.Class,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<Carbon.HTTP.Response.Class>
+```
+
+Removes the relation in the role towards the agents specified.
+
+*Parameters*
+
+- agent: The agents that wants to be removed from the role.
+- requestOptions
+
+##### removeAgents
+```typescript 
+removeAgents( agents:(string | Carbon.Pointer.Class)[],  requestOptions?:Carbon.HTTP.Request.Options ):Promise<Carbon.HTTP.Response.Class>
+```
+
+Remove the relation in the role towards the agents specified.
+
+*Parameters*
+
+- agents: An array with strings or Pointers that refers to the agents that wants to be removed from the role.
+- requestOptions
+
 ##### getAgents
 ```typescript 
 getAgents( requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ carbon.Auth.PersistedRole.Class, Carbon.HTTP.Response.Class ]>
@@ -1811,6 +1835,32 @@ Makes a relation in the role specified towards the agents specified.
 
 - roleURI: The URI of the role to look for its agents.
 - agents: An array with strings or Pointers that refers to the agents that wants to add to the role.
+- requestOptions
+
+##### removeAgent
+```typescript 
+removeAgent( roleURI:string,  agent:string | Carbon.Pointer.Class,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<Carbon.HTTP.Response.Class>
+```
+
+Removes the relation in the role specified towards the agent provided.
+
+*Parameters*
+
+- roleURI: The URI of the role from where to remove the agent.
+- agent: The agent that wants to be removed from the role.
+- requestOptions
+
+##### removeAgents
+```typescript 
+removeAgents( roleURI:string,  agents:(string | Carbon.Pointer.Class)[],  requestOptions?:Carbon.HTTP.Request.Options ):Promise<Carbon.HTTP.Response.Class>
+```
+
+Remove the relation in the role specified towards the agents specified.
+
+*Parameters*
+
+- roleURI: The URI of the role from where to remove the agents.
+- agents: An array with strings or Pointers that refers to the agents to be removed from the role.
 - requestOptions
 
 ##### createChild

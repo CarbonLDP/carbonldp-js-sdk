@@ -762,6 +762,109 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 			}).catch( done.fail );
 		});
 
+
+		it( hasMethod(
+			INSTANCE,
+			"removeAgent",
+			"Removes the relation in the role specified towards the agent provided.", [
+				{ name: "roleURI", type: "string", description: "The URI of the role from where to remove the agent."  },
+				{ name: "agent", type: "string | Carbon.Pointer.Class", description: "The agent that wants to be removed from the role." },
+				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true }
+			],
+			{ type: "Promise<Carbon.HTTP.Response.Class>" }
+		), ():void => {
+			expect( roles.removeAgent ).toBeDefined();
+			expect( Utils.isFunction( roles.removeAgent ) );
+
+			let options:HTTP.Request.Options = { timeout: 5555 };
+			let spy = spyOn( roles, "removeAgents" );
+
+			roles.removeAgent( "http://example.com/roles/a-role/", "http://example.com/agents/an-agent/" );
+			expect( spy ).toHaveBeenCalledWith( "http://example.com/roles/a-role/", [ "http://example.com/agents/an-agent/" ], undefined );
+
+			roles.removeAgent( "http://example.com/roles/a-role-2/", "http://example.com/agents/an-agent/", options );
+			expect( spy ).toHaveBeenCalledWith( "http://example.com/roles/a-role-2/", [ "http://example.com/agents/an-agent/" ], options );
+
+			roles.removeAgent( "another-role/", "http://example.com/agents/an-agent/", options );
+			expect( spy ).toHaveBeenCalledWith( "another-role/", [ "http://example.com/agents/an-agent/" ], options );
+		});
+
+		it( hasMethod(
+			INSTANCE,
+			"removeAgents",
+			"Remove the relation in the role specified towards the agents specified.", [
+				{ name: "roleURI", type: "string", description: "The URI of the role from where to remove the agents."  },
+				{ name: "agents", type: "(string | Carbon.Pointer.Class)[]", description: "An array with strings or Pointers that refers to the agents to be removed from the role." },
+				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true }
+			],
+			{ type: "Promise<Carbon.HTTP.Response.Class>" }
+		), ( done:{ ():void, fail:() => void } ):void => {
+			expect( roles.removeAgents ).toBeDefined();
+			expect( Utils.isFunction( roles.removeAgents ) );
+
+			function constructAccessPointResponse( uri:string ):string {
+				return `{
+				  "head" : {
+				    "vars" : [
+				      "agentsAccessPoint"
+				    ]
+				  },
+				  "results" : {
+				    "bindings" : [
+				      {
+				        "agentsAccessPoint" : {
+				          "type" : "uri",
+				          "value" : "${ uri }agents/"
+				        }
+				      }
+				    ]
+				  }
+				}`;
+			}
+
+			jasmine.Ajax.stubRequest( "http://example.com/roles/a-role/", null, "POST" ).andReturn( {
+				status: 200,
+				responseText: constructAccessPointResponse( "http://example.com/roles/a-role/" )
+			});
+			jasmine.Ajax.stubRequest( "http://example.com/roles/a-role-2/", null, "POST" ).andReturn( {
+				status: 200,
+				responseText: constructAccessPointResponse( "http://example.com/roles/a-role-2/" )
+			});
+			jasmine.Ajax.stubRequest( "http://example.com/roles/another-role/", null, "POST" ).andReturn( {
+				status: 200,
+				responseText: constructAccessPointResponse( "http://example.com/roles/another-role/" )
+			});
+
+			let options:HTTP.Request.Options = { timeout: 5555 };
+			let spy = spyOn( context.documents, "removeMembers" ).and.returnValue( Promise.resolve() );
+			let agents = [ "http://example.com/agents/an-agent/", Pointer.Factory.create( "http://example.com/agents/another-agent/" ) ];
+
+			expect( () => roles.removeAgents( "http://example.com/roles/a-role/", agents ) ).toThrowError( Errors.IllegalStateError );
+			context.setSetting( "platform.roles.container", "roles/" );
+
+			let promises:Promise<any>[] = [];
+			let promise:Promise<any>;
+
+			promise = roles.removeAgents( "http://example.com/roles/a-role/", agents );
+			expect( promise instanceof Promise ).toBe( true );
+			promises.push( promise );
+
+			promise = roles.removeAgents( "http://example.com/roles/a-role-2/", agents, options );
+			expect( promise instanceof Promise ).toBe( true );
+			promises.push( promise );
+
+			promise = roles.removeAgents( "another-role/", agents, options );
+			expect( promise instanceof Promise ).toBe( true );
+			promises.push( promise );
+
+			Promise.all( promises ).then( () => {
+				expect( spy ).toHaveBeenCalledWith( "http://example.com/roles/a-role/agents/", agents, undefined );
+				expect( spy ).toHaveBeenCalledWith( "http://example.com/roles/a-role-2/agents/", agents, options );
+				expect( spy ).toHaveBeenCalledWith( "http://example.com/roles/another-role/agents/", agents, options );
+				done();
+			}).catch( done.fail );
+		});
+
 	});
 
 	it( hasDefaultExport(
