@@ -1796,7 +1796,7 @@ Makes a relation in the role specified towards the agent provided.
 
 *Parameters*
 
-- roleURI: The URI of the role to look for its agents.
+- roleURI: The URI of the role where to add the agent.
 - agent: The agent that wants to add to the role.
 - requestOptions
 
@@ -1809,7 +1809,7 @@ Makes a relation in the role specified towards the agents specified.
 
 *Parameters*
 
-- roleURI: The URI of the role to look for its agents.
+- roleURI: The URI of the role where to add agents.
 - agents: An array with strings or Pointers that refers to the agents that wants to add to the role.
 - requestOptions
 

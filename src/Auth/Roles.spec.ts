@@ -664,7 +664,7 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 			INSTANCE,
 			"addAgent",
 			"Makes a relation in the role specified towards the agent provided.", [
-				{ name: "roleURI", type: "string", description: "The URI of the role to look for its agents."  },
+				{ name: "roleURI", type: "string", description: "The URI of the role where to add the agent."  },
 				{ name: "agent", type: "string | Carbon.Pointer.Class", description: "The agent that wants to add to the role." },
 				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true }
 			],
@@ -690,7 +690,7 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 			INSTANCE,
 			"addAgents",
 			"Makes a relation in the role specified towards the agents specified.", [
-				{ name: "roleURI", type: "string", description: "The URI of the role to look for its agents."  },
+				{ name: "roleURI", type: "string", description: "The URI of the role where to add agents."  },
 				{ name: "agents", type: "(string | Carbon.Pointer.Class)[]", description: "An array with strings or Pointers that refers to the agents that wants to add to the role." },
 				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true }
 			],
