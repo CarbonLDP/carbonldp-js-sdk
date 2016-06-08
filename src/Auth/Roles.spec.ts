@@ -294,29 +294,33 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 			let spySuccess = spyOn( spies, "success" ).and.callThrough();
 			let spyError = spyOn( spies, "error" ).and.callThrough();
 
-			expect( () => roles.get( "http://example.com/roles/a-role/" ) ).toThrowError( Errors.IllegalStateError );
-			context.setSetting( "platform.roles.container", "roles/" );
+			roles.get( "http://example.com/roles/a-role/" ).then( done.fail ).catch( ( error:Error ) => {
+				expect( error instanceof Errors.IllegalStateError ).toBe( true );
+				context.setSetting( "platform.roles.container", "roles/" );
 
-			let promises:Promise<any>[] = [];
-			let promise:Promise<any>;
+				let promises:Promise<any>[] = [];
+				let promise:Promise<any>;
 
-			promise = roles.get( "http://example.com/roles/a-role/" );
-			expect( promise instanceof Promise ).toBe( true );
-			promises.push( promise.then( spies.success ) );
+				promise = roles.get( "http://example.com/roles/a-role/" );
+				expect( promise instanceof Promise ).toBe( true );
+				promises.push( promise.then( spies.success ) );
 
-			promise = roles.get( "a-role/" );
-			expect( promise instanceof Promise ).toBe( true );
-			promises.push( promise.then( spies.success ) );
+				promise = roles.get( "a-role/" );
+				expect( promise instanceof Promise ).toBe( true );
+				promises.push( promise.then( spies.success ) );
 
-			promise = roles.get( "http://example.com/wrong-path/roles/a-role/" );
-			expect( promise instanceof Promise ).toBe( true );
-			promises.push( promise.catch( spies.error ) );
+				promise = roles.get( "http://example.com/wrong-path/roles/a-role/" );
+				expect( promise instanceof Promise ).toBe( true );
+				promises.push( promise.catch( spies.error ) );
 
-			Promise.all( promises ).then( ():void => {
-				expect( spySuccess ).toHaveBeenCalledTimes( 2 );
-				expect( spyError ).toHaveBeenCalledTimes( 1 );
-				done();
-			}).catch( done.fail );
+				Promise.all( promises ).then( ():void => {
+					expect( spySuccess ).toHaveBeenCalledTimes( 2 );
+					expect( spyError ).toHaveBeenCalledTimes( 1 );
+					done();
+				}).catch( done.fail );
+
+			});
+
 		});
 		
 	});

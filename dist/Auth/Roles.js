@@ -36,11 +36,10 @@ var Class = (function () {
         });
     };
     Class.prototype.get = function (roleURI, requestOptions) {
-        var containerUri = this.context.resolve(this.getContainerURI());
-        var uri = URI.Util.resolve(containerUri, roleURI);
-        if (!URI.Util.isBaseOf(containerUri, uri))
-            return Promise.reject(new Errors.IllegalArgumentError("The URI provided is not a valid role of the current context."));
-        return this.context.documents.get(uri, requestOptions);
+        var _this = this;
+        return this.resolveURI(roleURI).then(function (uri) {
+            return _this.context.documents.get(uri, requestOptions);
+        });
     };
     Class.prototype.resolveURI = function (agentURI) {
         var _this = this;
