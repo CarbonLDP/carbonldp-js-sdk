@@ -9,32 +9,35 @@ var Class = (function () {
     }
     Class.prototype.createChild = function (parentRole, role, slugOrRequestOptions, requestOptions) {
         var _this = this;
-        var containerUri = this.context.resolve(this.getContainerURI());
-        var parentUri = Utils.isString(parentRole) ? parentRole : parentRole.id;
-        parentUri = URI.Util.resolve(containerUri, parentUri);
+        var parentURI = Utils.isString(parentRole) ? parentRole : parentRole.id;
         var slug = Utils.isString(slugOrRequestOptions) ? slugOrRequestOptions : null;
         requestOptions = HTTP.Request.Util.isOptions(slugOrRequestOptions) ? slugOrRequestOptions : requestOptions;
-        if (!URI.Util.isBaseOf(containerUri, parentUri))
-            return Promise.reject(new Errors.IllegalArgumentError("The parent role provided is not a valid role of the current context."));
+        var containerURI;
         var rolePointer;
         var responseCreated;
-        return this.context.documents.exists(parentUri).then(function (_a) {
+        return this.resolveURI("").then(function (uri) {
+            containerURI = uri;
+            parentURI = URI.Util.resolve(containerURI, parentURI);
+            if (!URI.Util.isBaseOf(containerURI, parentURI))
+                throw new Errors.IllegalArgumentError("The parent role provided is not a valid role of the current context.");
+            return _this.context.documents.exists(parentURI);
+        }).then(function (_a) {
             var exists = _a[0], response = _a[1];
             if (!exists)
                 throw new Errors.IllegalArgumentError("The parent role provided does not exist.");
-            return slug ? _this.context.documents.createChild(containerUri, slug, role, requestOptions) : _this.context.documents.createChild(containerUri, role, requestOptions);
+            return slug ? _this.context.documents.createChild(containerURI, slug, role, requestOptions) : _this.context.documents.createChild(containerURI, role, requestOptions);
         }).then(function (_a) {
             var newRole = _a[0], response = _a[1];
             rolePointer = newRole;
             responseCreated = response;
-            return _this.context.documents.addMember(parentUri, newRole);
+            return _this.context.documents.addMember(parentURI, newRole);
         }).then(function (response) {
             return [rolePointer, [responseCreated, response]];
         });
     };
     Class.prototype.get = function (roleURI, requestOptions) {
         var _this = this;
-        return this.resolveRoleURI(roleURI).then(function (uri) {
+        return this.resolveURI(roleURI).then(function (uri) {
             return _this.context.documents.get(uri, requestOptions);
         });
     };
@@ -50,10 +53,15 @@ var Class = (function () {
             return _this.context.documents.getMembers(agentsAccessPoint.id, retrievalPreferencesOrRequestOptions, requestOptions);
         });
     };
-    Class.prototype.getContainerURI = function () {
-        if (!this.context.hasSetting("platform.roles.container"))
-            throw new Errors.IllegalStateError("The roles container setting hasn't been declared.");
-        return this.context.getSetting("platform.roles.container");
+    Class.prototype.resolveURI = function (agentURI) {
+        var _this = this;
+        return new Promise(function (resolve) {
+            var containerURI = _this.context.resolve(_this.getContainerURI());
+            var uri = URI.Util.resolve(containerURI, agentURI);
+            if (!URI.Util.isBaseOf(containerURI, uri))
+                throw new Errors.IllegalArgumentError("The URI provided is not a valid role of the current context.");
+            resolve(uri);
+        });
     };
     Class.prototype.resolveRoleURI = function (roleURI) {
         var containerUri = this.context.resolve(this.getContainerURI());
@@ -70,6 +78,11 @@ var Class = (function () {
             var selectResults = _a[0], response = _a[1];
             return selectResults.bindings[0]["agentsAccessPoint"];
         });
+    };
+    Class.prototype.getContainerURI = function () {
+        if (!this.context.hasSetting("platform.roles.container"))
+            throw new Errors.IllegalStateError("The roles container setting hasn't been declared.");
+        return this.context.getSetting("platform.roles.container");
     };
     return Class;
 }());
