@@ -22,6 +22,7 @@ import AbstractContext from "./AbstractContext";
 import AuthenticationToken from "./Auth/AuthenticationToken";
 import Authenticator from "./Auth/Authenticator";
 import BasicAuthenticator from "./Auth/BasicAuthenticator";
+import * as PersistedAgent from "./Auth/PersistedAgent";
 import * as Token from "./Auth/Token";
 import TokenAuthenticator from "./Auth/TokenAuthenticator";
 import UsernameAndPasswordToken from "./Auth/UsernameAndPasswordToken";
@@ -77,6 +78,15 @@ describe( module( "Carbon/Auth" ), ():void => {
 	), ():void => {
 		expect( Auth.BasicAuthenticator ).toBeDefined();
 		expect( Auth.BasicAuthenticator ).toBe( BasicAuthenticator );
+	});
+
+	it( reexports(
+		STATIC,
+		"PersistedAgent",
+		"Carbon.Auth.PersistedAgent"
+	), ():void => {
+		expect( Auth.PersistedAgent ).toBeDefined();
+		expect( Auth.PersistedAgent ).toBe( PersistedAgent );
 	});
 
 	it( reexports(

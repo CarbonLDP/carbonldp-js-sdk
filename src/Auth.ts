@@ -3,6 +3,7 @@ import * as Agents from "./Auth/Agents";
 import AuthenticationToken from "./Auth/AuthenticationToken";
 import Authenticator from "./Auth/Authenticator";
 import BasicAuthenticator from "./Auth/BasicAuthenticator";
+import * as PersistedAgent from "./Auth/PersistedAgent";
 import TokenAuthenticator from "./Auth/TokenAuthenticator";
 import * as Token from "./Auth/Token";
 import UsernameAndPasswordToken from "./Auth/UsernameAndPasswordToken";
@@ -20,6 +21,7 @@ export {
 	AuthenticationToken,
 	Authenticator,
 	BasicAuthenticator,
+	PersistedAgent,
 	Token,
 	TokenAuthenticator,
 	UsernameAndPasswordToken
