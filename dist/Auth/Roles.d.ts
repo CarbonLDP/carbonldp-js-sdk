@@ -15,8 +15,8 @@ export declare abstract class Class {
     getAgents(roleURI: string, retrievalPreferences?: RetrievalPreferences.Class, requestOptions?: HTTP.Request.Options): Promise<[Pointer.Class[], HTTP.Response.Class]>;
     addAgent(roleURI: string, agent: Pointer.Class | string, requestOptions?: HTTP.Request.Options): Promise<HTTP.Response.Class>;
     addAgents(roleURI: string, agents: (Pointer.Class | string)[], requestOptions?: HTTP.Request.Options): Promise<HTTP.Response.Class>;
-    private getContainerURI();
-    private resolveRoleURI(roleURI);
+    private resolveURI(agentURI);
     private getAgentsAccessPoint(roleURI);
+    private getContainerURI();
 }
 export default Class;

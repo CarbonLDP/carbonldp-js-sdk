@@ -153,7 +153,11 @@ describe( module( "Carbon/App/Roles" ), ():void => {
 		it( hasMethod(
 			INSTANCE,
 			"get",
-			"Retrieves a role from the current context."
+			"Retrieves a role from the current context.", [
+				{ name: "roleURI", type: "string", description: "The URI of the app role to retrieve." },
+				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true }
+			],
+			{ type: "Promise<[ Carbon.PersistedRole.Class, Carbon.HTTP.Response.Class ]>" }
 		), ( done:{ ():void, fail:() => void } ):void => {
 			expect( roles.get ).toBeDefined();
 			expect( Utils.isFunction( roles.get ) );
