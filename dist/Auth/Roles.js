@@ -63,16 +63,9 @@ var Class = (function () {
             resolve(uri);
         });
     };
-    Class.prototype.resolveRoleURI = function (roleURI) {
-        var containerUri = this.context.resolve(this.getContainerURI());
-        var uri = URI.Util.resolve(containerUri, roleURI);
-        if (!URI.Util.isBaseOf(containerUri, uri))
-            return Promise.reject(new Errors.IllegalArgumentError("The URI provided is not a valid role of the current context."));
-        return Promise.resolve(uri);
-    };
     Class.prototype.getAgentsAccessPoint = function (roleURI) {
         var _this = this;
-        return this.resolveRoleURI(roleURI).then(function (uri) {
+        return this.resolveURI(roleURI).then(function (uri) {
             return _this.context.documents.executeSELECTQuery(uri, " select distinct ?agentsAccessPoint where {\n\t\t\t\t<" + uri + "> <https://carbonldp.com/ns/v1/platform#accessPoint> ?agentsAccessPoint .\n\t\t\t\t?agentsAccessPoint <http://www.w3.org/ns/ldp#hasMemberRelation> <https://carbonldp.com/ns/v1/security#agent> .\n\t\t\t}");
         }).then(function (_a) {
             var selectResults = _a[0], response = _a[1];

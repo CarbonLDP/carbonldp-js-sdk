@@ -78,17 +78,8 @@ export abstract class Class {
 		});
 	}
 
-	private resolveRoleURI( roleURI:string ):Promise<string> {
-		let containerUri:string = this.context.resolve( this.getContainerURI() );
-		let uri:string = URI.Util.resolve( containerUri, roleURI );
-
-		if ( ! URI.Util.isBaseOf( containerUri, uri ) ) return Promise.reject<any>( new Errors.IllegalArgumentError( "The URI provided is not a valid role of the current context." ) );
-
-		return Promise.resolve<string>( uri );
-	}
-
 	private getAgentsAccessPoint( roleURI:string ):Promise<Pointer.Class> {
-		return this.resolveRoleURI( roleURI ).then( ( uri:string ) => {
+		return this.resolveURI( roleURI ).then( ( uri:string ) => {
 			return this.context.documents.executeSELECTQuery( uri, ` select distinct ?agentsAccessPoint where {
 				<${ uri }> <https://carbonldp.com/ns/v1/platform#accessPoint> ?agentsAccessPoint .
 				?agentsAccessPoint <http://www.w3.org/ns/ldp#hasMemberRelation> <https://carbonldp.com/ns/v1/security#agent> .
