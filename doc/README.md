@@ -1133,10 +1133,15 @@ Class( appContext:Carbon.App.Context )
 
 ##### get
 ```typescript 
-get()
+get( roleURI:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.PersistedRole.Class, Carbon.HTTP.Response.Class ]>
 ```
 
 Retrieves a role from the current context.
+
+*Parameters*
+
+- roleURI: The URI of the app role to retrieve.
+- requestOptions
 
 ##### createChild
 ```typescript 
@@ -1794,10 +1799,15 @@ Class( context:Carbon.Context )
 
 ##### get
 ```typescript 
-get()
+get( roleURI:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.PersistedRole.Class, Carbon.HTTP.Response.Class ]>
 ```
 
 Retrieves a role from the current context.
+
+*Parameters*
+
+- roleURI: The URI of the role to retrieve.
+- requestOptions
 
 ##### listAgents
 ```typescript 
@@ -1820,7 +1830,7 @@ Makes a relation in the role specified towards the agent provided.
 
 *Parameters*
 
-- roleURI: The URI of the role to look for its agents.
+- roleURI: The URI of the role where to add the agent.
 - agent: The agent that wants to add to the role.
 - requestOptions
 
@@ -1833,7 +1843,7 @@ Makes a relation in the role specified towards the agents specified.
 
 *Parameters*
 
-- roleURI: The URI of the role to look for its agents.
+- roleURI: The URI of the role where to add agents.
 - agents: An array with strings or Pointers that refers to the agents that wants to add to the role.
 - requestOptions
 
