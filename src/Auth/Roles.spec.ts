@@ -872,30 +872,34 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 			let spy = spyOn( context.documents, "removeMembers" ).and.returnValue( Promise.resolve() );
 			let agents = [ "http://example.com/agents/an-agent/", Pointer.Factory.create( "http://example.com/agents/another-agent/" ) ];
 
-			expect( () => roles.removeAgents( "http://example.com/roles/a-role/", agents ) ).toThrowError( Errors.IllegalStateError );
-			context.setSetting( "platform.roles.container", "roles/" );
+			roles.removeAgents( "http://example.com/roles/a-role/", agents ).then( done.fail ).catch( ( error:Error ) => {
+				expect( error instanceof Errors.IllegalStateError ).toBe( true );
+				context.setSetting( "platform.roles.container", "roles/" );
 
-			let promises:Promise<any>[] = [];
-			let promise:Promise<any>;
+				let promises:Promise<any>[] = [];
+				let promise:Promise<any>;
 
-			promise = roles.removeAgents( "http://example.com/roles/a-role/", agents );
-			expect( promise instanceof Promise ).toBe( true );
-			promises.push( promise );
+				promise = roles.removeAgents( "http://example.com/roles/a-role/", agents );
+				expect( promise instanceof Promise ).toBe( true );
+				promises.push( promise );
 
-			promise = roles.removeAgents( "http://example.com/roles/a-role-2/", agents, options );
-			expect( promise instanceof Promise ).toBe( true );
-			promises.push( promise );
+				promise = roles.removeAgents( "http://example.com/roles/a-role-2/", agents, options );
+				expect( promise instanceof Promise ).toBe( true );
+				promises.push( promise );
 
-			promise = roles.removeAgents( "another-role/", agents, options );
-			expect( promise instanceof Promise ).toBe( true );
-			promises.push( promise );
+				promise = roles.removeAgents( "another-role/", agents, options );
+				expect( promise instanceof Promise ).toBe( true );
+				promises.push( promise );
 
-			Promise.all( promises ).then( () => {
-				expect( spy ).toHaveBeenCalledWith( "http://example.com/roles/a-role/agents/", agents, undefined );
-				expect( spy ).toHaveBeenCalledWith( "http://example.com/roles/a-role-2/agents/", agents, options );
-				expect( spy ).toHaveBeenCalledWith( "http://example.com/roles/another-role/agents/", agents, options );
-				done();
-			}).catch( done.fail );
+				Promise.all( promises ).then( () => {
+					expect( spy ).toHaveBeenCalledWith( "http://example.com/roles/a-role/agents/", agents, undefined );
+					expect( spy ).toHaveBeenCalledWith( "http://example.com/roles/a-role-2/agents/", agents, options );
+					expect( spy ).toHaveBeenCalledWith( "http://example.com/roles/another-role/agents/", agents, options );
+					done();
+				}).catch( done.fail );
+
+			});
+
 		});
 
 	});
