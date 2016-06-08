@@ -64,7 +64,7 @@ export abstract class Class {
 	getAgents( roleURI:string, retrievalPreferencesOrRequestOptions?:RetrievalPreferences.Class, requestOptions?:HTTP.Request.Options ):Promise<[ Pointer.Class[], HTTP.Response.Class ]> {
 		return this.getAgentsAccessPoint( roleURI).then( ( agentsAccessPoint:Pointer.Class ) => {
 			return this.context.documents.getMembers( agentsAccessPoint.id, retrievalPreferencesOrRequestOptions, requestOptions );
-		}); 
+		});
 	}
 
 	addAgent( roleURI:string, agent:Pointer.Class | string, requestOptions?:HTTP.Request.Options ):Promise<HTTP.Response.Class> {
