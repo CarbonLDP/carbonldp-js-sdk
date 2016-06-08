@@ -101,9 +101,6 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 					}
 				});
 
-				expect( () => roles.createChild( "http://example.com/roles/parent/", Role.Factory.create( "Role name" ) ) ).toThrowError( Errors.IllegalStateError );
-				context.setSetting( "platform.roles.container", "roles/" );
-
 				let spies = {
 					success: ( [ pointer, [ response1, response2 ] ]:[ Pointer.Class, [ HTTP.Response.Class, HTTP.Response.Class ] ] ):void => {
 						expect( pointer ).toBeTruthy();
@@ -125,31 +122,39 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 				let spyError = spyOn( spies, "error" ).and.callThrough();
 				let spySuccess = spyOn( spies, "success" ).and.callThrough();
 
-				let promises:Promise<any>[] = [];
-				let promise:Promise<any>;
 
-				promise = roles.createChild( "parent/", Role.Factory.create( "Role name" ), "new-role" );
-				expect( promise instanceof Promise ).toBe( true );
-				promises.push( promise.then( spies.success ) );
+				roles.createChild( "http://example.com/roles/parent/", Role.Factory.create( "Role name" ) ).then( done.fail ).catch( ( error:Error ) => {
+					expect( error instanceof Errors.IllegalStateError ).toBe( true );
+					context.setSetting( "platform.roles.container", "roles/" );
 
-				promise = roles.createChild( "http://example.com/roles/parent/", Role.Factory.create( "Role name" ) );
-				expect( promise instanceof Promise ).toBe( true );
-				promises.push( promise.then( spies.success ) );
+					let promises:Promise<any>[] = [];
+					let promise:Promise<any>;
 
-				promise = roles.createChild( "parent/no-found/", Role.Factory.create( "Role name" ), "new-role" );
-				expect( promise instanceof Promise ).toBe( true );
-				promises.push( promise.catch( spies.error ) );
+					promise = roles.createChild( "parent/", Role.Factory.create( "Role name" ), "new-role" );
+					expect( promise instanceof Promise ).toBe( true );
+					promises.push( promise.then( spies.success ) );
 
-				Promise.all( promises ).then( ():void => {
-					let requests = jasmine.Ajax.requests.filter( /roles\/$/ );
-					expect( requests.length ).toBe( 2 );
-					expect( requests[ 0 ].requestHeaders[ "slug" ] ).toBe( "new-role" );
-					expect( requests[ 1 ].requestHeaders[ "slug" ] ).toBeUndefined();
+					promise = roles.createChild( "http://example.com/roles/parent/", Role.Factory.create( "Role name" ) );
+					expect( promise instanceof Promise ).toBe( true );
+					promises.push( promise.then( spies.success ) );
 
-					expect( spySuccess ).toHaveBeenCalledTimes( 2 );
-					expect( spyError ).toHaveBeenCalledTimes( 1 );
-					done();
-				}).catch( done.fail );
+					promise = roles.createChild( "parent/no-found/", Role.Factory.create( "Role name" ), "new-role" );
+					expect( promise instanceof Promise ).toBe( true );
+					promises.push( promise.catch( spies.error ) );
+
+					Promise.all( promises ).then( ():void => {
+						let requests = jasmine.Ajax.requests.filter( /roles\/$/ );
+						expect( requests.length ).toBe( 2 );
+						expect( requests[ 0 ].requestHeaders[ "slug" ] ).toBe( "new-role" );
+						expect( requests[ 1 ].requestHeaders[ "slug" ] ).toBeUndefined();
+
+						expect( spySuccess ).toHaveBeenCalledTimes( 2 );
+						expect( spyError ).toHaveBeenCalledTimes( 1 );
+						done();
+					}).catch( done.fail );
+
+				});
+
 			});
 
 			it( hasSignature(
@@ -177,9 +182,6 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 					}
 				});
 
-				expect( () => roles.createChild( "http://example.com/roles/parent/", Role.Factory.create( "Role name" ) ) ).toThrowError( Errors.IllegalStateError );
-				context.setSetting( "platform.roles.container", "roles/" );
-
 				let spies = {
 					success: ( [ pointer, [ response1, response2 ] ]:[ Pointer.Class, [ HTTP.Response.Class, HTTP.Response.Class ] ] ):void => {
 						expect( pointer ).toBeTruthy();
@@ -202,33 +204,40 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 				let spySuccess = spyOn( spies, "success" ).and.callThrough();
 				let spyCreate = spyOn( context.documents, "createChild" ).and.callThrough();
 
-				let promises:Promise<any>[] = [];
-				let promise:Promise<any>;
-				let options:HTTP.Request.Options = {
-					timeout: 5555
-				};
+				roles.createChild( "http://example.com/roles/parent/", Role.Factory.create( "Role name" ) ).then( done.fail ).catch( ( error:Error ) => {
+					expect( error instanceof Errors.IllegalStateError ).toBe( true );
+					context.setSetting( "platform.roles.container", "roles/" );
 
-				promise = roles.createChild( "parent/", Role.Factory.create( "Role name" ), options );
-				expect( promise instanceof Promise ).toBe( true );
-				promises.push( promise.then( spies.success ) );
+					let promises:Promise<any>[] = [];
+					let promise:Promise<any>;
+					let options:HTTP.Request.Options = {
+						timeout: 5555
+					};
 
-				promise = roles.createChild( "http://example.com/roles/parent/", Role.Factory.create( "Role name" ) );
-				expect( promise instanceof Promise ).toBe( true );
-				promises.push( promise.then( spies.success ) );
+					promise = roles.createChild( "parent/", Role.Factory.create( "Role name" ), options );
+					expect( promise instanceof Promise ).toBe( true );
+					promises.push( promise.then( spies.success ) );
 
-				promise = roles.createChild( "parent/no-found/", Role.Factory.create( "Role name" ), options );
-				expect( promise instanceof Promise ).toBe( true );
-				promises.push( promise.catch( spies.error ) );
+					promise = roles.createChild( "http://example.com/roles/parent/", Role.Factory.create( "Role name" ) );
+					expect( promise instanceof Promise ).toBe( true );
+					promises.push( promise.then( spies.success ) );
 
-				Promise.all( promises ).then( ():void => {
-					expect( spySuccess ).toHaveBeenCalledTimes( 2 );
-					expect( spyError ).toHaveBeenCalledTimes( 1 );
+					promise = roles.createChild( "parent/no-found/", Role.Factory.create( "Role name" ), options );
+					expect( promise instanceof Promise ).toBe( true );
+					promises.push( promise.catch( spies.error ) );
 
-					expect( spyCreate ).toHaveBeenCalledTimes( 2 );
-					expect( spyCreate ).toHaveBeenCalledWith( "http://example.com/roles/", jasmine.anything(), options );
-					expect( spyCreate ).toHaveBeenCalledWith( "http://example.com/roles/", jasmine.anything(), undefined );
-					done();
-				}).catch( done.fail );
+					Promise.all( promises ).then( ():void => {
+						expect( spySuccess ).toHaveBeenCalledTimes( 2 );
+						expect( spyError ).toHaveBeenCalledTimes( 1 );
+
+						expect( spyCreate ).toHaveBeenCalledTimes( 2 );
+						expect( spyCreate ).toHaveBeenCalledWith( "http://example.com/roles/", jasmine.anything(), options );
+						expect( spyCreate ).toHaveBeenCalledWith( "http://example.com/roles/", jasmine.anything(), undefined );
+						done();
+					}).catch( done.fail );
+
+				});
+
 			});
 
 		});
