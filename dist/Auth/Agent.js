@@ -17,17 +17,22 @@ exports.SCHEMA = {
         "@id": NS.CS.Predicate.password,
         "@type": NS.XSD.DataType.string,
     },
+    "enabled": {
+        "@id": NS.CS.Predicate.enabled,
+        "@type": NS.XSD.DataType.boolean,
+    }
 };
 var Factory = (function () {
     function Factory() {
     }
-    Factory.hasClassProperties = function (resource) {
-        return Utils.hasPropertyDefined(resource, "name")
-            && Utils.hasPropertyDefined(resource, "email");
+    Factory.hasClassProperties = function (object) {
+        return Utils.hasPropertyDefined(object, "name")
+            && Utils.hasPropertyDefined(object, "email")
+            && Utils.hasPropertyDefined(object, "password");
     };
     Factory.is = function (object) {
-        return Document.Factory.hasClassProperties(object)
-            && Factory.hasClassProperties(object)
+        return Factory.hasClassProperties(object)
+            && Document.Factory.hasClassProperties(object)
             && object.types.indexOf(NS.CS.Class.Agent) !== -1;
     };
     Factory.create = function (name, email, password) {

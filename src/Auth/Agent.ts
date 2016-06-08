@@ -19,24 +19,31 @@ export const SCHEMA:ObjectSchema.Class = {
 		"@id": NS.CS.Predicate.password,
 		"@type": NS.XSD.DataType.string,
 	},
+	"enabled": {
+		"@id": NS.CS.Predicate.enabled,
+		"@type": NS.XSD.DataType.boolean,
+	}
 };
 
 export interface Class extends Document.Class {
 	name:string;
 	email:string;
-	password?:string;
+	password:string;
 }
 
 export class Factory {
-	static hasClassProperties( resource:Object ):boolean {
-		return Utils.hasPropertyDefined( resource, "name" )
-			&& Utils.hasPropertyDefined( resource, "email" );
+	static hasClassProperties( object:Object ):boolean {
+		return Utils.hasPropertyDefined( object, "name" )
+			&& Utils.hasPropertyDefined( object, "email" )
+			&& Utils.hasPropertyDefined( object, "password" )
+			;
 	}
 
 	static is( object:Object ):boolean {
-		return Document.Factory.hasClassProperties( object )
-			&& Factory.hasClassProperties( object )
-			&& ( <Document.Class> object ).types.indexOf( NS.CS.Class.Agent ) !== -1;
+		return Factory.hasClassProperties( object )
+			&& Document.Factory.hasClassProperties( object )
+			// TODO Use Resource.Utils.hasType, when available
+			&& ( <Class> object ).types.indexOf( NS.CS.Class.Agent ) !== -1;
 	}
 
 	static create( name:string, email:string, password:string ):Class {

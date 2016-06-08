@@ -50,6 +50,9 @@
 	- [Class Carbon.Auth.BasicAuthenticator.Class](#Carbon-Auth-BasicAuthenticator-Class)
 		- [Constructor](#Carbon-Auth-BasicAuthenticator-Class-Constructor)
 		- [Methods](#Carbon-Auth-BasicAuthenticator-Class-Methods)
+- [Module Carbon/Auth/PersistedAgent](#Carbon-Auth-PersistedAgent)
+	- [Class Carbon.Auth.PersistedAgent.Factory](#Carbon-Auth-PersistedAgent-Factory)
+		- [Methods](#Carbon-Auth-PersistedAgent-Factory-Methods)
 - [Module Carbon/Auth/Token](#Carbon-Auth-Token)
 	- [Class Carbon.Auth.Token.Factory](#Carbon-Auth-Token-Factory)
 		- [Methods](#Carbon-Auth-Token-Factory-Methods)
@@ -1075,14 +1078,14 @@ static SCHEMA:Carbon.ObjectSchema.Class
 #### <a name="Carbon-Auth-Agent-Factory-Methods" />Methods
 ##### hasClassProperties
 ```typescript 
-static hasClassProperties( resource:Object ):boolean
+static hasClassProperties( object:Object ):boolean
 ```
 
 Returns true if the object provided has the properties that defines a `Carbon.Auth.Agent.Class` object
 
 *Parameters*
 
-- resource
+- object
 
 ##### is
 ```typescript 
@@ -1147,9 +1150,21 @@ Class()
 
 #### <a name="Carbon-Auth-Agents-Class-Methods" />Methods
 
-##### create
+##### get
 ```typescript 
-create( agentDocument:Carbon.Auth.Agents.Agent.Class ):Promise<Carbon.Pointer.Class, Carbon.HTTP.Response.Class>
+get( agentURI:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.Auth.PersistedAgent.Class, Carbon.HTTP.Response.Class ]>
+```
+
+Retrieves the agent specified from the current context.
+
+*Parameters*
+
+- agentURI: The URI of the agent to retrieve.
+- requestOptions
+
+##### register
+```typescript 
+register( agentDocument:Carbon.Auth.Agents.Agent.Class ):Promise<Carbon.Pointer.Class, Carbon.HTTP.Response.Class>
 ```
 
 Persists an Agent Document in the server, generating a random unique slug.
@@ -1160,7 +1175,7 @@ Returns a Promise with a Pointer for the stored Agent, and the response of the c
 - agentDocument
 
 ```typescript 
-create( slug:string,  agentDocument:Carbon.Auth.Agents.Agent.Class ):Promise<Carbon.Pointer.Class, Carbon.HTTP.Response.Class>
+register( slug:string,  agentDocument:Carbon.Auth.Agents.Agent.Class ):Promise<Carbon.Pointer.Class, Carbon.HTTP.Response.Class>
 ```
 
 Persists an Agent Document in the server using the slug specified.
@@ -1254,6 +1269,49 @@ Returns true if the Authenticator supports the AuthenticationToken.
 *Parameters*
 
 - authenticationToken
+
+
+
+## <a name="Carbon-Auth-PersistedAgent" />Module Carbon/Auth/PersistedAgent
+
+
+
+
+
+
+
+
+### <a name="Carbon-Auth-PersistedAgent-Factory" />Class Carbon.Auth.PersistedAgent.Factory
+
+
+> Factory class for `Carbon.Auth.PersistedAgent.Class` objects.
+
+
+
+
+#### <a name="Carbon-Auth-PersistedAgent-Factory-Methods" />Methods
+##### hasClassProperties
+```typescript 
+static hasClassProperties( object:Object ):boolean
+```
+
+Returns true if the object provided has the properties of a `Carbon.Auth.PersistedAgent.Class` object.
+
+*Parameters*
+
+- object
+
+##### is
+```typescript 
+static is( object:Object ):boolean
+```
+
+Returns true if the object provided is considered a `Carbon.Auth.PersistedAgent.Class` object.
+
+*Parameters*
+
+- object
+
 
 
 
@@ -5716,6 +5774,10 @@ static password:string
 
 ```typescript 
 static description:string 
+```
+
+```typescript 
+static enabled:string 
 ```
 
 

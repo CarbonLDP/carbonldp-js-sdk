@@ -418,7 +418,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 				expect( promise instanceof Promise ).toBe( true );
 				promises.push( promise.then( spies.success01, spies.fail ) );
 
-				// Will be OK, if expirationDate is a string the method tries parse it to a Date object
+				// Will be OK, if expirationDate is a string the method parses it to a Date object
 				date = new Date();
 				date.setDate( date.getDate() + 1 );
 				var getFromStorage = ():Object => {

@@ -74,7 +74,7 @@ describe( module( "Carbon/Auth/Agent" ), ():void => {
 			STATIC,
 			"hasClassProperties",
 			"Returns true if the object provided has the properties that defines a `Carbon.Auth.Agent.Class` object", [
-				{ name: "resource", type: "Object" }
+				{ name: "object", type: "Object" }
 			],
 			{ type: "boolean" }
 		), ():void => {
@@ -100,7 +100,7 @@ describe( module( "Carbon/Auth/Agent" ), ():void => {
 			object.email = null;
 
 			delete object.password;
-			expect( Agent.Factory.hasClassProperties( object ) ).toBe( true );
+			expect( Agent.Factory.hasClassProperties( object ) ).toBe( false );
 			object.password = null;
 		});
 

@@ -97,7 +97,7 @@ describe( module(
 			expect( CS.Predicate ).toBeDefined();
 			expect( Utils.isFunction( CS.Predicate ) ).toBe( true );
 
-			expect( Object.keys( CS.Predicate ).length ).toBe( 7 );
+			expect( Object.keys( CS.Predicate ).length ).toBe( 8 );
 		});
 
 		it( hasProperty(
@@ -175,6 +175,17 @@ describe( module(
 			expect( Utils.isString( CS.Predicate.description ) ).toBe( true );
 
 			expect( CS.Predicate.description ).toBe( "https://carbonldp.com/ns/v1/security#description" );
+		});
+
+		it( hasProperty(
+			STATIC,
+			"enabled",
+			"string"
+		), ():void => {
+			expect( CS.Predicate.enabled ).toBeDefined();
+			expect( Utils.isString( CS.Predicate.enabled ) ).toBe( true );
+
+			expect( CS.Predicate.enabled ).toBe( "https://carbonldp.com/ns/v1/security#enabled" );
 		});
 
 	});
