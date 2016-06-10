@@ -24,6 +24,11 @@ var Class = (function () {
         enumerable: true,
         configurable: true
     });
+    Object.defineProperty(Class, "Ticket", {
+        get: function () { return namespace + "Ticket"; },
+        enumerable: true,
+        configurable: true
+    });
     return Class;
 }());
 exports.Class = Class;
@@ -62,6 +67,16 @@ var Predicate = (function () {
     });
     Object.defineProperty(Predicate, "description", {
         get: function () { return namespace + "description"; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Predicate, "forIRI", {
+        get: function () { return namespace + "forIRI"; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Predicate, "ticketKey", {
+        get: function () { return namespace + "ticketKey"; },
         enumerable: true,
         configurable: true
     });

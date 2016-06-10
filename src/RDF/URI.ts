@@ -19,6 +19,10 @@ export class Util {
 		return uri.indexOf( "#" ) !== - 1;
 	}
 
+	static hasQuery( uri:string ):boolean {
+		return uri.indexOf( "?" ) !== -1;
+	}
+
 	static hasProtocol( uri:string ):boolean {
 		return Utils.S.startsWith( uri, "https://" ) || Utils.S.startsWith( uri, "http://" );
 	}
@@ -102,6 +106,27 @@ export class Util {
 		} else {
 			return parts[ parts.length - 1 ];
 		}
+	}
+
+	static getParameters( uri:string ):Map<string, string | string[]> {
+		let parameters:Map<string, string | string[]> = new Map();
+
+		if ( ! Util.hasQuery( uri ) ) return parameters;
+
+		uri.replace( /^.*\?/ , "" ).split( "&" ).forEach( ( param:string ) => {
+			let parts:string[] = param.replace( /\+/g, " " ).split( "=" );
+
+			let key:string = parts.shift();
+			let val:string = parts.length > 0 ? parts.join( "=" ) : null;
+
+			if ( ! parameters.has( key ) ) {
+				parameters.set( key, val );
+			} else {
+				parameters.set( key, [].concat( parameters.get( key ), val ) );
+			}
+		});
+
+		return parameters;
 	}
 
 	static resolve( parentURI:string, childURI:string ):string {

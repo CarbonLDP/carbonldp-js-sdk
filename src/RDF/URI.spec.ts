@@ -83,6 +83,24 @@ describe( module( "Carbon/RDF/URI" ), ():void => {
 
 		it( hasMethod(
 			STATIC,
+			"hasQuery",
+			"Returns true if the URI provided contains query parameters", [
+				{ name: "uri", type: "string" }
+			],
+			{ type: "boolean" }
+		), ():void => {
+			expect( "hasQuery" in URI.Util ).toBe( true );
+			expect( Utils.isFunction( URI.Util.hasQuery ) ).toBe( true );
+
+			expect( URI.Util.hasQuery( "http://example.com/resource/" ) ).toBe( false );
+			expect( URI.Util.hasQuery( "http://example.com/resource/#fragment" ) ).toBe( false );
+
+			expect( URI.Util.hasQuery( "http://example.com/resource/?parameter=true" ) ).toBe( true );
+			expect( URI.Util.hasQuery( "http://example.com/resource/#fragment?parameter=true" ) ).toBe( true );
+		});
+
+		it( hasMethod(
+			STATIC,
 			"hasProtocol",
 			"Returns true if the URI provided has a protocol", [
 				{ name: "uri", type: "string" }
@@ -381,6 +399,50 @@ describe( module( "Carbon/RDF/URI" ), ():void => {
 			expect( URI.Util.getSlug( "resource-1#fragment-2/fragment-3/" ) ).toEqual( "fragment-3/" );
 			expect( URI.Util.getSlug( "#" ) ).toEqual( "" );
 			expect( URI.Util.getSlug( "#/" ) ).toEqual( "/" );
+		});
+
+		it( hasMethod(
+			STATIC,
+			"getParameters",
+			"Returns the query parameters in form of a map of the uri provided.", [
+				{ name: "uri", type: "string" }
+			],
+			{ type: "Map<string, string | string[]>" }
+		), ():void => {
+			expect( URI.Util.getParameters ).toBeDefined();
+			expect( Utils.isFunction( URI.Util.getParameters ) ).toEqual( true );
+
+			let parameters:Map<string, string | string[]>;
+
+			parameters = URI.Util.getParameters( "http://example.com/resource/" );
+			expect( parameters instanceof Map ).toBe( true );
+			expect( parameters.size ).toBe( 0 );
+
+			parameters = URI.Util.getParameters( "http://example.com/resource/#fragment" );
+			expect( parameters instanceof Map ).toBe( true );
+			expect( parameters.size ).toBe( 0 );
+
+			parameters = URI.Util.getParameters( "http://example.com/resource/?parameter=true" );
+			expect( parameters instanceof Map ).toBe( true );
+			expect( parameters.size ).toBe( 1 );
+			expect( parameters.get( "parameter" ) ).toBe( "true" );
+
+			parameters = URI.Util.getParameters( "http://example.com/resource/#fragment?parameter=true" );
+			expect( parameters instanceof Map ).toBe( true );
+			expect( parameters.size ).toBe( 1 );
+			expect( parameters.get( "parameter" ) ).toBe( "true" );
+
+			parameters = URI.Util.getParameters( "http://example.com/resource/?parameter=true&some=1&some=2" );
+			expect( parameters instanceof Map ).toBe( true );
+			expect( parameters.size ).toBe( 2 );
+			expect( parameters.get( "parameter" ) ).toBe( "true" );
+			expect( parameters.get( "some" ) ).toEqual( [ "1", "2" ] );
+
+			parameters = URI.Util.getParameters( "http://example.com/resource/#fragment?parameter=true&some=1&some=2" );
+			expect( parameters instanceof Map ).toBe( true );
+			expect( parameters.size ).toBe( 2 );
+			expect( parameters.get( "parameter" ) ).toBe( "true" );
+			expect( parameters.get( "some" ) ).toEqual( [ "1", "2" ] );
 		});
 
 		it( hasMethod(

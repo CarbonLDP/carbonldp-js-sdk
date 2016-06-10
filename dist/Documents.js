@@ -467,6 +467,9 @@ var Documents = (function () {
         this.setDefaultRequestOptions(requestOptions, NS.LDP.Class.RDFSource);
         return HTTP.Request.Service.delete(documentURI, requestOptions);
     };
+    Documents.prototype.getDownloadURL = function (documentURI, requestOptions) {
+        return this.context.auth.getAuthenticatedURL(documentURI, requestOptions);
+    };
     Documents.prototype.getSchemaFor = function (object) {
         if ("@id" in object) {
             return this.getDigestedObjectSchemaForExpandedObject(object);

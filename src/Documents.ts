@@ -549,6 +549,10 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 		return HTTP.Request.Service.delete( documentURI, requestOptions );
 	}
 
+	getDownloadURL( documentURI:string, requestOptions?:HTTP.Request.Options ):Promise<string> {
+		return this.context.auth.getAuthenticatedURL( documentURI, requestOptions );
+	}
+
 	getSchemaFor( object:Object ):ObjectSchema.DigestedObjectSchema {
 		if( "@id" in object ) {
 			return this.getDigestedObjectSchemaForExpandedObject( object );

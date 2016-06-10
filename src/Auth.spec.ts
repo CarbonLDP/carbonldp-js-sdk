@@ -20,11 +20,14 @@ import AbstractContext from "./AbstractContext";
 import AuthenticationToken from "./Auth/AuthenticationToken";
 import Authenticator from "./Auth/Authenticator";
 import BasicAuthenticator from "./Auth/BasicAuthenticator";
+import * as Ticket from "./Auth/Ticket";
 import * as Token from "./Auth/Token";
 import TokenAuthenticator from "./Auth/TokenAuthenticator";
 import UsernameAndPasswordToken from "./Auth/UsernameAndPasswordToken";
 import UsernameAndPasswordCredentials from "./Auth/UsernameAndPasswordCredentials";
 import * as Errors from "./Errors";
+import * as HTTP from "./HTTP";
+import * as URI from "./RDF/URI";
 
 import * as Auth from "./Auth";
 import DefaultExport from "./Auth";
@@ -57,6 +60,15 @@ describe( module( "Carbon/Auth" ), ():void => {
 	), ():void => {
 		expect( Auth.BasicAuthenticator ).toBeDefined();
 		expect( Auth.BasicAuthenticator ).toBe( BasicAuthenticator );
+	});
+
+	it( reexports(
+		STATIC,
+		"Ticket",
+		"Carbon.Auth.Ticket"
+	), ():void => {
+		expect( Auth.Ticket ).toBeDefined();
+		expect( Auth.Ticket ).toBe( Ticket );
 	});
 
 	it( reexports(
@@ -117,6 +129,14 @@ describe( module( "Carbon/Auth" ), ():void => {
 		"Class for manage all the methods of authentication."
 	), ():void => {
 
+		beforeEach( ():void => {
+			jasmine.Ajax.install();
+		});
+
+		afterEach( ():void => {
+			jasmine.Ajax.uninstall();
+		});
+
 		it( isDefined(), ():void => {
 			expect( Auth.Class ).toBeDefined();
 			expect( Utils.isFunction( Auth.Class ) ).toBe( true );
@@ -147,7 +167,6 @@ describe( module( "Carbon/Auth" ), ():void => {
 		), ():void => {
 			// TODO test
 		});
-
 		it( hasMethod(
 			INSTANCE,
 			"authenticate",
@@ -189,12 +208,6 @@ describe( module( "Carbon/Auth" ), ():void => {
 					}
 				}
 				context = new MockedContext();
-
-				jasmine.Ajax.install();
-			});
-
-			afterEach( ():void => {
-				jasmine.Ajax.uninstall();
 			});
 
 			it( hasSignature(
@@ -449,6 +462,192 @@ describe( module( "Carbon/Auth" ), ():void => {
 		), ():void => {
 			// TODO test
 		});
+
+		it( hasMethod(
+			INSTANCE,
+			"createTicket",
+			"Retrieves a authentication ticket, which one only works one time and oly for the URI specified.", [
+				{ name: "uri", type: "string", description: "The URI to get an authentication ticket for." },
+				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true }
+			],
+			{ type: "Promise<[ Carbon.Auth.Ticket.Class, Carbon.HTTP.Response.Class ]>" }
+		), ( done:{ ():void, fail:() => void } ):void => {
+			class MockedContext extends AbstractContext {
+				resolve( uri:string ) {
+					return URI.Util.isAbsolute( uri ) ? uri : "http://example.com/" + uri;
+				}
+			}
+			class MockedEmptyContext extends AbstractContext {
+				resolve( uri:string ) {
+					return URI.Util.isAbsolute( uri ) ? uri : "http://example.com/empty/" + uri;
+				}
+			}
+			class MockedMultipleContext extends AbstractContext {
+				resolve( uri:string ) {
+					return URI.Util.isAbsolute( uri ) ? uri : "http://example.com/multiple/" + uri;
+				}
+			}
+
+			let context:AbstractContext = new MockedContext();
+			let auth = new Auth.Class( context );
+
+			let auth2 = new Auth.Class( new MockedEmptyContext() );
+			let auth3 = new Auth.Class( new MockedMultipleContext() );
+
+			expect( auth.createTicket ).toBeDefined();
+			expect( Utils.isFunction( auth.createTicket ) ).toBe( true );
+
+			let expirationTime:Date = new Date();
+			expirationTime.setDate( expirationTime.getDate() + 1 );
+
+			jasmine.Ajax.stubRequest( "http://example.com/auth-tickets/", null, "POST" ).andReturn( {
+				status: 200,
+				responseText: `[ {
+					"@id":"_:01",
+					"@type":[
+						"https://carbonldp.com/ns/v1/security#Ticket"
+					],
+					"https://carbonldp.com/ns/v1/security#expirationTime":[ {
+						"@type": "http://www.w3.org/2001/XMLSchema#dateTime",
+						"@value": "${ expirationTime.toISOString() }"
+					} ],
+					"https://carbonldp.com/ns/v1/security#forIRI":[ {
+						"@id": "http://example.com/resource/"
+					} ],
+					"https://carbonldp.com/ns/v1/security#ticketKey":[ {
+						"@value": "1234123412341234"
+					} ]
+				} ]`
+			});
+
+			jasmine.Ajax.stubRequest( "http://example.com/empty/auth-tickets/", null, "POST" ).andReturn( {
+				status: 200,
+				responseText: "[]"
+			});
+			jasmine.Ajax.stubRequest( "http://example.com/multiple/auth-tickets/", null, "POST" ).andReturn( {
+				status: 200,
+				responseText: `[ {
+					"@id":"_:01",
+					"@type":[
+						"https://carbonldp.com/ns/v1/security#Ticket"
+					],
+					"https://carbonldp.com/ns/v1/security#expirationTime":[ {
+						"@type": "http://www.w3.org/2001/XMLSchema#dateTime",
+						"@value": "${ expirationTime.toISOString() }"
+					} ],
+					"https://carbonldp.com/ns/v1/security#forIRI":[ {
+						"@id": "http://example.com/resource/"
+					} ],
+					"https://carbonldp.com/ns/v1/security#ticketKey":[ {
+						"@value": "1234123412341234"
+					} ]
+				}, {
+					"@id":"_:02",
+					"@type":[
+						"https://carbonldp.com/ns/v1/security#Ticket"
+					],
+					"https://carbonldp.com/ns/v1/security#expirationTime":[ {
+						"@type": "http://www.w3.org/2001/XMLSchema#dateTime",
+						"@value": "${ expirationTime.toISOString() }"
+					} ],
+					"https://carbonldp.com/ns/v1/security#forIRI":[ {
+						"@id": "http://example.com/resource/"
+					} ],
+					"https://carbonldp.com/ns/v1/security#ticketKey":[ {
+						"@value": "1234123412341234"
+					} ]
+				} ]`
+			});
+
+			let promises:Promise<any> [] =  [];
+			let promise:Promise<any>;
+
+			function checkSuccess( [ ticket, response ]:[ Ticket.Class, HTTP.Response.Class ] ) {
+				expect( ticket.expirationTime.getTime() ).toBeGreaterThan( Date.now() );
+				expect( ticket.forURI.id ).toBe( "http://example.com/resource/" );
+				expect( Utils.isString( ticket.ticketKey ) ).toBe( true );
+
+				expect( response instanceof HTTP.Response.Class ).toBe( true );
+			}
+			function checkFail( error:Error ) {
+				expect( error instanceof HTTP.Errors.BadResponseError ).toBe( true );
+			}
+
+			promise = auth.createTicket( "http://example.com/resource/" );
+			expect( promise instanceof Promise ).toBe( true );
+			promises.push( promise.then( checkSuccess ) );
+			
+			promise = auth.createTicket( "resource/" );
+			expect( promise instanceof Promise ).toBe( true );
+			promises.push( promise.then( checkSuccess ) );
+
+			promise = auth2.createTicket( "http://example.com/resource/" );
+			expect( promise instanceof Promise ).toBe( true );
+			promises.push( promise.catch( checkFail ) );
+
+			promise = auth3.createTicket( "http://example.com/resource/" );
+			expect( promise instanceof Promise ).toBe( true );
+			promises.push( promise.catch( checkFail ) );
+			
+			Promise.all( promises ).then( done ).catch( done.fail );
+		});
+
+		it( hasMethod(
+			INSTANCE,
+			"getAuthenticatedURL",
+			"Returns a Promise with a URI authenticated for only one use.", [
+				{ name: "uri", type: "string", description: "The URI to generate an authenticated URI for." },
+				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true }
+			]
+		), ( done:{ ():void, fail:() => void } ) => {
+			class MockedContext extends AbstractContext {
+				resolve( uri:string ) {
+					return URI.Util.isAbsolute( uri ) ? uri : "http://example.com/" + uri;
+				}
+			}
+
+			let context:AbstractContext = new MockedContext();
+			let auth = new Auth.Class( context );
+
+			expect( auth.getAuthenticatedURL ).toBeDefined();
+			expect( Utils.isFunction( auth.getAuthenticatedURL ) ).toBe( true );
+
+			spyOn( auth, "createTicket" ).and.returnValue( Promise.resolve( [ {
+				id: "_:01",
+				types: [ "https://carbonldp.com/ns/v1/security#Ticket" ],
+				expirationTime: new Date(),
+				forURI: context.documents.getPointer( "http://example.com/resource/" ),
+				ticketKey: "1234123412341234",
+			}, null ] ) );
+
+			let promises:Promise<any>[] = [];
+			let promise:Promise<any>;
+
+			promise = auth.getAuthenticatedURL( "http://example.com/resource/" );
+			expect( promise instanceof Promise ).toBe( true );
+			promises.push( promise.then( ( uri:string ) => {
+				expect( Utils.isString( uri ) ).toBe( true );
+				expect( URI.Util.isBaseOf( "http://example.com/resource/", uri ) ).toBe( true );
+
+				let query:Map<string, string | string[]> = URI.Util.getParameters( uri );
+				expect( query.size ).toBe( 1 );
+				expect( query.get( "ticket" ) ).toBe( "1234123412341234" );
+			}));
+
+			promise = auth.getAuthenticatedURL( "http://example.com/resource/?another=yes" );
+			expect( promise instanceof Promise ).toBe( true );
+			promises.push( promise.then( ( uri:string ) => {
+				expect( Utils.isString( uri ) ).toBe( true );
+				expect( URI.Util.isBaseOf( "http://example.com/resource/", uri ) ).toBe( true );
+
+				let query:Map<string, string | string[]> = URI.Util.getParameters( uri );
+				expect( query.size ).toBe( 2 );
+				expect( query.get( "another" ) ).toBe( "yes" );
+				expect( query.get( "ticket" ) ).toBe( "1234123412341234" );
+			}));
+
+			Promise.all( promises ).then( done ).catch( done.fail );
+		} );
 
 	});
 

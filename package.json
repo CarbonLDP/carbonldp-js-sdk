@@ -54,8 +54,10 @@
       "lib": "dist",
       "packages": "test/jspm_packages"
     },
+    "dependencies": {
+      "jsonld": "npm:jsonld@^0.4.11"
+    },
     "devDependencies": {
-      "jsonld": "npm:jsonld@^0.4.11",
       "os": "github:jspm/nodelibs-os@^0.2.0-alpha",
       "plugin-typescript": "github:frankwallis/plugin-typescript@^4.0.9"
     },

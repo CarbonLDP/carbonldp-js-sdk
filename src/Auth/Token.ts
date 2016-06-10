@@ -6,7 +6,7 @@ import Credentials from "./Credentials";
 
 export const RDF_CLASS:string = NS.CS.Class.Token;
 
-export const CONTEXT:ObjectSchema.Class = {
+export const SCHEMA:ObjectSchema.Class = {
 	"key": {
 		"@id": NS.CS.Predicate.tokenKey,
 		"@type": NS.XSD.DataType.string,

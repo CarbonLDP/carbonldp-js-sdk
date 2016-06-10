@@ -47,7 +47,8 @@ describe( module( "Carbon/FreeResources" ), ():void => {
 				createResource: fx,
 				hasPointer: fx,
 				getPointer: fx,
-				inScope: fx
+				inScope: fx,
+				toJSON: fx,
 			};
 			expect( FreeResources.Factory.hasClassProperties( object ) ).toBe( true );
 
@@ -86,6 +87,10 @@ describe( module( "Carbon/FreeResources" ), ():void => {
 			delete object.inScope;
 			expect( FreeResources.Factory.hasClassProperties( object ) ).toBe( false );
 			object.inScope = fx;
+
+			delete object.toJSON;
+			expect( FreeResources.Factory.hasClassProperties( object ) ).toBe( false );
+			object.toJSON = fx;
 		});
 
 		it( hasMethod(
@@ -153,7 +158,8 @@ describe( module( "Carbon/FreeResources" ), ():void => {
 				createResource: fx,
 				hasPointer: fx,
 				getPointer: fx,
-				inScope: fx
+				inScope: fx,
+				toJSON: fx,
 			};
 			let freeResources:FreeResources.Class = FreeResources.Factory.decorate( object );
 			expect( freeResources ).toBeTruthy();
@@ -181,6 +187,7 @@ describe( module( "Carbon/FreeResources" ), ():void => {
 			]
 		), ():void => {
 			let freeResources:FreeResources.Class;
+			let context:AbstractContext;
 			let documents:Documents;
 
 			beforeEach( ():void => {
@@ -189,7 +196,8 @@ describe( module( "Carbon/FreeResources" ), ():void => {
 						return "http://example.com/" + uri;
 					}
 				}
-				documents = new Documents( new MockedContext() );
+				context = new MockedContext();
+				documents = new Documents( context );
 
 				freeResources = FreeResources.Factory.create( documents );
 			});
@@ -392,6 +400,67 @@ describe( module( "Carbon/FreeResources" ), ():void => {
 					expect( freeResources.inScope( Pointer.Factory.create( "some/" ) ) ).toBe( false );
 				});
 
+			});
+
+			it( hasMethod(
+				INSTANCE,
+				"toJSON",
+				"Converts the resources contained in the current `Carbon.FreeResources.Class` object to a JSON string.",
+				{ type: "string" }
+			), ():void => {
+				expect( freeResources.toJSON ).toBeDefined();
+				expect( Utils.isFunction( freeResources.toJSON ) ).toBe( true );
+
+				context.extendObjectSchema( "http://example.com/ns#MyType", {
+					"anotherProperty": {
+						"@id": "http://example.com/ns#another-property",
+						"@type": "http://www.w3.org/2001/XMLSchema#string",
+					},
+				});
+
+				let resource:Resource.Class = Resource.Factory.createFrom( {
+					types: [ "http://example.com/ns#MyType" ],
+					"http://example.com/ns#property": "A Property",
+					"anotherProperty": "Another Property",
+				}, "_:some" );
+				freeResources._resourcesIndex.set( "_:some",  resource );
+
+				let expandedResource:any = {
+					"@id": "_:some",
+					"@type": [ "http://example.com/ns#MyType" ],
+					"http://example.com/ns#property": [{
+						"@value": "A Property",
+						"@type":"http://www.w3.org/2001/XMLSchema#string",
+					}],
+					"http://example.com/ns#another-property": [{
+						"@value": "Another Property",
+						"@type": "http://www.w3.org/2001/XMLSchema#string",
+					}],
+				};
+				let expectedString:string = JSON.stringify( [ expandedResource ] );
+				expect( freeResources.toJSON() ).toBe( expectedString );
+
+				let anotherResource:Resource.Class = Resource.Factory.createFrom( {
+					types: [ "http://example.com/ns#MyType" ],
+					"http://example.com/ns#property": "A Property",
+					"anotherProperty": "Another Property",
+				}, "_:another" );
+				freeResources._resourcesIndex.set( "_:another",  anotherResource );
+
+				let anotherExpandedResource:any = {
+					"@id": "_:another",
+					"@type": [ "http://example.com/ns#MyType" ],
+					"http://example.com/ns#property": [{
+						"@value": "A Property",
+						"@type":"http://www.w3.org/2001/XMLSchema#string",
+					}],
+					"http://example.com/ns#another-property": [{
+						"@value": "Another Property",
+						"@type": "http://www.w3.org/2001/XMLSchema#string",
+					}],
+				};
+				let anotherExpectedString:string = JSON.stringify( [ expandedResource, anotherExpandedResource ] );
+				expect( freeResources.toJSON() ).toBe( anotherExpectedString );
 			});
 
 		});

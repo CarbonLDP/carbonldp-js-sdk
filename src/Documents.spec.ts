@@ -2786,6 +2786,35 @@ describe( module( "Carbon/Documents" ), ():void => {
 			}, done.fail );
 		});
 
+		it( hasMethod(
+			INSTANCE,
+			"getDownloadURL",
+			"Add to the URI provided with the properties necessarily for a single download request.", [
+				{ name: "documentURI", type: "string", description: "The URI of the document that will be converted in a single download request." },
+				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true }
+			],
+			{ type: "Promise<Carbon.HTTP.Response.Class>" }
+		), ( done:{ ():void, fail:() => void } ):void => {
+			class MockedContext extends AbstractContext {
+				resolve( uri:string ):string {
+					return uri;
+				}
+			}
+
+			let context:MockedContext = new MockedContext();
+			let documents:Documents = context.documents;
+
+			expect( documents.getDownloadURL ).toBeDefined();
+			expect( Utils.isFunction( documents.getDownloadURL ) ).toBe( true );
+
+			spyOn( context.auth, "getAuthenticatedURL" ).and.returnValue( Promise.resolve( "http://example.com/resource/?ticket=1234567890" ) );
+
+			documents.getDownloadURL( "http://example.com/resource/" ).then( ( downloadURL:string ) => {
+				expect( downloadURL ).toBe( "http://example.com/resource/?ticket=1234567890" );
+				done();
+			}).catch( done.fail );
+		});
+
 		it( hasMethod( INSTANCE, "executeRawASKQuery", `
 				Executes an ASK query on a document and returns a raw application/sparql-results+json object
 			`, [

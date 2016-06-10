@@ -181,7 +181,9 @@ export class Class implements Context {
 		this.extendObjectSchema( LDP.ResourceMetadata.RDF_CLASS, LDP.ResourceMetadata.SCHEMA );
 		this.extendObjectSchema( LDP.AddMemberAction.RDF_CLASS,  LDP.AddMemberAction.SCHEMA );
 		this.extendObjectSchema( LDP.RemoveMemberAction.RDF_CLASS, LDP.RemoveMemberAction.SCHEMA );
-		this.extendObjectSchema( Auth.Token.RDF_CLASS, Auth.Token.CONTEXT );
+
+		this.extendObjectSchema( Auth.Token.RDF_CLASS, Auth.Token.SCHEMA );
+		this.extendObjectSchema( Auth.Ticket.RDF_CLASS, Auth.Ticket.SCHEMA );
 
 		this.extendObjectSchema( Agent.RDF_CLASS, Agent.SCHEMA );
 	}
