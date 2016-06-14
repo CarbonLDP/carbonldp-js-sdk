@@ -1,11 +1,11 @@
-import {hasMethod, INSTANCE, module, isDefined, clazz, decoratedObject, STATIC} from "./test/JasmineExtender";
-import AbstractContext from "./AbstractContext";
-import * as AccessPoint from "./AccessPoint";
-import * as PersistedACL from "./Auth/PersistedACL";
-import Documents from "./Documents";
-import * as HTTP from "./HTTP";
-import * as PersistedDocument from "./PersistedDocument";
-import * as Utils from "./Utils";
+import {hasMethod, INSTANCE, module, isDefined, clazz, decoratedObject, STATIC} from "./../test/JasmineExtender";
+import AbstractContext from "./../AbstractContext";
+import * as AccessPoint from "./../AccessPoint";
+import Documents from "./../Documents";
+import * as HTTP from "./../HTTP";
+import * as PersistedACL from "./../Auth/PersistedACL";
+import * as PersistedDocument from "./../PersistedDocument";
+import * as Utils from "./../Utils";
 
 import * as PersistedRDFSource from "./PersistedRDFSource";
 
@@ -41,6 +41,8 @@ describe( module( "Carbon/PersistedRDFSource" ), ():void => {
 			expect( PersistedRDFSource.Factory.hasClassProperties( object ) ).toBe( false );
 
 			object = {
+				created: null,
+				modified: null,
 				defaultInteractionModel: null,
 				accessPoints: null,
 				accessControlList: null,
@@ -68,6 +70,49 @@ describe( module( "Carbon/PersistedRDFSource" ), ():void => {
 			delete object.getACL;
 			expect( PersistedRDFSource.Factory.hasClassProperties( object ) ).toBe( false );
 			object.getACL = () => {};
+		});
+		
+		it( hasMethod(
+			STATIC,
+			"decorate",
+			"Decorate the object with the properties and methods of a `Carbon.LDP.PersistedRDFSource.Class` object.", [
+				{ name: "document", type: "T extends Carbon.PersistedDocument.Class", description: "The persisted document to decorate." }
+			],
+			{ type: "T & Carbon.LDP.PersistedRDFSource.Class" }
+		), ():void => {
+			expect( PersistedACL.Factory.decorate ).toBeDefined();
+			expect( Utils.isFunction( PersistedACL.Factory.decorate ) ).toBe( true );
+
+			let fn:Function = () => {};
+			let document:any;
+			let rdfSource:PersistedRDFSource.Class;
+
+			document = {
+				created: null,
+				modified: null,
+				defaultInteractionModel: null,
+				accessPoints: null,
+				accessControlList: null,
+				createAccessPoint: fn,
+				getACL: fn,
+			};
+			rdfSource = PersistedRDFSource.Factory.decorate( document );
+			expect( PersistedRDFSource.Factory.hasClassProperties( rdfSource ) ).toBe( true );
+			expect( rdfSource.getACL ).toBe( fn );
+			expect( rdfSource.createAccessPoint ).toBe( fn );
+			
+			document = {
+				created: null,
+				modified: null,
+				defaultInteractionModel: null,
+				accessPoints: null,
+				accessControlList: null,
+				createAccessPoint: fn,
+			};
+			rdfSource = PersistedRDFSource.Factory.decorate( document );
+			expect( PersistedRDFSource.Factory.hasClassProperties( rdfSource ) ).toBe( true );
+			expect( rdfSource.getACL ).not.toBe( fn );
+			expect( rdfSource.createAccessPoint ).not.toBe( fn );
 		});
 
 		describe( decoratedObject(
@@ -228,8 +273,8 @@ describe( module( "Carbon/PersistedRDFSource" ), ():void => {
 					expect( response ).toBeDefined();
 
 					expect( PersistedACL.Factory.hasClassProperties( acl ) ).toBe( true );
-					expect( acl.accessControlEntries ).toBeDefined();
-					expect( acl.accessControlEntries.length ).toBe( 1 );
+					expect( acl.entries ).toBeDefined();
+					expect( acl.entries.length ).toBe( 1 );
 					expect( acl.inheritableEntries ).toBeDefined();
 					expect( acl.inheritableEntries.length ).toBe( 1 );
 					expect( acl.accessTo.id ).toBe( rdfSource.id );

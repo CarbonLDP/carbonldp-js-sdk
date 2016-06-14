@@ -299,7 +299,6 @@
 			- [Methods](#Carbon-LDP-PersistedContainer-Factory-Decorated-Object-Methods)
 - [Module Carbon/LDP/RDFSource](#Carbon-LDP-RDFSource)
 	- [Properties](#Carbon-LDP-RDFSource-Properties)
-	- [Class Carbon.LDP.RDFSource.Factory](#Carbon-LDP-RDFSource-Factory)
 - [Module Carbon/LDP/RemoveMemberAction](#Carbon-LDP-RemoveMemberAction)
 	- [Properties](#Carbon-LDP-RemoveMemberAction-Properties)
 	- [Class Carbon.LDP.RemoveMemberAction.Factory](#Carbon-LDP-RemoveMemberAction-Factory)
@@ -439,8 +438,6 @@
 - [Module Carbon/RDF/Value](#Carbon-RDF-Value)
 	- [Class Carbon.RDF.Value.Util](#Carbon-RDF-Value-Util)
 		- [Methods](#Carbon-RDF-Value-Util-Methods)
-- [Module Carbon/RDFSource](#Carbon-RDFSource)
-	- [Properties](#Carbon-RDFSource-Properties)
 - [Module Carbon/Resource](#Carbon-Resource)
 	- [Class Carbon.Resource.Factory](#Carbon-Resource-Factory)
 		- [Methods](#Carbon-Resource-Factory-Methods)
@@ -5312,16 +5309,6 @@ static SCHEMA:Carbon.ObjectSchema.Class
 
 
 
-### <a name="Carbon-LDP-RDFSource-Factory" />Class Carbon.LDP.RDFSource.Factory
-
-
-> Factory class for RDFSource objects
-
-
-
-
-
-
 ## <a name="Carbon-LDP-RemoveMemberAction" />Module Carbon/LDP/RemoveMemberAction
 
 
@@ -8143,25 +8130,6 @@ Returns null if cannot be parsed
 
 - propertyValue
 - pointerLibrary
-
-
-
-
-## <a name="Carbon-RDFSource" />Module Carbon/RDFSource
-
-
-
-
-
-### <a name="Carbon-RDFSource-Properties" />Properties
-```typescript 
-static RDF_Class:string 
-```
-
-```typescript 
-static SCHEMA:Carbon.ObjectSchema.Class 
-```
-
 
 
 

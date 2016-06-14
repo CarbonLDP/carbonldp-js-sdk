@@ -6,7 +6,6 @@ import * as Errors from "./Errors";
 import * as LDP from "./LDP";
 import * as NS from "./NS";
 import * as PersistedBlankNode from "./PersistedBlankNode";
-import * as RDFSource from "./RDFSource";
 import * as ObjectSchema from "./ObjectSchema";
 import * as Agent from "./Agent";
 import * as RDFRepresentation from "./RDFRepresentation";
@@ -149,7 +148,6 @@ export class Class implements Context {
 		this.extendObjectSchema( LDP.Container.RDF_CLASS, LDP.Container.SCHEMA );
 		this.extendObjectSchema( LDP.BasicContainer.RDF_CLASS, LDP.Container.SCHEMA );
 
-		this.extendObjectSchema( RDFSource.RDF_CLASS, RDFSource.SCHEMA );
 		this.extendObjectSchema( RDFRepresentation.RDF_CLASS, RDFRepresentation.SCHEMA );
 		this.extendObjectSchema( APIDescription.RDF_CLASS, APIDescription.SCHEMA );
 

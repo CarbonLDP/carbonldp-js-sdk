@@ -1,13 +1,15 @@
-import * as AccessPoint from "./AccessPoint";
-import * as ACL from "./Auth/ACL";
-import * as HTTP from "./HTTP";
-import * as PersistedACL from "./Auth/PersistedACL";
-import * as PersistedDocument from "./PersistedDocument";
-import * as Pointer from "./Pointer";
-import * as Resource from "./Resource";
-import * as Utils from "./Utils";
+import * as AccessPoint from "./../AccessPoint";
+import * as ACL from "./../Auth/ACL";
+import * as HTTP from "./../HTTP";
+import * as PersistedACL from "./../Auth/PersistedACL";
+import * as PersistedDocument from "./../PersistedDocument";
+import * as Pointer from "./../Pointer";
+import * as Resource from "./../Resource";
+import * as Utils from "./../Utils";
 
 export interface Class extends PersistedDocument.Class {
+	created: Date;
+	modified: Date;
 	defaultInteractionModel: Pointer.Class;
 	accessPoints: Pointer.Class[];
 	accessControlList: Pointer.Class;
@@ -20,7 +22,9 @@ export interface Class extends PersistedDocument.Class {
 export class Factory {
 
 	static hasClassProperties( object:Object ):boolean {
-		return Utils.hasPropertyDefined( object, "defaultInteractionModel" )
+		return Utils.hasPropertyDefined( object, "created" )
+			&& Utils.hasPropertyDefined( object, "modified" )
+			&& Utils.hasPropertyDefined( object, "defaultInteractionModel" )
 			&& Utils.hasPropertyDefined( object, "accessPoints" )
 			&& Utils.hasPropertyDefined( object, "accessControlList" )
 			&& Utils.hasFunction( object, "createAccessPoint" )
@@ -28,7 +32,7 @@ export class Factory {
 		;
 	}
 
-	static decorate<T extends Object>( document:T ):T & Class {
+	static decorate<T extends PersistedDocument.Class>( document:T ):T & Class {
 		if( Factory.hasClassProperties( document ) ) return <any> document;
 
 		let rdfSource:T & Class = <any> document;

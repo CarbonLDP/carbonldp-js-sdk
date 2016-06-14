@@ -1,11 +1,8 @@
 import {module, isDefined, clazz, STATIC, hasMethod} from "../test/JasmineExtender";
 
-import Documents from "../Documents";
-import * as PersistedDocument from "./../PersistedDocument";
 import * as Utils from "./../Utils";
 
 import * as PersistedACL from "./PersistedACL";
-import IllegalArgumentError from "../Errors/IllegalArgumentError";
 
 describe( module( "Carbon/Auth/PersistedACL" ), ():void => {
 
@@ -36,7 +33,7 @@ describe( module( "Carbon/Auth/PersistedACL" ), ():void => {
 			expect( PersistedACL.Factory.hasClassProperties( object ) ).toBe( false );
 
 			object = {
-				accessControlEntries: null,
+				entries: null,
 				accessTo: null,
 				inheritableEntries: null,
 			};
@@ -46,9 +43,9 @@ describe( module( "Carbon/Auth/PersistedACL" ), ():void => {
 			expect( PersistedACL.Factory.hasClassProperties( object ) ).toBe( false );
 			object.accessTo = null;
 
-			delete object.accessControlEntries;
+			delete object.entries;
 			expect( PersistedACL.Factory.hasClassProperties( object ) ).toBe( true );
-			object.accessControlEntries = null;
+			object.entries = null;
 
 			delete object.inheritableEntries;
 			expect( PersistedACL.Factory.hasClassProperties( object ) ).toBe( true );
@@ -58,20 +55,19 @@ describe( module( "Carbon/Auth/PersistedACL" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"decorate",
-			"Decorate the object with the properties and methods o a `Carbon.Auth.PersistedACL.Class` object.", [
+			"Decorate the object with the properties and methods of a `Carbon.Auth.PersistedACL.Class` object.", [
 				{ name: "document", type: "T extends Carbon.PersistedDocument.Class", description: "The persisted document to decorate." }
 			],
-			{ type: "T & Carbon.Auth.ACl.Class" }
+			{ type: "T & Carbon.Auth.PersistedACL.Class" }
 		), ():void => {
 			expect( PersistedACL.Factory.decorate ).toBeDefined();
 			expect( Utils.isFunction( PersistedACL.Factory.decorate ) ).toBe( true );
 
-			expect( () => PersistedACL.Factory.decorate( <any> {} ) ).toThrowError( IllegalArgumentError );
+			let document:any;
 
-			let document:PersistedDocument.Class = PersistedDocument.Factory.create( "http://example.com/some/acl/", new Documents() );
-			expect( () => PersistedACL.Factory.decorate( document ) ).toThrowError( IllegalArgumentError );
-
-			document[ "accessTo" ] = document.getPointer( "http://example.com/some/" );
+			document = {
+				accessTo: null
+			};
 			let acl:PersistedACL.Class = PersistedACL.Factory.decorate( document );
 
 			// TODO continue test decorate when totally implemented

@@ -1,12 +1,11 @@
 "use strict";
+var PersistedRDFSource = require("./PersistedRDFSource");
 var Utils = require("./../Utils");
 function addMember(memberOrUri) {
-    var that = this;
-    return that._documents.addMember(that.id, memberOrUri);
+    return this._documents.addMember(this.id, memberOrUri);
 }
 function addMembers(members) {
-    var that = this;
-    return that._documents.addMembers(that.id, members);
+    return this._documents.addMembers(this.id, members);
 }
 function createChild(slugOrObject, object) {
     var slug = Utils.isString(slugOrObject) ? slugOrObject : null;
@@ -20,12 +19,10 @@ function createChild(slugOrObject, object) {
     }
 }
 function listChildren() {
-    var that = this;
-    return this._documents.listChildren(that.id);
+    return this._documents.listChildren(this.id);
 }
 function getChildren(retrievalPreferences) {
-    var that = this;
-    return this._documents.getChildren(that.id, retrievalPreferences);
+    return this._documents.getChildren(this.id, retrievalPreferences);
 }
 function listMembers(includeNonReadable) {
     if (includeNonReadable === void 0) { includeNonReadable = true; }
@@ -36,16 +33,13 @@ function getMembers(nonReadRetPref, retrievalPreferences) {
     return this._documents.getMembers(this.id, nonReadRetPref, retrievalPreferences);
 }
 function removeMember(memberOrUri) {
-    var that = this;
-    return that._documents.removeMember(that.id, memberOrUri);
+    return this._documents.removeMember(this.id, memberOrUri);
 }
 function removeMembers(members) {
-    var that = this;
-    return that._documents.removeMembers(that.id, members);
+    return this._documents.removeMembers(this.id, members);
 }
 function removeAllMembers() {
-    var that = this;
-    return that._documents.removeAllMembers(that.id);
+    return this._documents.removeAllMembers(this.id);
 }
 function upload(slugOrData, data) {
     if (data === void 0) { data = null; }
@@ -78,6 +72,7 @@ var Factory = (function () {
     Factory.decorate = function (persistedDocument) {
         if (Factory.hasClassProperties(persistedDocument))
             return persistedDocument;
+        PersistedRDFSource.Factory.decorate(persistedDocument);
         Object.defineProperties(persistedDocument, {
             "addMember": {
                 writable: false,

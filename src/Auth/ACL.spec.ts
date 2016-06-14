@@ -31,8 +31,8 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 		expect( ACL.SCHEMA ).toBeDefined();
 		expect( Utils.isObject( ACL.SCHEMA ) ).toBe( true );
 
-		expect( Utils.hasProperty( ACL.SCHEMA, "accessControlEntries" ) ).toBe( true );
-		expect( ACL.SCHEMA[ "accessControlEntries" ] ).toEqual({
+		expect( Utils.hasProperty( ACL.SCHEMA, "entries" ) ).toBe( true );
+		expect( ACL.SCHEMA[ "entries" ] ).toEqual({
 			"@id": NS.CS.Predicate.accessControlEntry,
 			"@type": "@id",
 			"@container": "@set",
@@ -74,7 +74,7 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 			expect( ACL.Factory.hasClassProperties( object ) ).toBe( false );
 
 			object = {
-				accessControlEntries: null,
+				entries: null,
 				accessTo: null,
 				inheritableEntries: null,
 			};
@@ -84,9 +84,9 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 			expect( ACL.Factory.hasClassProperties( object ) ).toBe( false );
 			object.accessTo = null;
 
-			delete object.accessControlEntries;
+			delete object.entries;
 			expect( ACL.Factory.hasClassProperties( object ) ).toBe( true );
-			object.accessControlEntries = null;
+			object.entries = null;
 
 			delete object.inheritableEntries;
 			expect( ACL.Factory.hasClassProperties( object ) ).toBe( true );

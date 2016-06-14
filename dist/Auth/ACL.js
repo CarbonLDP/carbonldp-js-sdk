@@ -3,7 +3,7 @@ var NS = require("./../NS");
 var Utils = require("./../Utils");
 exports.RDF_CLASS = NS.CS.Class.AccessControlList;
 exports.SCHEMA = {
-    "accessControlEntries": {
+    "entries": {
         "@id": NS.CS.Predicate.accessControlEntry,
         "@type": "@id",
         "@container": "@set",

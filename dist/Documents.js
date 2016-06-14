@@ -9,13 +9,11 @@ var FreeResources = require("./FreeResources");
 var JSONLDConverter = require("./JSONLDConverter");
 var PersistedACL = require("./Auth/PersistedACL");
 var PersistedDocument = require("./PersistedDocument");
-var PersistedRDFSource = require("./PersistedRDFSource");
 var Pointer = require("./Pointer");
 var NS = require("./NS");
 var ObjectSchema = require("./ObjectSchema");
 var LDP = require("./LDP");
 var SPARQL = require("./SPARQL");
-var RDFSource = require("./RDFSource");
 var Resource = require("./Resource");
 var RetrievalPreferences = require("./RetrievalPreferences");
 var Documents = (function () {
@@ -714,8 +712,6 @@ var Documents = (function () {
         document._resolved = true;
         if (LDP.Container.Factory.hasRDFClass(document))
             LDP.PersistedContainer.Factory.decorate(document);
-        if (Resource.Util.hasType(document, RDFSource.RDF_CLASS))
-            PersistedRDFSource.Factory.decorate(document);
         if (Resource.Util.hasType(document, ACL.RDF_CLASS))
             PersistedACL.Factory.decorate(document);
         return document;

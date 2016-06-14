@@ -49,16 +49,24 @@ describe( module( "Carbon/LDP/RDFSource" ), ():void => {
 			"@id": NS.C.Predicate.modified,
 			"@type": NS.XSD.DataType.dateTime
 		});
-	});
 
-	describe( clazz(
-		"Carbon.LDP.RDFSource.Factory",
-		"Factory class for RDFSource objects"
-	), ():void => {
+		expect( Utils.hasProperty( RDFSource.SCHEMA, "defaultInteractionModel" ) ).toBe( true );
+		expect( RDFSource.SCHEMA[ "defaultInteractionModel" ] ).toEqual({
+			"@id": NS.C.Predicate.defaultInteractionModel,
+			"@type": "@id",
+		});
 
-		it( isDefined(), ():void => {
-			expect( RDFSource.Factory ).toBeDefined();
-			expect( Utils.isFunction( RDFSource.Factory ) ).toBe( true );
+		expect( Utils.hasProperty( RDFSource.SCHEMA, "accessPoints" ) ).toBe( true );
+		expect( RDFSource.SCHEMA[ "accessPoints" ] ).toEqual({
+			"@id": NS.C.Predicate.accessPoint,
+			"@type": "@id",
+			"@container": "@set",
+		});
+
+		expect( Utils.hasProperty( RDFSource.SCHEMA, "accessControlList" ) ).toBe( true );
+		expect( RDFSource.SCHEMA[ "accessControlList" ] ).toEqual({
+			"@id": NS.CS.Predicate.accessControlList,
+			"@type": "@id",
 		});
 
 	});

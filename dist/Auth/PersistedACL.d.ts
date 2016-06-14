@@ -3,7 +3,7 @@ import * as PersistedDocument from "./../PersistedDocument";
 import * as Pointer from "./../Pointer";
 export interface Class extends PersistedDocument.Class {
     accessTo: Pointer.Class;
-    accessControlEntries?: PersistedACE.Class[];
+    entries?: PersistedACE.Class[];
     inheritableEntries?: PersistedACE.Class[];
 }
 export declare class Factory {

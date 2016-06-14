@@ -10,12 +10,19 @@ exports.SCHEMA = {
         "@id": NS.C.Predicate.modified,
         "@type": NS.XSD.DataType.dateTime,
     },
+    "defaultInteractionModel": {
+        "@id": NS.C.Predicate.defaultInteractionModel,
+        "@type": "@id",
+    },
+    "accessPoints": {
+        "@id": NS.C.Predicate.accessPoint,
+        "@type": "@id",
+        "@container": "@set",
+    },
+    "accessControlList": {
+        "@id": NS.CS.Predicate.accessControlList,
+        "@type": "@id",
+    },
 };
-var Factory = (function () {
-    function Factory() {
-    }
-    return Factory;
-}());
-exports.Factory = Factory;
 
 //# sourceMappingURL=RDFSource.js.map

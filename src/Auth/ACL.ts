@@ -9,7 +9,7 @@ import * as Utils from "./../Utils";
 export const RDF_CLASS:string = NS.CS.Class.AccessControlList;
 
 export const SCHEMA:ObjectSchema.Class = {
-	"accessControlEntries": {
+	"entries": {
 		"@id": NS.CS.Predicate.accessControlEntry,
 		"@type": "@id",
 		"@container": "@set",
@@ -27,7 +27,7 @@ export const SCHEMA:ObjectSchema.Class = {
 
 export interface Class extends Document.Class {
 	accessTo: Pointer.Class;
-	accessControlEntries?: ACE.Class[];
+	entries?: ACE.Class[];
 	inheritableEntries?: ACE.Class[];
 }
 

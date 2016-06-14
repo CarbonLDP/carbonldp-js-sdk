@@ -6,7 +6,6 @@ var Errors = require("./Errors");
 var LDP = require("./LDP");
 var NS = require("./NS");
 var PersistedBlankNode = require("./PersistedBlankNode");
-var RDFSource = require("./RDFSource");
 var ObjectSchema = require("./ObjectSchema");
 var Agent = require("./Agent");
 var RDFRepresentation = require("./RDFRepresentation");
@@ -132,7 +131,6 @@ var Class = (function () {
         this.extendObjectSchema(LDP.RDFSource.RDF_CLASS, LDP.RDFSource.SCHEMA);
         this.extendObjectSchema(LDP.Container.RDF_CLASS, LDP.Container.SCHEMA);
         this.extendObjectSchema(LDP.BasicContainer.RDF_CLASS, LDP.Container.SCHEMA);
-        this.extendObjectSchema(RDFSource.RDF_CLASS, RDFSource.SCHEMA);
         this.extendObjectSchema(RDFRepresentation.RDF_CLASS, RDFRepresentation.SCHEMA);
         this.extendObjectSchema(APIDescription.RDF_CLASS, APIDescription.SCHEMA);
         this.extendObjectSchema(NS.CS.Class.Application, {
