@@ -18,7 +18,5 @@
     "file-type": "^3.8.0",
     "jsonld": "^0.4.11"
   },
-  "jspm": {
-    "dependencies": {}
-  }
+  "jspm": {}
 }
