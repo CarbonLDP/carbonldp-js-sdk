@@ -234,7 +234,13 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 		};
 		HTTP.Request.Util.setContainerRetrievalPreferences( containerRetrievalPreferences, requestOptions );
 
-		return this.sendRequestForResponseWithMetadata( parentURI, requestOptions );
+		return HTTP.Request.Service.get( parentURI, requestOptions, new HTTP.JSONLDParser.Class() ).then( ( [ expandedResult, response ]:[ any, HTTP.Response.Class ] ) => {
+			let freeNodes:RDF.Node.Class[] = RDF.Node.Util.getFreeNodes( expandedResult );
+			let rdfDocuments:RDF.Document.Class[] = RDF.Document.Util.getDocuments( expandedResult ).filter( document => document[ "@id" ] !== parentURI );
+
+			let resources:PersistedDocument.Class[] = this.getPersistedMetadataResources( freeNodes, rdfDocuments, response );
+			return [ resources, response ];
+		});
 	}
 
 	createAccessPoint( documentURI:string, accessPoint:AccessPoint.Class, slug?:string, requestOptions?:HTTP.Request.Options ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
@@ -359,22 +365,7 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 			if ( rdfDocument === null ) throw new HTTP.Errors.BadResponseError( "No document was returned.", response );
 
 			let documentResource:RDF.Node.Class = this.getDocumentResource( rdfDocument, response );
-			let membershipResourceURI:string = RDF.Node.Util.getPropertyURI( documentResource, NS.LDP.Predicate.membershipResource );
-
-			let membershipResource:RDF.Node.Class;
-			if( documentResource[ "@id" ] === membershipResourceURI ) {
-				membershipResource = documentResource;
-			} else if( membershipResourceURI === null ) {
-				if( documentResource[ "@type" ].indexOf( NS.LDP.Class.BasicContainer ) !== -1 ) {
-					membershipResource = documentResource;
-				} else {
-					throw new HTTP.Errors.BadResponseError( "The document is not an ldp:BasicContainer and it doesn't contain an ldp:membershipResource triple.", response );
-				}
-			} else {
-				let membershipResourceDocument:RDF.Document.Class = this.getRDFDocument( membershipResourceURI, rdfDocuments, response );
-				if ( membershipResourceDocument === null ) throw new HTTP.Errors.BadResponseError( "The membershipResource document was not included in the response.", response );
-				membershipResource = this.getDocumentResource( membershipResourceDocument, response );
-			}
+			let membershipResource:RDF.Node.Class = this.getMembershipResource( documentResource, rdfDocuments, response );
 
 			let hasMemberRelation:string = RDF.Node.Util.getPropertyURI( documentResource, NS.LDP.Predicate.hasMemberRelation );
 
@@ -395,6 +386,8 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 
 		uri = this.getRequestURI( uri );
 		this.setDefaultRequestOptions( requestOptions, NS.LDP.Class.Container );
+
+		let containerURI:string = uri;
 		if ( !! retrievalPreferences ) uri += RetrievalPreferences.Util.stringifyRetrievalPreferences( retrievalPreferences );
 
 		let containerRetrievalPreferences:HTTP.Request.ContainerRetrievalPreferences = {
@@ -416,7 +409,25 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 		}
 		HTTP.Request.Util.setContainerRetrievalPreferences( containerRetrievalPreferences, requestOptions );
 
-		return this.sendRequestForResponseWithMetadata( uri, requestOptions );
+		return HTTP.Request.Service.get( uri, requestOptions, new HTTP.JSONLDParser.Class() ).then( ( [ expandedResult, response ]:[ any, HTTP.Response.Class ] ) => {
+			let freeNodes:RDF.Node.Class[] = RDF.Node.Util.getFreeNodes( expandedResult );
+			let rdfDocuments:RDF.Document.Class[] = RDF.Document.Util.getDocuments( expandedResult );
+
+			let rdfDocument:RDF.Document.Class = this.getRDFDocument( containerURI, rdfDocuments, response );
+			if ( rdfDocument === null ) throw new HTTP.Errors.BadResponseError( "No document was returned.", response );
+
+			let containerResource:RDF.Node.Class = this.getDocumentResource( rdfDocument, response );
+			let membershipResource:RDF.Node.Class = this.getMembershipResource( containerResource, rdfDocuments, response );
+
+			rdfDocuments = (<any[]> rdfDocuments).filter( ( targetRDFDocument:RDF.Node.Class ) => {
+				return ! RDF.Node.Util.areEqual( targetRDFDocument, containerResource )
+					&& ! RDF.Node.Util.areEqual( targetRDFDocument, membershipResource )
+					;
+			} );
+
+			let resources:PersistedDocument.Class[] = this.getPersistedMetadataResources( freeNodes, rdfDocuments, response );
+			return [ resources, response ];
+		});
 	}
 
 	addMember( documentURI:string, member:Pointer.Class, requestOptions?:HTTP.Request.Options ): Promise<HTTP.Response.Class>;
@@ -780,6 +791,27 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 		HTTP.Request.Util.setPreferredInteractionModel( interactionModel, requestOptions );
 	}
 
+	private getMembershipResource( documentResource:RDF.Node.Class, rdfDocuments:RDF.Document.Class[], response:HTTP.Response.Class ):RDF.Node.Class {
+		let membershipResource:RDF.Node.Class;
+
+		let membershipResourceURI:string = RDF.Node.Util.getPropertyURI( documentResource, NS.LDP.Predicate.membershipResource );
+		if( documentResource[ "@id" ] === membershipResourceURI ) {
+			membershipResource = documentResource;
+		} else if( membershipResourceURI === null ) {
+			if( documentResource[ "@type" ].indexOf( NS.LDP.Class.BasicContainer ) !== -1 ) {
+				membershipResource = documentResource;
+			} else {
+				throw new HTTP.Errors.BadResponseError( "The document is not an ldp:BasicContainer and it doesn't contain an ldp:membershipResource triple.", response );
+			}
+		} else {
+			let membershipResourceDocument:RDF.Document.Class = this.getRDFDocument( membershipResourceURI, rdfDocuments, response );
+			if ( membershipResourceDocument === null ) throw new HTTP.Errors.BadResponseError( "The membershipResource document was not included in the response.", response );
+			membershipResource = this.getDocumentResource( membershipResourceDocument, response );
+		}
+
+		return membershipResource;
+	}
+
 	private getPersistedDocument( rdfDocument:RDF.Document.Class, response:HTTP.Response.Class ):PersistedDocument.Class {
 		let documentResource:RDF.Node.Class = this.getDocumentResource( rdfDocument, response );
 		let fragmentResources:RDF.Node.Class[] = RDF.Document.Util.getBNodeResources( rdfDocument );
@@ -853,31 +885,22 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 		return persistedDocument;
 	}
 
-	private sendRequestForResponseWithMetadata( uri:string, requestOptions:HTTP.Request.Options ):Promise<[ PersistedDocument.Class[], HTTP.Response.Class ]> {
-		return HTTP.Request.Service.get( uri, requestOptions, new HTTP.JSONLDParser.Class() ).then( ( [ expandedResult, response ]:[ any, HTTP.Response.Class ] ) => {
-			let freeNodes:RDF.Node.Class[] = RDF.Node.Util.getFreeNodes( expandedResult );
-			let rdfDocuments:RDF.Document.Class[] = RDF.Document.Util.getDocuments( expandedResult );
+	private getPersistedMetadataResources( freeNodes:RDF.Node.Class[], rdfDocuments:RDF.Document.Class[], response:HTTP.Response.Class ):PersistedDocument.Class[] {
+		let freeResources:FreeResources.Class = this.getFreeResources( freeNodes );
 
-			let freeResources:FreeResources.Class = this.getFreeResources( freeNodes );
+		let descriptionResources:LDP.ResponseMetadata.Class[] = <any> freeResources.getResources().filter( LDP.ResponseMetadata.Factory.hasRDFClass );
+		if( descriptionResources.length === 0 ) return [];
+		if( descriptionResources.length > 1 ) throw new HTTP.Errors.BadResponseError( `The response contained multiple ${ LDP.ResponseMetadata.RDF_CLASS } objects.`, response );
 
-			let descriptionResources:LDP.ResponseMetadata.Class[] = <any> freeResources.getResources().filter( resource => LDP.ResponseMetadata.Factory.hasRDFClass( resource ) );
-			if( descriptionResources.length === 0 ) return [ [], response ];
-			if( descriptionResources.length > 1 ) throw new HTTP.Errors.BadResponseError( "The response contained multiple c:ResponseMetadata objects", response );
+		rdfDocuments.forEach( rdfDocument => this.getPersistedDocument( rdfDocument, response ) );
 
-			let responseMetadata:LDP.ResponseMetadata.Class = descriptionResources[ 0 ];
-			for ( let resourceMetadata of responseMetadata.resourcesMetadata ) {
-				let document:PersistedDocument.Class = <any> resourceMetadata.resource;
-				document._etag = resourceMetadata.eTag;
-			}
+		let responseMetadata:LDP.ResponseMetadata.Class = descriptionResources[ 0 ];
+		return responseMetadata.resourcesMetadata.map( ( resourceMetadata:LDP.ResourceMetadata.Class ) => {
+			let resource:PersistedDocument.Class = <PersistedDocument.Class> resourceMetadata.resource;
+			resource._etag = resourceMetadata.eTag;
 
-			let resourcePointers:Pointer.Class[] = responseMetadata.resourcesMetadata.map( ( resourceMetadata:LDP.ResourceMetadata.Class ) => resourceMetadata.resource );
-			rdfDocuments.forEach( ( rdfDocument:RDF.Document.Class ) => {
-				if ( Utils.A.indexOf( resourcePointers, rdfDocument, ( a:Pointer.Class, b:RDF.Document.Class ) => a.id === b[ "@id" ] ) !== -1 )
-					this.getPersistedDocument( rdfDocument, response );
-			});
-
-			return [ <PersistedDocument.Class[]> resourcePointers, response ];
-		} );
+			return resource;
+		});
 	}
 
 	private getFreeResources( nodes:RDF.Node.Class[] ):FreeResources.Class {

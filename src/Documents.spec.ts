@@ -1810,9 +1810,9 @@ describe( module( "Carbon/Documents" ), ():void => {
 							}]
 						},
 						{
-							"@id": "http://example.com/${ resource }/",
+							"@id": "http://example.com/${ resource }",
 							"@graph": [{
-								"@id": "http://example.com/${ resource }/",
+								"@id": "http://example.com/${ resource }",
 								"@type": [ "http://www.w3.org/ns/ldp#BasicContainer" ],
 								"http://www.w3.org/ns/ldp#hasMemberRelation": [{
 						            "@id": "http://www.w3.org/ns/ldp#my-member"
