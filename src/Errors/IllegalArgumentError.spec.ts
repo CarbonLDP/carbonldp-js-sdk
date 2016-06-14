@@ -19,7 +19,7 @@ describe( module(
 
 	describe( clazz(
 		"Carbon.Errors.IllegalArgumentError",
-		"Error class that indicates an illegal argument was provided to in a function"
+		"Error class to indicate that a different argument of the expected was provided."
 	), ():void => {
 
 		it( isDefined(), ():void => {

@@ -69,7 +69,7 @@ describe( module( "Carbon/AccessPoints" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"create",
-			"Create a `Carbon.AccessPoint.Class` object with the parameters specified.", [
+			"Creates a `Carbon.AccessPoint.Class` object with the parameters specified.", [
 				{ name: "membershipResource", type: "Carbon.Pointer.Class" },
 				{ name: "hasMemberRelation", type: "string | Carbon.Pointer.Class" },
 				{ name: "memberOfRelation", type: "string | Carbon.Pointer.Class", optional: true }
@@ -101,7 +101,7 @@ describe( module( "Carbon/AccessPoints" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"createFrom",
-			"Create a `Carbon.AccessPoint.Class` object from the object and parameters specified.", [
+			"Creates a `Carbon.AccessPoint.Class` object from the object and parameters specified.", [
 				{ name: "object", type: "T extends Object" },
 				{ name: "membershipResource", type: "Carbon.Pointer.Class" },
 				{ name: "hasMemberRelation", type: "string | Carbon.Pointer.Class" },

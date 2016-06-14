@@ -19,7 +19,7 @@ describe( module(
 
 	describe( clazz(
 		"Carbon.Errors.IllegalActionError",
-		"Error class that indicates a illegal action"
+		"Error class to indicate that an action not allowed was attempted."
 	), ():void => {
 
 		it( isDefined(), ():void => {

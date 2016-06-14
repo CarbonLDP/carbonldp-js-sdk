@@ -41,7 +41,7 @@ import * as Utils from "./Utils";
 // TODO: Add description
 describe( module( "Carbon/Documents" ), ():void => {
 
-	describe( clazz( "Carbon.Documents", "Class that contains methods for retrieving, saving and updating documents from the server." ), ():void => {
+	describe( clazz( "Carbon.Documents", "Class that contains methods for retrieving, saving and updating documents from the CarbonLDP server." ), ():void => {
 
 		beforeEach( ():void => {
 			jasmine.Ajax.install();
@@ -58,7 +58,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 		it( hasMethod(
 			INSTANCE,
 			"get",
-			"Obtains a Document from the CarbonLDP server, returning a Promise with a `Carbon.PersistedDocument.Class` and the Response of the request.", [
+			"Retrieves the Carbon Document referred by the URI specified from the CarbonLDP server.", [
 				{ name: "uri", type: "string" },
 			],
 			{ type: "Promise<[ Carbon.PersistedDocument.Class, HTTP.Response.Class ]>" }
@@ -250,7 +250,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 		), ():void => {
 
 			it( hasSignature(
-				"Persists a child document in the CarbonLDP server, for the respective parent source.", [
+				"Persists a child document for the respective parent source.", [
 					{ name: "parentURI", type: "string" },
 					{ name: "childDocument", type: "Carbon.Document.Class" },
 					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
@@ -341,7 +341,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 			});
 
 			it( hasSignature(
-				"Persists a child document in the CarbonLDP server, for the respective parent source.", [
+				"Persists a child document for the respective parent source.", [
 					{ name: "parentURI", type: "string" },
 					{ name: "slug", type: "string" },
 					{ name: "childDocument", type: "Carbon.Document.Class" },
@@ -433,7 +433,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 			});
 
 			it( hasSignature(
-				"Persists a child document in the CarbonLDP server, for the respective parent source.", [
+				"Persists a child document for the respective parent source.", [
 					{ name: "parentURI", type: "string" },
 					{ name: "childObject", type: "Object" },
 					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
@@ -530,7 +530,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 			});
 
 			it( hasSignature(
-				"Persists a child document in the CarbonLDP server, for the respective parent source.", [
+				"Persists a child document for the respective parent source.", [
 					{ name: "parentURI", type: "string" },
 					{ name: "slug", type: "string" },
 					{ name: "childObject", type: "Object" },
@@ -630,7 +630,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 		it( hasMethod(
 			INSTANCE,
 			"listChildren",
-			"Retrieves an array of unresolved pointers that refers to all children of the container specified.", [
+			"Retrieves an array of unresolved pointers that refers to the children of the container specified.", [
 				{ name: "parentURI", type: "string", description: "URI of the document container from where to look for its children." },
 				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true }
 			],
@@ -934,7 +934,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 			}
 
 			it( hasSignature(
-				"Retrieves an array of resolved Documents that refers the all children of the container specified, or a part of them in accordance of the retrieval preferences if specified.", [
+				"Retrieves an array of resolved Documents that refers the all children of the container specified, or a part of them in accordance of the retrieval preferences specified.", [
 					{ name: "parentURI", type: "string", description: "URI of the document from where to look for its children." },
 					{ name: "retrievalPreferences", type: "Carbon.RetrievalPreferences.Class", optional: true, description: "An object that specify the retrieval preferences for the request." },
 					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Options that can be specified to change the behavior of the request." },
@@ -1158,7 +1158,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 		), ():void => {
 
 			it( hasSignature(
-				"Persists an AccessPoint in the CarbonLDP server, in the document specified.", [
+				"Persists an AccessPoint in the document specified.", [
 					{ name: "documentURI", type: "string" },
 					{ name: "accessPoint", type: "Carbon.AccessPoint.Class" },
 					{ name: "slug", type: "string", optional: true },
@@ -1231,7 +1231,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 			});
 
 			it( hasSignature(
-				"Persists an AccessPoint in the CarbonLDP server, in the document specified.", [
+				"Persists an AccessPoint in the document specified.", [
 					{ name: "accessPoint", type: "Carbon.AccessPoint.Class" },
 					{ name: "slug", type: "string", optional: true },
 					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
@@ -1306,7 +1306,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 		), ():void => {
 
 			it( hasSignature(
-				"Upload a binary data to the CarbonLDP server, creating a child for the parent specified. This signature only works in a Browser.", [
+				"Upload a binary data, creating a child for the parent specified. This signature only works in a Browser.", [
 					{ name: "parentURI", type: "string" },
 					{ name: "data", type: "Blob" },
 					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
@@ -1361,7 +1361,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 			});
 
 			it( hasSignature(
-				"Upload a binary data to the CarbonLDP server, creating a child for the parent specified. This signature only works in a Browser.", [
+				"Upload a binary data, creating a child for the parent specified. This signature only works in a Browser.", [
 					{ name: "parentURI", type: "string" },
 					{ name: "slug", type: "string" },
 					{ name: "data", type: "Blob" },
@@ -1417,7 +1417,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 			});
 
 			it( hasSignature(
-				"Upload a binary data to the CarbonLDP server, creating a child for the parent specified. This signature only works in Node.js.", [
+				"Upload a binary data, creating a child for the parent specified. This signature only works in Node.js.", [
 					{ name: "parentURI", type: "string" },
 					{ name: "data", type: "Buffer" },
 					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
@@ -1472,7 +1472,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 			});
 
 			it( hasSignature(
-				"Upload a binary data to the CarbonLDP server, creating a child for the parent specified. This signature only works in Node.js.", [
+				"Upload a binary data, creating a child for the parent specified. This signature only works in Node.js.", [
 					{ name: "parentURI", type: "string" },
 					{ name: "slug", type: "string" },
 					{ name: "data", type: "Buffer" },
@@ -2519,7 +2519,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 		it( hasMethod(
 			INSTANCE,
 			"refresh",
-			"Update the document with the data of the CarbonLDP server, if there is a newest version.", [
+			"Update the specified document with the data of the CarbonLDP server, if there is a newest version exists.", [
 				{ name: "persistedDocument", type: "Carbon.PersistedDocument.Class", description: "The persisted document to update." },
 				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true }
 			],
@@ -2756,8 +2756,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 		it( hasMethod(
 			INSTANCE,
 			"delete",
-			"Delete the resource in the CarbonLDP server referred by the URI provided.", [
-				{ name: "documentURI", type: "string", description: "The resource to delete from the server." },
+			"Delete the resource from the CarbonLDP server referred by the URI provided.", [
+				{ name: "documentURI", type: "string", description: "The resource to delete from the CarbonLDP server." },
 				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true }
 			],
 			{ type: "Promise<Carbon.HTTP.Response.Class>" }

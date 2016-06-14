@@ -52,7 +52,7 @@ describe( module( "Carbon/LDP/RemoveMemberAction" ), ():void => {
 
 	describe( clazz(
 		"Carbon.LDP.RemoveMemberAction.Factory",
-		"Factory class for LDP RemoveMemberAction objects"
+		"Factory class for `Carbon.LDP.RemoveMemberAction.Class` objects."
 	), ():void => {
 
 		it( isDefined(), ():void => {
@@ -63,7 +63,7 @@ describe( module( "Carbon/LDP/RemoveMemberAction" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"hasClassProperties",
-			"Returns true if the object has the properties to be defined as a LDP RemoveMemberAction", [
+			"Returns true if the object has the properties of a `Carbon.LDP.RemoveMemberAction.Class` object.", [
 				{ name: "resource", type: "Carbon.RDF.Node.Class" }
 			],
 			{ type: "boolean" }
@@ -87,7 +87,7 @@ describe( module( "Carbon/LDP/RemoveMemberAction" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"createDocument",
-			"Create and returns a `Carbon.Document.Class` object with a RemoveMemberAction fragment for the specified targetMembers.", [
+			"Creates and returns a `Carbon.Document.Class` object with a `Carbon.LDP.RemoveMemberAction.Class` fragment for the specified targetMembers.", [
 				{ name: "targetMembers", type: "Carbon.Pointer.Class", description: "The target members of the remove action." }
 			],
 			{ type: "Carbon.Document.Class" }

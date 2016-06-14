@@ -25,7 +25,7 @@ describe( module(
 
 	describe( clazz(
 		"Carbon.HTTP.JSONLDParser.Class",
-		"Class wrapper for native `JSON.parse` using `Promise` pattern"
+		"Wrapper class for the `expand()` function of the `jsonld` lib, using the `Promise` pattern."
 	), ():void => {
 
 		it( isDefined(), ():void => {
@@ -40,7 +40,7 @@ describe( module(
 		it( hasMethod(
 			INSTANCE,
 			"parse", [
-				{ name: "body", type: "string", description: "A JSON string to parse" }
+				{ name: "body", type: "string", description: "A JSON-LD string to parse." }
 			],
 			{ type: "Promise <Object>" }
 		), ( done ):void => {

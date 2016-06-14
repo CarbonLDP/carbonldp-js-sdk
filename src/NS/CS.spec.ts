@@ -33,7 +33,7 @@ describe( module(
 
 	describe( clazz(
 		"Carbon.NS.CS.Class",
-		"Class that contains objects defined by Carbon Security"
+		"Class that contains classes defined by Carbon Security."
 	), ():void => {
 
 		it( isDefined(), ():void => {
@@ -90,7 +90,7 @@ describe( module(
 
 	describe( clazz(
 		"Carbon.NS.CS.Predicate",
-		"Class that contains predicates defined by Carbon Security"
+		"Class that contains predicates defined by Carbon Security."
 	), ():void => {
 
 		it( isDefined(), ():void => {

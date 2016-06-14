@@ -25,7 +25,7 @@ describe( module(
 
 	describe( clazz(
 		"Carbon.HTTP.Errors.client.ForbiddenError",
-		"Error class that can be throw to indicate that the current user does not have permissions to fulfill the request"
+		"Error class to indicate that the current user doesn't have permissions to fulfill the request."
 	), ():void => {
 
 		let response: Response;

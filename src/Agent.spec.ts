@@ -141,7 +141,7 @@ describe( module( "Carbon/Agent" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"create",
-			"Create a `Carbon.Agent.Class` object with the name and email specified.", [
+			"Creates a `Carbon.Agent.Class` object with the name and email specified.", [
 				{ name: "name", type: "string" },
 				{ name: "email", type: "string" }
 			],
@@ -165,7 +165,7 @@ describe( module( "Carbon/Agent" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"createFrom",
-			"Create a `Carbon.Agent.Class` object from the object and parameters specified.", [
+			"Creates a `Carbon.Agent.Class` object from the object and parameters specified.", [
 				{ name: "object", type: "T extends Object" },
 				{ name: "name", type: "string" },
 				{ name: "email", type: "string" }

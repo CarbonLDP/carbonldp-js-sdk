@@ -33,7 +33,7 @@ describe( module(
 
 	describe( clazz(
 		"Carbon.NS.CP.Predicate",
-		"Class that contains predicates defined by Carbon Patch"
+		"Class that contains predicates defined by Carbon Patch."
 	), ():void => {
 
 		it( isDefined(), ():void => {

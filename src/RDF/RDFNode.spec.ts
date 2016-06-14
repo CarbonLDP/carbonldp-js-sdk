@@ -20,7 +20,7 @@ describe( module( "Carbon/RDF/RDFNode" ), ():void => {
 
 	describe( clazz(
 		"Carbon.RDF.RDFNode.Factory",
-		"Class Factory to manage creation and management of RDFNode objects"
+		"Factory class `Carbon.RDF.RDFNode.Class` objects."
 	), ():void => {
 
 		it( isDefined(), ():void => {
@@ -31,7 +31,7 @@ describe( module( "Carbon/RDF/RDFNode" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"is",
-			"Returns true when an object can be called an RDFNode", [
+			"Returns true if the object provided is considered a `Carbon.RDF.RDFNode.Class` object.", [
 				{ name: "object", type: "Object" }
 			],
 			{ type: "boolean" }
@@ -52,7 +52,7 @@ describe( module( "Carbon/RDF/RDFNode" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"create",
-			"Create a RDFNode object providing an URI string", [
+			"Creates a `Carbon.RDF.RDFNode.Class` object with the URI provided.", [
 				{ name: "uri", type: "string" }
 			],
 			{ type: "Carbon.RDF.RDFNode.Class" }
@@ -69,7 +69,7 @@ describe( module( "Carbon/RDF/RDFNode" ), ():void => {
 
 	describe( clazz(
 		"Carbon.RDF.RDFNode.Util",
-		"Class with useful functions to manage RDFNode objects"
+		"Class with useful functions to manage `Carbon.RDF.RDFNode.Class` objects."
 	), ():void => {
 
 		it( isDefined(), ():void => {
@@ -80,7 +80,7 @@ describe( module( "Carbon/RDF/RDFNode" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"areEqual",
-			"Returns true if the objects represent the same resource", [
+			"Returns true if the objects represent the same resource.", [
 				{ name: "node1", type: "Carbon.RDF.RDFDocument.Class" },
 				{ name: "node2", type: "Carbon.RDF.RDFDocument.Class" }
 			],
@@ -103,7 +103,7 @@ describe( module( "Carbon/RDF/RDFNode" ), ():void => {
 			STATIC,
 			"getPropertyURI",
 			"Returns the URI from a property resource in the RDFNode object.\n" +
-			"Returns null if the property not exists or the URI is not found", [
+			"Returns `null` if the property not exists or the URI is not found.", [
 				{ name: "node", type: "Carbon.RDF.RDFNode.Class" },
 				{ name: "predicate", type: "string" }
 			],

@@ -37,7 +37,7 @@ describe( module( "Carbon/LDP/BasicContainer" ), ():void => {
 
 	describe( clazz(
 		"Carbon.LDP.BasicContainer.Factory",
-		"Factory class for LDP BasicContainer objects"
+		"Factory class for `Carbon.LDP.BasicContainer.Class` objects."
 	), ():void => {
 
 		it( isDefined(), ():void => {
@@ -51,7 +51,7 @@ describe( module( "Carbon/LDP/BasicContainer" ), ():void => {
 		), ():void => {
 
 			it( hasSignature(
-				"Returns true if the Pointer provided is an LDP BasicContainer.", [
+				"Returns true if the Pointer provided has the type of a BasicContainer.", [
 					{ name: "pointer", type: "Carbon.Pointer.Class" }
 				],
 				{ type: "boolean" }
@@ -132,7 +132,7 @@ describe( module( "Carbon/LDP/BasicContainer" ), ():void => {
 			});
 
 			it( hasSignature(
-				"Returns true if the Pointer provided is an LDP BasicContainer.", [
+				"Returns true if the Pointer provided has the type of a BasicContainer.", [
 					{ name: "pointer", type: "Carbon.Pointer.Class" }
 				],
 				{ type: "boolean" }

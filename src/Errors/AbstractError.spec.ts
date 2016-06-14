@@ -18,8 +18,8 @@ import {
 describe( module( "Carbon/Errors/AbstractError" ), function ():void {
 
 	describe( clazz(
-			"Carbon.Errors.AbstractError",
-			""
+		"Carbon.Errors.AbstractError",
+		"Class that works as template for the custom errors in the SDK."
 	), function():void {
 
 		class DummyError extends AbstractError {}
@@ -30,11 +30,9 @@ describe( module( "Carbon/Errors/AbstractError" ), function ():void {
 			expect( Utils.isFunction( AbstractError ) ).toBe( true );
 		});
 
-		it( hasConstructor(
-				[
-					{ name: "message", type: "string" }
-				]
-		), function():void {
+		it( hasConstructor( [
+			{ name: "message", type: "string" }
+		] ), function():void {
 			let exception:AbstractError = new DummyError( "This is the message" );
 			expect( exception instanceof Error ).toBe( true );
 			expect( exception instanceof AbstractError ).toBe( true );

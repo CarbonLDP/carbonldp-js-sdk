@@ -37,7 +37,7 @@ describe( module( "Carbon/SPARQL/Service" ), ():void => {
 		expect( Utils.isObject( Service ) ).toEqual( true );
 	});
 
-	describe( clazz( "Carbon.SPARQL.Service.Class", "Executes SPARQL queries and updates" ), ():void => {
+	describe( clazz( "Carbon.SPARQL.Service.Class", "Executes SPARQL queries and updates." ), ():void => {
 
 		beforeEach( function ():void {
 			jasmine.Ajax.install();
@@ -52,7 +52,7 @@ describe( module( "Carbon/SPARQL/Service" ), ():void => {
 			expect( Utils.isFunction( Service.Class ) ).toEqual( true );
 		});
 
-		it( hasMethod( STATIC, "executeRawASKQuery", "Executes an ASK Query and returns a raw application/sparql-results+json object", [
+		it( hasMethod( STATIC, "executeRawASKQuery", "Executes an ASK Query and returns a raw application/sparql-results+json object.", [
 			{ name: "url", type: "string" },
 			{ name: "askQuery", type: "string" },
 			{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
@@ -106,7 +106,7 @@ describe( module( "Carbon/SPARQL/Service" ), ():void => {
 			Promise.all( promises ).then( done, done.fail );
 		});
 
-		it( hasMethod( STATIC, "executeASKQuery", "Executes an ASK Query and returns a boolean", [
+		it( hasMethod( STATIC, "executeASKQuery", "Executes an ASK Query and returns a boolean.", [
 			{ name: "url", type: "string" },
 			{ name: "askQuery", type: "string" },
 			{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
@@ -152,7 +152,7 @@ describe( module( "Carbon/SPARQL/Service" ), ():void => {
 			Promise.all( promises ).then( done, done.fail );
 		});
 
-		it( hasMethod( STATIC, "executeSELECTQuery", "Executes a SELECT Query and parses the results", [
+		it( hasMethod( STATIC, "executeSELECTQuery", "Executes a SELECT Query and parses the results.", [
 			{ name: "url", type: "string" },
 			{ name: "selectQuery", type: "string" },
 			{ name: "pointerLibrary", type: "Carbon.Pointer.Library" },
@@ -316,7 +316,7 @@ describe( module( "Carbon/SPARQL/Service" ), ():void => {
 			Promise.all( promises ).then( done, done.fail );
 		});
 
-		it( hasMethod( STATIC, "executeRawSELECTQuery", "Executes a SELECT Query and returns a raw application/sparql-results+json object", [
+		it( hasMethod( STATIC, "executeRawSELECTQuery", "Executes a SELECT Query and returns a raw application/sparql-results+json object.", [
 			{ name: "url", type: "string" },
 			{ name: "selectQuery", type: "string" },
 			{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
@@ -455,7 +455,7 @@ describe( module( "Carbon/SPARQL/Service" ), ():void => {
 			Promise.all( promises ).then( done, done.fail );
 		});
 
-		it( hasMethod( STATIC, "executeRawCONSTRUCTQuery", "Executes a CONSTRUCT Query and returns a string with the resulting model", [
+		it( hasMethod( STATIC, "executeRawCONSTRUCTQuery", "Executes a CONSTRUCT Query and returns a string with the resulting model.", [
 			{ name: "url", type: "string" },
 			{ name: "constructQuery", type: "string" },
 			{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
@@ -548,7 +548,7 @@ describe( module( "Carbon/SPARQL/Service" ), ():void => {
 			Promise.all( promises ).then( done, done.fail );
 		});
 
-		it( hasMethod( STATIC, "executeRawDESCRIBEQuery", "Executes a DESCRIBE Query and returns a string with the resulting model", [
+		it( hasMethod( STATIC, "executeRawDESCRIBEQuery", "Executes a DESCRIBE Query and returns a string with the resulting model.", [
 			{ name: "url", type: "string" },
 			{ name: "describeQuery", type: "string" },
 			{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },

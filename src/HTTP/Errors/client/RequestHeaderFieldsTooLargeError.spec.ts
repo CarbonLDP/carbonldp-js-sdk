@@ -25,7 +25,7 @@ describe( module(
 
 	describe( clazz(
 		"Carbon.HTTP.Errors.client.RequestHeaderFieldsTooLargeError",
-		"Error class that can be throw to indicate that the server is no able to process the request because its header fields are too large"
+		"Error class to indicate that the server is no able to process the request because its header fields are too large."
 	), ():void => {
 
 		let response: Response;

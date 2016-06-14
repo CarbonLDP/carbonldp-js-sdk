@@ -53,7 +53,7 @@ describe( module( "Carbon/LDP/RDFSource" ), ():void => {
 
 	describe( clazz(
 		"Carbon.LDP.RDFSource.Factory",
-		"Factory class for RDFSource objects"
+		"Factory class for `Carbon.LDP.RDFSource.Class` objects."
 	), ():void => {
 
 		it( isDefined(), ():void => {

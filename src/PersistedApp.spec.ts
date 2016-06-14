@@ -24,7 +24,7 @@ describe( module( "Carbon/PersistedApp" ), ():void => {
 
 	describe( clazz(
 		"Carbon.PersistedApp.Factory",
-		"Factory class for `Carbon.PersistedApp.Class` objects"
+		"Factory class for `Carbon.PersistedApp.Class` objects."
 	), ():void => {
 
 		it( isDefined(), ():void => {
@@ -35,7 +35,7 @@ describe( module( "Carbon/PersistedApp" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"hasClassProperties",
-			"Returns true if the object provided has the properties that defines a `Carbon.PersistedApp.Class` object", [
+			"Returns true if the object provided has the properties of a `Carbon.PersistedApp.Class` object.", [
 				{ name: "resource", type: "Object" }
 			],
 			{ type: "boolean" }
@@ -59,7 +59,7 @@ describe( module( "Carbon/PersistedApp" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"is",
-			"Returns true if the object provided is considered as an `Carbon.PersistedApp.Class` object", [
+			"Returns true if the object provided is considered a `Carbon.PersistedApp.Class` object.", [
 				{ name: "object", type: "Object" }
 			],
 			{ type: "boolean" }

@@ -25,7 +25,7 @@ describe( module(
 
 	describe( clazz(
 		"Carbon.HTTP.Errors.UnknownError",
-		"Error class that defines any error that can not be identified"
+		"Error class that defines any error that can not be identified."
 	), ():void => {
 
 		let response: Response;

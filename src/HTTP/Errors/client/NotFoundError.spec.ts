@@ -25,7 +25,7 @@ describe( module(
 
 	describe( clazz(
 		"Carbon.HTTP.Errors.client.NotFoundError",
-		"Error class that can be throw to indicate that the resource was not found"
+		"Error class tto indicate that the resource was not found."
 	), ():void => {
 
 		let response: Response;

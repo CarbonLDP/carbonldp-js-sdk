@@ -22,7 +22,7 @@ describe( module( "Carbon/RDF/URI" ), ():void => {
 		expect( Utils.isObject( URI ) ).toBe( true );
 	});
 
-	describe( clazz( "Carbon.RDF.URI.Class", "Wrapper for an URI string value" ), ():void => {
+	describe( clazz( "Carbon.RDF.URI.Class", "Wrapper class for an URI string value." ), ():void => {
 
 		it( isDefined(), ():void => {
 			expect( URI.Class ).toBeDefined();
@@ -30,7 +30,7 @@ describe( module( "Carbon/RDF/URI" ), ():void => {
 		});
 
 		it( hasConstructor( [
-			{ name: "stringValue", type: "string", description: "The string that represents an URI" }
+			{ name: "stringValue", type: "string", description: "The string that represents the URI." }
 		]), ():void => {
 			let anURI = new URI.Class( "http://example.com/resource/" );
 
@@ -41,7 +41,7 @@ describe( module( "Carbon/RDF/URI" ), ():void => {
 		it( hasMethod(
 			INSTANCE,
 			"toString",
-			"Returns a string that represents the URI of the class",
+			"Returns a string that represents the URI of the class.",
 			{ type: "string" }
 		), ():void => {
 			let stringURI = "http://example.com/resource/";
@@ -56,7 +56,7 @@ describe( module( "Carbon/RDF/URI" ), ():void => {
 
 	});
 
-	describe( clazz( "Carbon.RDF.URI.Util", "CLass with useful functions for managing URI's" ), ():void => {
+	describe( clazz( "Carbon.RDF.URI.Util", "Class with useful functions for managing URI strings." ), ():void => {
 
 		it( isDefined(), ():void => {
 			expect( URI.Util ).toBeDefined();
@@ -84,7 +84,7 @@ describe( module( "Carbon/RDF/URI" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"hasProtocol",
-			"Returns true if the URI provided has a protocol", [
+			"Returns true if the URI provided has a protocol.", [
 				{ name: "uri", type: "string" }
 			],
 			{ type: "boolean" }
@@ -106,7 +106,7 @@ describe( module( "Carbon/RDF/URI" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"isAbsolute",
-			"Returns true if the URI provided is absolute", [
+			"Returns true if the URI provided is absolute.", [
 				{ name: "uri", type: "string" }
 			],
 			{ type: "boolean" }
@@ -127,7 +127,7 @@ describe( module( "Carbon/RDF/URI" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"isRelative",
-			"Returns true if the URI provided is relative", [
+			"Returns true if the URI provided is relative.", [
 				{ name: "uri", type: "string" }
 			],
 			{ type: "boolean" }
@@ -148,7 +148,7 @@ describe( module( "Carbon/RDF/URI" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"isBNodeID",
-			"Returns true if the URI provided reference to a Blank Node", [
+			"Returns true if the URI provided reference to a BlankNode.", [
 				{ name: "uri", type: "string" }
 			],
 			{ type: "boolean" }
@@ -187,7 +187,7 @@ describe( module( "Carbon/RDF/URI" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"isPrefixed",
-			"Returns true if the URI provided has a prefix", [
+			"Returns true if the URI provided has a prefix.", [
 				{ name: "uri", type: "string" }
 			],
 			{ type: "boolean" }
@@ -209,7 +209,7 @@ describe( module( "Carbon/RDF/URI" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"isFragmentOf",
-			"Returns true if the first URI is a fragment od the second URI provided", [
+			"Returns true if the first URI is a fragment od the second URI provided.", [
 				{ name: "fragmentURI", type: "string" },
 				{ name: "uri", type: "string" }
 			],
@@ -237,7 +237,7 @@ describe( module( "Carbon/RDF/URI" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"isBaseOf",
-			"Return true if the first URI is parent of the second URI provided", [
+			"Return true if the first URI is parent of the second URI provided.", [
 				{ name: "baseURI", type: "string" },
 				{ name: "uri", type: "string" }
 			],
@@ -277,7 +277,7 @@ describe( module( "Carbon/RDF/URI" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"getRelativeURI",
-			"Returns the relative URI from a base URI provided", [
+			"Returns the relative URI from a base URI provided.", [
 				{ name: "absoluteURI", type: "string" },
 				{ name: "base", type: "string" }
 			],
@@ -300,7 +300,7 @@ describe( module( "Carbon/RDF/URI" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"getDocumentURI",
-			"Returns the URI that just reference to the Document of the URI provided", [
+			"Returns the URI that just reference to the Document of the URI provided.", [
 				{ name: "uri", type: "string" }
 			]
 		), ():void => {
@@ -328,7 +328,7 @@ describe( module( "Carbon/RDF/URI" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"getFragment",
-			"Returns the name of the fragment in the URI provided. If no fragment exists in the URI, null will be returned", [
+			"Returns the name of the fragment in the URI provided. If no fragment exists in the URI, null will be returned.", [
 				{ name: "uri", type: "string" }
 			],
 			{ type: "string" }
@@ -386,7 +386,7 @@ describe( module( "Carbon/RDF/URI" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"resolve",
-			"Return a URI formed from a parent URI and a relative child URI", [
+			"Return a URI formed from a parent URI and a relative child URI.", [
 				{ name: "parentURI", type: "string" },
 				{ name: "childURI",  type: "string" }
 			],
@@ -442,7 +442,7 @@ describe( module( "Carbon/RDF/URI" ), ():void => {
 		), ():void => {
 
 			it( hasSignature(
-				"Replace a base of a URI with the prefix provided. If the prefix can not be resolved, the URI provided will be returned", [
+				"Replace a base of a URI with the prefix provided. If the prefix can not be resolved, the URI provided will be returned.", [
 					{ name: "uri", type: "string" },
 					{ name: "prefix", type: "string" },
 					{ name: "prefixURI", type: "string" }
@@ -469,7 +469,7 @@ describe( module( "Carbon/RDF/URI" ), ():void => {
 			});
 
 			it( hasSignature(
-				"Replace the base of a URI with a prefix in accordance with the ObjectSchema provided. If the prefix can not be resolved, the URI provided will be returned", [
+				"Replace the base of a URI with a prefix in accordance with the ObjectSchema provided. If the prefix can not be resolved, the URI provided will be returned.", [
 					{ name: "uri", type: "string" },
 					{ name: "objectSchema", type: "Carbon.ObjectSchema.DigestedObjectSchema" }
 				],

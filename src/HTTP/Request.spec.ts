@@ -31,7 +31,7 @@ describe( module( "Carbon/HTTP/Request" ), function ():void {
 
 	describe( clazz(
 		"Carbon.HTTP.Request.Service",
-		"Class that have functions to manage HTTP requests"
+		"Class with functions to easily manage HTTP requests."
 	), ():void => {
 
 		it( isDefined(), ():void => {
@@ -99,7 +99,7 @@ describe( module( "Carbon/HTTP/Request" ), function ():void {
 		it( hasMethod(
 			STATIC,
 			"send",
-			"Generic send method, to be used by the others methods in the class", [
+			"Generic send method, to be used by the others methods in the class.", [
 				{ name: "url", type: "string" },
 				{ name: "body", type: "string" },
 				{ name: "options", type: "object" }
@@ -214,7 +214,7 @@ describe( module( "Carbon/HTTP/Request" ), function ():void {
 		), ():void => {
 
 			it( hasSignature(
-				"Simple get request", [
+				"Simple get request.", [
 					{ name: "url", type: "string" },
 					{ name: "options", type: "object", optional: true, default: "{ sendCredentialsOnCORS: true }" }
 				],
@@ -263,7 +263,7 @@ describe( module( "Carbon/HTTP/Request" ), function ():void {
 			});
 
 			it( hasSignature(
-				"Get request with specified parser", [
+				"Get request with specified response parser.", [
 					{ name: "url", type: "string" },
 					{ name: "options", type: "object", optional: true, default: "{ sendCredentialsOnCORS: true }" },
 					{ name: "parser", type: "Carbon.HTTP.Parser<T>", optional: true }
@@ -326,7 +326,7 @@ describe( module( "Carbon/HTTP/Request" ), function ():void {
 		), ():void => {
 
 			it( hasSignature(
-				"Simple post request", [
+				"Simple post request.", [
 					{ name: "url", type: "string" },
 					{ name: "body", type: "string" },
 					{ name: "options", type: "object", optional: true, default: "{ sendCredentialsOnCORS: true }" }
@@ -376,7 +376,7 @@ describe( module( "Carbon/HTTP/Request" ), function ():void {
 			});
 
 			it( hasSignature(
-				"Post request with specified parser", [
+				"Post request with specified response parser.", [
 					{ name: "url", type: "string" },
 					{ name: "options", type: "object", optional: true, default: "{ sendCredentialsOnCORS: true }" },
 					{ name: "parser", type: "Carbon.HTTP.Parser<T>", optional: true }
@@ -439,7 +439,7 @@ describe( module( "Carbon/HTTP/Request" ), function ():void {
 		), ():void => {
 
 			it( hasSignature(
-				"Simple put request", [
+				"Simple put request.", [
 					{ name: "url", type: "string" },
 					{ name: "body", type: "string" },
 					{ name: "options", type: "object", optional: true, default: "{ sendCredentialsOnCORS: true }" }
@@ -489,7 +489,7 @@ describe( module( "Carbon/HTTP/Request" ), function ():void {
 			});
 
 			it( hasSignature(
-				"Put request with specified parser", [
+				"Put request with specified response parser.", [
 					{ name: "url", type: "string" },
 					{ name: "options", type: "object", optional: true, default: "{ sendCredentialsOnCORS: true }" },
 					{ name: "parser", type: "Carbon.HTTP.Parser<T>", optional: true }
@@ -552,7 +552,7 @@ describe( module( "Carbon/HTTP/Request" ), function ():void {
 		), ():void => {
 
 			it( hasSignature(
-				"Simple patch request", [
+				"Simple patch request.", [
 					{ name: "url", type: "string" },
 					{ name: "body", type: "string" },
 					{ name: "options", type: "object", optional: true, default: "{ sendCredentialsOnCORS: true }" }
@@ -602,7 +602,7 @@ describe( module( "Carbon/HTTP/Request" ), function ():void {
 			});
 
 			it( hasSignature(
-				"Patch request with specified parser", [
+				"Patch request with specified response parser.", [
 					{ name: "url", type: "string" },
 					{ name: "options", type: "object", optional: true, default: "{ sendCredentialsOnCORS: true }" },
 					{ name: "parser", type: "Carbon.HTTP.Parser<T>", optional: true }
@@ -665,7 +665,7 @@ describe( module( "Carbon/HTTP/Request" ), function ():void {
 		), ():void => {
 
 			it( hasSignature(
-				"Simple delete request", [
+				"Simple delete request.", [
 					{ name: "url", type: "string" },
 					{ name: "body", type: "string" },
 					{ name: "options", type: "object", optional: true, default: "{ sendCredentialsOnCORS: true }" }
@@ -715,7 +715,7 @@ describe( module( "Carbon/HTTP/Request" ), function ():void {
 			});
 
 			it( hasSignature(
-				"Delete request with specified parser", [
+				"Delete request with specified response parser.", [
 					{ name: "url", type: "string" },
 					{ name: "options", type: "object", optional: true, default: "{ sendCredentialsOnCORS: true }" },
 					{ name: "parser", type: "Carbon.HTTP.Parser<T>", optional: true }
@@ -772,7 +772,7 @@ describe( module( "Carbon/HTTP/Request" ), function ():void {
 
 
 			it( hasSignature(
-				"Simple delete request", [
+				"Simple delete request.", [
 					{ name: "url", type: "string" },
 					{ name: "options", type: "object", optional: true, default: "{ sendCredentialsOnCORS: true }" }
 				],
@@ -821,7 +821,7 @@ describe( module( "Carbon/HTTP/Request" ), function ():void {
 			});
 
 			it( hasSignature(
-				"Delete request with specified parser", [
+				"Delete request with specified response parser.", [
 					{ name: "url", type: "string" },
 					{ name: "options", type: "object", optional: true, default: "{ sendCredentialsOnCORS: true }" },
 					{ name: "parser", type: "Carbon.HTTP.Parser<T>", optional: true }
@@ -911,7 +911,7 @@ describe( module( "Carbon/HTTP/Request" ), function ():void {
 
 	describe( clazz(
 		"Carbon.HTTP.Request.Util",
-		"Useful functions to manage the options object of a request"
+		"Class with useful functions to manage the options object of a request."
 	), ():void => {
 		let options:Request.Options,
 			optionsWithHeaders:Request.Options;
@@ -935,7 +935,7 @@ describe( module( "Carbon/HTTP/Request" ), function ():void {
 		it( hasMethod(
 			STATIC,
 			"getHeader",
-			"Returns the header object of a header-name inside an options object request. Returns `undefined` if the header not exists. If `initialize` flag is provided with true, a empty header will be created even if it already exits", [
+			"Returns the header object of a header-name inside an options object request. Returns `undefined` if the header not exists. If `initialize` flag is provided with true, a empty header will be created even if it already exits.", [
 				{ name: "headerName", type: "string" },
 				{ name: "requestOptions", type: "Object" },
 				{ name: "initialize", type: "boolean", optional: true, default: "false" }
@@ -959,7 +959,7 @@ describe( module( "Carbon/HTTP/Request" ), function ():void {
 		it( hasMethod(
 		STATIC,
 		"setAcceptHeader",
-		"Set an Accept header in an options object request", [
+		"Set an Accept header in an options object request.", [
 		{ name: "accept", type: "string" },
 		{ name: "requestOptions", type: "Object" }
 		], {
@@ -980,7 +980,7 @@ describe( module( "Carbon/HTTP/Request" ), function ():void {
 		it( hasMethod(
 			STATIC,
 			"setContentTypeHeader",
-			"Set an Content-Type header in an options object request", [
+			"Set a Content-Type header in an options object request.", [
 				{ name: "contentType", type: "string" },
 				{ name: "requestOptions", type: "Object" }
 			], {
@@ -1001,7 +1001,7 @@ describe( module( "Carbon/HTTP/Request" ), function ():void {
 		it( hasMethod(
 			STATIC,
 			"setIfMatchHeader",
-			"Set a If-Match header in an options object request", [
+			"Set an If-Match header in an options object request.", [
 				{ name: "etag", type: "string" },
 				{ name: "requestOptions", type: "Object" }
 			], {
@@ -1022,7 +1022,7 @@ describe( module( "Carbon/HTTP/Request" ), function ():void {
 		it( hasMethod(
 			STATIC,
 			"setPreferredInteractionModel",
-			"Set a Prefer header with `rel=interaction-model` in an options object request", [
+			"Set a Prefer header with `rel=interaction-model` in an options object request.", [
 				{ name: "interactionModelURI", type: "string" },
 				{ name: "requestOptions", type: "Object" }
 			], {
@@ -1043,7 +1043,7 @@ describe( module( "Carbon/HTTP/Request" ), function ():void {
 		it( hasMethod(
 			STATIC,
 			"setSlug",
-			"Set a Slug header in an options object request", [
+			"Set a Slug header in an options object request.", [
 				{ name: "slug", type: "string" },
 				{ name: "requestOptions", type: "Object" }
 			], {
@@ -1064,7 +1064,7 @@ describe( module( "Carbon/HTTP/Request" ), function ():void {
 		it( hasMethod(
 			STATIC,
 			"setContainerRetrievalPreferences",
-			"Set a Prefer header with `return=representation` in an options object request", [
+			"Set a Prefer header with `return=representation` in an options object request.", [
 				{ name: "preference", type: "Carbon.HTTP.Request.ContainerRetrievalPreferences" },
 				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options" },
 				{ name: "returnRepresentation", type: "boolean", optional: true, description: "If set to true, add `return=representation;` before include and/or omit. Default value is set to `true`." }

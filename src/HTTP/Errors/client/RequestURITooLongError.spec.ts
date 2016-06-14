@@ -25,7 +25,7 @@ describe( module(
 
 	describe( clazz(
 		"Carbon.HTTP.Errors.client.RequestURITooLongError",
-		"Error class that can be throw to indicate that the server is no able to process the request because its URI is too long"
+		"Error class to indicate that the server is no able to process the request because the URI is too long."
 	), ():void => {
 
 		let response: Response;

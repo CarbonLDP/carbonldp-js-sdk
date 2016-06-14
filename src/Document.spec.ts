@@ -112,7 +112,7 @@ describe( module( "Carbon/Document" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"is",
-			"Returns true if the object is considered a `Carbon.Document.Class` object.", [
+			"Returns true if the object provided is considered a `Carbon.Document.Class` object.", [
 				{ name: "object", type: "Object" }
 			],
 			{ type: "boolean" }
@@ -482,7 +482,7 @@ describe( module( "Carbon/Document" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"decorate",
-			"Decorate the object provided with the properties and methods of a `Carbon.Document.Class` object.", [
+			"Decorates the object provided with the properties and methods of a `Carbon.Document.Class` object.", [
 				{ name: "object", type: "T extends Object" }
 			],
 			{ type: "T & Carbon.Document.Class" }

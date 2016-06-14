@@ -29,7 +29,7 @@ describe( module( "Carbon/RDF/Document" ), ():void => {
 
 	describe( clazz(
 		"Carbon.RDF.Document.Factory",
-		"Class Factory to manage creation and management of RDFDocument objects"
+		"Factory class for `Carbon.RDF.Document.Class` objects."
 	), ():void => {
 
 		it( isDefined(), ():void => {
@@ -40,7 +40,7 @@ describe( module( "Carbon/RDF/Document" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"is",
-			"Returns true if the object is an RDFDocument object", [
+			"Returns true if the object is a `Carbon.RDF.Document.Class` object.", [
 				{ name: "object", type: "Object" }
 			],
 			{ type: "boolean" }
@@ -77,7 +77,7 @@ describe( module( "Carbon/RDF/Document" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"create",
-			"Return an RDFDocument object created with the parameters provided", [
+			"Returns a `Carbon.RDF.Document.Class` object created with the parameters provided.", [
 				{ name: "resources", type: "Carbon.RDF.RDFNode.Class[]" },
 				{ name: "uri", type: "string", optional: true }
 			],
@@ -123,7 +123,7 @@ describe( module( "Carbon/RDF/Document" ), ():void => {
 
 	describe( clazz(
 		"Carbon.RDF.Document.Util",
-		"Class with useful functions to manage RDF Documents"
+		"Class with useful functions to manage `Carbon.RDF.Document.Class` objects."
 	), ():void => {
 		let document:RDFDocument.Class;
 		let node:RDFNode.Class, fragment:RDFNode.Class, bNode:RDFNode.Class;
@@ -185,7 +185,7 @@ describe( module( "Carbon/RDF/Document" ), ():void => {
 
 			it( hasSignature(
 				"Returns an array of with the object provided, if it is an RDF Document.", [
-					{ name: "object", type: "Object"}
+					{ name: "object", type: "Object" }
 				],
 				{ type: "Carbon.RDF.Document.Class[]" }
 			), ():void => {
@@ -553,7 +553,7 @@ describe( module( "Carbon/RDF/Document" ), ():void => {
 
 	describe( clazz(
 		"Carbon.RDF.Document.Parser",
-		"Async class for parse a JSON-LD string to an array of RDFDocuments"
+		"Class for parse a JSON-LD string to an array of RDFDocuments."
 	), ():void => {
 		let compactedObject = {
 			"@context": {
@@ -636,7 +636,7 @@ describe( module( "Carbon/RDF/Document" ), ():void => {
 		it( hasMethod(
 			INSTANCE,
 			"parse",
-			"Parse the a JSON-LD string to an array of RDFDocuments", [
+			"Parse the a JSON-LD string to an array of RDFDocuments.", [
 				{ name: "input", type: "string" }
 			],
 			{ type: "Promise<any>" }

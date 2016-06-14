@@ -25,7 +25,7 @@ describe( module(
 
 	describe( clazz(
 		"Carbon.HTTP.Errors.client.PreconditionFailedError",
-		"Error class that can be throw to indicate that the precondition header was resolved to false"
+		"Error class to indicate that the precondition header was resolved to false."
 	), ():void => {
 
 		let response: Response;

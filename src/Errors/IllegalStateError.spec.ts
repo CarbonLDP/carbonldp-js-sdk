@@ -21,7 +21,7 @@ describe( module( "Carbon/Errors/IllegalStateError" ), function ():void {
 
 	describe( clazz(
 		"Carbon.Errors.IllegalStateError",
-		"Error class that can be thrown to show an illegal state, meaning an state that the application is not supposed to reach."
+		"Error class to indicate that a task can't be completed because the lack of pre-required configuration or execution of previous tasks."
 	), function():void {
 		it( isDefined(), function():void {
 			expect( IllegalStateError ).toBeDefined();

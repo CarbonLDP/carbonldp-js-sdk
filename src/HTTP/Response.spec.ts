@@ -43,7 +43,7 @@ describe( module(
 
 	describe( clazz(
 		"Carbon.HTTP.Response.Class",
-		"Class that represents an HTTP Response"
+		"Class that represents an HTTP Response."
 	), ():void => {
 
 		beforeAll( ():void => {
@@ -63,7 +63,7 @@ describe( module(
 		describe( constructor(), ():void => {
 
 			it( hasSignature(
-				"Signature that only works when working in a Browser.", [
+				"Signature that only works in a Browser.", [
 				{ name: "request", type: "XMLHttpRequest" }
 			]), ( done:{ ():void, fail:() => void } ):void => {
 
@@ -78,7 +78,7 @@ describe( module(
 			});
 
 			it( hasSignature(
-				"Signature that only works when working in Node.js.", [
+				"Signature that only works in Node.js.", [
 				{ name: "request", type: "ClientRequest" },
 				{ name: "data", type: "string" },
 				{ name: "response", type: "IncomingMessage" }
@@ -101,7 +101,7 @@ describe( module(
 			INSTANCE,
 			"status",
 			"number",
-			"The status code returned by the request"
+			"The status code returned by the request."
 		), ( done:{ ():void, fail:() => void } ):void => {
 
 			createResponse( ( response:Response.Class ) => {
@@ -120,7 +120,7 @@ describe( module(
 			INSTANCE,
 			"data",
 			"string",
-			"The body returned by the request"
+			"The raw body returned by the request."
 		), ( done:{ ():void, fail:() => void } ):void => {
 
 			createResponse( ( response:Response.Class ) => {
@@ -138,7 +138,7 @@ describe( module(
 			INSTANCE,
 			"headers",
 			"Map<string, Carbon.HTTP.Header.Class>",
-			"A map object containing the headers returned by the request"
+			"A map object containing the headers returned by the request."
 		), ( done:{ ():void, fail:() => void } ):void => {
 
 			createResponse( ( response:Response.Class ) => {
@@ -183,7 +183,7 @@ describe( module(
 		it( hasMethod(
 			INSTANCE,
 			"getHeader",
-			"Return the Header object referred by the name provided.", [
+			"Return the Header object referred by the name specified.", [
 				{ name: "name", type: "string" }
 			],
 			{ type: "Carbon.HTTP.Header.Class" }
@@ -239,7 +239,7 @@ describe( module(
 
 	describe( clazz(
 		"Carbon.HTTP.Response.Util",
-		"Class with useful methods to use with a `Carbon.HTTP.Response.Class` object"
+		"Class with useful functions to manage `Carbon.HTTP.Response.Class` objects."
 	), ():void => {
 
 		beforeAll( ():void => {
@@ -260,7 +260,7 @@ describe( module(
 		it( hasMethod(
 			STATIC,
 			"getETag",
-			"Return the ETag string header of a `Carbon.HTTP.Response.Class` object. Returns null if no ETag exists", [
+			"Return the ETag header of a `Carbon.HTTP.Response.Class` object. Returns null if no ETag exists.", [
 				{ name: "response", type: "Carbon.HTTP.Response.Class" }
 			],
 			{ type: "string" }

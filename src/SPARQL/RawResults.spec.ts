@@ -21,7 +21,7 @@ describe( module( "Carbon/SPARQL/RawResults" ), ():void => {
 
 	describe( clazz(
 		"Carbon.SPARQL.RawResults",
-		"Class where specifies the types a SPARQL query result can be"
+		"Class that specifies the types a SPARQL query result can be."
 	), ():void => {
 
 		it( isDefined(), ():void => {
@@ -66,7 +66,7 @@ describe( module( "Carbon/SPARQL/RawResults" ), ():void => {
 
 	describe( clazz(
 		"Carbon.SPARQL.RawResults.Factory",
-		"Factory class for RawResults objects"
+		"Factory class for `Carbon.SPARQL.RawResults.Class` objects."
 	), ():void => {
 
 		it( isDefined(), ():void => {
@@ -77,7 +77,7 @@ describe( module( "Carbon/SPARQL/RawResults" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"hasClassProperties",
-			"Returns true if the object provided contains the properties required to be a `Carbon.SPARQL.RawResult.Class` object", [
+			"Returns true if the object provided has the properties of a `Carbon.SPARQL.RawResult.Class` object.", [
 				{ name: "value", type: "Object" }
 			],
 			{ type: "boolean" }
@@ -113,7 +113,7 @@ describe( module( "Carbon/SPARQL/RawResults" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"is",
-			"Returns true if the object provided is a `Carbon.SPARQL.RawResult.Class` object", [
+			"Returns true if the object provided is considered a `Carbon.SPARQL.RawResult.Class` object.", [
 				{ name: "value", type: "any" }
 			],
 			{ type: "boolean" }

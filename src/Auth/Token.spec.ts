@@ -8,8 +8,10 @@ import {
 
 	isDefined,
 	hasMethod,
-	hasSignature
+	hasSignature,
+	hasProperty,
 } from "./../test/JasmineExtender";
+import * as NS from "./../NS";
 import * as Token from "./Token";
 import * as Utils from "./../Utils";
 
@@ -18,6 +20,39 @@ describe( module( "Carbon/Auth/Token" ), ():void => {
 	it( isDefined(), ():void => {
 		expect( Token ).toBeDefined();
 		expect( Utils.isObject( Token ) ).toBe( true );
+	});
+
+	it( hasProperty(
+		STATIC,
+		"RDF_CLASS",
+		"string"
+	), ():void => {
+		expect( Token.RDF_CLASS ).toBeDefined();
+		expect( Utils.isString( Token.RDF_CLASS ) ).toBe( true );
+
+		expect( Token.RDF_CLASS ).toBe( NS.CS.Class.Token );
+	});
+
+	it( hasProperty(
+		STATIC,
+		"SCHEMA",
+		"Carbon.ObjectSchema.Class"
+	), ():void => {
+		expect( Token.SCHEMA ).toBeDefined();
+		expect( Utils.isObject( Token.SCHEMA ) ).toBe( true );
+
+		expect( Utils.hasProperty( Token.SCHEMA, "key" ) ).toBe( true );
+		expect( Token.SCHEMA[ "key" ] ).toEqual({
+			"@id": NS.CS.Predicate.tokenKey,
+			"@type": NS.XSD.DataType.string,
+		});
+
+		expect( Utils.hasProperty( Token.SCHEMA, "expirationTime" ) ).toBe( true );
+		expect( Token.SCHEMA[ "expirationTime" ] ).toEqual({
+			"@id": NS.CS.Predicate.expirationTime,
+			"@type": NS.XSD.DataType.dateTime,
+		});
+
 	});
 
 	describe( clazz( "Carbon.Auth.Token.Factory", "Factory class for `Carbon.Auth.Token.Class` objects." ), ():void => {

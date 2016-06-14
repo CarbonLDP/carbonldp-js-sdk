@@ -78,7 +78,7 @@ describe( module( "Carbon/LDP/Container" ), ():void => {
 
 	describe( clazz(
 		"Carbon.LDP.Container.Factory",
-		"Factory class for LDP Container objects"
+		"Factory class for `Carbon.LDP.Container.Class` objects."
 	), ():void => {
 
 		it( isDefined(), ():void => {
@@ -89,7 +89,7 @@ describe( module( "Carbon/LDP/Container" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"hasClassProperties",
-			"Returns true if the object has the properties to be defined as a LDP Container", [
+			"Returns true if the object has the properties a `Carbon.LDP.Container.Class` object.", [
 				{ name: "resource", type: "Carbon.RDF.Node.Class" }
 			],
 			{ type: "boolean" }
@@ -121,7 +121,7 @@ describe( module( "Carbon/LDP/Container" ), ():void => {
 		), ():void => {
 
 			it( hasSignature(
-				"Returns true if the Pointer provided is an LDP Container.", [
+				"Returns true if the Pointer provided has the type of a Container.", [
 					{ name: "pointer", type: "Carbon.Pointer.Class" }
 				],
 				{ type: "boolean" }
@@ -212,7 +212,7 @@ describe( module( "Carbon/LDP/Container" ), ():void => {
 			});
 
 			it( hasSignature(
-				"Returns true if the Object provided is an LDP Container.", [
+				"Returns true if the Object provided has the type of a Container.", [
 					{ name: "expandedObject", type: "Object" }
 				],
 				{ type: "boolean" }

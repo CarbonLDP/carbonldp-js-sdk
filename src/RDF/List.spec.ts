@@ -22,7 +22,7 @@ describe( module( "Carbon/RDF/List" ), ():void => {
 
 	describe( clazz(
 		"Carbon.RDF.List.Factory",
-		"Class Factory to manage creation and management of List objects"
+		"Factory class for `Carbon.RDF.List.Class` objects."
 	), ():void => {
 
 		it( isDefined(), ():void => {
@@ -33,7 +33,7 @@ describe( module( "Carbon/RDF/List" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"is",
-			"Returns true if the object provided can be called a RDF List", [
+			"Returns true if the object provided is considered a `Carbon.RDF.List.Class` object.", [
 				{ name: "value", type: "any" }
 			],
 			{ type: "boolean" }

@@ -30,7 +30,7 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 		expect( Utils.isObject( TokenAuthenticator ) ).toEqual( true );
 	});
 
-	describe( clazz( "Carbon.Auth.TokenAuthenticator.Class", "Authenticates requests using JSON Web Token (JWT) Authentication" ), ():void => {
+	describe( clazz( "Carbon.Auth.TokenAuthenticator.Class", "Authenticates requests using JSON Web Token (JWT) Authentication." ), ():void => {
 
 		beforeEach( function ():void {
 			jasmine.Ajax.install();

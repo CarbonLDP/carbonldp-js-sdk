@@ -34,7 +34,7 @@ describe( module( "Carbon/JSONLDConverter" ), ():void => {
 		expect( Utils.isObject( JSONLDConverter ) ).toEqual( true );
 	});
 
-	describe( clazz( "Carbon.JSONLDConverter.Class", "" ), ():void => {
+	describe( clazz( "Carbon.JSONLDConverter.Class", "Class that have methods for convert between expanded JSON-LD objects to compacted Carbon SDK Resources and vice versa." ), ():void => {
 		it( isDefined(), ():void => {
 			expect( JSONLDConverter.Class ).toBeDefined();
 			expect( Utils.isFunction( JSONLDConverter.Class ) ).toEqual( true );
@@ -42,7 +42,7 @@ describe( module( "Carbon/JSONLDConverter" ), ():void => {
 
 		describe( method( INSTANCE, "compact" ), ():void => {
 			// TODO: Improve signature description
-			it( hasSignature( "", [
+			it( hasSignature( "Returns a Carbon SDK Resource generated from the JSON-LD object provided.", [
 				{ name: "expandedObject", type: "Object" },
 				{ name: "targetObject", type: "Object" },
 				{ name: "digestedSchema", type: "Carbon.ObjectSchema.DigestedObjectSchema" },
@@ -203,7 +203,7 @@ describe( module( "Carbon/JSONLDConverter" ), ():void => {
 
 		describe( method( INSTANCE, "expand" ), ():void => {
 			// TODO: Improve signature description
-			it( hasSignature( "", [
+			it( hasSignature( "Returns a JSON-LD object generated from the Carbon SDK Resource provided.", [
 				{ name: "compactedObject", type: "Object" },
 				{ name: "digestedSchema", type: "Carbon.ObjectSchema.DigestedObjectSchema" },
 			], { type: "Object", description: "" } ), ():void => {

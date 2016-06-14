@@ -33,7 +33,7 @@ describe( module(
 
 	describe( clazz(
 		"Carbon.NS.C.Class",
-		"Class that contains objects defined by the Carbon Platform"
+		"Class that contains classes defined by the Carbon Platform."
 	), ():void => {
 
 		it( isDefined(), ():void => {
@@ -200,7 +200,7 @@ describe( module(
 
 	describe( clazz(
 		"Carbon.NS.C.Predicate",
-		"Class that contains predicates defined by the Carbon Platform"
+		"Class that contains predicates defined by the Carbon Platform."
 	), ():void => {
 
 		it( isDefined(), ():void => {

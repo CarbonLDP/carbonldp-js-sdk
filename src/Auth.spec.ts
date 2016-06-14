@@ -435,7 +435,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 		it( hasMethod(
 			INSTANCE,
 			"addAuthentication",
-			"Add the authentication header to a `Carbon.HTTP.Request.Options` object.", [
+			"Adds the authentication header to a `Carbon.HTTP.Request.Options` object.", [
 				{ name: "options", type: "Carbon.HTTP.Request.Options" }
 			]
 		), ():void => {

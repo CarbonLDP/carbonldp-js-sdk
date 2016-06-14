@@ -25,7 +25,7 @@ describe( module(
 
 	describe( clazz(
 		"Carbon.HTTP.Errors.client.PreconditionRequiredError",
-		"Error class that can be throw to indicate that the request is missing a precondition header"
+		"Error class to indicate that the request is missing a precondition header."
 	), ():void => {
 
 		let response: Response;

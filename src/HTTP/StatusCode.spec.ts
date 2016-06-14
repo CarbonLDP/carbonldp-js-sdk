@@ -18,7 +18,7 @@ describe( module(
 
 	describe( enumeration(
 		"Carbon.HTTP.Method",
-		"Enum with the HTTP/1.1 methods"
+		"Enum with the HTTP/1.1 status codes."
 	), ():void => {
 
 		it( isDefined(), ():void => {
@@ -29,7 +29,7 @@ describe( module(
 
 		it( hasEnumeral(
 			"CONTINUE",
-			"Enum that identifies the HTTP/1.1 100 status code"
+			"Enum that identifies the HTTP/1.1 100 status code."
 		), ():void => {
 			expect( StatusCode.CONTINUE ).toBeDefined();
 			expect( StatusCode.CONTINUE ).toBe( 100 );
@@ -39,7 +39,7 @@ describe( module(
 
 		it( hasEnumeral(
 			"OK",
-			"Enum that identifies the HTTP/1.1 200 status code"
+			"Enum that identifies the HTTP/1.1 200 status code."
 		), ():void => {
 			expect( StatusCode.OK ).toBeDefined();
 			expect( StatusCode.OK ).toBe( 200 );
@@ -47,7 +47,7 @@ describe( module(
 		});
 		it( hasEnumeral(
 			"CREATED",
-			"Enum that identifies the HTTP/1.1 201 status code"
+			"Enum that identifies the HTTP/1.1 201 status code."
 		), ():void => {
 			expect( StatusCode.CREATED ).toBeDefined();
 			expect( StatusCode.CREATED ).toBe( 201 );
@@ -55,7 +55,7 @@ describe( module(
 		});
 		it( hasEnumeral(
 			"ACCEPTED",
-			"Enum that identifies the HTTP/1.1 202 status code"
+			"Enum that identifies the HTTP/1.1 202 status code."
 		), ():void => {
 			expect( StatusCode.ACCEPTED ).toBeDefined();
 			expect( StatusCode.ACCEPTED ).toBe( 202 );
@@ -63,7 +63,7 @@ describe( module(
 		});
 		it( hasEnumeral(
 			"NON_AUTHORITATIVE_INFORMATION",
-			"Enum that identifies the HTTP/1.1 203 status code"
+			"Enum that identifies the HTTP/1.1 203 status code."
 		), ():void => {
 			expect( StatusCode.NON_AUTHORITATIVE_INFORMATION ).toBeDefined();
 			expect( StatusCode.NON_AUTHORITATIVE_INFORMATION ).toBe( 203 );
@@ -71,7 +71,7 @@ describe( module(
 		});
 		it( hasEnumeral(
 			"NO_CONTENT",
-			"Enum that identifies the HTTP/1.1 204 status code"
+			"Enum that identifies the HTTP/1.1 204 status code."
 		), ():void => {
 			expect( StatusCode.NO_CONTENT ).toBeDefined();
 			expect( StatusCode.NO_CONTENT ).toBe( 204 );
@@ -79,7 +79,7 @@ describe( module(
 		});
 		it( hasEnumeral(
 			"RESET_CONTENT",
-			"Enum that identifies the HTTP/1.1 205 status code"
+			"Enum that identifies the HTTP/1.1 205 status code."
 		), ():void => {
 			expect( StatusCode.RESET_CONTENT ).toBeDefined();
 			expect( StatusCode.RESET_CONTENT ).toBe( 205 );
@@ -87,7 +87,7 @@ describe( module(
 		});
 		it( hasEnumeral(
 			"PARTIAL_CONTENT",
-			"Enum that identifies the HTTP/1.1 206 status code"
+			"Enum that identifies the HTTP/1.1 206 status code."
 		), ():void => {
 			expect( StatusCode.PARTIAL_CONTENT ).toBeDefined();
 			expect( StatusCode.PARTIAL_CONTENT ).toBe( 206 );
@@ -95,7 +95,7 @@ describe( module(
 		});
 		it( hasEnumeral(
 			"MULTIPLE_CHOICES",
-			"Enum that identifies the HTTP/1.1 300 status code"
+			"Enum that identifies the HTTP/1.1 300 status code."
 		), ():void => {
 			expect( StatusCode.MULTIPLE_CHOICES ).toBeDefined();
 			expect( StatusCode.MULTIPLE_CHOICES ).toBe( 300 );
@@ -103,7 +103,7 @@ describe( module(
 		});
 		it( hasEnumeral(
 			"MOVED_PERMANENTLY",
-			"Enum that identifies the HTTP/1.1 301 status code"
+			"Enum that identifies the HTTP/1.1 301 status code."
 		), ():void => {
 			expect( StatusCode.MOVED_PERMANENTLY ).toBeDefined();
 			expect( StatusCode.MOVED_PERMANENTLY ).toBe( 301 );
@@ -111,7 +111,7 @@ describe( module(
 		});
 		it( hasEnumeral(
 			"FOUND",
-			"Enum that identifies the HTTP/1.1 302 status code"
+			"Enum that identifies the HTTP/1.1 302 status code."
 		), ():void => {
 			expect( StatusCode.FOUND ).toBeDefined();
 			expect( StatusCode.FOUND ).toBe( 302 );
@@ -119,7 +119,7 @@ describe( module(
 		});
 		it( hasEnumeral(
 			"SEE_OTHER",
-			"Enum that identifies the HTTP/1.1 303 status code"
+			"Enum that identifies the HTTP/1.1 303 status code."
 		), ():void => {
 			expect( StatusCode.SEE_OTHER ).toBeDefined();
 			expect( StatusCode.SEE_OTHER ).toBe( 303 );
@@ -127,7 +127,7 @@ describe( module(
 		});
 		it( hasEnumeral(
 			"NOT_MODIFIED",
-			"Enum that identifies the HTTP/1.1 304 status code"
+			"Enum that identifies the HTTP/1.1 304 status code."
 		), ():void => {
 			expect( StatusCode.NOT_MODIFIED ).toBeDefined();
 			expect( StatusCode.NOT_MODIFIED ).toBe( 304 );
@@ -135,7 +135,7 @@ describe( module(
 		});
 		it( hasEnumeral(
 			"USE_PROXY",
-			"Enum that identifies the HTTP/1.1 305 status code"
+			"Enum that identifies the HTTP/1.1 305 status code."
 		), ():void => {
 			expect( StatusCode.USE_PROXY ).toBeDefined();
 			expect( StatusCode.USE_PROXY ).toBe( 305 );
@@ -143,7 +143,7 @@ describe( module(
 		});
 		it( hasEnumeral(
 			"TEMPORARY_REDIRECT",
-			"Enum that identifies the HTTP/1.1 307 status code"
+			"Enum that identifies the HTTP/1.1 307 status code."
 		), ():void => {
 			expect( StatusCode.TEMPORARY_REDIRECT ).toBeDefined();
 			expect( StatusCode.TEMPORARY_REDIRECT ).toBe( 307 );
@@ -151,7 +151,7 @@ describe( module(
 		});
 		it( hasEnumeral(
 			"BAD_REQUEST",
-			"Enum that identifies the HTTP/1.1 400 status code"
+			"Enum that identifies the HTTP/1.1 400 status code."
 		), ():void => {
 			expect( StatusCode.BAD_REQUEST ).toBeDefined();
 			expect( StatusCode.BAD_REQUEST ).toBe( 400 );
@@ -159,7 +159,7 @@ describe( module(
 		});
 		it( hasEnumeral(
 			"UNAUTHORIZED",
-			"Enum that identifies the HTTP/1.1 401 status code"
+			"Enum that identifies the HTTP/1.1 401 status code."
 		), ():void => {
 			expect( StatusCode.UNAUTHORIZED ).toBeDefined();
 			expect( StatusCode.UNAUTHORIZED ).toBe( 401 );
@@ -167,7 +167,7 @@ describe( module(
 		});
 		it( hasEnumeral(
 			"PAYMENT_REQUIRED",
-			"Enum that identifies the HTTP/1.1 402 status code"
+			"Enum that identifies the HTTP/1.1 402 status code."
 		), ():void => {
 			expect( StatusCode.PAYMENT_REQUIRED ).toBeDefined();
 			expect( StatusCode.PAYMENT_REQUIRED ).toBe( 402 );
@@ -175,7 +175,7 @@ describe( module(
 		});
 		it( hasEnumeral(
 			"FORBIDDEN",
-			"Enum that identifies the HTTP/1.1 403 status code"
+			"Enum that identifies the HTTP/1.1 403 status code."
 		), ():void => {
 			expect( StatusCode.FORBIDDEN ).toBeDefined();
 			expect( StatusCode.FORBIDDEN ).toBe( 403 );
@@ -183,7 +183,7 @@ describe( module(
 		});
 		it( hasEnumeral(
 			"NOT_FOUND",
-			"Enum that identifies the HTTP/1.1 404 status code"
+			"Enum that identifies the HTTP/1.1 404 status code."
 		), ():void => {
 			expect( StatusCode.NOT_FOUND ).toBeDefined();
 			expect( StatusCode.NOT_FOUND ).toBe( 404 );
@@ -191,7 +191,7 @@ describe( module(
 		});
 		it( hasEnumeral(
 			"METHOD_NOT_ALLOWED",
-			"Enum that identifies the HTTP/1.1 405 status code"
+			"Enum that identifies the HTTP/1.1 405 status code."
 		), ():void => {
 			expect( StatusCode.METHOD_NOT_ALLOWED ).toBeDefined();
 			expect( StatusCode.METHOD_NOT_ALLOWED ).toBe( 405 );
@@ -199,7 +199,7 @@ describe( module(
 		});
 		it( hasEnumeral(
 			"NOT_ACCEPTABLE",
-			"Enum that identifies the HTTP/1.1 406 status code"
+			"Enum that identifies the HTTP/1.1 406 status code."
 		), ():void => {
 			expect( StatusCode.NOT_ACCEPTABLE ).toBeDefined();
 			expect( StatusCode.NOT_ACCEPTABLE ).toBe( 406 );
@@ -207,7 +207,7 @@ describe( module(
 		});
 		it( hasEnumeral(
 			"PROXY_AUTHENTICATION_REQUIRED",
-			"Enum that identifies the HTTP/1.1 407 status code"
+			"Enum that identifies the HTTP/1.1 407 status code."
 		), ():void => {
 			expect( StatusCode.PROXY_AUTHENTICATION_REQUIRED ).toBeDefined();
 			expect( StatusCode.PROXY_AUTHENTICATION_REQUIRED ).toBe( 407 );
@@ -215,7 +215,7 @@ describe( module(
 		});
 		it( hasEnumeral(
 			"REQUEST_TIME_OUT",
-			"Enum that identifies the HTTP/1.1 408 status code"
+			"Enum that identifies the HTTP/1.1 408 status code."
 		), ():void => {
 			expect( StatusCode.REQUEST_TIME_OUT ).toBeDefined();
 			expect( StatusCode.REQUEST_TIME_OUT ).toBe( 408 );
@@ -223,7 +223,7 @@ describe( module(
 		});
 		it( hasEnumeral(
 			"CONFLICT",
-			"Enum that identifies the HTTP/1.1 409 status code"
+			"Enum that identifies the HTTP/1.1 409 status code."
 		), ():void => {
 			expect( StatusCode.CONFLICT ).toBeDefined();
 			expect( StatusCode.CONFLICT ).toBe( 409 );
@@ -231,7 +231,7 @@ describe( module(
 		});
 		it( hasEnumeral(
 			"GONE",
-			"Enum that identifies the HTTP/1.1 410 status code"
+			"Enum that identifies the HTTP/1.1 410 status code."
 		), ():void => {
 			expect( StatusCode.GONE ).toBeDefined();
 			expect( StatusCode.GONE ).toBe( 410 );
@@ -239,7 +239,7 @@ describe( module(
 		});
 		it( hasEnumeral(
 			"LENGTH_REQUIRED",
-			"Enum that identifies the HTTP/1.1 411 status code"
+			"Enum that identifies the HTTP/1.1 411 status code."
 		), ():void => {
 			expect( StatusCode.LENGTH_REQUIRED ).toBeDefined();
 			expect( StatusCode.LENGTH_REQUIRED ).toBe( 411 );
@@ -247,7 +247,7 @@ describe( module(
 		});
 		it( hasEnumeral(
 			"PRECONDITION_FAILED",
-			"Enum that identifies the HTTP/1.1 412 status code"
+			"Enum that identifies the HTTP/1.1 412 status code."
 		), ():void => {
 			expect( StatusCode.PRECONDITION_FAILED ).toBeDefined();
 			expect( StatusCode.PRECONDITION_FAILED ).toBe( 412 );
@@ -255,7 +255,7 @@ describe( module(
 		});
 		it( hasEnumeral(
 			"REQUEST_ENTITY_TOO_LARGE",
-			"Enum that identifies the HTTP/1.1 413 status code"
+			"Enum that identifies the HTTP/1.1 413 status code."
 		), ():void => {
 			expect( StatusCode.REQUEST_ENTITY_TOO_LARGE ).toBeDefined();
 			expect( StatusCode.REQUEST_ENTITY_TOO_LARGE ).toBe( 413 );
@@ -263,7 +263,7 @@ describe( module(
 		});
 		it( hasEnumeral(
 			"REQUEST_URI_TOO_LARGE",
-			"Enum that identifies the HTTP/1.1 414 status code"
+			"Enum that identifies the HTTP/1.1 414 status code."
 		), ():void => {
 			expect( StatusCode.REQUEST_URI_TOO_LARGE ).toBeDefined();
 			expect( StatusCode.REQUEST_URI_TOO_LARGE ).toBe( 414 );
@@ -271,7 +271,7 @@ describe( module(
 		});
 		it( hasEnumeral(
 			"UNSUPPORTED_MEDIA_TYPE",
-			"Enum that identifies the HTTP/1.1 415 status code"
+			"Enum that identifies the HTTP/1.1 415 status code."
 		), ():void => {
 			expect( StatusCode.UNSUPPORTED_MEDIA_TYPE ).toBeDefined();
 			expect( StatusCode.UNSUPPORTED_MEDIA_TYPE ).toBe( 415 );
@@ -279,7 +279,7 @@ describe( module(
 		});
 		it( hasEnumeral(
 			"REQUESTED_RANGE_NOT_SATISFIABLE",
-			"Enum that identifies the HTTP/1.1 416 status code"
+			"Enum that identifies the HTTP/1.1 416 status code."
 		), ():void => {
 			expect( StatusCode.REQUESTED_RANGE_NOT_SATISFIABLE ).toBeDefined();
 			expect( StatusCode.REQUESTED_RANGE_NOT_SATISFIABLE ).toBe( 416 );
@@ -287,7 +287,7 @@ describe( module(
 		});
 		it( hasEnumeral(
 			"EXPECTATION_FAILED",
-			"Enum that identifies the HTTP/1.1 417 status code"
+			"Enum that identifies the HTTP/1.1 417 status code."
 		), ():void => {
 			expect( StatusCode.EXPECTATION_FAILED ).toBeDefined();
 			expect( StatusCode.EXPECTATION_FAILED ).toBe( 417 );
@@ -295,7 +295,7 @@ describe( module(
 		});
 		it( hasEnumeral(
 			"INTERNAL_SERVER_ERROR",
-			"Enum that identifies the HTTP/1.1 500 status code"
+			"Enum that identifies the HTTP/1.1 500 status code."
 		), ():void => {
 			expect( StatusCode.INTERNAL_SERVER_ERROR ).toBeDefined();
 			expect( StatusCode.INTERNAL_SERVER_ERROR ).toBe( 500 );
@@ -303,7 +303,7 @@ describe( module(
 		});
 		it( hasEnumeral(
 			"NOT_IMPLEMENTED",
-			"Enum that identifies the HTTP/1.1 501 status code"
+			"Enum that identifies the HTTP/1.1 501 status code."
 		), ():void => {
 			expect( StatusCode.NOT_IMPLEMENTED ).toBeDefined();
 			expect( StatusCode.NOT_IMPLEMENTED ).toBe( 501 );
@@ -311,7 +311,7 @@ describe( module(
 		});
 		it( hasEnumeral(
 			"BAD_GATEWAY",
-			"Enum that identifies the HTTP/1.1 502 status code"
+			"Enum that identifies the HTTP/1.1 502 status code."
 		), ():void => {
 			expect( StatusCode.BAD_GATEWAY ).toBeDefined();
 			expect( StatusCode.BAD_GATEWAY ).toBe( 502 );
@@ -319,7 +319,7 @@ describe( module(
 		});
 		it( hasEnumeral(
 			"SERVICE_UNAVAILABLE",
-			"Enum that identifies the HTTP/1.1 503 status code"
+			"Enum that identifies the HTTP/1.1 503 status code."
 		), ():void => {
 			expect( StatusCode.SERVICE_UNAVAILABLE ).toBeDefined();
 			expect( StatusCode.SERVICE_UNAVAILABLE ).toBe( 503 );
@@ -327,7 +327,7 @@ describe( module(
 		});
 		it( hasEnumeral(
 			"GATEWAY_TIME_OUT",
-			"Enum that identifies the HTTP/1.1 504 status code"
+			"Enum that identifies the HTTP/1.1 504 status code."
 		), ():void => {
 			expect( StatusCode.GATEWAY_TIME_OUT ).toBeDefined();
 			expect( StatusCode.GATEWAY_TIME_OUT ).toBe( 504 );
@@ -335,7 +335,7 @@ describe( module(
 		});
 		it( hasEnumeral(
 			"HTTP_VERSION_NOT_SUPPORTED",
-			"Enum that identifies the HTTP/1.1 505 status code"
+			"Enum that identifies the HTTP/1.1 505 status code."
 		), ():void => {
 			expect( StatusCode.HTTP_VERSION_NOT_SUPPORTED ).toBeDefined();
 			expect( StatusCode.HTTP_VERSION_NOT_SUPPORTED ).toBe( 505 );

@@ -30,7 +30,7 @@ describe( module( "Carbon/LDP/PersistedContainer" ), ():void => {
 
 	describe( clazz(
 		"Carbon.LDP.PersistedContainer.Factory",
-		"Factory class for LDP PersistedContainer objects"
+		"Factory class for `Carbon.LDP.PersistedContainer.Class` objects."
 	), ():void => {
 
 		beforeEach( ():void => {
@@ -50,7 +50,7 @@ describe( module( "Carbon/LDP/PersistedContainer" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"hasClassProperties",
-			"Returns true if the object has the properties to be defined as a PersistedContainer", [
+			"Returns true if the object has the properties and methods of a `Carbon.LDP.PersistedContainer.Class` object.", [
 				{ name: "document", type: "Carbon.Document.Class" }
 			],
 			{ type: "boolean" }
@@ -124,7 +124,7 @@ describe( module( "Carbon/LDP/PersistedContainer" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"decorate",
-			"Returns the PersistedDocuments decorated as a PersistedContainer", [
+			"Decorates the object provided with the properties and methods of a `Carbon.LDP.PersistedContainer.Class` object.", [
 				{ name: "persistedDocument", type: "T extends Carbon.PersistedDocument.Class" }
 			],
 			{ "type": "T & Carbon.LDP.PersistedContainer.Class" }
@@ -186,7 +186,7 @@ describe( module( "Carbon/LDP/PersistedContainer" ), ():void => {
 		});
 
 		describe( decoratedObject(
-			"Object decorated by the Carbon.LDP.PersistedContainer.Factory.decorate function.", [
+			"Object decorated by the `Carbon.LDP.PersistedContainer.Factory.decorate()` function.", [
 				"Carbon.LDP.PersistedContainer.Class",
 			]
 		), ():void => {
@@ -210,7 +210,7 @@ describe( module( "Carbon/LDP/PersistedContainer" ), ():void => {
 			), ():void => {
 
 				it( hasSignature(
-					"Add the specified resource Pointer as a member of the container.", [
+					"Adds the specified resource Pointer as a member of the container.", [
 						{ name: "member", type: "Carbon.Pointer.Class", description: "Pointer object that references the resource to add as a member." },
 					],
 					{ type: "Promise<Carbon.HTTP.Response.Class>" }
@@ -227,7 +227,7 @@ describe( module( "Carbon/LDP/PersistedContainer" ), ():void => {
 				});
 
 				it( hasSignature(
-					"Add the specified resource URI as a member of the container.", [
+					"Adds the specified resource URI as a member of the container.", [
 						{ name: "memberURI", type: "string", description: "URI of the resource to add as a member." },
 					],
 					{ type: "Promise<Carbon.HTTP.Response.Class>" }
@@ -247,7 +247,7 @@ describe( module( "Carbon/LDP/PersistedContainer" ), ():void => {
 			it( hasMethod(
 				INSTANCE,
 				"addMembers",
-				"Add the specified resources URI or Pointers as members of the container.", [
+				"Adds the specified resources URI or Pointers as members of the container.", [
 					{ name: "members", type: "(Carbon.Pointer.Class | string)[]", description: "Array of string URIs or Pointers to add as members" },
 				],
 				{ type: "Promise<Carbon.HTTP.Response.Class>" }
@@ -269,9 +269,10 @@ describe( module( "Carbon/LDP/PersistedContainer" ), ():void => {
 				"createChild"
 			), ():void => {
 
-				it( hasSignature( [
+				it( hasSignature(
+					"Persists a document with the slug specified as a child of the current container.", [
 					{ name: "slug", type: "string", description: "The slug name for the children URI." },
-					{ name: "object", type: "Object", description: "The object from where create the child. If it's a non `Carbon.Document.Class` object, it is transformed into one." }
+					{ name: "object", type: "Object", description: "The object from where create the child. If it's a non `Carbon.Document.Class` object, it's transformed into one." }
 				],
 					{ type: "Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>" }
 				), ():void => {
@@ -291,8 +292,9 @@ describe( module( "Carbon/LDP/PersistedContainer" ), ():void => {
 					expect( spy ).toHaveBeenCalledWith( "http://example.com/resource/", "child", object );
 				});
 
-				it( hasSignature( [
-						{ name: "object", type: "Object", description: "The object from where create the child. If it's a non `Carbon.Document.Class` object, it is transformed into one." }
+				it( hasSignature(
+					"Persists a document as a child of the current container.", [
+						{ name: "object", type: "Object", description: "The object from where create the child. If it's a non `Carbon.Document.Class` object, it's transformed into one." }
 					],
 					{ type: "Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>" }
 				), ():void => {
@@ -312,7 +314,8 @@ describe( module( "Carbon/LDP/PersistedContainer" ), ():void => {
 					expect( spy ).toHaveBeenCalledWith( "http://example.com/resource/", object );
 				});
 
-				it( hasSignature( [
+				it( hasSignature(
+					"Creates an persists an empty child for the current container with the slug provided.", [
 					{ name: "slug", type: "string", description: "The slug name for the children URI." }
 				],
 					{ type: "Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>" }
@@ -327,6 +330,7 @@ describe( module( "Carbon/LDP/PersistedContainer" ), ():void => {
 				});
 
 				it( hasSignature(
+					"Creates and persists an empty child fot he current document.",
 					{ type: "Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>" }
 				), ():void => {
 					expect( container.createChild ).toBeDefined();
@@ -343,7 +347,7 @@ describe( module( "Carbon/LDP/PersistedContainer" ), ():void => {
 			it( hasMethod(
 				INSTANCE,
 				"listChildren",
-				"Return all the children of the container.",
+				"Retrieves an array of unresolved pointers that refers to the children of the current container.",
 				{ type: "Promise<[ Carbon.Pointer.Class[], Carbon.HTTP.Response ]>" }
 			), ():void => {
 				expect( container.listChildren ).toBeDefined();
@@ -358,7 +362,7 @@ describe( module( "Carbon/LDP/PersistedContainer" ), ():void => {
 			it( hasMethod(
 				INSTANCE,
 				"getChildren",
-				"Return all the children of the container.", [
+				"Retrieves an array of resolved Carbon Document that refers to the children of the current container, in accordance of the retrieval preferences specified.", [
 					{ name: "retrievalPreferences", type: "Carbon.RetrievalPreferences.Class", optional: true },
 				],
 				{ type: "Promise<[ Carbon.Pointer.Class[], Carbon.HTTP.Response ]>" }
@@ -384,7 +388,8 @@ describe( module( "Carbon/LDP/PersistedContainer" ), ():void => {
 
 			it( hasMethod(
 				INSTANCE,
-				"listMembers", [
+				"listMembers",
+				"Retrieves an array of unresolved pointers that refers to the members of the current container.", [
 					{ name: "includeNonReadable", type: "boolean", optional: true, description: "By default this option is set to `true`." },
 				],
 				{ type: "Promise<[ Carbon.Pointer.Class[], Carbon.HTTP.Response.Class ]>" }
@@ -407,7 +412,8 @@ describe( module( "Carbon/LDP/PersistedContainer" ), ():void => {
 				"getMembers"
 			), ():void => {
 
-				it( hasSignature( [
+				it( hasSignature(
+					"Retrieves an array of resolver Carbon Document that refers to the members of the current container, in accordance of the retrieval preferences specified.", [
 						{ name: "includeNonReadable", type: "boolean", optional: true, description: "By default this option is set to `true`." },
 						{ name: "retrievalPreferences", type: "Carbon.RetrievalPreferences.Class", optional: true },
 					],
@@ -453,7 +459,7 @@ describe( module( "Carbon/LDP/PersistedContainer" ), ():void => {
 			), ():void => {
 
 				it( hasSignature(
-					"Remove the specified resource Pointer as a member of the container.", [
+					"Remove the specified resource Pointer as a member of the current container.", [
 						{ name: "member", type: "Carbon.Pointer.Class", description: "Pointer object that references the resource to remove as a member." },
 					],
 					{ type: "Promise<Carbon.HTTP.Response.Class>" }
@@ -470,7 +476,7 @@ describe( module( "Carbon/LDP/PersistedContainer" ), ():void => {
 				});
 
 				it( hasSignature(
-					"Remove the specified resource URI as a member of the container.", [
+					"Remove the specified resource URI as a member of the current container.", [
 						{ name: "memberURI", type: "string", description: "URI of the resource to remove as a member." },
 					],
 					{ type: "Promise<Carbon.HTTP.Response.Class>" }
@@ -490,7 +496,7 @@ describe( module( "Carbon/LDP/PersistedContainer" ), ():void => {
 			it( hasMethod(
 				INSTANCE,
 				"removeMembers",
-				"Remove the specified resources URI or Pointers as members of the container.", [
+				"Remove the specified resources URI or Pointers as members of the current container.", [
 					{ name: "members", type: "(Carbon.Pointer.Class | string)[]", description: "Array of string URIs or Pointers to remove as members" },
 				],
 				{ type: "Promise<Carbon.HTTP.Response.Class>" }
@@ -510,7 +516,7 @@ describe( module( "Carbon/LDP/PersistedContainer" ), ():void => {
 			it( hasMethod(
 				INSTANCE,
 				"removeAllMembers",
-				"Remove the specified resources URI or Pointers as members of the container.", [
+				"Remove the specified resources URI or Pointers as members of the current container.", [
 					{ name: "members", type: "(Carbon.Pointer.Class | string)[]", description: "Array of string URIs or Pointers to remove as members" },
 				],
 				{ type: "Promise<Carbon.HTTP.Response.Class>" }
@@ -527,13 +533,13 @@ describe( module( "Carbon/LDP/PersistedContainer" ), ():void => {
 
 			describe( method(
 				INSTANCE,
-				"upload",
-				"Upload a File to the server as a child of the Container."
+				"upload"
 			), ():void => {
 
-				it( hasSignature( [
+				it( hasSignature(
+					"Upload a File to the server as a child of the current container with the slug specified. This signature only works in a Browser.", [
 						{ name: "slug", type: "string", description: "The slug that will be used in the URI of the data." },
-						{ name: "data", type: "Blob", description: "Binary data to store in the server. The Blob works in a Browser." }
+						{ name: "data", type: "Blob", description: "Binary data to store in the server." }
 					],
 					{ type: "Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>" }
 				), ():void => {
@@ -550,8 +556,9 @@ describe( module( "Carbon/LDP/PersistedContainer" ), ():void => {
 					}
 				});
 
-				it( hasSignature( [
-						{ name: "data", type: "Blob", description: "Binary data to store in the server. The Blob works in a Browser." }
+				it( hasSignature(
+					"Upload a File to the server as a child of the current container. This signature only works in a Browser.", [
+						{ name: "data", type: "Blob", description: "Binary data to store in the server." }
 					],
 					{ type: "Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>" }
 				), ():void => {
@@ -568,7 +575,8 @@ describe( module( "Carbon/LDP/PersistedContainer" ), ():void => {
 					}
 				});
 
-				it( hasSignature( [
+				it( hasSignature(
+					"Upload a File to the server as a child of the current container with the slug specified. This signature only works with Node.js.", [
 						{ name: "slug", type: "string", description: "The slug that will be used in the URI of the data." },
 						{ name: "data", type: "Buffer", description: "Binary data to store in the server. The Buffer only works in Node.js." }
 					],
@@ -587,7 +595,8 @@ describe( module( "Carbon/LDP/PersistedContainer" ), ():void => {
 					}
 				});
 
-				it( hasSignature( [
+				it( hasSignature(
+					"Upload a File to the server as a child of the current container. This signature only works with Node.js.",[
 						{ name: "data", type: "Buffer", description: "Binary data to store in the server. The Buffer only works in Node.js." }
 					],
 					{ type: "Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>" }

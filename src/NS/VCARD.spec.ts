@@ -33,7 +33,7 @@ describe( module(
 
 	describe( clazz(
 		"Carbon.NS.VCARD.Predicate",
-		"Class that contains some predicates defined in the vCard Ontology Specification"
+		"Class that contains some predicates defined in the vCard Ontology Specification."
 	), ():void => {
 
 		it( isDefined(), ():void => {

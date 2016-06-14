@@ -33,7 +33,7 @@ describe( module(
 
 	describe( clazz(
 		"Carbon.NS.RDF.Predicate",
-		"Class that contains predicates defined in the RDF Syntax Specification"
+		"Class that contains predicates defined in the RDF Syntax Specification."
 	), ():void => {
 
 		it( isDefined(), ():void => {

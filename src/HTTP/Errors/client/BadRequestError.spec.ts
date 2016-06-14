@@ -25,7 +25,7 @@ describe( module(
 
 	describe( clazz(
 		"Carbon.HTTP.Errors.BadRequestError",
-		"Error class that can be throw to indicate has been send a request that doesn"
+		"Error class to indicate that has been sent a malformed request."
 	), ():void => {
 
 		let response: Response;

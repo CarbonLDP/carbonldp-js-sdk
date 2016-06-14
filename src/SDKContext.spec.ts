@@ -76,7 +76,7 @@ describe( module( "Carbon/SDKContext" ), ():void => {
 			INSTANCE,
 			"auth",
 			"Carbon.Auth.Class",
-			"Instance of Auth class to manage all the authentications in the context."
+			"Instance of `Carbon.Auth.Class` class to manage all the authentications in the context."
 		), ():void => {
 			expect( context.auth ).toBeDefined();
 			expect( context.auth instanceof Auth.Class );
@@ -86,7 +86,7 @@ describe( module( "Carbon/SDKContext" ), ():void => {
 			INSTANCE,
 			"documents",
 			"Carbon.Documents",
-			"Instance of Documents class to manage all the documents in the context."
+			"Instance of `Carbon.Documents` class to manage all the documents in the context."
 		), ():void => {
 			expect( context.documents ).toBeDefined();
 			expect( context.documents instanceof Documents ).toBe( true );
@@ -96,7 +96,7 @@ describe( module( "Carbon/SDKContext" ), ():void => {
 			INSTANCE,
 			"parentContext",
 			"Carbon.Context",
-			"Parent context of the actual context. For a instance of `Carbon.SDKContext.Class`, this is set to null since it is the root parent of every context in the SDK."
+			"Parent context of the current context. For an instance of `Carbon.SDKContext.Class`, this is set to null since it is the root parent of every context in the SDK."
 		), ():void => {
 			expect( context.parentContext ).toBeDefined();
 			expect( context.parentContext ).toBeNull();
@@ -105,7 +105,7 @@ describe( module( "Carbon/SDKContext" ), ():void => {
 		it( hasMethod(
 			INSTANCE,
 			"getBaseURI",
-			"Returns the base URI of the context. For a instance of `Carbon.SDKContext.Class`, this is an empty string.",
+			"Returns the base URI of the context. For an instance of `Carbon.SDKContext.Class`, this is an empty string.",
 			{ type: "string" }
 		), ():void => {
 			expect( context.getBaseURI ).toBeDefined();
@@ -117,7 +117,7 @@ describe( module( "Carbon/SDKContext" ), ():void => {
 		it( hasMethod(
 			INSTANCE,
 			"resolve",
-			"Returns URI provided resolved in this context, which is the same URI provided.", [
+			"Returns the resolved relative URI specified, in accordance of the scope of the context.", [
 				{ name: "relativeURI", type: "string" }
 			],
 			{ type: "string" }
@@ -132,7 +132,7 @@ describe( module( "Carbon/SDKContext" ), ():void => {
 		it( hasMethod(
 			INSTANCE,
 			"hasSetting",
-			"Returns true if the setting looked for has been assign.", [
+			"Returns true if the setting sought for has been assign.", [
 				{ name: "name", type: "string" }
 			],
 			{ type: "boolean"}
@@ -156,8 +156,8 @@ describe( module( "Carbon/SDKContext" ), ():void => {
 
 		it( hasMethod(
 			INSTANCE,
-			"getSetting",
-			`Returns the value of the setting looked for.
+			"getSetting", `
+			Returns the value of the setting sought for.
 			Returns \`null\` if no setting with the name specified exists.`, [
 				{ name: "name", type: "string" }
 			],
@@ -183,7 +183,7 @@ describe( module( "Carbon/SDKContext" ), ():void => {
 		it( hasMethod(
 			INSTANCE,
 			"setSetting",
-			"Set a setting in the actual context.", [
+			"Set a setting in the current context.", [
 				{ name: "name", type: "string" },
 				{ name: "value", type: "any" }
 			]
@@ -201,7 +201,7 @@ describe( module( "Carbon/SDKContext" ), ():void => {
 		it( hasMethod(
 			INSTANCE,
 			"deleteSetting",
-			"Deletes the setting specified by the name, from the actual context.", [
+			"Deletes the setting specified by the name provided from the current context.", [
 				{ name: "name", type: "string" }
 			]
 		), ():void => {
@@ -246,8 +246,8 @@ describe( module( "Carbon/SDKContext" ), ():void => {
 
 		it( hasMethod(
 			INSTANCE,
-			"getObjectSchema",
-			`Returns the ObjectSchema for the specified type or \`null\` if it not exists.
+			"getObjectSchema", `
+			Returns the ObjectSchema for the specified type or \`null\` if it doesn't exists.
 			If no type is specified, the general object schema of the context is returned. This is an schema that applies for all the Resources.`, [
 				{ name: "type", type: "string", optional: true, default: "null" }
 			],
@@ -335,7 +335,7 @@ describe( module( "Carbon/SDKContext" ), ():void => {
 			});
 
 			it( hasSignature(
-				"Extends the general schema of the actual context.\nIf a general schema exists in the parent context, this is duplicated for the actual context, but only the first time this schema is extended. ", [
+				"Extends the general schema of the current context.\nIf a general schema exists in the parent context, this is duplicated for the current context, but only the first time the schema is extended.", [
 					{ name: "objectSchema", type: "Carbon.ObjectSchema.DigestedObjectSchema" }
 				]
 			), ():void => {

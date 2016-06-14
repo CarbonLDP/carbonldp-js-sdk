@@ -260,7 +260,7 @@ describe( module(
 		STATIC,
 		"client",
 		"Array <Carbon.HTTP.Error.HTTPError>",
-		"Array that contains all the error classes that can be occur because of a client"
+		"Array that contains all the error classes that represents the errors induced by the client."
 	), ():void => {
 		expect( Errors.client ).toBeDefined();
 		expect( Utils.isArray( Errors.client ) ).toBe( true );
@@ -286,7 +286,7 @@ describe( module(
 		STATIC,
 		"server",
 		"Array <Carbon.HTTP.Error.HTTPError>",
-		"Array that contains all the error classes that can occur because of the server"
+		"Array that contains all the error classes that represents the errors occasioned by the server."
 	), ():void => {
 		expect( Errors.server ).toBeDefined();
 		expect( Utils.isArray( Errors.server ) ).toBe( true );
@@ -305,7 +305,7 @@ describe( module(
 		STATIC,
 		"statusCodeMap",
 		"Map <number, Carbon.HTTP.Error.HTTPError>",
-		"Map where are assigned the HTTP Status Codes used in the SDK with every error class declared"
+		"Map where are assigned the HTTP Status Codes used in the SDK with every error class declared."
 	), ():void => {
 		expect( Errors.statusCodeMap ).toBeDefined();
 		expect( Utils.isMap( Errors.statusCodeMap ) ).toBe( true );

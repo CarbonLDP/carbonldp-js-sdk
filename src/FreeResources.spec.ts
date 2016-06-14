@@ -26,7 +26,7 @@ describe( module( "Carbon/FreeResources" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"hasClassProperties",
-			"Returns true if the object provided has the properties of a `Carbon.FreeResources.Class` object.", [
+			"Returns true if the object provided has the properties and methods of a `Carbon.FreeResources.Class` object.", [
 				{ name: "object", type: "Object" }
 			],
 			{ type: "boolean" }
@@ -92,7 +92,7 @@ describe( module( "Carbon/FreeResources" ), ():void => {
 			STATIC,
 			"create",
 			"Creates a empty `Carbon.FreeResources.Class` object.", [
-				{ name: "documents", type: "Carbon.Documents", description: "A `Carbon.Documents` object where the FreeResources scope is."}
+				{ name: "documents", type: "Carbon.Documents", description: "A `Carbon.Documents` object where the FreeResources scope is in."}
 			],
 			{ type: "Carbon.FreeResources.Class" }
 		), ():void => {
@@ -109,9 +109,9 @@ describe( module( "Carbon/FreeResources" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"createFrom",
-			"Create a `Carbon.FreeResources.Class` object from the plain object provided.", [
+			"Creates a `Carbon.FreeResources.Class` object from the plain object provided.", [
 				{ name: "object", type: "T extends Object", description: "The object that wants be converted in a `Carbon.FreeResources.Class`." },
-				{ name: "documents", type: "Carbon.Documents.Class", description: "A `Carbon.Documents` object where the FreeResource scope is." }
+				{ name: "documents", type: "Carbon.Documents.Class", description: "A `Carbon.Documents` object where the FreeResource scope is in." }
 			],
 			{ type: "Carbon.FreeResources.Class & T" }
 		), ():void => {
@@ -135,7 +135,7 @@ describe( module( "Carbon/FreeResources" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"decorate",
-			"Decorate the object provided with the methods and properties of a `Carbon.FreeResources.Class` object.", [
+			"Decorates the object provided with the methods and properties of a `Carbon.FreeResources.Class` object.", [
 				{ name: "object", type: "T extends Object" }
 			],
 			{ type: "Carbon.FreeResources.Class & T" }
@@ -176,7 +176,7 @@ describe( module( "Carbon/FreeResources" ), ():void => {
 
 
 		describe( decoratedObject(
-			"Object decorated by the Carbon.FreeResources.Factory.decorate function.", [
+			"Object decorated by the `Carbon.FreeResources.Factory.decorate()` method.", [
 				"Carbon.FreeResources.Class",
 			]
 		), ():void => {
@@ -197,7 +197,7 @@ describe( module( "Carbon/FreeResources" ), ():void => {
 			it( hasProperty(
 				INSTANCE,
 				"_documents",
-				"Private property that contains the Documents class where the object scope is.",
+				"Private property that contains the Documents class where the object scope is in.",
 				"Carbon.Documents"
 			), ():void => {
 				expect( freeResources._documents ).toBeDefined();
@@ -218,7 +218,7 @@ describe( module( "Carbon/FreeResources" ), ():void => {
 				INSTANCE,
 				"hasResource",
 				"Returns true if exists a resource with the ID specified.", [
-					{ name: "id", type: "string", description: "The ID of the resource to seek for." }
+					{ name: "id", type: "string", description: "The ID of the resource to sought for." }
 				],
 				{ type: "boolean" }
 			), ():void => {
@@ -237,8 +237,8 @@ describe( module( "Carbon/FreeResources" ), ():void => {
 			it( hasMethod(
 				INSTANCE,
 				"getResource",
-				"Returns the resource referred by the ID provided. If no resource exists with the ID specified `null` is returned.", [
-					{ name: "id", type: "string", description: "The ID of the resource to seek for." }
+				"Returns the resource referred by the ID provided. If no resource exists with the ID specified, `null` is returned.", [
+					{ name: "id", type: "string", description: "The ID of the resource to sought for." }
 				],
 				{ type: "Carbon.Resource.Class" }
 			), ():void => {
@@ -258,7 +258,7 @@ describe( module( "Carbon/FreeResources" ), ():void => {
 			it( hasMethod(
 				INSTANCE,
 				"getResources",
-				"Returns an array with all the resources inside the FreeResources object",
+				"Returns an array with all the resources inside the FreeResources object.",
 				{ type: "Carbon.Resource.Class[]" }
 			), ():void => {
 				expect( freeResources.getResources ).toBeDefined();
@@ -284,7 +284,7 @@ describe( module( "Carbon/FreeResources" ), ():void => {
 			it( hasMethod(
 				INSTANCE,
 				"createResource",
-				"Create an returns a new Free Resource. Throw an Error if no valid id if provided or if it is already in use.", [
+				"Creates an returns a new Free Resource. Throw an Error if no valid ID if provided or if it's already in use.", [
 					{ name: "id", type: "string", optional: true, description: "The ID of the resource to create. It should be an ID as a BlankNode." }
 				],
 				{ type: "Carbon.Resource.Class" }
@@ -336,8 +336,8 @@ describe( module( "Carbon/FreeResources" ), ():void => {
 			it( hasMethod(
 				INSTANCE,
 				"getPointer",
-				"Returns the pointer referred by the id specified, or creates one if no pointer exists in the scope.", [
-					{ name: "id", type: "string", description: "The ID of the pointer seek for or the one to create." }
+				"Returns the pointer referred by the ID specified, or creates one if no pointer exists in the scope.", [
+					{ name: "id", type: "string", description: "The ID of the pointer sought for or the one to create." }
 				],
 				{ type: "Carbon.Pointer.Class" }
 			), ():void => {

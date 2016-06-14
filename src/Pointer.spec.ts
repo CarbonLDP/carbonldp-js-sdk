@@ -25,7 +25,7 @@ describe( module( "Carbon/Pointer" ), ():void => {
 
 	describe( clazz(
 		"Carbon.Pointer.Factory",
-		"Factory class for Pointer objects."
+		"Factory class for `Carbon.Pointer.Class` objects."
 	), ():void => {
 
 		it( isDefined(), ():void => {
@@ -36,7 +36,7 @@ describe( module( "Carbon/Pointer" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"hasClassProperties",
-			"Returns true if the object provided has the properties and functions of a Pointer object", [
+			"Returns true if the object provided has the properties and methods of a `Carbon.Pointer.Class` object.", [
 				{ name: "resource", type: "Object" }
 			],
 			{ type: "boolean" }
@@ -80,7 +80,7 @@ describe( module( "Carbon/Pointer" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"is",
-			"Returns true if the value provided is a Pinter object.", [
+			"Returns true if the value provided is considered a `Carbon.Pointer.Class` object.", [
 				{ name: "value", type: "any" }
 			],
 			{ type: "boolean" }
@@ -106,7 +106,7 @@ describe( module( "Carbon/Pointer" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"create",
-			"Create a Pointer object with id if provided.", [
+			"Creates a Pointer object with the ID provided.", [
 				{ name: "id", type: "string", optional: true }
 			],
 			{ type: "Carbon.Pointer.Class" }
@@ -130,7 +130,7 @@ describe( module( "Carbon/Pointer" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"decorate",
-			"Decorates the object provided with the elements of a Pointer object.", [
+			"Decorates the object provided with the properties and methods of a `Carbon.Pointer.Class` object.", [
 				{ name: "object", type: "T extends Object" }
 			],
 			{ type: "T & Carbon.Pointer.Class" }
@@ -160,7 +160,7 @@ describe( module( "Carbon/Pointer" ), ():void => {
 		});
 
 		describe( decoratedObject(
-			"Object decorated by the Carbon.Pointer.Factory.decorate function.", [
+			"Object decorated by the `Carbon.Pointer.Factory.decorate()` function.", [
 				"Carbon.Pointer.Class"
 			]
 		), ():void => {
@@ -174,7 +174,7 @@ describe( module( "Carbon/Pointer" ), ():void => {
 				INSTANCE,
 				"_id",
 				"string",
-				"URI that identifies the pointer."
+				"Private variable for the URI that identifies the pointer."
 			), ():void => {
 				expect( pointer._id ).toBeDefined();
 				expect( Utils.isString( pointer._id ) ).toBe( true );
@@ -186,7 +186,7 @@ describe( module( "Carbon/Pointer" ), ():void => {
 				INSTANCE,
 				"_resolved",
 				"boolean",
-				"Flag variable that indicate if the pointer has been resolved."
+				"Private variable that indicates if the pointer has been resolved."
 			), ():void => {
 				expect( pointer._resolved ).toBeDefined();
 				expect( Utils.isBoolean( pointer._resolved ) ).toBe( true );
@@ -227,7 +227,7 @@ describe( module( "Carbon/Pointer" ), ():void => {
 			it( hasMethod(
 				INSTANCE,
 				"resolve",
-				"Resolve the pointer. This function throw an Error, it should be reimplemented for the respective type of pointer."
+				"Resolve the pointer. This function throw an Error if has no been configured by another decorator."
 			), ( done:{ (): void, fail:() => void } ):void => {
 				expect( pointer.resolve ).toBeDefined();
 				expect( Utils.isFunction( pointer.resolve ) ).toBe( true );

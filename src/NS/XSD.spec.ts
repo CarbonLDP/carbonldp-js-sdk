@@ -33,7 +33,7 @@ describe( module(
 
 	describe( clazz(
 		"Carbon.NS.XSD.DataType",
-		"DataType that contains data-types defined in the XML Schema Definition Language (XSD)"
+		"DataType that contains data-types defined in the XML Schema Definition Language (XSD)."
 	), ():void => {
 
 		it( isDefined(), ():void => {

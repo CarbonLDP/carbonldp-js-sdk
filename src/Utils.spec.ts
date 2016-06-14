@@ -16,7 +16,7 @@ interface Dummy {
 	doSomething?():void;
 }
 
-describe( module( "Carbon/Utils", "The description of Carbon/Utils" ), ():void => {
+describe( module( "Carbon/Utils", "Class with useful functions used in the SDK." ), ():void => {
 
 	it( isDefined(), function():void {
 		expect( Utils ).toBeDefined();
@@ -162,7 +162,7 @@ describe( module( "Carbon/Utils", "The description of Carbon/Utils" ), ():void =
 		expect( Utils.isBoolean( [] ) ).toBe( false );
 	} );
 
-	it( hasMethod( STATIC, "isNumber", "Checks if the value passed is a number", [
+	it( hasMethod( STATIC, "isNumber", "Checks if the value passed is a number.", [
 		{ name: "value", type: "any" },
 	], { type: "boolean" } ), ():void => {
 		expect( Utils.isNumber ).toBeDefined();
@@ -228,7 +228,7 @@ describe( module( "Carbon/Utils", "The description of Carbon/Utils" ), ():void =
 		expect( Utils.isDate( new Date() ) ).toBe( true );
 	} );
 
-	it( hasMethod( STATIC, "isObject", "Checks if the value passed is an object (doesn\"t include null).", [
+	it( hasMethod( STATIC, "isObject", "Checks if the value passed is an object (doesn't include null).", [
 		{ name: "value", type: "any" },
 	], { type: "boolean" } ), ():void => {
 		expect( Utils.isObject ).toBeDefined();
@@ -323,7 +323,7 @@ describe( module( "Carbon/Utils", "The description of Carbon/Utils" ), ():void =
 		expect( anotherPost.three ).toBe( 3 );
 	} );
 
-	describe( clazz( "Carbon.Utils.O", "Utility functions related to strings." ), ():void => {
+	describe( clazz( "Carbon.Utils.O", "Utility functions related to objects." ), ():void => {
 		it( isDefined(), ():void => {
 			expect( Utils.O ).toBeDefined();
 		} );
@@ -439,7 +439,7 @@ describe( module( "Carbon/Utils", "The description of Carbon/Utils" ), ():void =
 			expect( Utils.S.contains( "hello", " " ) ).toBe( false );
 		} );
 	} );
-	describe( clazz( "Carbon.Utils.A", "Utility functions related to Arrays" ), ():void => {
+	describe( clazz( "Carbon.Utils.A", "Utility functions related to Arrays." ), ():void => {
 		it( isDefined(), ():void => {
 			expect( Utils.A ).toBeDefined();
 		} );
@@ -477,7 +477,7 @@ describe( module( "Carbon/Utils", "The description of Carbon/Utils" ), ():void =
 			expect( array.length ).toBe( 5 );
 		} );
 
-		it( hasMethod( STATIC, "joinWithoutDuplicates", "Takes two or more arrays and joins them while removing duplicates", [
+		it( hasMethod( STATIC, "joinWithoutDuplicates", "Takes two or more arrays and joins them while removing duplicates.", [
 			// TODO: Describe multiple arguments
 			{ name: "array", type: "array" },
 		], { type: "array" } ), ():void => {
@@ -524,7 +524,7 @@ describe( module( "Carbon/Utils", "The description of Carbon/Utils" ), ():void =
 		} );
 	} );
 
-	describe( clazz( "Carbon.Utils.UUID", "Utility functions related to UUIDs" ), ():void => {
+	describe( clazz( "Carbon.Utils.UUID", "Utility functions related to UUIDs." ), ():void => {
 		it( isDefined(), ():void => {
 			expect( Utils.UUID ).toBeDefined();
 		} );

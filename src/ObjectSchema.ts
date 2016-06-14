@@ -87,9 +87,7 @@ export class Digester {
 	static resolvePrefixedURI( uri:RDF.URI.Class, digestedSchema:DigestedObjectSchema ):RDF.URI.Class {
 		if( ! RDF.URI.Util.isPrefixed( uri.stringValue ) ) return uri;
 
-		let uriParts:string[] = uri.stringValue.split( ":" );
-		let prefix:string = uriParts[ 0 ];
-		let slug:string = uriParts[ 1 ];
+		let [ prefix, slug ]:[ string, string ] = <[ string, string ]> uri.stringValue.split( ":" );
 
 		if( digestedSchema.prefixes.has( prefix ) ) {
 			uri.stringValue = digestedSchema.prefixes.get( prefix ) + slug;

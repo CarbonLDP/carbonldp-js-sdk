@@ -32,7 +32,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 
 	describe( clazz(
 		"Carbon.PersistedDocument.Factory",
-		"Factory class for PersistedDocument objects."
+		"Factory class for `Carbon.PersistedDocument.Class` objects."
 	), ():void => {
 		let context:AbstractContext;
 		beforeEach( ():void => {
@@ -52,7 +52,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"hasClassProperties",
-			"Returns true if the Document provided has the properties and functions of a PersistedDocument object", [
+			"Returns true if the Document provided has the properties and methods of a `Carbon.PersistedDocument.Class` object.", [
 				{ name: "document", type: "Carbon.Document.Class" }
 			],
 			{ type: "boolean" }
@@ -131,7 +131,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"is",
-			"Returns true if the element provided is a PersistedDocument object.", [
+			"Returns true if the element provided is considered a `Carbon.PersistedDocument.Class` object.", [
 				{ name: "object", type: "Object" }
 			],
 			{ type: "boolean" }
@@ -164,9 +164,9 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"create",
-			"Creates an empty PersistedDocument object with the URI provided and contained by the Documents object specified.", [
+			"Creates an empty `Carbon.PersistedDocument.Class` object with the URI provided.", [
 				{ name: "uri", type: "string" },
-				{ name: "documents", type: "Carbon.Documents" }
+				{ name: "documents", type: "Carbon.Documents", description: "The Documents instance from where the PersistedDocument belong." }
 			],
 			{ type: "Carbon.PersistedDocument.Class" }
 		), ():void => {
@@ -183,9 +183,10 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"createFrom",
-			"Creates a PersistedDocument object from the object and URI provided, with the Documents object specified as container.", [
+			"Creates a PersistedDocument object from the object and URI provided.", [
 				{ name: "object", type: "T extends Object" },
-				{ name: "uri", type: "string" }
+				{ name: "uri", type: "string" },
+				{ name: "documents", type: "Carbon.Documents", description: "The Documents instance from where the PersistedDocument belong." }
 			],
 			{ type: "Carbon.PersistedDocument.Class" }
 		), ():void => {
@@ -214,7 +215,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 			"decorate",
 			"Adds the properties and methods necessary for a PersistedDocument object.", [
 				{ name: "object", type: "T extends Object" },
-				{ name: "documents", type: "Carbon.Documents" }
+				{ name: "documents", type: "Carbon.Documents", description: "The Documents instance from where the PersistedDocument belong." }
 			],
 			{ type: "T & Carbon.PersistedDocument.Class" }
 		), ():void => {
@@ -246,7 +247,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 		});
 
 		describe( decoratedObject(
-			"Object decorated by the Carbon.LDP.PersistedContainer.Factory.decorate function.", [
+			"Object decorated by the `Carbon.LDP.PersistedContainer.Factory.decorate()` function.", [
 				"Carbon.LDP.PersistedContainer.Class"
 			]
 		), ():void => {
@@ -263,7 +264,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 				INSTANCE,
 				"_documents",
 				"Carbon.Documents",
-				"Documents object who is the container of the PersistedContainer."
+				"Documents object from where the PersistedContainer belong."
 			), ():void => {
 				expect( document._documents ).toBeDefined();
 				expect( Utils.isObject( document._documents ) ).toBe( true );

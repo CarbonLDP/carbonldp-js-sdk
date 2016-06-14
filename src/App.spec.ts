@@ -125,7 +125,7 @@ describe( module( "Carbon/App" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"create",
-			"Create a `Carbon.App.Class` object with the parameters specified.", [
+			"Creates a `Carbon.App.Class` object with the parameters specified.", [
 				{ name: "name", type: "string" },
 				{ name: "description", type: "string", optional: true }
 			],
@@ -146,7 +146,7 @@ describe( module( "Carbon/App" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"createFrom",
-			"Create a `Carbon.App.Class` object from the object and parameters specified.", [
+			"Creates a `Carbon.App.Class` object from the object and parameters specified.", [
 				{ name: "object", type: "T extends Object" },
 				{ name: "name", type: "string" },
 				{ name: "description", type: "string", optional: true }

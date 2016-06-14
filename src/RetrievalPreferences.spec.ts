@@ -11,7 +11,7 @@ describe( module( "Carbon/RetrievalPreferences"), ():void => {
 		expect( Utils.isObject( RetrievalPreferences ) ).toBe( true );
 	});
 
-	describe( clazz( "Carbon.RetrievalPreferences.Factory", "Factory class for `Carbon.RetrievalPreferences.Class` object." ), ():void => {
+	describe( clazz( "Carbon.RetrievalPreferences.Factory", "Factory class for `Carbon.RetrievalPreferences.Class` objects." ), ():void => {
 
 		it( isDefined(), ():void => {
 			expect( RetrievalPreferences.Factory ).toBeDefined();
@@ -51,7 +51,7 @@ describe( module( "Carbon/RetrievalPreferences"), ():void => {
 
 	});
 
-	describe( clazz( "Carbon.RetrievalPreferences.Util", "Useful function when working with `Carbon.RetrievalPreferences.Class` objects." ), ():void => {
+	describe( clazz( "Carbon.RetrievalPreferences.Util", "Class with useful functions for working with `Carbon.RetrievalPreferences.Class` objects." ), ():void => {
 
 		it( isDefined(), ():void => {
 			expect( RetrievalPreferences.Util ).toBeDefined();
