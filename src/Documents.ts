@@ -858,7 +858,6 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 			let freeNodes:RDF.Node.Class[] = RDF.Node.Util.getFreeNodes( expandedResult );
 			let rdfDocuments:RDF.Document.Class[] = RDF.Document.Util.getDocuments( expandedResult );
 
-			rdfDocuments.forEach( rdfDocument => this.getPersistedDocument( rdfDocument, response ) );
 			let freeResources:FreeResources.Class = this.getFreeResources( freeNodes );
 
 			let descriptionResources:LDP.ResponseMetadata.Class[] = <any> freeResources.getResources().filter( resource => LDP.ResponseMetadata.Factory.hasRDFClass( resource ) );
@@ -871,8 +870,13 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 				document._etag = resourceMetadata.eTag;
 			}
 
-			let persistedDocuments:PersistedDocument.Class[] = responseMetadata.resourcesMetadata.map( ( resourceMetadata:LDP.ResourceMetadata.Class ) => <any> resourceMetadata.resource );
-			return [ persistedDocuments, response ];
+			let resourcePointers:Pointer.Class[] = responseMetadata.resourcesMetadata.map( ( resourceMetadata:LDP.ResourceMetadata.Class ) => resourceMetadata.resource );
+			rdfDocuments.forEach( ( rdfDocument:RDF.Document.Class ) => {
+				if ( Utils.A.indexOf( resourcePointers, rdfDocument, ( a:Pointer.Class, b:RDF.Document.Class ) => a.id === b[ "@id" ] ) !== -1 )
+					this.getPersistedDocument( rdfDocument, response );
+			});
+
+			return [ <PersistedDocument.Class[]> resourcePointers, response ];
 		} );
 	}
 

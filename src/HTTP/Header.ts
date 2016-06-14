@@ -1,6 +1,8 @@
 import * as Utils from "./../Utils";
 
 export class Class {
+	values:Value[] = [];
+
 	constructor();
 	constructor( values:Value[] );
 	constructor( value:string );
@@ -13,8 +15,6 @@ export class Class {
 			this.setValues( <string> valueOrValues );
 		}
 	}
-
-	values:Value[] = [];
 
 	toString():string {
 		return this.values.join( ", " );

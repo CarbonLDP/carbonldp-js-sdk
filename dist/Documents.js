@@ -744,7 +744,6 @@ var Documents = (function () {
             var expandedResult = _a[0], response = _a[1];
             var freeNodes = RDF.Node.Util.getFreeNodes(expandedResult);
             var rdfDocuments = RDF.Document.Util.getDocuments(expandedResult);
-            rdfDocuments.forEach(function (rdfDocument) { return _this.getPersistedDocument(rdfDocument, response); });
             var freeResources = _this.getFreeResources(freeNodes);
             var descriptionResources = freeResources.getResources().filter(function (resource) { return LDP.ResponseMetadata.Factory.hasRDFClass(resource); });
             if (descriptionResources.length === 0)
@@ -757,8 +756,12 @@ var Documents = (function () {
                 var document_1 = resourceMetadata.resource;
                 document_1._etag = resourceMetadata.eTag;
             }
-            var persistedDocuments = responseMetadata.resourcesMetadata.map(function (resourceMetadata) { return resourceMetadata.resource; });
-            return [persistedDocuments, response];
+            var resourcePointers = responseMetadata.resourcesMetadata.map(function (resourceMetadata) { return resourceMetadata.resource; });
+            rdfDocuments.forEach(function (rdfDocument) {
+                if (Utils.A.indexOf(resourcePointers, rdfDocument, function (a, b) { return a.id === b["@id"]; }) !== -1)
+                    _this.getPersistedDocument(rdfDocument, response);
+            });
+            return [resourcePointers, response];
         });
     };
     Documents.prototype.getFreeResources = function (nodes) {
