@@ -184,6 +184,7 @@ var Documents = (function () {
         requestOptions = HTTP.Request.Util.isOptions(retPrefReqOpt) ? retPrefReqOpt : (HTTP.Request.Util.isOptions(requestOptions) ? requestOptions : {});
         parentURI = this.getRequestURI(parentURI);
         this.setDefaultRequestOptions(requestOptions, NS.LDP.Class.Container);
+        var containerURI = parentURI;
         if (!!retrievalPreferences)
             parentURI += RetrievalPreferences.Util.stringifyRetrievalPreferences(retrievalPreferences);
         var containerRetrievalPreferences = {
@@ -201,7 +202,7 @@ var Documents = (function () {
         return HTTP.Request.Service.get(parentURI, requestOptions, new HTTP.JSONLDParser.Class()).then(function (_a) {
             var expandedResult = _a[0], response = _a[1];
             var freeNodes = RDF.Node.Util.getFreeNodes(expandedResult);
-            var rdfDocuments = RDF.Document.Util.getDocuments(expandedResult).filter(function (document) { return document["@id"] !== parentURI; });
+            var rdfDocuments = RDF.Document.Util.getDocuments(expandedResult).filter(function (document) { return document["@id"] !== containerURI; });
             var resources = _this.getPersistedMetadataResources(freeNodes, rdfDocuments, response);
             return [resources, response];
         });
