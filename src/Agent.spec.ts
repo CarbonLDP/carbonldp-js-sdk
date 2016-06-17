@@ -1,5 +1,3 @@
-import * as Agent from "./Agent";
-
 import {
 	STATIC,
 
@@ -8,12 +6,14 @@ import {
 
 	isDefined,
 	hasMethod,
-	hasProperty
+	hasProperty,
 } from "./test/JasmineExtender";
 import * as Utils from "./Utils";
 import * as NS from "./NS";
 import * as Errors from "./Errors";
 import * as Document from "./Document";
+
+import * as Agent from "./Agent";
 
 describe( module( "Carbon/Agent" ), ():void => {
 

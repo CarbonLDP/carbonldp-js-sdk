@@ -1,6 +1,5 @@
 import * as HTTP from "./../HTTP";
 import Authenticator from "./Authenticator";
-import AuthenticationToken from "./AuthenticationToken";
 import * as Errors from "./../Errors";
 import UsernameAndPasswordToken from "./UsernameAndPasswordToken";
 import * as UsernameAndPasswordCredentials from "./UsernameAndPasswordCredentials";
@@ -40,18 +39,14 @@ export class Class implements Authenticator<UsernameAndPasswordToken> {
 		this.credentials = null;
 	}
 
-	private addBasicAuthenticationHeader( headers:Map<string, HTTP.Header.Class> ):Map<string, HTTP.Header.Class> {
-		let header:HTTP.Header.Class;
-		if ( headers.has( "authorization" ) ) {
-			header = headers.get( "authorization" );
-		} else {
-			header = new HTTP.Header.Class();
-			headers.set( "authorization", header );
-		}
+	private addBasicAuthenticationHeader( headers:Map<string, HTTP.Header.Class> ):void {
+		if ( headers.has( "authorization" ) ) return;
+
+		let header:HTTP.Header.Class = new HTTP.Header.Class();
+		headers.set( "authorization", header );
+
 		let authorization:string = "Basic " + toB64( this.credentials.username + ":" + this.credentials.password );
 		header.values.push( new HTTP.Header.Value( authorization ) );
-
-		return headers;
 	}
 }
 

@@ -22,6 +22,7 @@ import * as RDF from "./RDF";
 
 import * as Apps from "./Apps";
 import DefaultExport from "./Apps";
+import IllegalStateError from "./Errors/IllegalStateError";
 
 describe( module( "Carbon/Apps" ), ():void => {
 	let context:AbstractContext;
@@ -47,7 +48,6 @@ describe( module( "Carbon/Apps" ), ():void => {
 				}
 			}
 			context = new MockedContext();
-			context.setSetting( "platform.apps.container", appsContainerURI );
 			apps = new Apps.Class( context );
 			jasmine.Ajax.install();
 		});
@@ -85,7 +85,7 @@ describe( module( "Carbon/Apps" ), ():void => {
 				jasmine.Ajax.stubRequest( "http://example.com/platform/apps/example-app/", null, "GET" ).andReturn({
 					status: 200,
 					responseHeaders: {
-						ETag: 'W/"123456789"'
+						ETag: '"123456789"'
 					},
 					responseText: `[{
 					    "@id": "http://example.com/platform/apps/example-app/",
@@ -113,27 +113,47 @@ describe( module( "Carbon/Apps" ), ():void => {
 					success: ( appContext:AppContext ):void => {
 						expect( appContext instanceof AppContext ).toBe( true );
 					},
-					fail: ( some ):void => {
-						console.log( some );
+					fail: ( error ):void => {
+						expect( error instanceof Errors.IllegalArgumentError ).toBe( true );
 					}
 				};
 				let successSpy = spyOn( spies, "success" ).and.callThrough();
 				let failSpy = spyOn( spies, "fail" ).and.callThrough();
 
+				let promises:Promise<any>[] = [];
 				let promise:Promise<any>;
 				let spy:jasmine.Spy;
 
 				spy = spyOn( context.documents, "get" ).and.callThrough();
 
-				promise = apps.getContext( 'example-app/' ).then( spies.success, spies.fail );
-				expect( promise instanceof Promise ).toBe( true );
+				// Test missing `platform.apps.container` setting
+				apps.getContext( "example-app/" ).catch( error => {
+					expect( error instanceof IllegalStateError ).toBe( true );
+					context.setSetting( "platform.apps.container", appsContainerURI );
 
-				promise.then( ():void => {
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/platform/apps/example-app/" );
-					expect( successSpy.calls.count() ).toBe( 1 );
-					expect( failSpy.calls.count() ).toBe( 0 );
-					done();
-				}, done.fail );
+					// Test the correct execution of the method
+					promise = apps.getContext( "example-app/" );
+					expect( promise instanceof Promise ).toBe( true );
+					promises.push( promise.then( spies.success ) );
+
+					// Test the correct execution of the method
+					promise = apps.getContext( "http://example.com/platform/apps/example-app/" );
+					expect( promise instanceof Promise ).toBe( true );
+					promises.push( promise.then( spies.success ) );
+
+					// Test sending incorrect app URI
+					promise = apps.getContext( "http://example.com/another-wrong-uri/example-app/" );
+					expect( promise instanceof Promise ).toBe( true );
+					promises.push( promise.catch( spies.fail ) );
+
+					Promise.all( promises ).then( ():void => {
+						expect( spy ).toHaveBeenCalledWith( "http://example.com/platform/apps/example-app/" );
+						expect( successSpy.calls.count() ).toBe( 2 );
+						expect( failSpy.calls.count() ).toBe( 1 );
+						done();
+					}).catch( done.fail );
+				});
+
 			});
 
 			it( hasSignature(
@@ -148,7 +168,7 @@ describe( module( "Carbon/Apps" ), ():void => {
 				jasmine.Ajax.stubRequest( "http://example.com/platform/apps/example-app/", null, "GET" ).andReturn({
 					status: 200,
 					responseHeaders: {
-						ETag: 'W/"123456789"'
+						ETag: '"1234567890"'
 					},
 					responseText: `[{
 					    "@id": "http://example.com/platform/apps/example-app/",
@@ -176,29 +196,47 @@ describe( module( "Carbon/Apps" ), ():void => {
 					success: ( appContext:AppContext ):void => {
 						expect( appContext instanceof AppContext ).toBe( true );
 					},
-					fail: ( some ):void => {
-						console.log( some );
+					fail: ( error ):void => {
+						expect( error instanceof Errors.IllegalArgumentError ).toBe( true );
 					}
 				};
 				let successSpy = spyOn( spies, "success" ).and.callThrough();
 				let failSpy = spyOn( spies, "fail" ).and.callThrough();
 
+				let promises:Promise<any>[] = [];
 				let promise:Promise<any>;
-				let pointer:Pointer.Class;
-				let spy:jasmine.Spy;
 
-				spy = spyOn( context.documents, "get" ).and.callThrough();
-				pointer = context.documents.getPointer( "apps/example-app/" );
+				let spyGet:jasmine.Spy = spyOn( context.documents, "get" ).and.callThrough();
 
-				promise = apps.getContext( pointer ).then( spies.success, spies.fail );
-				expect( promise instanceof Promise ).toBe( true );
+				// Test missing `platform.apps.container` setting
+				apps.getContext( context.documents.getPointer( "apps/example-app/" ) ).catch( error => {
+					expect( error instanceof IllegalStateError ).toBe( true );
+					context.setSetting( "platform.apps.container", appsContainerURI );
 
-				promise.then( ():void => {
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/platform/apps/example-app/" );
-					expect( successSpy.calls.count() ).toBe( 1 );
-					expect( failSpy.calls.count() ).toBe( 0 );
-					done();
-				}, done.fail );
+					// Text correct execution of the method
+					promise = apps.getContext( context.documents.getPointer( "apps/example-app/" ) );
+					expect( promise instanceof Promise ).toBe( true );
+					promises.push( promise.then( spies.success ) );
+
+					// Text correct execution of the method
+					promise = apps.getContext( context.documents.getPointer( "http://example.com/platform/apps/example-app/" ) );
+					expect( promise instanceof Promise ).toBe( true );
+					promises.push( promise.then( spies.success ) );
+
+					// Test sending incorrect app Pointer
+					promise = apps.getContext( context.documents.getPointer( "http://example.com/another-wrong-uri/example-app/" ) );
+					expect( promise instanceof Promise ).toBe( true );
+					promises.push( promise.catch( spies.fail ) );
+
+					Promise.all( promises ).then( ():void => {
+						expect( spyGet ).toHaveBeenCalledWith( "http://example.com/platform/apps/example-app/" );
+						expect( successSpy.calls.count() ).toBe( 2 );
+						expect( failSpy.calls.count() ).toBe( 1 );
+						done();
+					}, done.fail );
+
+				});
+
 			});
 
 		});
@@ -326,13 +364,22 @@ describe( module( "Carbon/Apps" ), ():void => {
 
 			let promise:Promise<any>;
 
-			promise = apps.getAllContexts().then( spies.success );
-			expect( promise instanceof Promise ).toBe( true );
+			// Test missing `platform.apps.container` setting
+			apps.getAllContexts().catch( error => {
+				expect( error instanceof IllegalStateError ).toBe( true );
+				context.setSetting( "platform.apps.container", appsContainerURI );
 
-			promise.then( ():void => {
-				expect( successSpy.calls.count() ).toBe( 1 );
-				done();
-			}).catch( done.fail );
+				// Text correct execution of the method
+				promise = apps.getAllContexts().then( spies.success );
+				expect( promise instanceof Promise ).toBe( true );
+
+				promise.then( ():void => {
+					expect( successSpy.calls.count() ).toBe( 1 );
+					done();
+				}).catch( done.fail );
+
+			});
+
 		});
 
 		describe( method(
@@ -350,27 +397,34 @@ describe( module( "Carbon/Apps" ), ():void => {
 				expect( apps.create ).toBeDefined();
 				expect( Utils.isFunction( apps.create ) ).toBe( true );
 
+				let promises:Promise<any>[] = [];
+				let promise:Promise<any>;
 				let spy = spyOn( context.documents, "createChild" );
+
 				let app:App.Class = App.Factory.create( "App name", "App description" );
 
-				apps.create( app );
-				expect( spy ).toHaveBeenCalledWith( appsContainerURI, null, app );
+				// Test missing `platform.apps.container` setting
+				apps.create( app ).catch( error => {
+					expect( error instanceof IllegalStateError ).toBe( true );
+					context.setSetting( "platform.apps.container", appsContainerURI );
 
-				let promise:Promise<any> = apps.create( null );
-				expect( promise instanceof Promise ).toBe( true );
+					//  Test correct execution of the method
+					promise = apps.create( app );
+					expect( promise instanceof Promise ).toBe( true );
+					promises.push( promise.then( () => {
+						expect( spy ).toHaveBeenCalledWith( appsContainerURI, null, app );
+					}));
 
-				let spies = {
-					onError: function( error ):void {
+					// Test incorrect `Carbon.App.Class` object provided
+					promise = apps.create( null );
+					expect( promise instanceof Promise ).toBe( true );
+					promises.push( promise.catch( error => {
 						expect( error instanceof Errors.IllegalArgumentError );
-					}
-				};
-				spy = spyOn( spies, "onError" ).and.callThrough();
-				promise = promise.catch( spies.onError );
+					}));
 
-				Promise.all( [promise] ).then( ():void => {
-					expect( spy ).toHaveBeenCalled();
-					done();
+					Promise.all( promises ).then( done ).catch( done.fail );
 				});
+
 			});
 
 			it( hasSignature(
@@ -380,36 +434,44 @@ describe( module( "Carbon/Apps" ), ():void => {
 					{ name: "appDocument", type: "Carbon.App.Class" }
 				],
 				{ type: "Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>" }
-			), ( done:() => void ):void => {
+			), ( done:{ ():void, fail:() => void } ):void => {
 				expect( apps.create ).toBeDefined();
 				expect( Utils.isFunction( apps.create ) ).toBe( true );
 
+				let promises:Promise<any>[] = [];
 				let promise:Promise<any>;
 				let spy = spyOn( context.documents, "createChild" );
 				let app:App.Class = App.Factory.create( "App name", "App description" );
 
-				apps.create( "slug-of-app", app );
-				expect( spy ).toHaveBeenCalledWith( appsContainerURI, "slug-of-app", app );
+				// Test missing `platform.apps.container` setting
+				apps.create( "slug-of-app", app ).catch( error => {
+					expect( error instanceof IllegalStateError ).toBe( true );
+					context.setSetting( "platform.apps.container", appsContainerURI );
 
-				spy.calls.reset();
-				apps.create( null, app );
-				expect( spy ).toHaveBeenCalledWith( appsContainerURI, null, app );
+					// Test correct execution of the method
+					promise = apps.create( "slug-of-app", app );
+					expect( promise instanceof Promise ).toBe( true );
+					promises.push( promise.then( () => {
+						expect( spy ).toHaveBeenCalledWith( appsContainerURI, "slug-of-app", app );
+					}));
 
-				promise = apps.create( "slug-of-app", null );
-				expect( promise instanceof Promise ).toBe( true );
+					// Test correct execution of the method, where delegate the manage of the `null` slug to `context.documents.createChild` method
+					apps.create( null, app );
+					expect( promise instanceof Promise ).toBe( true );
+					promises.push( promise.then( () => {
+						expect( spy ).toHaveBeenCalledWith( appsContainerURI, null, app );
+					}));
 
-				let spies = {
-					onError: function( error ):void {
+					// Test incorrect `Carbon.App.Class` object provided
+					promise = apps.create( "slug-of-app", null );
+					expect( promise instanceof Promise ).toBe( true );
+					promises.push( promise.catch( error => {
 						expect( error instanceof Errors.IllegalArgumentError );
-					}
-				};
-				spy = spyOn( spies, "onError" ).and.callThrough();
-				promise = promise.catch( spies.onError );
+					}));
 
-				Promise.all( [promise] ).then( ():void => {
-					expect( spy ).toHaveBeenCalled();
-					done();
+					Promise.all( promises ).then( done ).catch( done.fail );
 				});
+
 			});
 
 		});

@@ -957,15 +957,14 @@ describe( module( "Carbon/HTTP/Request" ), function ():void {
 		});
 
 		it( hasMethod(
-		STATIC,
-		"setAcceptHeader",
-		"Set an Accept header in an options object request.", [
-		{ name: "accept", type: "string" },
-		{ name: "requestOptions", type: "Object" }
-		], {
-		type: "Object"
-	}
-		), ():void => {
+			STATIC,
+			"setAcceptHeader",
+			"Set an Accept header in an options object request.", [
+			{ name: "accept", type: "string" },
+			{ name: "requestOptions", type: "Object" }
+			], {
+			type: "Object"
+		} ), ():void => {
 			expect( Request.Util.setAcceptHeader ).toBeDefined();
 			expect( Utils.isFunction( Request.Util.setAcceptHeader ) ).toBe( true );
 
@@ -1140,6 +1139,46 @@ describe( module( "Carbon/HTTP/Request" ), function ():void {
 			options = Request.Util.setContainerRetrievalPreferences( preferencesFullNormal, newOptionsObject(), false );
 			expect( Request.Util.getHeader( "Prefer", options ).toString() ).toEqual( preferencesFullStringNoRepresentatation );
 
+		});
+
+		it( hasMethod(
+			STATIC,
+			"isOptions",
+			"Returns `true` if the object provided has at least a property of a `Carbon.HTTP.Request.Option` object.", [
+				{ name: "object", type: "Object", description: "The object to evaluate." }
+			],
+			{ type: "boolean" }
+		), ():void => {
+			expect( Request.Util.isOptions ).toBeDefined();
+			expect( Utils.isFunction( Request.Util.isOptions ) ).toBe( true );
+
+			let options:Request.Options = {
+				headers: null,
+				sendCredentialsOnCORS: null,
+				timeout: null,
+				request: null,
+			};
+			expect( Request.Util.isOptions( options ) ).toBe( true );
+
+			delete options.headers;
+			expect( Request.Util.isOptions( options ) ).toBe( true );
+			options.headers = null;
+
+			delete options.sendCredentialsOnCORS;
+			expect( Request.Util.isOptions( options ) ).toBe( true );
+			options.sendCredentialsOnCORS = null;
+
+			delete options.timeout;
+			expect( Request.Util.isOptions( options ) ).toBe( true );
+			options.timeout = null;
+
+			delete options.request;
+			expect( Request.Util.isOptions( options ) ).toBe( true );
+			options.request = null;
+
+			expect( Request.Util.isOptions( {} ) ).toBe( false );
+			expect( Request.Util.isOptions( null ) ).toBe( false );
+			expect( Request.Util.isOptions( undefined ) ).toBe( false );
 		});
 
 		function newOptionsObject(): Request.Options {

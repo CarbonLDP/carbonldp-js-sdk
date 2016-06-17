@@ -68,7 +68,7 @@ describe( module(
 			let error: ConflictError = new ConflictError( "Message of the error", response );
 
 			expect( error ).toBeTruthy();
-			expect( error instanceof ConflictError).toBe( true );
+			expect( error instanceof ConflictError ).toBe( true );
 		});
 
 		it( hasMethod(

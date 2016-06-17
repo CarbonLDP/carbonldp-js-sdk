@@ -42,7 +42,7 @@ describe( module( "Carbon/LDP/ResponseMetadata"), ():void => {
 
 	describe( clazz(
 		"Carbon.LDP.ResponseMetadata.Factory",
-		"Factory class form `Carbon.LDP.ResponseMetadata.Class` objects."
+		"Factory class for `Carbon.LDP.ResponseMetadata.Class` objects."
 	), ():void => {
 
 		it( isDefined(), ():void => {

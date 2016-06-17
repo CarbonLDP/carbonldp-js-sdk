@@ -68,7 +68,7 @@ describe( module(
 			let error: HTTPError = new HTTPError( "Message of the error", response );
 
 			expect( error ).toBeTruthy();
-			expect( error instanceof HTTPError).toBe( true );
+			expect( error instanceof HTTPError ).toBe( true );
 		});
 
 		it( hasMethod(

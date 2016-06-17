@@ -68,7 +68,7 @@ describe( module(
 			let error: InternalServerErrorError = new InternalServerErrorError( "Message of the error", response );
 
 			expect( error ).toBeTruthy();
-			expect( error instanceof InternalServerErrorError).toBe( true );
+			expect( error instanceof InternalServerErrorError ).toBe( true );
 		});
 
 		it( hasMethod(

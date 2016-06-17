@@ -68,7 +68,7 @@ describe( module(
 			let error: RequestEntityTooLargeError = new RequestEntityTooLargeError( "Message of the error", response );
 
 			expect( error ).toBeTruthy();
-			expect( error instanceof RequestEntityTooLargeError).toBe( true );
+			expect( error instanceof RequestEntityTooLargeError ).toBe( true );
 		});
 
 		it( hasMethod(

@@ -25,7 +25,7 @@ describe( module(
 
 	describe( clazz(
 		"Carbon.HTTP.Errors.UnknownError",
-		"Error class that defines any error that can not be identified."
+		"Error class that defines any error that could not be identified."
 	), ():void => {
 
 		let response: Response;
@@ -68,7 +68,7 @@ describe( module(
 			let error: UnknownError = new UnknownError( "Message of the error", response );
 
 			expect( error ).toBeTruthy();
-			expect( error instanceof UnknownError).toBe( true );
+			expect( error instanceof UnknownError ).toBe( true );
 		});
 
 		it( hasMethod(

@@ -68,7 +68,7 @@ describe( module(
 			let error: RequestHeaderFieldsTooLargeError = new RequestHeaderFieldsTooLargeError( "Message of the error", response );
 
 			expect( error ).toBeTruthy();
-			expect( error instanceof RequestHeaderFieldsTooLargeError).toBe( true );
+			expect( error instanceof RequestHeaderFieldsTooLargeError ).toBe( true );
 		});
 
 		it( hasMethod(

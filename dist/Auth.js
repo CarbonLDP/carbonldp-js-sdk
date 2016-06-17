@@ -16,7 +16,6 @@ var Utils = require("./Utils");
 var Method = exports.Method;
 var Class = (function () {
     function Class(context) {
-        this.method = null;
         this.context = context;
         this.authenticators = [];
         this.authenticators[Method.BASIC] = new BasicAuthenticator_1.default();

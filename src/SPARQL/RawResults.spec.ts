@@ -21,7 +21,7 @@ describe( module( "Carbon/SPARQL/RawResults" ), ():void => {
 
 	describe( clazz(
 		"Carbon.SPARQL.RawResults",
-		"Class that specifies the types a SPARQL query result can be."
+		"Class that specifies the result types of a SPARQL query."
 	), ():void => {
 
 		it( isDefined(), ():void => {

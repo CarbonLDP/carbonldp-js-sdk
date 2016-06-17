@@ -389,40 +389,20 @@ describe( module( "Carbon/RDF/Literal" ), ():void => {
 
 	});
 
-	describe( clazz(
-		"Carbon.RDF.Literal.Util",
-		"Class with useful functions to manage `Carbon.RDF.Literal.Class` objects."
-	), ():void => {
-
-		it( isDefined(), ():void => {
-			expect( Literal.Util ).toBeDefined();
-			expect( Utils.isFunction( Literal.Util ) ).toBe( true );
-		});
-
-		it( hasMethod(
-			STATIC,
-			"areEqual",
-			"Returns true if two Literals are equal.", [
-				{ name: "literal1", type: "Carbon.RDF.Literal.Class" },
-				{ name: "literal2", type: "Carbon.RDF.Literal.Class" }
-			],
-			{ type: "boolean" }
-		), ():void => {
-			expect( Literal.Util.areEqual ).toBeDefined();
-			expect( Utils.isFunction( Literal.Util.areEqual ) ).toBe( true );
-
-			// TODO wait implementation
-		});
-
-	});
-
 	it( reexports(
 		STATIC,
-		"serializer",
+		"Serializers",
 		"Carbon/RDF/Literal/Serializers"
 	), ():void => {
 		expect( Literal.Serializers ).toBeDefined();
 		expect( Literal.Serializers ).toBe( Serializers );
+	});
+
+	it( reexports(
+		STATIC,
+		"Serializer",
+		"Carbon/RDF/Literal/Serializer"
+	), ():void => {
 	});
 
 });

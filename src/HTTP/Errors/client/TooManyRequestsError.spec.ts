@@ -68,7 +68,7 @@ describe( module(
 			let error: TooManyRequestsError = new TooManyRequestsError( "Message of the error", response );
 
 			expect( error ).toBeTruthy();
-			expect( error instanceof TooManyRequestsError).toBe( true );
+			expect( error instanceof TooManyRequestsError ).toBe( true );
 		});
 
 		it( hasMethod(

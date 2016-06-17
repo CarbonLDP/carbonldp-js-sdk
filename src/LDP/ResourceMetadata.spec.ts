@@ -47,7 +47,7 @@ describe( module( "Carbon/LDP/ResourceMetadata" ), ():void => {
 
 	describe( clazz(
 		"Carbon.LDP.ResourceMetadata.Factory",
-		"Factory class form `Carbon.LDP.ResourceMetadata.Class` objects."
+		"Factory class for `Carbon.LDP.ResourceMetadata.Class` objects."
 	), ():void => {
 
 		it( isDefined(), ():void => {

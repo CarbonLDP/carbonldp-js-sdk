@@ -61,7 +61,7 @@ var Class = (function () {
         return HTTP.Request.Service.post(uri, null, requestOptions, new HTTP.JSONLDParser.Class()).then(function (_a) {
             var expandedResult = _a[0], response = _a[1];
             var expandedNodes = RDF.Document.Util.getResources(expandedResult);
-            expandedNodes = expandedNodes.filter(Token.Factory.hasRDFClass);
+            expandedNodes = expandedNodes.filter(function (node) { return RDF.Node.Util.hasType(node, Token.RDF_CLASS); });
             if (expandedNodes.length === 0)
                 throw new HTTP.Errors.BadResponseError("No '" + Token.RDF_CLASS + "' was returned.", response);
             if (expandedNodes.length > 1)
@@ -74,17 +74,12 @@ var Class = (function () {
         });
     };
     Class.prototype.addTokenAuthenticationHeader = function (headers) {
-        var header;
-        if (headers.has("authorization")) {
-            header = headers.get("authorization");
-        }
-        else {
-            header = new HTTP.Header.Class();
-            headers.set("authorization", header);
-        }
+        if (headers.has("authorization"))
+            return;
+        var header = new HTTP.Header.Class();
+        headers.set("authorization", header);
         var authorization = "Token " + this._credentials.key;
         header.values.push(new HTTP.Header.Value(authorization));
-        return headers;
     };
     Class.TOKEN_CONTAINER = "auth-tokens/";
     return Class;

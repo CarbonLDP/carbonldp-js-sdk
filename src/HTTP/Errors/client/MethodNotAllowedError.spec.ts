@@ -68,7 +68,7 @@ describe( module(
 			let error: MethodNotAllowedError = new MethodNotAllowedError( "Message of the error", response );
 
 			expect( error ).toBeTruthy();
-			expect( error instanceof MethodNotAllowedError).toBe( true );
+			expect( error instanceof MethodNotAllowedError ).toBe( true );
 		});
 
 		it( hasMethod(

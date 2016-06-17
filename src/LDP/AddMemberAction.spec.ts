@@ -87,7 +87,7 @@ describe( module( "Carbon/LDP/AddMemberAction" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"createDocument",
-			"Creates and returns a `Carbon.Document.Class` object with an `Carbon.LDP.AddMemberAction.Class` fragment for the specified targetMembers.", [
+			"Creates and returns a `Carbon.Document.Class` object with a `Carbon.LDP.AddMemberAction.Class` fragment for the specified targetMembers.", [
 				{ name: "targetMembers", type: "Carbon.Pointer.Class[]", description: "The target members to add in a `addMember` request." }
 			],
 			{ type: "Carbon.Document.Class" }

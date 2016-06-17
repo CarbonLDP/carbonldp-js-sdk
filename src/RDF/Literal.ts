@@ -141,13 +141,6 @@ export class Factory {
 	}
 }
 
-export class Util {
-	static areEqual( literal1:Class, literal2:Class ):boolean {
-		// TODO: Implement
-		return false;
-	}
-}
-
 export default Class;
 
 export {

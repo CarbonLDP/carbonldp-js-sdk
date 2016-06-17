@@ -68,7 +68,7 @@ describe( module(
 			let error: UnsupportedMediaTypeError = new UnsupportedMediaTypeError( "Message of the error", response );
 
 			expect( error ).toBeTruthy();
-			expect( error instanceof UnsupportedMediaTypeError).toBe( true );
+			expect( error instanceof UnsupportedMediaTypeError ).toBe( true );
 		});
 
 		it( hasMethod(

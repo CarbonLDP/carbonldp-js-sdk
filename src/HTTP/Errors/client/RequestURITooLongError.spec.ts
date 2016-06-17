@@ -68,7 +68,7 @@ describe( module(
 			let error: RequestURITooLongError = new RequestURITooLongError( "Message of the error", response );
 
 			expect( error ).toBeTruthy();
-			expect( error instanceof RequestURITooLongError).toBe( true );
+			expect( error instanceof RequestURITooLongError ).toBe( true );
 		});
 
 		it( hasMethod(

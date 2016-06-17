@@ -20,6 +20,7 @@ import AbstractContext from "./AbstractContext";
 import AuthenticationToken from "./Auth/AuthenticationToken";
 import Authenticator from "./Auth/Authenticator";
 import BasicAuthenticator from "./Auth/BasicAuthenticator";
+import * as HTTP from "./HTTP";
 import * as Token from "./Auth/Token";
 import TokenAuthenticator from "./Auth/TokenAuthenticator";
 import UsernameAndPasswordToken from "./Auth/UsernameAndPasswordToken";
@@ -145,7 +146,136 @@ describe( module( "Carbon/Auth" ), ():void => {
 			],
 			{ type: "boolean" }
 		), ():void => {
-			// TODO test
+
+			// Property Integrity
+			( function propertyIntegrity() {
+				class MockedContext extends AbstractContext {
+					resolve( uri:string ) {
+						return uri;
+					}
+				}
+				let context = new MockedContext();
+				let auth = new Auth.Class( context );
+
+				expect( auth.isAuthenticated ).toBeDefined();
+				expect( Utils.isFunction( auth. isAuthenticated ) ).toBe( true );
+			} )();
+
+
+			// Neither current nor parent authenticated
+			( function currentNotAuthenticated_parentNotAuthenticated() {
+				class MockedContext extends AbstractContext {
+					constructor() {
+						super();
+						this._parentContext = this;
+					}
+					resolve( uri:string ) {
+						return uri;
+					}
+				}
+				let context = new MockedContext();
+				let auth = new Auth.Class( context );
+				let spyParent = spyOn( context.auth, "isAuthenticated" ).and.returnValue( false );
+
+				expect( auth.isAuthenticated() ).toBe( false );
+				expect( spyParent ).toHaveBeenCalled();
+				spyParent.calls.reset();
+
+				expect( auth.isAuthenticated( true ) ).toBe( false );
+				expect( spyParent ).toHaveBeenCalled();
+				spyParent.calls.reset();
+
+				expect( auth.isAuthenticated( false ) ).toBe( false );
+				expect( spyParent ).not.toHaveBeenCalled();
+			} )();
+
+			// Current not authenticated but parent is
+			( function currentNotAuthenticated_parentAuthenticated() {
+				class MockedContext extends AbstractContext {
+					constructor() {
+						super();
+						this._parentContext = this;
+					}
+					resolve( uri:string ) {
+						return uri;
+					}
+				}
+				let context = new MockedContext();
+				let auth = new Auth.Class( context );
+				let spyParent = spyOn( context.auth, "isAuthenticated" ).and.returnValue( true );
+
+				expect( auth.isAuthenticated() ).toBe( true );
+				expect( spyParent ).toHaveBeenCalled();
+				spyParent.calls.reset();
+
+				expect( auth.isAuthenticated( true ) ).toBe( true );
+				expect( spyParent ).toHaveBeenCalled();
+				spyParent.calls.reset();
+
+				expect( auth.isAuthenticated( false ) ).toBe( false );
+				expect( spyParent ).not.toHaveBeenCalled();
+			} )();
+
+			// Current and parent authenticated
+			( function currentAuthenticated_parentAuthenticated() {
+				class MockedContext extends AbstractContext {
+					constructor() {
+						super();
+						this._parentContext = this;
+					}
+					resolve( uri:string ) {
+						return uri;
+					}
+				}
+				let context = new MockedContext();
+
+				let auth = new Auth.Class( context );
+				(<any> auth).authenticator = { isAuthenticated: () => true };
+
+				let spyParent = spyOn( context.auth, "isAuthenticated" ).and.returnValue( true );
+
+				expect( auth.isAuthenticated() ).toBe( true );
+				expect( spyParent ).not.toHaveBeenCalled();
+				spyParent.calls.reset();
+
+				expect( auth.isAuthenticated( true ) ).toBe( true );
+				expect( spyParent ).not.toHaveBeenCalled();
+				spyParent.calls.reset();
+
+				expect( auth.isAuthenticated( false ) ).toBe( true );
+				expect( spyParent ).not.toHaveBeenCalled();
+			} )();
+
+			// Current authenticated but parent not
+			( function currentAuthenticated_parentNotAuthenticated() {
+				class MockedContext extends AbstractContext {
+					constructor() {
+						super();
+						this._parentContext = this;
+					}
+					resolve( uri:string ) {
+						return uri;
+					}
+				}
+				let context = new MockedContext();
+
+				let auth = new Auth.Class( context );
+				(<any> auth).authenticator = { isAuthenticated: () => true };
+
+				let spyParent = spyOn( context.auth, "isAuthenticated" ).and.returnValue( false );
+
+				expect( auth.isAuthenticated() ).toBe( true );
+				expect( spyParent ).not.toHaveBeenCalled();
+				spyParent.calls.reset();
+
+				expect( auth.isAuthenticated( true ) ).toBe( true );
+				expect( spyParent ).not.toHaveBeenCalled();
+				spyParent.calls.reset();
+
+				expect( auth.isAuthenticated( false ) ).toBe( true );
+				expect( spyParent ).not.toHaveBeenCalled();
+			} )();
+
 		});
 
 		it( hasMethod(
@@ -205,11 +335,10 @@ describe( module( "Carbon/Auth" ), ():void => {
 				],
 				{ type: "Promise<Carbon.Auth.UsernameAndPasswordCredentials.Class>"}
 			), ( done:{ ():void, fail:() => void } ):void => {
-				let auth01 = new Auth.Class( context );
-				
-				expect( auth01.authenticateUsing ).toBeDefined();
-				expect( Utils.isFunction( auth01.authenticateUsing ) ).toBe( true );
-				expect( auth01.isAuthenticated() ).toBe( false );
+				let auth = new Auth.Class( context );
+				expect( auth.authenticateUsing ).toBeDefined();
+				expect( Utils.isFunction( auth.authenticateUsing ) ).toBe( true );
+				expect( auth.isAuthenticated() ).toBe( false );
 
 				let username = "myUser@user.com";
 				let password = "myAwesomePassword";
@@ -228,16 +357,19 @@ describe( module( "Carbon/Auth" ), ():void => {
 				let spySuccess = spyOn( spies, "success" ).and.callThrough();
 				let spyFail = spyOn( spies, "fail" ).and.callThrough();
 
+				// Expected behavior
+				let auth01 = new Auth.Class( context );
 				promise = auth01.authenticateUsing( "BASIC", username, password );
 				expect( promise instanceof Promise ).toBe( true );
 				promises.push( promise.then( spies.success, spies.fail ) );
 
-
+				// Wrong parameters
 				let auth02 = new Auth.Class( context );
 				promise = auth02.authenticateUsing( "BASIC", {} );
 				expect( promise instanceof Promise ).toBe( true );
 				promises.push( promise.then( spies.success, spies.fail ) );
 
+				// Nonexistent authentication type
 				let auth03 = new Auth.Class( context );
 				promise = auth03.authenticateUsing( "Error", username, password );
 				expect( promise instanceof Promise ).toBe( true );
@@ -258,11 +390,10 @@ describe( module( "Carbon/Auth" ), ():void => {
 				],
 				{ type: "Promise<Carbon.Auth.Token.Class>"}
 			), ( done:{ ():void, fail:() => void } ):void => {
-				let auth01 = new Auth.Class( context );
-
-				expect( auth01.authenticateUsing ).toBeDefined();
-				expect( Utils.isFunction( auth01.authenticateUsing ) ).toBe( true );
-				expect( auth01.isAuthenticated() ).toBe( false );
+				let auth = new Auth.Class( context );
+				expect( auth.authenticateUsing ).toBeDefined();
+				expect( Utils.isFunction( auth.authenticateUsing ) ).toBe( true );
+				expect( auth.isAuthenticated() ).toBe( false );
 
 				let date:Date = new Date();
 				date.setDate( date.getDate() + 1 );
@@ -305,15 +436,19 @@ describe( module( "Carbon/Auth" ), ():void => {
 					responseText: JSON.stringify( token )
 				});
 
+				// Expected behavior
+				let auth01 = new Auth.Class( context );
 				promise = auth01.authenticateUsing( "TOKEN", "myUser@user.con", "myAwesomePassword" );
 				expect( promise instanceof Promise ).toBe( true );
 				promises.push( promise.then( spies.success, spies.fail ) );
 
+				// Wrong parameters
 				let auth02:Auth.Class = new Auth.Class( context );
 				promise = auth02.authenticateUsing( "TOKEN", {} );
 				expect( promise instanceof Promise ).toBe( true );
 				promises.push( promise.then( spies.success, spies.fail ) );
 
+				// Nonexistent authentication method
 				let auth03:Auth.Class = new Auth.Class( context );
 				promise = auth03.authenticateUsing( "Error", "myUser@user.con", "myAwesomePassword" );
 				expect( promise instanceof Promise ).toBe( true );
@@ -335,7 +470,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 			), ( done:{ ():void, fail:() => void } ):void => {
 				let auth01 = new Auth.Class( context );
 				let auth02 = new Auth.Class( context );
-				
+
 				expect( auth01.authenticateUsing ).toBeDefined();
 				expect( Utils.isFunction( auth01.authenticateUsing ) ).toBe( true );
 				expect( auth01.isAuthenticated() ).toBe( false );
@@ -362,7 +497,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 				let spySuccess02 = spyOn( spies, "success02" ).and.callThrough();
 				let spyFail = spyOn( spies, "fail" ).and.callThrough();
 
-				// OK Token
+				// Expected behavior
 				date = new Date();
 				date.setDate( date.getDate() + 1 );
 				token = <any> {
@@ -378,7 +513,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 				expect( promise instanceof Promise ).toBe( true );
 				promises.push( promise.then( spies.success01, spies.fail ) );
 
-				// Will be OK, if expirationDate is a string the method tries parse it to a Date object
+				// Expected behavior. If expirationDate is a string the method parse it to a Date object
 				date = new Date();
 				date.setDate( date.getDate() + 1 );
 				var getFromStorage = ():Object => {
@@ -397,7 +532,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 				expect( promise instanceof Promise ).toBe( true );
 				promises.push( promise.then( spies.success02, spies.fail ) );
 
-				// Will fail, because expirationDate has been reached
+				// ExpirationDate has been reached
 				let auth03:Auth.Class = new Auth.Class( context );
 				date = new Date();
 				date.setDate( date.getDate() - 1 );
@@ -414,10 +549,12 @@ describe( module( "Carbon/Auth" ), ():void => {
 				expect( promise instanceof Promise ).toBe( true );
 				promises.push( promise.then( spies.success01, spies.fail ) );
 
+				// Wrong parameters
 				promise = auth03.authenticateUsing( "TOKEN", {} );
 				expect( promise instanceof Promise ).toBe( true );
 				promises.push( promise.then( spies.success01, spies.fail ) );
 
+				// Nonexistent authentication method
 				promise = auth03.authenticateUsing( "Error", token );
 				expect( promise instanceof Promise ).toBe( true );
 				promises.push( promise.then( spies.success01, spies.fail ) );
@@ -439,15 +576,185 @@ describe( module( "Carbon/Auth" ), ():void => {
 				{ name: "options", type: "Carbon.HTTP.Request.Options" }
 			]
 		), ():void => {
-			// TODO test
+
+			// Property Integrity
+			( function propertyIntegrity() {
+				class MockedContext extends AbstractContext {
+					resolve( uri:string ) {
+						return uri;
+					}
+				}
+				let context = new MockedContext();
+				let auth = new Auth.Class( context );
+
+				expect( auth.addAuthentication ).toBeDefined();
+				expect( Utils.isFunction( auth.addAuthentication ) ).toBe( true );
+			} )();
+
+			// Neither current nor parent authenticated
+			( function currentNotAuthenticated_parentNotAuthenticated() {
+				class MockedContext extends AbstractContext {
+					constructor() {
+						super();
+						this._parentContext = this;
+					}
+					resolve( uri:string ) {
+						return uri;
+					}
+				}
+				let context = new MockedContext();
+				let auth = new Auth.Class( context );
+
+				let spyParent = spyOn( context.auth, "addAuthentication" ).and.callFake( options => {
+					options[ "parentAuth" ] = "no authenticated";
+				} );
+
+				let options:HTTP.Request.Options = {};
+
+				auth.addAuthentication( options );
+				expect( spyParent ).toHaveBeenCalledWith( options );
+				expect( options ).toEqual( { parentAuth: "no authenticated" } );
+			} )();
+
+			// Current not authenticated but parent is
+			( function currentNotAuthenticated_parentAuthenticated() {
+				class MockedContext extends AbstractContext {
+					constructor() {
+						super();
+						this._parentContext = this;
+					}
+					resolve( uri:string ) {
+						return uri;
+					}
+				}
+				let context = new MockedContext();
+				let auth = new Auth.Class( context );
+
+				let spyParent = spyOn( context.auth, "addAuthentication" ).and.callFake( options => {
+					options[ "parentAuth" ] = "is authenticated";
+				} );
+
+				let options:HTTP.Request.Options = {};
+
+				auth.addAuthentication( options );
+				expect( spyParent ).toHaveBeenCalledWith( options );
+				expect( options ).toEqual( { parentAuth: "is authenticated" } );
+			} )();
+
+			// Current and parent authenticated
+			( function currentAuthenticated_parentAuthenticated() {
+				class MockedContext extends AbstractContext {
+					constructor() {
+						super();
+						this._parentContext = this;
+					}
+					resolve( uri:string ) {
+						return uri;
+					}
+				}
+				let context = new MockedContext();
+				let auth = new Auth.Class( context );
+
+				(<any> auth).authenticator = { isAuthenticated: () => true, addAuthentication: options => {
+					options[ "currentAuth" ] = "is authenticated";
+				} };
+				let spyParent = spyOn( context.auth, "addAuthentication" ).and.callFake( options => {
+					options[ "parentAuth" ] = "is authenticated";
+				} );
+
+				let options:HTTP.Request.Options = {};
+
+				auth.addAuthentication( options );
+				expect( spyParent ).not.toHaveBeenCalled();
+				expect( options ).toEqual( { currentAuth: "is authenticated" } );
+			} )();
+
+			// Current authenticated but parent not
+			( function currentAuthenticated_parentNotAuthenticated() {
+				class MockedContext extends AbstractContext {
+					constructor() {
+						super();
+						this._parentContext = this;
+					}
+					resolve( uri:string ) {
+						return uri;
+					}
+				}
+				let context = new MockedContext();
+				let auth = new Auth.Class( context );
+
+				(<any> auth).authenticator = { isAuthenticated: () => true, addAuthentication: options => {
+					options[ "currentAuth" ] = "is authenticated";
+				} };
+				let spyParent = spyOn( context.auth, "addAuthentication" ).and.callFake( options => {
+					options[ "parentAuth" ] = "no authenticated";
+				} );
+
+				let options:HTTP.Request.Options = {};
+
+				auth.addAuthentication( options );
+				expect( spyParent ).not.toHaveBeenCalled();
+				expect( options ).toEqual( { currentAuth: "is authenticated" } );
+			} )();
+
 		});
 
 		it( hasMethod(
 			INSTANCE,
 			"clearAuthentication",
-			"Deletes the current authentication."
+			"Deletes the authentication of the current instance."
 		), ():void => {
-			// TODO test
+
+			// Property Integrity
+			( function propertyIntegrity() {
+				class MockedContext extends AbstractContext {
+					resolve( uri:string ) {
+						return uri;
+					}
+				}
+				let context = new MockedContext();
+				let auth = new Auth.Class( context );
+
+				expect( auth.clearAuthentication ).toBeDefined();
+				expect( Utils.isFunction( auth.clearAuthentication ) ).toBe( true );
+			} )();
+
+			// The module isn't authenticated
+			( function NotAuthenticated() {
+				class MockedContext extends AbstractContext {
+					resolve( uri:string ) {
+						return uri;
+					}
+				}
+				let context = new MockedContext();
+				let auth = new Auth.Class( context );
+
+				auth.clearAuthentication();
+				expect( (<any> auth).authenticator ).toBeFalsy();
+			} )();
+
+			// The module is authenticated
+			( function currentAuthenticated() {
+				class MockedContext extends AbstractContext {
+					resolve( uri:string ) {
+						return uri;
+					}
+				}
+				let context = new MockedContext();
+				let auth = new Auth.Class( context );
+				(<any> auth).authenticator = {
+					isAuthenticated: () => true,
+					clearAuthentication: () => {}
+				};
+				let spyClear = spyOn( (<any> auth).authenticator, "clearAuthentication" );
+
+				expect( auth.isAuthenticated() ).toBe( true );
+				auth.clearAuthentication();
+				expect( (<any> auth).authenticator ).toBeFalsy();
+				expect( auth.isAuthenticated() ).toBe( false );
+				expect( spyClear ).toHaveBeenCalled();
+			} )();
+
 		});
 
 	});

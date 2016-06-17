@@ -9,7 +9,8 @@ import {
 	hasConstructor,
 	isDefined,
 	hasMethod,
-	hasSignature
+	hasSignature,
+	hasProperty,
 } from "./../test/JasmineExtender";
 import * as Utils from "./../Utils";
 import * as URI from "./URI";
@@ -32,11 +33,25 @@ describe( module( "Carbon/RDF/URI" ), ():void => {
 		it( hasConstructor( [
 			{ name: "stringValue", type: "string", description: "The string that represents the URI." }
 		]), ():void => {
-			let anURI = new URI.Class( "http://example.com/resource/" );
+			let uri = new URI.Class( "http://example.com/resource/" );
 
-			expect( !! anURI ).toBe( true );
-			expect( anURI instanceof URI.Class ).toBe( true );
+			expect( !! uri ).toBe( true );
+			expect( uri instanceof URI.Class ).toBe( true );
 		});
+
+		it( hasProperty(
+			INSTANCE,
+			"stringValue",
+			"string",
+			"The string value of the URI object."
+		), ():void => {
+			let uri = new URI.Class( "http://example.com/resource/" );
+
+			expect( uri.stringValue ).toBe( "http://example.com/resource/" );
+
+			uri.stringValue = "http://example.com/another-resource/";
+			expect( uri.stringValue ).toBe( "http://example.com/another-resource/" );
+		} );
 
 		it( hasMethod(
 			INSTANCE,
@@ -45,12 +60,12 @@ describe( module( "Carbon/RDF/URI" ), ():void => {
 			{ type: "string" }
 		), ():void => {
 			let stringURI = "http://example.com/resource/";
-			let anURI = new URI.Class( stringURI );
+			let uri = new URI.Class( stringURI );
 
-			expect( "toString" in anURI ).toBe( true );
-			expect( Utils.isFunction( anURI.toString ) ).toBe( true );
+			expect( "toString" in uri ).toBe( true );
+			expect( Utils.isFunction( uri.toString ) ).toBe( true );
 
-			expect( anURI.toString() ).toEqual( stringURI );
+			expect( uri.toString() ).toEqual( stringURI );
 		});
 
 
@@ -356,9 +371,14 @@ describe( module( "Carbon/RDF/URI" ), ():void => {
 			expect( URI.Util.getDocumentURI.bind( null, errorURI ) ).toThrowError( /IllegalArgument/ );
 		});
 
-		it( hasMethod( STATIC, "getSlug", "Returns the slug of the URI. It takes an ending slash as part as the slug.", [
-			{ name: "uri", type: "string" }
-		], { type: "string" } ), ():void => {
+		it( hasMethod(
+			STATIC,
+			"getSlug",
+			"Returns the slug of the URI. It takes an ending slash as part as the slug.", [
+				{ name: "uri", type: "string" }
+			],
+			{ type: "string" }
+		), ():void => {
 			// Property integrity
 			(() => {
 				expect( "getSlug" in URI.Util ).toEqual( true );

@@ -68,7 +68,7 @@ describe( module(
 			let error: NotFoundError = new NotFoundError( "Message of the error", response );
 
 			expect( error ).toBeTruthy();
-			expect( error instanceof NotFoundError).toBe( true );
+			expect( error instanceof NotFoundError ).toBe( true );
 		});
 
 		it( hasMethod(

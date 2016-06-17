@@ -68,7 +68,7 @@ describe( module(
 			let error: UnauthorizedError = new UnauthorizedError( "Message of the error", response );
 
 			expect( error ).toBeTruthy();
-			expect( error instanceof UnauthorizedError).toBe( true );
+			expect( error instanceof UnauthorizedError ).toBe( true );
 		});
 
 		it( hasMethod(

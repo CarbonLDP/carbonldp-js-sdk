@@ -68,7 +68,7 @@ describe( module(
 			let error: BadRequestError = new BadRequestError( "Message of the error", response );
 
 			expect( error ).toBeTruthy();
-			expect( error instanceof BadRequestError).toBe( true );
+			expect( error instanceof BadRequestError ).toBe( true );
 		});
 
 		it( hasMethod(

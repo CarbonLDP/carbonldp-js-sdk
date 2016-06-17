@@ -68,7 +68,7 @@ describe( module(
 			let error: ForbiddenError = new ForbiddenError( "Message of the error", response );
 
 			expect( error ).toBeTruthy();
-			expect( error instanceof ForbiddenError).toBe( true );
+			expect( error instanceof ForbiddenError ).toBe( true );
 		});
 
 		it( hasMethod(

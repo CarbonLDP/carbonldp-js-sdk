@@ -17,7 +17,6 @@ import * as App from "./../App";
 import PersistedApp from "./../PersistedApp";
 import * as Pointer from "./../Pointer";
 import * as Utils from "./../Utils";
-import {DigestedObjectSchema} from "../ObjectSchema";
 
 import AppContext from "./Context";
 
@@ -75,7 +74,7 @@ describe( module( "Carbon/App/Context" ), ():void => {
 			INSTANCE,
 			"app",
 			"Carbon.App.Class",
-			"The Document that represents the actual CarbonLDP Application in the server."
+			"The Document that represents the CarbonLDP Application."
 		), ():void => {
 			expect( appContext.app ).toBeDefined();
 			expect( App.Factory.is( appContext.app ) ).toBe( true );

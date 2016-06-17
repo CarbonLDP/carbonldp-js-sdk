@@ -68,7 +68,7 @@ describe( module(
 			let error: NotAcceptableError = new NotAcceptableError( "Message of the error", response );
 
 			expect( error ).toBeTruthy();
-			expect( error instanceof NotAcceptableError).toBe( true );
+			expect( error instanceof NotAcceptableError ).toBe( true );
 		});
 
 		it( hasMethod(

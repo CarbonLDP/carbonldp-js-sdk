@@ -25,7 +25,7 @@ describe( module( "Carbon/LDP/VolatileResource"), ():void => {
 
 	describe( clazz(
 		"Carbon.LDP.VolatileResource.Factory",
-		"Factory class form `Carbon.LDP.VolatileResource.Class` objects."
+		"Factory class for `Carbon.LDP.VolatileResource.Class` objects."
 	), ():void => {
 
 		it( isDefined(), ():void => {

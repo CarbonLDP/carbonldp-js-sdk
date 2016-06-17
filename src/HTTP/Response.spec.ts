@@ -14,12 +14,10 @@ import {
 } from "./../test/JasmineExtender";
 import * as Utils from "./../Utils";
 import * as Header from "./Header";
+import {ClientRequest, IncomingMessage} from "http";
 
 import * as Response from "./Response";
 import DefaultExport from "./Response";
-import construct = Reflect.construct;
-import {ClientRequest, IncomingMessage} from "http";
-import {resolve} from "url";
 
 describe( module(
 	"Carbon/HTTP/Response"
@@ -67,13 +65,12 @@ describe( module(
 				{ name: "request", type: "XMLHttpRequest" }
 			]), ( done:{ ():void, fail:() => void } ):void => {
 
-				createResponse( ( response:Response.Class ) => {
-
+				createResponse().then( ( [ response, request ]:[ Response.Class, XMLHttpRequest | ClientRequest ] ) => {
 					expect( response ).toBeDefined();
 					expect( response instanceof Response.Class ).toBe( true );
 
 					done();
-				}, done.fail );
+				}).catch( done.fail );
 
 			});
 
@@ -84,13 +81,12 @@ describe( module(
 				{ name: "response", type: "IncomingMessage" }
 			]), ( done:{ ():void, fail:() => void } ):void => {
 
-				createResponse( ( response:Response.Class) => {
-
+				createResponse().then( ( [ response, request ]:[ Response.Class, XMLHttpRequest | ClientRequest ] ) => {
 					expect( response ).toBeDefined();
 					expect( response instanceof Response.Class ).toBe( true );
 
 					done();
-				}, done.fail );
+				}).catch( done.fail );
 
 			});
 
@@ -104,15 +100,14 @@ describe( module(
 			"The status code returned by the request."
 		), ( done:{ ():void, fail:() => void } ):void => {
 
-			createResponse( ( response:Response.Class ) => {
-
+			createResponse().then( ( [ response, request ]:[ Response.Class, XMLHttpRequest | ClientRequest ] ) => {
 				expect( response.status ).toBeDefined();
 				expect( Utils.isNumber( response.status ) ).toBe( true );
 
 				expect( response.status ).toBe( rawResponse.status );
 
 				done();
-			}, done.fail );
+			}).catch( done.fail );
 
 		});
 
@@ -123,15 +118,14 @@ describe( module(
 			"The raw body returned by the request."
 		), ( done:{ ():void, fail:() => void } ):void => {
 
-			createResponse( ( response:Response.Class ) => {
-
+			createResponse().then( ( [ response, request ]:[ Response.Class, XMLHttpRequest | ClientRequest ] ) => {
 				expect( response.data ).toBeDefined();
 				expect( Utils.isString( response.data ) ).toBe( true );
 
 				expect( response.data ).toBe( rawResponse.responseText );
 
 				done();
-			}, done.fail );
+			}).catch( done.fail );
 		});
 
 		it( hasProperty(
@@ -141,8 +135,7 @@ describe( module(
 			"A map object containing the headers returned by the request."
 		), ( done:{ ():void, fail:() => void } ):void => {
 
-			createResponse( ( response:Response.Class ) => {
-
+			createResponse().then( ( [ response, request ]:[ Response.Class, XMLHttpRequest | ClientRequest ] ) => {
 				expect( response.headers ).toBeDefined();
 				expect( Utils.isMap( response.headers ) ).toBe( true );
 
@@ -153,7 +146,7 @@ describe( module(
 				}
 
 				done();
-			}, done.fail );
+			}).catch( done.fail );
 
 		});
 
@@ -161,14 +154,13 @@ describe( module(
 			INSTANCE,
 			"request",
 			"XMLHttpRequest | ClientRequest",
-			"The XMLHttpRequest object that was provided in the constructor when working in a Browser, or The ClientRequest object when working with Node.js."
+			"The XMLHttpRequest object that was provided in the constructor when working in a Browser, or the ClientRequest object when working with Node.js."
 		), ( done:{ ():void, fail:() => void } ):void => {
 
-			createResponse( ( response:Response.Class, request:XMLHttpRequest | ClientRequest ) => {
-
+			createResponse().then( ( [ response, request ]:[ Response.Class, XMLHttpRequest | ClientRequest ] ) => {
 				expect( response.request ).toBeDefined();
 
-				if ( inXMLHttpRequest)
+				if ( inXMLHttpRequest )
 					expect( response.request instanceof XMLHttpRequest ).toBe( true );
 				else
 					expect( response.request instanceof require( "http" ).ClientRequest ).toBe( true );
@@ -176,7 +168,7 @@ describe( module(
 				expect( response.request ).toBe( request );
 
 				done();
-			}, done.fail );
+			}).catch( done.fail );
 
 		});
 
@@ -189,7 +181,7 @@ describe( module(
 			{ type: "Carbon.HTTP.Header.Class" }
 		), ( done:{ ():void, fail:() => void } ):void => {
 
-			createResponse( ( response:Response.Class ) => {
+			createResponse().then( ( [ response, request ]:[ Response.Class, XMLHttpRequest | ClientRequest ] ) => {
 
 				expect( response.getHeader ).toBeDefined();
 				expect( Utils.isFunction( response.getHeader ) ).toBe( true );
@@ -198,42 +190,9 @@ describe( module(
 				expect( header instanceof Header.Class ).toBe( true );
 
 				done();
-			}, done.fail );
+			}).catch( done.fail );
 
 		});
-
-		function createResponse( callback:( response:Response.Class, request?:XMLHttpRequest | ClientRequest ) => void, fail:( any?:any) =>  void ) {
-			if ( inXMLHttpRequest ) {
-				let request:XMLHttpRequest = new XMLHttpRequest();
-				request.open( "GET", "http://example.com/request/" );
-				request.onerror = fail;
-
-				request.onload = () => {
-					let response = new Response.Class( <XMLHttpRequest> request );
-					callback( response, request );
-				};
-
-				request.send();
-
-			} else {
-				let http:any = require( "http" );
-				let request:ClientRequest = http.request( {
-					method: "GET",
-					protocol: "http:",
-					host: "example.com",
-					path: "/request/"
-				}, ( res:IncomingMessage ) => {
-					res.setEncoding( "utf8" );
-					res.on( "data", ( data ) => {
-						let response = new Response.Class( <ClientRequest> request, data, res );
-						callback( response, request )
-					});
-				});
-
-				request.on( "error", fail );
-				request.end();
-			}
-		}
 
 	});
 
@@ -270,59 +229,57 @@ describe( module(
 
 			let promises:Promise<void>[] = [];
 
-			promises.push( createResponse( "full/", ( response:Response.Class ):void => {
+			promises.push( createResponse( "full/" ).then( ( [ response, request ]:[ Response.Class, XMLHttpRequest | ClientRequest ] ) => {
 				expect( Response.Util.getETag( response ) ).toBe( rawResponse.responseHeaders[ "ETag" ] );
 			} ) );
 
-			promises.push( createResponse( "empty/", ( response:Response.Class ):void => {
+			promises.push( createResponse( "empty/" ).then( ( [ response, request ]:[ Response.Class, XMLHttpRequest | ClientRequest ] ) => {
 				expect( Response.Util.getETag( response ) ).toBeNull();
 			} ) );
 
 			Promise.all( promises ).then( done ).catch( done.fail );
 		});
 
-		function createResponse( type:string, callback:( response:Response.Class ) => void ):Promise<void> {
-			return new Promise<void>( ( resolve, reject ) => {
-				if ( inXMLHttpRequest ) {
-					let request:XMLHttpRequest = new XMLHttpRequest();
-					request.open( "GET", "http://example.com/request/" + type );
-					request.onerror = reject;
-
-					request.onload = () => {
-						let response = new Response.Class( <XMLHttpRequest> request );
-						callback( response );
-						resolve();
-					};
-
-					request.send();
-
-				} else {
-					let http:any = require( "http" );
-					let request:ClientRequest = http.request( {
-						method: "GET",
-						protocol: "http:",
-						host: "example.com",
-						path: "/request/" + type
-					}, ( res:IncomingMessage ) => {
-						let data:string = "";
-						res.setEncoding( "utf8" );
-						res.on( "data", ( chunk ) => {
-							data = chunk;
-						});
-						res.on( "end", () => {
-							let response = new Response.Class( <ClientRequest> request, data, res );
-							callback( response );
-							resolve();
-						});
-					});
-
-					request.on( "error", reject );
-					request.end();
-				}
-			} );
-		}
-
 	});
+
+	function createResponse( type:string = "" ):Promise<[ Response.Class, XMLHttpRequest | ClientRequest ]> {
+		return new Promise<any> ( ( resolve, reject ) => {
+			if ( inXMLHttpRequest ) {
+				let request:XMLHttpRequest = new XMLHttpRequest();
+				request.open( "GET", "http://example.com/request/" + type );
+				request.onerror = fail;
+
+				request.onload = () => {
+					let response = new Response.Class( <XMLHttpRequest> request );
+					resolve( [ response, request ] );
+				};
+
+				request.send();
+
+			} else {
+				let http:any = require( "http" );
+				let request:ClientRequest = http.request( {
+					method: "GET",
+					protocol: "http:",
+					host: "example.com",
+					path: "/request/" + type,
+				}, ( res:IncomingMessage ) => {
+					let data:string = "";
+					res.setEncoding( "utf8" );
+					res.on( "data", ( chunk ) => {
+						data = chunk;
+					});
+					res.on( "end", () => {
+						let response = new Response.Class( <ClientRequest> request, data, res );
+						resolve( [ response, request ] )
+					});
+				});
+
+				request.on( "error", reject );
+				request.end();
+			}
+		} );
+	}
 
 	it( hasDefaultExport(
 		"Carbon.HTTP.Response.Class"

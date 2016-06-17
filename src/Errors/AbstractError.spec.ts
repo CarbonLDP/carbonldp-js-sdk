@@ -3,16 +3,12 @@ import * as Utils from "./../Utils";
 
 import {
 		INSTANCE,
-		STATIC,
 		clazz,
 		module,
 		isDefined,
 		hasConstructor,
 		hasMethod,
 		hasProperty,
-		hasInterface,
-		MethodArgument,
-		interfaze
 } from "./../test/JasmineExtender";
 
 describe( module( "Carbon/Errors/AbstractError" ), function ():void {
@@ -38,7 +34,7 @@ describe( module( "Carbon/Errors/AbstractError" ), function ():void {
 			expect( exception instanceof AbstractError ).toBe( true );
 		} );
 
-		it( hasMethod( INSTANCE, "toString", "Returns a string representation", { type: "string" } ), function():void {
+		it( hasMethod( INSTANCE, "toString", "Returns a string representation of the error.", { type: "string" } ), function():void {
 			let exception:AbstractError = new DummyError( "This is the message" );
 
 			expect( exception.toString ).toBeDefined();

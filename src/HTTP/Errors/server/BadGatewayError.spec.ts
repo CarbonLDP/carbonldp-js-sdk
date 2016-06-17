@@ -68,7 +68,7 @@ describe( module(
 			let error: BadGatewayError = new BadGatewayError( "Message of the error", response );
 
 			expect( error ).toBeTruthy();
-			expect( error instanceof BadGatewayError).toBe( true );
+			expect( error instanceof BadGatewayError ).toBe( true );
 		});
 
 		it( hasMethod(

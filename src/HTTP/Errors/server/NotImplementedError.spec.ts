@@ -68,7 +68,7 @@ describe( module(
 			let error: NotImplementedError = new NotImplementedError( "Message of the error", response );
 
 			expect( error ).toBeTruthy();
-			expect( error instanceof NotImplementedError).toBe( true );
+			expect( error instanceof NotImplementedError ).toBe( true );
 		});
 
 		it( hasMethod(

@@ -24,7 +24,7 @@ export class Class {
 	}
 
 	static executeASKQuery( url:string, askQuery:string, options:HTTP.Request.Options = {} ):Promise<[ boolean, HTTP.Response.Class ]> {
-		return HTTP.Request.Service.post( url, askQuery, options, Class.resultsParser ).then( ( [ rawResults, response ]:[ RawResults.Class, HTTP.Response.Class ] ) => {
+		return Class.executeRawASKQuery( url, askQuery, options ).then( ( [ rawResults, response ]:[ RawResults.Class, HTTP.Response.Class ] ) => {
 			return [ rawResults.boolean, response ];
 		});
 	}

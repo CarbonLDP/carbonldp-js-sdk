@@ -68,7 +68,7 @@ describe( module(
 			let error: GatewayTimeoutError = new GatewayTimeoutError( "Message of the error", response );
 
 			expect( error ).toBeTruthy();
-			expect( error instanceof GatewayTimeoutError).toBe( true );
+			expect( error instanceof GatewayTimeoutError ).toBe( true );
 		});
 
 		it( hasMethod(

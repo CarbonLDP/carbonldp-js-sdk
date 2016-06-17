@@ -68,7 +68,7 @@ describe( module(
 			let error: ServiceUnavailableError = new ServiceUnavailableError( "Message of the error", response );
 
 			expect( error ).toBeTruthy();
-			expect( error instanceof ServiceUnavailableError).toBe( true );
+			expect( error instanceof ServiceUnavailableError ).toBe( true );
 		});
 
 		it( hasMethod(

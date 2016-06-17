@@ -68,7 +68,7 @@ describe( module(
 			let error: HTTPVersionNotSupportedError = new HTTPVersionNotSupportedError( "Message of the error", response );
 
 			expect( error ).toBeTruthy();
-			expect( error instanceof HTTPVersionNotSupportedError).toBe( true );
+			expect( error instanceof HTTPVersionNotSupportedError ).toBe( true );
 		});
 
 		it( hasMethod(

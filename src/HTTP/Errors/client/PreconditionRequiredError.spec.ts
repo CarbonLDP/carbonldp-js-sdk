@@ -68,7 +68,7 @@ describe( module(
 			let error: PreconditionRequiredError = new PreconditionRequiredError( "Message of the error", response );
 
 			expect( error ).toBeTruthy();
-			expect( error instanceof PreconditionRequiredError).toBe( true );
+			expect( error instanceof PreconditionRequiredError ).toBe( true );
 		});
 
 		it( hasMethod(

@@ -145,38 +145,15 @@ describe( module( "Carbon/Auth/Token" ), ():void => {
 			expect( "decorate" in Token.Factory ).toBe( true );
 			expect( Utils.isFunction( Token.Factory.decorate ) ).toBe( true );
 
-			// TODO: Test behaviour
-		});
-
-		describe( method(
-			INSTANCE,
-			"hasRDFClass"
-		), ():void => {
-
-			it( hasSignature(
-				"Returns true if the pointer provided has the RDF Type of a `Carbon.Auth.Token.Class` object.", [
-					{ name: "pointer", type: "Carbon.Pointer.Class" }
-				],
-				{ type: "boolean" }
-			), ():void => {
-				expect( "hasRDFClass" in Token.Factory ).toBe( true );
-				expect( Utils.isFunction( Token.Factory.hasRDFClass ) ).toBe( true );
-
-				// TODO: Test behaviour
-			});
-
-			it( hasSignature(
-				"Returns true if the expanded object provided has the RDF Type of a `Carbon.Auth.Token.Class` object.", [
-					{ name: "expandedObject", type: "Object" }
-				],
-				{ type: "boolean" }
-			), ():void => {
-				expect( "hasRDFClass" in Token.Factory ).toBe( true );
-				expect( Utils.isFunction( Token.Factory.hasRDFClass ) ).toBe( true );
-
-				// TODO: Test behaviour
-			});
-
+			let object:any = {
+				key: null,
+				expirationTime: null
+			};
+			let token:Token.Class = Token.Factory.decorate( object );
+			expect( token ).toEqual( {
+				key: null,
+				expirationTime: null
+			} );
 		});
 
 	});

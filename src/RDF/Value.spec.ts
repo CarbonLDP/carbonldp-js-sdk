@@ -132,32 +132,6 @@ describe( module( "Carbon/RDF/Value" ), ():void => {
 
 		it( hasMethod(
 			STATIC,
-			"areEqual",
-			"Returns true if the two Values are considered equal.", [
-				{ name: "value1", type: "Carbon.RDF.Value.Class" },
-				{ name: "value2", type: "Carbon.RDF.Value.Class" }
-			],
-			{ type: "boolean" }
-		), ():void => {
-			expect( Value.Util.areEqual ).toBeDefined();
-			expect( Utils.isFunction( Value.Util.areEqual ) ).toBe( true );
-
-			let value1:Value.Class = undefined, value2:Value.Class = undefined;
-			let result:boolean;
-
-			result = Value.Util.areEqual( value1, value2 );
-			expect( result ).toBe( false );
-
-			value1 = {};
-			value2 = {};
-			result = Value.Util.areEqual( value1, value2 );
-			expect( result ).toBe( false );
-
-			// TODO wait implementation of `Carbon.RDF.Literal.Util.areEqual` function
-		});
-
-		it( hasMethod(
-			STATIC,
 			"getProperty",
 			"Returns the property searched, parsed in accordance to the RDF object it is.\n" +
 			"Returns null if the property is not found or cannot be parsed.", [

@@ -117,7 +117,7 @@ function upload( slugOrData:any, data:any = null ):Promise<[ Pointer.Class, HTTP
 	}
 }
 
-	export class Factory {
+export class Factory {
 	static hasClassProperties( document:Document.Class ):boolean {
 		return Utils.isObject( document )
 			&& Utils.hasFunction( document, "addMember" )
