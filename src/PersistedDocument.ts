@@ -36,6 +36,8 @@ export interface Class extends Pointer.Class, PersistedResource.Class, Document.
 	save():Promise<[Class, HTTP.Response.Class]>;
 	destroy():Promise<HTTP.Response.Class>;
 
+	getDownloadURL():Promise<string>;
+
 	createAccessPoint( accessPoint:AccessPoint.Class, slug?:string, requestOptions?:HTTP.Request.Options ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
 
 	executeRawASKQuery( askQuery:string, requestOptions?:HTTP.Request.Options ):Promise<[ SPARQL.RawResults.Class, HTTP.Response.Class ]>;
@@ -105,6 +107,10 @@ function save():Promise<void> {
 }
 function destroy():Promise<HTTP.Response.Class> {
 	return this._documents.delete( this.id );
+}
+
+function getDownloadURL():Promise<string> {
+	return (<Class> this)._documents.getDownloadURL( (<Class> this).id );
 }
 
 function createAccessPoint( accessPoint:AccessPoint.Class, slug:string = null, requestOptions:HTTP.Request.Options = {}):Promise<[ Pointer.Class, HTTP.Response.Class ]> {
@@ -266,6 +272,13 @@ export class Factory {
 				enumerable: false,
 				configurable: true,
 				value: destroy,
+			},
+
+			"getDownloadURL": {
+				writable: false,
+				enumerable: false,
+				configurable: true,
+				value: getDownloadURL,
 			},
 
 			"createAccessPoint": {

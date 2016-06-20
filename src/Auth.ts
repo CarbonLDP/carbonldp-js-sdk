@@ -2,20 +2,27 @@ import AuthenticationToken from "./Auth/AuthenticationToken";
 import Authenticator from "./Auth/Authenticator";
 import BasicAuthenticator from "./Auth/BasicAuthenticator";
 import TokenAuthenticator from "./Auth/TokenAuthenticator";
+import * as Ticket from "./Auth/Ticket";
 import * as Token from "./Auth/Token";
 import UsernameAndPasswordToken from "./Auth/UsernameAndPasswordToken";
 import UsernameAndPasswordCredentials from "./Auth/UsernameAndPasswordCredentials";
 import Credentials from "./Auth/Credentials";
 
-import * as HTTP from "./HTTP";
-import * as Errors from "./Errors";
 import Context from "./Context";
+import { DigestedObjectSchema } from "./ObjectSchema";
+import * as Errors from "./Errors";
+import * as FreeResources from "./FreeResources";
+import * as HTTP from "./HTTP";
+import * as NS from "./NS";
+import * as Resource from "./Resource";
+import * as RDF from "./RDF";
 import * as Utils from "./Utils";
 
 export {
 	AuthenticationToken,
 	Authenticator,
 	BasicAuthenticator,
+	Ticket,
 	Token,
 	TokenAuthenticator,
 	UsernameAndPasswordToken
@@ -87,6 +94,48 @@ export class Class {
 
 		this.authenticator.clearAuthentication();
 		this.authenticator = null;
+	}
+
+	createTicket( uri:string, requestOptions:HTTP.Request.Options = {} ):Promise<[ Ticket.Class, HTTP.Response.Class ]> {
+		let resourceURI:string = this.context.resolve( uri );
+		let containerURI:string = this.context.resolve( Ticket.TICKETS_CONTAINER );
+
+		let freeResources:FreeResources.Class = FreeResources.Factory.create( this.context.documents );
+		Ticket.Factory.createFrom( freeResources.createResource(), resourceURI );
+
+		if ( this.isAuthenticated() ) this.addAuthentication( requestOptions );
+		HTTP.Request.Util.setAcceptHeader( "application/ld+json", requestOptions );
+		HTTP.Request.Util.setContentTypeHeader( "application/ld+json", requestOptions );
+		HTTP.Request.Util.setPreferredInteractionModel( NS.LDP.Class.RDFSource, requestOptions );
+
+		return HTTP.Request.Service.post( containerURI, freeResources.toJSON(), requestOptions, new HTTP.JSONLDParser.Class() ).then( ( [ expandedResult, response ]:[ any, HTTP.Response.Class ] ) => {
+			let freeNodes:RDF.Node.Class[] = RDF.Node.Util.getFreeNodes( expandedResult );
+
+			let ticketNodes:RDF.Node.Class[] = freeNodes.filter( freeNode => RDF.Node.Util.hasType( freeNode, Ticket.RDF_CLASS ) );
+
+			if( ticketNodes.length === 0 ) throw new HTTP.Errors.BadResponseError( `No ${ Ticket.RDF_CLASS } was returned.`, response );
+			if( ticketNodes.length > 1 ) throw new HTTP.Errors.BadResponseError( `Multiple ${ Ticket.RDF_CLASS } were returned.`, response );
+
+			let expandedTicket:RDF.Node.Class = ticketNodes[ 0 ];
+			let ticket:Ticket.Class = <any> Resource.Factory.create();
+
+			let digestedSchema:DigestedObjectSchema = this.context.documents.getSchemaFor( expandedTicket );
+
+			this.context.documents.jsonldConverter.compact( expandedTicket, ticket, digestedSchema, this.context.documents );
+
+			return [ ticket, response ];
+		} );
+	}
+
+	getAuthenticatedURL( uri:string, requestOptions?:HTTP.Request.Options ):Promise<string> {
+		let resourceURI:string = this.context.resolve( uri );
+
+		return this.createTicket( resourceURI, requestOptions ).then( ( [ ticket, response ]:[ Ticket.Class, HTTP.Response.Class ] ) => {
+			resourceURI += RDF.URI.Util.hasQuery( resourceURI ) ? "&" : "?";
+			resourceURI += `ticket=${ ticket.ticketKey }`;
+
+			return resourceURI;
+		});
 	}
 
 	private authenticateWithBasic( username:string, password:string ):Promise<UsernameAndPasswordCredentials> {

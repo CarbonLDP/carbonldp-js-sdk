@@ -39,7 +39,7 @@ describe( module(
 		it( isDefined(), ():void => {
 			expect( CS.Class ).toBeDefined();
 			expect( Utils.isFunction( CS.Class ) ).toBe( true );
-			expect( Object.keys( CS.Class ).length ).toBe( 4 );
+			expect( Object.keys( CS.Class ).length ).toBe( 5 );
 		});
 
 		it( hasProperty(
@@ -77,13 +77,24 @@ describe( module(
 
 		it( hasProperty(
 			STATIC,
-			"AllOrigins",
+			"Agent",
 			"string"
 		), ():void => {
 			expect( CS.Class.Agent ).toBeDefined();
 			expect( Utils.isString( CS.Class.Agent ) ).toBe( true );
 
 			expect( CS.Class.Agent ).toBe( "https://carbonldp.com/ns/v1/security#Agent" );
+		});
+
+		it( hasProperty(
+			STATIC,
+			"Ticket",
+			"string"
+		), ():void => {
+			expect( CS.Class.Ticket ).toBeDefined();
+			expect( Utils.isString( CS.Class.Ticket ) ).toBe( true );
+
+			expect( CS.Class.Ticket ).toBe( "https://carbonldp.com/ns/v1/security#Ticket" );
 		});
 
 	});
@@ -97,7 +108,7 @@ describe( module(
 			expect( CS.Predicate ).toBeDefined();
 			expect( Utils.isFunction( CS.Predicate ) ).toBe( true );
 
-			expect( Object.keys( CS.Predicate ).length ).toBe( 7 );
+			expect( Object.keys( CS.Predicate ).length ).toBe( 9 );
 		});
 
 		it( hasProperty(
@@ -175,6 +186,28 @@ describe( module(
 			expect( Utils.isString( CS.Predicate.description ) ).toBe( true );
 
 			expect( CS.Predicate.description ).toBe( "https://carbonldp.com/ns/v1/security#description" );
+		});
+
+		it( hasProperty(
+			STATIC,
+			"forIRI",
+			"string"
+		), ():void => {
+			expect( CS.Predicate.forIRI ).toBeDefined();
+			expect( Utils.isString( CS.Predicate.forIRI ) ).toBe( true );
+
+			expect( CS.Predicate.forIRI ).toBe( "https://carbonldp.com/ns/v1/security#forIRI" );
+		});
+
+		it( hasProperty(
+			STATIC,
+			"ticketKey",
+			"string"
+		), ():void => {
+			expect( CS.Predicate.ticketKey ).toBeDefined();
+			expect( Utils.isString( CS.Predicate.ticketKey ) ).toBe( true );
+
+			expect( CS.Predicate.ticketKey ).toBe( "https://carbonldp.com/ns/v1/security#ticketKey" );
 		});
 
 	});

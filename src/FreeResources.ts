@@ -14,6 +14,8 @@ export interface Class extends Pointer.Library, Pointer.Validator {
 	getResources():Resource.Class[];
 
 	createResource( id?:string ):Resource.Class;
+
+	toJSON():string;
 }
 
 function hasPointer( id:string ):boolean {
@@ -86,6 +88,17 @@ function createResource( id?:string ):Resource.Class {
 	return resource;
 }
 
+function toJSON():string {
+	let resources:Resource.Class[] = this.getResources();
+	let expandedResources:RDF.Node.Class[] = [];
+
+	for( let resource of resources ) {
+		expandedResources.push( this._documents.jsonldConverter.expand( resource, this._documents.getSchemaFor( resource ) ) );
+	}
+
+	return JSON.stringify( expandedResources );
+}
+
 export class Factory {
 	static hasClassProperties( object:Object ):boolean {
 		return (
@@ -100,7 +113,9 @@ export class Factory {
 			Utils.hasFunction( object, "hasPointer" ) &&
 			Utils.hasFunction( object, "getPointer" ) &&
 
-			Utils.hasFunction( object, "inScope" )
+			Utils.hasFunction( object, "inScope" ) &&
+
+			Utils.hasFunction( object, "toJSON" )
 		);
 	}
 
@@ -166,6 +181,12 @@ export class Factory {
 				enumerable: false,
 				configurable: true,
 				value: createResource,
+			},
+			"toJSON": {
+				writable: true,
+				enumerable: false,
+				configurable: true,
+				value: toJSON,
 			},
 		} );
 

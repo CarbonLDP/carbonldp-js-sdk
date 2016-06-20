@@ -457,6 +457,20 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 
 			it( hasMethod(
 				INSTANCE,
+				"getDownloadURL",
+				"Returns the URI of the current document with the properties necessarily for a single download request.",
+				{ type: "Promise<Carbon.HTTP.Response.Class>" }
+			), ():void => {
+				expect( document.getDownloadURL ).toBeDefined();
+				expect( Utils.isFunction( document.getDownloadURL ) ).toBe( true );
+
+				let spy = spyOn( context.documents, "getDownloadURL" );
+				document.getDownloadURL();
+				expect( spy ).toHaveBeenCalledWith( document.id );
+			});
+
+			it( hasMethod(
+				INSTANCE,
 				"createAccessPoint",
 				"Creates an AccessPoint for the PersistedDocument.",
 				{ type: "Promise<[Carbon.Pointer.Class, Carbon.HTTP.Response.Class]>" }
