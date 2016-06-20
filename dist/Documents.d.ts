@@ -73,10 +73,11 @@ declare class Documents implements Pointer.Library, Pointer.Validator, ObjectSch
     private getAssociatedFragment(persistedDocument, fragment);
     private getRequestURI(uri);
     private setDefaultRequestOptions(requestOptions, interactionModel);
+    private getMembershipResource(documentResource, rdfDocuments, response);
     private getPersistedDocument(rdfDocument, response);
     private createPersistedDocument(documentPointer, documentResource, fragmentResources);
     private updatePersistedDocument(persistedDocument, documentResource, fragmentResources);
-    private sendRequestForResponseWithMetadata(uri, requestOptions);
+    private getPersistedMetadataResources(freeNodes, rdfDocuments, response);
     private getFreeResources(nodes);
 }
 export default Documents;

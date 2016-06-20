@@ -1,3 +1,7 @@
+# 0.34.1 (June 16, 2016)
+- Fix [LDP-672](https://jira.base22.com/browse/LDP-672) - Fragments with double #
+- Fix [LDP-686](https://jira.base22.com/browse/LDP-686) - `getMembers` deletes container and membershipResource properties
+
 # 0.34.0 (May 26, 2016)
 - [LDP-637](https://jira.base22.com/browse/LDP-637) Update test and build workflows to latest JSPM version
 - [LDP-662](https://jira.base22.com/browse/LDP-662) Definitions are no longer being bundled. Instead the npm package has been refactored so all definition files work with a node moduleResolution
