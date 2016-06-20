@@ -26,6 +26,7 @@ import * as Pointer from "./Pointer";
 import * as RDF from "./RDF";
 import * as Resource from "./Resource";
 import * as SDKContext from "./SDKContext";
+import * as Settings from "./Settings";
 import * as SPARQL from "./SPARQL";
 import * as Utils from "./Utils";
 declare class Carbon extends AbstractContext {
@@ -55,12 +56,13 @@ declare class Carbon extends AbstractContext {
     static RDF: typeof RDF;
     static Resource: typeof Resource;
     static SDKContext: typeof SDKContext;
+    static Settings: typeof Settings;
     static SPARQL: typeof SPARQL;
     static Utils: typeof Utils;
     static version: string;
     apps: Apps.Class;
     version: string;
-    constructor(settings?: any);
+    constructor(settings?: Settings.Class);
     resolve(uri: string): string;
     getAPIDescription(): Promise<APIDescription.Class>;
 }

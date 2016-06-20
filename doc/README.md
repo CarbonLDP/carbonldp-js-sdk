@@ -518,12 +518,13 @@
 | RDF | [Carbon/RDF](#Carbon-RDF) |
 | Resource | [Carbon/Resource](#Carbon-Resource) |
 | SDKContext | [Carbon/SDKContext](#Carbon-SDKContext) |
+| Settings | [Carbon/Settings](#Carbon-Settings) |
 | SPARQL | [Carbon/SPARQL](#Carbon-SPARQL) |
 | Utils | [Carbon/Utils](#Carbon-Utils) |
 
 #### <a name="Carbon-Constructor" />Constructor
 ```typescript 
-Carbon( settings?:any )
+Carbon( settings?:Carbon.Settings.Class )
 ```
 
 
@@ -629,7 +630,7 @@ The parent context provided in the constructor. If no context was provided, this
 resolve( relativeURI:string ):string
 ```
 
-Abstract method that from the URI provided, must return an absolute URI in accordance to the context scope.
+Abstract method that returns an absolute URI in accordance to the context scope from the relative URI provided.
 
 *Parameters*
 
@@ -1156,7 +1157,7 @@ Authenticates the user with Basic HTTP Authentication, which uses an encoded str
 authenticateUsing( method:'TOKEN',  username:string,  password:string ):Promise<Carbon.Auth.Token.Class>
 ```
 
-Authenticates the user with an username and password, and generates a JSON Web Token (JWT) credential that will be used in every request.
+Authenticates the user with a username and password, and generates a JSON Web Token (JWT) credential that will be used in every request.
 
 *Parameters*
 
@@ -1297,7 +1298,7 @@ Returns true if the object provided has the properties of a `Carbon.Auth.Token.C
 decorate( object:T extends Object ):Carbon.Auth.Token.Class
 ```
 
-Decorated the object provided with the methods and properties of a `Carbon.Auth.Token.Class` object.
+Decorates the object provided with the methods and properties of a `Carbon.Auth.Token.Class` object.
 
 *Parameters*
 
@@ -1397,7 +1398,7 @@ Stores credentials to authenticate future requests.
 ### <a name="Carbon-Auth-UsernameAndPasswordCredentials-Class" />Class Carbon.Auth.UsernameAndPasswordCredentials.Class
 
 
-> Wrapper to manage an Authentication Credentials in form of Username/Password.
+> Wrapper to manage Authentication Credentials in form of Username/Password.
 
 
 #### <a name="Carbon-Auth-UsernameAndPasswordCredentials-Class-Constructor" />Constructor
@@ -1641,7 +1642,7 @@ createFragment( slug:string,  object:Object ):Carbon.Fragment.Class
 ```
 
 Creates a `Carbon.NamedFragment.Class` from the object provided and the slug specified.
-If the slug have the form of a BlankNode id, a `Carbon.Fragment.Class` is created instead.
+If the slug has the form of a BlankNode ID, a `Carbon.Fragment.Class` is created instead.
 
 *Parameters*
 
@@ -1662,7 +1663,8 @@ Creates a `Carbon.Fragment.Class` from the object provided, since no slug is spe
 createFragment( slug:string ):Carbon.Fragment.Class
 ```
 
-Creates a `Carbon.Fragment.Class` with the slug provided.
+Creates an empty `Carbon.NamedFragment.Class` with the slug specified.
+If the slug has the form of a BlankNode ID, a `Carbon.Fragment.Class` is created instead.
 
 *Parameters*
 
@@ -1672,7 +1674,7 @@ Creates a `Carbon.Fragment.Class` with the slug provided.
 createFragment():Carbon.Fragment.Class
 ```
 
-Creates a `Carbon.Fragment.Class`, since no slug is provided
+Creates an empty `Carbon.Fragment.Class`, since no slug is provided.
 
 ##### createNamedFragment
 ```typescript 
@@ -1680,6 +1682,7 @@ createNamedFragment( slug:string ):Carbon.NamedFragment.Class
 ```
 
 Creates a `Carbon.NamedFragment.Class` with the slug provided.
+If the slug has the form of a BlankNode ID, an Error is thrown.
 
 *Parameters*
 
@@ -1690,6 +1693,7 @@ createNamedFragment( slug:string,  object:Object ):Carbon.NamedFragment.Class
 ```
 
 Creates a `Carbon.NamedFragment.Class` from the object provided and the slug specified.
+If the slug has the form of a BlankNode ID, an Error is thrown.
 
 *Parameters*
 
@@ -1701,7 +1705,7 @@ Creates a `Carbon.NamedFragment.Class` from the object provided and the slug spe
 removeFragment( fragment:Carbon.NamedFragment.Class )
 ```
 
-Remove the fragment referenced by the `Carbon.NamedFragment.Class` object provided from the Document.
+Remove the fragment referenced by the `Carbon.NamedFragment.Class` provided from the Document.
 
 *Parameters*
 
@@ -1711,7 +1715,7 @@ Remove the fragment referenced by the `Carbon.NamedFragment.Class` object provid
 removeFragment( fragment:Carbon.Fragment.Class )
 ```
 
-Remove the fragment referenced by the `Carbon.Fragment.Class` object provided from the Document.
+Remove the fragment referenced by the `Carbon.Fragment.Class` provided from the Document.
 
 *Parameters*
 
@@ -1721,7 +1725,7 @@ Remove the fragment referenced by the `Carbon.Fragment.Class` object provided fr
 removeFragment( slug:string )
 ```
 
-Remove the fragment referenced by the Slug string provided from the Document.
+Remove the fragment referenced by the Slug provided from the Document.
 
 *Parameters*
 
@@ -1729,7 +1733,7 @@ Remove the fragment referenced by the Slug string provided from the Document.
 
 ##### toJSON
 ```typescript 
-toJSON( objectSchemaResolver:Carbon.ObjectSchema.Resolver,  jsonLDConverter:JSONLDConverter ):string
+toJSON( objectSchemaResolver:Carbon.ObjectSchema.Resolver,  jsonLDConverter:Carbon.JSONLDConverter.Class ):string
 ```
 
 Returns a JSON string from the Document using an ObjectSchema and a JSONLDConverter.
@@ -1807,7 +1811,7 @@ Retrieves an array of unresolved pointers that refers to the children of the con
 
 *Parameters*
 
-- parentURI: URI of the document container from where to look for its children.
+- parentURI: URI of the document container where to look for its children.
 - requestOptions
 
 ##### addMembers
@@ -1819,8 +1823,8 @@ Add a member relation to every resources URI or Pointer provided in the document
 
 *Parameters*
 
-- documentURI: URI of the document container from where the members will be added.
-- members: Array of string URIs or Pointers to add as members.
+- documentURI: URI of the document container where the members will be added.
+- members: Array of URIs or Pointers to add as members.
 - requestOptions
 
 ##### removeMembers
@@ -1828,12 +1832,12 @@ Add a member relation to every resources URI or Pointer provided in the document
 removeMembers( documentURI:string,  members:(Carbon.Pointer.Class | string)[],  requestOptions?:Carbon.HTTP.Request.Options ):Promise<Carbon.HTTP.Response>
 ```
 
-Remove the member relation to every specified resources URI or Pointer form the document container specified.
+Remove the member relation to every specified resource URI or Pointer form the document container specified.
 
 *Parameters*
 
-- documentURI: URI of the document container from where the members will be removed.
-- members: Array of string URIs or Pointers to remove as members
+- documentURI: URI of the document container where the members will be removed.
+- members: Array of URIs or Pointers to remove as members
 - requestOptions
 
 ##### removeAllMembers
@@ -1841,11 +1845,11 @@ Remove the member relation to every specified resources URI or Pointer form the 
 removeAllMembers( documentURI:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<Carbon.HTTP.Response>
 ```
 
-Remove all the member relations form the document container specified.
+Remove all the member relations from the document container specified.
 
 *Parameters*
 
-- documentURI: URI of the document container from where the members will be removed.
+- documentURI: URI of the document container where the members will be removed.
 - requestOptions
 
 ##### refresh
@@ -1853,7 +1857,7 @@ Remove all the member relations form the document container specified.
 refresh( persistedDocument:Carbon.PersistedDocument.Class,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.PersistedDocument.Class, Carbon.HTTP.Response ]>
 ```
 
-Update the specified document with the data of the CarbonLDP server, if there is a newest version exists.
+Update the specified document with the data of the CarbonLDP server, if a newest version exists.
 
 *Parameters*
 
@@ -1986,7 +1990,7 @@ Persists a child document for the respective parent source.
 getChildren( parentURI:string,  retrievalPreferences?:Carbon.RetrievalPreferences.Class,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.PersistedDocument.Class[], Carbon.HTTP.Response.Class ]>
 ```
 
-Retrieves an array of resolved Documents that refers the all children of the container specified, or a part of them in accordance of the retrieval preferences specified.
+Retrieves an array of resolved Documents that refers all children of the container specified, or a part of them in accordance of the retrieval preferences specified.
 
 *Parameters*
 
@@ -1998,7 +2002,7 @@ Retrieves an array of resolved Documents that refers the all children of the con
 getChildren( parentURI:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.PersistedDocument.Class[], Carbon.HTTP.Response.Class ]>
 ```
 
-Retrieves an array of resolved Documents that refers the all children of the container specified.
+Retrieves an array of resolved Documents that refers all children of the container specified.
 
 *Parameters*
 
@@ -2036,7 +2040,7 @@ Persists an AccessPoint in the document specified.
 upload( parentURI:string,  data:Blob,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[Carbon.Pointer.Class, Carbon.HTTP.Response.Class]>
 ```
 
-Upload a binary data, creating a child for the parent specified. This signature only works in a Browser.
+Upload binary data, creating a child for the parent specified. This signature only works in a Browser.
 
 *Parameters*
 
@@ -2048,7 +2052,7 @@ Upload a binary data, creating a child for the parent specified. This signature 
 upload( parentURI:string,  slug:string,  data:Blob,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[Carbon.Pointer.Class, Carbon.HTTP.Response.Class]>
 ```
 
-Upload a binary data, creating a child for the parent specified. This signature only works in a Browser.
+Upload binary data, creating a child for the parent specified. This signature only works in a Browser.
 
 *Parameters*
 
@@ -2061,7 +2065,7 @@ Upload a binary data, creating a child for the parent specified. This signature 
 upload( parentURI:string,  data:Buffer,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[Carbon.Pointer.Class, Carbon.HTTP.Response.Class]>
 ```
 
-Upload a binary data, creating a child for the parent specified. This signature only works in Node.js.
+Upload binary data, creating a child for the parent specified. This signature only works in Node.js.
 
 *Parameters*
 
@@ -2073,7 +2077,7 @@ Upload a binary data, creating a child for the parent specified. This signature 
 upload( parentURI:string,  slug:string,  data:Buffer,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[Carbon.Pointer.Class, Carbon.HTTP.Response.Class]>
 ```
 
-Upload a binary data, creating a child for the parent specified. This signature only works in Node.js.
+Upload binary data, creating a child for the parent specified. This signature only works in Node.js.
 
 *Parameters*
 
@@ -2087,73 +2091,73 @@ Upload a binary data, creating a child for the parent specified. This signature 
 listMembers( uri:string,  includeNonReadable?:boolean,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.Pointer.Class[], Carbon.HTTP.Response.Class ]>
 ```
 
-Retrieves all the members of a document with out resolving them, where you can specify if the response should include the Non Readable resources and options for the request.
+Retrieves all the members of a document without resolving them.
 
 *Parameters*
 
 - uri: URI of the document from where to look for its members.
-- includeNonReadable: Specify if the the response should include the Non Readable resources. By default this is set to `true`.
-- requestOptions: Options that can be specified for change the behavior of the request.
+- includeNonReadable: Specify if the response should include the Non Readable resources. By default this is set to `true`.
+- requestOptions: Options that can be specified to change the behavior of the request.
 
 ```typescript 
 listMembers( uri:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.Pointer.Class[], Carbon.HTTP.Response.Class ]>
 ```
 
-Retrieves all the members of a document with out resolving them, where you can specify options for the request.
+Retrieves all the members of a document without resolving them.
 
 *Parameters*
 
 - uri: URI of the document from where to look for its members.
-- requestOptions: Options that can be specified for change the behavior of the request.
+- requestOptions: Options that can be specified to change the behavior of the request.
 
 ##### getMembers
 ```typescript 
 getMembers( uri:string,  includeNonReadable?:boolean,  retrievalPreferences?:Carbon.RetrievalPreferences.Class,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.Pointer.Class[], Carbon.HTTP.Response.Class ]>
 ```
 
-Retrieves all the members of a document and their contents, where you can specify if the response should include the Non Readable resources, the retrieval preferences and the options for the request.
+Retrieves all the members of a document and their contents, or a part of them in accordance of the retrieval preferences specified.
 
 *Parameters*
 
 - uri: URI of the document from where to look for its members.
-- includeNonReadable: Specify if the the response should include the Non Readable resources. By default this is set to `true`.
+- includeNonReadable: Specify if the response should include the Non Readable resources. By default this is set to `true`.
 - retrievalPreferences: An object for specify the retrieval preferences for the request.
-- requestOptions: Options that can be specified for change the behavior of the request.
+- requestOptions: Options that can be specified to change the behavior of the request.
 
 ```typescript 
 getMembers( uri:string,  includeNonReadable?:boolean,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.Pointer.Class[], Carbon.HTTP.Response.Class ]>
 ```
 
-Retrieves all the members of a document and their contents, where you can specify if the response should include the Non Readable resources and options for the request.
+Retrieves all the members of a document and their contents.
 
 *Parameters*
 
 - uri: URI of the document from where to look for its members.
-- includeNonReadable: Specify if the the response should include the Non Readable resources. By default this is set to `true`.
-- requestOptions: Options that can be specified for change the behavior of the request.
+- includeNonReadable: Specify if the response should include the Non Readable resources. By default this is set to `true`.
+- requestOptions: Options that can be specified to change the behavior of the request.
 
 ```typescript 
 getMembers( uri:string,  retrievalPreferences?:Carbon.RetrievalPreferences.Class,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.Pointer.Class[], Carbon.HTTP.Response.Class ]>
 ```
 
-Retrieves all the members of a document and their content, where you can specify the retrieval preferences and the options for the request.
+Retrieves all the members of a document and their content, or a part of them in accordance of the retrieval preferences specified.
 
 *Parameters*
 
 - uri: URI of the document from where to look for its members.
 - retrievalPreferences: An object for specify the retrieval preferences for the request.
-- requestOptions: Options that can be specified for change the behavior of the request.
+- requestOptions: Options that can be specified to change the behavior of the request.
 
 ```typescript 
 getMembers( uri:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.Pointer.Class[], Carbon.HTTP.Response.Class ]>
 ```
 
-Retrieves all the members of a document and their contents, where you can specify options for the request.
+Retrieves all the members of a document and their contents.
 
 *Parameters*
 
 - uri: URI of the document from where to look for its members.
-- requestOptions: Options that can be specified for change the behavior of the request.
+- requestOptions: Options that can be specified to change the behavior of the request.
 
 ##### addMember
 ```typescript 
@@ -2164,7 +2168,7 @@ Add a member relation to the resource Pointer in the document container specifie
 
 *Parameters*
 
-- documentURI: URI of the document container from where the member will be added.
+- documentURI: URI of the document container where the member will be added.
 - member: Pointer object that references the resource to add as a member.
 - requestOptions
 
@@ -2176,7 +2180,7 @@ Add a member relation to the resource URI in the document container specified.
 
 *Parameters*
 
-- documentURI: URI of the document container from where the member will be added.
+- documentURI: URI of the document container where the member will be added.
 - memberURI: URI of the resource to add as a member.
 - requestOptions
 

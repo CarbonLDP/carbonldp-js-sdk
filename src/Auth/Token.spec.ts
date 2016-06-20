@@ -137,7 +137,7 @@ describe( module( "Carbon/Auth/Token" ), ():void => {
 		it( hasMethod(
 			INSTANCE,
 			"decorate",
-			"Decorated the object provided with the methods and properties of a `Carbon.Auth.Token.Class` object.", [
+			"Decorates the object provided with the methods and properties of a `Carbon.Auth.Token.Class` object.", [
 				{ name: "object", type: "T extends Object" }
 			],
 			{ type: "Carbon.Auth.Token.Class" }

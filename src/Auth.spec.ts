@@ -383,7 +383,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 			});
 
 			it( hasSignature(
-				"Authenticates the user with an username and password, and generates a JSON Web Token (JWT) credential that will be used in every request.", [
+				"Authenticates the user with a username and password, and generates a JSON Web Token (JWT) credential that will be used in every request.", [
 					{ name: "method", type: "'TOKEN'" },
 					{ name: "username", type: "string" },
 					{ name: "password", type: "string" }

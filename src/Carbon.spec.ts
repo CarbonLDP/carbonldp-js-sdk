@@ -46,6 +46,7 @@ import * as Pointer from "./Pointer";
 import * as RDF from "./RDF";
 import * as Resource from "./Resource";
 import * as SDKContext from "./SDKContext";
+import * as Settings from "./Settings";
 import * as SPARQL from "./SPARQL";
 import * as Utils from "./Utils";
 
@@ -347,6 +348,15 @@ describe( module( "Carbon" ), ():void => {
 
 		it( reexports(
 			STATIC,
+			"Settings",
+			"Carbon/Settings"
+		), ():void => {
+			expect( Carbon.Settings ).toBeDefined();
+			expect( Carbon.Settings ).toBe( Settings );
+		});
+
+		it( reexports(
+			STATIC,
 			"SPARQL",
 			"Carbon/SPARQL"
 		), ():void => {
@@ -364,7 +374,7 @@ describe( module( "Carbon" ), ():void => {
 		});
 
 		it( hasConstructor([
-			{ name: "settings", type: "any", optional: true }
+			{ name: "settings", type: "Carbon.Settings.Class", optional: true }
 		]), ():void => {
 			// Instantiated in BeforeEach
 			expect( carbon ).toBeTruthy();

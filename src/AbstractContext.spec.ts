@@ -52,7 +52,7 @@ describe( module( "Carbon/AbstractContext" ), ():void => {
 		it( hasMethod(
 			INSTANCE,
 			"resolve",
-			"Abstract method that from the URI provided, must return an absolute URI in accordance to the context scope.", [
+			"Abstract method that returns an absolute URI in accordance to the context scope from the relative URI provided.", [
 				{ name: "relativeURI", type: "string" }
 			],
 			{ type: "string" }

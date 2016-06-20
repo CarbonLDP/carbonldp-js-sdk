@@ -38,7 +38,6 @@ import * as SPARQL from "./SPARQL";
 import * as URI from "./RDF/URI";
 import * as Utils from "./Utils";
 
-// TODO: Add description
 describe( module( "Carbon/Documents" ), ():void => {
 
 	describe( clazz( "Carbon.Documents", "Class that contains methods for retrieving, saving and updating documents from the CarbonLDP server." ), ():void => {
@@ -105,7 +104,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					},
 					{
 						"@id": "http://example.com/resource/#2",
-						"http://example.com/ns#string": [{ "@value": "NamedFragment 1" }],
+						"http://example.com/ns#string": [{ "@value": "NamedFragment 2" }],
 					},
 				],
 			});
@@ -163,7 +162,52 @@ describe( module( "Carbon/Documents" ), ():void => {
 				expect( response ).toBeDefined();
 				expect( Utils.isObject( response ) ).toEqual( true );
 
-				// TODO: Finish assertions
+				expect( document[ "string" ] ).toBe( "Document Resource" );
+
+				( function documentResource() {
+					expect( document[ "pointerSet" ].length ).toBe( 4 );
+					expect( Pointer.Util.getIDs( document[ "pointerSet" ] ) ).toContain( "_:1" );
+					expect( Pointer.Util.getIDs( document[ "pointerSet" ] ) ).toContain( "_:2" );
+					expect( Pointer.Util.getIDs( document[ "pointerSet" ] ) ).toContain( "http://example.com/resource/#1" );
+					expect( Pointer.Util.getIDs( document[ "pointerSet" ] ) ).toContain( "http://example.com/external-resource/" );
+				})();
+
+				( function documentFragments() {
+
+				let fragment:Fragment.Class;
+					expect( document.getFragments().length ).toBe( 4 );
+
+					( function documentBlankNode_1() {
+						fragment = document.getFragment( "_:1" );
+						expect( fragment ).toBeTruthy();
+						expect( fragment[ "string" ] ).toBe( "Fragment 1" );
+						expect( fragment[ "pointerSet" ].length ).toBe( 2 );
+						expect( Pointer.Util.getIDs( fragment[ "pointerSet" ] ) ).toContain( "http://example.com/resource/" );
+						expect( Pointer.Util.getIDs( fragment[ "pointerSet" ] ) ).toContain( "http://example.com/resource/#1" );
+						expect( fragment[ "pointerSet" ].find( pointer => pointer.id === "http://example.com/resource/" ) ).toBe( document );
+						expect( fragment[ "pointerSet" ].find( pointer => pointer.id === "http://example.com/resource/#1" ) ).toBe( document.getFragment( "1" ) );
+					})();
+
+					( function documentBlankNode_2() {
+						fragment = document.getFragment( "_:2" );
+						expect( fragment ).toBeTruthy();
+						expect( fragment[ "string" ] ).toBe( "Fragment 2" );
+					})();
+
+					( function documentNamedFragment_1() {
+						fragment = document.getFragment( "1" );
+						expect( fragment ).toBeTruthy();
+						expect( fragment[ "string" ] ).toBe( "NamedFragment 1" );
+					})();
+
+					( function documentNamedFragment_1() {
+						fragment = document.getFragment( "2" );
+						expect( fragment ).toBeTruthy();
+						expect( fragment[ "string" ] ).toBe( "NamedFragment 2" );
+					})();
+
+				})();
+
 			}) );
 
 			Promise.all( promises ).then( ():void => {
@@ -243,7 +287,6 @@ describe( module( "Carbon/Documents" ), ():void => {
 			}, done.fail );
 		});
 
-		// TODO: Test that it handles relative parentURIs and childDocuments with relativeURIs
 		describe( method(
 			INSTANCE,
 			"createChild"
@@ -261,7 +304,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 				class MockedContext extends AbstractContext {
 					resolve( uri:string ):string {
-						return uri;
+						return "http://example.com/" + uri;
 					}
 				}
 
@@ -326,10 +369,14 @@ describe( module( "Carbon/Documents" ), ():void => {
 					},
 				} );
 
-				promises.push( documents.createChild( "http://example.com/parent-resource/", childDocument ).then( ( response:any ):void => {
+				promises.push( documents.createChild( "parent-resource/", childDocument ).then( ( [ pointer, response ]:[ Pointer.Class, HTTP.Response.Class ] ):void => {
 					expect( response ).toBeDefined();
+					expect( response instanceof HTTP.Response.Class ).toBe( true );
 
-					// TODO: Finish assertions
+					expect( pointer ).toBeDefined();
+					expect( Pointer.Factory.is( pointer ) ).toBe( true );
+					expect( pointer.id ).toBe( "http://example.com/parent-resource/new-resource/" );
+					expect( pointer.isResolved() ).toBe( false );
 				}) );
 
 				Promise.all( promises ).then( ():void => {
@@ -353,7 +400,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 				class MockedContext extends AbstractContext {
 					resolve( uri:string ):string {
-						return uri;
+						return "http://example.com/" + uri;
 					}
 				}
 
@@ -418,10 +465,14 @@ describe( module( "Carbon/Documents" ), ():void => {
 					},
 				} );
 
-				promises.push( documents.createChild( "http://example.com/parent-resource/", "child-document", childDocument ).then( ( response:any ):void => {
+				promises.push( documents.createChild( "parent-resource/", "child-document", childDocument ).then( ( [ pointer, response ]:[ Pointer.Class, HTTP.Response.Class ] ):void => {
 					expect( response ).toBeDefined();
+					expect( response instanceof HTTP.Response.Class ).toBe( true );
 
-					// TODO: Finish assertions
+					expect( pointer ).toBeDefined();
+					expect( Pointer.Factory.is( pointer ) ).toBe( true );
+					expect( pointer.id ).toBe( "http://example.com/parent-resource/new-resource/" );
+					expect( pointer.isResolved() ).toBe( false );
 				}) );
 
 				Promise.all( promises ).then( ():void => {
@@ -444,7 +495,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 				class MockedContext extends AbstractContext {
 					resolve( uri:string ):string {
-						return uri;
+						return "http://example.com/" + uri;
 					}
 				}
 
@@ -515,10 +566,14 @@ describe( module( "Carbon/Documents" ), ():void => {
 					},
 				} );
 
-				promises.push( documents.createChild( "http://example.com/parent-resource/", childObject ).then( ( [ pointer, response ]:[Pointer.Class, HTTP.Response.Class] ):void => {
-					expect( Pointer.Factory.is( pointer ) ).toBe( true );
+				promises.push( documents.createChild( "parent-resource/", childObject ).then( ( [ pointer, response ]:[ Pointer.Class, HTTP.Response.Class ] ):void => {
+					expect( response ).toBeDefined();
+					expect( response instanceof HTTP.Response.Class ).toBe( true );
 
-					// TODO: Finish assertions
+					expect( pointer ).toBeDefined();
+					expect( Pointer.Factory.is( pointer ) ).toBe( true );
+					expect( pointer.id ).toBe( "http://example.com/parent-resource/new-resource/" );
+					expect( pointer.isResolved() ).toBe( false );
 				}) );
 
 				Promise.all( promises ).then( ():void => {
@@ -542,7 +597,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 				class MockedContext extends AbstractContext {
 					resolve( uri:string ):string {
-						return uri;
+						return "http://example.com/" + uri;
 					}
 				}
 
@@ -613,9 +668,14 @@ describe( module( "Carbon/Documents" ), ():void => {
 					},
 				} );
 
-				promises.push( documents.createChild( "http://example.com/parent-resource/", "child-document", childObject ).then( ( response:any ):void => {
+				promises.push( documents.createChild( "parent-resource/", "child-document", childObject ).then( ( [ pointer, response ]:[ Pointer.Class, HTTP.Response.Class ] ):void => {
 					expect( response ).toBeDefined();
-					// TODO: Finish assertions
+					expect( response instanceof HTTP.Response.Class ).toBe( true );
+
+					expect( pointer ).toBeDefined();
+					expect( Pointer.Factory.is( pointer ) ).toBe( true );
+					expect( pointer.id ).toBe( "http://example.com/parent-resource/new-resource/" );
+					expect( pointer.isResolved() ).toBe( false );
 				}) );
 
 				Promise.all( promises ).then( ():void => {
@@ -631,7 +691,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 			INSTANCE,
 			"listChildren",
 			"Retrieves an array of unresolved pointers that refers to the children of the container specified.", [
-				{ name: "parentURI", type: "string", description: "URI of the document container from where to look for its children." },
+				{ name: "parentURI", type: "string", description: "URI of the document container where to look for its children." },
 				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true }
 			],
 			{ type: "Promise<[ Carbon.Pointer.Class[], Carbon.HTTP.Response ]>" }
@@ -934,7 +994,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 			}
 
 			it( hasSignature(
-				"Retrieves an array of resolved Documents that refers the all children of the container specified, or a part of them in accordance of the retrieval preferences specified.", [
+				"Retrieves an array of resolved Documents that refers all children of the container specified, or a part of them in accordance of the retrieval preferences specified.", [
 					{ name: "parentURI", type: "string", description: "URI of the document from where to look for its children." },
 					{ name: "retrievalPreferences", type: "Carbon.RetrievalPreferences.Class", optional: true, description: "An object that specify the retrieval preferences for the request." },
 					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Options that can be specified to change the behavior of the request." },
@@ -1057,7 +1117,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 			});
 
 			it( hasSignature(
-				"Retrieves an array of resolved Documents that refers the all children of the container specified.", [
+				"Retrieves an array of resolved Documents that refers all children of the container specified.", [
 					{ name: "parentURI", type: "string", description: "URI of the document from where to look for its children." },
 					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Options that can be specified to change the behavior of the request." },
 				],
@@ -1306,7 +1366,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 		), ():void => {
 
 			it( hasSignature(
-				"Upload a binary data, creating a child for the parent specified. This signature only works in a Browser.", [
+				"Upload binary data, creating a child for the parent specified. This signature only works in a Browser.", [
 					{ name: "parentURI", type: "string" },
 					{ name: "data", type: "Blob" },
 					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
@@ -1361,7 +1421,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 			});
 
 			it( hasSignature(
-				"Upload a binary data, creating a child for the parent specified. This signature only works in a Browser.", [
+				"Upload binary data, creating a child for the parent specified. This signature only works in a Browser.", [
 					{ name: "parentURI", type: "string" },
 					{ name: "slug", type: "string" },
 					{ name: "data", type: "Blob" },
@@ -1417,7 +1477,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 			});
 
 			it( hasSignature(
-				"Upload a binary data, creating a child for the parent specified. This signature only works in Node.js.", [
+				"Upload binary data, creating a child for the parent specified. This signature only works in Node.js.", [
 					{ name: "parentURI", type: "string" },
 					{ name: "data", type: "Buffer" },
 					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
@@ -1472,7 +1532,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 			});
 
 			it( hasSignature(
-				"Upload a binary data, creating a child for the parent specified. This signature only works in Node.js.", [
+				"Upload binary data, creating a child for the parent specified. This signature only works in Node.js.", [
 					{ name: "parentURI", type: "string" },
 					{ name: "slug", type: "string" },
 					{ name: "data", type: "Buffer" },
@@ -1549,10 +1609,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 			});
 
 			it( hasSignature(
-				"Retrieves all the members of a document with out resolving them, where you can specify if the response should include the Non Readable resources and options for the request.", [
+				"Retrieves all the members of a document without resolving them.", [
 					{ name: "uri", type: "string", description: "URI of the document from where to look for its members." },
-					{ name: "includeNonReadable", type: "boolean", optional: true, description: "Specify if the the response should include the Non Readable resources. By default this is set to `true`." },
-					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Options that can be specified for change the behavior of the request." },
+					{ name: "includeNonReadable", type: "boolean", optional: true, description: "Specify if the response should include the Non Readable resources. By default this is set to `true`." },
+					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Options that can be specified to change the behavior of the request." },
 				],
 				{ type: "Promise<[ Carbon.Pointer.Class[], Carbon.HTTP.Response.Class ]>" }
 			), ( done:{ ():void, fail:() => void }) => {
@@ -1650,9 +1710,9 @@ describe( module( "Carbon/Documents" ), ():void => {
 			});
 
 			it( hasSignature(
-				"Retrieves all the members of a document with out resolving them, where you can specify options for the request.", [
+				"Retrieves all the members of a document without resolving them.", [
 					{ name: "uri", type: "string", description: "URI of the document from where to look for its members." },
-					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Options that can be specified for change the behavior of the request." },
+					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Options that can be specified to change the behavior of the request." },
 				],
 				{ type: "Promise<[ Carbon.Pointer.Class[], Carbon.HTTP.Response.Class ]>" }
 			), ( done:{ ():void, fail:() => void } ) => {
@@ -1926,11 +1986,11 @@ describe( module( "Carbon/Documents" ), ():void => {
 			}
 
 			it( hasSignature(
-				"Retrieves all the members of a document and their contents, where you can specify if the response should include the Non Readable resources, the retrieval preferences and the options for the request.", [
+				"Retrieves all the members of a document and their contents, or a part of them in accordance of the retrieval preferences specified.", [
 					{ name: "uri", type: "string", description: "URI of the document from where to look for its members." },
-					{ name: "includeNonReadable", type: "boolean", optional: true, description: "Specify if the the response should include the Non Readable resources. By default this is set to `true`." },
+					{ name: "includeNonReadable", type: "boolean", optional: true, description: "Specify if the response should include the Non Readable resources. By default this is set to `true`." },
 					{ name: "retrievalPreferences", type: "Carbon.RetrievalPreferences.Class", optional: true, description: "An object for specify the retrieval preferences for the request." },
-					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Options that can be specified for change the behavior of the request." },
+					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Options that can be specified to change the behavior of the request." },
 				],
 				{ type: "Promise<[ Carbon.Pointer.Class[], Carbon.HTTP.Response.Class ]>" }
 			), ( done:{ ():void, fail:() => void }) => {
@@ -2040,10 +2100,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 			});
 
 			it( hasSignature(
-				"Retrieves all the members of a document and their contents, where you can specify if the response should include the Non Readable resources and options for the request.", [
+				"Retrieves all the members of a document and their contents.", [
 					{ name: "uri", type: "string", description: "URI of the document from where to look for its members." },
-					{ name: "includeNonReadable", type: "boolean", optional: true, description: "Specify if the the response should include the Non Readable resources. By default this is set to `true`." },
-					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Options that can be specified for change the behavior of the request." },
+					{ name: "includeNonReadable", type: "boolean", optional: true, description: "Specify if the response should include the Non Readable resources. By default this is set to `true`." },
+					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Options that can be specified to change the behavior of the request." },
 				],
 				{ type: "Promise<[ Carbon.Pointer.Class[], Carbon.HTTP.Response.Class ]>" }
 			), ( done:{ ():void, fail:() => void }) => {
@@ -2125,10 +2185,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 			});
 
 			it( hasSignature(
-				"Retrieves all the members of a document and their content, where you can specify the retrieval preferences and the options for the request.", [
+				"Retrieves all the members of a document and their content, or a part of them in accordance of the retrieval preferences specified.", [
 					{ name: "uri", type: "string", description: "URI of the document from where to look for its members." },
 					{ name: "retrievalPreferences", type: "Carbon.RetrievalPreferences.Class", optional: true, description: "An object for specify the retrieval preferences for the request." },
-					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Options that can be specified for change the behavior of the request." },
+					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Options that can be specified to change the behavior of the request." },
 				],
 				{ type: "Promise<[ Carbon.Pointer.Class[], Carbon.HTTP.Response.Class ]>" }
 			), ( done:{ ():void, fail:() => void }) => {
@@ -2188,9 +2248,9 @@ describe( module( "Carbon/Documents" ), ():void => {
 			});
 
 			it( hasSignature(
-				"Retrieves all the members of a document and their contents, where you can specify options for the request.", [
+				"Retrieves all the members of a document and their contents.", [
 					{ name: "uri", type: "string", description: "URI of the document from where to look for its members." },
-					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Options that can be specified for change the behavior of the request." },
+					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Options that can be specified to change the behavior of the request." },
 				],
 				{ type: "Promise<[ Carbon.Pointer.Class[], Carbon.HTTP.Response.Class ]>" }
 			), ( done:{ ():void, fail:() => void } ) => {
@@ -2257,7 +2317,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 			it( hasSignature(
 				"Add a member relation to the resource Pointer in the document container specified.", [
-					{ name: "documentURI", type: "string", description: "URI of the document container from where the member will be added." },
+					{ name: "documentURI", type: "string", description: "URI of the document container where the member will be added." },
 					{ name: "member", type: "Carbon.Pointer.Class", description: "Pointer object that references the resource to add as a member." },
 					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true }
 				],
@@ -2275,7 +2335,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 			it( hasSignature(
 				"Add a member relation to the resource URI in the document container specified.", [
-					{ name: "documentURI", type: "string", description: "URI of the document container from where the member will be added." },
+					{ name: "documentURI", type: "string", description: "URI of the document container where the member will be added." },
 					{ name: "memberURI", type: "string", description: "URI of the resource to add as a member." },
 					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true }
 				],
@@ -2296,8 +2356,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 			INSTANCE,
 			"addMembers",
 			"Add a member relation to every resources URI or Pointer provided in the document container specified.", [
-				{ name: "documentURI", type: "string", description: "URI of the document container from where the members will be added." },
-				{ name: "members", type: "(Carbon.Pointer.Class | string)[]", description: "Array of string URIs or Pointers to add as members." },
+				{ name: "documentURI", type: "string", description: "URI of the document container where the members will be added." },
+				{ name: "members", type: "(Carbon.Pointer.Class | string)[]", description: "Array of URIs or Pointers to add as members." },
 				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true }
 			],
 			{ type: "Promise<Carbon.HTTP.Response>"}
@@ -2409,9 +2469,9 @@ describe( module( "Carbon/Documents" ), ():void => {
 		it( hasMethod(
 			INSTANCE,
 			"removeMembers",
-			"Remove the member relation to every specified resources URI or Pointer form the document container specified.", [
-				{ name: "documentURI", type: "string", description: "URI of the document container from where the members will be removed." },
-				{ name: "members", type: "(Carbon.Pointer.Class | string)[]", description: "Array of string URIs or Pointers to remove as members" },
+			"Remove the member relation to every specified resource URI or Pointer form the document container specified.", [
+				{ name: "documentURI", type: "string", description: "URI of the document container where the members will be removed." },
+				{ name: "members", type: "(Carbon.Pointer.Class | string)[]", description: "Array of URIs or Pointers to remove as members" },
 				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true }
 			],
 			{ type: "Promise<Carbon.HTTP.Response>" }
@@ -2468,8 +2528,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 		it( hasMethod(
 			INSTANCE,
 			"removeAllMembers",
-			"Remove all the member relations form the document container specified.", [
-				{ name: "documentURI", type: "string", description: "URI of the document container from where the members will be removed." },
+			"Remove all the member relations from the document container specified.", [
+				{ name: "documentURI", type: "string", description: "URI of the document container where the members will be removed." },
 				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true }
 			],
 			{ type: "Promise<Carbon.HTTP.Response>"}
@@ -2519,7 +2579,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 		it( hasMethod(
 			INSTANCE,
 			"refresh",
-			"Update the specified document with the data of the CarbonLDP server, if there is a newest version exists.", [
+			"Update the specified document with the data of the CarbonLDP server, if a newest version exists.", [
 				{ name: "persistedDocument", type: "Carbon.PersistedDocument.Class", description: "The persisted document to update." },
 				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true }
 			],
@@ -2764,7 +2824,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 		), ( done:{ ():void, fail:() => void } ):void => {
 			class MockedContext extends AbstractContext {
 				resolve( uri:string ):string {
-					return uri;
+					return "http://example.com/" + uri;
 				}
 			}
 
@@ -2786,9 +2846,20 @@ describe( module( "Carbon/Documents" ), ():void => {
 			};
 			let spySuccess = spyOn( spies, "success" ).and.callThrough();
 
-			let promise:Promise<any> = documents.delete( "http://example.com/resource/" ).then( spies.success );
+			let promises:Promise<any>[] = [];
+			let promise:Promise<any>;
 
-			Promise.all( [ promise ] ).then( ():void => {
+			// Proper execution
+			promise = documents.delete( "http://example.com/resource/" );
+			expect( promise instanceof Promise ).toBe( true );
+			promises.push( promise.then( spies.success ) );
+
+			// Relative URI
+			promise = documents.delete( "resource/" );
+			expect( promise instanceof Promise ).toBe( true );
+			promises.push( promise.then( spies.success ) );
+
+			Promise.all( promises ).then( ():void => {
 				expect( spySuccess ).toHaveBeenCalled();
 				done();
 			}, done.fail );
@@ -2803,7 +2874,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 		], { type: "Promise<[ Carbon.SPARQL.RawResults.Class, Carbon.HTTP.Response.Class ]>" } ), ():void => {
 			class MockedContext extends AbstractContext {
 				resolve( uri:string ):string {
-					return uri;
+					return "http://example.com/" + uri;
 				}
 			}
 
@@ -2816,15 +2887,22 @@ describe( module( "Carbon/Documents" ), ():void => {
 				expect( Utils.isFunction( documents.executeRawASKQuery ) ).toEqual( true );
 			})();
 
-			// Proper execution
-			(() => {
-				spyOn( SPARQL.Service, "executeRawASKQuery" );
+			let spyService = spyOn( SPARQL.Service, "executeRawASKQuery" );
 
+			// Proper execution
+			( function ProperExecution() {
 				documents.executeRawASKQuery( "http://example.com/document/", "ASK { ?subject, ?predicate, ?object }" );
 
-				// TODO: Test authentication and relative URIs check
+				expect( spyService ).toHaveBeenCalledWith( "http://example.com/document/", "ASK { ?subject, ?predicate, ?object }", jasmine.any( Object ) );
+				spyService.calls.reset();
+			})();
 
-				expect( SPARQL.Service.executeRawASKQuery ).toHaveBeenCalled();
+			// Relative URI
+			( function RelativeURI() {
+				documents.executeRawASKQuery( "document/", "ASK { ?subject, ?predicate, ?object }" );
+
+				expect( spyService ).toHaveBeenCalledWith( "http://example.com/document/", "ASK { ?subject, ?predicate, ?object }", jasmine.any( Object ) );
+				spyService.calls.reset();
 			})();
 		});
 		it( hasMethod( INSTANCE, "executeRawSELECTQuery", `Executes a SELECT query on a document and returns a raw application/sparql-results+json object`, [
@@ -2834,7 +2912,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 		], { type: "Promise<[ Carbon.SPARQL.RawResults.Class, Carbon.HTTP.Response.Class ]>" } ), ():void => {
 			class MockedContext extends AbstractContext {
 				resolve( uri:string ):string {
-					return uri;
+					return "http://example.com/" + uri;
 				}
 			}
 
@@ -2847,15 +2925,24 @@ describe( module( "Carbon/Documents" ), ():void => {
 				expect( Utils.isFunction( documents.executeRawSELECTQuery ) ).toEqual( true );
 			})();
 
+			let spyService = spyOn( SPARQL.Service, "executeRawSELECTQuery" );
+
 			// Proper execution
-			(() => {
-				spyOn( SPARQL.Service, "executeRawSELECTQuery" );
+			( function ProperExecution() {
 
 				documents.executeRawSELECTQuery( "http://example.com/document/", "SELECT ?book ?title WHERE { <http://example.com/some-document/> ?book ?title }" );
 
-				// TODO: Test authentication and relative URIs check
+				expect( spyService ).toHaveBeenCalledWith( "http://example.com/document/", "SELECT ?book ?title WHERE { <http://example.com/some-document/> ?book ?title }", jasmine.any( Object ) );
+				spyService.calls.reset();
+			})();
 
-				expect( SPARQL.Service.executeRawSELECTQuery ).toHaveBeenCalled();
+			// Relative URI
+			( function RelativeURI() {
+
+				documents.executeRawSELECTQuery( "document/", "SELECT ?book ?title WHERE { <http://example.com/some-document/> ?book ?title }" );
+
+				expect( spyService ).toHaveBeenCalledWith( "http://example.com/document/", "SELECT ?book ?title WHERE { <http://example.com/some-document/> ?book ?title }", jasmine.any( Object ) );
+				spyService.calls.reset();
 			})();
 		});
 
@@ -2868,7 +2955,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 		], { type: "Promise<[ string, Carbon.HTTP.Response.Class ]>" } ), ():void => {
 			class MockedContext extends AbstractContext {
 				resolve( uri:string ):string {
-					return uri;
+					return "http://example.com/" + uri;
 				}
 			}
 
@@ -2881,15 +2968,24 @@ describe( module( "Carbon/Documents" ), ():void => {
 				expect( Utils.isFunction( documents.executeRawCONSTRUCTQuery ) ).toEqual( true );
 			})();
 
+			let spyService = spyOn( SPARQL.Service, "executeRawCONSTRUCTQuery" );
+
 			// Proper execution
-			(() => {
-				spyOn( SPARQL.Service, "executeRawCONSTRUCTQuery" );
+			( function ProperExecution() {
 
 				documents.executeRawCONSTRUCTQuery( "http://example.com/document/", "CONSTRUCT { ?subject ?predicate ?object } WHERE { ?subject ?predicate ?object }" );
 
-				// TODO: Test authentication and relative URIs check
+				expect( spyService ).toHaveBeenCalledWith( "http://example.com/document/", "CONSTRUCT { ?subject ?predicate ?object } WHERE { ?subject ?predicate ?object }", jasmine.any( Object ) );
+				spyService.calls.reset();
+			})();
 
-				expect( SPARQL.Service.executeRawCONSTRUCTQuery ).toHaveBeenCalled();
+			// Relative URI
+			( function RelativeURI() {
+
+				documents.executeRawCONSTRUCTQuery( "document/", "CONSTRUCT { ?subject ?predicate ?object } WHERE { ?subject ?predicate ?object }" );
+
+				expect( spyService ).toHaveBeenCalledWith( "http://example.com/document/", "CONSTRUCT { ?subject ?predicate ?object } WHERE { ?subject ?predicate ?object }", jasmine.any( Object ) );
+				spyService.calls.reset();
 			})();
 		});
 
@@ -2902,7 +2998,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 		], { type: "Promise<[ string, Carbon.HTTP.Response.Class ]>" } ), ():void => {
 			class MockedContext extends AbstractContext {
 				resolve( uri:string ):string {
-					return uri;
+					return "http://example.com/" + uri;
 				}
 			}
 
@@ -2915,15 +3011,24 @@ describe( module( "Carbon/Documents" ), ():void => {
 				expect( Utils.isFunction( documents.executeRawDESCRIBEQuery ) ).toEqual( true );
 			})();
 
+			let spyService = spyOn( SPARQL.Service, "executeRawDESCRIBEQuery" );
+
 			// Proper execution
-			(() => {
-				spyOn( SPARQL.Service, "executeRawDESCRIBEQuery" );
+			( function ProperExecution() {
 
 				documents.executeRawDESCRIBEQuery( "http://example.com/document/", "DESCRIBE { ?subject ?predicate ?object } WHERE { ?subject ?predicate ?object }" );
 
-				// TODO: Test authentication and relative URIs check
+				expect( spyService ).toHaveBeenCalledWith( "http://example.com/document/", "DESCRIBE { ?subject ?predicate ?object } WHERE { ?subject ?predicate ?object }", jasmine.any( Object ) );
+				spyService.calls.reset();
+			})();
 
-				expect( SPARQL.Service.executeRawDESCRIBEQuery ).toHaveBeenCalled();
+			// Relative URI
+			( function RelativeURI() {
+
+				documents.executeRawDESCRIBEQuery( "document/", "DESCRIBE { ?subject ?predicate ?object } WHERE { ?subject ?predicate ?object }" );
+
+				expect( spyService ).toHaveBeenCalledWith( "http://example.com/document/", "DESCRIBE { ?subject ?predicate ?object } WHERE { ?subject ?predicate ?object }", jasmine.any( Object ) );
+				spyService.calls.reset();
 			})();
 		});
 
