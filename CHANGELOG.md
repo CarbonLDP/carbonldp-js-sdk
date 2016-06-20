@@ -1,3 +1,10 @@
+# 0.35.0 (June 20, 2016)
+- [LDP-685](https://jira.base22.com/browse/LDP-685) - Authenticate a URL with an Auth Ticket
+    - Added `auth.createTicket()`
+    - Added `auth.getAuthenticatedURL()`
+    - Added `documents.getDownloadURL()`
+    - Added `documents.getDownloadURL()`
+
 # 0.34.1 (June 16, 2016)
 - Fix [LDP-672](https://jira.base22.com/browse/LDP-672) - Fragments with double #
 - Fix [LDP-686](https://jira.base22.com/browse/LDP-686) - `getMembers` deletes container and membershipResource properties
