@@ -994,7 +994,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 			}
 
 			it( hasSignature(
-				"Retrieves an array of resolved Documents that refers all children of the container specified, or a part of them in accordance of the retrieval preferences specified.", [
+				"Retrieves an array of resolved Documents that refers all children of the container specified, or a part of them in accordance to the retrieval preferences specified.", [
 					{ name: "parentURI", type: "string", description: "URI of the document from where to look for its children." },
 					{ name: "retrievalPreferences", type: "Carbon.RetrievalPreferences.Class", optional: true, description: "An object that specify the retrieval preferences for the request." },
 					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Options that can be specified to change the behavior of the request." },
@@ -1986,7 +1986,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 			}
 
 			it( hasSignature(
-				"Retrieves all the members of a document and their contents, or a part of them in accordance of the retrieval preferences specified.", [
+				"Retrieves all the members of a document and their contents, or a part of them in accordance to the retrieval preferences specified.", [
 					{ name: "uri", type: "string", description: "URI of the document from where to look for its members." },
 					{ name: "includeNonReadable", type: "boolean", optional: true, description: "Specify if the response should include the Non Readable resources. By default this is set to `true`." },
 					{ name: "retrievalPreferences", type: "Carbon.RetrievalPreferences.Class", optional: true, description: "An object for specify the retrieval preferences for the request." },
@@ -2185,7 +2185,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 			});
 
 			it( hasSignature(
-				"Retrieves all the members of a document and their content, or a part of them in accordance of the retrieval preferences specified.", [
+				"Retrieves all the members of a document and their content, or a part of them in accordance to the retrieval preferences specified.", [
 					{ name: "uri", type: "string", description: "URI of the document from where to look for its members." },
 					{ name: "retrievalPreferences", type: "Carbon.RetrievalPreferences.Class", optional: true, description: "An object for specify the retrieval preferences for the request." },
 					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Options that can be specified to change the behavior of the request." },

@@ -89,7 +89,7 @@ describe( module( "Carbon/LDP/Container" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"hasClassProperties",
-			"Returns true if the object has the properties a `Carbon.LDP.Container.Class` object.", [
+			"Returns true if the object has the properties of a `Carbon.LDP.Container.Class` object.", [
 				{ name: "resource", type: "Carbon.RDF.Node.Class" }
 			],
 			{ type: "boolean" }

@@ -247,8 +247,8 @@ describe( module( "Carbon/LDP/PersistedContainer" ), ():void => {
 			it( hasMethod(
 				INSTANCE,
 				"addMembers",
-				"Adds the specified resources URI or Pointers as members of the container.", [
-					{ name: "members", type: "(Carbon.Pointer.Class | string)[]", description: "Array of string URIs or Pointers to add as members" },
+				"Adds the specified resources as members of the container.", [
+					{ name: "members", type: "(Carbon.Pointer.Class | string)[]", description: "Array of URIs or Pointers to add as members." },
 				],
 				{ type: "Promise<Carbon.HTTP.Response.Class>" }
 			), ():void => {
@@ -271,7 +271,7 @@ describe( module( "Carbon/LDP/PersistedContainer" ), ():void => {
 
 				it( hasSignature(
 					"Persists a document with the slug specified as a child of the current container.", [
-					{ name: "slug", type: "string", description: "The slug name for the children URI." },
+					{ name: "slug", type: "string", description: "The slug that will be used in the child URI." },
 					{ name: "object", type: "Object", description: "The object from where create the child. If it's a non `Carbon.Document.Class` object, it's transformed into one." }
 				],
 					{ type: "Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>" }
@@ -316,7 +316,7 @@ describe( module( "Carbon/LDP/PersistedContainer" ), ():void => {
 
 				it( hasSignature(
 					"Creates an persists an empty child for the current container with the slug provided.", [
-					{ name: "slug", type: "string", description: "The slug name for the children URI." }
+					{ name: "slug", type: "string", description: "The slug that will be used in the child URI." }
 				],
 					{ type: "Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>" }
 				), ():void => {
@@ -362,7 +362,7 @@ describe( module( "Carbon/LDP/PersistedContainer" ), ():void => {
 			it( hasMethod(
 				INSTANCE,
 				"getChildren",
-				"Retrieves an array of resolved Carbon Document that refers to the children of the current container, in accordance of the retrieval preferences specified.", [
+				"Retrieves an array of resolved Carbon Documents that refers to the children of the current container, in accordance to the retrieval preferences specified.", [
 					{ name: "retrievalPreferences", type: "Carbon.RetrievalPreferences.Class", optional: true },
 				],
 				{ type: "Promise<[ Carbon.Pointer.Class[], Carbon.HTTP.Response ]>" }
@@ -413,7 +413,7 @@ describe( module( "Carbon/LDP/PersistedContainer" ), ():void => {
 			), ():void => {
 
 				it( hasSignature(
-					"Retrieves an array of resolver Carbon Document that refers to the members of the current container, in accordance of the retrieval preferences specified.", [
+					"Retrieves an array of resolver Carbon Document that refers to the members of the current container, in accordance to the retrieval preferences specified.", [
 						{ name: "includeNonReadable", type: "boolean", optional: true, description: "By default this option is set to `true`." },
 						{ name: "retrievalPreferences", type: "Carbon.RetrievalPreferences.Class", optional: true },
 					],
@@ -497,7 +497,7 @@ describe( module( "Carbon/LDP/PersistedContainer" ), ():void => {
 				INSTANCE,
 				"removeMembers",
 				"Remove the specified resources URI or Pointers as members of the current container.", [
-					{ name: "members", type: "(Carbon.Pointer.Class | string)[]", description: "Array of string URIs or Pointers to remove as members" },
+					{ name: "members", type: "(Carbon.Pointer.Class | string)[]", description: "Array of URIs or Pointers to remove as members" },
 				],
 				{ type: "Promise<Carbon.HTTP.Response.Class>" }
 			), ():void => {
@@ -517,7 +517,7 @@ describe( module( "Carbon/LDP/PersistedContainer" ), ():void => {
 				INSTANCE,
 				"removeAllMembers",
 				"Remove the specified resources URI or Pointers as members of the current container.", [
-					{ name: "members", type: "(Carbon.Pointer.Class | string)[]", description: "Array of string URIs or Pointers to remove as members" },
+					{ name: "members", type: "(Carbon.Pointer.Class | string)[]", description: "Array of URIs or Pointers to remove as members" },
 				],
 				{ type: "Promise<Carbon.HTTP.Response.Class>" }
 			), ():void => {

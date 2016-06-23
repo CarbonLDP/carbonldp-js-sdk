@@ -1,53 +1,99 @@
 import {
-		INSTANCE,
-		STATIC,
+	INSTANCE,
+	STATIC,
 
-		module,
+	module,
 
-		isDefined,
+	isDefined,
 
-		interfaze,
-		clazz,
-		method,
+	interfaze,
+	clazz,
+	method,
 
-		hasConstructor,
-		hasMethod,
-		hasSignature,
-		hasProperty,
-		hasInterface,
-		extendsClass,
+	hasConstructor,
+	hasMethod,
+	hasSignature,
+	hasProperty,
+	hasInterface,
+	extendsClass,
 
-		MethodArgument,
+	MethodArgument, hasDefaultExport,
 } from "./test/JasmineExtender";
 
 import * as Errors from "./Errors";
 import * as HTTP from "./HTTP";
+import * as ObjectSchema from "./ObjectSchema";
 import * as Pointer from "./Pointer";
+import * as RDF from "./RDF";
 import * as Utils from "./Utils";
+import * as XSDSerialisers from "./RDF/Literal/Serializers/XSD";
 
 import * as JSONLDConverter from "./JSONLDConverter";
-import * as ObjectSchema from "./ObjectSchema";
+import DefaultExport from "./JSONLDConverter";
 
 describe( module( "Carbon/JSONLDConverter" ), ():void => {
+
 	it( isDefined(), ():void => {
 		expect( JSONLDConverter ).toBeDefined();
 		expect( Utils.isObject( JSONLDConverter ) ).toEqual( true );
 	});
 
-	describe( clazz( "Carbon.JSONLDConverter.Class", "Class that have methods for convert between expanded JSON-LD objects to compacted Carbon SDK Resources and vice versa." ), ():void => {
+	describe( clazz( "Carbon.JSONLDConverter.Class", "Class that have methods for convert expanded JSON-LD objects to compacted Carbon SDK Resources and vice versa." ), ():void => {
+
 		it( isDefined(), ():void => {
 			expect( JSONLDConverter.Class ).toBeDefined();
 			expect( Utils.isFunction( JSONLDConverter.Class ) ).toEqual( true );
 		});
+		
+		it( hasConstructor( [
+			{ name: "literalSerializers", type: "Map<string, Carbon.RDF.Literal.Serializer>", optional: true, description: "A Map object with the data type serializers that the converter will only be able to handle." }
+		]), ():void => {
+			let jsonldConverter:JSONLDConverter.Class;
+
+			jsonldConverter = new JSONLDConverter.Class();
+			expect( jsonldConverter ).toBeTruthy();
+			expect( jsonldConverter instanceof  JSONLDConverter.Class ).toBe( true );
+
+			let customSerializers:Map<string, RDF.Literal.Serializer> = new Map();
+			customSerializers.set( "http://example.com/ns#my-custom-type", <any> {} );
+
+			jsonldConverter = new JSONLDConverter.Class( customSerializers );
+			expect( jsonldConverter ).toBeTruthy();
+			expect( jsonldConverter instanceof  JSONLDConverter.Class ).toBe( true );
+		});
+
+		it( hasProperty(
+			INSTANCE,
+			"literalSerializers",
+			"Map<string, Carbon.RDF.Literal.Serializer>",
+			"A Map object with data-type/serializer pairs for stringify the data of a SDK Resource when expanding it."
+		), ():void => {
+			let jsonldConverter:JSONLDConverter.Class;
+			let serializers:Map<string, RDF.Literal.Serializer>;
+
+			jsonldConverter = new JSONLDConverter.Class();
+			serializers = jsonldConverter.literalSerializers;
+			expect( serializers.size ).toBeGreaterThan( 1 );
+
+			let customSerializers:Map<string, RDF.Literal.Serializer> = new Map();
+			customSerializers.set( "http://example.com/ns#my-custom-type", <any> {} );
+
+			jsonldConverter = new JSONLDConverter.Class( customSerializers );
+			serializers = jsonldConverter.literalSerializers;
+			expect( serializers.size ).toBe( 1 );
+		});
 
 		describe( method( INSTANCE, "compact" ), ():void => {
-			// TODO: Improve signature description
-			it( hasSignature( "Returns a Carbon SDK Resource generated from the JSON-LD object provided.", [
-				{ name: "expandedObject", type: "Object" },
-				{ name: "targetObject", type: "Object" },
-				{ name: "digestedSchema", type: "Carbon.ObjectSchema.DigestedObjectSchema" },
-				{ name: "pointerLibrary", type: "Carbon.Pointer.Library" },
-			], { type: "Object", description: "" } ), ():void => {
+
+			it( hasSignature(
+				"Assign the data of the expanded JSON-LD object, to the target object in a friendly mode, ie. without the JSON-LD Syntax Tokens and parsed values, in accordance to the schema provided.", [
+					{ name: "expandedObject", type: "Object", description: "The JSON-LD object to compact." },
+					{ name: "targetObject", type: "Object", description: "The target object where will be added the data of the expanded object." },
+					{ name: "digestedSchema", type: "Carbon.ObjectSchema.DigestedObjectSchema", description: "The schema that describes how compact the expanded object." },
+					{ name: "pointerLibrary", type: "Carbon.Pointer.Library", description: "An object from where one can obtain pointers to SDK Resources." },
+				],
+				{ type: "Object", description: "The compacted target object." }
+			), ():void => {
 				let jsonldConverter:JSONLDConverter.Class = new JSONLDConverter.Class();
 
 				expect( jsonldConverter.compact ).toBeDefined();
@@ -78,21 +124,21 @@ describe( module( "Carbon/JSONLDConverter" ), ():void => {
 						{ "@value": "日本語", "@language": "jp" },
 					],
 					"http://example.com/ns#pointer": [
-						{ "@id": "http://example.com/pointer" },
+						{ "@id": "http://example.com/pointer/" },
 					],
 					"http://example.com/ns#pointerList": [
 						{
 							"@list": [
-								{ "@id": "http://example.com/pointer-1" },
-								{ "@id": "http://example.com/pointer-2" },
-								{ "@id": "http://example.com/pointer-3" },
+								{ "@id": "http://example.com/pointer-1/" },
+								{ "@id": "http://example.com/pointer-2/" },
+								{ "@id": "http://example.com/pointer-3/" },
 							],
 						},
 					],
 					"http://example.com/ns#pointerSet": [
-						{ "@id": "http://example.com/pointer-1" },
-						{ "@id": "http://example.com/pointer-2" },
-						{ "@id": "http://example.com/pointer-3" },
+						{ "@id": "http://example.com/pointer-1/" },
+						{ "@id": "http://example.com/pointer-2/" },
+						{ "@id": "http://example.com/pointer-3/" },
 					],
 				};
 
@@ -183,30 +229,34 @@ describe( module( "Carbon/JSONLDConverter" ), ():void => {
 
 				expect( Utils.hasProperty( compactedObject, "pointer" ) ).toEqual( true );
 				expect( Utils.isObject( compactedObject.pointer ) ).toEqual( true );
-				expect( compactedObject.pointer.id ).toEqual( "http://example.com/pointer" );
+				expect( compactedObject.pointer.id ).toEqual( "http://example.com/pointer/" );
 
 				expect( Utils.hasProperty( compactedObject, "pointerList" ) ).toEqual( true );
 				expect( Utils.isArray( compactedObject.pointerList ) ).toEqual( true );
 				expect( compactedObject.pointerList.length ).toEqual( 3 );
-				expect( compactedObject.pointerList[ 0 ].id ).toEqual( "http://example.com/pointer-1" );
-				expect( compactedObject.pointerList[ 1 ].id ).toEqual( "http://example.com/pointer-2" );
-				expect( compactedObject.pointerList[ 2 ].id ).toEqual( "http://example.com/pointer-3" );
+				expect( compactedObject.pointerList[ 0 ].id ).toEqual( "http://example.com/pointer-1/" );
+				expect( compactedObject.pointerList[ 1 ].id ).toEqual( "http://example.com/pointer-2/" );
+				expect( compactedObject.pointerList[ 2 ].id ).toEqual( "http://example.com/pointer-3/" );
 
 				expect( Utils.hasProperty( compactedObject, "pointerSet" ) ).toEqual( true );
 				expect( Utils.isArray( compactedObject.pointerSet ) ).toEqual( true );
 				expect( compactedObject.pointerSet.length ).toEqual( 3 );
-				expect( compactedObject.pointerSet[ 0 ].id ).toEqual( "http://example.com/pointer-1" );
-				expect( compactedObject.pointerSet[ 1 ].id ).toEqual( "http://example.com/pointer-2" );
-				expect( compactedObject.pointerSet[ 2 ].id ).toEqual( "http://example.com/pointer-3" );
+				expect( compactedObject.pointerSet[ 0 ].id ).toEqual( "http://example.com/pointer-1/" );
+				expect( compactedObject.pointerSet[ 1 ].id ).toEqual( "http://example.com/pointer-2/" );
+				expect( compactedObject.pointerSet[ 2 ].id ).toEqual( "http://example.com/pointer-3/" );
 			});
 		});
 
 		describe( method( INSTANCE, "expand" ), ():void => {
-			// TODO: Improve signature description
-			it( hasSignature( "Returns a JSON-LD object generated from the Carbon SDK Resource provided.", [
-				{ name: "compactedObject", type: "Object" },
-				{ name: "digestedSchema", type: "Carbon.ObjectSchema.DigestedObjectSchema" },
-			], { type: "Object", description: "" } ), ():void => {
+
+
+			it( hasSignature(
+				"Creates a expanded JSON-LD object from the compacted object in accordance to the schema provided.", [
+					{ name: "compactedObject", type: "Object", description: "The compacted object to generate its expanded JSON-LD object." },
+					{ name: "digestedSchema", type: "Carbon.ObjectSchema.DigestedObjectSchema", description: "The schema that describes how construct the expanded object." },
+				],
+				{ type: "Object", description: "The expanded JSON-LD object generated." }
+			), ():void => {
 				let jsonldConverter:JSONLDConverter.Class = new JSONLDConverter.Class();
 
 				expect( jsonldConverter.compact ).toBeDefined();
@@ -270,34 +320,34 @@ describe( module( "Carbon/JSONLDConverter" ), ():void => {
 						"jp": "日本語",
 					},
 					"pointer": {
-						uri: "http://example.com/pointer",
+						uri: "http://example.com/pointer/",
 						resolve: mockedResolveFunction,
 					},
 					"pointerList": [
 						{
-							uri: "http://example.com/pointer-1",
+							uri: "http://example.com/pointer-1/",
 							resolve: mockedResolveFunction,
 						},
 						{
-							uri: "http://example.com/pointer-2",
+							uri: "http://example.com/pointer-2/",
 							resolve: mockedResolveFunction,
 						},
 						{
-							uri: "http://example.com/pointer-3",
+							uri: "http://example.com/pointer-3/",
 							resolve: mockedResolveFunction,
 						},
 					],
 					"pointerSet": [
 						{
-							uri: "http://example.com/pointer-1",
+							uri: "http://example.com/pointer-1/",
 							resolve: mockedResolveFunction,
 						},
 						{
-							uri: "http://example.com/pointer-2",
+							uri: "http://example.com/pointer-2/",
 							resolve: mockedResolveFunction,
 						},
 						{
-							uri: "http://example.com/pointer-3",
+							uri: "http://example.com/pointer-3/",
 							resolve: mockedResolveFunction,
 						},
 					],
@@ -309,12 +359,12 @@ describe( module( "Carbon/JSONLDConverter" ), ():void => {
 						"some-string",
 						function():void {},
 						{
-							uri: "http://example.com/pointer",
+							uri: "http://example.com/pointer/",
 							resolve: mockedResolveFunction,
 						},
 					],
 					"unknownTypePointer": {
-						uri: "http://example.com/pointer",
+						uri: "http://example.com/pointer/",
 						resolve: mockedResolveFunction,
 					},
 				};
@@ -325,6 +375,14 @@ describe( module( "Carbon/JSONLDConverter" ), ():void => {
 				expect( expandedObject ).toBeDefined();
 				expect( Utils.isObject( expandedObject ) ).toEqual( true );
 			});
+
 		});
+
 	});
+
+	it( hasDefaultExport( "Carbon.JSONLDConverter.Class" ), () => {
+		expect( DefaultExport ).toBeDefined();
+		expect( JSONLDConverter.Class ).toBe( DefaultExport );
+	});
+
 });

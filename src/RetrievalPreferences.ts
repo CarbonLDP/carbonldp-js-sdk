@@ -10,8 +10,6 @@ export interface Class {
 
 const allowedTypes:string[] = [ "numeric", "string", "boolean", "dateTime" ];
 
-// TODO `bundle-sfx` throw an Error when the literals are used in `@type`. For now declaring the type `oderByType` fix this.
-export type orderByType = "numeric" | "string" | "boolean" | "dateTime";
 export interface OrderByProperty {
 	"@id":string;
 	"@type"?:"numeric" | "string" | "boolean" | "dateTime";

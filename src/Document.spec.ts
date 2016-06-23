@@ -48,7 +48,7 @@ describe( module( "Carbon/Document" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"hasClassProperties",
-			"Returns true if the object provided has the properties and functions of a `Carbon.Document.Class` object.", [
+			"Returns true if the object provided has the properties and methods of a `Carbon.Document.Class` object.", [
 				{ name: "documentResource", type: "Object" }
 			],
 			{ type: "boolean" }
@@ -512,8 +512,8 @@ describe( module( "Carbon/Document" ), ():void => {
 		});
 
 		describe( decoratedObject(
-			"Object decorated by the `Carbon.LDP.PersistedContainer.Factory.decorate()` function.", [
-				"Carbon.LDP.PersistedContainer.Class"
+			"Object decorated by the `Carbon.Document.Factory.decorate()` function.", [
+				"Carbon.Document.Class"
 			]
 		), ():void => {
 			let document:Document.Class;

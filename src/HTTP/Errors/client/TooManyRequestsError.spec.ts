@@ -24,7 +24,7 @@ describe( module(
 ), ():void => {
 
 	describe( clazz(
-		"Carbon.HTTP.Errors.client.TooManyRequestsError",
+		"Carbon.HTTP.Errors.TooManyRequestsError",
 		"Error class to indicate that the current user has sent too many request in a given amount of time."
 	), ():void => {
 

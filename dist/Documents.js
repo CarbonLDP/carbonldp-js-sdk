@@ -371,7 +371,7 @@ var Documents = (function () {
             var member = members_1[_i];
             member = Utils.isString(member) ? this.getPointer(member) : member;
             if (!Pointer.Factory.is(member))
-                return Promise.reject(new Errors.IllegalArgumentError("No Carbon.Pointer or string URI provided."));
+                return Promise.reject(new Errors.IllegalArgumentError("No Carbon.Pointer or URI provided."));
             pointers.push(member);
         }
         documentURI = this.getRequestURI(documentURI);
@@ -392,7 +392,7 @@ var Documents = (function () {
             var member = members_2[_i];
             member = Utils.isString(member) ? this.getPointer(member) : member;
             if (!Pointer.Factory.is(member))
-                return Promise.reject(new Errors.IllegalArgumentError("No Carbon.Pointer or string URI provided."));
+                return Promise.reject(new Errors.IllegalArgumentError("No Carbon.Pointer or URI provided."));
             pointers.push(member);
         }
         documentURI = this.getRequestURI(documentURI);

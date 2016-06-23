@@ -24,7 +24,7 @@ describe( module(
 ), ():void => {
 
 	describe( clazz(
-		"Carbon.HTTP.Errors.client.MethodNotAllowedError",
+		"Carbon.HTTP.Errors.MethodNotAllowedError",
 		"Error class to indicate that the method used in the request is not allowed for that URI."
 	), ():void => {
 

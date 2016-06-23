@@ -332,7 +332,7 @@ describe( module( "Carbon/RDF/Value" ), ():void => {
 			STATIC,
 			"getProperties",
 			"Returns the property searched as an Array with the parsed Literal, Pointer or List.\n" +
-			"Returns null if the property is not found, or an empty array if cannot be parsed.", [
+			"Returns null if the property is not found, or an empty array if it cannot be parsed.", [
 				{ name: "expandedObject", type: "any" },
 				{ name: "propertyURI", type: "string" },
 				{ name: "pointerLibrary", type: "Carbon.Pointer.Library" }
@@ -484,7 +484,7 @@ describe( module( "Carbon/RDF/Value" ), ():void => {
 			STATIC,
 			"getPropertyLiterals",
 			"Returns the property searched as an Array with the parsed Literal.\n" +
-			"Returns null if the property is not found, or an empty array if cannot be parsed.", [
+			"Returns null if the property is not found, or an empty array if it cannot be parsed.", [
 				{ name: "expandedObject", type: "any" },
 				{ name: "propertyURI", type: "string" },
 				{ name: "literalType", type: "string" }
@@ -542,7 +542,7 @@ describe( module( "Carbon/RDF/Value" ), ():void => {
 			STATIC,
 			"getPropertyLanguageMap",
 			"Returns an object associating the language with the parsed string literal.\n" +
-			"Returns null if the property is not found, or an empty object if not is a property with language.", [
+			"Returns null if the property is not found, or an empty object if it is not a property with language.", [
 				{ name: "expandedObject", type: "any" },
 				{ name: "propertyURI", type: "string" },
 				{ name: "pointerLibrary", type: "Carbon.Pointer.Library" }
@@ -598,7 +598,7 @@ describe( module( "Carbon/RDF/Value" ), ():void => {
 			STATIC,
 			"parseValue",
 			"Returns the parsed object from an Literal, Node, or List.\n" +
-			"Returns null if cannot be parsed", [
+			"Returns null if it cannot be parsed", [
 				{ name: "propertyValue", type: "Carbon.RDF.Value.Class" },
 				{ name: "pointerLibrary", type: "Carbon.Pointer.Library" }
 			],

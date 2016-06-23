@@ -166,7 +166,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 			"create",
 			"Creates an empty `Carbon.PersistedDocument.Class` object with the URI provided.", [
 				{ name: "uri", type: "string" },
-				{ name: "documents", type: "Carbon.Documents", description: "The Documents instance from where the PersistedDocument belong." }
+				{ name: "documents", type: "Carbon.Documents", description: "The Documents instance to which the PersistedDocument belongs." }
 			],
 			{ type: "Carbon.PersistedDocument.Class" }
 		), ():void => {
@@ -186,7 +186,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 			"Creates a PersistedDocument object from the object and URI provided.", [
 				{ name: "object", type: "T extends Object" },
 				{ name: "uri", type: "string" },
-				{ name: "documents", type: "Carbon.Documents", description: "The Documents instance from where the PersistedDocument belong." }
+				{ name: "documents", type: "Carbon.Documents", description: "The Documents instance to which the PersistedDocument belongs." }
 			],
 			{ type: "Carbon.PersistedDocument.Class" }
 		), ():void => {
@@ -213,9 +213,9 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"decorate",
-			"Adds the properties and methods necessary for a PersistedDocument object.", [
+			"Decorates the object provided with the properties and methods of a `Carbon.PersistedDocument.Class` object.", [
 				{ name: "object", type: "T extends Object" },
-				{ name: "documents", type: "Carbon.Documents", description: "The Documents instance from where the PersistedDocument belong." }
+				{ name: "documents", type: "Carbon.Documents", description: "The Documents instance to which the PersistedDocument belongs." }
 			],
 			{ type: "T & Carbon.PersistedDocument.Class" }
 		), ():void => {
@@ -264,7 +264,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 				INSTANCE,
 				"_documents",
 				"Carbon.Documents",
-				"Documents object from where the PersistedContainer belong."
+				"The Documents instance to which the PersistedContainer belongs."
 			), ():void => {
 				expect( document._documents ).toBeDefined();
 				expect( Utils.isObject( document._documents ) ).toBe( true );
@@ -299,9 +299,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 				expect( document.hasPointer( "_:BlankNode" ) ).toBe( true );
 				expect( document.hasPointer( "http://example.com/in/documents/" ) ).toBe( true );
 
-				// TODO fix throw null error
-				//expect( document.hasPointer( "this-is-considered-a-fragment/" ) ).toBe( false );
-
+				expect( document.hasPointer( "relative-resource/" ) ).toBe( false );
 				expect( document.hasPointer( "http://example.com/document/#another-fragment" ) ).toBe( false );
 				expect( document.hasPointer( "_:AnotherBlankNode" ) ).toBe( false );
 				expect( document.hasPointer( "http://example.com/another-document/" ) ).toBe( false );
@@ -310,8 +308,8 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 			it( hasMethod(
 				INSTANCE,
 				"getPointer",
-				"Returns the pointer referenced by the URI provided. If not exists a pointer is created.\n" +
-				"Returns null if the URI is not inside scope of the PersistedDocument.", [
+				"Returns the pointer referenced by the URI provided. If none exists, an empty pointer is created.\n" +
+				"Returns null if the URI is not inside the scope of the PersistedDocument.", [
 					{ name: "id", type: "string" }
 				],
 				{ type: "boolean" }
@@ -493,7 +491,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 			it( hasMethod(
 				INSTANCE,
 				"executeASKQuery",
-				"Executes an ASK query in the document and returns a boolean of th result.", [
+				"Executes an ASK query in the document and returns a boolean of the result.", [
 					{ name: "askQuery", type: "string" },
 					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true }
 				],
@@ -510,7 +508,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 			it( hasMethod(
 				INSTANCE,
 				"executeRawSELECTQuery",
-				"Executes an SELECT query in the document and returns a raw application/sparql-results+json object.",[
+				"Executes a SELECT query in the document and returns a raw application/sparql-results+json object.",[
 					{ name: "selectQuery", type: "string" },
 					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true }
 				],
@@ -527,7 +525,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 			it( hasMethod(
 				INSTANCE,
 				"executeSELECTQuery",
-				"Executes an SELECT query in the document and returns the results as a `Carbon.SPARQL.SELECTResults.Class` object.",[
+				"Executes a SELECT query in the document and returns the results as a `Carbon.SPARQL.SELECTResults.Class` object.",[
 					{ name: "selectQuery", type: "string" },
 					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true }
 				],
@@ -544,7 +542,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 			it( hasMethod(
 				INSTANCE,
 				"executeRawCONSTRUCTQuery",
-				"Executes an CONSTRUCT query in the document and returns a string with the resulting model.",[
+				"Executes a CONSTRUCT query in the document and returns a string with the resulting model.",[
 					{ name: "constructQuery", type: "string" },
 					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true }
 				],
@@ -561,7 +559,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 			it( hasMethod(
 				INSTANCE,
 				"executeRawDESCRIBEQuery",
-				"Executes an DESCRIBE query in the document and returns a string with the resulting model.",[
+				"Executes a DESCRIBE query in the document and returns a string with the resulting model.",[
 					{ name: "constructQuery", type: "string" },
 					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true }
 				],

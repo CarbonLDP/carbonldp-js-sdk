@@ -20,7 +20,7 @@ import HTTPError from "./../HTTPError";
 import {Service} from "../../Request";
 
 describe( module(
-	"Carbon/HTTP/Errors/ConflictError"
+	"Carbon/HTTP/Errors/client/ConflictError"
 ), ():void => {
 
 	describe( clazz(

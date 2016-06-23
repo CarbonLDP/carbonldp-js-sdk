@@ -63,7 +63,7 @@ describe( module(
 
 	describe( clazz(
 		"Carbon.HTTP.Header.Class",
-		"Class for manage the values in an HTTP header."
+		"Class to manage the values in an HTTP header."
 	), ():void => {
 
 		// Mock data

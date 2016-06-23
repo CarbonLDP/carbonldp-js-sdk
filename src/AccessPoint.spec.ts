@@ -15,7 +15,7 @@ import * as NS from "./NS";
 import * as Pointer from "./Pointer";
 import * as DirectContainer from "./LDP/DirectContainer";
 
-describe( module( "Carbon/AccessPoints" ), ():void => {
+describe( module( "Carbon/AccessPoint" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( AccessPoint ).toBeDefined();
@@ -70,9 +70,9 @@ describe( module( "Carbon/AccessPoints" ), ():void => {
 			STATIC,
 			"create",
 			"Creates a `Carbon.AccessPoint.Class` object with the parameters specified.", [
-				{ name: "membershipResource", type: "Carbon.Pointer.Class" },
-				{ name: "hasMemberRelation", type: "string | Carbon.Pointer.Class" },
-				{ name: "memberOfRelation", type: "string | Carbon.Pointer.Class", optional: true }
+				{ name: "membershipResource", type: "Carbon.Pointer.Class", description: "A Pointer to the parent of the AccessPoint." },
+				{ name: "hasMemberRelation", type: "string | Carbon.Pointer.Class", description: "A URI or Pointer to the property in the parent resource managed by the AccessPoint." },
+				{ name: "memberOfRelation", type: "string | Carbon.Pointer.Class", optional: true, description: "A URI or Pointer to the property managed in the members added by the AccessPoint." }
 			],
 			{ type: "Carbon.AccessPoint.Class" }
 		), ():void => {
@@ -103,9 +103,9 @@ describe( module( "Carbon/AccessPoints" ), ():void => {
 			"createFrom",
 			"Creates a `Carbon.AccessPoint.Class` object from the object and parameters specified.", [
 				{ name: "object", type: "T extends Object" },
-				{ name: "membershipResource", type: "Carbon.Pointer.Class" },
-				{ name: "hasMemberRelation", type: "string | Carbon.Pointer.Class" },
-				{ name: "memberOfRelation", type: "string | Carbon.Pointer.Class", optional: true }
+				{ name: "membershipResource", type: "Carbon.Pointer.Class", description: "A Pointer to the parent of the AccessPoint." },
+				{ name: "hasMemberRelation", type: "string | Carbon.Pointer.Class", description: "A URI or Pointer to the property in the parent resource managed by the AccessPoint." },
+				{ name: "memberOfRelation", type: "string | Carbon.Pointer.Class", optional: true, description: "A URI or Pointer to the property managed in the members added by the AccessPoint." }
 			],
 			{ type: "T & Carbon.AccessPoint.Class" }
 		), ():void => {

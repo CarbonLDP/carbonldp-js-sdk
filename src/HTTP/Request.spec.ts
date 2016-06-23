@@ -935,7 +935,7 @@ describe( module( "Carbon/HTTP/Request" ), function ():void {
 		it( hasMethod(
 			STATIC,
 			"getHeader",
-			"Returns the header object of a header-name inside an options object request. Returns `undefined` if the header not exists. If `initialize` flag is provided with true, a empty header will be created even if it already exits.", [
+			"Returns the header object of a header-name inside an options object request. Returns `undefined` if the header doesn't exists. If `initialize` flag is provided with true, an empty header will be created even if it already exits.", [
 				{ name: "headerName", type: "string" },
 				{ name: "requestOptions", type: "Object" },
 				{ name: "initialize", type: "boolean", optional: true, default: "false" }

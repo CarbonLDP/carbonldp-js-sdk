@@ -1,3 +1,4 @@
+import {on} from "cluster";
 function hasFunction( object:Object, functionName:string ):boolean {
 	return typeof object[ functionName ] === "function";
 }
@@ -129,6 +130,49 @@ function forEachOwnProperty( object:Object, action:( name:string, value:any ) =>
 }
 
 class O {
+	// TODO Make tests
+	static clone( object:Object, config:{ arrays?:boolean, objects?:boolean } = { arrays: false, objects: false } ):Object {
+		let isAnArray:boolean = isArray( object );
+		if( ! isAnArray && ! isPlainObject( object ) ) return null;
+
+		let clone:Object = Object.assign( isAnArray ? [] : {}, object );
+		for ( let key of Object.keys( clone ) ) {
+			if ( isFunction( object[ key ] ) ) continue;
+
+			if ( isArray( object[ key ] ) && config.arrays ||
+				isPlainObject( object[ key ] ) && config.objects ) {
+					object[ key ] = O.clone( object[ key ] );
+			}
+		}
+
+		return clone;
+	}
+
+	// TODO Make tests
+	static areEqual( object1:Object, object2:Object, config:{ arrays?:boolean, objects?:boolean } = { arrays: false, objects: false } ):boolean {
+		if( object1 === object2 ) return true;
+		if( ! isObject( object1 ) || ! isObject( object2 ) ) return false;
+		if ( isDate( object1 ) ) return (<Date> object1).getTime() === (<Date> object2).getTime();
+
+		let keys:string[] = A.joinWithoutDuplicates( Object.keys( object1 ), Object.keys( object2 ) );
+		for ( let key of keys ) {
+			if ( ! ( key in object1 ) && ! ( key in object2 ) ) return false;
+			if ( typeof object1[ key ] !== typeof object2[ key ] ) return false;
+
+			if ( isFunction( object1[ key ] ) ) continue;
+
+			if ( isArray( object1[ key ] ) && config.arrays ||
+				isPlainObject( object1[ key ] ) && config.objects ||
+				isDate( object1[ key ] ) ) {
+					if ( ! O.areEqual( object1[ key ], object2[ key ], config ) ) return false;
+			} else {
+				if ( object1[ key ] !== object2[ key ] ) return false;
+			}
+		}
+
+		return true;
+	}
+
 	static areShallowlyEqual( object1:Object, object2:Object ):boolean {
 		if( object1 === object2 ) return true;
 		if( ! isObject( object1 ) || ! isObject( object2 ) ) return false;

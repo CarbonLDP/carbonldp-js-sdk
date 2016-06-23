@@ -25,7 +25,7 @@ describe( module(
 
 	describe( clazz(
 		"Carbon.HTTP.Errors.HTTPError",
-		"Error class for define any type of HTTP Error used in the SDK."
+		"Generic error class that defines any type of HTTP Error used in the SDK."
 	), ():void => {
 
 		let response: Response;

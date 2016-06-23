@@ -135,7 +135,7 @@ describe( module( "Carbon/FreeResources" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"decorate",
-			"Decorates the object provided with the methods and properties of a `Carbon.FreeResources.Class` object.", [
+			"Decorates the object provided with the properties and methods of a `Carbon.FreeResources.Class` object.", [
 				{ name: "object", type: "T extends Object" }
 			],
 			{ type: "Carbon.FreeResources.Class & T" }
@@ -217,7 +217,7 @@ describe( module( "Carbon/FreeResources" ), ():void => {
 			it( hasMethod(
 				INSTANCE,
 				"hasResource",
-				"Returns true if exists a resource with the ID specified.", [
+				"Returns true if a resource with the ID specified exists.", [
 					{ name: "id", type: "string", description: "The ID of the resource to sought for." }
 				],
 				{ type: "boolean" }
@@ -284,7 +284,7 @@ describe( module( "Carbon/FreeResources" ), ():void => {
 			it( hasMethod(
 				INSTANCE,
 				"createResource",
-				"Creates an returns a new Free Resource. Throw an Error if no valid ID if provided or if it's already in use.", [
+				"Creates and returns a new Free Resource. Throw an Error if no valid ID if provided or if it's already in use.", [
 					{ name: "id", type: "string", optional: true, description: "The ID of the resource to create. It should be an ID as a BlankNode." }
 				],
 				{ type: "Carbon.Resource.Class" }
@@ -316,7 +316,7 @@ describe( module( "Carbon/FreeResources" ), ():void => {
 			it( hasMethod(
 				INSTANCE,
 				"hasPointer",
-				"Returns true if exists a pointer in the scope of the FreeResources object and its parents.",
+				"Returns true if a pointer exists in the scope of the FreeResources object and its parents.",
 				{ type: "boolean" }
 			), ():void => {
 				expect( freeResources.hasPointer ).toBeDefined();
@@ -382,7 +382,7 @@ describe( module( "Carbon/FreeResources" ), ():void => {
 
 				it( hasSignature(
 					"Returns true if the the Pointer provided can be in the scope of the object.", [
-						{ name: "pointer", type: "Carbon.Pointer.Class", description: "The Pointer to evaluate if can be in the scope." }
+						{ name: "pointer", type: "Carbon.Pointer.Class", description: "Pointer to be evaluated if can be in the scope." }
 					],
 					{ type: "boolean" }
 				), ():void => {

@@ -138,6 +138,53 @@ exports.forEachOwnProperty = forEachOwnProperty;
 var O = (function () {
     function O() {
     }
+    O.clone = function (object, config) {
+        if (config === void 0) { config = { arrays: false, objects: false }; }
+        var isAnArray = isArray(object);
+        if (!isAnArray && !isPlainObject(object))
+            return null;
+        var clone = Object.assign(isAnArray ? [] : {}, object);
+        for (var _i = 0, _a = Object.keys(clone); _i < _a.length; _i++) {
+            var key = _a[_i];
+            if (isFunction(object[key]))
+                continue;
+            if (isArray(object[key]) && config.arrays ||
+                isPlainObject(object[key]) && config.objects) {
+                object[key] = O.clone(object[key]);
+            }
+        }
+        return clone;
+    };
+    O.areEqual = function (object1, object2, config) {
+        if (config === void 0) { config = { arrays: false, objects: false }; }
+        if (object1 === object2)
+            return true;
+        if (!isObject(object1) || !isObject(object2))
+            return false;
+        if (isDate(object1))
+            return object1.getTime() === object2.getTime();
+        var keys = A.joinWithoutDuplicates(Object.keys(object1), Object.keys(object2));
+        for (var _i = 0, keys_1 = keys; _i < keys_1.length; _i++) {
+            var key = keys_1[_i];
+            if (!(key in object1) && !(key in object2))
+                return false;
+            if (typeof object1[key] !== typeof object2[key])
+                return false;
+            if (isFunction(object1[key]))
+                continue;
+            if (isArray(object1[key]) && config.arrays ||
+                isPlainObject(object1[key]) && config.objects ||
+                isDate(object1[key])) {
+                if (!O.areEqual(object1[key], object2[key], config))
+                    return false;
+            }
+            else {
+                if (object1[key] !== object2[key])
+                    return false;
+            }
+        }
+        return true;
+    };
     O.areShallowlyEqual = function (object1, object2) {
         if (object1 === object2)
             return true;

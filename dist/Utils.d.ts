@@ -18,6 +18,14 @@ declare function parseBoolean(value: string): boolean;
 declare function extend(target: Object, ...objects: Object[]): Object;
 declare function forEachOwnProperty(object: Object, action: (name: string, value: any) => (boolean | void)): void;
 declare class O {
+    static clone(object: Object, config?: {
+        arrays?: boolean;
+        objects?: boolean;
+    }): Object;
+    static areEqual(object1: Object, object2: Object, config?: {
+        arrays?: boolean;
+        objects?: boolean;
+    }): boolean;
     static areShallowlyEqual(object1: Object, object2: Object): boolean;
 }
 declare class S {

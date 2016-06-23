@@ -49,28 +49,28 @@ describe( module(
 
 		it( hasEnumeral(
 			"POST",
-			"Enum that identifies the POST HTTP/1.1 method, which request to the server to create a new entity."
+			"Enum that identifies the POST HTTP/1.1 method, which requests to the server to create a new entity."
 		), ():void => {
 			expect( Method.OPTIONS ).toBeDefined();
 		});
 
 		it( hasEnumeral(
 			"PUT",
-			"Enum that identifies the PUT HTTP/1.1 method, which allows to replace an entirely entity, or to send a signal to a resource."
+			"Enum that identifies the PUT HTTP/1.1 method, which allows you to replace an entirely entity, or to send a signal to a resource."
 		), ():void => {
 			expect( Method.OPTIONS ).toBeDefined();
 		});
 
 		it( hasEnumeral(
 			"PATCH",
-			"Enum that identifies the PATCH HTTP/1.1 method, which allows to update specified fields of an entity."
+			"Enum that identifies the PATCH HTTP/1.1 method, which allows you to update specified fields of an entity."
 		), ():void => {
 			expect( Method.OPTIONS ).toBeDefined();
 		});
 
 		it( hasEnumeral(
 			"DELETE",
-			"Enum that identifies the DELETE HTTP/1.1 method, which allows to request the deletion of a resource identified by the request URI."
+			"Enum that identifies the DELETE HTTP/1.1 method, which allows you to request the deletion of a resource identified by the request URI."
 		), ():void => {
 			expect( Method.OPTIONS ).toBeDefined();
 		});

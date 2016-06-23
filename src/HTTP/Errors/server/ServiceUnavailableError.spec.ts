@@ -24,7 +24,7 @@ describe( module(
 ), ():void => {
 
 	describe( clazz(
-		"Carbon.HTTP.Errors.server.ServiceUnavailableError",
+		"Carbon.HTTP.Errors.ServiceUnavailableError",
 		"Error class to indicate that the server is currently unavailable (because it's overloaded or down for maintenance)."
 	), ():void => {
 

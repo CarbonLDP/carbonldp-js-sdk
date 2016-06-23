@@ -189,7 +189,7 @@ describe( module( "Carbon/Resource" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"decorate",
-			"Decorates the object provided with the elements of a `Carbon.Resource.Class` object.", [
+			"Decorates the object provided with the properties and methods of a `Carbon.Resource.Class` object.", [
 				{ name: "object", type: "T extends Object" }
 			],
 			{ type: "T & Carbon.Resource.Class" }

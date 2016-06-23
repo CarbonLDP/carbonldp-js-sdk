@@ -24,7 +24,7 @@ describe( module(
 ), ():void => {
 
 	describe( clazz(
-		"Carbon.HTTP.Errors.client.NotAcceptableError",
+		"Carbon.HTTP.Errors.NotAcceptableError",
 		"Error class to indicate that the server cannot respond with the data type specified by the accept header of the request."
 	), ():void => {
 

@@ -16,7 +16,6 @@ import * as LDP from "./LDP";
 import * as NamedFragment from "./NamedFragment";
 import * as NS from "./NS";
 import * as ObjectSchema from "./ObjectSchema";
-import * as Persisted from "./Persisted";
 import * as PersistedApp from "./PersistedApp";
 import * as PersistedDocument from "./PersistedDocument";
 import * as PersistedFragment from "./PersistedFragment";
@@ -46,7 +45,6 @@ declare class Carbon extends AbstractContext {
     static NamedFragment: typeof NamedFragment;
     static NS: typeof NS;
     static ObjectSchema: typeof ObjectSchema;
-    static Persisted: typeof Persisted;
     static PersistedApp: typeof PersistedApp;
     static PersistedDocument: typeof PersistedDocument;
     static PersistedFragment: typeof PersistedFragment;

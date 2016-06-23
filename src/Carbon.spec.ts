@@ -36,7 +36,6 @@ import * as LDP from "./LDP";
 import * as NamedFragment from "./NamedFragment";
 import * as NS from "./NS";
 import * as ObjectSchema from "./ObjectSchema";
-import * as Persisted from "./Persisted";
 import * as PersistedApp from "./PersistedApp";
 import * as PersistedDocument from "./PersistedDocument";
 import * as PersistedFragment from "./PersistedFragment";
@@ -254,15 +253,6 @@ describe( module( "Carbon" ), ():void => {
 		), ():void => {
 			expect( Carbon.ObjectSchema ).toBeDefined();
 			expect( Carbon.ObjectSchema ).toBe( ObjectSchema );
-		});
-
-		it( reexports(
-			STATIC,
-			"Persisted",
-			"Carbon/Persisted"
-		), ():void => {
-			expect( Carbon.Persisted ).toBeDefined();
-			expect( Carbon.Persisted ).toBe( Persisted );
 		});
 
 		it( reexports(

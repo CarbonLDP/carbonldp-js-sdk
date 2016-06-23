@@ -117,7 +117,7 @@ describe( module( "Carbon/SDKContext" ), ():void => {
 		it( hasMethod(
 			INSTANCE,
 			"resolve",
-			"Returns the resolved relative URI specified, in accordance of the scope of the context.", [
+			"Returns the resolved relative URI specified, in accordance with the scope of the context.", [
 				{ name: "relativeURI", type: "string" }
 			],
 			{ type: "string" }
@@ -424,7 +424,7 @@ describe( module( "Carbon/SDKContext" ), ():void => {
 		STATIC,
 		"instance",
 		"Carbon.SDKContext.Class",
-		"Instance of `Carbon.SDKContext.Class` that its used as the root parent in every context."
+		"Instance of `Carbon.SDKContext.Class` that is used as the root parent in every context."
 	), ():void => {
 		expect( SDKContext.instance ).toBeDefined();
 		expect( SDKContext.instance ).toBeTruthy();

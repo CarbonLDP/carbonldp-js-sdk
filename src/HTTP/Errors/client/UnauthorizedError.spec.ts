@@ -24,7 +24,7 @@ describe( module(
 ), ():void => {
 
 	describe( clazz(
-		"Carbon.HTTP.Errors.client.UnauthorizedError",
+		"Carbon.HTTP.Errors.UnauthorizedError",
 		"Error class to indicate that authentication is required or has failed."
 	), ():void => {
 

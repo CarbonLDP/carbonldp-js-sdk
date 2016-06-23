@@ -214,7 +214,7 @@ describe( module( "Carbon/ObjectSchema" ), ():void => {
 
 	});
 
-	describe( clazz( "Carbon.ObjectSchema.Digester", "Class with functions for standardize a JSON-LD Context Schema." ), ():void => {
+	describe( clazz( "Carbon.ObjectSchema.Digester", "Class with functions to standardize a JSON-LD Context Schema." ), ():void => {
 		describe( method( STATIC, "digestSchema" ), ():void => {
 			it( hasSignature( `
 					Processes a schema to standardize it before using it.

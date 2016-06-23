@@ -24,7 +24,7 @@ describe( module(
 ), ():void => {
 
 	describe( clazz(
-		"Carbon.HTTP.Errors.server.NotImplementedError",
+		"Carbon.HTTP.Errors.NotImplementedError",
 		"Error class to indicate that the server doesn't have the ability to fulfill the request yet."
 	), ():void => {
 

@@ -7,7 +7,6 @@ var RDF = require("./RDF");
 var Utils = require("./Utils");
 var Class = (function () {
     function Class(literalSerializers) {
-        if (literalSerializers === void 0) { literalSerializers = null; }
         this._literalSerializers = !!literalSerializers ? literalSerializers : Class.getDefaultSerializers();
     }
     Object.defineProperty(Class.prototype, "literalSerializers", {

@@ -227,7 +227,7 @@ describe( module( "Carbon/Pointer" ), ():void => {
 			it( hasMethod(
 				INSTANCE,
 				"resolve",
-				"Resolve the pointer. This function throw an Error if has no been configured by another decorator."
+				"Resolves the pointer. This function throw an Error if it has no been configured by another decorator."
 			), ( done:{ (): void, fail:() => void } ):void => {
 				expect( pointer.resolve ).toBeDefined();
 				expect( Utils.isFunction( pointer.resolve ) ).toBe( true );

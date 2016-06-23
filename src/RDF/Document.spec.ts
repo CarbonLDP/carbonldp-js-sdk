@@ -530,7 +530,7 @@ describe( module( "Carbon/RDF/Document" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"getBNodeResources",
-			"Returns all the resources that refers to blank nodes from a document.", [
+			"Returns all the resources that refers to the blank nodes from a document.", [
 				{ name: "document", type: "Carbon.RDF.Document.Class" }
 			],
 			{ type: "Carbon.RDF.RDFNode.Class[]" }
@@ -553,7 +553,7 @@ describe( module( "Carbon/RDF/Document" ), ():void => {
 
 	describe( clazz(
 		"Carbon.RDF.Document.Parser",
-		"Class for parse a JSON-LD string to an array of RDFDocuments."
+		"Class to parse a JSON-LD string to an array of RDFDocuments."
 	), ():void => {
 		let compactedObject = {
 			"@context": {

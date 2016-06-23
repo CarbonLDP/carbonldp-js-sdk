@@ -24,7 +24,7 @@ describe( module(
 ), ():void => {
 
 	describe( clazz(
-		"Carbon.HTTP.Errors.server.GatewayTimeoutError",
+		"Carbon.HTTP.Errors.GatewayTimeoutError",
 		"Error class to indicate that the server, while acting as a gateway or proxy, did not receive a timely response from the upstream server."
 	), ():void => {
 

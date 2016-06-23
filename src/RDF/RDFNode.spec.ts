@@ -181,7 +181,7 @@ describe( module( "Carbon/RDF/RDFNode" ), ():void => {
 			STATIC,
 			"getPropertyURI",
 			"Returns the URI from a property resource in the RDFNode object.\n" +
-			"Returns `null` if the property not exists or the URI is not found.", [
+			"Returns `null` if the property doesn't exists or the URI is not found.", [
 				{ name: "node", type: "Carbon.RDF.RDFNode.Class" },
 				{ name: "predicate", type: "string" }
 			],
@@ -224,7 +224,7 @@ describe( module( "Carbon/RDF/RDFNode" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"getFreeNodes",
-			"Returns an array with the node that are neither a RDFDocument nor are contained inside a one.", [
+			"Returns an array with the nodes that are neither a RDFDocument nor are contained inside a one.", [
 				{ name: "object", type: "T extends Object", description: "The object to evaluate for its free nodes." }
 			],
 			{ type: "Carbon.RDF.Node.Class[]" }
