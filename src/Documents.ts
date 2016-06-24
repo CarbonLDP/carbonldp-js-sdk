@@ -11,6 +11,7 @@ import * as JSONLDConverter from "./JSONLDConverter";
 import * as PersistedBlankNode from "./PersistedBlankNode";
 import * as PersistedDocument from "./PersistedDocument";
 import * as PersistedFragment from "./PersistedFragment";
+import * as PersistedNamedFragment from "./PersistedNamedFragment";
 import * as Pointer from "./Pointer";
 import * as NS from "./NS";
 import * as ObjectSchema from "./ObjectSchema";
@@ -754,7 +755,7 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 	}
 
 	private updateObject( target:Object, source:Object ):any {
-		let keys:string[] = Array.from<string>( new Set( Object.keys( source ).concat(  Object.keys( target ) ) ) );
+		let keys:string[] = Utils.A.joinWithoutDuplicates( Object.keys( source ), Object.keys( target ) );
 
 		for ( let key of keys ) {
 			if ( Utils.hasProperty( source, key ) ) {
@@ -767,19 +768,21 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 		return target;
 	}
 
-	private getAssociatedFragment( persistedDocument:PersistedDocument.Class, fragment:Pointer.Class ):PersistedFragment.Class {
-		if ( RDF.URI.Util.isBNodeID( fragment.id ) ) {
-			let blankNode:PersistedBlankNode.Class = <PersistedBlankNode.Class> fragment;
-			let fragments:PersistedFragment.Class[] = persistedDocument.getFragments();
-			for ( let frag of fragments ) {
-				if ( RDF.URI.Util.isBNodeID( frag.id ) && (<PersistedBlankNode.Class> frag).bNodeIdentifier === blankNode.bNodeIdentifier ) {
-					return frag;
+	private getAssociatedFragment( blankNodes:PersistedFragment.Class[], namedFragments:Map<string, PersistedNamedFragment.Class>, searchedFragment:RDF.Node.Class ):PersistedFragment.Class {
+		if ( RDF.URI.Util.isBNodeID( searchedFragment[ "@id" ] ) ) {
+			let bNodeIdentifier:string =  RDF.Value.Util.getProperty( searchedFragment, NS.C.Predicate.bNodeIdentifier, null );
+
+			for ( let fragment of blankNodes ) {
+				if ( RDF.URI.Util.isBNodeID( fragment.id ) ) {
+					if ( !! (<PersistedBlankNode.Class> fragment).bNodeIdentifier && (<PersistedBlankNode.Class> fragment).bNodeIdentifier === bNodeIdentifier ) {
+						return fragment;
+					}
 				}
 			}
-			persistedDocument.removeFragment( fragment.id );
 			return null;
 		}
-		return persistedDocument.getFragment( fragment.id );
+
+		return namedFragments.get( searchedFragment[ "@id" ] );
 	}
 
 	private getRequestURI( uri:string ):string {
@@ -860,31 +863,30 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 	}
 
 	private updatePersistedDocument( persistedDocument:PersistedDocument.Class, documentResource:RDF.Node.Class, fragmentResources:RDF.Node.Class[] ):PersistedDocument.Class {
-		let originalFragments:PersistedFragment.Class[] = persistedDocument.getFragments();
-		let setFragments:Set<string> = new Set( originalFragments.map( fragment => fragment.id ) );
+		let namedFragmentsMap:Map<string, PersistedNamedFragment.Class> = new Map();
+		let blankNodesArray:PersistedBlankNode.Class[] = <PersistedBlankNode.Class[]> persistedDocument.getFragments().filter( fragment => {
+			persistedDocument.removeFragment( fragment.id );
+			if ( RDF.URI.Util.isBNodeID( fragment.id ) ) return true;
 
-		let updatedData:Pointer.Class;
+			namedFragmentsMap.set( fragment.id, <PersistedNamedFragment.Class> fragment );
+			return false;
+		});
+
+		let newFragments:[ PersistedFragment.Class, RDF.Node.Class ][] = [];
 		for( let fragmentResource of fragmentResources ) {
-			updatedData = <Pointer.Class> this.compact( fragmentResource, {}, persistedDocument );
+			let fragment:PersistedFragment.Class = this.getAssociatedFragment( blankNodesArray, namedFragmentsMap, fragmentResource );
 
-			let fragment:PersistedFragment.Class = this.getAssociatedFragment( persistedDocument, updatedData );
-			if ( fragment ) {
-				fragment = this.updateObject( fragment, updatedData );
-				if ( ! persistedDocument.hasFragment( fragment.id ) ) {
-					persistedDocument.createFragment( fragment.id, fragment );
-				}
-			} else {
-				fragment = persistedDocument.createFragment( updatedData.id, updatedData );
-			}
-			setFragments.delete( fragment.id );
+			fragment = persistedDocument.createFragment( fragmentResource[ "@id" ], fragment || {} );
+			newFragments.push( [ fragment, fragmentResource ] );
+		}
 
+		for ( let [ fragment, resource ] of newFragments ) {
+			this.updateObject( fragment, this.compact( resource, {}, persistedDocument ) );
 			fragment._syncSnapshot();
 		}
-		Array.from( setFragments ).forEach( id => persistedDocument.removeFragment( id ) );
 		persistedDocument._syncSavedFragments();
 
-		updatedData = <Pointer.Class> this.compact( documentResource, {}, persistedDocument );
-		this.updateObject( persistedDocument, updatedData );
+		this.updateObject( persistedDocument, this.compact( documentResource, {}, persistedDocument ) );
 
 		persistedDocument._syncSnapshot();
 

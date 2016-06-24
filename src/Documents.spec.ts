@@ -2774,6 +2774,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					expect( blankNode02[ "string" ] ).toBe( "Fragment 2" );
 
 					document[ "new-property" ] = "A new property that will be erased at refresh";
+					document[ "new-pointer" ] = document.createFragment( { id: "_:new-pointer", string: "Pointer that will be erased at refresh" } );
 
 					let promise:Promise<any> = documents.refresh( document );
 					expect( promise instanceof Promise ).toBe( true );
@@ -2807,6 +2808,11 @@ describe( module( "Carbon/Documents" ), ():void => {
 									]
 								},
 								{
+									"@id": "_:1",
+									"${NS.C.Predicate.bNodeIdentifier}": "UUID fo _:2",
+									"http://example.com/ns#string": [{ "@value": "Old Fragment 2" }]
+								},
+								{
 									"@id": "_:0001",
 									"${NS.C.Predicate.bNodeIdentifier}": "UUID fo _:1",
 									"http://example.com/ns#string": [{ "@value": "Changed Fragment 1" }],
@@ -2818,7 +2824,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								{
 									"@id": "_:2",
 									"${NS.C.Predicate.bNodeIdentifier}": "NOT the UUID fo _:2",
-									"http://example.com/ns#string": [{ "@value": "Fragment 2" }]
+									"http://example.com/ns#string": [{ "@value": "New Fragment 2" }]
 								},
 								{
 									"@id": "http://example.com/resource/#1",
@@ -2851,16 +2857,23 @@ describe( module( "Carbon/Documents" ), ():void => {
 					expect( blankNode01.id ).toBe( "_:0001" );
 					expect( blankNode01 ).toBe( document.getFragment( "_:0001" ) );
 					expect( document[ "pointerSet" ][ 0 ] ).toBe( blankNode01 );
-					expect( document.hasFragment( "_:1") ).toBe( false );
 
-					expect( blankNode02.id ).toBe( "_:2" );
-					expect( blankNode02.id ).not.toBe( document.getFragment( "_:2" ) );
+					expect( blankNode02.id ).not.toBe( "_:2" );
+					expect( blankNode02 ).not.toBe( document.getFragment( "_:2" ) );
 					expect( document[ "pointerSet" ][ 1 ] ).not.toBe( blankNode02 );
+					expect( document[ "pointerSet" ][ 1 ] ).toBe( document.getFragment( "_:2" ) );
+					expect( document.getFragment( "_:2" )[ "string" ] ).toBe( "New Fragment 2" );
+
+					expect( blankNode02.id ).toBe( "_:1" );
+					expect( document.getFragment( "_:1" ) ).toBe( blankNode02 );
+					expect( blankNode02[ "string"] ).toBe( "Old Fragment 2" );
 
 					expect( document.hasFragment( "#2" ) ).toBe( false );
 					expect( document.hasFragment( "#3" ) ).toBe( true );
 
 					expect( document[ "new-property" ] ).toBeUndefined();
+					expect( document[ "new-pointer" ] ).toBeUndefined();
+					expect( document.hasFragment( "_:new-pointer" ) ).toBe( false );
 
 					expect( response ).toBeDefined();
 					expect( response instanceof HTTP.Response.Class ).toBe( true );

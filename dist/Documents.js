@@ -649,7 +649,7 @@ var Documents = (function () {
         return document.types;
     };
     Documents.prototype.updateObject = function (target, source) {
-        var keys = Array.from(new Set(Object.keys(source).concat(Object.keys(target))));
+        var keys = Utils.A.joinWithoutDuplicates(Object.keys(source), Object.keys(target));
         for (var _i = 0, keys_1 = keys; _i < keys_1.length; _i++) {
             var key = keys_1[_i];
             if (Utils.hasProperty(source, key)) {
@@ -661,20 +661,20 @@ var Documents = (function () {
         }
         return target;
     };
-    Documents.prototype.getAssociatedFragment = function (persistedDocument, fragment) {
-        if (RDF.URI.Util.isBNodeID(fragment.id)) {
-            var blankNode = fragment;
-            var fragments = persistedDocument.getFragments();
-            for (var _i = 0, fragments_1 = fragments; _i < fragments_1.length; _i++) {
-                var frag = fragments_1[_i];
-                if (RDF.URI.Util.isBNodeID(frag.id) && frag.bNodeIdentifier === blankNode.bNodeIdentifier) {
-                    return frag;
+    Documents.prototype.getAssociatedFragment = function (blankNodes, namedFragments, searchedFragment) {
+        if (RDF.URI.Util.isBNodeID(searchedFragment["@id"])) {
+            var bNodeIdentifier = RDF.Value.Util.getProperty(searchedFragment, NS.C.Predicate.bNodeIdentifier, null);
+            for (var _i = 0, blankNodes_1 = blankNodes; _i < blankNodes_1.length; _i++) {
+                var fragment = blankNodes_1[_i];
+                if (RDF.URI.Util.isBNodeID(fragment.id)) {
+                    if (!!fragment.bNodeIdentifier && fragment.bNodeIdentifier === bNodeIdentifier) {
+                        return fragment;
+                    }
                 }
             }
-            persistedDocument.removeFragment(fragment.id);
             return null;
         }
-        return persistedDocument.getFragment(fragment.id);
+        return namedFragments.get(searchedFragment["@id"]);
     };
     Documents.prototype.getRequestURI = function (uri) {
         if (RDF.URI.Util.isRelative(uri)) {
@@ -744,29 +744,28 @@ var Documents = (function () {
         return document;
     };
     Documents.prototype.updatePersistedDocument = function (persistedDocument, documentResource, fragmentResources) {
-        var originalFragments = persistedDocument.getFragments();
-        var setFragments = new Set(originalFragments.map(function (fragment) { return fragment.id; }));
-        var updatedData;
+        var namedFragmentsMap = new Map();
+        var blankNodesArray = persistedDocument.getFragments().filter(function (fragment) {
+            persistedDocument.removeFragment(fragment.id);
+            if (RDF.URI.Util.isBNodeID(fragment.id))
+                return true;
+            namedFragmentsMap.set(fragment.id, fragment);
+            return false;
+        });
+        var newFragments = [];
         for (var _i = 0, fragmentResources_2 = fragmentResources; _i < fragmentResources_2.length; _i++) {
             var fragmentResource = fragmentResources_2[_i];
-            updatedData = this.compact(fragmentResource, {}, persistedDocument);
-            var fragment = this.getAssociatedFragment(persistedDocument, updatedData);
-            if (fragment) {
-                fragment = this.updateObject(fragment, updatedData);
-                if (!persistedDocument.hasFragment(fragment.id)) {
-                    persistedDocument.createFragment(fragment.id, fragment);
-                }
-            }
-            else {
-                fragment = persistedDocument.createFragment(updatedData.id, updatedData);
-            }
-            setFragments.delete(fragment.id);
+            var fragment = this.getAssociatedFragment(blankNodesArray, namedFragmentsMap, fragmentResource);
+            fragment = persistedDocument.createFragment(fragmentResource["@id"], fragment || {});
+            newFragments.push([fragment, fragmentResource]);
+        }
+        for (var _a = 0, newFragments_1 = newFragments; _a < newFragments_1.length; _a++) {
+            var _b = newFragments_1[_a], fragment = _b[0], resource = _b[1];
+            this.updateObject(fragment, this.compact(resource, {}, persistedDocument));
             fragment._syncSnapshot();
         }
-        Array.from(setFragments).forEach(function (id) { return persistedDocument.removeFragment(id); });
         persistedDocument._syncSavedFragments();
-        updatedData = this.compact(documentResource, {}, persistedDocument);
-        this.updateObject(persistedDocument, updatedData);
+        this.updateObject(persistedDocument, this.compact(documentResource, {}, persistedDocument));
         persistedDocument._syncSnapshot();
         return persistedDocument;
     };
