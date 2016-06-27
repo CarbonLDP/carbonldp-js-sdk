@@ -75,9 +75,9 @@ function getResources():Resource.Class[] {
 function createResource( id?:string ):Resource.Class {
 	let freeResources:Class = <Class> this;
 
-	if ( id ) {
-		if ( ! inLocalScope( id ) ) throw new Errors.IllegalArgumentError( `The id "${ id }" is out of scope.` );
-		if ( freeResources._resourcesIndex.has( id ) ) throw new Errors.IDAlreadyInUseError( `The id "${ id }" is already in use by another resource.`);
+	if( id ) {
+		if( ! inLocalScope( id ) ) throw new Errors.IllegalArgumentError( `The id "${ id }" is out of scope.` );
+		if( freeResources._resourcesIndex.has( id ) ) throw new Errors.IDAlreadyInUseError( `The id "${ id }" is already in use by another resource.` );
 	} else {
 		id = RDF.URI.Util.generateBNodeID();
 	}
@@ -131,7 +131,7 @@ export class Factory {
 	}
 
 	static decorate<T extends Object>( object:T ):T & Class {
-		if ( Factory.hasClassProperties( object ) ) return <any> object;
+		if( Factory.hasClassProperties( object ) ) return <any> object;
 
 		Object.defineProperties( object, {
 			"_resourcesIndex": {

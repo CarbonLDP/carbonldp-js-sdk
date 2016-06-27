@@ -63,25 +63,25 @@ describe( module( "Carbon" ), ():void => {
 		beforeEach( ():void => {
 			carbon = new Carbon();
 
-			myCarbon = new Carbon({
+			myCarbon = new Carbon( {
 				"domain": "example.com",
 				"http.ssl": false,
 				"auth.method": Auth.Method.TOKEN,
 				"platform.container": "example-platform/",
 				"platform.apps.container": "example-apps/"
-			});
+			} );
 
 			jasmine.Ajax.install();
-		});
+		} );
 
 		afterEach( ():void => {
 			jasmine.Ajax.uninstall();
-		});
+		} );
 
 		it( isDefined(), ():void => {
 			expect( Carbon ).toBeDefined();
 			expect( Utils.isFunction( Carbon ) ).toBe( true );
-		});
+		} );
 
 		it( hasProperty(
 			STATIC,
@@ -93,7 +93,7 @@ describe( module( "Carbon" ), ():void => {
 			expect( Utils.isString( Carbon.version ) ).toBe( true );
 
 			expect( Carbon.version ).toMatch( /\d+\.\d+\.\d+.*/ );
-		});
+		} );
 
 		it( hasProperty(
 			INSTANCE,
@@ -105,7 +105,7 @@ describe( module( "Carbon" ), ():void => {
 			expect( Utils.isString( carbon.version ) ).toBe( true );
 
 			expect( carbon.version ).toMatch( /\d+\.\d+\.\d+.*/ );
-		});
+		} );
 
 		it( reexports(
 			STATIC,
@@ -114,7 +114,7 @@ describe( module( "Carbon" ), ():void => {
 		), ():void => {
 			expect( Carbon.Agent ).toBeDefined();
 			expect( Carbon.Agent ).toBe( Agent );
-		});
+		} );
 
 		it( reexports(
 			STATIC,
@@ -123,7 +123,7 @@ describe( module( "Carbon" ), ():void => {
 		), ():void => {
 			expect( Carbon.AccessPoint ).toBeDefined();
 			expect( Carbon.AccessPoint ).toBe( AccessPoint );
-		});
+		} );
 
 		it( reexports(
 			STATIC,
@@ -132,7 +132,7 @@ describe( module( "Carbon" ), ():void => {
 		), ():void => {
 			expect( Carbon.Agents ).toBeDefined();
 			expect( Carbon.Agents ).toBe( Agents );
-		});
+		} );
 
 		it( reexports(
 			STATIC,
@@ -141,7 +141,7 @@ describe( module( "Carbon" ), ():void => {
 		), ():void => {
 			expect( Carbon.App ).toBeDefined();
 			expect( Carbon.App ).toBe( App );
-		});
+		} );
 
 		it( reexports(
 			STATIC,
@@ -150,7 +150,7 @@ describe( module( "Carbon" ), ():void => {
 		), ():void => {
 			expect( Carbon.Apps ).toBeDefined();
 			expect( Carbon.Apps ).toBe( Apps );
-		});
+		} );
 
 		it( reexports(
 			STATIC,
@@ -159,7 +159,7 @@ describe( module( "Carbon" ), ():void => {
 		), ():void => {
 			expect( Carbon.Auth ).toBeDefined();
 			expect( Carbon.Auth ).toBe( Auth );
-		});
+		} );
 
 		it( reexports(
 			STATIC,
@@ -168,7 +168,7 @@ describe( module( "Carbon" ), ():void => {
 		), ():void => {
 			expect( Carbon.Document ).toBeDefined();
 			expect( Carbon.Document ).toBe( Document );
-		});
+		} );
 
 		it( reexports(
 			STATIC,
@@ -177,7 +177,7 @@ describe( module( "Carbon" ), ():void => {
 		), ():void => {
 			expect( Carbon.Documents ).toBeDefined();
 			expect( Carbon.Documents ).toBe( Documents );
-		});
+		} );
 
 		it( reexports(
 			STATIC,
@@ -186,7 +186,7 @@ describe( module( "Carbon" ), ():void => {
 		), ():void => {
 			expect( Carbon.Errors ).toBeDefined();
 			expect( Carbon.Errors ).toBe( Errors );
-		});
+		} );
 
 		it( reexports(
 			STATIC,
@@ -195,7 +195,7 @@ describe( module( "Carbon" ), ():void => {
 		), ():void => {
 			expect( Carbon.Fragment ).toBeDefined();
 			expect( Carbon.Fragment ).toBe( Fragment );
-		});
+		} );
 
 		it( reexports(
 			STATIC,
@@ -204,7 +204,7 @@ describe( module( "Carbon" ), ():void => {
 		), ():void => {
 			expect( Carbon.HTTP ).toBeDefined();
 			expect( Carbon.HTTP ).toBe( HTTP );
-		});
+		} );
 
 		it( reexports(
 			STATIC,
@@ -213,7 +213,7 @@ describe( module( "Carbon" ), ():void => {
 		), ():void => {
 			expect( Carbon.JSONLDConverter ).toBeDefined();
 			expect( Carbon.JSONLDConverter ).toBe( JSONLDConverter );
-		});
+		} );
 
 		it( reexports(
 			STATIC,
@@ -222,7 +222,7 @@ describe( module( "Carbon" ), ():void => {
 		), ():void => {
 			expect( Carbon.LDP ).toBeDefined();
 			expect( Carbon.LDP ).toBe( LDP );
-		});
+		} );
 
 		it( reexports(
 			STATIC,
@@ -231,7 +231,7 @@ describe( module( "Carbon" ), ():void => {
 		), ():void => {
 			expect( Carbon.NamedFragment ).toBeDefined();
 			expect( Carbon.NamedFragment ).toBe( NamedFragment );
-		});
+		} );
 
 		it( reexports(
 			STATIC,
@@ -240,7 +240,7 @@ describe( module( "Carbon" ), ():void => {
 		), ():void => {
 			expect( Carbon.NS ).toBeDefined();
 			expect( Carbon.NS ).toBe( NS );
-		});
+		} );
 
 		it( reexports(
 			STATIC,
@@ -249,7 +249,7 @@ describe( module( "Carbon" ), ():void => {
 		), ():void => {
 			expect( Carbon.ObjectSchema ).toBeDefined();
 			expect( Carbon.ObjectSchema ).toBe( ObjectSchema );
-		});
+		} );
 
 		it( reexports(
 			STATIC,
@@ -258,7 +258,7 @@ describe( module( "Carbon" ), ():void => {
 		), ():void => {
 			expect( Carbon.Persisted ).toBeDefined();
 			expect( Carbon.Persisted ).toBe( Persisted );
-		});
+		} );
 
 		it( reexports(
 			STATIC,
@@ -267,7 +267,7 @@ describe( module( "Carbon" ), ():void => {
 		), ():void => {
 			expect( Carbon.PersistedApp ).toBeDefined();
 			expect( Carbon.PersistedApp ).toBe( PersistedApp );
-		});
+		} );
 
 		it( reexports(
 			STATIC,
@@ -276,7 +276,7 @@ describe( module( "Carbon" ), ():void => {
 		), ():void => {
 			expect( Carbon.PersistedDocument ).toBeDefined();
 			expect( Carbon.PersistedDocument ).toBe( PersistedDocument );
-		});
+		} );
 
 		it( reexports(
 			STATIC,
@@ -285,7 +285,7 @@ describe( module( "Carbon" ), ():void => {
 		), ():void => {
 			expect( Carbon.PersistedFragment ).toBeDefined();
 			expect( Carbon.PersistedFragment ).toBe( PersistedFragment );
-		});
+		} );
 
 		it( reexports(
 			STATIC,
@@ -294,7 +294,7 @@ describe( module( "Carbon" ), ():void => {
 		), ():void => {
 			expect( Carbon.PersistedNamedFragment ).toBeDefined();
 			expect( Carbon.PersistedNamedFragment ).toBe( PersistedNamedFragment );
-		});
+		} );
 
 		it( reexports(
 			STATIC,
@@ -303,7 +303,7 @@ describe( module( "Carbon" ), ():void => {
 		), ():void => {
 			expect( Carbon.PersistedResource ).toBeDefined();
 			expect( Carbon.PersistedResource ).toBe( PersistedResource );
-		});
+		} );
 
 		it( reexports(
 			STATIC,
@@ -312,7 +312,7 @@ describe( module( "Carbon" ), ():void => {
 		), ():void => {
 			expect( Carbon.Pointer ).toBeDefined();
 			expect( Carbon.Pointer ).toBe( Pointer );
-		});
+		} );
 
 		it( reexports(
 			STATIC,
@@ -321,7 +321,7 @@ describe( module( "Carbon" ), ():void => {
 		), ():void => {
 			expect( Carbon.RDF ).toBeDefined();
 			expect( Carbon.RDF ).toBe( RDF );
-		});
+		} );
 
 		it( reexports(
 			STATIC,
@@ -330,7 +330,7 @@ describe( module( "Carbon" ), ():void => {
 		), ():void => {
 			expect( Carbon.Resource ).toBeDefined();
 			expect( Carbon.Resource ).toBe( Resource );
-		});
+		} );
 
 		it( reexports(
 			STATIC,
@@ -339,7 +339,7 @@ describe( module( "Carbon" ), ():void => {
 		), ():void => {
 			expect( Carbon.SDKContext ).toBeDefined();
 			expect( Carbon.SDKContext ).toBe( SDKContext );
-		});
+		} );
 
 		it( reexports(
 			STATIC,
@@ -348,7 +348,7 @@ describe( module( "Carbon" ), ():void => {
 		), ():void => {
 			expect( Carbon.SPARQL ).toBeDefined();
 			expect( Carbon.SPARQL ).toBe( SPARQL );
-		});
+		} );
 
 		it( reexports(
 			STATIC,
@@ -357,26 +357,26 @@ describe( module( "Carbon" ), ():void => {
 		), ():void => {
 			expect( Carbon.Utils ).toBeDefined();
 			expect( Carbon.Utils ).toBe( Utils );
-		});
+		} );
 
-		it( hasConstructor([
-			{ name: "settings", type: "any", optional: true }
-		]), ():void => {
+		it( hasConstructor( [
+			{name: "settings", type: "any", optional: true}
+		] ), ():void => {
 			// Instantiated in BeforeEach
 			expect( carbon ).toBeTruthy();
 			expect( carbon instanceof Carbon ).toBe( true );
 
 			expect( myCarbon ).toBeTruthy();
 			expect( myCarbon instanceof Carbon ).toBe( true );
-		});
+		} );
 
 		it( hasMethod(
 			INSTANCE,
 			"resolve",
 			"Resolve the URI provided in the context of the instance, this information is provided in the settings object.", [
-				{ name: "uri", type: "string" }
+				{name: "uri", type: "string"}
 			],
-			{ type: "string" }
+			{type: "string"}
 		), ():void => {
 			expect( carbon.resolve ).toBeDefined();
 			expect( Utils.isFunction( carbon.resolve ) ).toBe( true );
@@ -386,18 +386,18 @@ describe( module( "Carbon" ), ():void => {
 
 			expect( myCarbon.resolve( "http://example.com/example-platform/my-resource/" ) ).toBe( "http://example.com/example-platform/my-resource/" );
 			expect( myCarbon.resolve( "my-resource/" ) ).toBe( "http://example.com/example-platform/my-resource/" );
-		});
+		} );
 
 		it( hasMethod(
 			INSTANCE,
 			"getAPIDescription",
 			"Returns the API description of the connected platform in the instance of Carbon",
-			{ type: "Promise<Carbon.APIDescription.Class>"}
-		), ( done:{ ():void, fail:() => void }):void => {
+			{type: "Promise<Carbon.APIDescription.Class>"}
+		), ( done:{ ():void, fail:() => void } ):void => {
 			expect( carbon.getAPIDescription ).toBeDefined();
 			expect( Utils.isFunction( carbon.getAPIDescription ) ).toBe( true );
 
-			jasmine.Ajax.stubRequest( /api/, null, "GET" ).andReturn({
+			jasmine.Ajax.stubRequest( /api/, null, "GET" ).andReturn( {
 				status: 200,
 				responseHeaders: {
 					"ETag": 'W/"123456789"'
@@ -421,7 +421,7 @@ describe( module( "Carbon" ), ():void => {
 				    ],
 				    "@id": "https://carbonldp.com/platform/api/"
 				}]`
-			});
+			} );
 
 			let promise:Promise<any>;
 			promise = carbon.getAPIDescription();
@@ -432,7 +432,7 @@ describe( module( "Carbon" ), ():void => {
 				expect( description.version ).toBe( "1.0.0" );
 				done();
 			}, done.fail );
-		});
+		} );
 
 		it( hasProperty(
 			INSTANCE,
@@ -443,8 +443,8 @@ describe( module( "Carbon" ), ():void => {
 			expect( carbon.apps ).toBeDefined();
 			expect( Utils.isObject( carbon.apps ) );
 			expect( carbon.apps instanceof Apps.Class );
-		});
+		} );
 
-	});
+	} );
 
-});
+} );

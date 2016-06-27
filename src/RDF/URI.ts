@@ -20,7 +20,7 @@ export class Util {
 	}
 
 	static hasQuery( uri:string ):boolean {
-		return uri.indexOf( "?" ) !== -1;
+		return uri.indexOf( "?" ) !== - 1;
 	}
 
 	static hasProtocol( uri:string ):boolean {
@@ -70,22 +70,22 @@ export class Util {
 	}
 
 	static getRelativeURI( absoluteURI:string, base:string ):string {
-		if ( ! absoluteURI.startsWith( base ) )
+		if( ! absoluteURI.startsWith( base ) )
 			return absoluteURI;
 		return absoluteURI.substring( base.length );
 	}
 
 	static getDocumentURI( uri:string ):string {
 		let parts:string[] = uri.split( "#" );
-		if ( parts.length > 2 ) throw new Error( "IllegalArgument: The URI provided has more than one # sign." );
+		if( parts.length > 2 ) throw new Error( "IllegalArgument: The URI provided has more than one # sign." );
 
 		return parts[ 0 ];
 	}
 
 	static getFragment( uri:string ):string {
 		let parts:string[] = uri.split( "#" );
-		if ( parts.length < 2 ) return null;
-		if ( parts.length > 2 ) throw new Error( "IllegalArgument: The URI provided has more than one # sign." );
+		if( parts.length < 2 ) return null;
+		if( parts.length > 2 ) throw new Error( "IllegalArgument: The URI provided has more than one # sign." );
 
 		return parts[ 1 ];
 	}
@@ -111,32 +111,32 @@ export class Util {
 	static getParameters( uri:string ):Map<string, string | string[]> {
 		let parameters:Map<string, string | string[]> = new Map();
 
-		if ( ! Util.hasQuery( uri ) ) return parameters;
+		if( ! Util.hasQuery( uri ) ) return parameters;
 
-		uri.replace( /^.*\?/ , "" ).split( "&" ).forEach( ( param:string ) => {
+		uri.replace( /^.*\?/, "" ).split( "&" ).forEach( ( param:string ) => {
 			let parts:string[] = param.replace( /\+/g, " " ).split( "=" );
 
 			let key:string = parts.shift();
 			let val:string = parts.length > 0 ? parts.join( "=" ) : null;
 
-			if ( ! parameters.has( key ) ) {
+			if( ! parameters.has( key ) ) {
 				parameters.set( key, val );
 			} else {
 				parameters.set( key, [].concat( parameters.get( key ), val ) );
 			}
-		});
+		} );
 
 		return parameters;
 	}
 
 	static resolve( parentURI:string, childURI:string ):string {
-		if ( Util.isAbsolute( childURI ) || Util.isBNodeID( childURI) || Util.isPrefixed( childURI ) )
+		if( Util.isAbsolute( childURI ) || Util.isBNodeID( childURI ) || Util.isPrefixed( childURI ) )
 			return childURI;
 
 		let finalURI:string = parentURI;
-		if ( ! Utils.S.endsWith( parentURI, "#" ) && ! Utils.S.endsWith( parentURI, "/" ) ) finalURI += "/";
+		if( ! Utils.S.endsWith( parentURI, "#" ) && ! Utils.S.endsWith( parentURI, "/" ) ) finalURI += "/";
 
-		if ( Utils.S.startsWith( childURI, "/" ) ) {
+		if( Utils.S.startsWith( childURI, "/" ) ) {
 			finalURI = finalURI + childURI.substr( 1, childURI.length );
 		} else finalURI += childURI;
 
@@ -144,8 +144,8 @@ export class Util {
 	}
 
 	static removeProtocol( uri:string ):string {
-		if ( Utils.S.startsWith( uri, "https://" ) ) return uri.substr( 5, uri.length );
-		if ( Utils.S.startsWith( uri, "http://" ) ) return uri.substr( 4, uri.length );
+		if( Utils.S.startsWith( uri, "https://" ) ) return uri.substr( 5, uri.length );
+		if( Utils.S.startsWith( uri, "http://" ) ) return uri.substr( 4, uri.length );
 		return uri;
 	}
 
@@ -157,7 +157,7 @@ export class Util {
 
 		if( objectSchema !== null ) return prefixWithObjectSchema( uri, objectSchema );
 
-		if ( Util.isPrefixed( uri ) || ! uri.startsWith( prefixURI ) )
+		if( Util.isPrefixed( uri ) || ! uri.startsWith( prefixURI ) )
 			return uri;
 
 		return `${ prefix }:${ uri.substring( prefixURI.length ) }`;

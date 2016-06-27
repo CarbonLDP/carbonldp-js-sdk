@@ -662,19 +662,18 @@ var Documents = (function () {
         return target;
     };
     Documents.prototype.getAssociatedFragment = function (blankNodes, namedFragments, searchedFragment) {
-        if (RDF.URI.Util.isBNodeID(searchedFragment["@id"])) {
-            var bNodeIdentifier = RDF.Value.Util.getProperty(searchedFragment, NS.C.Predicate.bNodeIdentifier, null);
-            for (var _i = 0, blankNodes_1 = blankNodes; _i < blankNodes_1.length; _i++) {
-                var fragment = blankNodes_1[_i];
-                if (RDF.URI.Util.isBNodeID(fragment.id)) {
-                    if (!!fragment.bNodeIdentifier && fragment.bNodeIdentifier === bNodeIdentifier) {
-                        return fragment;
-                    }
-                }
-            }
-            return null;
+        if (!RDF.URI.Util.isBNodeID(searchedFragment["@id"]))
+            return namedFragments.get(searchedFragment["@id"]);
+        var bNodeIdentifier = RDF.Value.Util.getProperty(searchedFragment, NS.C.Predicate.bNodeIdentifier, null);
+        for (var _i = 0, blankNodes_1 = blankNodes; _i < blankNodes_1.length; _i++) {
+            var fragment = blankNodes_1[_i];
+            if (!RDF.URI.Util.isBNodeID(fragment.id))
+                continue;
+            var persistedBlankNode = fragment;
+            if (!!persistedBlankNode.bNodeIdentifier && persistedBlankNode.bNodeIdentifier === bNodeIdentifier)
+                return fragment;
         }
-        return namedFragments.get(searchedFragment["@id"]);
+        return null;
     };
     Documents.prototype.getRequestURI = function (uri) {
         if (RDF.URI.Util.isRelative(uri)) {

@@ -25,7 +25,7 @@ describe( module(
 	"Carbon/HTTP/Response"
 ), ():void => {
 
-	let rawResponse: JasmineAjaxRequestStubReturnOptions = {
+	let rawResponse:JasmineAjaxRequestStubReturnOptions = {
 		"status": 200,
 		"responseText": "A body response",
 		responseHeaders: {
@@ -37,9 +37,9 @@ describe( module(
 	let inXMLHttpRequest:boolean = ( typeof XMLHttpRequest !== "undefined" );
 
 	it( isDefined(), ():void => {
-		expect( Utils.isObject( Response) ).toBe( true );
+		expect( Utils.isObject( Response ) ).toBe( true );
 		expect( Response ).toBeDefined();
-	});
+	} );
 
 	describe( clazz(
 		"Carbon.HTTP.Response.Class",
@@ -49,23 +49,23 @@ describe( module(
 		beforeAll( ():void => {
 			jasmine.Ajax.install();
 			jasmine.Ajax.stubRequest( "http://example.com/request/" ).andReturn( rawResponse );
-		});
+		} );
 
 		afterAll( ():void => {
 			jasmine.Ajax.uninstall();
-		});
+		} );
 
 		it( isDefined(), ():void => {
 			expect( Response.Class ).toBeDefined();
 			expect( Utils.isFunction( Response.Class ) ).toBe( true );
-		});
+		} );
 
 		describe( constructor(), ():void => {
 
 			it( hasSignature(
 				"Signature that only works when working in a Browser.", [
-				{ name: "request", type: "XMLHttpRequest" }
-			]), ( done:{ ():void, fail:() => void } ):void => {
+					{name: "request", type: "XMLHttpRequest"}
+				] ), ( done:{ ():void, fail:() => void } ):void => {
 
 				createResponse( ( response:Response.Class ) => {
 
@@ -75,16 +75,16 @@ describe( module(
 					done();
 				}, done.fail );
 
-			});
+			} );
 
 			it( hasSignature(
 				"Signature that only works when working in Node.js.", [
-				{ name: "request", type: "ClientRequest" },
-				{ name: "data", type: "string" },
-				{ name: "response", type: "IncomingMessage" }
-			]), ( done:{ ():void, fail:() => void } ):void => {
+					{name: "request", type: "ClientRequest"},
+					{name: "data", type: "string"},
+					{name: "response", type: "IncomingMessage"}
+				] ), ( done:{ ():void, fail:() => void } ):void => {
 
-				createResponse( ( response:Response.Class) => {
+				createResponse( ( response:Response.Class ) => {
 
 					expect( response ).toBeDefined();
 					expect( response instanceof Response.Class ).toBe( true );
@@ -92,9 +92,9 @@ describe( module(
 					done();
 				}, done.fail );
 
-			});
+			} );
 
-		});
+		} );
 
 
 		it( hasProperty(
@@ -114,7 +114,7 @@ describe( module(
 				done();
 			}, done.fail );
 
-		});
+		} );
 
 		it( hasProperty(
 			INSTANCE,
@@ -132,7 +132,7 @@ describe( module(
 
 				done();
 			}, done.fail );
-		});
+		} );
 
 		it( hasProperty(
 			INSTANCE,
@@ -148,14 +148,14 @@ describe( module(
 
 				let objectKeys:Array<string> = Object.keys( rawResponse.responseHeaders );
 				expect( response.headers.size ).toBe( objectKeys.length );
-				for (let header of objectKeys ) {
-					expect( response.getHeader( header) ).toEqual( new Header.Class( rawResponse.responseHeaders[ header ] ) );
+				for( let header of objectKeys ) {
+					expect( response.getHeader( header ) ).toEqual( new Header.Class( rawResponse.responseHeaders[ header ] ) );
 				}
 
 				done();
 			}, done.fail );
 
-		});
+		} );
 
 		it( hasProperty(
 			INSTANCE,
@@ -168,7 +168,7 @@ describe( module(
 
 				expect( response.request ).toBeDefined();
 
-				if ( inXMLHttpRequest)
+				if( inXMLHttpRequest )
 					expect( response.request instanceof XMLHttpRequest ).toBe( true );
 				else
 					expect( response.request instanceof require( "http" ).ClientRequest ).toBe( true );
@@ -178,15 +178,15 @@ describe( module(
 				done();
 			}, done.fail );
 
-		});
+		} );
 
 		it( hasMethod(
 			INSTANCE,
 			"getHeader",
 			"Return the Header object referred by the name provided.", [
-				{ name: "name", type: "string" }
+				{name: "name", type: "string"}
 			],
-			{ type: "Carbon.HTTP.Header.Class" }
+			{type: "Carbon.HTTP.Header.Class"}
 		), ( done:{ ():void, fail:() => void } ):void => {
 
 			createResponse( ( response:Response.Class ) => {
@@ -200,10 +200,10 @@ describe( module(
 				done();
 			}, done.fail );
 
-		});
+		} );
 
-		function createResponse( callback:( response:Response.Class, request?:XMLHttpRequest | ClientRequest ) => void, fail:( any?:any) =>  void ) {
-			if ( inXMLHttpRequest ) {
+		function createResponse( callback:( response:Response.Class, request?:XMLHttpRequest | ClientRequest ) => void, fail:( any?:any ) =>  void ) {
+			if( inXMLHttpRequest ) {
 				let request:XMLHttpRequest = new XMLHttpRequest();
 				request.open( "GET", "http://example.com/request/" );
 				request.onerror = fail;
@@ -227,15 +227,15 @@ describe( module(
 					res.on( "data", ( data ) => {
 						let response = new Response.Class( <ClientRequest> request, data, res );
 						callback( response, request )
-					});
-				});
+					} );
+				} );
 
 				request.on( "error", fail );
 				request.end();
 			}
 		}
 
-	});
+	} );
 
 	describe( clazz(
 		"Carbon.HTTP.Response.Util",
@@ -246,24 +246,24 @@ describe( module(
 			jasmine.Ajax.install();
 			jasmine.Ajax.stubRequest( "http://example.com/request/full/" ).andReturn( rawResponse );
 			jasmine.Ajax.stubRequest( "http://example.com/request/empty/" ).andReturn( {} );
-		});
+		} );
 
 		afterAll( ():void => {
 			jasmine.Ajax.uninstall();
-		});
+		} );
 
 		it( isDefined(), ():void => {
 			expect( Response.Util ).toBeDefined();
 			expect( Utils.isFunction( Response.Util ) ).toBe( true );
-		});
+		} );
 
 		it( hasMethod(
 			STATIC,
 			"getETag",
 			"Return the ETag string header of a `Carbon.HTTP.Response.Class` object. Returns null if no ETag exists", [
-				{ name: "response", type: "Carbon.HTTP.Response.Class" }
+				{name: "response", type: "Carbon.HTTP.Response.Class"}
 			],
-			{ type: "string" }
+			{type: "string"}
 		), ( done:{ ():void, fail:() => void } ):void => {
 			expect( Response.Util.getETag ).toBeDefined();
 			expect( Utils.isFunction( Response.Util.getETag ) ).toBe( true );
@@ -279,11 +279,11 @@ describe( module(
 			} ) );
 
 			Promise.all( promises ).then( done ).catch( done.fail );
-		});
+		} );
 
 		function createResponse( type:string, callback:( response:Response.Class ) => void ):Promise<void> {
 			return new Promise<void>( ( resolve, reject ) => {
-				if ( inXMLHttpRequest ) {
+				if( inXMLHttpRequest ) {
 					let request:XMLHttpRequest = new XMLHttpRequest();
 					request.open( "GET", "http://example.com/request/" + type );
 					request.onerror = reject;
@@ -308,13 +308,13 @@ describe( module(
 						res.setEncoding( "utf8" );
 						res.on( "data", ( chunk ) => {
 							data = chunk;
-						});
+						} );
 						res.on( "end", () => {
 							let response = new Response.Class( <ClientRequest> request, data, res );
 							callback( response );
 							resolve();
-						});
-					});
+						} );
+					} );
 
 					request.on( "error", reject );
 					request.end();
@@ -322,12 +322,12 @@ describe( module(
 			} );
 		}
 
-	});
+	} );
 
 	it( hasDefaultExport(
 		"Carbon.HTTP.Response.Class"
 	), ():void => {
 		expect( DefaultExport ).toBe( Response.Class );
-	});
+	} );
 
-});
+} );

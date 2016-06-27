@@ -32,40 +32,40 @@ export class Util {
 	static stringifyRetrievalPreferences( retrievalPreferences:Class ):string {
 		let stringPreferences:string = "";
 
-		if ( "limit" in retrievalPreferences ) {
+		if( "limit" in retrievalPreferences ) {
 			stringPreferences += `limit=${ retrievalPreferences.limit }`;
 		}
 
-		if ( "offset" in retrievalPreferences ) {
+		if( "offset" in retrievalPreferences ) {
 			stringPreferences += `${ stringPreferences ? "&" : "" }offset=${ retrievalPreferences.offset }`;
 		}
 
-		if ( "orderBy" in retrievalPreferences && retrievalPreferences.orderBy.length > 0 ) {
+		if( "orderBy" in retrievalPreferences && retrievalPreferences.orderBy.length > 0 ) {
 			stringPreferences += `${ stringPreferences ? "&" : "" }orderBy=`;
 			let stringOrders:string[] = [];
 
-			for ( let orderBy of retrievalPreferences.orderBy ) {
+			for( let orderBy of retrievalPreferences.orderBy ) {
 				let stringOrder:string = "";
 
 				// TODO allow use of prefixes for expand URIs.
-				if ( "@id" in orderBy ) {
+				if( "@id" in orderBy ) {
 					let id:string = orderBy[ "@id" ];
 					let descending:boolean = id.startsWith( "-" );
-					stringOrder += `${ descending ? "-" : "" }<${ encodeURI( descending ? id.substr(1) : id ).replace( "#", "%23" ) }>`;
+					stringOrder += `${ descending ? "-" : "" }<${ encodeURI( descending ? id.substr( 1 ) : id ).replace( "#", "%23" ) }>`;
 				}
 
-				if ( "@type" in orderBy ) {
-					if ( ! stringOrder ) throw new IllegalArgumentError( "The @id property is missing in OrderBy property." );
+				if( "@type" in orderBy ) {
+					if( ! stringOrder ) throw new IllegalArgumentError( "The @id property is missing in OrderBy property." );
 
 					let type:string = orderBy[ "@type" ];
-					if ( allowedTypes.indexOf( type ) === -1 ) throw new IllegalArgumentError( "The @type value specified is not valid." );
+					if( allowedTypes.indexOf( type ) === - 1 ) throw new IllegalArgumentError( "The @type value specified is not valid." );
 
-					if ( type !== "numeric" ) type = `<${ encodeURI( XSD.DataType[ type ] ).replace( "#", "%23" ) }>`;
+					if( type !== "numeric" ) type = `<${ encodeURI( XSD.DataType[ type ] ).replace( "#", "%23" ) }>`;
 					stringOrder += `;${ type }`;
 				}
 
-				if ( "@language" in orderBy ) {
-					if ( ! stringOrder ) throw new IllegalArgumentError( "The @id property is missing in OrderBy property." );
+				if( "@language" in orderBy ) {
+					if( ! stringOrder ) throw new IllegalArgumentError( "The @id property is missing in OrderBy property." );
 					stringOrder += `;${ orderBy[ "@language" ] }`;
 				}
 

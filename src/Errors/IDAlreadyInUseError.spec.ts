@@ -24,31 +24,31 @@ describe( module( "Carbon/Errors/IDAlreadyInUseError" ), ():void => {
 			expect( IDAlreadyInUseError ).toBeDefined();
 			expect( Utils.isFunction( IDAlreadyInUseError ) ).toBe( true );
 
-			let error: IDAlreadyInUseError = new IDAlreadyInUseError( "Message of the error" );
+			let error:IDAlreadyInUseError = new IDAlreadyInUseError( "Message of the error" );
 			expect( error instanceof IDAlreadyInUseError ).toBe( true );
-		});
+		} );
 
 		it( extendsClass(
 			"Carbon.Errors.AbstractError"
 		), ():void => {
-			let error: IDAlreadyInUseError = new IDAlreadyInUseError( "Message of the error" );
+			let error:IDAlreadyInUseError = new IDAlreadyInUseError( "Message of the error" );
 
 			expect( error instanceof AbstractError ).toBe( true );
-		});
+		} );
 
 		it( hasProperty(
 			INSTANCE,
 			"name",
 			"string"
 		), ():void => {
-			let error: IDAlreadyInUseError = new IDAlreadyInUseError( "Message of the error" );
+			let error:IDAlreadyInUseError = new IDAlreadyInUseError( "Message of the error" );
 
 			expect( error.name ).toBeDefined();
 			expect( Utils.isString( error.name ) ).toBe( true );
 
 			expect( error.name ).toBe( "IDAlreadyInUseError" );
-		});
+		} );
 
-	});
+	} );
 
-});
+} );

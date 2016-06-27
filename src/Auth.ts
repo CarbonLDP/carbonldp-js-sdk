@@ -9,7 +9,7 @@ import UsernameAndPasswordCredentials from "./Auth/UsernameAndPasswordCredential
 import Credentials from "./Auth/Credentials";
 
 import Context from "./Context";
-import { DigestedObjectSchema } from "./ObjectSchema";
+import {DigestedObjectSchema} from "./ObjectSchema";
 import * as Errors from "./Errors";
 import * as FreeResources from "./FreeResources";
 import * as HTTP from "./HTTP";
@@ -51,7 +51,7 @@ export class Class {
 	isAuthenticated( askParent:boolean = true ):boolean {
 		return (
 			( this.authenticator && this.authenticator.isAuthenticated() ) ||
-			( askParent && !! this.context.parentContext && this.context.parentContext.auth.isAuthenticated() )
+			( askParent && ! ! this.context.parentContext && this.context.parentContext.auth.isAuthenticated() )
 		);
 	}
 
@@ -69,7 +69,7 @@ export class Class {
 	authenticateUsing( method:string, token:Credentials ):Promise<Credentials>;
 
 	authenticateUsing( method:string, userOrTokenOrCredentials:any, password?:string ):Promise<any> {
-		switch ( method ) {
+		switch( method ) {
 			case "BASIC":
 				return this.authenticateWithBasic( userOrTokenOrCredentials, password );
 			case "TOKEN":
@@ -82,7 +82,7 @@ export class Class {
 	addAuthentication( requestOptions:HTTP.Request.Options ):void {
 		if( this.isAuthenticated( false ) ) {
 			this.authenticator.addAuthentication( requestOptions );
-		} else if( !! this.context.parentContext ) {
+		} else if( ! ! this.context.parentContext ) {
 			this.context.parentContext.auth.addAuthentication( requestOptions );
 		} else {
 			console.warn( "There is no authentication to add to the request." );
@@ -103,7 +103,7 @@ export class Class {
 		let freeResources:FreeResources.Class = FreeResources.Factory.create( this.context.documents );
 		Ticket.Factory.createFrom( freeResources.createResource(), resourceURI );
 
-		if ( this.isAuthenticated() ) this.addAuthentication( requestOptions );
+		if( this.isAuthenticated() ) this.addAuthentication( requestOptions );
 		HTTP.Request.Util.setAcceptHeader( "application/ld+json", requestOptions );
 		HTTP.Request.Util.setContentTypeHeader( "application/ld+json", requestOptions );
 		HTTP.Request.Util.setPreferredInteractionModel( NS.LDP.Class.RDFSource, requestOptions );
@@ -135,11 +135,11 @@ export class Class {
 			resourceURI += `ticket=${ ticket.ticketKey }`;
 
 			return resourceURI;
-		});
+		} );
 	}
 
 	private authenticateWithBasic( username:string, password:string ):Promise<UsernameAndPasswordCredentials> {
-		let authenticator:BasicAuthenticator =  <BasicAuthenticator> this.authenticators[ Method.BASIC ];
+		let authenticator:BasicAuthenticator = <BasicAuthenticator> this.authenticators[ Method.BASIC ];
 		let authenticationToken:UsernameAndPasswordToken;
 
 		authenticationToken = new UsernameAndPasswordToken( username, password );
@@ -150,11 +150,11 @@ export class Class {
 	}
 
 	private authenticateWithToken( userOrTokenOrCredentials:any, password:string ):Promise<Token.Class> {
-		let authenticator:TokenAuthenticator =  <TokenAuthenticator> this.authenticators[ Method.TOKEN ];
+		let authenticator:TokenAuthenticator = <TokenAuthenticator> this.authenticators[ Method.TOKEN ];
 		let credentials:Token.Class = null;
 		let authenticationToken:UsernameAndPasswordToken = null;
 
-		if ( Utils.isString( userOrTokenOrCredentials ) &&  Utils.isString( password ) ) {
+		if( Utils.isString( userOrTokenOrCredentials ) && Utils.isString( password ) ) {
 			authenticationToken = new UsernameAndPasswordToken( userOrTokenOrCredentials, password );
 
 		} else if( Token.Factory.is( userOrTokenOrCredentials ) ) {
@@ -166,7 +166,7 @@ export class Class {
 
 		this.clearAuthentication();
 		this.authenticator = authenticator;
-		if ( authenticationToken )
+		if( authenticationToken )
 			return authenticator.authenticate( authenticationToken );
 
 		return authenticator.authenticate( credentials );

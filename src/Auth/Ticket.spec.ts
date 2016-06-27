@@ -19,7 +19,7 @@ describe( module( "Carbon/Auth/Ticket" ), ():void => {
 	it( isDefined(), ():void => {
 		expect( Ticket ).toBeDefined();
 		expect( Utils.isObject( Ticket ) ).toBe( true );
-	});
+	} );
 
 	it( hasProperty(
 		STATIC,
@@ -30,7 +30,7 @@ describe( module( "Carbon/Auth/Ticket" ), ():void => {
 		expect( Utils.isString( Ticket.RDF_CLASS ) ).toBe( true );
 
 		expect( Ticket.RDF_CLASS ).toBe( NS.CS.Class.Ticket );
-	});
+	} );
 
 	it( hasProperty(
 		STATIC,
@@ -41,23 +41,23 @@ describe( module( "Carbon/Auth/Ticket" ), ():void => {
 		expect( Utils.isObject( Ticket.SCHEMA ) ).toBe( true );
 
 		expect( Utils.hasProperty( Ticket.SCHEMA, "forURI" ) ).toBe( true );
-		expect( Ticket.SCHEMA[ "forURI" ] ).toEqual({
+		expect( Ticket.SCHEMA[ "forURI" ] ).toEqual( {
 			"@id": NS.CS.Predicate.forIRI,
 			"@type": "@id",
-		});
+		} );
 
 		expect( Utils.hasProperty( Ticket.SCHEMA, "expirationTime" ) ).toBe( true );
-		expect( Ticket.SCHEMA[ "expirationTime" ] ).toEqual({
+		expect( Ticket.SCHEMA[ "expirationTime" ] ).toEqual( {
 			"@id": NS.CS.Predicate.expirationTime,
 			"@type": NS.XSD.DataType.dateTime,
-		});
+		} );
 
 		expect( Utils.hasProperty( Ticket.SCHEMA, "ticketKey" ) ).toBe( true );
-		expect( Ticket.SCHEMA[ "ticketKey" ] ).toEqual({
+		expect( Ticket.SCHEMA[ "ticketKey" ] ).toEqual( {
 			"@id": NS.CS.Predicate.ticketKey,
 			"@type": NS.XSD.DataType.string,
-		});
-	});
+		} );
+	} );
 
 	describe( clazz(
 		"Carbon.Auth.Ticket.Factory",
@@ -67,15 +67,15 @@ describe( module( "Carbon/Auth/Ticket" ), ():void => {
 		it( isDefined(), ():void => {
 			expect( Ticket.Factory ).toBeDefined();
 			expect( Utils.isFunction( Ticket.Factory ) ).toBe( true );
-		});
+		} );
 
 		it( hasMethod(
 			STATIC,
 			"create",
 			"Create and returns a `Carbon.Auth.Ticket.Class` object for the specified URI.", [
-				{ name: "uri", type: "string", description: "The URI to get an authentication ticket for." }
+				{name: "uri", type: "string", description: "The URI to get an authentication ticket for."}
 			],
-			{ type: "Carbon.Auth.Ticket.Class" }
+			{type: "Carbon.Auth.Ticket.Class"}
 		), ():void => {
 			expect( Ticket.Factory.create ).toBeDefined();
 			expect( Utils.isFunction( Ticket.Factory.create ) ).toBe( true );
@@ -84,10 +84,10 @@ describe( module( "Carbon/Auth/Ticket" ), ():void => {
 			expect( URI.Util.isBNodeID( ticket.id ) ).toBe( true );
 			expect( ticket.forURI.id ).toBe( "http://example.com/resource/" );
 			expect( ticket.ticketKey ).toBeUndefined();
-			expect( ticket.expirationTime).toBeUndefined();
+			expect( ticket.expirationTime ).toBeUndefined();
 			expect( ticket.types ).toContain( Ticket.RDF_CLASS );
-		});
+		} );
 
-	});
+	} );
 
-});
+} );

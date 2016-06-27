@@ -21,30 +21,30 @@ describe( module(
 	it( isDefined(), ():void => {
 		expect( Token ).toBeDefined();
 		expect( Utils.isObject( Token ) ).toBe( true );
-	});
+	} );
 
 	describe( clazz( "Carbon.Auth.Token.Factory", "" ), ():void => {
 
 		it( isDefined(), ():void => {
 			expect( Token.Factory ).toBeDefined();
 			expect( Utils.isFunction( Token.Factory ) ).toBe( true );
-		});
+		} );
 
 		it( hasMethod( STATIC, "is",
 			"Duck tape tests if the value sent is a Token object", [
-				{ name: "value", type: "any" }
+				{name: "value", type: "any"}
 			],
-			{ type: "boolean" }
+			{type: "boolean"}
 		), ():void => {
 			expect( "is" in Token.Factory ).toBe( true );
 			expect( Utils.isFunction( Token.Factory.is ) ).toBe( true );
 
 			expect( Token.Factory.is( false ) ).toBe( false );
 
-			let object: Object = {
+			let object:Object = {
 				"key": {
 					"@id": "http://example.com/someID",
-					"@type":"xsd:string",
+					"@type": "xsd:string",
 				},
 				"expirationTime": {
 					"@id": "http://xmaple.com/anotherID",
@@ -54,32 +54,32 @@ describe( module(
 
 			expect( Token.Factory.hasClassProperties( object ) ).toBe( true );
 
-			object["anotherProperty"] = {
+			object[ "anotherProperty" ] = {
 				"@id": "http://example.com/anotherPropertyID",
 				"@type": "xsd:integer"
 			};
 			expect( Token.Factory.hasClassProperties( object ) ).toBe( true );
 
-			delete object["anotherProperty"];
-			delete object["key"];
+			delete object[ "anotherProperty" ];
+			delete object[ "key" ];
 			expect( Token.Factory.hasClassProperties( object ) ).toBe( false );
 
 			expect( Token.Factory.hasClassProperties( {} ) ).toBe( false );
-		});
+		} );
 
 		it( hasMethod( STATIC, "hasClassProperties",
 			"Returns true if the object provided has the necessary information to be utilized as a object of type `Carbon.Auth.Token.Class`", [
-				{ name: "object", type: "Object" }
+				{name: "object", type: "Object"}
 			],
-			{ type: "boolean" }
+			{type: "boolean"}
 		), ():void => {
 			expect( "hasClassProperties" in Token.Factory ).toBe( true );
 			expect( Utils.isFunction( Token.Factory.hasClassProperties ) ).toBe( true );
 
-			let object: Object = {
+			let object:Object = {
 				"key": {
 					"@id": "http://example.com/someID",
-					"@type":"xsd:string",
+					"@type": "xsd:string",
 				},
 				"expirationTime": {
 					"@id": "http://xmaple.com/anotherID",
@@ -89,32 +89,32 @@ describe( module(
 
 			expect( Token.Factory.hasClassProperties( object ) ).toBe( true );
 
-			object["anotherProperty"] = {
+			object[ "anotherProperty" ] = {
 				"@id": "http://example.com/anotherPropertyID",
 				"@type": "xsd:integer"
 			};
 			expect( Token.Factory.hasClassProperties( object ) ).toBe( true );
 
-			delete object["anotherProperty"];
-			delete object["key"];
+			delete object[ "anotherProperty" ];
+			delete object[ "key" ];
 			expect( Token.Factory.hasClassProperties( object ) ).toBe( false );
 
 			expect( Token.Factory.hasClassProperties( {} ) ).toBe( false );
-		});
+		} );
 
 		it( hasMethod(
 			INSTANCE,
 			"decorate",
 			"Adds any necessary data to the object provided to be utilized as a type `Carbon.Auth.Token.Class`", [
-				{ name: "object", type: "T extends Object" }
+				{name: "object", type: "T extends Object"}
 			],
-			{ type: "Carbon.Auth.Token.Class" }
+			{type: "Carbon.Auth.Token.Class"}
 		), ():void => {
 			expect( "decorate" in Token.Factory ).toBe( true );
 			expect( Utils.isFunction( Token.Factory.decorate ) ).toBe( true );
 
 			// TODO: Test behaviour
-		});
+		} );
 
 		describe( method(
 			INSTANCE,
@@ -124,30 +124,30 @@ describe( module(
 
 			it( hasSignature(
 				"Description", [
-					{ name: "pointer", type: "Carbon.Pointer.Class" }
+					{name: "pointer", type: "Carbon.Pointer.Class"}
 				],
-				{ type: "boolean" }
+				{type: "boolean"}
 			), ():void => {
 				expect( "hasRDFClass" in Token.Factory ).toBe( true );
 				expect( Utils.isFunction( Token.Factory.hasRDFClass ) ).toBe( true );
 
 				// TODO: Test behaviour
-			});
+			} );
 
 			it( hasSignature(
 				"Description", [
-					{ name: "expandedObject", type: "Object" }
+					{name: "expandedObject", type: "Object"}
 				],
-				{ type: "boolean" }
+				{type: "boolean"}
 			), ():void => {
 				expect( "hasRDFClass" in Token.Factory ).toBe( true );
 				expect( Utils.isFunction( Token.Factory.hasRDFClass ) ).toBe( true );
 
 				// TODO: Test behaviour
-			});
+			} );
 
-		});
+		} );
 
-	});
+	} );
 
-});
+} );
