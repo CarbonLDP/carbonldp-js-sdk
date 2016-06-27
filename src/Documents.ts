@@ -769,20 +769,16 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 	}
 
 	private getAssociatedFragment( blankNodes:PersistedFragment.Class[], namedFragments:Map<string, PersistedNamedFragment.Class>, searchedFragment:RDF.Node.Class ):PersistedFragment.Class {
-		if ( RDF.URI.Util.isBNodeID( searchedFragment[ "@id" ] ) ) {
-			let bNodeIdentifier:string =  RDF.Value.Util.getProperty( searchedFragment, NS.C.Predicate.bNodeIdentifier, null );
+		if( ! RDF.URI.Util.isBNodeID( searchedFragment[ "@id" ] ) ) return namedFragments.get( searchedFragment[ "@id" ] );
 
-			for ( let fragment of blankNodes ) {
-				if ( RDF.URI.Util.isBNodeID( fragment.id ) ) {
-					if ( !! (<PersistedBlankNode.Class> fragment).bNodeIdentifier && (<PersistedBlankNode.Class> fragment).bNodeIdentifier === bNodeIdentifier ) {
-						return fragment;
-					}
-				}
-			}
-			return null;
+		let bNodeIdentifier:string = RDF.Value.Util.getProperty( searchedFragment, NS.C.Predicate.bNodeIdentifier, null );
+
+		for( let fragment of blankNodes ) {
+			if( ! RDF.URI.Util.isBNodeID( fragment.id ) ) continue;
+			let persistedBlankNode:PersistedBlankNode.Class = <any> fragment;
+			if( ! ! persistedBlankNode.bNodeIdentifier && persistedBlankNode.bNodeIdentifier === bNodeIdentifier ) return fragment;
 		}
-
-		return namedFragments.get( searchedFragment[ "@id" ] );
+		return null;
 	}
 
 	private getRequestURI( uri:string ):string {
