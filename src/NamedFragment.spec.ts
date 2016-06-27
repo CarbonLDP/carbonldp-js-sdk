@@ -21,7 +21,7 @@ describe( module( "Carbon/NamedFragment" ), ():void => {
 	it( isDefined(), ():void => {
 		expect( NamedFragment ).toBeDefined();
 		expect( Utils.isObject( NamedFragment ) ).toBe( true );
-	});
+	} );
 
 	describe( clazz(
 		"Carbon.NamedFragment.Factory",
@@ -31,22 +31,22 @@ describe( module( "Carbon/NamedFragment" ), ():void => {
 		it( isDefined(), ():void => {
 			expect( NamedFragment.Factory ).toBeDefined();
 			expect( Utils.isFunction( NamedFragment.Factory ) ).toBe( true );
-		});
+		} );
 
 		let document:Document.Class;
 
 		beforeAll( ():void => {
 			document = Document.Factory.create();
 			document.id = "http://example.com/document/";
-		});
+		} );
 
 		it( hasMethod(
 			STATIC,
 			"hasClassProperties",
 			"Returns true if the object provided has the properties and functions of a NamedFragment object", [
-				{ name: "resource", type: "Carbon.Fragment.Class" }
+				{name: "resource", type: "Carbon.Fragment.Class"}
 			],
-			{ type: "boolean" }
+			{type: "boolean"}
 		), ():void => {
 			expect( NamedFragment.Factory.hasClassProperties ).toBeDefined();
 			expect( Utils.isFunction( NamedFragment.Factory.hasClassProperties ) ).toBe( true );
@@ -62,16 +62,16 @@ describe( module( "Carbon/NamedFragment" ), ():void => {
 			delete resource.slug;
 			expect( NamedFragment.Factory.hasClassProperties( resource ) ).toBe( false );
 			resource.slug = null;
-		});
+		} );
 
 		it( hasMethod(
 			STATIC,
 			"create",
 			"Creates a NamedFragment with the Slug provided for the document specified.", [
-				{ name: "slug", type: "string" },
-				{ name: "document", type: "Carbon.Document.Class" }
+				{name: "slug", type: "string"},
+				{name: "document", type: "Carbon.Document.Class"}
 			],
-			{ type: "Carbon.NamedFragment.Class" }
+			{type: "Carbon.NamedFragment.Class"}
 		), ():void => {
 			expect( NamedFragment.Factory.create ).toBeDefined();
 			expect( Utils.isFunction( NamedFragment.Factory.create ) ).toBe( true );
@@ -89,17 +89,17 @@ describe( module( "Carbon/NamedFragment" ), ():void => {
 			expect( NamedFragment.Factory.hasClassProperties( fragment ) ).toBe( true );
 			expect( fragment.document ).toBe( document );
 			expect( fragment.id ).toBe( "http://example.com/document/#another-fragment" );
-		});
+		} );
 
 		it( hasMethod(
 			STATIC,
 			"createFrom",
 			"Creates a NamedFragment from an Object with the Slug provided for the document specified.", [
-				{ name: "object", type: "T extends Object" },
-				{ name: "slug", type: "string" },
-				{ name: "document", type: "Carbon.Document.Class" },
+				{name: "object", type: "T extends Object"},
+				{name: "slug", type: "string"},
+				{name: "document", type: "Carbon.Document.Class"},
 			],
-			{ type: "T & Carbon.NamedFragment.Class" }
+			{type: "T & Carbon.NamedFragment.Class"}
 		), ():void => {
 			expect( NamedFragment.Factory.createFrom ).toBeDefined();
 			expect( Utils.isFunction( NamedFragment.Factory.createFrom ) ).toBe( true );
@@ -110,14 +110,14 @@ describe( module( "Carbon/NamedFragment" ), ():void => {
 			}
 			let fragment:NamedFragment.Class & MyFragment;
 
-			fragment = NamedFragment.Factory.createFrom<MyFragment>( { property: "my property 1" }, "fragment", document );
+			fragment = NamedFragment.Factory.createFrom<MyFragment>( {property: "my property 1"}, "fragment", document );
 			expect( fragment ).toBeTruthy();
 			expect( NamedFragment.Factory.hasClassProperties( fragment ) ).toBe( true );
 			expect( fragment.document ).toBe( document );
 			expect( fragment.id ).toBe( "http://example.com/document/#fragment" );
 			expect( fragment.property ).toBe( "my property 1" );
 
-			fragment = NamedFragment.Factory.createFrom<MyFragment>( { property: "my property 2" }, "another-fragment", document );
+			fragment = NamedFragment.Factory.createFrom<MyFragment>( {property: "my property 2"}, "another-fragment", document );
 			expect( fragment ).toBeTruthy();
 			expect( NamedFragment.Factory.hasClassProperties( fragment ) ).toBe( true );
 			expect( fragment.document ).toBe( document );
@@ -130,8 +130,8 @@ describe( module( "Carbon/NamedFragment" ), ():void => {
 			expect( anotherFragment.document ).toBe( document );
 			expect( anotherFragment.id ).toBe( "http://example.com/document/#some-fragment" );
 			expect( anotherFragment[ "property" ] ).toBeUndefined();
-		});
+		} );
 
-	});
+	} );
 
-});
+} );

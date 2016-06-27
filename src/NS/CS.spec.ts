@@ -18,7 +18,7 @@ describe( module(
 	it( isDefined(), ():void => {
 		expect( CS ).toBeDefined();
 		expect( Utils.isObject( CS ) ).toBe( true );
-	});
+	} );
 
 	it( hasProperty(
 		STATIC,
@@ -29,7 +29,7 @@ describe( module(
 		expect( Utils.isString( CS.namespace ) ).toBe( true );
 
 		expect( CS.namespace ).toBe( "https://carbonldp.com/ns/v1/security#" )
-	});
+	} );
 
 	describe( clazz(
 		"Carbon.NS.CS.Class",
@@ -40,7 +40,7 @@ describe( module(
 			expect( CS.Class ).toBeDefined();
 			expect( Utils.isFunction( CS.Class ) ).toBe( true );
 			expect( Object.keys( CS.Class ).length ).toBe( 5 );
-		});
+		} );
 
 		it( hasProperty(
 			STATIC,
@@ -51,7 +51,7 @@ describe( module(
 			expect( Utils.isString( CS.Class.Application ) ).toBe( true );
 
 			expect( CS.Class.Application ).toBe( "https://carbonldp.com/ns/v1/security#Application" );
-		});
+		} );
 
 		it( hasProperty(
 			STATIC,
@@ -62,7 +62,7 @@ describe( module(
 			expect( Utils.isString( CS.Class.Token ) ).toBe( true );
 
 			expect( CS.Class.Token ).toBe( "https://carbonldp.com/ns/v1/security#Token" );
-		});
+		} );
 
 		it( hasProperty(
 			STATIC,
@@ -73,7 +73,7 @@ describe( module(
 			expect( Utils.isString( CS.Class.AllOrigins ) ).toBe( true );
 
 			expect( CS.Class.AllOrigins ).toBe( "https://carbonldp.com/ns/v1/security#AllOrigins" );
-		});
+		} );
 
 		it( hasProperty(
 			STATIC,
@@ -84,7 +84,7 @@ describe( module(
 			expect( Utils.isString( CS.Class.Agent ) ).toBe( true );
 
 			expect( CS.Class.Agent ).toBe( "https://carbonldp.com/ns/v1/security#Agent" );
-		});
+		} );
 
 		it( hasProperty(
 			STATIC,
@@ -95,9 +95,9 @@ describe( module(
 			expect( Utils.isString( CS.Class.Ticket ) ).toBe( true );
 
 			expect( CS.Class.Ticket ).toBe( "https://carbonldp.com/ns/v1/security#Ticket" );
-		});
+		} );
 
-	});
+	} );
 
 	describe( clazz(
 		"Carbon.NS.CS.Predicate",
@@ -109,7 +109,7 @@ describe( module(
 			expect( Utils.isFunction( CS.Predicate ) ).toBe( true );
 
 			expect( Object.keys( CS.Predicate ).length ).toBe( 9 );
-		});
+		} );
 
 		it( hasProperty(
 			STATIC,
@@ -120,7 +120,7 @@ describe( module(
 			expect( Utils.isString( CS.Predicate.namae ) ).toBe( true );
 
 			expect( CS.Predicate.namae ).toBe( "https://carbonldp.com/ns/v1/security#name" );
-		});
+		} );
 
 		it( hasProperty(
 			STATIC,
@@ -131,7 +131,7 @@ describe( module(
 			expect( Utils.isString( CS.Predicate.allowsOrigin ) ).toBe( true );
 
 			expect( CS.Predicate.allowsOrigin ).toBe( "https://carbonldp.com/ns/v1/security#allowsOrigin" );
-		});
+		} );
 
 		it( hasProperty(
 			STATIC,
@@ -142,7 +142,7 @@ describe( module(
 			expect( Utils.isString( CS.Predicate.rootContainer ) ).toBe( true );
 
 			expect( CS.Predicate.rootContainer ).toBe( "https://carbonldp.com/ns/v1/security#rootContainer" );
-		});
+		} );
 
 		it( hasProperty(
 			STATIC,
@@ -153,7 +153,7 @@ describe( module(
 			expect( Utils.isString( CS.Predicate.tokenKey ) ).toBe( true );
 
 			expect( CS.Predicate.tokenKey ).toBe( "https://carbonldp.com/ns/v1/security#tokenKey" );
-		});
+		} );
 
 		it( hasProperty(
 			STATIC,
@@ -164,7 +164,7 @@ describe( module(
 			expect( Utils.isString( CS.Predicate.expirationTime ) ).toBe( true );
 
 			expect( CS.Predicate.expirationTime ).toBe( "https://carbonldp.com/ns/v1/security#expirationTime" );
-		});
+		} );
 
 		it( hasProperty(
 			STATIC,
@@ -175,7 +175,7 @@ describe( module(
 			expect( Utils.isString( CS.Predicate.password ) ).toBe( true );
 
 			expect( CS.Predicate.password ).toBe( "https://carbonldp.com/ns/v1/security#password" );
-		});
+		} );
 
 		it( hasProperty(
 			STATIC,
@@ -186,7 +186,7 @@ describe( module(
 			expect( Utils.isString( CS.Predicate.description ) ).toBe( true );
 
 			expect( CS.Predicate.description ).toBe( "https://carbonldp.com/ns/v1/security#description" );
-		});
+		} );
 
 		it( hasProperty(
 			STATIC,
@@ -197,7 +197,7 @@ describe( module(
 			expect( Utils.isString( CS.Predicate.forIRI ) ).toBe( true );
 
 			expect( CS.Predicate.forIRI ).toBe( "https://carbonldp.com/ns/v1/security#forIRI" );
-		});
+		} );
 
 		it( hasProperty(
 			STATIC,
@@ -208,8 +208,8 @@ describe( module(
 			expect( Utils.isString( CS.Predicate.ticketKey ) ).toBe( true );
 
 			expect( CS.Predicate.ticketKey ).toBe( "https://carbonldp.com/ns/v1/security#ticketKey" );
-		});
+		} );
 
-	});
+	} );
 
-});
+} );

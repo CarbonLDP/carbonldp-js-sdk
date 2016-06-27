@@ -70,7 +70,7 @@ declare class Documents implements Pointer.Library, Pointer.Validator, ObjectSch
     private getDigestedObjectSchema(objectTypes);
     private getDocumentTypes(document);
     private updateObject(target, source);
-    private getAssociatedFragment(persistedDocument, fragment);
+    private getAssociatedFragment(blankNodes, namedFragments, searchedFragment);
     private getRequestURI(uri);
     private setDefaultRequestOptions(requestOptions, interactionModel);
     private getMembershipResource(documentResource, rdfDocuments, response);

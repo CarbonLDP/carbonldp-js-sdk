@@ -21,47 +21,47 @@ describe( module( "Carbon/Errors" ), ():void => {
 	it( isDefined(), ():void => {
 		expect( Errors ).toBeDefined();
 		expect( Utils.isObject( Errors ) ).toBe( true );
-	});
+	} );
 
-	it ( reexports(
+	it( reexports(
 		STATIC,
 		"IDAlreadyInUseError",
 		"Carbon/Errors/IDAlreadyInUseError"
 	), ():void => {
 		expect( Errors.IDAlreadyInUseError ).toBeDefined();
 		expect( Errors.IDAlreadyInUseError ).toBe( IDAlreadyInUseError );
-	});
-	it ( reexports(
+	} );
+	it( reexports(
 		STATIC,
 		"IllegalActionError",
 		"Carbon/Errors/IllegalActionError"
 	), ():void => {
 		expect( Errors.IllegalActionError ).toBeDefined();
 		expect( Errors.IllegalActionError ).toBe( IllegalActionError );
-	});
-	it ( reexports(
+	} );
+	it( reexports(
 		STATIC,
 		"IllegalArgumentError",
 		"Carbon/Errors/IllegalArgumentError"
 	), ():void => {
 		expect( Errors.IllegalArgumentError ).toBeDefined();
 		expect( Errors.IllegalArgumentError ).toBe( IllegalArgumentError );
-	});
-	it ( reexports(
+	} );
+	it( reexports(
 		STATIC,
 		"IllegalStateError",
 		"Carbon/Errors/IllegalStateError"
 	), ():void => {
 		expect( Errors.IllegalStateError ).toBeDefined();
 		expect( Errors.IllegalStateError ).toBe( IllegalStateError );
-	});
-	it ( reexports(
+	} );
+	it( reexports(
 		STATIC,
 		"NotImplementedError",
 		"Carbon/Errors/NotImplementedError"
 	), ():void => {
 		expect( Errors.NotImplementedError ).toBeDefined();
 		expect( Errors.NotImplementedError ).toBe( NotImplementedError );
-	});
+	} );
 
-});
+} );

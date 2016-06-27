@@ -113,7 +113,7 @@ function getDownloadURL():Promise<string> {
 	return (<Class> this)._documents.getDownloadURL( (<Class> this).id );
 }
 
-function createAccessPoint( accessPoint:AccessPoint.Class, slug:string = null, requestOptions:HTTP.Request.Options = {}):Promise<[ Pointer.Class, HTTP.Response.Class ]> {
+function createAccessPoint( accessPoint:AccessPoint.Class, slug:string = null, requestOptions:HTTP.Request.Options = {} ):Promise<[ Pointer.Class, HTTP.Response.Class ]> {
 	return this._documents.createAccessPoint( accessPoint, slug, requestOptions );
 }
 
@@ -218,7 +218,7 @@ export class Factory {
 				writable: false,
 				enumerable: false,
 				configurable: true,
-				value: ( function():( id:string ) => boolean {
+				value: (function():( id:string ) => boolean {
 					let superFunction:( id:string ) => boolean = persistedDocument.hasPointer;
 					return function( id:string ):boolean {
 						if( superFunction.call( this, id ) ) return true;
@@ -231,7 +231,7 @@ export class Factory {
 				writable: false,
 				enumerable: false,
 				configurable: true,
-				value: ( function():( id:string ) => Pointer.Class {
+				value: (function():( id:string ) => Pointer.Class {
 					let superFunction:( id:string ) => Pointer.Class = persistedDocument.getPointer;
 					let inScopeFunction:( id:string ) => boolean = persistedDocument.inScope;
 					return function( id:string ):Pointer.Class {
@@ -245,7 +245,7 @@ export class Factory {
 				writable: false,
 				enumerable: false,
 				configurable: true,
-				value: ( function():( idOrPointer:any ) => boolean {
+				value: (function():( idOrPointer:any ) => boolean {
 					let superFunction:( idOrPointer:any ) => boolean = persistedDocument.inScope;
 					return function( idOrPointer:any ):boolean {
 						if( superFunction.call( this, idOrPointer ) ) return true;
