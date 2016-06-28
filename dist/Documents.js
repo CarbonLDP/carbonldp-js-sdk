@@ -38,7 +38,9 @@ var Documents = (function () {
             return false;
         if (!!this.context) {
             var baseURI = this.context.getBaseURI();
-            if (RDF.URI.Util.isAbsolute(id) && RDF.URI.Util.isBaseOf(baseURI, id))
+            if (RDF.URI.Util.isRelative(id))
+                return true;
+            if (RDF.URI.Util.isBaseOf(baseURI, id))
                 return true;
         }
         else {

@@ -375,9 +375,10 @@ describe( module( "Carbon/FreeResources" ), ():void => {
 					{ type: "boolean" }
 				), ():void => {
 					expect( freeResources.inScope( "_:some" ) ).toBe( true );
-					expect( freeResources.inScope( "http://example.com/some/" ) ).toBe( true );
 
-					expect( freeResources.inScope( "some/" ) ).toBe( false );
+					// Asks to its documents instance
+					expect( freeResources.inScope( "http://example.com/some/" ) ).toBe( true );
+					expect( freeResources.inScope( "relative-document/" ) ).toBe( true );
 				});
 
 				it( hasSignature(
@@ -387,9 +388,10 @@ describe( module( "Carbon/FreeResources" ), ():void => {
 					{ type: "boolean" }
 				), ():void => {
 					expect( freeResources.inScope( Pointer.Factory.create( "_:some" ) ) ).toBe( true );
-					expect( freeResources.inScope( Pointer.Factory.create( "http://example.com/some/" ) ) ).toBe( true );
 
-					expect( freeResources.inScope( Pointer.Factory.create( "some/" ) ) ).toBe( false );
+					// Asks to its documents instance
+					expect( freeResources.inScope( Pointer.Factory.create( "http://example.com/some/" ) ) ).toBe( true );
+					expect( freeResources.inScope( Pointer.Factory.create( "relative-document/" ) ) ).toBe( true );
 				});
 
 			});

@@ -26,6 +26,7 @@ import * as Document from "./Document";
 import Documents from "./Documents";
 import * as Errors from "./Errors";
 import * as Fragment from "./Fragment";
+import * as JSONLDConverter from "./JSONLDConverter";
 import * as HTTP from "./HTTP";
 import * as NS from "./NS";
 import * as ObjectSchema from "./ObjectSchema";
@@ -52,15 +53,248 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 		it( isDefined(), ():void => {
 			expect( Documents ).toBeDefined();
-		});
+			expect( Utils.isFunction( Documents ) ).toBe( true );
+		} );
+
+		it( hasConstructor( [
+			{name: "context", type: "Carbon.Context", optional: true, description: "The context where the documents instance will live. If no context is provided, calling its methods with relative URIs will throw an error, since there will be no form to resolve them."}
+		] ), ():void => {
+			class MockedContext extends AbstractContext {
+				resolve( uri:string ):string {
+					return uri;
+				}
+			}
+
+			let context:MockedContext = new MockedContext();
+
+			let documents:Documents = new Documents( context );
+			expect( documents ).toBeTruthy();
+			expect( documents instanceof Documents ).toBe( true );
+
+			documents = new Documents();
+			expect( documents ).toBeTruthy();
+			expect( documents instanceof Documents ).toBe( true );
+		} );
+
+		it( hasProperty(
+			INSTANCE,
+			"jsonldConverter",
+			"Carbon.JSONLDConverter.Class",
+			"Instance of `Carbon.JSONLDConverter.Class` that is used to compact retrieved documents and to expand documents to persist. This property is not writable."
+		), ():void => {
+			class MockedContext extends AbstractContext {
+				resolve( uri:string ):string {
+					return uri;
+				}
+			}
+
+			let context:MockedContext = new MockedContext();
+			let documents:Documents = context.documents;
+
+			expect( documents.jsonldConverter ).toBeDefined();
+			expect( documents.jsonldConverter instanceof JSONLDConverter.Class ).toBe( true );
+		} );
+
+		describe( method(
+			INSTANCE,
+			"inScope"
+		), ():void => {
+
+			it( isDefined(), ():void => {
+				class MockedContext extends AbstractContext {
+					resolve( uri:string ):string {
+						return uri;
+					}
+				}
+
+				let context:MockedContext = new MockedContext();
+				let documents:Documents = context.documents;
+
+				expect( documents.inScope ).toBeDefined();
+				expect( Utils.isFunction( documents.inScope ) ).toBe( true );
+			} );
+
+			it( hasSignature(
+				"Returns true if the pointer provided is inside the scope of the Documents instance.", [
+					{name: "pointer", type: "Carbon.Pointer.Class", description: "Pointer to evaluate."}
+				],
+				{type: "boolean"}
+			), ():void => {
+				class MockedContext extends AbstractContext {
+					resolve( uri:string ):string {
+						return "http://example.com/" + uri;
+					}
+				}
+
+				let context:MockedContext = new MockedContext();
+				let documents:Documents = context.documents;
+
+				let pointer:Pointer.Class;
+
+				pointer = Pointer.Factory.create( "http://example.com/document/child/" );
+				expect( documents.inScope( pointer ) ).toBe( true );
+				pointer = Pointer.Factory.create( "http://example.com/another-document/" );
+				expect( documents.inScope( pointer ) ).toBe( true );
+				pointer = Pointer.Factory.create( "http://example.com/document/" );
+				expect( documents.inScope( pointer ) ).toBe( true );
+				pointer = Pointer.Factory.create( "a-relative-document/" );
+				expect( documents.inScope( pointer ) ).toBe( true );
+
+				pointer = Pointer.Factory.create( "http://example.com/document/#fragment" );
+				expect( documents.inScope( pointer ) ).toBe( true );
+				pointer = Pointer.Factory.create( "http://example.com/document/#another-fragment" );
+				expect( documents.inScope( pointer ) ).toBe( true );
+
+				pointer = Pointer.Factory.create( "_:BlankNode" );
+				expect( documents.inScope( pointer ) ).toBe( false );
+
+				// Asks to context.parentContext.documents
+				pointer = Pointer.Factory.create( "http://example.org/document/" );
+				expect( documents.inScope( pointer ) ).toBe( true );
+			} );
+
+			it( hasSignature(
+				"Returns true if the URI provided is inside the scope of the Documents instance.", [
+					{name: "id", type: "string", description: "URI to evaluate."}
+				],
+				{type: "boolean"}
+			), ():void => {
+				class MockedContext extends AbstractContext {
+					resolve( uri:string ):string {
+						return "http://example.com/" + uri;
+					}
+				}
+
+				let context:MockedContext = new MockedContext();
+				let documents:Documents = context.documents;
+
+				expect( documents.inScope( "http://example.com/document/" ) ).toBe( true );
+				expect( documents.inScope( "http://example.com/document/child/" ) ).toBe( true );
+				expect( documents.inScope( "http://example.com/another-document/" ) ).toBe( true );
+				expect( documents.inScope( "a-relative-document/" ) ).toBe( true );
+
+				expect( documents.inScope( "http://example.com/document/#fragment" ) ).toBe( true );
+				expect( documents.inScope( "http://example.com/document/#another-fragment" ) ).toBe( true );
+
+				expect( documents.inScope( "_:BlankNode" ) ).toBe( false );
+
+				// Asks to context.parentContext.documents
+				expect( documents.inScope( "http://example.org/document/" ) ).toBe( true );
+			} );
+
+		} );
+
+		it( hasMethod(
+			INSTANCE,
+			"hasPointer",
+			"Returns true if the Documents instance has a pointer referenced by the URI provided.", [
+				{name: "id", type: "string", description: "URI to look for."}
+			],
+			{type: "boolean"}
+		), ():void => {
+			let context:MockedContext;
+			let documents:Documents;
+
+			class MockedContext extends AbstractContext {
+				resolve( uri:string ):string {
+					return "http://example.com/" + uri;
+				}
+			}
+			context = new MockedContext();
+			documents = context.documents;
+
+			expect( documents.hasPointer ).toBeDefined();
+			expect( Utils.isFunction( documents.hasPointer ) ).toBe( true );
+
+			expect( documents.hasPointer( "http://example.com/document/" ) ).toBe( false );
+			expect( documents.hasPointer( "document/" ) ).toBe( false );
+			expect( documents.hasPointer( "http://example.com/document/#fragment" ) ).toBe( false );
+			expect( documents.hasPointer( "http://example.com/another-document/" ) ).toBe( false );
+
+			expect( () => documents.hasPointer( "_:BlankNode" ) ).toThrowError( Errors.IllegalArgumentError );
+
+			context = new MockedContext();
+			documents = context.documents;
+			( <any> documents).pointers.set( "document/", Pointer.Factory.create( "http://example.com/document/" ) );
+			expect( documents.hasPointer( "http://example.com/document/" ) ).toBe( true );
+			expect( documents.hasPointer( "http://example.com/document/#fragment" ) ).toBe( false );
+			expect( documents.hasPointer( "document/" ) ).toBe( true );
+
+			expect( documents.hasPointer( "http://example.com/another-document/" ) ).toBe( false );
+
+			( <any> documents).pointers.set( "document/", Pointer.Factory.create( "http://example.com/document/" ) );
+			( <any> documents).pointers.set( "another-document/", Pointer.Factory.create( "http://example.com/another-document/" ) );
+			expect( documents.hasPointer( "http://example.com/document/" ) ).toBe( true );
+			expect( documents.hasPointer( "document/" ) ).toBe( true );
+			expect( documents.hasPointer( "http://example.com/another-document/" ) ).toBe( true );
+		} );
+
+		it( hasMethod(
+			INSTANCE,
+			"getPointer",
+			"Returns the pointer referenced by the URI provided. If no pointer exists, one is created and then returned.\n" +
+			"Returns `null` if the URI is outside the scope of the Documents instance.", [
+				{name: "id", type: "string", description: "URI to look for."}
+			],
+			{type: "boolean"}
+		), ():void => {
+			let context:MockedContext;
+			let documents:Documents;
+
+			class MockedContext extends AbstractContext {
+				resolve( uri:string ):string {
+					return "http://example.com/" + uri;
+				}
+			}
+			context = new MockedContext();
+			documents = context.documents;
+
+			expect( documents.getPointer ).toBeDefined();
+			expect( Utils.isFunction( documents.getPointer ) ).toBe( true );
+
+			let pointer:Pointer.Class;
+
+			pointer = documents.getPointer( "http://example.com/document/" );
+			expect( Pointer.Factory.is( pointer ) ).toBe( true );
+			expect( pointer.id ).toBe( "http://example.com/document/" );
+
+			pointer = documents.getPointer( "document/" );
+			expect( Pointer.Factory.is( pointer ) ).toBe( true );
+			expect( pointer.id ).toBe( "http://example.com/document/" );
+
+			pointer = documents.getPointer( "http://example.com/document/#fragment" );
+			expect( Pointer.Factory.is( pointer ) ).toBe( true );
+			expect( pointer.id ).toBe( "http://example.com/document/#fragment" );
+
+			pointer = documents.getPointer( "http://example.com/another-document/" );
+			expect( Pointer.Factory.is( pointer ) ).toBe( true );
+			expect( pointer.id ).toBe( "http://example.com/another-document/" );
+
+			// Asks to context.parentContext.documents
+			pointer = documents.getPointer( "http://example.org/document/" );
+			expect( Pointer.Factory.is( pointer ) ).toBe( true );
+			expect( pointer.id ).toBe( "http://example.org/document/" );
+
+			expect( () => documents.getPointer( "_:BlankNode" ) ).toThrowError( Errors.IllegalArgumentError );
+
+			let anotherPointer:Pointer.Class = Pointer.Factory.create( "http://example.com/document/" );
+			context = new MockedContext();
+			documents = context.documents;
+			( <any> documents).pointers.set( "document/", anotherPointer );
+			pointer = documents.getPointer( "http://example.com/document/" );
+			expect( pointer ).toBe( anotherPointer );
+			pointer = documents.getPointer( "document/" );
+			expect( pointer ).toBe( anotherPointer );
+		} );
 
 		it( hasMethod(
 			INSTANCE,
 			"get",
 			"Retrieves the Carbon Document referred by the URI specified from the CarbonLDP server.", [
-				{ name: "uri", type: "string" },
+				{name: "uri", type: "string", description: "The URI of the document to retrieve."},
+				{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customisable options for the request."},
 			],
-			{ type: "Promise<[ Carbon.PersistedDocument.Class, HTTP.Response.Class ]>" }
+			{type: "Promise<[ Carbon.PersistedDocument.Class, HTTP.Response.Class ]>"}
 		), ( done:(() => void) & { fail:( error?:any ) => void } ):void => {
 			let promises:Promise<any>[] = [];
 
@@ -73,41 +307,41 @@ describe( module( "Carbon/Documents" ), ():void => {
 			let context:MockedContext = new MockedContext();
 			let documents:Documents = context.documents;
 
-			let responseBody:string = JSON.stringify({
+			let responseBody:string = JSON.stringify( {
 				"@id": "http://example.com/resource/",
 				"@graph": [
 					{
 						"@id": "http://example.com/resource/",
-						"http://example.com/ns#string": [{ "@value": "Document Resource" }],
+						"http://example.com/ns#string": [ {"@value": "Document Resource"} ],
 						"http://example.com/ns#pointerSet": [
-							{ "@id": "_:1" },
-							{ "@id": "_:2" },
-							{ "@id": "http://example.com/resource/#1" },
-							{ "@id": "http://example.com/external-resource/" },
+							{"@id": "_:1"},
+							{"@id": "_:2"},
+							{"@id": "http://example.com/resource/#1"},
+							{"@id": "http://example.com/external-resource/"},
 						],
 					},
 					{
 						"@id": "_:1",
-						"http://example.com/ns#string": [{ "@value": "Fragment 1" }],
+						"http://example.com/ns#string": [ {"@value": "Fragment 1"} ],
 						"http://example.com/ns#pointerSet": [
-							{ "@id": "http://example.com/resource/" },
-							{ "@id": "http://example.com/resource/#1" },
+							{"@id": "http://example.com/resource/"},
+							{"@id": "http://example.com/resource/#1"},
 						],
 					},
 					{
 						"@id": "_:2",
-						"http://example.com/ns#string": [{ "@value": "Fragment 2" }],
+						"http://example.com/ns#string": [ {"@value": "Fragment 2"} ],
 					},
 					{
 						"@id": "http://example.com/resource/#1",
-						"http://example.com/ns#string": [{ "@value": "NamedFragment 1" }],
+						"http://example.com/ns#string": [ {"@value": "NamedFragment 1"} ],
 					},
 					{
 						"@id": "http://example.com/resource/#2",
-						"http://example.com/ns#string": [{ "@value": "NamedFragment 2" }],
+						"http://example.com/ns#string": [ {"@value": "NamedFragment 2"} ],
 					},
 				],
-			});
+			} );
 
 			let objectSchema:ObjectSchema.Class = {
 				"ex": "http://example.com/ns#",
@@ -164,7 +398,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 				expect( document[ "string" ] ).toBe( "Document Resource" );
 
-				( function documentResource() {
+				(function documentResource() {
 					expect( document[ "pointerSet" ].length ).toBe( 4 );
 					expect( Pointer.Util.getIDs( document[ "pointerSet" ] ) ).toContain( "_:1" );
 					expect( Pointer.Util.getIDs( document[ "pointerSet" ] ) ).toContain( "_:2" );
@@ -172,12 +406,12 @@ describe( module( "Carbon/Documents" ), ():void => {
 					expect( Pointer.Util.getIDs( document[ "pointerSet" ] ) ).toContain( "http://example.com/external-resource/" );
 				})();
 
-				( function documentFragments() {
+				(function documentFragments() {
 
-				let fragment:Fragment.Class;
+					let fragment:Fragment.Class;
 					expect( document.getFragments().length ).toBe( 4 );
 
-					( function documentBlankNode_1() {
+					(function documentBlankNode_1() {
 						fragment = document.getFragment( "_:1" );
 						expect( fragment ).toBeTruthy();
 						expect( fragment[ "string" ] ).toBe( "Fragment 1" );
@@ -188,19 +422,19 @@ describe( module( "Carbon/Documents" ), ():void => {
 						expect( fragment[ "pointerSet" ].find( pointer => pointer.id === "http://example.com/resource/#1" ) ).toBe( document.getFragment( "1" ) );
 					})();
 
-					( function documentBlankNode_2() {
+					(function documentBlankNode_2() {
 						fragment = document.getFragment( "_:2" );
 						expect( fragment ).toBeTruthy();
 						expect( fragment[ "string" ] ).toBe( "Fragment 2" );
 					})();
 
-					( function documentNamedFragment_1() {
+					(function documentNamedFragment_1() {
 						fragment = document.getFragment( "1" );
 						expect( fragment ).toBeTruthy();
 						expect( fragment[ "string" ] ).toBe( "NamedFragment 1" );
 					})();
 
-					( function documentNamedFragment_1() {
+					(function documentNamedFragment_1() {
 						fragment = document.getFragment( "2" );
 						expect( fragment ).toBeTruthy();
 						expect( fragment[ "string" ] ).toBe( "NamedFragment 2" );
@@ -208,24 +442,24 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 				})();
 
-			}) );
+			} ) );
 
 			Promise.all( promises ).then( ():void => {
 				done();
 			}, ( error:Error ):void => {
-				error = !! error ? error : new Error( "Unknown error" );
+				error = ! ! error ? error : new Error( "Unknown error" );
 				done.fail( error );
-			});
-		});
+			} );
+		} );
 
 		it( hasMethod(
 			INSTANCE,
 			"exists",
 			"Retrieves a boolean indicating if the resource exists or not in the CarbonLDP server.", [
-				{ name: "documentURI", type: "string" },
-				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
+				{name: "documentURI", type: "string", description: "The URI to verify if it exists."},
+				{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customisable options for the request."},
 			],
-			{ type: "Promise<[ boolean, Carbon.HTTP.Response.Class ]>" }
+			{type: "Promise<[ boolean, Carbon.HTTP.Response.Class ]>"}
 		), ( done:{ ():void, fail:() => void } ):void => {
 			let promises:Promise<any>[] = [];
 
@@ -241,11 +475,11 @@ describe( module( "Carbon/Documents" ), ():void => {
 			let spies = {
 				exists: ( [ exists, response ]:[ boolean, HTTP.Response.Class ] ):void => {
 					expect( exists ).toBe( true );
-					expect( response instanceof  HTTP.Response.Class ).toBe( true );
+					expect( response instanceof HTTP.Response.Class ).toBe( true );
 				},
 				notExists: ( [ exists, response ]:[ boolean, HTTP.Response.Class ] ):void => {
 					expect( exists ).toBe( false );
-					expect( response instanceof  HTTP.Response.Class ).toBe( true );
+					expect( response instanceof HTTP.Response.Class ).toBe( true );
 				},
 				fail: ( error:HTTP.Errors.Error ):void => {
 					expect( error instanceof HTTP.Errors.Error ).toBe( true );
@@ -257,13 +491,13 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 			jasmine.Ajax.stubRequest( "http://example.com/resource/exists/", null, "HEAD" ).andReturn( {
 				status: 200
-			});
+			} );
 			jasmine.Ajax.stubRequest( "http://example.com/resource/not-exists/", null, "HEAD" ).andReturn( {
 				status: 404
-			});
+			} );
 			jasmine.Ajax.stubRequest( "http://example.com/resource/error/", null, "HEAD" ).andReturn( {
 				status: 500
-			});
+			} );
 
 			let promise:Promise<any>;
 
@@ -285,7 +519,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				expect( spyFail ).toHaveBeenCalledTimes( 1 );
 				done();
 			}, done.fail );
-		});
+		} );
 
 		describe( method(
 			INSTANCE,
@@ -294,11 +528,11 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 			it( hasSignature(
 				"Persists a child document for the respective parent source.", [
-					{ name: "parentURI", type: "string" },
-					{ name: "childDocument", type: "Carbon.Document.Class" },
-					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
+					{name: "parentURI", type: "string", description: "URI of the document where to create a new child."},
+					{name: "childDocument", type: "Carbon.Document.Class", description: "Document to persists as a new child."},
+					{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customisable options for the request."},
 				],
-				{ type:"Promise<[Carbon.Pointer.Class, Carbon.HTTP.Response.Class]>" }
+				{type: "Promise<[Carbon.Pointer.Class, Carbon.HTTP.Response.Class]>"}
 			), ( done:(() => void) & { fail:( error?:any ) => void } ):void => {
 				let promises:Promise<any>[] = [];
 
@@ -377,24 +611,24 @@ describe( module( "Carbon/Documents" ), ():void => {
 					expect( Pointer.Factory.is( pointer ) ).toBe( true );
 					expect( pointer.id ).toBe( "http://example.com/parent-resource/new-resource/" );
 					expect( pointer.isResolved() ).toBe( false );
-				}) );
+				} ) );
 
 				Promise.all( promises ).then( ():void => {
 					done();
 				}, ( error:Error ):void => {
-					error = !! error ? error : new Error( "Unknown error" );
+					error = ! ! error ? error : new Error( "Unknown error" );
 					done.fail( error );
-				});
-			});
+				} );
+			} );
 
 			it( hasSignature(
 				"Persists a child document for the respective parent source.", [
-					{ name: "parentURI", type: "string" },
-					{ name: "slug", type: "string" },
-					{ name: "childDocument", type: "Carbon.Document.Class" },
-					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
+					{name: "parentURI", type: "string", description: "URI of the document where to create a new child."},
+					{name: "slug", type: "string", description: "Slug that will be used for the URI of the new child."},
+					{name: "childDocument", type: "Carbon.Document.Class", description: "Document to persists as a new child."},
+					{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customisable options for the request."},
 				],
-				{ type:"Promise<[Carbon.Pointer.Class, Carbon.HTTP.Response.Class]>" }
+				{type: "Promise<[Carbon.Pointer.Class, Carbon.HTTP.Response.Class]>"}
 			), ( done:(() => void) & { fail:( error?:any ) => void } ):void => {
 				let promises:Promise<any>[] = [];
 
@@ -473,23 +707,23 @@ describe( module( "Carbon/Documents" ), ():void => {
 					expect( Pointer.Factory.is( pointer ) ).toBe( true );
 					expect( pointer.id ).toBe( "http://example.com/parent-resource/new-resource/" );
 					expect( pointer.isResolved() ).toBe( false );
-				}) );
+				} ) );
 
 				Promise.all( promises ).then( ():void => {
 					done();
 				}, ( error:Error ):void => {
-					error = !! error ? error : new Error( "Unknown error" );
+					error = ! ! error ? error : new Error( "Unknown error" );
 					done.fail( error );
-				});
-			});
+				} );
+			} );
 
 			it( hasSignature(
 				"Persists a child document for the respective parent source.", [
-					{ name: "parentURI", type: "string" },
-					{ name: "childObject", type: "Object" },
-					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
+					{name: "parentURI", type: "string", description: "URI of the document where to create a new child."},
+					{name: "childObject", type: "Object", description: "A normal javascript object that will ve converted and persisted as a new child document."},
+					{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customisable options for the request."},
 				],
-				{ type:"Promise<[Carbon.Pointer.Class, Carbon.HTTP.Response.Class]>" }
+				{type: "Promise<[Carbon.Pointer.Class, Carbon.HTTP.Response.Class]>"}
 			), ( done:(() => void) & { fail:( error?:any ) => void } ):void => {
 				let promises:Promise<any>[] = [];
 
@@ -574,24 +808,24 @@ describe( module( "Carbon/Documents" ), ():void => {
 					expect( Pointer.Factory.is( pointer ) ).toBe( true );
 					expect( pointer.id ).toBe( "http://example.com/parent-resource/new-resource/" );
 					expect( pointer.isResolved() ).toBe( false );
-				}) );
+				} ) );
 
 				Promise.all( promises ).then( ():void => {
 					done();
 				}, ( error:Error ):void => {
-					error = !! error ? error : new Error( "Unknown error" );
+					error = ! ! error ? error : new Error( "Unknown error" );
 					done.fail( error );
-				});
-			});
+				} );
+			} );
 
 			it( hasSignature(
 				"Persists a child document for the respective parent source.", [
-					{ name: "parentURI", type: "string" },
-					{ name: "slug", type: "string" },
-					{ name: "childObject", type: "Object" },
-					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
+					{name: "parentURI", type: "string", description: "URI of the document where to create a new child."},
+					{name: "slug", type: "string", description: "Slug that will be used for the URI of the new child."},
+					{name: "childObject", type: "Object", description: "A normal javascript object that will be converted and persisted as a new child document."},
+					{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customisable options for the request."},
 				],
-				{ type:"Promise<[Carbon.Pointer.Class, Carbon.HTTP.Response.Class]>" }
+				{type: "Promise<[Carbon.Pointer.Class, Carbon.HTTP.Response.Class]>"}
 			), ( done:(() => void) & { fail:( error?:any ) => void } ):void => {
 				let promises:Promise<any>[] = [];
 
@@ -676,25 +910,25 @@ describe( module( "Carbon/Documents" ), ():void => {
 					expect( Pointer.Factory.is( pointer ) ).toBe( true );
 					expect( pointer.id ).toBe( "http://example.com/parent-resource/new-resource/" );
 					expect( pointer.isResolved() ).toBe( false );
-				}) );
+				} ) );
 
 				Promise.all( promises ).then( ():void => {
 					done();
 				}, ( error:Error ):void => {
-					error = !! error ? error : new Error( "Unknown error" );
+					error = ! ! error ? error : new Error( "Unknown error" );
 					done.fail( error );
-				});
-			});
-		});
+				} );
+			} );
+		} );
 
 		it( hasMethod(
 			INSTANCE,
 			"listChildren",
 			"Retrieves an array of unresolved pointers that refers to the children of the container specified.", [
-				{ name: "parentURI", type: "string", description: "URI of the document container where to look for its children." },
-				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true }
+				{name: "parentURI", type: "string", description: "URI of the document container where to look for its children."},
+				{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customisable options for the request."}
 			],
-			{ type: "Promise<[ Carbon.Pointer.Class[], Carbon.HTTP.Response ]>" }
+			{type: "Promise<[ Carbon.Pointer.Class[], Carbon.HTTP.Response ]>"}
 		), ( done:{ ():void, fail:() => void } ):void => {
 			class MockedContext extends AbstractContext {
 				resolve( uri:string ):string {
@@ -710,7 +944,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 			jasmine.Ajax.stubRequest( "http://example.com/empty-resource/", null, "GET" ).andReturn( {
 				status: 200,
 				responseText: "[]"
-			});
+			} );
 			jasmine.Ajax.stubRequest( "http://example.com/another-empty-resource/", null, "GET" ).andReturn( {
 				status: 200,
 				responseText: `[
@@ -724,7 +958,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				    "@id": "http://example.com/resource/"
 				  }
 				]`
-			});
+			} );
 			jasmine.Ajax.stubRequest( "http://example.com/another-another-empty-resource/", null, "GET" ).andReturn( {
 				status: 200,
 				responseText: `[
@@ -737,7 +971,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				    "@id": "http://example.com/resource/"
 				  }
 				]`
-			});
+			} );
 			jasmine.Ajax.stubRequest( "http://example.com/resource/", null, "GET" ).andReturn( {
 				status: 200,
 				responseText: `[
@@ -758,10 +992,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 				    "@id": "http://example.com/resource/"
 				  }
 				]`
-			});
+			} );
 
 			let spies = {
-				success: ( [ pointers, response ]:[ Pointer.Class[], HTTP.Response.Class ]  ):void => {
+				success: ( [ pointers, response ]:[ Pointer.Class[], HTTP.Response.Class ] ):void => {
 					expect( pointers ).toBeDefined();
 					expect( Utils.isArray( pointers ) ).toBe( true );
 					expect( pointers.length ).toBe( 2 );
@@ -773,7 +1007,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					expect( response ).toBeDefined();
 					expect( response instanceof HTTP.Response.Class ).toBe( true );
 				},
-				successEmpty: ( [ pointers, response ]:[ Pointer.Class[], HTTP.Response.Class ]  ):void => {
+				successEmpty: ( [ pointers, response ]:[ Pointer.Class[], HTTP.Response.Class ] ):void => {
 					expect( pointers ).toBeDefined();
 					expect( Utils.isArray( pointers ) ).toBe( true );
 					expect( pointers.length ).toBe( 0 );
@@ -814,8 +1048,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 				expect( spyEmpty ).toHaveBeenCalledTimes( 3 );
 				expect( spyFail ).not.toHaveBeenCalled();
 				done();
-			}).catch( done.fail );
-		});
+			} ).catch( done.fail );
+		} );
 
 		describe( method(
 			INSTANCE,
@@ -831,7 +1065,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				}
 
 				let context:MockedContext = new MockedContext();
-				context.extendObjectSchema({
+				context.extendObjectSchema( {
 					"ex": "http://example.com/ns#",
 					"xsd": "http://www.w3.org/2001/XMLSchema#",
 					"string": {
@@ -842,15 +1076,15 @@ describe( module( "Carbon/Documents" ), ():void => {
 						"@id": "ex:pointer",
 						"@type": "@id",
 					},
-				});
+				} );
 
 				documents = context.documents;
-			});
+			} );
 
 			it( isDefined(), () => {
 				expect( documents.getChildren ).toBeDefined();
 				expect( Utils.isFunction( documents.getChildren ) ).toBe( true );
-			});
+			} );
 
 			function stubListRequest( resource:string ):void {
 				jasmine.Ajax.stubRequest( new RegExp( resource ), null, "GET" ).andReturn( {
@@ -934,7 +1168,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 						    }]
 						}
 					]`
-				});
+				} );
 			}
 
 			function checkResponse( pointers:PersistedDocument.Class[], response:HTTP.Response.Class ):void {
@@ -972,13 +1206,13 @@ describe( module( "Carbon/Documents" ), ():void => {
 					let prefersValues:HTTP.Header.Class = new HTTP.Header.Class( request.requestHeaders[ "prefer" ] );
 					let preferInclude:HTTP.Header.Value = prefersValues.values.find( ( value:HTTP.Header.Value ) => {
 						return value.toString().startsWith( preferType );
-					});
+					} );
 					prefers[ index ] = preferInclude.toString().substring( preferType.length + 1, preferInclude.toString().length - 1 ).split( " " );
 				}
 				return prefers;
 			}
 
-			function checkPrefer( request:JasmineAjaxRequest, nonReadable:boolean = true ) {
+			function checkPrefer( request:JasmineAjaxRequest ) {
 				let includes:string[] = null;
 				let omits:string[] = null;
 
@@ -995,22 +1229,22 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 			it( hasSignature(
 				"Retrieves an array of resolved Documents that refers all children of the container specified, or a part of them in accordance to the retrieval preferences specified.", [
-					{ name: "parentURI", type: "string", description: "URI of the document from where to look for its children." },
-					{ name: "retrievalPreferences", type: "Carbon.RetrievalPreferences.Class", optional: true, description: "An object that specify the retrieval preferences for the request." },
-					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Options that can be specified to change the behavior of the request." },
+					{name: "parentURI", type: "string", description: "URI of the document from where to look for its children."},
+					{name: "retrievalPreferences", type: "Carbon.RetrievalPreferences.Class", optional: true, description: "An object that specify the retrieval preferences for the request."},
+					{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customisable options for the request."},
 				],
-				{ type: "Promise<[ Carbon.PersistedDocument.Class[], Carbon.HTTP.Response.Class ]>" }
-			), ( done:{ ():void, fail:() => void }) => {
+				{type: "Promise<[ Carbon.PersistedDocument.Class[], Carbon.HTTP.Response.Class ]>"}
+			), ( done:{ ():void, fail:() => void } ) => {
 				let promises:Promise<any> [] = [];
 
 				(() => {
 					stubListRequest( "resource-1/" );
 
-					let options:HTTP.Request.Options = { timeout: 12345 };
+					let options:HTTP.Request.Options = {timeout: 12345};
 					let retrievalPreferences:RetrievalPreferences.Class = {
 						limit: 10,
 						offset: 0,
-						orderBy: [ { "@id": "http://example.com/ns#string", "@type": "string" } ]
+						orderBy: [ {"@id": "http://example.com/ns#string", "@type": "string"} ]
 					};
 
 					let promise:Promise<[ PersistedDocument.Class[], HTTP.Response.Class ]> = documents.getChildren( "resource-1/", retrievalPreferences, options );
@@ -1025,9 +1259,9 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 						let request:JasmineAjaxRequest = jasmine.Ajax.requests.filter( /resource-1/ )[ 0 ];
 						let url:string = decodeURI( request.url );
-						expect( url.indexOf( "resource-1/?limit=10&offset=0&orderBy=<http://example.com/ns%23string>;<http://www.w3.org/2001/XMLSchema%23string>" ) ).not.toBe( -1 );
+						expect( url.indexOf( "resource-1/?limit=10&offset=0&orderBy=<http://example.com/ns%23string>;<http://www.w3.org/2001/XMLSchema%23string>" ) ).not.toBe( - 1 );
 						checkPrefer( request );
-					}) );
+					} ) );
 				})();
 
 				(() => {
@@ -1036,7 +1270,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					let retrievalPreferences:RetrievalPreferences.Class = {
 						limit: 10,
 						offset: 0,
-						orderBy: [ { "@id": "http://example.com/ns#string", "@type": "string" } ]
+						orderBy: [ {"@id": "http://example.com/ns#string", "@type": "string"} ]
 					};
 
 					let promise:Promise<[ PersistedDocument.Class[], HTTP.Response.Class ]> = documents.getChildren( "resource-2/", retrievalPreferences );
@@ -1048,21 +1282,21 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 						let request:JasmineAjaxRequest = jasmine.Ajax.requests.filter( /resource-2/ )[ 0 ];
 						let url:string = decodeURI( request.url );
-						expect( url.indexOf( "resource-2/?limit=10&offset=0&orderBy=<http://example.com/ns%23string>;<http://www.w3.org/2001/XMLSchema%23string>" ) ).not.toBe( -1 );
+						expect( url.indexOf( "resource-2/?limit=10&offset=0&orderBy=<http://example.com/ns%23string>;<http://www.w3.org/2001/XMLSchema%23string>" ) ).not.toBe( - 1 );
 						checkPrefer( request );
-					}) );
+					} ) );
 				})();
 
 				(() => {
 					jasmine.Ajax.stubRequest( new RegExp( "resource-3/" ), null, "GET" ).andReturn( {
 						status: 200,
 						responseText: `[]`
-					});
+					} );
 
 					let retrievalPreferences:RetrievalPreferences.Class = {
 						limit: 10,
 						offset: 0,
-						orderBy: [ { "@id": "http://example.com/ns#string", "@type": "string" } ]
+						orderBy: [ {"@id": "http://example.com/ns#string", "@type": "string"} ]
 					};
 
 					let promise:Promise<[ PersistedDocument.Class[], HTTP.Response.Class ]> = documents.getChildren( "resource-3/", retrievalPreferences );
@@ -1078,21 +1312,21 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 						let request:JasmineAjaxRequest = jasmine.Ajax.requests.filter( /resource-3/ )[ 0 ];
 						let url:string = decodeURI( request.url );
-						expect( url.indexOf( "resource-3/?limit=10&offset=0&orderBy=<http://example.com/ns%23string>;<http://www.w3.org/2001/XMLSchema%23string>" ) ).not.toBe( -1 );
+						expect( url.indexOf( "resource-3/?limit=10&offset=0&orderBy=<http://example.com/ns%23string>;<http://www.w3.org/2001/XMLSchema%23string>" ) ).not.toBe( - 1 );
 						checkPrefer( request );
-					}) );
+					} ) );
 				})();
 
 				(() => {
 					jasmine.Ajax.stubRequest( new RegExp( "resource-4/" ), null, "GET" ).andReturn( {
 						status: 200,
 						responseText: `{}`
-					});
+					} );
 
 					let retrievalPreferences:RetrievalPreferences.Class = {
 						limit: 10,
 						offset: 0,
-						orderBy: [ { "@id": "http://example.com/ns#string", "@type": "string" } ]
+						orderBy: [ {"@id": "http://example.com/ns#string", "@type": "string"} ]
 					};
 
 					let promise:Promise<[ PersistedDocument.Class[], HTTP.Response.Class ]> = documents.getChildren( "resource-4/", retrievalPreferences );
@@ -1108,27 +1342,27 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 						let request:JasmineAjaxRequest = jasmine.Ajax.requests.filter( /resource-4/ )[ 0 ];
 						let url:string = decodeURI( request.url );
-						expect( url.indexOf( "resource-4/?limit=10&offset=0&orderBy=<http://example.com/ns%23string>;<http://www.w3.org/2001/XMLSchema%23string>" ) ).not.toBe( -1 );
+						expect( url.indexOf( "resource-4/?limit=10&offset=0&orderBy=<http://example.com/ns%23string>;<http://www.w3.org/2001/XMLSchema%23string>" ) ).not.toBe( - 1 );
 						checkPrefer( request );
-					}) );
+					} ) );
 				})();
 
 				Promise.all( promises ).then( done ).catch( done.fail );
-			});
+			} );
 
 			it( hasSignature(
 				"Retrieves an array of resolved Documents that refers all children of the container specified.", [
-					{ name: "parentURI", type: "string", description: "URI of the document from where to look for its children." },
-					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Options that can be specified to change the behavior of the request." },
+					{name: "parentURI", type: "string", description: "URI of the document from where to look for its children."},
+					{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customisable options for the request."},
 				],
-				{ type: "Promise<[ Carbon.PersistedDocument.Class[], Carbon.HTTP.Response.Class ]>" }
+				{type: "Promise<[ Carbon.PersistedDocument.Class[], Carbon.HTTP.Response.Class ]>"}
 			), ( done:{ ():void, fail:() => void } ) => {
 				let promises:Promise<any> [] = [];
 
 				(() => {
 					stubListRequest( "resource-1/" );
 
-					let options:HTTP.Request.Options = { timeout: 12345 };
+					let options:HTTP.Request.Options = {timeout: 12345};
 					let promise:Promise<[ PersistedDocument.Class[], HTTP.Response.Class ]> = documents.getChildren( "resource-1/", options );
 
 					expect( promise instanceof Promise ).toBe( true );
@@ -1142,7 +1376,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 						let request:JasmineAjaxRequest = jasmine.Ajax.requests.filter( /resource-1/ )[ 0 ];
 						expect( request.url ).toMatch( "resource-1/" );
 						checkPrefer( request );
-					}) );
+					} ) );
 				})();
 
 				(() => {
@@ -1158,14 +1392,14 @@ describe( module( "Carbon/Documents" ), ():void => {
 						let request:JasmineAjaxRequest = jasmine.Ajax.requests.filter( /resource-2/ )[ 0 ];
 						expect( request.url ).toMatch( "resource-2/" );
 						checkPrefer( request );
-					}) );
+					} ) );
 				})();
 
 				(() => {
 					jasmine.Ajax.stubRequest( new RegExp( "resource-3/" ), null, "GET" ).andReturn( {
 						status: 200,
 						responseText: `[]`
-					});
+					} );
 
 					let promise:Promise<[ PersistedDocument.Class[], HTTP.Response.Class ]> = documents.getChildren( "resource-3/" );
 
@@ -1179,16 +1413,16 @@ describe( module( "Carbon/Documents" ), ():void => {
 						expect( response ).toBeDefined();
 
 						let request:JasmineAjaxRequest = jasmine.Ajax.requests.filter( /resource-3/ )[ 0 ];
-						expect( request.url.indexOf( "resource-3/" ) ).not.toBe( -1 );
+						expect( request.url.indexOf( "resource-3/" ) ).not.toBe( - 1 );
 						checkPrefer( request );
-					}) );
+					} ) );
 				})();
 
 				(() => {
 					jasmine.Ajax.stubRequest( new RegExp( "resource-4/" ), null, "GET" ).andReturn( {
 						status: 200,
 						responseText: `{}`
-					});
+					} );
 
 					let promise:Promise<[ PersistedDocument.Class[], HTTP.Response.Class ]> = documents.getChildren( "resource-4/" );
 
@@ -1202,15 +1436,15 @@ describe( module( "Carbon/Documents" ), ():void => {
 						expect( response ).toBeDefined();
 
 						let request:JasmineAjaxRequest = jasmine.Ajax.requests.filter( /resource-4/ )[ 0 ];
-						expect( request.url.indexOf( "resource-4/" ) ).not.toBe( -1 );
+						expect( request.url.indexOf( "resource-4/" ) ).not.toBe( - 1 );
 						checkPrefer( request );
-					}) );
+					} ) );
 				})();
 
 				Promise.all( promises ).then( done ).catch( done.fail );
-			});
+			} );
 
-		});
+		} );
 
 		describe( method(
 			INSTANCE,
@@ -1219,12 +1453,12 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 			it( hasSignature(
 				"Persists an AccessPoint in the document specified.", [
-					{ name: "documentURI", type: "string" },
-					{ name: "accessPoint", type: "Carbon.AccessPoint.Class" },
-					{ name: "slug", type: "string", optional: true },
-					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
+					{name: "documentURI", type: "string", description: "URI of the document where to create a new access point."},
+					{name: "accessPoint", type: "Carbon.AccessPoint.Class", description: "AccessPoint Document to persists."},
+					{name: "slug", type: "string", optional: true, description: "Slug that will be used for the URI of the new access point."},
+					{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customisable options for the request."},
 				],
-				{ type: "Promise<[Carbon.Pointer.Class, Carbon.HTTP.Response.Class]>" }
+				{type: "Promise<[Carbon.Pointer.Class, Carbon.HTTP.Response.Class]>"}
 			), ( done:(() => void) & { fail:( error?:any ) => void } ):void => {
 				let promises:Promise<any>[] = [];
 
@@ -1254,10 +1488,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 					},
 				} );
 
-				let membershipResource:Pointer.Class = Pointer.Factory.create("http://example.com/parent-resource/");
+				let membershipResource:Pointer.Class = Pointer.Factory.create( "http://example.com/parent-resource/" );
 				let promise:Promise<any>;
 				let accessPoint:AccessPoint.Class;
-	
+
 				accessPoint = AccessPoint.Factory.create( membershipResource, "http://example.com/myNamespace#some-relation" );
 				promise = documents.createAccessPoint( "http://example.com/parent-resource/", accessPoint, "access-point" );
 				expect( promise instanceof Promise ).toBe( true );
@@ -1288,15 +1522,15 @@ describe( module( "Carbon/Documents" ), ():void => {
 					expect( spyFail ).toHaveBeenCalledTimes( 3 );
 					done();
 				}, done.fail );
-			});
+			} );
 
 			it( hasSignature(
 				"Persists an AccessPoint in the document specified.", [
-					{ name: "accessPoint", type: "Carbon.AccessPoint.Class" },
-					{ name: "slug", type: "string", optional: true },
-					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
+					{name: "accessPoint", type: "Carbon.AccessPoint.Class", description: "AccessPoint Document to persists."},
+					{name: "slug", type: "string", optional: true, description: "Slug that will be used for the URI of the new access point."},
+					{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customisable options for the request."},
 				],
-				{ type: "Promise<[Carbon.Pointer.Class, Carbon.HTTP.Response.Class]>" }
+				{type: "Promise<[Carbon.Pointer.Class, Carbon.HTTP.Response.Class]>"}
 			), ( done:(() => void) & { fail:( error?:any ) => void } ):void => {
 
 				let promises:Promise<any>[] = [];
@@ -1327,7 +1561,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					},
 				} );
 
-				let membershipResource:Pointer.Class = Pointer.Factory.create("http://example.com/parent-resource/");
+				let membershipResource:Pointer.Class = Pointer.Factory.create( "http://example.com/parent-resource/" );
 				let promise:Promise<any>;
 				let accessPoint:AccessPoint.Class;
 
@@ -1357,8 +1591,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 					expect( spyFail ).toHaveBeenCalledTimes( 2 );
 					done();
 				}, done.fail );
-			});
-		});
+			} );
+		} );
 
 		describe( method(
 			INSTANCE,
@@ -1367,11 +1601,11 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 			it( hasSignature(
 				"Upload binary data, creating a child for the parent specified. This signature only works in a Browser.", [
-					{ name: "parentURI", type: "string" },
-					{ name: "data", type: "Blob" },
-					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
+					{name: "parentURI", type: "string", description: "URI of the document where to upload the new binary data child."},
+					{name: "data", type: "Blob", description: "Blob of the binary data to upload."},
+					{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customisable options for the request."},
 				],
-				{ type:"Promise<[Carbon.Pointer.Class, Carbon.HTTP.Response.Class]>" }
+				{type: "Promise<[Carbon.Pointer.Class, Carbon.HTTP.Response.Class]>"}
 			), ( done:{ ():void, fail:() => void } ):void => {
 				let promises:Promise<any>[] = [];
 
@@ -1401,7 +1635,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					};
 					let spySuccess = spyOn( spy, "success" ).and.callThrough();
 
-					let blob:Blob = new Blob( [ JSON.stringify( { "some content": "for the blob." } ) ], { type : "application/json" } );
+					let blob:Blob = new Blob( [ JSON.stringify( {"some content": "for the blob."} ) ], {type: "application/json"} );
 
 					jasmine.Ajax.stubRequest( "http://example.com/parent-resource/", null, "POST" ).andReturn( {
 						status: 200,
@@ -1418,16 +1652,16 @@ describe( module( "Carbon/Documents" ), ():void => {
 					}, done.fail );
 
 				} else { done(); }
-			});
+			} );
 
 			it( hasSignature(
 				"Upload binary data, creating a child for the parent specified. This signature only works in a Browser.", [
-					{ name: "parentURI", type: "string" },
-					{ name: "slug", type: "string" },
-					{ name: "data", type: "Blob" },
-					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
+					{name: "parentURI", type: "string", description: "URI of the document where to upload the new binary data child."},
+					{name: "slug", type: "string", description: "Slug that will be used for the URI of the new binary child."},
+					{name: "data", type: "Blob", description: "Blob of the binary data to upload."},
+					{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customisable options for the request."},
 				],
-				{ type:"Promise<[Carbon.Pointer.Class, Carbon.HTTP.Response.Class]>" }
+				{type: "Promise<[Carbon.Pointer.Class, Carbon.HTTP.Response.Class]>"}
 			), ( done:{ ():void, fail:() => void } ):void => {
 				let promises:Promise<any>[] = [];
 
@@ -1445,44 +1679,44 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 				if ( typeof Blob !== "undefined" ) {
 
-						let spy = {
-							success: ( response:[Pointer.Class, HTTP.Response.Class] ):void => {
-								expect( response ).toBeDefined();
-								expect( Utils.isArray( response ) ).toBe( true );
-								expect( response.length ).toBe( 2 );
+					let spy = {
+						success: ( response:[Pointer.Class, HTTP.Response.Class] ):void => {
+							expect( response ).toBeDefined();
+							expect( Utils.isArray( response ) ).toBe( true );
+							expect( response.length ).toBe( 2 );
 
-								let pointer:Pointer.Class = response[ 0 ];
-								expect( pointer.id ).toBe( "http://example.com/parent-resource/slug-id/" );
-							}
-						};
-						let spySuccess = spyOn( spy, "success" ).and.callThrough();
+							let pointer:Pointer.Class = response[ 0 ];
+							expect( pointer.id ).toBe( "http://example.com/parent-resource/slug-id/" );
+						}
+					};
+					let spySuccess = spyOn( spy, "success" ).and.callThrough();
 
-						let blob:Blob = new Blob( [ JSON.stringify( { "some content": "for the blob." } ) ], { type : "application/json" } );
+					let blob:Blob = new Blob( [ JSON.stringify( {"some content": "for the blob."} ) ], {type: "application/json"} );
 
-						jasmine.Ajax.stubRequest( "http://example.com/parent-resource/", null, "POST" ).andReturn( {
-							status: 200,
-							responseHeaders: {
-								"Location": "http://example.com/parent-resource/slug-id/",
-							},
-						});
+					jasmine.Ajax.stubRequest( "http://example.com/parent-resource/", null, "POST" ).andReturn( {
+						status: 200,
+						responseHeaders: {
+							"Location": "http://example.com/parent-resource/slug-id/",
+						},
+					} );
 
-						promises.push( documents.upload( "http://example.com/parent-resource/", "slug-id", blob ).then( spy.success ) );
+					promises.push( documents.upload( "http://example.com/parent-resource/", "slug-id", blob ).then( spy.success ) );
 
-						Promise.all( promises ).then( ():void => {
-							expect( spySuccess ).toHaveBeenCalled();
-							done();
+					Promise.all( promises ).then( ():void => {
+						expect( spySuccess ).toHaveBeenCalled();
+						done();
 					}, done.fail );
 
 				} else { done(); }
-			});
+			} );
 
 			it( hasSignature(
 				"Upload binary data, creating a child for the parent specified. This signature only works in Node.js.", [
-					{ name: "parentURI", type: "string" },
-					{ name: "data", type: "Buffer" },
-					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
+					{name: "parentURI", type: "string", description: "URI of the document where to upload the new binary data child."},
+					{name: "data", type: "Buffer", description: "Buffer of the binary data to upload."},
+					{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customisable options for the request."},
 				],
-				{ type:"Promise<[Carbon.Pointer.Class, Carbon.HTTP.Response.Class]>" }
+				{type: "Promise<[Carbon.Pointer.Class, Carbon.HTTP.Response.Class]>"}
 			), ( done:{ ():void, fail:() => void } ):void => {
 				let promises:Promise<any>[] = [];
 
@@ -1512,7 +1746,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					};
 					let spySuccess = spyOn( spy, "success" ).and.callThrough();
 
-					let buffer:Buffer = new Buffer( JSON.stringify( { "some content": "for the buffer." } ) );
+					let buffer:Buffer = new Buffer( JSON.stringify( {"some content": "for the buffer."} ) );
 
 					jasmine.Ajax.stubRequest( "http://example.com/parent-resource/", null, "POST" ).andReturn( {
 						status: 200,
@@ -1529,16 +1763,16 @@ describe( module( "Carbon/Documents" ), ():void => {
 					}, done.fail );
 
 				} else { done(); }
-			});
+			} );
 
 			it( hasSignature(
 				"Upload binary data, creating a child for the parent specified. This signature only works in Node.js.", [
-					{ name: "parentURI", type: "string" },
-					{ name: "slug", type: "string" },
-					{ name: "data", type: "Buffer" },
-					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
+					{name: "parentURI", type: "string", description: "URI of the document where to upload the new binary data child."},
+					{name: "slug", type: "string", description: "Slug that will be used fot he URI of the new binary child."},
+					{name: "data", type: "Buffer", description: "Buffer of the binary data to upload."},
+					{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customisable options for the request."},
 				],
-				{ type:"Promise<[Carbon.Pointer.Class, Carbon.HTTP.Response.Class]>" }
+				{type: "Promise<[Carbon.Pointer.Class, Carbon.HTTP.Response.Class]>"}
 			), ( done:{ ():void, fail:() => void } ):void => {
 				let promises:Promise<any>[] = [];
 
@@ -1568,7 +1802,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					};
 					let spySuccess = spyOn( spy, "success" ).and.callThrough();
 
-					let buffer:Buffer = new Buffer( JSON.stringify( { "some content": "for the buffer." } ) );
+					let buffer:Buffer = new Buffer( JSON.stringify( {"some content": "for the buffer."} ) );
 
 					jasmine.Ajax.stubRequest( "http://example.com/parent-resource/", null, "POST" ).andReturn( {
 						status: 200,
@@ -1585,9 +1819,9 @@ describe( module( "Carbon/Documents" ), ():void => {
 					}, done.fail );
 
 				} else { done(); }
-			});
+			} );
 
-		});
+		} );
 
 		describe( method( INSTANCE, "listMembers" ), () => {
 			let documents:Documents;
@@ -1601,27 +1835,27 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 				let context:MockedContext = new MockedContext();
 				documents = context.documents;
-			});
+			} );
 
 			it( isDefined(), () => {
 				expect( documents.listMembers ).toBeDefined();
 				expect( Utils.isFunction( documents.listMembers ) ).toBe( true );
-			});
+			} );
 
 			it( hasSignature(
 				"Retrieves all the members of a document without resolving them.", [
-					{ name: "uri", type: "string", description: "URI of the document from where to look for its members." },
-					{ name: "includeNonReadable", type: "boolean", optional: true, description: "Specify if the response should include the Non Readable resources. By default this is set to `true`." },
-					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Options that can be specified to change the behavior of the request." },
+					{name: "uri", type: "string", description: "URI of the document from where to look for its members."},
+					{name: "includeNonReadable", type: "boolean", optional: true, description: "Specify if the response should include the Non Readable resources. By default this is set to `true`."},
+					{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customisable options for the request."},
 				],
-				{ type: "Promise<[ Carbon.Pointer.Class[], Carbon.HTTP.Response.Class ]>" }
-			), ( done:{ ():void, fail:() => void }) => {
+				{type: "Promise<[ Carbon.Pointer.Class[], Carbon.HTTP.Response.Class ]>"}
+			), ( done:{ ():void, fail:() => void } ) => {
 				let promises:Promise<any> [] = [];
 
 				(() => {
 					stubListRequest( "resource-1/" );
 
-					let options:HTTP.Request.Options = { timeout: 12345 };
+					let options:HTTP.Request.Options = {timeout: 12345};
 					let promise:Promise<[ Pointer.Class[], HTTP.Response.Class ]> = documents.listMembers( "resource-1/", true, options );
 
 					expect( promise instanceof Promise ).toBe( true );
@@ -1635,13 +1869,13 @@ describe( module( "Carbon/Documents" ), ():void => {
 						let request:JasmineAjaxRequest = jasmine.Ajax.requests.filter( /resource-1/ )[ 0 ];
 						expect( request.url ).toMatch( "resource-1/" );
 						checkPrefer( request, "include" );
-					}) );
+					} ) );
 				})();
 
 				(() => {
 					stubListRequest( "resource-2/" );
 
-					let options:HTTP.Request.Options = { timeout: 12345 };
+					let options:HTTP.Request.Options = {timeout: 12345};
 					let promise:Promise<[ Pointer.Class[], HTTP.Response.Class ]> = documents.listMembers( "resource-2/", false, options );
 
 					expect( promise instanceof Promise ).toBe( true );
@@ -1655,7 +1889,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 						let request:JasmineAjaxRequest = jasmine.Ajax.requests.filter( /resource-2/ )[ 0 ];
 						expect( request.url ).toMatch( "resource-2/" );
 						checkPrefer( request, "omit" );
-					}) );
+					} ) );
 				})();
 
 				(() => {
@@ -1671,7 +1905,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 						let request:JasmineAjaxRequest = jasmine.Ajax.requests.filter( /resource-3/ )[ 0 ];
 						expect( request.url ).toMatch( "resource-3/" );
 						checkPrefer( request, "include" );
-					}) );
+					} ) );
 				})();
 
 				(() => {
@@ -1687,7 +1921,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 						let request:JasmineAjaxRequest = jasmine.Ajax.requests.filter( /resource-4/ )[ 0 ];
 						expect( request.url ).toMatch( "resource-4/" );
 						checkPrefer( request, "omit" );
-					}) );
+					} ) );
 				})();
 
 				(() => {
@@ -1703,25 +1937,25 @@ describe( module( "Carbon/Documents" ), ():void => {
 						let request:JasmineAjaxRequest = jasmine.Ajax.requests.filter( /resource-5/ )[ 0 ];
 						expect( request.url ).toMatch( "resource-5/" );
 						checkPrefer( request, "include" );
-					}) );
+					} ) );
 				})();
 
 				Promise.all( promises ).then( done ).catch( done.fail );
-			});
+			} );
 
 			it( hasSignature(
 				"Retrieves all the members of a document without resolving them.", [
-					{ name: "uri", type: "string", description: "URI of the document from where to look for its members." },
-					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Options that can be specified to change the behavior of the request." },
+					{name: "uri", type: "string", description: "URI of the document from where to look for its members."},
+					{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customisable options for the request."},
 				],
-				{ type: "Promise<[ Carbon.Pointer.Class[], Carbon.HTTP.Response.Class ]>" }
+				{type: "Promise<[ Carbon.Pointer.Class[], Carbon.HTTP.Response.Class ]>"}
 			), ( done:{ ():void, fail:() => void } ) => {
 				let promises:Promise<any> [] = [];
 
 				(() => {
 					stubListRequest( "resource-1/" );
 
-					let options:HTTP.Request.Options = { timeout: 12345 };
+					let options:HTTP.Request.Options = {timeout: 12345};
 					let promise:Promise<[ Pointer.Class[], HTTP.Response.Class ]> = documents.listMembers( "resource-1/", options );
 
 					expect( promise instanceof Promise ).toBe( true );
@@ -1735,7 +1969,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 						let request:JasmineAjaxRequest = jasmine.Ajax.requests.filter( /resource-1/ )[ 0 ];
 						expect( request.url ).toMatch( "resource-1/" );
 						checkPrefer( request, "include" );
-					}) );
+					} ) );
 				})();
 
 				(() => {
@@ -1751,11 +1985,11 @@ describe( module( "Carbon/Documents" ), ():void => {
 						let request:JasmineAjaxRequest = jasmine.Ajax.requests.filter( /resource-2/ )[ 0 ];
 						expect( request.url ).toMatch( "resource-2/" );
 						checkPrefer( request, "include" );
-					}) );
+					} ) );
 				})();
 
 				Promise.all( promises ).then( done ).catch( done.fail );
-			});
+			} );
 
 			function stubListRequest( resource:string ):void {
 				jasmine.Ajax.stubRequest( new RegExp( resource ), null, "GET" ).andReturn( {
@@ -1777,7 +2011,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 						        }]
 						    }]
 						}]`
-				});
+				} );
 			}
 
 			function checkResponse( pointers:Pointer.Class[], response:HTTP.Response.Class ):void {
@@ -1796,12 +2030,12 @@ describe( module( "Carbon/Documents" ), ():void => {
 				let prefers:HTTP.Header.Class = new HTTP.Header.Class( request.requestHeaders[ "prefer" ] );
 				let preferInclude:HTTP.Header.Value = prefers.values.find( ( value:HTTP.Header.Value ) => {
 					return value.toString().startsWith( prefer );
-				});
+				} );
 				let includes:string[] = preferInclude.toString().substring( prefer.length, preferInclude.toString().length - 1 ).split( " " );
 				expect( includes ).toContain( NS.C.Class.NonReadableMembershipResourceTriples );
 			}
 
-		});
+		} );
 
 		describe( method( INSTANCE, "getMembers", "Retrieves and resolve all the members of a specified document." ), () => {
 			let documents:Documents;
@@ -1814,7 +2048,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				}
 
 				let context:MockedContext = new MockedContext();
-				context.extendObjectSchema({
+				context.extendObjectSchema( {
 					"ex": "http://example.com/ns#",
 					"xsd": "http://www.w3.org/2001/XMLSchema#",
 					"string": {
@@ -1825,15 +2059,15 @@ describe( module( "Carbon/Documents" ), ():void => {
 						"@id": "ex:pointer",
 						"@type": "@id",
 					},
-				});
+				} );
 
 				documents = context.documents;
-			});
+			} );
 
 			it( isDefined(), () => {
 				expect( documents.getMembers ).toBeDefined();
 				expect( Utils.isFunction( documents.getMembers ) ).toBe( true );
-			});
+			} );
 
 			function stubListRequest( resource:string ):void {
 				jasmine.Ajax.stubRequest( new RegExp( resource ), null, "GET" ).andReturn( {
@@ -1921,7 +2155,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 						    }]
 						}
 					]`
-				});
+				} );
 			}
 
 			function checkResponse( pointers:PersistedDocument.Class[], response:HTTP.Response.Class ):void {
@@ -1959,7 +2193,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					let prefersValues:HTTP.Header.Class = new HTTP.Header.Class( request.requestHeaders[ "prefer" ] );
 					let preferInclude:HTTP.Header.Value = prefersValues.values.find( ( value:HTTP.Header.Value ) => {
 						return value.toString().startsWith( preferType );
-					});
+					} );
 					prefers[ index ] = preferInclude.toString().substring( preferType.length + 1, preferInclude.toString().length - 1 ).split( " " );
 				}
 				return prefers;
@@ -1987,23 +2221,23 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 			it( hasSignature(
 				"Retrieves all the members of a document and their contents, or a part of them in accordance to the retrieval preferences specified.", [
-					{ name: "uri", type: "string", description: "URI of the document from where to look for its members." },
-					{ name: "includeNonReadable", type: "boolean", optional: true, description: "Specify if the response should include the Non Readable resources. By default this is set to `true`." },
-					{ name: "retrievalPreferences", type: "Carbon.RetrievalPreferences.Class", optional: true, description: "An object for specify the retrieval preferences for the request." },
-					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Options that can be specified to change the behavior of the request." },
+					{name: "uri", type: "string", description: "URI of the document from where to look for its members."},
+					{name: "includeNonReadable", type: "boolean", optional: true, description: "Specify if the response should include the Non Readable resources. By default this is set to `true`."},
+					{name: "retrievalPreferences", type: "Carbon.RetrievalPreferences.Class", optional: true, description: "An object for specify the retrieval preferences for the request."},
+					{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customisable options for the request."},
 				],
-				{ type: "Promise<[ Carbon.Pointer.Class[], Carbon.HTTP.Response.Class ]>" }
-			), ( done:{ ():void, fail:() => void }) => {
+				{type: "Promise<[ Carbon.Pointer.Class[], Carbon.HTTP.Response.Class ]>"}
+			), ( done:{ ():void, fail:() => void } ) => {
 				let promises:Promise<any> [] = [];
 
 				(() => {
 					stubListRequest( "resource-1/" );
 
-					let options:HTTP.Request.Options = { timeout: 12345 };
+					let options:HTTP.Request.Options = {timeout: 12345};
 					let retrievalPreferences:RetrievalPreferences.Class = {
 						limit: 10,
 						offset: 0,
-						orderBy: [ { "@id": "http://example.com/ns#string", "@type": "string" } ]
+						orderBy: [ {"@id": "http://example.com/ns#string", "@type": "string"} ]
 					};
 
 					let promise:Promise<[ PersistedDocument.Class[], HTTP.Response.Class ]> = documents.getMembers( "resource-1/", true, retrievalPreferences, options );
@@ -2018,19 +2252,19 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 						let request:JasmineAjaxRequest = jasmine.Ajax.requests.filter( /resource-1/ )[ 0 ];
 						let url:string = decodeURI( request.url );
-						expect( url.indexOf( "resource-1/?limit=10&offset=0&orderBy=<http://example.com/ns%23string>;<http://www.w3.org/2001/XMLSchema%23string>" ) ).not.toBe( -1 );
+						expect( url.indexOf( "resource-1/?limit=10&offset=0&orderBy=<http://example.com/ns%23string>;<http://www.w3.org/2001/XMLSchema%23string>" ) ).not.toBe( - 1 );
 						checkPrefer( request, true );
-					}) );
+					} ) );
 				})();
 
 				(() => {
 					stubListRequest( "resource-2/" );
 
-					let options:HTTP.Request.Options = { timeout: 12345 };
+					let options:HTTP.Request.Options = {timeout: 12345};
 					let retrievalPreferences:RetrievalPreferences.Class = {
 						limit: 10,
 						offset: 0,
-						orderBy: [ { "@id": "http://example.com/ns#string", "@type": "string" } ]
+						orderBy: [ {"@id": "http://example.com/ns#string", "@type": "string"} ]
 					};
 
 					let promise:Promise<[ PersistedDocument.Class[], HTTP.Response.Class ]> = documents.getMembers( "resource-2/", false, retrievalPreferences, options );
@@ -2045,9 +2279,9 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 						let request:JasmineAjaxRequest = jasmine.Ajax.requests.filter( /resource-2/ )[ 0 ];
 						let url:string = decodeURI( request.url );
-						expect( url.indexOf( "resource-2/?limit=10&offset=0&orderBy=<http://example.com/ns%23string>;<http://www.w3.org/2001/XMLSchema%23string>" ) ).not.toBe( -1 );
+						expect( url.indexOf( "resource-2/?limit=10&offset=0&orderBy=<http://example.com/ns%23string>;<http://www.w3.org/2001/XMLSchema%23string>" ) ).not.toBe( - 1 );
 						checkPrefer( request, false );
-					}) );
+					} ) );
 				})();
 
 				(() => {
@@ -2056,7 +2290,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					let retrievalPreferences:RetrievalPreferences.Class = {
 						limit: 10,
 						offset: 0,
-						orderBy: [ { "@id": "http://example.com/ns#string", "@type": "string" } ]
+						orderBy: [ {"@id": "http://example.com/ns#string", "@type": "string"} ]
 					};
 
 					let promise:Promise<[ PersistedDocument.Class[], HTTP.Response.Class ]> = documents.getMembers( "resource-3/", true, retrievalPreferences );
@@ -2068,9 +2302,9 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 						let request:JasmineAjaxRequest = jasmine.Ajax.requests.filter( /resource-3/ )[ 0 ];
 						let url:string = decodeURI( request.url );
-						expect( url.indexOf( "resource-3/?limit=10&offset=0&orderBy=<http://example.com/ns%23string>;<http://www.w3.org/2001/XMLSchema%23string>" ) ).not.toBe( -1 );
+						expect( url.indexOf( "resource-3/?limit=10&offset=0&orderBy=<http://example.com/ns%23string>;<http://www.w3.org/2001/XMLSchema%23string>" ) ).not.toBe( - 1 );
 						checkPrefer( request, true );
-					}) );
+					} ) );
 				})();
 
 				(() => {
@@ -2079,7 +2313,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					let retrievalPreferences:RetrievalPreferences.Class = {
 						limit: 10,
 						offset: 0,
-						orderBy: [ { "@id": "http://example.com/ns#string", "@type": "string" } ]
+						orderBy: [ {"@id": "http://example.com/ns#string", "@type": "string"} ]
 					};
 
 					let promise:Promise<[ PersistedDocument.Class[], HTTP.Response.Class ]> = documents.getMembers( "resource-4/", false, retrievalPreferences );
@@ -2091,28 +2325,28 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 						let request:JasmineAjaxRequest = jasmine.Ajax.requests.filter( /resource-4/ )[ 0 ];
 						let url:string = decodeURI( request.url );
-						expect( url.indexOf( "resource-4/?limit=10&offset=0&orderBy=<http://example.com/ns%23string>;<http://www.w3.org/2001/XMLSchema%23string>" ) ).not.toBe( -1 );
+						expect( url.indexOf( "resource-4/?limit=10&offset=0&orderBy=<http://example.com/ns%23string>;<http://www.w3.org/2001/XMLSchema%23string>" ) ).not.toBe( - 1 );
 						checkPrefer( request, false );
-					}) );
+					} ) );
 				})();
 
 				Promise.all( promises ).then( done ).catch( done.fail );
-			});
+			} );
 
 			it( hasSignature(
 				"Retrieves all the members of a document and their contents.", [
-					{ name: "uri", type: "string", description: "URI of the document from where to look for its members." },
-					{ name: "includeNonReadable", type: "boolean", optional: true, description: "Specify if the response should include the Non Readable resources. By default this is set to `true`." },
-					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Options that can be specified to change the behavior of the request." },
+					{name: "uri", type: "string", description: "URI of the document from where to look for its members."},
+					{name: "includeNonReadable", type: "boolean", optional: true, description: "Specify if the response should include the Non Readable resources. By default this is set to `true`."},
+					{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customisable options for the request."},
 				],
-				{ type: "Promise<[ Carbon.Pointer.Class[], Carbon.HTTP.Response.Class ]>" }
-			), ( done:{ ():void, fail:() => void }) => {
+				{type: "Promise<[ Carbon.Pointer.Class[], Carbon.HTTP.Response.Class ]>"}
+			), ( done:{ ():void, fail:() => void } ) => {
 				let promises:Promise<any> [] = [];
 
 				(() => {
 					stubListRequest( "resource-1/" );
 
-					let options:HTTP.Request.Options = { timeout: 12345 };
+					let options:HTTP.Request.Options = {timeout: 12345};
 					let promise:Promise<[ PersistedDocument.Class[], HTTP.Response.Class ]> = documents.getMembers( "resource-1/", true, options );
 
 					expect( promise instanceof Promise ).toBe( true );
@@ -2126,13 +2360,13 @@ describe( module( "Carbon/Documents" ), ():void => {
 						let request:JasmineAjaxRequest = jasmine.Ajax.requests.filter( /resource-1/ )[ 0 ];
 						expect( request.url ).toMatch( "resource-1/" );
 						checkPrefer( request, true );
-					}) );
+					} ) );
 				})();
 
 				(() => {
 					stubListRequest( "resource-2/" );
 
-					let options:HTTP.Request.Options = { timeout: 12345 };
+					let options:HTTP.Request.Options = {timeout: 12345};
 					let promise:Promise<[ PersistedDocument.Class[], HTTP.Response.Class ]> = documents.getMembers( "resource-2/", false, options );
 
 					expect( promise instanceof Promise ).toBe( true );
@@ -2146,7 +2380,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 						let request:JasmineAjaxRequest = jasmine.Ajax.requests.filter( /resource-2/ )[ 0 ];
 						expect( request.url ).toMatch( "resource-2/" );
 						checkPrefer( request, false );
-					}) );
+					} ) );
 				})();
 
 				(() => {
@@ -2162,7 +2396,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 						let request:JasmineAjaxRequest = jasmine.Ajax.requests.filter( /resource-3/ )[ 0 ];
 						expect( request.url ).toMatch( "resource-3/" );
 						checkPrefer( request, true );
-					}) );
+					} ) );
 				})();
 
 				(() => {
@@ -2178,30 +2412,30 @@ describe( module( "Carbon/Documents" ), ():void => {
 						let request:JasmineAjaxRequest = jasmine.Ajax.requests.filter( /resource-4/ )[ 0 ];
 						expect( request.url ).toMatch( "resource-4/" );
 						checkPrefer( request, false );
-					}) );
+					} ) );
 				})();
 
 				Promise.all( promises ).then( done ).catch( done.fail );
-			});
+			} );
 
 			it( hasSignature(
 				"Retrieves all the members of a document and their content, or a part of them in accordance to the retrieval preferences specified.", [
-					{ name: "uri", type: "string", description: "URI of the document from where to look for its members." },
-					{ name: "retrievalPreferences", type: "Carbon.RetrievalPreferences.Class", optional: true, description: "An object for specify the retrieval preferences for the request." },
-					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Options that can be specified to change the behavior of the request." },
+					{name: "uri", type: "string", description: "URI of the document from where to look for its members."},
+					{name: "retrievalPreferences", type: "Carbon.RetrievalPreferences.Class", optional: true, description: "An object for specify the retrieval preferences for the request."},
+					{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customisable options for the request."},
 				],
-				{ type: "Promise<[ Carbon.Pointer.Class[], Carbon.HTTP.Response.Class ]>" }
-			), ( done:{ ():void, fail:() => void }) => {
+				{type: "Promise<[ Carbon.Pointer.Class[], Carbon.HTTP.Response.Class ]>"}
+			), ( done:{ ():void, fail:() => void } ) => {
 				let promises:Promise<any> [] = [];
 
 				(() => {
 					stubListRequest( "resource-1/" );
 
-					let options:HTTP.Request.Options = { timeout: 12345 };
+					let options:HTTP.Request.Options = {timeout: 12345};
 					let retrievalPreferences:RetrievalPreferences.Class = {
 						limit: 10,
 						offset: 0,
-						orderBy: [ { "@id": "http://example.com/ns#string", "@type": "string" } ]
+						orderBy: [ {"@id": "http://example.com/ns#string", "@type": "string"} ]
 					};
 
 					let promise:Promise<[ PersistedDocument.Class[], HTTP.Response.Class ]> = documents.getMembers( "resource-1/", retrievalPreferences, options );
@@ -2216,9 +2450,9 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 						let request:JasmineAjaxRequest = jasmine.Ajax.requests.filter( /resource-1/ )[ 0 ];
 						let url:string = decodeURI( request.url );
-						expect( url.indexOf( "resource-1/?limit=10&offset=0&orderBy=<http://example.com/ns%23string>;<http://www.w3.org/2001/XMLSchema%23string>" ) ).not.toBe( -1 );
+						expect( url.indexOf( "resource-1/?limit=10&offset=0&orderBy=<http://example.com/ns%23string>;<http://www.w3.org/2001/XMLSchema%23string>" ) ).not.toBe( - 1 );
 						checkPrefer( request );
-					}) );
+					} ) );
 				})();
 
 				(() => {
@@ -2227,7 +2461,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					let retrievalPreferences:RetrievalPreferences.Class = {
 						limit: 10,
 						offset: 0,
-						orderBy: [ { "@id": "http://example.com/ns#string", "@type": "string" } ]
+						orderBy: [ {"@id": "http://example.com/ns#string", "@type": "string"} ]
 					};
 
 					let promise:Promise<[ PersistedDocument.Class[], HTTP.Response.Class ]> = documents.getMembers( "resource-2/", retrievalPreferences );
@@ -2239,27 +2473,27 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 						let request:JasmineAjaxRequest = jasmine.Ajax.requests.filter( /resource-2/ )[ 0 ];
 						let url:string = decodeURI( request.url );
-						expect( url.indexOf( "resource-2/?limit=10&offset=0&orderBy=<http://example.com/ns%23string>;<http://www.w3.org/2001/XMLSchema%23string>" ) ).not.toBe( -1 );
+						expect( url.indexOf( "resource-2/?limit=10&offset=0&orderBy=<http://example.com/ns%23string>;<http://www.w3.org/2001/XMLSchema%23string>" ) ).not.toBe( - 1 );
 						checkPrefer( request );
-					}) );
+					} ) );
 				})();
 
 				Promise.all( promises ).then( done ).catch( done.fail );
-			});
+			} );
 
 			it( hasSignature(
 				"Retrieves all the members of a document and their contents.", [
-					{ name: "uri", type: "string", description: "URI of the document from where to look for its members." },
-					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Options that can be specified to change the behavior of the request." },
+					{name: "uri", type: "string", description: "URI of the document from where to look for its members."},
+					{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customisable options for the request."},
 				],
-				{ type: "Promise<[ Carbon.Pointer.Class[], Carbon.HTTP.Response.Class ]>" }
+				{type: "Promise<[ Carbon.Pointer.Class[], Carbon.HTTP.Response.Class ]>"}
 			), ( done:{ ():void, fail:() => void } ) => {
 				let promises:Promise<any> [] = [];
 
 				(() => {
 					stubListRequest( "resource-1/" );
 
-					let options:HTTP.Request.Options = { timeout: 12345 };
+					let options:HTTP.Request.Options = {timeout: 12345};
 					let promise:Promise<[ PersistedDocument.Class[], HTTP.Response.Class ]> = documents.getMembers( "resource-1/", options );
 
 					expect( promise instanceof Promise ).toBe( true );
@@ -2273,7 +2507,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 						let request:JasmineAjaxRequest = jasmine.Ajax.requests.filter( /resource-1/ )[ 0 ];
 						expect( request.url ).toMatch( "resource-1/" );
 						checkPrefer( request );
-					}) );
+					} ) );
 				})();
 
 				(() => {
@@ -2289,13 +2523,13 @@ describe( module( "Carbon/Documents" ), ():void => {
 						let request:JasmineAjaxRequest = jasmine.Ajax.requests.filter( /resource-2/ )[ 0 ];
 						expect( request.url ).toMatch( "resource-2/" );
 						checkPrefer( request );
-					}) );
+					} ) );
 				})();
 
 				Promise.all( promises ).then( done ).catch( done.fail );
-			});
+			} );
 
-		});
+		} );
 
 		describe( method(
 			INSTANCE,
@@ -2313,15 +2547,15 @@ describe( module( "Carbon/Documents" ), ():void => {
 			beforeEach( ():void => {
 				context = new MockedContext();
 				documents = context.documents;
-			});
+			} );
 
 			it( hasSignature(
 				"Add a member relation to the resource Pointer in the document container specified.", [
-					{ name: "documentURI", type: "string", description: "URI of the document container where the member will be added." },
-					{ name: "member", type: "Carbon.Pointer.Class", description: "Pointer object that references the resource to add as a member." },
-					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true }
+					{name: "documentURI", type: "string", description: "URI of the document container where the member will be added."},
+					{name: "member", type: "Carbon.Pointer.Class", description: "Pointer object that references the resource to add as a member."},
+					{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customisable options for the request."}
 				],
-				{ type: "Promise<Carbon.HTTP.Response>"}
+				{type: "Promise<Carbon.HTTP.Response>"}
 			), ():void => {
 				expect( documents.addMember ).toBeDefined();
 				expect( Utils.isFunction( documents.addMember ) ).toBe( true );
@@ -2331,15 +2565,15 @@ describe( module( "Carbon/Documents" ), ():void => {
 				let pointer:Pointer.Class = documents.getPointer( "new-member/" );
 				documents.addMember( "resource/", pointer );
 				expect( spy ).toHaveBeenCalledWith( "resource/", [ pointer ], {} );
-			});
+			} );
 
 			it( hasSignature(
 				"Add a member relation to the resource URI in the document container specified.", [
-					{ name: "documentURI", type: "string", description: "URI of the document container where the member will be added." },
-					{ name: "memberURI", type: "string", description: "URI of the resource to add as a member." },
-					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true }
+					{name: "documentURI", type: "string", description: "URI of the document container where the member will be added."},
+					{name: "memberURI", type: "string", description: "URI of the resource to add as a member."},
+					{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customisable options for the request."}
 				],
-				{ type: "Promise<Carbon.HTTP.Response>"}
+				{type: "Promise<Carbon.HTTP.Response>"}
 			), ():void => {
 				expect( documents.addMember ).toBeDefined();
 				expect( Utils.isFunction( documents.addMember ) ).toBe( true );
@@ -2348,19 +2582,19 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 				documents.addMember( "resource/", "new-member/" );
 				expect( spy ).toHaveBeenCalledWith( "resource/", [ "new-member/" ], {} );
-			});
+			} );
 
-		});
+		} );
 
 		it( hasMethod(
 			INSTANCE,
 			"addMembers",
 			"Add a member relation to every resources URI or Pointer provided in the document container specified.", [
-				{ name: "documentURI", type: "string", description: "URI of the document container where the members will be added." },
-				{ name: "members", type: "(Carbon.Pointer.Class | string)[]", description: "Array of URIs or Pointers to add as members." },
-				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true }
+				{name: "documentURI", type: "string", description: "URI of the document container where the members will be added."},
+				{name: "members", type: "(Carbon.Pointer.Class | string)[]", description: "Array of URIs or Pointers to add as members."},
+				{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customisable options for the request."}
 			],
-			{ type: "Promise<Carbon.HTTP.Response>"}
+			{type: "Promise<Carbon.HTTP.Response>"}
 		), ( done:{ ():void, fail:() => void } ):void => {
 			class MockedContext extends AbstractContext {
 				resolve( uri:string ):string {
@@ -2375,7 +2609,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 			jasmine.Ajax.stubRequest( "http://example.com/resource/", null, "PUT" ).andReturn( {
 				status: 200
-			});
+			} );
 
 			let spies = {
 				success: ( response:any ):void => {
@@ -2399,7 +2633,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 			expect( promise instanceof Promise ).toBe( true );
 			promises.push( promise.then( spies.success ) );
 
-			members = [ documents.getPointer( "new-member-01/" ), "new-member-02/", <any> { "something": "nor string or Pointer" } ];
+			members = [ documents.getPointer( "new-member-01/" ), "new-member-02/", <any> {"something": "nor string or Pointer"} ];
 			promise = documents.addMembers( "resource/", members );
 			expect( promise instanceof Promise ).toBe( true );
 			promises.push( promise.catch( spies.fail ) );
@@ -2409,7 +2643,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				expect( spyFail ).toHaveBeenCalledTimes( 1 );
 				done();
 			}, done.fail );
-		});
+		} );
 
 		describe( method(
 			INSTANCE,
@@ -2427,15 +2661,15 @@ describe( module( "Carbon/Documents" ), ():void => {
 			beforeEach( ():void => {
 				context = new MockedContext();
 				documents = context.documents;
-			});
+			} );
 
 			it( hasSignature(
 				"Remove the member relation to the Pointer provided from the resource container specified.", [
-					{ name: "documentURI", type: "string", description: "URI of the resource container from where the member will be removed." },
-					{ name: "member", type: "Carbon.Pointer.Class", description: "Pointer object that references the resource to remove as a member." },
-					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true }
+					{name: "documentURI", type: "string", description: "URI of the resource container from where the member will be removed."},
+					{name: "member", type: "Carbon.Pointer.Class", description: "Pointer object that references the resource to remove as a member."},
+					{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customisable options for the request."}
 				],
-				{ type: "Promise<Carbon.HTTP.Response>"}
+				{type: "Promise<Carbon.HTTP.Response>"}
 			), ():void => {
 				expect( documents.removeMember ).toBeDefined();
 				expect( Utils.isFunction( documents.removeMember ) ).toBe( true );
@@ -2445,15 +2679,15 @@ describe( module( "Carbon/Documents" ), ():void => {
 				let pointer:Pointer.Class = documents.getPointer( "remove-member/" );
 				documents.removeMember( "resource/", pointer );
 				expect( spy ).toHaveBeenCalledWith( "resource/", [ pointer ], {} );
-			});
+			} );
 
 			it( hasSignature(
 				"Remove the member relation to the resource URI from the resource container specified.", [
-					{ name: "documentURI", type: "string", description: "URI of the resource container from where the member will be removed." },
-					{ name: "memberURI", type: "string", description: "URI of the resource to remove as a member." },
-					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true }
+					{name: "documentURI", type: "string", description: "URI of the resource container from where the member will be removed."},
+					{name: "memberURI", type: "string", description: "URI of the resource to remove as a member."},
+					{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customisable options for the request."}
 				],
-				{ type: "Promise<Carbon.HTTP.Response>"}
+				{type: "Promise<Carbon.HTTP.Response>"}
 			), ():void => {
 				expect( documents.removeMember ).toBeDefined();
 				expect( Utils.isFunction( documents.removeMember ) ).toBe( true );
@@ -2462,19 +2696,19 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 				documents.removeMember( "resource/", "remove-member/" );
 				expect( spy ).toHaveBeenCalledWith( "resource/", [ "remove-member/" ], {} );
-			});
+			} );
 
-		});
+		} );
 
 		it( hasMethod(
 			INSTANCE,
 			"removeMembers",
 			"Remove the member relation to every specified resource URI or Pointer form the document container specified.", [
-				{ name: "documentURI", type: "string", description: "URI of the document container where the members will be removed." },
-				{ name: "members", type: "(Carbon.Pointer.Class | string)[]", description: "Array of URIs or Pointers to remove as members" },
-				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true }
+				{name: "documentURI", type: "string", description: "URI of the document container where the members will be removed."},
+				{name: "members", type: "(Carbon.Pointer.Class | string)[]", description: "Array of URIs or Pointers to remove as members"},
+				{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customisable options for the request."}
 			],
-			{ type: "Promise<Carbon.HTTP.Response>" }
+			{type: "Promise<Carbon.HTTP.Response>"}
 		), ( done:{ ():void, fail:() => void } ):void => {
 			class MockedContext extends AbstractContext {
 				resolve( uri:string ):string {
@@ -2489,7 +2723,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 			jasmine.Ajax.stubRequest( "http://example.com/resource/", null, "DELETE" ).andReturn( {
 				status: 200
-			});
+			} );
 
 			let spies = {
 				success: ( response:any ):void => {
@@ -2513,7 +2747,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 			expect( promise instanceof Promise ).toBe( true );
 			promises.push( promise.then( spies.success ) );
 
-			members = [ documents.getPointer( "remove-member-01/" ), "remove-member-02/", <any> { "something": "nor string or Pointer" } ];
+			members = [ documents.getPointer( "remove-member-01/" ), "remove-member-02/", <any> {"something": "nor string or Pointer"} ];
 			promise = documents.removeMembers( "resource/", members );
 			expect( promise instanceof Promise ).toBe( true );
 			promises.push( promise.catch( spies.fail ) );
@@ -2523,16 +2757,16 @@ describe( module( "Carbon/Documents" ), ():void => {
 				expect( spyFail ).toHaveBeenCalledTimes( 1 );
 				done();
 			}, done.fail );
-		});
+		} );
 
 		it( hasMethod(
 			INSTANCE,
 			"removeAllMembers",
 			"Remove all the member relations from the document container specified.", [
-				{ name: "documentURI", type: "string", description: "URI of the document container where the members will be removed." },
-				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true }
+				{name: "documentURI", type: "string", description: "URI of the document container where the members will be removed."},
+				{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customisable options for the request."}
 			],
-			{ type: "Promise<Carbon.HTTP.Response>"}
+			{type: "Promise<Carbon.HTTP.Response>"}
 		), ( done:{ ():void, fail:() => void } ):void => {
 			class MockedContext extends AbstractContext {
 				resolve( uri:string ):string {
@@ -2547,7 +2781,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 			jasmine.Ajax.stubRequest( "http://example.com/resource/", null, "DELETE" ).andReturn( {
 				status: 200
-			});
+			} );
 
 			let spies = {
 				success: ( response:any ):void => {
@@ -2573,25 +2807,25 @@ describe( module( "Carbon/Documents" ), ():void => {
 				expect( spySuccess ).toHaveBeenCalledTimes( 1 );
 				expect( spyFail ).not.toHaveBeenCalled();
 				done();
-			}).catch( done.fail );
-		});
+			} ).catch( done.fail );
+		} );
 
 		it( hasMethod(
 			INSTANCE,
 			"refresh",
 			"Update the specified document with the data of the CarbonLDP server, if a newest version exists.", [
-				{ name: "persistedDocument", type: "Carbon.PersistedDocument.Class", description: "The persisted document to update." },
-				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true }
+				{name: "persistedDocument", type: "Carbon.PersistedDocument.Class", description: "The persisted document to update."},
+				{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customisable options for the request."}
 			],
-			{ type: "Promise<[ Carbon.PersistedDocument.Class, Carbon.HTTP.Response ]>" }
+			{type: "Promise<[ Carbon.PersistedDocument.Class, Carbon.HTTP.Response ]>"}
 		), ( done:{ ():void, fail:() => void } ):void => {
-		class MockedContext extends AbstractContext {
-			resolve( uri:string ):string {
-				return uri;
+			class MockedContext extends AbstractContext {
+				resolve( uri:string ):string {
+					return uri;
+				}
 			}
-		}
-		let context:MockedContext = new MockedContext();
-		let documents:Documents = context.documents;
+			let context:MockedContext = new MockedContext();
+			let documents:Documents = context.documents;
 
 			expect( documents.refresh ).toBeDefined();
 			expect( Utils.isFunction( documents.refresh ) ).toBe( true );
@@ -2639,7 +2873,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				responseHeaders: {
 					"ETag": `"0123456789"`
 				}
-			});
+			} );
 			jasmine.Ajax.stubRequest( "http://example.com/resource/", null, "GET" ).andReturn( {
 				status: 200,
 				responseText: `[{
@@ -2683,7 +2917,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				responseHeaders: {
 					"ETag": `"0123456789"`
 				}
-			});
+			} );
 
 			let document:PersistedDocument.Class;
 			let fragment:PersistedNamedFragment.Class;
@@ -2721,7 +2955,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 						responseHeaders: {
 							"ETag": `"dif0123456789"`
 						}
-					});
+					} );
 					jasmine.Ajax.stubRequest( "http://example.com/resource/", null, "GET" ).andReturn( {
 						status: 200,
 						responseText: `[{
@@ -2765,7 +2999,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 						responseHeaders: {
 							"ETag": `"dif0123456789"`
 						}
-					});
+					} );
 
 					let promise:Promise<any> = documents.refresh( document );
 					expect( promise instanceof Promise ).toBe( true );
@@ -2779,11 +3013,11 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 					expect( document[ "pointer" ] ).toBe( blankNode01 );
 					expect( document[ "pointer" ][ "string" ] ).toBe( "Changed Fragment 1" );
-					expect( blankNode01[ "string"] ).toBe( "Changed Fragment 1" );
+					expect( blankNode01[ "string" ] ).toBe( "Changed Fragment 1" );
 					expect( blankNode01.id ).toBe( "_:0001" );
 					expect( blankNode01 ).toBe( document.getFragment( "_:0001" ) );
 					expect( document[ "pointerSet" ][ 0 ] ).toBe( blankNode01 );
-					expect( document.hasFragment( "_:1") ).toBe( false );
+					expect( document.hasFragment( "_:1" ) ).toBe( false );
 
 					expect( blankNode02.id ).toBe( "_:2" );
 					expect( blankNode02.id ).not.toBe( document.getFragment( "_:2" ) );
@@ -2810,17 +3044,17 @@ describe( module( "Carbon/Documents" ), ():void => {
 				expect( spySame ).toHaveBeenCalledTimes( 1 );
 				expect( spySuccess ).toHaveBeenCalledTimes( 1 );
 				done();
-			}).catch( done.fail );
-		});
+			} ).catch( done.fail );
+		} );
 
 		it( hasMethod(
 			INSTANCE,
 			"delete",
 			"Delete the resource from the CarbonLDP server referred by the URI provided.", [
-				{ name: "documentURI", type: "string", description: "The resource to delete from the CarbonLDP server." },
-				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true }
+				{name: "documentURI", type: "string", description: "The resource to delete from the CarbonLDP server."},
+				{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customisable options for the request."}
 			],
-			{ type: "Promise<Carbon.HTTP.Response.Class>" }
+			{type: "Promise<Carbon.HTTP.Response.Class>"}
 		), ( done:{ ():void, fail:() => void } ):void => {
 			class MockedContext extends AbstractContext {
 				resolve( uri:string ):string {
@@ -2836,7 +3070,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 			jasmine.Ajax.stubRequest( "http://example.com/resource/", null, "DELETE" ).andReturn( {
 				status: 200
-			});
+			} );
 
 			let spies = {
 				success: ( response:any ):void => {
@@ -2863,15 +3097,16 @@ describe( module( "Carbon/Documents" ), ():void => {
 				expect( spySuccess ).toHaveBeenCalled();
 				done();
 			}, done.fail );
-		});
+		} );
 
 		it( hasMethod( INSTANCE, "executeRawASKQuery", `
 				Executes an ASK query on a document and returns a raw application/sparql-results+json object
 			`, [
-			{ name: "documentURI", type: "string" },
-			{ name: "askQuery", type: "string" },
-			{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
-		], { type: "Promise<[ Carbon.SPARQL.RawResults.Class, Carbon.HTTP.Response.Class ]>" } ), ():void => {
+				{name: "documentURI", type: "string", description: "URI of the document that works as a SPARQL endpoint where to execute the SPARQL query."},
+				{name: "askQuery", type: "string", description: "ASK query to execute in the selected endpoint."},
+				{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customisable options for the request."},
+			], {type: "Promise<[ Carbon.SPARQL.RawResults.Class, Carbon.HTTP.Response.Class ]>"}
+		), ():void => {
 			class MockedContext extends AbstractContext {
 				resolve( uri:string ):string {
 					return "http://example.com/" + uri;
@@ -2890,7 +3125,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 			let spyService = spyOn( SPARQL.Service, "executeRawASKQuery" );
 
 			// Proper execution
-			( function ProperExecution() {
+			(function ProperExecution() {
 				documents.executeRawASKQuery( "http://example.com/document/", "ASK { ?subject, ?predicate, ?object }" );
 
 				expect( spyService ).toHaveBeenCalledWith( "http://example.com/document/", "ASK { ?subject, ?predicate, ?object }", jasmine.any( Object ) );
@@ -2898,18 +3133,21 @@ describe( module( "Carbon/Documents" ), ():void => {
 			})();
 
 			// Relative URI
-			( function RelativeURI() {
+			(function RelativeURI() {
 				documents.executeRawASKQuery( "document/", "ASK { ?subject, ?predicate, ?object }" );
 
 				expect( spyService ).toHaveBeenCalledWith( "http://example.com/document/", "ASK { ?subject, ?predicate, ?object }", jasmine.any( Object ) );
 				spyService.calls.reset();
 			})();
-		});
-		it( hasMethod( INSTANCE, "executeRawSELECTQuery", `Executes a SELECT query on a document and returns a raw application/sparql-results+json object`, [
-			{ name: "documentURI", type: "string" },
-			{ name: "selectQuery", type: "string" },
-			{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
-		], { type: "Promise<[ Carbon.SPARQL.RawResults.Class, Carbon.HTTP.Response.Class ]>" } ), ():void => {
+		} );
+
+		it( hasMethod( INSTANCE, "executeRawSELECTQuery",
+			`Executes a SELECT query on a document and returns a raw application/sparql-results+json object`, [
+				{name: "documentURI", type: "string", description: "URI of the document that works as a SPARQL endpoint where to execute the SPARQL query."},
+				{name: "selectQuery", type: "string", description: "SELECT query to execute in the selected endpoint."},
+				{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customisable options for the request."},
+			], {type: "Promise<[ Carbon.SPARQL.RawResults.Class, Carbon.HTTP.Response.Class ]>"}
+		), ():void => {
 			class MockedContext extends AbstractContext {
 				resolve( uri:string ):string {
 					return "http://example.com/" + uri;
@@ -2928,7 +3166,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 			let spyService = spyOn( SPARQL.Service, "executeRawSELECTQuery" );
 
 			// Proper execution
-			( function ProperExecution() {
+			(function ProperExecution() {
 
 				documents.executeRawSELECTQuery( "http://example.com/document/", "SELECT ?book ?title WHERE { <http://example.com/some-document/> ?book ?title }" );
 
@@ -2937,22 +3175,23 @@ describe( module( "Carbon/Documents" ), ():void => {
 			})();
 
 			// Relative URI
-			( function RelativeURI() {
+			(function RelativeURI() {
 
 				documents.executeRawSELECTQuery( "document/", "SELECT ?book ?title WHERE { <http://example.com/some-document/> ?book ?title }" );
 
 				expect( spyService ).toHaveBeenCalledWith( "http://example.com/document/", "SELECT ?book ?title WHERE { <http://example.com/some-document/> ?book ?title }", jasmine.any( Object ) );
 				spyService.calls.reset();
 			})();
-		});
+		} );
 
 		it( hasMethod( INSTANCE, "executeRawCONSTRUCTQuery", `
 				Executes a CONSTRUCT query on a document and returns a string with the resulting model
 			`, [
-			{ name: "documentURI", type: "string" },
-			{ name: "constructQuery", type: "string" },
-			{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
-		], { type: "Promise<[ string, Carbon.HTTP.Response.Class ]>" } ), ():void => {
+				{name: "documentURI", type: "string", description: "URI of the document that works as a SPARQL endpoint where to execute the SPARQL query."},
+				{name: "constructQuery", type: "string", description: "CONSTRUCT query to execute in the selected endpoint."},
+				{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customisable options for the request."},
+			], {type: "Promise<[ string, Carbon.HTTP.Response.Class ]>"}
+		), ():void => {
 			class MockedContext extends AbstractContext {
 				resolve( uri:string ):string {
 					return "http://example.com/" + uri;
@@ -2971,7 +3210,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 			let spyService = spyOn( SPARQL.Service, "executeRawCONSTRUCTQuery" );
 
 			// Proper execution
-			( function ProperExecution() {
+			(function ProperExecution() {
 
 				documents.executeRawCONSTRUCTQuery( "http://example.com/document/", "CONSTRUCT { ?subject ?predicate ?object } WHERE { ?subject ?predicate ?object }" );
 
@@ -2980,22 +3219,23 @@ describe( module( "Carbon/Documents" ), ():void => {
 			})();
 
 			// Relative URI
-			( function RelativeURI() {
+			(function RelativeURI() {
 
 				documents.executeRawCONSTRUCTQuery( "document/", "CONSTRUCT { ?subject ?predicate ?object } WHERE { ?subject ?predicate ?object }" );
 
 				expect( spyService ).toHaveBeenCalledWith( "http://example.com/document/", "CONSTRUCT { ?subject ?predicate ?object } WHERE { ?subject ?predicate ?object }", jasmine.any( Object ) );
 				spyService.calls.reset();
 			})();
-		});
+		} );
 
 		it( hasMethod( INSTANCE, "executeRawDESCRIBEQuery", `
 				Executes a DESCRIBE Query and returns a string with the resulting model
 			`, [
-			{ name: "documentURI", type: "string" },
-			{ name: "describeQuery", type: "string" },
-			{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
-		], { type: "Promise<[ string, Carbon.HTTP.Response.Class ]>" } ), ():void => {
+				{name: "documentURI", type: "string", description: "URI of the document that works as a SPARQL endpoint where to execute the SPARQL query."},
+				{name: "describeQuery", type: "string", description: "DESCRIBE query to execute in the selected endpoint."},
+				{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customisable options for the request."},
+			], {type: "Promise<[ string, Carbon.HTTP.Response.Class ]>"}
+		), ():void => {
 			class MockedContext extends AbstractContext {
 				resolve( uri:string ):string {
 					return "http://example.com/" + uri;
@@ -3014,7 +3254,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 			let spyService = spyOn( SPARQL.Service, "executeRawDESCRIBEQuery" );
 
 			// Proper execution
-			( function ProperExecution() {
+			(function ProperExecution() {
 
 				documents.executeRawDESCRIBEQuery( "http://example.com/document/", "DESCRIBE { ?subject ?predicate ?object } WHERE { ?subject ?predicate ?object }" );
 
@@ -3023,16 +3263,16 @@ describe( module( "Carbon/Documents" ), ():void => {
 			})();
 
 			// Relative URI
-			( function RelativeURI() {
+			(function RelativeURI() {
 
 				documents.executeRawDESCRIBEQuery( "document/", "DESCRIBE { ?subject ?predicate ?object } WHERE { ?subject ?predicate ?object }" );
 
 				expect( spyService ).toHaveBeenCalledWith( "http://example.com/document/", "DESCRIBE { ?subject ?predicate ?object } WHERE { ?subject ?predicate ?object }", jasmine.any( Object ) );
 				spyService.calls.reset();
 			})();
-		});
+		} );
 
-	});
+	} );
 
-});
+} );
 

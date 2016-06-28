@@ -72,6 +72,8 @@
 			- [Methods](#Carbon-Document-Factory-Decorated-Object-Methods)
 - [Module Carbon/Documents](#Carbon-Documents)
 	- [Class Carbon.Documents](#Carbon-Documents)
+		- [Constructor](#Carbon-Documents-Constructor)
+		- [Properties](#Carbon-Documents-Properties)
 		- [Methods](#Carbon-Documents-Methods)
 - [Module Carbon/Errors](#Carbon-Errors)
 	- [Reexports](#Carbon-Errors-Reexports)
@@ -1787,20 +1789,61 @@ Returns a JSON string from the Document using the default ObjectSchema.
 > Class that contains methods for retrieving, saving and updating documents from the CarbonLDP server.
 
 
+#### <a name="Carbon-Documents-Constructor" />Constructor
+```typescript 
+Documents( context?:Carbon.Context )
+```
 
+
+*Parameters*
+
+- context: The context where the documents instance will live. If no context is provided, calling its methods with relative URIs will throw an error, since there will be no form to resolve them.
+
+
+#### <a name="Carbon-Documents-Properties" />Properties
+
+```typescript 
+jsonldConverter:Carbon.JSONLDConverter.Class 
+```
+
+Instance of `Carbon.JSONLDConverter.Class` that is used to compact retrieved documents and to expand documents to persist. This property is not writable.
 
 #### <a name="Carbon-Documents-Methods" />Methods
 
+##### hasPointer
+```typescript 
+hasPointer( id:string ):boolean
+```
+
+Returns true if the Documents instance has a pointer referenced by the URI provided.
+
+*Parameters*
+
+- id: URI to look for.
+
+##### getPointer
+```typescript 
+getPointer( id:string ):boolean
+```
+
+Returns the pointer referenced by the URI provided. If no pointer exists, one is created and then returned.
+Returns `null` if the URI is outside the scope of the Documents instance.
+
+*Parameters*
+
+- id: URI to look for.
+
 ##### get
 ```typescript 
-get( uri:string ):Promise<[ Carbon.PersistedDocument.Class, HTTP.Response.Class ]>
+get( uri:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.PersistedDocument.Class, HTTP.Response.Class ]>
 ```
 
 Retrieves the Carbon Document referred by the URI specified from the CarbonLDP server.
 
 *Parameters*
 
-- uri
+- uri: The URI of the document to retrieve.
+- requestOptions: Customisable options for the request.
 
 ##### exists
 ```typescript 
@@ -1811,8 +1854,8 @@ Retrieves a boolean indicating if the resource exists or not in the CarbonLDP se
 
 *Parameters*
 
-- documentURI
-- requestOptions
+- documentURI: The URI to verify if it exists.
+- requestOptions: Customisable options for the request.
 
 ##### listChildren
 ```typescript 
@@ -1824,7 +1867,7 @@ Retrieves an array of unresolved pointers that refers to the children of the con
 *Parameters*
 
 - parentURI: URI of the document container where to look for its children.
-- requestOptions
+- requestOptions: Customisable options for the request.
 
 ##### addMembers
 ```typescript 
@@ -1837,7 +1880,7 @@ Add a member relation to every resources URI or Pointer provided in the document
 
 - documentURI: URI of the document container where the members will be added.
 - members: Array of URIs or Pointers to add as members.
-- requestOptions
+- requestOptions: Customisable options for the request.
 
 ##### removeMembers
 ```typescript 
@@ -1850,7 +1893,7 @@ Remove the member relation to every specified resource URI or Pointer form the d
 
 - documentURI: URI of the document container where the members will be removed.
 - members: Array of URIs or Pointers to remove as members
-- requestOptions
+- requestOptions: Customisable options for the request.
 
 ##### removeAllMembers
 ```typescript 
@@ -1862,7 +1905,7 @@ Remove all the member relations from the document container specified.
 *Parameters*
 
 - documentURI: URI of the document container where the members will be removed.
-- requestOptions
+- requestOptions: Customisable options for the request.
 
 ##### refresh
 ```typescript 
@@ -1874,7 +1917,7 @@ Update the specified document with the data of the CarbonLDP server, if a newest
 *Parameters*
 
 - persistedDocument: The persisted document to update.
-- requestOptions
+- requestOptions: Customisable options for the request.
 
 ##### delete
 ```typescript 
@@ -1886,7 +1929,7 @@ Delete the resource from the CarbonLDP server referred by the URI provided.
 *Parameters*
 
 - documentURI: The resource to delete from the CarbonLDP server.
-- requestOptions
+- requestOptions: Customisable options for the request.
 
 ##### executeRawASKQuery
 ```typescript 
@@ -1899,9 +1942,9 @@ Executes an ASK query on a document and returns a raw application/sparql-results
 
 *Parameters*
 
-- documentURI
-- askQuery
-- requestOptions
+- documentURI: URI of the document that works as a SPARQL endpoint where to execute the SPARQL query.
+- askQuery: ASK query to execute in the selected endpoint.
+- requestOptions: Customisable options for the request.
 
 ##### executeRawSELECTQuery
 ```typescript 
@@ -1912,9 +1955,9 @@ Executes a SELECT query on a document and returns a raw application/sparql-resul
 
 *Parameters*
 
-- documentURI
-- selectQuery
-- requestOptions
+- documentURI: URI of the document that works as a SPARQL endpoint where to execute the SPARQL query.
+- selectQuery: SELECT query to execute in the selected endpoint.
+- requestOptions: Customisable options for the request.
 
 ##### executeRawCONSTRUCTQuery
 ```typescript 
@@ -1927,9 +1970,9 @@ Executes a CONSTRUCT query on a document and returns a string with the resulting
 
 *Parameters*
 
-- documentURI
-- constructQuery
-- requestOptions
+- documentURI: URI of the document that works as a SPARQL endpoint where to execute the SPARQL query.
+- constructQuery: CONSTRUCT query to execute in the selected endpoint.
+- requestOptions: Customisable options for the request.
 
 ##### executeRawDESCRIBEQuery
 ```typescript 
@@ -1942,9 +1985,30 @@ Executes a DESCRIBE Query and returns a string with the resulting model
 
 *Parameters*
 
-- documentURI
-- describeQuery
-- requestOptions
+- documentURI: URI of the document that works as a SPARQL endpoint where to execute the SPARQL query.
+- describeQuery: DESCRIBE query to execute in the selected endpoint.
+- requestOptions: Customisable options for the request.
+
+##### inScope
+```typescript 
+inScope( pointer:Carbon.Pointer.Class ):boolean
+```
+
+Returns true if the pointer provided is inside the scope of the Documents instance.
+
+*Parameters*
+
+- pointer: Pointer to evaluate.
+
+```typescript 
+inScope( id:string ):boolean
+```
+
+Returns true if the URI provided is inside the scope of the Documents instance.
+
+*Parameters*
+
+- id: URI to evaluate.
 
 ##### createChild
 ```typescript 
@@ -1955,9 +2019,9 @@ Persists a child document for the respective parent source.
 
 *Parameters*
 
-- parentURI
-- childDocument
-- requestOptions
+- parentURI: URI of the document where to create a new child.
+- childDocument: Document to persists as a new child.
+- requestOptions: Customisable options for the request.
 
 ```typescript 
 createChild( parentURI:string,  slug:string,  childDocument:Carbon.Document.Class,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[Carbon.Pointer.Class, Carbon.HTTP.Response.Class]>
@@ -1967,10 +2031,10 @@ Persists a child document for the respective parent source.
 
 *Parameters*
 
-- parentURI
-- slug
-- childDocument
-- requestOptions
+- parentURI: URI of the document where to create a new child.
+- slug: Slug that will be used for the URI of the new child.
+- childDocument: Document to persists as a new child.
+- requestOptions: Customisable options for the request.
 
 ```typescript 
 createChild( parentURI:string,  childObject:Object,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[Carbon.Pointer.Class, Carbon.HTTP.Response.Class]>
@@ -1980,9 +2044,9 @@ Persists a child document for the respective parent source.
 
 *Parameters*
 
-- parentURI
-- childObject
-- requestOptions
+- parentURI: URI of the document where to create a new child.
+- childObject: A normal javascript object that will ve converted and persisted as a new child document.
+- requestOptions: Customisable options for the request.
 
 ```typescript 
 createChild( parentURI:string,  slug:string,  childObject:Object,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[Carbon.Pointer.Class, Carbon.HTTP.Response.Class]>
@@ -1992,10 +2056,10 @@ Persists a child document for the respective parent source.
 
 *Parameters*
 
-- parentURI
-- slug
-- childObject
-- requestOptions
+- parentURI: URI of the document where to create a new child.
+- slug: Slug that will be used for the URI of the new child.
+- childObject: A normal javascript object that will be converted and persisted as a new child document.
+- requestOptions: Customisable options for the request.
 
 ##### getChildren
 ```typescript 
@@ -2008,7 +2072,7 @@ Retrieves an array of resolved Documents that refers all children of the contain
 
 - parentURI: URI of the document from where to look for its children.
 - retrievalPreferences: An object that specify the retrieval preferences for the request.
-- requestOptions: Options that can be specified to change the behavior of the request.
+- requestOptions: Customisable options for the request.
 
 ```typescript 
 getChildren( parentURI:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.PersistedDocument.Class[], Carbon.HTTP.Response.Class ]>
@@ -2019,7 +2083,7 @@ Retrieves an array of resolved Documents that refers all children of the contain
 *Parameters*
 
 - parentURI: URI of the document from where to look for its children.
-- requestOptions: Options that can be specified to change the behavior of the request.
+- requestOptions: Customisable options for the request.
 
 ##### createAccessPoint
 ```typescript 
@@ -2030,10 +2094,10 @@ Persists an AccessPoint in the document specified.
 
 *Parameters*
 
-- documentURI
-- accessPoint
-- slug
-- requestOptions
+- documentURI: URI of the document where to create a new access point.
+- accessPoint: AccessPoint Document to persists.
+- slug: Slug that will be used for the URI of the new access point.
+- requestOptions: Customisable options for the request.
 
 ```typescript 
 createAccessPoint( accessPoint:Carbon.AccessPoint.Class,  slug?:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[Carbon.Pointer.Class, Carbon.HTTP.Response.Class]>
@@ -2043,9 +2107,9 @@ Persists an AccessPoint in the document specified.
 
 *Parameters*
 
-- accessPoint
-- slug
-- requestOptions
+- accessPoint: AccessPoint Document to persists.
+- slug: Slug that will be used for the URI of the new access point.
+- requestOptions: Customisable options for the request.
 
 ##### upload
 ```typescript 
@@ -2056,9 +2120,9 @@ Upload binary data, creating a child for the parent specified. This signature on
 
 *Parameters*
 
-- parentURI
-- data
-- requestOptions
+- parentURI: URI of the document where to upload the new binary data child.
+- data: Blob of the binary data to upload.
+- requestOptions: Customisable options for the request.
 
 ```typescript 
 upload( parentURI:string,  slug:string,  data:Blob,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[Carbon.Pointer.Class, Carbon.HTTP.Response.Class]>
@@ -2068,10 +2132,10 @@ Upload binary data, creating a child for the parent specified. This signature on
 
 *Parameters*
 
-- parentURI
-- slug
-- data
-- requestOptions
+- parentURI: URI of the document where to upload the new binary data child.
+- slug: Slug that will be used for the URI of the new binary child.
+- data: Blob of the binary data to upload.
+- requestOptions: Customisable options for the request.
 
 ```typescript 
 upload( parentURI:string,  data:Buffer,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[Carbon.Pointer.Class, Carbon.HTTP.Response.Class]>
@@ -2081,9 +2145,9 @@ Upload binary data, creating a child for the parent specified. This signature on
 
 *Parameters*
 
-- parentURI
-- data
-- requestOptions
+- parentURI: URI of the document where to upload the new binary data child.
+- data: Buffer of the binary data to upload.
+- requestOptions: Customisable options for the request.
 
 ```typescript 
 upload( parentURI:string,  slug:string,  data:Buffer,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[Carbon.Pointer.Class, Carbon.HTTP.Response.Class]>
@@ -2093,10 +2157,10 @@ Upload binary data, creating a child for the parent specified. This signature on
 
 *Parameters*
 
-- parentURI
-- slug
-- data
-- requestOptions
+- parentURI: URI of the document where to upload the new binary data child.
+- slug: Slug that will be used fot he URI of the new binary child.
+- data: Buffer of the binary data to upload.
+- requestOptions: Customisable options for the request.
 
 ##### listMembers
 ```typescript 
@@ -2109,7 +2173,7 @@ Retrieves all the members of a document without resolving them.
 
 - uri: URI of the document from where to look for its members.
 - includeNonReadable: Specify if the response should include the Non Readable resources. By default this is set to `true`.
-- requestOptions: Options that can be specified to change the behavior of the request.
+- requestOptions: Customisable options for the request.
 
 ```typescript 
 listMembers( uri:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.Pointer.Class[], Carbon.HTTP.Response.Class ]>
@@ -2120,7 +2184,7 @@ Retrieves all the members of a document without resolving them.
 *Parameters*
 
 - uri: URI of the document from where to look for its members.
-- requestOptions: Options that can be specified to change the behavior of the request.
+- requestOptions: Customisable options for the request.
 
 ##### getMembers
 ```typescript 
@@ -2134,7 +2198,7 @@ Retrieves all the members of a document and their contents, or a part of them in
 - uri: URI of the document from where to look for its members.
 - includeNonReadable: Specify if the response should include the Non Readable resources. By default this is set to `true`.
 - retrievalPreferences: An object for specify the retrieval preferences for the request.
-- requestOptions: Options that can be specified to change the behavior of the request.
+- requestOptions: Customisable options for the request.
 
 ```typescript 
 getMembers( uri:string,  includeNonReadable?:boolean,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.Pointer.Class[], Carbon.HTTP.Response.Class ]>
@@ -2146,7 +2210,7 @@ Retrieves all the members of a document and their contents.
 
 - uri: URI of the document from where to look for its members.
 - includeNonReadable: Specify if the response should include the Non Readable resources. By default this is set to `true`.
-- requestOptions: Options that can be specified to change the behavior of the request.
+- requestOptions: Customisable options for the request.
 
 ```typescript 
 getMembers( uri:string,  retrievalPreferences?:Carbon.RetrievalPreferences.Class,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.Pointer.Class[], Carbon.HTTP.Response.Class ]>
@@ -2158,7 +2222,7 @@ Retrieves all the members of a document and their content, or a part of them in 
 
 - uri: URI of the document from where to look for its members.
 - retrievalPreferences: An object for specify the retrieval preferences for the request.
-- requestOptions: Options that can be specified to change the behavior of the request.
+- requestOptions: Customisable options for the request.
 
 ```typescript 
 getMembers( uri:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.Pointer.Class[], Carbon.HTTP.Response.Class ]>
@@ -2169,7 +2233,7 @@ Retrieves all the members of a document and their contents.
 *Parameters*
 
 - uri: URI of the document from where to look for its members.
-- requestOptions: Options that can be specified to change the behavior of the request.
+- requestOptions: Customisable options for the request.
 
 ##### addMember
 ```typescript 
@@ -2182,7 +2246,7 @@ Add a member relation to the resource Pointer in the document container specifie
 
 - documentURI: URI of the document container where the member will be added.
 - member: Pointer object that references the resource to add as a member.
-- requestOptions
+- requestOptions: Customisable options for the request.
 
 ```typescript 
 addMember( documentURI:string,  memberURI:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<Carbon.HTTP.Response>
@@ -2194,7 +2258,7 @@ Add a member relation to the resource URI in the document container specified.
 
 - documentURI: URI of the document container where the member will be added.
 - memberURI: URI of the resource to add as a member.
-- requestOptions
+- requestOptions: Customisable options for the request.
 
 ##### removeMember
 ```typescript 
@@ -2207,7 +2271,7 @@ Remove the member relation to the Pointer provided from the resource container s
 
 - documentURI: URI of the resource container from where the member will be removed.
 - member: Pointer object that references the resource to remove as a member.
-- requestOptions
+- requestOptions: Customisable options for the request.
 
 ```typescript 
 removeMember( documentURI:string,  memberURI:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<Carbon.HTTP.Response>
@@ -2219,7 +2283,7 @@ Remove the member relation to the resource URI from the resource container speci
 
 - documentURI: URI of the resource container from where the member will be removed.
 - memberURI: URI of the resource to remove as a member.
-- requestOptions
+- requestOptions: Customisable options for the request.
 
 
 
