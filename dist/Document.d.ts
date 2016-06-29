@@ -6,6 +6,9 @@ import * as Pointer from "./Pointer";
 import * as Resource from "./Resource";
 export interface Class extends Resource.Class, Pointer.Library, Pointer.Validator {
     _fragmentsIndex: Map<string, Fragment.Class>;
+    _normalize(): void;
+    _removeFragment(fragment: Fragment.Class): void;
+    _removeFragment(slug: string): void;
     hasFragment(slug: string): boolean;
     getFragment(slug: string): Fragment.Class;
     getNamedFragment(slug: string): NamedFragment.Class;
@@ -16,10 +19,8 @@ export interface Class extends Resource.Class, Pointer.Library, Pointer.Validato
     createFragment(slug: string): NamedFragment.Class;
     createNamedFragment<T extends Object>(slug: string, object: T): NamedFragment.Class & T;
     createNamedFragment(slug: string): NamedFragment.Class;
-    removeFragment(fragment: NamedFragment.Class): void;
-    removeFragment(fragment: Fragment.Class): void;
-    removeFragment(slug: string): void;
-    removeFragment(fragmentOrSlug: any): void;
+    removeNamedFragment(fragment: NamedFragment.Class): void;
+    removeNamedFragment(slug: string): void;
     toJSON(objectSchemaResolver: ObjectSchema.Resolver, jsonldConverter: JSONLDConverter): string;
     toJSON(objectSchemaResolver: ObjectSchema.Resolver): string;
     toJSON(): string;

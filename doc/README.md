@@ -1619,6 +1619,13 @@ _fragmentsIndex:Map<string, Carbon.Fragment.Class>
 Map object for store the fragment pointers (named fragments and blank nodes) of the document.
 
 ##### <a name="Carbon-Document-Factory-Decorated-Object-Methods" />Methods
+##### _normalize
+```typescript 
+_normalize()
+```
+
+Search over the document for normal objects to convert into fragments, and unused fragments to eliminate.
+
 ##### hasPointer
 ```typescript 
 hasPointer( id:string ):boolean
@@ -1765,19 +1772,9 @@ Creates a NamedFragment from the object provided and the slug specified.
 - slug
 - object
 
-##### removeFragment
+##### _removeFragment
 ```typescript 
-removeFragment( fragment:Carbon.NamedFragment.Class )
-```
-
-Remove the fragment referenced by the NamedFragment object provided from the Document.
-
-*Parameters*
-
-- fragment
-
-```typescript 
-removeFragment( fragment:Carbon.Fragment.Class )
+_removeFragment( fragment:Carbon.Fragment.Class )
 ```
 
 Remove the fragment referenced by the Fragment object provided from the Document.
@@ -1787,7 +1784,28 @@ Remove the fragment referenced by the Fragment object provided from the Document
 - fragment
 
 ```typescript 
-removeFragment( slug:string )
+_removeFragment( id:string )
+```
+
+Remove the fragment referenced by the Slug string provided from the Document.
+
+*Parameters*
+
+- id
+
+##### removeNamedFragment
+```typescript 
+removeNamedFragment( fragment:Carbon.NamedFragment.Class )
+```
+
+Remove the fragment referenced by the NamedFragment object provided from the Document.
+
+*Parameters*
+
+- fragment
+
+```typescript 
+removeNamedFragment( slug:string )
 ```
 
 Remove the fragment referenced by the Slug string provided from the Document.

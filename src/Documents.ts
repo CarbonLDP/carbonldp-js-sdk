@@ -523,6 +523,7 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 		HTTP.Request.Util.setContentTypeHeader( "application/ld+json", requestOptions );
 		HTTP.Request.Util.setIfMatchHeader( persistedDocument._etag, requestOptions );
 
+		persistedDocument._normalize();
 		let body:string = persistedDocument.toJSON( this, this.jsonldConverter );
 
 		return HTTP.Request.Service.put( uri, body, requestOptions ).then( ( response:HTTP.Response.Class ) => {
@@ -861,7 +862,7 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 	private updatePersistedDocument( persistedDocument:PersistedDocument.Class, documentResource:RDF.Node.Class, fragmentResources:RDF.Node.Class[] ):PersistedDocument.Class {
 		let namedFragmentsMap:Map<string, PersistedNamedFragment.Class> = new Map();
 		let blankNodesArray:PersistedBlankNode.Class[] = <PersistedBlankNode.Class[]> persistedDocument.getFragments().filter( fragment => {
-			persistedDocument.removeFragment( fragment.id );
+			persistedDocument._removeFragment( fragment.id );
 			if( RDF.URI.Util.isBNodeID( fragment.id ) ) return true;
 
 			namedFragmentsMap.set( fragment.id, <PersistedNamedFragment.Class> fragment );
