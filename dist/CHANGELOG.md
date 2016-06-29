@@ -1,3 +1,6 @@
+# 0.35.1 (June 27, 2016)
+- Improve how fragments are refreshed
+
 # 0.35.0 (June 20, 2016)
 - [LDP-685](https://jira.base22.com/browse/LDP-685) - Authenticate a URL with an Auth Ticket
     - Added `auth.createTicket()`
