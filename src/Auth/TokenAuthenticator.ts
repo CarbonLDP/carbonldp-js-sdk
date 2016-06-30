@@ -1,6 +1,7 @@
 import Context from "./../Context";
 import * as Errors from "./../Errors";
 import * as HTTP from "./../HTTP";
+import JSONLDConverter from "./../JSONLDConverter";
 import * as NS from "./../NS";
 import * as ObjectSchema from "./../ObjectSchema";
 import * as RDF from "./../RDF";
@@ -101,7 +102,8 @@ export class Class implements Authenticator<UsernameAndPasswordToken> {
 
 			let digestedSchema:ObjectSchema.DigestedObjectSchema = this.context.documents.getSchemaFor( expandedToken );
 
-			this.context.documents.jsonldConverter.compact( expandedToken, token, digestedSchema, this.context.documents );
+			let jsonldConverter:JSONLDConverter = new JSONLDConverter( this.context.getObjectSchema() );
+			jsonldConverter.compact( expandedToken, token, digestedSchema, this.context.documents );
 
 			return [ token, response ];
 		} );

@@ -6,8 +6,8 @@ var Pointer = require("./Pointer");
 var RDF = require("./RDF");
 var Utils = require("./Utils");
 var Class = (function () {
-    function Class(literalSerializers) {
-        if (literalSerializers === void 0) { literalSerializers = null; }
+    function Class(generalSchema, literalSerializers) {
+        this.generalSchema = generalSchema;
         this._literalSerializers = !!literalSerializers ? literalSerializers : Class.getDefaultSerializers();
     }
     Object.defineProperty(Class.prototype, "literalSerializers", {
@@ -226,7 +226,7 @@ var Class = (function () {
         if (!id) {
             return null;
         }
-        id = ObjectSchema.Digester.resolvePrefixedURI(new RDF.URI.Class(id), digestedSchema).stringValue;
+        id = ObjectSchema.Digester.resolvePrefixedURI(new RDF.URI.Class(id), this.generalSchema).stringValue;
         if (digestedSchema.properties.has(id)) {
             var definition = digestedSchema.properties.get(id);
             if (definition.uri)

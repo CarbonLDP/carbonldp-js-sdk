@@ -4,8 +4,9 @@ import * as RDF from "./RDF";
 export declare class Class {
     private _literalSerializers;
     literalSerializers: Map<string, RDF.Literal.Serializer>;
+    private generalSchema;
     private static getDefaultSerializers();
-    constructor(literalSerializers?: Map<string, RDF.Literal.Serializer>);
+    constructor(generalSchema: ObjectSchema.DigestedObjectSchema, literalSerializers?: Map<string, RDF.Literal.Serializer>);
     compact(expandedObjects: Object[], targetObjects: Object[], digestedSchema: ObjectSchema.DigestedObjectSchema, pointerLibrary: Pointer.Library): Object[];
     compact(expandedObject: Object, targetObject: Object, digestedSchema: ObjectSchema.DigestedObjectSchema, pointerLibrary: Pointer.Library): Object;
     compact(expandedObjects: Object[], digestedSchema: ObjectSchema.DigestedObjectSchema, pointerLibrary: Pointer.Library): Object[];

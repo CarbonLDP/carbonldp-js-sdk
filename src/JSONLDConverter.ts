@@ -11,6 +11,8 @@ export class Class {
 
 	get literalSerializers():Map<string, RDF.Literal.Serializer> { return this._literalSerializers; };
 
+	private generalSchema:ObjectSchema.DigestedObjectSchema;
+
 	private static getDefaultSerializers():Map<string, RDF.Literal.Serializer> {
 		let literalSerializers:Map<string, RDF.Literal.Serializer> = new Map<string, RDF.Literal.Serializer>();
 
@@ -30,9 +32,11 @@ export class Class {
 		return literalSerializers;
 	}
 
-	constructor( literalSerializers:Map<string, RDF.Literal.Serializer> = null ) {
+	constructor( generalSchema:ObjectSchema.DigestedObjectSchema, literalSerializers?:Map<string, RDF.Literal.Serializer> ) {
+		this.generalSchema = generalSchema;
 		this._literalSerializers = ! ! literalSerializers ? literalSerializers : Class.getDefaultSerializers();
 	}
+
 
 	compact( expandedObjects:Object[], targetObjects:Object[], digestedSchema:ObjectSchema.DigestedObjectSchema, pointerLibrary:Pointer.Library ):Object[];
 	compact( expandedObject:Object, targetObject:Object, digestedSchema:ObjectSchema.DigestedObjectSchema, pointerLibrary:Pointer.Library ):Object;
@@ -267,14 +271,14 @@ export class Class {
 			return null;
 		}
 
-		id = ObjectSchema.Digester.resolvePrefixedURI( new RDF.URI.Class( id ), digestedSchema ).stringValue;
+		id = ObjectSchema.Digester.resolvePrefixedURI( new RDF.URI.Class( id ), this.generalSchema ).stringValue;
 
 		if( digestedSchema.properties.has( id ) ) {
 			let definition:ObjectSchema.DigestedPropertyDefinition = digestedSchema.properties.get( id );
 			if( definition.uri ) id = definition.uri.stringValue;
 		}
 
-		// TODO: Think in what base will resolve relative URIs with: `id = digestedSchema.base ? RDF.URI.Util.resolve( digestedSchema.base, id ) : id;`
+		// TODO: Think in what base will resolve relative URIs with: `id = this.generalSchema.base ? RDF.URI.Util.resolve( this.generalSchema.base, id ) : id;`
 
 		return {"@id": id};
 	}

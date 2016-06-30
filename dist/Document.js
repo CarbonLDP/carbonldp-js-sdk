@@ -128,15 +128,16 @@ function removeNamedFragment(fragmentOrSlug) {
 function toJSON(objectSchemaResolver, jsonldConverter) {
     if (objectSchemaResolver === void 0) { objectSchemaResolver = null; }
     if (jsonldConverter === void 0) { jsonldConverter = null; }
-    jsonldConverter = !!jsonldConverter ? jsonldConverter : new JSONLDConverter_1.default();
+    var generalSchema = objectSchemaResolver ? objectSchemaResolver.getGeneralSchema() : new ObjectSchema.DigestedObjectSchema();
+    jsonldConverter = !!jsonldConverter ? jsonldConverter : new JSONLDConverter_1.default(generalSchema);
     var resources = [];
     resources.push(this);
     resources = resources.concat(this.getFragments());
     var expandedResources = [];
     for (var _i = 0, resources_1 = resources; _i < resources_1.length; _i++) {
         var resource = resources_1[_i];
-        var digestedContext = objectSchemaResolver ? objectSchemaResolver.getSchemaFor(resource) : new ObjectSchema.DigestedObjectSchema();
-        expandedResources.push(jsonldConverter.expand(resource, digestedContext));
+        var resourceSchema = objectSchemaResolver ? objectSchemaResolver.getSchemaFor(resource) : new ObjectSchema.DigestedObjectSchema();
+        expandedResources.push(jsonldConverter.expand(resource, resourceSchema));
     }
     var graph = {
         "@id": this.id,

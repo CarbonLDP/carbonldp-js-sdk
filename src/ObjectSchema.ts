@@ -51,6 +51,7 @@ export class DigestedPropertyDefinition {
 }
 
 export interface Resolver {
+	getGeneralSchema():DigestedObjectSchema;
 	getSchemaFor( object:Object ):DigestedObjectSchema;
 }
 

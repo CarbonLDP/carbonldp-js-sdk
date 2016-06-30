@@ -12,6 +12,7 @@ import Context from "./Context";
 import {DigestedObjectSchema} from "./ObjectSchema";
 import * as Errors from "./Errors";
 import * as FreeResources from "./FreeResources";
+import JSONLDConverter from "./JSONLDConverter";
 import * as HTTP from "./HTTP";
 import * as NS from "./NS";
 import * as Resource from "./Resource";
@@ -121,7 +122,8 @@ export class Class {
 
 			let digestedSchema:DigestedObjectSchema = this.context.documents.getSchemaFor( expandedTicket );
 
-			this.context.documents.jsonldConverter.compact( expandedTicket, ticket, digestedSchema, this.context.documents );
+			let jsonldConverter:JSONLDConverter = new JSONLDConverter( this.context.getObjectSchema() );
+			jsonldConverter.compact( expandedTicket, ticket, digestedSchema, this.context.documents );
 
 			return [ ticket, response ];
 		} );

@@ -21,10 +21,6 @@ import * as Resource from "./Resource";
 import * as RetrievalPreferences from "./RetrievalPreferences";
 
 class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Resolver {
-	_jsonldConverter:JSONLDConverter.Class;
-
-	get jsonldConverter():JSONLDConverter.Class { return this._jsonldConverter; }
-
 	private context:Context;
 	private pointers:Map<string, Pointer.Class>;
 
@@ -37,12 +33,6 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 		this.pointers = new Map<string, Pointer.Class>();
 		this.documentsBeingResolved = new Map<string, Promise<[ PersistedDocument.Class, HTTP.Response.Class ]>>();
 
-		if( ! ! this.context && ! ! this.context.parentContext ) {
-			let contextJSONLDConverter:JSONLDConverter.Class = this.context.parentContext.documents.jsonldConverter;
-			this._jsonldConverter = new JSONLDConverter.Class( contextJSONLDConverter.literalSerializers );
-		} else {
-			this._jsonldConverter = new JSONLDConverter.Class();
-		}
 	}
 
 	inScope( pointer:Pointer.Class ):boolean;
@@ -162,7 +152,7 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 			}
 		}
 
-		let body:string = childDocument.toJSON( this, this.jsonldConverter );
+		let body:string = childDocument.toJSON( this );
 
 		if( slug !== null ) HTTP.Request.Util.setSlug( slug, requestOptions );
 
@@ -272,7 +262,7 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 			}
 		}
 
-		let body:string = accessPoint.toJSON( this, this.jsonldConverter );
+		let body:string = accessPoint.toJSON( this );
 
 		if( slug !== null ) HTTP.Request.Util.setSlug( slug, requestOptions );
 
@@ -455,7 +445,7 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 
 		let document:Document.Class = LDP.AddMemberAction.Factory.createDocument( pointers );
 
-		let body:string = document.toJSON( this, this.jsonldConverter );
+		let body:string = document.toJSON( this );
 
 		return HTTP.Request.Service.put( documentURI, body, requestOptions );
 	}
@@ -486,7 +476,7 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 		};
 		HTTP.Request.Util.setContainerRetrievalPreferences( containerRetrievalPreferences, requestOptions, false );
 
-		let body:string = document.toJSON( this, this.jsonldConverter );
+		let body:string = document.toJSON( this );
 
 		return HTTP.Request.Service.delete( documentURI, body, requestOptions );
 	}
@@ -524,7 +514,7 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 		HTTP.Request.Util.setIfMatchHeader( persistedDocument._etag, requestOptions );
 
 		persistedDocument._normalize();
-		let body:string = persistedDocument.toJSON( this, this.jsonldConverter );
+		let body:string = persistedDocument.toJSON( this );
 
 		return HTTP.Request.Service.put( uri, body, requestOptions ).then( ( response:HTTP.Response.Class ) => {
 			return [ persistedDocument, response ];
@@ -566,6 +556,10 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 
 	getDownloadURL( documentURI:string, requestOptions?:HTTP.Request.Options ):Promise<string> {
 		return this.context.auth.getAuthenticatedURL( documentURI, requestOptions );
+	}
+
+	getGeneralSchema():ObjectSchema.DigestedObjectSchema {
+		return this.context ? this.context.getObjectSchema() : new ObjectSchema.DigestedObjectSchema();
 	}
 
 	getSchemaFor( object:Object ):ObjectSchema.DigestedObjectSchema {
@@ -715,7 +709,8 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 	private compactSingle( expandedObject:Object, targetObject:Object, pointerLibrary:Pointer.Library ):Object {
 		let digestedSchema:ObjectSchema.DigestedObjectSchema = this.getDigestedObjectSchemaForExpandedObject( expandedObject );
 
-		return this.jsonldConverter.compact( expandedObject, targetObject, digestedSchema, pointerLibrary );
+		let jsonldConverter:JSONLDConverter.Class = new JSONLDConverter.Class( this.getGeneralSchema() );
+		return jsonldConverter.compact( expandedObject, targetObject, digestedSchema, pointerLibrary );
 	}
 
 	private getDigestedObjectSchemaForExpandedObject( expandedObject:Object ):ObjectSchema.DigestedObjectSchema {

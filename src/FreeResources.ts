@@ -1,5 +1,6 @@
 import Documents from "./Documents";
 import * as Errors from "./Errors";
+import JSONLDConverter from "./JSONLDConverter";
 import * as Pointer from "./Pointer";
 import * as RDF from "./RDF";
 import * as Resource from "./Resource";
@@ -89,11 +90,12 @@ function createResource( id?:string ):Resource.Class {
 }
 
 function toJSON():string {
+	let jsonldConverter:JSONLDConverter = new JSONLDConverter( this._documents.getGeneralSchema() );
 	let resources:Resource.Class[] = this.getResources();
 	let expandedResources:RDF.Node.Class[] = [];
 
 	for( let resource of resources ) {
-		expandedResources.push( this._documents.jsonldConverter.expand( resource, this._documents.getSchemaFor( resource ) ) );
+		expandedResources.push( jsonldConverter.expand( resource, this._documents.getSchemaFor( resource ) ) );
 	}
 
 	return JSON.stringify( expandedResources );

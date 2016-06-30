@@ -180,11 +180,12 @@ function removeNamedFragment( fragmentOrSlug:any ):void {
 	document._removeFragment( id );
 }
 
-function toJSON( objectSchemaResolver:ObjectSchema.Resolver, jsonLDConverter:JSONLDConverter ):string;
+function toJSON( objectSchemaResolver:ObjectSchema.Resolver, jsonldConverter:JSONLDConverter ):string;
 function toJSON( objectSchemaResolver:ObjectSchema.Resolver ):string;
 function toJSON():string;
 function toJSON( objectSchemaResolver:ObjectSchema.Resolver = null, jsonldConverter:JSONLDConverter = null ):string {
-	jsonldConverter = ! ! jsonldConverter ? jsonldConverter : new JSONLDConverter();
+	let generalSchema:ObjectSchema.DigestedObjectSchema = objectSchemaResolver ? objectSchemaResolver.getGeneralSchema() : new ObjectSchema.DigestedObjectSchema();
+	jsonldConverter = ! ! jsonldConverter ? jsonldConverter : new JSONLDConverter( generalSchema );
 
 	let resources:{ toJSON:() => string }[] = [];
 	resources.push( this );
@@ -192,9 +193,9 @@ function toJSON( objectSchemaResolver:ObjectSchema.Resolver = null, jsonldConver
 
 	let expandedResources:RDF.Node.Class[] = [];
 	for( let resource of resources ) {
-		let digestedContext:ObjectSchema.DigestedObjectSchema = objectSchemaResolver ? objectSchemaResolver.getSchemaFor( resource ) : new ObjectSchema.DigestedObjectSchema();
+		let resourceSchema:ObjectSchema.DigestedObjectSchema = objectSchemaResolver ? objectSchemaResolver.getSchemaFor( resource ) : new ObjectSchema.DigestedObjectSchema();
 
-		expandedResources.push( jsonldConverter.expand( resource, digestedContext ) );
+		expandedResources.push( jsonldConverter.expand( resource, resourceSchema ) );
 	}
 
 	let graph:RDF.Document.Class = {

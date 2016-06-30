@@ -49,11 +49,6 @@ describe( module( "Carbon/JSONLDConverter" ), ():void => {
 				{name: "digestedSchema", type: "Carbon.ObjectSchema.DigestedObjectSchema"},
 				{name: "pointerLibrary", type: "Carbon.Pointer.Library"},
 			], {type: "Object", description: ""} ), ():void => {
-				let jsonldConverter:JSONLDConverter.Class = new JSONLDConverter.Class();
-
-				expect( jsonldConverter.compact ).toBeDefined();
-				expect( Utils.isFunction( jsonldConverter.compact ) ).toBeDefined();
-
 				let expandedObject:any = {
 					"@id": "http://example.com/expandedObject/",
 					"http://example.com/ns#string": [
@@ -95,6 +90,11 @@ describe( module( "Carbon/JSONLDConverter" ), ():void => {
 						{"@id": "http://example.com/pointer-2"},
 						{"@id": "http://example.com/pointer-3"},
 					],
+				};
+
+				let generalSchema:ObjectSchema.Class = {
+					"ex": "http://example.com/ns#",
+					"xsd": "http://www.w3.org/2001/XMLSchema#",
 				};
 
 				let schema:ObjectSchema.Class = {
@@ -155,7 +155,13 @@ describe( module( "Carbon/JSONLDConverter" ), ():void => {
 				};
 
 				let compactedObject:any = {};
+				let digestedGeneralSchema:ObjectSchema.DigestedObjectSchema = ObjectSchema.Digester.digestSchema( generalSchema );
 				let digestedSchema:ObjectSchema.DigestedObjectSchema = ObjectSchema.Digester.digestSchema( schema );
+				let jsonldConverter:JSONLDConverter.Class = new JSONLDConverter.Class( digestedGeneralSchema );
+
+				expect( jsonldConverter.compact ).toBeDefined();
+				expect( Utils.isFunction( jsonldConverter.compact ) ).toBeDefined();
+
 				jsonldConverter.compact( expandedObject, compactedObject, digestedSchema, mockedPointerLibrary );
 
 				expect( compactedObject ).toBeDefined();
@@ -208,13 +214,12 @@ describe( module( "Carbon/JSONLDConverter" ), ():void => {
 				{name: "compactedObject", type: "Object"},
 				{name: "digestedSchema", type: "Carbon.ObjectSchema.DigestedObjectSchema"},
 			], {type: "Object", description: ""} ), ():void => {
-				let jsonldConverter:JSONLDConverter.Class = new JSONLDConverter.Class();
-
-				expect( jsonldConverter.compact ).toBeDefined();
-				expect( Utils.isFunction( jsonldConverter.compact ) ).toBeDefined();
-
-				let schema:ObjectSchema.Class = {
+				let generalSchema:ObjectSchema.Class = {
 					"@base": "http://example.com/",
+					"ex": "http://example.com/ns#",
+					"xsd": "http://www.w3.org/2001/XMLSchema#",
+				};
+				let schema:ObjectSchema.Class = {
 					"@vocab": "http://example.com/my-namespace#",
 					"ex": "http://example.com/ns#",
 					"xsd": "http://www.w3.org/2001/XMLSchema#",
@@ -273,7 +278,7 @@ describe( module( "Carbon/JSONLDConverter" ), ():void => {
 				};
 
 				let compactedObject:any = {
-					"uri": "http://example.com/compactedObject",
+					"id": "http://example.com/compactedObject",
 					"string": "some-string",
 					"date": new Date( "2015-12-04T23:06:57.920Z" ),
 					"numberList": [ 2, 3, 4, 5, 6, ],
@@ -310,7 +315,13 @@ describe( module( "Carbon/JSONLDConverter" ), ():void => {
 					"notInSchemaPointer": Pointer.Factory.create( "http://example.com/another-pointer/" ),
 				};
 
+				let digestedGeneralSchema:ObjectSchema.DigestedObjectSchema = ObjectSchema.Digester.digestSchema( generalSchema );
 				let digestedSchema:ObjectSchema.DigestedObjectSchema = ObjectSchema.Digester.digestSchema( schema );
+				let jsonldConverter:JSONLDConverter.Class = new JSONLDConverter.Class( digestedGeneralSchema );
+
+				expect( jsonldConverter.compact ).toBeDefined();
+				expect( Utils.isFunction( jsonldConverter.compact ) ).toBeDefined();
+
 				let expandedObject:any = jsonldConverter.expand( compactedObject, digestedSchema );
 
 				expect( expandedObject ).toBeDefined();
