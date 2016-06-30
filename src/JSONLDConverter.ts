@@ -268,6 +268,14 @@ export class Class {
 		}
 
 		id = ObjectSchema.Digester.resolvePrefixedURI( new RDF.URI.Class( id ), digestedSchema ).stringValue;
+
+		if( digestedSchema.properties.has( id ) ) {
+			let definition:ObjectSchema.DigestedPropertyDefinition = digestedSchema.properties.get( id );
+			if( definition.uri ) id = definition.uri.stringValue;
+		}
+
+		// TODO: Think in what base will resolve relative URIs with: `id = digestedSchema.base ? RDF.URI.Util.resolve( digestedSchema.base, id ) : id;`
+
 		return {"@id": id};
 	}
 

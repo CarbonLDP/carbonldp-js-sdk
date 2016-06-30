@@ -569,11 +569,11 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 	}
 
 	getSchemaFor( object:Object ):ObjectSchema.DigestedObjectSchema {
-		if( "@id" in object ) {
-			return this.getDigestedObjectSchemaForExpandedObject( object );
-		} else {
-			return this.getDigestedObjectSchemaForDocument( <any> object );
-		}
+		let schema:ObjectSchema.DigestedObjectSchema = ( "@id" in object ) ?
+			this.getDigestedObjectSchemaForExpandedObject( object ) :
+			this.getDigestedObjectSchemaForDocument( <any> object );
+
+		return schema;
 	}
 
 	executeRawASKQuery( documentURI:string, askQuery:string, requestOptions:HTTP.Request.Options = {} ):Promise<[ SPARQL.RawResults.Class, HTTP.Response.Class ]> {

@@ -81,21 +81,20 @@ var Digester = (function () {
                 continue;
             if (propertyName === "@index")
                 continue;
-            if (propertyName === "@base")
-                continue;
             var propertyValue = schema[propertyName];
+            if (propertyName === "@base" || propertyName === "@vocab") {
+                if (!Utils.isString(propertyValue))
+                    throw new Errors.IllegalArgumentError("The value of '" + propertyName + "' must be a string or null.");
+                digestedSchema[propertyName.substr(1)] = propertyValue;
+                continue;
+            }
             if (Utils.isString(propertyValue)) {
                 if (RDF.URI.Util.isPrefixed(propertyName))
                     throw new Errors.IllegalArgumentError("A prefixed property cannot be equal to another URI.");
                 var uri = new RDF.URI.Class(propertyValue);
                 if (RDF.URI.Util.isPrefixed(uri.stringValue))
                     uri = Digester.resolvePrefixedURI(uri, digestedSchema);
-                if (propertyName === "@vocab") {
-                    digestedSchema.vocab = uri.toString();
-                }
-                else {
-                    digestedSchema.prefixes.set(propertyName, uri);
-                }
+                digestedSchema.prefixes.set(propertyName, uri);
             }
             else if (!!propertyValue && Utils.isObject(propertyValue)) {
                 var schemaDefinition = propertyValue;

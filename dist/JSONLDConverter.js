@@ -227,6 +227,11 @@ var Class = (function () {
             return null;
         }
         id = ObjectSchema.Digester.resolvePrefixedURI(new RDF.URI.Class(id), digestedSchema).stringValue;
+        if (digestedSchema.properties.has(id)) {
+            var definition = digestedSchema.properties.get(id);
+            if (definition.uri)
+                id = definition.uri.stringValue;
+        }
         return { "@id": id };
     };
     Class.prototype.expandArray = function (propertyValue, digestedSchema) {

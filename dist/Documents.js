@@ -479,12 +479,10 @@ var Documents = (function () {
         return this.context.auth.getAuthenticatedURL(documentURI, requestOptions);
     };
     Documents.prototype.getSchemaFor = function (object) {
-        if ("@id" in object) {
-            return this.getDigestedObjectSchemaForExpandedObject(object);
-        }
-        else {
-            return this.getDigestedObjectSchemaForDocument(object);
-        }
+        var schema = ("@id" in object) ?
+            this.getDigestedObjectSchemaForExpandedObject(object) :
+            this.getDigestedObjectSchemaForDocument(object);
+        return schema;
     };
     Documents.prototype.executeRawASKQuery = function (documentURI, askQuery, requestOptions) {
         if (requestOptions === void 0) { requestOptions = {}; }

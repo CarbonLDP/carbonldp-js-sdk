@@ -22,6 +22,7 @@ import {
 
 import * as Errors from "./Errors";
 import * as HTTP from "./HTTP";
+import * as NS from "./NS";
 import * as Pointer from "./Pointer";
 import * as Utils from "./Utils";
 
@@ -142,13 +143,13 @@ describe( module( "Carbon/JSONLDConverter" ), ():void => {
 						return {
 							_id: id,
 							_resolved: true,
-							get id() {
+							get id():string {
 								return this._id;
 							},
-							isResolved: function() {
+							isResolved: function():boolean {
 								return this._resolved;
 							},
-							resolve: mockedResolveFunction
+							resolve: mockedResolveFunction,
 						};
 					},
 				};
@@ -213,6 +214,8 @@ describe( module( "Carbon/JSONLDConverter" ), ():void => {
 				expect( Utils.isFunction( jsonldConverter.compact ) ).toBeDefined();
 
 				let schema:ObjectSchema.Class = {
+					"@base": "http://example.com/",
+					"@vocab": "http://example.com/my-namespace#",
 					"ex": "http://example.com/ns#",
 					"xsd": "http://www.w3.org/2001/XMLSchema#",
 					"string": {
@@ -255,9 +258,19 @@ describe( module( "Carbon/JSONLDConverter" ), ():void => {
 					"unknownTypePointer": {
 						"@id": "ex:unknownTypePointer",
 					},
+					"anotherPointer": {
+						"@id": "ex:another-pointer",
+						"@type": "@id",
+					},
+					"anotherPrefixedPointer": {
+						"@id": "ex:another-prefixed-pointer",
+						"@type": "@id",
+					},
+					"anotherPointerInSchema": {
+						"@id": "ex:another-pointer-in-schema",
+						"@type": "@id",
+					},
 				};
-
-				let mockedResolveFunction:() => Promise<void> = function():Promise<void> { throw Error( "Don't call this method, duh" ); };
 
 				let compactedObject:any = {
 					"uri": "http://example.com/compactedObject",
@@ -269,37 +282,16 @@ describe( module( "Carbon/JSONLDConverter" ), ():void => {
 						"en": "english",
 						"jp": "日本語",
 					},
-					"pointer": {
-						uri: "http://example.com/pointer",
-						resolve: mockedResolveFunction,
-					},
+					"pointer": Pointer.Factory.create( "http://example.com/pointer" ),
 					"pointerList": [
-						{
-							uri: "http://example.com/pointer-1",
-							resolve: mockedResolveFunction,
-						},
-						{
-							uri: "http://example.com/pointer-2",
-							resolve: mockedResolveFunction,
-						},
-						{
-							uri: "http://example.com/pointer-3",
-							resolve: mockedResolveFunction,
-						},
+						Pointer.Factory.create( "http://example.com/pointer-1" ),
+						Pointer.Factory.create( "http://example.com/pointer-2" ),
+						Pointer.Factory.create( "http://example.com/pointer-3" ),
 					],
 					"pointerSet": [
-						{
-							uri: "http://example.com/pointer-1",
-							resolve: mockedResolveFunction,
-						},
-						{
-							uri: "http://example.com/pointer-2",
-							resolve: mockedResolveFunction,
-						},
-						{
-							uri: "http://example.com/pointer-3",
-							resolve: mockedResolveFunction,
-						},
+						Pointer.Factory.create( "http://example.com/pointer-1" ),
+						Pointer.Factory.create( "http://example.com/pointer-2" ),
+						Pointer.Factory.create( "http://example.com/pointer-3" ),
 					],
 					"unknownTypeLiteral": 1,
 					"unknownTypeArray": [
@@ -308,15 +300,14 @@ describe( module( "Carbon/JSONLDConverter" ), ():void => {
 						new Date( "2015-12-04T23:06:57.920Z" ),
 						"some-string",
 						function():void {},
-						{
-							uri: "http://example.com/pointer",
-							resolve: mockedResolveFunction,
-						},
+						Pointer.Factory.create( "http://example.com/pointer" ),
 					],
-					"unknownTypePointer": {
-						uri: "http://example.com/pointer",
-						resolve: mockedResolveFunction,
-					},
+					"unknownTypePointer": Pointer.Factory.create( "http://example.com/pointer" ),
+					"anotherPointer": "another-resource/",
+					"anotherPrefixedPointer": "ex:another-resource/",
+					"anotherPointerInSchema": "string",
+					"notInSchemaLiteral": "Property Literal not defined in Schema",
+					"notInSchemaPointer": Pointer.Factory.create( "http://example.com/another-pointer/" ),
 				};
 
 				let digestedSchema:ObjectSchema.DigestedObjectSchema = ObjectSchema.Digester.digestSchema( schema );
@@ -324,6 +315,32 @@ describe( module( "Carbon/JSONLDConverter" ), ():void => {
 
 				expect( expandedObject ).toBeDefined();
 				expect( Utils.isObject( expandedObject ) ).toEqual( true );
+
+				expect( expandedObject[ "http://example.com/ns#another-pointer" ] ).toBeDefined();
+				expect( expandedObject[ "http://example.com/ns#another-pointer" ] ).toEqual( [ {
+					"@id": "another-resource/",
+				} ] );
+
+				expect( expandedObject[ "http://example.com/ns#another-prefixed-pointer" ] ).toBeDefined();
+				expect( expandedObject[ "http://example.com/ns#another-prefixed-pointer" ] ).toEqual( [ {
+					"@id": "http://example.com/ns#another-resource/",
+				} ] );
+
+				expect( expandedObject[ "http://example.com/ns#another-pointer-in-schema" ] ).toBeDefined();
+				expect( expandedObject[ "http://example.com/ns#another-pointer-in-schema" ] ).toEqual( [ {
+					"@id": "http://example.com/ns#string",
+				} ] );
+
+				expect( expandedObject[ "http://example.com/my-namespace#notInSchemaLiteral" ] ).toBeDefined();
+				expect( expandedObject[ "http://example.com/my-namespace#notInSchemaLiteral" ] ).toEqual( [ {
+					"@value": "Property Literal not defined in Schema",
+					"@type": NS.XSD.DataType.string,
+				} ] );
+
+				expect( expandedObject[ "http://example.com/my-namespace#notInSchemaPointer" ] ).toBeDefined();
+				expect( expandedObject[ "http://example.com/my-namespace#notInSchemaPointer" ] ).toEqual( [ {
+					"@id": "http://example.com/another-pointer/",
+				} ] );
 			} );
 		} );
 	} );
