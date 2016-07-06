@@ -62,7 +62,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 
 			let document:any = undefined;
 			expect( PersistedDocument.Factory.hasClassProperties( document ) ).toBe( false );
-			
+
 			document = {
 				_documents: null,
 				_etag: null,
@@ -78,51 +78,51 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 				executeRawCONSTRUCTQuery: () => {},
 			};
 			expect( PersistedDocument.Factory.hasClassProperties( document ) ).toBe( true );
-			
+
 			delete document._documents;
 			expect( PersistedDocument.Factory.hasClassProperties( document ) ).toBe( false );
 			document._documents = null;
-			
+
 			delete document._etag;
 			expect( PersistedDocument.Factory.hasClassProperties( document ) ).toBe( false );
 			document._etag = null;
-			
+
 			delete document.refresh;
 			expect( PersistedDocument.Factory.hasClassProperties( document ) ).toBe( false );
 			document.refresh = ():void => {};
-			
+
 			delete document.save;
 			expect( PersistedDocument.Factory.hasClassProperties( document ) ).toBe( false );
 			document.save = ():void => {};
-			
+
 			delete document.destroy;
 			expect( PersistedDocument.Factory.hasClassProperties( document ) ).toBe( false );
 			document.destroy = ():void => {};
-			
+
 			delete document.createAccessPoint;
 			expect( PersistedDocument.Factory.hasClassProperties( document ) ).toBe( false );
 			document.createAccessPoint = ():void => {};
-			
+
 			delete document.executeRawASKQuery;
 			expect( PersistedDocument.Factory.hasClassProperties( document ) ).toBe( false );
 			document.executeRawASKQuery = ():void => {};
-			
+
 			delete document.executeASKQuery;
 			expect( PersistedDocument.Factory.hasClassProperties( document ) ).toBe( false );
 			document.executeASKQuery = ():void => {};
-			
+
 			delete document.executeRawSELECTQuery;
 			expect( PersistedDocument.Factory.hasClassProperties( document ) ).toBe( false );
 			document.executeRawSELECTQuery = ():void => {};
-			
+
 			delete document.executeSELECTQuery;
 			expect( PersistedDocument.Factory.hasClassProperties( document ) ).toBe( false );
 			document.executeSELECTQuery = ():void => {};
-			
+
 			delete document.executeRawDESCRIBEQuery;
 			expect( PersistedDocument.Factory.hasClassProperties( document ) ).toBe( false );
 			document.executeRawDESCRIBEQuery = ():void => {};
-			
+
 			delete document.executeRawCONSTRUCTQuery;
 			expect( PersistedDocument.Factory.hasClassProperties( document ) ).toBe( false );
 			document.executeRawCONSTRUCTQuery = ():void => {};
@@ -457,7 +457,11 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 			it( hasMethod(
 				INSTANCE,
 				"createAccessPoint",
-				"Creates an AccessPoint for the PersistedDocument.",
+				"Creates an AccessPoint for the PersistedDocument.", [
+					{name: "accessPoint", type: "Carbon.AccessPoint.Class", description: "AccessPoint Document to persist."},
+					{name: "slug", type: "string", optional: true, description: "Slug that will be used for the URI of the new access point."},
+					{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customisable options for the request."},
+				],
 				{ type: "Promise<[Carbon.Pointer.Class, Carbon.HTTP.Response.Class]>" }
 			), ():void => {
 				expect( document.createAccessPoint ).toBeDefined();

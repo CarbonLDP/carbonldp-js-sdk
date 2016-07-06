@@ -23,8 +23,8 @@ describe( module( "Carbon/PersistedFragment" ), ():void => {
 			STATIC,
 			"decorate",
 			"Decorates the object provided with the properties and methods of a `Carbon.PersistedFragment.Class` object.", [
-				{ name: "fragment", type: "T extends Carbon.Fragment.Class", description: "The Fragment object to convert into a persisted one." },
-				{ name: "snapshot", type: "Object", optional:true, description: "An shallow copy of the fragment, which will be used to track its changes." }
+				{name: "fragment", type: "T extends Carbon.Fragment.Class", description: "The Fragment object to convert into a persisted one."},
+				{name: "snapshot", type: "Object", optional: true, description: "A shallow copy of the fragment, which will be used to track its changes."}
 			]
 		), ():void => {
 			expect( PersistedFragment.Factory.decorate ).toBeDefined();
@@ -38,7 +38,7 @@ describe( module( "Carbon/PersistedFragment" ), ():void => {
 			expect( persistedFragment ).toBeTruthy();
 			expect( spyPersistedDecorator ).toHaveBeenCalledWith( fragment, jasmine.any( Object ) );
 		} );
-		
+
 	} );
 
 } );

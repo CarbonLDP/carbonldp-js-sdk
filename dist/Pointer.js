@@ -62,9 +62,7 @@ var Factory = (function () {
                 enumerable: false,
                 configurable: true,
                 value: function () {
-                    return new Promise(function (resolve, reject) {
-                        throw new Errors.NotImplementedError("A simple pointer cannot be resolved by it self.");
-                    });
+                    return Promise.reject(new Errors.NotImplementedError("A simple pointer cannot be resolved by it self."));
                 },
             },
         });

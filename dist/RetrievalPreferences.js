@@ -1,7 +1,9 @@
 "use strict";
-var Utils_1 = require("./Utils");
 var IllegalArgumentError_1 = require("./Errors/IllegalArgumentError");
+var ObjectSchema = require("./ObjectSchema");
 var XSD = require("./NS/XSD");
+var Utils_1 = require("./Utils");
+var URI = require("./RDF/URI");
 var allowedTypes = ["numeric", "string", "boolean", "dateTime"];
 var Factory = (function () {
     function Factory() {
@@ -17,7 +19,7 @@ exports.Factory = Factory;
 var Util = (function () {
     function Util() {
     }
-    Util.stringifyRetrievalPreferences = function (retrievalPreferences) {
+    Util.stringifyRetrievalPreferences = function (retrievalPreferences, digestedSchema) {
         var stringPreferences = "";
         if ("limit" in retrievalPreferences) {
             stringPreferences += "limit=" + retrievalPreferences.limit;
@@ -33,8 +35,17 @@ var Util = (function () {
                 var stringOrder = "";
                 if ("@id" in orderBy) {
                     var id = orderBy["@id"];
-                    var descending = id.startsWith("-");
-                    stringOrder += (descending ? "-" : "") + "<" + encodeURI(descending ? id.substr(1) : id).replace("#", "%23") + ">";
+                    var descending = false;
+                    if (id.startsWith("-")) {
+                        descending = true;
+                        id = id.substr(1);
+                    }
+                    if (!!digestedSchema && URI.Util.isRelative(id)) {
+                        id = ObjectSchema.Digester.resolvePrefixedURI(new URI.Class(id), digestedSchema).stringValue;
+                        if (!!digestedSchema.vocab)
+                            id = URI.Util.resolve(digestedSchema.vocab, id);
+                    }
+                    stringOrder += (descending ? "-" : "") + "<" + encodeURI(id).replace("#", "%23") + ">";
                 }
                 if ("@type" in orderBy) {
                     if (!stringOrder)

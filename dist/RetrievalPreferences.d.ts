@@ -1,3 +1,4 @@
+import * as ObjectSchema from "./ObjectSchema";
 export interface Class {
     orderBy?: OrderByProperty[];
     limit?: number;
@@ -12,6 +13,6 @@ export declare class Factory {
     static is(object: Object): boolean;
 }
 export declare class Util {
-    static stringifyRetrievalPreferences(retrievalPreferences: Class): string;
+    static stringifyRetrievalPreferences(retrievalPreferences: Class, digestedSchema?: ObjectSchema.DigestedObjectSchema): string;
 }
 export default Class;

@@ -71,7 +71,7 @@ describe( module( "Carbon/RDF/URI" ), ():void => {
 
 	});
 
-	describe( clazz( "Carbon.RDF.URI.Util", "Class with useful functions for managing URI strings." ), ():void => {
+	describe( clazz( "Carbon.RDF.URI.Util", "Class with useful functions to manage URI strings." ), ():void => {
 
 		it( isDefined(), ():void => {
 			expect( URI.Util ).toBeDefined();

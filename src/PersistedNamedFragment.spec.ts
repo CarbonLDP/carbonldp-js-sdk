@@ -23,8 +23,8 @@ describe( module( "Carbon/PersistedNamedFragment" ), ():void => {
 			STATIC,
 			"decorate",
 			"Decorates the object provided with the properties and methods of a `Carbon.PersistedNamedFragment.Class` object.", [
-				{ name: "fragment", type: "T extends Carbon.NamedFragment.Class", description: "The NamedFragment object to convert into a persisted one." },
-				{ name: "snapshot", type: "Object", optional:true, description: "An shallow copy of the fragment, which will be used to track its changes." }
+				{name: "fragment", type: "T extends Carbon.NamedFragment.Class", description: "The NamedFragment object to convert into a persisted one."},
+				{name: "snapshot", type: "Object", optional: true, description: "A shallow copy of the fragment, which will be used to track its changes."}
 			]
 		), ():void => {
 			expect( PersistedNamedFragment.Factory.decorate ).toBeDefined();
@@ -32,7 +32,7 @@ describe( module( "Carbon/PersistedNamedFragment" ), ():void => {
 
 			let spyPersistedDecorator = spyOn( PersistedFragment.Factory, "decorate" );
 
-			let fragment:NamedFragment.Class = NamedFragment.Factory.create( "fragment-slug", <any> { id: "http://example.com/resoruce/" } );
+			let fragment:NamedFragment.Class = NamedFragment.Factory.create( "fragment-slug", <any> {id: "http://example.com/resoruce/"} );
 			let persistedFragment:PersistedNamedFragment.Class = PersistedNamedFragment.Factory.decorate( fragment );
 
 			expect( persistedFragment ).toBeTruthy();

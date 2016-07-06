@@ -516,9 +516,7 @@ describe( module( "Carbon/LDP/PersistedContainer" ), ():void => {
 			it( hasMethod(
 				INSTANCE,
 				"removeAllMembers",
-				"Remove the specified resources URI or Pointers as members of the current container.", [
-					{ name: "members", type: "(Carbon.Pointer.Class | string)[]", description: "Array of URIs or Pointers to remove as members" },
-				],
+				"Remove the specified resources URI or Pointers as members of the current container.",
 				{ type: "Promise<Carbon.HTTP.Response.Class>" }
 			), ():void => {
 				expect( container.removeAllMembers ).toBeDefined();

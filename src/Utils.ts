@@ -1,19 +1,18 @@
-import {on} from "cluster";
 function hasFunction( object:Object, functionName:string ):boolean {
 	return typeof object[ functionName ] === "function";
 }
 
 function hasProperty( object:Object, property:string ):boolean {
-	if ( ! object ) return false;
+	if( ! object ) return false;
 	return isDefined( object[ property ] );
 }
 
 function hasPropertyDefined( object:Object, property:string ):boolean {
-	if ( ! object ) return false;
+	if( ! object ) return false;
 	return ! ! Object.getOwnPropertyDescriptor( object, property );
 }
 
-function isDefined( value:any ): boolean {
+function isDefined( value:any ):boolean {
 	return void 0 !== value;
 }
 
@@ -38,12 +37,12 @@ function isNumber( value:any ):boolean {
 }
 
 function isInteger( value:any ):boolean {
-	if ( ! isNumber( value ) )return false;
+	if( ! isNumber( value ) )return false;
 	return value % 1 === 0;
 }
 
 function isDouble( value:any ):boolean {
-	if ( ! isNumber( value ) ) return false;
+	if( ! isNumber( value ) ) return false;
 	return value % 1 !== 0;
 }
 
@@ -88,10 +87,10 @@ function isMap( value:any ):boolean {
 }
 
 function parseBoolean( value:string ):boolean {
-	if ( ! isString( value ) ) return false;
+	if( ! isString( value ) ) return false;
 
 	/* tslint:disable: no-switch-case-fall-through */
-	switch ( value.toLowerCase() ) {
+	switch( value.toLowerCase() ) {
 		case "true":
 		case "yes":
 		case "y":
@@ -108,11 +107,9 @@ function parseBoolean( value:string ):boolean {
 }
 
 function extend( target:Object, ...objects:Object[] ):Object {
-	if ( arguments.length <= 1 ) return target;
-	for ( let i:number = 0, length:number = arguments.length; i < length; i ++ ) {
-		let toMerge:Object = objects[ i ];
-		for ( let name in toMerge ) {
-			if ( toMerge.hasOwnProperty( name ) ) {
+	for( let toMerge of objects ) {
+		for( let name in toMerge ) {
+			if( toMerge.hasOwnProperty( name ) ) {
 				target[ name ] = toMerge[ name ];
 			}
 		}
@@ -121,56 +118,42 @@ function extend( target:Object, ...objects:Object[] ):Object {
 }
 
 function forEachOwnProperty( object:Object, action:( name:string, value:any ) => ( boolean | void ) ):void {
-	if ( ! ( isObject( object ) || isFunction( object ) ) ) throw new Error( "IllegalArgument" );
-	for ( let name in object ) {
-		if ( object.hasOwnProperty( name ) ) {
+	if( ! ( isObject( object ) || isFunction( object ) ) ) throw new Error( "IllegalArgument" );
+	for( let name in object ) {
+		if( object.hasOwnProperty( name ) ) {
 			if( action( name, object[ name ] ) === false ) break;
 		}
 	}
 }
 
 class O {
-	// TODO Make tests
-	static clone( object:Object, config:{ arrays?:boolean, objects?:boolean } = { arrays: false, objects: false } ):Object {
+
+	static clone( object:Object, config:{ arrays?:boolean, objects?:boolean } = {arrays: false, objects: false} ):Object {
 		let isAnArray:boolean = isArray( object );
 		if( ! isAnArray && ! isPlainObject( object ) ) return null;
 
-		let clone:Object = Object.assign( isAnArray ? [] : {}, object );
-		for ( let key of Object.keys( clone ) ) {
-			if ( isFunction( object[ key ] ) ) continue;
+		let clone:Object = isAnArray ? [] : {};
+		(<any> object).__SDKUtils_circularReferenceFlag = clone;
 
-			if ( isArray( object[ key ] ) && config.arrays ||
-				isPlainObject( object[ key ] ) && config.objects ) {
-					object[ key ] = O.clone( object[ key ] );
+		for( let key of Object.keys( object ) ) {
+			if( isFunction( object[ key ] ) || key === "__SDKUtils_circularReferenceFlag" ) continue;
+
+			let property:any = object[ key ];
+			if( isArray( property ) && config.arrays ||
+				isPlainObject( property ) && config.objects ) {
+
+				property = property.__SDKUtils_circularReferenceFlag || O.clone( property, config );
 			}
+
+			clone[ key ] = property;
 		}
 
+		delete (<any> object).__SDKUtils_circularReferenceFlag;
 		return clone;
 	}
 
-	// TODO Make tests
-	static areEqual( object1:Object, object2:Object, config:{ arrays?:boolean, objects?:boolean } = { arrays: false, objects: false } ):boolean {
-		if( object1 === object2 ) return true;
-		if( ! isObject( object1 ) || ! isObject( object2 ) ) return false;
-		if ( isDate( object1 ) ) return (<Date> object1).getTime() === (<Date> object2).getTime();
-
-		let keys:string[] = A.joinWithoutDuplicates( Object.keys( object1 ), Object.keys( object2 ) );
-		for ( let key of keys ) {
-			if ( ! ( key in object1 ) && ! ( key in object2 ) ) return false;
-			if ( typeof object1[ key ] !== typeof object2[ key ] ) return false;
-
-			if ( isFunction( object1[ key ] ) ) continue;
-
-			if ( isArray( object1[ key ] ) && config.arrays ||
-				isPlainObject( object1[ key ] ) && config.objects ||
-				isDate( object1[ key ] ) ) {
-					if ( ! O.areEqual( object1[ key ], object2[ key ], config ) ) return false;
-			} else {
-				if ( object1[ key ] !== object2[ key ] ) return false;
-			}
-		}
-
-		return true;
+	static areEqual( object1:Object, object2:Object, config:{ arrays?:boolean, objects?:boolean } = {arrays: false, objects: false} ):boolean {
+		return internalAreEqual( object1, object2, config, [ object1 ], [ object2 ] );
 	}
 
 	static areShallowlyEqual( object1:Object, object2:Object ):boolean {
@@ -190,11 +173,53 @@ class O {
 			if( ! object2.hasOwnProperty( propertyName ) ) continue;
 			if( isFunction( object2[ propertyName ] ) ) continue;
 			if( ! ( propertyName in object1 ) ) return false;
-			if( properties.indexOf( propertyName ) === -1 ) return false;
+			if( properties.indexOf( propertyName ) === - 1 ) return false;
 		}
 
 		return true;
 	}
+}
+
+function internalAreEqual( object1:Object, object2:Object, config:{ arrays?:boolean, objects?:boolean }, stack1:any[], stack2:any[] ):boolean {
+	if( object1 === object2 ) return true;
+	if( ! isObject( object1 ) || ! isObject( object2 ) ) return false;
+
+	if( isDate( object1 ) ) return (<Date> object1).getTime() === (<Date> object2).getTime();
+
+	let keys:string[] = A.joinWithoutDuplicates( Object.keys( object1 ), Object.keys( object2 ) );
+	for( let key of keys ) {
+		if( ! ( key in object1 ) || ! ( key in object2 ) ) return false;
+		if( typeof object1 !== typeof object2 ) return false;
+
+		if( isFunction( object1[ key ] ) ) continue;
+
+		let firstIsPlainObject:boolean = isPlainObject( object1[ key ] );
+		if( isArray( object1[ key ] ) && config.arrays ||
+			firstIsPlainObject && config.objects ||
+			isDate( object1[ key ] ) ) {
+
+			if( firstIsPlainObject ) {
+				let lengthStack:number = stack1.length;
+				while( lengthStack -- ) {
+					if( stack1[ lengthStack ] === object1[ key ] ) return stack2[ lengthStack ] === object2[ key ];
+				}
+
+				stack1.push( object1[ key ] );
+				stack2.push( object2[ key ] );
+			}
+
+			if( ! internalAreEqual( object1[ key ], object2[ key ], config, stack1, stack2 ) ) return false;
+
+			if( firstIsPlainObject ) {
+				stack1.pop();
+				stack2.pop();
+			}
+		} else {
+			if( object1[ key ] !== object2[ key ] ) return false;
+		}
+	}
+
+	return true;
 }
 
 class S {
@@ -215,7 +240,7 @@ class A {
 	static from<T>( iterator:Iterator<T> ):Array<T> {
 		let array:Array<T> = [];
 		let next:IteratorResult<T> = iterator.next();
-		while ( ! next.done ) {
+		while( ! next.done ) {
 			array.push( next.value );
 			next = iterator.next();
 		}
@@ -225,8 +250,8 @@ class A {
 	static joinWithoutDuplicates<T>( ...arrays:Array<Array<T>> ):Array<T> {
 		let result:Array<T> = arrays[ 0 ].slice();
 
-		for ( let i:number = 1, length:number = arrays.length; i < length; i ++ ) {
-			result = result.concat( arrays[ i ].filter( function ( item:T ):boolean {
+		for( let i:number = 1, length:number = arrays.length; i < length; i ++ ) {
+			result = result.concat( arrays[ i ].filter( function( item:T ):boolean {
 				return result.indexOf( item ) < 0;
 			} ) );
 		}
@@ -245,16 +270,16 @@ class M {
 	}
 
 	static extend<K, V>( toExtend:Map<K, V>, ...extenders:Map<K, V>[] ):Map<K, V> {
-		for ( let i:number = 0, length:number = extenders.length; i < length; i ++ ) {
+		for( let i:number = 0, length:number = extenders.length; i < length; i ++ ) {
 			let extender:Map<K, V> = extenders[ i ];
 			let values:Iterator<Array<(K|V)>> = extender.entries();
 
 			let next:IteratorResult<Array<(K|V)>> = values.next();
-			while ( ! next.done ) {
+			while( ! next.done ) {
 				let entry:Array<(K|V)> = next.value;
 				let key:K = <K> entry[ 0 ];
 				let value:V = <V> entry[ 1 ];
-				if ( ! toExtend.has( key ) ) toExtend.set( key, value );
+				if( ! toExtend.has( key ) ) toExtend.set( key, value );
 
 				next = values.next();
 			}
