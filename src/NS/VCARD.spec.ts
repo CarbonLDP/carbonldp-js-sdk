@@ -18,7 +18,7 @@ describe( module(
 	it( isDefined(), ():void => {
 		expect( VCARD ).toBeDefined();
 		expect( Utils.isObject( VCARD ) ).toBe( true );
-	});
+	} );
 
 	it( hasProperty(
 		STATIC,
@@ -29,7 +29,7 @@ describe( module(
 		expect( Utils.isString( VCARD.namespace ) ).toBe( true );
 
 		expect( VCARD.namespace ).toBe( "http://www.w3.org/2001/vcard-rdf/3.0#" )
-	});
+	} );
 
 	describe( clazz(
 		"Carbon.NS.VCARD.Predicate",
@@ -40,7 +40,7 @@ describe( module(
 			expect( VCARD.Predicate ).toBeDefined();
 			expect( Utils.isFunction( VCARD.Predicate ) ).toBe( true );
 			expect( Object.keys( VCARD.Predicate ).length ).toBe( 1 );
-		});
+		} );
 
 		it( hasProperty(
 			STATIC,
@@ -51,8 +51,8 @@ describe( module(
 			expect( Utils.isString( VCARD.Predicate.email ) ).toBe( true );
 
 			expect( VCARD.Predicate.email ).toBe( "http://www.w3.org/2001/vcard-rdf/3.0#email" );
-		});
+		} );
 
-	});
+	} );
 
-});
+} );

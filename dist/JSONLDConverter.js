@@ -226,7 +226,6 @@ var Class = (function () {
             return null;
         }
         id = ObjectSchema.Digester.resolvePrefixedURI(new RDF.URI.Class(id), digestedSchema).stringValue;
-        id = digestedSchema.vocab ? RDF.URI.Util.resolve(digestedSchema.vocab, id) : id;
         return { "@id": id };
     };
     Class.prototype.expandArray = function (propertyValue, digestedSchema) {

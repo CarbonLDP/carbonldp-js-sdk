@@ -24,22 +24,22 @@ describe( module( "Carbon/SPARQL/Service" ), ():void => {
 	it( isDefined(), ():void => {
 		expect( Service ).toBeDefined();
 		expect( Utils.isObject( Service ) ).toEqual( true );
-	});
+	} );
 
 	describe( clazz( "Carbon.SPARQL.Service.Class", "Executes SPARQL queries and updates." ), ():void => {
 
-		beforeEach( function ():void {
+		beforeEach( function():void {
 			jasmine.Ajax.install();
 		} );
 
-		afterEach( function ():void {
+		afterEach( function():void {
 			jasmine.Ajax.uninstall();
 		} );
 
 		it( isDefined(), ():void => {
 			expect( Service.Class ).toBeDefined();
 			expect( Utils.isFunction( Service.Class ) ).toEqual( true );
-		});
+		} );
 
 		it( hasMethod( STATIC, "executeRawASKQuery", "Executes an ASK Query and returns a raw application/sparql-results+json object.", [
 			{ name: "url", type: "string" },
@@ -61,10 +61,10 @@ describe( module( "Carbon/SPARQL/Service" ), ():void => {
 				jasmine.Ajax.stubRequest( "http://example.com/sparql-endpoint/", askQuery, "POST" ).andReturn( {
 					status: 200,
 					responseText: '' +
-						'{' +
-					    '    "head" : {} ,' +
-			            '    "boolean" : true' +
-						'}' +
+					'{' +
+					'    "head" : {} ,' +
+					'    "boolean" : true' +
+					'}' +
 					'',
 				} );
 
@@ -200,10 +200,11 @@ describe( module( "Carbon/SPARQL/Service" ), ():void => {
 				} );
 
 				class MockedPointerLibrary implements Pointer.Library {
-					hasPointer( id: string ): boolean {
+					hasPointer( id:string ):boolean {
 						return false;
 					}
-					getPointer( id: string ): Pointer.Class {
+
+					getPointer( id:string ):Pointer.Class {
 						return {
 							_id: id,
 							_resolved: false,
@@ -277,10 +278,11 @@ describe( module( "Carbon/SPARQL/Service" ), ():void => {
 				} );
 
 				class MockedPointerLibrary implements Pointer.Library {
-					hasPointer( id: string ): boolean {
+					hasPointer( id:string ):boolean {
 						return false;
 					}
-					getPointer( id: string ): Pointer.Class {
+
+					getPointer( id:string ):Pointer.Class {
 						return {
 							_id: id,
 							_resolved: false,
@@ -301,7 +303,7 @@ describe( module( "Carbon/SPARQL/Service" ), ():void => {
 						expect( spyRaw ).toHaveBeenCalledWith( "http://example.com/sparql-endpoint/with-bnode/", selectQuery, jasmine.any( Object ) );
 						expect( error instanceof Errors.NotImplementedError ).toEqual( true );
 					}
-				)
+					)
 				);
 			})();
 
@@ -440,7 +442,7 @@ describe( module( "Carbon/SPARQL/Service" ), ():void => {
 						expect( Utils.isObject( results.results ) ).toEqual( true );
 						expect( "bindings" in results.results ).toEqual( true );
 						expect( Utils.isArray( results.results.bindings ) ).toEqual( true );
-					})
+					} )
 				);
 			})();
 
@@ -472,7 +474,7 @@ describe( module( "Carbon/SPARQL/Service" ), ():void => {
 					'	"telephone": "(425) 123-4567",' +
 					'	"url": "http://www.janedoe.com"' +
 					'}' +
-				'';
+					'';
 
 				jasmine.Ajax.stubRequest( "http://example.com/sparql-endpoint/json/", constructQuery, "POST" ).andReturn( {
 					status: 200,
@@ -511,9 +513,9 @@ describe( module( "Carbon/SPARQL/Service" ), ():void => {
 					'   ldp:membershipResource <http://example.org/netWorth/nw1/>;' +
 					'   ldp:hasMemberRelation o:liability;' +
 					'   ldp:contains <l1>, <l2>, <l3>.' +
-				'';
+					'';
 				let acceptHeader:string = "text/turtle";
-				let requestOptions:HTTP.Request.Options = {headers: new Map().set("some", new HTTP.Header.Class("some") )};
+				let requestOptions:HTTP.Request.Options = {headers: new Map().set( "some", new HTTP.Header.Class( "some" ) )};
 				HTTP.Request.Util.setAcceptHeader( acceptHeader, requestOptions );
 
 				jasmine.Ajax.stubRequest( "http://example.com/sparql-endpoint/turtle/", constructQuery, "POST" ).andReturn( {
@@ -571,7 +573,7 @@ describe( module( "Carbon/SPARQL/Service" ), ():void => {
 					'	"telephone": "(425) 123-4567",' +
 					'	"url": "http://www.janedoe.com"' +
 					'}' +
-				'';
+					'';
 
 				jasmine.Ajax.stubRequest( "http://example.com/sparql-endpoint/json/", constructQuery, "POST" ).andReturn( {
 					status: 200,
@@ -610,7 +612,7 @@ describe( module( "Carbon/SPARQL/Service" ), ():void => {
 					'   ldp:membershipResource <http://example.org/netWorth/nw1/>;' +
 					'   ldp:hasMemberRelation o:liability;' +
 					'   ldp:contains <l1>, <l2>, <l3>.' +
-				'';
+					'';
 				let acceptHeader:string = "text/turtle";
 				let requestOptions:HTTP.Request.Options = {};
 				HTTP.Request.Util.setAcceptHeader( acceptHeader, requestOptions );

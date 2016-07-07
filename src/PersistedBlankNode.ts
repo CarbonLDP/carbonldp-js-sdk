@@ -5,12 +5,12 @@ import * as NS from "./NS";
 export const SCHEMA:ObjectSchema.Class = {
 	"bNodeIdentifier": {
 		"@id": NS.C.Predicate.bNodeIdentifier,
-			"@type": NS.XSD.DataType.string,
+		"@type": NS.XSD.DataType.string,
 	},
 };
 
 export interface Class extends PersistedFragment.Class {
-	bNodeIdentifier: string;
+	bNodeIdentifier:string;
 }
 
 export default Class;

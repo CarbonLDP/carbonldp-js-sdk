@@ -21,7 +21,7 @@ describe( module( "Carbon/SPARQL" ), ():void => {
 	it( isDefined(), ():void => {
 		expect( SPARQL ).toBeDefined();
 		expect( Utils.isObject( SPARQL ) ).toBe( true );
-	});
+	} );
 
 	it( reexports(
 		STATIC,
@@ -30,7 +30,7 @@ describe( module( "Carbon/SPARQL" ), ():void => {
 	), ():void => {
 		expect( SPARQL.RawResults ).toBeDefined();
 		expect( SPARQL.RawResults ).toBe( RawResults );
-	});
+	} );
 
 	it( reexports(
 		STATIC,
@@ -39,7 +39,7 @@ describe( module( "Carbon/SPARQL" ), ():void => {
 	), ():void => {
 		expect( SPARQL.RawResultsParser ).toBeDefined();
 		expect( SPARQL.RawResultsParser ).toBe( RawResultsParser );
-	});
+	} );
 
 	it( reexports(
 		STATIC,
@@ -48,7 +48,7 @@ describe( module( "Carbon/SPARQL" ), ():void => {
 	), ():void => {
 		expect( SPARQL.Service ).toBeDefined();
 		expect( SPARQL.Service ).toBe( Service );
-	});
+	} );
 
 	it( reexports(
 		STATIC,

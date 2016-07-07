@@ -32,36 +32,36 @@ describe( module( "Carbon/AbstractContext" ), ():void => {
 		it( isDefined(), ():void => {
 			expect( AbstractContext ).toBeDefined();
 			expect( Utils.isFunction( AbstractContext ) ).toBe( true );
-		});
+		} );
 
 		beforeEach( ():void => {
 			context = new MockedContext();
-		});
+		} );
 
 		it( hasConstructor(), ():void => {
 			expect( context ).toBeTruthy();
 			expect( context instanceof AbstractContext ).toBe( true );
-		});
+		} );
 
 		it( extendsClass(
 			"Carbon.SDKContext.Class"
 		), ():void => {
 			expect( context instanceof SDKContext.Class ).toBe( true );
-		});
+		} );
 
 		it( hasMethod(
 			INSTANCE,
 			"resolve",
 			"Abstract method that returns an absolute URI in accordance to the context scope from the relative URI provided.", [
-				{ name: "relativeURI", type: "string" }
+				{name: "relativeURI", type: "string"}
 			],
-			{ type: "string" }
+			{type: "string"}
 		), ():void => {
 			expect( context.resolve ).toBeDefined();
 			expect( Utils.isFunction( context.resolve ) ).toBe( true );
 
 			expect( context.resolve( "The mock returns the string provided" ) ).toBe( "The mock returns the string provided" );
-		});
+		} );
 
 		it( hasProperty(
 			INSTANCE,
@@ -76,8 +76,8 @@ describe( module( "Carbon/AbstractContext" ), ():void => {
 
 			let newContext = new MockedContext( context );
 			expect( newContext.parentContext ).toBe( context );
-		});
+		} );
 
-	});
+	} );
 
-});
+} );

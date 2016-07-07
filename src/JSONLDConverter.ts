@@ -31,7 +31,7 @@ export class Class {
 	}
 
 	constructor( literalSerializers?:Map<string, RDF.Literal.Serializer> ) {
-		this._literalSerializers = !! literalSerializers ? literalSerializers : Class.getDefaultSerializers();
+		this._literalSerializers = ! ! literalSerializers ? literalSerializers : Class.getDefaultSerializers();
 	}
 
 	compact( expandedObjects:Object[], targetObjects:Object[], digestedSchema:ObjectSchema.DigestedObjectSchema, pointerLibrary:Pointer.Library ):Object[];
@@ -46,10 +46,10 @@ export class Class {
 		if( ! Utils.isArray( expandedObjectOrObjects ) ) return this.compactSingle( expandedObjectOrObjects, targetObjectOrObjects, digestedSchema, pointerLibrary );
 
 		let expandedObjects:Object[] = expandedObjectOrObjects;
-		let targetObjects:Object[] = !! targetObjectOrObjects ? targetObjectOrObjects : [];
-		for( let i:number = 0, length:number = expandedObjects.length; i < length; i++ ) {
+		let targetObjects:Object[] = ! ! targetObjectOrObjects ? targetObjectOrObjects : [];
+		for( let i:number = 0, length:number = expandedObjects.length; i < length; i ++ ) {
 			let expandedObject:Object = expandedObjects[ i ];
-			let targetObject:Object = targetObjects[ i ] = !! targetObjects[ i ] ? targetObjects[ i ] : {};
+			let targetObject:Object = targetObjects[ i ] = ! ! targetObjects[ i ] ? targetObjects[ i ] : {};
 
 			this.compactSingle( expandedObject, targetObject, digestedSchema, pointerLibrary );
 		}
@@ -66,8 +66,8 @@ export class Class {
 	private expandSingle( compactedObject:Object, digestedSchema:ObjectSchema.DigestedObjectSchema ):RDF.Node.Class {
 		let expandedObject:any = {};
 
-		expandedObject[ "@id" ] = !! compactedObject[ "id" ] ? compactedObject[ "id" ] : "";
-		if( !! compactedObject[ "types" ] ) expandedObject[ "@type" ] = compactedObject[ "types" ];
+		expandedObject[ "@id" ] = ! ! compactedObject[ "id" ] ? compactedObject[ "id" ] : "";
+		if( ! ! compactedObject[ "types" ] ) expandedObject[ "@type" ] = compactedObject[ "types" ];
 
 		Utils.forEachOwnProperty( compactedObject, ( propertyName:string, value:any ):void => {
 			if( propertyName === "id" ) return;
@@ -81,14 +81,14 @@ export class Class {
 			} else if( RDF.URI.Util.isAbsolute( propertyName ) ) {
 				expandedValue = this.expandPropertyValues( value, digestedSchema );
 
-			} else if ( digestedSchema.vocab ) {
+			} else if( digestedSchema.vocab ) {
 				expandedValue = this.expandPropertyValue( value, digestedSchema );
-				propertyName  = RDF.URI.Util.resolve( digestedSchema.vocab, propertyName );
+				propertyName = RDF.URI.Util.resolve( digestedSchema.vocab, propertyName );
 			}
 
 			if( ! expandedValue ) return;
 			expandedObject[ propertyName ] = expandedValue;
-		});
+		} );
 
 		return expandedObject;
 	}
@@ -154,7 +154,7 @@ export class Class {
 		if( serializedValue === null ) return null;
 
 		return [
-			{ "@value": serializedValue, "@type": literalType },
+			{"@value": serializedValue, "@type": literalType},
 		];
 	}
 
@@ -166,7 +166,7 @@ export class Class {
 		if( ! expandedArray ) return null;
 
 		return [
-			{ "@list": expandedArray },
+			{"@list": expandedArray},
 		];
 	}
 
@@ -174,7 +174,7 @@ export class Class {
 		let listValues:Array<any> = this.expandPropertyPointers( propertyValues, digestedSchema );
 
 		return [
-			{ "@list": listValues },
+			{"@list": listValues},
 		];
 	}
 
@@ -182,7 +182,7 @@ export class Class {
 		let listValues:Array<any> = this.expandPropertyLiterals( propertyValues, literalType );
 
 		return [
-			{ "@list": listValues },
+			{"@list": listValues},
 		];
 	}
 
@@ -218,7 +218,7 @@ export class Class {
 			let serializedValue:string = this.serializeLiteral( propertyValue, literalType );
 			if( ! serializedValue ) continue;
 
-			listValues.push( { "@value": serializedValue, "@type": literalType } );
+			listValues.push( {"@value": serializedValue, "@type": literalType} );
 		}
 
 		return listValues;
@@ -235,8 +235,8 @@ export class Class {
 			// TODO: Validate language tags
 
 			let serializedValue:string = this.literalSerializers.get( NS.XSD.DataType.string ).serialize( value );
-			mapValues.push( { "@value": serializedValue, "@type": NS.XSD.DataType.string, "@language": languageTag } );
-		});
+			mapValues.push( {"@value": serializedValue, "@type": NS.XSD.DataType.string, "@language": languageTag} );
+		} );
 
 		return mapValues;
 	}
@@ -262,14 +262,13 @@ export class Class {
 
 	private expandPointer( propertyValue:any, digestedSchema:ObjectSchema.DigestedObjectSchema ):RDF.Node.Class {
 		let id:string = Pointer.Factory.is( propertyValue ) ? propertyValue.id : Utils.isString( propertyValue ) ? propertyValue : null;
-		if ( ! id ) {
+		if( ! id ) {
 			// TODO: Warn of data loss
 			return null;
 		}
 
 		id = ObjectSchema.Digester.resolvePrefixedURI( new RDF.URI.Class( id ), digestedSchema ).stringValue;
-		id = digestedSchema.vocab ? RDF.URI.Util.resolve( digestedSchema.vocab, id ) : id;
-		return { "@id": id };
+		return {"@id": id};
 	}
 
 	private expandArray( propertyValue:any, digestedSchema:ObjectSchema.DigestedObjectSchema ):any {
@@ -322,7 +321,7 @@ export class Class {
 
 		serializedValue = this.literalSerializers.get( literalType ).serialize( literalValue );
 
-		return { "@value": serializedValue, "@type": literalType };
+		return {"@value": serializedValue, "@type": literalType};
 	}
 
 	private compactSingle( expandedObject:any, targetObject:any, digestedSchema:ObjectSchema.DigestedObjectSchema, pointerLibrary:Pointer.Library ):void {
@@ -331,7 +330,7 @@ export class Class {
 		if( ! expandedObject[ "@id" ] ) throw new Errors.IllegalArgumentError( "The expandedObject doesn't have an @id defined." );
 		targetObject[ "id" ] = expandedObject[ "@id" ];
 
-		targetObject[ "types" ] = !! expandedObject[ "@type" ] ? expandedObject[ "@type" ] : [];
+		targetObject[ "types" ] = ! ! expandedObject[ "@type" ] ? expandedObject[ "@type" ] : [];
 
 		Utils.forEachOwnProperty( expandedObject, ( propertyURI:string, value:any ):void => {
 			if( propertyURI === "@id" ) return;
@@ -344,7 +343,7 @@ export class Class {
 				let propertyName:string = digestedSchema.vocab ? RDF.URI.Util.getRelativeURI( propertyURI, digestedSchema.vocab ) : propertyURI;
 				this.assignURIProperty( targetObject, expandedObject, propertyURI, propertyName, pointerLibrary );
 			}
-		});
+		} );
 
 		return targetObject;
 	}
@@ -571,7 +570,7 @@ export class Class {
 		let map:Map<string, string> = new Map<string, string>();
 		digestedSchema.properties.forEach( ( definition:ObjectSchema.DigestedPropertyDefinition, propertyName:string ):void => {
 			map.set( definition.uri.toString(), propertyName );
-		});
+		} );
 		return map;
 	}
 

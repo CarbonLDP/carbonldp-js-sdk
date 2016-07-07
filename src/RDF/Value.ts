@@ -109,7 +109,7 @@ export class Util {
 		let properties:Array<any> = [];
 		for( let propertyValue of propertyValues ) {
 			let parsedValue:any = Util.parseValue( propertyValue, pointerLibrary );
-			if ( parsedValue !== null )
+			if( parsedValue !== null )
 				properties.push( parsedValue );
 		}
 
@@ -126,7 +126,7 @@ export class Util {
 			if( ! RDFNode.Factory.is( propertyValue ) ) continue;
 
 			let pointer:Pointer.Class = pointerLibrary.getPointer( propertyValue[ "@id" ] );
-			if ( pointer !== null )
+			if( pointer !== null )
 				propertyPointers.push( pointer );
 		}
 

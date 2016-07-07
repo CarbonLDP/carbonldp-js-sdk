@@ -32,7 +32,7 @@ describe( module( "Carbon/ObjectSchema" ), ():void => {
 	it( isDefined(), ():void => {
 		expect( ObjectSchema ).toBeDefined();
 		expect( Utils.isObject( ObjectSchema ) ).toEqual( true );
-	});
+	} );
 
 	describe( enumeration(
 		"Carbon.ObjectSchema.ContainerType",
@@ -42,27 +42,27 @@ describe( module( "Carbon/ObjectSchema" ), ():void => {
 		it( isDefined(), ():void => {
 			expect( ObjectSchema.ContainerType ).toBeDefined();
 			expect( Utils.isObject( ObjectSchema.ContainerType ) ).toBe( true );
-		});
+		} );
 
 		it( hasEnumeral(
 			"SET"
 		), ():void => {
 			expect( ObjectSchema.ContainerType.SET ).toBeDefined();
-		});
+		} );
 
 		it( hasEnumeral(
 			"LIST"
 		), ():void => {
 			expect( ObjectSchema.ContainerType.LIST ).toBeDefined();
-		});
+		} );
 
 		it( hasEnumeral(
 			"LANGUAGE"
 		), ():void => {
 			expect( ObjectSchema.ContainerType.LANGUAGE ).toBeDefined();
-		});
+		} );
 
-	});
+	} );
 
 	describe( clazz(
 		"Carbon.ObjectSchema.DigestedObjectSchema",
@@ -72,18 +72,18 @@ describe( module( "Carbon/ObjectSchema" ), ():void => {
 		it( isDefined(), ():void => {
 			expect( ObjectSchema.DigestedObjectSchema ).toBeDefined();
 			expect( Utils.isFunction( ObjectSchema.DigestedObjectSchema ) ).toBe( true );
-		});
+		} );
 
 		let digestedSchema:ObjectSchema.DigestedObjectSchema;
 
 		beforeEach( ():void => {
 			digestedSchema = new ObjectSchema.DigestedObjectSchema();
-		});
+		} );
 
 		it( hasConstructor(), ():void => {
 			expect( digestedSchema ).toBeTruthy();
 			expect( digestedSchema instanceof ObjectSchema.DigestedObjectSchema ).toBe( true );
-		});
+		} );
 
 		it( hasProperty(
 			INSTANCE,
@@ -94,7 +94,7 @@ describe( module( "Carbon/ObjectSchema" ), ():void => {
 			expect( digestedSchema.base ).toBeDefined();
 			expect( Utils.isString( digestedSchema.base ) ).toBe( true );
 			expect( digestedSchema.base ).toBe( "" );
-		});
+		} );
 
 		it( hasProperty(
 			INSTANCE,
@@ -116,7 +116,7 @@ describe( module( "Carbon/ObjectSchema" ), ():void => {
 			expect( digestedSchema.prefixes ).toBeDefined();
 			expect( Utils.isMap( digestedSchema.prefixes ) ).toBe( true );
 			expect( digestedSchema.prefixes.size ).toBe( 0 );
-		});
+		} );
 
 		it( hasProperty(
 			INSTANCE,
@@ -127,7 +127,7 @@ describe( module( "Carbon/ObjectSchema" ), ():void => {
 			expect( digestedSchema.properties ).toBeDefined();
 			expect( Utils.isMap( digestedSchema.properties ) ).toBe( true );
 			expect( digestedSchema.properties.size ).toBe( 0 );
-		});
+		} );
 
 		it( hasProperty(
 			INSTANCE,
@@ -138,9 +138,9 @@ describe( module( "Carbon/ObjectSchema" ), ():void => {
 			expect( digestedSchema.prefixedURIs ).toBeDefined();
 			expect( Utils.isMap( digestedSchema.prefixedURIs ) ).toBe( true );
 			expect( digestedSchema.prefixedURIs.size ).toBe( 0 );
-		});
+		} );
 
-	});
+	} );
 
 	describe( clazz(
 		"Carbon.ObjectSchema.DigestedPropertyDefinition",
@@ -150,17 +150,17 @@ describe( module( "Carbon/ObjectSchema" ), ():void => {
 		it( isDefined(), ():void => {
 			expect( ObjectSchema.DigestedPropertyDefinition ).toBeDefined();
 			expect( Utils.isFunction( ObjectSchema.DigestedPropertyDefinition ) ).toBe( true );
-		});
+		} );
 
 		let digestedProperty:ObjectSchema.DigestedPropertyDefinition;
 		beforeEach( ():void => {
 			digestedProperty = new ObjectSchema.DigestedPropertyDefinition();
-		});
+		} );
 
 		it( hasConstructor(), ():void => {
 			expect( digestedProperty ).toBeTruthy();
 			expect( digestedProperty instanceof ObjectSchema.DigestedPropertyDefinition ).toBe( true );
-		});
+		} );
 
 		it( hasProperty(
 			INSTANCE,
@@ -170,7 +170,7 @@ describe( module( "Carbon/ObjectSchema" ), ():void => {
 		), ():void => {
 			expect( digestedProperty.uri ).toBeDefined();
 			expect( digestedProperty.uri ).toBeNull();
-		});
+		} );
 
 		it( hasProperty(
 			INSTANCE,
@@ -180,7 +180,7 @@ describe( module( "Carbon/ObjectSchema" ), ():void => {
 		), ():void => {
 			expect( digestedProperty.literal ).toBeDefined();
 			expect( digestedProperty.literal ).toBeNull();
-		});
+		} );
 
 		it( hasProperty(
 			INSTANCE,
@@ -190,7 +190,7 @@ describe( module( "Carbon/ObjectSchema" ), ():void => {
 		), ():void => {
 			expect( digestedProperty.literalType ).toBeDefined();
 			expect( digestedProperty.literalType ).toBeNull();
-		});
+		} );
 
 		it( hasProperty(
 			INSTANCE,
@@ -200,7 +200,7 @@ describe( module( "Carbon/ObjectSchema" ), ():void => {
 		), ():void => {
 			expect( digestedProperty.language ).toBeDefined();
 			expect( digestedProperty.language ).toBeNull();
-		});
+		} );
 
 		it( hasProperty(
 			INSTANCE,
@@ -210,17 +210,17 @@ describe( module( "Carbon/ObjectSchema" ), ():void => {
 		), ():void => {
 			expect( digestedProperty.containerType ).toBeDefined();
 			expect( digestedProperty.containerType ).toBeNull();
-		});
+		} );
 
-	});
+	} );
 
 	describe( clazz( "Carbon.ObjectSchema.Digester", "Class with functions to standardize a JSON-LD Context Schema." ), ():void => {
 		describe( method( STATIC, "digestSchema" ), ():void => {
 			it( hasSignature( `
 					Processes a schema to standardize it before using it.
 				`, [
-				{ name: "schema", type: "Carbon.ObjectSchema.Class" }
-			], { type: "Carbon.ObjectSchema.DigestedObjectSchema" } ), ():void => {
+				{name: "schema", type: "Carbon.ObjectSchema.Class"}
+			], {type: "Carbon.ObjectSchema.DigestedObjectSchema"} ), ():void => {
 				expect( ObjectSchema.Digester.digestSchema ).toBeDefined();
 				expect( Utils.isFunction( ObjectSchema.Digester.digestSchema ) ).toBeDefined();
 
@@ -269,13 +269,13 @@ describe( module( "Carbon/ObjectSchema" ), ():void => {
 				expect( digestedSchema.properties.get( "name" ).uri.toString() ).toEqual( "http://purl.org/dc/terms/name" );
 				expect( digestedSchema.properties.get( "name" ).containerType ).toEqual( null );
 				expect( digestedSchema.properties.get( "name" ).language ).toEqual( null );
-			});
+			} );
 
 			it( hasSignature( `
 					Processes several schemas to standardize and combine them before using them.
 				`, [
-				{ name: "schemas", type: "Array<Carbon.ObjectSchema.Class>" }
-			], { type: "Carbon.ObjectSchema.DigestedObjectSchema" } ), ():void => {
+				{name: "schemas", type: "Array<Carbon.ObjectSchema.Class>"}
+			], {type: "Carbon.ObjectSchema.DigestedObjectSchema"} ), ():void => {
 				expect( ObjectSchema.Digester.digestSchema ).toBeDefined();
 				expect( Utils.isFunction( ObjectSchema.Digester.digestSchema ) ).toBeDefined();
 
@@ -328,16 +328,16 @@ describe( module( "Carbon/ObjectSchema" ), ():void => {
 				expect( digestedSchema.properties.get( "name" ).uri.toString() ).toEqual( "http://purl.org/dc/terms/name" );
 				expect( digestedSchema.properties.get( "name" ).containerType ).toEqual( null );
 				expect( digestedSchema.properties.get( "name" ).language ).toEqual( null );
-			});
-		});
+			} );
+		} );
 
 		it( hasMethod(
 			STATIC,
 			"combineDigestedObjectSchemas",
 			"Combine several standardized schemas into one.", [
-				{ name: "digestedSchemas", type: "Carbon.ObjectSchema.DigestedObjectSchema[]" }
+				{name: "digestedSchemas", type: "Carbon.ObjectSchema.DigestedObjectSchema[]"}
 			],
-			{ type: "Carbon.ObjectSchema.DigestedObjectSchema" }
+			{type: "Carbon.ObjectSchema.DigestedObjectSchema"}
 		), ():void => {
 
 			expect( ObjectSchema.Digester.digestSchema ).toBeDefined();
@@ -375,7 +375,7 @@ describe( module( "Carbon/ObjectSchema" ), ():void => {
 			];
 
 			let digestedSchemas:ObjectSchema.DigestedObjectSchema[] = [];
-			for ( let schema of schemas ) {
+			for( let schema of schemas ) {
 				digestedSchemas.push( ObjectSchema.Digester.digestSchema( schema ) );
 			}
 
@@ -405,8 +405,8 @@ describe( module( "Carbon/ObjectSchema" ), ():void => {
 			expect( digestedSchema.properties.get( "name" ).uri.toString() ).toEqual( "http://purl.org/dc/terms/name" );
 			expect( digestedSchema.properties.get( "name" ).containerType ).toEqual( null );
 			expect( digestedSchema.properties.get( "name" ).language ).toEqual( null );
-		});
+		} );
 
-	});
+	} );
 
-});
+} );

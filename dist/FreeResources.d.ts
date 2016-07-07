@@ -8,6 +8,7 @@ export interface Class extends Pointer.Library, Pointer.Validator {
     getResource(id: string): Resource.Class;
     getResources(): Resource.Class[];
     createResource(id?: string): Resource.Class;
+    toJSON(): string;
 }
 export declare class Factory {
     static hasClassProperties(object: Object): boolean;

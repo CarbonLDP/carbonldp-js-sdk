@@ -50,6 +50,7 @@ declare class Documents implements Pointer.Library, Pointer.Validator, ObjectSch
     save(persistedDocument: PersistedDocument.Class, requestOptions?: HTTP.Request.Options): Promise<[PersistedDocument.Class, HTTP.Response.Class]>;
     refresh(persistedDocument: PersistedDocument.Class, requestOptions?: HTTP.Request.Options): Promise<[PersistedDocument.Class, HTTP.Response.Class]>;
     delete(documentURI: string, requestOptions?: HTTP.Request.Options): Promise<HTTP.Response.Class>;
+    getDownloadURL(documentURI: string, requestOptions?: HTTP.Request.Options): Promise<string>;
     getSchemaFor(object: Object): ObjectSchema.DigestedObjectSchema;
     executeRawASKQuery(documentURI: string, askQuery: string, requestOptions?: HTTP.Request.Options): Promise<[SPARQL.RawResults.Class, HTTP.Response.Class]>;
     executeASKQuery(documentURI: string, askQuery: string, requestOptions?: HTTP.Request.Options): Promise<[boolean, HTTP.Response.Class]>;
@@ -69,13 +70,14 @@ declare class Documents implements Pointer.Library, Pointer.Validator, ObjectSch
     private getDigestedObjectSchema(objectTypes);
     private getDocumentTypes(document);
     private updateObject(target, source);
-    private getAssociatedFragment(persistedDocument, fragment);
+    private getAssociatedFragment(blankNodes, namedFragments, searchedFragment);
     private getRequestURI(uri);
     private setDefaultRequestOptions(requestOptions, interactionModel);
+    private getMembershipResource(documentResource, rdfDocuments, response);
     private getPersistedDocument(rdfDocument, response);
     private createPersistedDocument(documentPointer, documentResource, fragmentResources);
     private updatePersistedDocument(persistedDocument, documentResource, fragmentResources);
-    private sendRequestForResponseWithMetadata(uri, requestOptions);
+    private getPersistedMetadataResources(freeNodes, rdfDocuments, response);
     private getFreeResources(nodes);
 }
 export default Documents;

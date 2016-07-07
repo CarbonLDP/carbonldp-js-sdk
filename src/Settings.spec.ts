@@ -18,10 +18,10 @@ describe( module( "Carbon/settings" ), ():void => {
 	it( isDefined(), ():void => {
 		expect( settings ).toBeDefined();
 		expect( Utils.isObject( settings ) ).toBe( true );
-	});
+	} );
 
 	it( hasDefaultExport(
-		"Carbon.settings",`
+		"Carbon.settings", `
 		A object of type \`Carbon.settings.CarbonSettings\`, which is the default settings of a Carbon instance:
 		* domain: \`"carbonldp.com"\`
 		* http.ssl: \`true\`
@@ -55,6 +55,6 @@ describe( module( "Carbon/settings" ), ():void => {
 
 		expect( defaultExport[ "vocabulary" ] ).toBeDefined();
 		expect( defaultExport[ "vocabulary" ] ).toBe( "vocabulary/#" );
-	});
+	} );
 
-});
+} );

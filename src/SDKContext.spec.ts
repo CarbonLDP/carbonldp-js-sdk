@@ -28,7 +28,7 @@ describe( module( "Carbon/SDKContext" ), ():void => {
 	it( isDefined(), ():void => {
 		expect( SDKContext ).toBeDefined();
 		expect( Utils.isObject( SDKContext ) ).toBe( true );
-	});
+	} );
 
 	describe( clazz(
 		"Carbon.SDKContext.Class",
@@ -38,25 +38,25 @@ describe( module( "Carbon/SDKContext" ), ():void => {
 		it( isDefined(), ():void => {
 			expect( SDKContext.Class ).toBeDefined();
 			expect( Utils.isFunction( SDKContext.Class ) ).toBe( true );
-		});
+		} );
 
 		let context:SDKContext.Class;
 		beforeEach( ():void => {
 			context = new SDKContext.Class();
-			jasmine.addMatchers({
+			jasmine.addMatchers( {
 				// Custom handler for Map as Jasmine does not support it yet
-				toEqual: function(util) {
+				toEqual: function( util ) {
 					return {
-						compare: function(actual, expected) {
-							return {pass: util.equals(actual, expected, [compareMap])};
+						compare: function( actual, expected ) {
+							return {pass: util.equals( actual, expected, [ compareMap ] )};
 						}
 					};
 
-					function compareMap(actual, expected) {
-						if (actual instanceof Map) {
+					function compareMap( actual, expected ) {
+						if( actual instanceof Map ) {
 							var pass = actual.size === expected.size;
-							if (pass) {
-								actual.forEach((v, k) => { pass = pass && util.equals(v, expected.get(k)); });
+							if( pass ) {
+								actual.forEach( ( v, k ) => { pass = pass && util.equals( v, expected.get( k ) ); } );
 							}
 							return pass;
 						} else {
@@ -64,13 +64,13 @@ describe( module( "Carbon/SDKContext" ), ():void => {
 						}
 					}
 				}
-			});
-		});
+			} );
+		} );
 
 		it( hasConstructor(), ():void => {
 			expect( context ).toBeTruthy();
 			expect( context instanceof SDKContext.Class );
-		});
+		} );
 
 		it( hasProperty(
 			INSTANCE,
@@ -80,7 +80,7 @@ describe( module( "Carbon/SDKContext" ), ():void => {
 		), ():void => {
 			expect( context.auth ).toBeDefined();
 			expect( context.auth instanceof Auth.Class );
-		});
+		} );
 
 		it( hasProperty(
 			INSTANCE,
@@ -90,7 +90,7 @@ describe( module( "Carbon/SDKContext" ), ():void => {
 		), ():void => {
 			expect( context.documents ).toBeDefined();
 			expect( context.documents instanceof Documents ).toBe( true );
-		});
+		} );
 
 		it( hasProperty(
 			INSTANCE,
@@ -100,7 +100,7 @@ describe( module( "Carbon/SDKContext" ), ():void => {
 		), ():void => {
 			expect( context.parentContext ).toBeDefined();
 			expect( context.parentContext ).toBeNull();
-		});
+		} );
 
 		it( hasMethod(
 			INSTANCE,
@@ -112,7 +112,7 @@ describe( module( "Carbon/SDKContext" ), ():void => {
 			expect( Utils.isFunction( context.getBaseURI ) ).toBe( true );
 
 			expect( context.getBaseURI() ).toBe( "" );
-		});
+		} );
 
 		it( hasMethod(
 			INSTANCE,
@@ -120,14 +120,14 @@ describe( module( "Carbon/SDKContext" ), ():void => {
 			"Returns the resolved relative URI specified, in accordance with the scope of the context.", [
 				{ name: "relativeURI", type: "string" }
 			],
-			{ type: "string" }
+			{type: "string"}
 		), ():void => {
 			expect( context.resolve ).toBeDefined();
 			expect( Utils.isFunction( context.resolve ) ).toBe( true );
 
 			expect( context.resolve( "http://example.com/a/uri/" ) ).toBe( "http://example.com/a/uri/" );
 			expect( context.resolve( "a/relative/uri/" ) ).toBe( "a/relative/uri/" );
-		});
+		} );
 
 		it( hasMethod(
 			INSTANCE,
@@ -135,7 +135,7 @@ describe( module( "Carbon/SDKContext" ), ():void => {
 			"Returns true if the setting sought for has been assign.", [
 				{ name: "name", type: "string" }
 			],
-			{ type: "boolean"}
+			{type: "boolean"}
 		), ():void => {
 			expect( context.hasSetting ).toBeDefined();
 			expect( Utils.isFunction( context.hasSetting ) ).toBe( true );
@@ -143,7 +143,7 @@ describe( module( "Carbon/SDKContext" ), ():void => {
 			expect( context.hasSetting( "a.setting" ) ).toBe( false );
 
 			class MyContext extends SDKContext.Class {
-				constructor( ) {
+				constructor() {
 					super();
 					this.settings.set( "a.setting", "my setting" );
 				}
@@ -152,16 +152,16 @@ describe( module( "Carbon/SDKContext" ), ():void => {
 
 			expect( mockedContext.hasSetting( "a.setting" ) ).toBe( true );
 			expect( mockedContext.hasSetting( "another.setting" ) ).toBe( false );
-		});
+		} );
 
 		it( hasMethod(
 			INSTANCE,
 			"getSetting", `
 			Returns the value of the setting sought for.
 			Returns \`null\` if no setting with the name specified exists.`, [
-				{ name: "name", type: "string" }
+				{name: "name", type: "string"}
 			],
-			{ type: "string" }
+			{type: "string"}
 		), ():void => {
 			expect( context.getSetting ).toBeDefined();
 			expect( Utils.isFunction( context.getSetting ) ).toBeDefined();
@@ -169,7 +169,7 @@ describe( module( "Carbon/SDKContext" ), ():void => {
 			expect( context.getSetting( "a.setting " ) ).toBeNull();
 
 			class MyContext extends SDKContext.Class {
-				constructor( ) {
+				constructor() {
 					super();
 					this.settings.set( "a.setting", "my setting" );
 				}
@@ -178,7 +178,7 @@ describe( module( "Carbon/SDKContext" ), ():void => {
 
 			expect( mockedContext.getSetting( "a.setting" ) ).toBe( "my setting" );
 			expect( mockedContext.getSetting( "another.setting" ) ).toBeNull();
-		});
+		} );
 
 		it( hasMethod(
 			INSTANCE,
@@ -196,7 +196,7 @@ describe( module( "Carbon/SDKContext" ), ():void => {
 
 			context.setSetting( "a.setting", "the same setting" );
 			expect( context.getSetting( "a.setting" ) ).toBe( "the same setting" );
-		});
+		} );
 
 		it( hasMethod(
 			INSTANCE,
@@ -209,7 +209,7 @@ describe( module( "Carbon/SDKContext" ), ():void => {
 			expect( Utils.isFunction( context.deleteSetting ) ).toBe( true );
 
 			class MyContext extends SDKContext.Class {
-				constructor( ) {
+				constructor() {
 					super();
 					this.settings.set( "a.setting", "my setting" );
 				}
@@ -218,7 +218,7 @@ describe( module( "Carbon/SDKContext" ), ():void => {
 
 			mockedContext.deleteSetting( "a.setting" );
 			expect( mockedContext.hasSetting( "a.setting" ) ).toBe( false );
-		});
+		} );
 
 		it( hasMethod(
 			INSTANCE,
@@ -226,7 +226,7 @@ describe( module( "Carbon/SDKContext" ), ():void => {
 			"Returns true if there is an ObjectSchema for the specified type.", [
 				{ name: "type", type: "string" }
 			],
-			{ type: "boolean" }
+			{type: "boolean"}
 		), ():void => {
 			expect( context.hasObjectSchema ).toBeDefined();
 			expect( Utils.isFunction( context.hasObjectSchema ) ).toBe( true );
@@ -242,7 +242,7 @@ describe( module( "Carbon/SDKContext" ), ():void => {
 			let mockedContext:Context = new MyContext();
 
 			expect( mockedContext.hasObjectSchema( "http://example.com/ns#MyType" ) ).toBe( true );
-		});
+		} );
 
 		it( hasMethod(
 			INSTANCE,
@@ -251,7 +251,7 @@ describe( module( "Carbon/SDKContext" ), ():void => {
 			If no type is specified, the general object schema of the context is returned. This is an schema that applies for all the Resources.`, [
 				{ name: "type", type: "string", optional: true, default: "null" }
 			],
-			{ type: "Carbon.ObjectSchema.DigestedObjectSchema" }
+			{type: "Carbon.ObjectSchema.DigestedObjectSchema"}
 		), ():void => {
 			expect( context.getObjectSchema ).toBeDefined();
 			expect( Utils.isFunction( context.getObjectSchema ) ).toBe( true );
@@ -296,7 +296,7 @@ describe( module( "Carbon/SDKContext" ), ():void => {
 			returnedSchema = mockedContext.getObjectSchema();
 			expect( returnedSchema instanceof ObjectSchema.DigestedObjectSchema ).toBe( true );
 			expect( returnedSchema ).toEqual( ObjectSchema.Digester.digestSchema( rawObjectSchema ) );
-		});
+		} );
 
 		describe( method(
 			INSTANCE,
@@ -332,7 +332,7 @@ describe( module( "Carbon/SDKContext" ), ():void => {
 				expect( digestedSchema instanceof ObjectSchema.DigestedObjectSchema ).toBe( true );
 
 				expect( digestedSchema ).toEqual( ObjectSchema.Digester.digestSchema( objectSchema ) );
-			});
+			} );
 
 			it( hasSignature(
 				"Extends the general schema of the current context.\nIf a general schema exists in the parent context, this is duplicated for the current context, but only the first time the schema is extended.", [
@@ -361,14 +361,14 @@ describe( module( "Carbon/SDKContext" ), ():void => {
 				let some = new ObjectSchema.DigestedObjectSchema();
 				expect( digestedSchema.properties ).not.toEqual( some.properties );
 
-				let expectedDigestedSchema:ObjectSchema.DigestedObjectSchema = ObjectSchema.Digester.combineDigestedObjectSchemas([
+				let expectedDigestedSchema:ObjectSchema.DigestedObjectSchema = ObjectSchema.Digester.combineDigestedObjectSchemas( [
 					ObjectSchema.Digester.digestSchema( objectSchema ),
 					SDKContext.instance.getObjectSchema(),
-				]);
+				] );
 				expect( digestedSchema ).toEqual( expectedDigestedSchema );
-			});
+			} );
 
-		});
+		} );
 
 		it( hasMethod(
 			INSTANCE,
@@ -416,9 +416,9 @@ describe( module( "Carbon/SDKContext" ), ():void => {
 			returnedSchema = mockedContext.getObjectSchema();
 			expect( returnedSchema ).not.toEqual( objectSchema );
 			expect( returnedSchema ).toEqual( new ObjectSchema.DigestedObjectSchema() );
-		});
+		} );
 
-	});
+	} );
 
 	it( hasProperty(
 		STATIC,
@@ -429,13 +429,13 @@ describe( module( "Carbon/SDKContext" ), ():void => {
 		expect( SDKContext.instance ).toBeDefined();
 		expect( SDKContext.instance ).toBeTruthy();
 		expect( SDKContext.instance instanceof SDKContext.Class ).toBe( true );
-	});
+	} );
 
 	it( hasDefaultExport(
 		"Carbon.SDKContext.instance"
 	), ():void => {
 		expect( DefaultExport ).toBeDefined();
 		expect( DefaultExport ).toBe( SDKContext.instance );
-	});
+	} );
 
-});
+} );

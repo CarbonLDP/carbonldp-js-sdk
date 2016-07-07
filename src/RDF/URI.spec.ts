@@ -21,14 +21,14 @@ describe( module( "Carbon/RDF/URI" ), ():void => {
 	it( isDefined(), ():void => {
 		expect( URI ).toBeDefined();
 		expect( Utils.isObject( URI ) ).toBe( true );
-	});
+	} );
 
 	describe( clazz( "Carbon.RDF.URI.Class", "Wrapper class for an URI string value." ), ():void => {
 
 		it( isDefined(), ():void => {
 			expect( URI.Class ).toBeDefined();
 			expect( Utils.isFunction( URI.Class ) ).toBe( true );
-		});
+		} );
 
 		it( hasConstructor( [
 			{ name: "stringValue", type: "string", description: "The string that represents the URI." }
@@ -69,22 +69,22 @@ describe( module( "Carbon/RDF/URI" ), ():void => {
 		});
 
 
-	});
+	} );
 
 	describe( clazz( "Carbon.RDF.URI.Util", "Class with useful functions to manage URI strings." ), ():void => {
 
 		it( isDefined(), ():void => {
 			expect( URI.Util ).toBeDefined();
 			expect( Utils.isFunction( URI.Util ) ).toBe( true );
-		});
+		} );
 
 		it( hasMethod(
 			STATIC,
 			"hasFragment",
 			"Returns true if the URI provided contains a fragment", [
-				{ name: "uri", type: "string" }
+				{name: "uri", type: "string"}
 			],
-			{ type: "boolean" }
+			{type: "boolean"}
 		), ():void => {
 			expect( "hasFragment" in URI.Util ).toBe( true );
 			expect( Utils.isFunction( URI.Util.hasFragment ) ).toBe( true );
@@ -94,7 +94,25 @@ describe( module( "Carbon/RDF/URI" ), ():void => {
 
 			expect( URI.Util.hasFragment( "http://example.com/resource/" ) ).toBe( false );
 			expect( URI.Util.hasFragment( "prefix:resource/" ) ).toBe( false );
-		});
+		} );
+
+		it( hasMethod(
+			STATIC,
+			"hasQuery",
+			"Returns true if the URI provided contains query parameters", [
+				{name: "uri", type: "string"}
+			],
+			{type: "boolean"}
+		), ():void => {
+			expect( "hasQuery" in URI.Util ).toBe( true );
+			expect( Utils.isFunction( URI.Util.hasQuery ) ).toBe( true );
+
+			expect( URI.Util.hasQuery( "http://example.com/resource/" ) ).toBe( false );
+			expect( URI.Util.hasQuery( "http://example.com/resource/#fragment" ) ).toBe( false );
+
+			expect( URI.Util.hasQuery( "http://example.com/resource/?parameter=true" ) ).toBe( true );
+			expect( URI.Util.hasQuery( "http://example.com/resource/#fragment?parameter=true" ) ).toBe( true );
+		} );
 
 		it( hasMethod(
 			STATIC,
@@ -102,21 +120,21 @@ describe( module( "Carbon/RDF/URI" ), ():void => {
 			"Returns true if the URI provided has a protocol.", [
 				{ name: "uri", type: "string" }
 			],
-			{ type: "boolean" }
+			{type: "boolean"}
 		), ():void => {
 			expect( "hasProtocol" in URI.Util ).toBe( true );
 			expect( Utils.isFunction( URI.Util.hasProtocol ) ).toBe( true );
 
-			expect( URI.Util.hasProtocol("http://example.com/resource/") ).toBe( true );
-			expect( URI.Util.hasProtocol("https://example.com/resource/") ).toBe( true );
+			expect( URI.Util.hasProtocol( "http://example.com/resource/" ) ).toBe( true );
+			expect( URI.Util.hasProtocol( "https://example.com/resource/" ) ).toBe( true );
 
-			expect( URI.Util.hasProtocol("ftp://example.com/resource/") ).toBe( false );
-			expect( URI.Util.hasProtocol("file://example.com/resource/") ).toBe( false );
-			expect( URI.Util.hasProtocol("://example.com/resource/") ).toBe( false );
-			expect( URI.Util.hasProtocol("/resource/")).toBe( false );
-			expect( URI.Util.hasProtocol("resource/") ).toBe( false );
+			expect( URI.Util.hasProtocol( "ftp://example.com/resource/" ) ).toBe( false );
+			expect( URI.Util.hasProtocol( "file://example.com/resource/" ) ).toBe( false );
+			expect( URI.Util.hasProtocol( "://example.com/resource/" ) ).toBe( false );
+			expect( URI.Util.hasProtocol( "/resource/" ) ).toBe( false );
+			expect( URI.Util.hasProtocol( "resource/" ) ).toBe( false );
 			expect( URI.Util.hasProtocol( "prefix:resource/" ) ).toBe( false );
-		});
+		} );
 
 		it( hasMethod(
 			STATIC,
@@ -124,7 +142,7 @@ describe( module( "Carbon/RDF/URI" ), ():void => {
 			"Returns true if the URI provided is absolute.", [
 				{ name: "uri", type: "string" }
 			],
-			{ type: "boolean" }
+			{type: "boolean"}
 		), ():void => {
 			expect( "isAbsolute" in URI.Util ).toBe( true );
 			expect( Utils.isFunction( URI.Util.isAbsolute ) ).toBe( true );
@@ -137,7 +155,7 @@ describe( module( "Carbon/RDF/URI" ), ():void => {
 			expect( URI.Util.isAbsolute( "resource/" ) ).toBe( false );
 			expect( URI.Util.isAbsolute( "resource/#fragment" ) ).toBe( false );
 			expect( URI.Util.isAbsolute( "prefix:resource/" ) ).toBe( false );
-		});
+		} );
 
 		it( hasMethod(
 			STATIC,
@@ -145,7 +163,7 @@ describe( module( "Carbon/RDF/URI" ), ():void => {
 			"Returns true if the URI provided is relative.", [
 				{ name: "uri", type: "string" }
 			],
-			{ type: "boolean" }
+			{type: "boolean"}
 		), ():void => {
 			expect( "isRelative" in URI.Util ).toBe( true );
 			expect( Utils.isFunction( URI.Util.isRelative ) ).toBe( true );
@@ -158,7 +176,7 @@ describe( module( "Carbon/RDF/URI" ), ():void => {
 			expect( URI.Util.isRelative( "http://example.com/resoruce/" ) ).toBe( false );
 			expect( URI.Util.isRelative( "https://example.com/resource/" ) ).toBe( false );
 			expect( URI.Util.isRelative( "://example.com/resource/" ) ).toBe( false );
-		});
+		} );
 
 		it( hasMethod(
 			STATIC,
@@ -166,7 +184,7 @@ describe( module( "Carbon/RDF/URI" ), ():void => {
 			"Returns true if the URI provided reference to a BlankNode.", [
 				{ name: "uri", type: "string" }
 			],
-			{ type: "boolean" }
+			{type: "boolean"}
 		), ():void => {
 			expect( "isBNodeID" in URI.Util ).toBe( true );
 			expect( Utils.isFunction( URI.Util.isBNodeID ) ).toBe( true );
@@ -180,7 +198,7 @@ describe( module( "Carbon/RDF/URI" ), ():void => {
 			expect( URI.Util.isBNodeID( "://example.com/resource/" ) ).toBe( false );
 			expect( URI.Util.isBNodeID( "/resource/" ) ).toBe( false );
 			expect( URI.Util.isBNodeID( "prefix:resource/" ) ).toBe( false );
-		});
+		} );
 
 		it( hasMethod(
 			STATIC,
@@ -197,7 +215,7 @@ describe( module( "Carbon/RDF/URI" ), ():void => {
 			expect( URI.Util.isBNodeID( id2 ) ).toBe( true );
 
 			expect( id1 ).not.toEqual( id2 );
-		});
+		} );
 
 		it( hasMethod(
 			STATIC,
@@ -205,7 +223,7 @@ describe( module( "Carbon/RDF/URI" ), ():void => {
 			"Returns true if the URI provided has a prefix.", [
 				{ name: "uri", type: "string" }
 			],
-			{ type: "boolean" }
+			{type: "boolean"}
 		), ():void => {
 			expect( "isPrefixed" in URI.Util ).toBe( true );
 			expect( Utils.isFunction( URI.Util.isPrefixed ) ).toBe( true );
@@ -219,7 +237,7 @@ describe( module( "Carbon/RDF/URI" ), ():void => {
 			expect( URI.Util.isPrefixed( "https://example.com/resource/" ) ).toBe( false );
 			expect( URI.Util.isPrefixed( "://example.com/resource/" ) ).toBe( false );
 			expect( URI.Util.isPrefixed( "/resource/" ) ).toBe( false );
-		});
+		} );
 
 		it( hasMethod(
 			STATIC,
@@ -228,7 +246,7 @@ describe( module( "Carbon/RDF/URI" ), ():void => {
 				{ name: "fragmentURI", type: "string" },
 				{ name: "uri", type: "string" }
 			],
-			{ type: "boolean" }
+			{type: "boolean"}
 		), ():void => {
 			expect( "isFragmentOf" in URI.Util ).toBe( true );
 			expect( Utils.isFunction( URI.Util.isFragmentOf ) ).toBe( true );
@@ -238,7 +256,7 @@ describe( module( "Carbon/RDF/URI" ), ():void => {
 			let prefixFragmentURI = "prefix:resource/#fragment";
 			let prefixResourceURI = "prefix:resource/";
 
-			expect( URI.Util.isFragmentOf( fragmentURI, resourceURI) ).toBe( true );
+			expect( URI.Util.isFragmentOf( fragmentURI, resourceURI ) ).toBe( true );
 			expect( URI.Util.isFragmentOf( prefixFragmentURI, prefixResourceURI ) ).toBe( true );
 
 			expect( URI.Util.isFragmentOf( fragmentURI, prefixResourceURI ) ).toBe( false );
@@ -247,7 +265,7 @@ describe( module( "Carbon/RDF/URI" ), ():void => {
 			expect( URI.Util.isFragmentOf( prefixResourceURI, prefixResourceURI ) ).toBe( false );
 			expect( URI.Util.isFragmentOf( resourceURI, fragmentURI ) ).toBe( false );
 			expect( URI.Util.isFragmentOf( prefixResourceURI, prefixFragmentURI ) ).toBe( false );
-		});
+		} );
 
 		it( hasMethod(
 			STATIC,
@@ -256,7 +274,7 @@ describe( module( "Carbon/RDF/URI" ), ():void => {
 				{ name: "baseURI", type: "string" },
 				{ name: "uri", type: "string" }
 			],
-			{ type: "boolean" }
+			{type: "boolean"}
 		), ():void => {
 			expect( "isBaseOf" in URI.Util ).toBe( true );
 			expect( Utils.isFunction( URI.Util.isBaseOf ) ).toBe( true );
@@ -272,8 +290,8 @@ describe( module( "Carbon/RDF/URI" ), ():void => {
 			let prefixAnotherURI = "another_prefix:resource";
 
 			expect( URI.Util.isBaseOf( namespaceURI, fragmentURI ) ).toBe( true );
-			expect( URI.Util.isBaseOf( resourceURI, fragmentURI) ).toBe( true );
-			expect( URI.Util.isBaseOf( resourceURI, childURI) ).toBe( true );
+			expect( URI.Util.isBaseOf( resourceURI, fragmentURI ) ).toBe( true );
+			expect( URI.Util.isBaseOf( resourceURI, childURI ) ).toBe( true );
 			expect( URI.Util.isBaseOf( prefixResourceURI, prefixFragmentURI ) ).toBe( true );
 			expect( URI.Util.isBaseOf( prefixResourceURI, prefixChildURI ) ).toBe( true );
 
@@ -287,7 +305,7 @@ describe( module( "Carbon/RDF/URI" ), ():void => {
 
 			expect( URI.Util.isBaseOf( resourceURI, anotherURI ) ).toBe( false );
 			expect( URI.Util.isBaseOf( prefixResourceURI, prefixAnotherURI ) ).toBe( false );
-		});
+		} );
 
 		it( hasMethod(
 			STATIC,
@@ -296,7 +314,7 @@ describe( module( "Carbon/RDF/URI" ), ():void => {
 				{ name: "absoluteURI", type: "string" },
 				{ name: "base", type: "string" }
 			],
-			{ type: "string" }
+			{type: "string"}
 		), ():void => {
 			expect( "getRelativeURI" in URI.Util ).toBe( true );
 			expect( Utils.isFunction( URI.Util.getRelativeURI ) ).toBe( true );
@@ -306,11 +324,11 @@ describe( module( "Carbon/RDF/URI" ), ():void => {
 			let anotherURI = "http://another_example.com/resource/";
 			let relativeURI = "child/";
 
-			expect( URI.Util.getRelativeURI( childURI, resourceURI) ).toBe( relativeURI );
+			expect( URI.Util.getRelativeURI( childURI, resourceURI ) ).toBe( relativeURI );
 
 			expect( URI.Util.getRelativeURI( relativeURI, resourceURI ) ).toBe( relativeURI );
 			expect( URI.Util.getRelativeURI( childURI, anotherURI ) ).toBe( childURI );
-		});
+		} );
 
 		it( hasMethod(
 			STATIC,
@@ -338,7 +356,7 @@ describe( module( "Carbon/RDF/URI" ), ():void => {
 			expect( URI.Util.getDocumentURI( prefixDocumentURI ) ).toEqual( prefixDocumentURI );
 
 			expect( URI.Util.getDocumentURI.bind( null, errorURI ) ).toThrowError( /IllegalArgument/ );
-		});
+		} );
 
 		it( hasMethod(
 			STATIC,
@@ -346,7 +364,7 @@ describe( module( "Carbon/RDF/URI" ), ():void => {
 			"Returns the name of the fragment in the URI provided. If no fragment exists in the URI, null will be returned.", [
 				{ name: "uri", type: "string" }
 			],
-			{ type: "string" }
+			{type: "string"}
 		), ():void => {
 			expect( "getFragment" in URI.Util ).toBe( true );
 			expect( Utils.isFunction( URI.Util.getFragment ) ).toBe( true );
@@ -369,7 +387,7 @@ describe( module( "Carbon/RDF/URI" ), ():void => {
 			expect( URI.Util.getFragment( prefixDocumentURI ) ).toBeNull();
 
 			expect( URI.Util.getDocumentURI.bind( null, errorURI ) ).toThrowError( /IllegalArgument/ );
-		});
+		} );
 
 		it( hasMethod(
 			STATIC,
@@ -401,7 +419,51 @@ describe( module( "Carbon/RDF/URI" ), ():void => {
 			expect( URI.Util.getSlug( "resource-1#fragment-2/fragment-3/" ) ).toEqual( "fragment-3/" );
 			expect( URI.Util.getSlug( "#" ) ).toEqual( "" );
 			expect( URI.Util.getSlug( "#/" ) ).toEqual( "/" );
-		});
+		} );
+
+		it( hasMethod(
+			STATIC,
+			"getParameters",
+			"Returns the query parameters in form of a map of the uri provided.", [
+				{name: "uri", type: "string"}
+			],
+			{type: "Map<string, string | string[]>"}
+		), ():void => {
+			expect( URI.Util.getParameters ).toBeDefined();
+			expect( Utils.isFunction( URI.Util.getParameters ) ).toEqual( true );
+
+			let parameters:Map<string, string | string[]>;
+
+			parameters = URI.Util.getParameters( "http://example.com/resource/" );
+			expect( parameters instanceof Map ).toBe( true );
+			expect( parameters.size ).toBe( 0 );
+
+			parameters = URI.Util.getParameters( "http://example.com/resource/#fragment" );
+			expect( parameters instanceof Map ).toBe( true );
+			expect( parameters.size ).toBe( 0 );
+
+			parameters = URI.Util.getParameters( "http://example.com/resource/?parameter=true" );
+			expect( parameters instanceof Map ).toBe( true );
+			expect( parameters.size ).toBe( 1 );
+			expect( parameters.get( "parameter" ) ).toBe( "true" );
+
+			parameters = URI.Util.getParameters( "http://example.com/resource/#fragment?parameter=true" );
+			expect( parameters instanceof Map ).toBe( true );
+			expect( parameters.size ).toBe( 1 );
+			expect( parameters.get( "parameter" ) ).toBe( "true" );
+
+			parameters = URI.Util.getParameters( "http://example.com/resource/?parameter=true&some=1&some=2" );
+			expect( parameters instanceof Map ).toBe( true );
+			expect( parameters.size ).toBe( 2 );
+			expect( parameters.get( "parameter" ) ).toBe( "true" );
+			expect( parameters.get( "some" ) ).toEqual( [ "1", "2" ] );
+
+			parameters = URI.Util.getParameters( "http://example.com/resource/#fragment?parameter=true&some=1&some=2" );
+			expect( parameters instanceof Map ).toBe( true );
+			expect( parameters.size ).toBe( 2 );
+			expect( parameters.get( "parameter" ) ).toBe( "true" );
+			expect( parameters.get( "some" ) ).toEqual( [ "1", "2" ] );
+		} );
 
 		it( hasMethod(
 			STATIC,
@@ -410,7 +472,7 @@ describe( module( "Carbon/RDF/URI" ), ():void => {
 				{ name: "parentURI", type: "string" },
 				{ name: "childURI",  type: "string" }
 			],
-			{ type: "string" }
+			{type: "string"}
 		), ():void => {
 			expect( "resolve" in URI.Util ).toBe( true );
 			expect( Utils.isFunction( URI.Util.resolve ) ).toBe( true );
@@ -430,15 +492,15 @@ describe( module( "Carbon/RDF/URI" ), ():void => {
 
 			expect( URI.Util.resolve( parentURI, resultURI ) ).toEqual( resultURI );
 			expect( URI.Util.resolve( parentURI, prefixURI ) ).toEqual( prefixURI );
-		});
+		} );
 
 		it( hasMethod(
 			STATIC,
 			"removeProtocol",
 			"Removes the protocol of the URI provided", [
-				{ name: "uri", type: "string" }
+				{name: "uri", type: "string"}
 			],
-			{ type: "string" }
+			{type: "string"}
 		), ():void => {
 			expect( "removeProtocol" in URI.Util ).toBe( true );
 			expect( Utils.isFunction( URI.Util.removeProtocol ) ).toBe( true );
@@ -454,7 +516,7 @@ describe( module( "Carbon/RDF/URI" ), ():void => {
 			expect( URI.Util.removeProtocol( URI3 ) ).toEqual( URI3 );
 			expect( URI.Util.removeProtocol( resultURI ) ).toEqual( resultURI );
 			expect( URI.Util.removeProtocol( prefixURI ) ).toEqual( prefixURI );
-		});
+		} );
 
 		describe( method(
 			STATIC,
@@ -467,7 +529,7 @@ describe( module( "Carbon/RDF/URI" ), ():void => {
 					{ name: "prefix", type: "string" },
 					{ name: "prefixURI", type: "string" }
 				],
-				{ type: "string" }
+				{type: "string"}
 			), ():void => {
 				expect( "prefix" in URI.Util ).toBe( true );
 				expect( Utils.isFunction( URI.Util.prefix ) ).toBe( true );
@@ -482,18 +544,18 @@ describe( module( "Carbon/RDF/URI" ), ():void => {
 
 				expect( URI.Util.prefix( resourceURI, prefix, prefixURI ) ).toBe( prefixResourceURI );
 				expect( URI.Util.prefix( prefixResourceURI, prefix, prefixURI ) ).toBe( prefixResourceURI );
-				expect( URI.Util.prefix( prefixResourceURI, anotherPrefix, prefix) ).toBe( prefixResourceURI );
+				expect( URI.Util.prefix( prefixResourceURI, anotherPrefix, prefix ) ).toBe( prefixResourceURI );
 
 				expect( URI.Util.prefix( resourceURI, prefix, anotherPrefixURI ) ).toBe( resourceURI );
 				expect( URI.Util.prefix( anotherResourceURI, prefix, anotherPrefixURI ) ).toBe( anotherResourceURI );
-			});
+			} );
 
 			it( hasSignature(
 				"Replace the base of a URI with a prefix in accordance with the ObjectSchema provided. If the prefix can not be resolved, the URI provided will be returned.", [
 					{ name: "uri", type: "string" },
 					{ name: "objectSchema", type: "Carbon.ObjectSchema.DigestedObjectSchema" }
 				],
-				{ type: "string" }
+				{type: "string"}
 			), ():void => {
 				expect( "prefix" in URI.Util ).toBe( true );
 				expect( Utils.isFunction( URI.Util.prefix ) ).toBe( true );
@@ -526,10 +588,10 @@ describe( module( "Carbon/RDF/URI" ), ():void => {
 				expect( URI.Util.prefix( resourceURI, anotherDigestedSchema ) ).toBe( resourceURI );
 				expect( URI.Util.prefix( anotherResourceURI, digestedSchema ) ).toBe( anotherResourceURI );
 				expect( URI.Util.prefix( prefixResourceURI, digestedSchema ) ).toBe( prefixResourceURI );
-			});
+			} );
 
-		});
+		} );
 
-	});
+	} );
 
-});
+} );

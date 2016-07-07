@@ -18,7 +18,7 @@ describe( module( "Carbon/LDP/IndirectContainer" ), ():void => {
 	it( isDefined(), ():void => {
 		expect( IndirectContainer ).toBeDefined();
 		expect( Utils.isObject( IndirectContainer ) ).toBe( true );
-	});
+	} );
 
 	it( hasProperty(
 		STATIC,
@@ -29,7 +29,7 @@ describe( module( "Carbon/LDP/IndirectContainer" ), ():void => {
 		expect( Utils.isString( IndirectContainer.RDF_CLASS ) ).toBe( true );
 
 		expect( IndirectContainer.RDF_CLASS ).toBe( NS.LDP.Class.IndirectContainer );
-	});
+	} );
 
 	describe( clazz(
 		"Carbon.IndirectContainer.Factory",
@@ -39,15 +39,15 @@ describe( module( "Carbon/LDP/IndirectContainer" ), ():void => {
 		it( isDefined(), ():void => {
 			expect( IndirectContainer.Factory ).toBeDefined();
 			expect( Utils.isFunction( IndirectContainer.Factory ) ).toBe( true );
-		});
+		} );
 
 		it( hasMethod(
 			STATIC,
 			"hasClassProperties",
 			"Returns true if the object provided has the properties of a `Carbon.LDP.IndirectContainer.Class` object.", [
-				{ name: "resource", type: "Object" }
+				{ name: "resource", type: "Object"}
 			],
-			{ type: "boolean" }
+			{type: "boolean"}
 		), ():void => {
 			expect( IndirectContainer.Factory.hasClassProperties ).toBeDefined();
 			expect( Utils.isFunction( IndirectContainer.Factory.hasClassProperties ) ).toBe( true );
@@ -63,8 +63,8 @@ describe( module( "Carbon/LDP/IndirectContainer" ), ():void => {
 			delete object.insertedContentRelation;
 			expect( IndirectContainer.Factory.hasClassProperties( object ) ).toBe( false );
 			object.insertedContentRelation = null;
-		});
-		
-	});
+		} );
 
-});
+	} );
+
+} );

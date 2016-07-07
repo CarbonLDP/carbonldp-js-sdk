@@ -47,9 +47,9 @@ describe( module( "Carbon/AccessPoint" ), ():void => {
 			STATIC,
 			"hasClassProperties",
 			"Returns true if the object provided has the properties that defines a `Carbon.AccessPoint.Class` object", [
-				{ name: "resource", type: "Object" }
+				{name: "resource", type: "Object"}
 			],
-			{ type: "boolean" }
+			{type: "boolean"}
 		), ():void => {
 			expect( AccessPoint.Factory.hasClassProperties ).toBeDefined();
 			expect( Utils.isFunction( AccessPoint.Factory.hasClassProperties ) ).toBe( true );
@@ -70,11 +70,11 @@ describe( module( "Carbon/AccessPoint" ), ():void => {
 			STATIC,
 			"create",
 			"Creates a `Carbon.AccessPoint.Class` object with the parameters specified.", [
-				{ name: "membershipResource", type: "Carbon.Pointer.Class", description: "A Pointer to the parent of the AccessPoint." },
-				{ name: "hasMemberRelation", type: "string | Carbon.Pointer.Class", description: "A URI or Pointer to the property in the parent resource managed by the AccessPoint." },
-				{ name: "memberOfRelation", type: "string | Carbon.Pointer.Class", optional: true, description: "A URI or Pointer to the property managed in the members added by the AccessPoint." }
+				{name: "membershipResource", type: "Carbon.Pointer.Class", description: "A Pointer to the parent of the AccessPoint."},
+				{name: "hasMemberRelation", type: "string | Carbon.Pointer.Class", description: "A URI or Pointer to the property in the parent resource managed by the AccessPoint."},
+				{name: "memberOfRelation", type: "string | Carbon.Pointer.Class", optional: true, description: "A URI or Pointer to the property managed in the members added by the AccessPoint."},
 			],
-			{ type: "Carbon.AccessPoint.Class" }
+			{type: "Carbon.AccessPoint.Class"}
 		), ():void => {
 			expect( AccessPoint.Factory.create ).toBeDefined();
 			expect( Utils.isFunction( AccessPoint.Factory.create ) ).toBe( true );
@@ -96,18 +96,18 @@ describe( module( "Carbon/AccessPoint" ), ():void => {
 
 			AccessPoint.Factory.create( pointer, pointer, pointer );
 			expect( spy ).toHaveBeenCalledWith( {}, pointer, pointer, pointer );
-		});
+		} );
 
 		it( hasMethod(
 			STATIC,
 			"createFrom",
 			"Creates a `Carbon.AccessPoint.Class` object from the object and parameters specified.", [
-				{ name: "object", type: "T extends Object" },
-				{ name: "membershipResource", type: "Carbon.Pointer.Class", description: "A Pointer to the parent of the AccessPoint." },
-				{ name: "hasMemberRelation", type: "string | Carbon.Pointer.Class", description: "A URI or Pointer to the property in the parent resource managed by the AccessPoint." },
-				{ name: "memberOfRelation", type: "string | Carbon.Pointer.Class", optional: true, description: "A URI or Pointer to the property managed in the members added by the AccessPoint." }
+				{name: "object", type: "T extends Object"},
+				{name: "membershipResource", type: "Carbon.Pointer.Class", description: "A Pointer to the parent of the AccessPoint."},
+				{name: "hasMemberRelation", type: "string | Carbon.Pointer.Class", description: "A URI or Pointer to the property in the parent resource managed by the AccessPoint."},
+				{name: "memberOfRelation", type: "string | Carbon.Pointer.Class", optional: true, description: "A URI or Pointer to the property managed in the members added by the AccessPoint."}
 			],
-			{ type: "T & Carbon.AccessPoint.Class" }
+			{type: "T & Carbon.AccessPoint.Class"}
 		), ():void => {
 			expect( AccessPoint.Factory.createFrom ).toBeDefined();
 			expect( Utils.isFunction( AccessPoint.Factory.createFrom ) ).toBe( true );
@@ -129,8 +129,8 @@ describe( module( "Carbon/AccessPoint" ), ():void => {
 
 			AccessPoint.Factory.createFrom( {}, pointer, pointer, pointer );
 			expect( spy ).toHaveBeenCalledWith( {}, pointer, pointer, pointer );
-		});
+		} );
 
-	});
+	} );
 
-});
+} );

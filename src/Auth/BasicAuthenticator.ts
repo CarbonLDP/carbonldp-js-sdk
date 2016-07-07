@@ -9,10 +9,10 @@ export class Class implements Authenticator<UsernameAndPasswordToken> {
 	private credentials:UsernameAndPasswordCredentials.Class;
 
 	isAuthenticated():boolean {
-		return !! this.credentials;
+		return ! ! this.credentials;
 	}
 
-	authenticate( authenticationToken:UsernameAndPasswordToken ):Promise<UsernameAndPasswordCredentials.Class>  {
+	authenticate( authenticationToken:UsernameAndPasswordToken ):Promise<UsernameAndPasswordCredentials.Class> {
 		if( authenticationToken === null ) throw new Errors.IllegalArgumentError( "The authenticationToken cannot be null." );
 
 		return new Promise<UsernameAndPasswordCredentials.Class>( ( resolve:( result:any ) => void, reject:( error:any ) => void ) => {
@@ -22,7 +22,7 @@ export class Class implements Authenticator<UsernameAndPasswordToken> {
 			this.credentials = new UsernameAndPasswordCredentials.Class( authenticationToken.username, authenticationToken.password );
 
 			resolve( this.credentials );
-		});
+		} );
 	}
 
 	addAuthentication( requestOptions:HTTP.Request.Options ):HTTP.Request.Options {
@@ -51,7 +51,7 @@ export class Class implements Authenticator<UsernameAndPasswordToken> {
 }
 
 function toB64( str:string ):string {
-	return  ( typeof btoa !== "undefined" ) ? btoa( str ) : new Buffer( str ).toString( "base64" );
+	return ( typeof btoa !== "undefined" ) ? btoa( str ) : new Buffer( str ).toString( "base64" );
 }
 
 export default Class;

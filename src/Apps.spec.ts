@@ -30,7 +30,7 @@ describe( module( "Carbon/Apps" ), ():void => {
 	it( isDefined(), ():void => {
 		expect( Apps ).toBeDefined();
 		expect( Utils.isObject( Apps ) ).toBe( true );
-	});
+	} );
 
 	describe( clazz(
 		"Carbon.Apps.Class",
@@ -50,23 +50,23 @@ describe( module( "Carbon/Apps" ), ():void => {
 			context = new MockedContext();
 			apps = new Apps.Class( context );
 			jasmine.Ajax.install();
-		});
+		} );
 
 		afterEach( ():void => {
 			jasmine.Ajax.uninstall();
-		});
+		} );
 
 		it( isDefined(), ():void => {
 			expect( Apps.Class ).toBeDefined();
 			expect( Utils.isFunction( Apps.Class ) ).toBe( true );
-		});
+		} );
 
 		it( hasConstructor([
-			{ name: "context", type: "Carbon.Context", description: "A context from where Carbon Apps can be administrated." }
+			{name: "context", type: "Carbon.Context", description: "A context from where Carbon Apps can be administrated."},
 		]), ():void => {
 			expect( apps ).toBeTruthy();
 			expect( apps instanceof Apps.Class ).toBe( true );
-		});
+		} );
 
 		describe( method(
 			INSTANCE,
@@ -75,14 +75,14 @@ describe( module( "Carbon/Apps" ), ():void => {
 
 			it( hasSignature(
 				"Obtains a `Carbon.App.Context` object from the specified app URI, if it exists within the context of the Apps instance.", [
-					{ name: "uri", type: "string" }
+					{name: "uri", type: "string"},
 				],
-				{ type: "Promise<Carbon.App.Context>" }
+				{type: "Promise<Carbon.App.Context>"}
 			), ( done:{ ():void, fail:() => void } ):void => {
 				expect( apps.getContext ).toBeDefined();
 				expect( Utils.isFunction( apps.getContext ) ).toBe( true );
 
-				jasmine.Ajax.stubRequest( "http://example.com/platform/apps/example-app/", null, "GET" ).andReturn({
+				jasmine.Ajax.stubRequest( "http://example.com/platform/apps/example-app/", null, "GET" ).andReturn( {
 					status: 200,
 					responseHeaders: {
 						ETag: '"123456789"'
@@ -107,7 +107,7 @@ describe( module( "Carbon/Apps" ), ():void => {
 					        }]
 					    }]
 					}]`
-				});
+				} );
 
 				let spies = {
 					success: ( appContext:AppContext ):void => {
@@ -151,21 +151,21 @@ describe( module( "Carbon/Apps" ), ():void => {
 						expect( successSpy.calls.count() ).toBe( 2 );
 						expect( failSpy.calls.count() ).toBe( 1 );
 						done();
-					}).catch( done.fail );
-				});
+					} ).catch( done.fail );
+				} );
 
 			});
 
 			it( hasSignature(
 				"Obtains a `Carbon.App.Context` object from the specified Pointer object, if it exists within the context of the Apps instance.", [
-					{ name: "pointer", type: "Carbon.Pointer.Class" }
+					{name: "pointer", type: "Carbon.Pointer.Class"},
 				],
-				{ type: "Promise<Carbon.App.Context>" }
+				{type: "Promise<Carbon.App.Context>"}
 			), ( done:{ ():void, fail:() => void } ):void => {
 				expect( apps.getContext ).toBeDefined();
 				expect( Utils.isFunction( apps.getContext ) ).toBe( true );
 
-				jasmine.Ajax.stubRequest( "http://example.com/platform/apps/example-app/", null, "GET" ).andReturn({
+				jasmine.Ajax.stubRequest( "http://example.com/platform/apps/example-app/", null, "GET" ).andReturn( {
 					status: 200,
 					responseHeaders: {
 						ETag: '"1234567890"'
@@ -190,7 +190,7 @@ describe( module( "Carbon/Apps" ), ():void => {
 					        }]
 					    }]
 					}]`
-				});
+				} );
 
 				let spies = {
 					success: ( appContext:AppContext ):void => {
@@ -235,22 +235,22 @@ describe( module( "Carbon/Apps" ), ():void => {
 						done();
 					}, done.fail );
 
-				});
+				} );
 
-			});
+			} );
 
-		});
+		} );
 
 		it( hasMethod(
 			INSTANCE,
 			"getAllContexts",
 			"Obtains an array of `Carbon.App.Context` objects, of every app within the context of the Apps instance.",
-			{ type: "Promise<Carbon.App.Context[]>"}
+			{type: "Promise<Carbon.App.Context[]>"}
 		), ( done:{ ():void, fail:() => void } ):void => {
 			expect( apps.getAllContexts ).toBeDefined();
 			expect( Utils.isFunction( apps.getAllContexts ) ).toBe( true );
 
-			jasmine.Ajax.stubRequest( "http://example.com/platform/apps/", null, "GET" ).andReturn({
+			jasmine.Ajax.stubRequest( "http://example.com/platform/apps/", null, "GET" ).andReturn( {
 				status: 200,
 				responseHeaders: {
 					ETag: '"123456789"'
@@ -349,7 +349,7 @@ describe( module( "Carbon/Apps" ), ():void => {
 					    }]
 					}
 				]`
-			});
+			} );
 
 
 			let spies = {
@@ -376,11 +376,11 @@ describe( module( "Carbon/Apps" ), ():void => {
 				promise.then( ():void => {
 					expect( successSpy.calls.count() ).toBe( 1 );
 					done();
-				}).catch( done.fail );
+				} ).catch( done.fail );
 
-			});
+			} );
 
-		});
+		} );
 
 		describe( method(
 			INSTANCE,
@@ -390,10 +390,10 @@ describe( module( "Carbon/Apps" ), ():void => {
 			it( hasSignature(
 				"Persists a `Carbon.App.Class` object generating a unique slug.\n" +
 				"Returns a Promise with a Pointer to the stored App, and the response of the request.", [
-					{ name: "appDocument", type: "Carbon.App.Class" }
+					{name: "appDocument", type: "Carbon.App.Class"},
 				],
-				{ type: "Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>" }
-			), ( done:{ ():void, fail:() => void } ):void => {
+				{type: "Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>" }
+			), ( done:{():void, fail:() => void} ):void => {
 				expect( apps.create ).toBeDefined();
 				expect( Utils.isFunction( apps.create ) ).toBe( true );
 
@@ -430,11 +430,11 @@ describe( module( "Carbon/Apps" ), ():void => {
 			it( hasSignature(
 				"Persists a `Carbon.App.Class` object using the slug specified.\n" +
 				"Returns a Promise with a Pointer to the stored App, and the response of the request.", [
-					{ name: "slug", type: "string" },
-					{ name: "appDocument", type: "Carbon.App.Class" }
+					{name: "slug", type: "string"},
+					{name: "appDocument", type: "Carbon.App.Class"},
 				],
-				{ type: "Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>" }
-			), ( done:{ ():void, fail:() => void } ):void => {
+				{type: "Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>"}
+			), ( done:{():void, fail:() => void} ):void => {
 				expect( apps.create ).toBeDefined();
 				expect( Utils.isFunction( apps.create ) ).toBe( true );
 
@@ -474,13 +474,13 @@ describe( module( "Carbon/Apps" ), ():void => {
 
 			});
 
-		});
+		} );
 
-	});
+	} );
 
 	it( hasDefaultExport( "Carbon.Apps.Class" ), ():void => {
 		expect( DefaultExport ).toBeDefined();
 		expect( Apps.Class ).toBe( DefaultExport );
-	});
+	} );
 
-});
+} );

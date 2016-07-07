@@ -47,7 +47,7 @@ export interface MethodDescriptor extends SpecDescriptor {
 }
 
 export interface ReexportsDescriptor extends SpecDescriptor {
-	originalLocation: string;
+	originalLocation:string;
 }
 
 export interface EnumDescriptor extends SpecDescriptor {
@@ -152,7 +152,7 @@ export function constructor( description:string = null ):string {
 	return toJSON( descriptor );
 }
 
-export function reexports( access: string, name: string, originalLocation: string ): string {
+export function reexports( access:string, name:string, originalLocation:string ):string {
 	let descriptor:ReexportsDescriptor = {
 		specType: REEXPORTS,
 		access: access,
@@ -163,7 +163,7 @@ export function reexports( access: string, name: string, originalLocation: strin
 	return toJSON( descriptor );
 }
 
-export function decoratedObject( description:string, type: string[] ):string {
+export function decoratedObject( description:string, type:string[] ):string {
 	let descriptor:DecorateDescriptor = {
 		suiteType: DECORATED,
 		type: type,
@@ -195,9 +195,9 @@ export function hasConstructor( description:string, constructorArguments:MethodA
 export function hasConstructor( argumentsOrDescription:any = null, constructorArguments:MethodArgument[] = null ):string {
 	let description:string = null;
 
-	if ( typeof argumentsOrDescription === "string" ) {
+	if( typeof argumentsOrDescription === "string" ) {
 		description = argumentsOrDescription;
-	} else if ( Object.prototype.toString.call( argumentsOrDescription ) === "[object Array]" ) {
+	} else if( Object.prototype.toString.call( argumentsOrDescription ) === "[object Array]" ) {
 		constructorArguments = argumentsOrDescription;
 	}
 
@@ -226,17 +226,17 @@ export function hasMethod( access:string, name:string, description:string, metho
 export function hasMethod( access:string, name:string, descriptionOrArgumentsOrReturns:any = null, argumentsOrReturns:any = null, returns:MethodReturn = null ):string {
 	let description:string = null, methodArguments:MethodArgument[] = [];
 
-	if ( typeof descriptionOrArgumentsOrReturns === "string" ) {
+	if( typeof descriptionOrArgumentsOrReturns === "string" ) {
 		description = descriptionOrArgumentsOrReturns;
-	} else if ( Object.prototype.toString.call( descriptionOrArgumentsOrReturns ) === "[object Array]" ) {
+	} else if( Object.prototype.toString.call( descriptionOrArgumentsOrReturns ) === "[object Array]" ) {
 		methodArguments = descriptionOrArgumentsOrReturns;
-	} else if ( descriptionOrArgumentsOrReturns ) {
+	} else if( descriptionOrArgumentsOrReturns ) {
 		returns = descriptionOrArgumentsOrReturns;
 	}
 
-	if ( Object.prototype.toString.call( argumentsOrReturns ) === "[object Array]" ) {
+	if( Object.prototype.toString.call( argumentsOrReturns ) === "[object Array]" ) {
 		methodArguments = argumentsOrReturns;
-	} else if ( argumentsOrReturns ) {
+	} else if( argumentsOrReturns ) {
 		returns = argumentsOrReturns;
 	}
 
@@ -277,17 +277,17 @@ export function hasSignature( descriptionOrArgumentsOrReturns:any = null, argume
 	let description:string = null;
 	let methodArguments:MethodArgument[] = null;
 
-	if ( typeof descriptionOrArgumentsOrReturns === "string" ) {
+	if( typeof descriptionOrArgumentsOrReturns === "string" ) {
 		description = descriptionOrArgumentsOrReturns;
-	} else if ( Object.prototype.toString.call( descriptionOrArgumentsOrReturns ) === "[object Array]" ) {
+	} else if( Object.prototype.toString.call( descriptionOrArgumentsOrReturns ) === "[object Array]" ) {
 		methodArguments = descriptionOrArgumentsOrReturns;
-	} else if ( descriptionOrArgumentsOrReturns ) {
+	} else if( descriptionOrArgumentsOrReturns ) {
 		returns = descriptionOrArgumentsOrReturns;
 	}
 
-	if ( Object.prototype.toString.call( argumentsOrReturns ) === "[object Array]" ) {
+	if( Object.prototype.toString.call( argumentsOrReturns ) === "[object Array]" ) {
 		methodArguments = argumentsOrReturns;
-	} else if ( argumentsOrReturns ) {
+	} else if( argumentsOrReturns ) {
 		returns = argumentsOrReturns;
 	}
 
@@ -326,7 +326,7 @@ export function extendsClass( name:string ):string {
 	return toJSON( descriptor );
 }
 
-export function hasDefaultExport( exportName: string, description:string = null ):string {
+export function hasDefaultExport( exportName:string, description:string = null ):string {
 	let descriptor:SpecDescriptor = {
 		specType: DEFAULTEXPORT,
 		name: exportName,
@@ -346,17 +346,17 @@ export function hasEnumeral( name:string, description:string = null ):string {
 	return toJSON( descriptor );
 }
 
-if ( typeof XMLHttpRequest === "undefined" ) {
+if( typeof XMLHttpRequest === "undefined" ) {
 	const nock:any = require( "nock" );
 	const URL:any = require( "url" );
 	let methods:string[] = [ "OPTIONS", "HEAD", "GET", "POST", "PUT", "PATCH", "DELETE" ];
 
-	jasmine.Ajax = <any> ( () => {
+	jasmine.Ajax = <any> (() => {
 
 		let requests:any[] = [];
 
 		// TODO Allow unmocked request with: `nock( /.*/ , { allowUnmocked: true } )`
-		let scope:any =  nock( /.*/ );
+		let scope:any = nock( /.*/ );
 		scope.persist();
 		scope.on( "request", updateRequests );
 
@@ -372,26 +372,26 @@ if ( typeof XMLHttpRequest === "undefined" ) {
 
 		function andReturn( requests:any[] ) {
 			return ( options:JasmineAjaxRequestStubReturnOptions ) => {
-				for ( let req of requests ) {
+				for( let req of requests ) {
 					req.reply( options.status || 200, options.responseText || options.response || "", options.responseHeaders || {} );
 				}
 			};
 		}
 
-		function stubRequest( url:string , data:string, method:string = "*" ):any {
+		function stubRequest( url:string, data:string, method:string = "*" ):any {
 			let path:any = url;
-			if ( isString( url ) ) {
+			if( isString( url ) ) {
 				let parsedURL:Url = URL.parse( url );
 				path = parsedURL.path;
 			}
 
 			let currentRequests:any[] = [];
 			let currentMethods:string[] = [ method ];
-			if ( method === "*" ) currentMethods = methods;
+			if( method === "*" ) currentMethods = methods;
 
-			for ( let key of currentMethods ) {
+			for( let key of currentMethods ) {
 				let interceptor = scope.keyedInterceptors[ `${key} /.*/${path}` ];
-				if ( interceptor ) nock.removeInterceptor( interceptor[ 0 ] );
+				if( interceptor ) nock.removeInterceptor( interceptor[ 0 ] );
 
 				currentRequests.push( scope.intercept( path, key, data || undefined ) );
 			}
@@ -402,7 +402,7 @@ if ( typeof XMLHttpRequest === "undefined" ) {
 			};
 		}
 
-		function updateRequests( req:any, interceptor:any  ) {
+		function updateRequests( req:any, interceptor:any ) {
 			requests.push( {
 				url: req.path,
 				method: interceptor.method,
@@ -414,15 +414,17 @@ if ( typeof XMLHttpRequest === "undefined" ) {
 		function requestMostRecent() {
 			return requests[ requests.length - 1 ];
 		}
-		function requestAt ( index ) {
+
+		function requestAt( index ) {
 			return requests[ index ];
 		}
-		function requestFilter( urlToMatch: string | RegExp | Function ):any[] {
+
+		function requestFilter( urlToMatch:string | RegExp | Function ):any[] {
 			let results:any[] = [];
 
-			for ( let request of requests ) {
+			for( let request of requests ) {
 				let url = request.url;
-				if (   urlToMatch instanceof RegExp && urlToMatch.test( url )
+				if( urlToMatch instanceof RegExp && urlToMatch.test( url )
 					|| urlToMatch instanceof Function && (<Function> urlToMatch)( request )
 					|| urlToMatch === url ) {
 					results.push( request );

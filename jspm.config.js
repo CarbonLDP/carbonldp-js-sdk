@@ -2,7 +2,8 @@ SystemJS.config({
   devConfig: {
     "map": {
       "os": "github:jspm/nodelibs-os@0.2.0-alpha",
-      "plugin-typescript": "github:frankwallis/plugin-typescript@4.0.9"
+      "plugin-typescript": "github:frankwallis/plugin-typescript@4.0.9",
+      "jsonld": "npm:jsonld@0.4.11"
     },
     "packages": {
       "github:frankwallis/plugin-typescript@4.0.9": {
@@ -13,6 +14,17 @@ SystemJS.config({
       "github:jspm/nodelibs-os@0.2.0-alpha": {
         "map": {
           "os-browserify": "npm:os-browserify@0.2.1"
+        }
+      },
+      "npm:jsonld@0.4.11": {
+        "map": {
+          "es6-promise": "npm:es6-promise@2.3.0",
+          "node-pkginfo": "npm:pkginfo@0.4.0",
+          "node-request": "@empty",
+          "node-xmldom": "npm:xmldom@0.1.19",
+          "pkginfo": "@empty",
+          "request": "@empty",
+          "xmldom": "npm:xmldom@0.1.19"
         }
       }
     }

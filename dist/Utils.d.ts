@@ -36,6 +36,7 @@ declare class S {
 declare class A {
     static from<T>(iterator: Iterator<T>): Array<T>;
     static joinWithoutDuplicates<T>(...arrays: Array<Array<T>>): Array<T>;
+    static indexOf<T, W>(array: Array<T>, searchElement: W, comparator?: (element: T, searchElement: W) => boolean): number;
 }
 declare class M {
     static from<V>(object: Object): Map<string, V>;

@@ -20,7 +20,7 @@ describe( module( "Carbon/Auth/Token" ), ():void => {
 	it( isDefined(), ():void => {
 		expect( Token ).toBeDefined();
 		expect( Utils.isObject( Token ) ).toBe( true );
-	});
+	} );
 
 	it( hasProperty(
 		STATIC,
@@ -60,23 +60,23 @@ describe( module( "Carbon/Auth/Token" ), ():void => {
 		it( isDefined(), ():void => {
 			expect( Token.Factory ).toBeDefined();
 			expect( Utils.isFunction( Token.Factory ) ).toBe( true );
-		});
+		} );
 
 		it( hasMethod( STATIC, "is",
 			"Returns true if the object provided is considered a `Carbon.Auth.Token.Class` object.", [
 				{ name: "value", type: "any" }
 			],
-			{ type: "boolean" }
+			{type: "boolean"}
 		), ():void => {
 			expect( "is" in Token.Factory ).toBe( true );
 			expect( Utils.isFunction( Token.Factory.is ) ).toBe( true );
 
 			expect( Token.Factory.is( false ) ).toBe( false );
 
-			let object: Object = {
+			let object:Object = {
 				"key": {
 					"@id": "http://example.com/someID",
-					"@type":"xsd:string",
+					"@type": "xsd:string",
 				},
 				"expirationTime": {
 					"@id": "http://xmaple.com/anotherID",
@@ -86,32 +86,32 @@ describe( module( "Carbon/Auth/Token" ), ():void => {
 
 			expect( Token.Factory.hasClassProperties( object ) ).toBe( true );
 
-			object["anotherProperty"] = {
+			object[ "anotherProperty" ] = {
 				"@id": "http://example.com/anotherPropertyID",
 				"@type": "xsd:integer"
 			};
 			expect( Token.Factory.hasClassProperties( object ) ).toBe( true );
 
-			delete object["anotherProperty"];
-			delete object["key"];
+			delete object[ "anotherProperty" ];
+			delete object[ "key" ];
 			expect( Token.Factory.hasClassProperties( object ) ).toBe( false );
 
 			expect( Token.Factory.hasClassProperties( {} ) ).toBe( false );
-		});
+		} );
 
 		it( hasMethod( STATIC, "hasClassProperties",
 			"Returns true if the object provided has the properties of a `Carbon.Auth.Token.Class` object.", [
 				{ name: "object", type: "Object" }
 			],
-			{ type: "boolean" }
+			{type: "boolean"}
 		), ():void => {
 			expect( "hasClassProperties" in Token.Factory ).toBe( true );
 			expect( Utils.isFunction( Token.Factory.hasClassProperties ) ).toBe( true );
 
-			let object: Object = {
+			let object:Object = {
 				"key": {
 					"@id": "http://example.com/someID",
-					"@type":"xsd:string",
+					"@type": "xsd:string",
 				},
 				"expirationTime": {
 					"@id": "http://xmaple.com/anotherID",
@@ -121,18 +121,18 @@ describe( module( "Carbon/Auth/Token" ), ():void => {
 
 			expect( Token.Factory.hasClassProperties( object ) ).toBe( true );
 
-			object["anotherProperty"] = {
+			object[ "anotherProperty" ] = {
 				"@id": "http://example.com/anotherPropertyID",
 				"@type": "xsd:integer"
 			};
 			expect( Token.Factory.hasClassProperties( object ) ).toBe( true );
 
-			delete object["anotherProperty"];
-			delete object["key"];
+			delete object[ "anotherProperty" ];
+			delete object[ "key" ];
 			expect( Token.Factory.hasClassProperties( object ) ).toBe( false );
 
 			expect( Token.Factory.hasClassProperties( {} ) ).toBe( false );
-		});
+		} );
 
 		it( hasMethod(
 			INSTANCE,
@@ -140,7 +140,7 @@ describe( module( "Carbon/Auth/Token" ), ():void => {
 			"Decorates the object provided with the properties and methods of a `Carbon.Auth.Token.Class` object.", [
 				{ name: "object", type: "T extends Object" }
 			],
-			{ type: "Carbon.Auth.Token.Class" }
+			{type: "Carbon.Auth.Token.Class"}
 		), ():void => {
 			expect( "decorate" in Token.Factory ).toBe( true );
 			expect( Utils.isFunction( Token.Factory.decorate ) ).toBe( true );
@@ -156,6 +156,6 @@ describe( module( "Carbon/Auth/Token" ), ():void => {
 			} );
 		});
 
-	});
+	} );
 
-});
+} );

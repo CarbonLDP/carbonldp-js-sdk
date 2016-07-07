@@ -18,7 +18,7 @@ describe( module(
 	it( isDefined(), ():void => {
 		expect( CP ).toBeDefined();
 		expect( Utils.isObject( CP ) ).toBe( true );
-	});
+	} );
 
 	it( hasProperty(
 		STATIC,
@@ -29,7 +29,7 @@ describe( module(
 		expect( Utils.isString( CP.namespace ) ).toBe( true );
 
 		expect( CP.namespace ).toBe( "https://carbonldp.com/ns/v1/patch#" )
-	});
+	} );
 
 	describe( clazz(
 		"Carbon.NS.CP.Predicate",
@@ -41,7 +41,7 @@ describe( module(
 			expect( Utils.isFunction( CP.Predicate ) ).toBe( true );
 
 			expect( Object.keys( CP.Predicate ).length ).toBe( 3 );
-		});
+		} );
 
 		it( hasProperty(
 			STATIC,
@@ -52,7 +52,7 @@ describe( module(
 			expect( Utils.isString( CP.Predicate.ADD_ACTION ) ).toBe( true );
 
 			expect( CP.Predicate.ADD_ACTION ).toBe( "https://carbonldp.com/ns/v1/patch#addAction" );
-		});
+		} );
 
 
 		it( hasProperty(
@@ -64,7 +64,7 @@ describe( module(
 			expect( Utils.isString( CP.Predicate.SET_ACTION ) ).toBe( true );
 
 			expect( CP.Predicate.SET_ACTION ).toBe( "https://carbonldp.com/ns/v1/patch#setAction" );
-		});
+		} );
 
 
 		it( hasProperty(
@@ -76,8 +76,8 @@ describe( module(
 			expect( Utils.isString( CP.Predicate.DELETE_ACTION ) ).toBe( true );
 
 			expect( CP.Predicate.DELETE_ACTION ).toBe( "https://carbonldp.com/ns/v1/patch#deleteAction" );
-		});
+		} );
 
-	});
+	} );
 
-});
+} );

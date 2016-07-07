@@ -14,6 +14,8 @@ export interface Class extends Pointer.Library, Pointer.Validator {
 	getResources():Resource.Class[];
 
 	createResource( id?:string ):Resource.Class;
+
+	toJSON():string;
 }
 
 function hasPointer( id:string ):boolean {
@@ -73,9 +75,9 @@ function getResources():Resource.Class[] {
 function createResource( id?:string ):Resource.Class {
 	let freeResources:Class = <Class> this;
 
-	if ( id ) {
-		if ( ! inLocalScope( id ) ) throw new Errors.IllegalArgumentError( `The id "${ id }" is out of scope.` );
-		if ( freeResources._resourcesIndex.has( id ) ) throw new Errors.IDAlreadyInUseError( `The id "${ id }" is already in use by another resource.`);
+	if( id ) {
+		if( ! inLocalScope( id ) ) throw new Errors.IllegalArgumentError( `The id "${ id }" is out of scope.` );
+		if( freeResources._resourcesIndex.has( id ) ) throw new Errors.IDAlreadyInUseError( `The id "${ id }" is already in use by another resource.` );
 	} else {
 		id = RDF.URI.Util.generateBNodeID();
 	}
@@ -84,6 +86,17 @@ function createResource( id?:string ):Resource.Class {
 	freeResources._resourcesIndex.set( id, resource );
 
 	return resource;
+}
+
+function toJSON():string {
+	let resources:Resource.Class[] = this.getResources();
+	let expandedResources:RDF.Node.Class[] = [];
+
+	for( let resource of resources ) {
+		expandedResources.push( this._documents.jsonldConverter.expand( resource, this._documents.getSchemaFor( resource ) ) );
+	}
+
+	return JSON.stringify( expandedResources );
 }
 
 export class Factory {
@@ -100,7 +113,9 @@ export class Factory {
 			Utils.hasFunction( object, "hasPointer" ) &&
 			Utils.hasFunction( object, "getPointer" ) &&
 
-			Utils.hasFunction( object, "inScope" )
+			Utils.hasFunction( object, "inScope" ) &&
+
+			Utils.hasFunction( object, "toJSON" )
 		);
 	}
 
@@ -116,7 +131,7 @@ export class Factory {
 	}
 
 	static decorate<T extends Object>( object:T ):T & Class {
-		if ( Factory.hasClassProperties( object ) ) return <any> object;
+		if( Factory.hasClassProperties( object ) ) return <any> object;
 
 		Object.defineProperties( object, {
 			"_resourcesIndex": {
@@ -166,6 +181,12 @@ export class Factory {
 				enumerable: false,
 				configurable: true,
 				value: createResource,
+			},
+			"toJSON": {
+				writable: true,
+				enumerable: false,
+				configurable: true,
+				value: toJSON,
 			},
 		} );
 

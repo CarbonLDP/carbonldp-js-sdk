@@ -1,8 +1,8 @@
 import IllegalArgumentError from "./Errors/IllegalArgumentError";
 import * as ObjectSchema from "./ObjectSchema";
 import * as XSD from "./NS/XSD";
-import {hasPropertyDefined} from "./Utils";
 import * as URI from "./RDF/URI";
+import * as Utils from "./Utils";
 
 export interface Class {
 	orderBy?:OrderByProperty[];
@@ -21,9 +21,9 @@ export interface OrderByProperty {
 
 export class Factory {
 	static is( object:Object ):boolean {
-		return hasPropertyDefined( object, "orderBy" )
-			|| hasPropertyDefined( object, "limit" )
-			|| hasPropertyDefined( object, "offset" );
+		return Utils.hasPropertyDefined( object, "orderBy" )
+			|| Utils.hasPropertyDefined( object, "limit" )
+			|| Utils.hasPropertyDefined( object, "offset" );
 	}
 }
 

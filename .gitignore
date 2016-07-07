@@ -20,7 +20,7 @@ src/**/*.map
 reports/
 
 # IntelliJ
-.idea/**
+.idea/workspace.xml
 # *.iml
 # *.iws
 

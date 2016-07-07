@@ -37,7 +37,7 @@ describe( module( "Carbon/Pointer" ), ():void => {
 			STATIC,
 			"hasClassProperties",
 			"Returns true if the object provided has the properties and methods of a `Carbon.Pointer.Class` object.", [
-				{name: "resource", type: "Object"}
+				{name: "resource", type: "Object"},
 			],
 			{type: "boolean"}
 		), ():void => {
@@ -81,7 +81,7 @@ describe( module( "Carbon/Pointer" ), ():void => {
 			STATIC,
 			"is",
 			"Returns true if the value provided is considered a `Carbon.Pointer.Class` object.", [
-				{name: "value", type: "any"}
+				{name: "value", type: "any"},
 			],
 			{type: "boolean"}
 		), ():void => {
@@ -107,7 +107,7 @@ describe( module( "Carbon/Pointer" ), ():void => {
 			STATIC,
 			"create",
 			"Creates a Pointer object with the ID provided.", [
-				{name: "id", type: "string", optional: true}
+				{name: "id", type: "string", optional: true},
 			],
 			{type: "Carbon.Pointer.Class"}
 		), ():void => {
@@ -131,7 +131,7 @@ describe( module( "Carbon/Pointer" ), ():void => {
 			STATIC,
 			"decorate",
 			"Decorates the object provided with the properties and methods of a `Carbon.Pointer.Class` object.", [
-				{name: "object", type: "T extends Object"}
+				{name: "object", type: "T extends Object"},
 			],
 			{type: "T & Carbon.Pointer.Class"}
 		), ():void => {

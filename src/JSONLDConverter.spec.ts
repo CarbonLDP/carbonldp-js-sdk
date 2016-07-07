@@ -16,8 +16,7 @@ import {
 	hasProperty,
 	hasInterface,
 	extendsClass,
-
-	MethodArgument, hasDefaultExport,
+	hasDefaultExport,
 } from "./test/JasmineExtender";
 
 import * as Errors from "./Errors";

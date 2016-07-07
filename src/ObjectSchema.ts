@@ -117,12 +117,12 @@ export class Digester {
 				let uri:RDF.URI.Class = new RDF.URI.Class( <string> propertyValue );
 				if( RDF.URI.Util.isPrefixed( uri.stringValue ) ) uri = Digester.resolvePrefixedURI( uri, digestedSchema );
 
-				if ( propertyName === "@vocab" ) {
+				if( propertyName === "@vocab" ) {
 					digestedSchema.vocab = uri.toString();
 				} else {
 					digestedSchema.prefixes.set( propertyName, uri );
 				}
-			} else if( !! propertyValue && Utils.isObject( propertyValue ) ) {
+			} else if( ! ! propertyValue && Utils.isObject( propertyValue ) ) {
 				let schemaDefinition:PropertyDefinition = <PropertyDefinition> propertyValue;
 				let digestedDefinition:DigestedPropertyDefinition = new DigestedPropertyDefinition();
 

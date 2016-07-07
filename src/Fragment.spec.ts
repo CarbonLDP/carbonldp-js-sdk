@@ -21,7 +21,7 @@ describe( module( "Carbon/Fragment" ), ():void => {
 	it( isDefined(), ():void => {
 		expect( Fragment ).toBeDefined();
 		expect( Utils.isObject( Fragment ) ).toBe( true );
-	});
+	} );
 
 	describe( clazz(
 		"Carbon.Fragment.Factory",
@@ -31,15 +31,15 @@ describe( module( "Carbon/Fragment" ), ():void => {
 		it( isDefined(), ():void => {
 			expect( Fragment.Factory ).toBeDefined();
 			expect( Utils.isFunction( Fragment.Factory ) ).toBe( true );
-		});
+		} );
 
 		it( hasMethod(
 			STATIC,
 			"hasClassProperties",
 			"Returns true if the object provided has the properties and methods of a `Class.Fragment.Class` object.", [
-				{ name: "resource", type: "Object" }
+				{name: "resource", type: "Object"},
 			],
-			{ type: "boolean" }
+			{type: "boolean"}
 		), ():void => {
 			expect( Fragment.Factory.hasClassProperties ).toBeDefined();
 			expect( Utils.isFunction( Fragment.Factory.hasClassProperties ) ).toBe( true );
@@ -55,14 +55,14 @@ describe( module( "Carbon/Fragment" ), ():void => {
 			delete resource.document;
 			expect( Fragment.Factory.hasClassProperties( resource ) ).toBe( false );
 			resource.document = null;
-		});
+		} );
 
 		let document:Document.Class;
 
 		beforeAll( ():void => {
 			document = Document.Factory.create();
 			document.id = "http://example.com/document/";
-		});
+		} );
 
 		describe( method(
 			STATIC,
@@ -71,10 +71,10 @@ describe( module( "Carbon/Fragment" ), ():void => {
 
 			it( hasSignature(
 				"Creates a Fragment with the ID provided.", [
-					{ name: "id", type: "string", description: "The ID of the fragment to create." },
-					{ name: "document", type: "Carbon.Document.Class", description: "The document that the fragment will be part of." }
+					{name: "id", type: "string", description: "The ID of the fragment to create."},
+					{name: "document", type: "Carbon.Document.Class", description: "The document that the fragment will be part of."},
 				],
-				{ type: "Carbon.Fragment.Class" }
+				{type: "Carbon.Fragment.Class"}
 			), ():void => {
 				expect( Fragment.Factory.create ).toBeDefined();
 				expect( Utils.isFunction( Fragment.Factory.create ) ).toBe( true );
@@ -98,13 +98,13 @@ describe( module( "Carbon/Fragment" ), ():void => {
 				expect( Fragment.Factory.hasClassProperties( fragment ) ).toBe( true );
 				expect( fragment.document ).toBe( document );
 				expect( fragment.id ).toBe( "_:BlankNode" );
-			});
+			} );
 
 			it( hasSignature(
 				"Creates a BlankNode since no ID is provided.", [
-					{ name: "document", type: "Carbon.Document.Class", description: "The document that the fragment will be part of." }
+					{name: "document", type: "Carbon.Document.Class", description: "The document that the fragment will be part of."},
 				],
-				{ type: "Carbon.Fragment.Class" }
+				{type: "Carbon.Fragment.Class"}
 			), ():void => {
 				expect( Fragment.Factory.create ).toBeDefined();
 				expect( Utils.isFunction( Fragment.Factory.create ) ).toBe( true );
@@ -126,9 +126,9 @@ describe( module( "Carbon/Fragment" ), ():void => {
 				expect( URI.Util.isBNodeID( fragment2.id ) ).toBe( true );
 
 				expect( fragment1.id ).not.toEqual( fragment2.id );
-			});
+			} );
 
-		});
+		} );
 
 
 		describe( method(
@@ -142,32 +142,32 @@ describe( module( "Carbon/Fragment" ), ():void => {
 
 			it( hasSignature(
 				"Creates a Fragment from an Object with the ID provided.", [
-					{ name: "object", type: "T extends Object", description: "Object that will be converted to a fragment." },
-					{ name: "id", type: "string", description: "The ID that will be assigned to the fragment." },
-					{ name: "document", type: "Carbon.Document.Class", description: "The document that the fragment will be part of." }
+					{name: "object", type: "T extends Object", description: "Object that will be converted to a fragment."},
+					{name: "id", type: "string", description: "The ID that will be assigned to the fragment."},
+					{name: "document", type: "Carbon.Document.Class", description: "The document that the fragment will be part of."},
 				],
-				{ type: "T & Carbon.Fragment.Class" }
+				{type: "T & Carbon.Fragment.Class"}
 			), ():void => {
 				expect( Fragment.Factory.createFrom ).toBeDefined();
 				expect( Utils.isFunction( Fragment.Factory.createFrom ) ).toBe( true );
 
 				let fragment:Fragment.Class & MyFragment;
 
-				fragment = Fragment.Factory.createFrom<MyFragment>( { property: "my property 1" }, "#fragment", document );
+				fragment = Fragment.Factory.createFrom<MyFragment>( {property: "my property 1"}, "#fragment", document );
 				expect( fragment ).toBeTruthy();
 				expect( Fragment.Factory.hasClassProperties( fragment ) ).toBe( true );
 				expect( fragment.document ).toBe( document );
 				expect( fragment.id ).toBe( "#fragment" );
 				expect( fragment.property ).toBe( "my property 1" );
 
-				fragment = Fragment.Factory.createFrom<MyFragment>( { property: "my property 2" }, "http://example.com/document/#fragment", document );
+				fragment = Fragment.Factory.createFrom<MyFragment>( {property: "my property 2"}, "http://example.com/document/#fragment", document );
 				expect( fragment ).toBeTruthy();
 				expect( Fragment.Factory.hasClassProperties( fragment ) ).toBe( true );
 				expect( fragment.document ).toBe( document );
 				expect( fragment.id ).toBe( "http://example.com/document/#fragment" );
 				expect( fragment.property ).toBe( "my property 2" );
 
-				fragment = Fragment.Factory.createFrom<MyFragment>( { property: "my property 3" }, "_:BlankNode", document );
+				fragment = Fragment.Factory.createFrom<MyFragment>( {property: "my property 3"}, "_:BlankNode", document );
 				expect( fragment ).toBeTruthy();
 				expect( Fragment.Factory.hasClassProperties( fragment ) ).toBe( true );
 				expect( fragment.document ).toBe( document );
@@ -180,14 +180,14 @@ describe( module( "Carbon/Fragment" ), ():void => {
 				expect( anotherFragment.document ).toBe( document );
 				expect( anotherFragment.id ).toBe( "_:AnotherBlankNode" );
 				expect( anotherFragment[ "property" ] ).toBeUndefined();
-			});
+			} );
 
 			it( hasSignature(
 				"Creates a BlankNode since no ID is provided.", [
-					{ name: "object", type: "T extends Object", description: "Object that will be converted to a fragment." },
-					{ name: "document", type: "Carbon.Document.Class", description: "The document that the fragment will be part of." }
+					{name: "object", type: "T extends Object", description: "Object that will be converted to a fragment."},
+					{name: "document", type: "Carbon.Document.Class", description: "The document that the fragment will be part of."},
 				],
-				{ type: "Carbon.Fragment.Class" }
+				{type: "Carbon.Fragment.Class"}
 			), ():void => {
 				expect( Fragment.Factory.createFrom ).toBeDefined();
 				expect( Utils.isFunction( Fragment.Factory.createFrom ) ).toBe( true );
@@ -195,7 +195,7 @@ describe( module( "Carbon/Fragment" ), ():void => {
 				let fragment1:Fragment.Class & MyFragment;
 				let fragment2:Fragment.Class & MyFragment;
 
-				fragment1 = Fragment.Factory.createFrom<MyFragment>( { property: "my property 1" }, document );
+				fragment1 = Fragment.Factory.createFrom<MyFragment>( {property: "my property 1"}, document );
 				expect( fragment1 ).toBeTruthy();
 				expect( Fragment.Factory.hasClassProperties( fragment1 ) ).toBe( true );
 				expect( fragment1.document ).toBe( document );
@@ -203,7 +203,7 @@ describe( module( "Carbon/Fragment" ), ():void => {
 				expect( fragment1.property ).toBe( "my property 1" );
 
 
-				fragment2 = Fragment.Factory.createFrom<MyFragment>( { property: "my property 2" }, document );
+				fragment2 = Fragment.Factory.createFrom<MyFragment>( {property: "my property 2"}, document );
 				expect( fragment2 ).toBeTruthy();
 				expect( Fragment.Factory.hasClassProperties( fragment2 ) ).toBe( true );
 				expect( fragment2.document ).toBe( document );
@@ -218,10 +218,10 @@ describe( module( "Carbon/Fragment" ), ():void => {
 				expect( anotherFragment.document ).toBe( document );
 				expect( URI.Util.isBNodeID( anotherFragment.id ) ).toBe( true );
 				expect( anotherFragment[ "property" ] ).toBeUndefined();
-			});
+			} );
 
-		});
+		} );
 
-	});
+	} );
 
-});
+} );

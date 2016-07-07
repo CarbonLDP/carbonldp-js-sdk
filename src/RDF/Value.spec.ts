@@ -22,7 +22,7 @@ describe( module( "Carbon/RDF/Value" ), ():void => {
 	it( isDefined(), ():void => {
 		expect( Value ).toBeDefined();
 		expect( Utils.isObject( Value ) ).toBe( true );
-	});
+	} );
 
 	describe( clazz(
 		"Carbon.RDF.Value.Util",
@@ -35,28 +35,28 @@ describe( module( "Carbon/RDF/Value" ), ():void => {
 		let context:AbstractContext;
 
 		beforeEach( ():void => {
-			expandedObject = [{
+			expandedObject = [ {
 				"@id": "http://example.com/resource/",
 				"@graph": [
 					{
 						"@id": "http://example.com/resource/",
-						"http://example.com/ns#string": [{
+						"http://example.com/ns#string": [ {
 							"@value": "a string"
-						}],
-						"http://example.com/ns#integer": [{
+						} ],
+						"http://example.com/ns#integer": [ {
 							"@value": "100",
 							"@type": "http://www.w3.org/2001/XMLSchema#integer"
-						}],
-						"http://example.com/ns#date": [{
+						} ],
+						"http://example.com/ns#date": [ {
 							"@value": "2001-02-15T05:35:12.029Z",
 							"@type": "http://www.w3.org/2001/XMLSchema#dateTime"
-						}],
-						"http://example.com/ns#pointer": [{
+						} ],
+						"http://example.com/ns#pointer": [ {
 							"@id": "http://example.com/pointer/1",
 							"@type": "@id"
-						}],
-						"http://example.com/ns#list": [{
-							"@list": [{
+						} ],
+						"http://example.com/ns#list": [ {
+							"@list": [ {
 								"@value": "100",
 								"@type": "http://www.w3.org/2001/XMLSchema#integer"
 							}, {
@@ -65,9 +65,9 @@ describe( module( "Carbon/RDF/Value" ), ():void => {
 							}, {
 								"@id": "http://example.com/pointer/1",
 								"@type": "@id"
-							}]
-						}],
-						"http://example.com/ns#set": [{
+							} ]
+						} ],
+						"http://example.com/ns#set": [ {
 							"@value": "100",
 							"@type": "http://www.w3.org/2001/XMLSchema#integer"
 						}, {
@@ -76,8 +76,8 @@ describe( module( "Carbon/RDF/Value" ), ():void => {
 						}, {
 							"@id": "http://example.com/pointer/1",
 							"@type": "@id"
-						}],
-						"http://example.com/ns#internationalString": [{
+						} ],
+						"http://example.com/ns#internationalString": [ {
 							"@value": "a string",
 							"@language": "en",
 							"@type": "http://www.w3.org/2001/XMLSchema#string"
@@ -87,32 +87,32 @@ describe( module( "Carbon/RDF/Value" ), ():void => {
 						}, {
 							"@value": "文字列",
 							"@language": "ja"
-						}],
+						} ],
 						"http://example.com/ns#pointerSet": [
-							{ "@id": "_:1" },
-							{ "@id": "http://example.com/resource/#1" },
-							{ "@id": "http://example.com/external-resource/" },
+							{"@id": "_:1"},
+							{"@id": "http://example.com/resource/#1"},
+							{"@id": "http://example.com/external-resource/"},
 						],
-						"http://example.com/ns#empty-property": [{}]
+						"http://example.com/ns#empty-property": [ {} ]
 					},
 					{
 						"@id": "_:1",
-						"http://example.com/ns#string": [{
+						"http://example.com/ns#string": [ {
 							"@value": "Fragment 1"
-						}],
+						} ],
 						"http://example.com/ns#pointerSet": [
-							{ "@id": "http://example.com/resource/" },
-							{ "@id": "http://example.com/resource/#1" },
+							{"@id": "http://example.com/resource/"},
+							{"@id": "http://example.com/resource/#1"},
 						],
 					},
 					{
 						"@id": "http://example.com/resource/#1",
-						"http://example.com/ns#string": [{
+						"http://example.com/ns#string": [ {
 							"@value": "NamedFragment 1"
-						}],
+						} ],
 					},
 				],
-			}];
+			} ];
 
 			class MockedContext extends AbstractContext {
 				resolve( uri:string ):string {
@@ -122,24 +122,24 @@ describe( module( "Carbon/RDF/Value" ), ():void => {
 			context = new MockedContext();
 
 			documentResource = RDFDocument.Util.getDocumentResources( expandedObject )[ 0 ];
-			pointerLibrary = PersistedDocument.Factory.create( expandedObject["@id"], context.documents );
-		});
+			pointerLibrary = PersistedDocument.Factory.create( expandedObject[ "@id" ], context.documents );
+		} );
 
 		it( isDefined(), ():void => {
 			expect( Value.Util ).toBeDefined();
 			expect( Utils.isFunction( Value.Util ) ).toBe( true );
-		});
+		} );
 
 		it( hasMethod(
 			STATIC,
 			"getProperty",
 			"Returns the property searched, parsed in accordance to the RDF object it is.\n" +
 			"Returns null if the property is not found or cannot be parsed.", [
-				{ name: "expandedObject", type: "any" },
-				{ name: "propertyURI", type: "string" },
-				{ name: "pointerLibrary", type: "Carbon.Pointer.Library" }
+				{name: "expandedObject", type: "any"},
+				{name: "propertyURI", type: "string"},
+				{name: "pointerLibrary", type: "Carbon.Pointer.Library"}
 			],
-			{ type: "any" }
+			{type: "any"}
 		), ():void => {
 			expect( Value.Util.getProperty ).toBeDefined();
 			expect( Utils.isFunction( Value.Util.getProperty ) ).toBe( true );
@@ -177,18 +177,18 @@ describe( module( "Carbon/RDF/Value" ), ():void => {
 
 			result = Value.Util.getProperty( documentResource, "http://example.com/ns#empty-property", pointerLibrary );
 			expect( result ).toBeNull();
-		});
+		} );
 
 		it( hasMethod(
 			STATIC,
 			"getPropertyPointer",
 			"Returns the property searched as a Pointer.\n" +
 			"Returns null if the property is not found or cannot be parsed as a Pointer.", [
-				{ name: "expandedObject", type: "any" },
-				{ name: "propertyURI", type: "string" },
-				{ name: "pointerLibrary", type: "Carbon.Pointer.Library" }
+				{name: "expandedObject", type: "any"},
+				{name: "propertyURI", type: "string"},
+				{name: "pointerLibrary", type: "Carbon.Pointer.Library"}
 			],
-			{ type: "any" }
+			{type: "any"}
 		), ():void => {
 			expect( Value.Util.getPropertyPointer ).toBeDefined();
 			expect( Utils.isFunction( Value.Util.getPropertyPointer ) ).toBe( true );
@@ -209,18 +209,18 @@ describe( module( "Carbon/RDF/Value" ), ():void => {
 			expect( result ).toBeNull();
 			result = Value.Util.getPropertyPointer( documentResource, "http://example.com/ns#empty-property", pointerLibrary );
 			expect( result ).toBeNull();
-		});
+		} );
 
 		it( hasMethod(
 			STATIC,
 			"getPropertyLiteral",
 			"Returns the property searched as a javascript variable. The property must be an RDF Literal.\n" +
 			"Returns null if the property is not found, the type provided not match with the type of the Literal, or cannot be parsed from a Literal.", [
-				{ name: "expandedObject", type: "any" },
-				{ name: "propertyURI", type: "string" },
-				{ name: "literalType", type: "string" }
+				{name: "expandedObject", type: "any"},
+				{name: "propertyURI", type: "string"},
+				{name: "literalType", type: "string"}
 			],
-			{ type: "any" }
+			{type: "any"}
 		), ():void => {
 			expect( Value.Util.getPropertyLiteral ).toBeDefined();
 			expect( Utils.isFunction( Value.Util.getPropertyLiteral ) ).toBe( true );
@@ -243,18 +243,18 @@ describe( module( "Carbon/RDF/Value" ), ():void => {
 			expect( result ).toBeNull();
 			result = Value.Util.getPropertyLiteral( documentResource, "http://example.com/ns#empty-property", XSD.DataType.object );
 			expect( result ).toBeNull();
-		});
+		} );
 
 		it( hasMethod(
 			STATIC,
 			"getPropertyList",
 			"Returns the property searched as an Array with every element parsed to its respective type of element.\n" +
 			"Returns null if the property is not found or cannot be parsed.", [
-				{ name: "expandedObject", type: "any" },
-				{ name: "propertyURI", type: "string" },
-				{ name: "pointerLibrary", type: "Carbon.Pointer.Library" }
+				{name: "expandedObject", type: "any"},
+				{name: "propertyURI", type: "string"},
+				{name: "pointerLibrary", type: "Carbon.Pointer.Library"}
 			],
-			{ type: "any" }
+			{type: "any"}
 		), ():void => {
 			expect( Value.Util.getPropertyList ).toBeDefined();
 			expect( Utils.isFunction( Value.Util.getPropertyList ) ).toBe( true );
@@ -271,18 +271,18 @@ describe( module( "Carbon/RDF/Value" ), ():void => {
 			expect( result ).toBeNull();
 			result = Value.Util.getPropertyList( documentResource, "http://example.com/ns#string", pointerLibrary );
 			expect( result ).toBeNull();
-		});
+		} );
 
 		it( hasMethod(
 			STATIC,
 			"getPropertyPointerList",
 			"Returns the property list searched as an Array of Pointers. It will be filtered no pointer values.\n" +
 			"Returns null if the property is not found or is not a List.", [
-				{ name: "expandedObject", type: "any" },
-				{ name: "propertyURI", type: "string" },
-				{ name: "pointerLibrary", type: "Carbon.Pointer.Library" }
+				{name: "expandedObject", type: "any"},
+				{name: "propertyURI", type: "string"},
+				{name: "pointerLibrary", type: "Carbon.Pointer.Library"}
 			],
-			{ type: "any" }
+			{type: "any"}
 		), ():void => {
 			expect( Value.Util.getPropertyPointerList ).toBeDefined();
 			expect( Utils.isFunction( Value.Util.getPropertyPointerList ) ).toBe( true );
@@ -299,18 +299,18 @@ describe( module( "Carbon/RDF/Value" ), ():void => {
 			expect( result ).toBeNull();
 			result = Value.Util.getPropertyPointerList( documentResource, "http://example.com/ns#empty-property", pointerLibrary );
 			expect( result ).toBeNull();
-		});
+		} );
 
 		it( hasMethod(
 			STATIC,
 			"getPropertyLiteralList",
 			"Returns the property list searched as an Array of parsed Literals. It will be filtered no Literal values with the type specified.\n" +
 			"Returns null if the property is not found or is not a List.", [
-				{ name: "expandedObject", type: "any" },
-				{ name: "propertyURI", type: "string" },
-				{ name: "pointerLibrary", type: "Carbon.Pointer.Library" }
+				{name: "expandedObject", type: "any"},
+				{name: "propertyURI", type: "string"},
+				{name: "pointerLibrary", type: "Carbon.Pointer.Library"}
 			],
-			{ type: "any" }
+			{type: "any"}
 		), ():void => {
 			expect( Value.Util.getPropertyLiteralList ).toBeDefined();
 			expect( Utils.isFunction( Value.Util.getPropertyLiteralList ) ).toBe( true );
@@ -326,7 +326,7 @@ describe( module( "Carbon/RDF/Value" ), ():void => {
 			expect( result ).toBeNull();
 			result = Value.Util.getPropertyLiteralList( documentResource, "http://example.com/ns#empty-property", XSD.DataType.object );
 			expect( result ).toBeNull();
-		});
+		} );
 
 		it( hasMethod(
 			STATIC,
@@ -337,7 +337,7 @@ describe( module( "Carbon/RDF/Value" ), ():void => {
 				{ name: "propertyURI", type: "string" },
 				{ name: "pointerLibrary", type: "Carbon.Pointer.Library" }
 			],
-			{ type: "any" }
+			{type: "any"}
 		), ():void => {
 			expect( Value.Util.getProperties ).toBeDefined();
 			expect( Utils.isFunction( Value.Util.getProperties ) ).toBe( true );
@@ -392,18 +392,18 @@ describe( module( "Carbon/RDF/Value" ), ():void => {
 
 			result = Value.Util.getProperties( documentResource, "http://example.com/ns#no-property", pointerLibrary );
 			expect( result ).toBeNull();
-		});
+		} );
 
 		it( hasMethod(
 			STATIC,
 			"getPropertyPointers",
 			"Returns the property searched as an Array with the parsed Pointer.\n" +
 			"Returns an empty array if the property is not found, or the property cannot be parsed as a pointer.", [
-				{ name: "expandedObject", type: "any" },
-				{ name: "propertyURI", type: "string" },
-				{ name: "pointerLibrary", type: "Carbon.Pointer.Library" }
+				{name: "expandedObject", type: "any"},
+				{name: "propertyURI", type: "string"},
+				{name: "pointerLibrary", type: "Carbon.Pointer.Library"}
 			],
-			{ type: "any" }
+			{type: "any"}
 		), ():void => {
 			expect( Value.Util.getPropertyPointers ).toBeDefined();
 			expect( Utils.isFunction( Value.Util.getPropertyPointers ) ).toBe( true );
@@ -433,17 +433,17 @@ describe( module( "Carbon/RDF/Value" ), ():void => {
 
 			result = Value.Util.getPropertyPointers( documentResource, "http://example.com/ns#no-property", pointerLibrary );
 			expect( result ).toEqual( [] );
-		});
+		} );
 
 		it( hasMethod(
 			STATIC,
 			"getPropertyURIs",
 			"Returns the URIs of the property searched.\n" +
 			"Returns null if the property is not found or an empty array if no URI was found.", [
-				{ name: "expandedObject", type: "any" },
-				{ name: "propertyURI", type: "string" }
+				{name: "expandedObject", type: "any"},
+				{name: "propertyURI", type: "string"}
 			],
-			{ type: "any" }
+			{type: "any"}
 		), ():void => {
 			expect( Value.Util.getPropertyURIs ).toBeDefined();
 			expect( Utils.isFunction( Value.Util.getPropertyURIs ) ).toBe( true );
@@ -478,7 +478,7 @@ describe( module( "Carbon/RDF/Value" ), ():void => {
 
 			result = Value.Util.getPropertyURIs( documentResource, "http://example.com/ns#no-property" );
 			expect( result ).toBeNull();
-		});
+		} );
 
 		it( hasMethod(
 			STATIC,
@@ -489,7 +489,7 @@ describe( module( "Carbon/RDF/Value" ), ():void => {
 				{ name: "propertyURI", type: "string" },
 				{ name: "literalType", type: "string" }
 			],
-			{ type: "any" }
+			{type: "any"}
 		), ():void => {
 			expect( Value.Util.getPropertyLiterals ).toBeDefined();
 			expect( Utils.isFunction( Value.Util.getPropertyLiterals ) ).toBe( true );
@@ -536,7 +536,7 @@ describe( module( "Carbon/RDF/Value" ), ():void => {
 
 			result = Value.Util.getPropertyLiterals( documentResource, "http://example.com/ns#no-property", XSD.DataType.string );
 			expect( result ).toBeNull();
-		});
+		} );
 
 		it( hasMethod(
 			STATIC,
@@ -547,7 +547,7 @@ describe( module( "Carbon/RDF/Value" ), ():void => {
 				{ name: "propertyURI", type: "string" },
 				{ name: "pointerLibrary", type: "Carbon.Pointer.Library" }
 			],
-			{ type: "any" }
+			{type: "any"}
 		), ():void => {
 			expect( Value.Util.getPropertyLanguageMap ).toBeDefined();
 			expect( Utils.isFunction( Value.Util.getPropertyLanguageMap ) ).toBe( true );
@@ -571,16 +571,16 @@ describe( module( "Carbon/RDF/Value" ), ():void => {
 
 			result = Value.Util.getPropertyLanguageMap( documentResource, "http://example.com/ns#no-property" );
 			expect( result ).toBeNull();
-		});
+		} );
 
 		it( hasMethod(
 			STATIC,
 			"getList",
 			"Returns the List object from the provided property of an expanded JSON-LD object.\n" +
 			"Returns null if no List object is found.", [
-				{ name: "propertyValues", type: "Array<any>" }
+				{name: "propertyValues", type: "Array<any>"}
 			],
-			{ type: "Carbon.RDF.List.Class" }
+			{type: "Carbon.RDF.List.Class"}
 		), ():void => {
 			expect( Value.Util.getList ).toBeDefined();
 			expect( Utils.isFunction( Value.Util.getList ) ).toBe( true );
@@ -592,7 +592,7 @@ describe( module( "Carbon/RDF/Value" ), ():void => {
 			expect( result ).toBeNull();
 			result = Value.Util.getList( documentResource[ "http://example.com/ns#string" ] );
 			expect( result ).toBeNull();
-		});
+		} );
 
 		it( hasMethod(
 			STATIC,
@@ -602,7 +602,7 @@ describe( module( "Carbon/RDF/Value" ), ():void => {
 				{ name: "propertyValue", type: "Carbon.RDF.Value.Class" },
 				{ name: "pointerLibrary", type: "Carbon.Pointer.Library" }
 			],
-			{ type: "any" }
+			{type: "any"}
 		), ():void => {
 			expect( Value.Util.parseValue ).toBeDefined();
 			expect( Utils.isFunction( Value.Util.parseValue ) ).toBe( true );
@@ -615,7 +615,7 @@ describe( module( "Carbon/RDF/Value" ), ():void => {
 			expect( result ).toBe( "a string" );
 
 			property = documentResource[ "http://example.com/ns#date" ][ 0 ];
-			result = Value.Util.parseValue(property, pointerLibrary );
+			result = Value.Util.parseValue( property, pointerLibrary );
 			expect( Utils.isDate( result ) ).toBe( true );
 			expect( result ).toEqual( new Date( "2001-02-15T05:35:12.029Z" ) );
 
@@ -636,8 +636,8 @@ describe( module( "Carbon/RDF/Value" ), ():void => {
 			property = documentResource[ "http://example.com/ns#empty-property" ][ 0 ];
 			result = Value.Util.parseValue( property, pointerLibrary );
 			expect( result ).toBeNull();
-		});
+		} );
 
-	});
+	} );
 
-});
+} );

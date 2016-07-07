@@ -28,74 +28,74 @@ describe( module(
 		"Error class to indicate that the precondition header was resolved to false."
 	), ():void => {
 
-		let response: Response;
+		let response:Response;
 
 		beforeAll( ( done:{ ():void, fail:() => void } ) => {
 			jasmine.Ajax.install();
-			jasmine.Ajax.stubRequest( "http://example.com/request/" ).andReturn({
+			jasmine.Ajax.stubRequest( "http://example.com/request/" ).andReturn( {
 				"status": 200,
 				"responseText": "A response"
-			});
+			} );
 
 			Service.send( "GET", "http://example.com/request/" ).then( ( _response ) => {
 				response = _response;
 				done();
-			}).catch( done.fail );
+			} ).catch( done.fail );
 
-		});
+		} );
 
 		afterAll( () => {
 			jasmine.Ajax.uninstall();
-		});
+		} );
 
 		it( isDefined(), ():void => {
 			expect( PreconditionFailedError ).toBeDefined();
 			expect( Utils.isFunction( PreconditionFailedError ) ).toBe( true );
-		});
+		} );
 
 		it( extendsClass(
 			"Carbon.Errors.HTTPError"
 		), ():void => {
-			let error: PreconditionFailedError = new PreconditionFailedError( "Message of the error", response );
+			let error:PreconditionFailedError = new PreconditionFailedError( "Message of the error", response );
 
 			expect( error instanceof HTTPError ).toBe( true );
-		});
+		} );
 
-		it( hasConstructor([
-			{ name: "message", type: "string" },
-			{ name: "response", type: "Carbon.HTTP.Response" }
-		]), ():void => {
-			let error: PreconditionFailedError = new PreconditionFailedError( "Message of the error", response );
+		it( hasConstructor( [
+			{name: "message", type: "string"},
+			{name: "response", type: "Carbon.HTTP.Response"}
+		] ), ():void => {
+			let error:PreconditionFailedError = new PreconditionFailedError( "Message of the error", response );
 
 			expect( error ).toBeTruthy();
 			expect( error instanceof PreconditionFailedError ).toBe( true );
-		});
+		} );
 
 		it( hasMethod(
 			INSTANCE,
 			"toString",
-			{ type: "string" }
+			{type: "string"}
 		), ():void => {
-			let error: PreconditionFailedError = new PreconditionFailedError( "Message of the error", response );
+			let error:PreconditionFailedError = new PreconditionFailedError( "Message of the error", response );
 
 			expect( error.toString ).toBeDefined();
 			expect( Utils.isFunction( error.toString ) );
 
-			expect( error.toString() ).toBe("PreconditionFailedError: Message of the error");
-		});
+			expect( error.toString() ).toBe( "PreconditionFailedError: Message of the error" );
+		} );
 
 		it( hasProperty(
 			INSTANCE,
 			"name",
 			"string"
 		), ():void => {
-			let error: PreconditionFailedError = new PreconditionFailedError( "Message of the error", response );
+			let error:PreconditionFailedError = new PreconditionFailedError( "Message of the error", response );
 
 			expect( error.name ).toBeDefined();
 			expect( Utils.isString( error.name ) ).toBe( true );
 
 			expect( error.name ).toBe( "PreconditionFailedError" );
-		});
+		} );
 
 		it( hasProperty(
 			STATIC,
@@ -106,8 +106,8 @@ describe( module(
 			expect( Utils.isNumber( PreconditionFailedError.statusCode ) );
 
 			expect( PreconditionFailedError.statusCode ).toBe( 412 );
-		});
+		} );
 
-	});
+	} );
 
-});
+} );

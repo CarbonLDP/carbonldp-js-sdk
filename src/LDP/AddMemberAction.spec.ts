@@ -20,7 +20,7 @@ describe( module( "Carbon/LDP/AddMemberAction" ), ():void => {
 	it( isDefined(), ():void => {
 		expect( AddMemberAction ).toBeDefined();
 		expect( Utils.isObject( AddMemberAction ) ).toBe( true );
-	});
+	} );
 
 	it( hasProperty(
 		STATIC,
@@ -31,7 +31,7 @@ describe( module( "Carbon/LDP/AddMemberAction" ), ():void => {
 		expect( Utils.isString( AddMemberAction.RDF_CLASS ) ).toBe( true );
 
 		expect( AddMemberAction.RDF_CLASS ).toBe( NS.C.Class.AddMemberAction );
-	});
+	} );
 
 	it( hasProperty(
 		STATIC,
@@ -42,13 +42,13 @@ describe( module( "Carbon/LDP/AddMemberAction" ), ():void => {
 		expect( Utils.isObject( AddMemberAction.SCHEMA ) ).toBe( true );
 
 		expect( Utils.hasProperty( AddMemberAction.SCHEMA, "targetMembers" ) ).toBe( true );
-		expect( AddMemberAction.SCHEMA[ "targetMembers" ] ).toEqual({
+		expect( AddMemberAction.SCHEMA[ "targetMembers" ] ).toEqual( {
 			"@id": NS.C.Predicate.targetMember,
 			"@container": "@set",
 			"@type": "@id"
-		});
+		} );
 
-	});
+	} );
 
 	describe( clazz(
 		"Carbon.LDP.AddMemberAction.Factory",
@@ -58,15 +58,15 @@ describe( module( "Carbon/LDP/AddMemberAction" ), ():void => {
 		it( isDefined(), ():void => {
 			expect( AddMemberAction.Factory ).toBeDefined();
 			expect( Utils.isFunction( AddMemberAction.Factory ) ).toBe( true );
-		});
+		} );
 
 		it( hasMethod(
 			STATIC,
 			"hasClassProperties",
 			"Returns true if the object has the properties of a `Carbon.LDP.AddMemberAction.Class` object.", [
-				{ name: "resource", type: "Carbon.RDF.Node.Class" }
+				{name: "resource", type: "Carbon.RDF.Node.Class"},
 			],
-			{ type: "boolean" }
+			{type: "boolean"}
 		), ():void => {
 			expect( AddMemberAction.Factory.hasClassProperties ).toBeDefined();
 			expect( Utils.isFunction( AddMemberAction.Factory.hasClassProperties ) ).toBe( true );
@@ -82,15 +82,15 @@ describe( module( "Carbon/LDP/AddMemberAction" ), ():void => {
 			delete object.targetMembers;
 			expect( AddMemberAction.Factory.hasClassProperties( object ) ).toBe( false );
 			object.targetMembers = null;
-		});
+		} );
 
 		it( hasMethod(
 			STATIC,
 			"createDocument",
 			"Creates and returns a `Carbon.Document.Class` object with a `Carbon.LDP.AddMemberAction.Class` fragment for the specified targetMembers.", [
-				{ name: "targetMembers", type: "Carbon.Pointer.Class[]", description: "The target members to add in a `addMember` request." }
+				{name: "targetMembers", type: "Carbon.Pointer.Class[]", description: "The target members to add in a `addMember` request."}
 			],
-			{ type: "Carbon.Document.Class" }
+			{type: "Carbon.Document.Class"}
 		), ():void => {
 			expect( AddMemberAction.Factory.createDocument ).toBeDefined();
 			expect( Utils.isFunction( AddMemberAction.Factory.createDocument ) ).toBe( true );
@@ -108,8 +108,8 @@ describe( module( "Carbon/LDP/AddMemberAction" ), ():void => {
 			expect( AddMemberAction.Factory.hasClassProperties( addMemberAction ) ).toBe( true );
 			expect( addMemberAction.targetMembers ).toEqual( pointers );
 			expect( addMemberAction.types ).toContain( AddMemberAction.RDF_CLASS );
-		});
-		
-	});
+		} );
 
-});
+	} );
+
+} );

@@ -27,39 +27,39 @@ export class Class implements Authenticator<UsernameAndPasswordToken> {
 	}
 
 	isAuthenticated():boolean {
-		return !! this._credentials && this._credentials.expirationTime > new Date();
+		return ! ! this._credentials && this._credentials.expirationTime > new Date();
 	}
 
 	authenticate( authenticationToken:UsernameAndPasswordToken ):Promise<Token.Class>;
 	authenticate( credentials:Token.Class ):Promise<Token.Class>;
 	authenticate( authenticationOrCredentials:any ):Promise<Token.Class> {
-		if ( Token.Factory.is( authenticationOrCredentials ) ) {
+		if( Token.Factory.is( authenticationOrCredentials ) ) {
 
-			if ( Utils.isString( authenticationOrCredentials.expirationTime ) )
+			if( Utils.isString( authenticationOrCredentials.expirationTime ) )
 				authenticationOrCredentials.expirationTime = new Date( <any> authenticationOrCredentials.expirationTime );
 			this._credentials = authenticationOrCredentials;
 
 			return new Promise<Token.Class>( ( resolve:Function, reject:Function ) => {
-				if ( ! this.isAuthenticated() ) {
+				if( ! this.isAuthenticated() ) {
 					this.clearAuthentication();
 					throw new Errors.IllegalArgumentError( "The token provided in not valid." );
 				}
 				resolve( this._credentials );
-			});
+			} );
 
 		} else {
 			return this.basicAuthenticator.authenticate( authenticationOrCredentials )
 				.then( ( credentials:Credentials.Class ):Promise<[ Token.Class, HTTP.Response.Class ]> => {
 					return this.createToken();
-				})
+				} )
 				.then( ( [ token, response ]:[ Token.Class, HTTP.Response.Class ] ):Token.Class => {
-					this._credentials = token;
+						this._credentials = token;
 
-					this.basicAuthenticator.clearAuthentication();
+						this.basicAuthenticator.clearAuthentication();
 
-					return this._credentials;
-				}
-			);
+						return this._credentials;
+					}
+				);
 		}
 	}
 

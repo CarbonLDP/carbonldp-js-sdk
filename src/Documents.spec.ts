@@ -1121,9 +1121,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 							}]
 						},
 						{
-							"@id": "http://example.com/${ resource }/",
+							"@id": "http://example.com/${ resource }",
 							"@graph": [{
-								"@id": "http://example.com/${ resource }/",
+								"@id": "http://example.com/${ resource }",
+								"@type": [ "http://www.w3.org/ns/ldp#BasicContainer" ],
 						        "http://www.w3.org/ns/ldp#contains": [{
 						            "@id": "http://example.com/resource/element-01/"
 						        }, {
@@ -1163,7 +1164,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 				} );
 			}
 
-			function checkResponse( pointers:PersistedDocument.Class[], response:HTTP.Response.Class ):void {
+			function checkResponse( resource:string, pointers:PersistedDocument.Class[], response:HTTP.Response.Class ):void {
+				expect( documents.hasPointer( resource ) ).toBe( false );
+				expect( (<any> documents).pointers.size ).toBe( 2 );
+
 				expect( pointers ).toBeDefined();
 				expect( Utils.isArray( pointers ) ).toBe( true );
 				expect( pointers.length ).toBe( 2 );
@@ -1244,7 +1248,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					expect( promise instanceof Promise ).toBe( true );
 					promises.push( promise.then( ( [ pointers, response ]:[ PersistedDocument.Class[], HTTP.Response.Class ] ) => {
 
-						checkResponse( pointers, response );
+						checkResponse( "resource-1/", pointers, response );
 
 						expect( options.timeout ).toBe( 12345 );
 						expect( options.headers ).toBeDefined();
@@ -1270,7 +1274,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					expect( promise instanceof Promise ).toBe( true );
 					promises.push( promise.then( ( [ pointers, response ]:[ PersistedDocument.Class[], HTTP.Response.Class ] ) => {
 
-						checkResponse( pointers, response );
+						checkResponse( "resource-2/", pointers, response );
 
 						let request:JasmineAjaxRequest = jasmine.Ajax.requests.filter( /resource-2/ )[ 0 ];
 						let url:string = decodeURI( request.url );
@@ -1360,7 +1364,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					expect( promise instanceof Promise ).toBe( true );
 					promises.push( promise.then( ( [ pointers, response ]:[ PersistedDocument.Class[], HTTP.Response.Class ] ) => {
 
-						checkResponse( pointers, response );
+						checkResponse( "resource-1/", pointers, response );
 
 						expect( options.timeout ).toBe( 12345 );
 						expect( options.headers ).toBeDefined();
@@ -1379,7 +1383,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					expect( promise instanceof Promise ).toBe( true );
 					promises.push( promise.then( ( [ pointers, response ]:[ PersistedDocument.Class[], HTTP.Response.Class ] ) => {
 
-						checkResponse( pointers, response );
+						checkResponse( "resource-2/", pointers, response );
 
 						let request:JasmineAjaxRequest = jasmine.Ajax.requests.filter( /resource-2/ )[ 0 ];
 						expect( request.url ).toMatch( "resource-2/" );
@@ -1855,7 +1859,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					expect( promise instanceof Promise ).toBe( true );
 					promises.push( promise.then( ( [ pointers, response ]:[ Pointer.Class[], HTTP.Response.Class ] ) => {
 
-						checkResponse( pointers, response );
+						checkResponse( "resource-1/", pointers, response );
 
 						expect( options.timeout ).toBe( 12345 );
 						expect( options.headers ).toBeDefined();
@@ -1875,7 +1879,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					expect( promise instanceof Promise ).toBe( true );
 					promises.push( promise.then( ( [ pointers, response ]:[ Pointer.Class[], HTTP.Response.Class ] ) => {
 
-						checkResponse( pointers, response );
+						checkResponse( "resource-2/", pointers, response );
 
 						expect( options.timeout ).toBe( 12345 );
 						expect( options.headers ).toBeDefined();
@@ -1894,7 +1898,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					expect( promise instanceof Promise ).toBe( true );
 					promises.push( promise.then( ( [ pointers, response ]:[ Pointer.Class[], HTTP.Response.Class ] ) => {
 
-						checkResponse( pointers, response );
+						checkResponse( "resource-3/", pointers, response );
 
 						let request:JasmineAjaxRequest = jasmine.Ajax.requests.filter( /resource-3/ )[ 0 ];
 						expect( request.url ).toMatch( "resource-3/" );
@@ -1910,7 +1914,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					expect( promise instanceof Promise ).toBe( true );
 					promises.push( promise.then( ( [ pointers, response ]:[ Pointer.Class[], HTTP.Response.Class ] ) => {
 
-						checkResponse( pointers, response );
+						checkResponse( "resource-4/", pointers, response );
 
 						let request:JasmineAjaxRequest = jasmine.Ajax.requests.filter( /resource-4/ )[ 0 ];
 						expect( request.url ).toMatch( "resource-4/" );
@@ -1926,7 +1930,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					expect( promise instanceof Promise ).toBe( true );
 					promises.push( promise.then( ( [ pointers, response ]:[ Pointer.Class[], HTTP.Response.Class ] ) => {
 
-						checkResponse( pointers, response );
+						checkResponse( "resource-5/", pointers, response );
 
 						let request:JasmineAjaxRequest = jasmine.Ajax.requests.filter( /resource-5/ )[ 0 ];
 						expect( request.url ).toMatch( "resource-5/" );
@@ -1955,7 +1959,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					expect( promise instanceof Promise ).toBe( true );
 					promises.push( promise.then( ( [ pointers, response ]:[ Pointer.Class[], HTTP.Response.Class ] ) => {
 
-						checkResponse( pointers, response );
+						checkResponse( "resource-1/", pointers, response );
 
 						expect( options.timeout ).toBe( 12345 );
 						expect( options.headers ).toBeDefined();
@@ -1974,7 +1978,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					expect( promise instanceof Promise ).toBe( true );
 					promises.push( promise.then( ( [ pointers, response ]:[ Pointer.Class[], HTTP.Response.Class ] ) => {
 
-						checkResponse( pointers, response );
+						checkResponse( "resource-2/", pointers, response );
 
 						let request:JasmineAjaxRequest = jasmine.Ajax.requests.filter( /resource-2/ )[ 0 ];
 						expect( request.url ).toMatch( "resource-2/" );
@@ -2008,7 +2012,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 				} );
 			}
 
-			function checkResponse( pointers:Pointer.Class[], response:HTTP.Response.Class ):void {
+			function checkResponse( resource:string, pointers:Pointer.Class[], response:HTTP.Response.Class ):void {
+				expect( (<any> documents).pointers.size ).toBe( 3 );
+				expect( documents.hasPointer( resource ) ).toBe( false );
+
 				expect( pointers ).toBeDefined();
 				expect( Utils.isArray( pointers ) ).toBe( true );
 				expect( pointers.length ).toBe( 3 );
@@ -2106,9 +2113,9 @@ describe( module( "Carbon/Documents" ), ():void => {
 							}]
 						},
 						{
-							"@id": "http://example.com/${ resource }/",
+							"@id": "http://example.com/${ resource }",
 							"@graph": [{
-								"@id": "http://example.com/${ resource }/",
+								"@id": "http://example.com/${ resource }",
 								"@type": [ "http://www.w3.org/ns/ldp#BasicContainer" ],
 								"http://www.w3.org/ns/ldp#hasMemberRelation": [{
 						            "@id": "http://www.w3.org/ns/ldp#my-member"
@@ -2152,7 +2159,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 				} );
 			}
 
-			function checkResponse( pointers:PersistedDocument.Class[], response:HTTP.Response.Class ):void {
+			function checkResponse( resource:string, pointers:PersistedDocument.Class[], response:HTTP.Response.Class ):void {
+				expect( documents.hasPointer( resource ) ).toBe( false );
+				expect( (<any> documents).pointers.size ).toBe( 2 );
+
 				expect( pointers ).toBeDefined();
 				expect( Utils.isArray( pointers ) ).toBe( true );
 				expect( pointers.length ).toBe( 2 );
@@ -2239,7 +2249,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					expect( promise instanceof Promise ).toBe( true );
 					promises.push( promise.then( ( [ pointers, response ]:[ PersistedDocument.Class[], HTTP.Response.Class ] ) => {
 
-						checkResponse( pointers, response );
+						checkResponse( "resource-1/", pointers, response );
 
 						expect( options.timeout ).toBe( 12345 );
 						expect( options.headers ).toBeDefined();
@@ -2266,7 +2276,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					expect( promise instanceof Promise ).toBe( true );
 					promises.push( promise.then( ( [ pointers, response ]:[ PersistedDocument.Class[], HTTP.Response.Class ] ) => {
 
-						checkResponse( pointers, response );
+						checkResponse( "resource-2/", pointers, response );
 
 						expect( options.timeout ).toBe( 12345 );
 						expect( options.headers ).toBeDefined();
@@ -2292,7 +2302,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					expect( promise instanceof Promise ).toBe( true );
 					promises.push( promise.then( ( [ pointers, response ]:[ PersistedDocument.Class[], HTTP.Response.Class ] ) => {
 
-						checkResponse( pointers, response );
+						checkResponse( "resource-3/", pointers, response );
 
 						let request:JasmineAjaxRequest = jasmine.Ajax.requests.filter( /resource-3/ )[ 0 ];
 						let url:string = decodeURI( request.url );
@@ -2315,7 +2325,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					expect( promise instanceof Promise ).toBe( true );
 					promises.push( promise.then( ( [ pointers, response ]:[ PersistedDocument.Class[], HTTP.Response.Class ] ) => {
 
-						checkResponse( pointers, response );
+						checkResponse( "resource-4/", pointers, response );
 
 						let request:JasmineAjaxRequest = jasmine.Ajax.requests.filter( /resource-4/ )[ 0 ];
 						let url:string = decodeURI( request.url );
@@ -2346,7 +2356,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					expect( promise instanceof Promise ).toBe( true );
 					promises.push( promise.then( ( [ pointers, response ]:[ PersistedDocument.Class[], HTTP.Response.Class ] ) => {
 
-						checkResponse( pointers, response );
+						checkResponse( "resource-1/", pointers, response );
 
 						expect( options.timeout ).toBe( 12345 );
 						expect( options.headers ).toBeDefined();
@@ -2366,7 +2376,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					expect( promise instanceof Promise ).toBe( true );
 					promises.push( promise.then( ( [ pointers, response ]:[ PersistedDocument.Class[], HTTP.Response.Class ] ) => {
 
-						checkResponse( pointers, response );
+						checkResponse( "resource-2/", pointers, response );
 
 						expect( options.timeout ).toBe( 12345 );
 						expect( options.headers ).toBeDefined();
@@ -2385,7 +2395,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					expect( promise instanceof Promise ).toBe( true );
 					promises.push( promise.then( ( [ pointers, response ]:[ PersistedDocument.Class[], HTTP.Response.Class ] ) => {
 
-						checkResponse( pointers, response );
+						checkResponse( "resource-3/", pointers, response );
 
 						let request:JasmineAjaxRequest = jasmine.Ajax.requests.filter( /resource-3/ )[ 0 ];
 						expect( request.url ).toMatch( "resource-3/" );
@@ -2401,7 +2411,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					expect( promise instanceof Promise ).toBe( true );
 					promises.push( promise.then( ( [ pointers, response ]:[ PersistedDocument.Class[], HTTP.Response.Class ] ) => {
 
-						checkResponse( pointers, response );
+						checkResponse( "resource-4/", pointers, response );
 
 						let request:JasmineAjaxRequest = jasmine.Ajax.requests.filter( /resource-4/ )[ 0 ];
 						expect( request.url ).toMatch( "resource-4/" );
@@ -2437,7 +2447,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					expect( promise instanceof Promise ).toBe( true );
 					promises.push( promise.then( ( [ pointers, response ]:[ PersistedDocument.Class[], HTTP.Response.Class ] ) => {
 
-						checkResponse( pointers, response );
+						checkResponse( "resource-1/", pointers, response );
 
 						expect( options.timeout ).toBe( 12345 );
 						expect( options.headers ).toBeDefined();
@@ -2463,7 +2473,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					expect( promise instanceof Promise ).toBe( true );
 					promises.push( promise.then( ( [ pointers, response ]:[ PersistedDocument.Class[], HTTP.Response.Class ] ) => {
 
-						checkResponse( pointers, response );
+						checkResponse( "resource-2/", pointers, response );
 
 						let request:JasmineAjaxRequest = jasmine.Ajax.requests.filter( /resource-2/ )[ 0 ];
 						let url:string = decodeURI( request.url );
@@ -2493,7 +2503,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					expect( promise instanceof Promise ).toBe( true );
 					promises.push( promise.then( ( [ pointers, response ]:[ PersistedDocument.Class[], HTTP.Response.Class ] ) => {
 
-						checkResponse( pointers, response );
+						checkResponse( "resource-1/", pointers, response );
 
 						expect( options.timeout ).toBe( 12345 );
 						expect( options.headers ).toBeDefined();
@@ -2512,10 +2522,136 @@ describe( module( "Carbon/Documents" ), ():void => {
 					expect( promise instanceof Promise ).toBe( true );
 					promises.push( promise.then( ( [ pointers, response ]:[ PersistedDocument.Class[], HTTP.Response.Class ] ) => {
 
-						checkResponse( pointers, response );
+						checkResponse( "resource-2/", pointers, response );
 
 						let request:JasmineAjaxRequest = jasmine.Ajax.requests.filter( /resource-2/ )[ 0 ];
 						expect( request.url ).toMatch( "resource-2/" );
+						checkPrefer( request );
+					} ) );
+				})();
+
+				(() => {
+					stubListRequest( "resource-3/" );
+
+					let promise:Promise<[ PersistedDocument.Class[], HTTP.Response.Class ]> = documents.getMembers( "resource-3/" );
+
+					expect( promise instanceof Promise ).toBe( true );
+					promises.push( promise.then( ( [ pointers, response ]:[ PersistedDocument.Class[], HTTP.Response.Class ] ) => {
+						expect( (<any> documents).pointers.size ).toBe( 2 );
+						expect( documents.hasPointer( "resource-3/" ) ).toBe( false );
+						checkResponse( "resource-3/", pointers, response );
+
+						let request:JasmineAjaxRequest = jasmine.Ajax.requests.filter( /resource-3/ )[ 0 ];
+						expect( request.url ).toMatch( "resource-3/" );
+						checkPrefer( request );
+					} ) );
+				})();
+
+				(() => {
+					jasmine.Ajax.stubRequest( "http://example.com/resource-4/", null, "GET" ).andReturn( {
+						status: 200,
+						responseText: `[ {
+							"@id": "http://example.com/resource-4/",
+							"@graph": [{
+								"@id": "http://example.com/resource-4/",
+								"@type": [ "http://www.w3.org/ns/ldp#DirectContainer" ],
+								"http://www.w3.org/ns/ldp#hasMemberRelation": [{
+						            "@id": "http://www.w3.org/ns/ldp#my-member"
+						        }],
+						        "http://www.w3.org/ns/ldp#membershipResource": [{
+						            "@id": "http://example.com/resource/"
+						        }]
+						    }]
+						},
+						{
+							"@id": "http://example.com/resource/",
+							"@graph": [{
+								"@id": "http://example.com/resource/",
+								"@type": [ "http://www.w3.org/ns/ldp#BasicContainer" ],
+						        "http://www.w3.org/ns/ldp#my-member": [{
+						            "@id": "http://example.com/resource/element-01/"
+						        }, {
+						            "@id": "http://example.com/resource/element-02/"
+						        }]
+						    }]
+						},
+						{
+						    "@id": "_:00",
+						    "@type": [
+						      "https://carbonldp.com/ns/v1/platform#ResponseMetadata",
+						      "https://carbonldp.com/ns/v1/platform#VolatileResource"
+						    ],
+						    "https://carbonldp.com/ns/v1/platform#resourceMetadata": [{
+								"@id": "_:01"
+							}, {
+								"@id": "_:02"
+							}]
+						},
+						{
+						    "@id": "_:01",
+						    "@type": [
+						        "https://carbonldp.com/ns/v1/platform#ResourceMetadata",
+						        "https://carbonldp.com/ns/v1/platform#VolatileResource"
+						    ],
+						    "https://carbonldp.com/ns/v1/platform#eTag": [{
+						        "@value": "\\"1234567890\\""
+						    }],
+						    "https://carbonldp.com/ns/v1/platform#resource": [{
+						        "@id": "http://example.com/resource/element-01/"
+						    }]
+						},
+						{
+							"@id": "_:02",
+							"@type": [
+								"https://carbonldp.com/ns/v1/platform#ResourceMetadata",
+								"https://carbonldp.com/ns/v1/platform#VolatileResource"
+							],
+							"https://carbonldp.com/ns/v1/platform#eTag": [{
+								"@value": "\\"0987654321\\""
+							}],
+							"https://carbonldp.com/ns/v1/platform#resource": [{
+								"@id": "http://example.com/resource/element-02/"
+							}]
+						},
+						{
+							"@id": "http://example.com/resource/element-01/",
+							"@graph": [{
+								"@id": "http://example.com/resource/element-01/",
+								"@type": [ "http://www.w3.org/ns/ldp#BasicContainer" ],
+								"http://example.com/ns#string": [{ "@value": "Document of resource 01" }],
+								"http://example.com/ns#pointer": [
+									{ "@id": "http://example.com/resource/element-01/#1" }
+								]
+						    }, {
+								"@id": "http://example.com/resource/element-01/#1",
+								"http://example.com/ns#string": [{ "@value": "NamedFragment of resource 01" }]
+						    }]
+						},
+						{
+							"@id": "http://example.com/resource/element-02/",
+							"@graph": [{
+								"@id": "http://example.com/resource/element-02/",
+								"@type": [ "http://www.w3.org/ns/ldp#BasicContainer" ],
+								"http://example.com/ns#string": [{ "@value": "Document of resource 02" }],
+								"http://example.com/ns#pointer": [
+									{ "@id": "_:01" }
+								]
+						    }, {
+								"@id": "_:01",
+								"http://example.com/ns#string": [{ "@value": "BlankNode of resource 02" }]
+						    }]
+						} ]`
+					} );
+
+					let promise:Promise<[ PersistedDocument.Class[], HTTP.Response.Class ]> = documents.getMembers( "resource-4/" );
+
+					expect( promise instanceof Promise ).toBe( true );
+					promises.push( promise.then( ( [ pointers, response ]:[ PersistedDocument.Class[], HTTP.Response.Class ] ) => {
+						expect( documents.hasPointer( "resource/" ) ).toBe( false );
+						checkResponse( "resource-4/", pointers, response );
+
+						let request:JasmineAjaxRequest = jasmine.Ajax.requests.filter( /resource-4/ )[ 0 ];
+						expect( request.url ).toMatch( "resource-4/" );
 						checkPrefer( request );
 					} ) );
 				})();
@@ -2936,6 +3072,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					expect( blankNode02[ "string" ] ).toBe( "Fragment 2" );
 
 					document[ "new-property" ] = "A new property that will be erased at refresh";
+					document[ "new-pointer" ] = document.createFragment( {id: "_:new-pointer", string: "Pointer that will be erased at refresh"} );
 
 					let promise:Promise<any> = documents.refresh( document );
 					expect( promise instanceof Promise ).toBe( true );
@@ -2969,6 +3106,11 @@ describe( module( "Carbon/Documents" ), ():void => {
 									]
 								},
 								{
+									"@id": "_:1",
+									"${NS.C.Predicate.bNodeIdentifier}": "UUID fo _:2",
+									"http://example.com/ns#string": [{ "@value": "Old Fragment 2" }]
+								},
+								{
 									"@id": "_:0001",
 									"${NS.C.Predicate.bNodeIdentifier}": "UUID fo _:1",
 									"http://example.com/ns#string": [{ "@value": "Changed Fragment 1" }],
@@ -2980,7 +3122,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								{
 									"@id": "_:2",
 									"${NS.C.Predicate.bNodeIdentifier}": "NOT the UUID fo _:2",
-									"http://example.com/ns#string": [{ "@value": "Fragment 2" }]
+									"http://example.com/ns#string": [{ "@value": "New Fragment 2" }]
 								},
 								{
 									"@id": "http://example.com/resource/#1",
@@ -3013,16 +3155,23 @@ describe( module( "Carbon/Documents" ), ():void => {
 					expect( blankNode01.id ).toBe( "_:0001" );
 					expect( blankNode01 ).toBe( document.getFragment( "_:0001" ) );
 					expect( document[ "pointerSet" ][ 0 ] ).toBe( blankNode01 );
-					expect( document.hasFragment( "_:1" ) ).toBe( false );
 
-					expect( blankNode02.id ).toBe( "_:2" );
-					expect( blankNode02.id ).not.toBe( document.getFragment( "_:2" ) );
+					expect( blankNode02.id ).not.toBe( "_:2" );
+					expect( blankNode02 ).not.toBe( document.getFragment( "_:2" ) );
 					expect( document[ "pointerSet" ][ 1 ] ).not.toBe( blankNode02 );
+					expect( document[ "pointerSet" ][ 1 ] ).toBe( document.getFragment( "_:2" ) );
+					expect( document.getFragment( "_:2" )[ "string" ] ).toBe( "New Fragment 2" );
+
+					expect( blankNode02.id ).toBe( "_:1" );
+					expect( document.getFragment( "_:1" ) ).toBe( blankNode02 );
+					expect( blankNode02[ "string" ] ).toBe( "Old Fragment 2" );
 
 					expect( document.hasFragment( "#2" ) ).toBe( false );
 					expect( document.hasFragment( "#3" ) ).toBe( true );
 
 					expect( document[ "new-property" ] ).toBeUndefined();
+					expect( document[ "new-pointer" ] ).toBeUndefined();
+					expect( document.hasFragment( "_:new-pointer" ) ).toBe( false );
 
 					expect( response ).toBeDefined();
 					expect( response instanceof HTTP.Response.Class ).toBe( true );
@@ -3093,6 +3242,35 @@ describe( module( "Carbon/Documents" ), ():void => {
 				expect( spySuccess ).toHaveBeenCalled();
 				done();
 			}, done.fail );
+		} );
+
+		it( hasMethod(
+			INSTANCE,
+			"getDownloadURL",
+			"Add to the URI provided with the properties necessarily for a single download request.", [
+				{name: "documentURI", type: "string", description: "The URI of the document that will be converted in a single download request."},
+				{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true}
+			],
+			{type: "Promise<Carbon.HTTP.Response.Class>"}
+		), ( done:{ ():void, fail:() => void } ):void => {
+			class MockedContext extends AbstractContext {
+				resolve( uri:string ):string {
+					return uri;
+				}
+			}
+
+			let context:MockedContext = new MockedContext();
+			let documents:Documents = context.documents;
+
+			expect( documents.getDownloadURL ).toBeDefined();
+			expect( Utils.isFunction( documents.getDownloadURL ) ).toBe( true );
+
+			spyOn( context.auth, "getAuthenticatedURL" ).and.returnValue( Promise.resolve( "http://example.com/resource/?ticket=1234567890" ) );
+
+			documents.getDownloadURL( "http://example.com/resource/" ).then( ( downloadURL:string ) => {
+				expect( downloadURL ).toBe( "http://example.com/resource/?ticket=1234567890" );
+				done();
+			} ).catch( done.fail );
 		} );
 
 		it( hasMethod( INSTANCE, "executeRawASKQuery",

@@ -22,7 +22,7 @@ describe( module( "Carbon/LDP/BasicContainer" ), ():void => {
 	it( isDefined(), ():void => {
 		expect( BasicContainer ).toBeDefined();
 		expect( Utils.isObject( BasicContainer ) ).toBe( true );
-	});
+	} );
 
 	it( hasProperty(
 		STATIC,
@@ -33,7 +33,7 @@ describe( module( "Carbon/LDP/BasicContainer" ), ():void => {
 		expect( Utils.isString( BasicContainer.RDF_CLASS ) ).toBe( true );
 
 		expect( BasicContainer.RDF_CLASS ).toBe( NS.LDP.Class.BasicContainer );
-	});
+	} );
 
 	describe( clazz(
 		"Carbon.LDP.BasicContainer.Factory",
@@ -43,7 +43,7 @@ describe( module( "Carbon/LDP/BasicContainer" ), ():void => {
 		it( isDefined(), ():void => {
 			expect( BasicContainer.Factory ).toBeDefined();
 			expect( Utils.isFunction( BasicContainer.Factory ) ).toBe( true );
-		});
+		} );
 
 		describe( method(
 			STATIC,
@@ -52,9 +52,9 @@ describe( module( "Carbon/LDP/BasicContainer" ), ():void => {
 
 			it( hasSignature(
 				"Returns true if the Pointer provided has the type of a BasicContainer.", [
-					{ name: "pointer", type: "Carbon.Pointer.Class" }
+					{name: "pointer", type: "Carbon.Pointer.Class"},
 				],
-				{ type: "boolean" }
+				{type: "boolean"}
 			), ():void => {
 				expect( BasicContainer.Factory.hasRDFClass ).toBeDefined();
 				expect( Utils.isFunction( BasicContainer.Factory.hasRDFClass ) ).toBe( true );
@@ -129,13 +129,13 @@ describe( module( "Carbon/LDP/BasicContainer" ), ():void => {
 
 				pointer = Pointer.Factory.create( "http://example.com/resource/#pointer" );
 				expect( BasicContainer.Factory.hasRDFClass( pointer ) ).toBe( false );
-			});
+			} );
 
 			it( hasSignature(
 				"Returns true if the Pointer provided has the type of a BasicContainer.", [
-					{ name: "pointer", type: "Carbon.Pointer.Class" }
+					{name: "pointer", type: "Carbon.Pointer.Class"},
 				],
-				{ type: "boolean" }
+				{type: "boolean"}
 			), ():void => {
 				expect( BasicContainer.Factory.hasRDFClass ).toBeDefined();
 				expect( Utils.isFunction( BasicContainer.Factory.hasRDFClass ) ).toBe( true );
@@ -147,13 +147,13 @@ describe( module( "Carbon/LDP/BasicContainer" ), ():void => {
 					"@type": [
 						"http://www.w3.org/ns/ldp#BasicContainer"
 					],
-					"http://example.com/ns#string": [{
+					"http://example.com/ns#string": [ {
 						"@value": "a string"
-					}],
-					"http://example.com/ns#integer": [{
+					} ],
+					"http://example.com/ns#integer": [ {
 						"@value": "100",
 						"@type": "http://www.w3.org/2001/XMLSchema#integer"
-					}]
+					} ]
 				};
 				expect( BasicContainer.Factory.hasRDFClass( object ) ).toBe( true );
 
@@ -163,13 +163,13 @@ describe( module( "Carbon/LDP/BasicContainer" ), ():void => {
 						"http://www.w3.org/ns/ldp#Container",
 						"http://www.w3.org/ns/ldp#BasicContainer"
 					],
-					"http://example.com/ns#string": [{
+					"http://example.com/ns#string": [ {
 						"@value": "a string"
-					}],
-					"http://example.com/ns#integer": [{
+					} ],
+					"http://example.com/ns#integer": [ {
 						"@value": "100",
 						"@type": "http://www.w3.org/2001/XMLSchema#integer"
-					}]
+					} ]
 				};
 				expect( BasicContainer.Factory.hasRDFClass( object ) ).toBe( true );
 
@@ -180,13 +180,13 @@ describe( module( "Carbon/LDP/BasicContainer" ), ():void => {
 						"http://www.w3.org/ns/ldp#Container",
 						"http://www.w3.org/ns/ldp#BasicContainer"
 					],
-					"http://example.com/ns#string": [{
+					"http://example.com/ns#string": [ {
 						"@value": "a string"
-					}],
-					"http://example.com/ns#integer": [{
+					} ],
+					"http://example.com/ns#integer": [ {
 						"@value": "100",
 						"@type": "http://www.w3.org/2001/XMLSchema#integer"
-					}]
+					} ]
 				};
 				expect( BasicContainer.Factory.hasRDFClass( object ) ).toBe( true );
 
@@ -198,13 +198,13 @@ describe( module( "Carbon/LDP/BasicContainer" ), ():void => {
 						"http://www.w3.org/ns/ldp#Container",
 						"http://www.w3.org/ns/ldp#DirectContainer"
 					],
-					"http://example.com/ns#string": [{
+					"http://example.com/ns#string": [ {
 						"@value": "a string"
-					}],
-					"http://example.com/ns#integer": [{
+					} ],
+					"http://example.com/ns#integer": [ {
 						"@value": "100",
 						"@type": "http://www.w3.org/2001/XMLSchema#integer"
-					}]
+					} ]
 				};
 				expect( BasicContainer.Factory.hasRDFClass( object ) ).toBe( false );
 
@@ -215,13 +215,13 @@ describe( module( "Carbon/LDP/BasicContainer" ), ():void => {
 						"http://www.w3.org/ns/ldp#Container",
 						"http://www.w3.org/ns/ldp#IndirectContainer"
 					],
-					"http://example.com/ns#string": [{
+					"http://example.com/ns#string": [ {
 						"@value": "a string"
-					}],
-					"http://example.com/ns#integer": [{
+					} ],
+					"http://example.com/ns#integer": [ {
 						"@value": "100",
 						"@type": "http://www.w3.org/2001/XMLSchema#integer"
-					}]
+					} ]
 				};
 				expect( BasicContainer.Factory.hasRDFClass( object ) ).toBe( false );
 
@@ -231,13 +231,13 @@ describe( module( "Carbon/LDP/BasicContainer" ), ():void => {
 						"http://www.w3.org/ns/ldp#RDFSource",
 						"http://www.w3.org/ns/ldp#Container"
 					],
-					"http://example.com/ns#string": [{
+					"http://example.com/ns#string": [ {
 						"@value": "a string"
-					}],
-					"http://example.com/ns#integer": [{
+					} ],
+					"http://example.com/ns#integer": [ {
 						"@value": "100",
 						"@type": "http://www.w3.org/2001/XMLSchema#integer"
-					}]
+					} ]
 				};
 				expect( BasicContainer.Factory.hasRDFClass( object ) ).toBe( false );
 
@@ -246,34 +246,34 @@ describe( module( "Carbon/LDP/BasicContainer" ), ():void => {
 					"@type": [
 						"http://www.w3.org/ns/ldp#RDFSource"
 					],
-					"http://example.com/ns#string": [{
+					"http://example.com/ns#string": [ {
 						"@value": "a string"
-					}],
-					"http://example.com/ns#integer": [{
+					} ],
+					"http://example.com/ns#integer": [ {
 						"@value": "100",
 						"@type": "http://www.w3.org/2001/XMLSchema#integer"
-					}]
+					} ]
 				};
 				expect( BasicContainer.Factory.hasRDFClass( object ) ).toBe( false );
 
 
 				object = {
 					"@id": "http://example.com/resource/",
-					"http://example.com/ns#string": [{
+					"http://example.com/ns#string": [ {
 						"@value": "a string"
-					}],
-					"http://example.com/ns#integer": [{
+					} ],
+					"http://example.com/ns#integer": [ {
 						"@value": "100",
 						"@type": "http://www.w3.org/2001/XMLSchema#integer"
-					}]
+					} ]
 				};
 				expect( BasicContainer.Factory.hasRDFClass( object ) ).toBe( false );
 
 				expect( BasicContainer.Factory.hasRDFClass( {} ) ).toBe( false );
-			});
+			} );
 
-		});
+		} );
 
-	});
+	} );
 
-});
+} );

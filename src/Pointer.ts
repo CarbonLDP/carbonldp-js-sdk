@@ -18,7 +18,7 @@ export interface Library {
 
 export class Factory {
 	static hasClassProperties( object:Object ):boolean {
-		return !! (
+		return ! ! (
 			Utils.hasPropertyDefined( object, "_id" ) &&
 			Utils.hasPropertyDefined( object, "_resolved" ) &&
 
@@ -29,14 +29,14 @@ export class Factory {
 	}
 
 	static is( value:any ):boolean {
-		return !! (
+		return ! ! (
 			Utils.isObject( value ) &&
 			Factory.hasClassProperties( value )
 		);
 	}
 
 	static create( id?:string ):Class {
-		id = !! id ? id : "";
+		id = ! ! id ? id : "";
 
 		let pointer:Class = Factory.decorate( {} );
 		pointer.id = id;
@@ -105,11 +105,11 @@ export class Util {
 	static resolveAll( pointers:Class[] ):Promise<[ Class[], HTTP.Response.Class[] ]> {
 		let promises:Promise<[ Class, HTTP.Response.Class ]>[] = pointers.map( ( pointer:Class ) => pointer.resolve() );
 		return Promise.all<[ Class, HTTP.Response.Class ]>( promises ).then( ( results:[ Class, HTTP.Response.Class ][] ) => {
-			let resolvedPointers:Class[] = results.map( ( result:Array<any> ) => result[0] );
-			let responses:HTTP.Response.Class[] = results.map( ( result:Array<any> ) => result[1] );
+			let resolvedPointers:Class[] = results.map( ( result:Array<any> ) => result[ 0 ] );
+			let responses:HTTP.Response.Class[] = results.map( ( result:Array<any> ) => result[ 1 ] );
 
 			return [ resolvedPointers, responses ];
-		});
+		} );
 	}
 }
 
