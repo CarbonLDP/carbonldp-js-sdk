@@ -49,7 +49,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 		} );
 
 		it( hasConstructor( [
-			{name: "context", type: "Carbon.Context", optional: true, description: "The context where the documents instance will live. If no context is provided, calling its methods with relative URIs will throw an error, since there will be no form to resolve them."}
+			{name: "context", type: "Carbon.Context", optional: true, description: "The context where the documents instance will live. If no context is provided, calling its methods with relative URIs will throw an error, since there will be no form to resolve them."},
 		] ), ():void => {
 			class MockedContext extends AbstractContext {
 				resolve( uri:string ):string {
@@ -108,7 +108,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 			it( hasSignature(
 				"Returns true if the pointer provided is inside the scope of the Documents instance.", [
-					{name: "pointer", type: "Carbon.Pointer.Class", description: "Pointer to evaluate."}
+					{name: "pointer", type: "Carbon.Pointer.Class", description: "Pointer to evaluate."},
 				],
 				{type: "boolean"}
 			), ():void => {
@@ -147,7 +147,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 			it( hasSignature(
 				"Returns true if the URI provided is inside the scope of the Documents instance.", [
-					{name: "id", type: "string", description: "URI to evaluate."}
+					{name: "id", type: "string", description: "URI to evaluate."},
 				],
 				{type: "boolean"}
 			), ():void => {
@@ -180,7 +180,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 			INSTANCE,
 			"hasPointer",
 			"Returns true if the Documents instance has a pointer referenced by the URI provided.", [
-				{name: "id", type: "string", description: "URI to look for."}
+				{name: "id", type: "string", description: "URI to look for."},
 			],
 			{type: "boolean"}
 		), ():void => {
@@ -226,7 +226,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 			"getPointer",
 			"Returns the pointer referenced by the URI provided. If no pointer exists, one is created and then returned.\n" +
 			"Returns `null` if the URI is outside the scope of the Documents instance.", [
-				{name: "id", type: "string", description: "URI to look for."}
+				{name: "id", type: "string", description: "URI to look for."},
 			],
 			{type: "boolean"}
 		), ():void => {
@@ -390,7 +390,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 				expect( document[ "string" ] ).toBe( "Document Resource" );
 
-				(function documentResource() {
+				(function documentResource():void {
 					expect( document[ "pointerSet" ].length ).toBe( 4 );
 					expect( Pointer.Util.getIDs( document[ "pointerSet" ] ) ).toContain( "_:1" );
 					expect( Pointer.Util.getIDs( document[ "pointerSet" ] ) ).toContain( "_:2" );
@@ -398,12 +398,12 @@ describe( module( "Carbon/Documents" ), ():void => {
 					expect( Pointer.Util.getIDs( document[ "pointerSet" ] ) ).toContain( "http://example.com/external-resource/" );
 				})();
 
-				(function documentFragments() {
+				(function documentFragments():void {
 
 					let fragment:Fragment.Class;
 					expect( document.getFragments().length ).toBe( 4 );
 
-					(function documentBlankNode_1() {
+					(function documentBlankNode_1():void {
 						fragment = document.getFragment( "_:1" );
 						expect( fragment ).toBeTruthy();
 						expect( fragment[ "string" ] ).toBe( "Fragment 1" );
@@ -414,19 +414,19 @@ describe( module( "Carbon/Documents" ), ():void => {
 						expect( fragment[ "pointerSet" ].find( pointer => pointer.id === "http://example.com/resource/#1" ) ).toBe( document.getFragment( "1" ) );
 					})();
 
-					(function documentBlankNode_2() {
+					(function documentBlankNode_2():void {
 						fragment = document.getFragment( "_:2" );
 						expect( fragment ).toBeTruthy();
 						expect( fragment[ "string" ] ).toBe( "Fragment 2" );
 					})();
 
-					(function documentNamedFragment_1() {
+					(function documentNamedFragment_1():void {
 						fragment = document.getFragment( "1" );
 						expect( fragment ).toBeTruthy();
 						expect( fragment[ "string" ] ).toBe( "NamedFragment 1" );
 					})();
 
-					(function documentNamedFragment_1() {
+					(function documentNamedFragment_1():void {
 						fragment = document.getFragment( "2" );
 						expect( fragment ).toBeTruthy();
 						expect( fragment[ "string" ] ).toBe( "NamedFragment 2" );
@@ -464,7 +464,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 			let context:MockedContext = new MockedContext();
 			let documents:Documents = context.documents;
 
-			let spies = {
+			let spies:any = {
 				exists: ( [ exists, response ]:[ boolean, HTTP.Response.Class ] ):void => {
 					expect( exists ).toBe( true );
 					expect( response instanceof HTTP.Response.Class ).toBe( true );
@@ -475,20 +475,20 @@ describe( module( "Carbon/Documents" ), ():void => {
 				},
 				fail: ( error:HTTP.Errors.Error ):void => {
 					expect( error instanceof HTTP.Errors.Error ).toBe( true );
-				}
+				},
 			};
-			let spyExists = spyOn( spies, "exists" ).and.callThrough();
-			let spyNotExists = spyOn( spies, "notExists" ).and.callThrough();
-			let spyFail = spyOn( spies, "fail" ).and.callThrough();
+			let spyExists:jasmine.Spy = spyOn( spies, "exists" ).and.callThrough();
+			let spyNotExists:jasmine.Spy = spyOn( spies, "notExists" ).and.callThrough();
+			let spyFail:jasmine.Spy = spyOn( spies, "fail" ).and.callThrough();
 
 			jasmine.Ajax.stubRequest( "http://example.com/resource/exists/", null, "HEAD" ).andReturn( {
-				status: 200
+				status: 200,
 			} );
 			jasmine.Ajax.stubRequest( "http://example.com/resource/not-exists/", null, "HEAD" ).andReturn( {
-				status: 404
+				status: 404,
 			} );
 			jasmine.Ajax.stubRequest( "http://example.com/resource/error/", null, "HEAD" ).andReturn( {
-				status: 500
+				status: 500,
 			} );
 
 			let promise:Promise<any>;
@@ -764,23 +764,23 @@ describe( module( "Carbon/Documents" ), ():void => {
 					},
 				};
 
-				let childObject = {
+				let childObject:any = {
 					string: "The ONE string",
 					date: new Date(),
 					pointerList: [
 						{
 							slug: "Fragment_1",
-							string: "The Named Fragment"
+							string: "The Named Fragment",
 						},
 						{
 							id: "_:Fragment_2",
-							string: "The Blank Node"
-						}
+							string: "The Blank Node",
+						},
 					],
 					pointer: {
 						id: "#Fragment_1",
-						string: "The real Named Fragment"
-					}
+						string: "The real Named Fragment",
+					},
 				};
 
 				context.extendObjectSchema( objectSchema );
@@ -866,7 +866,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					},
 				};
 
-				let childObject = {
+				let childObject:any = {
 					string: "The ONE string",
 					date: new Date(),
 					pointerList: [
@@ -877,12 +877,12 @@ describe( module( "Carbon/Documents" ), ():void => {
 						{
 							id: "_:Fragment_2",
 							string: "The Blank Node",
-						}
+						},
 					],
 					pointer: {
 						id: "#Fragment_1",
 						string: "The real Named Fragment",
-					}
+					},
 				};
 
 				context.extendObjectSchema( objectSchema );
@@ -918,7 +918,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 			"listChildren",
 			"Retrieves an array of unresolved pointers that refers to the children of the container specified.", [
 				{name: "parentURI", type: "string", description: "URI of the document container where to look for its children."},
-				{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request."}
+				{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request."},
 			],
 			{type: "Promise<[ Carbon.Pointer.Class[], Carbon.HTTP.Response ]>"}
 		), ( done:{ ():void, fail:() => void } ):void => {
@@ -935,58 +935,43 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 			jasmine.Ajax.stubRequest( "http://example.com/empty-resource/", null, "GET" ).andReturn( {
 				status: 200,
-				responseText: "[]"
+				responseText: "[]",
 			} );
 			jasmine.Ajax.stubRequest( "http://example.com/another-empty-resource/", null, "GET" ).andReturn( {
 				status: 200,
-				responseText: `[
-				  {
-				    "@graph": [
-				      {
-				        "@id": "http://example.com/resource/",
-				        "http://www.w3.org/ns/ldp#contains": []
-				      }
-				    ],
-				    "@id": "http://example.com/resource/"
-				  }
-				]`
+				responseText: `[ {
+					"@graph": [ {
+						"@id": "http://example.com/resource/",
+						"http://www.w3.org/ns/ldp#contains": []
+					} ],
+					"@id": "http://example.com/resource/"
+				} ]`,
 			} );
 			jasmine.Ajax.stubRequest( "http://example.com/another-another-empty-resource/", null, "GET" ).andReturn( {
 				status: 200,
-				responseText: `[
-				  {
-				    "@graph": [
-				      {
-				        "@id": "http://example.com/resource/"
-				      }
-				    ],
-				    "@id": "http://example.com/resource/"
-				  }
-				]`
+				responseText: `[ {
+					"@graph": [ {
+						"@id": "http://example.com/resource/"
+					} ],
+					"@id": "http://example.com/resource/"
+				} ]`,
 			} );
 			jasmine.Ajax.stubRequest( "http://example.com/resource/", null, "GET" ).andReturn( {
 				status: 200,
-				responseText: `[
-				  {
-				    "@graph": [
-				      {
-				        "@id": "http://example.com/resource/",
-				        "http://www.w3.org/ns/ldp#contains": [
-				          {
-				            "@id": "http://example.com/resource/pointer-01/"
-				          },
-				          {
-				            "@id": "http://example.com/resource/pointer-02/"
-				          }
-				        ]
-				      }
-				    ],
-				    "@id": "http://example.com/resource/"
-				  }
-				]`
+				responseText: `[ {
+					"@graph": [ {
+						"@id": "http://example.com/resource/",
+						"http://www.w3.org/ns/ldp#contains": [ {
+							"@id": "http://example.com/resource/pointer-01/"
+						}, {
+							"@id": "http://example.com/resource/pointer-02/"
+						} ]
+					} ],
+					"@id": "http://example.com/resource/"
+				} ]`,
 			} );
 
-			let spies = {
+			let spies:any = {
 				success: ( [ pointers, response ]:[ Pointer.Class[], HTTP.Response.Class ] ):void => {
 					expect( pointers ).toBeDefined();
 					expect( Utils.isArray( pointers ) ).toBe( true );
@@ -1010,11 +995,11 @@ describe( module( "Carbon/Documents" ), ():void => {
 				fail: ( error:Error ):void => {
 					expect( error ).toBeDefined();
 					expect( error instanceof Errors.IllegalArgumentError ).toBe( true );
-				}
+				},
 			};
-			let spySuccess = spyOn( spies, "success" ).and.callThrough();
-			let spyEmpty = spyOn( spies, "successEmpty" ).and.callThrough();
-			let spyFail = spyOn( spies, "fail" ).and.callThrough();
+			let spySuccess:jasmine.Spy = spyOn( spies, "success" ).and.callThrough();
+			let spyEmpty:jasmine.Spy = spyOn( spies, "successEmpty" ).and.callThrough();
+			let spyFail:jasmine.Spy = spyOn( spies, "fail" ).and.callThrough();
 
 			let promises:Promise<any>[] = [];
 			let promise:Promise<any>;
@@ -1081,86 +1066,79 @@ describe( module( "Carbon/Documents" ), ():void => {
 			function stubListRequest( resource:string ):void {
 				jasmine.Ajax.stubRequest( new RegExp( resource ), null, "GET" ).andReturn( {
 					status: 200,
-					responseText: `[
-						{
-						    "@id": "_:00",
-						    "@type": [
-						      "https://carbonldp.com/ns/v1/platform#ResponseMetadata",
-						      "https://carbonldp.com/ns/v1/platform#VolatileResource"
-						    ],
-						    "https://carbonldp.com/ns/v1/platform#resourceMetadata": [{
-								"@id": "_:01"
-							}, {
-								"@id": "_:02"
-							}]
-						},
-						{
-						    "@id": "_:01",
-						    "@type": [
-						        "https://carbonldp.com/ns/v1/platform#ResourceMetadata",
-						        "https://carbonldp.com/ns/v1/platform#VolatileResource"
-						    ],
-						    "https://carbonldp.com/ns/v1/platform#eTag": [{
-						        "@value": "\\"1234567890\\""
-						    }],
-						    "https://carbonldp.com/ns/v1/platform#resource": [{
-						        "@id": "http://example.com/resource/element-01/"
-						    }]
-						},
-						{
-							"@id": "_:02",
-							"@type": [
-								"https://carbonldp.com/ns/v1/platform#ResourceMetadata",
-								"https://carbonldp.com/ns/v1/platform#VolatileResource"
-							],
-							"https://carbonldp.com/ns/v1/platform#eTag": [{
-								"@value": "\\"0987654321\\""
-							}],
-							"https://carbonldp.com/ns/v1/platform#resource": [{
-								"@id": "http://example.com/resource/element-02/"
-							}]
-						},
-						{
+					responseText: `[ {
+						"@id": "_:00",
+						"@type": [
+							"https://carbonldp.com/ns/v1/platform#ResponseMetadata",
+							"https://carbonldp.com/ns/v1/platform#VolatileResource"
+						],
+						"https://carbonldp.com/ns/v1/platform#resourceMetadata": [ {
+							"@id": "_:01"
+						}, {
+							"@id": "_:02"
+						} ]
+					}, {
+						"@id": "_:01",
+						"@type": [
+							"https://carbonldp.com/ns/v1/platform#ResourceMetadata",
+							"https://carbonldp.com/ns/v1/platform#VolatileResource"
+						],
+						"https://carbonldp.com/ns/v1/platform#eTag": [ {
+							"@value": "\\"1234567890\\""
+						} ],
+						"https://carbonldp.com/ns/v1/platform#resource": [ {
+							"@id": "http://example.com/resource/element-01/"
+						} ]
+					}, {
+						"@id": "_:02",
+						"@type": [
+							"https://carbonldp.com/ns/v1/platform#ResourceMetadata",
+							"https://carbonldp.com/ns/v1/platform#VolatileResource"
+						],
+						"https://carbonldp.com/ns/v1/platform#eTag": [ {
+							"@value": "\\"0987654321\\""
+						} ],
+						"https://carbonldp.com/ns/v1/platform#resource": [ {
+							"@id": "http://example.com/resource/element-02/"
+						} ]
+					}, {
+						"@id": "http://example.com/${ resource }",
+						"@graph": [ {
 							"@id": "http://example.com/${ resource }",
-							"@graph": [{
-								"@id": "http://example.com/${ resource }",
-								"@type": [ "http://www.w3.org/ns/ldp#BasicContainer" ],
-						        "http://www.w3.org/ns/ldp#contains": [{
-						            "@id": "http://example.com/resource/element-01/"
-						        }, {
-						            "@id": "http://example.com/resource/element-02/"
-						        }]
-						    }]
-						},
-						{
+							"@type": [ "http://www.w3.org/ns/ldp#BasicContainer" ],
+							"http://www.w3.org/ns/ldp#contains": [ {
+								"@id": "http://example.com/resource/element-01/"
+							}, {
+								"@id": "http://example.com/resource/element-02/"
+							} ]
+						} ]
+					}, {
+						"@id": "http://example.com/resource/element-01/",
+						"@graph": [ {
 							"@id": "http://example.com/resource/element-01/",
-							"@graph": [{
-								"@id": "http://example.com/resource/element-01/",
-								"@type": [ "http://www.w3.org/ns/ldp#BasicContainer" ],
-								"http://example.com/ns#string": [{ "@value": "Document of resource 01" }],
-								"http://example.com/ns#pointer": [
-									{ "@id": "http://example.com/resource/element-01/#1" }
-								]
-						    }, {
-								"@id": "http://example.com/resource/element-01/#1",
-								"http://example.com/ns#string": [{ "@value": "NamedFragment of resource 01" }]
-						    }]
-						},
-						{
+							"@type": [ "http://www.w3.org/ns/ldp#BasicContainer" ],
+							"http://example.com/ns#string": [ {"@value": "Document of resource 01"} ],
+							"http://example.com/ns#pointer": [
+								{"@id": "http://example.com/resource/element-01/#1"}
+							]
+						}, {
+							"@id": "http://example.com/resource/element-01/#1",
+							"http://example.com/ns#string": [ {"@value": "NamedFragment of resource 01"} ]
+						} ]
+					}, {
+						"@id": "http://example.com/resource/element-02/",
+						"@graph": [ {
 							"@id": "http://example.com/resource/element-02/",
-							"@graph": [{
-								"@id": "http://example.com/resource/element-02/",
-								"@type": [ "http://www.w3.org/ns/ldp#BasicContainer" ],
-								"http://example.com/ns#string": [{ "@value": "Document of resource 02" }],
-								"http://example.com/ns#pointer": [
-									{ "@id": "_:01" }
-								]
-						    }, {
-								"@id": "_:01",
-								"http://example.com/ns#string": [{ "@value": "BlankNode of resource 02" }]
-						    }]
-						}
-					]`
+							"@type": [ "http://www.w3.org/ns/ldp#BasicContainer" ],
+							"http://example.com/ns#string": [ {"@value": "Document of resource 02"} ],
+							"http://example.com/ns#pointer": [
+								{"@id": "_:01"}
+							]
+						}, {
+							"@id": "_:01",
+							"http://example.com/ns#string": [ {"@value": "BlankNode of resource 02"} ]
+						} ]
+					} ]`,
 				} );
 			}
 
@@ -1208,7 +1186,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				return prefers;
 			}
 
-			function checkPrefer( request:JasmineAjaxRequest ) {
+			function checkPrefer( request:JasmineAjaxRequest ):void {
 				let includes:string[] = null;
 				let omits:string[] = null;
 
@@ -1240,7 +1218,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					let retrievalPreferences:RetrievalPreferences.Class = {
 						limit: 10,
 						offset: 0,
-						orderBy: [ {"@id": "http://example.com/ns#string", "@type": "string"} ]
+						orderBy: [ {"@id": "http://example.com/ns#string", "@type": "string"} ],
 					};
 
 					let promise:Promise<[ PersistedDocument.Class[], HTTP.Response.Class ]> = documents.getChildren( "resource-1/", retrievalPreferences, options );
@@ -1266,7 +1244,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					let retrievalPreferences:RetrievalPreferences.Class = {
 						limit: 10,
 						offset: 0,
-						orderBy: [ {"@id": "http://example.com/ns#string", "@type": "string"} ]
+						orderBy: [ {"@id": "http://example.com/ns#string", "@type": "string"} ],
 					};
 
 					let promise:Promise<[ PersistedDocument.Class[], HTTP.Response.Class ]> = documents.getChildren( "resource-2/", retrievalPreferences );
@@ -1286,13 +1264,13 @@ describe( module( "Carbon/Documents" ), ():void => {
 				(() => {
 					jasmine.Ajax.stubRequest( new RegExp( "resource-3/" ), null, "GET" ).andReturn( {
 						status: 200,
-						responseText: `[]`
+						responseText: `[]`,
 					} );
 
 					let retrievalPreferences:RetrievalPreferences.Class = {
 						limit: 10,
 						offset: 0,
-						orderBy: [ {"@id": "http://example.com/ns#string", "@type": "string"} ]
+						orderBy: [ {"@id": "http://example.com/ns#string", "@type": "string"} ],
 					};
 
 					let promise:Promise<[ PersistedDocument.Class[], HTTP.Response.Class ]> = documents.getChildren( "resource-3/", retrievalPreferences );
@@ -1316,13 +1294,13 @@ describe( module( "Carbon/Documents" ), ():void => {
 				(() => {
 					jasmine.Ajax.stubRequest( new RegExp( "resource-4/" ), null, "GET" ).andReturn( {
 						status: 200,
-						responseText: `{}`
+						responseText: `{}`,
 					} );
 
 					let retrievalPreferences:RetrievalPreferences.Class = {
 						limit: 10,
 						offset: 0,
-						orderBy: [ {"@id": "http://example.com/ns#string", "@type": "string"} ]
+						orderBy: [ {"@id": "http://example.com/ns#string", "@type": "string"} ],
 					};
 
 					let promise:Promise<[ PersistedDocument.Class[], HTTP.Response.Class ]> = documents.getChildren( "resource-4/", retrievalPreferences );
@@ -1394,7 +1372,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				(() => {
 					jasmine.Ajax.stubRequest( new RegExp( "resource-3/" ), null, "GET" ).andReturn( {
 						status: 200,
-						responseText: `[]`
+						responseText: `[]`,
 					} );
 
 					let promise:Promise<[ PersistedDocument.Class[], HTTP.Response.Class ]> = documents.getChildren( "resource-3/" );
@@ -1417,7 +1395,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				(() => {
 					jasmine.Ajax.stubRequest( new RegExp( "resource-4/" ), null, "GET" ).andReturn( {
 						status: 200,
-						responseText: `{}`
+						responseText: `{}`,
 					} );
 
 					let promise:Promise<[ PersistedDocument.Class[], HTTP.Response.Class ]> = documents.getChildren( "resource-4/" );
@@ -1466,17 +1444,17 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 				let context:MockedContext = new MockedContext();
 				let documents:Documents = context.documents;
-				let spy = {
+				let spy:any = {
 					success: ( [ pointer, response ]:[Pointer.Class, HTTP.Response.Class] ):void => {
 						expect( pointer.id ).toBe( "http://example.com/parent-resource/access-point/" );
 						expect( response instanceof HTTP.Response.Class ).toBe( true );
 					},
-					fail: ( error:Error ) => {
+					fail: ( error:Error ):void => {
 						expect( error instanceof Errors.IllegalArgumentError ).toBe( true );
-					}
+					},
 				};
-				let spySuccess = spyOn( spy, "success" ).and.callThrough();
-				let spyFail = spyOn( spy, "fail" ).and.callThrough();
+				let spySuccess:jasmine.Spy = spyOn( spy, "success" ).and.callThrough();
+				let spyFail:jasmine.Spy = spyOn( spy, "fail" ).and.callThrough();
 
 				jasmine.Ajax.stubRequest( "http://example.com/parent-resource/", null, "POST" ).andReturn( {
 					status: 200,
@@ -1509,8 +1487,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 				promises.push( promise.catch( spy.fail ) );
 
 				accessPoint.id = "";
-				let persisted = PersistedDocument.Factory.decorate( accessPoint, documents );
-				promise = documents.createAccessPoint( "http://example.com/parent-resource/", persisted );
+				PersistedDocument.Factory.decorate( accessPoint, documents );
+				promise = documents.createAccessPoint( "http://example.com/parent-resource/", accessPoint );
 				expect( promise instanceof Promise ).toBe( true );
 				promises.push( promise.catch( spy.fail ) );
 
@@ -1540,17 +1518,17 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 				let context:MockedContext = new MockedContext();
 				let documents:Documents = context.documents;
-				let spy = {
+				let spy:any = {
 					success: ( [ pointer, response ]:[Pointer.Class, HTTP.Response.Class] ):void => {
 						expect( pointer.id ).toBe( "http://example.com/parent-resource/access-point/" );
 						expect( response instanceof HTTP.Response.Class ).toBe( true );
 					},
-					fail: ( error:Error ) => {
+					fail: ( error:Error ):void => {
 						expect( error instanceof Errors.IllegalArgumentError ).toBe( true );
-					}
+					},
 				};
-				let spySuccess = spyOn( spy, "success" ).and.callThrough();
-				let spyFail = spyOn( spy, "fail" ).and.callThrough();
+				let spySuccess:jasmine.Spy = spyOn( spy, "success" ).and.callThrough();
+				let spyFail:jasmine.Spy = spyOn( spy, "fail" ).and.callThrough();
 
 				jasmine.Ajax.stubRequest( "http://example.com/parent-resource/", null, "POST" ).andReturn( {
 					status: 200,
@@ -1579,8 +1557,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 				promises.push( promise.catch( spy.fail ) );
 
 				accessPoint.id = "";
-				let persisted = PersistedDocument.Factory.decorate( accessPoint, documents );
-				promise = documents.createAccessPoint( persisted );
+				PersistedDocument.Factory.decorate( accessPoint, documents );
+				promise = documents.createAccessPoint( accessPoint );
 				expect( promise instanceof Promise ).toBe( true );
 				promises.push( promise.catch( spy.fail ) );
 
@@ -1621,7 +1599,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 				if( typeof Blob !== "undefined" ) {
 
-					let spy = {
+					let spy:any = {
 						success: ( response:[Pointer.Class, HTTP.Response.Class] ):void => {
 							expect( response ).toBeDefined();
 							expect( Utils.isArray( response ) ).toBe( true );
@@ -1629,9 +1607,9 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 							let pointer:Pointer.Class = response[ 0 ];
 							expect( pointer.id ).toBe( "http://example.com/parent-resource/new-auto-generated-id/" );
-						}
+						},
 					};
-					let spySuccess = spyOn( spy, "success" ).and.callThrough();
+					let spySuccess:jasmine.Spy = spyOn( spy, "success" ).and.callThrough();
 
 					let blob:Blob = new Blob( [ JSON.stringify( {"some content": "for the blob."} ) ], {type: "application/json"} );
 
@@ -1677,7 +1655,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 				if( typeof Blob !== "undefined" ) {
 
-					let spy = {
+					let spy:any = {
 						success: ( response:[Pointer.Class, HTTP.Response.Class] ):void => {
 							expect( response ).toBeDefined();
 							expect( Utils.isArray( response ) ).toBe( true );
@@ -1685,9 +1663,9 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 							let pointer:Pointer.Class = response[ 0 ];
 							expect( pointer.id ).toBe( "http://example.com/parent-resource/slug-id/" );
-						}
+						},
 					};
-					let spySuccess = spyOn( spy, "success" ).and.callThrough();
+					let spySuccess:jasmine.Spy = spyOn( spy, "success" ).and.callThrough();
 
 					let blob:Blob = new Blob( [ JSON.stringify( {"some content": "for the blob."} ) ], {type: "application/json"} );
 
@@ -1732,7 +1710,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 				if( typeof Buffer !== "undefined" ) {
 
-					let spy = {
+					let spy:any = {
 						success: ( response:[Pointer.Class, HTTP.Response.Class] ):void => {
 							expect( response ).toBeDefined();
 							expect( Utils.isArray( response ) ).toBe( true );
@@ -1740,9 +1718,9 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 							let pointer:Pointer.Class = response[ 0 ];
 							expect( pointer.id ).toBe( "http://example.com/parent-resource/new-auto-generated-id/" );
-						}
+						},
 					};
-					let spySuccess = spyOn( spy, "success" ).and.callThrough();
+					let spySuccess:jasmine.Spy = spyOn( spy, "success" ).and.callThrough();
 
 					let buffer:Buffer = new Buffer( JSON.stringify( {"some content": "for the buffer."} ) );
 
@@ -1788,7 +1766,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 				if( typeof Buffer !== "undefined" ) {
 
-					let spy = {
+					let spy:any = {
 						success: ( response:[Pointer.Class, HTTP.Response.Class] ):void => {
 							expect( response ).toBeDefined();
 							expect( Utils.isArray( response ) ).toBe( true );
@@ -1796,9 +1774,9 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 							let pointer:Pointer.Class = response[ 0 ];
 							expect( pointer.id ).toBe( "http://example.com/parent-resource/new-auto-generated-id/" );
-						}
+						},
 					};
-					let spySuccess = spyOn( spy, "success" ).and.callThrough();
+					let spySuccess:jasmine.Spy = spyOn( spy, "success" ).and.callThrough();
 
 					let buffer:Buffer = new Buffer( JSON.stringify( {"some content": "for the buffer."} ) );
 
@@ -1992,23 +1970,23 @@ describe( module( "Carbon/Documents" ), ():void => {
 			function stubListRequest( resource:string ):void {
 				jasmine.Ajax.stubRequest( new RegExp( resource ), null, "GET" ).andReturn( {
 					status: 200,
-					responseText: `[{
+					responseText: `[ {
+						"@id": "http://example.com/${ resource }",
+						"@graph": [ {
 							"@id": "http://example.com/${ resource }",
-							"@graph": [{
-								"@id": "http://example.com/${ resource }",
-								"@type": [ "http://www.w3.org/ns/ldp#BasicContainer" ],
-								"http://www.w3.org/ns/ldp#hasMemberRelation": [{
-						            "@id": "http://www.w3.org/ns/ldp#my-member"
-						        }],
-						        "http://www.w3.org/ns/ldp#my-member": [{
-						            "@id": "http://example.com/resource/element-01/"
-						        }, {
-						            "@id": "http://example.com/resource/element-02/"
-						        }, {
-						            "@id": "http://example.com/resource/element-03/"
-						        }]
-						    }]
-						}]`
+							"@type": [ "http://www.w3.org/ns/ldp#BasicContainer" ],
+							"http://www.w3.org/ns/ldp#hasMemberRelation": [ {
+								"@id": "http://www.w3.org/ns/ldp#my-member"
+							} ],
+							"http://www.w3.org/ns/ldp#my-member": [ {
+								"@id": "http://example.com/resource/element-01/"
+							}, {
+								"@id": "http://example.com/resource/element-02/"
+							}, {
+								"@id": "http://example.com/resource/element-03/"
+							} ]
+						} ]
+					} ]`,
 				} );
 			}
 
@@ -2025,7 +2003,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				expect( response instanceof HTTP.Response.Class ).toBe( true );
 			}
 
-			function checkPrefer( request:JasmineAjaxRequest, preferType:string ) {
+			function checkPrefer( request:JasmineAjaxRequest, preferType:string ):void {
 				let prefer:string = `return=representation; ${ preferType }=`;
 				expect( request.requestHeaders[ "prefer" ] ).toBeDefined();
 				let prefers:HTTP.Header.Class = new HTTP.Header.Class( request.requestHeaders[ "prefer" ] );
@@ -2073,89 +2051,82 @@ describe( module( "Carbon/Documents" ), ():void => {
 			function stubListRequest( resource:string ):void {
 				jasmine.Ajax.stubRequest( new RegExp( resource ), null, "GET" ).andReturn( {
 					status: 200,
-					responseText: `[
-						{
-						    "@id": "_:00",
-						    "@type": [
-						      "https://carbonldp.com/ns/v1/platform#ResponseMetadata",
-						      "https://carbonldp.com/ns/v1/platform#VolatileResource"
-						    ],
-						    "https://carbonldp.com/ns/v1/platform#resourceMetadata": [{
-								"@id": "_:01"
-							}, {
-								"@id": "_:02"
-							}]
-						},
-						{
-						    "@id": "_:01",
-						    "@type": [
-						        "https://carbonldp.com/ns/v1/platform#ResourceMetadata",
-						        "https://carbonldp.com/ns/v1/platform#VolatileResource"
-						    ],
-						    "https://carbonldp.com/ns/v1/platform#eTag": [{
-						        "@value": "\\"1234567890\\""
-						    }],
-						    "https://carbonldp.com/ns/v1/platform#resource": [{
-						        "@id": "http://example.com/resource/element-01/"
-						    }]
-						},
-						{
-							"@id": "_:02",
-							"@type": [
-								"https://carbonldp.com/ns/v1/platform#ResourceMetadata",
-								"https://carbonldp.com/ns/v1/platform#VolatileResource"
-							],
-							"https://carbonldp.com/ns/v1/platform#eTag": [{
-								"@value": "\\"0987654321\\""
-							}],
-							"https://carbonldp.com/ns/v1/platform#resource": [{
-								"@id": "http://example.com/resource/element-02/"
-							}]
-						},
-						{
+					responseText: `[ {
+						"@id": "_:00",
+						"@type": [
+							"https://carbonldp.com/ns/v1/platform#ResponseMetadata",
+							"https://carbonldp.com/ns/v1/platform#VolatileResource"
+						],
+						"https://carbonldp.com/ns/v1/platform#resourceMetadata": [ {
+							"@id": "_:01"
+						}, {
+							"@id": "_:02"
+						} ]
+					}, {
+						"@id": "_:01",
+						"@type": [
+							"https://carbonldp.com/ns/v1/platform#ResourceMetadata",
+							"https://carbonldp.com/ns/v1/platform#VolatileResource"
+						],
+						"https://carbonldp.com/ns/v1/platform#eTag": [ {
+							"@value": "\\"1234567890\\""
+						} ],
+						"https://carbonldp.com/ns/v1/platform#resource": [ {
+							"@id": "http://example.com/resource/element-01/"
+						} ]
+					}, {
+						"@id": "_:02",
+						"@type": [
+							"https://carbonldp.com/ns/v1/platform#ResourceMetadata",
+							"https://carbonldp.com/ns/v1/platform#VolatileResource"
+						],
+						"https://carbonldp.com/ns/v1/platform#eTag": [ {
+							"@value": "\\"0987654321\\""
+						} ],
+						"https://carbonldp.com/ns/v1/platform#resource": [ {
+							"@id": "http://example.com/resource/element-02/"
+						} ]
+					}, {
+						"@id": "http://example.com/${ resource }",
+						"@graph": [ {
 							"@id": "http://example.com/${ resource }",
-							"@graph": [{
-								"@id": "http://example.com/${ resource }",
-								"@type": [ "http://www.w3.org/ns/ldp#BasicContainer" ],
-								"http://www.w3.org/ns/ldp#hasMemberRelation": [{
-						            "@id": "http://www.w3.org/ns/ldp#my-member"
-						        }],
-						        "http://www.w3.org/ns/ldp#my-member": [{
-						            "@id": "http://example.com/resource/element-01/"
-						        }, {
-						            "@id": "http://example.com/resource/element-02/"
-						        }]
-						    }]
-						},
-						{
+							"@type": [ "http://www.w3.org/ns/ldp#BasicContainer" ],
+							"http://www.w3.org/ns/ldp#hasMemberRelation": [ {
+								"@id": "http://www.w3.org/ns/ldp#my-member"
+							} ],
+							"http://www.w3.org/ns/ldp#my-member": [ {
+								"@id": "http://example.com/resource/element-01/"
+							}, {
+								"@id": "http://example.com/resource/element-02/"
+							} ]
+						} ]
+					}, {
+						"@id": "http://example.com/resource/element-01/",
+						"@graph": [ {
 							"@id": "http://example.com/resource/element-01/",
-							"@graph": [{
-								"@id": "http://example.com/resource/element-01/",
-								"@type": [ "http://www.w3.org/ns/ldp#BasicContainer" ],
-								"http://example.com/ns#string": [{ "@value": "Document of resource 01" }],
-								"http://example.com/ns#pointer": [
-									{ "@id": "http://example.com/resource/element-01/#1" }
-								]
-						    }, {
-								"@id": "http://example.com/resource/element-01/#1",
-								"http://example.com/ns#string": [{ "@value": "NamedFragment of resource 01" }]
-						    }]
-						},
-						{
+							"@type": [ "http://www.w3.org/ns/ldp#BasicContainer" ],
+							"http://example.com/ns#string": [ {"@value": "Document of resource 01"} ],
+							"http://example.com/ns#pointer": [
+								{"@id": "http://example.com/resource/element-01/#1"}
+							]
+						}, {
+							"@id": "http://example.com/resource/element-01/#1",
+							"http://example.com/ns#string": [ {"@value": "NamedFragment of resource 01"} ]
+						} ]
+					}, {
+						"@id": "http://example.com/resource/element-02/",
+						"@graph": [ {
 							"@id": "http://example.com/resource/element-02/",
-							"@graph": [{
-								"@id": "http://example.com/resource/element-02/",
-								"@type": [ "http://www.w3.org/ns/ldp#BasicContainer" ],
-								"http://example.com/ns#string": [{ "@value": "Document of resource 02" }],
-								"http://example.com/ns#pointer": [
-									{ "@id": "_:01" }
-								]
-						    }, {
-								"@id": "_:01",
-								"http://example.com/ns#string": [{ "@value": "BlankNode of resource 02" }]
-						    }]
-						}
-					]`
+							"@type": [ "http://www.w3.org/ns/ldp#BasicContainer" ],
+							"http://example.com/ns#string": [ {"@value": "Document of resource 02"} ],
+							"http://example.com/ns#pointer": [
+								{"@id": "_:01"}
+							]
+						}, {
+							"@id": "_:01",
+							"http://example.com/ns#string": [ {"@value": "BlankNode of resource 02"} ]
+						} ]
+					} ]`,
 				} );
 			}
 
@@ -2203,7 +2174,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				return prefers;
 			}
 
-			function checkPrefer( request:JasmineAjaxRequest, nonReadable:boolean = true ) {
+			function checkPrefer( request:JasmineAjaxRequest, nonReadable:boolean = true ):void {
 				let includes:string[] = null;
 				let omits:string[] = null;
 
@@ -2241,7 +2212,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					let retrievalPreferences:RetrievalPreferences.Class = {
 						limit: 10,
 						offset: 0,
-						orderBy: [ {"@id": "http://example.com/ns#string", "@type": "string"} ]
+						orderBy: [ {"@id": "http://example.com/ns#string", "@type": "string"} ],
 					};
 
 					let promise:Promise<[ PersistedDocument.Class[], HTTP.Response.Class ]> = documents.getMembers( "resource-1/", true, retrievalPreferences, options );
@@ -2268,7 +2239,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					let retrievalPreferences:RetrievalPreferences.Class = {
 						limit: 10,
 						offset: 0,
-						orderBy: [ {"@id": "http://example.com/ns#string", "@type": "string"} ]
+						orderBy: [ {"@id": "http://example.com/ns#string", "@type": "string"} ],
 					};
 
 					let promise:Promise<[ PersistedDocument.Class[], HTTP.Response.Class ]> = documents.getMembers( "resource-2/", false, retrievalPreferences, options );
@@ -2294,7 +2265,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					let retrievalPreferences:RetrievalPreferences.Class = {
 						limit: 10,
 						offset: 0,
-						orderBy: [ {"@id": "http://example.com/ns#string", "@type": "string"} ]
+						orderBy: [ {"@id": "http://example.com/ns#string", "@type": "string"} ],
 					};
 
 					let promise:Promise<[ PersistedDocument.Class[], HTTP.Response.Class ]> = documents.getMembers( "resource-3/", true, retrievalPreferences );
@@ -2317,7 +2288,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					let retrievalPreferences:RetrievalPreferences.Class = {
 						limit: 10,
 						offset: 0,
-						orderBy: [ {"@id": "http://example.com/ns#string", "@type": "string"} ]
+						orderBy: [ {"@id": "http://example.com/ns#string", "@type": "string"} ],
 					};
 
 					let promise:Promise<[ PersistedDocument.Class[], HTTP.Response.Class ]> = documents.getMembers( "resource-4/", false, retrievalPreferences );
@@ -2439,7 +2410,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					let retrievalPreferences:RetrievalPreferences.Class = {
 						limit: 10,
 						offset: 0,
-						orderBy: [ {"@id": "http://example.com/ns#string", "@type": "string"} ]
+						orderBy: [ {"@id": "http://example.com/ns#string", "@type": "string"} ],
 					};
 
 					let promise:Promise<[ PersistedDocument.Class[], HTTP.Response.Class ]> = documents.getMembers( "resource-1/", retrievalPreferences, options );
@@ -2465,7 +2436,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					let retrievalPreferences:RetrievalPreferences.Class = {
 						limit: 10,
 						offset: 0,
-						orderBy: [ {"@id": "http://example.com/ns#string", "@type": "string"} ]
+						orderBy: [ {"@id": "http://example.com/ns#string", "@type": "string"} ],
 					};
 
 					let promise:Promise<[ PersistedDocument.Class[], HTTP.Response.Class ]> = documents.getMembers( "resource-2/", retrievalPreferences );
@@ -2551,96 +2522,118 @@ describe( module( "Carbon/Documents" ), ():void => {
 					jasmine.Ajax.stubRequest( "http://example.com/resource-4/", null, "GET" ).andReturn( {
 						status: 200,
 						responseText: `[ {
-							"@id": "http://example.com/resource-4/",
-							"@graph": [{
-								"@id": "http://example.com/resource-4/",
-								"@type": [ "http://www.w3.org/ns/ldp#DirectContainer" ],
-								"http://www.w3.org/ns/ldp#hasMemberRelation": [{
-						            "@id": "http://www.w3.org/ns/ldp#my-member"
-						        }],
-						        "http://www.w3.org/ns/ldp#membershipResource": [{
-						            "@id": "http://example.com/resource/"
-						        }]
-						    }]
-						},
-						{
-							"@id": "http://example.com/resource/",
-							"@graph": [{
-								"@id": "http://example.com/resource/",
-								"@type": [ "http://www.w3.org/ns/ldp#BasicContainer" ],
-						        "http://www.w3.org/ns/ldp#my-member": [{
-						            "@id": "http://example.com/resource/element-01/"
-						        }, {
-						            "@id": "http://example.com/resource/element-02/"
-						        }]
-						    }]
-						},
-						{
-						    "@id": "_:00",
-						    "@type": [
-						      "https://carbonldp.com/ns/v1/platform#ResponseMetadata",
-						      "https://carbonldp.com/ns/v1/platform#VolatileResource"
-						    ],
-						    "https://carbonldp.com/ns/v1/platform#resourceMetadata": [{
-								"@id": "_:01"
-							}, {
-								"@id": "_:02"
-							}]
-						},
-						{
-						    "@id": "_:01",
-						    "@type": [
-						        "https://carbonldp.com/ns/v1/platform#ResourceMetadata",
-						        "https://carbonldp.com/ns/v1/platform#VolatileResource"
-						    ],
-						    "https://carbonldp.com/ns/v1/platform#eTag": [{
-						        "@value": "\\"1234567890\\""
-						    }],
-						    "https://carbonldp.com/ns/v1/platform#resource": [{
-						        "@id": "http://example.com/resource/element-01/"
-						    }]
-						},
-						{
-							"@id": "_:02",
-							"@type": [
-								"https://carbonldp.com/ns/v1/platform#ResourceMetadata",
-								"https://carbonldp.com/ns/v1/platform#VolatileResource"
-							],
-							"https://carbonldp.com/ns/v1/platform#eTag": [{
-								"@value": "\\"0987654321\\""
-							}],
-							"https://carbonldp.com/ns/v1/platform#resource": [{
-								"@id": "http://example.com/resource/element-02/"
-							}]
-						},
-						{
-							"@id": "http://example.com/resource/element-01/",
-							"@graph": [{
-								"@id": "http://example.com/resource/element-01/",
-								"@type": [ "http://www.w3.org/ns/ldp#BasicContainer" ],
-								"http://example.com/ns#string": [{ "@value": "Document of resource 01" }],
-								"http://example.com/ns#pointer": [
-									{ "@id": "http://example.com/resource/element-01/#1" }
-								]
-						    }, {
-								"@id": "http://example.com/resource/element-01/#1",
-								"http://example.com/ns#string": [{ "@value": "NamedFragment of resource 01" }]
-						    }]
-						},
-						{
-							"@id": "http://example.com/resource/element-02/",
-							"@graph": [{
-								"@id": "http://example.com/resource/element-02/",
-								"@type": [ "http://www.w3.org/ns/ldp#BasicContainer" ],
-								"http://example.com/ns#string": [{ "@value": "Document of resource 02" }],
-								"http://example.com/ns#pointer": [
-									{ "@id": "_:01" }
-								]
-						    }, {
-								"@id": "_:01",
-								"http://example.com/ns#string": [{ "@value": "BlankNode of resource 02" }]
-						    }]
-						} ]`
+					"@id": "http://example.com/resource-4/",
+					"@graph": [ {
+						"@id": "http://example.com/resource-4/",
+						"@type": [ "http://www.w3.org/ns/ldp#DirectContainer" ],
+						"http://www.w3.org/ns/ldp#hasMemberRelation": [ {
+							"@id": "http://www.w3.org/ns/ldp#my-member"
+						} ],
+						"http://www.w3.org/ns/ldp#membershipResource": [ {
+							"@id": "http://example.com/resource/"
+						} ]
+					} ]
+				},
+				{
+					"@id": "http://example.com/resource/",
+					"@graph": [ {
+						"@id": "http://example.com/resource/",
+						"@type": [ "http://www.w3.org/ns/ldp#BasicContainer" ],
+						"http://www.w3.org/ns/ldp#my-member": [ {
+							"@id": "http://example.com/resource/element-01/"
+						}, {
+							"@id": "http://example.com/resource/element-02/"
+						} ]
+					} ]
+				},
+				{
+					"@id": "_:00",
+					"@type": [
+						"https://carbonldp.com/ns/v1/platform#ResponseMetadata",
+						"https://carbonldp.com/ns/v1/platform#VolatileResource"
+					],
+					"https://carbonldp.com/ns/v1/platform#resourceMetadata": [ {
+						"@id": "_:01"
+					}, {
+						"@id": "_:02"
+					} ]
+				},
+				{
+					"@id": "_:01",
+					"@type": [
+						"https://carbonldp.com/ns/v1/platform#ResourceMetadata",
+						"https://carbonldp.com/ns/v1/platform#VolatileResource"
+					],
+					"https://carbonldp.com/ns/v1/platform#eTag": [ {
+						"@value": "\\"1234567890\\""
+			}],
+				"https://carbonldp.com/ns/v1/platform#resource"
+			:
+				[ {
+					"@id": "http://example.com/resource/element-01/"
+				} ]
+			},
+				{
+					"@id"
+				:
+					"_:02",
+						"@type"
+				:
+					[
+						"https://carbonldp.com/ns/v1/platform#ResourceMetadata",
+						"https://carbonldp.com/ns/v1/platform#VolatileResource"
+					],
+						"https://carbonldp.com/ns/v1/platform#eTag"
+				:
+					[ {
+						"@value": "\\"0987654321\\""
+				}],
+					"https://carbonldp.com/ns/v1/platform#resource"
+				:
+					[ {
+						"@id": "http://example.com/resource/element-02/"
+					} ]
+				}
+			,
+				{
+					"@id"
+				:
+					"http://example.com/resource/element-01/",
+						"@graph"
+				:
+					[ {
+						"@id": "http://example.com/resource/element-01/",
+						"@type": [ "http://www.w3.org/ns/ldp#BasicContainer" ],
+						"http://example.com/ns#string": [ {"@value": "Document of resource 01"} ],
+						"http://example.com/ns#pointer": [
+							{"@id": "http://example.com/resource/element-01/#1"}
+						]
+					}, {
+						"@id": "http://example.com/resource/element-01/#1",
+						"http://example.com/ns#string": [ {"@value": "NamedFragment of resource 01"} ]
+					} ]
+				}
+			,
+				{
+					"@id"
+				:
+					"http://example.com/resource/element-02/",
+						"@graph"
+				:
+					[ {
+						"@id": "http://example.com/resource/element-02/",
+						"@type": [ "http://www.w3.org/ns/ldp#BasicContainer" ],
+						"http://example.com/ns#string": [ {"@value": "Document of resource 02"} ],
+						"http://example.com/ns#pointer": [
+							{"@id": "_:01"}
+						]
+					}, {
+						"@id": "_:01",
+						"http://example.com/ns#string": [ {"@value": "BlankNode of resource 02"} ]
+					} ]
+				}
+			]
+				`,
 					} );
 
 					let promise:Promise<[ PersistedDocument.Class[], HTTP.Response.Class ]> = documents.getMembers( "resource-4/" );
@@ -2683,14 +2676,14 @@ describe( module( "Carbon/Documents" ), ():void => {
 				"Add a member relation to the resource Pointer in the document container specified.", [
 					{name: "documentURI", type: "string", description: "URI of the document container where the member will be added."},
 					{name: "member", type: "Carbon.Pointer.Class", description: "Pointer object that references the resource to add as a member."},
-					{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request."}
+					{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request."},
 				],
 				{type: "Promise<Carbon.HTTP.Response>"}
 			), ():void => {
 				expect( documents.addMember ).toBeDefined();
 				expect( Utils.isFunction( documents.addMember ) ).toBe( true );
 
-				let spy = spyOn( documents, "addMembers" );
+				let spy:jasmine.Spy = spyOn( documents, "addMembers" );
 
 				let pointer:Pointer.Class = documents.getPointer( "new-member/" );
 				documents.addMember( "resource/", pointer );
@@ -2701,14 +2694,14 @@ describe( module( "Carbon/Documents" ), ():void => {
 				"Add a member relation to the resource URI in the document container specified.", [
 					{name: "documentURI", type: "string", description: "URI of the document container where the member will be added."},
 					{name: "memberURI", type: "string", description: "URI of the resource to add as a member."},
-					{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request."}
+					{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request."},
 				],
 				{type: "Promise<Carbon.HTTP.Response>"}
 			), ():void => {
 				expect( documents.addMember ).toBeDefined();
 				expect( Utils.isFunction( documents.addMember ) ).toBe( true );
 
-				let spy = spyOn( documents, "addMembers" );
+				let spy:jasmine.Spy = spyOn( documents, "addMembers" );
 
 				documents.addMember( "resource/", "new-member/" );
 				expect( spy ).toHaveBeenCalledWith( "resource/", [ "new-member/" ], {} );
@@ -2722,7 +2715,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 			"Add a member relation to every resource URI or Pointer provided in the document container specified.", [
 				{name: "documentURI", type: "string", description: "URI of the document container where the members will be added."},
 				{name: "members", type: "(Carbon.Pointer.Class | string)[]", description: "Array of URIs or Pointers to add as members."},
-				{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request."}
+				{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request."},
 			],
 			{type: "Promise<Carbon.HTTP.Response>"}
 		), ( done:{ ():void, fail:() => void } ):void => {
@@ -2738,10 +2731,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 			expect( Utils.isFunction( documents.addMembers ) ).toBe( true );
 
 			jasmine.Ajax.stubRequest( "http://example.com/resource/", null, "PUT" ).andReturn( {
-				status: 200
+				status: 200,
 			} );
 
-			let spies = {
+			let spies:any = {
 				success: ( response:any ):void => {
 					expect( response ).toBeDefined();
 					expect( response instanceof HTTP.Response.Class ).toBe( true );
@@ -2749,10 +2742,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 				fail: ( error:Error ):void => {
 					expect( error ).toBeDefined();
 					expect( error instanceof Errors.IllegalArgumentError );
-				}
+				},
 			};
-			let spySuccess = spyOn( spies, "success" ).and.callThrough();
-			let spyFail = spyOn( spies, "fail" ).and.callThrough();
+			let spySuccess:jasmine.Spy = spyOn( spies, "success" ).and.callThrough();
+			let spyFail:jasmine.Spy = spyOn( spies, "fail" ).and.callThrough();
 
 			let promises:Promise<any>[] = [];
 			let promise:Promise<any>;
@@ -2797,14 +2790,14 @@ describe( module( "Carbon/Documents" ), ():void => {
 				"Remove the member relation between the Pointer and the resource container specified.", [
 					{name: "documentURI", type: "string", description: "URI of the resource container from where the member will be removed."},
 					{name: "member", type: "Carbon.Pointer.Class", description: "Pointer object that references the resource to remove as a member."},
-					{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request."}
+					{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request."},
 				],
 				{type: "Promise<Carbon.HTTP.Response>"}
 			), ():void => {
 				expect( documents.removeMember ).toBeDefined();
 				expect( Utils.isFunction( documents.removeMember ) ).toBe( true );
 
-				let spy = spyOn( documents, "removeMembers" );
+				let spy:jasmine.Spy = spyOn( documents, "removeMembers" );
 
 				let pointer:Pointer.Class = documents.getPointer( "remove-member/" );
 				documents.removeMember( "resource/", pointer );
@@ -2815,14 +2808,14 @@ describe( module( "Carbon/Documents" ), ():void => {
 				"Remove the member relation between the resource URI and the resource container specified.", [
 					{name: "documentURI", type: "string", description: "URI of the resource container from where the member will be removed."},
 					{name: "memberURI", type: "string", description: "URI of the resource to remove as a member."},
-					{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request."}
+					{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request."},
 				],
 				{type: "Promise<Carbon.HTTP.Response>"}
 			), ():void => {
 				expect( documents.removeMember ).toBeDefined();
 				expect( Utils.isFunction( documents.removeMember ) ).toBe( true );
 
-				let spy = spyOn( documents, "removeMembers" );
+				let spy:jasmine.Spy = spyOn( documents, "removeMembers" );
 
 				documents.removeMember( "resource/", "remove-member/" );
 				expect( spy ).toHaveBeenCalledWith( "resource/", [ "remove-member/" ], {} );
@@ -2836,7 +2829,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 			"Remove the member relation to every specified resource URI or Pointer form the document container specified.", [
 				{name: "documentURI", type: "string", description: "URI of the document container where the members will be removed."},
 				{name: "members", type: "(Carbon.Pointer.Class | string)[]", description: "Array of URIs or Pointers to remove as members"},
-				{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request."}
+				{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request."},
 			],
 			{type: "Promise<Carbon.HTTP.Response>"}
 		), ( done:{ ():void, fail:() => void } ):void => {
@@ -2852,10 +2845,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 			expect( Utils.isFunction( documents.removeMembers ) ).toBe( true );
 
 			jasmine.Ajax.stubRequest( "http://example.com/resource/", null, "DELETE" ).andReturn( {
-				status: 200
+				status: 200,
 			} );
 
-			let spies = {
+			let spies:any = {
 				success: ( response:any ):void => {
 					expect( response ).toBeDefined();
 					expect( response instanceof HTTP.Response.Class ).toBe( true );
@@ -2863,10 +2856,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 				fail: ( error:Error ):void => {
 					expect( error ).toBeDefined();
 					expect( error instanceof Errors.IllegalArgumentError ).toBe( true );
-				}
+				},
 			};
-			let spySuccess = spyOn( spies, "success" ).and.callThrough();
-			let spyFail = spyOn( spies, "fail" ).and.callThrough();
+			let spySuccess:jasmine.Spy = spyOn( spies, "success" ).and.callThrough();
+			let spyFail:jasmine.Spy = spyOn( spies, "fail" ).and.callThrough();
 
 			let promises:Promise<any>[] = [];
 			let promise:Promise<any>;
@@ -2894,7 +2887,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 			"removeAllMembers",
 			"Remove all the member relations from the document container specified.", [
 				{name: "documentURI", type: "string", description: "URI of the document container where the members will be removed."},
-				{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request."}
+				{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request."},
 			],
 			{type: "Promise<Carbon.HTTP.Response>"}
 		), ( done:{ ():void, fail:() => void } ):void => {
@@ -2910,10 +2903,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 			expect( Utils.isFunction( documents.removeAllMembers ) ).toBe( true );
 
 			jasmine.Ajax.stubRequest( "http://example.com/resource/", null, "DELETE" ).andReturn( {
-				status: 200
+				status: 200,
 			} );
 
-			let spies = {
+			let spies:any = {
 				success: ( response:any ):void => {
 					expect( response ).toBeDefined();
 					expect( response instanceof HTTP.Response.Class ).toBe( true );
@@ -2921,10 +2914,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 				fail: ( error:Error ):void => {
 					expect( error ).toBeDefined();
 					expect( error instanceof Errors.IllegalArgumentError ).toBe( true );
-				}
+				},
 			};
-			let spySuccess = spyOn( spies, "success" ).and.callThrough();
-			let spyFail = spyOn( spies, "fail" ).and.callThrough();
+			let spySuccess:jasmine.Spy = spyOn( spies, "success" ).and.callThrough();
+			let spyFail:jasmine.Spy = spyOn( spies, "fail" ).and.callThrough();
 
 			let promises:Promise<any>[] = [];
 			let promise:Promise<any>;
@@ -2945,7 +2938,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 			"refresh",
 			"Update the specified document with the data of the CarbonLDP server, if a newest version exists.", [
 				{name: "persistedDocument", type: "Carbon.PersistedDocument.Class", description: "The persisted document to update."},
-				{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request."}
+				{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request."},
 			],
 			{type: "Promise<[ Carbon.PersistedDocument.Class, Carbon.HTTP.Response ]>"}
 		), ( done:{ ():void, fail:() => void } ):void => {
@@ -3001,52 +2994,52 @@ describe( module( "Carbon/Documents" ), ():void => {
 			jasmine.Ajax.stubRequest( "http://example.com/resource/", null, "HEAD" ).andReturn( {
 				status: 200,
 				responseHeaders: {
-					"ETag": `"0123456789"`
-				}
+					"ETag": `"0123456789"`,
+				},
 			} );
 			jasmine.Ajax.stubRequest( "http://example.com/resource/", null, "GET" ).andReturn( {
 				status: 200,
-				responseText: `[{
+				responseText: `[ {
 					"@id": "http://example.com/resource/",
 					"@graph": [
 						{
 							"@id": "http://example.com/resource/",
-							"http://example.com/ns#string": [{ "@value": "Document Resource" }],
-							"http://example.com/ns#pointer": [{ "@id": "http://example.com/resource/#1" }],
+							"http://example.com/ns#string": [ {"@value": "Document Resource"} ],
+							"http://example.com/ns#pointer": [ {"@id": "http://example.com/resource/#1"} ],
 							"http://example.com/ns#pointerSet": [
-								{ "@id": "_:1" },
-								{ "@id": "_:2" },
-								{ "@id": "http://example.com/resource/#1" },
-								{ "@id": "http://example.com/external-resource/" }
+								{"@id": "_:1"},
+								{"@id": "_:2"},
+								{"@id": "http://example.com/resource/#1"},
+								{"@id": "http://example.com/external-resource/"}
 							]
 						},
 						{
 							"@id": "_:1",
 							"${NS.C.Predicate.bNodeIdentifier}": "UUID fo _:1",
-							"http://example.com/ns#string": [{ "@value": "Fragment 1" }],
+							"http://example.com/ns#string": [ {"@value": "Fragment 1"} ],
 							"http://example.com/ns#pointerSet": [
-								{ "@id": "http://example.com/resource/" },
-								{ "@id": "http://example.com/resource/#1" }
+								{"@id": "http://example.com/resource/"},
+								{"@id": "http://example.com/resource/#1"}
 							]
 						},
 						{
 							"@id": "_:2",
 							"${NS.C.Predicate.bNodeIdentifier}": "UUID fo _:2",
-							"http://example.com/ns#string": [{ "@value": "Fragment 2" }]
+							"http://example.com/ns#string": [ {"@value": "Fragment 2"} ]
 						},
 						{
 							"@id": "http://example.com/resource/#1",
-							"http://example.com/ns#string": [{ "@value": "NamedFragment 1" }]
+							"http://example.com/ns#string": [ {"@value": "NamedFragment 1"} ]
 						},
 						{
 							"@id": "http://example.com/resource/#2",
-							"http://example.com/ns#string": [{ "@value": "NamedFragment 2" }]
+							"http://example.com/ns#string": [ {"@value": "NamedFragment 2"} ]
 						}
 					]
-				}]`,
+				} ]`,
 				responseHeaders: {
-					"ETag": `"0123456789"`
-				}
+					"ETag": `"0123456789"`,
+				},
 			} );
 
 			let document:PersistedDocument.Class;
@@ -3056,7 +3049,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 			let promises:Promise<any>[] = [];
 
-			let spies = {
+			let spies:any = {
 				init: ( [ persistedDoc, response ]:[ PersistedDocument.Class, HTTP.Response.Class ] ):any => {
 					expect( response instanceof HTTP.Response.Class ).toBe( true );
 
@@ -3086,57 +3079,57 @@ describe( module( "Carbon/Documents" ), ():void => {
 					jasmine.Ajax.stubRequest( "http://example.com/resource/", null, "HEAD" ).andReturn( {
 						status: 200,
 						responseHeaders: {
-							"ETag": `"dif0123456789"`
-						}
+							"ETag": `"dif0123456789"`,
+						},
 					} );
 					jasmine.Ajax.stubRequest( "http://example.com/resource/", null, "GET" ).andReturn( {
 						status: 200,
-						responseText: `[{
+						responseText: `[ {
+					"@id": "http://example.com/resource/",
+					"@graph": [
+						{
 							"@id": "http://example.com/resource/",
-							"@graph": [
-								{
-									"@id": "http://example.com/resource/",
-									"http://example.com/ns#string": [{ "@value": "Changed Document Resource" }],
-									"http://example.com/ns#pointer": [{ "@id": "_:0001" }],
-									"http://example.com/ns#pointerSet": [
-										{ "@id": "_:0001" },
-										{ "@id": "_:2" },
-										{ "@id": "http://example.com/resource/#1" },
-										{ "@id": "http://example.com/external-resource/" }
-									]
-								},
-								{
-									"@id": "_:1",
-									"${NS.C.Predicate.bNodeIdentifier}": "UUID fo _:2",
-									"http://example.com/ns#string": [{ "@value": "Old Fragment 2" }]
-								},
-								{
-									"@id": "_:0001",
-									"${NS.C.Predicate.bNodeIdentifier}": "UUID fo _:1",
-									"http://example.com/ns#string": [{ "@value": "Changed Fragment 1" }],
-									"http://example.com/ns#pointerSet": [
-										{ "@id": "http://example.com/resource/" },
-										{ "@id": "http://example.com/resource/#1" }
-									]
-								},
-								{
-									"@id": "_:2",
-									"${NS.C.Predicate.bNodeIdentifier}": "NOT the UUID fo _:2",
-									"http://example.com/ns#string": [{ "@value": "New Fragment 2" }]
-								},
-								{
-									"@id": "http://example.com/resource/#1",
-									"http://example.com/ns#string": [{ "@value": "Changed NamedFragment 1" }]
-								},
-								{
-									"@id": "http://example.com/resource/#3",
-									"http://example.com/ns#string": [{ "@value": "NamedFragment 3" }]
-								}
+							"http://example.com/ns#string": [ {"@value": "Changed Document Resource"} ],
+							"http://example.com/ns#pointer": [ {"@id": "_:0001"} ],
+							"http://example.com/ns#pointerSet": [
+								{"@id": "_:0001"},
+								{"@id": "_:2"},
+								{"@id": "http://example.com/resource/#1"},
+								{"@id": "http://example.com/external-resource/"}
 							]
-						}]`,
-						responseHeaders: {
-							"ETag": `"dif0123456789"`
+						},
+						{
+							"@id": "_:1",
+							"${NS.C.Predicate.bNodeIdentifier}": "UUID fo _:2",
+							"http://example.com/ns#string": [ {"@value": "Old Fragment 2"} ]
+						},
+						{
+							"@id": "_:0001",
+							"${NS.C.Predicate.bNodeIdentifier}": "UUID fo _:1",
+							"http://example.com/ns#string": [ {"@value": "Changed Fragment 1"} ],
+							"http://example.com/ns#pointerSet": [
+								{"@id": "http://example.com/resource/"},
+								{"@id": "http://example.com/resource/#1"}
+							]
+						},
+						{
+							"@id": "_:2",
+							"${NS.C.Predicate.bNodeIdentifier}": "NOT the UUID fo _:2",
+							"http://example.com/ns#string": [ {"@value": "New Fragment 2"} ]
+						},
+						{
+							"@id": "http://example.com/resource/#1",
+							"http://example.com/ns#string": [ {"@value": "Changed NamedFragment 1"} ]
+						},
+						{
+							"@id": "http://example.com/resource/#3",
+							"http://example.com/ns#string": [ {"@value": "NamedFragment 3"} ]
 						}
+					]
+				} ]`,
+						responseHeaders: {
+							"ETag": `"dif0123456789"`,
+						},
 					} );
 
 					let promise:Promise<any> = documents.refresh( document );
@@ -3175,11 +3168,11 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 					expect( response ).toBeDefined();
 					expect( response instanceof HTTP.Response.Class ).toBe( true );
-				}
+				},
 			};
 
-			let spySuccess = spyOn( spies, "success" ).and.callThrough();
-			let spySame = spyOn( spies, "same" ).and.callThrough();
+			let spySuccess:jasmine.Spy = spyOn( spies, "success" ).and.callThrough();
+			let spySame:jasmine.Spy = spyOn( spies, "same" ).and.callThrough();
 
 			let promise:Promise<any> = documents.get( "http://example.com/resource/" );
 			expect( promise instanceof Promise ).toBe( true );
@@ -3197,7 +3190,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 			"delete",
 			"Delete the resource from the CarbonLDP server referred by the URI provided.", [
 				{name: "documentURI", type: "string", description: "The resource to delete from the CarbonLDP server."},
-				{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request."}
+				{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request."},
 			],
 			{type: "Promise<Carbon.HTTP.Response.Class>"}
 		), ( done:{ ():void, fail:() => void } ):void => {
@@ -3214,16 +3207,16 @@ describe( module( "Carbon/Documents" ), ():void => {
 			expect( Utils.isFunction( documents.delete ) ).toBe( true );
 
 			jasmine.Ajax.stubRequest( "http://example.com/resource/", null, "DELETE" ).andReturn( {
-				status: 200
+				status: 200,
 			} );
 
-			let spies = {
+			let spies:any = {
 				success: ( response:any ):void => {
 					expect( response ).toBeDefined();
 					expect( response instanceof HTTP.Response.Class ).toBe( true );
-				}
+				},
 			};
-			let spySuccess = spyOn( spies, "success" ).and.callThrough();
+			let spySuccess:jasmine.Spy = spyOn( spies, "success" ).and.callThrough();
 
 			let promises:Promise<any>[] = [];
 			let promise:Promise<any>;
@@ -3247,9 +3240,9 @@ describe( module( "Carbon/Documents" ), ():void => {
 		it( hasMethod(
 			INSTANCE,
 			"getDownloadURL",
-			"Add to the URI provided with the properties necessarily for a single download request.", [
+			"Add to the URI provided the necessary properties for a single download request.", [
 				{name: "documentURI", type: "string", description: "The URI of the document that will be converted in a single download request."},
-				{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true}
+				{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true},
 			],
 			{type: "Promise<Carbon.HTTP.Response.Class>"}
 		), ( done:{ ():void, fail:() => void } ):void => {
@@ -3295,10 +3288,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 				expect( Utils.isFunction( documents.executeRawASKQuery ) ).toEqual( true );
 			})();
 
-			let spyService = spyOn( SPARQL.Service, "executeRawASKQuery" );
+			let spyService:jasmine.Spy = spyOn( SPARQL.Service, "executeRawASKQuery" );
 
 			// Proper execution
-			(function ProperExecution() {
+			(function ProperExecution():void {
 				documents.executeRawASKQuery( "http://example.com/document/", "ASK { ?subject, ?predicate, ?object }" );
 
 				expect( spyService ).toHaveBeenCalledWith( "http://example.com/document/", "ASK { ?subject, ?predicate, ?object }", jasmine.any( Object ) );
@@ -3306,7 +3299,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 			})();
 
 			// Relative URI
-			(function RelativeURI() {
+			(function RelativeURI():void {
 				documents.executeRawASKQuery( "document/", "ASK { ?subject, ?predicate, ?object }" );
 
 				expect( spyService ).toHaveBeenCalledWith( "http://example.com/document/", "ASK { ?subject, ?predicate, ?object }", jasmine.any( Object ) );
@@ -3336,10 +3329,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 				expect( Utils.isFunction( documents.executeRawSELECTQuery ) ).toEqual( true );
 			})();
 
-			let spyService = spyOn( SPARQL.Service, "executeRawSELECTQuery" );
+			let spyService:jasmine.Spy = spyOn( SPARQL.Service, "executeRawSELECTQuery" );
 
 			// Proper execution
-			(function ProperExecution() {
+			(function ProperExecution():void {
 
 				documents.executeRawSELECTQuery( "http://example.com/document/", "SELECT ?book ?title WHERE { <http://example.com/some-document/> ?book ?title }" );
 
@@ -3348,7 +3341,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 			})();
 
 			// Relative URI
-			(function RelativeURI() {
+			(function RelativeURI():void {
 
 				documents.executeRawSELECTQuery( "document/", "SELECT ?book ?title WHERE { <http://example.com/some-document/> ?book ?title }" );
 
@@ -3379,10 +3372,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 				expect( Utils.isFunction( documents.executeRawCONSTRUCTQuery ) ).toEqual( true );
 			})();
 
-			let spyService = spyOn( SPARQL.Service, "executeRawCONSTRUCTQuery" );
+			let spyService:jasmine.Spy = spyOn( SPARQL.Service, "executeRawCONSTRUCTQuery" );
 
 			// Proper execution
-			(function ProperExecution() {
+			(function ProperExecution():void {
 
 				documents.executeRawCONSTRUCTQuery( "http://example.com/document/", "CONSTRUCT { ?subject ?predicate ?object } WHERE { ?subject ?predicate ?object }" );
 
@@ -3391,7 +3384,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 			})();
 
 			// Relative URI
-			(function RelativeURI() {
+			(function RelativeURI():void {
 
 				documents.executeRawCONSTRUCTQuery( "document/", "CONSTRUCT { ?subject ?predicate ?object } WHERE { ?subject ?predicate ?object }" );
 
@@ -3422,10 +3415,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 				expect( Utils.isFunction( documents.executeRawDESCRIBEQuery ) ).toEqual( true );
 			})();
 
-			let spyService = spyOn( SPARQL.Service, "executeRawDESCRIBEQuery" );
+			let spyService:jasmine.Spy = spyOn( SPARQL.Service, "executeRawDESCRIBEQuery" );
 
 			// Proper execution
-			(function ProperExecution() {
+			(function ProperExecution():void {
 
 				documents.executeRawDESCRIBEQuery( "http://example.com/document/", "DESCRIBE { ?subject ?predicate ?object } WHERE { ?subject ?predicate ?object }" );
 
@@ -3434,7 +3427,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 			})();
 
 			// Relative URI
-			(function RelativeURI() {
+			(function RelativeURI():void {
 
 				documents.executeRawDESCRIBEQuery( "document/", "DESCRIBE { ?subject ?predicate ?object } WHERE { ?subject ?predicate ?object }" );
 

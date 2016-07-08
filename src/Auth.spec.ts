@@ -126,7 +126,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 
 	describe( clazz(
 		"Carbon.Auth.Class",
-		"Class that manage authentications and authorizations."
+		"Class that manages authentications and authorizations."
 	), ():void => {
 
 		beforeEach( ():void => {
@@ -789,7 +789,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 		it( hasMethod(
 			INSTANCE,
 			"createTicket",
-			"Retrieves a authentication ticket, which one only works one time and oly for the URI specified.", [
+			"Retrieves an authentication ticket for the URI specified.", [
 				{name: "uri", type: "string", description: "The URI to get an authentication ticket for."},
 				{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true},
 			],
@@ -919,10 +919,11 @@ describe( module( "Carbon/Auth" ), ():void => {
 		it( hasMethod(
 			INSTANCE,
 			"getAuthenticatedURL",
-			"Returns a Promise with a URI authenticated for only one use.", [
+			"Returns a Promise with a one time use only authenticated URI.", [
 				{name: "uri", type: "string", description: "The URI to generate an authenticated URI for."},
 				{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true},
-			]
+			],
+			{type: "Promise<string>"}
 		), ( done:{ ():void, fail:() => void } ) => {
 			class MockedContext extends AbstractContext {
 				resolve( uri:string ):string {

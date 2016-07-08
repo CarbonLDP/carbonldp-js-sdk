@@ -1107,7 +1107,7 @@ Returns a Promise with a Pointer to the stored App, and the response of the requ
 ### <a name="Carbon-Auth-Class" />Class Carbon.Auth.Class
 
 
-> Class that manage authentications and authorizations.
+> Class that manages authentications and authorizations.
 
 
 #### <a name="Carbon-Auth-Class-Constructor" />Constructor
@@ -1166,7 +1166,7 @@ Deletes the authentication of the current instance.
 createTicket( uri:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.Auth.Ticket.Class, Carbon.HTTP.Response.Class ]>
 ```
 
-Retrieves a authentication ticket, which one only works one time and oly for the URI specified.
+Retrieves an authentication ticket for the URI specified.
 
 *Parameters*
 
@@ -1175,10 +1175,10 @@ Retrieves a authentication ticket, which one only works one time and oly for the
 
 ##### getAuthenticatedURL
 ```typescript 
-getAuthenticatedURL( uri:string,  requestOptions?:Carbon.HTTP.Request.Options )
+getAuthenticatedURL( uri:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<string>
 ```
 
-Returns a Promise with a URI authenticated for only one use.
+Returns a Promise with a one time use only authenticated URI.
 
 *Parameters*
 
@@ -1320,7 +1320,7 @@ static SCHEMA:Carbon.ObjectSchema.Class
 static create( uri:string ):Carbon.Auth.Ticket.Class
 ```
 
-Create and returns a `Carbon.Auth.Ticket.Class` object for the specified URI.
+Creates and returns a `Carbon.Auth.Ticket.Class` object for the specified URI.
 
 *Parameters*
 
@@ -2009,7 +2009,7 @@ Delete the resource from the CarbonLDP server referred by the URI provided.
 getDownloadURL( documentURI:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<Carbon.HTTP.Response.Class>
 ```
 
-Add to the URI provided with the properties necessarily for a single download request.
+Add to the URI provided the necessary properties for a single download request.
 
 *Parameters*
 
