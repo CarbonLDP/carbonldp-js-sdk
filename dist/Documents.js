@@ -551,6 +551,17 @@ var Documents = (function () {
             this.context.auth.addAuthentication(requestOptions);
         return SPARQL.Service.executeRawDESCRIBEQuery(documentURI, constructQuery, requestOptions);
     };
+    Documents.prototype.executeUPDATEQuery = function (documentURI, constructQuery, requestOptions) {
+        if (requestOptions === void 0) { requestOptions = {}; }
+        if (!RDF.URI.Util.isAbsolute(documentURI)) {
+            if (!this.context)
+                throw new Errors.IllegalArgumentError("This Documents instance doesn't support relative URIs.");
+            documentURI = this.context.resolve(documentURI);
+        }
+        if (this.context && this.context.auth.isAuthenticated())
+            this.context.auth.addAuthentication(requestOptions);
+        return SPARQL.Service.executeUPDATEQuery(documentURI, constructQuery, requestOptions);
+    };
     Documents.prototype.getRDFDocument = function (requestURL, rdfDocuments, response) {
         rdfDocuments = rdfDocuments.filter(function (rdfDocument) { return rdfDocument["@id"] === requestURL; });
         if (rdfDocuments.length > 1)

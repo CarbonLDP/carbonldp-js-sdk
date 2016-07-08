@@ -2,7 +2,7 @@
 <head></head>
 <body>
 
-	<input type="file" id="upload" />
+	<input type="file" id="upload"/>
 
 	<script src="../dist/bundles/Carbon.sfx.js"></script>
 	<script>
@@ -50,7 +50,7 @@
 				"xsd": "http://www.w3.org/2001/XMLSchema#"
 			} );
 
-			carbon.extendObjectSchema( "http://example.org/ns#BlogPost" , {
+			carbon.extendObjectSchema( "http://example.org/ns#BlogPost", {
 				"title": {
 					"@id": "ex:title",
 					"@type": "xsd:string"
@@ -67,19 +67,24 @@
 
 			carbon.auth.authenticate( "admin@carbonldp.com", "hello" ).then( function() {
 				return carbon.apps.getContext( "my-first-app/" );
-			}).then( function( _appContext ) {
+			} ).then( function( _appContext ) {
 				appContext = _appContext;
 				return appContext.documents.get( "posts/first-post/" );
-			}).then( function( result ) {
+			} ).then( function( result ) {
+				var doc = result[ 0 ];
+				var query = `INSERT DATA { GRAPH <${ doc.id }> { <${ doc.id }> <${ appContext.resolve( appContext.getSetting( "vocabulary" ) + "property" ) }> "Second Property Value" } }`
+				return doc.executeUPDATEQuery( query );
+				//				return query;
+			} ).then( function( result ) {
 				console.log( result );
-			});
+			} );
 
 			var input = document.querySelector( "#upload" );
 			input.addEventListener( "change", function( event ) {
 				filesDocument.upload( event.target.files[ 0 ] ).then( function( result ) {
 					console.log( result );
-				});
-			});
+				} );
+			} );
 		})();
 	</script>
 </body>

@@ -92,6 +92,10 @@ function executeRawDESCRIBEQuery(describeQuery, requestOptions) {
     if (requestOptions === void 0) { requestOptions = {}; }
     return this._documents.executeRawDESCRIBEQuery(this.id, describeQuery, requestOptions);
 }
+function executeUPDATEQuery(updateQuery, requestOptions) {
+    if (requestOptions === void 0) { requestOptions = {}; }
+    return this._documents.executeUPDATEQuery(this.id, updateQuery, requestOptions);
+}
 var Factory = (function () {
     function Factory() {
     }
@@ -107,7 +111,8 @@ var Factory = (function () {
             Utils.hasFunction(document, "executeRawSELECTQuery") &&
             Utils.hasFunction(document, "executeSELECTQuery") &&
             Utils.hasFunction(document, "executeRawDESCRIBEQuery") &&
-            Utils.hasFunction(document, "executeRawCONSTRUCTQuery"));
+            Utils.hasFunction(document, "executeRawCONSTRUCTQuery") &&
+            Utils.hasFunction(document, "executeUPDATEQuery"));
     };
     Factory.is = function (object) {
         return Utils.isObject(object)
@@ -262,6 +267,12 @@ var Factory = (function () {
                 enumerable: false,
                 configurable: true,
                 value: executeRawDESCRIBEQuery,
+            },
+            "executeUPDATEQuery": {
+                writable: false,
+                enumerable: false,
+                configurable: true,
+                value: executeUPDATEQuery,
             },
             "createFragment": {
                 writable: false,

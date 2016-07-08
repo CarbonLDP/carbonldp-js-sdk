@@ -641,6 +641,17 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 		return SPARQL.Service.executeRawDESCRIBEQuery( documentURI, constructQuery, requestOptions );
 	}
 
+	executeUPDATEQuery( documentURI:string, constructQuery:string, requestOptions:HTTP.Request.Options = {} ):Promise<HTTP.Response.Class> {
+		if( ! RDF.URI.Util.isAbsolute( documentURI ) ) {
+			if( ! this.context ) throw new Errors.IllegalArgumentError( "This Documents instance doesn't support relative URIs." );
+			documentURI = this.context.resolve( documentURI );
+		}
+
+		if( this.context && this.context.auth.isAuthenticated() ) this.context.auth.addAuthentication( requestOptions );
+
+		return SPARQL.Service.executeUPDATEQuery( documentURI, constructQuery, requestOptions );
+	}
+
 	private getRDFDocument( requestURL:string, rdfDocuments:RDF.Document.Class[], response:HTTP.Response.Class ):RDF.Document.Class {
 		rdfDocuments = rdfDocuments.filter( ( rdfDocument:RDF.Document.Class ) => rdfDocument[ "@id" ] === requestURL );
 
