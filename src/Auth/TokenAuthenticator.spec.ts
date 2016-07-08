@@ -46,7 +46,7 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 		} );
 
 		it( hasConstructor( [
-				{ name: "context", type: "Carbon.Context", description: "The context where to authenticate the agent." }
+			{name: "context", type: "Carbon.Context", description: "The context where to authenticate the agent."},
 		] ), ():void => {
 			class MockedContext extends AbstractContext {
 				resolve( uri:string ):string {
@@ -63,8 +63,8 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 		it( hasMethod(
 			INSTANCE,
 			"isAuthenticated",
-			"Returns true if the instance contains stored credentials." ,
-			{ type: "boolean" }
+			"Returns true if the instance contains stored credentials.",
+			{type: "boolean"}
 		), ():void => {
 			class MockedContext extends AbstractContext {
 				resolve( uri:string ):string {
@@ -83,13 +83,13 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 			expirationTime.setDate( expirationTime.getDate() + 1 );
 			(<any> authenticator)._credentials = {
 				key: "token-value",
-				expirationTime: expirationTime
+				expirationTime: expirationTime,
 			};
 			expect( authenticator.isAuthenticated() ).toBe( true );
 
 			(<any> authenticator)._credentials = {
 				key: "token-value",
-				expirationTime: new Date()
+				expirationTime: new Date(),
 			};
 			expect( authenticator.isAuthenticated() ).toBe( false );
 
@@ -97,10 +97,10 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 			expirationTime.setDate( expirationTime.getDate() - 1 );
 			(<any> authenticator)._credentials = {
 				key: "token-value",
-				expirationTime: expirationTime
+				expirationTime: expirationTime,
 			};
 			expect( authenticator.isAuthenticated() ).toBe( false );
-		});
+		} );
 
 		describe( method(
 			INSTANCE,
@@ -109,7 +109,7 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 
 			it( hasSignature(
 				"Stores credentials to authenticate future requests.", [
-					{name: "authenticationToken", type: "Carbon.Auth.UsernameAndPasswordToken"}
+					{name: "authenticationToken", type: "Carbon.Auth.UsernameAndPasswordToken"},
 				],
 				{type: "Promise<Carbon.Auth.Token.Class>"}
 			), ( done:{ ():void, fail:( error:Error ) => void } ):void => {
@@ -117,11 +117,11 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 				// Property Integrity
 				(() => {
 					class MockedContext extends AbstractContext {
-						resolve( uri:string ) {
+						resolve( uri:string ):string {
 							return uri;
 						}
 					}
-					let context = new MockedContext();
+					let context:AbstractContext = new MockedContext();
 					let authenticator:TokenAuthenticator.Class = new TokenAuthenticator.Class( context );
 
 					expect( "authenticate" in authenticator ).toEqual( true );
@@ -181,7 +181,7 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 					let expirationTime:Date = new Date();
 					expirationTime.setDate( expirationTime.getDate() + 1 );
 					jasmine.Ajax.stubRequest( "http://example.com/unsuccessful/auth-tokens/", null, "POST" ).andReturn( {
-						status: 401
+						status: 401,
 					} );
 
 					let context:UnsuccessfulContext = new UnsuccessfulContext();
@@ -197,21 +197,21 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 				})();
 
 				Promise.all( promises ).then( done, done.fail );
-			});
+			} );
 
 			it( hasSignature(
 				"Stores credentials to authenticate future requests.", [
-					{name: "token", type: "Carbon.Auth.Token.Class"}
+					{name: "token", type: "Carbon.Auth.Token.Class"},
 				],
 				{type: "Promise<Carbon.Auth.Token.Class>"}
 			), ( done:{ ():void, fail:( error:Error ) => void } ):void => {
 
 				class MockedContext extends AbstractContext {
-					resolve( uri:string ) {
+					resolve( uri:string ):string {
 						return uri;
 					}
 				}
-				let context = new MockedContext();
+				let context:AbstractContext = new MockedContext();
 
 				// Property Integrity
 				(() => {
@@ -274,18 +274,18 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 				})();
 
 				Promise.all( promises ).then( done, done.fail );
-			});
-			
-		});
+			} );
 
-		it( hasMethod( 
-			INSTANCE, 
+		} );
+
+		it( hasMethod(
+			INSTANCE,
 			"addAuthentication",
 			"Adds the Token Authentication header to the passed request options object.\n" +
 			"The `Carbon.HTTP.Request.Options` provided is returned without modifications if it already has an authentication header.", [
-				{ name: "requestOptions", type:"Carbon.HTTP.Request.Options", description: "Request options object to add Authentication headers." }
+				{name: "requestOptions", type: "Carbon.HTTP.Request.Options", description: "Request options object to add Authentication headers."},
 			],
-			{ type: "Carbon.HTTP.Request.Options", description: "The request options with the added authentication headers." }
+			{type: "Carbon.HTTP.Request.Options", description: "The request options with the added authentication headers."}
 		), ():void => {
 
 			// Property Integrity
@@ -316,12 +316,12 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 				expirationTime.setDate( expirationTime.getDate() + 1 );
 				(<any> authenticator)._credentials = {
 					key: "token-value",
-					expirationTime: expirationTime
+					expirationTime: expirationTime,
 				};
 
 				let requestOptions:HTTP.Request.Options = authenticator.addAuthentication( {} );
 
-				expect( !! requestOptions ).toEqual( true );
+				expect( ! ! requestOptions ).toEqual( true );
 				expect( Utils.isObject( requestOptions ) ).toEqual( true );
 				expect( "headers" in requestOptions ).toEqual( true );
 				expect( requestOptions.headers instanceof Map ).toEqual( true );
@@ -352,15 +352,15 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 				expirationTime.setDate( expirationTime.getDate() + 1 );
 				(<any> authenticator)._credentials = {
 					key: "token-value",
-					expirationTime: expirationTime
+					expirationTime: expirationTime,
 				};
 
 				let requestOptions:HTTP.Request.Options = {
-					headers: new Map<string, HTTP.Header.Class>()
+					headers: new Map<string, HTTP.Header.Class>(),
 				};
 				authenticator.addAuthentication( requestOptions );
 
-				expect( !! requestOptions ).toEqual( true );
+				expect( ! ! requestOptions ).toEqual( true );
 				expect( Utils.isObject( requestOptions ) ).toEqual( true );
 				expect( "headers" in requestOptions ).toEqual( true );
 				expect( requestOptions.headers instanceof Map ).toEqual( true );
@@ -392,17 +392,17 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 				expirationTime.setDate( expirationTime.getDate() + 1 );
 				(<any> authenticator)._credentials = {
 					key: "token-value",
-					expirationTime: expirationTime
+					expirationTime: expirationTime,
 				};
 
 				let requestOptions:HTTP.Request.Options = {
-					headers: new Map<string, HTTP.Header.Class>()
+					headers: new Map<string, HTTP.Header.Class>(),
 				};
 				requestOptions.headers.set( "content-type", new HTTP.Header.Class( "text/plain" ) );
 				requestOptions.headers.set( "accept", new HTTP.Header.Class( "text/plain" ) );
 				authenticator.addAuthentication( requestOptions );
 
-				expect( !! requestOptions ).toEqual( true );
+				expect( ! ! requestOptions ).toEqual( true );
 				expect( Utils.isObject( requestOptions ) ).toEqual( true );
 				expect( "headers" in requestOptions ).toEqual( true );
 				expect( requestOptions.headers instanceof Map ).toEqual( true );
@@ -436,18 +436,18 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 				expirationTime.setDate( expirationTime.getDate() + 1 );
 				(<any> authenticator)._credentials = {
 					key: "token-value",
-					expirationTime: expirationTime
+					expirationTime: expirationTime,
 				};
 
 				let requestOptions:HTTP.Request.Options = {
-					headers: new Map<string, HTTP.Header.Class>()
+					headers: new Map<string, HTTP.Header.Class>(),
 				};
 				requestOptions.headers.set( "content-type", new HTTP.Header.Class( "text/plain" ) );
 				requestOptions.headers.set( "accept", new HTTP.Header.Class( "text/plain" ) );
 				requestOptions.headers.set( "authorization", new HTTP.Header.Class( "Another another-type-of-authorization" ) );
 				authenticator.addAuthentication( requestOptions );
 
-				expect( !! requestOptions ).toEqual( true );
+				expect( ! ! requestOptions ).toEqual( true );
 				expect( Utils.isObject( requestOptions ) ).toEqual( true );
 				expect( "headers" in requestOptions ).toEqual( true );
 				expect( requestOptions.headers instanceof Map ).toEqual( true );
@@ -481,18 +481,18 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 				expirationTime.setDate( expirationTime.getDate() + 1 );
 				(<any> authenticator)._credentials = {
 					key: "token-value",
-					expirationTime: expirationTime
+					expirationTime: expirationTime,
 				};
 
 				let requestOptions:HTTP.Request.Options = {
-					headers: new Map<string, HTTP.Header.Class>()
+					headers: new Map<string, HTTP.Header.Class>(),
 				};
 				requestOptions.headers.set( "content-type", new HTTP.Header.Class( "text/plain" ) );
 				requestOptions.headers.set( "accept", new HTTP.Header.Class( "text/plain" ) );
 				requestOptions.headers.set( "authorization", new HTTP.Header.Class( "Token another-token-value" ) );
 				authenticator.addAuthentication( requestOptions );
 
-				expect( !! requestOptions ).toEqual( true );
+				expect( ! ! requestOptions ).toEqual( true );
 				expect( Utils.isObject( requestOptions ) ).toEqual( true );
 				expect( "headers" in requestOptions ).toEqual( true );
 				expect( requestOptions.headers instanceof Map ).toEqual( true );
@@ -512,7 +512,7 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 				expect( authorization.substring( 6 ) ).toEqual( "another-token-value" );
 			})();
 
-		});
+		} );
 
 		it( hasMethod( INSTANCE, "clearAuthentication", `
 			Clears any saved credentials and restores the Authenticator to its initial state.
@@ -572,8 +572,8 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 			})();
 
 			Promise.all( promises ).then( done, done.fail );
-		});
+		} );
 
-	});
+	} );
 
-});
+} );

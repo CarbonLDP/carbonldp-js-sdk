@@ -8,7 +8,7 @@ import {
 	isDefined,
 	hasMethod,
 	hasProperty,
-	decoratedObject
+	decoratedObject,
 } from "./test/JasmineExtender";
 import Response from "./HTTP/Response";
 import NotImplementedError from "./HTTP/Errors/server/NotImplementedError";
@@ -51,8 +51,8 @@ describe( module( "Carbon/Pointer" ), ():void => {
 				_id: null,
 				_resolved: null,
 				id: null,
-				isResolved: () => {},
-				resolve: () => {},
+				isResolved: ():void => {},
+				resolve: ():void => {},
 			};
 			expect( Pointer.Factory.hasClassProperties( pointer ) ).toBe( true );
 
@@ -70,11 +70,11 @@ describe( module( "Carbon/Pointer" ), ():void => {
 
 			delete pointer.isResolved;
 			expect( Pointer.Factory.hasClassProperties( pointer ) ).toBe( false );
-			pointer.isResolved = () => null;
+			pointer.isResolved = ():void => {};
 
 			delete pointer.resolve;
 			expect( Pointer.Factory.hasClassProperties( pointer ) ).toBe( false );
-			pointer.resolve = () => null;
+			pointer.resolve = ():void => {};
 		} );
 
 		it( hasMethod(
@@ -94,12 +94,12 @@ describe( module( "Carbon/Pointer" ), ():void => {
 			expect( Pointer.Factory.is( 100 ) ).toBe( false );
 			expect( Pointer.Factory.is( {} ) ).toBe( false );
 
-			let value = {};
+			let value:any = {};
 			value[ "_id" ] = null;
 			value[ "_resolved" ] = null;
 			value[ "id" ] = null;
-			value[ "isResolved" ] = () => null;
-			value[ "resolve" ] = () => null;
+			value[ "isResolved" ] = ():void => {};
+			value[ "resolve" ] = ():void => {};
 			expect( Pointer.Factory.is( value ) ).toBe( true );
 		} );
 
@@ -140,7 +140,7 @@ describe( module( "Carbon/Pointer" ), ():void => {
 
 
 			interface MyResource {
-				myProperty?:string
+				myProperty?:string;
 			}
 			let pointer:Pointer.Class & MyResource;
 
@@ -161,13 +161,13 @@ describe( module( "Carbon/Pointer" ), ():void => {
 
 		describe( decoratedObject(
 			"Object decorated by the `Carbon.Pointer.Factory.decorate()` function.", [
-				"Carbon.Pointer.Class"
+				"Carbon.Pointer.Class",
 			]
 		), ():void => {
 			let pointer:Pointer.Class;
 
 			beforeEach( ():void => {
-				pointer = Pointer.Factory.create( "http://example.com/pointer/" )
+				pointer = Pointer.Factory.create( "http://example.com/pointer/" );
 			} );
 
 			it( hasProperty(
@@ -256,7 +256,7 @@ describe( module( "Carbon/Pointer" ), ():void => {
 			STATIC,
 			"getIDs",
 			"Extracts the IDs of all the pointers provided.", [
-				{name: "pointers", type: "Carbon.Pointer.Class[]", description: "The array of Pointers to obtains their IDs."}
+				{name: "pointers", type: "Carbon.Pointer.Class[]", description: "The array of Pointers to obtain their IDs."},
 			],
 			{type: "string[]"}
 		), ():void => {
@@ -282,7 +282,7 @@ describe( module( "Carbon/Pointer" ), ():void => {
 			STATIC,
 			"resolveAll",
 			"Calls the `resolve()` method of every pointer, and returns a single Promise with the results of every call.", [
-				{name: "pointers", type: "Carbon.Pointer.Class[]", description: "The array of Pointers to resolve."}
+				{name: "pointers", type: "Carbon.Pointer.Class[]", description: "The array of Pointers to resolve."},
 			],
 			{type: "Promise<[ Carbon.Pointer.Class[], Carbon.HTTP.Response.Class[] ]>"}
 		), ( done:{():void, fail:() => void} ):void => {
@@ -319,7 +319,7 @@ describe( module( "Carbon/Pointer" ), ():void => {
 
 				expect( responses.length ).toBe( 3 );
 				expect( responses ).toContain( null );
-				
+
 				done();
 			} ).catch( done.fail );
 		} );

@@ -57,6 +57,6 @@ describe( module( "Carbon/SPARQL" ), ():void => {
 	), ():void => {
 		expect( SPARQL.SELECTResults ).toBeDefined();
 		expect( SPARQL.SELECTResults ).toBe( SELECTResults );
-	});
+	} );
 
-});
+} );

@@ -85,7 +85,7 @@ describe( module( "Carbon" ), ():void => {
 
 		it( extendsClass( "Carbon.AbstractContext" ), ():void => {
 			expect( carbon instanceof AbstractContext ).toBe( true );
-		});
+		} );
 
 		it( hasProperty(
 			STATIC,
@@ -343,7 +343,7 @@ describe( module( "Carbon" ), ():void => {
 		), ():void => {
 			expect( Carbon.Settings ).toBeDefined();
 			expect( Carbon.Settings ).toBe( Settings );
-		});
+		} );
 
 		it( reexports(
 			STATIC,
@@ -363,9 +363,9 @@ describe( module( "Carbon" ), ():void => {
 			expect( Carbon.Utils ).toBe( Utils );
 		} );
 
-		it( hasConstructor([
+		it( hasConstructor( [
 			{name: "settings", type: "Carbon.Settings.Class", optional: true}
-		]), ():void => {
+		] ), ():void => {
 			// Instantiated in BeforeEach
 			expect( carbon ).toBeTruthy();
 			expect( carbon instanceof Carbon ).toBe( true );

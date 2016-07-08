@@ -32,7 +32,7 @@ describe( module( "Carbon/Auth/UsernameAndPasswordToken" ), ():void => {
 
 		it( hasConstructor( [
 			{name: "username", type: "string"},
-			{name: "password", type: "string"}
+			{name: "password", type: "string"},
 		] ), ():void => {
 			let token:UsernameAndPasswordToken.Class = new UsernameAndPasswordToken.Class( "myUserName", "myPassword" );
 

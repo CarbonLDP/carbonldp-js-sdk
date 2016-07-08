@@ -45,7 +45,7 @@ describe( module( "Carbon/LDP/IndirectContainer" ), ():void => {
 			STATIC,
 			"hasClassProperties",
 			"Returns true if the object provided has the properties of a `Carbon.LDP.IndirectContainer.Class` object.", [
-				{ name: "resource", type: "Object"}
+				{name: "resource", type: "Object"}
 			],
 			{type: "boolean"}
 		), ():void => {

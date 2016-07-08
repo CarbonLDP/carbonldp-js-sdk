@@ -78,7 +78,7 @@ describe( module( "Carbon/LDP/ResponseMetadata" ), ():void => {
 			STATIC,
 			"is",
 			"Return true if the object provided is considered a `Carbon.LDP.ResponseMetadata.Class` object.", [
-				{ name: "object", type: "Object", description: "Object to check" },
+				{name: "object", type: "Object", description: "Object to check"},
 			],
 			{type: "boolean"}
 		), ():void => {
@@ -109,7 +109,7 @@ describe( module( "Carbon/LDP/ResponseMetadata" ), ():void => {
 			STATIC,
 			"hasRDFClass",
 			"Return true if the object provided have the RDF_CLASS of a ResponseMetadata, either if it's a Carbon Resource or an RDF object.", [
-				{ name: "object", type: "Object", description: "Object to check." },
+				{name: "object", type: "Object", description: "Object to check."},
 			],
 			{type: "boolean"}
 		), ():void => {

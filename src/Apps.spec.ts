@@ -9,7 +9,7 @@ import {
 	hasConstructor,
 	hasMethod,
 	hasSignature,
-	hasDefaultExport
+	hasDefaultExport,
 } from "./test/JasmineExtender";
 import * as Utils from "./Utils";
 import AbstractContext from "./AbstractContext";
@@ -17,7 +17,6 @@ import AppContext from "./App/Context";
 import * as NS from "./NS";
 import * as Errors from "./Errors";
 import * as App from "./App";
-import * as Pointer from "./Pointer";
 import * as RDF from "./RDF";
 
 import * as Apps from "./Apps";
@@ -61,9 +60,9 @@ describe( module( "Carbon/Apps" ), ():void => {
 			expect( Utils.isFunction( Apps.Class ) ).toBe( true );
 		} );
 
-		it( hasConstructor([
+		it( hasConstructor( [
 			{name: "context", type: "Carbon.Context", description: "A context from where Carbon Apps can be administrated."},
-		]), ():void => {
+		] ), ():void => {
 			expect( apps ).toBeTruthy();
 			expect( apps instanceof Apps.Class ).toBe( true );
 		} );
@@ -85,40 +84,40 @@ describe( module( "Carbon/Apps" ), ():void => {
 				jasmine.Ajax.stubRequest( "http://example.com/platform/apps/example-app/", null, "GET" ).andReturn( {
 					status: 200,
 					responseHeaders: {
-						ETag: '"123456789"'
+						ETag: '"123456789"',
 					},
-					responseText: `[{
-					    "@id": "http://example.com/platform/apps/example-app/",
-					    "@graph": [{
-					        "@id": "http://example.com/platform/apps/example-app/",
-					        "@type": [
-					          "http://www.w3.org/ns/ldp#RDFSource",
-					          "http://www.w3.org/ns/ldp#BasicContainer",
-					          "${NS.CS.Class.Application}"
-					        ],
-					        "https://carbonldp.com/ns/v1/security#rootContainer": [{
-					            "@id": "https://example.com/apps/example-app/"
-					        }],
-					        "${NS.CS.Predicate.namae}": [{
-					            "@value": "Example App name"
-					        }],
-					        "${NS.CS.Predicate.description}": [{
-					            "@value": "Example App description"
-					        }]
-					    }]
-					}]`
+					responseText: `[ {
+						"@id": "http://example.com/platform/apps/example-app/",
+						"@graph": [ {
+							"@id": "http://example.com/platform/apps/example-app/",
+							"@type": [
+								"http://www.w3.org/ns/ldp#RDFSource",
+								"http://www.w3.org/ns/ldp#BasicContainer",
+								"${ NS.CS.Class.Application }"
+							],
+							"https://carbonldp.com/ns/v1/security#rootContainer": [ {
+								"@id": "https://example.com/apps/example-app/"
+							} ],
+							"${ NS.CS.Predicate.namae }": [ {
+								"@value": "Example App name"
+							} ],
+							"${ NS.CS.Predicate.description }": [ {
+								"@value": "Example App description"
+							} ]
+						} ]
+					} ]`,
 				} );
 
-				let spies = {
+				let spies:any = {
 					success: ( appContext:AppContext ):void => {
 						expect( appContext instanceof AppContext ).toBe( true );
 					},
 					fail: ( error ):void => {
 						expect( error instanceof Errors.IllegalArgumentError ).toBe( true );
-					}
+					},
 				};
-				let successSpy = spyOn( spies, "success" ).and.callThrough();
-				let failSpy = spyOn( spies, "fail" ).and.callThrough();
+				let successSpy:jasmine.Spy = spyOn( spies, "success" ).and.callThrough();
+				let failSpy:jasmine.Spy = spyOn( spies, "fail" ).and.callThrough();
 
 				let promises:Promise<any>[] = [];
 				let promise:Promise<any>;
@@ -154,7 +153,7 @@ describe( module( "Carbon/Apps" ), ():void => {
 					} ).catch( done.fail );
 				} );
 
-			});
+			} );
 
 			it( hasSignature(
 				"Obtains a `Carbon.App.Context` object from the specified Pointer object, if it exists within the context of the Apps instance.", [
@@ -168,40 +167,40 @@ describe( module( "Carbon/Apps" ), ():void => {
 				jasmine.Ajax.stubRequest( "http://example.com/platform/apps/example-app/", null, "GET" ).andReturn( {
 					status: 200,
 					responseHeaders: {
-						ETag: '"1234567890"'
+						ETag: '"1234567890"',
 					},
-					responseText: `[{
-					    "@id": "http://example.com/platform/apps/example-app/",
-					    "@graph": [{
-					        "@id": "http://example.com/platform/apps/example-app/",
-					        "@type": [
-					          "http://www.w3.org/ns/ldp#RDFSource",
-					          "http://www.w3.org/ns/ldp#BasicContainer",
-					          "${NS.CS.Class.Application}"
-					        ],
-					        "https://carbonldp.com/ns/v1/security#rootContainer": [{
-					            "@id": "https://example.com/apps/example-app/"
-					        }],
-					        "${NS.CS.Predicate.namae}": [{
-					            "@value": "Example App name"
-					        }],
-					        "${NS.CS.Predicate.description}": [{
-					            "@value": "Example App description"
-					        }]
-					    }]
-					}]`
+					responseText: `[ {
+						"@id": "http://example.com/platform/apps/example-app/",
+						"@graph": [ {
+							"@id": "http://example.com/platform/apps/example-app/",
+							"@type": [
+								"http://www.w3.org/ns/ldp#RDFSource",
+								"http://www.w3.org/ns/ldp#BasicContainer",
+								"${NS.CS.Class.Application}"
+							],
+							"https://carbonldp.com/ns/v1/security#rootContainer": [ {
+								"@id": "https://example.com/apps/example-app/"
+							} ],
+							"${NS.CS.Predicate.namae}": [ {
+								"@value": "Example App name"
+							} ],
+							"${NS.CS.Predicate.description}": [ {
+								"@value": "Example App description"
+							} ]
+						} ]
+					} ]`,
 				} );
 
-				let spies = {
+				let spies:any = {
 					success: ( appContext:AppContext ):void => {
 						expect( appContext instanceof AppContext ).toBe( true );
 					},
 					fail: ( error ):void => {
 						expect( error instanceof Errors.IllegalArgumentError ).toBe( true );
-					}
+					},
 				};
-				let successSpy = spyOn( spies, "success" ).and.callThrough();
-				let failSpy = spyOn( spies, "fail" ).and.callThrough();
+				let successSpy:jasmine.Spy = spyOn( spies, "success" ).and.callThrough();
+				let failSpy:jasmine.Spy = spyOn( spies, "fail" ).and.callThrough();
 
 				let promises:Promise<any>[] = [];
 				let promise:Promise<any>;
@@ -253,33 +252,33 @@ describe( module( "Carbon/Apps" ), ():void => {
 			jasmine.Ajax.stubRequest( "http://example.com/platform/apps/", null, "GET" ).andReturn( {
 				status: 200,
 				responseHeaders: {
-					ETag: '"123456789"'
+					ETag: '"123456789"',
 				},
 				responseText: `[
 					{
-					    "@id": "_:00",
-					    "@type": [
-					      "https://carbonldp.com/ns/v1/platform#ResponseMetadata",
-					      "https://carbonldp.com/ns/v1/platform#VolatileResource"
-					    ],
-					    "https://carbonldp.com/ns/v1/platform#resourceMetadata": [{
+						"@id": "_:00",
+						"@type": [
+							"https://carbonldp.com/ns/v1/platform#ResponseMetadata",
+							"https://carbonldp.com/ns/v1/platform#VolatileResource"
+						],
+						"https://carbonldp.com/ns/v1/platform#resourceMetadata": [ {
 							"@id": "_:01"
 						}, {
 							"@id": "_:02"
-						}]
+						} ]
 					},
 					{
-					    "@id": "_:01",
-					    "@type": [
-					        "https://carbonldp.com/ns/v1/platform#ResourceMetadata",
-					        "https://carbonldp.com/ns/v1/platform#VolatileResource"
-					    ],
-					    "https://carbonldp.com/ns/v1/platform#eTag": [{
-					        "@value": "\\"1234567890\\""
-					    }],
-					    "https://carbonldp.com/ns/v1/platform#resource": [{
-					        "@id": "http://example.com/platform/apps/example-app/"
-					    }]
+						"@id": "_:01",
+						"@type": [
+							"https://carbonldp.com/ns/v1/platform#ResourceMetadata",
+							"https://carbonldp.com/ns/v1/platform#VolatileResource"
+						],
+						"https://carbonldp.com/ns/v1/platform#eTag": [ {
+							"@value": "\\"1234567890\\""
+						} ],
+						"https://carbonldp.com/ns/v1/platform#resource": [ {
+							"@id": "http://example.com/platform/apps/example-app/"
+						} ]
 					},
 					{
 						"@id": "_:02",
@@ -287,86 +286,86 @@ describe( module( "Carbon/Apps" ), ():void => {
 							"https://carbonldp.com/ns/v1/platform#ResourceMetadata",
 							"https://carbonldp.com/ns/v1/platform#VolatileResource"
 						],
-						"https://carbonldp.com/ns/v1/platform#eTag": [{
+						"https://carbonldp.com/ns/v1/platform#eTag": [ {
 							"@value": "\\"0987654321\\""
-						}],
-						"https://carbonldp.com/ns/v1/platform#resource": [{
+						} ],
+						"https://carbonldp.com/ns/v1/platform#resource": [ {
 							"@id": "http://example.com/platform/apps/another-app/"
-						}]
+						} ]
 					},
 					{
-					    "@id": "http://example.com/platform/apps/",
-					    "@graph": [{
-					        "@id": "http://example.com/platform/apps/",
-					        "@type": [
-					          "http://www.w3.org/ns/ldp#BasicContainer"
-					        ],
-					        "http://www.w3.org/ns/ldp#hasMemberRelation": [{
-					            "@id": "http://www.w3.org/ns/ldp#member"
-					        }],
-					        "http://www.w3.org/ns/ldp#member": [{
-					            "@id": "http://example.com/platform/apps/example-app/"
-					        }, {
-					            "@id": "http://example.com/platform/apps/another-app/"
-					        }]
-					    }]
+						"@id": "http://example.com/platform/apps/",
+						"@graph": [ {
+							"@id": "http://example.com/platform/apps/",
+							"@type": [
+								"http://www.w3.org/ns/ldp#BasicContainer"
+							],
+							"http://www.w3.org/ns/ldp#hasMemberRelation": [ {
+								"@id": "http://www.w3.org/ns/ldp#member"
+							} ],
+							"http://www.w3.org/ns/ldp#member": [ {
+								"@id": "http://example.com/platform/apps/example-app/"
+							}, {
+								"@id": "http://example.com/platform/apps/another-app/"
+							} ]
+						} ]
 					},
 					{
-					    "@id": "http://example.com/platform/apps/another-app/",
-					    "@graph": [{
-					        "@id": "http://example.com/platform/apps/another-app/",
-					        "@type": [
-					          "http://www.w3.org/ns/ldp#RDFSource",
-					          "http://www.w3.org/ns/ldp#BasicContainer",
-					          "${NS.CS.Class.Application}"
-					        ],
-					        "https://carbonldp.com/ns/v1/security#rootContainer": [{
-					            "@id": "https://example.com/apps/another-app/"
-					        }],
-					        "${NS.CS.Predicate.namae}": [{
-					            "@value": "Another App name"
-					        }]
-					    }]
+						"@id": "http://example.com/platform/apps/another-app/",
+						"@graph": [ {
+							"@id": "http://example.com/platform/apps/another-app/",
+							"@type": [
+								"http://www.w3.org/ns/ldp#RDFSource",
+								"http://www.w3.org/ns/ldp#BasicContainer",
+								"${NS.CS.Class.Application}"
+							],
+							"https://carbonldp.com/ns/v1/security#rootContainer": [ {
+								"@id": "https://example.com/apps/another-app/"
+							} ],
+							"${NS.CS.Predicate.namae}": [ {
+								"@value": "Another App name"
+							} ]
+						} ]
 					},
 					{
-					    "@id": "http://example.com/platform/apps/example-app/",
-					    "@graph": [{
-					        "@id": "http://example.com/platform/apps/example-app/",
-					        "@type": [
-					          "http://www.w3.org/ns/ldp#RDFSource",
-					          "http://www.w3.org/ns/ldp#BasicContainer",
-					          "${NS.CS.Class.Application}"
-					        ],
-					        "https://carbonldp.com/ns/v1/security#rootContainer": [{
-					            "@id": "https://example.com/apps/example-app/"
-					        }],
-					        "${NS.CS.Predicate.namae}": [{
-					            "@value": "Example App name"
-					        }],
-					        "${NS.CS.Predicate.description}": [{
-					            "@value": "Example App description"
-					        }]
-					    }]
+						"@id": "http://example.com/platform/apps/example-app/",
+						"@graph": [ {
+							"@id": "http://example.com/platform/apps/example-app/",
+							"@type": [
+								"http://www.w3.org/ns/ldp#RDFSource",
+								"http://www.w3.org/ns/ldp#BasicContainer",
+								"${NS.CS.Class.Application}"
+							],
+							"https://carbonldp.com/ns/v1/security#rootContainer": [ {
+								"@id": "https://example.com/apps/example-app/"
+							} ],
+							"${NS.CS.Predicate.namae}": [ {
+								"@value": "Example App name"
+							} ],
+							"${NS.CS.Predicate.description}": [ {
+								"@value": "Example App description"
+							} ]
+						} ]
 					}
-				]`
+				]`,
 			} );
 
 
-			let spies = {
+			let spies:any = {
 				success: ( appsContext:AppContext[] ):void => {
 					expect( appsContext.length ).toBe( 2 );
 					for( let appContext of appsContext ) {
 						expect( appContext instanceof AppContext ).toBe( true );
 					}
-				}
+				},
 			};
-			let successSpy = spyOn( spies, "success" ).and.callThrough();
+			let successSpy:jasmine.Spy = spyOn( spies, "success" ).and.callThrough();
 
 			let promise:Promise<any>;
 
 			// Test missing `platform.apps.container` setting
-			apps.getAllContexts().catch( error => {
-				expect( error instanceof IllegalStateError ).toBe( true );
+			apps.getAllContexts().catch( stateError => {
+				expect( stateError instanceof IllegalStateError ).toBe( true );
 				context.setSetting( "platform.apps.container", appsContainerURI );
 
 				// Text correct execution of the method
@@ -392,20 +391,20 @@ describe( module( "Carbon/Apps" ), ():void => {
 				"Returns a Promise with a Pointer to the stored App, and the response of the request.", [
 					{name: "appDocument", type: "Carbon.App.Class"},
 				],
-				{type: "Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>" }
+				{type: "Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>"}
 			), ( done:{():void, fail:() => void} ):void => {
 				expect( apps.create ).toBeDefined();
 				expect( Utils.isFunction( apps.create ) ).toBe( true );
 
 				let promises:Promise<any>[] = [];
 				let promise:Promise<any>;
-				let spy = spyOn( context.documents, "createChild" );
+				let spy:jasmine.Spy = spyOn( context.documents, "createChild" );
 
 				let app:App.Class = App.Factory.create( "App name", "App description" );
 
 				// Test missing `platform.apps.container` setting
-				apps.create( app ).catch( error => {
-					expect( error instanceof IllegalStateError ).toBe( true );
+				apps.create( app ).catch( stateError => {
+					expect( stateError instanceof IllegalStateError ).toBe( true );
 					context.setSetting( "platform.apps.container", appsContainerURI );
 
 					//  Test correct execution of the method
@@ -413,19 +412,19 @@ describe( module( "Carbon/Apps" ), ():void => {
 					expect( promise instanceof Promise ).toBe( true );
 					promises.push( promise.then( () => {
 						expect( spy ).toHaveBeenCalledWith( appsContainerURI, null, app );
-					}));
+					} ) );
 
 					// Test incorrect `Carbon.App.Class` object provided
 					promise = apps.create( null );
 					expect( promise instanceof Promise ).toBe( true );
 					promises.push( promise.catch( error => {
 						expect( error instanceof Errors.IllegalArgumentError );
-					}));
+					} ) );
 
 					Promise.all( promises ).then( done ).catch( done.fail );
-				});
+				} );
 
-			});
+			} );
 
 			it( hasSignature(
 				"Persists a `Carbon.App.Class` object using the slug specified.\n" +
@@ -440,12 +439,12 @@ describe( module( "Carbon/Apps" ), ():void => {
 
 				let promises:Promise<any>[] = [];
 				let promise:Promise<any>;
-				let spy = spyOn( context.documents, "createChild" );
+				let spy:jasmine.Spy = spyOn( context.documents, "createChild" );
 				let app:App.Class = App.Factory.create( "App name", "App description" );
 
 				// Test missing `platform.apps.container` setting
-				apps.create( "slug-of-app", app ).catch( error => {
-					expect( error instanceof IllegalStateError ).toBe( true );
+				apps.create( "slug-of-app", app ).catch( stateError => {
+					expect( stateError instanceof IllegalStateError ).toBe( true );
 					context.setSetting( "platform.apps.container", appsContainerURI );
 
 					// Test correct execution of the method
@@ -453,26 +452,26 @@ describe( module( "Carbon/Apps" ), ():void => {
 					expect( promise instanceof Promise ).toBe( true );
 					promises.push( promise.then( () => {
 						expect( spy ).toHaveBeenCalledWith( appsContainerURI, "slug-of-app", app );
-					}));
+					} ) );
 
 					// Test correct execution of the method, where delegate the manage of the `null` slug to `context.documents.createChild` method
 					apps.create( null, app );
 					expect( promise instanceof Promise ).toBe( true );
 					promises.push( promise.then( () => {
 						expect( spy ).toHaveBeenCalledWith( appsContainerURI, null, app );
-					}));
+					} ) );
 
 					// Test incorrect `Carbon.App.Class` object provided
 					promise = apps.create( "slug-of-app", null );
 					expect( promise instanceof Promise ).toBe( true );
 					promises.push( promise.catch( error => {
 						expect( error instanceof Errors.IllegalArgumentError );
-					}));
+					} ) );
 
 					Promise.all( promises ).then( done ).catch( done.fail );
-				});
+				} );
 
-			});
+			} );
 
 		} );
 

@@ -111,10 +111,8 @@ function extend(target) {
     for (var _i = 1; _i < arguments.length; _i++) {
         objects[_i - 1] = arguments[_i];
     }
-    if (arguments.length <= 1)
-        return target;
-    for (var i = 0, length_1 = arguments.length; i < length_1; i++) {
-        var toMerge = objects[i];
+    for (var _a = 0, objects_1 = objects; _a < objects_1.length; _a++) {
+        var toMerge = objects_1[_a];
         for (var name_1 in toMerge) {
             if (toMerge.hasOwnProperty(name_1)) {
                 target[name_1] = toMerge[name_1];
@@ -138,6 +136,31 @@ exports.forEachOwnProperty = forEachOwnProperty;
 var O = (function () {
     function O() {
     }
+    O.clone = function (object, config) {
+        if (config === void 0) { config = { arrays: false, objects: false }; }
+        var isAnArray = isArray(object);
+        if (!isAnArray && !isPlainObject(object))
+            return null;
+        var clone = isAnArray ? [] : {};
+        object.__SDKUtils_circularReferenceFlag = clone;
+        for (var _i = 0, _a = Object.keys(object); _i < _a.length; _i++) {
+            var key = _a[_i];
+            if (isFunction(object[key]) || key === "__SDKUtils_circularReferenceFlag")
+                continue;
+            var property = object[key];
+            if (isArray(property) && config.arrays ||
+                isPlainObject(property) && config.objects) {
+                property = property.__SDKUtils_circularReferenceFlag || O.clone(property, config);
+            }
+            clone[key] = property;
+        }
+        delete object.__SDKUtils_circularReferenceFlag;
+        return clone;
+    };
+    O.areEqual = function (object1, object2, config) {
+        if (config === void 0) { config = { arrays: false, objects: false }; }
+        return internalAreEqual(object1, object2, config, [object1], [object2]);
+    };
     O.areShallowlyEqual = function (object1, object2) {
         if (object1 === object2)
             return true;
@@ -170,6 +193,49 @@ var O = (function () {
     return O;
 }());
 exports.O = O;
+function internalAreEqual(object1, object2, config, stack1, stack2) {
+    if (object1 === object2)
+        return true;
+    if (!isObject(object1) || !isObject(object2))
+        return false;
+    if (isDate(object1))
+        return object1.getTime() === object2.getTime();
+    var keys = A.joinWithoutDuplicates(Object.keys(object1), Object.keys(object2));
+    for (var _i = 0, keys_1 = keys; _i < keys_1.length; _i++) {
+        var key = keys_1[_i];
+        if (!(key in object1) || !(key in object2))
+            return false;
+        if (typeof object1 !== typeof object2)
+            return false;
+        if (isFunction(object1[key]))
+            continue;
+        var firstIsPlainObject = isPlainObject(object1[key]);
+        if (isArray(object1[key]) && config.arrays ||
+            firstIsPlainObject && config.objects ||
+            isDate(object1[key])) {
+            if (firstIsPlainObject) {
+                var lengthStack = stack1.length;
+                while (lengthStack--) {
+                    if (stack1[lengthStack] === object1[key])
+                        return stack2[lengthStack] === object2[key];
+                }
+                stack1.push(object1[key]);
+                stack2.push(object2[key]);
+            }
+            if (!internalAreEqual(object1[key], object2[key], config, stack1, stack2))
+                return false;
+            if (firstIsPlainObject) {
+                stack1.pop();
+                stack2.pop();
+            }
+        }
+        else {
+            if (object1[key] !== object2[key])
+                return false;
+        }
+    }
+    return true;
+}
 var S = (function () {
     function S() {
     }
@@ -203,20 +269,12 @@ var A = (function () {
             arrays[_i - 0] = arguments[_i];
         }
         var result = arrays[0].slice();
-        for (var i = 1, length_2 = arrays.length; i < length_2; i++) {
+        for (var i = 1, length_1 = arrays.length; i < length_1; i++) {
             result = result.concat(arrays[i].filter(function (item) {
                 return result.indexOf(item) < 0;
             }));
         }
         return result;
-    };
-    A.indexOf = function (array, searchElement, comparator) {
-        if (comparator === void 0) { comparator = function (a, b) { return a === b; }; }
-        for (var i = 0, length_3 = array.length; i < length_3; ++i) {
-            if (comparator(array[i], searchElement))
-                return i;
-        }
-        return -1;
     };
     return A;
 }());
@@ -236,7 +294,7 @@ var M = (function () {
         for (var _i = 1; _i < arguments.length; _i++) {
             extenders[_i - 1] = arguments[_i];
         }
-        for (var i = 0, length_4 = extenders.length; i < length_4; i++) {
+        for (var i = 0, length_2 = extenders.length; i < length_2; i++) {
             var extender = extenders[i];
             var values = extender.entries();
             var next = values.next();

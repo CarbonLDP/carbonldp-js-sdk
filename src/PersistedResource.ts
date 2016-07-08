@@ -9,12 +9,12 @@ export interface Class {
 
 function syncSnapshot():void {
 	let resource:Class = this;
-	resource._snapshot = Utils.O.clone( resource, { arrays: true } );
+	resource._snapshot = Utils.O.clone( resource, {arrays: true} );
 }
 
 function isDirty():boolean {
 	let resource:Class = this;
-	return ! Utils.O.areEqual( resource, resource._snapshot, { arrays: true } );
+	return ! Utils.O.areEqual( resource, resource._snapshot, {arrays: true} );
 }
 
 export class Factory {

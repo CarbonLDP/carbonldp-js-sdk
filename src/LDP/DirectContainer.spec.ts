@@ -249,7 +249,7 @@ describe( module( "Carbon/LDP/DirectContainer" ), ():void => {
 			STATIC,
 			"createFrom",
 			"Creates a `Carbon.LDP.DirectContainer.Class` object with the object provided and the parameters specified.", [
-				{name: "object", type: "T extends Object" },
+				{name: "object", type: "T extends Object"},
 				{name: "membershipResource", type: "Carbon.Pointer.Class"},
 				{name: "hasMemberRelation", type: "string | Carbon.Pointer.Class"},
 				{name: "memberOfRelation", type: "string | Carbon.Pointer.Class", optional: true},

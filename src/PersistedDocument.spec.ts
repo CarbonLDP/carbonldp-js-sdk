@@ -476,7 +476,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 					{name: "slug", type: "string", optional: true, description: "Slug that will be used for the URI of the new access point."},
 					{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customisable options for the request."},
 				],
-				{ type: "Promise<[Carbon.Pointer.Class, Carbon.HTTP.Response.Class]>" }
+				{type: "Promise<[Carbon.Pointer.Class, Carbon.HTTP.Response.Class]>"}
 			), ():void => {
 				expect( document.createAccessPoint ).toBeDefined();
 				expect( Utils.isFunction( document.createAccessPoint ) ).toBe( true );
@@ -526,7 +526,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 			it( hasMethod(
 				INSTANCE,
 				"executeRawSELECTQuery",
-				"Executes a SELECT query in the document and returns a raw application/sparql-results+json object.",[
+				"Executes a SELECT query in the document and returns a raw application/sparql-results+json object.", [
 					{name: "selectQuery", type: "string"},
 					{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true},
 				],
@@ -543,7 +543,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 			it( hasMethod(
 				INSTANCE,
 				"executeSELECTQuery",
-				"Executes a SELECT query in the document and returns the results as a `Carbon.SPARQL.SELECTResults.Class` object.",[
+				"Executes a SELECT query in the document and returns the results as a `Carbon.SPARQL.SELECTResults.Class` object.", [
 					{name: "selectQuery", type: "string"},
 					{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true},
 				],
@@ -560,7 +560,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 			it( hasMethod(
 				INSTANCE,
 				"executeRawCONSTRUCTQuery",
-				"Executes a CONSTRUCT query in the document and returns a string with the resulting model.",[
+				"Executes a CONSTRUCT query in the document and returns a string with the resulting model.", [
 					{name: "constructQuery", type: "string"},
 					{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true},
 				],
@@ -577,7 +577,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 			it( hasMethod(
 				INSTANCE,
 				"executeRawDESCRIBEQuery",
-				"Executes a DESCRIBE query in the document and returns a string with the resulting model.",[
+				"Executes a DESCRIBE query in the document and returns a string with the resulting model.", [
 					{name: "constructQuery", type: "string"},
 					{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true},
 				],

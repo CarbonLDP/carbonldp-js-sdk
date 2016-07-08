@@ -69,7 +69,7 @@ describe( module(
 
 			expect( error ).toBeTruthy();
 			expect( error instanceof UnknownError ).toBe( true );
-		});
+		} );
 
 		it( hasMethod(
 			INSTANCE,

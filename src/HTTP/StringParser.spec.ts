@@ -1,27 +1,16 @@
 import {
 	INSTANCE,
-	STATIC,
 
 	module,
 
-	isDefined,
 
-	interfaze,
 	clazz,
-	method,
 
-	hasConstructor,
+	isDefined,
 	hasDefaultExport,
 	hasMethod,
-	hasSignature,
-	hasProperty,
-	hasInterface,
-	extendsClass,
-
-	MethodArgument,
 } from "./../test/JasmineExtender";
 
-import * as Errors from "./../Errors";
 import * as Utils from "./../Utils";
 
 import * as StringParser from "./StringParser";
@@ -34,9 +23,15 @@ describe( module( "Carbon/HTTP/StringParser" ), ():void => {
 	} );
 
 	describe( clazz( "Carbon.HTTP.StringParser.Class", "Parses a `Carbon.HTTP.Response.Class` and returns a string." ), ():void => {
-		it( hasMethod( INSTANCE, "parse", "Gets a string and returns a promise with the same string.", [
-			{ name: "body", type: "Carbon.HTTP.Response.Class" }
-		], { type: "Promise<string>" } ), ( done:{ ():void; fail:( error:any ) => void } ):void => {
+
+		it( hasMethod(
+			INSTANCE,
+			"parse",
+			"Gets a string and returns a Promise with the same string.", [
+				{name: "body", type: "Carbon.HTTP.Response.Class"},
+			],
+			{type: "Promise<string>"}
+		), ( done:{ ():void; fail:( error:any ) => void } ):void => {
 			let stringParser:StringParser.Class = new StringParser.Class();
 
 			// Property Integrity

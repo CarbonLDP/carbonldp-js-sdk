@@ -37,7 +37,7 @@ describe( module( "Carbon/LDP/VolatileResource" ), ():void => {
 			STATIC,
 			"is",
 			"Return true if the object provided is considered a `Carbon.LDP.VolatileResource.Class` object.", [
-				{ name: "object", type: "Object", description: "Object to check." }
+				{name: "object", type: "Object", description: "Object to check."}
 			],
 			{type: "boolean"}
 		), ():void => {
@@ -62,7 +62,7 @@ describe( module( "Carbon/LDP/VolatileResource" ), ():void => {
 			STATIC,
 			"hasRDFClass",
 			"Return true if the object provided have the RDF_CLASS of a VolatileResource, either if it's a Carbon Resource or an RDF object.", [
-				{ name: "object", type: "Object", description: "Object to check." }
+				{name: "object", type: "Object", description: "Object to check."}
 			],
 			{type: "boolean"}
 		), ():void => {

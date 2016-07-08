@@ -97,8 +97,8 @@ describe( module( "Carbon/RDF/RDFNode" ), ():void => {
 			expect( RDFNode.Util.areEqual( node1Copy, node1 ) ).toBe( true );
 
 			expect( RDFNode.Util.areEqual( node1, node2 ) ).toBe( false );
-		});
-		
+		} );
+
 		it( hasMethod(
 			STATIC,
 			"hasType",
@@ -139,8 +139,8 @@ describe( module( "Carbon/RDF/RDFNode" ), ():void => {
 			};
 			expect( RDFNode.Util.hasType( node, "http://example.com/type-1/" ) ).toBe( false );
 			expect( RDFNode.Util.hasType( node, "http://example.com/type-2/" ) ).toBe( false );
-		});
-		
+		} );
+
 		it( hasMethod(
 			STATIC,
 			"getTypes",
@@ -175,7 +175,7 @@ describe( module( "Carbon/RDF/RDFNode" ), ():void => {
 				"@id": "http://example.com/resouce/",
 			};
 			expect( RDFNode.Util.getTypes( node ) ).toEqual( [] );
-		});
+		} );
 
 		it( hasMethod(
 			STATIC,

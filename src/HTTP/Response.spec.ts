@@ -62,31 +62,31 @@ describe( module(
 
 			it( hasSignature(
 				"Signature that only works in a web browser.", [
-				{ name: "request", type: "XMLHttpRequest" }
-			]), ( done:{ ():void, fail:() => void } ):void => {
+					{name: "request", type: "XMLHttpRequest"}
+				] ), ( done:{ ():void, fail:() => void } ):void => {
 
 				createResponse().then( ( [ response, request ]:[ Response.Class, XMLHttpRequest | ClientRequest ] ) => {
 					expect( response ).toBeDefined();
 					expect( response instanceof Response.Class ).toBe( true );
 
 					done();
-				}).catch( done.fail );
+				} ).catch( done.fail );
 
 			} );
 
 			it( hasSignature(
 				"Signature that only works in Node.js.", [
-				{ name: "request", type: "ClientRequest" },
-				{ name: "data", type: "string" },
-				{ name: "response", type: "IncomingMessage" }
-			]), ( done:{ ():void, fail:() => void } ):void => {
+					{name: "request", type: "ClientRequest"},
+					{name: "data", type: "string"},
+					{name: "response", type: "IncomingMessage"}
+				] ), ( done:{ ():void, fail:() => void } ):void => {
 
 				createResponse().then( ( [ response, request ]:[ Response.Class, XMLHttpRequest | ClientRequest ] ) => {
 					expect( response ).toBeDefined();
 					expect( response instanceof Response.Class ).toBe( true );
 
 					done();
-				}).catch( done.fail );
+				} ).catch( done.fail );
 
 			} );
 
@@ -107,7 +107,7 @@ describe( module(
 				expect( response.status ).toBe( rawResponse.status );
 
 				done();
-			}).catch( done.fail );
+			} ).catch( done.fail );
 
 		} );
 
@@ -125,8 +125,8 @@ describe( module(
 				expect( response.data ).toBe( rawResponse.responseText );
 
 				done();
-			}).catch( done.fail );
-		});
+			} ).catch( done.fail );
+		} );
 
 		it( hasProperty(
 			INSTANCE,
@@ -146,7 +146,7 @@ describe( module(
 				}
 
 				done();
-			}).catch( done.fail );
+			} ).catch( done.fail );
 
 		} );
 
@@ -168,7 +168,7 @@ describe( module(
 				expect( response.request ).toBe( request );
 
 				done();
-			}).catch( done.fail );
+			} ).catch( done.fail );
 
 		} );
 
@@ -176,7 +176,7 @@ describe( module(
 			INSTANCE,
 			"getHeader",
 			"Return the Header object referred by the name specified.", [
-				{ name: "name", type: "string" }
+				{name: "name", type: "string"}
 			],
 			{type: "Carbon.HTTP.Header.Class"}
 		), ( done:{ ():void, fail:() => void } ):void => {
@@ -190,9 +190,9 @@ describe( module(
 				expect( header instanceof Header.Class ).toBe( true );
 
 				done();
-			}).catch( done.fail );
+			} ).catch( done.fail );
 
-		});
+		} );
 
 	} );
 
@@ -220,7 +220,7 @@ describe( module(
 			STATIC,
 			"getETag",
 			"Return the ETag header of a `Carbon.HTTP.Response.Class` object. Returns null if no ETag exists.", [
-				{ name: "response", type: "Carbon.HTTP.Response.Class" }
+				{name: "response", type: "Carbon.HTTP.Response.Class"}
 			],
 			{type: "string"}
 		), ( done:{ ():void, fail:() => void } ):void => {
@@ -240,10 +240,10 @@ describe( module(
 			Promise.all( promises ).then( done ).catch( done.fail );
 		} );
 
-	});
+	} );
 
 	function createResponse( type:string = "" ):Promise<[ Response.Class, XMLHttpRequest | ClientRequest ]> {
-		return new Promise<any> ( ( resolve, reject ) => {
+		return new Promise<any>( ( resolve, reject ) => {
 			if( inXMLHttpRequest ) {
 				let request:XMLHttpRequest = new XMLHttpRequest();
 				request.open( "GET", "http://example.com/request/" + type );
@@ -268,12 +268,12 @@ describe( module(
 					res.setEncoding( "utf8" );
 					res.on( "data", ( chunk ) => {
 						data = chunk;
-					});
+					} );
 					res.on( "end", () => {
 						let response = new Response.Class( <ClientRequest> request, data, res );
 						resolve( [ response, request ] )
-					});
-				});
+					} );
+				} );
 
 				request.on( "error", reject );
 				request.end();

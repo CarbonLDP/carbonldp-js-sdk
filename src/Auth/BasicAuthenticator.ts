@@ -40,7 +40,7 @@ export class Class implements Authenticator<UsernameAndPasswordToken> {
 	}
 
 	private addBasicAuthenticationHeader( headers:Map<string, HTTP.Header.Class> ):void {
-		if ( headers.has( "authorization" ) ) return;
+		if( headers.has( "authorization" ) ) return;
 
 		let header:HTTP.Header.Class = new HTTP.Header.Class();
 		headers.set( "authorization", header );

@@ -31,13 +31,13 @@ describe( module( "Carbon/RDF/URI" ), ():void => {
 		} );
 
 		it( hasConstructor( [
-			{ name: "stringValue", type: "string", description: "The string that represents the URI." }
-		]), ():void => {
-			let uri = new URI.Class( "http://example.com/resource/" );
+			{name: "stringValue", type: "string", description: "The string that represents the URI."},
+		] ), ():void => {
+			let uri:URI.Class = new URI.Class( "http://example.com/resource/" );
 
-			expect( !! uri ).toBe( true );
+			expect( ! ! uri ).toBe( true );
 			expect( uri instanceof URI.Class ).toBe( true );
-		});
+		} );
 
 		it( hasProperty(
 			INSTANCE,
@@ -45,7 +45,7 @@ describe( module( "Carbon/RDF/URI" ), ():void => {
 			"string",
 			"The string value of the URI object."
 		), ():void => {
-			let uri = new URI.Class( "http://example.com/resource/" );
+			let uri:URI.Class = new URI.Class( "http://example.com/resource/" );
 
 			expect( uri.stringValue ).toBe( "http://example.com/resource/" );
 
@@ -57,16 +57,16 @@ describe( module( "Carbon/RDF/URI" ), ():void => {
 			INSTANCE,
 			"toString",
 			"Returns a string that represents the URI of the class.",
-			{ type: "string" }
+			{type: "string"}
 		), ():void => {
-			let stringURI = "http://example.com/resource/";
-			let uri = new URI.Class( stringURI );
+			let stringURI:string = "http://example.com/resource/";
+			let uri:URI.Class = new URI.Class( stringURI );
 
 			expect( "toString" in uri ).toBe( true );
 			expect( Utils.isFunction( uri.toString ) ).toBe( true );
 
 			expect( uri.toString() ).toEqual( stringURI );
-		});
+		} );
 
 
 	} );
@@ -81,8 +81,8 @@ describe( module( "Carbon/RDF/URI" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"hasFragment",
-			"Returns true if the URI provided contains a fragment", [
-				{name: "uri", type: "string"}
+			"Returns true if the URI provided contains a fragment.", [
+				{name: "uri", type: "string"},
 			],
 			{type: "boolean"}
 		), ():void => {
@@ -99,8 +99,8 @@ describe( module( "Carbon/RDF/URI" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"hasQuery",
-			"Returns true if the URI provided contains query parameters", [
-				{name: "uri", type: "string"}
+			"Returns true if the URI provided contains query parameters.", [
+				{name: "uri", type: "string"},
 			],
 			{type: "boolean"}
 		), ():void => {
@@ -118,7 +118,7 @@ describe( module( "Carbon/RDF/URI" ), ():void => {
 			STATIC,
 			"hasProtocol",
 			"Returns true if the URI provided has a protocol.", [
-				{ name: "uri", type: "string" }
+				{name: "uri", type: "string"},
 			],
 			{type: "boolean"}
 		), ():void => {
@@ -140,7 +140,7 @@ describe( module( "Carbon/RDF/URI" ), ():void => {
 			STATIC,
 			"isAbsolute",
 			"Returns true if the URI provided is absolute.", [
-				{ name: "uri", type: "string" }
+				{name: "uri", type: "string"},
 			],
 			{type: "boolean"}
 		), ():void => {
@@ -161,7 +161,7 @@ describe( module( "Carbon/RDF/URI" ), ():void => {
 			STATIC,
 			"isRelative",
 			"Returns true if the URI provided is relative.", [
-				{ name: "uri", type: "string" }
+				{name: "uri", type: "string"},
 			],
 			{type: "boolean"}
 		), ():void => {
@@ -182,7 +182,7 @@ describe( module( "Carbon/RDF/URI" ), ():void => {
 			STATIC,
 			"isBNodeID",
 			"Returns true if the URI provided reference to a BlankNode.", [
-				{ name: "uri", type: "string" }
+				{name: "uri", type: "string"},
 			],
 			{type: "boolean"}
 		), ():void => {
@@ -221,7 +221,7 @@ describe( module( "Carbon/RDF/URI" ), ():void => {
 			STATIC,
 			"isPrefixed",
 			"Returns true if the URI provided has a prefix.", [
-				{ name: "uri", type: "string" }
+				{name: "uri", type: "string"},
 			],
 			{type: "boolean"}
 		), ():void => {
@@ -243,18 +243,18 @@ describe( module( "Carbon/RDF/URI" ), ():void => {
 			STATIC,
 			"isFragmentOf",
 			"Returns true if the first URI is a fragment od the second URI provided.", [
-				{ name: "fragmentURI", type: "string" },
-				{ name: "uri", type: "string" }
+				{name: "fragmentURI", type: "string"},
+				{name: "uri", type: "string"},
 			],
 			{type: "boolean"}
 		), ():void => {
 			expect( "isFragmentOf" in URI.Util ).toBe( true );
 			expect( Utils.isFunction( URI.Util.isFragmentOf ) ).toBe( true );
 
-			let fragmentURI = "http://example.com/resource/#fragment";
-			let resourceURI = "http://example.com/resource/";
-			let prefixFragmentURI = "prefix:resource/#fragment";
-			let prefixResourceURI = "prefix:resource/";
+			let fragmentURI:string = "http://example.com/resource/#fragment";
+			let resourceURI:string = "http://example.com/resource/";
+			let prefixFragmentURI:string = "prefix:resource/#fragment";
+			let prefixResourceURI:string = "prefix:resource/";
 
 			expect( URI.Util.isFragmentOf( fragmentURI, resourceURI ) ).toBe( true );
 			expect( URI.Util.isFragmentOf( prefixFragmentURI, prefixResourceURI ) ).toBe( true );
@@ -271,23 +271,23 @@ describe( module( "Carbon/RDF/URI" ), ():void => {
 			STATIC,
 			"isBaseOf",
 			"Return true if the first URI is parent of the second URI provided.", [
-				{ name: "baseURI", type: "string" },
-				{ name: "uri", type: "string" }
+				{name: "baseURI", type: "string"},
+				{name: "uri", type: "string"},
 			],
 			{type: "boolean"}
 		), ():void => {
 			expect( "isBaseOf" in URI.Util ).toBe( true );
 			expect( Utils.isFunction( URI.Util.isBaseOf ) ).toBe( true );
 
-			let namespaceURI = "http://example.com/resource/#";
-			let fragmentURI = "http://example.com/resource/#fragment";
-			let childURI = "http://example.com/resource/child/";
-			let resourceURI = "http://example.com/resource/";
-			let prefixFragmentURI = "prefix:resource/#fragment";
-			let prefixResourceURI = "prefix:resource/";
-			let prefixChildURI = "prefix:resource/child/";
-			let anotherURI = "http://another_example.com/resource/";
-			let prefixAnotherURI = "another_prefix:resource";
+			let namespaceURI:string = "http://example.com/resource/#";
+			let fragmentURI:string = "http://example.com/resource/#fragment";
+			let childURI:string = "http://example.com/resource/child/";
+			let resourceURI:string = "http://example.com/resource/";
+			let prefixFragmentURI:string = "prefix:resource/#fragment";
+			let prefixResourceURI:string = "prefix:resource/";
+			let prefixChildURI:string = "prefix:resource/child/";
+			let anotherURI:string = "http://another_example.com/resource/";
+			let prefixAnotherURI:string = "another_prefix:resource";
 
 			expect( URI.Util.isBaseOf( namespaceURI, fragmentURI ) ).toBe( true );
 			expect( URI.Util.isBaseOf( resourceURI, fragmentURI ) ).toBe( true );
@@ -311,18 +311,18 @@ describe( module( "Carbon/RDF/URI" ), ():void => {
 			STATIC,
 			"getRelativeURI",
 			"Returns the relative URI from a base URI provided.", [
-				{ name: "absoluteURI", type: "string" },
-				{ name: "base", type: "string" }
+				{name: "absoluteURI", type: "string"},
+				{name: "base", type: "string"},
 			],
 			{type: "string"}
 		), ():void => {
 			expect( "getRelativeURI" in URI.Util ).toBe( true );
 			expect( Utils.isFunction( URI.Util.getRelativeURI ) ).toBe( true );
 
-			let childURI = "http://example.com/resource/child/";
-			let resourceURI = "http://example.com/resource/";
-			let anotherURI = "http://another_example.com/resource/";
-			let relativeURI = "child/";
+			let childURI:string = "http://example.com/resource/child/";
+			let resourceURI:string = "http://example.com/resource/";
+			let anotherURI:string = "http://another_example.com/resource/";
+			let relativeURI:string = "child/";
 
 			expect( URI.Util.getRelativeURI( childURI, resourceURI ) ).toBe( relativeURI );
 
@@ -334,19 +334,19 @@ describe( module( "Carbon/RDF/URI" ), ():void => {
 			STATIC,
 			"getDocumentURI",
 			"Returns the URI that just reference to the Document of the URI provided.", [
-				{ name: "uri", type: "string" }
+				{name: "uri", type: "string"},
 			]
 		), ():void => {
 			expect( "getDocumentURI" in URI.Util ).toBe( true );
 			expect( Utils.isFunction( URI.Util.getDocumentURI ) ).toBe( true );
 
-			let documentURI = "http://example.com/resource/";
-			let fragmentURI = "http://example.com/resource/#fragment";
-			let relativeDocumentURI = "resource/";
-			let relativeFragmentURI = "resource/#fragment";
-			let prefixDocumentURI = "prefix:resource/";
-			let prefixFragmentURI = "prefix:resource/#fragment";
-			let errorURI = "http://example.com/resource/#fragment#anotherFragment";
+			let documentURI:string = "http://example.com/resource/";
+			let fragmentURI:string = "http://example.com/resource/#fragment";
+			let relativeDocumentURI:string = "resource/";
+			let relativeFragmentURI:string = "resource/#fragment";
+			let prefixDocumentURI:string = "prefix:resource/";
+			let prefixFragmentURI:string = "prefix:resource/#fragment";
+			let errorURI:string = "http://example.com/resource/#fragment#anotherFragment";
 
 			expect( URI.Util.getDocumentURI( fragmentURI ) ).toEqual( documentURI );
 			expect( URI.Util.getDocumentURI( documentURI ) ).toEqual( documentURI );
@@ -362,21 +362,21 @@ describe( module( "Carbon/RDF/URI" ), ():void => {
 			STATIC,
 			"getFragment",
 			"Returns the name of the fragment in the URI provided. If no fragment exists in the URI, null will be returned.", [
-				{ name: "uri", type: "string" }
+				{name: "uri", type: "string"},
 			],
 			{type: "string"}
 		), ():void => {
 			expect( "getFragment" in URI.Util ).toBe( true );
 			expect( Utils.isFunction( URI.Util.getFragment ) ).toBe( true );
 
-			let documentURI = "http://example.com/resource/";
-			let fragmentURI = "http://example.com/resource/#fragment";
-			let relativeDocumentURI = "resource/";
-			let relativeFragmentURI = "resource/#fragment";
-			let fragmentName = "fragment";
-			let errorURI = "http://example.com/resource/#fragment#anotherFragment";
-			let prefixDocumentURI = "prefix:resource/";
-			let prefixFragmentURI = "prefix:resource/#fragment";
+			let documentURI:string = "http://example.com/resource/";
+			let fragmentURI:string = "http://example.com/resource/#fragment";
+			let relativeDocumentURI:string = "resource/";
+			let relativeFragmentURI:string = "resource/#fragment";
+			let fragmentName:string = "fragment";
+			let errorURI:string = "http://example.com/resource/#fragment#anotherFragment";
+			let prefixDocumentURI:string = "prefix:resource/";
+			let prefixFragmentURI:string = "prefix:resource/#fragment";
 
 			expect( URI.Util.getFragment( fragmentURI ) ).toEqual( fragmentName );
 			expect( URI.Util.getFragment( relativeFragmentURI ) ).toEqual( fragmentName );
@@ -393,9 +393,9 @@ describe( module( "Carbon/RDF/URI" ), ():void => {
 			STATIC,
 			"getSlug",
 			"Returns the slug of the URI. It takes an ending slash as part as the slug.", [
-				{ name: "uri", type: "string" }
+				{name: "uri", type: "string"},
 			],
-			{ type: "string" }
+			{type: "string"}
 		), ():void => {
 			// Property integrity
 			(() => {
@@ -424,8 +424,8 @@ describe( module( "Carbon/RDF/URI" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"getParameters",
-			"Returns the query parameters in form of a map of the uri provided.", [
-				{name: "uri", type: "string"}
+			"Returns the query parameters of the URI provided in form of a Map.", [
+				{name: "uri", type: "string"},
 			],
 			{type: "Map<string, string | string[]>"}
 		), ():void => {
@@ -469,20 +469,20 @@ describe( module( "Carbon/RDF/URI" ), ():void => {
 			STATIC,
 			"resolve",
 			"Return a URI formed from a parent URI and a relative child URI.", [
-				{ name: "parentURI", type: "string" },
-				{ name: "childURI",  type: "string" }
+				{name: "parentURI", type: "string"},
+				{name: "childURI", type: "string"},
 			],
 			{type: "string"}
 		), ():void => {
 			expect( "resolve" in URI.Util ).toBe( true );
 			expect( Utils.isFunction( URI.Util.resolve ) ).toBe( true );
 
-			let parentURI = "http://example.com/resource/";
-			let parentURI2 = "http://example.com/resource";
-			let childURI = "/child/";
-			let childURI2 = "child/";
-			let resultURI = "http://example.com/resource/child/";
-			let prefixURI = "prefix:resource";
+			let parentURI:string = "http://example.com/resource/";
+			let parentURI2:string = "http://example.com/resource";
+			let childURI:string = "/child/";
+			let childURI2:string = "child/";
+			let resultURI:string = "http://example.com/resource/child/";
+			let prefixURI:string = "prefix:resource";
 
 			expect( URI.Util.resolve( parentURI, childURI ) ).toEqual( resultURI );
 			expect( URI.Util.resolve( parentURI2, childURI ) ).toEqual( resultURI );
@@ -498,18 +498,18 @@ describe( module( "Carbon/RDF/URI" ), ():void => {
 			STATIC,
 			"removeProtocol",
 			"Removes the protocol of the URI provided", [
-				{name: "uri", type: "string"}
+				{name: "uri", type: "string"},
 			],
 			{type: "string"}
 		), ():void => {
 			expect( "removeProtocol" in URI.Util ).toBe( true );
 			expect( Utils.isFunction( URI.Util.removeProtocol ) ).toBe( true );
 
-			let URI1 = "http://example.com/resource";
-			let URI2 = "https://example.com/resource";
-			let URI3 = "resource/child/";
-			let resultURI = "://example.com/resource";
-			let prefixURI = "prefix:resource/";
+			let URI1:string = "http://example.com/resource";
+			let URI2:string = "https://example.com/resource";
+			let URI3:string = "resource/child/";
+			let resultURI:string = "://example.com/resource";
+			let prefixURI:string = "prefix:resource/";
 
 			expect( URI.Util.removeProtocol( URI1 ) ).toEqual( resultURI );
 			expect( URI.Util.removeProtocol( URI2 ) ).toEqual( resultURI );
@@ -525,22 +525,22 @@ describe( module( "Carbon/RDF/URI" ), ():void => {
 
 			it( hasSignature(
 				"Replace a base of a URI with the prefix provided. If the prefix can not be resolved, the URI provided will be returned.", [
-					{ name: "uri", type: "string" },
-					{ name: "prefix", type: "string" },
-					{ name: "prefixURI", type: "string" }
+					{name: "uri", type: "string"},
+					{name: "prefix", type: "string"},
+					{name: "prefixURI", type: "string"},
 				],
 				{type: "string"}
 			), ():void => {
 				expect( "prefix" in URI.Util ).toBe( true );
 				expect( Utils.isFunction( URI.Util.prefix ) ).toBe( true );
 
-				let resourceURI = "http://example.com/resource/";
-				let anotherResourceURI = "http://example.com/another_resource/";
-				let prefixURI = "http://example.com/";
-				let anotherPrefixURI = "http://another_example.com/";
-				let prefix = "prefix";
-				let anotherPrefix = "another_prefix";
-				let prefixResourceURI = "prefix:resource/";
+				let resourceURI:string = "http://example.com/resource/";
+				let anotherResourceURI:string = "http://example.com/another_resource/";
+				let prefixURI:string = "http://example.com/";
+				let anotherPrefixURI:string = "http://another_example.com/";
+				let prefix:string = "prefix";
+				let anotherPrefix:string = "another_prefix";
+				let prefixResourceURI:string = "prefix:resource/";
 
 				expect( URI.Util.prefix( resourceURI, prefix, prefixURI ) ).toBe( prefixResourceURI );
 				expect( URI.Util.prefix( prefixResourceURI, prefix, prefixURI ) ).toBe( prefixResourceURI );
@@ -552,8 +552,8 @@ describe( module( "Carbon/RDF/URI" ), ():void => {
 
 			it( hasSignature(
 				"Replace the base of a URI with a prefix in accordance with the ObjectSchema provided. If the prefix can not be resolved, the URI provided will be returned.", [
-					{ name: "uri", type: "string" },
-					{ name: "objectSchema", type: "Carbon.ObjectSchema.DigestedObjectSchema" }
+					{name: "uri", type: "string"},
+					{name: "objectSchema", type: "Carbon.ObjectSchema.DigestedObjectSchema"},
 				],
 				{type: "string"}
 			), ():void => {
@@ -561,25 +561,25 @@ describe( module( "Carbon/RDF/URI" ), ():void => {
 				expect( Utils.isFunction( URI.Util.prefix ) ).toBe( true );
 
 
-				let resourceURI = "http://example.com/resource/";
-				let anotherResourceURI = "http://another_example.com/resource/";
-				let prefixResourceURI = "prefix:resource/";
+				let resourceURI:string = "http://example.com/resource/";
+				let anotherResourceURI:string = "http://another_example.com/resource/";
+				let prefixResourceURI:string = "prefix:resource/";
 
 				let schema:ObjectSchema.Class = {
 					"xsd": "http://www.w3.org/2001/XMLSchema#",
 					"prefix": "http://example.com/",
 					"some_resource": {
 						"@id": "prefix:some_resource",
-						"@type": "@id"
-					}
+						"@type": "@id",
+					},
 				};
 				let anotherSchema:ObjectSchema.Class = {
 					"xsd": "http://www.w3.org/2001/XMLSchema#",
 					"another_prefix": "http://another_example.com/",
 					"some_resource": {
 						"@id": "prefix:some_resource",
-						"@type": "@id"
-					}
+						"@type": "@id",
+					},
 				};
 				let digestedSchema:ObjectSchema.DigestedObjectSchema = ObjectSchema.Digester.digestSchema( schema );
 				let anotherDigestedSchema:ObjectSchema.DigestedObjectSchema = ObjectSchema.Digester.digestSchema( anotherSchema );

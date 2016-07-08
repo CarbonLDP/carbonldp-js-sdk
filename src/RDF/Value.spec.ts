@@ -333,9 +333,9 @@ describe( module( "Carbon/RDF/Value" ), ():void => {
 			"getProperties",
 			"Returns the property searched as an Array with the parsed Literal, Pointer or List.\n" +
 			"Returns null if the property is not found, or an empty array if it cannot be parsed.", [
-				{ name: "expandedObject", type: "any" },
-				{ name: "propertyURI", type: "string" },
-				{ name: "pointerLibrary", type: "Carbon.Pointer.Library" }
+				{name: "expandedObject", type: "any"},
+				{name: "propertyURI", type: "string"},
+				{name: "pointerLibrary", type: "Carbon.Pointer.Library"}
 			],
 			{type: "any"}
 		), ():void => {
@@ -485,9 +485,9 @@ describe( module( "Carbon/RDF/Value" ), ():void => {
 			"getPropertyLiterals",
 			"Returns the property searched as an Array with the parsed Literal.\n" +
 			"Returns null if the property is not found, or an empty array if it cannot be parsed.", [
-				{ name: "expandedObject", type: "any" },
-				{ name: "propertyURI", type: "string" },
-				{ name: "literalType", type: "string" }
+				{name: "expandedObject", type: "any"},
+				{name: "propertyURI", type: "string"},
+				{name: "literalType", type: "string"}
 			],
 			{type: "any"}
 		), ():void => {
@@ -543,9 +543,9 @@ describe( module( "Carbon/RDF/Value" ), ():void => {
 			"getPropertyLanguageMap",
 			"Returns an object associating the language with the parsed string literal.\n" +
 			"Returns null if the property is not found, or an empty object if it is not a property with language.", [
-				{ name: "expandedObject", type: "any" },
-				{ name: "propertyURI", type: "string" },
-				{ name: "pointerLibrary", type: "Carbon.Pointer.Library" }
+				{name: "expandedObject", type: "any"},
+				{name: "propertyURI", type: "string"},
+				{name: "pointerLibrary", type: "Carbon.Pointer.Library"}
 			],
 			{type: "any"}
 		), ():void => {
@@ -599,8 +599,8 @@ describe( module( "Carbon/RDF/Value" ), ():void => {
 			"parseValue",
 			"Returns the parsed object from an Literal, Node, or List.\n" +
 			"Returns null if it cannot be parsed", [
-				{ name: "propertyValue", type: "Carbon.RDF.Value.Class" },
-				{ name: "pointerLibrary", type: "Carbon.Pointer.Library" }
+				{name: "propertyValue", type: "Carbon.RDF.Value.Class"},
+				{name: "pointerLibrary", type: "Carbon.Pointer.Library"}
 			],
 			{type: "any"}
 		), ():void => {

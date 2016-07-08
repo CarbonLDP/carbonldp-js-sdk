@@ -11,7 +11,7 @@ import {
 	hasProperty,
 } from "./../test/JasmineExtender";
 
-describe( module( "Carbon/Errors/AbstractError" ), function ():void {
+describe( module( "Carbon/Errors/AbstractError" ), function():void {
 
 	describe( clazz(
 		"Carbon.Errors.AbstractError",

@@ -8,7 +8,7 @@ import {
 	hasConstructor,
 	hasProperty,
 	hasMethod,
-	extendsClass
+	extendsClass,
 } from "./../test/JasmineExtender";
 
 import AbstractContext from "./../AbstractContext";
@@ -35,7 +35,7 @@ describe( module( "Carbon/App/Context" ), ():void => {
 					return uri;
 				}
 			}
-			let parentContext = new MockedContext();
+			parentContext = new MockedContext();
 			let app:PersistedApp = <any> App.Factory.create( "App name", "App description" );
 			app.rootContainer = <any> Pointer.Factory.create( "http://example.com/apps/example-app/" );
 			appContext = new AppContext( parentContext, app );

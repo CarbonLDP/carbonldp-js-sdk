@@ -271,10 +271,10 @@ describe( module( "Carbon/LDP/PersistedContainer" ), ():void => {
 
 				it( hasSignature(
 					"Persists a document with the slug specified as a child of the current container.", [
-					{name: "slug", type: "string", description: "The slug that will be used in the child URI."},
-					{name: "object", type: "Object", description: "The object from where create the child. If it's a non `Carbon.Document.Class` object, it's transformed into one."},
-				],
-					{ type: "Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>" }
+						{name: "slug", type: "string", description: "The slug that will be used in the child URI."},
+						{name: "object", type: "Object", description: "The object from where create the child. If it's a non `Carbon.Document.Class` object, it's transformed into one."},
+					],
+					{type: "Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>"}
 				), ():void => {
 					expect( container.createChild ).toBeDefined();
 					expect( Utils.isFunction( container.createChild ) ).toBeDefined();
@@ -316,9 +316,9 @@ describe( module( "Carbon/LDP/PersistedContainer" ), ():void => {
 
 				it( hasSignature(
 					"Creates an persists an empty child for the current container with the slug provided.", [
-					{name: "slug", type: "string", description: "The slug that will be used in the child URI."},
-				],
-					{ type: "Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>" }
+						{name: "slug", type: "string", description: "The slug that will be used in the child URI."},
+					],
+					{type: "Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>"}
 				), ():void => {
 					expect( container.createChild ).toBeDefined();
 					expect( Utils.isFunction( container.createChild ) ).toBeDefined();
@@ -594,7 +594,7 @@ describe( module( "Carbon/LDP/PersistedContainer" ), ():void => {
 				} );
 
 				it( hasSignature(
-					"Upload a File to the server as a child of the current container. This signature only works with Node.js.",[
+					"Upload a File to the server as a child of the current container. This signature only works with Node.js.", [
 						{name: "data", type: "Buffer", description: "Binary data to store in the server. The Buffer only works in Node.js."},
 					],
 					{type: "Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>"}

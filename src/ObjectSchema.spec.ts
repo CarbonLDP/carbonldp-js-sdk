@@ -105,7 +105,7 @@ describe( module( "Carbon/ObjectSchema" ), ():void => {
 			expect( digestedSchema.vocab ).toBeDefined();
 			expect( Utils.isString( digestedSchema.vocab ) ).toBe( true );
 			expect( digestedSchema.vocab ).toBe( "" );
-		});
+		} );
 
 		it( hasProperty(
 			INSTANCE,

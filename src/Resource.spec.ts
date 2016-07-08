@@ -34,7 +34,7 @@ describe( module( "Carbon/Resource" ), ():void => {
 			STATIC,
 			"hasClassProperties",
 			"Returns true if the object provided has the properties of a `Carbon.Resource.Class` object.", [
-				{ name: "resource", type: "Object" }
+				{name: "resource", type: "Object"}
 			],
 			{type: "boolean"}
 		), ():void => {
@@ -57,7 +57,7 @@ describe( module( "Carbon/Resource" ), ():void => {
 			STATIC,
 			"is",
 			"Returns true if the object provided is considered a `Carbon.Resource.Class` object.", [
-				{ name: "resource", type: "Object" }
+				{name: "resource", type: "Object"}
 			],
 			{type: "boolean"}
 		), ():void => {
@@ -81,8 +81,8 @@ describe( module( "Carbon/Resource" ), ():void => {
 			STATIC,
 			"create",
 			"Creates a Resource object with the id and types provided.", [
-				{ name: "id", type: "string", optional: true },
-				{ name: "types", type: "string[]", optional: true }
+				{name: "id", type: "string", optional: true},
+				{name: "types", type: "string[]", optional: true}
 			],
 			{type: "Carbon.Resource.Class"}
 		), ():void => {
@@ -126,9 +126,9 @@ describe( module( "Carbon/Resource" ), ():void => {
 			STATIC,
 			"createFrom",
 			"Creates a Resource object with the id and types provided.", [
-				{ name: "object", type: "T extends Object" },
-				{ name: "id", type: "string", optional: true },
-				{ name: "types", type: "string[]", optional: true }
+				{name: "object", type: "T extends Object"},
+				{name: "id", type: "string", optional: true},
+				{name: "types", type: "string[]", optional: true}
 			],
 			{type: "T & Carbon.Resource.Class"}
 		), ():void => {
@@ -190,7 +190,7 @@ describe( module( "Carbon/Resource" ), ():void => {
 			STATIC,
 			"decorate",
 			"Decorates the object provided with the properties and methods of a `Carbon.Resource.Class` object.", [
-				{ name: "object", type: "T extends Object" }
+				{name: "object", type: "T extends Object"}
 			],
 			{type: "T & Carbon.Resource.Class"}
 		), ():void => {

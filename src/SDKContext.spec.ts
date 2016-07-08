@@ -106,7 +106,7 @@ describe( module( "Carbon/SDKContext" ), ():void => {
 			INSTANCE,
 			"getBaseURI",
 			"Returns the base URI of the context. For an instance of `Carbon.SDKContext.Class`, this is an empty string.",
-			{ type: "string" }
+			{type: "string"}
 		), ():void => {
 			expect( context.getBaseURI ).toBeDefined();
 			expect( Utils.isFunction( context.getBaseURI ) ).toBe( true );
@@ -118,7 +118,7 @@ describe( module( "Carbon/SDKContext" ), ():void => {
 			INSTANCE,
 			"resolve",
 			"Returns the resolved relative URI specified, in accordance with the scope of the context.", [
-				{ name: "relativeURI", type: "string" }
+				{name: "relativeURI", type: "string"}
 			],
 			{type: "string"}
 		), ():void => {
@@ -133,7 +133,7 @@ describe( module( "Carbon/SDKContext" ), ():void => {
 			INSTANCE,
 			"hasSetting",
 			"Returns true if the setting sought for has been assign.", [
-				{ name: "name", type: "string" }
+				{name: "name", type: "string"}
 			],
 			{type: "boolean"}
 		), ():void => {
@@ -184,8 +184,8 @@ describe( module( "Carbon/SDKContext" ), ():void => {
 			INSTANCE,
 			"setSetting",
 			"Set a setting in the current context.", [
-				{ name: "name", type: "string" },
-				{ name: "value", type: "any" }
+				{name: "name", type: "string"},
+				{name: "value", type: "any"}
 			]
 		), ():void => {
 			expect( context.setSetting ).toBeDefined();
@@ -202,7 +202,7 @@ describe( module( "Carbon/SDKContext" ), ():void => {
 			INSTANCE,
 			"deleteSetting",
 			"Deletes the setting specified by the name provided from the current context.", [
-				{ name: "name", type: "string" }
+				{name: "name", type: "string"}
 			]
 		), ():void => {
 			expect( context.deleteSetting ).toBeDefined();
@@ -224,7 +224,7 @@ describe( module( "Carbon/SDKContext" ), ():void => {
 			INSTANCE,
 			"hasObjectSchema",
 			"Returns true if there is an ObjectSchema for the specified type.", [
-				{ name: "type", type: "string" }
+				{name: "type", type: "string"}
 			],
 			{type: "boolean"}
 		), ():void => {
@@ -249,7 +249,7 @@ describe( module( "Carbon/SDKContext" ), ():void => {
 			"getObjectSchema", `
 			Returns the ObjectSchema for the specified type or \`null\` if it doesn't exists.
 			If no type is specified, the general object schema of the context is returned. This is an schema that applies for all the Resources.`, [
-				{ name: "type", type: "string", optional: true, default: "null" }
+				{name: "type", type: "string", optional: true, default: "null"}
 			],
 			{type: "Carbon.ObjectSchema.DigestedObjectSchema"}
 		), ():void => {
@@ -305,8 +305,8 @@ describe( module( "Carbon/SDKContext" ), ():void => {
 
 			it( hasSignature(
 				"Extends the schema for a specified type of Resource.\nIf a schema for the type exists in the parent context, this is duplicated for the actual context, but only the first time this schema is extended.", [
-					{ name: "type", type: "string" },
-					{ name: "objectSchema", type: "Carbon.ObjectSchema.DigestedObjectSchema" }
+					{name: "type", type: "string"},
+					{name: "objectSchema", type: "Carbon.ObjectSchema.DigestedObjectSchema"}
 				]
 			), ():void => {
 				expect( context.extendObjectSchema ).toBeDefined();
@@ -336,7 +336,7 @@ describe( module( "Carbon/SDKContext" ), ():void => {
 
 			it( hasSignature(
 				"Extends the general schema of the current context.\nIf a general schema exists in the parent context, this is duplicated for the current context, but only the first time the schema is extended.", [
-					{ name: "objectSchema", type: "Carbon.ObjectSchema.DigestedObjectSchema" }
+					{name: "objectSchema", type: "Carbon.ObjectSchema.DigestedObjectSchema"}
 				]
 			), ():void => {
 				expect( context.extendObjectSchema ).toBeDefined();
@@ -374,7 +374,7 @@ describe( module( "Carbon/SDKContext" ), ():void => {
 			INSTANCE,
 			"clearObjectSchema",
 			"Remove the schema of the type specified, or the general schema if no type is provided.", [
-				{ name: "type", type: "string", optional: true }
+				{name: "type", type: "string", optional: true}
 			]
 		), ():void => {
 			expect( context.clearObjectSchema ).toBeDefined();

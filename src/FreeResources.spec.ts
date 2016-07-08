@@ -387,7 +387,7 @@ describe( module( "Carbon/FreeResources" ), ():void => {
 					// Asks to its documents instance
 					expect( freeResources.inScope( "http://example.com/some/" ) ).toBe( true );
 					expect( freeResources.inScope( "relative-document/" ) ).toBe( true );
-				});
+				} );
 
 				it( hasSignature(
 					"Returns true if the the Pointer provided can be in the scope of the object.", [
@@ -400,7 +400,7 @@ describe( module( "Carbon/FreeResources" ), ():void => {
 					// Asks to its documents instance
 					expect( freeResources.inScope( Pointer.Factory.create( "http://example.com/some/" ) ) ).toBe( true );
 					expect( freeResources.inScope( Pointer.Factory.create( "relative-document/" ) ) ).toBe( true );
-				});
+				} );
 
 			} );
 

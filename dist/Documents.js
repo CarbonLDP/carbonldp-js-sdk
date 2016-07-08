@@ -188,7 +188,7 @@ var Documents = (function () {
         this.setDefaultRequestOptions(requestOptions, NS.LDP.Class.Container);
         var containerURI = parentURI;
         if (!!retrievalPreferences)
-            parentURI += RetrievalPreferences.Util.stringifyRetrievalPreferences(retrievalPreferences, this.getDigestedObjectSchema([]));
+            parentURI += RetrievalPreferences.Util.stringifyRetrievalPreferences(retrievalPreferences);
         var containerRetrievalPreferences = {
             include: [
                 NS.LDP.Class.PreferContainment,
@@ -333,7 +333,7 @@ var Documents = (function () {
         this.setDefaultRequestOptions(requestOptions, NS.LDP.Class.Container);
         var containerURI = uri;
         if (!!retrievalPreferences)
-            uri += RetrievalPreferences.Util.stringifyRetrievalPreferences(retrievalPreferences, this.getDigestedObjectSchema([]));
+            uri += RetrievalPreferences.Util.stringifyRetrievalPreferences(retrievalPreferences);
         var containerRetrievalPreferences = {
             include: [
                 NS.LDP.Class.PreferMinimalContainer,

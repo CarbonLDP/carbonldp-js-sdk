@@ -101,7 +101,7 @@ describe( module( "Carbon/Utils", "Class with useful functions used in the SDK."
 		expect( Utils.isDefined( {} ) ).toBe( true );
 		expect( Utils.isDefined( [] ) ).toBe( true );
 
-		let somethingUndefined;
+		let somethingUndefined:any;
 		expect( Utils.isDefined( undefined ) ).toBe( false );
 		expect( Utils.isDefined( somethingUndefined ) ).toBe( false );
 	} );
@@ -294,9 +294,9 @@ describe( module( "Carbon/Utils", "Class with useful functions used in the SDK."
 		expect( Utils.parseBoolean( "an invalid string" ) ).toBe( false );
 	} );
 
-	it( hasMethod( STATIC, "extend", "Shallow extends of the target object with all the objects provided.", [
+	it( hasMethod( STATIC, "extend", "Extends the target object’s properties with the properties of the objects provided.", [
 		{name: "target", type: "Object", description: "The object to extend."},
-		{name: "...objects", type: "Objects[]", description: "Every parameter left where to extract its properties and add them to the target object."}
+		{name: "...objects", type: "Objects[]", description: "Every parameter left from where to extract the properties to be added."},
 	] ), ():void => {
 		expect( Utils.extend ).toBeDefined();
 		expect( Utils.isFunction( Utils.extend ) ).toBe( true );
@@ -336,7 +336,7 @@ describe( module( "Carbon/Utils", "Class with useful functions used in the SDK."
 
 	it( hasMethod( STATIC, "forEachOwnProperty", "Executes an action for each own property of the object.", [
 		{name: "object", type: "Object", description: "The object to iterate over its properties."},
-		{name: "action", type: "function", description: "A function in the form: `action( name:string, value:any ):boolean`. The loop will break if the action function returns `false`."},
+		{name: "action", type: "( name:string, value:any ) => boolean", description: "A function that will be called for every property own property in the object. The loop will break if the action function returns `false`."},
 	] ), ():void => {
 		expect( Utils.forEachOwnProperty ).toBeDefined();
 
@@ -369,8 +369,8 @@ describe( module( "Carbon/Utils", "Class with useful functions used in the SDK."
 			STATIC,
 			"clone",
 			"Makes a shallow or deep clone of the object provided depending of the configuration specified.", [
-				{name: "object", type: "Object", description: "The object to create its copy."},
-				{name: "config", type: "{arrays?:boolean, objects?:boolean}", description: "Object that indicates if the arrays or the objects must be copied or not. By default arrays and objects will not be deep copied."}
+				{name: "object", type: "Object", description: "The object to copy."},
+				{name: "config", type: "{arrays?:boolean, objects?:boolean}", description: "Object that indicates if the arrays or objects must be copied or not. By default, arrays and objects will not be deep copied."},
 			],
 			{type: "Object", description: "The copy of the object provided."}
 		), ():void => {
@@ -514,9 +514,9 @@ describe( module( "Carbon/Utils", "Class with useful functions used in the SDK."
 			STATIC,
 			"areEqual",
 			"Makes a shallow or deep comparison, between all the enumerable properties of the provided objects, depending of the configuration specified.", [
-				{name: "object1", type: "Object", description: "First object that will be compared against the second one."},
-				{name: "object2", type: "Object", description: "Second object that will be compared against the first one."},
-				{name: "config", type: "{arrays?:boolean, objects?:boolean}", description: "Object that indicates if the arrays or the objects must have a deep comparison or not. By default arrays and objects will have a shallow comparison."}
+				{name: "object1", type: "Object", description: "First object to compare."},
+				{name: "object2", type: "Object", description: "Second object to compare."},
+				{name: "config", type: "{arrays?:boolean, objects?:boolean}", description: "Object that indicates if the arrays or the objects must have a deep comparison or not. By default the comparison is shallow."},
 			],
 			{type: "boolean"}
 		), ():void => {
@@ -622,8 +622,8 @@ describe( module( "Carbon/Utils", "Class with useful functions used in the SDK."
 		} );
 
 		it( hasMethod( STATIC, "areShallowlyEqual", "Checks if an object has the same enumerable properties with the same values as another object.", [
-			{name: "object1", type: "Object", description: "First object that will be compared against the second one."},
-			{name: "object2", type: "Object", description: "Second object that will be compared against the first one."},
+			{name: "object1", type: "Object", description: "First object to compare."},
+			{name: "object2", type: "Object", description: "Second object to compare."},
 		], {type: "boolean"} ), ():void => {
 			expect( Utils.O.areShallowlyEqual ).toBeDefined();
 
@@ -635,12 +635,12 @@ describe( module( "Carbon/Utils", "Class with useful functions used in the SDK."
 				stringProperty: "something",
 				numberProperty: 1,
 				objectProperty: sharedObject,
-				functionProperty: () => {},
+				functionProperty: ():void => {},
 			}, {
 				stringProperty: "something",
 				numberProperty: 1,
 				objectProperty: sharedObject,
-				functionProperty: () => {},
+				functionProperty: ():void => {},
 			} ) ).toBe( true );
 			// Object values not the same reference
 			expect( Utils.O.areShallowlyEqual( {
@@ -745,7 +745,7 @@ describe( module( "Carbon/Utils", "Class with useful functions used in the SDK."
 			let iterator:Iterator<string> & { current:number, values:Array<string>} = {
 				current: 0,
 				values: [
-					"one", "two", "three", "four", "five"
+					"one", "two", "three", "four", "five",
 				],
 				next: function():IteratorResult<string> {
 					let value:IteratorResult<string>;
@@ -790,8 +790,11 @@ describe( module( "Carbon/Utils", "Class with useful functions used in the SDK."
 			expect( result.indexOf( 6 ) ).not.toBe( - 1 );
 			expect( result.indexOf( 4 ) ).not.toBe( - 1 );
 		} );
+
 	} );
+
 	describe( clazz( "Carbon.Utils.M", "Utility functions related to ES6 Maps." ), ():void => {
+
 		it( isDefined(), ():void => {
 			expect( Utils.M ).toBeDefined();
 		} );
@@ -818,9 +821,9 @@ describe( module( "Carbon/Utils", "Class with useful functions used in the SDK."
 		it( hasMethod(
 			STATIC,
 			"extend",
-			"Adds to a target Map objects, all the entries of the subsequents Maps provided.", [
+			"Adds to a target Map all the entries of the subsequents Maps provided. If entries with the same key exists between Maps, the entry's value of the first Map provided is preserved.", [
 				{name: "toExtend", type: "Map<K, V>", description: "Target Map to extend."},
-				{name: "...extenders", type: "Map<K, V>[]", description: "Every Map parameter from will be added its entries to the target Map."}
+				{name: "...extenders", type: "Map<K, V>[]", description: "Every other Map parameter, from which the entries to be added to the target Map will be taken."},
 			],
 			{type: "Map<K, V>", description: "Returns the target map provided."}
 		), ():void => {

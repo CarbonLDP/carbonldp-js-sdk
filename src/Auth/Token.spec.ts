@@ -4,11 +4,9 @@ import {
 
 	module,
 	clazz,
-	method,
 
 	isDefined,
 	hasMethod,
-	hasSignature,
 	hasProperty,
 } from "./../test/JasmineExtender";
 import * as NS from "./../NS";
@@ -31,7 +29,7 @@ describe( module( "Carbon/Auth/Token" ), ():void => {
 		expect( Utils.isString( Token.RDF_CLASS ) ).toBe( true );
 
 		expect( Token.RDF_CLASS ).toBe( NS.CS.Class.Token );
-	});
+	} );
 
 	it( hasProperty(
 		STATIC,
@@ -42,18 +40,18 @@ describe( module( "Carbon/Auth/Token" ), ():void => {
 		expect( Utils.isObject( Token.SCHEMA ) ).toBe( true );
 
 		expect( Utils.hasProperty( Token.SCHEMA, "key" ) ).toBe( true );
-		expect( Token.SCHEMA[ "key" ] ).toEqual({
+		expect( Token.SCHEMA[ "key" ] ).toEqual( {
 			"@id": NS.CS.Predicate.tokenKey,
 			"@type": NS.XSD.DataType.string,
-		});
+		} );
 
 		expect( Utils.hasProperty( Token.SCHEMA, "expirationTime" ) ).toBe( true );
-		expect( Token.SCHEMA[ "expirationTime" ] ).toEqual({
+		expect( Token.SCHEMA[ "expirationTime" ] ).toEqual( {
 			"@id": NS.CS.Predicate.expirationTime,
 			"@type": NS.XSD.DataType.dateTime,
-		});
+		} );
 
-	});
+	} );
 
 	describe( clazz( "Carbon.Auth.Token.Factory", "Factory class for `Carbon.Auth.Token.Class` objects." ), ():void => {
 
@@ -64,7 +62,7 @@ describe( module( "Carbon/Auth/Token" ), ():void => {
 
 		it( hasMethod( STATIC, "is",
 			"Returns true if the object provided is considered a `Carbon.Auth.Token.Class` object.", [
-				{ name: "value", type: "any" }
+				{name: "value", type: "any"},
 			],
 			{type: "boolean"}
 		), ():void => {
@@ -88,7 +86,7 @@ describe( module( "Carbon/Auth/Token" ), ():void => {
 
 			object[ "anotherProperty" ] = {
 				"@id": "http://example.com/anotherPropertyID",
-				"@type": "xsd:integer"
+				"@type": "xsd:integer",
 			};
 			expect( Token.Factory.hasClassProperties( object ) ).toBe( true );
 
@@ -101,7 +99,7 @@ describe( module( "Carbon/Auth/Token" ), ():void => {
 
 		it( hasMethod( STATIC, "hasClassProperties",
 			"Returns true if the object provided has the properties of a `Carbon.Auth.Token.Class` object.", [
-				{ name: "object", type: "Object" }
+				{name: "object", type: "Object"},
 			],
 			{type: "boolean"}
 		), ():void => {
@@ -123,7 +121,7 @@ describe( module( "Carbon/Auth/Token" ), ():void => {
 
 			object[ "anotherProperty" ] = {
 				"@id": "http://example.com/anotherPropertyID",
-				"@type": "xsd:integer"
+				"@type": "xsd:integer",
 			};
 			expect( Token.Factory.hasClassProperties( object ) ).toBe( true );
 
@@ -138,7 +136,7 @@ describe( module( "Carbon/Auth/Token" ), ():void => {
 			INSTANCE,
 			"decorate",
 			"Decorates the object provided with the properties and methods of a `Carbon.Auth.Token.Class` object.", [
-				{ name: "object", type: "T extends Object" }
+				{name: "object", type: "T extends Object"},
 			],
 			{type: "Carbon.Auth.Token.Class"}
 		), ():void => {
@@ -147,14 +145,14 @@ describe( module( "Carbon/Auth/Token" ), ():void => {
 
 			let object:any = {
 				key: null,
-				expirationTime: null
+				expirationTime: null,
 			};
 			let token:Token.Class = Token.Factory.decorate( object );
 			expect( token ).toEqual( {
 				key: null,
-				expirationTime: null
+				expirationTime: null,
 			} );
-		});
+		} );
 
 	} );
 

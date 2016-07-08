@@ -3,17 +3,13 @@ import {
 	STATIC,
 
 	module,
-	interfaze,
 	clazz,
 	method,
 
 	isDefined,
-	hasConstructor,
 	hasMethod,
 	hasSignature,
 	hasProperty,
-	hasInterface,
-	extendsClass,
 	decoratedObject,
 } from "./test/JasmineExtender";
 import * as Utils from "./Utils";
@@ -49,26 +45,26 @@ describe( module( "Carbon/Document" ), ():void => {
 			STATIC,
 			"hasClassProperties",
 			"Returns true if the object provided has the properties and methods of a `Carbon.Document.Class` object.", [
-				{name: "documentResource", type: "Object"}
+				{name: "documentResource", type: "Object"},
 			],
 			{type: "boolean"}
 		), ():void => {
 			expect( Document.Factory.hasClassProperties ).toBeDefined();
 			expect( Utils.isFunction( Document.Factory.hasClassProperties ) ).toBe( true );
 
-			let resource:any;
+			let resource:any = undefined;
 			expect( Document.Factory.hasClassProperties( resource ) ).toBe( false );
 
 			resource = {
 				_fragmentsIndex: null,
-				hasFragment: () => {},
-				getFragment: () => {},
-				getNamedFragment: () => {},
-				getFragments: () => {},
-				createFragment: () => {},
-				createNamedFragment: () => {},
-				removeFragment: () => {},
-				toJSON: () => {},
+				hasFragment: ():void => {},
+				getFragment: ():void => {},
+				getNamedFragment: ():void => {},
+				getFragments: ():void => {},
+				createFragment: ():void => {},
+				createNamedFragment: ():void => {},
+				removeFragment: ():void => {},
+				toJSON: ():void => {},
 			};
 			expect( Document.Factory.hasClassProperties( resource ) ).toBe( true );
 
@@ -78,42 +74,42 @@ describe( module( "Carbon/Document" ), ():void => {
 
 			delete resource.hasFragment;
 			expect( Document.Factory.hasClassProperties( resource ) ).toBe( false );
-			resource.hasFragment = () => {};
+			resource.hasFragment = ():void => {};
 
 			delete resource.getFragment;
 			expect( Document.Factory.hasClassProperties( resource ) ).toBe( false );
-			resource.getFragment = () => {};
+			resource.getFragment = ():void => {};
 
 			delete resource.getNamedFragment;
 			expect( Document.Factory.hasClassProperties( resource ) ).toBe( false );
-			resource.getNamedFragment = () => {};
+			resource.getNamedFragment = ():void => {};
 
 			delete resource.getFragments;
 			expect( Document.Factory.hasClassProperties( resource ) ).toBe( false );
-			resource.getFragments = () => {};
+			resource.getFragments = ():void => {};
 
 			delete resource.createFragment;
 			expect( Document.Factory.hasClassProperties( resource ) ).toBe( false );
-			resource.createFragment = () => {};
+			resource.createFragment = ():void => {};
 
 			delete resource.createNamedFragment;
 			expect( Document.Factory.hasClassProperties( resource ) ).toBe( false );
-			resource.createNamedFragment = () => {};
+			resource.createNamedFragment = ():void => {};
 
 			delete resource.removeFragment;
 			expect( Document.Factory.hasClassProperties( resource ) ).toBe( false );
-			resource.removeFragment = () => {};
+			resource.removeFragment = ():void => {};
 
 			delete resource.toJSON;
 			expect( Document.Factory.hasClassProperties( resource ) ).toBe( false );
-			resource.toJSON = () => {};
+			resource.toJSON = ():void => {};
 		} );
 
 		it( hasMethod(
 			STATIC,
 			"is",
 			"Returns true if the object provided is considered a `Carbon.Document.Class` object.", [
-				{name: "object", type: "Object"}
+				{name: "object", type: "Object"},
 			],
 			{type: "boolean"}
 		), ():void => {
@@ -143,7 +139,7 @@ describe( module( "Carbon/Document" ), ():void => {
 			resource[ "toJSON" ] = ():void => {};
 			expect( Document.Factory.is( resource ) ).toBe( false );
 
-			let document = Resource.Factory.createFrom( resource );
+			let document:Resource.Class = Resource.Factory.createFrom( resource );
 			expect( Document.Factory.is( document ) ).toBe( true );
 		} );
 
@@ -154,7 +150,7 @@ describe( module( "Carbon/Document" ), ():void => {
 
 			it( hasSignature(
 				"Creates a `Carbon.Document.Class` object.",
-				{type: "Carbon.Document.Class"},
+				{type: "Carbon.Document.Class"}
 			), ():void => {
 				expect( Document.Factory.create ).toBeDefined();
 				expect( Utils.isFunction( Document.Factory.create ) ).toBe( true );
@@ -203,11 +199,11 @@ describe( module( "Carbon/Document" ), ():void => {
 					let object = {
 						myProperty: "THE property",
 						myBlankNode: {
-							myProperty: "A BlankNode property"
+							myProperty: "A BlankNode property",
 						},
 						myNamedFragment: {
 							slug: "namedFragment",
-							myProperty: "A NamedFragment property"
+							myProperty: "A NamedFragment property",
 						}
 					};
 					document = Document.Factory.createFrom<myInterface>( object );
@@ -242,13 +238,13 @@ describe( module( "Carbon/Document" ), ():void => {
 					let object:any = {
 						myProperty: "THE property",
 						myBlankNode: {
-							myProperty: "A BlankNode property"
+							myProperty: "A BlankNode property",
 						},
 						myNamedFragment: {
 							slug: "namedFragment",
 							myProperty: "A NamedFragment property",
 							anotherFragment: {
-								myProperty: "A nested BlankNode property"
+								myProperty: "A nested BlankNode property",
 							}
 						}
 					};
@@ -288,7 +284,7 @@ describe( module( "Carbon/Document" ), ():void => {
 				// Conversion of a nested object with a reference to another nested object
 				(() => {
 					let fragment:any = {
-						myProperty: "A BlankNode property"
+						myProperty: "A BlankNode property",
 					};
 					let object:any = {
 						myProperty: "THE property",
@@ -296,8 +292,8 @@ describe( module( "Carbon/Document" ), ():void => {
 						myNamedFragment: {
 							slug: "namedFragment",
 							myProperty: "A NamedFragment property",
-							sameBlankNode: fragment
-						}
+							sameBlankNode: fragment,
+						},
 					};
 					document = Document.Factory.createFrom<myInterface>( object );
 					expect( object ).toBe( document );
@@ -332,11 +328,11 @@ describe( module( "Carbon/Document" ), ():void => {
 
 				// If there are multiples nested objects that implies the same Fragment, the reference to the first converted is preserved adding changes from the remaining ones
 				(() => {
-					let anotherBlankNode_1:any = {
+					let anotherBlankNode1:any = {
 						id: "_:2",
 						myProperty: "Another BNode property",
 					};
-					let anotherBlankNode_2:any = {
+					let anotherBlankNode2:any = {
 						id: "_:2",
 						newProperty: "New property",
 					};
@@ -346,7 +342,7 @@ describe( module( "Carbon/Document" ), ():void => {
 						myNamedFragment: {
 							id: "http://example.org/resource/#namedFragment",
 							myProperty: "A NamedFragment property",
-							anotherBlankNode: anotherBlankNode_1
+							anotherBlankNode: anotherBlankNode1,
 						},
 						myBlankNode: {
 							id: "_:1",
@@ -354,9 +350,9 @@ describe( module( "Carbon/Document" ), ():void => {
 							myNamedFragment: {
 								slug: "namedFragment",
 								myProperty: "A replace of the NamedFragment property",
-								anotherBlankNode: anotherBlankNode_2
-							}
-						}
+								anotherBlankNode: anotherBlankNode2,
+							},
+						},
 					};
 					document = Document.Factory.createFrom<myInterface>( object );
 					expect( object ).toBe( document );
@@ -394,10 +390,10 @@ describe( module( "Carbon/Document" ), ():void => {
 					expect( anotherBNode.myProperty ).toBe( "Another BNode property" );
 					expect( anotherBNode[ "newProperty" ] ).toBe( "New property" );
 
-					expect( document[ "myNamedFragment" ][ "anotherBlankNode" ] ).toBe( anotherBlankNode_1 );
+					expect( document[ "myNamedFragment" ][ "anotherBlankNode" ] ).toBe( anotherBlankNode1 );
 					expect( document[ "myNamedFragment" ][ "anotherBlankNode" ] ).toBe( document[ "myBlankNode" ][ "myNamedFragment" ][ "anotherBlankNode" ] );
-					expect( document[ "myBlankNode" ][ "myNamedFragment" ][ "anotherBlankNode" ] ).not.toBe( anotherBlankNode_2 );
-					expect( document[ "myBlankNode" ][ "myNamedFragment" ][ "anotherBlankNode" ] ).toBe( anotherBlankNode_1 );
+					expect( document[ "myBlankNode" ][ "myNamedFragment" ][ "anotherBlankNode" ] ).not.toBe( anotherBlankNode2 );
+					expect( document[ "myBlankNode" ][ "myNamedFragment" ][ "anotherBlankNode" ] ).toBe( anotherBlankNode1 );
 				})();
 
 				// If a nested object is a fragment that refers outside the scope of the current converted document, it will not be added as a fragment of the document
@@ -411,8 +407,8 @@ describe( module( "Carbon/Document" ), ():void => {
 							anotherBlankNode: {
 								id: "_:2",
 								myProperty: "Another BNode property",
-							}
-						}
+							},
+						},
 					};
 					document = Document.Factory.createFrom<myInterface>( object );
 					expect( object ).toBe( document );
@@ -435,17 +431,17 @@ describe( module( "Carbon/Document" ), ():void => {
 						pointerList: [
 							{
 								slug: "Fragment_1",
-								myProperty: "The Named Fragment"
+								myProperty: "The Named Fragment",
 							},
 							{
 								id: "_:Fragment_2",
-								myProperty: "The Blank Node"
+								myProperty: "The Blank Node",
 							}
 						],
 						pointer: {
 							id: "#Fragment_1",
-							myProperty: "The real Named Fragment"
-						}
+							myProperty: "The real Named Fragment",
+						},
 					};
 
 					document = Document.Factory.createFrom<myInterface>( object );
@@ -513,7 +509,7 @@ describe( module( "Carbon/Document" ), ():void => {
 
 		describe( decoratedObject(
 			"Object decorated by the `Carbon.Document.Factory.decorate()` function.", [
-				"Carbon.Document.Class"
+				"Carbon.Document.Class",
 			]
 		), ():void => {
 			let document:Document.Class;
@@ -787,7 +783,10 @@ describe( module( "Carbon/Document" ), ():void => {
 					expect( document.createFragment ).toBeDefined();
 					expect( Utils.isFunction( document.createFragment ) ).toBe( true );
 
-					interface MyInterface { myProperty?:string, myPointer?:MyInterface }
+					interface MyInterface {
+						myProperty?:string;
+						myPointer?:MyInterface;
+					}
 
 					let object:MyInterface;
 					let fragment:Fragment.Class & MyInterface;
@@ -847,7 +846,10 @@ describe( module( "Carbon/Document" ), ():void => {
 					expect( document.createFragment ).toBeDefined();
 					expect( Utils.isFunction( document.createFragment ) ).toBe( true );
 
-					interface MyInterface { myProperty?:string, myPointer?:MyInterface }
+					interface MyInterface {
+						myProperty?:string;
+						myPointer?:MyInterface;
+					}
 
 					let object:MyInterface;
 					let fragment:Fragment.Class & MyInterface;
@@ -939,7 +941,7 @@ describe( module( "Carbon/Document" ), ():void => {
 				it( hasSignature(
 					"Creates a `Carbon.NamedFragment.Class` with the slug provided.\n" +
 					"If the slug has the form of a BlankNode ID, an Error is thrown.", [
-						{name: "slug", type: "string"}
+						{name: "slug", type: "string"},
 					],
 					{type: "Carbon.NamedFragment.Class"}
 				), ():void => {
@@ -976,7 +978,10 @@ describe( module( "Carbon/Document" ), ():void => {
 					expect( document.createNamedFragment ).toBeDefined();
 					expect( Utils.isFunction( document.createNamedFragment ) ).toBe( true );
 
-					interface MyInterface { myProperty?:string, myPointer?:MyInterface }
+					interface MyInterface {
+						myProperty?:string;
+						myPointer?:MyInterface;
+					}
 
 					let object:MyInterface;
 					let fragment:Fragment.Class & MyInterface;
@@ -1004,7 +1009,7 @@ describe( module( "Carbon/Document" ), ():void => {
 					expect( URI.Util.isBNodeID( (<Fragment.Class> fragment.myPointer).id ) ).toBe( true );
 					expect( fragment.myPointer.myProperty ).toBeDefined();
 					expect( fragment.myPointer.myProperty ).toBe( "The Nested object" );
-				} )
+				} );
 
 			} );
 
@@ -1080,46 +1085,46 @@ describe( module( "Carbon/Document" ), ():void => {
 				let jsonFullDocument:string;
 
 				beforeAll( ():void => {
-					let emptyObject = {
+					let emptyObject:any = {
 						"@id": "http://example.com/document/",
 						"@graph": [ {
 							"@id": "http://example.com/document/",
-							"@type": []
+							"@type": [],
 						}, {
 							"@id": "_:BlankNode",
-							"@type": []
+							"@type": [],
 						}, {
 							"@id": "http://example.com/document/#fragment",
-							"@type": []
-						} ]
+							"@type": [],
+						} ],
 					};
 					jsonEmptyDocument = JSON.stringify( emptyObject );
 
-					let fullObject = {
+					let fullObject:any = {
 						"@id": "http://example.com/document/",
 						"@graph": [ {
 							"@id": "http://example.com/document/",
 							"@type": [],
 							"http://example.com/ns#myProperty": [ {
 								"@value": "a property",
-								"@type": "http://www.w3.org/2001/XMLSchema#string"
+								"@type": "http://www.w3.org/2001/XMLSchema#string",
 							} ],
 							"http://example.com/ns#myDate": [ {
 								"@value": "2016-06-01",
-								"@type": "http://www.w3.org/2001/XMLSchema#date"
+								"@type": "http://www.w3.org/2001/XMLSchema#date",
 							} ],
 							"http://example.com/ns#myFragment": [ {
-								"@id": "_:BlankNode"
+								"@id": "_:BlankNode",
 							}, {
-								"@id": "http://example.com/document/#fragment"
-							} ]
+								"@id": "http://example.com/document/#fragment",
+							} ],
 						}, {
 							"@id": "_:BlankNode",
-							"@type": []
+							"@type": [],
 						}, {
 							"@id": "http://example.com/document/#fragment",
-							"@type": []
-						} ]
+							"@type": [],
+						} ],
 					};
 					jsonFullDocument = JSON.stringify( fullObject );
 				} );
@@ -1160,7 +1165,7 @@ describe( module( "Carbon/Document" ), ():void => {
 						"ldp": "http://www.w3.org/ns/ldp#",
 						"myProperty": {
 							"@id": "ex:myProperty",
-							"@type": "xsd:string"
+							"@type": "xsd:string",
 						},
 						"myDate": {
 							"@id": "ex:myDate",
@@ -1169,8 +1174,8 @@ describe( module( "Carbon/Document" ), ():void => {
 						"myFragment": {
 							"@id": "ex:myFragment",
 							"@type": "@id",
-							"@container": "@set"
-						}
+							"@container": "@set",
+						},
 					} );
 					json = document.toJSON( context.documents, converter );
 					expect( json ).toEqual( jsonFullDocument );
@@ -1202,7 +1207,7 @@ describe( module( "Carbon/Document" ), ():void => {
 						"ldp": "http://www.w3.org/ns/ldp#",
 						"myProperty": {
 							"@id": "ex:myProperty",
-							"@type": "xsd:string"
+							"@type": "xsd:string",
 						},
 						"myDate": {
 							"@id": "ex:myDate",
@@ -1211,8 +1216,8 @@ describe( module( "Carbon/Document" ), ():void => {
 						"myFragment": {
 							"@id": "ex:myFragment",
 							"@type": "@id",
-							"@container": "@set"
-						}
+							"@container": "@set",
+						},
 					} );
 					json = document.toJSON( context.documents );
 					expect( json ).toEqual( jsonFullDocument );
@@ -1227,24 +1232,24 @@ describe( module( "Carbon/Document" ), ():void => {
 							"@type": [],
 							"vocabulary/#myProperty": [ {
 								"@value": "a property",
-								"@type": "http://www.w3.org/2001/XMLSchema#string"
+								"@type": "http://www.w3.org/2001/XMLSchema#string",
 							} ],
 							"vocabulary/#myDate": [ {
 								"@value": "2016-06-01T00:00:00.000Z",
-								"@type": "http://www.w3.org/2001/XMLSchema#dateTime"
+								"@type": "http://www.w3.org/2001/XMLSchema#dateTime",
 							} ],
 							"vocabulary/#myFragment": [ {
-								"@id": "_:BlankNode"
+								"@id": "_:BlankNode",
 							}, {
-								"@id": "http://example.com/document/#fragment"
+								"@id": "http://example.com/document/#fragment",
 							} ]
 						}, {
 							"@id": "_:BlankNode",
-							"@type": []
+							"@type": [],
 						}, {
 							"@id": "http://example.com/document/#fragment",
-							"@type": []
-						} ]
+							"@type": [],
+						} ],
 					} ) );
 				} );
 

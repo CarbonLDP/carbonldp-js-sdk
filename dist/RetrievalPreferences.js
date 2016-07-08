@@ -2,16 +2,16 @@
 var IllegalArgumentError_1 = require("./Errors/IllegalArgumentError");
 var ObjectSchema = require("./ObjectSchema");
 var XSD = require("./NS/XSD");
-var Utils_1 = require("./Utils");
 var URI = require("./RDF/URI");
+var Utils = require("./Utils");
 var allowedTypes = ["numeric", "string", "boolean", "dateTime"];
 var Factory = (function () {
     function Factory() {
     }
     Factory.is = function (object) {
-        return Utils_1.hasPropertyDefined(object, "orderBy")
-            || Utils_1.hasPropertyDefined(object, "limit")
-            || Utils_1.hasPropertyDefined(object, "offset");
+        return Utils.hasPropertyDefined(object, "orderBy")
+            || Utils.hasPropertyDefined(object, "limit")
+            || Utils.hasPropertyDefined(object, "offset");
     };
     return Factory;
 }());

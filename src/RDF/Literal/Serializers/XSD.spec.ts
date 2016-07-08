@@ -42,7 +42,7 @@ describe( module(
 			INSTANCE,
 			"serialize",
 			"Returns the string with format `YYYY-MM-DD`, of the Date object", [
-				{ name: "value", type: "any" }
+				{name: "value", type: "any"}
 			],
 			{type: "string"}
 		), ():void => {
@@ -92,7 +92,7 @@ describe( module(
 			INSTANCE,
 			"serialize",
 			"Returns the simplified extended ISO format (ISO 8601) of the Date object.", [
-				{ name: "value", type: "any" }
+				{name: "value", type: "any"}
 			],
 			{type: "string"}
 		), ():void => {
@@ -142,7 +142,7 @@ describe( module(
 			INSTANCE,
 			"serialize",
 			"Returns a string representing the Date object with format `HH:mm:ss.sssZ`.", [
-				{ name: "value", type: "any" }
+				{name: "value", type: "any"}
 			],
 			{type: "string"}
 		), ():void => {
@@ -192,7 +192,7 @@ describe( module(
 			INSTANCE,
 			"serialize",
 			"Returns a string representing a integer from the Number provided.", [
-				{ name: "value", type: "any" }
+				{name: "value", type: "any"}
 			],
 			{type: "string"}
 		), ():void => {
@@ -249,7 +249,7 @@ describe( module(
 			INSTANCE,
 			"serialize",
 			"Returns a string representing an unsigned integer from the Number provided.", [
-				{ name: "value", type: "any" }
+				{name: "value", type: "any"}
 			],
 			{type: "string"}
 		), ():void => {
@@ -306,7 +306,7 @@ describe( module(
 			INSTANCE,
 			"serialize",
 			"Returns a string representing a float from the Number provided.", [
-				{ name: "value", type: "any" }
+				{name: "value", type: "any"}
 			],
 			{type: "string"}
 		), ():void => {
@@ -363,7 +363,7 @@ describe( module(
 			INSTANCE,
 			"serialize",
 			"Returns a string representing the truth value from the variable provided.", [
-				{ name: "value", type: "any" }
+				{name: "value", type: "any"}
 			],
 			{type: "string"}
 		), ():void => {
@@ -427,7 +427,7 @@ describe( module(
 			INSTANCE,
 			"serialize",
 			"Returns a string representing the truth value from the variable provided.", [
-				{ name: "value", type: "any" }
+				{name: "value", type: "any"}
 			],
 			{type: "string"}
 		), ():void => {
