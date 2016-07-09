@@ -16,27 +16,22 @@ var Class = (function () {
         if (!uri)
             return Promise.reject(new Errors.IllegalArgumentError("The application's URI must be defined."));
         return this.resolveURI(uri).then(function (appURI) {
-            if (!pointer) {
-                pointer = _this.context.documents.getPointer(appURI);
-            }
-            else {
-                pointer.id = appURI;
-            }
-            return pointer.resolve().then(function (_a) {
-                var app = _a[0], response = _a[1];
-                if (!PersistedApp.Factory.is(app))
-                    return Promise.reject(new Errors.IllegalArgumentError("The resource fetched is not a cs:Application."));
-                return new Context_1.default(_this.context, app);
-            });
+            pointer = _this.context.documents.getPointer(appURI);
+            return pointer.resolve();
+        }).then(function (_a) {
+            var app = _a[0], response = _a[1];
+            if (!PersistedApp.Factory.is(app))
+                throw new Errors.IllegalArgumentError("The resource fetched is not a cs:Application.");
+            return new Context_1.default(_this.context, app);
         });
     };
     Class.prototype.getAllContexts = function () {
         var _this = this;
         return this.resolveURI("").then(function (appsContainerURI) {
-            return _this.context.documents.getMembers(appsContainerURI, false).then(function (_a) {
-                var members = _a[0], response = _a[1];
-                return members.map(function (member) { return new Context_1.default(_this.context, member); });
-            });
+            return _this.context.documents.getMembers(appsContainerURI, false);
+        }).then(function (_a) {
+            var members = _a[0], response = _a[1];
+            return members.map(function (member) { return new Context_1.default(_this.context, member); });
         });
     };
     Class.prototype.create = function (slugOrApp, appDocument) {
@@ -45,7 +40,7 @@ var Class = (function () {
             var slug = Utils.isString(slugOrApp) ? slugOrApp : null;
             appDocument = appDocument || slugOrApp;
             if (!App.Factory.is(appDocument))
-                return Promise.reject(new Errors.IllegalArgumentError("The Document is not a `Carbon.App.Class` object."));
+                throw new Errors.IllegalArgumentError("The Document is not a `Carbon.App.Class` object.");
             return _this.context.documents.createChild(appsContainerURI, slug, appDocument);
         });
     };

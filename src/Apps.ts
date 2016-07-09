@@ -24,29 +24,22 @@ export class Class {
 		if( ! uri ) return Promise.reject<AppContext>( new Errors.IllegalArgumentError( "The application's URI must be defined." ) );
 
 		return this.resolveURI( uri ).then( ( appURI:string ) => {
-			if( ! pointer ) {
-				pointer = this.context.documents.getPointer( appURI );
-			} else {
-				pointer.id = appURI;
-			}
+			pointer = this.context.documents.getPointer( appURI );
+			return pointer.resolve();
 
-			return pointer.resolve().then( ( [ app, response ]:[ PersistedApp.Class, Response.Class ] ) => {
-				if( ! PersistedApp.Factory.is( app ) )
-					return Promise.reject<AppContext>( new Errors.IllegalArgumentError( "The resource fetched is not a cs:Application." ) );
-
-				return new AppContext( this.context, app );
-			} );
+		} ).then( ( [ app, response ]:[ PersistedApp.Class, Response.Class ] ) => {
+			if( ! PersistedApp.Factory.is( app ) ) throw new Errors.IllegalArgumentError( "The resource fetched is not a cs:Application." );
+			return new AppContext( this.context, app );
 		} );
 
 	}
 
 	getAllContexts():Promise<AppContext[]> {
 		return this.resolveURI( "" ).then( ( appsContainerURI:string ) => {
-			return this.context.documents.getMembers( appsContainerURI, false ).then(
-				( [ members, response ]:[ Pointer.Class[], Response.Class ] ) => {
-					return members.map( ( member:Pointer.Class ) => new AppContext( this.context, <any> member ) );
-				}
-			);
+			return this.context.documents.getMembers( appsContainerURI, false );
+
+		} ).then( ( [ members, response ]:[ Pointer.Class[], Response.Class ] ) => {
+			return members.map( ( member:Pointer.Class ) => new AppContext( this.context, <any> member ) );
 		} );
 	}
 
@@ -57,7 +50,7 @@ export class Class {
 			let slug:string = Utils.isString( slugOrApp ) ? slugOrApp : null;
 			appDocument = appDocument || slugOrApp;
 
-			if( ! App.Factory.is( appDocument ) ) return Promise.reject<any>( new Errors.IllegalArgumentError( "The Document is not a `Carbon.App.Class` object." ) );
+			if( ! App.Factory.is( appDocument ) ) throw new Errors.IllegalArgumentError( "The Document is not a `Carbon.App.Class` object." );
 
 			return this.context.documents.createChild( appsContainerURI, slug, appDocument );
 		} );
