@@ -6,6 +6,9 @@ import * as Pointer from "./Pointer";
 import * as Resource from "./Resource";
 export interface Class extends Resource.Class, Pointer.Library, Pointer.Validator {
     _fragmentsIndex: Map<string, Fragment.Class>;
+    addType(type: string): void;
+    hasType(type: string): boolean;
+    removeType(type: string): void;
     hasFragment(slug: string): boolean;
     getFragment(slug: string): Fragment.Class;
     getNamedFragment(slug: string): NamedFragment.Class;

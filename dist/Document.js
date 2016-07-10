@@ -37,6 +37,17 @@ function inScope(idOrPointer) {
         return true;
     return RDF.URI.Util.isRelative(id);
 }
+function addType(type) {
+    this.types.push(type);
+}
+function hasType(type) {
+    return this.types.indexOf(type) !== -1;
+}
+function removeType(type) {
+    var index = this.types.indexOf(type);
+    if (index !== -1)
+        this.types.splice(index, 1);
+}
 function hasFragment(id) {
     var document = this;
     if (RDF.URI.Util.isAbsolute(id)) {
@@ -143,6 +154,9 @@ var Factory = (function () {
     Factory.hasClassProperties = function (documentResource) {
         return (Utils.isObject(documentResource) &&
             Utils.hasPropertyDefined(documentResource, "_fragmentsIndex") &&
+            Utils.hasFunction(documentResource, "addType") &&
+            Utils.hasFunction(documentResource, "hasType") &&
+            Utils.hasFunction(documentResource, "removeType") &&
             Utils.hasFunction(documentResource, "hasFragment") &&
             Utils.hasFunction(documentResource, "getFragment") &&
             Utils.hasFunction(documentResource, "getNamedFragment") &&
@@ -196,6 +210,24 @@ var Factory = (function () {
                 enumerable: false,
                 configurable: true,
                 value: inScope,
+            },
+            "addType": {
+                writable: true,
+                enumerable: false,
+                configurable: true,
+                value: addType,
+            },
+            "hasType": {
+                writable: true,
+                enumerable: false,
+                configurable: true,
+                value: hasType,
+            },
+            "removeType": {
+                writable: true,
+                enumerable: false,
+                configurable: true,
+                value: removeType,
             },
             "hasFragment": {
                 writable: true,

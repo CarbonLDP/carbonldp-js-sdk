@@ -61,6 +61,9 @@ describe( module( "Carbon/Document" ), ():void => {
 
 			resource = {
 				_fragmentsIndex: null,
+				addType: ():void => {},
+				hasType: ():void => {},
+				removeType: ():void => {},
 				hasFragment: () => {},
 				getFragment: () => {},
 				getNamedFragment: () => {},
@@ -75,6 +78,18 @@ describe( module( "Carbon/Document" ), ():void => {
 			delete resource._fragmentsIndex;
 			expect( Document.Factory.hasClassProperties( resource ) ).toBe( false );
 			resource._fragmentsIndex = null;
+
+			delete resource.addType;
+			expect( Document.Factory.hasClassProperties( resource ) ).toBe( false );
+			resource.addType = ():void => {};
+
+			delete resource.hasType;
+			expect( Document.Factory.hasClassProperties( resource ) ).toBe( false );
+			resource.hasType = ():void => {};
+
+			delete resource.removeType;
+			expect( Document.Factory.hasClassProperties( resource ) ).toBe( false );
+			resource.removeType = ():void => {};
 
 			delete resource.hasFragment;
 			expect( Document.Factory.hasClassProperties( resource ) ).toBe( false );
@@ -125,6 +140,12 @@ describe( module( "Carbon/Document" ), ():void => {
 			resource = {};
 			expect( Document.Factory.is( resource ) ).toBe( false );
 			resource[ "_fragmentsIndex" ] = null;
+			expect( Document.Factory.is( resource ) ).toBe( false );
+			resource[ "addType" ] = ():void => {};
+			expect( Document.Factory.is( resource ) ).toBe( false );
+			resource[ "hasType" ] = ():void => {};
+			expect( Document.Factory.is( resource ) ).toBe( false );
+			resource[ "removeType" ] = ():void => {};
 			expect( Document.Factory.is( resource ) ).toBe( false );
 			resource[ "hasFragment" ] = ():void => {};
 			expect( Document.Factory.is( resource ) ).toBe( false );
@@ -521,10 +542,84 @@ describe( module( "Carbon/Document" ), ():void => {
 				INSTANCE,
 				"_fragmentsIndex",
 				"Map<string, Carbon.Fragment.Class>",
-				"Map object for store the fragment pointers (named fragments and blank nodes) of the document."
+				"Map object for store the fragment pointers (named fragments and blank nodes) of the Document."
 			), ():void => {
 				expect( document._fragmentsIndex ).toBeDefined();
 				expect( Utils.isMap( document._fragmentsIndex ) ).toBe( true );
+			} );
+
+			it( hasMethod(
+				INSTANCE,
+				"addType",
+				"Adds a type to the Document.", [
+					{name: "type", type: "string"},
+				]
+			), ():void => {
+				expect( document.addType ).toBeDefined();
+				expect( Utils.isFunction( document.addType ) ).toBe( true );
+
+				expect( document.types.length ).toBe( 0 );
+
+				document.addType( "http://example.com/types#Type-1" );
+				expect( document.types.length ).toBe( 1 );
+				expect( document.types ).toContain( "http://example.com/types#Type-1" );
+
+				document.addType( "http://example.com/types#Type-2" );
+				expect( document.types.length ).toBe( 2 );
+				expect( document.types ).toContain( "http://example.com/types#Type-1" );
+				expect( document.types ).toContain( "http://example.com/types#Type-2" );
+			} );
+
+			it( hasMethod(
+				INSTANCE,
+				"hasType",
+				"Returns true if the Document contains the type specified.", [
+					{name: "type", type: "string"},
+				]
+			), ():void => {
+				expect( document.hasType ).toBeDefined();
+				expect( Utils.isFunction( document.hasType ) ).toBe( true );
+
+				document.types = [ "http://example.com/types#Type-1" ];
+				expect( document.hasType( "http://example.com/types#Type-1" ) ).toBe( true );
+				expect( document.hasType( "http://example.com/types#Type-2" ) ).toBe( false );
+
+
+				document.types = [ "http://example.com/types#Type-1", "http://example.com/types#Type-2" ];
+				expect( document.hasType( "http://example.com/types#Type-1" ) ).toBe( true );
+				expect( document.hasType( "http://example.com/types#Type-2" ) ).toBe( true );
+				expect( document.hasType( "http://example.com/types#Type-3" ) ).toBe( false );
+			} );
+
+			it( hasMethod(
+				INSTANCE,
+				"removeType",
+				"Remove the type specified from the Document.", [
+					{name: "type", type: "string"},
+				]
+			), ():void => {
+				expect( document.removeType ).toBeDefined();
+				expect( Utils.isFunction( document.removeType ) ).toBe( true );
+
+				document.types = [ "http://example.com/types#Type-1" ];
+				document.removeType( "http://example.com/types#Type-2" );
+				expect( document.types.length ).toBe( 1 );
+				expect( document.types ).toContain( "http://example.com/types#Type-1" );
+
+				document.types = [ "http://example.com/types#Type-1" ];
+				document.removeType( "http://example.com/types#Type-1" );
+				expect( document.types.length ).toBe( 0 );
+				expect( document.types ).not.toContain( "http://example.com/types#Type-1" );
+
+				document.types = [ "http://example.com/types#Type-1", "http://example.com/types#Type-2" ];
+				document.removeType( "http://example.com/types#Type-1" );
+				expect( document.types.length ).toBe( 1 );
+				expect( document.types ).not.toContain( "http://example.com/types#Type-1" );
+				expect( document.types ).toContain( "http://example.com/types#Type-2" );
+				document.removeType( "http://example.com/types#Type-2" );
+				expect( document.types.length ).toBe( 0 );
+				expect( document.types ).not.toContain( "http://example.com/types#Type-1" );
+				expect( document.types ).not.toContain( "http://example.com/types#Type-2" );
 			} );
 
 			it( hasMethod(

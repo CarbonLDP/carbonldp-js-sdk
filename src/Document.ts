@@ -11,6 +11,10 @@ import * as Utils from "./Utils";
 export interface Class extends Resource.Class, Pointer.Library, Pointer.Validator {
 	_fragmentsIndex:Map<string, Fragment.Class>;
 
+	addType( type:string ):void;
+	hasType( type:string ):boolean;
+	removeType( type:string ):void;
+
 	hasFragment( slug:string ):boolean;
 	getFragment( slug:string ):Fragment.Class;
 	getNamedFragment( slug:string ):NamedFragment.Class;
@@ -71,6 +75,17 @@ function inScope( idOrPointer:any ):boolean {
 	if( RDF.URI.Util.isFragmentOf( id, document.id ) ) return true;
 
 	return RDF.URI.Util.isRelative( id );
+}
+
+function addType( type:string ):void {
+	this.types.push( type );
+}
+function hasType( type:string ):boolean {
+	return this.types.indexOf( type ) !== - 1;
+}
+function removeType( type:string ):void {
+	let index:number = this.types.indexOf( type );
+	if( index !== - 1 ) this.types.splice( index, 1 );
 }
 
 function hasFragment( id:string ):boolean {
@@ -198,6 +213,10 @@ export class Factory {
 
 			Utils.hasPropertyDefined( documentResource, "_fragmentsIndex" ) &&
 
+			Utils.hasFunction( documentResource, "addType" ) &&
+			Utils.hasFunction( documentResource, "hasType" ) &&
+			Utils.hasFunction( documentResource, "removeType" ) &&
+
 			Utils.hasFunction( documentResource, "hasFragment" ) &&
 			Utils.hasFunction( documentResource, "getFragment" ) &&
 			Utils.hasFunction( documentResource, "getNamedFragment" ) &&
@@ -260,6 +279,26 @@ export class Factory {
 				configurable: true,
 				value: inScope,
 			},
+
+			"addType": {
+				writable: true,
+				enumerable: false,
+				configurable: true,
+				value: addType,
+			},
+			"hasType": {
+				writable: true,
+				enumerable: false,
+				configurable: true,
+				value: hasType,
+			},
+			"removeType": {
+				writable: true,
+				enumerable: false,
+				configurable: true,
+				value: removeType,
+			},
+
 			"hasFragment": {
 				writable: true,
 				enumerable: false,

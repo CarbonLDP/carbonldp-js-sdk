@@ -1616,9 +1616,42 @@ Creates a Document object from the object provided.
 _fragmentsIndex:Map<string, Carbon.Fragment.Class> 
 ```
 
-Map object for store the fragment pointers (named fragments and blank nodes) of the document.
+Map object for store the fragment pointers (named fragments and blank nodes) of the Document.
 
 ##### <a name="Carbon-Document-Factory-Decorated-Object-Methods" />Methods
+##### addType
+```typescript 
+addType( type:string )
+```
+
+Adds a type to the Document.
+
+*Parameters*
+
+- type
+
+##### hasType
+```typescript 
+hasType( type:string )
+```
+
+Returns true if the Document contains the type specified.
+
+*Parameters*
+
+- type
+
+##### removeType
+```typescript 
+removeType( type:string )
+```
+
+Remove the type specified from the Document.
+
+*Parameters*
+
+- type
+
 ##### hasPointer
 ```typescript 
 hasPointer( id:string ):boolean
