@@ -51,3 +51,5 @@ export class Util {
 			.filter( ( element ) => Factory.is( element ) );
 	}
 }
+
+export default Class;
