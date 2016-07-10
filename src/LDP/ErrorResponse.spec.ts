@@ -10,7 +10,7 @@ describe( module( "Carbon/LDP/ErrorResponse" ), ():void => {
 	it( isDefined(), ():void => {
 		expect( ErrorResponse ).toBeDefined();
 		expect( Utils.isObject( ErrorResponse ) ).toBe( true );
-	});
+	} );
 
 	it( hasProperty(
 		STATIC,
@@ -21,7 +21,7 @@ describe( module( "Carbon/LDP/ErrorResponse" ), ():void => {
 		expect( Utils.isString( ErrorResponse.RDF_CLASS ) ).toBe( true );
 
 		expect( ErrorResponse.RDF_CLASS ).toBe( NS.C.Class.ErrorResponse );
-	});
+	} );
 
 	it( hasProperty(
 		STATIC,
@@ -32,18 +32,24 @@ describe( module( "Carbon/LDP/ErrorResponse" ), ():void => {
 		expect( Utils.isObject( ErrorResponse.SCHEMA ) ).toBe( true );
 
 		expect( Utils.hasProperty( ErrorResponse.SCHEMA, "errors" ) ).toBe( true );
-		expect( ErrorResponse.SCHEMA[ "errors" ] ).toEqual({
+		expect( ErrorResponse.SCHEMA[ "errors" ] ).toEqual( {
 			"@id": NS.C.Predicate.error,
 			"@type": "@id",
-			"@container": "@set"
-		});
+			"@container": "@set",
+		} );
+
+		expect( Utils.hasProperty( ErrorResponse.SCHEMA, "requestID" ) ).toBe( true );
+		expect( ErrorResponse.SCHEMA[ "requestID" ] ).toEqual( {
+			"@id": NS.C.Predicate.requestID,
+			"@type": NS.XSD.DataType.string,
+		} );
 
 		expect( Utils.hasProperty( ErrorResponse.SCHEMA, "statusCode" ) ).toBe( true );
-		expect( ErrorResponse.SCHEMA[ "statusCode" ] ).toEqual({
+		expect( ErrorResponse.SCHEMA[ "statusCode" ] ).toEqual( {
 			"@id": NS.C.Predicate.httpStatusCode,
-			"@type": NS.XSD.DataType.int
-		});
-	});
+			"@type": NS.XSD.DataType.int,
+		} );
+	} );
 
 	describe( clazz(
 		"Carbon.LDP.ErrorResponse.Parser",
@@ -53,7 +59,7 @@ describe( module( "Carbon/LDP/ErrorResponse" ), ():void => {
 
 		beforeEach( ():void => {
 			parser = new ErrorResponse.Parser();
-		});
+		} );
 
 		it( isDefined(), ():void => {
 			expect( ErrorResponse.Parser ).toBeDefined();
@@ -61,15 +67,16 @@ describe( module( "Carbon/LDP/ErrorResponse" ), ():void => {
 
 			expect( parser ).toBeTruthy();
 			expect( parser instanceof ErrorResponse.Parser ).toBe( true );
-		});
-		
+		} );
+
 		it( hasMethod(
 			STATIC,
-			"create",
+			"parse",
 			"Parse the string data provided and create an `Carbon.LDP.ResponseError.Class` object.", [
-				{ name: "data", type: "string", description: "The json-ld string, which represents an error response from a Carbon server." }
+				{name: "data", type: "string", description: "The json-ld string, which represents an error response from a Carbon server."},
+				{name: "object", type: "Object", description: "The object to use as a base when parsing the ErrorResponse object", default: "{}"},
 			],
-			{ type: "Promise<Carbon.LDP.ErrorResponse.Class>" }
+			{type: "Promise<Carbon.LDP.ErrorResponse.Class>"}
 		), ( done:{ ():void, fail:() => void } ):void => {
 			expect( parser.parse ).toBeDefined();
 			expect( Utils.isFunction( parser.parse ) ).toBe( true );
@@ -222,10 +229,10 @@ describe( module( "Carbon/LDP/ErrorResponse" ), ():void => {
 				expect( spySuccess ).toHaveBeenCalledTimes( 1 );
 				expect( spyFail ).toHaveBeenCalledTimes( 2 );
 				done();
-			}).catch( done.fail );
-		});
+			} ).catch( done.fail );
+		} );
 
-	});
+	} );
 
 	describe( clazz(
 		"Carbon.LDP.ErrorResponse.Util",
@@ -235,15 +242,15 @@ describe( module( "Carbon/LDP/ErrorResponse" ), ():void => {
 		it( isDefined(), ():void => {
 			expect( ErrorResponse.Util ).toBeDefined();
 			expect( Utils.isFunction( ErrorResponse.Util ) ).toBe( true );
-		});
+		} );
 
 		it( hasMethod(
 			STATIC,
 			"getMessage",
 			"Returns a string with the message of all the errors in the ErrorResponse.", [
-				{ name: "errorResponse", type: "Carbon.LDP.ErrorResponse.Class", description: "The ErrorResponse object to obtain the message from." }
+				{name: "errorResponse", type: "Carbon.LDP.ErrorResponse.Class", description: "The ErrorResponse object to obtain the message from."}
 			],
-			{ type: "string" }
+			{type: "string"}
 		), ():void => {
 			expect( ErrorResponse.Util.getMessage ).toBeDefined();
 			expect( Utils.isFunction( ErrorResponse.Util.getMessage ) ).toBe( true );
@@ -280,8 +287,8 @@ describe( module( "Carbon/LDP/ErrorResponse" ), ():void => {
 			message = ErrorResponse.Util.getMessage( errorResponse );
 			expect( Utils.isString( message ) ).toBe( true );
 			expect( message ).toBe( "Message 01, Message 02" );
-		});
+		} );
 
-	});
+	} );
 
-});
+} );

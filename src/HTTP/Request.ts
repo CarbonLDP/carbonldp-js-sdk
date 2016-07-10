@@ -45,20 +45,24 @@ function onResolve( resolve:Resolve, reject:Reject, response:Response ):void {
 	if( response.status >= 200 && response.status <= 299 ) {
 		resolve( response );
 
-	} else if ( response.status >= 400 && response.status < 600 && Errors.statusCodeMap.has( response.status ) ) {
-		let Error:typeof HTTPError = Errors.statusCodeMap.get( response.status );
-		let error:HTTPError = new Error( "", response );
+	} else if( response.status >= 400 && response.status < 600 && Errors.statusCodeMap.has( response.status ) ) {
+		let errorClass:typeof HTTPError = Errors.statusCodeMap.get( response.status );
+		let error:HTTPError = new errorClass( "", response );
+
+		if( ! response.data ) {
+			reject( error );
+		}
 
 		let parser:ErrorResponse.Parser = new ErrorResponse.Parser();
-		parser.parse( response.data ).then( ( errorResponse:ErrorResponse.Class ) => {
+		parser.parse( response.data, error ).then( ( errorResponse:ErrorResponse.Class ) => {
 			let message:string = ErrorResponse.Util.getMessage( errorResponse );
 			error.message = message;
 			reject( error );
 
-		}).catch( () => {
+		} ).catch( () => {
 			error.message = response.data;
 			reject( error );
-		});
+		} );
 
 	} else {
 		reject( new Errors.UnknownError( response.data, response ) );

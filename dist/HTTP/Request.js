@@ -20,10 +20,13 @@ function onResolve(resolve, reject, response) {
         resolve(response);
     }
     else if (response.status >= 400 && response.status < 600 && Errors.statusCodeMap.has(response.status)) {
-        var Error_1 = Errors.statusCodeMap.get(response.status);
-        var error_1 = new Error_1("", response);
+        var errorClass = Errors.statusCodeMap.get(response.status);
+        var error_1 = new errorClass("", response);
+        if (!response.data) {
+            reject(error_1);
+        }
         var parser = new ErrorResponse.Parser();
-        parser.parse(response.data).then(function (errorResponse) {
+        parser.parse(response.data, error_1).then(function (errorResponse) {
             var message = ErrorResponse.Util.getMessage(errorResponse);
             error_1.message = message;
             reject(error_1);

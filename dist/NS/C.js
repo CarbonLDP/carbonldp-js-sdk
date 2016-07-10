@@ -109,33 +109,13 @@ var Predicate = (function () {
         enumerable: true,
         configurable: true
     });
+    Object.defineProperty(Predicate, "carbonCode", {
+        get: function () { return exports.namespace + "carbonCode"; },
+        enumerable: true,
+        configurable: true
+    });
     Object.defineProperty(Predicate, "created", {
         get: function () { return exports.namespace + "created"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Predicate, "modified", {
-        get: function () { return exports.namespace + "modified"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Predicate, "version", {
-        get: function () { return exports.namespace + "version"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Predicate, "mediaType", {
-        get: function () { return exports.namespace + "mediaType"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Predicate, "size", {
-        get: function () { return exports.namespace + "size"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Predicate, "targetMember", {
-        get: function () { return exports.namespace + "targetMember"; },
         enumerable: true,
         configurable: true
     });
@@ -144,18 +124,33 @@ var Predicate = (function () {
         enumerable: true,
         configurable: true
     });
+    Object.defineProperty(Predicate, "eTag", {
+        get: function () { return exports.namespace + "eTag"; },
+        enumerable: true,
+        configurable: true
+    });
     Object.defineProperty(Predicate, "httpStatusCode", {
         get: function () { return exports.namespace + "httpStatusCode"; },
         enumerable: true,
         configurable: true
     });
-    Object.defineProperty(Predicate, "carbonCode", {
-        get: function () { return exports.namespace + "carbonCode"; },
+    Object.defineProperty(Predicate, "mediaType", {
+        get: function () { return exports.namespace + "mediaType"; },
         enumerable: true,
         configurable: true
     });
     Object.defineProperty(Predicate, "message", {
         get: function () { return exports.namespace + "message"; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Predicate, "modified", {
+        get: function () { return exports.namespace + "modified"; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Predicate, "requestID", {
+        get: function () { return exports.namespace + "requestID"; },
         enumerable: true,
         configurable: true
     });
@@ -169,8 +164,18 @@ var Predicate = (function () {
         enumerable: true,
         configurable: true
     });
-    Object.defineProperty(Predicate, "eTag", {
-        get: function () { return exports.namespace + "eTag"; },
+    Object.defineProperty(Predicate, "size", {
+        get: function () { return exports.namespace + "size"; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Predicate, "targetMember", {
+        get: function () { return exports.namespace + "targetMember"; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Predicate, "version", {
+        get: function () { return exports.namespace + "version"; },
         enumerable: true,
         configurable: true
     });

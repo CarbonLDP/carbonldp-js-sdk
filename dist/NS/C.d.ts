@@ -22,17 +22,18 @@ export declare class Predicate {
     static accessPoint: string;
     static bNodeIdentifier: string;
     static buildDate: string;
-    static created: string;
-    static modified: string;
-    static version: string;
-    static mediaType: string;
-    static size: string;
-    static targetMember: string;
-    static error: string;
-    static httpStatusCode: string;
     static carbonCode: string;
+    static created: string;
+    static error: string;
+    static eTag: string;
+    static httpStatusCode: string;
+    static mediaType: string;
     static message: string;
+    static modified: string;
+    static requestID: string;
     static resourceMetadata: string;
     static resource: string;
-    static eTag: string;
+    static size: string;
+    static targetMember: string;
+    static version: string;
 }

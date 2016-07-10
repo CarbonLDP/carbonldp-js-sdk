@@ -7,7 +7,9 @@ export interface Class extends Pointer.Library, Pointer.Validator {
     hasResource(id: string): boolean;
     getResource(id: string): Resource.Class;
     getResources(): Resource.Class[];
+    getPointer(id: string): Resource.Class;
     createResource(id?: string): Resource.Class;
+    createResourceFrom<T extends Object>(object: T, id?: string): Resource.Class & T;
     toJSON(): string;
 }
 export declare class Factory {

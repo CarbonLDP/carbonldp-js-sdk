@@ -2720,7 +2720,18 @@ Returns an array with all the resources inside the FreeResources object
 createResource( id?:string ):Carbon.Resource.Class
 ```
 
-Create an returns a new Free Resource. Throw an Error if no valid id if provided or if it is already in use.
+Create and returns a new Free Resource. Throw an Error if no valid id is provided or if it is already in use.
+
+*Parameters*
+
+- id: The ID of the resource to create. It should be an ID as a BlankNode.
+
+##### createResourceFrom
+```typescript 
+createResourceFrom( id?:string ):Carbon.Resource.Class
+```
+
+Create and returns a new Free Resource. Throw an Error if no valid id is provided or if it is already in use.
 
 *Parameters*
 
@@ -3037,7 +3048,11 @@ response:number
 ```
 
 ```typescript 
-errorResponse:number 
+errors:Carbon.LDP.Error[] 
+```
+
+```typescript 
+requestID:string 
 ```
 
 
@@ -5041,9 +5056,9 @@ static SCHEMA:Carbon.ObjectSchema.Class
 
 
 #### <a name="Carbon-LDP-ErrorResponse-Parser-Methods" />Methods
-##### create
+##### parse
 ```typescript 
-static create( data:string ):Promise<Carbon.LDP.ErrorResponse.Class>
+static parse( data:string,  object:Object ):Promise<Carbon.LDP.ErrorResponse.Class>
 ```
 
 Parse the string data provided and create an `Carbon.LDP.ResponseError.Class` object.
@@ -5051,6 +5066,7 @@ Parse the string data provided and create an `Carbon.LDP.ResponseError.Class` ob
 *Parameters*
 
 - data: The json-ld string, which represents an error response from a Carbon server.
+- object: The object to use as a base when parsing the ErrorResponse object
 
 
 
@@ -5811,6 +5827,10 @@ static resource:string
 
 ```typescript 
 static eTag:string 
+```
+
+```typescript 
+static requestID:string 
 ```
 
 

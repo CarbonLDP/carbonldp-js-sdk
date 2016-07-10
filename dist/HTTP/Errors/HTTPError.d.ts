@@ -1,11 +1,20 @@
 import AbstractError from "./../../Errors/AbstractError";
+import * as Pointer from "./../../Pointer";
+import * as LDP from "./../../LDP";
 import Response from "./../Response";
-import ErrorResponse from "./../../LDP/ErrorResponse";
-declare class HTTPError extends AbstractError {
+declare class HTTPError extends AbstractError implements LDP.ErrorResponse.Class {
     static statusCode: number;
     name: string;
+    _id: string;
+    _resolved: boolean;
+    id: string;
+    errors: LDP.Error.Class[];
+    requestID: string;
     response: Response;
-    errorResponse: ErrorResponse;
+    statusCode: number;
+    types: string[];
+    isResolved: () => boolean;
+    resolve: () => Promise<[Pointer.Class, Response]>;
     constructor(message: string, response: Response);
 }
 export default HTTPError;

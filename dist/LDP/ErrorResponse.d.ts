@@ -6,12 +6,13 @@ export declare const RDF_CLASS: string;
 export declare const SCHEMA: ObjectSchema;
 export interface Class extends Resource {
     errors: Error[];
+    requestID: string;
     statusCode: number;
 }
 export declare class Util {
     static getMessage(errorResponse: Class): string;
 }
 export declare class Parser implements HTTPParser<Class> {
-    parse(input: string): Promise<Class>;
+    parse(input: string, errorResponse?: Class): Promise<Class>;
 }
 export default Class;

@@ -183,7 +183,7 @@ describe( module(
 			expect( Utils.isString( C.Class.ErrorResponse ) ).toBe( true );
 
 			expect( C.Class.ErrorResponse ).toBe( "https://carbonldp.com/ns/v1/platform#ErrorResponse" );
-		});
+		} );
 
 		it( hasProperty(
 			STATIC,
@@ -194,7 +194,7 @@ describe( module(
 			expect( Utils.isString( C.Class.Error ) ).toBe( true );
 
 			expect( C.Class.Error ).toBe( "https://carbonldp.com/ns/v1/platform#Error" );
-		});
+		} );
 
 		it( hasProperty(
 			STATIC,
@@ -229,8 +229,8 @@ describe( module(
 			expect( C.Predicate ).toBeDefined();
 			expect( Utils.isFunction( C.Predicate ) ).toBe( true );
 
-			expect( Object.keys( C.Predicate ).length ).toBe( 16 );
-		});
+			expect( Object.keys( C.Predicate ).length ).toBe( 17 );
+		} );
 
 		it( hasProperty(
 			STATIC,
@@ -342,7 +342,7 @@ describe( module(
 			expect( Utils.isString( C.Predicate.error ) ).toBe( true );
 
 			expect( C.Predicate.error ).toBe( "https://carbonldp.com/ns/v1/platform#error" );
-		});
+		} );
 
 		it( hasProperty(
 			STATIC,
@@ -353,7 +353,7 @@ describe( module(
 			expect( Utils.isString( C.Predicate.httpStatusCode ) ).toBe( true );
 
 			expect( C.Predicate.httpStatusCode ).toBe( "https://carbonldp.com/ns/v1/platform#httpStatusCode" );
-		});
+		} );
 
 		it( hasProperty(
 			STATIC,
@@ -364,7 +364,7 @@ describe( module(
 			expect( Utils.isString( C.Predicate.carbonCode ) ).toBe( true );
 
 			expect( C.Predicate.carbonCode ).toBe( "https://carbonldp.com/ns/v1/platform#carbonCode" );
-		});
+		} );
 
 		it( hasProperty(
 			STATIC,
@@ -375,7 +375,7 @@ describe( module(
 			expect( Utils.isString( C.Predicate.message ) ).toBe( true );
 
 			expect( C.Predicate.message ).toBe( "https://carbonldp.com/ns/v1/platform#message" );
-		});
+		} );
 
 		it( hasProperty(
 			STATIC,
@@ -408,6 +408,17 @@ describe( module(
 			expect( Utils.isString( C.Predicate.eTag ) ).toBe( true );
 
 			expect( C.Predicate.eTag ).toBe( "https://carbonldp.com/ns/v1/platform#eTag" );
+		} );
+
+		it( hasProperty(
+			STATIC,
+			"requestID",
+			"string"
+		), ():void => {
+			expect( C.Predicate.requestID ).toBeDefined();
+			expect( Utils.isString( C.Predicate.requestID ) ).toBe( true );
+
+			expect( C.Predicate.requestID ).toBe( "https://carbonldp.com/ns/v1/platform#requestID" );
 		} );
 
 	} );

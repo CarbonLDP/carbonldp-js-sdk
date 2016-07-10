@@ -4,7 +4,7 @@
 			"use strict";
 
 			let carbon = new Carbon();
-			carbon.setSetting( "domain", "local.carbonldp.com" );
+			carbon.setSetting( "domain", "hri-carbonldp.base22.io" );
 
 			carbon.extendObjectSchema( {
 				"acl": "http://www.w3.org/ns/auth/acl#",
@@ -60,95 +60,31 @@
 			} );
 
 			let appContext;
-			let timeline;
+			let resource;
 
-			carbon.auth.authenticate( "app@example.com", "app" ).then( function() {
-				return carbon.apps.getContext( "test-app/" );
+			carbon.auth.authenticate( "hri@honda.com", "honda" ).then( function() {
+				return carbon.apps.getContext( "hri-emi-web-app/" );
 			} ).then( ( _appContext ) => {
 				appContext = _appContext;
-				return appContext.documents.get( "" );
-			} ).then( ( [ _timeline, response ] ) => {
-				timeline = _timeline;
-
-				removeFragments( timeline );
-
-				timeline.labels = [];
-
-				return saveAndRefresh( timeline );
-			} ).then( () => {
-				timeline.labels = [
-					timeline.createFragment( {
-						color: "#1111",
-						style: "style-1",
-						type: "car"
-					} ),
-					timeline.createFragment( {
-						color: "#2222",
-						style: "style-2",
-						type: "cyclist"
-					} )
-				];
-
-				return saveAndRefresh( timeline );
-			} ).then( () => {
-				console.log( timeline.labels[ 0 ].color );
-				console.log( timeline.labels[ 1 ].color );
-
-				let label1 = timeline.labels.find( ( label ) => label.color === "#1111" );
-				let label2 = timeline.labels.find( ( label ) => label.color === "#2222" );
-
-				label2.color = "#222";
-				label2.newProperty = "Hello!";
-
-				timeline.removeFragment( label1 );
-				timeline.labels = [ label2 ];
-
-				timeline.labels.push(
-					timeline.createFragment( {
-						color: "#3333",
-						style: "style-3",
-						type: "pedestrian"
-					} )
-				);
-				timeline.labels.push(
-					timeline.createFragment( {
-						color: "#4444",
-						style: "style-4",
-						type: "car"
-					} )
-				);
-
-				return saveAndRefresh( timeline );
-			} ).then( () => {
-				expect( "labels" in timeline ).toEqual( true );
-				expect( timeline.labels.length ).toEqual( 3 );
-				expect( timeline.getFragments().length ).toEqual( 3 );
-
-				let label2 = timeline.labels.find( ( label ) => label.color === "#222" );
-				let label3 = timeline.labels.find( ( label ) => label.color === "#3333" );
-				let label4 = timeline.labels.find( ( label ) => label.color === "#4444" );
-
-				expect( label2 ).toBeDefined();
-				expect( label2.newProperty ).toEqual( "Hello!" );
-				expect( label2.style ).toEqual( "style-2" );
-				expect( label2.type ).toEqual( "cyclist" );
-
-				expect( label3 ).toBeDefined();
-				expect( label3.style ).toEqual( "style-3" );
-				expect( label3.type ).toEqual( "pedestrian" );
-
-				expect( label4 ).toBeDefined();
-				expect( label4.style ).toEqual( "style-4" );
-				expect( label4.type ).toEqual( "car" );
-
-				console.log( timeline );
-				console.log( timeline.labels[ 0 ].color );
-				console.log( timeline.labels[ 1 ].color );
-				console.log( timeline.labels[ 2 ].color );
-			} ).then( () => {
-				done();
+				return appContext.documents.get( "something-that-doesnt-exist/" );
+			} ).then( ( [ _resource, response ] ) => {
+				resource = _resource;
+				resource.contains = [];
+				return saveAndRefresh( resource );
+			} ).then( ( [ _resource, response ] ) => {
+				done( "Save was successful when it shouldn't be" );
 			} ).catch( ( error ) => {
-				done( error );
+				console.error( "%o", error );
+
+				expect( "errors" in error ).toEqual( true );
+				expect( error.errors ).toBeDefined( true );
+				expect( Carbon.Utils.isArray( error.errors ) ).toEqual( true );
+
+				expect( "requestID" in error ).toEqual( true );
+				expect( error.requestID ).toBeDefined( true );
+				expect( Carbon.Utils.isString( error.requestID ) ).toEqual( true );
+
+				done();
 			} );
 
 			function saveAndRefresh( persistedDocument ) {
