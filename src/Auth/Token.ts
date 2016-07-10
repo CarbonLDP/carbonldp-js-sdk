@@ -6,7 +6,7 @@ import Credentials from "./Credentials";
 
 export const RDF_CLASS:string = NS.CS.Class.Token;
 
-export const CONTEXT:ObjectSchema.Class = {
+export const SCHEMA:ObjectSchema.Class = {
 	"key": {
 		"@id": NS.CS.Predicate.tokenKey,
 		"@type": NS.XSD.DataType.string,
@@ -51,11 +51,11 @@ export class Factory {
 			types = pointerOrExpandedObject[ "@type" ];
 		} else if( "types" in pointerOrExpandedObject ) {
 			// TODO: Use proper class
-			let resource:{ types: Pointer.Class[] } = <any> pointerOrExpandedObject;
+			let resource:{ types:Pointer.Class[] } = <any> pointerOrExpandedObject;
 			types = Pointer.Util.getIDs( resource.types );
 		}
 
-		return types.indexOf( RDF_CLASS ) !== -1;
+		return types.indexOf( RDF_CLASS ) !== - 1;
 	}
 }
 

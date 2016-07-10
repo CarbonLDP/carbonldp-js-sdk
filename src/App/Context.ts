@@ -6,6 +6,7 @@ import PersistedApp from "./../PersistedApp";
 
 export class Class extends AbstractContext {
 	public agents:Agents;
+
 	public get app():PersistedApp { return this._app; };
 
 	private _app:PersistedApp;
@@ -24,7 +25,7 @@ export class Class extends AbstractContext {
 	}
 
 	resolve( uri:string ):string {
-		if ( RDF.URI.Util.isAbsolute( uri ) ) return uri;
+		if( RDF.URI.Util.isAbsolute( uri ) ) return uri;
 
 		let finalURI:string = this.parentContext.resolve( this.base );
 		return RDF.URI.Util.resolve( finalURI, uri );

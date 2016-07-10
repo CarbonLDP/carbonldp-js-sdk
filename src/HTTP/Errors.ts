@@ -52,10 +52,10 @@ server.push( NotImplementedError );
 server.push( ServiceUnavailableError );
 
 let statusCodeMap:Map<number, typeof HTTPError> = new Map<number, typeof HTTPError>();
-for ( let i:number = 0, length:number = client.length; i < length; i ++ ) {
+for( let i:number = 0, length:number = client.length; i < length; i ++ ) {
 	statusCodeMap.set( client[ i ].statusCode, client[ i ] );
 }
-for ( let i:number = 0, length:number = server.length; i < length; i ++ ) {
+for( let i:number = 0, length:number = server.length; i < length; i ++ ) {
 	statusCodeMap.set( server[ i ].statusCode, server[ i ] );
 }
 

@@ -12,7 +12,7 @@
 		"playground",
 		"scripts",
 		"test",
-		"typings/browser",
-		"typings/browser.d.ts"
+		"typings/global",
+		"typings/index.d.ts"
 	]
 }

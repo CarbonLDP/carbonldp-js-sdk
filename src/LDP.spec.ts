@@ -29,7 +29,7 @@ describe( module( "Carbon/LDP" ), ():void => {
 	it( isDefined(), ():void => {
 		expect( LDP ).toBeDefined();
 		expect( Utils.isObject( LDP ) ).toBe( true );
-	});
+	} );
 
 	it( reexports(
 		STATIC,
@@ -38,7 +38,7 @@ describe( module( "Carbon/LDP" ), ():void => {
 	), ():void => {
 		expect( LDP.AddMemberAction ).toBeDefined();
 		expect( LDP.AddMemberAction ).toBe( AddMemberAction );
-	});
+	} );
 
 	it( reexports(
 		STATIC,
@@ -47,7 +47,7 @@ describe( module( "Carbon/LDP" ), ():void => {
 	), ():void => {
 		expect( LDP.BasicContainer ).toBeDefined();
 		expect( LDP.BasicContainer ).toBe( BasicContainer );
-	});
+	} );
 
 	it( reexports(
 		STATIC,
@@ -56,7 +56,7 @@ describe( module( "Carbon/LDP" ), ():void => {
 	), ():void => {
 		expect( LDP.Container ).toBeDefined();
 		expect( LDP.Container ).toBe( Container );
-	});
+	} );
 
 	it( reexports(
 		STATIC,
@@ -65,7 +65,7 @@ describe( module( "Carbon/LDP" ), ():void => {
 	), ():void => {
 		expect( LDP.DirectContainer ).toBeDefined();
 		expect( LDP.DirectContainer ).toBe( DirectContainer );
-	});
+	} );
 
 	it( reexports(
 		STATIC,
@@ -83,7 +83,7 @@ describe( module( "Carbon/LDP" ), ():void => {
 	), ():void => {
 		expect( LDP.IndirectContainer ).toBeDefined();
 		expect( LDP.IndirectContainer ).toBe( IndirectContainer );
-	});
+	} );
 
 	it( reexports(
 		STATIC,
@@ -92,7 +92,7 @@ describe( module( "Carbon/LDP" ), ():void => {
 	), ():void => {
 		expect( LDP.PersistedContainer ).toBeDefined();
 		expect( LDP.PersistedContainer ).toBe( PersistedContainer );
-	});
+	} );
 
 	it( reexports(
 		STATIC,
@@ -101,7 +101,7 @@ describe( module( "Carbon/LDP" ), ():void => {
 	), ():void => {
 		expect( LDP.RDFSource ).toBeDefined();
 		expect( LDP.RDFSource ).toBe( RDFSource );
-	});
+	} );
 
 	it( reexports(
 		STATIC,
@@ -110,7 +110,7 @@ describe( module( "Carbon/LDP" ), ():void => {
 	), ():void => {
 		expect( LDP.RemoveMemberAction ).toBeDefined();
 		expect( LDP.RemoveMemberAction ).toBe( RemoveMemberAction );
-	});
+	} );
 
 	it( reexports(
 		STATIC,
@@ -128,7 +128,7 @@ describe( module( "Carbon/LDP" ), ():void => {
 	), ():void => {
 		expect( LDP.ResponseMetadata ).toBeDefined();
 		expect( LDP.ResponseMetadata ).toBe( ResponseMetadata );
-	});
+	} );
 
 	it( reexports(
 		STATIC,
@@ -137,6 +137,6 @@ describe( module( "Carbon/LDP" ), ():void => {
 	), ():void => {
 		expect( LDP.ResourceMetadata ).toBeDefined();
 		expect( LDP.ResourceMetadata ).toBe( ResourceMetadata );
-	});
+	} );
 
-});
+} );

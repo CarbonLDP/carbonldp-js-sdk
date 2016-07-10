@@ -20,7 +20,7 @@ describe( module( "Carbon/LDP/RemoveMemberAction" ), ():void => {
 	it( isDefined(), ():void => {
 		expect( RemoveMemberAction ).toBeDefined();
 		expect( Utils.isObject( RemoveMemberAction ) ).toBe( true );
-	});
+	} );
 
 	it( hasProperty(
 		STATIC,
@@ -31,7 +31,7 @@ describe( module( "Carbon/LDP/RemoveMemberAction" ), ():void => {
 		expect( Utils.isString( RemoveMemberAction.RDF_CLASS ) ).toBe( true );
 
 		expect( RemoveMemberAction.RDF_CLASS ).toBe( NS.C.Class.RemoveMemberAction );
-	});
+	} );
 
 	it( hasProperty(
 		STATIC,
@@ -42,13 +42,13 @@ describe( module( "Carbon/LDP/RemoveMemberAction" ), ():void => {
 		expect( Utils.isObject( RemoveMemberAction.SCHEMA ) ).toBe( true );
 
 		expect( Utils.hasProperty( RemoveMemberAction.SCHEMA, "targetMembers" ) ).toBe( true );
-		expect( RemoveMemberAction.SCHEMA[ "targetMembers" ] ).toEqual({
+		expect( RemoveMemberAction.SCHEMA[ "targetMembers" ] ).toEqual( {
 			"@id": NS.C.Predicate.targetMember,
 			"@container": "@set",
 			"@type": "@id"
-		});
+		} );
 
-	});
+	} );
 
 	describe( clazz(
 		"Carbon.LDP.RemoveMemberAction.Factory",
@@ -58,15 +58,15 @@ describe( module( "Carbon/LDP/RemoveMemberAction" ), ():void => {
 		it( isDefined(), ():void => {
 			expect( RemoveMemberAction.Factory ).toBeDefined();
 			expect( Utils.isFunction( RemoveMemberAction.Factory ) ).toBe( true );
-		});
+		} );
 
 		it( hasMethod(
 			STATIC,
 			"hasClassProperties",
 			"Returns true if the object has the properties to be defined as a LDP RemoveMemberAction", [
-				{ name: "resource", type: "Carbon.RDF.Node.Class" }
+				{name: "resource", type: "Carbon.RDF.Node.Class"}
 			],
-			{ type: "boolean" }
+			{type: "boolean"}
 		), ():void => {
 			expect( RemoveMemberAction.Factory.hasClassProperties ).toBeDefined();
 			expect( Utils.isFunction( RemoveMemberAction.Factory.hasClassProperties ) ).toBe( true );
@@ -82,15 +82,15 @@ describe( module( "Carbon/LDP/RemoveMemberAction" ), ():void => {
 			delete object.targetMembers;
 			expect( RemoveMemberAction.Factory.hasClassProperties( object ) ).toBe( false );
 			object.targetMembers = null;
-		});
+		} );
 
 		it( hasMethod(
 			STATIC,
 			"createDocument",
 			"Create and returns a `Carbon.Document.Class` object with a RemoveMemberAction fragment for the specified targetMembers.", [
-				{ name: "targetMembers", type: "Carbon.Pointer.Class", description: "The target members of the remove action." }
+				{name: "targetMembers", type: "Carbon.Pointer.Class", description: "The target members of the remove action."}
 			],
-			{ type: "Carbon.Document.Class" }
+			{type: "Carbon.Document.Class"}
 		), ():void => {
 			expect( RemoveMemberAction.Factory.createDocument ).toBeDefined();
 			expect( Utils.isFunction( RemoveMemberAction.Factory.createDocument ) ).toBe( true );
@@ -108,8 +108,8 @@ describe( module( "Carbon/LDP/RemoveMemberAction" ), ():void => {
 			expect( RemoveMemberAction.Factory.hasClassProperties( addMemberAction ) ).toBe( true );
 			expect( addMemberAction.targetMembers ).toEqual( pointers );
 			expect( addMemberAction.types ).toContain( RemoveMemberAction.RDF_CLASS );
-		});
-		
-	});
+		} );
 
-});
+	} );
+
+} );

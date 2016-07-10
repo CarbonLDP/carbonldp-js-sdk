@@ -26,7 +26,7 @@ describe( module( "Carbon/LDP/PersistedContainer" ), ():void => {
 	it( isDefined(), ():void => {
 		expect( PersistedContainer ).toBeDefined();
 		expect( Utils.isObject( PersistedContainer ) ).toBe( true );
-	});
+	} );
 
 	describe( clazz(
 		"Carbon.LDP.PersistedContainer.Factory",
@@ -40,20 +40,20 @@ describe( module( "Carbon/LDP/PersistedContainer" ), ():void => {
 				}
 			}
 			context = new MockedContext();
-		});
+		} );
 
 		it( isDefined(), ():void => {
 			expect( PersistedContainer.Factory ).toBeDefined();
 			expect( Utils.isFunction( PersistedContainer.Factory ) ).toBe( true );
-		});
+		} );
 
 		it( hasMethod(
 			STATIC,
 			"hasClassProperties",
 			"Returns true if the object has the properties to be defined as a PersistedContainer", [
-				{ name: "document", type: "Carbon.Document.Class" }
+				{name: "document", type: "Carbon.Document.Class"}
 			],
-			{ type: "boolean" }
+			{type: "boolean"}
 		), ():void => {
 			expect( PersistedContainer.Factory.hasClassProperties ).toBeDefined();
 			expect( Utils.isFunction( PersistedContainer.Factory.hasClassProperties ) ).toBe( true );
@@ -119,15 +119,15 @@ describe( module( "Carbon/LDP/PersistedContainer" ), ():void => {
 			delete document.upload;
 			expect( PersistedContainer.Factory.hasClassProperties( document ) ).toBe( false );
 			document.upload = () => {};
-		});
+		} );
 
 		it( hasMethod(
 			STATIC,
 			"decorate",
 			"Returns the PersistedDocuments decorated as a PersistedContainer", [
-				{ name: "persistedDocument", type: "T extends Carbon.PersistedDocument.Class" }
+				{name: "persistedDocument", type: "T extends Carbon.PersistedDocument.Class"}
 			],
-			{ "type": "T & Carbon.LDP.PersistedContainer.Class" }
+			{"type": "T & Carbon.LDP.PersistedContainer.Class"}
 		), ():void => {
 			expect( PersistedContainer.Factory.decorate ).toBeDefined();
 			expect( Utils.isFunction( PersistedContainer.Factory.decorate ) ).toBe( true );
@@ -183,7 +183,7 @@ describe( module( "Carbon/LDP/PersistedContainer" ), ():void => {
 			expect( anotherAnotherContainer.removeMembers ).not.toBe( fx );
 			expect( anotherAnotherContainer.removeAllMembers ).not.toBe( fx );
 			expect( anotherAnotherContainer.upload ).not.toBe( fx );
-		});
+		} );
 
 		describe( decoratedObject(
 			"Object decorated by the Carbon.LDP.PersistedContainer.Factory.decorate function.", [
@@ -202,7 +202,7 @@ describe( module( "Carbon/LDP/PersistedContainer" ), ():void => {
 				context = new MockedContext();
 				let document = PersistedDocument.Factory.create( "http://example.com/resource/", context.documents );
 				container = PersistedContainer.Factory.decorate( document );
-			});
+			} );
 
 			describe( method(
 				INSTANCE,
@@ -211,9 +211,9 @@ describe( module( "Carbon/LDP/PersistedContainer" ), ():void => {
 
 				it( hasSignature(
 					"Add the specified resource Pointer as a member of the container.", [
-						{ name: "member", type: "Carbon.Pointer.Class", description: "Pointer object that references the resource to add as a member." },
+						{name: "member", type: "Carbon.Pointer.Class", description: "Pointer object that references the resource to add as a member."},
 					],
-					{ type: "Promise<Carbon.HTTP.Response.Class>" }
+					{type: "Promise<Carbon.HTTP.Response.Class>"}
 				), ():void => {
 					expect( container.addMember ).toBeDefined();
 					expect( Utils.isFunction( container.addMember ) ).toBeDefined();
@@ -224,13 +224,13 @@ describe( module( "Carbon/LDP/PersistedContainer" ), ():void => {
 					container.addMember( pointer );
 
 					expect( spy ).toHaveBeenCalledWith( "http://example.com/resource/", pointer );
-				});
+				} );
 
 				it( hasSignature(
 					"Add the specified resource URI as a member of the container.", [
-						{ name: "memberURI", type: "string", description: "URI of the resource to add as a member." },
+						{name: "memberURI", type: "string", description: "URI of the resource to add as a member."},
 					],
-					{ type: "Promise<Carbon.HTTP.Response.Class>" }
+					{type: "Promise<Carbon.HTTP.Response.Class>"}
 				), ():void => {
 					expect( container.addMember ).toBeDefined();
 					expect( Utils.isFunction( container.addMember ) ).toBeDefined();
@@ -240,17 +240,17 @@ describe( module( "Carbon/LDP/PersistedContainer" ), ():void => {
 					container.addMember( "new-member/" );
 
 					expect( spy ).toHaveBeenCalledWith( "http://example.com/resource/", "new-member/" );
-				});
+				} );
 
-			});
+			} );
 
 			it( hasMethod(
 				INSTANCE,
 				"addMembers",
 				"Add the specified resources URI or Pointers as members of the container.", [
-					{ name: "members", type: "(Carbon.Pointer.Class | string)[]", description: "Array of string URIs or Pointers to add as members" },
+					{name: "members", type: "(Carbon.Pointer.Class | string)[]", description: "Array of string URIs or Pointers to add as members"},
 				],
-				{ type: "Promise<Carbon.HTTP.Response.Class>" }
+				{type: "Promise<Carbon.HTTP.Response.Class>"}
 			), ():void => {
 				expect( container.addMembers ).toBeDefined();
 				expect( Utils.isFunction( container.addMembers ) ).toBeDefined();
@@ -262,7 +262,7 @@ describe( module( "Carbon/LDP/PersistedContainer" ), ():void => {
 				container.addMembers( pointers );
 
 				expect( spy ).toHaveBeenCalledWith( "http://example.com/resource/", pointers );
-			});
+			} );
 
 			describe( method(
 				INSTANCE,
@@ -270,10 +270,10 @@ describe( module( "Carbon/LDP/PersistedContainer" ), ():void => {
 			), ():void => {
 
 				it( hasSignature( [
-					{ name: "slug", type: "string", description: "The slug name for the children URI." },
-					{ name: "object", type: "Object", description: "The object from where create the child. If it's a non `Carbon.Document.Class` object, it is transformed into one." }
-				],
-					{ type: "Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>" }
+						{name: "slug", type: "string", description: "The slug name for the children URI."},
+						{name: "object", type: "Object", description: "The object from where create the child. If it's a non `Carbon.Document.Class` object, it is transformed into one."}
+					],
+					{type: "Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>"}
 				), ():void => {
 					expect( container.createChild ).toBeDefined();
 					expect( Utils.isFunction( container.createChild ) ).toBeDefined();
@@ -286,15 +286,15 @@ describe( module( "Carbon/LDP/PersistedContainer" ), ():void => {
 					expect( spy ).toHaveBeenCalledWith( "http://example.com/resource/", "child", document );
 					spy.calls.reset();
 
-					let object:Object = { my: "object" };
+					let object:Object = {my: "object"};
 					container.createChild( "child", object );
 					expect( spy ).toHaveBeenCalledWith( "http://example.com/resource/", "child", object );
-				});
+				} );
 
 				it( hasSignature( [
-						{ name: "object", type: "Object", description: "The object from where create the child. If it's a non `Carbon.Document.Class` object, it is transformed into one." }
+						{name: "object", type: "Object", description: "The object from where create the child. If it's a non `Carbon.Document.Class` object, it is transformed into one."}
 					],
-					{ type: "Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>" }
+					{type: "Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>"}
 				), ():void => {
 					expect( container.createChild ).toBeDefined();
 					expect( Utils.isFunction( container.createChild ) ).toBeDefined();
@@ -307,15 +307,15 @@ describe( module( "Carbon/LDP/PersistedContainer" ), ():void => {
 					expect( spy ).toHaveBeenCalledWith( "http://example.com/resource/", document );
 					spy.calls.reset();
 
-					let object:Object = { my: "object" };
+					let object:Object = {my: "object"};
 					container.createChild( object );
 					expect( spy ).toHaveBeenCalledWith( "http://example.com/resource/", object );
-				});
+				} );
 
 				it( hasSignature( [
-					{ name: "slug", type: "string", description: "The slug name for the children URI." }
-				],
-					{ type: "Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>" }
+						{name: "slug", type: "string", description: "The slug name for the children URI."}
+					],
+					{type: "Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>"}
 				), ():void => {
 					expect( container.createChild ).toBeDefined();
 					expect( Utils.isFunction( container.createChild ) ).toBeDefined();
@@ -324,10 +324,10 @@ describe( module( "Carbon/LDP/PersistedContainer" ), ():void => {
 
 					container.createChild( "child" );
 					expect( spy ).toHaveBeenCalledWith( "http://example.com/resource/", "child", {} );
-				});
+				} );
 
 				it( hasSignature(
-					{ type: "Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>" }
+					{type: "Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>"}
 				), ():void => {
 					expect( container.createChild ).toBeDefined();
 					expect( Utils.isFunction( container.createChild ) ).toBeDefined();
@@ -336,15 +336,15 @@ describe( module( "Carbon/LDP/PersistedContainer" ), ():void => {
 
 					container.createChild();
 					expect( spy ).toHaveBeenCalledWith( "http://example.com/resource/", {} );
-				});
+				} );
 
-			});
+			} );
 
 			it( hasMethod(
 				INSTANCE,
 				"listChildren",
 				"Return all the children of the container.",
-				{ type: "Promise<[ Carbon.Pointer.Class[], Carbon.HTTP.Response ]>" }
+				{type: "Promise<[ Carbon.Pointer.Class[], Carbon.HTTP.Response ]>"}
 			), ():void => {
 				expect( container.listChildren ).toBeDefined();
 				expect( Utils.isFunction( container.listChildren ) ).toBeDefined();
@@ -353,15 +353,15 @@ describe( module( "Carbon/LDP/PersistedContainer" ), ():void => {
 
 				container.listChildren();
 				expect( spy ).toHaveBeenCalledWith( "http://example.com/resource/" );
-			});
+			} );
 
 			it( hasMethod(
 				INSTANCE,
 				"getChildren",
 				"Return all the children of the container.", [
-					{ name: "retrievalPreferences", type: "Carbon.RetrievalPreferences.Class", optional: true },
+					{name: "retrievalPreferences", type: "Carbon.RetrievalPreferences.Class", optional: true},
 				],
-				{ type: "Promise<[ Carbon.Pointer.Class[], Carbon.HTTP.Response ]>" }
+				{type: "Promise<[ Carbon.Pointer.Class[], Carbon.HTTP.Response ]>"}
 			), ():void => {
 				expect( container.getChildren ).toBeDefined();
 				expect( Utils.isFunction( container.getChildren ) ).toBeDefined();
@@ -376,18 +376,18 @@ describe( module( "Carbon/LDP/PersistedContainer" ), ():void => {
 				let retrievalPreferences:RetrievalPreferences.Class = {
 					limit: 10,
 					offset: 0,
-					orderBy: [ { "@id": "http://example.com/ns#string", "@type": "string" } ]
+					orderBy: [ {"@id": "http://example.com/ns#string", "@type": "string"} ]
 				};
 				container.getChildren( retrievalPreferences );
 				expect( spy ).toHaveBeenCalledWith( "http://example.com/resource/", retrievalPreferences );
-			});
+			} );
 
 			it( hasMethod(
 				INSTANCE,
 				"listMembers", [
-					{ name: "includeNonReadable", type: "boolean", optional: true, description: "By default this option is set to `true`." },
+					{name: "includeNonReadable", type: "boolean", optional: true, description: "By default this option is set to `true`."},
 				],
-				{ type: "Promise<[ Carbon.Pointer.Class[], Carbon.HTTP.Response.Class ]>" }
+				{type: "Promise<[ Carbon.Pointer.Class[], Carbon.HTTP.Response.Class ]>"}
 			), ():void => {
 				expect( container.listMembers ).toBeDefined();
 				expect( Utils.isFunction( container.listMembers ) ).toBeDefined();
@@ -400,7 +400,7 @@ describe( module( "Carbon/LDP/PersistedContainer" ), ():void => {
 
 				container.listMembers( false );
 				expect( spy ).toHaveBeenCalledWith( "http://example.com/resource/", false );
-			});
+			} );
 
 			describe( method(
 				INSTANCE,
@@ -408,10 +408,10 @@ describe( module( "Carbon/LDP/PersistedContainer" ), ():void => {
 			), ():void => {
 
 				it( hasSignature( [
-						{ name: "includeNonReadable", type: "boolean", optional: true, description: "By default this option is set to `true`." },
-						{ name: "retrievalPreferences", type: "Carbon.RetrievalPreferences.Class", optional: true },
+						{name: "includeNonReadable", type: "boolean", optional: true, description: "By default this option is set to `true`."},
+						{name: "retrievalPreferences", type: "Carbon.RetrievalPreferences.Class", optional: true},
 					],
-					{ type: "Promise<[ Carbon.Pointer.Class[], Carbon.HTTP.Response.Class ]>" }
+					{type: "Promise<[ Carbon.Pointer.Class[], Carbon.HTTP.Response.Class ]>"}
 				), ():void => {
 					expect( container.getMembers ).toBeDefined();
 					expect( Utils.isFunction( container.getMembers ) ).toBeDefined();
@@ -429,7 +429,7 @@ describe( module( "Carbon/LDP/PersistedContainer" ), ():void => {
 					let retrievalPreferences:RetrievalPreferences.Class = {
 						limit: 10,
 						offset: 0,
-						orderBy: [ { "@id": "http://example.com/ns#string", "@type": "string" } ]
+						orderBy: [ {"@id": "http://example.com/ns#string", "@type": "string"} ]
 					};
 
 					container.getMembers( false, retrievalPreferences );
@@ -443,9 +443,9 @@ describe( module( "Carbon/LDP/PersistedContainer" ), ():void => {
 					container.getMembers( retrievalPreferences );
 					expect( spy ).toHaveBeenCalledWith( "http://example.com/resource/", retrievalPreferences, undefined );
 					spy.calls.reset();
-				});
+				} );
 
-			});
+			} );
 
 			describe( method(
 				INSTANCE,
@@ -454,9 +454,9 @@ describe( module( "Carbon/LDP/PersistedContainer" ), ():void => {
 
 				it( hasSignature(
 					"Remove the specified resource Pointer as a member of the container.", [
-						{ name: "member", type: "Carbon.Pointer.Class", description: "Pointer object that references the resource to remove as a member." },
+						{name: "member", type: "Carbon.Pointer.Class", description: "Pointer object that references the resource to remove as a member."},
 					],
-					{ type: "Promise<Carbon.HTTP.Response.Class>" }
+					{type: "Promise<Carbon.HTTP.Response.Class>"}
 				), ():void => {
 					expect( container.removeMember ).toBeDefined();
 					expect( Utils.isFunction( container.removeMember ) ).toBeDefined();
@@ -467,13 +467,13 @@ describe( module( "Carbon/LDP/PersistedContainer" ), ():void => {
 					container.removeMember( pointer );
 
 					expect( spy ).toHaveBeenCalledWith( "http://example.com/resource/", pointer );
-				});
+				} );
 
 				it( hasSignature(
 					"Remove the specified resource URI as a member of the container.", [
-						{ name: "memberURI", type: "string", description: "URI of the resource to remove as a member." },
+						{name: "memberURI", type: "string", description: "URI of the resource to remove as a member."},
 					],
-					{ type: "Promise<Carbon.HTTP.Response.Class>" }
+					{type: "Promise<Carbon.HTTP.Response.Class>"}
 				), ():void => {
 					expect( container.removeMember ).toBeDefined();
 					expect( Utils.isFunction( container.removeMember ) ).toBeDefined();
@@ -483,17 +483,17 @@ describe( module( "Carbon/LDP/PersistedContainer" ), ():void => {
 					container.removeMember( "remove-member/" );
 
 					expect( spy ).toHaveBeenCalledWith( "http://example.com/resource/", "remove-member/" );
-				});
+				} );
 
-			});
+			} );
 
 			it( hasMethod(
 				INSTANCE,
 				"removeMembers",
 				"Remove the specified resources URI or Pointers as members of the container.", [
-					{ name: "members", type: "(Carbon.Pointer.Class | string)[]", description: "Array of string URIs or Pointers to remove as members" },
+					{name: "members", type: "(Carbon.Pointer.Class | string)[]", description: "Array of string URIs or Pointers to remove as members"},
 				],
-				{ type: "Promise<Carbon.HTTP.Response.Class>" }
+				{type: "Promise<Carbon.HTTP.Response.Class>"}
 			), ():void => {
 				expect( container.removeMembers ).toBeDefined();
 				expect( Utils.isFunction( container.removeMembers ) ).toBeDefined();
@@ -505,15 +505,15 @@ describe( module( "Carbon/LDP/PersistedContainer" ), ():void => {
 				container.removeMembers( pointers );
 
 				expect( spy ).toHaveBeenCalledWith( "http://example.com/resource/", pointers );
-			});
+			} );
 
 			it( hasMethod(
 				INSTANCE,
 				"removeAllMembers",
 				"Remove the specified resources URI or Pointers as members of the container.", [
-					{ name: "members", type: "(Carbon.Pointer.Class | string)[]", description: "Array of string URIs or Pointers to remove as members" },
+					{name: "members", type: "(Carbon.Pointer.Class | string)[]", description: "Array of string URIs or Pointers to remove as members"},
 				],
-				{ type: "Promise<Carbon.HTTP.Response.Class>" }
+				{type: "Promise<Carbon.HTTP.Response.Class>"}
 			), ():void => {
 				expect( container.removeAllMembers ).toBeDefined();
 				expect( Utils.isFunction( container.removeAllMembers ) ).toBeDefined();
@@ -523,7 +523,7 @@ describe( module( "Carbon/LDP/PersistedContainer" ), ():void => {
 				container.removeAllMembers();
 
 				expect( spy ).toHaveBeenCalledWith( "http://example.com/resource/" );
-			});
+			} );
 
 			describe( method(
 				INSTANCE,
@@ -532,83 +532,83 @@ describe( module( "Carbon/LDP/PersistedContainer" ), ():void => {
 			), ():void => {
 
 				it( hasSignature( [
-						{ name: "slug", type: "string", description: "The slug that will be used in the URI of the data." },
-						{ name: "data", type: "Blob", description: "Binary data to store in the server. The Blob works in a Browser." }
+						{name: "slug", type: "string", description: "The slug that will be used in the URI of the data."},
+						{name: "data", type: "Blob", description: "Binary data to store in the server. The Blob works in a Browser."}
 					],
-					{ type: "Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>" }
+					{type: "Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>"}
 				), ():void => {
 					expect( container.upload ).toBeDefined();
 					expect( Utils.isFunction( container.upload ) ).toBeDefined();
 
-					if ( typeof Blob !== "undefined" ) {
+					if( typeof Blob !== "undefined" ) {
 						let spy = spyOn( container._documents, "upload" );
 
-						let blob:Blob = new Blob( [ JSON.stringify( { "some content": "for the blob." } ) ], { type : "application/json" } );
+						let blob:Blob = new Blob( [ JSON.stringify( {"some content": "for the blob."} ) ], {type: "application/json"} );
 						container.upload( "child", blob );
 
 						expect( spy ).toHaveBeenCalledWith( "http://example.com/resource/", "child", blob );
 					}
-				});
+				} );
 
 				it( hasSignature( [
-						{ name: "data", type: "Blob", description: "Binary data to store in the server. The Blob works in a Browser." }
+						{name: "data", type: "Blob", description: "Binary data to store in the server. The Blob works in a Browser."}
 					],
-					{ type: "Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>" }
+					{type: "Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>"}
 				), ():void => {
 					expect( container.upload ).toBeDefined();
 					expect( Utils.isFunction( container.upload ) ).toBeDefined();
 
-					if ( typeof Blob !== "undefined" ) {
+					if( typeof Blob !== "undefined" ) {
 						let spy = spyOn( container._documents, "upload" );
 
-						let blob:Blob = new Blob( [ JSON.stringify( { "some content": "for the blob." } ) ], { type : "application/json" } );
+						let blob:Blob = new Blob( [ JSON.stringify( {"some content": "for the blob."} ) ], {type: "application/json"} );
 						container.upload( blob );
 
 						expect( spy ).toHaveBeenCalledWith( "http://example.com/resource/", blob );
 					}
-				});
+				} );
 
 				it( hasSignature( [
-						{ name: "slug", type: "string", description: "The slug that will be used in the URI of the data." },
-						{ name: "data", type: "Buffer", description: "Binary data to store in the server. The Buffer only works in Node.js." }
+						{name: "slug", type: "string", description: "The slug that will be used in the URI of the data."},
+						{name: "data", type: "Buffer", description: "Binary data to store in the server. The Buffer only works in Node.js."}
 					],
-					{ type: "Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>" }
+					{type: "Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>"}
 				), ():void => {
 					expect( container.upload ).toBeDefined();
 					expect( Utils.isFunction( container.upload ) ).toBeDefined();
 
-					if ( typeof Buffer !== "undefined" ) {
+					if( typeof Buffer !== "undefined" ) {
 						let spy = spyOn( container._documents, "upload" );
 
-						let buffer:Buffer = new Buffer( JSON.stringify( { "some content": "for the buffer." } ) );
+						let buffer:Buffer = new Buffer( JSON.stringify( {"some content": "for the buffer."} ) );
 						container.upload( "child", buffer );
 
 						expect( spy ).toHaveBeenCalledWith( "http://example.com/resource/", "child", buffer );
 					}
-				});
+				} );
 
 				it( hasSignature( [
-						{ name: "data", type: "Buffer", description: "Binary data to store in the server. The Buffer only works in Node.js." }
+						{name: "data", type: "Buffer", description: "Binary data to store in the server. The Buffer only works in Node.js."}
 					],
-					{ type: "Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>" }
+					{type: "Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>"}
 				), ():void => {
 					expect( container.upload ).toBeDefined();
 					expect( Utils.isFunction( container.upload ) ).toBeDefined();
 
-					if ( typeof Buffer !== "undefined" ) {
+					if( typeof Buffer !== "undefined" ) {
 						let spy = spyOn( container._documents, "upload" );
 
-						let buffer:Buffer = new Buffer( JSON.stringify( { "some content": "for the buffer." } ) );
+						let buffer:Buffer = new Buffer( JSON.stringify( {"some content": "for the buffer."} ) );
 						container.upload( buffer );
 
 						expect( spy ).toHaveBeenCalledWith( "http://example.com/resource/", buffer );
 					}
-				});
+				} );
 
-			});
+			} );
 
-		});
+		} );
 
-	});
+	} );
 
-});
+} );

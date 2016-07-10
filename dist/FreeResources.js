@@ -55,6 +55,15 @@ function createResource(id) {
     freeResources._resourcesIndex.set(id, resource);
     return resource;
 }
+function toJSON() {
+    var resources = this.getResources();
+    var expandedResources = [];
+    for (var _i = 0, resources_1 = resources; _i < resources_1.length; _i++) {
+        var resource = resources_1[_i];
+        expandedResources.push(this._documents.jsonldConverter.expand(resource, this._documents.getSchemaFor(resource)));
+    }
+    return JSON.stringify(expandedResources);
+}
 var Factory = (function () {
     function Factory() {
     }
@@ -67,7 +76,8 @@ var Factory = (function () {
             Utils.hasFunction(object, "createResource") &&
             Utils.hasFunction(object, "hasPointer") &&
             Utils.hasFunction(object, "getPointer") &&
-            Utils.hasFunction(object, "inScope"));
+            Utils.hasFunction(object, "inScope") &&
+            Utils.hasFunction(object, "toJSON"));
     };
     Factory.create = function (documents) {
         return Factory.createFrom({}, documents);
@@ -128,6 +138,12 @@ var Factory = (function () {
                 enumerable: false,
                 configurable: true,
                 value: createResource,
+            },
+            "toJSON": {
+                writable: true,
+                enumerable: false,
+                configurable: true,
+                value: toJSON,
             },
         });
         return object;
