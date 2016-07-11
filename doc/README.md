@@ -1344,12 +1344,12 @@ Creates and returns a `Carbon.Auth.Ticket.Class` object for the specified URI.
 
 
 ### <a name="Carbon-Auth-Token-Properties" />Properties
-```typescript
-static RDF_CLASS:string
+```typescript 
+static RDF_CLASS:string 
 ```
 
-```typescript
-static SCHEMA:Carbon.ObjectSchema.Class
+```typescript 
+static SCHEMA:Carbon.ObjectSchema.Class 
 ```
 
 
@@ -1497,7 +1497,7 @@ Stores credentials to authenticate future requests.
 
 
 #### <a name="Carbon-Auth-UsernameAndPasswordCredentials-Class-Constructor" />Constructor
-```typescript
+```typescript 
 Class( username:string,  password:string )
 ```
 
@@ -1510,12 +1510,12 @@ Class( username:string,  password:string )
 
 #### <a name="Carbon-Auth-UsernameAndPasswordCredentials-Class-Properties" />Properties
 
-```typescript
-username:string
+```typescript 
+username:string 
 ```
 
-```typescript
-password:string
+```typescript 
+password:string 
 ```
 
 
@@ -1871,7 +1871,7 @@ Returns a JSON string from the Document using the default ObjectSchema.
 
 
 #### <a name="Carbon-Documents-Constructor" />Constructor
-```typescript
+```typescript 
 Documents( context?:Carbon.Context )
 ```
 
@@ -1883,8 +1883,8 @@ Documents( context?:Carbon.Context )
 
 #### <a name="Carbon-Documents-Properties" />Properties
 
-```typescript
-jsonldConverter:Carbon.JSONLDConverter.Class
+```typescript 
+jsonldConverter:Carbon.JSONLDConverter.Class 
 ```
 
 Instance of `Carbon.JSONLDConverter.Class` that is used to compact retrieved documents and to expand documents to persist. This property is not writable.
@@ -1892,7 +1892,7 @@ Instance of `Carbon.JSONLDConverter.Class` that is used to compact retrieved doc
 #### <a name="Carbon-Documents-Methods" />Methods
 
 ##### hasPointer
-```typescript
+```typescript 
 hasPointer( id:string ):boolean
 ```
 
@@ -1903,7 +1903,7 @@ Returns true if the Documents instance has a pointer referenced by the URI provi
 - id: URI to look for.
 
 ##### getPointer
-```typescript
+```typescript 
 getPointer( id:string ):boolean
 ```
 
@@ -2077,7 +2077,7 @@ Executes a DESCRIBE query and returns a string with the resulting model.
 - requestOptions: Customizable options for the request.
 
 ##### inScope
-```typescript
+```typescript 
 inScope( pointer:Carbon.Pointer.Class ):boolean
 ```
 
@@ -2087,7 +2087,7 @@ Returns true if the pointer provided is inside the scope of the Documents instan
 
 - pointer: Pointer to evaluate.
 
-```typescript
+```typescript 
 inScope( id:string ):boolean
 ```
 
@@ -2755,7 +2755,7 @@ Decorates the object provided with the properties and methods of a `Carbon.FreeR
 
 ##### <a name="Carbon-FreeResources-Factory-Decorated-Object-Properties" />Properties
 ```typescript 
-_documents:Private property that contains the Documents class where the object scope is in.
+_documents:Private property that contains the Documents class where the object scope is in. 
 ```
 
 Carbon.Documents
@@ -2800,18 +2800,18 @@ Returns an array with all the resources inside the FreeResources object.
 createResource( id?:string ):Carbon.Resource.Class
 ```
 
-Create and returns a new Free Resource. Throw an Error if no valid id is provided or if it is already in use.
+Creates and returns a new Free Resource. Throw an Error if no valid ID if provided or if it's already in use.
 
 *Parameters*
 
 - id: The ID of the resource to create. It should be an ID as a BlankNode.
 
 ##### createResourceFrom
-```typescript
+```typescript 
 createResourceFrom( id?:string ):Carbon.Resource.Class
 ```
 
-Creates and returns a new Free Resource. Throw an Error if no valid ID if provided or if it's already in use.
+Create and returns a new Free Resource. Throw an Error if no valid id is provided or if it is already in use.
 
 *Parameters*
 
@@ -2976,6 +2976,18 @@ static statusCode:number
 name:string 
 ```
 
+```typescript 
+response:number 
+```
+
+```typescript 
+errors:Carbon.LDP.Error[] 
+```
+
+```typescript 
+requestID:string 
+```
+
 
 #### <a name="Carbon-HTTP-Errors-HTTPError-Methods" />Methods
 
@@ -3121,18 +3133,6 @@ static statusCode:number
 
 ```typescript 
 name:string 
-```
-
-```typescript
-response:number
-```
-
-```typescript
-errors:Carbon.LDP.Error[]
-```
-
-```typescript
-requestID:string
 ```
 
 
@@ -4569,7 +4569,7 @@ Set a Prefer header with `return=representation` in an options object request.
 - returnRepresentation: If set to true, add `return=representation;` before include and/or omit. Default value is set to `true`.
 
 ##### isOptions
-```typescript
+```typescript 
 static isOptions( object:Object ):boolean
 ```
 
@@ -4788,7 +4788,7 @@ Gets a string and returns a Promise with the same string.
 
 
 #### <a name="Carbon-JSONLDConverter-Class-Constructor" />Constructor
-```typescript
+```typescript 
 Class( literalSerializers?:Map<string, Carbon.RDF.Literal.Serializer> )
 ```
 
@@ -4800,8 +4800,8 @@ Class( literalSerializers?:Map<string, Carbon.RDF.Literal.Serializer> )
 
 #### <a name="Carbon-JSONLDConverter-Class-Properties" />Properties
 
-```typescript
-literalSerializers:Map<string, Carbon.RDF.Literal.Serializer>
+```typescript 
+literalSerializers:Map<string, Carbon.RDF.Literal.Serializer> 
 ```
 
 A Map object with data-type/serializer pairs for stringify the data of a SDK Resource when expanding it.
@@ -5128,12 +5128,12 @@ Returns true if the Object provided has the type of a DirectContainer.
 
 
 ### <a name="Carbon-LDP-Error-Properties" />Properties
-```typescript
-static RDF_CLASS:string
+```typescript 
+static RDF_CLASS:string 
 ```
 
-```typescript
-static SCHEMA:Carbon.ObjectSchema.Class
+```typescript 
+static SCHEMA:Carbon.ObjectSchema.Class 
 ```
 
 
@@ -5147,12 +5147,12 @@ static SCHEMA:Carbon.ObjectSchema.Class
 
 
 ### <a name="Carbon-LDP-ErrorResponse-Properties" />Properties
-```typescript
-static RDF_CLASS:string
+```typescript 
+static RDF_CLASS:string 
 ```
 
-```typescript
-static SCHEMA:Carbon.ObjectSchema.Class
+```typescript 
+static SCHEMA:Carbon.ObjectSchema.Class 
 ```
 
 
@@ -5169,7 +5169,7 @@ static SCHEMA:Carbon.ObjectSchema.Class
 
 #### <a name="Carbon-LDP-ErrorResponse-Parser-Methods" />Methods
 ##### parse
-```typescript
+```typescript 
 static parse( data:string,  object:Object ):Promise<Carbon.LDP.ErrorResponse.Class>
 ```
 
@@ -5193,7 +5193,7 @@ Parse the string data provided and create an `Carbon.LDP.ResponseError.Class` ob
 
 #### <a name="Carbon-LDP-ErrorResponse-Util-Methods" />Methods
 ##### getMessage
-```typescript
+```typescript 
 static getMessage( errorResponse:Carbon.LDP.ErrorResponse.Class ):string
 ```
 
@@ -5851,15 +5851,15 @@ static AddMemberAction:string
 static RemoveMemberAction:string 
 ```
 
-```typescript
-static ErrorResponse:string
+```typescript 
+static ErrorResponse:string 
 ```
 
-```typescript
-static Error:string
+```typescript 
+static Error:string 
 ```
 
-```typescript
+```typescript 
 static ResponseMetadata:string 
 ```
 
@@ -5915,23 +5915,23 @@ static size:string
 static targetMember:string 
 ```
 
-```typescript
-static error:string
+```typescript 
+static error:string 
 ```
 
-```typescript
-static httpStatusCode:string
+```typescript 
+static httpStatusCode:string 
 ```
 
-```typescript
-static carbonCode:string
+```typescript 
+static carbonCode:string 
 ```
 
-```typescript
-static message:string
+```typescript 
+static message:string 
 ```
 
-```typescript
+```typescript 
 static resourceMetadata:string 
 ```
 
@@ -5943,8 +5943,8 @@ static resource:string
 static eTag:string 
 ```
 
-```typescript
-static requestID:string
+```typescript 
+static requestID:string 
 ```
 
 
@@ -6641,8 +6641,8 @@ base:string
 ```
 
 The base URI of the schema.
-```typescript
-vocab:string
+```typescript 
+vocab:string 
 ```
 
 URI that will be used to resolve properties URIs that aren't defined in the schema.
@@ -7072,7 +7072,7 @@ Returns true if the URI provided is in the scope of the PersistedDocument.
 
 #### <a name="Carbon-PersistedFragment-Factory-Methods" />Methods
 ##### decorate
-```typescript
+```typescript 
 static decorate( fragment:T extends Carbon.Fragment.Class,  snapshot?:Object )
 ```
 
@@ -7105,7 +7105,7 @@ Decorates the object provided with the properties and methods of a `Carbon.Persi
 
 #### <a name="Carbon-PersistedNamedFragment-Factory-Methods" />Methods
 ##### decorate
-```typescript
+```typescript 
 static decorate( fragment:T extends Carbon.NamedFragment.Class,  snapshot?:Object )
 ```
 
@@ -7138,7 +7138,7 @@ Decorates the object provided with the properties and methods of a `Carbon.Persi
 
 #### <a name="Carbon-PersistedResource-Factory-Methods" />Methods
 ##### hasClassProperties
-```typescript
+```typescript 
 static hasClassProperties( object:Object ):boolean
 ```
 
@@ -7149,7 +7149,7 @@ Returns true if the object provided has the properties and methods of a `Carbon.
 - object
 
 ##### decorate
-```typescript
+```typescript 
 static decorate( fragment:T extends Object,  snapshot?:Object )
 ```
 
@@ -7168,22 +7168,22 @@ Decorates the object provided with the properties and methods of a `Carbon.Persi
 > Object decorated by the `Carbon.PersistedResource.Factory.decorate()` function.
 
 ##### <a name="Carbon-PersistedResource-Factory-Decorated-Object-Properties" />Properties
-```typescript
-_snapshot:Object
+```typescript 
+_snapshot:Object 
 ```
 
 The shallow copy of the resource, which is used to track the changes on the resource.
 
 ##### <a name="Carbon-PersistedResource-Factory-Decorated-Object-Methods" />Methods
 ##### _syncSnapshot
-```typescript
+```typescript 
 _syncSnapshot()
 ```
 
 Updates the snapshot with the data of the resource.
 
 ##### isDirty
-```typescript
+```typescript 
 isDirty()
 ```
 
@@ -7302,7 +7302,7 @@ Resolves the pointer. This function throw an Error if it has no been configured 
 
 #### <a name="Carbon-Pointer-Util-Methods" />Methods
 ##### getIDs
-```typescript
+```typescript 
 static getIDs( pointers:Carbon.Pointer.Class[] ):string[]
 ```
 
@@ -7313,7 +7313,7 @@ Extracts the IDs of all the pointers provided.
 - pointers: The array of Pointers to obtain their IDs.
 
 ##### resolveAll
-```typescript
+```typescript 
 static resolveAll( pointers:Carbon.Pointer.Class[] ):Promise<[ Carbon.Pointer.Class[], Carbon.HTTP.Response.Class[] ]>
 ```
 
@@ -7963,7 +7963,7 @@ Returns true if the objects represent the same resource.
 - node2
 
 ##### hasType
-```typescript
+```typescript 
 static hasType( object:Object,  type:string ):boolean
 ```
 
@@ -7975,7 +7975,7 @@ Returns true if the RDFNode provided has the specified type.
 - type: The type to look for it existence.
 
 ##### getTypes
-```typescript
+```typescript 
 static getTypes( object:Object ):string[]
 ```
 
@@ -7999,7 +7999,7 @@ Returns `null` if the property doesn't exists or the URI is not found.
 - predicate
 
 ##### getFreeNodes
-```typescript
+```typescript 
 static getFreeNodes( object:T extends Object ):Carbon.RDF.Node.Class[]
 ```
 
@@ -8040,8 +8040,8 @@ Class( stringValue:string )
 
 #### <a name="Carbon-RDF-URI-Class-Properties" />Properties
 
-```typescript
-stringValue:string
+```typescript 
+stringValue:string 
 ```
 
 The string value of the URI object.
@@ -8486,12 +8486,12 @@ Returns null if it cannot be parsed
 
 
 ### <a name="Carbon-RDFRepresentation-Properties" />Properties
-```typescript
-static RDF_CLASS:string
+```typescript 
+static RDF_CLASS:string 
 ```
 
-```typescript
-static SCHEMA:Carbon.ObjectSchema.Class
+```typescript 
+static SCHEMA:Carbon.ObjectSchema.Class 
 ```
 
 
@@ -8508,7 +8508,7 @@ static SCHEMA:Carbon.ObjectSchema.Class
 
 #### <a name="Carbon-RDFRepresentation-Factory-Methods" />Methods
 ##### hasClassProperties
-```typescript
+```typescript 
 static hasClassProperties( resource:Object ):boolean
 ```
 
@@ -8519,7 +8519,7 @@ Returns true if the object provided has the properties of a `Carbon.RDFRepresent
 - resource
 
 ##### is
-```typescript
+```typescript 
 static is( object:Object ):boolean
 ```
 
@@ -9284,7 +9284,7 @@ Executes an action for each own property of the object.
 
 #### <a name="Carbon-Utils-O-Methods" />Methods
 ##### clone
-```typescript
+```typescript 
 static clone( object:Object,  config:{arrays?:boolean, objects?:boolean} ):Object
 ```
 
@@ -9296,7 +9296,7 @@ Makes a shallow or deep clone of the object provided depending of the configurat
 - config: Object that indicates if the arrays or objects must be copied or not. By default, arrays and objects will not be deep copied.
 
 ##### areEqual
-```typescript
+```typescript 
 static areEqual( object1:Object,  object2:Object,  config:{arrays?:boolean, objects?:boolean} ):boolean
 ```
 
@@ -9426,7 +9426,7 @@ Takes an object and creates a map from its properties.
 - object
 
 ##### extend
-```typescript
+```typescript 
 static extend( toExtend:Map<K, V>,  ...extenders:Map<K, V>[] ):Map<K, V>
 ```
 
