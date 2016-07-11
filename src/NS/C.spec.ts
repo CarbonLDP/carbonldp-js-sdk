@@ -39,7 +39,7 @@ describe( module(
 		it( isDefined(), ():void => {
 			expect( C.Class ).toBeDefined();
 			expect( Utils.isFunction( C.Class ) ).toBe( true );
-			expect( Object.keys( C.Class ).length ).toBe( 15 );
+			expect( Object.keys( C.Class ).length ).toBe( 17 );
 		} );
 
 		it( hasProperty(
@@ -176,6 +176,28 @@ describe( module(
 
 		it( hasProperty(
 			STATIC,
+			"ErrorResponse",
+			"string"
+		), ():void => {
+			expect( C.Class.ErrorResponse ).toBeDefined();
+			expect( Utils.isString( C.Class.ErrorResponse ) ).toBe( true );
+
+			expect( C.Class.ErrorResponse ).toBe( "https://carbonldp.com/ns/v1/platform#ErrorResponse" );
+		} );
+
+		it( hasProperty(
+			STATIC,
+			"Error",
+			"string"
+		), ():void => {
+			expect( C.Class.Error ).toBeDefined();
+			expect( Utils.isString( C.Class.Error ) ).toBe( true );
+
+			expect( C.Class.Error ).toBe( "https://carbonldp.com/ns/v1/platform#Error" );
+		} );
+
+		it( hasProperty(
+			STATIC,
 			"ResponseMetadata",
 			"string"
 		), ():void => {
@@ -207,7 +229,7 @@ describe( module(
 			expect( C.Predicate ).toBeDefined();
 			expect( Utils.isFunction( C.Predicate ) ).toBe( true );
 
-			expect( Object.keys( C.Predicate ).length ).toBe( 12 );
+			expect( Object.keys( C.Predicate ).length ).toBe( 17 );
 		} );
 
 		it( hasProperty(
@@ -313,6 +335,50 @@ describe( module(
 
 		it( hasProperty(
 			STATIC,
+			"error",
+			"string"
+		), ():void => {
+			expect( C.Predicate.error ).toBeDefined();
+			expect( Utils.isString( C.Predicate.error ) ).toBe( true );
+
+			expect( C.Predicate.error ).toBe( "https://carbonldp.com/ns/v1/platform#error" );
+		} );
+
+		it( hasProperty(
+			STATIC,
+			"httpStatusCode",
+			"string"
+		), ():void => {
+			expect( C.Predicate.httpStatusCode ).toBeDefined();
+			expect( Utils.isString( C.Predicate.httpStatusCode ) ).toBe( true );
+
+			expect( C.Predicate.httpStatusCode ).toBe( "https://carbonldp.com/ns/v1/platform#httpStatusCode" );
+		} );
+
+		it( hasProperty(
+			STATIC,
+			"carbonCode",
+			"string"
+		), ():void => {
+			expect( C.Predicate.carbonCode ).toBeDefined();
+			expect( Utils.isString( C.Predicate.carbonCode ) ).toBe( true );
+
+			expect( C.Predicate.carbonCode ).toBe( "https://carbonldp.com/ns/v1/platform#carbonCode" );
+		} );
+
+		it( hasProperty(
+			STATIC,
+			"message",
+			"string"
+		), ():void => {
+			expect( C.Predicate.message ).toBeDefined();
+			expect( Utils.isString( C.Predicate.message ) ).toBe( true );
+
+			expect( C.Predicate.message ).toBe( "https://carbonldp.com/ns/v1/platform#message" );
+		} );
+
+		it( hasProperty(
+			STATIC,
 			"resourceMetadata",
 			"string"
 		), ():void => {
@@ -342,6 +408,17 @@ describe( module(
 			expect( Utils.isString( C.Predicate.eTag ) ).toBe( true );
 
 			expect( C.Predicate.eTag ).toBe( "https://carbonldp.com/ns/v1/platform#eTag" );
+		} );
+
+		it( hasProperty(
+			STATIC,
+			"requestID",
+			"string"
+		), ():void => {
+			expect( C.Predicate.requestID ).toBeDefined();
+			expect( Utils.isString( C.Predicate.requestID ) ).toBe( true );
+
+			expect( C.Predicate.requestID ).toBe( "https://carbonldp.com/ns/v1/platform#requestID" );
 		} );
 
 	} );
