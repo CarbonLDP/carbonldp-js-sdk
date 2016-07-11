@@ -13,9 +13,8 @@ import {
 	hasConstructor,
 	hasMethod,
 	hasProperty,
-	decoratedObject,
 	hasSignature,
-	hasDefaultExport
+	hasDefaultExport,
 } from "./test/JasmineExtender";
 import * as Utils from "./Utils";
 import * as Auth from "./Auth";
@@ -45,16 +44,16 @@ describe( module( "Carbon/SDKContext" ), ():void => {
 			context = new SDKContext.Class();
 			jasmine.addMatchers( {
 				// Custom handler for Map as Jasmine does not support it yet
-				toEqual: function( util ) {
+				toEqual: function( util:any ):any {
 					return {
-						compare: function( actual, expected ) {
+						compare: function( actual:any, expected:any ):any {
 							return {pass: util.equals( actual, expected, [ compareMap ] )};
-						}
+						},
 					};
 
-					function compareMap( actual, expected ) {
+					function compareMap( actual:any, expected:any ):any {
 						if( actual instanceof Map ) {
-							var pass = actual.size === expected.size;
+							let pass:any = actual.size === expected.size;
 							if( pass ) {
 								actual.forEach( ( v, k ) => { pass = pass && util.equals( v, expected.get( k ) ); } );
 							}
@@ -63,7 +62,7 @@ describe( module( "Carbon/SDKContext" ), ():void => {
 							return undefined;
 						}
 					}
-				}
+				},
 			} );
 		} );
 
@@ -118,7 +117,7 @@ describe( module( "Carbon/SDKContext" ), ():void => {
 			INSTANCE,
 			"resolve",
 			"Returns URI provided resolved in this context, witch is the same URI provided.", [
-				{name: "relativeURI", type: "string"}
+				{name: "relativeURI", type: "string"},
 			],
 			{type: "string"}
 		), ():void => {
@@ -133,7 +132,7 @@ describe( module( "Carbon/SDKContext" ), ():void => {
 			INSTANCE,
 			"hasSetting",
 			"Returns true if the setting looked for is established in the context.", [
-				{name: "name", type: "string"}
+				{name: "name", type: "string"},
 			],
 			{type: "boolean"}
 		), ():void => {
@@ -159,7 +158,7 @@ describe( module( "Carbon/SDKContext" ), ():void => {
 			"getSetting",
 			`Returns the value of the setting looked for.
 			Returns \`null\` if no setting with the name specified exists.`, [
-				{name: "name", type: "string"}
+				{name: "name", type: "string"},
 			],
 			{type: "string"}
 		), ():void => {
@@ -185,7 +184,7 @@ describe( module( "Carbon/SDKContext" ), ():void => {
 			"setSetting",
 			"Set a setting in the the context.", [
 				{name: "name", type: "string"},
-				{name: "value", type: "any"}
+				{name: "value", type: "any"},
 			]
 		), ():void => {
 			expect( context.setSetting ).toBeDefined();
@@ -202,7 +201,7 @@ describe( module( "Carbon/SDKContext" ), ():void => {
 			INSTANCE,
 			"deleteSetting",
 			"Deletes the setting specified from the the context.", [
-				{name: "name", type: "string"}
+				{name: "name", type: "string"},
 			]
 		), ():void => {
 			expect( context.deleteSetting ).toBeDefined();
@@ -224,7 +223,7 @@ describe( module( "Carbon/SDKContext" ), ():void => {
 			INSTANCE,
 			"hasObjectSchema",
 			"Returns true if the is an ObjectSchema for the specified type.", [
-				{name: "type", type: "string"}
+				{name: "type", type: "string"},
 			],
 			{type: "boolean"}
 		), ():void => {
@@ -233,15 +232,32 @@ describe( module( "Carbon/SDKContext" ), ():void => {
 
 			expect( context.hasObjectSchema( "http://example.com/ns#MyType" ) ).toBe( false );
 
+			let objectSchemaMyType:ObjectSchema.DigestedObjectSchema = new ObjectSchema.DigestedObjectSchema();
+			let objectSchemaAnotherType:ObjectSchema.DigestedObjectSchema = new ObjectSchema.DigestedObjectSchema();
+			let objectSchemaAnotherAnotherType:ObjectSchema.DigestedObjectSchema = new ObjectSchema.DigestedObjectSchema();
 			class MyContext extends SDKContext.Class {
 				constructor() {
 					super();
-					this.typeObjectSchemaMap.set( "http://example.com/ns#MyType", null );
+					this.typeObjectSchemaMap.set( "http://example.com/ns#MyType", objectSchemaMyType );
+					this.typeObjectSchemaMap.set( "http://example.com/types#Another-Type", objectSchemaAnotherType );
+					this.typeObjectSchemaMap.set( "http://example.com/vocab#Another-Another-Type", objectSchemaAnotherAnotherType );
+					this.generalObjectSchema = ObjectSchema.Digester.digestSchema( {
+						"ex": "http://example.com/ns#",
+						"exTypes": "http://example.com/types#",
+					} );
+				}
+
+				resolve( uri:string ):string {
+					return "http://example.com/" + uri;
 				}
 			}
 			let mockedContext:Context = new MyContext();
+			mockedContext.setSetting( "vocabulary", "vocab#" );
 
 			expect( mockedContext.hasObjectSchema( "http://example.com/ns#MyType" ) ).toBe( true );
+			expect( mockedContext.hasObjectSchema( "ex:MyType" ) ).toBe( true );
+			expect( mockedContext.hasObjectSchema( "exTypes:Another-Type" ) ).toBe( true );
+			expect( mockedContext.hasObjectSchema( "Another-Another-Type" ) ).toBe( true );
 		} );
 
 		it( hasMethod(
@@ -249,7 +265,7 @@ describe( module( "Carbon/SDKContext" ), ():void => {
 			"getObjectSchema",
 			`Returns the ObjectSchema for the specified type or null if not exits.
 			If no type specified the general object schema of the context is returned. This is an schema that applies for all the types.`, [
-				{name: "type", type: "string", optional: true, default: "null"}
+				{name: "type", type: "string", optional: true, default: "null"},
 			],
 			{type: "Carbon.ObjectSchema.DigestedObjectSchema"}
 		), ():void => {
@@ -259,34 +275,37 @@ describe( module( "Carbon/SDKContext" ), ():void => {
 			// Mocked Context
 			let rawObjectSchema:ObjectSchema.Class = {
 				"ex": "http://example.com/ns#",
+				"exTypes": "http://example.com/types#",
 				"xsd": "http://www.w3.org/2001/XMLSchema#",
 				"string": {
 					"@id": "ex:string",
-					"@type": "xsd:string"
+					"@type": "xsd:string",
 				},
 				"pointer": {
 					"@id": "ex:pointer",
-					"@type": "@id"
-				}
+					"@type": "@id",
+				},
 			};
-			let objectSchema:ObjectSchema.DigestedObjectSchema;
-			objectSchema = new ObjectSchema.DigestedObjectSchema();
+			let objectSchemaMyType:ObjectSchema.DigestedObjectSchema = new ObjectSchema.DigestedObjectSchema();
+			let objectSchemaAnotherType:ObjectSchema.DigestedObjectSchema = new ObjectSchema.DigestedObjectSchema();
+			let objectSchemaAnotherAnotherType:ObjectSchema.DigestedObjectSchema = new ObjectSchema.DigestedObjectSchema();
 			class MyContext extends SDKContext.Class {
 				constructor() {
 					super();
-					this.typeObjectSchemaMap.set( "http://example.com/ns#MyType", objectSchema );
+					this.typeObjectSchemaMap.set( "http://example.com/ns#MyType", objectSchemaMyType );
+					this.typeObjectSchemaMap.set( "http://example.com/types#Another-Type", objectSchemaAnotherType );
+					this.typeObjectSchemaMap.set( "http://example.com/vocab#Another-Another-Type", objectSchemaAnotherAnotherType );
 					this.generalObjectSchema = ObjectSchema.Digester.digestSchema( rawObjectSchema );
+				}
+
+				resolve( uri:string ):string {
+					return "http://example.com/" + uri;
 				}
 			}
 			let mockedContext:Context = new MyContext();
-
-			// Schema by type
-			expect( context.getObjectSchema( "http://example.com/ns#MyType" ) ).toBeNull();
+			mockedContext.setSetting( "vocabulary", "vocab#" );
 
 			let returnedSchema:ObjectSchema.DigestedObjectSchema;
-			returnedSchema = mockedContext.getObjectSchema( "http://example.com/ns#MyType" );
-			expect( returnedSchema instanceof ObjectSchema.DigestedObjectSchema ).toBe( true );
-			expect( returnedSchema ).toBe( objectSchema );
 
 			// General Schema
 			returnedSchema = context.getObjectSchema();
@@ -296,6 +315,27 @@ describe( module( "Carbon/SDKContext" ), ():void => {
 			returnedSchema = mockedContext.getObjectSchema();
 			expect( returnedSchema instanceof ObjectSchema.DigestedObjectSchema ).toBe( true );
 			expect( returnedSchema ).toEqual( ObjectSchema.Digester.digestSchema( rawObjectSchema ) );
+
+			// Schema by type
+			expect( context.getObjectSchema( "http://example.com/ns#MyType" ) ).toBeNull();
+			returnedSchema = mockedContext.getObjectSchema( "http://example.com/ns#MyType" );
+			expect( returnedSchema instanceof ObjectSchema.DigestedObjectSchema ).toBe( true );
+			expect( returnedSchema ).toBe( objectSchemaMyType );
+
+			expect( context.getObjectSchema( "ex:MyType" ) ).toBeNull();
+			returnedSchema = mockedContext.getObjectSchema( "ex:MyType" );
+			expect( returnedSchema instanceof ObjectSchema.DigestedObjectSchema ).toBe( true );
+			expect( returnedSchema ).toBe( objectSchemaMyType );
+
+			expect( context.getObjectSchema( "exTypes:Another-Type" ) ).toBeNull();
+			returnedSchema = mockedContext.getObjectSchema( "exTypes:Another-Type" );
+			expect( returnedSchema instanceof ObjectSchema.DigestedObjectSchema ).toBe( true );
+			expect( returnedSchema ).toBe( objectSchemaAnotherType );
+
+			expect( context.getObjectSchema( "Another-Another-Type" ) ).toBeNull();
+			returnedSchema = mockedContext.getObjectSchema( "Another-Another-Type" );
+			expect( returnedSchema instanceof ObjectSchema.DigestedObjectSchema ).toBe( true );
+			expect( returnedSchema ).toBe( objectSchemaAnotherAnotherType );
 		} );
 
 		describe( method(
@@ -306,29 +346,69 @@ describe( module( "Carbon/SDKContext" ), ():void => {
 			it( hasSignature(
 				"Extends an Schema for a specified type of Resource", [
 					{name: "type", type: "string"},
-					{name: "objectSchema", type: "Carbon.ObjectSchema.DigestedObjectSchema"}
+					{name: "objectSchema", type: "Carbon.ObjectSchema.DigestedObjectSchema"},
 				]
 			), ():void => {
+				class MockedSDKContext extends SDKContext.Class {
+					resolve( uri:string ):string {
+						return "http://example.com/" + uri;
+					}
+				}
+				context = new MockedSDKContext();
+				context.setSetting( "vocabulary", "vocab#" );
+				context.extendObjectSchema( {
+					"exTypes": "http://example.com/types#",
+				} );
+
 				expect( context.extendObjectSchema ).toBeDefined();
 				expect( Utils.isFunction( context.extendObjectSchema ) ).toBe( true );
+
 
 				let objectSchema:ObjectSchema.Class = {
 					"ex": "http://example.com/ns#",
 					"xsd": "http://www.w3.org/2001/XMLSchema#",
 					"string": {
 						"@id": "ex:string",
-						"@type": "xsd:string"
+						"@type": "xsd:string",
 					},
 					"pointer": {
 						"@id": "ex:pointer",
-						"@type": "@id"
-					}
+						"@type": "@id",
+					},
 				};
-				context.extendObjectSchema( "http://example.com/ns#MyType", objectSchema );
+				let digestedSchema:ObjectSchema.DigestedObjectSchema;
 
+				context.extendObjectSchema( "http://example.com/ns#MyType", objectSchema );
 				expect( context.hasObjectSchema( "http://example.com/ns#MyType" ) ).toBe( true );
 
-				let digestedSchema:ObjectSchema.DigestedObjectSchema = context.getObjectSchema( "http://example.com/ns#MyType" );
+				digestedSchema = context.getObjectSchema( "http://example.com/ns#MyType" );
+				expect( digestedSchema instanceof ObjectSchema.DigestedObjectSchema ).toBe( true );
+
+				expect( digestedSchema ).toEqual( ObjectSchema.Digester.digestSchema( objectSchema ) );
+
+				// Prefixed Type
+				context.extendObjectSchema( "exTypes:Another-Type", objectSchema );
+				expect( context.hasObjectSchema( "http://example.com/types#Another-Type" ) ).toBe( true );
+
+				digestedSchema = context.getObjectSchema( "http://example.com/types#Another-Type" );
+				expect( digestedSchema instanceof ObjectSchema.DigestedObjectSchema ).toBe( true );
+
+				expect( digestedSchema ).toEqual( ObjectSchema.Digester.digestSchema( objectSchema ) );
+
+				// Prefixed Type
+				context.extendObjectSchema( "ex:Another-Type", objectSchema );
+				expect( context.hasObjectSchema( "http://example.com/ns#Another-Type" ) ).toBe( false );
+
+				digestedSchema = context.getObjectSchema( "ex:Another-Type" );
+				expect( digestedSchema instanceof ObjectSchema.DigestedObjectSchema ).toBe( true );
+
+				expect( digestedSchema ).toEqual( ObjectSchema.Digester.digestSchema( objectSchema ) );
+
+				// Prefixed Type
+				context.extendObjectSchema( "Another-Type", objectSchema );
+				expect( context.hasObjectSchema( "http://example.com/vocab#Another-Type" ) ).toBe( true );
+
+				digestedSchema = context.getObjectSchema( "http://example.com/vocab#Another-Type" );
 				expect( digestedSchema instanceof ObjectSchema.DigestedObjectSchema ).toBe( true );
 
 				expect( digestedSchema ).toEqual( ObjectSchema.Digester.digestSchema( objectSchema ) );
@@ -336,7 +416,7 @@ describe( module( "Carbon/SDKContext" ), ():void => {
 
 			it( hasSignature(
 				"Extends the General Schema of the context.", [
-					{name: "objectSchema", type: "Carbon.ObjectSchema.DigestedObjectSchema"}
+					{name: "objectSchema", type: "Carbon.ObjectSchema.DigestedObjectSchema"},
 				]
 			), ():void => {
 				expect( context.extendObjectSchema ).toBeDefined();
@@ -347,18 +427,18 @@ describe( module( "Carbon/SDKContext" ), ():void => {
 					"xsd": "http://www.w3.org/2001/XMLSchema#",
 					"string": {
 						"@id": "ex:string",
-						"@type": "xsd:string"
+						"@type": "xsd:string",
 					},
 					"pointer": {
 						"@id": "ex:pointer",
-						"@type": "@id"
-					}
+						"@type": "@id",
+					},
 				};
 				context.extendObjectSchema( objectSchema );
 
 				let digestedSchema:ObjectSchema.DigestedObjectSchema = context.getObjectSchema();
 				expect( digestedSchema instanceof ObjectSchema.DigestedObjectSchema ).toBe( true );
-				let some = new ObjectSchema.DigestedObjectSchema();
+				let some:ObjectSchema.DigestedObjectSchema = new ObjectSchema.DigestedObjectSchema();
 				expect( digestedSchema.properties ).not.toEqual( some.properties );
 
 				let expectedDigestedSchema:ObjectSchema.DigestedObjectSchema = ObjectSchema.Digester.combineDigestedObjectSchemas( [
@@ -374,7 +454,7 @@ describe( module( "Carbon/SDKContext" ), ():void => {
 			INSTANCE,
 			"clearObjectSchema",
 			"Remove the Schema of the type specified, if not provided empty the General Schema.", [
-				{name: "type", type: "string", optional: true}
+				{name: "type", type: "string", optional: true},
 			]
 		), ():void => {
 			expect( context.clearObjectSchema ).toBeDefined();
@@ -386,12 +466,12 @@ describe( module( "Carbon/SDKContext" ), ():void => {
 				"xsd": "http://www.w3.org/2001/XMLSchema#",
 				"string": {
 					"@id": "ex:string",
-					"@type": "xsd:string"
+					"@type": "xsd:string",
 				},
 				"pointer": {
 					"@id": "ex:pointer",
-					"@type": "@id"
-				}
+					"@type": "@id",
+				},
 			};
 			let objectSchema:ObjectSchema.DigestedObjectSchema = ObjectSchema.Digester.digestSchema( rawObjectSchema );
 			class MyContext extends SDKContext.Class {
@@ -408,7 +488,7 @@ describe( module( "Carbon/SDKContext" ), ():void => {
 			mockedContext.clearObjectSchema( "http://example.com/ns#MyType" );
 			expect( mockedContext.hasObjectSchema( "http://example.com/ns#MyType" ) ).toBe( false );
 
-			//General schema
+			// General schema
 			let returnedSchema:ObjectSchema.DigestedObjectSchema;
 			returnedSchema = mockedContext.getObjectSchema();
 			expect( returnedSchema ).toEqual( objectSchema );

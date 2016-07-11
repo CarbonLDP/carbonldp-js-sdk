@@ -57,7 +57,7 @@ var Class = (function () {
         var expandedObject = {};
         expandedObject["@id"] = !!compactedObject["id"] ? compactedObject["id"] : "";
         if (!!compactedObject["types"])
-            expandedObject["@type"] = compactedObject["types"];
+            expandedObject["@type"] = compactedObject["types"].map(function (type) { return _this.resolveTypeURI(type, digestedSchema); });
         Utils.forEachOwnProperty(compactedObject, function (propertyName, value) {
             if (propertyName === "id")
                 return;
@@ -539,6 +539,14 @@ var Class = (function () {
         }
         else {
         }
+    };
+    Class.prototype.resolveTypeURI = function (uri, schema) {
+        if (RDF.URI.Util.isAbsolute(uri))
+            return uri;
+        uri = ObjectSchema.Digester.resolvePrefixedURI(new RDF.URI.Class(uri), schema).stringValue;
+        if (schema.vocab)
+            uri = RDF.URI.Util.resolve(schema.vocab, uri);
+        return uri;
     };
     return Class;
 }());

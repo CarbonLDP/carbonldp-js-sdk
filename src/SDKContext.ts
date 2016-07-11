@@ -1,16 +1,12 @@
-import * as App from "./App";
 import * as APIDescription from "./APIDescription";
 import * as Auth from "./Auth";
 import Context from "./Context";
 import Documents from "./Documents";
 import * as Errors from "./Errors";
-import * as JSONLDConverter from "./JSONLDConverter";
 import * as LDP from "./LDP";
 import * as NS from "./NS";
 import * as PersistedBlankNode from "./PersistedBlankNode";
-import * as Pointer from "./Pointer";
 import * as RDF from "./RDF";
-import * as Utils from "./Utils";
 import * as ObjectSchema from "./ObjectSchema";
 import * as Agent from "./Agent";
 import * as RDFRepresentation from "./RDFRepresentation";
@@ -66,6 +62,7 @@ export class Class implements Context {
 	}
 
 	hasObjectSchema( type:string ):boolean {
+		type = this.resolveTypeURI( type );
 		if( this.typeObjectSchemaMap.has( type ) ) return true;
 		if( ! ! this.parentContext && this.parentContext.hasObjectSchema( type ) ) return true;
 
@@ -75,6 +72,7 @@ export class Class implements Context {
 	getObjectSchema( type:string = null ):ObjectSchema.DigestedObjectSchema {
 		if( ! ! type ) {
 			// Type specific schema
+			type = this.resolveTypeURI( type );
 			if( this.typeObjectSchemaMap.has( type ) ) return this.typeObjectSchemaMap.get( type );
 			if( ! ! this.parentContext && this.parentContext.hasObjectSchema( type ) ) return this.parentContext.getObjectSchema( type );
 
@@ -106,6 +104,7 @@ export class Class implements Context {
 		if( ! type ) {
 			this.generalObjectSchema = ! ! this.parentContext ? null : new ObjectSchema.DigestedObjectSchema();
 		} else {
+			type = this.resolveTypeURI( type );
 			this.typeObjectSchemaMap.delete( type );
 		}
 	}
@@ -128,7 +127,9 @@ export class Class implements Context {
 	}
 
 	protected extendTypeObjectSchema( digestedSchema:ObjectSchema.DigestedObjectSchema, type:string ):void {
+		type = this.resolveTypeURI( type );
 		let digestedSchemaToExtend:ObjectSchema.DigestedObjectSchema;
+
 		if( this.typeObjectSchemaMap.has( type ) ) {
 			digestedSchemaToExtend = this.typeObjectSchemaMap.get( type );
 		} else if( ! ! this.parentContext && this.parentContext.hasObjectSchema( type ) ) {
@@ -138,7 +139,6 @@ export class Class implements Context {
 		}
 
 		let extendedDigestedSchema:ObjectSchema.DigestedObjectSchema = ObjectSchema.Digester.combineDigestedObjectSchemas( [
-			new ObjectSchema.DigestedObjectSchema(),
 			digestedSchemaToExtend,
 			digestedSchema,
 		] );
@@ -186,6 +186,19 @@ export class Class implements Context {
 		this.extendObjectSchema( Auth.Ticket.RDF_CLASS, Auth.Ticket.SCHEMA );
 
 		this.extendObjectSchema( Agent.RDF_CLASS, Agent.SCHEMA );
+	}
+
+	private resolveTypeURI( uri:string ):string {
+		if( RDF.URI.Util.isAbsolute( uri ) ) return uri;
+
+		let schema:ObjectSchema.DigestedObjectSchema = this.getObjectSchema();
+		let vocab:string;
+		if( this.hasSetting( "vocabulary" ) ) vocab = this.resolve( this.getSetting( "vocabulary" ) );
+
+		uri = ObjectSchema.Digester.resolvePrefixedURI( new RDF.URI.Class( uri ), schema ).stringValue;
+		if( vocab ) uri = RDF.URI.Util.resolve( vocab, uri );
+
+		return uri;
 	}
 }
 

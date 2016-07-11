@@ -1,5 +1,6 @@
 "use strict";
 var Document = require("./Document");
+var ObjectSchema = require("./ObjectSchema");
 var PersistedResource = require("./PersistedResource");
 var PersistedFragment = require("./PersistedFragment");
 var PersistedNamedFragment = require("./PersistedNamedFragment");
@@ -28,6 +29,33 @@ function extendIsDirty(superFunction) {
 function syncSavedFragments() {
     var document = this;
     document._savedFragments = Utils.A.from(document._fragmentsIndex.values());
+}
+function resolveURI(uri) {
+    if (URI.Util.isAbsolute(uri))
+        return uri;
+    var schema = this._documents.getSchemaFor(this);
+    uri = ObjectSchema.Digester.resolvePrefixedURI(new URI.Class(uri), schema).stringValue;
+    if (schema.vocab)
+        uri = URI.Util.resolve(schema.vocab, uri);
+    return uri;
+}
+function extendAddType(superFunction) {
+    return function (type) {
+        type = resolveURI.call(this, type);
+        superFunction.call(this, type);
+    };
+}
+function extendHasType(superFunction) {
+    return function (type) {
+        type = resolveURI.call(this, type);
+        return superFunction.call(this, type);
+    };
+}
+function extendRemoveType(superFunction) {
+    return function (type) {
+        type = resolveURI.call(this, type);
+        superFunction.call(this, type);
+    };
 }
 function extendCreateFragment(superFunction) {
     return function (slugOrObject, object) {
@@ -156,6 +184,24 @@ var Factory = (function () {
                 enumerable: false,
                 configurable: true,
                 value: syncSavedFragments,
+            },
+            "addType": {
+                writable: false,
+                enumerable: false,
+                configurable: true,
+                value: extendAddType(persistedDocument.addType),
+            },
+            "hasType": {
+                writable: false,
+                enumerable: false,
+                configurable: true,
+                value: extendHasType(persistedDocument.hasType),
+            },
+            "removeType": {
+                writable: false,
+                enumerable: false,
+                configurable: true,
+                value: extendRemoveType(persistedDocument.removeType),
             },
             "hasPointer": {
                 writable: false,

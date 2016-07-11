@@ -1628,7 +1628,7 @@ Adds a type to the Document.
 
 *Parameters*
 
-- type
+- type: The type to be added.
 
 ##### hasType
 ```typescript 
@@ -1639,7 +1639,7 @@ Returns true if the Document contains the type specified.
 
 *Parameters*
 
-- type
+- type: The type to look for.
 
 ##### removeType
 ```typescript 
@@ -1650,7 +1650,7 @@ Remove the type specified from the Document.
 
 *Parameters*
 
-- type
+- type: The type to be removed.
 
 ##### hasPointer
 ```typescript 
@@ -6715,6 +6715,39 @@ _etag:string
 The ETag (entity tag) of the PersistedDocument.
 
 ##### <a name="Carbon-PersistedDocument-Factory-Decorated-Object-Methods" />Methods
+##### addType
+```typescript 
+addType( type:string )
+```
+
+Adds a type to the Document. Relative and prefixed types are resolved before the operation.
+
+*Parameters*
+
+- type: The type to be added.
+
+##### hasType
+```typescript 
+hasType( type:string )
+```
+
+Returns true if the Document contains the type specified. Relative and prefixed types are resolved before the operation.
+
+*Parameters*
+
+- type: The type to look for.
+
+##### removeType
+```typescript 
+removeType( type:string )
+```
+
+Remove the type specified from the Document. Relative and prefixed types are resolved before the operation.
+
+*Parameters*
+
+- type: The type to be removed.
+
 ##### hasPointer
 ```typescript 
 hasPointer( id:string ):boolean

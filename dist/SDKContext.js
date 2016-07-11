@@ -6,6 +6,7 @@ var Errors = require("./Errors");
 var LDP = require("./LDP");
 var NS = require("./NS");
 var PersistedBlankNode = require("./PersistedBlankNode");
+var RDF = require("./RDF");
 var ObjectSchema = require("./ObjectSchema");
 var Agent = require("./Agent");
 var RDFRepresentation = require("./RDFRepresentation");
@@ -47,6 +48,7 @@ var Class = (function () {
         this.settings.delete(name);
     };
     Class.prototype.hasObjectSchema = function (type) {
+        type = this.resolveTypeURI(type);
         if (this.typeObjectSchemaMap.has(type))
             return true;
         if (!!this.parentContext && this.parentContext.hasObjectSchema(type))
@@ -56,6 +58,7 @@ var Class = (function () {
     Class.prototype.getObjectSchema = function (type) {
         if (type === void 0) { type = null; }
         if (!!type) {
+            type = this.resolveTypeURI(type);
             if (this.typeObjectSchemaMap.has(type))
                 return this.typeObjectSchemaMap.get(type);
             if (!!this.parentContext && this.parentContext.hasObjectSchema(type))
@@ -88,6 +91,7 @@ var Class = (function () {
             this.generalObjectSchema = !!this.parentContext ? null : new ObjectSchema.DigestedObjectSchema();
         }
         else {
+            type = this.resolveTypeURI(type);
             this.typeObjectSchemaMap.delete(type);
         }
     };
@@ -109,6 +113,7 @@ var Class = (function () {
         ]);
     };
     Class.prototype.extendTypeObjectSchema = function (digestedSchema, type) {
+        type = this.resolveTypeURI(type);
         var digestedSchemaToExtend;
         if (this.typeObjectSchemaMap.has(type)) {
             digestedSchemaToExtend = this.typeObjectSchemaMap.get(type);
@@ -120,7 +125,6 @@ var Class = (function () {
             digestedSchemaToExtend = new ObjectSchema.DigestedObjectSchema();
         }
         var extendedDigestedSchema = ObjectSchema.Digester.combineDigestedObjectSchemas([
-            new ObjectSchema.DigestedObjectSchema(),
             digestedSchemaToExtend,
             digestedSchema,
         ]);
@@ -158,6 +162,18 @@ var Class = (function () {
         this.extendObjectSchema(Auth.Token.RDF_CLASS, Auth.Token.SCHEMA);
         this.extendObjectSchema(Auth.Ticket.RDF_CLASS, Auth.Ticket.SCHEMA);
         this.extendObjectSchema(Agent.RDF_CLASS, Agent.SCHEMA);
+    };
+    Class.prototype.resolveTypeURI = function (uri) {
+        if (RDF.URI.Util.isAbsolute(uri))
+            return uri;
+        var schema = this.getObjectSchema();
+        var vocab;
+        if (this.hasSetting("vocabulary"))
+            vocab = this.resolve(this.getSetting("vocabulary"));
+        uri = ObjectSchema.Digester.resolvePrefixedURI(new RDF.URI.Class(uri), schema).stringValue;
+        if (vocab)
+            uri = RDF.URI.Util.resolve(vocab, uri);
+        return uri;
     };
     return Class;
 }());

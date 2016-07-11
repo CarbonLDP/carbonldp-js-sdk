@@ -35,6 +35,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 		"Factory class for PersistedDocument objects."
 	), ():void => {
 		let context:AbstractContext;
+
 		beforeEach( ():void => {
 			class MockedContext extends AbstractContext {
 				resolve( uri:string ) {
@@ -251,10 +252,23 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 			]
 		), ():void => {
 			let document:PersistedDocument.Class;
+			let myContext:AbstractContext;
 
 			beforeEach( ():void => {
-				context.documents.getPointer( "http://example.com/in/documents/" );
-				document = PersistedDocument.Factory.create( "http://example.com/document/", context.documents );
+				class MockedContext extends AbstractContext {
+					resolve( uri:string ) {
+						return URI.Util.isRelative( uri ) ? `http://example.com/${uri}` : uri;
+					}
+				}
+				myContext = new MockedContext();
+				myContext.setSetting( "vocabulary", "vocab#" );
+				myContext.extendObjectSchema( {
+					"exTypes": "http://example.com/types#",
+					"another": "http://example.com/another-url/ns#",
+				} );
+
+				myContext.documents.getPointer( "http://example.com/in/documents/" );
+				document = PersistedDocument.Factory.create( "http://example.com/document/", myContext.documents );
 				document.createNamedFragment( "fragment" );
 				document.createFragment( "_:BlankNode" );
 			} );
@@ -279,6 +293,159 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 				expect( document._etag ).toBeDefined();
 				// By default, the ETag is null.
 				expect( document._etag ).toBeNull();
+			} );
+
+			it( hasMethod(
+				INSTANCE,
+				"addType",
+				"Adds a type to the Document. Relative and prefixed types are resolved before the operation.", [
+					{name: "type", type: "string", description: "The type to be added."},
+				]
+			), ():void => {
+				expect( document.addType ).toBeDefined();
+				expect( Utils.isFunction( document.addType ) ).toBe( true );
+
+				expect( document.types.length ).toBe( 0 );
+
+				document.addType( "http://example.com/types#Type-1" );
+				expect( document.types.length ).toBe( 1 );
+				expect( document.types ).toContain( "http://example.com/types#Type-1" );
+
+				document.addType( "http://example.com/types#Type-2" );
+				expect( document.types.length ).toBe( 2 );
+				expect( document.types ).toContain( "http://example.com/types#Type-1" );
+				expect( document.types ).toContain( "http://example.com/types#Type-2" );
+
+				document.addType( "exTypes:Type-3" );
+				expect( document.types.length ).toBe( 3 );
+				expect( document.types ).toContain( "http://example.com/types#Type-1" );
+				expect( document.types ).toContain( "http://example.com/types#Type-2" );
+				expect( document.types ).toContain( "http://example.com/types#Type-3" );
+
+				document.addType( "another:Type-0" );
+				expect( document.types.length ).toBe( 4 );
+				expect( document.types ).toContain( "http://example.com/types#Type-1" );
+				expect( document.types ).toContain( "http://example.com/types#Type-2" );
+				expect( document.types ).toContain( "http://example.com/types#Type-3" );
+				expect( document.types ).toContain( "http://example.com/another-url/ns#Type-0" );
+
+				document.addType( "Current-Type" );
+				expect( document.types.length ).toBe( 5 );
+				expect( document.types ).toContain( "http://example.com/types#Type-1" );
+				expect( document.types ).toContain( "http://example.com/types#Type-2" );
+				expect( document.types ).toContain( "http://example.com/types#Type-3" );
+				expect( document.types ).toContain( "http://example.com/another-url/ns#Type-0" );
+				expect( document.types ).toContain( "http://example.com/vocab#Current-Type" );
+			} );
+
+			it( hasMethod(
+				INSTANCE,
+				"hasType",
+				"Returns true if the Document contains the type specified. Relative and prefixed types are resolved before the operation.", [
+					{name: "type", type: "string", description: "The type to look for."},
+				]
+			), ():void => {
+				expect( document.hasType ).toBeDefined();
+				expect( Utils.isFunction( document.hasType ) ).toBe( true );
+
+				document.types = [ "http://example.com/types#Type-1" ];
+				expect( document.hasType( "http://example.com/types#Type-1" ) ).toBe( true );
+				expect( document.hasType( "exTypes:Type-1" ) ).toBe( true );
+				expect( document.hasType( "http://example.com/types#Type-2" ) ).toBe( false );
+
+
+				document.types = [ "http://example.com/types#Type-1", "http://example.com/types#Type-2" ];
+				expect( document.hasType( "http://example.com/types#Type-1" ) ).toBe( true );
+				expect( document.hasType( "exTypes:Type-1" ) ).toBe( true );
+				expect( document.hasType( "http://example.com/types#Type-2" ) ).toBe( true );
+				expect( document.hasType( "exTypes:Type-2" ) ).toBe( true );
+				expect( document.hasType( "http://example.com/types#Type-3" ) ).toBe( false );
+				expect( document.hasType( "exTypes:#Type-3" ) ).toBe( false );
+
+				document.types = [ "http://example.com/types#Type-1", "http://example.com/another-url/ns#Type-2" ];
+				expect( document.hasType( "http://example.com/types#Type-1" ) ).toBe( true );
+				expect( document.hasType( "exTypes:Type-1" ) ).toBe( true );
+				expect( document.hasType( "another:Type-1" ) ).toBe( false );
+				expect( document.hasType( "http://example.com/another-url/ns#Type-2" ) ).toBe( true );
+				expect( document.hasType( "exTypes:Type-2" ) ).toBe( false );
+				expect( document.hasType( "another:Type-2" ) ).toBe( true );
+
+				document.types = [ "http://example.com/types#Type-1", "http://example.com/another-url/ns#Type-2", "http://example.com/vocab#Current-Type" ];
+				expect( document.hasType( "http://example.com/types#Type-1" ) ).toBe( true );
+				expect( document.hasType( "exTypes:Type-1" ) ).toBe( true );
+				expect( document.hasType( "another:Type-1" ) ).toBe( false );
+				expect( document.hasType( "Type-1" ) ).toBe( false );
+				expect( document.hasType( "http://example.com/another-url/ns#Type-2" ) ).toBe( true );
+				expect( document.hasType( "exTypes:Type-2" ) ).toBe( false );
+				expect( document.hasType( "another:Type-2" ) ).toBe( true );
+				expect( document.hasType( "Type-2" ) ).toBe( false );
+				expect( document.hasType( "http://example.com/vocab#Current-Type" ) ).toBe( true );
+				expect( document.hasType( "exTypes:Current-Type" ) ).toBe( false );
+				expect( document.hasType( "another:Current-Type" ) ).toBe( false );
+				expect( document.hasType( "Current-Type" ) ).toBe( true );
+			} );
+
+			it( hasMethod(
+				INSTANCE,
+				"removeType",
+				"Remove the type specified from the Document. Relative and prefixed types are resolved before the operation.", [
+					{name: "type", type: "string", description: "The type to be removed."},
+				]
+			), ():void => {
+				expect( document.removeType ).toBeDefined();
+				expect( Utils.isFunction( document.removeType ) ).toBe( true );
+
+				document.types = [ "http://example.com/types#Type-1" ];
+				document.removeType( "http://example.com/types#Type-2" );
+				expect( document.types.length ).toBe( 1 );
+				expect( document.types ).toContain( "http://example.com/types#Type-1" );
+				document.removeType( "another:Type-1" );
+				expect( document.types.length ).toBe( 1 );
+				expect( document.types ).toContain( "http://example.com/types#Type-1" );
+				document.removeType( "Type-1" );
+				expect( document.types.length ).toBe( 1 );
+				expect( document.types ).toContain( "http://example.com/types#Type-1" );
+
+				document.types = [ "http://example.com/types#Type-1" ];
+				document.removeType( "http://example.com/types#Type-1" );
+				expect( document.types.length ).toBe( 0 );
+				document.types = [ "http://example.com/types#Type-1" ];
+				document.removeType( "exTypes:Type-1" );
+				expect( document.types.length ).toBe( 0 );
+
+				document.types = [ "http://example.com/types#Type-1", "http://example.com/types#Type-2" ];
+				document.removeType( "http://example.com/types#Type-1" );
+				expect( document.types.length ).toBe( 1 );
+				expect( document.types ).toContain( "http://example.com/types#Type-2" );
+				document.removeType( "exTypes:Type-2" );
+				expect( document.types.length ).toBe( 0 );
+
+				document.types = [ "http://example.com/types#Type-1", "http://example.com/types#Type-2", "http://example.com/another-url/ns#Type-3" ];
+				document.removeType( "http://example.com/types#Type-1" );
+				expect( document.types.length ).toBe( 2 );
+				expect( document.types ).toContain( "http://example.com/types#Type-2" );
+				expect( document.types ).toContain( "http://example.com/another-url/ns#Type-3" );
+				document.removeType( "exTypes:Type-2" );
+				expect( document.types.length ).toBe( 1 );
+				expect( document.types ).toContain( "http://example.com/another-url/ns#Type-3" );
+				document.removeType( "another:Type-3" );
+				expect( document.types.length ).toBe( 0 );
+
+				document.types = [ "http://example.com/types#Type-1", "http://example.com/types#Type-2", "http://example.com/another-url/ns#Type-3", "http://example.com/vocab#Type-4" ];
+				document.removeType( "http://example.com/types#Type-1" );
+				expect( document.types.length ).toBe( 3 );
+				expect( document.types ).toContain( "http://example.com/types#Type-2" );
+				expect( document.types ).toContain( "http://example.com/another-url/ns#Type-3" );
+				expect( document.types ).toContain( "http://example.com/vocab#Type-4" );
+				document.removeType( "exTypes:Type-2" );
+				expect( document.types.length ).toBe( 2 );
+				expect( document.types ).toContain( "http://example.com/another-url/ns#Type-3" );
+				expect( document.types ).toContain( "http://example.com/vocab#Type-4" );
+				document.removeType( "another:Type-3" );
+				expect( document.types.length ).toBe( 1 );
+				expect( document.types ).toContain( "http://example.com/vocab#Type-4" );
+				document.removeType( "Type-4" );
+				expect( document.types.length ).toBe( 0 );
 			} );
 
 			it( hasMethod(
@@ -422,7 +589,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 				expect( document.refresh ).toBeDefined();
 				expect( Utils.isFunction( document.refresh ) ).toBe( true );
 
-				let spy = spyOn( context.documents, "refresh" );
+				let spy = spyOn( myContext.documents, "refresh" );
 				document.refresh();
 				expect( spy ).toHaveBeenCalledWith( document );
 			} );
@@ -436,7 +603,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 				expect( document.save ).toBeDefined();
 				expect( Utils.isFunction( document.save ) ).toBe( true );
 
-				let spy = spyOn( context.documents, "save" );
+				let spy = spyOn( myContext.documents, "save" );
 				document.save();
 				expect( spy ).toHaveBeenCalledWith( document );
 			} );
@@ -450,7 +617,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 				expect( document.destroy ).toBeDefined();
 				expect( Utils.isFunction( document.destroy ) ).toBe( true );
 
-				let spy = spyOn( context.documents, "delete" );
+				let spy = spyOn( myContext.documents, "delete" );
 				document.destroy();
 				expect( spy ).toHaveBeenCalledWith( document.id );
 			} );
@@ -464,7 +631,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 				expect( document.getDownloadURL ).toBeDefined();
 				expect( Utils.isFunction( document.getDownloadURL ) ).toBe( true );
 
-				let spy = spyOn( context.documents, "getDownloadURL" );
+				let spy = spyOn( myContext.documents, "getDownloadURL" );
 				document.getDownloadURL();
 				expect( spy ).toHaveBeenCalledWith( document.id );
 			} );
@@ -481,7 +648,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 				let accessPoint:AccessPoint.Class = AccessPoint.Factory.create( document, "http://example.com/" );
 				let requestOptions:HTTP.Request.Options = {};
 
-				let spy = spyOn( context.documents, "createAccessPoint" );
+				let spy = spyOn( myContext.documents, "createAccessPoint" );
 				document.createAccessPoint( accessPoint, "slug", requestOptions );
 				expect( spy ).toHaveBeenCalledWith( accessPoint, "slug", requestOptions );
 			} );
@@ -498,7 +665,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 				expect( document.executeRawASKQuery ).toBeDefined();
 				expect( Utils.isFunction( document.executeRawASKQuery ) ).toBe( true );
 
-				let spy = spyOn( context.documents, "executeRawASKQuery" );
+				let spy = spyOn( myContext.documents, "executeRawASKQuery" );
 				document.executeRawASKQuery( "ASK { ?subject, ?predicate, ?object }" );
 				expect( spy ).toHaveBeenCalledWith( document.id, "ASK { ?subject, ?predicate, ?object }", {} );
 			} );
@@ -515,7 +682,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 				expect( document.executeASKQuery ).toBeDefined();
 				expect( Utils.isFunction( document.executeASKQuery ) ).toBe( true );
 
-				let spy = spyOn( context.documents, "executeASKQuery" );
+				let spy = spyOn( myContext.documents, "executeASKQuery" );
 				document.executeASKQuery( "ASK { ?subject, ?predicate, ?object }" );
 				expect( spy ).toHaveBeenCalledWith( document.id, "ASK { ?subject, ?predicate, ?object }", {} );
 			} );
@@ -532,7 +699,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 				expect( document.executeRawSELECTQuery ).toBeDefined();
 				expect( Utils.isFunction( document.executeRawSELECTQuery ) ).toBe( true );
 
-				let spy = spyOn( context.documents, "executeRawSELECTQuery" );
+				let spy = spyOn( myContext.documents, "executeRawSELECTQuery" );
 				document.executeRawSELECTQuery( "SELECT ?book ?title WHERE { <http://example.com/some-document/> ?book ?title }" );
 				expect( spy ).toHaveBeenCalledWith( document.id, "SELECT ?book ?title WHERE { <http://example.com/some-document/> ?book ?title }", {} );
 			} );
@@ -549,7 +716,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 				expect( document.executeSELECTQuery ).toBeDefined();
 				expect( Utils.isFunction( document.executeSELECTQuery ) ).toBe( true );
 
-				let spy = spyOn( context.documents, "executeSELECTQuery" );
+				let spy = spyOn( myContext.documents, "executeSELECTQuery" );
 				document.executeSELECTQuery( "SELECT ?book ?title WHERE { <http://example.com/some-document/> ?book ?title }" );
 				expect( spy ).toHaveBeenCalledWith( document.id, "SELECT ?book ?title WHERE { <http://example.com/some-document/> ?book ?title }", {} );
 			} );
@@ -566,7 +733,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 				expect( document.executeRawCONSTRUCTQuery ).toBeDefined();
 				expect( Utils.isFunction( document.executeRawCONSTRUCTQuery ) ).toBe( true );
 
-				let spy = spyOn( context.documents, "executeRawCONSTRUCTQuery" );
+				let spy = spyOn( myContext.documents, "executeRawCONSTRUCTQuery" );
 				document.executeRawCONSTRUCTQuery( "CONSTRUCT { ?subject ?predicate ?object } WHERE { ?subject ?predicate ?object }" );
 				expect( spy ).toHaveBeenCalledWith( document.id, "CONSTRUCT { ?subject ?predicate ?object } WHERE { ?subject ?predicate ?object }", {} );
 			} );
@@ -583,7 +750,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 				expect( document.executeRawDESCRIBEQuery ).toBeDefined();
 				expect( Utils.isFunction( document.executeRawDESCRIBEQuery ) ).toBe( true );
 
-				let spy = spyOn( context.documents, "executeRawDESCRIBEQuery" );
+				let spy = spyOn( myContext.documents, "executeRawDESCRIBEQuery" );
 				document.executeRawDESCRIBEQuery( "DESCRIBE { ?subject ?predicate ?object } WHERE { ?subject ?predicate ?object }" );
 				expect( spy ).toHaveBeenCalledWith( document.id, "DESCRIBE { ?subject ?predicate ?object } WHERE { ?subject ?predicate ?object }", {} );
 			} );

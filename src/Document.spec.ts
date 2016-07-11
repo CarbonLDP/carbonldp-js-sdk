@@ -552,7 +552,7 @@ describe( module( "Carbon/Document" ), ():void => {
 				INSTANCE,
 				"addType",
 				"Adds a type to the Document.", [
-					{name: "type", type: "string"},
+					{name: "type", type: "string", description: "The type to be added."},
 				]
 			), ():void => {
 				expect( document.addType ).toBeDefined();
@@ -574,7 +574,7 @@ describe( module( "Carbon/Document" ), ():void => {
 				INSTANCE,
 				"hasType",
 				"Returns true if the Document contains the type specified.", [
-					{name: "type", type: "string"},
+					{name: "type", type: "string", description: "The type to look for."},
 				]
 			), ():void => {
 				expect( document.hasType ).toBeDefined();
@@ -595,7 +595,7 @@ describe( module( "Carbon/Document" ), ():void => {
 				INSTANCE,
 				"removeType",
 				"Remove the type specified from the Document.", [
-					{name: "type", type: "string"},
+					{name: "type", type: "string", description: "The type to be removed."},
 				]
 			), ():void => {
 				expect( document.removeType ).toBeDefined();
