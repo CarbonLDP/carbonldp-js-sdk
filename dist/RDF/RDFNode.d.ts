@@ -12,3 +12,4 @@ export declare class Util {
     static getPropertyURI(node: Class, predicate: string): string;
     static getFreeNodes<T extends Object>(value: T): Class[];
 }
+export default Class;
