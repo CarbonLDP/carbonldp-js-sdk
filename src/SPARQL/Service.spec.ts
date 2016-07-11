@@ -644,17 +644,17 @@ describe( module( "Carbon/SPARQL/Service" ), ():void => {
 
 		it( hasMethod(
 			STATIC,
-			"executeUPDATEQuery", "Executes an UPDATE query.", [
+			"executeUPDATE", "Executes an UPDATE query.", [
 				{name: "url", type: "string"},
-				{name: "updateQuery", type: "string"},
+				{name: "update", type: "string"},
 				{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true},
 			],
 			{type: "Promise<Carbon.HTTP.Response.Class>"}
 		), ( done:{ ():void; fail:( error:any ) => void } ):void => {
 			// Property Integrity
 			(() => {
-				expect( "executeUPDATEQuery" in Service.Class ).toEqual( true );
-				expect( Utils.isFunction( Service.Class.executeUPDATEQuery ) ).toEqual( true );
+				expect( "executeUPDATE" in Service.Class ).toEqual( true );
+				expect( Utils.isFunction( Service.Class.executeUPDATE ) ).toEqual( true );
 			})();
 
 			let promises:Promise<void>[] = [];
@@ -668,7 +668,7 @@ describe( module( "Carbon/SPARQL/Service" ), ():void => {
 					responseText: ``,
 				} );
 
-				promises.push( Service.Class.executeUPDATEQuery( "http://example.com/sparql-endpoint/json/", constructQuery ).then(
+				promises.push( Service.Class.executeUPDATE( "http://example.com/sparql-endpoint/json/", constructQuery ).then(
 					( response:HTTP.Response.Class ):void => {
 						// Inspect request sent
 						let request:JasmineAjaxRequest = jasmine.Ajax.requests.at( 0 );
@@ -698,7 +698,7 @@ describe( module( "Carbon/SPARQL/Service" ), ():void => {
 					responseText: ``,
 				} );
 
-				promises.push( Service.Class.executeUPDATEQuery( "http://example.com/sparql-endpoint/turtle/", constructQuery, requestOptions ).then(
+				promises.push( Service.Class.executeUPDATE( "http://example.com/sparql-endpoint/turtle/", constructQuery, requestOptions ).then(
 					( response:HTTP.Response.Class ):void => {
 						// Inspect request sent
 						let request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();

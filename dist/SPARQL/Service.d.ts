@@ -11,7 +11,7 @@ export declare class Class {
     static executeSELECTQuery(url: string, selectQuery: string, pointerLibrary: Pointer.Library, options?: HTTP.Request.Options): Promise<[any, HTTP.Response.Class]>;
     static executeRawCONSTRUCTQuery(url: string, constructQuery: string, options?: HTTP.Request.Options): Promise<[string, HTTP.Response.Class]>;
     static executeRawDESCRIBEQuery(url: string, describeQuery: string, options?: HTTP.Request.Options): Promise<[string, HTTP.Response.Class]>;
-    static executeUPDATEQuery(url: string, updateQuery: string, options?: HTTP.Request.Options): Promise<HTTP.Response.Class>;
+    static executeUPDATE(url: string, updateQuery: string, options?: HTTP.Request.Options): Promise<HTTP.Response.Class>;
     private static parseRawBindingProperty(rawBindingProperty, pointerLibrary);
 }
 export default Class;

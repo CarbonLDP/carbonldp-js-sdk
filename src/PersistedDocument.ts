@@ -46,7 +46,7 @@ export interface Class extends Pointer.Class, PersistedResource.Class, Document.
 	executeSELECTQuery( selectQuery:string, requestOptions?:HTTP.Request.Options ):Promise<[ SPARQL.SELECTResults.Class, HTTP.Response.Class ]>;
 	executeRawCONSTRUCTQuery( constructQuery:string, requestOptions?:HTTP.Request.Options ):Promise<[ string, HTTP.Response.Class ]>;
 	executeRawDESCRIBEQuery( describeQuery:string, requestOptions?:HTTP.Request.Options ):Promise<[ string, HTTP.Response.Class ]>;
-	executeUPDATEQuery( updateQuery:string, requestOptions?:HTTP.Request.Options ):Promise<HTTP.Response.Class>;
+	executeUPDATE( updateQuery:string, requestOptions?:HTTP.Request.Options ):Promise<HTTP.Response.Class>;
 }
 
 function extendIsDirty( superFunction:() => boolean ):() => boolean {
@@ -142,8 +142,8 @@ function executeRawDESCRIBEQuery( describeQuery:string, requestOptions:HTTP.Requ
 	return this._documents.executeRawDESCRIBEQuery( this.id, describeQuery, requestOptions );
 }
 
-function executeUPDATEQuery( updateQuery:string, requestOptions:HTTP.Request.Options = {} ):Promise<[ string, HTTP.Response.Class ]> {
-	return this._documents.executeUPDATEQuery( this.id, updateQuery, requestOptions );
+function executeUPDATE( updateQuery:string, requestOptions:HTTP.Request.Options = {} ):Promise<[ string, HTTP.Response.Class ]> {
+	return this._documents.executeUPDATE( this.id, updateQuery, requestOptions );
 }
 
 export class Factory {
@@ -163,7 +163,7 @@ export class Factory {
 			Utils.hasFunction( document, "executeSELECTQuery" ) &&
 			Utils.hasFunction( document, "executeRawDESCRIBEQuery" ) &&
 			Utils.hasFunction( document, "executeRawCONSTRUCTQuery" ) &&
-			Utils.hasFunction( document, "executeUPDATEQuery" )
+			Utils.hasFunction( document, "executeUPDATE" )
 		);
 	}
 
@@ -330,11 +330,11 @@ export class Factory {
 				configurable: true,
 				value: executeRawDESCRIBEQuery,
 			},
-			"executeUPDATEQuery": {
+			"executeUPDATE": {
 				writable: false,
 				enumerable: false,
 				configurable: true,
-				value: executeUPDATEQuery,
+				value: executeUPDATE,
 			},
 
 			"createFragment": {

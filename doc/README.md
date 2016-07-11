@@ -2010,9 +2010,9 @@ Executes a DESCRIBE Query and returns a string with the resulting model
 - describeQuery
 - requestOptions
 
-##### executeUPDATEQuery
+##### executeUPDATE
 ```typescript 
-executeUPDATEQuery( documentURI:string,  UPDATEQuery:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<Carbon.HTTP.Response.Class>
+executeUPDATE( documentURI:string,  update:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<Carbon.HTTP.Response.Class>
 ```
 
 Executes a DESCRIBE query and returns a string with the resulting model.
@@ -2020,7 +2020,7 @@ Executes a DESCRIBE query and returns a string with the resulting model.
 *Parameters*
 
 - documentURI: URI of the document that works as a SPARQL endpoint where to execute the SPARQL query.
-- UPDATEQuery: UPDATE query to execute in the selected endpoint.
+- update: UPDATE query to execute in the selected endpoint.
 - requestOptions: Customizable options for the request.
 
 ##### createChild
@@ -6825,9 +6825,9 @@ Executes an DESCRIBE query in the document and returns a string with the resulti
 - constructQuery
 - requestOptions: Customizable options for the request.
 
-##### executeUPDATEQuery
+##### executeUPDATE
 ```typescript 
-executeUPDATEQuery( updateQuery:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<Carbon.HTTP.Response.Class>
+executeUPDATE( updateQuery:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<Carbon.HTTP.Response.Class>
 ```
 
 Executes an UPDATE query.
@@ -8619,9 +8619,9 @@ Executes a DESCRIBE Query and returns a string with the resulting model
 - describeQuery
 - requestOptions
 
-##### executeUPDATEQuery
+##### executeUPDATE
 ```typescript 
-static executeUPDATEQuery( url:string,  updateQuery:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<Carbon.HTTP.Response.Class>
+static executeUPDATE( url:string,  update:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<Carbon.HTTP.Response.Class>
 ```
 
 Executes an UPDATE query.
@@ -8629,7 +8629,7 @@ Executes an UPDATE query.
 *Parameters*
 
 - url
-- updateQuery
+- update
 - requestOptions
 
 

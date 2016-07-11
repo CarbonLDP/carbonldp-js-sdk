@@ -3097,10 +3097,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 			})();
 		} );
 
-		it( hasMethod( INSTANCE, "executeUPDATEQuery",
+		it( hasMethod( INSTANCE, "executeUPDATE",
 			"Executes a DESCRIBE query and returns a string with the resulting model.", [
 				{name: "documentURI", type: "string", description: "URI of the document that works as a SPARQL endpoint where to execute the SPARQL query."},
-				{name: "UPDATEQuery", type: "string", description: "UPDATE query to execute in the selected endpoint."},
+				{name: "update", type: "string", description: "UPDATE query to execute in the selected endpoint."},
 				{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request."},
 			], {type: "Promise<Carbon.HTTP.Response.Class>"}
 		), ():void => {
@@ -3115,16 +3115,16 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 			// Property Integrity
 			(() => {
-				expect( "executeUPDATEQuery" in documents ).toEqual( true );
-				expect( Utils.isFunction( documents.executeUPDATEQuery ) ).toEqual( true );
+				expect( "executeUPDATE" in documents ).toEqual( true );
+				expect( Utils.isFunction( documents.executeUPDATE ) ).toEqual( true );
 			})();
 
-			let spyService:jasmine.Spy = spyOn( SPARQL.Service, "executeUPDATEQuery" );
+			let spyService:jasmine.Spy = spyOn( SPARQL.Service, "executeUPDATE" );
 
 			// Proper execution
 			(function ProperExecution():void {
 
-				documents.executeUPDATEQuery( "http://example.com/document/", `INSERT DATA { GRAPH <http://example.com/some-document/> { <http://example.com/some-document/> <http://example.com/ns#propertyString> "Property Value" } }` );
+				documents.executeUPDATE( "http://example.com/document/", `INSERT DATA { GRAPH <http://example.com/some-document/> { <http://example.com/some-document/> <http://example.com/ns#propertyString> "Property Value" } }` );
 
 				expect( spyService ).toHaveBeenCalledWith( "http://example.com/document/", `INSERT DATA { GRAPH <http://example.com/some-document/> { <http://example.com/some-document/> <http://example.com/ns#propertyString> "Property Value" } }`, jasmine.any( Object ) );
 				spyService.calls.reset();
@@ -3133,7 +3133,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 			// Relative URI
 			(function RelativeURI():void {
 
-				documents.executeUPDATEQuery( "document/", `INSERT DATA { GRAPH <http://example.com/some-document/> { <http://example.com/some-document/> <http://example.com/ns#propertyString> "Property Value" } }` );
+				documents.executeUPDATE( "document/", `INSERT DATA { GRAPH <http://example.com/some-document/> { <http://example.com/some-document/> <http://example.com/ns#propertyString> "Property Value" } }` );
 
 				expect( spyService ).toHaveBeenCalledWith( "http://example.com/document/", `INSERT DATA { GRAPH <http://example.com/some-document/> { <http://example.com/some-document/> <http://example.com/ns#propertyString> "Property Value" } }`, jasmine.any( Object ) );
 				spyService.calls.reset();

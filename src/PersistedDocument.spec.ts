@@ -76,7 +76,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 				executeSELECTQuery: ():void => {},
 				executeRawDESCRIBEQuery: ():void => {},
 				executeRawCONSTRUCTQuery: ():void => {},
-				executeUPDATEQuery: ():void => {},
+				executeUPDATE: ():void => {},
 			};
 			expect( PersistedDocument.Factory.hasClassProperties( document ) ).toBe( true );
 
@@ -128,9 +128,9 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 			expect( PersistedDocument.Factory.hasClassProperties( document ) ).toBe( false );
 			document.executeRawCONSTRUCTQuery = ():void => {};
 
-			delete document.executeUPDATEQuery;
+			delete document.executeUPDATE;
 			expect( PersistedDocument.Factory.hasClassProperties( document ) ).toBe( false );
-			document.executeUPDATEQuery = ():void => {};
+			document.executeUPDATE = ():void => {};
 		} );
 
 		it( hasMethod(
@@ -163,7 +163,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 			object[ "executeSELECTQuery" ] = ():void => {};
 			object[ "executeRawDESCRIBEQuery" ] = ():void => {};
 			object[ "executeRawCONSTRUCTQuery" ] = ():void => {};
-			object[ "executeUPDATEQuery" ] = ():void => {};
+			object[ "executeUPDATE" ] = ():void => {};
 			expect( PersistedDocument.Factory.is( object ) ).toBe( true );
 		} );
 
@@ -596,18 +596,18 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 
 			it( hasMethod(
 				INSTANCE,
-				"executeUPDATEQuery",
+				"executeUPDATE",
 				"Executes an UPDATE query.", [
 					{name: "updateQuery", type: "string", description: "UPDATE query to execute in the selected endpoint."},
 					{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request."},
 				],
 				{type: "Promise<Carbon.HTTP.Response.Class>"}
 			), ():void => {
-				expect( document.executeUPDATEQuery ).toBeDefined();
-				expect( Utils.isFunction( document.executeUPDATEQuery ) ).toBe( true );
+				expect( document.executeUPDATE ).toBeDefined();
+				expect( Utils.isFunction( document.executeUPDATE ) ).toBe( true );
 
-				let spy:jasmine.Spy = spyOn( context.documents, "executeUPDATEQuery" );
-				document.executeUPDATEQuery( `INSERT DATA { GRAPH <http://example.com/some-document/> { <http://example.com/some-document/> <http://example.com/ns#propertyString> "Property Value" } }` );
+				let spy:jasmine.Spy = spyOn( context.documents, "executeUPDATE" );
+				document.executeUPDATE( `INSERT DATA { GRAPH <http://example.com/some-document/> { <http://example.com/some-document/> <http://example.com/ns#propertyString> "Property Value" } }` );
 				expect( spy ).toHaveBeenCalledWith( document.id, `INSERT DATA { GRAPH <http://example.com/some-document/> { <http://example.com/some-document/> <http://example.com/ns#propertyString> "Property Value" } }`, {} );
 			} );
 

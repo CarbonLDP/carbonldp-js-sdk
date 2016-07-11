@@ -68,7 +68,7 @@ var Class = (function () {
         HTTP.Request.Util.setContentTypeHeader("application/sparql-query", options);
         return HTTP.Request.Service.post(url, describeQuery, options, Class.stringParser);
     };
-    Class.executeUPDATEQuery = function (url, updateQuery, options) {
+    Class.executeUPDATE = function (url, updateQuery, options) {
         if (options === void 0) { options = {}; }
         options = Utils.extend(options, Class.defaultOptions);
         if (HTTP.Request.Util.getHeader("Accept", options) === undefined)

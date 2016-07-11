@@ -80,7 +80,7 @@ export class Class {
 		return HTTP.Request.Service.post( url, describeQuery, options, Class.stringParser );
 	}
 
-	static executeUPDATEQuery( url:string, updateQuery:string, options:HTTP.Request.Options = {} ):Promise<HTTP.Response.Class> {
+	static executeUPDATE( url:string, updateQuery:string, options:HTTP.Request.Options = {} ):Promise<HTTP.Response.Class> {
 		options = Utils.extend( options, Class.defaultOptions );
 
 		if( HTTP.Request.Util.getHeader( "Accept", options ) === undefined ) HTTP.Request.Util.setAcceptHeader( "application/ld+json", options );
