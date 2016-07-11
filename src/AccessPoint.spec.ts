@@ -47,9 +47,9 @@ describe( module( "Carbon/AccessPoints" ), ():void => {
 			STATIC,
 			"hasClassProperties",
 			"Returns true if the object provided has the properties that defines a `Carbon.AccessPoint.Class` object", [
-				{ name: "resource", type: "Object" }
+				{name: "resource", type: "Object"}
 			],
-			{ type: "boolean" }
+			{type: "boolean"}
 		), ():void => {
 			expect( AccessPoint.Factory.hasClassProperties ).toBeDefined();
 			expect( Utils.isFunction( AccessPoint.Factory.hasClassProperties ) ).toBe( true );
@@ -70,11 +70,11 @@ describe( module( "Carbon/AccessPoints" ), ():void => {
 			STATIC,
 			"create",
 			"Create a `Carbon.AccessPoint.Class` object with the parameters specified.", [
-				{ name: "membershipResource", type: "Carbon.Pointer.Class" },
-				{ name: "hasMemberRelation", type: "string | Carbon.Pointer.Class" },
-				{ name: "memberOfRelation", type: "string | Carbon.Pointer.Class", optional: true }
+				{name: "membershipResource", type: "Carbon.Pointer.Class"},
+				{name: "hasMemberRelation", type: "string | Carbon.Pointer.Class"},
+				{name: "memberOfRelation", type: "string | Carbon.Pointer.Class", optional: true}
 			],
-			{ type: "Carbon.AccessPoint.Class" }
+			{type: "Carbon.AccessPoint.Class"}
 		), ():void => {
 			expect( AccessPoint.Factory.create ).toBeDefined();
 			expect( Utils.isFunction( AccessPoint.Factory.create ) ).toBe( true );
@@ -96,18 +96,18 @@ describe( module( "Carbon/AccessPoints" ), ():void => {
 
 			AccessPoint.Factory.create( pointer, pointer, pointer );
 			expect( spy ).toHaveBeenCalledWith( {}, pointer, pointer, pointer );
-		});
+		} );
 
 		it( hasMethod(
 			STATIC,
 			"createFrom",
 			"Create a `Carbon.AccessPoint.Class` object with the object provided.", [
-				{ name: "object", type: "T extends Object" },
-				{ name: "membershipResource", type: "Carbon.Pointer.Class" },
-				{ name: "hasMemberRelation", type: "string | Carbon.Pointer.Class" },
-				{ name: "memberOfRelation", type: "string | Carbon.Pointer.Class", optional: true }
+				{name: "object", type: "T extends Object"},
+				{name: "membershipResource", type: "Carbon.Pointer.Class"},
+				{name: "hasMemberRelation", type: "string | Carbon.Pointer.Class"},
+				{name: "memberOfRelation", type: "string | Carbon.Pointer.Class", optional: true}
 			],
-			{ type: "T & Carbon.AccessPoint.Class" }
+			{type: "T & Carbon.AccessPoint.Class"}
 		), ():void => {
 			expect( AccessPoint.Factory.createFrom ).toBeDefined();
 			expect( Utils.isFunction( AccessPoint.Factory.createFrom ) ).toBe( true );
@@ -129,8 +129,8 @@ describe( module( "Carbon/AccessPoints" ), ():void => {
 
 			AccessPoint.Factory.createFrom( {}, pointer, pointer, pointer );
 			expect( spy ).toHaveBeenCalledWith( {}, pointer, pointer, pointer );
-		});
+		} );
 
-	});
+	} );
 
-});
+} );

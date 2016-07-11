@@ -1,16 +1,16 @@
 import {
-		INSTANCE,
+	INSTANCE,
 
-		module,
+	module,
 
-		isDefined,
+	isDefined,
 
-		clazz,
-		method,
+	clazz,
+	method,
 
-		hasConstructor,
-		hasMethod,
-		hasSignature,
+	hasConstructor,
+	hasMethod,
+	hasSignature,
 } from "./../test/JasmineExtender";
 
 import AbstractContext from "./../AbstractContext";
@@ -29,28 +29,28 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 	it( isDefined(), ():void => {
 		expect( TokenAuthenticator ).toBeDefined();
 		expect( Utils.isObject( TokenAuthenticator ) ).toEqual( true );
-	});
+	} );
 
 	describe( clazz( "Carbon.Auth.TokenAuthenticator.Class", `
 		Authenticates requests using Basic Authentication
-	`), ():void => {
+	` ), ():void => {
 
-		beforeEach( function ():void {
+		beforeEach( function():void {
 			jasmine.Ajax.install();
 		} );
 
-		afterEach( function ():void {
+		afterEach( function():void {
 			jasmine.Ajax.uninstall();
 		} );
 
 		it( isDefined(), ():void => {
 			expect( TokenAuthenticator.Class ).toBeDefined();
 			expect( Utils.isFunction( TokenAuthenticator.Class ) ).toEqual( true );
-		});
+		} );
 
 		it( hasConstructor(
 			[
-				{ name: "context", type: "Carbon.Context", description: "The context where to authenticate the agent." }
+				{name: "context", type: "Carbon.Context", description: "The context where to authenticate the agent."}
 			]
 		), ():void => {
 			class MockedContext extends AbstractContext {
@@ -61,13 +61,13 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 
 			let authenticator:TokenAuthenticator.Class = new TokenAuthenticator.Class( new MockedContext() );
 
-			expect( !! authenticator ).toEqual( true );
+			expect( ! ! authenticator ).toEqual( true );
 			expect( authenticator instanceof TokenAuthenticator.Class ).toEqual( true );
-		});
+		} );
 
 		it( hasMethod( INSTANCE, "isAuthenticated", `
 			returns true if the instance contains stored credentials.
-		`, { type: "boolean" } ), ():void => {
+		`, {type: "boolean"} ), ():void => {
 			class MockedContext extends AbstractContext {
 				resolve( uri:string ):string {
 					return uri;
@@ -80,7 +80,7 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 			expect( Utils.isFunction( authenticator.isAuthenticated ) ).toEqual( true );
 
 			// TODO
-		});
+		} );
 
 		describe( method(
 			INSTANCE,
@@ -89,11 +89,11 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 
 			it( hasSignature(
 				"Stores credentials to authenticate future requests.", [
-					{ name: "authenticationToken", type: "Carbon.Auth.UsernameAndPasswordToken" }
+					{name: "authenticationToken", type: "Carbon.Auth.UsernameAndPasswordToken"}
 				],
-				{ type: "Promise<Carbon.Auth.Token.Class>"}
+				{type: "Promise<Carbon.Auth.Token.Class>"}
 			), ( done:{ ():void, fail:( error:Error ) => void } ):void => {
-				
+
 				// Property Integrity
 				(() => {
 					class MockedContext extends AbstractContext {
@@ -136,7 +136,7 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 							}
 						}]
 					`,
-					});
+					} );
 
 					let context:SuccessfulContext = new SuccessfulContext();
 					let authenticator:TokenAuthenticator.Class = new TokenAuthenticator.Class( context );
@@ -147,7 +147,7 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 						expect( token ).toBeDefined();
 						expect( token ).not.toBeNull();
 						expect( Token.Factory.is( token ) ).toEqual( true );
-					}) );
+					} ) );
 				})();
 
 				// Unsuccessful Authentication
@@ -168,7 +168,7 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 					let authenticator:TokenAuthenticator.Class = new TokenAuthenticator.Class( context );
 
 					promises.push( authenticator.authenticate( new UsernameAndPasswordToken( "user", "pass" ) ).then( () => {
-							done.fail( new Error( "The authentication should have been unsuccessful." ) );
+						done.fail( new Error( "The authentication should have been unsuccessful." ) );
 					}, ( error:Error ) => {
 						expect( error instanceof HTTP.Errors.UnauthorizedError ).toEqual( true );
 
@@ -180,14 +180,14 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 					done();
 				}, ( error:Error ):void => {
 					done.fail( error );
-				});
-			});
+				} );
+			} );
 
 			it( hasSignature(
 				"Stores credentials to authenticate future requests.", [
-					{ name: "token", type: "Carbon.Auth.Token.Class" }
+					{name: "token", type: "Carbon.Auth.Token.Class"}
 				],
-				{ type: "Promise<Carbon.Auth.Token.Class>" }
+				{type: "Promise<Carbon.Auth.Token.Class>"}
 			), ( done:{ ():void, fail:( error:Error ) => void } ):void => {
 
 				class MockedContext extends AbstractContext {
@@ -196,7 +196,7 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 					}
 				}
 				let context = new MockedContext();
-				
+
 				// Property Integrity
 				(() => {
 					let authenticator:TokenAuthenticator.Class = new TokenAuthenticator.Class( context );
@@ -225,11 +225,11 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 					promises.push( authenticator.authenticate( JSON.parse( tokenString ) )
 						.then( ( tokenCredentials:Token.Class ):void => {
 							expect( authenticator.isAuthenticated() ).toEqual( true );
-	
+
 							expect( tokenCredentials ).toBeDefined();
 							expect( tokenCredentials ).not.toBeNull();
 							expect( Token.Factory.is( tokenCredentials ) ).toEqual( true );
-						})
+						} )
 					);
 				})();
 
@@ -261,16 +261,16 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 					done();
 				}, ( error:Error ):void => {
 					done.fail( error );
-				});
-			});
-			
-		});
+				} );
+			} );
+
+		} );
 
 		it( hasMethod( INSTANCE, "addAuthentication", `
 			Adds the Basic authentication header to the passed request options object.
 		`, [
-			{ name: "requestOptions", type:"Carbon.HTTP.Request.Options", description: "Request options object to add Authentication headers." }
-		], { type: "Carbon.HTTP.Request.Options", description: "The request options with the added authentication headers." } ), (  done:{ ():void; fail:( error:any ) => void } ):void => {
+			{name: "requestOptions", type: "Carbon.HTTP.Request.Options", description: "Request options object to add Authentication headers."}
+		], {type: "Carbon.HTTP.Request.Options", description: "The request options with the added authentication headers."} ), ( done:{ ():void; fail:( error:any ) => void } ):void => {
 
 			// Property Integrity
 			(() => {
@@ -320,7 +320,7 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 				promises.push( authenticator.authenticate( new UsernameAndPasswordToken( "user", "pass" ) ).then( ():void => {
 					let requestOptions:HTTP.Request.Options = authenticator.addAuthentication( {} );
 
-					expect( !! requestOptions ).toEqual( true );
+					expect( ! ! requestOptions ).toEqual( true );
 					expect( Utils.isObject( requestOptions ) ).toEqual( true );
 					expect( "headers" in requestOptions ).toEqual( true );
 					expect( requestOptions.headers instanceof Map ).toEqual( true );
@@ -335,7 +335,7 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 
 					expect( Utils.S.startsWith( authorization, "Token " ) ).toEqual( true );
 					expect( authorization.substring( 6 ) ).toEqual( "token-value" );
-				}) );
+				} ) );
 			})();
 
 			// TODO: Test case where other headers are already provided
@@ -346,8 +346,8 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 				done();
 			}, ( error:Error ):void => {
 				done.fail( error );
-			});
-		});
+			} );
+		} );
 
 		it( hasMethod( INSTANCE, "clearAuthentication", `
 			Clears any saved credentials and restores the Authenticator to its initial state.
@@ -379,7 +379,7 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 				expirationTime.setDate( expirationTime.getDate() + 1 );
 				jasmine.Ajax.stubRequest( "http://example.com/successful/auth-tokens/", null, "POST" ).andReturn( {
 					status: 200,
-					responseText:`[{
+					responseText: `[{
 						"@id": "", 
 						"@type": [ 
 							"https://carbonldp.com/ns/v1/security#Token" 
@@ -401,22 +401,22 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 					authenticator.clearAuthentication();
 
 					expect( authenticator.isAuthenticated() ).toEqual( false );
-				}) );
+				} ) );
 			})();
 
 			Promise.all( promises ).then( ():void => {
 				done();
 			}, ( error:Error ):void => {
 				done.fail( error );
-			});
-		});
+			} );
+		} );
 
 		it( hasMethod( INSTANCE, "supports",
 			`Returns true if the Authenticator supports the AuthenticationToken.`,
 			[
-				{ name: "authenticationToken", type: "Carbon.Auth.AuthenticationToken" }
+				{name: "authenticationToken", type: "Carbon.Auth.AuthenticationToken"}
 			],
-			{ type: "boolean" }
+			{type: "boolean"}
 		), ():void => {
 			class MockedContext extends AbstractContext {
 				resolve( uri:string ):string {
@@ -432,6 +432,6 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 
 			expect( authenticator.supports( new UsernameAndPasswordToken( "user", "pass" ) ) ).toEqual( true );
 			expect( authenticator.supports( new DummyToken() ) ).toEqual( false );
-		});
-	});
-});
+		} );
+	} );
+} );

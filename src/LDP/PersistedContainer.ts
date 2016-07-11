@@ -10,7 +10,7 @@ export interface Class extends PersistedRDFSource.Class {
 	addMember( member:Pointer.Class ): Promise<HTTP.Response.Class>;
 	addMember( memberURI:string ): Promise<HTTP.Response.Class>;
 
-	addMembers( members:(Pointer.Class | string)[] ): Promise<HTTP.Response.Class>;
+	addMembers( members:(Pointer.Class | string)[] ):Promise<HTTP.Response.Class>;
 
 	createChild( slug:string, object:Object ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
 	createChild( slug:string ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
@@ -26,11 +26,11 @@ export interface Class extends PersistedRDFSource.Class {
 	getMembers( includeNonReadable?:boolean, retrievalPreferences?:RetrievalPreferences.Class ):Promise<[ Pointer.Class[], HTTP.Response.Class ]>;
 	getMembers( retrievalPreferences?:RetrievalPreferences.Class ):Promise<[ Pointer.Class[], HTTP.Response.Class ]>;
 
-	removeMember( member:Pointer.Class ): Promise<HTTP.Response.Class>;
-	removeMember( memberURI:string ): Promise<HTTP.Response.Class>;
+	removeMember( member:Pointer.Class ):Promise<HTTP.Response.Class>;
+	removeMember( memberURI:string ):Promise<HTTP.Response.Class>;
 
-	removeMembers( members:(Pointer.Class | string)[] ): Promise<HTTP.Response.Class>;
-	removeAllMembers(): Promise<HTTP.Response.Class>;
+	removeMembers( members:(Pointer.Class | string)[] ):Promise<HTTP.Response.Class>;
+	removeAllMembers():Promise<HTTP.Response.Class>;
 
 	upload( slug:string, blob:Blob ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
 	upload( blob:Blob ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
@@ -54,7 +54,7 @@ function createChild( object:Object ):Promise<[ Pointer.Class, HTTP.Response.Cla
 function createChild():Promise<[ Pointer.Class, HTTP.Response.Class ]>;
 function createChild( slugOrObject?:any, object?:Object ):Promise<[ Pointer.Class, HTTP.Response.Class ]> {
 	let slug:string = Utils.isString( slugOrObject ) ? slugOrObject : null;
-	object =  Utils.isString( slugOrObject ) ? object : slugOrObject;
+	object = Utils.isString( slugOrObject ) ? object : slugOrObject;
 	object = object || {};
 
 	if( slug ) {
@@ -102,7 +102,7 @@ function upload( slug:string, data:Blob ):Promise<[ Pointer.Class, HTTP.Response
 function upload( data:Blob ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
 function upload( slugOrData:any, data:any = null ):Promise<[ Pointer.Class, HTTP.Response.Class ]> {
 	let slug:string = Utils.isString( slugOrData ) ? slugOrData : null;
-	data =  slug ? data : slugOrData;
+	data = slug ? data : slugOrData;
 
 	if( slug ) {
 		return this._documents.upload( this.id, slug, data );
@@ -111,7 +111,7 @@ function upload( slugOrData:any, data:any = null ):Promise<[ Pointer.Class, HTTP
 	}
 }
 
-	export class Factory {
+export class Factory {
 	static hasClassProperties( document:Document.Class ):boolean {
 		return Utils.isObject( document )
 			&& Utils.hasFunction( document, "addMember" )

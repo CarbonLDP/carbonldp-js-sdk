@@ -23,7 +23,7 @@ describe( module( "Carbon/RDF" ), ():void => {
 	it( isDefined(), ():void => {
 		expect( RDF ).toBeDefined();
 		expect( Utils.isObject( RDF ) ).toBe( true );
-	});
+	} );
 
 	it( reexports(
 		STATIC,
@@ -32,7 +32,7 @@ describe( module( "Carbon/RDF" ), ():void => {
 	), ():void => {
 		expect( RDF.Literal ).toBeDefined();
 		expect( RDF.Literal ).toBe( Literal );
-	});
+	} );
 
 	it( reexports(
 		STATIC,
@@ -41,7 +41,7 @@ describe( module( "Carbon/RDF" ), ():void => {
 	), ():void => {
 		expect( RDF.Document ).toBeDefined();
 		expect( RDF.Document ).toBe( Document );
-	});
+	} );
 
 	it( reexports(
 		STATIC,
@@ -50,7 +50,7 @@ describe( module( "Carbon/RDF" ), ():void => {
 	), ():void => {
 		expect( RDF.List ).toBeDefined();
 		expect( RDF.List ).toBe( List );
-	});
+	} );
 
 	it( reexports(
 		STATIC,
@@ -59,7 +59,7 @@ describe( module( "Carbon/RDF" ), ():void => {
 	), ():void => {
 		expect( RDF.Node ).toBeDefined();
 		expect( RDF.Node ).toBe( Node );
-	});
+	} );
 
 	it( reexports(
 		STATIC,
@@ -68,7 +68,7 @@ describe( module( "Carbon/RDF" ), ():void => {
 	), ():void => {
 		expect( RDF.URI ).toBeDefined();
 		expect( RDF.URI ).toBe( URI );
-	});
+	} );
 
 	it( reexports(
 		STATIC,
@@ -77,6 +77,6 @@ describe( module( "Carbon/RDF" ), ():void => {
 	), ():void => {
 		expect( RDF.Value ).toBeDefined();
 		expect( RDF.Value ).toBe( Value );
-	});
+	} );
 
-});
+} );

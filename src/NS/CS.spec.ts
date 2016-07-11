@@ -18,7 +18,7 @@ describe( module(
 	it( isDefined(), ():void => {
 		expect( CS ).toBeDefined();
 		expect( Utils.isObject( CS ) ).toBe( true );
-	});
+	} );
 
 	it( hasProperty(
 		STATIC,
@@ -29,7 +29,7 @@ describe( module(
 		expect( Utils.isString( CS.namespace ) ).toBe( true );
 
 		expect( CS.namespace ).toBe( "https://carbonldp.com/ns/v1/security#" )
-	});
+	} );
 
 	describe( clazz(
 		"Carbon.NS.CS.Class",
@@ -39,7 +39,7 @@ describe( module(
 		it( isDefined(), ():void => {
 			expect( CS.Class ).toBeDefined();
 			expect( Utils.isFunction( CS.Class ) ).toBe( true );
-			expect( Object.keys( CS.Class ).length ).toBe( 6 );
+			expect( Object.keys( CS.Class ).length ).toBe( 7 );
 		});
 
 		it( hasProperty(
@@ -84,7 +84,7 @@ describe( module(
 			expect( Utils.isString( CS.Class.Agent ) ).toBe( true );
 
 			expect( CS.Class.Agent ).toBe( "https://carbonldp.com/ns/v1/security#Agent" );
-		});
+		} );
 
 		it( hasProperty(
 			STATIC,
@@ -99,6 +99,17 @@ describe( module(
 
 		it( hasProperty(
 			STATIC,
+			"Ticket",
+			"string"
+		), ():void => {
+			expect( CS.Class.Ticket ).toBeDefined();
+			expect( Utils.isString( CS.Class.Ticket ) ).toBe( true );
+
+			expect( CS.Class.Ticket ).toBe( "https://carbonldp.com/ns/v1/security#Ticket" );
+		} );
+
+		it( hasProperty(
+			STATIC,
 			"Token",
 			"string"
 		), ():void => {
@@ -108,7 +119,7 @@ describe( module(
 			expect( CS.Class.Token ).toBe( "https://carbonldp.com/ns/v1/security#Token" );
 		});
 
-	});
+	} );
 
 	describe( clazz(
 		"Carbon.NS.CS.Predicate",
@@ -119,7 +130,7 @@ describe( module(
 			expect( CS.Predicate ).toBeDefined();
 			expect( Utils.isFunction( CS.Predicate ) ).toBe( true );
 
-			expect( Object.keys( CS.Predicate ).length ).toBe( 15 );
+			expect( Object.keys( CS.Predicate ).length ).toBe( 17 );
 		});
 
 		it( hasProperty(
@@ -186,7 +197,18 @@ describe( module(
 			expect( Utils.isString( CS.Predicate.expirationTime ) ).toBe( true );
 
 			expect( CS.Predicate.expirationTime ).toBe( "https://carbonldp.com/ns/v1/security#expirationTime" );
-		});
+		} );
+
+		it( hasProperty(
+			STATIC,
+			"forIRI",
+			"string"
+		), ():void => {
+			expect( CS.Predicate.forIRI ).toBeDefined();
+			expect( Utils.isString( CS.Predicate.forIRI ) ).toBe( true );
+
+			expect( CS.Predicate.forIRI ).toBe( "https://carbonldp.com/ns/v1/security#forIRI" );
+		} );
 
 		it( hasProperty(
 			STATIC,
@@ -230,7 +252,7 @@ describe( module(
 			expect( Utils.isString( CS.Predicate.password ) ).toBe( true );
 
 			expect( CS.Predicate.password ).toBe( "https://carbonldp.com/ns/v1/security#password" );
-		});
+		} );
 
 		it( hasProperty(
 			STATIC,
@@ -278,6 +300,17 @@ describe( module(
 
 		it( hasProperty(
 			STATIC,
+			"ticketKey",
+			"string"
+		), ():void => {
+			expect( CS.Predicate.ticketKey ).toBeDefined();
+			expect( Utils.isString( CS.Predicate.ticketKey ) ).toBe( true );
+
+			expect( CS.Predicate.ticketKey ).toBe( "https://carbonldp.com/ns/v1/security#ticketKey" );
+		} );
+
+		it( hasProperty(
+			STATIC,
 			"tokenKey",
 			"string"
 		), ():void => {
@@ -287,6 +320,6 @@ describe( module(
 			expect( CS.Predicate.tokenKey ).toBe( "https://carbonldp.com/ns/v1/security#tokenKey" );
 		});
 
-	});
+	} );
 
-});
+} );

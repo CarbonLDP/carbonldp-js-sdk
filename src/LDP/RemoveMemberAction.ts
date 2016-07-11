@@ -27,7 +27,7 @@ export class Factory {
 	static createDocument( targetMembers:Pointer.Class[] ):Document.Class {
 		let document:Document.Class = Document.Factory.create();
 
-		let fragment:Class = document.createFragment( { targetMembers: targetMembers } );
+		let fragment:Class = document.createFragment( {targetMembers: targetMembers} );
 		fragment.types.push( RDF_CLASS );
 
 		return document;

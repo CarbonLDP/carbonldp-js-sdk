@@ -6,6 +6,7 @@ class Class {
 	static get Agent():string { return namespace + "Agent"; }
 	static get AllOrigins():string { return namespace + "AllOrigins"; }
 	static get Application():string { return namespace + "Application"; }
+	static get Ticket():string { return namespace + "Ticket"; }
 	static get Token():string { return namespace + "Token"; }
 }
 
@@ -16,6 +17,7 @@ class Predicate {
 	static get allowsOrigin():string { return namespace + "allowsOrigin"; }
 	static get description():string { return namespace + "description"; }
 	static get expirationTime():string { return namespace + "expirationTime"; }
+	static get forIRI():string { return namespace + "forIRI"; }
 	static get granting():string { return namespace + "granting"; }
 	static get inheritableEntry():string { return namespace + "inheritableEntry"; }
 	static get namae():string { return namespace + "name"; }
@@ -24,6 +26,7 @@ class Predicate {
 	static get rootContainer():string { return namespace + "rootContainer"; }
 	static get subject():string { return namespace + "subject"; }
 	static get subjectClass():string { return namespace + "subjectClass"; }
+	static get ticketKey():string { return namespace + "ticketKey"; }
 	static get tokenKey():string { return namespace + "tokenKey"; }
 }
 

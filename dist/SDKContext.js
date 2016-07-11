@@ -9,6 +9,8 @@ var PersistedBlankNode = require("./PersistedBlankNode");
 var ObjectSchema = require("./ObjectSchema");
 var Agent = require("./Agent");
 var RDFRepresentation = require("./RDFRepresentation");
+var ErrorResponse = require("./LDP/ErrorResponse");
+var Error = require("./LDP/Error");
 var Class = (function () {
     function Class() {
         this.settings = new Map();
@@ -133,6 +135,8 @@ var Class = (function () {
         this.extendObjectSchema(LDP.BasicContainer.RDF_CLASS, LDP.Container.SCHEMA);
         this.extendObjectSchema(RDFRepresentation.RDF_CLASS, RDFRepresentation.SCHEMA);
         this.extendObjectSchema(APIDescription.RDF_CLASS, APIDescription.SCHEMA);
+        this.extendObjectSchema(Error.RDF_CLASS, Error.SCHEMA);
+        this.extendObjectSchema(ErrorResponse.RDF_CLASS, ErrorResponse.SCHEMA);
         this.extendObjectSchema(NS.CS.Class.Application, {
             "name": {
                 "@id": NS.CS.Predicate.namae,
@@ -156,8 +160,7 @@ var Class = (function () {
         this.extendObjectSchema(LDP.AddMemberAction.RDF_CLASS, LDP.AddMemberAction.SCHEMA);
         this.extendObjectSchema(LDP.RemoveMemberAction.RDF_CLASS, LDP.RemoveMemberAction.SCHEMA);
         this.extendObjectSchema(Auth.Token.RDF_CLASS, Auth.Token.SCHEMA);
-        this.extendObjectSchema(Auth.ACE.RDF_CLASS, Auth.ACE.SCHEMA);
-        this.extendObjectSchema(Auth.ACL.RDF_CLASS, Auth.ACL.SCHEMA);
+        this.extendObjectSchema(Auth.Ticket.RDF_CLASS, Auth.Ticket.SCHEMA);
         this.extendObjectSchema(Agent.RDF_CLASS, Agent.SCHEMA);
     };
     return Class;
