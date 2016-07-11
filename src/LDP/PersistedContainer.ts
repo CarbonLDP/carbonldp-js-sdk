@@ -7,8 +7,8 @@ import * as Utils from "./../Utils";
 import * as RetrievalPreferences from "./../RetrievalPreferences";
 
 export interface Class extends PersistedRDFSource.Class {
-	addMember( member:Pointer.Class ): Promise<HTTP.Response.Class>;
-	addMember( memberURI:string ): Promise<HTTP.Response.Class>;
+	addMember( member:Pointer.Class ):Promise<HTTP.Response.Class>;
+	addMember( memberURI:string ):Promise<HTTP.Response.Class>;
 
 	addMembers( members:(Pointer.Class | string)[] ):Promise<HTTP.Response.Class>;
 
@@ -38,13 +38,13 @@ export interface Class extends PersistedRDFSource.Class {
 	upload( blob:Buffer ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
 }
 
-function addMember( member:Pointer.Class ): Promise<HTTP.Response.Class>;
-function addMember( memberURI:string ): Promise<HTTP.Response.Class>;
-function addMember( memberOrUri:any ): Promise<HTTP.Response.Class> {
+function addMember( member:Pointer.Class ):Promise<HTTP.Response.Class>;
+function addMember( memberURI:string ):Promise<HTTP.Response.Class>;
+function addMember( memberOrUri:any ):Promise<HTTP.Response.Class> {
 	return this._documents.addMember( this.id, memberOrUri );
 }
 
-function addMembers( members:(Pointer.Class | string)[] ): Promise<HTTP.Response.Class> {
+function addMembers( members:(Pointer.Class | string)[] ):Promise<HTTP.Response.Class> {
 	return this._documents.addMembers( this.id, members );
 }
 
@@ -82,17 +82,17 @@ function getMembers( nonReadRetPref:boolean = true, retrievalPreferences?:Retrie
 	return this._documents.getMembers( this.id, nonReadRetPref, retrievalPreferences );
 }
 
-function removeMember( member:Pointer.Class ): Promise<HTTP.Response.Class>;
-function removeMember( memberURI:string ): Promise<HTTP.Response.Class>;
-function removeMember( memberOrUri:any ): Promise<HTTP.Response.Class> {
+function removeMember( member:Pointer.Class ):Promise<HTTP.Response.Class>;
+function removeMember( memberURI:string ):Promise<HTTP.Response.Class>;
+function removeMember( memberOrUri:any ):Promise<HTTP.Response.Class> {
 	return this._documents.removeMember( this.id, memberOrUri );
 }
 
-function removeMembers( members:(Pointer.Class | string)[] ): Promise<HTTP.Response.Class> {
+function removeMembers( members:(Pointer.Class | string)[] ):Promise<HTTP.Response.Class> {
 	return this._documents.removeMembers( this.id, members );
 }
 
-function removeAllMembers(): Promise<HTTP.Response.Class> {
+function removeAllMembers():Promise<HTTP.Response.Class> {
 	return this._documents.removeAllMembers( this.id );
 }
 

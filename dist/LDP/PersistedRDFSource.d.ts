@@ -14,5 +14,5 @@ export interface Class extends PersistedDocument.Class {
 }
 export declare class Factory {
     static hasClassProperties(object: Object): boolean;
-    static decorate<T extends Object>(document: T): T & Class;
+    static decorate<T extends PersistedDocument.Class>(document: T): T & Class;
 }

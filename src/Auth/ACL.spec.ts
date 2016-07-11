@@ -10,7 +10,7 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 	it( isDefined(), ():void => {
 		expect( ACL ).toBeDefined();
 		expect( Utils.isObject( ACL ) ).toBe( true );
-	});
+	} );
 
 	it( hasProperty(
 		STATIC,
@@ -21,7 +21,7 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 		expect( Utils.isString( ACL.RDF_CLASS ) ).toBe( true );
 
 		expect( ACL.RDF_CLASS ).toBe( NS.CS.Class.AccessControlList );
-	});
+	} );
 
 	it( hasProperty(
 		STATIC,
@@ -32,40 +32,40 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 		expect( Utils.isObject( ACL.SCHEMA ) ).toBe( true );
 
 		expect( Utils.hasProperty( ACL.SCHEMA, "entries" ) ).toBe( true );
-		expect( ACL.SCHEMA[ "entries" ] ).toEqual({
+		expect( ACL.SCHEMA[ "entries" ] ).toEqual( {
 			"@id": NS.CS.Predicate.accessControlEntry,
 			"@type": "@id",
 			"@container": "@set",
-		});
+		} );
 
 		expect( Utils.hasProperty( ACL.SCHEMA, "accessTo" ) ).toBe( true );
-		expect( ACL.SCHEMA[ "accessTo" ] ).toEqual({
+		expect( ACL.SCHEMA[ "accessTo" ] ).toEqual( {
 			"@id": NS.CS.Predicate.accessTo,
 			"@type": "@id",
-		});
+		} );
 
 		expect( Utils.hasProperty( ACL.SCHEMA, "inheritableEntries" ) ).toBe( true );
-		expect( ACL.SCHEMA[ "inheritableEntries" ] ).toEqual({
+		expect( ACL.SCHEMA[ "inheritableEntries" ] ).toEqual( {
 			"@id": NS.CS.Predicate.inheritableEntry,
 			"@type": "@id",
 			"@container": "@set",
-		});
-	});
+		} );
+	} );
 
-	describe( clazz( "Carbon.Auth.ACL.Factory", "Factory class for `Carbon.Auth.ACL.Class` objects."), ():void => {
+	describe( clazz( "Carbon.Auth.ACL.Factory", "Factory class for `Carbon.Auth.ACL.Class` objects." ), ():void => {
 
 		it( isDefined(), ():void => {
 			expect( ACL.Factory ).toBeDefined();
 			expect( Utils.isFunction( ACL.Factory ) ).toBe( true );
-		});
+		} );
 
 		it( hasMethod(
 			STATIC,
 			"hasClassProperties",
 			"Return true if the object provided has the properties and methods of a `Carbon.Auth.ACL.Class` object.", [
-				{ name: "object", type: "Object", description: "The object to analise." }
+				{name: "object", type: "Object", description: "The object to analise."}
 			],
-			{ type: "boolean" }
+			{type: "boolean"}
 		), ():void => {
 			expect( ACL.Factory.hasClassProperties ).toBeDefined();
 			expect( Utils.isFunction( ACL.Factory.hasClassProperties ) ).toBe( true );
@@ -91,8 +91,8 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 			delete object.inheritableEntries;
 			expect( ACL.Factory.hasClassProperties( object ) ).toBe( true );
 			object.inheritableEntries = null;
-		});
+		} );
 
-	});
+	} );
 
-});
+} );

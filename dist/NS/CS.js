@@ -29,13 +29,13 @@ var Class = (function () {
         enumerable: true,
         configurable: true
     });
-    Object.defineProperty(Class, "Token", {
-        get: function () { return namespace + "Token"; },
+    Object.defineProperty(Class, "Ticket", {
+        get: function () { return namespace + "Ticket"; },
         enumerable: true,
         configurable: true
     });
-    Object.defineProperty(Class, "Ticket", {
-        get: function () { return namespace + "Ticket"; },
+    Object.defineProperty(Class, "Token", {
+        get: function () { return namespace + "Token"; },
         enumerable: true,
         configurable: true
     });
@@ -72,6 +72,11 @@ var Predicate = (function () {
     });
     Object.defineProperty(Predicate, "expirationTime", {
         get: function () { return namespace + "expirationTime"; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Predicate, "forIRI", {
+        get: function () { return namespace + "forIRI"; },
         enumerable: true,
         configurable: true
     });
@@ -115,18 +120,13 @@ var Predicate = (function () {
         enumerable: true,
         configurable: true
     });
-    Object.defineProperty(Predicate, "tokenKey", {
-        get: function () { return namespace + "tokenKey"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Predicate, "forIRI", {
-        get: function () { return namespace + "forIRI"; },
-        enumerable: true,
-        configurable: true
-    });
     Object.defineProperty(Predicate, "ticketKey", {
         get: function () { return namespace + "ticketKey"; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Predicate, "tokenKey", {
+        get: function () { return namespace + "tokenKey"; },
         enumerable: true,
         configurable: true
     });

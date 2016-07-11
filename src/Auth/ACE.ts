@@ -27,10 +27,10 @@ export const SCHEMA:ObjectSchema.Class = {
 };
 
 export interface Class extends Fragment.Class {
-	granting: boolean;
-	permissions: Pointer.Class[];
-	subject: Pointer.Class;
-	subjectClass: Pointer.Class;
+	granting:boolean;
+	permissions:Pointer.Class[];
+	subject:Pointer.Class;
+	subjectClass:Pointer.Class;
 }
 
 export default Class;

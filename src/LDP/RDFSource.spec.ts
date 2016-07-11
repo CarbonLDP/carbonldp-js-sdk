@@ -48,26 +48,26 @@ describe( module( "Carbon/LDP/RDFSource" ), ():void => {
 		expect( RDFSource.SCHEMA[ "modified" ] ).toEqual( {
 			"@id": NS.C.Predicate.modified,
 			"@type": NS.XSD.DataType.dateTime,
-		});
+		} );
 
 		expect( Utils.hasProperty( RDFSource.SCHEMA, "defaultInteractionModel" ) ).toBe( true );
-		expect( RDFSource.SCHEMA[ "defaultInteractionModel" ] ).toEqual({
+		expect( RDFSource.SCHEMA[ "defaultInteractionModel" ] ).toEqual( {
 			"@id": NS.C.Predicate.defaultInteractionModel,
 			"@type": "@id",
-		});
+		} );
 
 		expect( Utils.hasProperty( RDFSource.SCHEMA, "accessPoints" ) ).toBe( true );
-		expect( RDFSource.SCHEMA[ "accessPoints" ] ).toEqual({
+		expect( RDFSource.SCHEMA[ "accessPoints" ] ).toEqual( {
 			"@id": NS.C.Predicate.accessPoint,
 			"@type": "@id",
 			"@container": "@set",
-		});
+		} );
 
 		expect( Utils.hasProperty( RDFSource.SCHEMA, "accessControlList" ) ).toBe( true );
-		expect( RDFSource.SCHEMA[ "accessControlList" ] ).toEqual({
+		expect( RDFSource.SCHEMA[ "accessControlList" ] ).toEqual( {
 			"@id": NS.CS.Predicate.accessControlList,
 			"@type": "@id",
-		});
+		} );
 
 	} );
 

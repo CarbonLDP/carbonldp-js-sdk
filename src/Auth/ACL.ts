@@ -26,9 +26,9 @@ export const SCHEMA:ObjectSchema.Class = {
 };
 
 export interface Class extends Document.Class {
-	accessTo: Pointer.Class;
-	entries?: ACE.Class[];
-	inheritableEntries?: ACE.Class[];
+	accessTo:Pointer.Class;
+	entries?:ACE.Class[];
+	inheritableEntries?:ACE.Class[];
 }
 
 export class Factory {
@@ -40,7 +40,7 @@ export class Factory {
 	static decorate<T extends Object>( object:T ):T & Class {
 		let acl:T & Class = <any> object;
 
-		if ( Factory.hasClassProperties( acl ) ) return acl;
+		if( Factory.hasClassProperties( acl ) ) return acl;
 
 		return acl;
 	}

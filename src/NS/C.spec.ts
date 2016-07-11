@@ -230,7 +230,7 @@ describe( module(
 			expect( Utils.isFunction( C.Predicate ) ).toBe( true );
 
 			expect( Object.keys( C.Predicate ).length ).toBe( 18 );
-		});
+		} );
 
 		it( hasProperty(
 			STATIC,

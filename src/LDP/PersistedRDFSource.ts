@@ -8,11 +8,11 @@ import * as Resource from "./../Resource";
 import * as Utils from "./../Utils";
 
 export interface Class extends PersistedDocument.Class {
-	created: Date;
-	modified: Date;
-	defaultInteractionModel: Pointer.Class;
-	accessPoints: Pointer.Class[];
-	accessControlList: Pointer.Class;
+	created:Date;
+	modified:Date;
+	defaultInteractionModel:Pointer.Class;
+	accessPoints:Pointer.Class[];
+	accessControlList:Pointer.Class;
 
 	createAccessPoint( accessPoint:AccessPoint.Class, slug?:string, requestOptions?:HTTP.Request.Options ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
 
@@ -29,7 +29,7 @@ export class Factory {
 			&& Utils.hasPropertyDefined( object, "accessControlList" )
 			&& Utils.hasFunction( object, "createAccessPoint" )
 			&& Utils.hasFunction( object, "getACL" )
-		;
+			;
 	}
 
 	static decorate<T extends PersistedDocument.Class>( document:T ):T & Class {
@@ -40,9 +40,9 @@ export class Factory {
 		Object.defineProperties( rdfSource, {
 			"getACL": {
 				writable: false,
-					enumerable: false,
-					configurable: true,
-					value: getACL,
+				enumerable: false,
+				configurable: true,
+				value: getACL,
 			},
 			"createAccessPoint": {
 				writable: false,
@@ -50,7 +50,7 @@ export class Factory {
 				configurable: true,
 				value: createAccessPoint,
 			},
-		});
+		} );
 
 		return rdfSource;
 	}
@@ -60,11 +60,11 @@ export class Factory {
 function getACL( requestOptions?:HTTP.Request.Options ):Promise<[ PersistedACL.Class, HTTP.Response.Class ]> {
 	let that:Class = <Class> this;
 	return that._documents.get( that.accessControlList.id, requestOptions ).then( ( [ acl, response ]:[ PersistedACL.Class, HTTP.Response.Class ] ) => {
-		if ( ! Resource.Util.hasType( acl, ACL.RDF_CLASS ) ) throw new HTTP.Errors.BadResponseError( "The response does not contains a cs:AccessControlList object.", response );
+		if( ! Resource.Util.hasType( acl, ACL.RDF_CLASS ) ) throw new HTTP.Errors.BadResponseError( "The response does not contains a cs:AccessControlList object.", response );
 		return [ acl, response ];
-	});
+	} );
 }
 
-function createAccessPoint( accessPoint:AccessPoint.Class, slug:string = null, requestOptions:HTTP.Request.Options = {}):Promise<[ Pointer.Class, HTTP.Response.Class ]> {
+function createAccessPoint( accessPoint:AccessPoint.Class, slug:string = null, requestOptions:HTTP.Request.Options = {} ):Promise<[ Pointer.Class, HTTP.Response.Class ]> {
 	return this._documents.createAccessPoint( accessPoint, slug, requestOptions );
 }

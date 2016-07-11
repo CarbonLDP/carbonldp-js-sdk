@@ -64,15 +64,16 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 			document = {
 				_documents: null,
 				_etag: null,
-				refresh: () => {},
-				save: () => {},
-				destroy: () => {},
-				executeRawASKQuery: () => {},
-				executeASKQuery: () => {},
-				executeRawSELECTQuery: () => {},
-				executeSELECTQuery: () => {},
-				executeRawDESCRIBEQuery: () => {},
-				executeRawCONSTRUCTQuery: () => {},
+				refresh: ():void => {},
+				save: ():void => {},
+				destroy: ():void => {},
+				getDownloadURL: ():void => {},
+				executeRawASKQuery: ():void => {},
+				executeASKQuery: ():void => {},
+				executeRawSELECTQuery: ():void => {},
+				executeSELECTQuery: ():void => {},
+				executeRawDESCRIBEQuery: ():void => {},
+				executeRawCONSTRUCTQuery: ():void => {},
 			};
 			expect( PersistedDocument.Factory.hasClassProperties( document ) ).toBe( true );
 
@@ -95,6 +96,10 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 			delete document.destroy;
 			expect( PersistedDocument.Factory.hasClassProperties( document ) ).toBe( false );
 			document.destroy = ():void => {};
+
+			delete document.getDownloadURL;
+			expect( PersistedDocument.Factory.hasClassProperties( document ) ).toBe( false );
+			document.getDownloadURL = ():void => {};
 
 			delete document.executeRawASKQuery;
 			expect( PersistedDocument.Factory.hasClassProperties( document ) ).toBe( false );
@@ -144,6 +149,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 			object[ "refresh" ] = ():void => {};
 			object[ "save" ] = ():void => {};
 			object[ "destroy" ] = ():void => {};
+			object[ "getDownloadURL" ] = ():void => {};
 			object[ "executeRawASKQuery" ] = ():void => {};
 			object[ "executeASKQuery" ] = ():void => {};
 			object[ "executeRawSELECTQuery" ] = ():void => {};

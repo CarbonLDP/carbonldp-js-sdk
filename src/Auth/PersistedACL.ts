@@ -5,9 +5,9 @@ import * as Pointer from "./../Pointer";
 import * as Utils from "./../Utils";
 
 export interface Class extends PersistedDocument.Class {
-	accessTo: Pointer.Class;
-	entries?: PersistedACE.Class[];
-	inheritableEntries?: PersistedACE.Class[];
+	accessTo:Pointer.Class;
+	entries?:PersistedACE.Class[];
+	inheritableEntries?:PersistedACE.Class[];
 }
 
 export class Factory {
@@ -19,7 +19,7 @@ export class Factory {
 	static decorate<T extends PersistedDocument.Class>( document:T ):T & Class {
 		let acl:T & Class = <any> document;
 
-		if ( Factory.hasClassProperties( acl ) ) return acl;
+		if( Factory.hasClassProperties( acl ) ) return acl;
 
 		return acl;
 	}

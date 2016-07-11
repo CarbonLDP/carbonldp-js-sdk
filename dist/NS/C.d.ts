@@ -24,6 +24,7 @@ export declare class Predicate {
     static buildDate: string;
     static carbonCode: string;
     static created: string;
+    static defaultInteractionModel: string;
     static error: string;
     static eTag: string;
     static httpStatusCode: string;
