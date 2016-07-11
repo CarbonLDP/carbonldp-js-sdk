@@ -62,6 +62,9 @@ function save() {
 function destroy() {
     return this._documents.delete(this.id);
 }
+function getDownloadURL() {
+    return this._documents.getDownloadURL(this.id);
+}
 function executeRawASKQuery(askQuery, requestOptions) {
     if (requestOptions === void 0) { requestOptions = {}; }
     return this._documents.executeRawASKQuery(this.id, askQuery, requestOptions);
@@ -95,6 +98,7 @@ var Factory = (function () {
             Utils.hasFunction(document, "refresh") &&
             Utils.hasFunction(document, "save") &&
             Utils.hasFunction(document, "destroy") &&
+            Utils.hasFunction(document, "getDownloadURL") &&
             Utils.hasFunction(document, "executeRawASKQuery") &&
             Utils.hasFunction(document, "executeASKQuery") &&
             Utils.hasFunction(document, "executeRawSELECTQuery") &&
@@ -217,6 +221,12 @@ var Factory = (function () {
                 enumerable: false,
                 configurable: true,
                 value: destroy,
+            },
+            "getDownloadURL": {
+                writable: false,
+                enumerable: false,
+                configurable: true,
+                value: getDownloadURL,
             },
             "executeRawASKQuery": {
                 writable: false,

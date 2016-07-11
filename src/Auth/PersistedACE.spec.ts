@@ -9,6 +9,6 @@ describe( module( "Carbon/Auth/ACE" ), ():void => {
 	it( isDefined(), ():void => {
 		expect( PersistedACE ).toBeDefined();
 		expect( Utils.isObject( PersistedACE ) ).toBe( true );
-	});
+	} );
 
-});
+} );

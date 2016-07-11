@@ -15,7 +15,7 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 	it( isDefined(), ():void => {
 		expect( ACL ).toBeDefined();
 		expect( Utils.isObject( ACL ) ).toBe( true );
-	});
+	} );
 
 	it( hasProperty(
 		STATIC,
@@ -26,7 +26,7 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 		expect( Utils.isString( ACL.RDF_CLASS ) ).toBe( true );
 
 		expect( ACL.RDF_CLASS ).toBe( NS.CS.Class.AccessControlList );
-	});
+	} );
 
 	it( hasProperty(
 		STATIC,
@@ -36,41 +36,41 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 		expect( ACL.SCHEMA ).toBeDefined();
 		expect( Utils.isObject( ACL.SCHEMA ) ).toBe( true );
 
-		expect( Utils.hasProperty( ACL.SCHEMA, "accessControlEntries" ) ).toBe( true );
-		expect( ACL.SCHEMA[ "accessControlEntries" ] ).toEqual({
+		expect( Utils.hasProperty( ACL.SCHEMA, "entries" ) ).toBe( true );
+		expect( ACL.SCHEMA[ "entries" ] ).toEqual( {
 			"@id": NS.CS.Predicate.accessControlEntry,
 			"@type": "@id",
 			"@container": "@set",
-		});
+		} );
 
 		expect( Utils.hasProperty( ACL.SCHEMA, "accessTo" ) ).toBe( true );
-		expect( ACL.SCHEMA[ "accessTo" ] ).toEqual({
+		expect( ACL.SCHEMA[ "accessTo" ] ).toEqual( {
 			"@id": NS.CS.Predicate.accessTo,
 			"@type": "@id",
-		});
+		} );
 
 		expect( Utils.hasProperty( ACL.SCHEMA, "inheritableEntries" ) ).toBe( true );
-		expect( ACL.SCHEMA[ "inheritableEntries" ] ).toEqual({
+		expect( ACL.SCHEMA[ "inheritableEntries" ] ).toEqual( {
 			"@id": NS.CS.Predicate.inheritableEntry,
 			"@type": "@id",
 			"@container": "@set",
-		});
-	});
+		} );
+	} );
 
-	describe( clazz( "Carbon.Auth.ACL.Factory", "Factory class for `Carbon.Auth.ACL.Class` objects."), ():void => {
+	describe( clazz( "Carbon.Auth.ACL.Factory", "Factory class for `Carbon.Auth.ACL.Class` objects." ), ():void => {
 
 		it( isDefined(), ():void => {
 			expect( ACL.Factory ).toBeDefined();
 			expect( Utils.isFunction( ACL.Factory ) ).toBe( true );
-		});
+		} );
 
 		it( hasMethod(
 			STATIC,
 			"hasClassProperties",
 			"Return true if the object provided has the properties and methods of a `Carbon.Auth.ACL.Class` object.", [
-				{ name: "object", type: "Object", description: "The object to analise." }
+				{name: "object", type: "Object", description: "The object to analise."}
 			],
-			{ type: "boolean" }
+			{type: "boolean"}
 		), ():void => {
 			expect( ACL.Factory.hasClassProperties ).toBeDefined();
 			expect( Utils.isFunction( ACL.Factory.hasClassProperties ) ).toBe( true );
@@ -79,7 +79,7 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 			expect( ACL.Factory.hasClassProperties( object ) ).toBe( false );
 
 			object = {
-				accessControlEntries: null,
+				entries: null,
 				accessTo: null,
 				inheritableEntries: null,
 				grant: () => {},
@@ -97,9 +97,9 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 			expect( ACL.Factory.hasClassProperties( object ) ).toBe( false );
 			object.accessTo = null;
 
-			delete object.accessControlEntries;
+			delete object.entries;
 			expect( ACL.Factory.hasClassProperties( object ) ).toBe( true );
-			object.accessControlEntries = null;
+			object.entries = null;
 
 			delete object.inheritableEntries;
 			expect( ACL.Factory.hasClassProperties( object ) ).toBe( true );
@@ -148,7 +148,7 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 		), ():void => {
 			expect( ACL.Factory.decorate ).toBeDefined();
 			expect( Utils.isFunction( ACL.Factory.decorate ) ).toBe( true );
-			
+
 			let document:PersistedDocument.Class = PersistedDocument.Factory.create( "http://example.com/resource/~acl/", new Documents() );
 			let acl:ACL.Class = ACL.Factory.decorate( document );
 			acl.accessTo = acl.getPointer( "http://example.com/resource/" );
@@ -176,7 +176,7 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 				expect( acl ).toBeTruthy();
 				expect( ACL.Factory.hasClassProperties( acl ) ).toBe( true );
 			});
-			
+
 			describe( method( INSTANCE, "grant" ), ():void => {
 
 				it( isDefined(), ():void => {
@@ -586,16 +586,16 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 					acl.accessControlEntries.forEach( ace => acl.removeFragment( ace.id ) );
 					acl.accessControlEntries = [];
 
-					ace = ACE.Factory.decorate( 
-						acl.createFragment(), 
-						false, 
+					ace = ACE.Factory.decorate(
+						acl.createFragment(),
+						false,
 						[ acl.getPointer( "http://example.com/ns#Subject" ), acl.getPointer( "http://example.com/ns#Subject-2" ) ],
 						acl.getPointer( "http://example.com/ns#SubjetClass" ),
 						[ acl.getPointer( "http://example.com/ns#CREATE" ), acl.getPointer( "http://example.com/ns#DELETE" ) ]
 					);
 					acl.accessControlEntries.push( ace );
 
-					ace = ACE.Factory.decorate( 
+					ace = ACE.Factory.decorate(
 						acl.createFragment(),
 						true,
 						[ acl.getPointer( "http://example.com/ns#Subject-2" ), acl.getPointer( "http://example.com/ns#Subject-3" ) ],
@@ -1118,7 +1118,7 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 					acl.accessControlEntries = [];
 					ace = ACE.Factory.decorate(
 						acl.createFragment(),
-						false, 
+						false,
 						[ acl.getPointer( "http://example.com/ns#Subject" ), acl.getPointer( "http://example.com/ns#Subject-2" ) ],
 						acl.getPointer( "http://example.com/ns#SubjetClass" ),
 						[ acl.getPointer( "http://example.com/ns#CREATE" ), acl.getPointer( "http://example.com/ns#DELETE" ) ]
@@ -1126,7 +1126,7 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 					acl.accessControlEntries.push( ace );
 					ace = ACE.Factory.decorate(
 						acl.createFragment(),
-						true, 
+						true,
 						[ acl.getPointer( "http://example.com/ns#Subject-2" ), acl.getPointer( "http://example.com/ns#Subject-3" ) ],
 						acl.getPointer( "http://example.com/ns#SubjetClass" ),
 						[ acl.getPointer( "http://example.com/ns#READ" ), acl.getPointer( "http://example.com/ns#WRITE" ) ]
@@ -2217,7 +2217,7 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 				});
 
 			});
-			
+
 			it( hasMethod(
 				INSTANCE,
 				"grants",
@@ -2375,12 +2375,12 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 				INSTANCE,
 				"remove"
 			), ():void => {
-				
+
 				it( isDefined(), ():void => {
 					expect( acl.remove ).toBeDefined();
 					expect( Utils.isFunction( acl.remove ) ).toBe( true );
 				});
-				
+
 				it( hasSignature(
 					"Remove the configuration of a permission from a subject for the document related to the ACL.", [
 						{ name: "subject", type: "string | Carbon.Pointer.Class", description: "The subject from will be removed the permission." },
@@ -2500,7 +2500,7 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 					expect( acl.getChildInheritance( acl.getPointer( "http://example.com/ns#Subject" ), acl.getPointer( "http://example.com/ns#CREATE" ) ) ).toBe( true );
 					expect( acl.getChildInheritance( acl.getPointer( "http://example.com/ns#Subject" ), acl.getPointer( "http://example.com/ns#WRITE" ) ) ).toBe( true );
 				});
-				
+
 			});
 
 			describe( method(
@@ -2637,6 +2637,6 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 
 		});
 
-	});
+	} );
 
-});
+} );

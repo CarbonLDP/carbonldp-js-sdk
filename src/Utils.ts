@@ -3,16 +3,16 @@ function hasFunction( object:Object, functionName:string ):boolean {
 }
 
 function hasProperty( object:Object, property:string ):boolean {
-	if ( ! object ) return false;
+	if( ! object ) return false;
 	return isDefined( object[ property ] );
 }
 
 function hasPropertyDefined( object:Object, property:string ):boolean {
-	if ( ! object ) return false;
+	if( ! object ) return false;
 	return ! ! Object.getOwnPropertyDescriptor( object, property );
 }
 
-function isDefined( value:any ): boolean {
+function isDefined( value:any ):boolean {
 	return void 0 !== value;
 }
 
@@ -37,12 +37,12 @@ function isNumber( value:any ):boolean {
 }
 
 function isInteger( value:any ):boolean {
-	if ( ! isNumber( value ) )return false;
+	if( ! isNumber( value ) )return false;
 	return value % 1 === 0;
 }
 
 function isDouble( value:any ):boolean {
-	if ( ! isNumber( value ) ) return false;
+	if( ! isNumber( value ) ) return false;
 	return value % 1 !== 0;
 }
 
@@ -87,10 +87,10 @@ function isMap( value:any ):boolean {
 }
 
 function parseBoolean( value:string ):boolean {
-	if ( ! isString( value ) ) return false;
+	if( ! isString( value ) ) return false;
 
 	/* tslint:disable: no-switch-case-fall-through */
-	switch ( value.toLowerCase() ) {
+	switch( value.toLowerCase() ) {
 		case "true":
 		case "yes":
 		case "y":
@@ -107,11 +107,11 @@ function parseBoolean( value:string ):boolean {
 }
 
 function extend( target:Object, ...objects:Object[] ):Object {
-	if ( arguments.length <= 1 ) return target;
-	for ( let i:number = 0, length:number = arguments.length; i < length; i ++ ) {
+	if( arguments.length <= 1 ) return target;
+	for( let i:number = 0, length:number = arguments.length; i < length; i ++ ) {
 		let toMerge:Object = objects[ i ];
-		for ( let name in toMerge ) {
-			if ( toMerge.hasOwnProperty( name ) ) {
+		for( let name in toMerge ) {
+			if( toMerge.hasOwnProperty( name ) ) {
 				target[ name ] = toMerge[ name ];
 			}
 		}
@@ -120,9 +120,9 @@ function extend( target:Object, ...objects:Object[] ):Object {
 }
 
 function forEachOwnProperty( object:Object, action:( name:string, value:any ) => ( boolean | void ) ):void {
-	if ( ! ( isObject( object ) || isFunction( object ) ) ) throw new Error( "IllegalArgument" );
-	for ( let name in object ) {
-		if ( object.hasOwnProperty( name ) ) {
+	if( ! ( isObject( object ) || isFunction( object ) ) ) throw new Error( "IllegalArgument" );
+	for( let name in object ) {
+		if( object.hasOwnProperty( name ) ) {
 			if( action( name, object[ name ] ) === false ) break;
 		}
 	}
@@ -146,7 +146,7 @@ class O {
 			if( ! object2.hasOwnProperty( propertyName ) ) continue;
 			if( isFunction( object2[ propertyName ] ) ) continue;
 			if( ! ( propertyName in object1 ) ) return false;
-			if( properties.indexOf( propertyName ) === -1 ) return false;
+			if( properties.indexOf( propertyName ) === - 1 ) return false;
 		}
 
 		return true;
@@ -171,7 +171,7 @@ class A {
 	static from<T>( iterator:Iterator<T> ):Array<T> {
 		let array:Array<T> = [];
 		let next:IteratorResult<T> = iterator.next();
-		while ( ! next.done ) {
+		while( ! next.done ) {
 			array.push( next.value );
 			next = iterator.next();
 		}
@@ -181,8 +181,8 @@ class A {
 	static joinWithoutDuplicates<T>( ...arrays:Array<Array<T>> ):Array<T> {
 		let result:Array<T> = arrays[ 0 ].slice();
 
-		for ( let i:number = 1, length:number = arrays.length; i < length; i ++ ) {
-			result = result.concat( arrays[ i ].filter( function ( item:T ):boolean {
+		for( let i:number = 1, length:number = arrays.length; i < length; i ++ ) {
+			result = result.concat( arrays[ i ].filter( function( item:T ):boolean {
 				return result.indexOf( item ) < 0;
 			} ) );
 		}
@@ -190,11 +190,11 @@ class A {
 		return result;
 	}
 
-	static indexOf<T>( array:Array<T>, searchElement:T, comparator:( searchElement:T, element:T ) => boolean = ( a:T, b:T ) => a === b ):number {
-		for( let i:number = 0, length:number = array.length; i < length; ++i ) {
-			if ( comparator( searchElement, array[ i ] ) ) return i;
+	static indexOf<T, W>( array:Array<T>, searchElement:W, comparator:( element:T, searchElement:W ) => boolean = ( a:T, b:W ) => <any> a === <any> b ):number {
+		for( let i:number = 0, length:number = array.length; i < length; ++ i ) {
+			if( comparator( array[ i ], searchElement ) ) return i;
 		}
-		return -1;
+		return - 1;
 	}
 }
 
@@ -208,16 +208,16 @@ class M {
 	}
 
 	static extend<K, V>( toExtend:Map<K, V>, ...extenders:Map<K, V>[] ):Map<K, V> {
-		for ( let i:number = 0, length:number = extenders.length; i < length; i ++ ) {
+		for( let i:number = 0, length:number = extenders.length; i < length; i ++ ) {
 			let extender:Map<K, V> = extenders[ i ];
 			let values:Iterator<Array<(K|V)>> = extender.entries();
 
 			let next:IteratorResult<Array<(K|V)>> = values.next();
-			while ( ! next.done ) {
+			while( ! next.done ) {
 				let entry:Array<(K|V)> = next.value;
 				let key:K = <K> entry[ 0 ];
 				let value:V = <V> entry[ 1 ];
-				if ( ! toExtend.has( key ) ) toExtend.set( key, value );
+				if( ! toExtend.has( key ) ) toExtend.set( key, value );
 
 				next = values.next();
 			}

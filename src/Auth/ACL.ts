@@ -1,5 +1,4 @@
 import * as ACE from "./ACE";
-import IllegalArgumentError from "../Errors/IllegalArgumentError";
 import * as NS from "./../NS";
 import * as ObjectSchema from "./../ObjectSchema";
 import * as Document from "./../Document";
@@ -9,7 +8,7 @@ import * as Utils from "./../Utils";
 export const RDF_CLASS:string = NS.CS.Class.AccessControlList;
 
 export const SCHEMA:ObjectSchema.Class = {
-	"accessControlEntries": {
+	"entries": {
 		"@id": NS.CS.Predicate.accessControlEntry,
 		"@type": "@id",
 		"@container": "@set",
@@ -27,7 +26,7 @@ export const SCHEMA:ObjectSchema.Class = {
 
 export interface Class extends Document.Class {
 	accessTo: Pointer.Class;
-	accessControlEntries?: ACE.Class[];
+	entries?: ACE.Class[];
 	inheritableEntries?: ACE.Class[];
 
 	grant( subject:string | Pointer.Class, subjectClass:string | Pointer.Class, permission:string | Pointer.Class ): void;
@@ -72,7 +71,7 @@ export class Factory {
 	static decorate<T extends Object>( object:T ):T & Class {
 		let acl:T & Class = <any> object;
 
-		if ( Factory.hasClassProperties( acl ) ) return acl;
+		if( Factory.hasClassProperties( acl ) ) return acl;
 
 		Object.defineProperties( acl, {
 			"grant": {
@@ -170,8 +169,8 @@ function grant( subjects:(string | Pointer.Class)[], subjectClass:string | Point
 function grant( subjects:(string | Pointer.Class)[], subjectClass:string | Pointer.Class, permissions:(string | Pointer.Class)[] ): void;
 function grant( subjects:string | Pointer.Class | (string | Pointer.Class)[], subjectsClass:string | Pointer.Class, permissions:string | Pointer.Class | (string | Pointer.Class)[] ): void {
 	let that:Class = this;
-	that.accessControlEntries = that.accessControlEntries || [];
-	configACEs.call( this, true, subjects, subjectsClass, permissions, that.accessControlEntries );
+	that.entries = that.entries || [];
+	configACEs.call( this, true, subjects, subjectsClass, permissions, that.entries );
 }
 function deny( subject:string | Pointer.Class, subjectClass:string | Pointer.Class, permission:string | Pointer.Class ): void;
 function deny( subject:string | Pointer.Class, subjectClass:string | Pointer.Class, permissions:(string | Pointer.Class)[] ): void;
@@ -179,8 +178,8 @@ function deny( subjects:(string | Pointer.Class)[], subjectClass:string | Pointe
 function deny( subjects:(string | Pointer.Class)[], subjectClass:string | Pointer.Class, permissions:(string | Pointer.Class)[] ): void;
 function deny( subjects:string | Pointer.Class | (string | Pointer.Class)[], subjectsClass:string | Pointer.Class, permissions:string | Pointer.Class | (string | Pointer.Class)[] ): void {
 	let that:Class = this;
-	that.accessControlEntries = that.accessControlEntries || [];
-	configACEs.call( this, false, subjects, subjectsClass, permissions, that.accessControlEntries );
+	that.entries = that.entries || [];
+	configACEs.call( this, false, subjects, subjectsClass, permissions, that.entries );
 }
 function configureChildInheritance( granting:boolean, subject:string | Pointer.Class, subjectClass:string | Pointer.Class, permission:string | Pointer.Class ): void;
 function configureChildInheritance( granting:boolean, subject:string | Pointer.Class, subjectClass:string | Pointer.Class, permissions:(string | Pointer.Class)[] ): void;
@@ -211,11 +210,11 @@ function getGranting( subject:string | Pointer.Class, permission: string | Point
 }
 function grants( subject:string | Pointer.Class, permission: string | Pointer.Class ): boolean {
 	let that:Class = this;
-	return getGranting.call( this, subject, permission, that.accessControlEntries );
+	return getGranting.call( this, subject, permission, that.entries );
 }
 function denies( subject:string | Pointer.Class, permission: string | Pointer.Class ): boolean {
 	let that:Class = this;
-	let granting:boolean = getGranting.call( this, subject, permission, that.accessControlEntries );
+	let granting:boolean = getGranting.call( this, subject, permission, that.entries );
 	return granting === null ? null : ! granting;
 }
 function getChildInheritance( subject:string | Pointer.Class, permission: string | Pointer.Class ):boolean {
@@ -227,7 +226,7 @@ function removePermissionsFrom( subject:Pointer.Class, permissions:Pointer.Class
 	if ( ! aces ) return;
 
 	let that:Class = <Class> this;
-	let opposedAces:ACE.Class[] = that.accessControlEntries === aces ? that.inheritableEntries : that.accessControlEntries;
+	let opposedAces:ACE.Class[] = that.entries === aces ? that.inheritableEntries : that.entries;
 
 	let subjectACEs:ACE.Class[] = aces.filter( ace => Utils.A.indexOf( ace.subjects, subject, Pointer.Util.areEqual ) !== -1 );
 	for ( let ace of subjectACEs ) {
@@ -269,7 +268,7 @@ function remove( subject:string | Pointer.Class, permission:string | Pointer.Cla
 function remove( subject:string | Pointer.Class, permissions:(string | Pointer.Class)[] ): void;
 function remove( subject:string | Pointer.Class, permissions:string | Pointer.Class | (string | Pointer.Class)[] ): void {
 	let that:Class = this;
-	removePermissions.call( this, subject, permissions, that.accessControlEntries );
+	removePermissions.call( this, subject, permissions, that.entries );
 }
 function removeChildInheritance( subject:string | Pointer.Class, permission:string | Pointer.Class ): void;
 function removeChildInheritance( subject:string | Pointer.Class, permissions:(string | Pointer.Class)[] ): void;

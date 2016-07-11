@@ -51,11 +51,11 @@ export class Factory {
 			types = pointerOrExpandedObject[ "@type" ];
 		} else if( "types" in pointerOrExpandedObject ) {
 			// TODO: Use proper class
-			let resource:{ types: Pointer.Class[] } = <any> pointerOrExpandedObject;
+			let resource:{ types:Pointer.Class[] } = <any> pointerOrExpandedObject;
 			types = Pointer.Util.getIDs( resource.types );
 		}
 
-		return types.indexOf( RDF_CLASS ) !== -1;
+		return types.indexOf( RDF_CLASS ) !== - 1;
 	}
 }
 

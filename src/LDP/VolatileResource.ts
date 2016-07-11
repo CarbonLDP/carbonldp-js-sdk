@@ -15,10 +15,10 @@ export class Factory {
 	}
 
 	static hasRDFClass( object:Object ):boolean {
-		if ( ! object ) return false;
+		if( ! object ) return false;
 
 		let types:string[] = ( "@type" in object ) ? object[ "@type" ] : ( "types" in object ) ? (<Resource.Class> object).types : [];
-		return types.indexOf( RDF_CLASS ) !== -1;
+		return types.indexOf( RDF_CLASS ) !== - 1;
 	}
 
 }

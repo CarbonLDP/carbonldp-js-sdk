@@ -6,7 +6,7 @@ export declare const RDF_CLASS: string;
 export declare const SCHEMA: ObjectSchema.Class;
 export interface Class extends Document.Class {
     accessTo: Pointer.Class;
-    accessControlEntries?: ACE.Class[];
+    entries?: ACE.Class[];
     inheritableEntries?: ACE.Class[];
     grant(subject: string | Pointer.Class, subjectClass: string | Pointer.Class, permission: string | Pointer.Class): void;
     grant(subject: string | Pointer.Class, subjectClass: string | Pointer.Class, permissions: (string | Pointer.Class)[]): void;

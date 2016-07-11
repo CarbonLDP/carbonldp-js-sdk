@@ -5,6 +5,7 @@ declare class Class {
     static Agent: string;
     static AllOrigins: string;
     static Application: string;
+    static Ticket: string;
     static Token: string;
 }
 declare class Predicate {
@@ -14,6 +15,7 @@ declare class Predicate {
     static allowsOrigin: string;
     static description: string;
     static expirationTime: string;
+    static forIRI: string;
     static granting: string;
     static inheritableEntry: string;
     static namae: string;
@@ -22,6 +24,7 @@ declare class Predicate {
     static rootContainer: string;
     static subject: string;
     static subjectClass: string;
+    static ticketKey: string;
     static tokenKey: string;
 }
 export { namespace, Class, Predicate };

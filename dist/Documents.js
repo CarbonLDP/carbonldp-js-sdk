@@ -9,13 +9,11 @@ var FreeResources = require("./FreeResources");
 var JSONLDConverter = require("./JSONLDConverter");
 var PersistedACL = require("./Auth/PersistedACL");
 var PersistedDocument = require("./PersistedDocument");
-var PersistedRDFSource = require("./PersistedRDFSource");
 var Pointer = require("./Pointer");
 var NS = require("./NS");
 var ObjectSchema = require("./ObjectSchema");
 var LDP = require("./LDP");
 var SPARQL = require("./SPARQL");
-var RDFSource = require("./RDFSource");
 var Resource = require("./Resource");
 var RetrievalPreferences = require("./RetrievalPreferences");
 var Documents = (function () {
@@ -187,10 +185,12 @@ var Documents = (function () {
         });
     };
     Documents.prototype.getChildren = function (parentURI, retPrefReqOpt, requestOptions) {
+        var _this = this;
         var retrievalPreferences = RetrievalPreferences.Factory.is(retPrefReqOpt) ? retPrefReqOpt : null;
         requestOptions = HTTP.Request.Util.isOptions(retPrefReqOpt) ? retPrefReqOpt : (HTTP.Request.Util.isOptions(requestOptions) ? requestOptions : {});
         parentURI = this.getRequestURI(parentURI);
         this.setDefaultRequestOptions(requestOptions, NS.LDP.Class.Container);
+        var containerURI = parentURI;
         if (!!retrievalPreferences)
             parentURI += RetrievalPreferences.Util.stringifyRetrievalPreferences(retrievalPreferences);
         var containerRetrievalPreferences = {
@@ -205,7 +205,13 @@ var Documents = (function () {
             ],
         };
         HTTP.Request.Util.setContainerRetrievalPreferences(containerRetrievalPreferences, requestOptions);
-        return this.sendRequestForResponseWithMetadata(parentURI, requestOptions);
+        return HTTP.Request.Service.get(parentURI, requestOptions, new HTTP.JSONLDParser.Class()).then(function (_a) {
+            var expandedResult = _a[0], response = _a[1];
+            var freeNodes = RDF.Node.Util.getFreeNodes(expandedResult);
+            var rdfDocuments = RDF.Document.Util.getDocuments(expandedResult).filter(function (document) { return document["@id"] !== containerURI; });
+            var resources = _this.getPersistedMetadataResources(freeNodes, rdfDocuments, response);
+            return [resources, response];
+        });
     };
     Documents.prototype.createAccessPoint = function (documentURIOrAccessPoint, accessPointOrSlug, slugOrRequestOptions, requestOptions) {
         var _this = this;
@@ -316,36 +322,20 @@ var Documents = (function () {
             if (rdfDocument === null)
                 throw new HTTP.Errors.BadResponseError("No document was returned.", response);
             var documentResource = _this.getDocumentResource(rdfDocument, response);
-            var membershipResourceURI = RDF.Node.Util.getPropertyURI(documentResource, NS.LDP.Predicate.membershipResource);
-            var membershipResource;
-            if (documentResource["@id"] === membershipResourceURI) {
-                membershipResource = documentResource;
-            }
-            else if (membershipResourceURI === null) {
-                if (documentResource["@type"].indexOf(NS.LDP.Class.BasicContainer) !== -1) {
-                    membershipResource = documentResource;
-                }
-                else {
-                    throw new HTTP.Errors.BadResponseError("The document is not an ldp:BasicContainer and it doesn't contain an ldp:membershipResource triple.", response);
-                }
-            }
-            else {
-                var membershipResourceDocument = _this.getRDFDocument(membershipResourceURI, rdfDocuments, response);
-                if (membershipResourceDocument === null)
-                    throw new HTTP.Errors.BadResponseError("The membershipResource document was not included in the response.", response);
-                membershipResource = _this.getDocumentResource(membershipResourceDocument, response);
-            }
+            var membershipResource = _this.getMembershipResource(documentResource, rdfDocuments, response);
             var hasMemberRelation = RDF.Node.Util.getPropertyURI(documentResource, NS.LDP.Predicate.hasMemberRelation);
             var memberPointers = RDF.Value.Util.getPropertyPointers(membershipResource, hasMemberRelation, _this);
             return [memberPointers, response];
         });
     };
     Documents.prototype.getMembers = function (uri, nonReadRetPrefReqOpt, retPrefReqOpt, requestOptions) {
+        var _this = this;
         var includeNonReadable = Utils.isBoolean(nonReadRetPrefReqOpt) ? nonReadRetPrefReqOpt : true;
         var retrievalPreferences = RetrievalPreferences.Factory.is(nonReadRetPrefReqOpt) ? nonReadRetPrefReqOpt : (RetrievalPreferences.Factory.is(retPrefReqOpt) ? retPrefReqOpt : null);
         requestOptions = HTTP.Request.Util.isOptions(nonReadRetPrefReqOpt) ? nonReadRetPrefReqOpt : (HTTP.Request.Util.isOptions(retPrefReqOpt) ? retPrefReqOpt : (HTTP.Request.Util.isOptions(requestOptions) ? requestOptions : {}));
         uri = this.getRequestURI(uri);
         this.setDefaultRequestOptions(requestOptions, NS.LDP.Class.Container);
+        var containerURI = uri;
         if (!!retrievalPreferences)
             uri += RetrievalPreferences.Util.stringifyRetrievalPreferences(retrievalPreferences);
         var containerRetrievalPreferences = {
@@ -366,7 +356,22 @@ var Documents = (function () {
             containerRetrievalPreferences.omit.push(NS.C.Class.NonReadableMembershipResourceTriples);
         }
         HTTP.Request.Util.setContainerRetrievalPreferences(containerRetrievalPreferences, requestOptions);
-        return this.sendRequestForResponseWithMetadata(uri, requestOptions);
+        return HTTP.Request.Service.get(uri, requestOptions, new HTTP.JSONLDParser.Class()).then(function (_a) {
+            var expandedResult = _a[0], response = _a[1];
+            var freeNodes = RDF.Node.Util.getFreeNodes(expandedResult);
+            var rdfDocuments = RDF.Document.Util.getDocuments(expandedResult);
+            var rdfDocument = _this.getRDFDocument(containerURI, rdfDocuments, response);
+            if (rdfDocument === null)
+                throw new HTTP.Errors.BadResponseError("No document was returned.", response);
+            var containerResource = _this.getDocumentResource(rdfDocument, response);
+            var membershipResource = _this.getMembershipResource(containerResource, rdfDocuments, response);
+            rdfDocuments = rdfDocuments.filter(function (targetRDFDocument) {
+                return !RDF.Node.Util.areEqual(targetRDFDocument, containerResource)
+                    && !RDF.Node.Util.areEqual(targetRDFDocument, membershipResource);
+            });
+            var resources = _this.getPersistedMetadataResources(freeNodes, rdfDocuments, response);
+            return [resources, response];
+        });
     };
     Documents.prototype.addMember = function (documentURI, memberORUri, requestOptions) {
         if (requestOptions === void 0) { requestOptions = {}; }
@@ -474,6 +479,9 @@ var Documents = (function () {
         documentURI = this.getRequestURI(documentURI);
         this.setDefaultRequestOptions(requestOptions, NS.LDP.Class.RDFSource);
         return HTTP.Request.Service.delete(documentURI, requestOptions);
+    };
+    Documents.prototype.getDownloadURL = function (documentURI, requestOptions) {
+        return this.context.auth.getAuthenticatedURL(documentURI, requestOptions);
     };
     Documents.prototype.getSchemaFor = function (object) {
         if ("@id" in object) {
@@ -652,7 +660,7 @@ var Documents = (function () {
         return document.types;
     };
     Documents.prototype.updateObject = function (target, source) {
-        var keys = Array.from(new Set(Object.keys(source).concat(Object.keys(target))));
+        var keys = Utils.A.joinWithoutDuplicates(Object.keys(source), Object.keys(target));
         for (var _i = 0, keys_1 = keys; _i < keys_1.length; _i++) {
             var key = keys_1[_i];
             if (Utils.hasProperty(source, key)) {
@@ -664,20 +672,19 @@ var Documents = (function () {
         }
         return target;
     };
-    Documents.prototype.getAssociatedFragment = function (persistedDocument, fragment) {
-        if (RDF.URI.Util.isBNodeID(fragment.id)) {
-            var blankNode = fragment;
-            var fragments = persistedDocument.getFragments();
-            for (var _i = 0, fragments_1 = fragments; _i < fragments_1.length; _i++) {
-                var frag = fragments_1[_i];
-                if (RDF.URI.Util.isBNodeID(frag.id) && frag.bNodeIdentifier === blankNode.bNodeIdentifier) {
-                    return frag;
-                }
-            }
-            persistedDocument.removeFragment(fragment.id);
-            return null;
+    Documents.prototype.getAssociatedFragment = function (blankNodes, namedFragments, searchedFragment) {
+        if (!RDF.URI.Util.isBNodeID(searchedFragment["@id"]))
+            return namedFragments.get(searchedFragment["@id"]);
+        var bNodeIdentifier = RDF.Value.Util.getProperty(searchedFragment, NS.C.Predicate.bNodeIdentifier, null);
+        for (var _i = 0, blankNodes_1 = blankNodes; _i < blankNodes_1.length; _i++) {
+            var fragment = blankNodes_1[_i];
+            if (!RDF.URI.Util.isBNodeID(fragment.id))
+                continue;
+            var persistedBlankNode = fragment;
+            if (!!persistedBlankNode.bNodeIdentifier && persistedBlankNode.bNodeIdentifier === bNodeIdentifier)
+                return fragment;
         }
-        return persistedDocument.getFragment(fragment.id);
+        return null;
     };
     Documents.prototype.getRequestURI = function (uri) {
         if (RDF.URI.Util.isRelative(uri)) {
@@ -699,6 +706,28 @@ var Documents = (function () {
             this.context.auth.addAuthentication(requestOptions);
         HTTP.Request.Util.setAcceptHeader("application/ld+json", requestOptions);
         HTTP.Request.Util.setPreferredInteractionModel(interactionModel, requestOptions);
+    };
+    Documents.prototype.getMembershipResource = function (documentResource, rdfDocuments, response) {
+        var membershipResource;
+        var membershipResourceURI = RDF.Node.Util.getPropertyURI(documentResource, NS.LDP.Predicate.membershipResource);
+        if (documentResource["@id"] === membershipResourceURI) {
+            membershipResource = documentResource;
+        }
+        else if (membershipResourceURI === null) {
+            if (documentResource["@type"].indexOf(NS.LDP.Class.BasicContainer) !== -1) {
+                membershipResource = documentResource;
+            }
+            else {
+                throw new HTTP.Errors.BadResponseError("The document is not an ldp:BasicContainer and it doesn't contain an ldp:membershipResource triple.", response);
+            }
+        }
+        else {
+            var membershipResourceDocument = this.getRDFDocument(membershipResourceURI, rdfDocuments, response);
+            if (membershipResourceDocument === null)
+                throw new HTTP.Errors.BadResponseError("The membershipResource document was not included in the response.", response);
+            membershipResource = this.getDocumentResource(membershipResourceDocument, response);
+        }
+        return membershipResource;
     };
     Documents.prototype.getPersistedDocument = function (rdfDocument, response) {
         var documentResource = this.getDocumentResource(rdfDocument, response);
@@ -729,60 +758,50 @@ var Documents = (function () {
         document._resolved = true;
         if (LDP.Container.Factory.hasRDFClass(document))
             LDP.PersistedContainer.Factory.decorate(document);
-        if (Resource.Util.hasType(document, RDFSource.RDF_CLASS))
-            PersistedRDFSource.Factory.decorate(document);
         if (Resource.Util.hasType(document, ACL.RDF_CLASS))
             PersistedACL.Factory.decorate(document);
         return document;
     };
     Documents.prototype.updatePersistedDocument = function (persistedDocument, documentResource, fragmentResources) {
-        var originalFragments = persistedDocument.getFragments();
-        var setFragments = new Set(originalFragments.map(function (fragment) { return fragment.id; }));
-        var updatedData;
+        var namedFragmentsMap = new Map();
+        var blankNodesArray = persistedDocument.getFragments().filter(function (fragment) {
+            persistedDocument.removeFragment(fragment.id);
+            if (RDF.URI.Util.isBNodeID(fragment.id))
+                return true;
+            namedFragmentsMap.set(fragment.id, fragment);
+            return false;
+        });
+        var newFragments = [];
         for (var _i = 0, fragmentResources_2 = fragmentResources; _i < fragmentResources_2.length; _i++) {
             var fragmentResource = fragmentResources_2[_i];
-            updatedData = this.compact(fragmentResource, {}, persistedDocument);
-            var fragment = this.getAssociatedFragment(persistedDocument, updatedData);
-            if (fragment) {
-                fragment = this.updateObject(fragment, updatedData);
-                if (!persistedDocument.hasFragment(fragment.id)) {
-                    persistedDocument.createFragment(fragment.id, fragment);
-                }
-            }
-            else {
-                fragment = persistedDocument.createFragment(updatedData.id, updatedData);
-            }
-            setFragments.delete(fragment.id);
+            var fragment = this.getAssociatedFragment(blankNodesArray, namedFragmentsMap, fragmentResource);
+            fragment = persistedDocument.createFragment(fragmentResource["@id"], fragment || {});
+            newFragments.push([fragment, fragmentResource]);
+        }
+        for (var _a = 0, newFragments_1 = newFragments; _a < newFragments_1.length; _a++) {
+            var _b = newFragments_1[_a], fragment = _b[0], resource = _b[1];
+            this.updateObject(fragment, this.compact(resource, {}, persistedDocument));
             fragment._syncSnapshot();
         }
-        Array.from(setFragments).forEach(function (id) { return persistedDocument.removeFragment(id); });
         persistedDocument._syncSavedFragments();
-        updatedData = this.compact(documentResource, {}, persistedDocument);
-        this.updateObject(persistedDocument, updatedData);
+        this.updateObject(persistedDocument, this.compact(documentResource, {}, persistedDocument));
         persistedDocument._syncSnapshot();
         return persistedDocument;
     };
-    Documents.prototype.sendRequestForResponseWithMetadata = function (uri, requestOptions) {
+    Documents.prototype.getPersistedMetadataResources = function (freeNodes, rdfDocuments, response) {
         var _this = this;
-        return HTTP.Request.Service.get(uri, requestOptions, new HTTP.JSONLDParser.Class()).then(function (_a) {
-            var expandedResult = _a[0], response = _a[1];
-            var freeNodes = RDF.Node.Util.getFreeNodes(expandedResult);
-            var rdfDocuments = RDF.Document.Util.getDocuments(expandedResult);
-            rdfDocuments.forEach(function (rdfDocument) { return _this.getPersistedDocument(rdfDocument, response); });
-            var freeResources = _this.getFreeResources(freeNodes);
-            var descriptionResources = freeResources.getResources().filter(function (resource) { return LDP.ResponseMetadata.Factory.hasRDFClass(resource); });
-            if (descriptionResources.length === 0)
-                return [[], response];
-            if (descriptionResources.length > 1)
-                throw new HTTP.Errors.BadResponseError("The response contained multiple c:ResponseMetadata objects", response);
-            var responseMetadata = descriptionResources[0];
-            for (var _i = 0, _b = responseMetadata.resourcesMetadata; _i < _b.length; _i++) {
-                var resourceMetadata = _b[_i];
-                var document_1 = resourceMetadata.resource;
-                document_1._etag = resourceMetadata.eTag;
-            }
-            var persistedDocuments = responseMetadata.resourcesMetadata.map(function (resourceMetadata) { return resourceMetadata.resource; });
-            return [persistedDocuments, response];
+        var freeResources = this.getFreeResources(freeNodes);
+        var descriptionResources = freeResources.getResources().filter(LDP.ResponseMetadata.Factory.hasRDFClass);
+        if (descriptionResources.length === 0)
+            return [];
+        if (descriptionResources.length > 1)
+            throw new HTTP.Errors.BadResponseError("The response contained multiple " + LDP.ResponseMetadata.RDF_CLASS + " objects.", response);
+        rdfDocuments.forEach(function (rdfDocument) { return _this.getPersistedDocument(rdfDocument, response); });
+        var responseMetadata = descriptionResources[0];
+        return responseMetadata.resourcesMetadata.map(function (resourceMetadata) {
+            var resource = resourceMetadata.resource;
+            resource._etag = resourceMetadata.eTag;
+            return resource;
         });
     };
     Documents.prototype.getFreeResources = function (nodes) {

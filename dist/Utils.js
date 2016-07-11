@@ -213,7 +213,7 @@ var A = (function () {
     A.indexOf = function (array, searchElement, comparator) {
         if (comparator === void 0) { comparator = function (a, b) { return a === b; }; }
         for (var i = 0, length_3 = array.length; i < length_3; ++i) {
-            if (comparator(searchElement, array[i]))
+            if (comparator(array[i], searchElement))
                 return i;
         }
         return -1;

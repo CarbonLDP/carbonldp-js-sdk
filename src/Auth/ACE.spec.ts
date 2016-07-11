@@ -11,7 +11,7 @@ describe( module( "Carbon/Auth/ACE" ), ():void => {
 	it( isDefined(), ():void => {
 		expect( ACE ).toBeDefined();
 		expect( Utils.isObject( ACE ) ).toBe( true );
-	});
+	} );
 
 	it( hasProperty(
 		STATIC,
@@ -22,7 +22,7 @@ describe( module( "Carbon/Auth/ACE" ), ():void => {
 		expect( Utils.isString( ACE.RDF_CLASS ) ).toBe( true );
 
 		expect( ACE.RDF_CLASS ).toBe( NS.CS.Class.AccessControlEntry );
-	});
+	} );
 
 	it( hasProperty(
 		STATIC,
@@ -33,17 +33,17 @@ describe( module( "Carbon/Auth/ACE" ), ():void => {
 		expect( Utils.isObject( ACE.SCHEMA ) ).toBe( true );
 
 		expect( Utils.hasProperty( ACE.SCHEMA, "granting" ) ).toBe( true );
-		expect( ACE.SCHEMA[ "granting" ] ).toEqual({
+		expect( ACE.SCHEMA[ "granting" ] ).toEqual( {
 			"@id": NS.CS.Predicate.granting,
 			"@type": NS.XSD.DataType.boolean,
-		});
+		} );
 
 		expect( Utils.hasProperty( ACE.SCHEMA, "permissions" ) ).toBe( true );
-		expect( ACE.SCHEMA[ "permissions" ] ).toEqual({
+		expect( ACE.SCHEMA[ "permissions" ] ).toEqual( {
 			"@id": NS.CS.Predicate.permission,
 			"@type": "@id",
 			"@container": "@set",
-		});
+		} );
 
 		expect( Utils.hasProperty( ACE.SCHEMA, "subjects" ) ).toBe( true );
 		expect( ACE.SCHEMA[ "subjects" ] ).toEqual({
@@ -56,8 +56,8 @@ describe( module( "Carbon/Auth/ACE" ), ():void => {
 		expect( ACE.SCHEMA[ "subjectsClass" ] ).toEqual({
 			"@id": NS.CS.Predicate.subjectClass,
 			"@type": "@id",
-		});
-	});
+		} );
+	} );
 
 	describe( clazz(
 		"Carbon.Auth.ACE.Factory",
@@ -107,7 +107,7 @@ describe( module( "Carbon/Auth/ACE" ), ():void => {
 			expect( ACE.Factory.hasClassProperties( object ) ).toBe( false );
 			object.subjectsClass = null;
 		});
-		
+
 		it( hasMethod(
 			STATIC,
 			"decorate",
@@ -115,11 +115,11 @@ describe( module( "Carbon/Auth/ACE" ), ():void => {
 		), ():void => {
 			expect( ACE.Factory.decorate ).toBeDefined();
 			expect( Utils.isFunction( ACE.Factory.decorate ) ).toBe( true );
-			
-			
+
+
 			let object:any;
 			let ace:ACE.Class;
-			
+
 			object =  {};
 			ace = ACE.Factory.decorate( object, true, [ Pointer.Factory.create( "1" ) ], Pointer.Factory.create( "2" ), [ Pointer.Factory.create( "3" ) ] );
 			expect( ACE.Factory.hasClassProperties( ace ) ).toBe( true );

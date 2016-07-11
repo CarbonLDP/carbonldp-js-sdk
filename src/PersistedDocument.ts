@@ -36,6 +36,8 @@ export interface Class extends Pointer.Class, PersistedResource.Class, Document.
 	save():Promise<[Class, HTTP.Response.Class]>;
 	destroy():Promise<HTTP.Response.Class>;
 
+	getDownloadURL():Promise<string>;
+
 	executeRawASKQuery( askQuery:string, requestOptions?:HTTP.Request.Options ):Promise<[ SPARQL.RawResults.Class, HTTP.Response.Class ]>;
 	executeASKQuery( askQuery:string, requestOptions?:HTTP.Request.Options ):Promise<[ boolean, HTTP.Response.Class ]>;
 	executeRawSELECTQuery( selectQuery:string, requestOptions?:HTTP.Request.Options ):Promise<[ SPARQL.RawResults.Class, HTTP.Response.Class ]>;
@@ -105,6 +107,10 @@ function destroy():Promise<HTTP.Response.Class> {
 	return this._documents.delete( this.id );
 }
 
+function getDownloadURL():Promise<string> {
+	return (<Class> this)._documents.getDownloadURL( (<Class> this).id );
+}
+
 function executeRawASKQuery( askQuery:string, requestOptions:HTTP.Request.Options = {} ):Promise<[ SPARQL.RawResults.Class, HTTP.Response.Class ]> {
 	return this._documents.executeRawASKQuery( this.id, askQuery, requestOptions );
 }
@@ -137,6 +143,8 @@ export class Factory {
 			Utils.hasFunction( document, "refresh" ) &&
 			Utils.hasFunction( document, "save" ) &&
 			Utils.hasFunction( document, "destroy" ) &&
+
+			Utils.hasFunction( document, "getDownloadURL" ) &&
 
 			Utils.hasFunction( document, "executeRawASKQuery" ) &&
 			Utils.hasFunction( document, "executeASKQuery" ) &&
@@ -204,7 +212,7 @@ export class Factory {
 				writable: false,
 				enumerable: false,
 				configurable: true,
-				value: ( function():( id:string ) => boolean {
+				value: (function():( id:string ) => boolean {
 					let superFunction:( id:string ) => boolean = persistedDocument.hasPointer;
 					return function( id:string ):boolean {
 						if ( RDF.URI.Util.isPrefixed( id ) ) {
@@ -221,7 +229,7 @@ export class Factory {
 				writable: false,
 				enumerable: false,
 				configurable: true,
-				value: ( function():( id:string ) => Pointer.Class {
+				value: (function():( id:string ) => Pointer.Class {
 					let superFunction:( id:string ) => Pointer.Class = persistedDocument.getPointer;
 					let inScopeFunction:( id:string ) => boolean = persistedDocument.inScope;
 					return function( id:string ):Pointer.Class {
@@ -239,7 +247,7 @@ export class Factory {
 				writable: false,
 				enumerable: false,
 				configurable: true,
-				value: ( function():( idOrPointer:any ) => boolean {
+				value: (function():( idOrPointer:any ) => boolean {
 					let superFunction:( idOrPointer:any ) => boolean = persistedDocument.inScope;
 					return function( idOrPointer:any ):boolean {
 						let uri:string = Pointer.Factory.is( idOrPointer ) ? idOrPointer.id : idOrPointer;
@@ -270,6 +278,13 @@ export class Factory {
 				enumerable: false,
 				configurable: true,
 				value: destroy,
+			},
+
+			"getDownloadURL": {
+				writable: false,
+				enumerable: false,
+				configurable: true,
+				value: getDownloadURL,
 			},
 
 			"executeRawASKQuery": {

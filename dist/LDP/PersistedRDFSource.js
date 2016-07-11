@@ -1,13 +1,15 @@
 "use strict";
-var ACL = require("./Auth/ACL");
-var HTTP = require("./HTTP");
-var Resource = require("./Resource");
-var Utils = require("./Utils");
+var ACL = require("./../Auth/ACL");
+var HTTP = require("./../HTTP");
+var Resource = require("./../Resource");
+var Utils = require("./../Utils");
 var Factory = (function () {
     function Factory() {
     }
     Factory.hasClassProperties = function (object) {
-        return Utils.hasPropertyDefined(object, "defaultInteractionModel")
+        return Utils.hasPropertyDefined(object, "created")
+            && Utils.hasPropertyDefined(object, "modified")
+            && Utils.hasPropertyDefined(object, "defaultInteractionModel")
             && Utils.hasPropertyDefined(object, "accessPoints")
             && Utils.hasPropertyDefined(object, "accessControlList")
             && Utils.hasFunction(object, "createAccessPoint")

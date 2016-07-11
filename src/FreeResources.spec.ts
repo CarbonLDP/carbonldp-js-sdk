@@ -332,7 +332,7 @@ describe( module( "Carbon/FreeResources" ), ():void => {
 				documents.getPointer( "http://example.com/some/" );
 				expect( freeResources.hasPointer( "http://example.com/some/" ) ).toBe( true );
 				expect( freeResources.hasPointer( "some/" ) ).toBe( true );
-			});
+			} );
 
 			it( hasMethod(
 				INSTANCE,
@@ -366,7 +366,7 @@ describe( module( "Carbon/FreeResources" ), ():void => {
 				pointer = freeResources.getPointer( "relative-uri/" );
 				expect( pointer ).toBeTruthy();
 				expect( documents.getPointer( "http://example.com/relative-uri/" ) ).toBe( pointer );
-			});
+			} );
 
 			describe( method(
 				INSTANCE,
@@ -387,7 +387,7 @@ describe( module( "Carbon/FreeResources" ), ():void => {
 					expect( freeResources.inScope( "_:some" ) ).toBe( true );
 					expect( freeResources.inScope( "http://example.com/some/" ) ).toBe( true );
 					expect( freeResources.inScope( "relative-uri/" ) ).toBe( true );
-				});
+				} );
 
 				it( hasSignature(
 					"Returns true if the the Pointer provided can be in the scope of the object.", [
@@ -398,7 +398,7 @@ describe( module( "Carbon/FreeResources" ), ():void => {
 					expect( freeResources.inScope( Pointer.Factory.create( "_:some" ) ) ).toBe( true );
 					expect( freeResources.inScope( Pointer.Factory.create( "http://example.com/some/" ) ) ).toBe( true );
 					expect( freeResources.inScope( Pointer.Factory.create( "relative-uri/" ) ) ).toBe( true );
-				});
+				} );
 
 			});
 

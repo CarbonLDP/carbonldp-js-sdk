@@ -10,7 +10,7 @@ describe( module( "Carbon/NonRDFSource" ), ():void => {
 	it( isDefined(), ():void => {
 		expect( NonRDFSource ).toBeDefined();
 		expect( Utils.isObject( NonRDFSource ) ).toBe( true );
-	});
+	} );
 
 	it( hasProperty(
 		STATIC,
@@ -21,7 +21,7 @@ describe( module( "Carbon/NonRDFSource" ), ():void => {
 		expect( Utils.isString( NonRDFSource.RDF_CLASS ) ).toBe( true );
 
 		expect( NonRDFSource.RDF_CLASS ).toBe( NS.C.Class.RDFRepresentation );
-	});
+	} );
 
 	it( hasProperty(
 		STATIC,
@@ -32,17 +32,17 @@ describe( module( "Carbon/NonRDFSource" ), ():void => {
 		expect( Utils.isObject( NonRDFSource.SCHEMA ) ).toBe( true );
 
 		expect( Utils.hasProperty( NonRDFSource.SCHEMA, "mediaType" ) ).toBe( true );
-		expect( NonRDFSource.SCHEMA[ "mediaType" ] ).toEqual({
+		expect( NonRDFSource.SCHEMA[ "mediaType" ] ).toEqual( {
 			"@id": NS.C.Predicate.mediaType,
 			"@type": NS.XSD.DataType.string
-		});
+		} );
 
 		expect( Utils.hasProperty( NonRDFSource.SCHEMA, "size" ) ).toBe( true );
-		expect( NonRDFSource.SCHEMA[ "size" ] ).toEqual({
+		expect( NonRDFSource.SCHEMA[ "size" ] ).toEqual( {
 			"@id": NS.C.Predicate.size,
 			"@type": NS.XSD.DataType.long
-		});
-	});
+		} );
+	} );
 
 	describe( clazz(
 		"Carbon.NonRDFSource.Factory",
@@ -52,15 +52,15 @@ describe( module( "Carbon/NonRDFSource" ), ():void => {
 		it( isDefined(), ():void => {
 			expect( NonRDFSource.Factory ).toBeDefined();
 			expect( Utils.isFunction( NonRDFSource.Factory ) ).toBe( true );
-		});
+		} );
 
 		it( hasMethod(
 			STATIC,
 			"hasClassProperties",
 			"Returns true if the object provided has the properties that defines a `Carbon.NonRDFSource.Class` object", [
-				{ name: "resource", type: "Object" }
+				{name: "resource", type: "Object"}
 			],
-			{ type: "boolean" }
+			{type: "boolean"}
 		), ():void => {
 			expect( NonRDFSource.Factory.hasClassProperties ).toBeDefined();
 			expect( Utils.isFunction( NonRDFSource.Factory.hasClassProperties ) ).toBe( true );
@@ -81,15 +81,15 @@ describe( module( "Carbon/NonRDFSource" ), ():void => {
 			delete object.size;
 			expect( NonRDFSource.Factory.hasClassProperties( object ) ).toBe( false );
 			object.size = null;
-		});
+		} );
 
 		it( hasMethod(
 			STATIC,
 			"is",
 			"Returns true if the object provided is considered as an `Carbon.NonRDFSource.Class` object", [
-				{ name: "object", type: "Object" }
+				{name: "object", type: "Object"}
 			],
-			{ type: "boolean" }
+			{type: "boolean"}
 		), ():void => {
 			expect( NonRDFSource.Factory.is ).toBeDefined();
 			expect( Utils.isFunction( NonRDFSource.Factory.is ) ).toBe( true );
@@ -118,8 +118,8 @@ describe( module( "Carbon/NonRDFSource" ), ():void => {
 			expect( NonRDFSource.Factory.is( object ) ).toBe( false );
 			object.types.push( NonRDFSource.RDF_CLASS );
 			expect( NonRDFSource.Factory.is( object ) ).toBe( true );
-		});
+		} );
 
-	});
+	} );
 
-});
+} );
