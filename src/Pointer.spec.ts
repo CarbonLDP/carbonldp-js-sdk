@@ -246,21 +246,21 @@ describe( module( "Carbon/Pointer" ), ():void => {
 
 	} );
 
-	describe( clazz( "Carbon.Pointer.Util" , "Class with useful methods when working with `Carbon.Pointer.Class` objects." ), ():void => {
+	describe( clazz( "Carbon.Pointer.Util", "Class with useful methods when working with `Carbon.Pointer.Class` objects." ), ():void => {
 
 		it( isDefined(), ():void => {
 			expect( Pointer.Util ).toBeDefined();
 			expect( Utils.isFunction( Pointer.Util ) ).toBe( true );
-		});
+		} );
 
 		it( hasMethod(
 			STATIC,
 			"areEqual",
 			"Returns true if both pointers refers to the same resource.", [
-				{ name: "pointer1", type: "Carbon.Pointer.Class" },
-				{ name: "pointer2", type: "Carbon.Pointer.Class" },
+				{name: "pointer1", type: "Carbon.Pointer.Class"},
+				{name: "pointer2", type: "Carbon.Pointer.Class"},
 			],
-			{ type: "boolean" }
+			{type: "boolean"}
 		), ():void => {
 			expect( Pointer.Util.areEqual ).toBeDefined();
 			expect( Utils.isFunction( Pointer.Util.areEqual ) ).toBe( true );
@@ -276,15 +276,15 @@ describe( module( "Carbon/Pointer" ), ():void => {
 			another = Pointer.Factory.create( "http://example.com/another/id" );
 			expect( pointer ).not.toBe( another );
 			expect( Pointer.Util.areEqual( pointer, another ) ).toBe( false );
-		});
+		} );
 
 		it( hasMethod(
 			STATIC,
 			"getIDs",
 			"Returns an array of string with the IDs of every pointer in the array of pointers provided.", [
-				{ name: "pointers", type: "Carbon.Pointer.Class[]", description: "The array of pointers to obtains theirs IDs." }
+				{name: "pointers", type: "Carbon.Pointer.Class[]", description: "The array of pointers to obtains theirs IDs."}
 			],
-			{ type: "string[]" }
+			{type: "string[]"}
 		), ():void => {
 			expect( Pointer.Util.getIDs ).toBeDefined();
 			expect( Utils.isFunction( Pointer.Util.getIDs ) ).toBe( true );
@@ -298,15 +298,15 @@ describe( module( "Carbon/Pointer" ), ():void => {
 			expect( ids ).toContain( "http://example.com/some/id/" );
 			expect( ids ).toContain( "http://example.com/another/id/" );
 			expect( ids ).toContain( "http://example.com/random/id/1234567890/" );
-		});
+		} );
 
 		it( hasMethod(
 			STATIC,
 			"resolveAll",
 			"Resolve all the pointers of the array of pointers provided.", [
-				{ name: "pointers", type: "Carbon.Pointer.Class[]", description: "The array of pointers to be resolved" }
+				{name: "pointers", type: "Carbon.Pointer.Class[]", description: "The array of pointers to be resolved"}
 			],
-			{ type: "[ Carbon.Pointers.Class[], Carbon.HTTP.Response.Class[] ]" }
+			{type: "[ Carbon.Pointers.Class[], Carbon.HTTP.Response.Class[] ]"}
 		), ( done:{ ():void, fail:() => void } ):void => {
 			expect( Pointer.Util.resolveAll ).toBeDefined();
 			expect( Utils.isFunction( Pointer.Util.resolveAll ) ).toBe( true );
@@ -334,8 +334,8 @@ describe( module( "Carbon/Pointer" ), ():void => {
 
 				done();
 			} ).catch( done.fail );
-		});
+		} );
 
-	});
+	} );
 
-});
+} );

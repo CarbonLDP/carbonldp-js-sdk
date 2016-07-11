@@ -567,7 +567,7 @@ describe( module( "Carbon/Document" ), ():void => {
 				expect( pointer.id ).toBe( "_:BlankNode" );
 				pointer = document.getPointer( "#fragment" );
 				expect( pointer.id ).toBe( "http://example.com/document/#fragment" );
-				
+
 				pointer = document.getPointer( "relative-uri-is-not-valid/" );
 				expect( pointer ).toBeNull();
 				pointer = document.getPointer( "http://example.com/another-document/" );

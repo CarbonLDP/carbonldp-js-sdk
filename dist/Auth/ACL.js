@@ -127,13 +127,13 @@ function configACEs(granting, subjects, subjectsClass, permissions, aces) {
 }
 function grant(subjects, subjectsClass, permissions) {
     var that = this;
-    that.accessControlEntries = that.accessControlEntries || [];
-    configACEs.call(this, true, subjects, subjectsClass, permissions, that.accessControlEntries);
+    that.entries = that.entries || [];
+    configACEs.call(this, true, subjects, subjectsClass, permissions, that.entries);
 }
 function deny(subjects, subjectsClass, permissions) {
     var that = this;
-    that.accessControlEntries = that.accessControlEntries || [];
-    configACEs.call(this, false, subjects, subjectsClass, permissions, that.accessControlEntries);
+    that.entries = that.entries || [];
+    configACEs.call(this, false, subjects, subjectsClass, permissions, that.entries);
 }
 function configureChildInheritance(granting, subjects, subjectsClass, permissions) {
     var that = this;
@@ -158,11 +158,11 @@ function getGranting(subject, permission, aces) {
 }
 function grants(subject, permission) {
     var that = this;
-    return getGranting.call(this, subject, permission, that.accessControlEntries);
+    return getGranting.call(this, subject, permission, that.entries);
 }
 function denies(subject, permission) {
     var that = this;
-    var granting = getGranting.call(this, subject, permission, that.accessControlEntries);
+    var granting = getGranting.call(this, subject, permission, that.entries);
     return granting === null ? null : !granting;
 }
 function getChildInheritance(subject, permission) {
@@ -173,7 +173,7 @@ function removePermissionsFrom(subject, permissions, aces) {
     if (!aces)
         return;
     var that = this;
-    var opposedAces = that.accessControlEntries === aces ? that.inheritableEntries : that.accessControlEntries;
+    var opposedAces = that.entries === aces ? that.inheritableEntries : that.entries;
     var subjectACEs = aces.filter(function (ace) { return Utils.A.indexOf(ace.subjects, subject, Pointer.Util.areEqual) !== -1; });
     for (var _i = 0, subjectACEs_2 = subjectACEs; _i < subjectACEs_2.length; _i++) {
         var ace = subjectACEs_2[_i];
@@ -209,7 +209,7 @@ function removePermissions(subject, permissions, aces) {
 }
 function remove(subject, permissions) {
     var that = this;
-    removePermissions.call(this, subject, permissions, that.accessControlEntries);
+    removePermissions.call(this, subject, permissions, that.entries);
 }
 function removeChildInheritance(subject, permissions) {
     var that = this;

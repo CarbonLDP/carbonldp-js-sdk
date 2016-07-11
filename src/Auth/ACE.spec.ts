@@ -46,14 +46,14 @@ describe( module( "Carbon/Auth/ACE" ), ():void => {
 		} );
 
 		expect( Utils.hasProperty( ACE.SCHEMA, "subjects" ) ).toBe( true );
-		expect( ACE.SCHEMA[ "subjects" ] ).toEqual({
+		expect( ACE.SCHEMA[ "subjects" ] ).toEqual( {
 			"@id": NS.CS.Predicate.subject,
 			"@type": "@id",
 			"@container": "@set",
-		});
+		} );
 
 		expect( Utils.hasProperty( ACE.SCHEMA, "subjectsClass" ) ).toBe( true );
-		expect( ACE.SCHEMA[ "subjectsClass" ] ).toEqual({
+		expect( ACE.SCHEMA[ "subjectsClass" ] ).toEqual( {
 			"@id": NS.CS.Predicate.subjectClass,
 			"@type": "@id",
 		} );
@@ -67,15 +67,15 @@ describe( module( "Carbon/Auth/ACE" ), ():void => {
 		it( isDefined(), ():void => {
 			expect( ACE.Factory ).toBeDefined();
 			expect( Utils.isFunction( ACE.Factory ) ).toBe( true );
-		});
+		} );
 
 		it( hasMethod(
 			STATIC,
 			"hasClassProperties",
 			"Returns true if the object provided has the properties of a `Carbon.Auth.ACE.Class` object.", [
-				{ name: "object", type: "Object", description: "The object to evaluate its properties." }
+				{name: "object", type: "Object", description: "The object to evaluate its properties."}
 			],
-			{ type: "boolean" }
+			{type: "boolean"}
 		), ():void => {
 			expect( ACE.Factory.hasClassProperties ).toBeDefined();
 			expect( Utils.isFunction( ACE.Factory.hasClassProperties ) ).toBe( true );
@@ -106,7 +106,7 @@ describe( module( "Carbon/Auth/ACE" ), ():void => {
 			delete object.subjectsClass;
 			expect( ACE.Factory.hasClassProperties( object ) ).toBe( false );
 			object.subjectsClass = null;
-		});
+		} );
 
 		it( hasMethod(
 			STATIC,
@@ -120,7 +120,7 @@ describe( module( "Carbon/Auth/ACE" ), ():void => {
 			let object:any;
 			let ace:ACE.Class;
 
-			object =  {};
+			object = {};
 			ace = ACE.Factory.decorate( object, true, [ Pointer.Factory.create( "1" ) ], Pointer.Factory.create( "2" ), [ Pointer.Factory.create( "3" ) ] );
 			expect( ACE.Factory.hasClassProperties( ace ) ).toBe( true );
 			expect( ace.types ) .toContain( ACE.RDF_CLASS );
@@ -130,7 +130,7 @@ describe( module( "Carbon/Auth/ACE" ), ():void => {
 			expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "3" );
 			expect( ace[ "some" ] ).toBeUndefined();
 
-			object =  { some: "some" };
+			object = {some: "some"};
 			ace = ACE.Factory.decorate( object, false, [ Pointer.Factory.create( "4" ) ], Pointer.Factory.create( "5" ), [ Pointer.Factory.create( "6" ) ] );
 			expect( ACE.Factory.hasClassProperties( ace ) ).toBe( true );
 			expect( ace.types ) .toContain( ACE.RDF_CLASS );
@@ -139,8 +139,8 @@ describe( module( "Carbon/Auth/ACE" ), ():void => {
 			expect( ace.subjectsClass.id ).toContain( "5" );
 			expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "6" );
 			expect( ace[ "some" ] ).toBe( "some" );
-		});
+		} );
 
-	});
+	} );
 
-});
+} );

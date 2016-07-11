@@ -331,7 +331,7 @@ function convertNestedObjects( parent:Class, actual:any ):void {
 		if( ! Utils.isPlainObject( next ) || Pointer.Factory.is( next ) ) continue;
 
 		idOrSlug = ( "id" in next ) ? next.id : ( ( "slug" in next ) ? "#" + next.slug : "" );
-		if ( ! ! idOrSlug && ! parent.inScope( idOrSlug ) ) continue;
+		if( ! ! idOrSlug && ! parent.inScope( idOrSlug ) ) continue;
 
 		let parentFragment:Fragment.Class = parent.getFragment( idOrSlug );
 

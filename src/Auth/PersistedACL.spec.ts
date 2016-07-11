@@ -25,7 +25,7 @@ describe( module( "Carbon/Auth/PersistedACL" ), ():void => {
 			STATIC,
 			"hasClassProperties",
 			"Return true if the object provided has the properties and methods of a `Carbon.Auth.PersistedACL.Class` object.", [
-				{name: "object", type: "Object", description: "The object to analise."}
+				{name: "object", type: "Object", description: "The object to analise."},
 			],
 			{type: "boolean"}
 		), ():void => {
@@ -59,16 +59,14 @@ describe( module( "Carbon/Auth/PersistedACL" ), ():void => {
 			STATIC,
 			"decorate",
 			"Decorate the object with the properties and methods of a `Carbon.Auth.PersistedACL.Class` object.", [
-				{name: "document", type: "T extends Carbon.PersistedDocument.Class", description: "The persisted document to decorate."}
+				{name: "document", type: "T extends Carbon.PersistedDocument.Class", description: "The persisted document to decorate."},
 			],
 			{type: "T & Carbon.Auth.PersistedACL.Class"}
 		), ():void => {
 			expect( PersistedACL.Factory.decorate ).toBeDefined();
 			expect( Utils.isFunction( PersistedACL.Factory.decorate ) ).toBe( true );
 
-			let document:any;
-
-			let spy = spyOn( ACL.Factory, "decorate" );
+			let spy:jasmine.Spy = spyOn( ACL.Factory, "decorate" );
 			let document:PersistedDocument.Class = PersistedDocument.Factory.create( "http://example.com/some/acl/", new Documents() );
 			document[ "accessTo" ] = document.getPointer( "http://example.com/some/" );
 

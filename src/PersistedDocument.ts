@@ -11,7 +11,7 @@ import * as RDF from "./RDF";
 import * as SPARQL from "./SPARQL";
 import * as Utils from "./Utils";
 import * as URI from "./RDF/URI";
-import { Digester } from "./ObjectSchema";
+import {Digester} from "./ObjectSchema";
 
 export interface Class extends Pointer.Class, PersistedResource.Class, Document.Class {
 	_documents:Documents;
@@ -215,7 +215,7 @@ export class Factory {
 				value: (function():( id:string ) => boolean {
 					let superFunction:( id:string ) => boolean = persistedDocument.hasPointer;
 					return function( id:string ):boolean {
-						if ( RDF.URI.Util.isPrefixed( id ) ) {
+						if( RDF.URI.Util.isPrefixed( id ) ) {
 							id = Digester.resolvePrefixedURI( new RDF.URI.Class( id ), (<Class> this)._documents.getSchemaFor( this ) ).stringValue;
 						}
 
@@ -233,7 +233,7 @@ export class Factory {
 					let superFunction:( id:string ) => Pointer.Class = persistedDocument.getPointer;
 					let inScopeFunction:( id:string ) => boolean = persistedDocument.inScope;
 					return function( id:string ):Pointer.Class {
-						if ( RDF.URI.Util.isPrefixed( id ) ) {
+						if( RDF.URI.Util.isPrefixed( id ) ) {
 							id = Digester.resolvePrefixedURI( new RDF.URI.Class( id ), (<Class> this)._documents.getSchemaFor( this ) ).stringValue;
 						}
 
@@ -251,7 +251,7 @@ export class Factory {
 					let superFunction:( idOrPointer:any ) => boolean = persistedDocument.inScope;
 					return function( idOrPointer:any ):boolean {
 						let uri:string = Pointer.Factory.is( idOrPointer ) ? idOrPointer.id : idOrPointer;
-						if ( RDF.URI.Util.isPrefixed( uri ) ) {
+						if( RDF.URI.Util.isPrefixed( uri ) ) {
 							uri = Digester.resolvePrefixedURI( new RDF.URI.Class( uri ), (<Class> this)._documents.getSchemaFor( this ) ).stringValue;
 						}
 

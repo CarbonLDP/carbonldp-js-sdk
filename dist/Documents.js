@@ -40,9 +40,8 @@ var Documents = (function () {
         if (RDF.URI.Util.isBNodeID(id))
             return false;
         if (!!this.context) {
-            if (RDF.URI.Util.isPrefixed(id)) {
+            if (RDF.URI.Util.isPrefixed(id))
                 id = ObjectSchema.Digester.resolvePrefixedURI(new RDF.URI.Class(id), this.context.getObjectSchema()).stringValue;
-            }
             var baseURI = this.context.getBaseURI();
             if (RDF.URI.Util.isAbsolute(id) && RDF.URI.Util.isBaseOf(baseURI, id))
                 return true;
@@ -575,9 +574,8 @@ var Documents = (function () {
         if (RDF.URI.Util.isBNodeID(uri))
             throw new Errors.IllegalArgumentError("BNodes cannot be fetched directly.");
         if (!!this.context) {
-            if (RDF.URI.Util.isPrefixed(uri)) {
+            if (RDF.URI.Util.isPrefixed(uri))
                 uri = ObjectSchema.Digester.resolvePrefixedURI(new RDF.URI.Class(uri), this.context.getObjectSchema()).stringValue;
-            }
             if (!RDF.URI.Util.isRelative(uri)) {
                 var baseURI = this.context.getBaseURI();
                 if (!RDF.URI.Util.isBaseOf(baseURI, uri))

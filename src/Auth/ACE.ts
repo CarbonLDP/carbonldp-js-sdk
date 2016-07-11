@@ -28,10 +28,10 @@ export const SCHEMA:ObjectSchema.Class = {
 };
 
 export interface Class extends Fragment.Class {
-	granting: boolean;
-	permissions: Pointer.Class[];
-	subjects: Pointer.Class[];
-	subjectsClass: Pointer.Class;
+	granting:boolean;
+	permissions:Pointer.Class[];
+	subjects:Pointer.Class[];
+	subjectsClass:Pointer.Class;
 }
 
 export class Factory {
@@ -41,15 +41,15 @@ export class Factory {
 			&& Utils.hasPropertyDefined( object, "permissions" )
 			&& Utils.hasPropertyDefined( object, "subjects" )
 			&& Utils.hasPropertyDefined( object, "subjectsClass" )
-		;
+			;
 	}
 
 	static decorate<T extends Object>( object:T, granting:boolean, subjects:Pointer.Class[], subjectClass:Pointer.Class, permissions:Pointer.Class[] ):T & Class {
-		if ( Factory.hasClassProperties( object ) ) return <any> object;
+		if( Factory.hasClassProperties( object ) ) return <any> object;
 
 		let ace:T & Class = <any> object;
 
-		if ( ! ace.types ) ace.types = [];
+		if( ! ace.types ) ace.types = [];
 		ace.types.push( RDF_CLASS );
 
 		ace.granting = granting;
