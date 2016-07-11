@@ -10,6 +10,8 @@ import * as RDF from "./RDF";
 import * as ObjectSchema from "./ObjectSchema";
 import * as Agent from "./Agent";
 import * as RDFRepresentation from "./RDFRepresentation";
+import * as ErrorResponse from "./LDP/ErrorResponse";
+import * as Error from "./LDP/Error";
 
 export class Class implements Context {
 	auth:Auth.Class;
@@ -155,6 +157,8 @@ export class Class implements Context {
 
 		this.extendObjectSchema( RDFRepresentation.RDF_CLASS, RDFRepresentation.SCHEMA );
 		this.extendObjectSchema( APIDescription.RDF_CLASS, APIDescription.SCHEMA );
+		this.extendObjectSchema( Error.RDF_CLASS, Error.SCHEMA );
+		this.extendObjectSchema( ErrorResponse.RDF_CLASS, ErrorResponse.SCHEMA );
 
 		// TODO Fix error of cycle reference because the App module dependency of AbstractClass witch has a dependency with SDKContext. For now add manual data
 		/* this.extendObjectSchema( App.RDF_CLASS, App.SCHEMA ); */
