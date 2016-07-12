@@ -376,7 +376,7 @@ var Class = (function () {
             var propertyValue = propertyValues_3[_i];
             if (!RDF.Node.Factory.is(propertyValue))
                 continue;
-            return pointerLibrary.getPointer(propertyValue["@id"]);
+            return pointerLibrary.getPointer(propertyValue["@id"].trim());
         }
         return null;
     };
@@ -420,7 +420,7 @@ var Class = (function () {
             var listValue = _a[_i];
             if (!RDF.Node.Factory.is(listValue))
                 continue;
-            var pointer = pointerLibrary.getPointer(listValue["@id"]);
+            var pointer = pointerLibrary.getPointer(listValue["@id"].trim());
             listPointers.push(pointer);
         }
         return listPointers;
@@ -467,7 +467,7 @@ var Class = (function () {
             var propertyValue = propertyValues_6[_i];
             if (!RDF.Node.Factory.is(propertyValue))
                 continue;
-            var pointer = pointerLibrary.getPointer(propertyValue["@id"]);
+            var pointer = pointerLibrary.getPointer(propertyValue["@id"].trim());
             propertyPointers.push(pointer);
         }
         return propertyPointers;
@@ -526,7 +526,7 @@ var Class = (function () {
             return RDF.Literal.Factory.parse(propertyValue);
         }
         else if (RDF.Node.Factory.is(propertyValue)) {
-            return pointerLibrary.getPointer(propertyValue["@id"]);
+            return pointerLibrary.getPointer(propertyValue["@id"].trim());
         }
         else if (RDF.List.Factory.is(propertyValue)) {
             var parsedValue = [];

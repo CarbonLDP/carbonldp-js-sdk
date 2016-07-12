@@ -17,7 +17,6 @@ import * as App from "./../App";
 import PersistedApp from "./../PersistedApp";
 import * as Pointer from "./../Pointer";
 import * as Utils from "./../Utils";
-import {DigestedObjectSchema} from "../ObjectSchema";
 
 import AppContext from "./Context";
 
