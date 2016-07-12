@@ -6,7 +6,6 @@ import * as RetrievalPreferences from "./../RetrievalPreferences";
 import * as Role from "./Role";
 import * as Roles from "./Roles";
 import * as Utils from "./../Utils";
-import IllegalStateError from "../Errors/IllegalStateError";
 
 export interface Class extends PersistedDocument.Class {
 	_roles:Roles.Class;
@@ -58,7 +57,7 @@ export class Factory {
 				configurable: true,
 				value: getAgents,
 			},
-		});
+		} );
 
 		return role;
 	}
@@ -78,7 +77,7 @@ function getAgents( retrievalPreferencesOrRequestOptions?:RetrievalPreferences.C
 }
 
 function checkState():void {
-	if (! (<Class> this)._roles ) throw new IllegalStateError( "The context of the current role, does not support roles management." );
+	if( ! (<Class> this)._roles ) throw new Errors.IllegalStateError( "The context of the current role, does not support roles management." );
 }
 
 export default Class;

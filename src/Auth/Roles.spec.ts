@@ -54,8 +54,8 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 
 			jasmine.Ajax.stubRequest( "http://example.com/roles/role-not-found/" ).andReturn( {
 				status: 404,
-			});
-		});
+			} );
+		} );
 
 		afterEach( ():void => {
 			jasmine.Ajax.uninstall();
@@ -314,20 +314,20 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 					expect( spySuccess ).toHaveBeenCalledTimes( 2 );
 					expect( spyError ).toHaveBeenCalledTimes( 1 );
 					done();
-				}).catch( done.fail );
+				} ).catch( done.fail );
 
-			});
+			} );
 
-		});
+		} );
 
 		it( hasMethod(
 			INSTANCE,
 			"listAgents",
 			"Retrieves an array of unresolved pointers for all the agents of the specified role.", [
-				{ name: "roleURI", type: "string", description: "The URI of the role to look for its agents." },
-				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true }
+				{name: "roleURI", type: "string", description: "The URI of the role to look for its agents."},
+				{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true},
 			],
-			{ type: "Promise<[ Carbon.Auth.PersistedRole.Class, Carbon.HTTP.Response.Class ]>"}
+			{type: "Promise<[ Carbon.Auth.PersistedRole.Class, Carbon.HTTP.Response.Class ]>"}
 		), ( done:{ ():void, fail:() => void } ):void => {
 			expect( roles.listAgents ).toBeDefined();
 			expect( Utils.isFunction( roles.listAgents ) ).toBe( true );
@@ -335,53 +335,53 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 			jasmine.Ajax.stubRequest( "http://example.com/roles/a-role/", null, "POST" ).andReturn( {
 				status: 200,
 				responseText: `{
-				  "head" : {
-				    "vars" : [
-				      "agentsAccessPoint"
-				    ]
-				  },
-				  "results" : {
-				    "bindings" : [
-				      {
-				        "agentsAccessPoint" : {
-				          "type" : "uri",
-				          "value" : "http://example.com/roles/a-role/agents/"
-				        }
-				      }
-				    ]
-				  }
-				}`
-			});
+					"head": {
+						"vars": [
+							"agentsAccessPoint"
+						]
+					},
+					"results": {
+						"bindings": [
+							{
+								"agentsAccessPoint": {
+									"type": "uri",
+									"value": "http://example.com/roles/a-role/agents/"
+								}
+							}
+						]
+					}
+				}`,
+			} );
 			jasmine.Ajax.stubRequest( "http://example.com/roles/a-role/agents/", null, "GET" ).andReturn( {
 				status: 200,
 				responseText: `[ {
-				  "@graph" : [ {
-				    "@id" : "http://example.com/roles/a-role/",
-				    "https://carbonldp.com/ns/v1/security#agent" : [ {
-				      "@id" : "http://example.com/agents/an-agent/"
-				    } ]
-				  } ],
-				  "@id" : "http://example.com/roles/a-role/"
+					"@graph": [ {
+						"@id": "http://example.com/roles/a-role/",
+						"https://carbonldp.com/ns/v1/security#agent": [ {
+							"@id": "http://example.com/agents/an-agent/"
+						} ]
+					} ],
+					"@id": "http://example.com/roles/a-role/"
 				}, {
-				  "@graph" : [ {
-				    "@id" : "http://example.com/roles/a-role/agents/",
-				    "@type" : [ "http://www.w3.org/ns/ldp#RDFSource", "http://www.w3.org/ns/ldp#DirectContainer", "http://www.w3.org/ns/ldp#Container" ],
-				    "http://www.w3.org/ns/ldp#hasMemberRelation" : [ {
-				      "@id" : "https://carbonldp.com/ns/v1/security#agent"
-				    } ],
-				    "http://www.w3.org/ns/ldp#membershipResource" : [ {
-				      "@id" : "http://example.com/roles/a-role/"
-				    } ]
-				  } ],
-				  "@id" : "http://example.com/roles/a-role/agents/"
-				} ]`
-			});
+					"@graph": [ {
+						"@id": "http://example.com/roles/a-role/agents/",
+						"@type": [ "http://www.w3.org/ns/ldp#RDFSource", "http://www.w3.org/ns/ldp#DirectContainer", "http://www.w3.org/ns/ldp#Container" ],
+						"http://www.w3.org/ns/ldp#hasMemberRelation": [ {
+							"@id": "https://carbonldp.com/ns/v1/security#agent"
+						} ],
+						"http://www.w3.org/ns/ldp#membershipResource": [ {
+							"@id": "http://example.com/roles/a-role/"
+						} ]
+					} ],
+					"@id": "http://example.com/roles/a-role/agents/"
+				} ]`,
+			} );
 
-			roles.listAgents( "http://example.com/roles/a-role/", Role.Factory.create( "Role name" ) ).then( done.fail ).catch( ( error:Error ) => {
-				expect( error instanceof Errors.IllegalStateError ).toBe( true );
+			roles.listAgents( "http://example.com/roles/a-role/", Role.Factory.create( "Role name" ) ).then( done.fail ).catch( ( stateError:Error ) => {
+				expect( stateError instanceof Errors.IllegalStateError ).toBe( true );
 				context.setSetting( "platform.roles.container", "roles/" );
 
-				let spies = {
+				let spies:any = {
 					success: ( [ pointers, response ]:[ Pointer.Class[], HTTP.Response.Class ] ):void => {
 						expect( pointers ).toBeTruthy();
 						expect( pointers.length ).toBe( 1 );
@@ -393,17 +393,17 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 					},
 					error: function( error:Error ):void {
 						expect( error instanceof Errors.IllegalArgumentError );
-					}
+					},
 				};
 
-				let spyError = spyOn( spies, "error" ).and.callThrough();
-				let spySuccess = spyOn( spies, "success" ).and.callThrough();
-				let spyCreate = spyOn( context.documents, "listMembers" ).and.callThrough();
+				let spyError:jasmine.Spy = spyOn( spies, "error" ).and.callThrough();
+				let spySuccess:jasmine.Spy = spyOn( spies, "success" ).and.callThrough();
+				let spyCreate:jasmine.Spy = spyOn( context.documents, "listMembers" ).and.callThrough();
 
 				let promises:Promise<any>[] = [];
 				let promise:Promise<any>;
 				let options:HTTP.Request.Options = {
-					timeout: 5555
+					timeout: 5555,
 				};
 
 				promise = roles.listAgents( "a-role/", options );
@@ -426,11 +426,11 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 					expect( spyCreate ).toHaveBeenCalledWith( "http://example.com/roles/a-role/agents/", options );
 					expect( spyCreate ).toHaveBeenCalledWith( "http://example.com/roles/a-role/agents/", undefined );
 					done();
-				}).catch( done.fail );
+				} ).catch( done.fail );
 
-			});
+			} );
 
-		});
+		} );
 
 		describe( method(
 			INSTANCE,
@@ -441,130 +441,130 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 				jasmine.Ajax.stubRequest( "http://example.com/roles/a-role/", null, "POST" ).andReturn( {
 					status: 200,
 					responseText: `{
-					  "head" : {
-					    "vars" : [
-					      "agentsAccessPoint"
-					    ]
-					  },
-					  "results" : {
-					    "bindings" : [
-					      {
-					        "agentsAccessPoint" : {
-					          "type" : "uri",
-					          "value" : "http://example.com/roles/a-role/agents/"
-					        }
-					      }
-					    ]
-					  }
-					}`
-				});
+						"head": {
+							"vars": [
+								"agentsAccessPoint"
+							]
+						},
+						"results": {
+							"bindings": [
+								{
+									"agentsAccessPoint": {
+										"type": "uri",
+										"value": "http://example.com/roles/a-role/agents/"
+									}
+								}
+							]
+						}
+					}`,
+				} );
 				jasmine.Ajax.stubRequest( new RegExp( "roles/a-role/agents/" ), null, "GET" ).andReturn( {
 					status: 200,
 					responseText: `[
-					   {
-					      "@id":"_:01",
-					      "@type":[
-					         "https://carbonldp.com/ns/v1/platform#ResponseMetadata",
-					         "https://carbonldp.com/ns/v1/platform#VolatileResource"
-					      ],
-					      "https://carbonldp.com/ns/v1/platform#resourceMetadata":[
-					         {
-					            "@id":"_:02"
-					         }
-					      ]
-					   },
-					   {
-					      "@id":"_:02",
-					      "@type":[
-					         "https://carbonldp.com/ns/v1/platform#ResourceMetadata",
-					         "https://carbonldp.com/ns/v1/platform#VolatileResource"
-					      ],
-					      "https://carbonldp.com/ns/v1/platform#eTag":[
-					         {
-					            "@value":"\\"1234567890\\""
-					         }
-					      ],
-					      "https://carbonldp.com/ns/v1/platform#resource":[
-					         {
-					            "@id":"http://example.com/agents/an-agent/"
-					         }
-					      ]
-					   },
-					   {
-					      "@graph":[
-					         {
-					            "@id":"http://example.com/roles/a-role/",
-					            "https://carbonldp.com/ns/v1/security#agent":[
-					               {
-					                  "@id":"http://example.com/agents/an-agent/"
-					               }
-					            ]
-					         }
-					      ],
-					      "@id":"http://example.com/roles/a-role/"
-					   },
-					   {
-					      "@graph":[
-					         {
-					            "@id":"http://example.com/roles/a-role/agents/",
-					            "@type":[
-					               "http://www.w3.org/ns/ldp#RDFSource",
-					               "http://www.w3.org/ns/ldp#DirectContainer",
-					               "http://www.w3.org/ns/ldp#Container"
-					            ],
-					            "http://www.w3.org/ns/ldp#hasMemberRelation":[
-					               {
-					                  "@id":"https://carbonldp.com/ns/v1/security#agent"
-					               }
-					            ],
-					            "http://www.w3.org/ns/ldp#membershipResource":[
-					               {
-					                  "@id":"http://example.com/roles/a-role/"
-					               }
-					            ]
-					         }
-					      ],
-					      "@id":"http://example.com/roles/a-role/agents/"
-					   },
-					   {
-					      "@graph":[
-					         {
-					            "@id":"http://example.com/agents/an-agent/",
-					            "http://www.w3.org/2001/vcard-rdf/3.0#email":[
-					               {
-					                  "@value":"an-agent@example.com"
-					               }
-					            ],
-					            "https://carbonldp.com/ns/v1/security#name":[
-					               {
-					                  "@value":"The Agent Name"
-					               }
-					            ]
-					         }
-					      ],
-					      "@id":"http://example.com/agents/an-agent/"
-					   }
-					]`
-				});
-			});
+						{
+							"@id": "_:01",
+							"@type": [
+								"https://carbonldp.com/ns/v1/platform#ResponseMetadata",
+								"https://carbonldp.com/ns/v1/platform#VolatileResource"
+							],
+							"https://carbonldp.com/ns/v1/platform#resourceMetadata": [
+								{
+									"@id": "_:02"
+								}
+							]
+						},
+						{
+							"@id": "_:02",
+							"@type": [
+								"https://carbonldp.com/ns/v1/platform#ResourceMetadata",
+								"https://carbonldp.com/ns/v1/platform#VolatileResource"
+							],
+							"https://carbonldp.com/ns/v1/platform#eTag": [
+								{
+									"@value": "\\"1234567890\\""
+								}
+							],
+							"https://carbonldp.com/ns/v1/platform#resource": [
+								{
+									"@id": "http://example.com/agents/an-agent/"
+								}
+							]
+						},
+						{
+							"@graph": [
+								{
+									"@id": "http://example.com/roles/a-role/",
+									"https://carbonldp.com/ns/v1/security#agent": [
+										{
+											"@id": "http://example.com/agents/an-agent/"
+										}
+									]
+								}
+							],
+							"@id": "http://example.com/roles/a-role/"
+						},
+						{
+							"@graph": [
+								{
+									"@id": "http://example.com/roles/a-role/agents/",
+									"@type": [
+										"http://www.w3.org/ns/ldp#RDFSource",
+										"http://www.w3.org/ns/ldp#DirectContainer",
+										"http://www.w3.org/ns/ldp#Container"
+									],
+									"http://www.w3.org/ns/ldp#hasMemberRelation": [
+										{
+											"@id": "https://carbonldp.com/ns/v1/security#agent"
+										}
+									],
+									"http://www.w3.org/ns/ldp#membershipResource": [
+										{
+											"@id": "http://example.com/roles/a-role/"
+										}
+									]
+								}
+							],
+							"@id": "http://example.com/roles/a-role/agents/"
+						},
+						{
+							"@graph": [
+								{
+									"@id": "http://example.com/agents/an-agent/",
+									"http://www.w3.org/2001/vcard-rdf/3.0#email": [
+										{
+											"@value": "an-agent@example.com"
+										}
+									],
+									"https://carbonldp.com/ns/v1/security#name": [
+										{
+											"@value": "The Agent Name"
+										}
+									]
+								}
+							],
+							"@id": "http://example.com/agents/an-agent/"
+						}
+					]`,
+				} );
+			} );
 
 			it( isDefined(), ():void => {
 				expect( roles.getAgents ).toBeDefined();
 				expect( Utils.isFunction( roles.getAgents ) ).toBe( true );
-			});
+			} );
 
 			it( hasSignature(
 				"Retrieves an array of resolved pointers for all the agents of the specified role.", [
-					{ name: "roleURI", type: "string", description: "The URI of the role to look for its agents." },
-					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true }
+					{name: "roleURI", type: "string", description: "The URI of the role to look for its agents."},
+					{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true},
 				],
-				{ type: "Promise<[ carbon.Auth.PersistedRole.Class, Carbon.HTTP.Response.Class ]>"}
+				{type: "Promise<[ carbon.Auth.PersistedRole.Class, Carbon.HTTP.Response.Class ]>"}
 			), ( done:{ ():void, fail:() => void } ):void => {
-				roles.getAgents( "http://example.com/roles/a-role/", Role.Factory.create( "Role name" ) ).then( done.fail ).catch( ( error:Error ) => {
-					expect( error instanceof Errors.IllegalStateError ).toBe( true );
+				roles.getAgents( "http://example.com/roles/a-role/", Role.Factory.create( "Role name" ) ).then( done.fail ).catch( ( stateError:Error ) => {
+					expect( stateError instanceof Errors.IllegalStateError ).toBe( true );
 					context.setSetting( "platform.roles.container", "roles/" );
 
-					let spies = {
+					let spies:any = {
 						success: ( [ pointers, response ]:[ Pointer.Class[], HTTP.Response.Class ] ):void => {
 							expect( pointers ).toBeTruthy();
 							expect( pointers.length ).toBe( 1 );
@@ -577,17 +577,17 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 						},
 						error: function( error:Error ):void {
 							expect( error instanceof Errors.IllegalArgumentError );
-						}
+						},
 					};
 
-					let spyError = spyOn( spies, "error" ).and.callThrough();
-					let spySuccess = spyOn( spies, "success" ).and.callThrough();
-					let spyCreate = spyOn( context.documents, "getMembers" ).and.callThrough();
+					let spyError:jasmine.Spy = spyOn( spies, "error" ).and.callThrough();
+					let spySuccess:jasmine.Spy = spyOn( spies, "success" ).and.callThrough();
+					let spyCreate:jasmine.Spy = spyOn( context.documents, "getMembers" ).and.callThrough();
 
 					let promises:Promise<any>[] = [];
 					let promise:Promise<any>;
 					let options:HTTP.Request.Options = {
-						timeout: 5555
+						timeout: 5555,
 					};
 
 					promise = roles.getAgents( "a-role/", options );
@@ -610,25 +610,25 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 						expect( spyCreate ).toHaveBeenCalledWith( "http://example.com/roles/a-role/agents/", options, undefined );
 						expect( spyCreate ).toHaveBeenCalledWith( "http://example.com/roles/a-role/agents/", undefined, undefined );
 						done();
-					}).catch( done.fail );
+					} ).catch( done.fail );
 
-				});
+				} );
 
-			});
+			} );
 
 			it( hasSignature(
 				"Retrieves an array of resolved pointers for the agents of the role, in accordance of the retrievalPreferences provided.", [
-					{ name: "roleURI", type: "string", description: "The URI of the role to look for its agents." },
-					{ name: "retrievalPreferences", type: "Carbon.RetrievalPreferences.Class", optional: true, description: "An object that specify the retrieval preferences for the request." },
-					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true }
+					{name: "roleURI", type: "string", description: "The URI of the role to look for its agents."},
+					{name: "retrievalPreferences", type: "Carbon.RetrievalPreferences.Class", optional: true, description: "An object that specify the retrieval preferences for the request."},
+					{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true},
 				],
-				{ type: "Promise<[ carbon.Auth.PersistedRole.Class, Carbon.HTTP.Response.Class ]>"}
+				{type: "Promise<[ carbon.Auth.PersistedRole.Class, Carbon.HTTP.Response.Class ]>"}
 			), ( done:{ ():void, fail:() => void } ):void => {
-				roles.getAgents( "http://example.com/roles/a-role/", Role.Factory.create( "Role name" ) ).then( done.fail ).catch( ( error:Error ) => {
-					expect( error instanceof Errors.IllegalStateError ).toBe( true );
+				roles.getAgents( "http://example.com/roles/a-role/", Role.Factory.create( "Role name" ) ).then( done.fail ).catch( ( stateError:Error ) => {
+					expect( stateError instanceof Errors.IllegalStateError ).toBe( true );
 					context.setSetting( "platform.roles.container", "roles/" );
 
-					let spies = {
+					let spies:any = {
 						success: ( [ pointers, response ]:[ Pointer.Class[], HTTP.Response.Class ] ):void => {
 							expect( pointers ).toBeTruthy();
 							expect( pointers.length ).toBe( 1 );
@@ -641,22 +641,22 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 						},
 						error: function( error:Error ):void {
 							expect( error instanceof Errors.IllegalArgumentError );
-						}
+						},
 					};
 
-					let spyError = spyOn( spies, "error" ).and.callThrough();
-					let spySuccess = spyOn( spies, "success" ).and.callThrough();
-					let spyCreate = spyOn( context.documents, "getMembers" ).and.callThrough();
+					let spyError:jasmine.Spy = spyOn( spies, "error" ).and.callThrough();
+					let spySuccess:jasmine.Spy = spyOn( spies, "success" ).and.callThrough();
+					let spyCreate:jasmine.Spy = spyOn( context.documents, "getMembers" ).and.callThrough();
 
 					let promises:Promise<any>[] = [];
 					let promise:Promise<any>;
 					let options:HTTP.Request.Options = {
-						timeout: 5555
+						timeout: 5555,
 					};
 					let retrievalPreferences:RetrievalPreferences.Class = {
 						limit: 10,
 						offset: 0,
-						orderBy: [ { "@id": "http://example.com/ns#string", "@type": "string" } ]
+						orderBy: [ {"@id": "http://example.com/ns#string", "@type": "string"} ],
 					};
 
 					promise = roles.getAgents( "a-role/", retrievalPreferences, options );
@@ -679,15 +679,15 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 						expect( spyCreate ).toHaveBeenCalledWith( "http://example.com/roles/a-role/agents/", retrievalPreferences, options );
 						expect( spyCreate ).toHaveBeenCalledWith( "http://example.com/roles/a-role/agents/", retrievalPreferences, undefined );
 						done();
-					}).catch( done.fail );
+					} ).catch( done.fail );
 
-				});
+				} );
 
-			});
+			} );
 
-		});
+		} );
 
-	});
+	} );
 
 	it( hasDefaultExport(
 		"Carbon.Auth.Roles.Class"

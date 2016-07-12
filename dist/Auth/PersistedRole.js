@@ -1,7 +1,7 @@
 "use strict";
+var Errors = require("./../Errors");
 var Role = require("./Role");
 var Utils = require("./../Utils");
-var IllegalStateError_1 = require("../Errors/IllegalStateError");
 var Factory = (function () {
     function Factory() {
     }
@@ -54,7 +54,7 @@ function getAgents(retrievalPreferencesOrRequestOptions, requestOptions) {
 }
 function checkState() {
     if (!this._roles)
-        throw new IllegalStateError_1.default("The context of the current role, does not support roles management.");
+        throw new Errors.IllegalStateError("The context of the current role, does not support roles management.");
 }
 
 //# sourceMappingURL=PersistedRole.js.map

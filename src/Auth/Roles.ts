@@ -54,17 +54,17 @@ export abstract class Class {
 	}
 
 	listAgents( roleURI:string, requestOptions?:HTTP.Request.Options ):Promise<[ Pointer.Class[], HTTP.Response.Class ]> {
-		return this.getAgentsAccessPoint( roleURI).then( ( agentsAccessPoint:Pointer.Class ) => {
+		return this.getAgentsAccessPoint( roleURI ).then( ( agentsAccessPoint:Pointer.Class ) => {
 			return this.context.documents.listMembers( agentsAccessPoint.id, requestOptions );
-		});
+		} );
 	}
 
 	getAgents( roleURI:string, requestOptions?:HTTP.Request.Options ):Promise<[ Pointer.Class[], HTTP.Response.Class ]>;
 	getAgents( roleURI:string, retrievalPreferences?:RetrievalPreferences.Class, requestOptions?:HTTP.Request.Options ):Promise<[ Pointer.Class[], HTTP.Response.Class ]>;
 	getAgents( roleURI:string, retrievalPreferencesOrRequestOptions?:RetrievalPreferences.Class, requestOptions?:HTTP.Request.Options ):Promise<[ Pointer.Class[], HTTP.Response.Class ]> {
-		return this.getAgentsAccessPoint( roleURI).then( ( agentsAccessPoint:Pointer.Class ) => {
+		return this.getAgentsAccessPoint( roleURI ).then( ( agentsAccessPoint:Pointer.Class ) => {
 			return this.context.documents.getMembers( agentsAccessPoint.id, retrievalPreferencesOrRequestOptions, requestOptions );
-		}); 
+		} );
 	}
 
 	private resolveURI( agentURI:string ):Promise<string> {
@@ -84,9 +84,9 @@ export abstract class Class {
 				<${ uri }> <https://carbonldp.com/ns/v1/platform#accessPoint> ?agentsAccessPoint .
 				?agentsAccessPoint <http://www.w3.org/ns/ldp#hasMemberRelation> <https://carbonldp.com/ns/v1/security#agent> .
 			}` );
-		}).then( ( [ selectResults, response ]:[ SPARQL.SELECTResults.Class, HTTP.Response.Class ] ) => {
+		} ).then( ( [ selectResults, response ]:[ SPARQL.SELECTResults.Class, HTTP.Response.Class ] ) => {
 			return <Pointer.Class> selectResults.bindings[ 0 ][ "agentsAccessPoint" ];
-		});
+		} );
 	}
 
 	private getContainerURI():string {
