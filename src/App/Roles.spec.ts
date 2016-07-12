@@ -154,32 +154,34 @@ describe( module( "Carbon/App/Roles" ), ():void => {
 			INSTANCE,
 			"get",
 			"Retrieves a role from the current context.", [
-				{ name: "roleURI", type: "string", description: "The URI of the app role to retrieve." },
-				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true }
+				{name: "roleURI", type: "string", description: "The URI of the app role to retrieve."},
+				{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true},
 			],
-			{ type: "Promise<[ Carbon.PersistedRole.Class, Carbon.HTTP.Response.Class ]>" }
+			{type: "Promise<[ Carbon.PersistedRole.Class, Carbon.HTTP.Response.Class ]>"}
 		), ( done:{ ():void, fail:() => void } ):void => {
 			expect( roles.get ).toBeDefined();
 			expect( Utils.isFunction( roles.get ) );
 
 			let falseRole:PersistedRole.Class;
-			let spy = spyOn( AuthRoles.Class.prototype, "get" ).and.callFake( () => {
+			let spy:jasmine.Spy = spyOn( AuthRoles.Class.prototype, "get" ).and.callFake( () => {
 				return Promise.resolve( [ falseRole, null ] );
-			});
+			} );
 
-			let spies = {
+			let spies:any = {
 				success: ( [ pointer, response ]:[ PersistedRole.Class, HTTP.Response.Class ] ):void => {
 					expect( pointer ).toBeTruthy();
 					expect( PersistedRole.Factory.is( pointer ) ).toBe( true );
 					expect( pointer.id ).toBe( "http://example.com/roles/a-role/" );
+
+					expect( response ).toBeNull();
 				},
 				error: function( error:Error ):void {
 					expect( error instanceof Errors.IllegalArgumentError );
-				}
+				},
 			};
 
-			let spySuccess = spyOn( spies, "success" ).and.callThrough();
-			let spyError = spyOn( spies, "error" ).and.callThrough();
+			let spySuccess:jasmine.Spy = spyOn( spies, "success" ).and.callThrough();
+			let spyError:jasmine.Spy = spyOn( spies, "error" ).and.callThrough();
 
 			let promises:Promise<any>[] = [];
 			let promise:Promise<any>;
@@ -203,9 +205,9 @@ describe( module( "Carbon/App/Roles" ), ():void => {
 					expect( spyError ).toHaveBeenCalledTimes( 1 );
 					expect( spy ).toHaveBeenCalledTimes( 2 );
 					done();
-				}).catch( done.fail );
-			});
-		});
+				} ).catch( done.fail );
+			} );
+		} );
 
 	} );
 

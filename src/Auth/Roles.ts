@@ -45,10 +45,10 @@ export abstract class Class {
 		} );
 	}
 
-	get( roleURI, requestOptions?:HTTP.Request.Options ):Promise<[ PersistedRole.Class, HTTP.Response.Class ]> {
+	get( roleURI:string, requestOptions?:HTTP.Request.Options ):Promise<[ PersistedRole.Class, HTTP.Response.Class ]> {
 		return this.resolveURI( roleURI ).then( ( uri:string ) => {
 			return this.context.documents.get( uri, requestOptions );
-		});
+		} );
 	}
 
 	private resolveURI( agentURI:string ):Promise<string> {

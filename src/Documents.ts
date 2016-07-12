@@ -857,7 +857,7 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 		// TODO: Decorate additional behavior (app, etc.). See also updatePersistedDocument() method
 		// TODO: Make it dynamic. See also updatePersistedDocument() method
 		if( LDP.Container.Factory.hasRDFClass( document ) ) LDP.PersistedContainer.Factory.decorate( document );
-		if ( Resource.Util.hasType( document, AppRole.RDF_CLASS ) ) PersistedAppRole.Factory.decorate( document );
+		if( Resource.Util.hasType( document, AppRole.RDF_CLASS ) ) PersistedAppRole.Factory.decorate( document );
 
 		return document;
 	}

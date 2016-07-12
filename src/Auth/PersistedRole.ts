@@ -4,8 +4,8 @@ import * as Pointer from "./../Pointer";
 import * as Utils from "./../Utils";
 
 export interface Class extends PersistedDocument.Class {
-	name: string;
-	agents?: Pointer.Class;
+	name:string;
+	agents?:Pointer.Class;
 }
 
 export class Factory {
@@ -22,8 +22,8 @@ export class Factory {
 	}
 
 	static decorate<T extends Object>( object:T ):T & Class {
-		let role:Class & T= <any> object;
-		if ( Factory.hasClassProperties( role ) ) return role;
+		let role:Class & T = <any> object;
+		if( Factory.hasClassProperties( role ) ) return role;
 
 		return role;
 	}

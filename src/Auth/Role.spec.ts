@@ -129,7 +129,7 @@ describe( module( "Carbon/Auth/Role" ), ():void => {
 			STATIC,
 			"createFrom",
 			"Create a `Carbon.Auth.Role.Class` object with the object provided.", [
-				{name: "object", type: "T extends Object"}
+				{name: "object", type: "T extends Object"},
 			],
 			{type: "T & Carbon.Auth.Role.Class"}
 		), ():void => {

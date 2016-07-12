@@ -24,10 +24,10 @@ export class Class extends AuthRoles {
 
 	get( roleURI:string, requestOptions?:HTTP.Request.Options ):Promise<[ PersistedAppRole.Class, HTTP.Response.Class ]> {
 		return super.get( roleURI, requestOptions ).then( ( [ role, response ]:[ PersistedRole.Class, HTTP.Response.Class ] ) => {
-			if ( ! PersistedAppRole.Factory.is( role ) ) throw new Errors.IllegalArgumentError( "The resource fetched is not a cs:AppRole" );
+			if( ! PersistedAppRole.Factory.is( role ) ) throw new Errors.IllegalArgumentError( "The resource fetched is not a cs:AppRole" );
 
 			return [ role, response ];
-		});
+		} );
 	}
 
 }
