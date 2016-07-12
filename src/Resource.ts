@@ -22,8 +22,8 @@ export class Factory {
 	}
 
 	static createFrom<T extends Object>( object:T, id:string = null, types:string[] = null ):T & Class {
-		id = !! id ? id : ( (<any> object).id || "" );
-		types = !! types ? types : ( (<any> object).types || [] );
+		id = ! ! id ? id : ( (<any> object).id || "" );
+		types = ! ! types ? types : ( (<any> object).types || [] );
 
 		let resource:Class = Factory.decorate( object );
 		resource.id = id;
@@ -53,7 +53,7 @@ export class Factory {
 export class Util {
 
 	static hasType( resource:Class, type:string ):boolean {
-		return Util.getTypes( resource ).indexOf( type ) !== -1;
+		return Util.getTypes( resource ).indexOf( type ) !== - 1;
 	}
 
 	static getTypes( resource:Class ):string[] {

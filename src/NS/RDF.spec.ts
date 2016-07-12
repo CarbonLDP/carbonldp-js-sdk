@@ -18,7 +18,7 @@ describe( module(
 	it( isDefined(), ():void => {
 		expect( RDF ).toBeDefined();
 		expect( Utils.isObject( RDF ) ).toBe( true );
-	});
+	} );
 
 	it( hasProperty(
 		STATIC,
@@ -29,7 +29,7 @@ describe( module(
 		expect( Utils.isString( RDF.namespace ) ).toBe( true );
 
 		expect( RDF.namespace ).toBe( "http://www.w3.org/1999/02/22-rdf-syntax-ns#" )
-	});
+	} );
 
 	describe( clazz(
 		"Carbon.NS.RDF.Predicate",
@@ -41,7 +41,7 @@ describe( module(
 			expect( Utils.isFunction( RDF.Predicate ) ).toBe( true );
 
 			expect( Object.keys( RDF.Predicate ).length ).toBe( 1 );
-		});
+		} );
 
 		it( hasProperty(
 			STATIC,
@@ -52,8 +52,8 @@ describe( module(
 			expect( Utils.isString( RDF.Predicate.type ) ).toBe( true );
 
 			expect( RDF.Predicate.type ).toBe( "http://www.w3.org/1999/02/22-rdf-syntax-ns#type" );
-		});
+		} );
 
-	});
+	} );
 
-});
+} );

@@ -19,7 +19,7 @@ export class Factory {
 		if( "@type" in pointerOrExpandedObject ) {
 			types = pointerOrExpandedObject[ "@type" ];
 		} else if( "types" in pointerOrExpandedObject ) {
-			types = ( <Resource.Class> pointerOrExpandedObject ).types ;
+			types = ( <Resource.Class> pointerOrExpandedObject ).types;
 		}
 
 		return types.indexOf( NS.LDP.Class.BasicContainer ) !== - 1;

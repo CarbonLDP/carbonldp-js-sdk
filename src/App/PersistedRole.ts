@@ -7,8 +7,8 @@ import * as Utils from "./../Utils";
 export interface Class extends PersistedRole.Class {
 	_roles:Roles.Class;
 
-	parentRole?: Pointer.Class;
-	childRoles?: Pointer.Class[];
+	parentRole?:Pointer.Class;
+	childRoles?:Pointer.Class[];
 }
 
 export class Factory {
@@ -25,7 +25,7 @@ export class Factory {
 
 	static decorate<T extends Object>( object:T, roles:Roles.Class ):T & Class {
 		let role:T & Class = <any> object;
-		if ( Factory.hasClassProperties( role ) ) return role;
+		if( Factory.hasClassProperties( role ) ) return role;
 
 		PersistedRole.Factory.decorate( role, roles );
 

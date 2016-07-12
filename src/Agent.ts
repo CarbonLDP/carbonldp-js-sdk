@@ -36,7 +36,7 @@ export class Factory {
 	static is( object:Object ):boolean {
 		return Document.Factory.hasClassProperties( object )
 			&& Factory.hasClassProperties( object )
-			&& ( <Document.Class> object ).types.indexOf( NS.CS.Class.Agent ) !== -1;
+			&& ( <Document.Class> object ).types.indexOf( NS.CS.Class.Agent ) !== - 1;
 	}
 
 	static create( name:string, email:string, password:string ):Class {
@@ -44,12 +44,12 @@ export class Factory {
 	}
 
 	static createFrom<T extends Object>( object:T, name:string, email:string, password:string ):T & Class {
-		if ( ! Document.Factory.hasClassProperties( object ) )
+		if( ! Document.Factory.hasClassProperties( object ) )
 			object = Document.Factory.createFrom( object );
 
-		if ( ! name ) throw new IllegalArgumentError( "The name cannot be empty." );
-		if ( ! email ) throw new IllegalArgumentError( "The email cannot be empty." );
-		if ( ! password ) throw new IllegalArgumentError( "The password cannot be empty." );
+		if( ! name ) throw new IllegalArgumentError( "The name cannot be empty." );
+		if( ! email ) throw new IllegalArgumentError( "The email cannot be empty." );
+		if( ! password ) throw new IllegalArgumentError( "The password cannot be empty." );
 
 		let app:T & Class = <T & Class> object;
 		app.name = name;

@@ -164,7 +164,6 @@ gulp.task( "prepare-npm-package:copy-package-json", () => {
 			json.typings = json.typings.replace( "dist/", "" );
 
 			json.jspm = {
-				dependencies: json.jspm.dependencies,
 				map: json.jspm.map,
 			};
 

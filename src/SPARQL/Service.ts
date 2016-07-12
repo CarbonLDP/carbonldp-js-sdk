@@ -26,7 +26,7 @@ export class Class {
 	static executeASKQuery( url:string, askQuery:string, options:HTTP.Request.Options = {} ):Promise<[ boolean, HTTP.Response.Class ]> {
 		return HTTP.Request.Service.post( url, askQuery, options, Class.resultsParser ).then( ( [ rawResults, response ]:[ RawResults.Class, HTTP.Response.Class ] ) => {
 			return [ rawResults.boolean, response ];
-		});
+		} );
 	}
 
 	static executeRawSELECTQuery( url:string, selectQuery:string, options:HTTP.Request.Options = {} ):Promise<[ RawResults.Class, HTTP.Response.Class ]> {
@@ -59,7 +59,7 @@ export class Class {
 				bindings: bindings,
 			};
 			return [ results, response ];
-		});
+		} );
 	}
 
 	static executeRawCONSTRUCTQuery( url:string, constructQuery:string, options:HTTP.Request.Options = {} ):Promise<[ string, HTTP.Response.Class ]> {

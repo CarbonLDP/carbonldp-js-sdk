@@ -26,7 +26,7 @@ export class Util {
 	}
 
 	static hasType( node:Class, type:string ):boolean {
-		return Util.getTypes( node ).indexOf( type ) !== -1;
+		return Util.getTypes( node ).indexOf( type ) !== - 1;
 	}
 
 	static getTypes( node:Class ):string[] {
@@ -51,3 +51,5 @@ export class Util {
 			.filter( ( element ) => Factory.is( element ) );
 	}
 }
+
+export default Class;
