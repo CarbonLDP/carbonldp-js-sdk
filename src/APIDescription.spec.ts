@@ -17,7 +17,7 @@ describe( module( "Carbon/APIDescription" ), ():void => {
 	it( isDefined(), ():void => {
 		expect( APIDescription ).toBeDefined();
 		expect( Utils.isObject( APIDescription ) ).toBe( true );
-	});
+	} );
 
 	it( hasProperty(
 		STATIC,
@@ -28,7 +28,7 @@ describe( module( "Carbon/APIDescription" ), ():void => {
 		expect( Utils.isString( APIDescription.RDF_CLASS ) ).toBe( true );
 
 		expect( APIDescription.RDF_CLASS ).toBe( NS.C.Class.API );
-	});
+	} );
 
 	it( hasProperty(
 		STATIC,
@@ -39,17 +39,17 @@ describe( module( "Carbon/APIDescription" ), ():void => {
 		expect( Utils.isObject( APIDescription.SCHEMA ) ).toBe( true );
 
 		expect( Utils.hasProperty( APIDescription.SCHEMA, "version" ) ).toBe( true );
-		expect( APIDescription.SCHEMA[ "version" ] ).toEqual({
+		expect( APIDescription.SCHEMA[ "version" ] ).toEqual( {
 			"@id": NS.C.Predicate.version,
 			"@type": NS.XSD.DataType.string
-		});
+		} );
 
 		expect( Utils.hasProperty( APIDescription.SCHEMA, "buildDate" ) ).toBe( true );
-		expect( APIDescription.SCHEMA[ "buildDate" ] ).toEqual({
+		expect( APIDescription.SCHEMA[ "buildDate" ] ).toEqual( {
 			"@id": NS.C.Predicate.buildDate,
 			"@type": NS.XSD.DataType.dateTime
-		});
-	});
+		} );
+	} );
 
-});
+} );
 

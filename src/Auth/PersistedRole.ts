@@ -11,8 +11,8 @@ import IllegalStateError from "../Errors/IllegalStateError";
 export interface Class extends PersistedDocument.Class {
 	_roles:Roles.Class;
 
-	name: string;
-	agents?: Pointer.Class;
+	name:string;
+	agents?:Pointer.Class;
 
 	listAgents( requestOptions?:HTTP.Request.Options ):Promise<[ Pointer.Class[], HTTP.Response.Class ]>;
 
@@ -23,7 +23,7 @@ export interface Class extends PersistedDocument.Class {
 export class Factory {
 
 	static hasClassProperties( object:Object ):boolean {
-		return Utils.hasPropertyDefined( object, "_roles" ) 
+		return Utils.hasPropertyDefined( object, "_roles" )
 			&& Utils.hasPropertyDefined( object, "name" )
 			&& Utils.hasFunction( object, "listAgents" )
 			&& Utils.hasFunction( object, "getAgents" )
@@ -37,7 +37,7 @@ export class Factory {
 
 	static decorate<T extends Object>( object:T, roles:Roles.Class ):T & Class {
 		let role:Class & T = <any> object;
-		if ( Factory.hasClassProperties( role ) ) return role;
+		if( Factory.hasClassProperties( role ) ) return role;
 
 		Object.defineProperties( role, {
 			"_roles": {

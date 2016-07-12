@@ -78,6 +78,10 @@
 	- [Class Carbon.Auth.Roles.Class](#Carbon-Auth-Roles-Class)
 		- [Constructor](#Carbon-Auth-Roles-Class-Constructor)
 		- [Methods](#Carbon-Auth-Roles-Class-Methods)
+- [Module Carbon/Auth/Ticket](#Carbon-Auth-Ticket)
+	- [Properties](#Carbon-Auth-Ticket-Properties)
+	- [Class Carbon.Auth.Ticket.Factory](#Carbon-Auth-Ticket-Factory)
+		- [Methods](#Carbon-Auth-Ticket-Factory-Methods)
 - [Module Carbon/Auth/Token](#Carbon-Auth-Token)
 	- [Class Carbon.Auth.Token.Factory](#Carbon-Auth-Token-Factory)
 		- [Methods](#Carbon-Auth-Token-Factory-Methods)
@@ -307,6 +311,14 @@
 	- [Properties](#Carbon-LDP-DirectContainer-Properties)
 	- [Class Carbon.DirectContainer.Factory](#Carbon-DirectContainer-Factory)
 		- [Methods](#Carbon-DirectContainer-Factory-Methods)
+- [Module Carbon/LDP/Error](#Carbon-LDP-Error)
+	- [Properties](#Carbon-LDP-Error-Properties)
+- [Module Carbon/LDP/ErrorResponse](#Carbon-LDP-ErrorResponse)
+	- [Properties](#Carbon-LDP-ErrorResponse-Properties)
+	- [Class Carbon.LDP.ErrorResponse.Parser](#Carbon-LDP-ErrorResponse-Parser)
+		- [Methods](#Carbon-LDP-ErrorResponse-Parser-Methods)
+	- [Class Carbon.LDP.ErrorResponse.Util](#Carbon-LDP-ErrorResponse-Util)
+		- [Methods](#Carbon-LDP-ErrorResponse-Util-Methods)
 - [Module Carbon/LDP/IndirectContainer](#Carbon-LDP-IndirectContainer)
 	- [Properties](#Carbon-LDP-IndirectContainer-Properties)
 	- [Class Carbon.IndirectContainer.Factory](#Carbon-IndirectContainer-Factory)
@@ -1346,6 +1358,7 @@ Create a `Carbon.App.Role.Class` object with the object provided.
 | BasicAuthenticator | [Carbon.Auth.BasicAuthenticator](#Carbon-Auth-BasicAuthenticator) |
 | Role | [Carbon.Auth.Role](#Carbon-Auth-Role) |
 | Roles | [Carbon.Auth.Roles](#Carbon-Auth-Roles) |
+| Ticket | [Carbon.Auth.Ticket](#Carbon-Auth-Ticket) |
 | Token | [Carbon.Auth.Token](#Carbon-Auth-Token) |
 | TokenAuthenticator | [Carbon.Auth.TokenAuthenticator](#Carbon-Auth-TokenAuthenticator) |
 | UsernameAndPasswordToken | [Carbon.Auth.UsernameAndPasswordToken](#Carbon-Auth-UsernameAndPasswordToken) |
@@ -1431,6 +1444,30 @@ clearAuthentication()
 ```
 
 Deletes the current authentication
+
+##### createTicket
+```typescript 
+createTicket( uri:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.Auth.Ticket.Class, Carbon.HTTP.Response.Class ]>
+```
+
+Retrieves a authentication ticket, which one only works one time and oly for the URI specified.
+
+*Parameters*
+
+- uri: The URI to get an authentication ticket for.
+- requestOptions
+
+##### getAuthenticatedURL
+```typescript 
+getAuthenticatedURL( uri:string,  requestOptions?:Carbon.HTTP.Request.Options )
+```
+
+Returns a Promise with a URI authenticated for only one use.
+
+*Parameters*
+
+- uri: The URI to generate an authenticated URI for.
+- requestOptions
 
 ##### authenticateUsing
 ```typescript 
@@ -1824,6 +1861,48 @@ Retrieves an array of resolved pointers for the agents of the role, in accordanc
 - roleURI: The URI of the role to look for its agents.
 - retrievalPreferences: An object that specify the retrieval preferences for the request.
 - requestOptions
+
+
+
+## <a name="Carbon-Auth-Ticket" />Module Carbon/Auth/Ticket
+
+
+
+
+
+### <a name="Carbon-Auth-Ticket-Properties" />Properties
+```typescript 
+static RDF_CLASS:string 
+```
+
+```typescript 
+static SCHEMA:Carbon.ObjectSchema.Class 
+```
+
+
+
+
+
+### <a name="Carbon-Auth-Ticket-Factory" />Class Carbon.Auth.Ticket.Factory
+
+
+> Factory class for `Carbon.Auth.Ticket.Class` objects.
+
+
+
+
+#### <a name="Carbon-Auth-Ticket-Factory-Methods" />Methods
+##### create
+```typescript 
+static create( uri:string ):Carbon.Auth.Ticket.Class
+```
+
+Create and returns a `Carbon.Auth.Ticket.Class` object for the specified URI.
+
+*Parameters*
+
+- uri: The URI to get an authentication ticket for.
+
 
 
 
@@ -2440,6 +2519,18 @@ Delete a the Resource referred by a PersistedDocument from the server.
 *Parameters*
 
 - documentURI
+- requestOptions
+
+##### getDownloadURL
+```typescript 
+getDownloadURL( documentURI:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<Carbon.HTTP.Response.Class>
+```
+
+Add to the URI provided with the properties necessarily for a single download request.
+
+*Parameters*
+
+- documentURI: The URI of the document that will be converted in a single download request.
 - requestOptions
 
 ##### executeRawASKQuery
@@ -3202,7 +3293,18 @@ Returns an array with all the resources inside the FreeResources object
 createResource( id?:string ):Carbon.Resource.Class
 ```
 
-Create an returns a new Free Resource. Throw an Error if no valid id if provided or if it is already in use.
+Create and returns a new Free Resource. Throw an Error if no valid id is provided or if it is already in use.
+
+*Parameters*
+
+- id: The ID of the resource to create. It should be an ID as a BlankNode.
+
+##### createResourceFrom
+```typescript 
+createResourceFrom( id?:string ):Carbon.Resource.Class
+```
+
+Create and returns a new Free Resource. Throw an Error if no valid id is provided or if it is already in use.
 
 *Parameters*
 
@@ -3225,6 +3327,13 @@ Returns the pointer referred by the id specified, or creates one if no pointer e
 *Parameters*
 
 - id: The ID of the pointer seek for or the one to create.
+
+##### toJSON
+```typescript 
+toJSON():string
+```
+
+Converts the resources contained in the current `Carbon.FreeResources.Class` object to a JSON string.
 
 ##### inScope
 ```typescript 
@@ -3505,6 +3614,18 @@ static statusCode:number
 
 ```typescript 
 name:string 
+```
+
+```typescript 
+response:number 
+```
+
+```typescript 
+errors:Carbon.LDP.Error[] 
+```
+
+```typescript 
+requestID:string 
 ```
 
 
@@ -5187,10 +5308,12 @@ expand( compactedObject:Object,  digestedSchema:Carbon.ObjectSchema.DigestedObje
 | BasicContainer | [Carbon/LDP/BasicContainer](#Carbon-LDP-BasicContainer) |
 | Container | [Carbon/LDP/Container](#Carbon-LDP-Container) |
 | DirectContainer | [Carbon/LDP/DirectContainer](#Carbon-LDP-DirectContainer) |
+| Error | [Carbon/LDP/Error](#Carbon-LDP-Error) |
 | IndirectContainer | [Carbon/LDP/IndirectContainer](#Carbon-LDP-IndirectContainer) |
 | PersistedContainer | [Carbon/LDP/PersistedContainer](#Carbon-LDP-PersistedContainer) |
 | RDFSource | [Carbon/LDP/RDFSource](#Carbon-LDP-RDFSource) |
 | RemoveMemberAction | [Carbon/LDP/RemoveMemberAction](#Carbon-LDP-RemoveMemberAction) |
+| ErrorResponse | [Carbon/LDP/ErrorResponse](#Carbon-LDP-ErrorResponse) |
 | ResponseMetadata | [Carbon/LDP/ResponseMetadata](#Carbon-LDP-ResponseMetadata) |
 | ResourceMetadata | [Carbon/LDP/ResourceMetadata](#Carbon-LDP-ResourceMetadata) |
 
@@ -5455,6 +5578,91 @@ Returns true if the Object provided is an LDP DirectContainer.
 *Parameters*
 
 - expandedObject
+
+
+
+
+## <a name="Carbon-LDP-Error" />Module Carbon/LDP/Error
+
+
+
+
+
+### <a name="Carbon-LDP-Error-Properties" />Properties
+```typescript 
+static RDF_CLASS:string 
+```
+
+```typescript 
+static SCHEMA:Carbon.ObjectSchema.Class 
+```
+
+
+
+
+
+## <a name="Carbon-LDP-ErrorResponse" />Module Carbon/LDP/ErrorResponse
+
+
+
+
+
+### <a name="Carbon-LDP-ErrorResponse-Properties" />Properties
+```typescript 
+static RDF_CLASS:string 
+```
+
+```typescript 
+static SCHEMA:Carbon.ObjectSchema.Class 
+```
+
+
+
+
+
+### <a name="Carbon-LDP-ErrorResponse-Parser" />Class Carbon.LDP.ErrorResponse.Parser
+
+
+> Parser class for `Carbon.LDP.ErrorResponse.Class` objects.
+
+
+
+
+#### <a name="Carbon-LDP-ErrorResponse-Parser-Methods" />Methods
+##### parse
+```typescript 
+static parse( data:string,  object:Object ):Promise<Carbon.LDP.ErrorResponse.Class>
+```
+
+Parse the string data provided and create an `Carbon.LDP.ResponseError.Class` object.
+
+*Parameters*
+
+- data: The json-ld string, which represents an error response from a Carbon server.
+- object: The object to use as a base when parsing the ErrorResponse object
+
+
+
+
+### <a name="Carbon-LDP-ErrorResponse-Util" />Class Carbon.LDP.ErrorResponse.Util
+
+
+> Useful functions for managing `Carbon.LDP.ErrorResponse.Class` objects.
+
+
+
+
+#### <a name="Carbon-LDP-ErrorResponse-Util-Methods" />Methods
+##### getMessage
+```typescript 
+static getMessage( errorResponse:Carbon.LDP.ErrorResponse.Class ):string
+```
+
+Returns a string with the message of all the errors in the ErrorResponse.
+
+*Parameters*
+
+- errorResponse: The ErrorResponse object to obtain the message from.
 
 
 
@@ -6103,6 +6311,14 @@ static RemoveMemberAction:string
 ```
 
 ```typescript 
+static ErrorResponse:string 
+```
+
+```typescript 
+static Error:string 
+```
+
+```typescript 
 static ResponseMetadata:string 
 ```
 
@@ -6159,6 +6375,22 @@ static targetMember:string
 ```
 
 ```typescript 
+static error:string 
+```
+
+```typescript 
+static httpStatusCode:string 
+```
+
+```typescript 
+static carbonCode:string 
+```
+
+```typescript 
+static message:string 
+```
+
+```typescript 
 static resourceMetadata:string 
 ```
 
@@ -6168,6 +6400,10 @@ static resource:string
 
 ```typescript 
 static eTag:string 
+```
+
+```typescript 
+static requestID:string 
 ```
 
 
@@ -6237,11 +6473,7 @@ static namespace:string
 
 #### <a name="Carbon-NS-CS-Class-Properties" />Properties
 ```typescript 
-static Application:string 
-```
-
-```typescript 
-static Token:string 
+static Agent:string 
 ```
 
 ```typescript 
@@ -6249,7 +6481,19 @@ static AllOrigins:string
 ```
 
 ```typescript 
+static Application:string 
+```
+
+```typescript 
 static AppRole:string 
+```
+
+```typescript 
+static Ticket:string 
+```
+
+```typescript 
+static Token:string 
 ```
 
 
@@ -6265,10 +6509,6 @@ static AppRole:string
 
 #### <a name="Carbon-NS-CS-Predicate-Properties" />Properties
 ```typescript 
-static namae:string 
-```
-
-```typescript 
 static agent:string 
 ```
 
@@ -6281,15 +6521,19 @@ static childRole:string
 ```
 
 ```typescript 
-static rootContainer:string 
-```
-
-```typescript 
-static tokenKey:string 
+static description:string 
 ```
 
 ```typescript 
 static expirationTime:string 
+```
+
+```typescript 
+static forIRI:string 
+```
+
+```typescript 
+static namae:string 
 ```
 
 ```typescript 
@@ -6301,7 +6545,15 @@ static password:string
 ```
 
 ```typescript 
-static description:string 
+static ticketKey:string 
+```
+
+```typescript 
+static rootContainer:string 
+```
+
+```typescript 
+static tokenKey:string 
 ```
 
 
@@ -7208,6 +7460,13 @@ destroy():Promise<Carbon.HTTP.Response.Class>
 ```
 
 Remove the data in the server referred by the id of the PersistedDocument.
+
+##### getDownloadURL
+```typescript 
+getDownloadURL():Promise<Carbon.HTTP.Response.Class>
+```
+
+Returns the URI of the current document with the properties necessarily for a single download request.
 
 ##### createAccessPoint
 ```typescript 
@@ -8174,6 +8433,17 @@ Returns true if the URI provided contains a fragment
 
 - uri
 
+##### hasQuery
+```typescript 
+static hasQuery( uri:string ):boolean
+```
+
+Returns true if the URI provided contains query parameters
+
+*Parameters*
+
+- uri
+
 ##### hasProtocol
 ```typescript 
 static hasProtocol( uri:string ):boolean
@@ -8300,6 +8570,17 @@ static getSlug( uri:string ):string
 ```
 
 Returns the slug of the URI. It takes an ending slash as part as the slug.
+
+*Parameters*
+
+- uri
+
+##### getParameters
+```typescript 
+static getParameters( uri:string ):Map<string, string | string[]>
+```
+
+Returns the query parameters in form of a map of the uri provided.
 
 *Parameters*
 

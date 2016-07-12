@@ -7,11 +7,18 @@ var Roles = require("./Auth/Roles");
 exports.Roles = Roles;
 var TokenAuthenticator_1 = require("./Auth/TokenAuthenticator");
 exports.TokenAuthenticator = TokenAuthenticator_1.default;
+var Ticket = require("./Auth/Ticket");
+exports.Ticket = Ticket;
 var Token = require("./Auth/Token");
 exports.Token = Token;
 var UsernameAndPasswordToken_1 = require("./Auth/UsernameAndPasswordToken");
 exports.UsernameAndPasswordToken = UsernameAndPasswordToken_1.default;
 var Errors = require("./Errors");
+var FreeResources = require("./FreeResources");
+var HTTP = require("./HTTP");
+var NS = require("./NS");
+var Resource = require("./Resource");
+var RDF = require("./RDF");
 var Utils = require("./Utils");
 (function (Method) {
     Method[Method["BASIC"] = 0] = "BASIC";
@@ -61,6 +68,42 @@ var Class = (function () {
             return;
         this.authenticator.clearAuthentication();
         this.authenticator = null;
+    };
+    Class.prototype.createTicket = function (uri, requestOptions) {
+        var _this = this;
+        if (requestOptions === void 0) { requestOptions = {}; }
+        var resourceURI = this.context.resolve(uri);
+        var containerURI = this.context.resolve(Ticket.TICKETS_CONTAINER);
+        var freeResources = FreeResources.Factory.create(this.context.documents);
+        Ticket.Factory.createFrom(freeResources.createResource(), resourceURI);
+        if (this.isAuthenticated())
+            this.addAuthentication(requestOptions);
+        HTTP.Request.Util.setAcceptHeader("application/ld+json", requestOptions);
+        HTTP.Request.Util.setContentTypeHeader("application/ld+json", requestOptions);
+        HTTP.Request.Util.setPreferredInteractionModel(NS.LDP.Class.RDFSource, requestOptions);
+        return HTTP.Request.Service.post(containerURI, freeResources.toJSON(), requestOptions, new HTTP.JSONLDParser.Class()).then(function (_a) {
+            var expandedResult = _a[0], response = _a[1];
+            var freeNodes = RDF.Node.Util.getFreeNodes(expandedResult);
+            var ticketNodes = freeNodes.filter(function (freeNode) { return RDF.Node.Util.hasType(freeNode, Ticket.RDF_CLASS); });
+            if (ticketNodes.length === 0)
+                throw new HTTP.Errors.BadResponseError("No " + Ticket.RDF_CLASS + " was returned.", response);
+            if (ticketNodes.length > 1)
+                throw new HTTP.Errors.BadResponseError("Multiple " + Ticket.RDF_CLASS + " were returned.", response);
+            var expandedTicket = ticketNodes[0];
+            var ticket = Resource.Factory.create();
+            var digestedSchema = _this.context.documents.getSchemaFor(expandedTicket);
+            _this.context.documents.jsonldConverter.compact(expandedTicket, ticket, digestedSchema, _this.context.documents);
+            return [ticket, response];
+        });
+    };
+    Class.prototype.getAuthenticatedURL = function (uri, requestOptions) {
+        var resourceURI = this.context.resolve(uri);
+        return this.createTicket(resourceURI, requestOptions).then(function (_a) {
+            var ticket = _a[0], response = _a[1];
+            resourceURI += RDF.URI.Util.hasQuery(resourceURI) ? "&" : "?";
+            resourceURI += "ticket=" + ticket.ticketKey;
+            return resourceURI;
+        });
     };
     Class.prototype.authenticateWithBasic = function (username, password) {
         var authenticator = this.authenticators[Method.BASIC];

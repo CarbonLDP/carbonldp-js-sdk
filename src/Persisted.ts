@@ -45,15 +45,15 @@ class Factory {
 		let objects:Object[] = Utils.isArray( objectOrObjects ) ? <Object[]>objectOrObjects : [ <Object>objectOrObjects ];
 		let values:Persisted[] = [];
 
-		for ( let i:number = 0, length:number = objects.length; i < length; i ++ ) {
+		for( let i:number = 0, length:number = objects.length; i < length; i ++ ) {
 			let value:Persisted = <any>objects[ i ];
 
-			if ( ! Factory.is( value ) ) Factory.injectBehavior( value );
+			if( ! Factory.is( value ) ) Factory.injectBehavior( value );
 
 			values.push( value );
 		}
 
-		if ( Utils.isArray( objectOrObjects ) ) return values;
+		if( Utils.isArray( objectOrObjects ) ) return values;
 		return values[ 0 ];
 	}
 
