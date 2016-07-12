@@ -16,7 +16,7 @@ describe( module( "Carbon/LDP/PersistedBlankNode" ), ():void => {
 	it( isDefined(), ():void => {
 		expect( PersistedBlankNode ).toBeDefined();
 		expect( Utils.isObject( PersistedBlankNode ) ).toBe( true );
-	});
+	} );
 
 	it( hasProperty(
 		STATIC,
@@ -27,10 +27,10 @@ describe( module( "Carbon/LDP/PersistedBlankNode" ), ():void => {
 		expect( Utils.isObject( PersistedBlankNode.SCHEMA ) ).toBe( true );
 
 		expect( Utils.hasProperty( PersistedBlankNode.SCHEMA, "bNodeIdentifier" ) ).toBe( true );
-		expect( PersistedBlankNode.SCHEMA[ "bNodeIdentifier" ] ).toEqual({
+		expect( PersistedBlankNode.SCHEMA[ "bNodeIdentifier" ] ).toEqual( {
 			"@id": NS.C.Predicate.bNodeIdentifier,
 			"@type": NS.XSD.DataType.string
-		});
-	});
+		} );
+	} );
 
-});
+} );

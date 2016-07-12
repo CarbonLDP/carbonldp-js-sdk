@@ -46,7 +46,7 @@ export class Factory {
 	static is( object:Object ):boolean {
 		return Document.Factory.hasClassProperties( object )
 			&& Factory.hasClassProperties( object )
-			&& ( <Document.Class> object ).types.indexOf( NS.CS.Class.Application ) !== -1;
+			&& ( <Document.Class> object ).types.indexOf( NS.CS.Class.Application ) !== - 1;
 	}
 
 	static create( name:string, description?:string ):Class {
@@ -54,17 +54,17 @@ export class Factory {
 	}
 
 	static createFrom<T extends Object>( object:T, name:string, description?:string ):T & Class {
-		if ( ! Document.Factory.hasClassProperties( object ) )
+		if( ! Document.Factory.hasClassProperties( object ) )
 			object = Document.Factory.createFrom( object );
 
-		if ( ! Utils.isString( name ) || ! name )
+		if( ! Utils.isString( name ) || ! name )
 			throw new IllegalArgumentError( "The name cannot be empty." );
 
 		let app:T & Class = <T & Class> object;
 		app.name = name;
 		app.types.push( NS.CS.Class.Application );
 
-		if ( !! description) app.description = description;
+		if( ! ! description ) app.description = description;
 
 		return app;
 	}

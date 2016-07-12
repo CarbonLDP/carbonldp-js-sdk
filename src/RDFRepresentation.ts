@@ -29,7 +29,7 @@ export class Factory {
 
 	static is( object:Object ):boolean {
 		return PersistedDocument.Factory.is( object )
-			&& ( <PersistedDocument.Class> object ).types.indexOf( RDF_CLASS ) !== -1
+			&& ( <PersistedDocument.Class> object ).types.indexOf( RDF_CLASS ) !== - 1
 			&& Factory.hasClassProperties( object );
 	}
 }

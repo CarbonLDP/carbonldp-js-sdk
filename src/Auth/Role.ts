@@ -37,10 +37,10 @@ export class Factory {
 	}
 
 	static createFrom<T extends Object>( object:T, name:string ):T & Class {
-		if ( ! Document.Factory.hasClassProperties( object ) )
+		if( ! Document.Factory.hasClassProperties( object ) )
 			object = Document.Factory.createFrom( object );
 
-		if ( ! name ) throw new IllegalArgumentError( "The name cannot be empty." );
+		if( ! name ) throw new IllegalArgumentError( "The name cannot be empty." );
 
 		let role:T & Class = <T & Class> object;
 		role.name = name;

@@ -6,9 +6,8 @@ import {
 
 	isDefined,
 	hasMethod,
-	hasProperty
+	hasProperty,
 } from "./../test/JasmineExtender";
-import * as Document from "./../Document";
 import * as Errors from "./../Errors";
 import * as NS from "./../NS";
 import * as Role from "./../Auth/Role";
@@ -21,7 +20,7 @@ describe( module( "Carbon/Apps/Role" ), ():void => {
 	it( isDefined(), ():void => {
 		expect( AppRole ).toBeDefined();
 		expect( Utils.isObject( AppRole ) ).toBe( true );
-	});
+	} );
 
 	it( hasProperty(
 		STATIC,
@@ -32,7 +31,7 @@ describe( module( "Carbon/Apps/Role" ), ():void => {
 		expect( Utils.isString( AppRole.RDF_CLASS ) ).toBe( true );
 
 		expect( AppRole.RDF_CLASS ).toBe( NS.CS.Class.AppRole );
-	});
+	} );
 
 	it( hasProperty(
 		STATIC,
@@ -43,18 +42,18 @@ describe( module( "Carbon/Apps/Role" ), ():void => {
 		expect( Utils.isObject( AppRole.SCHEMA ) ).toBe( true );
 
 		expect( Utils.hasProperty( AppRole.SCHEMA, "parentRole" ) ).toBe( true );
-		expect( AppRole.SCHEMA[ "parentRole" ] ).toEqual({
+		expect( AppRole.SCHEMA[ "parentRole" ] ).toEqual( {
 			"@id": NS.CS.Predicate.parentRole,
 			"@type": "@id",
-		});
+		} );
 
 		expect( Utils.hasProperty( AppRole.SCHEMA, "childRoles" ) ).toBe( true );
-		expect( AppRole.SCHEMA[ "childRoles" ] ).toEqual({
+		expect( AppRole.SCHEMA[ "childRoles" ] ).toEqual( {
 			"@id": NS.CS.Predicate.childRole,
 			"@type": "@id",
 			"@container": "@set",
-		});
-	});
+		} );
+	} );
 
 	describe( clazz(
 		"Carbon.App.Role.Factory",
@@ -64,15 +63,15 @@ describe( module( "Carbon/Apps/Role" ), ():void => {
 		it( isDefined(), ():void => {
 			expect( AppRole.Factory ).toBeDefined();
 			expect( Utils.isFunction( AppRole.Factory ) ).toBe( true );
-		});
+		} );
 
 		it( hasMethod(
 			STATIC,
 			"hasClassProperties",
 			"Returns true if the object provided has the properties that defines a `Carbon.App.Role.Class` object", [
-				{ name: "resource", type: "Object" }
+				{name: "resource", type: "Object"},
 			],
-			{ type: "boolean" }
+			{type: "boolean"}
 		), ():void => {
 			expect( AppRole.Factory.hasClassProperties ).toBeDefined();
 			expect( Utils.isFunction( AppRole.Factory.hasClassProperties ) ).toBe( true );
@@ -81,30 +80,27 @@ describe( module( "Carbon/Apps/Role" ), ():void => {
 
 			expect( AppRole.Factory.hasClassProperties( object ) ).toBe( false );
 
-			object = {
-			};
+			object = {};
 			expect( AppRole.Factory.hasClassProperties( object ) ).toBe( true );
-		});
+		} );
 
 		it( hasMethod(
 			STATIC,
 			"is",
 			"Returns true if the object provided is considered a `Carbon.App.Role.Class` object", [
-				{ name: "object", type: "Object" }
+				{name: "object", type: "Object"},
 			],
-			{ type: "boolean" }
+			{type: "boolean"}
 		), ():void => {
 			expect( AppRole.Factory.is ).toBeDefined();
 			expect( Utils.isFunction( AppRole.Factory.is ) ).toBe( true );
 
 			let object:any;
 
-
 			object = {};
 			expect( AppRole.Factory.is( object ) ).toBe( false );
 
-			object = {
-			};
+			object = {};
 			expect( AppRole.Factory.is( object ) ).toBe( false );
 			object.types = [ NS.CS.Class.AppRole ];
 			expect( AppRole.Factory.is( object ) ).toBe( false );
@@ -113,21 +109,21 @@ describe( module( "Carbon/Apps/Role" ), ():void => {
 			expect( AppRole.Factory.is( object ) ).toBe( false );
 			object.types.push( NS.CS.Class.AppRole );
 			expect( AppRole.Factory.is( object ) ).toBe( true );
-		});
+		} );
 
 		it( hasMethod(
 			STATIC,
 			"create",
 			"Create a `Carbon.App.Role.Class` object with the name and email specified.", [
-				{ name: "name", type: "string" },
-				{ name: "email", type: "string" }
+				{name: "name", type: "string"},
+				{name: "email", type: "string"},
 			],
-			{ type: "Carbon.App.Role.Class" }
+			{type: "Carbon.App.Role.Class"}
 		), ():void => {
 			expect( AppRole.Factory.create ).toBeDefined();
 			expect( Utils.isFunction( AppRole.Factory.create ) ).toBe( true );
 
-			let spy = spyOn( AppRole.Factory, "createFrom" );
+			let spy:jasmine.Spy = spyOn( AppRole.Factory, "createFrom" );
 
 			AppRole.Factory.create( "Role name" );
 			expect( spy ).toHaveBeenCalledWith( {}, "Role name" );
@@ -137,21 +133,21 @@ describe( module( "Carbon/Apps/Role" ), ():void => {
 
 			AppRole.Factory.create( "" );
 			expect( spy ).toHaveBeenCalledWith( {}, "" );
-		});
+		} );
 
 		it( hasMethod(
 			STATIC,
 			"createFrom",
 			"Create a `Carbon.App.Role.Class` object with the object provided.", [
-				{ name: "object", type: "T extends Object" }
+				{name: "object", type: "T extends Object"},
 			],
-			{ type: "T & Carbon.App.Role.Class" }
+			{type: "T & Carbon.App.Role.Class"}
 		), ():void => {
 			expect( AppRole.Factory.createFrom ).toBeDefined();
 			expect( Utils.isFunction( AppRole.Factory.createFrom ) ).toBe( true );
 
 			interface TheAppRole {
-				myProperty?: string;
+				myProperty?:string;
 			}
 			interface MyAppRole extends AppRole.Class, TheAppRole {}
 
@@ -159,21 +155,21 @@ describe( module( "Carbon/Apps/Role" ), ():void => {
 			role = AppRole.Factory.createFrom<TheAppRole>( {}, "Role name" );
 			expect( AppRole.Factory.is( role ) ).toBe( true );
 			expect( role.myProperty ).toBeUndefined();
-			expect( role.name ).toBe( "Role name");
+			expect( role.name ).toBe( "Role name" );
 			expect( role.types ).toContain( NS.CS.Class.AppRole );
 
-			role = AppRole.Factory.createFrom<TheAppRole>( { myProperty: "a property" }, "Role name" );
+			role = AppRole.Factory.createFrom<TheAppRole>( {myProperty: "a property"}, "Role name" );
 			expect( AppRole.Factory.is( role ) ).toBe( true );
 			expect( role.myProperty ).toBeDefined();
 			expect( role.myProperty ).toBe( "a property" );
-			expect( role.name ).toBe( "Role name");
+			expect( role.name ).toBe( "Role name" );
 			expect( role.types ).toContain( NS.CS.Class.AppRole );
 
 			expect( () => AppRole.Factory.createFrom( {}, "" ) ).toThrowError( Errors.IllegalArgumentError );
 			expect( () => AppRole.Factory.createFrom( {}, null ) ).toThrowError( Errors.IllegalArgumentError );
 			expect( () => AppRole.Factory.createFrom( {}, undefined ) ).toThrowError( Errors.IllegalArgumentError );
-		});
+		} );
 
-	});
+	} );
 
-});
+} );

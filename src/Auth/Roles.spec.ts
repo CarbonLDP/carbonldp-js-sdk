@@ -31,7 +31,7 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 	it( isDefined(), ():void => {
 		expect( Roles ).toBeDefined();
 		expect( Utils.isObject( Roles ) ).toBe( true );
-	});
+	} );
 
 	describe( clazz(
 		"Carbon.Auth.Roles.Class",
@@ -52,23 +52,23 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 			roles = new MockRoles( context );
 
 			jasmine.Ajax.install();
-		});
+		} );
 
 		afterEach( ():void => {
 			jasmine.Ajax.uninstall();
-		});
+		} );
 
 		it( isDefined(), ():void => {
 			expect( Roles.Class ).toBeDefined();
 			expect( Utils.isFunction( Roles.Class ) ).toBe( true );
-		});
+		} );
 
-		it( hasConstructor([
-			{ name: "context", type: "Carbon.Context" }
-		]), ():void => {
+		it( hasConstructor( [
+			{name: "context", type: "Carbon.Context"}
+		] ), ():void => {
 			expect( roles ).toBeTruthy();
 			expect( roles instanceof Roles.Class ).toBe( true );
-		});
+		} );
 
 		describe( method(
 			INSTANCE,
@@ -78,28 +78,28 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 			it( hasSignature(
 				"Persists the Role provided with the slug, if specified, as a childRole of the parentRole specified.\n" +
 				"Returns a Promise with a Pointer for the stored role; and a tuple of two responses, the first one is the response of the creation, and the second one is the response of the creation of the relation parent-child of the roles.", [
-					{ name: "parentRole", type: "string | Carbon.Pointer.Class", description: "The role that will be assigned as the parent of the role that wants to persist." },
-					{ name: "role", type: "Carbon.Auth.Roles.Class", description: "The appRole that wants to persist." },
-					{ name: "slug", type: "string", optional: true, description: "The slug where the role will be persisted." },
-					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "The slug where the role will be persisted." },
+					{name: "parentRole", type: "string | Carbon.Pointer.Class", description: "The role that will be assigned as the parent of the role that wants to persist."},
+					{name: "role", type: "Carbon.Auth.Roles.Class", description: "The appRole that wants to persist."},
+					{name: "slug", type: "string", optional: true, description: "The slug where the role will be persisted."},
+					{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "The slug where the role will be persisted."},
 				],
-				{ type: "Promise<[ Carbon.Pointer.Class, [ Carbon.HTTP.Response.Class, Carbon.HTTP.Response.Class] ]>" }
+				{type: "Promise<[ Carbon.Pointer.Class, [ Carbon.HTTP.Response.Class, Carbon.HTTP.Response.Class] ]>"}
 			), ( done:{ ():void, fail:() => void } ):void => {
 				expect( roles.createChild ).toBeDefined();
 				expect( Utils.isFunction( roles.createChild ) ).toBe( true );
 
 				jasmine.Ajax.stubRequest( "http://example.com/roles/parent/no-found/" ).andReturn( {
 					status: 404
-				});
+				} );
 				jasmine.Ajax.stubRequest( "http://example.com/roles/parent/" ).andReturn( {
 					status: 200
-				});
+				} );
 				jasmine.Ajax.stubRequest( "http://example.com/roles/" ).andReturn( {
 					status: 200,
 					responseHeaders: {
 						"Location": "http://example.com/roles/new-role/"
 					}
-				});
+				} );
 
 				let spies = {
 					success: ( [ pointer, [ response1, response2 ] ]:[ Pointer.Class, [ HTTP.Response.Class, HTTP.Response.Class ] ] ):void => {
@@ -151,36 +151,36 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 						expect( spySuccess ).toHaveBeenCalledTimes( 2 );
 						expect( spyError ).toHaveBeenCalledTimes( 1 );
 						done();
-					}).catch( done.fail );
+					} ).catch( done.fail );
 
-				});
+				} );
 
-			});
+			} );
 
 			it( hasSignature(
 				"Persists the Role provided as a childRole of the parentRole specified.\n" +
 				"Returns a Promise with a Pointer for the stored role; and a tuple of two responses, the first one is the response of the creation, and the second one is the response of the creation of the relation parent-child of the roles.", [
-					{ name: "parentRole", type: "string | Carbon.Pointer.Class", description: "The role that will be assigned as the parent of the role that wants to persist." },
-					{ name: "role", type: "Carbon.Auth.Roles.Class", description: "The appRole that wants to persist." },
-					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "The slug where the role will be persisted." },
+					{name: "parentRole", type: "string | Carbon.Pointer.Class", description: "The role that will be assigned as the parent of the role that wants to persist."},
+					{name: "role", type: "Carbon.Auth.Roles.Class", description: "The appRole that wants to persist."},
+					{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "The slug where the role will be persisted."},
 				],
-				{ type: "Promise<[ Carbon.Pointer.Class, [ Carbon.HTTP.Response.Class, Carbon.HTTP.Response.Class] ]>" }
+				{type: "Promise<[ Carbon.Pointer.Class, [ Carbon.HTTP.Response.Class, Carbon.HTTP.Response.Class] ]>"}
 			), ( done:{ ():void, fail:() => void } ):void => {
 				expect( roles.createChild ).toBeDefined();
 				expect( Utils.isFunction( roles.createChild ) ).toBe( true );
 
 				jasmine.Ajax.stubRequest( "http://example.com/roles/parent/no-found/" ).andReturn( {
 					status: 404
-				});
+				} );
 				jasmine.Ajax.stubRequest( "http://example.com/roles/parent/" ).andReturn( {
 					status: 200
-				});
+				} );
 				jasmine.Ajax.stubRequest( "http://example.com/roles/" ).andReturn( {
 					status: 200,
 					responseHeaders: {
 						"Location": "http://example.com/roles/new-role/"
 					}
-				});
+				} );
 
 				let spies = {
 					success: ( [ pointer, [ response1, response2 ] ]:[ Pointer.Class, [ HTTP.Response.Class, HTTP.Response.Class ] ] ):void => {
@@ -234,13 +234,13 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 						expect( spyCreate ).toHaveBeenCalledWith( "http://example.com/roles/", jasmine.anything(), options );
 						expect( spyCreate ).toHaveBeenCalledWith( "http://example.com/roles/", jasmine.anything(), undefined );
 						done();
-					}).catch( done.fail );
+					} ).catch( done.fail );
 
-				});
+				} );
 
-			});
+			} );
 
-		});
+		} );
 
 		it( hasMethod(
 			INSTANCE,
@@ -322,14 +322,14 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 			});
 
 		});
-		
-	});
+
+	} );
 
 	it( hasDefaultExport(
 		"Carbon.Auth.Roles.Class"
 	), ():void => {
 		expect( DefaultExport ).toBeDefined();
 		expect( DefaultExport ).toBe( Roles.Class );
-	})
+	} )
 
-});
+} );

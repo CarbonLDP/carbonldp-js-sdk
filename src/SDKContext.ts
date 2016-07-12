@@ -10,6 +10,8 @@ import * as PersistedBlankNode from "./PersistedBlankNode";
 import * as ObjectSchema from "./ObjectSchema";
 import * as Agent from "./Agent";
 import * as RDFRepresentation from "./RDFRepresentation";
+import * as ErrorResponse from "./LDP/ErrorResponse";
+import * as Error from "./LDP/Error";
 
 export class Class implements Context {
 	auth:Auth.Class;
@@ -43,8 +45,8 @@ export class Class implements Context {
 	}
 
 	hasSetting( name:string ):boolean {
-		return  ( this.settings.has( name ) )
-			||  ( !! this.parentContext && this.parentContext.hasSetting( name ) );
+		return ( this.settings.has( name ) )
+			|| ( ! ! this.parentContext && this.parentContext.hasSetting( name ) );
 	}
 
 	getSetting( name:string ):any {
@@ -63,22 +65,22 @@ export class Class implements Context {
 
 	hasObjectSchema( type:string ):boolean {
 		if( this.typeObjectSchemaMap.has( type ) ) return true;
-		if( !! this.parentContext && this.parentContext.hasObjectSchema( type ) ) return true;
+		if( ! ! this.parentContext && this.parentContext.hasObjectSchema( type ) ) return true;
 
 		return false;
 	}
 
 	getObjectSchema( type:string = null ):ObjectSchema.DigestedObjectSchema {
-		if( !! type ) {
+		if( ! ! type ) {
 			// Type specific schema
 			if( this.typeObjectSchemaMap.has( type ) ) return this.typeObjectSchemaMap.get( type );
-			if( !! this.parentContext && this.parentContext.hasObjectSchema( type ) ) return this.parentContext.getObjectSchema( type );
+			if( ! ! this.parentContext && this.parentContext.hasObjectSchema( type ) ) return this.parentContext.getObjectSchema( type );
 
 			return null;
 		} else {
 			// General schema
-			if( !! this.generalObjectSchema ) return this.generalObjectSchema;
-			if( !! this.parentContext ) return this.parentContext.getObjectSchema();
+			if( ! ! this.generalObjectSchema ) return this.generalObjectSchema;
+			if( ! ! this.parentContext ) return this.parentContext.getObjectSchema();
 
 			throw new Errors.IllegalStateError();
 		}
@@ -88,7 +90,7 @@ export class Class implements Context {
 	extendObjectSchema( objectSchema:ObjectSchema.Class ):void;
 	extendObjectSchema( typeOrObjectSchema:any, objectSchema:ObjectSchema.Class = null ):void {
 		let type:string = objectSchema ? typeOrObjectSchema : null;
-		objectSchema = !! objectSchema ? objectSchema : typeOrObjectSchema;
+		objectSchema = ! ! objectSchema ? objectSchema : typeOrObjectSchema;
 		let digestedSchema:ObjectSchema.DigestedObjectSchema = ObjectSchema.Digester.digestSchema( objectSchema );
 
 		if( ! type ) {
@@ -100,7 +102,7 @@ export class Class implements Context {
 
 	clearObjectSchema( type:string = null ):void {
 		if( ! type ) {
-			this.generalObjectSchema = !! this.parentContext ? null : new ObjectSchema.DigestedObjectSchema();
+			this.generalObjectSchema = ! ! this.parentContext ? null : new ObjectSchema.DigestedObjectSchema();
 		} else {
 			this.typeObjectSchemaMap.delete( type );
 		}
@@ -108,9 +110,9 @@ export class Class implements Context {
 
 	protected extendGeneralObjectSchema( digestedSchema:ObjectSchema.DigestedObjectSchema ):void {
 		let digestedSchemaToExtend:ObjectSchema.DigestedObjectSchema;
-		if( !! this.generalObjectSchema ) {
+		if( ! ! this.generalObjectSchema ) {
 			digestedSchemaToExtend = this.generalObjectSchema;
-		} else if( !! this.parentContext ) {
+		} else if( ! ! this.parentContext ) {
 			digestedSchemaToExtend = this.parentContext.getObjectSchema();
 		} else {
 			digestedSchemaToExtend = new ObjectSchema.DigestedObjectSchema();
@@ -127,7 +129,7 @@ export class Class implements Context {
 		let digestedSchemaToExtend:ObjectSchema.DigestedObjectSchema;
 		if( this.typeObjectSchemaMap.has( type ) ) {
 			digestedSchemaToExtend = this.typeObjectSchemaMap.get( type );
-		} else if( !! this.parentContext && this.parentContext.hasObjectSchema( type ) ) {
+		} else if( ! ! this.parentContext && this.parentContext.hasObjectSchema( type ) ) {
 			digestedSchemaToExtend = this.parentContext.getObjectSchema( type );
 		} else {
 			digestedSchemaToExtend = new ObjectSchema.DigestedObjectSchema();
@@ -151,6 +153,8 @@ export class Class implements Context {
 
 		this.extendObjectSchema( RDFRepresentation.RDF_CLASS, RDFRepresentation.SCHEMA );
 		this.extendObjectSchema( APIDescription.RDF_CLASS, APIDescription.SCHEMA );
+		this.extendObjectSchema( Error.RDF_CLASS, Error.SCHEMA );
+		this.extendObjectSchema( ErrorResponse.RDF_CLASS, ErrorResponse.SCHEMA );
 
 		// TODO Fix error of cycle reference because the App module dependency of AbstractClass witch has a dependency with SDKContext. For now add manual data
 		/* this.extendObjectSchema( App.RDF_CLASS, App.SCHEMA ); */
@@ -171,16 +175,17 @@ export class Class implements Context {
 				"@id": NS.CS.Predicate.allowsOrigin,
 				"@container": "@set",
 			},
-		});
+		} );
 		this.extendObjectSchema( AppRole.RDF_CLASS, Auth.Role.SCHEMA );
 		this.extendObjectSchema( AppRole.RDF_CLASS, AppRole.SCHEMA );
 
 		this.extendObjectSchema( LDP.ResponseMetadata.RDF_CLASS, LDP.ResponseMetadata.SCHEMA );
 		this.extendObjectSchema( LDP.ResourceMetadata.RDF_CLASS, LDP.ResourceMetadata.SCHEMA );
-		this.extendObjectSchema( LDP.AddMemberAction.RDF_CLASS,  LDP.AddMemberAction.SCHEMA );
+		this.extendObjectSchema( LDP.AddMemberAction.RDF_CLASS, LDP.AddMemberAction.SCHEMA );
 		this.extendObjectSchema( LDP.RemoveMemberAction.RDF_CLASS, LDP.RemoveMemberAction.SCHEMA );
 
-		this.extendObjectSchema( Auth.Token.RDF_CLASS, Auth.Token.CONTEXT );
+		this.extendObjectSchema( Auth.Token.RDF_CLASS, Auth.Token.SCHEMA );
+		this.extendObjectSchema( Auth.Ticket.RDF_CLASS, Auth.Ticket.SCHEMA );
 
 		this.extendObjectSchema( Agent.RDF_CLASS, Agent.SCHEMA );
 	}

@@ -22,8 +22,8 @@ export class Factory {
 	}
 
 	static createFrom<T extends Object>( object:T, id:string = null, types:string[] = null ):T & Class {
-		id = !! id ? id : ( (<any> object).id || "" );
-		types = !! types ? types : ( (<any> object).types || [] );
+		id = ! ! id ? id : ( (<any> object).id || "" );
+		types = ! ! types ? types : ( (<any> object).types || [] );
 
 		let resource:Class = Factory.decorate( object );
 		resource.id = id;
