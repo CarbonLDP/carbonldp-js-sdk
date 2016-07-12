@@ -60,6 +60,9 @@ function save() {
 function destroy() {
     return this._documents.delete(this.id);
 }
+function getDownloadURL() {
+    return this._documents.getDownloadURL(this.id);
+}
 function createAccessPoint(accessPoint, slug, requestOptions) {
     if (slug === void 0) { slug = null; }
     if (requestOptions === void 0) { requestOptions = {}; }
@@ -211,6 +214,12 @@ var Factory = (function () {
                 enumerable: false,
                 configurable: true,
                 value: destroy,
+            },
+            "getDownloadURL": {
+                writable: false,
+                enumerable: false,
+                configurable: true,
+                value: getDownloadURL,
             },
             "createAccessPoint": {
                 writable: false,

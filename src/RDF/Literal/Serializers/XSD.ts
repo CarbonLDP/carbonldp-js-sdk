@@ -5,7 +5,7 @@ import Serializer from "./../Serializer";
 
 function pad( value:number ):string {
 	let paddedValue:string = String( value );
-	if ( paddedValue.length === 1 ) paddedValue = "0" + paddedValue;
+	if( paddedValue.length === 1 ) paddedValue = "0" + paddedValue;
 	return paddedValue;
 }
 
@@ -38,7 +38,7 @@ export class TimeSerializer implements Serializer {
 			+ ":" + pad( value.getUTCSeconds() )
 			+ "." + String( ( value.getUTCMilliseconds() / 1000 ).toFixed( 3 ) ).slice( 2, 5 )
 			+ "Z"
-		;
+			;
 	}
 }
 
@@ -49,7 +49,7 @@ export class IntegerSerializer implements Serializer {
 		if( ! Utils.isNumber( value ) ) throw new Errors.IllegalArgumentError( "The value is not a number." );
 
 		// Negative truncate
-		return ( ~~value ).toString();
+		return ( ~ ~ value ).toString();
 	}
 }
 
@@ -81,7 +81,7 @@ export let floatSerializer:FloatSerializer = new FloatSerializer();
 
 export class BooleanSerializer implements Serializer {
 	serialize( value:any ):string {
-		return ( !! value ).toString();
+		return ( ! ! value ).toString();
 	}
 }
 

@@ -6,6 +6,7 @@ export declare class Class {
 }
 export declare class Util {
     static hasFragment(uri: string): boolean;
+    static hasQuery(uri: string): boolean;
     static hasProtocol(uri: string): boolean;
     static isAbsolute(uri: string): boolean;
     static isRelative(uri: string): boolean;
@@ -18,6 +19,7 @@ export declare class Util {
     static getDocumentURI(uri: string): string;
     static getFragment(uri: string): string;
     static getSlug(uri: string): string;
+    static getParameters(uri: string): Map<string, string | string[]>;
     static resolve(parentURI: string, childURI: string): string;
     static removeProtocol(uri: string): string;
     static prefix(uri: string, prefix: string, prefixURI: string): string;

@@ -19,7 +19,7 @@ describe( module( "Carbon/SPARQL/RawResultsParser" ), ():void => {
 	it( isDefined(), ():void => {
 		expect( RawResultsParser ).toBeDefined();
 		expect( Utils.isObject( RawResultsParser ) ).toBe( true );
-	});
+	} );
 
 	describe( clazz(
 		"Carbon.SPARQL.RawResultsParser.Class",
@@ -33,15 +33,15 @@ describe( module( "Carbon/SPARQL/RawResultsParser" ), ():void => {
 			let parser:RawResultsParser.Class = new RawResultsParser.Class();
 			expect( parser ).toBeTruthy();
 			expect( parser instanceof RawResultsParser.Class ).toBe( true );
-		});
+		} );
 
 		it( hasMethod(
 			INSTANCE,
 			"parse",
 			"Parse the SPARQL Query string result to a `Carbon.SPARQL.RawResult.Class` object", [
-				{ name: "input", type: "string" }
+				{name: "input", type: "string"}
 			],
-			{ type: "Promise<Carbon.SPARQL.RawResult.Class>"}
+			{type: "Promise<Carbon.SPARQL.RawResult.Class>"}
 		), ( done:{ ():void, fail:() => void } ):void => {
 			let parser:RawResultsParser.Class = new RawResultsParser.Class();
 
@@ -66,32 +66,32 @@ describe( module( "Carbon/SPARQL/RawResultsParser" ), ():void => {
 				"results": {
 					"bindings": [
 						{
-							"x" : { "type": "bnode", "value": "r1" },
+							"x": {"type": "bnode", "value": "r1"},
 
-							"hpage" : { "type": "uri", "value": "http://work.example.org/alice/" },
+							"hpage": {"type": "uri", "value": "http://work.example.org/alice/"},
 
-							"name" : {  "type": "literal", "value": "Alice" } ,
+							"name": {"type": "literal", "value": "Alice"},
 
-							"mbox" : {  "type": "literal", "value": "" } ,
+							"mbox": {"type": "literal", "value": ""},
 
-							"blurb" : {
+							"blurb": {
 								"datatype": "http://www.w3.org/1999/02/22-rdf-syntax-ns#XMLLiteral",
 								"type": "literal",
 								"value": "<p xmlns=\"http://www.w3.org/1999/xhtml\">My name is <b>alice</b></p>"
 							},
 
-							"friend" : { "type": "bnode", "value": "r2" }
+							"friend": {"type": "bnode", "value": "r2"}
 						},
 						{
-							"x" : { "type": "bnode", "value": "r2" },
+							"x": {"type": "bnode", "value": "r2"},
 
-							"hpage" : { "type": "uri", "value": "http://work.example.org/bob/" },
+							"hpage": {"type": "uri", "value": "http://work.example.org/bob/"},
 
-							"name" : { "type": "literal", "value": "Bob", "xml:lang": "en" },
+							"name": {"type": "literal", "value": "Bob", "xml:lang": "en"},
 
-							"mbox" : { "type": "uri", "value": "mailto:bob@work.example.org" },
+							"mbox": {"type": "uri", "value": "mailto:bob@work.example.org"},
 
-							"friend" : { "type": "bnode", "value": "r1" }
+							"friend": {"type": "bnode", "value": "r1"}
 						}
 					]
 				}
@@ -99,8 +99,8 @@ describe( module( "Carbon/SPARQL/RawResultsParser" ), ():void => {
 			let querySelectString = JSON.stringify( querySelectObject );
 
 			let queryAskObject = {
-				"head" : { } ,
-				"boolean" : true
+				"head": {},
+				"boolean": true
 			};
 			let queryAskString = JSON.stringify( queryAskObject );
 
@@ -143,13 +143,13 @@ describe( module( "Carbon/SPARQL/RawResultsParser" ), ():void => {
 				expect( spyFail.calls.count() ).toBe( 1 );
 				done();
 			}, done.fail );
-		});
+		} );
 
-	});
+	} );
 
 	it( hasDefaultExport( "Carbon.SPARQL.RawResultParser.Class" ), ():void => {
 		expect( DefaultExport ).toBeDefined();
 		expect( DefaultExport ).toBe( RawResultsParser.Class );
-	});
+	} );
 
-});
+} );
