@@ -5,11 +5,16 @@ var __extends = (this && this.__extends) || function (d, b) {
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
 var AbstractError_1 = require("./../../Errors/AbstractError");
+var Resource = require("./../../Resource");
 var HTTPError = (function (_super) {
     __extends(HTTPError, _super);
     function HTTPError(message, response) {
         _super.call(this, message);
+        Resource.Factory.createFrom(this);
+        this.errors = [];
+        this.requestID = null;
         this.response = response;
+        this.statusCode = response.status;
     }
     Object.defineProperty(HTTPError, "statusCode", {
         get: function () { return null; },

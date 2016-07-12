@@ -21,7 +21,7 @@ describe( module( "Carbon/Pointer" ), ():void => {
 	it( isDefined(), ():void => {
 		expect( Pointer ).toBeDefined();
 		expect( Utils.isObject( Pointer ) ).toBe( true );
-	});
+	} );
 
 	describe( clazz(
 		"Carbon.Pointer.Factory",
@@ -31,15 +31,15 @@ describe( module( "Carbon/Pointer" ), ():void => {
 		it( isDefined(), ():void => {
 			expect( Pointer.Factory ).toBeDefined();
 			expect( Utils.isFunction( Pointer.Factory ) ).toBe( true );
-		});
+		} );
 
 		it( hasMethod(
 			STATIC,
 			"hasClassProperties",
 			"Returns true if the object provided has the properties and functions of a Pointer object", [
-				{ name: "resource", type: "Object" }
+				{name: "resource", type: "Object"}
 			],
-			{ type: "boolean" }
+			{type: "boolean"}
 		), ():void => {
 			expect( Pointer.Factory.hasClassProperties ).toBeDefined();
 			expect( Utils.isFunction( Pointer.Factory.hasClassProperties ) ).toBe( true );
@@ -75,15 +75,15 @@ describe( module( "Carbon/Pointer" ), ():void => {
 			delete pointer.resolve;
 			expect( Pointer.Factory.hasClassProperties( pointer ) ).toBe( false );
 			pointer.resolve = () => null;
-		});
+		} );
 
 		it( hasMethod(
 			STATIC,
 			"is",
 			"Returns true if the value provided is a Pinter object.", [
-				{ name: "value", type: "any" }
+				{name: "value", type: "any"}
 			],
-			{ type: "boolean" }
+			{type: "boolean"}
 		), ():void => {
 			expect( Pointer.Factory.is ).toBeDefined();
 			expect( Utils.isFunction( Pointer.Factory.is ) ).toBe( true );
@@ -95,22 +95,22 @@ describe( module( "Carbon/Pointer" ), ():void => {
 			expect( Pointer.Factory.is( {} ) ).toBe( false );
 
 			let value = {};
-			value["_id"] = null;
-			value["_resolved"] = null;
-			value["id"] = null;
-			value["isResolved"] = () => null;
-			value["resolve"] = () => null;
+			value[ "_id" ] = null;
+			value[ "_resolved" ] = null;
+			value[ "id" ] = null;
+			value[ "isResolved" ] = () => null;
+			value[ "resolve" ] = () => null;
 			expect( Pointer.Factory.is( value ) ).toBe( true );
-		});
+		} );
 
 		it( hasMethod(
 			STATIC,
 			"create",
 			"Create a Pointer object with id if provided.", [
-				{ name: "id", type: "string", optional: true }
+				{name: "id", type: "string", optional: true}
 			],
-			{ type: "Carbon.Pointer.Class" }
-		),():void => {
+			{type: "Carbon.Pointer.Class"}
+		), ():void => {
 			expect( Pointer.Factory.create ).toBeDefined();
 			expect( Utils.isFunction( Pointer.Factory.create ) ).toBe( true );
 
@@ -125,15 +125,15 @@ describe( module( "Carbon/Pointer" ), ():void => {
 			expect( pointer ).toBeTruthy();
 			expect( Pointer.Factory.hasClassProperties( pointer ) ).toBe( true );
 			expect( pointer.id ).toBe( "http://example.com/pointer/" );
-		});
+		} );
 
 		it( hasMethod(
 			STATIC,
 			"decorate",
 			"Decorates the object provided with the elements of a Pointer object.", [
-				{ name: "object", type: "T extends Object" }
+				{name: "object", type: "T extends Object"}
 			],
-			{ type: "T & Carbon.Pointer.Class" }
+			{type: "T & Carbon.Pointer.Class"}
 		), ():void => {
 			expect( Pointer.Factory.decorate ).toBeDefined();
 			expect( Utils.isFunction( Pointer.Factory.decorate ) ).toBe( true );
@@ -147,7 +147,7 @@ describe( module( "Carbon/Pointer" ), ():void => {
 			pointer = Pointer.Factory.decorate<MyResource>( {} );
 			expect( Pointer.Factory.hasClassProperties( pointer ) ).toBe( true );
 
-			pointer = Pointer.Factory.decorate<MyResource>( { myProperty: "a property" } );
+			pointer = Pointer.Factory.decorate<MyResource>( {myProperty: "a property"} );
 			expect( Pointer.Factory.hasClassProperties( pointer ) ).toBe( true );
 			expect( pointer.myProperty ).toBeDefined();
 			expect( pointer.myProperty ).toBe( "a property" );
@@ -157,7 +157,7 @@ describe( module( "Carbon/Pointer" ), ():void => {
 			pointer._resolved = true;
 			pointer = Pointer.Factory.decorate<MyResource>( pointer );
 			expect( pointer.isResolved() ).toBe( true );
-		});
+		} );
 
 		describe( decoratedObject(
 			"Object decorated by the Carbon.Pointer.Factory.decorate function.", [
@@ -168,7 +168,7 @@ describe( module( "Carbon/Pointer" ), ():void => {
 
 			beforeEach( ():void => {
 				pointer = Pointer.Factory.create( "http://example.com/pointer/" )
-			});
+			} );
 
 			it( hasProperty(
 				INSTANCE,
@@ -180,7 +180,7 @@ describe( module( "Carbon/Pointer" ), ():void => {
 				expect( Utils.isString( pointer._id ) ).toBe( true );
 
 				expect( pointer._id ).toBe( "http://example.com/pointer/" );
-			});
+			} );
 
 			it( hasProperty(
 				INSTANCE,
@@ -192,7 +192,7 @@ describe( module( "Carbon/Pointer" ), ():void => {
 				expect( Utils.isBoolean( pointer._resolved ) ).toBe( true );
 
 				expect( pointer._resolved ).toBe( false );
-			});
+			} );
 
 			it( hasProperty(
 				INSTANCE,
@@ -207,13 +207,13 @@ describe( module( "Carbon/Pointer" ), ():void => {
 
 				pointer.id = "http://example.com/pointer/change/";
 				expect( pointer._id ).toBe( "http://example.com/pointer/change/" );
-			});
+			} );
 
 			it( hasMethod(
 				INSTANCE,
 				"isResolved",
 				"Returns true if the pointer has been resolved. It checks the `_resolved` property.",
-				{ type: "boolean" }
+				{type: "boolean"}
 			), ():void => {
 				expect( pointer.isResolved ).toBeDefined();
 				expect( Utils.isFunction( pointer.isResolved ) ).toBe( true );
@@ -222,13 +222,13 @@ describe( module( "Carbon/Pointer" ), ():void => {
 
 				pointer._resolved = true;
 				expect( pointer.isResolved() ).toBe( true );
-			});
+			} );
 
 			it( hasMethod(
 				INSTANCE,
 				"resolve",
 				"Resolve the pointer. This function throw an Error, it should be reimplemented for the respective type of pointer."
-			), ( done:{ (): void, fail:() => void } ):void => {
+			), ( done:{ ():void, fail:() => void } ):void => {
 				expect( pointer.resolve ).toBeDefined();
 				expect( Utils.isFunction( pointer.resolve ) ).toBe( true );
 
@@ -238,11 +238,11 @@ describe( module( "Carbon/Pointer" ), ():void => {
 				promise.then( done.fail, ( error:NotImplementedError ):void => {
 					expect( error.name ).toBe( "NotImplementedError" );
 					done();
-				});
-			});
+				} );
+			} );
 
-		});
+		} );
 
-	});
+	} );
 
-});
+} );
