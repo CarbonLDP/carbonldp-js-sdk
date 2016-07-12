@@ -20,7 +20,7 @@ describe( module(
 	it( isDefined(), ():void => {
 		expect( Serializers ).toBeDefined();
 		expect( Utils.isObject( Serializers ) ).toBe( true );
-	});
+	} );
 
 	it( reexports(
 		STATIC,
@@ -29,6 +29,6 @@ describe( module(
 	), ():void => {
 		expect( Serializers.XSD ).toBeDefined();
 		expect( Serializers.XSD ).toBe( XSD );
-	});
+	} );
 
-});
+} );

@@ -27,8 +27,8 @@ export class Class {
 
 			if( ! uri ) return Promise.reject<AppContext>( new Errors.IllegalArgumentError( "The application's URI cannot be null" ) );
 
-			if ( RDF.URI.Util.isRelative( uri ) ) {
-				if ( ! Utils.S.startsWith( uri, appsContainerURI ) ) uri = RDF.URI.Util.resolve( appsContainerURI, uri );
+			if( RDF.URI.Util.isRelative( uri ) ) {
+				if( ! Utils.S.startsWith( uri, appsContainerURI ) ) uri = RDF.URI.Util.resolve( appsContainerURI, uri );
 				uri = this.context.resolve( uri );
 			}
 
@@ -36,11 +36,11 @@ export class Class {
 		}
 
 		return pointer.resolve().then( ( [ app, response ]:[ PersistedApp.Class, Response.Class ] ) => {
-			if ( ! PersistedApp.Factory.is( app ) )
+			if( ! PersistedApp.Factory.is( app ) )
 				return Promise.reject<AppContext>( new Errors.IllegalArgumentError( "The resource fetched is not a cs:Application." ) );
 
 			return new AppContext( this.context, <PersistedApp.Class> app );
-		});
+		} );
 	}
 
 	getAllContexts():Promise<AppContext[]> {
@@ -58,13 +58,13 @@ export class Class {
 		let slug:string = Utils.isString( slugOrApp ) ? slugOrApp : null;
 		appDocument = appDocument || slugOrApp;
 
-		if ( ! App.Factory.is( appDocument ) ) return Promise.reject<any>( new Errors.IllegalArgumentError( "The Document is not a `Carbon.App.Class` object." ) );
+		if( ! App.Factory.is( appDocument ) ) return Promise.reject<any>( new Errors.IllegalArgumentError( "The Document is not a `Carbon.App.Class` object." ) );
 
 		return this.context.documents.createChild( appsContainerURI, slug, appDocument );
 	}
 
 	private getAppsContainerURI():string {
-		if ( ! this.context.hasSetting( "platform.apps.container" ) ) throw new Errors.IllegalStateError( "The apps container URI hasn't been set." );
+		if( ! this.context.hasSetting( "platform.apps.container" ) ) throw new Errors.IllegalStateError( "The apps container URI hasn't been set." );
 		return this.context.getSetting( "platform.apps.container" );
 	}
 }

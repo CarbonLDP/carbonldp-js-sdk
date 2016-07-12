@@ -12,20 +12,20 @@ export interface Class {
 
 export class Factory {
 	static from( value:any ):Class {
-		if ( Utils.isNull( value ) )
+		if( Utils.isNull( value ) )
 			throw new Errors.IllegalArgumentError( "Null cannot be converted into a Literal" );
-		if ( ! Utils.isDefined( value ) )
+		if( ! Utils.isDefined( value ) )
 			throw new Errors.IllegalArgumentError( "The value is undefined" );
 
 		let type:any;
 
-		switch ( true ) {
+		switch( true ) {
 			case Utils.isDate( value ):
 				type = XSD.DataType.dateTime;
 				value = value.toISOString();
 				break;
 			case Utils.isNumber( value ):
-				if ( Utils.isInteger( value ) ) {
+				if( Utils.isInteger( value ) ) {
 					type = XSD.DataType.integer;
 				} else {
 					type = XSD.DataType.double;
@@ -44,8 +44,8 @@ export class Factory {
 				break;
 		}
 
-		let literal:Class = { "@value": value.toString() };
-		if ( type ) literal[ "@type" ] = type;
+		let literal:Class = {"@value": value.toString()};
+		if( type ) literal[ "@type" ] = type;
 
 		return literal;
 	}
@@ -58,29 +58,29 @@ export class Factory {
 			literalValue = literalValueOrLiteral;
 		} else {
 			let literal:Class = literalValueOrLiteral;
-			if ( ! literal ) return null;
-			if ( ! Utils.hasProperty( literal, "@value" ) ) return null;
+			if( ! literal ) return null;
+			if( ! Utils.hasProperty( literal, "@value" ) ) return null;
 
 			literalDataType = "@type" in literal ? literal[ "@type" ] : null;
 			literalValue = literal[ "@value" ];
 		}
 
-		if ( literalDataType === null ) return literalValue;
+		if( literalDataType === null ) return literalValue;
 		// The DataType isn't supported
-		if ( ! Utils.hasProperty( XSD.DataType, literalDataType ) ) return literalValue;
+		if( ! Utils.hasProperty( XSD.DataType, literalDataType ) ) return literalValue;
 
 		let value:any;
 		let parts:string[];
-		switch ( literalDataType ) {
+		switch( literalDataType ) {
 			// Dates
 			case XSD.DataType.date:
 			case XSD.DataType.dateTime:
 				value = new Date( literalValue );
 				break;
 			case XSD.DataType.time:
-				parts = literalValue.match(/(\d+):(\d+):(\d+)\.(\d+)Z/);
+				parts = literalValue.match( /(\d+):(\d+):(\d+)\.(\d+)Z/ );
 				value = new Date();
-				value.setUTCHours( parseFloat( parts[1] ), parseFloat( parts[2] ), parseFloat( parts[3]), parseFloat( parts[4] ) );
+				value.setUTCHours( parseFloat( parts[ 1 ] ), parseFloat( parts[ 2 ] ), parseFloat( parts[ 3 ] ), parseFloat( parts[ 4 ] ) );
 				break;
 			case XSD.DataType.duration:
 				// TODO: Support duration values (create a class or something...)

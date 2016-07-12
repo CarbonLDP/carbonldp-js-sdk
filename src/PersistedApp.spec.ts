@@ -20,7 +20,7 @@ describe( module( "Carbon/PersistedApp" ), ():void => {
 	it( isDefined(), ():void => {
 		expect( PersistedApp ).toBeDefined();
 		expect( Utils.isObject( PersistedApp ) ).toBe( true );
-	});
+	} );
 
 	describe( clazz(
 		"Carbon.PersistedApp.Factory",
@@ -30,15 +30,15 @@ describe( module( "Carbon/PersistedApp" ), ():void => {
 		it( isDefined(), ():void => {
 			expect( PersistedApp.Factory ).toBeDefined();
 			expect( Utils.isFunction( PersistedApp.Factory ) ).toBe( true );
-		});
+		} );
 
 		it( hasMethod(
 			STATIC,
 			"hasClassProperties",
 			"Returns true if the object provided has the properties that defines a `Carbon.PersistedApp.Class` object", [
-				{ name: "resource", type: "Object" }
+				{name: "resource", type: "Object"}
 			],
-			{ type: "boolean" }
+			{type: "boolean"}
 		), ():void => {
 			expect( PersistedApp.Factory.hasClassProperties ).toBeDefined();
 			expect( Utils.isFunction( PersistedApp.Factory.hasClassProperties ) ).toBe( true );
@@ -54,7 +54,7 @@ describe( module( "Carbon/PersistedApp" ), ():void => {
 			delete object.rootContainer;
 			expect( PersistedApp.Factory.hasClassProperties( object ) ).toBe( false );
 			object.rootContainer = null;
-		});
+		} );
 
 		it( hasMethod(
 			STATIC,
@@ -62,7 +62,7 @@ describe( module( "Carbon/PersistedApp" ), ():void => {
 			"Returns true if the object provided is considered a `Carbon.PersistedApp.Class` object", [
 				{ name: "object", type: "Object" }
 			],
-			{ type: "boolean" }
+			{type: "boolean"}
 		), ():void => {
 			expect( PersistedApp.Factory.is ).toBeDefined();
 			expect( Utils.isFunction( PersistedApp.Factory.is ) ).toBe( true );
@@ -90,8 +90,8 @@ describe( module( "Carbon/PersistedApp" ), ():void => {
 
 			document = PersistedDocument.Factory.createFrom( object, "persistedApp", new Documents() );
 			expect( PersistedApp.Factory.is( document ) ).toBe( true );
-		});
+		} );
 
-	});
+	} );
 
-});
+} );
