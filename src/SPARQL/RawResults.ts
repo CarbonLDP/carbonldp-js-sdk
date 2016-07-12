@@ -2,7 +2,9 @@ import * as Utils from "./../Utils";
 
 export class ValueTypes {
 	static get URI():string { return "uri"; }
+
 	static get LITERAL():string { return "literal"; }
+
 	static get BNODE():string { return "bnode"; }
 }
 

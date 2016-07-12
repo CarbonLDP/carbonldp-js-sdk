@@ -25,7 +25,7 @@ describe( module( "Carbon/Agents" ), ():void => {
 	it( isDefined(), ():void => {
 		expect( Agents ).toBeDefined();
 		expect( Utils.isObject( Agents ) ).toBe( true );
-	});
+	} );
 
 	describe( clazz(
 		"Carbon.Agents.Class",
@@ -35,7 +35,7 @@ describe( module( "Carbon/Agents" ), ():void => {
 		it( isDefined(), ():void => {
 			expect( Agents.Class ).toBeDefined();
 			expect( Utils.isFunction( Agents.Class ) ).toBe( true );
-		});
+		} );
 
 		it( hasConstructor(), ():void => {
 			let agents:Agents.Class;
@@ -51,7 +51,7 @@ describe( module( "Carbon/Agents" ), ():void => {
 
 			expect( agents ).toBeTruthy();
 			expect( agents instanceof Agents.Class ).toBe( true );
-		});
+		} );
 
 		describe( method(
 			INSTANCE,
@@ -61,9 +61,9 @@ describe( module( "Carbon/Agents" ), ():void => {
 			it( hasSignature(
 				"Persists an Agent Document in the server, generating a random unique slug.\n" +
 				"Returns a Promise with a Pointer for the stored Agent, and the response of the call.", [
-					{ name: "agentDocument", type: "Carbon.Agents.Agent.Class" }
+					{name: "agentDocument", type: "Carbon.Agents.Agent.Class"}
 				],
-				{ type: "Promise<Carbon.Pointer.Class, Carbon.HTTP.Response.Class>" }
+				{type: "Promise<Carbon.Pointer.Class, Carbon.HTTP.Response.Class>"}
 			), ( done ):void => {
 				let agents:Agents.Class;
 				let context:AbstractContext;
@@ -80,7 +80,7 @@ describe( module( "Carbon/Agents" ), ():void => {
 				expect( Utils.isFunction( agents.create ) ).toBe( true );
 
 				let spy = spyOn( context.documents, "createChild" );
-				let agent:Agent.Class = Agent.Factory.create( "Agent name", "email.of.agent@example.com", "myAwesomePassword");
+				let agent:Agent.Class = Agent.Factory.create( "Agent name", "email.of.agent@example.com", "myAwesomePassword" );
 
 				expect( () => agents.create( agent ) ).toThrowError( Errors.IllegalStateError );
 				context.setSetting( "platform.agents.container", "agents/" );
@@ -100,19 +100,19 @@ describe( module( "Carbon/Agents" ), ():void => {
 				spy = spyOn( spies, "onError" ).and.callThrough();
 				promise = promise.catch( spies.onError );
 
-				Promise.all( [promise] ).then( ():void => {
+				Promise.all( [ promise ] ).then( ():void => {
 					expect( spy ).toHaveBeenCalled();
 					done();
-				});
-			});
+				} );
+			} );
 
 			it( hasSignature(
 				"Persists an Agent Document in the server using the slug specified.\n" +
 				"Returns a Promise with a Pointer for the stored Agent, and the response of the call.", [
-					{ name: "slug", type: "string" },
-					{ name: "agentDocument", type: "Carbon.Agents.Agent.Class" }
+					{name: "slug", type: "string"},
+					{name: "agentDocument", type: "Carbon.Agents.Agent.Class"}
 				],
-				{ type: "Promise<Carbon.Pointer.Class, Carbon.HTTP.Response.Class>" }
+				{type: "Promise<Carbon.Pointer.Class, Carbon.HTTP.Response.Class>"}
 			), ( done:() => void ):void => {
 				let agents:Agents.Class;
 				let context:AbstractContext;
@@ -153,21 +153,21 @@ describe( module( "Carbon/Agents" ), ():void => {
 				spy = spyOn( spies, "onError" ).and.callThrough();
 				promise = promise.catch( spies.onError );
 
-				Promise.all( [promise] ).then( ():void => {
+				Promise.all( [ promise ] ).then( ():void => {
 					expect( spy ).toHaveBeenCalled();
 					done();
-				});
-			});
+				} );
+			} );
 
-		});
+		} );
 
-	});
+	} );
 
 	it( hasDefaultExport(
 		"Carbon.Agents.Class"
 	), ():void => {
 		expect( DefaultExport ).toBeDefined();
 		expect( DefaultExport ).toBe( Agents.Class );
-	})
+	} )
 
-});
+} );

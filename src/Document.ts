@@ -171,7 +171,7 @@ function toJSON( objectSchemaResolver:ObjectSchema.Resolver, jsonLDConverter:JSO
 function toJSON( objectSchemaResolver:ObjectSchema.Resolver ):string;
 function toJSON():string;
 function toJSON( objectSchemaResolver:ObjectSchema.Resolver = null, jsonldConverter:JSONLDConverter = null ):string {
-	jsonldConverter = !! jsonldConverter ? jsonldConverter : new JSONLDConverter();
+	jsonldConverter = ! ! jsonldConverter ? jsonldConverter : new JSONLDConverter();
 
 	let resources:{ toJSON:() => string }[] = [];
 	resources.push( this );
@@ -230,9 +230,9 @@ export class Factory {
 		let document:T & Class = Factory.decorate<T>( <any> resource );
 		convertNestedObjects( document, document );
 
-		if ( LDP.Container.Factory.hasClassProperties( document ) ) LDP.Container.Factory.decorate( document );
+		if( LDP.Container.Factory.hasClassProperties( document ) ) LDP.Container.Factory.decorate( document );
 
- 		return document;
+		return document;
 	}
 
 	static decorate<T extends Object>( object:T ):T & Class {
@@ -331,18 +331,18 @@ function convertNestedObjects( parent:Class, actual:any ):void {
 			continue;
 		}
 
-		if ( ! Utils.isPlainObject( next ) || Pointer.Factory.is( next ) ) continue;
+		if( ! Utils.isPlainObject( next ) || Pointer.Factory.is( next ) ) continue;
 
-		idOrSlug = ( "id" in next ) ?  next.id : ( ( "slug" in next ) ? next.slug : "" );
-		if ( ! parent.inScope( idOrSlug ) ) continue;
+		idOrSlug = ( "id" in next ) ? next.id : ( ( "slug" in next ) ? next.slug : "" );
+		if( ! parent.inScope( idOrSlug ) ) continue;
 
 		let parentFragment:Fragment.Class = parent.getFragment( idOrSlug );
 
-		if ( ! parentFragment ) {
+		if( ! parentFragment ) {
 			fragment = parent.createFragment( idOrSlug, next );
 			convertNestedObjects( parent, fragment );
 
-		} else if ( parentFragment !== next ) {
+		} else if( parentFragment !== next ) {
 			Object.assign( parentFragment, next );
 			fragment = actual[ key ] = parentFragment;
 			convertNestedObjects( parent, fragment );

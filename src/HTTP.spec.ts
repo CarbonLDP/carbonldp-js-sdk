@@ -27,7 +27,7 @@ describe( module( "Carbon/HTTP" ), ():void => {
 	it( isDefined(), ():void => {
 		expect( HTTP ).toBeDefined();
 		expect( Utils.isObject( HTTP ) ).toBe( true );
-	});
+	} );
 
 	it( reexports(
 		STATIC,
@@ -36,7 +36,7 @@ describe( module( "Carbon/HTTP" ), ():void => {
 	), ():void => {
 		expect( HTTP.Errors ).toBeDefined();
 		expect( HTTP.Errors ).toBe( Errors );
-	});
+	} );
 
 	it( reexports(
 		STATIC,
@@ -45,7 +45,7 @@ describe( module( "Carbon/HTTP" ), ():void => {
 	), ():void => {
 		expect( HTTP.Header ).toBeDefined();
 		expect( HTTP.Header ).toBe( Header );
-	});
+	} );
 
 	it( reexports(
 		STATIC,
@@ -54,7 +54,7 @@ describe( module( "Carbon/HTTP" ), ():void => {
 	), ():void => {
 		expect( HTTP.JSONParser ).toBeDefined();
 		expect( HTTP.JSONParser ).toBe( JSONParser );
-	});
+	} );
 
 	it( reexports(
 		STATIC,
@@ -63,7 +63,7 @@ describe( module( "Carbon/HTTP" ), ():void => {
 	), ():void => {
 		expect( HTTP.JSONLDParser ).toBeDefined();
 		expect( HTTP.JSONLDParser ).toBe( JSONLDParser );
-	});
+	} );
 
 	it( reexports(
 		STATIC,
@@ -72,7 +72,7 @@ describe( module( "Carbon/HTTP" ), ():void => {
 	), ():void => {
 		expect( HTTP.Method ).toBeDefined();
 		expect( HTTP.Method ).toBe( Method );
-	});
+	} );
 
 	it( reexports(
 		STATIC,
@@ -81,7 +81,7 @@ describe( module( "Carbon/HTTP" ), ():void => {
 	), ():void => {
 		expect( HTTP.Parser ).toBeDefined();
 		expect( HTTP.Parser ).toBe( Parser );
-	});
+	} );
 
 	it( reexports(
 		STATIC,
@@ -90,7 +90,7 @@ describe( module( "Carbon/HTTP" ), ():void => {
 	), ():void => {
 		expect( HTTP.Request ).toBeDefined();
 		expect( HTTP.Request ).toBe( Request );
-	});
+	} );
 
 	it( reexports(
 		STATIC,
@@ -99,7 +99,7 @@ describe( module( "Carbon/HTTP" ), ():void => {
 	), ():void => {
 		expect( HTTP.Response ).toBeDefined();
 		expect( HTTP.Response ).toBe( Response );
-	});
+	} );
 
 	it( reexports(
 		STATIC,
@@ -108,7 +108,7 @@ describe( module( "Carbon/HTTP" ), ():void => {
 	), ():void => {
 		expect( HTTP.StatusCode ).toBeDefined();
 		expect( HTTP.StatusCode ).toBe( StatusCode );
-	});
+	} );
 
 	it( reexports(
 		STATIC,
@@ -117,5 +117,5 @@ describe( module( "Carbon/HTTP" ), ():void => {
 	), ():void => {
 		expect( HTTP.StringParser ).toBeDefined();
 		expect( HTTP.StringParser ).toBe( StringParser );
-	});
-});
+	} );
+} );

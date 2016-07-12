@@ -3,13 +3,15 @@
 
 module.exports = function( config ) {
 	config.set( {
-		basePath: "",
-
 		frameworks: [ "jspm", "jasmine" ],
 
 		jspm: {
+			browser: "jspm.browser.js",
 			config: "jspm.config.js",
+
 			packages: "test/jspm_packages/",
+
+			stripExtension: false,
 
 			loadFiles: [
 				"test/karma-jasmine/lib/extender.js",
@@ -19,6 +21,7 @@ module.exports = function( config ) {
 				"src/**/*.spec.ts"
 			],
 			serveFiles: [
+				"tsconfig.json",
 				"src/**/!(*.spec).ts"
 			]
 		},

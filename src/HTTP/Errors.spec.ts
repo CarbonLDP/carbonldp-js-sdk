@@ -42,12 +42,12 @@ import * as Errors from "./Errors";
 
 describe( module(
 	"Carbon/HTTP/Errors"
-), ():void  => {
+), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( Errors ).toBeDefined();
 		expect( Utils.isObject( Errors ) ).toBe( true );
-	});
+	} );
 
 	it( reexports(
 		STATIC,
@@ -56,7 +56,7 @@ describe( module(
 	), ():void => {
 		expect( Errors.Error ).toBeDefined();
 		expect( Errors.Error ).toBe( HTTPError );
-	});
+	} );
 
 	it( reexports(
 		STATIC,
@@ -65,7 +65,7 @@ describe( module(
 	), ():void => {
 		expect( Errors.BadRequestError ).toBeDefined();
 		expect( Errors.BadRequestError ).toBe( BadRequestError );
-	});
+	} );
 
 	it( reexports(
 		STATIC,
@@ -74,7 +74,7 @@ describe( module(
 	), ():void => {
 		expect( Errors.ConflictError ).toBeDefined();
 		expect( Errors.ConflictError ).toBe( ConflictError );
-	});
+	} );
 
 	it( reexports(
 		STATIC,
@@ -83,7 +83,7 @@ describe( module(
 	), ():void => {
 		expect( Errors.ForbiddenError ).toBeDefined();
 		expect( Errors.ForbiddenError ).toBe( ForbiddenError );
-	});
+	} );
 
 	it( reexports(
 		STATIC,
@@ -92,7 +92,7 @@ describe( module(
 	), ():void => {
 		expect( Errors.MethodNotAllowedError ).toBeDefined();
 		expect( Errors.MethodNotAllowedError ).toBe( MethodNotAllowedError );
-	});
+	} );
 
 	it( reexports(
 		STATIC,
@@ -101,7 +101,7 @@ describe( module(
 	), ():void => {
 		expect( Errors.NotAcceptableError ).toBeDefined();
 		expect( Errors.NotAcceptableError ).toBe( NotAcceptableError );
-	});
+	} );
 
 	it( reexports(
 		STATIC,
@@ -110,7 +110,7 @@ describe( module(
 	), ():void => {
 		expect( Errors.NotFoundError ).toBeDefined();
 		expect( Errors.NotFoundError ).toBe( NotFoundError );
-	});
+	} );
 
 	it( reexports(
 		STATIC,
@@ -119,7 +119,7 @@ describe( module(
 	), ():void => {
 		expect( Errors.PreconditionFailedError ).toBeDefined();
 		expect( Errors.PreconditionFailedError ).toBe( PreconditionFailedError );
-	});
+	} );
 
 	it( reexports(
 		STATIC,
@@ -128,7 +128,7 @@ describe( module(
 	), ():void => {
 		expect( Errors.PreconditionRequiredError ).toBeDefined();
 		expect( Errors.PreconditionRequiredError ).toBe( PreconditionRequiredError );
-	});
+	} );
 
 	it( reexports(
 		STATIC,
@@ -137,7 +137,7 @@ describe( module(
 	), ():void => {
 		expect( Errors.RequestEntityTooLargeError ).toBeDefined();
 		expect( Errors.RequestEntityTooLargeError ).toBe( RequestEntityTooLargeError );
-	});
+	} );
 
 	it( reexports(
 		STATIC,
@@ -146,7 +146,7 @@ describe( module(
 	), ():void => {
 		expect( Errors.RequestHeaderFieldsTooLargeError ).toBeDefined();
 		expect( Errors.RequestHeaderFieldsTooLargeError ).toBe( RequestHeaderFieldsTooLargeError );
-	});
+	} );
 
 	it( reexports(
 		STATIC,
@@ -155,7 +155,7 @@ describe( module(
 	), ():void => {
 		expect( Errors.RequestURITooLongError ).toBeDefined();
 		expect( Errors.RequestURITooLongError ).toBe( RequestURITooLongError );
-	});
+	} );
 
 	it( reexports(
 		STATIC,
@@ -164,7 +164,7 @@ describe( module(
 	), ():void => {
 		expect( Errors.TooManyRequestsError ).toBeDefined();
 		expect( Errors.TooManyRequestsError ).toBe( TooManyRequestsError );
-	});
+	} );
 
 	it( reexports(
 		STATIC,
@@ -173,7 +173,7 @@ describe( module(
 	), ():void => {
 		expect( Errors.UnauthorizedError ).toBeDefined();
 		expect( Errors.UnauthorizedError ).toBe( UnauthorizedError );
-	});
+	} );
 
 	it( reexports(
 		STATIC,
@@ -182,7 +182,7 @@ describe( module(
 	), ():void => {
 		expect( Errors.UnsupportedMediaTypeError ).toBeDefined();
 		expect( Errors.UnsupportedMediaTypeError ).toBe( UnsupportedMediaTypeError );
-	});
+	} );
 
 	it( reexports(
 		STATIC,
@@ -191,7 +191,7 @@ describe( module(
 	), ():void => {
 		expect( Errors.BadResponseError ).toBeDefined();
 		expect( Errors.BadResponseError ).toBe( BadResponseError );
-	});
+	} );
 
 	it( reexports(
 		STATIC,
@@ -200,7 +200,7 @@ describe( module(
 	), ():void => {
 		expect( Errors.BadGatewayError ).toBeDefined();
 		expect( Errors.BadGatewayError ).toBe( BadGatewayError );
-	});
+	} );
 
 	it( reexports(
 		STATIC,
@@ -209,7 +209,7 @@ describe( module(
 	), ():void => {
 		expect( Errors.GatewayTimeoutError ).toBeDefined();
 		expect( Errors.GatewayTimeoutError ).toBe( GatewayTimeoutError );
-	});
+	} );
 
 	it( reexports(
 		STATIC,
@@ -218,7 +218,7 @@ describe( module(
 	), ():void => {
 		expect( Errors.HTTPVersionNotSupportedError ).toBeDefined();
 		expect( Errors.HTTPVersionNotSupportedError ).toBe( HTTPVersionNotSupportedError );
-	});
+	} );
 
 	it( reexports(
 		STATIC,
@@ -227,7 +227,7 @@ describe( module(
 	), ():void => {
 		expect( Errors.InternalServerErrorError ).toBeDefined();
 		expect( Errors.InternalServerErrorError ).toBe( InternalServerErrorError );
-	});
+	} );
 
 	it( reexports(
 		STATIC,
@@ -236,7 +236,7 @@ describe( module(
 	), ():void => {
 		expect( Errors.NotImplementedError ).toBeDefined();
 		expect( Errors.NotImplementedError ).toBe( NotImplementedError );
-	});
+	} );
 
 	it( reexports(
 		STATIC,
@@ -245,7 +245,7 @@ describe( module(
 	), ():void => {
 		expect( Errors.ServiceUnavailableError ).toBeDefined();
 		expect( Errors.ServiceUnavailableError ).toBe( ServiceUnavailableError );
-	});
+	} );
 
 	it( reexports(
 		STATIC,
@@ -254,7 +254,7 @@ describe( module(
 	), ():void => {
 		expect( Errors.UnknownError ).toBeDefined();
 		expect( Errors.UnknownError ).toBe( UnknownError );
-	});
+	} );
 
 	it( hasProperty(
 		STATIC,
@@ -266,21 +266,21 @@ describe( module(
 		expect( Utils.isArray( Errors.client ) ).toBe( true );
 
 		expect( Errors.client.length ).toBe( 14 );
-		expect( Errors.client.indexOf( BadRequestError ) ).not.toBe( -1 );
-		expect( Errors.client.indexOf( ConflictError ) ).not.toBe( -1 );
-		expect( Errors.client.indexOf( ForbiddenError ) ).not.toBe( -1 );
-		expect( Errors.client.indexOf( MethodNotAllowedError ) ).not.toBe( -1 );
-		expect( Errors.client.indexOf( NotAcceptableError ) ).not.toBe( -1 );
-		expect( Errors.client.indexOf( NotFoundError ) ).not.toBe( -1 );
-		expect( Errors.client.indexOf( PreconditionFailedError ) ).not.toBe( -1 );
-		expect( Errors.client.indexOf( PreconditionRequiredError ) ).not.toBe( -1 );
-		expect( Errors.client.indexOf( RequestEntityTooLargeError ) ).not.toBe( -1 );
-		expect( Errors.client.indexOf( RequestHeaderFieldsTooLargeError ) ).not.toBe( -1 );
-		expect( Errors.client.indexOf( RequestURITooLongError ) ).not.toBe( -1 );
-		expect( Errors.client.indexOf( TooManyRequestsError ) ).not.toBe( -1 );
-		expect( Errors.client.indexOf( UnauthorizedError ) ).not.toBe( -1 );
-		expect( Errors.client.indexOf( UnsupportedMediaTypeError ) ).not.toBe( -1 );
-	});
+		expect( Errors.client.indexOf( BadRequestError ) ).not.toBe( - 1 );
+		expect( Errors.client.indexOf( ConflictError ) ).not.toBe( - 1 );
+		expect( Errors.client.indexOf( ForbiddenError ) ).not.toBe( - 1 );
+		expect( Errors.client.indexOf( MethodNotAllowedError ) ).not.toBe( - 1 );
+		expect( Errors.client.indexOf( NotAcceptableError ) ).not.toBe( - 1 );
+		expect( Errors.client.indexOf( NotFoundError ) ).not.toBe( - 1 );
+		expect( Errors.client.indexOf( PreconditionFailedError ) ).not.toBe( - 1 );
+		expect( Errors.client.indexOf( PreconditionRequiredError ) ).not.toBe( - 1 );
+		expect( Errors.client.indexOf( RequestEntityTooLargeError ) ).not.toBe( - 1 );
+		expect( Errors.client.indexOf( RequestHeaderFieldsTooLargeError ) ).not.toBe( - 1 );
+		expect( Errors.client.indexOf( RequestURITooLongError ) ).not.toBe( - 1 );
+		expect( Errors.client.indexOf( TooManyRequestsError ) ).not.toBe( - 1 );
+		expect( Errors.client.indexOf( UnauthorizedError ) ).not.toBe( - 1 );
+		expect( Errors.client.indexOf( UnsupportedMediaTypeError ) ).not.toBe( - 1 );
+	} );
 
 	it( hasProperty(
 		STATIC,
@@ -292,14 +292,14 @@ describe( module(
 		expect( Utils.isArray( Errors.server ) ).toBe( true );
 
 		expect( Errors.server.length ).toBe( 7 );
-		expect( Errors.server.indexOf( BadResponseError ) ).not.toBe( -1 );
-		expect( Errors.server.indexOf( BadGatewayError ) ).not.toBe( -1 );
-		expect( Errors.server.indexOf( GatewayTimeoutError ) ).not.toBe( -1 );
-		expect( Errors.server.indexOf( HTTPVersionNotSupportedError ) ).not.toBe( -1 );
-		expect( Errors.server.indexOf( InternalServerErrorError ) ).not.toBe( -1 );
-		expect( Errors.server.indexOf( NotImplementedError ) ).not.toBe( -1 );
-		expect( Errors.server.indexOf( ServiceUnavailableError ) ).not.toBe( -1 );
-	});
+		expect( Errors.server.indexOf( BadResponseError ) ).not.toBe( - 1 );
+		expect( Errors.server.indexOf( BadGatewayError ) ).not.toBe( - 1 );
+		expect( Errors.server.indexOf( GatewayTimeoutError ) ).not.toBe( - 1 );
+		expect( Errors.server.indexOf( HTTPVersionNotSupportedError ) ).not.toBe( - 1 );
+		expect( Errors.server.indexOf( InternalServerErrorError ) ).not.toBe( - 1 );
+		expect( Errors.server.indexOf( NotImplementedError ) ).not.toBe( - 1 );
+		expect( Errors.server.indexOf( ServiceUnavailableError ) ).not.toBe( - 1 );
+	} );
 
 	it( hasProperty(
 		STATIC,
@@ -332,6 +332,6 @@ describe( module(
 		expect( Errors.statusCodeMap.get( InternalServerErrorError.statusCode ) ).toBe( InternalServerErrorError );
 		expect( Errors.statusCodeMap.get( NotImplementedError.statusCode ) ).toBe( NotImplementedError );
 		expect( Errors.statusCodeMap.get( ServiceUnavailableError.statusCode ) ).toBe( ServiceUnavailableError );
-	});
+	} );
 
-});
+} );

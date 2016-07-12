@@ -8,12 +8,11 @@ import {
 	isDefined,
 	hasProperty,
 	hasMethod,
-	hasSignature
+	hasSignature,
 } from "./../test/JasmineExtender";
 import * as Document from "./../Document";
 import * as NS from "./../NS";
 import * as Pointer from "./../Pointer";
-import * as Resource from "./../Resource";
 import * as Utils from "./../Utils";
 
 import * as Container from "./Container";
@@ -23,7 +22,7 @@ describe( module( "Carbon/LDP/Container" ), ():void => {
 	it( isDefined(), ():void => {
 		expect( Container ).toBeDefined();
 		expect( Utils.isObject( Container ) ).toBe( true );
-	});
+	} );
 
 	it( hasProperty(
 		STATIC,
@@ -34,7 +33,7 @@ describe( module( "Carbon/LDP/Container" ), ():void => {
 		expect( Utils.isString( Container.RDF_CLASS ) ).toBe( true );
 
 		expect( Container.RDF_CLASS ).toBe( NS.LDP.Class.Container );
-	});
+	} );
 
 	it( hasProperty(
 		STATIC,
@@ -45,37 +44,37 @@ describe( module( "Carbon/LDP/Container" ), ():void => {
 		expect( Utils.isObject( Container.SCHEMA ) ).toBe( true );
 
 		expect( Utils.hasProperty( Container.SCHEMA, "contains" ) ).toBe( true );
-		expect( Container.SCHEMA[ "contains" ] ).toEqual({
+		expect( Container.SCHEMA[ "contains" ] ).toEqual( {
 			"@id": NS.LDP.Predicate.contains,
 			"@container": "@set",
-			"@type": "@id"
-		});
+			"@type": "@id",
+		} );
 
 		expect( Utils.hasProperty( Container.SCHEMA, "members" ) ).toBe( true );
-		expect( Container.SCHEMA[ "members" ] ).toEqual({
+		expect( Container.SCHEMA[ "members" ] ).toEqual( {
 			"@id": NS.LDP.Predicate.member,
 			"@container": "@set",
-			"@type": "@id"
-		});
+			"@type": "@id",
+		} );
 
 		expect( Utils.hasProperty( Container.SCHEMA, "memberOfRelation" ) ).toBe( true );
-		expect( Container.SCHEMA[ "memberOfRelation" ] ).toEqual({
+		expect( Container.SCHEMA[ "memberOfRelation" ] ).toEqual( {
 			"@id": NS.LDP.Predicate.memberOfRelation,
-			"@type": "@id"
-		});
+			"@type": "@id",
+		} );
 
 		expect( Utils.hasProperty( Container.SCHEMA, "hasMemberRelation" ) ).toBe( true );
-		expect( Container.SCHEMA[ "hasMemberRelation" ] ).toEqual({
+		expect( Container.SCHEMA[ "hasMemberRelation" ] ).toEqual( {
 			"@id": NS.LDP.Predicate.hasMemberRelation,
-			"@type": "@id"
-		});
+			"@type": "@id",
+		} );
 
 		expect( Utils.hasProperty( Container.SCHEMA, "insertedContentRelation" ) ).toBe( true );
-		expect( Container.SCHEMA[ "insertedContentRelation" ] ).toEqual({
+		expect( Container.SCHEMA[ "insertedContentRelation" ] ).toEqual( {
 			"@id": NS.LDP.Predicate.insertedContentRelation,
-			"@type": "@id"
-		});
-	});
+			"@type": "@id",
+		} );
+	} );
 
 	describe( clazz(
 		"Carbon.LDP.Container.Factory",
@@ -85,15 +84,15 @@ describe( module( "Carbon/LDP/Container" ), ():void => {
 		it( isDefined(), ():void => {
 			expect( Container.Factory ).toBeDefined();
 			expect( Utils.isFunction( Container.Factory ) ).toBe( true );
-		});
+		} );
 
 		it( hasMethod(
 			STATIC,
 			"hasClassProperties",
 			"Returns true if the object has the properties to be defined as a LDP Container", [
-				{ name: "object", type: "Object" }
+				{name: "object", type: "Object"},
 			],
-			{ type: "boolean" }
+			{type: "boolean"}
 		), ():void => {
 			expect( Container.Factory.hasClassProperties ).toBeDefined();
 			expect( Utils.isFunction( Container.Factory.hasClassProperties ) ).toBe( true );
@@ -103,7 +102,7 @@ describe( module( "Carbon/LDP/Container" ), ():void => {
 
 			object = {
 				hasMemberRelation: null,
-				memberOfRelation: null
+				memberOfRelation: null,
 			};
 			expect( Container.Factory.hasClassProperties( object ) ).toBe( true );
 
@@ -114,17 +113,17 @@ describe( module( "Carbon/LDP/Container" ), ():void => {
 			delete object.memberOfRelation;
 			expect( Container.Factory.hasClassProperties( object ) ).toBe( true );
 			object.memberOfRelation = null;
-		});
+		} );
 
 		it( hasMethod(
 			STATIC,
 			"decorate",
 			"Decorate the object with the properties and functions of a LDP Container", [
-				{ name: "object", type: "Object" },
-				{ name: "hasMemberRelation", type: "string | Carbon.Pointer.Class", optional: true },
-				{ name: "memberOfRelation", type: "string | Carbon.Pointer.Class", optional: true },
+				{name: "object", type: "Object"},
+				{name: "hasMemberRelation", type: "string | Carbon.Pointer.Class", optional: true},
+				{name: "memberOfRelation", type: "string | Carbon.Pointer.Class", optional: true},
 			],
-			{ type: "Carbon.LDP.Container.Class" }
+			{type: "Carbon.LDP.Container.Class"}
 		), ():void => {
 			expect( Container.Factory.decorate ).toBeDefined();
 			expect( Utils.isFunction( Container.Factory.decorate ) ).toBe( true );
@@ -134,7 +133,7 @@ describe( module( "Carbon/LDP/Container" ), ():void => {
 
 			object = {
 				hasMemberRelation: "http://example.com/ns#my-member",
-				memberOfRelation: "http://example.com/ns#is-member-of"
+				memberOfRelation: "http://example.com/ns#is-member-of",
 			};
 			container = Container.Factory.decorate( object );
 			expect( Container.Factory.hasClassProperties( container ) ).toBe( true );
@@ -155,7 +154,7 @@ describe( module( "Carbon/LDP/Container" ), ():void => {
 			expect( container.memberOfRelation ).toBeUndefined();
 
 			object = {
-				memberOfRelation: "http://example.com/ns#is-member-of"
+				memberOfRelation: "http://example.com/ns#is-member-of",
 			};
 			container = Container.Factory.decorate( object );
 			expect( Container.Factory.hasClassProperties( container ) ).toBe( true );
@@ -163,7 +162,7 @@ describe( module( "Carbon/LDP/Container" ), ():void => {
 			expect( container.hasMemberRelation ).toBeUndefined();
 			expect( Pointer.Factory.is( container.memberOfRelation ) ).toBe( true );
 			expect( container.memberOfRelation.id ).toBe( "http://example.com/ns#is-member-of" );
-		});
+		} );
 
 		describe( method(
 			STATIC,
@@ -172,9 +171,9 @@ describe( module( "Carbon/LDP/Container" ), ():void => {
 
 			it( hasSignature(
 				"Returns true if the Pointer provided is an LDP Container.", [
-					{ name: "pointer", type: "Carbon.Pointer.Class" }
+					{name: "pointer", type: "Carbon.Pointer.Class"},
 				],
-				{ type: "boolean" }
+				{type: "boolean"}
 			), ():void => {
 				expect( Container.Factory.hasRDFClass ).toBeDefined();
 				expect( Utils.isFunction( Container.Factory.hasRDFClass ) ).toBe( true );
@@ -259,13 +258,13 @@ describe( module( "Carbon/LDP/Container" ), ():void => {
 
 				pointer = Pointer.Factory.create( "http://example.com/resource/#pointer" );
 				expect( Container.Factory.hasRDFClass( pointer ) ).toBe( false );
-			});
+			} );
 
 			it( hasSignature(
 				"Returns true if the Object provided is an LDP Container.", [
-					{ name: "expandedObject", type: "Object" }
+					{name: "expandedObject", type: "Object"},
 				],
-				{ type: "boolean" }
+				{type: "boolean"}
 			), ():void => {
 				expect( Container.Factory.hasRDFClass ).toBeDefined();
 				expect( Utils.isFunction( Container.Factory.hasRDFClass ) ).toBe( true );
@@ -277,15 +276,15 @@ describe( module( "Carbon/LDP/Container" ), ():void => {
 					"@type": [
 						"http://www.w3.org/ns/ldp#RDFSource",
 						"http://www.w3.org/ns/ldp#Container",
-						"http://www.w3.org/ns/ldp#BasicContainer"
+						"http://www.w3.org/ns/ldp#BasicContainer",
 					],
-					"http://example.com/ns#string": [{
-						"@value": "a string"
-					}],
-					"http://example.com/ns#integer": [{
+					"http://example.com/ns#string": [ {
+						"@value": "a string",
+					} ],
+					"http://example.com/ns#integer": [ {
 						"@value": "100",
-						"@type": "http://www.w3.org/2001/XMLSchema#integer"
-					}]
+						"@type": "http://www.w3.org/2001/XMLSchema#integer",
+					} ],
 				};
 				expect( Container.Factory.hasRDFClass( object ) ).toBe( true );
 
@@ -294,15 +293,15 @@ describe( module( "Carbon/LDP/Container" ), ():void => {
 					"@type": [
 						"http://www.w3.org/ns/ldp#RDFSource",
 						"http://www.w3.org/ns/ldp#Container",
-						"http://www.w3.org/ns/ldp#DirectContainer"
+						"http://www.w3.org/ns/ldp#DirectContainer",
 					],
-					"http://example.com/ns#string": [{
-						"@value": "a string"
-					}],
-					"http://example.com/ns#integer": [{
+					"http://example.com/ns#string": [ {
+						"@value": "a string",
+					} ],
+					"http://example.com/ns#integer": [ {
 						"@value": "100",
-						"@type": "http://www.w3.org/2001/XMLSchema#integer"
-					}]
+						"@type": "http://www.w3.org/2001/XMLSchema#integer",
+					} ],
 				};
 				expect( Container.Factory.hasRDFClass( object ) ).toBe( true );
 
@@ -311,15 +310,15 @@ describe( module( "Carbon/LDP/Container" ), ():void => {
 					"@type": [
 						"http://www.w3.org/ns/ldp#RDFSource",
 						"http://www.w3.org/ns/ldp#Container",
-						"http://www.w3.org/ns/ldp#IndirectContainer"
+						"http://www.w3.org/ns/ldp#IndirectContainer",
 					],
-					"http://example.com/ns#string": [{
-						"@value": "a string"
-					}],
-					"http://example.com/ns#integer": [{
+					"http://example.com/ns#string": [ {
+						"@value": "a string",
+					} ],
+					"http://example.com/ns#integer": [ {
 						"@value": "100",
-						"@type": "http://www.w3.org/2001/XMLSchema#integer"
-					}]
+						"@type": "http://www.w3.org/2001/XMLSchema#integer",
+					} ],
 				};
 				expect( Container.Factory.hasRDFClass( object ) ).toBe( true );
 
@@ -327,15 +326,15 @@ describe( module( "Carbon/LDP/Container" ), ():void => {
 					"@id": "http://example.com/resource/",
 					"@type": [
 						"http://www.w3.org/ns/ldp#RDFSource",
-						"http://www.w3.org/ns/ldp#BasicContainer"
+						"http://www.w3.org/ns/ldp#BasicContainer",
 					],
-					"http://example.com/ns#string": [{
-						"@value": "a string"
-					}],
-					"http://example.com/ns#integer": [{
+					"http://example.com/ns#string": [ {
+						"@value": "a string",
+					} ],
+					"http://example.com/ns#integer": [ {
 						"@value": "100",
-						"@type": "http://www.w3.org/2001/XMLSchema#integer"
-					}]
+						"@type": "http://www.w3.org/2001/XMLSchema#integer",
+					} ],
 				};
 				expect( Container.Factory.hasRDFClass( object ) ).toBe( true );
 
@@ -343,15 +342,15 @@ describe( module( "Carbon/LDP/Container" ), ():void => {
 					"@id": "http://example.com/resource/",
 					"@type": [
 						"http://www.w3.org/ns/ldp#RDFSource",
-						"http://www.w3.org/ns/ldp#DirectContainer"
+						"http://www.w3.org/ns/ldp#DirectContainer",
 					],
-					"http://example.com/ns#string": [{
-						"@value": "a string"
-					}],
-					"http://example.com/ns#integer": [{
+					"http://example.com/ns#string": [ {
+						"@value": "a string",
+					} ],
+					"http://example.com/ns#integer": [ {
 						"@value": "100",
-						"@type": "http://www.w3.org/2001/XMLSchema#integer"
-					}]
+						"@type": "http://www.w3.org/2001/XMLSchema#integer",
+					} ],
 				};
 				expect( Container.Factory.hasRDFClass( object ) ).toBe( true );
 
@@ -359,15 +358,15 @@ describe( module( "Carbon/LDP/Container" ), ():void => {
 					"@id": "http://example.com/resource/",
 					"@type": [
 						"http://www.w3.org/ns/ldp#RDFSource",
-						"http://www.w3.org/ns/ldp#IndirectContainer"
+						"http://www.w3.org/ns/ldp#IndirectContainer",
 					],
-					"http://example.com/ns#string": [{
-						"@value": "a string"
-					}],
-					"http://example.com/ns#integer": [{
+					"http://example.com/ns#string": [ {
+						"@value": "a string",
+					} ],
+					"http://example.com/ns#integer": [ {
 						"@value": "100",
-						"@type": "http://www.w3.org/2001/XMLSchema#integer"
-					}]
+						"@type": "http://www.w3.org/2001/XMLSchema#integer",
+					} ],
 				};
 				expect( Container.Factory.hasRDFClass( object ) ).toBe( true );
 
@@ -375,51 +374,51 @@ describe( module( "Carbon/LDP/Container" ), ():void => {
 					"@id": "http://example.com/resource/",
 					"@type": [
 						"http://www.w3.org/ns/ldp#RDFSource",
-						"http://www.w3.org/ns/ldp#Container"
+						"http://www.w3.org/ns/ldp#Container",
 					],
-					"http://example.com/ns#string": [{
-						"@value": "a string"
-					}],
-					"http://example.com/ns#integer": [{
+					"http://example.com/ns#string": [ {
+						"@value": "a string",
+					} ],
+					"http://example.com/ns#integer": [ {
 						"@value": "100",
-						"@type": "http://www.w3.org/2001/XMLSchema#integer"
-					}]
+						"@type": "http://www.w3.org/2001/XMLSchema#integer",
+					} ],
 				};
 				expect( Container.Factory.hasRDFClass( object ) ).toBe( true );
 
 				object = {
 					"@id": "http://example.com/resource/",
 					"@type": [
-						"http://www.w3.org/ns/ldp#RDFSource"
+						"http://www.w3.org/ns/ldp#RDFSource",
 					],
-					"http://example.com/ns#string": [{
-						"@value": "a string"
-					}],
-					"http://example.com/ns#integer": [{
+					"http://example.com/ns#string": [ {
+						"@value": "a string",
+					} ],
+					"http://example.com/ns#integer": [ {
 						"@value": "100",
-						"@type": "http://www.w3.org/2001/XMLSchema#integer"
-					}]
+						"@type": "http://www.w3.org/2001/XMLSchema#integer",
+					} ],
 				};
 				expect( Container.Factory.hasRDFClass( object ) ).toBe( false );
 
 
 				object = {
 					"@id": "http://example.com/resource/",
-					"http://example.com/ns#string": [{
-						"@value": "a string"
-					}],
-					"http://example.com/ns#integer": [{
+					"http://example.com/ns#string": [ {
+						"@value": "a string",
+					} ],
+					"http://example.com/ns#integer": [ {
 						"@value": "100",
-						"@type": "http://www.w3.org/2001/XMLSchema#integer"
-					}]
+						"@type": "http://www.w3.org/2001/XMLSchema#integer",
+					} ],
 				};
 				expect( Container.Factory.hasRDFClass( object ) ).toBe( false );
 
 				expect( Container.Factory.hasRDFClass( {} ) ).toBe( false );
-			});
+			} );
 
-		});
+		} );
 
-	});
+	} );
 
-});
+} );

@@ -58,14 +58,14 @@ export class Factory {
 
 		container.types.push( NS.LDP.Class.Container );
 
-		if( !! hasMemberRelation ) {
+		if( ! ! hasMemberRelation ) {
 			container.hasMemberRelation = Pointer.Factory.is( hasMemberRelation ) ? <Pointer.Class> hasMemberRelation : Pointer.Factory.create( <string> hasMemberRelation );
 		}
 
-		if( !! memberOfRelation ) {
+		if( ! ! memberOfRelation ) {
 			container.memberOfRelation = Pointer.Factory.is( memberOfRelation ) ? <Pointer.Class> memberOfRelation : Pointer.Factory.create( <string> memberOfRelation );
 		}
-		
+
 		return container;
 	}
 

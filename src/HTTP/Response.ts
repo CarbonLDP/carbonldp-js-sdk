@@ -3,10 +3,15 @@ import {ClientRequest, IncomingMessage} from "http";
 import {isString, isObject} from "../Utils";
 
 export class Class {
+	status:number;
+	data:string;
+	headers:Map<string, Header.Class>;
+	request:XMLHttpRequest | ClientRequest;
+
 	constructor( request:XMLHttpRequest );
 	constructor( request:ClientRequest, data:string, response?:IncomingMessage );
 	constructor( request:XMLHttpRequest | ClientRequest, data?:string, response:IncomingMessage = <any>{} ) {
-		if ( typeof XMLHttpRequest !== "undefined" && request instanceof XMLHttpRequest ) {
+		if( typeof XMLHttpRequest !== "undefined" && request instanceof XMLHttpRequest ) {
 			let res:XMLHttpRequest = request;
 			this.status = res.status;
 			this.data = res.responseText;
@@ -20,11 +25,6 @@ export class Class {
 		this.request = request;
 	}
 
-	status:number;
-	data:string;
-	headers:Map<string, Header.Class>;
-	request:XMLHttpRequest | ClientRequest;
-
 	public getHeader( name:string ):Header.Class {
 		name = name.toLowerCase();
 		return this.headers.get( name ) || null;
@@ -33,12 +33,12 @@ export class Class {
 	private setHeaders( headersString:string ):void;
 	private setHeaders( headerObject:Object ):void;
 	private setHeaders( headers:any ):void {
-		if ( isString( headers ) ) {
+		if( isString( headers ) ) {
 			this.headers = Header.Util.parseHeaders( headers );
 		} else {
 			this.headers = new Map<string, Header.Class>();
-			if ( isObject( headers ) ) {
-				for ( let name of Object.keys( headers ) ) {
+			if( isObject( headers ) ) {
+				for( let name of Object.keys( headers ) ) {
 					this.headers.set( name, new Header.Class( headers[ name ] ) );
 				}
 			}
