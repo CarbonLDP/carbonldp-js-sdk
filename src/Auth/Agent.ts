@@ -1,8 +1,8 @@
-import * as Utils from "./../Utils";
 import * as Document from "./../Document";
+import IllegalArgumentError from "./../Errors/IllegalArgumentError";
 import * as NS from "./../NS";
 import * as ObjectSchema from "./../ObjectSchema";
-import IllegalArgumentError from "./../Errors/IllegalArgumentError";
+import * as Utils from "./../Utils";
 
 export const RDF_CLASS:string = NS.CS.Class.Agent;
 
@@ -22,7 +22,7 @@ export const SCHEMA:ObjectSchema.Class = {
 	"enabled": {
 		"@id": NS.CS.Predicate.enabled,
 		"@type": NS.XSD.DataType.boolean,
-	}
+	},
 };
 
 export interface Class extends Document.Class {
@@ -42,8 +42,8 @@ export class Factory {
 	static is( object:Object ):boolean {
 		return Factory.hasClassProperties( object )
 			&& Document.Factory.hasClassProperties( object )
-			// TODO Use Resource.Utils.hasType, when available
-			&& ( <Class> object ).types.indexOf( NS.CS.Class.Agent ) !== -1;
+			// TODO Use (<Document.Class> object).hasType( RDF_CLASS ) when available
+			&& ( <Class> object ).types.indexOf( RDF_CLASS ) !== - 1;
 	}
 
 	static create( name:string, email:string, password:string ):Class {
@@ -51,12 +51,12 @@ export class Factory {
 	}
 
 	static createFrom<T extends Object>( object:T, name:string, email:string, password:string ):T & Class {
-		if ( ! Document.Factory.hasClassProperties( object ) )
+		if( ! Document.Factory.hasClassProperties( object ) )
 			object = Document.Factory.createFrom( object );
 
-		if ( ! name ) throw new IllegalArgumentError( "The name cannot be empty." );
-		if ( ! email ) throw new IllegalArgumentError( "The email cannot be empty." );
-		if ( ! password ) throw new IllegalArgumentError( "The password cannot be empty." );
+		if( ! name ) throw new IllegalArgumentError( "The name cannot be empty." );
+		if( ! email ) throw new IllegalArgumentError( "The email cannot be empty." );
+		if( ! password ) throw new IllegalArgumentError( "The password cannot be empty." );
 
 		let app:T & Class = <T & Class> object;
 		app.name = name;

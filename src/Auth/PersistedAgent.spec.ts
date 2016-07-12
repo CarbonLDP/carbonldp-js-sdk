@@ -18,7 +18,7 @@ describe( module( "Carbon/Auth/PersistedAgent" ), ():void => {
 	it( isDefined(), ():void => {
 		expect( PersistedAgent ).toBeDefined();
 		expect( Utils.isObject( PersistedAgent ) ).toBe( true );
-	});
+	} );
 
 	describe( clazz(
 		"Carbon.Auth.PersistedAgent.Factory",
@@ -28,15 +28,15 @@ describe( module( "Carbon/Auth/PersistedAgent" ), ():void => {
 		it( isDefined(), ():void => {
 			expect( PersistedAgent.Factory ).toBeDefined();
 			expect( Utils.isFunction( PersistedAgent.Factory ) ).toBe( true );
-		});
+		} );
 
 		it( hasMethod(
 			STATIC,
 			"hasClassProperties",
 			"Returns true if the object provided has the properties of a `Carbon.Auth.PersistedAgent.Class` object.", [
-				{ name: "object", type: "Object" }
+				{name: "object", type: "Object"},
 			],
-			{ type: "boolean" }
+			{type: "boolean"}
 		), ():void => {
 			expect( PersistedAgent.Factory.hasClassProperties ).toBeDefined();
 			expect( Utils.isFunction( PersistedAgent.Factory.hasClassProperties ) ).toBe( true );
@@ -62,15 +62,15 @@ describe( module( "Carbon/Auth/PersistedAgent" ), ():void => {
 			delete object.enabled;
 			expect( PersistedAgent.Factory.hasClassProperties( object ) ).toBe( false );
 			object.enabled = null;
-		});
+		} );
 
 		it( hasMethod(
 			STATIC,
 			"is",
 			"Returns true if the object provided is considered a `Carbon.Auth.PersistedAgent.Class` object.", [
-				{ name: "object", type: "Object" }
+				{name: "object", type: "Object"},
 			],
-			{ type: "boolean" }
+			{type: "boolean"}
 		), ():void => {
 			expect( PersistedAgent.Factory.is ).toBeDefined();
 			expect( Utils.isFunction( PersistedAgent.Factory.is ) ).toBe( true );
@@ -96,8 +96,8 @@ describe( module( "Carbon/Auth/PersistedAgent" ), ():void => {
 			expect( PersistedAgent.Factory.is( object ) ).toBe( false );
 			object.types.push( NS.CS.Class.Agent );
 			expect( PersistedAgent.Factory.is( object ) ).toBe( true );
-		});
+		} );
 
-	});
+	} );
 
-});
+} );

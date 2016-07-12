@@ -60,9 +60,10 @@ class Carbon extends AbstractContext {
 	/* tslint:enable: variable-name */
 
 	// TODO: Get package.json version directly
-	static get version():string { return "0.34.0"; }
+	static get version():string { return "0.35.1"; }
 
 	apps:Apps.Class;
+
 	get version():string { return Carbon.version; }
 
 	// TODO: Define settings type
@@ -77,7 +78,7 @@ class Carbon extends AbstractContext {
 	}
 
 	resolve( uri:string ):string {
-		if ( RDF.URI.Util.isAbsolute( uri ) ) return uri;
+		if( RDF.URI.Util.isAbsolute( uri ) ) return uri;
 
 		let finalURI:string = this.settings.get( "http.ssl" ) ? "https://" : "http://";
 		finalURI += this.settings.get( "domain" ) + "/" + this.getSetting( "platform.container" );

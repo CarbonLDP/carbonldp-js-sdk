@@ -22,16 +22,16 @@ export class Class {
 			let slug:string = Utils.isString( slugOrAgent ) ? slugOrAgent : null;
 			agentDocument = agentDocument || slugOrAgent;
 
-			if ( ! Agent.Factory.is( agentDocument ) ) throw new Errors.IllegalArgumentError( "The Document is not a cs:Agent object." );
+			if( ! Agent.Factory.is( agentDocument ) ) throw new Errors.IllegalArgumentError( "The Document is not a cs:Agent object." );
 
 			return slug ? this.context.documents.createChild( containerURI, slug, agentDocument ) : this.context.documents.createChild( containerURI, agentDocument );
-		});
+		} );
 	}
 
 	get( agentURI:string, requestOptions?:HTTP.Request.Options ):Promise<[ PersistedAgent.Class, HTTP.Response.Class ]> {
 		return this.resolveURI( agentURI ).then( ( uri:string ) => {
 			return this.context.documents.get( uri, requestOptions );
-		});
+		} );
 	}
 
 	private resolveURI( agentURI:string ):Promise<string> {
@@ -39,14 +39,14 @@ export class Class {
 			let containerURI:string = this.context.resolve( this.getContainerURI() );
 			let uri:string = URI.Util.resolve( containerURI, agentURI );
 
-			if ( ! URI.Util.isBaseOf( containerURI, uri ) ) throw new Errors.IllegalArgumentError( "The URI provided is not a valid agent of the current context." );
+			if( ! URI.Util.isBaseOf( containerURI, uri ) ) throw new Errors.IllegalArgumentError( "The URI provided is not a valid agent of the current context." );
 
 			resolve( uri );
-		});
+		} );
 	}
 
 	private getContainerURI():string {
-		if ( ! this.context.hasSetting( "platform.agents.container" ) ) throw new Errors.IllegalStateError( "The agents container URI hasn't been set." );
+		if( ! this.context.hasSetting( "platform.agents.container" ) ) throw new Errors.IllegalStateError( "The agents container URI hasn't been set." );
 		return this.context.getSetting( "platform.agents.container" );
 	}
 }

@@ -1,8 +1,8 @@
 "use strict";
-var Utils = require("./../Utils");
 var Document = require("./../Document");
-var NS = require("./../NS");
 var IllegalArgumentError_1 = require("./../Errors/IllegalArgumentError");
+var NS = require("./../NS");
+var Utils = require("./../Utils");
 exports.RDF_CLASS = NS.CS.Class.Agent;
 exports.SCHEMA = {
     "name": {
@@ -20,7 +20,7 @@ exports.SCHEMA = {
     "enabled": {
         "@id": NS.CS.Predicate.enabled,
         "@type": NS.XSD.DataType.boolean,
-    }
+    },
 };
 var Factory = (function () {
     function Factory() {
@@ -33,7 +33,7 @@ var Factory = (function () {
     Factory.is = function (object) {
         return Factory.hasClassProperties(object)
             && Document.Factory.hasClassProperties(object)
-            && object.types.indexOf(NS.CS.Class.Agent) !== -1;
+            && object.types.indexOf(exports.RDF_CLASS) !== -1;
     };
     Factory.create = function (name, email, password) {
         return Factory.createFrom({}, name, email, password);

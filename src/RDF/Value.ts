@@ -13,9 +13,9 @@ export interface Class {
 // TODO: Move all getters and setters to RDFNode.Util
 export class Util {
 	static areEqual( value1:Class, value2:Class ):boolean {
-		if ( Literal.Factory.is( value1 ) && Literal.Factory.is( value2 ) ) {
+		if( Literal.Factory.is( value1 ) && Literal.Factory.is( value2 ) ) {
 			return Literal.Util.areEqual( <Literal.Class> value1, <Literal.Class> value2 );
-		} else if ( RDFNode.Factory.is( value1 ) && RDFNode.Factory.is( value2 ) ) {
+		} else if( RDFNode.Factory.is( value1 ) && RDFNode.Factory.is( value2 ) ) {
 			return RDFNode.Util.areEqual( <RDFNode.Class> value1, <RDFNode.Class> value2 );
 		} else return false;
 	}
@@ -116,7 +116,7 @@ export class Util {
 		let properties:Array<any> = [];
 		for( let propertyValue of propertyValues ) {
 			let parsedValue:any = Util.parseValue( propertyValue, pointerLibrary );
-			if ( parsedValue !== null )
+			if( parsedValue !== null )
 				properties.push( parsedValue );
 		}
 
@@ -133,7 +133,7 @@ export class Util {
 			if( ! RDFNode.Factory.is( propertyValue ) ) continue;
 
 			let pointer:Pointer.Class = pointerLibrary.getPointer( propertyValue[ "@id" ] );
-			if ( pointer !== null )
+			if( pointer !== null )
 				propertyPointers.push( pointer );
 		}
 

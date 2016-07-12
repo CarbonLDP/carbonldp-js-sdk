@@ -1,46 +1,108 @@
 (function() {
+	describe( "something", () => {
+		it( "something else", ( done ) => {
+			"use strict";
 
-	var carbon = new Carbon();
+			let carbon = new Carbon();
+			carbon.setSetting( "domain", "hri-carbonldp.base22.io" );
 
-	// Define classes and properties
-	carbon.extendObjectSchema( "ex:BlogPost", {
-		"title": {
-			"@id": "ex:title",
-			"@type": "xsd:string"
-		}
-	});
+			carbon.extendObjectSchema( {
+				"acl": "http://www.w3.org/ns/auth/acl#",
+				"api": "http://purl.org/linked-data/api/vocab#",
+				"c": "http://carbonldp.com/ns/v1/platform#",
+				"cs": "http://carbonldp.com/ns/v1/security#",
+				"cp": "http://carbonldp.com/ns/v1/patch#",
+				"cc": "http://creativecommons.org/ns#",
+				"cert": "http://www.w3.org/ns/auth/cert#",
+				"dbp": "http://dbpedia.org/property/",
+				"dc": "http://purl.org/dc/terms/",
+				"doap": "http://usefulinc.com/ns/doap#",
+				"example": "http://example.org/ns#",
+				"ex": "http://example.org/ns#",
+				"exif": "http://www.w3.org/2003/12/exif/ns#",
+				"fn": "http://www.w3.org/2005/xpath-functions#",
+				"foaf": "http://xmlns.com/foaf/0.1/",
+				"geo": "http://www.w3.org/2003/01/geo/wgs84_pos#",
+				"geonames": "http://www.geonames.org/ontology#",
+				"gr": "http://purl.org/goodrelations/v1#",
+				"http": "http://www.w3.org/2006/http#",
+				"ldp": "http://www.w3.org/ns/ldp#",
+				"log": "http://www.w3.org/2000/10/swap/log#",
+				"owl": "http://www.w3.org/2002/07/owl#",
+				"rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+				"rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+				"rei": "http://www.w3.org/2004/06/rei#",
+				"rsa": "http://www.w3.org/ns/auth/rsa#",
+				"rss": "http://purl.org/rss/1.0/",
+				"sd": "http://www.w3.org/ns/sparql-service-description#",
+				"sfn": "http://www.w3.org/ns/sparql#",
+				"sioc": "http://rdfs.org/sioc/ns#",
+				"skos": "http://www.w3.org/2004/02/skos/core#",
+				"swrc": "http://swrc.ontoware.org/ontology#",
+				"types": "http://rdfs.org/sioc/types#",
+				"vcard": "http://www.w3.org/2001/vcard-rdf/3.0#",
+				"wot": "http://xmlns.com/wot/0.1/",
+				"xhtml": "http://www.w3.org/1999/xhtml#",
+				"xsd": "http://www.w3.org/2001/XMLSchema#"
+			} );
 
-	var username = $( "input[name=username]" ).val();
-	var password = $( "input[name=password]" ).val();
+			carbon.extendObjectSchema( {
+				"hri": "http://hri.base22.com/ns#",
+				"labels": {
+					"@id": "hri:labels",
+					"@type": "@id",
+					"@container": "@set"
+				},
+				"gradient": {
+					"@id": "hri:gradient",
+					"@type": "@id"
+				}
+			} );
 
-	var myBlog;
-	var blogPosts;
+			let appContext;
+			let resource;
 
-	carbon.Auth.authenticate( username, password ).then( function() {
-		// Authenticated
+			carbon.auth.authenticate( "hri@honda.com", "honda" ).then( function() {
+				return carbon.apps.getContext( "hri-emi-web-app/" );
+			} ).then( ( _appContext ) => {
+				appContext = _appContext;
+				return appContext.documents.get( "something-that-doesnt-exist/" );
+			} ).then( ( [ _resource, response ] ) => {
+				resource = _resource;
+				resource.contains = [];
+				return saveAndRefresh( resource );
+			} ).then( ( [ _resource, response ] ) => {
+				done( "Save was successful when it shouldn't be" );
+			} ).catch( ( error ) => {
+				console.error( "%o", error );
 
-		return carbon.apps.get( "my-blog" );
-	} ).then( function( processedResult ) {
-		myBlog = processedResult.result;
+				expect( "errors" in error ).toEqual( true );
+				expect( error.errors ).toBeDefined( true );
+				expect( Carbon.Utils.isArray( error.errors ) ).toEqual( true );
 
-		return myBlog.Documents.get( "blogPosts/" );
-	} ).then( function( processedResult ) {
-		var blogPostsContainer = processedResult.result;
+				expect( "requestID" in error ).toEqual( true );
+				expect( error.requestID ).toBeDefined( true );
+				expect( Carbon.Utils.isString( error.requestID ) ).toEqual( true );
 
-		blogPosts = blogPostsContainer.members;
-		var promises = [];
-		blogPosts.forEach( function( blogPost ) {
-			promises.push( blogPost.fetch() );
+				done();
+			} );
+
+			function saveAndRefresh( persistedDocument ) {
+				let responses = [];
+				return persistedDocument.save().then( ( [ persistedDocument, response ] ) => {
+					responses.push( response );
+					return persistedDocument.refresh();
+				} ).then( ( [ persistedDocument, response ] ) => {
+					responses.push( response );
+					return [ persistedDocument, responses ];
+				} );
+			}
+
+			function removeFragments( persistedDocument ) {
+				for( let fragment of persistedDocument.getFragments() ) {
+					persistedDocument.removeFragment( fragment );
+				}
+			}
 		} );
-
-		return Promise.all( promises );
-	} ).then( function() {
-		blogPosts.forEach( function( blogPost ) {
-			new XWidget({
-				data: blogPost,
-				// ...
-			} ).render();
-		});
 	} );
-
 })();

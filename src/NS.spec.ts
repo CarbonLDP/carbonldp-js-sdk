@@ -24,7 +24,7 @@ describe( module( "Carbon/NS" ), ():void => {
 	it( isDefined(), ():void => {
 		expect( NS ).toBeDefined();
 		expect( Utils.isObject( NS ) ).toBe( true );
-	});
+	} );
 
 	it( reexports(
 		STATIC,
@@ -33,7 +33,7 @@ describe( module( "Carbon/NS" ), ():void => {
 	), ():void => {
 		expect( NS.C ).toBeDefined();
 		expect( NS.C ).toBe( C );
-	});
+	} );
 
 	it( reexports(
 		STATIC,
@@ -42,7 +42,7 @@ describe( module( "Carbon/NS" ), ():void => {
 	), ():void => {
 		expect( NS.CP ).toBeDefined();
 		expect( NS.CP ).toBe( CP );
-	});
+	} );
 
 	it( reexports(
 		STATIC,
@@ -51,7 +51,7 @@ describe( module( "Carbon/NS" ), ():void => {
 	), ():void => {
 		expect( NS.CS ).toBeDefined();
 		expect( NS.CS ).toBe( CS );
-	});
+	} );
 
 	it( reexports(
 		STATIC,
@@ -60,7 +60,7 @@ describe( module( "Carbon/NS" ), ():void => {
 	), ():void => {
 		expect( NS.LDP ).toBeDefined();
 		expect( NS.LDP ).toBe( LDP );
-	});
+	} );
 
 	it( reexports(
 		STATIC,
@@ -69,7 +69,7 @@ describe( module( "Carbon/NS" ), ():void => {
 	), ():void => {
 		expect( NS.RDF ).toBeDefined();
 		expect( NS.RDF ).toBe( RDF );
-	});
+	} );
 
 	it( reexports(
 		STATIC,
@@ -78,7 +78,7 @@ describe( module( "Carbon/NS" ), ():void => {
 	), ():void => {
 		expect( NS.XSD ).toBeDefined();
 		expect( NS.XSD ).toBe( XSD );
-	});
+	} );
 
 	it( reexports(
 		STATIC,
@@ -87,6 +87,6 @@ describe( module( "Carbon/NS" ), ():void => {
 	), ():void => {
 		expect( NS.VCARD ).toBeDefined();
 		expect( NS.VCARD ).toBe( VCARD );
-	});
+	} );
 
-});
+} );

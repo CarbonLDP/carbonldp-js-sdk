@@ -5,11 +5,11 @@ export class Class implements Parser<Object> {
 		return new Promise<Object>( ( resolve:( result:string ) => void, reject:( error:Error ) => void ) => {
 			try {
 				resolve( JSON.parse( body ) );
-			} catch ( error ) {
+			} catch( error ) {
 				// TODO: Handle SyntaxError
 				reject( error );
 			}
-		});
+		} );
 	}
 }
 

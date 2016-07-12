@@ -8,7 +8,7 @@ import {
 	hasConstructor,
 	hasProperty,
 	hasMethod,
-	extendsClass
+	extendsClass,
 } from "./../test/JasmineExtender";
 
 import AbstractContext from "./../AbstractContext";
@@ -35,30 +35,30 @@ describe( module( "Carbon/App/Context" ), ():void => {
 					return uri;
 				}
 			}
-			let parentContext = new MockedContext();
+			parentContext = new MockedContext();
 			let app:PersistedApp = <any> App.Factory.create( "App name", "App description" );
 			app.rootContainer = <any> Pointer.Factory.create( "http://example.com/apps/example-app/" );
 			appContext = new AppContext( parentContext, app );
-		});
+		} );
 
 		it( isDefined(), ():void => {
 			expect( AppContext ).toBeDefined();
 			expect( Utils.isFunction( AppContext ) );
-		});
+		} );
 
-		it( hasConstructor([
-			{ name: "parentContext", type: "Carbon.Context" },
-			{ name: "app", type: "Carbon.App.Context" },
-		]), ():void => {
+		it( hasConstructor( [
+			{name: "parentContext", type: "Carbon.Context"},
+			{name: "app", type: "Carbon.App.Context"},
+		] ), ():void => {
 			expect( appContext ).toBeTruthy();
 			expect( appContext instanceof AppContext );
-		});
+		} );
 
 		it( extendsClass(
 			"Carbon.AbstractContext"
 		), ():void => {
 			expect( appContext instanceof AbstractContext );
-		});
+		} );
 
 		it( hasProperty(
 			INSTANCE,
@@ -68,15 +68,15 @@ describe( module( "Carbon/App/Context" ), ():void => {
 		), ():void => {
 			expect( appContext.app ).toBeDefined();
 			expect( App.Factory.is( appContext.app ) ).toBe( true );
-		});
+		} );
 
 		it( hasMethod(
 			INSTANCE,
 			"resolve",
 			"Resolve the URI provided in the scope of the application", [
-				{ name: "uri", type: "string" }
+				{name: "uri", type: "string"},
 			],
-			{ type: "string" }
+			{type: "string"}
 		), ():void => {
 			expect( appContext.resolve( "/child/" ) ).toBe( "http://example.com/apps/example-app/child/" );
 
@@ -84,8 +84,8 @@ describe( module( "Carbon/App/Context" ), ():void => {
 				.toBe( "http://example.com/apps/example-app/child-another/grandchild/" );
 			expect( appContext.resolve( "http://example.com/apps/another-app/child/" ) )
 				.toBe( "http://example.com/apps/another-app/child/" );
-		});
+		} );
 
-	});
+	} );
 
-});
+} );

@@ -6,10 +6,10 @@ import * as Utils from "./../Utils";
 import * as RetrievalPreferences from "./../RetrievalPreferences";
 
 export interface Class extends PersistedDocument.Class {
-	addMember( member:Pointer.Class ): Promise<HTTP.Response.Class>;
-	addMember( memberURI:string ): Promise<HTTP.Response.Class>;
+	addMember( member:Pointer.Class ):Promise<HTTP.Response.Class>;
+	addMember( memberURI:string ):Promise<HTTP.Response.Class>;
 
-	addMembers( members:(Pointer.Class | string)[] ): Promise<HTTP.Response.Class>;
+	addMembers( members:(Pointer.Class | string)[] ):Promise<HTTP.Response.Class>;
 
 	createChild( slug:string, object:Object ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
 	createChild( slug:string ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
@@ -25,11 +25,11 @@ export interface Class extends PersistedDocument.Class {
 	getMembers( includeNonReadable?:boolean, retrievalPreferences?:RetrievalPreferences.Class ):Promise<[ Pointer.Class[], HTTP.Response.Class ]>;
 	getMembers( retrievalPreferences?:RetrievalPreferences.Class ):Promise<[ Pointer.Class[], HTTP.Response.Class ]>;
 
-	removeMember( member:Pointer.Class ): Promise<HTTP.Response.Class>;
-	removeMember( memberURI:string ): Promise<HTTP.Response.Class>;
+	removeMember( member:Pointer.Class ):Promise<HTTP.Response.Class>;
+	removeMember( memberURI:string ):Promise<HTTP.Response.Class>;
 
-	removeMembers( members:(Pointer.Class | string)[] ): Promise<HTTP.Response.Class>;
-	removeAllMembers(): Promise<HTTP.Response.Class>;
+	removeMembers( members:(Pointer.Class | string)[] ):Promise<HTTP.Response.Class>;
+	removeAllMembers():Promise<HTTP.Response.Class>;
 
 	upload( slug:string, blob:Blob ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
 	upload( blob:Blob ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
@@ -37,14 +37,14 @@ export interface Class extends PersistedDocument.Class {
 	upload( blob:Buffer ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
 }
 
-function addMember( member:Pointer.Class ): Promise<HTTP.Response.Class>;
-function addMember( memberURI:string ): Promise<HTTP.Response.Class>;
-function addMember( memberOrUri:any ): Promise<HTTP.Response.Class> {
+function addMember( member:Pointer.Class ):Promise<HTTP.Response.Class>;
+function addMember( memberURI:string ):Promise<HTTP.Response.Class>;
+function addMember( memberOrUri:any ):Promise<HTTP.Response.Class> {
 	let that:PersistedDocument.Class = <PersistedDocument.Class> this;
 	return that._documents.addMember( that.id, memberOrUri );
 }
 
-function addMembers( members:(Pointer.Class | string)[] ): Promise<HTTP.Response.Class> {
+function addMembers( members:(Pointer.Class | string)[] ):Promise<HTTP.Response.Class> {
 	let that:PersistedDocument.Class = <PersistedDocument.Class> this;
 	return that._documents.addMembers( that.id, members );
 }
@@ -55,7 +55,7 @@ function createChild( object:Object ):Promise<[ Pointer.Class, HTTP.Response.Cla
 function createChild():Promise<[ Pointer.Class, HTTP.Response.Class ]>;
 function createChild( slugOrObject?:any, object?:Object ):Promise<[ Pointer.Class, HTTP.Response.Class ]> {
 	let slug:string = Utils.isString( slugOrObject ) ? slugOrObject : null;
-	object =  Utils.isString( slugOrObject ) ? object : slugOrObject;
+	object = Utils.isString( slugOrObject ) ? object : slugOrObject;
 	object = object || {};
 
 	if( slug ) {
@@ -85,19 +85,19 @@ function getMembers( nonReadRetPref:boolean = true, retrievalPreferences?:Retrie
 	return this._documents.getMembers( this.id, nonReadRetPref, retrievalPreferences );
 }
 
-function removeMember( member:Pointer.Class ): Promise<HTTP.Response.Class>;
-function removeMember( memberURI:string ): Promise<HTTP.Response.Class>;
-function removeMember( memberOrUri:any ): Promise<HTTP.Response.Class> {
+function removeMember( member:Pointer.Class ):Promise<HTTP.Response.Class>;
+function removeMember( memberURI:string ):Promise<HTTP.Response.Class>;
+function removeMember( memberOrUri:any ):Promise<HTTP.Response.Class> {
 	let that:PersistedDocument.Class = <PersistedDocument.Class> this;
 	return that._documents.removeMember( that.id, memberOrUri );
 }
 
-function removeMembers( members:(Pointer.Class | string)[] ): Promise<HTTP.Response.Class> {
+function removeMembers( members:(Pointer.Class | string)[] ):Promise<HTTP.Response.Class> {
 	let that:PersistedDocument.Class = <PersistedDocument.Class> this;
 	return that._documents.removeMembers( that.id, members );
 }
 
-function removeAllMembers(): Promise<HTTP.Response.Class> {
+function removeAllMembers():Promise<HTTP.Response.Class> {
 	let that:PersistedDocument.Class = <PersistedDocument.Class> this;
 	return that._documents.removeAllMembers( that.id );
 }
@@ -108,7 +108,7 @@ function upload( slug:string, data:Blob ):Promise<[ Pointer.Class, HTTP.Response
 function upload( data:Blob ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
 function upload( slugOrData:any, data:any = null ):Promise<[ Pointer.Class, HTTP.Response.Class ]> {
 	let slug:string = Utils.isString( slugOrData ) ? slugOrData : null;
-	data =  slug ? data : slugOrData;
+	data = slug ? data : slugOrData;
 
 	if( slug ) {
 		return this._documents.upload( this.id, slug, data );
@@ -117,7 +117,7 @@ function upload( slugOrData:any, data:any = null ):Promise<[ Pointer.Class, HTTP
 	}
 }
 
-	export class Factory {
+export class Factory {
 	static hasClassProperties( document:Document.Class ):boolean {
 		return Utils.isObject( document )
 			&& Utils.hasFunction( document, "addMember" )
