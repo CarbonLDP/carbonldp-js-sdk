@@ -1,6 +1,7 @@
 import * as Errors from "./Errors";
 import * as Fragment from "./Fragment";
 import JSONLDConverter from "./JSONLDConverter";
+import * as LDP from "./LDP";
 import * as NamedFragment from "./NamedFragment";
 import * as ObjectSchema from "./ObjectSchema";
 import * as Pointer from "./Pointer";
@@ -228,6 +229,8 @@ export class Factory {
 
 		let document:T & Class = Factory.decorate<T>( <any> resource );
 		convertNestedObjects( document, document );
+
+		if( LDP.Container.Factory.hasClassProperties( document ) ) LDP.Container.Factory.decorate( document );
 
 		return document;
 	}

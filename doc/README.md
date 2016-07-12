@@ -4879,14 +4879,27 @@ static SCHEMA:Carbon.ObjectSchema.Class
 #### <a name="Carbon-LDP-Container-Factory-Methods" />Methods
 ##### hasClassProperties
 ```typescript 
-static hasClassProperties( resource:Carbon.RDF.Node.Class ):boolean
+static hasClassProperties( object:Object ):boolean
 ```
 
 Returns true if the object has the properties to be defined as a LDP Container
 
 *Parameters*
 
-- resource
+- object
+
+##### decorate
+```typescript 
+static decorate( object:Object,  hasMemberRelation?:string | Carbon.Pointer.Class,  memberOfRelation?:string | Carbon.Pointer.Class ):Carbon.LDP.Container.Class
+```
+
+Decorate the object with the properties and functions of a LDP Container
+
+*Parameters*
+
+- object
+- hasMemberRelation
+- memberOfRelation
 
 ##### hasRDFClass
 ```typescript 

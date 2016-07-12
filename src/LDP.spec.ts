@@ -74,7 +74,7 @@ describe( module( "Carbon/LDP" ), ():void => {
 	), ():void => {
 		expect( LDP.Error ).toBeDefined();
 		expect( LDP.Error ).toBe( Error );
-	});
+	} );
 
 	it( reexports(
 		STATIC,
@@ -119,7 +119,7 @@ describe( module( "Carbon/LDP" ), ():void => {
 	), ():void => {
 		expect( LDP.ErrorResponse ).toBeDefined();
 		expect( LDP.ErrorResponse ).toBe( ErrorResponse );
-	});
+	} );
 
 	it( reexports(
 		STATIC,

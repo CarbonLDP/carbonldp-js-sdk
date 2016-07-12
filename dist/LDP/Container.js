@@ -1,5 +1,7 @@
 "use strict";
 var NS = require("./../NS");
+var Pointer = require("./../Pointer");
+var Resource = require("./../Resource");
 var Utils = require("./../Utils");
 exports.RDF_CLASS = NS.LDP.Class.Container;
 exports.SCHEMA = {
@@ -33,9 +35,23 @@ exports.SCHEMA = {
 var Factory = (function () {
     function Factory() {
     }
-    Factory.hasClassProperties = function (resource) {
-        return (Utils.hasPropertyDefined(resource, "memberOfRelation") &&
-            Utils.hasPropertyDefined(resource, "hasMemberRelation"));
+    Factory.hasClassProperties = function (object) {
+        return (Utils.hasPropertyDefined(object, "memberOfRelation") ||
+            Utils.hasPropertyDefined(object, "hasMemberRelation"));
+    };
+    Factory.decorate = function (object, hasMemberRelation, memberOfRelation) {
+        Resource.Factory.decorate(object);
+        var container = object;
+        hasMemberRelation = hasMemberRelation || container.hasMemberRelation;
+        memberOfRelation = memberOfRelation || container.memberOfRelation;
+        container.types.push(NS.LDP.Class.Container);
+        if (!!hasMemberRelation) {
+            container.hasMemberRelation = Pointer.Factory.is(hasMemberRelation) ? hasMemberRelation : Pointer.Factory.create(hasMemberRelation);
+        }
+        if (!!memberOfRelation) {
+            container.memberOfRelation = Pointer.Factory.is(memberOfRelation) ? memberOfRelation : Pointer.Factory.create(memberOfRelation);
+        }
+        return container;
     };
     Factory.hasRDFClass = function (resourceOrExpandedObject) {
         var types = [];

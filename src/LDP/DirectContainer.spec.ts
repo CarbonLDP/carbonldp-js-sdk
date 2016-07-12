@@ -10,7 +10,7 @@ import {
 	isDefined,
 	hasMethod,
 	hasProperty,
-	hasSignature
+	hasSignature,
 } from "./../test/JasmineExtender";
 import * as Utils from "./../Utils";
 import * as NS from "./../NS";
@@ -50,7 +50,7 @@ describe( module( "Carbon/LDP/DirectContainer" ), ():void => {
 			STATIC,
 			"hasClassProperties",
 			"Returns true if the object provided has the properties that defines a `Carbon.LDP.DirectContainer.Class` object", [
-				{name: "resource", type: "Object"}
+				{name: "resource", type: "Object"},
 			],
 			{type: "boolean"}
 		), ():void => {
@@ -74,7 +74,7 @@ describe( module( "Carbon/LDP/DirectContainer" ), ():void => {
 			STATIC,
 			"is",
 			"Returns true if the object provided is considered as an `Carbon.LDP.DirectContainer.Class` object", [
-				{name: "object", type: "Object"}
+				{name: "object", type: "Object"},
 			],
 			{type: "boolean"}
 		), ():void => {
@@ -106,7 +106,7 @@ describe( module( "Carbon/LDP/DirectContainer" ), ():void => {
 
 			it( hasSignature(
 				"Returns true if the Pointer provided is an LDP DirectContainer.", [
-					{name: "pointer", type: "Carbon.Pointer.Class"}
+					{name: "pointer", type: "Carbon.Pointer.Class"},
 				],
 				{type: "boolean"}
 			), ():void => {
@@ -141,7 +141,7 @@ describe( module( "Carbon/LDP/DirectContainer" ), ():void => {
 
 			it( hasSignature(
 				"Returns true if the Object provided is an LDP DirectContainer.", [
-					{name: "expandedObject", type: "Object"}
+					{name: "expandedObject", type: "Object"},
 				],
 				{type: "boolean"}
 			), ():void => {
@@ -155,42 +155,42 @@ describe( module( "Carbon/LDP/DirectContainer" ), ():void => {
 					"@id": "http://example.com/access-point/",
 					"@type": [],
 					"http://example.com/ns#string": [ {
-						"@value": "a string"
+						"@value": "a string",
 					} ],
 					"http://example.com/ns#integer": [ {
 						"@value": "100",
-						"@type": "http://www.w3.org/2001/XMLSchema#integer"
-					} ]
+						"@type": "http://www.w3.org/2001/XMLSchema#integer",
+					} ],
 				};
 				expect( DirectContainer.Factory.hasRDFClass( object ) ).toBe( false );
 
 				object = {
 					"@id": "http://example.com/access-point/",
 					"@type": [
-						"http://www.w3.org/ns/ldp#Container"
+						"http://www.w3.org/ns/ldp#Container",
 					],
 					"http://example.com/ns#string": [ {
-						"@value": "a string"
+						"@value": "a string",
 					} ],
 					"http://example.com/ns#integer": [ {
 						"@value": "100",
-						"@type": "http://www.w3.org/2001/XMLSchema#integer"
-					} ]
+						"@type": "http://www.w3.org/2001/XMLSchema#integer",
+					} ],
 				};
 				expect( DirectContainer.Factory.hasRDFClass( object ) ).toBe( false );
 
 				object = {
 					"@id": "http://example.com/access-point/",
 					"@type": [
-						"http://www.w3.org/ns/ldp#DirectContainer"
+						"http://www.w3.org/ns/ldp#DirectContainer",
 					],
 					"http://example.com/ns#string": [ {
-						"@value": "a string"
+						"@value": "a string",
 					} ],
 					"http://example.com/ns#integer": [ {
 						"@value": "100",
-						"@type": "http://www.w3.org/2001/XMLSchema#integer"
-					} ]
+						"@type": "http://www.w3.org/2001/XMLSchema#integer",
+					} ],
 				};
 				expect( DirectContainer.Factory.hasRDFClass( object ) ).toBe( true );
 
@@ -198,15 +198,15 @@ describe( module( "Carbon/LDP/DirectContainer" ), ():void => {
 					"@id": "http://example.com/access-point/",
 					"@type": [
 						"http://www.w3.org/ns/ldp#Container",
-						"http://www.w3.org/ns/ldp#DirectContainer"
+						"http://www.w3.org/ns/ldp#DirectContainer",
 					],
 					"http://example.com/ns#string": [ {
-						"@value": "a string"
+						"@value": "a string",
 					} ],
 					"http://example.com/ns#integer": [ {
 						"@value": "100",
-						"@type": "http://www.w3.org/2001/XMLSchema#integer"
-					} ]
+						"@type": "http://www.w3.org/2001/XMLSchema#integer",
+					} ],
 				};
 				expect( DirectContainer.Factory.hasRDFClass( object ) ).toBe( true );
 			} );
@@ -219,7 +219,7 @@ describe( module( "Carbon/LDP/DirectContainer" ), ():void => {
 			"Create a `Carbon.LDP.DirectContainer.Class` object with the parameters specified.", [
 				{name: "membershipResource", type: "Carbon.Pointer.Class"},
 				{name: "hasMemberRelation", type: "string | Carbon.Pointer.Class"},
-				{name: "memberOfRelation", type: "string | Carbon.Pointer.Class", optional: true}
+				{name: "memberOfRelation", type: "string | Carbon.Pointer.Class", optional: true},
 			],
 			{type: "Carbon.LDP.DirectContainer.Class"}
 		), ():void => {
@@ -252,7 +252,7 @@ describe( module( "Carbon/LDP/DirectContainer" ), ():void => {
 				{name: "object", type: "T extends Object"},
 				{name: "membershipResource", type: "Carbon.Pointer.Class"},
 				{name: "hasMemberRelation", type: "string | Carbon.Pointer.Class"},
-				{name: "memberOfRelation", type: "string | Carbon.Pointer.Class", optional: true}
+				{name: "memberOfRelation", type: "string | Carbon.Pointer.Class", optional: true},
 			],
 			{type: "T & Carbon.LDP.DirectContainer.Class"}
 		), ():void => {

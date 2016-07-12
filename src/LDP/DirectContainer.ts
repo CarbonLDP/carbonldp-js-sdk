@@ -49,21 +49,11 @@ export class Factory {
 		if( Factory.is( object ) ) throw new Errors.IllegalArgumentError( "The base object is already a DirectContainer" );
 		if( ! membershipResource ) throw new Errors.IllegalArgumentError( "membershipResource cannot be null" );
 
-		let container:T & Class = <any> object;
-		if( ! Document.Factory.is( object ) ) container = <any> Document.Factory.createFrom( object );
+		if( ! Document.Factory.is( object ) ) object = <any> Document.Factory.createFrom( object );
+		let container:T & Class = Container.Factory.decorate( <any> object, hasMemberRelation, memberOfRelation );
 
-		container.types.push( NS.LDP.Class.Container );
 		container.types.push( NS.LDP.Class.DirectContainer );
-
 		container.membershipResource = membershipResource;
-
-		if( ! ! hasMemberRelation ) {
-			container.hasMemberRelation = Pointer.Factory.is( hasMemberRelation ) ? <Pointer.Class> hasMemberRelation : Pointer.Factory.create( <string> hasMemberRelation );
-		}
-
-		if( ! ! memberOfRelation ) {
-			container.memberOfRelation = Pointer.Factory.is( memberOfRelation ) ? <Pointer.Class> memberOfRelation : Pointer.Factory.create( <string> memberOfRelation );
-		}
 
 		return container;
 	}

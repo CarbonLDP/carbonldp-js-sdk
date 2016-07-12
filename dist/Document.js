@@ -2,6 +2,7 @@
 var Errors = require("./Errors");
 var Fragment = require("./Fragment");
 var JSONLDConverter_1 = require("./JSONLDConverter");
+var LDP = require("./LDP");
 var NamedFragment = require("./NamedFragment");
 var ObjectSchema = require("./ObjectSchema");
 var Pointer = require("./Pointer");
@@ -167,6 +168,8 @@ var Factory = (function () {
             resource = Resource.Factory.createFrom(object);
         var document = Factory.decorate(resource);
         convertNestedObjects(document, document);
+        if (LDP.Container.Factory.hasClassProperties(document))
+            LDP.Container.Factory.decorate(document);
         return document;
     };
     Factory.decorate = function (object) {
