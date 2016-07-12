@@ -175,7 +175,7 @@ export class Class implements Context {
 				"@id": NS.CS.Predicate.allowsOrigin,
 				"@container": "@set",
 			},
-		});
+		} );
 		this.extendObjectSchema( AppRole.RDF_CLASS, Auth.Role.SCHEMA );
 		this.extendObjectSchema( AppRole.RDF_CLASS, AppRole.SCHEMA );
 

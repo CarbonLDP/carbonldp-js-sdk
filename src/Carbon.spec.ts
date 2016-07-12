@@ -313,7 +313,7 @@ describe( module( "Carbon" ), ():void => {
 		), ():void => {
 			expect( Carbon.Platform ).toBeDefined();
 			expect( Carbon.Platform ).toBe( Platform );
-		});
+		} );
 
 		it( reexports(
 			STATIC,
@@ -464,8 +464,8 @@ describe( module( "Carbon" ), ():void => {
 			expect( carbon.auth ).toBeDefined();
 			expect( Utils.isObject( carbon.auth ) );
 			expect( carbon.auth instanceof Platform.Auth.Class );
-		});
+		} );
 
-	});
+	} );
 
 } );

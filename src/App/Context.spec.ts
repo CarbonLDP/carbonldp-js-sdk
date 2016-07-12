@@ -8,7 +8,7 @@ import {
 	hasConstructor,
 	hasProperty,
 	hasMethod,
-	extendsClass
+	extendsClass,
 } from "./../test/JasmineExtender";
 
 import AbstractContext from "./../AbstractContext";
@@ -37,7 +37,7 @@ describe( module( "Carbon/App/Context" ), ():void => {
 					return uri;
 				}
 			}
-			let parentContext = new MockedContext();
+			let parentContext:AbstractContext = new MockedContext();
 			let app:PersistedApp = <any> App.Factory.create( "App name", "App description" );
 			app.rootContainer = <any> Pointer.Factory.create( "http://example.com/apps/example-app/" );
 			appContext = new AppContext( parentContext, app );
@@ -70,7 +70,7 @@ describe( module( "Carbon/App/Context" ), ():void => {
 		), ():void => {
 			expect( appContext.auth ).toBeDefined();
 			expect( appContext.auth instanceof Auth.Class ).toBe( true );
-		});
+		} );
 
 		it( hasProperty(
 			INSTANCE,
@@ -96,7 +96,7 @@ describe( module( "Carbon/App/Context" ), ():void => {
 			INSTANCE,
 			"resolve",
 			"Resolve the URI provided in the scope of the application", [
-				{name: "uri", type: "string"}
+				{name: "uri", type: "string"},
 			],
 			{type: "string"}
 		), ():void => {

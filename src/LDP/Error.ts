@@ -9,15 +9,15 @@ export const SCHEMA:ObjectSchema = {
 		"@id": NS.C.Predicate.carbonCode,
 		"@type": NS.XSD.DataType.string,
 	},
-	"message":{
+	"message": {
 		"@id": NS.C.Predicate.message,
 		"@type": NS.XSD.DataType.string,
 	},
 };
 
 export interface Class extends Resource {
-	carbonCode: string;
-	message: string;
+	carbonCode:string;
+	message:string;
 }
 
 export default Class;

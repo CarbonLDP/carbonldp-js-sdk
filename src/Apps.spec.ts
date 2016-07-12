@@ -128,8 +128,8 @@ describe( module( "Carbon/Apps" ), ():void => {
 					expect( spy ).toHaveBeenCalledWith( "http://example.com/platform/apps/example-app/" );
 					expect( successSpy.calls.count() ).toBe( 1 );
 					done();
-				}).catch( done.fail );
-			});
+				} ).catch( done.fail );
+			} );
 
 			it( hasSignature(
 				"Obtains a `Carbon.App.Context` object of the specified Pointer object, if it exists within the context of the Apps instance.", [
@@ -188,8 +188,8 @@ describe( module( "Carbon/Apps" ), ():void => {
 					expect( spy ).toHaveBeenCalledWith( "http://example.com/platform/apps/example-app/" );
 					expect( successSpy.calls.count() ).toBe( 1 );
 					done();
-				}).catch( done.fail );
-			});
+				} ).catch( done.fail );
+			} );
 
 		} );
 

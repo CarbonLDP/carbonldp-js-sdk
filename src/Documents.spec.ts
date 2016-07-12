@@ -22,6 +22,7 @@ import {
 
 import AbstractContext from "./AbstractContext";
 import * as AccessPoint from "./AccessPoint";
+import * as Auth from "./Auth";
 import * as Document from "./Document";
 import Documents from "./Documents";
 import * as Errors from "./Errors";
@@ -2944,7 +2945,13 @@ describe( module( "Carbon/Documents" ), ():void => {
 			],
 			{type: "Promise<Carbon.HTTP.Response.Class>"}
 		), ( done:{ ():void, fail:() => void } ):void => {
+			class MockedAuth extends Auth.Class {}
 			class MockedContext extends AbstractContext {
+				constructor() {
+					super();
+					this.auth = new MockedAuth( this );
+				}
+
 				resolve( uri:string ):string {
 					return uri;
 				}

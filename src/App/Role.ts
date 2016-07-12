@@ -31,7 +31,7 @@ export class Factory {
 	static is( object:Object ):boolean {
 		return Role.Factory.is( object )
 			// TODO Use Resource.Util.hasType( RDF_CLASS ) when ACL merged.
-			&& (<Resource.Class> object).types.indexOf( RDF_CLASS ) !== -1
+			&& (<Resource.Class> object).types.indexOf( RDF_CLASS ) !== - 1
 			;
 	}
 

@@ -74,7 +74,7 @@ describe( module( "Carbon/LDP/DirectContainer" ), ():void => {
 			STATIC,
 			"is",
 			"Returns true if the object provided is considered a `Carbon.LDP.DirectContainer.Class` object", [
-				{ name: "object", type: "Object" }
+				{name: "object", type: "Object"}
 			],
 			{type: "boolean"}
 		), ():void => {

@@ -475,6 +475,8 @@ var Documents = (function () {
         return HTTP.Request.Service.delete(documentURI, requestOptions);
     };
     Documents.prototype.getDownloadURL = function (documentURI, requestOptions) {
+        if (!this.context.auth)
+            Promise.reject(new Errors.IllegalStateError("This instance doesn't support Authenticated request."));
         return this.context.auth.getAuthenticatedURL(documentURI, requestOptions);
     };
     Documents.prototype.getSchemaFor = function (object) {

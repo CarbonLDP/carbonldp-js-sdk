@@ -218,7 +218,7 @@ describe( module( "Carbon/App" ), ():void => {
 	), ():void => {
 		expect( App.Role ).toBeDefined();
 		expect( App.Role ).toEqual( Role );
-	});
+	} );
 
 	it( reexports(
 		STATIC,
@@ -227,6 +227,6 @@ describe( module( "Carbon/App" ), ():void => {
 	), ():void => {
 		expect( App.Roles ).toBeDefined();
 		expect( App.Roles ).toEqual( Roles );
-	});
+	} );
 
-});
+} );

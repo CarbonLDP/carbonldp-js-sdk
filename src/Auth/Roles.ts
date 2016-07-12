@@ -26,22 +26,22 @@ export abstract class Class {
 		return this.resolveURI( "" ).then( ( uri:string ) => {
 			containerURI = uri;
 
-			parentURI =  URI.Util.resolve( containerURI, parentURI );
-			if ( ! URI.Util.isBaseOf( containerURI, parentURI ) ) throw new Errors.IllegalArgumentError( "The parent role provided is not a valid role of the current context." );
+			parentURI = URI.Util.resolve( containerURI, parentURI );
+			if( ! URI.Util.isBaseOf( containerURI, parentURI ) ) throw new Errors.IllegalArgumentError( "The parent role provided is not a valid role of the current context." );
 			return this.context.documents.exists( parentURI );
 
-		}).then( ( [ exists, response ]:[ boolean, HTTP.Response.Class ] ) => {
-			if ( ! exists ) throw new Errors.IllegalArgumentError( "The parent role provided does not exist." );
+		} ).then( ( [ exists, response ]:[ boolean, HTTP.Response.Class ] ) => {
+			if( ! exists ) throw new Errors.IllegalArgumentError( "The parent role provided does not exist." );
 			return slug ? this.context.documents.createChild( containerURI, slug, role, requestOptions ) : this.context.documents.createChild( containerURI, role, requestOptions );
 
-		}).then( ( [ newRole, response ]:[ Pointer.Class, HTTP.Response.Class] ) => {
+		} ).then( ( [ newRole, response ]:[ Pointer.Class, HTTP.Response.Class] ) => {
 			rolePointer = newRole;
 			responseCreated = response;
 			return this.context.documents.addMember( parentURI, newRole );
 
-		}).then( ( response ) => {
+		} ).then( ( response ) => {
 			return [ rolePointer, [ responseCreated, response ] ];
-		});
+		} );
 	}
 
 	private resolveURI( agentURI:string ):Promise<string> {
@@ -49,14 +49,14 @@ export abstract class Class {
 			let containerURI:string = this.context.resolve( this.getContainerURI() );
 			let uri:string = URI.Util.resolve( containerURI, agentURI );
 
-			if ( ! URI.Util.isBaseOf( containerURI, uri ) ) throw new Errors.IllegalArgumentError( "The URI provided is not a valid role of the current context." );
+			if( ! URI.Util.isBaseOf( containerURI, uri ) ) throw new Errors.IllegalArgumentError( "The URI provided is not a valid role of the current context." );
 
 			resolve( uri );
-		});
+		} );
 	}
 
 	private getContainerURI():string {
-		if ( ! this.context.hasSetting( "platform.roles.container" ) ) throw new Errors.IllegalStateError( "The roles container setting hasn't been declared." );
+		if( ! this.context.hasSetting( "platform.roles.container" ) ) throw new Errors.IllegalStateError( "The roles container setting hasn't been declared." );
 		return this.context.getSetting( "platform.roles.container" );
 	}
 }

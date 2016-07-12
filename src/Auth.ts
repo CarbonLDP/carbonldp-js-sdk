@@ -59,7 +59,7 @@ export abstract class Class {
 	isAuthenticated( askParent:boolean = true ):boolean {
 		return (
 			( this.authenticator && this.authenticator.isAuthenticated() ) ||
-			( askParent && !! this.context.parentContext && !! this.context.parentContext.auth && this.context.parentContext.auth.isAuthenticated() )
+			( askParent && ! ! this.context.parentContext && ! ! this.context.parentContext.auth && this.context.parentContext.auth.isAuthenticated() )
 		);
 	}
 
@@ -90,7 +90,7 @@ export abstract class Class {
 	addAuthentication( requestOptions:HTTP.Request.Options ):void {
 		if( this.isAuthenticated( false ) ) {
 			this.authenticator.addAuthentication( requestOptions );
-		} else if( !! this.context.parentContext && !! this.context.parentContext.auth ) {
+		} else if( ! ! this.context.parentContext && ! ! this.context.parentContext.auth ) {
 			this.context.parentContext.auth.addAuthentication( requestOptions );
 		} else {
 			console.warn( "There is no authentication to add to the request." );
