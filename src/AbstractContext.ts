@@ -1,4 +1,4 @@
-import Auth from "./Auth";
+import * as Auth from "./Auth";
 import Context from "./Context";
 import Documents from "./Documents";
 import * as Errors from "./Errors";
@@ -12,6 +12,8 @@ import * as ObjectSchema from "./ObjectSchema";
 abstract class AbstractContext extends SDKContext.Class {
 	_parentContext:Context;
 	get parentContext():Context { return this._parentContext; };
+
+	// TODO Made the property `auth:Auth.Class` abstract. In TSC 2.0 https://github.com/Microsoft/TypeScript/issues/4669;
 
 	constructor( parentContext:Context = null ) {
 		super();

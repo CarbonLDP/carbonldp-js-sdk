@@ -3,15 +3,18 @@ var Errors = require("./Errors");
 var HTTP = require("./HTTP");
 var RDF = require("./RDF");
 var Utils = require("./Utils");
+var AppRole = require("./App/Role");
 var Document = require("./Document");
 var FreeResources = require("./FreeResources");
 var JSONLDConverter = require("./JSONLDConverter");
+var PersistedAppRole = require("./App/PersistedRole");
 var PersistedDocument = require("./PersistedDocument");
 var Pointer = require("./Pointer");
 var NS = require("./NS");
 var ObjectSchema = require("./ObjectSchema");
 var LDP = require("./LDP");
 var SPARQL = require("./SPARQL");
+var Resource = require("./Resource");
 var RetrievalPreferences = require("./RetrievalPreferences");
 var Documents = (function () {
     function Documents(context) {
@@ -475,6 +478,8 @@ var Documents = (function () {
         return HTTP.Request.Service.delete(documentURI, requestOptions);
     };
     Documents.prototype.getDownloadURL = function (documentURI, requestOptions) {
+        if (!this.context.auth)
+            Promise.reject(new Errors.IllegalStateError("This instance doesn't support Authenticated request."));
         return this.context.auth.getAuthenticatedURL(documentURI, requestOptions);
     };
     Documents.prototype.getSchemaFor = function (object) {
@@ -492,7 +497,7 @@ var Documents = (function () {
                 throw new Errors.IllegalArgumentError("This Documents instance doesn't support relative URIs.");
             documentURI = this.context.resolve(documentURI);
         }
-        if (this.context && this.context.auth.isAuthenticated())
+        if (this.context && this.context.auth && this.context.auth.isAuthenticated())
             this.context.auth.addAuthentication(requestOptions);
         return SPARQL.Service.executeRawASKQuery(documentURI, askQuery, requestOptions);
     };
@@ -503,7 +508,7 @@ var Documents = (function () {
                 throw new Errors.IllegalArgumentError("This Documents instance doesn't support relative URIs.");
             documentURI = this.context.resolve(documentURI);
         }
-        if (this.context && this.context.auth.isAuthenticated())
+        if (this.context && this.context.auth && this.context.auth.isAuthenticated())
             this.context.auth.addAuthentication(requestOptions);
         return SPARQL.Service.executeASKQuery(documentURI, askQuery, requestOptions);
     };
@@ -514,7 +519,7 @@ var Documents = (function () {
                 throw new Errors.IllegalArgumentError("This Documents instance doesn't support relative URIs.");
             documentURI = this.context.resolve(documentURI);
         }
-        if (this.context && this.context.auth.isAuthenticated())
+        if (this.context && this.context.auth && this.context.auth.isAuthenticated())
             this.context.auth.addAuthentication(requestOptions);
         return SPARQL.Service.executeRawSELECTQuery(documentURI, selectQuery, requestOptions);
     };
@@ -525,7 +530,7 @@ var Documents = (function () {
                 throw new Errors.IllegalArgumentError("This Documents instance doesn't support relative URIs.");
             documentURI = this.context.resolve(documentURI);
         }
-        if (this.context && this.context.auth.isAuthenticated())
+        if (this.context && this.context.auth && this.context.auth.isAuthenticated())
             this.context.auth.addAuthentication(requestOptions);
         return SPARQL.Service.executeSELECTQuery(documentURI, selectQuery, this, requestOptions);
     };
@@ -536,7 +541,7 @@ var Documents = (function () {
                 throw new Errors.IllegalArgumentError("This Documents instance doesn't support relative URIs.");
             documentURI = this.context.resolve(documentURI);
         }
-        if (this.context && this.context.auth.isAuthenticated())
+        if (this.context && this.context.auth && this.context.auth.isAuthenticated())
             this.context.auth.addAuthentication(requestOptions);
         return SPARQL.Service.executeRawCONSTRUCTQuery(documentURI, constructQuery, requestOptions);
     };
@@ -547,7 +552,7 @@ var Documents = (function () {
                 throw new Errors.IllegalArgumentError("This Documents instance doesn't support relative URIs.");
             documentURI = this.context.resolve(documentURI);
         }
-        if (this.context && this.context.auth.isAuthenticated())
+        if (this.context && this.context.auth && this.context.auth.isAuthenticated())
             this.context.auth.addAuthentication(requestOptions);
         return SPARQL.Service.executeRawDESCRIBEQuery(documentURI, constructQuery, requestOptions);
     };
@@ -684,7 +689,7 @@ var Documents = (function () {
         return uri;
     };
     Documents.prototype.setDefaultRequestOptions = function (requestOptions, interactionModel) {
-        if (this.context && this.context.auth.isAuthenticated())
+        if (this.context && this.context.auth && this.context.auth.isAuthenticated())
             this.context.auth.addAuthentication(requestOptions);
         HTTP.Request.Util.setAcceptHeader("application/ld+json", requestOptions);
         HTTP.Request.Util.setPreferredInteractionModel(interactionModel, requestOptions);
@@ -740,6 +745,8 @@ var Documents = (function () {
         document._resolved = true;
         if (LDP.Container.Factory.hasRDFClass(document))
             LDP.PersistedContainer.Factory.decorate(document);
+        if (Resource.Util.hasType(document, AppRole.RDF_CLASS))
+            PersistedAppRole.Factory.decorate(document, this.context.auth ? this.context.auth.roles : null);
         return document;
     };
     Documents.prototype.updatePersistedDocument = function (persistedDocument, documentResource, fragmentResources) {

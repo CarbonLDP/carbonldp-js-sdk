@@ -20,6 +20,7 @@ import * as PersistedDocument from "./PersistedDocument";
 import * as PersistedFragment from "./PersistedFragment";
 import * as PersistedNamedFragment from "./PersistedNamedFragment";
 import * as PersistedResource from "./PersistedResource";
+import * as Platform from "./Platform";
 import * as Pointer from "./Pointer";
 import * as RDF from "./RDF";
 import * as Resource from "./Resource";
@@ -51,6 +52,7 @@ class Carbon extends AbstractContext {
 	static PersistedFragment:typeof PersistedFragment = PersistedFragment;
 	static PersistedNamedFragment:typeof PersistedNamedFragment = PersistedNamedFragment;
 	static PersistedResource:typeof PersistedResource = PersistedResource;
+	static Platform:typeof Platform = Platform;
 	static Pointer:typeof Pointer = Pointer;
 	static RDF:typeof RDF = RDF;
 	static Resource:typeof Resource = Resource;
@@ -69,6 +71,7 @@ class Carbon extends AbstractContext {
 	// TODO: Define settings type
 	constructor( settings?:any ) {
 		super();
+		this.auth = new Platform.Auth.Class( this );
 
 		settings = settings ? settings : defaultSettings;
 

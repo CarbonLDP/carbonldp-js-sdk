@@ -73,7 +73,7 @@ describe( module( "Carbon/LDP/DirectContainer" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"is",
-			"Returns true if the object provided is considered as an `Carbon.LDP.DirectContainer.Class` object", [
+			"Returns true if the object provided is considered a `Carbon.LDP.DirectContainer.Class` object", [
 				{name: "object", type: "Object"}
 			],
 			{type: "boolean"}

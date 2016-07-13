@@ -5,9 +5,11 @@ import * as RDF from "./RDF";
 import * as Utils from "./Utils";
 
 import * as AccessPoint from "./AccessPoint";
+import * as AppRole from "./App/Role";
 import * as Document from "./Document";
 import * as FreeResources from "./FreeResources";
 import * as JSONLDConverter from "./JSONLDConverter";
+import * as PersistedAppRole from "./App/PersistedRole";
 import * as PersistedBlankNode from "./PersistedBlankNode";
 import * as PersistedDocument from "./PersistedDocument";
 import * as PersistedFragment from "./PersistedFragment";
@@ -564,6 +566,7 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 	}
 
 	getDownloadURL( documentURI:string, requestOptions?:HTTP.Request.Options ):Promise<string> {
+		if( ! this.context.auth ) Promise.reject<any>( new Errors.IllegalStateError( "This instance doesn't support Authenticated request." ) );
 		return this.context.auth.getAuthenticatedURL( documentURI, requestOptions );
 	}
 
@@ -581,7 +584,7 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 			documentURI = this.context.resolve( documentURI );
 		}
 
-		if( this.context && this.context.auth.isAuthenticated() ) this.context.auth.addAuthentication( requestOptions );
+		if( this.context && this.context.auth && this.context.auth.isAuthenticated() ) this.context.auth.addAuthentication( requestOptions );
 
 		return SPARQL.Service.executeRawASKQuery( documentURI, askQuery, requestOptions );
 	}
@@ -592,7 +595,7 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 			documentURI = this.context.resolve( documentURI );
 		}
 
-		if( this.context && this.context.auth.isAuthenticated() ) this.context.auth.addAuthentication( requestOptions );
+		if( this.context && this.context.auth && this.context.auth.isAuthenticated() ) this.context.auth.addAuthentication( requestOptions );
 
 		return SPARQL.Service.executeASKQuery( documentURI, askQuery, requestOptions );
 	}
@@ -603,7 +606,7 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 			documentURI = this.context.resolve( documentURI );
 		}
 
-		if( this.context && this.context.auth.isAuthenticated() ) this.context.auth.addAuthentication( requestOptions );
+		if( this.context && this.context.auth && this.context.auth.isAuthenticated() ) this.context.auth.addAuthentication( requestOptions );
 
 		return SPARQL.Service.executeRawSELECTQuery( documentURI, selectQuery, requestOptions );
 	}
@@ -614,7 +617,7 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 			documentURI = this.context.resolve( documentURI );
 		}
 
-		if( this.context && this.context.auth.isAuthenticated() ) this.context.auth.addAuthentication( requestOptions );
+		if( this.context && this.context.auth && this.context.auth.isAuthenticated() ) this.context.auth.addAuthentication( requestOptions );
 
 		return SPARQL.Service.executeSELECTQuery( documentURI, selectQuery, this, requestOptions );
 	}
@@ -625,7 +628,7 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 			documentURI = this.context.resolve( documentURI );
 		}
 
-		if( this.context && this.context.auth.isAuthenticated() ) this.context.auth.addAuthentication( requestOptions );
+		if( this.context && this.context.auth && this.context.auth.isAuthenticated() ) this.context.auth.addAuthentication( requestOptions );
 
 		return SPARQL.Service.executeRawCONSTRUCTQuery( documentURI, constructQuery, requestOptions );
 	}
@@ -636,7 +639,7 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 			documentURI = this.context.resolve( documentURI );
 		}
 
-		if( this.context && this.context.auth.isAuthenticated() ) this.context.auth.addAuthentication( requestOptions );
+		if( this.context && this.context.auth && this.context.auth.isAuthenticated() ) this.context.auth.addAuthentication( requestOptions );
 
 		return SPARQL.Service.executeRawDESCRIBEQuery( documentURI, constructQuery, requestOptions );
 	}
@@ -790,7 +793,7 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 	}
 
 	private setDefaultRequestOptions( requestOptions:HTTP.Request.Options, interactionModel:string ):void {
-		if( this.context && this.context.auth.isAuthenticated() ) this.context.auth.addAuthentication( requestOptions );
+		if( this.context && this.context.auth && this.context.auth.isAuthenticated() ) this.context.auth.addAuthentication( requestOptions );
 
 		HTTP.Request.Util.setAcceptHeader( "application/ld+json", requestOptions );
 		HTTP.Request.Util.setPreferredInteractionModel( interactionModel, requestOptions );
@@ -854,6 +857,7 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 		// TODO: Decorate additional behavior (app, etc.). See also updatePersistedDocument() method
 		// TODO: Make it dynamic. See also updatePersistedDocument() method
 		if( LDP.Container.Factory.hasRDFClass( document ) ) LDP.PersistedContainer.Factory.decorate( document );
+		if( Resource.Util.hasType( document, AppRole.RDF_CLASS ) ) PersistedAppRole.Factory.decorate( document, this.context.auth ? this.context.auth.roles : null );
 
 		return document;
 	}

@@ -17,20 +17,43 @@
 	- [Properties](#Carbon-AccessPoints-Properties)
 	- [Class Carbon.AccessPoint.Factory](#Carbon-AccessPoint-Factory)
 		- [Methods](#Carbon-AccessPoint-Factory-Methods)
+- [Module Carbon/Agent](#Carbon-Agent)
+	- [Properties](#Carbon-Agent-Properties)
+	- [Class Carbon.Agent.Factory](#Carbon-Agent-Factory)
+		- [Methods](#Carbon-Agent-Factory-Methods)
+- [Module Carbon/Agents](#Carbon-Agents)
+	- [Class Carbon.Agents.Class](#Carbon-Agents-Class)
+		- [Constructor](#Carbon-Agents-Class-Constructor)
+		- [Methods](#Carbon-Agents-Class-Methods)
 - [Module Carbon/App](#Carbon-App)
 	- [Reexports](#Carbon-App-Reexports)
 	- [Properties](#Carbon-App-Properties)
 	- [Class Carbon.App.Factory](#Carbon-App-Factory)
 		- [Methods](#Carbon-App-Factory-Methods)
+- [Module Carbon/App/Auth](#Carbon-App-Auth)
+	- [Class Carbon.App.Auth.Class](#Carbon-App-Auth-Class)
+		- [Constructor](#Carbon-App-Auth-Class-Constructor)
+		- [Properties](#Carbon-App-Auth-Class-Properties)
 - [Module Carbon/App/Context](#Carbon-App-Context)
 	- [Class Carbon.App.Context](#Carbon-App-Context)
 		- [Constructor](#Carbon-App-Context-Constructor)
 		- [Properties](#Carbon-App-Context-Properties)
 		- [Methods](#Carbon-App-Context-Methods)
+- [Module Carbon/App/PersistedRole](#Carbon-App-PersistedRole)
+	- [Class Carbon.App.PersistedRole.Factory](#Carbon-App-PersistedRole-Factory)
+		- [Methods](#Carbon-App-PersistedRole-Factory-Methods)
+- [Module Carbon/App/Roles](#Carbon-App-Roles)
+	- [Class Carbon.App.Roles.Class](#Carbon-App-Roles-Class)
+		- [Constructor](#Carbon-App-Roles-Class-Constructor)
+		- [Methods](#Carbon-App-Roles-Class-Methods)
 - [Module Carbon/Apps](#Carbon-Apps)
 	- [Class Carbon.Apps.Class](#Carbon-Apps-Class)
 		- [Constructor](#Carbon-Apps-Class-Constructor)
 		- [Methods](#Carbon-Apps-Class-Methods)
+- [Module Carbon/Apps/Role](#Carbon-Apps-Role)
+	- [Properties](#Carbon-Apps-Role-Properties)
+	- [Class Carbon.App.Role.Factory](#Carbon-App-Role-Factory)
+		- [Methods](#Carbon-App-Role-Factory-Methods)
 - [Module Carbon/Auth](#Carbon-Auth)
 	- [Reexports](#Carbon-Auth-Reexports)
 	- [Enums](#Carbon-Auth-Enums)
@@ -38,21 +61,23 @@
 		- [Constructor](#Carbon-Auth-Class-Constructor)
 		- [Properties](#Carbon-Auth-Class-Properties)
 		- [Methods](#Carbon-Auth-Class-Methods)
-- [Module Carbon/Auth/Agent](#Carbon-Auth-Agent)
-	- [Properties](#Carbon-Auth-Agent-Properties)
-	- [Class Carbon.Auth.Agent.Factory](#Carbon-Auth-Agent-Factory)
-		- [Methods](#Carbon-Auth-Agent-Factory-Methods)
-- [Module Carbon/Auth/Agents](#Carbon-Auth-Agents)
-	- [Class Carbon.Auth.Agents.Class](#Carbon-Auth-Agents-Class)
-		- [Constructor](#Carbon-Auth-Agents-Class-Constructor)
-		- [Methods](#Carbon-Auth-Agents-Class-Methods)
 - [Module Carbon/Auth/BasicAuthenticator](#Carbon-Auth-BasicAuthenticator)
 	- [Class Carbon.Auth.BasicAuthenticator.Class](#Carbon-Auth-BasicAuthenticator-Class)
 		- [Constructor](#Carbon-Auth-BasicAuthenticator-Class-Constructor)
 		- [Methods](#Carbon-Auth-BasicAuthenticator-Class-Methods)
-- [Module Carbon/Auth/PersistedAgent](#Carbon-Auth-PersistedAgent)
-	- [Class Carbon.Auth.PersistedAgent.Factory](#Carbon-Auth-PersistedAgent-Factory)
-		- [Methods](#Carbon-Auth-PersistedAgent-Factory-Methods)
+- [Module Carbon/Auth/PersistedRole](#Carbon-Auth-PersistedRole)
+	- [Class Carbon.Auth.PersistedRole.Factory](#Carbon-Auth-PersistedRole-Factory)
+		- [Methods](#Carbon-Auth-PersistedRole-Factory-Methods)
+		- [Decorated Object](#Carbon-Auth-PersistedRole-Factory-Decorated-Object)
+			- [Methods](#Carbon-Auth-PersistedRole-Factory-Decorated-Object-Methods)
+- [Module Carbon/Auth/Role](#Carbon-Auth-Role)
+	- [Properties](#Carbon-Auth-Role-Properties)
+	- [Class Carbon.Auth.Role.Factory](#Carbon-Auth-Role-Factory)
+		- [Methods](#Carbon-Auth-Role-Factory-Methods)
+- [Module Carbon/Auth/Roles](#Carbon-Auth-Roles)
+	- [Class Carbon.Auth.Roles.Class](#Carbon-Auth-Roles-Class)
+		- [Constructor](#Carbon-Auth-Roles-Class-Constructor)
+		- [Methods](#Carbon-Auth-Roles-Class-Methods)
 - [Module Carbon/Auth/Ticket](#Carbon-Auth-Ticket)
 	- [Properties](#Carbon-Auth-Ticket-Properties)
 	- [Class Carbon.Auth.Ticket.Factory](#Carbon-Auth-Ticket-Factory)
@@ -385,6 +410,10 @@
 		- [Methods](#Carbon-PersistedDocument-Factory-Methods)
 		- [Decorated Object](#Carbon-PersistedDocument-Factory-Decorated-Object)
 			- [Methods](#Carbon-PersistedDocument-Factory-Decorated-Object-Methods)
+- [Module Carbon/Platform/Auth](#Carbon-Platform-Auth)
+	- [Class Carbon.Platform.Auth.Class](#Carbon-Platform-Auth-Class)
+		- [Constructor](#Carbon-Platform-Auth-Class-Constructor)
+		- [Properties](#Carbon-Platform-Auth-Class-Properties)
 - [Module Carbon/Pointer](#Carbon-Pointer)
 	- [Class Carbon.Pointer.Factory](#Carbon-Pointer-Factory)
 		- [Methods](#Carbon-Pointer-Factory-Methods)
@@ -503,7 +532,9 @@
 #### <a name="Carbon-Reexports" />Reexports 
 | Export name | Original Location | 
 | --- | --- |
+| Agent | [Carbon/Agent](#Carbon-Agent) |
 | AccessPoint | [Carbon/AccessPoint](#Carbon-AccessPoint) |
+| Agents | [Carbon/Agents](#Carbon-Agents) |
 | App | [Carbon/App](#Carbon-App) |
 | Apps | [Carbon/Apps](#Carbon-Apps) |
 | Auth | [Carbon/Auth](#Carbon-Auth) |
@@ -523,6 +554,7 @@
 | PersistedFragment | [Carbon/PersistedFragment](#Carbon-PersistedFragment) |
 | PersistedNamedFragment | [Carbon/PersistedNamedFragment](#Carbon-PersistedNamedFragment) |
 | PersistedResource | [Carbon/PersistedResource](#Carbon-PersistedResource) |
+| Platform | [Carbon/Platform](#Carbon-Platform) |
 | Pointer | [Carbon/Pointer](#Carbon-Pointer) |
 | RDF | [Carbon/RDF](#Carbon-RDF) |
 | Resource | [Carbon/Resource](#Carbon-Resource) |
@@ -558,6 +590,11 @@ apps:Carbon.Apps.Class
 ```
 
 Instance of the class `Carbon.Apps` in the context of the Carbon instance.
+```typescript 
+auth:Carbon.Platform.Auth.Class 
+```
+
+Instance of `Carbon.Platform.Auth.Class` class for manage the auth inside of the platform.
 
 #### <a name="Carbon-Methods" />Methods
 
@@ -711,6 +748,134 @@ Create a `Carbon.AccessPoint.Class` object with the object provided.
 
 
 
+## <a name="Carbon-Agent" />Module Carbon/Agent
+
+
+
+
+
+### <a name="Carbon-Agent-Properties" />Properties
+```typescript 
+static RDF_CLASS:string 
+```
+
+```typescript 
+static SCHEMA:Carbon.ObjectSchema.Class 
+```
+
+
+
+
+
+### <a name="Carbon-Agent-Factory" />Class Carbon.Agent.Factory
+
+
+> Factory class for `Carbon.Agent.Class` objects
+
+
+
+
+#### <a name="Carbon-Agent-Factory-Methods" />Methods
+##### hasClassProperties
+```typescript 
+static hasClassProperties( resource:Object ):boolean
+```
+
+Returns true if the object provided has the properties that defines a `Carbon.Agent.Class` object
+
+*Parameters*
+
+- resource
+
+##### is
+```typescript 
+static is( object:Object ):boolean
+```
+
+Returns true if the object provided is considered a `Carbon.Agent.Class` object
+
+*Parameters*
+
+- object
+
+##### create
+```typescript 
+static create( name:string,  email:string ):Carbon.Agent.Class
+```
+
+Create a `Carbon.Agent.Class` object with the name and email specified.
+
+*Parameters*
+
+- name
+- email
+
+##### createFrom
+```typescript 
+static createFrom( object:T extends Object ):T & Carbon.Agent.Class
+```
+
+Create a `Carbon.Agent.Class` object with the object provided.
+
+*Parameters*
+
+- object
+
+
+
+
+## <a name="Carbon-Agents" />Module Carbon/Agents
+
+
+**Default export:** [Carbon.Agents.Class](#Carbon-Agents-Class)
+
+
+
+
+
+
+### <a name="Carbon-Agents-Class" />Class Carbon.Agents.Class
+
+
+> Class for manage Agents of a determined context.
+
+
+#### <a name="Carbon-Agents-Class-Constructor" />Constructor
+```typescript 
+Class()
+```
+
+
+
+
+#### <a name="Carbon-Agents-Class-Methods" />Methods
+
+##### create
+```typescript 
+create( agentDocument:Carbon.Agents.Agent.Class ):Promise<Carbon.Pointer.Class, Carbon.HTTP.Response.Class>
+```
+
+Persists an Agent Document in the server, generating a random unique slug.
+Returns a Promise with a Pointer for the stored Agent, and the response of the call.
+
+*Parameters*
+
+- agentDocument
+
+```typescript 
+create( slug:string,  agentDocument:Carbon.Agents.Agent.Class ):Promise<Carbon.Pointer.Class, Carbon.HTTP.Response.Class>
+```
+
+Persists an Agent Document in the server using the slug specified.
+Returns a Promise with a Pointer for the stored Agent, and the response of the call.
+
+*Parameters*
+
+- slug
+- agentDocument
+
+
+
 ## <a name="Carbon-App" />Module Carbon/App
 
 
@@ -718,7 +883,9 @@ Create a `Carbon.AccessPoint.Class` object with the object provided.
 #### <a name="Carbon-App-Reexports" />Reexports 
 | Export name | Original Location | 
 | --- | --- |
-| App | [Carbon/App/Context](#Carbon-App-Context) |
+| Context | [Carbon/App/Context](#Carbon-App-Context) |
+| Role | [Carbon/App/Role](#Carbon-App-Role) |
+| Roles | [Carbon/App/Roles](#Carbon-App-Roles) |
 
 
 ### <a name="Carbon-App-Properties" />Properties
@@ -759,7 +926,7 @@ Returns true if the object provided has the properties that defines a `Carbon.Ap
 static is( object:Object ):boolean
 ```
 
-Returns true if the object provided is considered as an `Carbon.App.Class` object
+Returns true if the object provided is considered a `Carbon.App.Class` object
 
 *Parameters*
 
@@ -790,6 +957,43 @@ Create a `Carbon.App.Class` object with the object provided.
 - name
 - description
 
+
+
+
+## <a name="Carbon-App-Auth" />Module Carbon/App/Auth
+
+
+**Default export:** [Carbon.App.Auth.Class](#Carbon-App-Auth-Class)
+
+
+
+
+
+
+### <a name="Carbon-App-Auth-Class" />Class Carbon.App.Auth.Class
+
+
+> Implementation of `Carbon.Auth.Class` abstract class, that will manage the authentication and authorization specific of a Application Context.
+
+
+#### <a name="Carbon-App-Auth-Class-Constructor" />Constructor
+```typescript 
+Class( appContext:Carbon.App.Context )
+```
+
+
+*Parameters*
+
+- appContext
+
+
+#### <a name="Carbon-App-Auth-Class-Properties" />Properties
+
+```typescript 
+roles:Carbon.App.Roles.Class 
+```
+
+Instance of `Carbon.App.Roles.Class`, for managing the roles of the current context.
 
 
 
@@ -824,6 +1028,16 @@ Context( parentContext:Carbon.Context,  app:Carbon.App.Context )
 #### <a name="Carbon-App-Context-Properties" />Properties
 
 ```typescript 
+auth:Carbon.App.Auth.Class 
+```
+
+Instance of `Carbon.App.Auth.Class` class for manage the auth inside of an application.
+```typescript 
+agents:Carbon.Agents.Class 
+```
+
+Instance of Agents class for manage the agents inside of an application.
+```typescript 
 app:Carbon.App.Class 
 ```
 
@@ -841,6 +1055,133 @@ Resolve the URI provided in the scope of the application
 *Parameters*
 
 - uri
+
+
+
+## <a name="Carbon-App-PersistedRole" />Module Carbon/App/PersistedRole
+
+
+
+
+
+
+
+
+### <a name="Carbon-App-PersistedRole-Factory" />Class Carbon.App.PersistedRole.Factory
+
+
+> Factory class for `Carbon.App.PersistedRole.Class` objects
+
+
+
+
+#### <a name="Carbon-App-PersistedRole-Factory-Methods" />Methods
+##### hasClassProperties
+```typescript 
+static hasClassProperties( resource:Object ):boolean
+```
+
+Returns true if the object provided has the properties that defines a `Carbon.App.PersistedRole.Class` object
+
+*Parameters*
+
+- resource
+
+##### is
+```typescript 
+static is( object:Object ):boolean
+```
+
+Returns true if the object provided is considered a `Carbon.App.PersistedRole.Class` object
+
+*Parameters*
+
+- object
+
+##### decorate
+```typescript 
+static decorate( object:T extends Object ):T & Carbon.App.PersistedRole.Class
+```
+
+Decorates the object provided with the methods and properties of a `Carbon.App.PersistedRole.Class` object.
+
+*Parameters*
+
+- object
+
+
+
+
+## <a name="Carbon-App-Roles" />Module Carbon/App/Roles
+
+
+**Default export:** [Carbon.App.Roles.Class](#Carbon-App-Roles-Class)
+
+
+
+
+
+
+### <a name="Carbon-App-Roles-Class" />Class Carbon.App.Roles.Class
+
+**Extends:** [Carbon.Auth.Roles](#Carbon-Auth-Roles)
+
+> Class for manage roles of an application.
+
+
+#### <a name="Carbon-App-Roles-Class-Constructor" />Constructor
+```typescript 
+Class( appContext:Carbon.App.Context )
+```
+
+
+*Parameters*
+
+- appContext
+
+
+
+#### <a name="Carbon-App-Roles-Class-Methods" />Methods
+
+##### get
+```typescript 
+get( roleURI:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.PersistedRole.Class, Carbon.HTTP.Response.Class ]>
+```
+
+Retrieves a role from the current context.
+
+*Parameters*
+
+- roleURI: The URI of the app role to retrieve.
+- requestOptions
+
+##### createChild
+```typescript 
+createChild( parentRole:string | Carbon.Pointer.Class,  role:Carbon.App.Roles.Class,  slug?:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.Pointer.Class, [ Carbon.HTTP.Response.Class, Carbon.HTTP.Response.Class] ]>
+```
+
+Persists the AppRole provided with the slug, if specified, as a childRole of the parentRole specified.
+Returns a Promise with a Pointer for the stored role; and a tuple of two responses, the first one is the response of the creation, and the second one is the response of the creation of the relation parent-child of the roles.
+
+*Parameters*
+
+- parentRole: The role that will be assigned as the parent of the role that wants to persist.
+- role: The appRole that wants to persist.
+- slug: The slug where the role will be persisted.
+- requestOptions: The slug where the role will be persisted.
+
+```typescript 
+createChild( parentRole:string | Carbon.Pointer.Class,  role:Carbon.App.Roles.Class,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.Pointer.Class, [ Carbon.HTTP.Response.Class, Carbon.HTTP.Response.Class] ]>
+```
+
+Persists the AppRole provided as a childRole of the parentRole specified.
+Returns a Promise with a Pointer for the stored role; and a tuple of two responses, the first one is the response of the creation, and the second one is the response of the creation of the relation parent-child of the roles.
+
+*Parameters*
+
+- parentRole: The role that will be assigned as the parent of the role that wants to persist.
+- role: The appRole that wants to persist.
+- requestOptions: The slug where the role will be persisted.
 
 
 
@@ -928,6 +1269,82 @@ Returns a Pointer for the stored App Document, and the response of the call.
 
 
 
+## <a name="Carbon-Apps-Role" />Module Carbon/Apps/Role
+
+
+
+
+
+### <a name="Carbon-Apps-Role-Properties" />Properties
+```typescript 
+static RDF_CLASS:string 
+```
+
+```typescript 
+static SCHEMA:Carbon.ObjectSchema.Class 
+```
+
+
+
+
+
+### <a name="Carbon-App-Role-Factory" />Class Carbon.App.Role.Factory
+
+
+> Factory class for `Carbon.App.Role.Class` objects
+
+
+
+
+#### <a name="Carbon-App-Role-Factory-Methods" />Methods
+##### hasClassProperties
+```typescript 
+static hasClassProperties( resource:Object ):boolean
+```
+
+Returns true if the object provided has the properties that defines a `Carbon.App.Role.Class` object
+
+*Parameters*
+
+- resource
+
+##### is
+```typescript 
+static is( object:Object ):boolean
+```
+
+Returns true if the object provided is considered a `Carbon.App.Role.Class` object
+
+*Parameters*
+
+- object
+
+##### create
+```typescript 
+static create( name:string,  email:string ):Carbon.App.Role.Class
+```
+
+Create a `Carbon.App.Role.Class` object with the name and email specified.
+
+*Parameters*
+
+- name
+- email
+
+##### createFrom
+```typescript 
+static createFrom( object:T extends Object ):T & Carbon.App.Role.Class
+```
+
+Create a `Carbon.App.Role.Class` object with the object provided.
+
+*Parameters*
+
+- object
+
+
+
+
 ## <a name="Carbon-Auth" />Module Carbon/Auth
 
 
@@ -936,12 +1353,11 @@ Returns a Pointer for the stored App Document, and the response of the call.
 #### <a name="Carbon-Auth-Reexports" />Reexports 
 | Export name | Original Location | 
 | --- | --- |
-| Agent | [Carbon.Auth.Agent](#Carbon-Auth-Agent) |
-| Agents | [Carbon.Auth.Agents](#Carbon-Auth-Agents) |
 | AuthenticationToken | [Carbon.Auth.AuthenticationToken](#Carbon-Auth-AuthenticationToken) |
 | Authenticator | [Carbon.Auth.Authenticator](#Carbon-Auth-Authenticator) |
 | BasicAuthenticator | [Carbon.Auth.BasicAuthenticator](#Carbon-Auth-BasicAuthenticator) |
-| PersistedAgent | [Carbon.Auth.PersistedAgent](#Carbon-Auth-PersistedAgent) |
+| Role | [Carbon.Auth.Role](#Carbon-Auth-Role) |
+| Roles | [Carbon.Auth.Roles](#Carbon-Auth-Roles) |
 | Ticket | [Carbon.Auth.Ticket](#Carbon-Auth-Ticket) |
 | Token | [Carbon.Auth.Token](#Carbon-Auth-Token) |
 | TokenAuthenticator | [Carbon.Auth.TokenAuthenticator](#Carbon-Auth-TokenAuthenticator) |
@@ -963,23 +1379,28 @@ Returns a Pointer for the stored App Document, and the response of the call.
 ### <a name="Carbon-Auth-Class" />Class Carbon.Auth.Class
 
 
-> Class for manage all the methods of authentication.
+> Abstract class that will manage the authentication and authorization of a context.
 
 
 #### <a name="Carbon-Auth-Class-Constructor" />Constructor
 ```typescript 
-Class()
+Class( context:Carbon.Context )
 ```
 
+
+*Parameters*
+
+- context
 
 
 #### <a name="Carbon-Auth-Class-Properties" />Properties
 
 ```typescript 
-agents:Carbon.Auth.Agents.Class 
+roles:Carbon.Auth.Roles.Class 
 ```
 
-Instance of `Carbon.Auth.Agents.Class` that helps you manage the agents of the current context.
+Instance of a implementation of the `Carbon.Auth.Roles.Class` abstract class, that help managing the roles of the current context.
+In this class the property is set to `null`, and implementations of this class set it to their respective role model using a valid instance of `Carbon.Auth.Roles.Class`.
 
 #### <a name="Carbon-Auth-Class-Methods" />Methods
 
@@ -1086,146 +1507,6 @@ Authenticates the user with a JSON Web Token (JWT), i.e. the credentials generat
 
 
 
-## <a name="Carbon-Auth-Agent" />Module Carbon/Auth/Agent
-
-
-
-
-
-### <a name="Carbon-Auth-Agent-Properties" />Properties
-```typescript 
-static RDF_CLASS:string 
-```
-
-```typescript 
-static SCHEMA:Carbon.ObjectSchema.Class 
-```
-
-
-
-
-
-### <a name="Carbon-Auth-Agent-Factory" />Class Carbon.Auth.Agent.Factory
-
-
-> Factory class for `Carbon.Auth.Agent.Class` objects
-
-
-
-
-#### <a name="Carbon-Auth-Agent-Factory-Methods" />Methods
-##### hasClassProperties
-```typescript 
-static hasClassProperties( object:Object ):boolean
-```
-
-Returns true if the object provided has the properties that defines a `Carbon.Auth.Agent.Class` object.
-
-*Parameters*
-
-- object
-
-##### is
-```typescript 
-static is( object:Object ):boolean
-```
-
-Returns true if the object provided is considered as an `Carbon.Auth.Agent.Class` object.
-
-*Parameters*
-
-- object
-
-##### create
-```typescript 
-static create( name:string,  email:string ):Carbon.Auth.Agent.Class
-```
-
-Create a `Carbon.Auth.Agent.Class` object with the name and email specified.
-
-*Parameters*
-
-- name
-- email
-
-##### createFrom
-```typescript 
-static createFrom( object:T extends Object ):T & Carbon.Auth.Agent.Class
-```
-
-Create a `Carbon.Auth.Agent.Class` object with the object provided.
-
-*Parameters*
-
-- object
-
-
-
-
-## <a name="Carbon-Auth-Agents" />Module Carbon/Auth/Agents
-
-
-**Default export:** [Carbon.Auth.Agents.Class](#Carbon-Auth-Agents-Class)
-
-
-
-
-
-
-### <a name="Carbon-Auth-Agents-Class" />Class Carbon.Auth.Agents.Class
-
-
-> Class for manage Agents of a determined context.
-
-
-#### <a name="Carbon-Auth-Agents-Class-Constructor" />Constructor
-```typescript 
-Class()
-```
-
-
-
-
-#### <a name="Carbon-Auth-Agents-Class-Methods" />Methods
-
-##### get
-```typescript 
-get( agentURI:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.Auth.PersistedAgent.Class, Carbon.HTTP.Response.Class ]>
-```
-
-Retrieves the agent specified from the current context.
-
-*Parameters*
-
-- agentURI: The URI of the agent to retrieve.
-- requestOptions
-
-##### register
-```typescript 
-register( agentDocument:Carbon.Auth.Agents.Agent.Class ):Promise<Carbon.Pointer.Class, Carbon.HTTP.Response.Class>
-```
-
-Persists an Agent Document in the server, generating a random unique slug.
-Returns a Promise with a Pointer for the stored Agent, and the response of the call.
-
-*Parameters*
-
-- agentDocument
-
-```typescript 
-register( slug:string,  agentDocument:Carbon.Auth.Agents.Agent.Class ):Promise<Carbon.Pointer.Class, Carbon.HTTP.Response.Class>
-```
-
-Persists an Agent Document in the server using the slug specified.
-Returns a Promise with a Pointer for the stored Agent, and the response of the call.
-
-*Parameters*
-
-- slug
-- agentDocument
-
-
-
 ## <a name="Carbon-Auth-BasicAuthenticator" />Module Carbon/Auth/BasicAuthenticator
 
 
@@ -1310,7 +1591,7 @@ Returns true if the Authenticator supports the AuthenticationToken.
 
 
 
-## <a name="Carbon-Auth-PersistedAgent" />Module Carbon/Auth/PersistedAgent
+## <a name="Carbon-Auth-PersistedRole" />Module Carbon/Auth/PersistedRole
 
 
 
@@ -1319,21 +1600,169 @@ Returns true if the Authenticator supports the AuthenticationToken.
 
 
 
-### <a name="Carbon-Auth-PersistedAgent-Factory" />Class Carbon.Auth.PersistedAgent.Factory
+### <a name="Carbon-Auth-PersistedRole-Factory" />Class Carbon.Auth.PersistedRole.Factory
 
 
-> Factory class for `Carbon.Auth.PersistedAgent.Class` objects.
+> Factory class for `Carbon.Auth.PersistedRole.Class` objects
 
 
 
 
-#### <a name="Carbon-Auth-PersistedAgent-Factory-Methods" />Methods
+#### <a name="Carbon-Auth-PersistedRole-Factory-Methods" />Methods
+##### hasClassProperties
+```typescript 
+static hasClassProperties( resource:Object ):boolean
+```
+
+Returns true if the object provided has the properties that defines a `Carbon.Auth.PersistedRole.Class` object
+
+*Parameters*
+
+- resource
+
+##### is
+```typescript 
+static is( object:Object ):boolean
+```
+
+Returns true if the object provided is considered a `Carbon.Auth.PersistedRole.Class` object
+
+*Parameters*
+
+- object
+
+##### decorate
+```typescript 
+static decorate( object:T extends Object ):T & Carbon.Auth.PersistedRole.Class
+```
+
+Decorates the object provided with the methods and properties of a `Carbon.Auth.PersistedRole.Class` object.
+
+*Parameters*
+
+- object
+
+
+
+#### <a name="Carbon-Auth-PersistedRole-Factory-Decorated-Object" />Decorated Object
+**Interfaces:** [Carbon.Auth.PersistedRole.Class](#Carbon-Auth-PersistedRole-Class)
+
+> Object decorated by the `Carbon.Auth.PersistedRole.Factory.decorate()` function.
+
+
+##### <a name="Carbon-Auth-PersistedRole-Factory-Decorated-Object-Methods" />Methods
+##### listAgents
+```typescript 
+listAgents( requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.Auth.PersistedRole.Class, Carbon.HTTP.Response.Class ]>
+```
+
+Retrieves an array of unresolved pointers for all the agents of the role.
+
+*Parameters*
+
+- requestOptions
+
+##### addAgent
+```typescript 
+addAgent( agent:string | Carbon.Pointer.Class,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<Carbon.HTTP.Response.Class>
+```
+
+Makes a relation in the role towards the agents specified.
+
+*Parameters*
+
+- agent: The agents that wants to add to the role.
+- requestOptions
+
+##### addAgents
+```typescript 
+addAgents( agents:(string | Carbon.Pointer.Class)[],  requestOptions?:Carbon.HTTP.Request.Options ):Promise<Carbon.HTTP.Response.Class>
+```
+
+Makes a relation in the role towards the agents specified.
+
+*Parameters*
+
+- agents: An array with strings or Pointers that refers to the agents that wants to add to the role.
+- requestOptions
+
+##### removeAgent
+```typescript 
+removeAgent( agent:string | Carbon.Pointer.Class,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<Carbon.HTTP.Response.Class>
+```
+
+Removes the relation in the role towards the agents specified.
+
+*Parameters*
+
+- agent: The agents that wants to be removed from the role.
+- requestOptions
+
+##### removeAgents
+```typescript 
+removeAgents( agents:(string | Carbon.Pointer.Class)[],  requestOptions?:Carbon.HTTP.Request.Options ):Promise<Carbon.HTTP.Response.Class>
+```
+
+Remove the relation in the role towards the agents specified.
+
+*Parameters*
+
+- agents: An array with strings or Pointers that refers to the agents that wants to be removed from the role.
+- requestOptions
+
+##### getAgents
+```typescript 
+getAgents( requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ carbon.Auth.PersistedRole.Class, Carbon.HTTP.Response.Class ]>
+```
+
+Retrieves an array of resolved pointers for all the agents of the role.
+
+*Parameters*
+
+- requestOptions
+
+```typescript 
+getAgents( retrievalPreferences?:Carbon.RetrievalPreferences.Class,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ carbon.Auth.PersistedRole.Class, Carbon.HTTP.Response.Class ]>
+```
+
+Retrieves an array of resolved pointers for the agents of the role, in accordance of the retrievalPreferences provided.
+
+*Parameters*
+
+- retrievalPreferences: An object that specify the retrieval preferences for the request.
+- requestOptions
+
+
+## <a name="Carbon-Auth-Role" />Module Carbon/Auth/Role
+
+
+
+
+
+### <a name="Carbon-Auth-Role-Properties" />Properties
+```typescript 
+static SCHEMA:Carbon.ObjectSchema.Class 
+```
+
+
+
+
+
+### <a name="Carbon-Auth-Role-Factory" />Class Carbon.Auth.Role.Factory
+
+
+> Factory class for `Carbon.Auth.Role.Class` objects
+
+
+
+
+#### <a name="Carbon-Auth-Role-Factory-Methods" />Methods
 ##### hasClassProperties
 ```typescript 
 static hasClassProperties( object:Object ):boolean
 ```
 
-Returns true if the object provided has the properties of a `Carbon.Auth.PersistedAgent.Class` object.
+Returns true if the object provided has the properties that defines a `Carbon.Auth.Role.Class` object
 
 *Parameters*
 
@@ -1344,12 +1773,194 @@ Returns true if the object provided has the properties of a `Carbon.Auth.Persist
 static is( object:Object ):boolean
 ```
 
-Returns true if the object provided is considered a `Carbon.Auth.PersistedAgent.Class` object.
+Returns true if the object provided is considered a `Carbon.Auth.Role.Class` object
 
 *Parameters*
 
 - object
 
+##### create
+```typescript 
+static create( name:string ):Carbon.Auth.Role.Class
+```
+
+Create a `Carbon.Auth.Role.Class` object with the name specified.
+
+*Parameters*
+
+- name: The name of the role to create.
+
+##### createFrom
+```typescript 
+static createFrom( object:T extends Object ):T & Carbon.Auth.Role.Class
+```
+
+Create a `Carbon.Auth.Role.Class` object with the object provided.
+
+*Parameters*
+
+- object
+
+
+
+
+## <a name="Carbon-Auth-Roles" />Module Carbon/Auth/Roles
+
+
+**Default export:** [Carbon.Auth.Roles.Class](#Carbon-Auth-Roles-Class)
+
+
+
+
+
+
+### <a name="Carbon-Auth-Roles-Class" />Class Carbon.Auth.Roles.Class
+
+
+> Class for manage roles of an application.
+
+
+#### <a name="Carbon-Auth-Roles-Class-Constructor" />Constructor
+```typescript 
+Class( context:Carbon.Context )
+```
+
+
+*Parameters*
+
+- context
+
+
+
+#### <a name="Carbon-Auth-Roles-Class-Methods" />Methods
+
+##### get
+```typescript 
+get( roleURI:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.PersistedRole.Class, Carbon.HTTP.Response.Class ]>
+```
+
+Retrieves a role from the current context.
+
+*Parameters*
+
+- roleURI: The URI of the role to retrieve.
+- requestOptions
+
+##### listAgents
+```typescript 
+listAgents( roleURI:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.Auth.PersistedRole.Class, Carbon.HTTP.Response.Class ]>
+```
+
+Retrieves an array of unresolved pointers for all the agents of the specified role.
+
+*Parameters*
+
+- roleURI: The URI of the role to look for its agents.
+- requestOptions
+
+##### addAgent
+```typescript 
+addAgent( roleURI:string,  agent:string | Carbon.Pointer.Class,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<Carbon.HTTP.Response.Class>
+```
+
+Makes a relation in the role specified towards the agent provided.
+
+*Parameters*
+
+- roleURI: The URI of the role where to add the agent.
+- agent: The agent that wants to add to the role.
+- requestOptions
+
+##### addAgents
+```typescript 
+addAgents( roleURI:string,  agents:(string | Carbon.Pointer.Class)[],  requestOptions?:Carbon.HTTP.Request.Options ):Promise<Carbon.HTTP.Response.Class>
+```
+
+Makes a relation in the role specified towards the agents specified.
+
+*Parameters*
+
+- roleURI: The URI of the role where to add agents.
+- agents: An array with strings or Pointers that refers to the agents that wants to add to the role.
+- requestOptions
+
+##### removeAgent
+```typescript 
+removeAgent( roleURI:string,  agent:string | Carbon.Pointer.Class,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<Carbon.HTTP.Response.Class>
+```
+
+Removes the relation in the role specified towards the agent provided.
+
+*Parameters*
+
+- roleURI: The URI of the role from where to remove the agent.
+- agent: The agent that wants to be removed from the role.
+- requestOptions
+
+##### removeAgents
+```typescript 
+removeAgents( roleURI:string,  agents:(string | Carbon.Pointer.Class)[],  requestOptions?:Carbon.HTTP.Request.Options ):Promise<Carbon.HTTP.Response.Class>
+```
+
+Remove the relation in the role specified towards the agents specified.
+
+*Parameters*
+
+- roleURI: The URI of the role from where to remove the agents.
+- agents: An array with strings or Pointers that refers to the agents to be removed from the role.
+- requestOptions
+
+##### createChild
+```typescript 
+createChild( parentRole:string | Carbon.Pointer.Class,  role:Carbon.Auth.Roles.Class,  slug?:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.Pointer.Class, [ Carbon.HTTP.Response.Class, Carbon.HTTP.Response.Class] ]>
+```
+
+Persists the Role provided with the slug, if specified, as a childRole of the parentRole specified.
+Returns a Promise with a Pointer for the stored role; and a tuple of two responses, the first one is the response of the creation, and the second one is the response of the creation of the relation parent-child of the roles.
+
+*Parameters*
+
+- parentRole: The role that will be assigned as the parent of the role that wants to persist.
+- role: The appRole that wants to persist.
+- slug: The slug where the role will be persisted.
+- requestOptions: The slug where the role will be persisted.
+
+```typescript 
+createChild( parentRole:string | Carbon.Pointer.Class,  role:Carbon.Auth.Roles.Class,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.Pointer.Class, [ Carbon.HTTP.Response.Class, Carbon.HTTP.Response.Class] ]>
+```
+
+Persists the Role provided as a childRole of the parentRole specified.
+Returns a Promise with a Pointer for the stored role; and a tuple of two responses, the first one is the response of the creation, and the second one is the response of the creation of the relation parent-child of the roles.
+
+*Parameters*
+
+- parentRole: The role that will be assigned as the parent of the role that wants to persist.
+- role: The appRole that wants to persist.
+- requestOptions: The slug where the role will be persisted.
+
+##### getAgents
+```typescript 
+getAgents( roleURI:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ carbon.Auth.PersistedRole.Class, Carbon.HTTP.Response.Class ]>
+```
+
+Retrieves an array of resolved pointers for all the agents of the specified role.
+
+*Parameters*
+
+- roleURI: The URI of the role to look for its agents.
+- requestOptions
+
+```typescript 
+getAgents( roleURI:string,  retrievalPreferences?:Carbon.RetrievalPreferences.Class,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ carbon.Auth.PersistedRole.Class, Carbon.HTTP.Response.Class ]>
+```
+
+Retrieves an array of resolved pointers for the agents of the role, in accordance of the retrievalPreferences provided.
+
+*Parameters*
+
+- roleURI: The URI of the role to look for its agents.
+- retrievalPreferences: An object that specify the retrieval preferences for the request.
+- requestOptions
 
 
 
@@ -5014,7 +5625,7 @@ Returns true if the object provided has the properties that defines a `Carbon.LD
 static is( object:Object ):boolean
 ```
 
-Returns true if the object provided is considered as an `Carbon.LDP.DirectContainer.Class` object
+Returns true if the object provided is considered a `Carbon.LDP.DirectContainer.Class` object
 
 *Parameters*
 
@@ -5962,11 +6573,7 @@ static namespace:string
 
 #### <a name="Carbon-NS-CS-Class-Properties" />Properties
 ```typescript 
-static Application:string 
-```
-
-```typescript 
-static Token:string 
+static Agent:string 
 ```
 
 ```typescript 
@@ -5974,11 +6581,19 @@ static AllOrigins:string
 ```
 
 ```typescript 
-static Agent:string 
+static Application:string 
+```
+
+```typescript 
+static AppRole:string 
 ```
 
 ```typescript 
 static Ticket:string 
+```
+
+```typescript 
+static Token:string 
 ```
 
 
@@ -5994,15 +6609,19 @@ static Ticket:string
 
 #### <a name="Carbon-NS-CS-Predicate-Properties" />Properties
 ```typescript 
+static agent:string 
+```
+
+```typescript 
 static allowsOrigin:string 
 ```
 
 ```typescript 
-static description:string 
+static childRole:string 
 ```
 
 ```typescript 
-static enabled:string 
+static description:string 
 ```
 
 ```typescript 
@@ -6018,15 +6637,19 @@ static namae:string
 ```
 
 ```typescript 
+static parentRole:string 
+```
+
+```typescript 
 static password:string 
 ```
 
 ```typescript 
-static rootContainer:string 
+static ticketKey:string 
 ```
 
 ```typescript 
-static ticketKey:string 
+static rootContainer:string 
 ```
 
 ```typescript 
@@ -6598,7 +7221,7 @@ Returns true if the object provided has the properties that defines a `Carbon.No
 static is( object:Object ):boolean
 ```
 
-Returns true if the object provided is considered as an `Carbon.NonRDFSource.Class` object
+Returns true if the object provided is considered a `Carbon.NonRDFSource.Class` object
 
 *Parameters*
 
@@ -6789,7 +7412,7 @@ Returns true if the object provided has the properties that defines a `Carbon.Pe
 static is( object:Object ):boolean
 ```
 
-Returns true if the object provided is considered as an `Carbon.PersistedApp.Class` object
+Returns true if the object provided is considered a `Carbon.PersistedApp.Class` object
 
 *Parameters*
 
@@ -7044,6 +7667,43 @@ Returns true if the URI provided is in the scope of the PersistedDocument.
 *Parameters*
 
 - id
+
+
+## <a name="Carbon-Platform-Auth" />Module Carbon/Platform/Auth
+
+
+**Default export:** [Carbon.Platform.Auth.Class](#Carbon-Platform-Auth-Class)
+
+
+
+
+
+
+### <a name="Carbon-Platform-Auth-Class" />Class Carbon.Platform.Auth.Class
+
+
+> Implementation of `Carbon.Auth.Class` abstract class, that will manage the authentication and authorization specific of a Platform Context.
+
+
+#### <a name="Carbon-Platform-Auth-Class-Constructor" />Constructor
+```typescript 
+Class( context:Carbon.Platform.Context )
+```
+
+
+*Parameters*
+
+- context
+
+
+#### <a name="Carbon-Platform-Auth-Class-Properties" />Properties
+
+```typescript 
+roles:Carbon.Platform.Roles.Class 
+```
+
+Instance of `Carbon.Platform.Roles.Class`, for managing the roles of the current context.
+
 
 
 ## <a name="Carbon-Pointer" />Module Carbon/Pointer
@@ -8457,7 +9117,8 @@ Class()
 auth:Carbon.Auth.Class 
 ```
 
-Instance of Auth class for manage all the authentications in the context.
+Instance of a implementation of the Auth class for manage all the authentications and authorizations in the context.
+In the SDKContext this property is set to `null`, and in it children contexts, they instantiate a valid implementation of the `Carbon.Auth.Class` abstract class.
 ```typescript 
 documents:Carbon.Documents 
 ```
@@ -9188,6 +9849,7 @@ A object of type `Carbon.settings.CarbonSettings`, whitch is the default setting
 * platform.container: `"platform/"`
 * platform.apps.container: `"apps/"`
 * platform.agents.container: `"agents/"`
+* platform.roles.container: `"roles/"`
 * vocabulary: `"vocabulary/#"`
 
 

@@ -112,28 +112,23 @@ describe( module( "Carbon/Apps" ), ():void => {
 				let spies = {
 					success: ( appContext:AppContext ):void => {
 						expect( appContext instanceof AppContext ).toBe( true );
-					},
-					fail: ( some ):void => {
-						console.log( some );
 					}
 				};
 				let successSpy = spyOn( spies, "success" ).and.callThrough();
-				let failSpy = spyOn( spies, "fail" ).and.callThrough();
 
 				let promise:Promise<any>;
 				let spy:jasmine.Spy;
 
 				spy = spyOn( context.documents, "get" ).and.callThrough();
 
-				promise = apps.getContext( 'example-app/' ).then( spies.success, spies.fail );
+				promise = apps.getContext( 'example-app/' ).then( spies.success );
 				expect( promise instanceof Promise ).toBe( true );
 
 				promise.then( ():void => {
 					expect( spy ).toHaveBeenCalledWith( "http://example.com/platform/apps/example-app/" );
 					expect( successSpy.calls.count() ).toBe( 1 );
-					expect( failSpy.calls.count() ).toBe( 0 );
 					done();
-				}, done.fail );
+				} ).catch( done.fail );
 			} );
 
 			it( hasSignature(
@@ -175,13 +170,9 @@ describe( module( "Carbon/Apps" ), ():void => {
 				let spies = {
 					success: ( appContext:AppContext ):void => {
 						expect( appContext instanceof AppContext ).toBe( true );
-					},
-					fail: ( some ):void => {
-						console.log( some );
 					}
 				};
 				let successSpy = spyOn( spies, "success" ).and.callThrough();
-				let failSpy = spyOn( spies, "fail" ).and.callThrough();
 
 				let promise:Promise<any>;
 				let pointer:Pointer.Class;
@@ -190,15 +181,14 @@ describe( module( "Carbon/Apps" ), ():void => {
 				spy = spyOn( context.documents, "get" ).and.callThrough();
 				pointer = context.documents.getPointer( "apps/example-app/" );
 
-				promise = apps.getContext( pointer ).then( spies.success, spies.fail );
+				promise = apps.getContext( pointer ).then( spies.success );
 				expect( promise instanceof Promise ).toBe( true );
 
 				promise.then( ():void => {
 					expect( spy ).toHaveBeenCalledWith( "http://example.com/platform/apps/example-app/" );
 					expect( successSpy.calls.count() ).toBe( 1 );
-					expect( failSpy.calls.count() ).toBe( 0 );
 					done();
-				}, done.fail );
+				} ).catch( done.fail );
 			} );
 
 		} );

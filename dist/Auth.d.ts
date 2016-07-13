@@ -1,9 +1,8 @@
-import * as Agent from "./Auth/Agent";
-import * as Agents from "./Auth/Agents";
 import AuthenticationToken from "./Auth/AuthenticationToken";
 import Authenticator from "./Auth/Authenticator";
 import BasicAuthenticator from "./Auth/BasicAuthenticator";
-import * as PersistedAgent from "./Auth/PersistedAgent";
+import * as Role from "./Auth/Role";
+import * as Roles from "./Auth/Roles";
 import TokenAuthenticator from "./Auth/TokenAuthenticator";
 import * as Ticket from "./Auth/Ticket";
 import * as Token from "./Auth/Token";
@@ -12,13 +11,13 @@ import UsernameAndPasswordCredentials from "./Auth/UsernameAndPasswordCredential
 import Credentials from "./Auth/Credentials";
 import Context from "./Context";
 import * as HTTP from "./HTTP";
-export { Agent, Agents, AuthenticationToken, Authenticator, BasicAuthenticator, PersistedAgent, Ticket, Token, TokenAuthenticator, UsernameAndPasswordToken };
+export { AuthenticationToken, Authenticator, BasicAuthenticator, Role, Roles, Ticket, Token, TokenAuthenticator, UsernameAndPasswordToken };
 export declare enum Method {
     BASIC = 0,
     TOKEN = 1,
 }
-export declare class Class {
-    agents: Agents.Class;
+export declare abstract class Class {
+    roles: Roles.Class;
     private context;
     private method;
     private authenticators;

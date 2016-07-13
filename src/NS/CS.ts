@@ -1,19 +1,23 @@
 const namespace:string = "https://carbonldp.com/ns/v1/security#";
 
 class Class {
-	static get AllOrigins():string { return namespace + "AllOrigins"; }
-
 	static get Agent():string { return namespace + "Agent"; }
+
+	static get AllOrigins():string { return namespace + "AllOrigins"; }
 
 	static get Application():string { return namespace + "Application"; }
 
-	static get Ticket():string { return namespace + "Ticket"; }
+	static get AppRole():string { return namespace + "AppRole"; }
 
-	static get Token():string { return namespace + "Token"; }
+	static get Ticket():string { return namespace + "Ticket"; }
 }
 
 class Predicate {
+	static get agent():string { return namespace + "agent"; }
+
 	static get allowsOrigin():string { return namespace + "allowsOrigin"; }
+
+	static get childRole():string { return namespace + "childRole"; }
 
 	static get description():string { return namespace + "description"; }
 
@@ -24,6 +28,8 @@ class Predicate {
 	static get forIRI():string { return namespace + "forIRI"; }
 
 	static get namae():string { return namespace + "name"; }
+
+	static get parentRole():string { return namespace + "parentRole"; }
 
 	static get password():string { return namespace + "password"; }
 

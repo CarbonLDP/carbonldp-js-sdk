@@ -1,4 +1,5 @@
 "use strict";
+var AppRole = require("./App/Role");
 var APIDescription = require("./APIDescription");
 var Auth = require("./Auth");
 var Documents_1 = require("./Documents");
@@ -15,7 +16,7 @@ var Class = (function () {
         this.settings = new Map();
         this.generalObjectSchema = new ObjectSchema.DigestedObjectSchema();
         this.typeObjectSchemaMap = new Map();
-        this.auth = new Auth.Class(this);
+        this.auth = null;
         this.documents = new Documents_1.default(this);
         this.registerDefaultObjectSchemas();
     }
@@ -154,6 +155,8 @@ var Class = (function () {
                 "@container": "@set",
             },
         });
+        this.extendObjectSchema(AppRole.RDF_CLASS, Auth.Role.SCHEMA);
+        this.extendObjectSchema(AppRole.RDF_CLASS, AppRole.SCHEMA);
         this.extendObjectSchema(LDP.ResponseMetadata.RDF_CLASS, LDP.ResponseMetadata.SCHEMA);
         this.extendObjectSchema(LDP.ResourceMetadata.RDF_CLASS, LDP.ResourceMetadata.SCHEMA);
         this.extendObjectSchema(LDP.AddMemberAction.RDF_CLASS, LDP.AddMemberAction.SCHEMA);

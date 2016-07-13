@@ -107,7 +107,7 @@ describe( module( "Carbon/Auth/Agent" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"is",
-			"Returns true if the object provided is considered as an `Carbon.Auth.Agent.Class` object.", [
+			"Returns true if the object provided is considered a `Carbon.Auth.Agent.Class` object.", [
 				{name: "object", type: "Object"},
 			],
 			{type: "boolean"}

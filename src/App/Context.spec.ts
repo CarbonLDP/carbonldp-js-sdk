@@ -13,6 +13,7 @@ import {
 
 import AbstractContext from "./../AbstractContext";
 import * as App from "./../App";
+import * as Auth from "./Auth";
 import PersistedApp from "./../PersistedApp";
 import * as Pointer from "./../Pointer";
 import * as Utils from "./../Utils";
@@ -58,6 +59,16 @@ describe( module( "Carbon/App/Context" ), ():void => {
 			"Carbon.AbstractContext"
 		), ():void => {
 			expect( appContext instanceof AbstractContext );
+		} );
+
+		it( hasProperty(
+			INSTANCE,
+			"auth",
+			"Carbon.App.Auth.Class",
+			"Instance of `Carbon.App.Auth.Class` class for manage the auth inside of an application."
+		), ():void => {
+			expect( appContext.auth ).toBeDefined();
+			expect( appContext.auth instanceof Auth.Class ).toBe( true );
 		} );
 
 		it( hasProperty(

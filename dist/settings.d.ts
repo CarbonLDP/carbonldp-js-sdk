@@ -5,6 +5,7 @@ export interface CarbonSettings {
     "auth.method"?: Auth.Method;
     "platform.container"?: string;
     "platform.apps.container"?: string;
+    "platform.roles.container"?: string;
     "platform.agents.container"?: string;
     "vocabulary"?: string;
 }

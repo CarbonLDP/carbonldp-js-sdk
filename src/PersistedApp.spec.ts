@@ -59,7 +59,7 @@ describe( module( "Carbon/PersistedApp" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"is",
-			"Returns true if the object provided is considered as an `Carbon.PersistedApp.Class` object", [
+			"Returns true if the object provided is considered a `Carbon.PersistedApp.Class` object", [
 				{name: "object", type: "Object"}
 			],
 			{type: "boolean"}
