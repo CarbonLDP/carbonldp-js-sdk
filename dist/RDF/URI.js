@@ -17,6 +17,9 @@ var Util = (function () {
     Util.hasFragment = function (uri) {
         return uri.indexOf("#") !== -1;
     };
+    Util.hasQuery = function (uri) {
+        return uri.indexOf("?") !== -1;
+    };
     Util.hasProtocol = function (uri) {
         return Utils.S.startsWith(uri, "https://") || Utils.S.startsWith(uri, "http://");
     };
@@ -30,6 +33,9 @@ var Util = (function () {
     };
     Util.isBNodeID = function (uri) {
         return Utils.S.startsWith(uri, "_:");
+    };
+    Util.generateBNodeID = function () {
+        return "_:" + Utils.UUID.generate();
     };
     Util.isPrefixed = function (uri) {
         return !Util.isAbsolute(uri) && !Util.isBNodeID(uri) && Utils.S.contains(uri, ":");
@@ -91,11 +97,28 @@ var Util = (function () {
             return parts[parts.length - 1];
         }
     };
+    Util.getParameters = function (uri) {
+        var parameters = new Map();
+        if (!Util.hasQuery(uri))
+            return parameters;
+        uri.replace(/^.*\?/, "").split("&").forEach(function (param) {
+            var parts = param.replace(/\+/g, " ").split("=");
+            var key = parts.shift();
+            var val = parts.length > 0 ? parts.join("=") : null;
+            if (!parameters.has(key)) {
+                parameters.set(key, val);
+            }
+            else {
+                parameters.set(key, [].concat(parameters.get(key), val));
+            }
+        });
+        return parameters;
+    };
     Util.resolve = function (parentURI, childURI) {
-        if (Util.isAbsolute(childURI) || Util.isPrefixed(childURI))
+        if (Util.isAbsolute(childURI) || Util.isBNodeID(childURI) || Util.isPrefixed(childURI))
             return childURI;
         var finalURI = parentURI;
-        if (!Utils.S.endsWith(parentURI, "/"))
+        if (!Utils.S.endsWith(parentURI, "#") && !Utils.S.endsWith(parentURI, "/"))
             finalURI += "/";
         if (Utils.S.startsWith(childURI, "/")) {
             finalURI = finalURI + childURI.substr(1, childURI.length);

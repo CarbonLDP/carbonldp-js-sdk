@@ -17,6 +17,7 @@ import Response from "./../../Response";
 
 import ConflictError from "./ConflictError";
 import HTTPError from "./../HTTPError";
+import {Service} from "../../Request";
 
 describe( module(
 	"Carbon/HTTP/Errors/ConflictError"
@@ -27,74 +28,74 @@ describe( module(
 		"Error class that can be throw to indicate that the request could not be processed because of conflict in the request, such as an ID conflict"
 	), ():void => {
 
-		let response: Response;
+		let response:Response;
 
-		beforeEach(function() {
+		beforeAll( ( done:{ ():void, fail:() => void } ) => {
 			jasmine.Ajax.install();
-			jasmine.Ajax.stubRequest("/a/request/").andReturn({
+			jasmine.Ajax.stubRequest( "http://example.com/request/" ).andReturn( {
 				"status": 200,
 				"responseText": "A response"
-			});
+			} );
 
-			let request = new XMLHttpRequest();
-			request.open( "GET", "/a/request/");
-			request.send();
+			Service.send( "GET", "http://example.com/request/" ).then( ( _response ) => {
+				response = _response;
+				done();
+			} ).catch( done.fail );
 
-			response = new Response( request );
-		});
+		} );
 
-		afterEach(function() {
+		afterAll( () => {
 			jasmine.Ajax.uninstall();
-		});
+		} );
 
 		it( isDefined(), ():void => {
 			expect( ConflictError ).toBeDefined();
 			expect( Utils.isFunction( ConflictError ) ).toBe( true );
-		});
+		} );
 
 		it( extendsClass(
 			"Carbon.Errors.HTTPError"
 		), ():void => {
-			let error: ConflictError = new ConflictError( "Message of the error", response );
+			let error:ConflictError = new ConflictError( "Message of the error", response );
 
 			expect( error instanceof HTTPError ).toBe( true );
-		});
+		} );
 
-		it( hasConstructor([
-			{ name: "message", type: "string" },
-			{ name: "response", type: "Carbon.HTTP.Response" }
-		]), ():void => {
-			let error: ConflictError = new ConflictError( "Message of the error", response );
+		it( hasConstructor( [
+			{name: "message", type: "string"},
+			{name: "response", type: "Carbon.HTTP.Response"}
+		] ), ():void => {
+			let error:ConflictError = new ConflictError( "Message of the error", response );
 
 			expect( error ).toBeTruthy();
-			expect( error instanceof ConflictError).toBe( true );
-		});
+			expect( error instanceof ConflictError ).toBe( true );
+		} );
 
 		it( hasMethod(
 			INSTANCE,
 			"toString",
-			{ type: "string" }
+			{type: "string"}
 		), ():void => {
-			let error: ConflictError = new ConflictError( "Message of the error", response );
+			let error:ConflictError = new ConflictError( "Message of the error", response );
 
 			expect( error.toString ).toBeDefined();
 			expect( Utils.isFunction( error.toString ) );
 
-			expect( error.toString() ).toBe("ConflictError: Message of the error");
-		});
+			expect( error.toString() ).toBe( "ConflictError: Message of the error" );
+		} );
 
 		it( hasProperty(
 			INSTANCE,
 			"name",
 			"string"
 		), ():void => {
-			let error: ConflictError = new ConflictError( "Message of the error", response );
+			let error:ConflictError = new ConflictError( "Message of the error", response );
 
 			expect( error.name ).toBeDefined();
 			expect( Utils.isString( error.name ) ).toBe( true );
 
 			expect( error.name ).toBe( "ConflictError" );
-		});
+		} );
 
 		it( hasProperty(
 			STATIC,
@@ -104,8 +105,8 @@ describe( module(
 			expect( ConflictError.statusCode ).toBeDefined();
 			expect( Utils.isNumber( ConflictError.statusCode ) );
 			expect( ConflictError.statusCode ).toBe( 409 );
-		});
+		} );
 
-	});
+	} );
 
-});
+} );

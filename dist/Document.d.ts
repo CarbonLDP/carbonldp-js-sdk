@@ -10,8 +10,11 @@ export interface Class extends Resource.Class, Pointer.Library, Pointer.Validato
     getFragment(slug: string): Fragment.Class;
     getNamedFragment(slug: string): NamedFragment.Class;
     getFragments(): Fragment.Class[];
+    createFragment<T extends Object>(slug: string, object: T): NamedFragment.Class & T;
+    createFragment<T extends Object>(object: T): Fragment.Class & T;
     createFragment(): Fragment.Class;
     createFragment(slug: string): NamedFragment.Class;
+    createNamedFragment<T extends Object>(slug: string, object: T): NamedFragment.Class & T;
     createNamedFragment(slug: string): NamedFragment.Class;
     removeFragment(fragment: NamedFragment.Class): void;
     removeFragment(fragment: Fragment.Class): void;
@@ -23,9 +26,8 @@ export interface Class extends Resource.Class, Pointer.Library, Pointer.Validato
 }
 export declare class Factory {
     static hasClassProperties(documentResource: Object): boolean;
-    static create(uri: string): Class;
+    static is(object: Object): boolean;
     static create(): Class;
-    static createFrom<T extends Object>(object: T, uri: string): T & Class;
     static createFrom<T extends Object>(object: T): T & Class;
     static decorate<T extends Object>(object: T): T & Class;
 }

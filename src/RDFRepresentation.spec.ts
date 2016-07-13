@@ -36,14 +36,14 @@ describe( module( "Carbon/RDFRepresentation" ), ():void => {
 		expect( RDFRepresentation.SCHEMA[ "mediaType" ] ).toEqual({
 			"@id": NS.C.Predicate.mediaType,
 			"@type": NS.XSD.DataType.string
-		});
+		} );
 
 		expect( Utils.hasProperty( RDFRepresentation.SCHEMA, "size" ) ).toBe( true );
 		expect( RDFRepresentation.SCHEMA[ "size" ] ).toEqual({
 			"@id": NS.C.Predicate.size,
 			"@type": NS.XSD.DataType.long
-		});
-	});
+		} );
+	} );
 
 	describe( clazz(
 		"Carbon.RDFRepresentation.Factory",
@@ -58,33 +58,44 @@ describe( module( "Carbon/RDFRepresentation" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"hasClassProperties",
-			"Returns true if the object provided has the properties that defines a `Carbon.RDFRepresentation.Class` object", [
+			"Returns true if the object provided has the properties that defines a `Carbon.RDFRepresentation.Class` object.", [
 				{ name: "resource", type: "Object" }
 			],
-			{ type: "boolean" }
+			{type: "boolean"}
 		), ():void => {
 			expect( RDFRepresentation.Factory.hasClassProperties ).toBeDefined();
 			expect( Utils.isFunction( RDFRepresentation.Factory.hasClassProperties ) ).toBe( true );
 
-			let object:any = {};
-			expect( RDFRepresentation.Factory.hasClassProperties( object ) ).toBe( false );
+			let object:any;
+			expect( NonRDFSource.Factory.hasClassProperties( object ) ).toBe( false );
 
-			object.mediaType = "application/pdf";
-			expect( RDFRepresentation.Factory.hasClassProperties( object ) ).toBe( false );
-			object.size = 1000;
-			expect( RDFRepresentation.Factory.hasClassProperties( object ) ).toBe( false );
+			object:any = {
+				mediaType: null,
+				size: null,
+				download: ():void => {},
+			};
+			expect( NonRDFSource.Factory.hasClassProperties( object ) ).toBe( true );
 
+			delete object.mediaType;
+			expect( NonRDFSource.Factory.hasClassProperties( object ) ).toBe( false );
+			object.mediaType = null;
+
+			delete object.size;
+			expect( NonRDFSource.Factory.hasClassProperties( object ) ).toBe( false );
+			object.size = null;
+
+			delete object.download;
+			expect( NonRDFSource.Factory.hasClassProperties( object ) ).toBe( false );
 			object.download = ():void => {};
-			expect( RDFRepresentation.Factory.hasClassProperties( object ) ).toBe( true );
-		});
+		} );
 
 		it( hasMethod(
 			STATIC,
 			"is",
-			"Returns true if the object provided is considered as an `Carbon.RDFRepresentation.Class` object", [
+			"Returns true if the object provided is considered as an `Carbon.RDFRepresentation.Class` object.", [
 				{ name: "object", type: "Object" }
 			],
-			{ type: "boolean" }
+			{type: "boolean"}
 		), ():void => {
 			expect( RDFRepresentation.Factory.is ).toBeDefined();
 			expect( Utils.isFunction( RDFRepresentation.Factory.is ) ).toBe( true );
@@ -286,6 +297,6 @@ describe( module( "Carbon/RDFRepresentation" ), ():void => {
 
 		});
 
-	});
+	} );
 
-});
+} );

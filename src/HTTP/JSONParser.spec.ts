@@ -22,7 +22,7 @@ describe( module(
 	it( isDefined(), ():void => {
 		expect( JSONParser ).toBeDefined();
 		expect( Utils.isObject( JSONParser ) ).toBe( true );
-	});
+	} );
 
 	describe( clazz(
 		"Carbon.HTTP.JSONParser.Class",
@@ -32,20 +32,20 @@ describe( module(
 		it( isDefined(), ():void => {
 			expect( JSONParser.Class ).toBeDefined();
 			expect( Utils.isFunction( JSONParser.Class ) ).toBe( true );
-			let value: JSONParser.Class = new JSONParser.Class();
+			let value:JSONParser.Class = new JSONParser.Class();
 
 			expect( value ).toBeTruthy();
 			expect( value instanceof JSONParser.Class ).toBe( true );
-		});
+		} );
 
 		it( hasMethod(
 			INSTANCE,
 			"parse", [
-				{ name: "body", type: "string", description: "A JSON string to parse" }
+				{name: "body", type: "string", description: "A JSON string to parse"}
 			],
-			{ type: "Promise <Object>" }
+			{type: "Promise <Object>"}
 		), ( done ):void => {
-			let parser: JSONParser.Class = new JSONParser.Class();
+			let parser:JSONParser.Class = new JSONParser.Class();
 			let jsonString = `{
 			   "anObject": {
 			      "numericProperty": -122,
@@ -72,9 +72,9 @@ describe( module(
 			      5
 			   ]
 			}`;
-			let jsonObject: Object = {
+			let jsonObject:Object = {
 				anObject: {
-					numericProperty: -122,
+					numericProperty: - 122,
 					nullProperty: null,
 					booleanProperty: true,
 					dateProperty: "2011-09-23"
@@ -110,10 +110,10 @@ describe( module(
 					expect( errorObject instanceof Error ).toBe( true );
 				}
 			};
-			let success = spyOn(spy, 'success').and.callThrough();
-			let error = spyOn(spy, 'error').and.callThrough();
+			let success = spyOn( spy, 'success' ).and.callThrough();
+			let error = spyOn( spy, 'error' ).and.callThrough();
 
-			let promises: Promise<any>[] = [];
+			let promises:Promise<any>[] = [];
 
 			promises.push( parser.parse( jsonString ).then( spy.success, spy.error ) );
 			promises.push( parser.parse( "some String /12121/ that is not JSON ))(*&^%$#@!" ).then( spy.success, spy.error ) );
@@ -123,15 +123,15 @@ describe( module(
 				expect( error.calls.count() ).toBe( 1 );
 				done();
 			}, done.fail );
-		});
+		} );
 
-	});
+	} );
 
 	it( hasDefaultExport(
 		"Carbon.HTTP.JSONParser.Class"
 	), ():void => {
 		expect( DefaultExport ).toBeDefined();
 		expect( DefaultExport ).toBe( JSONParser.Class );
-	});
+	} );
 
-});
+} );

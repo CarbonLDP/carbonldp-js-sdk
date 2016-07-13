@@ -37,4 +37,4 @@ export class DataType {
 
 Utils.forEachOwnProperty( DataType, ( key:string, value:any ):void => {
 	DataType[ value ] = key;
-});
+} );

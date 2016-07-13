@@ -1,6 +1,5 @@
 "use strict";
 var Context_1 = require("./App/Context");
-var Pointer = require("./Pointer");
 var RDF = require("./RDF");
 var Utils = require("./Utils");
 var App = require("./App");
@@ -36,9 +35,6 @@ var Class = (function () {
         var _this = this;
         return this.context.documents.getMembers(this.getAppsContainerURI(), false).then(function (_a) {
             var members = _a[0], response = _a[1];
-            return Pointer.Util.resolveAll(members);
-        }).then(function (_a) {
-            var members = _a[0], responses = _a[1];
             return members.map(function (member) { return new Context_1.default(_this.context, member); });
         });
     };

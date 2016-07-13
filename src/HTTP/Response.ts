@@ -1,30 +1,47 @@
 import * as Header from "./Header";
+import {ClientRequest, IncomingMessage} from "http";
+import {isString, isObject} from "../Utils";
 
 export class Class {
-	constructor( request:XMLHttpRequest ) {
-		this.status = request.status;
-		this.data = request.response || request.responseText;
-		this.setHeaders( request );
-
-		this.request = request;
-	}
-
 	status:number;
 	data:string | Blob;
 	headers:Map<string, Header.Class>;
-	request:XMLHttpRequest;
+	request:XMLHttpRequest | ClientRequest;
+
+	constructor( request:XMLHttpRequest );
+	constructor( request:ClientRequest, data:string, response?:IncomingMessage );
+	constructor( request:XMLHttpRequest | ClientRequest, data?:string, response:IncomingMessage = <any>{} ) {
+		if( typeof XMLHttpRequest !== "undefined" && request instanceof XMLHttpRequest ) {
+			let res:XMLHttpRequest = request;
+			this.status = res.status;
+			this.data = res.response || res.responseText;
+			this.setHeaders( res.getAllResponseHeaders() );
+		} else {
+			this.status = response.statusCode;
+			this.data = data || "";
+			this.setHeaders( <Object> response.headers );
+		}
+
+		this.request = request;
+	}
 
 	public getHeader( name:string ):Header.Class {
 		name = name.toLowerCase();
 		return this.headers.get( name ) || null;
 	}
 
-	private setHeaders( request:XMLHttpRequest ):void {
-		let headersString:string = request.getAllResponseHeaders();
-		if ( headersString ) {
-			this.headers = Header.Util.parseHeaders( headersString );
+	private setHeaders( headersString:string ):void;
+	private setHeaders( headerObject:Object ):void;
+	private setHeaders( headers:any ):void {
+		if( isString( headers ) ) {
+			this.headers = Header.Util.parseHeaders( headers );
 		} else {
 			this.headers = new Map<string, Header.Class>();
+			if( isObject( headers ) ) {
+				for( let name of Object.keys( headers ) ) {
+					this.headers.set( name, new Header.Class( headers[ name ] ) );
+				}
+			}
 		}
 	}
 }

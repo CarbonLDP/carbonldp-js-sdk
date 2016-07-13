@@ -16,8 +16,12 @@ export interface Class extends Resource.Class, Pointer.Library, Pointer.Validato
 	getNamedFragment( slug:string ):NamedFragment.Class;
 	getFragments():Fragment.Class[];
 
+	createFragment<T extends Object>( slug:string, object:T ):NamedFragment.Class & T;
+	createFragment<T extends Object>( object:T ):Fragment.Class & T;
 	createFragment():Fragment.Class;
 	createFragment( slug:string ):NamedFragment.Class;
+
+	createNamedFragment<T extends Object>( slug:string, object:T ):NamedFragment.Class & T;
 	createNamedFragment( slug:string ):NamedFragment.Class;
 
 	removeFragment( fragment:NamedFragment.Class ):void;
@@ -102,28 +106,33 @@ function getFragments():Fragment.Class[] {
 	return Utils.A.from( document._fragmentsIndex.values() );
 }
 
+function createFragment<T extends Object>( slug:string, object:T ):NamedFragment.Class & T;
+function createFragment<T extends Object>( object:T ):Fragment.Class & T;
 function createFragment( slug:string ):NamedFragment.Class;
-function createFragment( slug?:string ):Fragment.Class;
-function createFragment( slug:any = null ):any {
+function createFragment():Fragment.Class;
+function createFragment( slugOrObject?:any, object?:any ):any {
 	let document:Class = <Class> this;
+	let slug:string = Utils.isString( slugOrObject ) ? slugOrObject : null;
+	object = Utils.isString( slugOrObject ) ? object : slugOrObject;
+	object = object || {};
 
-	let id:string;
 	if( slug ) {
-		if( ! RDF.URI.Util.isBNodeID( slug ) ) return document.createNamedFragment( slug );
-		id = slug;
-		if( this._fragmentsIndex.has( id ) ) throw new Errors.IDAlreadyInUseError( "The slug provided is already being used by a fragment." );
-	} else {
-		id = Fragment.Util.generateID();
+		if( ! RDF.URI.Util.isBNodeID( slug ) ) return document.createNamedFragment( slug, object );
+		if( this._fragmentsIndex.has( slug ) ) throw new Errors.IDAlreadyInUseError( "The slug provided is already being used by a fragment." );
 	}
 
-	let fragment:Fragment.Class = Fragment.Factory.create( id, document );
+	let fragment:Fragment.Class = Fragment.Factory.createFrom( object, slug, document );
+	document._fragmentsIndex.set( fragment.id, fragment );
 
-	document._fragmentsIndex.set( id, fragment );
-
+	convertNestedObjects( document, fragment );
 	return fragment;
 }
-function createNamedFragment( slug:string ):NamedFragment.Class {
+
+function createNamedFragment<T extends Object>( slug:string, object:T ):NamedFragment.Class & T;
+function createNamedFragment( slug:string ):NamedFragment.Class;
+function createNamedFragment( slug:string, object?:any ):any {
 	let document:Class = <Class> this;
+	object = object || {};
 
 	if( RDF.URI.Util.isBNodeID( slug ) ) throw new Errors.IllegalArgumentError( "Named fragments can't have a slug that starts with '_:'." );
 
@@ -134,10 +143,10 @@ function createNamedFragment( slug:string ):NamedFragment.Class {
 
 	if( document._fragmentsIndex.has( slug ) ) throw new Errors.IDAlreadyInUseError( "The slug provided is already being used by a fragment." );
 
-	let fragment:NamedFragment.Class = <NamedFragment.Class> NamedFragment.Factory.create( slug, document );
-
+	let fragment:NamedFragment.Class = <NamedFragment.Class> NamedFragment.Factory.createFrom( object, slug, document );
 	document._fragmentsIndex.set( slug, fragment );
 
+	convertNestedObjects( document, fragment );
 	return fragment;
 }
 
@@ -161,7 +170,7 @@ function toJSON( objectSchemaResolver:ObjectSchema.Resolver, jsonLDConverter:JSO
 function toJSON( objectSchemaResolver:ObjectSchema.Resolver ):string;
 function toJSON():string;
 function toJSON( objectSchemaResolver:ObjectSchema.Resolver = null, jsonldConverter:JSONLDConverter = null ):string {
-	jsonldConverter = !! jsonldConverter ? jsonldConverter : new JSONLDConverter();
+	jsonldConverter = ! ! jsonldConverter ? jsonldConverter : new JSONLDConverter();
 
 	let resources:{ toJSON:() => string }[] = [];
 	resources.push( this );
@@ -171,7 +180,7 @@ function toJSON( objectSchemaResolver:ObjectSchema.Resolver = null, jsonldConver
 	for( let resource of resources ) {
 		let digestedContext:ObjectSchema.DigestedObjectSchema = objectSchemaResolver ? objectSchemaResolver.getSchemaFor( resource ) : new ObjectSchema.DigestedObjectSchema();
 
-		expandedResources.push( jsonldConverter.expand( resource, digestedContext, this ) );
+		expandedResources.push( jsonldConverter.expand( resource, digestedContext ) );
 	}
 
 	let graph:RDF.Document.Class = {
@@ -200,22 +209,27 @@ export class Factory {
 		);
 	}
 
-	static create( uri:string ):Class;
-	static create():Class;
-	static create( uri:string = null ):Class {
-		return Factory.createFrom( {}, uri );
+	static is( object:Object ):boolean {
+		return (
+			Resource.Factory.is( object ) &&
+			Factory.hasClassProperties( object )
+		);
 	}
 
-	static createFrom<T extends Object>( object:T, uri:string ):T & Class;
-	static createFrom<T extends Object>( object:T ):T & Class;
-	static createFrom<T extends Object>( object:T, uri:string = null ):T & Class {
-		if( !! uri && RDF.URI.Util.isBNodeID( uri ) ) throw new Errors.IllegalArgumentError( "Documents cannot have a BNodeID as a uri." );
+	static create():Class {
+		return Factory.createFrom( {} );
+	}
 
-		let resource:Resource.Class = Resource.Factory.createFrom( object, uri );
+	static createFrom<T extends Object>( object:T ):T & Class {
+		if( Factory.is( object ) ) throw new Errors.IllegalArgumentError( "The object passed is already a Document" );
 
-		let document:Class = Factory.decorate( resource );
+		let resource:Resource.Class = <any> object;
+		if( ! Resource.Factory.is( object ) ) resource = Resource.Factory.createFrom( object );
 
-		return <any> document;
+		let document:T & Class = Factory.decorate<T>( <any> resource );
+		convertNestedObjects( document, document );
+
+		return document;
 	}
 
 	static decorate<T extends Object>( object:T ):T & Class {
@@ -298,6 +312,41 @@ export class Factory {
 
 		return <any> object;
 	}
+}
+
+function convertNestedObjects( parent:Class, actual:any ):void {
+	let next:any;
+	let idOrSlug:string;
+	let fragment:Fragment.Class;
+
+	let keys:string[] = Object.keys( actual );
+	for( let key of keys ) {
+		next = actual[ key ];
+
+		if( Utils.isArray( next ) ) {
+			convertNestedObjects( parent, next );
+			continue;
+		}
+
+		if( ! Utils.isPlainObject( next ) || Pointer.Factory.is( next ) ) continue;
+
+		idOrSlug = ( "id" in next ) ? next.id : ( ( "slug" in next ) ? next.slug : "" );
+		if( ! parent.inScope( idOrSlug ) ) continue;
+
+		let parentFragment:Fragment.Class = parent.getFragment( idOrSlug );
+
+		if( ! parentFragment ) {
+			fragment = parent.createFragment( idOrSlug, next );
+			convertNestedObjects( parent, fragment );
+
+		} else if( parentFragment !== next ) {
+			Object.assign( parentFragment, next );
+			fragment = actual[ key ] = parentFragment;
+			convertNestedObjects( parent, fragment );
+		}
+
+	}
+
 }
 
 export default Class;

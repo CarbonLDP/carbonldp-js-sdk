@@ -12,13 +12,18 @@ export class Factory {
 		);
 	}
 
+	static is( object:Object ):boolean {
+		return Pointer.Factory.is( object )
+			&& Factory.hasClassProperties( object );
+	}
+
 	static create( id:string = null, types:string[] = null ):Class {
 		return Factory.createFrom( {}, id, types );
 	}
 
 	static createFrom<T extends Object>( object:T, id:string = null, types:string[] = null ):T & Class {
-		id = !! id ? id : ( (<any> object).id || "" );
-		types = !! types ? types : ( (<any> object).types || [] );
+		id = ! ! id ? id : ( (<any> object).id || "" );
+		types = ! ! types ? types : ( (<any> object).types || [] );
 
 		let resource:Class = Factory.decorate( object );
 		resource.id = id;

@@ -10,6 +10,7 @@ export class Class implements AuthenticationToken {
 	}
 
 	get username():string { return this._username; }
+
 	get password():string { return this._password; }
 }
 

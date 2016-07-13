@@ -1,0 +1,10 @@
+{{~new-line~}}
+{{#each properties~}}
+	```typescript {{new-line~}}
+	{{../access}}{{name}}:{{{type}}} {{new-line~}}
+	```
+
+	{{#with description~}}
+		{{{trim this}}}
+	{{/with}}
+{{/each}}

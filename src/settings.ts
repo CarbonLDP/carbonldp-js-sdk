@@ -7,6 +7,7 @@ export interface CarbonSettings {
 	"platform.container"?:string;
 	"platform.apps.container"?:string;
 	"platform.agents.container"?:string;
+	"vocabulary"?:string;
 }
 
 let settings:CarbonSettings = {};
@@ -16,5 +17,6 @@ settings[ "auth.method" ] = Auth.Method.TOKEN;
 settings[ "platform.container" ] = "platform/";
 settings[ "platform.apps.container" ] = "apps/";
 settings[ "platform.agents.container" ] = "agents/";
+settings[ "vocabulary" ] = "vocabulary/#";
 
 export default settings;

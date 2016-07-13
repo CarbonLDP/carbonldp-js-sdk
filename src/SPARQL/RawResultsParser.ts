@@ -10,7 +10,7 @@ export class Class implements Parser<RawResults> {
 		let jsonParser:JSONParser = new JSONParser();
 		return jsonParser.parse( input ).then( ( parsedObject:Object ) => {
 			return <any> parsedObject;
-		});
+		} );
 	}
 }
 

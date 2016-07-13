@@ -6,6 +6,7 @@ export interface CarbonSettings {
     "platform.container"?: string;
     "platform.apps.container"?: string;
     "platform.agents.container"?: string;
+    "vocabulary"?: string;
 }
 declare let settings: CarbonSettings;
 export default settings;

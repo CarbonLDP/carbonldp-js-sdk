@@ -30,33 +30,43 @@ function syncSavedFragments() {
     document._savedFragments = Utils.A.from(document._fragmentsIndex.values());
 }
 function extendCreateFragment(superFunction) {
-    return function (slug) {
-        if (slug === void 0) { slug = null; }
-        var fragment = superFunction.call(this, slug);
-        if (slug !== null) {
-            if (RDF.URI.Util.isBNodeID(slug))
-                return PersistedFragment.Factory.decorate(fragment);
-            return PersistedNamedFragment.Factory.decorate(fragment);
+    return function (slugOrObject, object) {
+        if (slugOrObject === void 0) { slugOrObject = null; }
+        if (object === void 0) { object = null; }
+        var fragment = superFunction.call(this, slugOrObject, object);
+        var id = fragment.id;
+        if (RDF.URI.Util.isBNodeID(id)) {
+            PersistedFragment.Factory.decorate(fragment);
         }
         else {
-            return PersistedFragment.Factory.decorate(fragment);
+            PersistedNamedFragment.Factory.decorate(fragment);
         }
+        return fragment;
     };
 }
 function extendCreateNamedFragment(superFunction) {
-    return function (slug) {
-        var fragment = superFunction.call(this, slug);
+    return function (slug, object) {
+        if (object === void 0) { object = null; }
+        var fragment = superFunction.call(this, slug, object);
         return PersistedFragment.Factory.decorate(fragment);
     };
 }
 function refresh() {
-    return null;
+    return this._documents.refresh(this);
 }
 function save() {
     return this._documents.save(this);
 }
 function destroy() {
-    return this._documents.delete(this);
+    return this._documents.delete(this.id);
+}
+function getDownloadURL() {
+    return this._documents.getDownloadURL(this.id);
+}
+function createAccessPoint(accessPoint, slug, requestOptions) {
+    if (slug === void 0) { slug = null; }
+    if (requestOptions === void 0) { requestOptions = {}; }
+    return this._documents.createAccessPoint(accessPoint, slug, requestOptions);
 }
 function executeRawASKQuery(askQuery, requestOptions) {
     if (requestOptions === void 0) { requestOptions = {}; }
@@ -91,6 +101,7 @@ var Factory = (function () {
             Utils.hasFunction(document, "refresh") &&
             Utils.hasFunction(document, "save") &&
             Utils.hasFunction(document, "destroy") &&
+            Utils.hasFunction(document, "createAccessPoint") &&
             Utils.hasFunction(document, "executeRawASKQuery") &&
             Utils.hasFunction(document, "executeASKQuery") &&
             Utils.hasFunction(document, "executeRawSELECTQuery") &&
@@ -105,12 +116,14 @@ var Factory = (function () {
     };
     Factory.create = function (uri, documents, snapshot) {
         if (snapshot === void 0) { snapshot = {}; }
-        var document = Document.Factory.create(uri);
+        var document = Document.Factory.create();
+        document.id = uri;
         return Factory.decorate(document, documents, snapshot);
     };
     Factory.createFrom = function (object, uri, documents, snapshot) {
         if (snapshot === void 0) { snapshot = {}; }
-        var document = Document.Factory.createFrom(object, uri);
+        var document = Document.Factory.createFrom(object);
+        document.id = uri;
         return Factory.decorate(document, documents, snapshot);
     };
     Factory.decorate = function (document, documents, snapshot) {
@@ -201,6 +214,18 @@ var Factory = (function () {
                 enumerable: false,
                 configurable: true,
                 value: destroy,
+            },
+            "getDownloadURL": {
+                writable: false,
+                enumerable: false,
+                configurable: true,
+                value: getDownloadURL,
+            },
+            "createAccessPoint": {
+                writable: false,
+                enumerable: false,
+                configurable: true,
+                value: createAccessPoint,
             },
             "executeRawASKQuery": {
                 writable: false,

@@ -2,21 +2,26 @@
 var Document = require("./Document");
 var NS = require("./NS");
 var Utils = require("./Utils");
-var Errors_1 = require("./Errors");
+var IllegalArgumentError_1 = require("./Errors/IllegalArgumentError");
 var Context_1 = require("./App/Context");
 exports.Context = Context_1.default;
 exports.RDF_CLASS = NS.CS.Class.Application;
 exports.SCHEMA = {
     "name": {
-        "@id": NS.CS.Predicate.name,
+        "@id": NS.CS.Predicate.namae,
+        "@type": NS.XSD.DataType.string,
+    },
+    "description": {
+        "@id": NS.CS.Predicate.description,
         "@type": NS.XSD.DataType.string,
     },
     "rootContainer": {
         "@id": NS.CS.Predicate.rootContainer,
         "@type": "@id",
     },
-    "allowsOrigin": {
+    "allowsOrigins": {
         "@id": NS.CS.Predicate.allowsOrigin,
+        "@container": "@set",
     },
 };
 var Factory = (function () {
@@ -30,17 +35,19 @@ var Factory = (function () {
             && Factory.hasClassProperties(object)
             && object.types.indexOf(NS.CS.Class.Application) !== -1;
     };
-    Factory.create = function (name) {
-        return Factory.createFrom({}, name);
+    Factory.create = function (name, description) {
+        return Factory.createFrom({}, name, description);
     };
-    Factory.createFrom = function (object, name) {
+    Factory.createFrom = function (object, name, description) {
         if (!Document.Factory.hasClassProperties(object))
             object = Document.Factory.createFrom(object);
         if (!Utils.isString(name) || !name)
-            throw new Errors_1.IllegalArgumentError("The name cannot be empty.");
+            throw new IllegalArgumentError_1.default("The name cannot be empty.");
         var app = object;
         app.name = name;
         app.types.push(NS.CS.Class.Application);
+        if (!!description)
+            app.description = description;
         return app;
     };
     return Factory;

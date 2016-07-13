@@ -1,23 +1,23 @@
 import {
-		INSTANCE,
-		STATIC,
+	INSTANCE,
+	STATIC,
 
-		module,
+	module,
 
-		isDefined,
+	isDefined,
 
-		interfaze,
-		clazz,
-		method,
+	interfaze,
+	clazz,
+	method,
 
-		hasConstructor,
-		hasMethod,
-		hasSignature,
-		hasProperty,
-		hasInterface,
-		extendsClass,
+	hasConstructor,
+	hasMethod,
+	hasSignature,
+	hasProperty,
+	hasInterface,
+	extendsClass,
 
-		MethodArgument,
+	MethodArgument,
 } from "./test/JasmineExtender";
 
 import * as Errors from "./Errors";
@@ -32,22 +32,22 @@ describe( module( "Carbon/JSONLDConverter" ), ():void => {
 	it( isDefined(), ():void => {
 		expect( JSONLDConverter ).toBeDefined();
 		expect( Utils.isObject( JSONLDConverter ) ).toEqual( true );
-	});
+	} );
 
 	describe( clazz( "Carbon.JSONLDConverter.Class", "" ), ():void => {
 		it( isDefined(), ():void => {
 			expect( JSONLDConverter.Class ).toBeDefined();
 			expect( Utils.isFunction( JSONLDConverter.Class ) ).toEqual( true );
-		});
+		} );
 
 		describe( method( INSTANCE, "compact" ), ():void => {
 			// TODO: Improve signature description
 			it( hasSignature( "", [
-				{ name: "expandedObject", type: "Object" },
-				{ name: "targetObject", type: "Object" },
-				{ name: "digestedSchema", type: "Carbon.ObjectSchema.DigestedObjectSchema" },
-				{ name: "pointerLibrary", type: "Carbon.Pointer.Library" },
-			], { type: "Object", description: "" } ), ():void => {
+				{name: "expandedObject", type: "Object"},
+				{name: "targetObject", type: "Object"},
+				{name: "digestedSchema", type: "Carbon.ObjectSchema.DigestedObjectSchema"},
+				{name: "pointerLibrary", type: "Carbon.Pointer.Library"},
+			], {type: "Object", description: ""} ), ():void => {
 				let jsonldConverter:JSONLDConverter.Class = new JSONLDConverter.Class();
 
 				expect( jsonldConverter.compact ).toBeDefined();
@@ -56,43 +56,43 @@ describe( module( "Carbon/JSONLDConverter" ), ():void => {
 				let expandedObject:any = {
 					"@id": "http://example.com/expandedObject/",
 					"http://example.com/ns#string": [
-						{ "@value": "some-string", "@type": "http://www.w3.org/2001/XMLSchema#string" },
+						{"@value": "some-string", "@type": "http://www.w3.org/2001/XMLSchema#string"},
 					],
 					"http://example.com/ns#date": [
-						{ "@value": "2015-12-04T23:06:57.920Z", "@type": "http://www.w3.org/2001/XMLSchema#dateTime" },
+						{"@value": "2015-12-04T23:06:57.920Z", "@type": "http://www.w3.org/2001/XMLSchema#dateTime"},
 					],
 					"http://example.com/ns#numberList": [
 						{
 							"@list": [
-								{ "@value": "2", "@type": "http://www.w3.org/2001/XMLSchema#integer" },
-								{ "@value": "3", "@type": "http://www.w3.org/2001/XMLSchema#integer" },
-								{ "@value": "4", "@type": "http://www.w3.org/2001/XMLSchema#integer" },
-								{ "@value": "5", "@type": "http://www.w3.org/2001/XMLSchema#integer" },
-								{ "@value": "6", "@type": "http://www.w3.org/2001/XMLSchema#integer" },
+								{"@value": "2", "@type": "http://www.w3.org/2001/XMLSchema#integer"},
+								{"@value": "3", "@type": "http://www.w3.org/2001/XMLSchema#integer"},
+								{"@value": "4", "@type": "http://www.w3.org/2001/XMLSchema#integer"},
+								{"@value": "5", "@type": "http://www.w3.org/2001/XMLSchema#integer"},
+								{"@value": "6", "@type": "http://www.w3.org/2001/XMLSchema#integer"},
 							],
 						},
 					],
 					"http://example.com/ns#languageMap": [
-						{ "@value": "español", "@type": "http://www.w3.org/2001/XMLSchema#string", "@language": "es" },
-						{ "@value": "english", "@type": "http://www.w3.org/2001/XMLSchema#string", "@language": "en" },
-						{ "@value": "日本語", "@language": "jp" },
+						{"@value": "español", "@type": "http://www.w3.org/2001/XMLSchema#string", "@language": "es"},
+						{"@value": "english", "@type": "http://www.w3.org/2001/XMLSchema#string", "@language": "en"},
+						{"@value": "日本語", "@language": "jp"},
 					],
 					"http://example.com/ns#pointer": [
-						{ "@id": "http://example.com/pointer" },
+						{"@id": "http://example.com/pointer"},
 					],
 					"http://example.com/ns#pointerList": [
 						{
 							"@list": [
-								{ "@id": "http://example.com/pointer-1" },
-								{ "@id": "http://example.com/pointer-2" },
-								{ "@id": "http://example.com/pointer-3" },
+								{"@id": "http://example.com/pointer-1"},
+								{"@id": "http://example.com/pointer-2"},
+								{"@id": "http://example.com/pointer-3"},
 							],
 						},
 					],
 					"http://example.com/ns#pointerSet": [
-						{ "@id": "http://example.com/pointer-1" },
-						{ "@id": "http://example.com/pointer-2" },
-						{ "@id": "http://example.com/pointer-3" },
+						{"@id": "http://example.com/pointer-1"},
+						{"@id": "http://example.com/pointer-2"},
+						{"@id": "http://example.com/pointer-3"},
 					],
 				};
 
@@ -198,15 +198,15 @@ describe( module( "Carbon/JSONLDConverter" ), ():void => {
 				expect( compactedObject.pointerSet[ 0 ].id ).toEqual( "http://example.com/pointer-1" );
 				expect( compactedObject.pointerSet[ 1 ].id ).toEqual( "http://example.com/pointer-2" );
 				expect( compactedObject.pointerSet[ 2 ].id ).toEqual( "http://example.com/pointer-3" );
-			});
-		});
+			} );
+		} );
 
 		describe( method( INSTANCE, "expand" ), ():void => {
 			// TODO: Improve signature description
 			it( hasSignature( "", [
-				{ name: "compactedObject", type: "Object" },
-				{ name: "digestedSchema", type: "Carbon.ObjectSchema.DigestedObjectSchema" },
-			], { type: "Object", description: "" } ), ():void => {
+				{name: "compactedObject", type: "Object"},
+				{name: "digestedSchema", type: "Carbon.ObjectSchema.DigestedObjectSchema"},
+			], {type: "Object", description: ""} ), ():void => {
 				let jsonldConverter:JSONLDConverter.Class = new JSONLDConverter.Class();
 
 				expect( jsonldConverter.compact ).toBeDefined();
@@ -324,7 +324,7 @@ describe( module( "Carbon/JSONLDConverter" ), ():void => {
 
 				expect( expandedObject ).toBeDefined();
 				expect( Utils.isObject( expandedObject ) ).toEqual( true );
-			});
-		});
-	});
-});
+			} );
+		} );
+	} );
+} );

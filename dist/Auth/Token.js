@@ -3,7 +3,7 @@ var NS = require("./../NS");
 var Pointer = require("./../Pointer");
 var Utils = require("./../Utils");
 exports.RDF_CLASS = NS.CS.Class.Token;
-exports.CONTEXT = {
+exports.SCHEMA = {
     "key": {
         "@id": NS.CS.Predicate.tokenKey,
         "@type": NS.XSD.DataType.string,

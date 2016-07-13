@@ -71,26 +71,25 @@ function getFragments() {
     var document = this;
     return Utils.A.from(document._fragmentsIndex.values());
 }
-function createFragment(slug) {
-    if (slug === void 0) { slug = null; }
+function createFragment(slugOrObject, object) {
     var document = this;
-    var id;
+    var slug = Utils.isString(slugOrObject) ? slugOrObject : null;
+    object = Utils.isString(slugOrObject) ? object : slugOrObject;
+    object = object || {};
     if (slug) {
         if (!RDF.URI.Util.isBNodeID(slug))
-            return document.createNamedFragment(slug);
-        id = slug;
-        if (this._fragmentsIndex.has(id))
+            return document.createNamedFragment(slug, object);
+        if (this._fragmentsIndex.has(slug))
             throw new Errors.IDAlreadyInUseError("The slug provided is already being used by a fragment.");
     }
-    else {
-        id = Fragment.Util.generateID();
-    }
-    var fragment = Fragment.Factory.create(id, document);
-    document._fragmentsIndex.set(id, fragment);
+    var fragment = Fragment.Factory.createFrom(object, slug, document);
+    document._fragmentsIndex.set(fragment.id, fragment);
+    convertNestedObjects(document, fragment);
     return fragment;
 }
-function createNamedFragment(slug) {
+function createNamedFragment(slug, object) {
     var document = this;
+    object = object || {};
     if (RDF.URI.Util.isBNodeID(slug))
         throw new Errors.IllegalArgumentError("Named fragments can't have a slug that starts with '_:'.");
     if (RDF.URI.Util.isAbsolute(slug)) {
@@ -102,8 +101,9 @@ function createNamedFragment(slug) {
         slug = slug.substring(1);
     if (document._fragmentsIndex.has(slug))
         throw new Errors.IDAlreadyInUseError("The slug provided is already being used by a fragment.");
-    var fragment = NamedFragment.Factory.create(slug, document);
+    var fragment = NamedFragment.Factory.createFrom(object, slug, document);
     document._fragmentsIndex.set(slug, fragment);
+    convertNestedObjects(document, fragment);
     return fragment;
 }
 function removeFragment(fragmentOrSlug) {
@@ -129,7 +129,7 @@ function toJSON(objectSchemaResolver, jsonldConverter) {
     for (var _i = 0, resources_1 = resources; _i < resources_1.length; _i++) {
         var resource = resources_1[_i];
         var digestedContext = objectSchemaResolver ? objectSchemaResolver.getSchemaFor(resource) : new ObjectSchema.DigestedObjectSchema();
-        expandedResources.push(jsonldConverter.expand(resource, digestedContext, this));
+        expandedResources.push(jsonldConverter.expand(resource, digestedContext));
     }
     var graph = {
         "@id": this.id,
@@ -152,16 +152,21 @@ var Factory = (function () {
             Utils.hasFunction(documentResource, "removeFragment") &&
             Utils.hasFunction(documentResource, "toJSON"));
     };
-    Factory.create = function (uri) {
-        if (uri === void 0) { uri = null; }
-        return Factory.createFrom({}, uri);
+    Factory.is = function (object) {
+        return (Resource.Factory.is(object) &&
+            Factory.hasClassProperties(object));
     };
-    Factory.createFrom = function (object, uri) {
-        if (uri === void 0) { uri = null; }
-        if (!!uri && RDF.URI.Util.isBNodeID(uri))
-            throw new Errors.IllegalArgumentError("Documents cannot have a BNodeID as a uri.");
-        var resource = Resource.Factory.createFrom(object, uri);
+    Factory.create = function () {
+        return Factory.createFrom({});
+    };
+    Factory.createFrom = function (object) {
+        if (Factory.is(object))
+            throw new Errors.IllegalArgumentError("The object passed is already a Document");
+        var resource = object;
+        if (!Resource.Factory.is(object))
+            resource = Resource.Factory.createFrom(object);
         var document = Factory.decorate(resource);
+        convertNestedObjects(document, document);
         return document;
     };
     Factory.decorate = function (object) {
@@ -246,5 +251,34 @@ var Factory = (function () {
     return Factory;
 }());
 exports.Factory = Factory;
+function convertNestedObjects(parent, actual) {
+    var next;
+    var idOrSlug;
+    var fragment;
+    var keys = Object.keys(actual);
+    for (var _i = 0, keys_1 = keys; _i < keys_1.length; _i++) {
+        var key = keys_1[_i];
+        next = actual[key];
+        if (Utils.isArray(next)) {
+            convertNestedObjects(parent, next);
+            continue;
+        }
+        if (!Utils.isPlainObject(next) || Pointer.Factory.is(next))
+            continue;
+        idOrSlug = ("id" in next) ? next.id : (("slug" in next) ? next.slug : "");
+        if (!parent.inScope(idOrSlug))
+            continue;
+        var parentFragment = parent.getFragment(idOrSlug);
+        if (!parentFragment) {
+            fragment = parent.createFragment(idOrSlug, next);
+            convertNestedObjects(parent, fragment);
+        }
+        else if (parentFragment !== next) {
+            Object.assign(parentFragment, next);
+            fragment = actual[key] = parentFragment;
+            convertNestedObjects(parent, fragment);
+        }
+    }
+}
 
 //# sourceMappingURL=Document.js.map

@@ -4,7 +4,6 @@ import * as NS from "./NS";
 import * as Pointer from "./Pointer";
 import * as RDF from "./RDF";
 import * as Utils from "./Utils";
-import ContainerType from "./ObjectSchema";
 
 // TODO: Use Literal.Parsers to parse literals
 export class Class {
@@ -21,6 +20,8 @@ export class Class {
 		literalSerializers.set( NS.XSD.DataType.integer, RDF.Literal.Serializers.XSD.integerSerializer );
 		literalSerializers.set( NS.XSD.DataType.int, RDF.Literal.Serializers.XSD.integerSerializer );
 		literalSerializers.set( NS.XSD.DataType.unsignedInt, RDF.Literal.Serializers.XSD.unsignedIntegerSerializer );
+		literalSerializers.set( NS.XSD.DataType.long, RDF.Literal.Serializers.XSD.integerSerializer );
+		literalSerializers.set( NS.XSD.DataType.unsignedLong, RDF.Literal.Serializers.XSD.unsignedIntegerSerializer );
 		literalSerializers.set( NS.XSD.DataType.float, RDF.Literal.Serializers.XSD.floatSerializer );
 		literalSerializers.set( NS.XSD.DataType.double, RDF.Literal.Serializers.XSD.floatSerializer );
 		literalSerializers.set( NS.XSD.DataType.boolean, RDF.Literal.Serializers.XSD.booleanSerializer );
@@ -30,7 +31,7 @@ export class Class {
 	}
 
 	constructor( literalSerializers:Map<string, RDF.Literal.Serializer> = null ) {
-		this._literalSerializers = !! literalSerializers ? literalSerializers : Class.getDefaultSerializers();
+		this._literalSerializers = ! ! literalSerializers ? literalSerializers : Class.getDefaultSerializers();
 	}
 
 	compact( expandedObjects:Object[], targetObjects:Object[], digestedSchema:ObjectSchema.DigestedObjectSchema, pointerLibrary:Pointer.Library ):Object[];
@@ -45,10 +46,10 @@ export class Class {
 		if( ! Utils.isArray( expandedObjectOrObjects ) ) return this.compactSingle( expandedObjectOrObjects, targetObjectOrObjects, digestedSchema, pointerLibrary );
 
 		let expandedObjects:Object[] = expandedObjectOrObjects;
-		let targetObjects:Object[] = !! targetObjectOrObjects ? targetObjectOrObjects : [];
-		for( let i:number = 0, length:number = expandedObjects.length; i < length; i++ ) {
+		let targetObjects:Object[] = ! ! targetObjectOrObjects ? targetObjectOrObjects : [];
+		for( let i:number = 0, length:number = expandedObjects.length; i < length; i ++ ) {
 			let expandedObject:Object = expandedObjects[ i ];
-			let targetObject:Object = targetObjects[ i ] = !! targetObjects[ i ] ? targetObjects[ i ] : {};
+			let targetObject:Object = targetObjects[ i ] = ! ! targetObjects[ i ] ? targetObjects[ i ] : {};
 
 			this.compactSingle( expandedObject, targetObject, digestedSchema, pointerLibrary );
 		}
@@ -56,68 +57,68 @@ export class Class {
 		return targetObjects;
 	}
 
-	expand( compactedObjects:Object[], digestedSchema:ObjectSchema.DigestedObjectSchema, pointerValidator?:Pointer.Validator ):RDF.Node.Class[];
-	expand( compactedObject:Object, digestedSchema:ObjectSchema.DigestedObjectSchema, pointerValidator?:Pointer.Validator ):RDF.Node.Class;
-	expand( compactedObjectOrObjects:Object[], digestedSchema:ObjectSchema.DigestedObjectSchema, pointerValidator:Pointer.Validator = null ):any {
-		if( ! Utils.isArray( compactedObjectOrObjects ) ) return this.expandSingle( compactedObjectOrObjects, digestedSchema, pointerValidator );
+	expand( compactedObjects:Object[], digestedSchema:ObjectSchema.DigestedObjectSchema ):RDF.Node.Class[];
+	expand( compactedObject:Object, digestedSchema:ObjectSchema.DigestedObjectSchema ):RDF.Node.Class;
+	expand( compactedObjectOrObjects:Object[], digestedSchema:ObjectSchema.DigestedObjectSchema ):any {
+		if( ! Utils.isArray( compactedObjectOrObjects ) ) return this.expandSingle( compactedObjectOrObjects, digestedSchema );
 	}
 
-	private expandSingle( compactedObject:Object, digestedSchema:ObjectSchema.DigestedObjectSchema, pointerValidator:Pointer.Validator ):RDF.Node.Class {
+	private expandSingle( compactedObject:Object, digestedSchema:ObjectSchema.DigestedObjectSchema ):RDF.Node.Class {
 		let expandedObject:any = {};
 
-		expandedObject[ "@id" ] = !! compactedObject[ "id" ] ? compactedObject[ "id" ] : "";
-		if( !! compactedObject[ "types" ] ) expandedObject[ "@type" ] = compactedObject[ "types" ];
+		expandedObject[ "@id" ] = ! ! compactedObject[ "id" ] ? compactedObject[ "id" ] : "";
+		if( ! ! compactedObject[ "types" ] ) expandedObject[ "@type" ] = compactedObject[ "types" ];
 
 		Utils.forEachOwnProperty( compactedObject, ( propertyName:string, value:any ):void => {
 			if( propertyName === "id" ) return;
 
+			let expandedValue:any;
 			if( digestedSchema.properties.has( propertyName ) ) {
 				let definition:ObjectSchema.DigestedPropertyDefinition = digestedSchema.properties.get( propertyName );
-				let expandedValue:any = this.expandProperty( value, definition, pointerValidator );
+				expandedValue = this.expandProperty( value, definition, digestedSchema );
+				propertyName = definition.uri.toString();
 
-				if( ! expandedValue ) return;
-
-				expandedObject[ definition.uri.toString() ] = expandedValue;
 			} else if( RDF.URI.Util.isAbsolute( propertyName ) ) {
-				let expandedValue:any = this.expandPropertyValues( value, pointerValidator );
+				expandedValue = this.expandPropertyValues( value, digestedSchema );
 
-				if( ! expandedValue ) return;
-
-				expandedObject[ propertyName ] = expandedValue;
-			} else {
-				// TODO: Do your best. Use the default vocabulary
+			} else if( digestedSchema.vocab ) {
+				expandedValue = this.expandPropertyValue( value, digestedSchema );
+				propertyName = RDF.URI.Util.resolve( digestedSchema.vocab, propertyName );
 			}
-		});
+
+			if( ! expandedValue ) return;
+			expandedObject[ propertyName ] = expandedValue;
+		} );
 
 		return expandedObject;
 	}
 
-	private expandProperty( propertyValue:any, propertyDefinition:ObjectSchema.DigestedPropertyDefinition, pointerValidator:Pointer.Validator ):any {
+	private expandProperty( propertyValue:any, propertyDefinition:ObjectSchema.DigestedPropertyDefinition, digestedSchema:ObjectSchema.DigestedObjectSchema ):any {
 		switch( propertyDefinition.containerType ) {
 			case null:
 				// Property is not a list
 				if( propertyDefinition.literal ) {
 					return this.expandPropertyLiteral( propertyValue, propertyDefinition.literalType.toString() );
 				} else if( propertyDefinition.literal === false ) {
-					return this.expandPropertyPointer( propertyValue, pointerValidator );
+					return this.expandPropertyPointer( propertyValue, digestedSchema );
 				} else {
-					return this.expandPropertyValue( propertyValue, pointerValidator );
+					return this.expandPropertyValue( propertyValue, digestedSchema );
 				}
 			case ObjectSchema.ContainerType.LIST:
 				if( propertyDefinition.literal ) {
 					return this.expandPropertyLiteralList( propertyValue, propertyDefinition.literalType.toString() );
 				} else if( propertyDefinition.literal === false ) {
-					return this.expandPropertyPointerList( propertyValue, pointerValidator );
+					return this.expandPropertyPointerList( propertyValue, digestedSchema );
 				} else {
-					return this.expandPropertyList( propertyValue, pointerValidator );
+					return this.expandPropertyList( propertyValue, digestedSchema );
 				}
 			case ObjectSchema.ContainerType.SET:
 				if( propertyDefinition.literal ) {
 					return this.expandPropertyLiterals( propertyValue, propertyDefinition.literalType.toString() );
 				} else if( propertyDefinition.literal === false ) {
-					return this.expandPropertyPointers( propertyValue, pointerValidator );
+					return this.expandPropertyPointers( propertyValue, digestedSchema );
 				} else {
-					return this.expandPropertyValues( propertyValue, pointerValidator );
+					return this.expandPropertyValues( propertyValue, digestedSchema );
 				}
 			case ObjectSchema.ContainerType.LANGUAGE:
 				return this.expandPropertyLanguageMap( propertyValue );
@@ -126,11 +127,11 @@ export class Class {
 		}
 	}
 
-	private expandPropertyValue( propertyValue:any, pointerValidator:Pointer.Validator ):any {
+	private expandPropertyValue( propertyValue:any, digestedSchema:ObjectSchema.DigestedObjectSchema ):any {
 		if( Utils.isArray( propertyValue ) ) {
-			return this.expandPropertyValues( propertyValue, pointerValidator );
+			return this.expandPropertyValues( propertyValue, digestedSchema );
 		} else {
-			let expandedValue:RDF.Node.Class = this.expandValue( propertyValue, pointerValidator );
+			let expandedValue:RDF.Node.Class = this.expandValue( propertyValue, digestedSchema );
 
 			if( ! expandedValue ) return null;
 
@@ -138,8 +139,8 @@ export class Class {
 		}
 	}
 
-	private expandPropertyPointer( propertyValue:any, pointerValidator:Pointer.Validator ):any {
-		let expandedPointer:RDF.Node.Class = this.expandPointer( propertyValue, pointerValidator );
+	private expandPropertyPointer( propertyValue:any, digestedSchema:ObjectSchema.DigestedObjectSchema ):any {
+		let expandedPointer:RDF.Node.Class = this.expandPointer( propertyValue, digestedSchema );
 
 		if( ! expandedPointer ) return null;
 
@@ -153,27 +154,27 @@ export class Class {
 		if( serializedValue === null ) return null;
 
 		return [
-			{ "@value": serializedValue, "@type": literalType },
+			{"@value": serializedValue, "@type": literalType},
 		];
 	}
 
-	private expandPropertyList( propertyValues:any, pointerValidator:Pointer.Validator ):any {
+	private expandPropertyList( propertyValues:any, digestedSchema:ObjectSchema.DigestedObjectSchema ):any {
 		propertyValues = Utils.isArray( propertyValues ) ? propertyValues : [ propertyValues ];
 
-		let expandedArray:any = this.expandArray( propertyValues, pointerValidator );
+		let expandedArray:any = this.expandArray( propertyValues, digestedSchema );
 
 		if( ! expandedArray ) return null;
 
 		return [
-			{ "@list": expandedArray },
+			{"@list": expandedArray},
 		];
 	}
 
-	private expandPropertyPointerList( propertyValues:any, pointerValidator:Pointer.Validator ):any {
-		let listValues:Array<any> = this.expandPropertyPointers( propertyValues, pointerValidator );
+	private expandPropertyPointerList( propertyValues:any, digestedSchema:ObjectSchema.DigestedObjectSchema ):any {
+		let listValues:Array<any> = this.expandPropertyPointers( propertyValues, digestedSchema );
 
 		return [
-			{ "@list": listValues },
+			{"@list": listValues},
 		];
 	}
 
@@ -181,26 +182,26 @@ export class Class {
 		let listValues:Array<any> = this.expandPropertyLiterals( propertyValues, literalType );
 
 		return [
-			{ "@list": listValues },
+			{"@list": listValues},
 		];
 	}
 
-	private expandPropertyValues( propertyValues:any, pointerValidator:Pointer.Validator ):any {
+	private expandPropertyValues( propertyValues:any, digestedSchema:ObjectSchema.DigestedObjectSchema ):any {
 		propertyValues = Utils.isArray( propertyValues ) ? propertyValues : [ propertyValues ];
 
-		let expandedArray:any = this.expandArray( propertyValues, pointerValidator );
+		let expandedArray:any = this.expandArray( propertyValues, digestedSchema );
 
 		if( ! expandedArray ) return null;
 
 		return expandedArray;
 	}
 
-	private expandPropertyPointers( propertyValues:any, pointerValidator:Pointer.Validator ):any {
+	private expandPropertyPointers( propertyValues:any, digestedSchema:ObjectSchema.DigestedObjectSchema ):any {
 		propertyValues = Utils.isArray( propertyValues ) ? propertyValues : [ propertyValues ];
 
 		let expandedPointers:Array<any> = [];
 		for( let propertyValue of propertyValues ) {
-			let expandedPointer:RDF.Node.Class = this.expandPointer( propertyValue, pointerValidator );
+			let expandedPointer:RDF.Node.Class = this.expandPointer( propertyValue, digestedSchema );
 			if( ! expandedPointer ) continue;
 
 			expandedPointers.push( expandedPointer );
@@ -217,7 +218,7 @@ export class Class {
 			let serializedValue:string = this.serializeLiteral( propertyValue, literalType );
 			if( ! serializedValue ) continue;
 
-			listValues.push( { "@value": serializedValue, "@type": literalType } );
+			listValues.push( {"@value": serializedValue, "@type": literalType} );
 		}
 
 		return listValues;
@@ -234,8 +235,8 @@ export class Class {
 			// TODO: Validate language tags
 
 			let serializedValue:string = this.literalSerializers.get( NS.XSD.DataType.string ).serialize( value );
-			mapValues.push( { "@value": serializedValue, "@type": NS.XSD.DataType.string, "@language": languageTag } );
-		});
+			mapValues.push( {"@value": serializedValue, "@type": NS.XSD.DataType.string, "@language": languageTag} );
+		} );
 
 		return mapValues;
 	}
@@ -259,24 +260,21 @@ export class Class {
 		}
 	}
 
-	private expandPointer( propertyValue:any, pointerValidator:Pointer.Validator ):RDF.Node.Class {
-		if( ! Pointer.Factory.is( propertyValue ) ) {
+	private expandPointer( propertyValue:any, digestedSchema:ObjectSchema.DigestedObjectSchema ):RDF.Node.Class {
+		let id:string = Pointer.Factory.is( propertyValue ) ? propertyValue.id : Utils.isString( propertyValue ) ? propertyValue : null;
+		if( ! id ) {
 			// TODO: Warn of data loss
 			return null;
 		}
 
-		if( !! pointerValidator && ! pointerValidator.inScope( propertyValue ) ) {
-			// TODO: Warn of data loss
-			return null;
-		}
-
-		return { "@id": propertyValue.id };
+		id = ObjectSchema.Digester.resolvePrefixedURI( new RDF.URI.Class( id ), digestedSchema ).stringValue;
+		return {"@id": id};
 	}
 
-	private expandArray( propertyValue:any, pointerValidator:Pointer.Validator ):any {
+	private expandArray( propertyValue:any, digestedSchema:ObjectSchema.DigestedObjectSchema ):any {
 		let listValues:Array<any> = [];
 		for( let listValue of propertyValue ) {
-			let expandedValue:any = this.expandValue( listValue, pointerValidator );
+			let expandedValue:any = this.expandValue( listValue, digestedSchema );
 			if( ! expandedValue ) continue;
 
 			listValues.push( expandedValue );
@@ -287,12 +285,12 @@ export class Class {
 		return listValues;
 	}
 
-	private expandValue( propertyValue:any, pointerValidator:Pointer.Validator ):any {
+	private expandValue( propertyValue:any, digestedSchema:ObjectSchema.DigestedObjectSchema ):any {
 		if( Utils.isArray( propertyValue ) ) {
 			// TODO: Lists of lists are not currently supported by the spec
 			return null;
 		} else if( Pointer.Factory.is( propertyValue ) ) {
-			return this.expandPointer( propertyValue, pointerValidator );
+			return this.expandPointer( propertyValue, digestedSchema );
 		} else {
 			return this.expandLiteral( propertyValue );
 		}
@@ -323,7 +321,7 @@ export class Class {
 
 		serializedValue = this.literalSerializers.get( literalType ).serialize( literalValue );
 
-		return { "@value": serializedValue, "@type": literalType };
+		return {"@value": serializedValue, "@type": literalType};
 	}
 
 	private compactSingle( expandedObject:any, targetObject:any, digestedSchema:ObjectSchema.DigestedObjectSchema, pointerLibrary:Pointer.Library ):void {
@@ -332,7 +330,7 @@ export class Class {
 		if( ! expandedObject[ "@id" ] ) throw new Errors.IllegalArgumentError( "The expandedObject doesn't have an @id defined." );
 		targetObject[ "id" ] = expandedObject[ "@id" ];
 
-		targetObject[ "types" ] = !! expandedObject[ "@type" ] ? expandedObject[ "@type" ] : [];
+		targetObject[ "types" ] = ! ! expandedObject[ "@type" ] ? expandedObject[ "@type" ] : [];
 
 		Utils.forEachOwnProperty( expandedObject, ( propertyURI:string, value:any ):void => {
 			if( propertyURI === "@id" ) return;
@@ -342,9 +340,10 @@ export class Class {
 				let propertyName:string = propertyURINameMap.get( propertyURI );
 				this.assignProperty( targetObject, expandedObject, propertyName, digestedSchema, pointerLibrary );
 			} else {
-				this.assignURIProperty( targetObject, expandedObject, propertyURI, pointerLibrary );
+				let propertyName:string = digestedSchema.vocab ? RDF.URI.Util.getRelativeURI( propertyURI, digestedSchema.vocab ) : propertyURI;
+				this.assignURIProperty( targetObject, expandedObject, propertyURI, propertyName, pointerLibrary );
 			}
-		});
+		} );
 
 		return targetObject;
 	}
@@ -354,12 +353,12 @@ export class Class {
 		compactedObject[ propertyName ] = this.getPropertyValue( expandedObject, propertyDefinition, pointerLibrary );
 	}
 
-	private assignURIProperty( compactedObject:any, expandedObject:any, propertyURI:string, pointerLibrary:Pointer.Library ):void {
+	private assignURIProperty( compactedObject:any, expandedObject:any, propertyURI:string, propertyName:string, pointerLibrary:Pointer.Library ):void {
 		let guessedDefinition:ObjectSchema.DigestedPropertyDefinition = new ObjectSchema.DigestedPropertyDefinition();
 		guessedDefinition.uri = new RDF.URI.Class( propertyURI );
 		guessedDefinition.containerType = this.getPropertyContainerType( expandedObject[ propertyURI ] );
 
-		compactedObject[ propertyURI ] = this.getPropertyValue( expandedObject, guessedDefinition, pointerLibrary );
+		compactedObject[ propertyName ] = this.getPropertyValue( expandedObject, guessedDefinition, pointerLibrary );
 	}
 
 	private getPropertyContainerType( propertyValues:any ):ObjectSchema.ContainerType {
@@ -571,7 +570,7 @@ export class Class {
 		let map:Map<string, string> = new Map<string, string>();
 		digestedSchema.properties.forEach( ( definition:ObjectSchema.DigestedPropertyDefinition, propertyName:string ):void => {
 			map.set( definition.uri.toString(), propertyName );
-		});
+		} );
 		return map;
 	}
 

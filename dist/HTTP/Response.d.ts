@@ -1,12 +1,15 @@
 import * as Header from "./Header";
+import { ClientRequest, IncomingMessage } from "http";
 export declare class Class {
-    constructor(request: XMLHttpRequest);
     status: number;
     data: string | Blob;
     headers: Map<string, Header.Class>;
-    request: XMLHttpRequest;
+    request: XMLHttpRequest | ClientRequest;
+    constructor(request: XMLHttpRequest);
+    constructor(request: ClientRequest, data: string, response?: IncomingMessage);
     getHeader(name: string): Header.Class;
-    private setHeaders(request);
+    private setHeaders(headersString);
+    private setHeaders(headerObject);
 }
 export declare class Util {
     static getETag(response: Class): string;

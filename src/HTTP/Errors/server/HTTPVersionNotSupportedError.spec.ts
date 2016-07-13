@@ -17,6 +17,7 @@ import Response from "./../../Response";
 
 import HTTPVersionNotSupportedError from "./HTTPVersionNotSupportedError";
 import HTTPError from "./../HTTPError";
+import {Service} from "../../Request";
 
 describe( module(
 	"Carbon/HTTP/Errors/server/HTTPVersionNotSupportedError"
@@ -27,74 +28,74 @@ describe( module(
 		"Error class that can be throw to indicate that the server does not support the HTTP protocol version used in the request"
 	), ():void => {
 
-		let response: Response;
+		let response:Response;
 
-		beforeEach(function() {
+		beforeAll( ( done:{ ():void, fail:() => void } ) => {
 			jasmine.Ajax.install();
-			jasmine.Ajax.stubRequest( "/a/request/" ).andReturn({
+			jasmine.Ajax.stubRequest( "http://example.com/request/" ).andReturn( {
 				"status": 200,
 				"responseText": "A response"
-			});
+			} );
 
-			let request = new XMLHttpRequest();
-			request.open( "GET", "/a/request/" );
-			request.send();
+			Service.send( "GET", "http://example.com/request/" ).then( ( _response ) => {
+				response = _response;
+				done();
+			} ).catch( done.fail );
 
-			response = new Response( request );
-		});
+		} );
 
-		afterEach(function() {
+		afterAll( () => {
 			jasmine.Ajax.uninstall();
-		});
+		} );
 
 		it( isDefined(), ():void => {
 			expect( HTTPVersionNotSupportedError ).toBeDefined();
 			expect( Utils.isFunction( HTTPVersionNotSupportedError ) ).toBe( true );
-		});
+		} );
 
 		it( extendsClass(
 			"Carbon.Errors.HTTPError"
 		), ():void => {
-			let error: HTTPVersionNotSupportedError = new HTTPVersionNotSupportedError( "Message of the error", response );
+			let error:HTTPVersionNotSupportedError = new HTTPVersionNotSupportedError( "Message of the error", response );
 
 			expect( error instanceof HTTPError ).toBe( true );
-		});
+		} );
 
-		it( hasConstructor([
-			{ name: "message", type: "string" },
-			{ name: "response", type: "Carbon.HTTP.Response" }
-		]), ():void => {
-			let error: HTTPVersionNotSupportedError = new HTTPVersionNotSupportedError( "Message of the error", response );
+		it( hasConstructor( [
+			{name: "message", type: "string"},
+			{name: "response", type: "Carbon.HTTP.Response"}
+		] ), ():void => {
+			let error:HTTPVersionNotSupportedError = new HTTPVersionNotSupportedError( "Message of the error", response );
 
 			expect( error ).toBeTruthy();
-			expect( error instanceof HTTPVersionNotSupportedError).toBe( true );
-		});
+			expect( error instanceof HTTPVersionNotSupportedError ).toBe( true );
+		} );
 
 		it( hasMethod(
 			INSTANCE,
 			"toString",
-			{ type: "string" }
+			{type: "string"}
 		), ():void => {
-			let error: HTTPVersionNotSupportedError = new HTTPVersionNotSupportedError( "Message of the error", response );
+			let error:HTTPVersionNotSupportedError = new HTTPVersionNotSupportedError( "Message of the error", response );
 
 			expect( error.toString ).toBeDefined();
 			expect( Utils.isFunction( error.toString ) );
 
-			expect( error.toString() ).toBe("HTTPVersionNotSupportedError: Message of the error");
-		});
+			expect( error.toString() ).toBe( "HTTPVersionNotSupportedError: Message of the error" );
+		} );
 
 		it( hasProperty(
 			INSTANCE,
 			"name",
 			"string"
 		), ():void => {
-			let error: HTTPVersionNotSupportedError = new HTTPVersionNotSupportedError( "Message of the error", response );
+			let error:HTTPVersionNotSupportedError = new HTTPVersionNotSupportedError( "Message of the error", response );
 
 			expect( error.name ).toBeDefined();
 			expect( Utils.isString( error.name ) ).toBe( true );
 
 			expect( error.name ).toBe( "HTTPVersionNotSupportedError" );
-		});
+		} );
 
 		it( hasProperty(
 			STATIC,
@@ -105,8 +106,8 @@ describe( module(
 			expect( Utils.isNumber( HTTPVersionNotSupportedError.statusCode ) );
 
 			expect( HTTPVersionNotSupportedError.statusCode ).toBe( 505 );
-		});
+		} );
 
-	});
+	} );
 
-});
+} );

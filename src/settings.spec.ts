@@ -18,10 +18,10 @@ describe( module( "Carbon/settings" ), ():void => {
 	it( isDefined(), ():void => {
 		expect( settings ).toBeDefined();
 		expect( Utils.isObject( settings ) ).toBe( true );
-	});
+	} );
 
 	it( hasDefaultExport(
-		"Carbon.settings",`
+		"Carbon.settings", `
 		A object of type \`Carbon.settings.CarbonSettings\`, whitch is the default settings of a Carbon instance:
 		* domain: \`"carbonldp.com"\`
 		* http.ssl: \`true\`
@@ -29,6 +29,7 @@ describe( module( "Carbon/settings" ), ():void => {
 		* platform.container: \`"platform/"\`
 		* platform.apps.container: \`"apps/"\`
 		* platform.agents.container: \`"agents/"\`
+		* vocabulary: \`"vocabulary/#"\`
 		`
 	), ():void => {
 		expect( defaultExport ).toBeDefined();
@@ -51,6 +52,9 @@ describe( module( "Carbon/settings" ), ():void => {
 
 		expect( defaultExport[ "platform.agents.container" ] ).toBeDefined();
 		expect( defaultExport[ "platform.agents.container" ] ).toBe( "agents/" );
-	});
 
-});
+		expect( defaultExport[ "vocabulary" ] ).toBeDefined();
+		expect( defaultExport[ "vocabulary" ] ).toBe( "vocabulary/#" );
+	} );
+
+} );

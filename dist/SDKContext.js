@@ -5,9 +5,12 @@ var Documents_1 = require("./Documents");
 var Errors = require("./Errors");
 var LDP = require("./LDP");
 var NS = require("./NS");
+var PersistedBlankNode = require("./PersistedBlankNode");
 var ObjectSchema = require("./ObjectSchema");
 var Agent = require("./Agent");
 var RDFRepresentation = require("./RDFRepresentation");
+var ErrorResponse = require("./LDP/ErrorResponse");
+var Error = require("./LDP/Error");
 var Class = (function () {
     function Class() {
         this.settings = new Map();
@@ -126,25 +129,38 @@ var Class = (function () {
         this.typeObjectSchemaMap.set(type, extendedDigestedSchema);
     };
     Class.prototype.registerDefaultObjectSchemas = function () {
+        this.extendObjectSchema(PersistedBlankNode.SCHEMA);
         this.extendObjectSchema(LDP.RDFSource.RDF_CLASS, LDP.RDFSource.SCHEMA);
         this.extendObjectSchema(LDP.Container.RDF_CLASS, LDP.Container.SCHEMA);
         this.extendObjectSchema(LDP.BasicContainer.RDF_CLASS, LDP.Container.SCHEMA);
         this.extendObjectSchema(RDFRepresentation.RDF_CLASS, RDFRepresentation.SCHEMA);
         this.extendObjectSchema(APIDescription.RDF_CLASS, APIDescription.SCHEMA);
+        this.extendObjectSchema(Error.RDF_CLASS, Error.SCHEMA);
+        this.extendObjectSchema(ErrorResponse.RDF_CLASS, ErrorResponse.SCHEMA);
         this.extendObjectSchema(NS.CS.Class.Application, {
             "name": {
-                "@id": NS.CS.Predicate.name,
+                "@id": NS.CS.Predicate.namae,
+                "@type": NS.XSD.DataType.string,
+            },
+            "description": {
+                "@id": NS.CS.Predicate.description,
                 "@type": NS.XSD.DataType.string,
             },
             "rootContainer": {
                 "@id": NS.CS.Predicate.rootContainer,
                 "@type": "@id",
             },
-            "allowsOrigin": {
+            "allowsOrigins": {
                 "@id": NS.CS.Predicate.allowsOrigin,
+                "@container": "@set",
             },
         });
-        this.extendObjectSchema(Auth.Token.RDF_CLASS, Auth.Token.CONTEXT);
+        this.extendObjectSchema(LDP.ResponseMetadata.RDF_CLASS, LDP.ResponseMetadata.SCHEMA);
+        this.extendObjectSchema(LDP.ResourceMetadata.RDF_CLASS, LDP.ResourceMetadata.SCHEMA);
+        this.extendObjectSchema(LDP.AddMemberAction.RDF_CLASS, LDP.AddMemberAction.SCHEMA);
+        this.extendObjectSchema(LDP.RemoveMemberAction.RDF_CLASS, LDP.RemoveMemberAction.SCHEMA);
+        this.extendObjectSchema(Auth.Token.RDF_CLASS, Auth.Token.SCHEMA);
+        this.extendObjectSchema(Auth.Ticket.RDF_CLASS, Auth.Ticket.SCHEMA);
         this.extendObjectSchema(Agent.RDF_CLASS, Agent.SCHEMA);
     };
     return Class;
