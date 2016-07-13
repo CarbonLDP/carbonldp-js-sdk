@@ -55,18 +55,18 @@ function onResolve( resolve:Resolve, reject:Reject, response:Response ):void {
 		}
 
 		let parser:ErrorResponse.Parser = new ErrorResponse.Parser();
-		parser.parse( response.data, error ).then( ( errorResponse:ErrorResponse.Class ) => {
+		parser.parse( <string> response.data, error ).then( ( errorResponse:ErrorResponse.Class ) => {
 			let message:string = ErrorResponse.Util.getMessage( errorResponse );
 			error.message = message;
 			reject( error );
 
 		} ).catch( () => {
-			error.message = response.data;
+			error.message = <string> response.data;
 			reject( error );
 		} );
 
 	} else {
-		reject( new Errors.UnknownError( response.data, response ) );
+		reject( new Errors.UnknownError( <string> response.data, response ) );
 
 	}
 }
@@ -113,7 +113,7 @@ function sendWithNode( method:string, url:string, body:string | Buffer, options:
 		let request:ClientRequest = HTTP.request( requestOptions, ( res:IncomingMessage ) => {
 			let data:string = "";
 
-			res.setEncoding( "utf8" );
+			if( ! options.isFile ) res.setEncoding( "utf8" );
 			res.on( "data", ( chunk ) => {
 				data = chunk;
 			} );

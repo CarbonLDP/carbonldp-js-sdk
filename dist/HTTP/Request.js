@@ -48,6 +48,8 @@ function sendWithBrowser(method, url, body, options) {
         request.withCredentials = options.sendCredentialsOnCORS;
         if (options.timeout)
             request.timeout = options.timeout;
+        if (options.isFile)
+            request.responseType = "blob";
         request.onload = request.onerror = function () {
             var response = new Response_1.default(request);
             onResolve(resolve, reject, response);
@@ -77,7 +79,8 @@ function sendWithNode(method, url, body, options) {
             forEachHeaders(options.headers, function (name, value) { return requestOptions.headers[name] = value; });
         var request = HTTP.request(requestOptions, function (res) {
             var data = "";
-            res.setEncoding("utf8");
+            if (!options.isFile)
+                res.setEncoding("utf8");
             res.on("data", function (chunk) {
                 data = chunk;
             });

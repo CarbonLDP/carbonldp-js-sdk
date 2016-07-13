@@ -2930,62 +2930,109 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 			let promise:Promise<any> = documents.delete( "http://example.com/resource/" ).then( spies.success );
 
-		Promise.all( [ promise ] ).then( ():void => {
-			expect( spySuccess ).toHaveBeenCalled();
-			done();
-		}, done.fail );
-	});
+			Promise.all( [ promise ] ).then( ():void => {
+				expect( spySuccess ).toHaveBeenCalled();
+				done();
+			}, done.fail );
+		} );
 
-	it( hasMethod(
-		INSTANCE,
-		"download",
-		"Obtains the Blob object from the server referred by the RDFRepresentation Document provided.", [
-			{ name: "rdfRepresentation", type: "Carbon.RDFRepresentation.Class" }
-		],
-		{ type: "Promise<[ Blob, Carbon.HTTP.Response.Class ]>" }
-	), ( done:{ ():void, fail:() => void } ):void => {
-		class MockedContext extends AbstractContext {
-			resolve( uri:string ):string {
-				return uri;
-			}
-		}
 
-		let context:MockedContext = new MockedContext();
-		let documents:Documents = context.documents;
+		describe( method(
+			INSTANCE,
+			"download"
+		), ():void => {
 
-		let document:PersistedDocument.Class = PersistedDocument.Factory.create( "http://example.com/resource/", documents );
-		document.types.push( RDFRepresentation.RDF_CLASS );
+			it( hasSignature(
+				"Download the binary data, referred by the `Carbon.RDFRepresentation.Class` provided, as a Blob object. This signature only works in a web browser.", [
+					{name: "rdfRepresentation", type: "Carbon.RDFRepresentation.Class", description: "The rdfRepresentation of the binary data to download."},
+				],
+				{type: "Promise<[ Blob, Carbon.HTTP.Response.Class ]>"}
+			), ( done:{ ():void, fail:() => void } ):void => {
+				class MockedContext extends AbstractContext {
+					resolve( uri:string ):string {
+						return uri;
+					}
+				}
 
-		let rdfRepresentation:RDFRepresentation.Class = RDFRepresentation.Factory.decorate( document );
-		rdfRepresentation.mediaType = "text/plain";
-		rdfRepresentation.fileIdentifier = "00-01";
-		rdfRepresentation.size = 68;
+				let context:MockedContext = new MockedContext();
+				let documents:Documents = context.documents;
 
-		expect( documents.download ).toBeDefined();
-		expect( Utils.isFunction( documents.download ) ).toBe( true );
+				let document:PersistedDocument.Class = PersistedDocument.Factory.create( "http://example.com/resource/", documents );
+				document.types.push( RDFRepresentation.RDF_CLASS );
 
-		jasmine.Ajax.stubRequest( "http://example.com/resource/", null, "GET" ).andReturn({
-			status: 200,
-			response: <any> new Blob( [ "486921aa54686973206973206d7920504c41494e20626f72696e672054455854202028ca0203f21bc29aa4279657e205c2028202225e1202229202f" ], { type: "text/plain" } )
-		});
+				let rdfRepresentation:RDFRepresentation.Class = RDFRepresentation.Factory.decorate( document );
+				rdfRepresentation.mediaType = "text/plain";
+				rdfRepresentation.size = 68;
 
-		let spies = {
-			success: ( response:any ):void => {
-				expect( Utils.isArray( response ) ).toBe( true );
+				expect( documents.download ).toBeDefined();
+				expect( Utils.isFunction( documents.download ) ).toBe( true );
 
-				expect( response[ 0 ] instanceof Blob ).toBe( true );
-				expect( response[ 1 ] instanceof HTTP.Response.Class ).toBe( true );
-			}
-		};
-		let spySuccess = spyOn( spies, "success" ).and.callThrough();
+				if( typeof Blob !== "undefined" ) {
 
-		let promise:Promise<any> = documents.download( rdfRepresentation ).then( spies.success );
+					jasmine.Ajax.stubRequest( "http://example.com/resource/", null, "GET" ).andReturn( {
+						status: 200,
+						response: <any> new Blob( [ "4869212054686973206973206d7920504c41494e20626f72696e672054455854203a44" ], {type: "text/plain"} ),
+					} );
 
-		Promise.all( [ promise ] ).then( ():void => {
-			expect( spySuccess ).toHaveBeenCalled();
-			done();
-		}, done.fail );
-	});
+					documents.download( rdfRepresentation ).then( ( [ data, response ]:[ Blob, HTTP.Response.Class] ):void => {
+						expect( data ).toBeTruthy();
+						expect( data instanceof Blob ).toBe( true );
+
+						expect( response ).toBeTruthy();
+						expect( response instanceof HTTP.Response.Class ).toBe( true );
+
+						done();
+					} ).catch( done.fail );
+
+				} else { done(); }
+			} );
+
+			it( hasSignature(
+				"Download the binary data, referred by the `Carbon.RDFRepresentation.Class` provided, as a Buffer object. This signature only works in Node.js.", [
+					{name: "rdfRepresentation", type: "Carbon.RDFRepresentation.Class", description: "The rdfRepresentation of the binary data to download."},
+				],
+				{type: "Promise<[ Blob, Carbon.HTTP.Response.Class ]>"}
+			), ( done:{ ():void, fail:() => void } ):void => {
+				class MockedContext extends AbstractContext {
+					resolve( uri:string ):string {
+						return uri;
+					}
+				}
+
+				let context:MockedContext = new MockedContext();
+				let documents:Documents = context.documents;
+
+				let document:PersistedDocument.Class = PersistedDocument.Factory.create( "http://example.com/resource/", documents );
+				document.types.push( RDFRepresentation.RDF_CLASS );
+
+				let rdfRepresentation:RDFRepresentation.Class = RDFRepresentation.Factory.decorate( document );
+				rdfRepresentation.mediaType = "text/plain";
+				rdfRepresentation.size = 68;
+
+				expect( documents.download ).toBeDefined();
+				expect( Utils.isFunction( documents.download ) ).toBe( true );
+
+				if( typeof Buffer !== "undefined" ) {
+
+					jasmine.Ajax.stubRequest( "http://example.com/resource/", null, "GET" ).andReturn( {
+						status: 200,
+						response: <any> new Buffer( "4869212054686973206973206d7920504c41494e20626f72696e672054455854203a44", "hex" ),
+					} );
+
+					documents.download( rdfRepresentation ).then( ( [ data, response ]:[ Buffer, HTTP.Response.Class] ):void => {
+						expect( data ).toBeTruthy();
+						expect( data instanceof Buffer ).toBe( true );
+
+						expect( response ).toBeTruthy();
+						expect( response instanceof HTTP.Response.Class ).toBe( true );
+
+						done();
+					} ).catch( done.fail );
+
+				} else { done(); }
+			} );
+
+		} );
 
 		it( hasMethod(
 			INSTANCE,

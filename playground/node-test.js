@@ -1,7 +1,7 @@
 const Carbon = require( "../dist/Carbon" ).default;
 
 var carbon = new Carbon();
-carbon.setSetting( "domain", "dev.carbonldp.com" );
+carbon.setSetting( "domain", "local.carbonldp.com" );
 
 carbon.extendObjectSchema( {
 	"acl": "http://www.w3.org/ns/auth/acl#",
@@ -67,10 +67,14 @@ carbon.auth.authenticate( "admin@carbonldp.com", "hello" ).then( function() {
 	appContext = _appContext;
 
 	console.log( "Getting root container..." );
-	return appContext.documents.get( "/" );
+	return appContext.documents.get( "/files/js01/" );
 }).then( function( result ) {
-	console.log( "Root container received" );
-	console.log( result[0].id );
+	console.log( "Files" );
+	console.log( result[0] );
+	return result[0].download();
+}).then( function( result ) {
+	console.log( "Buffer" );
+	console.log( result[0] );
 	process.exit();
 }).catch( function( error ) {
 	console.error( error );

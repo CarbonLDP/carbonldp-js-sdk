@@ -38,7 +38,7 @@ export class Factory {
 			&& Factory.hasClassProperties( object );
 	}
 
-	static decorate<T extends PersistedDocument.Class>( persistedDocument:T ): T & Class {
+	static decorate<T extends PersistedDocument.Class>( persistedDocument:T ):T & Class {
 		if( Factory.hasClassProperties( persistedDocument ) ) return <any> persistedDocument;
 
 		Object.defineProperties( persistedDocument, {
@@ -64,7 +64,7 @@ export class Factory {
 			types = resource.types;
 		}
 
-		return types.indexOf( RDF_CLASS ) !== - 1 ;
+		return types.indexOf( RDF_CLASS ) !== - 1;
 	}
 }
 

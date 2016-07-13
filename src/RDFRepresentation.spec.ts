@@ -11,7 +11,7 @@ describe( module( "Carbon/RDFRepresentation" ), ():void => {
 	it( isDefined(), ():void => {
 		expect( RDFRepresentation ).toBeDefined();
 		expect( Utils.isObject( RDFRepresentation ) ).toBe( true );
-	});
+	} );
 
 	it( hasProperty(
 		STATIC,
@@ -22,7 +22,7 @@ describe( module( "Carbon/RDFRepresentation" ), ():void => {
 		expect( Utils.isString( RDFRepresentation.RDF_CLASS ) ).toBe( true );
 
 		expect( RDFRepresentation.RDF_CLASS ).toBe( NS.C.Class.RDFRepresentation );
-	});
+	} );
 
 	it( hasProperty(
 		STATIC,
@@ -33,15 +33,15 @@ describe( module( "Carbon/RDFRepresentation" ), ():void => {
 		expect( Utils.isObject( RDFRepresentation.SCHEMA ) ).toBe( true );
 
 		expect( Utils.hasProperty( RDFRepresentation.SCHEMA, "mediaType" ) ).toBe( true );
-		expect( RDFRepresentation.SCHEMA[ "mediaType" ] ).toEqual({
+		expect( RDFRepresentation.SCHEMA[ "mediaType" ] ).toEqual( {
 			"@id": NS.C.Predicate.mediaType,
-			"@type": NS.XSD.DataType.string
+			"@type": NS.XSD.DataType.string,
 		} );
 
 		expect( Utils.hasProperty( RDFRepresentation.SCHEMA, "size" ) ).toBe( true );
-		expect( RDFRepresentation.SCHEMA[ "size" ] ).toEqual({
+		expect( RDFRepresentation.SCHEMA[ "size" ] ).toEqual( {
 			"@id": NS.C.Predicate.size,
-			"@type": NS.XSD.DataType.long
+			"@type": NS.XSD.DataType.long,
 		} );
 	} );
 
@@ -53,13 +53,13 @@ describe( module( "Carbon/RDFRepresentation" ), ():void => {
 		it( isDefined(), ():void => {
 			expect( RDFRepresentation.Factory ).toBeDefined();
 			expect( Utils.isFunction( RDFRepresentation.Factory ) ).toBe( true );
-		});
+		} );
 
 		it( hasMethod(
 			STATIC,
 			"hasClassProperties",
 			"Returns true if the object provided has the properties that defines a `Carbon.RDFRepresentation.Class` object.", [
-				{ name: "resource", type: "Object" }
+				{name: "resource", type: "Object"},
 			],
 			{type: "boolean"}
 		), ():void => {
@@ -67,25 +67,25 @@ describe( module( "Carbon/RDFRepresentation" ), ():void => {
 			expect( Utils.isFunction( RDFRepresentation.Factory.hasClassProperties ) ).toBe( true );
 
 			let object:any;
-			expect( NonRDFSource.Factory.hasClassProperties( object ) ).toBe( false );
+			expect( RDFRepresentation.Factory.hasClassProperties( object ) ).toBe( false );
 
-			object:any = {
+			object = {
 				mediaType: null,
 				size: null,
 				download: ():void => {},
 			};
-			expect( NonRDFSource.Factory.hasClassProperties( object ) ).toBe( true );
+			expect( RDFRepresentation.Factory.hasClassProperties( object ) ).toBe( true );
 
 			delete object.mediaType;
-			expect( NonRDFSource.Factory.hasClassProperties( object ) ).toBe( false );
+			expect( RDFRepresentation.Factory.hasClassProperties( object ) ).toBe( false );
 			object.mediaType = null;
 
 			delete object.size;
-			expect( NonRDFSource.Factory.hasClassProperties( object ) ).toBe( false );
+			expect( RDFRepresentation.Factory.hasClassProperties( object ) ).toBe( false );
 			object.size = null;
 
 			delete object.download;
-			expect( NonRDFSource.Factory.hasClassProperties( object ) ).toBe( false );
+			expect( RDFRepresentation.Factory.hasClassProperties( object ) ).toBe( false );
 			object.download = ():void => {};
 		} );
 
@@ -93,7 +93,7 @@ describe( module( "Carbon/RDFRepresentation" ), ():void => {
 			STATIC,
 			"is",
 			"Returns true if the object provided is considered as an `Carbon.RDFRepresentation.Class` object.", [
-				{ name: "object", type: "Object" }
+				{name: "object", type: "Object"},
 			],
 			{type: "boolean"}
 		), ():void => {
@@ -128,14 +128,14 @@ describe( module( "Carbon/RDFRepresentation" ), ():void => {
 			expect( RDFRepresentation.Factory.is( object ) ).toBe( false );
 			object.types.push( RDFRepresentation.RDF_CLASS );
 			expect( RDFRepresentation.Factory.is( object ) ).toBe( true );
-		});
+		} );
 
 		it( hasMethod(
 			STATIC,
 			"decorate", [
-				{ name: "persistedDocument", type: "T extends Carbon.PersistedDocument.Class" }
+				{name: "persistedDocument", type: "T extends Carbon.PersistedDocument.Class"},
 			],
-			{ type: "T & Carbon.RDFRepresentation.Class" }
+			{type: "T & Carbon.RDFRepresentation.Class"}
 		), ():void => {
 			class MockedContext extends AbstractContext {
 				resolve( uri:string ):string {
@@ -152,10 +152,9 @@ describe( module( "Carbon/RDFRepresentation" ), ():void => {
 			expect( RDFRepresentation.Factory.hasRDFClass( rdfRepresentation ) ).toBe( true );
 
 			rdfRepresentation.mediaType = "text/plain";
-			rdfRepresentation.fileIdentifier = "00-01";
 			rdfRepresentation.size = 68;
 			expect( RDFRepresentation.Factory.is( rdfRepresentation ) ).toBe( true );
-		});
+		} );
 
 		describe( method(
 			STATIC,
@@ -164,9 +163,9 @@ describe( module( "Carbon/RDFRepresentation" ), ():void => {
 
 			it( hasSignature(
 				"Returns true if the Resource provided is an RDFRepresentation.", [
-					{ name: "resource", type: "Carbon.Resource.Class" }
+					{name: "resource", type: "Carbon.Resource.Class"},
 				],
-				{ type: "boolean" }
+				{type: "boolean"}
 			), ():void => {
 				expect( RDFRepresentation.Factory.hasRDFClass ).toBeDefined();
 				expect( Utils.isFunction( RDFRepresentation.Factory.hasRDFClass ) ).toBe( true );
@@ -179,7 +178,7 @@ describe( module( "Carbon/RDFRepresentation" ), ():void => {
 				resource = Resource.Factory.create( "http://example.com/resource/" );
 				expect( RDFRepresentation.Factory.hasRDFClass( resource ) ).toBe( false );
 
-				resource = Resource.Factory.create( "http://example.com/resource/", [ NS.LDP.Class.BasicContainer ]);
+				resource = Resource.Factory.create( "http://example.com/resource/", [ NS.LDP.Class.BasicContainer ] );
 				expect( RDFRepresentation.Factory.hasRDFClass( resource ) ).toBe( false );
 
 				resource = Resource.Factory.create( "http://example.com/resource/", [ NS.C.Class.RDFRepresentation ] );
@@ -187,13 +186,13 @@ describe( module( "Carbon/RDFRepresentation" ), ():void => {
 
 				resource = Resource.Factory.create( "http://example.com/resource/", [ NS.LDP.Class.BasicContainer, NS.C.Class.RDFRepresentation ] );
 				expect( RDFRepresentation.Factory.hasRDFClass( resource ) ).toBe( true );
-			});
+			} );
 
 			it( hasSignature(
 				"Returns true if the Object provided is an LDP RDFRepresentation.", [
-					{ name: "expandedObject", type: "Object" }
+					{name: "expandedObject", type: "Object"},
 				],
-				{ type: "boolean" }
+				{type: "boolean"}
 			), ():void => {
 				expect( RDFRepresentation.Factory.hasRDFClass ).toBeDefined();
 				expect( Utils.isFunction( RDFRepresentation.Factory.hasRDFClass ) ).toBe( true );
@@ -204,45 +203,44 @@ describe( module( "Carbon/RDFRepresentation" ), ():void => {
 
 				object = {
 					"@id": "http://example.com/resource/",
-					"@type": [
-					],
-					"http://example.com/ns#string": [{
-						"@value": "a string"
-					}],
-					"http://example.com/ns#integer": [{
+					"@type": [],
+					"http://example.com/ns#string": [ {
+						"@value": "a string",
+					} ],
+					"http://example.com/ns#integer": [ {
 						"@value": "100",
-						"@type": "http://www.w3.org/2001/XMLSchema#integer"
-					}]
+						"@type": "http://www.w3.org/2001/XMLSchema#integer",
+					} ],
 				};
 				expect( RDFRepresentation.Factory.hasRDFClass( object ) ).toBe( false );
 
 				object = {
 					"@id": "http://example.com/resource/",
 					"@type": [
-						"http://www.w3.org/ns/ldp#BasicContainer"
+						"http://www.w3.org/ns/ldp#BasicContainer",
 					],
-					"http://example.com/ns#string": [{
-						"@value": "a string"
-					}],
-					"http://example.com/ns#integer": [{
+					"http://example.com/ns#string": [ {
+						"@value": "a string",
+					} ],
+					"http://example.com/ns#integer": [ {
 						"@value": "100",
-						"@type": "http://www.w3.org/2001/XMLSchema#integer"
-					}]
+						"@type": "http://www.w3.org/2001/XMLSchema#integer",
+					} ],
 				};
 				expect( RDFRepresentation.Factory.hasRDFClass( object ) ).toBe( false );
 
 				object = {
 					"@id": "http://example.com/resource/",
 					"@type": [
-						`${NS.C.Class.RDFRepresentation}`
+						`${NS.C.Class.RDFRepresentation}`,
 					],
-					"http://example.com/ns#string": [{
-						"@value": "a string"
-					}],
-					"http://example.com/ns#integer": [{
+					"http://example.com/ns#string": [ {
+						"@value": "a string",
+					} ],
+					"http://example.com/ns#integer": [ {
 						"@value": "100",
-						"@type": "http://www.w3.org/2001/XMLSchema#integer"
-					}]
+						"@type": "http://www.w3.org/2001/XMLSchema#integer",
+					} ],
 				};
 				expect( RDFRepresentation.Factory.hasRDFClass( object ) ).toBe( true );
 
@@ -250,24 +248,24 @@ describe( module( "Carbon/RDFRepresentation" ), ():void => {
 					"@id": "http://example.com/resource/",
 					"@type": [
 						`${NS.C.Class.RDFRepresentation}`,
-						"http://www.w3.org/ns/ldp#BasicContainer"
+						"http://www.w3.org/ns/ldp#BasicContainer",
 					],
-					"http://example.com/ns#string": [{
-						"@value": "a string"
-					}],
-					"http://example.com/ns#integer": [{
+					"http://example.com/ns#string": [ {
+						"@value": "a string",
+					} ],
+					"http://example.com/ns#integer": [ {
 						"@value": "100",
-						"@type": "http://www.w3.org/2001/XMLSchema#integer"
-					}]
+						"@type": "http://www.w3.org/2001/XMLSchema#integer",
+					} ],
 				};
 				expect( RDFRepresentation.Factory.hasRDFClass( object ) ).toBe( true );
-			});
+			} );
 
-		});
+		} );
 
 		describe( decoratedObject(
 			"Object decorated by the Carbon.RDFRepresentation.Factory.decorate function.", [
-				"Carbon.RDFRepresentation.Class"
+				"Carbon.RDFRepresentation.Class",
 			]
 		), ():void => {
 
@@ -275,7 +273,7 @@ describe( module( "Carbon/RDFRepresentation" ), ():void => {
 				INSTANCE,
 				"download",
 				"Returns a Blob of the file resolved from the server.",
-				{ type: "Promise<[ Blob, Carbon.HTTP.Response.Class ]>"}
+				{type: "Promise<[ Blob, Carbon.HTTP.Response.Class ]>"}
 			), ():void => {
 				class MockedContext extends AbstractContext {
 					resolve( uri:string ):string {
@@ -289,13 +287,13 @@ describe( module( "Carbon/RDFRepresentation" ), ():void => {
 				expect( rdfRepresentation.download ).toBeDefined();
 				expect( Utils.isFunction( rdfRepresentation.download ) ).toBe( true );
 
-				let spy = spyOn( context.documents, "download" );
+				let spy:jasmine.Spy = spyOn( context.documents, "download" );
 				rdfRepresentation.download();
 
 				expect( spy ).toHaveBeenCalledWith( rdfRepresentation );
-			});
+			} );
 
-		});
+		} );
 
 	} );
 

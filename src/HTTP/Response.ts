@@ -4,7 +4,7 @@ import {isString, isObject} from "../Utils";
 
 export class Class {
 	status:number;
-	data:string | Blob;
+	data:string | Blob | Buffer;
 	headers:Map<string, Header.Class>;
 	request:XMLHttpRequest | ClientRequest;
 
