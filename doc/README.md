@@ -1200,6 +1200,18 @@ Retrieves the agent specified from the current context.
 - agentURI: The URI of the agent to retrieve.
 - requestOptions
 
+##### delete
+```typescript 
+delete( agentURI:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.Auth.PersistedAgent.Class, Carbon.HTTP.Response.Class ]>
+```
+
+Deletes the agent specified.
+
+*Parameters*
+
+- agentURI: The URI of the agent to be deleted.
+- requestOptions
+
 ##### register
 ```typescript 
 register( agentDocument:Carbon.Auth.Agents.Agent.Class ):Promise<Carbon.Pointer.Class, Carbon.HTTP.Response.Class>

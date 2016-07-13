@@ -10,6 +10,7 @@ export declare class Class {
     register(agentDocument: Agent.Class): Promise<[Pointer.Class, Response.Class]>;
     register(slug: string, agentDocument: Agent.Class): Promise<[Pointer.Class, Response.Class]>;
     get(agentURI: string, requestOptions?: HTTP.Request.Options): Promise<[PersistedAgent.Class, HTTP.Response.Class]>;
+    delete(agentURI: string, requestOptions?: HTTP.Request.Options): Promise<HTTP.Response.Class>;
     private resolveURI(agentURI);
     private getContainerURI();
 }

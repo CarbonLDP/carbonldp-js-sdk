@@ -34,6 +34,12 @@ export class Class {
 		} );
 	}
 
+	delete( agentURI:string, requestOptions?:HTTP.Request.Options ):Promise<HTTP.Response.Class> {
+		return this.resolveURI( agentURI ).then( uri => {
+			return this.context.documents.delete( uri, requestOptions );
+		} );
+	}
+
 	private resolveURI( agentURI:string ):Promise<string> {
 		return new Promise<string>( ( resolve:( uri:string ) => void ) => {
 			let containerURI:string = this.context.resolve( this.getContainerURI() );

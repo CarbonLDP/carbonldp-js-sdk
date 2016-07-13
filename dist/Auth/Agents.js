@@ -23,6 +23,12 @@ var Class = (function () {
             return _this.context.documents.get(uri, requestOptions);
         });
     };
+    Class.prototype.delete = function (agentURI, requestOptions) {
+        var _this = this;
+        return this.resolveURI(agentURI).then(function (uri) {
+            return _this.context.documents.delete(uri, requestOptions);
+        });
+    };
     Class.prototype.resolveURI = function (agentURI) {
         var _this = this;
         return new Promise(function (resolve) {
