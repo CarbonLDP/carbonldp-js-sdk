@@ -4,11 +4,11 @@ import * as NS from "./../NS";
 import * as Utils from "./../Utils";
 
 describe( module( "Carbon/LDP/Error" ), ():void => {
-	
+
 	it( isDefined(), ():void => {
 		expect( Error ).toBeDefined();
 		expect( Utils.isObject( Error ) ).toBe( true );
-	});
+	} );
 
 	it( hasProperty(
 		STATIC,
@@ -19,7 +19,7 @@ describe( module( "Carbon/LDP/Error" ), ():void => {
 		expect( Utils.isString( Error.RDF_CLASS ) ).toBe( true );
 
 		expect( Error.RDF_CLASS ).toBe( NS.C.Class.Error );
-	});
+	} );
 
 	it( hasProperty(
 		STATIC,
@@ -30,16 +30,16 @@ describe( module( "Carbon/LDP/Error" ), ():void => {
 		expect( Utils.isObject( Error.SCHEMA ) ).toBe( true );
 
 		expect( Utils.hasProperty( Error.SCHEMA, "carbonCode" ) ).toBe( true );
-		expect( Error.SCHEMA[ "carbonCode" ] ).toEqual({
+		expect( Error.SCHEMA[ "carbonCode" ] ).toEqual( {
 			"@id": NS.C.Predicate.carbonCode,
 			"@type": NS.XSD.DataType.string
-		});
+		} );
 
 		expect( Utils.hasProperty( Error.SCHEMA, "message" ) ).toBe( true );
-		expect( Error.SCHEMA[ "message" ] ).toEqual({
+		expect( Error.SCHEMA[ "message" ] ).toEqual( {
 			"@id": NS.C.Predicate.message,
 			"@type": NS.XSD.DataType.string
-		});
-	});
+		} );
+	} );
 
-});
+} );

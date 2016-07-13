@@ -2,7 +2,7 @@ import * as Header from "./Header";
 import { ClientRequest, IncomingMessage } from "http";
 export declare class Class {
     status: number;
-    data: string;
+    data: string | Blob | Buffer;
     headers: Map<string, Header.Class>;
     request: XMLHttpRequest | ClientRequest;
     constructor(request: XMLHttpRequest);

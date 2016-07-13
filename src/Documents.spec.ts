@@ -37,6 +37,7 @@ import * as RetrievalPreferences from "./RetrievalPreferences";
 import * as SPARQL from "./SPARQL";
 import * as URI from "./RDF/URI";
 import * as Utils from "./Utils";
+import * as RDFRepresentation from "./RDFRepresentation";
 
 // TODO: Add description
 describe( module( "Carbon/Documents" ), ():void => {
@@ -2933,6 +2934,104 @@ describe( module( "Carbon/Documents" ), ():void => {
 				expect( spySuccess ).toHaveBeenCalled();
 				done();
 			}, done.fail );
+		} );
+
+
+		describe( method(
+			INSTANCE,
+			"download"
+		), ():void => {
+
+			it( hasSignature(
+				"Download the binary data, referred by the `Carbon.RDFRepresentation.Class` provided, as a Blob object. This signature only works in a web browser.", [
+					{name: "rdfRepresentation", type: "Carbon.RDFRepresentation.Class", description: "The rdfRepresentation of the binary data to download."},
+				],
+				{type: "Promise<[ Blob, Carbon.HTTP.Response.Class ]>"}
+			), ( done:{ ():void, fail:() => void } ):void => {
+				class MockedContext extends AbstractContext {
+					resolve( uri:string ):string {
+						return uri;
+					}
+				}
+
+				let context:MockedContext = new MockedContext();
+				let documents:Documents = context.documents;
+
+				let document:PersistedDocument.Class = PersistedDocument.Factory.create( "http://example.com/resource/", documents );
+				document.types.push( RDFRepresentation.RDF_CLASS );
+
+				let rdfRepresentation:RDFRepresentation.Class = RDFRepresentation.Factory.decorate( document );
+				rdfRepresentation.mediaType = "text/plain";
+				rdfRepresentation.size = 68;
+
+				expect( documents.download ).toBeDefined();
+				expect( Utils.isFunction( documents.download ) ).toBe( true );
+
+				if( typeof Blob !== "undefined" ) {
+
+					jasmine.Ajax.stubRequest( "http://example.com/resource/", null, "GET" ).andReturn( {
+						status: 200,
+						response: <any> new Blob( [ "4869212054686973206973206d7920504c41494e20626f72696e672054455854203a44" ], {type: "text/plain"} ),
+					} );
+
+					documents.download( rdfRepresentation ).then( ( [ data, response ]:[ Blob, HTTP.Response.Class] ):void => {
+						expect( data ).toBeTruthy();
+						expect( data instanceof Blob ).toBe( true );
+
+						expect( response ).toBeTruthy();
+						expect( response instanceof HTTP.Response.Class ).toBe( true );
+
+						done();
+					} ).catch( done.fail );
+
+				} else { done(); }
+			} );
+
+			it( hasSignature(
+				"Download the binary data, referred by the `Carbon.RDFRepresentation.Class` provided, as a Buffer object. This signature only works in Node.js.", [
+					{name: "rdfRepresentation", type: "Carbon.RDFRepresentation.Class", description: "The rdfRepresentation of the binary data to download."},
+				],
+				{type: "Promise<[ Blob, Carbon.HTTP.Response.Class ]>"}
+			), ( done:{ ():void, fail:() => void } ):void => {
+				class MockedContext extends AbstractContext {
+					resolve( uri:string ):string {
+						return uri;
+					}
+				}
+
+				let context:MockedContext = new MockedContext();
+				let documents:Documents = context.documents;
+
+				let document:PersistedDocument.Class = PersistedDocument.Factory.create( "http://example.com/resource/", documents );
+				document.types.push( RDFRepresentation.RDF_CLASS );
+
+				let rdfRepresentation:RDFRepresentation.Class = RDFRepresentation.Factory.decorate( document );
+				rdfRepresentation.mediaType = "text/plain";
+				rdfRepresentation.size = 68;
+
+				expect( documents.download ).toBeDefined();
+				expect( Utils.isFunction( documents.download ) ).toBe( true );
+
+				if( typeof Buffer !== "undefined" ) {
+
+					jasmine.Ajax.stubRequest( "http://example.com/resource/", null, "GET" ).andReturn( {
+						status: 200,
+						response: <any> new Buffer( "4869212054686973206973206d7920504c41494e20626f72696e672054455854203a44", "hex" ),
+					} );
+
+					documents.download( rdfRepresentation ).then( ( [ data, response ]:[ Buffer, HTTP.Response.Class] ):void => {
+						expect( data ).toBeTruthy();
+						expect( data instanceof Buffer ).toBe( true );
+
+						expect( response ).toBeTruthy();
+						expect( response instanceof HTTP.Response.Class ).toBe( true );
+
+						done();
+					} ).catch( done.fail );
+
+				} else { done(); }
+			} );
+
 		} );
 
 		it( hasMethod(

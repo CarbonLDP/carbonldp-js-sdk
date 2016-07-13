@@ -12,6 +12,7 @@ var NS = require("./NS");
 var ObjectSchema = require("./ObjectSchema");
 var LDP = require("./LDP");
 var SPARQL = require("./SPARQL");
+var RDFRepresentation = require("./RDFRepresentation");
 var RetrievalPreferences = require("./RetrievalPreferences");
 var Documents = (function () {
     function Documents(context) {
@@ -477,6 +478,19 @@ var Documents = (function () {
     Documents.prototype.getDownloadURL = function (documentURI, requestOptions) {
         return this.context.auth.getAuthenticatedURL(documentURI, requestOptions);
     };
+    Documents.prototype.download = function (rdfRepresentation) {
+        if (!RDFRepresentation.Factory.is(rdfRepresentation))
+            return Promise.reject(new Errors.IllegalArgumentError("No RDFRepresentation Document was provided."));
+        var uri = this.context.resolve(rdfRepresentation.id);
+        var requestOptions = { isFile: true };
+        if (this.context && this.context.auth.isAuthenticated())
+            this.context.auth.addAuthentication(requestOptions);
+        HTTP.Request.Util.setAcceptHeader(rdfRepresentation.mediaType, requestOptions);
+        HTTP.Request.Util.setPreferredInteractionModel(NS.LDP.Class.NonRDFSource, requestOptions);
+        return HTTP.Request.Service.get(uri, requestOptions).then(function (response) {
+            return [response.data, response];
+        });
+    };
     Documents.prototype.getSchemaFor = function (object) {
         if ("@id" in object) {
             return this.getDigestedObjectSchemaForExpandedObject(object);
@@ -740,6 +754,8 @@ var Documents = (function () {
         document._resolved = true;
         if (LDP.Container.Factory.hasRDFClass(document))
             LDP.PersistedContainer.Factory.decorate(document);
+        if (RDFRepresentation.Factory.hasRDFClass(document))
+            RDFRepresentation.Factory.decorate(document);
         return document;
     };
     Documents.prototype.updatePersistedDocument = function (persistedDocument, documentResource, fragmentResources) {

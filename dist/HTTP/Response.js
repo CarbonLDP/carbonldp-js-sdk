@@ -7,7 +7,7 @@ var Class = (function () {
         if (typeof XMLHttpRequest !== "undefined" && request instanceof XMLHttpRequest) {
             var res = request;
             this.status = res.status;
-            this.data = res.responseText;
+            this.data = res.response || res.responseText;
             this.setHeaders(res.getAllResponseHeaders());
         }
         else {

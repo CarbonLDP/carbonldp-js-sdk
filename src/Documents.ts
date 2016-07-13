@@ -3,7 +3,6 @@ import * as HTTP from "./HTTP";
 import Context from "./Context";
 import * as RDF from "./RDF";
 import * as Utils from "./Utils";
-
 import * as AccessPoint from "./AccessPoint";
 import * as Document from "./Document";
 import * as FreeResources from "./FreeResources";
@@ -17,6 +16,7 @@ import * as NS from "./NS";
 import * as ObjectSchema from "./ObjectSchema";
 import * as LDP from "./LDP";
 import * as SPARQL from "./SPARQL";
+import * as RDFRepresentation from "./RDFRepresentation";
 import * as Resource from "./Resource";
 import * as RetrievalPreferences from "./RetrievalPreferences";
 
@@ -567,6 +567,23 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 		return this.context.auth.getAuthenticatedURL( documentURI, requestOptions );
 	}
 
+	download( rdfRepresentation:RDFRepresentation.Class ):Promise<[ Blob | Buffer, HTTP.Response.Class ]>;
+	download( rdfRepresentation:RDFRepresentation.Class ):Promise<[ Blob | Buffer, HTTP.Response.Class ]> {
+		if( ! RDFRepresentation.Factory.is( rdfRepresentation ) ) return Promise.reject<any>( new Errors.IllegalArgumentError( "No RDFRepresentation Document was provided." ) );
+
+		let uri:string = this.context.resolve( rdfRepresentation.id );
+		let requestOptions:HTTP.Request.Options = {isFile: true};
+
+		if( this.context && this.context.auth.isAuthenticated() ) this.context.auth.addAuthentication( requestOptions );
+
+		HTTP.Request.Util.setAcceptHeader( rdfRepresentation.mediaType, requestOptions );
+		HTTP.Request.Util.setPreferredInteractionModel( NS.LDP.Class.NonRDFSource, requestOptions );
+
+		return HTTP.Request.Service.get( uri, requestOptions ).then( ( response:HTTP.Response.Class ) => {
+			return [ response.data, response ];
+		} );
+	}
+
 	getSchemaFor( object:Object ):ObjectSchema.DigestedObjectSchema {
 		if( "@id" in object ) {
 			return this.getDigestedObjectSchemaForExpandedObject( object );
@@ -853,7 +870,9 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 
 		// TODO: Decorate additional behavior (app, etc.). See also updatePersistedDocument() method
 		// TODO: Make it dynamic. See also updatePersistedDocument() method
+		// TODO: Use document.hasType( RDF_CLASS ) when available
 		if( LDP.Container.Factory.hasRDFClass( document ) ) LDP.PersistedContainer.Factory.decorate( document );
+		if( RDFRepresentation.Factory.hasRDFClass( document ) ) RDFRepresentation.Factory.decorate( document );
 
 		return document;
 	}

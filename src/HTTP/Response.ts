@@ -4,7 +4,7 @@ import {isString, isObject} from "../Utils";
 
 export class Class {
 	status:number;
-	data:string;
+	data:string | Blob | Buffer;
 	headers:Map<string, Header.Class>;
 	request:XMLHttpRequest | ClientRequest;
 
@@ -14,7 +14,7 @@ export class Class {
 		if( typeof XMLHttpRequest !== "undefined" && request instanceof XMLHttpRequest ) {
 			let res:XMLHttpRequest = request;
 			this.status = res.status;
-			this.data = res.responseText;
+			this.data = res.response || res.responseText;
 			this.setHeaders( res.getAllResponseHeaders() );
 		} else {
 			this.status = response.statusCode;

@@ -359,10 +359,6 @@
 - [Module Carbon/NamedFragment](#Carbon-NamedFragment)
 	- [Class Carbon.NamedFragment.Factory](#Carbon-NamedFragment-Factory)
 		- [Methods](#Carbon-NamedFragment-Factory-Methods)
-- [Module Carbon/NonRDFSource](#Carbon-NonRDFSource)
-	- [Properties](#Carbon-NonRDFSource-Properties)
-	- [Class Carbon.NonRDFSource.Factory](#Carbon-NonRDFSource-Factory)
-		- [Methods](#Carbon-NonRDFSource-Factory-Methods)
 - [Module Carbon/ObjectSchema](#Carbon-ObjectSchema)
 	- [Enums](#Carbon-ObjectSchema-Enums)
 	- [Class Carbon.ObjectSchema.DigestedObjectSchema](#Carbon-ObjectSchema-DigestedObjectSchema)
@@ -438,6 +434,12 @@
 - [Module Carbon/RDF/Value](#Carbon-RDF-Value)
 	- [Class Carbon.RDF.Value.Util](#Carbon-RDF-Value-Util)
 		- [Methods](#Carbon-RDF-Value-Util-Methods)
+- [Module Carbon/RDFRepresentation](#Carbon-RDFRepresentation)
+	- [Properties](#Carbon-RDFRepresentation-Properties)
+	- [Class Carbon.RDFRepresentation.Factory](#Carbon-RDFRepresentation-Factory)
+		- [Methods](#Carbon-RDFRepresentation-Factory-Methods)
+		- [Decorated Object](#Carbon-RDFRepresentation-Factory-Decorated-Object)
+			- [Methods](#Carbon-RDFRepresentation-Factory-Decorated-Object-Methods)
 - [Module Carbon/Resource](#Carbon-Resource)
 	- [Class Carbon.Resource.Factory](#Carbon-Resource-Factory)
 		- [Methods](#Carbon-Resource-Factory-Methods)
@@ -2292,6 +2294,27 @@ Remove the specified resource URI member of the resource container specified.
 - documentURI: URI of the resource container where to remove the member.
 - memberURI: URI of the resource to remove as a member.
 - requestOptions
+
+##### download
+```typescript 
+download( rdfRepresentation:Carbon.RDFRepresentation.Class ):Promise<[ Blob, Carbon.HTTP.Response.Class ]>
+```
+
+Download the binary data, referred by the `Carbon.RDFRepresentation.Class` provided, as a Blob object. This signature only works in a web browser.
+
+*Parameters*
+
+- rdfRepresentation: The rdfRepresentation of the binary data to download.
+
+```typescript 
+download( rdfRepresentation:Carbon.RDFRepresentation.Class ):Promise<[ Blob, Carbon.HTTP.Response.Class ]>
+```
+
+Download the binary data, referred by the `Carbon.RDFRepresentation.Class` provided, as a Buffer object. This signature only works in Node.js.
+
+*Parameters*
+
+- rdfRepresentation: The rdfRepresentation of the binary data to download.
 
 
 
@@ -6488,59 +6511,6 @@ Creates a NamedFragment from an Object with the Slug provided for the document s
 
 
 
-## <a name="Carbon-NonRDFSource" />Module Carbon/NonRDFSource
-
-
-
-
-
-### <a name="Carbon-NonRDFSource-Properties" />Properties
-```typescript 
-static RDF_CLASS:string 
-```
-
-```typescript 
-static SCHEMA:Carbon.ObjectSchema.Class 
-```
-
-
-
-
-
-### <a name="Carbon-NonRDFSource-Factory" />Class Carbon.NonRDFSource.Factory
-
-
-> Factory class for `Carbon.NonRDFSource.Class` objects
-
-
-
-
-#### <a name="Carbon-NonRDFSource-Factory-Methods" />Methods
-##### hasClassProperties
-```typescript 
-static hasClassProperties( resource:Object ):boolean
-```
-
-Returns true if the object provided has the properties that defines a `Carbon.NonRDFSource.Class` object
-
-*Parameters*
-
-- resource
-
-##### is
-```typescript 
-static is( object:Object ):boolean
-```
-
-Returns true if the object provided is considered as an `Carbon.NonRDFSource.Class` object
-
-*Parameters*
-
-- object
-
-
-
-
 ## <a name="Carbon-ObjectSchema" />Module Carbon/ObjectSchema
 
 
@@ -8219,6 +8189,104 @@ Returns null if cannot be parsed
 - pointerLibrary
 
 
+
+
+## <a name="Carbon-RDFRepresentation" />Module Carbon/RDFRepresentation
+
+
+
+
+
+### <a name="Carbon-RDFRepresentation-Properties" />Properties
+```typescript 
+static RDF_CLASS:string 
+```
+
+```typescript 
+static SCHEMA:Carbon.ObjectSchema.Class 
+```
+
+
+
+
+
+### <a name="Carbon-RDFRepresentation-Factory" />Class Carbon.RDFRepresentation.Factory
+
+
+> Factory class for `Carbon.RDFRepresentation.Class` objects
+
+
+
+
+#### <a name="Carbon-RDFRepresentation-Factory-Methods" />Methods
+##### hasClassProperties
+```typescript 
+static hasClassProperties( resource:Object ):boolean
+```
+
+Returns true if the object provided has the properties that defines a `Carbon.RDFRepresentation.Class` object.
+
+*Parameters*
+
+- resource
+
+##### is
+```typescript 
+static is( object:Object ):boolean
+```
+
+Returns true if the object provided is considered as an `Carbon.RDFRepresentation.Class` object.
+
+*Parameters*
+
+- object
+
+##### decorate
+```typescript 
+static decorate( persistedDocument:T extends Carbon.PersistedDocument.Class ):T & Carbon.RDFRepresentation.Class
+```
+
+
+*Parameters*
+
+- persistedDocument
+
+##### hasRDFClass
+```typescript 
+static hasRDFClass( resource:Carbon.Resource.Class ):boolean
+```
+
+Returns true if the Resource provided is an RDFRepresentation.
+
+*Parameters*
+
+- resource
+
+```typescript 
+static hasRDFClass( expandedObject:Object ):boolean
+```
+
+Returns true if the Object provided is an LDP RDFRepresentation.
+
+*Parameters*
+
+- expandedObject
+
+
+
+#### <a name="Carbon-RDFRepresentation-Factory-Decorated-Object" />Decorated Object
+**Interfaces:** [Carbon.RDFRepresentation.Class](#Carbon-RDFRepresentation-Class)
+
+> Object decorated by the Carbon.RDFRepresentation.Factory.decorate function.
+
+
+##### <a name="Carbon-RDFRepresentation-Factory-Decorated-Object-Methods" />Methods
+##### download
+```typescript 
+download():Promise<[ Blob, Carbon.HTTP.Response.Class ]>
+```
+
+Returns a Blob of the file resolved from the server.
 
 
 ## <a name="Carbon-Resource" />Module Carbon/Resource

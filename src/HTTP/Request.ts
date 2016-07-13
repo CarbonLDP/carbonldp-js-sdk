@@ -16,6 +16,7 @@ export interface Options {
 	sendCredentialsOnCORS?:boolean;
 	timeout?:number;
 	request?:XMLHttpRequest;
+	isFile?:boolean;
 }
 
 export interface ContainerRetrievalPreferences {
@@ -54,18 +55,18 @@ function onResolve( resolve:Resolve, reject:Reject, response:Response ):void {
 		}
 
 		let parser:ErrorResponse.Parser = new ErrorResponse.Parser();
-		parser.parse( response.data, error ).then( ( errorResponse:ErrorResponse.Class ) => {
+		parser.parse( <string> response.data, error ).then( ( errorResponse:ErrorResponse.Class ) => {
 			let message:string = ErrorResponse.Util.getMessage( errorResponse );
 			error.message = message;
 			reject( error );
 
 		} ).catch( () => {
-			error.message = response.data;
+			error.message = <string> response.data;
 			reject( error );
 		} );
 
 	} else {
-		reject( new Errors.UnknownError( response.data, response ) );
+		reject( new Errors.UnknownError( <string> response.data, response ) );
 
 	}
 }
@@ -78,6 +79,7 @@ function sendWithBrowser( method:string, url:string, body:string | Blob, options
 		if( options.headers ) forEachHeaders( options.headers, ( name:string, value:string ) => request.setRequestHeader( name, value ) );
 		request.withCredentials = options.sendCredentialsOnCORS;
 		if( options.timeout ) request.timeout = options.timeout;
+		if( options.isFile ) request.responseType = "blob";
 
 		request.onload = request.onerror = () => {
 			let response:Response = new Response( request );
@@ -111,7 +113,7 @@ function sendWithNode( method:string, url:string, body:string | Buffer, options:
 		let request:ClientRequest = HTTP.request( requestOptions, ( res:IncomingMessage ) => {
 			let data:string = "";
 
-			res.setEncoding( "utf8" );
+			if( ! options.isFile ) res.setEncoding( "utf8" );
 			res.on( "data", ( chunk ) => {
 				data = chunk;
 			} );
@@ -182,7 +184,7 @@ export class Service {
 		if( parser === null ) return requestPromise;
 
 		return requestPromise.then( ( response:Response ) => {
-			return parser.parse( response.data ).then( ( parsedBody:T ) => {
+			return parser.parse( <string> response.data ).then( ( parsedBody:T ) => {
 				return [ parsedBody, response ];
 			} );
 		} );
