@@ -10,6 +10,8 @@ class Class {
 	static get AppRole():string { return namespace + "AppRole"; }
 
 	static get Ticket():string { return namespace + "Ticket"; }
+
+	static get Token():string { return namespace + "Token"; }
 }
 
 class Predicate {
@@ -32,6 +34,8 @@ class Predicate {
 	static get parentRole():string { return namespace + "parentRole"; }
 
 	static get password():string { return namespace + "password"; }
+
+	static get platformRole():string { return namespace + "platformRole"; }
 
 	static get rootContainer():string { return namespace + "rootContainer"; }
 

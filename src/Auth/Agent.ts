@@ -23,6 +23,11 @@ export const SCHEMA:ObjectSchema.Class = {
 		"@id": NS.CS.Predicate.enabled,
 		"@type": NS.XSD.DataType.boolean,
 	},
+	"platformRoles": {
+		"@id": NS.CS.Predicate.platformRole,
+		"@type": "@id",
+		"@container": "@set",
+	},
 };
 
 export interface Class extends Document.Class {

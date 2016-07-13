@@ -60,6 +60,11 @@ var Predicate = (function () {
         enumerable: true,
         configurable: true
     });
+    Object.defineProperty(Predicate, "enabled", {
+        get: function () { return namespace + "enabled"; },
+        enumerable: true,
+        configurable: true
+    });
     Object.defineProperty(Predicate, "expirationTime", {
         get: function () { return namespace + "expirationTime"; },
         enumerable: true,
@@ -82,6 +87,11 @@ var Predicate = (function () {
     });
     Object.defineProperty(Predicate, "password", {
         get: function () { return namespace + "password"; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Predicate, "platformRole", {
+        get: function () { return namespace + "platformRole"; },
         enumerable: true,
         configurable: true
     });

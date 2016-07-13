@@ -119,7 +119,7 @@ describe( module(
 			expect( CS.Predicate ).toBeDefined();
 			expect( Utils.isFunction( CS.Predicate ) ).toBe( true );
 
-			expect( Object.keys( CS.Predicate ).length ).toBe( 13 );
+			expect( Object.keys( CS.Predicate ).length ).toBe( 14 );
 		} );
 
 		it( hasProperty(
@@ -230,6 +230,17 @@ describe( module(
 			expect( Utils.isString( CS.Predicate.password ) ).toBe( true );
 
 			expect( CS.Predicate.password ).toBe( "https://carbonldp.com/ns/v1/security#password" );
+		} );
+
+		it( hasProperty(
+			STATIC,
+			"platformRole",
+			"string"
+		), ():void => {
+			expect( CS.Predicate.platformRole ).toBeDefined();
+			expect( Utils.isString( CS.Predicate.platformRole ) ).toBe( true );
+
+			expect( CS.Predicate.platformRole ).toBe( "https://carbonldp.com/ns/v1/security#platformRole" );
 		} );
 
 		it( hasProperty(

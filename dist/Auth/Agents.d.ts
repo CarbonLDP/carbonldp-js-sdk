@@ -4,7 +4,7 @@ import * as HTTP from "./../HTTP";
 import * as PersistedAgent from "./PersistedAgent";
 import * as Pointer from "./../Pointer";
 import * as Response from "./../HTTP/Response";
-export declare class Class {
+export declare abstract class Class {
     private context;
     constructor(context: Context);
     register(agentDocument: Agent.Class): Promise<[Pointer.Class, Response.Class]>;

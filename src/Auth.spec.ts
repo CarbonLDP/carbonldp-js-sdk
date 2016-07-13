@@ -215,20 +215,22 @@ describe( module( "Carbon/Auth" ), ():void => {
 			INSTANCE,
 			"agents",
 			"Carbon.Auth.Agents.Class",
-			"Instance of `Carbon.Auth.Agents.Class` that helps you manage the agents of the current context."
+			"Instance of `Carbon.Auth.Agents.Class` that helps you manage the agents of the current context.\n" +
+			"In this class the property is set to `null`, and implementations of this class must set it to their respective agent model using a valid instance of `Carbon.Auth.Agents.Class`."
 		), ():void => {
 			let context:AbstractContext;
 			class MockedContext extends AbstractContext {
-				resolve( uri:string ) {
+				resolve( uri:string ):string {
 					return uri;
 				}
 			}
 			context = new MockedContext();
 
-			let auth = new Auth.Class( context );
+			class MockedAuth extends Auth.Class {}
+			let auth:Auth.Class = new MockedAuth( context );
 
 			expect( auth.agents ).toBeDefined();
-			expect( auth.agents instanceof Agents.Class ).toBe( true );
+			expect( auth.roles ).toBeNull();
 		} );
 
 		it( hasProperty(
@@ -236,7 +238,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 			"roles",
 			"Carbon.Auth.Roles.Class",
 			"Instance of a implementation of the `Carbon.Auth.Roles.Class` abstract class, that help managing the roles of the current context.\n" +
-			"In this class the property is set to `null`, and implementations of this class set it to their respective role model using a valid instance of `Carbon.Auth.Roles.Class`."
+			"In this class the property is set to `null`, and implementations of this class must set it to their respective role model using a valid instance of `Carbon.Auth.Roles.Class`."
 		), ():void => {
 			let context:AbstractContext;
 			class MockedContext extends AbstractContext {

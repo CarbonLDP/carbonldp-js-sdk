@@ -23,7 +23,6 @@ export class Factory {
 			&& ( <Class> object ).types.indexOf( Agent.RDF_CLASS ) !== - 1
 			;
 	}
-
 }
 
 export default Class;

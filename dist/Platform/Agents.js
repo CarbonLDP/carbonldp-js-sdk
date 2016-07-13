@@ -4,20 +4,19 @@ var __extends = (this && this.__extends) || function (d, b) {
     function __() { this.constructor = d; }
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
-var Agents_1 = require("./Agents");
-var Roles_1 = require("./Roles");
-var Auth_1 = require("./../Auth");
+var Agents = require("./../Auth/Agents");
 var Class = (function (_super) {
     __extends(Class, _super);
     function Class(appContext) {
         _super.call(this, appContext);
-        this.roles = new Roles_1.default(appContext);
-        this.agents = new Agents_1.default(appContext);
     }
+    Class.prototype.get = function (agentURI, requestOptions) {
+        return _super.prototype.get.call(this, agentURI, requestOptions);
+    };
     return Class;
-}(Auth_1.default));
+}(Agents.Class));
 exports.Class = Class;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = Class;
 
-//# sourceMappingURL=Auth.js.map
+//# sourceMappingURL=Agents.js.map

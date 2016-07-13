@@ -12,11 +12,13 @@ declare class Predicate {
     static allowsOrigin: string;
     static childRole: string;
     static description: string;
+    static enabled: string;
     static expirationTime: string;
     static forIRI: string;
     static namae: string;
     static parentRole: string;
     static password: string;
+    static platformRole: string;
     static rootContainer: string;
     static ticketKey: string;
     static tokenKey: string;
