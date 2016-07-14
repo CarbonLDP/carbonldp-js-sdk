@@ -43,6 +43,7 @@ export interface Class extends Pointer.Class, PersistedResource.Class, Document.
 	executeSELECTQuery( selectQuery:string, requestOptions?:HTTP.Request.Options ):Promise<[ SPARQL.SELECTResults.Class, HTTP.Response.Class ]>;
 	executeRawCONSTRUCTQuery( constructQuery:string, requestOptions?:HTTP.Request.Options ):Promise<[ string, HTTP.Response.Class ]>;
 	executeRawDESCRIBEQuery( describeQuery:string, requestOptions?:HTTP.Request.Options ):Promise<[ string, HTTP.Response.Class ]>;
+	executeUPDATE( updateQuery:string, requestOptions?:HTTP.Request.Options ):Promise<HTTP.Response.Class>;
 }
 
 function extendIsDirty( superFunction:() => boolean ):() => boolean {
@@ -134,6 +135,10 @@ function executeRawDESCRIBEQuery( describeQuery:string, requestOptions:HTTP.Requ
 	return this._documents.executeRawDESCRIBEQuery( this.id, describeQuery, requestOptions );
 }
 
+function executeUPDATE( updateQuery:string, requestOptions:HTTP.Request.Options = {} ):Promise<[ string, HTTP.Response.Class ]> {
+	return this._documents.executeUPDATE( this.id, updateQuery, requestOptions );
+}
+
 export class Factory {
 	static hasClassProperties( document:Document.Class ):boolean {
 		return (
@@ -150,7 +155,8 @@ export class Factory {
 			Utils.hasFunction( document, "executeRawSELECTQuery" ) &&
 			Utils.hasFunction( document, "executeSELECTQuery" ) &&
 			Utils.hasFunction( document, "executeRawDESCRIBEQuery" ) &&
-			Utils.hasFunction( document, "executeRawCONSTRUCTQuery" )
+			Utils.hasFunction( document, "executeRawCONSTRUCTQuery" ) &&
+			Utils.hasFunction( document, "executeUPDATE" )
 		);
 	}
 
@@ -308,6 +314,12 @@ export class Factory {
 				enumerable: false,
 				configurable: true,
 				value: executeRawDESCRIBEQuery,
+			},
+			"executeUPDATE": {
+				writable: false,
+				enumerable: false,
+				configurable: true,
+				value: executeUPDATE,
 			},
 
 			"createFragment": {
