@@ -45,10 +45,18 @@
 	- [Class Carbon.Auth.Class](#Carbon-Auth-Class)
 		- [Constructor](#Carbon-Auth-Class-Constructor)
 		- [Methods](#Carbon-Auth-Class-Methods)
+- [Module Carbon/Auth/ACE](#Carbon-Auth-ACE)
+- [Module Carbon/Auth/ACL](#Carbon-Auth-ACL)
+	- [Properties](#Carbon-Auth-ACL-Properties)
+	- [Class Carbon.Auth.ACL.Factory](#Carbon-Auth-ACL-Factory)
+		- [Methods](#Carbon-Auth-ACL-Factory-Methods)
 - [Module Carbon/Auth/BasicAuthenticator](#Carbon-Auth-BasicAuthenticator)
 	- [Class Carbon.Auth.BasicAuthenticator.Class](#Carbon-Auth-BasicAuthenticator-Class)
 		- [Constructor](#Carbon-Auth-BasicAuthenticator-Class-Constructor)
 		- [Methods](#Carbon-Auth-BasicAuthenticator-Class-Methods)
+- [Module Carbon/Auth/PersistedACL](#Carbon-Auth-PersistedACL)
+	- [Class Carbon.Auth.PersistedACL.Factory](#Carbon-Auth-PersistedACL-Factory)
+		- [Methods](#Carbon-Auth-PersistedACL-Factory-Methods)
 - [Module Carbon/Auth/Ticket](#Carbon-Auth-Ticket)
 	- [Properties](#Carbon-Auth-Ticket-Properties)
 	- [Class Carbon.Auth.Ticket.Factory](#Carbon-Auth-Ticket-Factory)
@@ -303,7 +311,6 @@
 			- [Methods](#Carbon-LDP-PersistedContainer-Factory-Decorated-Object-Methods)
 - [Module Carbon/LDP/RDFSource](#Carbon-LDP-RDFSource)
 	- [Properties](#Carbon-LDP-RDFSource-Properties)
-	- [Class Carbon.LDP.RDFSource.Factory](#Carbon-LDP-RDFSource-Factory)
 - [Module Carbon/LDP/RemoveMemberAction](#Carbon-LDP-RemoveMemberAction)
 	- [Properties](#Carbon-LDP-RemoveMemberAction-Properties)
 	- [Class Carbon.LDP.RemoveMemberAction.Factory](#Carbon-LDP-RemoveMemberAction-Factory)
@@ -381,6 +388,11 @@
 		- [Methods](#Carbon-PersistedDocument-Factory-Methods)
 		- [Decorated Object](#Carbon-PersistedDocument-Factory-Decorated-Object)
 			- [Methods](#Carbon-PersistedDocument-Factory-Decorated-Object-Methods)
+- [Module Carbon/PersistedRDFSource](#Carbon-PersistedRDFSource)
+	- [Class Carbon.PersistedRDFSource.Factory](#Carbon-PersistedRDFSource-Factory)
+		- [Methods](#Carbon-PersistedRDFSource-Factory-Methods)
+		- [Decorated Object](#Carbon-PersistedRDFSource-Factory-Decorated-Object)
+			- [Methods](#Carbon-PersistedRDFSource-Factory-Decorated-Object-Methods)
 - [Module Carbon/Pointer](#Carbon-Pointer)
 	- [Class Carbon.Pointer.Factory](#Carbon-Pointer-Factory)
 		- [Methods](#Carbon-Pointer-Factory-Methods)
@@ -1067,9 +1079,13 @@ Returns a Pointer for the stored App Document, and the response of the call.
 #### <a name="Carbon-Auth-Reexports" />Reexports 
 | Export name | Original Location | 
 | --- | --- |
+| ACE | [Carbon.Auth.ACE](#Carbon-Auth-ACE) |
+| ACL | [Carbon.Auth.ACL](#Carbon-Auth-ACL) |
 | AuthenticationToken | [Carbon.Auth.AuthenticationToken](#Carbon-Auth-AuthenticationToken) |
 | Authenticator | [Carbon.Auth.Authenticator](#Carbon-Auth-Authenticator) |
 | BasicAuthenticator | [Carbon.Auth.BasicAuthenticator](#Carbon-Auth-BasicAuthenticator) |
+| PersistedACE | [Carbon.Auth.PersistedACE](#Carbon-Auth-PersistedACE) |
+| PersistedACL | [Carbon.Auth.PersistedACL](#Carbon-Auth-PersistedACL) |
 | Ticket | [Carbon.Auth.Ticket](#Carbon-Auth-Ticket) |
 | Token | [Carbon.Auth.Token](#Carbon-Auth-Token) |
 | TokenAuthenticator | [Carbon.Auth.TokenAuthenticator](#Carbon-Auth-TokenAuthenticator) |
@@ -1207,6 +1223,57 @@ Authenticates the user with a JSON Web Token (JWT), i.e. the credentials generat
 
 
 
+## <a name="Carbon-Auth-ACE" />Module Carbon/Auth/ACE
+
+
+
+
+
+
+
+
+## <a name="Carbon-Auth-ACL" />Module Carbon/Auth/ACL
+
+
+
+
+
+### <a name="Carbon-Auth-ACL-Properties" />Properties
+```typescript 
+static RDF_Class:string 
+```
+
+```typescript 
+static SCHEMA:Carbon.ObjectSchema.Class 
+```
+
+
+
+
+
+### <a name="Carbon-Auth-ACL-Factory" />Class Carbon.Auth.ACL.Factory
+
+
+> Factory class for `Carbon.Auth.ACL.Class` objects.
+
+
+
+
+#### <a name="Carbon-Auth-ACL-Factory-Methods" />Methods
+##### hasClassProperties
+```typescript 
+static hasClassProperties( object:Object ):boolean
+```
+
+Return true if the object provided has the properties and methods of a `Carbon.Auth.ACL.Class` object.
+
+*Parameters*
+
+- object: The object to analise.
+
+
+
+
 ## <a name="Carbon-Auth-BasicAuthenticator" />Module Carbon/Auth/BasicAuthenticator
 
 
@@ -1288,6 +1355,49 @@ Returns true if the Authenticator supports the AuthenticationToken.
 *Parameters*
 
 - authenticationToken
+
+
+
+## <a name="Carbon-Auth-PersistedACL" />Module Carbon/Auth/PersistedACL
+
+
+
+
+
+
+
+
+### <a name="Carbon-Auth-PersistedACL-Factory" />Class Carbon.Auth.PersistedACL.Factory
+
+
+> Factory class for `Carbon.Auth.PersistedACL.Class` objects.
+
+
+
+
+#### <a name="Carbon-Auth-PersistedACL-Factory-Methods" />Methods
+##### hasClassProperties
+```typescript 
+static hasClassProperties( object:Object ):boolean
+```
+
+Return true if the object provided has the properties and methods of a `Carbon.Auth.PersistedACL.Class` object.
+
+*Parameters*
+
+- object: The object to analise.
+
+##### decorate
+```typescript 
+static decorate( document:T extends Carbon.PersistedDocument.Class ):T & Carbon.Auth.PersistedACL.Class
+```
+
+Decorate the object with the properties and methods of a `Carbon.Auth.PersistedACL.Class` object.
+
+*Parameters*
+
+- document: The persisted document to decorate.
+
 
 
 
@@ -5420,16 +5530,6 @@ static SCHEMA:Carbon.ObjectSchema.Class
 
 
 
-### <a name="Carbon-LDP-RDFSource-Factory" />Class Carbon.LDP.RDFSource.Factory
-
-
-> Factory class for RDFSource objects
-
-
-
-
-
-
 ## <a name="Carbon-LDP-RemoveMemberAction" />Module Carbon/LDP/RemoveMemberAction
 
 
@@ -5795,6 +5895,10 @@ static created:string
 ```
 
 ```typescript 
+static defaultInteractionModel:string 
+```
+
+```typescript 
 static modified:string 
 ```
 
@@ -5913,15 +6017,11 @@ static namespace:string
 
 #### <a name="Carbon-NS-CS-Class-Properties" />Properties
 ```typescript 
-static Application:string 
+static AccessControlEntry:string 
 ```
 
 ```typescript 
-static Token:string 
-```
-
-```typescript 
-static AllOrigins:string 
+static AccessControlList:string 
 ```
 
 ```typescript 
@@ -5929,7 +6029,19 @@ static Agent:string
 ```
 
 ```typescript 
+static AllOrigins:string 
+```
+
+```typescript 
+static Application:string 
+```
+
+```typescript 
 static Ticket:string 
+```
+
+```typescript 
+static Token:string 
 ```
 
 
@@ -5945,7 +6057,15 @@ static Ticket:string
 
 #### <a name="Carbon-NS-CS-Predicate-Properties" />Properties
 ```typescript 
-static namae:string 
+static accessControlEntry:string 
+```
+
+```typescript 
+static accessControlList:string 
+```
+
+```typescript 
+static accessTo:string 
 ```
 
 ```typescript 
@@ -5953,11 +6073,7 @@ static allowsOrigin:string
 ```
 
 ```typescript 
-static rootContainer:string 
-```
-
-```typescript 
-static tokenKey:string 
+static description:string 
 ```
 
 ```typescript 
@@ -5965,19 +6081,47 @@ static expirationTime:string
 ```
 
 ```typescript 
-static password:string 
-```
-
-```typescript 
-static description:string 
-```
-
-```typescript 
 static forIRI:string 
 ```
 
 ```typescript 
+static granting:string 
+```
+
+```typescript 
+static inheritableEntry:string 
+```
+
+```typescript 
+static namae:string 
+```
+
+```typescript 
+static password:string 
+```
+
+```typescript 
+static permission:string 
+```
+
+```typescript 
+static rootContainer:string 
+```
+
+```typescript 
+static subject:string 
+```
+
+```typescript 
+static subjectClass:string 
+```
+
+```typescript 
 static ticketKey:string 
+```
+
+```typescript 
+static tokenKey:string 
 ```
 
 
@@ -6892,13 +7036,6 @@ getDownloadURL():Promise<Carbon.HTTP.Response.Class>
 
 Returns the URI of the current document with the properties necessarily for a single download request.
 
-##### createAccessPoint
-```typescript 
-createAccessPoint():Promise<[Carbon.Pointer.Class, Carbon.HTTP.Response.Class]>
-```
-
-Creates an AccessPoint for the PersistedDocument.
-
 ##### executeRawASKQuery
 ```typescript 
 executeRawASKQuery( askQuery:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.SPARQL.RawResults.Class, Carbon.HTTP.Response.Class ]>
@@ -7003,6 +7140,70 @@ Returns true if the URI provided is in the scope of the PersistedDocument.
 *Parameters*
 
 - id
+
+
+## <a name="Carbon-PersistedRDFSource" />Module Carbon/PersistedRDFSource
+
+
+
+
+
+
+
+
+### <a name="Carbon-PersistedRDFSource-Factory" />Class Carbon.PersistedRDFSource.Factory
+
+
+> Factory class for `Carbon.PersistedRDFSource.Class` objects.
+
+
+
+
+#### <a name="Carbon-PersistedRDFSource-Factory-Methods" />Methods
+##### hasClassProperties
+```typescript 
+static hasClassProperties( object:Object ):boolean
+```
+
+Returns true if the object provided contains the properties and methods of a `Carbon.PersistedRDFSource.Class` object.
+
+*Parameters*
+
+- object: The object to analise.
+
+##### decorate
+```typescript 
+static decorate( document:T extends Carbon.PersistedDocument.Class ):T & Carbon.LDP.PersistedRDFSource.Class
+```
+
+Decorate the object with the properties and methods of a `Carbon.LDP.PersistedRDFSource.Class` object.
+
+*Parameters*
+
+- document: The persisted document to decorate.
+
+
+
+#### <a name="Carbon-PersistedRDFSource-Factory-Decorated-Object" />Decorated Object
+**Interfaces:** [Carbon.PersistedRDFSource.Class](#Carbon-PersistedRDFSource-Class)
+
+> The object decorated by `Carbon.PersistedRDFSource.Factory.decorate()` method.
+
+
+##### <a name="Carbon-PersistedRDFSource-Factory-Decorated-Object-Methods" />Methods
+##### createAccessPoint
+```typescript 
+createAccessPoint():Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>
+```
+
+Creates an AccessPoint for the PersistedDocument.
+
+##### getACL
+```typescript 
+getACL():Promise<[ Carbon.Auth.PersistedACL.Class, Carbon.HTTP.Response.Class ]>
+```
+
+Obtains and resolve the ACL of the actual document.
 
 
 ## <a name="Carbon-Pointer" />Module Carbon/Pointer

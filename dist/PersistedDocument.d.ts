@@ -1,4 +1,3 @@
-import * as AccessPoint from "./AccessPoint";
 import * as Document from "./Document";
 import Documents from "./Documents";
 import * as HTTP from "./HTTP";
@@ -26,7 +25,6 @@ export interface Class extends Pointer.Class, PersistedResource.Class, Document.
     save(): Promise<[Class, HTTP.Response.Class]>;
     destroy(): Promise<HTTP.Response.Class>;
     getDownloadURL(): Promise<string>;
-    createAccessPoint(accessPoint: AccessPoint.Class, slug?: string, requestOptions?: HTTP.Request.Options): Promise<[Pointer.Class, HTTP.Response.Class]>;
     executeRawASKQuery(askQuery: string, requestOptions?: HTTP.Request.Options): Promise<[SPARQL.RawResults.Class, HTTP.Response.Class]>;
     executeASKQuery(askQuery: string, requestOptions?: HTTP.Request.Options): Promise<[boolean, HTTP.Response.Class]>;
     executeRawSELECTQuery(selectQuery: string, requestOptions?: HTTP.Request.Options): Promise<[SPARQL.RawResults.Class, HTTP.Response.Class]>;

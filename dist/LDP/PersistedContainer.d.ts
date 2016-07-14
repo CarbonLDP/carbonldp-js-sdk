@@ -1,9 +1,10 @@
 import * as Document from "./../Document";
 import * as HTTP from "./../HTTP";
 import * as PersistedDocument from "./../PersistedDocument";
+import * as PersistedRDFSource from "./PersistedRDFSource";
 import * as Pointer from "./../Pointer";
 import * as RetrievalPreferences from "./../RetrievalPreferences";
-export interface Class extends PersistedDocument.Class {
+export interface Class extends PersistedRDFSource.Class {
     addMember(member: Pointer.Class): Promise<HTTP.Response.Class>;
     addMember(memberURI: string): Promise<HTTP.Response.Class>;
     addMembers(members: (Pointer.Class | string)[]): Promise<HTTP.Response.Class>;

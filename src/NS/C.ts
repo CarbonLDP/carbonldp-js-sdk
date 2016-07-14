@@ -47,6 +47,8 @@ export class Predicate {
 
 	static get created():string { return namespace + "created"; }
 
+	static get defaultInteractionModel():string { return namespace + "defaultInteractionModel"; }
+
 	static get error():string { return namespace + "error"; }
 
 	static get eTag():string { return namespace + "eTag"; }

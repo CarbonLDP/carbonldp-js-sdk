@@ -229,7 +229,7 @@ describe( module(
 			expect( C.Predicate ).toBeDefined();
 			expect( Utils.isFunction( C.Predicate ) ).toBe( true );
 
-			expect( Object.keys( C.Predicate ).length ).toBe( 17 );
+			expect( Object.keys( C.Predicate ).length ).toBe( 18 );
 		} );
 
 		it( hasProperty(
@@ -274,6 +274,17 @@ describe( module(
 			expect( Utils.isString( C.Predicate.created ) ).toBe( true );
 
 			expect( C.Predicate.created ).toBe( "https://carbonldp.com/ns/v1/platform#created" );
+		} );
+
+		it( hasProperty(
+			STATIC,
+			"defaultInteractionModel",
+			"string"
+		), ():void => {
+			expect( C.Predicate.defaultInteractionModel ).toBeDefined();
+			expect( Utils.isString( C.Predicate.defaultInteractionModel ) ).toBe( true );
+
+			expect( C.Predicate.defaultInteractionModel ).toBe( "https://carbonldp.com/ns/v1/platform#defaultInteractionModel" );
 		} );
 
 		it( hasProperty(

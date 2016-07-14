@@ -119,6 +119,11 @@ var Predicate = (function () {
         enumerable: true,
         configurable: true
     });
+    Object.defineProperty(Predicate, "defaultInteractionModel", {
+        get: function () { return exports.namespace + "defaultInteractionModel"; },
+        enumerable: true,
+        configurable: true
+    });
     Object.defineProperty(Predicate, "error", {
         get: function () { return exports.namespace + "error"; },
         enumerable: true,

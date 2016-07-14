@@ -1,4 +1,3 @@
-import * as AccessPoint from "./AccessPoint";
 import * as Document from "./Document";
 import Documents from "./Documents";
 import * as HTTP from "./HTTP";
@@ -37,8 +36,6 @@ export interface Class extends Pointer.Class, PersistedResource.Class, Document.
 	destroy():Promise<HTTP.Response.Class>;
 
 	getDownloadURL():Promise<string>;
-
-	createAccessPoint( accessPoint:AccessPoint.Class, slug?:string, requestOptions?:HTTP.Request.Options ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
 
 	executeRawASKQuery( askQuery:string, requestOptions?:HTTP.Request.Options ):Promise<[ SPARQL.RawResults.Class, HTTP.Response.Class ]>;
 	executeASKQuery( askQuery:string, requestOptions?:HTTP.Request.Options ):Promise<[ boolean, HTTP.Response.Class ]>;
@@ -114,10 +111,6 @@ function getDownloadURL():Promise<string> {
 	return (<Class> this)._documents.getDownloadURL( (<Class> this).id );
 }
 
-function createAccessPoint( accessPoint:AccessPoint.Class, slug:string = null, requestOptions:HTTP.Request.Options = {} ):Promise<[ Pointer.Class, HTTP.Response.Class ]> {
-	return this._documents.createAccessPoint( accessPoint, slug, requestOptions );
-}
-
 function executeRawASKQuery( askQuery:string, requestOptions:HTTP.Request.Options = {} ):Promise<[ SPARQL.RawResults.Class, HTTP.Response.Class ]> {
 	return this._documents.executeRawASKQuery( this.id, askQuery, requestOptions );
 }
@@ -155,7 +148,7 @@ export class Factory {
 			Utils.hasFunction( document, "save" ) &&
 			Utils.hasFunction( document, "destroy" ) &&
 
-			Utils.hasFunction( document, "createAccessPoint" ) &&
+			Utils.hasFunction( document, "getDownloadURL" ) &&
 
 			Utils.hasFunction( document, "executeRawASKQuery" ) &&
 			Utils.hasFunction( document, "executeASKQuery" ) &&
@@ -260,7 +253,6 @@ export class Factory {
 					};
 				})(),
 			},
-
 			"refresh": {
 				writable: false,
 				enumerable: false,
@@ -285,13 +277,6 @@ export class Factory {
 				enumerable: false,
 				configurable: true,
 				value: getDownloadURL,
-			},
-
-			"createAccessPoint": {
-				writable: false,
-				enumerable: false,
-				configurable: true,
-				value: createAccessPoint,
 			},
 
 			"executeRawASKQuery": {
