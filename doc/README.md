@@ -2046,6 +2046,13 @@ Update the document with the data of the server, if there is a different version
 - persistedDocument: The persisted document to update.
 - requestOptions
 
+##### saveAndRefresh
+```typescript 
+saveAndRefresh():Promise<[ Carbon.PersistedDocument.Class, [ HTTP.Response.Class, HTTP.Response.Class ] ]>
+```
+
+Save and refresh the PersistedDocument specified.
+
 ##### delete
 ```typescript 
 delete( documentURI:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<Carbon.HTTP.Response.Class>

@@ -457,26 +457,13 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 				"saveAndRefresh",
 				"Save and refresh the PersistedDocument.",
 				{type: "Promise<[ Carbon.PersistedDocument.Class, [ HTTP.Response.Class, HTTP.Response.Class ] ]>"}
-			), ( done:{ ():void, fail:() => void } ):void => {
+			), ():void => {
 				expect( document.saveAndRefresh ).toBeDefined();
 				expect( Utils.isFunction( document.saveAndRefresh ) ).toBe( true );
 
-				let mockSaveResponse:any = {val: "Mock Save Response"};
-				let mockRefreshResponse:any = {val: "Mock Save Response"};
-
-				let spySave:jasmine.Spy = spyOn( context.documents, "save" ).and.returnValue( Promise.resolve<any>( [ document, mockSaveResponse ] ) );
-				let spyRefresh:jasmine.Spy = spyOn( context.documents, "refresh" ).and.returnValue( Promise.resolve<any>( [ document, mockRefreshResponse ] ) );
-
-				document.saveAndRefresh().then( ( [ _document, [ saveResponse, refreshResponse ] ]:[ Document.Class, [ HTTP.Response.Class, HTTP.Response.Class] ] ) => {
-					expect( spySave ).toHaveBeenCalledWith( document );
-					expect( spyRefresh ).toHaveBeenCalledWith( document );
-
-					expect( document ).toBe( _document );
-					expect( saveResponse ).toBe( mockSaveResponse );
-					expect( refreshResponse ).toBe( mockRefreshResponse );
-
-					done();
-				} );
+				let spy:jasmine.Spy = spyOn( context.documents, "saveAndRefresh" );
+				document.saveAndRefresh();
+				expect( spy ).toHaveBeenCalledWith( document );
 			} );
 
 			it( hasMethod(

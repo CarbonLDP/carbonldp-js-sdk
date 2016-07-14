@@ -471,6 +471,19 @@ var Documents = (function () {
             return [updatedPersistedDocument, response];
         });
     };
+    Documents.prototype.saveAndRefresh = function (persistedDocument, requestOptions) {
+        var _this = this;
+        if (requestOptions === void 0) { requestOptions = {}; }
+        var saveResponse;
+        return this.save(persistedDocument, requestOptions).then(function (_a) {
+            var document = _a[0], response = _a[1];
+            saveResponse = response;
+            return _this.refresh(persistedDocument, requestOptions);
+        }).then(function (_a) {
+            var document = _a[0], response = _a[1];
+            return [persistedDocument, [saveResponse, response]];
+        });
+    };
     Documents.prototype.delete = function (documentURI, requestOptions) {
         if (requestOptions === void 0) { requestOptions = {}; }
         documentURI = this.getRequestURI(documentURI);

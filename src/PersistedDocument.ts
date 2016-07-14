@@ -107,15 +107,7 @@ function save():Promise<[Class, HTTP.Response.Class]> {
 	return this._documents.save( this );
 }
 function saveAndRefresh():Promise<[ Class, [ HTTP.Response.Class, HTTP.Response.Class] ]> {
-	let saveResponse:HTTP.Response.Class;
-	return this._documents.save( this ).then( ( [ document, response ]:[ Class, HTTP.Response.Class ] ) => {
-		saveResponse = response;
-		return this._documents.refresh( this );
-
-	} ).then( ( [ document, response ]:[ Class, HTTP.Response.Class ] ) => {
-		return [ this, [ saveResponse, response ] ];
-
-	} );
+	return this._documents.saveAndRefresh( this );
 }
 
 function destroy():Promise<HTTP.Response.Class> {
