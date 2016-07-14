@@ -19,7 +19,19 @@ var Documents = (function () {
         this.context = context;
         this.pointers = new Map();
         this.documentsBeingResolved = new Map();
+        if (!!this.context && !!this.context.parentContext) {
+            var contextJSONLDConverter = this.context.parentContext.documents.jsonldConverter;
+            this._jsonldConverter = new JSONLDConverter.Class(contextJSONLDConverter.literalSerializers);
+        }
+        else {
+            this._jsonldConverter = new JSONLDConverter.Class();
+        }
     }
+    Object.defineProperty(Documents.prototype, "jsonldConverter", {
+        get: function () { return this._jsonldConverter; },
+        enumerable: true,
+        configurable: true
+    });
     Documents.prototype.inScope = function (idOrPointer) {
         var id = Pointer.Factory.is(idOrPointer) ? idOrPointer.id : idOrPointer;
         if (RDF.URI.Util.isBNodeID(id))
@@ -121,7 +133,7 @@ var Documents = (function () {
                 return Promise.reject(new Errors.IllegalArgumentError("The childDocument's URI is not relative to the parentURI specified"));
             }
         }
-        var body = childDocument.toJSON(this);
+        var body = childDocument.toJSON(this, this.jsonldConverter);
         if (slug !== null)
             HTTP.Request.Util.setSlug(slug, requestOptions);
         return HTTP.Request.Service.post(parentURI, body, requestOptions).then(function (response) {
@@ -220,7 +232,7 @@ var Documents = (function () {
                 return Promise.reject(new Errors.IllegalArgumentError("The accessPoint's URI is not relative to the parentURI specified"));
             }
         }
-        var body = accessPoint.toJSON(this);
+        var body = accessPoint.toJSON(this, this.jsonldConverter);
         if (slug !== null)
             HTTP.Request.Util.setSlug(slug, requestOptions);
         return HTTP.Request.Service.post(documentURI, body, requestOptions).then(function (response) {
@@ -373,7 +385,7 @@ var Documents = (function () {
         this.setDefaultRequestOptions(requestOptions, NS.LDP.Class.Container);
         HTTP.Request.Util.setContentTypeHeader("application/ld+json", requestOptions);
         var document = LDP.AddMemberAction.Factory.createDocument(pointers);
-        var body = document.toJSON(this);
+        var body = document.toJSON(this, this.jsonldConverter);
         return HTTP.Request.Service.put(documentURI, body, requestOptions);
     };
     Documents.prototype.removeMember = function (documentURI, memberORUri, requestOptions) {
@@ -399,7 +411,7 @@ var Documents = (function () {
             omit: [NS.C.Class.PreferMembershipTriples],
         };
         HTTP.Request.Util.setContainerRetrievalPreferences(containerRetrievalPreferences, requestOptions, false);
-        var body = document.toJSON(this);
+        var body = document.toJSON(this, this.jsonldConverter);
         return HTTP.Request.Service.delete(documentURI, body, requestOptions);
     };
     Documents.prototype.removeAllMembers = function (documentURI, requestOptions) {
@@ -427,7 +439,7 @@ var Documents = (function () {
         HTTP.Request.Util.setContentTypeHeader("application/ld+json", requestOptions);
         HTTP.Request.Util.setIfMatchHeader(persistedDocument._etag, requestOptions);
         persistedDocument._normalize();
-        var body = persistedDocument.toJSON(this);
+        var body = persistedDocument.toJSON(this, this.jsonldConverter);
         return HTTP.Request.Service.put(uri, body, requestOptions).then(function (response) {
             return [persistedDocument, response];
         });
@@ -467,7 +479,10 @@ var Documents = (function () {
         return this.context.auth.getAuthenticatedURL(documentURI, requestOptions);
     };
     Documents.prototype.getGeneralSchema = function () {
-        return this.context ? this.context.getObjectSchema() : new ObjectSchema.DigestedObjectSchema();
+        var schemas = [];
+        if (!!this.context)
+            schemas.push(this.context.getObjectSchema());
+        return ObjectSchema.Digester.combineDigestedObjectSchemas(schemas);
     };
     Documents.prototype.getSchemaFor = function (object) {
         var schema = ("@id" in object) ?
@@ -603,8 +618,7 @@ var Documents = (function () {
     };
     Documents.prototype.compactSingle = function (expandedObject, targetObject, pointerLibrary) {
         var digestedSchema = this.getDigestedObjectSchemaForExpandedObject(expandedObject);
-        var jsonldConverter = new JSONLDConverter.Class(this.getGeneralSchema());
-        return jsonldConverter.compact(expandedObject, targetObject, digestedSchema, pointerLibrary);
+        return this.jsonldConverter.compact(expandedObject, targetObject, digestedSchema, pointerLibrary);
     };
     Documents.prototype.getDigestedObjectSchemaForExpandedObject = function (expandedObject) {
         var types = RDF.Node.Util.getTypes(expandedObject);

@@ -122,8 +122,7 @@ export class Class {
 
 			let digestedSchema:DigestedObjectSchema = this.context.documents.getSchemaFor( expandedTicket );
 
-			let jsonldConverter:JSONLDConverter = new JSONLDConverter( this.context.getObjectSchema() );
-			jsonldConverter.compact( expandedTicket, ticket, digestedSchema, this.context.documents );
+			this.context.documents.jsonldConverter.compact( expandedTicket, ticket, digestedSchema, this.context.documents );
 
 			return [ ticket, response ];
 		} );

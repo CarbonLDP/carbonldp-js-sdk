@@ -1,6 +1,7 @@
 import Documents from "./Documents";
 import * as Errors from "./Errors";
 import JSONLDConverter from "./JSONLDConverter";
+import * as ObjectSchema from "./ObjectSchema";
 import * as Pointer from "./Pointer";
 import * as RDF from "./RDF";
 import * as Resource from "./Resource";
@@ -90,12 +91,13 @@ function createResource( id?:string ):Resource.Class {
 }
 
 function toJSON():string {
-	let jsonldConverter:JSONLDConverter = new JSONLDConverter( this._documents.getGeneralSchema() );
+	let generalSchema:ObjectSchema.DigestedObjectSchema = this._documents.getGeneralSchema();
+	let jsonldConverter:JSONLDConverter = new JSONLDConverter();
 	let resources:Resource.Class[] = this.getResources();
 	let expandedResources:RDF.Node.Class[] = [];
 
 	for( let resource of resources ) {
-		expandedResources.push( jsonldConverter.expand( resource, this._documents.getSchemaFor( resource ) ) );
+		expandedResources.push( jsonldConverter.expand( resource, generalSchema, this._documents.getSchemaFor( resource ) ) );
 	}
 
 	return JSON.stringify( expandedResources );

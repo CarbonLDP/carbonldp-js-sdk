@@ -2,12 +2,15 @@ import * as HTTP from "./HTTP";
 import Context from "./Context";
 import * as AccessPoint from "./AccessPoint";
 import * as Document from "./Document";
+import * as JSONLDConverter from "./JSONLDConverter";
 import * as PersistedDocument from "./PersistedDocument";
 import * as Pointer from "./Pointer";
 import * as ObjectSchema from "./ObjectSchema";
 import * as SPARQL from "./SPARQL";
 import * as RetrievalPreferences from "./RetrievalPreferences";
 declare class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Resolver {
+    _jsonldConverter: JSONLDConverter.Class;
+    jsonldConverter: JSONLDConverter.Class;
     private context;
     private pointers;
     private documentsBeingResolved;

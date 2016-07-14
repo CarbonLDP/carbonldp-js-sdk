@@ -1228,10 +1228,9 @@ describe( module( "Carbon/Document" ), ():void => {
 						}
 					}
 					let context:AbstractContext = new MockedContext();
-					let converter:JSONLDConverter;
+					let converter:JSONLDConverter = new JSONLDConverter();
 					let json:string;
 
-					converter = new JSONLDConverter( context.getObjectSchema() );
 					json = document.toJSON( context.documents, converter );
 					expect( json ).toEqual( jsonEmptyDocument );
 
@@ -1253,7 +1252,6 @@ describe( module( "Carbon/Document" ), ():void => {
 							"@container": "@set",
 						},
 					} );
-					converter = new JSONLDConverter( context.getObjectSchema() );
 					json = document.toJSON( context.documents, converter );
 					expect( json ).toEqual( jsonFullDocument );
 				} );

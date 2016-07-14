@@ -11,7 +11,6 @@ var UsernameAndPasswordToken_1 = require("./Auth/UsernameAndPasswordToken");
 exports.UsernameAndPasswordToken = UsernameAndPasswordToken_1.default;
 var Errors = require("./Errors");
 var FreeResources = require("./FreeResources");
-var JSONLDConverter_1 = require("./JSONLDConverter");
 var HTTP = require("./HTTP");
 var NS = require("./NS");
 var Resource = require("./Resource");
@@ -88,8 +87,7 @@ var Class = (function () {
             var expandedTicket = ticketNodes[0];
             var ticket = Resource.Factory.create();
             var digestedSchema = _this.context.documents.getSchemaFor(expandedTicket);
-            var jsonldConverter = new JSONLDConverter_1.default(_this.context.getObjectSchema());
-            jsonldConverter.compact(expandedTicket, ticket, digestedSchema, _this.context.documents);
+            _this.context.documents.jsonldConverter.compact(expandedTicket, ticket, digestedSchema, _this.context.documents);
             return [ticket, response];
         });
     };

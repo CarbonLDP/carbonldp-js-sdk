@@ -11,8 +11,6 @@ export class Class {
 
 	get literalSerializers():Map<string, RDF.Literal.Serializer> { return this._literalSerializers; };
 
-	private generalSchema:ObjectSchema.DigestedObjectSchema;
-
 	private static getDefaultSerializers():Map<string, RDF.Literal.Serializer> {
 		let literalSerializers:Map<string, RDF.Literal.Serializer> = new Map<string, RDF.Literal.Serializer>();
 
@@ -32,8 +30,7 @@ export class Class {
 		return literalSerializers;
 	}
 
-	constructor( generalSchema:ObjectSchema.DigestedObjectSchema, literalSerializers?:Map<string, RDF.Literal.Serializer> ) {
-		this.generalSchema = generalSchema;
+	constructor( literalSerializers:Map<string, RDF.Literal.Serializer> = null ) {
 		this._literalSerializers = ! ! literalSerializers ? literalSerializers : Class.getDefaultSerializers();
 	}
 
@@ -61,13 +58,13 @@ export class Class {
 		return targetObjects;
 	}
 
-	expand( compactedObjects:Object[], digestedSchema:ObjectSchema.DigestedObjectSchema ):RDF.Node.Class[];
-	expand( compactedObject:Object, digestedSchema:ObjectSchema.DigestedObjectSchema ):RDF.Node.Class;
-	expand( compactedObjectOrObjects:Object[], digestedSchema:ObjectSchema.DigestedObjectSchema ):any {
-		if( ! Utils.isArray( compactedObjectOrObjects ) ) return this.expandSingle( compactedObjectOrObjects, digestedSchema );
+	expand( compactedObjects:Object[], generalSchema:ObjectSchema.DigestedObjectSchema, digestedSchema:ObjectSchema.DigestedObjectSchema ):RDF.Node.Class[];
+	expand( compactedObject:Object, generalSchema:ObjectSchema.DigestedObjectSchema, digestedSchema:ObjectSchema.DigestedObjectSchema ):RDF.Node.Class;
+	expand( compactedObjectOrObjects:Object[], generalSchema:ObjectSchema.DigestedObjectSchema, digestedSchema:ObjectSchema.DigestedObjectSchema ):any {
+		if( ! Utils.isArray( compactedObjectOrObjects ) ) return this.expandSingle( compactedObjectOrObjects, generalSchema, digestedSchema );
 	}
 
-	private expandSingle( compactedObject:Object, digestedSchema:ObjectSchema.DigestedObjectSchema ):RDF.Node.Class {
+	private expandSingle( compactedObject:Object, generalSchema:ObjectSchema.DigestedObjectSchema, digestedSchema:ObjectSchema.DigestedObjectSchema ):RDF.Node.Class {
 		let expandedObject:any = {};
 
 		expandedObject[ "@id" ] = ! ! compactedObject[ "id" ] ? compactedObject[ "id" ] : "";
@@ -79,14 +76,14 @@ export class Class {
 			let expandedValue:any;
 			if( digestedSchema.properties.has( propertyName ) ) {
 				let definition:ObjectSchema.DigestedPropertyDefinition = digestedSchema.properties.get( propertyName );
-				expandedValue = this.expandProperty( value, definition, digestedSchema );
+				expandedValue = this.expandProperty( value, definition, generalSchema, digestedSchema );
 				propertyName = definition.uri.toString();
 
 			} else if( RDF.URI.Util.isAbsolute( propertyName ) ) {
-				expandedValue = this.expandPropertyValues( value, digestedSchema );
+				expandedValue = this.expandPropertyValues( value, generalSchema, digestedSchema );
 
 			} else if( digestedSchema.vocab ) {
-				expandedValue = this.expandPropertyValue( value, digestedSchema );
+				expandedValue = this.expandPropertyValue( value, generalSchema, digestedSchema );
 				propertyName = RDF.URI.Util.resolve( digestedSchema.vocab, propertyName );
 			}
 
@@ -97,32 +94,32 @@ export class Class {
 		return expandedObject;
 	}
 
-	private expandProperty( propertyValue:any, propertyDefinition:ObjectSchema.DigestedPropertyDefinition, digestedSchema:ObjectSchema.DigestedObjectSchema ):any {
+	private expandProperty( propertyValue:any, propertyDefinition:ObjectSchema.DigestedPropertyDefinition, generalSchema:ObjectSchema.DigestedObjectSchema, digestedSchema:ObjectSchema.DigestedObjectSchema ):any {
 		switch( propertyDefinition.containerType ) {
 			case null:
 				// Property is not a list
 				if( propertyDefinition.literal ) {
 					return this.expandPropertyLiteral( propertyValue, propertyDefinition.literalType.toString() );
 				} else if( propertyDefinition.literal === false ) {
-					return this.expandPropertyPointer( propertyValue, digestedSchema );
+					return this.expandPropertyPointer( propertyValue, generalSchema, digestedSchema );
 				} else {
-					return this.expandPropertyValue( propertyValue, digestedSchema );
+					return this.expandPropertyValue( propertyValue, generalSchema, digestedSchema );
 				}
 			case ObjectSchema.ContainerType.LIST:
 				if( propertyDefinition.literal ) {
 					return this.expandPropertyLiteralList( propertyValue, propertyDefinition.literalType.toString() );
 				} else if( propertyDefinition.literal === false ) {
-					return this.expandPropertyPointerList( propertyValue, digestedSchema );
+					return this.expandPropertyPointerList( propertyValue, generalSchema, digestedSchema );
 				} else {
-					return this.expandPropertyList( propertyValue, digestedSchema );
+					return this.expandPropertyList( propertyValue, generalSchema, digestedSchema );
 				}
 			case ObjectSchema.ContainerType.SET:
 				if( propertyDefinition.literal ) {
 					return this.expandPropertyLiterals( propertyValue, propertyDefinition.literalType.toString() );
 				} else if( propertyDefinition.literal === false ) {
-					return this.expandPropertyPointers( propertyValue, digestedSchema );
+					return this.expandPropertyPointers( propertyValue, generalSchema, digestedSchema );
 				} else {
-					return this.expandPropertyValues( propertyValue, digestedSchema );
+					return this.expandPropertyValues( propertyValue, generalSchema, digestedSchema );
 				}
 			case ObjectSchema.ContainerType.LANGUAGE:
 				return this.expandPropertyLanguageMap( propertyValue );
@@ -131,11 +128,11 @@ export class Class {
 		}
 	}
 
-	private expandPropertyValue( propertyValue:any, digestedSchema:ObjectSchema.DigestedObjectSchema ):any {
+	private expandPropertyValue( propertyValue:any, generalSchema:ObjectSchema.DigestedObjectSchema, digestedSchema:ObjectSchema.DigestedObjectSchema ):any {
 		if( Utils.isArray( propertyValue ) ) {
-			return this.expandPropertyValues( propertyValue, digestedSchema );
+			return this.expandPropertyValues( propertyValue, generalSchema, digestedSchema );
 		} else {
-			let expandedValue:RDF.Node.Class = this.expandValue( propertyValue, digestedSchema );
+			let expandedValue:RDF.Node.Class = this.expandValue( propertyValue, generalSchema, digestedSchema );
 
 			if( ! expandedValue ) return null;
 
@@ -143,8 +140,8 @@ export class Class {
 		}
 	}
 
-	private expandPropertyPointer( propertyValue:any, digestedSchema:ObjectSchema.DigestedObjectSchema ):any {
-		let expandedPointer:RDF.Node.Class = this.expandPointer( propertyValue, digestedSchema );
+	private expandPropertyPointer( propertyValue:any, generalSchema:ObjectSchema.DigestedObjectSchema, digestedSchema:ObjectSchema.DigestedObjectSchema ):any {
+		let expandedPointer:RDF.Node.Class = this.expandPointer( propertyValue, generalSchema, digestedSchema );
 
 		if( ! expandedPointer ) return null;
 
@@ -162,10 +159,10 @@ export class Class {
 		];
 	}
 
-	private expandPropertyList( propertyValues:any, digestedSchema:ObjectSchema.DigestedObjectSchema ):any {
+	private expandPropertyList( propertyValues:any, generalSchema:ObjectSchema.DigestedObjectSchema, digestedSchema:ObjectSchema.DigestedObjectSchema ):any {
 		propertyValues = Utils.isArray( propertyValues ) ? propertyValues : [ propertyValues ];
 
-		let expandedArray:any = this.expandArray( propertyValues, digestedSchema );
+		let expandedArray:any = this.expandArray( propertyValues, generalSchema, digestedSchema );
 
 		if( ! expandedArray ) return null;
 
@@ -174,8 +171,8 @@ export class Class {
 		];
 	}
 
-	private expandPropertyPointerList( propertyValues:any, digestedSchema:ObjectSchema.DigestedObjectSchema ):any {
-		let listValues:Array<any> = this.expandPropertyPointers( propertyValues, digestedSchema );
+	private expandPropertyPointerList( propertyValues:any, generalSchema:ObjectSchema.DigestedObjectSchema, digestedSchema:ObjectSchema.DigestedObjectSchema ):any {
+		let listValues:Array<any> = this.expandPropertyPointers( propertyValues, generalSchema, digestedSchema );
 
 		return [
 			{"@list": listValues},
@@ -190,22 +187,22 @@ export class Class {
 		];
 	}
 
-	private expandPropertyValues( propertyValues:any, digestedSchema:ObjectSchema.DigestedObjectSchema ):any {
+	private expandPropertyValues( propertyValues:any, generalSchema:ObjectSchema.DigestedObjectSchema, digestedSchema:ObjectSchema.DigestedObjectSchema ):any {
 		propertyValues = Utils.isArray( propertyValues ) ? propertyValues : [ propertyValues ];
 
-		let expandedArray:any = this.expandArray( propertyValues, digestedSchema );
+		let expandedArray:any = this.expandArray( propertyValues, generalSchema, digestedSchema );
 
 		if( ! expandedArray ) return null;
 
 		return expandedArray;
 	}
 
-	private expandPropertyPointers( propertyValues:any, digestedSchema:ObjectSchema.DigestedObjectSchema ):any {
+	private expandPropertyPointers( propertyValues:any, generalSchema:ObjectSchema.DigestedObjectSchema, digestedSchema:ObjectSchema.DigestedObjectSchema ):any {
 		propertyValues = Utils.isArray( propertyValues ) ? propertyValues : [ propertyValues ];
 
 		let expandedPointers:Array<any> = [];
 		for( let propertyValue of propertyValues ) {
-			let expandedPointer:RDF.Node.Class = this.expandPointer( propertyValue, digestedSchema );
+			let expandedPointer:RDF.Node.Class = this.expandPointer( propertyValue, generalSchema, digestedSchema );
 			if( ! expandedPointer ) continue;
 
 			expandedPointers.push( expandedPointer );
@@ -264,29 +261,29 @@ export class Class {
 		}
 	}
 
-	private expandPointer( propertyValue:any, digestedSchema:ObjectSchema.DigestedObjectSchema ):RDF.Node.Class {
+	private expandPointer( propertyValue:any, generalSchema:ObjectSchema.DigestedObjectSchema, digestedSchema:ObjectSchema.DigestedObjectSchema ):RDF.Node.Class {
 		let id:string = Pointer.Factory.is( propertyValue ) ? propertyValue.id : Utils.isString( propertyValue ) ? propertyValue : null;
 		if( ! id ) {
 			// TODO: Warn of data loss
 			return null;
 		}
 
-		id = ObjectSchema.Digester.resolvePrefixedURI( new RDF.URI.Class( id ), this.generalSchema ).stringValue;
+		id = ObjectSchema.Digester.resolvePrefixedURI( new RDF.URI.Class( id ), generalSchema ).stringValue;
 
 		if( digestedSchema.properties.has( id ) ) {
 			let definition:ObjectSchema.DigestedPropertyDefinition = digestedSchema.properties.get( id );
 			if( definition.uri ) id = definition.uri.stringValue;
 		}
 
-		// TODO: Think in what base will resolve relative URIs with: `id = this.generalSchema.base ? RDF.URI.Util.resolve( this.generalSchema.base, id ) : id;`
+		// TODO: Think in what base will resolve relative URIs with: `id = digestedSchema.base ? RDF.URI.Util.resolve( digestedSchema.base, id ) : id;`
 
 		return {"@id": id};
 	}
 
-	private expandArray( propertyValue:any, digestedSchema:ObjectSchema.DigestedObjectSchema ):any {
+	private expandArray( propertyValue:any, generalSchema:ObjectSchema.DigestedObjectSchema, digestedSchema:ObjectSchema.DigestedObjectSchema ):any {
 		let listValues:Array<any> = [];
 		for( let listValue of propertyValue ) {
-			let expandedValue:any = this.expandValue( listValue, digestedSchema );
+			let expandedValue:any = this.expandValue( listValue, generalSchema, digestedSchema );
 			if( ! expandedValue ) continue;
 
 			listValues.push( expandedValue );
@@ -297,12 +294,12 @@ export class Class {
 		return listValues;
 	}
 
-	private expandValue( propertyValue:any, digestedSchema:ObjectSchema.DigestedObjectSchema ):any {
+	private expandValue( propertyValue:any, generalSchema:ObjectSchema.DigestedObjectSchema, digestedSchema:ObjectSchema.DigestedObjectSchema ):any {
 		if( Utils.isArray( propertyValue ) ) {
 			// TODO: Lists of lists are not currently supported by the spec
 			return null;
 		} else if( Pointer.Factory.is( propertyValue ) ) {
-			return this.expandPointer( propertyValue, digestedSchema );
+			return this.expandPointer( propertyValue, generalSchema, digestedSchema );
 		} else {
 			return this.expandLiteral( propertyValue );
 		}

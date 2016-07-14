@@ -155,9 +155,8 @@ describe( module( "Carbon/JSONLDConverter" ), ():void => {
 				};
 
 				let compactedObject:any = {};
-				let digestedGeneralSchema:ObjectSchema.DigestedObjectSchema = ObjectSchema.Digester.digestSchema( generalSchema );
 				let digestedSchema:ObjectSchema.DigestedObjectSchema = ObjectSchema.Digester.digestSchema( schema );
-				let jsonldConverter:JSONLDConverter.Class = new JSONLDConverter.Class( digestedGeneralSchema );
+				let jsonldConverter:JSONLDConverter.Class = new JSONLDConverter.Class();
 
 				expect( jsonldConverter.compact ).toBeDefined();
 				expect( Utils.isFunction( jsonldConverter.compact ) ).toBeDefined();
@@ -317,12 +316,12 @@ describe( module( "Carbon/JSONLDConverter" ), ():void => {
 
 				let digestedGeneralSchema:ObjectSchema.DigestedObjectSchema = ObjectSchema.Digester.digestSchema( generalSchema );
 				let digestedSchema:ObjectSchema.DigestedObjectSchema = ObjectSchema.Digester.digestSchema( schema );
-				let jsonldConverter:JSONLDConverter.Class = new JSONLDConverter.Class( digestedGeneralSchema );
+				let jsonldConverter:JSONLDConverter.Class = new JSONLDConverter.Class();
 
 				expect( jsonldConverter.compact ).toBeDefined();
 				expect( Utils.isFunction( jsonldConverter.compact ) ).toBeDefined();
 
-				let expandedObject:any = jsonldConverter.expand( compactedObject, digestedSchema );
+				let expandedObject:any = jsonldConverter.expand( compactedObject, digestedGeneralSchema, digestedSchema );
 
 				expect( expandedObject ).toBeDefined();
 				expect( Utils.isObject( expandedObject ) ).toEqual( true );

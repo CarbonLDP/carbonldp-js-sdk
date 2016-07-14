@@ -57,12 +57,13 @@ function createResource(id) {
     return resource;
 }
 function toJSON() {
-    var jsonldConverter = new JSONLDConverter_1.default(this._documents.getGeneralSchema());
+    var generalSchema = this._documents.getGeneralSchema();
+    var jsonldConverter = new JSONLDConverter_1.default();
     var resources = this.getResources();
     var expandedResources = [];
     for (var _i = 0, resources_1 = resources; _i < resources_1.length; _i++) {
         var resource = resources_1[_i];
-        expandedResources.push(jsonldConverter.expand(resource, this._documents.getSchemaFor(resource)));
+        expandedResources.push(jsonldConverter.expand(resource, generalSchema, this._documents.getSchemaFor(resource)));
     }
     return JSON.stringify(expandedResources);
 }

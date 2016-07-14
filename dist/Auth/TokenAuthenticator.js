@@ -1,7 +1,6 @@
 "use strict";
 var Errors = require("./../Errors");
 var HTTP = require("./../HTTP");
-var JSONLDConverter_1 = require("./../JSONLDConverter");
 var NS = require("./../NS");
 var RDF = require("./../RDF");
 var BasicAuthenticator_1 = require("./BasicAuthenticator");
@@ -74,8 +73,7 @@ var Class = (function () {
             var expandedToken = expandedNodes[0];
             var token = Token.Factory.decorate({});
             var digestedSchema = _this.context.documents.getSchemaFor(expandedToken);
-            var jsonldConverter = new JSONLDConverter_1.default(_this.context.getObjectSchema());
-            jsonldConverter.compact(expandedToken, token, digestedSchema, _this.context.documents);
+            _this.context.documents.jsonldConverter.compact(expandedToken, token, digestedSchema, _this.context.documents);
             return [token, response];
         });
     };

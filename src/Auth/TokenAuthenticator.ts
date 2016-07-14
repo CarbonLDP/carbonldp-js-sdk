@@ -102,8 +102,7 @@ export class Class implements Authenticator<UsernameAndPasswordToken> {
 
 			let digestedSchema:ObjectSchema.DigestedObjectSchema = this.context.documents.getSchemaFor( expandedToken );
 
-			let jsonldConverter:JSONLDConverter = new JSONLDConverter( this.context.getObjectSchema() );
-			jsonldConverter.compact( expandedToken, token, digestedSchema, this.context.documents );
+			this.context.documents.jsonldConverter.compact( expandedToken, token, digestedSchema, this.context.documents );
 
 			return [ token, response ];
 		} );

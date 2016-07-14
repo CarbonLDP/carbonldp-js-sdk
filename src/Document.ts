@@ -185,7 +185,7 @@ function toJSON( objectSchemaResolver:ObjectSchema.Resolver ):string;
 function toJSON():string;
 function toJSON( objectSchemaResolver:ObjectSchema.Resolver = null, jsonldConverter:JSONLDConverter = null ):string {
 	let generalSchema:ObjectSchema.DigestedObjectSchema = objectSchemaResolver ? objectSchemaResolver.getGeneralSchema() : new ObjectSchema.DigestedObjectSchema();
-	jsonldConverter = ! ! jsonldConverter ? jsonldConverter : new JSONLDConverter( generalSchema );
+	jsonldConverter = ! ! jsonldConverter ? jsonldConverter : new JSONLDConverter();
 
 	let resources:{ toJSON:() => string }[] = [];
 	resources.push( this );
@@ -195,7 +195,7 @@ function toJSON( objectSchemaResolver:ObjectSchema.Resolver = null, jsonldConver
 	for( let resource of resources ) {
 		let resourceSchema:ObjectSchema.DigestedObjectSchema = objectSchemaResolver ? objectSchemaResolver.getSchemaFor( resource ) : new ObjectSchema.DigestedObjectSchema();
 
-		expandedResources.push( jsonldConverter.expand( resource, resourceSchema ) );
+		expandedResources.push( jsonldConverter.expand( resource, generalSchema, resourceSchema ) );
 	}
 
 	let graph:RDF.Document.Class = {
