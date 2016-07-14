@@ -11,7 +11,7 @@ export interface Class extends PersistedDocument.Class {
 	created:Date;
 	modified:Date;
 	defaultInteractionModel:Pointer.Class;
-	accessPoints:Pointer.Class[];
+	accessPoints?:Pointer.Class[];
 	accessControlList:Pointer.Class;
 
 	createAccessPoint( accessPoint:AccessPoint.Class, slug?:string, requestOptions?:HTTP.Request.Options ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
@@ -25,7 +25,6 @@ export class Factory {
 		return Utils.hasPropertyDefined( object, "created" )
 			&& Utils.hasPropertyDefined( object, "modified" )
 			&& Utils.hasPropertyDefined( object, "defaultInteractionModel" )
-			&& Utils.hasPropertyDefined( object, "accessPoints" )
 			&& Utils.hasPropertyDefined( object, "accessControlList" )
 			&& Utils.hasFunction( object, "createAccessPoint" )
 			&& Utils.hasFunction( object, "getACL" )

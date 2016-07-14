@@ -2386,6 +2386,19 @@ Executes a DESCRIBE Query and returns a string with the resulting model
 - describeQuery
 - requestOptions
 
+##### executeUPDATE
+```typescript 
+executeUPDATE( documentURI:string,  update:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<Carbon.HTTP.Response.Class>
+```
+
+Executes a DESCRIBE query and returns a string with the resulting model.
+
+*Parameters*
+
+- documentURI: URI of the document that works as a SPARQL endpoint where to execute the SPARQL query.
+- update: UPDATE query to execute in the selected endpoint.
+- requestOptions: Customizable options for the request.
+
 ##### createChild
 ```typescript 
 createChild( parentURI:string,  childDocument:Carbon.Document.Class,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[Carbon.Pointer.Class, Carbon.HTTP.Response.Class]>
@@ -7291,7 +7304,7 @@ Executes an ASK query in the document and returns a raw application/sparql-resul
 *Parameters*
 
 - askQuery
-- requestOptions
+- requestOptions: Customizable options for the request.
 
 ##### executeASKQuery
 ```typescript 
@@ -7303,7 +7316,7 @@ Executes an ASK query in the document and returns a boolean of th result.
 *Parameters*
 
 - askQuery
-- requestOptions
+- requestOptions: Customizable options for the request.
 
 ##### executeRawSELECTQuery
 ```typescript 
@@ -7315,7 +7328,7 @@ Executes an SELECT query in the document and returns a raw application/sparql-re
 *Parameters*
 
 - selectQuery
-- requestOptions
+- requestOptions: Customizable options for the request.
 
 ##### executeSELECTQuery
 ```typescript 
@@ -7327,7 +7340,7 @@ Executes an SELECT query in the document and returns the results as a `Carbon.SP
 *Parameters*
 
 - selectQuery
-- requestOptions
+- requestOptions: Customizable options for the request.
 
 ##### executeRawCONSTRUCTQuery
 ```typescript 
@@ -7339,7 +7352,7 @@ Executes an CONSTRUCT query in the document and returns a string with the result
 *Parameters*
 
 - constructQuery
-- requestOptions
+- requestOptions: Customizable options for the request.
 
 ##### executeRawDESCRIBEQuery
 ```typescript 
@@ -7351,7 +7364,19 @@ Executes an DESCRIBE query in the document and returns a string with the resulti
 *Parameters*
 
 - constructQuery
-- requestOptions
+- requestOptions: Customizable options for the request.
+
+##### executeUPDATE
+```typescript 
+executeUPDATE( updateQuery:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<Carbon.HTTP.Response.Class>
+```
+
+Executes an UPDATE query.
+
+*Parameters*
+
+- updateQuery: UPDATE query to execute in the selected endpoint.
+- requestOptions: Customizable options for the request.
 
 ##### inScope
 ```typescript 
@@ -9150,6 +9175,7 @@ Parse the SPARQL Query string result to a `Carbon.SPARQL.RawResult.Class` object
 ## <a name="Carbon-SPARQL-Service" />Module Carbon/SPARQL/Service
 
 
+**Default export:** [Carbon.SPARQL.Service.Class](#Carbon-SPARQL-Service-Class)
 
 
 
@@ -9242,6 +9268,19 @@ Executes a DESCRIBE Query and returns a string with the resulting model
 
 - url
 - describeQuery
+- requestOptions
+
+##### executeUPDATE
+```typescript 
+static executeUPDATE( url:string,  update:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<Carbon.HTTP.Response.Class>
+```
+
+Executes an UPDATE query.
+
+*Parameters*
+
+- url
+- update
 - requestOptions
 
 

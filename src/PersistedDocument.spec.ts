@@ -35,7 +35,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 		let context:AbstractContext;
 		beforeEach( ():void => {
 			class MockedContext extends AbstractContext {
-				resolve( uri:string ) {
+				resolve( uri:string ):string {
 					return URI.Util.isRelative( uri ) ? `http://example.com/${uri}` : uri;
 				}
 			}
@@ -51,7 +51,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 			STATIC,
 			"hasClassProperties",
 			"Returns true if the Document provided has the properties and functions of a PersistedDocument object", [
-				{name: "document", type: "Carbon.Document.Class"}
+				{name: "document", type: "Carbon.Document.Class"},
 			],
 			{type: "boolean"}
 		), ():void => {
@@ -74,6 +74,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 				executeSELECTQuery: ():void => {},
 				executeRawDESCRIBEQuery: ():void => {},
 				executeRawCONSTRUCTQuery: ():void => {},
+				executeUPDATE: ():void => {},
 			};
 			expect( PersistedDocument.Factory.hasClassProperties( document ) ).toBe( true );
 
@@ -124,13 +125,17 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 			delete document.executeRawCONSTRUCTQuery;
 			expect( PersistedDocument.Factory.hasClassProperties( document ) ).toBe( false );
 			document.executeRawCONSTRUCTQuery = ():void => {};
+
+			delete document.executeUPDATE;
+			expect( PersistedDocument.Factory.hasClassProperties( document ) ).toBe( false );
+			document.executeUPDATE = ():void => {};
 		} );
 
 		it( hasMethod(
 			STATIC,
 			"is",
 			"Returns true if the element provided is a PersistedDocument object.", [
-				{name: "object", type: "Object"}
+				{name: "object", type: "Object"},
 			],
 			{type: "boolean"}
 		), ():void => {
@@ -143,7 +148,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 			expect( PersistedDocument.Factory.is( 100 ) ).toBe( false );
 			expect( PersistedDocument.Factory.is( {} ) ).toBe( false );
 
-			let object = Document.Factory.create();
+			let object:any = Document.Factory.create();
 			object[ "_documents" ] = null;
 			object[ "_etag" ] = null;
 			object[ "refresh" ] = ():void => {};
@@ -156,6 +161,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 			object[ "executeSELECTQuery" ] = ():void => {};
 			object[ "executeRawDESCRIBEQuery" ] = ():void => {};
 			object[ "executeRawCONSTRUCTQuery" ] = ():void => {};
+			object[ "executeUPDATE" ] = ():void => {};
 			expect( PersistedDocument.Factory.is( object ) ).toBe( true );
 		} );
 
@@ -164,7 +170,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 			"create",
 			"Creates an empty PersistedDocument object with the URI provided and contained by the Documents object specified.", [
 				{name: "uri", type: "string"},
-				{name: "documents", type: "Carbon.Documents"}
+				{name: "documents", type: "Carbon.Documents"},
 			],
 			{type: "Carbon.PersistedDocument.Class"}
 		), ():void => {
@@ -183,7 +189,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 			"createFrom",
 			"Creates a PersistedDocument object from the object and URI provided, with the Documents object specified as container.", [
 				{name: "object", type: "T extends Object"},
-				{name: "uri", type: "string"}
+				{name: "uri", type: "string"},
 			],
 			{type: "Carbon.PersistedDocument.Class"}
 		), ():void => {
@@ -191,7 +197,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 			expect( Utils.isFunction( PersistedDocument.Factory.createFrom ) ).toBe( true );
 
 			interface MyObject {
-				myProperty?:string
+				myProperty?:string;
 			}
 
 			interface MyPersistedDocument extends MyObject, PersistedDocument.Class {}
@@ -212,7 +218,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 			"decorate",
 			"Adds the properties and methods necessary for a PersistedDocument object.", [
 				{name: "object", type: "T extends Object"},
-				{name: "documents", type: "Carbon.Documents"}
+				{name: "documents", type: "Carbon.Documents"},
 			],
 			{type: "T & Carbon.PersistedDocument.Class"}
 		), ():void => {
@@ -220,7 +226,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 			expect( Utils.isFunction( PersistedDocument.Factory.decorate ) ).toBe( true );
 
 			interface MyObject {
-				myProperty?:string
+				myProperty?:string;
 			}
 
 			interface MyDocument extends MyObject, Document.Class {}
@@ -245,7 +251,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 
 		describe( decoratedObject(
 			"Object decorated by the Carbon.LDP.PersistedContainer.Factory.decorate function.", [
-				"Carbon.LDP.PersistedContainer.Class"
+				"Carbon.LDP.PersistedContainer.Class",
 			]
 		), ():void => {
 			let document:PersistedDocument.Class;
@@ -283,7 +289,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 				INSTANCE,
 				"hasPointer",
 				"Returns true if the PersistedDocument object has a pointer referenced by the URI provided.", [
-					{name: "id", type: "string"}
+					{name: "id", type: "string"},
 				],
 				{type: "boolean"}
 			), ():void => {
@@ -307,7 +313,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 				"getPointer",
 				"Returns the pointer referenced by the URI provided. If not exists a pointer is created.\n" +
 				"Returns null if the URI is not inside scope of the PersistedDocument.", [
-					{name: "id", type: "string"}
+					{name: "id", type: "string"},
 				],
 				{type: "boolean"}
 			), ():void => {
@@ -346,7 +352,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 
 				it( hasSignature(
 					"Returns true if the pointer provided is in the scope of the PersistedDocument.", [
-						{name: "pointer", type: "Carbon.Pointer.Class"}
+						{name: "pointer", type: "Carbon.Pointer.Class"},
 					],
 					{type: "boolean"}
 				), ():void => {
@@ -385,7 +391,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 
 				it( hasSignature(
 					"Returns true if the URI provided is in the scope of the PersistedDocument.", [
-						{name: "id", type: "string"}
+						{name: "id", type: "string"},
 					],
 					{type: "boolean"}
 				), ():void => {
@@ -418,7 +424,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 				expect( document.refresh ).toBeDefined();
 				expect( Utils.isFunction( document.refresh ) ).toBe( true );
 
-				let spy = spyOn( context.documents, "refresh" );
+				let spy:jasmine.Spy = spyOn( context.documents, "refresh" );
 				document.refresh();
 				expect( spy ).toHaveBeenCalledWith( document );
 			} );
@@ -432,7 +438,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 				expect( document.save ).toBeDefined();
 				expect( Utils.isFunction( document.save ) ).toBe( true );
 
-				let spy = spyOn( context.documents, "save" );
+				let spy:jasmine.Spy = spyOn( context.documents, "save" );
 				document.save();
 				expect( spy ).toHaveBeenCalledWith( document );
 			} );
@@ -446,7 +452,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 				expect( document.destroy ).toBeDefined();
 				expect( Utils.isFunction( document.destroy ) ).toBe( true );
 
-				let spy = spyOn( context.documents, "delete" );
+				let spy:jasmine.Spy = spyOn( context.documents, "delete" );
 				document.destroy();
 				expect( spy ).toHaveBeenCalledWith( document.id );
 			} );
@@ -460,7 +466,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 				expect( document.getDownloadURL ).toBeDefined();
 				expect( Utils.isFunction( document.getDownloadURL ) ).toBe( true );
 
-				let spy = spyOn( context.documents, "getDownloadURL" );
+				let spy:jasmine.Spy = spyOn( context.documents, "getDownloadURL" );
 				document.getDownloadURL();
 				expect( spy ).toHaveBeenCalledWith( document.id );
 			} );
@@ -470,14 +476,14 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 				"executeRawASKQuery",
 				"Executes an ASK query in the document and returns a raw application/sparql-results+json object.", [
 					{name: "askQuery", type: "string"},
-					{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true}
+					{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request."},
 				],
 				{type: "Promise<[ Carbon.SPARQL.RawResults.Class, Carbon.HTTP.Response.Class ]>"}
 			), ():void => {
 				expect( document.executeRawASKQuery ).toBeDefined();
 				expect( Utils.isFunction( document.executeRawASKQuery ) ).toBe( true );
 
-				let spy = spyOn( context.documents, "executeRawASKQuery" );
+				let spy:jasmine.Spy = spyOn( context.documents, "executeRawASKQuery" );
 				document.executeRawASKQuery( "ASK { ?subject, ?predicate, ?object }" );
 				expect( spy ).toHaveBeenCalledWith( document.id, "ASK { ?subject, ?predicate, ?object }", {} );
 			} );
@@ -487,14 +493,14 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 				"executeASKQuery",
 				"Executes an ASK query in the document and returns a boolean of th result.", [
 					{name: "askQuery", type: "string"},
-					{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true}
+					{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request."},
 				],
 				{type: "Promise<[ boolean, Carbon.HTTP.Response.Class ]>"}
 			), ():void => {
 				expect( document.executeASKQuery ).toBeDefined();
 				expect( Utils.isFunction( document.executeASKQuery ) ).toBe( true );
 
-				let spy = spyOn( context.documents, "executeASKQuery" );
+				let spy:jasmine.Spy = spyOn( context.documents, "executeASKQuery" );
 				document.executeASKQuery( "ASK { ?subject, ?predicate, ?object }" );
 				expect( spy ).toHaveBeenCalledWith( document.id, "ASK { ?subject, ?predicate, ?object }", {} );
 			} );
@@ -504,14 +510,14 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 				"executeRawSELECTQuery",
 				"Executes an SELECT query in the document and returns a raw application/sparql-results+json object.", [
 					{name: "selectQuery", type: "string"},
-					{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true}
+					{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request."},
 				],
 				{type: "Promise<[ Carbon.SPARQL.RawResults.Class, Carbon.HTTP.Response.Class ]>"}
 			), ():void => {
 				expect( document.executeRawSELECTQuery ).toBeDefined();
 				expect( Utils.isFunction( document.executeRawSELECTQuery ) ).toBe( true );
 
-				let spy = spyOn( context.documents, "executeRawSELECTQuery" );
+				let spy:jasmine.Spy = spyOn( context.documents, "executeRawSELECTQuery" );
 				document.executeRawSELECTQuery( "SELECT ?book ?title WHERE { <http://example.com/some-document/> ?book ?title }" );
 				expect( spy ).toHaveBeenCalledWith( document.id, "SELECT ?book ?title WHERE { <http://example.com/some-document/> ?book ?title }", {} );
 			} );
@@ -521,14 +527,14 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 				"executeSELECTQuery",
 				"Executes an SELECT query in the document and returns the results as a `Carbon.SPARQL.SELECTResults.Class` object.", [
 					{name: "selectQuery", type: "string"},
-					{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true}
+					{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request."},
 				],
 				{type: "Promise<[ Carbon.SPARQL.SELECTResults.Class, Carbon.HTTP.Response.Class ]>"}
 			), ():void => {
 				expect( document.executeSELECTQuery ).toBeDefined();
 				expect( Utils.isFunction( document.executeSELECTQuery ) ).toBe( true );
 
-				let spy = spyOn( context.documents, "executeSELECTQuery" );
+				let spy:jasmine.Spy = spyOn( context.documents, "executeSELECTQuery" );
 				document.executeSELECTQuery( "SELECT ?book ?title WHERE { <http://example.com/some-document/> ?book ?title }" );
 				expect( spy ).toHaveBeenCalledWith( document.id, "SELECT ?book ?title WHERE { <http://example.com/some-document/> ?book ?title }", {} );
 			} );
@@ -538,14 +544,14 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 				"executeRawCONSTRUCTQuery",
 				"Executes an CONSTRUCT query in the document and returns a string with the resulting model.", [
 					{name: "constructQuery", type: "string"},
-					{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true}
+					{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request."},
 				],
 				{type: "Promise<[ string, Carbon.HTTP.Response.Class ]>"}
 			), ():void => {
 				expect( document.executeRawCONSTRUCTQuery ).toBeDefined();
 				expect( Utils.isFunction( document.executeRawCONSTRUCTQuery ) ).toBe( true );
 
-				let spy = spyOn( context.documents, "executeRawCONSTRUCTQuery" );
+				let spy:jasmine.Spy = spyOn( context.documents, "executeRawCONSTRUCTQuery" );
 				document.executeRawCONSTRUCTQuery( "CONSTRUCT { ?subject ?predicate ?object } WHERE { ?subject ?predicate ?object }" );
 				expect( spy ).toHaveBeenCalledWith( document.id, "CONSTRUCT { ?subject ?predicate ?object } WHERE { ?subject ?predicate ?object }", {} );
 			} );
@@ -555,16 +561,33 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 				"executeRawDESCRIBEQuery",
 				"Executes an DESCRIBE query in the document and returns a string with the resulting model.", [
 					{name: "constructQuery", type: "string"},
-					{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true}
+					{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request."},
 				],
 				{type: "Promise<[ string, Carbon.HTTP.Response.Class ]>"}
 			), ():void => {
 				expect( document.executeRawDESCRIBEQuery ).toBeDefined();
 				expect( Utils.isFunction( document.executeRawDESCRIBEQuery ) ).toBe( true );
 
-				let spy = spyOn( context.documents, "executeRawDESCRIBEQuery" );
+				let spy:jasmine.Spy = spyOn( context.documents, "executeRawDESCRIBEQuery" );
 				document.executeRawDESCRIBEQuery( "DESCRIBE { ?subject ?predicate ?object } WHERE { ?subject ?predicate ?object }" );
 				expect( spy ).toHaveBeenCalledWith( document.id, "DESCRIBE { ?subject ?predicate ?object } WHERE { ?subject ?predicate ?object }", {} );
+			} );
+
+			it( hasMethod(
+				INSTANCE,
+				"executeUPDATE",
+				"Executes an UPDATE query.", [
+					{name: "updateQuery", type: "string", description: "UPDATE query to execute in the selected endpoint."},
+					{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request."},
+				],
+				{type: "Promise<Carbon.HTTP.Response.Class>"}
+			), ():void => {
+				expect( document.executeUPDATE ).toBeDefined();
+				expect( Utils.isFunction( document.executeUPDATE ) ).toBe( true );
+
+				let spy:jasmine.Spy = spyOn( context.documents, "executeUPDATE" );
+				document.executeUPDATE( `INSERT DATA { GRAPH <http://example.com/some-document/> { <http://example.com/some-document/> <http://example.com/ns#propertyString> "Property Value" } }` );
+				expect( spy ).toHaveBeenCalledWith( document.id, `INSERT DATA { GRAPH <http://example.com/some-document/> { <http://example.com/some-document/> <http://example.com/ns#propertyString> "Property Value" } }`, {} );
 			} );
 
 		} );
