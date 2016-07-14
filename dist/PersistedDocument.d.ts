@@ -23,6 +23,7 @@ export interface Class extends Pointer.Class, PersistedResource.Class, Document.
     createNamedFragment<T extends Object>(slug: string, object: T): PersistedNamedFragment.Class & T;
     refresh(): Promise<[Class, HTTP.Response.Class]>;
     save(): Promise<[Class, HTTP.Response.Class]>;
+    saveAndRefresh(): Promise<[Class, [HTTP.Response.Class, HTTP.Response.Class]]>;
     destroy(): Promise<HTTP.Response.Class>;
     getDownloadURL(): Promise<string>;
     executeRawASKQuery(askQuery: string, requestOptions?: HTTP.Request.Options): Promise<[SPARQL.RawResults.Class, HTTP.Response.Class]>;

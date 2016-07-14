@@ -7022,6 +7022,13 @@ save():Promise<[ Carbon.PersistedDocument.Class, HTTP.Response.Class ]>
 
 Save the PersistedDocument to the server.
 
+##### saveAndRefresh
+```typescript 
+saveAndRefresh():Promise<[ Carbon.PersistedDocument.Class, [ HTTP.Response.Class, HTTP.Response.Class ] ]>
+```
+
+Save and refresh the PersistedDocument.
+
 ##### destroy
 ```typescript 
 destroy():Promise<Carbon.HTTP.Response.Class>

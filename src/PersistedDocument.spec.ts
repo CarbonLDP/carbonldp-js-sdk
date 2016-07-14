@@ -18,6 +18,7 @@ import * as Utils from "./Utils";
 import * as Document from "./Document";
 import AbstractContext from "./AbstractContext";
 import Documents from "./Documents";
+import * as HTTP from "./HTTP";
 import * as Pointer from "./Pointer";
 import * as URI from "./RDF/URI";
 
@@ -66,6 +67,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 				_etag: null,
 				refresh: ():void => {},
 				save: ():void => {},
+				saveAndRefresh: ():void => {},
 				destroy: ():void => {},
 				getDownloadURL: ():void => {},
 				executeRawASKQuery: ():void => {},
@@ -93,6 +95,10 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 			delete document.save;
 			expect( PersistedDocument.Factory.hasClassProperties( document ) ).toBe( false );
 			document.save = ():void => {};
+
+			delete document.saveAndRefresh;
+			expect( PersistedDocument.Factory.hasClassProperties( document ) ).toBe( false );
+			document.saveAndRefresh = ():void => {};
 
 			delete document.destroy;
 			expect( PersistedDocument.Factory.hasClassProperties( document ) ).toBe( false );
@@ -153,6 +159,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 			object[ "_etag" ] = null;
 			object[ "refresh" ] = ():void => {};
 			object[ "save" ] = ():void => {};
+			object[ "saveAndRefresh" ] = ():void => {};
 			object[ "destroy" ] = ():void => {};
 			object[ "getDownloadURL" ] = ():void => {};
 			object[ "executeRawASKQuery" ] = ():void => {};
@@ -443,6 +450,33 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 				let spy:jasmine.Spy = spyOn( context.documents, "save" );
 				document.save();
 				expect( spy ).toHaveBeenCalledWith( document );
+			} );
+
+			it( hasMethod(
+				INSTANCE,
+				"saveAndRefresh",
+				"Save and refresh the PersistedDocument.",
+				{type: "Promise<[ Carbon.PersistedDocument.Class, [ HTTP.Response.Class, HTTP.Response.Class ] ]>"}
+			), ( done:{ ():void, fail:() => void } ):void => {
+				expect( document.saveAndRefresh ).toBeDefined();
+				expect( Utils.isFunction( document.saveAndRefresh ) ).toBe( true );
+
+				let mockSaveResponse:any = {val: "Mock Save Response"};
+				let mockRefreshResponse:any = {val: "Mock Save Response"};
+
+				let spySave:jasmine.Spy = spyOn( context.documents, "save" ).and.returnValue( Promise.resolve<any>( [ document, mockSaveResponse ] ) );
+				let spyRefresh:jasmine.Spy = spyOn( context.documents, "refresh" ).and.returnValue( Promise.resolve<any>( [ document, mockRefreshResponse ] ) );
+
+				document.saveAndRefresh().then( ( [ _document, [ saveResponse, refreshResponse ] ]:[ Document.Class, [ HTTP.Response.Class, HTTP.Response.Class] ] ) => {
+					expect( spySave ).toHaveBeenCalledWith( document );
+					expect( spyRefresh ).toHaveBeenCalledWith( document );
+
+					expect( document ).toBe( _document );
+					expect( saveResponse ).toBe( mockSaveResponse );
+					expect( refreshResponse ).toBe( mockRefreshResponse );
+
+					done();
+				} );
 			} );
 
 			it( hasMethod(

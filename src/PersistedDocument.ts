@@ -32,7 +32,10 @@ export interface Class extends Pointer.Class, PersistedResource.Class, Document.
 	createNamedFragment<T extends Object>( slug:string, object:T ):PersistedNamedFragment.Class & T;
 
 	refresh():Promise<[Class, HTTP.Response.Class]>;
+
 	save():Promise<[Class, HTTP.Response.Class]>;
+	saveAndRefresh():Promise<[ Class, [ HTTP.Response.Class, HTTP.Response.Class ] ]>;
+
 	destroy():Promise<HTTP.Response.Class>;
 
 	getDownloadURL():Promise<string>;
@@ -100,9 +103,21 @@ function extendCreateNamedFragment( superFunction:( slug:string, object?:Object 
 function refresh():Promise<[Class, HTTP.Response.Class]> {
 	return this._documents.refresh( this );
 }
-function save():Promise<void> {
+function save():Promise<[Class, HTTP.Response.Class]> {
 	return this._documents.save( this );
 }
+function saveAndRefresh():Promise<[ Class, [ HTTP.Response.Class, HTTP.Response.Class] ]> {
+	let saveResponse:HTTP.Response.Class;
+	return this._documents.save( this ).then( ( [ document, response ]:[ Class, HTTP.Response.Class ] ) => {
+		saveResponse = response;
+		return this._documents.refresh( this );
+
+	} ).then( ( [ document, response ]:[ Class, HTTP.Response.Class ] ) => {
+		return [ this, [ saveResponse, response ] ];
+
+	} );
+}
+
 function destroy():Promise<HTTP.Response.Class> {
 	return this._documents.delete( this.id );
 }
@@ -146,6 +161,7 @@ export class Factory {
 			Utils.hasPropertyDefined( document, "_etag" ) &&
 			Utils.hasFunction( document, "refresh" ) &&
 			Utils.hasFunction( document, "save" ) &&
+			Utils.hasFunction( document, "saveAndRefresh" ) &&
 			Utils.hasFunction( document, "destroy" ) &&
 
 			Utils.hasFunction( document, "getDownloadURL" ) &&
@@ -264,6 +280,12 @@ export class Factory {
 				enumerable: false,
 				configurable: true,
 				value: save,
+			},
+			"saveAndRefresh": {
+				writable: false,
+				enumerable: false,
+				configurable: true,
+				value: saveAndRefresh,
 			},
 			"destroy": {
 				writable: false,

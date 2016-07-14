@@ -57,6 +57,18 @@ function refresh() {
 function save() {
     return this._documents.save(this);
 }
+function saveAndRefresh() {
+    var _this = this;
+    var saveResponse;
+    return this._documents.save(this).then(function (_a) {
+        var document = _a[0], response = _a[1];
+        saveResponse = response;
+        return _this._documents.refresh(_this);
+    }).then(function (_a) {
+        var document = _a[0], response = _a[1];
+        return [_this, [saveResponse, response]];
+    });
+}
 function destroy() {
     return this._documents.delete(this.id);
 }
@@ -99,6 +111,7 @@ var Factory = (function () {
             Utils.hasPropertyDefined(document, "_etag") &&
             Utils.hasFunction(document, "refresh") &&
             Utils.hasFunction(document, "save") &&
+            Utils.hasFunction(document, "saveAndRefresh") &&
             Utils.hasFunction(document, "destroy") &&
             Utils.hasFunction(document, "getDownloadURL") &&
             Utils.hasFunction(document, "executeRawASKQuery") &&
@@ -208,6 +221,12 @@ var Factory = (function () {
                 enumerable: false,
                 configurable: true,
                 value: save,
+            },
+            "saveAndRefresh": {
+                writable: false,
+                enumerable: false,
+                configurable: true,
+                value: saveAndRefresh,
             },
             "destroy": {
                 writable: false,

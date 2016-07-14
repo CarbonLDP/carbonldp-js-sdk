@@ -558,6 +558,8 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 		} );
 	}
 
+
+
 	delete( documentURI:string, requestOptions:HTTP.Request.Options = {} ):Promise<HTTP.Response.Class> {
 		documentURI = this.getRequestURI( documentURI );
 		this.setDefaultRequestOptions( requestOptions, NS.LDP.Class.RDFSource );
