@@ -63,11 +63,6 @@ function destroy() {
 function getDownloadURL() {
     return this._documents.getDownloadURL(this.id);
 }
-function createAccessPoint(accessPoint, slug, requestOptions) {
-    if (slug === void 0) { slug = null; }
-    if (requestOptions === void 0) { requestOptions = {}; }
-    return this._documents.createAccessPoint(accessPoint, slug, requestOptions);
-}
 function executeRawASKQuery(askQuery, requestOptions) {
     if (requestOptions === void 0) { requestOptions = {}; }
     return this._documents.executeRawASKQuery(this.id, askQuery, requestOptions);
@@ -92,6 +87,10 @@ function executeRawDESCRIBEQuery(describeQuery, requestOptions) {
     if (requestOptions === void 0) { requestOptions = {}; }
     return this._documents.executeRawDESCRIBEQuery(this.id, describeQuery, requestOptions);
 }
+function executeUPDATE(updateQuery, requestOptions) {
+    if (requestOptions === void 0) { requestOptions = {}; }
+    return this._documents.executeUPDATE(this.id, updateQuery, requestOptions);
+}
 var Factory = (function () {
     function Factory() {
     }
@@ -101,13 +100,14 @@ var Factory = (function () {
             Utils.hasFunction(document, "refresh") &&
             Utils.hasFunction(document, "save") &&
             Utils.hasFunction(document, "destroy") &&
-            Utils.hasFunction(document, "createAccessPoint") &&
+            Utils.hasFunction(document, "getDownloadURL") &&
             Utils.hasFunction(document, "executeRawASKQuery") &&
             Utils.hasFunction(document, "executeASKQuery") &&
             Utils.hasFunction(document, "executeRawSELECTQuery") &&
             Utils.hasFunction(document, "executeSELECTQuery") &&
             Utils.hasFunction(document, "executeRawDESCRIBEQuery") &&
-            Utils.hasFunction(document, "executeRawCONSTRUCTQuery"));
+            Utils.hasFunction(document, "executeRawCONSTRUCTQuery") &&
+            Utils.hasFunction(document, "executeUPDATE"));
     };
     Factory.is = function (object) {
         return Utils.isObject(object)
@@ -221,12 +221,6 @@ var Factory = (function () {
                 configurable: true,
                 value: getDownloadURL,
             },
-            "createAccessPoint": {
-                writable: false,
-                enumerable: false,
-                configurable: true,
-                value: createAccessPoint,
-            },
             "executeRawASKQuery": {
                 writable: false,
                 enumerable: false,
@@ -262,6 +256,12 @@ var Factory = (function () {
                 enumerable: false,
                 configurable: true,
                 value: executeRawDESCRIBEQuery,
+            },
+            "executeUPDATE": {
+                writable: false,
+                enumerable: false,
+                configurable: true,
+                value: executeUPDATE,
             },
             "createFragment": {
                 writable: false,

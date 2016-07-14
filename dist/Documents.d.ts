@@ -58,7 +58,8 @@ declare class Documents implements Pointer.Library, Pointer.Validator, ObjectSch
     executeRawSELECTQuery(documentURI: string, selectQuery: string, requestOptions?: HTTP.Request.Options): Promise<[SPARQL.RawResults.Class, HTTP.Response.Class]>;
     executeSELECTQuery(documentURI: string, selectQuery: string, requestOptions?: HTTP.Request.Options): Promise<[SPARQL.SELECTResults.Class, HTTP.Response.Class]>;
     executeRawCONSTRUCTQuery(documentURI: string, constructQuery: string, requestOptions?: HTTP.Request.Options): Promise<[string, HTTP.Response.Class]>;
-    executeRawDESCRIBEQuery(documentURI: string, constructQuery: string, requestOptions?: HTTP.Request.Options): Promise<[string, HTTP.Response.Class]>;
+    executeRawDESCRIBEQuery(documentURI: string, describeQuery: string, requestOptions?: HTTP.Request.Options): Promise<[string, HTTP.Response.Class]>;
+    executeUPDATE(documentURI: string, update: string, requestOptions?: HTTP.Request.Options): Promise<HTTP.Response.Class>;
     private getRDFDocument(requestURL, rdfDocuments, response);
     private getDocumentResource(rdfDocument, response);
     private getPointerID(uri);

@@ -15,7 +15,10 @@ export interface Class extends Pointer.Library, Pointer.Validator {
 	getResource( id:string ):Resource.Class;
 	getResources():Resource.Class[];
 
+	getPointer( id:string ):Resource.Class;
+
 	createResource( id?:string ):Resource.Class;
+	createResourceFrom<T extends Object>( object:T, id?:string ):Resource.Class & T;
 
 	toJSON():string;
 }
@@ -52,8 +55,7 @@ function inScope( idOrPointer:any ):boolean {
 	let freeResources:Class = <Class> this;
 	let id:string = Pointer.Factory.is( idOrPointer ) ? idOrPointer.id : idOrPointer;
 
-	return inLocalScope( id )
-		|| freeResources._documents.inScope( id );
+	return inLocalScope( id ) || freeResources._documents.inScope( id );
 }
 
 function hasResource( id:string ):boolean {
@@ -75,6 +77,9 @@ function getResources():Resource.Class[] {
 }
 
 function createResource( id?:string ):Resource.Class {
+	return this.createResourceFrom( {}, id );
+}
+function createResourceFrom<T extends Object>( object:T, id?:string ):Resource.Class & T {
 	let freeResources:Class = <Class> this;
 
 	if( id ) {
@@ -84,7 +89,7 @@ function createResource( id?:string ):Resource.Class {
 		id = RDF.URI.Util.generateBNodeID();
 	}
 
-	let resource:Resource.Class = Resource.Factory.create( id );
+	let resource:Resource.Class & T = Resource.Factory.createFrom<T>( object, id );
 	freeResources._resourcesIndex.set( id, resource );
 
 	return resource;
@@ -113,6 +118,7 @@ export class Factory {
 			Utils.hasFunction( object, "getResource" ) &&
 			Utils.hasFunction( object, "getResources" ) &&
 			Utils.hasFunction( object, "createResource" ) &&
+			Utils.hasFunction( object, "createResourceFrom" ) &&
 
 			Utils.hasFunction( object, "hasPointer" ) &&
 			Utils.hasFunction( object, "getPointer" ) &&
@@ -145,49 +151,55 @@ export class Factory {
 				value: new Map<string, Resource.Class>(),
 			},
 			"hasPointer": {
-				writable: true,
+				writable: false,
 				enumerable: false,
 				configurable: true,
 				value: hasPointer,
 			},
 			"getPointer": {
-				writable: true,
+				writable: false,
 				enumerable: false,
 				configurable: true,
 				value: getPointer,
 			},
 			"inScope": {
-				writable: true,
+				writable: false,
 				enumerable: false,
 				configurable: true,
 				value: inScope,
 			},
 			"hasResource": {
-				writable: true,
+				writable: false,
 				enumerable: false,
 				configurable: true,
 				value: hasResource,
 			},
 			"getResource": {
-				writable: true,
+				writable: false,
 				enumerable: false,
 				configurable: true,
 				value: getResource,
 			},
 			"getResources": {
-				writable: true,
+				writable: false,
 				enumerable: false,
 				configurable: true,
 				value: getResources,
 			},
 			"createResource": {
-				writable: true,
+				writable: false,
 				enumerable: false,
 				configurable: true,
 				value: createResource,
 			},
+			"createResourceFrom": {
+				writable: false,
+				enumerable: false,
+				configurable: true,
+				value: createResourceFrom,
+			},
 			"toJSON": {
-				writable: true,
+				writable: false,
 				enumerable: false,
 				configurable: true,
 				value: toJSON,

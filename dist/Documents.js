@@ -3,15 +3,18 @@ var Errors = require("./Errors");
 var HTTP = require("./HTTP");
 var RDF = require("./RDF");
 var Utils = require("./Utils");
+var ACL = require("./Auth/ACL");
 var Document = require("./Document");
 var FreeResources = require("./FreeResources");
 var JSONLDConverter = require("./JSONLDConverter");
+var PersistedACL = require("./Auth/PersistedACL");
 var PersistedDocument = require("./PersistedDocument");
 var Pointer = require("./Pointer");
 var NS = require("./NS");
 var ObjectSchema = require("./ObjectSchema");
 var LDP = require("./LDP");
 var SPARQL = require("./SPARQL");
+var Resource = require("./Resource");
 var RetrievalPreferences = require("./RetrievalPreferences");
 var Documents = (function () {
     function Documents(context) {
@@ -545,7 +548,7 @@ var Documents = (function () {
             this.context.auth.addAuthentication(requestOptions);
         return SPARQL.Service.executeRawCONSTRUCTQuery(documentURI, constructQuery, requestOptions);
     };
-    Documents.prototype.executeRawDESCRIBEQuery = function (documentURI, constructQuery, requestOptions) {
+    Documents.prototype.executeRawDESCRIBEQuery = function (documentURI, describeQuery, requestOptions) {
         if (requestOptions === void 0) { requestOptions = {}; }
         if (!RDF.URI.Util.isAbsolute(documentURI)) {
             if (!this.context)
@@ -554,7 +557,18 @@ var Documents = (function () {
         }
         if (this.context && this.context.auth.isAuthenticated())
             this.context.auth.addAuthentication(requestOptions);
-        return SPARQL.Service.executeRawDESCRIBEQuery(documentURI, constructQuery, requestOptions);
+        return SPARQL.Service.executeRawDESCRIBEQuery(documentURI, describeQuery, requestOptions);
+    };
+    Documents.prototype.executeUPDATE = function (documentURI, update, requestOptions) {
+        if (requestOptions === void 0) { requestOptions = {}; }
+        if (!RDF.URI.Util.isAbsolute(documentURI)) {
+            if (!this.context)
+                throw new Errors.IllegalArgumentError("This Documents instance doesn't support relative URIs.");
+            documentURI = this.context.resolve(documentURI);
+        }
+        if (this.context && this.context.auth.isAuthenticated())
+            this.context.auth.addAuthentication(requestOptions);
+        return SPARQL.Service.executeUPDATE(documentURI, update, requestOptions);
     };
     Documents.prototype.getRDFDocument = function (requestURL, rdfDocuments, response) {
         rdfDocuments = rdfDocuments.filter(function (rdfDocument) { return rdfDocument["@id"] === requestURL; });
@@ -745,6 +759,8 @@ var Documents = (function () {
         document._resolved = true;
         if (LDP.Container.Factory.hasRDFClass(document))
             LDP.PersistedContainer.Factory.decorate(document);
+        if (Resource.Util.hasType(document, ACL.RDF_CLASS))
+            PersistedACL.Factory.decorate(document);
         return document;
     };
     Documents.prototype.updatePersistedDocument = function (persistedDocument, documentResource, fragmentResources) {

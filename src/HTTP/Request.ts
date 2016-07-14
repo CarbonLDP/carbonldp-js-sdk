@@ -3,6 +3,9 @@ import * as Header from "./Header";
 import Method from "./Method";
 import Parser from "./Parser";
 import Response from "./Response";
+import * as ErrorResponse from "./../LDP/ErrorResponse";
+import HTTPError from "./Errors/HTTPError";
+
 import * as Utils from "./../Utils";
 
 import {RequestOptions, ClientRequest, IncomingMessage} from "http";
@@ -43,9 +46,23 @@ function onResolve( resolve:Resolve, reject:Reject, response:Response ):void {
 		resolve( response );
 
 	} else if( response.status >= 400 && response.status < 600 && Errors.statusCodeMap.has( response.status ) ) {
-		let error:typeof Errors.Error = Errors.statusCodeMap.get( response.status );
-		// TODO: Set error message
-		reject( new error( "", response ) );
+		let errorClass:typeof HTTPError = Errors.statusCodeMap.get( response.status );
+		let error:HTTPError = new errorClass( "", response );
+
+		if( ! response.data ) {
+			reject( error );
+		}
+
+		let parser:ErrorResponse.Parser = new ErrorResponse.Parser();
+		parser.parse( response.data, error ).then( ( errorResponse:ErrorResponse.Class ) => {
+			let message:string = ErrorResponse.Util.getMessage( errorResponse );
+			error.message = message;
+			reject( error );
+
+		} ).catch( () => {
+			error.message = response.data;
+			reject( error );
+		} );
 
 	} else {
 		reject( new Errors.UnknownError( response.data, response ) );

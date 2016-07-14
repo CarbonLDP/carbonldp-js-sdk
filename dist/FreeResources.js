@@ -26,8 +26,7 @@ function inLocalScope(id) {
 function inScope(idOrPointer) {
     var freeResources = this;
     var id = Pointer.Factory.is(idOrPointer) ? idOrPointer.id : idOrPointer;
-    return inLocalScope(id)
-        || freeResources._documents.inScope(id);
+    return inLocalScope(id) || freeResources._documents.inScope(id);
 }
 function hasResource(id) {
     var freeResources = this;
@@ -42,6 +41,9 @@ function getResources() {
     return Utils.A.from(freeResources._resourcesIndex.values());
 }
 function createResource(id) {
+    return this.createResourceFrom({}, id);
+}
+function createResourceFrom(object, id) {
     var freeResources = this;
     if (id) {
         if (!inLocalScope(id))
@@ -52,7 +54,7 @@ function createResource(id) {
     else {
         id = RDF.URI.Util.generateBNodeID();
     }
-    var resource = Resource.Factory.create(id);
+    var resource = Resource.Factory.createFrom(object, id);
     freeResources._resourcesIndex.set(id, resource);
     return resource;
 }
@@ -77,6 +79,7 @@ var Factory = (function () {
             Utils.hasFunction(object, "getResource") &&
             Utils.hasFunction(object, "getResources") &&
             Utils.hasFunction(object, "createResource") &&
+            Utils.hasFunction(object, "createResourceFrom") &&
             Utils.hasFunction(object, "hasPointer") &&
             Utils.hasFunction(object, "getPointer") &&
             Utils.hasFunction(object, "inScope") &&
@@ -101,49 +104,55 @@ var Factory = (function () {
                 value: new Map(),
             },
             "hasPointer": {
-                writable: true,
+                writable: false,
                 enumerable: false,
                 configurable: true,
                 value: hasPointer,
             },
             "getPointer": {
-                writable: true,
+                writable: false,
                 enumerable: false,
                 configurable: true,
                 value: getPointer,
             },
             "inScope": {
-                writable: true,
+                writable: false,
                 enumerable: false,
                 configurable: true,
                 value: inScope,
             },
             "hasResource": {
-                writable: true,
+                writable: false,
                 enumerable: false,
                 configurable: true,
                 value: hasResource,
             },
             "getResource": {
-                writable: true,
+                writable: false,
                 enumerable: false,
                 configurable: true,
                 value: getResource,
             },
             "getResources": {
-                writable: true,
+                writable: false,
                 enumerable: false,
                 configurable: true,
                 value: getResources,
             },
             "createResource": {
-                writable: true,
+                writable: false,
                 enumerable: false,
                 configurable: true,
                 value: createResource,
             },
+            "createResourceFrom": {
+                writable: false,
+                enumerable: false,
+                configurable: true,
+                value: createResourceFrom,
+            },
             "toJSON": {
-                writable: true,
+                writable: false,
                 enumerable: false,
                 configurable: true,
                 value: toJSON,

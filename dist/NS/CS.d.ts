@@ -1,20 +1,30 @@
 declare const namespace: string;
 declare class Class {
-    static Application: string;
-    static Token: string;
-    static AllOrigins: string;
+    static AccessControlEntry: string;
+    static AccessControlList: string;
     static Agent: string;
+    static AllOrigins: string;
+    static Application: string;
     static Ticket: string;
+    static Token: string;
 }
 declare class Predicate {
-    static namae: string;
+    static accessControlEntry: string;
+    static accessControlList: string;
+    static accessTo: string;
     static allowsOrigin: string;
-    static rootContainer: string;
-    static tokenKey: string;
-    static expirationTime: string;
-    static password: string;
     static description: string;
+    static expirationTime: string;
     static forIRI: string;
+    static granting: string;
+    static inheritableEntry: string;
+    static namae: string;
+    static password: string;
+    static permission: string;
+    static rootContainer: string;
+    static subject: string;
+    static subjectClass: string;
     static ticketKey: string;
+    static tokenKey: string;
 }
 export { namespace, Class, Predicate };

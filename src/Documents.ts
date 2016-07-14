@@ -5,9 +5,11 @@ import * as RDF from "./RDF";
 import * as Utils from "./Utils";
 
 import * as AccessPoint from "./AccessPoint";
+import * as ACL from "./Auth/ACL";
 import * as Document from "./Document";
 import * as FreeResources from "./FreeResources";
 import * as JSONLDConverter from "./JSONLDConverter";
+import * as PersistedACL from "./Auth/PersistedACL";
 import * as PersistedBlankNode from "./PersistedBlankNode";
 import * as PersistedDocument from "./PersistedDocument";
 import * as PersistedFragment from "./PersistedFragment";
@@ -638,7 +640,7 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 		return SPARQL.Service.executeRawCONSTRUCTQuery( documentURI, constructQuery, requestOptions );
 	}
 
-	executeRawDESCRIBEQuery( documentURI:string, constructQuery:string, requestOptions:HTTP.Request.Options = {} ):Promise<[ string, HTTP.Response.Class ]> {
+	executeRawDESCRIBEQuery( documentURI:string, describeQuery:string, requestOptions:HTTP.Request.Options = {} ):Promise<[ string, HTTP.Response.Class ]> {
 		if( ! RDF.URI.Util.isAbsolute( documentURI ) ) {
 			if( ! this.context ) throw new Errors.IllegalArgumentError( "This Documents instance doesn't support relative URIs." );
 			documentURI = this.context.resolve( documentURI );
@@ -646,7 +648,18 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 
 		if( this.context && this.context.auth.isAuthenticated() ) this.context.auth.addAuthentication( requestOptions );
 
-		return SPARQL.Service.executeRawDESCRIBEQuery( documentURI, constructQuery, requestOptions );
+		return SPARQL.Service.executeRawDESCRIBEQuery( documentURI, describeQuery, requestOptions );
+	}
+
+	executeUPDATE( documentURI:string, update:string, requestOptions:HTTP.Request.Options = {} ):Promise<HTTP.Response.Class> {
+		if( ! RDF.URI.Util.isAbsolute( documentURI ) ) {
+			if( ! this.context ) throw new Errors.IllegalArgumentError( "This Documents instance doesn't support relative URIs." );
+			documentURI = this.context.resolve( documentURI );
+		}
+
+		if( this.context && this.context.auth.isAuthenticated() ) this.context.auth.addAuthentication( requestOptions );
+
+		return SPARQL.Service.executeUPDATE( documentURI, update, requestOptions );
 	}
 
 	private getRDFDocument( requestURL:string, rdfDocuments:RDF.Document.Class[], response:HTTP.Response.Class ):RDF.Document.Class {
@@ -862,6 +875,7 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 		// TODO: Decorate additional behavior (app, etc.). See also updatePersistedDocument() method
 		// TODO: Make it dynamic. See also updatePersistedDocument() method
 		if( LDP.Container.Factory.hasRDFClass( document ) ) LDP.PersistedContainer.Factory.decorate( document );
+		if( Resource.Util.hasType( document, ACL.RDF_CLASS ) ) PersistedACL.Factory.decorate( document );
 
 		return document;
 	}

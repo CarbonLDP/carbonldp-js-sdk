@@ -1,19 +1,16 @@
-import * as App from "./App";
 import * as APIDescription from "./APIDescription";
 import * as Auth from "./Auth";
 import Context from "./Context";
 import Documents from "./Documents";
 import * as Errors from "./Errors";
-import * as JSONLDConverter from "./JSONLDConverter";
 import * as LDP from "./LDP";
 import * as NS from "./NS";
 import * as PersistedBlankNode from "./PersistedBlankNode";
-import * as Pointer from "./Pointer";
-import * as RDF from "./RDF";
-import * as Utils from "./Utils";
 import * as ObjectSchema from "./ObjectSchema";
 import * as Agent from "./Agent";
 import * as RDFRepresentation from "./RDFRepresentation";
+import * as ErrorResponse from "./LDP/ErrorResponse";
+import * as Error from "./LDP/Error";
 
 export class Class implements Context {
 	auth:Auth.Class;
@@ -155,6 +152,8 @@ export class Class implements Context {
 
 		this.extendObjectSchema( RDFRepresentation.RDF_CLASS, RDFRepresentation.SCHEMA );
 		this.extendObjectSchema( APIDescription.RDF_CLASS, APIDescription.SCHEMA );
+		this.extendObjectSchema( Error.RDF_CLASS, Error.SCHEMA );
+		this.extendObjectSchema( ErrorResponse.RDF_CLASS, ErrorResponse.SCHEMA );
 
 		// TODO Fix error of cycle reference because the App module dependency of AbstractClass witch has a dependency with SDKContext. For now add manual data
 		/* this.extendObjectSchema( App.RDF_CLASS, App.SCHEMA ); */
@@ -182,8 +181,10 @@ export class Class implements Context {
 		this.extendObjectSchema( LDP.AddMemberAction.RDF_CLASS, LDP.AddMemberAction.SCHEMA );
 		this.extendObjectSchema( LDP.RemoveMemberAction.RDF_CLASS, LDP.RemoveMemberAction.SCHEMA );
 
-		this.extendObjectSchema( Auth.Token.RDF_CLASS, Auth.Token.SCHEMA );
+		this.extendObjectSchema( Auth.ACE.RDF_CLASS, Auth.ACE.SCHEMA );
+		this.extendObjectSchema( Auth.ACL.RDF_CLASS, Auth.ACL.SCHEMA );
 		this.extendObjectSchema( Auth.Ticket.RDF_CLASS, Auth.Ticket.SCHEMA );
+		this.extendObjectSchema( Auth.Token.RDF_CLASS, Auth.Token.SCHEMA );
 
 		this.extendObjectSchema( Agent.RDF_CLASS, Agent.SCHEMA );
 	}

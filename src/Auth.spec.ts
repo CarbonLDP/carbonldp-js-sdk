@@ -17,9 +17,13 @@ import {
 } from "./test/JasmineExtender";
 import * as Utils from "./Utils";
 import AbstractContext from "./AbstractContext";
+import * as ACE from "./Auth/ACE";
+import * as ACL from "./Auth/ACL";
 import AuthenticationToken from "./Auth/AuthenticationToken";
 import Authenticator from "./Auth/Authenticator";
 import BasicAuthenticator from "./Auth/BasicAuthenticator";
+import * as PersistedACE from "./Auth/PersistedACE";
+import * as PersistedACL from "./Auth/PersistedACL";
 import * as Ticket from "./Auth/Ticket";
 import * as Token from "./Auth/Token";
 import TokenAuthenticator from "./Auth/TokenAuthenticator";
@@ -37,6 +41,24 @@ describe( module( "Carbon/Auth" ), ():void => {
 	it( isDefined(), ():void => {
 		expect( Auth ).toBeDefined();
 		expect( Utils.isObject( Auth ) ).toBe( true );
+	} );
+
+	it( reexports(
+		STATIC,
+		"ACE",
+		"Carbon.Auth.ACE"
+	), ():void => {
+		expect( Auth.ACE ).toBeDefined();
+		expect( Auth.ACE ).toBe( ACE );
+	} );
+
+	it( reexports(
+		STATIC,
+		"ACL",
+		"Carbon.Auth.ACL"
+	), ():void => {
+		expect( Auth.ACL ).toBeDefined();
+		expect( Auth.ACL ).toBe( ACL );
 	} );
 
 	it( reexports(
@@ -60,6 +82,24 @@ describe( module( "Carbon/Auth" ), ():void => {
 	), ():void => {
 		expect( Auth.BasicAuthenticator ).toBeDefined();
 		expect( Auth.BasicAuthenticator ).toBe( BasicAuthenticator );
+	} );
+
+	it( reexports(
+		STATIC,
+		"PersistedACE",
+		"Carbon.Auth.PersistedACE"
+	), ():void => {
+		expect( Auth.PersistedACE ).toBeDefined();
+		expect( Auth.PersistedACE ).toBe( PersistedACE );
+	} );
+
+	it( reexports(
+		STATIC,
+		"PersistedACL",
+		"Carbon.Auth.PersistedACL"
+	), ():void => {
+		expect( Auth.PersistedACL ).toBeDefined();
+		expect( Auth.PersistedACL ).toBe( PersistedACL );
 	} );
 
 	it( reexports(

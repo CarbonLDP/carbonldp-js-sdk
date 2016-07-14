@@ -1,11 +1,12 @@
 import * as Document from "./../Document";
 import * as HTTP from "./../HTTP";
 import * as PersistedDocument from "./../PersistedDocument";
+import * as PersistedRDFSource from "./PersistedRDFSource";
 import * as Pointer from "./../Pointer";
 import * as Utils from "./../Utils";
 import * as RetrievalPreferences from "./../RetrievalPreferences";
 
-export interface Class extends PersistedDocument.Class {
+export interface Class extends PersistedRDFSource.Class {
 	addMember( member:Pointer.Class ):Promise<HTTP.Response.Class>;
 	addMember( memberURI:string ):Promise<HTTP.Response.Class>;
 
@@ -40,13 +41,11 @@ export interface Class extends PersistedDocument.Class {
 function addMember( member:Pointer.Class ):Promise<HTTP.Response.Class>;
 function addMember( memberURI:string ):Promise<HTTP.Response.Class>;
 function addMember( memberOrUri:any ):Promise<HTTP.Response.Class> {
-	let that:PersistedDocument.Class = <PersistedDocument.Class> this;
-	return that._documents.addMember( that.id, memberOrUri );
+	return this._documents.addMember( this.id, memberOrUri );
 }
 
 function addMembers( members:(Pointer.Class | string)[] ):Promise<HTTP.Response.Class> {
-	let that:PersistedDocument.Class = <PersistedDocument.Class> this;
-	return that._documents.addMembers( that.id, members );
+	return this._documents.addMembers( this.id, members );
 }
 
 function createChild( slug:string, object:Object ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
@@ -66,13 +65,11 @@ function createChild( slugOrObject?:any, object?:Object ):Promise<[ Pointer.Clas
 }
 
 function listChildren():Promise<[ Pointer.Class[], HTTP.Response.Class ]> {
-	let that:PersistedDocument.Class = <PersistedDocument.Class> this;
-	return this._documents.listChildren( that.id );
+	return this._documents.listChildren( this.id );
 }
 
 function getChildren( retrievalPreferences?:RetrievalPreferences.Class ):Promise<[ Pointer.Class[], HTTP.Response.Class ]> {
-	let that:PersistedDocument.Class = <PersistedDocument.Class> this;
-	return this._documents.getChildren( that.id, retrievalPreferences );
+	return this._documents.getChildren( this.id, retrievalPreferences );
 }
 
 function listMembers( includeNonReadable:boolean = true ):Promise<[ Pointer.Class[], HTTP.Response.Class ]> {
@@ -88,18 +85,15 @@ function getMembers( nonReadRetPref:boolean = true, retrievalPreferences?:Retrie
 function removeMember( member:Pointer.Class ):Promise<HTTP.Response.Class>;
 function removeMember( memberURI:string ):Promise<HTTP.Response.Class>;
 function removeMember( memberOrUri:any ):Promise<HTTP.Response.Class> {
-	let that:PersistedDocument.Class = <PersistedDocument.Class> this;
-	return that._documents.removeMember( that.id, memberOrUri );
+	return this._documents.removeMember( this.id, memberOrUri );
 }
 
 function removeMembers( members:(Pointer.Class | string)[] ):Promise<HTTP.Response.Class> {
-	let that:PersistedDocument.Class = <PersistedDocument.Class> this;
-	return that._documents.removeMembers( that.id, members );
+	return this._documents.removeMembers( this.id, members );
 }
 
 function removeAllMembers():Promise<HTTP.Response.Class> {
-	let that:PersistedDocument.Class = <PersistedDocument.Class> this;
-	return that._documents.removeAllMembers( that.id );
+	return this._documents.removeAllMembers( this.id );
 }
 
 function upload( slug:string, data:Buffer ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
@@ -135,6 +129,8 @@ export class Factory {
 
 	static decorate<T extends PersistedDocument.Class>( persistedDocument:T ):T & Class {
 		if( Factory.hasClassProperties( persistedDocument ) ) return <any> persistedDocument;
+
+		PersistedRDFSource.Factory.decorate( persistedDocument );
 
 		Object.defineProperties( persistedDocument, {
 			"addMember": {

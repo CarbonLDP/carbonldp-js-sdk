@@ -9,7 +9,8 @@ import {
 	extendsClass,
 	hasConstructor,
 	hasProperty,
-	hasMethod
+	hasMethod,
+	hasInterface,
 } from "./../../test/JasmineExtender";
 import * as Utils from "./../../Utils";
 
@@ -107,6 +108,41 @@ describe( module(
 			expect( HTTPError.statusCode ).toBeNull();
 		} );
 
+		it( hasProperty(
+			INSTANCE,
+			"response",
+			"number"
+		), ():void => {
+			let error:HTTPError = new HTTPError( "Message of the error", response );
+
+			expect( error.response ).toBeDefined();
+			expect( error.response instanceof Response );
+			expect( error.response ).toBe( response );
+		} );
+
+		it( hasProperty(
+			INSTANCE,
+			"errors",
+			"Carbon.LDP.Error[]"
+		), ():void => {
+			let error:HTTPError = new HTTPError( "Message of the error", response );
+
+			expect( error.errors ).toBeDefined();
+			expect( Utils.isArray( error.errors ) ).toEqual( true );
+		} );
+
+		it( hasProperty(
+			INSTANCE,
+			"requestID",
+			"string"
+		), ():void => {
+			let error:HTTPError = new HTTPError( "Message of the error", response );
+
+			expect( error.requestID ).toBeDefined();
+			expect( error.requestID ).toEqual( null );
+		} );
+
+		it( hasInterface( INSTANCE, "Carbon.LDP.ErrorResponse.Class" ), () => {} );
 	} );
 
 } );

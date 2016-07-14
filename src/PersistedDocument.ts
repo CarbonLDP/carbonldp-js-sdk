@@ -1,4 +1,3 @@
-import * as AccessPoint from "./AccessPoint";
 import * as Document from "./Document";
 import Documents from "./Documents";
 import * as HTTP from "./HTTP";
@@ -38,14 +37,13 @@ export interface Class extends Pointer.Class, PersistedResource.Class, Document.
 
 	getDownloadURL():Promise<string>;
 
-	createAccessPoint( accessPoint:AccessPoint.Class, slug?:string, requestOptions?:HTTP.Request.Options ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
-
 	executeRawASKQuery( askQuery:string, requestOptions?:HTTP.Request.Options ):Promise<[ SPARQL.RawResults.Class, HTTP.Response.Class ]>;
 	executeASKQuery( askQuery:string, requestOptions?:HTTP.Request.Options ):Promise<[ boolean, HTTP.Response.Class ]>;
 	executeRawSELECTQuery( selectQuery:string, requestOptions?:HTTP.Request.Options ):Promise<[ SPARQL.RawResults.Class, HTTP.Response.Class ]>;
 	executeSELECTQuery( selectQuery:string, requestOptions?:HTTP.Request.Options ):Promise<[ SPARQL.SELECTResults.Class, HTTP.Response.Class ]>;
 	executeRawCONSTRUCTQuery( constructQuery:string, requestOptions?:HTTP.Request.Options ):Promise<[ string, HTTP.Response.Class ]>;
 	executeRawDESCRIBEQuery( describeQuery:string, requestOptions?:HTTP.Request.Options ):Promise<[ string, HTTP.Response.Class ]>;
+	executeUPDATE( updateQuery:string, requestOptions?:HTTP.Request.Options ):Promise<HTTP.Response.Class>;
 }
 
 function extendIsDirty( superFunction:() => boolean ):() => boolean {
@@ -113,10 +111,6 @@ function getDownloadURL():Promise<string> {
 	return (<Class> this)._documents.getDownloadURL( (<Class> this).id );
 }
 
-function createAccessPoint( accessPoint:AccessPoint.Class, slug:string = null, requestOptions:HTTP.Request.Options = {} ):Promise<[ Pointer.Class, HTTP.Response.Class ]> {
-	return this._documents.createAccessPoint( accessPoint, slug, requestOptions );
-}
-
 function executeRawASKQuery( askQuery:string, requestOptions:HTTP.Request.Options = {} ):Promise<[ SPARQL.RawResults.Class, HTTP.Response.Class ]> {
 	return this._documents.executeRawASKQuery( this.id, askQuery, requestOptions );
 }
@@ -141,6 +135,10 @@ function executeRawDESCRIBEQuery( describeQuery:string, requestOptions:HTTP.Requ
 	return this._documents.executeRawDESCRIBEQuery( this.id, describeQuery, requestOptions );
 }
 
+function executeUPDATE( updateQuery:string, requestOptions:HTTP.Request.Options = {} ):Promise<[ string, HTTP.Response.Class ]> {
+	return this._documents.executeUPDATE( this.id, updateQuery, requestOptions );
+}
+
 export class Factory {
 	static hasClassProperties( document:Document.Class ):boolean {
 		return (
@@ -150,14 +148,15 @@ export class Factory {
 			Utils.hasFunction( document, "save" ) &&
 			Utils.hasFunction( document, "destroy" ) &&
 
-			Utils.hasFunction( document, "createAccessPoint" ) &&
+			Utils.hasFunction( document, "getDownloadURL" ) &&
 
 			Utils.hasFunction( document, "executeRawASKQuery" ) &&
 			Utils.hasFunction( document, "executeASKQuery" ) &&
 			Utils.hasFunction( document, "executeRawSELECTQuery" ) &&
 			Utils.hasFunction( document, "executeSELECTQuery" ) &&
 			Utils.hasFunction( document, "executeRawDESCRIBEQuery" ) &&
-			Utils.hasFunction( document, "executeRawCONSTRUCTQuery" )
+			Utils.hasFunction( document, "executeRawCONSTRUCTQuery" ) &&
+			Utils.hasFunction( document, "executeUPDATE" )
 		);
 	}
 
@@ -254,7 +253,6 @@ export class Factory {
 					};
 				})(),
 			},
-
 			"refresh": {
 				writable: false,
 				enumerable: false,
@@ -279,13 +277,6 @@ export class Factory {
 				enumerable: false,
 				configurable: true,
 				value: getDownloadURL,
-			},
-
-			"createAccessPoint": {
-				writable: false,
-				enumerable: false,
-				configurable: true,
-				value: createAccessPoint,
 			},
 
 			"executeRawASKQuery": {
@@ -323,6 +314,12 @@ export class Factory {
 				enumerable: false,
 				configurable: true,
 				value: executeRawDESCRIBEQuery,
+			},
+			"executeUPDATE": {
+				writable: false,
+				enumerable: false,
+				configurable: true,
+				value: executeUPDATE,
 			},
 
 			"createFragment": {
