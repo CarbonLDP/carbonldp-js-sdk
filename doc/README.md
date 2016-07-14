@@ -53,6 +53,8 @@
 - [Module Carbon/Auth/PersistedAgent](#Carbon-Auth-PersistedAgent)
 	- [Class Carbon.Auth.PersistedAgent.Factory](#Carbon-Auth-PersistedAgent-Factory)
 		- [Methods](#Carbon-Auth-PersistedAgent-Factory-Methods)
+		- [Decorated Object](#Carbon-Auth-PersistedAgent-Factory-Decorated-Object)
+			- [Methods](#Carbon-Auth-PersistedAgent-Factory-Decorated-Object-Methods)
 - [Module Carbon/Auth/Ticket](#Carbon-Auth-Ticket)
 	- [Properties](#Carbon-Auth-Ticket-Properties)
 	- [Class Carbon.Auth.Ticket.Factory](#Carbon-Auth-Ticket-Factory)
@@ -1200,6 +1202,30 @@ Retrieves the agent specified from the current context.
 - agentURI: The URI of the agent to retrieve.
 - requestOptions
 
+##### enable
+```typescript 
+enable( agentURI:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.Auth.PersistedAgent.Class, [ Carbon.HTTP.Response.Class, Carbon.HTTP.Response.Class ] ]>
+```
+
+Activate the account of the agent specified.
+
+*Parameters*
+
+- agentURI: The URI of the agent to be activated.
+- requestOptions
+
+##### disable
+```typescript 
+disable( agentURI:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.Auth.PersistedAgent.Class, [ Carbon.HTTP.Response.Class, Carbon.HTTP.Response.Class ] ]>
+```
+
+Deactivate the account of the agent specified.
+
+*Parameters*
+
+- agentURI: The URI of the agent to be deactivated.
+- requestOptions
+
 ##### delete
 ```typescript 
 delete( agentURI:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.Auth.PersistedAgent.Class, Carbon.HTTP.Response.Class ]>
@@ -1362,7 +1388,35 @@ Returns true if the object provided is considered a `Carbon.Auth.PersistedAgent.
 
 - object
 
+##### decorate
+```typescript 
+static decorate()
+```
 
+Decorates the object provided with the properties and methods of a `Carbon.Auth.PersistedAgent.Class` object.
+
+
+
+#### <a name="Carbon-Auth-PersistedAgent-Factory-Decorated-Object" />Decorated Object
+**Interfaces:** [Carbon.Auth.PersistedAgent.Class](#Carbon-Auth-PersistedAgent-Class)
+
+> Object decorated by the `Carbon.Auth.PersistedAgent.Factory.decorate()` function.
+
+
+##### <a name="Carbon-Auth-PersistedAgent-Factory-Decorated-Object-Methods" />Methods
+##### enable
+```typescript 
+enable():Promise<[ Carbon.Auth.PersistedAgent.Class Carbon.HTTP.Response.Class ]>
+```
+
+Activate the account of the agent.
+
+##### disable
+```typescript 
+disable():Promise<[ Carbon.Auth.PersistedAgent.Class Carbon.HTTP.Response.Class ]>
+```
+
+Deactivate the account of the agent.
 
 
 ## <a name="Carbon-Auth-Ticket" />Module Carbon/Auth/Ticket

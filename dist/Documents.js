@@ -3,6 +3,7 @@ var Errors = require("./Errors");
 var HTTP = require("./HTTP");
 var RDF = require("./RDF");
 var Utils = require("./Utils");
+var Auth = require("./Auth");
 var Document = require("./Document");
 var FreeResources = require("./FreeResources");
 var JSONLDConverter = require("./JSONLDConverter");
@@ -740,6 +741,8 @@ var Documents = (function () {
         document._resolved = true;
         if (LDP.Container.Factory.hasRDFClass(document))
             LDP.PersistedContainer.Factory.decorate(document);
+        if (document.types.indexOf(Auth.Agent.RDF_CLASS) !== -1)
+            Auth.PersistedAgent.Factory.decorate(document);
         return document;
     };
     Documents.prototype.updatePersistedDocument = function (persistedDocument, documentResource, fragmentResources) {

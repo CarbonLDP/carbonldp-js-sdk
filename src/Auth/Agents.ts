@@ -5,7 +5,6 @@ import * as HTTP from "./../HTTP";
 import * as PersistedAgent from "./PersistedAgent";
 import * as Pointer from "./../Pointer";
 import * as URI from "./../RDF/URI";
-import * as Response from "./../HTTP/Response";
 import * as Utils from "./../Utils";
 
 export class Class {
@@ -15,9 +14,9 @@ export class Class {
 		this.context = context;
 	}
 
-	register( agentDocument:Agent.Class ):Promise<[ Pointer.Class, Response.Class]>;
-	register( slug:string, agentDocument:Agent.Class ):Promise<[ Pointer.Class, Response.Class]>;
-	register( slugOrAgent:any, agentDocument?:Agent.Class ):Promise<[ Pointer.Class, Response.Class]> {
+	register( agentDocument:Agent.Class ):Promise<[ Pointer.Class, HTTP.Response.Class]>;
+	register( slug:string, agentDocument:Agent.Class ):Promise<[ Pointer.Class, HTTP.Response.Class]>;
+	register( slugOrAgent:any, agentDocument?:Agent.Class ):Promise<[ Pointer.Class, HTTP.Response.Class]> {
 		return this.resolveURI( "" ).then( ( containerURI:string ) => {
 			let slug:string = Utils.isString( slugOrAgent ) ? slugOrAgent : null;
 			agentDocument = agentDocument || slugOrAgent;
@@ -34,9 +33,28 @@ export class Class {
 		} );
 	}
 
+	enable( agentURI:string, requestOptions?:HTTP.Request.Options ):Promise<[ PersistedAgent.Class, [ HTTP.Response.Class, HTTP.Response.Class ] ]> {
+		return this.changeEnabledStatus( agentURI, true, requestOptions );
+	}
+
+	disable( agentURI:string, requestOptions?:HTTP.Request.Options ):Promise<[ PersistedAgent.Class, [ HTTP.Response.Class, HTTP.Response.Class ] ]> {
+		return this.changeEnabledStatus( agentURI, false, requestOptions );
+	}
+
 	delete( agentURI:string, requestOptions?:HTTP.Request.Options ):Promise<HTTP.Response.Class> {
 		return this.resolveURI( agentURI ).then( uri => {
 			return this.context.documents.delete( uri, requestOptions );
+		} );
+	}
+
+	private changeEnabledStatus( agentURI:string, value:boolean, requestOptions?:HTTP.Request.Options ):Promise<[ PersistedAgent.Class, [ HTTP.Response.Class, HTTP.Response.Class ] ]> {
+		let getResponse:HTTP.Response.Class;
+		return this.get( agentURI, requestOptions ).then( ( [ agent, response ]:[ PersistedAgent.Class, HTTP.Response.Class ] ) => {
+			getResponse = response;
+			agent.enabled = value;
+			return agent.save();
+		} ).then( ( [ agent, response ]:[ PersistedAgent.Class, HTTP.Response.Class ] ) => {
+			return [ agent, [ getResponse, response ] ];
 		} );
 	}
 

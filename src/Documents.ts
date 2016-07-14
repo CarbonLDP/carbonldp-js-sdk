@@ -5,6 +5,7 @@ import * as RDF from "./RDF";
 import * as Utils from "./Utils";
 
 import * as AccessPoint from "./AccessPoint";
+import * as Auth from "./Auth";
 import * as Document from "./Document";
 import * as FreeResources from "./FreeResources";
 import * as JSONLDConverter from "./JSONLDConverter";
@@ -853,7 +854,9 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 
 		// TODO: Decorate additional behavior (app, etc.). See also updatePersistedDocument() method
 		// TODO: Make it dynamic. See also updatePersistedDocument() method
+		// TODO: Use document.hasType( RDF_CLASS ) when available
 		if( LDP.Container.Factory.hasRDFClass( document ) ) LDP.PersistedContainer.Factory.decorate( document );
+		if( document.types.indexOf( Auth.Agent.RDF_CLASS ) !== - 1 ) Auth.PersistedAgent.Factory.decorate( document );
 
 		return document;
 	}

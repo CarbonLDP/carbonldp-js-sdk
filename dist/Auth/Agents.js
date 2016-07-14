@@ -23,10 +23,28 @@ var Class = (function () {
             return _this.context.documents.get(uri, requestOptions);
         });
     };
+    Class.prototype.enable = function (agentURI, requestOptions) {
+        return this.changeEnabledStatus(agentURI, true, requestOptions);
+    };
+    Class.prototype.disable = function (agentURI, requestOptions) {
+        return this.changeEnabledStatus(agentURI, false, requestOptions);
+    };
     Class.prototype.delete = function (agentURI, requestOptions) {
         var _this = this;
         return this.resolveURI(agentURI).then(function (uri) {
             return _this.context.documents.delete(uri, requestOptions);
+        });
+    };
+    Class.prototype.changeEnabledStatus = function (agentURI, value, requestOptions) {
+        var getResponse;
+        return this.get(agentURI, requestOptions).then(function (_a) {
+            var agent = _a[0], response = _a[1];
+            getResponse = response;
+            agent.enabled = value;
+            return agent.save();
+        }).then(function (_a) {
+            var agent = _a[0], response = _a[1];
+            return [agent, [getResponse, response]];
         });
     };
     Class.prototype.resolveURI = function (agentURI) {
