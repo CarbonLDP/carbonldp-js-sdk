@@ -44,9 +44,7 @@ export class Factory {
 			;
 	}
 
-	static decorate<T extends Object>( object:T, granting:boolean, subjects:Pointer.Class[], subjectClass:Pointer.Class, permissions:Pointer.Class[] ):T & Class {
-		if( Factory.hasClassProperties( object ) ) return <any> object;
-
+	static createFrom<T extends Object>( object:T, granting:boolean, subjects:Pointer.Class[], subjectClass:Pointer.Class, permissions:Pointer.Class[] ):T & Class {
 		let ace:T & Class = <any> object;
 
 		if( ! ace.types ) ace.types = [];

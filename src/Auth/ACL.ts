@@ -144,7 +144,7 @@ function configACE( granting:boolean, subject:Pointer.Class, subjectClass:Pointe
 
 	let ace:ACE.Class;
 	if( subjectACEs.length === 0 ) {
-		ace = ACE.Factory.decorate( (<Class> this).createFragment(), granting, [ subject ], subjectClass, [] );
+		ace = ACE.Factory.createFrom( (<Class> this).createFragment(), granting, [ subject ], subjectClass, [] );
 		aces.push( ace );
 	} else {
 		ace = subjectACEs[ 0 ];

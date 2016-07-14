@@ -31,9 +31,7 @@ var Factory = (function () {
             && Utils.hasPropertyDefined(object, "subjects")
             && Utils.hasPropertyDefined(object, "subjectsClass");
     };
-    Factory.decorate = function (object, granting, subjects, subjectClass, permissions) {
-        if (Factory.hasClassProperties(object))
-            return object;
+    Factory.createFrom = function (object, granting, subjects, subjectClass, permissions) {
         var ace = object;
         if (!ace.types)
             ace.types = [];

@@ -35,7 +35,7 @@ function inScope(idOrPointer) {
         return true;
     if (RDF.URI.Util.isFragmentOf(id, document.id))
         return true;
-    return Utils.S.startsWith(id, "#");
+    return RDF.URI.Util.isFragmentOf(id, "");
 }
 function hasFragment(id) {
     var document = this;

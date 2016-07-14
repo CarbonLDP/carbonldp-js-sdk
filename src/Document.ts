@@ -70,7 +70,7 @@ function inScope( idOrPointer:any ):boolean {
 
 	if( RDF.URI.Util.isFragmentOf( id, document.id ) ) return true;
 
-	return Utils.S.startsWith( id, "#" );
+	return RDF.URI.Util.isFragmentOf( id, "" );
 }
 
 function hasFragment( id:string ):boolean {

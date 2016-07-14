@@ -73,7 +73,7 @@ describe( module( "Carbon/Auth/ACE" ), ():void => {
 			STATIC,
 			"hasClassProperties",
 			"Returns true if the object provided has the properties of a `Carbon.Auth.ACE.Class` object.", [
-				{name: "object", type: "Object", description: "The object to evaluate its properties."}
+				{name: "object", type: "Object", description: "The object to evaluate its properties."},
 			],
 			{type: "boolean"}
 		), ():void => {
@@ -110,18 +110,23 @@ describe( module( "Carbon/Auth/ACE" ), ():void => {
 
 		it( hasMethod(
 			STATIC,
-			"decorate",
-			"Decorates the object provided with the properties and data necessary for a `Carbon.Auth.ACE.Class` object."
+			"createFrom",
+			"Creates a `Carbon.Auth.ACE.Class` object with the parameters specified.", [
+				{name: "object", type: "T extends Object", description: "The object that will be converted into a `Carbon.Auth.ACE.Class`"},
+				{name: "granting", type: "boolean", description: "Indicates if the ACE is a granting or denying permissions."},
+				{name: "subjects", type: "Carbon.Pointer.Class[]", description: "Subjects that will have the permissions specified."},
+				{name: "subjectClass", type: "Carbon.Pointer.Class", description: "The type of the subjects provided."},
+				{name: "permissions", type: "Carbon.Pointer.Class[]", description: "The permissions that will be granted or denied."},
+			]
 		), ():void => {
-			expect( ACE.Factory.decorate ).toBeDefined();
-			expect( Utils.isFunction( ACE.Factory.decorate ) ).toBe( true );
-
+			expect( ACE.Factory.createFrom ).toBeDefined();
+			expect( Utils.isFunction( ACE.Factory.createFrom ) ).toBe( true );
 
 			let object:any;
 			let ace:ACE.Class;
 
 			object = {};
-			ace = ACE.Factory.decorate( object, true, [ Pointer.Factory.create( "1" ) ], Pointer.Factory.create( "2" ), [ Pointer.Factory.create( "3" ) ] );
+			ace = ACE.Factory.createFrom( object, true, [ Pointer.Factory.create( "1" ) ], Pointer.Factory.create( "2" ), [ Pointer.Factory.create( "3" ) ] );
 			expect( ACE.Factory.hasClassProperties( ace ) ).toBe( true );
 			expect( ace.types ) .toContain( ACE.RDF_CLASS );
 			expect( ace.granting ).toBe( true );
@@ -131,7 +136,7 @@ describe( module( "Carbon/Auth/ACE" ), ():void => {
 			expect( ace[ "some" ] ).toBeUndefined();
 
 			object = {some: "some"};
-			ace = ACE.Factory.decorate( object, false, [ Pointer.Factory.create( "4" ) ], Pointer.Factory.create( "5" ), [ Pointer.Factory.create( "6" ) ] );
+			ace = ACE.Factory.createFrom( object, false, [ Pointer.Factory.create( "4" ) ], Pointer.Factory.create( "5" ), [ Pointer.Factory.create( "6" ) ] );
 			expect( ACE.Factory.hasClassProperties( ace ) ).toBe( true );
 			expect( ace.types ) .toContain( ACE.RDF_CLASS );
 			expect( ace.granting ).toBe( false );

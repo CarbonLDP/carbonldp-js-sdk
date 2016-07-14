@@ -68,7 +68,7 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 			STATIC,
 			"hasClassProperties",
 			"Return true if the object provided has the properties and methods of a `Carbon.Auth.ACL.Class` object.", [
-				{name: "object", type: "Object", description: "The object to analise."}
+				{name: "object", type: "Object", description: "The object to analise."},
 			],
 			{type: "boolean"}
 		), ():void => {
@@ -142,7 +142,7 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 			STATIC,
 			"decorate",
 			"Decorate the object with the methods o a `Carbon.Auth.ACL.Class` object.", [
-				{name: "document", type: "T extends Carbon.PersistedDocument.Class", description: "The persisted document to decorate."}
+				{name: "document", type: "T extends Carbon.PersistedDocument.Class", description: "The persisted document to decorate."},
 			],
 			{type: "T & Carbon.Auth.ACl.Class"}
 		), ():void => {
@@ -162,7 +162,7 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 			function getACEsOf( subject:string, fragments:Fragment[] ):ACE.Class[] {
 				return <ACE.Class[]> fragments.filter( fragment => {
 					let ids:string[] = Pointer.Util.getIDs( (<ACE.Class> fragment).subjects );
-					return ids.indexOf( subject ) !== - 1
+					return ids.indexOf( subject ) !== - 1;
 				} );
 			}
 
@@ -188,7 +188,7 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 					"Grant the permission specified to the subject provided for the document related to the ACL.", [
 						{name: "subject", type: "string | Carbon.Pointer.Class", description: "The subject which will be assigned the permission specified."},
 						{name: "subjectClass", type: "string | Carbon.Pointer.Class", description: "The type of subject provided."},
-						{name: "permission", type: "string | Carbon.Pointer.Class", description: "The permission that will be granted to the subject specified."}
+						{name: "permission", type: "string | Carbon.Pointer.Class", description: "The permission that will be granted to the subject specified."},
 					]
 				), ():void => {
 					let fragments:Fragment[];
@@ -256,7 +256,7 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 					"Grant several permissions to the subject provided for the document related to the ACL.", [
 						{name: "subject", type: "string | Carbon.Pointer.Class", description: "The subject which will be assigned the permission specified."},
 						{name: "subjectClass", type: "string | Carbon.Pointer.Class", description: "The type of subject provided."},
-						{name: "permissions", type: "(string | Carbon.Pointer.Class)[]", description: "The permissions that will be granted to the subject specified."}
+						{name: "permissions", type: "(string | Carbon.Pointer.Class)[]", description: "The permissions that will be granted to the subject specified."},
 					]
 				), ():void => {
 					let fragments:Fragment[];
@@ -343,7 +343,7 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 					"Grant the permission specified to the every subject provided for the document related to the ACL.", [
 						{name: "subjects", type: "(string | Carbon.Pointer.Class)[]", description: "The subjects which will be assigned the every permissions specified."},
 						{name: "subjectClass", type: "string | Carbon.Pointer.Class", description: "The type of subjects provided."},
-						{name: "permission", type: "string | Carbon.Pointer.Class", description: "The permission that will be granted to the every subject."}
+						{name: "permission", type: "string | Carbon.Pointer.Class", description: "The permission that will be granted to the every subject."},
 					]
 				), ():void => {
 					let fragments:Fragment[];
@@ -448,7 +448,7 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 					"Grant several permissions to the every subject provided for the document related to the ACL.", [
 						{name: "subjects", type: "(string | Carbon.Pointer.Class)[]", description: "The subjects which will be assigned the every permissions specified."},
 						{name: "subjectClass", type: "string | Carbon.Pointer.Class", description: "The type of subjects provided."},
-						{name: "permissions", type: "(string | Carbon.Pointer.Class)[]", description: "The permissions that will be granted to the every subject."}
+						{name: "permissions", type: "(string | Carbon.Pointer.Class)[]", description: "The permissions that will be granted to the every subject."},
 					]
 				), ():void => {
 					let fragments:Fragment[];
@@ -583,10 +583,10 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 					expect( acl.entries ).toContain( ace );
 
 
-					acl.entries.forEach( ace => acl.removeFragment( ace.id ) );
+					acl.entries.forEach( forEachACE => acl.removeFragment( forEachACE.id ) );
 					acl.entries = [];
 
-					ace = ACE.Factory.decorate(
+					ace = ACE.Factory.createFrom(
 						acl.createFragment(),
 						false,
 						[ acl.getPointer( "http://example.com/ns#Subject" ), acl.getPointer( "http://example.com/ns#Subject-2" ) ],
@@ -595,7 +595,7 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 					);
 					acl.entries.push( ace );
 
-					ace = ACE.Factory.decorate(
+					ace = ACE.Factory.createFrom(
 						acl.createFragment(),
 						true,
 						[ acl.getPointer( "http://example.com/ns#Subject-2" ), acl.getPointer( "http://example.com/ns#Subject-3" ) ],
@@ -664,11 +664,11 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#CREATE" );
 					expect( acl.entries ).toContain( ace );
 
-					acl.entries.forEach( ace => acl.removeFragment( ace.id ) );
+					acl.entries.forEach( forEachACE => acl.removeFragment( forEachACE.id ) );
 					acl.entries = [];
 					acl.inheritableEntries = [];
 
-					ace = ACE.Factory.decorate(
+					ace = ACE.Factory.createFrom(
 						acl.createFragment(),
 						true,
 						[ acl.getPointer( "http://example.com/ns#Subject" ) ],
@@ -719,7 +719,7 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 					"Grant the permission specified to the subject provided for the document related to the ACL.", [
 						{name: "subject", type: "string | Carbon.Pointer.Class", description: "The subject which will be assigned the permission specified."},
 						{name: "subjectClass", type: "string | Carbon.Pointer.Class", description: "The type of subject provided."},
-						{name: "permission", type: "string | Carbon.Pointer.Class", description: "The permission that will be granted to the subject specified."}
+						{name: "permission", type: "string | Carbon.Pointer.Class", description: "The permission that will be granted to the subject specified."},
 					]
 				), ():void => {
 					let fragments:Fragment[];
@@ -787,7 +787,7 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 					"Grant several permissions to the subject provided for the document related to the ACL.", [
 						{name: "subject", type: "string | Carbon.Pointer.Class", description: "The subject which will be assigned the permission specified."},
 						{name: "subjectClass", type: "string | Carbon.Pointer.Class", description: "The type of subject provided."},
-						{name: "permissions", type: "(string | Carbon.Pointer.Class)[]", description: "The permissions that will be granted to the subject specified."}
+						{name: "permissions", type: "(string | Carbon.Pointer.Class)[]", description: "The permissions that will be granted to the subject specified."},
 					]
 				), ():void => {
 					let fragments:Fragment[];
@@ -874,7 +874,7 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 					"Grant the permission specified to the every subject provided for the document related to the ACL.", [
 						{name: "subjects", type: "(string | Carbon.Pointer.Class)[]", description: "The subjects which will be assigned the every permissions specified."},
 						{name: "subjectClass", type: "string | Carbon.Pointer.Class", description: "The type of subjects provided."},
-						{name: "permission", type: "string | Carbon.Pointer.Class", description: "The permission that will be granted to the every subject."}
+						{name: "permission", type: "string | Carbon.Pointer.Class", description: "The permission that will be granted to the every subject."},
 					]
 				), ():void => {
 					let fragments:Fragment[];
@@ -979,7 +979,7 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 					"Grant several permissions to the every subject provided for the document related to the ACL.", [
 						{name: "subjects", type: "(string | Carbon.Pointer.Class)[]", description: "The subjects which will be assigned the every permissions specified."},
 						{name: "subjectClass", type: "string | Carbon.Pointer.Class", description: "The type of subjects provided."},
-						{name: "permissions", type: "(string | Carbon.Pointer.Class)[]", description: "The permissions that will be granted to the every subject."}
+						{name: "permissions", type: "(string | Carbon.Pointer.Class)[]", description: "The permissions that will be granted to the every subject."},
 					]
 				), ():void => {
 					let fragments:Fragment[];
@@ -1114,9 +1114,9 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 					expect( acl.entries ).toContain( ace );
 
 
-					acl.entries.forEach( ace => acl.removeFragment( ace.id ) );
+					acl.entries.forEach( forEachACE => acl.removeFragment( forEachACE.id ) );
 					acl.entries = [];
-					ace = ACE.Factory.decorate(
+					ace = ACE.Factory.createFrom(
 						acl.createFragment(),
 						false,
 						[ acl.getPointer( "http://example.com/ns#Subject" ), acl.getPointer( "http://example.com/ns#Subject-2" ) ],
@@ -1124,7 +1124,7 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 						[ acl.getPointer( "http://example.com/ns#CREATE" ), acl.getPointer( "http://example.com/ns#DELETE" ) ]
 					);
 					acl.entries.push( ace );
-					ace = ACE.Factory.decorate(
+					ace = ACE.Factory.createFrom(
 						acl.createFragment(),
 						true,
 						[ acl.getPointer( "http://example.com/ns#Subject-2" ), acl.getPointer( "http://example.com/ns#Subject-3" ) ],
@@ -1196,11 +1196,11 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 					expect( acl.entries ).toContain( ace );
 
 
-					acl.entries.forEach( ace => acl.removeFragment( ace.id ) );
+					acl.entries.forEach( forEachACE => acl.removeFragment( forEachACE.id ) );
 					acl.entries = [];
 					acl.inheritableEntries = [];
 
-					ace = ACE.Factory.decorate(
+					ace = ACE.Factory.createFrom(
 						acl.createFragment(),
 						false,
 						[ acl.getPointer( "http://example.com/ns#Subject" ) ],
@@ -1252,7 +1252,7 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 						{name: "granting", type: "boolean", description: "Boolean to indicate if the permission will be granted o denied."},
 						{name: "subject", type: "string | Carbon.Pointer.Class", description: "The subject which will be assigned the permission specified."},
 						{name: "subjectClass", type: "string | Carbon.Pointer.Class", description: "The type of subject provided."},
-						{name: "permission", type: "string | Carbon.Pointer.Class", description: "The permission that will be granted to the subject specified."}
+						{name: "permission", type: "string | Carbon.Pointer.Class", description: "The permission that will be granted to the subject specified."},
 					]
 				), ():void => {
 					let fragments:Fragment[];
@@ -1315,7 +1315,7 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#DELETE" );
 					expect( acl.inheritableEntries ).toContain( ace );
 
-					acl.inheritableEntries.forEach( ace => acl.removeFragment( ace.id ) );
+					acl.inheritableEntries.forEach( forEachACE => acl.removeFragment( forEachACE.id ) );
 					delete acl.inheritableEntries;
 
 					acl.configureChildInheritance( false, "http://example.com/ns#Subject-02", "http://example.com/ns#SubjetClass", "http://example.com/ns#READ" );
@@ -1380,7 +1380,7 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 						{name: "granting", type: "boolean", description: "Boolean to indicate if the permission will be granted o denied."},
 						{name: "subject", type: "string | Carbon.Pointer.Class", description: "The subject which will be assigned the permission specified."},
 						{name: "subjectClass", type: "string | Carbon.Pointer.Class", description: "The type of subject provided."},
-						{name: "permissions", type: "(string | Carbon.Pointer.Class)[]", description: "The permissions that will be granted to the subject specified."}
+						{name: "permissions", type: "(string | Carbon.Pointer.Class)[]", description: "The permissions that will be granted to the subject specified."},
 					]
 				), ():void => {
 					let fragments:Fragment[];
@@ -1462,7 +1462,7 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
 					expect( acl.inheritableEntries ).toContain( ace );
 
-					acl.inheritableEntries.forEach( ace => acl.removeFragment( ace.id ) );
+					acl.inheritableEntries.forEach( forEachACE => acl.removeFragment( forEachACE.id ) );
 					delete acl.inheritableEntries;
 
 					acl.configureChildInheritance( false, "http://example.com/ns#Subject", "http://example.com/ns#SubjetClass", [ "http://example.com/ns#READ" ] );
@@ -1546,7 +1546,7 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 						{name: "granting", type: "boolean", description: "Boolean to indicate if the permission will be granted o denied."},
 						{name: "subjects", type: "(string | Carbon.Pointer.Class)[]", description: "The subjects which will be assigned the every permissions specified."},
 						{name: "subjectClass", type: "string | Carbon.Pointer.Class", description: "The type of subjects provided."},
-						{name: "permission", type: "string | Carbon.Pointer.Class", description: "The permission that will be granted to the every subject."}
+						{name: "permission", type: "string | Carbon.Pointer.Class", description: "The permission that will be granted to the every subject."},
 					]
 				), ():void => {
 					let fragments:Fragment[];
@@ -1646,7 +1646,7 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#DELETE" );
 					expect( acl.inheritableEntries ).toContain( ace );
 
-					acl.inheritableEntries.forEach( ace => acl.removeFragment( ace.id ) );
+					acl.inheritableEntries.forEach( forEachACE => acl.removeFragment( forEachACE.id ) );
 					delete acl.inheritableEntries;
 
 					acl.configureChildInheritance( false, [ "http://example.com/ns#Subject" ], "http://example.com/ns#SubjetClass", "http://example.com/ns#READ" );
@@ -1748,7 +1748,7 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 						{name: "granting", type: "boolean", description: "Boolean to indicate if the permission will be granted o denied."},
 						{name: "subjects", type: "(string | Carbon.Pointer.Class)[]", description: "The subjects which will be assigned the every permissions specified."},
 						{name: "subjectClass", type: "string | Carbon.Pointer.Class", description: "The type of subjects provided."},
-						{name: "permissions", type: "(string | Carbon.Pointer.Class)[]", description: "The permissions that will be granted to the every subject."}
+						{name: "permissions", type: "(string | Carbon.Pointer.Class)[]", description: "The permissions that will be granted to the every subject."},
 					]
 				), ():void => {
 					let fragments:Fragment[];
@@ -1882,7 +1882,7 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#CREATE" );
 					expect( acl.inheritableEntries ).toContain( ace );
 
-					acl.inheritableEntries.forEach( ace => acl.removeFragment( ace.id ) );
+					acl.inheritableEntries.forEach( forEachACE => acl.removeFragment( forEachACE.id ) );
 					delete acl.inheritableEntries;
 
 					acl.configureChildInheritance( false, [ "http://example.com/ns#Subject" ], "http://example.com/ns#SubjetClass", [ "http://example.com/ns#READ" ] );
@@ -2012,10 +2012,10 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#CREATE" );
 					expect( acl.inheritableEntries ).toContain( ace );
 
-					acl.inheritableEntries.forEach( ace => acl.removeFragment( ace.id ) );
+					acl.inheritableEntries.forEach( forEachACE => acl.removeFragment( forEachACE.id ) );
 					acl.inheritableEntries = [];
 
-					ace = ACE.Factory.decorate(
+					ace = ACE.Factory.createFrom(
 						acl.createFragment(),
 						false,
 						[ acl.getPointer( "http://example.com/ns#Subject" ), acl.getPointer( "http://example.com/ns#Subject-2" ) ],
@@ -2023,7 +2023,7 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 						[ acl.getPointer( "http://example.com/ns#CREATE" ), acl.getPointer( "http://example.com/ns#DELETE" ) ]
 					);
 					acl.inheritableEntries.push( ace );
-					ace = ACE.Factory.decorate(
+					ace = ACE.Factory.createFrom(
 						acl.createFragment(),
 						true,
 						[ acl.getPointer( "http://example.com/ns#Subject-2" ), acl.getPointer( "http://example.com/ns#Subject-3" ) ],
@@ -2092,10 +2092,10 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#CREATE" );
 					expect( acl.inheritableEntries ).toContain( ace );
 
-					acl.inheritableEntries.forEach( ace => acl.removeFragment( ace.id ) );
+					acl.inheritableEntries.forEach( forEachACE => acl.removeFragment( forEachACE.id ) );
 					acl.inheritableEntries = [];
 
-					ace = ACE.Factory.decorate(
+					ace = ACE.Factory.createFrom(
 						acl.createFragment(),
 						false,
 						[ acl.getPointer( "http://example.com/ns#Subject" ), acl.getPointer( "http://example.com/ns#Subject-2" ) ],
@@ -2103,7 +2103,7 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 						[ acl.getPointer( "http://example.com/ns#CREATE" ), acl.getPointer( "http://example.com/ns#DELETE" ) ]
 					);
 					acl.inheritableEntries.push( ace );
-					ace = ACE.Factory.decorate(
+					ace = ACE.Factory.createFrom(
 						acl.createFragment(),
 						true,
 						[ acl.getPointer( "http://example.com/ns#Subject-2" ), acl.getPointer( "http://example.com/ns#Subject-3" ) ],
@@ -2174,11 +2174,11 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
 					expect( acl.inheritableEntries ).toContain( ace );
 
-					acl.inheritableEntries.forEach( ace => acl.removeFragment( ace.id ) );
+					acl.inheritableEntries.forEach( forEachACE => acl.removeFragment( forEachACE.id ) );
 					acl.inheritableEntries = [];
 					acl.entries = [];
 
-					ace = ACE.Factory.decorate(
+					ace = ACE.Factory.createFrom(
 						acl.createFragment(),
 						true,
 						[ acl.getPointer( "http://example.com/ns#Subject" ) ],
@@ -2223,7 +2223,7 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 				"grants",
 				"Returns true if the subject has a configuration where it grants the permission specified for the document related to de ACL.\nReturns `null` if no configuration of the subject and permission exists in the ACL.", [
 					{name: "subject", type: "string | Carbon.Pointer.Class", description: "The subject to look for its configuration."},
-					{name: "permission", type: "string | Carbon.Pointer.Class", description: "The permission to check if it has a granting configuration."}
+					{name: "permission", type: "string | Carbon.Pointer.Class", description: "The permission to check if it has a granting configuration."},
 				],
 				{type: "boolean"}
 			), ():void => {
@@ -2235,7 +2235,7 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 
 				let ace:ACE.Class;
 
-				ace = ACE.Factory.decorate(
+				ace = ACE.Factory.createFrom(
 					acl.createFragment(),
 					true,
 					[ acl.getPointer( "http://example.com/ns#Subject" ) ],
@@ -2250,7 +2250,7 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 				expect( acl.grants( acl.getPointer( "http://example.com/ns#Subject" ), acl.getPointer( "http://example.com/ns#ANOTHER" ) ) ).toBeNull();
 				expect( acl.grants( acl.getPointer( "http://example.com/ns#Subject-02" ), acl.getPointer( "http://example.com/ns#READ" ) ) ).toBeNull();
 
-				ace = ACE.Factory.decorate(
+				ace = ACE.Factory.createFrom(
 					acl.createFragment(),
 					false,
 					[ acl.getPointer( "http://example.com/ns#Subject" ) ],
@@ -2274,7 +2274,7 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 				"denies",
 				"Returns true if the subject has a configuration where it denies the permission specified for the document related to de ACL.\nReturns `null` if no configuration of the subject and permission exists in the ACL.", [
 					{name: "subject", type: "string | Carbon.Pointer.Class", description: "The subject to look for its configuration."},
-					{name: "permission", type: "string | Carbon.Pointer.Class", description: "The permission to check if it has a granting configuration."}
+					{name: "permission", type: "string | Carbon.Pointer.Class", description: "The permission to check if it has a granting configuration."},
 				],
 				{type: "boolean"}
 			), ():void => {
@@ -2286,7 +2286,7 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 
 				let ace:ACE.Class;
 
-				ace = ACE.Factory.decorate(
+				ace = ACE.Factory.createFrom(
 					acl.createFragment(),
 					false,
 					[ acl.getPointer( "http://example.com/ns#Subject" ) ],
@@ -2301,7 +2301,7 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 				expect( acl.denies( acl.getPointer( "http://example.com/ns#Subject" ), acl.getPointer( "http://example.com/ns#ANOTHER" ) ) ).toBeNull();
 				expect( acl.denies( acl.getPointer( "http://example.com/ns#Subject-02" ), acl.getPointer( "http://example.com/ns#READ" ) ) ).toBeNull();
 
-				ace = ACE.Factory.decorate(
+				ace = ACE.Factory.createFrom(
 					acl.createFragment(),
 					true,
 					[ acl.getPointer( "http://example.com/ns#Subject" ) ],
@@ -2325,7 +2325,7 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 				"getChildInheritance",
 				"Returns if grants or denies a configuration of the subject and the permission specified for the children of document related to de ACL.\nReturns `null` if no configuration of the subject and permission exists in the ACL.", [
 					{name: "subject", type: "string | Carbon.Pointer.Class", description: "The subject to look for its configuration."},
-					{name: "permission", type: "string | Carbon.Pointer.Class", description: "The permission to check if it has a granting configuration."}
+					{name: "permission", type: "string | Carbon.Pointer.Class", description: "The permission to check if it has a granting configuration."},
 				],
 				{type: "boolean"}
 			), ():void => {
@@ -2337,7 +2337,7 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 
 				let ace:ACE.Class;
 
-				ace = ACE.Factory.decorate(
+				ace = ACE.Factory.createFrom(
 					acl.createFragment(),
 					true,
 					[ acl.getPointer( "http://example.com/ns#Subject" ) ],
@@ -2352,7 +2352,7 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 				expect( acl.getChildInheritance( acl.getPointer( "http://example.com/ns#Subject" ), acl.getPointer( "http://example.com/ns#ANOTHER" ) ) ).toBeNull();
 				expect( acl.getChildInheritance( acl.getPointer( "http://example.com/ns#Subject-02" ), acl.getPointer( "http://example.com/ns#READ" ) ) ).toBeNull();
 
-				ace = ACE.Factory.decorate(
+				ace = ACE.Factory.createFrom(
 					acl.createFragment(),
 					false,
 					[ acl.getPointer( "http://example.com/ns#Subject" ) ],
@@ -2392,7 +2392,7 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 
 					let ace:ACE.Class;
 
-					ace = ACE.Factory.decorate(
+					ace = ACE.Factory.createFrom(
 						acl.createFragment(),
 						true,
 						[ acl.getPointer( "http://example.com/ns#Subject" ) ],
@@ -2422,7 +2422,7 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 
 					expect( acl.entries.length ).toBe( 0 );
 
-					ace = ACE.Factory.decorate(
+					ace = ACE.Factory.createFrom(
 						acl.createFragment(),
 						true,
 						[ acl.getPointer( "http://example.com/ns#Subject" ) ],
@@ -2452,7 +2452,7 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 
 					let ace:ACE.Class;
 
-					ace = ACE.Factory.decorate(
+					ace = ACE.Factory.createFrom(
 						acl.createFragment(),
 						true,
 						[ acl.getPointer( "http://example.com/ns#Subject" ) ],
@@ -2480,7 +2480,7 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 
 					expect( acl.entries.length ).toBe( 0 );
 
-					ace = ACE.Factory.decorate(
+					ace = ACE.Factory.createFrom(
 						acl.createFragment(),
 						true,
 						[ acl.getPointer( "http://example.com/ns#Subject" ) ],
@@ -2524,7 +2524,7 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 
 					let ace:ACE.Class;
 
-					ace = ACE.Factory.decorate(
+					ace = ACE.Factory.createFrom(
 						acl.createFragment(),
 						true,
 						[ acl.getPointer( "http://example.com/ns#Subject" ) ],
@@ -2554,7 +2554,7 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 
 					expect( acl.inheritableEntries.length ).toBe( 0 );
 
-					ace = ACE.Factory.decorate(
+					ace = ACE.Factory.createFrom(
 						acl.createFragment(),
 						true,
 						[ acl.getPointer( "http://example.com/ns#Subject" ) ],
@@ -2584,7 +2584,7 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 
 					let ace:ACE.Class;
 
-					ace = ACE.Factory.decorate(
+					ace = ACE.Factory.createFrom(
 						acl.createFragment(),
 						true,
 						[ acl.getPointer( "http://example.com/ns#Subject" ) ],
@@ -2612,7 +2612,7 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 
 					expect( acl.inheritableEntries.length ).toBe( 0 );
 
-					ace = ACE.Factory.decorate(
+					ace = ACE.Factory.createFrom(
 						acl.createFragment(),
 						true,
 						[ acl.getPointer( "http://example.com/ns#Subject" ) ],

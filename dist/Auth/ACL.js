@@ -106,7 +106,7 @@ function configACE(granting, subject, subjectClass, permissions, aces) {
     var subjectACEs = aces.filter(function (ace) { return ace.subjects.length === 1 && ace.subjects.indexOf(subject) !== -1 && ace.granting === granting; });
     var ace;
     if (subjectACEs.length === 0) {
-        ace = ACE.Factory.decorate(this.createFragment(), granting, [subject], subjectClass, []);
+        ace = ACE.Factory.createFrom(this.createFragment(), granting, [subject], subjectClass, []);
         aces.push(ace);
     }
     else {
