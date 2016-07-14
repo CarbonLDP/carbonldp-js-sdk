@@ -1036,6 +1036,18 @@ getAllContexts():Promise<Carbon.App.Context[]>
 
 Obtains an array of `Carbon.App.Context` objects, of every app within the context of the Apps instance.
 
+##### delete
+```typescript 
+delete( appURI:string,  requestOptions:Carbon.HTTP.Request.Options ):Promise<Carbon.HTTP.Response.Class>
+```
+
+Deletes the app specified.
+
+*Parameters*
+
+- appURI: The URI of the app to be deleted.
+- requestOptions
+
 ##### getContext
 ```typescript 
 getContext( uri:string ):Promise<Carbon.App.Context>

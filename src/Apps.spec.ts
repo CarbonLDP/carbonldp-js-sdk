@@ -18,6 +18,7 @@ import * as NS from "./NS";
 import * as Errors from "./Errors";
 import * as App from "./App";
 import * as RDF from "./RDF";
+import * as HTTP from "./HTTP";
 
 import * as Apps from "./Apps";
 import DefaultExport from "./Apps";
@@ -455,7 +456,7 @@ describe( module( "Carbon/Apps" ), ():void => {
 					} ) );
 
 					// Test correct execution of the method, where delegate the manage of the `null` slug to `context.documents.createChild` method
-					apps.create( null, app );
+					promise = apps.create( null, app );
 					expect( promise instanceof Promise ).toBe( true );
 					promises.push( promise.then( () => {
 						expect( spy ).toHaveBeenCalledWith( appsContainerURI, null, app );
@@ -473,6 +474,70 @@ describe( module( "Carbon/Apps" ), ():void => {
 
 			} );
 
+		} );
+
+		it( hasMethod(
+			INSTANCE,
+			"delete",
+			"Deletes the app specified.", [
+				{name: "appURI", type: "string", description: "The URI of the app to be deleted."},
+				{name: "requestOptions", type: "Carbon.HTTP.Request.Options"},
+			],
+			{type: "Promise<Carbon.HTTP.Response.Class>"}
+		), ( done:{ ():void, fail:() => void } ):void => {
+			expect( apps.delete ).toBeDefined();
+			expect( Utils.isFunction( apps.delete ) ).toBe( true );
+
+			let promises:Promise<any>[] = [];
+			let promise:Promise<any>;
+			let spy:jasmine.Spy = spyOn( context.documents, "delete" );
+			let options:HTTP.Request.Options = {timeout: 5050};
+
+			// Test missing `platform.apps.container` setting
+			apps.delete( "the-app/" ).catch( stateError => {
+				expect( stateError instanceof IllegalStateError ).toBe( true );
+				context.setSetting( "platform.apps.container", "apps/" );
+
+				// Correct execution of the method
+				promise = apps.delete( "the-app/" );
+				expect( promise instanceof Promise ).toBe( true );
+				promises.push( promise.then( () => {
+					expect( spy ).toHaveBeenCalledWith( "http://example.com/platform/apps/the-app/", undefined );
+				} ) );
+
+				// Correct execution with options
+				promise = apps.delete( "the-app/", options );
+				expect( promise instanceof Promise ).toBe( true );
+				promises.push( promise.then( () => {
+					expect( spy ).toHaveBeenCalledWith( "http://example.com/platform/apps/the-app/", options );
+				} ) );
+
+				// Correct absolute URI
+				promise = apps.delete( "http://example.com/platform/apps/another-app/" );
+				expect( promise instanceof Promise ).toBe( true );
+				promises.push( promise.then( () => {
+					expect( spy ).toHaveBeenCalledWith( "http://example.com/platform/apps/another-app/", undefined );
+				} ) );
+
+				// Incorrect absolute URI
+				promise = apps.delete( "http://example.com/wrong-uri/the-app/" );
+				expect( promise instanceof Promise ).toBe( true );
+				promises.push( promise.catch( error => {
+					expect( error instanceof Errors.IllegalArgumentError );
+				} ) );
+
+				// Empty URI
+				promise = apps.delete( "" );
+				expect( promise instanceof Promise ).toBe( true );
+				promises.push( promise.catch( error => {
+					expect( error instanceof Errors.IllegalArgumentError );
+				} ) );
+
+				Promise.all( promises ).then( () => {
+					expect( spy ).toHaveBeenCalledTimes( 3 );
+					done();
+				} ).catch( done.fail );
+			} );
 		} );
 
 	} );

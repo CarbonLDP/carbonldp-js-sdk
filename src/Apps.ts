@@ -2,6 +2,7 @@ import * as App from "./App";
 import AppContext from "./App/Context";
 import Context from "./Context";
 import * as Errors from "./Errors";
+import {Options} from "./HTTP/Request";
 import * as PersistedApp from "./PersistedApp";
 import * as Pointer from "./Pointer";
 import * as Response from "./HTTP/Response";
@@ -53,6 +54,14 @@ export class Class {
 			if( ! App.Factory.is( appDocument ) ) throw new Errors.IllegalArgumentError( "The Document is not a `Carbon.App.Class` object." );
 
 			return this.context.documents.createChild( appsContainerURI, slug, appDocument );
+		} );
+	}
+
+	delete( appURI:string, requestOptions?:Options ):Promise<Response.Class> {
+		if( ! appURI ) return Promise.reject<any>( new Errors.IllegalArgumentError( "The application's URI must be defined." ) );
+
+		return this.resolveURI( appURI ).then( ( uri:string ) => {
+			return this.context.documents.delete( uri, requestOptions );
 		} );
 	}
 
