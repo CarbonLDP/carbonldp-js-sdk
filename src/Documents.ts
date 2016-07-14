@@ -630,7 +630,7 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 		return SPARQL.Service.executeRawCONSTRUCTQuery( documentURI, constructQuery, requestOptions );
 	}
 
-	executeRawDESCRIBEQuery( documentURI:string, constructQuery:string, requestOptions:HTTP.Request.Options = {} ):Promise<[ string, HTTP.Response.Class ]> {
+	executeRawDESCRIBEQuery( documentURI:string, describeQuery:string, requestOptions:HTTP.Request.Options = {} ):Promise<[ string, HTTP.Response.Class ]> {
 		if( ! RDF.URI.Util.isAbsolute( documentURI ) ) {
 			if( ! this.context ) throw new Errors.IllegalArgumentError( "This Documents instance doesn't support relative URIs." );
 			documentURI = this.context.resolve( documentURI );
@@ -638,7 +638,18 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 
 		if( this.context && this.context.auth.isAuthenticated() ) this.context.auth.addAuthentication( requestOptions );
 
-		return SPARQL.Service.executeRawDESCRIBEQuery( documentURI, constructQuery, requestOptions );
+		return SPARQL.Service.executeRawDESCRIBEQuery( documentURI, describeQuery, requestOptions );
+	}
+
+	executeUPDATE( documentURI:string, update:string, requestOptions:HTTP.Request.Options = {} ):Promise<HTTP.Response.Class> {
+		if( ! RDF.URI.Util.isAbsolute( documentURI ) ) {
+			if( ! this.context ) throw new Errors.IllegalArgumentError( "This Documents instance doesn't support relative URIs." );
+			documentURI = this.context.resolve( documentURI );
+		}
+
+		if( this.context && this.context.auth.isAuthenticated() ) this.context.auth.addAuthentication( requestOptions );
+
+		return SPARQL.Service.executeUPDATE( documentURI, update, requestOptions );
 	}
 
 	private getRDFDocument( requestURL:string, rdfDocuments:RDF.Document.Class[], response:HTTP.Response.Class ):RDF.Document.Class {
