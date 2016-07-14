@@ -30,7 +30,7 @@ describe( module( "Carbon/PersistedRDFSource" ), ():void => {
 			STATIC,
 			"hasClassProperties",
 			"Returns true if the object provided contains the properties and methods of a `Carbon.PersistedRDFSource.Class` object.", [
-				{name: "object", type: "Object", description: "The object to analise."}
+				{name: "object", type: "Object", description: "The object to analise."},
 			],
 			{type: "boolean"}
 		), ():void => {
@@ -46,8 +46,8 @@ describe( module( "Carbon/PersistedRDFSource" ), ():void => {
 				defaultInteractionModel: null,
 				accessPoints: null,
 				accessControlList: null,
-				createAccessPoint: () => {},
-				getACL: () => {},
+				createAccessPoint: ():void => {},
+				getACL: ():void => {},
 			};
 			expect( PersistedRDFSource.Factory.hasClassProperties( object ) ).toBe( true );
 
@@ -56,7 +56,7 @@ describe( module( "Carbon/PersistedRDFSource" ), ():void => {
 			object.defaultInteractionModel = null;
 
 			delete object.accessPoints;
-			expect( PersistedRDFSource.Factory.hasClassProperties( object ) ).toBe( false );
+			expect( PersistedRDFSource.Factory.hasClassProperties( object ) ).toBe( true );
 			object.accessPoints = null;
 
 			delete object.accessControlList;
@@ -65,25 +65,25 @@ describe( module( "Carbon/PersistedRDFSource" ), ():void => {
 
 			delete object.createAccessPoint;
 			expect( PersistedRDFSource.Factory.hasClassProperties( object ) ).toBe( false );
-			object.createAccessPoint = () => {};
+			object.createAccessPoint = ():void => {};
 
 			delete object.getACL;
 			expect( PersistedRDFSource.Factory.hasClassProperties( object ) ).toBe( false );
-			object.getACL = () => {};
+			object.getACL = ():void => {};
 		} );
 
 		it( hasMethod(
 			STATIC,
 			"decorate",
 			"Decorate the object with the properties and methods of a `Carbon.LDP.PersistedRDFSource.Class` object.", [
-				{name: "document", type: "T extends Carbon.PersistedDocument.Class", description: "The persisted document to decorate."}
+				{name: "document", type: "T extends Carbon.PersistedDocument.Class", description: "The persisted document to decorate."},
 			],
 			{type: "T & Carbon.LDP.PersistedRDFSource.Class"}
 		), ():void => {
 			expect( PersistedACL.Factory.decorate ).toBeDefined();
 			expect( Utils.isFunction( PersistedACL.Factory.decorate ) ).toBe( true );
 
-			let fn:Function = () => {};
+			let fn:Function = ():void => {};
 			let document:any;
 			let rdfSource:PersistedRDFSource.Class;
 
@@ -117,7 +117,7 @@ describe( module( "Carbon/PersistedRDFSource" ), ():void => {
 
 		describe( decoratedObject(
 			"The object decorated by `Carbon.PersistedRDFSource.Factory.decorate()` method.", [
-				"Carbon.PersistedRDFSource.Class"
+				"Carbon.PersistedRDFSource.Class",
 			]
 		), ():void => {
 			let rdfSource:PersistedRDFSource.Class;
@@ -129,7 +129,7 @@ describe( module( "Carbon/PersistedRDFSource" ), ():void => {
 
 			beforeEach( ():void => {
 				class MockContext extends AbstractContext {
-					resolve( uri:string ) { return uri; }
+					resolve( uri:string ):string { return uri; }
 				}
 				let context:AbstractContext = new MockContext();
 				documents = context.documents;
@@ -154,7 +154,7 @@ describe( module( "Carbon/PersistedRDFSource" ), ():void => {
 
 				let accessPoint:AccessPoint.Class = AccessPoint.Factory.create( rdfSource, "http://example.com/" );
 
-				let spy = spyOn( documents, "createAccessPoint" );
+				let spy:jasmine.Spy = spyOn( documents, "createAccessPoint" );
 				rdfSource.createAccessPoint( accessPoint, "slug", {} );
 				expect( spy ).toHaveBeenCalledWith( accessPoint, "slug", {} );
 			} );
@@ -170,102 +170,102 @@ describe( module( "Carbon/PersistedRDFSource" ), ():void => {
 
 				jasmine.Ajax.stubRequest( "http://example.com/resource/~acl/" ).andReturn( {
 					responseHeaders: {
-						"ETag": `"1234567890"`
+						"ETag": `"1234567890"`,
 					},
 					responseText: `[
-					  {
-					    "@graph": [
-					      {
-					        "@id": "_:1",
-					        "@type": [
-					          "https://carbonldp.com/ns/v1/security#AccessControlEntry"
-					        ],
-					        "https://carbonldp.com/ns/v1/security#granting": [
-					          {
-					            "@type": "http://www.w3.org/2001/XMLSchema#boolean",
-					            "@value": "true"
-					          }
-					        ],
-					        "https://carbonldp.com/ns/v1/security#permission": [
-					          {
-					            "@id": "http://example.com/ns#READ"
-					          },
-					          {
-					            "@id": "http://example.com/ns#WRITE"
-					          },
-					          {
-					            "@id": "http://example.com/ns#CREATE"
-					          },
-					          {
-					            "@id": "http://example.com/ns#DELETE"
-					          }
-					        ],
-					        "https://carbonldp.com/ns/v1/security#subject": [
-					          {
-					            "@id": "https://example.com/roles/my-role/"
-					          }
-					        ],
-					        "https://carbonldp.com/ns/v1/security#subjectClass": [
-					          {
-					            "@id": "https://carbonldp.com/ns/v1/security#AppRole"
-					          }
-					        ]
-					      },
-					      {
-					        "@id": "_:2",
-					        "@type": [
-					          "https://carbonldp.com/ns/v1/security#AccessControlEntry"
-					        ],
-					        "https://carbonldp.com/ns/v1/security#granting": [
-					          {
-					            "@type": "http://www.w3.org/2001/XMLSchema#boolean",
-					            "@value": "true"
-					          }
-					        ],
-					        "https://carbonldp.com/ns/v1/security#permission": [
-					          {
-					            "@id": "http://example.com/ns#READ"
-					          },
-					          {
-					            "@id": "http://example.com/ns#WRITE"
-					          }
-					        ],
-					        "https://carbonldp.com/ns/v1/security#subject": [
-					          {
-					            "@id": "https://example.com/roles/my-role/"
-					          }
-					        ],
-					        "https://carbonldp.com/ns/v1/security#subjectClass": [
-					          {
-					            "@id": "https://carbonldp.com/ns/v1/security#AppRole"
-					          }
-					        ]
-					      },
-					      {
-					        "@id": "https://dev.carbonldp.com/apps/test-app/~acl/",
-					        "@type": [
-					          "https://carbonldp.com/ns/v1/security#AccessControlList"
-					        ],
-					        "https://carbonldp.com/ns/v1/security#accessControlEntry": [
-					          {
-					            "@id": "_:1"
-					          }
-					        ],
-					        "https://carbonldp.com/ns/v1/security#accessTo": [
-					          {
-					            "@id": "http://example.com/resource/"
-					          }
-					        ],
-					        "https://carbonldp.com/ns/v1/security#inheritableEntry": [
-					          {
-					            "@id": "_:2"
-					          }
-					        ]
-					      }
-					    ],
-					    "@id": "http://example.com/resource/~acl/"
-					  }
-					]`
+						{
+							"@graph": [
+								{
+									"@id": "_:1",
+									"@type": [
+										"https://carbonldp.com/ns/v1/security#AccessControlEntry"
+									],
+									"https://carbonldp.com/ns/v1/security#granting": [
+										{
+											"@type": "http://www.w3.org/2001/XMLSchema#boolean",
+											"@value": "true"
+										}
+									],
+									"https://carbonldp.com/ns/v1/security#permission": [
+										{
+											"@id": "http://example.com/ns#READ"
+										},
+										{
+											"@id": "http://example.com/ns#WRITE"
+										},
+										{
+											"@id": "http://example.com/ns#CREATE"
+										},
+										{
+											"@id": "http://example.com/ns#DELETE"
+										}
+									],
+									"https://carbonldp.com/ns/v1/security#subject": [
+										{
+											"@id": "https://example.com/roles/my-role/"
+										}
+									],
+									"https://carbonldp.com/ns/v1/security#subjectClass": [
+										{
+											"@id": "https://carbonldp.com/ns/v1/security#AppRole"
+										}
+									]
+								},
+								{
+									"@id": "_:2",
+									"@type": [
+										"https://carbonldp.com/ns/v1/security#AccessControlEntry"
+									],
+									"https://carbonldp.com/ns/v1/security#granting": [
+										{
+											"@type": "http://www.w3.org/2001/XMLSchema#boolean",
+											"@value": "true"
+										}
+									],
+									"https://carbonldp.com/ns/v1/security#permission": [
+										{
+											"@id": "http://example.com/ns#READ"
+										},
+										{
+											"@id": "http://example.com/ns#WRITE"
+										}
+									],
+									"https://carbonldp.com/ns/v1/security#subject": [
+										{
+											"@id": "https://example.com/roles/my-role/"
+										}
+									],
+									"https://carbonldp.com/ns/v1/security#subjectClass": [
+										{
+											"@id": "https://carbonldp.com/ns/v1/security#AppRole"
+										}
+									]
+								},
+								{
+									"@id": "https://dev.carbonldp.com/apps/test-app/~acl/",
+									"@type": [
+										"https://carbonldp.com/ns/v1/security#AccessControlList"
+									],
+									"https://carbonldp.com/ns/v1/security#accessControlEntry": [
+										{
+											"@id": "_:1"
+										}
+									],
+									"https://carbonldp.com/ns/v1/security#accessTo": [
+										{
+											"@id": "http://example.com/resource/"
+										}
+									],
+									"https://carbonldp.com/ns/v1/security#inheritableEntry": [
+										{
+											"@id": "_:2"
+										}
+									]
+								}
+							],
+							"@id": "http://example.com/resource/~acl/"
+						}
+					]`,
 				} );
 
 				rdfSource.getACL().then( ( [ acl, response ]:[ PersistedACL.Class, HTTP.Response.Class ] ) => {

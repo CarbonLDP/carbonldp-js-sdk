@@ -25,7 +25,6 @@ export class Factory {
 		return Utils.hasPropertyDefined( object, "created" )
 			&& Utils.hasPropertyDefined( object, "modified" )
 			&& Utils.hasPropertyDefined( object, "defaultInteractionModel" )
-			&& Utils.hasPropertyDefined( object, "accessPoints" )
 			&& Utils.hasPropertyDefined( object, "accessControlList" )
 			&& Utils.hasFunction( object, "createAccessPoint" )
 			&& Utils.hasFunction( object, "getACL" )
