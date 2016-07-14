@@ -11,7 +11,7 @@ export interface Class extends PersistedDocument.Class {
 	created:Date;
 	modified:Date;
 	defaultInteractionModel:Pointer.Class;
-	accessPoints:Pointer.Class[];
+	accessPoints?:Pointer.Class[];
 	accessControlList:Pointer.Class;
 
 	createAccessPoint( accessPoint:AccessPoint.Class, slug?:string, requestOptions?:HTTP.Request.Options ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
