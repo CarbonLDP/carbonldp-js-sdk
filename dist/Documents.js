@@ -257,10 +257,11 @@ var Documents = (function () {
                 throw new HTTP.Errors.BadResponseError("The response is missing a Location header.", response);
             if (locationHeader.values.length !== 1)
                 throw new HTTP.Errors.BadResponseError("The response contains more than one Location header.", response);
-            var locationURI = locationHeader.values[0].toString();
-            var pointer = _this.getPointer(locationURI);
+            var localID = _this.getPointerID(locationHeader.values[0].toString());
+            var _accessPoint = _this.createPointerFrom(accessPoint, localID);
+            _this.pointers.set(localID, _accessPoint);
             return [
-                pointer,
+                _accessPoint,
                 response,
             ];
         });

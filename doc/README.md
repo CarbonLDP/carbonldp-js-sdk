@@ -2244,7 +2244,7 @@ Retrieves all the children of a document and their content, where you can specif
 
 ##### createAccessPoint
 ```typescript 
-createAccessPoint( documentURI:string,  accessPoint:Carbon.AccessPoint.Class,  slug?:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[Carbon.Pointer.Class, Carbon.HTTP.Response.Class]>
+createAccessPoint( documentURI:string,  accessPoint:Carbon.AccessPoint.Class,  slug?:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[Carbon.AccessPoint.Class, Carbon.HTTP.Response.Class]>
 ```
 
 Create an AccessPoint of the document.
@@ -2257,7 +2257,7 @@ Create an AccessPoint of the document.
 - requestOptions
 
 ```typescript 
-createAccessPoint( accessPoint:Carbon.AccessPoint.Class,  slug?:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[Carbon.Pointer.Class, Carbon.HTTP.Response.Class]>
+createAccessPoint( accessPoint:Carbon.AccessPoint.Class,  slug?:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[Carbon.AccessPoint.Class, Carbon.HTTP.Response.Class]>
 ```
 
 Create an AccessPoint of the document.

@@ -260,9 +260,9 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 		} );
 	}
 
-	createAccessPoint( documentURI:string, accessPoint:AccessPoint.Class, slug?:string, requestOptions?:HTTP.Request.Options ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
-	createAccessPoint( accessPoint:AccessPoint.Class, slug?:string, requestOptions?:HTTP.Request.Options ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
-	createAccessPoint( documentURIOrAccessPoint:any, accessPointOrSlug:any, slugOrRequestOptions:any = null, requestOptions:HTTP.Request.Options = {} ):Promise<[ Pointer.Class, HTTP.Response.Class ]> {
+	createAccessPoint( documentURI:string, accessPoint:AccessPoint.Class, slug?:string, requestOptions?:HTTP.Request.Options ):Promise<[ AccessPoint.Class, HTTP.Response.Class ]>;
+	createAccessPoint( accessPoint:AccessPoint.Class, slug?:string, requestOptions?:HTTP.Request.Options ):Promise<[ AccessPoint.Class, HTTP.Response.Class ]>;
+	createAccessPoint( documentURIOrAccessPoint:any, accessPointOrSlug:any, slugOrRequestOptions:any = null, requestOptions:HTTP.Request.Options = {} ):Promise<[ AccessPoint.Class, HTTP.Response.Class ]> {
 		let documentURI:string = Utils.isString( documentURIOrAccessPoint ) ? documentURIOrAccessPoint : null;
 		let accessPoint:AccessPoint.Class = ! Utils.isString( documentURIOrAccessPoint ) ? documentURIOrAccessPoint : accessPointOrSlug;
 		let slug:string = Utils.isString( accessPointOrSlug ) ? accessPointOrSlug : slugOrRequestOptions;
@@ -295,13 +295,12 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 			if( locationHeader === null || locationHeader.values.length < 1 ) throw new HTTP.Errors.BadResponseError( "The response is missing a Location header.", response );
 			if( locationHeader.values.length !== 1 ) throw new HTTP.Errors.BadResponseError( "The response contains more than one Location header.", response );
 
-			let locationURI:string = locationHeader.values[ 0 ].toString();
-
-			// TODO: If a Document was supplied, use it to create the pointer instead of creating a new one
-			let pointer:Pointer.Class = this.getPointer( locationURI );
+			let localID:string = this.getPointerID( locationHeader.values[ 0 ].toString() );
+			let _accessPoint:AccessPoint.Class = this.createPointerFrom( accessPoint, localID );
+			this.pointers.set( localID, _accessPoint );
 
 			return [
-				pointer,
+				_accessPoint,
 				response,
 			];
 		} );
