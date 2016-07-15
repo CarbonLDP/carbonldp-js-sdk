@@ -2220,9 +2220,9 @@ Returns a JSON string from the document using the default ObjectSchema
 
 #### <a name="Carbon-Documents-Methods" />Methods
 
-##### get
+##### get&lt;T extends Carbon.PersistedDocument.Class&gt;
 ```typescript 
-get( uri:string ):Promise<[ Carbon.PersistedDocument.Class, HTTP.Response.Class ]>
+get&lt;T extends Carbon.PersistedDocument.Class&gt;( uri:string ):Promise<[ T, HTTP.Response.Class ]>
 ```
 
 
@@ -2292,9 +2292,21 @@ Remove all the members of the document container specified.
 - documentURI: URI of the document container where to remove the members.
 - requestOptions
 
-##### refresh
+##### save&lt;T extends Carbon.PersistedDocument.Class&gt;
 ```typescript 
-refresh( persistedDocument:Carbon.PersistedDocument.Class,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.PersistedDocument.Class, Carbon.HTTP.Response ]>
+save&lt;T extends Carbon.PersistedDocument.Class&gt;( persistedDocument:T,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ T, Carbon.HTTP.Response.Class ]>
+```
+
+Update the data of the document provided in the server.
+
+*Parameters*
+
+- persistedDocument: The persisted document with the data to update in the server.
+- requestOptions: Customisable options for the request.
+
+##### refresh&lt;T extends Carbon.PersistedDocument.Class&gt;
+```typescript 
+refresh&lt;T extends Carbon.PersistedDocument.Class&gt;( persistedDocument:T,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ T, Carbon.HTTP.Response ]>
 ```
 
 Update the document with the data of the server, if there is a different version on it.
@@ -7266,16 +7278,16 @@ Returns null if the URI is not inside scope of the PersistedDocument.
 
 - id
 
-##### refresh
+##### refresh&lt;T extends Carbon.PersistedDocument.Class&gt;
 ```typescript 
-refresh():Promise<void>
+refresh&lt;T extends Carbon.PersistedDocument.Class&gt;():Promise<[ T, Carbon.HTTP.Response.Class]>
 ```
 
 Sync the PersistedDocument with the data in the server.
 
-##### save
+##### save&lt;T extends Carbon.PersistedDocument.Class&gt;
 ```typescript 
-save():Promise<[ Carbon.PersistedDocument.Class, HTTP.Response.Class ]>
+save&lt;T extends Carbon.PersistedDocument.Class&gt;():Promise<[ T, Carbon.HTTP.Response.Class ]>
 ```
 
 Save the PersistedDocument to the server.
@@ -7515,9 +7527,9 @@ Create a Pointer object with id if provided.
 
 - id
 
-##### decorate
+##### decorate&lt;T extends Object&gt;
 ```typescript 
-static decorate( object:T extends Object ):T & Carbon.Pointer.Class
+static decorate&lt;T extends Object&gt;( object:T ):T & Carbon.Pointer.Class
 ```
 
 Decorates the object provided with the elements of a Pointer object.
@@ -7558,9 +7570,9 @@ isResolved():boolean
 
 Returns true if the pointer has been resolved. It checks the `_resolved` property.
 
-##### resolve
+##### resolve&lt;T extends Carbon.PersistedDocument.Class&gt;
 ```typescript 
-resolve()
+resolve&lt;T extends Carbon.PersistedDocument.Class&gt;():Promise<[ T, Carbon.HTTP.Response.Class ]>
 ```
 
 Resolve the pointer. This function throw an Error, it should be reimplemented for the respective type of pointer.

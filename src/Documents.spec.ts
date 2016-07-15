@@ -55,9 +55,9 @@ describe( module( "Carbon/Documents" ), ():void => {
 			expect( Documents ).toBeDefined();
 		} );
 
-		it( hasMethod( INSTANCE, "get", [
+		it( hasMethod( INSTANCE, "get<T extends Carbon.PersistedDocument.Class>", [
 			{name: "uri", type: "string"},
-		], {type: "Promise<[ Carbon.PersistedDocument.Class, HTTP.Response.Class ]>"} ), ( done:(() => void) & { fail:( error?:any ) => void } ):void => {
+		], {type: "Promise<[ T, HTTP.Response.Class ]>"} ), ( done:(() => void) & { fail:( error?:any ) => void } ):void => {
 			let promises:Promise<any>[] = [];
 
 			class MockedContext extends AbstractContext {
@@ -2646,12 +2646,48 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 		it( hasMethod(
 			INSTANCE,
-			"refresh",
+			"save<T extends Carbon.PersistedDocument.Class>",
+			"Update the data of the document provided in the server.", [
+				{name: "persistedDocument", type: "T", description: "The persisted document with the data to update in the server."},
+				{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customisable options for the request."},
+			],
+			{type: "Promise<[ T, Carbon.HTTP.Response.Class ]>"}
+		), ( done:{ ():void, fail:() => void } ):void => {
+			class MockedContext extends AbstractContext {
+				resolve( uri:string ):string {
+					return uri;
+				}
+			}
+			let context:MockedContext = new MockedContext();
+			let documents:Documents = context.documents;
+
+			expect( documents.refresh ).toBeDefined();
+			expect( Utils.isFunction( documents.refresh ) ).toBe( true );
+
+			jasmine.Ajax.stubRequest( "http://example.com/resource/", null, "PUT" ).andReturn( {
+				status: 200,
+				responseHeaders: {
+					"ETag": `"0123456789"`,
+				},
+			} );
+			let persistedDocument:PersistedDocument.Class = PersistedDocument.Factory.create( "http://example.com/resource/", documents );
+
+			documents.save( persistedDocument ).then( ( [ _document, response ]:[ PersistedDocument.Class, HTTP.Response.Class ] ) => {
+				expect( _document ).toBe( persistedDocument );
+				expect( response ).toEqual( jasmine.any( HTTP.Response.Class ) );
+
+				done();
+			} ).catch( done.fail );
+		} );
+
+		it( hasMethod(
+			INSTANCE,
+			"refresh<T extends Carbon.PersistedDocument.Class>",
 			"Update the document with the data of the server, if there is a different version on it.", [
-				{name: "persistedDocument", type: "Carbon.PersistedDocument.Class", description: "The persisted document to update."},
+				{name: "persistedDocument", type: "T", description: "The persisted document to update."},
 				{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true}
 			],
-			{type: "Promise<[ Carbon.PersistedDocument.Class, Carbon.HTTP.Response ]>"}
+			{type: "Promise<[ T, Carbon.HTTP.Response ]>"}
 		), ( done:{ ():void, fail:() => void } ):void => {
 			class MockedContext extends AbstractContext {
 				resolve( uri:string ):string {

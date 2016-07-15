@@ -19,7 +19,7 @@ declare class Documents implements Pointer.Library, Pointer.Validator, ObjectSch
     inScope(id: string): boolean;
     hasPointer(id: string): boolean;
     getPointer(id: string): Pointer.Class;
-    get(uri: string, requestOptions?: HTTP.Request.Options): Promise<[PersistedDocument.Class, HTTP.Response.Class]>;
+    get<T extends PersistedDocument.Class>(uri: string, requestOptions?: HTTP.Request.Options): Promise<[T, HTTP.Response.Class]>;
     exists(documentURI: string, requestOptions?: HTTP.Request.Options): Promise<[boolean, HTTP.Response.Class]>;
     createChild(parentURI: string, slug: string, childDocument: Document.Class, requestOptions?: HTTP.Request.Options): Promise<[Pointer.Class, HTTP.Response.Class]>;
     createChild(parentURI: string, childDocument: Document.Class, requestOptions?: HTTP.Request.Options): Promise<[Pointer.Class, HTTP.Response.Class]>;
@@ -47,8 +47,8 @@ declare class Documents implements Pointer.Library, Pointer.Validator, ObjectSch
     removeMember(documentURI: string, memberURI: string, requestOptions?: HTTP.Request.Options): Promise<HTTP.Response.Class>;
     removeMembers(documentURI: string, members: (Pointer.Class | string)[], requestOptions?: HTTP.Request.Options): Promise<HTTP.Response.Class>;
     removeAllMembers(documentURI: string, requestOptions?: HTTP.Request.Options): Promise<HTTP.Response.Class>;
-    save(persistedDocument: PersistedDocument.Class, requestOptions?: HTTP.Request.Options): Promise<[PersistedDocument.Class, HTTP.Response.Class]>;
-    refresh(persistedDocument: PersistedDocument.Class, requestOptions?: HTTP.Request.Options): Promise<[PersistedDocument.Class, HTTP.Response.Class]>;
+    save<T extends PersistedDocument.Class>(persistedDocument: T, requestOptions?: HTTP.Request.Options): Promise<[T, HTTP.Response.Class]>;
+    refresh<T extends PersistedDocument.Class>(persistedDocument: T, requestOptions?: HTTP.Request.Options): Promise<[T, HTTP.Response.Class]>;
     delete(documentURI: string, requestOptions?: HTTP.Request.Options): Promise<HTTP.Response.Class>;
     getDownloadURL(documentURI: string, requestOptions?: HTTP.Request.Options): Promise<string>;
     getSchemaFor(object: Object): ObjectSchema.DigestedObjectSchema;

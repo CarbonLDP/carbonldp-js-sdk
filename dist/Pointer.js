@@ -1,6 +1,6 @@
 "use strict";
-var Utils = require("./Utils");
 var Errors = require("./Errors");
+var Utils = require("./Utils");
 var Factory = (function () {
     function Factory() {
     }

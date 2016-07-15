@@ -417,9 +417,9 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 
 			it( hasMethod(
 				INSTANCE,
-				"refresh",
+				"refresh<T extends Carbon.PersistedDocument.Class>",
 				"Sync the PersistedDocument with the data in the server.",
-				{type: "Promise<void>"}
+				{type: "Promise<[ T, Carbon.HTTP.Response.Class]>"}
 			), ():void => {
 				expect( document.refresh ).toBeDefined();
 				expect( Utils.isFunction( document.refresh ) ).toBe( true );
@@ -431,9 +431,9 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 
 			it( hasMethod(
 				INSTANCE,
-				"save",
+				"save<T extends Carbon.PersistedDocument.Class>",
 				"Save the PersistedDocument to the server.",
-				{type: "Promise<[ Carbon.PersistedDocument.Class, HTTP.Response.Class ]>"}
+				{type: "Promise<[ T, Carbon.HTTP.Response.Class ]>"}
 			), ():void => {
 				expect( document.save ).toBeDefined();
 				expect( Utils.isFunction( document.save ) ).toBe( true );

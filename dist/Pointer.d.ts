@@ -1,10 +1,11 @@
 import * as HTTP from "./HTTP";
+import * as PersistedDocument from "./PersistedDocument";
 export interface Class {
     _id: string;
     _resolved: boolean;
     id: string;
     isResolved(): boolean;
-    resolve(): Promise<[Class, HTTP.Response.Class]>;
+    resolve<T extends PersistedDocument.Class>(): Promise<[T, HTTP.Response.Class]>;
 }
 export interface Library {
     hasPointer(id: string): boolean;

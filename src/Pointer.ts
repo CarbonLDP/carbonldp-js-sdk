@@ -1,6 +1,7 @@
-import * as HTTP from "./HTTP";
-import * as Utils from "./Utils";
 import * as Errors from "./Errors";
+import * as HTTP from "./HTTP";
+import * as PersistedDocument from "./PersistedDocument";
+import * as Utils from "./Utils";
 
 export interface Class {
 	_id:string;
@@ -8,7 +9,7 @@ export interface Class {
 
 	id:string;
 	isResolved():boolean;
-	resolve():Promise<[ Class, HTTP.Response.Class ]>;
+	resolve<T extends PersistedDocument.Class>():Promise<[ T, HTTP.Response.Class ]>;
 }
 
 export interface Library {

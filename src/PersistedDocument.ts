@@ -32,8 +32,8 @@ export interface Class extends Pointer.Class, PersistedResource.Class, Document.
 	createNamedFragment( slug:string ):PersistedNamedFragment.Class;
 	createNamedFragment<T extends Object>( slug:string, object:T ):PersistedNamedFragment.Class & T;
 
-	refresh():Promise<[Class, HTTP.Response.Class]>;
-	save():Promise<[Class, HTTP.Response.Class]>;
+	refresh<T extends Class>():Promise<[T, HTTP.Response.Class]>;
+	save<T extends Class>():Promise<[T, HTTP.Response.Class]>;
 	destroy():Promise<HTTP.Response.Class>;
 
 	getDownloadURL():Promise<string>;
@@ -98,10 +98,10 @@ function extendCreateNamedFragment( superFunction:( slug:string, object?:Object 
 	};
 }
 
-function refresh():Promise<[Class, HTTP.Response.Class]> {
+function refresh<T extends Class>():Promise<[T, HTTP.Response.Class]> {
 	return this._documents.refresh( this );
 }
-function save():Promise<void> {
+function save<T extends Class>():Promise<[T, HTTP.Response.Class]> {
 	return this._documents.save( this );
 }
 function destroy():Promise<HTTP.Response.Class> {

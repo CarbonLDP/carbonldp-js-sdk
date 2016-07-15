@@ -4,7 +4,6 @@ import {
 
 	module,
 	clazz,
-	method,
 
 	isDefined,
 	hasMethod,
@@ -38,7 +37,7 @@ describe( module( "Carbon/Pointer" ), ():void => {
 			STATIC,
 			"hasClassProperties",
 			"Returns true if the object provided has the properties and functions of a Pointer object", [
-				{name: "resource", type: "Object"}
+				{name: "resource", type: "Object"},
 			],
 			{type: "boolean"}
 		), ():void => {
@@ -52,8 +51,8 @@ describe( module( "Carbon/Pointer" ), ():void => {
 				_id: null,
 				_resolved: null,
 				id: null,
-				isResolved: () => {},
-				resolve: () => {},
+				isResolved: ():void => {},
+				resolve: ():void => {},
 			};
 			expect( Pointer.Factory.hasClassProperties( pointer ) ).toBe( true );
 
@@ -71,18 +70,18 @@ describe( module( "Carbon/Pointer" ), ():void => {
 
 			delete pointer.isResolved;
 			expect( Pointer.Factory.hasClassProperties( pointer ) ).toBe( false );
-			pointer.isResolved = () => null;
+			pointer.isResolved = ():void => {};
 
 			delete pointer.resolve;
 			expect( Pointer.Factory.hasClassProperties( pointer ) ).toBe( false );
-			pointer.resolve = () => null;
+			pointer.resolve = ():void => {};
 		} );
 
 		it( hasMethod(
 			STATIC,
 			"is",
 			"Returns true if the value provided is a Pinter object.", [
-				{name: "value", type: "any"}
+				{name: "value", type: "any"},
 			],
 			{type: "boolean"}
 		), ():void => {
@@ -95,12 +94,12 @@ describe( module( "Carbon/Pointer" ), ():void => {
 			expect( Pointer.Factory.is( 100 ) ).toBe( false );
 			expect( Pointer.Factory.is( {} ) ).toBe( false );
 
-			let value = {};
+			let value:any = {};
 			value[ "_id" ] = null;
 			value[ "_resolved" ] = null;
 			value[ "id" ] = null;
-			value[ "isResolved" ] = () => null;
-			value[ "resolve" ] = () => null;
+			value[ "isResolved" ] = ():void => {};
+			value[ "resolve" ] = ():void => {};
 			expect( Pointer.Factory.is( value ) ).toBe( true );
 		} );
 
@@ -108,7 +107,7 @@ describe( module( "Carbon/Pointer" ), ():void => {
 			STATIC,
 			"create",
 			"Create a Pointer object with id if provided.", [
-				{name: "id", type: "string", optional: true}
+				{name: "id", type: "string", optional: true},
 			],
 			{type: "Carbon.Pointer.Class"}
 		), ():void => {
@@ -130,18 +129,17 @@ describe( module( "Carbon/Pointer" ), ():void => {
 
 		it( hasMethod(
 			STATIC,
-			"decorate",
+			"decorate<T extends Object>",
 			"Decorates the object provided with the elements of a Pointer object.", [
-				{name: "object", type: "T extends Object"}
+				{name: "object", type: "T"},
 			],
 			{type: "T & Carbon.Pointer.Class"}
 		), ():void => {
 			expect( Pointer.Factory.decorate ).toBeDefined();
 			expect( Utils.isFunction( Pointer.Factory.decorate ) ).toBe( true );
 
-
 			interface MyResource {
-				myProperty?:string
+				myProperty?:string;
 			}
 			let pointer:Pointer.Class & MyResource;
 
@@ -162,13 +160,13 @@ describe( module( "Carbon/Pointer" ), ():void => {
 
 		describe( decoratedObject(
 			"Object decorated by the Carbon.Pointer.Factory.decorate function.", [
-				"Carbon.Pointer.Class"
+				"Carbon.Pointer.Class",
 			]
 		), ():void => {
 			let pointer:Pointer.Class;
 
 			beforeEach( ():void => {
-				pointer = Pointer.Factory.create( "http://example.com/pointer/" )
+				pointer = Pointer.Factory.create( "http://example.com/pointer/" );
 			} );
 
 			it( hasProperty(
@@ -227,8 +225,9 @@ describe( module( "Carbon/Pointer" ), ():void => {
 
 			it( hasMethod(
 				INSTANCE,
-				"resolve",
-				"Resolve the pointer. This function throw an Error, it should be reimplemented for the respective type of pointer."
+				"resolve<T extends Carbon.PersistedDocument.Class>",
+				"Resolve the pointer. This function throw an Error, it should be reimplemented for the respective type of pointer.",
+				{type: "Promise<[ T, Carbon.HTTP.Response.Class ]>"}
 			), ( done:{ ():void, fail:() => void } ):void => {
 				expect( pointer.resolve ).toBeDefined();
 				expect( Utils.isFunction( pointer.resolve ) ).toBe( true );
@@ -282,7 +281,7 @@ describe( module( "Carbon/Pointer" ), ():void => {
 			STATIC,
 			"getIDs",
 			"Returns an array of string with the IDs of every pointer in the array of pointers provided.", [
-				{name: "pointers", type: "Carbon.Pointer.Class[]", description: "The array of pointers to obtains theirs IDs."}
+				{name: "pointers", type: "Carbon.Pointer.Class[]", description: "The array of pointers to obtains theirs IDs."},
 			],
 			{type: "string[]"}
 		), ():void => {
@@ -304,7 +303,7 @@ describe( module( "Carbon/Pointer" ), ():void => {
 			STATIC,
 			"resolveAll",
 			"Resolve all the pointers of the array of pointers provided.", [
-				{name: "pointers", type: "Carbon.Pointer.Class[]", description: "The array of pointers to be resolved"}
+				{name: "pointers", type: "Carbon.Pointer.Class[]", description: "The array of pointers to be resolved"},
 			],
 			{type: "[ Carbon.Pointers.Class[], Carbon.HTTP.Response.Class[] ]"}
 		), ( done:{ ():void, fail:() => void } ):void => {
@@ -320,13 +319,13 @@ describe( module( "Carbon/Pointer" ), ():void => {
 			let promise:Promise<[ Pointer.Class[], any[] ]> = Pointer.Util.resolveAll( pointers );
 			expect( promise instanceof Promise ).toBe( true );
 
-			promise.then( ( [ pointers, responses ]:[ Pointer.Class[], any[] ] ) => {
-				expect( pointers.length ).toBe( 3 );
+			promise.then( ( [ _pointers, responses ]:[ Pointer.Class[], any[] ] ) => {
+				expect( _pointers.length ).toBe( 3 );
 				expect( responses.length ).toBe( 3 );
 
-				expect( pointers[ 0 ].id ).toBe( "http://example.com/resolved/pointer/" );
-				expect( pointers[ 1 ].id ).toBe( "http://example.com/resolved/pointer/" );
-				expect( pointers[ 2 ].id ).toBe( "http://example.com/resolved/pointer/" );
+				expect( _pointers[ 0 ].id ).toBe( "http://example.com/resolved/pointer/" );
+				expect( _pointers[ 1 ].id ).toBe( "http://example.com/resolved/pointer/" );
+				expect( _pointers[ 2 ].id ).toBe( "http://example.com/resolved/pointer/" );
 
 				expect( responses[ 0 ] ).toBeNull();
 				expect( responses[ 1 ] ).toBeNull();
