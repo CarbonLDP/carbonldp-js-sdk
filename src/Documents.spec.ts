@@ -331,6 +331,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 					expect( documents.hasPointer( "parent-resource/new-resource/" ) ).toBe( true );
 				} ) );
 
+				promises.push( documents.createChild( "http://example.com/parent-resource/", childDocument ).catch( error => {
+					expect( error ).toEqual( jasmine.any( Errors.IllegalArgumentError ) );
+				} ) );
+
 				Promise.all( promises ).then( ():void => {
 					done();
 				}, ( error:Error ):void => {
@@ -354,7 +358,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 				class MockedContext extends AbstractContext {
 					resolve( uri:string ):string {
-						return uri;
+						return URI.Util.isRelative( uri ) ? "http://example.com/" + uri : uri;
 					}
 				}
 
@@ -419,10 +423,16 @@ describe( module( "Carbon/Documents" ), ():void => {
 					},
 				} );
 
-				promises.push( documents.createChild( "http://example.com/parent-resource/", "child-document", childDocument ).then( ( response:any ):void => {
-					expect( response ).toBeDefined();
+				promises.push( documents.createChild( "http://example.com/parent-resource/", "child-document", childDocument ).then( ( [ document, response ]:[ Document.Class, HTTP.Response.Class ] ):void => {
+					expect( response ).toEqual( jasmine.any( HTTP.Response.Class ) );
 
-					// TODO: Finish assertions
+					expect( document ).toBe( childDocument );
+					expect( document.id ).toBe( "http://example.com/parent-resource/new-resource/" );
+					expect( documents.hasPointer( "parent-resource/new-resource/" ) ).toBe( true );
+				} ) );
+
+				promises.push( documents.createChild( "http://example.com/parent-resource/", "child-document", childDocument ).catch( error => {
+					expect( error ).toEqual( jasmine.any( Errors.IllegalArgumentError ) );
 				} ) );
 
 				Promise.all( promises ).then( ():void => {
@@ -447,7 +457,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 				class MockedContext extends AbstractContext {
 					resolve( uri:string ):string {
-						return uri;
+						return URI.Util.isRelative( uri ) ? "http://example.com/" + uri : uri;
 					}
 				}
 
@@ -518,10 +528,16 @@ describe( module( "Carbon/Documents" ), ():void => {
 					},
 				} );
 
-				promises.push( documents.createChild( "http://example.com/parent-resource/", childObject ).then( ( [ pointer, response ]:[Pointer.Class, HTTP.Response.Class] ):void => {
-					expect( Pointer.Factory.is( pointer ) ).toBe( true );
+				promises.push( documents.createChild( "http://example.com/parent-resource/", childObject ).then( ( [ document, response ]:[ Document.Class, HTTP.Response.Class ] ):void => {
+					expect( response ).toEqual( jasmine.any( HTTP.Response.Class ) );
 
-					// TODO: Finish assertions
+					expect( document ).toBe( childObject );
+					expect( document.id ).toBe( "http://example.com/parent-resource/new-resource/" );
+					expect( documents.hasPointer( "parent-resource/new-resource/" ) ).toBe( true );
+				} ) );
+
+				promises.push( documents.createChild( "http://example.com/parent-resource/", childObject ).catch( error => {
+					expect( error ).toEqual( jasmine.any( Errors.IllegalArgumentError ) );
 				} ) );
 
 				Promise.all( promises ).then( ():void => {
@@ -547,7 +563,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 				class MockedContext extends AbstractContext {
 					resolve( uri:string ):string {
-						return uri;
+						return URI.Util.isRelative( uri ) ? "http://example.com/" + uri : uri;
 					}
 				}
 
@@ -618,9 +634,20 @@ describe( module( "Carbon/Documents" ), ():void => {
 					},
 				} );
 
-				promises.push( documents.createChild( "http://example.com/parent-resource/", "child-document", childObject ).then( ( response:any ):void => {
-					expect( response ).toBeDefined();
-					// TODO: Finish assertions
+				promises.push( documents.createChild( "http://example.com/parent-resource/", "child-document", childObject ).then( ( [ document, response ]:[ Document.Class, HTTP.Response.Class ] ):void => {
+					expect( response ).toEqual( jasmine.any( HTTP.Response.Class ) );
+
+					expect( document ).toBe( childObject );
+					expect( document.id ).toBe( "http://example.com/parent-resource/new-resource/" );
+					expect( documents.hasPointer( "parent-resource/new-resource/" ) ).toBe( true );
+				} ) );
+
+				promises.push( documents.createChild( "http://example.com/parent-resource/", "child-document", childObject ).catch( error => {
+					expect( error ).toEqual( jasmine.any( Errors.IllegalArgumentError ) );
+				} ) );
+
+				promises.push( documents.createChild( "http://example.com/parent-resource/", "child-document", childObject ).catch( error => {
+					expect( error ).toEqual( jasmine.any( Errors.IllegalArgumentError ) );
 				} ) );
 
 				Promise.all( promises ).then( ():void => {
@@ -1324,6 +1351,11 @@ describe( module( "Carbon/Documents" ), ():void => {
 				promise = documents.createAccessPoint( "http://example.com/parent-resource/", accessPoint );
 				expect( promise instanceof Promise ).toBe( true );
 				promises.push( promise.then( callSuccess( accessPoint ) ) );
+
+				// Trying to persists the same accessPoint
+				promise = documents.createAccessPoint( "http://example.com/parent-resource/", accessPoint );
+				expect( promise instanceof Promise ).toBe( true );
+				promises.push( promise.catch( spy.fail ) );
 
 				promise = documents.createAccessPoint( "http://example.com/the-bad-parent-resource/", accessPoint );
 				expect( promise instanceof Promise ).toBe( true );

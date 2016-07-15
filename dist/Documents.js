@@ -139,7 +139,16 @@ var Documents = (function () {
         var body = childDocument.toJSON(this, this.jsonldConverter);
         if (slug !== null)
             HTTP.Request.Util.setSlug(slug, requestOptions);
+        if (childDocument["__CarbonSDK_InProgressOfPersisting"])
+            Promise.reject(new Errors.IllegalArgumentError("The childDocument is already being persisted."));
+        Object.defineProperty(childDocument, "__CarbonSDK_InProgressOfPersisting", {
+            configurable: true,
+            enumerable: false,
+            writable: false,
+            value: true,
+        });
         return HTTP.Request.Service.post(parentURI, body, requestOptions).then(function (response) {
+            delete childDocument["__CarbonSDK_InProgressOfPersisting"];
             var locationHeader = response.getHeader("Location");
             if (locationHeader === null || locationHeader.values.length < 1)
                 throw new HTTP.Errors.BadResponseError("The response is missing a Location header.", response);
@@ -251,7 +260,16 @@ var Documents = (function () {
         var body = accessPoint.toJSON(this, this.jsonldConverter);
         if (slug !== null)
             HTTP.Request.Util.setSlug(slug, requestOptions);
+        if (accessPoint["__CarbonSDK_InProgressOfPersisting"])
+            Promise.reject(new Errors.IllegalArgumentError("The accessPoint is already being persisted."));
+        Object.defineProperty(accessPoint, "__CarbonSDK_InProgressOfPersisting", {
+            configurable: true,
+            enumerable: false,
+            writable: false,
+            value: true,
+        });
         return HTTP.Request.Service.post(documentURI, body, requestOptions).then(function (response) {
+            delete accessPoint["__CarbonSDK_InProgressOfPersisting"];
             var locationHeader = response.getHeader("Location");
             if (locationHeader === null || locationHeader.values.length < 1)
                 throw new HTTP.Errors.BadResponseError("The response is missing a Location header.", response);

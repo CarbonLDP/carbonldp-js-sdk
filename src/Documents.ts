@@ -21,7 +21,6 @@ import * as LDP from "./LDP";
 import * as SPARQL from "./SPARQL";
 import * as Resource from "./Resource";
 import * as RetrievalPreferences from "./RetrievalPreferences";
-import {request} from "http";
 
 class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Resolver {
 	_jsonldConverter:JSONLDConverter.Class;
@@ -169,7 +168,16 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 
 		if( slug !== null ) HTTP.Request.Util.setSlug( slug, requestOptions );
 
+		if( childDocument[ "__CarbonSDK_InProgressOfPersisting" ] ) Promise.reject<any>( new Errors.IllegalArgumentError( "The childDocument is already being persisted." ) );
+		Object.defineProperty( childDocument, "__CarbonSDK_InProgressOfPersisting", {
+			configurable: true,
+			enumerable: false,
+			writable: false,
+			value: true,
+		} );
 		return HTTP.Request.Service.post( parentURI, body, requestOptions ).then( ( response:HTTP.Response.Class ) => {
+			delete childDocument[ "__CarbonSDK_InProgressOfPersisting" ];
+
 			let locationHeader:HTTP.Header.Class = response.getHeader( "Location" );
 			if( locationHeader === null || locationHeader.values.length < 1 ) throw new HTTP.Errors.BadResponseError( "The response is missing a Location header.", response );
 			if( locationHeader.values.length !== 1 ) throw new HTTP.Errors.BadResponseError( "The response contains more than one Location header.", response );
@@ -290,7 +298,16 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 
 		if( slug !== null ) HTTP.Request.Util.setSlug( slug, requestOptions );
 
+		if( accessPoint[ "__CarbonSDK_InProgressOfPersisting" ] ) Promise.reject<any>( new Errors.IllegalArgumentError( "The accessPoint is already being persisted." ) );
+		Object.defineProperty( accessPoint, "__CarbonSDK_InProgressOfPersisting", {
+			configurable: true,
+			enumerable: false,
+			writable: false,
+			value: true,
+		} );
 		return HTTP.Request.Service.post( documentURI, body, requestOptions ).then( ( response:HTTP.Response.Class ) => {
+			delete accessPoint[ "__CarbonSDK_InProgressOfPersisting" ];
+
 			let locationHeader:HTTP.Header.Class = response.getHeader( "Location" );
 			if( locationHeader === null || locationHeader.values.length < 1 ) throw new HTTP.Errors.BadResponseError( "The response is missing a Location header.", response );
 			if( locationHeader.values.length !== 1 ) throw new HTTP.Errors.BadResponseError( "The response contains more than one Location header.", response );
