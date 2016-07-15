@@ -18,6 +18,17 @@ function createChild(slugOrObject, object) {
         return this._documents.createChild(this.id, object);
     }
 }
+function createChildAndRetrieve(slugOrObject, object) {
+    var slug = Utils.isString(slugOrObject) ? slugOrObject : null;
+    object = Utils.isString(slugOrObject) ? object : slugOrObject;
+    object = object || {};
+    if (slug) {
+        return this._documents.createChildAndRetrieve(this.id, slug, object);
+    }
+    else {
+        return this._documents.createChildAndRetrieve(this.id, object);
+    }
+}
 function listChildren() {
     return this._documents.listChildren(this.id);
 }
@@ -60,6 +71,7 @@ var Factory = (function () {
             && Utils.hasFunction(document, "addMember")
             && Utils.hasFunction(document, "addMembers")
             && Utils.hasFunction(document, "createChild")
+            && Utils.hasFunction(document, "createChildAndRetrieve")
             && Utils.hasFunction(document, "listChildren")
             && Utils.hasFunction(document, "getChildren")
             && Utils.hasFunction(document, "listMembers")
@@ -91,6 +103,12 @@ var Factory = (function () {
                 enumerable: false,
                 configurable: true,
                 value: createChild,
+            },
+            "createChildAndRetrieve": {
+                writable: false,
+                enumerable: false,
+                configurable: true,
+                value: createChildAndRetrieve,
             },
             "listChildren": {
                 writable: false,

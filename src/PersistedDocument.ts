@@ -140,23 +140,23 @@ function executeUPDATE( updateQuery:string, requestOptions:HTTP.Request.Options 
 }
 
 export class Factory {
-	static hasClassProperties( document:Document.Class ):boolean {
+	static hasClassProperties( object:Object ):boolean {
 		return (
-			Utils.hasPropertyDefined( document, "_documents" ) &&
-			Utils.hasPropertyDefined( document, "_etag" ) &&
-			Utils.hasFunction( document, "refresh" ) &&
-			Utils.hasFunction( document, "save" ) &&
-			Utils.hasFunction( document, "destroy" ) &&
+			Utils.hasPropertyDefined( object, "_documents" ) &&
+			Utils.hasPropertyDefined( object, "_etag" ) &&
+			Utils.hasFunction( object, "refresh" ) &&
+			Utils.hasFunction( object, "save" ) &&
+			Utils.hasFunction( object, "destroy" ) &&
 
-			Utils.hasFunction( document, "getDownloadURL" ) &&
+			Utils.hasFunction( object, "getDownloadURL" ) &&
 
-			Utils.hasFunction( document, "executeRawASKQuery" ) &&
-			Utils.hasFunction( document, "executeASKQuery" ) &&
-			Utils.hasFunction( document, "executeRawSELECTQuery" ) &&
-			Utils.hasFunction( document, "executeSELECTQuery" ) &&
-			Utils.hasFunction( document, "executeRawDESCRIBEQuery" ) &&
-			Utils.hasFunction( document, "executeRawCONSTRUCTQuery" ) &&
-			Utils.hasFunction( document, "executeUPDATE" )
+			Utils.hasFunction( object, "executeRawASKQuery" ) &&
+			Utils.hasFunction( object, "executeASKQuery" ) &&
+			Utils.hasFunction( object, "executeRawSELECTQuery" ) &&
+			Utils.hasFunction( object, "executeSELECTQuery" ) &&
+			Utils.hasFunction( object, "executeRawDESCRIBEQuery" ) &&
+			Utils.hasFunction( object, "executeRawCONSTRUCTQuery" ) &&
+			Utils.hasFunction( object, "executeUPDATE" )
 		);
 	}
 
@@ -180,12 +180,13 @@ export class Factory {
 		return Factory.decorate( document, documents, snapshot );
 	}
 
-	static decorate<T extends Document.Class>( document:T, documents:Documents, snapshot:Object = {} ):T & Class {
-		PersistedResource.Factory.decorate( document, snapshot );
+	static decorate<T extends Object>( object:T, documents:Documents, snapshot:Object = {} ):T & Class {
+		Document.Factory.decorate( object );
+		PersistedResource.Factory.decorate( object, snapshot );
 
-		if( Factory.hasClassProperties( document ) ) return <any> document;
+		if( Factory.hasClassProperties( object ) ) return <any> object;
 
-		let persistedDocument:Class = <any> document;
+		let persistedDocument:Class = <any> object;
 
 		Object.defineProperties( persistedDocument, {
 			"_documents": {

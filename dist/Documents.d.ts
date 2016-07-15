@@ -21,10 +21,12 @@ declare class Documents implements Pointer.Library, Pointer.Validator, ObjectSch
     getPointer(id: string): Pointer.Class;
     get(uri: string, requestOptions?: HTTP.Request.Options): Promise<[PersistedDocument.Class, HTTP.Response.Class]>;
     exists(documentURI: string, requestOptions?: HTTP.Request.Options): Promise<[boolean, HTTP.Response.Class]>;
-    createChild(parentURI: string, slug: string, childDocument: Document.Class, requestOptions?: HTTP.Request.Options): Promise<[Pointer.Class, HTTP.Response.Class]>;
-    createChild(parentURI: string, childDocument: Document.Class, requestOptions?: HTTP.Request.Options): Promise<[Pointer.Class, HTTP.Response.Class]>;
-    createChild(parentURI: string, slug: string, childObject: Object, requestOptions?: HTTP.Request.Options): Promise<[Pointer.Class, HTTP.Response.Class]>;
-    createChild(parentURI: string, childObject: Object, requestOptions?: HTTP.Request.Options): Promise<[Pointer.Class, HTTP.Response.Class]>;
+    createChild<T extends Document.Class>(parentURI: string, slug: string, childDocument: T, requestOptions?: HTTP.Request.Options): Promise<[T, HTTP.Response.Class]>;
+    createChild<T extends Document.Class>(parentURI: string, childDocument: T, requestOptions?: HTTP.Request.Options): Promise<[T, HTTP.Response.Class]>;
+    createChild<T extends Object>(parentURI: string, slug: string, childObject: T, requestOptions?: HTTP.Request.Options): Promise<[T & Document.Class, HTTP.Response.Class]>;
+    createChild<T extends Object>(parentURI: string, childObject: T, requestOptions?: HTTP.Request.Options): Promise<[T & Document.Class, HTTP.Response.Class]>;
+    createChildAndRetrieve<T extends Object>(parentURI: string, slug: string, childObject: T, requestOptions?: HTTP.Request.Options): Promise<[T & PersistedDocument.Class, [HTTP.Response.Class, HTTP.Response.Class]]>;
+    createChildAndRetrieve<T extends Object>(parentURI: string, childObject: T, requestOptions?: HTTP.Request.Options): Promise<[T & PersistedDocument.Class, [HTTP.Response.Class, HTTP.Response.Class]]>;
     listChildren(parentURI: string, requestOptions?: HTTP.Request.Options): Promise<[Pointer.Class[], HTTP.Response.Class]>;
     getChildren(parentURI: string, retrievalPreferences?: RetrievalPreferences.Class, requestOptions?: HTTP.Request.Options): Promise<[PersistedDocument.Class[], HTTP.Response.Class]>;
     getChildren(parentURI: string, requestOptions?: HTTP.Request.Options): Promise<[PersistedDocument.Class[], HTTP.Response.Class]>;
@@ -63,6 +65,7 @@ declare class Documents implements Pointer.Library, Pointer.Validator, ObjectSch
     private getDocumentResource(rdfDocument, response);
     private getPointerID(uri);
     private createPointer(localID);
+    private createPointerFrom<T>(object, localID);
     private compact(expandedObjects, targetObjects, pointerLibrary);
     private compact(expandedObject, targetObject, pointerLibrary);
     private compactSingle(expandedObject, targetObject, pointerLibrary);

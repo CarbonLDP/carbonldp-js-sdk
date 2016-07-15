@@ -8,10 +8,14 @@ export interface Class extends PersistedRDFSource.Class {
     addMember(member: Pointer.Class): Promise<HTTP.Response.Class>;
     addMember(memberURI: string): Promise<HTTP.Response.Class>;
     addMembers(members: (Pointer.Class | string)[]): Promise<HTTP.Response.Class>;
-    createChild(slug: string, object: Object): Promise<[Pointer.Class, HTTP.Response.Class]>;
-    createChild(slug: string): Promise<[Pointer.Class, HTTP.Response.Class]>;
-    createChild(object: Object): Promise<[Pointer.Class, HTTP.Response.Class]>;
-    createChild(): Promise<[Pointer.Class, HTTP.Response.Class]>;
+    createChild<T extends Object>(slug: string, object: T): Promise<[T & Document.Class, HTTP.Response.Class]>;
+    createChild(slug: string): Promise<[Document.Class, HTTP.Response.Class]>;
+    createChild<T extends Object>(object: T): Promise<[T & Document.Class, HTTP.Response.Class]>;
+    createChild(): Promise<[Document.Class, HTTP.Response.Class]>;
+    createChildAndRetrieve<T extends Object>(slug: string, object: T): Promise<[T & PersistedDocument.Class, [HTTP.Response.Class, HTTP.Response.Class]]>;
+    createChildAndRetrieve(slug: string): Promise<[PersistedDocument.Class, [HTTP.Response.Class, HTTP.Response.Class]]>;
+    createChildAndRetrieve<T extends Object>(object: T): Promise<[T & PersistedDocument.Class, [HTTP.Response.Class, HTTP.Response.Class]]>;
+    createChildAndRetrieve(): Promise<[PersistedDocument.Class, [HTTP.Response.Class, HTTP.Response.Class]]>;
     listChildren(): Promise<[Pointer.Class[], HTTP.Response.Class]>;
     getChildren(retrievalPreferences?: RetrievalPreferences.Class): Promise<[Pointer.Class[], HTTP.Response.Class]>;
     listMembers(includeNonReadable?: boolean): Promise<[Pointer.Class[], HTTP.Response.Class]>;

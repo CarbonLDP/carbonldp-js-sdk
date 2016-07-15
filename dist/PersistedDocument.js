@@ -94,20 +94,20 @@ function executeUPDATE(updateQuery, requestOptions) {
 var Factory = (function () {
     function Factory() {
     }
-    Factory.hasClassProperties = function (document) {
-        return (Utils.hasPropertyDefined(document, "_documents") &&
-            Utils.hasPropertyDefined(document, "_etag") &&
-            Utils.hasFunction(document, "refresh") &&
-            Utils.hasFunction(document, "save") &&
-            Utils.hasFunction(document, "destroy") &&
-            Utils.hasFunction(document, "getDownloadURL") &&
-            Utils.hasFunction(document, "executeRawASKQuery") &&
-            Utils.hasFunction(document, "executeASKQuery") &&
-            Utils.hasFunction(document, "executeRawSELECTQuery") &&
-            Utils.hasFunction(document, "executeSELECTQuery") &&
-            Utils.hasFunction(document, "executeRawDESCRIBEQuery") &&
-            Utils.hasFunction(document, "executeRawCONSTRUCTQuery") &&
-            Utils.hasFunction(document, "executeUPDATE"));
+    Factory.hasClassProperties = function (object) {
+        return (Utils.hasPropertyDefined(object, "_documents") &&
+            Utils.hasPropertyDefined(object, "_etag") &&
+            Utils.hasFunction(object, "refresh") &&
+            Utils.hasFunction(object, "save") &&
+            Utils.hasFunction(object, "destroy") &&
+            Utils.hasFunction(object, "getDownloadURL") &&
+            Utils.hasFunction(object, "executeRawASKQuery") &&
+            Utils.hasFunction(object, "executeASKQuery") &&
+            Utils.hasFunction(object, "executeRawSELECTQuery") &&
+            Utils.hasFunction(object, "executeSELECTQuery") &&
+            Utils.hasFunction(object, "executeRawDESCRIBEQuery") &&
+            Utils.hasFunction(object, "executeRawCONSTRUCTQuery") &&
+            Utils.hasFunction(object, "executeUPDATE"));
     };
     Factory.is = function (object) {
         return Utils.isObject(object)
@@ -126,12 +126,13 @@ var Factory = (function () {
         document.id = uri;
         return Factory.decorate(document, documents, snapshot);
     };
-    Factory.decorate = function (document, documents, snapshot) {
+    Factory.decorate = function (object, documents, snapshot) {
         if (snapshot === void 0) { snapshot = {}; }
-        PersistedResource.Factory.decorate(document, snapshot);
-        if (Factory.hasClassProperties(document))
-            return document;
-        var persistedDocument = document;
+        Document.Factory.decorate(object);
+        PersistedResource.Factory.decorate(object, snapshot);
+        if (Factory.hasClassProperties(object))
+            return object;
+        var persistedDocument = object;
         Object.defineProperties(persistedDocument, {
             "_documents": {
                 writable: false,

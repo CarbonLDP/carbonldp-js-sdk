@@ -9,7 +9,7 @@ import {
 	isDefined,
 	hasMethod,
 	hasSignature,
-	decoratedObject
+	decoratedObject,
 } from "./../test/JasmineExtender";
 import * as Utils from "./../Utils";
 import * as Pointer from "./../Pointer";
@@ -62,63 +62,68 @@ describe( module( "Carbon/LDP/PersistedContainer" ), ():void => {
 			expect( PersistedContainer.Factory.hasClassProperties( document ) ).toBe( false );
 
 			document = {
-				addMember: () => {},
-				addMembers: () => {},
-				createChild: () => {},
-				listChildren: () => {},
-				getChildren: () => {},
-				listMembers: () => {},
-				getMembers: () => {},
-				removeMember: () => {},
-				removeMembers: () => {},
-				removeAllMembers: () => {},
-				upload: () => {},
+				addMember: ():void => {},
+				addMembers: ():void => {},
+				createChild: ():void => {},
+				createChildAndRetrieve: ():void => {},
+				listChildren: ():void => {},
+				getChildren: ():void => {},
+				listMembers: ():void => {},
+				getMembers: ():void => {},
+				removeMember: ():void => {},
+				removeMembers: ():void => {},
+				removeAllMembers: ():void => {},
+				upload: ():void => {},
 			};
 			expect( PersistedContainer.Factory.hasClassProperties( document ) ).toBe( true );
 
 			delete document.addMember;
 			expect( PersistedContainer.Factory.hasClassProperties( document ) ).toBe( false );
-			document.addMember = () => {};
+			document.addMember = ():void => {};
 
 			delete document.addMembers;
 			expect( PersistedContainer.Factory.hasClassProperties( document ) ).toBe( false );
-			document.addMembers = () => {};
+			document.addMembers = ():void => {};
 
 			delete document.createChild;
 			expect( PersistedContainer.Factory.hasClassProperties( document ) ).toBe( false );
-			document.createChild = () => {};
+			document.createChild = ():void => {};
+
+			delete document.createChildAndRetrieve;
+			expect( PersistedContainer.Factory.hasClassProperties( document ) ).toBe( false );
+			document.createChildAndRetrieve = ():void => {};
 
 			delete document.listChildren;
 			expect( PersistedContainer.Factory.hasClassProperties( document ) ).toBe( false );
-			document.listChildren = () => {};
+			document.listChildren = ():void => {};
 
 			delete document.getChildren;
 			expect( PersistedContainer.Factory.hasClassProperties( document ) ).toBe( false );
-			document.getChildren = () => {};
+			document.getChildren = ():void => {};
 
 			delete document.listMembers;
 			expect( PersistedContainer.Factory.hasClassProperties( document ) ).toBe( false );
-			document.listMembers = () => {};
+			document.listMembers = ():void => {};
 
 			delete document.getMembers;
 			expect( PersistedContainer.Factory.hasClassProperties( document ) ).toBe( false );
-			document.getMembers = () => {};
+			document.getMembers = ():void => {};
 
 			delete document.removeMember;
 			expect( PersistedContainer.Factory.hasClassProperties( document ) ).toBe( false );
-			document.removeMember = () => {};
+			document.removeMember = ():void => {};
 
 			delete document.removeMembers;
 			expect( PersistedContainer.Factory.hasClassProperties( document ) ).toBe( false );
-			document.removeMembers = () => {};
+			document.removeMembers = ():void => {};
 
 			delete document.removeAllMembers;
 			expect( PersistedContainer.Factory.hasClassProperties( document ) ).toBe( false );
-			document.removeAllMembers = () => {};
+			document.removeAllMembers = ():void => {};
 
 			delete document.upload;
 			expect( PersistedContainer.Factory.hasClassProperties( document ) ).toBe( false );
-			document.upload = () => {};
+			document.upload = ():void => {};
 		} );
 
 		it( hasMethod(
@@ -138,11 +143,12 @@ describe( module( "Carbon/LDP/PersistedContainer" ), ():void => {
 			let persistedContainer:PersistedContainer.Class = PersistedContainer.Factory.decorate( document );
 			expect( PersistedContainer.Factory.hasClassProperties( persistedContainer ) ).toBe( true );
 
-			let fx = () => {};
+			let fx = ():void => {};
 			document = PersistedDocument.Factory.create( "http://example.com/resource/", context.documents );
 			document.addMember = fx;
 			document.addMembers = fx;
 			document.createChild = fx;
+			document.createChildAndRetrieve = fx;
 			document.listChildren = fx;
 			document.getChildren = fx;
 			document.listMembers = fx;
@@ -158,6 +164,7 @@ describe( module( "Carbon/LDP/PersistedContainer" ), ():void => {
 			expect( anotherContainer.addMember ).toBe( fx );
 			expect( anotherContainer.addMembers ).toBe( fx );
 			expect( anotherContainer.createChild ).toBe( fx );
+			expect( anotherContainer.createChildAndRetrieve ).toBe( fx );
 			expect( anotherContainer.listChildren ).toBe( fx );
 			expect( anotherContainer.getChildren ).toBe( fx );
 			expect( anotherContainer.listMembers ).toBe( fx );
@@ -175,6 +182,7 @@ describe( module( "Carbon/LDP/PersistedContainer" ), ():void => {
 			expect( anotherAnotherContainer.addMember ).not.toBe( fx );
 			expect( anotherAnotherContainer.addMembers ).not.toBe( fx );
 			expect( anotherAnotherContainer.createChild ).not.toBe( fx );
+			expect( anotherAnotherContainer.createChildAndRetrieve ).not.toBe( fx );
 			expect( anotherAnotherContainer.listChildren ).not.toBe( fx );
 			expect( anotherAnotherContainer.getChildren ).not.toBe( fx );
 			expect( anotherAnotherContainer.listMembers ).not.toBe( fx );
@@ -270,10 +278,12 @@ describe( module( "Carbon/LDP/PersistedContainer" ), ():void => {
 			), ():void => {
 
 				it( hasSignature( [
+						"T extends Object",
+					], [
 						{name: "slug", type: "string", description: "The slug name for the children URI."},
-						{name: "object", type: "Object", description: "The object from where create the child. If it's a non `Carbon.Document.Class` object, it is transformed into one."}
+						{name: "object", type: "T", description: "The object from where create the child. If it's a non `Carbon.Document.Class` object, it is transformed into one."}
 					],
-					{type: "Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>"}
+					{type: "Promise<[ T & Carbon.Document.Class, Carbon.HTTP.Response.Class ]>"}
 				), ():void => {
 					expect( container.createChild ).toBeDefined();
 					expect( Utils.isFunction( container.createChild ) ).toBeDefined();
@@ -292,9 +302,11 @@ describe( module( "Carbon/LDP/PersistedContainer" ), ():void => {
 				} );
 
 				it( hasSignature( [
-						{name: "object", type: "Object", description: "The object from where create the child. If it's a non `Carbon.Document.Class` object, it is transformed into one."}
+						"T extends Object",
+					], [
+						{name: "object", type: "T", description: "The object from where create the child. If it's a non `Carbon.Document.Class` object, it is transformed into one."}
 					],
-					{type: "Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>"}
+					{type: "Promise<[ T & Carbon.Document.Class, Carbon.HTTP.Response.Class ]>"}
 				), ():void => {
 					expect( container.createChild ).toBeDefined();
 					expect( Utils.isFunction( container.createChild ) ).toBeDefined();
@@ -315,7 +327,7 @@ describe( module( "Carbon/LDP/PersistedContainer" ), ():void => {
 				it( hasSignature( [
 						{name: "slug", type: "string", description: "The slug name for the children URI."}
 					],
-					{type: "Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>"}
+					{type: "Promise<[ Carbon.Document.Class, Carbon.HTTP.Response.Class ]>"}
 				), ():void => {
 					expect( container.createChild ).toBeDefined();
 					expect( Utils.isFunction( container.createChild ) ).toBeDefined();
@@ -327,7 +339,7 @@ describe( module( "Carbon/LDP/PersistedContainer" ), ():void => {
 				} );
 
 				it( hasSignature(
-					{type: "Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>"}
+					{type: "Promise<[ Carbon.Document.Class, Carbon.HTTP.Response.Class ]>"}
 				), ():void => {
 					expect( container.createChild ).toBeDefined();
 					expect( Utils.isFunction( container.createChild ) ).toBeDefined();
@@ -335,6 +347,87 @@ describe( module( "Carbon/LDP/PersistedContainer" ), ():void => {
 					let spy = spyOn( container._documents, "createChild" );
 
 					container.createChild();
+					expect( spy ).toHaveBeenCalledWith( "http://example.com/resource/", {} );
+				} );
+
+			} );
+
+			describe( method(
+				INSTANCE,
+				"createChildAndRetrieve",
+				"Create a child for the current document and retrieves the updated document data from the server."
+			), ():void => {
+
+				it( hasSignature( [
+						"T extends Object",
+					], [
+						{name: "slug", type: "string", description: "The slug name for the children URI."},
+						{name: "object", type: "T", description: "The object from where create the child. If it's a non `Carbon.Document.Class` object, it is transformed into one."},
+					],
+					{type: "Promise<[ T & Carbon.Document.Class, [ Carbon.HTTP.Response.Class, Carbon.HTTP.Response.Class ] ]>"}
+				), ():void => {
+					expect( container.createChildAndRetrieve ).toBeDefined();
+					expect( Utils.isFunction( container.createChildAndRetrieve() ) ).toBeDefined();
+
+					let spy:jasmine.Spy = spyOn( container._documents, "createChildAndRetrieve" );
+
+					let document:Document.Class = Document.Factory.create();
+					container.createChildAndRetrieve( "child", document );
+
+					expect( spy ).toHaveBeenCalledWith( "http://example.com/resource/", "child", document );
+					spy.calls.reset();
+
+					let object:Object = {my: "object"};
+					container.createChildAndRetrieve( "child", object );
+					expect( spy ).toHaveBeenCalledWith( "http://example.com/resource/", "child", object );
+				} );
+
+				it( hasSignature( [
+						"T extends Object",
+					], [
+						{name: "object", type: "T", description: "The object from where create the child. If it's a non `Carbon.Document.Class` object, it is transformed into one."},
+					],
+					{type: "Promise<[ T & Carbon.Document.Class, [ Carbon.HTTP.Response.Class, Carbon.HTTP.Response.Class ] ]>"}
+				), ():void => {
+					expect( container.createChildAndRetrieve ).toBeDefined();
+					expect( Utils.isFunction( container.createChildAndRetrieve() ) ).toBeDefined();
+
+					let spy:jasmine.Spy = spyOn( container._documents, "createChildAndRetrieve" );
+
+					let document:Document.Class = Document.Factory.create();
+					container.createChildAndRetrieve( document );
+
+					expect( spy ).toHaveBeenCalledWith( "http://example.com/resource/", document );
+					spy.calls.reset();
+
+					let object:Object = {my: "object"};
+					container.createChildAndRetrieve( object );
+					expect( spy ).toHaveBeenCalledWith( "http://example.com/resource/", object );
+				} );
+
+				it( hasSignature( [
+						{name: "slug", type: "string", description: "The slug name for the children URI."},
+					],
+					{type: "Promise<[ Carbon.Document.Class, [ Carbon.HTTP.Response.Class, Carbon.HTTP.Response.Class ] ]>"}
+				), ():void => {
+					expect( container.createChildAndRetrieve ).toBeDefined();
+					expect( Utils.isFunction( container.createChildAndRetrieve() ) ).toBeDefined();
+
+					let spy:jasmine.Spy = spyOn( container._documents, "createChildAndRetrieve" );
+
+					container.createChildAndRetrieve( "child" );
+					expect( spy ).toHaveBeenCalledWith( "http://example.com/resource/", "child", {} );
+				} );
+
+				it( hasSignature(
+					{type: "Promise<[ Carbon.Document.Class, [ Carbon.HTTP.Response.Class, Carbon.HTTP.Response.Class ] ]>"}
+				), ():void => {
+					expect( container.createChildAndRetrieve ).toBeDefined();
+					expect( Utils.isFunction( container.createChildAndRetrieve() ) ).toBeDefined();
+
+					let spy:jasmine.Spy = spyOn( container._documents, "createChildAndRetrieve" );
+
+					container.createChildAndRetrieve();
 					expect( spy ).toHaveBeenCalledWith( "http://example.com/resource/", {} );
 				} );
 

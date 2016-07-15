@@ -2143,7 +2143,7 @@ Executes a DESCRIBE query and returns a string with the resulting model.
 
 ##### createChild
 ```typescript 
-createChild( parentURI:string,  childDocument:Carbon.Document.Class,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[Carbon.Pointer.Class, Carbon.HTTP.Response.Class]>
+createChild<T extends Carbon.Document.Class>( parentURI:string,  childDocument:T,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ T, Carbon.HTTP.Response.Class ]>
 ```
 
 Create a child document for the respective parent source.
@@ -2155,7 +2155,7 @@ Create a child document for the respective parent source.
 - requestOptions
 
 ```typescript 
-createChild( parentURI:string,  slug:string,  childDocument:Carbon.Document.Class,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[Carbon.Pointer.Class, Carbon.HTTP.Response.Class]>
+createChild<T extends Carbon.Document.Class>( parentURI:string,  slug:string,  childDocument:T,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ T, Carbon.HTTP.Response.Class ]>
 ```
 
 Create a child document for the respective parent source.
@@ -2168,7 +2168,7 @@ Create a child document for the respective parent source.
 - requestOptions
 
 ```typescript 
-createChild( parentURI:string,  childObject:Object,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[Carbon.Pointer.Class, Carbon.HTTP.Response.Class]>
+createChild<T extends Object>( parentURI:string,  childObject:T,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ T & Carbon.Document.Class, Carbon.HTTP.Response.Class ]>
 ```
 
 Create a child document for the respective parent source.
@@ -2180,7 +2180,7 @@ Create a child document for the respective parent source.
 - requestOptions
 
 ```typescript 
-createChild( parentURI:string,  slug:string,  childObject:Object,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[Carbon.Pointer.Class, Carbon.HTTP.Response.Class]>
+createChild<T extends Object>( parentURI:string,  slug:string,  childObject:T,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ T & Carbon.Carbon.Class, Carbon.HTTP.Response.Class ]>
 ```
 
 Create a child document for the respective parent source.
@@ -2191,6 +2191,32 @@ Create a child document for the respective parent source.
 - slug
 - childObject
 - requestOptions
+
+##### createChildAndRetrieve
+```typescript 
+createChildAndRetrieve<T extends Object>( parentURI:string,  childObject:T,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ T & Carbon.Document.Class, Carbon.HTTP.Response.Class ]>
+```
+
+Persists JavaScript object as a child document for the respective parent source and retrieves tha updated data from the server.
+
+*Parameters*
+
+- parentURI: URI of the document where to create a new child.
+- childObject:  A normal JavaScript object that will be converted and persisted as a new child document.
+- requestOptions: Customizable options for the request.
+
+```typescript 
+createChildAndRetrieve<T extends Object>( parentURI:string,  slug:string,  childObject:T,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ T & Carbon.Carbon.Class, Carbon.HTTP.Response.Class ]>
+```
+
+Persists JavaScript object as a child document for the respective parent source and retrieves tha updated data from the server.
+
+*Parameters*
+
+- parentURI: URI of the document where to create a new child.
+- slug: Slug that will be used for the URI of the new child.
+- childObject:  A normal JavaScript object that will be converted and persisted as a new child document.
+- requestOptions: Customizable options for the request.
 
 ##### getChildren
 ```typescript 
@@ -5403,7 +5429,7 @@ Add the specified resource URI as a member of the container.
 
 ##### createChild
 ```typescript 
-createChild( slug:string,  object:Object ):Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>
+createChild<T extends Object>( slug:string,  object:T ):Promise<[ T & Carbon.Document.Class, Carbon.HTTP.Response.Class ]>
 ```
 
 
@@ -5413,7 +5439,7 @@ createChild( slug:string,  object:Object ):Promise<[ Carbon.Pointer.Class, Carbo
 - object: The object from where create the child. If it's a non `Carbon.Document.Class` object, it is transformed into one.
 
 ```typescript 
-createChild( object:Object ):Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>
+createChild<T extends Object>( object:T ):Promise<[ T & Carbon.Document.Class, Carbon.HTTP.Response.Class ]>
 ```
 
 
@@ -5422,7 +5448,7 @@ createChild( object:Object ):Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Respons
 - object: The object from where create the child. If it's a non `Carbon.Document.Class` object, it is transformed into one.
 
 ```typescript 
-createChild( slug:string ):Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>
+createChild( slug:string ):Promise<[ Carbon.Document.Class, Carbon.HTTP.Response.Class ]>
 ```
 
 
@@ -5431,9 +5457,47 @@ createChild( slug:string ):Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.
 - slug: The slug name for the children URI.
 
 ```typescript 
-createChild():Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>
+createChild():Promise<[ Carbon.Document.Class, Carbon.HTTP.Response.Class ]>
 ```
 
+
+##### createChildAndRetrieve
+```typescript 
+createChildAndRetrieve<T extends Object>( slug:string,  object:T ):Promise<[ T & Carbon.Document.Class, [ Carbon.HTTP.Response.Class, Carbon.HTTP.Response.Class ] ]>
+```
+
+Create a child for the current document and retrieves the updated document data from the server.
+
+*Parameters*
+
+- slug: The slug name for the children URI.
+- object: The object from where create the child. If it's a non `Carbon.Document.Class` object, it is transformed into one.
+
+```typescript 
+createChildAndRetrieve<T extends Object>( object:T ):Promise<[ T & Carbon.Document.Class, [ Carbon.HTTP.Response.Class, Carbon.HTTP.Response.Class ] ]>
+```
+
+Create a child for the current document and retrieves the updated document data from the server.
+
+*Parameters*
+
+- object: The object from where create the child. If it's a non `Carbon.Document.Class` object, it is transformed into one.
+
+```typescript 
+createChildAndRetrieve( slug:string ):Promise<[ Carbon.Document.Class, [ Carbon.HTTP.Response.Class, Carbon.HTTP.Response.Class ] ]>
+```
+
+Create a child for the current document and retrieves the updated document data from the server.
+
+*Parameters*
+
+- slug: The slug name for the children URI.
+
+```typescript 
+createChildAndRetrieve():Promise<[ Carbon.Document.Class, [ Carbon.HTTP.Response.Class, Carbon.HTTP.Response.Class ] ]>
+```
+
+Create a child for the current document and retrieves the updated document data from the server.
 
 ##### getMembers
 ```typescript 
@@ -6955,7 +7019,7 @@ Creates a PersistedDocument object from the object and URI provided, with the Do
 
 ##### decorate
 ```typescript 
-static decorate( object:T extends Object,  documents:Carbon.Documents ):T & Carbon.PersistedDocument.Class
+static decorate<T extends Object>( object:T,  documents:Carbon.Documents ):T & Carbon.PersistedDocument.Class
 ```
 
 Adds the properties and methods necessary for a PersistedDocument object.
