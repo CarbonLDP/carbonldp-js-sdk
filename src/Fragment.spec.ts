@@ -8,11 +8,10 @@ import {
 
 	isDefined,
 	hasMethod,
-	hasSignature
+	hasSignature,
 } from "./test/JasmineExtender";
 import * as Utils from "./Utils";
 import * as Document from "./Document";
-import * as URI from "./RDF/URI";
 
 import * as Fragment from "./Fragment";
 
@@ -37,7 +36,7 @@ describe( module( "Carbon/Fragment" ), ():void => {
 			STATIC,
 			"hasClassProperties",
 			"Returns true if the object provided has the properties and functions of a Fragment object", [
-				{name: "resource", type: "Object"}
+				{name: "resource", type: "Object"},
 			],
 			{type: "boolean"}
 		), ():void => {
@@ -48,7 +47,7 @@ describe( module( "Carbon/Fragment" ), ():void => {
 			expect( Fragment.Factory.hasClassProperties( resource ) ).toBe( false );
 
 			resource = {
-				document: null
+				document: null,
 			};
 			expect( Fragment.Factory.hasClassProperties( resource ) ).toBe( true );
 
@@ -72,7 +71,7 @@ describe( module( "Carbon/Fragment" ), ():void => {
 			it( hasSignature(
 				"Creates a Fragment with the ID provided for the document specified.", [
 					{name: "id", type: "string"},
-					{name: "document", type: "Carbon.Document.Class"}
+					{name: "document", type: "Carbon.Document.Class"},
 				],
 				{type: "Carbon.Fragment.Class"}
 			), ():void => {
@@ -102,7 +101,7 @@ describe( module( "Carbon/Fragment" ), ():void => {
 
 			it( hasSignature(
 				"Create a Blank Node Fragment since no ID is provided for the specified document.", [
-					{name: "document", type: "Carbon.Document.Class"}
+					{name: "document", type: "Carbon.Document.Class"},
 				],
 				{type: "Carbon.Fragment.Class"}
 			), ():void => {
@@ -116,16 +115,14 @@ describe( module( "Carbon/Fragment" ), ():void => {
 				expect( fragment1 ).toBeTruthy();
 				expect( Fragment.Factory.hasClassProperties( fragment1 ) ).toBe( true );
 				expect( fragment1.document ).toBe( document );
-				expect( URI.Util.isBNodeID( fragment1.id ) ).toBe( true );
+				expect( fragment1.id ).toBe( "" );
 
 
 				fragment2 = Fragment.Factory.create( document );
 				expect( fragment2 ).toBeTruthy();
 				expect( Fragment.Factory.hasClassProperties( fragment2 ) ).toBe( true );
 				expect( fragment2.document ).toBe( document );
-				expect( URI.Util.isBNodeID( fragment2.id ) ).toBe( true );
-
-				expect( fragment1.id ).not.toEqual( fragment2.id );
+				expect( fragment2.id ).toBe( "" );
 			} );
 
 		} );
@@ -144,7 +141,7 @@ describe( module( "Carbon/Fragment" ), ():void => {
 				"Creates a Fragment from an Object with the ID provided for the document specified.", [
 					{name: "object", type: "T extends Object"},
 					{name: "id", type: "string"},
-					{name: "document", type: "Carbon.Document.Class"}
+					{name: "document", type: "Carbon.Document.Class"},
 				],
 				{type: "T & Carbon.Fragment.Class"}
 			), ():void => {
@@ -174,7 +171,7 @@ describe( module( "Carbon/Fragment" ), ():void => {
 				expect( fragment.id ).toBe( "_:BlankNode" );
 				expect( fragment.property ).toBe( "my property 3" );
 
-				let anotherFragment = Fragment.Factory.createFrom<Object>( {}, "_:AnotherBlankNode", document );
+				let anotherFragment:Fragment.Class = Fragment.Factory.createFrom<Object>( {}, "_:AnotherBlankNode", document );
 				expect( anotherFragment ).toBeTruthy();
 				expect( Fragment.Factory.hasClassProperties( anotherFragment ) ).toBe( true );
 				expect( anotherFragment.document ).toBe( document );
@@ -185,7 +182,7 @@ describe( module( "Carbon/Fragment" ), ():void => {
 			it( hasSignature(
 				"Create a Blank Node Fragment since no ID is provided for the specified document.", [
 					{name: "object", type: "T extends Object"},
-					{name: "document", type: "Carbon.Document.Class"}
+					{name: "document", type: "Carbon.Document.Class"},
 				],
 				{type: "Carbon.Fragment.Class"}
 			), ():void => {
@@ -199,7 +196,7 @@ describe( module( "Carbon/Fragment" ), ():void => {
 				expect( fragment1 ).toBeTruthy();
 				expect( Fragment.Factory.hasClassProperties( fragment1 ) ).toBe( true );
 				expect( fragment1.document ).toBe( document );
-				expect( URI.Util.isBNodeID( fragment1.id ) ).toBe( true );
+				expect( fragment1.id ).toBe( "" );
 				expect( fragment1.property ).toBe( "my property 1" );
 
 
@@ -207,16 +204,14 @@ describe( module( "Carbon/Fragment" ), ():void => {
 				expect( fragment2 ).toBeTruthy();
 				expect( Fragment.Factory.hasClassProperties( fragment2 ) ).toBe( true );
 				expect( fragment2.document ).toBe( document );
-				expect( URI.Util.isBNodeID( fragment2.id ) ).toBe( true );
+				expect( fragment2.id ).toBe( "" );
 				expect( fragment2.property ).toBe( "my property 2" );
 
-				expect( fragment1.id ).not.toEqual( fragment2.id );
-
-				let anotherFragment = Fragment.Factory.createFrom<Object>( {}, document );
+				let anotherFragment:Fragment.Class = Fragment.Factory.createFrom<Object>( {}, document );
 				expect( anotherFragment ).toBeTruthy();
 				expect( Fragment.Factory.hasClassProperties( anotherFragment ) ).toBe( true );
 				expect( anotherFragment.document ).toBe( document );
-				expect( URI.Util.isBNodeID( anotherFragment.id ) ).toBe( true );
+				expect( anotherFragment.id ).toBe( "" );
 				expect( anotherFragment[ "property" ] ).toBeUndefined();
 			} );
 

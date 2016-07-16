@@ -5,7 +5,7 @@ import Documents from "./Documents";
 import * as Errors from "./Errors";
 import * as LDP from "./LDP";
 import * as NS from "./NS";
-import * as PersistedBlankNode from "./PersistedBlankNode";
+import * as BlankNode from "./BlankNode";
 import * as ObjectSchema from "./ObjectSchema";
 import * as Agent from "./Agent";
 import * as RDFRepresentation from "./RDFRepresentation";
@@ -144,7 +144,7 @@ export class Class implements Context {
 	}
 
 	private registerDefaultObjectSchemas():void {
-		this.extendObjectSchema( PersistedBlankNode.SCHEMA );
+		this.extendObjectSchema( BlankNode.SCHEMA );
 
 		this.extendObjectSchema( LDP.RDFSource.RDF_CLASS, LDP.RDFSource.SCHEMA );
 		this.extendObjectSchema( LDP.Container.RDF_CLASS, LDP.Container.SCHEMA );

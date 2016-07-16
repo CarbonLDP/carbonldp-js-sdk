@@ -5,7 +5,7 @@ var Documents_1 = require("./Documents");
 var Errors = require("./Errors");
 var LDP = require("./LDP");
 var NS = require("./NS");
-var PersistedBlankNode = require("./PersistedBlankNode");
+var BlankNode = require("./BlankNode");
 var ObjectSchema = require("./ObjectSchema");
 var Agent = require("./Agent");
 var RDFRepresentation = require("./RDFRepresentation");
@@ -129,7 +129,7 @@ var Class = (function () {
         this.typeObjectSchemaMap.set(type, extendedDigestedSchema);
     };
     Class.prototype.registerDefaultObjectSchemas = function () {
-        this.extendObjectSchema(PersistedBlankNode.SCHEMA);
+        this.extendObjectSchema(BlankNode.SCHEMA);
         this.extendObjectSchema(LDP.RDFSource.RDF_CLASS, LDP.RDFSource.SCHEMA);
         this.extendObjectSchema(LDP.Container.RDF_CLASS, LDP.Container.SCHEMA);
         this.extendObjectSchema(LDP.BasicContainer.RDF_CLASS, LDP.Container.SCHEMA);

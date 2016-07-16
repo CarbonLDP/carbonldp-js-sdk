@@ -1,6 +1,6 @@
 "use strict";
+var BlankNode = require("./BlankNode");
 var Errors = require("./Errors");
-var Fragment = require("./Fragment");
 var JSONLDConverter_1 = require("./JSONLDConverter");
 var NamedFragment = require("./NamedFragment");
 var ObjectSchema = require("./ObjectSchema");
@@ -82,7 +82,7 @@ function createFragment(slugOrObject, object) {
         if (this._fragmentsIndex.has(slug))
             throw new Errors.IDAlreadyInUseError("The slug provided is already being used by a fragment.");
     }
-    var fragment = Fragment.Factory.createFrom(object, slug, document);
+    var fragment = BlankNode.Factory.createFrom(object, document, slug);
     document._fragmentsIndex.set(fragment.id, fragment);
     convertNestedObjects(document, fragment);
     return fragment;

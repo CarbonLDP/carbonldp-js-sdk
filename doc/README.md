@@ -282,6 +282,10 @@
 	- [Properties](#Carbon-LDP-BasicContainer-Properties)
 	- [Class Carbon.LDP.BasicContainer.Factory](#Carbon-LDP-BasicContainer-Factory)
 		- [Methods](#Carbon-LDP-BasicContainer-Factory-Methods)
+- [Module Carbon/LDP/BlankNode](#Carbon-LDP-BlankNode)
+	- [Properties](#Carbon-LDP-BlankNode-Properties)
+	- [Class Carbon.BlankNode.Factory](#Carbon-BlankNode-Factory)
+		- [Methods](#Carbon-BlankNode-Factory-Methods)
 - [Module Carbon/LDP/Container](#Carbon-LDP-Container)
 	- [Properties](#Carbon-LDP-Container-Properties)
 	- [Class Carbon.LDP.Container.Factory](#Carbon-LDP-Container-Factory)
@@ -303,7 +307,6 @@
 	- [Class Carbon.IndirectContainer.Factory](#Carbon-IndirectContainer-Factory)
 		- [Methods](#Carbon-IndirectContainer-Factory-Methods)
 - [Module Carbon/LDP/PersistedBlankNode](#Carbon-LDP-PersistedBlankNode)
-	- [Properties](#Carbon-LDP-PersistedBlankNode-Properties)
 - [Module Carbon/LDP/PersistedContainer](#Carbon-LDP-PersistedContainer)
 	- [Class Carbon.LDP.PersistedContainer.Factory](#Carbon-LDP-PersistedContainer-Factory)
 		- [Methods](#Carbon-LDP-PersistedContainer-Factory-Methods)
@@ -4972,6 +4975,58 @@ Returns true if the Pointer provided is an LDP BasicContainer.
 
 
 
+## <a name="Carbon-LDP-BlankNode" />Module Carbon/LDP/BlankNode
+
+
+
+
+
+### <a name="Carbon-LDP-BlankNode-Properties" />Properties
+```typescript 
+static SCHEMA:Carbon.ObjectSchema.Class 
+```
+
+
+
+
+
+### <a name="Carbon-BlankNode-Factory" />Class Carbon.BlankNode.Factory
+
+
+> Factory class for `Carbon.BlankNode.Class` objects.
+
+
+
+
+#### <a name="Carbon-BlankNode-Factory-Methods" />Methods
+##### createFrom
+```typescript 
+static createFrom( object:T extends Object,  document:Carbon.Document.Class,  id?:string ):T & Carbon.BlankNode.Class
+```
+
+Creates a `Carbon.BlankNode.Class` object from the object and parameters specified.
+
+*Parameters*
+
+- object: Object to be converted into a `Carbon.BlankNode.Class`.
+- document: The `Carbon.Document.Class` object where the fragment is part of.
+- id: The ID of the of the BlankNode to create. If no ID is provided, one will be created.
+
+##### decorate
+```typescript 
+static decorate( object:T extends Object,  bNodeIdentifier?:string ):T & Carbon.BlankNode.Class
+```
+
+Decorates the object provided with the properties and methods of a Carbon.FreeResources.Class object.
+
+*Parameters*
+
+- object: The object to be decorated.
+- bNodeIdentifier: The identifier to be added to the decorated BlankNode.
+
+
+
+
 ## <a name="Carbon-LDP-Container" />Module Carbon/LDP/Container
 
 
@@ -5259,12 +5314,6 @@ Returns true if the object provided has the properties that defines a `Carbon.LD
 
 
 
-
-
-### <a name="Carbon-LDP-PersistedBlankNode-Properties" />Properties
-```typescript 
-static SCHEMA:Carbon.ObjectSchema.Class 
-```
 
 
 

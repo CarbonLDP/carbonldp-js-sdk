@@ -25,6 +25,7 @@ import * as URI from "./RDF/URI";
 import AbstractContext from "./AbstractContext";
 import JSONLDConverter from "./JSONLDConverter";
 import * as Resource from "./Resource";
+import * as NS from "./NS";
 
 import * as Document from "./Document";
 
@@ -1037,52 +1038,60 @@ describe( module( "Carbon/Document" ), ():void => {
 				let jsonFullDocument:string;
 
 				beforeAll( ():void => {
-					let emptyObject = {
+					let emptyObject:any = {
 						"@id": "http://example.com/document/",
 						"@graph": [ {
 							"@id": "http://example.com/document/",
-							"@type": []
+							"@type": [],
 						}, {
 							"@id": "_:BlankNode",
-							"@type": []
+							"@type": [],
+							"https://carbonldp.com/ns/v1/platform#bNodeIdentifier": [ {
+								"@value": "cbc92415-5bdd-4a2a-873b-16a165315e7d",
+								"@type": "http://www.w3.org/2001/XMLSchema#string",
+							} ],
 						}, {
 							"@id": "http://example.com/document/#fragment",
-							"@type": []
-						} ]
+							"@type": [],
+						} ],
 					};
 					jsonEmptyDocument = JSON.stringify( emptyObject );
 
-					let fullObject = {
+					let fullObject:any = {
 						"@id": "http://example.com/document/",
 						"@graph": [ {
 							"@id": "http://example.com/document/",
 							"@type": [],
 							"http://example.com/ns#myProperty": [ {
 								"@value": "a property",
-								"@type": "http://www.w3.org/2001/XMLSchema#string"
+								"@type": "http://www.w3.org/2001/XMLSchema#string",
 							} ],
 							"http://example.com/ns#myDate": [ {
 								"@value": "2016-06-01",
-								"@type": "http://www.w3.org/2001/XMLSchema#date"
+								"@type": "http://www.w3.org/2001/XMLSchema#date",
 							} ],
 							"http://example.com/ns#myFragment": [ {
-								"@id": "_:BlankNode"
+								"@id": "_:BlankNode",
 							}, {
-								"@id": "http://example.com/document/#fragment"
-							} ]
+								"@id": "http://example.com/document/#fragment",
+							} ],
 						}, {
 							"@id": "_:BlankNode",
-							"@type": []
+							"@type": [],
+							"https://carbonldp.com/ns/v1/platform#bNodeIdentifier": [ {
+								"@value": "cbc92415-5bdd-4a2a-873b-16a165315e7d",
+								"@type": "http://www.w3.org/2001/XMLSchema#string",
+							} ],
 						}, {
 							"@id": "http://example.com/document/#fragment",
-							"@type": []
-						} ]
+							"@type": [],
+						} ],
 					};
 					jsonFullDocument = JSON.stringify( fullObject );
 				} );
 
 				beforeEach( ():void => {
-					document.createFragment( "_:BlankNode" );
+					document.createFragment( "_:BlankNode", {bNodeIdentifier: "cbc92415-5bdd-4a2a-873b-16a165315e7d"} );
 					document.createFragment( "fragment" );
 					document[ "myProperty" ] = "a property";
 					document[ "myDate" ] = new Date( "2016-06-01" );
@@ -1117,7 +1126,7 @@ describe( module( "Carbon/Document" ), ():void => {
 						"ldp": "http://www.w3.org/ns/ldp#",
 						"myProperty": {
 							"@id": "ex:myProperty",
-							"@type": "xsd:string"
+							"@type": "xsd:string",
 						},
 						"myDate": {
 							"@id": "ex:myDate",
@@ -1126,7 +1135,7 @@ describe( module( "Carbon/Document" ), ():void => {
 						"myFragment": {
 							"@id": "ex:myFragment",
 							"@type": "@id",
-							"@container": "@set"
+							"@container": "@set",
 						}
 					} );
 					json = document.toJSON( context.documents, converter );
@@ -1135,7 +1144,7 @@ describe( module( "Carbon/Document" ), ():void => {
 
 				it( hasSignature(
 					"Returns a JSON string from the document using an ObjectSchema", [
-						{name: "objectSchemaResolver", type: "Carbon.ObjectSchema.Resolver"}
+						{name: "objectSchemaResolver", type: "Carbon.ObjectSchema.Resolver"},
 					],
 					{type: "string"}
 				), ():void => {
@@ -1159,7 +1168,7 @@ describe( module( "Carbon/Document" ), ():void => {
 						"ldp": "http://www.w3.org/ns/ldp#",
 						"myProperty": {
 							"@id": "ex:myProperty",
-							"@type": "xsd:string"
+							"@type": "xsd:string",
 						},
 						"myDate": {
 							"@id": "ex:myDate",
@@ -1168,8 +1177,8 @@ describe( module( "Carbon/Document" ), ():void => {
 						"myFragment": {
 							"@id": "ex:myFragment",
 							"@type": "@id",
-							"@container": "@set"
-						}
+							"@container": "@set",
+						},
 					} );
 					json = document.toJSON( context.documents );
 					expect( json ).toEqual( jsonFullDocument );
@@ -1184,24 +1193,28 @@ describe( module( "Carbon/Document" ), ():void => {
 							"@type": [],
 							"vocabulary/#myProperty": [ {
 								"@value": "a property",
-								"@type": "http://www.w3.org/2001/XMLSchema#string"
+								"@type": "http://www.w3.org/2001/XMLSchema#string",
 							} ],
 							"vocabulary/#myDate": [ {
 								"@value": "2016-06-01T00:00:00.000Z",
-								"@type": "http://www.w3.org/2001/XMLSchema#dateTime"
+								"@type": "http://www.w3.org/2001/XMLSchema#dateTime",
 							} ],
 							"vocabulary/#myFragment": [ {
-								"@id": "_:BlankNode"
+								"@id": "_:BlankNode",
 							}, {
-								"@id": "http://example.com/document/#fragment"
-							} ]
+								"@id": "http://example.com/document/#fragment",
+							} ],
 						}, {
 							"@id": "_:BlankNode",
-							"@type": []
+							"@type": [],
+							"https://carbonldp.com/ns/v1/platform#bNodeIdentifier": [ {
+								"@value": "cbc92415-5bdd-4a2a-873b-16a165315e7d",
+								"@type": "http://www.w3.org/2001/XMLSchema#string",
+							} ],
 						}, {
 							"@id": "http://example.com/document/#fragment",
-							"@type": []
-						} ]
+							"@type": [],
+						} ],
 					} ) );
 				} );
 
@@ -1211,6 +1224,21 @@ describe( module( "Carbon/Document" ), ():void => {
 				), ():void => {
 					expect( document.toJSON ).toBeDefined();
 					expect( Utils.isFunction( document.toJSON ) ).toBe( true );
+
+					let emptyObject:any = {
+						"@id": "http://example.com/document/",
+						"@graph": [ {
+							"@id": "http://example.com/document/",
+							"@type": [],
+						}, {
+							"@id": "_:BlankNode",
+							"@type": [],
+						}, {
+							"@id": "http://example.com/document/#fragment",
+							"@type": [],
+						} ],
+					};
+					jsonEmptyDocument = JSON.stringify( emptyObject );
 
 					let json:string;
 					json = document.toJSON();
@@ -1223,4 +1251,4 @@ describe( module( "Carbon/Document" ), ():void => {
 
 	} );
 
-} );
+} )
