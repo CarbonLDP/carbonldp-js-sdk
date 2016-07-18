@@ -558,6 +558,7 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 		} );
 	}
 
+	// TODO: Convert to a generic method
 	saveAndRefresh( persistedDocument:PersistedDocument.Class, requestOptions:HTTP.Request.Options = {} ):Promise<[ PersistedDocument.Class, [ HTTP.Response.Class, HTTP.Response.Class] ]> {
 		let saveResponse:HTTP.Response.Class;
 		return this.save( persistedDocument, requestOptions ).then( ( [ document, response ]:[ PersistedDocument.Class, HTTP.Response.Class ] ) => {
