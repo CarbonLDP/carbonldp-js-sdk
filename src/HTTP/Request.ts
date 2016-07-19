@@ -109,14 +109,14 @@ function sendWithNode( method:string, url:string, body:string | Buffer, options:
 		if( options.headers ) forEachHeaders( options.headers, ( name:string, value:string ) => requestOptions.headers[ name ] = value );
 
 		let request:ClientRequest = HTTP.request( requestOptions, ( res:IncomingMessage ) => {
-			let data:string = "";
+			let rawData:Buffer[] = [];
 
-			res.setEncoding( "utf8" );
 			res.on( "data", ( chunk ) => {
-				data += chunk;
+				rawData.push( chunk );
 			} );
 
 			res.on( "end", () => {
+				let data:string = Buffer.concat( rawData ).toString( "utf8" );
 				let response:Response = new Response( request, data, res );
 				onResolve( resolve, reject, response );
 			} );
