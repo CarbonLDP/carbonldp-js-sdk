@@ -320,6 +320,8 @@ var Documents = (function () {
                 throw new HTTP.Errors.BadResponseError("No document was returned.", response);
             var documentResource = _this.getDocumentResource(rdfDocument, response);
             var membershipResource = _this.getMembershipResource(documentResource, rdfDocuments, response);
+            if (membershipResource === null)
+                return [[], response];
             var hasMemberRelation = RDF.Node.Util.getPropertyURI(documentResource, NS.LDP.Predicate.hasMemberRelation);
             var memberPointers = RDF.Value.Util.getPropertyPointers(membershipResource, hasMemberRelation, _this);
             return [memberPointers, response];
@@ -362,6 +364,8 @@ var Documents = (function () {
                 throw new HTTP.Errors.BadResponseError("No document was returned.", response);
             var containerResource = _this.getDocumentResource(rdfDocument, response);
             var membershipResource = _this.getMembershipResource(containerResource, rdfDocuments, response);
+            if (membershipResource === null)
+                return [[], response];
             rdfDocuments = rdfDocuments.filter(function (targetRDFDocument) {
                 return !RDF.Node.Util.areEqual(targetRDFDocument, containerResource)
                     && !RDF.Node.Util.areEqual(targetRDFDocument, membershipResource);
@@ -720,7 +724,7 @@ var Documents = (function () {
         else {
             var membershipResourceDocument = this.getRDFDocument(membershipResourceURI, rdfDocuments, response);
             if (membershipResourceDocument === null)
-                throw new HTTP.Errors.BadResponseError("The membershipResource document was not included in the response.", response);
+                return null;
             membershipResource = this.getDocumentResource(membershipResourceDocument, response);
         }
         return membershipResource;

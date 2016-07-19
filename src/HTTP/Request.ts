@@ -113,7 +113,7 @@ function sendWithNode( method:string, url:string, body:string | Buffer, options:
 
 			res.setEncoding( "utf8" );
 			res.on( "data", ( chunk ) => {
-				data = chunk;
+				data += chunk;
 			} );
 
 			res.on( "end", () => {

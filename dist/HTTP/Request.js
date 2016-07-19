@@ -79,7 +79,7 @@ function sendWithNode(method, url, body, options) {
             var data = "";
             res.setEncoding("utf8");
             res.on("data", function (chunk) {
-                data = chunk;
+                data += chunk;
             });
             res.on("end", function () {
                 var response = new Response_1.default(request, data, res);
