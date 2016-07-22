@@ -115,7 +115,7 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 			let rdfDocument:RDF.Document.Class = this.getRDFDocument( uri, rdfDocuments, response );
 			if( rdfDocument === null ) throw new HTTP.Errors.BadResponseError( "No document was returned.", response );
 
-			let document:PersistedDocument.Class = this.getPersistedDocument( rdfDocument, response );
+			let document:PersistedDocument.Class = this._getPersistedDocument( rdfDocument, response );
 			document._etag = eTag;
 
 			this.documentsBeingResolved.delete( pointerID );
@@ -551,7 +551,7 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 			let rdfDocument:RDF.Document.Class = this.getRDFDocument( uri, rdfDocuments, response );
 			if( rdfDocument === null ) throw new HTTP.Errors.BadResponseError( "No document was returned.", response );
 
-			let updatedPersistedDocument:PersistedDocument.Class = this.getPersistedDocument( rdfDocument, response );
+			let updatedPersistedDocument:PersistedDocument.Class = this._getPersistedDocument( rdfDocument, response );
 			updatedPersistedDocument._etag = eTag;
 
 			return [ updatedPersistedDocument, response ];
@@ -652,6 +652,32 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 		if( this.context && this.context.auth.isAuthenticated() ) this.context.auth.addAuthentication( requestOptions );
 
 		return SPARQL.Service.executeUPDATE( documentURI, update, requestOptions );
+	}
+
+	_getPersistedDocument( rdfDocument:RDF.Document.Class, response:HTTP.Response.Class ):PersistedDocument.Class {
+		let documentResource:RDF.Node.Class = this.getDocumentResource( rdfDocument, response );
+		let fragmentResources:RDF.Node.Class[] = RDF.Document.Util.getBNodeResources( rdfDocument );
+		fragmentResources = fragmentResources.concat( RDF.Document.Util.getFragmentResources( rdfDocument ) );
+
+		let uri:string = documentResource[ "@id" ];
+		let documentPointer:Pointer.Class = this.getPointer( uri );
+
+		if( documentPointer.isResolved() ) {
+			this.updatePersistedDocument( <PersistedDocument.Class> documentPointer, documentResource, fragmentResources );
+		} else {
+			this.createPersistedDocument( documentPointer, documentResource, fragmentResources );
+		}
+
+		return <PersistedDocument.Class> documentPointer;
+	}
+
+	_getFreeResources( nodes:RDF.Node.Class[] ):FreeResources.Class {
+		let freeResourcesDocument:FreeResources.Class = FreeResources.Factory.create( this );
+
+		let resources:Resource.Class[] = nodes.map( node => freeResourcesDocument.createResource( node[ "@id" ] ) );
+		this.compact( nodes, resources, freeResourcesDocument );
+
+		return freeResourcesDocument;
 	}
 
 	private getRDFDocument( requestURL:string, rdfDocuments:RDF.Document.Class[], response:HTTP.Response.Class ):RDF.Document.Class {
@@ -830,23 +856,6 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 		return membershipResource;
 	}
 
-	private getPersistedDocument( rdfDocument:RDF.Document.Class, response:HTTP.Response.Class ):PersistedDocument.Class {
-		let documentResource:RDF.Node.Class = this.getDocumentResource( rdfDocument, response );
-		let fragmentResources:RDF.Node.Class[] = RDF.Document.Util.getBNodeResources( rdfDocument );
-		fragmentResources = fragmentResources.concat( RDF.Document.Util.getFragmentResources( rdfDocument ) );
-
-		let uri:string = documentResource[ "@id" ];
-		let documentPointer:Pointer.Class = this.getPointer( uri );
-
-		if( documentPointer.isResolved() ) {
-			this.updatePersistedDocument( <PersistedDocument.Class> documentPointer, documentResource, fragmentResources );
-		} else {
-			this.createPersistedDocument( documentPointer, documentResource, fragmentResources );
-		}
-
-		return <PersistedDocument.Class> documentPointer;
-	}
-
 	private createPersistedDocument( documentPointer:Pointer.Class, documentResource:RDF.Node.Class, fragmentResources:RDF.Node.Class[] ):PersistedDocument.Class {
 		let document:PersistedDocument.Class = PersistedDocument.Factory.createFrom( documentPointer, documentPointer.id, this );
 
@@ -904,13 +913,13 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 	}
 
 	private getPersistedMetadataResources( freeNodes:RDF.Node.Class[], rdfDocuments:RDF.Document.Class[], response:HTTP.Response.Class ):PersistedDocument.Class[] {
-		let freeResources:FreeResources.Class = this.getFreeResources( freeNodes );
+		let freeResources:FreeResources.Class = this._getFreeResources( freeNodes );
 
 		let descriptionResources:LDP.ResponseMetadata.Class[] = <any> freeResources.getResources().filter( LDP.ResponseMetadata.Factory.hasRDFClass );
 		if( descriptionResources.length === 0 ) return [];
 		if( descriptionResources.length > 1 ) throw new HTTP.Errors.BadResponseError( `The response contained multiple ${ LDP.ResponseMetadata.RDF_CLASS } objects.`, response );
 
-		rdfDocuments.forEach( rdfDocument => this.getPersistedDocument( rdfDocument, response ) );
+		rdfDocuments.forEach( rdfDocument => this._getPersistedDocument( rdfDocument, response ) );
 
 		let responseMetadata:LDP.ResponseMetadata.Class = descriptionResources[ 0 ];
 		return responseMetadata.resourcesMetadata.map( ( resourceMetadata:LDP.ResourceMetadata.Class ) => {
@@ -919,15 +928,6 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 
 			return resource;
 		} );
-	}
-
-	private getFreeResources( nodes:RDF.Node.Class[] ):FreeResources.Class {
-		let freeResourcesDocument:FreeResources.Class = FreeResources.Factory.create( this );
-
-		let resources:Resource.Class[] = nodes.map( node => freeResourcesDocument.createResource( node[ "@id" ] ) );
-		this.compact( nodes, resources, freeResourcesDocument );
-
-		return freeResourcesDocument;
 	}
 
 }

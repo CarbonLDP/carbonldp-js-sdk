@@ -14,6 +14,7 @@ import {
 } from "./../test/JasmineExtender";
 
 import AbstractContext from "./../AbstractContext";
+import * as Agent from "./../Agent";
 import * as Errors from "./../Errors";
 import * as HTTP from "./../HTTP";
 import * as Utils from "./../Utils";
@@ -48,11 +49,9 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 			expect( Utils.isFunction( TokenAuthenticator.Class ) ).toEqual( true );
 		} );
 
-		it( hasConstructor(
-			[
-				{name: "context", type: "Carbon.Context", description: "The context where to authenticate the agent."}
-			]
-		), ():void => {
+		it( hasConstructor( [
+			{name: "context", type: "Carbon.Context", description: "The context where to authenticate the agent."},
+		] ), ():void => {
 			class MockedContext extends AbstractContext {
 				resolve( uri:string ):string {
 					return uri;
@@ -89,7 +88,7 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 
 			it( hasSignature(
 				"Stores credentials to authenticate future requests.", [
-					{name: "authenticationToken", type: "Carbon.Auth.UsernameAndPasswordToken"}
+					{name: "authenticationToken", type: "Carbon.Auth.UsernameAndPasswordToken"},
 				],
 				{type: "Promise<Carbon.Auth.Token.Class>"}
 			), ( done:{ ():void, fail:( error:Error ) => void } ):void => {
@@ -97,11 +96,11 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 				// Property Integrity
 				(() => {
 					class MockedContext extends AbstractContext {
-						resolve( uri:string ) {
+						resolve( uri:string ):string {
 							return uri;
 						}
 					}
-					let context = new MockedContext();
+					let context:AbstractContext = new MockedContext();
 					let authenticator:TokenAuthenticator.Class = new TokenAuthenticator.Class( context );
 
 					expect( "authenticate" in authenticator ).toEqual( true );
@@ -122,20 +121,41 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 					expirationTime.setDate( expirationTime.getDate() + 1 );
 					jasmine.Ajax.stubRequest( "http://example.com/successful/auth-tokens/", null, "POST" ).andReturn( {
 						status: 200,
-						responseText: `
-						[{
-							"@id": "",
+						responseText: `[ {
+							"@id": "_:1",
 							"@type": [
 								"https://carbonldp.com/ns/v1/security#Token",
 								"https://carbonldp.com/ns/v1/platform#VolatileResource"
 							],
-							"https://carbonldp.com/ns/v1/security#tokenKey": "token-value",
+							"https://carbonldp.com/ns/v1/security#tokenKey": [ {
+								"@value": "token-value"
+							} ],
 							"https://carbonldp.com/ns/v1/security#expirationTime": {
 								"@value": "${expirationTime.toISOString()}",
 								"@type": "http://www.w3.org/2001/XMLSchema#dateTime"
-							}
-						}]
-					`,
+							},
+							"https://carbonldp.com/ns/v1/security#credentialsOf": [ {
+								"@id": "http://example.com/successful/agents/my-agent/"
+							} ]
+						}, {
+							"@id": "http://example.com/successful/agents/my-agent/",
+							"@graph": [ {
+								"@id": "http://example.com/successful/agents/my-agent/",
+								"@type": [ "https://carbonldp.com/ns/v1/security#Agent" ],
+								"https://carbonldp.com/ns/v1/security#name": [ {
+									"@value": "My Agent Name",
+									"@type": "http://www.w3.org/2001/XMLSchema#string"
+								} ],
+								"http://www.w3.org/2001/vcard-rdf/3.0#email": [ {
+									"@value": "my-agent@agents.com",
+									"@type": "http://www.w3.org/2001/XMLSchema#string"
+								} ],
+								"https://carbonldp.com/ns/v1/security#enabled": [ {
+									"@value": "true",
+									"@type": "http://www.w3.org/2001/XMLSchema#boolean"
+								} ]
+							} ]
+						} ]`,
 					} );
 
 					let context:SuccessfulContext = new SuccessfulContext();
@@ -147,6 +167,9 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 						expect( token ).toBeDefined();
 						expect( token ).not.toBeNull();
 						expect( Token.Factory.is( token ) ).toEqual( true );
+
+						// TODO: Change to `PersistedAgent`
+						expect( Agent.Factory.is( token.agent ) ).toBe( true );
 					} ) );
 				})();
 
@@ -161,7 +184,7 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 					let expirationTime:Date = new Date();
 					expirationTime.setDate( expirationTime.getDate() + 1 );
 					jasmine.Ajax.stubRequest( "http://example.com/unsuccessful/auth-tokens/", null, "POST" ).andReturn( {
-						status: 401
+						status: 401,
 					} );
 
 					let context:UnsuccessfulContext = new UnsuccessfulContext();
@@ -185,17 +208,17 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 
 			it( hasSignature(
 				"Stores credentials to authenticate future requests.", [
-					{name: "token", type: "Carbon.Auth.Token.Class"}
+					{name: "token", type: "Carbon.Auth.Token.Class"},
 				],
 				{type: "Promise<Carbon.Auth.Token.Class>"}
 			), ( done:{ ():void, fail:( error:Error ) => void } ):void => {
 
 				class MockedContext extends AbstractContext {
-					resolve( uri:string ) {
-						return uri;
+					resolve( uri:string ):string {
+						return "http://example.com/" + uri;
 					}
 				}
-				let context = new MockedContext();
+				let context:AbstractContext = new MockedContext();
 
 				// Property Integrity
 				(() => {
@@ -215,10 +238,8 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 						"expirationTime": "${expirationTime.toISOString()}",
 						"id": "",
 						"key": "token-value",
-						"types": [
-							"https://carbonldp.com/ns/v1/security#Token",
-							"https://carbonldp.com/ns/v1/platform#VolatileResource"
-						]
+						"types": [ "https://carbonldp.com/ns/v1/security#Token" ],
+						"agent": { "id": "http://exmple.com/agents/my-agent/" }
 					}`;
 					let authenticator:TokenAuthenticator.Class = new TokenAuthenticator.Class( context );
 
@@ -228,7 +249,28 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 
 							expect( tokenCredentials ).toBeDefined();
 							expect( tokenCredentials ).not.toBeNull();
-							expect( Token.Factory.is( tokenCredentials ) ).toEqual( true );
+							expect( Token.Factory.hasRequiredValues( tokenCredentials ) ).toEqual( true );
+						} )
+					);
+				})();
+				(() => {
+					let expirationTime:Date = new Date();
+					expirationTime.setDate( expirationTime.getDate() + 1 );
+					let tokenString:string = `{
+						"expirationTime": "${expirationTime.toISOString()}",
+						"id": "",
+						"key": "token-value",
+						"types": [ "https://carbonldp.com/ns/v1/security#Token" ]
+					}`;
+					let authenticator:TokenAuthenticator.Class = new TokenAuthenticator.Class( context );
+
+					promises.push( authenticator.authenticate( JSON.parse( tokenString ) )
+						.then( ( tokenCredentials:Token.Class ):void => {
+							expect( authenticator.isAuthenticated() ).toEqual( true );
+
+							expect( tokenCredentials ).toBeDefined();
+							expect( tokenCredentials ).not.toBeNull();
+							expect( Token.Factory.hasRequiredValues( tokenCredentials ) ).toEqual( true );
 						} )
 					);
 				})();
@@ -241,10 +283,8 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 						"expirationTime": "${expirationTime.toISOString()}",
 						"id": "",
 						"key": "token-value",
-						"types": [
-							"https://carbonldp.com/ns/v1/security#Token",
-							"https://carbonldp.com/ns/v1/platform#VolatileResource"
-						]
+						"types": [ "https://carbonldp.com/ns/v1/security#Token" ],
+						"agent": { "id": "http://exmple.com/agents/my-agent/" }
 					}`;
 					let authenticator:TokenAuthenticator.Class = new TokenAuthenticator.Class( context );
 
@@ -269,7 +309,7 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 		it( hasMethod( INSTANCE, "addAuthentication", `
 			Adds the Basic authentication header to the passed request options object.
 		`, [
-			{name: "requestOptions", type: "Carbon.HTTP.Request.Options", description: "Request options object to add Authentication headers."}
+			{name: "requestOptions", type: "Carbon.HTTP.Request.Options", description: "Request options object to add Authentication headers."},
 		], {type: "Carbon.HTTP.Request.Options", description: "The request options with the added authentication headers."} ), ( done:{ ():void; fail:( error:any ) => void } ):void => {
 
 			// Property Integrity
@@ -302,10 +342,8 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 				jasmine.Ajax.stubRequest( "http://example.com/successful/auth-tokens/", null, "POST" ).andReturn( {
 					status: 200,
 					responseText: `[{
-						"@id": "", 
-						"@type": [ 
-							"https://carbonldp.com/ns/v1/security#Token" 
-						], 
+						"@id": "_:1", 
+						"@type": [ "https://carbonldp.com/ns/v1/security#Token" ], 
 						"https://carbonldp.com/ns/v1/security#tokenKey": "token-value", 
 						"https://carbonldp.com/ns/v1/security#expirationTime": { 
 							"@value": "${expirationTime.toISOString()}"  , 
@@ -380,10 +418,8 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 				jasmine.Ajax.stubRequest( "http://example.com/successful/auth-tokens/", null, "POST" ).andReturn( {
 					status: 200,
 					responseText: `[{
-						"@id": "", 
-						"@type": [ 
-							"https://carbonldp.com/ns/v1/security#Token" 
-						], 
+						"@id": "_:1", 
+						"@type": [ "https://carbonldp.com/ns/v1/security#Token" ], 
 						"https://carbonldp.com/ns/v1/security#tokenKey": "token-value", 
 						"https://carbonldp.com/ns/v1/security#expirationTime": { 
 							"@value": "${expirationTime.toISOString()}"  , 
@@ -414,7 +450,7 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 		it( hasMethod( INSTANCE, "supports",
 			`Returns true if the Authenticator supports the AuthenticationToken.`,
 			[
-				{name: "authenticationToken", type: "Carbon.Auth.AuthenticationToken"}
+				{name: "authenticationToken", type: "Carbon.Auth.AuthenticationToken"},
 			],
 			{type: "boolean"}
 		), ():void => {

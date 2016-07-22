@@ -1,7 +1,9 @@
 import * as HTTP from "./HTTP";
 import Context from "./Context";
+import * as RDF from "./RDF";
 import * as AccessPoint from "./AccessPoint";
 import * as Document from "./Document";
+import * as FreeResources from "./FreeResources";
 import * as JSONLDConverter from "./JSONLDConverter";
 import * as PersistedDocument from "./PersistedDocument";
 import * as Pointer from "./Pointer";
@@ -59,6 +61,8 @@ declare class Documents implements Pointer.Library, Pointer.Validator, ObjectSch
     executeRawCONSTRUCTQuery(documentURI: string, constructQuery: string, requestOptions?: HTTP.Request.Options): Promise<[string, HTTP.Response.Class]>;
     executeRawDESCRIBEQuery(documentURI: string, describeQuery: string, requestOptions?: HTTP.Request.Options): Promise<[string, HTTP.Response.Class]>;
     executeUPDATE(documentURI: string, update: string, requestOptions?: HTTP.Request.Options): Promise<HTTP.Response.Class>;
+    _getPersistedDocument(rdfDocument: RDF.Document.Class, response: HTTP.Response.Class): PersistedDocument.Class;
+    _getFreeResources(nodes: RDF.Node.Class[]): FreeResources.Class;
     private getRDFDocument(requestURL, rdfDocuments, response);
     private getDocumentResource(rdfDocument, response);
     private getPointerID(uri);
@@ -75,10 +79,8 @@ declare class Documents implements Pointer.Library, Pointer.Validator, ObjectSch
     private getRequestURI(uri);
     private setDefaultRequestOptions(requestOptions, interactionModel);
     private getMembershipResource(documentResource, rdfDocuments, response);
-    private getPersistedDocument(rdfDocument, response);
     private createPersistedDocument(documentPointer, documentResource, fragmentResources);
     private updatePersistedDocument(persistedDocument, documentResource, fragmentResources);
     private getPersistedMetadataResources(freeNodes, rdfDocuments, response);
-    private getFreeResources(nodes);
 }
 export default Documents;

@@ -3,6 +3,7 @@ var Errors = require("./../Errors");
 var HTTP = require("./../HTTP");
 var NS = require("./../NS");
 var RDF = require("./../RDF");
+var Resource = require("./../Resource");
 var BasicAuthenticator_1 = require("./BasicAuthenticator");
 var UsernameAndPasswordToken_1 = require("./UsernameAndPasswordToken");
 var Token = require("./Token");
@@ -19,30 +20,22 @@ var Class = (function () {
     };
     Class.prototype.authenticate = function (authenticationOrCredentials) {
         var _this = this;
-        if (Token.Factory.is(authenticationOrCredentials)) {
-            if (Utils.isString(authenticationOrCredentials.expirationTime))
-                authenticationOrCredentials.expirationTime = new Date(authenticationOrCredentials.expirationTime);
-            this._credentials = authenticationOrCredentials;
-            return new Promise(function (resolve, reject) {
-                if (!_this.isAuthenticated()) {
-                    _this.clearAuthentication();
-                    throw new Errors.IllegalArgumentError("The token provided in not valid.");
-                }
-                resolve(_this._credentials);
-            });
-        }
-        else {
-            return this.basicAuthenticator.authenticate(authenticationOrCredentials)
-                .then(function (credentials) {
+        if (authenticationOrCredentials instanceof UsernameAndPasswordToken_1.default)
+            return this.basicAuthenticator.authenticate(authenticationOrCredentials).then(function () {
                 return _this.createToken();
-            })
-                .then(function (_a) {
+            }).then(function (_a) {
                 var token = _a[0], response = _a[1];
-                _this._credentials = token;
                 _this.basicAuthenticator.clearAuthentication();
-                return _this._credentials;
+                _this._credentials = token;
+                return token;
             });
-        }
+        var credentials = authenticationOrCredentials;
+        if (Utils.isString(credentials.expirationTime))
+            authenticationOrCredentials.expirationTime = new Date(credentials.expirationTime);
+        if (credentials.expirationTime <= new Date())
+            return Promise.reject(new Errors.IllegalArgumentError("The token provided in not valid."));
+        this._credentials = credentials;
+        return Promise.resolve(credentials);
     };
     Class.prototype.addAuthentication = function (requestOptions) {
         var headers = requestOptions.headers ? requestOptions.headers : requestOptions.headers = new Map();
@@ -64,16 +57,16 @@ var Class = (function () {
         HTTP.Request.Util.setPreferredInteractionModel(NS.LDP.Class.RDFSource, requestOptions);
         return HTTP.Request.Service.post(uri, null, requestOptions, new HTTP.JSONLDParser.Class()).then(function (_a) {
             var expandedResult = _a[0], response = _a[1];
-            var expandedNodes = RDF.Document.Util.getResources(expandedResult);
-            expandedNodes = expandedNodes.filter(Token.Factory.hasRDFClass);
-            if (expandedNodes.length === 0)
+            var freeNodes = RDF.Node.Util.getFreeNodes(expandedResult);
+            var freeResources = _this.context.documents._getFreeResources(freeNodes);
+            var tokenResources = freeResources.getResources().filter(function (resource) { return Resource.Util.hasType(resource, Token.RDF_CLASS); });
+            if (tokenResources.length === 0)
                 throw new HTTP.Errors.BadResponseError("No '" + Token.RDF_CLASS + "' was returned.", response);
-            if (expandedNodes.length > 1)
+            if (tokenResources.length > 1)
                 throw new HTTP.Errors.BadResponseError("Multiple '" + Token.RDF_CLASS + "' were returned. ", response);
-            var expandedToken = expandedNodes[0];
-            var token = Token.Factory.decorate({});
-            var digestedSchema = _this.context.documents.getSchemaFor(expandedToken);
-            _this.context.documents.jsonldConverter.compact(expandedToken, token, digestedSchema, _this.context.documents);
+            var token = tokenResources[0];
+            var agentDocuments = RDF.Document.Util.getDocuments(expandedResult).filter(function (rdfDocument) { return rdfDocument["@id"] === token.agent.id; });
+            agentDocuments.forEach(function (document) { return _this.context.documents._getPersistedDocument(document, response); });
             return [token, response];
         });
     };

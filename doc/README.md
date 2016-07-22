@@ -44,6 +44,7 @@
 	- [Enums](#Carbon-Auth-Enums)
 	- [Class Carbon.Auth.Class](#Carbon-Auth-Class)
 		- [Constructor](#Carbon-Auth-Class-Constructor)
+		- [Properties](#Carbon-Auth-Class-Properties)
 		- [Methods](#Carbon-Auth-Class-Methods)
 - [Module Carbon/Auth/ACE](#Carbon-Auth-ACE)
 - [Module Carbon/Auth/ACL](#Carbon-Auth-ACL)
@@ -63,6 +64,7 @@
 		- [Methods](#Carbon-Auth-Ticket-Factory-Methods)
 - [Module Carbon/Auth/Token](#Carbon-Auth-Token)
 	- [Class Carbon.Auth.Token.Factory](#Carbon-Auth-Token-Factory)
+		- [Properties](#Carbon-Auth-Token-Factory-Properties)
 		- [Methods](#Carbon-Auth-Token-Factory-Methods)
 - [Module Carbon/Auth/TokenAuthenticator](#Carbon-Auth-TokenAuthenticator)
 	- [Class Carbon.Auth.TokenAuthenticator.Class](#Carbon-Auth-TokenAuthenticator-Class)
@@ -1117,6 +1119,13 @@ Class()
 
 
 
+#### <a name="Carbon-Auth-Class-Properties" />Properties
+
+```typescript 
+authenticatedAgent:Carbon.PersistedDocument.Class 
+```
+
+The agent of the user that has been authenticated. If no authentication exists in the current context, it will ask to it's parent context.
 
 #### <a name="Carbon-Auth-Class-Methods" />Methods
 
@@ -1458,6 +1467,12 @@ Create and returns a `Carbon.Auth.Ticket.Class` object for the specified URI.
 
 
 
+#### <a name="Carbon-Auth-Token-Factory-Properties" />Properties
+```typescript 
+static SCHEMA:Carbon.ObjectSchema.Class 
+```
+
+
 
 #### <a name="Carbon-Auth-Token-Factory-Methods" />Methods
 ##### is
@@ -1493,27 +1508,6 @@ Adds any necessary data to the object provided to be utilized as a type `Carbon.
 *Parameters*
 
 - object
-
-##### hasRDFClass
-```typescript 
-hasRDFClass( pointer:Carbon.Pointer.Class ):boolean
-```
-
-Description
-
-*Parameters*
-
-- pointer
-
-```typescript 
-hasRDFClass( expandedObject:Object ):boolean
-```
-
-Description
-
-*Parameters*
-
-- expandedObject
 
 
 
@@ -6070,6 +6064,10 @@ static accessTo:string
 
 ```typescript 
 static allowsOrigin:string 
+```
+
+```typescript 
+static credentialsOf:string 
 ```
 
 ```typescript 

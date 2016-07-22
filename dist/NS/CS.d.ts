@@ -13,6 +13,7 @@ declare class Predicate {
     static accessControlList: string;
     static accessTo: string;
     static allowsOrigin: string;
+    static credentialsOf: string;
     static description: string;
     static expirationTime: string;
     static forIRI: string;
