@@ -221,7 +221,7 @@ export class Factory {
 	}
 
 	static createFrom<T extends Object>( object:T ):T & Class {
-		if( Factory.is( object ) ) throw new Errors.IllegalArgumentError( "The object passed is already a Document" );
+		if( Factory.is( object ) ) throw new Errors.IllegalArgumentError( "The object provided is already a Document" );
 
 		let resource:Resource.Class = <any> object;
 		if( ! Resource.Factory.is( object ) ) resource = Resource.Factory.createFrom( object );

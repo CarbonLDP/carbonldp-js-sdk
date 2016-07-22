@@ -215,9 +215,11 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 
 		it( hasMethod(
 			STATIC,
-			"decorate",
+			"decorate", [
+				"T extends Object",
+			],
 			"Adds the properties and methods necessary for a PersistedDocument object.", [
-				{name: "object", type: "T extends Object"},
+				{name: "object", type: "T"},
 				{name: "documents", type: "Carbon.Documents"},
 			],
 			{type: "T & Carbon.PersistedDocument.Class"}

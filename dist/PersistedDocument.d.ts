@@ -34,10 +34,10 @@ export interface Class extends Pointer.Class, PersistedResource.Class, Document.
     executeUPDATE(updateQuery: string, requestOptions?: HTTP.Request.Options): Promise<HTTP.Response.Class>;
 }
 export declare class Factory {
-    static hasClassProperties(document: Document.Class): boolean;
+    static hasClassProperties(object: Object): boolean;
     static is(object: Object): boolean;
     static create(uri: string, documents: Documents, snapshot?: Object): Class;
     static createFrom<T extends Object>(object: T, uri: string, documents: Documents, snapshot?: Object): Class;
-    static decorate<T extends Document.Class>(document: T, documents: Documents, snapshot?: Object): T & Class;
+    static decorate<T extends Object>(object: T, documents: Documents, snapshot?: Object): T & Class;
 }
 export default Class;

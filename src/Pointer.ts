@@ -36,15 +36,19 @@ export class Factory {
 	}
 
 	static create( id?:string ):Class {
+		return Factory.createFrom( {}, id );
+	}
+
+	static createFrom<T extends Object>( object:T, id?:string ): T & Class {
 		id = ! ! id ? id : "";
 
-		let pointer:Class = Factory.decorate( {} );
+		let pointer:T & Class = Factory.decorate<T>( object );
 		pointer.id = id;
 
 		return pointer;
 	}
 
-	static decorate<T extends Object>( object:T ):Class {
+	static decorate<T extends Object>( object:T ): T & Class {
 		if( Factory.hasClassProperties( object ) ) return <any> object;
 
 		Object.defineProperties( object, {

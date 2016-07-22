@@ -161,7 +161,7 @@ var Factory = (function () {
     };
     Factory.createFrom = function (object) {
         if (Factory.is(object))
-            throw new Errors.IllegalArgumentError("The object passed is already a Document");
+            throw new Errors.IllegalArgumentError("The object provided is already a Document");
         var resource = object;
         if (!Resource.Factory.is(object))
             resource = Resource.Factory.createFrom(object);

@@ -244,19 +244,21 @@ describe( module( "Carbon/Documents" ), ():void => {
 			"createChild"
 		), ():void => {
 
-			it( hasSignature(
+			it( hasSignature( [
+					"T extends Carbon.Document.Class",
+				],
 				"Create a child document for the respective parent source.", [
 					{name: "parentURI", type: "string"},
-					{name: "childDocument", type: "Carbon.Document.Class"},
+					{name: "childDocument", type: "T"},
 					{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true},
 				],
-				{type: "Promise<[Carbon.Pointer.Class, Carbon.HTTP.Response.Class]>"}
+				{type: "Promise<[ T, Carbon.HTTP.Response.Class ]>"}
 			), ( done:(() => void) & { fail:( error?:any ) => void } ):void => {
 				let promises:Promise<any>[] = [];
 
 				class MockedContext extends AbstractContext {
 					resolve( uri:string ):string {
-						return uri;
+						return URI.Util.isRelative( uri ) ? "http://example.com/" + uri : uri;
 					}
 				}
 
@@ -321,10 +323,16 @@ describe( module( "Carbon/Documents" ), ():void => {
 					},
 				} );
 
-				promises.push( documents.createChild( "http://example.com/parent-resource/", childDocument ).then( ( response:any ):void => {
-					expect( response ).toBeDefined();
+				promises.push( documents.createChild( "http://example.com/parent-resource/", childDocument ).then( ( [ document, response ]:[ Document.Class, HTTP.Response.Class ] ):void => {
+					expect( response ).toEqual( jasmine.any( HTTP.Response.Class ) );
 
-					// TODO: Finish assertions
+					expect( document ).toBe( childDocument );
+					expect( document.id ).toBe( "http://example.com/parent-resource/new-resource/" );
+					expect( documents.hasPointer( "parent-resource/new-resource/" ) ).toBe( true );
+				} ) );
+
+				promises.push( documents.createChild( "http://example.com/parent-resource/", childDocument ).catch( error => {
+					expect( error ).toEqual( jasmine.any( Errors.IllegalArgumentError ) );
 				} ) );
 
 				Promise.all( promises ).then( ():void => {
@@ -335,20 +343,22 @@ describe( module( "Carbon/Documents" ), ():void => {
 				} );
 			} );
 
-			it( hasSignature(
+			it( hasSignature( [
+					"T extends Carbon.Document.Class",
+				],
 				"Create a child document for the respective parent source.", [
 					{name: "parentURI", type: "string"},
 					{name: "slug", type: "string"},
-					{name: "childDocument", type: "Carbon.Document.Class"},
+					{name: "childDocument", type: "T"},
 					{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true},
 				],
-				{type: "Promise<[Carbon.Pointer.Class, Carbon.HTTP.Response.Class]>"}
+				{type: "Promise<[ T, Carbon.HTTP.Response.Class ]>"}
 			), ( done:(() => void) & { fail:( error?:any ) => void } ):void => {
 				let promises:Promise<any>[] = [];
 
 				class MockedContext extends AbstractContext {
 					resolve( uri:string ):string {
-						return uri;
+						return URI.Util.isRelative( uri ) ? "http://example.com/" + uri : uri;
 					}
 				}
 
@@ -413,10 +423,16 @@ describe( module( "Carbon/Documents" ), ():void => {
 					},
 				} );
 
-				promises.push( documents.createChild( "http://example.com/parent-resource/", "child-document", childDocument ).then( ( response:any ):void => {
-					expect( response ).toBeDefined();
+				promises.push( documents.createChild( "http://example.com/parent-resource/", "child-document", childDocument ).then( ( [ document, response ]:[ Document.Class, HTTP.Response.Class ] ):void => {
+					expect( response ).toEqual( jasmine.any( HTTP.Response.Class ) );
 
-					// TODO: Finish assertions
+					expect( document ).toBe( childDocument );
+					expect( document.id ).toBe( "http://example.com/parent-resource/new-resource/" );
+					expect( documents.hasPointer( "parent-resource/new-resource/" ) ).toBe( true );
+				} ) );
+
+				promises.push( documents.createChild( "http://example.com/parent-resource/", "child-document", childDocument ).catch( error => {
+					expect( error ).toEqual( jasmine.any( Errors.IllegalArgumentError ) );
 				} ) );
 
 				Promise.all( promises ).then( ():void => {
@@ -427,19 +443,21 @@ describe( module( "Carbon/Documents" ), ():void => {
 				} );
 			} );
 
-			it( hasSignature(
+			it( hasSignature( [
+					"T extends Object",
+				],
 				"Create a child document for the respective parent source.", [
 					{name: "parentURI", type: "string"},
-					{name: "childObject", type: "Object"},
+					{name: "childObject", type: "T"},
 					{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true},
 				],
-				{type: "Promise<[Carbon.Pointer.Class, Carbon.HTTP.Response.Class]>"}
+				{type: "Promise<[ T & Carbon.Document.Class, Carbon.HTTP.Response.Class ]>"}
 			), ( done:(() => void) & { fail:( error?:any ) => void } ):void => {
 				let promises:Promise<any>[] = [];
 
 				class MockedContext extends AbstractContext {
 					resolve( uri:string ):string {
-						return uri;
+						return URI.Util.isRelative( uri ) ? "http://example.com/" + uri : uri;
 					}
 				}
 
@@ -510,10 +528,16 @@ describe( module( "Carbon/Documents" ), ():void => {
 					},
 				} );
 
-				promises.push( documents.createChild( "http://example.com/parent-resource/", childObject ).then( ( [ pointer, response ]:[Pointer.Class, HTTP.Response.Class] ):void => {
-					expect( Pointer.Factory.is( pointer ) ).toBe( true );
+				promises.push( documents.createChild( "http://example.com/parent-resource/", childObject ).then( ( [ document, response ]:[ Document.Class, HTTP.Response.Class ] ):void => {
+					expect( response ).toEqual( jasmine.any( HTTP.Response.Class ) );
 
-					// TODO: Finish assertions
+					expect( document ).toBe( childObject );
+					expect( document.id ).toBe( "http://example.com/parent-resource/new-resource/" );
+					expect( documents.hasPointer( "parent-resource/new-resource/" ) ).toBe( true );
+				} ) );
+
+				promises.push( documents.createChild( "http://example.com/parent-resource/", childObject ).catch( error => {
+					expect( error ).toEqual( jasmine.any( Errors.IllegalArgumentError ) );
 				} ) );
 
 				Promise.all( promises ).then( ():void => {
@@ -524,20 +548,22 @@ describe( module( "Carbon/Documents" ), ():void => {
 				} );
 			} );
 
-			it( hasSignature(
+			it( hasSignature( [
+					"T extends Object",
+				],
 				"Create a child document for the respective parent source.", [
 					{name: "parentURI", type: "string"},
 					{name: "slug", type: "string"},
-					{name: "childObject", type: "Object"},
+					{name: "childObject", type: "T"},
 					{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true},
 				],
-				{type: "Promise<[Carbon.Pointer.Class, Carbon.HTTP.Response.Class]>"}
+				{type: "Promise<[ T & Carbon.Carbon.Class, Carbon.HTTP.Response.Class ]>"}
 			), ( done:(() => void) & { fail:( error?:any ) => void } ):void => {
 				let promises:Promise<any>[] = [];
 
 				class MockedContext extends AbstractContext {
 					resolve( uri:string ):string {
-						return uri;
+						return URI.Util.isRelative( uri ) ? "http://example.com/" + uri : uri;
 					}
 				}
 
@@ -608,9 +634,20 @@ describe( module( "Carbon/Documents" ), ():void => {
 					},
 				} );
 
-				promises.push( documents.createChild( "http://example.com/parent-resource/", "child-document", childObject ).then( ( response:any ):void => {
-					expect( response ).toBeDefined();
-					// TODO: Finish assertions
+				promises.push( documents.createChild( "http://example.com/parent-resource/", "child-document", childObject ).then( ( [ document, response ]:[ Document.Class, HTTP.Response.Class ] ):void => {
+					expect( response ).toEqual( jasmine.any( HTTP.Response.Class ) );
+
+					expect( document ).toBe( childObject );
+					expect( document.id ).toBe( "http://example.com/parent-resource/new-resource/" );
+					expect( documents.hasPointer( "parent-resource/new-resource/" ) ).toBe( true );
+				} ) );
+
+				promises.push( documents.createChild( "http://example.com/parent-resource/", "child-document", childObject ).catch( error => {
+					expect( error ).toEqual( jasmine.any( Errors.IllegalArgumentError ) );
+				} ) );
+
+				promises.push( documents.createChild( "http://example.com/parent-resource/", "child-document", childObject ).catch( error => {
+					expect( error ).toEqual( jasmine.any( Errors.IllegalArgumentError ) );
 				} ) );
 
 				Promise.all( promises ).then( ():void => {
@@ -620,6 +657,109 @@ describe( module( "Carbon/Documents" ), ():void => {
 					done.fail( error );
 				} );
 			} );
+		} );
+
+		describe( method(
+			INSTANCE,
+			"createChildAndRetrieve"
+		), ():void => {
+
+			it( hasSignature( [
+					"T extends Object",
+				],
+				"Persists JavaScript object as a child document for the respective parent source and retrieves tha updated data from the server.", [
+					{name: "parentURI", type: "string", description: "URI of the document where to create a new child."},
+					{name: "childObject", type: "T", description: " A normal JavaScript object that will be converted and persisted as a new child document."},
+					{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request."},
+				],
+				{type: "Promise<[ T & Carbon.Document.Class, Carbon.HTTP.Response.Class ]>"}
+			), ( done:{ ():void, fail:() => void } ):void => {
+				class MockedContext extends AbstractContext {
+					resolve( uri:string ):string {
+						return URI.Util.isRelative( uri ) ? "http://example.com/" + uri : uri;
+					}
+				}
+
+				let context:MockedContext = new MockedContext();
+				let documents:Documents = context.documents;
+
+				let mockCreateResponse:any = {val: "Mock Save Response"};
+				let mockRetrieveResponse:any = {val: "Mock Save Response"};
+				let options:HTTP.Request.Options = {timeout: 50550};
+
+				let childObject:Object = {property: "My property"};
+
+				let spyCreateChild:jasmine.Spy = spyOn( context.documents, "createChild" ).and.callFake( () => {
+					let document:Document.Class = Document.Factory.createFrom( childObject );
+					document.id = "http://example.com/parent-resource/new-child/";
+					return Promise.resolve<any>( [ document, mockCreateResponse ] );
+				} );
+				let spyRetrieve:jasmine.Spy = spyOn( context.documents, "get" ).and.callFake( () => {
+					let persistedDocument:PersistedDocument.Class = PersistedDocument.Factory.decorate( childObject, documents );
+					return Promise.resolve<any>( [ persistedDocument, mockRetrieveResponse ] );
+				} );
+
+				documents.createChildAndRetrieve( "http://example.com/parent-resource/", childObject, options ).then( ( [ _document, [ createResponse, retrieveResponse ] ]:[ Document.Class, [ HTTP.Response.Class, HTTP.Response.Class] ] ) => {
+					expect( spyCreateChild ).toHaveBeenCalledWith( "http://example.com/parent-resource/", childObject, options, undefined );
+					expect( spyRetrieve ).toHaveBeenCalledWith( "http://example.com/parent-resource/new-child/" );
+
+					expect( childObject ).toBe( _document );
+					expect( createResponse ).toBe( mockCreateResponse );
+					expect( retrieveResponse ).toBe( mockRetrieveResponse );
+
+					done();
+				} ).catch( done.fail );
+			} );
+
+			it( hasSignature( [
+					"T extends Object",
+				],
+				"Persists JavaScript object as a child document for the respective parent source and retrieves tha updated data from the server.", [
+					{name: "parentURI", type: "string", description: "URI of the document where to create a new child."},
+					{name: "slug", type: "string", description: "Slug that will be used for the URI of the new child."},
+					{name: "childObject", type: "T", description: " A normal JavaScript object that will be converted and persisted as a new child document."},
+					{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request."},
+				],
+				{type: "Promise<[ T & Carbon.Carbon.Class, Carbon.HTTP.Response.Class ]>"}
+			), ( done:{ ():void, fail:() => void } ):void => {
+				class MockedContext extends AbstractContext {
+					resolve( uri:string ):string {
+						return URI.Util.isRelative( uri ) ? "http://example.com/" + uri : uri;
+					}
+				}
+
+				let context:MockedContext = new MockedContext();
+				let documents:Documents = context.documents;
+
+				let mockCreateResponse:any = {val: "Mock Save Response"};
+				let mockRetrieveResponse:any = {val: "Mock Save Response"};
+				let options:HTTP.Request.Options = {timeout: 50550};
+
+				let childObject:Object = {property: "My property"};
+
+				let spyCreateChild:jasmine.Spy = spyOn( context.documents, "createChild" ).and.callFake( () => {
+					let document:Document.Class = Document.Factory.createFrom( childObject );
+					document.id = "http://example.com/parent-resource/child-document/";
+					return Promise.resolve<any>( [ document, mockCreateResponse ] );
+				} );
+				let spyRetrieve:jasmine.Spy = spyOn( context.documents, "get" ).and.callFake( () => {
+					let persistedDocument:PersistedDocument.Class = PersistedDocument.Factory.decorate( childObject, documents );
+					return Promise.resolve<any>( [ persistedDocument, mockRetrieveResponse ] );
+				} );
+
+				documents.createChildAndRetrieve( "http://example.com/parent-resource/", "child-document", childObject, options ).then( ( [ _document, [ createResponse, retrieveResponse ] ]:[ Document.Class, [ HTTP.Response.Class, HTTP.Response.Class] ] ) => {
+					expect( spyCreateChild ).toHaveBeenCalledWith( "http://example.com/parent-resource/", "child-document", childObject, options );
+					expect( spyRetrieve ).toHaveBeenCalledWith( "http://example.com/parent-resource/child-document/" );
+
+					expect( childObject ).toBe( _document );
+					expect( createResponse ).toBe( mockCreateResponse );
+					expect( retrieveResponse ).toBe( mockRetrieveResponse );
+
+					done();
+				} ).catch( done.fail );
+
+			} );
+
 		} );
 
 		it( hasMethod(
@@ -1160,7 +1300,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					{name: "slug", type: "string", optional: true},
 					{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true},
 				],
-				{type: "Promise<[Carbon.Pointer.Class, Carbon.HTTP.Response.Class]>"}
+				{type: "Promise<[Carbon.AccessPoint.Class, Carbon.HTTP.Response.Class]>"}
 			), ( done:(() => void) & { fail:( error?:any ) => void } ):void => {
 				let promises:Promise<any>[] = [];
 
@@ -1172,16 +1312,14 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 				let context:MockedContext = new MockedContext();
 				let documents:Documents = context.documents;
-				let spy = {
-					success: ( [ pointer, response ]:[Pointer.Class, HTTP.Response.Class] ):void => {
-						expect( pointer.id ).toBe( "http://example.com/parent-resource/access-point/" );
-					},
-					fail: ( error:Error ) => {
+				let spy:any = {
+					success: ():void => {},
+					fail: ( error:Error ):void => {
 						expect( error instanceof Errors.IllegalArgumentError ).toBe( true );
-					}
+					},
 				};
-				let spySuccess = spyOn( spy, "success" ).and.callThrough();
-				let spyFail = spyOn( spy, "fail" ).and.callThrough();
+				let spySuccess:jasmine.Spy = spyOn( spy, "success" ).and.callThrough();
+				let spyFail:jasmine.Spy = spyOn( spy, "fail" ).and.callThrough();
 
 				jasmine.Ajax.stubRequest( "http://example.com/parent-resource/", null, "POST" ).andReturn( {
 					status: 200,
@@ -1194,15 +1332,30 @@ describe( module( "Carbon/Documents" ), ():void => {
 				let promise:Promise<any>;
 				let accessPoint:AccessPoint.Class;
 
+				function callSuccess( originalAccessPoint:AccessPoint.Class ):any {
+					return ( [ _accessPoint, response ]:[ AccessPoint.Class, HTTP.Response.Class ] ):void => {
+						expect( _accessPoint.id ).toBe( "http://example.com/parent-resource/access-point/" );
+						expect( originalAccessPoint ).toBe( _accessPoint );
+
+						expect( response ).toEqual( jasmine.any( HTTP.Response.Class ) );
+						spy.success();
+					};
+				}
+
 				accessPoint = AccessPoint.Factory.create( membershipResource, "http://example.com/myNamespace#some-relation" );
 				promise = documents.createAccessPoint( "http://example.com/parent-resource/", accessPoint, "access-point" );
 				expect( promise instanceof Promise ).toBe( true );
-				promises.push( promise.then( spy.success ) );
+				promises.push( promise.then( callSuccess( accessPoint ) ) );
 
 				accessPoint = AccessPoint.Factory.create( membershipResource, "http://example.com/myNamespace#some-relation" );
 				promise = documents.createAccessPoint( "http://example.com/parent-resource/", accessPoint );
 				expect( promise instanceof Promise ).toBe( true );
-				promises.push( promise.then( spy.success ) );
+				promises.push( promise.then( callSuccess( accessPoint ) ) );
+
+				// Trying to persists the same accessPoint
+				promise = documents.createAccessPoint( "http://example.com/parent-resource/", accessPoint );
+				expect( promise instanceof Promise ).toBe( true );
+				promises.push( promise.catch( spy.fail ) );
 
 				promise = documents.createAccessPoint( "http://example.com/the-bad-parent-resource/", accessPoint );
 				expect( promise instanceof Promise ).toBe( true );
@@ -1214,7 +1367,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				promises.push( promise.catch( spy.fail ) );
 
 				accessPoint.id = "";
-				let persisted = PersistedDocument.Factory.decorate( accessPoint, documents );
+				let persisted:AccessPoint.Class & PersistedDocument.Class = PersistedDocument.Factory.decorate( accessPoint, documents );
 				promise = documents.createAccessPoint( "http://example.com/parent-resource/", persisted );
 				expect( promise instanceof Promise ).toBe( true );
 				promises.push( promise.catch( spy.fail ) );
@@ -1232,7 +1385,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					{name: "slug", type: "string", optional: true},
 					{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true},
 				],
-				{type: "Promise<[Carbon.Pointer.Class, Carbon.HTTP.Response.Class]>"}
+				{type: "Promise<[Carbon.AccessPoint.Class, Carbon.HTTP.Response.Class]>"}
 			), ( done:(() => void) & { fail:( error?:any ) => void } ):void => {
 
 				let promises:Promise<any>[] = [];
@@ -1245,16 +1398,14 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 				let context:MockedContext = new MockedContext();
 				let documents:Documents = context.documents;
-				let spy = {
-					success: ( [ pointer, response ]:[Pointer.Class, HTTP.Response.Class] ):void => {
-						expect( pointer.id ).toBe( "http://example.com/parent-resource/access-point/" );
-					},
-					fail: ( error:Error ) => {
+				let spy:any = {
+					success: ():void => {},
+					fail: ( error:Error ):void => {
 						expect( error instanceof Errors.IllegalArgumentError ).toBe( true );
-					}
+					},
 				};
-				let spySuccess = spyOn( spy, "success" ).and.callThrough();
-				let spyFail = spyOn( spy, "fail" ).and.callThrough();
+				let spySuccess:jasmine.Spy = spyOn( spy, "success" ).and.callThrough();
+				let spyFail:jasmine.Spy = spyOn( spy, "fail" ).and.callThrough();
 
 				jasmine.Ajax.stubRequest( "http://example.com/parent-resource/", null, "POST" ).andReturn( {
 					status: 200,
@@ -1267,15 +1418,25 @@ describe( module( "Carbon/Documents" ), ():void => {
 				let promise:Promise<any>;
 				let accessPoint:AccessPoint.Class;
 
+				function callSuccess( originalAccessPoint:AccessPoint.Class ):any {
+					return ( [ _accessPoint, response ]:[ AccessPoint.Class, HTTP.Response.Class ] ):void => {
+						expect( _accessPoint.id ).toBe( "http://example.com/parent-resource/access-point/" );
+						expect( originalAccessPoint ).toBe( _accessPoint );
+
+						expect( response ).toEqual( jasmine.any( HTTP.Response.Class ) );
+						spy.success();
+					};
+				}
+
 				accessPoint = AccessPoint.Factory.create( membershipResource, "http://example.com/myNamespace#some-relation" );
 				promise = documents.createAccessPoint( accessPoint, "access-point" );
 				expect( promise instanceof Promise ).toBe( true );
-				promises.push( promise.then( spy.success ) );
+				promises.push( promise.then( callSuccess( accessPoint ) ) );
 
 				accessPoint = AccessPoint.Factory.create( membershipResource, "http://example.com/myNamespace#some-relation" );
 				promise = documents.createAccessPoint( accessPoint );
 				expect( promise instanceof Promise ).toBe( true );
-				promises.push( promise.then( spy.success ) );
+				promises.push( promise.then( callSuccess( accessPoint ) ) );
 
 				accessPoint.id = "http://example.com/bad-access-point-id/";
 				promise = documents.createAccessPoint( accessPoint );
@@ -1283,7 +1444,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				promises.push( promise.catch( spy.fail ) );
 
 				accessPoint.id = "";
-				let persisted = PersistedDocument.Factory.decorate( accessPoint, documents );
+				let persisted:AccessPoint.Class & PersistedDocument.Class = PersistedDocument.Factory.decorate( accessPoint, documents );
 				promise = documents.createAccessPoint( persisted );
 				expect( promise instanceof Promise ).toBe( true );
 				promises.push( promise.catch( spy.fail ) );
@@ -3143,4 +3304,3 @@ describe( module( "Carbon/Documents" ), ():void => {
 	} );
 
 } );
-

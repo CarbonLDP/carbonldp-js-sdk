@@ -139,18 +139,40 @@ var Documents = (function () {
         var body = childDocument.toJSON(this, this.jsonldConverter);
         if (slug !== null)
             HTTP.Request.Util.setSlug(slug, requestOptions);
+        if (childDocument["__CarbonSDK_InProgressOfPersisting"])
+            Promise.reject(new Errors.IllegalArgumentError("The childDocument is already being persisted."));
+        Object.defineProperty(childDocument, "__CarbonSDK_InProgressOfPersisting", {
+            configurable: true,
+            enumerable: false,
+            writable: false,
+            value: true,
+        });
         return HTTP.Request.Service.post(parentURI, body, requestOptions).then(function (response) {
+            delete childDocument["__CarbonSDK_InProgressOfPersisting"];
             var locationHeader = response.getHeader("Location");
             if (locationHeader === null || locationHeader.values.length < 1)
                 throw new HTTP.Errors.BadResponseError("The response is missing a Location header.", response);
             if (locationHeader.values.length !== 1)
                 throw new HTTP.Errors.BadResponseError("The response contains more than one Location header.", response);
-            var locationURI = locationHeader.values[0].toString();
-            var pointer = _this.getPointer(locationURI);
+            var localID = _this.getPointerID(locationHeader.values[0].toString());
+            var document = _this.createPointerFrom(childDocument, localID);
+            _this.pointers.set(localID, document);
             return [
-                pointer,
+                document,
                 response,
             ];
+        });
+    };
+    Documents.prototype.createChildAndRetrieve = function (parentURI, slugOrChildDocument, childDocumentOrRequestOptions, requestOptions) {
+        var _this = this;
+        var createResponse;
+        return this.createChild(parentURI, slugOrChildDocument, childDocumentOrRequestOptions, requestOptions).then(function (_a) {
+            var document = _a[0], response = _a[1];
+            createResponse = response;
+            return _this.get(document.id);
+        }).then(function (_a) {
+            var persistedDocument = _a[0], response = _a[1];
+            return [persistedDocument, [createResponse, response]];
         });
     };
     Documents.prototype.listChildren = function (parentURI, requestOptions) {
@@ -238,16 +260,26 @@ var Documents = (function () {
         var body = accessPoint.toJSON(this, this.jsonldConverter);
         if (slug !== null)
             HTTP.Request.Util.setSlug(slug, requestOptions);
+        if (accessPoint["__CarbonSDK_InProgressOfPersisting"])
+            Promise.reject(new Errors.IllegalArgumentError("The accessPoint is already being persisted."));
+        Object.defineProperty(accessPoint, "__CarbonSDK_InProgressOfPersisting", {
+            configurable: true,
+            enumerable: false,
+            writable: false,
+            value: true,
+        });
         return HTTP.Request.Service.post(documentURI, body, requestOptions).then(function (response) {
+            delete accessPoint["__CarbonSDK_InProgressOfPersisting"];
             var locationHeader = response.getHeader("Location");
             if (locationHeader === null || locationHeader.values.length < 1)
                 throw new HTTP.Errors.BadResponseError("The response is missing a Location header.", response);
             if (locationHeader.values.length !== 1)
                 throw new HTTP.Errors.BadResponseError("The response contains more than one Location header.", response);
-            var locationURI = locationHeader.values[0].toString();
-            var pointer = _this.getPointer(locationURI);
+            var localID = _this.getPointerID(locationHeader.values[0].toString());
+            var _accessPoint = _this.createPointerFrom(accessPoint, localID);
+            _this.pointers.set(localID, _accessPoint);
             return [
-                pointer,
+                _accessPoint,
                 response,
             ];
         });
@@ -600,9 +632,12 @@ var Documents = (function () {
         }
     };
     Documents.prototype.createPointer = function (localID) {
+        return this.createPointerFrom({}, localID);
+    };
+    Documents.prototype.createPointerFrom = function (object, localID) {
         var _this = this;
         var id = !!this.context ? this.context.resolve(localID) : localID;
-        var pointer = Pointer.Factory.create(id);
+        var pointer = Pointer.Factory.createFrom(object, id);
         Object.defineProperty(pointer, "resolve", {
             writable: false,
             enumerable: false,
@@ -740,7 +775,7 @@ var Documents = (function () {
         return documentPointer;
     };
     Documents.prototype.createPersistedDocument = function (documentPointer, documentResource, fragmentResources) {
-        var document = PersistedDocument.Factory.createFrom(documentPointer, documentPointer.id, this);
+        var document = PersistedDocument.Factory.decorate(documentPointer, this);
         var fragments = [];
         for (var _i = 0, fragmentResources_1 = fragmentResources; _i < fragmentResources_1.length; _i++) {
             var fragmentResource = fragmentResources_1[_i];

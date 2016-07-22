@@ -12,10 +12,15 @@ export interface Class extends PersistedRDFSource.Class {
 
 	addMembers( members:(Pointer.Class | string)[] ):Promise<HTTP.Response.Class>;
 
-	createChild( slug:string, object:Object ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
-	createChild( slug:string ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
-	createChild( object:Object ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
-	createChild():Promise<[ Pointer.Class, HTTP.Response.Class ]>;
+	createChild<T extends Object>( slug:string, object:T ):Promise<[ T & Document.Class, HTTP.Response.Class ]>;
+	createChild( slug:string ):Promise<[ Document.Class, HTTP.Response.Class ]>;
+	createChild<T extends Object>( object:T ):Promise<[ T & Document.Class, HTTP.Response.Class ]>;
+	createChild():Promise<[ Document.Class, HTTP.Response.Class ]>;
+
+	createChildAndRetrieve<T extends Object>( slug:string, object:T ):Promise<[ T & PersistedDocument.Class, [ HTTP.Response.Class, HTTP.Response.Class ] ]>;
+	createChildAndRetrieve( slug:string ):Promise<[ PersistedDocument.Class, [ HTTP.Response.Class, HTTP.Response.Class ] ]>;
+	createChildAndRetrieve<T extends Object>( object:T ):Promise<[ T & PersistedDocument.Class, [ HTTP.Response.Class, HTTP.Response.Class ] ]>;
+	createChildAndRetrieve():Promise<[ PersistedDocument.Class, [ HTTP.Response.Class, HTTP.Response.Class ] ]>;
 
 	listChildren():Promise<[ Pointer.Class[], HTTP.Response.Class ]>;
 
@@ -61,6 +66,22 @@ function createChild( slugOrObject?:any, object?:Object ):Promise<[ Pointer.Clas
 		return this._documents.createChild( this.id, slug, object );
 	} else {
 		return this._documents.createChild( this.id, object );
+	}
+}
+
+function createChildAndRetrieve( slug:string, object:Object ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
+function createChildAndRetrieve( slug:string ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
+function createChildAndRetrieve( object:Object ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
+function createChildAndRetrieve():Promise<[ Pointer.Class, HTTP.Response.Class ]>;
+function createChildAndRetrieve( slugOrObject?:any, object?:Object ):Promise<[ Pointer.Class, HTTP.Response.Class ]> {
+	let slug:string = Utils.isString( slugOrObject ) ? slugOrObject : null;
+	object = Utils.isString( slugOrObject ) ? object : slugOrObject;
+	object = object || {};
+
+	if( slug ) {
+		return this._documents.createChildAndRetrieve( this.id, slug, object );
+	} else {
+		return this._documents.createChildAndRetrieve( this.id, object );
 	}
 }
 
@@ -117,6 +138,7 @@ export class Factory {
 			&& Utils.hasFunction( document, "addMember" )
 			&& Utils.hasFunction( document, "addMembers" )
 			&& Utils.hasFunction( document, "createChild" )
+			&& Utils.hasFunction( document, "createChildAndRetrieve" )
 			&& Utils.hasFunction( document, "listChildren" )
 			&& Utils.hasFunction( document, "getChildren" )
 			&& Utils.hasFunction( document, "listMembers" )
@@ -150,6 +172,12 @@ export class Factory {
 				enumerable: false,
 				configurable: true,
 				value: createChild,
+			},
+			"createChildAndRetrieve": {
+				writable: false,
+				enumerable: false,
+				configurable: true,
+				value: createChildAndRetrieve,
 			},
 			"listChildren": {
 				writable: false,

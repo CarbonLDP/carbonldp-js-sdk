@@ -16,8 +16,11 @@ var Factory = (function () {
             Factory.hasClassProperties(value));
     };
     Factory.create = function (id) {
+        return Factory.createFrom({}, id);
+    };
+    Factory.createFrom = function (object, id) {
         id = !!id ? id : "";
-        var pointer = Factory.decorate({});
+        var pointer = Factory.decorate(object);
         pointer.id = id;
         return pointer;
     };
