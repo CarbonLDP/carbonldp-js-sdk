@@ -19,7 +19,7 @@ declare class Documents implements Pointer.Library, Pointer.Validator, ObjectSch
     inScope(id: string): boolean;
     hasPointer(id: string): boolean;
     getPointer(id: string): Pointer.Class;
-    get<T extends PersistedDocument.Class>(uri: string, requestOptions?: HTTP.Request.Options): Promise<[T, HTTP.Response.Class]>;
+    get<T>(uri: string, requestOptions?: HTTP.Request.Options): Promise<[T & PersistedDocument.Class, HTTP.Response.Class]>;
     exists(documentURI: string, requestOptions?: HTTP.Request.Options): Promise<[boolean, HTTP.Response.Class]>;
     createChild(parentURI: string, slug: string, childDocument: Document.Class, requestOptions?: HTTP.Request.Options): Promise<[Pointer.Class, HTTP.Response.Class]>;
     createChild(parentURI: string, childDocument: Document.Class, requestOptions?: HTTP.Request.Options): Promise<[Pointer.Class, HTTP.Response.Class]>;
