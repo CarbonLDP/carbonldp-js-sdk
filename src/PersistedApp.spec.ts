@@ -67,7 +67,7 @@ describe( module( "Carbon/PersistedApp" ), ():void => {
 			expect( PersistedApp.Factory.is ).toBeDefined();
 			expect( Utils.isFunction( PersistedApp.Factory.is ) ).toBe( true );
 
-			let object:any = {};
+			let object:any = {created: null, modified: null, defaultInteractionModel: null};
 			expect( PersistedApp.Factory.is( object ) ).toBe( false );
 			object.name = "App name";
 			expect( PersistedApp.Factory.is( object ) ).toBe( false );

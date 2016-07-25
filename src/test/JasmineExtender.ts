@@ -42,6 +42,7 @@ export interface PropertyDescriptor extends SpecDescriptor {
 }
 
 export interface MethodDescriptor extends SpecDescriptor {
+	generics?:string[];
 	arguments?:MethodArgument[];
 	returns?:MethodReturn;
 }
@@ -215,16 +216,32 @@ export function hasMethod( access:string, name:string ):string;
 
 export function hasMethod( access:string, name:string, description:string ):string;
 export function hasMethod( access:string, name:string, methodArguments:MethodArgument[] ):string;
+export function hasMethod( access:string, name:string, generics:string[], methodArguments:MethodArgument[] ):string;
 export function hasMethod( access:string, name:string, returns:MethodReturn ):string;
+export function hasMethod( access:string, name:string, generics:string[], returns:MethodReturn ):string;
 
 export function hasMethod( access:string, name:string, description:string, methodArguments:MethodArgument[] ):string;
+export function hasMethod( access:string, name:string, generics:string[], description:string, methodArguments:MethodArgument[] ):string;
 export function hasMethod( access:string, name:string, description:string, returns:MethodReturn ):string;
+export function hasMethod( access:string, name:string, generics:string[], description:string, returns:MethodReturn ):string;
 export function hasMethod( access:string, name:string, methodArguments:MethodArgument[], returns:MethodReturn ):string;
+export function hasMethod( access:string, name:string, generics:string[], methodArguments:MethodArgument[], returns:MethodReturn ):string;
 
 export function hasMethod( access:string, name:string, description:string, methodArguments:MethodArgument[], returns:MethodReturn ):string;
+export function hasMethod( access:string, name:string, generics:string[], description:string, methodArguments:MethodArgument[], returns:MethodReturn ):string;
 
-export function hasMethod( access:string, name:string, descriptionOrArgumentsOrReturns:any = null, argumentsOrReturns:any = null, returns:MethodReturn = null ):string {
-	let description:string = null, methodArguments:MethodArgument[] = [];
+export function hasMethod( access:string, name:string, genericsOrDescriptionOrArgumentsOrReturns:any = null, descriptionOrArgumentsOrReturns:any = null, argumentsOrReturns:any = null, returns:MethodReturn = null ):string {
+	let generics:string[] = null;
+	let description:string = null;
+	let methodArguments:MethodArgument[] = [];
+
+	if( Object.prototype.toString.call( genericsOrDescriptionOrArgumentsOrReturns ) === "[object Array]" && typeof genericsOrDescriptionOrArgumentsOrReturns[ 0 ] === "string" ) {
+		generics = genericsOrDescriptionOrArgumentsOrReturns;
+	} else {
+		returns = argumentsOrReturns;
+		argumentsOrReturns = descriptionOrArgumentsOrReturns;
+		descriptionOrArgumentsOrReturns = genericsOrDescriptionOrArgumentsOrReturns;
+	}
 
 	if( typeof descriptionOrArgumentsOrReturns === "string" ) {
 		description = descriptionOrArgumentsOrReturns;
@@ -244,6 +261,7 @@ export function hasMethod( access:string, name:string, descriptionOrArgumentsOrR
 		access: access,
 		specType: METHOD,
 		name: name,
+		generics: generics,
 		description: description,
 		arguments: methodArguments,
 		returns: returns,
@@ -268,14 +286,29 @@ export function method( access:string, name:string, description:string = null ):
 export function hasSignature():string;
 export function hasSignature( description:string ):string;
 export function hasSignature( description:string, returns:MethodReturn ):string;
+export function hasSignature( generics:string[], description:string, returns:MethodReturn ):string;
 export function hasSignature( description:string, methodArguments:MethodArgument[] ):string;
+export function hasSignature( generics:string[], description:string, methodArguments:MethodArgument[] ):string;
 export function hasSignature( description:string, methodArguments:MethodArgument[], returns:MethodReturn ):string;
+export function hasSignature( generics:string[], description:string, methodArguments:MethodArgument[], returns:MethodReturn ):string;
 export function hasSignature( methodArguments:MethodArgument[] ):string;
+export function hasSignature( generics:string[], methodArguments:MethodArgument[] ):string;
 export function hasSignature( methodArguments:MethodArgument[], returns:MethodReturn ):string;
+export function hasSignature( generics:string[], methodArguments:MethodArgument[], returns:MethodReturn ):string;
 export function hasSignature( returns:MethodReturn ):string;
-export function hasSignature( descriptionOrArgumentsOrReturns:any = null, argumentsOrReturns:any = null, returns:MethodReturn = null ):string {
+export function hasSignature( generics:string[], returns:MethodReturn ):string;
+export function hasSignature( genericsOrDescriptionOrArgumentsOrReturns:any = null, descriptionOrArgumentsOrReturns:any = null, argumentsOrReturns:any = null, returns:MethodReturn = null ):string {
+	let generics:string[] = null;
 	let description:string = null;
 	let methodArguments:MethodArgument[] = null;
+
+	if( Object.prototype.toString.call( genericsOrDescriptionOrArgumentsOrReturns ) === "[object Array]" && typeof genericsOrDescriptionOrArgumentsOrReturns[ 0 ] === "string" ) {
+		generics = genericsOrDescriptionOrArgumentsOrReturns;
+	} else {
+		returns = argumentsOrReturns;
+		argumentsOrReturns = descriptionOrArgumentsOrReturns;
+		descriptionOrArgumentsOrReturns = genericsOrDescriptionOrArgumentsOrReturns;
+	}
 
 	if( typeof descriptionOrArgumentsOrReturns === "string" ) {
 		description = descriptionOrArgumentsOrReturns;
@@ -293,6 +326,7 @@ export function hasSignature( descriptionOrArgumentsOrReturns:any = null, argume
 
 	let descriptor:MethodDescriptor = {
 		specType: SIGNATURE,
+		generics: generics,
 		description: description,
 		arguments: methodArguments,
 		returns: returns,

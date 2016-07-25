@@ -5,7 +5,7 @@ export interface Class {
     _resolved: boolean;
     id: string;
     isResolved(): boolean;
-    resolve<T extends PersistedDocument.Class>(): Promise<[T, HTTP.Response.Class]>;
+    resolve<T>(): Promise<[T & PersistedDocument.Class, HTTP.Response.Class]>;
 }
 export interface Library {
     hasPointer(id: string): boolean;

@@ -1,27 +1,37 @@
+import * as AccessPoint from "./AccessPoint";
 import * as Document from "./Document";
 import Documents from "./Documents";
-import * as HTTP from "./HTTP";
 import * as Fragment from "./Fragment";
+import * as HTTP from "./HTTP";
 import * as NamedFragment from "./NamedFragment";
 import * as PersistedResource from "./PersistedResource";
 import * as PersistedFragment from "./PersistedFragment";
 import * as PersistedNamedFragment from "./PersistedNamedFragment";
 import * as Pointer from "./Pointer";
+import * as RetrievalPreferences from "./RetrievalPreferences";
 import * as RDF from "./RDF";
 import * as SPARQL from "./SPARQL";
 import * as Utils from "./Utils";
 import * as URI from "./RDF/URI";
-import {Digester} from "./ObjectSchema";
+import * as ObjectSchema from "./ObjectSchema";
 
 export interface Class extends Pointer.Class, PersistedResource.Class, Document.Class {
+	created:Date;
+	modified:Date;
+	defaultInteractionModel:Pointer.Class;
+	accessPoints?:Pointer.Class[];
+
+	hasMemberRelation?:Pointer.Class;
+	memberOfRelation?:Pointer.Class;
+
 	_documents:Documents;
 	_etag:string;
 	_fragmentsIndex:Map<string, PersistedFragment.Class>;
 	_savedFragments:PersistedFragment.Class[];
 	_syncSavedFragments():void;
 
-	getFragment( slug:string ):PersistedFragment.Class;
-	getNamedFragment( slug:string ):PersistedNamedFragment.Class;
+	getFragment<T>( slug:string ):T & PersistedFragment.Class;
+	getNamedFragment<T>( slug:string ):T & PersistedNamedFragment.Class;
 	getFragments():PersistedFragment.Class[];
 
 	createFragment():PersistedFragment.Class;
@@ -37,6 +47,38 @@ export interface Class extends Pointer.Class, PersistedResource.Class, Document.
 	destroy():Promise<HTTP.Response.Class>;
 
 	getDownloadURL():Promise<string>;
+
+	addMember( member:Pointer.Class ):Promise<HTTP.Response.Class>;
+	addMember( memberURI:string ):Promise<HTTP.Response.Class>;
+
+	addMembers( members:(Pointer.Class | string)[] ):Promise<HTTP.Response.Class>;
+
+	createChild( slug:string, object:Object ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
+	createChild( slug:string ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
+	createChild( object:Object ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
+	createChild():Promise<[ Pointer.Class, HTTP.Response.Class ]>;
+
+	createAccessPoint( accessPoint:AccessPoint.Class, slug?:string, requestOptions?:HTTP.Request.Options ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
+
+	listChildren():Promise<[ Pointer.Class[], HTTP.Response.Class ]>;
+
+	getChildren<T>( retrievalPreferences?:RetrievalPreferences.Class ):Promise<[ (T & Class)[], HTTP.Response.Class ]>;
+
+	listMembers( includeNonReadable?:boolean ):Promise<[ Pointer.Class[], HTTP.Response.Class ]>;
+
+	getMembers<T>( includeNonReadable?:boolean, retrievalPreferences?:RetrievalPreferences.Class ):Promise<[ (T & Class)[], HTTP.Response.Class ]>;
+	getMembers<T>( retrievalPreferences?:RetrievalPreferences.Class ):Promise<[ (T & Class)[], HTTP.Response.Class ]>;
+
+	removeMember( member:Pointer.Class ):Promise<HTTP.Response.Class>;
+	removeMember( memberURI:string ):Promise<HTTP.Response.Class>;
+
+	removeMembers( members:(Pointer.Class | string)[] ):Promise<HTTP.Response.Class>;
+	removeAllMembers():Promise<HTTP.Response.Class>;
+
+	upload( slug:string, blob:Blob ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
+	upload( blob:Blob ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
+	upload( slug:string, blob:Buffer ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
+	upload( blob:Buffer ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
 
 	executeRawASKQuery( askQuery:string, requestOptions?:HTTP.Request.Options ):Promise<[ SPARQL.RawResults.Class, HTTP.Response.Class ]>;
 	executeASKQuery( askQuery:string, requestOptions?:HTTP.Request.Options ):Promise<[ boolean, HTTP.Response.Class ]>;
@@ -112,6 +154,83 @@ function getDownloadURL():Promise<string> {
 	return (<Class> this)._documents.getDownloadURL( (<Class> this).id );
 }
 
+function addMember( member:Pointer.Class ):Promise<HTTP.Response.Class>;
+function addMember( memberURI:string ):Promise<HTTP.Response.Class>;
+function addMember( memberOrUri:any ):Promise<HTTP.Response.Class> {
+	return this._documents.addMember( this.id, memberOrUri );
+}
+
+function addMembers( members:(Pointer.Class | string)[] ):Promise<HTTP.Response.Class> {
+	return this._documents.addMembers( this.id, members );
+}
+
+function createChild( slug:string, object:Object ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
+function createChild( slug:string ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
+function createChild( object:Object ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
+function createChild():Promise<[ Pointer.Class, HTTP.Response.Class ]>;
+function createChild( slugOrObject?:any, object?:Object ):Promise<[ Pointer.Class, HTTP.Response.Class ]> {
+	let slug:string = Utils.isString( slugOrObject ) ? slugOrObject : null;
+	object = Utils.isString( slugOrObject ) ? object : slugOrObject;
+	object = object || {};
+
+	if( slug ) {
+		return this._documents.createChild( this.id, slug, object );
+	} else {
+		return this._documents.createChild( this.id, object );
+	}
+}
+
+function createAccessPoint( accessPoint:AccessPoint.Class, slug:string = null, requestOptions:HTTP.Request.Options = {} ):Promise<[ Pointer.Class, HTTP.Response.Class ]> {
+	return this._documents.createAccessPoint( accessPoint, slug, requestOptions );
+}
+
+function listChildren():Promise<[ Pointer.Class[], HTTP.Response.Class ]> {
+	return this._documents.listChildren( this.id );
+}
+
+function getChildren( retrievalPreferences?:RetrievalPreferences.Class ):Promise<[ Pointer.Class[], HTTP.Response.Class ]> {
+	return this._documents.getChildren( this.id, retrievalPreferences );
+}
+
+function listMembers( includeNonReadable:boolean = true ):Promise<[ Pointer.Class[], HTTP.Response.Class ]> {
+	return this._documents.listMembers( this.id, includeNonReadable );
+}
+
+function getMembers( includeNonReadable:boolean, retrievalPreferences?:RetrievalPreferences.Class ):Promise<[ Pointer.Class[], HTTP.Response.Class ]>;
+function getMembers( retrievalPreferences?:RetrievalPreferences.Class ):Promise<[ Pointer.Class[], HTTP.Response.Class ]>;
+function getMembers( nonReadRetPref:boolean = true, retrievalPreferences?:RetrievalPreferences.Class ):Promise<[ Pointer.Class[], HTTP.Response.Class ]> {
+	return this._documents.getMembers( this.id, nonReadRetPref, retrievalPreferences );
+}
+
+function removeMember( member:Pointer.Class ):Promise<HTTP.Response.Class>;
+function removeMember( memberURI:string ):Promise<HTTP.Response.Class>;
+function removeMember( memberOrUri:any ):Promise<HTTP.Response.Class> {
+	return this._documents.removeMember( this.id, memberOrUri );
+}
+
+function removeMembers( members:(Pointer.Class | string)[] ):Promise<HTTP.Response.Class> {
+	return this._documents.removeMembers( this.id, members );
+}
+
+function removeAllMembers():Promise<HTTP.Response.Class> {
+	return this._documents.removeAllMembers( this.id );
+}
+
+function upload( slug:string, data:Buffer ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
+function upload( data:Buffer ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
+function upload( slug:string, data:Blob ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
+function upload( data:Blob ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
+function upload( slugOrData:any, data:any = null ):Promise<[ Pointer.Class, HTTP.Response.Class ]> {
+	let slug:string = Utils.isString( slugOrData ) ? slugOrData : null;
+	data = slug ? data : slugOrData;
+
+	if( slug ) {
+		return this._documents.upload( this.id, slug, data );
+	} else {
+		return this._documents.upload( this.id, data );
+	}
+}
+
 function executeRawASKQuery( askQuery:string, requestOptions:HTTP.Request.Options = {} ):Promise<[ SPARQL.RawResults.Class, HTTP.Response.Class ]> {
 	return this._documents.executeRawASKQuery( this.id, askQuery, requestOptions );
 }
@@ -141,30 +260,46 @@ function executeUPDATE( updateQuery:string, requestOptions:HTTP.Request.Options 
 }
 
 export class Factory {
-	static hasClassProperties( document:Document.Class ):boolean {
-		return (
-			Utils.hasPropertyDefined( document, "_documents" ) &&
-			Utils.hasPropertyDefined( document, "_etag" ) &&
-			Utils.hasFunction( document, "refresh" ) &&
-			Utils.hasFunction( document, "save" ) &&
-			Utils.hasFunction( document, "destroy" ) &&
+	static hasClassProperties( object:Object ):boolean {
+		return Utils.hasPropertyDefined( object, "_documents" )
+			&& Utils.hasPropertyDefined( object, "_etag" )
 
-			Utils.hasFunction( document, "getDownloadURL" ) &&
+			&& Utils.hasPropertyDefined( object, "created" )
+			&& Utils.hasPropertyDefined( object, "modified" )
+			&& Utils.hasPropertyDefined( object, "defaultInteractionModel" )
 
-			Utils.hasFunction( document, "executeRawASKQuery" ) &&
-			Utils.hasFunction( document, "executeASKQuery" ) &&
-			Utils.hasFunction( document, "executeRawSELECTQuery" ) &&
-			Utils.hasFunction( document, "executeSELECTQuery" ) &&
-			Utils.hasFunction( document, "executeRawDESCRIBEQuery" ) &&
-			Utils.hasFunction( document, "executeRawCONSTRUCTQuery" ) &&
-			Utils.hasFunction( document, "executeUPDATE" )
-		);
+			&& Utils.hasFunction( object, "refresh" )
+			&& Utils.hasFunction( object, "save" )
+			&& Utils.hasFunction( object, "destroy" )
+
+			&& Utils.hasFunction( object, "getDownloadURL" )
+
+			&& Utils.hasFunction( object, "addMember" )
+			&& Utils.hasFunction( object, "addMembers" )
+			&& Utils.hasFunction( object, "createAccessPoint" )
+			&& Utils.hasFunction( object, "createChild" )
+			&& Utils.hasFunction( object, "getChildren" )
+			&& Utils.hasFunction( object, "getMembers" )
+			&& Utils.hasFunction( object, "listChildren" )
+			&& Utils.hasFunction( object, "listMembers" )
+			&& Utils.hasFunction( object, "removeMember" )
+			&& Utils.hasFunction( object, "removeMembers" )
+			&& Utils.hasFunction( object, "removeAllMembers" )
+			&& Utils.hasFunction( object, "upload" )
+
+			&& Utils.hasFunction( object, "executeRawASKQuery" )
+			&& Utils.hasFunction( object, "executeASKQuery" )
+			&& Utils.hasFunction( object, "executeRawSELECTQuery" )
+			&& Utils.hasFunction( object, "executeSELECTQuery" )
+			&& Utils.hasFunction( object, "executeRawDESCRIBEQuery" )
+			&& Utils.hasFunction( object, "executeRawCONSTRUCTQuery" )
+			&& Utils.hasFunction( object, "executeUPDATE" )
+			;
 	}
 
 	static is( object:Object ):boolean {
-		return Utils.isObject( object )
-			&& Document.Factory.hasClassProperties( object )
-			&& Factory.hasClassProperties( <any> object );
+		return Factory.hasClassProperties( object )
+			&& Document.Factory.is( object );
 	}
 
 	static create( uri:string, documents:Documents, snapshot:Object = {} ):Class {
@@ -222,7 +357,7 @@ export class Factory {
 					let superFunction:( id:string ) => boolean = persistedDocument.hasPointer;
 					return function( id:string ):boolean {
 						if( RDF.URI.Util.isPrefixed( id ) ) {
-							id = Digester.resolvePrefixedURI( new RDF.URI.Class( id ), (<Class> this)._documents.getSchemaFor( this ) ).stringValue;
+							id = ObjectSchema.Digester.resolvePrefixedURI( new RDF.URI.Class( id ), (<Class> this)._documents.getSchemaFor( this ) ).stringValue;
 						}
 
 						if( superFunction.call( this, id ) ) return true;
@@ -240,7 +375,7 @@ export class Factory {
 					let inScopeFunction:( id:string ) => boolean = persistedDocument.inScope;
 					return function( id:string ):Pointer.Class {
 						if( RDF.URI.Util.isPrefixed( id ) ) {
-							id = Digester.resolvePrefixedURI( new RDF.URI.Class( id ), (<Class> this)._documents.getSchemaFor( this ) ).stringValue;
+							id = ObjectSchema.Digester.resolvePrefixedURI( new RDF.URI.Class( id ), (<Class> this)._documents.getSchemaFor( this ) ).stringValue;
 						}
 
 						if( inScopeFunction.call( this, id ) ) return superFunction.call( this, id );
@@ -258,7 +393,7 @@ export class Factory {
 					return function( idOrPointer:any ):boolean {
 						let uri:string = Pointer.Factory.is( idOrPointer ) ? idOrPointer.id : idOrPointer;
 						if( RDF.URI.Util.isPrefixed( uri ) ) {
-							uri = Digester.resolvePrefixedURI( new RDF.URI.Class( uri ), (<Class> this)._documents.getSchemaFor( this ) ).stringValue;
+							uri = ObjectSchema.Digester.resolvePrefixedURI( new RDF.URI.Class( uri ), (<Class> this)._documents.getSchemaFor( this ) ).stringValue;
 						}
 
 						if( superFunction.call( this, uri ) ) return true;
@@ -291,6 +426,79 @@ export class Factory {
 				enumerable: false,
 				configurable: true,
 				value: getDownloadURL,
+			},
+
+			"addMember": {
+				writable: false,
+				enumerable: false,
+				configurable: true,
+				value: addMember,
+			},
+			"addMembers": {
+				writable: false,
+				enumerable: false,
+				configurable: true,
+				value: addMembers,
+			},
+			"createChild": {
+				writable: false,
+				enumerable: false,
+				configurable: true,
+				value: createChild,
+			},
+			"createAccessPoint": {
+				writable: false,
+				enumerable: false,
+				configurable: true,
+				value: createAccessPoint,
+			},
+			"listChildren": {
+				writable: false,
+				enumerable: false,
+				configurable: true,
+				value: listChildren,
+			},
+			"getChildren": {
+				writable: false,
+				enumerable: false,
+				configurable: true,
+				value: getChildren,
+			},
+			"listMembers": {
+				writable: false,
+				enumerable: false,
+				configurable: true,
+				value: listMembers,
+			},
+			"getMembers": {
+				writable: false,
+				enumerable: false,
+				configurable: true,
+				value: getMembers,
+			},
+			"removeMember": {
+				writable: false,
+				enumerable: false,
+				configurable: true,
+				value: removeMember,
+			},
+			"removeMembers": {
+				writable: false,
+				enumerable: false,
+				configurable: true,
+				value: removeMembers,
+			},
+			"removeAllMembers": {
+				writable: false,
+				enumerable: false,
+				configurable: true,
+				value: removeAllMembers,
+			},
+			"upload": {
+				writable: false,
+				enumerable: false,
+				configurable: true,
+				value: upload,
 			},
 
 			"executeRawASKQuery": {

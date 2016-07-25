@@ -111,13 +111,15 @@ describe( module( "Carbon/Auth/ACE" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"createFrom",
+			[ "T extends Object" ],
 			"Creates a `Carbon.Auth.ACE.Class` object with the parameters specified.", [
-				{name: "object", type: "T extends Object", description: "The object that will be converted into a `Carbon.Auth.ACE.Class`"},
+				{name: "object", type: "T", description: "The object that will be converted into a `Carbon.Auth.ACE.Class`"},
 				{name: "granting", type: "boolean", description: "Indicates if the ACE is a granting or denying permissions."},
 				{name: "subjects", type: "Carbon.Pointer.Class[]", description: "Subjects that will have the permissions specified."},
 				{name: "subjectClass", type: "Carbon.Pointer.Class", description: "The type of the subjects provided."},
 				{name: "permissions", type: "Carbon.Pointer.Class[]", description: "The permissions that will be granted or denied."},
-			]
+			],
+			{type: "T & Carbon.Auth.ACE.Class"}
 		), ():void => {
 			expect( ACE.Factory.createFrom ).toBeDefined();
 			expect( Utils.isFunction( ACE.Factory.createFrom ) ).toBe( true );

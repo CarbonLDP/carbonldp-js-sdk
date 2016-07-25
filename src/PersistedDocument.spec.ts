@@ -1,5 +1,3 @@
-import * as PersistedDocument from "./PersistedDocument";
-
 import {
 	INSTANCE,
 	STATIC,
@@ -14,12 +12,15 @@ import {
 	hasProperty,
 	decoratedObject,
 } from "./test/JasmineExtender";
-import * as Utils from "./Utils";
-import * as Document from "./Document";
 import AbstractContext from "./AbstractContext";
+import * as Document from "./Document";
 import Documents from "./Documents";
 import * as Pointer from "./Pointer";
+import * as RetrievalPreferences from "./RetrievalPreferences";
 import * as URI from "./RDF/URI";
+import * as Utils from "./Utils";
+
+import * as PersistedDocument from "./PersistedDocument";
 
 describe( module( "Carbon/PersistedDocument" ), ():void => {
 
@@ -62,12 +63,33 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 			expect( PersistedDocument.Factory.hasClassProperties( document ) ).toBe( false );
 
 			document = {
+				created: null,
+				modified: null,
+				defaultInteractionModel: null,
+				accessPoints: null,
+
 				_documents: null,
 				_etag: null,
+
 				refresh: ():void => {},
 				save: ():void => {},
 				destroy: ():void => {},
+
 				getDownloadURL: ():void => {},
+
+				addMember: ():void => {},
+				addMembers: ():void => {},
+				createAccessPoint: ():void => {},
+				createChild: ():void => {},
+				listChildren: ():void => {},
+				getChildren: ():void => {},
+				listMembers: ():void => {},
+				getMembers: ():void => {},
+				removeMember: ():void => {},
+				removeMembers: ():void => {},
+				removeAllMembers: ():void => {},
+				upload: ():void => {},
+
 				executeRawASKQuery: ():void => {},
 				executeASKQuery: ():void => {},
 				executeRawSELECTQuery: ():void => {},
@@ -77,6 +99,22 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 				executeUPDATE: ():void => {},
 			};
 			expect( PersistedDocument.Factory.hasClassProperties( document ) ).toBe( true );
+
+			delete document.accessPoints;
+			expect( PersistedDocument.Factory.hasClassProperties( document ) ).toBe( true );
+			document.accessPoints = null;
+
+			delete document.created;
+			expect( PersistedDocument.Factory.hasClassProperties( document ) ).toBe( false );
+			document.created = null;
+
+			delete document.modified;
+			expect( PersistedDocument.Factory.hasClassProperties( document ) ).toBe( false );
+			document.modified = null;
+
+			delete document.defaultInteractionModel;
+			expect( PersistedDocument.Factory.hasClassProperties( document ) ).toBe( false );
+			document.defaultInteractionModel = null;
 
 			delete document._documents;
 			expect( PersistedDocument.Factory.hasClassProperties( document ) ).toBe( false );
@@ -101,6 +139,54 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 			delete document.getDownloadURL;
 			expect( PersistedDocument.Factory.hasClassProperties( document ) ).toBe( false );
 			document.getDownloadURL = ():void => {};
+
+			delete document.addMember;
+			expect( PersistedDocument.Factory.hasClassProperties( document ) ).toBe( false );
+			document.addMember = ():void => {};
+
+			delete document.addMembers;
+			expect( PersistedDocument.Factory.hasClassProperties( document ) ).toBe( false );
+			document.addMembers = ():void => {};
+
+			delete document.createAccessPoint;
+			expect( PersistedDocument.Factory.hasClassProperties( document ) ).toBe( false );
+			document.createAccessPoint = ():void => {};
+
+			delete document.createChild;
+			expect( PersistedDocument.Factory.hasClassProperties( document ) ).toBe( false );
+			document.createChild = ():void => {};
+
+			delete document.listChildren;
+			expect( PersistedDocument.Factory.hasClassProperties( document ) ).toBe( false );
+			document.listChildren = ():void => {};
+
+			delete document.getChildren;
+			expect( PersistedDocument.Factory.hasClassProperties( document ) ).toBe( false );
+			document.getChildren = ():void => {};
+
+			delete document.listMembers;
+			expect( PersistedDocument.Factory.hasClassProperties( document ) ).toBe( false );
+			document.listMembers = ():void => {};
+
+			delete document.getMembers;
+			expect( PersistedDocument.Factory.hasClassProperties( document ) ).toBe( false );
+			document.getMembers = ():void => {};
+
+			delete document.removeMember;
+			expect( PersistedDocument.Factory.hasClassProperties( document ) ).toBe( false );
+			document.removeMember = ():void => {};
+
+			delete document.removeMembers;
+			expect( PersistedDocument.Factory.hasClassProperties( document ) ).toBe( false );
+			document.removeMembers = ():void => {};
+
+			delete document.removeAllMembers;
+			expect( PersistedDocument.Factory.hasClassProperties( document ) ).toBe( false );
+			document.removeAllMembers = ():void => {};
+
+			delete document.upload;
+			expect( PersistedDocument.Factory.hasClassProperties( document ) ).toBe( false );
+			document.upload = ():void => {};
 
 			delete document.executeRawASKQuery;
 			expect( PersistedDocument.Factory.hasClassProperties( document ) ).toBe( false );
@@ -148,20 +234,42 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 			expect( PersistedDocument.Factory.is( 100 ) ).toBe( false );
 			expect( PersistedDocument.Factory.is( {} ) ).toBe( false );
 
-			let object:any = Document.Factory.create();
-			object[ "_documents" ] = null;
-			object[ "_etag" ] = null;
-			object[ "refresh" ] = ():void => {};
-			object[ "save" ] = ():void => {};
-			object[ "destroy" ] = ():void => {};
-			object[ "getDownloadURL" ] = ():void => {};
-			object[ "executeRawASKQuery" ] = ():void => {};
-			object[ "executeASKQuery" ] = ():void => {};
-			object[ "executeRawSELECTQuery" ] = ():void => {};
-			object[ "executeSELECTQuery" ] = ():void => {};
-			object[ "executeRawDESCRIBEQuery" ] = ():void => {};
-			object[ "executeRawCONSTRUCTQuery" ] = ():void => {};
-			object[ "executeUPDATE" ] = ():void => {};
+			let object:any = Document.Factory.createFrom( {
+				created: null,
+				modified: null,
+				defaultInteractionModel: null,
+				accessPoints: null,
+
+				_documents: null,
+				_etag: null,
+
+				refresh: ():void => {},
+				save: ():void => {},
+				destroy: ():void => {},
+
+				getDownloadURL: ():void => {},
+
+				addMember: ():void => {},
+				addMembers: ():void => {},
+				createAccessPoint: ():void => {},
+				createChild: ():void => {},
+				listChildren: ():void => {},
+				getChildren: ():void => {},
+				listMembers: ():void => {},
+				getMembers: ():void => {},
+				removeMember: ():void => {},
+				removeMembers: ():void => {},
+				removeAllMembers: ():void => {},
+				upload: ():void => {},
+
+				executeRawASKQuery: ():void => {},
+				executeASKQuery: ():void => {},
+				executeRawSELECTQuery: ():void => {},
+				executeSELECTQuery: ():void => {},
+				executeRawDESCRIBEQuery: ():void => {},
+				executeRawCONSTRUCTQuery: ():void => {},
+				executeUPDATE: ():void => {},
+			} );
 			expect( PersistedDocument.Factory.is( object ) ).toBe( true );
 		} );
 
@@ -178,46 +286,61 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 			expect( Utils.isFunction( PersistedDocument.Factory.create ) ).toBe( true );
 
 			let document:PersistedDocument.Class;
-			document = PersistedDocument.Factory.create( "http://example.com/resource/", context.documents );
+			document = PersistedDocument.Factory.create( "http://example.com/document/", context.documents );
+			expect( PersistedDocument.Factory.is( document ) ).toBe( false );
+
+			document.created = null;
+			document.modified = null;
+			document.defaultInteractionModel = null;
 			expect( PersistedDocument.Factory.is( document ) ).toBe( true );
-			expect( document.id ).toBe( "http://example.com/resource/" );
+
+			expect( document.id ).toBe( "http://example.com/document/" );
 			expect( document._documents ).toBe( context.documents );
 		} );
 
 		it( hasMethod(
 			STATIC,
 			"createFrom",
+			[ "T extends Object" ],
 			"Creates a PersistedDocument object from the object and URI provided, with the Documents object specified as container.", [
-				{name: "object", type: "T extends Object"},
+				{name: "object", type: "T"},
 				{name: "uri", type: "string"},
 			],
-			{type: "Carbon.PersistedDocument.Class"}
+			{type: "T & Carbon.PersistedDocument.Class"}
 		), ():void => {
 			expect( PersistedDocument.Factory.createFrom ).toBeDefined();
 			expect( Utils.isFunction( PersistedDocument.Factory.createFrom ) ).toBe( true );
 
 			interface MyObject {
+				created?:Date;
+				modified?:Date;
+				defaultInteractionModel?:Pointer.Class;
 				myProperty?:string;
 			}
 
-			interface MyPersistedDocument extends MyObject, PersistedDocument.Class {}
+			interface MyPersistedDocument extends MyObject, PersistedDocument.Class {
+				created:Date;
+				modified:Date;
+				defaultInteractionModel:Pointer.Class;
+			}
 			let persistedDocument:MyPersistedDocument;
 
-			persistedDocument = PersistedDocument.Factory.createFrom<MyObject>( {}, "http://example.com/resource/", context.documents );
+			persistedDocument = PersistedDocument.Factory.createFrom<MyObject>( {created: null, modified: null, defaultInteractionModel: null}, "http://example.com/document/", context.documents );
 			expect( PersistedDocument.Factory.is( persistedDocument ) ).toBe( true );
-			expect( persistedDocument.id ).toBe( "http://example.com/resource/" );
+			expect( persistedDocument.id ).toBe( "http://example.com/document/" );
 
-			persistedDocument = PersistedDocument.Factory.createFrom<MyObject>( {myProperty: "a property"}, "http://example.com/resource/", context.documents );
+			persistedDocument = PersistedDocument.Factory.createFrom<MyObject>( {myProperty: "a property", created: null, modified: null, defaultInteractionModel: null}, "http://example.com/document/", context.documents );
 			expect( PersistedDocument.Factory.is( persistedDocument ) ).toBe( true );
-			expect( persistedDocument.id ).toBe( "http://example.com/resource/" );
+			expect( persistedDocument.id ).toBe( "http://example.com/document/" );
 			expect( persistedDocument.myProperty ).toBe( "a property" );
 		} );
 
 		it( hasMethod(
 			STATIC,
 			"decorate",
+			[ "T extends Object" ],
 			"Adds the properties and methods necessary for a PersistedDocument object.", [
-				{name: "object", type: "T extends Object"},
+				{name: "object", type: "T"},
 				{name: "documents", type: "Carbon.Documents"},
 			],
 			{type: "T & Carbon.PersistedDocument.Class"}
@@ -226,22 +349,29 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 			expect( Utils.isFunction( PersistedDocument.Factory.decorate ) ).toBe( true );
 
 			interface MyObject {
+				created?:Date;
+				modified?:Date;
+				defaultInteractionModel?:Pointer.Class;
 				myProperty?:string;
 			}
 
 			interface MyDocument extends MyObject, Document.Class {}
 			let document:MyDocument;
 
-			interface MyPersistedDocument extends MyObject, PersistedDocument.Class {}
+			interface MyPersistedDocument extends MyObject, PersistedDocument.Class {
+				created:Date;
+				modified:Date;
+				defaultInteractionModel:Pointer.Class;
+			}
 			let persistedDocument:MyPersistedDocument;
 
-			document = Document.Factory.createFrom<MyObject>( {} );
+			document = Document.Factory.createFrom<MyObject>( {created: null, modified: null, defaultInteractionModel: null} );
 			persistedDocument = PersistedDocument.Factory.decorate<MyDocument>( document, context.documents );
 			expect( PersistedDocument.Factory.is( persistedDocument ) ).toBe( true );
 			expect( persistedDocument.myProperty ).toBeUndefined();
 			expect( persistedDocument._documents ).toBe( context.documents );
 
-			document = Document.Factory.createFrom<MyObject>( {myProperty: "a property"} );
+			document = Document.Factory.createFrom<MyObject>( {myProperty: "a property", created: null, modified: null, defaultInteractionModel: null} );
 			persistedDocument = PersistedDocument.Factory.decorate<MyDocument>( document, context.documents );
 			expect( PersistedDocument.Factory.is( persistedDocument ) ).toBe( true );
 			expect( persistedDocument.myProperty ).toBeDefined();
@@ -250,8 +380,8 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 		} );
 
 		describe( decoratedObject(
-			"Object decorated by the Carbon.LDP.PersistedContainer.Factory.decorate function.", [
-				"Carbon.LDP.PersistedContainer.Class",
+			"Object decorated by the `Carbon.PersistedDocument.Factory.decorate()` function.", [
+				"Carbon.PersistedDocument.Class",
 			]
 		), ():void => {
 			let document:PersistedDocument.Class;
@@ -417,7 +547,8 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 
 			it( hasMethod(
 				INSTANCE,
-				"refresh<T extends Carbon.PersistedDocument.Class>",
+				"refresh",
+				[ "T extends Carbon.PersistedDocument.Class" ],
 				"Sync the PersistedDocument with the data in the server.",
 				{type: "Promise<[ T, Carbon.HTTP.Response.Class]>"}
 			), ():void => {
@@ -431,7 +562,8 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 
 			it( hasMethod(
 				INSTANCE,
-				"save<T extends Carbon.PersistedDocument.Class>",
+				"save",
+				[ "T extends Carbon.PersistedDocument.Class" ],
 				"Save the PersistedDocument to the server.",
 				{type: "Promise<[ T, Carbon.HTTP.Response.Class ]>"}
 			), ():void => {
@@ -469,6 +601,411 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 				let spy:jasmine.Spy = spyOn( context.documents, "getDownloadURL" );
 				document.getDownloadURL();
 				expect( spy ).toHaveBeenCalledWith( document.id );
+			} );
+
+			describe( method(
+				INSTANCE,
+				"addMember"
+			), ():void => {
+
+				it( hasSignature(
+					"Add the specified resource Pointer as a member of the container.", [
+						{name: "member", type: "Carbon.Pointer.Class", description: "Pointer object that references the resource to add as a member."},
+					],
+					{type: "Promise<Carbon.HTTP.Response.Class>"}
+				), ():void => {
+					expect( document.addMember ).toBeDefined();
+					expect( Utils.isFunction( document.addMember ) ).toBeDefined();
+
+					let spy:jasmine.Spy = spyOn( document._documents, "addMember" );
+
+					let pointer:Pointer.Class = context.documents.getPointer( "new-member/" );
+					document.addMember( pointer );
+
+					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", pointer );
+				} );
+
+				it( hasSignature(
+					"Add the specified resource URI as a member of the document.", [
+						{name: "memberURI", type: "string", description: "URI of the resource to add as a member."},
+					],
+					{type: "Promise<Carbon.HTTP.Response.Class>"}
+				), ():void => {
+					expect( document.addMember ).toBeDefined();
+					expect( Utils.isFunction( document.addMember ) ).toBeDefined();
+
+					let spy:jasmine.Spy = spyOn( document._documents, "addMember" );
+
+					document.addMember( "new-member/" );
+
+					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", "new-member/" );
+				} );
+
+			} );
+
+			it( hasMethod(
+				INSTANCE,
+				"addMembers",
+				"Add the specified resources URI or Pointers as members of the document.", [
+					{name: "members", type: "(Carbon.Pointer.Class | string)[]", description: "Array of string URIs or Pointers to add as members"},
+				],
+				{type: "Promise<Carbon.HTTP.Response.Class>"}
+			), ():void => {
+				expect( document.addMembers ).toBeDefined();
+				expect( Utils.isFunction( document.addMembers ) ).toBeDefined();
+
+				let spy:jasmine.Spy = spyOn( document._documents, "addMembers" );
+
+				let pointers:Pointer.Class[] = [];
+				pointers.push( context.documents.getPointer( "new-member/" ) );
+				document.addMembers( pointers );
+
+				expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", pointers );
+			} );
+
+			describe( method(
+				INSTANCE,
+				"createChild"
+			), ():void => {
+
+				it( hasSignature( [
+						{name: "slug", type: "string", description: "The slug name for the children URI."},
+						{name: "object", type: "Object", description: "The object from where create the child. If it's a non `Carbon.Document.Class` object, it is transformed into one."},
+					],
+					{type: "Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>"}
+				), ():void => {
+					expect( document.createChild ).toBeDefined();
+					expect( Utils.isFunction( document.createChild ) ).toBeDefined();
+
+					let spy:jasmine.Spy = spyOn( document._documents, "createChild" );
+
+					let childDocument:Document.Class = Document.Factory.create();
+					document.createChild( "child", childDocument );
+
+					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", "child", childDocument );
+					spy.calls.reset();
+
+					let object:Object = {my: "object"};
+					document.createChild( "child", object );
+					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", "child", object );
+				} );
+
+				it( hasSignature( [
+						{name: "object", type: "Object", description: "The object from where create the child. If it's a non `Carbon.Document.Class` object, it is transformed into one."},
+					],
+					{type: "Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>"}
+				), ():void => {
+					expect( document.createChild ).toBeDefined();
+					expect( Utils.isFunction( document.createChild ) ).toBeDefined();
+
+					let spy:jasmine.Spy = spyOn( document._documents, "createChild" );
+
+					let childDocument:Document.Class = Document.Factory.create();
+					document.createChild( childDocument );
+
+					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", childDocument );
+					spy.calls.reset();
+
+					let object:Object = {my: "object"};
+					document.createChild( object );
+					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", object );
+				} );
+
+				it( hasSignature( [
+						{name: "slug", type: "string", description: "The slug name for the children URI."},
+					],
+					{type: "Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>"}
+				), ():void => {
+					expect( document.createChild ).toBeDefined();
+					expect( Utils.isFunction( document.createChild ) ).toBeDefined();
+
+					let spy:jasmine.Spy = spyOn( document._documents, "createChild" );
+
+					document.createChild( "child" );
+					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", "child", {} );
+				} );
+
+				it( hasSignature(
+					{type: "Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>"}
+				), ():void => {
+					expect( document.createChild ).toBeDefined();
+					expect( Utils.isFunction( document.createChild ) ).toBeDefined();
+
+					let spy:jasmine.Spy = spyOn( document._documents, "createChild" );
+
+					document.createChild();
+					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", {} );
+				} );
+
+			} );
+
+			it( hasMethod(
+				INSTANCE,
+				"listChildren",
+				"Return all the children of the document.",
+				{type: "Promise<[ Carbon.Pointer.Class[], Carbon.HTTP.Response ]>"}
+			), ():void => {
+				expect( document.listChildren ).toBeDefined();
+				expect( Utils.isFunction( document.listChildren ) ).toBeDefined();
+
+				let spy:jasmine.Spy = spyOn( document._documents, "listChildren" );
+
+				document.listChildren();
+				expect( spy ).toHaveBeenCalledWith( "http://example.com/document/" );
+			} );
+
+			it( hasMethod(
+				INSTANCE,
+				"getChildren",
+				[ "T" ],
+				"Return all the children of the document.", [
+					{name: "retrievalPreferences", type: "Carbon.RetrievalPreferences.Class", optional: true},
+				],
+				{type: "Promise<[ (T & Carbon.PersistedDocument.Class)[], Carbon.HTTP.Response ]>"}
+			), ():void => {
+				expect( document.getChildren ).toBeDefined();
+				expect( Utils.isFunction( document.getChildren ) ).toBeDefined();
+
+				let spy:jasmine.Spy = spyOn( document._documents, "getChildren" );
+
+				document.getChildren();
+				expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", undefined );
+				spy.calls.reset();
+
+
+				let retrievalPreferences:RetrievalPreferences.Class = {
+					limit: 10,
+					offset: 0,
+					orderBy: [ {"@id": "http://example.com/ns#string", "@type": "string"} ],
+				};
+				document.getChildren( retrievalPreferences );
+				expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", retrievalPreferences );
+			} );
+
+			it( hasMethod(
+				INSTANCE,
+				"listMembers", [
+					{name: "includeNonReadable", type: "boolean", optional: true, description: "By default this option is set to `true`."},
+				],
+				{type: "Promise<[ Carbon.Pointer.Class[], Carbon.HTTP.Response.Class ]>"}
+			), ():void => {
+				expect( document.listMembers ).toBeDefined();
+				expect( Utils.isFunction( document.listMembers ) ).toBeDefined();
+
+				let spy:jasmine.Spy = spyOn( document._documents, "listMembers" );
+
+				document.listMembers();
+				expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", true );
+				spy.calls.reset();
+
+				document.listMembers( false );
+				expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", false );
+			} );
+
+			describe( method(
+				INSTANCE,
+				"getMembers"
+			), ():void => {
+
+				it( hasSignature(
+					[ "T" ], [
+						{name: "includeNonReadable", type: "boolean", optional: true, description: "By default this option is set to `true`."},
+						{name: "retrievalPreferences", type: "Carbon.RetrievalPreferences.Class", optional: true},
+					],
+					{type: "Promise<[ (T & Carbon.PersistedDocument.Class)[], Carbon.HTTP.Response.Class ]>"}
+				), ():void => {
+					expect( document.getMembers ).toBeDefined();
+					expect( Utils.isFunction( document.getMembers ) ).toBeDefined();
+
+					let spy:jasmine.Spy = spyOn( document._documents, "getMembers" );
+
+					document.getMembers();
+					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", true, undefined );
+					spy.calls.reset();
+
+					document.getMembers( false );
+					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", false, undefined );
+					spy.calls.reset();
+
+					let retrievalPreferences:RetrievalPreferences.Class = {
+						limit: 10,
+						offset: 0,
+						orderBy: [ {"@id": "http://example.com/ns#string", "@type": "string"} ],
+					};
+
+					document.getMembers( false, retrievalPreferences );
+					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", false, retrievalPreferences );
+					spy.calls.reset();
+
+					document.getMembers( true, retrievalPreferences );
+					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", true, retrievalPreferences );
+					spy.calls.reset();
+
+					document.getMembers( retrievalPreferences );
+					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", retrievalPreferences, undefined );
+					spy.calls.reset();
+				} );
+
+			} );
+
+			describe( method(
+				INSTANCE,
+				"removeMember"
+			), ():void => {
+
+				it( hasSignature(
+					"Remove the specified resource Pointer as a member of the document.", [
+						{name: "member", type: "Carbon.Pointer.Class", description: "Pointer object that references the resource to remove as a member."},
+					],
+					{type: "Promise<Carbon.HTTP.Response.Class>"}
+				), ():void => {
+					expect( document.removeMember ).toBeDefined();
+					expect( Utils.isFunction( document.removeMember ) ).toBeDefined();
+
+					let spy:jasmine.Spy = spyOn( document._documents, "removeMember" );
+
+					let pointer:Pointer.Class = context.documents.getPointer( "remove-member/" );
+					document.removeMember( pointer );
+
+					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", pointer );
+				} );
+
+				it( hasSignature(
+					"Remove the specified resource URI as a member of the document.", [
+						{name: "memberURI", type: "string", description: "URI of the resource to remove as a member."},
+					],
+					{type: "Promise<Carbon.HTTP.Response.Class>"}
+				), ():void => {
+					expect( document.removeMember ).toBeDefined();
+					expect( Utils.isFunction( document.removeMember ) ).toBeDefined();
+
+					let spy:jasmine.Spy = spyOn( document._documents, "removeMember" );
+
+					document.removeMember( "remove-member/" );
+
+					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", "remove-member/" );
+				} );
+
+			} );
+
+			it( hasMethod(
+				INSTANCE,
+				"removeMembers",
+				"Remove the specified resources URI or Pointers as members of the document.", [
+					{name: "members", type: "(Carbon.Pointer.Class | string)[]", description: "Array of string URIs or Pointers to remove as members"},
+				],
+				{type: "Promise<Carbon.HTTP.Response.Class>"}
+			), ():void => {
+				expect( document.removeMembers ).toBeDefined();
+				expect( Utils.isFunction( document.removeMembers ) ).toBeDefined();
+
+				let spy:jasmine.Spy = spyOn( document._documents, "removeMembers" );
+
+				let pointers:Pointer.Class[] = [];
+				pointers.push( context.documents.getPointer( "remove-member/" ) );
+				document.removeMembers( pointers );
+
+				expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", pointers );
+			} );
+
+			it( hasMethod(
+				INSTANCE,
+				"removeAllMembers",
+				"Remove the specified resources URI or Pointers as members of the document.", [
+					{name: "members", type: "(Carbon.Pointer.Class | string)[]", description: "Array of string URIs or Pointers to remove as members"},
+				],
+				{type: "Promise<Carbon.HTTP.Response.Class>"}
+			), ():void => {
+				expect( document.removeAllMembers ).toBeDefined();
+				expect( Utils.isFunction( document.removeAllMembers ) ).toBeDefined();
+
+				let spy:jasmine.Spy = spyOn( document._documents, "removeAllMembers" );
+
+				document.removeAllMembers();
+
+				expect( spy ).toHaveBeenCalledWith( "http://example.com/document/" );
+			} );
+
+			describe( method(
+				INSTANCE,
+				"upload",
+				"Upload a File to the server as a child of the Container."
+			), ():void => {
+
+				it( hasSignature( [
+						{name: "slug", type: "string", description: "The slug that will be used in the URI of the data."},
+						{name: "data", type: "Blob", description: "Binary data to store in the server. The Blob works in a Browser."},
+					],
+					{type: "Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>"}
+				), ():void => {
+					expect( document.upload ).toBeDefined();
+					expect( Utils.isFunction( document.upload ) ).toBeDefined();
+
+					if( typeof Blob !== "undefined" ) {
+						let spy:jasmine.Spy = spyOn( document._documents, "upload" );
+
+						let blob:Blob = new Blob( [ JSON.stringify( {"some content": "for the blob."} ) ], {type: "application/json"} );
+						document.upload( "child", blob );
+
+						expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", "child", blob );
+					}
+				} );
+
+				it( hasSignature( [
+						{name: "data", type: "Blob", description: "Binary data to store in the server. The Blob works in a Browser."},
+					],
+					{type: "Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>"}
+				), ():void => {
+					expect( document.upload ).toBeDefined();
+					expect( Utils.isFunction( document.upload ) ).toBeDefined();
+
+					if( typeof Blob !== "undefined" ) {
+						let spy:jasmine.Spy = spyOn( document._documents, "upload" );
+
+						let blob:Blob = new Blob( [ JSON.stringify( {"some content": "for the blob."} ) ], {type: "application/json"} );
+						document.upload( blob );
+
+						expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", blob );
+					}
+				} );
+
+				it( hasSignature( [
+						{name: "slug", type: "string", description: "The slug that will be used in the URI of the data."},
+						{name: "data", type: "Buffer", description: "Binary data to store in the server. The Buffer only works in Node.js."},
+					],
+					{type: "Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>"}
+				), ():void => {
+					expect( document.upload ).toBeDefined();
+					expect( Utils.isFunction( document.upload ) ).toBeDefined();
+
+					if( typeof Buffer !== "undefined" ) {
+						let spy:jasmine.Spy = spyOn( document._documents, "upload" );
+
+						let buffer:Buffer = new Buffer( JSON.stringify( {"some content": "for the buffer."} ) );
+						document.upload( "child", buffer );
+
+						expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", "child", buffer );
+					}
+				} );
+
+				it( hasSignature( [
+						{name: "data", type: "Buffer", description: "Binary data to store in the server. The Buffer only works in Node.js."},
+					],
+					{type: "Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>"}
+				), ():void => {
+					expect( document.upload ).toBeDefined();
+					expect( Utils.isFunction( document.upload ) ).toBeDefined();
+
+					if( typeof Buffer !== "undefined" ) {
+						let spy:jasmine.Spy = spyOn( document._documents, "upload" );
+
+						let buffer:Buffer = new Buffer( JSON.stringify( {"some content": "for the buffer."} ) );
+						document.upload( buffer );
+
+						expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", buffer );
+					}
+				} );
+
 			} );
 
 			it( hasMethod(

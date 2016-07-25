@@ -1,3 +1,4 @@
+import * as AccessPoint from "./AccessPoint";
 import * as Document from "./Document";
 import Documents from "./Documents";
 import * as HTTP from "./HTTP";
@@ -5,15 +6,22 @@ import * as PersistedResource from "./PersistedResource";
 import * as PersistedFragment from "./PersistedFragment";
 import * as PersistedNamedFragment from "./PersistedNamedFragment";
 import * as Pointer from "./Pointer";
+import * as RetrievalPreferences from "./RetrievalPreferences";
 import * as SPARQL from "./SPARQL";
 export interface Class extends Pointer.Class, PersistedResource.Class, Document.Class {
+    created: Date;
+    modified: Date;
+    defaultInteractionModel: Pointer.Class;
+    accessPoints?: Pointer.Class[];
+    hasMemberRelation?: Pointer.Class;
+    memberOfRelation?: Pointer.Class;
     _documents: Documents;
     _etag: string;
     _fragmentsIndex: Map<string, PersistedFragment.Class>;
     _savedFragments: PersistedFragment.Class[];
     _syncSavedFragments(): void;
-    getFragment(slug: string): PersistedFragment.Class;
-    getNamedFragment(slug: string): PersistedNamedFragment.Class;
+    getFragment<T>(slug: string): T & PersistedFragment.Class;
+    getNamedFragment<T>(slug: string): T & PersistedNamedFragment.Class;
     getFragments(): PersistedFragment.Class[];
     createFragment(): PersistedFragment.Class;
     createFragment(slug: string): PersistedNamedFragment.Class;
@@ -25,6 +33,27 @@ export interface Class extends Pointer.Class, PersistedResource.Class, Document.
     save<T extends Class>(): Promise<[T, HTTP.Response.Class]>;
     destroy(): Promise<HTTP.Response.Class>;
     getDownloadURL(): Promise<string>;
+    addMember(member: Pointer.Class): Promise<HTTP.Response.Class>;
+    addMember(memberURI: string): Promise<HTTP.Response.Class>;
+    addMembers(members: (Pointer.Class | string)[]): Promise<HTTP.Response.Class>;
+    createChild(slug: string, object: Object): Promise<[Pointer.Class, HTTP.Response.Class]>;
+    createChild(slug: string): Promise<[Pointer.Class, HTTP.Response.Class]>;
+    createChild(object: Object): Promise<[Pointer.Class, HTTP.Response.Class]>;
+    createChild(): Promise<[Pointer.Class, HTTP.Response.Class]>;
+    createAccessPoint(accessPoint: AccessPoint.Class, slug?: string, requestOptions?: HTTP.Request.Options): Promise<[Pointer.Class, HTTP.Response.Class]>;
+    listChildren(): Promise<[Pointer.Class[], HTTP.Response.Class]>;
+    getChildren<T>(retrievalPreferences?: RetrievalPreferences.Class): Promise<[(T & Class)[], HTTP.Response.Class]>;
+    listMembers(includeNonReadable?: boolean): Promise<[Pointer.Class[], HTTP.Response.Class]>;
+    getMembers<T>(includeNonReadable?: boolean, retrievalPreferences?: RetrievalPreferences.Class): Promise<[(T & Class)[], HTTP.Response.Class]>;
+    getMembers<T>(retrievalPreferences?: RetrievalPreferences.Class): Promise<[(T & Class)[], HTTP.Response.Class]>;
+    removeMember(member: Pointer.Class): Promise<HTTP.Response.Class>;
+    removeMember(memberURI: string): Promise<HTTP.Response.Class>;
+    removeMembers(members: (Pointer.Class | string)[]): Promise<HTTP.Response.Class>;
+    removeAllMembers(): Promise<HTTP.Response.Class>;
+    upload(slug: string, blob: Blob): Promise<[Pointer.Class, HTTP.Response.Class]>;
+    upload(blob: Blob): Promise<[Pointer.Class, HTTP.Response.Class]>;
+    upload(slug: string, blob: Buffer): Promise<[Pointer.Class, HTTP.Response.Class]>;
+    upload(blob: Buffer): Promise<[Pointer.Class, HTTP.Response.Class]>;
     executeRawASKQuery(askQuery: string, requestOptions?: HTTP.Request.Options): Promise<[SPARQL.RawResults.Class, HTTP.Response.Class]>;
     executeASKQuery(askQuery: string, requestOptions?: HTTP.Request.Options): Promise<[boolean, HTTP.Response.Class]>;
     executeRawSELECTQuery(selectQuery: string, requestOptions?: HTTP.Request.Options): Promise<[SPARQL.RawResults.Class, HTTP.Response.Class]>;
@@ -34,7 +63,7 @@ export interface Class extends Pointer.Class, PersistedResource.Class, Document.
     executeUPDATE(updateQuery: string, requestOptions?: HTTP.Request.Options): Promise<HTTP.Response.Class>;
 }
 export declare class Factory {
-    static hasClassProperties(document: Document.Class): boolean;
+    static hasClassProperties(object: Object): boolean;
     static is(object: Object): boolean;
     static create(uri: string, documents: Documents, snapshot?: Object): Class;
     static createFrom<T extends Object>(object: T, uri: string, documents: Documents, snapshot?: Object): Class;

@@ -10,12 +10,6 @@ export interface Class extends LDP.DirectContainer.Class {
 }
 
 export class Factory {
-	static hasClassProperties( resource:Object ):boolean {
-		return (
-			Utils.hasPropertyDefined( resource, "membershipResource" )
-		);
-	}
-
 	static create( membershipResource:Pointer.Class, hasMemberRelation:string | Pointer.Class, memberOfRelation?:string | Pointer.Class ):Class {
 		return Factory.createFrom( {}, membershipResource, hasMemberRelation, memberOfRelation );
 	}

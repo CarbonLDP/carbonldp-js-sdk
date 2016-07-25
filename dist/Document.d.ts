@@ -4,11 +4,16 @@ import * as NamedFragment from "./NamedFragment";
 import * as ObjectSchema from "./ObjectSchema";
 import * as Pointer from "./Pointer";
 import * as Resource from "./Resource";
+export declare const RDF_CLASS: string;
+export declare const SCHEMA: ObjectSchema.Class;
 export interface Class extends Resource.Class, Pointer.Library, Pointer.Validator {
+    defaultInteractionModel?: Pointer.Class;
+    memberOfRelation?: Pointer.Class;
+    hasMemberRelation?: Pointer.Class;
     _fragmentsIndex: Map<string, Fragment.Class>;
     hasFragment(slug: string): boolean;
-    getFragment(slug: string): Fragment.Class;
-    getNamedFragment(slug: string): NamedFragment.Class;
+    getFragment<T>(slug: string): T & Fragment.Class;
+    getNamedFragment<T>(slug: string): T & NamedFragment.Class;
     getFragments(): Fragment.Class[];
     createFragment<T extends Object>(slug: string, object: T): NamedFragment.Class & T;
     createFragment<T extends Object>(object: T): Fragment.Class & T;

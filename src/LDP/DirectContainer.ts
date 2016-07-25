@@ -1,4 +1,3 @@
-import * as Container from "./Container";
 import * as Document from "./../Document";
 import * as Errors from "./../Errors";
 import * as NS from "./../NS";
@@ -8,7 +7,7 @@ import * as Utils from "./../Utils";
 
 export const RDF_CLASS:string = NS.LDP.Class.DirectContainer;
 
-export interface Class extends Container.Class {
+export interface Class extends Document.Class {
 	membershipResource:Pointer.Class;
 }
 
@@ -19,25 +18,11 @@ export class Factory {
 		);
 	}
 
-	static hasRDFClass( resource:Resource.Class ):boolean;
-	static hasRDFClass( expandedObject:Object ):boolean;
-	static hasRDFClass( resourceOrExpandedObject:Object ):boolean {
-		let types:string[] = [];
-		if( "@type" in resourceOrExpandedObject ) {
-			types = resourceOrExpandedObject[ "@type" ];
-		} else if( "types" in resourceOrExpandedObject ) {
-			let resource:Resource.Class = <any> resourceOrExpandedObject;
-			types = resource.types;
-		}
-
-		return types.indexOf( NS.LDP.Class.DirectContainer ) !== - 1;
-	}
-
 	static is( object:Object ):boolean {
 		return (
-			Document.Factory.is( object ) &&
-			Factory.hasClassProperties( object ) &&
-			Factory.hasRDFClass( object )
+			Factory.hasClassProperties( object )
+			&& Resource.Util.hasType( object, RDF_CLASS )
+			&& Document.Factory.is( object )
 		);
 	}
 
@@ -47,7 +32,7 @@ export class Factory {
 
 	static createFrom<T extends Object>( object:T, membershipResource:Pointer.Class, hasMemberRelation:string | Pointer.Class, memberOfRelation?:string | Pointer.Class ):T & Class {
 		if( Factory.is( object ) ) throw new Errors.IllegalArgumentError( "The base object is already a DirectContainer" );
-		if( ! membershipResource ) throw new Errors.IllegalArgumentError( "membershipResource cannot be null" );
+		if( ! membershipResource ) throw new Errors.IllegalArgumentError( "The membershipResource cannot be null" );
 
 		let container:T & Class = <any> object;
 		if( ! Document.Factory.is( object ) ) container = <any> Document.Factory.createFrom( object );

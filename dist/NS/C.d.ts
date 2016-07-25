@@ -3,6 +3,7 @@ export declare class Class {
     static AccessPoint: string;
     static AddMemberAction: string;
     static API: string;
+    static Document: string;
     static NonReadableMembershipResourceTriples: string;
     static PreferContainer: string;
     static PreferContainmentResources: string;

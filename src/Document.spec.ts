@@ -16,15 +16,16 @@ import {
 	extendsClass,
 	decoratedObject,
 } from "./test/JasmineExtender";
-import * as Utils from "./Utils";
-import * as Errors from "./Errors";
-import * as Pointer from "./Pointer";
-import * as Fragment from "./Fragment";
-import * as NamedFragment from "./NamedFragment";
-import * as URI from "./RDF/URI";
 import AbstractContext from "./AbstractContext";
+import * as Errors from "./Errors";
+import * as Fragment from "./Fragment";
 import JSONLDConverter from "./JSONLDConverter";
+import * as NamedFragment from "./NamedFragment";
+import * as NS from "./NS";
+import * as Pointer from "./Pointer";
 import * as Resource from "./Resource";
+import * as URI from "./RDF/URI";
+import * as Utils from "./Utils";
 
 import * as Document from "./Document";
 
@@ -33,6 +34,90 @@ describe( module( "Carbon/Document" ), ():void => {
 	it( isDefined(), ():void => {
 		expect( Document ).toBeDefined();
 		expect( Utils.isObject( Document ) ).toBe( true );
+	} );
+
+	it( hasProperty(
+		STATIC,
+		"RDF_CLASS",
+		"string"
+	), ():void => {
+		expect( Document.RDF_CLASS ).toBeDefined();
+		expect( Utils.isString( Document.RDF_CLASS ) ).toBe( true );
+
+		expect( Document.RDF_CLASS ).toBe( NS.C.Class.Document );
+	} );
+
+	it( hasProperty(
+		STATIC,
+		"SCHEMA",
+		"Carbon.ObjectSchema.Class"
+	), ():void => {
+		expect( Document.SCHEMA ).toBeDefined();
+		expect( Utils.isObject( Document.SCHEMA ) ).toBe( true );
+
+		expect( Utils.hasProperty( Document.SCHEMA, "contains" ) ).toBe( true );
+		expect( Document.SCHEMA[ "contains" ] ).toEqual( {
+			"@id": NS.LDP.Predicate.contains,
+			"@container": "@set",
+			"@type": "@id",
+		} );
+
+		expect( Utils.hasProperty( Document.SCHEMA, "members" ) ).toBe( true );
+		expect( Document.SCHEMA[ "members" ] ).toEqual( {
+			"@id": NS.LDP.Predicate.member,
+			"@container": "@set",
+			"@type": "@id",
+		} );
+
+
+		expect( Utils.hasProperty( Document.SCHEMA, "membershipResource" ) ).toBe( true );
+		expect( Document.SCHEMA[ "membershipResource" ] ).toEqual( {
+			"@id": NS.LDP.Predicate.membershipResource,
+			"@type": "@id",
+		} );
+
+		expect( Utils.hasProperty( Document.SCHEMA, "memberOfRelation" ) ).toBe( true );
+		expect( Document.SCHEMA[ "memberOfRelation" ] ).toEqual( {
+			"@id": NS.LDP.Predicate.memberOfRelation,
+			"@type": "@id",
+		} );
+
+		expect( Utils.hasProperty( Document.SCHEMA, "hasMemberRelation" ) ).toBe( true );
+		expect( Document.SCHEMA[ "hasMemberRelation" ] ).toEqual( {
+			"@id": NS.LDP.Predicate.hasMemberRelation,
+			"@type": "@id",
+		} );
+
+		expect( Utils.hasProperty( Document.SCHEMA, "insertedContentRelation" ) ).toBe( true );
+		expect( Document.SCHEMA[ "insertedContentRelation" ] ).toEqual( {
+			"@id": NS.LDP.Predicate.insertedContentRelation,
+			"@type": "@id",
+		} );
+
+		expect( Utils.hasProperty( Document.SCHEMA, "created" ) ).toBe( true );
+		expect( Document.SCHEMA[ "created" ] ).toEqual( {
+			"@id": NS.C.Predicate.created,
+			"@type": NS.XSD.DataType.dateTime,
+		} );
+
+		expect( Utils.hasProperty( Document.SCHEMA, "modified" ) ).toBe( true );
+		expect( Document.SCHEMA[ "modified" ] ).toEqual( {
+			"@id": NS.C.Predicate.modified,
+			"@type": NS.XSD.DataType.dateTime,
+		} );
+
+		expect( Utils.hasProperty( Document.SCHEMA, "defaultInteractionModel" ) ).toBe( true );
+		expect( Document.SCHEMA[ "defaultInteractionModel" ] ).toEqual( {
+			"@id": NS.C.Predicate.defaultInteractionModel,
+			"@type": "@id",
+		} );
+
+		expect( Utils.hasProperty( Document.SCHEMA, "accessPoints" ) ).toBe( true );
+		expect( Document.SCHEMA[ "accessPoints" ] ).toEqual( {
+			"@id": NS.C.Predicate.accessPoint,
+			"@type": "@id",
+			"@container": "@set",
+		} );
 	} );
 
 	describe( clazz(
@@ -60,17 +145,33 @@ describe( module( "Carbon/Document" ), ():void => {
 			expect( Document.Factory.hasClassProperties( resource ) ).toBe( false );
 
 			resource = {
+				hasMemberRelation: null,
+				memberOfRelation: null,
+				defaultInteractionModel: null,
+
 				_fragmentsIndex: null,
-				hasFragment: () => {},
-				getFragment: () => {},
-				getNamedFragment: () => {},
-				getFragments: () => {},
-				createFragment: () => {},
-				createNamedFragment: () => {},
-				removeFragment: () => {},
-				toJSON: () => {},
+				hasFragment: ():void => {},
+				getFragment: ():void => {},
+				getNamedFragment: ():void => {},
+				getFragments: ():void => {},
+				createFragment: ():void => {},
+				createNamedFragment: ():void => {},
+				removeFragment: ():void => {},
+				toJSON: ():void => {},
 			};
 			expect( Document.Factory.hasClassProperties( resource ) ).toBe( true );
+
+			delete resource.hasMemberRelation;
+			expect( Document.Factory.hasClassProperties( resource ) ).toBe( true );
+			resource.hasMemberRelation = null;
+
+			delete resource.memberOfRelation;
+			expect( Document.Factory.hasClassProperties( resource ) ).toBe( true );
+			resource.memberOfRelation = null;
+
+			delete resource.defaultInteractionModel;
+			expect( Document.Factory.hasClassProperties( resource ) ).toBe( true );
+			resource.defaultInteractionModel = null;
 
 			delete resource._fragmentsIndex;
 			expect( Document.Factory.hasClassProperties( resource ) ).toBe( false );
@@ -78,35 +179,35 @@ describe( module( "Carbon/Document" ), ():void => {
 
 			delete resource.hasFragment;
 			expect( Document.Factory.hasClassProperties( resource ) ).toBe( false );
-			resource.hasFragment = () => {};
+			resource.hasFragment = ():void => {};
 
 			delete resource.getFragment;
 			expect( Document.Factory.hasClassProperties( resource ) ).toBe( false );
-			resource.getFragment = () => {};
+			resource.getFragment = ():void => {};
 
 			delete resource.getNamedFragment;
 			expect( Document.Factory.hasClassProperties( resource ) ).toBe( false );
-			resource.getNamedFragment = () => {};
+			resource.getNamedFragment = ():void => {};
 
 			delete resource.getFragments;
 			expect( Document.Factory.hasClassProperties( resource ) ).toBe( false );
-			resource.getFragments = () => {};
+			resource.getFragments = ():void => {};
 
 			delete resource.createFragment;
 			expect( Document.Factory.hasClassProperties( resource ) ).toBe( false );
-			resource.createFragment = () => {};
+			resource.createFragment = ():void => {};
 
 			delete resource.createNamedFragment;
 			expect( Document.Factory.hasClassProperties( resource ) ).toBe( false );
-			resource.createNamedFragment = () => {};
+			resource.createNamedFragment = ():void => {};
 
 			delete resource.removeFragment;
 			expect( Document.Factory.hasClassProperties( resource ) ).toBe( false );
-			resource.removeFragment = () => {};
+			resource.removeFragment = ():void => {};
 
 			delete resource.toJSON;
 			expect( Document.Factory.hasClassProperties( resource ) ).toBe( false );
-			resource.toJSON = () => {};
+			resource.toJSON = ():void => {};
 		} );
 
 		it( hasMethod(
@@ -174,10 +275,11 @@ describe( module( "Carbon/Document" ), ():void => {
 		), ():void => {
 
 			it( hasSignature(
+				[ "T extends Object" ],
 				"Creates a Document object from the object provided.", [
-					{name: "object", type: "T extends Object"}
+					{name: "object", type: "T"}
 				],
-				{type: "Carbon.Document.Class"}
+				{type: "T & Carbon.Document.Class"}
 			), ():void => {
 				expect( Document.Factory.createFrom ).toBeDefined();
 				expect( Utils.isFunction( Document.Factory.createFrom ) ).toBe( true );
@@ -482,8 +584,9 @@ describe( module( "Carbon/Document" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"decorate",
+			[ "T extends Object" ],
 			"Adds the properties and method necessary for a Document object.", [
-				{name: "object", type: "T extends Object"}
+				{name: "object", type: "T"}
 			],
 			{type: "T & Carbon.Document.Class"}
 		), ():void => {
@@ -670,11 +773,12 @@ describe( module( "Carbon/Document" ), ():void => {
 			it( hasMethod(
 				INSTANCE,
 				"getFragment",
+				[ "T" ],
 				"Returns the fragment referenced by the URI provided.\n" +
 				"Returns null if no fragment exists in the document.", [
 					{name: "id", type: "string"}
 				],
-				{type: "Carbon.Fragment.Class"}
+				{type: "T & Carbon.Fragment.Class"}
 			), ():void => {
 				expect( document.getFragment ).toBeDefined();
 				expect( Utils.isFunction( document.getFragment ) ).toBe( true );
@@ -705,11 +809,12 @@ describe( module( "Carbon/Document" ), ():void => {
 			it( hasMethod(
 				INSTANCE,
 				"getNamedFragment",
+				[ "T" ],
 				"Returns the fragment referenced by the URI provided.\n" +
 				"Returns null if no fragment exists in the document.", [
 					{name: "id", type: "string"}
 				],
-				{type: "Carbon.Fragment.Class"}
+				{type: "T & Carbon.Fragment.Class"}
 			), ():void => {
 				expect( document.getNamedFragment ).toBeDefined();
 				expect( Utils.isFunction( document.getNamedFragment ) ).toBe( true );
@@ -771,11 +876,12 @@ describe( module( "Carbon/Document" ), ():void => {
 			), ():void => {
 
 				it( hasSignature(
+					[ "T extends Object" ],
 					"Creates a NamedFragment from the object provided and the slug specified.", [
 						{name: "slug", type: "string"},
-						{name: "object", type: "Object"}
+						{name: "object", type: "T"},
 					],
-					{type: "Carbon.NamedFragment.Class"}
+					{type: "T & Carbon.Fragment.Class"}
 				), ():void => {
 					expect( document.createFragment ).toBeDefined();
 					expect( Utils.isFunction( document.createFragment ) ).toBe( true );
@@ -832,10 +938,11 @@ describe( module( "Carbon/Document" ), ():void => {
 				} );
 
 				it( hasSignature(
+					[ "T extends Object" ],
 					"Creates a BlankNode from the object provided, sing no slug was specififed.", [
-						{name: "object", type: "Object"}
+						{name: "object", type: "T"},
 					],
-					{type: "Carbon.Fragment.Class"}
+					{type: "T & Carbon.Fragment.Class"}
 				), ():void => {
 					expect( document.createFragment ).toBeDefined();
 					expect( Utils.isFunction( document.createFragment ) ).toBe( true );
@@ -956,11 +1063,12 @@ describe( module( "Carbon/Document" ), ():void => {
 				} );
 
 				it( hasSignature(
+					[ "T extends Object" ],
 					"Creates a NamedFragment from the object provided and the slug specified.", [
 						{name: "slug", type: "string"},
-						{name: "object", type: "Object"}
+						{name: "object", type: "T"}
 					],
-					{type: "Carbon.NamedFragment.Class"}
+					{type: "T & Carbon.NamedFragment.Class"}
 				), ():void => {
 
 					expect( document.createNamedFragment ).toBeDefined();

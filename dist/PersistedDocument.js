@@ -7,7 +7,7 @@ var Pointer = require("./Pointer");
 var RDF = require("./RDF");
 var Utils = require("./Utils");
 var URI = require("./RDF/URI");
-var ObjectSchema_1 = require("./ObjectSchema");
+var ObjectSchema = require("./ObjectSchema");
 function extendIsDirty(superFunction) {
     return function () {
         var isDirty = superFunction.call(this);
@@ -65,6 +65,62 @@ function destroy() {
 function getDownloadURL() {
     return this._documents.getDownloadURL(this.id);
 }
+function addMember(memberOrUri) {
+    return this._documents.addMember(this.id, memberOrUri);
+}
+function addMembers(members) {
+    return this._documents.addMembers(this.id, members);
+}
+function createChild(slugOrObject, object) {
+    var slug = Utils.isString(slugOrObject) ? slugOrObject : null;
+    object = Utils.isString(slugOrObject) ? object : slugOrObject;
+    object = object || {};
+    if (slug) {
+        return this._documents.createChild(this.id, slug, object);
+    }
+    else {
+        return this._documents.createChild(this.id, object);
+    }
+}
+function createAccessPoint(accessPoint, slug, requestOptions) {
+    if (slug === void 0) { slug = null; }
+    if (requestOptions === void 0) { requestOptions = {}; }
+    return this._documents.createAccessPoint(accessPoint, slug, requestOptions);
+}
+function listChildren() {
+    return this._documents.listChildren(this.id);
+}
+function getChildren(retrievalPreferences) {
+    return this._documents.getChildren(this.id, retrievalPreferences);
+}
+function listMembers(includeNonReadable) {
+    if (includeNonReadable === void 0) { includeNonReadable = true; }
+    return this._documents.listMembers(this.id, includeNonReadable);
+}
+function getMembers(nonReadRetPref, retrievalPreferences) {
+    if (nonReadRetPref === void 0) { nonReadRetPref = true; }
+    return this._documents.getMembers(this.id, nonReadRetPref, retrievalPreferences);
+}
+function removeMember(memberOrUri) {
+    return this._documents.removeMember(this.id, memberOrUri);
+}
+function removeMembers(members) {
+    return this._documents.removeMembers(this.id, members);
+}
+function removeAllMembers() {
+    return this._documents.removeAllMembers(this.id);
+}
+function upload(slugOrData, data) {
+    if (data === void 0) { data = null; }
+    var slug = Utils.isString(slugOrData) ? slugOrData : null;
+    data = slug ? data : slugOrData;
+    if (slug) {
+        return this._documents.upload(this.id, slug, data);
+    }
+    else {
+        return this._documents.upload(this.id, data);
+    }
+}
 function executeRawASKQuery(askQuery, requestOptions) {
     if (requestOptions === void 0) { requestOptions = {}; }
     return this._documents.executeRawASKQuery(this.id, askQuery, requestOptions);
@@ -96,25 +152,39 @@ function executeUPDATE(updateQuery, requestOptions) {
 var Factory = (function () {
     function Factory() {
     }
-    Factory.hasClassProperties = function (document) {
-        return (Utils.hasPropertyDefined(document, "_documents") &&
-            Utils.hasPropertyDefined(document, "_etag") &&
-            Utils.hasFunction(document, "refresh") &&
-            Utils.hasFunction(document, "save") &&
-            Utils.hasFunction(document, "destroy") &&
-            Utils.hasFunction(document, "getDownloadURL") &&
-            Utils.hasFunction(document, "executeRawASKQuery") &&
-            Utils.hasFunction(document, "executeASKQuery") &&
-            Utils.hasFunction(document, "executeRawSELECTQuery") &&
-            Utils.hasFunction(document, "executeSELECTQuery") &&
-            Utils.hasFunction(document, "executeRawDESCRIBEQuery") &&
-            Utils.hasFunction(document, "executeRawCONSTRUCTQuery") &&
-            Utils.hasFunction(document, "executeUPDATE"));
+    Factory.hasClassProperties = function (object) {
+        return Utils.hasPropertyDefined(object, "_documents")
+            && Utils.hasPropertyDefined(object, "_etag")
+            && Utils.hasPropertyDefined(object, "created")
+            && Utils.hasPropertyDefined(object, "modified")
+            && Utils.hasPropertyDefined(object, "defaultInteractionModel")
+            && Utils.hasFunction(object, "refresh")
+            && Utils.hasFunction(object, "save")
+            && Utils.hasFunction(object, "destroy")
+            && Utils.hasFunction(object, "getDownloadURL")
+            && Utils.hasFunction(object, "addMember")
+            && Utils.hasFunction(object, "addMembers")
+            && Utils.hasFunction(object, "createAccessPoint")
+            && Utils.hasFunction(object, "createChild")
+            && Utils.hasFunction(object, "getChildren")
+            && Utils.hasFunction(object, "getMembers")
+            && Utils.hasFunction(object, "listChildren")
+            && Utils.hasFunction(object, "listMembers")
+            && Utils.hasFunction(object, "removeMember")
+            && Utils.hasFunction(object, "removeMembers")
+            && Utils.hasFunction(object, "removeAllMembers")
+            && Utils.hasFunction(object, "upload")
+            && Utils.hasFunction(object, "executeRawASKQuery")
+            && Utils.hasFunction(object, "executeASKQuery")
+            && Utils.hasFunction(object, "executeRawSELECTQuery")
+            && Utils.hasFunction(object, "executeSELECTQuery")
+            && Utils.hasFunction(object, "executeRawDESCRIBEQuery")
+            && Utils.hasFunction(object, "executeRawCONSTRUCTQuery")
+            && Utils.hasFunction(object, "executeUPDATE");
     };
     Factory.is = function (object) {
-        return Utils.isObject(object)
-            && Document.Factory.hasClassProperties(object)
-            && Factory.hasClassProperties(object);
+        return Factory.hasClassProperties(object)
+            && Document.Factory.is(object);
     };
     Factory.create = function (uri, documents, snapshot) {
         if (snapshot === void 0) { snapshot = {}; }
@@ -167,7 +237,7 @@ var Factory = (function () {
                     var superFunction = persistedDocument.hasPointer;
                     return function (id) {
                         if (RDF.URI.Util.isPrefixed(id)) {
-                            id = ObjectSchema_1.Digester.resolvePrefixedURI(new RDF.URI.Class(id), this._documents.getSchemaFor(this)).stringValue;
+                            id = ObjectSchema.Digester.resolvePrefixedURI(new RDF.URI.Class(id), this._documents.getSchemaFor(this)).stringValue;
                         }
                         if (superFunction.call(this, id))
                             return true;
@@ -184,7 +254,7 @@ var Factory = (function () {
                     var inScopeFunction = persistedDocument.inScope;
                     return function (id) {
                         if (RDF.URI.Util.isPrefixed(id)) {
-                            id = ObjectSchema_1.Digester.resolvePrefixedURI(new RDF.URI.Class(id), this._documents.getSchemaFor(this)).stringValue;
+                            id = ObjectSchema.Digester.resolvePrefixedURI(new RDF.URI.Class(id), this._documents.getSchemaFor(this)).stringValue;
                         }
                         if (inScopeFunction.call(this, id))
                             return superFunction.call(this, id);
@@ -201,7 +271,7 @@ var Factory = (function () {
                     return function (idOrPointer) {
                         var uri = Pointer.Factory.is(idOrPointer) ? idOrPointer.id : idOrPointer;
                         if (RDF.URI.Util.isPrefixed(uri)) {
-                            uri = ObjectSchema_1.Digester.resolvePrefixedURI(new RDF.URI.Class(uri), this._documents.getSchemaFor(this)).stringValue;
+                            uri = ObjectSchema.Digester.resolvePrefixedURI(new RDF.URI.Class(uri), this._documents.getSchemaFor(this)).stringValue;
                         }
                         if (superFunction.call(this, uri))
                             return true;
@@ -232,6 +302,78 @@ var Factory = (function () {
                 enumerable: false,
                 configurable: true,
                 value: getDownloadURL,
+            },
+            "addMember": {
+                writable: false,
+                enumerable: false,
+                configurable: true,
+                value: addMember,
+            },
+            "addMembers": {
+                writable: false,
+                enumerable: false,
+                configurable: true,
+                value: addMembers,
+            },
+            "createChild": {
+                writable: false,
+                enumerable: false,
+                configurable: true,
+                value: createChild,
+            },
+            "createAccessPoint": {
+                writable: false,
+                enumerable: false,
+                configurable: true,
+                value: createAccessPoint,
+            },
+            "listChildren": {
+                writable: false,
+                enumerable: false,
+                configurable: true,
+                value: listChildren,
+            },
+            "getChildren": {
+                writable: false,
+                enumerable: false,
+                configurable: true,
+                value: getChildren,
+            },
+            "listMembers": {
+                writable: false,
+                enumerable: false,
+                configurable: true,
+                value: listMembers,
+            },
+            "getMembers": {
+                writable: false,
+                enumerable: false,
+                configurable: true,
+                value: getMembers,
+            },
+            "removeMember": {
+                writable: false,
+                enumerable: false,
+                configurable: true,
+                value: removeMember,
+            },
+            "removeMembers": {
+                writable: false,
+                enumerable: false,
+                configurable: true,
+                value: removeMembers,
+            },
+            "removeAllMembers": {
+                writable: false,
+                enumerable: false,
+                configurable: true,
+                value: removeAllMembers,
+            },
+            "upload": {
+                writable: false,
+                enumerable: false,
+                configurable: true,
+                value: upload,
             },
             "executeRawASKQuery": {
                 writable: false,

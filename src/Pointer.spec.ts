@@ -129,7 +129,8 @@ describe( module( "Carbon/Pointer" ), ():void => {
 
 		it( hasMethod(
 			STATIC,
-			"decorate<T extends Object>",
+			"decorate",
+			[ "T extends Object" ],
 			"Decorates the object provided with the elements of a Pointer object.", [
 				{name: "object", type: "T"},
 			],
@@ -225,9 +226,10 @@ describe( module( "Carbon/Pointer" ), ():void => {
 
 			it( hasMethod(
 				INSTANCE,
-				"resolve<T extends Carbon.PersistedDocument.Class>",
+				"resolve",
+				[ "T" ],
 				"Resolve the pointer. This function throw an Error, it should be reimplemented for the respective type of pointer.",
-				{type: "Promise<[ T, Carbon.HTTP.Response.Class ]>"}
+				{type: "Promise<[ T & Carbon.PersistedDocument.Class, Carbon.HTTP.Response.Class ]>"}
 			), ( done:{ ():void, fail:() => void } ):void => {
 				expect( pointer.resolve ).toBeDefined();
 				expect( Utils.isFunction( pointer.resolve ) ).toBe( true );

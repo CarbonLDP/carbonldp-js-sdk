@@ -55,9 +55,12 @@ describe( module( "Carbon/Documents" ), ():void => {
 			expect( Documents ).toBeDefined();
 		} );
 
-		it( hasMethod( INSTANCE, "get<T extends Carbon.PersistedDocument.Class>", [
-			{name: "uri", type: "string"},
-		], {type: "Promise<[ T, HTTP.Response.Class ]>"} ), ( done:(() => void) & { fail:( error?:any ) => void } ):void => {
+		it( hasMethod(
+			INSTANCE, "get", [ "T" ], [
+				{name: "uri", type: "string"},
+			],
+			{type: "Promise<[ T & Carbon.PersistedDocument.Class, HTTP.Response.Class ]>"}
+		), ( done:(() => void) & { fail:( error?:any ) => void } ):void => {
 			let promises:Promise<any>[] = [];
 
 			class MockedContext extends AbstractContext {
@@ -752,7 +755,11 @@ describe( module( "Carbon/Documents" ), ():void => {
 			} ).catch( done.fail );
 		} );
 
-		describe( method( INSTANCE, "getChildren", "Retrieves and resolve all the children of a specified document." ), () => {
+		describe( method(
+			INSTANCE,
+			"getChildren",
+			"Retrieves and resolve all the children of a specified document."
+		), () => {
 			let documents:Documents;
 
 			beforeEach( () => {
@@ -930,12 +937,13 @@ describe( module( "Carbon/Documents" ), ():void => {
 			}
 
 			it( hasSignature(
+				[ "T" ],
 				"Retrieves all the children of a document and their content, where you can specify the retrieval preferences and the options for the request.", [
 					{name: "parentURI", type: "string", description: "URI of the document to ask its children."},
 					{name: "retrievalPreferences", type: "Carbon.RetrievalPreferences.Class", optional: true, description: "An object for specify the retrieval preferences for the request."},
 					{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Options that can be specified for change the behavior of the request."},
 				],
-				{type: "Promise<[ Carbon.PersistedDocument.Class[], Carbon.HTTP.Response.Class ]>"}
+				{type: "Promise<[ (T & Carbon.PersistedDocument.Class)[], Carbon.HTTP.Response.Class ]>"}
 			), ( done:{ ():void, fail:() => void } ) => {
 				let promises:Promise<any> [] = [];
 
@@ -1053,11 +1061,12 @@ describe( module( "Carbon/Documents" ), ():void => {
 			} );
 
 			it( hasSignature(
+				[ "T" ],
 				"Retrieves all the children of a document and their content, where you can specify options for the request.", [
 					{name: "parentURI", type: "string", description: "URI of the document to ask its children."},
 					{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Options that can be specified for change the behavior of the request."},
 				],
-				{type: "Promise<[ Carbon.PersistedDocument.Class[], Carbon.HTTP.Response.Class ]>"}
+				{type: "Promise<[ (T & Carbon.PersistedDocument.Class)[], Carbon.HTTP.Response.Class ]>"}
 			), ( done:{ ():void, fail:() => void } ) => {
 				let promises:Promise<any> [] = [];
 
@@ -1214,7 +1223,11 @@ describe( module( "Carbon/Documents" ), ():void => {
 				promises.push( promise.catch( spy.fail ) );
 
 				accessPoint.id = "";
-				let persisted = PersistedDocument.Factory.decorate( accessPoint, documents );
+				let persisted:AccessPoint.Class = PersistedDocument.Factory.decorate( accessPoint, documents );
+				persisted[ "created" ] = null;
+				persisted[ "modified" ] = null;
+				persisted[ "defaultInteractionModel" ] = null;
+
 				promise = documents.createAccessPoint( "http://example.com/parent-resource/", persisted );
 				expect( promise instanceof Promise ).toBe( true );
 				promises.push( promise.catch( spy.fail ) );
@@ -1283,7 +1296,11 @@ describe( module( "Carbon/Documents" ), ():void => {
 				promises.push( promise.catch( spy.fail ) );
 
 				accessPoint.id = "";
-				let persisted = PersistedDocument.Factory.decorate( accessPoint, documents );
+				let persisted:AccessPoint.Class = PersistedDocument.Factory.decorate( accessPoint, documents );
+				persisted[ "created" ] = null;
+				persisted[ "modified" ] = null;
+				persisted[ "defaultInteractionModel" ] = null;
+
 				promise = documents.createAccessPoint( persisted );
 				expect( promise instanceof Promise ).toBe( true );
 				promises.push( promise.catch( spy.fail ) );
@@ -1742,7 +1759,11 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 		} );
 
-		describe( method( INSTANCE, "getMembers", "Retrieves and resolve all the members of a specified document." ), () => {
+		describe( method(
+			INSTANCE,
+			"getMembers",
+			"Retrieves and resolve all the members of a specified document."
+		), () => {
 			let documents:Documents;
 
 			beforeEach( () => {
@@ -1928,13 +1949,14 @@ describe( module( "Carbon/Documents" ), ():void => {
 			}
 
 			it( hasSignature(
+				[ "T" ],
 				"Retrieves all the members of a document and their contents, where you can specify if the response should include the Non Readable resources, the retrieval preferences and the options for the request.", [
 					{name: "uri", type: "string", description: "URI of the document to ask its members."},
 					{name: "includeNonReadable", type: "boolean", optional: true, description: "Specify if the the response should include the Non Readable resources. By default this is set to `true`."},
 					{name: "retrievalPreferences", type: "Carbon.RetrievalPreferences.Class", optional: true, description: "An object for specify the retrieval preferences for the request."},
 					{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Options that can be specified for change the behavior of the request."},
 				],
-				{type: "Promise<[ Carbon.Pointer.Class[], Carbon.HTTP.Response.Class ]>"}
+				{type: "Promise<[ (T & Carbon.PersistedDocument.Class)[], Carbon.HTTP.Response.Class ]>"}
 			), ( done:{ ():void, fail:() => void } ) => {
 				let promises:Promise<any> [] = [];
 
@@ -2042,12 +2064,13 @@ describe( module( "Carbon/Documents" ), ():void => {
 			} );
 
 			it( hasSignature(
+				[ "T" ],
 				"Retrieves all the members of a document and their contents, where you can specify if the response should include the Non Readable resources and options for the request.", [
 					{name: "uri", type: "string", description: "URI of the document to ask its members."},
 					{name: "includeNonReadable", type: "boolean", optional: true, description: "Specify if the the response should include the Non Readable resources. By default this is set to `true`."},
 					{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Options that can be specified for change the behavior of the request."},
 				],
-				{type: "Promise<[ Carbon.Pointer.Class[], Carbon.HTTP.Response.Class ]>"}
+				{type: "Promise<[ (T & Carbon.PersistedDocument.Class)[], Carbon.HTTP.Response.Class ]>"}
 			), ( done:{ ():void, fail:() => void } ) => {
 				let promises:Promise<any> [] = [];
 
@@ -2127,12 +2150,13 @@ describe( module( "Carbon/Documents" ), ():void => {
 			} );
 
 			it( hasSignature(
+				[ "T" ],
 				"Retrieves all the members of a document and their content, where you can specify the retrieval preferences and the options for the request.", [
 					{name: "uri", type: "string", description: "URI of the document to ask its members."},
 					{name: "retrievalPreferences", type: "Carbon.RetrievalPreferences.Class", optional: true, description: "An object for specify the retrieval preferences for the request."},
 					{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Options that can be specified for change the behavior of the request."},
 				],
-				{type: "Promise<[ Carbon.Pointer.Class[], Carbon.HTTP.Response.Class ]>"}
+				{type: "Promise<[ (T & Carbon.PersistedDocument.Class)[], Carbon.HTTP.Response.Class ]>"}
 			), ( done:{ ():void, fail:() => void } ) => {
 				let promises:Promise<any> [] = [];
 
@@ -2190,11 +2214,12 @@ describe( module( "Carbon/Documents" ), ():void => {
 			} );
 
 			it( hasSignature(
+				[ "T" ],
 				"Retrieves all the members of a document and their contents, where you can specify options for the request.", [
 					{name: "uri", type: "string", description: "URI of the document to ask its members."},
 					{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Options that can be specified for change the behavior of the request."},
 				],
-				{type: "Promise<[ Carbon.Pointer.Class[], Carbon.HTTP.Response.Class ]>"}
+				{type: "Promise<[ (T & Carbon.PersistedDocument.Class)[], Carbon.HTTP.Response.Class ]>"}
 			), ( done:{ ():void, fail:() => void } ) => {
 				let promises:Promise<any> [] = [];
 
@@ -2646,7 +2671,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 		it( hasMethod(
 			INSTANCE,
-			"save<T extends Carbon.PersistedDocument.Class>",
+			"save",
+			[ "T extends Carbon.PersistedDocument.Class" ],
 			"Update the data of the document provided in the server.", [
 				{name: "persistedDocument", type: "T", description: "The persisted document with the data to update in the server."},
 				{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customisable options for the request."},
@@ -2682,7 +2708,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 		it( hasMethod(
 			INSTANCE,
-			"refresh<T extends Carbon.PersistedDocument.Class>",
+			"refresh",
+			[ "T extends Carbon.PersistedDocument.Class" ],
 			"Update the document with the data of the server, if there is a different version on it.", [
 				{name: "persistedDocument", type: "T", description: "The persisted document to update."},
 				{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true}

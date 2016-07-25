@@ -119,11 +119,12 @@ describe( module( "Carbon/FreeResources" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"createFrom",
+			[ "T extends Object" ],
 			"Create a `Carbon.FreeResources.Class` object from the plain object provided.", [
-				{name: "object", type: "T extends Object", description: "The object that wants be converted in a `Carbon.FreeResources.Class`."},
+				{name: "object", type: "T", description: "The object that wants be converted in a `Carbon.FreeResources.Class`."},
 				{name: "documents", type: "Carbon.Documents.Class", description: "A `Carbon.Documents` object where the FreeResource scope is."},
 			],
-			{type: "Carbon.FreeResources.Class & T"}
+			{type: "T & Carbon.FreeResources.Class"}
 		), ():void => {
 			expect( FreeResources.Factory.createFrom ).toBeDefined();
 			expect( Utils.isFunction( FreeResources.Factory.createFrom ) ).toBe( true );
@@ -145,10 +146,11 @@ describe( module( "Carbon/FreeResources" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"decorate",
+			[ "T extends Object" ],
 			"Decorate the object provided with the methods and properties of a `Carbon.FreeResources.Class` object.", [
-				{name: "object", type: "T extends Object"},
+				{name: "object", type: "T"},
 			],
-			{type: "Carbon.FreeResources.Class & T"}
+			{type: "T & Carbon.FreeResources.Class"}
 		), ():void => {
 			expect( FreeResources.Factory.decorate ).toBeDefined();
 			expect( Utils.isFunction( FreeResources.Factory.decorate ) ).toBe( true );

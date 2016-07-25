@@ -98,121 +98,6 @@ describe( module( "Carbon/LDP/DirectContainer" ), ():void => {
 			expect( DirectContainer.Factory.is( object ) ).toBe( true );
 		} );
 
-
-		describe( method(
-			STATIC,
-			"hasRDFClass"
-		), ():void => {
-
-			it( hasSignature(
-				"Returns true if the Pointer provided is an LDP DirectContainer.", [
-					{name: "pointer", type: "Carbon.Pointer.Class"}
-				],
-				{type: "boolean"}
-			), ():void => {
-				expect( DirectContainer.Factory.hasRDFClass ).toBeDefined();
-				expect( Utils.isFunction( DirectContainer.Factory.hasRDFClass ) ).toBe( true );
-
-				let pointer:Pointer.Class;
-
-				pointer = Document.Factory.create();
-				expect( DirectContainer.Factory.hasRDFClass( pointer ) ).toBe( false );
-
-				pointer = Document.Factory.create();
-				pointer.id = "http://example.com/access-point/";
-				expect( DirectContainer.Factory.hasRDFClass( pointer ) ).toBe( false );
-
-				pointer = Document.Factory.create();
-				pointer.id = "http://example.com/access-point/";
-				(<Document.Class> pointer).types.push( NS.LDP.Class.Container );
-				expect( DirectContainer.Factory.hasRDFClass( pointer ) ).toBe( false );
-
-				pointer = Document.Factory.create();
-				pointer.id = "http://example.com/access-point/";
-				(<Document.Class> pointer).types.push( NS.LDP.Class.DirectContainer );
-				expect( DirectContainer.Factory.hasRDFClass( pointer ) ).toBe( true );
-
-				pointer = Document.Factory.create();
-				pointer.id = "http://example.com/access-point/";
-				(<Document.Class> pointer).types.push( NS.LDP.Class.Container );
-				(<Document.Class> pointer).types.push( NS.LDP.Class.DirectContainer );
-				expect( DirectContainer.Factory.hasRDFClass( pointer ) ).toBe( true );
-			} );
-
-			it( hasSignature(
-				"Returns true if the Object provided is an LDP DirectContainer.", [
-					{name: "expandedObject", type: "Object"}
-				],
-				{type: "boolean"}
-			), ():void => {
-				expect( DirectContainer.Factory.hasRDFClass ).toBeDefined();
-				expect( Utils.isFunction( DirectContainer.Factory.hasRDFClass ) ).toBe( true );
-
-				let object:Object = {};
-				expect( DirectContainer.Factory.hasRDFClass( object ) ).toBe( false );
-
-				object = {
-					"@id": "http://example.com/access-point/",
-					"@type": [],
-					"http://example.com/ns#string": [ {
-						"@value": "a string"
-					} ],
-					"http://example.com/ns#integer": [ {
-						"@value": "100",
-						"@type": "http://www.w3.org/2001/XMLSchema#integer"
-					} ]
-				};
-				expect( DirectContainer.Factory.hasRDFClass( object ) ).toBe( false );
-
-				object = {
-					"@id": "http://example.com/access-point/",
-					"@type": [
-						"http://www.w3.org/ns/ldp#Container"
-					],
-					"http://example.com/ns#string": [ {
-						"@value": "a string"
-					} ],
-					"http://example.com/ns#integer": [ {
-						"@value": "100",
-						"@type": "http://www.w3.org/2001/XMLSchema#integer"
-					} ]
-				};
-				expect( DirectContainer.Factory.hasRDFClass( object ) ).toBe( false );
-
-				object = {
-					"@id": "http://example.com/access-point/",
-					"@type": [
-						"http://www.w3.org/ns/ldp#DirectContainer"
-					],
-					"http://example.com/ns#string": [ {
-						"@value": "a string"
-					} ],
-					"http://example.com/ns#integer": [ {
-						"@value": "100",
-						"@type": "http://www.w3.org/2001/XMLSchema#integer"
-					} ]
-				};
-				expect( DirectContainer.Factory.hasRDFClass( object ) ).toBe( true );
-
-				object = {
-					"@id": "http://example.com/access-point/",
-					"@type": [
-						"http://www.w3.org/ns/ldp#Container",
-						"http://www.w3.org/ns/ldp#DirectContainer"
-					],
-					"http://example.com/ns#string": [ {
-						"@value": "a string"
-					} ],
-					"http://example.com/ns#integer": [ {
-						"@value": "100",
-						"@type": "http://www.w3.org/2001/XMLSchema#integer"
-					} ]
-				};
-				expect( DirectContainer.Factory.hasRDFClass( object ) ).toBe( true );
-			} );
-
-		} );
-
 		it( hasMethod(
 			STATIC,
 			"create",
@@ -248,8 +133,9 @@ describe( module( "Carbon/LDP/DirectContainer" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"createFrom",
+			[ "T extends Object" ],
 			"Create a `Carbon.LDP.DirectContainer.Class` object with the object provided and the parameters specified.", [
-				{name: "object", type: "T extends Object"},
+				{name: "object", type: "T"},
 				{name: "membershipResource", type: "Carbon.Pointer.Class"},
 				{name: "hasMemberRelation", type: "string | Carbon.Pointer.Class"},
 				{name: "memberOfRelation", type: "string | Carbon.Pointer.Class", optional: true}

@@ -2,18 +2,71 @@ import * as Errors from "./Errors";
 import * as Fragment from "./Fragment";
 import JSONLDConverter from "./JSONLDConverter";
 import * as NamedFragment from "./NamedFragment";
+import * as NS from "./NS";
 import * as ObjectSchema from "./ObjectSchema";
 import * as Pointer from "./Pointer";
 import * as RDF from "./RDF";
 import * as Resource from "./Resource";
 import * as Utils from "./Utils";
 
+export const RDF_CLASS:string = NS.C.Class.Document;
+
+export const SCHEMA:ObjectSchema.Class = {
+	"contains": {
+		"@id": NS.LDP.Predicate.contains,
+		"@container": "@set",
+		"@type": "@id",
+	},
+	"members": {
+		"@id": NS.LDP.Predicate.member,
+		"@container": "@set",
+		"@type": "@id",
+	},
+	"membershipResource": {
+		"@id": NS.LDP.Predicate.membershipResource,
+		"@type": "@id",
+	},
+	"memberOfRelation": {
+		"@id": NS.LDP.Predicate.memberOfRelation,
+		"@type": "@id",
+	},
+	"hasMemberRelation": {
+		"@id": NS.LDP.Predicate.hasMemberRelation,
+		"@type": "@id",
+	},
+	"insertedContentRelation": {
+		"@id": NS.LDP.Predicate.insertedContentRelation,
+		"@type": "@id",
+	},
+	"created": {
+		"@id": NS.C.Predicate.created,
+		"@type": NS.XSD.DataType.dateTime,
+	},
+	"modified": {
+		"@id": NS.C.Predicate.modified,
+		"@type": NS.XSD.DataType.dateTime,
+	},
+	"defaultInteractionModel": {
+		"@id": NS.C.Predicate.defaultInteractionModel,
+		"@type": "@id",
+	},
+	"accessPoints": {
+		"@id": NS.C.Predicate.accessPoint,
+		"@type": "@id",
+		"@container": "@set",
+	},
+};
+
 export interface Class extends Resource.Class, Pointer.Library, Pointer.Validator {
+	defaultInteractionModel?:Pointer.Class;
+	memberOfRelation?:Pointer.Class;
+	hasMemberRelation?:Pointer.Class;
+
 	_fragmentsIndex:Map<string, Fragment.Class>;
 
 	hasFragment( slug:string ):boolean;
-	getFragment( slug:string ):Fragment.Class;
-	getNamedFragment( slug:string ):NamedFragment.Class;
+	getFragment<T>( slug:string ):T & Fragment.Class;
+	getNamedFragment<T>( slug:string ):T & NamedFragment.Class;
 	getFragments():Fragment.Class[];
 
 	createFragment<T extends Object>( slug:string, object:T ):NamedFragment.Class & T;

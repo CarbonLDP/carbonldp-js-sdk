@@ -9,6 +9,8 @@ var FreeResources = require("./FreeResources");
 var JSONLDConverter = require("./JSONLDConverter");
 var PersistedACL = require("./Auth/PersistedACL");
 var PersistedDocument = require("./PersistedDocument");
+var PersistedProtectedDocument = require("./PersistedProtectedDocument");
+var ProtectedDocument = require("./ProtectedDocument");
 var Pointer = require("./Pointer");
 var NS = require("./NS");
 var ObjectSchema = require("./ObjectSchema");
@@ -765,8 +767,8 @@ var Documents = (function () {
         fragments.forEach(function (fragment) { return fragment._syncSnapshot(); });
         document._syncSavedFragments();
         document._resolved = true;
-        if (LDP.Container.Factory.hasRDFClass(document))
-            LDP.PersistedContainer.Factory.decorate(document);
+        if (Resource.Util.hasType(document, ProtectedDocument.RDF_CLASS))
+            PersistedProtectedDocument.Factory.decorate(document);
         if (Resource.Util.hasType(document, ACL.RDF_CLASS))
             PersistedACL.Factory.decorate(document);
         return document;

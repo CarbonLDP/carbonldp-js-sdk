@@ -14,6 +14,8 @@ import * as PersistedBlankNode from "./PersistedBlankNode";
 import * as PersistedDocument from "./PersistedDocument";
 import * as PersistedFragment from "./PersistedFragment";
 import * as PersistedNamedFragment from "./PersistedNamedFragment";
+import * as PersistedProtectedDocument from "./PersistedProtectedDocument";
+import * as ProtectedDocument from "./ProtectedDocument";
 import * as Pointer from "./Pointer";
 import * as NS from "./NS";
 import * as ObjectSchema from "./ObjectSchema";
@@ -876,7 +878,7 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 
 		// TODO: Decorate additional behavior (app, etc.). See also updatePersistedDocument() method
 		// TODO: Make it dynamic. See also updatePersistedDocument() method
-		if( LDP.Container.Factory.hasRDFClass( document ) ) LDP.PersistedContainer.Factory.decorate( document );
+		if( Resource.Util.hasType( document, ProtectedDocument.RDF_CLASS ) ) PersistedProtectedDocument.Factory.decorate( document );
 		if( Resource.Util.hasType( document, ACL.RDF_CLASS ) ) PersistedACL.Factory.decorate( document );
 
 		return document;

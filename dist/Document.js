@@ -3,11 +3,58 @@ var Errors = require("./Errors");
 var Fragment = require("./Fragment");
 var JSONLDConverter_1 = require("./JSONLDConverter");
 var NamedFragment = require("./NamedFragment");
+var NS = require("./NS");
 var ObjectSchema = require("./ObjectSchema");
 var Pointer = require("./Pointer");
 var RDF = require("./RDF");
 var Resource = require("./Resource");
 var Utils = require("./Utils");
+exports.RDF_CLASS = NS.C.Class.Document;
+exports.SCHEMA = {
+    "contains": {
+        "@id": NS.LDP.Predicate.contains,
+        "@container": "@set",
+        "@type": "@id",
+    },
+    "members": {
+        "@id": NS.LDP.Predicate.member,
+        "@container": "@set",
+        "@type": "@id",
+    },
+    "membershipResource": {
+        "@id": NS.LDP.Predicate.membershipResource,
+        "@type": "@id",
+    },
+    "memberOfRelation": {
+        "@id": NS.LDP.Predicate.memberOfRelation,
+        "@type": "@id",
+    },
+    "hasMemberRelation": {
+        "@id": NS.LDP.Predicate.hasMemberRelation,
+        "@type": "@id",
+    },
+    "insertedContentRelation": {
+        "@id": NS.LDP.Predicate.insertedContentRelation,
+        "@type": "@id",
+    },
+    "created": {
+        "@id": NS.C.Predicate.created,
+        "@type": NS.XSD.DataType.dateTime,
+    },
+    "modified": {
+        "@id": NS.C.Predicate.modified,
+        "@type": NS.XSD.DataType.dateTime,
+    },
+    "defaultInteractionModel": {
+        "@id": NS.C.Predicate.defaultInteractionModel,
+        "@type": "@id",
+    },
+    "accessPoints": {
+        "@id": NS.C.Predicate.accessPoint,
+        "@type": "@id",
+        "@container": "@set",
+    },
+};
 function hasPointer(id) {
     var document = this;
     if (id === document.id)

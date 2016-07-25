@@ -3,6 +3,7 @@ var Document = require("./../Document");
 var Errors = require("./../Errors");
 var NS = require("./../NS");
 var Pointer = require("./../Pointer");
+var Resource = require("./../Resource");
 var Utils = require("./../Utils");
 exports.RDF_CLASS = NS.LDP.Class.DirectContainer;
 var Factory = (function () {
@@ -11,21 +12,10 @@ var Factory = (function () {
     Factory.hasClassProperties = function (resource) {
         return (Utils.hasPropertyDefined(resource, "membershipResource"));
     };
-    Factory.hasRDFClass = function (resourceOrExpandedObject) {
-        var types = [];
-        if ("@type" in resourceOrExpandedObject) {
-            types = resourceOrExpandedObject["@type"];
-        }
-        else if ("types" in resourceOrExpandedObject) {
-            var resource = resourceOrExpandedObject;
-            types = resource.types;
-        }
-        return types.indexOf(NS.LDP.Class.DirectContainer) !== -1;
-    };
     Factory.is = function (object) {
-        return (Document.Factory.is(object) &&
-            Factory.hasClassProperties(object) &&
-            Factory.hasRDFClass(object));
+        return (Factory.hasClassProperties(object)
+            && Resource.Util.hasType(object, exports.RDF_CLASS)
+            && Document.Factory.is(object));
     };
     Factory.create = function (membershipResource, hasMemberRelation, memberOfRelation) {
         return Factory.createFrom({}, membershipResource, hasMemberRelation, memberOfRelation);
@@ -34,7 +24,7 @@ var Factory = (function () {
         if (Factory.is(object))
             throw new Errors.IllegalArgumentError("The base object is already a DirectContainer");
         if (!membershipResource)
-            throw new Errors.IllegalArgumentError("membershipResource cannot be null");
+            throw new Errors.IllegalArgumentError("The membershipResource cannot be null");
         var container = object;
         if (!Document.Factory.is(object))
             container = Document.Factory.createFrom(object);

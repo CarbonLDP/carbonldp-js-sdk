@@ -1,11 +1,13 @@
 import * as APIDescription from "./APIDescription";
 import * as Auth from "./Auth";
 import Context from "./Context";
+import * as Document from "./Document";
 import Documents from "./Documents";
 import * as Errors from "./Errors";
 import * as LDP from "./LDP";
 import * as NS from "./NS";
 import * as PersistedBlankNode from "./PersistedBlankNode";
+import * as ProtectedDocument from "./ProtectedDocument";
 import * as ObjectSchema from "./ObjectSchema";
 import * as Agent from "./Agent";
 import * as RDFRepresentation from "./RDFRepresentation";
@@ -146,9 +148,8 @@ export class Class implements Context {
 	private registerDefaultObjectSchemas():void {
 		this.extendObjectSchema( PersistedBlankNode.SCHEMA );
 
-		this.extendObjectSchema( LDP.RDFSource.RDF_CLASS, LDP.RDFSource.SCHEMA );
-		this.extendObjectSchema( LDP.Container.RDF_CLASS, LDP.Container.SCHEMA );
-		this.extendObjectSchema( LDP.BasicContainer.RDF_CLASS, LDP.Container.SCHEMA );
+		this.extendObjectSchema( Document.RDF_CLASS, Document.SCHEMA );
+		this.extendObjectSchema( ProtectedDocument.RDF_CLASS, ProtectedDocument.SCHEMA );
 
 		this.extendObjectSchema( RDFRepresentation.RDF_CLASS, RDFRepresentation.SCHEMA );
 		this.extendObjectSchema( APIDescription.RDF_CLASS, APIDescription.SCHEMA );

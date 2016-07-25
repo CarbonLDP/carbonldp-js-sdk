@@ -58,8 +58,9 @@ describe( module( "Carbon/Auth/PersistedACL" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"decorate",
+			[ "T extends Carbon.PersistedDocument.Class" ],
 			"Decorate the object with the properties and methods of a `Carbon.Auth.PersistedACL.Class` object.", [
-				{name: "document", type: "T extends Carbon.PersistedDocument.Class", description: "The persisted document to decorate."},
+				{name: "document", type: "T", description: "The persisted document to decorate."},
 			],
 			{type: "T & Carbon.Auth.PersistedACL.Class"}
 		), ():void => {
