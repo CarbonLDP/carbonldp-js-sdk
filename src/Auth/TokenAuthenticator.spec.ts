@@ -122,7 +122,28 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 					jasmine.Ajax.stubRequest( "http://example.com/successful/auth-tokens/", null, "POST" ).andReturn( {
 						status: 200,
 						responseText: `[ {
-							"@id": "_:1",
+							"@id": "_:00",
+							"@type": [
+								"https://carbonldp.com/ns/v1/platform#ResponseMetadata",
+								"https://carbonldp.com/ns/v1/platform#VolatileResource"
+							],
+							"https://carbonldp.com/ns/v1/platform#resourceMetadata": [ {
+								"@id": "_:01"
+							} ]
+						}, {
+							"@id": "_:01",
+							"@type": [
+								"https://carbonldp.com/ns/v1/platform#ResourceMetadata",
+								"https://carbonldp.com/ns/v1/platform#VolatileResource"
+							],
+							"https://carbonldp.com/ns/v1/platform#eTag": [ {
+								"@value": "\\"1234567890\\""
+							} ],
+							"https://carbonldp.com/ns/v1/platform#resource": [ {
+								"@id": "http://example.com/successful/agents/my-agent/"
+							} ]
+						}, {
+							"@id": "_:02",
 							"@type": [
 								"https://carbonldp.com/ns/v1/security#Token",
 								"https://carbonldp.com/ns/v1/platform#VolatileResource"
@@ -341,15 +362,62 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 				expirationTime.setDate( expirationTime.getDate() + 1 );
 				jasmine.Ajax.stubRequest( "http://example.com/successful/auth-tokens/", null, "POST" ).andReturn( {
 					status: 200,
-					responseText: `[{
-						"@id": "_:1", 
-						"@type": [ "https://carbonldp.com/ns/v1/security#Token" ], 
-						"https://carbonldp.com/ns/v1/security#tokenKey": "token-value", 
-						"https://carbonldp.com/ns/v1/security#expirationTime": { 
-							"@value": "${expirationTime.toISOString()}"  , 
-							"@type": "http://www.w3.org/2001/XMLSchema#dateTime" 
-						} 
-					}]`,
+					responseText: `[ {
+						"@id": "_:00",
+						"@type": [
+							"https://carbonldp.com/ns/v1/platform#ResponseMetadata",
+							"https://carbonldp.com/ns/v1/platform#VolatileResource"
+						],
+						"https://carbonldp.com/ns/v1/platform#resourceMetadata": [ {
+							"@id": "_:01"
+						} ]
+					}, {
+						"@id": "_:01",
+						"@type": [
+							"https://carbonldp.com/ns/v1/platform#ResourceMetadata",
+							"https://carbonldp.com/ns/v1/platform#VolatileResource"
+						],
+						"https://carbonldp.com/ns/v1/platform#eTag": [ {
+							"@value": "\\"1234567890\\""
+						} ],
+						"https://carbonldp.com/ns/v1/platform#resource": [ {
+							"@id": "http://example.com/successful/agents/my-agent/"
+						} ]
+					}, {
+						"@id": "_:02",
+						"@type": [
+							"https://carbonldp.com/ns/v1/security#Token",
+							"https://carbonldp.com/ns/v1/platform#VolatileResource"
+						],
+						"https://carbonldp.com/ns/v1/security#tokenKey": [ {
+							"@value": "token-value"
+						} ],
+						"https://carbonldp.com/ns/v1/security#expirationTime": {
+							"@value": "${expirationTime.toISOString()}",
+							"@type": "http://www.w3.org/2001/XMLSchema#dateTime"
+						},
+						"https://carbonldp.com/ns/v1/security#credentialsOf": [ {
+							"@id": "http://example.com/successful/agents/my-agent/"
+						} ]
+					}, {
+						"@id": "http://example.com/successful/agents/my-agent/",
+						"@graph": [ {
+							"@id": "http://example.com/successful/agents/my-agent/",
+							"@type": [ "https://carbonldp.com/ns/v1/security#Agent" ],
+							"https://carbonldp.com/ns/v1/security#name": [ {
+								"@value": "My Agent Name",
+								"@type": "http://www.w3.org/2001/XMLSchema#string"
+							} ],
+							"http://www.w3.org/2001/vcard-rdf/3.0#email": [ {
+								"@value": "my-agent@agents.com",
+								"@type": "http://www.w3.org/2001/XMLSchema#string"
+							} ],
+							"https://carbonldp.com/ns/v1/security#enabled": [ {
+								"@value": "true",
+								"@type": "http://www.w3.org/2001/XMLSchema#boolean"
+							} ]
+						} ]
+					} ]`,
 				} );
 
 				let context:SuccessfulContext = new SuccessfulContext();
@@ -417,15 +485,62 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 				expirationTime.setDate( expirationTime.getDate() + 1 );
 				jasmine.Ajax.stubRequest( "http://example.com/successful/auth-tokens/", null, "POST" ).andReturn( {
 					status: 200,
-					responseText: `[{
-						"@id": "_:1", 
-						"@type": [ "https://carbonldp.com/ns/v1/security#Token" ], 
-						"https://carbonldp.com/ns/v1/security#tokenKey": "token-value", 
-						"https://carbonldp.com/ns/v1/security#expirationTime": { 
-							"@value": "${expirationTime.toISOString()}"  , 
-							"@type": "http://www.w3.org/2001/XMLSchema#dateTime" 
-						} 
-					}]`,
+					responseText: `[ {
+						"@id": "_:00",
+						"@type": [
+							"https://carbonldp.com/ns/v1/platform#ResponseMetadata",
+							"https://carbonldp.com/ns/v1/platform#VolatileResource"
+						],
+						"https://carbonldp.com/ns/v1/platform#resourceMetadata": [ {
+							"@id": "_:01"
+						} ]
+					}, {
+						"@id": "_:01",
+						"@type": [
+							"https://carbonldp.com/ns/v1/platform#ResourceMetadata",
+							"https://carbonldp.com/ns/v1/platform#VolatileResource"
+						],
+						"https://carbonldp.com/ns/v1/platform#eTag": [ {
+							"@value": "\\"1234567890\\""
+						} ],
+						"https://carbonldp.com/ns/v1/platform#resource": [ {
+							"@id": "http://example.com/successful/agents/my-agent/"
+						} ]
+					}, {
+						"@id": "_:02",
+						"@type": [
+							"https://carbonldp.com/ns/v1/security#Token",
+							"https://carbonldp.com/ns/v1/platform#VolatileResource"
+						],
+						"https://carbonldp.com/ns/v1/security#tokenKey": [ {
+							"@value": "token-value"
+						} ],
+						"https://carbonldp.com/ns/v1/security#expirationTime": {
+							"@value": "${expirationTime.toISOString()}",
+							"@type": "http://www.w3.org/2001/XMLSchema#dateTime"
+						},
+						"https://carbonldp.com/ns/v1/security#credentialsOf": [ {
+							"@id": "http://example.com/successful/agents/my-agent/"
+						} ]
+					}, {
+						"@id": "http://example.com/successful/agents/my-agent/",
+						"@graph": [ {
+							"@id": "http://example.com/successful/agents/my-agent/",
+							"@type": [ "https://carbonldp.com/ns/v1/security#Agent" ],
+							"https://carbonldp.com/ns/v1/security#name": [ {
+								"@value": "My Agent Name",
+								"@type": "http://www.w3.org/2001/XMLSchema#string"
+							} ],
+							"http://www.w3.org/2001/vcard-rdf/3.0#email": [ {
+								"@value": "my-agent@agents.com",
+								"@type": "http://www.w3.org/2001/XMLSchema#string"
+							} ],
+							"https://carbonldp.com/ns/v1/security#enabled": [ {
+								"@value": "true",
+								"@type": "http://www.w3.org/2001/XMLSchema#boolean"
+							} ]
+						} ]
+					} ]`,
 				} );
 
 				let context:SuccessfulContext = new SuccessfulContext();

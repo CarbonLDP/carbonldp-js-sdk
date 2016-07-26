@@ -2,8 +2,10 @@ import Context from "./../Context";
 import * as Errors from "./../Errors";
 import * as FreeResources from "./../FreeResources";
 import * as HTTP from "./../HTTP";
+import * as LDP from "./../LDP";
 import * as NS from "./../NS";
 import * as ObjectSchema from "./../ObjectSchema";
+import * as PersistedDocument from "./../PersistedDocument";
 import * as RDF from "./../RDF";
 import * as Resource from "./../Resource";
 import Authenticator from "./Authenticator";
@@ -88,6 +90,11 @@ export class Class implements Authenticator<UsernameAndPasswordToken> {
 
 			let agentDocuments:RDF.Document.Class[] = RDF.Document.Util.getDocuments( expandedResult ).filter( rdfDocument => rdfDocument[ "@id" ] === token.agent.id );
 			agentDocuments.forEach( document => this.context.documents._getPersistedDocument( document, response ) );
+
+			let responseMetadata:LDP.ResponseMetadata.Class = <LDP.ResponseMetadata.Class> freeResources.getResources().find( resource => Resource.Util.hasType( resource, LDP.ResponseMetadata.RDF_CLASS ) );
+			responseMetadata.resourcesMetadata.forEach( ( resourceMetadata:LDP.ResourceMetadata.Class ) => {
+				(<PersistedDocument.Class> resourceMetadata.resource)._etag = resourceMetadata.eTag;
+			} );
 
 			return [ token, response ];
 		} );

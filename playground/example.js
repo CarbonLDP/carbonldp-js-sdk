@@ -76,6 +76,7 @@
 
 				expect( appContext.auth.authenticatedAgent ).toBeDefined();
 				expect( appContext.auth.authenticatedAgent ).toBe( carbon.auth.authenticatedAgent );
+				expect( appContext.auth.authenticatedAgent._etag ).toBe( "\"-1873495190\"" );
 				console.log( appContext.auth.authenticatedAgent );
 				done();
 			} ).then( ( [ _resource, response ] ) => {

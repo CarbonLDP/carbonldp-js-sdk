@@ -20,11 +20,11 @@ export declare enum Method {
     TOKEN = 1,
 }
 export declare class Class {
+    protected _authenticatedAgent: PersistedDocument.Class;
     private context;
     private method;
     private authenticators;
     private authenticator;
-    protected _authenticatedAgent: PersistedDocument.Class;
     authenticatedAgent: PersistedDocument.Class;
     constructor(context: Context);
     isAuthenticated(askParent?: boolean): boolean;

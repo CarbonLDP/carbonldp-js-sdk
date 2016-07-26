@@ -1,6 +1,7 @@
 "use strict";
 var Errors = require("./../Errors");
 var HTTP = require("./../HTTP");
+var LDP = require("./../LDP");
 var NS = require("./../NS");
 var RDF = require("./../RDF");
 var Resource = require("./../Resource");
@@ -67,6 +68,10 @@ var Class = (function () {
             var token = tokenResources[0];
             var agentDocuments = RDF.Document.Util.getDocuments(expandedResult).filter(function (rdfDocument) { return rdfDocument["@id"] === token.agent.id; });
             agentDocuments.forEach(function (document) { return _this.context.documents._getPersistedDocument(document, response); });
+            var responseMetadata = freeResources.getResources().find(function (resource) { return Resource.Util.hasType(resource, LDP.ResponseMetadata.RDF_CLASS); });
+            responseMetadata.resourcesMetadata.forEach(function (resourceMetadata) {
+                resourceMetadata.resource._etag = resourceMetadata.eTag;
+            });
             return [token, response];
         });
     };

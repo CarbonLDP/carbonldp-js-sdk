@@ -43,14 +43,15 @@ export enum Method {
 }
 
 export class Class {
+	// TODO: Change to `PersistedAgent.Class`
+	protected _authenticatedAgent:PersistedDocument.Class;
+
 	private context:Context;
 
 	private method:Method = null;
 	private authenticators:Array<Authenticator<AuthenticationToken>>;
 	private authenticator:Authenticator<AuthenticationToken>;
 
-	// TODO: Change to `PersistedAgent.Class`
-	protected _authenticatedAgent:PersistedDocument.Class;
 	public get authenticatedAgent():PersistedDocument.Class {
 		if( ! this._authenticatedAgent ) {
 			if( this.context.parentContext  && this.context.parentContext.auth ) return this.context.parentContext.auth.authenticatedAgent;
