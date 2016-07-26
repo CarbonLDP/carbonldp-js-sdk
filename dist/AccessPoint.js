@@ -5,6 +5,9 @@ exports.RDF_CLASS = NS.C.Class.AccessPoint;
 var Factory = (function () {
     function Factory() {
     }
+    Factory.is = function (object) {
+        return LDP.DirectContainer.Factory.is(object);
+    };
     Factory.create = function (membershipResource, hasMemberRelation, memberOfRelation) {
         return Factory.createFrom({}, membershipResource, hasMemberRelation, memberOfRelation);
     };

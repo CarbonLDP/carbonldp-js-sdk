@@ -15,12 +15,11 @@ import * as Utils from "./Utils";
 import * as URI from "./RDF/URI";
 import * as ObjectSchema from "./ObjectSchema";
 
-export interface Class extends Pointer.Class, PersistedResource.Class, Document.Class {
-	created:Date;
-	modified:Date;
-	defaultInteractionModel:Pointer.Class;
+export interface Class extends PersistedResource.Class, Document.Class {
+	created?:Date;
+	modified?:Date;
+	defaultInteractionModel?:Pointer.Class;
 	accessPoints?:Pointer.Class[];
-
 	hasMemberRelation?:Pointer.Class;
 	memberOfRelation?:Pointer.Class;
 
@@ -264,10 +263,6 @@ export class Factory {
 		return Utils.hasPropertyDefined( object, "_documents" )
 			&& Utils.hasPropertyDefined( object, "_etag" )
 
-			&& Utils.hasPropertyDefined( object, "created" )
-			&& Utils.hasPropertyDefined( object, "modified" )
-			&& Utils.hasPropertyDefined( object, "defaultInteractionModel" )
-
 			&& Utils.hasFunction( object, "refresh" )
 			&& Utils.hasFunction( object, "save" )
 			&& Utils.hasFunction( object, "destroy" )
@@ -316,7 +311,8 @@ export class Factory {
 		return Factory.decorate( document, documents, snapshot );
 	}
 
-	static decorate<T extends Document.Class>( document:T, documents:Documents, snapshot:Object = {} ):T & Class {
+	static decorate<T extends Object>( document:T, documents:Documents, snapshot:Object = {} ):T & Class {
+		Document.Factory.decorate( document );
 		PersistedResource.Factory.decorate( document, snapshot );
 
 		if( Factory.hasClassProperties( document ) ) return <any> document;

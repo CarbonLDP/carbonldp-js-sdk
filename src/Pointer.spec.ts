@@ -129,6 +129,37 @@ describe( module( "Carbon/Pointer" ), ():void => {
 
 		it( hasMethod(
 			STATIC,
+			"createFrom",
+			[ "T extends Object" ],
+			"Create a Pointer from the object provided with id if provided.", [
+				{name: "object", type: "T"},
+				{name: "id", type: "string", optional: true},
+			],
+			{type: "T & Carbon.Pointer.Class"}
+		), ():void => {
+			expect( Pointer.Factory.createFrom ).toBeDefined();
+			expect( Utils.isFunction( Pointer.Factory.createFrom ) ).toBe( true );
+
+			interface MyInterface {
+				myProperty?:string;
+			}
+			let pointer:Pointer.Class & MyInterface;
+
+			pointer = Pointer.Factory.createFrom<MyInterface>( {} );
+			expect( pointer ).toBeTruthy();
+			expect( Pointer.Factory.hasClassProperties( pointer ) ).toBe( true );
+			expect( pointer.id ).toBe( "" );
+			expect( pointer.myProperty ).not.toBeDefined();
+
+			pointer = Pointer.Factory.createFrom( {myProperty: "My Property"}, "http://example.com/pointer/" );
+			expect( pointer ).toBeTruthy();
+			expect( Pointer.Factory.hasClassProperties( pointer ) ).toBe( true );
+			expect( pointer.id ).toBe( "http://example.com/pointer/" );
+			expect( pointer.myProperty ).toBe( "My Property" );
+		} );
+
+		it( hasMethod(
+			STATIC,
 			"decorate",
 			[ "T extends Object" ],
 			"Decorates the object provided with the elements of a Pointer object.", [

@@ -8,10 +8,10 @@ import * as PersistedNamedFragment from "./PersistedNamedFragment";
 import * as Pointer from "./Pointer";
 import * as RetrievalPreferences from "./RetrievalPreferences";
 import * as SPARQL from "./SPARQL";
-export interface Class extends Pointer.Class, PersistedResource.Class, Document.Class {
-    created: Date;
-    modified: Date;
-    defaultInteractionModel: Pointer.Class;
+export interface Class extends PersistedResource.Class, Document.Class {
+    created?: Date;
+    modified?: Date;
+    defaultInteractionModel?: Pointer.Class;
     accessPoints?: Pointer.Class[];
     hasMemberRelation?: Pointer.Class;
     memberOfRelation?: Pointer.Class;
@@ -67,6 +67,6 @@ export declare class Factory {
     static is(object: Object): boolean;
     static create(uri: string, documents: Documents, snapshot?: Object): Class;
     static createFrom<T extends Object>(object: T, uri: string, documents: Documents, snapshot?: Object): Class;
-    static decorate<T extends Document.Class>(document: T, documents: Documents, snapshot?: Object): T & Class;
+    static decorate<T extends Object>(document: T, documents: Documents, snapshot?: Object): T & Class;
 }
 export default Class;

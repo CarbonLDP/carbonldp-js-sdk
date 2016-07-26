@@ -9,6 +9,7 @@ import * as ACL from "./Auth/ACL";
 import * as Document from "./Document";
 import * as FreeResources from "./FreeResources";
 import * as JSONLDConverter from "./JSONLDConverter";
+import * as PersistedAccessPoint from "./PersistedAccessPoint";
 import * as PersistedACL from "./Auth/PersistedACL";
 import * as PersistedBlankNode from "./PersistedBlankNode";
 import * as PersistedDocument from "./PersistedDocument";
@@ -142,13 +143,13 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 		} );
 	}
 
-	createChild( parentURI:string, slug:string, childDocument:Document.Class, requestOptions?:HTTP.Request.Options ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
-	createChild( parentURI:string, childDocument:Document.Class, requestOptions?:HTTP.Request.Options ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
+	createChild<T extends Document.Class>( parentURI:string, slug:string, childDocument:T, requestOptions?:HTTP.Request.Options ):Promise<[ T & PersistedDocument.Class, HTTP.Response.Class ]>;
+	createChild<T extends Document.Class>( parentURI:string, childDocument:T, requestOptions?:HTTP.Request.Options ):Promise<[ T & PersistedDocument.Class, HTTP.Response.Class ]>;
 
-	createChild( parentURI:string, slug:string, childObject:Object, requestOptions?:HTTP.Request.Options ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
-	createChild( parentURI:string, childObject:Object, requestOptions?:HTTP.Request.Options ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
+	createChild<T extends Object>( parentURI:string, slug:string, childObject:T, requestOptions?:HTTP.Request.Options ):Promise<[ T & PersistedDocument.Class, HTTP.Response.Class ]>;
+	createChild<T extends Object>( parentURI:string, childObject:T, requestOptions?:HTTP.Request.Options ):Promise<[ T & PersistedDocument.Class, HTTP.Response.Class ]>;
 
-	createChild( parentURI:string, slugOrChildDocument:any, childDocumentOrRequestOptions:any = {}, requestOptions:HTTP.Request.Options = {} ):Promise<[ Pointer.Class, HTTP.Response.Class ]> {
+	createChild<T extends Object>( parentURI:string, slugOrChildDocument:any, childDocumentOrRequestOptions:any = {}, requestOptions:HTTP.Request.Options = {} ):Promise<[ T & PersistedDocument.Class, HTTP.Response.Class ]> {
 		let slug:string = Utils.isString( slugOrChildDocument ) ? slugOrChildDocument : null;
 		let childDocument:Document.Class = ! Utils.isString( slugOrChildDocument ) ? slugOrChildDocument : childDocumentOrRequestOptions;
 		requestOptions = ! Utils.isString( slugOrChildDocument ) ? childDocumentOrRequestOptions : requestOptions;
@@ -168,28 +169,32 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 			}
 		}
 
+		if( childDocument[ "__CarbonSDK_InProgressOfPersisting" ] ) return Promise.reject<any>( new Errors.IllegalArgumentError( "The childDocument is already being persisted." ) );
+		Object.defineProperty( childDocument, "__CarbonSDK_InProgressOfPersisting", {configurable: true, enumerable: false, writable: false, value: true} );
+
 		let body:string = childDocument.toJSON( this, this.jsonldConverter );
 
 		if( slug !== null ) HTTP.Request.Util.setSlug( slug, requestOptions );
 
 		return HTTP.Request.Service.post( parentURI, body, requestOptions ).then( ( response:HTTP.Response.Class ) => {
+			delete childDocument[ "__CarbonSDK_InProgressOfPersisting" ];
+
 			let locationHeader:HTTP.Header.Class = response.getHeader( "Location" );
 			if( locationHeader === null || locationHeader.values.length < 1 ) throw new HTTP.Errors.BadResponseError( "The response is missing a Location header.", response );
 			if( locationHeader.values.length !== 1 ) throw new HTTP.Errors.BadResponseError( "The response contains more than one Location header.", response );
 
-			let locationURI:string = locationHeader.values[ 0 ].toString();
-
-			// TODO: If a Document was supplied, use it to create the pointer instead of creating a new one
-			let pointer:Pointer.Class = this.getPointer( locationURI );
+			let localID:string = this.getPointerID( locationHeader.values[ 0 ].toString() );
+			let persistedDocument:PersistedDocument.Class = PersistedDocument.Factory.decorate( this.createPointerFrom( childDocument, localID ), this );
+			this.pointers.set( localID, persistedDocument );
 
 			return [
-				pointer,
+				persistedDocument,
 				response,
 			];
 		} );
 	}
 
-	listChildren( parentURI:string, requestOptions:HTTP.Request.Options = {} ):Promise<[ Pointer.Class[], HTTP.Response.Class ]> {
+	listChildren( parentURI:string, requestOptions:HTTP.Request.Options = {} ):Promise<[ PersistedDocument.Class[], HTTP.Response.Class ]> {
 		parentURI = this.getRequestURI( parentURI );
 		this.setDefaultRequestOptions( requestOptions, NS.LDP.Class.Container );
 
@@ -213,8 +218,9 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 
 				let documentResource:RDF.Node.Class = this.getDocumentResource( rdfDocument, response );
 				let childPointers:Pointer.Class[] = RDF.Value.Util.getPropertyPointers( documentResource, NS.LDP.Predicate.contains, this );
+				let persistedChildPointers:PersistedDocument.Class[] = childPointers.map( pointer => PersistedDocument.Factory.decorate( pointer, this ) );
 
-				return [ childPointers, response ];
+				return [ persistedChildPointers, response ];
 			} );
 	}
 
@@ -248,52 +254,55 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 			let rdfDocuments:RDF.Document.Class[] = RDF.Document.Util.getDocuments( expandedResult ).filter( document => document[ "@id" ] !== containerURI );
 
 			let resources:PersistedDocument.Class[] = this.getPersistedMetadataResources( freeNodes, rdfDocuments, response );
-			return [ <any> resources, response ];
+			return [ resources, response ];
 		} );
 	}
 
-	createAccessPoint( documentURI:string, accessPoint:AccessPoint.Class, slug?:string, requestOptions?:HTTP.Request.Options ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
-	createAccessPoint( accessPoint:AccessPoint.Class, slug?:string, requestOptions?:HTTP.Request.Options ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
-	createAccessPoint( documentURIOrAccessPoint:any, accessPointOrSlug:any, slugOrRequestOptions:any = null, requestOptions:HTTP.Request.Options = {} ):Promise<[ Pointer.Class, HTTP.Response.Class ]> {
-		let documentURI:string = Utils.isString( documentURIOrAccessPoint ) ? documentURIOrAccessPoint : null;
-		let accessPoint:AccessPoint.Class = ! Utils.isString( documentURIOrAccessPoint ) ? documentURIOrAccessPoint : accessPointOrSlug;
-		let slug:string = Utils.isString( accessPointOrSlug ) ? accessPointOrSlug : slugOrRequestOptions;
-		requestOptions = ! Utils.isString( slugOrRequestOptions ) && slugOrRequestOptions !== null ? slugOrRequestOptions : requestOptions;
-
-		if( documentURI === null ) documentURI = accessPoint.membershipResource.id;
+	createAccessPoint( documentURI:string, accessPoint:AccessPoint.Class, slug?:string, requestOptions?:HTTP.Request.Options ):Promise<[ PersistedAccessPoint.Class, HTTP.Response.Class ]>;
+	createAccessPoint( documentURI:string, accessPoint:AccessPoint.Class, requestOptions?:HTTP.Request.Options ):Promise<[ PersistedAccessPoint.Class, HTTP.Response.Class ]>;
+	createAccessPoint( documentURI:string, accessPoint:AccessPoint.Class, slugOrRequestOptions:any, requestOptions:HTTP.Request.Options = {} ):Promise<[ PersistedAccessPoint.Class, HTTP.Response.Class ]> {
+		let slug:string = Utils.isString( slugOrRequestOptions ) ? slugOrRequestOptions : null;
+		requestOptions = ! Utils.isString( slugOrRequestOptions ) && ! ! slugOrRequestOptions ? slugOrRequestOptions : requestOptions;
 
 		documentURI = this.getRequestURI( documentURI );
 		this.setDefaultRequestOptions( requestOptions, NS.LDP.Class.RDFSource );
 		HTTP.Request.Util.setContentTypeHeader( "application/ld+json", requestOptions );
 
-		if( accessPoint.membershipResource.id !== documentURI ) return Promise.reject<any>( new Errors.IllegalArgumentError( "The documentURI must be the same as the accessPoint's membershipResource" ) );
 		if( PersistedDocument.Factory.is( accessPoint ) ) return Promise.reject<any>( new Errors.IllegalArgumentError( "The accessPoint provided has been already persisted." ) );
 
+		let accessPointDocument:AccessPoint.DocumentClass = AccessPoint.Factory.is( accessPoint ) ? <any> accessPoint
+			: AccessPoint.Factory.createFrom( accessPoint, this.getPointer( documentURI ), accessPoint.hasMemberRelation, accessPoint.memberOfRelation );
+		if( accessPointDocument.membershipResource.id !== documentURI ) return Promise.reject<any>( new Errors.IllegalArgumentError( "The documentURI must be the same as the accessPoint's membershipResource" ) );
+
 		// TODO: Reuse logic with createChild
-		if( accessPoint.id ) {
-			let childURI:string = accessPoint.id;
+		if( accessPointDocument.id ) {
+			let childURI:string = accessPointDocument.id;
 			if( ! ! this.context ) childURI = this.context.resolve( childURI );
 			if( ! RDF.URI.Util.isBaseOf( documentURI, childURI ) ) {
 				return Promise.reject<any>( new Errors.IllegalArgumentError( "The accessPoint's URI is not relative to the parentURI specified" ) );
 			}
 		}
 
-		let body:string = accessPoint.toJSON( this, this.jsonldConverter );
+		if( accessPoint[ "__CarbonSDK_InProgressOfPersisting" ] ) return Promise.reject<any>( new Errors.IllegalArgumentError( "The accessPoint is already being persisted." ) );
+		Object.defineProperty( accessPoint, "__CarbonSDK_InProgressOfPersisting", {configurable: true, enumerable: false, writable: false, value: true} );
+
+		let body:string = accessPointDocument.toJSON( this, this.jsonldConverter );
 
 		if( slug !== null ) HTTP.Request.Util.setSlug( slug, requestOptions );
 
 		return HTTP.Request.Service.post( documentURI, body, requestOptions ).then( ( response:HTTP.Response.Class ) => {
+			delete accessPoint[ "__CarbonSDK_InProgressOfPersisting" ];
+
 			let locationHeader:HTTP.Header.Class = response.getHeader( "Location" );
 			if( locationHeader === null || locationHeader.values.length < 1 ) throw new HTTP.Errors.BadResponseError( "The response is missing a Location header.", response );
 			if( locationHeader.values.length !== 1 ) throw new HTTP.Errors.BadResponseError( "The response contains more than one Location header.", response );
 
-			let locationURI:string = locationHeader.values[ 0 ].toString();
-
-			// TODO: If a Document was supplied, use it to create the pointer instead of creating a new one
-			let pointer:Pointer.Class = this.getPointer( locationURI );
+			let localID:string = this.getPointerID( locationHeader.values[ 0 ].toString() );
+			let persistedAccessPoint:PersistedAccessPoint.Class = PersistedDocument.Factory.decorate<AccessPoint.DocumentClass>( this.createPointerFrom( accessPointDocument, localID ), this );
+			this.pointers.set( localID, persistedAccessPoint );
 
 			return [
-				pointer,
+				persistedAccessPoint,
 				response,
 			];
 		} );
@@ -341,9 +350,9 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 		} );
 	}
 
-	listMembers( uri:string, includeNonReadable?:boolean, requestOptions?:HTTP.Request.Options ):Promise<[ Pointer.Class[], HTTP.Response.Class ]>;
-	listMembers( uri:string, requestOptions?:HTTP.Request.Options ):Promise<[ Pointer.Class[], HTTP.Response.Class ]>;
-	listMembers( uri:string, nonReadReqOpt?:any, reqOpt?:HTTP.Request.Options ):Promise<[ Pointer.Class[], HTTP.Response.Class ]> {
+	listMembers( uri:string, includeNonReadable?:boolean, requestOptions?:HTTP.Request.Options ):Promise<[ PersistedDocument.Class[], HTTP.Response.Class ]>;
+	listMembers( uri:string, requestOptions?:HTTP.Request.Options ):Promise<[ PersistedDocument.Class[], HTTP.Response.Class ]>;
+	listMembers( uri:string, nonReadReqOpt?:any, reqOpt?:HTTP.Request.Options ):Promise<[ PersistedDocument.Class[], HTTP.Response.Class ]> {
 		let includeNonReadable:boolean = Utils.isBoolean( nonReadReqOpt ) ? nonReadReqOpt : true;
 		let requestOptions:HTTP.Request.Options = HTTP.Request.Util.isOptions( nonReadReqOpt ) ? nonReadReqOpt : ( HTTP.Request.Util.isOptions( reqOpt ) ? reqOpt : {} );
 
@@ -379,8 +388,9 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 			let hasMemberRelation:string = RDF.Node.Util.getPropertyURI( documentResource, NS.LDP.Predicate.hasMemberRelation );
 
 			let memberPointers:Pointer.Class[] = RDF.Value.Util.getPropertyPointers( membershipResource, hasMemberRelation, this );
+			let persistedMemberPointers:PersistedDocument.Class[] = memberPointers.map( pointer => PersistedDocument.Factory.decorate( pointer, this ) );
 
-			return [ memberPointers, response ];
+			return [ persistedMemberPointers, response ];
 		} );
 	}
 
@@ -700,8 +710,12 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 	}
 
 	private createPointer( localID:string ):Pointer.Class {
+		return this.createPointerFrom( {}, localID );
+	}
+
+	private createPointerFrom<T extends Object>( object:T, localID:string ):T & Pointer.Class {
 		let id:string = ! ! this.context ? this.context.resolve( localID ) : localID;
-		let pointer:Pointer.Class = Pointer.Factory.create( id );
+		let pointer:T & Pointer.Class = Pointer.Factory.createFrom<T>( object, id );
 		Object.defineProperty( pointer, "resolve", {
 			writable: false,
 			enumerable: false,
@@ -860,28 +874,28 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 	}
 
 	private createPersistedDocument( documentPointer:Pointer.Class, documentResource:RDF.Node.Class, fragmentResources:RDF.Node.Class[] ):PersistedDocument.Class {
-		let document:PersistedDocument.Class = PersistedDocument.Factory.createFrom( documentPointer, documentPointer.id, this );
+		let persistedDocument:PersistedDocument.Class = PersistedDocument.Factory.decorate( documentPointer, this );
 
 		let fragments:PersistedFragment.Class[] = [];
 		for( let fragmentResource of fragmentResources ) {
-			fragments.push( document.createFragment( fragmentResource[ "@id" ] ) );
+			fragments.push( persistedDocument.createFragment( fragmentResource[ "@id" ] ) );
 		}
 
-		this.compact( documentResource, document, document );
-		this.compact( fragmentResources, fragments, document );
+		this.compact( documentResource, persistedDocument, persistedDocument );
+		this.compact( fragmentResources, fragments, persistedDocument );
 
 		// TODO: Move this to a more appropriate place. See also updatePersistedDocument() method
-		document._syncSnapshot();
+		persistedDocument._syncSnapshot();
 		fragments.forEach( ( fragment:PersistedFragment.Class ) => fragment._syncSnapshot() );
-		document._syncSavedFragments();
-		document._resolved = true;
+		persistedDocument._syncSavedFragments();
+		persistedDocument._resolved = true;
 
 		// TODO: Decorate additional behavior (app, etc.). See also updatePersistedDocument() method
 		// TODO: Make it dynamic. See also updatePersistedDocument() method
-		if( Resource.Util.hasType( document, ProtectedDocument.RDF_CLASS ) ) PersistedProtectedDocument.Factory.decorate( document );
-		if( Resource.Util.hasType( document, ACL.RDF_CLASS ) ) PersistedACL.Factory.decorate( document );
+		if( Resource.Util.hasType( persistedDocument, ProtectedDocument.RDF_CLASS ) ) PersistedProtectedDocument.Factory.decorate( persistedDocument );
+		if( Resource.Util.hasType( persistedDocument, ACL.RDF_CLASS ) ) PersistedACL.Factory.decorate( persistedDocument );
 
-		return document;
+		return persistedDocument;
 	}
 
 	private updatePersistedDocument( persistedDocument:PersistedDocument.Class, documentResource:RDF.Node.Class, fragmentResources:RDF.Node.Class[] ):PersistedDocument.Class {

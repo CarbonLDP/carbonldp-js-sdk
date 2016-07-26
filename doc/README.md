@@ -2231,7 +2231,7 @@ Returns a Promise with a boolean indicating if the resource exists or not.
 
 ##### listChildren
 ```typescript 
-listChildren( parentURI:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.Pointer.Class[], Carbon.HTTP.Response ]>
+listChildren( parentURI:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.PersistedDocument.Class[], Carbon.HTTP.Response ]>
 ```
 
 Return all the children of the container specified.
@@ -2400,7 +2400,7 @@ Executes a DESCRIBE query and returns a string with the resulting model.
 
 ##### createChild
 ```typescript 
-createChild( parentURI:string,  childDocument:Carbon.Document.Class,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[Carbon.Pointer.Class, Carbon.HTTP.Response.Class]>
+createChild<T extends Carbon.Document.Class>( parentURI:string,  childDocument:T,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ T & Carbon.PersistedDocument.Class, Carbon.HTTP.Response.Class ]>
 ```
 
 Create a child document for the respective parent source.
@@ -2412,7 +2412,7 @@ Create a child document for the respective parent source.
 - requestOptions
 
 ```typescript 
-createChild( parentURI:string,  slug:string,  childDocument:Carbon.Document.Class,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[Carbon.Pointer.Class, Carbon.HTTP.Response.Class]>
+createChild<T extends Carbon.Document.Class>( parentURI:string,  slug:string,  childDocument:T,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ T & Carbon.PersistedDocument.Class, Carbon.HTTP.Response.Class ]>
 ```
 
 Create a child document for the respective parent source.
@@ -2425,7 +2425,7 @@ Create a child document for the respective parent source.
 - requestOptions
 
 ```typescript 
-createChild( parentURI:string,  childObject:Object,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[Carbon.Pointer.Class, Carbon.HTTP.Response.Class]>
+createChild<T extends Object>( parentURI:string,  childObject:T,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ T & Carbon.PersistedDocument.Class, Carbon.HTTP.Response.Class ]>
 ```
 
 Create a child document for the respective parent source.
@@ -2437,7 +2437,7 @@ Create a child document for the respective parent source.
 - requestOptions
 
 ```typescript 
-createChild( parentURI:string,  slug:string,  childObject:Object,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[Carbon.Pointer.Class, Carbon.HTTP.Response.Class]>
+createChild<T extends Object>( parentURI:string,  slug:string,  childObject:T,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ T & Carbon.PersistedDocument.Class, Carbon.HTTP.Response.Class ]>
 ```
 
 Create a child document for the respective parent source.
@@ -2488,15 +2488,15 @@ Create an AccessPoint of the document.
 - requestOptions
 
 ```typescript 
-createAccessPoint( accessPoint:Carbon.AccessPoint.Class,  slug?:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[Carbon.Pointer.Class, Carbon.HTTP.Response.Class]>
+createAccessPoint( documentURI:string,  accessPoint:Carbon.AccessPoint.Class,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[Carbon.Pointer.Class, Carbon.HTTP.Response.Class]>
 ```
 
 Create an AccessPoint of the document.
 
 *Parameters*
 
+- documentURI
 - accessPoint
-- slug
 - requestOptions
 
 ##### upload
@@ -2552,7 +2552,7 @@ Upload a binary data to the server, creating a child for the parent specified. T
 
 ##### listMembers
 ```typescript 
-listMembers( uri:string,  includeNonReadable?:boolean,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.Pointer.Class[], Carbon.HTTP.Response.Class ]>
+listMembers( uri:string,  includeNonReadable?:boolean,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.PersistedDocument.Class[], Carbon.HTTP.Response.Class ]>
 ```
 
 Retrieves all the members of a document with out resolving them, where you can specify if the response should include the Non Readable resources and options for the request.
@@ -2564,7 +2564,7 @@ Retrieves all the members of a document with out resolving them, where you can s
 - requestOptions: Options that can be specified for change the behavior of the request.
 
 ```typescript 
-listMembers( uri:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.Pointer.Class[], Carbon.HTTP.Response.Class ]>
+listMembers( uri:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.PersistedDocument.Class[], Carbon.HTTP.Response.Class ]>
 ```
 
 Retrieves all the members of a document with out resolving them, where you can specify options for the request.
@@ -7255,6 +7255,18 @@ Create a Pointer object with id if provided.
 
 *Parameters*
 
+- id
+
+##### createFrom
+```typescript 
+static createFrom<T extends Object>( object:T,  id?:string ):T & Carbon.Pointer.Class
+```
+
+Create a Pointer from the object provided with id if provided.
+
+*Parameters*
+
+- object
 - id
 
 ##### decorate

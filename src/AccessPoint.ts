@@ -5,16 +5,28 @@ import * as Utils from "./Utils";
 
 export const RDF_CLASS:string = NS.C.Class.AccessPoint;
 
-export interface Class extends LDP.DirectContainer.Class {
+export interface Class {
+	hasMemberRelation:string | Pointer.Class;
+	memberOfRelation?:string | Pointer.Class;
+	insertedContentRelation?: string | Pointer.Class;
+}
+
+export interface DocumentClass extends LDP.DirectContainer.Class {
+	membershipResource:Pointer.Class;
+	hasMemberRelation:Pointer.Class;
 	insertedContentRelation?:Pointer.Class;
 }
 
 export class Factory {
-	static create( membershipResource:Pointer.Class, hasMemberRelation:string | Pointer.Class, memberOfRelation?:string | Pointer.Class ):Class {
+	static is( object:Object ):boolean {
+		return LDP.DirectContainer.Factory.is( object );
+	}
+
+	static create( membershipResource:Pointer.Class, hasMemberRelation:string | Pointer.Class, memberOfRelation?:string | Pointer.Class ):DocumentClass {
 		return Factory.createFrom( {}, membershipResource, hasMemberRelation, memberOfRelation );
 	}
 
-	static createFrom<T extends Object>( object:T, membershipResource:Pointer.Class, hasMemberRelation:string | Pointer.Class, memberOfRelation?:string | Pointer.Class ):T & Class {
+	static createFrom<T extends Object>( object:T, membershipResource:Pointer.Class, hasMemberRelation:string | Pointer.Class, memberOfRelation?:string | Pointer.Class ):T & DocumentClass {
 		return <any> LDP.DirectContainer.Factory.createFrom<T>( object, membershipResource, hasMemberRelation, memberOfRelation );
 	}
 }

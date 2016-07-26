@@ -105,15 +105,15 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 			document.accessPoints = null;
 
 			delete document.created;
-			expect( PersistedDocument.Factory.hasClassProperties( document ) ).toBe( false );
+			expect( PersistedDocument.Factory.hasClassProperties( document ) ).toBe( true );
 			document.created = null;
 
 			delete document.modified;
-			expect( PersistedDocument.Factory.hasClassProperties( document ) ).toBe( false );
+			expect( PersistedDocument.Factory.hasClassProperties( document ) ).toBe( true );
 			document.modified = null;
 
 			delete document.defaultInteractionModel;
-			expect( PersistedDocument.Factory.hasClassProperties( document ) ).toBe( false );
+			expect( PersistedDocument.Factory.hasClassProperties( document ) ).toBe( true );
 			document.defaultInteractionModel = null;
 
 			delete document._documents;
@@ -287,11 +287,6 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 
 			let document:PersistedDocument.Class;
 			document = PersistedDocument.Factory.create( "http://example.com/document/", context.documents );
-			expect( PersistedDocument.Factory.is( document ) ).toBe( false );
-
-			document.created = null;
-			document.modified = null;
-			document.defaultInteractionModel = null;
 			expect( PersistedDocument.Factory.is( document ) ).toBe( true );
 
 			expect( document.id ).toBe( "http://example.com/document/" );
@@ -312,24 +307,17 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 			expect( Utils.isFunction( PersistedDocument.Factory.createFrom ) ).toBe( true );
 
 			interface MyObject {
-				created?:Date;
-				modified?:Date;
-				defaultInteractionModel?:Pointer.Class;
 				myProperty?:string;
 			}
 
-			interface MyPersistedDocument extends MyObject, PersistedDocument.Class {
-				created:Date;
-				modified:Date;
-				defaultInteractionModel:Pointer.Class;
-			}
+			interface MyPersistedDocument extends MyObject, PersistedDocument.Class {}
 			let persistedDocument:MyPersistedDocument;
 
-			persistedDocument = PersistedDocument.Factory.createFrom<MyObject>( {created: null, modified: null, defaultInteractionModel: null}, "http://example.com/document/", context.documents );
+			persistedDocument = PersistedDocument.Factory.createFrom<MyObject>( {}, "http://example.com/document/", context.documents );
 			expect( PersistedDocument.Factory.is( persistedDocument ) ).toBe( true );
 			expect( persistedDocument.id ).toBe( "http://example.com/document/" );
 
-			persistedDocument = PersistedDocument.Factory.createFrom<MyObject>( {myProperty: "a property", created: null, modified: null, defaultInteractionModel: null}, "http://example.com/document/", context.documents );
+			persistedDocument = PersistedDocument.Factory.createFrom<MyObject>( {myProperty: "a property"}, "http://example.com/document/", context.documents );
 			expect( PersistedDocument.Factory.is( persistedDocument ) ).toBe( true );
 			expect( persistedDocument.id ).toBe( "http://example.com/document/" );
 			expect( persistedDocument.myProperty ).toBe( "a property" );
@@ -349,9 +337,6 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 			expect( Utils.isFunction( PersistedDocument.Factory.decorate ) ).toBe( true );
 
 			interface MyObject {
-				created?:Date;
-				modified?:Date;
-				defaultInteractionModel?:Pointer.Class;
 				myProperty?:string;
 			}
 
@@ -359,19 +344,16 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 			let document:MyDocument;
 
 			interface MyPersistedDocument extends MyObject, PersistedDocument.Class {
-				created:Date;
-				modified:Date;
-				defaultInteractionModel:Pointer.Class;
 			}
 			let persistedDocument:MyPersistedDocument;
 
-			document = Document.Factory.createFrom<MyObject>( {created: null, modified: null, defaultInteractionModel: null} );
+			document = Document.Factory.createFrom<MyObject>( {} );
 			persistedDocument = PersistedDocument.Factory.decorate<MyDocument>( document, context.documents );
 			expect( PersistedDocument.Factory.is( persistedDocument ) ).toBe( true );
 			expect( persistedDocument.myProperty ).toBeUndefined();
 			expect( persistedDocument._documents ).toBe( context.documents );
 
-			document = Document.Factory.createFrom<MyObject>( {myProperty: "a property", created: null, modified: null, defaultInteractionModel: null} );
+			document = Document.Factory.createFrom<MyObject>( {myProperty: "a property"} );
 			persistedDocument = PersistedDocument.Factory.decorate<MyDocument>( document, context.documents );
 			expect( PersistedDocument.Factory.is( persistedDocument ) ).toBe( true );
 			expect( persistedDocument.myProperty ).toBeDefined();

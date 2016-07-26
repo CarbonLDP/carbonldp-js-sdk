@@ -111,7 +111,7 @@ describe( module( "Carbon/RDFRepresentation" ), ():void => {
 			}
 			let context:AbstractContext = new MockedContext();
 
-			object = PersistedDocument.Factory.createFrom( {created: null, modified: null, defaultInteractionModel: null}, "", context.documents );
+			object = PersistedDocument.Factory.create( "", context.documents );
 			expect( RDFRepresentation.Factory.is( object ) ).toBe( false );
 			object.mediaType = "application/pdf";
 			expect( RDFRepresentation.Factory.is( object ) ).toBe( false );

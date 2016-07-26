@@ -155,9 +155,6 @@ var Factory = (function () {
     Factory.hasClassProperties = function (object) {
         return Utils.hasPropertyDefined(object, "_documents")
             && Utils.hasPropertyDefined(object, "_etag")
-            && Utils.hasPropertyDefined(object, "created")
-            && Utils.hasPropertyDefined(object, "modified")
-            && Utils.hasPropertyDefined(object, "defaultInteractionModel")
             && Utils.hasFunction(object, "refresh")
             && Utils.hasFunction(object, "save")
             && Utils.hasFunction(object, "destroy")
@@ -200,6 +197,7 @@ var Factory = (function () {
     };
     Factory.decorate = function (document, documents, snapshot) {
         if (snapshot === void 0) { snapshot = {}; }
+        Document.Factory.decorate(document);
         PersistedResource.Factory.decorate(document, snapshot);
         if (Factory.hasClassProperties(document))
             return document;
