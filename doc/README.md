@@ -2070,21 +2070,21 @@ Returns true if the URI provided is in the scope of the document.
 
 ##### createFragment
 ```typescript 
-createFragment<T extends Object>( slug:string,  object:T ):T & Carbon.Fragment.Class
+createFragment<T extends Object>( object:T,  slug:string ):T & Carbon.Fragment.Class
 ```
 
-Creates a NamedFragment from the object provided and the slug specified.
+Creates a Fragment from the object provided and the slug specified.
 
 *Parameters*
 
-- slug
 - object
+- slug
 
 ```typescript 
 createFragment<T extends Object>( object:T ):T & Carbon.Fragment.Class
 ```
 
-Creates a BlankNode from the object provided, sing no slug was specififed.
+Creates a BlankNode from the object provided, sing no slug was specified.
 
 *Parameters*
 
@@ -2104,7 +2104,7 @@ Creates a Fragment with the slug provided.
 createFragment():Carbon.Fragment.Class
 ```
 
-Creates a Blank Node Fragment, since no slug is provided
+Creates a BlankNode, since no slug is provided
 
 ##### createNamedFragment
 ```typescript 
@@ -2118,15 +2118,15 @@ Creates a NamedFragment with the slug provided
 - slug
 
 ```typescript 
-createNamedFragment<T extends Object>( slug:string,  object:T ):T & Carbon.NamedFragment.Class
+createNamedFragment<T extends Object>( object:T,  slug:string ):T & Carbon.NamedFragment.Class
 ```
 
 Creates a NamedFragment from the object provided and the slug specified.
 
 *Parameters*
 
-- slug
 - object
+- slug
 
 ##### removeFragment
 ```typescript 
@@ -2412,7 +2412,7 @@ Create a child document for the respective parent source.
 - requestOptions
 
 ```typescript 
-createChild<T extends Carbon.Document.Class>( parentURI:string,  slug:string,  childDocument:T,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ T & Carbon.PersistedDocument.Class, Carbon.HTTP.Response.Class ]>
+createChild<T extends Carbon.Document.Class>( parentURI:string,  childDocument:T,  slug?:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ T & Carbon.PersistedDocument.Class, Carbon.HTTP.Response.Class ]>
 ```
 
 Create a child document for the respective parent source.
@@ -2420,8 +2420,8 @@ Create a child document for the respective parent source.
 *Parameters*
 
 - parentURI
-- slug
 - childDocument
+- slug
 - requestOptions
 
 ```typescript 
@@ -2437,7 +2437,7 @@ Create a child document for the respective parent source.
 - requestOptions
 
 ```typescript 
-createChild<T extends Object>( parentURI:string,  slug:string,  childObject:T,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ T & Carbon.PersistedDocument.Class, Carbon.HTTP.Response.Class ]>
+createChild<T extends Object>( parentURI:string,  childObject:T,  slug?:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ T & Carbon.PersistedDocument.Class, Carbon.HTTP.Response.Class ]>
 ```
 
 Create a child document for the respective parent source.
@@ -2445,9 +2445,35 @@ Create a child document for the respective parent source.
 *Parameters*
 
 - parentURI
-- slug
 - childObject
+- slug
 - requestOptions
+
+##### createChildAndRetrieve
+```typescript 
+createChildAndRetrieve<T extends Object>( parentURI:string,  childObject:T,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ T & Carbon.Document.Class, [ Carbon.HTTP.Response.Class, Carbon.HTTP.Response.Class ] ]>
+```
+
+Persists JavaScript object as a child document for the respective parent source and retrieves tha updated data from the server.
+
+*Parameters*
+
+- parentURI: URI of the document where to create a new child.
+- childObject:  A normal JavaScript object that will be converted and persisted as a new child document.
+- requestOptions: Customizable options for the request.
+
+```typescript 
+createChildAndRetrieve<T extends Object>( parentURI:string,  childObject:T,  slug?:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ T & Carbon.Carbon.Class, [ Carbon.HTTP.Response.Class, Carbon.HTTP.Response.Class ] ]>
+```
+
+Persists JavaScript object as a child document for the respective parent source and retrieves tha updated data from the server.
+
+*Parameters*
+
+- parentURI: URI of the document where to create a new child.
+- childObject:  A normal JavaScript object that will be converted and persisted as a new child document.
+- slug: Slug that will be used for the URI of the new child.
+- requestOptions: Customizable options for the request.
 
 ##### getChildren
 ```typescript 
@@ -2513,7 +2539,7 @@ Upload a binary data to the server, creating a child for the parent specified. T
 - requestOptions
 
 ```typescript 
-upload( parentURI:string,  slug:string,  data:Blob,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[Carbon.Pointer.Class, Carbon.HTTP.Response.Class]>
+upload( parentURI:string,  data:Blob,  slug?:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[Carbon.Pointer.Class, Carbon.HTTP.Response.Class]>
 ```
 
 Upload a binary data to the server, creating a child for the parent specified. This signature it's only when working in a Browser.
@@ -2521,8 +2547,8 @@ Upload a binary data to the server, creating a child for the parent specified. T
 *Parameters*
 
 - parentURI
-- slug
 - data
+- slug
 - requestOptions
 
 ```typescript 
@@ -2538,7 +2564,7 @@ Upload a binary data to the server, creating a child for the parent specified. T
 - requestOptions
 
 ```typescript 
-upload( parentURI:string,  slug:string,  data:Buffer,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[Carbon.Pointer.Class, Carbon.HTTP.Response.Class]>
+upload( parentURI:string,  data:Buffer,  slug?:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[Carbon.Pointer.Class, Carbon.HTTP.Response.Class]>
 ```
 
 Upload a binary data to the server, creating a child for the parent specified. This signature it's only when working in Node.js.
@@ -2546,8 +2572,8 @@ Upload a binary data to the server, creating a child for the parent specified. T
 *Parameters*
 
 - parentURI
-- slug
 - data
+- slug
 - requestOptions
 
 ##### listMembers
@@ -7018,6 +7044,66 @@ Returns true if the URI provided is in the scope of the PersistedDocument.
 
 - id
 
+##### createFragment
+```typescript 
+createFragment<T extends Object>( object:T,  slug:string ):T & Carbon.PersistedFragment.Class
+```
+
+Creates a PersistedFragment from the object provided and the slug specified.
+
+*Parameters*
+
+- object
+- slug
+
+```typescript 
+createFragment<T extends Object>( object:T ):T & Carbon.PersistedFragment.Class
+```
+
+Creates a PersistedBlankNode from the object provided, sing no slug was specified.
+
+*Parameters*
+
+- object
+
+```typescript 
+createFragment( slug:string ):Carbon.PersistedFragment.Class
+```
+
+Creates a PersistedFragment with the slug provided.
+
+*Parameters*
+
+- slug
+
+```typescript 
+createFragment():Carbon.PersistedFragment.Class
+```
+
+Creates a PersistedBlankNode, since no slug is provided
+
+##### createNamedFragment
+```typescript 
+createNamedFragment( slug:string ):Carbon.PersistedNamedFragment.Class
+```
+
+Creates a PersistedNamedFragment with the slug provided
+
+*Parameters*
+
+- slug
+
+```typescript 
+createNamedFragment<T extends Object>( object:T,  slug:string ):T & Carbon.PersistedNamedFragment.Class
+```
+
+Creates a PersistedNamedFragment from the object provided and the slug specified.
+
+*Parameters*
+
+- object
+- slug
+
 ##### addMember
 ```typescript 
 addMember( member:Carbon.Pointer.Class ):Promise<Carbon.HTTP.Response.Class>
@@ -7041,14 +7127,14 @@ Add the specified resource URI as a member of the document.
 
 ##### createChild
 ```typescript 
-createChild<T extends Object>( slug:string,  object:T ):Promise<[ T & Carbon.PersistedDocument.Class, Carbon.HTTP.Response.Class ]>
+createChild<T extends Object>( object:T,  slug:string ):Promise<[ T & Carbon.PersistedDocument.Class, Carbon.HTTP.Response.Class ]>
 ```
 
 
 *Parameters*
 
-- slug: The slug name for the children URI.
 - object: The object from where create the child. If it's a non `Carbon.Document.Class` object, it is transformed into one.
+- slug: The slug name for the children URI.
 
 ```typescript 
 createChild<T extends Object>( object:T ):Promise<[ T & Carbon.PersistedDocument.Class, Carbon.HTTP.Response.Class ]>
@@ -7072,6 +7158,44 @@ createChild( slug:string ):Promise<[ Carbon.PersistedDocument.Class, Carbon.HTTP
 createChild():Promise<[ Carbon.PersistedDocument.Class, Carbon.HTTP.Response.Class ]>
 ```
 
+
+##### createChildAndRetrieve
+```typescript 
+createChildAndRetrieve<T extends Object>( object:T,  slug:string ):Promise<[ T & Carbon.PersistedDocument.Class, [ Carbon.HTTP.Response.Class, Carbon.HTTP.Response.Class ] ]>
+```
+
+Create a child for the document and retrieves the updated data from the server.
+
+*Parameters*
+
+- object: The object from where create the child. If it's a non `Carbon.Document.Class` object, it is transformed into one.
+- slug: The slug name for the children URI.
+
+```typescript 
+createChildAndRetrieve<T extends Object>( object:T ):Promise<[ T & Carbon.PersistedDocument.Class, [ Carbon.HTTP.Response.Class, Carbon.HTTP.Response.Class ] ]>
+```
+
+Create a child for the document and retrieves the updated data from the server.
+
+*Parameters*
+
+- object: The object from where create the child. If it's a non `Carbon.PersistedDocument.Class` object, it is transformed into one.
+
+```typescript 
+createChildAndRetrieve( slug:string ):Promise<[ Carbon.PersistedDocument.Class, [ Carbon.HTTP.Response.Class, Carbon.HTTP.Response.Class ] ]>
+```
+
+Create a child for the document and retrieves the updated data from the server.
+
+*Parameters*
+
+- slug: The slug name for the children URI.
+
+```typescript 
+createChildAndRetrieve():Promise<[ Carbon.PersistedDocument.Class, [ Carbon.HTTP.Response.Class, Carbon.HTTP.Response.Class ] ]>
+```
+
+Create a child for the document and retrieves the updated data from the server.
 
 ##### createAccessPoint
 ```typescript 
@@ -7131,15 +7255,15 @@ Remove the specified resource URI as a member of the document.
 
 ##### upload
 ```typescript 
-upload( slug:string,  data:Blob ):Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>
+upload( data:Blob,  slug:string ):Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>
 ```
 
 Upload a File to the server as a child of the Container.
 
 *Parameters*
 
-- slug: The slug that will be used in the URI of the data.
 - data: Binary data to store in the server. The Blob works in a Browser.
+- slug: The slug that will be used in the URI of the data.
 
 ```typescript 
 upload( data:Blob ):Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>
@@ -7152,15 +7276,15 @@ Upload a File to the server as a child of the Container.
 - data: Binary data to store in the server. The Blob works in a Browser.
 
 ```typescript 
-upload( slug:string,  data:Buffer ):Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>
+upload( data:Buffer,  slug:string ):Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>
 ```
 
 Upload a File to the server as a child of the Container.
 
 *Parameters*
 
-- slug: The slug that will be used in the URI of the data.
 - data: Binary data to store in the server. The Buffer only works in Node.js.
+- slug: The slug that will be used in the URI of the data.
 
 ```typescript 
 upload( data:Buffer ):Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>

@@ -118,14 +118,13 @@ function getFragments() {
     var document = this;
     return Utils.A.from(document._fragmentsIndex.values());
 }
-function createFragment(slugOrObject, object) {
+function createFragment(slugOrObject, slug) {
     var document = this;
-    var slug = Utils.isString(slugOrObject) ? slugOrObject : null;
-    object = Utils.isString(slugOrObject) ? object : slugOrObject;
-    object = object || {};
+    slug = Utils.isString(slugOrObject) ? slugOrObject : slug;
+    var object = !Utils.isString(slugOrObject) && !!slugOrObject ? slugOrObject : {};
     if (slug) {
         if (!RDF.URI.Util.isBNodeID(slug))
-            return document.createNamedFragment(slug, object);
+            return document.createNamedFragment(object, slug);
         if (this._fragmentsIndex.has(slug))
             throw new Errors.IDAlreadyInUseError("The slug provided is already being used by a fragment.");
     }
@@ -134,9 +133,10 @@ function createFragment(slugOrObject, object) {
     convertNestedObjects(document, fragment);
     return fragment;
 }
-function createNamedFragment(slug, object) {
+function createNamedFragment(slugOrObject, slug) {
     var document = this;
-    object = object || {};
+    slug = Utils.isString(slugOrObject) ? slugOrObject : slug;
+    var object = !Utils.isString(slugOrObject) && !!slugOrObject ? slugOrObject : {};
     if (RDF.URI.Util.isBNodeID(slug))
         throw new Errors.IllegalArgumentError("Named fragments can't have a slug that starts with '_:'.");
     if (RDF.URI.Util.isAbsolute(slug)) {
@@ -318,7 +318,7 @@ function convertNestedObjects(parent, actual) {
             continue;
         var parentFragment = parent.getFragment(idOrSlug);
         if (!parentFragment) {
-            fragment = parent.createFragment(idOrSlug, next);
+            fragment = parent.createFragment(next, idOrSlug);
             convertNestedObjects(parent, fragment);
         }
         else if (parentFragment !== next) {

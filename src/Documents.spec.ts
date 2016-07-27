@@ -363,8 +363,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 				[ "T extends Carbon.Document.Class" ],
 				"Create a child document for the respective parent source.", [
 					{name: "parentURI", type: "string"},
-					{name: "slug", type: "string"},
 					{name: "childDocument", type: "T"},
+					{name: "slug", type: "string", optional: true},
 					{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true},
 				],
 				{type: "Promise<[ T & Carbon.PersistedDocument.Class, Carbon.HTTP.Response.Class ]>"}
@@ -445,7 +445,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				let spySuccess:jasmine.Spy = spyOn( spy, "success" ).and.callThrough();
 				let spyFail:jasmine.Spy = spyOn( spy, "fail" ).and.callThrough();
 
-				promises.push( documents.createChild( "http://example.com/parent-resource/", "child-document", childDocument ).then( ( [ document, response ]:[ Document.Class, HTTP.Response.Class ] ):void => {
+				promises.push( documents.createChild( "http://example.com/parent-resource/", childDocument, "child-document" ).then( ( [ document, response ]:[ Document.Class, HTTP.Response.Class ] ):void => {
 					expect( response ).toEqual( jasmine.any( HTTP.Response.Class ) );
 
 					expect( document ).toBe( childDocument );
@@ -455,7 +455,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					spy.success();
 				} ) );
 
-				promises.push( documents.createChild( "http://example.com/parent-resource/", "child-document", childDocument ).catch( error => {
+				promises.push( documents.createChild( "http://example.com/parent-resource/", childDocument, "child-document" ).catch( error => {
 					expect( error ).toEqual( jasmine.any( Errors.IllegalArgumentError ) );
 					spy.fail();
 				} ) );
@@ -594,8 +594,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 				[ "T extends Object" ],
 				"Create a child document for the respective parent source.", [
 					{name: "parentURI", type: "string"},
-					{name: "slug", type: "string"},
 					{name: "childObject", type: "T"},
+					{name: "slug", type: "string", optional: true},
 					{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true},
 				],
 				{type: "Promise<[ T & Carbon.PersistedDocument.Class, Carbon.HTTP.Response.Class ]>"}
@@ -682,7 +682,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				let spySuccess:jasmine.Spy = spyOn( spy, "success" ).and.callThrough();
 				let spyFail:jasmine.Spy = spyOn( spy, "fail" ).and.callThrough();
 
-				promises.push( documents.createChild( "http://example.com/parent-resource/", "child-document", childObject ).then( ( [ document, response ]:[ Document.Class, HTTP.Response.Class ] ):void => {
+				promises.push( documents.createChild( "http://example.com/parent-resource/", childObject, "child-document" ).then( ( [ document, response ]:[ Document.Class, HTTP.Response.Class ] ):void => {
 					expect( response ).toEqual( jasmine.any( HTTP.Response.Class ) );
 
 					expect( document ).toBe( childObject );
@@ -692,7 +692,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					spy.success();
 				} ) );
 
-				promises.push( documents.createChild( "http://example.com/parent-resource/", "child-document", childObject ).catch( error => {
+				promises.push( documents.createChild( "http://example.com/parent-resource/", childObject, "child-document" ).catch( error => {
 					expect( error ).toEqual( jasmine.any( Errors.IllegalArgumentError ) );
 
 					spy.fail();
@@ -708,6 +708,109 @@ describe( module( "Carbon/Documents" ), ():void => {
 					done.fail( error );
 				} );
 			} );
+		} );
+
+		describe( method(
+			INSTANCE,
+			"createChildAndRetrieve"
+		), ():void => {
+
+			it( hasSignature( [
+					"T extends Object",
+				],
+				"Persists JavaScript object as a child document for the respective parent source and retrieves tha updated data from the server.", [
+					{name: "parentURI", type: "string", description: "URI of the document where to create a new child."},
+					{name: "childObject", type: "T", description: " A normal JavaScript object that will be converted and persisted as a new child document."},
+					{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request."},
+				],
+				{type: "Promise<[ T & Carbon.Document.Class, [ Carbon.HTTP.Response.Class, Carbon.HTTP.Response.Class ] ]>"}
+			), ( done:{ ():void, fail:() => void } ):void => {
+				class MockedContext extends AbstractContext {
+					resolve( uri:string ):string {
+						return URI.Util.isRelative( uri ) ? "http://example.com/" + uri : uri;
+					}
+				}
+
+				let context:MockedContext = new MockedContext();
+				let documents:Documents = context.documents;
+
+				let mockCreateResponse:any = {val: "Mock Save Response"};
+				let mockRetrieveResponse:any = {val: "Mock Save Response"};
+				let options:HTTP.Request.Options = {timeout: 50550};
+
+				let childObject:Object = {property: "My property"};
+
+				let spyCreateChild:jasmine.Spy = spyOn( context.documents, "createChild" ).and.callFake( () => {
+					let document:Document.Class = Document.Factory.createFrom( childObject );
+					document.id = "http://example.com/parent-resource/new-child/";
+					return Promise.resolve<any>( [ document, mockCreateResponse ] );
+				} );
+				let spyRetrieve:jasmine.Spy = spyOn( context.documents, "get" ).and.callFake( () => {
+					let persistedDocument:PersistedDocument.Class = PersistedDocument.Factory.decorate( childObject, documents );
+					return Promise.resolve<any>( [ persistedDocument, mockRetrieveResponse ] );
+				} );
+
+				documents.createChildAndRetrieve( "http://example.com/parent-resource/", childObject, options ).then( ( [ _document, [ createResponse, retrieveResponse ] ]:[ Document.Class, [ HTTP.Response.Class, HTTP.Response.Class] ] ) => {
+					expect( spyCreateChild ).toHaveBeenCalledWith( "http://example.com/parent-resource/", childObject, options, undefined );
+					expect( spyRetrieve ).toHaveBeenCalledWith( "http://example.com/parent-resource/new-child/" );
+
+					expect( childObject ).toBe( _document );
+					expect( createResponse ).toBe( mockCreateResponse );
+					expect( retrieveResponse ).toBe( mockRetrieveResponse );
+
+					done();
+				} ).catch( done.fail );
+			} );
+
+			it( hasSignature( [
+					"T extends Object",
+				],
+				"Persists JavaScript object as a child document for the respective parent source and retrieves tha updated data from the server.", [
+					{name: "parentURI", type: "string", description: "URI of the document where to create a new child."},
+					{name: "childObject", type: "T", description: " A normal JavaScript object that will be converted and persisted as a new child document."},
+					{name: "slug", type: "string", optional: true, description: "Slug that will be used for the URI of the new child."},
+					{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request."},
+				],
+				{type: "Promise<[ T & Carbon.Carbon.Class, [ Carbon.HTTP.Response.Class, Carbon.HTTP.Response.Class ] ]>"}
+			), ( done:{ ():void, fail:() => void } ):void => {
+				class MockedContext extends AbstractContext {
+					resolve( uri:string ):string {
+						return URI.Util.isRelative( uri ) ? "http://example.com/" + uri : uri;
+					}
+				}
+
+				let context:MockedContext = new MockedContext();
+				let documents:Documents = context.documents;
+
+				let mockCreateResponse:any = {val: "Mock Save Response"};
+				let mockRetrieveResponse:any = {val: "Mock Save Response"};
+				let options:HTTP.Request.Options = {timeout: 50550};
+
+				let childObject:Object = {property: "My property"};
+
+				let spyCreateChild:jasmine.Spy = spyOn( context.documents, "createChild" ).and.callFake( () => {
+					let document:Document.Class = Document.Factory.createFrom( childObject );
+					document.id = "http://example.com/parent-resource/child-document/";
+					return Promise.resolve<any>( [ document, mockCreateResponse ] );
+				} );
+				let spyRetrieve:jasmine.Spy = spyOn( context.documents, "get" ).and.callFake( () => {
+					let persistedDocument:PersistedDocument.Class = PersistedDocument.Factory.decorate( childObject, documents );
+					return Promise.resolve<any>( [ persistedDocument, mockRetrieveResponse ] );
+				} );
+
+				documents.createChildAndRetrieve( "http://example.com/parent-resource/", childObject, "child-document", options ).then( ( [ _document, [ createResponse, retrieveResponse ] ]:[ Document.Class, [ HTTP.Response.Class, HTTP.Response.Class] ] ) => {
+					expect( spyCreateChild ).toHaveBeenCalledWith( "http://example.com/parent-resource/", childObject, "child-document", options );
+					expect( spyRetrieve ).toHaveBeenCalledWith( "http://example.com/parent-resource/child-document/" );
+
+					expect( childObject ).toBe( _document );
+					expect( createResponse ).toBe( mockCreateResponse );
+					expect( retrieveResponse ).toBe( mockRetrieveResponse );
+
+					done();
+				} ).catch( done.fail );
+
+			} );
+
 		} );
 
 		it( hasMethod(
@@ -1505,8 +1608,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 			it( hasSignature(
 				"Upload a binary data to the server, creating a child for the parent specified. This signature it's only when working in a Browser.", [
 					{name: "parentURI", type: "string"},
-					{name: "slug", type: "string"},
 					{name: "data", type: "Blob"},
+					{name: "slug", type: "string", optional: true},
 					{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true},
 				],
 				{type: "Promise<[Carbon.Pointer.Class, Carbon.HTTP.Response.Class]>"}
@@ -1548,7 +1651,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 						},
 					} );
 
-					promises.push( documents.upload( "http://example.com/parent-resource/", "slug-id", blob ).then( spy.success ) );
+					promises.push( documents.upload( "http://example.com/parent-resource/", blob, "slug-id" ).then( spy.success ) );
 
 					Promise.all( promises ).then( ():void => {
 						expect( spySuccess ).toHaveBeenCalled();
@@ -1616,8 +1719,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 			it( hasSignature(
 				"Upload a binary data to the server, creating a child for the parent specified. This signature it's only when working in Node.js.", [
 					{name: "parentURI", type: "string"},
-					{name: "slug", type: "string"},
 					{name: "data", type: "Buffer"},
+					{name: "slug", type: "string", optional: true},
 					{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true},
 				],
 				{type: "Promise<[Carbon.Pointer.Class, Carbon.HTTP.Response.Class]>"}
@@ -1659,7 +1762,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 						},
 					} );
 
-					promises.push( documents.upload( "http://example.com/parent-resource/", "slug-id", buffer ).then( spy.success ) );
+					promises.push( documents.upload( "http://example.com/parent-resource/", buffer, "slug-id" ).then( spy.success ) );
 
 					Promise.all( promises ).then( ():void => {
 						expect( spySuccess ).toHaveBeenCalled();

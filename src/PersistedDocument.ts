@@ -35,12 +35,12 @@ export interface Class extends PersistedResource.Class, Document.Class {
 	getFragments():PersistedFragment.Class[];
 
 	createFragment():PersistedFragment.Class;
-	createFragment( slug:string ):PersistedNamedFragment.Class;
-	createFragment<T extends Object>( slug:string, object:T ):PersistedNamedFragment.Class & T;
+	createFragment( slug:string ):PersistedFragment.Class;
 	createFragment<T extends Object>( object:T ):PersistedFragment.Class & T;
+	createFragment<T extends Object>( object:T, slug:string ):PersistedFragment.Class & T;
 
 	createNamedFragment( slug:string ):PersistedNamedFragment.Class;
-	createNamedFragment<T extends Object>( slug:string, object:T ):PersistedNamedFragment.Class & T;
+	createNamedFragment<T extends Object>( object:T, slug:string ):PersistedNamedFragment.Class & T;
 
 	refresh<T extends Class>():Promise<[T, HTTP.Response.Class]>;
 	save<T extends Class>():Promise<[T, HTTP.Response.Class]>;
@@ -53,10 +53,15 @@ export interface Class extends PersistedResource.Class, Document.Class {
 
 	addMembers( members:(Pointer.Class | string)[] ):Promise<HTTP.Response.Class>;
 
-	createChild<T extends Object>( slug:string, object:Object ):Promise<[ T & Class, HTTP.Response.Class ]>;
-	createChild( slug:string ):Promise<[ Class, HTTP.Response.Class ]>;
+	createChild<T extends Object>( object:Object, slug:string ):Promise<[ T & Class, HTTP.Response.Class ]>;
 	createChild<T extends Object>( object:T ):Promise<[ T & Class, HTTP.Response.Class ]>;
+	createChild( slug:string ):Promise<[ Class, HTTP.Response.Class ]>;
 	createChild():Promise<[ Class, HTTP.Response.Class ]>;
+
+	createChildAndRetrieve<T extends Object>( object:Object, slug:string ):Promise<[ T & Class, [ HTTP.Response.Class, HTTP.Response.Class ] ]>;
+	createChildAndRetrieve<T extends Object>( object:T ):Promise<[ T & Class, [ HTTP.Response.Class, HTTP.Response.Class ] ]>;
+	createChildAndRetrieve( slug:string ):Promise<[ Class, [ HTTP.Response.Class, HTTP.Response.Class ] ]>;
+	createChildAndRetrieve():Promise<[ Class, [ HTTP.Response.Class, HTTP.Response.Class ] ]>;
 
 	createAccessPoint( accessPoint:AccessPoint.Class, slug?:string, requestOptions?:HTTP.Request.Options ):Promise<[ PersistedAccessPoint.Class, HTTP.Response.Class ]>;
 	createAccessPoint( accessPoint:AccessPoint.Class, requestOptions?:HTTP.Request.Options ):Promise<[ PersistedAccessPoint.Class, HTTP.Response.Class ]>;
@@ -76,9 +81,9 @@ export interface Class extends PersistedResource.Class, Document.Class {
 	removeMembers( members:(Pointer.Class | string)[] ):Promise<HTTP.Response.Class>;
 	removeAllMembers():Promise<HTTP.Response.Class>;
 
-	upload( slug:string, blob:Blob ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
+	upload( blob:Blob, slug:string ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
 	upload( blob:Blob ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
-	upload( slug:string, blob:Buffer ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
+	upload( blob:Buffer, slug:string ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
 	upload( blob:Buffer ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
 
 	executeRawASKQuery( askQuery:string, requestOptions?:HTTP.Request.Options ):Promise<[ SPARQL.RawResults.Class, HTTP.Response.Class ]>;
@@ -115,13 +120,13 @@ function syncSavedFragments():void {
 	document._savedFragments = Utils.A.from( document._fragmentsIndex.values() );
 }
 
-function extendCreateFragment( superFunction:( slug:string ) => NamedFragment.Class ):( slug:string ) => PersistedNamedFragment.Class;
 function extendCreateFragment( superFunction:() => Fragment.Class ):() => PersistedFragment.Class;
-function extendCreateFragment( superFunction:( slug:string, object:Object ) => NamedFragment.Class ):( slug:string, object:Object ) => PersistedNamedFragment.Class;
+function extendCreateFragment( superFunction:( slug:string ) => Fragment.Class ):( slug:string ) => PersistedFragment.Class;
+function extendCreateFragment( superFunction:( object:Object, slug:string ) => Fragment.Class ):( slug:string, object:Object ) => PersistedFragment.Class;
 function extendCreateFragment( superFunction:( object:Object ) => Fragment.Class ):( object:Object ) => PersistedFragment.Class;
-function extendCreateFragment( superFunction:( slug?:string, object?:Object ) => any ):any {
-	return function( slugOrObject:string = null, object:Object = null ):any {
-		let fragment:Fragment.Class = superFunction.call( this, slugOrObject, object );
+function extendCreateFragment( superFunction:( slugOrObject?:any, slug?:string ) => Fragment.Class ):any {
+	return function( slugOrObject?:any, slug?:string  ):any {
+		let fragment:Fragment.Class = superFunction.call( this, slugOrObject, slug );
 		let id:string = fragment.id;
 
 		if( RDF.URI.Util.isBNodeID( id ) ) {
@@ -133,10 +138,10 @@ function extendCreateFragment( superFunction:( slug?:string, object?:Object ) =>
 	};
 }
 function extendCreateNamedFragment( superFunction:( slug:string ) => NamedFragment.Class ):( slug:string ) => PersistedNamedFragment.Class;
-function extendCreateNamedFragment( superFunction:( slug:string, object:Object ) => NamedFragment.Class ):( slug:string, object:Object ) => PersistedNamedFragment.Class;
-function extendCreateNamedFragment( superFunction:( slug:string, object?:Object ) => NamedFragment.Class ):any {
-	return function( slug:string, object:Object = null ):PersistedNamedFragment.Class {
-		let fragment:NamedFragment.Class = superFunction.call( this, slug, object );
+function extendCreateNamedFragment( superFunction:( object:Object, slug:string ) => NamedFragment.Class ):( slug:string, object:Object ) => PersistedNamedFragment.Class;
+function extendCreateNamedFragment( superFunction:( slugOrObject:any, slug?:string  ) => NamedFragment.Class ):any {
+	return function( slugOrObject:any, slug?:string ):PersistedNamedFragment.Class {
+		let fragment:NamedFragment.Class = superFunction.call( this, slugOrObject, slug );
 		return PersistedFragment.Factory.decorate( fragment );
 	};
 }
@@ -165,20 +170,25 @@ function addMembers( members:(Pointer.Class | string)[] ):Promise<HTTP.Response.
 	return this._documents.addMembers( this.id, members );
 }
 
-function createChild<T extends Object>( slug:string, object:T ):Promise<[ T & Class, HTTP.Response.Class ]>;
-function createChild( slug:string ):Promise<[ Class, HTTP.Response.Class ]>;
+function createChild<T extends Object>( object:T, slug:string ):Promise<[ T & Class, HTTP.Response.Class ]>;
 function createChild<T extends Object>( object:T ):Promise<[ T & Class, HTTP.Response.Class ]>;
+function createChild( slug:string ):Promise<[ Class, HTTP.Response.Class ]>;
 function createChild():Promise<[ Class, HTTP.Response.Class ]>;
-function createChild( slugOrObject?:any, object?:Object ):Promise<[ Pointer.Class, HTTP.Response.Class ]> {
-	let slug:string = Utils.isString( slugOrObject ) ? slugOrObject : null;
-	object = Utils.isString( slugOrObject ) ? object : slugOrObject;
-	object = object || {};
+function createChild<T extends Object>( slugOrObject?:any, slug?:string ):Promise<[ T & Class, HTTP.Response.Class ]> {
+	let object:T = ! Utils.isString( slugOrObject ) && ! ! slugOrObject ? slugOrObject : <T> {};
+	slug = Utils.isString( slugOrObject ) ? slugOrObject : slug;
 
-	if( slug ) {
-		return (<Class> this)._documents.createChild( this.id, slug, object );
-	} else {
-		return (<Class> this)._documents.createChild( this.id, object );
-	}
+	return (<Class> this)._documents.createChild( this.id, object, slug );
+}
+function createChildAndRetrieve<T extends Object>( object:T, slug:string ):Promise<[ T & Class, [ HTTP.Response.Class, HTTP.Response.Class ] ]>;
+function createChildAndRetrieve<T extends Object>( object:T ):Promise<[ T & Class, [ HTTP.Response.Class, HTTP.Response.Class ] ]>;
+function createChildAndRetrieve( slug:string ):Promise<[ Class, [ HTTP.Response.Class, HTTP.Response.Class ] ]>;
+function createChildAndRetrieve():Promise<[ Class, [ HTTP.Response.Class, HTTP.Response.Class ] ]>;
+function createChildAndRetrieve<T extends Object>( slugOrObject?:any, slug?:string ):Promise<[ T & Class, [ HTTP.Response.Class, HTTP.Response.Class ] ]> {
+	let object:T = ! Utils.isString( slugOrObject ) && ! ! slugOrObject ? slugOrObject : <T> {};
+	slug = Utils.isString( slugOrObject ) ? slugOrObject : slug;
+
+	return (<Class> this)._documents.createChildAndRetrieve<T>( this.id, object, slug );
 }
 
 
@@ -220,19 +230,12 @@ function removeAllMembers():Promise<HTTP.Response.Class> {
 	return this._documents.removeAllMembers( this.id );
 }
 
-function upload( slug:string, data:Buffer ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
+function upload( data:Buffer, slug:string ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
 function upload( data:Buffer ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
-function upload( slug:string, data:Blob ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
+function upload( data:Blob, slug:string ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
 function upload( data:Blob ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
-function upload( slugOrData:any, data:any = null ):Promise<[ Pointer.Class, HTTP.Response.Class ]> {
-	let slug:string = Utils.isString( slugOrData ) ? slugOrData : null;
-	data = slug ? data : slugOrData;
-
-	if( slug ) {
-		return this._documents.upload( this.id, slug, data );
-	} else {
-		return this._documents.upload( this.id, data );
-	}
+function upload( data:Blob | Buffer, slug?:string ):Promise<[ Pointer.Class, HTTP.Response.Class ]> {
+	return this._documents.upload( this.id, data, slug );
 }
 
 function executeRawASKQuery( askQuery:string, requestOptions:HTTP.Request.Options = {} ):Promise<[ SPARQL.RawResults.Class, HTTP.Response.Class ]> {
@@ -278,6 +281,7 @@ export class Factory {
 			&& Utils.hasFunction( object, "addMembers" )
 			&& Utils.hasFunction( object, "createAccessPoint" )
 			&& Utils.hasFunction( object, "createChild" )
+			&& Utils.hasFunction( object, "createChildAndRetrieve" )
 			&& Utils.hasFunction( object, "getChildren" )
 			&& Utils.hasFunction( object, "getMembers" )
 			&& Utils.hasFunction( object, "listChildren" )
@@ -446,6 +450,12 @@ export class Factory {
 				enumerable: false,
 				configurable: true,
 				value: createChild,
+			},
+			"createChildAndRetrieve": {
+				writable: false,
+				enumerable: false,
+				configurable: true,
+				value: createChildAndRetrieve,
 			},
 			"createAccessPoint": {
 				writable: false,

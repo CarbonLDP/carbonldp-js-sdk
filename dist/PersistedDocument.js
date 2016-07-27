@@ -32,10 +32,8 @@ function syncSavedFragments() {
     document._savedFragments = Utils.A.from(document._fragmentsIndex.values());
 }
 function extendCreateFragment(superFunction) {
-    return function (slugOrObject, object) {
-        if (slugOrObject === void 0) { slugOrObject = null; }
-        if (object === void 0) { object = null; }
-        var fragment = superFunction.call(this, slugOrObject, object);
+    return function (slugOrObject, slug) {
+        var fragment = superFunction.call(this, slugOrObject, slug);
         var id = fragment.id;
         if (RDF.URI.Util.isBNodeID(id)) {
             PersistedFragment.Factory.decorate(fragment);
@@ -47,9 +45,8 @@ function extendCreateFragment(superFunction) {
     };
 }
 function extendCreateNamedFragment(superFunction) {
-    return function (slug, object) {
-        if (object === void 0) { object = null; }
-        var fragment = superFunction.call(this, slug, object);
+    return function (slugOrObject, slug) {
+        var fragment = superFunction.call(this, slugOrObject, slug);
         return PersistedFragment.Factory.decorate(fragment);
     };
 }
@@ -71,16 +68,15 @@ function addMember(memberOrUri) {
 function addMembers(members) {
     return this._documents.addMembers(this.id, members);
 }
-function createChild(slugOrObject, object) {
-    var slug = Utils.isString(slugOrObject) ? slugOrObject : null;
-    object = Utils.isString(slugOrObject) ? object : slugOrObject;
-    object = object || {};
-    if (slug) {
-        return this._documents.createChild(this.id, slug, object);
-    }
-    else {
-        return this._documents.createChild(this.id, object);
-    }
+function createChild(slugOrObject, slug) {
+    var object = !Utils.isString(slugOrObject) && !!slugOrObject ? slugOrObject : {};
+    slug = Utils.isString(slugOrObject) ? slugOrObject : slug;
+    return this._documents.createChild(this.id, object, slug);
+}
+function createChildAndRetrieve(slugOrObject, slug) {
+    var object = !Utils.isString(slugOrObject) && !!slugOrObject ? slugOrObject : {};
+    slug = Utils.isString(slugOrObject) ? slugOrObject : slug;
+    return this._documents.createChildAndRetrieve(this.id, object, slug);
 }
 function createAccessPoint(accessPoint, slugOrRequestOptions, requestOptions) {
     return this._documents.createAccessPoint(this.id, accessPoint, slugOrRequestOptions, requestOptions);
@@ -108,16 +104,8 @@ function removeMembers(members) {
 function removeAllMembers() {
     return this._documents.removeAllMembers(this.id);
 }
-function upload(slugOrData, data) {
-    if (data === void 0) { data = null; }
-    var slug = Utils.isString(slugOrData) ? slugOrData : null;
-    data = slug ? data : slugOrData;
-    if (slug) {
-        return this._documents.upload(this.id, slug, data);
-    }
-    else {
-        return this._documents.upload(this.id, data);
-    }
+function upload(data, slug) {
+    return this._documents.upload(this.id, data, slug);
 }
 function executeRawASKQuery(askQuery, requestOptions) {
     if (requestOptions === void 0) { requestOptions = {}; }
@@ -161,6 +149,7 @@ var Factory = (function () {
             && Utils.hasFunction(object, "addMembers")
             && Utils.hasFunction(object, "createAccessPoint")
             && Utils.hasFunction(object, "createChild")
+            && Utils.hasFunction(object, "createChildAndRetrieve")
             && Utils.hasFunction(object, "getChildren")
             && Utils.hasFunction(object, "getMembers")
             && Utils.hasFunction(object, "listChildren")
@@ -316,6 +305,12 @@ var Factory = (function () {
                 enumerable: false,
                 configurable: true,
                 value: createChild,
+            },
+            "createChildAndRetrieve": {
+                writable: false,
+                enumerable: false,
+                configurable: true,
+                value: createChildAndRetrieve,
             },
             "createAccessPoint": {
                 writable: false,

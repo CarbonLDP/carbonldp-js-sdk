@@ -119,17 +119,14 @@ var Documents = (function () {
             return Promise.reject(error);
         });
     };
-    Documents.prototype.createChild = function (parentURI, slugOrChildDocument, childDocumentOrRequestOptions, requestOptions) {
+    Documents.prototype.createChild = function (parentURI, childObject, slugOrRequestOptions, requestOptions) {
         var _this = this;
-        if (childDocumentOrRequestOptions === void 0) { childDocumentOrRequestOptions = {}; }
         if (requestOptions === void 0) { requestOptions = {}; }
-        var slug = Utils.isString(slugOrChildDocument) ? slugOrChildDocument : null;
-        var childDocument = !Utils.isString(slugOrChildDocument) ? slugOrChildDocument : childDocumentOrRequestOptions;
-        requestOptions = !Utils.isString(slugOrChildDocument) ? childDocumentOrRequestOptions : requestOptions;
-        if (PersistedDocument.Factory.is(childDocument))
-            return Promise.reject(new Errors.IllegalArgumentError("The childDocument provided has been already persisted."));
-        if (!Document.Factory.is(childDocument))
-            childDocument = Document.Factory.createFrom(childDocument);
+        var slug = Utils.isString(slugOrRequestOptions) ? slugOrRequestOptions : null;
+        requestOptions = !Utils.isString(slugOrRequestOptions) && !!slugOrRequestOptions ? slugOrRequestOptions : requestOptions;
+        if (PersistedDocument.Factory.is(childObject))
+            return Promise.reject(new Errors.IllegalArgumentError("The child provided has been already persisted."));
+        var childDocument = Document.Factory.is(childObject) ? childObject : Document.Factory.createFrom(childObject);
         parentURI = this.getRequestURI(parentURI);
         this.setDefaultRequestOptions(requestOptions, NS.LDP.Class.Container);
         HTTP.Request.Util.setContentTypeHeader("application/ld+json", requestOptions);
@@ -145,7 +142,7 @@ var Documents = (function () {
             return Promise.reject(new Errors.IllegalArgumentError("The childDocument is already being persisted."));
         Object.defineProperty(childDocument, "__CarbonSDK_InProgressOfPersisting", { configurable: true, enumerable: false, writable: false, value: true });
         var body = childDocument.toJSON(this, this.jsonldConverter);
-        if (slug !== null)
+        if (!slug)
             HTTP.Request.Util.setSlug(slug, requestOptions);
         return HTTP.Request.Service.post(parentURI, body, requestOptions).then(function (response) {
             delete childDocument["__CarbonSDK_InProgressOfPersisting"];
@@ -161,6 +158,18 @@ var Documents = (function () {
                 persistedDocument,
                 response,
             ];
+        });
+    };
+    Documents.prototype.createChildAndRetrieve = function (parentURI, childObject, slugOrRequestOptions, requestOptions) {
+        var _this = this;
+        var createResponse;
+        return this.createChild(parentURI, childObject, slugOrRequestOptions, requestOptions).then(function (_a) {
+            var document = _a[0], response = _a[1];
+            createResponse = response;
+            return _this.get(document.id);
+        }).then(function (_a) {
+            var persistedDocument = _a[0], response = _a[1];
+            return [persistedDocument, [createResponse, response]];
         });
     };
     Documents.prototype.listChildren = function (parentURI, requestOptions) {
@@ -247,7 +256,7 @@ var Documents = (function () {
             return Promise.reject(new Errors.IllegalArgumentError("The accessPoint is already being persisted."));
         Object.defineProperty(accessPoint, "__CarbonSDK_InProgressOfPersisting", { configurable: true, enumerable: false, writable: false, value: true });
         var body = accessPointDocument.toJSON(this, this.jsonldConverter);
-        if (slug !== null)
+        if (!slug)
             HTTP.Request.Util.setSlug(slug, requestOptions);
         return HTTP.Request.Service.post(documentURI, body, requestOptions).then(function (response) {
             delete accessPoint["__CarbonSDK_InProgressOfPersisting"];
@@ -265,13 +274,11 @@ var Documents = (function () {
             ];
         });
     };
-    Documents.prototype.upload = function (parentURI, slugOrData, dataOrRequestOptions, requestOptions) {
+    Documents.prototype.upload = function (parentURI, data, slugOrRequestOptions, requestOptions) {
         var _this = this;
-        if (dataOrRequestOptions === void 0) { dataOrRequestOptions = {}; }
         if (requestOptions === void 0) { requestOptions = {}; }
-        var slug = Utils.isString(slugOrData) ? slugOrData : null;
-        var data = !Utils.isString(slugOrData) ? slugOrData : dataOrRequestOptions;
-        requestOptions = !Utils.isString(slugOrData) ? dataOrRequestOptions : requestOptions;
+        var slug = Utils.isString(slugOrRequestOptions) ? slugOrRequestOptions : null;
+        requestOptions = !Utils.isString(slugOrRequestOptions) && !!slugOrRequestOptions ? slugOrRequestOptions : requestOptions;
         if (typeof Blob !== "undefined") {
             if (!(data instanceof Blob))
                 return Promise.reject(new Errors.IllegalArgumentError("The data is not a valid Blob object."));
@@ -286,7 +293,7 @@ var Documents = (function () {
         }
         parentURI = this.getRequestURI(parentURI);
         this.setDefaultRequestOptions(requestOptions, NS.LDP.Class.Container);
-        if (slug !== null)
+        if (!slug)
             HTTP.Request.Util.setSlug(slug, requestOptions);
         return HTTP.Request.Service.post(parentURI, data, requestOptions).then(function (response) {
             var locationHeader = response.getHeader("Location");
@@ -799,7 +806,7 @@ var Documents = (function () {
         for (var _i = 0, fragmentResources_2 = fragmentResources; _i < fragmentResources_2.length; _i++) {
             var fragmentResource = fragmentResources_2[_i];
             var fragment = this.getAssociatedFragment(blankNodesArray, namedFragmentsMap, fragmentResource);
-            fragment = persistedDocument.createFragment(fragmentResource["@id"], fragment || {});
+            fragment = persistedDocument.createFragment(fragment || {}, fragmentResource["@id"]);
             newFragments.push([fragment, fragmentResource]);
         }
         for (var _a = 0, newFragments_1 = newFragments; _a < newFragments_1.length; _a++) {

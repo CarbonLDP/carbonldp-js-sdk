@@ -877,41 +877,41 @@ describe( module( "Carbon/Document" ), ():void => {
 
 				it( hasSignature(
 					[ "T extends Object" ],
-					"Creates a NamedFragment from the object provided and the slug specified.", [
-						{name: "slug", type: "string"},
+					"Creates a Fragment from the object provided and the slug specified.", [
 						{name: "object", type: "T"},
+						{name: "slug", type: "string"},
 					],
 					{type: "T & Carbon.Fragment.Class"}
 				), ():void => {
 					expect( document.createFragment ).toBeDefined();
 					expect( Utils.isFunction( document.createFragment ) ).toBe( true );
 
-					interface MyInterface { myProperty?:string, myPointer?:MyInterface }
+					interface MyInterface { myProperty?:string; myPointer?:MyInterface; }
 
 					let object:MyInterface;
 					let fragment:Fragment.Class & MyInterface;
 
 					object = {};
-					fragment = document.createFragment<MyInterface>( "fragment", object );
+					fragment = document.createFragment<MyInterface>( object, "fragment" );
 					expect( object ).toBe( fragment );
 					expect( Fragment.Factory.hasClassProperties( fragment ) ).toBe( true );
 					expect( fragment.id ).toBe( "http://example.com/document/#fragment" );
 					expect( fragment.myProperty ).toBeUndefined();
 
 					object = {myProperty: "The property"};
-					fragment = document.createFragment<MyInterface>( "http://example.com/document/#another-fragment", object );
+					fragment = document.createFragment<MyInterface>( object, "http://example.com/document/#another-fragment" );
 					expect( Fragment.Factory.hasClassProperties( fragment ) ).toBe( true );
 					expect( fragment.id ).toBe( "http://example.com/document/#another-fragment" );
 					expect( fragment.myProperty ).toBe( "The property" );
 
 					object = {myProperty: "The BlankNode property"};
-					fragment = document.createFragment<MyInterface>( "_:BlankNode", object );
+					fragment = document.createFragment<MyInterface>( object, "_:BlankNode" );
 					expect( Fragment.Factory.hasClassProperties( fragment ) ).toBe( true );
 					expect( fragment.id ).toBe( "_:BlankNode" );
 					expect( fragment.myProperty ).toBe( "The BlankNode property" );
 
 					object = {myProperty: "Fragment with nested object", myPointer: {myProperty: "The Nested object"}};
-					fragment = document.createFragment<MyInterface>( "#another-another-fragment", object );
+					fragment = document.createFragment<MyInterface>( object, "#another-another-fragment" );
 					expect( Fragment.Factory.hasClassProperties( fragment ) ).toBe( true );
 					expect( fragment.id ).toBe( "http://example.com/document/#another-another-fragment" );
 					expect( fragment.myProperty ).toBe( "Fragment with nested object" );
@@ -922,7 +922,7 @@ describe( module( "Carbon/Document" ), ():void => {
 					expect( fragment.myPointer.myProperty ).toBe( "The Nested object" );
 
 					object = {myProperty: "Fragment with nested object", myPointer: {myProperty: "The Nested object"}};
-					fragment = document.createFragment<MyInterface>( "_:AnotherBlankNode", object );
+					fragment = document.createFragment<MyInterface>( object, "_:AnotherBlankNode" );
 					expect( Fragment.Factory.hasClassProperties( fragment ) ).toBe( true );
 					expect( fragment.id ).toBe( "_:AnotherBlankNode" );
 					expect( fragment.myProperty ).toBe( "Fragment with nested object" );
@@ -932,14 +932,14 @@ describe( module( "Carbon/Document" ), ():void => {
 					expect( fragment.myPointer.myProperty ).toBeDefined();
 					expect( fragment.myPointer.myProperty ).toBe( "The Nested object" );
 
-					expect( document.createFragment.bind( document, "http://example.com/another-document/#fragment", {} ) ).toThrowError( Errors.IllegalArgumentError );
-					expect( document.createFragment.bind( document, "fragment", {} ) ).toThrowError( Errors.IDAlreadyInUseError );
-					expect( document.createFragment.bind( document, "_:BlankNode", {} ) ).toThrowError( Errors.IDAlreadyInUseError );
+					expect( () => document.createFragment( {}, "http://example.com/another-document/#fragment" ) ).toThrowError( Errors.IllegalArgumentError );
+					expect( () => document.createFragment( {}, "fragment" ) ).toThrowError( Errors.IDAlreadyInUseError );
+					expect( () => document.createFragment( {}, "_:BlankNode" ) ).toThrowError( Errors.IDAlreadyInUseError );
 				} );
 
 				it( hasSignature(
 					[ "T extends Object" ],
-					"Creates a BlankNode from the object provided, sing no slug was specififed.", [
+					"Creates a BlankNode from the object provided, sing no slug was specified.", [
 						{name: "object", type: "T"},
 					],
 					{type: "T & Carbon.Fragment.Class"}
@@ -947,7 +947,7 @@ describe( module( "Carbon/Document" ), ():void => {
 					expect( document.createFragment ).toBeDefined();
 					expect( Utils.isFunction( document.createFragment ) ).toBe( true );
 
-					interface MyInterface { myProperty?:string, myPointer?:MyInterface }
+					interface MyInterface { myProperty?:string; myPointer?:MyInterface; }
 
 					let object:MyInterface;
 					let fragment:Fragment.Class & MyInterface;
@@ -979,7 +979,7 @@ describe( module( "Carbon/Document" ), ():void => {
 
 				it( hasSignature(
 					"Creates a Fragment with the slug provided.", [
-						{name: "slug", type: "string"}
+						{name: "slug", type: "string"},
 					],
 					{type: "Carbon.Fragment.Class"}
 				), ():void => {
@@ -1000,13 +1000,13 @@ describe( module( "Carbon/Document" ), ():void => {
 					expect( Fragment.Factory.hasClassProperties( fragment ) ).toBe( true );
 					expect( fragment.id ).toBe( "_:BlankNode" );
 
-					expect( document.createFragment.bind( document, "http://example.com/another-document/#fragment" ) ).toThrowError( Errors.IllegalArgumentError );
-					expect( document.createFragment.bind( document, "fragment" ) ).toThrowError( Errors.IDAlreadyInUseError );
-					expect( document.createFragment.bind( document, "_:BlankNode" ) ).toThrowError( Errors.IDAlreadyInUseError );
+					expect( () => document.createFragment( "http://example.com/another-document/#fragment" ) ).toThrowError( Errors.IllegalArgumentError );
+					expect( () => document.createFragment( "fragment" ) ).toThrowError( Errors.IDAlreadyInUseError );
+					expect( () => document.createFragment( "_:BlankNode" ) ).toThrowError( Errors.IDAlreadyInUseError );
 				} );
 
 				it( hasSignature(
-					"Creates a Blank Node Fragment, since no slug is provided",
+					"Creates a BlankNode, since no slug is provided",
 					{type: "Carbon.Fragment.Class"}
 				), ():void => {
 					expect( document.createFragment ).toBeDefined();
@@ -1037,7 +1037,7 @@ describe( module( "Carbon/Document" ), ():void => {
 
 				it( hasSignature(
 					"Creates a NamedFragment with the slug provided", [
-						{name: "slug", type: "string"}
+						{name: "slug", type: "string"},
 					],
 					{type: "Carbon.NamedFragment.Class"}
 				), ():void => {
@@ -1056,17 +1056,16 @@ describe( module( "Carbon/Document" ), ():void => {
 					expect( fragment.slug ).toBe( "another-fragment" );
 					expect( fragment.id ).toBe( "http://example.com/document/#another-fragment" );
 
-					expect( document.createNamedFragment.bind( document, "_:BlankNode" ) ).toThrowError( Errors.IllegalArgumentError );
-
-					expect( document.createNamedFragment.bind( document, "http://example.com/another-document/#fragment" ) ).toThrowError( Errors.IllegalArgumentError );
-					expect( document.createNamedFragment.bind( document, "fragment" ) ).toThrowError( Errors.IDAlreadyInUseError );
+					expect( () => document.createNamedFragment( "_:BlankNode" ) ).toThrowError( Errors.IllegalArgumentError );
+					expect( () => document.createNamedFragment( "http://example.com/another-document/#fragment" ) ).toThrowError( Errors.IllegalArgumentError );
+					expect( () => document.createNamedFragment( "fragment" ) ).toThrowError( Errors.IDAlreadyInUseError );
 				} );
 
 				it( hasSignature(
 					[ "T extends Object" ],
 					"Creates a NamedFragment from the object provided and the slug specified.", [
+						{name: "object", type: "T"},
 						{name: "slug", type: "string"},
-						{name: "object", type: "T"}
 					],
 					{type: "T & Carbon.NamedFragment.Class"}
 				), ():void => {
@@ -1074,26 +1073,26 @@ describe( module( "Carbon/Document" ), ():void => {
 					expect( document.createNamedFragment ).toBeDefined();
 					expect( Utils.isFunction( document.createNamedFragment ) ).toBe( true );
 
-					interface MyInterface { myProperty?:string, myPointer?:MyInterface }
+					interface MyInterface { myProperty?:string; myPointer?:MyInterface; }
 
 					let object:MyInterface;
 					let fragment:Fragment.Class & MyInterface;
 
 					object = {};
-					fragment = document.createNamedFragment<MyInterface>( "fragment", object );
+					fragment = document.createNamedFragment<MyInterface>( object, "fragment" );
 					expect( object ).toBe( fragment );
 					expect( Fragment.Factory.hasClassProperties( fragment ) ).toBe( true );
 					expect( fragment.id ).toBe( "http://example.com/document/#fragment" );
 					expect( fragment.myProperty ).toBeUndefined();
 
 					object = {myProperty: "The property"};
-					fragment = document.createNamedFragment<MyInterface>( "http://example.com/document/#another-fragment", object );
+					fragment = document.createNamedFragment<MyInterface>( object, "http://example.com/document/#another-fragment" );
 					expect( Fragment.Factory.hasClassProperties( fragment ) ).toBe( true );
 					expect( fragment.id ).toBe( "http://example.com/document/#another-fragment" );
 					expect( fragment.myProperty ).toBe( "The property" );
 
 					object = {myProperty: "Fragment with nested object", myPointer: {myProperty: "The Nested object"}};
-					fragment = document.createNamedFragment<MyInterface>( "#another-another-fragment", object );
+					fragment = document.createNamedFragment<MyInterface>( object, "#another-another-fragment" );
 					expect( Fragment.Factory.hasClassProperties( fragment ) ).toBe( true );
 					expect( fragment.id ).toBe( "http://example.com/document/#another-another-fragment" );
 					expect( fragment.myProperty ).toBe( "Fragment with nested object" );
@@ -1102,7 +1101,7 @@ describe( module( "Carbon/Document" ), ():void => {
 					expect( URI.Util.isBNodeID( (<Fragment.Class> fragment.myPointer).id ) ).toBe( true );
 					expect( fragment.myPointer.myProperty ).toBeDefined();
 					expect( fragment.myPointer.myProperty ).toBe( "The Nested object" );
-				} )
+				} );
 
 			} );
 

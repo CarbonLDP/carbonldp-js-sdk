@@ -69,12 +69,12 @@ export interface Class extends Resource.Class, Pointer.Library, Pointer.Validato
 	getNamedFragment<T>( slug:string ):T & NamedFragment.Class;
 	getFragments():Fragment.Class[];
 
-	createFragment<T extends Object>( slug:string, object:T ):NamedFragment.Class & T;
-	createFragment<T extends Object>( object:T ):Fragment.Class & T;
+	createFragment<T extends Object>( object:T, slug:string ):T & Fragment.Class;
+	createFragment<T extends Object>( object:T ):T & Fragment.Class;
+	createFragment( slug:string ):Fragment.Class;
 	createFragment():Fragment.Class;
-	createFragment( slug:string ):NamedFragment.Class;
 
-	createNamedFragment<T extends Object>( slug:string, object:T ):NamedFragment.Class & T;
+	createNamedFragment<T extends Object>( object:T, slug:string ):T & NamedFragment.Class;
 	createNamedFragment( slug:string ):NamedFragment.Class;
 
 	removeFragment( fragment:NamedFragment.Class ):void;
@@ -159,33 +159,33 @@ function getFragments():Fragment.Class[] {
 	return Utils.A.from( document._fragmentsIndex.values() );
 }
 
-function createFragment<T extends Object>( slug:string, object:T ):NamedFragment.Class & T;
-function createFragment<T extends Object>( object:T ):Fragment.Class & T;
-function createFragment( slug:string ):NamedFragment.Class;
+function createFragment<T extends Object>( object:T, slug:string ):T & Fragment.Class;
+function createFragment<T extends Object>( object:T ):T & Fragment.Class;
+function createFragment( slug:string ):Fragment.Class;
 function createFragment():Fragment.Class;
-function createFragment( slugOrObject?:any, object?:any ):any {
+function createFragment<T extends Object>( slugOrObject?:any, slug?:string ):T & Fragment.Class {
 	let document:Class = <Class> this;
-	let slug:string = Utils.isString( slugOrObject ) ? slugOrObject : null;
-	object = Utils.isString( slugOrObject ) ? object : slugOrObject;
-	object = object || {};
+	slug = Utils.isString( slugOrObject ) ? slugOrObject : slug;
+	let object:T = ! Utils.isString( slugOrObject ) && ! ! slugOrObject ? slugOrObject : <T> {};
 
 	if( slug ) {
-		if( ! RDF.URI.Util.isBNodeID( slug ) ) return document.createNamedFragment( slug, object );
+		if( ! RDF.URI.Util.isBNodeID( slug ) ) return document.createNamedFragment<T>( object, slug );
 		if( this._fragmentsIndex.has( slug ) ) throw new Errors.IDAlreadyInUseError( "The slug provided is already being used by a fragment." );
 	}
 
-	let fragment:Fragment.Class = Fragment.Factory.createFrom( object, slug, document );
+	let fragment:T & Fragment.Class = Fragment.Factory.createFrom<T>( object, slug, document );
 	document._fragmentsIndex.set( fragment.id, fragment );
 
 	convertNestedObjects( document, fragment );
 	return fragment;
 }
 
-function createNamedFragment<T extends Object>( slug:string, object:T ):NamedFragment.Class & T;
+function createNamedFragment<T extends Object>( object:T, slug:string ):NamedFragment.Class & T;
 function createNamedFragment( slug:string ):NamedFragment.Class;
-function createNamedFragment( slug:string, object?:any ):any {
+function createNamedFragment<T extends Object>( slugOrObject:any, slug?:string ):T & NamedFragment.Class {
 	let document:Class = <Class> this;
-	object = object || {};
+	slug = Utils.isString( slugOrObject ) ? slugOrObject : slug;
+	let object:T = ! Utils.isString( slugOrObject ) && ! ! slugOrObject ? slugOrObject : <T> {};
 
 	if( RDF.URI.Util.isBNodeID( slug ) ) throw new Errors.IllegalArgumentError( "Named fragments can't have a slug that starts with '_:'." );
 
@@ -196,7 +196,7 @@ function createNamedFragment( slug:string, object?:any ):any {
 
 	if( document._fragmentsIndex.has( slug ) ) throw new Errors.IDAlreadyInUseError( "The slug provided is already being used by a fragment." );
 
-	let fragment:NamedFragment.Class = <NamedFragment.Class> NamedFragment.Factory.createFrom( object, slug, document );
+	let fragment:T & NamedFragment.Class = NamedFragment.Factory.createFrom<T>( object, slug, document );
 	document._fragmentsIndex.set( slug, fragment );
 
 	convertNestedObjects( document, fragment );
@@ -391,7 +391,7 @@ function convertNestedObjects( parent:Class, actual:any ):void {
 		let parentFragment:Fragment.Class = parent.getFragment( idOrSlug );
 
 		if( ! parentFragment ) {
-			fragment = parent.createFragment( idOrSlug, next );
+			fragment = parent.createFragment( <Object> next, idOrSlug );
 			convertNestedObjects( parent, fragment );
 
 		} else if( parentFragment !== next ) {

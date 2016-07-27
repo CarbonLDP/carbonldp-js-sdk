@@ -15,6 +15,11 @@ import {
 import AbstractContext from "./AbstractContext";
 import * as Document from "./Document";
 import Documents from "./Documents";
+import * as Errors from "./Errors";
+import * as Fragment from "./Fragment";
+import * as NamedFragment from "./NamedFragment";
+import * as PersistedFragment from "./PersistedFragment";
+import * as PersistedNamedFragment from "./PersistedNamedFragment";
 import * as Pointer from "./Pointer";
 import * as RetrievalPreferences from "./RetrievalPreferences";
 import * as URI from "./RDF/URI";
@@ -81,6 +86,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 				addMembers: ():void => {},
 				createAccessPoint: ():void => {},
 				createChild: ():void => {},
+				createChildAndRetrieve: ():void => {},
 				listChildren: ():void => {},
 				getChildren: ():void => {},
 				listMembers: ():void => {},
@@ -155,6 +161,10 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 			delete document.createChild;
 			expect( PersistedDocument.Factory.hasClassProperties( document ) ).toBe( false );
 			document.createChild = ():void => {};
+
+			delete document.createChildAndRetrieve;
+			expect( PersistedDocument.Factory.hasClassProperties( document ) ).toBe( false );
+			document.createChildAndRetrieve = ():void => {};
 
 			delete document.listChildren;
 			expect( PersistedDocument.Factory.hasClassProperties( document ) ).toBe( false );
@@ -253,6 +263,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 				addMembers: ():void => {},
 				createAccessPoint: ():void => {},
 				createChild: ():void => {},
+				createChildAndRetrieve: ():void => {},
 				listChildren: ():void => {},
 				getChildren: ():void => {},
 				listMembers: ():void => {},
@@ -527,6 +538,241 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 
 			} );
 
+			describe( method(
+				INSTANCE,
+				"createFragment"
+			), ():void => {
+
+				it( hasSignature(
+					[ "T extends Object" ],
+					"Creates a PersistedFragment from the object provided and the slug specified.", [
+						{name: "object", type: "T"},
+						{name: "slug", type: "string"},
+					],
+					{type: "T & Carbon.PersistedFragment.Class"}
+				), ():void => {
+					expect( document.createFragment ).toBeDefined();
+					expect( Utils.isFunction( document.createFragment ) ).toBe( true );
+
+					interface MyInterface { myProperty?:string; myPointer?:MyInterface; }
+
+					let object:MyInterface;
+					let fragment:PersistedFragment.Class & MyInterface;
+
+					object = {};
+					fragment = document.createFragment<MyInterface>( object, "my-fragment" );
+					expect( object ).toBe( fragment );
+					expect( Fragment.Factory.hasClassProperties( fragment ) ).toBe( true );
+					expect( fragment.id ).toBe( "http://example.com/document/#my-fragment" );
+					expect( fragment.myProperty ).toBeUndefined();
+
+					object = {myProperty: "The property"};
+					fragment = document.createFragment<MyInterface>( object, "http://example.com/document/#another-fragment" );
+					expect( Fragment.Factory.hasClassProperties( fragment ) ).toBe( true );
+					expect( fragment.id ).toBe( "http://example.com/document/#another-fragment" );
+					expect( fragment.myProperty ).toBe( "The property" );
+
+					object = {myProperty: "The BlankNode property"};
+					fragment = document.createFragment<MyInterface>( object, "_:My-BlankNode" );
+					expect( Fragment.Factory.hasClassProperties( fragment ) ).toBe( true );
+					expect( fragment.id ).toBe( "_:My-BlankNode" );
+					expect( fragment.myProperty ).toBe( "The BlankNode property" );
+
+					object = {myProperty: "Fragment with nested object", myPointer: {myProperty: "The Nested object"}};
+					fragment = document.createFragment<MyInterface>( object, "#another-another-fragment" );
+					expect( Fragment.Factory.hasClassProperties( fragment ) ).toBe( true );
+					expect( fragment.id ).toBe( "http://example.com/document/#another-another-fragment" );
+					expect( fragment.myProperty ).toBe( "Fragment with nested object" );
+					expect( fragment.myPointer ).toBeDefined();
+					expect( Fragment.Factory.hasClassProperties( fragment.myPointer ) ).toBe( true );
+					expect( URI.Util.isBNodeID( (<Fragment.Class> fragment.myPointer).id ) ).toBe( true );
+					expect( fragment.myPointer.myProperty ).toBeDefined();
+					expect( fragment.myPointer.myProperty ).toBe( "The Nested object" );
+
+					object = {myProperty: "Fragment with nested object", myPointer: {myProperty: "The Nested object"}};
+					fragment = document.createFragment<MyInterface>( object, "_:AnotherBlankNode" );
+					expect( Fragment.Factory.hasClassProperties( fragment ) ).toBe( true );
+					expect( fragment.id ).toBe( "_:AnotherBlankNode" );
+					expect( fragment.myProperty ).toBe( "Fragment with nested object" );
+					expect( fragment.myPointer ).toBeDefined();
+					expect( Fragment.Factory.hasClassProperties( fragment.myPointer ) ).toBe( true );
+					expect( URI.Util.isBNodeID( (<Fragment.Class> fragment.myPointer).id ) ).toBe( true );
+					expect( fragment.myPointer.myProperty ).toBeDefined();
+					expect( fragment.myPointer.myProperty ).toBe( "The Nested object" );
+
+					expect( () => document.createFragment( {}, "http://example.com/another-document/#fragment" ) ).toThrowError( Errors.IllegalArgumentError );
+					expect( () => document.createFragment( {}, "fragment" ) ).toThrowError( Errors.IDAlreadyInUseError );
+					expect( () => document.createFragment( {}, "_:BlankNode" ) ).toThrowError( Errors.IDAlreadyInUseError );
+				} );
+
+				it( hasSignature(
+					[ "T extends Object" ],
+					"Creates a PersistedBlankNode from the object provided, sing no slug was specified.", [
+						{name: "object", type: "T"},
+					],
+					{type: "T & Carbon.PersistedFragment.Class"}
+				), ():void => {
+					expect( document.createFragment ).toBeDefined();
+					expect( Utils.isFunction( document.createFragment ) ).toBe( true );
+
+					interface MyInterface { myProperty?:string; myPointer?:MyInterface; }
+
+					let object:MyInterface;
+					let fragment:PersistedFragment.Class & MyInterface;
+
+					object = {};
+					fragment = document.createFragment<MyInterface>( object );
+					expect( object ).toBe( fragment );
+					expect( Fragment.Factory.hasClassProperties( fragment ) ).toBe( true );
+					expect( URI.Util.isBNodeID( fragment.id ) ).toBe( true );
+					expect( fragment.myProperty ).toBeUndefined();
+
+					object = {myProperty: "The property"};
+					fragment = document.createFragment<MyInterface>( object );
+					expect( Fragment.Factory.hasClassProperties( fragment ) ).toBe( true );
+					expect( URI.Util.isBNodeID( fragment.id ) ).toBe( true );
+					expect( fragment.myProperty ).toBe( "The property" );
+
+					object = {myProperty: "Fragment with nested object", myPointer: {myProperty: "The Nested object"}};
+					fragment = document.createFragment<MyInterface>( object );
+					expect( Fragment.Factory.hasClassProperties( fragment ) ).toBe( true );
+					expect( URI.Util.isBNodeID( fragment.id ) ).toBe( true );
+					expect( fragment.myProperty ).toBe( "Fragment with nested object" );
+					expect( fragment.myPointer ).toBeDefined();
+					expect( Fragment.Factory.hasClassProperties( fragment.myPointer ) ).toBe( true );
+					expect( URI.Util.isBNodeID( (<Fragment.Class> fragment.myPointer).id ) ).toBe( true );
+					expect( fragment.myPointer.myProperty ).toBeDefined();
+					expect( fragment.myPointer.myProperty ).toBe( "The Nested object" );
+				} );
+
+				it( hasSignature(
+					"Creates a PersistedFragment with the slug provided.", [
+						{name: "slug", type: "string"},
+					],
+					{type: "Carbon.PersistedFragment.Class"}
+				), ():void => {
+					expect( document.createFragment ).toBeDefined();
+					expect( Utils.isFunction( document.createFragment ) ).toBe( true );
+
+					let fragment:PersistedFragment.Class;
+
+					fragment = document.createFragment( "my-fragment" );
+					expect( Fragment.Factory.hasClassProperties( fragment ) ).toBe( true );
+					expect( fragment.id ).toBe( "http://example.com/document/#my-fragment" );
+
+					fragment = document.createFragment( "http://example.com/document/#another-fragment" );
+					expect( Fragment.Factory.hasClassProperties( fragment ) ).toBe( true );
+					expect( fragment.id ).toBe( "http://example.com/document/#another-fragment" );
+
+					fragment = document.createFragment( "_:My-BlankNode" );
+					expect( Fragment.Factory.hasClassProperties( fragment ) ).toBe( true );
+					expect( fragment.id ).toBe( "_:My-BlankNode" );
+
+					expect( () => document.createFragment( "http://example.com/another-document/#fragment" ) ).toThrowError( Errors.IllegalArgumentError );
+					expect( () => document.createFragment( "fragment" ) ).toThrowError( Errors.IDAlreadyInUseError );
+					expect( () => document.createFragment( "_:BlankNode" ) ).toThrowError( Errors.IDAlreadyInUseError );
+				} );
+
+				it( hasSignature(
+					"Creates a PersistedBlankNode, since no slug is provided",
+					{type: "Carbon.PersistedFragment.Class"}
+				), ():void => {
+					expect( document.createFragment ).toBeDefined();
+					expect( Utils.isFunction( document.createFragment ) ).toBe( true );
+
+					let fragment1:PersistedFragment.Class;
+					let fragment2:PersistedFragment.Class;
+
+					fragment1 = document.createFragment();
+					expect( Fragment.Factory.hasClassProperties( fragment1 ) ).toBe( true );
+					expect( Utils.isString( fragment1.id ) ).toBe( true );
+					expect( URI.Util.isBNodeID( fragment1.id ) ).toBe( true );
+
+					fragment2 = document.createFragment();
+					expect( Fragment.Factory.hasClassProperties( fragment2 ) ).toBe( true );
+					expect( Utils.isString( fragment2.id ) ).toBe( true );
+					expect( URI.Util.isBNodeID( fragment2.id ) ).toBe( true );
+
+					expect( fragment1.id ).not.toBe( fragment2.id );
+				} );
+
+			} );
+
+			describe( method(
+				INSTANCE,
+				"createNamedFragment"
+			), ():void => {
+
+				it( hasSignature(
+					"Creates a PersistedNamedFragment with the slug provided", [
+						{name: "slug", type: "string"},
+					],
+					{type: "Carbon.PersistedNamedFragment.Class"}
+				), ():void => {
+					expect( document.createNamedFragment ).toBeDefined();
+					expect( Utils.isFunction( document.createNamedFragment ) ).toBe( true );
+
+					let fragment:PersistedNamedFragment.Class;
+
+					fragment = document.createNamedFragment( "my-fragment" );
+					expect( NamedFragment.Factory.hasClassProperties( fragment ) ).toBe( true );
+					expect( fragment.slug ).toBe( "my-fragment" );
+					expect( fragment.id ).toBe( "http://example.com/document/#my-fragment" );
+
+					fragment = document.createNamedFragment( "http://example.com/document/#another-fragment" );
+					expect( Fragment.Factory.hasClassProperties( fragment ) ).toBe( true );
+					expect( fragment.slug ).toBe( "another-fragment" );
+					expect( fragment.id ).toBe( "http://example.com/document/#another-fragment" );
+
+					expect( () => document.createNamedFragment( "_:BlankNode" ) ).toThrowError( Errors.IllegalArgumentError );
+					expect( () => document.createNamedFragment( "http://example.com/another-document/#fragment" ) ).toThrowError( Errors.IllegalArgumentError );
+					expect( () => document.createNamedFragment( "fragment" ) ).toThrowError( Errors.IDAlreadyInUseError );
+				} );
+
+				it( hasSignature(
+					[ "T extends Object" ],
+					"Creates a PersistedNamedFragment from the object provided and the slug specified.", [
+						{name: "object", type: "T"},
+						{name: "slug", type: "string"},
+					],
+					{type: "T & Carbon.PersistedNamedFragment.Class"}
+				), ():void => {
+
+					expect( document.createNamedFragment ).toBeDefined();
+					expect( Utils.isFunction( document.createNamedFragment ) ).toBe( true );
+
+					interface MyInterface { myProperty?:string; myPointer?:MyInterface; }
+
+					let object:MyInterface;
+					let fragment:PersistedFragment.Class & MyInterface;
+
+					object = {};
+					fragment = document.createNamedFragment<MyInterface>( object, "my-fragment" );
+					expect( object ).toBe( fragment );
+					expect( Fragment.Factory.hasClassProperties( fragment ) ).toBe( true );
+					expect( fragment.id ).toBe( "http://example.com/document/#my-fragment" );
+					expect( fragment.myProperty ).toBeUndefined();
+
+					object = {myProperty: "The property"};
+					fragment = document.createNamedFragment<MyInterface>( object, "http://example.com/document/#another-fragment" );
+					expect( Fragment.Factory.hasClassProperties( fragment ) ).toBe( true );
+					expect( fragment.id ).toBe( "http://example.com/document/#another-fragment" );
+					expect( fragment.myProperty ).toBe( "The property" );
+
+					object = {myProperty: "Fragment with nested object", myPointer: {myProperty: "The Nested object"}};
+					fragment = document.createNamedFragment<MyInterface>( object, "#another-another-fragment" );
+					expect( Fragment.Factory.hasClassProperties( fragment ) ).toBe( true );
+					expect( fragment.id ).toBe( "http://example.com/document/#another-another-fragment" );
+					expect( fragment.myProperty ).toBe( "Fragment with nested object" );
+					expect( fragment.myPointer ).toBeDefined();
+					expect( Fragment.Factory.hasClassProperties( fragment.myPointer ) ).toBe( true );
+					expect( URI.Util.isBNodeID( (<Fragment.Class> fragment.myPointer).id ) ).toBe( true );
+					expect( fragment.myPointer.myProperty ).toBeDefined();
+					expect( fragment.myPointer.myProperty ).toBe( "The Nested object" );
+				} );
+
+			} );
+
 			it( hasMethod(
 				INSTANCE,
 				"refresh",
@@ -652,8 +898,8 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 
 				it( hasSignature(
 					[ "T extends Object" ], [
-						{name: "slug", type: "string", description: "The slug name for the children URI."},
 						{name: "object", type: "T", description: "The object from where create the child. If it's a non `Carbon.Document.Class` object, it is transformed into one."},
+						{name: "slug", type: "string", description: "The slug name for the children URI."},
 					],
 					{type: "Promise<[ T & Carbon.PersistedDocument.Class, Carbon.HTTP.Response.Class ]>"}
 				), ():void => {
@@ -663,14 +909,14 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 					let spy:jasmine.Spy = spyOn( document._documents, "createChild" );
 
 					let childDocument:Document.Class = Document.Factory.create();
-					document.createChild( "child", childDocument );
+					document.createChild( childDocument, "child" );
 
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", "child", childDocument );
+					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", childDocument, "child" );
 					spy.calls.reset();
 
 					let object:Object = {my: "object"};
-					document.createChild( "child", object );
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", "child", object );
+					document.createChild( object, "child" );
+					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", object, "child" );
 				} );
 
 				it( hasSignature(
@@ -687,12 +933,12 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 					let childDocument:Document.Class = Document.Factory.create();
 					document.createChild( childDocument );
 
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", childDocument );
+					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", childDocument, undefined );
 					spy.calls.reset();
 
 					let object:Object = {my: "object"};
 					document.createChild( object );
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", object );
+					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", object, undefined );
 				} );
 
 				it( hasSignature( [
@@ -706,7 +952,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 					let spy:jasmine.Spy = spyOn( document._documents, "createChild" );
 
 					document.createChild( "child" );
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", "child", {} );
+					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", {}, "child" );
 				} );
 
 				it( hasSignature(
@@ -718,7 +964,79 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 					let spy:jasmine.Spy = spyOn( document._documents, "createChild" );
 
 					document.createChild();
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", {} );
+					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", {}, undefined );
+				} );
+
+			} );
+
+			describe( method(
+				INSTANCE,
+				"createChildAndRetrieve",
+				"Create a child for the document and retrieves the updated data from the server."
+			), ():void => {
+
+				it( isDefined(), ():void => {
+					expect( document.createChildAndRetrieve ).toBeDefined();
+					expect( Utils.isFunction( document.createChildAndRetrieve ) ).toBeDefined();
+				} );
+
+				it( hasSignature(
+					[ "T extends Object" ], [
+						{name: "object", type: "T", description: "The object from where create the child. If it's a non `Carbon.Document.Class` object, it is transformed into one."},
+						{name: "slug", type: "string", description: "The slug name for the children URI."},
+					],
+					{type: "Promise<[ T & Carbon.PersistedDocument.Class, [ Carbon.HTTP.Response.Class, Carbon.HTTP.Response.Class ] ]>"}
+				), ():void => {
+					let spy:jasmine.Spy = spyOn( document._documents, "createChildAndRetrieve" );
+
+					let childDocument:Document.Class = Document.Factory.create();
+					document.createChildAndRetrieve( childDocument, "child" );
+
+					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", childDocument, "child" );
+					spy.calls.reset();
+
+					let object:Object = {my: "object"};
+					document.createChildAndRetrieve( object, "child" );
+					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", object, "child" );
+				} );
+
+				it( hasSignature(
+					[ "T extends Object" ], [
+						{name: "object", type: "T", description: "The object from where create the child. If it's a non `Carbon.PersistedDocument.Class` object, it is transformed into one."},
+					],
+					{type: "Promise<[ T & Carbon.PersistedDocument.Class, [ Carbon.HTTP.Response.Class, Carbon.HTTP.Response.Class ] ]>"}
+				), ():void => {
+					let spy:jasmine.Spy = spyOn( document._documents, "createChildAndRetrieve" );
+
+					let childDocument:Document.Class = Document.Factory.create();
+					document.createChildAndRetrieve( childDocument );
+
+					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", childDocument, undefined );
+					spy.calls.reset();
+
+					let object:Object = {my: "object"};
+					document.createChildAndRetrieve( object );
+					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", object, undefined );
+				} );
+
+				it( hasSignature( [
+						{name: "slug", type: "string", description: "The slug name for the children URI."},
+					],
+					{type: "Promise<[ Carbon.PersistedDocument.Class, [ Carbon.HTTP.Response.Class, Carbon.HTTP.Response.Class ] ]>"}
+				), ():void => {
+					let spy:jasmine.Spy = spyOn( document._documents, "createChildAndRetrieve" );
+
+					document.createChildAndRetrieve( "child" );
+					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", {}, "child" );
+				} );
+
+				it( hasSignature(
+					{type: "Promise<[ Carbon.PersistedDocument.Class, [ Carbon.HTTP.Response.Class, Carbon.HTTP.Response.Class ] ]>"}
+				), ():void => {
+					let spy:jasmine.Spy = spyOn( document._documents, "createChildAndRetrieve" );
+
+					document.createChildAndRetrieve();
+					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", {}, undefined );
 				} );
 
 			} );
@@ -732,7 +1050,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 					"Create an AccessPoint for the document with the slug specified.", [
 						{name: "accessPoint", type: "Carbon.AccessPoint.Class"},
 						{name: "slug", type: "string", optional: true, description: "Slug that will be used for the URI of the new access point."},
-						{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: " Customizable options for the request."}
+						{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: " Customizable options for the request."},
 					],
 					{type: "Promise<[ Carbon.PersistedAccessPoint.Class[], Carbon.HTTP.Response ]>"}
 				), ():void => {
@@ -748,7 +1066,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 				it( hasSignature(
 					"Create an AccessPoint for the document.", [
 						{name: "accessPoint", type: "Carbon.AccessPoint.Class"},
-						{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: " Customizable options for the request."}
+						{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: " Customizable options for the request."},
 					],
 					{type: "Promise<[ Carbon.PersistedAccessPoint.Class[], Carbon.HTTP.Response ]>"}
 				), ():void => {
@@ -957,8 +1275,8 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 			), ():void => {
 
 				it( hasSignature( [
-						{name: "slug", type: "string", description: "The slug that will be used in the URI of the data."},
 						{name: "data", type: "Blob", description: "Binary data to store in the server. The Blob works in a Browser."},
+						{name: "slug", type: "string", description: "The slug that will be used in the URI of the data."},
 					],
 					{type: "Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>"}
 				), ():void => {
@@ -969,9 +1287,9 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 						let spy:jasmine.Spy = spyOn( document._documents, "upload" );
 
 						let blob:Blob = new Blob( [ JSON.stringify( {"some content": "for the blob."} ) ], {type: "application/json"} );
-						document.upload( "child", blob );
+						document.upload( blob, "child" );
 
-						expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", "child", blob );
+						expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", blob, "child" );
 					}
 				} );
 
@@ -989,13 +1307,13 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 						let blob:Blob = new Blob( [ JSON.stringify( {"some content": "for the blob."} ) ], {type: "application/json"} );
 						document.upload( blob );
 
-						expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", blob );
+						expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", blob, undefined );
 					}
 				} );
 
 				it( hasSignature( [
-						{name: "slug", type: "string", description: "The slug that will be used in the URI of the data."},
 						{name: "data", type: "Buffer", description: "Binary data to store in the server. The Buffer only works in Node.js."},
+						{name: "slug", type: "string", description: "The slug that will be used in the URI of the data."},
 					],
 					{type: "Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>"}
 				), ():void => {
@@ -1006,9 +1324,9 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 						let spy:jasmine.Spy = spyOn( document._documents, "upload" );
 
 						let buffer:Buffer = new Buffer( JSON.stringify( {"some content": "for the buffer."} ) );
-						document.upload( "child", buffer );
+						document.upload( buffer, "child" );
 
-						expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", "child", buffer );
+						expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", buffer, "child" );
 					}
 				} );
 
@@ -1026,7 +1344,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 						let buffer:Buffer = new Buffer( JSON.stringify( {"some content": "for the buffer."} ) );
 						document.upload( buffer );
 
-						expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", buffer );
+						expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", buffer, undefined );
 					}
 				} );
 

@@ -143,19 +143,16 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 		} );
 	}
 
-	createChild<T extends Document.Class>( parentURI:string, slug:string, childDocument:T, requestOptions?:HTTP.Request.Options ):Promise<[ T & PersistedDocument.Class, HTTP.Response.Class ]>;
+	createChild<T extends Document.Class>( parentURI:string, childDocument:T, slug?:string, requestOptions?:HTTP.Request.Options ):Promise<[ T & PersistedDocument.Class, HTTP.Response.Class ]>;
 	createChild<T extends Document.Class>( parentURI:string, childDocument:T, requestOptions?:HTTP.Request.Options ):Promise<[ T & PersistedDocument.Class, HTTP.Response.Class ]>;
-
-	createChild<T extends Object>( parentURI:string, slug:string, childObject:T, requestOptions?:HTTP.Request.Options ):Promise<[ T & PersistedDocument.Class, HTTP.Response.Class ]>;
+	createChild<T extends Object>( parentURI:string, childObject:T, slug?:string, requestOptions?:HTTP.Request.Options ):Promise<[ T & PersistedDocument.Class, HTTP.Response.Class ]>;
 	createChild<T extends Object>( parentURI:string, childObject:T, requestOptions?:HTTP.Request.Options ):Promise<[ T & PersistedDocument.Class, HTTP.Response.Class ]>;
+	createChild<T extends Object>( parentURI:string, childObject:T, slugOrRequestOptions?:any, requestOptions:HTTP.Request.Options = {} ):Promise<[ T & PersistedDocument.Class, HTTP.Response.Class ]> {
+		let slug:string = Utils.isString( slugOrRequestOptions ) ? slugOrRequestOptions : null;
+		requestOptions = ! Utils.isString( slugOrRequestOptions ) && ! ! slugOrRequestOptions ? slugOrRequestOptions : requestOptions;
 
-	createChild<T extends Object>( parentURI:string, slugOrChildDocument:any, childDocumentOrRequestOptions:any = {}, requestOptions:HTTP.Request.Options = {} ):Promise<[ T & PersistedDocument.Class, HTTP.Response.Class ]> {
-		let slug:string = Utils.isString( slugOrChildDocument ) ? slugOrChildDocument : null;
-		let childDocument:Document.Class = ! Utils.isString( slugOrChildDocument ) ? slugOrChildDocument : childDocumentOrRequestOptions;
-		requestOptions = ! Utils.isString( slugOrChildDocument ) ? childDocumentOrRequestOptions : requestOptions;
-
-		if( PersistedDocument.Factory.is( childDocument ) ) return Promise.reject<any>( new Errors.IllegalArgumentError( "The childDocument provided has been already persisted." ) );
-		if( ! Document.Factory.is( childDocument ) ) childDocument = Document.Factory.createFrom( childDocument );
+		if( PersistedDocument.Factory.is( childObject ) ) return Promise.reject<any>( new Errors.IllegalArgumentError( "The child provided has been already persisted." ) );
+		let childDocument:Document.Class = Document.Factory.is( childObject ) ? <any> childObject : Document.Factory.createFrom( childObject );
 
 		parentURI = this.getRequestURI( parentURI );
 		this.setDefaultRequestOptions( requestOptions, NS.LDP.Class.Container );
@@ -174,7 +171,7 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 
 		let body:string = childDocument.toJSON( this, this.jsonldConverter );
 
-		if( slug !== null ) HTTP.Request.Util.setSlug( slug, requestOptions );
+		if( ! slug ) HTTP.Request.Util.setSlug( slug, requestOptions );
 
 		return HTTP.Request.Service.post( parentURI, body, requestOptions ).then( ( response:HTTP.Response.Class ) => {
 			delete childDocument[ "__CarbonSDK_InProgressOfPersisting" ];
@@ -191,6 +188,18 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 				persistedDocument,
 				response,
 			];
+		} );
+	}
+
+	createChildAndRetrieve<T extends Object>( parentURI:string, childObject:T, slug?:string, requestOptions?:HTTP.Request.Options ):Promise<[ T & PersistedDocument.Class, [ HTTP.Response.Class, HTTP.Response.Class ] ]>;
+	createChildAndRetrieve<T extends Object>( parentURI:string, childObject:T, requestOptions?:HTTP.Request.Options ):Promise<[ T & PersistedDocument.Class, [ HTTP.Response.Class, HTTP.Response.Class ] ]>;
+	createChildAndRetrieve<T extends Object>( parentURI:string, childObject:T, slugOrRequestOptions?:any, requestOptions?:HTTP.Request.Options ):Promise<[ T & PersistedDocument.Class, [ HTTP.Response.Class, HTTP.Response.Class ] ]> {
+		let createResponse:HTTP.Response.Class;
+		return this.createChild( parentURI, childObject, slugOrRequestOptions, requestOptions ).then( ( [ document, response ]:[ T & PersistedDocument.Class, HTTP.Response.Class ] ) => {
+			createResponse = response;
+			return this.get<T>( document.id );
+		} ).then( ( [ persistedDocument, response ]:[ T & PersistedDocument.Class, HTTP.Response.Class ] ) => {
+			return [ persistedDocument, [ createResponse, response ] ];
 		} );
 	}
 
@@ -288,7 +297,7 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 
 		let body:string = accessPointDocument.toJSON( this, this.jsonldConverter );
 
-		if( slug !== null ) HTTP.Request.Util.setSlug( slug, requestOptions );
+		if( ! slug ) HTTP.Request.Util.setSlug( slug, requestOptions );
 
 		return HTTP.Request.Service.post( documentURI, body, requestOptions ).then( ( response:HTTP.Response.Class ) => {
 			delete accessPoint[ "__CarbonSDK_InProgressOfPersisting" ];
@@ -308,14 +317,13 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 		} );
 	}
 
-	upload( parentURI:string, slug:string, data:Buffer, requestOptions?:HTTP.Request.Options ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
+	upload( parentURI:string, data:Buffer, slug?:string, requestOptions?:HTTP.Request.Options ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
 	upload( parentURI:string, data:Buffer, requestOptions?:HTTP.Request.Options ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
-	upload( parentURI:string, slug:string, data:Blob, requestOptions?:HTTP.Request.Options ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
+	upload( parentURI:string, data:Blob, slug?:string, requestOptions?:HTTP.Request.Options ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
 	upload( parentURI:string, data:Blob, requestOptions?:HTTP.Request.Options ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
-	upload( parentURI:string, slugOrData:any, dataOrRequestOptions:any = {}, requestOptions:HTTP.Request.Options = {} ):Promise<[ Pointer.Class, HTTP.Response.Class ]> {
-		let slug:string = Utils.isString( slugOrData ) ? slugOrData : null;
-		let data:Blob | Buffer = ! Utils.isString( slugOrData ) ? slugOrData : dataOrRequestOptions;
-		requestOptions = ! Utils.isString( slugOrData ) ? dataOrRequestOptions : requestOptions;
+	upload( parentURI:string, data:Blob | Buffer, slugOrRequestOptions?:any, requestOptions:HTTP.Request.Options = {} ):Promise<[ Pointer.Class, HTTP.Response.Class ]> {
+		let slug:string = Utils.isString( slugOrRequestOptions ) ? slugOrRequestOptions : null;
+		requestOptions = ! Utils.isString( slugOrRequestOptions ) && ! ! slugOrRequestOptions ? slugOrRequestOptions : requestOptions;
 
 		if( typeof Blob !== "undefined" ) {
 			if( ! ( data instanceof Blob ) ) return Promise.reject<any>( new Errors.IllegalArgumentError( "The data is not a valid Blob object." ) );
@@ -332,7 +340,7 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 		parentURI = this.getRequestURI( parentURI );
 		this.setDefaultRequestOptions( requestOptions, NS.LDP.Class.Container );
 
-		if( slug !== null ) HTTP.Request.Util.setSlug( slug, requestOptions );
+		if( ! slug ) HTTP.Request.Util.setSlug( slug, requestOptions );
 
 		return HTTP.Request.Service.post( parentURI, <any> data, requestOptions ).then( ( response:HTTP.Response.Class ) => {
 			let locationHeader:HTTP.Header.Class = response.getHeader( "Location" );
@@ -912,7 +920,7 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 		for( let fragmentResource of fragmentResources ) {
 			let fragment:PersistedFragment.Class = this.getAssociatedFragment( blankNodesArray, namedFragmentsMap, fragmentResource );
 
-			fragment = persistedDocument.createFragment( fragmentResource[ "@id" ], fragment || {} );
+			fragment = persistedDocument.createFragment( fragment || {}, fragmentResource[ "@id" ] );
 			newFragments.push( [ fragment, fragmentResource ] );
 		}
 
