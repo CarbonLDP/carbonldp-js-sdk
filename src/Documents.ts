@@ -584,7 +584,12 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 		documentURI = this.getRequestURI( documentURI );
 		this.setDefaultRequestOptions( requestOptions, NS.LDP.Class.RDFSource );
 
-		return HTTP.Request.Service.delete( documentURI, requestOptions );
+		return HTTP.Request.Service.delete( documentURI, requestOptions ).then( ( response:HTTP.Response.Class ) => {
+			let pointerID:string = this.getPointerID( documentURI );
+			this.pointers.delete( pointerID );
+
+			return response;
+		} );
 	}
 
 	getDownloadURL( documentURI:string, requestOptions?:HTTP.Request.Options ):Promise<string> {
@@ -766,34 +771,22 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 	}
 
 	private getDigestedObjectSchemaForDocument( document:Document.Class ):ObjectSchema.DigestedObjectSchema {
-		let types:string[] = this.getDocumentTypes( document );
+		let types:string[] = Resource.Util.getTypes( document );
 
 		return this.getDigestedObjectSchema( types );
 	}
 
 	private getDigestedObjectSchema( objectTypes:string[] ):ObjectSchema.DigestedObjectSchema {
-		let digestedSchema:ObjectSchema.DigestedObjectSchema;
-		if( ! ! this.context ) {
-			let typesDigestedObjectSchemas:ObjectSchema.DigestedObjectSchema[] = [ this.context.getObjectSchema() ];
-			for( let type of objectTypes ) {
-				if( this.context.getObjectSchema( type ) ) typesDigestedObjectSchemas.push( this.context.getObjectSchema( type ) );
-			}
-			digestedSchema = ObjectSchema.Digester.combineDigestedObjectSchemas( typesDigestedObjectSchemas );
+		if( ! this.context ) return new ObjectSchema.DigestedObjectSchema();
 
-			let vocab:string = this.context.getSetting( "vocabulary" );
-			if( vocab ) {
-				digestedSchema.vocab = this.context.resolve( vocab );
-			}
-		} else {
-			digestedSchema = new ObjectSchema.DigestedObjectSchema();
+		let typesDigestedObjectSchemas:ObjectSchema.DigestedObjectSchema[] = [ this.context.getObjectSchema() ];
+		for( let type of objectTypes ) {
+			if( this.context.hasObjectSchema( type ) ) typesDigestedObjectSchemas.push( this.context.getObjectSchema( type ) );
 		}
+		let digestedSchema:ObjectSchema.DigestedObjectSchema = ObjectSchema.Digester.combineDigestedObjectSchemas( typesDigestedObjectSchemas );
+		if( this.context.hasSetting( "vocabulary" ) ) digestedSchema.vocab = this.context.resolve( this.context.getSetting( "vocabulary" ) );
 
 		return digestedSchema;
-	}
-
-	private getDocumentTypes( document:Document.Class ):string[] {
-		if( ! document.types ) return [];
-		return document.types;
 	}
 
 	private updateObject( target:Object, source:Object ):any {

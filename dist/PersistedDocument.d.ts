@@ -32,7 +32,7 @@ export interface Class extends PersistedResource.Class, Document.Class {
     createNamedFragment<T extends Object>(object: T, slug: string): PersistedNamedFragment.Class & T;
     refresh<T extends Class>(): Promise<[T, HTTP.Response.Class]>;
     save<T extends Class>(): Promise<[T, HTTP.Response.Class]>;
-    destroy(): Promise<HTTP.Response.Class>;
+    delete(): Promise<HTTP.Response.Class>;
     getDownloadURL(): Promise<string>;
     addMember(member: Pointer.Class): Promise<HTTP.Response.Class>;
     addMember(memberURI: string): Promise<HTTP.Response.Class>;

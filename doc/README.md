@@ -6864,9 +6864,9 @@ save<T extends Carbon.PersistedDocument.Class>():Promise<[ T, Carbon.HTTP.Respon
 
 Save the PersistedDocument to the server.
 
-##### destroy
+##### delete
 ```typescript 
-destroy():Promise<Carbon.HTTP.Response.Class>
+delete():Promise<Carbon.HTTP.Response.Class>
 ```
 
 Remove the data in the server referred by the id of the PersistedDocument.

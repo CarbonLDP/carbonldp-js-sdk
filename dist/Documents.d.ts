@@ -73,7 +73,6 @@ declare class Documents implements Pointer.Library, Pointer.Validator, ObjectSch
     private getDigestedObjectSchemaForExpandedObject(expandedObject);
     private getDigestedObjectSchemaForDocument(document);
     private getDigestedObjectSchema(objectTypes);
-    private getDocumentTypes(document);
     private updateObject(target, source);
     private getAssociatedFragment(blankNodes, namedFragments, searchedFragment);
     private getRequestURI(uri);

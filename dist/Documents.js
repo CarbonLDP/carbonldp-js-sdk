@@ -493,10 +493,15 @@ var Documents = (function () {
         });
     };
     Documents.prototype.delete = function (documentURI, requestOptions) {
+        var _this = this;
         if (requestOptions === void 0) { requestOptions = {}; }
         documentURI = this.getRequestURI(documentURI);
         this.setDefaultRequestOptions(requestOptions, NS.LDP.Class.RDFSource);
-        return HTTP.Request.Service.delete(documentURI, requestOptions);
+        return HTTP.Request.Service.delete(documentURI, requestOptions).then(function (response) {
+            var pointerID = _this.getPointerID(documentURI);
+            _this.pointers.delete(pointerID);
+            return response;
+        });
     };
     Documents.prototype.getDownloadURL = function (documentURI, requestOptions) {
         return this.context.auth.getAuthenticatedURL(documentURI, requestOptions);
@@ -662,33 +667,22 @@ var Documents = (function () {
         return this.getDigestedObjectSchema(types);
     };
     Documents.prototype.getDigestedObjectSchemaForDocument = function (document) {
-        var types = this.getDocumentTypes(document);
+        var types = Resource.Util.getTypes(document);
         return this.getDigestedObjectSchema(types);
     };
     Documents.prototype.getDigestedObjectSchema = function (objectTypes) {
-        var digestedSchema;
-        if (!!this.context) {
-            var typesDigestedObjectSchemas = [this.context.getObjectSchema()];
-            for (var _i = 0, objectTypes_1 = objectTypes; _i < objectTypes_1.length; _i++) {
-                var type = objectTypes_1[_i];
-                if (this.context.getObjectSchema(type))
-                    typesDigestedObjectSchemas.push(this.context.getObjectSchema(type));
-            }
-            digestedSchema = ObjectSchema.Digester.combineDigestedObjectSchemas(typesDigestedObjectSchemas);
-            var vocab = this.context.getSetting("vocabulary");
-            if (vocab) {
-                digestedSchema.vocab = this.context.resolve(vocab);
-            }
+        if (!this.context)
+            return new ObjectSchema.DigestedObjectSchema();
+        var typesDigestedObjectSchemas = [this.context.getObjectSchema()];
+        for (var _i = 0, objectTypes_1 = objectTypes; _i < objectTypes_1.length; _i++) {
+            var type = objectTypes_1[_i];
+            if (this.context.hasObjectSchema(type))
+                typesDigestedObjectSchemas.push(this.context.getObjectSchema(type));
         }
-        else {
-            digestedSchema = new ObjectSchema.DigestedObjectSchema();
-        }
+        var digestedSchema = ObjectSchema.Digester.combineDigestedObjectSchemas(typesDigestedObjectSchemas);
+        if (this.context.hasSetting("vocabulary"))
+            digestedSchema.vocab = this.context.resolve(this.context.getSetting("vocabulary"));
         return digestedSchema;
-    };
-    Documents.prototype.getDocumentTypes = function (document) {
-        if (!document.types)
-            return [];
-        return document.types;
     };
     Documents.prototype.updateObject = function (target, source) {
         var keys = Utils.A.joinWithoutDuplicates(Object.keys(source), Object.keys(target));

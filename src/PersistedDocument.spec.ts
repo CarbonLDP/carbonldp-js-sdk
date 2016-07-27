@@ -78,7 +78,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 
 				refresh: ():void => {},
 				save: ():void => {},
-				destroy: ():void => {},
+				delete: ():void => {},
 
 				getDownloadURL: ():void => {},
 
@@ -138,9 +138,9 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 			expect( PersistedDocument.Factory.hasClassProperties( document ) ).toBe( false );
 			document.save = ():void => {};
 
-			delete document.destroy;
+			delete document.delete;
 			expect( PersistedDocument.Factory.hasClassProperties( document ) ).toBe( false );
-			document.destroy = ():void => {};
+			document.delete = ():void => {};
 
 			delete document.getDownloadURL;
 			expect( PersistedDocument.Factory.hasClassProperties( document ) ).toBe( false );
@@ -255,7 +255,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 
 				refresh: ():void => {},
 				save: ():void => {},
-				destroy: ():void => {},
+				delete: ():void => {},
 
 				getDownloadURL: ():void => {},
 
@@ -805,15 +805,15 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 
 			it( hasMethod(
 				INSTANCE,
-				"destroy",
+				"delete",
 				"Remove the data in the server referred by the id of the PersistedDocument.",
 				{type: "Promise<Carbon.HTTP.Response.Class>"}
 			), ():void => {
-				expect( document.destroy ).toBeDefined();
-				expect( Utils.isFunction( document.destroy ) ).toBe( true );
+				expect( document.delete ).toBeDefined();
+				expect( Utils.isFunction( document.delete ) ).toBe( true );
 
 				let spy:jasmine.Spy = spyOn( context.documents, "delete" );
-				document.destroy();
+				document.delete();
 				expect( spy ).toHaveBeenCalledWith( document.id );
 			} );
 

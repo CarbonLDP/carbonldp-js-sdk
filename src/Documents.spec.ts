@@ -3200,7 +3200,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 		), ( done:{ ():void, fail:() => void } ):void => {
 			class MockedContext extends AbstractContext {
 				resolve( uri:string ):string {
-					return uri;
+					return "http://example.com/" + uri;
 				}
 			}
 
@@ -3213,6 +3213,9 @@ describe( module( "Carbon/Documents" ), ():void => {
 			jasmine.Ajax.stubRequest( "http://example.com/resource/", null, "DELETE" ).andReturn( {
 				status: 200
 			} );
+			jasmine.Ajax.stubRequest( "http://example.com/a-document/", null, "DELETE" ).andReturn( {
+				status: 200
+			} );
 
 			let spies = {
 				success: ( response:any ):void => {
@@ -3222,10 +3225,21 @@ describe( module( "Carbon/Documents" ), ():void => {
 			};
 			let spySuccess = spyOn( spies, "success" ).and.callThrough();
 
-			let promise:Promise<any> = documents.delete( "http://example.com/resource/" ).then( spies.success );
+			let promise:Promise<any>;
+			let promises:Promise<any>[] = [];
 
-			Promise.all( [ promise ] ).then( ():void => {
-				expect( spySuccess ).toHaveBeenCalled();
+			promise = documents.delete( "http://example.com/resource/" );
+			expect( promise ).toEqual( jasmine.any( Promise ) );
+			promises.push( promise.then( spies.success ) );
+
+			documents.getPointer( "http://example.com/a-document/" );
+			promise = documents.delete( "http://example.com/a-document/" );
+			expect( promise ).toEqual( jasmine.any( Promise ) );
+			promises.push( promise.then( spies.success ) );
+
+			Promise.all( promises ).then( ():void => {
+				expect( spySuccess ).toHaveBeenCalledTimes( 2 );
+				expect( documents.hasPointer( "http://example.com/a-document/" ) ).toBe( false );
 				done();
 			}, done.fail );
 		} );

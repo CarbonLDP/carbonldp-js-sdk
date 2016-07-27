@@ -44,7 +44,7 @@ export interface Class extends PersistedResource.Class, Document.Class {
 
 	refresh<T extends Class>():Promise<[T, HTTP.Response.Class]>;
 	save<T extends Class>():Promise<[T, HTTP.Response.Class]>;
-	destroy():Promise<HTTP.Response.Class>;
+	delete():Promise<HTTP.Response.Class>;
 
 	getDownloadURL():Promise<string>;
 
@@ -152,7 +152,7 @@ function refresh<T extends Class>():Promise<[T, HTTP.Response.Class]> {
 function save<T extends Class>():Promise<[T, HTTP.Response.Class]> {
 	return this._documents.save( this );
 }
-function destroy():Promise<HTTP.Response.Class> {
+function _delete():Promise<HTTP.Response.Class> {
 	return this._documents.delete( this.id );
 }
 
@@ -273,7 +273,7 @@ export class Factory {
 
 			&& Utils.hasFunction( object, "refresh" )
 			&& Utils.hasFunction( object, "save" )
-			&& Utils.hasFunction( object, "destroy" )
+			&& Utils.hasFunction( object, "delete" )
 
 			&& Utils.hasFunction( object, "getDownloadURL" )
 
@@ -419,11 +419,11 @@ export class Factory {
 				configurable: true,
 				value: save,
 			},
-			"destroy": {
+			"delete": {
 				writable: false,
 				enumerable: false,
 				configurable: true,
-				value: destroy,
+				value: _delete,
 			},
 
 			"getDownloadURL": {
