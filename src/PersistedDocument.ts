@@ -4,6 +4,7 @@ import Documents from "./Documents";
 import * as Fragment from "./Fragment";
 import * as HTTP from "./HTTP";
 import * as NamedFragment from "./NamedFragment";
+import * as PersistedAccessPoint from "./PersistedAccessPoint";
 import * as PersistedResource from "./PersistedResource";
 import * as PersistedFragment from "./PersistedFragment";
 import * as PersistedNamedFragment from "./PersistedNamedFragment";
@@ -52,18 +53,19 @@ export interface Class extends PersistedResource.Class, Document.Class {
 
 	addMembers( members:(Pointer.Class | string)[] ):Promise<HTTP.Response.Class>;
 
-	createChild( slug:string, object:Object ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
-	createChild( slug:string ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
-	createChild( object:Object ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
-	createChild():Promise<[ Pointer.Class, HTTP.Response.Class ]>;
+	createChild<T extends Object>( slug:string, object:Object ):Promise<[ T & Class, HTTP.Response.Class ]>;
+	createChild( slug:string ):Promise<[ Class, HTTP.Response.Class ]>;
+	createChild<T extends Object>( object:T ):Promise<[ T & Class, HTTP.Response.Class ]>;
+	createChild():Promise<[ Class, HTTP.Response.Class ]>;
 
-	createAccessPoint( accessPoint:AccessPoint.Class, slug?:string, requestOptions?:HTTP.Request.Options ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
+	createAccessPoint( accessPoint:AccessPoint.Class, slug?:string, requestOptions?:HTTP.Request.Options ):Promise<[ PersistedAccessPoint.Class, HTTP.Response.Class ]>;
+	createAccessPoint( accessPoint:AccessPoint.Class, requestOptions?:HTTP.Request.Options ):Promise<[ PersistedAccessPoint.Class, HTTP.Response.Class ]>;
 
-	listChildren():Promise<[ Pointer.Class[], HTTP.Response.Class ]>;
+	listChildren():Promise<[ Class[], HTTP.Response.Class ]>;
 
 	getChildren<T>( retrievalPreferences?:RetrievalPreferences.Class ):Promise<[ (T & Class)[], HTTP.Response.Class ]>;
 
-	listMembers( includeNonReadable?:boolean ):Promise<[ Pointer.Class[], HTTP.Response.Class ]>;
+	listMembers( includeNonReadable?:boolean ):Promise<[ Class[], HTTP.Response.Class ]>;
 
 	getMembers<T>( includeNonReadable?:boolean, retrievalPreferences?:RetrievalPreferences.Class ):Promise<[ (T & Class)[], HTTP.Response.Class ]>;
 	getMembers<T>( retrievalPreferences?:RetrievalPreferences.Class ):Promise<[ (T & Class)[], HTTP.Response.Class ]>;
@@ -163,41 +165,44 @@ function addMembers( members:(Pointer.Class | string)[] ):Promise<HTTP.Response.
 	return this._documents.addMembers( this.id, members );
 }
 
-function createChild( slug:string, object:Object ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
-function createChild( slug:string ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
-function createChild( object:Object ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
-function createChild():Promise<[ Pointer.Class, HTTP.Response.Class ]>;
+function createChild<T extends Object>( slug:string, object:T ):Promise<[ T & Class, HTTP.Response.Class ]>;
+function createChild( slug:string ):Promise<[ Class, HTTP.Response.Class ]>;
+function createChild<T extends Object>( object:T ):Promise<[ T & Class, HTTP.Response.Class ]>;
+function createChild():Promise<[ Class, HTTP.Response.Class ]>;
 function createChild( slugOrObject?:any, object?:Object ):Promise<[ Pointer.Class, HTTP.Response.Class ]> {
 	let slug:string = Utils.isString( slugOrObject ) ? slugOrObject : null;
 	object = Utils.isString( slugOrObject ) ? object : slugOrObject;
 	object = object || {};
 
 	if( slug ) {
-		return this._documents.createChild( this.id, slug, object );
+		return (<Class> this)._documents.createChild( this.id, slug, object );
 	} else {
-		return this._documents.createChild( this.id, object );
+		return (<Class> this)._documents.createChild( this.id, object );
 	}
 }
 
-function createAccessPoint( accessPoint:AccessPoint.Class, slug:string = null, requestOptions:HTTP.Request.Options = {} ):Promise<[ Pointer.Class, HTTP.Response.Class ]> {
-	return this._documents.createAccessPoint( accessPoint, slug, requestOptions );
+
+function createAccessPoint( accessPoint:AccessPoint.Class, slug?:string, requestOptions?:HTTP.Request.Options ):Promise<[ PersistedAccessPoint.Class, HTTP.Response.Class ]>;
+function createAccessPoint( accessPoint:AccessPoint.Class, requestOptions?:HTTP.Request.Options ):Promise<[ PersistedAccessPoint.Class, HTTP.Response.Class ]>;
+function createAccessPoint( accessPoint:AccessPoint.Class, slugOrRequestOptions?:any, requestOptions?:HTTP.Request.Options ):Promise<[ PersistedAccessPoint.Class, HTTP.Response.Class ]> {
+	return this._documents.createAccessPoint( this.id, accessPoint, slugOrRequestOptions, requestOptions );
 }
 
-function listChildren():Promise<[ Pointer.Class[], HTTP.Response.Class ]> {
+function listChildren():Promise<[ Class[], HTTP.Response.Class ]> {
 	return this._documents.listChildren( this.id );
 }
 
-function getChildren( retrievalPreferences?:RetrievalPreferences.Class ):Promise<[ Pointer.Class[], HTTP.Response.Class ]> {
+function getChildren<T>( retrievalPreferences?:RetrievalPreferences.Class ):Promise<[ T & Class[], HTTP.Response.Class ]> {
 	return this._documents.getChildren( this.id, retrievalPreferences );
 }
 
-function listMembers( includeNonReadable:boolean = true ):Promise<[ Pointer.Class[], HTTP.Response.Class ]> {
+function listMembers( includeNonReadable:boolean = true ):Promise<[ Class[], HTTP.Response.Class ]> {
 	return this._documents.listMembers( this.id, includeNonReadable );
 }
 
-function getMembers( includeNonReadable:boolean, retrievalPreferences?:RetrievalPreferences.Class ):Promise<[ Pointer.Class[], HTTP.Response.Class ]>;
-function getMembers( retrievalPreferences?:RetrievalPreferences.Class ):Promise<[ Pointer.Class[], HTTP.Response.Class ]>;
-function getMembers( nonReadRetPref:boolean = true, retrievalPreferences?:RetrievalPreferences.Class ):Promise<[ Pointer.Class[], HTTP.Response.Class ]> {
+function getMembers<T>( includeNonReadable:boolean, retrievalPreferences?:RetrievalPreferences.Class ):Promise<[ T & Class[], HTTP.Response.Class ]>;
+function getMembers<T>( retrievalPreferences?:RetrievalPreferences.Class ):Promise<[ T & Class[], HTTP.Response.Class ]>;
+function getMembers<T>( nonReadRetPref:boolean = true, retrievalPreferences?:RetrievalPreferences.Class ):Promise<[ T & Class[], HTTP.Response.Class ]> {
 	return this._documents.getMembers( this.id, nonReadRetPref, retrievalPreferences );
 }
 

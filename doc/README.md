@@ -6865,7 +6865,7 @@ Add the specified resources URI or Pointers as members of the document.
 
 ##### listChildren
 ```typescript 
-listChildren():Promise<[ Carbon.Pointer.Class[], Carbon.HTTP.Response ]>
+listChildren():Promise<[ Carbon.PersistedDocument.Class[], Carbon.HTTP.Response ]>
 ```
 
 Return all the children of the document.
@@ -6883,7 +6883,7 @@ Return all the children of the document.
 
 ##### listMembers
 ```typescript 
-listMembers( includeNonReadable?:boolean ):Promise<[ Carbon.Pointer.Class[], Carbon.HTTP.Response.Class ]>
+listMembers( includeNonReadable?:boolean ):Promise<[ Carbon.PersistedDocument.Class[], Carbon.HTTP.Response.Class ]>
 ```
 
 
@@ -7041,7 +7041,7 @@ Add the specified resource URI as a member of the document.
 
 ##### createChild
 ```typescript 
-createChild( slug:string,  object:Object ):Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>
+createChild<T extends Object>( slug:string,  object:T ):Promise<[ T & Carbon.PersistedDocument.Class, Carbon.HTTP.Response.Class ]>
 ```
 
 
@@ -7051,7 +7051,7 @@ createChild( slug:string,  object:Object ):Promise<[ Carbon.Pointer.Class, Carbo
 - object: The object from where create the child. If it's a non `Carbon.Document.Class` object, it is transformed into one.
 
 ```typescript 
-createChild( object:Object ):Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>
+createChild<T extends Object>( object:T ):Promise<[ T & Carbon.PersistedDocument.Class, Carbon.HTTP.Response.Class ]>
 ```
 
 
@@ -7060,7 +7060,7 @@ createChild( object:Object ):Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Respons
 - object: The object from where create the child. If it's a non `Carbon.Document.Class` object, it is transformed into one.
 
 ```typescript 
-createChild( slug:string ):Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>
+createChild( slug:string ):Promise<[ Carbon.PersistedDocument.Class, Carbon.HTTP.Response.Class ]>
 ```
 
 
@@ -7069,9 +7069,33 @@ createChild( slug:string ):Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.
 - slug: The slug name for the children URI.
 
 ```typescript 
-createChild():Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>
+createChild():Promise<[ Carbon.PersistedDocument.Class, Carbon.HTTP.Response.Class ]>
 ```
 
+
+##### createAccessPoint
+```typescript 
+createAccessPoint( accessPoint:Carbon.AccessPoint.Class,  slug?:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.PersistedAccessPoint.Class[], Carbon.HTTP.Response ]>
+```
+
+Create an AccessPoint for the document with the slug specified.
+
+*Parameters*
+
+- accessPoint
+- slug: Slug that will be used for the URI of the new access point.
+- requestOptions:  Customizable options for the request.
+
+```typescript 
+createAccessPoint( accessPoint:Carbon.AccessPoint.Class,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.PersistedAccessPoint.Class[], Carbon.HTTP.Response ]>
+```
+
+Create an AccessPoint for the document.
+
+*Parameters*
+
+- accessPoint
+- requestOptions:  Customizable options for the request.
 
 ##### getMembers
 ```typescript 

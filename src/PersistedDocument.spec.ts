@@ -650,11 +650,12 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 				"createChild"
 			), ():void => {
 
-				it( hasSignature( [
+				it( hasSignature(
+					[ "T extends Object" ], [
 						{name: "slug", type: "string", description: "The slug name for the children URI."},
-						{name: "object", type: "Object", description: "The object from where create the child. If it's a non `Carbon.Document.Class` object, it is transformed into one."},
+						{name: "object", type: "T", description: "The object from where create the child. If it's a non `Carbon.Document.Class` object, it is transformed into one."},
 					],
-					{type: "Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>"}
+					{type: "Promise<[ T & Carbon.PersistedDocument.Class, Carbon.HTTP.Response.Class ]>"}
 				), ():void => {
 					expect( document.createChild ).toBeDefined();
 					expect( Utils.isFunction( document.createChild ) ).toBeDefined();
@@ -672,10 +673,11 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", "child", object );
 				} );
 
-				it( hasSignature( [
-						{name: "object", type: "Object", description: "The object from where create the child. If it's a non `Carbon.Document.Class` object, it is transformed into one."},
+				it( hasSignature(
+					[ "T extends Object" ], [
+						{name: "object", type: "T", description: "The object from where create the child. If it's a non `Carbon.Document.Class` object, it is transformed into one."},
 					],
-					{type: "Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>"}
+					{type: "Promise<[ T & Carbon.PersistedDocument.Class, Carbon.HTTP.Response.Class ]>"}
 				), ():void => {
 					expect( document.createChild ).toBeDefined();
 					expect( Utils.isFunction( document.createChild ) ).toBeDefined();
@@ -696,7 +698,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 				it( hasSignature( [
 						{name: "slug", type: "string", description: "The slug name for the children URI."},
 					],
-					{type: "Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>"}
+					{type: "Promise<[ Carbon.PersistedDocument.Class, Carbon.HTTP.Response.Class ]>"}
 				), ():void => {
 					expect( document.createChild ).toBeDefined();
 					expect( Utils.isFunction( document.createChild ) ).toBeDefined();
@@ -708,7 +710,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 				} );
 
 				it( hasSignature(
-					{type: "Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>"}
+					{type: "Promise<[ Carbon.PersistedDocument.Class, Carbon.HTTP.Response.Class ]>"}
 				), ():void => {
 					expect( document.createChild ).toBeDefined();
 					expect( Utils.isFunction( document.createChild ) ).toBeDefined();
@@ -721,11 +723,51 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 
 			} );
 
+			describe( method(
+				INSTANCE,
+				"createAccessPoint"
+			), ():void => {
+
+				it( hasSignature(
+					"Create an AccessPoint for the document with the slug specified.", [
+						{name: "accessPoint", type: "Carbon.AccessPoint.Class"},
+						{name: "slug", type: "string", optional: true, description: "Slug that will be used for the URI of the new access point."},
+						{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: " Customizable options for the request."}
+					],
+					{type: "Promise<[ Carbon.PersistedAccessPoint.Class[], Carbon.HTTP.Response ]>"}
+				), ():void => {
+					expect( document.createAccessPoint ).toBeDefined();
+					expect( Utils.isFunction( document.createAccessPoint ) ).toBeDefined();
+
+					let spy:jasmine.Spy = spyOn( document._documents, "createAccessPoint" );
+
+					document.createAccessPoint( {hasMemberRelation: "http://example.com/ns#memeber-relation"}, "my-new-access-point" );
+					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", {hasMemberRelation: "http://example.com/ns#memeber-relation"}, "my-new-access-point", undefined );
+				} );
+
+				it( hasSignature(
+					"Create an AccessPoint for the document.", [
+						{name: "accessPoint", type: "Carbon.AccessPoint.Class"},
+						{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: " Customizable options for the request."}
+					],
+					{type: "Promise<[ Carbon.PersistedAccessPoint.Class[], Carbon.HTTP.Response ]>"}
+				), ():void => {
+					expect( document.createAccessPoint ).toBeDefined();
+					expect( Utils.isFunction( document.createAccessPoint ) ).toBeDefined();
+
+					let spy:jasmine.Spy = spyOn( document._documents, "createAccessPoint" );
+
+					document.createAccessPoint( {hasMemberRelation: "http://example.com/ns#memeber-relation"} );
+					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", {hasMemberRelation: "http://example.com/ns#memeber-relation"}, undefined, undefined );
+				} );
+
+			} );
+
 			it( hasMethod(
 				INSTANCE,
 				"listChildren",
 				"Return all the children of the document.",
-				{type: "Promise<[ Carbon.Pointer.Class[], Carbon.HTTP.Response ]>"}
+				{type: "Promise<[ Carbon.PersistedDocument.Class[], Carbon.HTTP.Response ]>"}
 			), ():void => {
 				expect( document.listChildren ).toBeDefined();
 				expect( Utils.isFunction( document.listChildren ) ).toBeDefined();
@@ -769,7 +811,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 				"listMembers", [
 					{name: "includeNonReadable", type: "boolean", optional: true, description: "By default this option is set to `true`."},
 				],
-				{type: "Promise<[ Carbon.Pointer.Class[], Carbon.HTTP.Response.Class ]>"}
+				{type: "Promise<[ Carbon.PersistedDocument.Class[], Carbon.HTTP.Response.Class ]>"}
 			), ():void => {
 				expect( document.listMembers ).toBeDefined();
 				expect( Utils.isFunction( document.listMembers ) ).toBeDefined();

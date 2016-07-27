@@ -82,10 +82,8 @@ function createChild(slugOrObject, object) {
         return this._documents.createChild(this.id, object);
     }
 }
-function createAccessPoint(accessPoint, slug, requestOptions) {
-    if (slug === void 0) { slug = null; }
-    if (requestOptions === void 0) { requestOptions = {}; }
-    return this._documents.createAccessPoint(accessPoint, slug, requestOptions);
+function createAccessPoint(accessPoint, slugOrRequestOptions, requestOptions) {
+    return this._documents.createAccessPoint(this.id, accessPoint, slugOrRequestOptions, requestOptions);
 }
 function listChildren() {
     return this._documents.listChildren(this.id);
