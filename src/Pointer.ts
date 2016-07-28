@@ -1,6 +1,7 @@
-import * as HTTP from "./HTTP";
-import * as Utils from "./Utils";
 import * as Errors from "./Errors";
+import * as HTTP from "./HTTP";
+import * as PersistedDocument from "./PersistedDocument";
+import * as Utils from "./Utils";
 
 export interface Class {
 	_id:string;
@@ -8,7 +9,7 @@ export interface Class {
 
 	id:string;
 	isResolved():boolean;
-	resolve():Promise<[ Class, HTTP.Response.Class ]>;
+	resolve<T>():Promise<[ T & PersistedDocument.Class, HTTP.Response.Class ]>;
 }
 
 export interface Library {
@@ -36,15 +37,19 @@ export class Factory {
 	}
 
 	static create( id?:string ):Class {
+		return Factory.createFrom( {}, id );
+	}
+
+	static createFrom<T extends Object>( object:T, id?:string ):T & Class {
 		id = ! ! id ? id : "";
 
-		let pointer:Class = Factory.decorate( {} );
+		let pointer:T & Class = Factory.decorate<T>( object );
 		pointer.id = id;
 
 		return pointer;
 	}
 
-	static decorate<T extends Object>( object:T ):Class {
+	static decorate<T extends Object>( object:T ):T & Class {
 		if( Factory.hasClassProperties( object ) ) return <any> object;
 
 		Object.defineProperties( object, {
@@ -96,6 +101,10 @@ export class Factory {
 }
 
 export class Util {
+	static areEqual( pointer1:Class, pointer2:Class ):boolean {
+		return pointer1.id === pointer2.id;
+	}
+
 	static getIDs( pointers:Class[] ):string[] {
 		let ids:string[] = [];
 		for( let pointer of pointers ) {
@@ -104,11 +113,11 @@ export class Util {
 		return ids;
 	}
 
-	static resolveAll( pointers:Class[] ):Promise<[ Class[], HTTP.Response.Class[] ]> {
-		let promises:Promise<[ Class, HTTP.Response.Class ]>[] = pointers.map( ( pointer:Class ) => pointer.resolve() );
-		return Promise.all<[ Class, HTTP.Response.Class ]>( promises ).then( ( results:[ Class, HTTP.Response.Class ][] ) => {
-			let resolvedPointers:Class[] = results.map( ( result:Array<any> ) => result[ 0 ] );
-			let responses:HTTP.Response.Class[] = results.map( ( result:Array<any> ) => result[ 1 ] );
+	static resolveAll<T>( pointers:Class[] ):Promise<[ (T & PersistedDocument.Class)[], HTTP.Response.Class[] ]> {
+		let promises:Promise<[ T & PersistedDocument.Class, HTTP.Response.Class ]>[] = pointers.map( ( pointer:Class ) => pointer.resolve<T>() );
+		return Promise.all<[ T & PersistedDocument.Class, HTTP.Response.Class ]>( promises ).then( ( results:[ T & PersistedDocument.Class, HTTP.Response.Class ][] ) => {
+			let resolvedPointers:(T & PersistedDocument.Class)[] = results.map( ( result:[ T & PersistedDocument.Class, HTTP.Response.Class ] ) => result[ 0 ] );
+			let responses:HTTP.Response.Class[] = results.map( ( result:[ T & PersistedDocument.Class, HTTP.Response.Class ] ) => result[ 1 ] );
 
 			return [ resolvedPointers, responses ];
 		} );

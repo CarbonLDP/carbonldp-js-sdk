@@ -29,6 +29,11 @@ var Class = (function () {
         enumerable: true,
         configurable: true
     });
+    Object.defineProperty(Class, "ProtectedDocument", {
+        get: function () { return namespace + "ProtectedDocument"; },
+        enumerable: true,
+        configurable: true
+    });
     Object.defineProperty(Class, "Ticket", {
         get: function () { return namespace + "Ticket"; },
         enumerable: true,

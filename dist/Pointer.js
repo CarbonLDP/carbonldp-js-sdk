@@ -1,6 +1,6 @@
 "use strict";
-var Utils = require("./Utils");
 var Errors = require("./Errors");
+var Utils = require("./Utils");
 var Factory = (function () {
     function Factory() {
     }
@@ -16,8 +16,11 @@ var Factory = (function () {
             Factory.hasClassProperties(value));
     };
     Factory.create = function (id) {
+        return Factory.createFrom({}, id);
+    };
+    Factory.createFrom = function (object, id) {
         id = !!id ? id : "";
-        var pointer = Factory.decorate({});
+        var pointer = Factory.decorate(object);
         pointer.id = id;
         return pointer;
     };
@@ -76,6 +79,9 @@ exports.Factory = Factory;
 var Util = (function () {
     function Util() {
     }
+    Util.areEqual = function (pointer1, pointer2) {
+        return pointer1.id === pointer2.id;
+    };
     Util.getIDs = function (pointers) {
         var ids = [];
         for (var _i = 0, pointers_1 = pointers; _i < pointers_1.length; _i++) {

@@ -39,7 +39,7 @@ describe( module(
 		it( isDefined(), ():void => {
 			expect( CS.Class ).toBeDefined();
 			expect( Utils.isFunction( CS.Class ) ).toBe( true );
-			expect( Object.keys( CS.Class ).length ).toBe( 7 );
+			expect( Object.keys( CS.Class ).length ).toBe( 8 );
 		} );
 
 		it( hasProperty(
@@ -95,6 +95,17 @@ describe( module(
 			expect( Utils.isString( CS.Class.Application ) ).toBe( true );
 
 			expect( CS.Class.Application ).toBe( "https://carbonldp.com/ns/v1/security#Application" );
+		} );
+
+		it( hasProperty(
+			STATIC,
+			"ProtectedDocument",
+			"string"
+		), ():void => {
+			expect( CS.Class.ProtectedDocument ).toBeDefined();
+			expect( Utils.isString( CS.Class.ProtectedDocument ) ).toBe( true );
+
+			expect( CS.Class.ProtectedDocument ).toBe( "https://carbonldp.com/ns/v1/security#ProtectedDocument" );
 		} );
 
 		it( hasProperty(

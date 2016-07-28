@@ -27,7 +27,7 @@ describe( module( "Carbon/FreeResources" ), ():void => {
 			STATIC,
 			"hasClassProperties",
 			"Returns true if the object provided has the properties of a `Carbon.FreeResources.Class` object.", [
-				{name: "object", type: "Object"}
+				{name: "object", type: "Object"},
 			],
 			{type: "boolean"}
 		), ():void => {
@@ -102,7 +102,7 @@ describe( module( "Carbon/FreeResources" ), ():void => {
 			STATIC,
 			"create",
 			"Creates a empty `Carbon.FreeResources.Class` object.", [
-				{name: "documents", type: "Carbon.Documents", description: "A `Carbon.Documents` object where the FreeResources scope is."}
+				{name: "documents", type: "Carbon.Documents", description: "A `Carbon.Documents` object where the FreeResources scope is."},
 			],
 			{type: "Carbon.FreeResources.Class"}
 		), ():void => {
@@ -119,11 +119,12 @@ describe( module( "Carbon/FreeResources" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"createFrom",
+			[ "T extends Object" ],
 			"Create a `Carbon.FreeResources.Class` object from the plain object provided.", [
-				{name: "object", type: "T extends Object", description: "The object that wants be converted in a `Carbon.FreeResources.Class`."},
-				{name: "documents", type: "Carbon.Documents.Class", description: "A `Carbon.Documents` object where the FreeResource scope is."}
+				{name: "object", type: "T", description: "The object that wants be converted in a `Carbon.FreeResources.Class`."},
+				{name: "documents", type: "Carbon.Documents.Class", description: "A `Carbon.Documents` object where the FreeResource scope is."},
 			],
-			{type: "Carbon.FreeResources.Class & T"}
+			{type: "T & Carbon.FreeResources.Class"}
 		), ():void => {
 			expect( FreeResources.Factory.createFrom ).toBeDefined();
 			expect( Utils.isFunction( FreeResources.Factory.createFrom ) ).toBe( true );
@@ -134,7 +135,7 @@ describe( module( "Carbon/FreeResources" ), ():void => {
 			expect( freeResources ).toBeTruthy();
 			expect( FreeResources.Factory.hasClassProperties( freeResources ) );
 
-			interface My { myProperty:string }
+			interface My { myProperty:string; }
 			let myFreeResources:FreeResources.Class & My = FreeResources.Factory.createFrom( {myProperty: "The property"}, documents );
 			expect( myFreeResources ).toBeTruthy();
 			expect( FreeResources.Factory.hasClassProperties( myFreeResources ) );
@@ -145,10 +146,11 @@ describe( module( "Carbon/FreeResources" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"decorate",
+			[ "T extends Object" ],
 			"Decorate the object provided with the methods and properties of a `Carbon.FreeResources.Class` object.", [
-				{name: "object", type: "T extends Object"}
+				{name: "object", type: "T"},
 			],
-			{type: "Carbon.FreeResources.Class & T"}
+			{type: "T & Carbon.FreeResources.Class"}
 		), ():void => {
 			expect( FreeResources.Factory.decorate ).toBeDefined();
 			expect( Utils.isFunction( FreeResources.Factory.decorate ) ).toBe( true );
@@ -198,7 +200,7 @@ describe( module( "Carbon/FreeResources" ), ():void => {
 
 			beforeEach( ():void => {
 				class MockedContext extends AbstractContext {
-					resolve( uri:string ) {
+					resolve( uri:string ):string {
 						return "http://example.com/" + uri;
 					}
 				}
@@ -422,26 +424,24 @@ describe( module( "Carbon/FreeResources" ), ():void => {
 
 				it( hasSignature(
 					"Returns true if the the ID provided is in the scope of the object.", [
-						{name: "id", type: "string", description: "The ID to evaluate if is in the scope."}
+						{name: "id", type: "string", description: "The ID to evaluate if is in the scope."},
 					],
 					{type: "boolean"}
 				), ():void => {
 					expect( freeResources.inScope( "_:some" ) ).toBe( true );
 					expect( freeResources.inScope( "http://example.com/some/" ) ).toBe( true );
-
-					expect( freeResources.inScope( "some/" ) ).toBe( false );
+					expect( freeResources.inScope( "some/" ) ).toBe( true );
 				} );
 
 				it( hasSignature(
 					"Returns true if the the Pointer provided can be in the scope of the object.", [
-						{name: "pointer", type: "Carbon.Pointer.Class", description: "The Pointer to evaluate if can be in the scope."}
+						{name: "pointer", type: "Carbon.Pointer.Class", description: "The Pointer to evaluate if can be in the scope."},
 					],
 					{type: "boolean"}
 				), ():void => {
 					expect( freeResources.inScope( Pointer.Factory.create( "_:some" ) ) ).toBe( true );
 					expect( freeResources.inScope( Pointer.Factory.create( "http://example.com/some/" ) ) ).toBe( true );
-
-					expect( freeResources.inScope( Pointer.Factory.create( "some/" ) ) ).toBe( false );
+					expect( freeResources.inScope( Pointer.Factory.create( "some/" ) ) ).toBe( true );
 				} );
 
 			} );

@@ -62,31 +62,36 @@
 			let appContext;
 			let resource;
 
-			carbon.auth.authenticate( "admin@carbonldp.com", "hello" ).then( function( credentials ) {
-				expect( credentials.agent ).toBeDefined();
-				console.log( credentials );
-
-				expect( carbon.auth.authenticatedAgent ).toBeDefined();
-				console.log( carbon.auth.authenticatedAgent );
-
-				expect( carbon.auth.authenticatedAgent ).toBe( credentials.agent );
+			carbon.auth.authenticate( "admin@carbonldp.com", "hello" ).then( function() {
 				return carbon.apps.getContext( "test-app/" );
 			} ).then( ( _appContext ) => {
 				appContext = _appContext;
-
-				expect( appContext.auth.authenticatedAgent ).toBeDefined();
-				expect( appContext.auth.authenticatedAgent ).toBe( carbon.auth.authenticatedAgent );
-				expect( appContext.auth.authenticatedAgent._etag ).toBe( "\"-1873495190\"" );
-				console.log( appContext.auth.authenticatedAgent );
-				done();
+				return appContext.documents.get( "posts/first-post/" );
 			} ).then( ( [ _resource, response ] ) => {
 				resource = _resource;
-				resource.contains = [];
+
+				console.log( resource )
+				resource.getFragments().forEach( fragment => resource.removeFragment( fragment ) );
+				resource.myBlankNode = resource.createFragment( { property: "A property", type: "Blank Node" } );
+				resource.myNamedFragment = resource.createNamedFragment( { property: "A property~! ", type: "Named Fragment" }, "my-fragment" );
+
 				return saveAndRefresh( resource );
 			} ).then( ( [ _resource, response ] ) => {
-				done( "Save was successful when it shouldn't be" );
+
+				console.log( resource );
+				done();
 			} ).catch( ( error ) => {
-				done.fail( error );
+				console.error( "%o", error );
+
+				expect( "errors" in error ).toEqual( true );
+				expect( error.errors ).toBeDefined( true );
+				expect( Carbon.Utils.isArray( error.errors ) ).toEqual( true );
+
+				expect( "requestID" in error ).toEqual( true );
+				expect( error.requestID ).toBeDefined( true );
+				expect( Carbon.Utils.isString( error.requestID ) ).toEqual( true );
+
+				done();
 			} );
 
 			function saveAndRefresh( persistedDocument ) {
