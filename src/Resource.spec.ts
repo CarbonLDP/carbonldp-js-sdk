@@ -125,8 +125,9 @@ describe( module( "Carbon/Resource" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"createFrom",
+			[ "T extends Object" ],
 			"Create a Resource object with id and types if provided.", [
-				{name: "object", type: "T extends Object"},
+				{name: "object", type: "T"},
 				{name: "id", type: "string", optional: true},
 				{name: "types", type: "string[]", optional: true}
 			],
@@ -189,8 +190,9 @@ describe( module( "Carbon/Resource" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"decorate",
+			[ "T extends Object" ],
 			"Decorates the object provided with the elements of a Resource object.", [
-				{name: "object", type: "T extends Object"}
+				{name: "object", type: "T"},
 			],
 			{type: "T & Carbon.Resource.Class"}
 		), ():void => {

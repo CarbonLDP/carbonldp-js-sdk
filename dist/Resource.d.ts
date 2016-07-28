@@ -10,7 +10,7 @@ export declare class Factory {
     static decorate<T extends Object>(object: T): T & Class;
 }
 export declare class Util {
-    static hasType(resource: Class, type: string): boolean;
-    static getTypes(resource: Class): string[];
+    static hasType(resource: Object, type: string): boolean;
+    static getTypes(resource: Object): string[];
 }
 export default Class;

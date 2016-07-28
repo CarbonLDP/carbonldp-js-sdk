@@ -146,8 +146,9 @@ describe( module( "Carbon/App" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"createFrom",
+			[ "T extends Object" ],
 			"Create a `Carbon.App.Class` object with the object provided.", [
-				{name: "object", type: "T extends Object"},
+				{name: "object", type: "T"},
 				{name: "name", type: "string"},
 				{name: "description", type: "string", optional: true}
 			],
