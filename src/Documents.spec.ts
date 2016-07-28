@@ -350,6 +350,9 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 				Promise.all( promises ).then( ():void => {
 					expect( spySuccess ).toHaveBeenCalledTimes( 1 );
+					let request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.requestHeaders[ "slug" ] ).toBeUndefined();
+
 					expect( spyFail ).toHaveBeenCalledTimes( 1 );
 
 					done();
@@ -462,6 +465,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 				Promise.all( promises ).then( ():void => {
 					expect( spySuccess ).toHaveBeenCalledTimes( 1 );
+					let request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.requestHeaders[ "slug" ] ).toBeDefined();
+					expect( request.requestHeaders[ "slug" ] ).toBe( "child-document" );
+
 					expect( spyFail ).toHaveBeenCalledTimes( 1 );
 
 					done();

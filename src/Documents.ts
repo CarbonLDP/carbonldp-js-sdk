@@ -173,7 +173,7 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 
 		let body:string = childDocument.toJSON( this, this.jsonldConverter );
 
-		if( ! slug ) HTTP.Request.Util.setSlug( slug, requestOptions );
+		if( ! ! slug ) HTTP.Request.Util.setSlug( slug, requestOptions );
 
 		return HTTP.Request.Service.post( parentURI, body, requestOptions ).then( ( response:HTTP.Response.Class ) => {
 			delete childDocument[ "__CarbonSDK_InProgressOfPersisting" ];
@@ -299,7 +299,7 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 
 		let body:string = accessPointDocument.toJSON( this, this.jsonldConverter );
 
-		if( ! slug ) HTTP.Request.Util.setSlug( slug, requestOptions );
+		if( ! ! slug ) HTTP.Request.Util.setSlug( slug, requestOptions );
 
 		return HTTP.Request.Service.post( documentURI, body, requestOptions ).then( ( response:HTTP.Response.Class ) => {
 			delete accessPoint[ "__CarbonSDK_InProgressOfPersisting" ];
@@ -342,7 +342,7 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 		parentURI = this.getRequestURI( parentURI );
 		this.setDefaultRequestOptions( requestOptions, NS.LDP.Class.Container );
 
-		if( ! slug ) HTTP.Request.Util.setSlug( slug, requestOptions );
+		if( ! ! slug ) HTTP.Request.Util.setSlug( slug, requestOptions );
 
 		return HTTP.Request.Service.post( parentURI, <any> data, requestOptions ).then( ( response:HTTP.Response.Class ) => {
 			let locationHeader:HTTP.Header.Class = response.getHeader( "Location" );

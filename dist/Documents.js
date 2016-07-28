@@ -142,7 +142,7 @@ var Documents = (function () {
             return Promise.reject(new Errors.IllegalArgumentError("The childDocument is already being persisted."));
         Object.defineProperty(childDocument, "__CarbonSDK_InProgressOfPersisting", { configurable: true, enumerable: false, writable: false, value: true });
         var body = childDocument.toJSON(this, this.jsonldConverter);
-        if (!slug)
+        if (!!slug)
             HTTP.Request.Util.setSlug(slug, requestOptions);
         return HTTP.Request.Service.post(parentURI, body, requestOptions).then(function (response) {
             delete childDocument["__CarbonSDK_InProgressOfPersisting"];
@@ -256,7 +256,7 @@ var Documents = (function () {
             return Promise.reject(new Errors.IllegalArgumentError("The accessPoint is already being persisted."));
         Object.defineProperty(accessPoint, "__CarbonSDK_InProgressOfPersisting", { configurable: true, enumerable: false, writable: false, value: true });
         var body = accessPointDocument.toJSON(this, this.jsonldConverter);
-        if (!slug)
+        if (!!slug)
             HTTP.Request.Util.setSlug(slug, requestOptions);
         return HTTP.Request.Service.post(documentURI, body, requestOptions).then(function (response) {
             delete accessPoint["__CarbonSDK_InProgressOfPersisting"];
@@ -293,7 +293,7 @@ var Documents = (function () {
         }
         parentURI = this.getRequestURI(parentURI);
         this.setDefaultRequestOptions(requestOptions, NS.LDP.Class.Container);
-        if (!slug)
+        if (!!slug)
             HTTP.Request.Util.setSlug(slug, requestOptions);
         return HTTP.Request.Service.post(parentURI, data, requestOptions).then(function (response) {
             var locationHeader = response.getHeader("Location");

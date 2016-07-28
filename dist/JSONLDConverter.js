@@ -224,11 +224,22 @@ var Class = (function () {
         }
     };
     Class.prototype.expandPointer = function (propertyValue, digestedSchema) {
-        var id = Pointer.Factory.is(propertyValue) ? propertyValue.id : Utils.isString(propertyValue) ? propertyValue : null;
+        var notPointer = true;
+        var id;
+        if (Pointer.Factory.is(propertyValue)) {
+            notPointer = false;
+            propertyValue = propertyValue.id;
+        }
+        else if (!Utils.isString(propertyValue)) {
+            propertyValue = null;
+        }
+        id = propertyValue;
         if (!id) {
             return null;
         }
         id = ObjectSchema.Digester.resolvePrefixedURI(new RDF.URI.Class(id), digestedSchema).stringValue;
+        if (notPointer && !!digestedSchema.vocab)
+            id = RDF.URI.Util.resolve(digestedSchema.vocab, id);
         return { "@id": id };
     };
     Class.prototype.expandArray = function (propertyValue, digestedSchema) {
