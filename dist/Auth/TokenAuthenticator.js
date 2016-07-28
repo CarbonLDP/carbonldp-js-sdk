@@ -69,9 +69,10 @@ var Class = (function () {
             var agentDocuments = RDF.Document.Util.getDocuments(expandedResult).filter(function (rdfDocument) { return rdfDocument["@id"] === token.agent.id; });
             agentDocuments.forEach(function (document) { return _this.context.documents._getPersistedDocument(document, response); });
             var responseMetadata = freeResources.getResources().find(function (resource) { return Resource.Util.hasType(resource, LDP.ResponseMetadata.RDF_CLASS); });
-            responseMetadata.resourcesMetadata.forEach(function (resourceMetadata) {
-                resourceMetadata.resource._etag = resourceMetadata.eTag;
-            });
+            if (!!responseMetadata)
+                responseMetadata.resourcesMetadata.forEach(function (resourceMetadata) {
+                    resourceMetadata.resource._etag = resourceMetadata.eTag;
+                });
             return [token, response];
         });
     };

@@ -1,5 +1,6 @@
 (function() {
 	describe( "something", () => {
+
 		it( "something else", ( done ) => {
 			"use strict";
 
@@ -62,29 +63,17 @@
 			let appContext;
 			let resource;
 
-			carbon.auth.authenticate( "admin@carbonldp.com", "hello" ).then( function( credentials ) {
-				expect( credentials.agent ).toBeDefined();
-				console.log( credentials );
+			carbon.auth.authenticate( "roddolf@carbonldp.com", "hello" ).then( function( credentials ) {
+				return carbon.apps.getAllContexts();
+			} ).then( ( _appContexts ) => {
+				expect( _appContexts.length ).toBe( 1 );
+				appContext = _appContexts[ 0 ];
 
-				expect( carbon.auth.authenticatedAgent ).toBeDefined();
-				console.log( carbon.auth.authenticatedAgent );
+				expect( appContext instanceof Carbon.App.Context ).toBe( true );
+				expect( Carbon.PersistedDocument.Factory.is( appContext.app ) ).toBe( true );
 
-				expect( carbon.auth.authenticatedAgent ).toBe( credentials.agent );
-				return carbon.apps.getContext( "test-app/" );
-			} ).then( ( _appContext ) => {
-				appContext = _appContext;
-
-				expect( appContext.auth.authenticatedAgent ).toBeDefined();
-				expect( appContext.auth.authenticatedAgent ).toBe( carbon.auth.authenticatedAgent );
-				expect( appContext.auth.authenticatedAgent._etag ).toBe( "\"-1873495190\"" );
-				console.log( appContext.auth.authenticatedAgent );
+				console.log( _appContexts );
 				done();
-			} ).then( ( [ _resource, response ] ) => {
-				resource = _resource;
-				resource.contains = [];
-				return saveAndRefresh( resource );
-			} ).then( ( [ _resource, response ] ) => {
-				done( "Save was successful when it shouldn't be" );
 			} ).catch( ( error ) => {
 				done.fail( error );
 			} );

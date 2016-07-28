@@ -5877,6 +5877,10 @@ static accessPoint:string
 ```
 
 ```typescript 
+static appRoleMap:string 
+```
+
+```typescript 
 static bNodeIdentifier:string 
 ```
 
@@ -5890,6 +5894,14 @@ static created:string
 
 ```typescript 
 static defaultInteractionModel:string 
+```
+
+```typescript 
+static entry:string 
+```
+
+```typescript 
+static key:string 
 ```
 
 ```typescript 

@@ -39,6 +39,8 @@ export class Class {
 export class Predicate {
 	static get accessPoint():string { return namespace + "accessPoint"; }
 
+	static get appRoleMap():string { return namespace + "appRoleMap"; }
+
 	static get bNodeIdentifier():string { return namespace + "bNodeIdentifier"; }
 
 	static get buildDate():string { return namespace + "buildDate"; }
@@ -49,11 +51,15 @@ export class Predicate {
 
 	static get defaultInteractionModel():string { return namespace + "defaultInteractionModel"; }
 
+	static get entry():string { return namespace + "entry"; }
+
 	static get error():string { return namespace + "error"; }
 
 	static get eTag():string { return namespace + "eTag"; }
 
 	static get httpStatusCode():string { return namespace + "httpStatusCode"; }
+
+	static get key():string { return namespace + "key"; }
 
 	static get mediaType():string { return namespace + "mediaType"; }
 

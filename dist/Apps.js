@@ -1,5 +1,7 @@
 "use strict";
 var Context_1 = require("./App/Context");
+var NS = require("./NS");
+var Pointer = require("./Pointer");
 var RDF = require("./RDF");
 var Utils = require("./Utils");
 var App = require("./App");
@@ -33,9 +35,19 @@ var Class = (function () {
     };
     Class.prototype.getAllContexts = function () {
         var _this = this;
-        return this.context.documents.getMembers(this.getAppsContainerURI(), false).then(function (_a) {
-            var members = _a[0], response = _a[1];
-            return members.map(function (member) { return new Context_1.default(_this.context, member); });
+        if (!this.context.auth.isAuthenticated())
+            return this.context.documents.getMembers(this.getAppsContainerURI(), false).then(function (_a) {
+                var members = _a[0], response = _a[1];
+                return members.map(function (member) { return new Context_1.default(_this.context, member); });
+            });
+        var agentID = this.context.auth.authenticatedAgent.id;
+        return this.context.documents.executeSELECTQuery(agentID, "\n\t\t\tSELECT ?app WHERE {\n\t\t\t\t<" + agentID + "> <" + NS.C.Predicate.appRoleMap + "> ?roleMap.\n\t\t\t\t?roleMap <" + NS.C.Predicate.entry + "> ?appEntry.\n\t\t\t\t?appEntry <" + NS.C.Predicate.key + "> ?app.\n\t\t\t}\n\t\t").then(function (_a) {
+            var results = _a[0], response = _a[1];
+            var apps = results.bindings.map(function (binding) { return binding["app"]; });
+            return Pointer.Util.resolveAll(apps);
+        }).then(function (_a) {
+            var apps = _a[0], results = _a[1];
+            return apps.map(function (app) { return new Context_1.default(_this.context, app); });
         });
     };
     Class.prototype.create = function (slugOrApp, appDocument) {

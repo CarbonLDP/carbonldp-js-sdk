@@ -92,7 +92,8 @@ export class Class implements Authenticator<UsernameAndPasswordToken> {
 			agentDocuments.forEach( document => this.context.documents._getPersistedDocument( document, response ) );
 
 			let responseMetadata:LDP.ResponseMetadata.Class = <LDP.ResponseMetadata.Class> freeResources.getResources().find( resource => Resource.Util.hasType( resource, LDP.ResponseMetadata.RDF_CLASS ) );
-			responseMetadata.resourcesMetadata.forEach( ( resourceMetadata:LDP.ResourceMetadata.Class ) => {
+
+			if( ! ! responseMetadata ) responseMetadata.resourcesMetadata.forEach( ( resourceMetadata:LDP.ResourceMetadata.Class ) => {
 				(<PersistedDocument.Class> resourceMetadata.resource)._etag = resourceMetadata.eTag;
 			} );
 

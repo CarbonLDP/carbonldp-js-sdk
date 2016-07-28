@@ -1,9 +1,12 @@
 import AppContext from "./App/Context";
 import * as PersistedDocument from "./PersistedDocument";
 import Context from "./Context";
+import * as HTTP from "./HTTP";
+import * as NS from "./NS";
 import * as Response from "./HTTP/Response";
 import * as Pointer from "./Pointer";
 import * as RDF from "./RDF";
+import * as SPARQL from "./SPARQL";
 import * as Utils from "./Utils";
 import * as App from "./App";
 import * as PersistedApp from "./PersistedApp";
@@ -44,11 +47,27 @@ export class Class {
 	}
 
 	getAllContexts():Promise<AppContext[]> {
-		return this.context.documents.getMembers( this.getAppsContainerURI(), false ).then(
+		// TODO: Use generic and change to `PersistedApp`
+		if( ! this.context.auth.isAuthenticated() ) return this.context.documents.getMembers( this.getAppsContainerURI(), false ).then(
 			( [ members, response ]:[ Pointer.Class[], Response.Class ] ) => {
 				return members.map( ( member:Pointer.Class ) => new AppContext( this.context, <any> member ) );
 			}
 		);
+
+		let agentID:string = this.context.auth.authenticatedAgent.id;
+		return this.context.documents.executeSELECTQuery( agentID, `
+			SELECT ?app WHERE {
+				<${ agentID }> <${ NS.C.Predicate.appRoleMap }> ?roleMap.
+				?roleMap <${ NS.C.Predicate.entry }> ?appEntry.
+				?appEntry <${ NS.C.Predicate.key }> ?app.
+			}
+		` ).then( ( [ results, response ]:[ SPARQL.SELECTResults.Class, HTTP.Response.Class ] ) => {
+			let apps:Pointer.Class[] = results.bindings.map( binding => <Pointer.Class> binding[ "app" ] );
+			return Pointer.Util.resolveAll( apps );
+			// TODO: Use generic and change to `PersistedApp`
+		} ).then( ( [ apps, results ]:[ Pointer.Class[], HTTP.Response.Class[] ] ) => {
+			return apps.map( ( app:Pointer.Class ) => new AppContext( this.context, <any> app ) );
+		} );
 	}
 
 	create( appDocument:App.Class ):Promise<[ Pointer.Class, Response.Class]>;
