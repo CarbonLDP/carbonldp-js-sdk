@@ -8,7 +8,7 @@ export declare const RDF_CLASS: string;
 export declare const SCHEMA: ObjectSchema.Class;
 export interface Class extends Resource.Class, Pointer.Library, Pointer.Validator {
     defaultInteractionModel?: Pointer.Class;
-    memberOfRelation?: Pointer.Class;
+    isMemberOfRelation?: Pointer.Class;
     hasMemberRelation?: Pointer.Class;
     _fragmentsIndex: Map<string, Fragment.Class>;
     hasFragment(slug: string): boolean;

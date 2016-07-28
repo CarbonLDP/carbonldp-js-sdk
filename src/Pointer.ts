@@ -49,7 +49,7 @@ export class Factory {
 		return pointer;
 	}
 
-	static decorate<T extends Object>( object:T ): T & Class {
+	static decorate<T extends Object>( object:T ):T & Class {
 		if( Factory.hasClassProperties( object ) ) return <any> object;
 
 		Object.defineProperties( object, {
@@ -113,11 +113,11 @@ export class Util {
 		return ids;
 	}
 
-	static resolveAll( pointers:Class[] ):Promise<[ Class[], HTTP.Response.Class[] ]> {
-		let promises:Promise<[ Class, HTTP.Response.Class ]>[] = pointers.map( ( pointer:Class ) => pointer.resolve() );
-		return Promise.all<[ Class, HTTP.Response.Class ]>( promises ).then( ( results:[ Class, HTTP.Response.Class ][] ) => {
-			let resolvedPointers:Class[] = results.map( ( result:Array<any> ) => result[ 0 ] );
-			let responses:HTTP.Response.Class[] = results.map( ( result:Array<any> ) => result[ 1 ] );
+	static resolveAll<T>( pointers:Class[] ):Promise<[ (T & PersistedDocument.Class)[], HTTP.Response.Class[] ]> {
+		let promises:Promise<[ T & PersistedDocument.Class, HTTP.Response.Class ]>[] = pointers.map( ( pointer:Class ) => pointer.resolve<T>() );
+		return Promise.all<[ T & PersistedDocument.Class, HTTP.Response.Class ]>( promises ).then( ( results:[ T & PersistedDocument.Class, HTTP.Response.Class ][] ) => {
+			let resolvedPointers:(T & PersistedDocument.Class)[] = results.map( ( result:[ T & PersistedDocument.Class, HTTP.Response.Class ] ) => result[ 0 ] );
+			let responses:HTTP.Response.Class[] = results.map( ( result:[ T & PersistedDocument.Class, HTTP.Response.Class ] ) => result[ 1 ] );
 
 			return [ resolvedPointers, responses ];
 		} );

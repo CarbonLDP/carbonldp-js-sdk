@@ -21,7 +21,7 @@ export declare class Factory {
 export declare class Util {
     static areEqual(pointer1: Class, pointer2: Class): boolean;
     static getIDs(pointers: Class[]): string[];
-    static resolveAll(pointers: Class[]): Promise<[Class[], HTTP.Response.Class[]]>;
+    static resolveAll<T>(pointers: Class[]): Promise<[(T & PersistedDocument.Class)[], HTTP.Response.Class[]]>;
 }
 export interface Validator {
     inScope(id: string): boolean;

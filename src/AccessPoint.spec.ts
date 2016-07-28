@@ -49,7 +49,7 @@ describe( module( "Carbon/AccessPoints" ), ():void => {
 			"Create a `Carbon.AccessPoint.Class` object with the parameters specified.", [
 				{name: "membershipResource", type: "Carbon.Pointer.Class"},
 				{name: "hasMemberRelation", type: "string | Carbon.Pointer.Class"},
-				{name: "memberOfRelation", type: "string | Carbon.Pointer.Class", optional: true}
+				{name: "isMemberOfRelation", type: "string | Carbon.Pointer.Class", optional: true}
 			],
 			{type: "Carbon.AccessPoint.Class"}
 		), ():void => {
@@ -83,7 +83,7 @@ describe( module( "Carbon/AccessPoints" ), ():void => {
 				{name: "object", type: "T"},
 				{name: "membershipResource", type: "Carbon.Pointer.Class"},
 				{name: "hasMemberRelation", type: "string | Carbon.Pointer.Class"},
-				{name: "memberOfRelation", type: "string | Carbon.Pointer.Class", optional: true}
+				{name: "isMemberOfRelation", type: "string | Carbon.Pointer.Class", optional: true}
 			],
 			{type: "T & Carbon.AccessPoint.Class"}
 		), ():void => {

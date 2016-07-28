@@ -76,9 +76,9 @@ describe( module( "Carbon/Document" ), ():void => {
 			"@type": "@id",
 		} );
 
-		expect( Utils.hasProperty( Document.SCHEMA, "memberOfRelation" ) ).toBe( true );
-		expect( Document.SCHEMA[ "memberOfRelation" ] ).toEqual( {
-			"@id": NS.LDP.Predicate.memberOfRelation,
+		expect( Utils.hasProperty( Document.SCHEMA, "isMemberOfRelation" ) ).toBe( true );
+		expect( Document.SCHEMA[ "isMemberOfRelation" ] ).toEqual( {
+			"@id": NS.LDP.Predicate.isMemberOfRelation,
 			"@type": "@id",
 		} );
 
@@ -146,7 +146,7 @@ describe( module( "Carbon/Document" ), ():void => {
 
 			resource = {
 				hasMemberRelation: null,
-				memberOfRelation: null,
+				isMemberOfRelation: null,
 				defaultInteractionModel: null,
 
 				_fragmentsIndex: null,
@@ -165,9 +165,9 @@ describe( module( "Carbon/Document" ), ():void => {
 			expect( Document.Factory.hasClassProperties( resource ) ).toBe( true );
 			resource.hasMemberRelation = null;
 
-			delete resource.memberOfRelation;
+			delete resource.isMemberOfRelation;
 			expect( Document.Factory.hasClassProperties( resource ) ).toBe( true );
-			resource.memberOfRelation = null;
+			resource.isMemberOfRelation = null;
 
 			delete resource.defaultInteractionModel;
 			expect( Document.Factory.hasClassProperties( resource ) ).toBe( true );

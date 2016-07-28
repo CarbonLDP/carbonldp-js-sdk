@@ -5,7 +5,7 @@ import * as Pointer from "./Pointer";
 export interface Class extends AccessPoint.Class, PersistedDocument.Class {
 	membershipResource:Pointer.Class;
 	hasMemberRelation:Pointer.Class;
-	memberOfRelation?:Pointer.Class;
+	isMemberOfRelation?:Pointer.Class;
 	insertedContentRelation?: Pointer.Class;
 }
 

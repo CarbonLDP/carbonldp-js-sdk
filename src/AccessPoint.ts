@@ -7,7 +7,7 @@ export const RDF_CLASS:string = NS.C.Class.AccessPoint;
 
 export interface Class {
 	hasMemberRelation:string | Pointer.Class;
-	memberOfRelation?:string | Pointer.Class;
+	isMemberOfRelation?:string | Pointer.Class;
 	insertedContentRelation?: string | Pointer.Class;
 }
 
@@ -22,12 +22,12 @@ export class Factory {
 		return LDP.DirectContainer.Factory.is( object );
 	}
 
-	static create( membershipResource:Pointer.Class, hasMemberRelation:string | Pointer.Class, memberOfRelation?:string | Pointer.Class ):DocumentClass {
-		return Factory.createFrom( {}, membershipResource, hasMemberRelation, memberOfRelation );
+	static create( membershipResource:Pointer.Class, hasMemberRelation:string | Pointer.Class, isMemberOfRelation?:string | Pointer.Class ):DocumentClass {
+		return Factory.createFrom( {}, membershipResource, hasMemberRelation, isMemberOfRelation );
 	}
 
-	static createFrom<T extends Object>( object:T, membershipResource:Pointer.Class, hasMemberRelation:string | Pointer.Class, memberOfRelation?:string | Pointer.Class ):T & DocumentClass {
-		return <any> LDP.DirectContainer.Factory.createFrom<T>( object, membershipResource, hasMemberRelation, memberOfRelation );
+	static createFrom<T extends Object>( object:T, membershipResource:Pointer.Class, hasMemberRelation:string | Pointer.Class, isMemberOfRelation?:string | Pointer.Class ):T & DocumentClass {
+		return <any> LDP.DirectContainer.Factory.createFrom<T>( object, membershipResource, hasMemberRelation, isMemberOfRelation );
 	}
 }
 

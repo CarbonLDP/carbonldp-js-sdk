@@ -241,7 +241,7 @@ var Documents = (function () {
         if (PersistedDocument.Factory.is(accessPoint))
             return Promise.reject(new Errors.IllegalArgumentError("The accessPoint provided has been already persisted."));
         var accessPointDocument = AccessPoint.Factory.is(accessPoint) ? accessPoint
-            : AccessPoint.Factory.createFrom(accessPoint, this.getPointer(documentURI), accessPoint.hasMemberRelation, accessPoint.memberOfRelation);
+            : AccessPoint.Factory.createFrom(accessPoint, this.getPointer(documentURI), accessPoint.hasMemberRelation, accessPoint.isMemberOfRelation);
         if (accessPointDocument.membershipResource.id !== documentURI)
             return Promise.reject(new Errors.IllegalArgumentError("The documentURI must be the same as the accessPoint's membershipResource"));
         if (accessPointDocument.id) {

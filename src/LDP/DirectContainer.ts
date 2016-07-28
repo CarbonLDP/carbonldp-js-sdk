@@ -26,11 +26,11 @@ export class Factory {
 		);
 	}
 
-	static create( membershipResource:Pointer.Class, hasMemberRelation:string | Pointer.Class, memberOfRelation?:string | Pointer.Class ):Class {
-		return Factory.createFrom( {}, membershipResource, hasMemberRelation, memberOfRelation );
+	static create( membershipResource:Pointer.Class, hasMemberRelation:string | Pointer.Class, isMemberOfRelation?:string | Pointer.Class ):Class {
+		return Factory.createFrom( {}, membershipResource, hasMemberRelation, isMemberOfRelation );
 	}
 
-	static createFrom<T extends Object>( object:T, membershipResource:Pointer.Class, hasMemberRelation:string | Pointer.Class, memberOfRelation?:string | Pointer.Class ):T & Class {
+	static createFrom<T extends Object>( object:T, membershipResource:Pointer.Class, hasMemberRelation:string | Pointer.Class, isMemberOfRelation?:string | Pointer.Class ):T & Class {
 		if( Factory.is( object ) ) throw new Errors.IllegalArgumentError( "The base object is already a DirectContainer" );
 		if( ! membershipResource ) throw new Errors.IllegalArgumentError( "The membershipResource cannot be null" );
 
@@ -46,8 +46,8 @@ export class Factory {
 			container.hasMemberRelation = Pointer.Factory.is( hasMemberRelation ) ? <Pointer.Class> hasMemberRelation : Pointer.Factory.create( <string> hasMemberRelation );
 		}
 
-		if( ! ! memberOfRelation ) {
-			container.memberOfRelation = Pointer.Factory.is( memberOfRelation ) ? <Pointer.Class> memberOfRelation : Pointer.Factory.create( <string> memberOfRelation );
+		if( ! ! isMemberOfRelation ) {
+			container.isMemberOfRelation = Pointer.Factory.is( isMemberOfRelation ) ? <Pointer.Class> isMemberOfRelation : Pointer.Factory.create( <string> isMemberOfRelation );
 		}
 
 		return container;

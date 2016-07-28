@@ -674,7 +674,7 @@ static RDF_CLASS:string
 #### <a name="Carbon-AccessPoint-Factory-Methods" />Methods
 ##### create
 ```typescript 
-static create( membershipResource:Carbon.Pointer.Class,  hasMemberRelation:string | Carbon.Pointer.Class,  memberOfRelation?:string | Carbon.Pointer.Class ):Carbon.AccessPoint.Class
+static create( membershipResource:Carbon.Pointer.Class,  hasMemberRelation:string | Carbon.Pointer.Class,  isMemberOfRelation?:string | Carbon.Pointer.Class ):Carbon.AccessPoint.Class
 ```
 
 Create a `Carbon.AccessPoint.Class` object with the parameters specified.
@@ -683,11 +683,11 @@ Create a `Carbon.AccessPoint.Class` object with the parameters specified.
 
 - membershipResource
 - hasMemberRelation
-- memberOfRelation
+- isMemberOfRelation
 
 ##### createFrom
 ```typescript 
-static createFrom<T extends Object>( object:T,  membershipResource:Carbon.Pointer.Class,  hasMemberRelation:string | Carbon.Pointer.Class,  memberOfRelation?:string | Carbon.Pointer.Class ):T & Carbon.AccessPoint.Class
+static createFrom<T extends Object>( object:T,  membershipResource:Carbon.Pointer.Class,  hasMemberRelation:string | Carbon.Pointer.Class,  isMemberOfRelation?:string | Carbon.Pointer.Class ):T & Carbon.AccessPoint.Class
 ```
 
 Create a `Carbon.AccessPoint.Class` object with the object provided.
@@ -697,7 +697,7 @@ Create a `Carbon.AccessPoint.Class` object with the object provided.
 - object
 - membershipResource
 - hasMemberRelation
-- memberOfRelation
+- isMemberOfRelation
 
 
 
@@ -5251,7 +5251,7 @@ Returns true if the object provided is considered as an `Carbon.LDP.DirectContai
 
 ##### create
 ```typescript 
-static create( membershipResource:Carbon.Pointer.Class,  hasMemberRelation:string | Carbon.Pointer.Class,  memberOfRelation?:string | Carbon.Pointer.Class ):Carbon.LDP.DirectContainer.Class
+static create( membershipResource:Carbon.Pointer.Class,  hasMemberRelation:string | Carbon.Pointer.Class,  isMemberOfRelation?:string | Carbon.Pointer.Class ):Carbon.LDP.DirectContainer.Class
 ```
 
 Create a `Carbon.LDP.DirectContainer.Class` object with the parameters specified.
@@ -5260,11 +5260,11 @@ Create a `Carbon.LDP.DirectContainer.Class` object with the parameters specified
 
 - membershipResource
 - hasMemberRelation
-- memberOfRelation
+- isMemberOfRelation
 
 ##### createFrom
 ```typescript 
-static createFrom<T extends Object>( object:T,  membershipResource:Carbon.Pointer.Class,  hasMemberRelation:string | Carbon.Pointer.Class,  memberOfRelation?:string | Carbon.Pointer.Class ):T & Carbon.LDP.DirectContainer.Class
+static createFrom<T extends Object>( object:T,  membershipResource:Carbon.Pointer.Class,  hasMemberRelation:string | Carbon.Pointer.Class,  isMemberOfRelation?:string | Carbon.Pointer.Class ):T & Carbon.LDP.DirectContainer.Class
 ```
 
 Create a `Carbon.LDP.DirectContainer.Class` object with the object provided and the parameters specified.
@@ -5274,7 +5274,7 @@ Create a `Carbon.LDP.DirectContainer.Class` object with the object provided and 
 - object
 - membershipResource
 - hasMemberRelation
-- memberOfRelation
+- isMemberOfRelation
 
 
 

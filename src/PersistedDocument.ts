@@ -22,7 +22,7 @@ export interface Class extends PersistedResource.Class, Document.Class {
 	defaultInteractionModel?:Pointer.Class;
 	accessPoints?:Pointer.Class[];
 	hasMemberRelation?:Pointer.Class;
-	memberOfRelation?:Pointer.Class;
+	isMemberOfRelation?:Pointer.Class;
 
 	_documents:Documents;
 	_etag:string;

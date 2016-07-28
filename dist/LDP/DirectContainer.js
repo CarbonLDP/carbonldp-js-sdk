@@ -17,10 +17,10 @@ var Factory = (function () {
             && Resource.Util.hasType(object, exports.RDF_CLASS)
             && Document.Factory.is(object));
     };
-    Factory.create = function (membershipResource, hasMemberRelation, memberOfRelation) {
-        return Factory.createFrom({}, membershipResource, hasMemberRelation, memberOfRelation);
+    Factory.create = function (membershipResource, hasMemberRelation, isMemberOfRelation) {
+        return Factory.createFrom({}, membershipResource, hasMemberRelation, isMemberOfRelation);
     };
-    Factory.createFrom = function (object, membershipResource, hasMemberRelation, memberOfRelation) {
+    Factory.createFrom = function (object, membershipResource, hasMemberRelation, isMemberOfRelation) {
         if (Factory.is(object))
             throw new Errors.IllegalArgumentError("The base object is already a DirectContainer");
         if (!membershipResource)
@@ -34,8 +34,8 @@ var Factory = (function () {
         if (!!hasMemberRelation) {
             container.hasMemberRelation = Pointer.Factory.is(hasMemberRelation) ? hasMemberRelation : Pointer.Factory.create(hasMemberRelation);
         }
-        if (!!memberOfRelation) {
-            container.memberOfRelation = Pointer.Factory.is(memberOfRelation) ? memberOfRelation : Pointer.Factory.create(memberOfRelation);
+        if (!!isMemberOfRelation) {
+            container.isMemberOfRelation = Pointer.Factory.is(isMemberOfRelation) ? isMemberOfRelation : Pointer.Factory.create(isMemberOfRelation);
         }
         return container;
     };

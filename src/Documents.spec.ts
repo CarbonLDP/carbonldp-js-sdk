@@ -1408,7 +1408,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 				accessPoint = {
 					hasMemberRelation: "http://example.com/myNamespace#some-relation",
-					memberOfRelation: "http://example.com/myNamespace#some-inverted-relation",
+					isMemberOfRelation: "http://example.com/myNamespace#some-inverted-relation",
 				};
 				promise = documents.createAccessPoint( "http://example.com/parent-resource/", accessPoint, "access-point" );
 				expect( promise instanceof Promise ).toBe( true );
@@ -1506,7 +1506,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 				accessPoint = {
 					hasMemberRelation: "http://example.com/myNamespace#some-relation",
-					memberOfRelation: "http://example.com/myNamespace#some-inverted-relation",
+					isMemberOfRelation: "http://example.com/myNamespace#some-inverted-relation",
 				};
 				promise = documents.createAccessPoint( "http://example.com/parent-resource/", accessPoint );
 				expect( promise instanceof Promise ).toBe( true );

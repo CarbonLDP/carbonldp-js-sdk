@@ -26,8 +26,8 @@ export const SCHEMA:ObjectSchema.Class = {
 		"@id": NS.LDP.Predicate.membershipResource,
 		"@type": "@id",
 	},
-	"memberOfRelation": {
-		"@id": NS.LDP.Predicate.memberOfRelation,
+	"isMemberOfRelation": {
+		"@id": NS.LDP.Predicate.isMemberOfRelation,
 		"@type": "@id",
 	},
 	"hasMemberRelation": {
@@ -59,7 +59,7 @@ export const SCHEMA:ObjectSchema.Class = {
 
 export interface Class extends Resource.Class, Pointer.Library, Pointer.Validator {
 	defaultInteractionModel?:Pointer.Class;
-	memberOfRelation?:Pointer.Class;
+	isMemberOfRelation?:Pointer.Class;
 	hasMemberRelation?:Pointer.Class;
 
 	_fragmentsIndex:Map<string, Fragment.Class>;
