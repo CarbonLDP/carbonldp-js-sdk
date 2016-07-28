@@ -674,7 +674,7 @@ var Documents = (function () {
         if (!this.context)
             return new ObjectSchema.DigestedObjectSchema();
         var objectSchemas = [this.context.getObjectSchema()];
-        if (!RDF.URI.Util.hasFragment(objectID) && !RDF.URI.Util.isBNodeID(objectID))
+        if (Utils.isDefined(objectID) && !RDF.URI.Util.hasFragment(objectID) && !RDF.URI.Util.isBNodeID(objectID))
             objectSchemas.push(Documents._documentSchema);
         for (var _i = 0, objectTypes_1 = objectTypes; _i < objectTypes_1.length; _i++) {
             var type = objectTypes_1[_i];

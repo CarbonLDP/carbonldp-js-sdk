@@ -782,7 +782,7 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 		if( ! this.context ) return new ObjectSchema.DigestedObjectSchema();
 
 		let objectSchemas:ObjectSchema.DigestedObjectSchema[] = [ this.context.getObjectSchema() ];
-		if( ! RDF.URI.Util.hasFragment( objectID ) && ! RDF.URI.Util.isBNodeID( objectID ) ) objectSchemas.push( Documents._documentSchema );
+		if( Utils.isDefined( objectID ) && ! RDF.URI.Util.hasFragment( objectID ) && ! RDF.URI.Util.isBNodeID( objectID ) ) objectSchemas.push( Documents._documentSchema );
 
 		for( let type of objectTypes ) {
 			if( this.context.hasObjectSchema( type ) ) objectSchemas.push( this.context.getObjectSchema( type ) );
