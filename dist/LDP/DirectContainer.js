@@ -2,7 +2,6 @@
 var Document = require("./../Document");
 var Errors = require("./../Errors");
 var NS = require("./../NS");
-var Pointer = require("./../Pointer");
 var Resource = require("./../Resource");
 var Utils = require("./../Utils");
 exports.RDF_CLASS = NS.LDP.Class.DirectContainer;
@@ -31,12 +30,8 @@ var Factory = (function () {
         container.types.push(NS.LDP.Class.Container);
         container.types.push(NS.LDP.Class.DirectContainer);
         container.membershipResource = membershipResource;
-        if (!!hasMemberRelation) {
-            container.hasMemberRelation = Pointer.Factory.is(hasMemberRelation) ? hasMemberRelation : Pointer.Factory.create(hasMemberRelation);
-        }
-        if (!!isMemberOfRelation) {
-            container.isMemberOfRelation = Pointer.Factory.is(isMemberOfRelation) ? isMemberOfRelation : Pointer.Factory.create(isMemberOfRelation);
-        }
+        container.hasMemberRelation = hasMemberRelation;
+        container.isMemberOfRelation = isMemberOfRelation;
         return container;
     };
     return Factory;

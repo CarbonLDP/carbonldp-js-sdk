@@ -42,13 +42,9 @@ export class Factory {
 
 		container.membershipResource = membershipResource;
 
-		if( ! ! hasMemberRelation ) {
-			container.hasMemberRelation = Pointer.Factory.is( hasMemberRelation ) ? <Pointer.Class> hasMemberRelation : Pointer.Factory.create( <string> hasMemberRelation );
-		}
-
-		if( ! ! isMemberOfRelation ) {
-			container.isMemberOfRelation = Pointer.Factory.is( isMemberOfRelation ) ? <Pointer.Class> isMemberOfRelation : Pointer.Factory.create( <string> isMemberOfRelation );
-		}
+		// TODO: Handle properties correctly and validate them
+		container.hasMemberRelation = <Pointer.Class> hasMemberRelation;
+		container.isMemberOfRelation = <Pointer.Class> isMemberOfRelation;
 
 		return container;
 	}
