@@ -1047,12 +1047,13 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 			), ():void => {
 
 				it( hasSignature(
+					[ "T extends Carbon.AccessPoint.Class" ],
 					"Create an AccessPoint for the document with the slug specified.", [
-						{name: "accessPoint", type: "Carbon.AccessPoint.Class"},
+						{name: "accessPoint", type: "T"},
 						{name: "slug", type: "string", optional: true, description: "Slug that will be used for the URI of the new access point."},
 						{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: " Customizable options for the request."},
 					],
-					{type: "Promise<[ Carbon.PersistedAccessPoint.Class[], Carbon.HTTP.Response ]>"}
+					{type: "Promise<[ T & Carbon.PersistedAccessPoint.Class, Carbon.HTTP.Response ]>"}
 				), ():void => {
 					expect( document.createAccessPoint ).toBeDefined();
 					expect( Utils.isFunction( document.createAccessPoint ) ).toBeDefined();
@@ -1064,11 +1065,12 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 				} );
 
 				it( hasSignature(
+					[ "T extends Carbon.AccessPoint.Class" ],
 					"Create an AccessPoint for the document.", [
-						{name: "accessPoint", type: "Carbon.AccessPoint.Class"},
+						{name: "accessPoint", type: "T"},
 						{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: " Customizable options for the request."},
 					],
-					{type: "Promise<[ Carbon.PersistedAccessPoint.Class[], Carbon.HTTP.Response ]>"}
+					{type: "Promise<[ T & Carbon.PersistedAccessPoint.Class, Carbon.HTTP.Response ]>"}
 				), ():void => {
 					expect( document.createAccessPoint ).toBeDefined();
 					expect( Utils.isFunction( document.createAccessPoint ) ).toBeDefined();

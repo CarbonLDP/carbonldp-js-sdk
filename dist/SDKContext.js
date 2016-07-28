@@ -1,7 +1,6 @@
 "use strict";
 var APIDescription = require("./APIDescription");
 var Auth = require("./Auth");
-var Document = require("./Document");
 var Documents_1 = require("./Documents");
 var Errors = require("./Errors");
 var LDP = require("./LDP");
@@ -132,7 +131,6 @@ var Class = (function () {
     };
     Class.prototype.registerDefaultObjectSchemas = function () {
         this.extendObjectSchema(PersistedBlankNode.SCHEMA);
-        this.extendObjectSchema(Document.RDF_CLASS, Document.SCHEMA);
         this.extendObjectSchema(ProtectedDocument.RDF_CLASS, ProtectedDocument.SCHEMA);
         this.extendObjectSchema(RDFRepresentation.RDF_CLASS, RDFRepresentation.SCHEMA);
         this.extendObjectSchema(APIDescription.RDF_CLASS, APIDescription.SCHEMA);

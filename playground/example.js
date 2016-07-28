@@ -4,7 +4,7 @@
 			"use strict";
 
 			let carbon = new Carbon();
-			carbon.setSetting( "domain", "hri-carbonldp.base22.io" );
+			carbon.setSetting( "domain", "local.carbonldp.com" );
 
 			carbon.extendObjectSchema( {
 				"acl": "http://www.w3.org/ns/auth/acl#",
@@ -62,17 +62,24 @@
 			let appContext;
 			let resource;
 
-			carbon.auth.authenticate( "hri@honda.com", "honda" ).then( function() {
-				return carbon.apps.getContext( "hri-emi-web-app/" );
+			carbon.auth.authenticate( "admin@carbonldp.com", "hello" ).then( function() {
+				return carbon.apps.getContext( "test-app/" );
 			} ).then( ( _appContext ) => {
 				appContext = _appContext;
-				return appContext.documents.get( "something-that-doesnt-exist/" );
+				return appContext.documents.get( "posts/first-post/" );
 			} ).then( ( [ _resource, response ] ) => {
 				resource = _resource;
-				resource.contains = [];
+
+				console.log( resource )
+				resource.getFragments().forEach( fragment => resource.removeFragment( fragment ) );
+				resource.myBlankNode = resource.createFragment( { property: "A property", type: "Blank Node" } );
+				resource.myNamedFragment = resource.createNamedFragment( { property: "A property~! ", type: "Named Fragment" }, "my-fragment" );
+
 				return saveAndRefresh( resource );
 			} ).then( ( [ _resource, response ] ) => {
-				done( "Save was successful when it shouldn't be" );
+
+				console.log( resource );
+				done();
 			} ).catch( ( error ) => {
 				console.error( "%o", error );
 

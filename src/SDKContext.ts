@@ -148,7 +148,6 @@ export class Class implements Context {
 	private registerDefaultObjectSchemas():void {
 		this.extendObjectSchema( PersistedBlankNode.SCHEMA );
 
-		this.extendObjectSchema( Document.RDF_CLASS, Document.SCHEMA );
 		this.extendObjectSchema( ProtectedDocument.RDF_CLASS, ProtectedDocument.SCHEMA );
 
 		this.extendObjectSchema( RDFRepresentation.RDF_CLASS, RDFRepresentation.SCHEMA );

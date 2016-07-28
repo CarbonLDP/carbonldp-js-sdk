@@ -664,22 +664,24 @@ var Documents = (function () {
     };
     Documents.prototype.getDigestedObjectSchemaForExpandedObject = function (expandedObject) {
         var types = RDF.Node.Util.getTypes(expandedObject);
-        return this.getDigestedObjectSchema(types);
+        return this.getDigestedObjectSchema(types, expandedObject["@id"]);
     };
     Documents.prototype.getDigestedObjectSchemaForDocument = function (document) {
         var types = Resource.Util.getTypes(document);
-        return this.getDigestedObjectSchema(types);
+        return this.getDigestedObjectSchema(types, document.id);
     };
-    Documents.prototype.getDigestedObjectSchema = function (objectTypes) {
+    Documents.prototype.getDigestedObjectSchema = function (objectTypes, objectID) {
         if (!this.context)
             return new ObjectSchema.DigestedObjectSchema();
-        var typesDigestedObjectSchemas = [this.context.getObjectSchema()];
+        var objectSchemas = [this.context.getObjectSchema()];
+        if (!RDF.URI.Util.hasFragment(objectID) && !RDF.URI.Util.isBNodeID(objectID))
+            objectSchemas.push(Documents._documentSchema);
         for (var _i = 0, objectTypes_1 = objectTypes; _i < objectTypes_1.length; _i++) {
             var type = objectTypes_1[_i];
             if (this.context.hasObjectSchema(type))
-                typesDigestedObjectSchemas.push(this.context.getObjectSchema(type));
+                objectSchemas.push(this.context.getObjectSchema(type));
         }
-        var digestedSchema = ObjectSchema.Digester.combineDigestedObjectSchemas(typesDigestedObjectSchemas);
+        var digestedSchema = ObjectSchema.Digester.combineDigestedObjectSchemas(objectSchemas);
         if (this.context.hasSetting("vocabulary"))
             digestedSchema.vocab = this.context.resolve(this.context.getSetting("vocabulary"));
         return digestedSchema;
@@ -835,6 +837,7 @@ var Documents = (function () {
         this.compact(nodes, resources, freeResourcesDocument);
         return freeResourcesDocument;
     };
+    Documents._documentSchema = ObjectSchema.Digester.digestSchema(Document.SCHEMA);
     return Documents;
 }());
 Object.defineProperty(exports, "__esModule", { value: true });

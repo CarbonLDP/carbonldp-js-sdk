@@ -94,8 +94,8 @@ var Factory = (function () {
 }());
 exports.Factory = Factory;
 function parsePointer(element) {
-    var that = this;
-    return Pointer.Factory.is(element) ? element : that.getPointer(element);
+    var acl = this;
+    return Pointer.Factory.is(element) ? element : acl.getPointer(element);
 }
 function parsePointers(elements) {
     var _this = this;
@@ -126,19 +126,19 @@ function configACEs(granting, subjects, subjectsClass, permissions, aces) {
     }
 }
 function grant(subjects, subjectsClass, permissions) {
-    var that = this;
-    that.entries = that.entries || [];
-    configACEs.call(this, true, subjects, subjectsClass, permissions, that.entries);
+    var acl = this;
+    acl.entries = acl.entries || [];
+    configACEs.call(this, true, subjects, subjectsClass, permissions, acl.entries);
 }
 function deny(subjects, subjectsClass, permissions) {
-    var that = this;
-    that.entries = that.entries || [];
-    configACEs.call(this, false, subjects, subjectsClass, permissions, that.entries);
+    var acl = this;
+    acl.entries = acl.entries || [];
+    configACEs.call(this, false, subjects, subjectsClass, permissions, acl.entries);
 }
 function configureChildInheritance(granting, subjects, subjectsClass, permissions) {
-    var that = this;
-    that.inheritableEntries = that.inheritableEntries || [];
-    configACEs.call(this, granting, subjects, subjectsClass, permissions, that.inheritableEntries);
+    var acl = this;
+    acl.inheritableEntries = acl.inheritableEntries || [];
+    configACEs.call(this, granting, subjects, subjectsClass, permissions, acl.inheritableEntries);
 }
 function grantingFrom(subject, permission, aces) {
     var subjectACEs = aces.filter(function (ace) { return Utils.A.indexOf(ace.subjects, subject, Pointer.Util.areEqual) !== -1; });
@@ -157,23 +157,23 @@ function getGranting(subject, permission, aces) {
     return grantingFrom(subjectPointer, permissionPointer, aces);
 }
 function grants(subject, permission) {
-    var that = this;
-    return getGranting.call(this, subject, permission, that.entries);
+    var acl = this;
+    return getGranting.call(this, subject, permission, acl.entries);
 }
 function denies(subject, permission) {
-    var that = this;
-    var granting = getGranting.call(this, subject, permission, that.entries);
+    var acl = this;
+    var granting = getGranting.call(this, subject, permission, acl.entries);
     return granting === null ? null : !granting;
 }
 function getChildInheritance(subject, permission) {
-    var that = this;
-    return getGranting.call(this, subject, permission, that.inheritableEntries);
+    var acl = this;
+    return getGranting.call(this, subject, permission, acl.inheritableEntries);
 }
 function removePermissionsFrom(subject, permissions, aces) {
     if (!aces)
         return;
-    var that = this;
-    var opposedAces = that.entries === aces ? that.inheritableEntries : that.entries;
+    var acl = this;
+    var opposedAces = acl.entries === aces ? acl.inheritableEntries : acl.entries;
     var subjectACEs = aces.filter(function (ace) { return Utils.A.indexOf(ace.subjects, subject, Pointer.Util.areEqual) !== -1; });
     for (var _i = 0, subjectACEs_2 = subjectACEs; _i < subjectACEs_2.length; _i++) {
         var ace = subjectACEs_2[_i];
@@ -198,7 +198,7 @@ function removePermissionsFrom(subject, permissions, aces) {
         }
         if (ace.permissions.length === 0) {
             aces.splice(Utils.A.indexOf(aces, ace, Pointer.Util.areEqual), 1);
-            that.removeFragment(ace);
+            acl.removeFragment(ace);
         }
     }
 }
@@ -208,12 +208,12 @@ function removePermissions(subject, permissions, aces) {
     removePermissionsFrom.call(this, subjectPointer, permissionPointers, aces);
 }
 function remove(subject, permissions) {
-    var that = this;
-    removePermissions.call(this, subject, permissions, that.entries);
+    var acl = this;
+    removePermissions.call(this, subject, permissions, acl.entries);
 }
 function removeChildInheritance(subject, permissions) {
-    var that = this;
-    removePermissions.call(this, subject, permissions, that.inheritableEntries);
+    var acl = this;
+    removePermissions.call(this, subject, permissions, acl.inheritableEntries);
 }
 
 //# sourceMappingURL=ACL.js.map

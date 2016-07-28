@@ -2501,7 +2501,7 @@ Retrieves all the children of a document and their content, where you can specif
 
 ##### createAccessPoint
 ```typescript 
-createAccessPoint( documentURI:string,  accessPoint:Carbon.AccessPoint.Class,  slug?:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[Carbon.Pointer.Class, Carbon.HTTP.Response.Class]>
+createAccessPoint<T extends Carbon.AccessPoint.Class>( documentURI:string,  accessPoint:T,  slug?:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ T & Carbon.PersistedAccessPoint.Class, Carbon.HTTP.Response.Class ]>
 ```
 
 Create an AccessPoint of the document.
@@ -2514,7 +2514,7 @@ Create an AccessPoint of the document.
 - requestOptions
 
 ```typescript 
-createAccessPoint( documentURI:string,  accessPoint:Carbon.AccessPoint.Class,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[Carbon.Pointer.Class, Carbon.HTTP.Response.Class]>
+createAccessPoint<T extends Carbon.AccessPoint.Class>( documentURI:string,  accessPoint:T,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ T & Carbon.PersistedAccessPoint.Class, Carbon.HTTP.Response.Class ]>
 ```
 
 Create an AccessPoint of the document.
@@ -7199,7 +7199,7 @@ Create a child for the document and retrieves the updated data from the server.
 
 ##### createAccessPoint
 ```typescript 
-createAccessPoint( accessPoint:Carbon.AccessPoint.Class,  slug?:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.PersistedAccessPoint.Class[], Carbon.HTTP.Response ]>
+createAccessPoint<T extends Carbon.AccessPoint.Class>( accessPoint:T,  slug?:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ T & Carbon.PersistedAccessPoint.Class, Carbon.HTTP.Response ]>
 ```
 
 Create an AccessPoint for the document with the slug specified.
@@ -7211,7 +7211,7 @@ Create an AccessPoint for the document with the slug specified.
 - requestOptions:  Customizable options for the request.
 
 ```typescript 
-createAccessPoint( accessPoint:Carbon.AccessPoint.Class,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.PersistedAccessPoint.Class[], Carbon.HTTP.Response ]>
+createAccessPoint<T extends Carbon.AccessPoint.Class>( accessPoint:T,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ T & Carbon.PersistedAccessPoint.Class, Carbon.HTTP.Response ]>
 ```
 
 Create an AccessPoint for the document.

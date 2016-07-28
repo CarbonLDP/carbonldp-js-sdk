@@ -10,6 +10,7 @@ import * as ObjectSchema from "./ObjectSchema";
 import * as SPARQL from "./SPARQL";
 import * as RetrievalPreferences from "./RetrievalPreferences";
 declare class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Resolver {
+    private static _documentSchema;
     _jsonldConverter: JSONLDConverter.Class;
     jsonldConverter: JSONLDConverter.Class;
     private context;
@@ -31,8 +32,8 @@ declare class Documents implements Pointer.Library, Pointer.Validator, ObjectSch
     listChildren(parentURI: string, requestOptions?: HTTP.Request.Options): Promise<[PersistedDocument.Class[], HTTP.Response.Class]>;
     getChildren<T>(parentURI: string, retrievalPreferences?: RetrievalPreferences.Class, requestOptions?: HTTP.Request.Options): Promise<[(T & PersistedDocument.Class)[], HTTP.Response.Class]>;
     getChildren<T>(parentURI: string, requestOptions?: HTTP.Request.Options): Promise<[(T & PersistedDocument.Class)[], HTTP.Response.Class]>;
-    createAccessPoint(documentURI: string, accessPoint: AccessPoint.Class, slug?: string, requestOptions?: HTTP.Request.Options): Promise<[PersistedAccessPoint.Class, HTTP.Response.Class]>;
-    createAccessPoint(documentURI: string, accessPoint: AccessPoint.Class, requestOptions?: HTTP.Request.Options): Promise<[PersistedAccessPoint.Class, HTTP.Response.Class]>;
+    createAccessPoint<T extends AccessPoint.Class>(documentURI: string, accessPoint: T, slug?: string, requestOptions?: HTTP.Request.Options): Promise<[T & PersistedAccessPoint.Class, HTTP.Response.Class]>;
+    createAccessPoint<T extends AccessPoint.Class>(documentURI: string, accessPoint: T, requestOptions?: HTTP.Request.Options): Promise<[T & PersistedAccessPoint.Class, HTTP.Response.Class]>;
     upload(parentURI: string, data: Buffer, slug?: string, requestOptions?: HTTP.Request.Options): Promise<[Pointer.Class, HTTP.Response.Class]>;
     upload(parentURI: string, data: Buffer, requestOptions?: HTTP.Request.Options): Promise<[Pointer.Class, HTTP.Response.Class]>;
     upload(parentURI: string, data: Blob, slug?: string, requestOptions?: HTTP.Request.Options): Promise<[Pointer.Class, HTTP.Response.Class]>;
@@ -72,7 +73,7 @@ declare class Documents implements Pointer.Library, Pointer.Validator, ObjectSch
     private compactSingle(expandedObject, targetObject, pointerLibrary);
     private getDigestedObjectSchemaForExpandedObject(expandedObject);
     private getDigestedObjectSchemaForDocument(document);
-    private getDigestedObjectSchema(objectTypes);
+    private getDigestedObjectSchema(objectTypes, objectID);
     private updateObject(target, source);
     private getAssociatedFragment(blankNodes, namedFragments, searchedFragment);
     private getRequestURI(uri);

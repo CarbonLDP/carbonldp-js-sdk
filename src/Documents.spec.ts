@@ -1351,13 +1351,14 @@ describe( module( "Carbon/Documents" ), ():void => {
 		), ():void => {
 
 			it( hasSignature(
+				[ "T extends Carbon.AccessPoint.Class" ],
 				"Create an AccessPoint of the document.", [
 					{name: "documentURI", type: "string"},
-					{name: "accessPoint", type: "Carbon.AccessPoint.Class"},
+					{name: "accessPoint", type: "T"},
 					{name: "slug", type: "string", optional: true},
 					{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true},
 				],
-				{type: "Promise<[Carbon.Pointer.Class, Carbon.HTTP.Response.Class]>"}
+				{type: "Promise<[ T & Carbon.PersistedAccessPoint.Class, Carbon.HTTP.Response.Class ]>"}
 			), ( done:(() => void) & { fail:( error?:any ) => void } ):void => {
 				let promises:Promise<any>[] = [];
 
@@ -1448,12 +1449,13 @@ describe( module( "Carbon/Documents" ), ():void => {
 			} );
 
 			it( hasSignature(
+				[ "T extends Carbon.AccessPoint.Class" ],
 				"Create an AccessPoint of the document.", [
 					{name: "documentURI", type: "string"},
-					{name: "accessPoint", type: "Carbon.AccessPoint.Class"},
+					{name: "accessPoint", type: "T"},
 					{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true},
 				],
-				{type: "Promise<[Carbon.Pointer.Class, Carbon.HTTP.Response.Class]>"}
+				{type: "Promise<[ T & Carbon.PersistedAccessPoint.Class, Carbon.HTTP.Response.Class ]>"}
 			), ( done:(() => void) & { fail:( error?:any ) => void } ):void => {
 
 				let promises:Promise<any>[] = [];

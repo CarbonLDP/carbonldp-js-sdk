@@ -26,6 +26,8 @@ import * as Resource from "./Resource";
 import * as RetrievalPreferences from "./RetrievalPreferences";
 
 class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Resolver {
+	private static _documentSchema:ObjectSchema.DigestedObjectSchema = ObjectSchema.Digester.digestSchema( Document.SCHEMA );
+
 	_jsonldConverter:JSONLDConverter.Class;
 
 	get jsonldConverter():JSONLDConverter.Class { return this._jsonldConverter; }
@@ -267,9 +269,9 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 		} );
 	}
 
-	createAccessPoint( documentURI:string, accessPoint:AccessPoint.Class, slug?:string, requestOptions?:HTTP.Request.Options ):Promise<[ PersistedAccessPoint.Class, HTTP.Response.Class ]>;
-	createAccessPoint( documentURI:string, accessPoint:AccessPoint.Class, requestOptions?:HTTP.Request.Options ):Promise<[ PersistedAccessPoint.Class, HTTP.Response.Class ]>;
-	createAccessPoint( documentURI:string, accessPoint:AccessPoint.Class, slugOrRequestOptions:any, requestOptions:HTTP.Request.Options = {} ):Promise<[ PersistedAccessPoint.Class, HTTP.Response.Class ]> {
+	createAccessPoint<T extends AccessPoint.Class>( documentURI:string, accessPoint:T, slug?:string, requestOptions?:HTTP.Request.Options ):Promise<[ T & PersistedAccessPoint.Class, HTTP.Response.Class ]>;
+	createAccessPoint<T extends AccessPoint.Class>( documentURI:string, accessPoint:T, requestOptions?:HTTP.Request.Options ):Promise<[ T & PersistedAccessPoint.Class, HTTP.Response.Class ]>;
+	createAccessPoint<T extends AccessPoint.Class>( documentURI:string, accessPoint:T, slugOrRequestOptions:any, requestOptions:HTTP.Request.Options = {} ):Promise<[ T & PersistedAccessPoint.Class, HTTP.Response.Class ]> {
 		let slug:string = Utils.isString( slugOrRequestOptions ) ? slugOrRequestOptions : null;
 		requestOptions = ! Utils.isString( slugOrRequestOptions ) && ! ! slugOrRequestOptions ? slugOrRequestOptions : requestOptions;
 
@@ -279,8 +281,8 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 
 		if( PersistedDocument.Factory.is( accessPoint ) ) return Promise.reject<any>( new Errors.IllegalArgumentError( "The accessPoint provided has been already persisted." ) );
 
-		let accessPointDocument:AccessPoint.DocumentClass = AccessPoint.Factory.is( accessPoint ) ? <any> accessPoint
-			: AccessPoint.Factory.createFrom( accessPoint, this.getPointer( documentURI ), accessPoint.hasMemberRelation, accessPoint.memberOfRelation );
+		let accessPointDocument:T & AccessPoint.DocumentClass = AccessPoint.Factory.is( accessPoint ) ? <any> accessPoint
+			: AccessPoint.Factory.createFrom<T>( accessPoint, this.getPointer( documentURI ), accessPoint.hasMemberRelation, accessPoint.memberOfRelation );
 		if( accessPointDocument.membershipResource.id !== documentURI ) return Promise.reject<any>( new Errors.IllegalArgumentError( "The documentURI must be the same as the accessPoint's membershipResource" ) );
 
 		// TODO: Reuse logic with createChild
@@ -307,7 +309,7 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 			if( locationHeader.values.length !== 1 ) throw new HTTP.Errors.BadResponseError( "The response contains more than one Location header.", response );
 
 			let localID:string = this.getPointerID( locationHeader.values[ 0 ].toString() );
-			let persistedAccessPoint:PersistedAccessPoint.Class = PersistedDocument.Factory.decorate<AccessPoint.DocumentClass>( this.createPointerFrom( accessPointDocument, localID ), this );
+			let persistedAccessPoint:T & PersistedAccessPoint.Class = PersistedDocument.Factory.decorate<T & AccessPoint.DocumentClass>( this.createPointerFrom( accessPointDocument, localID ), this );
 			this.pointers.set( localID, persistedAccessPoint );
 
 			return [
@@ -767,23 +769,26 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 	private getDigestedObjectSchemaForExpandedObject( expandedObject:Object ):ObjectSchema.DigestedObjectSchema {
 		let types:string[] = RDF.Node.Util.getTypes( <any> expandedObject );
 
-		return this.getDigestedObjectSchema( types );
+		return this.getDigestedObjectSchema( types, expandedObject[ "@id" ] );
 	}
 
 	private getDigestedObjectSchemaForDocument( document:Document.Class ):ObjectSchema.DigestedObjectSchema {
 		let types:string[] = Resource.Util.getTypes( document );
 
-		return this.getDigestedObjectSchema( types );
+		return this.getDigestedObjectSchema( types, document.id );
 	}
 
-	private getDigestedObjectSchema( objectTypes:string[] ):ObjectSchema.DigestedObjectSchema {
+	private getDigestedObjectSchema( objectTypes:string[], objectID:string ):ObjectSchema.DigestedObjectSchema {
 		if( ! this.context ) return new ObjectSchema.DigestedObjectSchema();
 
-		let typesDigestedObjectSchemas:ObjectSchema.DigestedObjectSchema[] = [ this.context.getObjectSchema() ];
+		let objectSchemas:ObjectSchema.DigestedObjectSchema[] = [ this.context.getObjectSchema() ];
+		if( ! RDF.URI.Util.hasFragment( objectID ) && ! RDF.URI.Util.isBNodeID( objectID ) ) objectSchemas.push( Documents._documentSchema );
+
 		for( let type of objectTypes ) {
-			if( this.context.hasObjectSchema( type ) ) typesDigestedObjectSchemas.push( this.context.getObjectSchema( type ) );
+			if( this.context.hasObjectSchema( type ) ) objectSchemas.push( this.context.getObjectSchema( type ) );
 		}
-		let digestedSchema:ObjectSchema.DigestedObjectSchema = ObjectSchema.Digester.combineDigestedObjectSchemas( typesDigestedObjectSchemas );
+
+		let digestedSchema:ObjectSchema.DigestedObjectSchema = ObjectSchema.Digester.combineDigestedObjectSchemas( objectSchemas );
 		if( this.context.hasSetting( "vocabulary" ) ) digestedSchema.vocab = this.context.resolve( this.context.getSetting( "vocabulary" ) );
 
 		return digestedSchema;

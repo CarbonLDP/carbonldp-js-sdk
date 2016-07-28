@@ -45,8 +45,8 @@ export interface Class extends PersistedResource.Class, Document.Class {
     createChildAndRetrieve<T extends Object>(object: T): Promise<[T & Class, [HTTP.Response.Class, HTTP.Response.Class]]>;
     createChildAndRetrieve(slug: string): Promise<[Class, [HTTP.Response.Class, HTTP.Response.Class]]>;
     createChildAndRetrieve(): Promise<[Class, [HTTP.Response.Class, HTTP.Response.Class]]>;
-    createAccessPoint(accessPoint: AccessPoint.Class, slug?: string, requestOptions?: HTTP.Request.Options): Promise<[PersistedAccessPoint.Class, HTTP.Response.Class]>;
-    createAccessPoint(accessPoint: AccessPoint.Class, requestOptions?: HTTP.Request.Options): Promise<[PersistedAccessPoint.Class, HTTP.Response.Class]>;
+    createAccessPoint<T extends AccessPoint.Class>(accessPoint: T, slug?: string, requestOptions?: HTTP.Request.Options): Promise<[T & PersistedAccessPoint.Class, HTTP.Response.Class]>;
+    createAccessPoint<T extends AccessPoint.Class>(accessPoint: T, requestOptions?: HTTP.Request.Options): Promise<[T & PersistedAccessPoint.Class, HTTP.Response.Class]>;
     listChildren(): Promise<[Class[], HTTP.Response.Class]>;
     getChildren<T>(retrievalPreferences?: RetrievalPreferences.Class): Promise<[(T & Class)[], HTTP.Response.Class]>;
     listMembers(includeNonReadable?: boolean): Promise<[Class[], HTTP.Response.Class]>;
