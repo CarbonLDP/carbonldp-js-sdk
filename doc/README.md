@@ -9759,6 +9759,20 @@ Collects the values of an ES6 iterator and returns an array.
 
 - iterator
 
+##### indexOf
+```typescript 
+static indexOf<T, W>( array:Array<T>,  searchedElement:W,  comparator?:( element:T, searchedElement:W ) => boolean ):boolean
+```
+
+Returns the index of a element searched in an array with a custom comparator function.
+If the element was not found `-1` is returned
+
+*Parameters*
+
+- array: The array were to search the element.
+- searchedElement: The element searched
+- comparator: The function that must compare if the two elements provided are de same.
+
 ##### joinWithoutDuplicates
 ```typescript 
 static joinWithoutDuplicates( ...arrays:Array<Array<T>> ):Array<T>

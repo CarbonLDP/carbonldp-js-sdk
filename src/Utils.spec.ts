@@ -791,6 +791,75 @@ describe( module( "Carbon/Utils", "Class with useful functions used in the SDK."
 			expect( result.indexOf( 4 ) ).not.toBe( - 1 );
 		} );
 
+		it( hasMethod(
+			STATIC,
+			"indexOf",
+			[ "T", "W" ],
+			"Returns the index of a element searched in an array with a custom comparator function.\n" +
+			"If the element was not found `-1` is returned", [
+				{name: "array", type: "Array<T>", description: "The array were to search the element."},
+				{name: "searchedElement", type: "W", description: "The element searched"},
+				{name: "comparator", type: "( element:T, searchedElement:W ) => boolean", optional: true, description: "The function that must compare if the two elements provided are de same."},
+			],
+			{type: "boolean"}
+		), ():void => {
+			expect( Utils.A.indexOf ).toBeDefined();
+			expect( Utils.isFunction( Utils.A.indexOf ) ).toBe( true );
+
+			// Test if the default comparator works
+			(() => {
+				let result:number;
+				let array:Array<number> = [ 5, 3, 1 ];
+
+				result = Utils.A.indexOf<number, number>( array, 1 );
+				expect( result ).toBe( 2 );
+				result = Utils.A.indexOf<number, number>( array, 5 );
+				expect( result ).toBe( 0 );
+				result = Utils.A.indexOf<number, number>( array, 4 );
+				expect( result ).toBe( - 1 );
+			})();
+
+			// Test if the default comparator works
+			(() => {
+				let result:number;
+				let array:Array<number> = [ 5, 3, 1 ];
+
+				result = Utils.A.indexOf<number, string>( array, "1" );
+				expect( result ).toBe( - 1 );
+				result = Utils.A.indexOf<number, string>( array, "5" );
+				expect( result ).toBe( - 1 );
+				result = Utils.A.indexOf<number, string>( array, "4" );
+				expect( result ).toBe( - 1 );
+			})();
+
+			// Test using a custom function
+			(() => {
+				interface NoNumber {
+					value:number;
+				}
+				function comparator( a:number, b:NoNumber ):boolean {
+					return a === b.value;
+				}
+
+				let result:number;
+				let array:Array<number> = [ 5, 3, 1 ];
+				let searched:NoNumber;
+
+				searched = {value: 1};
+				result = Utils.A.indexOf<number, NoNumber>( array, searched, comparator );
+				expect( result ).toBe( 2 );
+
+				searched = <NoNumber> {value: 5, another: "thing"};
+				result = Utils.A.indexOf<number, NoNumber>( array, searched, comparator );
+				expect( result ).toBe( 0 );
+
+				searched = {value: 4};
+				result = Utils.A.indexOf<number, NoNumber>( array, searched, comparator );
+				expect( result ).toBe( - 1 );
+			})();
+
+		} );
+
 	} );
 
 	describe( clazz( "Carbon.Utils.M", "Utility functions related to ES6 Maps." ), ():void => {
