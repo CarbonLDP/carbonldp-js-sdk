@@ -24,8 +24,8 @@ describe( module(
 ), ():void => {
 
 	describe( clazz(
-		"Carbon.HTTP.Errors.server.InternalServerErrorError",
-		"Error class that can be throw to indicate that the server encountered an unexpected condition. This generic error is given when no more specific message is suitable"
+		"Carbon.HTTP.Errors.InternalServerErrorError",
+		"Error class to indicate that the server encountered an unexpected condition. This generic error is given when no other specific error is suitable."
 	), ():void => {
 
 		let response:Response;

@@ -4,7 +4,6 @@ var HTTP = require("./../HTTP");
 var NS = require("./../NS");
 var RDF = require("./../RDF");
 var BasicAuthenticator_1 = require("./BasicAuthenticator");
-var UsernameAndPasswordToken_1 = require("./UsernameAndPasswordToken");
 var Token = require("./Token");
 var Utils = require("./../Utils");
 var Class = (function () {
@@ -52,9 +51,6 @@ var Class = (function () {
     Class.prototype.clearAuthentication = function () {
         this._credentials = null;
     };
-    Class.prototype.supports = function (authenticationToken) {
-        return authenticationToken instanceof UsernameAndPasswordToken_1.default;
-    };
     Class.prototype.createToken = function () {
         var _this = this;
         var uri = this.context.resolve(Class.TOKEN_CONTAINER);
@@ -65,7 +61,7 @@ var Class = (function () {
         return HTTP.Request.Service.post(uri, null, requestOptions, new HTTP.JSONLDParser.Class()).then(function (_a) {
             var expandedResult = _a[0], response = _a[1];
             var expandedNodes = RDF.Document.Util.getResources(expandedResult);
-            expandedNodes = expandedNodes.filter(Token.Factory.hasRDFClass);
+            expandedNodes = expandedNodes.filter(function (node) { return RDF.Node.Util.hasType(node, Token.RDF_CLASS); });
             if (expandedNodes.length === 0)
                 throw new HTTP.Errors.BadResponseError("No '" + Token.RDF_CLASS + "' was returned.", response);
             if (expandedNodes.length > 1)
@@ -78,17 +74,12 @@ var Class = (function () {
         });
     };
     Class.prototype.addTokenAuthenticationHeader = function (headers) {
-        var header;
-        if (headers.has("authorization")) {
-            header = headers.get("authorization");
-        }
-        else {
-            header = new HTTP.Header.Class();
-            headers.set("authorization", header);
-        }
+        if (headers.has("authorization"))
+            return;
+        var header = new HTTP.Header.Class();
+        headers.set("authorization", header);
         var authorization = "Token " + this._credentials.key;
         header.values.push(new HTTP.Header.Value(authorization));
-        return headers;
     };
     Class.TOKEN_CONTAINER = "auth-tokens/";
     return Class;

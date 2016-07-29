@@ -17,7 +17,7 @@ describe( module( "Carbon/Errors/IDAlreadyInUseError" ), ():void => {
 
 	describe( clazz(
 		"Carbon.Errors.IDAlreadyInUseError",
-		"Error class to indicates that an ID is already in use"
+		"Error class to indicate that an identifier (ID) is already in use."
 	), ():void => {
 
 		it( isDefined(), ():void => {

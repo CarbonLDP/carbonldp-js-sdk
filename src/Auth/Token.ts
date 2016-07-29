@@ -43,20 +43,6 @@ export class Factory {
 		return <any> object;
 	}
 
-	static hasRDFClass( pointer:Pointer.Class ):boolean;
-	static hasRDFClass( expandedObject:Object ):boolean;
-	static hasRDFClass( pointerOrExpandedObject:Object ):boolean {
-		let types:string[] = [];
-		if( "@type" in pointerOrExpandedObject ) {
-			types = pointerOrExpandedObject[ "@type" ];
-		} else if( "types" in pointerOrExpandedObject ) {
-			// TODO: Use proper class
-			let resource:{ types:Pointer.Class[] } = <any> pointerOrExpandedObject;
-			types = Pointer.Util.getIDs( resource.types );
-		}
-
-		return types.indexOf( RDF_CLASS ) !== - 1;
-	}
 }
 
 export default Class;

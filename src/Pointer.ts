@@ -89,9 +89,7 @@ export class Factory {
 				enumerable: false,
 				configurable: true,
 				value: function():Promise<[ Class, HTTP.Response.Class ]> {
-					return new Promise( ( resolve:( result:any ) => void, reject:( error:any ) => void ):any => {
-						throw new Errors.NotImplementedError( "A simple pointer cannot be resolved by it self." );
-					} );
+					return Promise.reject<any>( new Errors.NotImplementedError( "A simple pointer cannot be resolved by it self." ) );
 				},
 			},
 		} );

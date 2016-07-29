@@ -132,7 +132,7 @@ function extendCreateFragment( superFunction:( slugOrObject?:any, slug?:string )
 		if( RDF.URI.Util.isBNodeID( id ) ) {
 			PersistedFragment.Factory.decorate( fragment );
 		} else {
-			PersistedNamedFragment.Factory.decorate( fragment );
+			PersistedNamedFragment.Factory.decorate( <NamedFragment.Class> fragment );
 		}
 		return fragment;
 	};

@@ -44,7 +44,7 @@ export enum Method {
 export class Class {
 	private context:Context;
 
-	private method:Method = null;
+	private method:Method;
 	private authenticators:Array<Authenticator<AuthenticationToken>>;
 	private authenticator:Authenticator<AuthenticationToken>;
 

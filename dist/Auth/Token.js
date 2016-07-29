@@ -1,6 +1,5 @@
 "use strict";
 var NS = require("./../NS");
-var Pointer = require("./../Pointer");
 var Utils = require("./../Utils");
 exports.RDF_CLASS = NS.CS.Class.Token;
 exports.SCHEMA = {
@@ -28,17 +27,6 @@ var Factory = (function () {
         if (this.hasClassProperties(object))
             return object;
         return object;
-    };
-    Factory.hasRDFClass = function (pointerOrExpandedObject) {
-        var types = [];
-        if ("@type" in pointerOrExpandedObject) {
-            types = pointerOrExpandedObject["@type"];
-        }
-        else if ("types" in pointerOrExpandedObject) {
-            var resource = pointerOrExpandedObject;
-            types = Pointer.Util.getIDs(resource.types);
-        }
-        return types.indexOf(exports.RDF_CLASS) !== -1;
     };
     return Factory;
 }());

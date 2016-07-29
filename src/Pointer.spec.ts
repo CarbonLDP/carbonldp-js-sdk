@@ -11,8 +11,9 @@ import {
 	decoratedObject,
 } from "./test/JasmineExtender";
 import Documents from "./Documents";
-import * as Utils from "./Utils";
 import NotImplementedError from "./HTTP/Errors/server/NotImplementedError";
+import Response from "./HTTP/Response";
+import * as Utils from "./Utils";
 
 import * as Pointer from "./Pointer";
 
@@ -25,7 +26,7 @@ describe( module( "Carbon/Pointer" ), ():void => {
 
 	describe( clazz(
 		"Carbon.Pointer.Factory",
-		"Factory class for Pointer objects."
+		"Factory class for `Carbon.Pointer.Class` objects."
 	), ():void => {
 
 		it( isDefined(), ():void => {
@@ -36,7 +37,7 @@ describe( module( "Carbon/Pointer" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"hasClassProperties",
-			"Returns true if the object provided has the properties and functions of a Pointer object", [
+			"Returns true if the object provided has the properties and methods of a `Carbon.Pointer.Class` object.", [
 				{name: "resource", type: "Object"},
 			],
 			{type: "boolean"}
@@ -80,7 +81,7 @@ describe( module( "Carbon/Pointer" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"is",
-			"Returns true if the value provided is a Pinter object.", [
+			"Returns true if the value provided is considered a `Carbon.Pointer.Class` object.", [
 				{name: "value", type: "any"},
 			],
 			{type: "boolean"}
@@ -106,7 +107,7 @@ describe( module( "Carbon/Pointer" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"create",
-			"Create a Pointer object with id if provided.", [
+			"Creates a Pointer object with the ID provided.", [
 				{name: "id", type: "string", optional: true},
 			],
 			{type: "Carbon.Pointer.Class"}
@@ -162,7 +163,7 @@ describe( module( "Carbon/Pointer" ), ():void => {
 			STATIC,
 			"decorate",
 			[ "T extends Object" ],
-			"Decorates the object provided with the elements of a Pointer object.", [
+			"Decorates the object provided with the properties and methods of a `Carbon.Pointer.Class` object.", [
 				{name: "object", type: "T"},
 			],
 			{type: "T & Carbon.Pointer.Class"}
@@ -191,7 +192,7 @@ describe( module( "Carbon/Pointer" ), ():void => {
 		} );
 
 		describe( decoratedObject(
-			"Object decorated by the Carbon.Pointer.Factory.decorate function.", [
+			"Object decorated by the `Carbon.Pointer.Factory.decorate()` function.", [
 				"Carbon.Pointer.Class",
 			]
 		), ():void => {
@@ -205,7 +206,7 @@ describe( module( "Carbon/Pointer" ), ():void => {
 				INSTANCE,
 				"_id",
 				"string",
-				"URI that identifies the pointer."
+				"Private variable for the URI that identifies the pointer."
 			), ():void => {
 				expect( pointer._id ).toBeDefined();
 				expect( Utils.isString( pointer._id ) ).toBe( true );
@@ -217,7 +218,7 @@ describe( module( "Carbon/Pointer" ), ():void => {
 				INSTANCE,
 				"_resolved",
 				"boolean",
-				"Flag variable that indicate if the pointer has been resolved."
+				"Private variable that indicates if the pointer has been resolved."
 			), ():void => {
 				expect( pointer._resolved ).toBeDefined();
 				expect( Utils.isBoolean( pointer._resolved ) ).toBe( true );
@@ -259,7 +260,7 @@ describe( module( "Carbon/Pointer" ), ():void => {
 				INSTANCE,
 				"resolve",
 				[ "T" ],
-				"Resolve the pointer. This function throw an Error, it should be reimplemented for the respective type of pointer.",
+				"Resolves the pointer. This function throw an Error if it has no been configured by another decorator.",
 				{type: "Promise<[ T & Carbon.PersistedDocument.Class, Carbon.HTTP.Response.Class ]>"}
 			), ( done:{ ():void, fail:() => void } ):void => {
 				expect( pointer.resolve ).toBeDefined();
@@ -278,7 +279,7 @@ describe( module( "Carbon/Pointer" ), ():void => {
 
 	} );
 
-	describe( clazz( "Carbon.Pointer.Util", "Class with useful methods when working with `Carbon.Pointer.Class` objects." ), ():void => {
+	describe( clazz( "Carbon.Pointer.Util", "Class with useful functions to manage `Carbon.Pointer.Class` objects." ), ():void => {
 
 		it( isDefined(), ():void => {
 			expect( Pointer.Util ).toBeDefined();
@@ -287,34 +288,9 @@ describe( module( "Carbon/Pointer" ), ():void => {
 
 		it( hasMethod(
 			STATIC,
-			"areEqual",
-			"Returns true if both pointers refers to the same resource.", [
-				{name: "pointer1", type: "Carbon.Pointer.Class"},
-				{name: "pointer2", type: "Carbon.Pointer.Class"},
-			],
-			{type: "boolean"}
-		), ():void => {
-			expect( Pointer.Util.areEqual ).toBeDefined();
-			expect( Utils.isFunction( Pointer.Util.areEqual ) ).toBe( true );
-
-			let pointer:Pointer.Class;
-			let another:Pointer.Class;
-
-			pointer = Pointer.Factory.create( "http://example.com/some/id" );
-			another = Pointer.Factory.create( "http://example.com/some/id" );
-			expect( pointer ).not.toBe( another );
-			expect( Pointer.Util.areEqual( pointer, another ) ).toBe( true );
-
-			another = Pointer.Factory.create( "http://example.com/another/id" );
-			expect( pointer ).not.toBe( another );
-			expect( Pointer.Util.areEqual( pointer, another ) ).toBe( false );
-		} );
-
-		it( hasMethod(
-			STATIC,
 			"getIDs",
-			"Returns an array of string with the IDs of every pointer in the array of pointers provided.", [
-				{name: "pointers", type: "Carbon.Pointer.Class[]", description: "The array of pointers to obtains theirs IDs."},
+			"Extracts the IDs of all the pointers provided.", [
+				{name: "pointers", type: "Carbon.Pointer.Class[]", description: "The array of Pointers to obtain their IDs."},
 			],
 			{type: "string[]"}
 		), ():void => {
@@ -324,22 +300,26 @@ describe( module( "Carbon/Pointer" ), ():void => {
 			let pointers:Pointer.Class[];
 			let ids:string[];
 
-			pointers = [ Pointer.Factory.create( "http://example.com/some/id/" ), Pointer.Factory.create( "http://example.com/another/id/" ), Pointer.Factory.create( "http://example.com/random/id/1234567890/" ) ];
+			pointers = [];
+			pointers.push( Pointer.Factory.create( "http://example.com/resource-1/" ) );
+			pointers.push( Pointer.Factory.create( "http://example.com/resource-2/" ) );
+			pointers.push( Pointer.Factory.create( "http://example.com/resource-3/" ) );
+
 			ids = Pointer.Util.getIDs( pointers );
 			expect( ids.length ).toBe( 3 );
-			expect( ids ).toContain( "http://example.com/some/id/" );
-			expect( ids ).toContain( "http://example.com/another/id/" );
-			expect( ids ).toContain( "http://example.com/random/id/1234567890/" );
+			expect( ids ).toContain( "http://example.com/resource-1/" );
+			expect( ids ).toContain( "http://example.com/resource-2/" );
+			expect( ids ).toContain( "http://example.com/resource-3/" );
 		} );
 
 		it( hasMethod(
 			STATIC,
 			"resolveAll",
-			"Resolve all the pointers of the array of pointers provided.", [
-				{name: "pointers", type: "Carbon.Pointer.Class[]", description: "The array of pointers to be resolved"},
+			"Calls the `resolve()` method of every pointer, and returns a single Promise with the results of every call.", [
+				{name: "pointers", type: "Carbon.Pointer.Class[]", description: "The array of Pointers to resolve."},
 			],
-			{type: "[ Carbon.Pointers.Class[], Carbon.HTTP.Response.Class[] ]"}
-		), ( done:{ ():void, fail:() => void } ):void => {
+			{type: "Promise<[ Carbon.Pointer.Class[], Carbon.HTTP.Response.Class[] ]>"}
+		), ( done:{():void, fail:() => void} ):void => {
 			expect( Pointer.Util.resolveAll ).toBeDefined();
 			expect( Utils.isFunction( Pointer.Util.resolveAll ) ).toBe( true );
 
@@ -347,7 +327,12 @@ describe( module( "Carbon/Pointer" ), ():void => {
 			let pointers:Pointer.Class[];
 
 			pointers = [ documents.getPointer( "http://example.com/some/id/" ), documents.getPointer( "http://example.com/another/id/" ), documents.getPointer( "http://example.com/random/id/1234567890/" ) ];
-			spyOn( documents, "get" ).and.returnValue( Promise.resolve( [ Pointer.Factory.create( "http://example.com/resolved/pointer/" ), null ] ) );
+			spyOn( documents, "get" ).and.callFake( ( id:string ):any => {
+				let pointer:Pointer.Class = documents.getPointer( id );
+				pointer._resolved = true;
+
+				return Promise.resolve( [ pointer, null ] );
+			} );
 
 			let promise:Promise<[ Pointer.Class[], any[] ]> = Pointer.Util.resolveAll( pointers );
 			expect( promise instanceof Promise ).toBe( true );
@@ -356,9 +341,10 @@ describe( module( "Carbon/Pointer" ), ():void => {
 				expect( _pointers.length ).toBe( 3 );
 				expect( responses.length ).toBe( 3 );
 
-				expect( _pointers[ 0 ].id ).toBe( "http://example.com/resolved/pointer/" );
-				expect( _pointers[ 1 ].id ).toBe( "http://example.com/resolved/pointer/" );
-				expect( _pointers[ 2 ].id ).toBe( "http://example.com/resolved/pointer/" );
+				expect( _pointers ).toEqual( pointers );
+				expect( _pointers[ 0 ].isResolved() ).toBe( true );
+				expect( _pointers[ 1 ].isResolved() ).toBe( true );
+				expect( _pointers[ 2 ].isResolved() ).toBe( true );
 
 				expect( responses[ 0 ] ).toBeNull();
 				expect( responses[ 1 ] ).toBeNull();

@@ -75,10 +75,6 @@ export class Class implements Authenticator<UsernameAndPasswordToken> {
 		this._credentials = null;
 	}
 
-	supports( authenticationToken:AuthenticationToken ):boolean {
-		return authenticationToken instanceof UsernameAndPasswordToken;
-	}
-
 	private createToken():Promise<[ Token.Class, HTTP.Response.Class ]> {
 		let uri:string = this.context.resolve( Class.TOKEN_CONTAINER );
 		let requestOptions:HTTP.Request.Options = {};
@@ -91,7 +87,7 @@ export class Class implements Authenticator<UsernameAndPasswordToken> {
 		return HTTP.Request.Service.post( uri, null, requestOptions, new HTTP.JSONLDParser.Class() ).then( ( [ expandedResult, response ]:[ Object, HTTP.Response.Class ] ) => {
 			let expandedNodes:RDF.Node.Class[] = RDF.Document.Util.getResources( expandedResult );
 
-			expandedNodes = expandedNodes.filter( Token.Factory.hasRDFClass );
+			expandedNodes = expandedNodes.filter( node => RDF.Node.Util.hasType( node, Token.RDF_CLASS ) );
 
 			if( expandedNodes.length === 0 ) throw new HTTP.Errors.BadResponseError( "No '" + Token.RDF_CLASS + "' was returned.", response );
 			if( expandedNodes.length > 1 ) throw new HTTP.Errors.BadResponseError( "Multiple '" + Token.RDF_CLASS + "' were returned. ", response );
@@ -107,18 +103,14 @@ export class Class implements Authenticator<UsernameAndPasswordToken> {
 		} );
 	}
 
-	private addTokenAuthenticationHeader( headers:Map<string, HTTP.Header.Class> ):Map<string, HTTP.Header.Class> {
-		let header:HTTP.Header.Class;
-		if( headers.has( "authorization" ) ) {
-			header = headers.get( "authorization" );
-		} else {
-			header = new HTTP.Header.Class();
-			headers.set( "authorization", header );
-		}
+	private addTokenAuthenticationHeader( headers:Map<string, HTTP.Header.Class> ):void {
+		if( headers.has( "authorization" ) ) return;
+
+		let header:HTTP.Header.Class = new HTTP.Header.Class();
+		headers.set( "authorization", header );
+
 		let authorization:string = "Token " + this._credentials.key;
 		header.values.push( new HTTP.Header.Value( authorization ) );
-
-		return headers;
 	}
 }
 
