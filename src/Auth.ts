@@ -54,8 +54,8 @@ export class Class {
 
 	public get authenticatedAgent():PersistedDocument.Class {
 		if( ! this._authenticatedAgent ) {
-			if( this.context.parentContext  && this.context.parentContext.auth ) return this.context.parentContext.auth.authenticatedAgent;
-			throw new Errors.IllegalStateError( "You are not authenticated." );
+			if( this.context.parentContext && this.context.parentContext.auth ) return this.context.parentContext.auth.authenticatedAgent;
+			return null;
 		}
 		return this._authenticatedAgent;
 	}
@@ -166,12 +166,14 @@ export class Class {
 		authenticationToken = new UsernameAndPasswordToken( username, password );
 		this.clearAuthentication();
 
-		return authenticator.authenticate( authenticationToken ).then( ( credentials:UsernameAndPasswordCredentials ) => {
-			return this.getAuthenticatedAgent( authenticator ).then( ( persistedAgent:PersistedDocument.Class ) => {
-				this._authenticatedAgent = persistedAgent;
-				this.authenticator = authenticator;
-				return credentials;
-			} );
+		let credentials:UsernameAndPasswordCredentials;
+		return authenticator.authenticate( authenticationToken ).then( ( _credentials:UsernameAndPasswordCredentials ) => {
+			credentials = _credentials;
+			return this.getAuthenticatedAgent( authenticator );
+		} ).then( ( persistedAgent:PersistedDocument.Class ) => {
+			this._authenticatedAgent = persistedAgent;
+			this.authenticator = authenticator;
+			return credentials;
 		} );
 	}
 
@@ -195,7 +197,7 @@ export class Class {
 			credentials = _credentials;
 
 			// TODO: Use `PersistedAgent`
-			if ( PersistedDocument.Factory.is ( _credentials.agent ) ) return credentials.agent;
+			if( PersistedDocument.Factory.is( _credentials.agent ) ) return credentials.agent;
 			return this.getAuthenticatedAgent( authenticator );
 
 		} ).then( ( persistedAgent:PersistedDocument.Class ) => {

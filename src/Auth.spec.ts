@@ -204,7 +204,8 @@ describe( module( "Carbon/Auth" ), ():void => {
 			"authenticatedAgent",
 			// TODO: Change for `PersistedAgent`
 			"Carbon.PersistedDocument.Class",
-			"The agent of the user that has been authenticated. If no authentication exists in the current context, it will ask to it's parent context."
+			"The agent of the user that has been authenticated. If no authentication exists in the current context, it will ask to it's parent context.\n" +
+			"Returns `null` if the user it not authenticated."
 		), ():void => {
 
 			(() => {
@@ -215,7 +216,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 				}
 				let context:AbstractContext = new MockedContext();
 
-				expect( () => context.auth.authenticatedAgent ).toThrowError( Errors.IllegalStateError );
+				expect( context.auth.authenticatedAgent ).toBeNull();
 			})();
 
 			(() => {
@@ -234,7 +235,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 				let context:AbstractContext = new MockedContext();
 				let auth:Auth.Class = new MockedAuth( context );
 
-				expect( () => context.auth.authenticatedAgent ).toThrowError( Errors.IllegalStateError );
+				expect( context.auth.authenticatedAgent ).toBeNull();
 
 				expect( auth.authenticatedAgent ).toBeTruthy();
 				expect( PersistedDocument.Factory.is( auth.authenticatedAgent ) ).toBe( true );
