@@ -276,6 +276,14 @@ var A = (function () {
         }
         return result;
     };
+    A.indexOf = function (array, searchedElement, comparator) {
+        if (comparator === void 0) { comparator = function (a, b) { return a === b; }; }
+        for (var i = 0, length_2 = array.length; i < length_2; ++i) {
+            if (comparator(array[i], searchedElement))
+                return i;
+        }
+        return -1;
+    };
     return A;
 }());
 exports.A = A;
@@ -294,7 +302,7 @@ var M = (function () {
         for (var _i = 1; _i < arguments.length; _i++) {
             extenders[_i - 1] = arguments[_i];
         }
-        for (var i = 0, length_2 = extenders.length; i < length_2; i++) {
+        for (var i = 0, length_3 = extenders.length; i < length_3; i++) {
             var extender = extenders[i];
             var values = extender.entries();
             var next = values.next();

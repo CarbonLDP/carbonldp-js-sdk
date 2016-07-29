@@ -141,8 +141,9 @@ describe( module( "Carbon/Fragment" ), ():void => {
 			}
 
 			it( hasSignature(
+				[ "T extends Object" ],
 				"Creates a Fragment from an Object with the ID provided.", [
-					{name: "object", type: "T extends Object", description: "Object that will be converted to a fragment."},
+					{name: "object", type: "T", description: "Object that will be converted to a fragment."},
 					{name: "id", type: "string", description: "The ID that will be assigned to the fragment."},
 					{name: "document", type: "Carbon.Document.Class", description: "The document that the fragment will be part of."},
 				],
@@ -183,11 +184,12 @@ describe( module( "Carbon/Fragment" ), ():void => {
 			} );
 
 			it( hasSignature(
+				[ "T extends Object" ],
 				"Creates a BlankNode since no ID is provided.", [
-					{name: "object", type: "T extends Object", description: "Object that will be converted to a fragment."},
+					{name: "object", type: "T", description: "Object that will be converted to a fragment."},
 					{name: "document", type: "Carbon.Document.Class", description: "The document that the fragment will be part of."},
 				],
-				{type: "Carbon.Fragment.Class"}
+				{type: "T & Carbon.Fragment.Class"}
 			), ():void => {
 				expect( Fragment.Factory.createFrom ).toBeDefined();
 				expect( Utils.isFunction( Fragment.Factory.createFrom ) ).toBe( true );

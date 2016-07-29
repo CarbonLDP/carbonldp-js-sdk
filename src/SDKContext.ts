@@ -1,16 +1,13 @@
-import * as App from "./App";
 import * as APIDescription from "./APIDescription";
 import * as Auth from "./Auth";
 import Context from "./Context";
+import * as Document from "./Document";
 import Documents from "./Documents";
 import * as Errors from "./Errors";
-import * as JSONLDConverter from "./JSONLDConverter";
 import * as LDP from "./LDP";
 import * as NS from "./NS";
 import * as PersistedBlankNode from "./PersistedBlankNode";
-import * as Pointer from "./Pointer";
-import * as RDF from "./RDF";
-import * as Utils from "./Utils";
+import * as ProtectedDocument from "./ProtectedDocument";
 import * as ObjectSchema from "./ObjectSchema";
 import * as Agent from "./Agent";
 import * as RDFRepresentation from "./RDFRepresentation";
@@ -151,9 +148,7 @@ export class Class implements Context {
 	private registerDefaultObjectSchemas():void {
 		this.extendObjectSchema( PersistedBlankNode.SCHEMA );
 
-		this.extendObjectSchema( LDP.RDFSource.RDF_CLASS, LDP.RDFSource.SCHEMA );
-		this.extendObjectSchema( LDP.Container.RDF_CLASS, LDP.Container.SCHEMA );
-		this.extendObjectSchema( LDP.BasicContainer.RDF_CLASS, LDP.Container.SCHEMA );
+		this.extendObjectSchema( ProtectedDocument.RDF_CLASS, ProtectedDocument.SCHEMA );
 
 		this.extendObjectSchema( RDFRepresentation.RDF_CLASS, RDFRepresentation.SCHEMA );
 		this.extendObjectSchema( APIDescription.RDF_CLASS, APIDescription.SCHEMA );
@@ -186,8 +181,10 @@ export class Class implements Context {
 		this.extendObjectSchema( LDP.AddMemberAction.RDF_CLASS, LDP.AddMemberAction.SCHEMA );
 		this.extendObjectSchema( LDP.RemoveMemberAction.RDF_CLASS, LDP.RemoveMemberAction.SCHEMA );
 
-		this.extendObjectSchema( Auth.Token.RDF_CLASS, Auth.Token.SCHEMA );
+		this.extendObjectSchema( Auth.ACE.RDF_CLASS, Auth.ACE.SCHEMA );
+		this.extendObjectSchema( Auth.ACL.RDF_CLASS, Auth.ACL.SCHEMA );
 		this.extendObjectSchema( Auth.Ticket.RDF_CLASS, Auth.Ticket.SCHEMA );
+		this.extendObjectSchema( Auth.Token.RDF_CLASS, Auth.Token.SCHEMA );
 
 		this.extendObjectSchema( Agent.RDF_CLASS, Agent.SCHEMA );
 	}

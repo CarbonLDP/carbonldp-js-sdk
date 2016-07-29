@@ -142,8 +142,9 @@ describe( module( "Carbon/Agent" ), ():void => {
 			STATIC,
 			"create",
 			"Creates a `Carbon.Agent.Class` object with the name and email specified.", [
-				{name: "name", type: "string"},
-				{name: "email", type: "string"},
+				{name: "name", type: "string", description: "Name of the agent to be created."},
+				{name: "email", type: "string", description: "Email of the agent to be created."},
+				{name: "password", type: "string", description: "Password of the agent to be created."},
 			],
 			{type: "Carbon.Agent.Class"}
 		), ():void => {
@@ -165,10 +166,12 @@ describe( module( "Carbon/Agent" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"createFrom",
+			[ "T extends Object" ],
 			"Creates a `Carbon.Agent.Class` object from the object and parameters specified.", [
-				{name: "object", type: "T extends Object"},
-				{name: "name", type: "string"},
-				{name: "email", type: "string"},
+				{name: "object", type: "T", description: "Object that will be converted into an Agent."},
+				{name: "name", type: "string", description: "Name of the agent to be created."},
+				{name: "email", type: "string", description: "Email of the agent to be created."},
+				{name: "password", type: "string", description: "Password of the agent to be created."},
 			],
 			{type: "T & Carbon.Agent.Class"}
 		), ():void => {

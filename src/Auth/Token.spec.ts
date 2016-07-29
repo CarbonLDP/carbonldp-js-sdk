@@ -135,10 +135,11 @@ describe( module( "Carbon/Auth/Token" ), ():void => {
 		it( hasMethod(
 			INSTANCE,
 			"decorate",
+			[ "T extends Object" ],
 			"Decorates the object provided with the properties and methods of a `Carbon.Auth.Token.Class` object.", [
-				{name: "object", type: "T extends Object"},
+				{name: "object", type: "T"},
 			],
-			{type: "Carbon.Auth.Token.Class"}
+			{type: "T & Carbon.Auth.Token.Class"}
 		), ():void => {
 			expect( "decorate" in Token.Factory ).toBe( true );
 			expect( Utils.isFunction( Token.Factory.decorate ) ).toBe( true );

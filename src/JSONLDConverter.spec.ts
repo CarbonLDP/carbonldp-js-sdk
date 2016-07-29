@@ -262,6 +262,7 @@ describe( module( "Carbon/JSONLDConverter" ), ():void => {
 				expect( Utils.isFunction( jsonldConverter.compact ) ).toBeDefined();
 
 				let schema:ObjectSchema.Class = {
+					"@vocab": "http://example.com/vocabulary#",
 					"ex": "http://example.com/ns#",
 					"xsd": "http://www.w3.org/2001/XMLSchema#",
 					"string": {
@@ -304,6 +305,14 @@ describe( module( "Carbon/JSONLDConverter" ), ():void => {
 					"unknownTypePointer": {
 						"@id": "ex:unknownTypePointer",
 					},
+					"vocabPointer": {
+						"@id": "ex:vocab-pointer",
+						"@type": "@id",
+					},
+					"relativePointer": {
+						"@id": "ex:relative-pointer",
+						"@type": "@id",
+					},
 				};
 
 				let compactedObject:any = {
@@ -338,6 +347,8 @@ describe( module( "Carbon/JSONLDConverter" ), ():void => {
 						Pointer.Factory.create( "http://example.com/pointer/" ),
 					],
 					"unknownTypePointer": Pointer.Factory.create( "http://example.com/pointer/" ),
+					"vocabPointer": "to-pointer",
+					"relativePointer": Pointer.Factory.create( "relative-pointer/" ),
 				};
 
 				let digestedSchema:ObjectSchema.DigestedObjectSchema = ObjectSchema.Digester.digestSchema( schema );
@@ -460,6 +471,17 @@ describe( module( "Carbon/JSONLDConverter" ), ():void => {
 				node = <RDF.Node.Class> property[ 0 ];
 				expect( RDF.Node.Factory.is( node ) ).toBe( true );
 				expect( node[ "@id" ] ).toBe( "http://example.com/pointer/" );
+
+				expect( expandedObject[ "http://example.com/ns#vocab-pointer" ] ).toBeDefined();
+				expect( expandedObject[ "http://example.com/ns#vocab-pointer" ] ).toEqual( [ {
+					"@id": "http://example.com/vocabulary#to-pointer",
+				} ] );
+
+				expect( expandedObject[ "http://example.com/ns#relative-pointer" ] ).toBeDefined();
+				expect( expandedObject[ "http://example.com/ns#relative-pointer" ] ).toEqual( [ {
+					"@id": "relative-pointer/",
+				} ] );
+
 			} );
 
 		} );

@@ -11,17 +11,18 @@ import {
 	hasSignature,
 	hasDefaultExport,
 } from "./test/JasmineExtender";
-import * as Utils from "./Utils";
 import AbstractContext from "./AbstractContext";
-import AppContext from "./App/Context";
-import * as NS from "./NS";
-import * as Errors from "./Errors";
 import * as App from "./App";
+import AppContext from "./App/Context";
+import * as Errors from "./Errors";
+import IllegalStateError from "./Errors/IllegalStateError";
+import * as NS from "./NS";
+import * as Pointer from "./Pointer";
 import * as RDF from "./RDF";
+import * as Utils from "./Utils";
 
 import * as Apps from "./Apps";
 import DefaultExport from "./Apps";
-import IllegalStateError from "./Errors/IllegalStateError";
 
 describe( module( "Carbon/Apps" ), ():void => {
 	let context:AbstractContext;
@@ -73,8 +74,8 @@ describe( module( "Carbon/Apps" ), ():void => {
 		), ():void => {
 
 			it( hasSignature(
-				"Obtains a `Carbon.App.Context` object from the specified app URI, if it exists within the context of the Apps instance.", [
-					{name: "uri", type: "string"},
+				"Retrieves a `Carbon.App.Context` object from the specified app's URI.", [
+					{name: "uri", type: "string", description: "URI of the app to retrieve and create its context."},
 				],
 				{type: "Promise<Carbon.App.Context>"}
 			), ( done:{ ():void, fail:() => void } ):void => {
@@ -90,11 +91,7 @@ describe( module( "Carbon/Apps" ), ():void => {
 						"@id": "http://example.com/platform/apps/example-app/",
 						"@graph": [ {
 							"@id": "http://example.com/platform/apps/example-app/",
-							"@type": [
-								"http://www.w3.org/ns/ldp#RDFSource",
-								"http://www.w3.org/ns/ldp#BasicContainer",
-								"${ NS.CS.Class.Application }"
-							],
+							"@type": [ "${ NS.CS.Class.Application }" ],
 							"https://carbonldp.com/ns/v1/security#rootContainer": [ {
 								"@id": "https://example.com/apps/example-app/"
 							} ],
@@ -156,8 +153,8 @@ describe( module( "Carbon/Apps" ), ():void => {
 			} );
 
 			it( hasSignature(
-				"Obtains a `Carbon.App.Context` object from the specified Pointer object, if it exists within the context of the Apps instance.", [
-					{name: "pointer", type: "Carbon.Pointer.Class"},
+				"Retrieves a `Carbon.App.Context` object from the specified app's Pointer.", [
+					{name: "pointer", type: "Carbon.Pointer.Class", description: "Pointer of the app to retrieve and create its context."},
 				],
 				{type: "Promise<Carbon.App.Context>"}
 			), ( done:{ ():void, fail:() => void } ):void => {
@@ -173,18 +170,14 @@ describe( module( "Carbon/Apps" ), ():void => {
 						"@id": "http://example.com/platform/apps/example-app/",
 						"@graph": [ {
 							"@id": "http://example.com/platform/apps/example-app/",
-							"@type": [
-								"http://www.w3.org/ns/ldp#RDFSource",
-								"http://www.w3.org/ns/ldp#BasicContainer",
-								"${NS.CS.Class.Application}"
-							],
+							"@type": [ "${ NS.CS.Class.Application }" ],
 							"https://carbonldp.com/ns/v1/security#rootContainer": [ {
 								"@id": "https://example.com/apps/example-app/"
 							} ],
-							"${NS.CS.Predicate.namae}": [ {
+							"${ NS.CS.Predicate.namae }": [ {
 								"@value": "Example App name"
 							} ],
-							"${NS.CS.Predicate.description}": [ {
+							"${ NS.CS.Predicate.description }": [ {
 								"@value": "Example App description"
 							} ]
 						} ]
@@ -243,7 +236,7 @@ describe( module( "Carbon/Apps" ), ():void => {
 		it( hasMethod(
 			INSTANCE,
 			"getAllContexts",
-			"Obtains an array of `Carbon.App.Context` objects, of every app within the context of the Apps instance.",
+			"Retrieves an array of `Carbon.App.Context` objects, of every app the current user have access to.",
 			{type: "Promise<Carbon.App.Context[]>"}
 		), ( done:{ ():void, fail:() => void } ):void => {
 			expect( apps.getAllContexts ).toBeDefined();
@@ -297,9 +290,7 @@ describe( module( "Carbon/Apps" ), ():void => {
 						"@id": "http://example.com/platform/apps/",
 						"@graph": [ {
 							"@id": "http://example.com/platform/apps/",
-							"@type": [
-								"http://www.w3.org/ns/ldp#BasicContainer"
-							],
+							"@type": [ "http://www.w3.org/ns/ldp#BasicContainer" ],
 							"http://www.w3.org/ns/ldp#hasMemberRelation": [ {
 								"@id": "http://www.w3.org/ns/ldp#member"
 							} ],
@@ -314,11 +305,7 @@ describe( module( "Carbon/Apps" ), ():void => {
 						"@id": "http://example.com/platform/apps/another-app/",
 						"@graph": [ {
 							"@id": "http://example.com/platform/apps/another-app/",
-							"@type": [
-								"http://www.w3.org/ns/ldp#RDFSource",
-								"http://www.w3.org/ns/ldp#BasicContainer",
-								"${NS.CS.Class.Application}"
-							],
+							"@type": [ "${NS.CS.Class.Application}" ],
 							"https://carbonldp.com/ns/v1/security#rootContainer": [ {
 								"@id": "https://example.com/apps/another-app/"
 							} ],
@@ -331,11 +318,7 @@ describe( module( "Carbon/Apps" ), ():void => {
 						"@id": "http://example.com/platform/apps/example-app/",
 						"@graph": [ {
 							"@id": "http://example.com/platform/apps/example-app/",
-							"@type": [
-								"http://www.w3.org/ns/ldp#RDFSource",
-								"http://www.w3.org/ns/ldp#BasicContainer",
-								"${NS.CS.Class.Application}"
-							],
+							"@type": [ "${NS.CS.Class.Application}" ],
 							"https://carbonldp.com/ns/v1/security#rootContainer": [ {
 								"@id": "https://example.com/apps/example-app/"
 							} ],
@@ -389,7 +372,7 @@ describe( module( "Carbon/Apps" ), ():void => {
 			it( hasSignature(
 				"Persists a `Carbon.App.Class` object generating a unique slug.\n" +
 				"Returns a Promise with a Pointer to the stored App, and the response of the request.", [
-					{name: "appDocument", type: "Carbon.App.Class"},
+					{name: "appDocument", type: "Carbon.App.Class", description: "App document that will be persisted."},
 				],
 				{type: "Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>"}
 			), ( done:{():void, fail:() => void} ):void => {
@@ -429,8 +412,8 @@ describe( module( "Carbon/Apps" ), ():void => {
 			it( hasSignature(
 				"Persists a `Carbon.App.Class` object using the slug specified.\n" +
 				"Returns a Promise with a Pointer to the stored App, and the response of the request.", [
-					{name: "slug", type: "string"},
-					{name: "appDocument", type: "Carbon.App.Class"},
+					{name: "slug", type: "string", description: "Slug that will be used for the URI of the new app."},
+					{name: "appDocument", type: "Carbon.App.Class", description: "App document that will be persisted."},
 				],
 				{type: "Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>"}
 			), ( done:{():void, fail:() => void} ):void => {

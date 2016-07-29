@@ -68,6 +68,14 @@ var Class = (function () {
         HTTP.Request.Util.setContentTypeHeader("application/sparql-query", options);
         return HTTP.Request.Service.post(url, describeQuery, options, Class.stringParser);
     };
+    Class.executeUPDATE = function (url, updateQuery, options) {
+        if (options === void 0) { options = {}; }
+        options = Utils.extend(options, Class.defaultOptions);
+        if (HTTP.Request.Util.getHeader("Accept", options) === undefined)
+            HTTP.Request.Util.setAcceptHeader("application/ld+json", options);
+        HTTP.Request.Util.setContentTypeHeader("application/sparql-update", options);
+        return HTTP.Request.Service.post(url, updateQuery, options);
+    };
     Class.parseRawBindingProperty = function (rawBindingProperty, pointerLibrary) {
         switch (rawBindingProperty.type) {
             case "uri":

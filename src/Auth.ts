@@ -1,6 +1,10 @@
+import * as ACE from "./Auth/ACE";
+import * as ACL from "./Auth/ACL";
 import AuthenticationToken from "./Auth/AuthenticationToken";
 import Authenticator from "./Auth/Authenticator";
 import BasicAuthenticator from "./Auth/BasicAuthenticator";
+import * as PersistedACE from "./Auth/PersistedACE";
+import * as PersistedACL from "./Auth/PersistedACL";
 import TokenAuthenticator from "./Auth/TokenAuthenticator";
 import * as Ticket from "./Auth/Ticket";
 import * as Token from "./Auth/Token";
@@ -19,9 +23,13 @@ import * as RDF from "./RDF";
 import * as Utils from "./Utils";
 
 export {
+	ACE,
+	ACL,
 	AuthenticationToken,
 	Authenticator,
 	BasicAuthenticator,
+	PersistedACE,
+	PersistedACL,
 	Ticket,
 	Token,
 	TokenAuthenticator,

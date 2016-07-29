@@ -60,12 +60,10 @@ describe( module( "Carbon/SPARQL/Service" ), ():void => {
 
 				jasmine.Ajax.stubRequest( "http://example.com/sparql-endpoint/", askQuery, "POST" ).andReturn( {
 					status: 200,
-					responseText: '' +
-					'{' +
-					'    "head" : {} ,' +
-					'    "boolean" : true' +
-					'}' +
-					'',
+					responseText: `{
+						"head" : {},
+						"boolean" : true
+					}`,
 				} );
 
 				promises.push( Service.Class.executeRawASKQuery( "http://example.com/sparql-endpoint/", askQuery ).then(
@@ -113,12 +111,10 @@ describe( module( "Carbon/SPARQL/Service" ), ():void => {
 
 				jasmine.Ajax.stubRequest( "http://example.com/sparql-endpoint/", askQuery, "POST" ).andReturn( {
 					status: 200,
-					responseText: '' +
-					'{' +
-					'    "head" : {} ,' +
-					'    "boolean" : true' +
-					'}' +
-					'',
+					responseText: `{
+						"head" : {},
+						"boolean" : true
+					}`,
 				} );
 
 				let spyRaw = spyOn( Service.Class, "executeRawASKQuery" ).and.callThrough();
@@ -162,41 +158,39 @@ describe( module( "Carbon/SPARQL/Service" ), ():void => {
 
 				jasmine.Ajax.stubRequest( "http://example.com/sparql-endpoint/", selectQuery, "POST" ).andReturn( {
 					status: 200,
-					responseText: `
-						{
-						   "head": {
-						      "vars": [
-						         "literalBinding",
-						         "uriBinding"
-						      ]
-						   },
-						   "results": {
-						      "bindings": [
-						         {
-						            "literalBinding": {
-						               "type": "literal",
-						               "value": "some string"
-						            },
-						            "uriBinding": {
-						               "type": "uri",
-						               "value": "http://example.com/document-1/"
-						            }
-						         },
-						         {
-						            "literalBinding": {
-						               "type": "literal",
-						               "value": "12",
-						               "datatype": "http://www.w3.org/2001/XMLSchema#integer"
-						            },
-						            "uriBinding": {
-						               "type": "uri",
-						               "value": "http://example.com/document-2/"
-						            }
-						         }
-						      ]
-						   }
+					responseText: `{
+						"head": {
+							"vars": [
+								"literalBinding",
+								"uriBinding"
+							]
+						},
+						"results": {
+							"bindings": [
+								{
+									"literalBinding": {
+										"type": "literal",
+										"value": "some string"
+									},
+									"uriBinding": {
+										"type": "uri",
+										"value": "http://example.com/document-1/"
+									}
+								},
+								{
+									"literalBinding": {
+										"type": "literal",
+										"value": "12",
+										"datatype": "http://www.w3.org/2001/XMLSchema#integer"
+									},
+									"uriBinding": {
+										"type": "uri",
+										"value": "http://example.com/document-2/"
+									}
+								}
+							]
 						}
-					`,
+					}`,
 				} );
 
 				class MockedPointerLibrary implements Pointer.Library {
@@ -210,7 +204,7 @@ describe( module( "Carbon/SPARQL/Service" ), ():void => {
 							_resolved: false,
 							id: id,
 							isResolved: ():any => { return false; },
-							resolve: ():any => { throw new Error(); }
+							resolve: ():any => { throw new Error(); },
 						};
 					}
 				}
@@ -257,24 +251,33 @@ describe( module( "Carbon/SPARQL/Service" ), ():void => {
 				jasmine.Ajax.stubRequest( "http://example.com/sparql-endpoint/with-bnode/", selectQuery, "POST" ).andReturn( {
 					status: 200,
 					responseText: `
-						{
-						   "head": {
-						      "vars": [
-						         "bnodeBinding"
-						      ]
-						   },
-						   "results": {
-						      "bindings": [
-						         {
-						            "bnodeBinding": {
-						               "type": "bnode",
-						               "value": "r1"
-						            }
-						         }
-						      ]
-						   }
-						}
-					`,
+				{
+					"head"
+				:
+					{
+						"vars"
+					:
+						[
+							"bnodeBinding"
+						]
+					}
+				,
+					"results"
+				:
+					{
+						"bindings"
+					:
+						[
+							{
+								"bnodeBinding": {
+									"type": "bnode",
+									"value": "r1"
+								}
+							}
+						]
+					}
+				}
+				`,
 				} );
 
 				class MockedPointerLibrary implements Pointer.Library {
@@ -288,7 +291,7 @@ describe( module( "Carbon/SPARQL/Service" ), ():void => {
 							_resolved: false,
 							id: id,
 							isResolved: ():any => { return false; },
-							resolve: ():any => { throw new Error(); }
+							resolve: ():any => { throw new Error(); },
 						};
 					}
 				}
@@ -330,89 +333,98 @@ describe( module( "Carbon/SPARQL/Service" ), ():void => {
 				jasmine.Ajax.stubRequest( "http://example.com/sparql-endpoint/", selectQuery, "POST" ).andReturn( {
 					status: 200,
 					responseText: `
-						{
-						   "head":{
-						      "vars":[
-						         "book",
-						         "title"
-						      ]
-						   },
-						   "results":{
-						      "bindings":[
-						         {
-						            "book":{
-						               "type":"uri",
-						               "value":"http://example.org/book/book6"
-						            },
-						            "title":{
-						               "type":"literal",
-						               "value":"Harry Potter and the Half-Blood Prince"
-						            }
-						         },
-						         {
-						            "book":{
-						               "type":"uri",
-						               "value":"http://example.org/book/book7"
-						            },
-						            "title":{
-						               "type":"literal",
-						               "value":"Harry Potter and the Deathly Hallows"
-						            }
-						         },
-						         {
-						            "book":{
-						               "type":"uri",
-						               "value":"http://example.org/book/book5"
-						            },
-						            "title":{
-						               "type":"literal",
-						               "value":"Harry Potter and the Order of the Phoenix"
-						            }
-						         },
-						         {
-						            "book":{
-						               "type":"uri",
-						               "value":"http://example.org/book/book4"
-						            },
-						            "title":{
-						               "type":"literal",
-						               "value":"Harry Potter and the Goblet of Fire"
-						            }
-						         },
-						         {
-						            "book":{
-						               "type":"uri",
-						               "value":"http://example.org/book/book2"
-						            },
-						            "title":{
-						               "type":"literal",
-						               "value":"Harry Potter and the Chamber of Secrets"
-						            }
-						         },
-						         {
-						            "book":{
-						               "type":"uri",
-						               "value":"http://example.org/book/book3"
-						            },
-						            "title":{
-						               "type":"literal",
-						               "value":"Harry Potter and the Prisoner Of Azkaban"
-						            }
-						         },
-						         {
-						            "book":{
-						               "type":"uri",
-						               "value":"http://example.org/book/book1"
-						            },
-						            "title":{
-						               "type":"literal",
-						               "value":"Harry Potter and the Philosopher's Stone"
-						            }
-						         }
-						      ]
-						   }
-						}
-					`,
+				{
+					"head"
+				:
+					{
+						"vars"
+					:
+						[
+							"book",
+							"title"
+						]
+					}
+				,
+					"results"
+				:
+					{
+						"bindings"
+					:
+						[
+							{
+								"book": {
+									"type": "uri",
+									"value": "http://example.org/book/book6"
+								},
+								"title": {
+									"type": "literal",
+									"value": "Harry Potter and the Half-Blood Prince"
+								}
+							},
+							{
+								"book": {
+									"type": "uri",
+									"value": "http://example.org/book/book7"
+								},
+								"title": {
+									"type": "literal",
+									"value": "Harry Potter and the Deathly Hallows"
+								}
+							},
+							{
+								"book": {
+									"type": "uri",
+									"value": "http://example.org/book/book5"
+								},
+								"title": {
+									"type": "literal",
+									"value": "Harry Potter and the Order of the Phoenix"
+								}
+							},
+							{
+								"book": {
+									"type": "uri",
+									"value": "http://example.org/book/book4"
+								},
+								"title": {
+									"type": "literal",
+									"value": "Harry Potter and the Goblet of Fire"
+								}
+							},
+							{
+								"book": {
+									"type": "uri",
+									"value": "http://example.org/book/book2"
+								},
+								"title": {
+									"type": "literal",
+									"value": "Harry Potter and the Chamber of Secrets"
+								}
+							},
+							{
+								"book": {
+									"type": "uri",
+									"value": "http://example.org/book/book3"
+								},
+								"title": {
+									"type": "literal",
+									"value": "Harry Potter and the Prisoner Of Azkaban"
+								}
+							},
+							{
+								"book": {
+									"type": "uri",
+									"value": "http://example.org/book/book1"
+								},
+								"title": {
+									"type": "literal",
+									"value": "Harry Potter and the Philosopher's Stone"
+								}
+							}
+						]
+					}
+				}
+				`,
 				} );
 
 				promises.push( Service.Class.executeRawSELECTQuery( "http://example.com/sparql-endpoint/", selectQuery ).then(
@@ -465,16 +477,14 @@ describe( module( "Carbon/SPARQL/Service" ), ():void => {
 			// Default Accept
 			(() => {
 				let constructQuery:string = "CONSTRUCT { ?subject ?predicate ?object } WHERE { ?subject ?predicate ?object }";
-				let model:string = '' +
-					'{' +
-					'	"@context": "http://schema.org/",' +
-					'	"@type": "Person",' +
-					'	"name": "Jane Doe",' +
-					'	"jobTitle": "Professor",' +
-					'	"telephone": "(425) 123-4567",' +
-					'	"url": "http://www.janedoe.com"' +
-					'}' +
-					'';
+				let model:string = `{
+					"@context": "http://schema.org/",
+					"@type": "Person",
+					"name": "Jane Doe",
+					"jobTitle": "Professor",
+					"telephone": "(425) 123-4567",
+					"url": "http://www.janedoe.com"
+				}`;
 
 				jasmine.Ajax.stubRequest( "http://example.com/sparql-endpoint/json/", constructQuery, "POST" ).andReturn( {
 					status: 200,
@@ -506,14 +516,14 @@ describe( module( "Carbon/SPARQL/Service" ), ():void => {
 			// Custom Accept
 			(() => {
 				let constructQuery:string = "CONSTRUCT { ?subject ?predicate ?object } WHERE { ?subject ?predicate ?object }";
-				let model:string = '' +
-					'<http://example.org/netWorth/nw1/liabilities/>' +
-					'   a ldp:DirectContainer;' +
-					'   dcterms:title "The liabilities of JohnZSmith";' +
-					'   ldp:membershipResource <http://example.org/netWorth/nw1/>;' +
-					'   ldp:hasMemberRelation o:liability;' +
-					'   ldp:contains <l1>, <l2>, <l3>.' +
-					'';
+				let model:string = `
+					<http://example.org/netWorth/nw1/liabilities/>
+						a ldp:DirectContainer;
+						dcterms:title "The liabilities of JohnZSmith";
+						ldp:membershipResource <http://example.org/netWorth/nw1/>;
+						ldp:hasMemberRelation o:liability;
+						ldp:contains <l1>, <l2>, <l3>.
+				`;
 				let acceptHeader:string = "text/turtle";
 				let requestOptions:HTTP.Request.Options = {headers: new Map().set( "some", new HTTP.Header.Class( "some" ) )};
 				HTTP.Request.Util.setAcceptHeader( acceptHeader, requestOptions );
@@ -564,16 +574,14 @@ describe( module( "Carbon/SPARQL/Service" ), ():void => {
 			// Default Accept
 			(() => {
 				let constructQuery:string = "DESCRIBE ?subject WHERE { ?subject ?predicate ?object }";
-				let model:string = '' +
-					'{' +
-					'	"@context": "http://schema.org/",' +
-					'	"@type": "Person",' +
-					'	"name": "Jane Doe",' +
-					'	"jobTitle": "Professor",' +
-					'	"telephone": "(425) 123-4567",' +
-					'	"url": "http://www.janedoe.com"' +
-					'}' +
-					'';
+				let model:string = `{
+					"@context": "http://schema.org/",
+					"@type": "Person",
+					"name": "Jane Doe",
+					"jobTitle": "Professor",
+					"telephone": "(425) 123-4567",
+					"url": "http://www.janedoe.com"
+				}`;
 
 				jasmine.Ajax.stubRequest( "http://example.com/sparql-endpoint/json/", constructQuery, "POST" ).andReturn( {
 					status: 200,
@@ -605,14 +613,14 @@ describe( module( "Carbon/SPARQL/Service" ), ():void => {
 			// Custom Accept
 			(() => {
 				let constructQuery:string = "DESCRIBE ?subject WHERE { ?subject ?predicate ?object }";
-				let model:string = '' +
-					'<http://example.org/netWorth/nw1/liabilities/>' +
-					'   a ldp:DirectContainer;' +
-					'   dcterms:title "The liabilities of JohnZSmith";' +
-					'   ldp:membershipResource <http://example.org/netWorth/nw1/>;' +
-					'   ldp:hasMemberRelation o:liability;' +
-					'   ldp:contains <l1>, <l2>, <l3>.' +
-					'';
+				let model:string = `
+					<http://example.org/netWorth/nw1/liabilities/>
+						a ldp:DirectContainer;
+						dcterms:title "The liabilities of JohnZSmith";
+						ldp:membershipResource <http://example.org/netWorth/nw1/>;
+						ldp:hasMemberRelation o:liability;
+						ldp:contains <l1>, <l2>, <l3>.
+				`;
 				let acceptHeader:string = "text/turtle";
 				let requestOptions:HTTP.Request.Options = {};
 				HTTP.Request.Util.setAcceptHeader( acceptHeader, requestOptions );
@@ -647,11 +655,88 @@ describe( module( "Carbon/SPARQL/Service" ), ():void => {
 			Promise.all( promises ).then( done ).catch( done.fail );
 		} );
 
+		it( hasMethod(
+			STATIC,
+			"executeUPDATE", "Executes an UPDATE query.", [
+				{name: "url", type: "string"},
+				{name: "update", type: "string"},
+				{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true},
+			],
+			{type: "Promise<Carbon.HTTP.Response.Class>"}
+		), ( done:{ ():void; fail:( error:any ) => void } ):void => {
+			// Property Integrity
+			(() => {
+				expect( "executeUPDATE" in Service.Class ).toEqual( true );
+				expect( Utils.isFunction( Service.Class.executeUPDATE ) ).toEqual( true );
+			})();
+
+			let promises:Promise<void>[] = [];
+
+			// Default Accept
+			(() => {
+				let constructQuery:string = `INSERT DATA { GRAPH <http://example.com/some-document/> { <http://example.com/some-document/> <http://example.com/ns#propertyString> "Property Value" } }`;
+
+				jasmine.Ajax.stubRequest( "http://example.com/sparql-endpoint/json/", constructQuery, "POST" ).andReturn( {
+					status: 200,
+					responseText: ``,
+				} );
+
+				promises.push( Service.Class.executeUPDATE( "http://example.com/sparql-endpoint/json/", constructQuery ).then(
+					( response:HTTP.Response.Class ):void => {
+						// Inspect request sent
+						let request:JasmineAjaxRequest = jasmine.Ajax.requests.at( 0 );
+						expect( request.method ).toEqual( "POST" );
+						expect( request.url ).toMatch( "/sparql-endpoint/json/" );
+						expect( "accept" in request.requestHeaders ).toEqual( true );
+						expect( request.requestHeaders[ "accept" ] ).toEqual( "application/ld+json" );
+						expect( "content-type" in request.requestHeaders ).toEqual( true );
+						expect( request.requestHeaders[ "content-type" ] ).toEqual( "application/sparql-update" );
+
+						// Inspect response
+						expect( response ).toBeDefined();
+						expect( response instanceof HTTP.Response.Class ).toEqual( true );
+					} )
+				);
+			})();
+
+			// Custom Accept
+			(() => {
+				let constructQuery:string = `INSERT DATA { GRAPH <http://example.com/some-document/> { <http://example.com/some-document/> <http://example.com/ns#propertyString> "Property Value" } }`;
+				let acceptHeader:string = "text/turtle";
+				let requestOptions:HTTP.Request.Options = {};
+				HTTP.Request.Util.setAcceptHeader( acceptHeader, requestOptions );
+
+				jasmine.Ajax.stubRequest( "http://example.com/sparql-endpoint/turtle/", constructQuery, "POST" ).andReturn( {
+					status: 200,
+					responseText: ``,
+				} );
+
+				promises.push( Service.Class.executeUPDATE( "http://example.com/sparql-endpoint/turtle/", constructQuery, requestOptions ).then(
+					( response:HTTP.Response.Class ):void => {
+						// Inspect request sent
+						let request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+						expect( request.method ).toEqual( "POST" );
+						expect( request.url ).toMatch( "/sparql-endpoint/turtle/" );
+						expect( "accept" in request.requestHeaders ).toEqual( true );
+						expect( request.requestHeaders[ "accept" ] ).toEqual( acceptHeader );
+						expect( "content-type" in request.requestHeaders ).toEqual( true );
+						expect( request.requestHeaders[ "content-type" ] ).toEqual( "application/sparql-update" );
+
+						// Inspect response
+						expect( response ).toBeDefined();
+						expect( response instanceof HTTP.Response.Class ).toEqual( true );
+					} )
+				);
+			})();
+
+			Promise.all( promises ).then( done, done.fail );
+		} );
+
 	} );
 
 	it( hasDefaultExport( "Carbon.SPARQL.Service.Class" ), ():void => {
 		expect( DefaultExport ).toBeDefined();
-		expect( Service.Class ).toBe( DefaultExport );
+		expect( DefaultExport ).toBe( Service.Class );
 	} );
 
 } );

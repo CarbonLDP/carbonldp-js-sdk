@@ -259,6 +259,12 @@ class A {
 		return result;
 	}
 
+	static indexOf<T, W>( array:Array<T>, searchedElement:W, comparator:( element:T, searchedElement:W ) => boolean = ( a:T, b:W ) => <any> a === <any> b ):number {
+		for( let i:number = 0, length:number = array.length; i < length; ++ i ) {
+			if( comparator( array[ i ], searchedElement ) ) return i;
+		}
+		return - 1;
+	}
 }
 
 class M {

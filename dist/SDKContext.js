@@ -6,6 +6,7 @@ var Errors = require("./Errors");
 var LDP = require("./LDP");
 var NS = require("./NS");
 var PersistedBlankNode = require("./PersistedBlankNode");
+var ProtectedDocument = require("./ProtectedDocument");
 var ObjectSchema = require("./ObjectSchema");
 var Agent = require("./Agent");
 var RDFRepresentation = require("./RDFRepresentation");
@@ -130,9 +131,7 @@ var Class = (function () {
     };
     Class.prototype.registerDefaultObjectSchemas = function () {
         this.extendObjectSchema(PersistedBlankNode.SCHEMA);
-        this.extendObjectSchema(LDP.RDFSource.RDF_CLASS, LDP.RDFSource.SCHEMA);
-        this.extendObjectSchema(LDP.Container.RDF_CLASS, LDP.Container.SCHEMA);
-        this.extendObjectSchema(LDP.BasicContainer.RDF_CLASS, LDP.Container.SCHEMA);
+        this.extendObjectSchema(ProtectedDocument.RDF_CLASS, ProtectedDocument.SCHEMA);
         this.extendObjectSchema(RDFRepresentation.RDF_CLASS, RDFRepresentation.SCHEMA);
         this.extendObjectSchema(APIDescription.RDF_CLASS, APIDescription.SCHEMA);
         this.extendObjectSchema(Error.RDF_CLASS, Error.SCHEMA);
@@ -159,8 +158,10 @@ var Class = (function () {
         this.extendObjectSchema(LDP.ResourceMetadata.RDF_CLASS, LDP.ResourceMetadata.SCHEMA);
         this.extendObjectSchema(LDP.AddMemberAction.RDF_CLASS, LDP.AddMemberAction.SCHEMA);
         this.extendObjectSchema(LDP.RemoveMemberAction.RDF_CLASS, LDP.RemoveMemberAction.SCHEMA);
-        this.extendObjectSchema(Auth.Token.RDF_CLASS, Auth.Token.SCHEMA);
+        this.extendObjectSchema(Auth.ACE.RDF_CLASS, Auth.ACE.SCHEMA);
+        this.extendObjectSchema(Auth.ACL.RDF_CLASS, Auth.ACL.SCHEMA);
         this.extendObjectSchema(Auth.Ticket.RDF_CLASS, Auth.Ticket.SCHEMA);
+        this.extendObjectSchema(Auth.Token.RDF_CLASS, Auth.Token.SCHEMA);
         this.extendObjectSchema(Agent.RDF_CLASS, Agent.SCHEMA);
     };
     return Class;
