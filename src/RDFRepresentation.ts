@@ -1,6 +1,7 @@
 import * as NS from "./NS";
 import * as ObjectSchema from "./ObjectSchema";
 import * as PersistedDocument from "./PersistedDocument";
+import * as Resource from "./Resource";
 import * as Utils from "./Utils";
 
 export const RDF_CLASS:string = NS.C.Class.RDFRepresentation;
@@ -28,9 +29,10 @@ export class Factory {
 	}
 
 	static is( object:Object ):boolean {
-		return PersistedDocument.Factory.is( object )
-			&& ( <PersistedDocument.Class> object ).types.indexOf( RDF_CLASS ) !== - 1
-			&& Factory.hasClassProperties( object );
+		return Factory.hasClassProperties( object )
+			&& PersistedDocument.Factory.is( object )
+			&& Resource.Util.hasType( object, RDF_CLASS )
+			;
 	}
 }
 

@@ -98,128 +98,13 @@ describe( module( "Carbon/LDP/DirectContainer" ), ():void => {
 			expect( DirectContainer.Factory.is( object ) ).toBe( true );
 		} );
 
-
-		describe( method(
-			STATIC,
-			"hasRDFClass"
-		), ():void => {
-
-			it( hasSignature(
-				"Returns true if the Pointer provided is an LDP DirectContainer.", [
-					{name: "pointer", type: "Carbon.Pointer.Class"}
-				],
-				{type: "boolean"}
-			), ():void => {
-				expect( DirectContainer.Factory.hasRDFClass ).toBeDefined();
-				expect( Utils.isFunction( DirectContainer.Factory.hasRDFClass ) ).toBe( true );
-
-				let pointer:Pointer.Class;
-
-				pointer = Document.Factory.create();
-				expect( DirectContainer.Factory.hasRDFClass( pointer ) ).toBe( false );
-
-				pointer = Document.Factory.create();
-				pointer.id = "http://example.com/access-point/";
-				expect( DirectContainer.Factory.hasRDFClass( pointer ) ).toBe( false );
-
-				pointer = Document.Factory.create();
-				pointer.id = "http://example.com/access-point/";
-				(<Document.Class> pointer).types.push( NS.LDP.Class.Container );
-				expect( DirectContainer.Factory.hasRDFClass( pointer ) ).toBe( false );
-
-				pointer = Document.Factory.create();
-				pointer.id = "http://example.com/access-point/";
-				(<Document.Class> pointer).types.push( NS.LDP.Class.DirectContainer );
-				expect( DirectContainer.Factory.hasRDFClass( pointer ) ).toBe( true );
-
-				pointer = Document.Factory.create();
-				pointer.id = "http://example.com/access-point/";
-				(<Document.Class> pointer).types.push( NS.LDP.Class.Container );
-				(<Document.Class> pointer).types.push( NS.LDP.Class.DirectContainer );
-				expect( DirectContainer.Factory.hasRDFClass( pointer ) ).toBe( true );
-			} );
-
-			it( hasSignature(
-				"Returns true if the Object provided is an LDP DirectContainer.", [
-					{name: "expandedObject", type: "Object"}
-				],
-				{type: "boolean"}
-			), ():void => {
-				expect( DirectContainer.Factory.hasRDFClass ).toBeDefined();
-				expect( Utils.isFunction( DirectContainer.Factory.hasRDFClass ) ).toBe( true );
-
-				let object:Object = {};
-				expect( DirectContainer.Factory.hasRDFClass( object ) ).toBe( false );
-
-				object = {
-					"@id": "http://example.com/access-point/",
-					"@type": [],
-					"http://example.com/ns#string": [ {
-						"@value": "a string"
-					} ],
-					"http://example.com/ns#integer": [ {
-						"@value": "100",
-						"@type": "http://www.w3.org/2001/XMLSchema#integer"
-					} ]
-				};
-				expect( DirectContainer.Factory.hasRDFClass( object ) ).toBe( false );
-
-				object = {
-					"@id": "http://example.com/access-point/",
-					"@type": [
-						"http://www.w3.org/ns/ldp#Container"
-					],
-					"http://example.com/ns#string": [ {
-						"@value": "a string"
-					} ],
-					"http://example.com/ns#integer": [ {
-						"@value": "100",
-						"@type": "http://www.w3.org/2001/XMLSchema#integer"
-					} ]
-				};
-				expect( DirectContainer.Factory.hasRDFClass( object ) ).toBe( false );
-
-				object = {
-					"@id": "http://example.com/access-point/",
-					"@type": [
-						"http://www.w3.org/ns/ldp#DirectContainer"
-					],
-					"http://example.com/ns#string": [ {
-						"@value": "a string"
-					} ],
-					"http://example.com/ns#integer": [ {
-						"@value": "100",
-						"@type": "http://www.w3.org/2001/XMLSchema#integer"
-					} ]
-				};
-				expect( DirectContainer.Factory.hasRDFClass( object ) ).toBe( true );
-
-				object = {
-					"@id": "http://example.com/access-point/",
-					"@type": [
-						"http://www.w3.org/ns/ldp#Container",
-						"http://www.w3.org/ns/ldp#DirectContainer"
-					],
-					"http://example.com/ns#string": [ {
-						"@value": "a string"
-					} ],
-					"http://example.com/ns#integer": [ {
-						"@value": "100",
-						"@type": "http://www.w3.org/2001/XMLSchema#integer"
-					} ]
-				};
-				expect( DirectContainer.Factory.hasRDFClass( object ) ).toBe( true );
-			} );
-
-		} );
-
 		it( hasMethod(
 			STATIC,
 			"create",
 			"Create a `Carbon.LDP.DirectContainer.Class` object with the parameters specified.", [
 				{name: "membershipResource", type: "Carbon.Pointer.Class"},
 				{name: "hasMemberRelation", type: "string | Carbon.Pointer.Class"},
-				{name: "memberOfRelation", type: "string | Carbon.Pointer.Class", optional: true}
+				{name: "isMemberOfRelation", type: "string | Carbon.Pointer.Class", optional: true}
 			],
 			{type: "Carbon.LDP.DirectContainer.Class"}
 		), ():void => {
@@ -248,11 +133,12 @@ describe( module( "Carbon/LDP/DirectContainer" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"createFrom",
+			[ "T extends Object" ],
 			"Create a `Carbon.LDP.DirectContainer.Class` object with the object provided and the parameters specified.", [
-				{name: "object", type: "T extends Object"},
+				{name: "object", type: "T"},
 				{name: "membershipResource", type: "Carbon.Pointer.Class"},
 				{name: "hasMemberRelation", type: "string | Carbon.Pointer.Class"},
-				{name: "memberOfRelation", type: "string | Carbon.Pointer.Class", optional: true}
+				{name: "isMemberOfRelation", type: "string | Carbon.Pointer.Class", optional: true}
 			],
 			{type: "T & Carbon.LDP.DirectContainer.Class"}
 		), ():void => {
@@ -266,7 +152,7 @@ describe( module( "Carbon/LDP/DirectContainer" ), ():void => {
 
 			let membershipResource:Pointer.Class = Pointer.Factory.create( "http://example.com/theResource/" );
 			let hasMemberRelation:Pointer.Class = Pointer.Factory.create( "http://example.com/myNamespace#some-relation" );
-			let memberOfRelation:Pointer.Class = Pointer.Factory.create( "http://example.com/myNamespace#some-inverted-relation" );
+			let isMemberOfRelation:Pointer.Class = Pointer.Factory.create( "http://example.com/myNamespace#some-inverted-relation" );
 
 			let directContainer:MyDirectContainer;
 
@@ -274,8 +160,8 @@ describe( module( "Carbon/LDP/DirectContainer" ), ():void => {
 			expect( DirectContainer.Factory.is( directContainer ) ).toBe( true );
 			expect( directContainer.myProperty ).toBeUndefined();
 			expect( directContainer.membershipResource ).toBe( membershipResource );
-			expect( directContainer.hasMemberRelation ).toEqual( hasMemberRelation );
-			expect( directContainer.memberOfRelation ).toBeUndefined();
+			expect( directContainer.hasMemberRelation ).toEqual( "http://example.com/myNamespace#some-relation" );
+			expect( directContainer.isMemberOfRelation ).toBeUndefined();
 			expect( directContainer.types ).toContain( NS.LDP.Class.DirectContainer );
 
 			directContainer = DirectContainer.Factory.createFrom( {}, membershipResource, hasMemberRelation );
@@ -283,15 +169,15 @@ describe( module( "Carbon/LDP/DirectContainer" ), ():void => {
 			expect( directContainer.myProperty ).toBeUndefined();
 			expect( directContainer.membershipResource ).toBe( membershipResource );
 			expect( directContainer.hasMemberRelation ).toBe( hasMemberRelation );
-			expect( directContainer.memberOfRelation ).toBeUndefined();
+			expect( directContainer.isMemberOfRelation ).toBeUndefined();
 			expect( directContainer.types ).toContain( NS.LDP.Class.DirectContainer );
 
 			directContainer = DirectContainer.Factory.createFrom( {}, membershipResource, "http://example.com/myNamespace#some-relation", "http://example.com/myNamesape#some-inverted-relation" );
 			expect( DirectContainer.Factory.is( directContainer ) ).toBe( true );
 			expect( directContainer.myProperty ).toBeUndefined();
 			expect( directContainer.membershipResource ).toBe( membershipResource );
-			expect( directContainer.hasMemberRelation ).toEqual( hasMemberRelation );
-			expect( directContainer.memberOfRelation ).toEqual( memberOfRelation );
+			expect( directContainer.hasMemberRelation ).toEqual( "http://example.com/myNamespace#some-relation"  );
+			expect( directContainer.isMemberOfRelation ).toEqual( "http://example.com/myNamesape#some-inverted-relation" );
 			expect( directContainer.types ).toContain( NS.LDP.Class.DirectContainer );
 
 			directContainer = DirectContainer.Factory.createFrom( {}, membershipResource, hasMemberRelation, "http://example.com/myNamesape#some-inverted-relation" );
@@ -299,23 +185,23 @@ describe( module( "Carbon/LDP/DirectContainer" ), ():void => {
 			expect( directContainer.myProperty ).toBeUndefined();
 			expect( directContainer.membershipResource ).toBe( membershipResource );
 			expect( directContainer.hasMemberRelation ).toBe( hasMemberRelation );
-			expect( directContainer.memberOfRelation ).toEqual( memberOfRelation );
+			expect( directContainer.isMemberOfRelation ).toEqual( "http://example.com/myNamesape#some-inverted-relation" );
 			expect( directContainer.types ).toContain( NS.LDP.Class.DirectContainer );
 
-			directContainer = DirectContainer.Factory.createFrom( {}, membershipResource, hasMemberRelation, memberOfRelation );
+			directContainer = DirectContainer.Factory.createFrom( {}, membershipResource, hasMemberRelation, isMemberOfRelation );
 			expect( DirectContainer.Factory.is( directContainer ) ).toBe( true );
 			expect( directContainer.myProperty ).toBeUndefined();
 			expect( directContainer.membershipResource ).toBe( membershipResource );
 			expect( directContainer.hasMemberRelation ).toBe( hasMemberRelation );
-			expect( directContainer.memberOfRelation ).toBe( memberOfRelation );
+			expect( directContainer.isMemberOfRelation ).toBe( isMemberOfRelation );
 			expect( directContainer.types ).toContain( NS.LDP.Class.DirectContainer );
 
 			directContainer = DirectContainer.Factory.createFrom<TheDirectContainer>( {myProperty: "The property"}, membershipResource, "http://example.com/myNamespace#some-relation" );
 			expect( DirectContainer.Factory.is( directContainer ) ).toBe( true );
 			expect( directContainer.myProperty ).toBe( "The property" );
 			expect( directContainer.membershipResource ).toBe( membershipResource );
-			expect( directContainer.hasMemberRelation ).toEqual( hasMemberRelation );
-			expect( directContainer.memberOfRelation ).toBeUndefined();
+			expect( directContainer.hasMemberRelation ).toEqual( "http://example.com/myNamespace#some-relation" );
+			expect( directContainer.isMemberOfRelation ).toBeUndefined();
 			expect( directContainer.types ).toContain( NS.LDP.Class.DirectContainer );
 
 			directContainer = DirectContainer.Factory.createFrom<TheDirectContainer>( {myProperty: "The property"}, membershipResource, hasMemberRelation );
@@ -323,15 +209,15 @@ describe( module( "Carbon/LDP/DirectContainer" ), ():void => {
 			expect( directContainer.myProperty ).toBe( "The property" );
 			expect( directContainer.membershipResource ).toBe( membershipResource );
 			expect( directContainer.hasMemberRelation ).toBe( hasMemberRelation );
-			expect( directContainer.memberOfRelation ).toBeUndefined();
+			expect( directContainer.isMemberOfRelation ).toBeUndefined();
 			expect( directContainer.types ).toContain( NS.LDP.Class.DirectContainer );
 
 			directContainer = DirectContainer.Factory.createFrom<TheDirectContainer>( {myProperty: "The property"}, membershipResource, "http://example.com/myNamespace#some-relation", "http://example.com/myNamesape#some-inverted-relation" );
 			expect( DirectContainer.Factory.is( directContainer ) ).toBe( true );
 			expect( directContainer.myProperty ).toBe( "The property" );
 			expect( directContainer.membershipResource ).toBe( membershipResource );
-			expect( directContainer.hasMemberRelation ).toEqual( hasMemberRelation );
-			expect( directContainer.memberOfRelation ).toEqual( memberOfRelation );
+			expect( directContainer.hasMemberRelation ).toEqual( "http://example.com/myNamespace#some-relation" );
+			expect( directContainer.isMemberOfRelation ).toEqual( "http://example.com/myNamesape#some-inverted-relation" );
 			expect( directContainer.types ).toContain( NS.LDP.Class.DirectContainer );
 
 			directContainer = DirectContainer.Factory.createFrom<TheDirectContainer>( {myProperty: "The property"}, membershipResource, hasMemberRelation, "http://example.com/myNamesape#some-inverted-relation" );
@@ -339,15 +225,15 @@ describe( module( "Carbon/LDP/DirectContainer" ), ():void => {
 			expect( directContainer.myProperty ).toBe( "The property" );
 			expect( directContainer.membershipResource ).toBe( membershipResource );
 			expect( directContainer.hasMemberRelation ).toBe( hasMemberRelation );
-			expect( directContainer.memberOfRelation ).toEqual( memberOfRelation );
+			expect( directContainer.isMemberOfRelation ).toEqual( "http://example.com/myNamesape#some-inverted-relation" );
 			expect( directContainer.types ).toContain( NS.LDP.Class.DirectContainer );
 
-			directContainer = DirectContainer.Factory.createFrom<TheDirectContainer>( {myProperty: "The property"}, membershipResource, hasMemberRelation, memberOfRelation );
+			directContainer = DirectContainer.Factory.createFrom<TheDirectContainer>( {myProperty: "The property"}, membershipResource, hasMemberRelation, isMemberOfRelation );
 			expect( DirectContainer.Factory.is( directContainer ) ).toBe( true );
 			expect( directContainer.myProperty ).toBe( "The property" );
 			expect( directContainer.membershipResource ).toBe( membershipResource );
 			expect( directContainer.hasMemberRelation ).toBe( hasMemberRelation );
-			expect( directContainer.memberOfRelation ).toBe( memberOfRelation );
+			expect( directContainer.isMemberOfRelation ).toBe( isMemberOfRelation );
 			expect( directContainer.types ).toContain( NS.LDP.Class.DirectContainer );
 
 			expect( () => DirectContainer.Factory.createFrom( directContainer, membershipResource, hasMemberRelation ) ).toThrowError( Errors.IllegalArgumentError );

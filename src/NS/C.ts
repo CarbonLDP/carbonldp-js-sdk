@@ -7,6 +7,8 @@ export class Class {
 
 	static get API():string { return namespace + "API"; }
 
+	static get Document():string { return namespace + "Document"; }
+
 	static get NonReadableMembershipResourceTriples():string { return namespace + "NonReadableMembershipResourceTriples"; }
 
 	static get PreferContainer():string { return namespace + "PreferContainer"; }
@@ -46,6 +48,8 @@ export class Predicate {
 	static get carbonCode():string { return namespace + "carbonCode"; }
 
 	static get created():string { return namespace + "created"; }
+
+	static get defaultInteractionModel():string { return namespace + "defaultInteractionModel"; }
 
 	static get error():string { return namespace + "error"; }
 

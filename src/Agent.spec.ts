@@ -165,8 +165,9 @@ describe( module( "Carbon/Agent" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"createFrom",
+			[ "T extends Object" ],
 			"Create a `Carbon.Agent.Class` object with the object provided.", [
-				{name: "object", type: "T extends Object"}
+				{name: "object", type: "T"},
 			],
 			{type: "T & Carbon.Agent.Class"}
 		), ():void => {

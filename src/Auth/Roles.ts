@@ -32,7 +32,7 @@ export abstract class Class {
 
 		} ).then( ( [ exists, response ]:[ boolean, HTTP.Response.Class ] ) => {
 			if( ! exists ) throw new Errors.IllegalArgumentError( "The parent role provided does not exist." );
-			return slug ? this.context.documents.createChild( containerURI, slug, role, requestOptions ) : this.context.documents.createChild( containerURI, role, requestOptions );
+			return slug ? this.context.documents.createChild( containerURI, role, slug, requestOptions ) : this.context.documents.createChild( containerURI, role, requestOptions );
 
 		} ).then( ( [ newRole, response ]:[ Pointer.Class, HTTP.Response.Class] ) => {
 			rolePointer = newRole;

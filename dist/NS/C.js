@@ -18,6 +18,11 @@ var Class = (function () {
         enumerable: true,
         configurable: true
     });
+    Object.defineProperty(Class, "Document", {
+        get: function () { return exports.namespace + "Document"; },
+        enumerable: true,
+        configurable: true
+    });
     Object.defineProperty(Class, "NonReadableMembershipResourceTriples", {
         get: function () { return exports.namespace + "NonReadableMembershipResourceTriples"; },
         enumerable: true,
@@ -116,6 +121,11 @@ var Predicate = (function () {
     });
     Object.defineProperty(Predicate, "created", {
         get: function () { return exports.namespace + "created"; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Predicate, "defaultInteractionModel", {
+        get: function () { return exports.namespace + "defaultInteractionModel"; },
         enumerable: true,
         configurable: true
     });

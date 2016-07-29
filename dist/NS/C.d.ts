@@ -3,6 +3,7 @@ export declare class Class {
     static AccessPoint: string;
     static AddMemberAction: string;
     static API: string;
+    static Document: string;
     static NonReadableMembershipResourceTriples: string;
     static PreferContainer: string;
     static PreferContainmentResources: string;
@@ -24,6 +25,7 @@ export declare class Predicate {
     static buildDate: string;
     static carbonCode: string;
     static created: string;
+    static defaultInteractionModel: string;
     static error: string;
     static eTag: string;
     static httpStatusCode: string;
