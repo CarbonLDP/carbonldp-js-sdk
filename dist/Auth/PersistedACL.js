@@ -1,4 +1,5 @@
 "use strict";
+var ACL = require("./ACL");
 var Utils = require("./../Utils");
 var Factory = (function () {
     function Factory() {
@@ -7,7 +8,7 @@ var Factory = (function () {
         return Utils.hasPropertyDefined(object, "accessTo");
     };
     Factory.decorate = function (document) {
-        var acl = document;
+        var acl = ACL.Factory.decorate(document);
         if (Factory.hasClassProperties(acl))
             return acl;
         return acl;

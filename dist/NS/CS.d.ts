@@ -5,6 +5,7 @@ declare class Class {
     static Agent: string;
     static AllOrigins: string;
     static Application: string;
+    static ProtectedDocument: string;
     static Ticket: string;
     static Token: string;
 }

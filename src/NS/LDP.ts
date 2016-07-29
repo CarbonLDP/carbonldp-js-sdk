@@ -41,7 +41,7 @@ class Predicate {
 
 	static get hasMemberRelation():string { return namespace + "hasMemberRelation"; }
 
-	static get memberOfRelation():string { return namespace + "memberOfRelation"; }
+	static get isMemberOfRelation():string { return namespace + "isMemberOfRelation"; }
 
 	static get membershipResource():string { return namespace + "membershipResource"; }
 
