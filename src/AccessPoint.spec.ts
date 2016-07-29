@@ -45,34 +45,11 @@ describe( module( "Carbon/AccessPoints" ), ():void => {
 
 		it( hasMethod(
 			STATIC,
-			"hasClassProperties",
-			"Returns true if the object provided has the properties that defines a `Carbon.AccessPoint.Class` object", [
-				{name: "resource", type: "Object"}
-			],
-			{type: "boolean"}
-		), ():void => {
-			expect( AccessPoint.Factory.hasClassProperties ).toBeDefined();
-			expect( Utils.isFunction( AccessPoint.Factory.hasClassProperties ) ).toBe( true );
-
-			let object:any;
-			expect( AccessPoint.Factory.hasClassProperties( object ) ).toBe( false );
-
-			object = {
-				membershipResource: null
-			};
-			expect( AccessPoint.Factory.hasClassProperties( object ) ).toBe( true );
-
-			delete  object.membershipResource;
-			expect( AccessPoint.Factory.hasClassProperties( object ) ).toBe( false );
-		} );
-
-		it( hasMethod(
-			STATIC,
 			"create",
 			"Create a `Carbon.AccessPoint.Class` object with the parameters specified.", [
 				{name: "membershipResource", type: "Carbon.Pointer.Class"},
 				{name: "hasMemberRelation", type: "string | Carbon.Pointer.Class"},
-				{name: "memberOfRelation", type: "string | Carbon.Pointer.Class", optional: true}
+				{name: "isMemberOfRelation", type: "string | Carbon.Pointer.Class", optional: true}
 			],
 			{type: "Carbon.AccessPoint.Class"}
 		), ():void => {
@@ -101,11 +78,12 @@ describe( module( "Carbon/AccessPoints" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"createFrom",
+			[ "T extends Object" ],
 			"Create a `Carbon.AccessPoint.Class` object with the object provided.", [
-				{name: "object", type: "T extends Object"},
+				{name: "object", type: "T"},
 				{name: "membershipResource", type: "Carbon.Pointer.Class"},
 				{name: "hasMemberRelation", type: "string | Carbon.Pointer.Class"},
-				{name: "memberOfRelation", type: "string | Carbon.Pointer.Class", optional: true}
+				{name: "isMemberOfRelation", type: "string | Carbon.Pointer.Class", optional: true}
 			],
 			{type: "T & Carbon.AccessPoint.Class"}
 		), ():void => {

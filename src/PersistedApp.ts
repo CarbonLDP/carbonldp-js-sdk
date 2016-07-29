@@ -1,4 +1,3 @@
-import * as LDP from "./LDP";
 import * as App from "./App";
 import * as PersistedDocument from "./PersistedDocument";
 import Pointer from "./Pointer";
@@ -8,7 +7,7 @@ import * as Utils from "./Utils";
 export interface Class extends PersistedDocument.Class {
 	name:string;
 	description?:string;
-	rootContainer:LDP.PersistedContainer.Class;
+	rootContainer:Pointer;
 	allowsOrigins?:(Pointer | string)[];
 }
 

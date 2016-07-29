@@ -94,8 +94,9 @@ describe( module( "Carbon/NamedFragment" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"createFrom",
+			[ "T extends Object" ],
 			"Creates a NamedFragment from an Object with the Slug provided for the document specified.", [
-				{name: "object", type: "T extends Object"},
+				{name: "object", type: "T"},
 				{name: "slug", type: "string"},
 				{name: "document", type: "Carbon.Document.Class"},
 			],

@@ -7,6 +7,8 @@ export class Class {
 
 	static get API():string { return namespace + "API"; }
 
+	static get Document():string { return namespace + "Document"; }
+
 	static get NonReadableMembershipResourceTriples():string { return namespace + "NonReadableMembershipResourceTriples"; }
 
 	static get PreferContainer():string { return namespace + "PreferContainer"; }
