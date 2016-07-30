@@ -24,7 +24,6 @@ export interface Class extends Resource.Class, Pointer.Library, Pointer.Validato
     removeFragment(fragment: NamedFragment.Class): void;
     removeFragment(fragment: Fragment.Class): void;
     removeFragment(slug: string): void;
-    removeFragment(fragmentOrSlug: any): void;
     toJSON(objectSchemaResolver: ObjectSchema.Resolver, jsonldConverter: JSONLDConverter): string;
     toJSON(objectSchemaResolver: ObjectSchema.Resolver): string;
     toJSON(): string;

@@ -32,7 +32,6 @@ var Utils = require("./Utils");
 var Method = exports.Method;
 var Class = (function () {
     function Class(context) {
-        this.method = null;
         this.context = context;
         this.authenticators = [];
         this.authenticators[Method.BASIC] = new BasicAuthenticator_1.default();
@@ -43,7 +42,7 @@ var Class = (function () {
             if (!this._authenticatedAgent) {
                 if (this.context.parentContext && this.context.parentContext.auth)
                     return this.context.parentContext.auth.authenticatedAgent;
-                throw new Errors.IllegalStateError("You are not authenticated.");
+                return null;
             }
             return this._authenticatedAgent;
         },
@@ -128,12 +127,14 @@ var Class = (function () {
         var authenticationToken;
         authenticationToken = new UsernameAndPasswordToken_1.default(username, password);
         this.clearAuthentication();
-        return authenticator.authenticate(authenticationToken).then(function (credentials) {
-            return _this.getAuthenticatedAgent(authenticator).then(function (persistedAgent) {
-                _this._authenticatedAgent = persistedAgent;
-                _this.authenticator = authenticator;
-                return credentials;
-            });
+        var credentials;
+        return authenticator.authenticate(authenticationToken).then(function (_credentials) {
+            credentials = _credentials;
+            return _this.getAuthenticatedAgent(authenticator);
+        }).then(function (persistedAgent) {
+            _this._authenticatedAgent = persistedAgent;
+            _this.authenticator = authenticator;
+            return credentials;
         });
     };
     Class.prototype.authenticateWithToken = function (userOrTokenOrCredentials, password) {

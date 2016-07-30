@@ -65,10 +65,6 @@ export class Class implements Authenticator<UsernameAndPasswordToken> {
 		this._credentials = null;
 	}
 
-	supports( authenticationToken:AuthenticationToken ):boolean {
-		return authenticationToken instanceof UsernameAndPasswordToken;
-	}
-
 	private createToken():Promise<[ Token.Class, HTTP.Response.Class ]> {
 		let uri:string = this.context.resolve( Class.TOKEN_CONTAINER );
 		let requestOptions:HTTP.Request.Options = {};
@@ -101,18 +97,14 @@ export class Class implements Authenticator<UsernameAndPasswordToken> {
 		} );
 	}
 
-	private addTokenAuthenticationHeader( headers:Map<string, HTTP.Header.Class> ):Map<string, HTTP.Header.Class> {
-		let header:HTTP.Header.Class;
-		if( headers.has( "authorization" ) ) {
-			header = headers.get( "authorization" );
-		} else {
-			header = new HTTP.Header.Class();
-			headers.set( "authorization", header );
-		}
+	private addTokenAuthenticationHeader( headers:Map<string, HTTP.Header.Class> ):void {
+		if( headers.has( "authorization" ) ) return;
+
+		let header:HTTP.Header.Class = new HTTP.Header.Class();
+		headers.set( "authorization", header );
+
 		let authorization:string = "Token " + this._credentials.key;
 		header.values.push( new HTTP.Header.Value( authorization ) );
-
-		return headers;
 	}
 }
 

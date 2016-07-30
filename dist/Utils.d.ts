@@ -18,6 +18,14 @@ declare function parseBoolean(value: string): boolean;
 declare function extend(target: Object, ...objects: Object[]): Object;
 declare function forEachOwnProperty(object: Object, action: (name: string, value: any) => (boolean | void)): void;
 declare class O {
+    static clone(object: Object, config?: {
+        arrays?: boolean;
+        objects?: boolean;
+    }): Object;
+    static areEqual(object1: Object, object2: Object, config?: {
+        arrays?: boolean;
+        objects?: boolean;
+    }): boolean;
     static areShallowlyEqual(object1: Object, object2: Object): boolean;
 }
 declare class S {
@@ -28,7 +36,7 @@ declare class S {
 declare class A {
     static from<T>(iterator: Iterator<T>): Array<T>;
     static joinWithoutDuplicates<T>(...arrays: Array<Array<T>>): Array<T>;
-    static indexOf<T, W>(array: Array<T>, searchElement: W, comparator?: (element: T, searchElement: W) => boolean): number;
+    static indexOf<T, W>(array: Array<T>, searchedElement: W, comparator?: (element: T, searchedElement: W) => boolean): number;
 }
 declare class M {
     static from<V>(object: Object): Map<string, V>;

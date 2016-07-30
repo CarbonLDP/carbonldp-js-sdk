@@ -28,7 +28,7 @@ import * as RetrievalPreferences from "./RetrievalPreferences";
 class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Resolver {
 	private static _documentSchema:ObjectSchema.DigestedObjectSchema = ObjectSchema.Digester.digestSchema( Document.SCHEMA );
 
-	_jsonldConverter:JSONLDConverter.Class;
+	private _jsonldConverter:JSONLDConverter.Class;
 
 	get jsonldConverter():JSONLDConverter.Class { return this._jsonldConverter; }
 
@@ -63,7 +63,8 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 			if( RDF.URI.Util.isPrefixed( id ) ) id = ObjectSchema.Digester.resolvePrefixedURI( new RDF.URI.Class( id ), this.context.getObjectSchema() ).stringValue;
 
 			let baseURI:string = this.context.getBaseURI();
-			if( RDF.URI.Util.isAbsolute( id ) && RDF.URI.Util.isBaseOf( baseURI, id ) ) return true;
+			if( RDF.URI.Util.isRelative( id ) ) return true;
+			if( RDF.URI.Util.isBaseOf( baseURI, id ) ) return true;
 		} else {
 			if( RDF.URI.Util.isAbsolute( id ) ) return true;
 		}
@@ -470,7 +471,7 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 		let pointers:Pointer.Class[] = [];
 		for( let member  of members ) {
 			member = Utils.isString( member ) ? this.getPointer( <string> member ) : member;
-			if( ! Pointer.Factory.is( member ) ) return Promise.reject<any>( new Errors.IllegalArgumentError( "No Carbon.Pointer or string URI provided." ) );
+			if( ! Pointer.Factory.is( member ) ) return Promise.reject<any>( new Errors.IllegalArgumentError( "No Carbon.Pointer or URI provided." ) );
 
 			pointers.push( <Pointer.Class> member );
 		}
@@ -496,7 +497,7 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 		let pointers:Pointer.Class[] = [];
 		for( let member of members ) {
 			member = Utils.isString( member ) ? this.getPointer( <string> member ) : member;
-			if( ! Pointer.Factory.is( member ) ) return Promise.reject<any>( new Errors.IllegalArgumentError( "No Carbon.Pointer or string URI provided." ) );
+			if( ! Pointer.Factory.is( member ) ) return Promise.reject<any>( new Errors.IllegalArgumentError( "No Carbon.Pointer or URI provided." ) );
 
 			pointers.push( <Pointer.Class> member );
 		}
@@ -607,10 +608,7 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 	}
 
 	executeRawASKQuery( documentURI:string, askQuery:string, requestOptions:HTTP.Request.Options = {} ):Promise<[ SPARQL.RawResults.Class, HTTP.Response.Class ]> {
-		if( ! RDF.URI.Util.isAbsolute( documentURI ) ) {
-			if( ! this.context ) throw new Errors.IllegalArgumentError( "This Documents instance doesn't support relative URIs." );
-			documentURI = this.context.resolve( documentURI );
-		}
+		documentURI = this.getRequestURI( documentURI );
 
 		if( this.context && this.context.auth.isAuthenticated() ) this.context.auth.addAuthentication( requestOptions );
 
@@ -618,10 +616,7 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 	}
 
 	executeASKQuery( documentURI:string, askQuery:string, requestOptions:HTTP.Request.Options = {} ):Promise<[ boolean, HTTP.Response.Class ]> {
-		if( ! RDF.URI.Util.isAbsolute( documentURI ) ) {
-			if( ! this.context ) throw new Errors.IllegalArgumentError( "This Documents instance doesn't support relative URIs." );
-			documentURI = this.context.resolve( documentURI );
-		}
+		documentURI = this.getRequestURI( documentURI );
 
 		if( this.context && this.context.auth.isAuthenticated() ) this.context.auth.addAuthentication( requestOptions );
 
@@ -629,10 +624,7 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 	}
 
 	executeRawSELECTQuery( documentURI:string, selectQuery:string, requestOptions:HTTP.Request.Options = {} ):Promise<[ SPARQL.RawResults.Class, HTTP.Response.Class ]> {
-		if( ! RDF.URI.Util.isAbsolute( documentURI ) ) {
-			if( ! this.context ) throw new Errors.IllegalArgumentError( "This Documents instance doesn't support relative URIs." );
-			documentURI = this.context.resolve( documentURI );
-		}
+		documentURI = this.getRequestURI( documentURI );
 
 		if( this.context && this.context.auth.isAuthenticated() ) this.context.auth.addAuthentication( requestOptions );
 
@@ -640,10 +632,7 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 	}
 
 	executeSELECTQuery( documentURI:string, selectQuery:string, requestOptions:HTTP.Request.Options = {} ):Promise<[ SPARQL.SELECTResults.Class, HTTP.Response.Class ]> {
-		if( ! RDF.URI.Util.isAbsolute( documentURI ) ) {
-			if( ! this.context ) throw new Errors.IllegalArgumentError( "This Documents instance doesn't support relative URIs." );
-			documentURI = this.context.resolve( documentURI );
-		}
+		documentURI = this.getRequestURI( documentURI );
 
 		if( this.context && this.context.auth.isAuthenticated() ) this.context.auth.addAuthentication( requestOptions );
 
@@ -651,10 +640,7 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 	}
 
 	executeRawCONSTRUCTQuery( documentURI:string, constructQuery:string, requestOptions:HTTP.Request.Options = {} ):Promise<[ string, HTTP.Response.Class ]> {
-		if( ! RDF.URI.Util.isAbsolute( documentURI ) ) {
-			if( ! this.context ) throw new Errors.IllegalArgumentError( "This Documents instance doesn't support relative URIs." );
-			documentURI = this.context.resolve( documentURI );
-		}
+		documentURI = this.getRequestURI( documentURI );
 
 		if( this.context && this.context.auth.isAuthenticated() ) this.context.auth.addAuthentication( requestOptions );
 
@@ -662,10 +648,7 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 	}
 
 	executeRawDESCRIBEQuery( documentURI:string, describeQuery:string, requestOptions:HTTP.Request.Options = {} ):Promise<[ string, HTTP.Response.Class ]> {
-		if( ! RDF.URI.Util.isAbsolute( documentURI ) ) {
-			if( ! this.context ) throw new Errors.IllegalArgumentError( "This Documents instance doesn't support relative URIs." );
-			documentURI = this.context.resolve( documentURI );
-		}
+		documentURI = this.getRequestURI( documentURI );
 
 		if( this.context && this.context.auth.isAuthenticated() ) this.context.auth.addAuthentication( requestOptions );
 

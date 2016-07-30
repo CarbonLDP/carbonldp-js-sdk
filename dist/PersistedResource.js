@@ -2,11 +2,11 @@
 var Utils = require("./Utils");
 function syncSnapshot() {
     var resource = this;
-    resource._snapshot = Object.assign({}, resource);
+    resource._snapshot = Utils.O.clone(resource, { arrays: true });
 }
 function isDirty() {
     var resource = this;
-    return !Utils.O.areShallowlyEqual(resource, resource._snapshot);
+    return !Utils.O.areEqual(resource, resource._snapshot, { arrays: true });
 }
 var Factory = (function () {
     function Factory() {

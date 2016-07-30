@@ -1,5 +1,3 @@
-import * as jsonld from "jsonld";
-
 import Parser from "./../HTTP/Parser";
 import JSONParser from "./../HTTP/JSONParser";
 

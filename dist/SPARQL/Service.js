@@ -16,7 +16,7 @@ var Class = (function () {
     };
     Class.executeASKQuery = function (url, askQuery, options) {
         if (options === void 0) { options = {}; }
-        return HTTP.Request.Service.post(url, askQuery, options, Class.resultsParser).then(function (_a) {
+        return Class.executeRawASKQuery(url, askQuery, options).then(function (_a) {
             var rawResults = _a[0], response = _a[1];
             return [rawResults.boolean, response];
         });

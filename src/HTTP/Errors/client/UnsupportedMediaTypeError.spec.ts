@@ -24,8 +24,8 @@ describe( module(
 ), ():void => {
 
 	describe( clazz(
-		"Carbon.HTTP.Errors.client.UnsupportedMediaTypeError",
-		"Error class that can be throw to indicate that the request has a media-type not supported by the server"
+		"Carbon.HTTP.Errors.UnsupportedMediaTypeError",
+		"Error class to indicate that the request has a media-type not supported by the server."
 	), ():void => {
 
 		let response:Response;

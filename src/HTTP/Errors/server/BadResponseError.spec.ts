@@ -24,8 +24,8 @@ describe( module(
 ), ():void => {
 
 	describe( clazz(
-		"Carbon.HTTP.Errors.server.BadResponseError",
-		"Error class that can be throw to indicate that the response obtained can not is note the expected or cannot be interpreted"
+		"Carbon.HTTP.Errors.BadResponseError",
+		"Error class to indicate that the response obtained isn't the expected or can't be interpreted."
 	), ():void => {
 
 		let response:Response;
