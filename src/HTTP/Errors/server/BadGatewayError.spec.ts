@@ -24,8 +24,8 @@ describe( module(
 ), ():void => {
 
 	describe( clazz(
-		"Carbon.HTTP.Errors.server.BadGatewayError",
-		"Error class that can be throw to indicate that the server was acting as a gateway or proxy and received an invalid response from the upstream server"
+		"Carbon.HTTP.Errors.BadGatewayError",
+		"Error class to indicate that the server was acting as a gateway or proxy and received an invalid response from the upstream server."
 	), ():void => {
 
 		let response:Response;

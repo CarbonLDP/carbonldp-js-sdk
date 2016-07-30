@@ -381,8 +381,11 @@ export function hasEnumeral( name:string, description:string = null ):string {
 }
 
 if( typeof XMLHttpRequest === "undefined" ) {
+	/* tslint:disable */
 	const nock:any = require( "nock" );
 	const URL:any = require( "url" );
+	/* tslint:enable */
+
 	let methods:string[] = [ "OPTIONS", "HEAD", "GET", "POST", "PUT", "PATCH", "DELETE" ];
 
 	jasmine.Ajax = <any> (() => {
@@ -394,17 +397,17 @@ if( typeof XMLHttpRequest === "undefined" ) {
 		scope.persist();
 		scope.on( "request", updateRequests );
 
-		function install() {
+		function install():void {
 			nock.disableNetConnect();
 		}
 
-		function uninstall() {
+		function uninstall():void {
 			requests = [];
 			nock.cleanAll();
 			nock.enableNetConnect();
 		}
 
-		function andReturn( requests:any[] ) {
+		function andReturn( requests:any[] ):Function {
 			return ( options:JasmineAjaxRequestStubReturnOptions ) => {
 				for( let req of requests ) {
 					req.reply( options.status || 200, options.responseText || options.response || "", options.responseHeaders || {} );
@@ -424,7 +427,7 @@ if( typeof XMLHttpRequest === "undefined" ) {
 			if( method === "*" ) currentMethods = methods;
 
 			for( let key of currentMethods ) {
-				let interceptor = scope.keyedInterceptors[ `${key} /.*/${path}` ];
+				let interceptor:any = scope.keyedInterceptors[ `${key} /.*/${path}` ];
 				if( interceptor ) nock.removeInterceptor( interceptor[ 0 ] );
 
 				currentRequests.push( scope.intercept( path, key, data || undefined ) );
@@ -432,11 +435,11 @@ if( typeof XMLHttpRequest === "undefined" ) {
 
 			return {
 				method: method,
-				andReturn: andReturn( currentRequests )
+				andReturn: andReturn( currentRequests ),
 			};
 		}
 
-		function updateRequests( req:any, interceptor:any ) {
+		function updateRequests( req:any, interceptor:any ):void {
 			requests.push( {
 				url: req.path,
 				method: interceptor.method,
@@ -445,11 +448,11 @@ if( typeof XMLHttpRequest === "undefined" ) {
 		}
 
 
-		function requestMostRecent() {
+		function requestMostRecent():any {
 			return requests[ requests.length - 1 ];
 		}
 
-		function requestAt( index ) {
+		function requestAt( index:number ):any {
 			return requests[ index ];
 		}
 
@@ -457,8 +460,8 @@ if( typeof XMLHttpRequest === "undefined" ) {
 			let results:any[] = [];
 
 			for( let request of requests ) {
-				let url = request.url;
-				if( urlToMatch instanceof RegExp && urlToMatch.test( url )
+				let url:string | RegExp = request.url;
+				if( urlToMatch instanceof RegExp && urlToMatch.test( <string> url )
 					|| urlToMatch instanceof Function && (<Function> urlToMatch)( request )
 					|| urlToMatch === url ) {
 					results.push( request );

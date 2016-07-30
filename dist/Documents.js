@@ -46,7 +46,9 @@ var Documents = (function () {
             if (RDF.URI.Util.isPrefixed(id))
                 id = ObjectSchema.Digester.resolvePrefixedURI(new RDF.URI.Class(id), this.context.getObjectSchema()).stringValue;
             var baseURI = this.context.getBaseURI();
-            if (RDF.URI.Util.isAbsolute(id) && RDF.URI.Util.isBaseOf(baseURI, id))
+            if (RDF.URI.Util.isRelative(id))
+                return true;
+            if (RDF.URI.Util.isBaseOf(baseURI, id))
                 return true;
         }
         else {
@@ -402,7 +404,7 @@ var Documents = (function () {
             var member = members_1[_i];
             member = Utils.isString(member) ? this.getPointer(member) : member;
             if (!Pointer.Factory.is(member))
-                return Promise.reject(new Errors.IllegalArgumentError("No Carbon.Pointer or string URI provided."));
+                return Promise.reject(new Errors.IllegalArgumentError("No Carbon.Pointer or URI provided."));
             pointers.push(member);
         }
         documentURI = this.getRequestURI(documentURI);
@@ -423,7 +425,7 @@ var Documents = (function () {
             var member = members_2[_i];
             member = Utils.isString(member) ? this.getPointer(member) : member;
             if (!Pointer.Factory.is(member))
-                return Promise.reject(new Errors.IllegalArgumentError("No Carbon.Pointer or string URI provided."));
+                return Promise.reject(new Errors.IllegalArgumentError("No Carbon.Pointer or URI provided."));
             pointers.push(member);
         }
         documentURI = this.getRequestURI(documentURI);
@@ -516,66 +518,42 @@ var Documents = (function () {
     };
     Documents.prototype.executeRawASKQuery = function (documentURI, askQuery, requestOptions) {
         if (requestOptions === void 0) { requestOptions = {}; }
-        if (!RDF.URI.Util.isAbsolute(documentURI)) {
-            if (!this.context)
-                throw new Errors.IllegalArgumentError("This Documents instance doesn't support relative URIs.");
-            documentURI = this.context.resolve(documentURI);
-        }
+        documentURI = this.getRequestURI(documentURI);
         if (this.context && this.context.auth.isAuthenticated())
             this.context.auth.addAuthentication(requestOptions);
         return SPARQL.Service.executeRawASKQuery(documentURI, askQuery, requestOptions);
     };
     Documents.prototype.executeASKQuery = function (documentURI, askQuery, requestOptions) {
         if (requestOptions === void 0) { requestOptions = {}; }
-        if (!RDF.URI.Util.isAbsolute(documentURI)) {
-            if (!this.context)
-                throw new Errors.IllegalArgumentError("This Documents instance doesn't support relative URIs.");
-            documentURI = this.context.resolve(documentURI);
-        }
+        documentURI = this.getRequestURI(documentURI);
         if (this.context && this.context.auth.isAuthenticated())
             this.context.auth.addAuthentication(requestOptions);
         return SPARQL.Service.executeASKQuery(documentURI, askQuery, requestOptions);
     };
     Documents.prototype.executeRawSELECTQuery = function (documentURI, selectQuery, requestOptions) {
         if (requestOptions === void 0) { requestOptions = {}; }
-        if (!RDF.URI.Util.isAbsolute(documentURI)) {
-            if (!this.context)
-                throw new Errors.IllegalArgumentError("This Documents instance doesn't support relative URIs.");
-            documentURI = this.context.resolve(documentURI);
-        }
+        documentURI = this.getRequestURI(documentURI);
         if (this.context && this.context.auth.isAuthenticated())
             this.context.auth.addAuthentication(requestOptions);
         return SPARQL.Service.executeRawSELECTQuery(documentURI, selectQuery, requestOptions);
     };
     Documents.prototype.executeSELECTQuery = function (documentURI, selectQuery, requestOptions) {
         if (requestOptions === void 0) { requestOptions = {}; }
-        if (!RDF.URI.Util.isAbsolute(documentURI)) {
-            if (!this.context)
-                throw new Errors.IllegalArgumentError("This Documents instance doesn't support relative URIs.");
-            documentURI = this.context.resolve(documentURI);
-        }
+        documentURI = this.getRequestURI(documentURI);
         if (this.context && this.context.auth.isAuthenticated())
             this.context.auth.addAuthentication(requestOptions);
         return SPARQL.Service.executeSELECTQuery(documentURI, selectQuery, this, requestOptions);
     };
     Documents.prototype.executeRawCONSTRUCTQuery = function (documentURI, constructQuery, requestOptions) {
         if (requestOptions === void 0) { requestOptions = {}; }
-        if (!RDF.URI.Util.isAbsolute(documentURI)) {
-            if (!this.context)
-                throw new Errors.IllegalArgumentError("This Documents instance doesn't support relative URIs.");
-            documentURI = this.context.resolve(documentURI);
-        }
+        documentURI = this.getRequestURI(documentURI);
         if (this.context && this.context.auth.isAuthenticated())
             this.context.auth.addAuthentication(requestOptions);
         return SPARQL.Service.executeRawCONSTRUCTQuery(documentURI, constructQuery, requestOptions);
     };
     Documents.prototype.executeRawDESCRIBEQuery = function (documentURI, describeQuery, requestOptions) {
         if (requestOptions === void 0) { requestOptions = {}; }
-        if (!RDF.URI.Util.isAbsolute(documentURI)) {
-            if (!this.context)
-                throw new Errors.IllegalArgumentError("This Documents instance doesn't support relative URIs.");
-            documentURI = this.context.resolve(documentURI);
-        }
+        documentURI = this.getRequestURI(documentURI);
         if (this.context && this.context.auth.isAuthenticated())
             this.context.auth.addAuthentication(requestOptions);
         return SPARQL.Service.executeRawDESCRIBEQuery(documentURI, describeQuery, requestOptions);

@@ -1,5 +1,5 @@
 import * as Auth from "./Auth";
-export interface CarbonSettings {
+export interface Class {
     "domain"?: string;
     "http.ssl"?: boolean;
     "auth.method"?: Auth.Method;
@@ -8,5 +8,5 @@ export interface CarbonSettings {
     "platform.agents.container"?: string;
     "vocabulary"?: string;
 }
-declare let settings: CarbonSettings;
-export default settings;
+export declare const defaultSettings: Class;
+export default defaultSettings;

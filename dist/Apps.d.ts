@@ -1,8 +1,8 @@
+import * as App from "./App";
 import AppContext from "./App/Context";
 import Context from "./Context";
-import * as Response from "./HTTP/Response";
 import * as Pointer from "./Pointer";
-import * as App from "./App";
+import * as Response from "./HTTP/Response";
 export declare class Class {
     private context;
     constructor(context: Context);
@@ -11,6 +11,7 @@ export declare class Class {
     getAllContexts(): Promise<AppContext[]>;
     create(appDocument: App.Class): Promise<[Pointer.Class, Response.Class]>;
     create(slug: string, appDocument: App.Class): Promise<[Pointer.Class, Response.Class]>;
-    private getAppsContainerURI();
+    private resolveURI(appURI);
+    private getContainerURI();
 }
 export default Class;

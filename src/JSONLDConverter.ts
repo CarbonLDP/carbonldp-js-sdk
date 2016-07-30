@@ -30,7 +30,7 @@ export class Class {
 		return literalSerializers;
 	}
 
-	constructor( literalSerializers:Map<string, RDF.Literal.Serializer> = null ) {
+	constructor( literalSerializers?:Map<string, RDF.Literal.Serializer> ) {
 		this._literalSerializers = ! ! literalSerializers ? literalSerializers : Class.getDefaultSerializers();
 	}
 

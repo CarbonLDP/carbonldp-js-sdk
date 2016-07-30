@@ -1,6 +1,8 @@
-import {hasPropertyDefined} from "./Utils";
 import IllegalArgumentError from "./Errors/IllegalArgumentError";
+import * as ObjectSchema from "./ObjectSchema";
 import * as XSD from "./NS/XSD";
+import * as URI from "./RDF/URI";
+import * as Utils from "./Utils";
 
 export interface Class {
 	orderBy?:OrderByProperty[];
@@ -10,8 +12,6 @@ export interface Class {
 
 const allowedTypes:string[] = [ "numeric", "string", "boolean", "dateTime" ];
 
-// TODO `bundle-sfx` throw an Error when the literals are used in `@type`. For now declaring the type `oderByType` fix this.
-export type orderByType = "numeric" | "string" | "boolean" | "dateTime";
 export interface OrderByProperty {
 	"@id":string;
 	"@type"?:"numeric" | "string" | "boolean" | "dateTime";
@@ -21,15 +21,15 @@ export interface OrderByProperty {
 
 export class Factory {
 	static is( object:Object ):boolean {
-		return hasPropertyDefined( object, "orderBy" )
-			|| hasPropertyDefined( object, "limit" )
-			|| hasPropertyDefined( object, "offset" );
+		return Utils.hasPropertyDefined( object, "orderBy" )
+			|| Utils.hasPropertyDefined( object, "limit" )
+			|| Utils.hasPropertyDefined( object, "offset" );
 	}
 }
 
 export class Util {
 
-	static stringifyRetrievalPreferences( retrievalPreferences:Class ):string {
+	static stringifyRetrievalPreferences( retrievalPreferences:Class, digestedSchema?:ObjectSchema.DigestedObjectSchema ):string {
 		let stringPreferences:string = "";
 
 		if( "limit" in retrievalPreferences ) {
@@ -47,11 +47,20 @@ export class Util {
 			for( let orderBy of retrievalPreferences.orderBy ) {
 				let stringOrder:string = "";
 
-				// TODO allow use of prefixes for expand URIs.
 				if( "@id" in orderBy ) {
 					let id:string = orderBy[ "@id" ];
-					let descending:boolean = id.startsWith( "-" );
-					stringOrder += `${ descending ? "-" : "" }<${ encodeURI( descending ? id.substr( 1 ) : id ).replace( "#", "%23" ) }>`;
+					let descending:boolean = false;
+					if( id.startsWith( "-" ) ) {
+						descending = true;
+						id = id.substr( 1 );
+					}
+
+					if( ! ! digestedSchema && URI.Util.isRelative( id ) ) {
+						id = ObjectSchema.Digester.resolvePrefixedURI( new URI.Class( id ), digestedSchema ).stringValue;
+						if( ! ! digestedSchema.vocab ) id = URI.Util.resolve( digestedSchema.vocab, id );
+					}
+
+					stringOrder += `${ descending ? "-" : "" }<${ encodeURI( id ).replace( "#", "%23" ) }>`;
 				}
 
 				if( "@type" in orderBy ) {

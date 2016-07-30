@@ -46,9 +46,6 @@ var Class = (function () {
     Class.prototype.clearAuthentication = function () {
         this._credentials = null;
     };
-    Class.prototype.supports = function (authenticationToken) {
-        return authenticationToken instanceof UsernameAndPasswordToken_1.default;
-    };
     Class.prototype.createToken = function () {
         var _this = this;
         var uri = this.context.resolve(Class.TOKEN_CONTAINER);
@@ -76,17 +73,12 @@ var Class = (function () {
         });
     };
     Class.prototype.addTokenAuthenticationHeader = function (headers) {
-        var header;
-        if (headers.has("authorization")) {
-            header = headers.get("authorization");
-        }
-        else {
-            header = new HTTP.Header.Class();
-            headers.set("authorization", header);
-        }
+        if (headers.has("authorization"))
+            return;
+        var header = new HTTP.Header.Class();
+        headers.set("authorization", header);
         var authorization = "Token " + this._credentials.key;
         header.values.push(new HTTP.Header.Value(authorization));
-        return headers;
     };
     Class.TOKEN_CONTAINER = "auth-tokens/";
     return Class;

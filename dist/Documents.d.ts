@@ -13,7 +13,7 @@ import * as SPARQL from "./SPARQL";
 import * as RetrievalPreferences from "./RetrievalPreferences";
 declare class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Resolver {
     private static _documentSchema;
-    _jsonldConverter: JSONLDConverter.Class;
+    private _jsonldConverter;
     jsonldConverter: JSONLDConverter.Class;
     private context;
     private pointers;
