@@ -14,16 +14,19 @@ import {
 	reexports,
 	hasEnumeral,
 	hasSignature,
+	hasProperty,
 } from "./test/JasmineExtender";
 import * as Utils from "./Utils";
 import AbstractContext from "./AbstractContext";
 import * as ACE from "./Auth/ACE";
 import * as ACL from "./Auth/ACL";
+import * as Agent from "./Agent";
 import AuthenticationToken from "./Auth/AuthenticationToken";
 import Authenticator from "./Auth/Authenticator";
 import BasicAuthenticator from "./Auth/BasicAuthenticator";
 import * as PersistedACE from "./Auth/PersistedACE";
 import * as PersistedACL from "./Auth/PersistedACL";
+import * as PersistedDocument from "./PersistedDocument";
 import * as Ticket from "./Auth/Ticket";
 import * as Token from "./Auth/Token";
 import TokenAuthenticator from "./Auth/TokenAuthenticator";
@@ -195,6 +198,110 @@ describe( module( "Carbon/Auth" ), ():void => {
 
 			expect( auth ).toBeTruthy();
 			expect( auth instanceof Auth.Class ).toBe( true );
+		} );
+
+		it( hasProperty(
+			INSTANCE,
+			"authenticatedAgent",
+			// TODO: Change for `PersistedAgent`
+			"Carbon.PersistedDocument.Class",
+			"The agent of the user that has been authenticated. If no authentication exists in the current context, it will ask to it's parent context.\n" +
+			"Returns `null` if the user it not authenticated."
+		), ():void => {
+
+			(() => {
+				class MockedContext extends AbstractContext {
+					resolve( uri:string ):string {
+						return uri;
+					}
+				}
+				let context:AbstractContext = new MockedContext();
+
+				expect( context.auth.authenticatedAgent ).toBeNull();
+			})();
+
+			(() => {
+				class MockedAuth extends Auth.Class {
+					constructor( _context:AbstractContext ) {
+						super( _context );
+						this._authenticatedAgent = PersistedDocument.Factory.create( "http://example.com/agents/my-agent/", _context.documents );
+					}
+				}
+				class MockedContext extends AbstractContext {
+					resolve( uri:string ):string {
+						return uri;
+					}
+				}
+
+				let context:AbstractContext = new MockedContext();
+				let auth:Auth.Class = new MockedAuth( context );
+
+				expect( context.auth.authenticatedAgent ).toBeNull();
+
+				expect( auth.authenticatedAgent ).toBeTruthy();
+				expect( PersistedDocument.Factory.is( auth.authenticatedAgent ) ).toBe( true );
+			})();
+
+			(() => {
+				class MockedAuth extends Auth.Class {
+					constructor( _context:AbstractContext ) {
+						super( _context );
+						this._authenticatedAgent = PersistedDocument.Factory.create( "http://example.com/agents/my-agent/", _context.documents );
+					}
+				}
+				class MockedContext extends AbstractContext {
+					constructor( _context?:AbstractContext, flag:boolean = false ) {
+						super( _context );
+						if( flag ) this.auth = new MockedAuth( this );
+					}
+
+					resolve( uri:string ):string {
+						return uri;
+					}
+				}
+
+				let parentContext:AbstractContext = new MockedContext( null, true );
+				let context:AbstractContext = new MockedContext( parentContext );
+
+				expect( parentContext.auth.authenticatedAgent ).toBeTruthy();
+				expect( PersistedDocument.Factory.is( parentContext.auth.authenticatedAgent ) ).toBe( true );
+
+				expect( context.auth.authenticatedAgent ).toBeTruthy();
+				expect( PersistedDocument.Factory.is( context.auth.authenticatedAgent ) ).toBe( true );
+
+				expect( parentContext.auth.authenticatedAgent ).toBe( context.auth.authenticatedAgent );
+			})();
+
+			(() => {
+				class MockedAuth extends Auth.Class {
+					constructor( _context:AbstractContext ) {
+						super( _context );
+						this._authenticatedAgent = PersistedDocument.Factory.create( "http://example.com/agents/my-agent/", _context.documents );
+					}
+				}
+				class MockedContext extends AbstractContext {
+					constructor( _context?:AbstractContext, flag:boolean = false ) {
+						super( _context );
+						if( flag ) this.auth = new MockedAuth( this );
+					}
+
+					resolve( uri:string ):string {
+						return uri;
+					}
+				}
+
+				let parentContext:AbstractContext = new MockedContext( null, true );
+				let context:AbstractContext = new MockedContext( parentContext, true );
+
+				expect( parentContext.auth.authenticatedAgent ).toBeTruthy();
+				expect( PersistedDocument.Factory.is( parentContext.auth.authenticatedAgent ) ).toBe( true );
+
+				expect( context.auth.authenticatedAgent ).toBeTruthy();
+				expect( PersistedDocument.Factory.is( context.auth.authenticatedAgent ) ).toBe( true );
+
+				expect( parentContext.auth.authenticatedAgent ).not.toBe( context.auth.authenticatedAgent );
+			})();
+
 		} );
 
 		it( hasMethod(
@@ -392,6 +499,33 @@ describe( module( "Carbon/Auth" ), ():void => {
 				],
 				{type: "Promise<Carbon.Auth.UsernameAndPasswordCredentials.Class>"}
 			), ( done:{ ():void, fail:() => void } ):void => {
+				jasmine.Ajax.stubRequest( "http://example.com/agents/me/" ).andReturn( {
+					status: 200,
+					responseHeaders: {
+						"ETag": "1234567890",
+						"Content-Location": "http://example.com/agents/my-agent/",
+					},
+					responseText: `[ {
+						"@id": "http://example.com/agents/my-agent/",
+						"@graph": [ {
+							"@id": "http://example.com/agents/my-agent/",
+							"@type": [ "https://carbonldp.com/ns/v1/security#Agent" ],
+							"https://carbonldp.com/ns/v1/security#name": [ {
+								"@value": "My Agent Name",
+								"@type": "http://www.w3.org/2001/XMLSchema#string"
+							} ],
+							"http://www.w3.org/2001/vcard-rdf/3.0#email": [ {
+								"@value": "my-agent@agents.com",
+								"@type": "http://www.w3.org/2001/XMLSchema#string"
+							} ],
+							"https://carbonldp.com/ns/v1/security#enabled": [ {
+								"@value": "true",
+								"@type": "http://www.w3.org/2001/XMLSchema#boolean"
+							} ]
+						} ]
+					} ]`,
+				} );
+
 				let auth:Auth.Class = new Auth.Class( context );
 				expect( auth.authenticateUsing ).toBeDefined();
 				expect( Utils.isFunction( auth.authenticateUsing ) ).toBe( true );
@@ -402,12 +536,16 @@ describe( module( "Carbon/Auth" ), ():void => {
 				let promises:Promise<any>[] = [];
 				let promise:Promise<any>;
 
-				let auth01:Auth.Class;
 				let spies:any = {
-					success: ( credentials:UsernameAndPasswordCredentials ):void => {
-						expect( auth01.isAuthenticated() ).toBe( true );
+					success: ( _auth:Auth.Class, credentials:UsernameAndPasswordCredentials ):void => {
+						expect( _auth.isAuthenticated() ).toBe( true );
+
 						expect( credentials.username ).toEqual( username );
 						expect( credentials.password ).toEqual( password );
+
+						expect( _auth.authenticatedAgent ).toBeTruthy();
+						// TODO: Change to `PersistedAgent`
+						expect( Agent.Factory.is( _auth.authenticatedAgent ) ).toBe( true );
 					},
 					fail: ( error ):void => {
 						expect( error.name ).toBe( Errors.IllegalArgumentError.name );
@@ -417,22 +555,24 @@ describe( module( "Carbon/Auth" ), ():void => {
 				let spyFail:jasmine.Spy = spyOn( spies, "fail" ).and.callThrough();
 
 				// Expected behavior
-				auth01 = new Auth.Class( context );
+				let auth01:Auth.Class = new Auth.Class( context );
 				promise = auth01.authenticateUsing( "BASIC", username, password );
 				expect( promise instanceof Promise ).toBe( true );
-				promises.push( promise.then( spies.success, spies.fail ) );
+				promises.push( promise.then( ( credentials:UsernameAndPasswordCredentials ):void => {
+					spies.success( auth01, credentials );
+				} ) );
 
 				// Wrong parameters
 				let auth02:Auth.Class = new Auth.Class( context );
 				promise = auth02.authenticateUsing( "BASIC", {} );
 				expect( promise instanceof Promise ).toBe( true );
-				promises.push( promise.then( spies.success, spies.fail ) );
+				promises.push( promise.catch( spies.fail ) );
 
 				// Nonexistent authentication type
 				let auth03:Auth.Class = new Auth.Class( context );
 				promise = auth03.authenticateUsing( "Error", username, password );
 				expect( promise instanceof Promise ).toBe( true );
-				promises.push( promise.then( spies.success, spies.fail ) );
+				promises.push( promise.catch( spies.fail ) );
 
 				Promise.all( promises ).then( ():void => {
 					expect( spySuccess.calls.count() ).toBe( 1 );
@@ -456,34 +596,17 @@ describe( module( "Carbon/Auth" ), ():void => {
 
 				let date:Date = new Date();
 				date.setDate( date.getDate() + 1 );
-				let token:Object = [
-					{
-						"@id": "_:BlankNode",
-						"@type": [
-							"https://carbonldp.com/ns/v1/security#Token",
-							"https://carbonldp.com/ns/v1/platform#VolatileResource",
-						],
-						"https://carbonldp.com/ns/v1/security#expirationTime": [
-							{
-								"@type": "http://www.w3.org/2001/XMLSchema#dateTime",
-								"@value": date.toISOString(),
-							},
-						],
-						"https://carbonldp.com/ns/v1/security#tokenKey": [
-							{
-								"@value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJodHRwczovL2V4YW1wbGUuY29tL3VzZXJzL2EtdXNlci8iLCJleHAiOjExNDkxMjAwMDAwMDB9.T8XSFKyiT-5PAx_yxv2uY94nfvx65zWz8mI2OlSUFnE",
-							},
-						],
-					},
-				];
 				let promises:Promise<any>[] = [];
 				let promise:Promise<any>;
-
-				let auth01:Auth.Class;
 				let spies:any = {
-					success: ( credentials:Token.Class ):void => {
-						expect( auth01.isAuthenticated() ).toBe( true );
-						expect( credentials.key ).toEqual( token[ 0 ][ "https://carbonldp.com/ns/v1/security#tokenKey" ][ 0 ][ "@value" ] );
+					success: ( _auth:Auth.Class, credentials:Token.Class ):void => {
+						expect( _auth.isAuthenticated() ).toBe( true );
+						expect( credentials.key ).toEqual( "token-value" );
+
+						expect( _auth.authenticatedAgent ).toBeTruthy();
+						expect( credentials.agent ).toBe( _auth.authenticatedAgent );
+						// TODO: Change to `PersistedAgent`
+						expect( Agent.Factory.is( _auth.authenticatedAgent ) ).toBe( true );
 					},
 					fail: ( error ):void => {
 						expect( error instanceof Errors.IllegalArgumentError ).toBe( true );
@@ -494,26 +617,83 @@ describe( module( "Carbon/Auth" ), ():void => {
 
 				jasmine.Ajax.stubRequest( /token/ ).andReturn( {
 					status: 200,
-					responseText: JSON.stringify( token ),
+					responseText: `[ {
+						"@id": "_:00",
+						"@type": [
+							"https://carbonldp.com/ns/v1/platform#ResponseMetadata",
+							"https://carbonldp.com/ns/v1/platform#VolatileResource"
+						],
+						"https://carbonldp.com/ns/v1/platform#resourceMetadata": [ {
+							"@id": "_:01"
+						} ]
+					}, {
+						"@id": "_:01",
+						"@type": [
+							"https://carbonldp.com/ns/v1/platform#ResourceMetadata",
+							"https://carbonldp.com/ns/v1/platform#VolatileResource"
+						],
+						"https://carbonldp.com/ns/v1/platform#eTag": [ {
+							"@value": "\\"1234567890\\""
+						} ],
+						"https://carbonldp.com/ns/v1/platform#resource": [ {
+							"@id": "http://example.com/successful/agents/my-agent/"
+						} ]
+					}, {
+						"@id": "_:02",
+						"@type": [
+							"https://carbonldp.com/ns/v1/security#Token",
+							"https://carbonldp.com/ns/v1/platform#VolatileResource"
+						],
+						"https://carbonldp.com/ns/v1/security#tokenKey": [ {
+							"@value": "token-value"
+						} ],
+						"https://carbonldp.com/ns/v1/security#expirationTime": {
+							"@value": "${ date.toISOString() }",
+							"@type": "http://www.w3.org/2001/XMLSchema#dateTime"
+						},
+						"https://carbonldp.com/ns/v1/security#credentialsOf": [ {
+							"@id": "http://example.com/successful/agents/my-agent/"
+						} ]
+					}, {
+						"@id": "http://example.com/successful/agents/my-agent/",
+						"@graph": [ {
+							"@id": "http://example.com/successful/agents/my-agent/",
+							"@type": [ "https://carbonldp.com/ns/v1/security#Agent" ],
+							"https://carbonldp.com/ns/v1/security#name": [ {
+								"@value": "My Agent Name",
+								"@type": "http://www.w3.org/2001/XMLSchema#string"
+							} ],
+							"http://www.w3.org/2001/vcard-rdf/3.0#email": [ {
+								"@value": "my-agent@agents.com",
+								"@type": "http://www.w3.org/2001/XMLSchema#string"
+							} ],
+							"https://carbonldp.com/ns/v1/security#enabled": [ {
+								"@value": "true",
+								"@type": "http://www.w3.org/2001/XMLSchema#boolean"
+							} ]
+						} ]
+					} ]`,
 				} );
 
 				// Expected behavior
-				auth01 = new Auth.Class( context );
+				let auth01:Auth.Class = new Auth.Class( context );
 				promise = auth01.authenticateUsing( "TOKEN", "myUser@user.con", "myAwesomePassword" );
 				expect( promise instanceof Promise ).toBe( true );
-				promises.push( promise.then( spies.success, spies.fail ) );
+				promises.push( promise.then( ( credentials:Token.Class ):void => {
+					spies.success( auth01, credentials );
+				} ) );
 
 				// Wrong parameters
 				let auth02:Auth.Class = new Auth.Class( context );
 				promise = auth02.authenticateUsing( "TOKEN", {} );
 				expect( promise instanceof Promise ).toBe( true );
-				promises.push( promise.then( spies.success, spies.fail ) );
+				promises.push( promise.catch( spies.fail ) );
 
 				// Nonexistent authentication method
 				let auth03:Auth.Class = new Auth.Class( context );
 				promise = auth03.authenticateUsing( "Error", "myUser@user.con", "myAwesomePassword" );
 				expect( promise instanceof Promise ).toBe( true );
-				promises.push( promise.then( spies.success, spies.fail ) );
+				promises.push( promise.catch( spies.fail ) );
 
 				Promise.all( promises ).then( ():void => {
 					expect( spySuccess.calls.count() ).toBe( 1 );
@@ -529,6 +709,33 @@ describe( module( "Carbon/Auth" ), ():void => {
 				],
 				{type: "Promise<Carbon.Auth.Token.Class>"}
 			), ( done:{ ():void, fail:() => void } ):void => {
+				jasmine.Ajax.stubRequest( "http://example.com/agents/me/" ).andReturn( {
+					status: 200,
+					responseHeaders: {
+						"ETag": "1234567890",
+						"Content-Location": "http://example.com/agents/my-agent/",
+					},
+					responseText: `[ {
+						"@id": "http://example.com/agents/my-agent/",
+						"@graph": [ {
+							"@id": "http://example.com/agents/my-agent/",
+							"@type": [ "https://carbonldp.com/ns/v1/security#Agent" ],
+							"https://carbonldp.com/ns/v1/security#name": [ {
+								"@value": "My Agent Name",
+								"@type": "http://www.w3.org/2001/XMLSchema#string"
+							} ],
+							"http://www.w3.org/2001/vcard-rdf/3.0#email": [ {
+								"@value": "my-agent@agents.com",
+								"@type": "http://www.w3.org/2001/XMLSchema#string"
+							} ],
+							"https://carbonldp.com/ns/v1/security#enabled": [ {
+								"@value": "true",
+								"@type": "http://www.w3.org/2001/XMLSchema#boolean"
+							} ]
+						} ]
+					} ]`,
+				} );
+
 				let auth01:Auth.Class = new Auth.Class( context );
 				let auth02:Auth.Class = new Auth.Class( context );
 
@@ -542,13 +749,23 @@ describe( module( "Carbon/Auth" ), ():void => {
 				let promises:Promise<any>[] = [];
 				let promise:Promise<any>;
 				let spies:any = {
-					success01: ( credential:Token.Class ):void => {
-						expect( credential.key ).toEqual( token.key );
-						expect( auth01.isAuthenticated() ).toBe( true );
+					success01: ( _auth:Auth.Class, credentials:Token.Class ):void => {
+						expect( credentials.key ).toEqual( token.key );
+						expect( _auth.isAuthenticated() ).toBe( true );
+
+						expect( _auth.authenticatedAgent ).toBeTruthy();
+						expect( credentials.agent ).toBe( _auth.authenticatedAgent );
+						// TODO: Change to `PersistedAgent`
+						expect( Agent.Factory.is( _auth.authenticatedAgent ) ).toBe( true );
 					},
-					success02: ( credential:Token.Class ):void => {
-						expect( credential.key ).toEqual( token.key );
-						expect( auth02.isAuthenticated() ).toBe( true );
+					success02: ( _auth:Auth.Class, credentials:Token.Class ):void => {
+						expect( credentials.key ).toEqual( token.key );
+						expect( _auth.isAuthenticated() ).toBe( true );
+
+						expect( _auth.authenticatedAgent ).toBeTruthy();
+						expect( credentials.agent ).toBe( _auth.authenticatedAgent );
+						// TODO: Change to `PersistedAgent`
+						expect( Agent.Factory.is( _auth.authenticatedAgent ) ).toBe( true );
 					},
 					fail: ( error ):void => {
 						expect( error.name ).toBe( Errors.IllegalArgumentError.name );
@@ -567,12 +784,13 @@ describe( module( "Carbon/Auth" ), ():void => {
 					key: "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJodHRwczovL2V4YW1wbGUuY29tL3VzZXJzL2EtdXNlci8iLCJleHAiOjExNDkxMjAwMDAwMDB9.T8XSFKyiT-5PAx_yxv2uY94nfvx65zWz8mI2OlSUFnE",
 					types: [
 						"https://carbonldp.com/ns/v1/security#Token",
-						"https://carbonldp.com/ns/v1/platform#VolatileResource",
-					],
+					]
 				};
 				promise = auth01.authenticateUsing( "TOKEN", token );
 				expect( promise instanceof Promise ).toBe( true );
-				promises.push( promise.then( spies.success01, spies.fail ) );
+				promises.push( promise.then( ( credentials:Token.Class ):void => {
+					spies.success01( auth01, credentials );
+				} ) );
 
 				// Expected behavior. If expirationDate is a string the method parse it to a Date object
 				date = new Date();
@@ -584,14 +802,15 @@ describe( module( "Carbon/Auth" ), ():void => {
 						key: "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJodHRwczovL2V4YW1wbGUuY29tL3VzZXJzL2EtdXNlci8iLCJleHAiOjExNDkxMjAwMDAwMDB9.T8XSFKyiT-5PAx_yxv2uY94nfvx65zWz8mI2OlSUFnE",
 						types: [
 							"https://carbonldp.com/ns/v1/security#Token",
-							"https://carbonldp.com/ns/v1/platform#VolatileResource",
-						],
+						]
 					};
 					return JSON.parse( JSON.stringify( storedToken ) );
 				};
 				promise = auth02.authenticateUsing( "TOKEN", <Token.Class> getFromStorage() );
 				expect( promise instanceof Promise ).toBe( true );
-				promises.push( promise.then( spies.success02, spies.fail ) );
+				promises.push( promise.then( ( credentials:Token.Class ):void => {
+					spies.success02( auth01, credentials );
+				} ) );
 
 				// ExpirationDate has been reached
 				let auth03:Auth.Class = new Auth.Class( context );
@@ -603,22 +822,21 @@ describe( module( "Carbon/Auth" ), ():void => {
 					key: "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJodHRwczovL2V4YW1wbGUuY29tL3VzZXJzL2EtdXNlci8iLCJleHAiOjExNDkxMjAwMDAwMDB9.T8XSFKyiT-5PAx_yxv2uY94nfvx65zWz8mI2OlSUFnE",
 					types: [
 						"https://carbonldp.com/ns/v1/security#Token",
-						"https://carbonldp.com/ns/v1/platform#VolatileResource",
-					],
+					]
 				};
 				promise = auth03.authenticateUsing( "TOKEN", token );
 				expect( promise instanceof Promise ).toBe( true );
-				promises.push( promise.then( spies.success01, spies.fail ) );
+				promises.push( promise.catch( spies.fail ) );
 
 				// Wrong parameters
 				promise = auth03.authenticateUsing( "TOKEN", {} );
 				expect( promise instanceof Promise ).toBe( true );
-				promises.push( promise.then( spies.success01, spies.fail ) );
+				promises.push( promise.catch( spies.fail ) );
 
 				// Nonexistent authentication method
 				promise = auth03.authenticateUsing( "Error", token );
 				expect( promise instanceof Promise ).toBe( true );
-				promises.push( promise.then( spies.success01, spies.fail ) );
+				promises.push( promise.catch( spies.fail ) );
 
 				Promise.all( promises ).then( ():void => {
 					expect( spySuccess01.calls.count() ).toBe( 1 );

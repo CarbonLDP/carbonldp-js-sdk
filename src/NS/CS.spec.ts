@@ -141,7 +141,7 @@ describe( module(
 			expect( CS.Predicate ).toBeDefined();
 			expect( Utils.isFunction( CS.Predicate ) ).toBe( true );
 
-			expect( Object.keys( CS.Predicate ).length ).toBe( 17 );
+			expect( Object.keys( CS.Predicate ).length ).toBe( 18 );
 		} );
 
 		it( hasProperty(
@@ -186,6 +186,17 @@ describe( module(
 			expect( Utils.isString( CS.Predicate.allowsOrigin ) ).toBe( true );
 
 			expect( CS.Predicate.allowsOrigin ).toBe( "https://carbonldp.com/ns/v1/security#allowsOrigin" );
+		} );
+
+		it( hasProperty(
+			STATIC,
+			"credentialsOf",
+			"string"
+		), ():void => {
+			expect( CS.Predicate.credentialsOf ).toBeDefined();
+			expect( Utils.isString( CS.Predicate.credentialsOf ) ).toBe( true );
+
+			expect( CS.Predicate.credentialsOf ).toBe( "https://carbonldp.com/ns/v1/security#credentialsOf" );
 		} );
 
 		it( hasProperty(

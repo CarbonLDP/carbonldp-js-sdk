@@ -1,8 +1,10 @@
 import * as NS from "./../NS";
 import * as ObjectSchema from "./../ObjectSchema";
 import * as Pointer from "./../Pointer";
+import * as Resource from "./../Resource";
 import * as Utils from "./../Utils";
 import Credentials from "./Credentials";
+import * as PersistedDocument from "./../PersistedDocument";
 
 export const RDF_CLASS:string = NS.CS.Class.Token;
 
@@ -15,25 +17,39 @@ export const SCHEMA:ObjectSchema.Class = {
 		"@id": NS.CS.Predicate.expirationTime,
 		"@type": NS.XSD.DataType.dateTime,
 	},
+	"agent": {
+		"@id": NS.CS.Predicate.credentialsOf,
+		"@type": "@id",
+	},
 };
 
-export interface Class extends Pointer.Class, Credentials {
+export interface Class extends Resource.Class, Credentials {
 	key:string;
 	expirationTime:Date;
+	// TODO: Change to `PersistedAgent`
+	agent:PersistedDocument.Class;
 }
 
 export class Factory {
 	static is( value:any ):boolean {
 		return (
-			Utils.isObject( value ) &&
-			Factory.hasClassProperties( value )
+			Resource.Factory.is( value )
+			&& Factory.hasClassProperties( value )
 		);
 	}
 
 	static hasClassProperties( object:Object ):boolean {
 		return (
-			Utils.hasPropertyDefined( object, "key" ) &&
-			Utils.hasPropertyDefined( object, "expirationTime" )
+			Utils.hasPropertyDefined( object, "key" )
+			&& Utils.hasPropertyDefined( object, "expirationTime" )
+			&& Utils.hasPropertyDefined( object, "agent" )
+		);
+	}
+
+	static hasRequiredValues( object:Object ):boolean {
+		return (
+			Utils.hasProperty( object, "key" )
+			&& Utils.hasProperty( object, "expirationTime" )
 		);
 	}
 

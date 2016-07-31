@@ -103,7 +103,7 @@ var Documents = (function () {
             var rdfDocument = _this.getRDFDocument(uri, rdfDocuments, response);
             if (rdfDocument === null)
                 throw new HTTP.Errors.BadResponseError("No document was returned.", response);
-            var document = _this.getPersistedDocument(rdfDocument, response);
+            var document = _this._getPersistedDocument(rdfDocument, response);
             document._etag = eTag;
             _this.documentsBeingResolved.delete(pointerID);
             return [document, response];
@@ -489,7 +489,7 @@ var Documents = (function () {
             var rdfDocument = _this.getRDFDocument(uri, rdfDocuments, response);
             if (rdfDocument === null)
                 throw new HTTP.Errors.BadResponseError("No document was returned.", response);
-            var updatedPersistedDocument = _this.getPersistedDocument(rdfDocument, response);
+            var updatedPersistedDocument = _this._getPersistedDocument(rdfDocument, response);
             updatedPersistedDocument._etag = eTag;
             return [updatedPersistedDocument, response];
         });
@@ -568,6 +568,26 @@ var Documents = (function () {
         if (this.context && this.context.auth.isAuthenticated())
             this.context.auth.addAuthentication(requestOptions);
         return SPARQL.Service.executeUPDATE(documentURI, update, requestOptions);
+    };
+    Documents.prototype._getPersistedDocument = function (rdfDocument, response) {
+        var documentResource = this.getDocumentResource(rdfDocument, response);
+        var fragmentResources = RDF.Document.Util.getBNodeResources(rdfDocument);
+        fragmentResources = fragmentResources.concat(RDF.Document.Util.getFragmentResources(rdfDocument));
+        var uri = documentResource["@id"];
+        var documentPointer = this.getPointer(uri);
+        if (documentPointer.isResolved()) {
+            this.updatePersistedDocument(documentPointer, documentResource, fragmentResources);
+        }
+        else {
+            this.createPersistedDocument(documentPointer, documentResource, fragmentResources);
+        }
+        return documentPointer;
+    };
+    Documents.prototype._getFreeResources = function (nodes) {
+        var freeResourcesDocument = FreeResources.Factory.create(this);
+        var resources = nodes.map(function (node) { return freeResourcesDocument.createResource(node["@id"]); });
+        this.compact(nodes, resources, freeResourcesDocument);
+        return freeResourcesDocument;
     };
     Documents.prototype.getRDFDocument = function (requestURL, rdfDocuments, response) {
         rdfDocuments = rdfDocuments.filter(function (rdfDocument) { return rdfDocument["@id"] === requestURL; });
@@ -734,20 +754,6 @@ var Documents = (function () {
         }
         return membershipResource;
     };
-    Documents.prototype.getPersistedDocument = function (rdfDocument, response) {
-        var documentResource = this.getDocumentResource(rdfDocument, response);
-        var fragmentResources = RDF.Document.Util.getBNodeResources(rdfDocument);
-        fragmentResources = fragmentResources.concat(RDF.Document.Util.getFragmentResources(rdfDocument));
-        var uri = documentResource["@id"];
-        var documentPointer = this.getPointer(uri);
-        if (documentPointer.isResolved()) {
-            this.updatePersistedDocument(documentPointer, documentResource, fragmentResources);
-        }
-        else {
-            this.createPersistedDocument(documentPointer, documentResource, fragmentResources);
-        }
-        return documentPointer;
-    };
     Documents.prototype.createPersistedDocument = function (documentPointer, documentResource, fragmentResources) {
         var persistedDocument = PersistedDocument.Factory.decorate(documentPointer, this);
         var fragments = [];
@@ -795,25 +801,19 @@ var Documents = (function () {
     };
     Documents.prototype.getPersistedMetadataResources = function (freeNodes, rdfDocuments, response) {
         var _this = this;
-        var freeResources = this.getFreeResources(freeNodes);
+        var freeResources = this._getFreeResources(freeNodes);
         var descriptionResources = freeResources.getResources().filter(LDP.ResponseMetadata.Factory.hasRDFClass);
         if (descriptionResources.length === 0)
             return [];
         if (descriptionResources.length > 1)
             throw new HTTP.Errors.BadResponseError("The response contained multiple " + LDP.ResponseMetadata.RDF_CLASS + " objects.", response);
-        rdfDocuments.forEach(function (rdfDocument) { return _this.getPersistedDocument(rdfDocument, response); });
+        rdfDocuments.forEach(function (rdfDocument) { return _this._getPersistedDocument(rdfDocument, response); });
         var responseMetadata = descriptionResources[0];
         return responseMetadata.resourcesMetadata.map(function (resourceMetadata) {
             var resource = resourceMetadata.resource;
             resource._etag = resourceMetadata.eTag;
             return resource;
         });
-    };
-    Documents.prototype.getFreeResources = function (nodes) {
-        var freeResourcesDocument = FreeResources.Factory.create(this);
-        var resources = nodes.map(function (node) { return freeResourcesDocument.createResource(node["@id"]); });
-        this.compact(nodes, resources, freeResourcesDocument);
-        return freeResourcesDocument;
     };
     Documents._documentSchema = ObjectSchema.Digester.digestSchema(Document.SCHEMA);
     return Documents;
