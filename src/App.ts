@@ -17,7 +17,7 @@ export interface Class extends Document.Class {
 
 export const RDF_CLASS:string = NS.CS.Class.Application;
 
-// TODO Problem in circular reference: the SCHEMA is hardcoded in SDKContext
+// TODO Problem with circular reference: The SCHEMA is hardcoded in SDKContext module
 export const SCHEMA:ObjectSchema.Class = {
 	"name": {
 		"@id": NS.CS.Predicate.namae,
@@ -70,10 +70,10 @@ export class Factory {
 
 }
 
-export default Class;
-
 export {
 	Context,
 	Role,
 	Roles,
 };
+
+export default Class;

@@ -10,8 +10,8 @@ import {
 import * as Utils from "./Utils";
 import * as Auth from "./Auth";
 
-import * as settings from "./settings";
-import defaultExport from "./settings";
+import * as settings from "./Settings";
+import defaultExport from "./Settings";
 
 describe( module( "Carbon/settings" ), ():void => {
 
@@ -22,7 +22,7 @@ describe( module( "Carbon/settings" ), ():void => {
 
 	it( hasDefaultExport(
 		"Carbon.settings", `
-		A object of type \`Carbon.settings.CarbonSettings\`, whitch is the default settings of a Carbon instance:
+		A object of type \`Carbon.settings.CarbonSettings\`, which is the default settings of a Carbon instance:
 		* domain: \`"carbonldp.com"\`
 		* http.ssl: \`true\`
 		* auth.method: \`Carbon.Auth.Method.TOKEN\`

@@ -1,5 +1,3 @@
-import * as Agent from "./Agent";
-
 import {
 	STATIC,
 
@@ -8,12 +6,14 @@ import {
 
 	isDefined,
 	hasMethod,
-	hasProperty
+	hasProperty,
 } from "./test/JasmineExtender";
 import * as Utils from "./Utils";
 import * as NS from "./NS";
 import * as Errors from "./Errors";
 import * as Document from "./Document";
+
+import * as Agent from "./Agent";
 
 describe( module( "Carbon/Agent" ), ():void => {
 
@@ -62,7 +62,7 @@ describe( module( "Carbon/Agent" ), ():void => {
 
 	describe( clazz(
 		"Carbon.Agent.Factory",
-		"Factory class for `Carbon.Agent.Class` objects"
+		"Factory class for `Carbon.Agent.Class` objects."
 	), ():void => {
 
 		it( isDefined(), ():void => {
@@ -73,8 +73,8 @@ describe( module( "Carbon/Agent" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"hasClassProperties",
-			"Returns true if the object provided has the properties that defines a `Carbon.Agent.Class` object", [
-				{name: "resource", type: "Object"}
+			"Returns true if the object provided has the properties that defines a `Carbon.Agent.Class` object.", [
+				{name: "resource", type: "Object"},
 			],
 			{type: "boolean"}
 		), ():void => {
@@ -107,8 +107,8 @@ describe( module( "Carbon/Agent" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"is",
-			"Returns true if the object provided is considered a `Carbon.Agent.Class` object", [
-				{name: "object", type: "Object"}
+			"Returns true if the object provided is considered a `Carbon.Agent.Class` object.", [
+				{name: "object", type: "Object"},
 			],
 			{type: "boolean"}
 		), ():void => {
@@ -141,9 +141,10 @@ describe( module( "Carbon/Agent" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"create",
-			"Create a `Carbon.Agent.Class` object with the name and email specified.", [
-				{name: "name", type: "string"},
-				{name: "email", type: "string"}
+			"Creates a `Carbon.Agent.Class` object with the name and email specified.", [
+				{name: "name", type: "string", description: "Name of the agent to be created."},
+				{name: "email", type: "string", description: "Email of the agent to be created."},
+				{name: "password", type: "string", description: "Password of the agent to be created."},
 			],
 			{type: "Carbon.Agent.Class"}
 		), ():void => {
@@ -166,8 +167,11 @@ describe( module( "Carbon/Agent" ), ():void => {
 			STATIC,
 			"createFrom",
 			[ "T extends Object" ],
-			"Create a `Carbon.Agent.Class` object with the object provided.", [
-				{name: "object", type: "T"},
+			"Creates a `Carbon.Agent.Class` object from the object and parameters specified.", [
+				{name: "object", type: "T", description: "Object that will be converted into an Agent."},
+				{name: "name", type: "string", description: "Name of the agent to be created."},
+				{name: "email", type: "string", description: "Email of the agent to be created."},
+				{name: "password", type: "string", description: "Password of the agent to be created."},
 			],
 			{type: "T & Carbon.Agent.Class"}
 		), ():void => {

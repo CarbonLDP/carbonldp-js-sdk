@@ -17,6 +17,7 @@ declare class Predicate {
     static agent: string;
     static allowsOrigin: string;
     static childRole: string;
+    static credentialsOf: string;
     static description: string;
     static expirationTime: string;
     static forIRI: string;

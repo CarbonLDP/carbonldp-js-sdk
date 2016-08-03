@@ -16,7 +16,6 @@ import * as LDP from "./LDP";
 import * as NamedFragment from "./NamedFragment";
 import * as NS from "./NS";
 import * as ObjectSchema from "./ObjectSchema";
-import * as Persisted from "./Persisted";
 import * as PersistedApp from "./PersistedApp";
 import * as PersistedDocument from "./PersistedDocument";
 import * as PersistedFragment from "./PersistedFragment";
@@ -27,6 +26,7 @@ import * as Pointer from "./Pointer";
 import * as RDF from "./RDF";
 import * as Resource from "./Resource";
 import * as SDKContext from "./SDKContext";
+import * as Settings from "./Settings";
 import * as SPARQL from "./SPARQL";
 import * as Utils from "./Utils";
 declare class Carbon extends AbstractContext {
@@ -46,7 +46,6 @@ declare class Carbon extends AbstractContext {
     static NamedFragment: typeof NamedFragment;
     static NS: typeof NS;
     static ObjectSchema: typeof ObjectSchema;
-    static Persisted: typeof Persisted;
     static PersistedApp: typeof PersistedApp;
     static PersistedDocument: typeof PersistedDocument;
     static PersistedFragment: typeof PersistedFragment;
@@ -57,12 +56,13 @@ declare class Carbon extends AbstractContext {
     static RDF: typeof RDF;
     static Resource: typeof Resource;
     static SDKContext: typeof SDKContext;
+    static Settings: typeof Settings;
     static SPARQL: typeof SPARQL;
     static Utils: typeof Utils;
     static version: string;
     apps: Apps.Class;
     version: string;
-    constructor(settings?: any);
+    constructor(settings?: Settings.Class);
     resolve(uri: string): string;
     getAPIDescription(): Promise<APIDescription.Class>;
 }

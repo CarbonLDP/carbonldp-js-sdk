@@ -26,7 +26,7 @@ describe( module( "Carbon/RDF/Value" ), ():void => {
 
 	describe( clazz(
 		"Carbon.RDF.Value.Util",
-		"Class with useful functions for manage RDF Values."
+		"Class with useful functions to manage `Carbon.RDF.Value.Class` objects."
 	), ():void => {
 		let expandedObject:any;
 		let documentResource:any;
@@ -128,32 +128,6 @@ describe( module( "Carbon/RDF/Value" ), ():void => {
 		it( isDefined(), ():void => {
 			expect( Value.Util ).toBeDefined();
 			expect( Utils.isFunction( Value.Util ) ).toBe( true );
-		} );
-
-		it( hasMethod(
-			STATIC,
-			"areEqual",
-			"Returns true if the two Values are considered equal.", [
-				{name: "value1", type: "Carbon.RDF.Value.Class"},
-				{name: "value2", type: "Carbon.RDF.Value.Class"}
-			],
-			{type: "boolean"}
-		), ():void => {
-			expect( Value.Util.areEqual ).toBeDefined();
-			expect( Utils.isFunction( Value.Util.areEqual ) ).toBe( true );
-
-			let value1:Value.Class = undefined, value2:Value.Class = undefined;
-			let result:boolean;
-
-			result = Value.Util.areEqual( value1, value2 );
-			expect( result ).toBe( false );
-
-			value1 = {};
-			value2 = {};
-			result = Value.Util.areEqual( value1, value2 );
-			expect( result ).toBe( false );
-
-			// TODO wait implementation of `Carbon.RDF.Literal.Util.areEqual` function
 		} );
 
 		it( hasMethod(
@@ -358,7 +332,7 @@ describe( module( "Carbon/RDF/Value" ), ():void => {
 			STATIC,
 			"getProperties",
 			"Returns the property searched as an Array with the parsed Literal, Pointer or List.\n" +
-			"Returns null if the property is not found, or an empty array if cannot be parsed.", [
+			"Returns null if the property is not found, or an empty array if it cannot be parsed.", [
 				{name: "expandedObject", type: "any"},
 				{name: "propertyURI", type: "string"},
 				{name: "pointerLibrary", type: "Carbon.Pointer.Library"}
@@ -510,7 +484,7 @@ describe( module( "Carbon/RDF/Value" ), ():void => {
 			STATIC,
 			"getPropertyLiterals",
 			"Returns the property searched as an Array with the parsed Literal.\n" +
-			"Returns null if the property is not found, or an empty array if cannot be parsed.", [
+			"Returns null if the property is not found, or an empty array if it cannot be parsed.", [
 				{name: "expandedObject", type: "any"},
 				{name: "propertyURI", type: "string"},
 				{name: "literalType", type: "string"}
@@ -568,7 +542,7 @@ describe( module( "Carbon/RDF/Value" ), ():void => {
 			STATIC,
 			"getPropertyLanguageMap",
 			"Returns an object associating the language with the parsed string literal.\n" +
-			"Returns null if the property is not found, or an empty object if not is a property with language.", [
+			"Returns null if the property is not found, or an empty object if it is not a property with language.", [
 				{name: "expandedObject", type: "any"},
 				{name: "propertyURI", type: "string"},
 				{name: "pointerLibrary", type: "Carbon.Pointer.Library"}
@@ -624,7 +598,7 @@ describe( module( "Carbon/RDF/Value" ), ():void => {
 			STATIC,
 			"parseValue",
 			"Returns the parsed object from an Literal, Node, or List.\n" +
-			"Returns null if cannot be parsed", [
+			"Returns null if it cannot be parsed", [
 				{name: "propertyValue", type: "Carbon.RDF.Value.Class"},
 				{name: "pointerLibrary", type: "Carbon.Pointer.Library"}
 			],

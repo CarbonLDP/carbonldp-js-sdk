@@ -33,7 +33,7 @@ describe( module(
 
 	describe( clazz(
 		"Carbon.NS.CS.Class",
-		"Class that contains objects defined by Carbon Security"
+		"Class that contains classes defined by Carbon Security."
 	), ():void => {
 
 		it( isDefined(), ():void => {
@@ -145,14 +145,14 @@ describe( module(
 
 	describe( clazz(
 		"Carbon.NS.CS.Predicate",
-		"Class that contains predicates defined by Carbon Security"
+		"Class that contains predicates defined by Carbon Security."
 	), ():void => {
 
 		it( isDefined(), ():void => {
 			expect( CS.Predicate ).toBeDefined();
 			expect( Utils.isFunction( CS.Predicate ) ).toBe( true );
 
-			expect( Object.keys( CS.Predicate ).length ).toBe( 20 );
+			expect( Object.keys( CS.Predicate ).length ).toBe( 21 );
 		} );
 
 		it( hasProperty(
@@ -219,6 +219,17 @@ describe( module(
 			expect( Utils.isString( CS.Predicate.childRole ) ).toBe( true );
 
 			expect( CS.Predicate.childRole ).toBe( "https://carbonldp.com/ns/v1/security#childRole" );
+		} );
+
+		it( hasProperty(
+			STATIC,
+			"credentialsOf",
+			"string"
+		), ():void => {
+			expect( CS.Predicate.credentialsOf ).toBeDefined();
+			expect( Utils.isString( CS.Predicate.credentialsOf ) ).toBe( true );
+
+			expect( CS.Predicate.credentialsOf ).toBe( "https://carbonldp.com/ns/v1/security#credentialsOf" );
 		} );
 
 		it( hasProperty(

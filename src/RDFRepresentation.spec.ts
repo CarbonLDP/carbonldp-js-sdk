@@ -47,7 +47,7 @@ describe( module( "Carbon/RDFRepresentation" ), ():void => {
 
 	describe( clazz(
 		"Carbon.RDFRepresentation.Factory",
-		"Factory class for `Carbon.RDFRepresentation.Class` objects"
+		"Factory class for `Carbon.RDFRepresentation.Class` objects."
 	), ():void => {
 
 		it( isDefined(), ():void => {
@@ -58,7 +58,7 @@ describe( module( "Carbon/RDFRepresentation" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"hasClassProperties",
-			"Returns true if the object provided has the properties that defines a `Carbon.RDFRepresentation.Class` object", [
+			"Returns true if the object provided has the properties of a `Carbon.RDFRepresentation.Class` object.", [
 				{name: "resource", type: "Object"},
 			],
 			{type: "boolean"}
@@ -87,7 +87,7 @@ describe( module( "Carbon/RDFRepresentation" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"is",
-			"Returns true if the object provided is considered a `Carbon.NonRDFSource.Class` object", [
+			"Returns true if the object provided is considered a `Carbon.RDFRepresentation.Class` object.", [
 				{name: "object", type: "Object"},
 			],
 			{type: "boolean"}

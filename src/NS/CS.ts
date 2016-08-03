@@ -33,6 +33,8 @@ class Predicate {
 
 	static get childRole():string { return namespace + "childRole"; }
 
+	static get credentialsOf():string { return namespace + "credentialsOf"; }
+
 	static get description():string { return namespace + "description"; }
 
 	static get expirationTime():string { return namespace + "expirationTime"; }

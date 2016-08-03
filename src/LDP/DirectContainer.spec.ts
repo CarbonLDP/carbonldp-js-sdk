@@ -10,7 +10,7 @@ import {
 	isDefined,
 	hasMethod,
 	hasProperty,
-	hasSignature
+	hasSignature,
 } from "./../test/JasmineExtender";
 import * as Utils from "./../Utils";
 import * as NS from "./../NS";
@@ -38,7 +38,7 @@ describe( module( "Carbon/LDP/DirectContainer" ), ():void => {
 
 	describe( clazz(
 		"Carbon.DirectContainer.Factory",
-		"Factory class for `Carbon.LDP.DirectContainer.Class` objects"
+		"Factory class for `Carbon.LDP.DirectContainer.Class` objects."
 	), ():void => {
 
 		it( isDefined(), ():void => {
@@ -49,8 +49,8 @@ describe( module( "Carbon/LDP/DirectContainer" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"hasClassProperties",
-			"Returns true if the object provided has the properties that defines a `Carbon.LDP.DirectContainer.Class` object", [
-				{name: "resource", type: "Object"}
+			"Returns true if the object provided has the properties of a `Carbon.LDP.DirectContainer.Class` object.", [
+				{name: "resource", type: "Object", description: "Object to evaluate."},
 			],
 			{type: "boolean"}
 		), ():void => {
@@ -73,8 +73,8 @@ describe( module( "Carbon/LDP/DirectContainer" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"is",
-			"Returns true if the object provided is considered a `Carbon.LDP.DirectContainer.Class` object", [
-				{name: "object", type: "Object"}
+			"Returns true if the object provided is considered a `Carbon.LDP.DirectContainer.Class` object.", [
+				{name: "object", type: "Object", description: "Object to evaluate."},
 			],
 			{type: "boolean"}
 		), ():void => {
@@ -101,10 +101,10 @@ describe( module( "Carbon/LDP/DirectContainer" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"create",
-			"Create a `Carbon.LDP.DirectContainer.Class` object with the parameters specified.", [
+			"Creates a `Carbon.LDP.DirectContainer.Class` object with the parameters specified.", [
 				{name: "membershipResource", type: "Carbon.Pointer.Class"},
 				{name: "hasMemberRelation", type: "string | Carbon.Pointer.Class"},
-				{name: "isMemberOfRelation", type: "string | Carbon.Pointer.Class", optional: true}
+				{name: "isMemberOfRelation", type: "string | Carbon.Pointer.Class", optional: true},
 			],
 			{type: "Carbon.LDP.DirectContainer.Class"}
 		), ():void => {
@@ -134,11 +134,11 @@ describe( module( "Carbon/LDP/DirectContainer" ), ():void => {
 			STATIC,
 			"createFrom",
 			[ "T extends Object" ],
-			"Create a `Carbon.LDP.DirectContainer.Class` object with the object provided and the parameters specified.", [
+			"Creates a `Carbon.LDP.DirectContainer.Class` object with the object provided and the parameters specified.", [
 				{name: "object", type: "T"},
 				{name: "membershipResource", type: "Carbon.Pointer.Class"},
 				{name: "hasMemberRelation", type: "string | Carbon.Pointer.Class"},
-				{name: "isMemberOfRelation", type: "string | Carbon.Pointer.Class", optional: true}
+				{name: "isMemberOfRelation", type: "string | Carbon.Pointer.Class", optional: true},
 			],
 			{type: "T & Carbon.LDP.DirectContainer.Class"}
 		), ():void => {

@@ -46,7 +46,9 @@ var Documents = (function () {
             if (RDF.URI.Util.isPrefixed(id))
                 id = ObjectSchema.Digester.resolvePrefixedURI(new RDF.URI.Class(id), this.context.getObjectSchema()).stringValue;
             var baseURI = this.context.getBaseURI();
-            if (RDF.URI.Util.isAbsolute(id) && RDF.URI.Util.isBaseOf(baseURI, id))
+            if (RDF.URI.Util.isRelative(id))
+                return true;
+            if (RDF.URI.Util.isBaseOf(baseURI, id))
                 return true;
         }
         else {
@@ -101,7 +103,7 @@ var Documents = (function () {
             var rdfDocument = _this.getRDFDocument(uri, rdfDocuments, response);
             if (rdfDocument === null)
                 throw new HTTP.Errors.BadResponseError("No document was returned.", response);
-            var document = _this.getPersistedDocument(rdfDocument, response);
+            var document = _this._getPersistedDocument(rdfDocument, response);
             document._etag = eTag;
             _this.documentsBeingResolved.delete(pointerID);
             return [document, response];
@@ -402,7 +404,7 @@ var Documents = (function () {
             var member = members_1[_i];
             member = Utils.isString(member) ? this.getPointer(member) : member;
             if (!Pointer.Factory.is(member))
-                return Promise.reject(new Errors.IllegalArgumentError("No Carbon.Pointer or string URI provided."));
+                return Promise.reject(new Errors.IllegalArgumentError("No Carbon.Pointer or URI provided."));
             pointers.push(member);
         }
         documentURI = this.getRequestURI(documentURI);
@@ -423,7 +425,7 @@ var Documents = (function () {
             var member = members_2[_i];
             member = Utils.isString(member) ? this.getPointer(member) : member;
             if (!Pointer.Factory.is(member))
-                return Promise.reject(new Errors.IllegalArgumentError("No Carbon.Pointer or string URI provided."));
+                return Promise.reject(new Errors.IllegalArgumentError("No Carbon.Pointer or URI provided."));
             pointers.push(member);
         }
         documentURI = this.getRequestURI(documentURI);
@@ -487,7 +489,7 @@ var Documents = (function () {
             var rdfDocument = _this.getRDFDocument(uri, rdfDocuments, response);
             if (rdfDocument === null)
                 throw new HTTP.Errors.BadResponseError("No document was returned.", response);
-            var updatedPersistedDocument = _this.getPersistedDocument(rdfDocument, response);
+            var updatedPersistedDocument = _this._getPersistedDocument(rdfDocument, response);
             updatedPersistedDocument._etag = eTag;
             return [updatedPersistedDocument, response];
         });
@@ -518,66 +520,42 @@ var Documents = (function () {
     };
     Documents.prototype.executeRawASKQuery = function (documentURI, askQuery, requestOptions) {
         if (requestOptions === void 0) { requestOptions = {}; }
-        if (!RDF.URI.Util.isAbsolute(documentURI)) {
-            if (!this.context)
-                throw new Errors.IllegalArgumentError("This Documents instance doesn't support relative URIs.");
-            documentURI = this.context.resolve(documentURI);
-        }
+        documentURI = this.getRequestURI(documentURI);
         if (this.context && this.context.auth && this.context.auth.isAuthenticated())
             this.context.auth.addAuthentication(requestOptions);
         return SPARQL.Service.executeRawASKQuery(documentURI, askQuery, requestOptions);
     };
     Documents.prototype.executeASKQuery = function (documentURI, askQuery, requestOptions) {
         if (requestOptions === void 0) { requestOptions = {}; }
-        if (!RDF.URI.Util.isAbsolute(documentURI)) {
-            if (!this.context)
-                throw new Errors.IllegalArgumentError("This Documents instance doesn't support relative URIs.");
-            documentURI = this.context.resolve(documentURI);
-        }
+        documentURI = this.getRequestURI(documentURI);
         if (this.context && this.context.auth && this.context.auth.isAuthenticated())
             this.context.auth.addAuthentication(requestOptions);
         return SPARQL.Service.executeASKQuery(documentURI, askQuery, requestOptions);
     };
     Documents.prototype.executeRawSELECTQuery = function (documentURI, selectQuery, requestOptions) {
         if (requestOptions === void 0) { requestOptions = {}; }
-        if (!RDF.URI.Util.isAbsolute(documentURI)) {
-            if (!this.context)
-                throw new Errors.IllegalArgumentError("This Documents instance doesn't support relative URIs.");
-            documentURI = this.context.resolve(documentURI);
-        }
+        documentURI = this.getRequestURI(documentURI);
         if (this.context && this.context.auth && this.context.auth.isAuthenticated())
             this.context.auth.addAuthentication(requestOptions);
         return SPARQL.Service.executeRawSELECTQuery(documentURI, selectQuery, requestOptions);
     };
     Documents.prototype.executeSELECTQuery = function (documentURI, selectQuery, requestOptions) {
         if (requestOptions === void 0) { requestOptions = {}; }
-        if (!RDF.URI.Util.isAbsolute(documentURI)) {
-            if (!this.context)
-                throw new Errors.IllegalArgumentError("This Documents instance doesn't support relative URIs.");
-            documentURI = this.context.resolve(documentURI);
-        }
+        documentURI = this.getRequestURI(documentURI);
         if (this.context && this.context.auth && this.context.auth.isAuthenticated())
             this.context.auth.addAuthentication(requestOptions);
         return SPARQL.Service.executeSELECTQuery(documentURI, selectQuery, this, requestOptions);
     };
     Documents.prototype.executeRawCONSTRUCTQuery = function (documentURI, constructQuery, requestOptions) {
         if (requestOptions === void 0) { requestOptions = {}; }
-        if (!RDF.URI.Util.isAbsolute(documentURI)) {
-            if (!this.context)
-                throw new Errors.IllegalArgumentError("This Documents instance doesn't support relative URIs.");
-            documentURI = this.context.resolve(documentURI);
-        }
+        documentURI = this.getRequestURI(documentURI);
         if (this.context && this.context.auth && this.context.auth.isAuthenticated())
             this.context.auth.addAuthentication(requestOptions);
         return SPARQL.Service.executeRawCONSTRUCTQuery(documentURI, constructQuery, requestOptions);
     };
     Documents.prototype.executeRawDESCRIBEQuery = function (documentURI, describeQuery, requestOptions) {
         if (requestOptions === void 0) { requestOptions = {}; }
-        if (!RDF.URI.Util.isAbsolute(documentURI)) {
-            if (!this.context)
-                throw new Errors.IllegalArgumentError("This Documents instance doesn't support relative URIs.");
-            documentURI = this.context.resolve(documentURI);
-        }
+        documentURI = this.getRequestURI(documentURI);
         if (this.context && this.context.auth && this.context.auth.isAuthenticated())
             this.context.auth.addAuthentication(requestOptions);
         return SPARQL.Service.executeRawDESCRIBEQuery(documentURI, describeQuery, requestOptions);
@@ -592,6 +570,26 @@ var Documents = (function () {
         if (this.context && this.context.auth && this.context.auth.isAuthenticated())
             this.context.auth.addAuthentication(requestOptions);
         return SPARQL.Service.executeUPDATE(documentURI, update, requestOptions);
+    };
+    Documents.prototype._getPersistedDocument = function (rdfDocument, response) {
+        var documentResource = this.getDocumentResource(rdfDocument, response);
+        var fragmentResources = RDF.Document.Util.getBNodeResources(rdfDocument);
+        fragmentResources = fragmentResources.concat(RDF.Document.Util.getFragmentResources(rdfDocument));
+        var uri = documentResource["@id"];
+        var documentPointer = this.getPointer(uri);
+        if (documentPointer.isResolved()) {
+            this.updatePersistedDocument(documentPointer, documentResource, fragmentResources);
+        }
+        else {
+            this.createPersistedDocument(documentPointer, documentResource, fragmentResources);
+        }
+        return documentPointer;
+    };
+    Documents.prototype._getFreeResources = function (nodes) {
+        var freeResourcesDocument = FreeResources.Factory.create(this);
+        var resources = nodes.map(function (node) { return freeResourcesDocument.createResource(node["@id"]); });
+        this.compact(nodes, resources, freeResourcesDocument);
+        return freeResourcesDocument;
     };
     Documents.prototype.getRDFDocument = function (requestURL, rdfDocuments, response) {
         rdfDocuments = rdfDocuments.filter(function (rdfDocument) { return rdfDocument["@id"] === requestURL; });
@@ -758,20 +756,6 @@ var Documents = (function () {
         }
         return membershipResource;
     };
-    Documents.prototype.getPersistedDocument = function (rdfDocument, response) {
-        var documentResource = this.getDocumentResource(rdfDocument, response);
-        var fragmentResources = RDF.Document.Util.getBNodeResources(rdfDocument);
-        fragmentResources = fragmentResources.concat(RDF.Document.Util.getFragmentResources(rdfDocument));
-        var uri = documentResource["@id"];
-        var documentPointer = this.getPointer(uri);
-        if (documentPointer.isResolved()) {
-            this.updatePersistedDocument(documentPointer, documentResource, fragmentResources);
-        }
-        else {
-            this.createPersistedDocument(documentPointer, documentResource, fragmentResources);
-        }
-        return documentPointer;
-    };
     Documents.prototype.createPersistedDocument = function (documentPointer, documentResource, fragmentResources) {
         var persistedDocument = PersistedDocument.Factory.decorate(documentPointer, this);
         var fragments = [];
@@ -819,25 +803,19 @@ var Documents = (function () {
     };
     Documents.prototype.getPersistedMetadataResources = function (freeNodes, rdfDocuments, response) {
         var _this = this;
-        var freeResources = this.getFreeResources(freeNodes);
+        var freeResources = this._getFreeResources(freeNodes);
         var descriptionResources = freeResources.getResources().filter(LDP.ResponseMetadata.Factory.hasRDFClass);
         if (descriptionResources.length === 0)
             return [];
         if (descriptionResources.length > 1)
             throw new HTTP.Errors.BadResponseError("The response contained multiple " + LDP.ResponseMetadata.RDF_CLASS + " objects.", response);
-        rdfDocuments.forEach(function (rdfDocument) { return _this.getPersistedDocument(rdfDocument, response); });
+        rdfDocuments.forEach(function (rdfDocument) { return _this._getPersistedDocument(rdfDocument, response); });
         var responseMetadata = descriptionResources[0];
         return responseMetadata.resourcesMetadata.map(function (resourceMetadata) {
             var resource = resourceMetadata.resource;
             resource._etag = resourceMetadata.eTag;
             return resource;
         });
-    };
-    Documents.prototype.getFreeResources = function (nodes) {
-        var freeResourcesDocument = FreeResources.Factory.create(this);
-        var resources = nodes.map(function (node) { return freeResourcesDocument.createResource(node["@id"]); });
-        this.compact(nodes, resources, freeResourcesDocument);
-        return freeResourcesDocument;
     };
     Documents._documentSchema = ObjectSchema.Digester.digestSchema(Document.SCHEMA);
     return Documents;

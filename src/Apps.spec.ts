@@ -11,14 +11,15 @@ import {
 	hasSignature,
 	hasDefaultExport,
 } from "./test/JasmineExtender";
-import * as Utils from "./Utils";
 import AbstractContext from "./AbstractContext";
-import AppContext from "./App/Context";
-import * as NS from "./NS";
-import * as Errors from "./Errors";
 import * as App from "./App";
+import AppContext from "./App/Context";
+import * as Errors from "./Errors";
+import IllegalStateError from "./Errors/IllegalStateError";
+import * as NS from "./NS";
 import * as Pointer from "./Pointer";
 import * as RDF from "./RDF";
+import * as Utils from "./Utils";
 
 import * as Apps from "./Apps";
 import DefaultExport from "./Apps";
@@ -33,7 +34,7 @@ describe( module( "Carbon/Apps" ), ():void => {
 
 	describe( clazz(
 		"Carbon.Apps.Class",
-		"Class for obtaining Carbon Apps."
+		"Class for managing Carbon Apps."
 	), ():void => {
 		let apps:Apps.Class;
 		let platformBaseURI:string = "http://example.com/platform/";
@@ -47,7 +48,6 @@ describe( module( "Carbon/Apps" ), ():void => {
 				}
 			}
 			context = new MockedContext();
-			context.setSetting( "platform.apps.container", appsContainerURI );
 			apps = new Apps.Class( context );
 			jasmine.Ajax.install();
 		} );
@@ -62,7 +62,7 @@ describe( module( "Carbon/Apps" ), ():void => {
 		} );
 
 		it( hasConstructor( [
-			{name: "context", type: "Carbon.Context", description: "A context from where Carbon Apps can be obtained"},
+			{name: "context", type: "Carbon.Context", description: "A context from where Carbon Apps can be administrated."},
 		] ), ():void => {
 			expect( apps ).toBeTruthy();
 			expect( apps instanceof Apps.Class ).toBe( true );
@@ -74,8 +74,8 @@ describe( module( "Carbon/Apps" ), ():void => {
 		), ():void => {
 
 			it( hasSignature(
-				"Obtains a `Carbon.App.Context` object of the specified app URI, if it exists within the context of the Apps instance.", [
-					{name: "uri", type: "string"},
+				"Retrieves a `Carbon.App.Context` object from the specified app's URI.", [
+					{name: "uri", type: "string", description: "URI of the app to retrieve and create its context."},
 				],
 				{type: "Promise<Carbon.App.Context>"}
 			), ( done:{ ():void, fail:() => void } ):void => {
@@ -85,16 +85,13 @@ describe( module( "Carbon/Apps" ), ():void => {
 				jasmine.Ajax.stubRequest( "http://example.com/platform/apps/example-app/", null, "GET" ).andReturn( {
 					status: 200,
 					responseHeaders: {
-						ETag: 'W/"123456789"',
+						ETag: '"123456789"',
 					},
 					responseText: `[ {
 						"@id": "http://example.com/platform/apps/example-app/",
 						"@graph": [ {
 							"@id": "http://example.com/platform/apps/example-app/",
-							"@type": [
-								"${ NS.C.Class.Document }",
-								"${ NS.CS.Class.Application }"
-							],
+							"@type": [ "${ NS.CS.Class.Application }" ],
 							"https://carbonldp.com/ns/v1/security#rootContainer": [ {
 								"@id": "https://example.com/apps/example-app/"
 							} ],
@@ -103,15 +100,6 @@ describe( module( "Carbon/Apps" ), ():void => {
 							} ],
 							"${ NS.CS.Predicate.description }": [ {
 								"@value": "Example App description"
-							} ],
-							"${ NS.C.Predicate.created }": [ {
-								"@value": "${ new Date().toISOString() }"
-							} ],
-							"${ NS.C.Predicate.modified }": [ {
-								"@value": "${ new Date().toISOString() }"
-							} ],
-							"${ NS.C.Predicate.defaultInteractionModel }": [ {
-								"@id": "${ NS.LDP.Class.RDFSource }"
 							} ]
 						} ]
 					} ]`,
@@ -121,27 +109,52 @@ describe( module( "Carbon/Apps" ), ():void => {
 					success: ( appContext:AppContext ):void => {
 						expect( appContext instanceof AppContext ).toBe( true );
 					},
+					fail: ( error ):void => {
+						expect( error instanceof Errors.IllegalArgumentError ).toBe( true );
+					},
 				};
 				let successSpy:jasmine.Spy = spyOn( spies, "success" ).and.callThrough();
+				let failSpy:jasmine.Spy = spyOn( spies, "fail" ).and.callThrough();
 
+				let promises:Promise<any>[] = [];
 				let promise:Promise<any>;
 				let spy:jasmine.Spy;
 
 				spy = spyOn( context.documents, "get" ).and.callThrough();
 
-				promise = apps.getContext( "example-app/" ).then( spies.success );
-				expect( promise instanceof Promise ).toBe( true );
+				// Test missing `platform.apps.container` setting
+				apps.getContext( "example-app/" ).catch( error => {
+					expect( error instanceof IllegalStateError ).toBe( true );
+					context.setSetting( "platform.apps.container", appsContainerURI );
 
-				promise.then( ():void => {
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/platform/apps/example-app/" );
-					expect( successSpy.calls.count() ).toBe( 1 );
-					done();
-				} ).catch( done.fail );
+					// Test the correct execution of the method
+					promise = apps.getContext( "example-app/" );
+					expect( promise instanceof Promise ).toBe( true );
+					promises.push( promise.then( spies.success ) );
+
+					// Test the correct execution of the method
+					promise = apps.getContext( "http://example.com/platform/apps/example-app/" );
+					expect( promise instanceof Promise ).toBe( true );
+					promises.push( promise.then( spies.success ) );
+
+					// Test sending incorrect app URI
+					promise = apps.getContext( "http://example.com/another-wrong-uri/example-app/" );
+					expect( promise instanceof Promise ).toBe( true );
+					promises.push( promise.catch( spies.fail ) );
+
+					Promise.all( promises ).then( ():void => {
+						expect( spy ).toHaveBeenCalledWith( "http://example.com/platform/apps/example-app/" );
+						expect( successSpy ).toHaveBeenCalledTimes( 2 );
+						expect( failSpy ).toHaveBeenCalledTimes( 1 );
+						done();
+					} ).catch( done.fail );
+				} );
+
 			} );
 
 			it( hasSignature(
-				"Obtains a `Carbon.App.Context` object of the specified Pointer object, if it exists within the context of the Apps instance.", [
-					{name: "pointer", type: "Carbon.Pointer.Class"},
+				"Retrieves a `Carbon.App.Context` object from the specified app's Pointer.", [
+					{name: "pointer", type: "Carbon.Pointer.Class", description: "Pointer of the app to retrieve and create its context."},
 				],
 				{type: "Promise<Carbon.App.Context>"}
 			), ( done:{ ():void, fail:() => void } ):void => {
@@ -151,16 +164,13 @@ describe( module( "Carbon/Apps" ), ():void => {
 				jasmine.Ajax.stubRequest( "http://example.com/platform/apps/example-app/", null, "GET" ).andReturn( {
 					status: 200,
 					responseHeaders: {
-						ETag: 'W/"123456789"',
+						ETag: '"1234567890"',
 					},
 					responseText: `[ {
 						"@id": "http://example.com/platform/apps/example-app/",
 						"@graph": [ {
 							"@id": "http://example.com/platform/apps/example-app/",
-							"@type": [
-								"${ NS.C.Class.Document }",
-								"${ NS.CS.Class.Application }"
-							],
+							"@type": [ "${ NS.CS.Class.Application }" ],
 							"https://carbonldp.com/ns/v1/security#rootContainer": [ {
 								"@id": "https://example.com/apps/example-app/"
 							} ],
@@ -169,15 +179,6 @@ describe( module( "Carbon/Apps" ), ():void => {
 							} ],
 							"${ NS.CS.Predicate.description }": [ {
 								"@value": "Example App description"
-							} ],
-							"${ NS.C.Predicate.created }": [ {
-								"@value": "${ new Date().toISOString() }"
-							} ],
-							"${ NS.C.Predicate.modified }": [ {
-								"@value": "${ new Date().toISOString() }"
-							} ],
-							"${ NS.C.Predicate.defaultInteractionModel }": [ {
-								"@id": "${ NS.LDP.Class.RDFSource }"
 							} ]
 						} ]
 					} ]`,
@@ -187,24 +188,47 @@ describe( module( "Carbon/Apps" ), ():void => {
 					success: ( appContext:AppContext ):void => {
 						expect( appContext instanceof AppContext ).toBe( true );
 					},
+					fail: ( error ):void => {
+						expect( error instanceof Errors.IllegalArgumentError ).toBe( true );
+					},
 				};
 				let successSpy:jasmine.Spy = spyOn( spies, "success" ).and.callThrough();
+				let failSpy:jasmine.Spy = spyOn( spies, "fail" ).and.callThrough();
 
+				let promises:Promise<any>[] = [];
 				let promise:Promise<any>;
-				let pointer:Pointer.Class;
-				let spy:jasmine.Spy;
 
-				spy = spyOn( context.documents, "get" ).and.callThrough();
-				pointer = context.documents.getPointer( "apps/example-app/" );
+				let spyGet:jasmine.Spy = spyOn( context.documents, "get" ).and.callThrough();
 
-				promise = apps.getContext( pointer ).then( spies.success );
-				expect( promise instanceof Promise ).toBe( true );
+				// Test missing `platform.apps.container` setting
+				apps.getContext( context.documents.getPointer( "apps/example-app/" ) ).catch( error => {
+					expect( error instanceof IllegalStateError ).toBe( true );
+					context.setSetting( "platform.apps.container", appsContainerURI );
 
-				promise.then( ():void => {
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/platform/apps/example-app/" );
-					expect( successSpy.calls.count() ).toBe( 1 );
-					done();
-				} ).catch( done.fail );
+					// Text correct execution of the method
+					promise = apps.getContext( context.documents.getPointer( "apps/example-app/" ) );
+					expect( promise instanceof Promise ).toBe( true );
+					promises.push( promise.then( spies.success ) );
+
+					// Text correct execution of the method
+					promise = apps.getContext( context.documents.getPointer( "http://example.com/platform/apps/example-app/" ) );
+					expect( promise instanceof Promise ).toBe( true );
+					promises.push( promise.then( spies.success ) );
+
+					// Test sending incorrect app Pointer
+					promise = apps.getContext( context.documents.getPointer( "http://example.com/another-wrong-uri/example-app/" ) );
+					expect( promise instanceof Promise ).toBe( true );
+					promises.push( promise.catch( spies.fail ) );
+
+					Promise.all( promises ).then( ():void => {
+						expect( spyGet ).toHaveBeenCalledWith( "http://example.com/platform/apps/example-app/" );
+						expect( successSpy ).toHaveBeenCalledTimes( 2 );
+						expect( failSpy ).toHaveBeenCalledTimes( 1 );
+						done();
+					}, done.fail );
+
+				} );
+
 			} );
 
 		} );
@@ -212,7 +236,7 @@ describe( module( "Carbon/Apps" ), ():void => {
 		it( hasMethod(
 			INSTANCE,
 			"getAllContexts",
-			"Obtains all the `Carbon.App.Context` objects of every app where the context of the Apps instance can reach.",
+			"Retrieves an array of `Carbon.App.Context` objects, of every app the current user have access to.",
 			{type: "Promise<Carbon.App.Context[]>"}
 		), ( done:{ ():void, fail:() => void } ):void => {
 			expect( apps.getAllContexts ).toBeDefined();
@@ -281,24 +305,12 @@ describe( module( "Carbon/Apps" ), ():void => {
 						"@id": "http://example.com/platform/apps/another-app/",
 						"@graph": [ {
 							"@id": "http://example.com/platform/apps/another-app/",
-							"@type": [
-								"${ NS.C.Class.Document }",
-								"${NS.CS.Class.Application}"
-							],
+							"@type": [ "${NS.CS.Class.Application}" ],
 							"https://carbonldp.com/ns/v1/security#rootContainer": [ {
 								"@id": "https://example.com/apps/another-app/"
 							} ],
 							"${NS.CS.Predicate.namae}": [ {
 								"@value": "Another App name"
-							} ],
-							"${ NS.C.Predicate.created }": [ {
-								"@value": "${ new Date().toISOString() }"
-							} ],
-							"${ NS.C.Predicate.modified }": [ {
-								"@value": "${ new Date().toISOString() }"
-							} ],
-							"${ NS.C.Predicate.defaultInteractionModel }": [ {
-								"@id": "${ NS.LDP.Class.RDFSource }"
 							} ]
 						} ]
 					},
@@ -306,10 +318,7 @@ describe( module( "Carbon/Apps" ), ():void => {
 						"@id": "http://example.com/platform/apps/example-app/",
 						"@graph": [ {
 							"@id": "http://example.com/platform/apps/example-app/",
-							"@type": [
-								"${ NS.C.Class.Document }",
-								"${NS.CS.Class.Application}"
-							],
+							"@type": [ "${NS.CS.Class.Application}" ],
 							"https://carbonldp.com/ns/v1/security#rootContainer": [ {
 								"@id": "https://example.com/apps/example-app/"
 							} ],
@@ -318,15 +327,6 @@ describe( module( "Carbon/Apps" ), ():void => {
 							} ],
 							"${NS.CS.Predicate.description}": [ {
 								"@value": "Example App description"
-							} ],
-							"${ NS.C.Predicate.created }": [ {
-								"@value": "${ new Date().toISOString() }"
-							} ],
-							"${ NS.C.Predicate.modified }": [ {
-								"@value": "${ new Date().toISOString() }"
-							} ],
-							"${ NS.C.Predicate.defaultInteractionModel }": [ {
-								"@id": "${ NS.LDP.Class.RDFSource }"
 							} ]
 						} ]
 					}
@@ -341,22 +341,27 @@ describe( module( "Carbon/Apps" ), ():void => {
 						expect( appContext instanceof AppContext ).toBe( true );
 					}
 				},
-				fail: ():void => {
-				},
 			};
 			let successSpy:jasmine.Spy = spyOn( spies, "success" ).and.callThrough();
-			let failSpy:jasmine.Spy = spyOn( spies, "fail" ).and.callThrough();
 
 			let promise:Promise<any>;
 
-			promise = apps.getAllContexts().then( spies.success, spies.fail );
-			expect( promise instanceof Promise ).toBe( true );
+			// Test missing `platform.apps.container` setting
+			apps.getAllContexts().catch( stateError => {
+				expect( stateError instanceof IllegalStateError ).toBe( true );
+				context.setSetting( "platform.apps.container", appsContainerURI );
 
-			promise.then( ():void => {
-				expect( successSpy.calls.count() ).toBe( 1 );
-				expect( failSpy.calls.count() ).toBe( 0 );
-				done();
-			} ).catch( done.fail );
+				// Text correct execution of the method
+				promise = apps.getAllContexts().then( spies.success );
+				expect( promise instanceof Promise ).toBe( true );
+
+				promise.then( ():void => {
+					expect( successSpy ).toHaveBeenCalledTimes( 1 );
+					done();
+				} ).catch( done.fail );
+
+			} );
+
 		} );
 
 		describe( method(
@@ -365,75 +370,90 @@ describe( module( "Carbon/Apps" ), ():void => {
 		), ():void => {
 
 			it( hasSignature(
-				"Persists an App Document in the server, generating a unique slug.\n" +
-				"Returns a Pointer for the stored App Document, and the response of the call.", [
-					{name: "appDocument", type: "Carbon.App.Class"},
+				"Persists a `Carbon.App.Class` object generating a unique slug.\n" +
+				"Returns a Promise with a Pointer to the stored App, and the response of the request.", [
+					{name: "appDocument", type: "Carbon.App.Class", description: "App document that will be persisted."},
 				],
-				{type: "Promise<Carbon.Pointer.Class, Carbon.HTTP.Response.Class>"}
-			), ( done ):void => {
+				{type: "Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>"}
+			), ( done:{():void, fail:() => void} ):void => {
 				expect( apps.create ).toBeDefined();
 				expect( Utils.isFunction( apps.create ) ).toBe( true );
 
+				let promises:Promise<any>[] = [];
+				let promise:Promise<any>;
 				let spy:jasmine.Spy = spyOn( context.documents, "createChild" );
+
 				let app:App.Class = App.Factory.create( "App name", "App description" );
 
-				apps.create( app );
-				expect( spy ).toHaveBeenCalledWith( appsContainerURI, null, app );
+				// Test missing `platform.apps.container` setting
+				apps.create( app ).catch( stateError => {
+					expect( stateError instanceof IllegalStateError ).toBe( true );
+					context.setSetting( "platform.apps.container", appsContainerURI );
 
-				let promise:Promise<any> = apps.create( null );
-				expect( promise instanceof Promise ).toBe( true );
+					//  Test correct execution of the method
+					promise = apps.create( app );
+					expect( promise instanceof Promise ).toBe( true );
+					promises.push( promise.then( () => {
+						expect( spy ).toHaveBeenCalledWith( appsContainerURI, null, app );
+					} ) );
 
-				let spies:any = {
-					onError: function( error:Error ):void {
+					// Test incorrect `Carbon.App.Class` object provided
+					promise = apps.create( null );
+					expect( promise instanceof Promise ).toBe( true );
+					promises.push( promise.catch( error => {
 						expect( error instanceof Errors.IllegalArgumentError );
-					},
-				};
-				spy = spyOn( spies, "onError" ).and.callThrough();
-				promise = promise.catch( spies.onError );
+					} ) );
 
-				Promise.all( [ promise ] ).then( ():void => {
-					expect( spy ).toHaveBeenCalled();
-					done();
+					Promise.all( promises ).then( done ).catch( done.fail );
 				} );
+
 			} );
 
 			it( hasSignature(
-				"Persists an App Document in the server using the slug specified.\n" +
-				"Returns a Pointer for the stored App Document, and the response of the call.", [
-					{name: "slug", type: "string"},
-					{name: "appDocument", type: "Carbon.App.Class"},
+				"Persists a `Carbon.App.Class` object using the slug specified.\n" +
+				"Returns a Promise with a Pointer to the stored App, and the response of the request.", [
+					{name: "slug", type: "string", description: "Slug that will be used for the URI of the new app."},
+					{name: "appDocument", type: "Carbon.App.Class", description: "App document that will be persisted."},
 				],
-				{type: "Promise<Carbon.Pointer.Class, Carbon.HTTP.Response.Class>"}
-			), ( done:() => void ):void => {
+				{type: "Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>"}
+			), ( done:{():void, fail:() => void} ):void => {
 				expect( apps.create ).toBeDefined();
 				expect( Utils.isFunction( apps.create ) ).toBe( true );
 
+				let promises:Promise<any>[] = [];
 				let promise:Promise<any>;
 				let spy:jasmine.Spy = spyOn( context.documents, "createChild" );
 				let app:App.Class = App.Factory.create( "App name", "App description" );
 
-				apps.create( "slug-of-app", app );
-				expect( spy ).toHaveBeenCalledWith( appsContainerURI, "slug-of-app", app );
+				// Test missing `platform.apps.container` setting
+				apps.create( "slug-of-app", app ).catch( stateError => {
+					expect( stateError instanceof IllegalStateError ).toBe( true );
+					context.setSetting( "platform.apps.container", appsContainerURI );
 
-				spy.calls.reset();
-				apps.create( null, app );
-				expect( spy ).toHaveBeenCalledWith( appsContainerURI, null, app );
+					// Test correct execution of the method
+					promise = apps.create( "slug-of-app", app );
+					expect( promise instanceof Promise ).toBe( true );
+					promises.push( promise.then( () => {
+						expect( spy ).toHaveBeenCalledWith( appsContainerURI, "slug-of-app", app );
+					} ) );
 
-				promise = apps.create( "slug-of-app", null );
-				expect( promise instanceof Promise ).toBe( true );
+					// Test correct execution of the method, where delegate the manage of the `null` slug to `context.documents.createChild` method
+					apps.create( null, app );
+					expect( promise instanceof Promise ).toBe( true );
+					promises.push( promise.then( () => {
+						expect( spy ).toHaveBeenCalledWith( appsContainerURI, null, app );
+					} ) );
 
-				let spies:any = {
-					onError: function( error:Error ):void {
+					// Test incorrect `Carbon.App.Class` object provided
+					promise = apps.create( "slug-of-app", null );
+					expect( promise instanceof Promise ).toBe( true );
+					promises.push( promise.catch( error => {
 						expect( error instanceof Errors.IllegalArgumentError );
-					},
-				};
-				spy = spyOn( spies, "onError" ).and.callThrough();
-				promise = promise.catch( spies.onError );
+					} ) );
 
-				Promise.all( [ promise ] ).then( ():void => {
-					expect( spy ).toHaveBeenCalled();
-					done();
+					Promise.all( promises ).then( done ).catch( done.fail );
 				} );
+
 			} );
 
 		} );

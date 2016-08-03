@@ -36,7 +36,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 
 	describe( clazz(
 		"Carbon.PersistedDocument.Factory",
-		"Factory class for PersistedDocument objects."
+		"Factory class for `Carbon.PersistedDocument.Class` objects."
 	), ():void => {
 		let context:AbstractContext;
 		beforeEach( ():void => {
@@ -56,7 +56,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"hasClassProperties",
-			"Returns true if the Document provided has the properties and functions of a PersistedDocument object", [
+			"Returns true if the Document provided has the properties and methods of a `Carbon.PersistedDocument.Class` object.", [
 				{name: "document", type: "Carbon.Document.Class"},
 			],
 			{type: "boolean"}
@@ -230,7 +230,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"is",
-			"Returns true if the element provided is a PersistedDocument object.", [
+			"Returns true if the element provided is considered a `Carbon.PersistedDocument.Class` object.", [
 				{name: "object", type: "Object"},
 			],
 			{type: "boolean"}
@@ -287,9 +287,9 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"create",
-			"Creates an empty PersistedDocument object with the URI provided and contained by the Documents object specified.", [
+			"Creates an empty `Carbon.PersistedDocument.Class` object with the URI provided.", [
 				{name: "uri", type: "string"},
-				{name: "documents", type: "Carbon.Documents"},
+				{name: "documents", type: "Carbon.Documents", description: "The Documents instance to which the PersistedDocument belongs."},
 			],
 			{type: "Carbon.PersistedDocument.Class"}
 		), ():void => {
@@ -308,9 +308,10 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 			STATIC,
 			"createFrom",
 			[ "T extends Object" ],
-			"Creates a PersistedDocument object from the object and URI provided, with the Documents object specified as container.", [
+			"Creates a PersistedDocument object from the object and URI provided.", [
 				{name: "object", type: "T"},
 				{name: "uri", type: "string"},
+				{name: "documents", type: "Carbon.Documents", description: "The Documents instance to which the PersistedDocument belongs."},
 			],
 			{type: "T & Carbon.PersistedDocument.Class"}
 		), ():void => {
@@ -338,9 +339,9 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 			STATIC,
 			"decorate",
 			[ "T extends Object" ],
-			"Adds the properties and methods necessary for a PersistedDocument object.", [
+			"Decorates the object provided with the properties and methods of a `Carbon.PersistedDocument.Class` object.", [
 				{name: "object", type: "T"},
-				{name: "documents", type: "Carbon.Documents"},
+				{name: "documents", type: "Carbon.Documents", description: "The Documents instance to which the PersistedDocument belongs."},
 			],
 			{type: "T & Carbon.PersistedDocument.Class"}
 		), ():void => {
@@ -373,8 +374,8 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 		} );
 
 		describe( decoratedObject(
-			"Object decorated by the `Carbon.PersistedDocument.Factory.decorate()` function.", [
-				"Carbon.PersistedDocument.Class",
+			"Object decorated by the `Carbon.LDP.PersistedContainer.Factory.decorate()` function.", [
+				"Carbon.LDP.PersistedContainer.Class",
 			]
 		), ():void => {
 			let document:PersistedDocument.Class;
@@ -390,7 +391,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 				INSTANCE,
 				"_documents",
 				"Carbon.Documents",
-				"Documents object who is the container of the PersistedContainer."
+				"The Documents instance to which the PersistedContainer belongs."
 			), ():void => {
 				expect( document._documents ).toBeDefined();
 				expect( Utils.isObject( document._documents ) ).toBe( true );
@@ -434,8 +435,8 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 			it( hasMethod(
 				INSTANCE,
 				"getPointer",
-				"Returns the pointer referenced by the URI provided. If not exists a pointer is created.\n" +
-				"Returns null if the URI is not inside scope of the PersistedDocument.", [
+				"Returns the pointer referenced by the URI provided. If none exists, an empty pointer is created.\n" +
+				"Returns null if the URI is not inside the scope of the PersistedDocument.", [
 					{name: "id", type: "string"},
 				],
 				{type: "boolean"}
@@ -837,7 +838,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 			), ():void => {
 
 				it( hasSignature(
-					"Add the specified resource Pointer as a member of the container.", [
+					"Adds the specified resource Pointer as a member of the container.", [
 						{name: "member", type: "Carbon.Pointer.Class", description: "Pointer object that references the resource to add as a member."},
 					],
 					{type: "Promise<Carbon.HTTP.Response.Class>"}
@@ -854,7 +855,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 				} );
 
 				it( hasSignature(
-					"Add the specified resource URI as a member of the document.", [
+					"Adds the specified resource URI as a member of the container.", [
 						{name: "memberURI", type: "string", description: "URI of the resource to add as a member."},
 					],
 					{type: "Promise<Carbon.HTTP.Response.Class>"}
@@ -874,8 +875,8 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 			it( hasMethod(
 				INSTANCE,
 				"addMembers",
-				"Add the specified resources URI or Pointers as members of the document.", [
-					{name: "members", type: "(Carbon.Pointer.Class | string)[]", description: "Array of string URIs or Pointers to add as members"},
+				"Adds the specified resources as members of the container.", [
+					{name: "members", type: "(Carbon.Pointer.Class | string)[]", description: "Array of URIs or Pointers to add as members."},
 				],
 				{type: "Promise<Carbon.HTTP.Response.Class>"}
 			), ():void => {
@@ -897,9 +898,10 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 			), ():void => {
 
 				it( hasSignature(
-					[ "T extends Object" ], [
-						{name: "object", type: "T", description: "The object from where create the child. If it's a non `Carbon.Document.Class` object, it is transformed into one."},
-						{name: "slug", type: "string", description: "The slug name for the children URI."},
+					[ "T extends Object" ],
+					"Persists a document with the slug specified as a child of the current container.", [
+						{name: "object", type: "T", description: "The object from where create the child. If it's a non `Carbon.Document.Class` object, it's transformed into one."},
+						{name: "slug", type: "string", description: "The slug that will be used in the child URI."},
 					],
 					{type: "Promise<[ T & Carbon.PersistedDocument.Class, Carbon.HTTP.Response.Class ]>"}
 				), ():void => {
@@ -920,8 +922,9 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 				} );
 
 				it( hasSignature(
-					[ "T extends Object" ], [
-						{name: "object", type: "T", description: "The object from where create the child. If it's a non `Carbon.Document.Class` object, it is transformed into one."},
+					[ "T extends Object" ],
+					"Persists a document as a child of the current container.", [
+						{name: "object", type: "T", description: "The object from where create the child. If it's a non `Carbon.Document.Class` object, it's transformed into one."},
 					],
 					{type: "Promise<[ T & Carbon.PersistedDocument.Class, Carbon.HTTP.Response.Class ]>"}
 				), ():void => {
@@ -941,8 +944,9 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", object, undefined );
 				} );
 
-				it( hasSignature( [
-						{name: "slug", type: "string", description: "The slug name for the children URI."},
+				it( hasSignature(
+					"Creates an persists an empty child for the current container with the slug provided.", [
+						{name: "slug", type: "string", description: "The slug that will be used in the child URI."},
 					],
 					{type: "Promise<[ Carbon.PersistedDocument.Class, Carbon.HTTP.Response.Class ]>"}
 				), ():void => {
@@ -956,7 +960,8 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 				} );
 
 				it( hasSignature(
-					{type: "Promise<[ Carbon.PersistedDocument.Class, Carbon.HTTP.Response.Class ]>"}
+					"Creates and persists an empty child fot he current document.",
+					{type: "Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>"}
 				), ():void => {
 					expect( document.createChild ).toBeDefined();
 					expect( Utils.isFunction( document.createChild ) ).toBeDefined();
@@ -1049,9 +1054,9 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 				it( hasSignature(
 					[ "T extends Carbon.AccessPoint.Class" ],
 					"Create an AccessPoint for the document with the slug specified.", [
-						{name: "accessPoint", type: "T"},
+						{name: "accessPoint", type: "T", description: "AccessPoint Document to persist."},
 						{name: "slug", type: "string", optional: true, description: "Slug that will be used for the URI of the new access point."},
-						{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: " Customizable options for the request."},
+						{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customisable options for the request."},
 					],
 					{type: "Promise<[ T & Carbon.PersistedAccessPoint.Class, Carbon.HTTP.Response ]>"}
 				), ():void => {
@@ -1067,7 +1072,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 				it( hasSignature(
 					[ "T extends Carbon.AccessPoint.Class" ],
 					"Create an AccessPoint for the document.", [
-						{name: "accessPoint", type: "T"},
+						{name: "accessPoint", type: "T", description: "AccessPoint Document to persist."},
 						{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: " Customizable options for the request."},
 					],
 					{type: "Promise<[ T & Carbon.PersistedAccessPoint.Class, Carbon.HTTP.Response ]>"}
@@ -1086,7 +1091,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 			it( hasMethod(
 				INSTANCE,
 				"listChildren",
-				"Return all the children of the document.",
+				"Retrieves an array of unresolved persisted documents that refers to the children of the current container.",
 				{type: "Promise<[ Carbon.PersistedDocument.Class[], Carbon.HTTP.Response ]>"}
 			), ():void => {
 				expect( document.listChildren ).toBeDefined();
@@ -1102,7 +1107,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 				INSTANCE,
 				"getChildren",
 				[ "T" ],
-				"Return all the children of the document.", [
+				"Retrieves an array of resolved persisted documents that refers to the children of the current container, in accordance to the retrieval preferences specified.", [
 					{name: "retrievalPreferences", type: "Carbon.RetrievalPreferences.Class", optional: true},
 				],
 				{type: "Promise<[ (T & Carbon.PersistedDocument.Class)[], Carbon.HTTP.Response ]>"}
@@ -1128,7 +1133,8 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 
 			it( hasMethod(
 				INSTANCE,
-				"listMembers", [
+				"listMembers",
+				"Retrieves an array of unresolved persisted documents that refers to the members of the current container.", [
 					{name: "includeNonReadable", type: "boolean", optional: true, description: "By default this option is set to `true`."},
 				],
 				{type: "Promise<[ Carbon.PersistedDocument.Class[], Carbon.HTTP.Response.Class ]>"}
@@ -1152,7 +1158,8 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 			), ():void => {
 
 				it( hasSignature(
-					[ "T" ], [
+					[ "T" ],
+					"Retrieves an array of resolved persisted documents that refers to the members of the current container, in accordance to the retrieval preferences specified.", [
 						{name: "includeNonReadable", type: "boolean", optional: true, description: "By default this option is set to `true`."},
 						{name: "retrievalPreferences", type: "Carbon.RetrievalPreferences.Class", optional: true},
 					],
@@ -1198,7 +1205,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 			), ():void => {
 
 				it( hasSignature(
-					"Remove the specified resource Pointer as a member of the document.", [
+					"Remove the specified resource Pointer as a member of the current container.", [
 						{name: "member", type: "Carbon.Pointer.Class", description: "Pointer object that references the resource to remove as a member."},
 					],
 					{type: "Promise<Carbon.HTTP.Response.Class>"}
@@ -1215,7 +1222,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 				} );
 
 				it( hasSignature(
-					"Remove the specified resource URI as a member of the document.", [
+					"Remove the specified resource URI as a member of the current container.", [
 						{name: "memberURI", type: "string", description: "URI of the resource to remove as a member."},
 					],
 					{type: "Promise<Carbon.HTTP.Response.Class>"}
@@ -1235,8 +1242,8 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 			it( hasMethod(
 				INSTANCE,
 				"removeMembers",
-				"Remove the specified resources URI or Pointers as members of the document.", [
-					{name: "members", type: "(Carbon.Pointer.Class | string)[]", description: "Array of string URIs or Pointers to remove as members"},
+				"Remove the specified resources URI or Pointers as members of the current container.", [
+					{name: "members", type: "(Carbon.Pointer.Class | string)[]", description: "Array of URIs or Pointers to remove as members"},
 				],
 				{type: "Promise<Carbon.HTTP.Response.Class>"}
 			), ():void => {
@@ -1255,9 +1262,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 			it( hasMethod(
 				INSTANCE,
 				"removeAllMembers",
-				"Remove the specified resources URI or Pointers as members of the document.", [
-					{name: "members", type: "(Carbon.Pointer.Class | string)[]", description: "Array of string URIs or Pointers to remove as members"},
-				],
+				"Remove the specified resources URI or Pointers as members of the current container.",
 				{type: "Promise<Carbon.HTTP.Response.Class>"}
 			), ():void => {
 				expect( document.removeAllMembers ).toBeDefined();
@@ -1272,12 +1277,12 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 
 			describe( method(
 				INSTANCE,
-				"upload",
-				"Upload a File to the server as a child of the Container."
+				"upload"
 			), ():void => {
 
-				it( hasSignature( [
-						{name: "data", type: "Blob", description: "Binary data to store in the server. The Blob works in a Browser."},
+				it( hasSignature(
+					"Upload a File to the server as a child of the current container with the slug specified. This signature only works in a web browser.", [
+						{name: "data", type: "Blob", description: "Binary data to store in the server."},
 						{name: "slug", type: "string", description: "The slug that will be used in the URI of the data."},
 					],
 					{type: "Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>"}
@@ -1295,8 +1300,9 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 					}
 				} );
 
-				it( hasSignature( [
-						{name: "data", type: "Blob", description: "Binary data to store in the server. The Blob works in a Browser."},
+				it( hasSignature(
+					"Upload a File to the server as a child of the current container. This signature only works in a web browser.", [
+						{name: "data", type: "Blob", description: "Binary data to store in the server."},
 					],
 					{type: "Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>"}
 				), ():void => {
@@ -1313,7 +1319,8 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 					}
 				} );
 
-				it( hasSignature( [
+				it( hasSignature(
+					"Upload a File to the server as a child of the current container with the slug specified. This signature only works with Node.js.", [
 						{name: "data", type: "Buffer", description: "Binary data to store in the server. The Buffer only works in Node.js."},
 						{name: "slug", type: "string", description: "The slug that will be used in the URI of the data."},
 					],
@@ -1332,7 +1339,8 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 					}
 				} );
 
-				it( hasSignature( [
+				it( hasSignature(
+					"Upload a File to the server as a child of the current container. This signature only works with Node.js.", [
 						{name: "data", type: "Buffer", description: "Binary data to store in the server. The Buffer only works in Node.js."},
 					],
 					{type: "Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>"}
@@ -1372,7 +1380,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 			it( hasMethod(
 				INSTANCE,
 				"executeASKQuery",
-				"Executes an ASK query in the document and returns a boolean of th result.", [
+				"Executes an ASK query in the document and returns a boolean of the result.", [
 					{name: "askQuery", type: "string"},
 					{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request."},
 				],
@@ -1389,7 +1397,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 			it( hasMethod(
 				INSTANCE,
 				"executeRawSELECTQuery",
-				"Executes an SELECT query in the document and returns a raw application/sparql-results+json object.", [
+				"Executes a SELECT query in the document and returns a raw application/sparql-results+json object.", [
 					{name: "selectQuery", type: "string"},
 					{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request."},
 				],
@@ -1406,7 +1414,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 			it( hasMethod(
 				INSTANCE,
 				"executeSELECTQuery",
-				"Executes an SELECT query in the document and returns the results as a `Carbon.SPARQL.SELECTResults.Class` object.", [
+				"Executes a SELECT query in the document and returns the results as a `Carbon.SPARQL.SELECTResults.Class` object.", [
 					{name: "selectQuery", type: "string"},
 					{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request."},
 				],
@@ -1423,7 +1431,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 			it( hasMethod(
 				INSTANCE,
 				"executeRawCONSTRUCTQuery",
-				"Executes an CONSTRUCT query in the document and returns a string with the resulting model.", [
+				"Executes a CONSTRUCT query in the document and returns a string with the resulting model.", [
 					{name: "constructQuery", type: "string"},
 					{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request."},
 				],
@@ -1440,7 +1448,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 			it( hasMethod(
 				INSTANCE,
 				"executeRawDESCRIBEQuery",
-				"Executes an DESCRIBE query in the document and returns a string with the resulting model.", [
+				"Executes a DESCRIBE query in the document and returns a string with the resulting model.", [
 					{name: "constructQuery", type: "string"},
 					{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request."},
 				],

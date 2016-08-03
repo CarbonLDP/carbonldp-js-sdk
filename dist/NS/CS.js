@@ -85,6 +85,11 @@ var Predicate = (function () {
         enumerable: true,
         configurable: true
     });
+    Object.defineProperty(Predicate, "credentialsOf", {
+        get: function () { return namespace + "credentialsOf"; },
+        enumerable: true,
+        configurable: true
+    });
     Object.defineProperty(Predicate, "description", {
         get: function () { return namespace + "description"; },
         enumerable: true,
