@@ -66,6 +66,7 @@ class Carbon extends AbstractContext {
 	static get version():string { return "0.35.1"; }
 
 	apps:Apps.Class;
+	agents:Agents.Class;
 
 	get version():string { return Carbon.version; }
 
@@ -77,6 +78,7 @@ class Carbon extends AbstractContext {
 		Utils.M.extend( this.settings, Utils.M.from( settings ) );
 
 		this.apps = new Apps.Class( this );
+		this.agents = new Agents.Class( this );
 	}
 
 	resolve( uri:string ):string {
