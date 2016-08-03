@@ -832,18 +832,7 @@ Class()
 
 ##### create
 ```typescript 
-create( agentDocument:Carbon.Agents.Agent.Class ):Promise<Carbon.Pointer.Class, Carbon.HTTP.Response.Class>
-```
-
-Persists a `Carbon.Agent.Class` object generating a random unique slug.
-Returns a Promise with a Pointer to the stored Agent, and the response of the request.
-
-*Parameters*
-
-- agentDocument
-
-```typescript 
-create( slug:string,  agentDocument:Carbon.Agents.Agent.Class ):Promise<Carbon.Pointer.Class, Carbon.HTTP.Response.Class>
+create( agentDocument:Carbon.Agents.Agent.Class,  slug?:string ):Promise<Carbon.Pointer.Class, Carbon.HTTP.Response.Class>
 ```
 
 Persists a `Carbon.Agent.Class` object using the slug specified.
@@ -851,8 +840,8 @@ Returns a Promise with a Pointer to the stored Agent, and the response of the re
 
 *Parameters*
 
-- slug
 - agentDocument
+- slug
 
 
 
@@ -1031,6 +1020,19 @@ getAllContexts():Promise<Carbon.App.Context[]>
 
 Retrieves an array of `Carbon.App.Context` objects, of every app the current user have access to.
 
+##### create
+```typescript 
+create( slug:string,  appDocument:Carbon.App.Class ):Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>
+```
+
+Persists a `Carbon.App.Class` object using the slug specified.
+Returns a Promise with a Pointer to the stored App, and the response of the request.
+
+*Parameters*
+
+- slug: Slug that will be used for the URI of the new app.
+- appDocument: App document that will be persisted.
+
 ##### getContext
 ```typescript 
 getContext( uri:string ):Promise<Carbon.App.Context>
@@ -1051,30 +1053,6 @@ Retrieves a `Carbon.App.Context` object from the specified app's Pointer.
 *Parameters*
 
 - pointer: Pointer of the app to retrieve and create its context.
-
-##### create
-```typescript 
-create( appDocument:Carbon.App.Class ):Promise<[ Carbon.PersistedDocument.Class, Carbon.HTTP.Response.Class ]>
-```
-
-Persists a `Carbon.App.Class` object generating a unique slug.
-Returns a Promise with a Pointer to the stored App, and the response of the request.
-
-*Parameters*
-
-- appDocument: App document that will be persisted.
-
-```typescript 
-create( slug:string,  appDocument:Carbon.App.Class ):Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>
-```
-
-Persists a `Carbon.App.Class` object using the slug specified.
-Returns a Promise with a Pointer to the stored App, and the response of the request.
-
-*Parameters*
-
-- slug: Slug that will be used for the URI of the new app.
-- appDocument: App document that will be persisted.
 
 
 

@@ -10,8 +10,7 @@ export declare class Class {
     getContext(uri: string): Promise<AppContext>;
     getContext(pointer: Pointer.Class): Promise<AppContext>;
     getAllContexts(): Promise<AppContext[]>;
-    create(appDocument: App.Class): Promise<[PersistedDocument.Class, HTTP.Response.Class]>;
-    create(slug: string, appDocument: App.Class): Promise<[PersistedDocument.Class, HTTP.Response.Class]>;
+    create(appDocument: App.Class, slug?: string): Promise<[PersistedDocument.Class, HTTP.Response.Class]>;
     private resolveURI(appURI);
     private getContainerURI();
 }

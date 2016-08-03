@@ -58,16 +58,11 @@ export class Class {
 		} );
 	}
 
-	create( appDocument:App.Class ):Promise<[ PersistedDocument.Class, HTTP.Response.Class]>;
-	create( slug:string, appDocument:App.Class ):Promise<[ PersistedDocument.Class, HTTP.Response.Class]>;
-	create( slugOrApp:any, appDocument?:App.Class ):Promise<[ PersistedDocument.Class, HTTP.Response.Class]> {
+	create( appDocument:App.Class, slug:string = null ):Promise<[ PersistedDocument.Class, HTTP.Response.Class]> {
 		return this.resolveURI( "" ).then( ( appsContainerURI:string ) => {
-			let slug:string = Utils.isString( slugOrApp ) ? slugOrApp : null;
-			appDocument = appDocument || slugOrApp;
-
 			if( ! App.Factory.is( appDocument ) ) throw new Errors.IllegalArgumentError( "The Document is not a `Carbon.App.Class` object." );
 
-			return this.context.documents.createChild( appsContainerURI, slug, appDocument );
+			return this.context.documents.createChild( appsContainerURI, appDocument, slug );
 		} );
 	}
 

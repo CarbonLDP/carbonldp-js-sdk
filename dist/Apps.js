@@ -43,14 +43,13 @@ var Class = (function () {
             return apps.map(function (app) { return new Context_1.default(_this.context, app); });
         });
     };
-    Class.prototype.create = function (slugOrApp, appDocument) {
+    Class.prototype.create = function (appDocument, slug) {
         var _this = this;
+        if (slug === void 0) { slug = null; }
         return this.resolveURI("").then(function (appsContainerURI) {
-            var slug = Utils.isString(slugOrApp) ? slugOrApp : null;
-            appDocument = appDocument || slugOrApp;
             if (!App.Factory.is(appDocument))
                 throw new Errors.IllegalArgumentError("The Document is not a `Carbon.App.Class` object.");
-            return _this.context.documents.createChild(appsContainerURI, slug, appDocument);
+            return _this.context.documents.createChild(appsContainerURI, appDocument, slug);
         });
     };
     Class.prototype.resolveURI = function (appURI) {
