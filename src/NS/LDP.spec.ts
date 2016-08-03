@@ -33,7 +33,7 @@ describe( module(
 
 	describe( clazz(
 		"Carbon.NS.LDP.Class",
-		"Class that contains objects defined in the W3C Linked Data Platform (LDP) vocabulary"
+		"Class that contains classes defined in the W3C Linked Data Platform (LDP) vocabulary."
 	), ():void => {
 
 		it( isDefined(), ():void => {
@@ -222,7 +222,7 @@ describe( module(
 
 	describe( clazz(
 		"Carbon.NS.LDP.Predicate",
-		"Class that contains predicates defined in the W3C Linked Data Platform (LDP) vocabulary"
+		"Class that contains predicates defined in the W3C Linked Data Platform (LDP) vocabulary."
 	), ():void => {
 
 		it( isDefined(), ():void => {

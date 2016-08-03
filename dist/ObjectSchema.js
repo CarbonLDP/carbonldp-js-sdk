@@ -59,9 +59,7 @@ var Digester = (function () {
     Digester.resolvePrefixedURI = function (uri, digestedSchema) {
         if (!RDF.URI.Util.isPrefixed(uri.stringValue))
             return uri;
-        var uriParts = uri.stringValue.split(":");
-        var prefix = uriParts[0];
-        var slug = uriParts[1];
+        var _a = uri.stringValue.split(":"), prefix = _a[0], slug = _a[1];
         if (digestedSchema.prefixes.has(prefix)) {
             uri.stringValue = digestedSchema.prefixes.get(prefix) + slug;
         }

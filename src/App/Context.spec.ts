@@ -8,7 +8,7 @@ import {
 	hasConstructor,
 	hasProperty,
 	hasMethod,
-	extendsClass
+	extendsClass,
 } from "./../test/JasmineExtender";
 
 import AbstractContext from "./../AbstractContext";
@@ -17,7 +17,6 @@ import * as App from "./../App";
 import PersistedApp from "./../PersistedApp";
 import * as Pointer from "./../Pointer";
 import * as Utils from "./../Utils";
-import {DigestedObjectSchema} from "../ObjectSchema";
 
 import AppContext from "./Context";
 
@@ -25,8 +24,7 @@ describe( module( "Carbon/App/Context" ), ():void => {
 
 	describe( clazz(
 		"Carbon.App.Context",
-		"Class that represents a Carbon Application. " +
-		"It centers the scope of several services (Carbon.Auth, Carbon.Resources, etc.) into the Application's scope."
+		"Class that represents de scope of a CarbonLDP Application."
 	), ():void => {
 		let parentContext:AbstractContext;
 		let appContext:AppContext;
@@ -37,7 +35,7 @@ describe( module( "Carbon/App/Context" ), ():void => {
 					return uri;
 				}
 			}
-			let parentContext = new MockedContext();
+			parentContext = new MockedContext();
 			let app:PersistedApp = <any> App.Factory.create( "App name", "App description" );
 			app.rootContainer = <any> Pointer.Factory.create( "http://example.com/apps/example-app/" );
 			appContext = new AppContext( parentContext, app );
@@ -66,7 +64,7 @@ describe( module( "Carbon/App/Context" ), ():void => {
 			INSTANCE,
 			"agents",
 			"Carbon.Agents.Class",
-			"Instance of Agents class for manage the agents inside of an application."
+			"Instance of Agents class, that helps manage the agents inside of an application."
 		), ():void => {
 			expect( appContext.agents ).toBeDefined();
 			expect( appContext.agents instanceof Agents.Class ).toBe( true );
@@ -76,7 +74,7 @@ describe( module( "Carbon/App/Context" ), ():void => {
 			INSTANCE,
 			"app",
 			"Carbon.App.Class",
-			"Object of type `Carbon.App.Class` witch is the Document that represents the actual Application."
+			"The Document that represents the CarbonLDP Application."
 		), ():void => {
 			expect( appContext.app ).toBeDefined();
 			expect( App.Factory.is( appContext.app ) ).toBe( true );
@@ -85,8 +83,8 @@ describe( module( "Carbon/App/Context" ), ():void => {
 		it( hasMethod(
 			INSTANCE,
 			"resolve",
-			"Resolve the URI provided in the scope of the application", [
-				{name: "uri", type: "string"}
+			"Resolve the URI provided in the scope of the application.", [
+				{name: "uri", type: "string"},
 			],
 			{type: "string"}
 		), ():void => {
