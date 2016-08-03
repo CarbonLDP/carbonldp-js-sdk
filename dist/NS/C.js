@@ -104,6 +104,11 @@ var Predicate = (function () {
         enumerable: true,
         configurable: true
     });
+    Object.defineProperty(Predicate, "appRoleMap", {
+        get: function () { return exports.namespace + "appRoleMap"; },
+        enumerable: true,
+        configurable: true
+    });
     Object.defineProperty(Predicate, "bNodeIdentifier", {
         get: function () { return exports.namespace + "bNodeIdentifier"; },
         enumerable: true,
@@ -129,6 +134,11 @@ var Predicate = (function () {
         enumerable: true,
         configurable: true
     });
+    Object.defineProperty(Predicate, "entry", {
+        get: function () { return exports.namespace + "entry"; },
+        enumerable: true,
+        configurable: true
+    });
     Object.defineProperty(Predicate, "error", {
         get: function () { return exports.namespace + "error"; },
         enumerable: true,
@@ -141,6 +151,11 @@ var Predicate = (function () {
     });
     Object.defineProperty(Predicate, "httpStatusCode", {
         get: function () { return exports.namespace + "httpStatusCode"; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Predicate, "key", {
+        get: function () { return exports.namespace + "key"; },
         enumerable: true,
         configurable: true
     });
