@@ -1,5 +1,6 @@
 (function() {
 	describe( "something", () => {
+
 		it( "something else", ( done ) => {
 			"use strict";
 
@@ -62,36 +63,19 @@
 			let appContext;
 			let resource;
 
-			carbon.auth.authenticate( "admin@carbonldp.com", "hello" ).then( function() {
-				return carbon.apps.getContext( "test-app/" );
-			} ).then( ( _appContext ) => {
-				appContext = _appContext;
-				return appContext.documents.get( "posts/first-post/" );
-			} ).then( ( [ _resource, response ] ) => {
-				resource = _resource;
+			carbon.auth.authenticate( "roddolf@carbonldp.com", "hello" ).then( function( credentials ) {
+				return carbon.apps.getAllContexts();
+			} ).then( ( _appContexts ) => {
+				expect( _appContexts.length ).toBe( 1 );
+				appContext = _appContexts[ 0 ];
 
-				console.log( resource )
-				resource.getFragments().forEach( fragment => resource.removeFragment( fragment ) );
-				resource.myBlankNode = resource.createFragment( { property: "A property", type: "Blank Node" } );
-				resource.myNamedFragment = resource.createNamedFragment( { property: "A property~! ", type: "Named Fragment" }, "my-fragment" );
+				expect( appContext instanceof Carbon.App.Context ).toBe( true );
+				expect( Carbon.PersistedDocument.Factory.is( appContext.app ) ).toBe( true );
 
-				return saveAndRefresh( resource );
-			} ).then( ( [ _resource, response ] ) => {
-
-				console.log( resource );
+				console.log( _appContexts );
 				done();
 			} ).catch( ( error ) => {
-				console.error( "%o", error );
-
-				expect( "errors" in error ).toEqual( true );
-				expect( error.errors ).toBeDefined( true );
-				expect( Carbon.Utils.isArray( error.errors ) ).toEqual( true );
-
-				expect( "requestID" in error ).toEqual( true );
-				expect( error.requestID ).toBeDefined( true );
-				expect( Carbon.Utils.isString( error.requestID ) ).toEqual( true );
-
-				done();
+				done.fail( error );
 			} );
 
 			function saveAndRefresh( persistedDocument ) {
