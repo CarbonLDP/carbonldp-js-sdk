@@ -16,11 +16,12 @@ export const SCHEMA:ObjectSchema.Class = {
 		"@type": "@id",
 		"@container": "@set",
 	},
-	"subject": {
+	"subjects": {
 		"@id": NS.CS.Predicate.subject,
 		"@type": "@id",
+		"@container": "@set",
 	},
-	"subjectClass": {
+	"subjectsClass": {
 		"@id": NS.CS.Predicate.subjectClass,
 		"@type": "@id",
 	},
@@ -29,8 +30,34 @@ export const SCHEMA:ObjectSchema.Class = {
 export interface Class extends Fragment.Class {
 	granting:boolean;
 	permissions:Pointer.Class[];
-	subject:Pointer.Class;
-	subjectClass:Pointer.Class;
+	subjects:Pointer.Class[];
+	subjectsClass:Pointer.Class;
+}
+
+export class Factory {
+
+	static hasClassProperties( object:Object ):boolean {
+		return Utils.hasPropertyDefined( object, "granting" )
+			&& Utils.hasPropertyDefined( object, "permissions" )
+			&& Utils.hasPropertyDefined( object, "subjects" )
+			&& Utils.hasPropertyDefined( object, "subjectsClass" )
+			;
+	}
+
+	static createFrom<T extends Object>( object:T, granting:boolean, subjects:Pointer.Class[], subjectClass:Pointer.Class, permissions:Pointer.Class[] ):T & Class {
+		let ace:T & Class = <any> object;
+
+		if( ! ace.types ) ace.types = [];
+		ace.types.push( RDF_CLASS );
+
+		ace.granting = granting;
+		ace.subjects = subjects;
+		ace.subjectsClass = subjectClass;
+		ace.permissions = permissions;
+
+		return ace;
+	}
+
 }
 
 export default Class;

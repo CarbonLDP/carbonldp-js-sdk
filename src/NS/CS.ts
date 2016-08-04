@@ -11,6 +11,8 @@ class Class {
 
 	static get Application():string { return namespace + "Application"; }
 
+	static get ProtectedDocument():string { return namespace + "ProtectedDocument"; }
+
 	static get Ticket():string { return namespace + "Ticket"; }
 
 	static get Token():string { return namespace + "Token"; }
@@ -24,6 +26,8 @@ class Predicate {
 	static get accessTo():string { return namespace + "accessTo"; }
 
 	static get allowsOrigin():string { return namespace + "allowsOrigin"; }
+
+	static get credentialsOf():string { return namespace + "credentialsOf"; }
 
 	static get description():string { return namespace + "description"; }
 

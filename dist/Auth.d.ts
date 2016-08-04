@@ -13,16 +13,19 @@ import UsernameAndPasswordCredentials from "./Auth/UsernameAndPasswordCredential
 import Credentials from "./Auth/Credentials";
 import Context from "./Context";
 import * as HTTP from "./HTTP";
+import * as PersistedDocument from "./PersistedDocument";
 export { ACE, ACL, AuthenticationToken, Authenticator, BasicAuthenticator, PersistedACE, PersistedACL, Ticket, Token, TokenAuthenticator, UsernameAndPasswordToken };
 export declare enum Method {
     BASIC = 0,
     TOKEN = 1,
 }
 export declare class Class {
+    protected _authenticatedAgent: PersistedDocument.Class;
     private context;
     private method;
     private authenticators;
     private authenticator;
+    authenticatedAgent: PersistedDocument.Class;
     constructor(context: Context);
     isAuthenticated(askParent?: boolean): boolean;
     authenticate(username: string, password: string): Promise<Credentials>;
@@ -37,5 +40,6 @@ export declare class Class {
     getAuthenticatedURL(uri: string, requestOptions?: HTTP.Request.Options): Promise<string>;
     private authenticateWithBasic(username, password);
     private authenticateWithToken(userOrTokenOrCredentials, password);
+    private getAuthenticatedAgent(authenticator);
 }
 export default Class;

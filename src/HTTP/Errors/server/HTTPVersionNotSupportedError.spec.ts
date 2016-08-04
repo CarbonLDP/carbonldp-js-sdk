@@ -24,8 +24,8 @@ describe( module(
 ), ():void => {
 
 	describe( clazz(
-		"Carbon.HTTP.Errors.server.HTTPVersionNotSupportedError",
-		"Error class that can be throw to indicate that the server does not support the HTTP protocol version used in the request"
+		"Carbon.HTTP.Errors.HTTPVersionNotSupportedError",
+		"Error class to indicate that the server doesn't support the HTTP protocol version used in the request."
 	), ():void => {
 
 		let response:Response;

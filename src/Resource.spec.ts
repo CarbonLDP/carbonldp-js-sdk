@@ -22,7 +22,7 @@ describe( module( "Carbon/Resource" ), ():void => {
 
 	describe( clazz(
 		"Carbon.Resource.Factory",
-		"Factory class for Resource objects."
+		"Factory class for `Carbon.Resource.Class` objects."
 	), ():void => {
 
 		it( isDefined(), ():void => {
@@ -33,7 +33,7 @@ describe( module( "Carbon/Resource" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"hasClassProperties",
-			"Returns true if the object provided has the properties and functions of a Resource object", [
+			"Returns true if the object provided has the properties of a `Carbon.Resource.Class` object.", [
 				{name: "resource", type: "Object"}
 			],
 			{type: "boolean"}
@@ -56,7 +56,7 @@ describe( module( "Carbon/Resource" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"is",
-			"Returns true if the object is a `Carbon.Resource.Class` (by duck type)", [
+			"Returns true if the object provided is considered a `Carbon.Resource.Class` object.", [
 				{name: "resource", type: "Object"}
 			],
 			{type: "boolean"}
@@ -80,7 +80,7 @@ describe( module( "Carbon/Resource" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"create",
-			"Create a Resource object with id and types if provided.", [
+			"Creates a Resource object with the id and types provided.", [
 				{name: "id", type: "string", optional: true},
 				{name: "types", type: "string[]", optional: true}
 			],
@@ -125,10 +125,11 @@ describe( module( "Carbon/Resource" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"createFrom",
-			"Create a Resource object with id and types if provided.", [
-				{name: "object", type: "T extends Object"},
+			[ "T extends Object" ],
+			"Creates a Resource object with the id and types provided.", [
+				{name: "object", type: "T"},
 				{name: "id", type: "string", optional: true},
-				{name: "types", type: "string[]", optional: true}
+				{name: "types", type: "string[]", optional: true},
 			],
 			{type: "T & Carbon.Resource.Class"}
 		), ():void => {
@@ -189,8 +190,9 @@ describe( module( "Carbon/Resource" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"decorate",
-			"Decorates the object provided with the elements of a Resource object.", [
-				{name: "object", type: "T extends Object"}
+			[ "T extends Object" ],
+			"Decorates the object provided with the properties and methods of a `Carbon.Resource.Class` object.", [
+				{name: "object", type: "T"},
 			],
 			{type: "T & Carbon.Resource.Class"}
 		), ():void => {

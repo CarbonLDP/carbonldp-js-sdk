@@ -26,7 +26,7 @@ describe( module( "Carbon/AbstractContext" ), ():void => {
 
 	describe( clazz(
 		"Carbon.AbstractContext",
-		"Abstract class for defining contexts"
+		"Abstract class for defining contexts."
 	), ():void => {
 
 		it( isDefined(), ():void => {
@@ -52,7 +52,7 @@ describe( module( "Carbon/AbstractContext" ), ():void => {
 		it( hasMethod(
 			INSTANCE,
 			"resolve",
-			"Abstract method which implementation must resolve the URI provided in the scope of the application.", [
+			"Abstract method that returns an absolute URI in accordance to the context scope from the relative URI provided.", [
 				{name: "relativeURI", type: "string"}
 			],
 			{type: "string"}
@@ -60,7 +60,7 @@ describe( module( "Carbon/AbstractContext" ), ():void => {
 			expect( context.resolve ).toBeDefined();
 			expect( Utils.isFunction( context.resolve ) ).toBe( true );
 
-			expect( context.resolve( "the mock just returns the string provided" ) ).toBe( "the mock just returns the string provided" );
+			expect( context.resolve( "The mock returns the string provided" ) ).toBe( "The mock returns the string provided" );
 		} );
 
 		it( hasProperty(
@@ -68,7 +68,7 @@ describe( module( "Carbon/AbstractContext" ), ():void => {
 			"parentContext",
 			"Carbon.Context",
 			"The parent context provided in the constructor. " +
-			"If no context has provided, the property will be the singleton `Carbon.SDKContext.instance` of the class `Carbon.SDKContext.Class`."
+			"If no context was provided, this property will be the singleton `Carbon.SDKContext.instance` of the class `Carbon.SDKContext.Class`."
 		), ():void => {
 			expect( context.parentContext ).toBeDefined();
 
