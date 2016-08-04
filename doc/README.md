@@ -2108,7 +2108,7 @@ Returns a Promise with a Pointer for the stored role; and a tuple of two respons
 
 ##### get
 ```typescript 
-get( roleURI:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.PersistedRole.Class, Carbon.HTTP.Response.Class ]>
+get<T>( roleURI:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ T & Carbon.PersistedRole.Class, Carbon.HTTP.Response.Class ]>
 ```
 
 Retrieves a role from the current context.

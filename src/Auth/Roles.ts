@@ -45,9 +45,9 @@ export abstract class Class {
 		} );
 	}
 
-	get( roleURI:string, requestOptions?:HTTP.Request.Options ):Promise<[ PersistedRole.Class, HTTP.Response.Class ]> {
+	get<T>( roleURI:string, requestOptions?:HTTP.Request.Options ):Promise<[ T & PersistedRole.Class, HTTP.Response.Class ]> {
 		return this.resolveURI( roleURI ).then( ( uri:string ) => {
-			return this.context.documents.get( uri, requestOptions );
+			return this.context.documents.get<T & PersistedRole.Class>( uri, requestOptions );
 		} );
 	}
 
