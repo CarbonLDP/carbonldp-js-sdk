@@ -62,17 +62,24 @@
 
 			let appContext;
 			let resource;
+			let fragment;
 
-			carbon.auth.authenticate( "roddolf@carbonldp.com", "hello" ).then( function( credentials ) {
-				return carbon.apps.getAllContexts();
-			} ).then( ( _appContexts ) => {
-				expect( _appContexts.length ).toBe( 1 );
-				appContext = _appContexts[ 0 ];
-
-				expect( appContext instanceof Carbon.App.Context ).toBe( true );
-				expect( Carbon.PersistedDocument.Factory.is( appContext.app ) ).toBe( true );
-
-				console.log( _appContexts );
+			carbon.auth.authenticate( "admin@carbonldp.com", "hello" ).then( function() {
+				return carbon.apps.getContext( "test-app/" );
+			} ).then( ( _appContext ) => {
+				appContext = _appContext;
+				return appContext.documents.get( "5080328326853933297/" );
+			} ).then( ( [ _resource, response ] ) => {
+				resource = _resource;
+				debugger;
+				removeFragments( resource );
+				fragment = resource.myFragment = resource.createFragment( {
+					string: "A fragment",
+				} );
+				return saveAndRefresh( resource );
+			} ).then( ( [ _resource, responses ] ) => {
+				expect( _resource ).toBe( resource );
+				expect( fragment ).toBe( _resource.myFragment );
 				done();
 			} ).catch( ( error ) => {
 				done.fail( error );
