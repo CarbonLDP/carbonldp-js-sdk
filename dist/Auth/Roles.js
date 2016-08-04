@@ -25,7 +25,7 @@ var Class = (function () {
             var exists = _a[0], response = _a[1];
             if (!exists)
                 throw new Errors.IllegalArgumentError("The parent role provided does not exist.");
-            return slug ? _this.context.documents.createChild(containerURI, slug, role, requestOptions) : _this.context.documents.createChild(containerURI, role, requestOptions);
+            return slug ? _this.context.documents.createChild(containerURI, role, slug, requestOptions) : _this.context.documents.createChild(containerURI, role, requestOptions);
         }).then(function (_a) {
             var newRole = _a[0], response = _a[1];
             rolePointer = newRole;

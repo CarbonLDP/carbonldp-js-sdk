@@ -4,6 +4,16 @@ exports.namespace = namespace;
 var Class = (function () {
     function Class() {
     }
+    Object.defineProperty(Class, "AccessControlEntry", {
+        get: function () { return namespace + "AccessControlEntry"; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Class, "AccessControlList", {
+        get: function () { return namespace + "AccessControlList"; },
+        enumerable: true,
+        configurable: true
+    });
     Object.defineProperty(Class, "Agent", {
         get: function () { return namespace + "Agent"; },
         enumerable: true,
@@ -24,6 +34,11 @@ var Class = (function () {
         enumerable: true,
         configurable: true
     });
+    Object.defineProperty(Class, "ProtectedDocument", {
+        get: function () { return namespace + "ProtectedDocument"; },
+        enumerable: true,
+        configurable: true
+    });
     Object.defineProperty(Class, "Ticket", {
         get: function () { return namespace + "Ticket"; },
         enumerable: true,
@@ -40,6 +55,21 @@ exports.Class = Class;
 var Predicate = (function () {
     function Predicate() {
     }
+    Object.defineProperty(Predicate, "accessControlEntry", {
+        get: function () { return namespace + "accessControlEntry"; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Predicate, "accessControlList", {
+        get: function () { return namespace + "accessControlList"; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Predicate, "accessTo", {
+        get: function () { return namespace + "accessTo"; },
+        enumerable: true,
+        configurable: true
+    });
     Object.defineProperty(Predicate, "agent", {
         get: function () { return namespace + "agent"; },
         enumerable: true,
@@ -52,6 +82,11 @@ var Predicate = (function () {
     });
     Object.defineProperty(Predicate, "childRole", {
         get: function () { return namespace + "childRole"; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Predicate, "credentialsOf", {
+        get: function () { return namespace + "credentialsOf"; },
         enumerable: true,
         configurable: true
     });
@@ -70,6 +105,16 @@ var Predicate = (function () {
         enumerable: true,
         configurable: true
     });
+    Object.defineProperty(Predicate, "granting", {
+        get: function () { return namespace + "granting"; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Predicate, "inheritableEntry", {
+        get: function () { return namespace + "inheritableEntry"; },
+        enumerable: true,
+        configurable: true
+    });
     Object.defineProperty(Predicate, "namae", {
         get: function () { return namespace + "name"; },
         enumerable: true,
@@ -85,8 +130,23 @@ var Predicate = (function () {
         enumerable: true,
         configurable: true
     });
+    Object.defineProperty(Predicate, "permission", {
+        get: function () { return namespace + "permission"; },
+        enumerable: true,
+        configurable: true
+    });
     Object.defineProperty(Predicate, "rootContainer", {
         get: function () { return namespace + "rootContainer"; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Predicate, "subject", {
+        get: function () { return namespace + "subject"; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Predicate, "subjectClass", {
+        get: function () { return namespace + "subjectClass"; },
         enumerable: true,
         configurable: true
     });

@@ -3,11 +3,58 @@ var Errors = require("./Errors");
 var Fragment = require("./Fragment");
 var JSONLDConverter_1 = require("./JSONLDConverter");
 var NamedFragment = require("./NamedFragment");
+var NS = require("./NS");
 var ObjectSchema = require("./ObjectSchema");
 var Pointer = require("./Pointer");
 var RDF = require("./RDF");
 var Resource = require("./Resource");
 var Utils = require("./Utils");
+exports.RDF_CLASS = NS.C.Class.Document;
+exports.SCHEMA = {
+    "contains": {
+        "@id": NS.LDP.Predicate.contains,
+        "@container": "@set",
+        "@type": "@id",
+    },
+    "members": {
+        "@id": NS.LDP.Predicate.member,
+        "@container": "@set",
+        "@type": "@id",
+    },
+    "membershipResource": {
+        "@id": NS.LDP.Predicate.membershipResource,
+        "@type": "@id",
+    },
+    "isMemberOfRelation": {
+        "@id": NS.LDP.Predicate.isMemberOfRelation,
+        "@type": "@id",
+    },
+    "hasMemberRelation": {
+        "@id": NS.LDP.Predicate.hasMemberRelation,
+        "@type": "@id",
+    },
+    "insertedContentRelation": {
+        "@id": NS.LDP.Predicate.insertedContentRelation,
+        "@type": "@id",
+    },
+    "created": {
+        "@id": NS.C.Predicate.created,
+        "@type": NS.XSD.DataType.dateTime,
+    },
+    "modified": {
+        "@id": NS.C.Predicate.modified,
+        "@type": NS.XSD.DataType.dateTime,
+    },
+    "defaultInteractionModel": {
+        "@id": NS.C.Predicate.defaultInteractionModel,
+        "@type": "@id",
+    },
+    "accessPoints": {
+        "@id": NS.C.Predicate.accessPoint,
+        "@type": "@id",
+        "@container": "@set",
+    },
+};
 function hasPointer(id) {
     var document = this;
     if (id === document.id)
@@ -35,7 +82,7 @@ function inScope(idOrPointer) {
         return true;
     if (RDF.URI.Util.isFragmentOf(id, document.id))
         return true;
-    return RDF.URI.Util.isRelative(id);
+    return RDF.URI.Util.isFragmentOf(id, "");
 }
 function hasFragment(id) {
     var document = this;
@@ -71,14 +118,13 @@ function getFragments() {
     var document = this;
     return Utils.A.from(document._fragmentsIndex.values());
 }
-function createFragment(slugOrObject, object) {
+function createFragment(slugOrObject, slug) {
     var document = this;
-    var slug = Utils.isString(slugOrObject) ? slugOrObject : null;
-    object = Utils.isString(slugOrObject) ? object : slugOrObject;
-    object = object || {};
+    slug = Utils.isString(slugOrObject) ? slugOrObject : slug;
+    var object = !Utils.isString(slugOrObject) && !!slugOrObject ? slugOrObject : {};
     if (slug) {
         if (!RDF.URI.Util.isBNodeID(slug))
-            return document.createNamedFragment(slug, object);
+            return document.createNamedFragment(object, slug);
         if (this._fragmentsIndex.has(slug))
             throw new Errors.IDAlreadyInUseError("The slug provided is already being used by a fragment.");
     }
@@ -87,9 +133,10 @@ function createFragment(slugOrObject, object) {
     convertNestedObjects(document, fragment);
     return fragment;
 }
-function createNamedFragment(slug, object) {
+function createNamedFragment(slugOrObject, slug) {
     var document = this;
-    object = object || {};
+    slug = Utils.isString(slugOrObject) ? slugOrObject : slug;
+    var object = !Utils.isString(slugOrObject) && !!slugOrObject ? slugOrObject : {};
     if (RDF.URI.Util.isBNodeID(slug))
         throw new Errors.IllegalArgumentError("Named fragments can't have a slug that starts with '_:'.");
     if (RDF.URI.Util.isAbsolute(slug)) {
@@ -161,7 +208,7 @@ var Factory = (function () {
     };
     Factory.createFrom = function (object) {
         if (Factory.is(object))
-            throw new Errors.IllegalArgumentError("The object passed is already a Document");
+            throw new Errors.IllegalArgumentError("The object provided is already a Document");
         var resource = object;
         if (!Resource.Factory.is(object))
             resource = Resource.Factory.createFrom(object);
@@ -170,6 +217,7 @@ var Factory = (function () {
         return document;
     };
     Factory.decorate = function (object) {
+        Resource.Factory.decorate(object);
         if (Factory.hasClassProperties(object))
             return object;
         Object.defineProperties(object, {
@@ -265,12 +313,12 @@ function convertNestedObjects(parent, actual) {
         }
         if (!Utils.isPlainObject(next) || Pointer.Factory.is(next))
             continue;
-        idOrSlug = ("id" in next) ? next.id : (("slug" in next) ? next.slug : "");
-        if (!parent.inScope(idOrSlug))
+        idOrSlug = ("id" in next) ? next.id : (("slug" in next) ? "#" + next.slug : "");
+        if (!!idOrSlug && !parent.inScope(idOrSlug))
             continue;
         var parentFragment = parent.getFragment(idOrSlug);
         if (!parentFragment) {
-            fragment = parent.createFragment(idOrSlug, next);
+            fragment = parent.createFragment(next, idOrSlug);
             convertNestedObjects(parent, fragment);
         }
         else if (parentFragment !== next) {

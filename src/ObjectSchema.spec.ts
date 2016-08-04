@@ -36,7 +36,7 @@ describe( module( "Carbon/ObjectSchema" ), ():void => {
 
 	describe( enumeration(
 		"Carbon.ObjectSchema.ContainerType",
-		"Enum for the types a container can be."
+		"Enum for the types that a container can be."
 	), ():void => {
 
 		it( isDefined(), ():void => {
@@ -66,7 +66,7 @@ describe( module( "Carbon/ObjectSchema" ), ():void => {
 
 	describe( clazz(
 		"Carbon.ObjectSchema.DigestedObjectSchema",
-		"Class of a standardized Schema."
+		"Class of a standardized Schema that is used for the SDK for compact and expand JSON-LD objects and Carbon Resources."
 	), ():void => {
 
 		it( isDefined(), ():void => {
@@ -89,7 +89,7 @@ describe( module( "Carbon/ObjectSchema" ), ():void => {
 			INSTANCE,
 			"base",
 			"string",
-			"This property is initialized with an empty string."
+			"The base URI of the schema."
 		), ():void => {
 			expect( digestedSchema.base ).toBeDefined();
 			expect( Utils.isString( digestedSchema.base ) ).toBe( true );
@@ -98,9 +98,20 @@ describe( module( "Carbon/ObjectSchema" ), ():void => {
 
 		it( hasProperty(
 			INSTANCE,
+			"vocab",
+			"string",
+			"URI that will be used to resolve properties URIs that aren't defined in the schema."
+		), ():void => {
+			expect( digestedSchema.vocab ).toBeDefined();
+			expect( Utils.isString( digestedSchema.vocab ) ).toBe( true );
+			expect( digestedSchema.vocab ).toBe( "" );
+		} );
+
+		it( hasProperty(
+			INSTANCE,
 			"prefixes",
 			"Map<string, Carbon.RDF.URI.Class>",
-			"This property is initialized with an empty Map."
+			"Map that contains the prefixes of absolutes URIs."
 		), ():void => {
 			expect( digestedSchema.prefixes ).toBeDefined();
 			expect( Utils.isMap( digestedSchema.prefixes ) ).toBe( true );
@@ -111,7 +122,7 @@ describe( module( "Carbon/ObjectSchema" ), ():void => {
 			INSTANCE,
 			"properties",
 			"Map<string, Carbon.ObjectSchema.DigestedPropertyDefinition>",
-			"This property is initialized with an empty Map."
+			"Map that contains the definitions of the properties in the schema."
 		), ():void => {
 			expect( digestedSchema.properties ).toBeDefined();
 			expect( Utils.isMap( digestedSchema.properties ) ).toBe( true );
@@ -122,7 +133,7 @@ describe( module( "Carbon/ObjectSchema" ), ():void => {
 			INSTANCE,
 			"prefixedURIs",
 			"Map<string, Carbon.RDF.URI.Class[]>",
-			"This property is initialized with an empty Map."
+			"Map with the prefixed URIs used in the schema for an easy access to its absolute URI."
 		), ():void => {
 			expect( digestedSchema.prefixedURIs ).toBeDefined();
 			expect( Utils.isMap( digestedSchema.prefixedURIs ) ).toBe( true );
@@ -133,7 +144,7 @@ describe( module( "Carbon/ObjectSchema" ), ():void => {
 
 	describe( clazz(
 		"Carbon.ObjectSchema.DigestedPropertyDefinition",
-		"Class for standardized object properties in a Schema."
+		"Class for standardized object properties of a schema."
 	), ():void => {
 
 		it( isDefined(), ():void => {
@@ -155,7 +166,7 @@ describe( module( "Carbon/ObjectSchema" ), ():void => {
 			INSTANCE,
 			"uri",
 			"Carbon.RDF.URI.Class",
-			"This property is initialized with null."
+			"The absolute URI that represents the property"
 		), ():void => {
 			expect( digestedProperty.uri ).toBeDefined();
 			expect( digestedProperty.uri ).toBeNull();
@@ -165,7 +176,7 @@ describe( module( "Carbon/ObjectSchema" ), ():void => {
 			INSTANCE,
 			"literal",
 			"boolean",
-			"This property is initialized with null."
+			"Indicates if the property is a literal or not."
 		), ():void => {
 			expect( digestedProperty.literal ).toBeDefined();
 			expect( digestedProperty.literal ).toBeNull();
@@ -173,19 +184,9 @@ describe( module( "Carbon/ObjectSchema" ), ():void => {
 
 		it( hasProperty(
 			INSTANCE,
-			"uri",
-			"Carbon.RDF.URI.Class",
-			"This property is initialized with null."
-		), ():void => {
-			expect( digestedProperty.uri ).toBeDefined();
-			expect( digestedProperty.uri ).toBeNull();
-		} );
-
-		it( hasProperty(
-			INSTANCE,
 			"literalType",
 			"Carbon.RDF.URI.Class",
-			"This property is initialized with null."
+			"The type of literal the property is. It's `null` if the property is not a literal."
 		), ():void => {
 			expect( digestedProperty.literalType ).toBeDefined();
 			expect( digestedProperty.literalType ).toBeNull();
@@ -195,7 +196,7 @@ describe( module( "Carbon/ObjectSchema" ), ():void => {
 			INSTANCE,
 			"language",
 			"string",
-			"This property is initialized with null."
+			"The language the property is in. It's `null` if the property is not a container language."
 		), ():void => {
 			expect( digestedProperty.language ).toBeDefined();
 			expect( digestedProperty.language ).toBeNull();
@@ -205,7 +206,7 @@ describe( module( "Carbon/ObjectSchema" ), ():void => {
 			INSTANCE,
 			"containerType",
 			"Carbon.ObjectSchema.ContainerType",
-			"This property is initialized with null."
+			"The type of container the property is. It's `null` if the property is no container type."
 		), ():void => {
 			expect( digestedProperty.containerType ).toBeDefined();
 			expect( digestedProperty.containerType ).toBeNull();
@@ -213,7 +214,7 @@ describe( module( "Carbon/ObjectSchema" ), ():void => {
 
 	} );
 
-	describe( clazz( "Carbon.ObjectSchema.Digester", "Class with options for standardize a JSON-LD Schema." ), ():void => {
+	describe( clazz( "Carbon.ObjectSchema.Digester", "Class with functions to standardize a JSON-LD Context Schema." ), ():void => {
 		describe( method( STATIC, "digestSchema" ), ():void => {
 			it( hasSignature( `
 					Processes a schema to standardize it before using it.
@@ -333,7 +334,7 @@ describe( module( "Carbon/ObjectSchema" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"combineDigestedObjectSchemas",
-			"Combine several standardized schemas in one.", [
+			"Combine several standardized schemas into one.", [
 				{name: "digestedSchemas", type: "Carbon.ObjectSchema.DigestedObjectSchema[]"}
 			],
 			{type: "Carbon.ObjectSchema.DigestedObjectSchema"}

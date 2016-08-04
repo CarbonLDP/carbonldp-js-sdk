@@ -33,7 +33,7 @@ describe( module(
 
 	describe( clazz(
 		"Carbon.NS.LDP.Class",
-		"Class that contains objects defined in the W3C Linked Data Platform (LDP) vocabulary"
+		"Class that contains classes defined in the W3C Linked Data Platform (LDP) vocabulary."
 	), ():void => {
 
 		it( isDefined(), ():void => {
@@ -222,7 +222,7 @@ describe( module(
 
 	describe( clazz(
 		"Carbon.NS.LDP.Predicate",
-		"Class that contains predicates defined in the W3C Linked Data Platform (LDP) vocabulary"
+		"Class that contains predicates defined in the W3C Linked Data Platform (LDP) vocabulary."
 	), ():void => {
 
 		it( isDefined(), ():void => {
@@ -270,10 +270,10 @@ describe( module(
 			"isMemberOfRelation",
 			"string"
 		), ():void => {
-			expect( LDP.Predicate.memberOfRelation ).toBeDefined();
-			expect( Utils.isString( LDP.Predicate.memberOfRelation ) ).toBe( true );
+			expect( LDP.Predicate.isMemberOfRelation ).toBeDefined();
+			expect( Utils.isString( LDP.Predicate.isMemberOfRelation ) ).toBe( true );
 
-			expect( LDP.Predicate.memberOfRelation ).toBe( "http://www.w3.org/ns/ldp#memberOfRelation" );
+			expect( LDP.Predicate.isMemberOfRelation ).toBe( "http://www.w3.org/ns/ldp#isMemberOfRelation" );
 		} );
 
 		it( hasProperty(

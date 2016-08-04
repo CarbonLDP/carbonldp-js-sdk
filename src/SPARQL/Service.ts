@@ -24,7 +24,7 @@ export class Class {
 	}
 
 	static executeASKQuery( url:string, askQuery:string, options:HTTP.Request.Options = {} ):Promise<[ boolean, HTTP.Response.Class ]> {
-		return HTTP.Request.Service.post( url, askQuery, options, Class.resultsParser ).then( ( [ rawResults, response ]:[ RawResults.Class, HTTP.Response.Class ] ) => {
+		return Class.executeRawASKQuery( url, askQuery, options ).then( ( [ rawResults, response ]:[ RawResults.Class, HTTP.Response.Class ] ) => {
 			return [ rawResults.boolean, response ];
 		} );
 	}
@@ -78,6 +78,15 @@ export class Class {
 		HTTP.Request.Util.setContentTypeHeader( "application/sparql-query", options );
 
 		return HTTP.Request.Service.post( url, describeQuery, options, Class.stringParser );
+	}
+
+	static executeUPDATE( url:string, updateQuery:string, options:HTTP.Request.Options = {} ):Promise<HTTP.Response.Class> {
+		options = Utils.extend( options, Class.defaultOptions );
+
+		if( HTTP.Request.Util.getHeader( "Accept", options ) === undefined ) HTTP.Request.Util.setAcceptHeader( "application/ld+json", options );
+		HTTP.Request.Util.setContentTypeHeader( "application/sparql-update", options );
+
+		return HTTP.Request.Service.post( url, updateQuery, options );
 	}
 
 	private static parseRawBindingProperty( rawBindingProperty:RawResults.BindingProperty, pointerLibrary:Pointer.Library ):any {

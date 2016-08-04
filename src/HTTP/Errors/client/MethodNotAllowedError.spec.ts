@@ -24,8 +24,8 @@ describe( module(
 ), ():void => {
 
 	describe( clazz(
-		"Carbon.HTTP.Errors.client.MethodNotAllowedError",
-		"Error class that can be throw to indicate that the current user does not have the required permissions to fulfill the request"
+		"Carbon.HTTP.Errors.MethodNotAllowedError",
+		"Error class to indicate that the method used in the request is not allowed for that URI."
 	), ():void => {
 
 		let response:Response;
