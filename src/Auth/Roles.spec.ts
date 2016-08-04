@@ -40,7 +40,7 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 
 		beforeEach( ():void => {
 			class MockedContext extends AbstractContext {
-				resolve( uri:string ) {
+				resolve( uri:string ):string {
 					return URI.Util.resolve( "http://example.com/", uri );
 				}
 			}
@@ -62,7 +62,7 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 		} );
 
 		it( hasConstructor( [
-			{name: "context", type: "Carbon.Context"}
+			{name: "context", type: "Carbon.Context"},
 		] ), ():void => {
 			expect( roles ).toBeTruthy();
 			expect( roles instanceof Roles.Class ).toBe( true );
@@ -87,19 +87,19 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 				expect( Utils.isFunction( roles.createChild ) ).toBe( true );
 
 				jasmine.Ajax.stubRequest( "http://example.com/roles/parent/no-found/" ).andReturn( {
-					status: 404
+					status: 404,
 				} );
 				jasmine.Ajax.stubRequest( "http://example.com/roles/parent/" ).andReturn( {
-					status: 200
+					status: 200,
 				} );
 				jasmine.Ajax.stubRequest( "http://example.com/roles/" ).andReturn( {
 					status: 200,
 					responseHeaders: {
-						"Location": "http://example.com/roles/new-role/"
-					}
+						"Location": "http://example.com/roles/new-role/",
+					},
 				} );
 
-				let spies = {
+				let spies:any = {
 					success: ( [ pointer, [ response1, response2 ] ]:[ Pointer.Class, [ HTTP.Response.Class, HTTP.Response.Class ] ] ):void => {
 						expect( pointer ).toBeTruthy();
 						expect( Pointer.Factory.is( pointer ) ).toBe( true );
@@ -114,11 +114,11 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 					},
 					error: function( error:Error ):void {
 						expect( error instanceof Errors.IllegalArgumentError );
-					}
+					},
 				};
 
-				let spyError = spyOn( spies, "error" ).and.callThrough();
-				let spySuccess = spyOn( spies, "success" ).and.callThrough();
+				let spyError:jasmine.Spy = spyOn( spies, "error" ).and.callThrough();
+				let spySuccess:jasmine.Spy = spyOn( spies, "success" ).and.callThrough();
 
 
 				roles.createChild( "http://example.com/roles/parent/", Role.Factory.create( "Role name" ) ).then( done.fail ).catch( ( error:Error ) => {
@@ -141,7 +141,7 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 					promises.push( promise.catch( spies.error ) );
 
 					Promise.all( promises ).then( ():void => {
-						let requests = jasmine.Ajax.requests.filter( /roles\/$/ );
+						let requests:JasmineAjaxRequest[] = jasmine.Ajax.requests.filter( /roles\/$/ );
 						expect( requests.length ).toBe( 2 );
 						expect( requests[ 0 ].requestHeaders[ "slug" ] ).toBe( "new-role" );
 						expect( requests[ 1 ].requestHeaders[ "slug" ] ).toBeUndefined();
@@ -168,19 +168,19 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 				expect( Utils.isFunction( roles.createChild ) ).toBe( true );
 
 				jasmine.Ajax.stubRequest( "http://example.com/roles/parent/no-found/" ).andReturn( {
-					status: 404
+					status: 404,
 				} );
 				jasmine.Ajax.stubRequest( "http://example.com/roles/parent/" ).andReturn( {
-					status: 200
+					status: 200,
 				} );
 				jasmine.Ajax.stubRequest( "http://example.com/roles/" ).andReturn( {
 					status: 200,
 					responseHeaders: {
-						"Location": "http://example.com/roles/new-role/"
-					}
+						"Location": "http://example.com/roles/new-role/",
+					},
 				} );
 
-				let spies = {
+				let spies:any = {
 					success: ( [ pointer, [ response1, response2 ] ]:[ Pointer.Class, [ HTTP.Response.Class, HTTP.Response.Class ] ] ):void => {
 						expect( pointer ).toBeTruthy();
 						expect( Pointer.Factory.is( pointer ) ).toBe( true );
@@ -195,12 +195,12 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 					},
 					error: function( error:Error ):void {
 						expect( error instanceof Errors.IllegalArgumentError );
-					}
+					},
 				};
 
-				let spyError = spyOn( spies, "error" ).and.callThrough();
-				let spySuccess = spyOn( spies, "success" ).and.callThrough();
-				let spyCreate = spyOn( context.documents, "createChild" ).and.callThrough();
+				let spyError:jasmine.Spy = spyOn( spies, "error" ).and.callThrough();
+				let spySuccess:jasmine.Spy = spyOn( spies, "success" ).and.callThrough();
+				let spyCreate:jasmine.Spy = spyOn( context.documents, "createChild" ).and.callThrough();
 
 				roles.createChild( "http://example.com/roles/parent/", Role.Factory.create( "Role name" ) ).then( done.fail ).catch( ( error:Error ) => {
 					expect( error instanceof Errors.IllegalStateError ).toBe( true );
@@ -209,7 +209,7 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 					let promises:Promise<any>[] = [];
 					let promise:Promise<any>;
 					let options:HTTP.Request.Options = {
-						timeout: 5555
+						timeout: 5555,
 					};
 
 					promise = roles.createChild( "parent/", Role.Factory.create( "Role name" ), options );
@@ -229,8 +229,8 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 						expect( spyError ).toHaveBeenCalledTimes( 1 );
 
 						expect( spyCreate ).toHaveBeenCalledTimes( 2 );
-						expect( spyCreate ).toHaveBeenCalledWith( "http://example.com/roles/", jasmine.anything(), options );
-						expect( spyCreate ).toHaveBeenCalledWith( "http://example.com/roles/", jasmine.anything(), undefined );
+						expect( spyCreate ).toHaveBeenCalledWith( "http://example.com/roles/", jasmine.anything(), null, options );
+						expect( spyCreate ).toHaveBeenCalledWith( "http://example.com/roles/", jasmine.anything(), null, undefined );
 						done();
 					} ).catch( done.fail );
 
@@ -247,6 +247,6 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 	), ():void => {
 		expect( DefaultExport ).toBeDefined();
 		expect( DefaultExport ).toBe( Roles.Class );
-	} )
+	} );
 
 } );
