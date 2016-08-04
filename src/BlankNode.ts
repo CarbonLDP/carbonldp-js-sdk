@@ -18,8 +18,12 @@ export interface Class extends Fragment.Class {
 
 export class Factory {
 
-	static createFrom<T extends Object>( object:T, document:Document.Class, id?:string ):T & Class {
-		id = id || RDF.URI.Util.generateBNodeID();
+	static createFrom<T extends Object>( object:T, document:Document.Class ):T & Class;
+	static createFrom<T extends Object>( object:T, id:string, document:Document.Class ):T & Class;
+	static createFrom<T extends Object>( object:T, idOrDocument:any, document?:Document.Class ):T & Class {
+		let id:string = ! ! idOrDocument && Utils.isString( idOrDocument ) ? idOrDocument : RDF.URI.Util.generateBNodeID();
+		document = document || idOrDocument;
+
 		let fragment:T & Fragment.Class = Fragment.Factory.createFrom<T>( object, id, document );
 
 		return Factory.decorate<T>( fragment, (<any> fragment).bNodeIdentifier );

@@ -128,7 +128,7 @@ function createFragment(slugOrObject, slug) {
         if (this._fragmentsIndex.has(slug))
             throw new Errors.IDAlreadyInUseError("The slug provided is already being used by a fragment.");
     }
-    var fragment = BlankNode.Factory.createFrom(object, document, slug);
+    var fragment = BlankNode.Factory.createFrom(object, slug, document);
     document._fragmentsIndex.set(fragment.id, fragment);
     convertNestedObjects(document, fragment);
     return fragment;

@@ -173,8 +173,7 @@ function createFragment<T extends Object>( slugOrObject?:any, slug?:string ):T &
 		if( this._fragmentsIndex.has( slug ) ) throw new Errors.IDAlreadyInUseError( "The slug provided is already being used by a fragment." );
 	}
 
-	// TODO: Add generic
-	let fragment:BlankNode.Class = BlankNode.Factory.createFrom( object, document, slug );
+	let fragment: T & BlankNode.Class = BlankNode.Factory.createFrom<T>( object, slug, document );
 	document._fragmentsIndex.set( fragment.id, fragment );
 
 	convertNestedObjects( document, fragment );

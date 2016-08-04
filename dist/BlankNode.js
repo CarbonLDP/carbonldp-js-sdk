@@ -12,8 +12,9 @@ exports.SCHEMA = {
 var Factory = (function () {
     function Factory() {
     }
-    Factory.createFrom = function (object, document, id) {
-        id = id || RDF.URI.Util.generateBNodeID();
+    Factory.createFrom = function (object, idOrDocument, document) {
+        var id = !!idOrDocument && Utils.isString(idOrDocument) ? idOrDocument : RDF.URI.Util.generateBNodeID();
+        document = document || idOrDocument;
         var fragment = Fragment.Factory.createFrom(object, id, document);
         return Factory.decorate(fragment, fragment.bNodeIdentifier);
     };
