@@ -6,7 +6,7 @@ import Documents from "./Documents";
 import * as Errors from "./Errors";
 import * as LDP from "./LDP";
 import * as NS from "./NS";
-import * as PersistedBlankNode from "./PersistedBlankNode";
+import * as BlankNode from "./BlankNode";
 import * as ProtectedDocument from "./ProtectedDocument";
 import * as ObjectSchema from "./ObjectSchema";
 import * as Agent from "./Agent";
@@ -146,7 +146,7 @@ export class Class implements Context {
 	}
 
 	private registerDefaultObjectSchemas():void {
-		this.extendObjectSchema( PersistedBlankNode.SCHEMA );
+		this.extendObjectSchema( BlankNode.SCHEMA );
 
 		this.extendObjectSchema( ProtectedDocument.RDF_CLASS, ProtectedDocument.SCHEMA );
 
