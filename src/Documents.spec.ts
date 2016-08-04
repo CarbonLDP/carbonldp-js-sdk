@@ -2206,10 +2206,58 @@ describe( module( "Carbon/Documents" ), ():void => {
 					} ) );
 				})();
 
+				(() => {
+					stubListRequest( "resource-3/", false );
+
+					let promise:Promise<[ Pointer.Class[], HTTP.Response.Class ]> = documents.listMembers( "resource-3/" );
+
+					expect( promise instanceof Promise ).toBe( true );
+					promises.push( promise.then( ( [ pointers, response ]:[ Pointer.Class[], HTTP.Response.Class ] ) => {
+
+						checkResponse( "resource-3/", pointers, response, false );
+
+						let request:JasmineAjaxRequest = jasmine.Ajax.requests.filter( /resource-3/ )[ 0 ];
+						expect( request.url ).toMatch( "resource-3/" );
+						checkPrefer( request, "include" );
+					} ) );
+				})();
+
+				(() => {
+					stubListRequestOfAccessPoint( "resource-4/" );
+
+					let promise:Promise<[ Pointer.Class[], HTTP.Response.Class ]> = documents.listMembers( "resource-4/" );
+
+					expect( promise instanceof Promise ).toBe( true );
+					promises.push( promise.then( ( [ pointers, response ]:[ Pointer.Class[], HTTP.Response.Class ] ) => {
+
+						checkResponse( "resource-4/", pointers, response );
+
+						let request:JasmineAjaxRequest = jasmine.Ajax.requests.filter( /resource-4/ )[ 0 ];
+						expect( request.url ).toMatch( "resource-4/" );
+						checkPrefer( request, "include" );
+					} ) );
+				})();
+
+				(() => {
+					stubListRequestOfAccessPoint( "resource-5/", false );
+
+					let promise:Promise<[ Pointer.Class[], HTTP.Response.Class ]> = documents.listMembers( "resource-5/" );
+
+					expect( promise instanceof Promise ).toBe( true );
+					promises.push( promise.then( ( [ pointers, response ]:[ Pointer.Class[], HTTP.Response.Class ] ) => {
+
+						checkResponse( "resource-5/", pointers, response, false );
+
+						let request:JasmineAjaxRequest = jasmine.Ajax.requests.filter( /resource-5/ )[ 0 ];
+						expect( request.url ).toMatch( "resource-5/" );
+						checkPrefer( request, "include" );
+					} ) );
+				})();
+
 				Promise.all( promises ).then( done ).catch( done.fail );
 			} );
 
-			function stubListRequest( resource:string ):void {
+			function stubListRequest( resource:string, withMembers:boolean = true ):void {
 				jasmine.Ajax.stubRequest( new RegExp( resource ), null, "GET" ).andReturn( {
 					status: 200,
 					responseText: `[ {
@@ -2218,28 +2266,70 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@id": "http://example.com/${ resource }",
 							"@type": [ "http://www.w3.org/ns/ldp#BasicContainer" ],
 							"http://www.w3.org/ns/ldp#hasMemberRelation": [ {
-								"@id": "http://www.w3.org/ns/ldp#my-member"
+								"@id": "http://example.com/ns#my-member"
+							${ withMembers ? `
 							} ],
-							"http://www.w3.org/ns/ldp#my-member": [ {
+							"http://example.com/ns#my-member": [ {
 								"@id": "http://example.com/resource/element-01/"
 							}, {
 								"@id": "http://example.com/resource/element-02/"
 							}, {
-								"@id": "http://example.com/resource/element-03/"
+								"@id": "http://example.com/resource/element-03/"` : "" }
 							} ]
 						} ]
 					} ]`,
 				} );
 			}
 
-			function checkResponse( resource:string, pointers:Pointer.Class[], response:HTTP.Response.Class ):void {
+			function stubListRequestOfAccessPoint( resource:string, withMembers:boolean = true ):void {
+				jasmine.Ajax.stubRequest( new RegExp( resource ), null, "GET" ).andReturn( {
+					status: 200,
+					responseText: `[ {
+						"@id": "http://example.com/${ resource }",
+						"@graph": [ {
+							"@id": "http://example.com/${ resource }",
+							"@type": [ "http://www.w3.org/ns/ldp#DirectContainer" ],
+							"http://www.w3.org/ns/ldp#hasMemberRelation": [ {
+								"@id": "http://example.com/ns#my-member"
+							} ],
+							"http://www.w3.org/ns/ldp#membershipResource": [{
+								"@id": "http://example.com/members-resource/"
+							} ]
+						} ]
+					}, {
+						"@id": "http://example.com/members-resource/",
+						"@graph": [ {
+							"@id": "http://example.com/members-resource/",
+							"@type": [ "http://www.w3.org/ns/ldp#BasicContainer" ],
+							"http://www.w3.org/ns/ldp#hasMemberRelation": [ {
+								"@id": "http://example.com/ns#another-member"
+							${ withMembers ? `
+							} ],
+							"http://example.com/ns#my-member": [ {
+								"@id": "http://example.com/resource/element-01/"
+							}, {
+								"@id": "http://example.com/resource/element-02/"
+							}, {
+								"@id": "http://example.com/resource/element-03/"` : "" }
+							} ]
+						} ]
+					} ]`,
+				} );
+			}
+
+			function checkResponse( resource:string, pointers:Pointer.Class[], response:HTTP.Response.Class, hasMembers:boolean = true ):void {
 				expect( (<any> documents).pointers.size ).toBe( 3 );
 				expect( documents.hasPointer( resource ) ).toBe( false );
 
 				expect( pointers ).toBeDefined();
 				expect( Utils.isArray( pointers ) ).toBe( true );
-				expect( pointers.length ).toBe( 3 );
-				expect( Pointer.Util.getIDs( pointers ) ).toEqual( [ "http://example.com/resource/element-01/", "http://example.com/resource/element-02/", "http://example.com/resource/element-03/" ] );
+
+				if( hasMembers ) {
+					expect( pointers.length ).toBe( 3 );
+					expect( Pointer.Util.getIDs( pointers ) ).toEqual( [ "http://example.com/resource/element-01/", "http://example.com/resource/element-02/", "http://example.com/resource/element-03/" ] );
+				} else {
+					expect( pointers.length ).toBe( 0 );
+				}
 
 				expect( response ).toBeDefined();
 				expect( response instanceof HTTP.Response.Class ).toBe( true );
@@ -2294,112 +2384,246 @@ describe( module( "Carbon/Documents" ), ():void => {
 				expect( Utils.isFunction( documents.getMembers ) ).toBe( true );
 			} );
 
-			function stubListRequest( resource:string ):void {
+			function stubListRequest( resource:string, withMembers:boolean = true ):void {
 				jasmine.Ajax.stubRequest( new RegExp( resource ), null, "GET" ).andReturn( {
 					status: 200,
-					responseText: `[ {
-						"@id": "_:00",
-						"@type": [
-							"https://carbonldp.com/ns/v1/platform#ResponseMetadata",
-							"https://carbonldp.com/ns/v1/platform#VolatileResource"
-						],
-						"https://carbonldp.com/ns/v1/platform#resourceMetadata": [ {
-							"@id": "_:01"
-						}, {
-							"@id": "_:02"
-						} ]
-					}, {
-						"@id": "_:01",
-						"@type": [
-							"https://carbonldp.com/ns/v1/platform#ResourceMetadata",
-							"https://carbonldp.com/ns/v1/platform#VolatileResource"
-						],
-						"https://carbonldp.com/ns/v1/platform#eTag": [ {
-							"@value": "\\"1234567890\\""
-						} ],
-						"https://carbonldp.com/ns/v1/platform#resource": [ {
-							"@id": "http://example.com/resource/element-01/"
-						} ]
-					}, {
-						"@id": "_:02",
-						"@type": [
-							"https://carbonldp.com/ns/v1/platform#ResourceMetadata",
-							"https://carbonldp.com/ns/v1/platform#VolatileResource"
-						],
-						"https://carbonldp.com/ns/v1/platform#eTag": [ {
-							"@value": "\\"0987654321\\""
-						} ],
-						"https://carbonldp.com/ns/v1/platform#resource": [ {
-							"@id": "http://example.com/resource/element-02/"
-						} ]
-					}, {
+					responseText: withMembers ? `[
+						{
+							"@id": "_:00",
+							"@type": [
+								"https://carbonldp.com/ns/v1/platform#ResponseMetadata",
+								"https://carbonldp.com/ns/v1/platform#VolatileResource"
+							],
+							"https://carbonldp.com/ns/v1/platform#resourceMetadata": [ {
+								"@id": "_:01"
+							}, {
+								"@id": "_:02"
+							} ]
+						},
+						{
+							"@id": "_:01",
+							"@type": [
+								"https://carbonldp.com/ns/v1/platform#ResourceMetadata",
+								"https://carbonldp.com/ns/v1/platform#VolatileResource"
+							],
+							"https://carbonldp.com/ns/v1/platform#eTag": [ {
+								"@value": "\\"1234567890\\""
+							} ],
+							"https://carbonldp.com/ns/v1/platform#resource": [ {
+								"@id": "http://example.com/resource/element-01/"
+							} ]
+						},
+						{
+							"@id": "_:02",
+							"@type": [
+								"https://carbonldp.com/ns/v1/platform#ResourceMetadata",
+								"https://carbonldp.com/ns/v1/platform#VolatileResource"
+							],
+							"https://carbonldp.com/ns/v1/platform#eTag": [ {
+								"@value": "\\"0987654321\\""
+							} ],
+							"https://carbonldp.com/ns/v1/platform#resource": [ {
+								"@id": "http://example.com/resource/element-02/"
+							} ]
+						},
+						{
+							"@id": "http://example.com/${ resource }",
+							"@graph": [ {
+								"@id": "http://example.com/${ resource }",
+								"@type": [ "http://www.w3.org/ns/ldp#BasicContainer" ],
+								"http://www.w3.org/ns/ldp#hasMemberRelation": [ {
+									"@id": "http://www.w3.org/ns/ldp#my-member"
+								} ],
+								"http://example.com/ns#my-member": [ {
+									"@id": "http://example.com/resource/element-01/"
+								}, {
+									"@id": "http://example.com/resource/element-02/"
+								} ]
+							} ]
+						},
+						{
+							"@id": "http://example.com/resource/element-01/",
+							"@graph": [ {
+								"@id": "http://example.com/resource/element-01/",
+								"@type": [ "http://www.w3.org/ns/ldp#BasicContainer" ],
+								"http://example.com/ns#string": [ {"@value": "Document of resource 01"} ],
+								"http://example.com/ns#pointer": [
+									{"@id": "http://example.com/resource/element-01/#1"}
+								]
+							}, {
+								"@id": "http://example.com/resource/element-01/#1",
+								"http://example.com/ns#string": [ {"@value": "NamedFragment of resource 01"} ]
+							} ]
+						},
+						{
+							"@id": "http://example.com/resource/element-02/",
+							"@graph": [ {
+								"@id": "http://example.com/resource/element-02/",
+								"@type": [ "http://www.w3.org/ns/ldp#BasicContainer" ],
+								"http://example.com/ns#string": [ {"@value": "Document of resource 02"} ],
+								"http://example.com/ns#pointer": [
+									{"@id": "_:01"}
+								]
+							}, {
+								"@id": "_:01",
+								"http://example.com/ns#string": [ {"@value": "BlankNode of resource 02"} ]
+							} ]
+						}
+					]` : `[ {
 						"@id": "http://example.com/${ resource }",
 						"@graph": [ {
 							"@id": "http://example.com/${ resource }",
 							"@type": [ "http://www.w3.org/ns/ldp#BasicContainer" ],
 							"http://www.w3.org/ns/ldp#hasMemberRelation": [ {
 								"@id": "http://www.w3.org/ns/ldp#my-member"
-							} ],
-							"http://www.w3.org/ns/ldp#my-member": [ {
-								"@id": "http://example.com/resource/element-01/"
-							}, {
-								"@id": "http://example.com/resource/element-02/"
 							} ]
-						} ]
-					}, {
-						"@id": "http://example.com/resource/element-01/",
-						"@graph": [ {
-							"@id": "http://example.com/resource/element-01/",
-							"@type": [ "http://www.w3.org/ns/ldp#BasicContainer" ],
-							"http://example.com/ns#string": [ {"@value": "Document of resource 01"} ],
-							"http://example.com/ns#pointer": [
-								{"@id": "http://example.com/resource/element-01/#1"}
-							]
-						}, {
-							"@id": "http://example.com/resource/element-01/#1",
-							"http://example.com/ns#string": [ {"@value": "NamedFragment of resource 01"} ]
-						} ]
-					}, {
-						"@id": "http://example.com/resource/element-02/",
-						"@graph": [ {
-							"@id": "http://example.com/resource/element-02/",
-							"@type": [ "http://www.w3.org/ns/ldp#BasicContainer" ],
-							"http://example.com/ns#string": [ {"@value": "Document of resource 02"} ],
-							"http://example.com/ns#pointer": [
-								{"@id": "_:01"}
-							]
-						}, {
-							"@id": "_:01",
-							"http://example.com/ns#string": [ {"@value": "BlankNode of resource 02"} ]
 						} ]
 					} ]`,
 				} );
 			}
 
-			function checkResponse( resource:string, pointers:PersistedDocument.Class[], response:HTTP.Response.Class ):void {
+			function stubListRequestOfAccessPoint( resource:string, withMembers:boolean = true ):void {
+				jasmine.Ajax.stubRequest( new RegExp( resource ), null, "GET" ).andReturn( {
+					status: 200,
+					responseText: withMembers ? `[
+						{
+							"@id": "_:00",
+							"@type": [
+								"https://carbonldp.com/ns/v1/platform#ResponseMetadata",
+								"https://carbonldp.com/ns/v1/platform#VolatileResource"
+							],
+							"https://carbonldp.com/ns/v1/platform#resourceMetadata": [ {
+								"@id": "_:01"
+							}, {
+								"@id": "_:02"
+							} ]
+						},
+						{
+							"@id": "_:01",
+							"@type": [
+								"https://carbonldp.com/ns/v1/platform#ResourceMetadata",
+								"https://carbonldp.com/ns/v1/platform#VolatileResource"
+							],
+							"https://carbonldp.com/ns/v1/platform#eTag": [ {
+								"@value": "\\"1234567890\\""
+							} ],
+							"https://carbonldp.com/ns/v1/platform#resource": [ {
+								"@id": "http://example.com/resource/element-01/"
+							} ]
+						},
+						{
+							"@id": "_:02",
+							"@type": [
+								"https://carbonldp.com/ns/v1/platform#ResourceMetadata",
+								"https://carbonldp.com/ns/v1/platform#VolatileResource"
+							],
+							"https://carbonldp.com/ns/v1/platform#eTag": [ {
+								"@value": "\\"0987654321\\""
+							} ],
+							"https://carbonldp.com/ns/v1/platform#resource": [ {
+								"@id": "http://example.com/resource/element-02/"
+							} ]
+						},
+						{
+							"@id": "http://example.com/${ resource }",
+							"@graph": [ {
+								"@id": "http://example.com/${ resource }",
+								"@type": [ "http://www.w3.org/ns/ldp#DirectContainer" ],
+								"http://www.w3.org/ns/ldp#hasMemberRelation": [ {
+									"@id": "http://example.com/ns#my-member"
+								} ],
+								"http://www.w3.org/ns/ldp#membershipResource": [{
+									"@id": "http://example.com/members-resource/"
+								} ]
+							} ]
+						}, {
+							"@id": "http://example.com/members-resource/",
+							"@graph": [ {
+								"@id": "http://example.com/members-resource/",
+								"@type": [ "http://www.w3.org/ns/ldp#DirectContainer" ],
+								"http://www.w3.org/ns/ldp#hasMemberRelation": [ {
+									"@id": "http://example.com/ns#another-member"
+								} ],
+								"http://example.com/ns#my-member": [ {
+									"@id": "http://example.com/resource/element-01/"
+								}, {
+									"@id": "http://example.com/resource/element-02/"
+								} ]
+							} ]
+						},
+						{
+							"@id": "http://example.com/resource/element-01/",
+							"@graph": [ {
+								"@id": "http://example.com/resource/element-01/",
+								"@type": [ "http://www.w3.org/ns/ldp#BasicContainer" ],
+								"http://example.com/ns#string": [ {"@value": "Document of resource 01"} ],
+								"http://example.com/ns#pointer": [
+									{"@id": "http://example.com/resource/element-01/#1"}
+								]
+							}, {
+								"@id": "http://example.com/resource/element-01/#1",
+								"http://example.com/ns#string": [ {"@value": "NamedFragment of resource 01"} ]
+							} ]
+						},
+						{
+							"@id": "http://example.com/resource/element-02/",
+							"@graph": [ {
+								"@id": "http://example.com/resource/element-02/",
+								"@type": [ "http://www.w3.org/ns/ldp#BasicContainer" ],
+								"http://example.com/ns#string": [ {"@value": "Document of resource 02"} ],
+								"http://example.com/ns#pointer": [
+									{"@id": "_:01"}
+								]
+							}, {
+								"@id": "_:01",
+								"http://example.com/ns#string": [ {"@value": "BlankNode of resource 02"} ]
+							} ]
+						}
+					]` : `[ {
+						"@id": "http://example.com/${ resource }",
+						"@graph": [ {
+							"@id": "http://example.com/${ resource }",
+							"@type": [ "http://www.w3.org/ns/ldp#DirectContainer" ],
+							"http://www.w3.org/ns/ldp#hasMemberRelation": [ {
+								"@id": "http://example.com/ns#my-member"
+							} ],
+							"http://www.w3.org/ns/ldp#membershipResource": [{
+								"@id": "http://example.com/members-resource/"
+							} ]
+						} ]
+					} ]`,
+				} );
+			}
+
+			function checkResponse( resource:string, pointers:PersistedDocument.Class[], response:HTTP.Response.Class, hasMembers:boolean = true ):void {
 				expect( documents.hasPointer( resource ) ).toBe( false );
 				expect( (<any> documents).pointers.size ).toBe( 2 );
 
 				expect( pointers ).toBeDefined();
 				expect( Utils.isArray( pointers ) ).toBe( true );
-				expect( pointers.length ).toBe( 2 );
-				expect( Pointer.Util.getIDs( pointers ) ).toEqual( [ "http://example.com/resource/element-01/", "http://example.com/resource/element-02/" ] );
 
-				expect( pointers[ 0 ].id ).toBe( "http://example.com/resource/element-01/" );
-				expect( pointers[ 0 ].isResolved() ).toBe( true );
-				expect( pointers[ 0 ][ "_etag" ] ).toBe( "\"1234567890\"" );
-				expect( pointers[ 0 ][ "string" ] ).toBe( "Document of resource 01" );
-				expect( pointers[ 0 ][ "pointer" ] ).toBeDefined();
-				expect( pointers[ 0 ][ "pointer" ][ "id" ] ).toBe( "http://example.com/resource/element-01/#1" );
-				expect( pointers[ 0 ][ "pointer" ][ "string" ] ).toBe( "NamedFragment of resource 01" );
+				if( hasMembers ) {
+					expect( pointers.length ).toBe( 2 );
+					expect( Pointer.Util.getIDs( pointers ) ).toEqual( [ "http://example.com/resource/element-01/", "http://example.com/resource/element-02/" ] );
 
-				expect( pointers[ 1 ].id ).toBe( "http://example.com/resource/element-02/" );
-				expect( pointers[ 1 ].isResolved() ).toBe( true );
-				expect( pointers[ 1 ][ "_etag" ] ).toBe( "\"0987654321\"" );
-				expect( pointers[ 1 ][ "string" ] ).toBe( "Document of resource 02" );
-				expect( pointers[ 1 ][ "pointer" ] ).toBeDefined();
-				expect( pointers[ 1 ][ "pointer" ][ "id" ] ).toBe( "_:01" );
-				expect( pointers[ 1 ][ "pointer" ][ "string" ] ).toBe( "BlankNode of resource 02" );
+					expect( pointers[ 0 ].id ).toBe( "http://example.com/resource/element-01/" );
+					expect( pointers[ 0 ].isResolved() ).toBe( true );
+					expect( pointers[ 0 ][ "_etag" ] ).toBe( "\"1234567890\"" );
+					expect( pointers[ 0 ][ "string" ] ).toBe( "Document of resource 01" );
+					expect( pointers[ 0 ][ "pointer" ] ).toBeDefined();
+					expect( pointers[ 0 ][ "pointer" ][ "id" ] ).toBe( "http://example.com/resource/element-01/#1" );
+					expect( pointers[ 0 ][ "pointer" ][ "string" ] ).toBe( "NamedFragment of resource 01" );
+
+					expect( pointers[ 1 ].id ).toBe( "http://example.com/resource/element-02/" );
+					expect( pointers[ 1 ].isResolved() ).toBe( true );
+					expect( pointers[ 1 ][ "_etag" ] ).toBe( "\"0987654321\"" );
+					expect( pointers[ 1 ][ "string" ] ).toBe( "Document of resource 02" );
+					expect( pointers[ 1 ][ "pointer" ] ).toBeDefined();
+					expect( pointers[ 1 ][ "pointer" ][ "id" ] ).toBe( "_:01" );
+					expect( pointers[ 1 ][ "pointer" ][ "string" ] ).toBe( "BlankNode of resource 02" );
+				} else {
+					expect( pointers.length ).toBe( 0 );
+				}
 
 				expect( response ).toBeDefined();
 				expect( response instanceof HTTP.Response.Class ).toBe( true );
@@ -2769,132 +2993,50 @@ describe( module( "Carbon/Documents" ), ():void => {
 				})();
 
 				(() => {
-					jasmine.Ajax.stubRequest( "http://example.com/resource-4/", null, "GET" ).andReturn( {
-						status: 200,
-						responseText: `[ {
-					"@id": "http://example.com/resource-4/",
-					"@graph": [ {
-						"@id": "http://example.com/resource-4/",
-						"@type": [ "http://www.w3.org/ns/ldp#DirectContainer" ],
-						"http://www.w3.org/ns/ldp#hasMemberRelation": [ {
-							"@id": "http://www.w3.org/ns/ldp#my-member"
-						} ],
-						"http://www.w3.org/ns/ldp#membershipResource": [ {
-							"@id": "http://example.com/resource/"
-						} ]
-					} ]
-				},
-				{
-					"@id": "http://example.com/resource/",
-					"@graph": [ {
-						"@id": "http://example.com/resource/",
-						"@type": [ "http://www.w3.org/ns/ldp#BasicContainer" ],
-						"http://www.w3.org/ns/ldp#my-member": [ {
-							"@id": "http://example.com/resource/element-01/"
-						}, {
-							"@id": "http://example.com/resource/element-02/"
-						} ]
-					} ]
-				},
-				{
-					"@id": "_:00",
-					"@type": [
-						"https://carbonldp.com/ns/v1/platform#ResponseMetadata",
-						"https://carbonldp.com/ns/v1/platform#VolatileResource"
-					],
-					"https://carbonldp.com/ns/v1/platform#resourceMetadata": [ {
-						"@id": "_:01"
-					}, {
-						"@id": "_:02"
-					} ]
-				},
-				{
-					"@id": "_:01",
-					"@type": [
-						"https://carbonldp.com/ns/v1/platform#ResourceMetadata",
-						"https://carbonldp.com/ns/v1/platform#VolatileResource"
-					],
-					"https://carbonldp.com/ns/v1/platform#eTag": [ {
-						"@value": "\\"1234567890\\""
-			}],
-				"https://carbonldp.com/ns/v1/platform#resource"
-			:
-				[ {
-					"@id": "http://example.com/resource/element-01/"
-				} ]
-			},
-				{
-					"@id"
-				:
-					"_:02",
-						"@type"
-				:
-					[
-						"https://carbonldp.com/ns/v1/platform#ResourceMetadata",
-						"https://carbonldp.com/ns/v1/platform#VolatileResource"
-					],
-						"https://carbonldp.com/ns/v1/platform#eTag"
-				:
-					[ {
-						"@value": "\\"0987654321\\""
-				}],
-					"https://carbonldp.com/ns/v1/platform#resource"
-				:
-					[ {
-						"@id": "http://example.com/resource/element-02/"
-					} ]
-				}
-			,
-				{
-					"@id"
-				:
-					"http://example.com/resource/element-01/",
-						"@graph"
-				:
-					[ {
-						"@id": "http://example.com/resource/element-01/",
-						"@type": [ "http://www.w3.org/ns/ldp#BasicContainer" ],
-						"http://example.com/ns#string": [ {"@value": "Document of resource 01"} ],
-						"http://example.com/ns#pointer": [
-							{"@id": "http://example.com/resource/element-01/#1"}
-						]
-					}, {
-						"@id": "http://example.com/resource/element-01/#1",
-						"http://example.com/ns#string": [ {"@value": "NamedFragment of resource 01"} ]
-					} ]
-				}
-			,
-				{
-					"@id"
-				:
-					"http://example.com/resource/element-02/",
-						"@graph"
-				:
-					[ {
-						"@id": "http://example.com/resource/element-02/",
-						"@type": [ "http://www.w3.org/ns/ldp#BasicContainer" ],
-						"http://example.com/ns#string": [ {"@value": "Document of resource 02"} ],
-						"http://example.com/ns#pointer": [
-							{"@id": "_:01"}
-						]
-					}, {
-						"@id": "_:01",
-						"http://example.com/ns#string": [ {"@value": "BlankNode of resource 02"} ]
-					} ]
-				}
-			]
-				`,
-					} );
+					stubListRequest( "resource-4/", false );
 
 					let promise:Promise<[ PersistedDocument.Class[], HTTP.Response.Class ]> = documents.getMembers( "resource-4/" );
 
 					expect( promise instanceof Promise ).toBe( true );
 					promises.push( promise.then( ( [ pointers, response ]:[ PersistedDocument.Class[], HTTP.Response.Class ] ) => {
-						expect( documents.hasPointer( "resource/" ) ).toBe( false );
-						checkResponse( "resource-4/", pointers, response );
+						expect( (<any> documents).pointers.size ).toBe( 2 );
+						expect( documents.hasPointer( "resource-4/" ) ).toBe( false );
+						checkResponse( "resource-4/", pointers, response, false );
 
 						let request:JasmineAjaxRequest = jasmine.Ajax.requests.filter( /resource-4/ )[ 0 ];
 						expect( request.url ).toMatch( "resource-4/" );
+						checkPrefer( request );
+					} ) );
+				})();
+
+				(() => {
+					stubListRequestOfAccessPoint( "resource-5/" );
+
+					let promise:Promise<[ PersistedDocument.Class[], HTTP.Response.Class ]> = documents.getMembers( "resource-5/" );
+
+					expect( promise instanceof Promise ).toBe( true );
+					promises.push( promise.then( ( [ pointers, response ]:[ PersistedDocument.Class[], HTTP.Response.Class ] ) => {
+						expect( documents.hasPointer( "members-resource/" ) ).toBe( false );
+						checkResponse( "resource-5/", pointers, response );
+
+						let request:JasmineAjaxRequest = jasmine.Ajax.requests.filter( /resource-5/ )[ 0 ];
+						expect( request.url ).toMatch( "resource-5/" );
+						checkPrefer( request );
+					} ) );
+				})();
+
+				(() => {
+					stubListRequestOfAccessPoint( "resource-6/", false );
+
+					let promise:Promise<[ PersistedDocument.Class[], HTTP.Response.Class ]> = documents.getMembers( "resource-6/" );
+
+					expect( promise instanceof Promise ).toBe( true );
+					promises.push( promise.then( ( [ pointers, response ]:[ PersistedDocument.Class[], HTTP.Response.Class ] ) => {
+						expect( documents.hasPointer( "members-resource/" ) ).toBe( false );
+						checkResponse( "resource-6/", pointers, response, false );
+
+						let request:JasmineAjaxRequest = jasmine.Ajax.requests.filter( /resource-6/ )[ 0 ];
+						expect( request.url ).toMatch( "resource-6/" );
 						checkPrefer( request );
 					} ) );
 				})();

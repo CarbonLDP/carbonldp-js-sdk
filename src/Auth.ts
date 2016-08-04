@@ -227,7 +227,11 @@ export abstract class Class {
 			let eTag:string = HTTP.Response.Util.getETag( response );
 			if( eTag === null ) throw new HTTP.Errors.BadResponseError( "The authenticated agent doesn't contain an ETag", response );
 
-			let agentURI:string = response.getHeader( "Content-Location" ).toString();
+			let locationHeader:HTTP.Header.Class = response.getHeader( "Content-Location" );
+			if( ! locationHeader || locationHeader.values.length < 1 ) throw new HTTP.Errors.BadResponseError( "The response is missing a Content-Location header.", response );
+			if( locationHeader.values.length !== 1 ) throw new HTTP.Errors.BadResponseError( "The response contains more than one Content-Location header.", response );
+
+			let agentURI:string = locationHeader.toString();
 			if( ! agentURI ) throw new HTTP.Errors.BadResponseError( `The response doesn't contain a 'Content-Location' header.`, response );
 
 			let agentsDocuments:RDF.Document.Class[] = RDF.Document.Util.getDocuments( rdfDocuments ).filter( rdfDocument => rdfDocument[ "@id" ] === agentURI );

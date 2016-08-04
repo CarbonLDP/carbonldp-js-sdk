@@ -61,6 +61,7 @@ declare class Carbon extends AbstractContext {
     static Utils: typeof Utils;
     static version: string;
     apps: Apps.Class;
+    agents: Agents.Class;
     version: string;
     constructor(settings?: Settings.Class);
     resolve(uri: string): string;

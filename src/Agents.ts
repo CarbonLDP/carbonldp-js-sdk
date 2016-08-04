@@ -2,7 +2,6 @@ import Context from "./Context";
 import * as Agent from "./Agent";
 import * as Pointer from "./Pointer";
 import * as Response from "./HTTP/Response";
-import * as Utils from "./Utils";
 import * as Errors from "./Errors";
 
 export class Class {
@@ -12,20 +11,12 @@ export class Class {
 		this.context = context;
 	}
 
-	create( agentDocument:Agent.Class ):Promise<[ Pointer.Class, Response.Class]>;
-	create( slug:string, agentDocument:Agent.Class ):Promise<[ Pointer.Class, Response.Class]>;
-	create( slugOrAgent:any, agentDocument?:Agent.Class ):Promise<[ Pointer.Class, Response.Class]> {
+	create( agentDocument:Agent.Class, slug:string = null ):Promise<[ Pointer.Class, Response.Class]> {
 		let containerURI:string = this.context.resolve( this.getContainerURI() );
-		let slug:string = Utils.isString( slugOrAgent ) ? slugOrAgent : null;
-		agentDocument = agentDocument || slugOrAgent;
 
 		if( ! Agent.Factory.is( agentDocument ) ) return Promise.reject<any>( new Errors.IllegalArgumentError( "The Document is not a `Carbon.Agents.Agent.Class` object." ) );
 
-		if( slug ) {
-			return this.context.documents.createChild( containerURI, slug, agentDocument );
-		} else {
-			return this.context.documents.createChild( containerURI, agentDocument );
-		}
+		return this.context.documents.createChild( containerURI, agentDocument, slug );
 	}
 
 	private getContainerURI():string {

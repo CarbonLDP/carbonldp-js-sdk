@@ -395,6 +395,7 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 
 			let documentResource:RDF.Node.Class = this.getDocumentResource( rdfDocument, response );
 			let membershipResource:RDF.Node.Class = this.getMembershipResource( documentResource, rdfDocuments, response );
+			if( membershipResource === null ) return [ [], response ];
 
 			let hasMemberRelation:string = RDF.Node.Util.getPropertyURI( documentResource, NS.LDP.Predicate.hasMemberRelation );
 
@@ -448,6 +449,7 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 
 			let containerResource:RDF.Node.Class = this.getDocumentResource( rdfDocument, response );
 			let membershipResource:RDF.Node.Class = this.getMembershipResource( containerResource, rdfDocuments, response );
+			if( membershipResource === null ) return [ [], response ];
 
 			rdfDocuments = (<any[]> rdfDocuments).filter( ( targetRDFDocument:RDF.Node.Class ) => {
 				return ! RDF.Node.Util.areEqual( targetRDFDocument, containerResource )
@@ -865,7 +867,7 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 			}
 		} else {
 			let membershipResourceDocument:RDF.Document.Class = this.getRDFDocument( membershipResourceURI, rdfDocuments, response );
-			if( membershipResourceDocument === null ) throw new HTTP.Errors.BadResponseError( "The membershipResource document was not included in the response.", response );
+			if( membershipResourceDocument === null ) return null;
 			membershipResource = this.getDocumentResource( membershipResourceDocument, response );
 		}
 

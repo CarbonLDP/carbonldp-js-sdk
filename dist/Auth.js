@@ -181,7 +181,12 @@ var Class = (function () {
             var eTag = HTTP.Response.Util.getETag(response);
             if (eTag === null)
                 throw new HTTP.Errors.BadResponseError("The authenticated agent doesn't contain an ETag", response);
-            var agentURI = response.getHeader("Content-Location").toString();
+            var locationHeader = response.getHeader("Content-Location");
+            if (!locationHeader || locationHeader.values.length < 1)
+                throw new HTTP.Errors.BadResponseError("The response is missing a Content-Location header.", response);
+            if (locationHeader.values.length !== 1)
+                throw new HTTP.Errors.BadResponseError("The response contains more than one Content-Location header.", response);
+            var agentURI = locationHeader.toString();
             if (!agentURI)
                 throw new HTTP.Errors.BadResponseError("The response doesn't contain a 'Content-Location' header.", response);
             var agentsDocuments = RDF.Document.Util.getDocuments(rdfDocuments).filter(function (rdfDocument) { return rdfDocument["@id"] === agentURI; });
