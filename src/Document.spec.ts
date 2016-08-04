@@ -312,7 +312,7 @@ describe( module( "Carbon/Document" ), ():void => {
 
 				// Conversion of simple nested objects to BlankNodes and NamedFragments
 				(() => {
-					let object = {
+					let object:any = {
 						myProperty: "THE property",
 						myBlankNode: {
 							myProperty: "A BlankNode property",
@@ -685,7 +685,7 @@ describe( module( "Carbon/Document" ), ():void => {
 				document._normalize();
 				expect( document.hasFragment( fragment.id ) ).toBe( false );
 
-				document.createFragment( "named-fragment", {string: "Fragment that will not be deleted"} );
+				document.createFragment( {string: "Fragment that will not be deleted"}, "named-fragment" );
 
 				fragment = document.createFragment( {string: "Fragment with a reference"} );
 				document[ "fragment" ] = fragment;
@@ -1216,23 +1216,8 @@ describe( module( "Carbon/Document" ), ():void => {
 			), ():void => {
 
 				it( isDefined(), () => {
-					expect( document.removeFragment ).toBeDefined();
-					expect( Utils.isFunction( document.removeFragment ) ).toBe( true );
-				} );
-
-				it( hasSignature(
-					"Remove the fragment referenced by the `Carbon.NamedFragment.Class` provided from the Document.", [
-						{name: "fragment", type: "Carbon.NamedFragment.Class"},
-					]
-				), ():void => {
-					let fragment1:NamedFragment.Class = document.createNamedFragment( "slug" );
-					let fragment2:Fragment.Class = document.createFragment();
-
-					expect( document.getFragments().length ).toBe( 2 );
-					document.removeFragment( fragment1 );
-					expect( document.getFragments().length ).toBe( 1 );
-					expect( document.hasFragment( fragment1.id ) ).toBe( false );
-					expect( document.hasFragment( fragment2.id ) ).toBe( true );
+					expect( document._removeFragment ).toBeDefined();
+					expect( Utils.isFunction( document._removeFragment ) ).toBe( true );
 				} );
 
 				it( hasSignature(
@@ -1240,15 +1225,41 @@ describe( module( "Carbon/Document" ), ():void => {
 						{name: "fragment", type: "Carbon.Fragment.Class"},
 					]
 				), ():void => {
-					let fragment1:Fragment.Class = document.createFragment();
-					let fragment2:NamedFragment.Class = document.createNamedFragment( "slug" );
+					let fragment1:NamedFragment.Class = document.createNamedFragment( "slug" );
+					let fragment2:Fragment.Class = document.createFragment();
 
 					expect( document.getFragments().length ).toBe( 2 );
 
-					document.removeFragment( fragment1 );
+					document._removeFragment( fragment1 );
 					expect( document.getFragments().length ).toBe( 1 );
 					expect( document.hasFragment( fragment1.id ) ).toBe( false );
 					expect( document.hasFragment( fragment2.id ) ).toBe( true );
+
+					document._removeFragment( fragment2 );
+					expect( document.getFragments().length ).toBe( 0 );
+					expect( document.hasFragment( fragment1.id ) ).toBe( false );
+					expect( document.hasFragment( fragment2.id ) ).toBe( false );
+				} );
+
+				it( hasSignature(
+					"Remove the fragment referenced by the Slug provided from the Document.", [
+						{name: "slug", type: "string"},
+					]
+				), ():void => {
+					document.createNamedFragment( "slug" );
+					document.createFragment( "_:bNode" );
+
+					expect( document.getFragments().length ).toBe( 2 );
+
+					document._removeFragment( "slug" );
+					expect( document.getFragments().length ).toBe( 1 );
+					expect( document.hasFragment( "slug" ) ).toBe( false );
+					expect( document.hasFragment( "_:bNode" ) ).toBe( true );
+
+					document._removeFragment( "_:bNode" );
+					expect( document.getFragments().length ).toBe( 0 );
+					expect( document.hasFragment( "slug" ) ).toBe( false );
+					expect( document.hasFragment( "_:bNode" ) ).toBe( false );
 				} );
 
 			} );
@@ -1264,17 +1275,25 @@ describe( module( "Carbon/Document" ), ():void => {
 				} );
 
 				it( hasSignature(
-					"Remove the fragment referenced by the NamedFragment object provided from the Document.", [
+					"Remove the maned fragment referenced by the `Carbon.NamedFragment.Class` provided from the Document.", [
 						{name: "fragment", type: "Carbon.NamedFragment.Class"},
 					]
 				), ():void => {
-					expect( ():void => document.removeNamedFragment( <any> Fragment.Factory.create( document ) ) );
+					let fragment1:NamedFragment.Class = document.createNamedFragment( "slug" );
+					let fragment2:Fragment.Class = document.createFragment();
 
-					// TODO complete assertions
+					expect( document.getFragments().length ).toBe( 2 );
+
+					document.removeNamedFragment( fragment1 );
+					expect( document.getFragments().length ).toBe( 1 );
+					expect( document.hasFragment( fragment1.id ) ).toBe( false );
+					expect( document.hasFragment( fragment2.id ) ).toBe( true );
+
+					expect( () => document.removeNamedFragment( <any> fragment2 ) ).toThrowError( Errors.IllegalArgumentError );
 				} );
 
 				it( hasSignature(
-					"Remove the fragment referenced by the Slug provided from the Document.", [
+					"Remove the named fragment referenced by the Slug provided from the Document.", [
 						{name: "slug", type: "string"},
 					]
 				), ():void => {
@@ -1283,15 +1302,12 @@ describe( module( "Carbon/Document" ), ():void => {
 
 					expect( document.getFragments().length ).toBe( 2 );
 
-					document.removeFragment( "slug" );
+					document.removeNamedFragment( "slug" );
 					expect( document.getFragments().length ).toBe( 1 );
 					expect( document.hasFragment( "slug" ) ).toBe( false );
 					expect( document.hasFragment( "_:bNode" ) ).toBe( true );
 
-					document.removeFragment( "_:bNode" );
-					expect( document.getFragments().length ).toBe( 0 );
-					expect( document.hasFragment( "slug" ) ).toBe( false );
-					expect( document.hasFragment( "_:bNode" ) ).toBe( false );
+					expect( () => document.removeNamedFragment( "_:bNode" ) ).toThrowError( Errors.IllegalArgumentError );
 				} );
 
 			} );
@@ -1461,7 +1477,7 @@ describe( module( "Carbon/Document" ), ():void => {
 								"@id": "_:BlankNode",
 							}, {
 								"@id": "http://example.com/document/#fragment",
-							} ]
+							} ],
 						}, {
 							"@id": "_:BlankNode",
 							"@type": [],

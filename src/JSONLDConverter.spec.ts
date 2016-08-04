@@ -45,7 +45,7 @@ describe( module( "Carbon/JSONLDConverter" ), ():void => {
 		} );
 
 		it( hasConstructor( [
-			{name: "literalSerializers", type: "Map<string, Carbon.RDF.Literal.Serializer>", optional: true, description: "A Map object with the data type serializers that the converter will only be able to handle."}
+			{name: "literalSerializers", type: "Map<string, Carbon.RDF.Literal.Serializer>", optional: true, description: "A Map object with the data type serializers that the converter will only be able to handle."},
 		] ), ():void => {
 			let jsonldConverter:JSONLDConverter.Class;
 
@@ -205,7 +205,6 @@ describe( module( "Carbon/JSONLDConverter" ), ():void => {
 
 				let compactedObject:any = {};
 				let digestedSchema:ObjectSchema.DigestedObjectSchema = ObjectSchema.Digester.digestSchema( schema );
-				let jsonldConverter:JSONLDConverter.Class = new JSONLDConverter.Class();
 
 				expect( jsonldConverter.compact ).toBeDefined();
 				expect( Utils.isFunction( jsonldConverter.compact ) ).toBeDefined();
@@ -271,6 +270,11 @@ describe( module( "Carbon/JSONLDConverter" ), ():void => {
 				expect( jsonldConverter.compact ).toBeDefined();
 				expect( Utils.isFunction( jsonldConverter.compact ) ).toBeDefined();
 
+				let generalSchema:ObjectSchema.Class = {
+					"ex": "http://example.com/ns#",
+					"xsd": "http://www.w3.org/2001/XMLSchema#",
+				};
+
 				let schema:ObjectSchema.Class = {
 					"@vocab": "http://example.com/my-namespace#",
 					"ex": "http://example.com/ns#",
@@ -315,10 +319,6 @@ describe( module( "Carbon/JSONLDConverter" ), ():void => {
 					"unknownTypePointer": {
 						"@id": "ex:unknownTypePointer",
 					},
-					"anotherPointer": {
-						"@id": "ex:another-pointer",
-						"@type": "@id",
-					},
 					"anotherPrefixedPointer": {
 						"@id": "ex:another-prefixed-pointer",
 						"@type": "@id",
@@ -338,7 +338,7 @@ describe( module( "Carbon/JSONLDConverter" ), ():void => {
 				};
 
 				let compactedObject:any = {
-					"id": "http://example.com/compactedObject",
+					"id": "http://example.com/compactedObject/",
 					"types": [ "http://example.com/ns#Type-1", "http://example.com/ns#Type-2" ],
 					"string": "Some string",
 					"date": new Date( "2015-12-04T23:06:57.920Z" ),
@@ -368,8 +368,7 @@ describe( module( "Carbon/JSONLDConverter" ), ():void => {
 						function():void {},
 						Pointer.Factory.create( "http://example.com/pointer/" ),
 					],
-					"unknownTypePointer": Pointer.Factory.create( "http://example.com/pointer" ),
-					"anotherPointer": "another-resource/",
+					"unknownTypePointer": Pointer.Factory.create( "http://example.com/pointer/" ),
 					"anotherPrefixedPointer": "ex:another-resource/",
 					"anotherPointerInSchema": "string",
 					"notInSchemaLiteral": "Property Literal not defined in Schema",
@@ -380,7 +379,6 @@ describe( module( "Carbon/JSONLDConverter" ), ():void => {
 
 				let digestedGeneralSchema:ObjectSchema.DigestedObjectSchema = ObjectSchema.Digester.digestSchema( generalSchema );
 				let digestedSchema:ObjectSchema.DigestedObjectSchema = ObjectSchema.Digester.digestSchema( schema );
-				let jsonldConverter:JSONLDConverter.Class = new JSONLDConverter.Class();
 
 				expect( jsonldConverter.compact ).toBeDefined();
 				expect( Utils.isFunction( jsonldConverter.compact ) ).toBeDefined();
@@ -390,7 +388,7 @@ describe( module( "Carbon/JSONLDConverter" ), ():void => {
 				expect( expandedObject ).toBeDefined();
 				expect( Utils.isObject( expandedObject ) ).toEqual( true );
 
-				expect( expandedObject[ "@id" ] ).toBe( "http://example.com/compactedObject" );
+				expect( expandedObject[ "@id" ] ).toBe( "http://example.com/compactedObject/" );
 
 				expect( Utils.isArray( expandedObject[ "@type" ] ) ).toBe( true );
 				expect( expandedObject[ "@type" ].length ).toBe( 2 );
@@ -504,11 +502,6 @@ describe( module( "Carbon/JSONLDConverter" ), ():void => {
 				node = <RDF.Node.Class> property[ 0 ];
 				expect( RDF.Node.Factory.is( node ) ).toBe( true );
 				expect( node[ "@id" ] ).toBe( "http://example.com/pointer/" );
-
-				expect( expandedObject[ "http://example.com/ns#another-pointer" ] ).toBeDefined();
-				expect( expandedObject[ "http://example.com/ns#another-pointer" ] ).toEqual( [ {
-					"@id": "another-resource/",
-				} ] );
 
 				expect( expandedObject[ "http://example.com/ns#another-prefixed-pointer" ] ).toBeDefined();
 				expect( expandedObject[ "http://example.com/ns#another-prefixed-pointer" ] ).toEqual( [ {
