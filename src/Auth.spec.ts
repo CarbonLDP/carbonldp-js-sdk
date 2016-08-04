@@ -288,8 +288,11 @@ describe( module( "Carbon/Auth" ), ():void => {
 				class MockedContext extends AbstractContext {
 					constructor( _context?:AbstractContext, flag:boolean = false ) {
 						super( _context );
-						if( flag ) this.auth = new MockedAuth( this );
-						else this.auth = new BasicMockedAuth( this );
+						if( flag ) {
+							this.auth = new MockedAuth( this );
+						} else {
+							this.auth = new BasicMockedAuth( this );
+						}
 					}
 
 					resolve( uri:string ):string {
@@ -320,8 +323,11 @@ describe( module( "Carbon/Auth" ), ():void => {
 				class MockedContext extends AbstractContext {
 					constructor( _context?:AbstractContext, flag:boolean = false ) {
 						super( _context );
-						if( flag ) this.auth = new MockedAuth( this );
-						else this.auth = new BasicMockedAuth( this );
+						if( flag ) {
+							this.auth = new MockedAuth( this );
+						} else {
+							this.auth = new BasicMockedAuth( this );
+						}
 					}
 
 					resolve( uri:string ):string {

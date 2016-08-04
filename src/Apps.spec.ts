@@ -14,6 +14,7 @@ import {
 import AbstractContext from "./AbstractContext";
 import * as App from "./App";
 import AppContext from "./App/Context";
+import * as Auth from "./Auth";
 import * as Errors from "./Errors";
 import IllegalStateError from "./Errors/IllegalStateError";
 import * as NS from "./NS";
@@ -40,7 +41,13 @@ describe( module( "Carbon/Apps" ), ():void => {
 		let appsContainerURI:string = `${platformBaseURI}apps/`;
 
 		beforeEach( ():void => {
+			class MockedAuth extends Auth.Class {}
 			class MockedContext extends AbstractContext {
+				constructor() {
+					super();
+					this.auth = new MockedAuth( this );
+				}
+
 				resolve( uri:string ):string {
 					if( ! RDF.URI.Util.isAbsolute( uri ) ) return RDF.URI.Util.resolve( platformBaseURI, uri );
 					return uri;
