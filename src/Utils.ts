@@ -107,9 +107,7 @@ function parseBoolean( value:string ):boolean {
 }
 
 function extend( target:Object, ...objects:Object[] ):Object {
-	if( arguments.length <= 1 ) return target;
-	for( let i:number = 0, length:number = arguments.length; i < length; i ++ ) {
-		let toMerge:Object = objects[ i ];
+	for( let toMerge of objects ) {
 		for( let name in toMerge ) {
 			if( toMerge.hasOwnProperty( name ) ) {
 				target[ name ] = toMerge[ name ];
@@ -129,6 +127,35 @@ function forEachOwnProperty( object:Object, action:( name:string, value:any ) =>
 }
 
 class O {
+
+	static clone( object:Object, config:{ arrays?:boolean, objects?:boolean } = {arrays: false, objects: false} ):Object {
+		let isAnArray:boolean = isArray( object );
+		if( ! isAnArray && ! isPlainObject( object ) ) return null;
+
+		let clone:Object = isAnArray ? [] : {};
+		(<any> object).__SDKUtils_circularReferenceFlag = clone;
+
+		for( let key of Object.keys( object ) ) {
+			if( isFunction( object[ key ] ) || key === "__SDKUtils_circularReferenceFlag" ) continue;
+
+			let property:any = object[ key ];
+			if( isArray( property ) && config.arrays ||
+				isPlainObject( property ) && config.objects ) {
+
+				property = property.__SDKUtils_circularReferenceFlag || O.clone( property, config );
+			}
+
+			clone[ key ] = property;
+		}
+
+		delete (<any> object).__SDKUtils_circularReferenceFlag;
+		return clone;
+	}
+
+	static areEqual( object1:Object, object2:Object, config:{ arrays?:boolean, objects?:boolean } = {arrays: false, objects: false} ):boolean {
+		return internalAreEqual( object1, object2, config, [ object1 ], [ object2 ] );
+	}
+
 	static areShallowlyEqual( object1:Object, object2:Object ):boolean {
 		if( object1 === object2 ) return true;
 		if( ! isObject( object1 ) || ! isObject( object2 ) ) return false;
@@ -151,6 +178,48 @@ class O {
 
 		return true;
 	}
+}
+
+function internalAreEqual( object1:Object, object2:Object, config:{ arrays?:boolean, objects?:boolean }, stack1:any[], stack2:any[] ):boolean {
+	if( object1 === object2 ) return true;
+	if( ! isObject( object1 ) || ! isObject( object2 ) ) return false;
+
+	if( isDate( object1 ) ) return (<Date> object1).getTime() === (<Date> object2).getTime();
+
+	let keys:string[] = A.joinWithoutDuplicates( Object.keys( object1 ), Object.keys( object2 ) );
+	for( let key of keys ) {
+		if( ! ( key in object1 ) || ! ( key in object2 ) ) return false;
+		if( typeof object1 !== typeof object2 ) return false;
+
+		if( isFunction( object1[ key ] ) ) continue;
+
+		let firstIsPlainObject:boolean = isPlainObject( object1[ key ] );
+		if( isArray( object1[ key ] ) && config.arrays ||
+			firstIsPlainObject && config.objects ||
+			isDate( object1[ key ] ) ) {
+
+			if( firstIsPlainObject ) {
+				let lengthStack:number = stack1.length;
+				while( lengthStack -- ) {
+					if( stack1[ lengthStack ] === object1[ key ] ) return stack2[ lengthStack ] === object2[ key ];
+				}
+
+				stack1.push( object1[ key ] );
+				stack2.push( object2[ key ] );
+			}
+
+			if( ! internalAreEqual( object1[ key ], object2[ key ], config, stack1, stack2 ) ) return false;
+
+			if( firstIsPlainObject ) {
+				stack1.pop();
+				stack2.pop();
+			}
+		} else {
+			if( object1[ key ] !== object2[ key ] ) return false;
+		}
+	}
+
+	return true;
 }
 
 class S {
@@ -190,9 +259,9 @@ class A {
 		return result;
 	}
 
-	static indexOf<T, W>( array:Array<T>, searchElement:W, comparator:( element:T, searchElement:W ) => boolean = ( a:T, b:W ) => <any> a === <any> b ):number {
+	static indexOf<T, W>( array:Array<T>, searchedElement:W, comparator:( element:T, searchedElement:W ) => boolean = ( a:T, b:W ) => <any> a === <any> b ):number {
 		for( let i:number = 0, length:number = array.length; i < length; ++ i ) {
-			if( comparator( array[ i ], searchElement ) ) return i;
+			if( comparator( array[ i ], searchedElement ) ) return i;
 		}
 		return - 1;
 	}

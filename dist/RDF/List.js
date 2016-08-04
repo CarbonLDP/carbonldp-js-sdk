@@ -4,8 +4,7 @@ var Factory = (function () {
     function Factory() {
     }
     Factory.is = function (value) {
-        return Utils.isObject(value)
-            && Utils.hasProperty(value, "@list")
+        return Utils.hasPropertyDefined(value, "@list")
             && Utils.isArray(value["@list"]);
     };
     return Factory;

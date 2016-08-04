@@ -6,7 +6,6 @@ export interface Class {
     "@value"?: string;
 }
 export declare class Util {
-    static areEqual(value1: Class, value2: Class): boolean;
     static getProperty(expandedObject: any, propertyURI: string, pointerLibrary: Pointer.Library): any;
     static getPropertyPointer(expandedObject: any, propertyURI: string, pointerLibrary: Pointer.Library): any;
     static getPropertyLiteral(expandedObject: any, propertyURI: string, literalType: string): any;

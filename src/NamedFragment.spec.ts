@@ -25,7 +25,7 @@ describe( module( "Carbon/NamedFragment" ), ():void => {
 
 	describe( clazz(
 		"Carbon.NamedFragment.Factory",
-		"Factory class for NamedFragment objects."
+		"Factory class for `Carbon.NamedFragment.Class` objects."
 	), ():void => {
 
 		it( isDefined(), ():void => {
@@ -43,8 +43,8 @@ describe( module( "Carbon/NamedFragment" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"hasClassProperties",
-			"Returns true if the object provided has the properties and functions of a NamedFragment object", [
-				{name: "resource", type: "Carbon.Fragment.Class"}
+			"Returns true if the object provided has the properties and methods of a `Carbon.NamedFragment.Class` object.", [
+				{name: "resource", type: "Carbon.Fragment.Class"},
 			],
 			{type: "boolean"}
 		), ():void => {
@@ -67,9 +67,9 @@ describe( module( "Carbon/NamedFragment" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"create",
-			"Creates a NamedFragment with the Slug provided for the document specified.", [
-				{name: "slug", type: "string"},
-				{name: "document", type: "Carbon.Document.Class"}
+			"Creates a NamedFragment with the slug provided", [
+				{name: "slug", type: "string", description: "The slug that will identify the NamedFragment."},
+				{name: "document", type: "Carbon.Document.Class", description: "The document that the NamedFragment will be part of."},
 			],
 			{type: "Carbon.NamedFragment.Class"}
 		), ():void => {
@@ -94,10 +94,11 @@ describe( module( "Carbon/NamedFragment" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"createFrom",
-			"Creates a NamedFragment from an Object with the Slug provided for the document specified.", [
-				{name: "object", type: "T extends Object"},
-				{name: "slug", type: "string"},
-				{name: "document", type: "Carbon.Document.Class"},
+			[ "T extends Object" ],
+			"Creates a NamedFragment from an Object with the slug provided.", [
+				{name: "object", type: "T", description: "Object that will be converted to a NamedFragment."},
+				{name: "slug", type: "string", description: "The slug that will identify the NamedFragment."},
+				{name: "document", type: "Carbon.Document.Class", description: "The document that the NamedFragment will be part of."},
 			],
 			{type: "T & Carbon.NamedFragment.Class"}
 		), ():void => {

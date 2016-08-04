@@ -24,8 +24,8 @@ describe( module(
 ), ():void => {
 
 	describe( clazz(
-		"Carbon.HTTP.Errors.client.RequestEntityTooLargeError",
-		"Error class that can be throw to indicate that the request entity is larger than the server is able to process"
+		"Carbon.HTTP.Errors.RequestEntityTooLargeError",
+		"Error class to indicate that the request entity is larger than the server is able to process."
 	), ():void => {
 
 		let response:Response;

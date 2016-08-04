@@ -18,5 +18,5 @@ export declare class Factory {
     static create(name: string, description?: string): Class;
     static createFrom<T extends Object>(object: T, name: string, description?: string): T & Class;
 }
-export default Class;
 export { Context, PersistedRole, Role, Roles };
+export default Class;

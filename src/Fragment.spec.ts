@@ -25,7 +25,7 @@ describe( module( "Carbon/Fragment" ), ():void => {
 
 	describe( clazz(
 		"Carbon.Fragment.Factory",
-		"Factory class for Fragment objects."
+		"Factory class for `Carbon.Fragment.Class` objects."
 	), ():void => {
 
 		it( isDefined(), ():void => {
@@ -36,8 +36,8 @@ describe( module( "Carbon/Fragment" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"hasClassProperties",
-			"Returns true if the object provided has the properties and functions of a Fragment object", [
-				{name: "resource", type: "Object"}
+			"Returns true if the object provided has the properties and methods of a `Class.Fragment.Class` object.", [
+				{name: "resource", type: "Object"},
 			],
 			{type: "boolean"}
 		), ():void => {
@@ -70,9 +70,9 @@ describe( module( "Carbon/Fragment" ), ():void => {
 		), ():void => {
 
 			it( hasSignature(
-				"Creates a Fragment with the ID provided for the document specified.", [
-					{name: "id", type: "string"},
-					{name: "document", type: "Carbon.Document.Class"}
+				"Creates a Fragment with the ID provided.", [
+					{name: "id", type: "string", description: "The ID of the fragment to create."},
+					{name: "document", type: "Carbon.Document.Class", description: "The document that the fragment will be part of."},
 				],
 				{type: "Carbon.Fragment.Class"}
 			), ():void => {
@@ -101,8 +101,8 @@ describe( module( "Carbon/Fragment" ), ():void => {
 			} );
 
 			it( hasSignature(
-				"Create a Blank Node Fragment since no ID is provided for the specified document.", [
-					{name: "document", type: "Carbon.Document.Class"}
+				"Creates a BlankNode since no ID is provided.", [
+					{name: "document", type: "Carbon.Document.Class", description: "The document that the fragment will be part of."},
 				],
 				{type: "Carbon.Fragment.Class"}
 			), ():void => {
@@ -141,10 +141,11 @@ describe( module( "Carbon/Fragment" ), ():void => {
 			}
 
 			it( hasSignature(
-				"Creates a Fragment from an Object with the ID provided for the document specified.", [
-					{name: "object", type: "T extends Object"},
-					{name: "id", type: "string"},
-					{name: "document", type: "Carbon.Document.Class"}
+				[ "T extends Object" ],
+				"Creates a Fragment from an Object with the ID provided.", [
+					{name: "object", type: "T", description: "Object that will be converted to a fragment."},
+					{name: "id", type: "string", description: "The ID that will be assigned to the fragment."},
+					{name: "document", type: "Carbon.Document.Class", description: "The document that the fragment will be part of."},
 				],
 				{type: "T & Carbon.Fragment.Class"}
 			), ():void => {
@@ -183,11 +184,12 @@ describe( module( "Carbon/Fragment" ), ():void => {
 			} );
 
 			it( hasSignature(
-				"Create a Blank Node Fragment since no ID is provided for the specified document.", [
-					{name: "object", type: "T extends Object"},
-					{name: "document", type: "Carbon.Document.Class"}
+				[ "T extends Object" ],
+				"Creates a BlankNode since no ID is provided.", [
+					{name: "object", type: "T", description: "Object that will be converted to a fragment."},
+					{name: "document", type: "Carbon.Document.Class", description: "The document that the fragment will be part of."},
 				],
-				{type: "Carbon.Fragment.Class"}
+				{type: "T & Carbon.Fragment.Class"}
 			), ():void => {
 				expect( Fragment.Factory.createFrom ).toBeDefined();
 				expect( Utils.isFunction( Fragment.Factory.createFrom ) ).toBe( true );

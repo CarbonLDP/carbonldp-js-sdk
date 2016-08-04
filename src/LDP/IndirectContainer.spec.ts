@@ -33,7 +33,7 @@ describe( module( "Carbon/LDP/IndirectContainer" ), ():void => {
 
 	describe( clazz(
 		"Carbon.IndirectContainer.Factory",
-		"Factory class for `Carbon.LDP.IndirectContainer.Class` objects"
+		"Factory class for `Carbon.LDP.IndirectContainer.Class` objects."
 	), ():void => {
 
 		it( isDefined(), ():void => {
@@ -44,7 +44,7 @@ describe( module( "Carbon/LDP/IndirectContainer" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"hasClassProperties",
-			"Returns true if the object provided has the properties that defines a `Carbon.LDP.IndirectContainer.Class` object", [
+			"Returns true if the object provided has the properties of a `Carbon.LDP.IndirectContainer.Class` object.", [
 				{name: "resource", type: "Object"}
 			],
 			{type: "boolean"}

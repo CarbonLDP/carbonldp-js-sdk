@@ -1,10 +1,11 @@
 (function() {
 	describe( "something", () => {
+
 		it( "something else", ( done ) => {
 			"use strict";
 
 			let carbon = new Carbon();
-			carbon.setSetting( "domain", "hri-carbonldp.base22.io" );
+			carbon.setSetting( "domain", "local.carbonldp.com" );
 
 			carbon.extendObjectSchema( {
 				"acl": "http://www.w3.org/ns/auth/acl#",
@@ -62,29 +63,19 @@
 			let appContext;
 			let resource;
 
-			carbon.auth.authenticate( "hri@honda.com", "honda" ).then( function() {
-				return carbon.apps.getContext( "hri-emi-web-app/" );
-			} ).then( ( _appContext ) => {
-				appContext = _appContext;
-				return appContext.documents.get( "something-that-doesnt-exist/" );
-			} ).then( ( [ _resource, response ] ) => {
-				resource = _resource;
-				resource.contains = [];
-				return saveAndRefresh( resource );
-			} ).then( ( [ _resource, response ] ) => {
-				done( "Save was successful when it shouldn't be" );
-			} ).catch( ( error ) => {
-				console.error( "%o", error );
+			carbon.auth.authenticate( "roddolf@carbonldp.com", "hello" ).then( function( credentials ) {
+				return carbon.apps.getAllContexts();
+			} ).then( ( _appContexts ) => {
+				expect( _appContexts.length ).toBe( 1 );
+				appContext = _appContexts[ 0 ];
 
-				expect( "errors" in error ).toEqual( true );
-				expect( error.errors ).toBeDefined( true );
-				expect( Carbon.Utils.isArray( error.errors ) ).toEqual( true );
+				expect( appContext instanceof Carbon.App.Context ).toBe( true );
+				expect( Carbon.PersistedDocument.Factory.is( appContext.app ) ).toBe( true );
 
-				expect( "requestID" in error ).toEqual( true );
-				expect( error.requestID ).toBeDefined( true );
-				expect( Carbon.Utils.isString( error.requestID ) ).toEqual( true );
-
+				console.log( _appContexts );
 				done();
+			} ).catch( ( error ) => {
+				done.fail( error );
 			} );
 
 			function saveAndRefresh( persistedDocument ) {
