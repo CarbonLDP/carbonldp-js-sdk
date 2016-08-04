@@ -5,23 +5,29 @@ import * as Utils from "./Utils";
 
 export const RDF_CLASS:string = NS.C.Class.AccessPoint;
 
-export interface Class extends LDP.DirectContainer.Class {
+export interface Class {
+	hasMemberRelation:string | Pointer.Class;
+	isMemberOfRelation?:string | Pointer.Class;
+	insertedContentRelation?: string | Pointer.Class;
+}
+
+export interface DocumentClass extends LDP.DirectContainer.Class {
+	membershipResource:Pointer.Class;
+	hasMemberRelation:Pointer.Class;
 	insertedContentRelation?:Pointer.Class;
 }
 
 export class Factory {
-	static hasClassProperties( resource:Object ):boolean {
-		return (
-			Utils.hasPropertyDefined( resource, "membershipResource" )
-		);
+	static is( object:Object ):boolean {
+		return LDP.DirectContainer.Factory.is( object );
 	}
 
-	static create( membershipResource:Pointer.Class, hasMemberRelation:string | Pointer.Class, memberOfRelation?:string | Pointer.Class ):Class {
-		return Factory.createFrom( {}, membershipResource, hasMemberRelation, memberOfRelation );
+	static create( membershipResource:Pointer.Class, hasMemberRelation:string | Pointer.Class, isMemberOfRelation?:string | Pointer.Class ):DocumentClass {
+		return Factory.createFrom( {}, membershipResource, hasMemberRelation, isMemberOfRelation );
 	}
 
-	static createFrom<T extends Object>( object:T, membershipResource:Pointer.Class, hasMemberRelation:string | Pointer.Class, memberOfRelation?:string | Pointer.Class ):T & Class {
-		return <any> LDP.DirectContainer.Factory.createFrom<T>( object, membershipResource, hasMemberRelation, memberOfRelation );
+	static createFrom<T extends Object>( object:T, membershipResource:Pointer.Class, hasMemberRelation:string | Pointer.Class, isMemberOfRelation?:string | Pointer.Class ):T & DocumentClass {
+		return <any> LDP.DirectContainer.Factory.createFrom<T>( object, membershipResource, hasMemberRelation, isMemberOfRelation );
 	}
 }
 

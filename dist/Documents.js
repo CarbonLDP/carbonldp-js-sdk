@@ -3,12 +3,15 @@ var Errors = require("./Errors");
 var HTTP = require("./HTTP");
 var RDF = require("./RDF");
 var Utils = require("./Utils");
+var AccessPoint = require("./AccessPoint");
 var ACL = require("./Auth/ACL");
 var Document = require("./Document");
 var FreeResources = require("./FreeResources");
 var JSONLDConverter = require("./JSONLDConverter");
 var PersistedACL = require("./Auth/PersistedACL");
 var PersistedDocument = require("./PersistedDocument");
+var PersistedProtectedDocument = require("./PersistedProtectedDocument");
+var ProtectedDocument = require("./ProtectedDocument");
 var Pointer = require("./Pointer");
 var NS = require("./NS");
 var ObjectSchema = require("./ObjectSchema");
@@ -40,8 +43,12 @@ var Documents = (function () {
         if (RDF.URI.Util.isBNodeID(id))
             return false;
         if (!!this.context) {
+            if (RDF.URI.Util.isPrefixed(id))
+                id = ObjectSchema.Digester.resolvePrefixedURI(new RDF.URI.Class(id), this.context.getObjectSchema()).stringValue;
             var baseURI = this.context.getBaseURI();
-            if (RDF.URI.Util.isAbsolute(id) && RDF.URI.Util.isBaseOf(baseURI, id))
+            if (RDF.URI.Util.isRelative(id))
+                return true;
+            if (RDF.URI.Util.isBaseOf(baseURI, id))
                 return true;
         }
         else {
@@ -50,7 +57,7 @@ var Documents = (function () {
         }
         if (!!this.context && !!this.context.parentContext)
             return this.context.parentContext.documents.inScope(id);
-        return false;
+        return RDF.URI.Util.isRelative(id);
     };
     Documents.prototype.hasPointer = function (id) {
         id = this.getPointerID(id);
@@ -96,7 +103,7 @@ var Documents = (function () {
             var rdfDocument = _this.getRDFDocument(uri, rdfDocuments, response);
             if (rdfDocument === null)
                 throw new HTTP.Errors.BadResponseError("No document was returned.", response);
-            var document = _this.getPersistedDocument(rdfDocument, response);
+            var document = _this._getPersistedDocument(rdfDocument, response);
             document._etag = eTag;
             _this.documentsBeingResolved.delete(pointerID);
             return [document, response];
@@ -114,17 +121,14 @@ var Documents = (function () {
             return Promise.reject(error);
         });
     };
-    Documents.prototype.createChild = function (parentURI, slugOrChildDocument, childDocumentOrRequestOptions, requestOptions) {
+    Documents.prototype.createChild = function (parentURI, childObject, slugOrRequestOptions, requestOptions) {
         var _this = this;
-        if (childDocumentOrRequestOptions === void 0) { childDocumentOrRequestOptions = {}; }
         if (requestOptions === void 0) { requestOptions = {}; }
-        var slug = Utils.isString(slugOrChildDocument) ? slugOrChildDocument : null;
-        var childDocument = !Utils.isString(slugOrChildDocument) ? slugOrChildDocument : childDocumentOrRequestOptions;
-        requestOptions = !Utils.isString(slugOrChildDocument) ? childDocumentOrRequestOptions : requestOptions;
-        if (PersistedDocument.Factory.is(childDocument))
-            return Promise.reject(new Errors.IllegalArgumentError("The childDocument provided has been already persisted."));
-        if (!Document.Factory.is(childDocument))
-            childDocument = Document.Factory.createFrom(childDocument);
+        var slug = Utils.isString(slugOrRequestOptions) ? slugOrRequestOptions : null;
+        requestOptions = !Utils.isString(slugOrRequestOptions) && !!slugOrRequestOptions ? slugOrRequestOptions : requestOptions;
+        if (PersistedDocument.Factory.is(childObject))
+            return Promise.reject(new Errors.IllegalArgumentError("The child provided has been already persisted."));
+        var childDocument = Document.Factory.is(childObject) ? childObject : Document.Factory.createFrom(childObject);
         parentURI = this.getRequestURI(parentURI);
         this.setDefaultRequestOptions(requestOptions, NS.LDP.Class.Container);
         HTTP.Request.Util.setContentTypeHeader("application/ld+json", requestOptions);
@@ -136,21 +140,38 @@ var Documents = (function () {
                 return Promise.reject(new Errors.IllegalArgumentError("The childDocument's URI is not relative to the parentURI specified"));
             }
         }
+        if (childDocument["__CarbonSDK_InProgressOfPersisting"])
+            return Promise.reject(new Errors.IllegalArgumentError("The childDocument is already being persisted."));
+        Object.defineProperty(childDocument, "__CarbonSDK_InProgressOfPersisting", { configurable: true, enumerable: false, writable: false, value: true });
         var body = childDocument.toJSON(this, this.jsonldConverter);
-        if (slug !== null)
+        if (!!slug)
             HTTP.Request.Util.setSlug(slug, requestOptions);
         return HTTP.Request.Service.post(parentURI, body, requestOptions).then(function (response) {
+            delete childDocument["__CarbonSDK_InProgressOfPersisting"];
             var locationHeader = response.getHeader("Location");
             if (locationHeader === null || locationHeader.values.length < 1)
                 throw new HTTP.Errors.BadResponseError("The response is missing a Location header.", response);
             if (locationHeader.values.length !== 1)
                 throw new HTTP.Errors.BadResponseError("The response contains more than one Location header.", response);
-            var locationURI = locationHeader.values[0].toString();
-            var pointer = _this.getPointer(locationURI);
+            var localID = _this.getPointerID(locationHeader.values[0].toString());
+            var persistedDocument = PersistedDocument.Factory.decorate(_this.createPointerFrom(childDocument, localID), _this);
+            _this.pointers.set(localID, persistedDocument);
             return [
-                pointer,
+                persistedDocument,
                 response,
             ];
+        });
+    };
+    Documents.prototype.createChildAndRetrieve = function (parentURI, childObject, slugOrRequestOptions, requestOptions) {
+        var _this = this;
+        var createResponse;
+        return this.createChild(parentURI, childObject, slugOrRequestOptions, requestOptions).then(function (_a) {
+            var document = _a[0], response = _a[1];
+            createResponse = response;
+            return _this.get(document.id);
+        }).then(function (_a) {
+            var persistedDocument = _a[0], response = _a[1];
+            return [persistedDocument, [createResponse, response]];
         });
     };
     Documents.prototype.listChildren = function (parentURI, requestOptions) {
@@ -178,7 +199,8 @@ var Documents = (function () {
                 return [[], response];
             var documentResource = _this.getDocumentResource(rdfDocument, response);
             var childPointers = RDF.Value.Util.getPropertyPointers(documentResource, NS.LDP.Predicate.contains, _this);
-            return [childPointers, response];
+            var persistedChildPointers = childPointers.map(function (pointer) { return PersistedDocument.Factory.decorate(pointer, _this); });
+            return [persistedChildPointers, response];
         });
     };
     Documents.prototype.getChildren = function (parentURI, retPrefReqOpt, requestOptions) {
@@ -210,55 +232,55 @@ var Documents = (function () {
             return [resources, response];
         });
     };
-    Documents.prototype.createAccessPoint = function (documentURIOrAccessPoint, accessPointOrSlug, slugOrRequestOptions, requestOptions) {
+    Documents.prototype.createAccessPoint = function (documentURI, accessPoint, slugOrRequestOptions, requestOptions) {
         var _this = this;
-        if (slugOrRequestOptions === void 0) { slugOrRequestOptions = null; }
         if (requestOptions === void 0) { requestOptions = {}; }
-        var documentURI = Utils.isString(documentURIOrAccessPoint) ? documentURIOrAccessPoint : null;
-        var accessPoint = !Utils.isString(documentURIOrAccessPoint) ? documentURIOrAccessPoint : accessPointOrSlug;
-        var slug = Utils.isString(accessPointOrSlug) ? accessPointOrSlug : slugOrRequestOptions;
-        requestOptions = !Utils.isString(slugOrRequestOptions) && slugOrRequestOptions !== null ? slugOrRequestOptions : requestOptions;
-        if (documentURI === null)
-            documentURI = accessPoint.membershipResource.id;
+        var slug = Utils.isString(slugOrRequestOptions) ? slugOrRequestOptions : null;
+        requestOptions = !Utils.isString(slugOrRequestOptions) && !!slugOrRequestOptions ? slugOrRequestOptions : requestOptions;
         documentURI = this.getRequestURI(documentURI);
         this.setDefaultRequestOptions(requestOptions, NS.LDP.Class.RDFSource);
         HTTP.Request.Util.setContentTypeHeader("application/ld+json", requestOptions);
-        if (accessPoint.membershipResource.id !== documentURI)
-            return Promise.reject(new Errors.IllegalArgumentError("The documentURI must be the same as the accessPoint's membershipResource"));
         if (PersistedDocument.Factory.is(accessPoint))
             return Promise.reject(new Errors.IllegalArgumentError("The accessPoint provided has been already persisted."));
-        if (accessPoint.id) {
-            var childURI = accessPoint.id;
+        var accessPointDocument = AccessPoint.Factory.is(accessPoint) ? accessPoint
+            : AccessPoint.Factory.createFrom(accessPoint, this.getPointer(documentURI), accessPoint.hasMemberRelation, accessPoint.isMemberOfRelation);
+        if (accessPointDocument.membershipResource.id !== documentURI)
+            return Promise.reject(new Errors.IllegalArgumentError("The documentURI must be the same as the accessPoint's membershipResource"));
+        if (accessPointDocument.id) {
+            var childURI = accessPointDocument.id;
             if (!!this.context)
                 childURI = this.context.resolve(childURI);
             if (!RDF.URI.Util.isBaseOf(documentURI, childURI)) {
                 return Promise.reject(new Errors.IllegalArgumentError("The accessPoint's URI is not relative to the parentURI specified"));
             }
         }
-        var body = accessPoint.toJSON(this, this.jsonldConverter);
-        if (slug !== null)
+        if (accessPoint["__CarbonSDK_InProgressOfPersisting"])
+            return Promise.reject(new Errors.IllegalArgumentError("The accessPoint is already being persisted."));
+        Object.defineProperty(accessPoint, "__CarbonSDK_InProgressOfPersisting", { configurable: true, enumerable: false, writable: false, value: true });
+        var body = accessPointDocument.toJSON(this, this.jsonldConverter);
+        if (!!slug)
             HTTP.Request.Util.setSlug(slug, requestOptions);
         return HTTP.Request.Service.post(documentURI, body, requestOptions).then(function (response) {
+            delete accessPoint["__CarbonSDK_InProgressOfPersisting"];
             var locationHeader = response.getHeader("Location");
             if (locationHeader === null || locationHeader.values.length < 1)
                 throw new HTTP.Errors.BadResponseError("The response is missing a Location header.", response);
             if (locationHeader.values.length !== 1)
                 throw new HTTP.Errors.BadResponseError("The response contains more than one Location header.", response);
-            var locationURI = locationHeader.values[0].toString();
-            var pointer = _this.getPointer(locationURI);
+            var localID = _this.getPointerID(locationHeader.values[0].toString());
+            var persistedAccessPoint = PersistedDocument.Factory.decorate(_this.createPointerFrom(accessPointDocument, localID), _this);
+            _this.pointers.set(localID, persistedAccessPoint);
             return [
-                pointer,
+                persistedAccessPoint,
                 response,
             ];
         });
     };
-    Documents.prototype.upload = function (parentURI, slugOrData, dataOrRequestOptions, requestOptions) {
+    Documents.prototype.upload = function (parentURI, data, slugOrRequestOptions, requestOptions) {
         var _this = this;
-        if (dataOrRequestOptions === void 0) { dataOrRequestOptions = {}; }
         if (requestOptions === void 0) { requestOptions = {}; }
-        var slug = Utils.isString(slugOrData) ? slugOrData : null;
-        var data = !Utils.isString(slugOrData) ? slugOrData : dataOrRequestOptions;
-        requestOptions = !Utils.isString(slugOrData) ? dataOrRequestOptions : requestOptions;
+        var slug = Utils.isString(slugOrRequestOptions) ? slugOrRequestOptions : null;
+        requestOptions = !Utils.isString(slugOrRequestOptions) && !!slugOrRequestOptions ? slugOrRequestOptions : requestOptions;
         if (typeof Blob !== "undefined") {
             if (!(data instanceof Blob))
                 return Promise.reject(new Errors.IllegalArgumentError("The data is not a valid Blob object."));
@@ -273,7 +295,7 @@ var Documents = (function () {
         }
         parentURI = this.getRequestURI(parentURI);
         this.setDefaultRequestOptions(requestOptions, NS.LDP.Class.Container);
-        if (slug !== null)
+        if (!!slug)
             HTTP.Request.Util.setSlug(slug, requestOptions);
         return HTTP.Request.Service.post(parentURI, data, requestOptions).then(function (response) {
             var locationHeader = response.getHeader("Location");
@@ -320,9 +342,12 @@ var Documents = (function () {
                 throw new HTTP.Errors.BadResponseError("No document was returned.", response);
             var documentResource = _this.getDocumentResource(rdfDocument, response);
             var membershipResource = _this.getMembershipResource(documentResource, rdfDocuments, response);
+            if (membershipResource === null)
+                return [[], response];
             var hasMemberRelation = RDF.Node.Util.getPropertyURI(documentResource, NS.LDP.Predicate.hasMemberRelation);
             var memberPointers = RDF.Value.Util.getPropertyPointers(membershipResource, hasMemberRelation, _this);
-            return [memberPointers, response];
+            var persistedMemberPointers = memberPointers.map(function (pointer) { return PersistedDocument.Factory.decorate(pointer, _this); });
+            return [persistedMemberPointers, response];
         });
     };
     Documents.prototype.getMembers = function (uri, nonReadRetPrefReqOpt, retPrefReqOpt, requestOptions) {
@@ -362,6 +387,8 @@ var Documents = (function () {
                 throw new HTTP.Errors.BadResponseError("No document was returned.", response);
             var containerResource = _this.getDocumentResource(rdfDocument, response);
             var membershipResource = _this.getMembershipResource(containerResource, rdfDocuments, response);
+            if (membershipResource === null)
+                return [[], response];
             rdfDocuments = rdfDocuments.filter(function (targetRDFDocument) {
                 return !RDF.Node.Util.areEqual(targetRDFDocument, containerResource)
                     && !RDF.Node.Util.areEqual(targetRDFDocument, membershipResource);
@@ -381,7 +408,7 @@ var Documents = (function () {
             var member = members_1[_i];
             member = Utils.isString(member) ? this.getPointer(member) : member;
             if (!Pointer.Factory.is(member))
-                return Promise.reject(new Errors.IllegalArgumentError("No Carbon.Pointer or string URI provided."));
+                return Promise.reject(new Errors.IllegalArgumentError("No Carbon.Pointer or URI provided."));
             pointers.push(member);
         }
         documentURI = this.getRequestURI(documentURI);
@@ -402,7 +429,7 @@ var Documents = (function () {
             var member = members_2[_i];
             member = Utils.isString(member) ? this.getPointer(member) : member;
             if (!Pointer.Factory.is(member))
-                return Promise.reject(new Errors.IllegalArgumentError("No Carbon.Pointer or string URI provided."));
+                return Promise.reject(new Errors.IllegalArgumentError("No Carbon.Pointer or URI provided."));
             pointers.push(member);
         }
         documentURI = this.getRequestURI(documentURI);
@@ -466,16 +493,21 @@ var Documents = (function () {
             var rdfDocument = _this.getRDFDocument(uri, rdfDocuments, response);
             if (rdfDocument === null)
                 throw new HTTP.Errors.BadResponseError("No document was returned.", response);
-            var updatedPersistedDocument = _this.getPersistedDocument(rdfDocument, response);
+            var updatedPersistedDocument = _this._getPersistedDocument(rdfDocument, response);
             updatedPersistedDocument._etag = eTag;
             return [updatedPersistedDocument, response];
         });
     };
     Documents.prototype.delete = function (documentURI, requestOptions) {
+        var _this = this;
         if (requestOptions === void 0) { requestOptions = {}; }
         documentURI = this.getRequestURI(documentURI);
         this.setDefaultRequestOptions(requestOptions, NS.LDP.Class.RDFSource);
-        return HTTP.Request.Service.delete(documentURI, requestOptions);
+        return HTTP.Request.Service.delete(documentURI, requestOptions).then(function (response) {
+            var pointerID = _this.getPointerID(documentURI);
+            _this.pointers.delete(pointerID);
+            return response;
+        });
     };
     Documents.prototype.getDownloadURL = function (documentURI, requestOptions) {
         return this.context.auth.getAuthenticatedURL(documentURI, requestOptions);
@@ -490,66 +522,42 @@ var Documents = (function () {
     };
     Documents.prototype.executeRawASKQuery = function (documentURI, askQuery, requestOptions) {
         if (requestOptions === void 0) { requestOptions = {}; }
-        if (!RDF.URI.Util.isAbsolute(documentURI)) {
-            if (!this.context)
-                throw new Errors.IllegalArgumentError("This Documents instance doesn't support relative URIs.");
-            documentURI = this.context.resolve(documentURI);
-        }
+        documentURI = this.getRequestURI(documentURI);
         if (this.context && this.context.auth.isAuthenticated())
             this.context.auth.addAuthentication(requestOptions);
         return SPARQL.Service.executeRawASKQuery(documentURI, askQuery, requestOptions);
     };
     Documents.prototype.executeASKQuery = function (documentURI, askQuery, requestOptions) {
         if (requestOptions === void 0) { requestOptions = {}; }
-        if (!RDF.URI.Util.isAbsolute(documentURI)) {
-            if (!this.context)
-                throw new Errors.IllegalArgumentError("This Documents instance doesn't support relative URIs.");
-            documentURI = this.context.resolve(documentURI);
-        }
+        documentURI = this.getRequestURI(documentURI);
         if (this.context && this.context.auth.isAuthenticated())
             this.context.auth.addAuthentication(requestOptions);
         return SPARQL.Service.executeASKQuery(documentURI, askQuery, requestOptions);
     };
     Documents.prototype.executeRawSELECTQuery = function (documentURI, selectQuery, requestOptions) {
         if (requestOptions === void 0) { requestOptions = {}; }
-        if (!RDF.URI.Util.isAbsolute(documentURI)) {
-            if (!this.context)
-                throw new Errors.IllegalArgumentError("This Documents instance doesn't support relative URIs.");
-            documentURI = this.context.resolve(documentURI);
-        }
+        documentURI = this.getRequestURI(documentURI);
         if (this.context && this.context.auth.isAuthenticated())
             this.context.auth.addAuthentication(requestOptions);
         return SPARQL.Service.executeRawSELECTQuery(documentURI, selectQuery, requestOptions);
     };
     Documents.prototype.executeSELECTQuery = function (documentURI, selectQuery, requestOptions) {
         if (requestOptions === void 0) { requestOptions = {}; }
-        if (!RDF.URI.Util.isAbsolute(documentURI)) {
-            if (!this.context)
-                throw new Errors.IllegalArgumentError("This Documents instance doesn't support relative URIs.");
-            documentURI = this.context.resolve(documentURI);
-        }
+        documentURI = this.getRequestURI(documentURI);
         if (this.context && this.context.auth.isAuthenticated())
             this.context.auth.addAuthentication(requestOptions);
         return SPARQL.Service.executeSELECTQuery(documentURI, selectQuery, this, requestOptions);
     };
     Documents.prototype.executeRawCONSTRUCTQuery = function (documentURI, constructQuery, requestOptions) {
         if (requestOptions === void 0) { requestOptions = {}; }
-        if (!RDF.URI.Util.isAbsolute(documentURI)) {
-            if (!this.context)
-                throw new Errors.IllegalArgumentError("This Documents instance doesn't support relative URIs.");
-            documentURI = this.context.resolve(documentURI);
-        }
+        documentURI = this.getRequestURI(documentURI);
         if (this.context && this.context.auth.isAuthenticated())
             this.context.auth.addAuthentication(requestOptions);
         return SPARQL.Service.executeRawCONSTRUCTQuery(documentURI, constructQuery, requestOptions);
     };
     Documents.prototype.executeRawDESCRIBEQuery = function (documentURI, describeQuery, requestOptions) {
         if (requestOptions === void 0) { requestOptions = {}; }
-        if (!RDF.URI.Util.isAbsolute(documentURI)) {
-            if (!this.context)
-                throw new Errors.IllegalArgumentError("This Documents instance doesn't support relative URIs.");
-            documentURI = this.context.resolve(documentURI);
-        }
+        documentURI = this.getRequestURI(documentURI);
         if (this.context && this.context.auth.isAuthenticated())
             this.context.auth.addAuthentication(requestOptions);
         return SPARQL.Service.executeRawDESCRIBEQuery(documentURI, describeQuery, requestOptions);
@@ -564,6 +572,26 @@ var Documents = (function () {
         if (this.context && this.context.auth.isAuthenticated())
             this.context.auth.addAuthentication(requestOptions);
         return SPARQL.Service.executeUPDATE(documentURI, update, requestOptions);
+    };
+    Documents.prototype._getPersistedDocument = function (rdfDocument, response) {
+        var documentResource = this.getDocumentResource(rdfDocument, response);
+        var fragmentResources = RDF.Document.Util.getBNodeResources(rdfDocument);
+        fragmentResources = fragmentResources.concat(RDF.Document.Util.getFragmentResources(rdfDocument));
+        var uri = documentResource["@id"];
+        var documentPointer = this.getPointer(uri);
+        if (documentPointer.isResolved()) {
+            this.updatePersistedDocument(documentPointer, documentResource, fragmentResources);
+        }
+        else {
+            this.createPersistedDocument(documentPointer, documentResource, fragmentResources);
+        }
+        return documentPointer;
+    };
+    Documents.prototype._getFreeResources = function (nodes) {
+        var freeResourcesDocument = FreeResources.Factory.create(this);
+        var resources = nodes.map(function (node) { return freeResourcesDocument.createResource(node["@id"]); });
+        this.compact(nodes, resources, freeResourcesDocument);
+        return freeResourcesDocument;
     };
     Documents.prototype.getRDFDocument = function (requestURL, rdfDocuments, response) {
         rdfDocuments = rdfDocuments.filter(function (rdfDocument) { return rdfDocument["@id"] === requestURL; });
@@ -583,6 +611,8 @@ var Documents = (function () {
         if (RDF.URI.Util.isBNodeID(uri))
             throw new Errors.IllegalArgumentError("BNodes cannot be fetched directly.");
         if (!!this.context) {
+            if (RDF.URI.Util.isPrefixed(uri))
+                uri = ObjectSchema.Digester.resolvePrefixedURI(new RDF.URI.Class(uri), this.context.getObjectSchema()).stringValue;
             if (!RDF.URI.Util.isRelative(uri)) {
                 var baseURI = this.context.getBaseURI();
                 if (!RDF.URI.Util.isBaseOf(baseURI, uri))
@@ -590,19 +620,24 @@ var Documents = (function () {
                 return uri.substring(baseURI.length);
             }
             else {
-                return uri;
+                return uri[0] === "/" ? uri.substr(1) : uri;
             }
         }
         else {
             if (RDF.URI.Util.isRelative(uri))
                 throw new Errors.IllegalArgumentError("This Documents instance doesn't support relative URIs.");
+            if (RDF.URI.Util.isPrefixed(uri))
+                throw new Errors.IllegalArgumentError("This Documents instance doesn't support prefixed URIs.");
             return uri;
         }
     };
     Documents.prototype.createPointer = function (localID) {
+        return this.createPointerFrom({}, localID);
+    };
+    Documents.prototype.createPointerFrom = function (object, localID) {
         var _this = this;
         var id = !!this.context ? this.context.resolve(localID) : localID;
-        var pointer = Pointer.Factory.create(id);
+        var pointer = Pointer.Factory.createFrom(object, id);
         Object.defineProperty(pointer, "resolve", {
             writable: false,
             enumerable: false,
@@ -631,36 +666,27 @@ var Documents = (function () {
     };
     Documents.prototype.getDigestedObjectSchemaForExpandedObject = function (expandedObject) {
         var types = RDF.Node.Util.getTypes(expandedObject);
-        return this.getDigestedObjectSchema(types);
+        return this.getDigestedObjectSchema(types, expandedObject["@id"]);
     };
     Documents.prototype.getDigestedObjectSchemaForDocument = function (document) {
-        var types = this.getDocumentTypes(document);
-        return this.getDigestedObjectSchema(types);
+        var types = Resource.Util.getTypes(document);
+        return this.getDigestedObjectSchema(types, document.id);
     };
-    Documents.prototype.getDigestedObjectSchema = function (objectTypes) {
-        var digestedSchema;
-        if (!!this.context) {
-            var typesDigestedObjectSchemas = [this.context.getObjectSchema()];
-            for (var _i = 0, objectTypes_1 = objectTypes; _i < objectTypes_1.length; _i++) {
-                var type = objectTypes_1[_i];
-                if (this.context.getObjectSchema(type))
-                    typesDigestedObjectSchemas.push(this.context.getObjectSchema(type));
-            }
-            digestedSchema = ObjectSchema.Digester.combineDigestedObjectSchemas(typesDigestedObjectSchemas);
-            var vocab = this.context.getSetting("vocabulary");
-            if (vocab) {
-                digestedSchema.vocab = this.context.resolve(vocab);
-            }
+    Documents.prototype.getDigestedObjectSchema = function (objectTypes, objectID) {
+        if (!this.context)
+            return new ObjectSchema.DigestedObjectSchema();
+        var objectSchemas = [this.context.getObjectSchema()];
+        if (Utils.isDefined(objectID) && !RDF.URI.Util.hasFragment(objectID) && !RDF.URI.Util.isBNodeID(objectID))
+            objectSchemas.push(Documents._documentSchema);
+        for (var _i = 0, objectTypes_1 = objectTypes; _i < objectTypes_1.length; _i++) {
+            var type = objectTypes_1[_i];
+            if (this.context.hasObjectSchema(type))
+                objectSchemas.push(this.context.getObjectSchema(type));
         }
-        else {
-            digestedSchema = new ObjectSchema.DigestedObjectSchema();
-        }
+        var digestedSchema = ObjectSchema.Digester.combineDigestedObjectSchemas(objectSchemas);
+        if (this.context.hasSetting("vocabulary"))
+            digestedSchema.vocab = this.context.resolve(this.context.getSetting("vocabulary"));
         return digestedSchema;
-    };
-    Documents.prototype.getDocumentTypes = function (document) {
-        if (!document.types)
-            return [];
-        return document.types;
     };
     Documents.prototype.updateObject = function (target, source) {
         var keys = Utils.A.joinWithoutDuplicates(Object.keys(source), Object.keys(target));
@@ -695,6 +721,13 @@ var Documents = (function () {
                 throw new Errors.IllegalArgumentError("This Documents instance doesn't support relative URIs.");
             uri = this.context.resolve(uri);
         }
+        else if (RDF.URI.Util.isPrefixed(uri)) {
+            if (!this.context)
+                throw new Errors.IllegalArgumentError("This Documents instance doesn't support prefixed URIs.");
+            uri = ObjectSchema.Digester.resolvePrefixedURI(new RDF.URI.Class(uri), this.context.getObjectSchema()).stringValue;
+            if (RDF.URI.Util.isPrefixed(uri))
+                throw new Errors.IllegalArgumentError("The prefixed URI \"" + uri + "\" could not be resolved.");
+        }
         return uri;
     };
     Documents.prototype.setDefaultRequestOptions = function (requestOptions, interactionModel) {
@@ -720,43 +753,29 @@ var Documents = (function () {
         else {
             var membershipResourceDocument = this.getRDFDocument(membershipResourceURI, rdfDocuments, response);
             if (membershipResourceDocument === null)
-                throw new HTTP.Errors.BadResponseError("The membershipResource document was not included in the response.", response);
+                return null;
             membershipResource = this.getDocumentResource(membershipResourceDocument, response);
         }
         return membershipResource;
     };
-    Documents.prototype.getPersistedDocument = function (rdfDocument, response) {
-        var documentResource = this.getDocumentResource(rdfDocument, response);
-        var fragmentResources = RDF.Document.Util.getBNodeResources(rdfDocument);
-        fragmentResources = fragmentResources.concat(RDF.Document.Util.getFragmentResources(rdfDocument));
-        var uri = documentResource["@id"];
-        var documentPointer = this.getPointer(uri);
-        if (documentPointer.isResolved()) {
-            this.updatePersistedDocument(documentPointer, documentResource, fragmentResources);
-        }
-        else {
-            this.createPersistedDocument(documentPointer, documentResource, fragmentResources);
-        }
-        return documentPointer;
-    };
     Documents.prototype.createPersistedDocument = function (documentPointer, documentResource, fragmentResources) {
-        var document = PersistedDocument.Factory.createFrom(documentPointer, documentPointer.id, this);
+        var persistedDocument = PersistedDocument.Factory.decorate(documentPointer, this);
         var fragments = [];
         for (var _i = 0, fragmentResources_1 = fragmentResources; _i < fragmentResources_1.length; _i++) {
             var fragmentResource = fragmentResources_1[_i];
-            fragments.push(document.createFragment(fragmentResource["@id"]));
+            fragments.push(persistedDocument.createFragment(fragmentResource["@id"]));
         }
-        this.compact(documentResource, document, document);
-        this.compact(fragmentResources, fragments, document);
-        document._syncSnapshot();
+        this.compact(documentResource, persistedDocument, persistedDocument);
+        this.compact(fragmentResources, fragments, persistedDocument);
+        persistedDocument._syncSnapshot();
         fragments.forEach(function (fragment) { return fragment._syncSnapshot(); });
-        document._syncSavedFragments();
-        document._resolved = true;
-        if (LDP.Container.Factory.hasRDFClass(document))
-            LDP.PersistedContainer.Factory.decorate(document);
-        if (Resource.Util.hasType(document, ACL.RDF_CLASS))
-            PersistedACL.Factory.decorate(document);
-        return document;
+        persistedDocument._syncSavedFragments();
+        persistedDocument._resolved = true;
+        if (Resource.Util.hasType(persistedDocument, ProtectedDocument.RDF_CLASS))
+            PersistedProtectedDocument.Factory.decorate(persistedDocument);
+        if (Resource.Util.hasType(persistedDocument, ACL.RDF_CLASS))
+            PersistedACL.Factory.decorate(persistedDocument);
+        return persistedDocument;
     };
     Documents.prototype.updatePersistedDocument = function (persistedDocument, documentResource, fragmentResources) {
         var namedFragmentsMap = new Map();
@@ -771,7 +790,7 @@ var Documents = (function () {
         for (var _i = 0, fragmentResources_2 = fragmentResources; _i < fragmentResources_2.length; _i++) {
             var fragmentResource = fragmentResources_2[_i];
             var fragment = this.getAssociatedFragment(blankNodesArray, namedFragmentsMap, fragmentResource);
-            fragment = persistedDocument.createFragment(fragmentResource["@id"], fragment || {});
+            fragment = persistedDocument.createFragment(fragment || {}, fragmentResource["@id"]);
             newFragments.push([fragment, fragmentResource]);
         }
         for (var _a = 0, newFragments_1 = newFragments; _a < newFragments_1.length; _a++) {
@@ -786,13 +805,13 @@ var Documents = (function () {
     };
     Documents.prototype.getPersistedMetadataResources = function (freeNodes, rdfDocuments, response) {
         var _this = this;
-        var freeResources = this.getFreeResources(freeNodes);
+        var freeResources = this._getFreeResources(freeNodes);
         var descriptionResources = freeResources.getResources().filter(LDP.ResponseMetadata.Factory.hasRDFClass);
         if (descriptionResources.length === 0)
             return [];
         if (descriptionResources.length > 1)
             throw new HTTP.Errors.BadResponseError("The response contained multiple " + LDP.ResponseMetadata.RDF_CLASS + " objects.", response);
-        rdfDocuments.forEach(function (rdfDocument) { return _this.getPersistedDocument(rdfDocument, response); });
+        rdfDocuments.forEach(function (rdfDocument) { return _this._getPersistedDocument(rdfDocument, response); });
         var responseMetadata = descriptionResources[0];
         return responseMetadata.resourcesMetadata.map(function (resourceMetadata) {
             var resource = resourceMetadata.resource;
@@ -800,12 +819,7 @@ var Documents = (function () {
             return resource;
         });
     };
-    Documents.prototype.getFreeResources = function (nodes) {
-        var freeResourcesDocument = FreeResources.Factory.create(this);
-        var resources = nodes.map(function (node) { return freeResourcesDocument.createResource(node["@id"]); });
-        this.compact(nodes, resources, freeResourcesDocument);
-        return freeResourcesDocument;
-    };
+    Documents._documentSchema = ObjectSchema.Digester.digestSchema(Document.SCHEMA);
     return Documents;
 }());
 Object.defineProperty(exports, "__esModule", { value: true });

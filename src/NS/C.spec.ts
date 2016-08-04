@@ -33,13 +33,13 @@ describe( module(
 
 	describe( clazz(
 		"Carbon.NS.C.Class",
-		"Class that contains objects defined by the Carbon Platform"
+		"Class that contains classes defined by the Carbon Platform."
 	), ():void => {
 
 		it( isDefined(), ():void => {
 			expect( C.Class ).toBeDefined();
 			expect( Utils.isFunction( C.Class ) ).toBe( true );
-			expect( Object.keys( C.Class ).length ).toBe( 17 );
+			expect( Object.keys( C.Class ).length ).toBe( 18 );
 		} );
 
 		it( hasProperty(
@@ -62,6 +62,17 @@ describe( module(
 			expect( Utils.isString( C.Class.API ) ).toBe( true );
 
 			expect( C.Class.API ).toBe( "https://carbonldp.com/ns/v1/platform#API" );
+		} );
+
+		it( hasProperty(
+			STATIC,
+			"Document",
+			"string"
+		), ():void => {
+			expect( C.Class.Document ).toBeDefined();
+			expect( Utils.isString( C.Class.Document ) ).toBe( true );
+
+			expect( C.Class.Document ).toBe( "https://carbonldp.com/ns/v1/platform#Document" );
 		} );
 
 		it( hasProperty(
@@ -222,14 +233,14 @@ describe( module(
 
 	describe( clazz(
 		"Carbon.NS.C.Predicate",
-		"Class that contains predicates defined by the Carbon Platform"
+		"Class that contains predicates defined by the Carbon Platform."
 	), ():void => {
 
 		it( isDefined(), ():void => {
 			expect( C.Predicate ).toBeDefined();
 			expect( Utils.isFunction( C.Predicate ) ).toBe( true );
 
-			expect( Object.keys( C.Predicate ).length ).toBe( 18 );
+			expect( Object.keys( C.Predicate ).length ).toBe( 21 );
 		} );
 
 		it( hasProperty(
@@ -241,6 +252,17 @@ describe( module(
 			expect( Utils.isString( C.Predicate.accessPoint ) ).toBe( true );
 
 			expect( C.Predicate.accessPoint ).toBe( "https://carbonldp.com/ns/v1/platform#accessPoint" );
+		} );
+
+		it( hasProperty(
+			STATIC,
+			"appRoleMap",
+			"string"
+		), ():void => {
+			expect( C.Predicate.appRoleMap ).toBeDefined();
+			expect( Utils.isString( C.Predicate.appRoleMap ) ).toBe( true );
+
+			expect( C.Predicate.appRoleMap ).toBe( "https://carbonldp.com/ns/v1/platform#appRoleMap" );
 		} );
 
 		it( hasProperty(
@@ -285,6 +307,28 @@ describe( module(
 			expect( Utils.isString( C.Predicate.defaultInteractionModel ) ).toBe( true );
 
 			expect( C.Predicate.defaultInteractionModel ).toBe( "https://carbonldp.com/ns/v1/platform#defaultInteractionModel" );
+		} );
+
+		it( hasProperty(
+			STATIC,
+			"entry",
+			"string"
+		), ():void => {
+			expect( C.Predicate.entry ).toBeDefined();
+			expect( Utils.isString( C.Predicate.entry ) ).toBe( true );
+
+			expect( C.Predicate.entry ).toBe( "https://carbonldp.com/ns/v1/platform#entry" );
+		} );
+
+		it( hasProperty(
+			STATIC,
+			"key",
+			"string"
+		), ():void => {
+			expect( C.Predicate.key ).toBeDefined();
+			expect( Utils.isString( C.Predicate.key ) ).toBe( true );
+
+			expect( C.Predicate.key ).toBe( "https://carbonldp.com/ns/v1/platform#key" );
 		} );
 
 		it( hasProperty(

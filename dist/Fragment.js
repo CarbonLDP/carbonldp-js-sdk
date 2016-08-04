@@ -8,7 +8,6 @@ var Factory = (function () {
         return (Utils.hasPropertyDefined(resource, "document"));
     };
     Factory.create = function (idOrDocument, document) {
-        if (document === void 0) { document = null; }
         return this.createFrom({}, idOrDocument, document);
     };
     Factory.createFrom = function (object, idOrDocument, document) {

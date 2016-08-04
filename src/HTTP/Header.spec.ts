@@ -29,7 +29,7 @@ describe( module(
 
 	describe( clazz(
 		"Carbon.HTTP.Header.Value",
-		"Class wrapper for a string value of a HTTP header"
+		"Wrapper class for a value of an HTTP header."
 	), ():void => {
 
 		it( isDefined(), ():void => {
@@ -63,7 +63,7 @@ describe( module(
 
 	describe( clazz(
 		"Carbon.HTTP.Header.Class",
-		"Class for have better management of the values in a HTTP header"
+		"Class to manage the values in an HTTP header."
 	), ():void => {
 
 		// Mock data
@@ -139,7 +139,7 @@ describe( module(
 			INSTANCE,
 			"values",
 			"Array <Carbon.HTTP.Header.Value>",
-			"Array that contains each value of the header"
+			"Array that contains each value of the header."
 		), ():void => {
 			let header:Header.Class = new Header.Class( valuesArray );
 
@@ -153,7 +153,7 @@ describe( module(
 
 	describe( clazz(
 		"Carbon.HTTP.Header.Util",
-		"Class with useful options for manage headers"
+		"Class with useful functions to manage headers."
 	), ():void => {
 
 		it( isDefined(), ():void => {
@@ -164,8 +164,8 @@ describe( module(
 		it( hasMethod(
 			STATIC,
 			"parseHeaders",
-			"Returns an Map object, witch relates the all header-names with a `Carbon.HTTP.Header.Class` containing their values", [
-				{name: "headersString", type: "string"}
+			"Returns a Map object which relates all header names with a `Carbon.HTTP.Header.Class` object containing their values.", [
+				{name: "headersString", type: "string"},
 			],
 			{type: "Map <string, Carbon.HTTP.Header.Class>"}
 		), ():void => {

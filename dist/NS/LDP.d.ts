@@ -21,7 +21,7 @@ declare class Predicate {
     static contains: string;
     static member: string;
     static hasMemberRelation: string;
-    static memberOfRelation: string;
+    static isMemberOfRelation: string;
     static membershipResource: string;
     static insertedContentRelation: string;
     static constrainedBy: string;

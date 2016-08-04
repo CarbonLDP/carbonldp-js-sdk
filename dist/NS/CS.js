@@ -29,6 +29,11 @@ var Class = (function () {
         enumerable: true,
         configurable: true
     });
+    Object.defineProperty(Class, "ProtectedDocument", {
+        get: function () { return namespace + "ProtectedDocument"; },
+        enumerable: true,
+        configurable: true
+    });
     Object.defineProperty(Class, "Ticket", {
         get: function () { return namespace + "Ticket"; },
         enumerable: true,
@@ -62,6 +67,11 @@ var Predicate = (function () {
     });
     Object.defineProperty(Predicate, "allowsOrigin", {
         get: function () { return namespace + "allowsOrigin"; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Predicate, "credentialsOf", {
+        get: function () { return namespace + "credentialsOf"; },
         enumerable: true,
         configurable: true
     });

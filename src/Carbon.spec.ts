@@ -17,8 +17,8 @@ import {
 	reexports,
 
 } from "./test/JasmineExtender";
-import setting from "./settings";
 
+import AbstractContext from "./AbstractContext";
 import * as AccessPoint from "./AccessPoint";
 import * as Agent from "./Agent";
 import * as Agents from "./Agents";
@@ -36,7 +36,6 @@ import * as LDP from "./LDP";
 import * as NamedFragment from "./NamedFragment";
 import * as NS from "./NS";
 import * as ObjectSchema from "./ObjectSchema";
-import * as Persisted from "./Persisted";
 import * as PersistedApp from "./PersistedApp";
 import * as PersistedDocument from "./PersistedDocument";
 import * as PersistedFragment from "./PersistedFragment";
@@ -46,6 +45,7 @@ import * as Pointer from "./Pointer";
 import * as RDF from "./RDF";
 import * as Resource from "./Resource";
 import * as SDKContext from "./SDKContext";
+import * as Settings from "./Settings";
 import * as SPARQL from "./SPARQL";
 import * as Utils from "./Utils";
 
@@ -55,7 +55,7 @@ describe( module( "Carbon" ), ():void => {
 
 	describe( clazz(
 		"Carbon",
-		"Principal class that contains all references for use the SDK."
+		"The main class of the SDK, which contains all the references of the modules used in the the SDK."
 	), ():void => {
 		let carbon:Carbon;
 		let myCarbon:Carbon;
@@ -83,11 +83,15 @@ describe( module( "Carbon" ), ():void => {
 			expect( Utils.isFunction( Carbon ) ).toBe( true );
 		} );
 
+		it( extendsClass( "Carbon.AbstractContext" ), ():void => {
+			expect( carbon instanceof AbstractContext ).toBe( true );
+		} );
+
 		it( hasProperty(
 			STATIC,
 			"version",
 			"string",
-			"Returns the version of the SDK"
+			"Returns the version of the SDK."
 		), ():void => {
 			expect( Carbon.version ).toBeDefined();
 			expect( Utils.isString( Carbon.version ) ).toBe( true );
@@ -99,7 +103,7 @@ describe( module( "Carbon" ), ():void => {
 			INSTANCE,
 			"version",
 			"string",
-			"Returns the version of the SDK"
+			"Returns the version of the SDK."
 		), ():void => {
 			expect( carbon.version ).toBeDefined();
 			expect( Utils.isString( carbon.version ) ).toBe( true );
@@ -253,15 +257,6 @@ describe( module( "Carbon" ), ():void => {
 
 		it( reexports(
 			STATIC,
-			"Persisted",
-			"Carbon/Persisted"
-		), ():void => {
-			expect( Carbon.Persisted ).toBeDefined();
-			expect( Carbon.Persisted ).toBe( Persisted );
-		} );
-
-		it( reexports(
-			STATIC,
 			"PersistedApp",
 			"Carbon/PersistedApp"
 		), ():void => {
@@ -343,6 +338,15 @@ describe( module( "Carbon" ), ():void => {
 
 		it( reexports(
 			STATIC,
+			"Settings",
+			"Carbon/Settings"
+		), ():void => {
+			expect( Carbon.Settings ).toBeDefined();
+			expect( Carbon.Settings ).toBe( Settings );
+		} );
+
+		it( reexports(
+			STATIC,
 			"SPARQL",
 			"Carbon/SPARQL"
 		), ():void => {
@@ -360,7 +364,7 @@ describe( module( "Carbon" ), ():void => {
 		} );
 
 		it( hasConstructor( [
-			{name: "settings", type: "any", optional: true}
+			{name: "settings", type: "Carbon.Settings.Class", optional: true}
 		] ), ():void => {
 			// Instantiated in BeforeEach
 			expect( carbon ).toBeTruthy();
@@ -373,7 +377,7 @@ describe( module( "Carbon" ), ():void => {
 		it( hasMethod(
 			INSTANCE,
 			"resolve",
-			"Resolve the URI provided in the context of the instance, this information is provided in the settings object.", [
+			"Resolve the URI provided in the scope of the CarbonLDP Platform.", [
 				{name: "uri", type: "string"}
 			],
 			{type: "string"}
@@ -391,7 +395,7 @@ describe( module( "Carbon" ), ():void => {
 		it( hasMethod(
 			INSTANCE,
 			"getAPIDescription",
-			"Returns the API description of the connected platform in the instance of Carbon",
+			"Returns the API description of the related CarbonLDP Platform.",
 			{type: "Promise<Carbon.APIDescription.Class>"}
 		), ( done:{ ():void, fail:() => void } ):void => {
 			expect( carbon.getAPIDescription ).toBeDefined();
@@ -438,7 +442,7 @@ describe( module( "Carbon" ), ():void => {
 			INSTANCE,
 			"apps",
 			"Carbon.Apps.Class",
-			"Instance of the class `Carbon.Apps` in the context of the Carbon instance."
+			"Instance of the class `Carbon.Apps` in the context of the instanced Carbon class."
 		), ():void => {
 			expect( carbon.apps ).toBeDefined();
 			expect( Utils.isObject( carbon.apps ) );

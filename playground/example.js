@@ -1,5 +1,6 @@
 (function() {
 	describe( "something", () => {
+
 		it( "something else", ( done ) => {
 			"use strict";
 

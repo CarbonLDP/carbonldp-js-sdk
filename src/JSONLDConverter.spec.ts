@@ -16,38 +16,83 @@ import {
 	hasProperty,
 	hasInterface,
 	extendsClass,
-
-	MethodArgument,
+	hasDefaultExport,
 } from "./test/JasmineExtender";
 
 import * as Errors from "./Errors";
 import * as HTTP from "./HTTP";
+import * as NS from "./NS";
+import * as ObjectSchema from "./ObjectSchema";
 import * as Pointer from "./Pointer";
+import * as RDF from "./RDF";
 import * as Utils from "./Utils";
 
 import * as JSONLDConverter from "./JSONLDConverter";
-import * as ObjectSchema from "./ObjectSchema";
+import DefaultExport from "./JSONLDConverter";
 
 describe( module( "Carbon/JSONLDConverter" ), ():void => {
+
 	it( isDefined(), ():void => {
 		expect( JSONLDConverter ).toBeDefined();
 		expect( Utils.isObject( JSONLDConverter ) ).toEqual( true );
 	} );
 
-	describe( clazz( "Carbon.JSONLDConverter.Class", "" ), ():void => {
+	describe( clazz( "Carbon.JSONLDConverter.Class", "Class that have methods for convert expanded JSON-LD objects to compacted Carbon SDK Resources and vice versa." ), ():void => {
+
 		it( isDefined(), ():void => {
 			expect( JSONLDConverter.Class ).toBeDefined();
 			expect( Utils.isFunction( JSONLDConverter.Class ) ).toEqual( true );
 		} );
 
+		it( hasConstructor( [
+			{name: "literalSerializers", type: "Map<string, Carbon.RDF.Literal.Serializer>", optional: true, description: "A Map object with the data type serializers that the converter will only be able to handle."}
+		] ), ():void => {
+			let jsonldConverter:JSONLDConverter.Class;
+
+			jsonldConverter = new JSONLDConverter.Class();
+			expect( jsonldConverter ).toBeTruthy();
+			expect( jsonldConverter instanceof JSONLDConverter.Class ).toBe( true );
+
+			let customSerializers:Map<string, RDF.Literal.Serializer> = new Map();
+			customSerializers.set( "http://example.com/ns#my-custom-type", <any> {} );
+
+			jsonldConverter = new JSONLDConverter.Class( customSerializers );
+			expect( jsonldConverter ).toBeTruthy();
+			expect( jsonldConverter instanceof JSONLDConverter.Class ).toBe( true );
+		} );
+
+		it( hasProperty(
+			INSTANCE,
+			"literalSerializers",
+			"Map<string, Carbon.RDF.Literal.Serializer>",
+			"A Map object with data-type/serializer pairs for stringify the data of a SDK Resource when expanding it."
+		), ():void => {
+			let jsonldConverter:JSONLDConverter.Class;
+			let serializers:Map<string, RDF.Literal.Serializer>;
+
+			jsonldConverter = new JSONLDConverter.Class();
+			serializers = jsonldConverter.literalSerializers;
+			expect( serializers.size ).toBeGreaterThan( 1 );
+
+			let customSerializers:Map<string, RDF.Literal.Serializer> = new Map();
+			customSerializers.set( "http://example.com/ns#my-custom-type", <any> {} );
+
+			jsonldConverter = new JSONLDConverter.Class( customSerializers );
+			serializers = jsonldConverter.literalSerializers;
+			expect( serializers.size ).toBe( 1 );
+		} );
+
 		describe( method( INSTANCE, "compact" ), ():void => {
-			// TODO: Improve signature description
-			it( hasSignature( "", [
-				{name: "expandedObject", type: "Object"},
-				{name: "targetObject", type: "Object"},
-				{name: "digestedSchema", type: "Carbon.ObjectSchema.DigestedObjectSchema"},
-				{name: "pointerLibrary", type: "Carbon.Pointer.Library"},
-			], {type: "Object", description: ""} ), ():void => {
+
+			it( hasSignature(
+				"Assign the data of the expanded JSON-LD object, to the target object in a friendly mode, ie. without the JSON-LD Syntax Tokens and parsed values, in accordance to the schema provided.", [
+					{name: "expandedObject", type: "Object", description: "The JSON-LD object to compact."},
+					{name: "targetObject", type: "Object", description: "The target object where will be added the data of the expanded object."},
+					{name: "digestedSchema", type: "Carbon.ObjectSchema.DigestedObjectSchema", description: "The schema that describes how compact the expanded object."},
+					{name: "pointerLibrary", type: "Carbon.Pointer.Library", description: "An object from where one can obtain pointers to SDK Resources."},
+				],
+				{type: "Object", description: "The compacted target object."}
+			), ():void => {
 				let jsonldConverter:JSONLDConverter.Class = new JSONLDConverter.Class();
 
 				expect( jsonldConverter.compact ).toBeDefined();
@@ -75,24 +120,24 @@ describe( module( "Carbon/JSONLDConverter" ), ():void => {
 					"http://example.com/ns#languageMap": [
 						{"@value": "español", "@type": "http://www.w3.org/2001/XMLSchema#string", "@language": "es"},
 						{"@value": "english", "@type": "http://www.w3.org/2001/XMLSchema#string", "@language": "en"},
-						{"@value": "日本語", "@language": "jp"},
+						{"@value": "日本語", "@language": "ja"},
 					],
 					"http://example.com/ns#pointer": [
-						{"@id": "http://example.com/pointer"},
+						{"@id": "http://example.com/pointer/"},
 					],
 					"http://example.com/ns#pointerList": [
 						{
 							"@list": [
-								{"@id": "http://example.com/pointer-1"},
-								{"@id": "http://example.com/pointer-2"},
-								{"@id": "http://example.com/pointer-3"},
+								{"@id": "http://example.com/pointer-1/"},
+								{"@id": "http://example.com/pointer-2/"},
+								{"@id": "http://example.com/pointer-3/"},
 							],
 						},
 					],
 					"http://example.com/ns#pointerSet": [
-						{"@id": "http://example.com/pointer-1"},
-						{"@id": "http://example.com/pointer-2"},
-						{"@id": "http://example.com/pointer-3"},
+						{"@id": "http://example.com/pointer-1/"},
+						{"@id": "http://example.com/pointer-2/"},
+						{"@id": "http://example.com/pointer-3/"},
 					],
 				};
 
@@ -179,40 +224,45 @@ describe( module( "Carbon/JSONLDConverter" ), ():void => {
 				expect( Utils.isObject( compactedObject.languageMap ) ).toEqual( true );
 				expect( compactedObject.languageMap.es ).toEqual( "español" );
 				expect( compactedObject.languageMap.en ).toEqual( "english" );
-				expect( compactedObject.languageMap.jp ).toEqual( "日本語" );
+				expect( compactedObject.languageMap.ja ).toEqual( "日本語" );
 
 				expect( Utils.hasProperty( compactedObject, "pointer" ) ).toEqual( true );
 				expect( Utils.isObject( compactedObject.pointer ) ).toEqual( true );
-				expect( compactedObject.pointer.id ).toEqual( "http://example.com/pointer" );
+				expect( compactedObject.pointer.id ).toEqual( "http://example.com/pointer/" );
 
 				expect( Utils.hasProperty( compactedObject, "pointerList" ) ).toEqual( true );
 				expect( Utils.isArray( compactedObject.pointerList ) ).toEqual( true );
 				expect( compactedObject.pointerList.length ).toEqual( 3 );
-				expect( compactedObject.pointerList[ 0 ].id ).toEqual( "http://example.com/pointer-1" );
-				expect( compactedObject.pointerList[ 1 ].id ).toEqual( "http://example.com/pointer-2" );
-				expect( compactedObject.pointerList[ 2 ].id ).toEqual( "http://example.com/pointer-3" );
+				expect( compactedObject.pointerList[ 0 ].id ).toEqual( "http://example.com/pointer-1/" );
+				expect( compactedObject.pointerList[ 1 ].id ).toEqual( "http://example.com/pointer-2/" );
+				expect( compactedObject.pointerList[ 2 ].id ).toEqual( "http://example.com/pointer-3/" );
 
 				expect( Utils.hasProperty( compactedObject, "pointerSet" ) ).toEqual( true );
 				expect( Utils.isArray( compactedObject.pointerSet ) ).toEqual( true );
 				expect( compactedObject.pointerSet.length ).toEqual( 3 );
-				expect( compactedObject.pointerSet[ 0 ].id ).toEqual( "http://example.com/pointer-1" );
-				expect( compactedObject.pointerSet[ 1 ].id ).toEqual( "http://example.com/pointer-2" );
-				expect( compactedObject.pointerSet[ 2 ].id ).toEqual( "http://example.com/pointer-3" );
+				expect( compactedObject.pointerSet[ 0 ].id ).toEqual( "http://example.com/pointer-1/" );
+				expect( compactedObject.pointerSet[ 1 ].id ).toEqual( "http://example.com/pointer-2/" );
+				expect( compactedObject.pointerSet[ 2 ].id ).toEqual( "http://example.com/pointer-3/" );
 			} );
 		} );
 
 		describe( method( INSTANCE, "expand" ), ():void => {
-			// TODO: Improve signature description
-			it( hasSignature( "", [
-				{name: "compactedObject", type: "Object"},
-				{name: "digestedSchema", type: "Carbon.ObjectSchema.DigestedObjectSchema"},
-			], {type: "Object", description: ""} ), ():void => {
+
+
+			it( hasSignature(
+				"Creates a expanded JSON-LD object from the compacted object in accordance to the schema provided.", [
+					{name: "compactedObject", type: "Object", description: "The compacted object to generate its expanded JSON-LD object."},
+					{name: "digestedSchema", type: "Carbon.ObjectSchema.DigestedObjectSchema", description: "The schema that describes how construct the expanded object."},
+				],
+				{type: "Object", description: "The expanded JSON-LD object generated."}
+			), ():void => {
 				let jsonldConverter:JSONLDConverter.Class = new JSONLDConverter.Class();
 
 				expect( jsonldConverter.compact ).toBeDefined();
 				expect( Utils.isFunction( jsonldConverter.compact ) ).toBeDefined();
 
 				let schema:ObjectSchema.Class = {
+					"@vocab": "http://example.com/vocabulary#",
 					"ex": "http://example.com/ns#",
 					"xsd": "http://www.w3.org/2001/XMLSchema#",
 					"string": {
@@ -255,68 +305,50 @@ describe( module( "Carbon/JSONLDConverter" ), ():void => {
 					"unknownTypePointer": {
 						"@id": "ex:unknownTypePointer",
 					},
+					"vocabPointer": {
+						"@id": "ex:vocab-pointer",
+						"@type": "@id",
+					},
+					"relativePointer": {
+						"@id": "ex:relative-pointer",
+						"@type": "@id",
+					},
 				};
 
-				let mockedResolveFunction:() => Promise<void> = function():Promise<void> { throw Error( "Don't call this method, duh" ); };
-
 				let compactedObject:any = {
-					"uri": "http://example.com/compactedObject",
-					"string": "some-string",
+					"id": "http://example.com/compactedObject",
+					"types": [ "http://example.com/ns#Type-1", "http://example.com/ns#Type-2" ],
+					"string": "Some string",
 					"date": new Date( "2015-12-04T23:06:57.920Z" ),
 					"numberList": [ 2, 3, 4, 5, 6, ],
 					"languageMap": {
 						"es": "español",
 						"en": "english",
-						"jp": "日本語",
+						"ja": "日本語",
 					},
-					"pointer": {
-						uri: "http://example.com/pointer",
-						resolve: mockedResolveFunction,
-					},
+					"pointer": Pointer.Factory.create( "http://example.com/pointer/" ),
 					"pointerList": [
-						{
-							uri: "http://example.com/pointer-1",
-							resolve: mockedResolveFunction,
-						},
-						{
-							uri: "http://example.com/pointer-2",
-							resolve: mockedResolveFunction,
-						},
-						{
-							uri: "http://example.com/pointer-3",
-							resolve: mockedResolveFunction,
-						},
+						Pointer.Factory.create( "http://example.com/pointer-1/" ),
+						Pointer.Factory.create( "http://example.com/pointer-2/" ),
+						Pointer.Factory.create( "http://example.com/pointer-3/" ),
 					],
 					"pointerSet": [
-						{
-							uri: "http://example.com/pointer-1",
-							resolve: mockedResolveFunction,
-						},
-						{
-							uri: "http://example.com/pointer-2",
-							resolve: mockedResolveFunction,
-						},
-						{
-							uri: "http://example.com/pointer-3",
-							resolve: mockedResolveFunction,
-						},
+						Pointer.Factory.create( "http://example.com/pointer-1/" ),
+						Pointer.Factory.create( "http://example.com/pointer-2/" ),
+						Pointer.Factory.create( "http://example.com/pointer-3/" ),
 					],
 					"unknownTypeLiteral": 1,
 					"unknownTypeArray": [
 						1.12,
 						false,
 						new Date( "2015-12-04T23:06:57.920Z" ),
-						"some-string",
+						"Some string",
 						function():void {},
-						{
-							uri: "http://example.com/pointer",
-							resolve: mockedResolveFunction,
-						},
+						Pointer.Factory.create( "http://example.com/pointer/" ),
 					],
-					"unknownTypePointer": {
-						uri: "http://example.com/pointer",
-						resolve: mockedResolveFunction,
-					},
+					"unknownTypePointer": Pointer.Factory.create( "http://example.com/pointer/" ),
+					"vocabPointer": "to-pointer",
+					"relativePointer": Pointer.Factory.create( "relative-pointer/" ),
 				};
 
 				let digestedSchema:ObjectSchema.DigestedObjectSchema = ObjectSchema.Digester.digestSchema( schema );
@@ -324,7 +356,141 @@ describe( module( "Carbon/JSONLDConverter" ), ():void => {
 
 				expect( expandedObject ).toBeDefined();
 				expect( Utils.isObject( expandedObject ) ).toEqual( true );
+
+				expect( expandedObject[ "@id" ] ).toBe( "http://example.com/compactedObject" );
+
+				expect( Utils.isArray( expandedObject[ "@type" ] ) ).toBe( true );
+				expect( expandedObject[ "@type" ].length ).toBe( 2 );
+				expect( expandedObject[ "@type" ] ).toContain( "http://example.com/ns#Type-1" );
+				expect( expandedObject[ "@type" ] ).toContain( "http://example.com/ns#Type-2" );
+
+				let property:RDF.Literal.Class[] | RDF.Node.Class[] | [ RDF.List.Class ];
+				let literal:RDF.Literal.Class;
+				let node:RDF.Node.Class;
+				let list:RDF.List.Class;
+
+				property = expandedObject[ "http://example.com/ns#string" ];
+				expect( Utils.isArray( property ) ).toBe( true );
+				expect( property.length ).toBe( 1 );
+				literal = <RDF.Literal.Class> property[ 0 ];
+				expect( RDF.Literal.Factory.is( literal ) ).toBe( true );
+				expect( RDF.Literal.Factory.hasType( literal, NS.XSD.DataType.string ) ).toBe( true );
+				expect( literal[ "@value" ] ).toBe( "Some string" );
+
+				property = expandedObject[ "http://example.com/ns#date" ];
+				expect( Utils.isArray( property ) ).toBe( true );
+				expect( property.length ).toBe( 1 );
+				literal = <RDF.Literal.Class> property[ 0 ];
+				expect( RDF.Literal.Factory.is( literal ) ).toBe( true );
+				expect( RDF.Literal.Factory.hasType( literal, NS.XSD.DataType.dateTime ) ).toBe( true );
+				expect( literal[ "@value" ] ).toBe( "2015-12-04T23:06:57.920Z" );
+
+				property = expandedObject[ "http://example.com/ns#languageMap" ];
+				expect( Utils.isArray( property ) ).toBe( true );
+				expect( property.length ).toBe( 3 );
+				literal = <RDF.Literal.Class> property[ 0 ];
+				expect( RDF.Literal.Factory.is( literal ) ).toBe( true );
+				expect( RDF.Literal.Factory.hasType( literal, NS.XSD.DataType.string ) ).toBe( true );
+				expect( literal[ "@language" ] ).toBe( "es" );
+				expect( literal[ "@value" ] ).toBe( "español" );
+				literal = <RDF.Literal.Class> property[ 1 ];
+				expect( RDF.Literal.Factory.is( literal ) ).toBe( true );
+				expect( RDF.Literal.Factory.hasType( literal, NS.XSD.DataType.string ) ).toBe( true );
+				expect( literal[ "@language" ] ).toBe( "en" );
+				expect( literal[ "@value" ] ).toBe( "english" );
+				literal = <RDF.Literal.Class> property[ 2 ];
+				expect( RDF.Literal.Factory.is( literal ) ).toBe( true );
+				expect( RDF.Literal.Factory.hasType( literal, NS.XSD.DataType.string ) ).toBe( true );
+				expect( literal[ "@language" ] ).toBe( "ja" );
+				expect( literal[ "@value" ] ).toBe( "日本語" );
+
+				property = expandedObject[ "http://example.com/ns#pointer" ];
+				expect( Utils.isArray( property ) ).toBe( true );
+				expect( property.length ).toBe( 1 );
+				node = <RDF.Node.Class> property[ 0 ];
+				expect( RDF.Node.Factory.is( node ) ).toBe( true );
+				expect( node[ "@id" ] ).toBe( "http://example.com/pointer/" );
+
+				property = expandedObject[ "http://example.com/ns#pointerList" ];
+				expect( Utils.isArray( property ) ).toBe( true );
+				expect( property.length ).toBe( 1 );
+				list = <RDF.List.Class> property[ 0 ];
+				expect( RDF.List.Factory.is( list ) ).toBe( true );
+				expect( list[ "@list" ].length ).toBe( 3 );
+				node = <RDF.Node.Class> list[ "@list" ][ 0 ];
+				expect( node[ "@id" ] ).toBe( "http://example.com/pointer-1/" );
+				node = <RDF.Node.Class> list[ "@list" ][ 1 ];
+				expect( node[ "@id" ] ).toBe( "http://example.com/pointer-2/" );
+				node = <RDF.Node.Class> list[ "@list" ][ 2 ];
+				expect( node[ "@id" ] ).toBe( "http://example.com/pointer-3/" );
+
+				property = expandedObject[ "http://example.com/ns#pointerSet" ];
+				expect( Utils.isArray( property ) ).toBe( true );
+				expect( property.length ).toBe( 3 );
+				node = <RDF.Node.Class> property[ 0 ];
+				expect( node[ "@id" ] ).toBe( "http://example.com/pointer-1/" );
+				node = <RDF.Node.Class> property[ 1 ];
+				expect( node[ "@id" ] ).toBe( "http://example.com/pointer-2/" );
+				node = <RDF.Node.Class> property[ 2 ];
+				expect( node[ "@id" ] ).toBe( "http://example.com/pointer-3/" );
+
+				property = expandedObject[ "http://example.com/ns#unknownTypeLiteral" ];
+				expect( Utils.isArray( property ) ).toBe( true );
+				expect( property.length ).toBe( 1 );
+				literal = <RDF.Literal.Class> property[ 0 ];
+				expect( RDF.Literal.Factory.is( literal ) ).toBe( true );
+				expect( RDF.Literal.Factory.hasType( literal, NS.XSD.DataType.float ) ).toBe( true );
+				expect( literal[ "@value" ] ).toBe( "1" );
+
+				property = expandedObject[ "http://example.com/ns#unknownTypeArray" ];
+				expect( Utils.isArray( property ) ).toBe( true );
+				expect( property.length ).toBe( 5 );
+				literal = <RDF.Literal.Class> property[ 0 ];
+				expect( RDF.Literal.Factory.is( literal ) ).toBe( true );
+				expect( RDF.Literal.Factory.hasType( literal, NS.XSD.DataType.float ) ).toBe( true );
+				expect( literal[ "@value" ] ).toBe( "1.12" );
+				literal = <RDF.Literal.Class> property[ 1 ];
+				expect( RDF.Literal.Factory.is( literal ) ).toBe( true );
+				expect( RDF.Literal.Factory.hasType( literal, NS.XSD.DataType.boolean ) ).toBe( true );
+				expect( literal[ "@value" ] ).toBe( "false" );
+				literal = <RDF.Literal.Class> property[ 2 ];
+				expect( RDF.Literal.Factory.is( literal ) ).toBe( true );
+				expect( RDF.Literal.Factory.hasType( literal, NS.XSD.DataType.dateTime ) ).toBe( true );
+				expect( literal[ "@value" ] ).toBe( "2015-12-04T23:06:57.920Z" );
+				literal = <RDF.Literal.Class> property[ 3 ];
+				expect( RDF.Literal.Factory.is( literal ) ).toBe( true );
+				expect( RDF.Literal.Factory.hasType( literal, NS.XSD.DataType.string ) ).toBe( true );
+				expect( literal[ "@value" ] ).toBe( "Some string" );
+				node = <RDF.Node.Class> property[ 4 ];
+				expect( RDF.Node.Factory.is( node ) ).toBe( true );
+				expect( node[ "@id" ] ).toBe( "http://example.com/pointer/" );
+
+				property = expandedObject[ "http://example.com/ns#unknownTypePointer" ];
+				expect( Utils.isArray( property ) ).toBe( true );
+				expect( property.length ).toBe( 1 );
+				node = <RDF.Node.Class> property[ 0 ];
+				expect( RDF.Node.Factory.is( node ) ).toBe( true );
+				expect( node[ "@id" ] ).toBe( "http://example.com/pointer/" );
+
+				expect( expandedObject[ "http://example.com/ns#vocab-pointer" ] ).toBeDefined();
+				expect( expandedObject[ "http://example.com/ns#vocab-pointer" ] ).toEqual( [ {
+					"@id": "http://example.com/vocabulary#to-pointer",
+				} ] );
+
+				expect( expandedObject[ "http://example.com/ns#relative-pointer" ] ).toBeDefined();
+				expect( expandedObject[ "http://example.com/ns#relative-pointer" ] ).toEqual( [ {
+					"@id": "relative-pointer/",
+				} ] );
+
 			} );
+
 		} );
+
 	} );
+
+	it( hasDefaultExport( "Carbon.JSONLDConverter.Class" ), () => {
+		expect( DefaultExport ).toBeDefined();
+		expect( JSONLDConverter.Class ).toBe( DefaultExport );
+	} );
+
 } );

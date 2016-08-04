@@ -52,7 +52,7 @@ describe( module( "Carbon/LDP/AddMemberAction" ), ():void => {
 
 	describe( clazz(
 		"Carbon.LDP.AddMemberAction.Factory",
-		"Factory class for LDP AddMemberAction objects"
+		"Factory class for `Carbon.LDP.AddMemberAction.Class` objects."
 	), ():void => {
 
 		it( isDefined(), ():void => {
@@ -63,8 +63,8 @@ describe( module( "Carbon/LDP/AddMemberAction" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"hasClassProperties",
-			"Returns true if the object has the properties to be defined as a LDP AddMemberAction", [
-				{name: "resource", type: "Carbon.RDF.Node.Class"}
+			"Returns true if the object has the properties of a `Carbon.LDP.AddMemberAction.Class` object.", [
+				{name: "resource", type: "Carbon.RDF.Node.Class"},
 			],
 			{type: "boolean"}
 		), ():void => {
@@ -87,8 +87,8 @@ describe( module( "Carbon/LDP/AddMemberAction" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"createDocument",
-			"Create and returns a `Carbon.Document.Class` object with a AddMemberAction fragment for the specified targetMembers.", [
-				{name: "targetMembers", type: "Carbon.Pointer.Class", description: "The target member to add in a `addMember` request."}
+			"Creates and returns a `Carbon.Document.Class` object with a `Carbon.LDP.AddMemberAction.Class` fragment for the specified targetMembers.", [
+				{name: "targetMembers", type: "Carbon.Pointer.Class[]", description: "The target members to add in a `addMember` request."}
 			],
 			{type: "Carbon.Document.Class"}
 		), ():void => {
