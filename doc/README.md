@@ -2724,6 +2724,18 @@ Update the data of the document provided in the server.
 - persistedDocument: The persisted document with the data to update in the server.
 - requestOptions: Customisable options for the request.
 
+##### saveAndRefresh
+```typescript 
+saveAndRefresh<T extends Carbon.PersistedDocument.Class>( persistedDocument:T,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ T, [ HTTP.Response.Class, HTTP.Response.Class ] ]>
+```
+
+Save and refresh the PersistedDocument specified.
+
+*Parameters*
+
+- persistedDocument: The persistedDocument to save and refresh.
+- requestOptions: Customizable options for the request.
+
 ##### upload
 ```typescript 
 upload( parentURI:string,  data:Blob,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[Carbon.Pointer.Class, Carbon.HTTP.Response.Class]>
@@ -7442,6 +7454,13 @@ save<T extends Carbon.PersistedDocument.Class>():Promise<[ T, Carbon.HTTP.Respon
 ```
 
 Save the PersistedDocument to the server.
+
+##### saveAndRefresh
+```typescript 
+saveAndRefresh<T extends Carbon.PersistedDocument.Class>():Promise<[ T, [ HTTP.Response.Class, HTTP.Response.Class ] ]>
+```
+
+Save and refresh the PersistedDocument.
 
 ##### upload
 ```typescript 

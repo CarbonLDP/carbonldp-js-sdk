@@ -17,6 +17,7 @@ import * as Document from "./Document";
 import Documents from "./Documents";
 import * as Errors from "./Errors";
 import * as Fragment from "./Fragment";
+import * as HTTP from "./HTTP";
 import * as NamedFragment from "./NamedFragment";
 import * as PersistedFragment from "./PersistedFragment";
 import * as PersistedNamedFragment from "./PersistedNamedFragment";
@@ -78,6 +79,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 
 				refresh: ():void => {},
 				save: ():void => {},
+				saveAndRefresh: ():void => {},
 				delete: ():void => {},
 
 				getDownloadURL: ():void => {},
@@ -137,6 +139,10 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 			delete document.save;
 			expect( PersistedDocument.Factory.hasClassProperties( document ) ).toBe( false );
 			document.save = ():void => {};
+
+			delete document.saveAndRefresh;
+			expect( PersistedDocument.Factory.hasClassProperties( document ) ).toBe( false );
+			document.saveAndRefresh = ():void => {};
 
 			delete document.delete;
 			expect( PersistedDocument.Factory.hasClassProperties( document ) ).toBe( false );
@@ -255,6 +261,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 
 				refresh: ():void => {},
 				save: ():void => {},
+				saveAndRefresh: ():void => {},
 				delete: ():void => {},
 
 				getDownloadURL: ():void => {},
@@ -801,6 +808,21 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 
 				let spy:jasmine.Spy = spyOn( context.documents, "save" );
 				document.save();
+				expect( spy ).toHaveBeenCalledWith( document );
+			} );
+
+			it( hasMethod(
+				INSTANCE,
+				"saveAndRefresh",
+				[ "T extends Carbon.PersistedDocument.Class" ],
+				"Save and refresh the PersistedDocument.",
+				{type: "Promise<[ T, [ HTTP.Response.Class, HTTP.Response.Class ] ]>"}
+			), ():void => {
+				expect( document.saveAndRefresh ).toBeDefined();
+				expect( Utils.isFunction( document.saveAndRefresh ) ).toBe( true );
+
+				let spy:jasmine.Spy = spyOn( context.documents, "saveAndRefresh" );
+				document.saveAndRefresh();
 				expect( spy ).toHaveBeenCalledWith( document );
 			} );
 

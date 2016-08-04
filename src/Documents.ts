@@ -585,6 +585,17 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 		} );
 	}
 
+	saveAndRefresh<T extends PersistedDocument.Class>( persistedDocument:T, requestOptions:HTTP.Request.Options = {} ):Promise<[ T, [ HTTP.Response.Class, HTTP.Response.Class] ]> {
+		let saveResponse:HTTP.Response.Class;
+		return this.save<T>( persistedDocument, requestOptions ).then( ( [ document, response ]:[ T, HTTP.Response.Class ] ) => {
+			saveResponse = response;
+			return this.refresh<T>( persistedDocument, requestOptions );
+		} ).then( ( [ document, response ]:[ T, HTTP.Response.Class ] ) => {
+			return [ persistedDocument, [ saveResponse, response ] ];
+		} );
+	}
+
+
 	delete( documentURI:string, requestOptions:HTTP.Request.Options = {} ):Promise<HTTP.Response.Class> {
 		documentURI = this.getRequestURI( documentURI );
 		this.setDefaultRequestOptions( requestOptions, NS.LDP.Class.RDFSource );
