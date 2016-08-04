@@ -3,11 +3,58 @@ var Errors = require("./Errors");
 var Fragment = require("./Fragment");
 var JSONLDConverter_1 = require("./JSONLDConverter");
 var NamedFragment = require("./NamedFragment");
+var NS = require("./NS");
 var ObjectSchema = require("./ObjectSchema");
 var Pointer = require("./Pointer");
 var RDF = require("./RDF");
 var Resource = require("./Resource");
 var Utils = require("./Utils");
+exports.RDF_CLASS = NS.C.Class.Document;
+exports.SCHEMA = {
+    "contains": {
+        "@id": NS.LDP.Predicate.contains,
+        "@container": "@set",
+        "@type": "@id",
+    },
+    "members": {
+        "@id": NS.LDP.Predicate.member,
+        "@container": "@set",
+        "@type": "@id",
+    },
+    "membershipResource": {
+        "@id": NS.LDP.Predicate.membershipResource,
+        "@type": "@id",
+    },
+    "isMemberOfRelation": {
+        "@id": NS.LDP.Predicate.isMemberOfRelation,
+        "@type": "@id",
+    },
+    "hasMemberRelation": {
+        "@id": NS.LDP.Predicate.hasMemberRelation,
+        "@type": "@id",
+    },
+    "insertedContentRelation": {
+        "@id": NS.LDP.Predicate.insertedContentRelation,
+        "@type": "@id",
+    },
+    "created": {
+        "@id": NS.C.Predicate.created,
+        "@type": NS.XSD.DataType.dateTime,
+    },
+    "modified": {
+        "@id": NS.C.Predicate.modified,
+        "@type": NS.XSD.DataType.dateTime,
+    },
+    "defaultInteractionModel": {
+        "@id": NS.C.Predicate.defaultInteractionModel,
+        "@type": "@id",
+    },
+    "accessPoints": {
+        "@id": NS.C.Predicate.accessPoint,
+        "@type": "@id",
+        "@container": "@set",
+    },
+};
 function hasPointer(id) {
     var document = this;
     if (id === document.id)
@@ -35,7 +82,7 @@ function inScope(idOrPointer) {
         return true;
     if (RDF.URI.Util.isFragmentOf(id, document.id))
         return true;
-    return RDF.URI.Util.isRelative(id);
+    return RDF.URI.Util.isFragmentOf(id, "");
 }
 function hasFragment(id) {
     var document = this;
@@ -71,14 +118,13 @@ function getFragments() {
     var document = this;
     return Utils.A.from(document._fragmentsIndex.values());
 }
-function createFragment(slugOrObject, object) {
+function createFragment(slugOrObject, slug) {
     var document = this;
-    var slug = Utils.isString(slugOrObject) ? slugOrObject : null;
-    object = Utils.isString(slugOrObject) ? object : slugOrObject;
-    object = object || {};
+    slug = Utils.isString(slugOrObject) ? slugOrObject : slug;
+    var object = !Utils.isString(slugOrObject) && !!slugOrObject ? slugOrObject : {};
     if (slug) {
         if (!RDF.URI.Util.isBNodeID(slug))
-            return document.createNamedFragment(slug, object);
+            return document.createNamedFragment(object, slug);
         if (this._fragmentsIndex.has(slug))
             throw new Errors.IDAlreadyInUseError("The slug provided is already being used by a fragment.");
     }
@@ -87,9 +133,10 @@ function createFragment(slugOrObject, object) {
     convertNestedObjects(document, fragment);
     return fragment;
 }
-function createNamedFragment(slug, object) {
+function createNamedFragment(slugOrObject, slug) {
     var document = this;
-    object = object || {};
+    slug = Utils.isString(slugOrObject) ? slugOrObject : slug;
+    var object = !Utils.isString(slugOrObject) && !!slugOrObject ? slugOrObject : {};
     if (RDF.URI.Util.isBNodeID(slug))
         throw new Errors.IllegalArgumentError("Named fragments can't have a slug that starts with '_:'.");
     if (RDF.URI.Util.isAbsolute(slug)) {
@@ -118,17 +165,9 @@ function removeFragment(fragmentOrSlug) {
         id = id.substring(1);
     document._fragmentsIndex.delete(id);
 }
-function removeNamedFragment(fragmentOrSlug) {
-    var document = this;
-    var id = Utils.isString(fragmentOrSlug) ? fragmentOrSlug : fragmentOrSlug.id;
-    if (RDF.URI.Util.isBNodeID(id))
-        throw new Errors.IllegalArgumentError("You can only remove NamedFragments.");
-    document._removeFragment(id);
-}
 function toJSON(objectSchemaResolver, jsonldConverter) {
     if (objectSchemaResolver === void 0) { objectSchemaResolver = null; }
     if (jsonldConverter === void 0) { jsonldConverter = null; }
-    var generalSchema = objectSchemaResolver ? objectSchemaResolver.getGeneralSchema() : new ObjectSchema.DigestedObjectSchema();
     jsonldConverter = !!jsonldConverter ? jsonldConverter : new JSONLDConverter_1.default();
     var resources = [];
     resources.push(this);
@@ -136,8 +175,8 @@ function toJSON(objectSchemaResolver, jsonldConverter) {
     var expandedResources = [];
     for (var _i = 0, resources_1 = resources; _i < resources_1.length; _i++) {
         var resource = resources_1[_i];
-        var resourceSchema = objectSchemaResolver ? objectSchemaResolver.getSchemaFor(resource) : new ObjectSchema.DigestedObjectSchema();
-        expandedResources.push(jsonldConverter.expand(resource, generalSchema, resourceSchema));
+        var digestedContext = objectSchemaResolver ? objectSchemaResolver.getSchemaFor(resource) : new ObjectSchema.DigestedObjectSchema();
+        expandedResources.push(jsonldConverter.expand(resource, digestedContext));
     }
     var graph = {
         "@id": this.id,
@@ -145,32 +184,19 @@ function toJSON(objectSchemaResolver, jsonldConverter) {
     };
     return JSON.stringify(graph);
 }
-function normalize() {
-    var _this = this;
-    var currentFragments = this.getFragments().filter(function (fragment) { return RDF.URI.Util.isBNodeID(fragment.id); });
-    var usedFragmentsIDs = new Set();
-    convertNestedObjects(this, this, usedFragmentsIDs);
-    currentFragments.forEach(function (fragment) {
-        if (!usedFragmentsIDs.has(fragment.id)) {
-            _this._fragmentsIndex.delete(fragment.id);
-        }
-    });
-}
 var Factory = (function () {
     function Factory() {
     }
     Factory.hasClassProperties = function (documentResource) {
         return (Utils.isObject(documentResource) &&
             Utils.hasPropertyDefined(documentResource, "_fragmentsIndex") &&
-            Utils.hasFunction(documentResource, "_normalize") &&
-            Utils.hasFunction(documentResource, "_removeFragment") &&
             Utils.hasFunction(documentResource, "hasFragment") &&
             Utils.hasFunction(documentResource, "getFragment") &&
             Utils.hasFunction(documentResource, "getNamedFragment") &&
             Utils.hasFunction(documentResource, "getFragments") &&
             Utils.hasFunction(documentResource, "createFragment") &&
             Utils.hasFunction(documentResource, "createNamedFragment") &&
-            Utils.hasFunction(documentResource, "removeNamedFragment") &&
+            Utils.hasFunction(documentResource, "removeFragment") &&
             Utils.hasFunction(documentResource, "toJSON"));
     };
     Factory.is = function (object) {
@@ -182,7 +208,7 @@ var Factory = (function () {
     };
     Factory.createFrom = function (object) {
         if (Factory.is(object))
-            throw new Errors.IllegalArgumentError("The object passed is already a Document");
+            throw new Errors.IllegalArgumentError("The object provided is already a Document");
         var resource = object;
         if (!Resource.Factory.is(object))
             resource = Resource.Factory.createFrom(object);
@@ -191,6 +217,7 @@ var Factory = (function () {
         return document;
     };
     Factory.decorate = function (object) {
+        Resource.Factory.decorate(object);
         if (Factory.hasClassProperties(object))
             return object;
         Object.defineProperties(object, {
@@ -199,18 +226,6 @@ var Factory = (function () {
                 enumerable: false,
                 configurable: true,
                 value: new Map(),
-            },
-            "_normalize": {
-                writable: false,
-                enumerable: false,
-                configurable: true,
-                value: normalize,
-            },
-            "_removeFragment": {
-                writable: true,
-                enumerable: false,
-                configurable: true,
-                value: removeFragment,
             },
             "hasPointer": {
                 writable: true,
@@ -266,11 +281,11 @@ var Factory = (function () {
                 configurable: true,
                 value: createNamedFragment,
             },
-            "removeNamedFragment": {
+            "removeFragment": {
                 writable: true,
                 enumerable: false,
                 configurable: true,
-                value: removeNamedFragment,
+                value: removeFragment,
             },
             "toJSON": {
                 writable: true,
@@ -284,7 +299,7 @@ var Factory = (function () {
     return Factory;
 }());
 exports.Factory = Factory;
-function convertNestedObjects(parent, actual, fragmentsTracker) {
+function convertNestedObjects(parent, actual) {
     var next;
     var idOrSlug;
     var fragment;
@@ -293,31 +308,23 @@ function convertNestedObjects(parent, actual, fragmentsTracker) {
         var key = keys_1[_i];
         next = actual[key];
         if (Utils.isArray(next)) {
-            convertNestedObjects(parent, next, fragmentsTracker);
+            convertNestedObjects(parent, next);
             continue;
         }
-        if (!Utils.isPlainObject(next))
+        if (!Utils.isPlainObject(next) || Pointer.Factory.is(next))
             continue;
-        if (Pointer.Factory.is(next)) {
-            if (parent.hasFragment(next.id)) {
-                if (fragmentsTracker)
-                    fragmentsTracker.add(next.id);
-                convertNestedObjects(parent, next, fragmentsTracker);
-            }
-            continue;
-        }
-        idOrSlug = ("id" in next) ? next.id : (("slug" in next) ? next.slug : "");
-        if (!parent.inScope(idOrSlug))
+        idOrSlug = ("id" in next) ? next.id : (("slug" in next) ? "#" + next.slug : "");
+        if (!!idOrSlug && !parent.inScope(idOrSlug))
             continue;
         var parentFragment = parent.getFragment(idOrSlug);
         if (!parentFragment) {
-            fragment = parent.createFragment(idOrSlug, next);
-            convertNestedObjects(parent, fragment, fragmentsTracker);
+            fragment = parent.createFragment(next, idOrSlug);
+            convertNestedObjects(parent, fragment);
         }
         else if (parentFragment !== next) {
             Object.assign(parentFragment, next);
             fragment = actual[key] = parentFragment;
-            convertNestedObjects(parent, fragment, fragmentsTracker);
+            convertNestedObjects(parent, fragment);
         }
     }
 }

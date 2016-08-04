@@ -1,23 +1,16 @@
 "use strict";
 var Agent = require("./Agent");
-var Utils = require("./Utils");
 var Errors = require("./Errors");
 var Class = (function () {
     function Class(context) {
         this.context = context;
     }
-    Class.prototype.create = function (slugOrAgent, agentDocument) {
+    Class.prototype.create = function (agentDocument, slug) {
+        if (slug === void 0) { slug = null; }
         var containerURI = this.context.resolve(this.getContainerURI());
-        var slug = Utils.isString(slugOrAgent) ? slugOrAgent : null;
-        agentDocument = agentDocument || slugOrAgent;
         if (!Agent.Factory.is(agentDocument))
             return Promise.reject(new Errors.IllegalArgumentError("The Document is not a `Carbon.Agents.Agent.Class` object."));
-        if (slug) {
-            return this.context.documents.createChild(containerURI, slug, agentDocument);
-        }
-        else {
-            return this.context.documents.createChild(containerURI, agentDocument);
-        }
+        return this.context.documents.createChild(containerURI, agentDocument, slug);
     };
     Class.prototype.getContainerURI = function () {
         if (!this.context.hasSetting("platform.agents.container"))

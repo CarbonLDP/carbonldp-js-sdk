@@ -1,7 +1,6 @@
 "use strict";
 var HTTP = require("./../HTTP");
 var Errors = require("./../Errors");
-var UsernameAndPasswordToken_1 = require("./UsernameAndPasswordToken");
 var UsernameAndPasswordCredentials = require("./UsernameAndPasswordCredentials");
 var Class = (function () {
     function Class() {
@@ -32,21 +31,13 @@ var Class = (function () {
     Class.prototype.clearAuthentication = function () {
         this.credentials = null;
     };
-    Class.prototype.supports = function (authenticationToken) {
-        return authenticationToken instanceof UsernameAndPasswordToken_1.default;
-    };
     Class.prototype.addBasicAuthenticationHeader = function (headers) {
-        var header;
-        if (headers.has("authorization")) {
-            header = headers.get("authorization");
-        }
-        else {
-            header = new HTTP.Header.Class();
-            headers.set("authorization", header);
-        }
+        if (headers.has("authorization"))
+            return;
+        var header = new HTTP.Header.Class();
+        headers.set("authorization", header);
         var authorization = "Basic " + toB64(this.credentials.username + ":" + this.credentials.password);
         header.values.push(new HTTP.Header.Value(authorization));
-        return headers;
     };
     return Class;
 }());

@@ -18,7 +18,7 @@ export class Factory {
 
 	static create( id:string, document:Document.Class ):Class;
 	static create( document:Document.Class ):Class;
-	static create( idOrDocument:any, document:Document.Class = null ):Class {
+	static create( idOrDocument:any, document?:Document.Class ):Class {
 		return this.createFrom( {}, idOrDocument, document );
 	}
 

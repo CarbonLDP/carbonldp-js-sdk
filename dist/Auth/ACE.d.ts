@@ -6,7 +6,11 @@ export declare const SCHEMA: ObjectSchema.Class;
 export interface Class extends Fragment.Class {
     granting: boolean;
     permissions: Pointer.Class[];
-    subject: Pointer.Class;
-    subjectClass: Pointer.Class;
+    subjects: Pointer.Class[];
+    subjectsClass: Pointer.Class;
+}
+export declare class Factory {
+    static hasClassProperties(object: Object): boolean;
+    static createFrom<T extends Object>(object: T, granting: boolean, subjects: Pointer.Class[], subjectClass: Pointer.Class, permissions: Pointer.Class[]): T & Class;
 }
 export default Class;

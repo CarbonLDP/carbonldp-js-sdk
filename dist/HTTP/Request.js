@@ -76,12 +76,12 @@ function sendWithNode(method, url, body, options) {
         if (options.headers)
             forEachHeaders(options.headers, function (name, value) { return requestOptions.headers[name] = value; });
         var request = HTTP.request(requestOptions, function (res) {
-            var data = "";
-            res.setEncoding("utf8");
+            var rawData = [];
             res.on("data", function (chunk) {
-                data = chunk;
+                rawData.push(chunk);
             });
             res.on("end", function () {
+                var data = Buffer.concat(rawData).toString("utf8");
                 var response = new Response_1.default(request, data, res);
                 onResolve(resolve, reject, response);
             });

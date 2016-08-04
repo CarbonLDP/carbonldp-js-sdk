@@ -7,7 +7,6 @@ export interface Class<T extends AuthenticationToken> {
 	authenticate( authenticationToken:T ):Promise<Credentials.Class>;
 	clearAuthentication():void;
 	addAuthentication( requestOptions:HTTP.Request.Options ):HTTP.Request.Options;
-	supports( authenticationToken:AuthenticationToken ):boolean;
 }
 
 export default Class;

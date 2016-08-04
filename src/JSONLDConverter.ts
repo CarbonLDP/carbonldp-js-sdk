@@ -30,7 +30,7 @@ export class Class {
 		return literalSerializers;
 	}
 
-	constructor( literalSerializers:Map<string, RDF.Literal.Serializer> = null ) {
+	constructor( literalSerializers?:Map<string, RDF.Literal.Serializer> ) {
 		this._literalSerializers = ! ! literalSerializers ? literalSerializers : Class.getDefaultSerializers();
 	}
 
@@ -72,6 +72,7 @@ export class Class {
 
 		Utils.forEachOwnProperty( compactedObject, ( propertyName:string, value:any ):void => {
 			if( propertyName === "id" ) return;
+			if( propertyName === "types" ) return;
 
 			let expandedValue:any;
 			if( digestedSchema.properties.has( propertyName ) ) {
@@ -262,7 +263,16 @@ export class Class {
 	}
 
 	private expandPointer( propertyValue:any, generalSchema:ObjectSchema.DigestedObjectSchema, digestedSchema:ObjectSchema.DigestedObjectSchema ):RDF.Node.Class {
-		let id:string = Pointer.Factory.is( propertyValue ) ? propertyValue.id : Utils.isString( propertyValue ) ? propertyValue : null;
+		let notPointer:boolean = true;
+		let id:string;
+		if( Pointer.Factory.is( propertyValue ) ) {
+			notPointer = false;
+			propertyValue = propertyValue.id;
+		} else if( ! Utils.isString( propertyValue ) ) {
+			propertyValue = null;
+		}
+
+		id = propertyValue;
 		if( ! id ) {
 			// TODO: Warn of data loss
 			return null;
@@ -275,7 +285,7 @@ export class Class {
 			if( definition.uri ) id = definition.uri.stringValue;
 		}
 
-		// TODO: Think in what base will resolve relative URIs with: `id = digestedSchema.base ? RDF.URI.Util.resolve( digestedSchema.base, id ) : id;`
+		if( notPointer && ! ! digestedSchema.vocab ) id = RDF.URI.Util.resolve( digestedSchema.vocab, id );
 
 		return {"@id": id};
 	}

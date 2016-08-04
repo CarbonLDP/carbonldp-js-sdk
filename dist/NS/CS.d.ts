@@ -5,6 +5,7 @@ declare class Class {
     static Agent: string;
     static AllOrigins: string;
     static Application: string;
+    static ProtectedDocument: string;
     static Ticket: string;
     static Token: string;
 }
@@ -13,6 +14,7 @@ declare class Predicate {
     static accessControlList: string;
     static accessTo: string;
     static allowsOrigin: string;
+    static credentialsOf: string;
     static description: string;
     static expirationTime: string;
     static forIRI: string;

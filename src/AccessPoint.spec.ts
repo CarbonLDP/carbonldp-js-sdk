@@ -15,7 +15,7 @@ import * as NS from "./NS";
 import * as Pointer from "./Pointer";
 import * as DirectContainer from "./LDP/DirectContainer";
 
-describe( module( "Carbon/AccessPoints" ), ():void => {
+describe( module( "Carbon/AccessPoint" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( AccessPoint ).toBeDefined();
@@ -35,7 +35,7 @@ describe( module( "Carbon/AccessPoints" ), ():void => {
 
 	describe( clazz(
 		"Carbon.AccessPoint.Factory",
-		"Factory class for `Carbon.AccessPoint.Class` objects"
+		"Factory class for `Carbon.AccessPoint.Class` objects."
 	), ():void => {
 
 		it( isDefined(), ():void => {
@@ -45,34 +45,11 @@ describe( module( "Carbon/AccessPoints" ), ():void => {
 
 		it( hasMethod(
 			STATIC,
-			"hasClassProperties",
-			"Returns true if the object provided has the properties that defines a `Carbon.AccessPoint.Class` object", [
-				{name: "resource", type: "Object"}
-			],
-			{type: "boolean"}
-		), ():void => {
-			expect( AccessPoint.Factory.hasClassProperties ).toBeDefined();
-			expect( Utils.isFunction( AccessPoint.Factory.hasClassProperties ) ).toBe( true );
-
-			let object:any;
-			expect( AccessPoint.Factory.hasClassProperties( object ) ).toBe( false );
-
-			object = {
-				membershipResource: null
-			};
-			expect( AccessPoint.Factory.hasClassProperties( object ) ).toBe( true );
-
-			delete  object.membershipResource;
-			expect( AccessPoint.Factory.hasClassProperties( object ) ).toBe( false );
-		} );
-
-		it( hasMethod(
-			STATIC,
 			"create",
-			"Create a `Carbon.AccessPoint.Class` object with the parameters specified.", [
-				{name: "membershipResource", type: "Carbon.Pointer.Class"},
-				{name: "hasMemberRelation", type: "string | Carbon.Pointer.Class"},
-				{name: "memberOfRelation", type: "string | Carbon.Pointer.Class", optional: true}
+			"Creates a `Carbon.AccessPoint.Class` object with the parameters specified.", [
+				{name: "membershipResource", type: "Carbon.Pointer.Class", description: "A Pointer to the parent of the AccessPoint."},
+				{name: "hasMemberRelation", type: "string | Carbon.Pointer.Class", description: "A URI or Pointer to the property in the parent resource managed by the AccessPoint."},
+				{name: "isMemberOfRelation", type: "string | Carbon.Pointer.Class", optional: true, description: "A URI or Pointer to the property managed in the members added by the AccessPoint."},
 			],
 			{type: "Carbon.AccessPoint.Class"}
 		), ():void => {
@@ -101,11 +78,12 @@ describe( module( "Carbon/AccessPoints" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"createFrom",
-			"Create a `Carbon.AccessPoint.Class` object with the object provided.", [
-				{name: "object", type: "T extends Object"},
-				{name: "membershipResource", type: "Carbon.Pointer.Class"},
-				{name: "hasMemberRelation", type: "string | Carbon.Pointer.Class"},
-				{name: "memberOfRelation", type: "string | Carbon.Pointer.Class", optional: true}
+			[ "T extends Object" ],
+			"Creates a `Carbon.AccessPoint.Class` object from the object and parameters specified.", [
+				{name: "object", type: "T", description: "Object that will be converted into an AccessPoint."},
+				{name: "membershipResource", type: "Carbon.Pointer.Class", description: "A Pointer to the parent of the AccessPoint."},
+				{name: "hasMemberRelation", type: "string | Carbon.Pointer.Class", description: "A URI or Pointer to the property in the parent resource managed by the AccessPoint."},
+				{name: "isMemberOfRelation", type: "string | Carbon.Pointer.Class", optional: true, description: "A URI or Pointer to the property managed in the members added by the AccessPoint."}
 			],
 			{type: "T & Carbon.AccessPoint.Class"}
 		), ():void => {
