@@ -2,9 +2,10 @@ import Context from "./../Context";
 import * as Errors from "./../Errors";
 import * as Pointer from "./../Pointer";
 import * as HTTP from "./../HTTP";
-import * as Role from "./Role";
-import * as PersistedRole from "./PersistedRole";
+import * as PersistedDocument from "./../PersistedDocument";
 import * as RetrievalPreferences from "./../RetrievalPreferences";
+import * as PersistedRole from "./PersistedRole";
+import * as Role from "./Role";
 import * as SPARQL from "./../SPARQL";
 import * as URI from "./../RDF/URI";
 import * as Utils from "./../Utils";
@@ -53,17 +54,18 @@ export abstract class Class {
 		} );
 	}
 
-	listAgents( roleURI:string, requestOptions?:HTTP.Request.Options ):Promise<[ Pointer.Class[], HTTP.Response.Class ]> {
+	listAgents( roleURI:string, requestOptions?:HTTP.Request.Options ):Promise<[ PersistedDocument.Class[], HTTP.Response.Class ]> {
 		return this.getAgentsAccessPoint( roleURI ).then( ( agentsAccessPoint:Pointer.Class ) => {
 			return this.context.documents.listMembers( agentsAccessPoint.id, requestOptions );
 		} );
 	}
 
-	getAgents( roleURI:string, requestOptions?:HTTP.Request.Options ):Promise<[ Pointer.Class[], HTTP.Response.Class ]>;
-	getAgents( roleURI:string, retrievalPreferences?:RetrievalPreferences.Class, requestOptions?:HTTP.Request.Options ):Promise<[ Pointer.Class[], HTTP.Response.Class ]>;
-	getAgents( roleURI:string, retrievalPreferencesOrRequestOptions?:RetrievalPreferences.Class, requestOptions?:HTTP.Request.Options ):Promise<[ Pointer.Class[], HTTP.Response.Class ]> {
+	// TODO: Change to `PersistedAgent`
+	getAgents<T>( roleURI:string, requestOptions?:HTTP.Request.Options ):Promise<[ (T & PersistedDocument.Class)[], HTTP.Response.Class ]>;
+	getAgents<T>( roleURI:string, retrievalPreferences?:RetrievalPreferences.Class, requestOptions?:HTTP.Request.Options ):Promise<[ (T & PersistedDocument.Class)[], HTTP.Response.Class ]>;
+	getAgents<T>( roleURI:string, retrievalPreferencesOrRequestOptions?:RetrievalPreferences.Class, requestOptions?:HTTP.Request.Options ):Promise<[ (T & PersistedDocument.Class)[], HTTP.Response.Class ]> {
 		return this.getAgentsAccessPoint( roleURI ).then( ( agentsAccessPoint:Pointer.Class ) => {
-			return this.context.documents.getMembers( agentsAccessPoint.id, retrievalPreferencesOrRequestOptions, requestOptions );
+			return this.context.documents.getMembers<T>( agentsAccessPoint.id, retrievalPreferencesOrRequestOptions, requestOptions );
 		} );
 	}
 

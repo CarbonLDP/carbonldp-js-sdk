@@ -327,7 +327,7 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 				{name: "roleURI", type: "string", description: "The URI of the role to look for its agents."},
 				{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true},
 			],
-			{type: "Promise<[ Carbon.Auth.PersistedRole.Class, Carbon.HTTP.Response.Class ]>"}
+			{type: "Promise<[ Carbon.PersistedDocument.Class, Carbon.HTTP.Response.Class ]>"}
 		), ( done:{ ():void, fail:() => void } ):void => {
 			expect( roles.listAgents ).toBeDefined();
 			expect( Utils.isFunction( roles.listAgents ) ).toBe( true );
@@ -554,11 +554,13 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 			} );
 
 			it( hasSignature(
+				[ "T" ],
 				"Retrieves an array of resolved pointers for all the agents of the specified role.", [
 					{name: "roleURI", type: "string", description: "The URI of the role to look for its agents."},
 					{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true},
 				],
-				{type: "Promise<[ carbon.Auth.PersistedRole.Class, Carbon.HTTP.Response.Class ]>"}
+				// TODO: Change to `PersistedAgent`
+				{type: "Promise<[ (T & Carbon.PersistedDocument.Class)[], Carbon.HTTP.Response.Class ]>"}
 			), ( done:{ ():void, fail:() => void } ):void => {
 				roles.getAgents( "http://example.com/roles/a-role/", Role.Factory.create( "Role name" ) ).then( done.fail ).catch( ( stateError:Error ) => {
 					expect( stateError instanceof Errors.IllegalStateError ).toBe( true );
@@ -617,12 +619,14 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 			} );
 
 			it( hasSignature(
+				[ "T" ],
 				"Retrieves an array of resolved pointers for the agents of the role, in accordance of the retrievalPreferences provided.", [
 					{name: "roleURI", type: "string", description: "The URI of the role to look for its agents."},
 					{name: "retrievalPreferences", type: "Carbon.RetrievalPreferences.Class", optional: true, description: "An object that specify the retrieval preferences for the request."},
 					{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true},
 				],
-				{type: "Promise<[ carbon.Auth.PersistedRole.Class, Carbon.HTTP.Response.Class ]>"}
+				// TODO: Change to `PersistedAgent`
+				{type: "Promise<[ (T & Carbon.PersistedDocument.Class)[], Carbon.HTTP.Response.Class ]>"}
 			), ( done:{ ():void, fail:() => void } ):void => {
 				roles.getAgents( "http://example.com/roles/a-role/", Role.Factory.create( "Role name" ) ).then( done.fail ).catch( ( stateError:Error ) => {
 					expect( stateError instanceof Errors.IllegalStateError ).toBe( true );

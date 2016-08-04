@@ -2162,7 +2162,7 @@ Retrieves a role from the current context.
 
 ##### getAgents
 ```typescript 
-getAgents( roleURI:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ carbon.Auth.PersistedRole.Class, Carbon.HTTP.Response.Class ]>
+getAgents<T>( roleURI:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ (T & Carbon.PersistedDocument.Class)[], Carbon.HTTP.Response.Class ]>
 ```
 
 Retrieves an array of resolved pointers for all the agents of the specified role.
@@ -2173,7 +2173,7 @@ Retrieves an array of resolved pointers for all the agents of the specified role
 - requestOptions
 
 ```typescript 
-getAgents( roleURI:string,  retrievalPreferences?:Carbon.RetrievalPreferences.Class,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ carbon.Auth.PersistedRole.Class, Carbon.HTTP.Response.Class ]>
+getAgents<T>( roleURI:string,  retrievalPreferences?:Carbon.RetrievalPreferences.Class,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ (T & Carbon.PersistedDocument.Class)[], Carbon.HTTP.Response.Class ]>
 ```
 
 Retrieves an array of resolved pointers for the agents of the role, in accordance of the retrievalPreferences provided.
@@ -2186,7 +2186,7 @@ Retrieves an array of resolved pointers for the agents of the role, in accordanc
 
 ##### listAgents
 ```typescript 
-listAgents( roleURI:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.Auth.PersistedRole.Class, Carbon.HTTP.Response.Class ]>
+listAgents( roleURI:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.PersistedDocument.Class, Carbon.HTTP.Response.Class ]>
 ```
 
 Retrieves an array of unresolved pointers for all the agents of the specified role.
