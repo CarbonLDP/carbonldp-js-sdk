@@ -56,6 +56,9 @@ function refresh() {
 function save() {
     return this._documents.save(this);
 }
+function saveAndRefresh() {
+    return this._documents.saveAndRefresh(this);
+}
 function _delete() {
     return this._documents.delete(this.id);
 }
@@ -143,6 +146,7 @@ var Factory = (function () {
             && Utils.hasPropertyDefined(object, "_etag")
             && Utils.hasFunction(object, "refresh")
             && Utils.hasFunction(object, "save")
+            && Utils.hasFunction(object, "saveAndRefresh")
             && Utils.hasFunction(object, "delete")
             && Utils.hasFunction(object, "getDownloadURL")
             && Utils.hasFunction(object, "addMember")
@@ -275,6 +279,12 @@ var Factory = (function () {
                 enumerable: false,
                 configurable: true,
                 value: save,
+            },
+            "saveAndRefresh": {
+                writable: false,
+                enumerable: false,
+                configurable: true,
+                value: saveAndRefresh,
             },
             "delete": {
                 writable: false,

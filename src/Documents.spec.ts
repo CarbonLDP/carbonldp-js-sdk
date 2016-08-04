@@ -3617,8 +3617,12 @@ describe( module( "Carbon/Documents" ), ():void => {
 		it( hasMethod(
 			INSTANCE,
 			"saveAndRefresh",
-			"Save and refresh the PersistedDocument specified.",
-			{type: "Promise<[ Carbon.PersistedDocument.Class, [ HTTP.Response.Class, HTTP.Response.Class ] ]>"}
+			[ "T extends Carbon.PersistedDocument.Class" ],
+			"Save and refresh the PersistedDocument specified.", [
+				{name: "persistedDocument", type: "T", description: "The persistedDocument to save and refresh."},
+				{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request."},
+			],
+			{type: "Promise<[ T, [ HTTP.Response.Class, HTTP.Response.Class ] ]>"}
 		), ( done:{ ():void, fail:() => void } ):void => {
 			class MockedContext extends AbstractContext {
 				resolve( uri:string ):string {

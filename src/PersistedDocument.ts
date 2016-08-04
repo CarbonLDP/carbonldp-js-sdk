@@ -42,9 +42,9 @@ export interface Class extends PersistedResource.Class, Document.Class {
 	createNamedFragment( slug:string ):PersistedNamedFragment.Class;
 	createNamedFragment<T extends Object>( object:T, slug:string ):PersistedNamedFragment.Class & T;
 
-	refresh():Promise<[Class, HTTP.Response.Class]>;
-	save():Promise<[Class, HTTP.Response.Class]>;
-	saveAndRefresh():Promise<[ Class, [ HTTP.Response.Class, HTTP.Response.Class ] ]>;
+	refresh<T extends Class>():Promise<[ T, HTTP.Response.Class ]>;
+	save<T extends Class>():Promise<[ T, HTTP.Response.Class ]>;
+	saveAndRefresh<T extends Class>():Promise<[ T, [ HTTP.Response.Class, HTTP.Response.Class ] ]>;
 	delete():Promise<HTTP.Response.Class>;
 
 	getDownloadURL():Promise<string>;
@@ -147,14 +147,14 @@ function extendCreateNamedFragment( superFunction:( slugOrObject:any, slug?:stri
 	};
 }
 
-function refresh<T extends Class>():Promise<[T, HTTP.Response.Class]> {
+function refresh<T extends Class>():Promise<[ T, HTTP.Response.Class ]> {
 	return this._documents.refresh( this );
 }
-function save<T extends Class>():Promise<[T, HTTP.Response.Class]> {
+function save<T extends Class>():Promise<[ T, HTTP.Response.Class ]> {
 	return this._documents.save( this );
 }
-function saveAndRefresh():Promise<[ Class, [ HTTP.Response.Class, HTTP.Response.Class] ]> {
-	return this._documents.saveAndRefresh( this );
+function saveAndRefresh<T extends Class>():Promise<[ T, [ HTTP.Response.Class, HTTP.Response.Class] ]> {
+	return (<Class> this)._documents.saveAndRefresh<T>( this );
 }
 
 function _delete():Promise<HTTP.Response.Class> {

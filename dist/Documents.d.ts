@@ -55,6 +55,7 @@ declare class Documents implements Pointer.Library, Pointer.Validator, ObjectSch
     removeAllMembers(documentURI: string, requestOptions?: HTTP.Request.Options): Promise<HTTP.Response.Class>;
     save<T extends PersistedDocument.Class>(persistedDocument: T, requestOptions?: HTTP.Request.Options): Promise<[T, HTTP.Response.Class]>;
     refresh<T extends PersistedDocument.Class>(persistedDocument: T, requestOptions?: HTTP.Request.Options): Promise<[T, HTTP.Response.Class]>;
+    saveAndRefresh<T extends PersistedDocument.Class>(persistedDocument: T, requestOptions?: HTTP.Request.Options): Promise<[T, [HTTP.Response.Class, HTTP.Response.Class]]>;
     delete(documentURI: string, requestOptions?: HTTP.Request.Options): Promise<HTTP.Response.Class>;
     getDownloadURL(documentURI: string, requestOptions?: HTTP.Request.Options): Promise<string>;
     getSchemaFor(object: Object): ObjectSchema.DigestedObjectSchema;

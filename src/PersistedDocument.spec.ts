@@ -814,8 +814,9 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 			it( hasMethod(
 				INSTANCE,
 				"saveAndRefresh",
+				[ "T extends Carbon.PersistedDocument.Class" ],
 				"Save and refresh the PersistedDocument.",
-				{type: "Promise<[ Carbon.PersistedDocument.Class, [ HTTP.Response.Class, HTTP.Response.Class ] ]>"}
+				{type: "Promise<[ T, [ HTTP.Response.Class, HTTP.Response.Class ] ]>"}
 			), ():void => {
 				expect( document.saveAndRefresh ).toBeDefined();
 				expect( Utils.isFunction( document.saveAndRefresh ) ).toBe( true );
