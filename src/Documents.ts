@@ -590,10 +590,8 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 		return this.save<T>( persistedDocument, requestOptions ).then( ( [ document, response ]:[ T, HTTP.Response.Class ] ) => {
 			saveResponse = response;
 			return this.refresh<T>( persistedDocument, requestOptions );
-
 		} ).then( ( [ document, response ]:[ T, HTTP.Response.Class ] ) => {
 			return [ persistedDocument, [ saveResponse, response ] ];
-
 		} );
 	}
 
