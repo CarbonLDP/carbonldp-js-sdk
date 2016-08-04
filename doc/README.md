@@ -1954,7 +1954,7 @@ Class( context:Carbon.Context )
 
 ##### createChild
 ```typescript 
-createChild( parentRole:string | Carbon.Pointer.Class,  role:Carbon.Auth.Roles.Class,  slug?:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.Pointer.Class, [ Carbon.HTTP.Response.Class, Carbon.HTTP.Response.Class] ]>
+createChild<T extends Carbon.Auth.Roles.Class>( parentRole:string | Carbon.Pointer.Class,  role:T,  slug?:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ T & Carbon.PersistedDocument.Class, [ Carbon.HTTP.Response.Class, Carbon.HTTP.Response.Class] ]>
 ```
 
 Persists the Role provided with the slug, if specified, as a childRole of the parentRole specified.
@@ -1968,7 +1968,7 @@ Returns a Promise with a Pointer for the stored role; and a tuple of two respons
 - requestOptions: The slug where the role will be persisted.
 
 ```typescript 
-createChild( parentRole:string | Carbon.Pointer.Class,  role:Carbon.Auth.Roles.Class,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.Pointer.Class, [ Carbon.HTTP.Response.Class, Carbon.HTTP.Response.Class] ]>
+createChild<T extends Carbon.Auth.Roles.Class>( parentRole:string | Carbon.Pointer.Class,  role:T,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ T & Carbon.PersistedDocument.Class, [ Carbon.HTTP.Response.Class, Carbon.HTTP.Response.Class] ]>
 ```
 
 Persists the Role provided as a childRole of the parentRole specified.
