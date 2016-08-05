@@ -1,9 +1,10 @@
-import * as Agent from "./Auth/Agent";
-import * as Agents from "./Auth/Agents";
+import * as ACE from "./Auth/ACE";
+import * as ACL from "./Auth/ACL";
 import AuthenticationToken from "./Auth/AuthenticationToken";
 import Authenticator from "./Auth/Authenticator";
 import BasicAuthenticator from "./Auth/BasicAuthenticator";
-import * as PersistedAgent from "./Auth/PersistedAgent";
+import * as PersistedACE from "./Auth/PersistedACE";
+import * as PersistedACL from "./Auth/PersistedACL";
 import TokenAuthenticator from "./Auth/TokenAuthenticator";
 import * as Ticket from "./Auth/Ticket";
 import * as Token from "./Auth/Token";
@@ -12,17 +13,19 @@ import UsernameAndPasswordCredentials from "./Auth/UsernameAndPasswordCredential
 import Credentials from "./Auth/Credentials";
 import Context from "./Context";
 import * as HTTP from "./HTTP";
-export { Agent, Agents, AuthenticationToken, Authenticator, BasicAuthenticator, PersistedAgent, Ticket, Token, TokenAuthenticator, UsernameAndPasswordToken };
+import * as PersistedDocument from "./PersistedDocument";
+export { ACE, ACL, AuthenticationToken, Authenticator, BasicAuthenticator, PersistedACE, PersistedACL, Ticket, Token, TokenAuthenticator, UsernameAndPasswordToken };
 export declare enum Method {
     BASIC = 0,
     TOKEN = 1,
 }
 export declare class Class {
-    agents: Agents.Class;
+    protected _authenticatedAgent: PersistedDocument.Class;
     private context;
     private method;
     private authenticators;
     private authenticator;
+    authenticatedAgent: PersistedDocument.Class;
     constructor(context: Context);
     isAuthenticated(askParent?: boolean): boolean;
     authenticate(username: string, password: string): Promise<Credentials>;
@@ -37,5 +40,6 @@ export declare class Class {
     getAuthenticatedURL(uri: string, requestOptions?: HTTP.Request.Options): Promise<string>;
     private authenticateWithBasic(username, password);
     private authenticateWithToken(userOrTokenOrCredentials, password);
+    private getAuthenticatedAgent(authenticator);
 }
 export default Class;
