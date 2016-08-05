@@ -1997,6 +1997,34 @@ _fragmentsIndex:Map<string, Carbon.Fragment.Class>
 Map that stores the fragments (named fragments and blank nodes) of the Document.
 
 ##### <a name="Carbon-Document-Factory-Decorated-Object-Methods" />Methods
+##### _normalize
+```typescript 
+_normalize()
+```
+
+Search over the document for normal objects to convert into fragments, and unused fragments to eliminate.
+
+##### _removeFragment
+```typescript 
+_removeFragment( fragment:Carbon.Fragment.Class )
+```
+
+Remove the fragment referenced by the `Carbon.Fragment.Class` provided from the Document.
+
+*Parameters*
+
+- fragment
+
+```typescript 
+_removeFragment( slug:string )
+```
+
+Remove the fragment referenced by the Slug provided from the Document.
+
+*Parameters*
+
+- slug
+
 ##### createFragment
 ```typescript 
 createFragment<T extends Object>( object:T,  slug:string ):T & Carbon.Fragment.Class
@@ -2147,32 +2175,22 @@ Returns true if the URI provided is inside the scope of the Document.
 
 - id
 
-##### removeFragment
+##### removeNamedFragment
 ```typescript 
-removeFragment( fragment:Carbon.NamedFragment.Class )
+removeNamedFragment( fragment:Carbon.NamedFragment.Class )
 ```
 
-Remove the fragment referenced by the `Carbon.NamedFragment.Class` provided from the Document.
+Remove the maned fragment referenced by the `Carbon.NamedFragment.Class` provided from the Document.
 
 *Parameters*
 
 - fragment
 
 ```typescript 
-removeFragment( fragment:Carbon.Fragment.Class )
+removeNamedFragment( slug:string )
 ```
 
-Remove the fragment referenced by the `Carbon.Fragment.Class` provided from the Document.
-
-*Parameters*
-
-- fragment
-
-```typescript 
-removeFragment( slug:string )
-```
-
-Remove the fragment referenced by the Slug provided from the Document.
+Remove the named fragment referenced by the Slug provided from the Document.
 
 *Parameters*
 

@@ -198,7 +198,7 @@ function removePermissionsFrom(subject, permissions, aces) {
         }
         if (ace.permissions.length === 0) {
             aces.splice(Utils.A.indexOf(aces, ace, Pointer.Util.areEqual), 1);
-            acl.removeFragment(ace);
+            acl._removeFragment(ace);
         }
     }
 }

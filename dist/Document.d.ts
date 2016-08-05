@@ -11,6 +11,9 @@ export interface Class extends Resource.Class, Pointer.Library, Pointer.Validato
     isMemberOfRelation?: Pointer.Class;
     hasMemberRelation?: Pointer.Class;
     _fragmentsIndex: Map<string, Fragment.Class>;
+    _normalize(): void;
+    _removeFragment(fragment: Fragment.Class): void;
+    _removeFragment(slug: string): void;
     hasFragment(slug: string): boolean;
     getFragment<T>(slug: string): T & Fragment.Class;
     getNamedFragment<T>(slug: string): T & NamedFragment.Class;
@@ -21,9 +24,8 @@ export interface Class extends Resource.Class, Pointer.Library, Pointer.Validato
     createFragment(): Fragment.Class;
     createNamedFragment<T extends Object>(object: T, slug: string): T & NamedFragment.Class;
     createNamedFragment(slug: string): NamedFragment.Class;
-    removeFragment(fragment: NamedFragment.Class): void;
-    removeFragment(fragment: Fragment.Class): void;
-    removeFragment(slug: string): void;
+    removeNamedFragment(fragment: NamedFragment.Class): void;
+    removeNamedFragment(slug: string): void;
     toJSON(objectSchemaResolver: ObjectSchema.Resolver, jsonldConverter: JSONLDConverter): string;
     toJSON(objectSchemaResolver: ObjectSchema.Resolver): string;
     toJSON(): string;

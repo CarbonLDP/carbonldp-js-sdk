@@ -65,6 +65,11 @@ export interface Class extends Resource.Class, Pointer.Library, Pointer.Validato
 
 	_fragmentsIndex:Map<string, Fragment.Class>;
 
+	_normalize():void;
+
+	_removeFragment( fragment:Fragment.Class ):void;
+	_removeFragment( slug:string ):void;
+
 	hasFragment( slug:string ):boolean;
 	getFragment<T>( slug:string ):T & Fragment.Class;
 	getNamedFragment<T>( slug:string ):T & NamedFragment.Class;
@@ -78,9 +83,8 @@ export interface Class extends Resource.Class, Pointer.Library, Pointer.Validato
 	createNamedFragment<T extends Object>( object:T, slug:string ):T & NamedFragment.Class;
 	createNamedFragment( slug:string ):NamedFragment.Class;
 
-	removeFragment( fragment:NamedFragment.Class ):void;
-	removeFragment( fragment:Fragment.Class ):void;
-	removeFragment( slug:string ):void;
+	removeNamedFragment( fragment:NamedFragment.Class ):void;
+	removeNamedFragment( slug:string ):void;
 
 	toJSON( objectSchemaResolver:ObjectSchema.Resolver, jsonldConverter:JSONLDConverter ):string;
 	toJSON( objectSchemaResolver:ObjectSchema.Resolver ):string;
@@ -203,7 +207,6 @@ function createNamedFragment<T extends Object>( slugOrObject:any, slug?:string )
 	return fragment;
 }
 
-function removeFragment( fragment:NamedFragment.Class ):void;
 function removeFragment( fragment:Fragment.Class ):void;
 function removeFragment( slug:string ):void;
 function removeFragment( fragmentOrSlug:any ):void {
@@ -219,10 +222,23 @@ function removeFragment( fragmentOrSlug:any ):void {
 	document._fragmentsIndex.delete( id );
 }
 
-function toJSON( objectSchemaResolver:ObjectSchema.Resolver, jsonLDConverter:JSONLDConverter ):string;
+function removeNamedFragment( fragment:NamedFragment.Class ):void;
+function removeNamedFragment( slug:string ):void;
+function removeNamedFragment( fragmentOrSlug:any ):void {
+	let document:Class = <Class> this;
+
+	let id:string = Utils.isString( fragmentOrSlug ) ? fragmentOrSlug : <Fragment.Class> fragmentOrSlug.id;
+
+	if( RDF.URI.Util.isBNodeID( id ) ) throw new Errors.IllegalArgumentError( "You can only remove NamedFragments." );
+
+	document._removeFragment( id );
+}
+
+function toJSON( objectSchemaResolver:ObjectSchema.Resolver, jsonldConverter:JSONLDConverter ):string;
 function toJSON( objectSchemaResolver:ObjectSchema.Resolver ):string;
 function toJSON():string;
 function toJSON( objectSchemaResolver:ObjectSchema.Resolver = null, jsonldConverter:JSONLDConverter = null ):string {
+	let generalSchema:ObjectSchema.DigestedObjectSchema = objectSchemaResolver ? objectSchemaResolver.getGeneralSchema() : new ObjectSchema.DigestedObjectSchema();
 	jsonldConverter = ! ! jsonldConverter ? jsonldConverter : new JSONLDConverter();
 
 	let resources:{ toJSON:() => string }[] = [];
@@ -231,9 +247,9 @@ function toJSON( objectSchemaResolver:ObjectSchema.Resolver = null, jsonldConver
 
 	let expandedResources:RDF.Node.Class[] = [];
 	for( let resource of resources ) {
-		let digestedContext:ObjectSchema.DigestedObjectSchema = objectSchemaResolver ? objectSchemaResolver.getSchemaFor( resource ) : new ObjectSchema.DigestedObjectSchema();
+		let resourceSchema:ObjectSchema.DigestedObjectSchema = objectSchemaResolver ? objectSchemaResolver.getSchemaFor( resource ) : new ObjectSchema.DigestedObjectSchema();
 
-		expandedResources.push( jsonldConverter.expand( resource, digestedContext ) );
+		expandedResources.push( jsonldConverter.expand( resource, generalSchema, resourceSchema ) );
 	}
 
 	let graph:RDF.Document.Class = {
@@ -244,6 +260,19 @@ function toJSON( objectSchemaResolver:ObjectSchema.Resolver = null, jsonldConver
 	return JSON.stringify( graph );
 }
 
+function normalize():void {
+	let currentFragments:Fragment.Class[] = (<Class> this).getFragments().filter( fragment => RDF.URI.Util.isBNodeID( fragment.id ) );
+	let usedFragmentsIDs:Set<string> = new Set();
+
+	convertNestedObjects( this, this, usedFragmentsIDs );
+
+	currentFragments.forEach( fragment => {
+		if( ! usedFragmentsIDs.has( fragment.id ) ) {
+			(<Class> this)._fragmentsIndex.delete( fragment.id );
+		}
+	} );
+}
+
 export class Factory {
 	static hasClassProperties( documentResource:Object ):boolean {
 		return (
@@ -251,13 +280,16 @@ export class Factory {
 
 			Utils.hasPropertyDefined( documentResource, "_fragmentsIndex" ) &&
 
+			Utils.hasFunction( documentResource, "_normalize" ) &&
+			Utils.hasFunction( documentResource, "_removeFragment" ) &&
+
 			Utils.hasFunction( documentResource, "hasFragment" ) &&
 			Utils.hasFunction( documentResource, "getFragment" ) &&
 			Utils.hasFunction( documentResource, "getNamedFragment" ) &&
 			Utils.hasFunction( documentResource, "getFragments" ) &&
 			Utils.hasFunction( documentResource, "createFragment" ) &&
 			Utils.hasFunction( documentResource, "createNamedFragment" ) &&
-			Utils.hasFunction( documentResource, "removeFragment" ) &&
+			Utils.hasFunction( documentResource, "removeNamedFragment" ) &&
 			Utils.hasFunction( documentResource, "toJSON" )
 		);
 	}
@@ -296,6 +328,18 @@ export class Factory {
 				enumerable: false,
 				configurable: true,
 				value: new Map<string, Fragment.Class>(),
+			},
+			"_normalize": {
+				writable: false,
+				enumerable: false,
+				configurable: true,
+				value: normalize,
+			},
+			"_removeFragment": {
+				writable: true,
+				enumerable: false,
+				configurable: true,
+				value: removeFragment,
 			},
 			"hasPointer": {
 				writable: true,
@@ -351,11 +395,11 @@ export class Factory {
 				configurable: true,
 				value: createNamedFragment,
 			},
-			"removeFragment": {
+			"removeNamedFragment": {
 				writable: true,
 				enumerable: false,
 				configurable: true,
-				value: removeFragment,
+				value: removeNamedFragment,
 			},
 			"toJSON": {
 				writable: true,
@@ -369,7 +413,7 @@ export class Factory {
 	}
 }
 
-function convertNestedObjects( parent:Class, actual:any ):void {
+function convertNestedObjects( parent:Class, actual:any, fragmentsTracker?:Set<string> ):void {
 	let next:any;
 	let idOrSlug:string;
 	let fragment:Fragment.Class;
@@ -379,11 +423,18 @@ function convertNestedObjects( parent:Class, actual:any ):void {
 		next = actual[ key ];
 
 		if( Utils.isArray( next ) ) {
-			convertNestedObjects( parent, next );
+			convertNestedObjects( parent, next, fragmentsTracker );
 			continue;
 		}
 
-		if( ! Utils.isPlainObject( next ) || Pointer.Factory.is( next ) ) continue;
+		if( ! Utils.isPlainObject( next ) ) continue;
+		if( Pointer.Factory.is( next ) ) {
+			if( parent.hasFragment( next.id ) ) {
+				if( fragmentsTracker ) fragmentsTracker.add( next.id );
+				convertNestedObjects( parent, next, fragmentsTracker );
+			}
+			continue;
+		}
 
 		idOrSlug = ( "id" in next ) ? next.id : ( ( "slug" in next ) ? "#" + next.slug : "" );
 		if( ! ! idOrSlug && ! parent.inScope( idOrSlug ) ) continue;
@@ -392,12 +443,12 @@ function convertNestedObjects( parent:Class, actual:any ):void {
 
 		if( ! parentFragment ) {
 			fragment = parent.createFragment( <Object> next, idOrSlug );
-			convertNestedObjects( parent, fragment );
+			convertNestedObjects( parent, fragment, fragmentsTracker );
 
 		} else if( parentFragment !== next ) {
 			Object.assign( parentFragment, next );
 			fragment = actual[ key ] = parentFragment;
-			convertNestedObjects( parent, fragment );
+			convertNestedObjects( parent, fragment, fragmentsTracker );
 		}
 
 	}
