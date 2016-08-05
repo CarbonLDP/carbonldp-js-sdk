@@ -1,6 +1,10 @@
+import * as ACE from "./Auth/ACE";
+import * as ACL from "./Auth/ACL";
 import AuthenticationToken from "./Auth/AuthenticationToken";
 import Authenticator from "./Auth/Authenticator";
 import BasicAuthenticator from "./Auth/BasicAuthenticator";
+import * as PersistedACE from "./Auth/PersistedACE";
+import * as PersistedACL from "./Auth/PersistedACL";
 import TokenAuthenticator from "./Auth/TokenAuthenticator";
 import * as Ticket from "./Auth/Ticket";
 import * as Token from "./Auth/Token";
@@ -14,14 +18,19 @@ import * as Errors from "./Errors";
 import * as FreeResources from "./FreeResources";
 import * as HTTP from "./HTTP";
 import * as NS from "./NS";
+import * as PersistedDocument from "./PersistedDocument";
 import * as Resource from "./Resource";
 import * as RDF from "./RDF";
 import * as Utils from "./Utils";
 
 export {
+	ACE,
+	ACL,
 	AuthenticationToken,
 	Authenticator,
 	BasicAuthenticator,
+	PersistedACE,
+	PersistedACL,
 	Ticket,
 	Token,
 	TokenAuthenticator,
@@ -34,11 +43,22 @@ export enum Method {
 }
 
 export class Class {
+	// TODO: Change to `PersistedAgent.Class`
+	protected _authenticatedAgent:PersistedDocument.Class;
+
 	private context:Context;
 
-	private method:Method = null;
+	private method:Method;
 	private authenticators:Array<Authenticator<AuthenticationToken>>;
 	private authenticator:Authenticator<AuthenticationToken>;
+
+	public get authenticatedAgent():PersistedDocument.Class {
+		if( ! this._authenticatedAgent ) {
+			if( this.context.parentContext && this.context.parentContext.auth ) return this.context.parentContext.auth.authenticatedAgent;
+			return null;
+		}
+		return this._authenticatedAgent;
+	}
 
 	constructor( context:Context ) {
 		this.context = context;
@@ -94,6 +114,7 @@ export class Class {
 
 		this.authenticator.clearAuthentication();
 		this.authenticator = null;
+		this._authenticatedAgent = null;
 	}
 
 	createTicket( uri:string, requestOptions:HTTP.Request.Options = {} ):Promise<[ Ticket.Class, HTTP.Response.Class ]> {
@@ -145,8 +166,15 @@ export class Class {
 		authenticationToken = new UsernameAndPasswordToken( username, password );
 		this.clearAuthentication();
 
-		this.authenticator = authenticator;
-		return this.authenticator.authenticate( authenticationToken );
+		let credentials:UsernameAndPasswordCredentials;
+		return authenticator.authenticate( authenticationToken ).then( ( _credentials:UsernameAndPasswordCredentials ) => {
+			credentials = _credentials;
+			return this.getAuthenticatedAgent( authenticator );
+		} ).then( ( persistedAgent:PersistedDocument.Class ) => {
+			this._authenticatedAgent = persistedAgent;
+			this.authenticator = authenticator;
+			return credentials;
+		} );
 	}
 
 	private authenticateWithToken( userOrTokenOrCredentials:any, password:string ):Promise<Token.Class> {
@@ -157,7 +185,7 @@ export class Class {
 		if( Utils.isString( userOrTokenOrCredentials ) && Utils.isString( password ) ) {
 			authenticationToken = new UsernameAndPasswordToken( userOrTokenOrCredentials, password );
 
-		} else if( Token.Factory.is( userOrTokenOrCredentials ) ) {
+		} else if( Token.Factory.hasRequiredValues( userOrTokenOrCredentials ) ) {
 			credentials = userOrTokenOrCredentials;
 
 		} else {
@@ -165,11 +193,49 @@ export class Class {
 		}
 
 		this.clearAuthentication();
-		this.authenticator = authenticator;
-		if( authenticationToken )
-			return authenticator.authenticate( authenticationToken );
+		return authenticator.authenticate( ( authenticationToken ) ? authenticationToken : <any> credentials ).then( ( _credentials:Token.Class ) => {
+			credentials = _credentials;
 
-		return authenticator.authenticate( credentials );
+			// TODO: Use `PersistedAgent`
+			if( PersistedDocument.Factory.is( _credentials.agent ) ) return credentials.agent;
+			return this.getAuthenticatedAgent( authenticator );
+
+		} ).then( ( persistedAgent:PersistedDocument.Class ) => {
+			this._authenticatedAgent = persistedAgent;
+			credentials.agent = persistedAgent;
+
+			this.authenticator = authenticator;
+			return credentials;
+		} );
+	}
+
+	private getAuthenticatedAgent( authenticator:Authenticator<any> ):Promise<PersistedDocument.Class> {
+		let requestOptions:HTTP.Request.Options = {};
+		authenticator.addAuthentication( requestOptions );
+		HTTP.Request.Util.setAcceptHeader( "application/ld+json", requestOptions );
+		HTTP.Request.Util.setPreferredInteractionModel( NS.LDP.Class.RDFSource, requestOptions );
+
+		let uri:string = this.context.resolve( "agents/me/" );
+		return HTTP.Request.Service.get( uri, requestOptions, new RDF.Document.Parser() ).then( ( [ rdfDocuments, response ]:[ any, HTTP.Response.Class ] ) => {
+			let eTag:string = HTTP.Response.Util.getETag( response );
+			if( eTag === null ) throw new HTTP.Errors.BadResponseError( "The authenticated agent doesn't contain an ETag", response );
+
+			let locationHeader:HTTP.Header.Class = response.getHeader( "Content-Location" );
+			if( ! locationHeader || locationHeader.values.length < 1 ) throw new HTTP.Errors.BadResponseError( "The response is missing a Content-Location header.", response );
+			if( locationHeader.values.length !== 1 ) throw new HTTP.Errors.BadResponseError( "The response contains more than one Content-Location header.", response );
+
+			let agentURI:string = locationHeader.toString();
+			if( ! agentURI ) throw new HTTP.Errors.BadResponseError( `The response doesn't contain a 'Content-Location' header.`, response );
+
+			let agentsDocuments:RDF.Document.Class[] = RDF.Document.Util.getDocuments( rdfDocuments ).filter( rdfDocument => rdfDocument[ "@id" ] === agentURI );
+			if( agentsDocuments.length === 0 ) throw new HTTP.Errors.BadResponseError( `The response doesn't contain a the '${ agentURI }' resource.`, response );
+			if( agentsDocuments.length > 1 ) throw new HTTP.Errors.BadResponseError( `The response contains more than one '${ agentURI }' resource.`, response );
+
+			let document:PersistedDocument.Class = this.context.documents._getPersistedDocument( agentsDocuments[ 0 ], response );
+			document._etag = eTag;
+
+			return document;
+		} );
 	}
 
 }

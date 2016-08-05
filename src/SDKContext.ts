@@ -1,17 +1,19 @@
+import * as Agent from "./Agent";
 import * as APIDescription from "./APIDescription";
 import * as Auth from "./Auth";
+import * as BlankNode from "./BlankNode";
 import Context from "./Context";
+import * as Document from "./Document";
 import Documents from "./Documents";
+import * as Error from "./LDP/Error";
+import * as ErrorResponse from "./LDP/ErrorResponse";
 import * as Errors from "./Errors";
 import * as LDP from "./LDP";
 import * as NS from "./NS";
-import * as PersistedBlankNode from "./PersistedBlankNode";
-import * as RDF from "./RDF";
 import * as ObjectSchema from "./ObjectSchema";
-import * as Agent from "./Agent";
+import * as ProtectedDocument from "./ProtectedDocument";
+import * as RDF from "./RDF";
 import * as RDFRepresentation from "./RDFRepresentation";
-import * as ErrorResponse from "./LDP/ErrorResponse";
-import * as Error from "./LDP/Error";
 
 export class Class implements Context {
 	auth:Auth.Class;
@@ -149,18 +151,16 @@ export class Class implements Context {
 	}
 
 	private registerDefaultObjectSchemas():void {
-		this.extendObjectSchema( PersistedBlankNode.SCHEMA );
+		this.extendObjectSchema( BlankNode.SCHEMA );
 
-		this.extendObjectSchema( LDP.RDFSource.RDF_CLASS, LDP.RDFSource.SCHEMA );
-		this.extendObjectSchema( LDP.Container.RDF_CLASS, LDP.Container.SCHEMA );
-		this.extendObjectSchema( LDP.BasicContainer.RDF_CLASS, LDP.Container.SCHEMA );
+		this.extendObjectSchema( ProtectedDocument.RDF_CLASS, ProtectedDocument.SCHEMA );
 
 		this.extendObjectSchema( RDFRepresentation.RDF_CLASS, RDFRepresentation.SCHEMA );
 		this.extendObjectSchema( APIDescription.RDF_CLASS, APIDescription.SCHEMA );
 		this.extendObjectSchema( Error.RDF_CLASS, Error.SCHEMA );
 		this.extendObjectSchema( ErrorResponse.RDF_CLASS, ErrorResponse.SCHEMA );
 
-		// TODO Fix error of cycle reference because the App module dependency of AbstractClass witch has a dependency with SDKContext. For now add manual data
+		// TODO Fix error of cycle reference because the App module dependency of AbstractClass which has a dependency with SDKContext. For now add manual data
 		/* this.extendObjectSchema( App.RDF_CLASS, App.SCHEMA ); */
 		this.extendObjectSchema( NS.CS.Class.Application, {
 			"name": {
@@ -186,8 +186,10 @@ export class Class implements Context {
 		this.extendObjectSchema( LDP.AddMemberAction.RDF_CLASS, LDP.AddMemberAction.SCHEMA );
 		this.extendObjectSchema( LDP.RemoveMemberAction.RDF_CLASS, LDP.RemoveMemberAction.SCHEMA );
 
-		this.extendObjectSchema( Auth.Token.RDF_CLASS, Auth.Token.SCHEMA );
+		this.extendObjectSchema( Auth.ACE.RDF_CLASS, Auth.ACE.SCHEMA );
+		this.extendObjectSchema( Auth.ACL.RDF_CLASS, Auth.ACL.SCHEMA );
 		this.extendObjectSchema( Auth.Ticket.RDF_CLASS, Auth.Ticket.SCHEMA );
+		this.extendObjectSchema( Auth.Token.RDF_CLASS, Auth.Token.SCHEMA );
 
 		this.extendObjectSchema( Agent.RDF_CLASS, Agent.SCHEMA );
 	}

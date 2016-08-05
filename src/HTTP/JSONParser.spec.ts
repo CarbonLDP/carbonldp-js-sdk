@@ -26,7 +26,7 @@ describe( module(
 
 	describe( clazz(
 		"Carbon.HTTP.JSONParser.Class",
-		"Class wrapper for native `JSON.parse` using `Promise` pattern"
+		"Wrapper class for the native `JSON.parse()` function using the `Promise` pattern."
 	), ():void => {
 
 		it( isDefined(), ():void => {
@@ -41,7 +41,7 @@ describe( module(
 		it( hasMethod(
 			INSTANCE,
 			"parse", [
-				{name: "body", type: "string", description: "A JSON string to parse"}
+				{name: "body", type: "string", description: "A JSON string to parse."},
 			],
 			{type: "Promise <Object>"}
 		), ( done ):void => {

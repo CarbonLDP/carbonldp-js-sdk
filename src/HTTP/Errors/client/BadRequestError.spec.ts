@@ -20,12 +20,12 @@ import HTTPError from "./../HTTPError";
 import {Service} from "../../Request";
 
 describe( module(
-	"Carbon/HTTP/Errors/BadRequestError"
+	"Carbon/HTTP/Errors/client/BadRequestError"
 ), ():void => {
 
 	describe( clazz(
 		"Carbon.HTTP.Errors.BadRequestError",
-		"Error class that can be throw to indicate has been send a request that doesn"
+		"Error class to indicate that a malformed request has been sent."
 	), ():void => {
 
 		let response:Response;

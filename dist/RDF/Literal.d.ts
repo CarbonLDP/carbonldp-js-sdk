@@ -11,8 +11,5 @@ export declare class Factory {
     static is(value: any): boolean;
     static hasType(value: Class, type: string): boolean;
 }
-export declare class Util {
-    static areEqual(literal1: Class, literal2: Class): boolean;
-}
 export default Class;
 export { Serializer, Serializers };

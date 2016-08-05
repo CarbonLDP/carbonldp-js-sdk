@@ -1,17 +1,18 @@
 "use strict";
+var Agent = require("./Agent");
 var APIDescription = require("./APIDescription");
 var Auth = require("./Auth");
+var BlankNode = require("./BlankNode");
 var Documents_1 = require("./Documents");
+var Error = require("./LDP/Error");
+var ErrorResponse = require("./LDP/ErrorResponse");
 var Errors = require("./Errors");
 var LDP = require("./LDP");
 var NS = require("./NS");
-var PersistedBlankNode = require("./PersistedBlankNode");
-var RDF = require("./RDF");
 var ObjectSchema = require("./ObjectSchema");
-var Agent = require("./Agent");
+var ProtectedDocument = require("./ProtectedDocument");
+var RDF = require("./RDF");
 var RDFRepresentation = require("./RDFRepresentation");
-var ErrorResponse = require("./LDP/ErrorResponse");
-var Error = require("./LDP/Error");
 var Class = (function () {
     function Class() {
         this.settings = new Map();
@@ -133,10 +134,8 @@ var Class = (function () {
         this.typeObjectSchemaMap.set(type, extendedDigestedSchema);
     };
     Class.prototype.registerDefaultObjectSchemas = function () {
-        this.extendObjectSchema(PersistedBlankNode.SCHEMA);
-        this.extendObjectSchema(LDP.RDFSource.RDF_CLASS, LDP.RDFSource.SCHEMA);
-        this.extendObjectSchema(LDP.Container.RDF_CLASS, LDP.Container.SCHEMA);
-        this.extendObjectSchema(LDP.BasicContainer.RDF_CLASS, LDP.Container.SCHEMA);
+        this.extendObjectSchema(BlankNode.SCHEMA);
+        this.extendObjectSchema(ProtectedDocument.RDF_CLASS, ProtectedDocument.SCHEMA);
         this.extendObjectSchema(RDFRepresentation.RDF_CLASS, RDFRepresentation.SCHEMA);
         this.extendObjectSchema(APIDescription.RDF_CLASS, APIDescription.SCHEMA);
         this.extendObjectSchema(Error.RDF_CLASS, Error.SCHEMA);
@@ -163,8 +162,10 @@ var Class = (function () {
         this.extendObjectSchema(LDP.ResourceMetadata.RDF_CLASS, LDP.ResourceMetadata.SCHEMA);
         this.extendObjectSchema(LDP.AddMemberAction.RDF_CLASS, LDP.AddMemberAction.SCHEMA);
         this.extendObjectSchema(LDP.RemoveMemberAction.RDF_CLASS, LDP.RemoveMemberAction.SCHEMA);
-        this.extendObjectSchema(Auth.Token.RDF_CLASS, Auth.Token.SCHEMA);
+        this.extendObjectSchema(Auth.ACE.RDF_CLASS, Auth.ACE.SCHEMA);
+        this.extendObjectSchema(Auth.ACL.RDF_CLASS, Auth.ACL.SCHEMA);
         this.extendObjectSchema(Auth.Ticket.RDF_CLASS, Auth.Ticket.SCHEMA);
+        this.extendObjectSchema(Auth.Token.RDF_CLASS, Auth.Token.SCHEMA);
         this.extendObjectSchema(Agent.RDF_CLASS, Agent.SCHEMA);
     };
     Class.prototype.resolveTypeURI = function (uri) {

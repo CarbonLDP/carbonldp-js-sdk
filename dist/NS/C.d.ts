@@ -3,6 +3,7 @@ export declare class Class {
     static AccessPoint: string;
     static AddMemberAction: string;
     static API: string;
+    static Document: string;
     static NonReadableMembershipResourceTriples: string;
     static PreferContainer: string;
     static PreferContainmentResources: string;
@@ -20,13 +21,17 @@ export declare class Class {
 }
 export declare class Predicate {
     static accessPoint: string;
+    static appRoleMap: string;
     static bNodeIdentifier: string;
     static buildDate: string;
     static carbonCode: string;
     static created: string;
+    static defaultInteractionModel: string;
+    static entry: string;
     static error: string;
     static eTag: string;
     static httpStatusCode: string;
+    static key: string;
     static mediaType: string;
     static message: string;
     static modified: string;

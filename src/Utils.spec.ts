@@ -16,7 +16,7 @@ interface Dummy {
 	doSomething?():void;
 }
 
-describe( module( "Carbon/Utils", "The description of Carbon/Utils" ), ():void => {
+describe( module( "Carbon/Utils", "Class with useful functions used in the SDK." ), ():void => {
 
 	it( isDefined(), function():void {
 		expect( Utils ).toBeDefined();
@@ -24,7 +24,7 @@ describe( module( "Carbon/Utils", "The description of Carbon/Utils" ), ():void =
 	} );
 
 	it( hasMethod( STATIC, "hasFunction", "Checks if the object has a property with that name and if it that property is a function.", [
-		{name: "object", type: "object"},
+		{name: "object", type: "Object"},
 		{name: "name", type: "string"},
 	], {type: "boolean"} ), ():void => {
 		expect( Utils.hasFunction ).toBeDefined();
@@ -40,7 +40,7 @@ describe( module( "Carbon/Utils", "The description of Carbon/Utils" ), ():void =
 		expect( Utils.hasFunction( myObject, "something" ) ).toBe( false );
 	} );
 	it( hasMethod( STATIC, "hasProperty", "Checks if the object has a property with that name.", [
-		{name: "object", type: "object"},
+		{name: "object", type: "Object"},
 		{name: "name", type: "string"},
 	], {type: "boolean"} ), ():void => {
 		expect( Utils.hasProperty ).toBeDefined();
@@ -57,7 +57,7 @@ describe( module( "Carbon/Utils", "The description of Carbon/Utils" ), ():void =
 		expect( Utils.hasProperty( post, "prototypeProperty" ) ).toBe( true );
 	} );
 	it( hasMethod( STATIC, "hasPropertyDefined", "Checks if an object has a property defined under that name (even if its value is undefined).", [
-		{name: "object", type: "object"},
+		{name: "object", type: "Object"},
 		{name: "name", type: "string"},
 	], {type: "boolean"} ), ():void => {
 		expect( Utils.hasPropertyDefined ).toBeDefined();
@@ -101,7 +101,7 @@ describe( module( "Carbon/Utils", "The description of Carbon/Utils" ), ():void =
 		expect( Utils.isDefined( {} ) ).toBe( true );
 		expect( Utils.isDefined( [] ) ).toBe( true );
 
-		let somethingUndefined;
+		let somethingUndefined:any;
 		expect( Utils.isDefined( undefined ) ).toBe( false );
 		expect( Utils.isDefined( somethingUndefined ) ).toBe( false );
 	} );
@@ -162,7 +162,7 @@ describe( module( "Carbon/Utils", "The description of Carbon/Utils" ), ():void =
 		expect( Utils.isBoolean( [] ) ).toBe( false );
 	} );
 
-	it( hasMethod( STATIC, "isNumber", "Checks if the value passed is a number", [
+	it( hasMethod( STATIC, "isNumber", "Checks if the value passed is a number.", [
 		{name: "value", type: "any"},
 	], {type: "boolean"} ), ():void => {
 		expect( Utils.isNumber ).toBeDefined();
@@ -228,7 +228,7 @@ describe( module( "Carbon/Utils", "The description of Carbon/Utils" ), ():void =
 		expect( Utils.isDate( new Date() ) ).toBe( true );
 	} );
 
-	it( hasMethod( STATIC, "isObject", "Checks if the value passed is an object (doesn\"t include null).", [
+	it( hasMethod( STATIC, "isObject", "Checks if the value passed is an object (doesn't include null).", [
 		{name: "value", type: "any"},
 	], {type: "boolean"} ), ():void => {
 		expect( Utils.isObject ).toBeDefined();
@@ -294,13 +294,49 @@ describe( module( "Carbon/Utils", "The description of Carbon/Utils" ), ():void =
 		expect( Utils.parseBoolean( "an invalid string" ) ).toBe( false );
 	} );
 
-	it( hasMethod( STATIC, "extend", "", [] ), ():void => {
-		// TODO: Test
+	it( hasMethod( STATIC, "extend", "Extends the target object’s properties with the properties of the objects provided.", [
+		{name: "target", type: "Object", description: "The object to extend."},
+		{name: "...objects", type: "Objects[]", description: "Every parameter left from where to extract the properties to be added."},
+	] ), ():void => {
+		expect( Utils.extend ).toBeDefined();
+		expect( Utils.isFunction( Utils.extend ) ).toBe( true );
+
+		let object:Object;
+
+		object = {};
+		Utils.extend( object, {property1: "Property 1"} );
+
+		expect( object[ "property1" ] ).toBe( "Property 1" );
+
+		object = {};
+		Utils.extend( object, {property1: "Property 1"}, {property2: "Property 2"} );
+
+		expect( object[ "property1" ] ).toBe( "Property 1" );
+		expect( object[ "property2" ] ).toBe( "Property 2" );
+
+		object = {};
+		Utils.extend( object, {property1: "Property 1"}, {property1: "Last Property 1", property2: "Property 2"} );
+
+		expect( object[ "property1" ] ).toBe( "Last Property 1" );
+		expect( object[ "property2" ] ).toBe( "Property 2" );
+
+		object = {property1: "Old Property 1"};
+		Utils.extend( object, {property1: "Property 1"}, {property1: "Last Property 1", property2: "Property 2"} );
+
+		expect( object[ "property1" ] ).toBe( "Last Property 1" );
+		expect( object[ "property2" ] ).toBe( "Property 2" );
+
+		object = {property0: "Original Property 0"};
+		Utils.extend( object, {property1: "Property 1"}, {property1: "Last Property 1", property2: "Property 2"} );
+
+		expect( object[ "property0" ] ).toBe( "Original Property 0" );
+		expect( object[ "property1" ] ).toBe( "Last Property 1" );
+		expect( object[ "property2" ] ).toBe( "Property 2" );
 	} );
 
 	it( hasMethod( STATIC, "forEachOwnProperty", "Executes an action for each own property of the object.", [
-		{name: "object", type: "object"},
-		{name: "action", type: "function", description: "action( name, value )"},
+		{name: "object", type: "Object", description: "The object to iterate over its properties."},
+		{name: "action", type: "( name:string, value:any ) => boolean", description: "A function that will be called for every property own property in the object. The loop will break if the action function returns `false`."},
 	] ), ():void => {
 		expect( Utils.forEachOwnProperty ).toBeDefined();
 
@@ -323,14 +359,271 @@ describe( module( "Carbon/Utils", "The description of Carbon/Utils" ), ():void =
 		expect( anotherPost.three ).toBe( 3 );
 	} );
 
-	describe( clazz( "Carbon.Utils.O", "Utility functions related to strings." ), ():void => {
+	describe( clazz( "Carbon.Utils.O", "Utility functions related to objects." ), ():void => {
+
 		it( isDefined(), ():void => {
 			expect( Utils.O ).toBeDefined();
 		} );
 
+		it( hasMethod(
+			STATIC,
+			"clone",
+			"Makes a shallow or deep clone of the object provided depending of the configuration specified.", [
+				{name: "object", type: "Object", description: "The object to copy."},
+				{name: "config", type: "{arrays?:boolean, objects?:boolean}", description: "Object that indicates if the arrays or objects must be copied or not. By default, arrays and objects will not be deep copied."},
+			],
+			{type: "Object", description: "The copy of the object provided."}
+		), ():void => {
+			expect( Utils.O.clone ).toBeDefined();
+			expect( Utils.isFunction( Utils.O.clone ) ).toBe( true );
+
+			let object:Object;
+			let clone:Object;
+
+			object = {};
+			clone = Utils.O.clone( object );
+			expect( clone ).not.toBe( object );
+			expect( clone ).toEqual( {} );
+
+			object = {property1: "Property 1"};
+			clone = Utils.O.clone( object );
+			expect( clone ).not.toBe( object );
+			expect( clone[ "property1" ] ).toBe( "Property 1" );
+
+			object = {property1: "Property 1", property2: [ 1, 2, 3 ]};
+			clone = Utils.O.clone( object );
+			expect( clone ).not.toBe( object );
+			expect( clone[ "property1" ] ).toBe( "Property 1" );
+			expect( clone[ "property2" ] ).toEqual( [ 1, 2, 3 ] );
+			expect( clone[ "property2" ] ).toBe( object[ "property2" ] );
+
+			object = {property1: "Property 1", property2: [ 1, 2, 3 ]};
+			clone = Utils.O.clone( object, {arrays: true} );
+			expect( clone ).not.toBe( object );
+			expect( clone[ "property1" ] ).toBe( "Property 1" );
+			expect( clone[ "property2" ] ).toEqual( [ 1, 2, 3 ] );
+			expect( clone[ "property2" ] ).not.toBe( object[ "property2" ] );
+
+			object = {property1: "Property 1", property2: {nestedProperty: "Nested Property"}};
+			clone = Utils.O.clone( object );
+			expect( clone ).not.toBe( object );
+			expect( clone[ "property1" ] ).toBe( "Property 1" );
+			expect( clone[ "property2" ] ).toEqual( {nestedProperty: "Nested Property"} );
+			expect( clone[ "property2" ] ).toBe( object[ "property2" ] );
+
+			object = {property1: "Property 1", property2: {nestedProperty: "Nested Property"}};
+			clone = Utils.O.clone( object, {objects: true} );
+			expect( clone ).not.toBe( object );
+			expect( clone[ "property1" ] ).toBe( "Property 1" );
+			expect( clone[ "property2" ] ).toEqual( {nestedProperty: "Nested Property"} );
+			expect( clone[ "property2" ] ).not.toBe( object[ "property2" ] );
+
+			object = {property1: "Property 1", property2: [ 1, 2, 3 ], property3: {nestedProperty: "Nested Property"}};
+			clone = Utils.O.clone( object );
+			expect( clone ).not.toBe( object );
+			expect( clone[ "property1" ] ).toBe( "Property 1" );
+			expect( clone[ "property2" ] ).toEqual( [ 1, 2, 3 ] );
+			expect( clone[ "property2" ] ).toBe( object[ "property2" ] );
+			expect( clone[ "property3" ] ).toEqual( {nestedProperty: "Nested Property"} );
+			expect( clone[ "property3" ] ).toBe( object[ "property3" ] );
+
+			object = {property1: "Property 1", property2: [ 1, 2, 3 ], property3: {nestedProperty: "Nested Property"}};
+			clone = Utils.O.clone( object, {arrays: true} );
+			expect( clone ).not.toBe( object );
+			expect( clone[ "property1" ] ).toBe( "Property 1" );
+			expect( clone[ "property2" ] ).toEqual( [ 1, 2, 3 ] );
+			expect( clone[ "property2" ] ).not.toBe( object[ "property2" ] );
+			expect( clone[ "property3" ] ).toEqual( {nestedProperty: "Nested Property"} );
+			expect( clone[ "property3" ] ).toBe( object[ "property3" ] );
+
+			object = {property1: "Property 1", property2: [ 1, 2, 3 ], property3: {nestedProperty: "Nested Property"}};
+			clone = Utils.O.clone( object, {arrays: true, objects: true} );
+			expect( clone ).not.toBe( object );
+			expect( clone[ "property1" ] ).toBe( "Property 1" );
+			expect( clone[ "property2" ] ).toEqual( [ 1, 2, 3 ] );
+			expect( clone[ "property2" ] ).not.toBe( object[ "property2" ] );
+			expect( clone[ "property3" ] ).toEqual( {nestedProperty: "Nested Property"} );
+			expect( clone[ "property3" ] ).not.toBe( object[ "property3" ] );
+
+			object = {property1: "Property 1", property2: [ {nestedProperty: "Nested Property of 1"}, {nestedProperty: "Nested Property of 2"} ]};
+			clone = Utils.O.clone( object, {arrays: true, objects: true} );
+			expect( clone ).not.toBe( object );
+			expect( clone[ "property1" ] ).toBe( "Property 1" );
+			expect( clone[ "property2" ] ).not.toBe( object[ "property2" ] );
+			expect( clone[ "property2" ].length ).toBe( 2 );
+			expect( clone[ "property2" ][ 0 ] ).toEqual( {nestedProperty: "Nested Property of 1"} );
+			expect( clone[ "property2" ][ 0 ] ).not.toBe( object[ "property2" ][ 0 ] );
+			expect( clone[ "property2" ][ 1 ] ).toEqual( {nestedProperty: "Nested Property of 2"} );
+			expect( clone[ "property2" ][ 1 ] ).not.toBe( object[ "property2" ][ 1 ] );
+
+			object = {property1: "Property 1"};
+			object[ "property2" ] = object;
+			clone = Utils.O.clone( object );
+			expect( clone ).not.toBe( object );
+			expect( clone[ "property1" ] ).toBe( "Property 1" );
+			expect( clone[ "property2" ] ).toBe( object[ "property2" ] );
+			expect( clone[ "property2" ] ).toBe( object );
+
+			object = {property1: "Property 1"};
+			object[ "property2" ] = object;
+			clone = Utils.O.clone( object, {objects: true} );
+			expect( clone ).not.toBe( object );
+			expect( clone[ "property1" ] ).toBe( "Property 1" );
+			expect( clone[ "property2" ] ).not.toBe( object[ "property2" ] );
+			expect( clone[ "property2" ] ).toBe( clone );
+
+			object = {property1: "Property 1"};
+			object[ "property2" ] = [ object ];
+			clone = Utils.O.clone( object );
+			expect( clone ).not.toBe( object );
+			expect( clone[ "property1" ] ).toBe( "Property 1" );
+			expect( clone[ "property2" ] ).toBe( object[ "property2" ] );
+			expect( clone[ "property2" ].length ).toBe( 1 );
+			expect( clone[ "property2" ][ 0 ] ).toBe( object );
+
+			object = {property1: "Property 1"};
+			object[ "property2" ] = [ object ];
+			clone = Utils.O.clone( object, {objects: true} );
+			expect( clone ).not.toBe( object );
+			expect( clone[ "property1" ] ).toBe( "Property 1" );
+			expect( clone[ "property2" ] ).toBe( object[ "property2" ] );
+			expect( clone[ "property2" ].length ).toBe( 1 );
+			expect( clone[ "property2" ][ 0 ] ).toBe( object );
+
+			object = {property1: "Property 1"};
+			object[ "property2" ] = [ object ];
+			clone = Utils.O.clone( object, {arrays: true} );
+			expect( clone ).not.toBe( object );
+			expect( clone[ "property1" ] ).toBe( "Property 1" );
+			expect( clone[ "property2" ] ).not.toBe( object[ "property2" ] );
+			expect( clone[ "property2" ].length ).toBe( 1 );
+			expect( clone[ "property2" ][ 0 ] ).toBe( object );
+
+			object = {property1: "Property 1"};
+			object[ "property2" ] = [ object ];
+			clone = Utils.O.clone( object, {arrays: true, objects: true} );
+			expect( clone ).not.toBe( object );
+			expect( clone[ "property1" ] ).toBe( "Property 1" );
+			expect( clone[ "property2" ] ).not.toBe( object[ "property2" ] );
+			expect( clone[ "property2" ].length ).toBe( 1 );
+			expect( clone[ "property2" ][ 0 ] ).toBe( clone );
+
+		} );
+
+		it( hasMethod(
+			STATIC,
+			"areEqual",
+			"Makes a shallow or deep comparison, between all the enumerable properties of the provided objects, depending of the configuration specified.", [
+				{name: "object1", type: "Object", description: "First object to compare."},
+				{name: "object2", type: "Object", description: "Second object to compare."},
+				{name: "config", type: "{arrays?:boolean, objects?:boolean}", description: "Object that indicates if the arrays or the objects must have a deep comparison or not. By default the comparison is shallow."},
+			],
+			{type: "boolean"}
+		), ():void => {
+			expect( Utils.O.areEqual ).toBeDefined();
+			expect( Utils.isFunction( Utils.O.areEqual ) ).toBe( true );
+
+			let firstObject:Object;
+			let secondObject:Object;
+			let result:boolean;
+
+			firstObject = {};
+			secondObject = {};
+			result = Utils.O.areEqual( firstObject, secondObject );
+			expect( result ).toBe( true );
+
+			firstObject = {property1: "Property 1"};
+			secondObject = {property1: "Property 1"};
+			result = Utils.O.areEqual( firstObject, secondObject );
+			expect( result ).toBe( true );
+
+			firstObject = {property1: new Date( "2016/01/01" )};
+			secondObject = {property1: new Date( "2016/01/01" )};
+			result = Utils.O.areEqual( firstObject, secondObject );
+			expect( result ).toBe( true );
+
+			firstObject = {property1: "Property 1", property2: [ 1, 2, 3 ]};
+			secondObject = {property1: "Property 1", property2: [ 1, 2, 3 ]};
+			result = Utils.O.areEqual( firstObject, secondObject );
+			expect( result ).toBe( false );
+
+			firstObject = {property1: "Property 1", property2: [ 1, 2, 3 ]};
+			secondObject = {property1: "Property 1", property2: [ 1, 2, 3 ]};
+			result = Utils.O.areEqual( firstObject, secondObject, {arrays: true} );
+			expect( result ).toBe( true );
+
+			firstObject = {property1: "Property 1", property2: [ 1, new Date( "2016/01/01" ), 3 ]};
+			secondObject = {property1: "Property 1", property2: [ 1, new Date( "2016/01/01" ), 3 ]};
+			result = Utils.O.areEqual( firstObject, secondObject, {arrays: true} );
+			expect( result ).toBe( true );
+
+			firstObject = {property1: "Property 1", property2: {nestedProperty: "Nested Property"}};
+			secondObject = {property1: "Property 1", property2: {nestedProperty: "Nested Property"}};
+			result = Utils.O.areEqual( firstObject, secondObject );
+			expect( result ).toBe( false );
+
+			firstObject = {property1: "Property 1", property2: {nestedProperty: "Nested Property"}};
+			secondObject = {property1: "Property 1", property2: {nestedProperty: "Nested Property"}};
+			result = Utils.O.areEqual( firstObject, secondObject, {objects: true} );
+			expect( result ).toBe( true );
+
+			firstObject = {property1: "Property 1", property2: [ 1, 2, 3 ], property3: {nestedProperty: "Nested Property"}};
+			secondObject = {property1: "Property 1", property2: [ 1, 2, 3 ], property3: {nestedProperty: "Nested Property"}};
+			result = Utils.O.areEqual( firstObject, secondObject );
+			expect( result ).toBe( false );
+
+			firstObject = {property1: "Property 1", property2: [ 1, 2, 3 ], property3: {nestedProperty: "Nested Property"}};
+			secondObject = {property1: "Property 1", property2: [ 1, 2, 3 ], property3: {nestedProperty: "Nested Property"}};
+			result = Utils.O.areEqual( firstObject, secondObject, {arrays: true} );
+			expect( result ).toBe( false );
+
+			firstObject = {property1: "Property 1", property2: [ 1, 2, 3 ], property3: {nestedProperty: "Nested Property"}};
+			secondObject = {property1: "Property 1", property2: [ 1, 2, 3 ], property3: {nestedProperty: "Nested Property"}};
+			result = Utils.O.areEqual( firstObject, secondObject, {arrays: true, objects: true} );
+			expect( result ).toBe( true );
+
+			firstObject = {property1: "Property 1", property2: [ 1, new Date( "2016/01/01" ), 3 ]};
+			secondObject = {property1: "Property 1", property2: [ 1, new Date( "2016/01/01" ), 3 ]};
+			result = Utils.O.areEqual( firstObject, secondObject, {arrays: true, objects: true} );
+			expect( result ).toBe( true );
+
+			firstObject = {property1: "Property 1", property2: [ {nestedProperty: "Nested Property of 1"}, {nestedProperty: "Nested Property of 2"} ]};
+			secondObject = {property1: "Property 1", property2: [ {nestedProperty: "Nested Property of 1"}, {nestedProperty: "Nested Property of 2"} ]};
+			result = Utils.O.areEqual( firstObject, secondObject, {arrays: true} );
+			expect( result ).toBe( false );
+
+			firstObject = {property1: "Property 1", property2: [ {nestedProperty: "Nested Property of 1"}, {nestedProperty: "Nested Property of 2"} ]};
+			secondObject = {property1: "Property 1", property2: [ {nestedProperty: "Nested Property of 1"}, {nestedProperty: "Nested Property of 2"} ]};
+			result = Utils.O.areEqual( firstObject, secondObject, {objects: true} );
+			expect( result ).toBe( false );
+
+			firstObject = {property1: "Property 1", property2: [ {nestedProperty: "Nested Property of 1"}, {nestedProperty: "Nested Property of 2"} ]};
+			secondObject = {property1: "Property 1", property2: [ {nestedProperty: "Nested Property of 1"}, {nestedProperty: "Nested Property of 2"} ]};
+			result = Utils.O.areEqual( firstObject, secondObject, {arrays: true, objects: true} );
+			expect( result ).toBe( true );
+
+			firstObject = {property1: "Property 1", property2: {nestedProperty: "Nested Property"}};
+			firstObject[ "property3" ] = firstObject;
+
+			secondObject = {property1: "Property 1", property2: {nestedProperty: "Nested Property"}};
+			secondObject[ "property3" ] = firstObject;
+
+			result = Utils.O.areEqual( firstObject, secondObject, {objects: true} );
+			expect( result ).toBe( false );
+
+			firstObject = {property1: "Property 1", property2: {nestedProperty: "Nested Property"}};
+			firstObject[ "property3" ] = firstObject;
+
+			secondObject = {property1: "Property 1", property2: {nestedProperty: "Nested Property"}};
+			secondObject[ "property3" ] = secondObject;
+
+			result = Utils.O.areEqual( firstObject, secondObject, {objects: true} );
+			expect( result ).toBe( true );
+		} );
+
 		it( hasMethod( STATIC, "areShallowlyEqual", "Checks if an object has the same enumerable properties with the same values as another object.", [
-			{name: "object1", type: "object"},
-			{name: "object2", type: "object"},
+			{name: "object1", type: "Object", description: "First object to compare."},
+			{name: "object2", type: "Object", description: "Second object to compare."},
 		], {type: "boolean"} ), ():void => {
 			expect( Utils.O.areShallowlyEqual ).toBeDefined();
 
@@ -342,12 +635,12 @@ describe( module( "Carbon/Utils", "The description of Carbon/Utils" ), ():void =
 				stringProperty: "something",
 				numberProperty: 1,
 				objectProperty: sharedObject,
-				functionProperty: () => {},
+				functionProperty: ():void => {},
 			}, {
 				stringProperty: "something",
 				numberProperty: 1,
 				objectProperty: sharedObject,
-				functionProperty: () => {},
+				functionProperty: ():void => {},
 			} ) ).toBe( true );
 			// Object values not the same reference
 			expect( Utils.O.areShallowlyEqual( {
@@ -439,7 +732,7 @@ describe( module( "Carbon/Utils", "The description of Carbon/Utils" ), ():void =
 			expect( Utils.S.contains( "hello", " " ) ).toBe( false );
 		} );
 	} );
-	describe( clazz( "Carbon.Utils.A", "Utility functions related to Arrays" ), ():void => {
+	describe( clazz( "Carbon.Utils.A", "Utility functions related to Arrays." ), ():void => {
 		it( isDefined(), ():void => {
 			expect( Utils.A ).toBeDefined();
 		} );
@@ -452,7 +745,7 @@ describe( module( "Carbon/Utils", "The description of Carbon/Utils" ), ():void =
 			let iterator:Iterator<string> & { current:number, values:Array<string>} = {
 				current: 0,
 				values: [
-					"one", "two", "three", "four", "five"
+					"one", "two", "three", "four", "five",
 				],
 				next: function():IteratorResult<string> {
 					let value:IteratorResult<string>;
@@ -477,10 +770,9 @@ describe( module( "Carbon/Utils", "The description of Carbon/Utils" ), ():void =
 			expect( array.length ).toBe( 5 );
 		} );
 
-		it( hasMethod( STATIC, "joinWithoutDuplicates", "Takes two or more arrays and joins them while removing duplicates", [
-			// TODO: Describe multiple arguments
-			{name: "array", type: "array"},
-		], {type: "array"} ), ():void => {
+		it( hasMethod( STATIC, "joinWithoutDuplicates", "Takes two or more arrays and joins them while removing duplicates.", [
+			{name: "...arrays", type: "Array<Array<T>>", description: "Every array parameter to merge."},
+		], {type: "Array<T>"} ), ():void => {
 			expect( Utils.A.joinWithoutDuplicates ).toBeDefined();
 
 			let array1:Array<number> = [ 5, 3, 1 ];
@@ -498,14 +790,86 @@ describe( module( "Carbon/Utils", "The description of Carbon/Utils" ), ():void =
 			expect( result.indexOf( 6 ) ).not.toBe( - 1 );
 			expect( result.indexOf( 4 ) ).not.toBe( - 1 );
 		} );
+
+		it( hasMethod(
+			STATIC,
+			"indexOf",
+			[ "T", "W" ],
+			"Returns the index of a element searched in an array with a custom comparator function.\n" +
+			"If the element was not found `-1` is returned", [
+				{name: "array", type: "Array<T>", description: "The array were to search the element."},
+				{name: "searchedElement", type: "W", description: "The element searched"},
+				{name: "comparator", type: "( element:T, searchedElement:W ) => boolean", optional: true, description: "The function that must compare if the two elements provided are de same."},
+			],
+			{type: "boolean"}
+		), ():void => {
+			expect( Utils.A.indexOf ).toBeDefined();
+			expect( Utils.isFunction( Utils.A.indexOf ) ).toBe( true );
+
+			// Test if the default comparator works
+			(() => {
+				let result:number;
+				let array:Array<number> = [ 5, 3, 1 ];
+
+				result = Utils.A.indexOf<number, number>( array, 1 );
+				expect( result ).toBe( 2 );
+				result = Utils.A.indexOf<number, number>( array, 5 );
+				expect( result ).toBe( 0 );
+				result = Utils.A.indexOf<number, number>( array, 4 );
+				expect( result ).toBe( - 1 );
+			})();
+
+			// Test if the default comparator works
+			(() => {
+				let result:number;
+				let array:Array<number> = [ 5, 3, 1 ];
+
+				result = Utils.A.indexOf<number, string>( array, "1" );
+				expect( result ).toBe( - 1 );
+				result = Utils.A.indexOf<number, string>( array, "5" );
+				expect( result ).toBe( - 1 );
+				result = Utils.A.indexOf<number, string>( array, "4" );
+				expect( result ).toBe( - 1 );
+			})();
+
+			// Test using a custom function
+			(() => {
+				interface NoNumber {
+					value:number;
+				}
+				function comparator( a:number, b:NoNumber ):boolean {
+					return a === b.value;
+				}
+
+				let result:number;
+				let array:Array<number> = [ 5, 3, 1 ];
+				let searched:NoNumber;
+
+				searched = {value: 1};
+				result = Utils.A.indexOf<number, NoNumber>( array, searched, comparator );
+				expect( result ).toBe( 2 );
+
+				searched = <NoNumber> {value: 5, another: "thing"};
+				result = Utils.A.indexOf<number, NoNumber>( array, searched, comparator );
+				expect( result ).toBe( 0 );
+
+				searched = {value: 4};
+				result = Utils.A.indexOf<number, NoNumber>( array, searched, comparator );
+				expect( result ).toBe( - 1 );
+			})();
+
+		} );
+
 	} );
+
 	describe( clazz( "Carbon.Utils.M", "Utility functions related to ES6 Maps." ), ():void => {
+
 		it( isDefined(), ():void => {
 			expect( Utils.M ).toBeDefined();
 		} );
 
 		it( hasMethod( STATIC, "from", "Takes an object and creates a map from its properties.", [
-			{name: "object", type: "object"},
+			{name: "object", type: "Object"},
 		], {type: "map"} ), ():void => {
 			expect( Utils.M.from ).toBeDefined();
 
@@ -522,9 +886,80 @@ describe( module( "Carbon/Utils", "The description of Carbon/Utils" ), ():void =
 			expect( result.get( "two" ) ).toBe( 2 );
 			expect( result.get( "three" ) ).toBe( 3 );
 		} );
+
+		it( hasMethod(
+			STATIC,
+			"extend",
+			"Adds to a target Map all the entries of the subsequents Maps provided. If entries with the same key exists between Maps, the entry's value of the first Map provided is preserved.", [
+				{name: "toExtend", type: "Map<K, V>", description: "Target Map to extend."},
+				{name: "...extenders", type: "Map<K, V>[]", description: "Every other Map parameter, from which the entries to be added to the target Map will be taken."},
+			],
+			{type: "Map<K, V>", description: "Returns the target map provided."}
+		), ():void => {
+			expect( Utils.M.extend ).toBeDefined();
+			expect( Utils.isFunction( Utils.M.extend ) ).toBe( true );
+
+			let target:Map<string, number>;
+			let result:Map<string, number>;
+
+			target = new Map();
+			result = Utils.M.extend<string, number>( target );
+			expect( result ).toBe( target );
+			expect( result.size ).toBe( 0 );
+
+			target = new Map();
+			result = Utils.M.extend<string, number>( target, new Map() );
+			expect( result ).toBe( target );
+			expect( result.size ).toBe( 0 );
+
+			target = new Map();
+			result = Utils.M.extend<string, number>( target, new Map<string, number>( <any> [ [ "entry1", 1 ] ] ) );
+			expect( result ).toBe( target );
+			expect( result.size ).toBe( 1 );
+			expect( result.get( "entry1" ) ).toBe( 1 );
+
+			target = new Map();
+			result = Utils.M.extend<string, number>( target, new Map<string, number>( <any> [ [ "entry1", 1 ], [ "entry3", 3 ] ] ), new Map<string, number>( <any> [ [ "entry2", 2 ] ] ) );
+			expect( result ).toBe( target );
+			expect( result.size ).toBe( 3 );
+			expect( result.get( "entry1" ) ).toBe( 1 );
+			expect( result.get( "entry2" ) ).toBe( 2 );
+			expect( result.get( "entry3" ) ).toBe( 3 );
+
+			target = new Map<string, number>( <any> [ [ "entry0", 0 ] ] );
+			result = Utils.M.extend<string, number>( target, new Map<string, number>( <any> [ [ "entry1", 1 ], [ "entry3", 3 ] ] ), new Map<string, number>( <any> [ [ "entry2", 2 ] ] ) );
+			expect( result ).toBe( target );
+			expect( result.size ).toBe( 4 );
+			expect( result.get( "entry0" ) ).toBe( 0 );
+			expect( result.get( "entry1" ) ).toBe( 1 );
+			expect( result.get( "entry2" ) ).toBe( 2 );
+			expect( result.get( "entry3" ) ).toBe( 3 );
+
+			target = new Map<string, number>( <any> [ [ "entry0", 0 ] ] );
+			result = Utils.M.extend<string, number>( target, new Map<string, number>( <any> [ [ "entry0", 10 ], [ "entry3", 3 ] ] ) );
+			expect( result ).toBe( target );
+			expect( result.size ).toBe( 2 );
+			expect( result.get( "entry0" ) ).toBe( 0 );
+			expect( result.get( "entry3" ) ).toBe( 3 );
+
+			target = new Map<string, number>( <any> [ [ "entry0", 0 ] ] );
+			result = Utils.M.extend<string, number>( target, new Map<string, number>( <any> [ [ "entry0", 10 ], [ "entry3", 3 ] ] ), new Map<string, number>( <any> [ [ "entry0", 100 ] ] ) );
+			expect( result ).toBe( target );
+			expect( result.size ).toBe( 2 );
+			expect( result.get( "entry0" ) ).toBe( 0 );
+			expect( result.get( "entry3" ) ).toBe( 3 );
+
+			target = new Map();
+			result = Utils.M.extend<string, number>( target, new Map<string, number>( <any> [ [ "entry0", 10 ], [ "entry3", 3 ] ] ), new Map<string, number>( <any> [ [ "entry0", 100 ] ] ) );
+			expect( result ).toBe( target );
+			expect( result.size ).toBe( 2 );
+			expect( result.get( "entry0" ) ).toBe( 10 );
+			expect( result.get( "entry3" ) ).toBe( 3 );
+		} );
+
 	} );
 
-	describe( clazz( "Carbon.Utils.UUID", "Utility functions related to UUIDs" ), ():void => {
+	describe( clazz( "Carbon.Utils.UUID", "Utility functions related to UUIDs." ), ():void => {
 		it( isDefined(), ():void => {
 			expect( Utils.UUID ).toBeDefined();
 		} );

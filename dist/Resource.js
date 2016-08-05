@@ -43,5 +43,17 @@ var Factory = (function () {
     return Factory;
 }());
 exports.Factory = Factory;
+var Util = (function () {
+    function Util() {
+    }
+    Util.hasType = function (resource, type) {
+        return Util.getTypes(resource).indexOf(type) !== -1;
+    };
+    Util.getTypes = function (resource) {
+        return resource.types || [];
+    };
+    return Util;
+}());
+exports.Util = Util;
 
 //# sourceMappingURL=Resource.js.map

@@ -1,6 +1,14 @@
 "use strict";
+var ACE = require("./Auth/ACE");
+exports.ACE = ACE;
+var ACL = require("./Auth/ACL");
+exports.ACL = ACL;
 var BasicAuthenticator_1 = require("./Auth/BasicAuthenticator");
 exports.BasicAuthenticator = BasicAuthenticator_1.default;
+var PersistedACE = require("./Auth/PersistedACE");
+exports.PersistedACE = PersistedACE;
+var PersistedACL = require("./Auth/PersistedACL");
+exports.PersistedACL = PersistedACL;
 var TokenAuthenticator_1 = require("./Auth/TokenAuthenticator");
 exports.TokenAuthenticator = TokenAuthenticator_1.default;
 var Ticket = require("./Auth/Ticket");
@@ -13,6 +21,7 @@ var Errors = require("./Errors");
 var FreeResources = require("./FreeResources");
 var HTTP = require("./HTTP");
 var NS = require("./NS");
+var PersistedDocument = require("./PersistedDocument");
 var Resource = require("./Resource");
 var RDF = require("./RDF");
 var Utils = require("./Utils");
@@ -23,12 +32,23 @@ var Utils = require("./Utils");
 var Method = exports.Method;
 var Class = (function () {
     function Class(context) {
-        this.method = null;
         this.context = context;
         this.authenticators = [];
         this.authenticators[Method.BASIC] = new BasicAuthenticator_1.default();
         this.authenticators[Method.TOKEN] = new TokenAuthenticator_1.default(this.context);
     }
+    Object.defineProperty(Class.prototype, "authenticatedAgent", {
+        get: function () {
+            if (!this._authenticatedAgent) {
+                if (this.context.parentContext && this.context.parentContext.auth)
+                    return this.context.parentContext.auth.authenticatedAgent;
+                return null;
+            }
+            return this._authenticatedAgent;
+        },
+        enumerable: true,
+        configurable: true
+    });
     Class.prototype.isAuthenticated = function (askParent) {
         if (askParent === void 0) { askParent = true; }
         return ((this.authenticator && this.authenticator.isAuthenticated()) ||
@@ -63,6 +83,7 @@ var Class = (function () {
             return;
         this.authenticator.clearAuthentication();
         this.authenticator = null;
+        this._authenticatedAgent = null;
     };
     Class.prototype.createTicket = function (uri, requestOptions) {
         var _this = this;
@@ -101,31 +122,77 @@ var Class = (function () {
         });
     };
     Class.prototype.authenticateWithBasic = function (username, password) {
+        var _this = this;
         var authenticator = this.authenticators[Method.BASIC];
         var authenticationToken;
         authenticationToken = new UsernameAndPasswordToken_1.default(username, password);
         this.clearAuthentication();
-        this.authenticator = authenticator;
-        return this.authenticator.authenticate(authenticationToken);
+        var credentials;
+        return authenticator.authenticate(authenticationToken).then(function (_credentials) {
+            credentials = _credentials;
+            return _this.getAuthenticatedAgent(authenticator);
+        }).then(function (persistedAgent) {
+            _this._authenticatedAgent = persistedAgent;
+            _this.authenticator = authenticator;
+            return credentials;
+        });
     };
     Class.prototype.authenticateWithToken = function (userOrTokenOrCredentials, password) {
+        var _this = this;
         var authenticator = this.authenticators[Method.TOKEN];
         var credentials = null;
         var authenticationToken = null;
         if (Utils.isString(userOrTokenOrCredentials) && Utils.isString(password)) {
             authenticationToken = new UsernameAndPasswordToken_1.default(userOrTokenOrCredentials, password);
         }
-        else if (Token.Factory.is(userOrTokenOrCredentials)) {
+        else if (Token.Factory.hasRequiredValues(userOrTokenOrCredentials)) {
             credentials = userOrTokenOrCredentials;
         }
         else {
             return Promise.reject(new Errors.IllegalArgumentError("Parameters do not match with the authentication request."));
         }
         this.clearAuthentication();
-        this.authenticator = authenticator;
-        if (authenticationToken)
-            return authenticator.authenticate(authenticationToken);
-        return authenticator.authenticate(credentials);
+        return authenticator.authenticate((authenticationToken) ? authenticationToken : credentials).then(function (_credentials) {
+            credentials = _credentials;
+            if (PersistedDocument.Factory.is(_credentials.agent))
+                return credentials.agent;
+            return _this.getAuthenticatedAgent(authenticator);
+        }).then(function (persistedAgent) {
+            _this._authenticatedAgent = persistedAgent;
+            credentials.agent = persistedAgent;
+            _this.authenticator = authenticator;
+            return credentials;
+        });
+    };
+    Class.prototype.getAuthenticatedAgent = function (authenticator) {
+        var _this = this;
+        var requestOptions = {};
+        authenticator.addAuthentication(requestOptions);
+        HTTP.Request.Util.setAcceptHeader("application/ld+json", requestOptions);
+        HTTP.Request.Util.setPreferredInteractionModel(NS.LDP.Class.RDFSource, requestOptions);
+        var uri = this.context.resolve("agents/me/");
+        return HTTP.Request.Service.get(uri, requestOptions, new RDF.Document.Parser()).then(function (_a) {
+            var rdfDocuments = _a[0], response = _a[1];
+            var eTag = HTTP.Response.Util.getETag(response);
+            if (eTag === null)
+                throw new HTTP.Errors.BadResponseError("The authenticated agent doesn't contain an ETag", response);
+            var locationHeader = response.getHeader("Content-Location");
+            if (!locationHeader || locationHeader.values.length < 1)
+                throw new HTTP.Errors.BadResponseError("The response is missing a Content-Location header.", response);
+            if (locationHeader.values.length !== 1)
+                throw new HTTP.Errors.BadResponseError("The response contains more than one Content-Location header.", response);
+            var agentURI = locationHeader.toString();
+            if (!agentURI)
+                throw new HTTP.Errors.BadResponseError("The response doesn't contain a 'Content-Location' header.", response);
+            var agentsDocuments = RDF.Document.Util.getDocuments(rdfDocuments).filter(function (rdfDocument) { return rdfDocument["@id"] === agentURI; });
+            if (agentsDocuments.length === 0)
+                throw new HTTP.Errors.BadResponseError("The response doesn't contain a the '" + agentURI + "' resource.", response);
+            if (agentsDocuments.length > 1)
+                throw new HTTP.Errors.BadResponseError("The response contains more than one '" + agentURI + "' resource.", response);
+            var document = _this.context.documents._getPersistedDocument(agentsDocuments[0], response);
+            document._etag = eTag;
+            return document;
+        });
     };
     return Class;
 }());

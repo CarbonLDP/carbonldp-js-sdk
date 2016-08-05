@@ -47,7 +47,7 @@ describe( module( "Carbon/LDP/ResourceMetadata" ), ():void => {
 
 	describe( clazz(
 		"Carbon.LDP.ResourceMetadata.Factory",
-		"Factory class form `Carbon.LDP.ResourceMetadata.Class` objects."
+		"Factory class for `Carbon.LDP.ResourceMetadata.Class` objects."
 	), ():void => {
 
 		it( isDefined(), ():void => {
@@ -87,7 +87,7 @@ describe( module( "Carbon/LDP/ResourceMetadata" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"is",
-			"Return true if the object provided can be classified as a `Carbon.LDP.ResourceMetadata.Class` object.", [
+			"Return true if the object provided is considered a `Carbon.LDP.ResourceMetadata.Class` object.", [
 				{name: "object", type: "Object", description: "Object to check."},
 			],
 			{type: "boolean"}
@@ -119,7 +119,7 @@ describe( module( "Carbon/LDP/ResourceMetadata" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"hasRDFClass",
-			"Return true if the object provided have the RDF_CLASS of a ResourceMetadata, either if it's a Resource or a RDF object.", [
+			"Return true if the object provided have the RDF_CLASS of a ResourceMetadata, either if it's a Carbon Resource or an RDF object.", [
 				{name: "object", type: "Object", description: "Object to check."},
 			],
 			{type: "boolean"}
