@@ -3644,8 +3644,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 			let spyRefresh:jasmine.Spy = spyOn( context.documents, "refresh" ).and.returnValue( Promise.resolve<any>( [ document, mockRefreshResponse ] ) );
 
 			documents.saveAndRefresh( document, options ).then( ( [ _document, [ saveResponse, refreshResponse ] ]:[ Document.Class, [ HTTP.Response.Class, HTTP.Response.Class] ] ) => {
-				expect( spySave ).toHaveBeenCalledWith( document, options );
-				expect( spyRefresh ).toHaveBeenCalledWith( document, options );
+				expect( spySave ).toHaveBeenCalledWith( document );
+				expect( spyRefresh ).toHaveBeenCalledWith( document );
 
 				expect( document ).toBe( _document );
 				expect( saveResponse ).toBe( mockSaveResponse );

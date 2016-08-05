@@ -468,6 +468,7 @@ var Documents = (function () {
         this.setDefaultRequestOptions(requestOptions, NS.LDP.Class.RDFSource);
         HTTP.Request.Util.setContentTypeHeader("application/ld+json", requestOptions);
         HTTP.Request.Util.setIfMatchHeader(persistedDocument._etag, requestOptions);
+        persistedDocument._normalize();
         var body = persistedDocument.toJSON(this, this.jsonldConverter);
         return HTTP.Request.Service.put(uri, body, requestOptions).then(function (response) {
             return [persistedDocument, response];
@@ -502,10 +503,10 @@ var Documents = (function () {
         var _this = this;
         if (requestOptions === void 0) { requestOptions = {}; }
         var saveResponse;
-        return this.save(persistedDocument, requestOptions).then(function (_a) {
+        return this.save(persistedDocument).then(function (_a) {
             var document = _a[0], response = _a[1];
             saveResponse = response;
-            return _this.refresh(persistedDocument, requestOptions);
+            return _this.refresh(persistedDocument);
         }).then(function (_a) {
             var document = _a[0], response = _a[1];
             return [persistedDocument, [saveResponse, response]];
@@ -525,13 +526,17 @@ var Documents = (function () {
     Documents.prototype.getDownloadURL = function (documentURI, requestOptions) {
         return this.context.auth.getAuthenticatedURL(documentURI, requestOptions);
     };
+    Documents.prototype.getGeneralSchema = function () {
+        var schemas = [];
+        if (!!this.context)
+            schemas.push(this.context.getObjectSchema());
+        return ObjectSchema.Digester.combineDigestedObjectSchemas(schemas);
+    };
     Documents.prototype.getSchemaFor = function (object) {
-        if ("@id" in object) {
-            return this.getDigestedObjectSchemaForExpandedObject(object);
-        }
-        else {
-            return this.getDigestedObjectSchemaForDocument(object);
-        }
+        var schema = ("@id" in object) ?
+            this.getDigestedObjectSchemaForExpandedObject(object) :
+            this.getDigestedObjectSchemaForDocument(object);
+        return schema;
     };
     Documents.prototype.executeRawASKQuery = function (documentURI, askQuery, requestOptions) {
         if (requestOptions === void 0) { requestOptions = {}; }
@@ -793,7 +798,7 @@ var Documents = (function () {
     Documents.prototype.updatePersistedDocument = function (persistedDocument, documentResource, fragmentResources) {
         var namedFragmentsMap = new Map();
         var blankNodesArray = persistedDocument.getFragments().filter(function (fragment) {
-            persistedDocument.removeFragment(fragment.id);
+            persistedDocument._removeFragment(fragment.id);
             if (RDF.URI.Util.isBNodeID(fragment.id))
                 return true;
             namedFragmentsMap.set(fragment.id, fragment);

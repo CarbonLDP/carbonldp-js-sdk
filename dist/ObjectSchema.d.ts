@@ -34,6 +34,7 @@ export declare class DigestedPropertyDefinition {
     containerType: ContainerType;
 }
 export interface Resolver {
+    getGeneralSchema(): DigestedObjectSchema;
     getSchemaFor(object: Object): DigestedObjectSchema;
 }
 export declare class Digester {

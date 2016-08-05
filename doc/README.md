@@ -1997,16 +1997,33 @@ _fragmentsIndex:Map<string, Carbon.Fragment.Class>
 Map that stores the fragments (named fragments and blank nodes) of the Document.
 
 ##### <a name="Carbon-Document-Factory-Decorated-Object-Methods" />Methods
-##### addType
+##### _normalize
 ```typescript 
-addType( type:string )
+_normalize()
 ```
 
-Adds a type to the Document.
+Search over the document for normal objects to convert into fragments, and unused fragments to eliminate.
+
+##### _removeFragment
+```typescript 
+_removeFragment( fragment:Carbon.Fragment.Class )
+```
+
+Remove the fragment referenced by the `Carbon.Fragment.Class` provided from the Document.
 
 *Parameters*
 
-- type: The type to be added.
+- fragment
+
+```typescript 
+_removeFragment( slug:string )
+```
+
+Remove the fragment referenced by the Slug provided from the Document.
+
+*Parameters*
+
+- slug
 
 ##### createFragment
 ```typescript 
@@ -2137,17 +2154,6 @@ Returns true if the Document has a pointer referenced by the URI provided.
 
 - id
 
-##### hasType
-```typescript 
-hasType( type:string )
-```
-
-Returns true if the Document contains the type specified.
-
-*Parameters*
-
-- type: The type to look for.
-
 ##### inScope
 ```typescript 
 inScope( pointer:Carbon.Pointer.Class ):boolean
@@ -2169,47 +2175,26 @@ Returns true if the URI provided is inside the scope of the Document.
 
 - id
 
-##### removeFragment
+##### removeNamedFragment
 ```typescript 
-removeFragment( fragment:Carbon.NamedFragment.Class )
+removeNamedFragment( fragment:Carbon.NamedFragment.Class )
 ```
 
-Remove the fragment referenced by the `Carbon.NamedFragment.Class` provided from the Document.
+Remove the maned fragment referenced by the `Carbon.NamedFragment.Class` provided from the Document.
 
 *Parameters*
 
 - fragment
 
 ```typescript 
-removeFragment( fragment:Carbon.Fragment.Class )
+removeNamedFragment( slug:string )
 ```
 
-Remove the fragment referenced by the `Carbon.Fragment.Class` provided from the Document.
-
-*Parameters*
-
-- fragment
-
-```typescript 
-removeFragment( slug:string )
-```
-
-Remove the fragment referenced by the Slug provided from the Document.
+Remove the named fragment referenced by the Slug provided from the Document.
 
 *Parameters*
 
 - slug
-
-##### removeType
-```typescript 
-removeType( type:string )
-```
-
-Remove the type specified from the Document.
-
-*Parameters*
-
-- type: The type to be removed.
 
 ##### toJSON
 ```typescript 
@@ -7092,17 +7077,6 @@ Adds the specified resources as members of the container.
 
 - members: Array of URIs or Pointers to add as members.
 
-##### addType
-```typescript 
-addType( type:string )
-```
-
-Adds a type to the Document. Relative and prefixed types are resolved before the operation.
-
-*Parameters*
-
-- type: The type to be added.
-
 ##### createAccessPoint
 ```typescript 
 createAccessPoint<T extends Carbon.AccessPoint.Class>( accessPoint:T,  slug?:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ T & Carbon.PersistedAccessPoint.Class, Carbon.HTTP.Response ]>
@@ -7407,17 +7381,6 @@ Returns true if the PersistedDocument object has a pointer referenced by the URI
 
 - id
 
-##### hasType
-```typescript 
-hasType( type:string )
-```
-
-Returns true if the Document contains the type specified. Relative and prefixed types are resolved before the operation.
-
-*Parameters*
-
-- type: The type to look for.
-
 ##### inScope
 ```typescript 
 inScope( pointer:Carbon.Pointer.Class ):boolean
@@ -7502,17 +7465,6 @@ Remove the specified resources URI or Pointers as members of the current contain
 *Parameters*
 
 - members: Array of URIs or Pointers to remove as members
-
-##### removeType
-```typescript 
-removeType( type:string )
-```
-
-Remove the type specified from the Document. Relative and prefixed types are resolved before the operation.
-
-*Parameters*
-
-- type: The type to be removed.
 
 ##### save
 ```typescript 

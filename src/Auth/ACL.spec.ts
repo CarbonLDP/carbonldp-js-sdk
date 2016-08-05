@@ -584,7 +584,7 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 					expect( acl.entries ).toContain( ace );
 
 
-					acl.entries.forEach( forEachACE => acl.removeFragment( forEachACE.id ) );
+					acl.entries.forEach( forEachACE => acl._removeFragment( forEachACE.id ) );
 					acl.entries = [];
 
 					ace = ACE.Factory.createFrom(
@@ -665,7 +665,7 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#CREATE" );
 					expect( acl.entries ).toContain( ace );
 
-					acl.entries.forEach( forEachACE => acl.removeFragment( forEachACE.id ) );
+					acl.entries.forEach( forEachACE => acl._removeFragment( forEachACE.id ) );
 					acl.entries = [];
 					acl.inheritableEntries = [];
 
@@ -1115,7 +1115,7 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 					expect( acl.entries ).toContain( ace );
 
 
-					acl.entries.forEach( forEachACE => acl.removeFragment( forEachACE.id ) );
+					acl.entries.forEach( forEachACE => acl._removeFragment( forEachACE.id ) );
 					acl.entries = [];
 					ace = ACE.Factory.createFrom(
 						acl.createFragment(),
@@ -1197,7 +1197,7 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 					expect( acl.entries ).toContain( ace );
 
 
-					acl.entries.forEach( forEachACE => acl.removeFragment( forEachACE.id ) );
+					acl.entries.forEach( forEachACE => acl._removeFragment( forEachACE.id ) );
 					acl.entries = [];
 					acl.inheritableEntries = [];
 
@@ -1316,7 +1316,7 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#DELETE" );
 					expect( acl.inheritableEntries ).toContain( ace );
 
-					acl.inheritableEntries.forEach( forEachACE => acl.removeFragment( forEachACE.id ) );
+					acl.inheritableEntries.forEach( forEachACE => acl._removeFragment( forEachACE.id ) );
 					delete acl.inheritableEntries;
 
 					acl.configureChildInheritance( false, "http://example.com/ns#Subject-02", "http://example.com/ns#SubjetClass", "http://example.com/ns#READ" );
@@ -1463,7 +1463,7 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
 					expect( acl.inheritableEntries ).toContain( ace );
 
-					acl.inheritableEntries.forEach( forEachACE => acl.removeFragment( forEachACE.id ) );
+					acl.inheritableEntries.forEach( forEachACE => acl._removeFragment( forEachACE.id ) );
 					delete acl.inheritableEntries;
 
 					acl.configureChildInheritance( false, "http://example.com/ns#Subject", "http://example.com/ns#SubjetClass", [ "http://example.com/ns#READ" ] );
@@ -1647,7 +1647,7 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#DELETE" );
 					expect( acl.inheritableEntries ).toContain( ace );
 
-					acl.inheritableEntries.forEach( forEachACE => acl.removeFragment( forEachACE.id ) );
+					acl.inheritableEntries.forEach( forEachACE => acl._removeFragment( forEachACE.id ) );
 					delete acl.inheritableEntries;
 
 					acl.configureChildInheritance( false, [ "http://example.com/ns#Subject" ], "http://example.com/ns#SubjetClass", "http://example.com/ns#READ" );
@@ -1883,7 +1883,7 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#CREATE" );
 					expect( acl.inheritableEntries ).toContain( ace );
 
-					acl.inheritableEntries.forEach( forEachACE => acl.removeFragment( forEachACE.id ) );
+					acl.inheritableEntries.forEach( forEachACE => acl._removeFragment( forEachACE.id ) );
 					delete acl.inheritableEntries;
 
 					acl.configureChildInheritance( false, [ "http://example.com/ns#Subject" ], "http://example.com/ns#SubjetClass", [ "http://example.com/ns#READ" ] );
@@ -2013,7 +2013,7 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#CREATE" );
 					expect( acl.inheritableEntries ).toContain( ace );
 
-					acl.inheritableEntries.forEach( forEachACE => acl.removeFragment( forEachACE.id ) );
+					acl.inheritableEntries.forEach( forEachACE => acl._removeFragment( forEachACE.id ) );
 					acl.inheritableEntries = [];
 
 					ace = ACE.Factory.createFrom(
@@ -2093,7 +2093,7 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#CREATE" );
 					expect( acl.inheritableEntries ).toContain( ace );
 
-					acl.inheritableEntries.forEach( forEachACE => acl.removeFragment( forEachACE.id ) );
+					acl.inheritableEntries.forEach( forEachACE => acl._removeFragment( forEachACE.id ) );
 					acl.inheritableEntries = [];
 
 					ace = ACE.Factory.createFrom(
@@ -2175,7 +2175,7 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
 					expect( acl.inheritableEntries ).toContain( ace );
 
-					acl.inheritableEntries.forEach( forEachACE => acl.removeFragment( forEachACE.id ) );
+					acl.inheritableEntries.forEach( forEachACE => acl._removeFragment( forEachACE.id ) );
 					acl.inheritableEntries = [];
 					acl.entries = [];
 
