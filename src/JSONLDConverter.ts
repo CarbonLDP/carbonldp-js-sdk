@@ -280,8 +280,8 @@ export class Class {
 
 		id = ObjectSchema.Digester.resolvePrefixedURI( new RDF.URI.Class( id ), generalSchema ).stringValue;
 
-		if( digestedSchema.properties.has( id ) ) {
-			let definition:ObjectSchema.DigestedPropertyDefinition = digestedSchema.properties.get( id );
+		if( generalSchema.properties.has( id ) ) {
+			let definition:ObjectSchema.DigestedPropertyDefinition = generalSchema.properties.get( id );
 			if( definition.uri ) id = definition.uri.stringValue;
 		}
 

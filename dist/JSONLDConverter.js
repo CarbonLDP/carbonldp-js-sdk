@@ -237,8 +237,8 @@ var Class = (function () {
             return null;
         }
         id = ObjectSchema.Digester.resolvePrefixedURI(new RDF.URI.Class(id), generalSchema).stringValue;
-        if (digestedSchema.properties.has(id)) {
-            var definition = digestedSchema.properties.get(id);
+        if (generalSchema.properties.has(id)) {
+            var definition = generalSchema.properties.get(id);
             if (definition.uri)
                 id = definition.uri.stringValue;
         }

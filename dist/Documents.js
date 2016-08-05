@@ -503,10 +503,10 @@ var Documents = (function () {
         var _this = this;
         if (requestOptions === void 0) { requestOptions = {}; }
         var saveResponse;
-        return this.save(persistedDocument, requestOptions).then(function (_a) {
+        return this.save(persistedDocument).then(function (_a) {
             var document = _a[0], response = _a[1];
             saveResponse = response;
-            return _this.refresh(persistedDocument, requestOptions);
+            return _this.refresh(persistedDocument);
         }).then(function (_a) {
             var document = _a[0], response = _a[1];
             return [persistedDocument, [saveResponse, response]];

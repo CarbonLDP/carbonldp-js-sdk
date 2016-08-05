@@ -273,6 +273,10 @@ describe( module( "Carbon/JSONLDConverter" ), ():void => {
 				let generalSchema:ObjectSchema.Class = {
 					"ex": "http://example.com/ns#",
 					"xsd": "http://www.w3.org/2001/XMLSchema#",
+					"propertyInGeneral": {
+						"@id": "ex:property-in-general",
+						"@type": "@id"
+					}
 				};
 
 				let schema:ObjectSchema.Class = {
@@ -370,7 +374,7 @@ describe( module( "Carbon/JSONLDConverter" ), ():void => {
 					],
 					"unknownTypePointer": Pointer.Factory.create( "http://example.com/pointer/" ),
 					"anotherPrefixedPointer": "ex:another-resource/",
-					"anotherPointerInSchema": "string",
+					"anotherPointerInSchema": "propertyInGeneral",
 					"notInSchemaLiteral": "Property Literal not defined in Schema",
 					"notInSchemaPointer": Pointer.Factory.create( "http://example.com/another-pointer/" ),
 					"vocabPointer": "to-pointer",
@@ -510,7 +514,7 @@ describe( module( "Carbon/JSONLDConverter" ), ():void => {
 
 				expect( expandedObject[ "http://example.com/ns#another-pointer-in-schema" ] ).toBeDefined();
 				expect( expandedObject[ "http://example.com/ns#another-pointer-in-schema" ] ).toEqual( [ {
-					"@id": "http://example.com/ns#string",
+					"@id": "http://example.com/ns#property-in-general",
 				} ] );
 
 				expect( expandedObject[ "http://example.com/my-namespace#notInSchemaLiteral" ] ).toBeDefined();

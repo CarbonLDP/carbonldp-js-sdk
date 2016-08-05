@@ -587,10 +587,12 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 	}
 
 	saveAndRefresh<T extends PersistedDocument.Class>( persistedDocument:T, requestOptions:HTTP.Request.Options = {} ):Promise<[ T, [ HTTP.Response.Class, HTTP.Response.Class] ]> {
+		// TODO: Check how to manage the requestOptions for the multiple calls
+
 		let saveResponse:HTTP.Response.Class;
-		return this.save<T>( persistedDocument, requestOptions ).then( ( [ document, response ]:[ T, HTTP.Response.Class ] ) => {
+		return this.save<T>( persistedDocument ).then( ( [ document, response ]:[ T, HTTP.Response.Class ] ) => {
 			saveResponse = response;
-			return this.refresh<T>( persistedDocument, requestOptions );
+			return this.refresh<T>( persistedDocument );
 		} ).then( ( [ document, response ]:[ T, HTTP.Response.Class ] ) => {
 			return [ persistedDocument, [ saveResponse, response ] ];
 		} );
