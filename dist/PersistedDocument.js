@@ -1,5 +1,6 @@
 "use strict";
 var Document = require("./Document");
+var ObjectSchema = require("./ObjectSchema");
 var PersistedResource = require("./PersistedResource");
 var PersistedFragment = require("./PersistedFragment");
 var PersistedNamedFragment = require("./PersistedNamedFragment");
@@ -7,7 +8,6 @@ var Pointer = require("./Pointer");
 var RDF = require("./RDF");
 var Utils = require("./Utils");
 var URI = require("./RDF/URI");
-var ObjectSchema = require("./ObjectSchema");
 function extendIsDirty(superFunction) {
     return function () {
         var isDirty = superFunction.call(this);
@@ -30,6 +30,33 @@ function extendIsDirty(superFunction) {
 function syncSavedFragments() {
     var document = this;
     document._savedFragments = Utils.A.from(document._fragmentsIndex.values());
+}
+function resolveURI(uri) {
+    if (URI.Util.isAbsolute(uri))
+        return uri;
+    uri = ObjectSchema.Digester.resolvePrefixedURI(new URI.Class(uri), this._documents.getGeneralSchema()).stringValue;
+    var schema = this._documents.getSchemaFor(this);
+    if (schema.vocab)
+        uri = URI.Util.resolve(schema.vocab, uri);
+    return uri;
+}
+function extendAddType(superFunction) {
+    return function (type) {
+        type = resolveURI.call(this, type);
+        superFunction.call(this, type);
+    };
+}
+function extendHasType(superFunction) {
+    return function (type) {
+        type = resolveURI.call(this, type);
+        return superFunction.call(this, type);
+    };
+}
+function extendRemoveType(superFunction) {
+    return function (type) {
+        type = resolveURI.call(this, type);
+        superFunction.call(this, type);
+    };
 }
 function extendCreateFragment(superFunction) {
     return function (slugOrObject, slug) {
@@ -55,6 +82,9 @@ function refresh() {
 }
 function save() {
     return this._documents.save(this);
+}
+function saveAndRefresh() {
+    return this._documents.saveAndRefresh(this);
 }
 function _delete() {
     return this._documents.delete(this.id);
@@ -143,6 +173,7 @@ var Factory = (function () {
             && Utils.hasPropertyDefined(object, "_etag")
             && Utils.hasFunction(object, "refresh")
             && Utils.hasFunction(object, "save")
+            && Utils.hasFunction(object, "saveAndRefresh")
             && Utils.hasFunction(object, "delete")
             && Utils.hasFunction(object, "getDownloadURL")
             && Utils.hasFunction(object, "addMember")
@@ -214,6 +245,24 @@ var Factory = (function () {
                 configurable: true,
                 value: syncSavedFragments,
             },
+            "addType": {
+                writable: false,
+                enumerable: false,
+                configurable: true,
+                value: extendAddType(persistedDocument.addType),
+            },
+            "hasType": {
+                writable: false,
+                enumerable: false,
+                configurable: true,
+                value: extendHasType(persistedDocument.hasType),
+            },
+            "removeType": {
+                writable: false,
+                enumerable: false,
+                configurable: true,
+                value: extendRemoveType(persistedDocument.removeType),
+            },
             "hasPointer": {
                 writable: false,
                 enumerable: false,
@@ -222,7 +271,7 @@ var Factory = (function () {
                     var superFunction = persistedDocument.hasPointer;
                     return function (id) {
                         if (RDF.URI.Util.isPrefixed(id)) {
-                            id = ObjectSchema.Digester.resolvePrefixedURI(new RDF.URI.Class(id), this._documents.getSchemaFor(this)).stringValue;
+                            id = ObjectSchema.Digester.resolvePrefixedURI(new RDF.URI.Class(id), this._documents.getGeneralSchema()).stringValue;
                         }
                         if (superFunction.call(this, id))
                             return true;
@@ -239,7 +288,7 @@ var Factory = (function () {
                     var inScopeFunction = persistedDocument.inScope;
                     return function (id) {
                         if (RDF.URI.Util.isPrefixed(id)) {
-                            id = ObjectSchema.Digester.resolvePrefixedURI(new RDF.URI.Class(id), this._documents.getSchemaFor(this)).stringValue;
+                            id = ObjectSchema.Digester.resolvePrefixedURI(new RDF.URI.Class(id), this._documents.getGeneralSchema()).stringValue;
                         }
                         if (inScopeFunction.call(this, id))
                             return superFunction.call(this, id);
@@ -256,7 +305,7 @@ var Factory = (function () {
                     return function (idOrPointer) {
                         var uri = Pointer.Factory.is(idOrPointer) ? idOrPointer.id : idOrPointer;
                         if (RDF.URI.Util.isPrefixed(uri)) {
-                            uri = ObjectSchema.Digester.resolvePrefixedURI(new RDF.URI.Class(uri), this._documents.getSchemaFor(this)).stringValue;
+                            uri = ObjectSchema.Digester.resolvePrefixedURI(new RDF.URI.Class(uri), this._documents.getGeneralSchema()).stringValue;
                         }
                         if (superFunction.call(this, uri))
                             return true;
@@ -275,6 +324,12 @@ var Factory = (function () {
                 enumerable: false,
                 configurable: true,
                 value: save,
+            },
+            "saveAndRefresh": {
+                writable: false,
+                enumerable: false,
+                configurable: true,
+                value: saveAndRefresh,
             },
             "delete": {
                 writable: false,

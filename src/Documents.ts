@@ -552,6 +552,7 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 		HTTP.Request.Util.setContentTypeHeader( "application/ld+json", requestOptions );
 		HTTP.Request.Util.setIfMatchHeader( persistedDocument._etag, requestOptions );
 
+		persistedDocument._normalize();
 		let body:string = persistedDocument.toJSON( this, this.jsonldConverter );
 
 		return HTTP.Request.Service.put( uri, body, requestOptions ).then( ( response:HTTP.Response.Class ) => {
@@ -585,6 +586,19 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 		} );
 	}
 
+	saveAndRefresh<T extends PersistedDocument.Class>( persistedDocument:T, requestOptions:HTTP.Request.Options = {} ):Promise<[ T, [ HTTP.Response.Class, HTTP.Response.Class] ]> {
+		// TODO: Check how to manage the requestOptions for the multiple calls
+
+		let saveResponse:HTTP.Response.Class;
+		return this.save<T>( persistedDocument ).then( ( [ document, response ]:[ T, HTTP.Response.Class ] ) => {
+			saveResponse = response;
+			return this.refresh<T>( persistedDocument );
+		} ).then( ( [ document, response ]:[ T, HTTP.Response.Class ] ) => {
+			return [ persistedDocument, [ saveResponse, response ] ];
+		} );
+	}
+
+
 	delete( documentURI:string, requestOptions:HTTP.Request.Options = {} ):Promise<HTTP.Response.Class> {
 		documentURI = this.getRequestURI( documentURI );
 		this.setDefaultRequestOptions( requestOptions, NS.LDP.Class.RDFSource );
@@ -602,12 +616,19 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 		return this.context.auth.getAuthenticatedURL( documentURI, requestOptions );
 	}
 
+	getGeneralSchema():ObjectSchema.DigestedObjectSchema {
+		let schemas:ObjectSchema.DigestedObjectSchema[] = [];
+		if( ! ! this.context ) schemas.push( this.context.getObjectSchema() );
+
+		return ObjectSchema.Digester.combineDigestedObjectSchemas( schemas );
+	}
+
 	getSchemaFor( object:Object ):ObjectSchema.DigestedObjectSchema {
-		if( "@id" in object ) {
-			return this.getDigestedObjectSchemaForExpandedObject( object );
-		} else {
-			return this.getDigestedObjectSchemaForDocument( <any> object );
-		}
+		let schema:ObjectSchema.DigestedObjectSchema = ( "@id" in object ) ?
+			this.getDigestedObjectSchemaForExpandedObject( object ) :
+			this.getDigestedObjectSchemaForDocument( <any> object );
+
+		return schema;
 	}
 
 	executeRawASKQuery( documentURI:string, askQuery:string, requestOptions:HTTP.Request.Options = {} ):Promise<[ SPARQL.RawResults.Class, HTTP.Response.Class ]> {
@@ -719,7 +740,7 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 		*/
 
 		if( ! ! this.context ) {
-			if( RDF.URI.Util.isPrefixed( uri ) ) uri = ObjectSchema.Digester.resolvePrefixedURI( new RDF.URI.Class( uri ), this.context.getObjectSchema() ).stringValue;
+			if( RDF.URI.Util.isPrefixed( uri ) ) uri = ObjectSchema.Digester.resolvePrefixedURI( new RDF.URI.Class( uri ), this.getGeneralSchema() ).stringValue;
 
 			if( ! RDF.URI.Util.isRelative( uri ) ) {
 				let baseURI:string = this.context.getBaseURI();
@@ -902,7 +923,7 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 	private updatePersistedDocument( persistedDocument:PersistedDocument.Class, documentResource:RDF.Node.Class, fragmentResources:RDF.Node.Class[] ):PersistedDocument.Class {
 		let namedFragmentsMap:Map<string, PersistedNamedFragment.Class> = new Map();
 		let blankNodesArray:PersistedBlankNode.Class[] = <PersistedBlankNode.Class[]> persistedDocument.getFragments().filter( fragment => {
-			persistedDocument.removeFragment( fragment.id );
+			persistedDocument._removeFragment( fragment.id );
 			if( RDF.URI.Util.isBNodeID( fragment.id ) ) return true;
 
 			namedFragmentsMap.set( fragment.id, <PersistedNamedFragment.Class> fragment );

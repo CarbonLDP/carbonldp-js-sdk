@@ -3617,6 +3617,47 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 		it( hasMethod(
 			INSTANCE,
+			"saveAndRefresh",
+			[ "T extends Carbon.PersistedDocument.Class" ],
+			"Save and refresh the PersistedDocument specified.", [
+				{name: "persistedDocument", type: "T", description: "The persistedDocument to save and refresh."},
+				{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request."},
+			],
+			{type: "Promise<[ T, [ HTTP.Response.Class, HTTP.Response.Class ] ]>"}
+		), ( done:{ ():void, fail:() => void } ):void => {
+			class MockedContext extends AbstractContext {
+				resolve( uri:string ):string {
+					return uri;
+				}
+			}
+			let context:MockedContext = new MockedContext();
+			let documents:Documents = context.documents;
+
+			expect( documents.saveAndRefresh ).toBeDefined();
+			expect( Utils.isFunction( documents.saveAndRefresh ) ).toBe( true );
+
+			let mockSaveResponse:any = {val: "Mock Save Response"};
+			let mockRefreshResponse:any = {val: "Mock Save Response"};
+			let document:PersistedDocument.Class = PersistedDocument.Factory.create( "", documents );
+			let options:HTTP.Request.Options = {timeout: 50500};
+
+			let spySave:jasmine.Spy = spyOn( context.documents, "save" ).and.returnValue( Promise.resolve<any>( [ document, mockSaveResponse ] ) );
+			let spyRefresh:jasmine.Spy = spyOn( context.documents, "refresh" ).and.returnValue( Promise.resolve<any>( [ document, mockRefreshResponse ] ) );
+
+			documents.saveAndRefresh( document, options ).then( ( [ _document, [ saveResponse, refreshResponse ] ]:[ Document.Class, [ HTTP.Response.Class, HTTP.Response.Class] ] ) => {
+				expect( spySave ).toHaveBeenCalledWith( document );
+				expect( spyRefresh ).toHaveBeenCalledWith( document );
+
+				expect( document ).toBe( _document );
+				expect( saveResponse ).toBe( mockSaveResponse );
+				expect( refreshResponse ).toBe( mockRefreshResponse );
+
+				done();
+			} );
+		} );
+
+		it( hasMethod(
+			INSTANCE,
 			"delete",
 			"Delete the resource from the CarbonLDP server referred by the URI provided.", [
 				{name: "documentURI", type: "string", description: "The resource to delete from the CarbonLDP server."},
