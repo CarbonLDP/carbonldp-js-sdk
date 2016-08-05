@@ -630,7 +630,7 @@ var Documents = (function () {
             throw new Errors.IllegalArgumentError("BNodes cannot be fetched directly.");
         if (!!this.context) {
             if (RDF.URI.Util.isPrefixed(uri))
-                uri = ObjectSchema.Digester.resolvePrefixedURI(new RDF.URI.Class(uri), this.context.getObjectSchema()).stringValue;
+                uri = ObjectSchema.Digester.resolvePrefixedURI(new RDF.URI.Class(uri), this.getGeneralSchema()).stringValue;
             if (!RDF.URI.Util.isRelative(uri)) {
                 var baseURI = this.context.getBaseURI();
                 if (!RDF.URI.Util.isBaseOf(baseURI, uri))

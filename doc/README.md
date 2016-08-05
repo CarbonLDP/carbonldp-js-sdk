@@ -2025,6 +2025,17 @@ Remove the fragment referenced by the Slug provided from the Document.
 
 - slug
 
+##### addType
+```typescript 
+addType( type:string )
+```
+
+Adds a type to the Document.
+
+*Parameters*
+
+- type: The type to be added.
+
 ##### createFragment
 ```typescript 
 createFragment<T extends Object>( object:T,  slug:string ):T & Carbon.Fragment.Class
@@ -2154,6 +2165,17 @@ Returns true if the Document has a pointer referenced by the URI provided.
 
 - id
 
+##### hasType
+```typescript 
+hasType( type:string )
+```
+
+Returns true if the Document contains the type specified.
+
+*Parameters*
+
+- type: The type to look for.
+
 ##### inScope
 ```typescript 
 inScope( pointer:Carbon.Pointer.Class ):boolean
@@ -2195,6 +2217,17 @@ Remove the named fragment referenced by the Slug provided from the Document.
 *Parameters*
 
 - slug
+
+##### removeType
+```typescript 
+removeType( type:string )
+```
+
+Remove the type specified from the Document.
+
+*Parameters*
+
+- type: The type to be removed.
 
 ##### toJSON
 ```typescript 
@@ -7077,6 +7110,17 @@ Adds the specified resources as members of the container.
 
 - members: Array of URIs or Pointers to add as members.
 
+##### addType
+```typescript 
+addType( type:string )
+```
+
+Adds a type to the Document. Relative and prefixed types are resolved before the operation.
+
+*Parameters*
+
+- type: The type to be added.
+
 ##### createAccessPoint
 ```typescript 
 createAccessPoint<T extends Carbon.AccessPoint.Class>( accessPoint:T,  slug?:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ T & Carbon.PersistedAccessPoint.Class, Carbon.HTTP.Response ]>
@@ -7381,6 +7425,17 @@ Returns true if the PersistedDocument object has a pointer referenced by the URI
 
 - id
 
+##### hasType
+```typescript 
+hasType( type:string )
+```
+
+Returns true if the Document contains the type specified. Relative and prefixed types are resolved before the operation.
+
+*Parameters*
+
+- type: The type to look for.
+
 ##### inScope
 ```typescript 
 inScope( pointer:Carbon.Pointer.Class ):boolean
@@ -7465,6 +7520,17 @@ Remove the specified resources URI or Pointers as members of the current contain
 *Parameters*
 
 - members: Array of URIs or Pointers to remove as members
+
+##### removeType
+```typescript 
+removeType( type:string )
+```
+
+Remove the type specified from the Document. Relative and prefixed types are resolved before the operation.
+
+*Parameters*
+
+- type: The type to be removed.
 
 ##### save
 ```typescript 

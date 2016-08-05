@@ -40,6 +40,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 		"Factory class for `Carbon.PersistedDocument.Class` objects."
 	), ():void => {
 		let context:AbstractContext;
+
 		beforeEach( ():void => {
 			class MockedContext extends AbstractContext {
 				resolve( uri:string ):string {
@@ -388,7 +389,14 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 			let document:PersistedDocument.Class;
 
 			beforeEach( ():void => {
+				context.setSetting( "vocabulary", "vocab#" );
+				context.extendObjectSchema( {
+					"exTypes": "http://example.com/types#",
+					"another": "http://example.com/another-url/ns#",
+				} );
+
 				context.documents.getPointer( "http://example.com/in/documents/" );
+
 				document = PersistedDocument.Factory.create( "http://example.com/document/", context.documents );
 				document.createNamedFragment( "fragment" );
 				document.createFragment( "_:BlankNode" );
@@ -414,6 +422,159 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 				expect( document._etag ).toBeDefined();
 				// By default, the ETag is null.
 				expect( document._etag ).toBeNull();
+			} );
+
+			it( hasMethod(
+				INSTANCE,
+				"addType",
+				"Adds a type to the Document. Relative and prefixed types are resolved before the operation.", [
+					{name: "type", type: "string", description: "The type to be added."},
+				]
+			), ():void => {
+				expect( document.addType ).toBeDefined();
+				expect( Utils.isFunction( document.addType ) ).toBe( true );
+
+				expect( document.types.length ).toBe( 0 );
+
+				document.addType( "http://example.com/types#Type-1" );
+				expect( document.types.length ).toBe( 1 );
+				expect( document.types ).toContain( "http://example.com/types#Type-1" );
+
+				document.addType( "http://example.com/types#Type-2" );
+				expect( document.types.length ).toBe( 2 );
+				expect( document.types ).toContain( "http://example.com/types#Type-1" );
+				expect( document.types ).toContain( "http://example.com/types#Type-2" );
+
+				document.addType( "exTypes:Type-3" );
+				expect( document.types.length ).toBe( 3 );
+				expect( document.types ).toContain( "http://example.com/types#Type-1" );
+				expect( document.types ).toContain( "http://example.com/types#Type-2" );
+				expect( document.types ).toContain( "http://example.com/types#Type-3" );
+
+				document.addType( "another:Type-0" );
+				expect( document.types.length ).toBe( 4 );
+				expect( document.types ).toContain( "http://example.com/types#Type-1" );
+				expect( document.types ).toContain( "http://example.com/types#Type-2" );
+				expect( document.types ).toContain( "http://example.com/types#Type-3" );
+				expect( document.types ).toContain( "http://example.com/another-url/ns#Type-0" );
+
+				document.addType( "Current-Type" );
+				expect( document.types.length ).toBe( 5 );
+				expect( document.types ).toContain( "http://example.com/types#Type-1" );
+				expect( document.types ).toContain( "http://example.com/types#Type-2" );
+				expect( document.types ).toContain( "http://example.com/types#Type-3" );
+				expect( document.types ).toContain( "http://example.com/another-url/ns#Type-0" );
+				expect( document.types ).toContain( "http://example.com/vocab#Current-Type" );
+			} );
+
+			it( hasMethod(
+				INSTANCE,
+				"hasType",
+				"Returns true if the Document contains the type specified. Relative and prefixed types are resolved before the operation.", [
+					{name: "type", type: "string", description: "The type to look for."},
+				]
+			), ():void => {
+				expect( document.hasType ).toBeDefined();
+				expect( Utils.isFunction( document.hasType ) ).toBe( true );
+
+				document.types = [ "http://example.com/types#Type-1" ];
+				expect( document.hasType( "http://example.com/types#Type-1" ) ).toBe( true );
+				expect( document.hasType( "exTypes:Type-1" ) ).toBe( true );
+				expect( document.hasType( "http://example.com/types#Type-2" ) ).toBe( false );
+
+
+				document.types = [ "http://example.com/types#Type-1", "http://example.com/types#Type-2" ];
+				expect( document.hasType( "http://example.com/types#Type-1" ) ).toBe( true );
+				expect( document.hasType( "exTypes:Type-1" ) ).toBe( true );
+				expect( document.hasType( "http://example.com/types#Type-2" ) ).toBe( true );
+				expect( document.hasType( "exTypes:Type-2" ) ).toBe( true );
+				expect( document.hasType( "http://example.com/types#Type-3" ) ).toBe( false );
+				expect( document.hasType( "exTypes:#Type-3" ) ).toBe( false );
+
+				document.types = [ "http://example.com/types#Type-1", "http://example.com/another-url/ns#Type-2" ];
+				expect( document.hasType( "http://example.com/types#Type-1" ) ).toBe( true );
+				expect( document.hasType( "exTypes:Type-1" ) ).toBe( true );
+				expect( document.hasType( "another:Type-1" ) ).toBe( false );
+				expect( document.hasType( "http://example.com/another-url/ns#Type-2" ) ).toBe( true );
+				expect( document.hasType( "exTypes:Type-2" ) ).toBe( false );
+				expect( document.hasType( "another:Type-2" ) ).toBe( true );
+
+				document.types = [ "http://example.com/types#Type-1", "http://example.com/another-url/ns#Type-2", "http://example.com/vocab#Current-Type" ];
+				expect( document.hasType( "http://example.com/types#Type-1" ) ).toBe( true );
+				expect( document.hasType( "exTypes:Type-1" ) ).toBe( true );
+				expect( document.hasType( "another:Type-1" ) ).toBe( false );
+				expect( document.hasType( "Type-1" ) ).toBe( false );
+				expect( document.hasType( "http://example.com/another-url/ns#Type-2" ) ).toBe( true );
+				expect( document.hasType( "exTypes:Type-2" ) ).toBe( false );
+				expect( document.hasType( "another:Type-2" ) ).toBe( true );
+				expect( document.hasType( "Type-2" ) ).toBe( false );
+				expect( document.hasType( "http://example.com/vocab#Current-Type" ) ).toBe( true );
+				expect( document.hasType( "exTypes:Current-Type" ) ).toBe( false );
+				expect( document.hasType( "another:Current-Type" ) ).toBe( false );
+				expect( document.hasType( "Current-Type" ) ).toBe( true );
+			} );
+
+			it( hasMethod(
+				INSTANCE,
+				"removeType",
+				"Remove the type specified from the Document. Relative and prefixed types are resolved before the operation.", [
+					{name: "type", type: "string", description: "The type to be removed."},
+				]
+			), ():void => {
+				expect( document.removeType ).toBeDefined();
+				expect( Utils.isFunction( document.removeType ) ).toBe( true );
+
+				document.types = [ "http://example.com/types#Type-1" ];
+				document.removeType( "http://example.com/types#Type-2" );
+				expect( document.types.length ).toBe( 1 );
+				expect( document.types ).toContain( "http://example.com/types#Type-1" );
+				document.removeType( "another:Type-1" );
+				expect( document.types.length ).toBe( 1 );
+				expect( document.types ).toContain( "http://example.com/types#Type-1" );
+				document.removeType( "Type-1" );
+				expect( document.types.length ).toBe( 1 );
+				expect( document.types ).toContain( "http://example.com/types#Type-1" );
+
+				document.types = [ "http://example.com/types#Type-1" ];
+				document.removeType( "http://example.com/types#Type-1" );
+				expect( document.types.length ).toBe( 0 );
+				document.types = [ "http://example.com/types#Type-1" ];
+				document.removeType( "exTypes:Type-1" );
+				expect( document.types.length ).toBe( 0 );
+
+				document.types = [ "http://example.com/types#Type-1", "http://example.com/types#Type-2" ];
+				document.removeType( "http://example.com/types#Type-1" );
+				expect( document.types.length ).toBe( 1 );
+				expect( document.types ).toContain( "http://example.com/types#Type-2" );
+				document.removeType( "exTypes:Type-2" );
+				expect( document.types.length ).toBe( 0 );
+
+				document.types = [ "http://example.com/types#Type-1", "http://example.com/types#Type-2", "http://example.com/another-url/ns#Type-3" ];
+				document.removeType( "http://example.com/types#Type-1" );
+				expect( document.types.length ).toBe( 2 );
+				expect( document.types ).toContain( "http://example.com/types#Type-2" );
+				expect( document.types ).toContain( "http://example.com/another-url/ns#Type-3" );
+				document.removeType( "exTypes:Type-2" );
+				expect( document.types.length ).toBe( 1 );
+				expect( document.types ).toContain( "http://example.com/another-url/ns#Type-3" );
+				document.removeType( "another:Type-3" );
+				expect( document.types.length ).toBe( 0 );
+
+				document.types = [ "http://example.com/types#Type-1", "http://example.com/types#Type-2", "http://example.com/another-url/ns#Type-3", "http://example.com/vocab#Type-4" ];
+				document.removeType( "http://example.com/types#Type-1" );
+				expect( document.types.length ).toBe( 3 );
+				expect( document.types ).toContain( "http://example.com/types#Type-2" );
+				expect( document.types ).toContain( "http://example.com/another-url/ns#Type-3" );
+				expect( document.types ).toContain( "http://example.com/vocab#Type-4" );
+				document.removeType( "exTypes:Type-2" );
+				expect( document.types.length ).toBe( 2 );
+				expect( document.types ).toContain( "http://example.com/another-url/ns#Type-3" );
+				expect( document.types ).toContain( "http://example.com/vocab#Type-4" );
+				document.removeType( "another:Type-3" );
+				expect( document.types.length ).toBe( 1 );
+				expect( document.types ).toContain( "http://example.com/vocab#Type-4" );
+				document.removeType( "Type-4" );
+				expect( document.types.length ).toBe( 0 );
 			} );
 
 			it( hasMethod(
