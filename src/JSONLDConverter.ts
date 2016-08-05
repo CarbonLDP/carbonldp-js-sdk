@@ -68,7 +68,7 @@ export class Class {
 		let expandedObject:any = {};
 
 		expandedObject[ "@id" ] = ! ! compactedObject[ "id" ] ? compactedObject[ "id" ] : "";
-		if( ! ! compactedObject[ "types" ] ) expandedObject[ "@type" ] = compactedObject[ "types" ].map( ( type:string ) => this.resolveTypeURI( type, digestedSchema ) );
+		if( ! ! compactedObject[ "types" ] ) expandedObject[ "@type" ] = compactedObject[ "types" ].map( ( type:string ) => this.resolveTypeURI( type, generalSchema, digestedSchema ) );
 
 		Utils.forEachOwnProperty( compactedObject, ( propertyName:string, value:any ):void => {
 			if( propertyName === "id" ) return;
@@ -610,11 +610,11 @@ export class Class {
 		}
 	}
 
-	private resolveTypeURI( uri:string, schema:ObjectSchema.DigestedObjectSchema ):string {
+	private resolveTypeURI( uri:string, generalSchema:ObjectSchema.DigestedObjectSchema, digestedSchema:ObjectSchema.DigestedObjectSchema ):string {
 		if( RDF.URI.Util.isAbsolute( uri ) ) return uri;
 
-		uri = ObjectSchema.Digester.resolvePrefixedURI( new RDF.URI.Class( uri ), schema ).stringValue;
-		if( schema.vocab ) uri = RDF.URI.Util.resolve( schema.vocab, uri );
+		uri = ObjectSchema.Digester.resolvePrefixedURI( new RDF.URI.Class( uri ), generalSchema ).stringValue;
+		if( digestedSchema.vocab ) uri = RDF.URI.Util.resolve( digestedSchema.vocab, uri );
 
 		return uri;
 	}

@@ -124,8 +124,9 @@ function syncSavedFragments():void {
 function resolveURI( uri:string ):string {
 	if( URI.Util.isAbsolute( uri ) ) return uri;
 
+	uri = ObjectSchema.Digester.resolvePrefixedURI( new URI.Class( uri ), this._documents.getGeneralSchema() ).stringValue;
+
 	let schema:ObjectSchema.DigestedObjectSchema = this._documents.getSchemaFor( this );
-	uri = ObjectSchema.Digester.resolvePrefixedURI( new URI.Class( uri ), schema ).stringValue;
 	if( schema.vocab ) uri = URI.Util.resolve( schema.vocab, uri );
 
 	return uri;

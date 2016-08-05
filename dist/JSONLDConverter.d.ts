@@ -47,6 +47,6 @@ export declare class Class {
     private getList(propertyValues);
     private getPropertyURINameMap(digestedSchema);
     private parseValue(propertyValue, pointerLibrary);
-    private resolveTypeURI(uri, schema);
+    private resolveTypeURI(uri, generalSchema, digestedSchema);
 }
 export default Class;

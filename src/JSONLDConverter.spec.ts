@@ -275,14 +275,15 @@ describe( module( "Carbon/JSONLDConverter" ), ():void => {
 					"xsd": "http://www.w3.org/2001/XMLSchema#",
 					"propertyInGeneral": {
 						"@id": "ex:property-in-general",
-						"@type": "@id"
-					}
+						"@type": "@id",
+					},
 				};
 
 				let schema:ObjectSchema.Class = {
 					"@vocab": "http://example.com/my-namespace#",
 					"ex": "http://example.com/ns#",
 					"xsd": "http://www.w3.org/2001/XMLSchema#",
+					"another": "http://example.com/another-namespace#",
 					"string": {
 						"@id": "ex:string",
 						"@type": "xsd:string",
@@ -346,6 +347,7 @@ describe( module( "Carbon/JSONLDConverter" ), ():void => {
 					"types": [
 						"http://example.com/ns#MyType",
 						"ex:Another-Type",
+						"another:Another-Namespace-Type",
 						"Another-Another-Type",
 						"http://example.com/ns#Type-1",
 						"http://example.com/ns#Type-2",
@@ -401,11 +403,12 @@ describe( module( "Carbon/JSONLDConverter" ), ():void => {
 				expect( expandedObject[ "@id" ] ).toBe( "http://example.com/compactedObject/" );
 
 				expect( Utils.isArray( expandedObject[ "@type" ] ) ).toBe( true );
-				expect( expandedObject[ "@type" ].length ).toBe( 5 );
+				expect( expandedObject[ "@type" ].length ).toBe( 6 );
 				expect( expandedObject[ "@type" ] ).toContain( "http://example.com/ns#Type-1" );
 				expect( expandedObject[ "@type" ] ).toContain( "http://example.com/ns#Type-2" );
 				expect( expandedObject[ "@type" ] ).toContain( "http://example.com/ns#MyType" );
 				expect( expandedObject[ "@type" ] ).toContain( "http://example.com/ns#Another-Type" );
+				expect( expandedObject[ "@type" ] ).toContain( "another:Another-Namespace-Type" );
 				expect( expandedObject[ "@type" ] ).toContain( "http://example.com/my-namespace#Another-Another-Type" );
 
 				let property:RDF.Literal.Class[] | RDF.Node.Class[] | [ RDF.List.Class ];
