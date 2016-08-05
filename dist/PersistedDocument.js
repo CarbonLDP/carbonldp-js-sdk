@@ -271,7 +271,7 @@ var Factory = (function () {
                     var superFunction = persistedDocument.hasPointer;
                     return function (id) {
                         if (RDF.URI.Util.isPrefixed(id)) {
-                            id = ObjectSchema.Digester.resolvePrefixedURI(new RDF.URI.Class(id), this._documents.getSchemaFor(this)).stringValue;
+                            id = ObjectSchema.Digester.resolvePrefixedURI(new RDF.URI.Class(id), this._documents.getGeneralSchema()).stringValue;
                         }
                         if (superFunction.call(this, id))
                             return true;
@@ -288,7 +288,7 @@ var Factory = (function () {
                     var inScopeFunction = persistedDocument.inScope;
                     return function (id) {
                         if (RDF.URI.Util.isPrefixed(id)) {
-                            id = ObjectSchema.Digester.resolvePrefixedURI(new RDF.URI.Class(id), this._documents.getSchemaFor(this)).stringValue;
+                            id = ObjectSchema.Digester.resolvePrefixedURI(new RDF.URI.Class(id), this._documents.getGeneralSchema()).stringValue;
                         }
                         if (inScopeFunction.call(this, id))
                             return superFunction.call(this, id);
@@ -305,7 +305,7 @@ var Factory = (function () {
                     return function (idOrPointer) {
                         var uri = Pointer.Factory.is(idOrPointer) ? idOrPointer.id : idOrPointer;
                         if (RDF.URI.Util.isPrefixed(uri)) {
-                            uri = ObjectSchema.Digester.resolvePrefixedURI(new RDF.URI.Class(uri), this._documents.getSchemaFor(this)).stringValue;
+                            uri = ObjectSchema.Digester.resolvePrefixedURI(new RDF.URI.Class(uri), this._documents.getGeneralSchema()).stringValue;
                         }
                         if (superFunction.call(this, uri))
                             return true;
