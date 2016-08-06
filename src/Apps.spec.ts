@@ -409,12 +409,12 @@ describe( module( "Carbon/Apps" ), ():void => {
 				expect( spy ).toHaveBeenCalledWith( appsContainerURI, app, "slug-of-app" );
 			} ) );
 
-				// Test correct execution of the method, where delegate the manage of the `null` slug to `context.documents.createChild` method
-				promise = apps.create( app, null );
-				expect( promise instanceof Promise ).toBe( true );
-				promises.push( promise.then( () => {
-					expect( spy ).toHaveBeenCalledWith( appsContainerURI, app, null );
-				} ) );
+			// Test correct execution of the method, where delegate the manage of the `null` slug to `context.documents.createChild` method
+			promise = apps.create( app, null );
+			expect( promise instanceof Promise ).toBe( true );
+			promises.push( promise.then( () => {
+				expect( spy ).toHaveBeenCalledWith( appsContainerURI, app, null );
+			} ) );
 
 			// Test incorrect `Carbon.App.Class` object provided
 			promise = apps.create( null, "slug-of-app" );
