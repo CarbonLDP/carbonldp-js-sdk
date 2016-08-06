@@ -52,15 +52,14 @@ export enum Method {
 export class Class {
 	public agents:Agents.Class;
 
-	// TODO: Change to `PersistedAgent.Class`
-	protected _authenticatedAgent:PersistedDocument.Class;
+	protected _authenticatedAgent:PersistedAgent.Class;
 
 	private context:Context;
 	private method:Method;
 	private authenticators:Array<Authenticator<AuthenticationToken>>;
 	private authenticator:Authenticator<AuthenticationToken>;
 
-	public get authenticatedAgent():PersistedDocument.Class {
+	public get authenticatedAgent():PersistedAgent.Class {
 		if( ! this._authenticatedAgent ) {
 			if( this.context.parentContext && this.context.parentContext.auth ) return this.context.parentContext.auth.authenticatedAgent;
 			return null;
@@ -180,7 +179,7 @@ export class Class {
 		return authenticator.authenticate( authenticationToken ).then( ( _credentials:UsernameAndPasswordCredentials ) => {
 			credentials = _credentials;
 			return this.getAuthenticatedAgent( authenticator );
-		} ).then( ( persistedAgent:PersistedDocument.Class ) => {
+		} ).then( ( persistedAgent:PersistedAgent.Class ) => {
 			this._authenticatedAgent = persistedAgent;
 			this.authenticator = authenticator;
 			return credentials;
@@ -206,11 +205,10 @@ export class Class {
 		return authenticator.authenticate( ( authenticationToken ) ? authenticationToken : <any> credentials ).then( ( _credentials:Token.Class ) => {
 			credentials = _credentials;
 
-			// TODO: Use `PersistedAgent`
-			if( PersistedDocument.Factory.is( _credentials.agent ) ) return credentials.agent;
+			if( PersistedAgent.Factory.is( credentials.agent ) ) return credentials.agent;
 			return this.getAuthenticatedAgent( authenticator );
 
-		} ).then( ( persistedAgent:PersistedDocument.Class ) => {
+		} ).then( ( persistedAgent:PersistedAgent.Class ) => {
 			this._authenticatedAgent = persistedAgent;
 			credentials.agent = persistedAgent;
 
@@ -219,7 +217,7 @@ export class Class {
 		} );
 	}
 
-	private getAuthenticatedAgent( authenticator:Authenticator<any> ):Promise<PersistedDocument.Class> {
+	private getAuthenticatedAgent( authenticator:Authenticator<any> ):Promise<PersistedAgent.Class> {
 		let requestOptions:HTTP.Request.Options = {};
 		authenticator.addAuthentication( requestOptions );
 		HTTP.Request.Util.setAcceptHeader( "application/ld+json", requestOptions );

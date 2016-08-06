@@ -1,4 +1,3 @@
-import * as Agent from "./Agent";
 import * as APIDescription from "./APIDescription";
 import * as Auth from "./Auth";
 import * as BlankNode from "./BlankNode";

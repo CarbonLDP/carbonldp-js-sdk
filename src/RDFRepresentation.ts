@@ -31,7 +31,7 @@ export class Factory {
 	static is( object:Object ):boolean {
 		return Factory.hasClassProperties( object )
 			&& PersistedDocument.Factory.is( object )
-			&& Resource.Util.hasType( object, RDF_CLASS )
+			&& (<PersistedDocument.Class> object).hasType( RDF_CLASS )
 			;
 	}
 }

@@ -16,6 +16,7 @@ declare class Predicate {
     static allowsOrigin: string;
     static credentialsOf: string;
     static description: string;
+    static enabled: string;
     static expirationTime: string;
     static forIRI: string;
     static granting: string;

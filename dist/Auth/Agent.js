@@ -33,7 +33,7 @@ var Factory = (function () {
     Factory.is = function (object) {
         return Factory.hasClassProperties(object)
             && Document.Factory.hasClassProperties(object)
-            && object.types.indexOf(exports.RDF_CLASS) !== -1;
+            && object.hasType(exports.RDF_CLASS);
     };
     Factory.create = function (name, email, password) {
         return Factory.createFrom({}, name, email, password);

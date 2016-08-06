@@ -44,7 +44,7 @@ describe( module( "Carbon/Auth/Agents" ), ():void => {
 			let context:AbstractContext;
 
 			class MockedContext extends AbstractContext {
-				resolve( uri:string ) {
+				resolve( uri:string ):string {
 					return "http://example.com/container/" + uri;
 				}
 			}
@@ -55,115 +55,67 @@ describe( module( "Carbon/Auth/Agents" ), ():void => {
 			expect( agents instanceof Agents.Class ).toBe( true );
 		} );
 
-		describe( method(
+		it( hasMethod(
 			INSTANCE,
-			"register"
-		), ():void => {
+			"register",
+			"Persists a `Carbon.Auth.Agent.Class` object using the slug specified.\n" +
+			"Returns a Promise with a Pointer to the stored Agent, and the response of the request.",
+			[
+				{ name: "agentDocument", type: "Carbon.Auth.Agent.Class" },
+				{ name: "slug", type: "string", optional: true },
+			],
+			{ type: "Promise<Carbon.Pointer.Class, Carbon.HTTP.Response.Class>" }
+		), ( done:{ ():void, fail:() => void } ):void => {
+			let agents:Agents.Class;
+			let context:AbstractContext;
 
-			it( hasSignature(
-				"Persists an Agent Document in the server, generating a random unique slug.\n" +
-				"Returns a Promise with a Pointer for the stored Agent, and the response of the call.", [
-					{name: "agentDocument", type: "Carbon.Auth.Agents.Agent.Class"}
-				],
-				{type: "Promise<Carbon.Pointer.Class, Carbon.HTTP.Response.Class>"}
-			), ( done ):void => {
-				let agents:Agents.Class;
-				let context:AbstractContext;
-
-				class MockedContext extends AbstractContext {
-					resolve( uri:string ) {
-						return "http://example.com/container/" + uri;
-					}
+			class MockedContext extends AbstractContext {
+				resolve( uri:string ):string {
+					return "http://example.com/container/" + uri;
 				}
-				context = new MockedContext();
-				agents = new Agents.Class( context );
+			}
+			context = new MockedContext();
+			agents = new Agents.Class( context );
 
-				expect( agents.register ).toBeDefined();
-				expect( Utils.isFunction( agents.register ) ).toBe( true );
+			expect( agents.register ).toBeDefined();
+			expect( Utils.isFunction( agents.register ) ).toBe( true );
 
-				let spy = spyOn( context.documents, "createChild" );
-				let agent:Agent.Class = Agent.Factory.create( "Agent name", "email.of.agent@example.com", "myAwesomePassword" );
+			let spy:jasmine.Spy = spyOn( context.documents, "createChild" );
+			let agent:Agent.Class = Agent.Factory.create( "Agent name", "email.of.agent@example.com", "myAwesomePassword" );
 
-				agents.register( agent ).then( done.fail ).catch( error => {
-					expect( error instanceof Errors.IllegalStateError ).toBe( true );
-					context.setSetting( "platform.agents.container", "agents/" );
+			agents.register( agent ).then( done.fail ).catch( stateError => {
+				expect( stateError instanceof Errors.IllegalStateError ).toBe( true );
+				context.setSetting( "platform.agents.container", "agents/" );
 
-					let promises:Promise<any>[] = [];
-					let promise:Promise<any>;
+				let promises:Promise<any>[] = [];
+				let promise:Promise<any>;
 
-					promise = agents.register( agent );
-					expect( promise instanceof Promise ).toBe( true );
-					promises.push( promise );
+				promise = agents.register( agent, "agentSlug" );
+				expect( promise instanceof Promise ).toBe( true );
+				promises.push( promise );
 
-					promise = agents.register( null );
-					expect( promise instanceof Promise ).toBe( true );
-					promises.push( promise.catch( ( error:Error ) => {
-						expect( error instanceof Errors.IllegalArgumentError );
-					} ) );
+				agents.register( agent, null );
+				expect( promise instanceof Promise ).toBe( true );
+				promises.push( promise );
 
-					Promise.all( promises ).then( ():void => {
-						expect( spy ).toHaveBeenCalledWith( "http://example.com/container/agents/", agent );
-						done();
-					} );
+				agents.register( agent );
+				expect( promise instanceof Promise ).toBe( true );
+				promises.push( promise );
+
+				promise = agents.register( null );
+				expect( promise instanceof Promise ).toBe( true );
+				promises.push( promise.catch( ( error:Error ) => {
+					expect( error instanceof Errors.IllegalArgumentError );
+				} ) );
+
+				Promise.all( promises ).then( ():void => {
+					expect( spy ).toHaveBeenCalledTimes( 3 );
+					expect( spy ).toHaveBeenCalledWith( "http://example.com/container/agents/", agent, "agentSlug" );
+					expect( spy ).toHaveBeenCalledWith( "http://example.com/container/agents/", agent, null );
+					expect( spy ).not.toHaveBeenCalledWith( "http://example.com/container/agents/", agent );
+					done();
 				} );
 			} );
-
-			it( hasSignature(
-				"Persists an Agent Document in the server using the slug specified.\n" +
-				"Returns a Promise with a Pointer for the stored Agent, and the response of the call.", [
-					{name: "slug", type: "string"},
-					{name: "agentDocument", type: "Carbon.Auth.Agents.Agent.Class"}
-				],
-				{type: "Promise<Carbon.Pointer.Class, Carbon.HTTP.Response.Class>"}
-			), ( done:{ ():void, fail:() => void } ):void => {
-				let agents:Agents.Class;
-				let context:AbstractContext;
-
-				class MockedContext extends AbstractContext {
-					resolve( uri:string ) {
-						return "http://example.com/container/" + uri;
-					}
-				}
-				context = new MockedContext();
-				agents = new Agents.Class( context );
-
-				expect( agents.register ).toBeDefined();
-				expect( Utils.isFunction( agents.register ) ).toBe( true );
-
-				let spy = spyOn( context.documents, "createChild" );
-				let agent:Agent.Class = Agent.Factory.create( "Agent name", "email.of.agent@example.com", "myAwesomePassword" );
-
-				agents.register( "agentSlug", agent ).then( done.fail ).catch( error => {
-					expect( error instanceof Errors.IllegalStateError ).toBe( true );
-					context.setSetting( "platform.agents.container", "agents/" );
-
-					let promises:Promise<any>[] = [];
-					let promise:Promise<any>;
-
-					promise = agents.register( "agentSlug", agent );
-					expect( promise instanceof Promise ).toBe( true );
-					promises.push( promise );
-
-					agents.register( null, agent );
-					expect( promise instanceof Promise ).toBe( true );
-					promises.push( promise );
-
-					promise = agents.register( "agentSlug", null );
-					expect( promise instanceof Promise ).toBe( true );
-					promises.push( promise.catch( ( error:Error ) => {
-						expect( error instanceof Errors.IllegalArgumentError );
-					} ) );
-
-					Promise.all( promises ).then( ():void => {
-						expect( spy ).toHaveBeenCalledWith( "http://example.com/container/agents/", "agentSlug", agent );
-						expect( spy ).toHaveBeenCalledWith( "http://example.com/container/agents/", agent );
-						expect( spy ).toHaveBeenCalled();
-						done();
-					} );
-				} );
-
-			} );
-
 		} );
 
 		it( hasMethod(
@@ -171,7 +123,7 @@ describe( module( "Carbon/Auth/Agents" ), ():void => {
 			"get",
 			"Retrieves the agent specified from the current context.", [
 				{name: "agentURI", type: "string", description: "The URI of the agent to retrieve."},
-				{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true}
+				{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true},
 			],
 			{type: "Promise<[ Carbon.Auth.PersistedAgent.Class, Carbon.HTTP.Response.Class ]>"}
 		), ( done:{ ():void, fail:() => void } ) => {
@@ -179,7 +131,7 @@ describe( module( "Carbon/Auth/Agents" ), ():void => {
 			let context:AbstractContext;
 
 			class MockedContext extends AbstractContext {
-				resolve( uri:string ) {
+				resolve( uri:string ):string {
 					return "http://example.com/" + uri;
 				}
 			}
@@ -189,16 +141,16 @@ describe( module( "Carbon/Auth/Agents" ), ():void => {
 			expect( agents.get ).toBeDefined();
 			expect( Utils.isFunction( agents.get ) ).toBe( true );
 
-			let promise:Promise<any>;
+			let statePromise:Promise<any>;
 
 			let options:HTTP.Request.Options = {timeout: 5555};
-			let spy = spyOn( context.documents, "get" ).and.returnValue( Promise.resolve() );
+			let spy:jasmine.Spy = spyOn( context.documents, "get" ).and.returnValue( Promise.resolve() );
 
-			promise = agents.get( "http://example.com/agents/an-agent/" );
-			expect( promise instanceof Promise ).toBe( true );
+			statePromise = agents.get( "http://example.com/agents/an-agent/" );
+			expect( statePromise instanceof Promise ).toBe( true );
 
-			promise.then( done.fail ).catch( ( error:Error ) => {
-				expect( error instanceof Errors.IllegalStateError ).toBe( true );
+			statePromise.then( done.fail ).catch( ( stateError:Error ) => {
+				expect( stateError instanceof Errors.IllegalStateError ).toBe( true );
 				context.setSetting( "platform.agents.container", "agents/" );
 
 				let promises:Promise<any>[] = [];
@@ -239,6 +191,6 @@ describe( module( "Carbon/Auth/Agents" ), ():void => {
 	), ():void => {
 		expect( DefaultExport ).toBeDefined();
 		expect( DefaultExport ).toBe( Agents.Class );
-	} )
+	} );
 
 } );
