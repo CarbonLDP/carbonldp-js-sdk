@@ -1,6 +1,6 @@
 {
   "name": "karma-markdown-reporter",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Karma markdown reporter",
   "main": "reporter.js",
   "scripts": {

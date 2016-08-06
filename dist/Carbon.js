@@ -19,7 +19,6 @@ var LDP = require("./LDP");
 var NamedFragment = require("./NamedFragment");
 var NS = require("./NS");
 var ObjectSchema = require("./ObjectSchema");
-var Persisted = require("./Persisted");
 var PersistedApp = require("./PersistedApp");
 var PersistedDocument = require("./PersistedDocument");
 var PersistedFragment = require("./PersistedFragment");
@@ -29,14 +28,14 @@ var Pointer = require("./Pointer");
 var RDF = require("./RDF");
 var Resource = require("./Resource");
 var SDKContext = require("./SDKContext");
-var settings_1 = require("./settings");
+var Settings = require("./Settings");
 var SPARQL = require("./SPARQL");
 var Utils = require("./Utils");
 var Carbon = (function (_super) {
     __extends(Carbon, _super);
     function Carbon(settings) {
         _super.call(this);
-        settings = settings ? settings : settings_1.default;
+        settings = settings ? settings : Settings.defaultSettings;
         Utils.M.extend(this.settings, Utils.M.from(settings));
         this.apps = new Apps.Class(this);
     }
@@ -77,7 +76,6 @@ var Carbon = (function (_super) {
     Carbon.NamedFragment = NamedFragment;
     Carbon.NS = NS;
     Carbon.ObjectSchema = ObjectSchema;
-    Carbon.Persisted = Persisted;
     Carbon.PersistedApp = PersistedApp;
     Carbon.PersistedDocument = PersistedDocument;
     Carbon.PersistedFragment = PersistedFragment;
@@ -87,6 +85,7 @@ var Carbon = (function (_super) {
     Carbon.RDF = RDF;
     Carbon.Resource = Resource;
     Carbon.SDKContext = SDKContext;
+    Carbon.Settings = Settings;
     Carbon.SPARQL = SPARQL;
     Carbon.Utils = Utils;
     return Carbon;

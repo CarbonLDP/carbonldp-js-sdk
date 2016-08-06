@@ -62,7 +62,7 @@ describe( module( "Carbon/Auth/Agent" ), ():void => {
 
 	describe( clazz(
 		"Carbon.Auth.Agent.Factory",
-		"Factory class for `Carbon.Auth.Agent.Class` objects"
+		"Factory class for `Carbon.Auth.Agent.Class` objects."
 	), ():void => {
 
 		it( isDefined(), ():void => {
@@ -107,7 +107,7 @@ describe( module( "Carbon/Auth/Agent" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"is",
-			"Returns true if the object provided is considered as an `Carbon.Auth.Agent.Class` object.", [
+			"Returns true if the object provided is considered a `Carbon.Auth.Agent.Class` object.", [
 				{name: "object", type: "Object"},
 			],
 			{type: "boolean"}
@@ -141,9 +141,10 @@ describe( module( "Carbon/Auth/Agent" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"create",
-			"Create a `Carbon.Auth.Agent.Class` object with the name and email specified.", [
-				{name: "name", type: "string"},
-				{name: "email", type: "string"},
+			"Creates a `Carbon.Auth.Agent.Class` object with the name and email specified.", [
+				{name: "name", type: "string", description: "Name of the agent to be created."},
+				{name: "email", type: "string", description: "Email of the agent to be created."},
+				{name: "password", type: "string", description: "Password of the agent to be created."},
 			],
 			{type: "Carbon.Auth.Agent.Class"}
 		), ():void => {
@@ -165,8 +166,12 @@ describe( module( "Carbon/Auth/Agent" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"createFrom",
-			"Create a `Carbon.Auth.Agent.Class` object with the object provided.", [
-				{name: "object", type: "T extends Object"},
+			[ "T extends Object" ],
+			"Creates a `Carbon.Auth.Agent.Class` object from the object and parameters specified.", [
+				{name: "object", type: "T", description: "Object that will be converted into an Agent."},
+				{name: "name", type: "string", description: "Name of the agent to be created."},
+				{name: "email", type: "string", description: "Email of the agent to be created."},
+				{name: "password", type: "string", description: "Password of the agent to be created."},
 			],
 			{type: "T & Carbon.Auth.Agent.Class"}
 		), ():void => {

@@ -1,5 +1,4 @@
 "use strict";
-var RDF = require("./RDF");
 var Resource = require("./Resource");
 var Utils = require("./Utils");
 var Factory = (function () {
@@ -9,12 +8,11 @@ var Factory = (function () {
         return (Utils.hasPropertyDefined(resource, "document"));
     };
     Factory.create = function (idOrDocument, document) {
-        if (document === void 0) { document = null; }
         return this.createFrom({}, idOrDocument, document);
     };
     Factory.createFrom = function (object, idOrDocument, document) {
         if (document === void 0) { document = null; }
-        var id = !!idOrDocument && Utils.isString(idOrDocument) ? idOrDocument : RDF.URI.Util.generateBNodeID();
+        var id = !!idOrDocument && Utils.isString(idOrDocument) ? idOrDocument : "";
         document = document || idOrDocument;
         var resource = Resource.Factory.createFrom(object, id);
         if (Factory.hasClassProperties(resource))

@@ -185,17 +185,6 @@ var MarkdownReporter = (() => {
 	 * @param {string[]} result.suite - Suites the spec belongs to, from top to bottom
 	 */
 	function onSpecComplete( browser, result ) {
-		// var container;
-		// var path = [].concat( result.suite, result.description );
-		// var maxDepth = path.length - 1;
-		//
-		// path.reduce( function ( previous, current, depth ) {
-		// 	current = parseData( current );
-		//
-		// 	container = getContainer( previous, current, depth < maxDepth );
-		//
-		// 	return container;
-		// }, docsData );
 	}
 
 	function onRunStart( browsers, server ) {
@@ -212,6 +201,7 @@ var MarkdownReporter = (() => {
 	 */
 	function onBrowserStart( browser, results, server ) {
 		parseSpecs( docsData, results.specs );
+		// fs.writeFileSync( "doc/data.json", JSON.stringify( docsData ), "utf8" );
 	}
 
 	function parseSpecs( parent, specs ) {
@@ -226,6 +216,14 @@ var MarkdownReporter = (() => {
 			}
 			delete specs[ key ]._;
 			parseSpecs( container, specs[ key ] );
+
+			sortObjectProperty( container, "classes" );
+			sortObjectProperty( container, "reexports" );
+			sortObjectProperty( container, "enums" );
+			sortObjectProperty( container, "methods", "instance" );
+			sortObjectProperty( container, "methods", "static" );
+			sortObjectProperty( container, "properties", "instance" );
+			sortObjectProperty( container, "properties", "static" );
 		}
 	}
 
@@ -241,10 +239,27 @@ var MarkdownReporter = (() => {
 	 * @param server
 	 */
 	function onRunComplete( browsers, overallResults, server ) {
-		var data = sortObject( docsData );// console.log( docsData );
+		var data = sortObject( docsData );
 		var outData = template( { modules: data } );
-		// fs.writeFileSync( destFile, JSON.stringify({ modules: data }), "utf8" );
 		fs.writeFileSync( destFile, outData, "utf8" );
+	}
+
+	function sortObjectProperty( object, property, extra ) {
+		if ( ! object[ property ] ) return;
+		var propertyObject = object[ property ];
+
+		if ( !! extra ) {
+			if ( ! propertyObject[ extra ] ) return;
+			object = propertyObject;
+			property = extra;
+
+			propertyObject = propertyObject[ extra ];
+		}
+
+		if ( Array.isArray( propertyObject ) )
+			return propertyObject.sort( function( a, b ) { return a.name.localeCompare( b.name ) } );
+
+		return object[ property ] = sortObject( propertyObject );
 	}
 
 	function sortObject( object ) {

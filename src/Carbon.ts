@@ -14,7 +14,6 @@ import * as LDP from "./LDP";
 import * as NamedFragment from "./NamedFragment";
 import * as NS from "./NS";
 import * as ObjectSchema from "./ObjectSchema";
-import * as Persisted from "./Persisted";
 import * as PersistedApp from "./PersistedApp";
 import * as PersistedDocument from "./PersistedDocument";
 import * as PersistedFragment from "./PersistedFragment";
@@ -24,7 +23,7 @@ import * as Pointer from "./Pointer";
 import * as RDF from "./RDF";
 import * as Resource from "./Resource";
 import * as SDKContext from "./SDKContext";
-import defaultSettings from "./settings";
+import * as Settings from "./Settings";
 import * as SPARQL from "./SPARQL";
 import * as Utils from "./Utils";
 
@@ -45,7 +44,6 @@ class Carbon extends AbstractContext {
 	static NamedFragment:typeof NamedFragment = NamedFragment;
 	static NS:typeof NS = NS;
 	static ObjectSchema:typeof ObjectSchema = ObjectSchema;
-	static Persisted:typeof Persisted = Persisted;
 	static PersistedApp:typeof PersistedApp = PersistedApp;
 	static PersistedDocument:typeof PersistedDocument = PersistedDocument;
 	static PersistedFragment:typeof PersistedFragment = PersistedFragment;
@@ -55,6 +53,7 @@ class Carbon extends AbstractContext {
 	static RDF:typeof RDF = RDF;
 	static Resource:typeof Resource = Resource;
 	static SDKContext:typeof SDKContext = SDKContext;
+	static Settings:typeof Settings = Settings;
 	static SPARQL:typeof SPARQL = SPARQL;
 	static Utils:typeof Utils = Utils;
 	/* tslint:enable: variable-name */
@@ -66,11 +65,10 @@ class Carbon extends AbstractContext {
 
 	get version():string { return Carbon.version; }
 
-	// TODO: Define settings type
-	constructor( settings?:any ) {
+	constructor( settings?:Settings.Class ) {
 		super();
 
-		settings = settings ? settings : defaultSettings;
+		settings = settings ? settings : Settings.defaultSettings;
 
 		Utils.M.extend( this.settings, Utils.M.from( settings ) );
 
