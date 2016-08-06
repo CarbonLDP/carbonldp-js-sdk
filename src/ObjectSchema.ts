@@ -51,6 +51,7 @@ export class DigestedPropertyDefinition {
 }
 
 export interface Resolver {
+	getGeneralSchema():DigestedObjectSchema;
 	getSchemaFor( object:Object ):DigestedObjectSchema;
 }
 
@@ -107,9 +108,15 @@ export class Digester {
 
 			if( propertyName === "@reverse" ) continue;
 			if( propertyName === "@index" ) continue;
-			if( propertyName === "@base" ) continue;
 
 			let propertyValue:( string | PropertyDefinition ) = schema[ propertyName ];
+
+			if( propertyName === "@base" || propertyName === "@vocab" ) {
+				if( ! Utils.isString( propertyValue ) ) throw new Errors.IllegalArgumentError( `The value of '${ propertyName }' must be a string or null.` );
+
+				digestedSchema[ propertyName.substr( 1 ) ] = propertyValue;
+				continue;
+			}
 
 			if( Utils.isString( propertyValue ) ) {
 				if( RDF.URI.Util.isPrefixed( propertyName ) ) throw new Errors.IllegalArgumentError( "A prefixed property cannot be equal to another URI." );
@@ -117,11 +124,7 @@ export class Digester {
 				let uri:RDF.URI.Class = new RDF.URI.Class( <string> propertyValue );
 				if( RDF.URI.Util.isPrefixed( uri.stringValue ) ) uri = Digester.resolvePrefixedURI( uri, digestedSchema );
 
-				if( propertyName === "@vocab" ) {
-					digestedSchema.vocab = uri.toString();
-				} else {
-					digestedSchema.prefixes.set( propertyName, uri );
-				}
+				digestedSchema.prefixes.set( propertyName, uri );
 			} else if( ! ! propertyValue && Utils.isObject( propertyValue ) ) {
 				let schemaDefinition:PropertyDefinition = <PropertyDefinition> propertyValue;
 				let digestedDefinition:DigestedPropertyDefinition = new DigestedPropertyDefinition();

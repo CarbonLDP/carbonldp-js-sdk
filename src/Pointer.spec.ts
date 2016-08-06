@@ -10,8 +10,9 @@ import {
 	hasProperty,
 	decoratedObject,
 } from "./test/JasmineExtender";
-import Response from "./HTTP/Response";
+import Documents from "./Documents";
 import NotImplementedError from "./HTTP/Errors/server/NotImplementedError";
+import Response from "./HTTP/Response";
 import * as Utils from "./Utils";
 
 import * as Pointer from "./Pointer";
@@ -129,15 +130,46 @@ describe( module( "Carbon/Pointer" ), ():void => {
 
 		it( hasMethod(
 			STATIC,
+			"createFrom",
+			[ "T extends Object" ],
+			"Create a Pointer from the object provided with id if provided.", [
+				{name: "object", type: "T"},
+				{name: "id", type: "string", optional: true},
+			],
+			{type: "T & Carbon.Pointer.Class"}
+		), ():void => {
+			expect( Pointer.Factory.createFrom ).toBeDefined();
+			expect( Utils.isFunction( Pointer.Factory.createFrom ) ).toBe( true );
+
+			interface MyInterface {
+				myProperty?:string;
+			}
+			let pointer:Pointer.Class & MyInterface;
+
+			pointer = Pointer.Factory.createFrom<MyInterface>( {} );
+			expect( pointer ).toBeTruthy();
+			expect( Pointer.Factory.hasClassProperties( pointer ) ).toBe( true );
+			expect( pointer.id ).toBe( "" );
+			expect( pointer.myProperty ).not.toBeDefined();
+
+			pointer = Pointer.Factory.createFrom( {myProperty: "My Property"}, "http://example.com/pointer/" );
+			expect( pointer ).toBeTruthy();
+			expect( Pointer.Factory.hasClassProperties( pointer ) ).toBe( true );
+			expect( pointer.id ).toBe( "http://example.com/pointer/" );
+			expect( pointer.myProperty ).toBe( "My Property" );
+		} );
+
+		it( hasMethod(
+			STATIC,
 			"decorate",
+			[ "T extends Object" ],
 			"Decorates the object provided with the properties and methods of a `Carbon.Pointer.Class` object.", [
-				{name: "object", type: "T extends Object"},
+				{name: "object", type: "T"},
 			],
 			{type: "T & Carbon.Pointer.Class"}
 		), ():void => {
 			expect( Pointer.Factory.decorate ).toBeDefined();
 			expect( Utils.isFunction( Pointer.Factory.decorate ) ).toBe( true );
-
 
 			interface MyResource {
 				myProperty?:string;
@@ -227,7 +259,9 @@ describe( module( "Carbon/Pointer" ), ():void => {
 			it( hasMethod(
 				INSTANCE,
 				"resolve",
-				"Resolves the pointer. This function throw an Error if it has no been configured by another decorator."
+				[ "T" ],
+				"Resolves the pointer. This function throw an Error if it has no been configured by another decorator.",
+				{type: "Promise<[ T & Carbon.PersistedDocument.Class, Carbon.HTTP.Response.Class ]>"}
 			), ( done:{ ():void, fail:() => void } ):void => {
 				expect( pointer.resolve ).toBeDefined();
 				expect( Utils.isFunction( pointer.resolve ) ).toBe( true );
@@ -289,36 +323,32 @@ describe( module( "Carbon/Pointer" ), ():void => {
 			expect( Pointer.Util.resolveAll ).toBeDefined();
 			expect( Utils.isFunction( Pointer.Util.resolveAll ) ).toBe( true );
 
-			function createPointer( uri:string ):Pointer.Class {
-				let pointer:Pointer.Class = Pointer.Factory.create( uri );
-
-				Object.defineProperties( pointer, {
-					"resolve": {
-						writable: false,
-						enumerable: false,
-						configurable: false,
-						value: function():Promise<any> {
-							return Promise.resolve( [ this, null ] );
-						},
-					},
-				} );
-
-				return pointer;
-			}
-
+			let documents:Documents = new Documents();
 			let pointers:Pointer.Class[];
 
-			pointers = [];
-			pointers.push( createPointer( "http://example.com/resource-1/" ) );
-			pointers.push( createPointer( "http://example.com/resource-2/" ) );
-			pointers.push( createPointer( "http://example.com/resource-3/" ) );
+			pointers = [ documents.getPointer( "http://example.com/some/id/" ), documents.getPointer( "http://example.com/another/id/" ), documents.getPointer( "http://example.com/random/id/1234567890/" ) ];
+			spyOn( documents, "get" ).and.callFake( ( id:string ):any => {
+				let pointer:Pointer.Class = documents.getPointer( id );
+				pointer._resolved = true;
 
-			Pointer.Util.resolveAll( pointers ).then( ( [ resolvedPointers, responses ]:[ Pointer.Class[], Response[] ] ) => {
-				expect( resolvedPointers.length ).toBe( 3 );
-				expect( resolvedPointers ).toEqual( pointers );
+				return Promise.resolve( [ pointer, null ] );
+			} );
 
+			let promise:Promise<[ Pointer.Class[], any[] ]> = Pointer.Util.resolveAll( pointers );
+			expect( promise instanceof Promise ).toBe( true );
+
+			promise.then( ( [ _pointers, responses ]:[ Pointer.Class[], any[] ] ) => {
+				expect( _pointers.length ).toBe( 3 );
 				expect( responses.length ).toBe( 3 );
-				expect( responses ).toContain( null );
+
+				expect( _pointers ).toEqual( pointers );
+				expect( _pointers[ 0 ].isResolved() ).toBe( true );
+				expect( _pointers[ 1 ].isResolved() ).toBe( true );
+				expect( _pointers[ 2 ].isResolved() ).toBe( true );
+
+				expect( responses[ 0 ] ).toBeNull();
+				expect( responses[ 1 ] ).toBeNull();
+				expect( responses[ 2 ] ).toBeNull();
 
 				done();
 			} ).catch( done.fail );

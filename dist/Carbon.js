@@ -40,6 +40,7 @@ var Carbon = (function (_super) {
         settings = settings ? settings : Settings.defaultSettings;
         Utils.M.extend(this.settings, Utils.M.from(settings));
         this.apps = new Apps.Class(this);
+        this.agents = new Agents.Class(this);
     }
     Object.defineProperty(Carbon, "version", {
         get: function () { return "0.35.1"; },

@@ -80,6 +80,15 @@ export class Class {
 		return HTTP.Request.Service.post( url, describeQuery, options, Class.stringParser );
 	}
 
+	static executeUPDATE( url:string, updateQuery:string, options:HTTP.Request.Options = {} ):Promise<HTTP.Response.Class> {
+		options = Utils.extend( options, Class.defaultOptions );
+
+		if( HTTP.Request.Util.getHeader( "Accept", options ) === undefined ) HTTP.Request.Util.setAcceptHeader( "application/ld+json", options );
+		HTTP.Request.Util.setContentTypeHeader( "application/sparql-update", options );
+
+		return HTTP.Request.Service.post( url, updateQuery, options );
+	}
+
 	private static parseRawBindingProperty( rawBindingProperty:RawResults.BindingProperty, pointerLibrary:Pointer.Library ):any {
 		switch( rawBindingProperty.type ) {
 			case "uri":
