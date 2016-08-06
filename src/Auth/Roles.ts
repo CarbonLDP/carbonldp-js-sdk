@@ -2,6 +2,7 @@ import Context from "./../Context";
 import * as Errors from "./../Errors";
 import * as Pointer from "./../Pointer";
 import * as HTTP from "./../HTTP";
+import * as PersistedDocument from "./../PersistedDocument";
 import * as Role from "./Role";
 import * as PersistedRole from "./PersistedRole";
 import * as URI from "./../RDF/URI";
@@ -14,15 +15,15 @@ export abstract class Class {
 		this.context = context;
 	}
 
-	createChild( parentRole:string | Pointer.Class, role:Role.Class, requestOptions?:HTTP.Request.Options ):Promise<[ Pointer.Class, [ HTTP.Response.Class, HTTP.Response.Class ] ]>;
-	createChild( parentRole:string | Pointer.Class, role:Role.Class, slug?:string, requestOptions?:HTTP.Request.Options ):Promise<[ Pointer.Class, [ HTTP.Response.Class, HTTP.Response.Class ] ]>;
-	createChild( parentRole:string | Pointer.Class, role:Role.Class, slugOrRequestOptions?:any, requestOptions?:HTTP.Request.Options ):Promise<[ Pointer.Class, [ HTTP.Response.Class, HTTP.Response.Class ] ]> {
+	createChild<T extends Role.Class>( parentRole:string | Pointer.Class, role:T, requestOptions?:HTTP.Request.Options ):Promise<[ T & PersistedDocument.Class, [ HTTP.Response.Class, HTTP.Response.Class ] ]>;
+	createChild<T extends Role.Class>( parentRole:string | Pointer.Class, role:T, slug?:string, requestOptions?:HTTP.Request.Options ):Promise<[ T & PersistedDocument.Class, [ HTTP.Response.Class, HTTP.Response.Class ] ]>;
+	createChild<T extends Role.Class>( parentRole:string | Pointer.Class, role:T, slugOrRequestOptions?:any, requestOptions?:HTTP.Request.Options ):Promise<[ T & PersistedDocument.Class, [ HTTP.Response.Class, HTTP.Response.Class ] ]> {
 		let parentURI:string = Utils.isString( parentRole ) ? <string> parentRole : ( <Pointer.Class> parentRole).id;
 		let slug:string = Utils.isString( slugOrRequestOptions ) ? slugOrRequestOptions : null;
 		requestOptions = HTTP.Request.Util.isOptions( slugOrRequestOptions ) ? slugOrRequestOptions : requestOptions;
 
 		let containerURI:string;
-		let rolePointer:Pointer.Class;
+		let persistedRole:T & PersistedDocument.Class;
 		let responseCreated:HTTP.Response.Class;
 		return this.resolveURI( "" ).then( ( uri:string ) => {
 			containerURI = uri;
@@ -33,15 +34,15 @@ export abstract class Class {
 
 		} ).then( ( [ exists, response ]:[ boolean, HTTP.Response.Class ] ) => {
 			if( ! exists ) throw new Errors.IllegalArgumentError( "The parent role provided does not exist." );
-			return slug ? this.context.documents.createChild( containerURI, role, slug, requestOptions ) : this.context.documents.createChild( containerURI, role, requestOptions );
+			return this.context.documents.createChild<T>( containerURI, role, slug, requestOptions );
 
-		} ).then( ( [ newRole, response ]:[ Pointer.Class, HTTP.Response.Class] ) => {
-			rolePointer = newRole;
+		} ).then( ( [ newRole, response ]:[ T & PersistedDocument.Class, HTTP.Response.Class] ) => {
+			persistedRole = newRole;
 			responseCreated = response;
 			return this.context.documents.addMember( parentURI, newRole );
 
 		} ).then( ( response ) => {
-			return [ rolePointer, [ responseCreated, response ] ];
+			return [ persistedRole, [ responseCreated, response ] ];
 		} );
 	}
 

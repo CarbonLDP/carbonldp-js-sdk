@@ -4,6 +4,7 @@ import Documents from "./Documents";
 import * as Fragment from "./Fragment";
 import * as HTTP from "./HTTP";
 import * as NamedFragment from "./NamedFragment";
+import * as ObjectSchema from "./ObjectSchema";
 import * as PersistedAccessPoint from "./PersistedAccessPoint";
 import * as PersistedResource from "./PersistedResource";
 import * as PersistedFragment from "./PersistedFragment";
@@ -14,7 +15,6 @@ import * as RDF from "./RDF";
 import * as SPARQL from "./SPARQL";
 import * as Utils from "./Utils";
 import * as URI from "./RDF/URI";
-import * as ObjectSchema from "./ObjectSchema";
 
 export interface Class extends PersistedResource.Class, Document.Class {
 	created?:Date;
@@ -42,8 +42,9 @@ export interface Class extends PersistedResource.Class, Document.Class {
 	createNamedFragment( slug:string ):PersistedNamedFragment.Class;
 	createNamedFragment<T extends Object>( object:T, slug:string ):PersistedNamedFragment.Class & T;
 
-	refresh<T extends Class>():Promise<[T, HTTP.Response.Class]>;
-	save<T extends Class>():Promise<[T, HTTP.Response.Class]>;
+	refresh<T extends Class>():Promise<[ T, HTTP.Response.Class ]>;
+	save<T extends Class>():Promise<[ T, HTTP.Response.Class ]>;
+	saveAndRefresh<T extends Class>():Promise<[ T, [ HTTP.Response.Class, HTTP.Response.Class ] ]>;
 	delete():Promise<HTTP.Response.Class>;
 
 	getDownloadURL():Promise<string>;
@@ -120,6 +121,35 @@ function syncSavedFragments():void {
 	document._savedFragments = Utils.A.from( document._fragmentsIndex.values() );
 }
 
+function resolveURI( uri:string ):string {
+	if( URI.Util.isAbsolute( uri ) ) return uri;
+
+	uri = ObjectSchema.Digester.resolvePrefixedURI( new URI.Class( uri ), this._documents.getGeneralSchema() ).stringValue;
+
+	let schema:ObjectSchema.DigestedObjectSchema = this._documents.getSchemaFor( this );
+	if( schema.vocab ) uri = URI.Util.resolve( schema.vocab, uri );
+
+	return uri;
+}
+function extendAddType( superFunction:( type:string ) => void ):( type:string ) => void {
+	return function( type:string ):void {
+		type = resolveURI.call( this, type );
+		superFunction.call( this, type );
+	};
+}
+function extendHasType( superFunction:( type:string ) => boolean ):( type:string ) => boolean {
+	return function( type:string ):boolean {
+		type = resolveURI.call( this, type );
+		return superFunction.call( this, type );
+	};
+}
+function extendRemoveType( superFunction:( type:string ) => void ):( type:string ) => void {
+	return function( type:string ):void {
+		type = resolveURI.call( this, type );
+		superFunction.call( this, type );
+	};
+}
+
 function extendCreateFragment( superFunction:() => Fragment.Class ):() => PersistedFragment.Class;
 function extendCreateFragment( superFunction:( slug:string ) => Fragment.Class ):( slug:string ) => PersistedFragment.Class;
 function extendCreateFragment( superFunction:( object:Object, slug:string ) => Fragment.Class ):( slug:string, object:Object ) => PersistedFragment.Class;
@@ -146,12 +176,16 @@ function extendCreateNamedFragment( superFunction:( slugOrObject:any, slug?:stri
 	};
 }
 
-function refresh<T extends Class>():Promise<[T, HTTP.Response.Class]> {
+function refresh<T extends Class>():Promise<[ T, HTTP.Response.Class ]> {
 	return this._documents.refresh( this );
 }
-function save<T extends Class>():Promise<[T, HTTP.Response.Class]> {
+function save<T extends Class>():Promise<[ T, HTTP.Response.Class ]> {
 	return this._documents.save( this );
 }
+function saveAndRefresh<T extends Class>():Promise<[ T, [ HTTP.Response.Class, HTTP.Response.Class] ]> {
+	return (<Class> this)._documents.saveAndRefresh<T>( this );
+}
+
 function _delete():Promise<HTTP.Response.Class> {
 	return this._documents.delete( this.id );
 }
@@ -273,6 +307,7 @@ export class Factory {
 
 			&& Utils.hasFunction( object, "refresh" )
 			&& Utils.hasFunction( object, "save" )
+			&& Utils.hasFunction( object, "saveAndRefresh" )
 			&& Utils.hasFunction( object, "delete" )
 
 			&& Utils.hasFunction( object, "getDownloadURL" )
@@ -354,6 +389,25 @@ export class Factory {
 				value: syncSavedFragments,
 			},
 
+			"addType": {
+				writable: false,
+				enumerable: false,
+				configurable: true,
+				value: extendAddType( persistedDocument.addType ),
+			},
+			"hasType": {
+				writable: false,
+				enumerable: false,
+				configurable: true,
+				value: extendHasType( persistedDocument.hasType ),
+			},
+			"removeType": {
+				writable: false,
+				enumerable: false,
+				configurable: true,
+				value: extendRemoveType( persistedDocument.removeType ),
+			},
+
 			"hasPointer": {
 				writable: false,
 				enumerable: false,
@@ -362,7 +416,7 @@ export class Factory {
 					let superFunction:( id:string ) => boolean = persistedDocument.hasPointer;
 					return function( id:string ):boolean {
 						if( RDF.URI.Util.isPrefixed( id ) ) {
-							id = ObjectSchema.Digester.resolvePrefixedURI( new RDF.URI.Class( id ), (<Class> this)._documents.getSchemaFor( this ) ).stringValue;
+							id = ObjectSchema.Digester.resolvePrefixedURI( new RDF.URI.Class( id ), (<Class> this)._documents.getGeneralSchema() ).stringValue;
 						}
 
 						if( superFunction.call( this, id ) ) return true;
@@ -380,7 +434,7 @@ export class Factory {
 					let inScopeFunction:( id:string ) => boolean = persistedDocument.inScope;
 					return function( id:string ):Pointer.Class {
 						if( RDF.URI.Util.isPrefixed( id ) ) {
-							id = ObjectSchema.Digester.resolvePrefixedURI( new RDF.URI.Class( id ), (<Class> this)._documents.getSchemaFor( this ) ).stringValue;
+							id = ObjectSchema.Digester.resolvePrefixedURI( new RDF.URI.Class( id ), (<Class> this)._documents.getGeneralSchema() ).stringValue;
 						}
 
 						if( inScopeFunction.call( this, id ) ) return superFunction.call( this, id );
@@ -398,7 +452,7 @@ export class Factory {
 					return function( idOrPointer:any ):boolean {
 						let uri:string = Pointer.Factory.is( idOrPointer ) ? idOrPointer.id : idOrPointer;
 						if( RDF.URI.Util.isPrefixed( uri ) ) {
-							uri = ObjectSchema.Digester.resolvePrefixedURI( new RDF.URI.Class( uri ), (<Class> this)._documents.getSchemaFor( this ) ).stringValue;
+							uri = ObjectSchema.Digester.resolvePrefixedURI( new RDF.URI.Class( uri ), (<Class> this)._documents.getGeneralSchema() ).stringValue;
 						}
 
 						if( superFunction.call( this, uri ) ) return true;
@@ -418,6 +472,12 @@ export class Factory {
 				enumerable: false,
 				configurable: true,
 				value: save,
+			},
+			"saveAndRefresh": {
+				writable: false,
+				enumerable: false,
+				configurable: true,
+				value: saveAndRefresh,
 			},
 			"delete": {
 				writable: false,

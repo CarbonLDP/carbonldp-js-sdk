@@ -18,6 +18,7 @@ import Context from "./Context";
 import {DigestedObjectSchema} from "./ObjectSchema";
 import * as Errors from "./Errors";
 import * as FreeResources from "./FreeResources";
+import JSONLDConverter from "./JSONLDConverter";
 import * as HTTP from "./HTTP";
 import * as NS from "./NS";
 import * as PersistedDocument from "./PersistedDocument";
