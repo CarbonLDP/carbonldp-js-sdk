@@ -55,8 +55,10 @@ declare class Documents implements Pointer.Library, Pointer.Validator, ObjectSch
     removeAllMembers(documentURI: string, requestOptions?: HTTP.Request.Options): Promise<HTTP.Response.Class>;
     save<T extends PersistedDocument.Class>(persistedDocument: T, requestOptions?: HTTP.Request.Options): Promise<[T, HTTP.Response.Class]>;
     refresh<T extends PersistedDocument.Class>(persistedDocument: T, requestOptions?: HTTP.Request.Options): Promise<[T, HTTP.Response.Class]>;
+    saveAndRefresh<T extends PersistedDocument.Class>(persistedDocument: T, requestOptions?: HTTP.Request.Options): Promise<[T, [HTTP.Response.Class, HTTP.Response.Class]]>;
     delete(documentURI: string, requestOptions?: HTTP.Request.Options): Promise<HTTP.Response.Class>;
     getDownloadURL(documentURI: string, requestOptions?: HTTP.Request.Options): Promise<string>;
+    getGeneralSchema(): ObjectSchema.DigestedObjectSchema;
     getSchemaFor(object: Object): ObjectSchema.DigestedObjectSchema;
     executeRawASKQuery(documentURI: string, askQuery: string, requestOptions?: HTTP.Request.Options): Promise<[SPARQL.RawResults.Class, HTTP.Response.Class]>;
     executeASKQuery(documentURI: string, askQuery: string, requestOptions?: HTTP.Request.Options): Promise<[boolean, HTTP.Response.Class]>;

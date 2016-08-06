@@ -320,6 +320,10 @@
 	- [Properties](#Carbon-LDP-AddMemberAction-Properties)
 	- [Class Carbon.LDP.AddMemberAction.Factory](#Carbon-LDP-AddMemberAction-Factory)
 		- [Methods](#Carbon-LDP-AddMemberAction-Factory-Methods)
+- [Module Carbon/LDP/BlankNode](#Carbon-LDP-BlankNode)
+	- [Properties](#Carbon-LDP-BlankNode-Properties)
+	- [Class Carbon.BlankNode.Factory](#Carbon-BlankNode-Factory)
+		- [Methods](#Carbon-BlankNode-Factory-Methods)
 - [Module Carbon/LDP/DirectContainer](#Carbon-LDP-DirectContainer)
 	- [Properties](#Carbon-LDP-DirectContainer-Properties)
 	- [Class Carbon.DirectContainer.Factory](#Carbon-DirectContainer-Factory)
@@ -337,7 +341,6 @@
 	- [Class Carbon.IndirectContainer.Factory](#Carbon-IndirectContainer-Factory)
 		- [Methods](#Carbon-IndirectContainer-Factory-Methods)
 - [Module Carbon/LDP/PersistedBlankNode](#Carbon-LDP-PersistedBlankNode)
-	- [Properties](#Carbon-LDP-PersistedBlankNode-Properties)
 - [Module Carbon/LDP/RemoveMemberAction](#Carbon-LDP-RemoveMemberAction)
 	- [Properties](#Carbon-LDP-RemoveMemberAction-Properties)
 	- [Class Carbon.LDP.RemoveMemberAction.Factory](#Carbon-LDP-RemoveMemberAction-Factory)
@@ -2122,7 +2125,7 @@ Class( context:Carbon.Context )
 
 ##### createChild
 ```typescript 
-createChild( parentRole:string | Carbon.Pointer.Class,  role:Carbon.Auth.Roles.Class,  slug?:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.Pointer.Class, [ Carbon.HTTP.Response.Class, Carbon.HTTP.Response.Class] ]>
+createChild<T extends Carbon.Auth.Roles.Class>( parentRole:string | Carbon.Pointer.Class,  role:T,  slug?:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ T & Carbon.PersistedDocument.Class, [ Carbon.HTTP.Response.Class, Carbon.HTTP.Response.Class] ]>
 ```
 
 Persists the Role provided with the slug, if specified, as a childRole of the parentRole specified.
@@ -2136,7 +2139,7 @@ Returns a Promise with a Pointer for the stored role; and a tuple of two respons
 - requestOptions: The slug where the role will be persisted.
 
 ```typescript 
-createChild( parentRole:string | Carbon.Pointer.Class,  role:Carbon.Auth.Roles.Class,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.Pointer.Class, [ Carbon.HTTP.Response.Class, Carbon.HTTP.Response.Class] ]>
+createChild<T extends Carbon.Auth.Roles.Class>( parentRole:string | Carbon.Pointer.Class,  role:T,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ T & Carbon.PersistedDocument.Class, [ Carbon.HTTP.Response.Class, Carbon.HTTP.Response.Class] ]>
 ```
 
 Persists the Role provided as a childRole of the parentRole specified.
@@ -2150,7 +2153,7 @@ Returns a Promise with a Pointer for the stored role; and a tuple of two respons
 
 ##### get
 ```typescript 
-get( roleURI:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.PersistedRole.Class, Carbon.HTTP.Response.Class ]>
+get<T>( roleURI:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ T & Carbon.PersistedRole.Class, Carbon.HTTP.Response.Class ]>
 ```
 
 Retrieves a role from the current context.
@@ -2564,6 +2567,45 @@ _fragmentsIndex:Map<string, Carbon.Fragment.Class>
 Map that stores the fragments (named fragments and blank nodes) of the Document.
 
 ##### <a name="Carbon-Document-Factory-Decorated-Object-Methods" />Methods
+##### _normalize
+```typescript 
+_normalize()
+```
+
+Search over the document for normal objects to convert into fragments, and unused fragments to eliminate.
+
+##### _removeFragment
+```typescript 
+_removeFragment( fragment:Carbon.Fragment.Class )
+```
+
+Remove the fragment referenced by the `Carbon.Fragment.Class` provided from the Document.
+
+*Parameters*
+
+- fragment
+
+```typescript 
+_removeFragment( slug:string )
+```
+
+Remove the fragment referenced by the Slug provided from the Document.
+
+*Parameters*
+
+- slug
+
+##### addType
+```typescript 
+addType( type:string )
+```
+
+Adds a type to the Document.
+
+*Parameters*
+
+- type: The type to be added.
+
 ##### createFragment
 ```typescript 
 createFragment<T extends Object>( object:T,  slug:string ):T & Carbon.Fragment.Class
@@ -2693,6 +2735,17 @@ Returns true if the Document has a pointer referenced by the URI provided.
 
 - id
 
+##### hasType
+```typescript 
+hasType( type:string )
+```
+
+Returns true if the Document contains the type specified.
+
+*Parameters*
+
+- type: The type to look for.
+
 ##### inScope
 ```typescript 
 inScope( pointer:Carbon.Pointer.Class ):boolean
@@ -2714,36 +2767,37 @@ Returns true if the URI provided is inside the scope of the Document.
 
 - id
 
-##### removeFragment
+##### removeNamedFragment
 ```typescript 
-removeFragment( fragment:Carbon.NamedFragment.Class )
+removeNamedFragment( fragment:Carbon.NamedFragment.Class )
 ```
 
-Remove the fragment referenced by the `Carbon.NamedFragment.Class` provided from the Document.
+Remove the maned fragment referenced by the `Carbon.NamedFragment.Class` provided from the Document.
 
 *Parameters*
 
 - fragment
 
 ```typescript 
-removeFragment( fragment:Carbon.Fragment.Class )
+removeNamedFragment( slug:string )
 ```
 
-Remove the fragment referenced by the `Carbon.Fragment.Class` provided from the Document.
-
-*Parameters*
-
-- fragment
-
-```typescript 
-removeFragment( slug:string )
-```
-
-Remove the fragment referenced by the Slug provided from the Document.
+Remove the named fragment referenced by the Slug provided from the Document.
 
 *Parameters*
 
 - slug
+
+##### removeType
+```typescript 
+removeType( type:string )
+```
+
+Remove the type specified from the Document.
+
+*Parameters*
+
+- type: The type to be removed.
 
 ##### toJSON
 ```typescript 
@@ -3290,6 +3344,18 @@ Update the data of the document provided in the server.
 
 - persistedDocument: The persisted document with the data to update in the server.
 - requestOptions: Customisable options for the request.
+
+##### saveAndRefresh
+```typescript 
+saveAndRefresh<T extends Carbon.PersistedDocument.Class>( persistedDocument:T,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ T, [ HTTP.Response.Class, HTTP.Response.Class ] ]>
+```
+
+Save and refresh the PersistedDocument specified.
+
+*Parameters*
+
+- persistedDocument: The persistedDocument to save and refresh.
+- requestOptions: Customizable options for the request.
 
 ##### upload
 ```typescript 
@@ -5879,6 +5945,69 @@ Returns true if the object has the properties of a `Carbon.LDP.AddMemberAction.C
 
 
 
+## <a name="Carbon-LDP-BlankNode" />Module Carbon/LDP/BlankNode
+
+
+
+
+
+### <a name="Carbon-LDP-BlankNode-Properties" />Properties
+```typescript 
+static SCHEMA:Carbon.ObjectSchema.Class 
+```
+
+
+
+
+
+### <a name="Carbon-BlankNode-Factory" />Class Carbon.BlankNode.Factory
+
+
+> Factory class for `Carbon.BlankNode.Class` objects.
+
+
+
+
+#### <a name="Carbon-BlankNode-Factory-Methods" />Methods
+##### createFrom
+```typescript 
+static createFrom<T extends Object>( object:T extends Object,  id:string,  document:Carbon.Document.Class ):T & Carbon.BlankNode.Class
+```
+
+Creates a `Carbon.BlankNode.Class` object from the object and parameters specified.
+
+*Parameters*
+
+- object: Object to be converted into a `Carbon.BlankNode.Class`.
+- id: The ID of the of the BlankNode to create. If no ID is provided, one will be created.
+- document: The `Carbon.Document.Class` object where the fragment is part of.
+
+```typescript 
+static createFrom<T extends Object>( object:T extends Object,  document:Carbon.Document.Class ):T & Carbon.BlankNode.Class
+```
+
+Creates a `Carbon.BlankNode.Class` object from the object and parameters specified.
+
+*Parameters*
+
+- object: Object to be converted into a `Carbon.BlankNode.Class`.
+- document: The `Carbon.Document.Class` object where the fragment is part of.
+
+##### decorate
+```typescript 
+static decorate( object:T extends Object,  bNodeIdentifier?:string ):T & Carbon.BlankNode.Class
+```
+
+Decorates the object provided with the properties and methods of a Carbon.FreeResources.Class object.
+
+*Parameters*
+
+- object: The object to be decorated.
+- bNodeIdentifier: The identifier to be added to the decorated BlankNode.
+
+
+
+
 ## <a name="Carbon-LDP-DirectContainer" />Module Carbon/LDP/DirectContainer
 
 
@@ -6082,12 +6211,6 @@ Returns true if the object provided has the properties of a `Carbon.LDP.Indirect
 
 
 
-
-
-### <a name="Carbon-LDP-PersistedBlankNode-Properties" />Properties
-```typescript 
-static SCHEMA:Carbon.ObjectSchema.Class 
-```
 
 
 
@@ -7573,6 +7696,17 @@ Adds the specified resources as members of the container.
 
 - members: Array of URIs or Pointers to add as members.
 
+##### addType
+```typescript 
+addType( type:string )
+```
+
+Adds a type to the Document. Relative and prefixed types are resolved before the operation.
+
+*Parameters*
+
+- type: The type to be added.
+
 ##### createAccessPoint
 ```typescript 
 createAccessPoint<T extends Carbon.AccessPoint.Class>( accessPoint:T,  slug?:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ T & Carbon.PersistedAccessPoint.Class, Carbon.HTTP.Response ]>
@@ -7877,6 +8011,17 @@ Returns true if the PersistedDocument object has a pointer referenced by the URI
 
 - id
 
+##### hasType
+```typescript 
+hasType( type:string )
+```
+
+Returns true if the Document contains the type specified. Relative and prefixed types are resolved before the operation.
+
+*Parameters*
+
+- type: The type to look for.
+
 ##### inScope
 ```typescript 
 inScope( pointer:Carbon.Pointer.Class ):boolean
@@ -7962,12 +8107,30 @@ Remove the specified resources URI or Pointers as members of the current contain
 
 - members: Array of URIs or Pointers to remove as members
 
+##### removeType
+```typescript 
+removeType( type:string )
+```
+
+Remove the type specified from the Document. Relative and prefixed types are resolved before the operation.
+
+*Parameters*
+
+- type: The type to be removed.
+
 ##### save
 ```typescript 
 save<T extends Carbon.PersistedDocument.Class>():Promise<[ T, Carbon.HTTP.Response.Class ]>
 ```
 
 Save the PersistedDocument to the server.
+
+##### saveAndRefresh
+```typescript 
+saveAndRefresh<T extends Carbon.PersistedDocument.Class>():Promise<[ T, [ HTTP.Response.Class, HTTP.Response.Class ] ]>
+```
+
+Save and refresh the PersistedDocument.
 
 ##### upload
 ```typescript 
