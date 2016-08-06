@@ -53,7 +53,7 @@ describe( module( "Carbon/App" ), ():void => {
 
 	describe( clazz(
 		"Carbon.App.Factory",
-		"Factory class for `Carbon.App.Class` objects"
+		"Factory class for `Carbon.App.Class` objects."
 	), ():void => {
 
 		it( isDefined(), ():void => {
@@ -93,8 +93,8 @@ describe( module( "Carbon/App" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"is",
-			"Returns true if the object provided is considered as an `Carbon.App.Class` object", [
-				{name: "object", type: "Object"}
+			"Returns true if the object provided is considered a `Carbon.App.Class` object", [
+				{name: "object", type: "Object"},
 			],
 			{type: "boolean"}
 		), ():void => {
@@ -125,9 +125,9 @@ describe( module( "Carbon/App" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"create",
-			"Create a empty `Carbon.App.Class` object.", [
-				{name: "name", type: "string"},
-				{name: "description", type: "string", optional: true}
+			"Creates a `Carbon.App.Class` object with the parameters specified.", [
+				{name: "name", type: "string", description: "Name of the app to be created."},
+				{name: "description", type: "string", optional: true, description: "Description of the app to be created." },
 			],
 			{type: "Carbon.App.Class"}
 		), ():void => {
@@ -146,10 +146,11 @@ describe( module( "Carbon/App" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"createFrom",
-			"Create a `Carbon.App.Class` object with the object provided.", [
-				{name: "object", type: "T extends Object"},
-				{name: "name", type: "string"},
-				{name: "description", type: "string", optional: true}
+			[ "T extends Object" ],
+			"Creates a `Carbon.App.Class` object from the object and parameters specified.", [
+				{name: "object", type: "T", description: "Object that will be converted into aa App."},
+				{name: "name", type: "string", description: "Name of the app to be created."},
+				{name: "description", type: "string", optional: true, description: "Description of the app to be created." },
 			],
 			{type: "T & Carbon.App.Class"}
 		), ():void => {

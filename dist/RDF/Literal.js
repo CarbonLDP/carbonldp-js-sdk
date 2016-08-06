@@ -125,14 +125,5 @@ var Factory = (function () {
     return Factory;
 }());
 exports.Factory = Factory;
-var Util = (function () {
-    function Util() {
-    }
-    Util.areEqual = function (literal1, literal2) {
-        return false;
-    };
-    return Util;
-}());
-exports.Util = Util;
 
 //# sourceMappingURL=Literal.js.map

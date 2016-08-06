@@ -25,8 +25,7 @@ export class Factory {
 	static is( object:Object ):boolean {
 		return Factory.hasClassProperties( object )
 			&& PersistedDocument.Factory.is( object )
-			// TODO Use (<Document.Class> object).hasType( Agent.RDF_CLASS ), when available
-			&& ( <Class> object ).types.indexOf( Agent.RDF_CLASS ) !== - 1
+			&& (<PersistedDocument.Class> object).hasType( Agent.RDF_CLASS )
 			;
 	}
 

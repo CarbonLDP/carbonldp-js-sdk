@@ -16,7 +16,7 @@ var Class = (function () {
     };
     Class.executeASKQuery = function (url, askQuery, options) {
         if (options === void 0) { options = {}; }
-        return HTTP.Request.Service.post(url, askQuery, options, Class.resultsParser).then(function (_a) {
+        return Class.executeRawASKQuery(url, askQuery, options).then(function (_a) {
             var rawResults = _a[0], response = _a[1];
             return [rawResults.boolean, response];
         });
@@ -67,6 +67,14 @@ var Class = (function () {
             HTTP.Request.Util.setAcceptHeader("application/ld+json", options);
         HTTP.Request.Util.setContentTypeHeader("application/sparql-query", options);
         return HTTP.Request.Service.post(url, describeQuery, options, Class.stringParser);
+    };
+    Class.executeUPDATE = function (url, updateQuery, options) {
+        if (options === void 0) { options = {}; }
+        options = Utils.extend(options, Class.defaultOptions);
+        if (HTTP.Request.Util.getHeader("Accept", options) === undefined)
+            HTTP.Request.Util.setAcceptHeader("application/ld+json", options);
+        HTTP.Request.Util.setContentTypeHeader("application/sparql-update", options);
+        return HTTP.Request.Service.post(url, updateQuery, options);
     };
     Class.parseRawBindingProperty = function (rawBindingProperty, pointerLibrary) {
         switch (rawBindingProperty.type) {

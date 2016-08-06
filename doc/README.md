@@ -13,8 +13,8 @@
 		- [Constructor](#Carbon-AbstractContext-Constructor)
 		- [Properties](#Carbon-AbstractContext-Properties)
 		- [Methods](#Carbon-AbstractContext-Methods)
-- [Module Carbon/AccessPoints](#Carbon-AccessPoints)
-	- [Properties](#Carbon-AccessPoints-Properties)
+- [Module Carbon/AccessPoint](#Carbon-AccessPoint)
+	- [Properties](#Carbon-AccessPoint-Properties)
 	- [Class Carbon.AccessPoint.Factory](#Carbon-AccessPoint-Factory)
 		- [Methods](#Carbon-AccessPoint-Factory-Methods)
 - [Module Carbon/App](#Carbon-App)
@@ -38,6 +38,13 @@
 		- [Constructor](#Carbon-Auth-Class-Constructor)
 		- [Properties](#Carbon-Auth-Class-Properties)
 		- [Methods](#Carbon-Auth-Class-Methods)
+- [Module Carbon/Auth/ACE](#Carbon-Auth-ACE)
+- [Module Carbon/Auth/ACL](#Carbon-Auth-ACL)
+	- [Properties](#Carbon-Auth-ACL-Properties)
+	- [Class Carbon.Auth.ACL.Factory](#Carbon-Auth-ACL-Factory)
+		- [Methods](#Carbon-Auth-ACL-Factory-Methods)
+		- [Decorated Object](#Carbon-Auth-ACL-Factory-Decorated-Object)
+			- [Methods](#Carbon-Auth-ACL-Factory-Decorated-Object-Methods)
 - [Module Carbon/Auth/Agent](#Carbon-Auth-Agent)
 	- [Properties](#Carbon-Auth-Agent-Properties)
 	- [Class Carbon.Auth.Agent.Factory](#Carbon-Auth-Agent-Factory)
@@ -50,6 +57,9 @@
 	- [Class Carbon.Auth.BasicAuthenticator.Class](#Carbon-Auth-BasicAuthenticator-Class)
 		- [Constructor](#Carbon-Auth-BasicAuthenticator-Class-Constructor)
 		- [Methods](#Carbon-Auth-BasicAuthenticator-Class-Methods)
+- [Module Carbon/Auth/PersistedACL](#Carbon-Auth-PersistedACL)
+	- [Class Carbon.Auth.PersistedACL.Factory](#Carbon-Auth-PersistedACL-Factory)
+		- [Methods](#Carbon-Auth-PersistedACL-Factory-Methods)
 - [Module Carbon/Auth/PersistedAgent](#Carbon-Auth-PersistedAgent)
 	- [Class Carbon.Auth.PersistedAgent.Factory](#Carbon-Auth-PersistedAgent-Factory)
 		- [Methods](#Carbon-Auth-PersistedAgent-Factory-Methods)
@@ -60,23 +70,32 @@
 	- [Class Carbon.Auth.Ticket.Factory](#Carbon-Auth-Ticket-Factory)
 		- [Methods](#Carbon-Auth-Ticket-Factory-Methods)
 - [Module Carbon/Auth/Token](#Carbon-Auth-Token)
+	- [Properties](#Carbon-Auth-Token-Properties)
 	- [Class Carbon.Auth.Token.Factory](#Carbon-Auth-Token-Factory)
+		- [Properties](#Carbon-Auth-Token-Factory-Properties)
 		- [Methods](#Carbon-Auth-Token-Factory-Methods)
 - [Module Carbon/Auth/TokenAuthenticator](#Carbon-Auth-TokenAuthenticator)
 	- [Class Carbon.Auth.TokenAuthenticator.Class](#Carbon-Auth-TokenAuthenticator-Class)
 		- [Constructor](#Carbon-Auth-TokenAuthenticator-Class-Constructor)
 		- [Methods](#Carbon-Auth-TokenAuthenticator-Class-Methods)
+- [Module Carbon/Auth/UsernameAndPasswordCredentials](#Carbon-Auth-UsernameAndPasswordCredentials)
+	- [Class Carbon.Auth.UsernameAndPasswordCredentials.Class](#Carbon-Auth-UsernameAndPasswordCredentials-Class)
+		- [Constructor](#Carbon-Auth-UsernameAndPasswordCredentials-Class-Constructor)
+		- [Properties](#Carbon-Auth-UsernameAndPasswordCredentials-Class-Properties)
 - [Module Carbon/Auth/UsernameAndPasswordToken](#Carbon-Auth-UsernameAndPasswordToken)
 	- [Class Carbon.Auth.UsernameAndPasswordToken.Class](#Carbon-Auth-UsernameAndPasswordToken-Class)
 		- [Constructor](#Carbon-Auth-UsernameAndPasswordToken-Class-Constructor)
 		- [Properties](#Carbon-Auth-UsernameAndPasswordToken-Class-Properties)
 - [Module Carbon/Document](#Carbon-Document)
+	- [Properties](#Carbon-Document-Properties)
 	- [Class Carbon.Document.Factory](#Carbon-Document-Factory)
 		- [Methods](#Carbon-Document-Factory-Methods)
 		- [Decorated Object](#Carbon-Document-Factory-Decorated-Object)
 			- [Methods](#Carbon-Document-Factory-Decorated-Object-Methods)
 - [Module Carbon/Documents](#Carbon-Documents)
 	- [Class Carbon.Documents](#Carbon-Documents)
+		- [Constructor](#Carbon-Documents-Constructor)
+		- [Properties](#Carbon-Documents-Properties)
 		- [Methods](#Carbon-Documents-Methods)
 - [Module Carbon/Errors](#Carbon-Errors)
 	- [Reexports](#Carbon-Errors-Reexports)
@@ -117,21 +136,6 @@
 - [Module Carbon/HTTP/Errors](#Carbon-HTTP-Errors)
 	- [Reexports](#Carbon-HTTP-Errors-Reexports)
 	- [Properties](#Carbon-HTTP-Errors-Properties)
-- [Module Carbon/HTTP/Errors/BadRequestError](#Carbon-HTTP-Errors-BadRequestError)
-	- [Class Carbon.HTTP.Errors.BadRequestError](#Carbon-HTTP-Errors-BadRequestError)
-		- [Constructor](#Carbon-HTTP-Errors-BadRequestError-Constructor)
-		- [Properties](#Carbon-HTTP-Errors-BadRequestError-Properties)
-		- [Methods](#Carbon-HTTP-Errors-BadRequestError-Methods)
-- [Module Carbon/HTTP/Errors/ConflictError](#Carbon-HTTP-Errors-ConflictError)
-	- [Class Carbon.HTTP.Errors.ConflictError](#Carbon-HTTP-Errors-ConflictError)
-		- [Constructor](#Carbon-HTTP-Errors-ConflictError-Constructor)
-		- [Properties](#Carbon-HTTP-Errors-ConflictError-Properties)
-		- [Methods](#Carbon-HTTP-Errors-ConflictError-Methods)
-- [Module Carbon/HTTP/Errors/ForbiddenError](#Carbon-HTTP-Errors-ForbiddenError)
-	- [Class Carbon.HTTP.Errors.client.ForbiddenError](#Carbon-HTTP-Errors-client-ForbiddenError)
-		- [Constructor](#Carbon-HTTP-Errors-client-ForbiddenError-Constructor)
-		- [Properties](#Carbon-HTTP-Errors-client-ForbiddenError-Properties)
-		- [Methods](#Carbon-HTTP-Errors-client-ForbiddenError-Methods)
 - [Module Carbon/HTTP/Errors/HTTPError](#Carbon-HTTP-Errors-HTTPError)
 	- [Class Carbon.HTTP.Errors.HTTPError](#Carbon-HTTP-Errors-HTTPError)
 		- [Constructor](#Carbon-HTTP-Errors-HTTPError-Constructor)
@@ -142,106 +146,121 @@
 		- [Constructor](#Carbon-HTTP-Errors-UnknownError-Constructor)
 		- [Properties](#Carbon-HTTP-Errors-UnknownError-Properties)
 		- [Methods](#Carbon-HTTP-Errors-UnknownError-Methods)
+- [Module Carbon/HTTP/Errors/client/BadRequestError](#Carbon-HTTP-Errors-client-BadRequestError)
+	- [Class Carbon.HTTP.Errors.BadRequestError](#Carbon-HTTP-Errors-BadRequestError)
+		- [Constructor](#Carbon-HTTP-Errors-BadRequestError-Constructor)
+		- [Properties](#Carbon-HTTP-Errors-BadRequestError-Properties)
+		- [Methods](#Carbon-HTTP-Errors-BadRequestError-Methods)
+- [Module Carbon/HTTP/Errors/client/ConflictError](#Carbon-HTTP-Errors-client-ConflictError)
+	- [Class Carbon.HTTP.Errors.ConflictError](#Carbon-HTTP-Errors-ConflictError)
+		- [Constructor](#Carbon-HTTP-Errors-ConflictError-Constructor)
+		- [Properties](#Carbon-HTTP-Errors-ConflictError-Properties)
+		- [Methods](#Carbon-HTTP-Errors-ConflictError-Methods)
+- [Module Carbon/HTTP/Errors/client/ForbiddenError](#Carbon-HTTP-Errors-client-ForbiddenError)
+	- [Class Carbon.HTTP.Errors.ForbiddenError](#Carbon-HTTP-Errors-ForbiddenError)
+		- [Constructor](#Carbon-HTTP-Errors-ForbiddenError-Constructor)
+		- [Properties](#Carbon-HTTP-Errors-ForbiddenError-Properties)
+		- [Methods](#Carbon-HTTP-Errors-ForbiddenError-Methods)
 - [Module Carbon/HTTP/Errors/client/MethodNotAllowedError](#Carbon-HTTP-Errors-client-MethodNotAllowedError)
-	- [Class Carbon.HTTP.Errors.client.MethodNotAllowedError](#Carbon-HTTP-Errors-client-MethodNotAllowedError)
-		- [Constructor](#Carbon-HTTP-Errors-client-MethodNotAllowedError-Constructor)
-		- [Properties](#Carbon-HTTP-Errors-client-MethodNotAllowedError-Properties)
-		- [Methods](#Carbon-HTTP-Errors-client-MethodNotAllowedError-Methods)
+	- [Class Carbon.HTTP.Errors.MethodNotAllowedError](#Carbon-HTTP-Errors-MethodNotAllowedError)
+		- [Constructor](#Carbon-HTTP-Errors-MethodNotAllowedError-Constructor)
+		- [Properties](#Carbon-HTTP-Errors-MethodNotAllowedError-Properties)
+		- [Methods](#Carbon-HTTP-Errors-MethodNotAllowedError-Methods)
 - [Module Carbon/HTTP/Errors/client/NotAcceptableError](#Carbon-HTTP-Errors-client-NotAcceptableError)
-	- [Class Carbon.HTTP.Errors.client.NotAcceptableError](#Carbon-HTTP-Errors-client-NotAcceptableError)
-		- [Constructor](#Carbon-HTTP-Errors-client-NotAcceptableError-Constructor)
-		- [Properties](#Carbon-HTTP-Errors-client-NotAcceptableError-Properties)
-		- [Methods](#Carbon-HTTP-Errors-client-NotAcceptableError-Methods)
+	- [Class Carbon.HTTP.Errors.NotAcceptableError](#Carbon-HTTP-Errors-NotAcceptableError)
+		- [Constructor](#Carbon-HTTP-Errors-NotAcceptableError-Constructor)
+		- [Properties](#Carbon-HTTP-Errors-NotAcceptableError-Properties)
+		- [Methods](#Carbon-HTTP-Errors-NotAcceptableError-Methods)
 - [Module Carbon/HTTP/Errors/client/NotFoundError](#Carbon-HTTP-Errors-client-NotFoundError)
-	- [Class Carbon.HTTP.Errors.client.NotFoundError](#Carbon-HTTP-Errors-client-NotFoundError)
-		- [Constructor](#Carbon-HTTP-Errors-client-NotFoundError-Constructor)
-		- [Properties](#Carbon-HTTP-Errors-client-NotFoundError-Properties)
-		- [Methods](#Carbon-HTTP-Errors-client-NotFoundError-Methods)
+	- [Class Carbon.HTTP.Errors.NotFoundError](#Carbon-HTTP-Errors-NotFoundError)
+		- [Constructor](#Carbon-HTTP-Errors-NotFoundError-Constructor)
+		- [Properties](#Carbon-HTTP-Errors-NotFoundError-Properties)
+		- [Methods](#Carbon-HTTP-Errors-NotFoundError-Methods)
 - [Module Carbon/HTTP/Errors/client/PreconditionFailedError](#Carbon-HTTP-Errors-client-PreconditionFailedError)
-	- [Class Carbon.HTTP.Errors.client.PreconditionFailedError](#Carbon-HTTP-Errors-client-PreconditionFailedError)
-		- [Constructor](#Carbon-HTTP-Errors-client-PreconditionFailedError-Constructor)
-		- [Properties](#Carbon-HTTP-Errors-client-PreconditionFailedError-Properties)
-		- [Methods](#Carbon-HTTP-Errors-client-PreconditionFailedError-Methods)
+	- [Class Carbon.HTTP.Errors.PreconditionFailedError](#Carbon-HTTP-Errors-PreconditionFailedError)
+		- [Constructor](#Carbon-HTTP-Errors-PreconditionFailedError-Constructor)
+		- [Properties](#Carbon-HTTP-Errors-PreconditionFailedError-Properties)
+		- [Methods](#Carbon-HTTP-Errors-PreconditionFailedError-Methods)
 - [Module Carbon/HTTP/Errors/client/PreconditionRequiredError](#Carbon-HTTP-Errors-client-PreconditionRequiredError)
-	- [Class Carbon.HTTP.Errors.client.PreconditionRequiredError](#Carbon-HTTP-Errors-client-PreconditionRequiredError)
-		- [Constructor](#Carbon-HTTP-Errors-client-PreconditionRequiredError-Constructor)
-		- [Properties](#Carbon-HTTP-Errors-client-PreconditionRequiredError-Properties)
-		- [Methods](#Carbon-HTTP-Errors-client-PreconditionRequiredError-Methods)
+	- [Class Carbon.HTTP.Errors.PreconditionRequiredError](#Carbon-HTTP-Errors-PreconditionRequiredError)
+		- [Constructor](#Carbon-HTTP-Errors-PreconditionRequiredError-Constructor)
+		- [Properties](#Carbon-HTTP-Errors-PreconditionRequiredError-Properties)
+		- [Methods](#Carbon-HTTP-Errors-PreconditionRequiredError-Methods)
 - [Module Carbon/HTTP/Errors/client/RequestEntityTooLargeError](#Carbon-HTTP-Errors-client-RequestEntityTooLargeError)
-	- [Class Carbon.HTTP.Errors.client.RequestEntityTooLargeError](#Carbon-HTTP-Errors-client-RequestEntityTooLargeError)
-		- [Constructor](#Carbon-HTTP-Errors-client-RequestEntityTooLargeError-Constructor)
-		- [Properties](#Carbon-HTTP-Errors-client-RequestEntityTooLargeError-Properties)
-		- [Methods](#Carbon-HTTP-Errors-client-RequestEntityTooLargeError-Methods)
+	- [Class Carbon.HTTP.Errors.RequestEntityTooLargeError](#Carbon-HTTP-Errors-RequestEntityTooLargeError)
+		- [Constructor](#Carbon-HTTP-Errors-RequestEntityTooLargeError-Constructor)
+		- [Properties](#Carbon-HTTP-Errors-RequestEntityTooLargeError-Properties)
+		- [Methods](#Carbon-HTTP-Errors-RequestEntityTooLargeError-Methods)
 - [Module Carbon/HTTP/Errors/client/RequestHeaderFieldsTooLargeError](#Carbon-HTTP-Errors-client-RequestHeaderFieldsTooLargeError)
-	- [Class Carbon.HTTP.Errors.client.RequestHeaderFieldsTooLargeError](#Carbon-HTTP-Errors-client-RequestHeaderFieldsTooLargeError)
-		- [Constructor](#Carbon-HTTP-Errors-client-RequestHeaderFieldsTooLargeError-Constructor)
-		- [Properties](#Carbon-HTTP-Errors-client-RequestHeaderFieldsTooLargeError-Properties)
-		- [Methods](#Carbon-HTTP-Errors-client-RequestHeaderFieldsTooLargeError-Methods)
+	- [Class Carbon.HTTP.Errors.RequestHeaderFieldsTooLargeError](#Carbon-HTTP-Errors-RequestHeaderFieldsTooLargeError)
+		- [Constructor](#Carbon-HTTP-Errors-RequestHeaderFieldsTooLargeError-Constructor)
+		- [Properties](#Carbon-HTTP-Errors-RequestHeaderFieldsTooLargeError-Properties)
+		- [Methods](#Carbon-HTTP-Errors-RequestHeaderFieldsTooLargeError-Methods)
 - [Module Carbon/HTTP/Errors/client/RequestURITooLongError](#Carbon-HTTP-Errors-client-RequestURITooLongError)
-	- [Class Carbon.HTTP.Errors.client.RequestURITooLongError](#Carbon-HTTP-Errors-client-RequestURITooLongError)
-		- [Constructor](#Carbon-HTTP-Errors-client-RequestURITooLongError-Constructor)
-		- [Properties](#Carbon-HTTP-Errors-client-RequestURITooLongError-Properties)
-		- [Methods](#Carbon-HTTP-Errors-client-RequestURITooLongError-Methods)
+	- [Class Carbon.HTTP.Errors.RequestURITooLongError](#Carbon-HTTP-Errors-RequestURITooLongError)
+		- [Constructor](#Carbon-HTTP-Errors-RequestURITooLongError-Constructor)
+		- [Properties](#Carbon-HTTP-Errors-RequestURITooLongError-Properties)
+		- [Methods](#Carbon-HTTP-Errors-RequestURITooLongError-Methods)
 - [Module Carbon/HTTP/Errors/client/TooManyRequestsError](#Carbon-HTTP-Errors-client-TooManyRequestsError)
-	- [Class Carbon.HTTP.Errors.client.TooManyRequestsError](#Carbon-HTTP-Errors-client-TooManyRequestsError)
-		- [Constructor](#Carbon-HTTP-Errors-client-TooManyRequestsError-Constructor)
-		- [Properties](#Carbon-HTTP-Errors-client-TooManyRequestsError-Properties)
-		- [Methods](#Carbon-HTTP-Errors-client-TooManyRequestsError-Methods)
+	- [Class Carbon.HTTP.Errors.TooManyRequestsError](#Carbon-HTTP-Errors-TooManyRequestsError)
+		- [Constructor](#Carbon-HTTP-Errors-TooManyRequestsError-Constructor)
+		- [Properties](#Carbon-HTTP-Errors-TooManyRequestsError-Properties)
+		- [Methods](#Carbon-HTTP-Errors-TooManyRequestsError-Methods)
 - [Module Carbon/HTTP/Errors/client/UnauthorizedError](#Carbon-HTTP-Errors-client-UnauthorizedError)
-	- [Class Carbon.HTTP.Errors.client.UnauthorizedError](#Carbon-HTTP-Errors-client-UnauthorizedError)
-		- [Constructor](#Carbon-HTTP-Errors-client-UnauthorizedError-Constructor)
-		- [Properties](#Carbon-HTTP-Errors-client-UnauthorizedError-Properties)
-		- [Methods](#Carbon-HTTP-Errors-client-UnauthorizedError-Methods)
+	- [Class Carbon.HTTP.Errors.UnauthorizedError](#Carbon-HTTP-Errors-UnauthorizedError)
+		- [Constructor](#Carbon-HTTP-Errors-UnauthorizedError-Constructor)
+		- [Properties](#Carbon-HTTP-Errors-UnauthorizedError-Properties)
+		- [Methods](#Carbon-HTTP-Errors-UnauthorizedError-Methods)
 - [Module Carbon/HTTP/Errors/client/UnsupportedMediaTypeError](#Carbon-HTTP-Errors-client-UnsupportedMediaTypeError)
-	- [Class Carbon.HTTP.Errors.client.UnsupportedMediaTypeError](#Carbon-HTTP-Errors-client-UnsupportedMediaTypeError)
-		- [Constructor](#Carbon-HTTP-Errors-client-UnsupportedMediaTypeError-Constructor)
-		- [Properties](#Carbon-HTTP-Errors-client-UnsupportedMediaTypeError-Properties)
-		- [Methods](#Carbon-HTTP-Errors-client-UnsupportedMediaTypeError-Methods)
+	- [Class Carbon.HTTP.Errors.UnsupportedMediaTypeError](#Carbon-HTTP-Errors-UnsupportedMediaTypeError)
+		- [Constructor](#Carbon-HTTP-Errors-UnsupportedMediaTypeError-Constructor)
+		- [Properties](#Carbon-HTTP-Errors-UnsupportedMediaTypeError-Properties)
+		- [Methods](#Carbon-HTTP-Errors-UnsupportedMediaTypeError-Methods)
 - [Module Carbon/HTTP/Errors/server/BadGatewayError](#Carbon-HTTP-Errors-server-BadGatewayError)
-	- [Class Carbon.HTTP.Errors.server.BadGatewayError](#Carbon-HTTP-Errors-server-BadGatewayError)
-		- [Constructor](#Carbon-HTTP-Errors-server-BadGatewayError-Constructor)
-		- [Properties](#Carbon-HTTP-Errors-server-BadGatewayError-Properties)
-		- [Methods](#Carbon-HTTP-Errors-server-BadGatewayError-Methods)
+	- [Class Carbon.HTTP.Errors.BadGatewayError](#Carbon-HTTP-Errors-BadGatewayError)
+		- [Constructor](#Carbon-HTTP-Errors-BadGatewayError-Constructor)
+		- [Properties](#Carbon-HTTP-Errors-BadGatewayError-Properties)
+		- [Methods](#Carbon-HTTP-Errors-BadGatewayError-Methods)
 - [Module Carbon/HTTP/Errors/server/BadResponseError](#Carbon-HTTP-Errors-server-BadResponseError)
-	- [Class Carbon.HTTP.Errors.server.BadResponseError](#Carbon-HTTP-Errors-server-BadResponseError)
-		- [Constructor](#Carbon-HTTP-Errors-server-BadResponseError-Constructor)
-		- [Properties](#Carbon-HTTP-Errors-server-BadResponseError-Properties)
-		- [Methods](#Carbon-HTTP-Errors-server-BadResponseError-Methods)
+	- [Class Carbon.HTTP.Errors.BadResponseError](#Carbon-HTTP-Errors-BadResponseError)
+		- [Constructor](#Carbon-HTTP-Errors-BadResponseError-Constructor)
+		- [Properties](#Carbon-HTTP-Errors-BadResponseError-Properties)
+		- [Methods](#Carbon-HTTP-Errors-BadResponseError-Methods)
 - [Module Carbon/HTTP/Errors/server/GatewayTimeoutError](#Carbon-HTTP-Errors-server-GatewayTimeoutError)
-	- [Class Carbon.HTTP.Errors.server.GatewayTimeoutError](#Carbon-HTTP-Errors-server-GatewayTimeoutError)
-		- [Constructor](#Carbon-HTTP-Errors-server-GatewayTimeoutError-Constructor)
-		- [Properties](#Carbon-HTTP-Errors-server-GatewayTimeoutError-Properties)
-		- [Methods](#Carbon-HTTP-Errors-server-GatewayTimeoutError-Methods)
+	- [Class Carbon.HTTP.Errors.GatewayTimeoutError](#Carbon-HTTP-Errors-GatewayTimeoutError)
+		- [Constructor](#Carbon-HTTP-Errors-GatewayTimeoutError-Constructor)
+		- [Properties](#Carbon-HTTP-Errors-GatewayTimeoutError-Properties)
+		- [Methods](#Carbon-HTTP-Errors-GatewayTimeoutError-Methods)
 - [Module Carbon/HTTP/Errors/server/HTTPVersionNotSupportedError](#Carbon-HTTP-Errors-server-HTTPVersionNotSupportedError)
-	- [Class Carbon.HTTP.Errors.server.HTTPVersionNotSupportedError](#Carbon-HTTP-Errors-server-HTTPVersionNotSupportedError)
-		- [Constructor](#Carbon-HTTP-Errors-server-HTTPVersionNotSupportedError-Constructor)
-		- [Properties](#Carbon-HTTP-Errors-server-HTTPVersionNotSupportedError-Properties)
-		- [Methods](#Carbon-HTTP-Errors-server-HTTPVersionNotSupportedError-Methods)
+	- [Class Carbon.HTTP.Errors.HTTPVersionNotSupportedError](#Carbon-HTTP-Errors-HTTPVersionNotSupportedError)
+		- [Constructor](#Carbon-HTTP-Errors-HTTPVersionNotSupportedError-Constructor)
+		- [Properties](#Carbon-HTTP-Errors-HTTPVersionNotSupportedError-Properties)
+		- [Methods](#Carbon-HTTP-Errors-HTTPVersionNotSupportedError-Methods)
 - [Module Carbon/HTTP/Errors/server/InternalServerErrorError](#Carbon-HTTP-Errors-server-InternalServerErrorError)
-	- [Class Carbon.HTTP.Errors.server.InternalServerErrorError](#Carbon-HTTP-Errors-server-InternalServerErrorError)
-		- [Constructor](#Carbon-HTTP-Errors-server-InternalServerErrorError-Constructor)
-		- [Properties](#Carbon-HTTP-Errors-server-InternalServerErrorError-Properties)
-		- [Methods](#Carbon-HTTP-Errors-server-InternalServerErrorError-Methods)
+	- [Class Carbon.HTTP.Errors.InternalServerErrorError](#Carbon-HTTP-Errors-InternalServerErrorError)
+		- [Constructor](#Carbon-HTTP-Errors-InternalServerErrorError-Constructor)
+		- [Properties](#Carbon-HTTP-Errors-InternalServerErrorError-Properties)
+		- [Methods](#Carbon-HTTP-Errors-InternalServerErrorError-Methods)
 - [Module Carbon/HTTP/Errors/server/NotImplementedError](#Carbon-HTTP-Errors-server-NotImplementedError)
-	- [Class Carbon.HTTP.Errors.server.NotImplementedError](#Carbon-HTTP-Errors-server-NotImplementedError)
-		- [Constructor](#Carbon-HTTP-Errors-server-NotImplementedError-Constructor)
-		- [Properties](#Carbon-HTTP-Errors-server-NotImplementedError-Properties)
-		- [Methods](#Carbon-HTTP-Errors-server-NotImplementedError-Methods)
+	- [Class Carbon.HTTP.Errors.NotImplementedError](#Carbon-HTTP-Errors-NotImplementedError)
+		- [Constructor](#Carbon-HTTP-Errors-NotImplementedError-Constructor)
+		- [Properties](#Carbon-HTTP-Errors-NotImplementedError-Properties)
+		- [Methods](#Carbon-HTTP-Errors-NotImplementedError-Methods)
 - [Module Carbon/HTTP/Errors/server/ServiceUnavailableError](#Carbon-HTTP-Errors-server-ServiceUnavailableError)
-	- [Class Carbon.HTTP.Errors.server.ServiceUnavailableError](#Carbon-HTTP-Errors-server-ServiceUnavailableError)
-		- [Constructor](#Carbon-HTTP-Errors-server-ServiceUnavailableError-Constructor)
-		- [Properties](#Carbon-HTTP-Errors-server-ServiceUnavailableError-Properties)
-		- [Methods](#Carbon-HTTP-Errors-server-ServiceUnavailableError-Methods)
+	- [Class Carbon.HTTP.Errors.ServiceUnavailableError](#Carbon-HTTP-Errors-ServiceUnavailableError)
+		- [Constructor](#Carbon-HTTP-Errors-ServiceUnavailableError-Constructor)
+		- [Properties](#Carbon-HTTP-Errors-ServiceUnavailableError-Properties)
+		- [Methods](#Carbon-HTTP-Errors-ServiceUnavailableError-Methods)
 - [Module Carbon/HTTP/Header](#Carbon-HTTP-Header)
-	- [Class Carbon.HTTP.Header.Value](#Carbon-HTTP-Header-Value)
-		- [Constructor](#Carbon-HTTP-Header-Value-Constructor)
-		- [Methods](#Carbon-HTTP-Header-Value-Methods)
 	- [Class Carbon.HTTP.Header.Class](#Carbon-HTTP-Header-Class)
 		- [Constructor](#Carbon-HTTP-Header-Class-Constructor)
 		- [Properties](#Carbon-HTTP-Header-Class-Properties)
 		- [Methods](#Carbon-HTTP-Header-Class-Methods)
 	- [Class Carbon.HTTP.Header.Util](#Carbon-HTTP-Header-Util)
 		- [Methods](#Carbon-HTTP-Header-Util-Methods)
+	- [Class Carbon.HTTP.Header.Value](#Carbon-HTTP-Header-Value)
+		- [Constructor](#Carbon-HTTP-Header-Value-Constructor)
+		- [Methods](#Carbon-HTTP-Header-Value-Methods)
 - [Module Carbon/HTTP/JSONLDParser](#Carbon-HTTP-JSONLDParser)
 	- [Class Carbon.HTTP.JSONLDParser.Class](#Carbon-HTTP-JSONLDParser-Class)
 		- [Methods](#Carbon-HTTP-JSONLDParser-Class-Methods)
@@ -269,6 +288,8 @@
 		- [Methods](#Carbon-HTTP-StringParser-Class-Methods)
 - [Module Carbon/JSONLDConverter](#Carbon-JSONLDConverter)
 	- [Class Carbon.JSONLDConverter.Class](#Carbon-JSONLDConverter-Class)
+		- [Constructor](#Carbon-JSONLDConverter-Class-Constructor)
+		- [Properties](#Carbon-JSONLDConverter-Class-Properties)
 		- [Methods](#Carbon-JSONLDConverter-Class-Methods)
 - [Module Carbon/LDP](#Carbon-LDP)
 	- [Reexports](#Carbon-LDP-Reexports)
@@ -276,14 +297,10 @@
 	- [Properties](#Carbon-LDP-AddMemberAction-Properties)
 	- [Class Carbon.LDP.AddMemberAction.Factory](#Carbon-LDP-AddMemberAction-Factory)
 		- [Methods](#Carbon-LDP-AddMemberAction-Factory-Methods)
-- [Module Carbon/LDP/BasicContainer](#Carbon-LDP-BasicContainer)
-	- [Properties](#Carbon-LDP-BasicContainer-Properties)
-	- [Class Carbon.LDP.BasicContainer.Factory](#Carbon-LDP-BasicContainer-Factory)
-		- [Methods](#Carbon-LDP-BasicContainer-Factory-Methods)
-- [Module Carbon/LDP/Container](#Carbon-LDP-Container)
-	- [Properties](#Carbon-LDP-Container-Properties)
-	- [Class Carbon.LDP.Container.Factory](#Carbon-LDP-Container-Factory)
-		- [Methods](#Carbon-LDP-Container-Factory-Methods)
+- [Module Carbon/LDP/BlankNode](#Carbon-LDP-BlankNode)
+	- [Properties](#Carbon-LDP-BlankNode-Properties)
+	- [Class Carbon.BlankNode.Factory](#Carbon-BlankNode-Factory)
+		- [Methods](#Carbon-BlankNode-Factory-Methods)
 - [Module Carbon/LDP/DirectContainer](#Carbon-LDP-DirectContainer)
 	- [Properties](#Carbon-LDP-DirectContainer-Properties)
 	- [Class Carbon.DirectContainer.Factory](#Carbon-DirectContainer-Factory)
@@ -301,15 +318,6 @@
 	- [Class Carbon.IndirectContainer.Factory](#Carbon-IndirectContainer-Factory)
 		- [Methods](#Carbon-IndirectContainer-Factory-Methods)
 - [Module Carbon/LDP/PersistedBlankNode](#Carbon-LDP-PersistedBlankNode)
-	- [Properties](#Carbon-LDP-PersistedBlankNode-Properties)
-- [Module Carbon/LDP/PersistedContainer](#Carbon-LDP-PersistedContainer)
-	- [Class Carbon.LDP.PersistedContainer.Factory](#Carbon-LDP-PersistedContainer-Factory)
-		- [Methods](#Carbon-LDP-PersistedContainer-Factory-Methods)
-		- [Decorated Object](#Carbon-LDP-PersistedContainer-Factory-Decorated-Object)
-			- [Methods](#Carbon-LDP-PersistedContainer-Factory-Decorated-Object-Methods)
-- [Module Carbon/LDP/RDFSource](#Carbon-LDP-RDFSource)
-	- [Properties](#Carbon-LDP-RDFSource-Properties)
-	- [Class Carbon.LDP.RDFSource.Factory](#Carbon-LDP-RDFSource-Factory)
 - [Module Carbon/LDP/RemoveMemberAction](#Carbon-LDP-RemoveMemberAction)
 	- [Properties](#Carbon-LDP-RemoveMemberAction-Properties)
 	- [Class Carbon.LDP.RemoveMemberAction.Factory](#Carbon-LDP-RemoveMemberAction-Factory)
@@ -365,10 +373,6 @@
 - [Module Carbon/NamedFragment](#Carbon-NamedFragment)
 	- [Class Carbon.NamedFragment.Factory](#Carbon-NamedFragment-Factory)
 		- [Methods](#Carbon-NamedFragment-Factory-Methods)
-- [Module Carbon/NonRDFSource](#Carbon-NonRDFSource)
-	- [Properties](#Carbon-NonRDFSource-Properties)
-	- [Class Carbon.NonRDFSource.Factory](#Carbon-NonRDFSource-Factory)
-		- [Methods](#Carbon-NonRDFSource-Factory-Methods)
 - [Module Carbon/ObjectSchema](#Carbon-ObjectSchema)
 	- [Enums](#Carbon-ObjectSchema-Enums)
 	- [Class Carbon.ObjectSchema.DigestedObjectSchema](#Carbon-ObjectSchema-DigestedObjectSchema)
@@ -387,20 +391,40 @@
 		- [Methods](#Carbon-PersistedDocument-Factory-Methods)
 		- [Decorated Object](#Carbon-PersistedDocument-Factory-Decorated-Object)
 			- [Methods](#Carbon-PersistedDocument-Factory-Decorated-Object-Methods)
+- [Module Carbon/PersistedFragment](#Carbon-PersistedFragment)
+	- [Class Carbon.PersistedFragment.Factory](#Carbon-PersistedFragment-Factory)
+		- [Methods](#Carbon-PersistedFragment-Factory-Methods)
+- [Module Carbon/PersistedNamedFragment](#Carbon-PersistedNamedFragment)
+	- [Class Carbon.PersistedNamedFragment.Factory](#Carbon-PersistedNamedFragment-Factory)
+		- [Methods](#Carbon-PersistedNamedFragment-Factory-Methods)
+- [Module Carbon/PersistedProtectedDocument](#Carbon-PersistedProtectedDocument)
+	- [Class Carbon.PersistedProtectedDocument.Factory](#Carbon-PersistedProtectedDocument-Factory)
+		- [Methods](#Carbon-PersistedProtectedDocument-Factory-Methods)
+		- [Decorated Object](#Carbon-PersistedProtectedDocument-Factory-Decorated-Object)
+			- [Methods](#Carbon-PersistedProtectedDocument-Factory-Decorated-Object-Methods)
+- [Module Carbon/PersistedResource](#Carbon-PersistedResource)
+	- [Class Carbon.PersistedResource.Factory](#Carbon-PersistedResource-Factory)
+		- [Methods](#Carbon-PersistedResource-Factory-Methods)
+		- [Decorated Object](#Carbon-PersistedResource-Factory-Decorated-Object)
+			- [Methods](#Carbon-PersistedResource-Factory-Decorated-Object-Methods)
 - [Module Carbon/Pointer](#Carbon-Pointer)
 	- [Class Carbon.Pointer.Factory](#Carbon-Pointer-Factory)
 		- [Methods](#Carbon-Pointer-Factory-Methods)
 		- [Decorated Object](#Carbon-Pointer-Factory-Decorated-Object)
 			- [Methods](#Carbon-Pointer-Factory-Decorated-Object-Methods)
+	- [Class Carbon.Pointer.Util](#Carbon-Pointer-Util)
+		- [Methods](#Carbon-Pointer-Util-Methods)
+- [Module Carbon/ProtectedDocument](#Carbon-ProtectedDocument)
+	- [Properties](#Carbon-ProtectedDocument-Properties)
 - [Module Carbon/RDF](#Carbon-RDF)
 	- [Reexports](#Carbon-RDF-Reexports)
 - [Module Carbon/RDF/Document](#Carbon-RDF-Document)
 	- [Class Carbon.RDF.Document.Factory](#Carbon-RDF-Document-Factory)
 		- [Methods](#Carbon-RDF-Document-Factory-Methods)
-	- [Class Carbon.RDF.Document.Util](#Carbon-RDF-Document-Util)
-		- [Methods](#Carbon-RDF-Document-Util-Methods)
 	- [Class Carbon.RDF.Document.Parser](#Carbon-RDF-Document-Parser)
 		- [Methods](#Carbon-RDF-Document-Parser-Methods)
+	- [Class Carbon.RDF.Document.Util](#Carbon-RDF-Document-Util)
+		- [Methods](#Carbon-RDF-Document-Util-Methods)
 - [Module Carbon/RDF/List](#Carbon-RDF-List)
 	- [Class Carbon.RDF.List.Factory](#Carbon-RDF-List-Factory)
 		- [Methods](#Carbon-RDF-List-Factory-Methods)
@@ -408,28 +432,26 @@
 	- [Reexports](#Carbon-RDF-Literal-Reexports)
 	- [Class Carbon.RDF.Literal.Factory](#Carbon-RDF-Literal-Factory)
 		- [Methods](#Carbon-RDF-Literal-Factory-Methods)
-	- [Class Carbon.RDF.Literal.Util](#Carbon-RDF-Literal-Util)
-		- [Methods](#Carbon-RDF-Literal-Util-Methods)
 - [Module Carbon/RDF/Literal/Serializers](#Carbon-RDF-Literal-Serializers)
 	- [Reexports](#Carbon-RDF-Literal-Serializers-Reexports)
 - [Module Carbon/RDF/Literal/Serializers/XSD](#Carbon-RDF-Literal-Serializers-XSD)
 	- [Properties](#Carbon-RDF-Literal-Serializers-XSD-Properties)
+	- [Class Carbon.RDF.Literal.Serializes.XSD.BooleanSerializer](#Carbon-RDF-Literal-Serializes-XSD-BooleanSerializer)
+		- [Methods](#Carbon-RDF-Literal-Serializes-XSD-BooleanSerializer-Methods)
 	- [Class Carbon.RDF.Literal.Serializes.XSD.DateSerializer](#Carbon-RDF-Literal-Serializes-XSD-DateSerializer)
 		- [Methods](#Carbon-RDF-Literal-Serializes-XSD-DateSerializer-Methods)
 	- [Class Carbon.RDF.Literal.Serializes.XSD.DateTimeSerializer](#Carbon-RDF-Literal-Serializes-XSD-DateTimeSerializer)
 		- [Methods](#Carbon-RDF-Literal-Serializes-XSD-DateTimeSerializer-Methods)
-	- [Class Carbon.RDF.Literal.Serializes.XSD.TimeSerializer](#Carbon-RDF-Literal-Serializes-XSD-TimeSerializer)
-		- [Methods](#Carbon-RDF-Literal-Serializes-XSD-TimeSerializer-Methods)
-	- [Class Carbon.RDF.Literal.Serializes.XSD.IntegerSerializer](#Carbon-RDF-Literal-Serializes-XSD-IntegerSerializer)
-		- [Methods](#Carbon-RDF-Literal-Serializes-XSD-IntegerSerializer-Methods)
-	- [Class Carbon.RDF.Literal.Serializes.XSD.UnsignedIntegerSerializer](#Carbon-RDF-Literal-Serializes-XSD-UnsignedIntegerSerializer)
-		- [Methods](#Carbon-RDF-Literal-Serializes-XSD-UnsignedIntegerSerializer-Methods)
 	- [Class Carbon.RDF.Literal.Serializes.XSD.FloatSerializer](#Carbon-RDF-Literal-Serializes-XSD-FloatSerializer)
 		- [Methods](#Carbon-RDF-Literal-Serializes-XSD-FloatSerializer-Methods)
-	- [Class Carbon.RDF.Literal.Serializes.XSD.BooleanSerializer](#Carbon-RDF-Literal-Serializes-XSD-BooleanSerializer)
-		- [Methods](#Carbon-RDF-Literal-Serializes-XSD-BooleanSerializer-Methods)
+	- [Class Carbon.RDF.Literal.Serializes.XSD.IntegerSerializer](#Carbon-RDF-Literal-Serializes-XSD-IntegerSerializer)
+		- [Methods](#Carbon-RDF-Literal-Serializes-XSD-IntegerSerializer-Methods)
 	- [Class Carbon.RDF.Literal.Serializes.XSD.StringSerializer](#Carbon-RDF-Literal-Serializes-XSD-StringSerializer)
 		- [Methods](#Carbon-RDF-Literal-Serializes-XSD-StringSerializer-Methods)
+	- [Class Carbon.RDF.Literal.Serializes.XSD.TimeSerializer](#Carbon-RDF-Literal-Serializes-XSD-TimeSerializer)
+		- [Methods](#Carbon-RDF-Literal-Serializes-XSD-TimeSerializer-Methods)
+	- [Class Carbon.RDF.Literal.Serializes.XSD.UnsignedIntegerSerializer](#Carbon-RDF-Literal-Serializes-XSD-UnsignedIntegerSerializer)
+		- [Methods](#Carbon-RDF-Literal-Serializes-XSD-UnsignedIntegerSerializer-Methods)
 - [Module Carbon/RDF/RDFNode](#Carbon-RDF-RDFNode)
 	- [Class Carbon.RDF.RDFNode.Factory](#Carbon-RDF-RDFNode-Factory)
 		- [Methods](#Carbon-RDF-RDFNode-Factory-Methods)
@@ -438,12 +460,17 @@
 - [Module Carbon/RDF/URI](#Carbon-RDF-URI)
 	- [Class Carbon.RDF.URI.Class](#Carbon-RDF-URI-Class)
 		- [Constructor](#Carbon-RDF-URI-Class-Constructor)
+		- [Properties](#Carbon-RDF-URI-Class-Properties)
 		- [Methods](#Carbon-RDF-URI-Class-Methods)
 	- [Class Carbon.RDF.URI.Util](#Carbon-RDF-URI-Util)
 		- [Methods](#Carbon-RDF-URI-Util-Methods)
 - [Module Carbon/RDF/Value](#Carbon-RDF-Value)
 	- [Class Carbon.RDF.Value.Util](#Carbon-RDF-Value-Util)
 		- [Methods](#Carbon-RDF-Value-Util-Methods)
+- [Module Carbon/RDFRepresentation](#Carbon-RDFRepresentation)
+	- [Properties](#Carbon-RDFRepresentation-Properties)
+	- [Class Carbon.RDFRepresentation.Factory](#Carbon-RDFRepresentation-Factory)
+		- [Methods](#Carbon-RDFRepresentation-Factory-Methods)
 - [Module Carbon/Resource](#Carbon-Resource)
 	- [Class Carbon.Resource.Factory](#Carbon-Resource-Factory)
 		- [Methods](#Carbon-Resource-Factory-Methods)
@@ -473,14 +500,14 @@
 		- [Methods](#Carbon-SPARQL-Service-Class-Methods)
 - [Module Carbon/Utils](#Carbon-Utils)
 	- [Methods](#Carbon-Utils-Methods)
-	- [Class Carbon.Utils.O](#Carbon-Utils-O)
-		- [Methods](#Carbon-Utils-O-Methods)
-	- [Class Carbon.Utils.S](#Carbon-Utils-S)
-		- [Methods](#Carbon-Utils-S-Methods)
 	- [Class Carbon.Utils.A](#Carbon-Utils-A)
 		- [Methods](#Carbon-Utils-A-Methods)
 	- [Class Carbon.Utils.M](#Carbon-Utils-M)
 		- [Methods](#Carbon-Utils-M-Methods)
+	- [Class Carbon.Utils.O](#Carbon-Utils-O)
+		- [Methods](#Carbon-Utils-O-Methods)
+	- [Class Carbon.Utils.S](#Carbon-Utils-S)
+		- [Methods](#Carbon-Utils-S-Methods)
 	- [Class Carbon.Utils.UUID](#Carbon-Utils-UUID)
 		- [Methods](#Carbon-Utils-UUID-Methods)
 - [Module Carbon/settings](#Carbon-settings)
@@ -499,8 +526,9 @@
 
 ### <a name="Carbon" />Class Carbon
 
+**Extends:** [Carbon.AbstractContext](#Carbon-AbstractContext)
 
-> Principal class that contains all references for use the SDK.
+> The main class of the SDK, which contains all the references of the modules used in the the SDK.
 
 #### <a name="Carbon-Reexports" />Reexports 
 | Export name | Original Location | 
@@ -519,7 +547,6 @@
 | NamedFragment | [Carbon/NamedFragment](#Carbon-NamedFragment) |
 | NS | [Carbon/NS](#Carbon-NS) |
 | ObjectSchema | [Carbon/ObjectSchema](#Carbon-ObjectSchema) |
-| Persisted | [Carbon/Persisted](#Carbon-Persisted) |
 | PersistedApp | [Carbon/PersistedApp](#Carbon-PersistedApp) |
 | PersistedDocument | [Carbon/PersistedDocument](#Carbon-PersistedDocument) |
 | PersistedFragment | [Carbon/PersistedFragment](#Carbon-PersistedFragment) |
@@ -529,12 +556,13 @@
 | RDF | [Carbon/RDF](#Carbon-RDF) |
 | Resource | [Carbon/Resource](#Carbon-Resource) |
 | SDKContext | [Carbon/SDKContext](#Carbon-SDKContext) |
+| Settings | [Carbon/Settings](#Carbon-Settings) |
 | SPARQL | [Carbon/SPARQL](#Carbon-SPARQL) |
 | Utils | [Carbon/Utils](#Carbon-Utils) |
 
 #### <a name="Carbon-Constructor" />Constructor
 ```typescript 
-Carbon( settings?:any )
+Carbon( settings?:Carbon.Settings.Class )
 ```
 
 
@@ -548,38 +576,38 @@ Carbon( settings?:any )
 static version:string 
 ```
 
-Returns the version of the SDK
+Returns the version of the SDK.
 
-```typescript 
-version:string 
-```
-
-Returns the version of the SDK
 ```typescript 
 apps:Carbon.Apps.Class 
 ```
 
-Instance of the class `Carbon.Apps` in the context of the Carbon instance.
-
-#### <a name="Carbon-Methods" />Methods
-
-##### resolve
+Instance of the class `Carbon.Apps` in the context of the instanced Carbon class.
 ```typescript 
-resolve( uri:string ):string
+version:string 
 ```
 
-Resolve the URI provided in the context of the instance, this information is provided in the settings object.
+Returns the version of the SDK.
 
-*Parameters*
-
-- uri
+#### <a name="Carbon-Methods" />Methods
 
 ##### getAPIDescription
 ```typescript 
 getAPIDescription():Promise<Carbon.APIDescription.Class>
 ```
 
-Returns the API description of the connected platform in the instance of Carbon
+Returns the API description of the related CarbonLDP Platform.
+
+##### resolve
+```typescript 
+resolve( uri:string ):string
+```
+
+Resolve the URI provided in the scope of the CarbonLDP Platform.
+
+*Parameters*
+
+- uri
 
 
 
@@ -615,7 +643,7 @@ static SCHEMA:Carbon.ObjectSchema.Class
 
 **Extends:** [Carbon.SDKContext.Class](#Carbon-SDKContext-Class)
 
-> Abstract class for defining contexts
+> Abstract class for defining contexts.
 
 
 #### <a name="Carbon-AbstractContext-Constructor" />Constructor
@@ -631,7 +659,7 @@ AbstractContext()
 parentContext:Carbon.Context 
 ```
 
-The parent context provided in the constructor. If no context has provided, the property will be the singleton `Carbon.SDKContext.instance` of the class `Carbon.SDKContext.Class`.
+The parent context provided in the constructor. If no context was provided, this property will be the singleton `Carbon.SDKContext.instance` of the class `Carbon.SDKContext.Class`.
 
 #### <a name="Carbon-AbstractContext-Methods" />Methods
 
@@ -640,7 +668,7 @@ The parent context provided in the constructor. If no context has provided, the 
 resolve( relativeURI:string ):string
 ```
 
-Abstract method which implementation must resolve the URI provided in the scope of the application.
+Abstract method that returns an absolute URI in accordance to the context scope from the relative URI provided.
 
 *Parameters*
 
@@ -648,13 +676,13 @@ Abstract method which implementation must resolve the URI provided in the scope 
 
 
 
-## <a name="Carbon-AccessPoints" />Module Carbon/AccessPoints
+## <a name="Carbon-AccessPoint" />Module Carbon/AccessPoint
 
 
 
 
 
-### <a name="Carbon-AccessPoints-Properties" />Properties
+### <a name="Carbon-AccessPoint-Properties" />Properties
 ```typescript 
 static RDF_CLASS:string 
 ```
@@ -666,49 +694,38 @@ static RDF_CLASS:string
 ### <a name="Carbon-AccessPoint-Factory" />Class Carbon.AccessPoint.Factory
 
 
-> Factory class for `Carbon.AccessPoint.Class` objects
+> Factory class for `Carbon.AccessPoint.Class` objects.
 
 
 
 
 #### <a name="Carbon-AccessPoint-Factory-Methods" />Methods
-##### hasClassProperties
-```typescript 
-static hasClassProperties( resource:Object ):boolean
-```
-
-Returns true if the object provided has the properties that defines a `Carbon.AccessPoint.Class` object
-
-*Parameters*
-
-- resource
-
 ##### create
 ```typescript 
-static create( membershipResource:Carbon.Pointer.Class,  hasMemberRelation:string | Carbon.Pointer.Class,  memberOfRelation?:string | Carbon.Pointer.Class ):Carbon.AccessPoint.Class
+static create( membershipResource:Carbon.Pointer.Class,  hasMemberRelation:string | Carbon.Pointer.Class,  isMemberOfRelation?:string | Carbon.Pointer.Class ):Carbon.AccessPoint.Class
 ```
 
-Create a `Carbon.AccessPoint.Class` object with the parameters specified.
+Creates a `Carbon.AccessPoint.Class` object with the parameters specified.
 
 *Parameters*
 
-- membershipResource
-- hasMemberRelation
-- memberOfRelation
+- membershipResource: A Pointer to the parent of the AccessPoint.
+- hasMemberRelation: A URI or Pointer to the property in the parent resource managed by the AccessPoint.
+- isMemberOfRelation: A URI or Pointer to the property managed in the members added by the AccessPoint.
 
 ##### createFrom
 ```typescript 
-static createFrom( object:T extends Object,  membershipResource:Carbon.Pointer.Class,  hasMemberRelation:string | Carbon.Pointer.Class,  memberOfRelation?:string | Carbon.Pointer.Class ):T & Carbon.AccessPoint.Class
+static createFrom<T extends Object>( object:T,  membershipResource:Carbon.Pointer.Class,  hasMemberRelation:string | Carbon.Pointer.Class,  isMemberOfRelation?:string | Carbon.Pointer.Class ):T & Carbon.AccessPoint.Class
 ```
 
-Create a `Carbon.AccessPoint.Class` object with the object provided.
+Creates a `Carbon.AccessPoint.Class` object from the object and parameters specified.
 
 *Parameters*
 
-- object
-- membershipResource
-- hasMemberRelation
-- memberOfRelation
+- object: Object that will be converted into an AccessPoint.
+- membershipResource: A Pointer to the parent of the AccessPoint.
+- hasMemberRelation: A URI or Pointer to the property in the parent resource managed by the AccessPoint.
+- isMemberOfRelation: A URI or Pointer to the property managed in the members added by the AccessPoint.
 
 
 
@@ -739,12 +756,37 @@ static SCHEMA:Carbon.ObjectSchema.Class
 ### <a name="Carbon-App-Factory" />Class Carbon.App.Factory
 
 
-> Factory class for `Carbon.App.Class` objects
+> Factory class for `Carbon.App.Class` objects.
 
 
 
 
 #### <a name="Carbon-App-Factory-Methods" />Methods
+##### create
+```typescript 
+static create( name:string,  description?:string ):Carbon.App.Class
+```
+
+Creates a `Carbon.App.Class` object with the parameters specified.
+
+*Parameters*
+
+- name: Name of the app to be created.
+- description: Description of the app to be created.
+
+##### createFrom
+```typescript 
+static createFrom<T extends Object>( object:T,  name:string,  description?:string ):T & Carbon.App.Class
+```
+
+Creates a `Carbon.App.Class` object from the object and parameters specified.
+
+*Parameters*
+
+- object: Object that will be converted into aa App.
+- name: Name of the app to be created.
+- description: Description of the app to be created.
+
 ##### hasClassProperties
 ```typescript 
 static hasClassProperties( resource:Object ):boolean
@@ -761,36 +803,11 @@ Returns true if the object provided has the properties that defines a `Carbon.Ap
 static is( object:Object ):boolean
 ```
 
-Returns true if the object provided is considered as an `Carbon.App.Class` object
+Returns true if the object provided is considered a `Carbon.App.Class` object
 
 *Parameters*
 
 - object
-
-##### create
-```typescript 
-static create( name:string,  description?:string ):Carbon.App.Class
-```
-
-Create a empty `Carbon.App.Class` object.
-
-*Parameters*
-
-- name
-- description
-
-##### createFrom
-```typescript 
-static createFrom( object:T extends Object,  name:string,  description?:string ):T & Carbon.App.Class
-```
-
-Create a `Carbon.App.Class` object with the object provided.
-
-*Parameters*
-
-- object
-- name
-- description
 
 
 
@@ -808,7 +825,7 @@ Create a `Carbon.App.Class` object with the object provided.
 
 **Extends:** [Carbon.AbstractContext](#Carbon-AbstractContext)
 
-> Class that represents a Carbon Application. It centers the scope of several services (Carbon.Auth, Carbon.Resources, etc.) into the Application's scope.
+> Class that represents de scope of a CarbonLDP Application.
 
 
 #### <a name="Carbon-App-Context-Constructor" />Constructor
@@ -829,7 +846,7 @@ Context( parentContext:Carbon.Context,  app:Carbon.App.Context )
 app:Carbon.App.Class 
 ```
 
-Object of type `Carbon.App.Class` witch is the Document that represents the actual Application.
+The Document that represents the CarbonLDP Application.
 
 #### <a name="Carbon-App-Context-Methods" />Methods
 
@@ -838,7 +855,7 @@ Object of type `Carbon.App.Class` witch is the Document that represents the actu
 resolve( uri:string ):string
 ```
 
-Resolve the URI provided in the scope of the application
+Resolve the URI provided in the scope of the application.
 
 *Parameters*
 
@@ -859,7 +876,7 @@ Resolve the URI provided in the scope of the application
 ### <a name="Carbon-Apps-Class" />Class Carbon.Apps.Class
 
 
-> Class for obtaining Carbon Apps.
+> Class for managing Carbon Apps.
 
 
 #### <a name="Carbon-Apps-Class-Constructor" />Constructor
@@ -870,63 +887,52 @@ Class( context:Carbon.Context )
 
 *Parameters*
 
-- context: A context from where Carbon Apps can be obtained
+- context: A context from where Carbon Apps can be administrated.
 
 
 
 #### <a name="Carbon-Apps-Class-Methods" />Methods
+
+##### create
+```typescript 
+create( slug:string,  appDocument:Carbon.App.Class ):Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>
+```
+
+Persists a `Carbon.App.Class` object using the slug specified.
+Returns a Promise with a Pointer to the stored App, and the response of the request.
+
+*Parameters*
+
+- slug: Slug that will be used for the URI of the new app.
+- appDocument: App document that will be persisted.
 
 ##### getAllContexts
 ```typescript 
 getAllContexts():Promise<Carbon.App.Context[]>
 ```
 
-Obtains all the `Carbon.App.Context` objects of every app where the context of the Apps instance can reach.
+Retrieves an array of `Carbon.App.Context` objects, of every app the current user have access to.
 
 ##### getContext
 ```typescript 
 getContext( uri:string ):Promise<Carbon.App.Context>
 ```
 
-Obtains a `Carbon.App.Context` object of the specified app URI, if it exists within the context of the Apps instance.
+Retrieves a `Carbon.App.Context` object from the specified app's URI.
 
 *Parameters*
 
-- uri
+- uri: URI of the app to retrieve and create its context.
 
 ```typescript 
 getContext( pointer:Carbon.Pointer.Class ):Promise<Carbon.App.Context>
 ```
 
-Obtains a `Carbon.App.Context` object of the specified Pointer object, if it exists within the context of the Apps instance.
+Retrieves a `Carbon.App.Context` object from the specified app's Pointer.
 
 *Parameters*
 
-- pointer
-
-##### create
-```typescript 
-create( appDocument:Carbon.App.Class ):Promise<Carbon.Pointer.Class, Carbon.HTTP.Response.Class>
-```
-
-Persists an App Document in the server, generating a unique slug.
-Returns a Pointer for the stored App Document, and the response of the call.
-
-*Parameters*
-
-- appDocument
-
-```typescript 
-create( slug:string,  appDocument:Carbon.App.Class ):Promise<Carbon.Pointer.Class, Carbon.HTTP.Response.Class>
-```
-
-Persists an App Document in the server using the slug specified.
-Returns a Pointer for the stored App Document, and the response of the call.
-
-*Parameters*
-
-- slug
-- appDocument
+- pointer: Pointer of the app to retrieve and create its context.
 
 
 
@@ -938,11 +944,15 @@ Returns a Pointer for the stored App Document, and the response of the call.
 #### <a name="Carbon-Auth-Reexports" />Reexports 
 | Export name | Original Location | 
 | --- | --- |
+| ACE | [Carbon.Auth.ACE](#Carbon-Auth-ACE) |
+| ACL | [Carbon.Auth.ACL](#Carbon-Auth-ACL) |
 | Agent | [Carbon.Auth.Agent](#Carbon-Auth-Agent) |
 | Agents | [Carbon.Auth.Agents](#Carbon-Auth-Agents) |
 | AuthenticationToken | [Carbon.Auth.AuthenticationToken](#Carbon-Auth-AuthenticationToken) |
 | Authenticator | [Carbon.Auth.Authenticator](#Carbon-Auth-Authenticator) |
 | BasicAuthenticator | [Carbon.Auth.BasicAuthenticator](#Carbon-Auth-BasicAuthenticator) |
+| PersistedACE | [Carbon.Auth.PersistedACE](#Carbon-Auth-PersistedACE) |
+| PersistedACL | [Carbon.Auth.PersistedACL](#Carbon-Auth-PersistedACL) |
 | PersistedAgent | [Carbon.Auth.PersistedAgent](#Carbon-Auth-PersistedAgent) |
 | Ticket | [Carbon.Auth.Ticket](#Carbon-Auth-Ticket) |
 | Token | [Carbon.Auth.Token](#Carbon-Auth-Token) |
@@ -952,7 +962,7 @@ Returns a Pointer for the stored App Document, and the response of the call.
 ### <a name="Carbon-Auth-Enums" />Enums
 
 #### <a name"Carbon-Auth-Method />Carbon.Auth.Method
-> Enum with for the methods of authentication supported
+> Enum with the methods of authentication supported by CarbonLDP.
 
 | Name | Description | 
 | --- | --- |
@@ -965,7 +975,7 @@ Returns a Pointer for the stored App Document, and the response of the call.
 ### <a name="Carbon-Auth-Class" />Class Carbon.Auth.Class
 
 
-> Class for manage all the methods of authentication.
+> Class that manages authentications and authorizations.
 
 
 #### <a name="Carbon-Auth-Class-Constructor" />Constructor
@@ -982,80 +992,44 @@ agents:Carbon.Auth.Agents.Class
 ```
 
 Instance of `Carbon.Auth.Agents.Class` that helps you manage the agents of the current context.
+```typescript 
+authenticatedAgent:Carbon.Auth.PersistedAgent.Class 
+```
+
+The agent of the user that has been authenticated. If no authentication exists in the current context, it will ask to it's parent context.
+Returns `null` if the user it not authenticated.
 
 #### <a name="Carbon-Auth-Class-Methods" />Methods
-
-##### isAuthenticated
-```typescript 
-isAuthenticated( askParent?:boolean ):boolean
-```
-
-Returns true the user is authenticated.
-
-*Parameters*
-
-- askParent
-
-##### authenticate
-```typescript 
-authenticate( username:string,  password:string ):Promise<Carbon.Auth.Credentials>
-```
-
-Authenticate the user with an `username` and `password`. Uses the `TOKEN` method for the authentication.
-
-*Parameters*
-
-- username
-- password
 
 ##### addAuthentication
 ```typescript 
 addAuthentication( options:Carbon.HTTP.Request.Options )
 ```
 
-Add the authentication header to a `Carbon.HTTP.Request.Options` object.
+Adds the authentication header to a `Carbon.HTTP.Request.Options` object.
 
 *Parameters*
 
 - options
 
-##### clearAuthentication
+##### authenticate
 ```typescript 
-clearAuthentication()
+authenticate( username:string,  password:string ):Promise<Carbon.Auth.Credentials>
 ```
 
-Deletes the current authentication
-
-##### createTicket
-```typescript 
-createTicket( uri:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.Auth.Ticket.Class, Carbon.HTTP.Response.Class ]>
-```
-
-Retrieves a authentication ticket, which one only works one time and oly for the URI specified.
+Authenticate the user with a `username` and `password`. Uses the `TOKEN` method for the authentication.
 
 *Parameters*
 
-- uri: The URI to get an authentication ticket for.
-- requestOptions
-
-##### getAuthenticatedURL
-```typescript 
-getAuthenticatedURL( uri:string,  requestOptions?:Carbon.HTTP.Request.Options )
-```
-
-Returns a Promise with a URI authenticated for only one use.
-
-*Parameters*
-
-- uri: The URI to generate an authenticated URI for.
-- requestOptions
+- username
+- password
 
 ##### authenticateUsing
 ```typescript 
 authenticateUsing( method:'BASIC',  username:string,  password:string ):Promise<Carbon.Auth.UsernameAndPasswordCredentials.Class>
 ```
 
-Authenticates the user with Basic HTTP Authentication, witch uses encoded username and password.
+Authenticates the user with Basic HTTP Authentication, which uses an encoded string with username and password in every request.
 
 *Parameters*
 
@@ -1067,7 +1041,7 @@ Authenticates the user with Basic HTTP Authentication, witch uses encoded userna
 authenticateUsing( method:'TOKEN',  username:string,  password:string ):Promise<Carbon.Auth.Token.Class>
 ```
 
-Authenticates the user with username and password, and generates a JSON Web Token (JWT) credentials.
+Authenticates the user with a username and password, and generates a JSON Web Token (JWT) credential that will be used in every request.
 
 *Parameters*
 
@@ -1079,13 +1053,360 @@ Authenticates the user with username and password, and generates a JSON Web Toke
 authenticateUsing( method:'TOKEN',  token:Carbon.Auth.Token.Class ):Promise<Carbon.Auth.Token.Class>
 ```
 
-Authenticates the user with a JSON Web Token (JWT), i.e. the credentials generated by TokenAuthenticator.
+Authenticates the user with a `Carbon.Auth.Token.Class`, which contains a JSON Web Token (JWT) that will be used in every request.
 
 *Parameters*
 
 - method
 - token
 
+##### clearAuthentication
+```typescript 
+clearAuthentication()
+```
+
+Deletes the authentication of the current instance.
+
+##### createTicket
+```typescript 
+createTicket( uri:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.Auth.Ticket.Class, Carbon.HTTP.Response.Class ]>
+```
+
+Retrieves an authentication ticket for the URI specified.
+
+*Parameters*
+
+- uri: The URI to get an authentication ticket for.
+- requestOptions
+
+##### getAuthenticatedURL
+```typescript 
+getAuthenticatedURL( uri:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<string>
+```
+
+Returns a Promise with a one time use only authenticated URI.
+
+*Parameters*
+
+- uri: The URI to generate an authenticated URI for.
+- requestOptions
+
+##### isAuthenticated
+```typescript 
+isAuthenticated( askParent?:boolean ):boolean
+```
+
+Returns true if the user is authenticated.
+
+*Parameters*
+
+- askParent
+
+
+
+## <a name="Carbon-Auth-ACE" />Module Carbon/Auth/ACE
+
+
+
+
+
+
+
+
+## <a name="Carbon-Auth-ACL" />Module Carbon/Auth/ACL
+
+
+
+
+
+### <a name="Carbon-Auth-ACL-Properties" />Properties
+```typescript 
+static RDF_Class:string 
+```
+
+```typescript 
+static SCHEMA:Carbon.ObjectSchema.Class 
+```
+
+
+
+
+
+### <a name="Carbon-Auth-ACL-Factory" />Class Carbon.Auth.ACL.Factory
+
+
+> Factory class for `Carbon.Auth.ACL.Class` objects.
+
+
+
+
+#### <a name="Carbon-Auth-ACL-Factory-Methods" />Methods
+##### decorate
+```typescript 
+static decorate<T extends Object>( object:T ):T & Carbon.Auth.ACl.Class
+```
+
+Decorate the object with the methods o a `Carbon.Auth.ACL.Class` object.
+
+*Parameters*
+
+- object: The object to decorate.
+
+##### hasClassProperties
+```typescript 
+static hasClassProperties( object:Object ):boolean
+```
+
+Return true if the object provided has the properties and methods of a `Carbon.Auth.ACL.Class` object.
+
+*Parameters*
+
+- object: The object to analise.
+
+
+
+#### <a name="Carbon-Auth-ACL-Factory-Decorated-Object" />Decorated Object
+**Interfaces:** [Carbon.Auth.ACL.Class](#Carbon-Auth-ACL-Class)
+
+> Object decorated for the Carbon.Auth.ACL.Factory.decorate method.
+
+
+##### <a name="Carbon-Auth-ACL-Factory-Decorated-Object-Methods" />Methods
+##### configureChildInheritance
+```typescript 
+configureChildInheritance( granting:boolean,  subject:string | Carbon.Pointer.Class,  subjectClass:string | Carbon.Pointer.Class,  permission:string | Carbon.Pointer.Class )
+```
+
+Configures the permission specified to the subject provided either granting or denying it for the children of the document related to the ACL.
+
+*Parameters*
+
+- granting: Boolean to indicate if the permission will be granted o denied.
+- subject: The subject which will be assigned the permission specified.
+- subjectClass: The type of subject provided.
+- permission: The permission that will be granted to the subject specified.
+
+```typescript 
+configureChildInheritance( granting:boolean,  subject:string | Carbon.Pointer.Class,  subjectClass:string | Carbon.Pointer.Class,  permissions:(string | Carbon.Pointer.Class)[] )
+```
+
+Configure several permissions to the subject provided either granting or denying them for the children of the document related to the ACL.
+
+*Parameters*
+
+- granting: Boolean to indicate if the permission will be granted o denied.
+- subject: The subject which will be assigned the permission specified.
+- subjectClass: The type of subject provided.
+- permissions: The permissions that will be granted to the subject specified.
+
+```typescript 
+configureChildInheritance( granting:boolean,  subjects:(string | Carbon.Pointer.Class)[],  subjectClass:string | Carbon.Pointer.Class,  permission:string | Carbon.Pointer.Class )
+```
+
+Configure the permission specified to the every subject provided either granting or denying it for the children of the document related to the ACL.
+
+*Parameters*
+
+- granting: Boolean to indicate if the permission will be granted o denied.
+- subjects: The subjects which will be assigned the every permissions specified.
+- subjectClass: The type of subjects provided.
+- permission: The permission that will be granted to the every subject.
+
+```typescript 
+configureChildInheritance( granting:boolean,  subjects:(string | Carbon.Pointer.Class)[],  subjectClass:string | Carbon.Pointer.Class,  permissions:(string | Carbon.Pointer.Class)[] )
+```
+
+Configure several permissions to the every subject provided either granting or denying them for the children of the document related to the ACL.
+
+*Parameters*
+
+- granting: Boolean to indicate if the permission will be granted o denied.
+- subjects: The subjects which will be assigned the every permissions specified.
+- subjectClass: The type of subjects provided.
+- permissions: The permissions that will be granted to the every subject.
+
+##### denies
+```typescript 
+denies( subject:string | Carbon.Pointer.Class,  permission:string | Carbon.Pointer.Class ):boolean
+```
+
+Returns true if the subject has a configuration where it denies the permission specified for the document related to de ACL.
+Returns `null` if no configuration of the subject and permission exists in the ACL.
+
+*Parameters*
+
+- subject: The subject to look for its configuration.
+- permission: The permission to check if it has a granting configuration.
+
+##### deny
+```typescript 
+deny( subject:string | Carbon.Pointer.Class,  subjectClass:string | Carbon.Pointer.Class,  permission:string | Carbon.Pointer.Class )
+```
+
+Grant the permission specified to the subject provided for the document related to the ACL.
+
+*Parameters*
+
+- subject: The subject which will be assigned the permission specified.
+- subjectClass: The type of subject provided.
+- permission: The permission that will be granted to the subject specified.
+
+```typescript 
+deny( subject:string | Carbon.Pointer.Class,  subjectClass:string | Carbon.Pointer.Class,  permissions:(string | Carbon.Pointer.Class)[] )
+```
+
+Grant several permissions to the subject provided for the document related to the ACL.
+
+*Parameters*
+
+- subject: The subject which will be assigned the permission specified.
+- subjectClass: The type of subject provided.
+- permissions: The permissions that will be granted to the subject specified.
+
+```typescript 
+deny( subjects:(string | Carbon.Pointer.Class)[],  subjectClass:string | Carbon.Pointer.Class,  permission:string | Carbon.Pointer.Class )
+```
+
+Grant the permission specified to the every subject provided for the document related to the ACL.
+
+*Parameters*
+
+- subjects: The subjects which will be assigned the every permissions specified.
+- subjectClass: The type of subjects provided.
+- permission: The permission that will be granted to the every subject.
+
+```typescript 
+deny( subjects:(string | Carbon.Pointer.Class)[],  subjectClass:string | Carbon.Pointer.Class,  permissions:(string | Carbon.Pointer.Class)[] )
+```
+
+Grant several permissions to the every subject provided for the document related to the ACL.
+
+*Parameters*
+
+- subjects: The subjects which will be assigned the every permissions specified.
+- subjectClass: The type of subjects provided.
+- permissions: The permissions that will be granted to the every subject.
+
+##### getChildInheritance
+```typescript 
+getChildInheritance( subject:string | Carbon.Pointer.Class,  permission:string | Carbon.Pointer.Class ):boolean
+```
+
+Returns if grants or denies a configuration of the subject and the permission specified for the children of document related to de ACL.
+Returns `null` if no configuration of the subject and permission exists in the ACL.
+
+*Parameters*
+
+- subject: The subject to look for its configuration.
+- permission: The permission to check if it has a granting configuration.
+
+##### grant
+```typescript 
+grant( subject:string | Carbon.Pointer.Class,  subjectClass:string | Carbon.Pointer.Class,  permission:string | Carbon.Pointer.Class )
+```
+
+Grant the permission specified to the subject provided for the document related to the ACL.
+
+*Parameters*
+
+- subject: The subject which will be assigned the permission specified.
+- subjectClass: The type of subject provided.
+- permission: The permission that will be granted to the subject specified.
+
+```typescript 
+grant( subject:string | Carbon.Pointer.Class,  subjectClass:string | Carbon.Pointer.Class,  permissions:(string | Carbon.Pointer.Class)[] )
+```
+
+Grant several permissions to the subject provided for the document related to the ACL.
+
+*Parameters*
+
+- subject: The subject which will be assigned the permission specified.
+- subjectClass: The type of subject provided.
+- permissions: The permissions that will be granted to the subject specified.
+
+```typescript 
+grant( subjects:(string | Carbon.Pointer.Class)[],  subjectClass:string | Carbon.Pointer.Class,  permission:string | Carbon.Pointer.Class )
+```
+
+Grant the permission specified to the every subject provided for the document related to the ACL.
+
+*Parameters*
+
+- subjects: The subjects which will be assigned the every permissions specified.
+- subjectClass: The type of subjects provided.
+- permission: The permission that will be granted to the every subject.
+
+```typescript 
+grant( subjects:(string | Carbon.Pointer.Class)[],  subjectClass:string | Carbon.Pointer.Class,  permissions:(string | Carbon.Pointer.Class)[] )
+```
+
+Grant several permissions to the every subject provided for the document related to the ACL.
+
+*Parameters*
+
+- subjects: The subjects which will be assigned the every permissions specified.
+- subjectClass: The type of subjects provided.
+- permissions: The permissions that will be granted to the every subject.
+
+##### grants
+```typescript 
+grants( subject:string | Carbon.Pointer.Class,  permission:string | Carbon.Pointer.Class ):boolean
+```
+
+Returns true if the subject has a configuration where it grants the permission specified for the document related to de ACL.
+Returns `null` if no configuration of the subject and permission exists in the ACL.
+
+*Parameters*
+
+- subject: The subject to look for its configuration.
+- permission: The permission to check if it has a granting configuration.
+
+##### remove
+```typescript 
+remove( subject:string | Carbon.Pointer.Class,  permission:string | Carbon.Pointer.Class )
+```
+
+Remove the configuration of a permission from a subject for the document related to the ACL.
+
+*Parameters*
+
+- subject: The subject from will be removed the permission.
+- permission: The permission to remove from the subject configuration.
+
+```typescript 
+remove( subject:string | Carbon.Pointer.Class,  permissions:(string | Carbon.Pointer.Class)[] )
+```
+
+Remove the configuration of several permissions from a subject for the document related to the ACL.
+
+*Parameters*
+
+- subject: The subject from will removed the permission.
+- permissions: The permissions to remove from the subject configuration.
+
+##### removeChildInheritance
+```typescript 
+removeChildInheritance( subject:string | Carbon.Pointer.Class,  permission:string | Carbon.Pointer.Class )
+```
+
+Remove the configuration of a permission from a subject for the children of the document related to the ACL.
+
+*Parameters*
+
+- subject: The subject from will be removed the permission.
+- permission: The permission to remove from the subject configuration.
+
+```typescript 
+removeChildInheritance( subject:string | Carbon.Pointer.Class,  permissions:(string | Carbon.Pointer.Class)[] )
+```
+
+Remove the configuration of several permissions from a subject for the children of the document related to the ACL.
+
+*Parameters*
+
+- subject: The subject from will removed the permission.
+- permissions: The permissions to remove from the subject configuration.
 
 
 ## <a name="Carbon-Auth-Agent" />Module Carbon/Auth/Agent
@@ -1110,12 +1431,39 @@ static SCHEMA:Carbon.ObjectSchema.Class
 ### <a name="Carbon-Auth-Agent-Factory" />Class Carbon.Auth.Agent.Factory
 
 
-> Factory class for `Carbon.Auth.Agent.Class` objects
+> Factory class for `Carbon.Auth.Agent.Class` objects.
 
 
 
 
 #### <a name="Carbon-Auth-Agent-Factory-Methods" />Methods
+##### create
+```typescript 
+static create( name:string,  email:string,  password:string ):Carbon.Auth.Agent.Class
+```
+
+Creates a `Carbon.Auth.Agent.Class` object with the name and email specified.
+
+*Parameters*
+
+- name: Name of the agent to be created.
+- email: Email of the agent to be created.
+- password: Password of the agent to be created.
+
+##### createFrom
+```typescript 
+static createFrom<T extends Object>( object:T,  name:string,  email:string,  password:string ):T & Carbon.Auth.Agent.Class
+```
+
+Creates a `Carbon.Auth.Agent.Class` object from the object and parameters specified.
+
+*Parameters*
+
+- object: Object that will be converted into an Agent.
+- name: Name of the agent to be created.
+- email: Email of the agent to be created.
+- password: Password of the agent to be created.
+
 ##### hasClassProperties
 ```typescript 
 static hasClassProperties( object:Object ):boolean
@@ -1132,30 +1480,7 @@ Returns true if the object provided has the properties that defines a `Carbon.Au
 static is( object:Object ):boolean
 ```
 
-Returns true if the object provided is considered as an `Carbon.Auth.Agent.Class` object.
-
-*Parameters*
-
-- object
-
-##### create
-```typescript 
-static create( name:string,  email:string ):Carbon.Auth.Agent.Class
-```
-
-Create a `Carbon.Auth.Agent.Class` object with the name and email specified.
-
-*Parameters*
-
-- name
-- email
-
-##### createFrom
-```typescript 
-static createFrom( object:T extends Object ):T & Carbon.Auth.Agent.Class
-```
-
-Create a `Carbon.Auth.Agent.Class` object with the object provided.
+Returns true if the object provided is considered a `Carbon.Auth.Agent.Class` object.
 
 *Parameters*
 
@@ -1190,28 +1515,16 @@ Class()
 
 #### <a name="Carbon-Auth-Agents-Class-Methods" />Methods
 
-##### get
+##### delete
 ```typescript 
-get( agentURI:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.Auth.PersistedAgent.Class, Carbon.HTTP.Response.Class ]>
+delete( agentURI:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.Auth.PersistedAgent.Class, Carbon.HTTP.Response.Class ]>
 ```
 
-Retrieves the agent specified from the current context.
+Deletes the agent specified.
 
 *Parameters*
 
-- agentURI: The URI of the agent to retrieve.
-- requestOptions
-
-##### enable
-```typescript 
-enable( agentURI:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.Auth.PersistedAgent.Class, [ Carbon.HTTP.Response.Class, Carbon.HTTP.Response.Class ] ]>
-```
-
-Activate the account of the agent specified.
-
-*Parameters*
-
-- agentURI: The URI of the agent to be activated.
+- agentURI: The URI of the agent to be deleted.
 - requestOptions
 
 ##### disable
@@ -1226,41 +1539,42 @@ Deactivate the account of the agent specified.
 - agentURI: The URI of the agent to be deactivated.
 - requestOptions
 
-##### delete
+##### enable
 ```typescript 
-delete( agentURI:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.Auth.PersistedAgent.Class, Carbon.HTTP.Response.Class ]>
+enable( agentURI:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.Auth.PersistedAgent.Class, [ Carbon.HTTP.Response.Class, Carbon.HTTP.Response.Class ] ]>
 ```
 
-Deletes the agent specified.
+Activate the account of the agent specified.
 
 *Parameters*
 
-- agentURI: The URI of the agent to be deleted.
+- agentURI: The URI of the agent to be activated.
+- requestOptions
+
+##### get
+```typescript 
+get( agentURI:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.Auth.PersistedAgent.Class, Carbon.HTTP.Response.Class ]>
+```
+
+Retrieves the agent specified from the current context.
+
+*Parameters*
+
+- agentURI: The URI of the agent to retrieve.
 - requestOptions
 
 ##### register
 ```typescript 
-register( agentDocument:Carbon.Auth.Agents.Agent.Class ):Promise<Carbon.Pointer.Class, Carbon.HTTP.Response.Class>
+register( agentDocument:Carbon.Auth.Agent.Class,  slug?:string ):Promise<Carbon.Pointer.Class, Carbon.HTTP.Response.Class>
 ```
 
-Persists an Agent Document in the server, generating a random unique slug.
-Returns a Promise with a Pointer for the stored Agent, and the response of the call.
+Persists a `Carbon.Auth.Agent.Class` object using the slug specified.
+Returns a Promise with a Pointer to the stored Agent, and the response of the request.
 
 *Parameters*
 
 - agentDocument
-
-```typescript 
-register( slug:string,  agentDocument:Carbon.Auth.Agents.Agent.Class ):Promise<Carbon.Pointer.Class, Carbon.HTTP.Response.Class>
-```
-
-Persists an Agent Document in the server using the slug specified.
-Returns a Promise with a Pointer for the stored Agent, and the response of the call.
-
-*Parameters*
-
 - slug
-- agentDocument
 
 
 
@@ -1276,9 +1590,7 @@ Returns a Promise with a Pointer for the stored Agent, and the response of the c
 ### <a name="Carbon-Auth-BasicAuthenticator-Class" />Class Carbon.Auth.BasicAuthenticator.Class
 
 
-> 
-Authenticates requests using Basic Authentication
-
+> Authenticates requests using HTTP Basic Authentication.
 
 
 #### <a name="Carbon-Auth-BasicAuthenticator-Class-Constructor" />Constructor
@@ -1291,60 +1603,85 @@ Class()
 
 #### <a name="Carbon-Auth-BasicAuthenticator-Class-Methods" />Methods
 
-##### isAuthenticated
-```typescript 
-isAuthenticated():boolean
-```
-
-
-returns true if the instance contains stored credentials.
-
-
-##### authenticate
-```typescript 
-authenticate( authenticationToken:Carbon.Auth.UsernameAndPasswordToken ):Promise<void>
-```
-
-
-Stores credentials to authenticate future requests.
-
-
-*Parameters*
-
-- authenticationToken
-
 ##### addAuthentication
 ```typescript 
 addAuthentication( requestOptions:Carbon.HTTP.Request.Options ):Carbon.HTTP.Request.Options
 ```
 
-
 Adds the Basic authentication header to the passed request options object.
-
+The `Carbon.HTTP.Request.Options` provided is returned without modifications if it already has an authentication header.
 
 *Parameters*
 
 - requestOptions: Request options object to add Authentication headers.
+
+##### authenticate
+```typescript 
+authenticate( authenticationToken:Carbon.Auth.UsernameAndPasswordToken ):Promise< Carbon.Auth.UsernameAndPasswordCredentials.Class >
+```
+
+Stores credentials to authenticate future requests.
+
+*Parameters*
+
+- authenticationToken
 
 ##### clearAuthentication
 ```typescript 
 clearAuthentication()
 ```
 
-
 Clears any saved credentials and restores the Authenticator to its initial state.
 
-
-##### supports
+##### isAuthenticated
 ```typescript 
-supports( authenticationToken:Carbon.Auth.AuthenticationToken ):boolean
+isAuthenticated():boolean
 ```
 
-Returns true if the Authenticator supports the AuthenticationToken.
+Returns true if the instance contains stored credentials.
+
+
+
+## <a name="Carbon-Auth-PersistedACL" />Module Carbon/Auth/PersistedACL
+
+
+
+
+
+
+
+
+### <a name="Carbon-Auth-PersistedACL-Factory" />Class Carbon.Auth.PersistedACL.Factory
+
+
+> Factory class for `Carbon.Auth.PersistedACL.Class` objects.
+
+
+
+
+#### <a name="Carbon-Auth-PersistedACL-Factory-Methods" />Methods
+##### decorate
+```typescript 
+static decorate<T extends Carbon.PersistedDocument.Class>( document:T ):T & Carbon.Auth.PersistedACL.Class
+```
+
+Decorate the object with the properties and methods of a `Carbon.Auth.PersistedACL.Class` object.
 
 *Parameters*
 
-- authenticationToken
+- document: The persisted document to decorate.
+
+##### hasClassProperties
+```typescript 
+static hasClassProperties( object:Object ):boolean
+```
+
+Return true if the object provided has the properties and methods of a `Carbon.Auth.PersistedACL.Class` object.
+
+*Parameters*
+
+- object: The object to analise.
+
 
 
 
@@ -1366,6 +1703,17 @@ Returns true if the Authenticator supports the AuthenticationToken.
 
 
 #### <a name="Carbon-Auth-PersistedAgent-Factory-Methods" />Methods
+##### decorate
+```typescript 
+static decorate<T extends Object>( object:T ):T & Carbon.Auth.PersistedAgent.Class
+```
+
+Decorates the object provided with the properties and methods of a `Carbon.Auth.PersistedAgent.Class` object.
+
+*Parameters*
+
+- object: The object to decorate.
+
 ##### hasClassProperties
 ```typescript 
 static hasClassProperties( object:Object ):boolean
@@ -1388,13 +1736,6 @@ Returns true if the object provided is considered a `Carbon.Auth.PersistedAgent.
 
 - object
 
-##### decorate
-```typescript 
-static decorate()
-```
-
-Decorates the object provided with the properties and methods of a `Carbon.Auth.PersistedAgent.Class` object.
-
 
 
 #### <a name="Carbon-Auth-PersistedAgent-Factory-Decorated-Object" />Decorated Object
@@ -1404,19 +1745,19 @@ Decorates the object provided with the properties and methods of a `Carbon.Auth.
 
 
 ##### <a name="Carbon-Auth-PersistedAgent-Factory-Decorated-Object-Methods" />Methods
-##### enable
-```typescript 
-enable():Promise<[ Carbon.Auth.PersistedAgent.Class Carbon.HTTP.Response.Class ]>
-```
-
-Activate the account of the agent.
-
 ##### disable
 ```typescript 
 disable():Promise<[ Carbon.Auth.PersistedAgent.Class Carbon.HTTP.Response.Class ]>
 ```
 
 Deactivate the account of the agent.
+
+##### enable
+```typescript 
+enable():Promise<[ Carbon.Auth.PersistedAgent.Class Carbon.HTTP.Response.Class ]>
+```
+
+Activate the account of the agent.
 
 
 ## <a name="Carbon-Auth-Ticket" />Module Carbon/Auth/Ticket
@@ -1452,7 +1793,7 @@ static SCHEMA:Carbon.ObjectSchema.Class
 static create( uri:string ):Carbon.Auth.Ticket.Class
 ```
 
-Create and returns a `Carbon.Auth.Ticket.Class` object for the specified URI.
+Creates and returns a `Carbon.Auth.Ticket.Class` object for the specified URI.
 
 *Parameters*
 
@@ -1467,71 +1808,67 @@ Create and returns a `Carbon.Auth.Ticket.Class` object for the specified URI.
 
 
 
+### <a name="Carbon-Auth-Token-Properties" />Properties
+```typescript 
+static RDF_CLASS:string 
+```
+
+```typescript 
+static SCHEMA:Carbon.ObjectSchema.Class 
+```
+
+
 
 
 
 ### <a name="Carbon-Auth-Token-Factory" />Class Carbon.Auth.Token.Factory
 
 
+> Factory class for `Carbon.Auth.Token.Class` objects.
 
+
+
+#### <a name="Carbon-Auth-Token-Factory-Properties" />Properties
+```typescript 
+static SCHEMA:Carbon.ObjectSchema.Class 
+```
 
 
 
 #### <a name="Carbon-Auth-Token-Factory-Methods" />Methods
-##### is
-```typescript 
-static is( value:any ):boolean
-```
-
-Duck tape tests if the value sent is a Token object
-
-*Parameters*
-
-- value
-
 ##### hasClassProperties
 ```typescript 
 static hasClassProperties( object:Object ):boolean
 ```
 
-Returns true if the object provided has the necessary information to be utilized as a object of type `Carbon.Auth.Token.Class`
+Returns true if the object provided has the properties of a `Carbon.Auth.Token.Class` object.
 
 *Parameters*
 
 - object
+
+##### is
+```typescript 
+static is( value:any ):boolean
+```
+
+Returns true if the object provided is considered a `Carbon.Auth.Token.Class` object.
+
+*Parameters*
+
+- value
 
 
 ##### decorate
 ```typescript 
-decorate( object:T extends Object ):Carbon.Auth.Token.Class
+decorate<T extends Object>( object:T ):T & Carbon.Auth.Token.Class
 ```
 
-Adds any necessary data to the object provided to be utilized as a type `Carbon.Auth.Token.Class`
+Decorates the object provided with the properties and methods of a `Carbon.Auth.Token.Class` object.
 
 *Parameters*
 
 - object
-
-##### hasRDFClass
-```typescript 
-hasRDFClass( pointer:Carbon.Pointer.Class ):boolean
-```
-
-Description
-
-*Parameters*
-
-- pointer
-
-```typescript 
-hasRDFClass( expandedObject:Object ):boolean
-```
-
-Description
-
-*Parameters*
-
-- expandedObject
 
 
 
@@ -1547,9 +1884,7 @@ Description
 ### <a name="Carbon-Auth-TokenAuthenticator-Class" />Class Carbon.Auth.TokenAuthenticator.Class
 
 
-> 
-Authenticates requests using Basic Authentication
-
+> Authenticates requests using JSON Web Token (JWT) Authentication.
 
 
 #### <a name="Carbon-Auth-TokenAuthenticator-Class-Constructor" />Constructor
@@ -1566,47 +1901,17 @@ Class( context:Carbon.Context )
 
 #### <a name="Carbon-Auth-TokenAuthenticator-Class-Methods" />Methods
 
-##### isAuthenticated
-```typescript 
-isAuthenticated():boolean
-```
-
-
-returns true if the instance contains stored credentials.
-
-
 ##### addAuthentication
 ```typescript 
 addAuthentication( requestOptions:Carbon.HTTP.Request.Options ):Carbon.HTTP.Request.Options
 ```
 
-
-Adds the Basic authentication header to the passed request options object.
-
+Adds the Token Authentication header to the passed request options object.
+The `Carbon.HTTP.Request.Options` provided is returned without modifications if it already has an authentication header.
 
 *Parameters*
 
 - requestOptions: Request options object to add Authentication headers.
-
-##### clearAuthentication
-```typescript 
-clearAuthentication()
-```
-
-
-Clears any saved credentials and restores the Authenticator to its initial state.
-
-
-##### supports
-```typescript 
-supports( authenticationToken:Carbon.Auth.AuthenticationToken ):boolean
-```
-
-Returns true if the Authenticator supports the AuthenticationToken.
-
-*Parameters*
-
-- authenticationToken
 
 ##### authenticate
 ```typescript 
@@ -1629,6 +1934,62 @@ Stores credentials to authenticate future requests.
 
 - token
 
+##### clearAuthentication
+```typescript 
+clearAuthentication()
+```
+
+
+Clears any saved credentials and restores the Authenticator to its initial state.
+
+
+##### isAuthenticated
+```typescript 
+isAuthenticated():boolean
+```
+
+Returns true if the instance contains stored credentials.
+
+
+
+## <a name="Carbon-Auth-UsernameAndPasswordCredentials" />Module Carbon/Auth/UsernameAndPasswordCredentials
+
+
+
+
+
+
+
+
+### <a name="Carbon-Auth-UsernameAndPasswordCredentials-Class" />Class Carbon.Auth.UsernameAndPasswordCredentials.Class
+
+
+> Wrapper to manage Authentication Credentials in form of Username/Password.
+
+
+#### <a name="Carbon-Auth-UsernameAndPasswordCredentials-Class-Constructor" />Constructor
+```typescript 
+Class( username:string,  password:string )
+```
+
+
+*Parameters*
+
+- username
+- password
+
+
+#### <a name="Carbon-Auth-UsernameAndPasswordCredentials-Class-Properties" />Properties
+
+```typescript 
+password:string 
+```
+
+```typescript 
+username:string 
+```
+
+
 
 
 ## <a name="Carbon-Auth-UsernameAndPasswordToken" />Module Carbon/Auth/UsernameAndPasswordToken
@@ -1643,7 +2004,7 @@ Stores credentials to authenticate future requests.
 ### <a name="Carbon-Auth-UsernameAndPasswordToken-Class" />Class Carbon.Auth.UsernameAndPasswordToken.Class
 
 
-> Wrapper for manage an Authentication Token in form of UserName/Password
+> Wrapper to manage an Authentication Token in form of Username/Password.
 
 
 #### <a name="Carbon-Auth-UsernameAndPasswordToken-Class-Constructor" />Constructor
@@ -1661,11 +2022,11 @@ Class( username:string,  password:string )
 #### <a name="Carbon-Auth-UsernameAndPasswordToken-Class-Properties" />Properties
 
 ```typescript 
-username:string 
+password:string 
 ```
 
 ```typescript 
-password:string 
+username:string 
 ```
 
 
@@ -1677,24 +2038,63 @@ password:string
 
 
 
+### <a name="Carbon-Document-Properties" />Properties
+```typescript 
+static RDF_CLASS:string 
+```
+
+```typescript 
+static SCHEMA:Carbon.ObjectSchema.Class 
+```
+
+
 
 
 
 ### <a name="Carbon-Document-Factory" />Class Carbon.Document.Factory
 
 
-> Factory class for Document objects.
+> Factory class for `Carbon.Document.Class` objects.
 
 
 
 
 #### <a name="Carbon-Document-Factory-Methods" />Methods
+##### create
+```typescript 
+static create():Carbon.Document.Class
+```
+
+Creates a `Carbon.Document.Class` object.
+
+##### createFrom
+```typescript 
+static createFrom<T extends Object>( object:T ):T & Carbon.Document.Class
+```
+
+Creates a `Carbon.Document.Class` object from the object provided.
+
+*Parameters*
+
+- object: Object to be converted into a Document.
+
+##### decorate
+```typescript 
+static decorate<T extends Object>( object:T ):T & Carbon.Document.Class
+```
+
+Decorates the object provided with the properties and methods of a `Carbon.Document.Class` object.
+
+*Parameters*
+
+- object: Object to be decorated.
+
 ##### hasClassProperties
 ```typescript 
 static hasClassProperties( documentResource:Object ):boolean
 ```
 
-Returns true if the object provided has the properties and functions of a Document object
+Returns true if the object provided has the properties and methods of a `Carbon.Document.Class` object.
 
 *Parameters*
 
@@ -1705,36 +2105,7 @@ Returns true if the object provided has the properties and functions of a Docume
 static is( object:Object ):boolean
 ```
 
-Returns true if the object is considered a Document object
-
-*Parameters*
-
-- object
-
-##### decorate
-```typescript 
-static decorate( object:T extends Object ):T & Carbon.Document.Class
-```
-
-Adds the properties and method necessary for a Document object.
-
-*Parameters*
-
-- object
-
-##### create
-```typescript 
-static create():Carbon.Document.Class
-```
-
-Creates an empty Document object.
-
-##### createFrom
-```typescript 
-static createFrom( object:T extends Object ):Carbon.Document.Class
-```
-
-Creates a Document object from the object provided.
+Returns true if the object provided is considered a `Carbon.Document.Class` object.
 
 *Parameters*
 
@@ -1743,71 +2114,128 @@ Creates a Document object from the object provided.
 
 
 #### <a name="Carbon-Document-Factory-Decorated-Object" />Decorated Object
-**Interfaces:** [Carbon.LDP.PersistedContainer.Class](#Carbon-LDP-PersistedContainer-Class)
+**Interfaces:** [Carbon.Document.Class](#Carbon-Document-Class)
 
-> Object decorated by the Carbon.LDP.PersistedContainer.Factory.decorate function.
+> Object decorated by the `Carbon.Document.Factory.decorate()` function.
 
 ##### <a name="Carbon-Document-Factory-Decorated-Object-Properties" />Properties
 ```typescript 
 _fragmentsIndex:Map<string, Carbon.Fragment.Class> 
 ```
 
-Map object for store the fragment pointers (named fragments and blank nodes) of the document.
+Map that stores the fragments (named fragments and blank nodes) of the Document.
 
 ##### <a name="Carbon-Document-Factory-Decorated-Object-Methods" />Methods
-##### hasPointer
+##### _normalize
 ```typescript 
-hasPointer( id:string ):boolean
+_normalize()
 ```
 
-Returns true if the Document object has a pointer referenced by the URI provided.
+Search over the document for normal objects to convert into fragments, and unused fragments to eliminate.
+
+##### _removeFragment
+```typescript 
+_removeFragment( fragment:Carbon.Fragment.Class )
+```
+
+Remove the fragment referenced by the `Carbon.Fragment.Class` provided from the Document.
 
 *Parameters*
 
-- id
+- fragment
 
-##### getPointer
 ```typescript 
-getPointer( id:string ):boolean
+_removeFragment( slug:string )
 ```
 
-Returns the pointer referenced by the URI provided. If not exists a pointer is created.
-Returns null if the URI is not inside scope of the document.
+Remove the fragment referenced by the Slug provided from the Document.
 
 *Parameters*
 
-- id
+- slug
 
-##### hasFragment
+##### addType
 ```typescript 
-hasFragment( id:string ):boolean
+addType( type:string )
 ```
 
-Returns true if the document has the fragment id provided
+Adds a type to the Document.
 
 *Parameters*
 
-- id
+- type: The type to be added.
+
+##### createFragment
+```typescript 
+createFragment<T extends Object>( object:T,  slug:string ):T & Carbon.Fragment.Class
+```
+
+Creates a `Carbon.NamedFragment.Class` from the object provided and the slug specified.
+If the slug has the form of a BlankNode ID, a `Carbon.Fragment.Class` is created instead.
+
+*Parameters*
+
+- object
+- slug
+
+```typescript 
+createFragment<T extends Object>( object:Object ):T & Carbon.Fragment.Class
+```
+
+Creates a `Carbon.Fragment.Class` from the object provided, since no slug is specified.
+
+*Parameters*
+
+- object
+
+```typescript 
+createFragment( slug:string ):Carbon.Fragment.Class
+```
+
+Creates an empty `Carbon.NamedFragment.Class` with the slug specified.
+If the slug has the form of a BlankNode ID, a `Carbon.Fragment.Class` is created instead.
+
+*Parameters*
+
+- slug
+
+```typescript 
+createFragment():Carbon.Fragment.Class
+```
+
+Creates an empty `Carbon.Fragment.Class`, since no slug is provided.
+
+##### createNamedFragment
+```typescript 
+createNamedFragment( slug:string ):Carbon.NamedFragment.Class
+```
+
+Creates a `Carbon.NamedFragment.Class` with the slug provided.
+If the slug has the form of a BlankNode ID, an Error is thrown.
+
+*Parameters*
+
+- slug
+
+```typescript 
+createNamedFragment<T extends Object>( object:T,  slug:string ):T & Carbon.NamedFragment.Class
+```
+
+Creates a `Carbon.NamedFragment.Class` from the object provided and the slug specified.
+If the slug has the form of a BlankNode ID, an Error is thrown.
+
+*Parameters*
+
+- object
+- slug
 
 ##### getFragment
 ```typescript 
-getFragment( id:string ):Carbon.Fragment.Class
+getFragment<T>( id:string ):T & Carbon.Fragment.Class
 ```
 
-Returns the fragment referenced by the URI provided.
-Returns null if no fragment exists in the document.
-
-*Parameters*
-
-- id
-
-##### getNamedFragment
-```typescript 
-getNamedFragment( id:string ):Carbon.Fragment.Class
-```
-
-Returns the fragment referenced by the URI provided.
-Returns null if no fragment exists in the document.
+Returns the fragment referenced by the ID provided.
+Returns `null` if no fragment exists in the Document.
 
 *Parameters*
 
@@ -1818,14 +2246,71 @@ Returns null if no fragment exists in the document.
 getFragments():Carbon.Fragment.Class[]
 ```
 
-Returns an array of the fragments in the document
+Returns an array with all the fragments in the Document.
+
+##### getNamedFragment
+```typescript 
+getNamedFragment<T>( id:string ):T & Carbon.Fragment.Class
+```
+
+Returns the fragment referenced by the ID provided.
+Returns `null` if no fragment exists in the Document.
+
+*Parameters*
+
+- id
+
+##### getPointer
+```typescript 
+getPointer( id:string ):boolean
+```
+
+Returns the pointer referenced by the URI provided. If no pointer exists, one is created and then returned.
+Returns `null` if the URI is outside the scope of the Document.
+
+*Parameters*
+
+- id
+
+##### hasFragment
+```typescript 
+hasFragment( id:string ):boolean
+```
+
+Returns true if the Document has the fragment referenced by the ID provided.
+
+*Parameters*
+
+- id
+
+##### hasPointer
+```typescript 
+hasPointer( id:string ):boolean
+```
+
+Returns true if the Document has a pointer referenced by the URI provided.
+
+*Parameters*
+
+- id
+
+##### hasType
+```typescript 
+hasType( type:string )
+```
+
+Returns true if the Document contains the type specified.
+
+*Parameters*
+
+- type: The type to look for.
 
 ##### inScope
 ```typescript 
 inScope( pointer:Carbon.Pointer.Class ):boolean
 ```
 
-Returns true if the pointer provided is in the scope of the document.
+Returns true if the pointer provided is inside the scope of the Document.
 
 *Parameters*
 
@@ -1835,109 +2320,50 @@ Returns true if the pointer provided is in the scope of the document.
 inScope( id:string ):boolean
 ```
 
-Returns true if the URI provided is in the scope of the document.
+Returns true if the URI provided is inside the scope of the Document.
 
 *Parameters*
 
 - id
 
-##### createFragment
+##### removeNamedFragment
 ```typescript 
-createFragment( slug:string,  object:Object ):Carbon.NamedFragment.Class
+removeNamedFragment( fragment:Carbon.NamedFragment.Class )
 ```
 
-Creates a NamedFragment from the object provided and the slug specified.
-
-*Parameters*
-
-- slug
-- object
-
-```typescript 
-createFragment( object:Object ):Carbon.Fragment.Class
-```
-
-Creates a BlankNode from the object provided, sing no slug was specififed.
-
-*Parameters*
-
-- object
-
-```typescript 
-createFragment( slug:string ):Carbon.Fragment.Class
-```
-
-Creates a Fragment with the slug provided.
-
-*Parameters*
-
-- slug
-
-```typescript 
-createFragment():Carbon.Fragment.Class
-```
-
-Creates a Blank Node Fragment, since no slug is provided
-
-##### createNamedFragment
-```typescript 
-createNamedFragment( slug:string ):Carbon.NamedFragment.Class
-```
-
-Creates a NamedFragment with the slug provided
-
-*Parameters*
-
-- slug
-
-```typescript 
-createNamedFragment( slug:string,  object:Object ):Carbon.NamedFragment.Class
-```
-
-Creates a NamedFragment from the object provided and the slug specified.
-
-*Parameters*
-
-- slug
-- object
-
-##### removeFragment
-```typescript 
-removeFragment( fragment:Carbon.NamedFragment.Class )
-```
-
-Remove the fragment referenced by the NamedFragment object provided from the Document.
+Remove the maned fragment referenced by the `Carbon.NamedFragment.Class` provided from the Document.
 
 *Parameters*
 
 - fragment
 
 ```typescript 
-removeFragment( fragment:Carbon.Fragment.Class )
+removeNamedFragment( slug:string )
 ```
 
-Remove the fragment referenced by the Fragment object provided from the Document.
-
-*Parameters*
-
-- fragment
-
-```typescript 
-removeFragment( slug:string )
-```
-
-Remove the fragment referenced by the Slug string provided from the Document.
+Remove the named fragment referenced by the Slug provided from the Document.
 
 *Parameters*
 
 - slug
+
+##### removeType
+```typescript 
+removeType( type:string )
+```
+
+Remove the type specified from the Document.
+
+*Parameters*
+
+- type: The type to be removed.
 
 ##### toJSON
 ```typescript 
-toJSON( objectSchemaResolver:Carbon.ObjectSchema.Resolver,  jsonLDConverter:JSONLDConverter ):string
+toJSON( objectSchemaResolver:Carbon.ObjectSchema.Resolver,  jsonLDConverter:Carbon.JSONLDConverter.Class ):string
 ```
 
-Returns a JSON string from the document using an ObjectSchema and a JSONLDConverter
+Returns a JSON string from the Document using an ObjectSchema and a JSONLDConverter.
 
 *Parameters*
 
@@ -1948,7 +2374,7 @@ Returns a JSON string from the document using an ObjectSchema and a JSONLDConver
 toJSON( objectSchemaResolver:Carbon.ObjectSchema.Resolver ):string
 ```
 
-Returns a JSON string from the document using an ObjectSchema
+Returns a JSON string from the Document using an ObjectSchema
 
 *Parameters*
 
@@ -1958,7 +2384,7 @@ Returns a JSON string from the document using an ObjectSchema
 toJSON():string
 ```
 
-Returns a JSON string from the document using the default ObjectSchema
+Returns a JSON string from the Document using the default ObjectSchema.
 
 
 ## <a name="Carbon-Documents" />Module Carbon/Documents
@@ -1973,453 +2399,573 @@ Returns a JSON string from the document using the default ObjectSchema
 ### <a name="Carbon-Documents" />Class Carbon.Documents
 
 
-> Class that contains methods for retrieving, saving and updating documents from the server.
+> Class that contains methods for retrieving, saving and updating documents from the CarbonLDP server.
 
 
+#### <a name="Carbon-Documents-Constructor" />Constructor
+```typescript 
+Documents( context?:Carbon.Context )
+```
 
+
+*Parameters*
+
+- context: The context where the documents instance will live. If no context is provided, calling its methods with relative URIs will throw an error, since there will be no form to resolve them.
+
+
+#### <a name="Carbon-Documents-Properties" />Properties
+
+```typescript 
+jsonldConverter:Carbon.JSONLDConverter.Class 
+```
+
+Instance of `Carbon.JSONLDConverter.Class` that is used to compact retrieved documents and to expand documents to persist. This property is not writable.
 
 #### <a name="Carbon-Documents-Methods" />Methods
-
-##### get
-```typescript 
-get( uri:string ):Promise<[ Carbon.PersistedDocument.Class, HTTP.Response.Class ]>
-```
-
-
-*Parameters*
-
-- uri
-
-##### exists
-```typescript 
-exists( documentURI:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ boolean, Carbon.HTTP.Response.Class ]>
-```
-
-Returns a Promise with a boolean indicating if the resource exists or not.
-
-*Parameters*
-
-- documentURI
-- requestOptions
-
-##### listChildren
-```typescript 
-listChildren( parentURI:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.Pointer.Class[], Carbon.HTTP.Response ]>
-```
-
-Return all the children of the container specified.
-
-*Parameters*
-
-- parentURI: URI of the document container to look for their children.
-- requestOptions
-
-##### addMembers
-```typescript 
-addMembers( documentURI:string,  members:(Carbon.Pointer.Class | string)[],  requestOptions?:Carbon.HTTP.Request.Options ):Promise<Carbon.HTTP.Response>
-```
-
-Add the specified resources URI or Pointers as members of the document container specified.
-
-*Parameters*
-
-- documentURI: URI of the document container where to add the members.
-- members: Array of string URIs or Pointers to add as members
-- requestOptions
-
-##### removeMembers
-```typescript 
-removeMembers( documentURI:string,  members:(Carbon.Pointer.Class | string)[],  requestOptions?:Carbon.HTTP.Request.Options ):Promise<Carbon.HTTP.Response>
-```
-
-Remove the specified resources URI or Pointers as members of the document container specified.
-
-*Parameters*
-
-- documentURI: URI of the document container where to remove the members.
-- members: Array of string URIs or Pointers to remove as members
-- requestOptions
-
-##### removeAllMembers
-```typescript 
-removeAllMembers( documentURI:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<Carbon.HTTP.Response>
-```
-
-Remove all the members of the document container specified.
-
-*Parameters*
-
-- documentURI: URI of the document container where to remove the members.
-- requestOptions
-
-##### refresh
-```typescript 
-refresh( persistedDocument:Carbon.PersistedDocument.Class,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.PersistedDocument.Class, Carbon.HTTP.Response ]>
-```
-
-Update the document with the data of the server, if there is a different version on it.
-
-*Parameters*
-
-- persistedDocument: The persisted document to update.
-- requestOptions
-
-##### delete
-```typescript 
-delete( documentURI:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<Carbon.HTTP.Response.Class>
-```
-
-Delete a the Resource referred by a PersistedDocument from the server.
-
-*Parameters*
-
-- documentURI
-- requestOptions
-
-##### getDownloadURL
-```typescript 
-getDownloadURL( documentURI:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<Carbon.HTTP.Response.Class>
-```
-
-Add to the URI provided with the properties necessarily for a single download request.
-
-*Parameters*
-
-- documentURI: The URI of the document that will be converted in a single download request.
-- requestOptions
-
-##### executeRawASKQuery
-```typescript 
-executeRawASKQuery( documentURI:string,  askQuery:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.SPARQL.RawResults.Class, Carbon.HTTP.Response.Class ]>
-```
-
-
-Executes an ASK query on a document and returns a raw application/sparql-results+json object
-
-
-*Parameters*
-
-- documentURI
-- askQuery
-- requestOptions
-
-##### executeRawSELECTQuery
-```typescript 
-executeRawSELECTQuery( documentURI:string,  selectQuery:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.SPARQL.RawResults.Class, Carbon.HTTP.Response.Class ]>
-```
-
-Executes a SELECT query on a document and returns a raw application/sparql-results+json object
-
-*Parameters*
-
-- documentURI
-- selectQuery
-- requestOptions
-
-##### executeRawCONSTRUCTQuery
-```typescript 
-executeRawCONSTRUCTQuery( documentURI:string,  constructQuery:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ string, Carbon.HTTP.Response.Class ]>
-```
-
-
-Executes a CONSTRUCT query on a document and returns a string with the resulting model
-
-
-*Parameters*
-
-- documentURI
-- constructQuery
-- requestOptions
-
-##### executeRawDESCRIBEQuery
-```typescript 
-executeRawDESCRIBEQuery( documentURI:string,  describeQuery:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ string, Carbon.HTTP.Response.Class ]>
-```
-
-
-Executes a DESCRIBE Query and returns a string with the resulting model
-
-
-*Parameters*
-
-- documentURI
-- describeQuery
-- requestOptions
-
-##### createChild
-```typescript 
-createChild( parentURI:string,  childDocument:Carbon.Document.Class,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[Carbon.Pointer.Class, Carbon.HTTP.Response.Class]>
-```
-
-Create a child document for the respective parent source.
-
-*Parameters*
-
-- parentURI
-- childDocument
-- requestOptions
-
-```typescript 
-createChild( parentURI:string,  slug:string,  childDocument:Carbon.Document.Class,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[Carbon.Pointer.Class, Carbon.HTTP.Response.Class]>
-```
-
-Create a child document for the respective parent source.
-
-*Parameters*
-
-- parentURI
-- slug
-- childDocument
-- requestOptions
-
-```typescript 
-createChild( parentURI:string,  childObject:Object,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[Carbon.Pointer.Class, Carbon.HTTP.Response.Class]>
-```
-
-Create a child document for the respective parent source.
-
-*Parameters*
-
-- parentURI
-- childObject
-- requestOptions
-
-```typescript 
-createChild( parentURI:string,  slug:string,  childObject:Object,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[Carbon.Pointer.Class, Carbon.HTTP.Response.Class]>
-```
-
-Create a child document for the respective parent source.
-
-*Parameters*
-
-- parentURI
-- slug
-- childObject
-- requestOptions
-
-##### getChildren
-```typescript 
-getChildren( parentURI:string,  retrievalPreferences?:Carbon.RetrievalPreferences.Class,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.PersistedDocument.Class[], Carbon.HTTP.Response.Class ]>
-```
-
-Retrieves all the children of a document and their content, where you can specify the retrieval preferences and the options for the request.
-
-*Parameters*
-
-- parentURI: URI of the document to ask its children.
-- retrievalPreferences: An object for specify the retrieval preferences for the request.
-- requestOptions: Options that can be specified for change the behavior of the request.
-
-```typescript 
-getChildren( parentURI:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.PersistedDocument.Class[], Carbon.HTTP.Response.Class ]>
-```
-
-Retrieves all the children of a document and their content, where you can specify options for the request.
-
-*Parameters*
-
-- parentURI: URI of the document to ask its children.
-- requestOptions: Options that can be specified for change the behavior of the request.
-
-##### createAccessPoint
-```typescript 
-createAccessPoint( documentURI:string,  accessPoint:Carbon.AccessPoint.Class,  slug?:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[Carbon.Pointer.Class, Carbon.HTTP.Response.Class]>
-```
-
-Create an AccessPoint of the document.
-
-*Parameters*
-
-- documentURI
-- accessPoint
-- slug
-- requestOptions
-
-```typescript 
-createAccessPoint( accessPoint:Carbon.AccessPoint.Class,  slug?:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[Carbon.Pointer.Class, Carbon.HTTP.Response.Class]>
-```
-
-Create an AccessPoint of the document.
-
-*Parameters*
-
-- accessPoint
-- slug
-- requestOptions
-
-##### upload
-```typescript 
-upload( parentURI:string,  data:Blob,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[Carbon.Pointer.Class, Carbon.HTTP.Response.Class]>
-```
-
-Upload a binary data to the server, creating a child for the parent specified. This signature it's only when working in a Browser.
-
-*Parameters*
-
-- parentURI
-- data
-- requestOptions
-
-```typescript 
-upload( parentURI:string,  slug:string,  data:Blob,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[Carbon.Pointer.Class, Carbon.HTTP.Response.Class]>
-```
-
-Upload a binary data to the server, creating a child for the parent specified. This signature it's only when working in a Browser.
-
-*Parameters*
-
-- parentURI
-- slug
-- data
-- requestOptions
-
-```typescript 
-upload( parentURI:string,  data:Buffer,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[Carbon.Pointer.Class, Carbon.HTTP.Response.Class]>
-```
-
-Upload a binary data to the server, creating a child for the parent specified. This signature it's only when working in Node.js.
-
-*Parameters*
-
-- parentURI
-- data
-- requestOptions
-
-```typescript 
-upload( parentURI:string,  slug:string,  data:Buffer,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[Carbon.Pointer.Class, Carbon.HTTP.Response.Class]>
-```
-
-Upload a binary data to the server, creating a child for the parent specified. This signature it's only when working in Node.js.
-
-*Parameters*
-
-- parentURI
-- slug
-- data
-- requestOptions
-
-##### listMembers
-```typescript 
-listMembers( uri:string,  includeNonReadable?:boolean,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.Pointer.Class[], Carbon.HTTP.Response.Class ]>
-```
-
-Retrieves all the members of a document with out resolving them, where you can specify if the response should include the Non Readable resources and options for the request.
-
-*Parameters*
-
-- uri: URI of the document to ask its members.
-- includeNonReadable: Specify if the the response should include the Non Readable resources. By default this is set to `true`.
-- requestOptions: Options that can be specified for change the behavior of the request.
-
-```typescript 
-listMembers( uri:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.Pointer.Class[], Carbon.HTTP.Response.Class ]>
-```
-
-Retrieves all the members of a document with out resolving them, where you can specify options for the request.
-
-*Parameters*
-
-- uri: URI of the document to ask its members.
-- requestOptions: Options that can be specified for change the behavior of the request.
-
-##### getMembers
-```typescript 
-getMembers( uri:string,  includeNonReadable?:boolean,  retrievalPreferences?:Carbon.RetrievalPreferences.Class,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.Pointer.Class[], Carbon.HTTP.Response.Class ]>
-```
-
-Retrieves all the members of a document and their contents, where you can specify if the response should include the Non Readable resources, the retrieval preferences and the options for the request.
-
-*Parameters*
-
-- uri: URI of the document to ask its members.
-- includeNonReadable: Specify if the the response should include the Non Readable resources. By default this is set to `true`.
-- retrievalPreferences: An object for specify the retrieval preferences for the request.
-- requestOptions: Options that can be specified for change the behavior of the request.
-
-```typescript 
-getMembers( uri:string,  includeNonReadable?:boolean,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.Pointer.Class[], Carbon.HTTP.Response.Class ]>
-```
-
-Retrieves all the members of a document and their contents, where you can specify if the response should include the Non Readable resources and options for the request.
-
-*Parameters*
-
-- uri: URI of the document to ask its members.
-- includeNonReadable: Specify if the the response should include the Non Readable resources. By default this is set to `true`.
-- requestOptions: Options that can be specified for change the behavior of the request.
-
-```typescript 
-getMembers( uri:string,  retrievalPreferences?:Carbon.RetrievalPreferences.Class,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.Pointer.Class[], Carbon.HTTP.Response.Class ]>
-```
-
-Retrieves all the members of a document and their content, where you can specify the retrieval preferences and the options for the request.
-
-*Parameters*
-
-- uri: URI of the document to ask its members.
-- retrievalPreferences: An object for specify the retrieval preferences for the request.
-- requestOptions: Options that can be specified for change the behavior of the request.
-
-```typescript 
-getMembers( uri:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.Pointer.Class[], Carbon.HTTP.Response.Class ]>
-```
-
-Retrieves all the members of a document and their contents, where you can specify options for the request.
-
-*Parameters*
-
-- uri: URI of the document to ask its members.
-- requestOptions: Options that can be specified for change the behavior of the request.
 
 ##### addMember
 ```typescript 
 addMember( documentURI:string,  member:Carbon.Pointer.Class,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<Carbon.HTTP.Response>
 ```
 
-Add the specified resource Pointer as a member of the document container specified.
+Add a member relation to the resource Pointer in the document container specified.
 
 *Parameters*
 
-- documentURI: URI of the document container where to add the member.
+- documentURI: URI of the document container where the member will be added.
 - member: Pointer object that references the resource to add as a member.
-- requestOptions
+- requestOptions: Customizable options for the request.
 
 ```typescript 
 addMember( documentURI:string,  memberURI:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<Carbon.HTTP.Response>
 ```
 
-Add the specified resource URI as a member of the document container specified.
+Add a member relation to the resource URI in the document container specified.
 
 *Parameters*
 
-- documentURI: URI of the document container where to add the member.
+- documentURI: URI of the document container where the member will be added.
 - memberURI: URI of the resource to add as a member.
+- requestOptions: Customizable options for the request.
+
+##### addMembers
+```typescript 
+addMembers( documentURI:string,  members:(Carbon.Pointer.Class | string)[],  requestOptions?:Carbon.HTTP.Request.Options ):Promise<Carbon.HTTP.Response>
+```
+
+Add a member relation to every resource URI or Pointer provided in the document container specified.
+
+*Parameters*
+
+- documentURI: URI of the document container where the members will be added.
+- members: Array of URIs or Pointers to add as members.
+- requestOptions: Customizable options for the request.
+
+##### createAccessPoint
+```typescript 
+createAccessPoint<T extends Carbon.AccessPoint.Class>( documentURI:string,  accessPoint:T,  slug?:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ T & Carbon.PersistedAccessPoint.Class, Carbon.HTTP.Response.Class ]>
+```
+
+Persists an AccessPoint in the document specified.
+
+*Parameters*
+
+- documentURI: URI of the document where to create a new access point.
+- accessPoint: AccessPoint Document to persist.
+- slug: Slug that will be used for the URI of the new access point.
+- requestOptions: Customizable options for the request.
+
+```typescript 
+createAccessPoint<T extends Carbon.AccessPoint.Class>( documentURI:string,  accessPoint:T,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ T & Carbon.PersistedAccessPoint.Class, Carbon.HTTP.Response.Class ]>
+```
+
+Persists an AccessPoint in the document specified.
+
+*Parameters*
+
+- documentURI: URI of the document where to create a new access point.
+- accessPoint: AccessPoint Document to persist.
+- requestOptions: Customizable options for the request.
+
+##### createChild
+```typescript 
+createChild<T extends Carbon.Document.Class>( parentURI:string,  childDocument:T,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ T & Carbon.PersistedDocument.Class, Carbon.HTTP.Response.Class ]>
+```
+
+Persists a child document for the respective parent source.
+
+*Parameters*
+
+- parentURI: URI of the document where to create a new child.
+- childDocument: Document to persists as a new child.
+- requestOptions: Customizable options for the request.
+
+```typescript 
+createChild<T extends Carbon.Document.Class>( parentURI:string,  slug:string,  childDocument:T,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ T & Carbon.PersistedDocument.Class, Carbon.HTTP.Response.Class ]>
+```
+
+Persists a child document for the respective parent source.
+
+*Parameters*
+
+- parentURI: URI of the document where to create a new child.
+- slug: Slug that will be used for the URI of the new child.
+- childDocument: Document to persists as a new child.
+- requestOptions: Customizable options for the request.
+
+```typescript 
+createChild<T extends Object>( parentURI:string,  childObject:T,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ T & Carbon.PersistedDocument.Class, Carbon.HTTP.Response.Class ]>
+```
+
+Persists JavaScript object as a child document for the respective parent source.
+
+*Parameters*
+
+- parentURI: URI of the document where to create a new child.
+- childObject: A normal JavaScript object that will be converted and persisted as a new child document.
+- requestOptions: Customizable options for the request.
+
+```typescript 
+createChild<T extends Object>( parentURI:string,  slug:string,  childObject:T,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ T & Carbon.PersistedDocument.Class, Carbon.HTTP.Response.Class ]>
+```
+
+Persists JavaScript object as a child document for the respective parent source.
+
+*Parameters*
+
+- parentURI: URI of the document where to create a new child.
+- slug: Slug that will be used for the URI of the new child.
+- childObject: A normal JavaScript object that will be converted and persisted as a new child document.
+- requestOptions: Customizable options for the request.
+
+##### createChildAndRetrieve
+```typescript 
+createChildAndRetrieve<T extends Object>( parentURI:string,  childObject:T,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ T & Carbon.Document.Class, [ Carbon.HTTP.Response.Class, Carbon.HTTP.Response.Class ] ]>
+```
+
+Persists JavaScript object as a child document for the respective parent source and retrieves tha updated data from the server.
+
+*Parameters*
+
+- parentURI: URI of the document where to create a new child.
+- childObject:  A normal JavaScript object that will be converted and persisted as a new child document.
+- requestOptions: Customizable options for the request.
+
+```typescript 
+createChildAndRetrieve<T extends Object>( parentURI:string,  childObject:T,  slug?:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ T & Carbon.Carbon.Class, [ Carbon.HTTP.Response.Class, Carbon.HTTP.Response.Class ] ]>
+```
+
+Persists JavaScript object as a child document for the respective parent source and retrieves tha updated data from the server.
+
+*Parameters*
+
+- parentURI: URI of the document where to create a new child.
+- childObject:  A normal JavaScript object that will be converted and persisted as a new child document.
+- slug: Slug that will be used for the URI of the new child.
+- requestOptions: Customizable options for the request.
+
+##### delete
+```typescript 
+delete( documentURI:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<Carbon.HTTP.Response.Class>
+```
+
+Delete the resource from the CarbonLDP server referred by the URI provided.
+
+*Parameters*
+
+- documentURI: The resource to delete from the CarbonLDP server.
+- requestOptions: Customizable options for the request.
+
+##### executeRawASKQuery
+```typescript 
+executeRawASKQuery( documentURI:string,  askQuery:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.SPARQL.RawResults.Class, Carbon.HTTP.Response.Class ]>
+```
+
+Executes an ASK query on a document and returns a raw application/sparql-results+json object.
+
+*Parameters*
+
+- documentURI: URI of the document that works as a SPARQL endpoint where to execute the SPARQL query.
+- askQuery: ASK query to execute in the selected endpoint.
+- requestOptions: Customizable options for the request.
+
+##### executeRawCONSTRUCTQuery
+```typescript 
+executeRawCONSTRUCTQuery( documentURI:string,  constructQuery:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ string, Carbon.HTTP.Response.Class ]>
+```
+
+Executes a CONSTRUCT query on a document and returns a string with the resulting model.
+
+*Parameters*
+
+- documentURI: URI of the document that works as a SPARQL endpoint where to execute the SPARQL query.
+- constructQuery: CONSTRUCT query to execute in the selected endpoint.
+- requestOptions: Customizable options for the request.
+
+##### executeRawDESCRIBEQuery
+```typescript 
+executeRawDESCRIBEQuery( documentURI:string,  describeQuery:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ string, Carbon.HTTP.Response.Class ]>
+```
+
+Executes a DESCRIBE query and returns a string with the resulting model.
+
+*Parameters*
+
+- documentURI: URI of the document that works as a SPARQL endpoint where to execute the SPARQL query.
+- describeQuery: DESCRIBE query to execute in the selected endpoint.
+- requestOptions: Customizable options for the request.
+
+##### executeRawSELECTQuery
+```typescript 
+executeRawSELECTQuery( documentURI:string,  selectQuery:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.SPARQL.RawResults.Class, Carbon.HTTP.Response.Class ]>
+```
+
+Executes a SELECT query on a document and returns a raw application/sparql-results+json object.
+
+*Parameters*
+
+- documentURI: URI of the document that works as a SPARQL endpoint where to execute the SPARQL query.
+- selectQuery: SELECT query to execute in the selected endpoint.
+- requestOptions: Customizable options for the request.
+
+##### executeUPDATE
+```typescript 
+executeUPDATE( documentURI:string,  update:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<Carbon.HTTP.Response.Class>
+```
+
+Executes a DESCRIBE query and returns a string with the resulting model.
+
+*Parameters*
+
+- documentURI: URI of the document that works as a SPARQL endpoint where to execute the SPARQL query.
+- update: UPDATE query to execute in the selected endpoint.
+- requestOptions: Customizable options for the request.
+
+##### exists
+```typescript 
+exists( documentURI:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ boolean, Carbon.HTTP.Response.Class ]>
+```
+
+Retrieves a boolean indicating if the resource exists or not in the CarbonLDP server.
+
+*Parameters*
+
+- documentURI: The URI to verify if it exists.
+- requestOptions: Customizable options for the request.
+
+##### get
+```typescript 
+get<T>( uri:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ T & Carbon.PersistedDocument.Class, HTTP.Response.Class ]>
+```
+
+Retrieves the Carbon Document referred by the URI specified from the CarbonLDP server.
+
+*Parameters*
+
+- uri: The URI of the document to retrieve.
+- requestOptions: Customizable options for the request.
+
+##### getChildren
+```typescript 
+getChildren<T>( parentURI:string,  retrievalPreferences?:Carbon.RetrievalPreferences.Class,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ (T & Carbon.PersistedDocument.Class)[], Carbon.HTTP.Response.Class ]>
+```
+
+Retrieves an array of resolved persisted documents that refers all children of the container specified, or a part of them in accordance to the retrieval preferences specified.
+
+*Parameters*
+
+- parentURI: URI of the document from where to look for its children.
+- retrievalPreferences: An object that specify the retrieval preferences for the request.
+- requestOptions: Customizable options for the request.
+
+```typescript 
+getChildren<T>( parentURI:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ (T & Carbon.PersistedDocument.Class)[], Carbon.HTTP.Response.Class ]>
+```
+
+Retrieves an array of resolved persisted documents that refers all children of the container specified.
+
+*Parameters*
+
+- parentURI: URI of the document from where to look for its children.
+- requestOptions: Customizable options for the request.
+
+##### getDownloadURL
+```typescript 
+getDownloadURL( documentURI:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<Carbon.HTTP.Response.Class>
+```
+
+Add to the URI provided the necessary properties for a single download request.
+
+*Parameters*
+
+- documentURI: The URI of the document that will be converted in a single download request.
 - requestOptions
+
+##### getMembers
+```typescript 
+getMembers<T>( uri:string,  includeNonReadable?:boolean,  retrievalPreferences?:Carbon.RetrievalPreferences.Class,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ (T & Carbon.PersistedDocument.Class)[], Carbon.HTTP.Response.Class ]>
+```
+
+Retrieves all the members of a document and their contents, or a part of them in accordance to the retrieval preferences specified.
+
+*Parameters*
+
+- uri: URI of the document from where to look for its members.
+- includeNonReadable: Specify if the response should include the Non Readable resources. By default this is set to `true`.
+- retrievalPreferences: An object to specify the retrieval preferences for the request.
+- requestOptions: Customizable options for the request.
+
+```typescript 
+getMembers<T>( uri:string,  includeNonReadable?:boolean,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ (T & Carbon.PersistedDocument.Class)[], Carbon.HTTP.Response.Class ]>
+```
+
+Retrieves all the members of a document and their contents.
+
+*Parameters*
+
+- uri: URI of the document from where to look for its members.
+- includeNonReadable: Specify if the response should include the Non Readable resources. By default this is set to `true`.
+- requestOptions: Customizable options for the request.
+
+```typescript 
+getMembers<T>( uri:string,  retrievalPreferences?:Carbon.RetrievalPreferences.Class,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ (T & Carbon.PersistedDocument.Class)[], Carbon.HTTP.Response.Class ]>
+```
+
+Retrieves all the members of a document and their content, or a part of them in accordance to the retrieval preferences specified.
+
+*Parameters*
+
+- uri: URI of the document from where to look for its members.
+- retrievalPreferences: An object to specify the retrieval preferences for the request.
+- requestOptions: Customizable options for the request.
+
+```typescript 
+getMembers<T>( uri:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ (T & Carbon.PersistedDocument.Class)[], Carbon.HTTP.Response.Class ]>
+```
+
+Retrieves all the members of a document and their contents.
+
+*Parameters*
+
+- uri: URI of the document from where to look for its members.
+- requestOptions: Customizable options for the request.
+
+##### getPointer
+```typescript 
+getPointer( id:string ):boolean
+```
+
+Returns the pointer referenced by the URI provided. If no pointer exists, one is created and then returned.
+Returns `null` if the URI is outside the scope of the Documents instance.
+
+*Parameters*
+
+- id: URI to look for.
+
+##### hasPointer
+```typescript 
+hasPointer( id:string ):boolean
+```
+
+Returns true if the Documents instance has a pointer referenced by the URI provided.
+
+*Parameters*
+
+- id: URI to look for.
+
+##### inScope
+```typescript 
+inScope( pointer:Carbon.Pointer.Class ):boolean
+```
+
+Returns true if the pointer provided is inside the scope of the Documents instance.
+
+*Parameters*
+
+- pointer: Pointer to evaluate.
+
+```typescript 
+inScope( id:string ):boolean
+```
+
+Returns true if the URI provided is inside the scope of the Documents instance.
+
+*Parameters*
+
+- id: URI to evaluate.
+
+##### listChildren
+```typescript 
+listChildren( parentURI:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.PersistedDocument.Class[], Carbon.HTTP.Response ]>
+```
+
+Retrieves an array of unresolved persisted documents that refers to the children of the container specified.
+
+*Parameters*
+
+- parentURI: URI of the document container where to look for its children.
+- requestOptions: Customizable options for the request.
+
+##### listMembers
+```typescript 
+listMembers( uri:string,  includeNonReadable?:boolean,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.PersistedDocument.Class[], Carbon.HTTP.Response.Class ]>
+```
+
+Retrieves all the members of a document without resolving them.
+
+*Parameters*
+
+- uri: URI of the document from where to look for its members.
+- includeNonReadable: Specify if the response should include the Non Readable resources. By default this is set to `true`.
+- requestOptions: Customizable options for the request.
+
+```typescript 
+listMembers( uri:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.PersistedDocument.Class[], Carbon.HTTP.Response.Class ]>
+```
+
+Retrieves all the members of a document without resolving them.
+
+*Parameters*
+
+- uri: URI of the document from where to look for its members.
+- requestOptions: Customizable options for the request.
+
+##### refresh
+```typescript 
+refresh<T extends Carbon.PersistedDocument.Class>( persistedDocument:T,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ T, Carbon.HTTP.Response ]>
+```
+
+Update the specified document with the data of the CarbonLDP server, if a newest version exists.
+
+*Parameters*
+
+- persistedDocument: The persisted document to update.
+- requestOptions: Customizable options for the request.
+
+##### removeAllMembers
+```typescript 
+removeAllMembers( documentURI:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<Carbon.HTTP.Response>
+```
+
+Remove all the member relations from the document container specified.
+
+*Parameters*
+
+- documentURI: URI of the document container where the members will be removed.
+- requestOptions: Customizable options for the request.
 
 ##### removeMember
 ```typescript 
 removeMember( documentURI:string,  member:Carbon.Pointer.Class,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<Carbon.HTTP.Response>
 ```
 
-Remove the specified resource Pointer member of the resource container specified.
+Remove the member relation between the Pointer and the resource container specified.
 
 *Parameters*
 
-- documentURI: URI of the resource container where to remove the member.
+- documentURI: URI of the resource container from where the member will be removed.
 - member: Pointer object that references the resource to remove as a member.
-- requestOptions
+- requestOptions: Customizable options for the request.
 
 ```typescript 
 removeMember( documentURI:string,  memberURI:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<Carbon.HTTP.Response>
 ```
 
-Remove the specified resource URI member of the resource container specified.
+Remove the member relation between the resource URI and the resource container specified.
 
 *Parameters*
 
-- documentURI: URI of the resource container where to remove the member.
+- documentURI: URI of the resource container from where the member will be removed.
 - memberURI: URI of the resource to remove as a member.
-- requestOptions
+- requestOptions: Customizable options for the request.
+
+##### removeMembers
+```typescript 
+removeMembers( documentURI:string,  members:(Carbon.Pointer.Class | string)[],  requestOptions?:Carbon.HTTP.Request.Options ):Promise<Carbon.HTTP.Response>
+```
+
+Remove the member relation to every specified resource URI or Pointer form the document container specified.
+
+*Parameters*
+
+- documentURI: URI of the document container where the members will be removed.
+- members: Array of URIs or Pointers to remove as members
+- requestOptions: Customizable options for the request.
+
+##### save
+```typescript 
+save<T extends Carbon.PersistedDocument.Class>( persistedDocument:T,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ T, Carbon.HTTP.Response.Class ]>
+```
+
+Update the data of the document provided in the server.
+
+*Parameters*
+
+- persistedDocument: The persisted document with the data to update in the server.
+- requestOptions: Customisable options for the request.
+
+##### saveAndRefresh
+```typescript 
+saveAndRefresh<T extends Carbon.PersistedDocument.Class>( persistedDocument:T,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ T, [ HTTP.Response.Class, HTTP.Response.Class ] ]>
+```
+
+Save and refresh the PersistedDocument specified.
+
+*Parameters*
+
+- persistedDocument: The persistedDocument to save and refresh.
+- requestOptions: Customizable options for the request.
+
+##### upload
+```typescript 
+upload( parentURI:string,  data:Blob,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[Carbon.Pointer.Class, Carbon.HTTP.Response.Class]>
+```
+
+Upload binary data, creating a child for the parent specified. This signature only works in a web browser.
+
+*Parameters*
+
+- parentURI: URI of the document where to upload the new binary data child.
+- data: Blob of the binary data to upload.
+- requestOptions: Customizable options for the request.
+
+```typescript 
+upload( parentURI:string,  data:Blob,  slug?:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[Carbon.Pointer.Class, Carbon.HTTP.Response.Class]>
+```
+
+Upload binary data, creating a child for the parent specified. This signature only works in a web browser.
+
+*Parameters*
+
+- parentURI: URI of the document where to upload the new binary data child.
+- data: Blob of the binary data to upload.
+- slug: Slug that will be used for the URI of the new binary child.
+- requestOptions: Customizable options for the request.
+
+```typescript 
+upload( parentURI:string,  data:Buffer,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[Carbon.Pointer.Class, Carbon.HTTP.Response.Class]>
+```
+
+Upload binary data, creating a child for the parent specified. This signature only works in Node.js.
+
+*Parameters*
+
+- parentURI: URI of the document where to upload the new binary data child.
+- data: Buffer of the binary data to upload.
+- requestOptions: Customizable options for the request.
+
+```typescript 
+upload( parentURI:string,  data:Buffer,  slug?:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[Carbon.Pointer.Class, Carbon.HTTP.Response.Class]>
+```
+
+Upload binary data, creating a child for the parent specified. This signature only works in Node.js.
+
+*Parameters*
+
+- parentURI: URI of the document where to upload the new binary data child.
+- data: Buffer of the binary data to upload.
+- slug: Slug that will be used fot he URI of the new binary child.
+- requestOptions: Customizable options for the request.
 
 
 
@@ -2452,6 +2998,7 @@ Remove the specified resource URI member of the resource container specified.
 ### <a name="Carbon-Errors-AbstractError" />Class Carbon.Errors.AbstractError
 
 
+> Class that works as template for the custom errors in the SDK.
 
 
 #### <a name="Carbon-Errors-AbstractError-Constructor" />Constructor
@@ -2468,11 +3015,11 @@ AbstractError( message:string )
 #### <a name="Carbon-Errors-AbstractError-Properties" />Properties
 
 ```typescript 
-name:string 
+message:string 
 ```
 
 ```typescript 
-message:string 
+name:string 
 ```
 
 
@@ -2483,7 +3030,7 @@ message:string
 toString():string
 ```
 
-Returns a string representation
+Returns a string representation of the error.
 
 
 
@@ -2500,7 +3047,7 @@ Returns a string representation
 
 **Extends:** [Carbon.Errors.AbstractError](#Carbon-Errors-AbstractError)
 
-> Error class to indicates that an ID is already in use
+> Error class to indicate that an identifier (ID) is already in use.
 
 
 
@@ -2526,7 +3073,7 @@ name:string
 
 **Extends:** [Carbon.Errors.AbstractError](#Carbon-Errors-AbstractError)
 
-> Error class that indicates a illegal action
+> Error class to indicate that an action not allowed was attempted.
 
 
 
@@ -2552,7 +3099,7 @@ name:string
 
 **Extends:** [Carbon.Errors.AbstractError](#Carbon-Errors-AbstractError)
 
-> Error class that indicates an illegal argument was provided to in a function
+> Error class to indicate that a different argument than the expected was provided.
 
 
 
@@ -2578,7 +3125,7 @@ name:string
 
 **Extends:** [Carbon.Errors.AbstractError](#Carbon-Errors-AbstractError)
 
-> Error class that can be thrown to show an illegal state, meaning an state that the application is not supposed to reach.
+> Error class to indicate that a task can't be completed because of the lack of pre-required configuration or execution of previous tasks.
 
 
 #### <a name="Carbon-Errors-IllegalStateError-Constructor" />Constructor
@@ -2622,7 +3169,7 @@ toString():string
 
 **Extends:** [Carbon.Errors.AbstractError](#Carbon-Errors-AbstractError)
 
-> Error class that indicates a function that is still not implemented
+> Error class to indicate that an action is not yet implemented.
 
 
 #### <a name="Carbon-Errors-NotImplementedError-Constructor" />Constructor
@@ -2665,68 +3212,68 @@ toString():string
 ### <a name="Carbon-Fragment-Factory" />Class Carbon.Fragment.Factory
 
 
-> Factory class for Fragment objects.
+> Factory class for `Carbon.Fragment.Class` objects.
 
 
 
 
 #### <a name="Carbon-Fragment-Factory-Methods" />Methods
-##### hasClassProperties
-```typescript 
-static hasClassProperties( resource:Object ):boolean
-```
-
-Returns true if the object provided has the properties and functions of a Fragment object
-
-*Parameters*
-
-- resource
-
 ##### create
 ```typescript 
 static create( id:string,  document:Carbon.Document.Class ):Carbon.Fragment.Class
 ```
 
-Creates a Fragment with the ID provided for the document specified.
+Creates a Fragment with the ID provided.
 
 *Parameters*
 
-- id
-- document
+- id: The ID of the fragment to create.
+- document: The document that the fragment will be part of.
 
 ```typescript 
 static create( document:Carbon.Document.Class ):Carbon.Fragment.Class
 ```
 
-Create a Blank Node Fragment since no ID is provided for the specified document.
+Creates a BlankNode since no ID is provided.
 
 *Parameters*
 
-- document
+- document: The document that the fragment will be part of.
 
 ##### createFrom
 ```typescript 
-static createFrom( object:T extends Object,  id:string,  document:Carbon.Document.Class ):T & Carbon.Fragment.Class
+static createFrom<T extends Object>( object:T,  id:string,  document:Carbon.Document.Class ):T & Carbon.Fragment.Class
 ```
 
-Creates a Fragment from an Object with the ID provided for the document specified.
+Creates a Fragment from an Object with the ID provided.
 
 *Parameters*
 
-- object
-- id
-- document
+- object: Object that will be converted to a fragment.
+- id: The ID that will be assigned to the fragment.
+- document: The document that the fragment will be part of.
 
 ```typescript 
-static createFrom( object:T extends Object,  document:Carbon.Document.Class ):Carbon.Fragment.Class
+static createFrom<T extends Object>( object:T,  document:Carbon.Document.Class ):T & Carbon.Fragment.Class
 ```
 
-Create a Blank Node Fragment since no ID is provided for the specified document.
+Creates a BlankNode since no ID is provided.
 
 *Parameters*
 
-- object
-- document
+- object: Object that will be converted to a fragment.
+- document: The document that the fragment will be part of.
+
+##### hasClassProperties
+```typescript 
+static hasClassProperties( resource:Object ):boolean
+```
+
+Returns true if the object provided has the properties and methods of a `Class.Fragment.Class` object.
+
+*Parameters*
+
+- resource
 
 
 
@@ -2749,17 +3296,6 @@ Create a Blank Node Fragment since no ID is provided for the specified document.
 
 
 #### <a name="Carbon-FreeResources-Factory-Methods" />Methods
-##### hasClassProperties
-```typescript 
-static hasClassProperties( object:Object ):boolean
-```
-
-Returns true if the object provided has the properties of a `Carbon.FreeResources.Class` object.
-
-*Parameters*
-
-- object
-
 ##### create
 ```typescript 
 static create( documents:Carbon.Documents ):Carbon.FreeResources.Class
@@ -2769,41 +3305,52 @@ Creates a empty `Carbon.FreeResources.Class` object.
 
 *Parameters*
 
-- documents: A `Carbon.Documents` object where the FreeResources scope is.
+- documents: A `Carbon.Documents` object where the FreeResources scope is in.
 
 ##### createFrom
 ```typescript 
-static createFrom( object:T extends Object,  documents:Carbon.Documents.Class ):Carbon.FreeResources.Class & T
+static createFrom<T extends Object>( object:T,  documents:Carbon.Documents.Class ):T & Carbon.FreeResources.Class
 ```
 
-Create a `Carbon.FreeResources.Class` object from the plain object provided.
+Creates a `Carbon.FreeResources.Class` object from the plain object provided.
 
 *Parameters*
 
 - object: The object that wants be converted in a `Carbon.FreeResources.Class`.
-- documents: A `Carbon.Documents` object where the FreeResource scope is.
+- documents: A `Carbon.Documents` object where the FreeResource scope is in.
 
 ##### decorate
 ```typescript 
-static decorate( object:T extends Object ):Carbon.FreeResources.Class & T
+static decorate<T extends Object>( object:T ):T & Carbon.FreeResources.Class
 ```
 
-Decorate the object provided with the methods and properties of a `Carbon.FreeResources.Class` object.
+Decorates the object provided with the properties and methods of a `Carbon.FreeResources.Class` object.
 
 *Parameters*
 
 - object
+
+##### hasClassProperties
+```typescript 
+static hasClassProperties( object:Object ):boolean
+```
+
+Returns true if the object provided has the properties and methods of a `Carbon.FreeResources.Class` object.
+
+*Parameters*
+
+- object: Object to evaluate.
 
 
 
 #### <a name="Carbon-FreeResources-Factory-Decorated-Object" />Decorated Object
 **Interfaces:** [Carbon.FreeResources.Class](#Carbon-FreeResources-Class)
 
-> Object decorated by the Carbon.FreeResources.Factory.decorate function.
+> Object decorated by the `Carbon.FreeResources.Factory.decorate()` method.
 
 ##### <a name="Carbon-FreeResources-Factory-Decorated-Object-Properties" />Properties
 ```typescript 
-_documents:Private property that contains the Documents class where the object scope is. 
+_documents:Private property that contains the Documents class where the object scope is in. 
 ```
 
 Carbon.Documents
@@ -2814,41 +3361,12 @@ _resourcesIndex:Private property that contains the references of every free reso
 Map<string, Carbon.Resource.Class>
 
 ##### <a name="Carbon-FreeResources-Factory-Decorated-Object-Methods" />Methods
-##### hasResource
-```typescript 
-hasResource( id:string ):boolean
-```
-
-Returns true if exists a resource with the ID specified.
-
-*Parameters*
-
-- id: The ID of the resource to seek for.
-
-##### getResource
-```typescript 
-getResource( id:string ):Carbon.Resource.Class
-```
-
-Returns the resource referred by the ID provided. If no resource exists with the ID specified `null` is returned.
-
-*Parameters*
-
-- id: The ID of the resource to seek for.
-
-##### getResources
-```typescript 
-getResources():Carbon.Resource.Class[]
-```
-
-Returns an array with all the resources inside the FreeResources object
-
 ##### createResource
 ```typescript 
 createResource( id?:string ):Carbon.Resource.Class
 ```
 
-Create and returns a new Free Resource. Throw an Error if no valid id is provided or if it is already in use.
+Creates and returns a new Free Resource. Throw an Error if no valid ID if provided or if it's already in use.
 
 *Parameters*
 
@@ -2865,30 +3383,52 @@ Create and returns a new Free Resource. Throw an Error if no valid id is provide
 
 - id: The ID of the resource to create. It should be an ID as a BlankNode.
 
-##### hasPointer
-```typescript 
-hasPointer():boolean
-```
-
-Returns true if exists a pointer in the scope of the FreeResources object and its parents.
-
 ##### getPointer
 ```typescript 
 getPointer( id:string ):Carbon.Pointer.Class
 ```
 
-Returns the pointer referred by the id specified, or creates one if no pointer exists in the scope.
+Returns the pointer referred by the ID specified, or creates one if no pointer exists in the scope.
 
 *Parameters*
 
-- id: The ID of the pointer seek for or the one to create.
+- id: The ID of the pointer sought for or the one to create.
 
-##### toJSON
+##### getResource
 ```typescript 
-toJSON():string
+getResource( id:string ):Carbon.Resource.Class
 ```
 
-Converts the resources contained in the current `Carbon.FreeResources.Class` object to a JSON string.
+Returns the resource referred by the ID provided. If no resource exists with the ID specified, `null` is returned.
+
+*Parameters*
+
+- id: The ID of the resource to sought for.
+
+##### getResources
+```typescript 
+getResources():Carbon.Resource.Class[]
+```
+
+Returns an array with all the resources inside the FreeResources object.
+
+##### hasPointer
+```typescript 
+hasPointer():boolean
+```
+
+Returns true if a pointer exists in the scope of the FreeResources object and its parents.
+
+##### hasResource
+```typescript 
+hasResource( id:string ):boolean
+```
+
+Returns true if a resource with the ID specified exists.
+
+*Parameters*
+
+- id: The ID of the resource to sought for.
 
 ##### inScope
 ```typescript 
@@ -2909,7 +3449,14 @@ Returns true if the the Pointer provided can be in the scope of the object.
 
 *Parameters*
 
-- pointer: The Pointer to evaluate if can be in the scope.
+- pointer: Pointer to be evaluated if can be in the scope.
+
+##### toJSON
+```typescript 
+toJSON():string
+```
+
+Converts the resources contained in the current `Carbon.FreeResources.Class` object to a JSON string.
 
 
 ## <a name="Carbon-HTTP" />Module Carbon/HTTP
@@ -2921,8 +3468,8 @@ Returns true if the the Pointer provided can be in the scope of the object.
 | --- | --- |
 | Errors | [Carbon/HTTP/Errors](#Carbon-HTTP-Errors) |
 | Header | [Carbon/HTTP/Header](#Carbon-HTTP-Header) |
-| JSONParser | [Carbon/HTTP/JSONParser](#Carbon-HTTP-JSONParser) |
 | JSONLDParser | [Carbon/HTTP/JSONLDParser](#Carbon-HTTP-JSONLDParser) |
+| JSONParser | [Carbon/HTTP/JSONParser](#Carbon-HTTP-JSONParser) |
 | Method | [Carbon/HTTP/Method](#Carbon-HTTP-Method) |
 | Parser | [Carbon/HTTP/Parser](#Carbon-HTTP-Parser) |
 | Request | [Carbon/HTTP/Request](#Carbon-HTTP-Request) |
@@ -2941,29 +3488,29 @@ Returns true if the the Pointer provided can be in the scope of the object.
 #### <a name="Carbon-HTTP-Errors-Reexports" />Reexports 
 | Export name | Original Location | 
 | --- | --- |
-| Error | [Carbon/HTTP/Errors/HTTPError](#Carbon-HTTP-Errors-HTTPError) |
+| BadGatewayError | [Carbon/HTTP/Errors/client/BadGatewayError](#Carbon-HTTP-Errors-client-BadGatewayError) |
 | BadRequestError | [Carbon/HTTP/Errors/client/BadRequestError](#Carbon-HTTP-Errors-client-BadRequestError) |
+| BadResponseError | [Carbon/HTTP/Errors/client/BadResponseError](#Carbon-HTTP-Errors-client-BadResponseError) |
 | ConflictError | [Carbon/HTTP/Errors/client/ConflictError](#Carbon-HTTP-Errors-client-ConflictError) |
+| Error | [Carbon/HTTP/Errors/HTTPError](#Carbon-HTTP-Errors-HTTPError) |
 | ForbiddenError | [Carbon/HTTP/Errors/client/ForbiddenError](#Carbon-HTTP-Errors-client-ForbiddenError) |
+| GatewayTimeoutError | [Carbon/HTTP/Errors/client/GatewayTimeoutError](#Carbon-HTTP-Errors-client-GatewayTimeoutError) |
+| HTTPVersionNotSupportedError | [Carbon/HTTP/Errors/client/HTTPVersionNotSupportedError](#Carbon-HTTP-Errors-client-HTTPVersionNotSupportedError) |
+| InternalServerErrorError | [Carbon/HTTP/Errors/client/InternalServerErrorError](#Carbon-HTTP-Errors-client-InternalServerErrorError) |
 | MethodNotAllowedError | [Carbon/HTTP/Errors/client/MethodNotAllowedError](#Carbon-HTTP-Errors-client-MethodNotAllowedError) |
 | NotAcceptableError | [Carbon/HTTP/Errors/client/NotAcceptableError](#Carbon-HTTP-Errors-client-NotAcceptableError) |
 | NotFoundError | [Carbon/HTTP/Errors/client/NotFoundError](#Carbon-HTTP-Errors-client-NotFoundError) |
+| NotImplementedError | [Carbon/HTTP/Errors/client/NotImplementedError](#Carbon-HTTP-Errors-client-NotImplementedError) |
 | PreconditionFailedError | [Carbon/HTTP/Errors/client/PreconditionFailedError](#Carbon-HTTP-Errors-client-PreconditionFailedError) |
 | PreconditionRequiredError | [Carbon/HTTP/Errors/client/PreconditionRequiredError](#Carbon-HTTP-Errors-client-PreconditionRequiredError) |
 | RequestEntityTooLargeError | [Carbon/HTTP/Errors/client/RequestEntityTooLargeError](#Carbon-HTTP-Errors-client-RequestEntityTooLargeError) |
 | RequestHeaderFieldsTooLargeError | [Carbon/HTTP/Errors/client/RequestHeaderFieldsTooLargeError](#Carbon-HTTP-Errors-client-RequestHeaderFieldsTooLargeError) |
 | RequestURITooLongError | [Carbon/HTTP/Errors/client/RequestURITooLongError](#Carbon-HTTP-Errors-client-RequestURITooLongError) |
+| ServiceUnavailableError | [Carbon/HTTP/Errors/client/ServiceUnavailableError](#Carbon-HTTP-Errors-client-ServiceUnavailableError) |
 | TooManyRequestsError | [Carbon/HTTP/Errors/client/TooManyRequestsError](#Carbon-HTTP-Errors-client-TooManyRequestsError) |
 | UnauthorizedError | [Carbon/HTTP/Errors/client/UnauthorizedError](#Carbon-HTTP-Errors-client-UnauthorizedError) |
-| UnsupportedMediaTypeError | [Carbon/HTTP/Errors/client/UnsupportedMediaTypeError](#Carbon-HTTP-Errors-client-UnsupportedMediaTypeError) |
-| BadResponseError | [Carbon/HTTP/Errors/client/BadResponseError](#Carbon-HTTP-Errors-client-BadResponseError) |
-| BadGatewayError | [Carbon/HTTP/Errors/client/BadGatewayError](#Carbon-HTTP-Errors-client-BadGatewayError) |
-| GatewayTimeoutError | [Carbon/HTTP/Errors/client/GatewayTimeoutError](#Carbon-HTTP-Errors-client-GatewayTimeoutError) |
-| HTTPVersionNotSupportedError | [Carbon/HTTP/Errors/client/HTTPVersionNotSupportedError](#Carbon-HTTP-Errors-client-HTTPVersionNotSupportedError) |
-| InternalServerErrorError | [Carbon/HTTP/Errors/client/InternalServerErrorError](#Carbon-HTTP-Errors-client-InternalServerErrorError) |
-| NotImplementedError | [Carbon/HTTP/Errors/client/NotImplementedError](#Carbon-HTTP-Errors-client-NotImplementedError) |
-| ServiceUnavailableError | [Carbon/HTTP/Errors/client/ServiceUnavailableError](#Carbon-HTTP-Errors-client-ServiceUnavailableError) |
 | UnknownError | [Carbon/HTTP/Errors/client/UnknownError](#Carbon-HTTP-Errors-client-UnknownError) |
+| UnsupportedMediaTypeError | [Carbon/HTTP/Errors/client/UnsupportedMediaTypeError](#Carbon-HTTP-Errors-client-UnsupportedMediaTypeError) |
 
 
 ### <a name="Carbon-HTTP-Errors-Properties" />Properties
@@ -2971,164 +3518,17 @@ Returns true if the the Pointer provided can be in the scope of the object.
 static client:Array <Carbon.HTTP.Error.HTTPError> 
 ```
 
-Array that contains all the error classes that can be occur because of a client
+Array that contains all the error classes that represents the errors induced by the client.
 ```typescript 
 static server:Array <Carbon.HTTP.Error.HTTPError> 
 ```
 
-Array that contains all the error classes that can occur because of the server
+Array that contains all the error classes that represents the errors caused by the server.
 ```typescript 
 static statusCodeMap:Map <number, Carbon.HTTP.Error.HTTPError> 
 ```
 
-Map where are assigned the HTTP Status Codes used in the SDK with every error class declared
-
-
-
-
-## <a name="Carbon-HTTP-Errors-BadRequestError" />Module Carbon/HTTP/Errors/BadRequestError
-
-
-
-
-
-
-
-
-### <a name="Carbon-HTTP-Errors-BadRequestError" />Class Carbon.HTTP.Errors.BadRequestError
-
-**Extends:** [Carbon.Errors.HTTPError](#Carbon-Errors-HTTPError)
-
-> Error class that can be throw to indicate has been send a request that doesn
-
-
-#### <a name="Carbon-HTTP-Errors-BadRequestError-Constructor" />Constructor
-```typescript 
-BadRequestError( message:string,  response:Carbon.HTTP.Response )
-```
-
-
-*Parameters*
-
-- message
-- response
-
-
-#### <a name="Carbon-HTTP-Errors-BadRequestError-Properties" />Properties
-```typescript 
-static statusCode:number 
-```
-
-
-```typescript 
-name:string 
-```
-
-
-#### <a name="Carbon-HTTP-Errors-BadRequestError-Methods" />Methods
-
-##### toString
-```typescript 
-toString():string
-```
-
-
-
-
-## <a name="Carbon-HTTP-Errors-ConflictError" />Module Carbon/HTTP/Errors/ConflictError
-
-
-
-
-
-
-
-
-### <a name="Carbon-HTTP-Errors-ConflictError" />Class Carbon.HTTP.Errors.ConflictError
-
-**Extends:** [Carbon.Errors.HTTPError](#Carbon-Errors-HTTPError)
-
-> Error class that can be throw to indicate that the request could not be processed because of conflict in the request, such as an ID conflict
-
-
-#### <a name="Carbon-HTTP-Errors-ConflictError-Constructor" />Constructor
-```typescript 
-ConflictError( message:string,  response:Carbon.HTTP.Response )
-```
-
-
-*Parameters*
-
-- message
-- response
-
-
-#### <a name="Carbon-HTTP-Errors-ConflictError-Properties" />Properties
-```typescript 
-static statusCode:number 
-```
-
-
-```typescript 
-name:string 
-```
-
-
-#### <a name="Carbon-HTTP-Errors-ConflictError-Methods" />Methods
-
-##### toString
-```typescript 
-toString():string
-```
-
-
-
-
-## <a name="Carbon-HTTP-Errors-ForbiddenError" />Module Carbon/HTTP/Errors/ForbiddenError
-
-
-
-
-
-
-
-
-### <a name="Carbon-HTTP-Errors-client-ForbiddenError" />Class Carbon.HTTP.Errors.client.ForbiddenError
-
-**Extends:** [Carbon.Errors.HTTPError](#Carbon-Errors-HTTPError)
-
-> Error class that can be throw to indicate that the current user does not have permissions to fulfill the request
-
-
-#### <a name="Carbon-HTTP-Errors-client-ForbiddenError-Constructor" />Constructor
-```typescript 
-ForbiddenError( message:string,  response:Carbon.HTTP.Response )
-```
-
-
-*Parameters*
-
-- message
-- response
-
-
-#### <a name="Carbon-HTTP-Errors-client-ForbiddenError-Properties" />Properties
-```typescript 
-static statusCode:number 
-```
-
-
-```typescript 
-name:string 
-```
-
-
-#### <a name="Carbon-HTTP-Errors-client-ForbiddenError-Methods" />Methods
-
-##### toString
-```typescript 
-toString():string
-```
+Map where all the HTTP Status Codes used in the SDK are assigned to their specific error class.
 
 
 
@@ -3146,7 +3546,7 @@ toString():string
 
 **Extends:** [Carbon.Errors.AbstractError](#Carbon-Errors-AbstractError)
 
-> Error class for define any type of HTTP Error occurred
+> Generic error class that defines any type of HTTP Error used in the SDK.
 
 
 #### <a name="Carbon-HTTP-Errors-HTTPError-Constructor" />Constructor
@@ -3168,19 +3568,19 @@ static statusCode:number
 
 
 ```typescript 
-name:string 
-```
-
-```typescript 
-response:number 
-```
-
-```typescript 
 errors:Carbon.LDP.Error[] 
 ```
 
 ```typescript 
+name:string 
+```
+
+```typescript 
 requestID:string 
+```
+
+```typescript 
+response:number 
 ```
 
 
@@ -3207,7 +3607,7 @@ toString():string
 
 **Extends:** [Carbon.Errors.HTTPError](#Carbon-Errors-HTTPError)
 
-> Error class that defines any error that can not be identified
+> Error class that defines any error that could not be identified.
 
 
 #### <a name="Carbon-HTTP-Errors-UnknownError-Constructor" />Constructor
@@ -3243,6 +3643,153 @@ toString():string
 
 
 
+## <a name="Carbon-HTTP-Errors-client-BadRequestError" />Module Carbon/HTTP/Errors/client/BadRequestError
+
+
+
+
+
+
+
+
+### <a name="Carbon-HTTP-Errors-BadRequestError" />Class Carbon.HTTP.Errors.BadRequestError
+
+**Extends:** [Carbon.Errors.HTTPError](#Carbon-Errors-HTTPError)
+
+> Error class to indicate that a malformed request has been sent.
+
+
+#### <a name="Carbon-HTTP-Errors-BadRequestError-Constructor" />Constructor
+```typescript 
+BadRequestError( message:string,  response:Carbon.HTTP.Response )
+```
+
+
+*Parameters*
+
+- message
+- response
+
+
+#### <a name="Carbon-HTTP-Errors-BadRequestError-Properties" />Properties
+```typescript 
+static statusCode:number 
+```
+
+
+```typescript 
+name:string 
+```
+
+
+#### <a name="Carbon-HTTP-Errors-BadRequestError-Methods" />Methods
+
+##### toString
+```typescript 
+toString():string
+```
+
+
+
+
+## <a name="Carbon-HTTP-Errors-client-ConflictError" />Module Carbon/HTTP/Errors/client/ConflictError
+
+
+
+
+
+
+
+
+### <a name="Carbon-HTTP-Errors-ConflictError" />Class Carbon.HTTP.Errors.ConflictError
+
+**Extends:** [Carbon.Errors.HTTPError](#Carbon-Errors-HTTPError)
+
+> Error class to indicate that the request could not be processed because of a conflict, such as an ID conflict.
+
+
+#### <a name="Carbon-HTTP-Errors-ConflictError-Constructor" />Constructor
+```typescript 
+ConflictError( message:string,  response:Carbon.HTTP.Response )
+```
+
+
+*Parameters*
+
+- message
+- response
+
+
+#### <a name="Carbon-HTTP-Errors-ConflictError-Properties" />Properties
+```typescript 
+static statusCode:number 
+```
+
+
+```typescript 
+name:string 
+```
+
+
+#### <a name="Carbon-HTTP-Errors-ConflictError-Methods" />Methods
+
+##### toString
+```typescript 
+toString():string
+```
+
+
+
+
+## <a name="Carbon-HTTP-Errors-client-ForbiddenError" />Module Carbon/HTTP/Errors/client/ForbiddenError
+
+
+
+
+
+
+
+
+### <a name="Carbon-HTTP-Errors-ForbiddenError" />Class Carbon.HTTP.Errors.ForbiddenError
+
+**Extends:** [Carbon.Errors.HTTPError](#Carbon-Errors-HTTPError)
+
+> Error class to indicate that the current user doesn't have permissions to fulfill the request.
+
+
+#### <a name="Carbon-HTTP-Errors-ForbiddenError-Constructor" />Constructor
+```typescript 
+ForbiddenError( message:string,  response:Carbon.HTTP.Response )
+```
+
+
+*Parameters*
+
+- message
+- response
+
+
+#### <a name="Carbon-HTTP-Errors-ForbiddenError-Properties" />Properties
+```typescript 
+static statusCode:number 
+```
+
+
+```typescript 
+name:string 
+```
+
+
+#### <a name="Carbon-HTTP-Errors-ForbiddenError-Methods" />Methods
+
+##### toString
+```typescript 
+toString():string
+```
+
+
+
+
 ## <a name="Carbon-HTTP-Errors-client-MethodNotAllowedError" />Module Carbon/HTTP/Errors/client/MethodNotAllowedError
 
 
@@ -3252,14 +3799,14 @@ toString():string
 
 
 
-### <a name="Carbon-HTTP-Errors-client-MethodNotAllowedError" />Class Carbon.HTTP.Errors.client.MethodNotAllowedError
+### <a name="Carbon-HTTP-Errors-MethodNotAllowedError" />Class Carbon.HTTP.Errors.MethodNotAllowedError
 
 **Extends:** [Carbon.Errors.HTTPError](#Carbon-Errors-HTTPError)
 
-> Error class that can be throw to indicate that the current user does not have the required permissions to fulfill the request
+> Error class to indicate that the method used in the request is not allowed for that URI.
 
 
-#### <a name="Carbon-HTTP-Errors-client-MethodNotAllowedError-Constructor" />Constructor
+#### <a name="Carbon-HTTP-Errors-MethodNotAllowedError-Constructor" />Constructor
 ```typescript 
 MethodNotAllowedError( message:string,  response:Carbon.HTTP.Response )
 ```
@@ -3271,7 +3818,7 @@ MethodNotAllowedError( message:string,  response:Carbon.HTTP.Response )
 - response
 
 
-#### <a name="Carbon-HTTP-Errors-client-MethodNotAllowedError-Properties" />Properties
+#### <a name="Carbon-HTTP-Errors-MethodNotAllowedError-Properties" />Properties
 ```typescript 
 static statusCode:number 
 ```
@@ -3282,7 +3829,7 @@ name:string
 ```
 
 
-#### <a name="Carbon-HTTP-Errors-client-MethodNotAllowedError-Methods" />Methods
+#### <a name="Carbon-HTTP-Errors-MethodNotAllowedError-Methods" />Methods
 
 ##### toString
 ```typescript 
@@ -3301,14 +3848,14 @@ toString():string
 
 
 
-### <a name="Carbon-HTTP-Errors-client-NotAcceptableError" />Class Carbon.HTTP.Errors.client.NotAcceptableError
+### <a name="Carbon-HTTP-Errors-NotAcceptableError" />Class Carbon.HTTP.Errors.NotAcceptableError
 
 **Extends:** [Carbon.Errors.HTTPError](#Carbon-Errors-HTTPError)
 
-> Error class that can be throw to indicate that the server cannot respond with the accept-header specified in the request
+> Error class to indicate that the server cannot respond with the data type specified by the accept header of the request.
 
 
-#### <a name="Carbon-HTTP-Errors-client-NotAcceptableError-Constructor" />Constructor
+#### <a name="Carbon-HTTP-Errors-NotAcceptableError-Constructor" />Constructor
 ```typescript 
 NotAcceptableError( message:string,  response:Carbon.HTTP.Response )
 ```
@@ -3320,7 +3867,7 @@ NotAcceptableError( message:string,  response:Carbon.HTTP.Response )
 - response
 
 
-#### <a name="Carbon-HTTP-Errors-client-NotAcceptableError-Properties" />Properties
+#### <a name="Carbon-HTTP-Errors-NotAcceptableError-Properties" />Properties
 ```typescript 
 static statusCode:number 
 ```
@@ -3331,7 +3878,7 @@ name:string
 ```
 
 
-#### <a name="Carbon-HTTP-Errors-client-NotAcceptableError-Methods" />Methods
+#### <a name="Carbon-HTTP-Errors-NotAcceptableError-Methods" />Methods
 
 ##### toString
 ```typescript 
@@ -3350,14 +3897,14 @@ toString():string
 
 
 
-### <a name="Carbon-HTTP-Errors-client-NotFoundError" />Class Carbon.HTTP.Errors.client.NotFoundError
+### <a name="Carbon-HTTP-Errors-NotFoundError" />Class Carbon.HTTP.Errors.NotFoundError
 
 **Extends:** [Carbon.Errors.HTTPError](#Carbon-Errors-HTTPError)
 
-> Error class that can be throw to indicate that the resource was not found
+> Error class to indicate that the resource was not found.
 
 
-#### <a name="Carbon-HTTP-Errors-client-NotFoundError-Constructor" />Constructor
+#### <a name="Carbon-HTTP-Errors-NotFoundError-Constructor" />Constructor
 ```typescript 
 NotFoundError( message:string,  response:Carbon.HTTP.Response )
 ```
@@ -3369,7 +3916,7 @@ NotFoundError( message:string,  response:Carbon.HTTP.Response )
 - response
 
 
-#### <a name="Carbon-HTTP-Errors-client-NotFoundError-Properties" />Properties
+#### <a name="Carbon-HTTP-Errors-NotFoundError-Properties" />Properties
 ```typescript 
 static statusCode:number 
 ```
@@ -3380,7 +3927,7 @@ name:string
 ```
 
 
-#### <a name="Carbon-HTTP-Errors-client-NotFoundError-Methods" />Methods
+#### <a name="Carbon-HTTP-Errors-NotFoundError-Methods" />Methods
 
 ##### toString
 ```typescript 
@@ -3399,14 +3946,14 @@ toString():string
 
 
 
-### <a name="Carbon-HTTP-Errors-client-PreconditionFailedError" />Class Carbon.HTTP.Errors.client.PreconditionFailedError
+### <a name="Carbon-HTTP-Errors-PreconditionFailedError" />Class Carbon.HTTP.Errors.PreconditionFailedError
 
 **Extends:** [Carbon.Errors.HTTPError](#Carbon-Errors-HTTPError)
 
-> Error class that can be throw to indicate that the precondition header was resolved to false
+> Error class to indicate that the precondition header was resolved to false.
 
 
-#### <a name="Carbon-HTTP-Errors-client-PreconditionFailedError-Constructor" />Constructor
+#### <a name="Carbon-HTTP-Errors-PreconditionFailedError-Constructor" />Constructor
 ```typescript 
 PreconditionFailedError( message:string,  response:Carbon.HTTP.Response )
 ```
@@ -3418,7 +3965,7 @@ PreconditionFailedError( message:string,  response:Carbon.HTTP.Response )
 - response
 
 
-#### <a name="Carbon-HTTP-Errors-client-PreconditionFailedError-Properties" />Properties
+#### <a name="Carbon-HTTP-Errors-PreconditionFailedError-Properties" />Properties
 ```typescript 
 static statusCode:number 
 ```
@@ -3429,7 +3976,7 @@ name:string
 ```
 
 
-#### <a name="Carbon-HTTP-Errors-client-PreconditionFailedError-Methods" />Methods
+#### <a name="Carbon-HTTP-Errors-PreconditionFailedError-Methods" />Methods
 
 ##### toString
 ```typescript 
@@ -3448,14 +3995,14 @@ toString():string
 
 
 
-### <a name="Carbon-HTTP-Errors-client-PreconditionRequiredError" />Class Carbon.HTTP.Errors.client.PreconditionRequiredError
+### <a name="Carbon-HTTP-Errors-PreconditionRequiredError" />Class Carbon.HTTP.Errors.PreconditionRequiredError
 
 **Extends:** [Carbon.Errors.HTTPError](#Carbon-Errors-HTTPError)
 
-> Error class that can be throw to indicate that the request is missing a precondition header
+> Error class to indicate that the request is missing a precondition header.
 
 
-#### <a name="Carbon-HTTP-Errors-client-PreconditionRequiredError-Constructor" />Constructor
+#### <a name="Carbon-HTTP-Errors-PreconditionRequiredError-Constructor" />Constructor
 ```typescript 
 PreconditionRequiredError( message:string,  response:Carbon.HTTP.Response )
 ```
@@ -3467,7 +4014,7 @@ PreconditionRequiredError( message:string,  response:Carbon.HTTP.Response )
 - response
 
 
-#### <a name="Carbon-HTTP-Errors-client-PreconditionRequiredError-Properties" />Properties
+#### <a name="Carbon-HTTP-Errors-PreconditionRequiredError-Properties" />Properties
 ```typescript 
 static statusCode:number 
 ```
@@ -3478,7 +4025,7 @@ name:string
 ```
 
 
-#### <a name="Carbon-HTTP-Errors-client-PreconditionRequiredError-Methods" />Methods
+#### <a name="Carbon-HTTP-Errors-PreconditionRequiredError-Methods" />Methods
 
 ##### toString
 ```typescript 
@@ -3497,14 +4044,14 @@ toString():string
 
 
 
-### <a name="Carbon-HTTP-Errors-client-RequestEntityTooLargeError" />Class Carbon.HTTP.Errors.client.RequestEntityTooLargeError
+### <a name="Carbon-HTTP-Errors-RequestEntityTooLargeError" />Class Carbon.HTTP.Errors.RequestEntityTooLargeError
 
 **Extends:** [Carbon.Errors.HTTPError](#Carbon-Errors-HTTPError)
 
-> Error class that can be throw to indicate that the request entity is larger than the server is able to process
+> Error class to indicate that the request entity is larger than the server is able to process.
 
 
-#### <a name="Carbon-HTTP-Errors-client-RequestEntityTooLargeError-Constructor" />Constructor
+#### <a name="Carbon-HTTP-Errors-RequestEntityTooLargeError-Constructor" />Constructor
 ```typescript 
 RequestEntityTooLargeError( message:string,  response:Carbon.HTTP.Response )
 ```
@@ -3516,7 +4063,7 @@ RequestEntityTooLargeError( message:string,  response:Carbon.HTTP.Response )
 - response
 
 
-#### <a name="Carbon-HTTP-Errors-client-RequestEntityTooLargeError-Properties" />Properties
+#### <a name="Carbon-HTTP-Errors-RequestEntityTooLargeError-Properties" />Properties
 ```typescript 
 static statusCode:number 
 ```
@@ -3527,7 +4074,7 @@ name:string
 ```
 
 
-#### <a name="Carbon-HTTP-Errors-client-RequestEntityTooLargeError-Methods" />Methods
+#### <a name="Carbon-HTTP-Errors-RequestEntityTooLargeError-Methods" />Methods
 
 ##### toString
 ```typescript 
@@ -3546,14 +4093,14 @@ toString():string
 
 
 
-### <a name="Carbon-HTTP-Errors-client-RequestHeaderFieldsTooLargeError" />Class Carbon.HTTP.Errors.client.RequestHeaderFieldsTooLargeError
+### <a name="Carbon-HTTP-Errors-RequestHeaderFieldsTooLargeError" />Class Carbon.HTTP.Errors.RequestHeaderFieldsTooLargeError
 
 **Extends:** [Carbon.Errors.HTTPError](#Carbon-Errors-HTTPError)
 
-> Error class that can be throw to indicate that the server is no able to process the request because its header fields are too large
+> Error class to indicate that the server is not able to process the request because its header fields are too large.
 
 
-#### <a name="Carbon-HTTP-Errors-client-RequestHeaderFieldsTooLargeError-Constructor" />Constructor
+#### <a name="Carbon-HTTP-Errors-RequestHeaderFieldsTooLargeError-Constructor" />Constructor
 ```typescript 
 RequestHeaderFieldsTooLargeError( message:string,  response:Carbon.HTTP.Response )
 ```
@@ -3565,7 +4112,7 @@ RequestHeaderFieldsTooLargeError( message:string,  response:Carbon.HTTP.Response
 - response
 
 
-#### <a name="Carbon-HTTP-Errors-client-RequestHeaderFieldsTooLargeError-Properties" />Properties
+#### <a name="Carbon-HTTP-Errors-RequestHeaderFieldsTooLargeError-Properties" />Properties
 ```typescript 
 static statusCode:number 
 ```
@@ -3576,7 +4123,7 @@ name:string
 ```
 
 
-#### <a name="Carbon-HTTP-Errors-client-RequestHeaderFieldsTooLargeError-Methods" />Methods
+#### <a name="Carbon-HTTP-Errors-RequestHeaderFieldsTooLargeError-Methods" />Methods
 
 ##### toString
 ```typescript 
@@ -3595,14 +4142,14 @@ toString():string
 
 
 
-### <a name="Carbon-HTTP-Errors-client-RequestURITooLongError" />Class Carbon.HTTP.Errors.client.RequestURITooLongError
+### <a name="Carbon-HTTP-Errors-RequestURITooLongError" />Class Carbon.HTTP.Errors.RequestURITooLongError
 
 **Extends:** [Carbon.Errors.HTTPError](#Carbon-Errors-HTTPError)
 
-> Error class that can be throw to indicate that the server is no able to process the request because its URI is too long
+> Error class to indicate that the server is not able to process the request because the URI is too long.
 
 
-#### <a name="Carbon-HTTP-Errors-client-RequestURITooLongError-Constructor" />Constructor
+#### <a name="Carbon-HTTP-Errors-RequestURITooLongError-Constructor" />Constructor
 ```typescript 
 RequestURITooLongError( message:string,  response:Carbon.HTTP.Response )
 ```
@@ -3614,7 +4161,7 @@ RequestURITooLongError( message:string,  response:Carbon.HTTP.Response )
 - response
 
 
-#### <a name="Carbon-HTTP-Errors-client-RequestURITooLongError-Properties" />Properties
+#### <a name="Carbon-HTTP-Errors-RequestURITooLongError-Properties" />Properties
 ```typescript 
 static statusCode:number 
 ```
@@ -3625,7 +4172,7 @@ name:string
 ```
 
 
-#### <a name="Carbon-HTTP-Errors-client-RequestURITooLongError-Methods" />Methods
+#### <a name="Carbon-HTTP-Errors-RequestURITooLongError-Methods" />Methods
 
 ##### toString
 ```typescript 
@@ -3644,14 +4191,14 @@ toString():string
 
 
 
-### <a name="Carbon-HTTP-Errors-client-TooManyRequestsError" />Class Carbon.HTTP.Errors.client.TooManyRequestsError
+### <a name="Carbon-HTTP-Errors-TooManyRequestsError" />Class Carbon.HTTP.Errors.TooManyRequestsError
 
 **Extends:** [Carbon.Errors.HTTPError](#Carbon-Errors-HTTPError)
 
-> Error class that can be throw to indicate that the current user has sent too many request in a given amount of time
+> Error class to indicate that the current user has sent too many request in a given amount of time.
 
 
-#### <a name="Carbon-HTTP-Errors-client-TooManyRequestsError-Constructor" />Constructor
+#### <a name="Carbon-HTTP-Errors-TooManyRequestsError-Constructor" />Constructor
 ```typescript 
 TooManyRequestsError( message:string,  response:Carbon.HTTP.Response )
 ```
@@ -3663,7 +4210,7 @@ TooManyRequestsError( message:string,  response:Carbon.HTTP.Response )
 - response
 
 
-#### <a name="Carbon-HTTP-Errors-client-TooManyRequestsError-Properties" />Properties
+#### <a name="Carbon-HTTP-Errors-TooManyRequestsError-Properties" />Properties
 ```typescript 
 static statusCode:number 
 ```
@@ -3674,7 +4221,7 @@ name:string
 ```
 
 
-#### <a name="Carbon-HTTP-Errors-client-TooManyRequestsError-Methods" />Methods
+#### <a name="Carbon-HTTP-Errors-TooManyRequestsError-Methods" />Methods
 
 ##### toString
 ```typescript 
@@ -3693,14 +4240,14 @@ toString():string
 
 
 
-### <a name="Carbon-HTTP-Errors-client-UnauthorizedError" />Class Carbon.HTTP.Errors.client.UnauthorizedError
+### <a name="Carbon-HTTP-Errors-UnauthorizedError" />Class Carbon.HTTP.Errors.UnauthorizedError
 
 **Extends:** [Carbon.Errors.HTTPError](#Carbon-Errors-HTTPError)
 
-> Error class that can be throw to indicate that authentication is required or has failed
+> Error class to indicate that authentication is required or has failed.
 
 
-#### <a name="Carbon-HTTP-Errors-client-UnauthorizedError-Constructor" />Constructor
+#### <a name="Carbon-HTTP-Errors-UnauthorizedError-Constructor" />Constructor
 ```typescript 
 UnauthorizedError( message:string,  response:Carbon.HTTP.Response )
 ```
@@ -3712,7 +4259,7 @@ UnauthorizedError( message:string,  response:Carbon.HTTP.Response )
 - response
 
 
-#### <a name="Carbon-HTTP-Errors-client-UnauthorizedError-Properties" />Properties
+#### <a name="Carbon-HTTP-Errors-UnauthorizedError-Properties" />Properties
 ```typescript 
 static statusCode:number 
 ```
@@ -3723,7 +4270,7 @@ name:string
 ```
 
 
-#### <a name="Carbon-HTTP-Errors-client-UnauthorizedError-Methods" />Methods
+#### <a name="Carbon-HTTP-Errors-UnauthorizedError-Methods" />Methods
 
 ##### toString
 ```typescript 
@@ -3742,14 +4289,14 @@ toString():string
 
 
 
-### <a name="Carbon-HTTP-Errors-client-UnsupportedMediaTypeError" />Class Carbon.HTTP.Errors.client.UnsupportedMediaTypeError
+### <a name="Carbon-HTTP-Errors-UnsupportedMediaTypeError" />Class Carbon.HTTP.Errors.UnsupportedMediaTypeError
 
 **Extends:** [Carbon.Errors.HTTPError](#Carbon-Errors-HTTPError)
 
-> Error class that can be throw to indicate that the request has a media-type not supported by the server
+> Error class to indicate that the request has a media-type not supported by the server.
 
 
-#### <a name="Carbon-HTTP-Errors-client-UnsupportedMediaTypeError-Constructor" />Constructor
+#### <a name="Carbon-HTTP-Errors-UnsupportedMediaTypeError-Constructor" />Constructor
 ```typescript 
 UnsupportedMediaTypeError( message:string,  response:Carbon.HTTP.Response )
 ```
@@ -3761,7 +4308,7 @@ UnsupportedMediaTypeError( message:string,  response:Carbon.HTTP.Response )
 - response
 
 
-#### <a name="Carbon-HTTP-Errors-client-UnsupportedMediaTypeError-Properties" />Properties
+#### <a name="Carbon-HTTP-Errors-UnsupportedMediaTypeError-Properties" />Properties
 ```typescript 
 static statusCode:number 
 ```
@@ -3772,7 +4319,7 @@ name:string
 ```
 
 
-#### <a name="Carbon-HTTP-Errors-client-UnsupportedMediaTypeError-Methods" />Methods
+#### <a name="Carbon-HTTP-Errors-UnsupportedMediaTypeError-Methods" />Methods
 
 ##### toString
 ```typescript 
@@ -3791,14 +4338,14 @@ toString():string
 
 
 
-### <a name="Carbon-HTTP-Errors-server-BadGatewayError" />Class Carbon.HTTP.Errors.server.BadGatewayError
+### <a name="Carbon-HTTP-Errors-BadGatewayError" />Class Carbon.HTTP.Errors.BadGatewayError
 
 **Extends:** [Carbon.Errors.HTTPError](#Carbon-Errors-HTTPError)
 
-> Error class that can be throw to indicate that the server was acting as a gateway or proxy and received an invalid response from the upstream server
+> Error class to indicate that the server was acting as a gateway or proxy and received an invalid response from the upstream server.
 
 
-#### <a name="Carbon-HTTP-Errors-server-BadGatewayError-Constructor" />Constructor
+#### <a name="Carbon-HTTP-Errors-BadGatewayError-Constructor" />Constructor
 ```typescript 
 BadGatewayError( message:string,  response:Carbon.HTTP.Response )
 ```
@@ -3810,7 +4357,7 @@ BadGatewayError( message:string,  response:Carbon.HTTP.Response )
 - response
 
 
-#### <a name="Carbon-HTTP-Errors-server-BadGatewayError-Properties" />Properties
+#### <a name="Carbon-HTTP-Errors-BadGatewayError-Properties" />Properties
 ```typescript 
 static statusCode:number 
 ```
@@ -3821,7 +4368,7 @@ name:string
 ```
 
 
-#### <a name="Carbon-HTTP-Errors-server-BadGatewayError-Methods" />Methods
+#### <a name="Carbon-HTTP-Errors-BadGatewayError-Methods" />Methods
 
 ##### toString
 ```typescript 
@@ -3840,14 +4387,14 @@ toString():string
 
 
 
-### <a name="Carbon-HTTP-Errors-server-BadResponseError" />Class Carbon.HTTP.Errors.server.BadResponseError
+### <a name="Carbon-HTTP-Errors-BadResponseError" />Class Carbon.HTTP.Errors.BadResponseError
 
 **Extends:** [Carbon.Errors.HTTPError](#Carbon-Errors-HTTPError)
 
-> Error class that can be throw to indicate that the response obtained can not is note the expected or cannot be interpreted
+> Error class to indicate that the response obtained isn't the expected or can't be interpreted.
 
 
-#### <a name="Carbon-HTTP-Errors-server-BadResponseError-Constructor" />Constructor
+#### <a name="Carbon-HTTP-Errors-BadResponseError-Constructor" />Constructor
 ```typescript 
 BadResponseError( message:string,  response:Carbon.HTTP.Response )
 ```
@@ -3859,7 +4406,7 @@ BadResponseError( message:string,  response:Carbon.HTTP.Response )
 - response
 
 
-#### <a name="Carbon-HTTP-Errors-server-BadResponseError-Properties" />Properties
+#### <a name="Carbon-HTTP-Errors-BadResponseError-Properties" />Properties
 ```typescript 
 static statusCode:number 
 ```
@@ -3870,7 +4417,7 @@ name:string
 ```
 
 
-#### <a name="Carbon-HTTP-Errors-server-BadResponseError-Methods" />Methods
+#### <a name="Carbon-HTTP-Errors-BadResponseError-Methods" />Methods
 
 ##### toString
 ```typescript 
@@ -3889,14 +4436,14 @@ toString():string
 
 
 
-### <a name="Carbon-HTTP-Errors-server-GatewayTimeoutError" />Class Carbon.HTTP.Errors.server.GatewayTimeoutError
+### <a name="Carbon-HTTP-Errors-GatewayTimeoutError" />Class Carbon.HTTP.Errors.GatewayTimeoutError
 
 **Extends:** [Carbon.Errors.HTTPError](#Carbon-Errors-HTTPError)
 
-> Error class that can be throw to indicate that the server, while acting as a gateway or proxy, did not receive a timely response from the upstream server
+> Error class to indicate that the server, while acting as a gateway or proxy, did not receive a timely response from the upstream server.
 
 
-#### <a name="Carbon-HTTP-Errors-server-GatewayTimeoutError-Constructor" />Constructor
+#### <a name="Carbon-HTTP-Errors-GatewayTimeoutError-Constructor" />Constructor
 ```typescript 
 GatewayTimeoutError( message:string,  response:Carbon.HTTP.Response )
 ```
@@ -3908,7 +4455,7 @@ GatewayTimeoutError( message:string,  response:Carbon.HTTP.Response )
 - response
 
 
-#### <a name="Carbon-HTTP-Errors-server-GatewayTimeoutError-Properties" />Properties
+#### <a name="Carbon-HTTP-Errors-GatewayTimeoutError-Properties" />Properties
 ```typescript 
 static statusCode:number 
 ```
@@ -3919,7 +4466,7 @@ name:string
 ```
 
 
-#### <a name="Carbon-HTTP-Errors-server-GatewayTimeoutError-Methods" />Methods
+#### <a name="Carbon-HTTP-Errors-GatewayTimeoutError-Methods" />Methods
 
 ##### toString
 ```typescript 
@@ -3938,14 +4485,14 @@ toString():string
 
 
 
-### <a name="Carbon-HTTP-Errors-server-HTTPVersionNotSupportedError" />Class Carbon.HTTP.Errors.server.HTTPVersionNotSupportedError
+### <a name="Carbon-HTTP-Errors-HTTPVersionNotSupportedError" />Class Carbon.HTTP.Errors.HTTPVersionNotSupportedError
 
 **Extends:** [Carbon.Errors.HTTPError](#Carbon-Errors-HTTPError)
 
-> Error class that can be throw to indicate that the server does not support the HTTP protocol version used in the request
+> Error class to indicate that the server doesn't support the HTTP protocol version used in the request.
 
 
-#### <a name="Carbon-HTTP-Errors-server-HTTPVersionNotSupportedError-Constructor" />Constructor
+#### <a name="Carbon-HTTP-Errors-HTTPVersionNotSupportedError-Constructor" />Constructor
 ```typescript 
 HTTPVersionNotSupportedError( message:string,  response:Carbon.HTTP.Response )
 ```
@@ -3957,7 +4504,7 @@ HTTPVersionNotSupportedError( message:string,  response:Carbon.HTTP.Response )
 - response
 
 
-#### <a name="Carbon-HTTP-Errors-server-HTTPVersionNotSupportedError-Properties" />Properties
+#### <a name="Carbon-HTTP-Errors-HTTPVersionNotSupportedError-Properties" />Properties
 ```typescript 
 static statusCode:number 
 ```
@@ -3968,7 +4515,7 @@ name:string
 ```
 
 
-#### <a name="Carbon-HTTP-Errors-server-HTTPVersionNotSupportedError-Methods" />Methods
+#### <a name="Carbon-HTTP-Errors-HTTPVersionNotSupportedError-Methods" />Methods
 
 ##### toString
 ```typescript 
@@ -3987,14 +4534,14 @@ toString():string
 
 
 
-### <a name="Carbon-HTTP-Errors-server-InternalServerErrorError" />Class Carbon.HTTP.Errors.server.InternalServerErrorError
+### <a name="Carbon-HTTP-Errors-InternalServerErrorError" />Class Carbon.HTTP.Errors.InternalServerErrorError
 
 **Extends:** [Carbon.Errors.HTTPError](#Carbon-Errors-HTTPError)
 
-> Error class that can be throw to indicate that the server encountered an unexpected condition. This generic error is given when no more specific message is suitable
+> Error class to indicate that the server encountered an unexpected condition. This generic error is given when no other specific error is suitable.
 
 
-#### <a name="Carbon-HTTP-Errors-server-InternalServerErrorError-Constructor" />Constructor
+#### <a name="Carbon-HTTP-Errors-InternalServerErrorError-Constructor" />Constructor
 ```typescript 
 InternalServerErrorError( message:string,  response:Carbon.HTTP.Response )
 ```
@@ -4006,7 +4553,7 @@ InternalServerErrorError( message:string,  response:Carbon.HTTP.Response )
 - response
 
 
-#### <a name="Carbon-HTTP-Errors-server-InternalServerErrorError-Properties" />Properties
+#### <a name="Carbon-HTTP-Errors-InternalServerErrorError-Properties" />Properties
 ```typescript 
 static statusCode:number 
 ```
@@ -4017,7 +4564,7 @@ name:string
 ```
 
 
-#### <a name="Carbon-HTTP-Errors-server-InternalServerErrorError-Methods" />Methods
+#### <a name="Carbon-HTTP-Errors-InternalServerErrorError-Methods" />Methods
 
 ##### toString
 ```typescript 
@@ -4036,14 +4583,14 @@ toString():string
 
 
 
-### <a name="Carbon-HTTP-Errors-server-NotImplementedError" />Class Carbon.HTTP.Errors.server.NotImplementedError
+### <a name="Carbon-HTTP-Errors-NotImplementedError" />Class Carbon.HTTP.Errors.NotImplementedError
 
 **Extends:** [Carbon.Errors.HTTPError](#Carbon-Errors-HTTPError)
 
-> Error class that can be throw to indicate that the server does not have the ability to fulfill the request yet
+> Error class to indicate that the server doesn't have the ability to fulfill the request yet.
 
 
-#### <a name="Carbon-HTTP-Errors-server-NotImplementedError-Constructor" />Constructor
+#### <a name="Carbon-HTTP-Errors-NotImplementedError-Constructor" />Constructor
 ```typescript 
 NotImplementedError( message:string,  response:Carbon.HTTP.Response )
 ```
@@ -4055,7 +4602,7 @@ NotImplementedError( message:string,  response:Carbon.HTTP.Response )
 - response
 
 
-#### <a name="Carbon-HTTP-Errors-server-NotImplementedError-Properties" />Properties
+#### <a name="Carbon-HTTP-Errors-NotImplementedError-Properties" />Properties
 ```typescript 
 static statusCode:number 
 ```
@@ -4066,7 +4613,7 @@ name:string
 ```
 
 
-#### <a name="Carbon-HTTP-Errors-server-NotImplementedError-Methods" />Methods
+#### <a name="Carbon-HTTP-Errors-NotImplementedError-Methods" />Methods
 
 ##### toString
 ```typescript 
@@ -4085,14 +4632,14 @@ toString():string
 
 
 
-### <a name="Carbon-HTTP-Errors-server-ServiceUnavailableError" />Class Carbon.HTTP.Errors.server.ServiceUnavailableError
+### <a name="Carbon-HTTP-Errors-ServiceUnavailableError" />Class Carbon.HTTP.Errors.ServiceUnavailableError
 
 **Extends:** [Carbon.Errors.HTTPError](#Carbon-Errors-HTTPError)
 
-> Error class that can be throw to indicate that the server is currently unavailable (because it is overloaded or down for maintenance)
+> Error class to indicate that the server is currently unavailable (because it's overloaded or down for maintenance).
 
 
-#### <a name="Carbon-HTTP-Errors-server-ServiceUnavailableError-Constructor" />Constructor
+#### <a name="Carbon-HTTP-Errors-ServiceUnavailableError-Constructor" />Constructor
 ```typescript 
 ServiceUnavailableError( message:string,  response:Carbon.HTTP.Response )
 ```
@@ -4104,7 +4651,7 @@ ServiceUnavailableError( message:string,  response:Carbon.HTTP.Response )
 - response
 
 
-#### <a name="Carbon-HTTP-Errors-server-ServiceUnavailableError-Properties" />Properties
+#### <a name="Carbon-HTTP-Errors-ServiceUnavailableError-Properties" />Properties
 ```typescript 
 static statusCode:number 
 ```
@@ -4115,7 +4662,7 @@ name:string
 ```
 
 
-#### <a name="Carbon-HTTP-Errors-server-ServiceUnavailableError-Methods" />Methods
+#### <a name="Carbon-HTTP-Errors-ServiceUnavailableError-Methods" />Methods
 
 ##### toString
 ```typescript 
@@ -4135,38 +4682,10 @@ toString():string
 
 
 
-### <a name="Carbon-HTTP-Header-Value" />Class Carbon.HTTP.Header.Value
-
-
-> Class wrapper for a string value of a HTTP header
-
-
-#### <a name="Carbon-HTTP-Header-Value-Constructor" />Constructor
-```typescript 
-Value( value:string )
-```
-
-
-*Parameters*
-
-- value
-
-
-
-#### <a name="Carbon-HTTP-Header-Value-Methods" />Methods
-
-##### toString
-```typescript 
-toString():string
-```
-
-
-
-
 ### <a name="Carbon-HTTP-Header-Class" />Class Carbon.HTTP.Header.Class
 
 
-> Class for have better management of the values in a HTTP header
+> Class to manage the values in an HTTP header.
 
 
 #### <a name="Carbon-HTTP-Header-Class-Constructor" />Constructor
@@ -4195,7 +4714,7 @@ Class( value:string )
 values:Array <Carbon.HTTP.Header.Value> 
 ```
 
-Array that contains each value of the header
+Array that contains each value of the header.
 
 #### <a name="Carbon-HTTP-Header-Class-Methods" />Methods
 
@@ -4211,7 +4730,7 @@ string
 ### <a name="Carbon-HTTP-Header-Util" />Class Carbon.HTTP.Header.Util
 
 
-> Class with useful options for manage headers
+> Class with useful functions to manage headers.
 
 
 
@@ -4222,11 +4741,39 @@ string
 static parseHeaders( headersString:string ):Map <string, Carbon.HTTP.Header.Class>
 ```
 
-Returns an Map object, witch relates the all header-names with a `Carbon.HTTP.Header.Class` containing their values
+Returns a Map object which relates all header names with a `Carbon.HTTP.Header.Class` object containing their values.
 
 *Parameters*
 
 - headersString
+
+
+
+
+### <a name="Carbon-HTTP-Header-Value" />Class Carbon.HTTP.Header.Value
+
+
+> Wrapper class for a value of an HTTP header.
+
+
+#### <a name="Carbon-HTTP-Header-Value-Constructor" />Constructor
+```typescript 
+Value( value:string )
+```
+
+
+*Parameters*
+
+- value
+
+
+
+#### <a name="Carbon-HTTP-Header-Value-Methods" />Methods
+
+##### toString
+```typescript 
+toString():string
+```
 
 
 
@@ -4244,7 +4791,7 @@ Returns an Map object, witch relates the all header-names with a `Carbon.HTTP.He
 ### <a name="Carbon-HTTP-JSONLDParser-Class" />Class Carbon.HTTP.JSONLDParser.Class
 
 
-> Class wrapper for native `JSON.parse` using `Promise` pattern
+> Wrapper class for the `expand()` function of the `jsonld` lib, using the `Promise` pattern.
 
 
 
@@ -4259,7 +4806,7 @@ parse( body:string ):Promise <Object>
 
 *Parameters*
 
-- body: A JSON string to parse
+- body: A JSON-LD string to parse.
 
 
 
@@ -4276,7 +4823,7 @@ parse( body:string ):Promise <Object>
 ### <a name="Carbon-HTTP-JSONParser-Class" />Class Carbon.HTTP.JSONParser.Class
 
 
-> Class wrapper for native `JSON.parse` using `Promise` pattern
+> Wrapper class for the native `JSON.parse()` function using the `Promise` pattern.
 
 
 
@@ -4291,7 +4838,7 @@ parse( body:string ):Promise <Object>
 
 *Parameters*
 
-- body: A JSON string to parse
+- body: A JSON string to parse.
 
 
 
@@ -4303,17 +4850,17 @@ parse( body:string ):Promise <Object>
 ### <a name="Carbon-HTTP-Method-Enums" />Enums
 
 #### <a name"Carbon-HTTP-Method />Carbon.HTTP.Method
-> Enum with the HTTP/1.1 methods
+> Enum with the HTTP/1.1 methods.
 
 | Name | Description | 
 | --- | --- |
-| OPTIONS | Enum that identifies the OPTIONS HTTP/1.1 method, which allows the client to determine the options and/or requirements associated with a resource, or the capabilities of a server, without implying a resource action or initiating a resource retrieval |
-| HEAD | Enum that identifies the HEAD HTTP/1.1 method, which returns only the headers of a GET HTTP request |
-| GET | Enum that identifies the GET HTTP/1.1 method, which returns whatever information is identified by the request URI |
-| POST | Enum that identifies the POST HTTP/1.1 method, which request to the server to create a new entity |
-| PUT | Enum that identifies the PUT HTTP/1.1 method, which allows to replace an entirely entity, or to send a signal to a resource |
-| PATCH | Enum that identifies the PATCH HTTP/1.1 method, which allows to update specified fields of an entity |
-| DELETE | Enum that identifies the DELETE HTTP/1.1 method, which allows to request the deletion of a resource identified by the request URI |
+| OPTIONS | Enum that identifies the OPTIONS HTTP/1.1 method, which allows the client to determine the options and/or requirements associated with a resource, or the capabilities of a server, without implying a resource action or initiating a resource retrieval. |
+| HEAD | Enum that identifies the HEAD HTTP/1.1 method, which returns only the headers of a GET HTTP request. |
+| GET | Enum that identifies the GET HTTP/1.1 method, which returns whatever information is identified by the request URI. |
+| POST | Enum that identifies the POST HTTP/1.1 method, which requests to the server to create a new entity. |
+| PUT | Enum that identifies the PUT HTTP/1.1 method, which allows you to replace an entirely entity, or to send a signal to a resource. |
+| PATCH | Enum that identifies the PATCH HTTP/1.1 method, which allows you to update specified fields of an entity. |
+| DELETE | Enum that identifies the DELETE HTTP/1.1 method, which allows you to request the deletion of a resource identified by the request URI. |
 
 
 
@@ -4330,24 +4877,83 @@ parse( body:string ):Promise <Object>
 ### <a name="Carbon-HTTP-Request-Service" />Class Carbon.HTTP.Request.Service
 
 
-> Class that have functions to manage HTTP requests
+> Class with functions to easily manage HTTP requests.
 
 
 
 
 #### <a name="Carbon-HTTP-Request-Service-Methods" />Methods
-##### send
+##### delete
 ```typescript 
-static send( url:string,  body:string,  options:object ):Promise<Carbon.HTTP.Response>
+static delete( url:string,  body:string,  options?:object ):Promise<Carbon.HTTP.Response>
 ```
 
-Generic send method, to be used by the others methods in the class
+Simple delete request.
 
 *Parameters*
 
 - url
 - body
 - options
+
+```typescript 
+static delete( url:string,  options?:object,  parser?:Carbon.HTTP.Parser<T> ):Promise<Carbon.HTTP.Response>
+```
+
+Delete request with specified response parser.
+
+*Parameters*
+
+- url
+- options
+- parser
+
+```typescript 
+static delete( url:string,  options?:object ):Promise<Carbon.HTTP.Response>
+```
+
+Simple delete request.
+
+*Parameters*
+
+- url
+- options
+
+```typescript 
+static delete( url:string,  options?:object,  parser?:Carbon.HTTP.Parser<T> ):Promise<Carbon.HTTP.Response>
+```
+
+Delete request with specified response parser.
+
+*Parameters*
+
+- url
+- options
+- parser
+
+##### get
+```typescript 
+static get( url:string,  options?:object ):Promise<Carbon.HTTP.Response>
+```
+
+Simple get request.
+
+*Parameters*
+
+- url
+- options
+
+```typescript 
+static get( url:string,  options?:object,  parser?:Carbon.HTTP.Parser<T> ):Promise<[Object, Carbon.HTTP.Response]>
+```
+
+Get request with specified response parser.
+
+*Parameters*
+
+- url
+- options
+- parser
 
 ##### head
 ```typescript 
@@ -4371,23 +4977,24 @@ static options( url:string,  options?:object ):Promise<Carbon.HTTP.Response>
 - url
 - options
 
-##### get
+##### patch
 ```typescript 
-static get( url:string,  options?:object ):Promise<Carbon.HTTP.Response>
+static patch( url:string,  body:string,  options?:object ):Promise<Carbon.HTTP.Response>
 ```
 
-Simple get request
+Simple patch request.
 
 *Parameters*
 
 - url
+- body
 - options
 
 ```typescript 
-static get( url:string,  options?:object,  parser?:Carbon.HTTP.Parser<T> ):Promise<[Object, Carbon.HTTP.Response]>
+static patch( url:string,  options?:object,  parser?:Carbon.HTTP.Parser<T> ):Promise<Carbon.HTTP.Response>
 ```
 
-Get request with specified parser
+Patch request with specified response parser.
 
 *Parameters*
 
@@ -4400,7 +5007,7 @@ Get request with specified parser
 static post( url:string,  body:string,  options?:object ):Promise<Carbon.HTTP.Response>
 ```
 
-Simple post request
+Simple post request.
 
 *Parameters*
 
@@ -4412,7 +5019,7 @@ Simple post request
 static post( url:string,  options?:object,  parser?:Carbon.HTTP.Parser<T> ):Promise<Carbon.HTTP.Response>
 ```
 
-Post request with specified parser
+Post request with specified response parser.
 
 *Parameters*
 
@@ -4425,7 +5032,7 @@ Post request with specified parser
 static put( url:string,  body:string,  options?:object ):Promise<Carbon.HTTP.Response>
 ```
 
-Simple put request
+Simple put request.
 
 *Parameters*
 
@@ -4437,7 +5044,7 @@ Simple put request
 static put( url:string,  options?:object,  parser?:Carbon.HTTP.Parser<T> ):Promise<Carbon.HTTP.Response>
 ```
 
-Put request with specified parser
+Put request with specified response parser.
 
 *Parameters*
 
@@ -4445,78 +5052,18 @@ Put request with specified parser
 - options
 - parser
 
-##### patch
+##### send
 ```typescript 
-static patch( url:string,  body:string,  options?:object ):Promise<Carbon.HTTP.Response>
+static send( url:string,  body:string,  options:object ):Promise<Carbon.HTTP.Response>
 ```
 
-Simple patch request
+Generic send method, to be used by the others methods in the class.
 
 *Parameters*
 
 - url
 - body
 - options
-
-```typescript 
-static patch( url:string,  options?:object,  parser?:Carbon.HTTP.Parser<T> ):Promise<Carbon.HTTP.Response>
-```
-
-Patch request with specified parser
-
-*Parameters*
-
-- url
-- options
-- parser
-
-##### delete
-```typescript 
-static delete( url:string,  body:string,  options?:object ):Promise<Carbon.HTTP.Response>
-```
-
-Simple delete request
-
-*Parameters*
-
-- url
-- body
-- options
-
-```typescript 
-static delete( url:string,  options?:object,  parser?:Carbon.HTTP.Parser<T> ):Promise<Carbon.HTTP.Response>
-```
-
-Delete request with specified parser
-
-*Parameters*
-
-- url
-- options
-- parser
-
-```typescript 
-static delete( url:string,  options?:object ):Promise<Carbon.HTTP.Response>
-```
-
-Simple delete request
-
-*Parameters*
-
-- url
-- options
-
-```typescript 
-static delete( url:string,  options?:object,  parser?:Carbon.HTTP.Parser<T> ):Promise<Carbon.HTTP.Response>
-```
-
-Delete request with specified parser
-
-*Parameters*
-
-- url
-- options
-- parser
 
 
 
@@ -4524,7 +5071,7 @@ Delete request with specified parser
 ### <a name="Carbon-HTTP-Request-Util" />Class Carbon.HTTP.Request.Util
 
 
-> Useful functions for manage the options object of a request
+> Class with useful functions to manage the options object of a request.
 
 
 
@@ -4535,7 +5082,7 @@ Delete request with specified parser
 static getHeader( headerName:string,  requestOptions:Object,  initialize?:boolean ):Carbon.HTTP.Header.Class
 ```
 
-Returns the header object of a header-name inside an options object request. Returns `undefined` if the header not exists. If `initialize` flag is provided with true, a empty header will be created even if it already exits
+Returns the header object of a header-name inside an options object request. Returns `undefined` if the header doesn't exists. If `initialize` flag is provided with true, an empty header will be created even if it already exits.
 
 *Parameters*
 
@@ -4543,24 +5090,48 @@ Returns the header object of a header-name inside an options object request. Ret
 - requestOptions
 - initialize
 
+##### isOptions
+```typescript 
+static isOptions( object:Object ):boolean
+```
+
+Returns `true` if the object provided has at least a property of a `Carbon.HTTP.Request.Option` object.
+
+*Parameters*
+
+- object: The object to evaluate.
+
 ##### setAcceptHeader
 ```typescript 
 static setAcceptHeader( accept:string,  requestOptions:Object ):Object
 ```
 
-Set an Accept header in an options object request
+Set an Accept header in an options object request.
 
 *Parameters*
 
 - accept
 - requestOptions
 
+##### setContainerRetrievalPreferences
+```typescript 
+static setContainerRetrievalPreferences( preference:Carbon.HTTP.Request.ContainerRetrievalPreferences,  requestOptions:Carbon.HTTP.Request.Options,  returnRepresentation?:boolean ):Object
+```
+
+Set a Prefer header with `return=representation` in an options object request.
+
+*Parameters*
+
+- preference
+- requestOptions
+- returnRepresentation: If set to true, add `return=representation;` before include and/or omit. Default value is set to `true`.
+
 ##### setContentTypeHeader
 ```typescript 
 static setContentTypeHeader( contentType:string,  requestOptions:Object ):Object
 ```
 
-Set an Content-Type header in an options object request
+Set a Content-Type header in an options object request.
 
 *Parameters*
 
@@ -4572,7 +5143,7 @@ Set an Content-Type header in an options object request
 static setIfMatchHeader( etag:string,  requestOptions:Object ):Object
 ```
 
-Set a If-Match header in an options object request
+Set an If-Match header in an options object request.
 
 *Parameters*
 
@@ -4584,7 +5155,7 @@ Set a If-Match header in an options object request
 static setPreferredInteractionModel( interactionModelURI:string,  requestOptions:Object ):Object
 ```
 
-Set a Prefer header with `rel=interaction-model` in an options object request
+Set a Prefer header with `rel=interaction-model` in an options object request.
 
 *Parameters*
 
@@ -4596,25 +5167,12 @@ Set a Prefer header with `rel=interaction-model` in an options object request
 static setSlug( slug:string,  requestOptions:Object ):Object
 ```
 
-Set a Slug header in an options object request
+Set a Slug header in an options object request.
 
 *Parameters*
 
 - slug
 - requestOptions
-
-##### setContainerRetrievalPreferences
-```typescript 
-static setContainerRetrievalPreferences( preference:Carbon.HTTP.Request.ContainerRetrievalPreferences,  requestOptions:Carbon.HTTP.Request.Options,  returnRepresentation?:boolean ):Object
-```
-
-Set a Prefer header with `return=representation` in an options object request
-
-*Parameters*
-
-- preference
-- requestOptions
-- returnRepresentation: If set to true, add `return=representation;` before include and/or omit. Default value is set to `true`.
 
 
 
@@ -4632,7 +5190,7 @@ Set a Prefer header with `return=representation` in an options object request
 ### <a name="Carbon-HTTP-Response-Class" />Class Carbon.HTTP.Response.Class
 
 
-> Class that represents an HTTP Response
+> Class that represents an HTTP Response.
 
 
 #### <a name="Carbon-HTTP-Response-Class-Constructor" />Constructor
@@ -4640,7 +5198,7 @@ Set a Prefer header with `return=representation` in an options object request
 Class( request:XMLHttpRequest )
 ```
 
-Signature that only works when working in a Browser.
+Signature that only works in a web browser.
 
 *Parameters*
 
@@ -4650,7 +5208,7 @@ Signature that only works when working in a Browser.
 Class( request:ClientRequest,  data:string,  response:IncomingMessage )
 ```
 
-Signature that only works when working in Node.js.
+Signature that only works in Node.js.
 
 *Parameters*
 
@@ -4662,25 +5220,25 @@ Signature that only works when working in Node.js.
 #### <a name="Carbon-HTTP-Response-Class-Properties" />Properties
 
 ```typescript 
-status:number 
-```
-
-The status code returned by the request
-```typescript 
 data:string 
 ```
 
-The body returned by the request
+The raw body returned by the request.
 ```typescript 
 headers:Map<string, Carbon.HTTP.Header.Class> 
 ```
 
-A map object containing the headers returned by the request
+A map object containing the headers returned by the request.
 ```typescript 
 request:XMLHttpRequest | ClientRequest 
 ```
 
-The XMLHttpRequest object that was provided in the constructor when working in a Browser, or The ClientRequest object when working with Node.js.
+The XMLHttpRequest object that was provided in the constructor when working in a Browser, or the ClientRequest object when working with Node.js.
+```typescript 
+status:number 
+```
+
+The status code returned by the request.
 
 #### <a name="Carbon-HTTP-Response-Class-Methods" />Methods
 
@@ -4689,7 +5247,7 @@ The XMLHttpRequest object that was provided in the constructor when working in a
 getHeader( name:string ):Carbon.HTTP.Header.Class
 ```
 
-Return the Header object referred by the name provided.
+Return the Header object referred by the name specified.
 
 *Parameters*
 
@@ -4700,7 +5258,7 @@ Return the Header object referred by the name provided.
 ### <a name="Carbon-HTTP-Response-Util" />Class Carbon.HTTP.Response.Util
 
 
-> Class with useful methods to use with a `Carbon.HTTP.Response.Class` object
+> Class with useful functions to manage `Carbon.HTTP.Response.Class` objects.
 
 
 
@@ -4711,7 +5269,7 @@ Return the Header object referred by the name provided.
 static getETag( response:Carbon.HTTP.Response.Class ):string
 ```
 
-Return the ETag string header of a `Carbon.HTTP.Response.Class` object. Returns null if no ETag exists
+Return the ETag header of a `Carbon.HTTP.Response.Class` object. Returns null if no ETag exists.
 
 *Parameters*
 
@@ -4728,49 +5286,49 @@ Return the ETag string header of a `Carbon.HTTP.Response.Class` object. Returns 
 ### <a name="Carbon-HTTP-StatusCode-Enums" />Enums
 
 #### <a name"Carbon-HTTP-Method />Carbon.HTTP.Method
-> Enum with the HTTP/1.1 methods
+> Enum with the HTTP/1.1 status codes.
 
 | Name | Description | 
 | --- | --- |
-| CONTINUE | Enum that identifies the HTTP/1.1 100 status code |
-| OK | Enum that identifies the HTTP/1.1 200 status code |
-| CREATED | Enum that identifies the HTTP/1.1 201 status code |
-| ACCEPTED | Enum that identifies the HTTP/1.1 202 status code |
-| NON_AUTHORITATIVE_INFORMATION | Enum that identifies the HTTP/1.1 203 status code |
-| NO_CONTENT | Enum that identifies the HTTP/1.1 204 status code |
-| RESET_CONTENT | Enum that identifies the HTTP/1.1 205 status code |
-| PARTIAL_CONTENT | Enum that identifies the HTTP/1.1 206 status code |
-| MULTIPLE_CHOICES | Enum that identifies the HTTP/1.1 300 status code |
-| MOVED_PERMANENTLY | Enum that identifies the HTTP/1.1 301 status code |
-| FOUND | Enum that identifies the HTTP/1.1 302 status code |
-| SEE_OTHER | Enum that identifies the HTTP/1.1 303 status code |
-| NOT_MODIFIED | Enum that identifies the HTTP/1.1 304 status code |
-| USE_PROXY | Enum that identifies the HTTP/1.1 305 status code |
-| TEMPORARY_REDIRECT | Enum that identifies the HTTP/1.1 307 status code |
-| BAD_REQUEST | Enum that identifies the HTTP/1.1 400 status code |
-| UNAUTHORIZED | Enum that identifies the HTTP/1.1 401 status code |
-| PAYMENT_REQUIRED | Enum that identifies the HTTP/1.1 402 status code |
-| FORBIDDEN | Enum that identifies the HTTP/1.1 403 status code |
-| NOT_FOUND | Enum that identifies the HTTP/1.1 404 status code |
-| METHOD_NOT_ALLOWED | Enum that identifies the HTTP/1.1 405 status code |
-| NOT_ACCEPTABLE | Enum that identifies the HTTP/1.1 406 status code |
-| PROXY_AUTHENTICATION_REQUIRED | Enum that identifies the HTTP/1.1 407 status code |
-| REQUEST_TIME_OUT | Enum that identifies the HTTP/1.1 408 status code |
-| CONFLICT | Enum that identifies the HTTP/1.1 409 status code |
-| GONE | Enum that identifies the HTTP/1.1 410 status code |
-| LENGTH_REQUIRED | Enum that identifies the HTTP/1.1 411 status code |
-| PRECONDITION_FAILED | Enum that identifies the HTTP/1.1 412 status code |
-| REQUEST_ENTITY_TOO_LARGE | Enum that identifies the HTTP/1.1 413 status code |
-| REQUEST_URI_TOO_LARGE | Enum that identifies the HTTP/1.1 414 status code |
-| UNSUPPORTED_MEDIA_TYPE | Enum that identifies the HTTP/1.1 415 status code |
-| REQUESTED_RANGE_NOT_SATISFIABLE | Enum that identifies the HTTP/1.1 416 status code |
-| EXPECTATION_FAILED | Enum that identifies the HTTP/1.1 417 status code |
-| INTERNAL_SERVER_ERROR | Enum that identifies the HTTP/1.1 500 status code |
-| NOT_IMPLEMENTED | Enum that identifies the HTTP/1.1 501 status code |
-| BAD_GATEWAY | Enum that identifies the HTTP/1.1 502 status code |
-| SERVICE_UNAVAILABLE | Enum that identifies the HTTP/1.1 503 status code |
-| GATEWAY_TIME_OUT | Enum that identifies the HTTP/1.1 504 status code |
-| HTTP_VERSION_NOT_SUPPORTED | Enum that identifies the HTTP/1.1 505 status code |
+| CONTINUE | Enum that identifies the HTTP/1.1 100 status code. |
+| OK | Enum that identifies the HTTP/1.1 200 status code. |
+| CREATED | Enum that identifies the HTTP/1.1 201 status code. |
+| ACCEPTED | Enum that identifies the HTTP/1.1 202 status code. |
+| NON_AUTHORITATIVE_INFORMATION | Enum that identifies the HTTP/1.1 203 status code. |
+| NO_CONTENT | Enum that identifies the HTTP/1.1 204 status code. |
+| RESET_CONTENT | Enum that identifies the HTTP/1.1 205 status code. |
+| PARTIAL_CONTENT | Enum that identifies the HTTP/1.1 206 status code. |
+| MULTIPLE_CHOICES | Enum that identifies the HTTP/1.1 300 status code. |
+| MOVED_PERMANENTLY | Enum that identifies the HTTP/1.1 301 status code. |
+| FOUND | Enum that identifies the HTTP/1.1 302 status code. |
+| SEE_OTHER | Enum that identifies the HTTP/1.1 303 status code. |
+| NOT_MODIFIED | Enum that identifies the HTTP/1.1 304 status code. |
+| USE_PROXY | Enum that identifies the HTTP/1.1 305 status code. |
+| TEMPORARY_REDIRECT | Enum that identifies the HTTP/1.1 307 status code. |
+| BAD_REQUEST | Enum that identifies the HTTP/1.1 400 status code. |
+| UNAUTHORIZED | Enum that identifies the HTTP/1.1 401 status code. |
+| PAYMENT_REQUIRED | Enum that identifies the HTTP/1.1 402 status code. |
+| FORBIDDEN | Enum that identifies the HTTP/1.1 403 status code. |
+| NOT_FOUND | Enum that identifies the HTTP/1.1 404 status code. |
+| METHOD_NOT_ALLOWED | Enum that identifies the HTTP/1.1 405 status code. |
+| NOT_ACCEPTABLE | Enum that identifies the HTTP/1.1 406 status code. |
+| PROXY_AUTHENTICATION_REQUIRED | Enum that identifies the HTTP/1.1 407 status code. |
+| REQUEST_TIME_OUT | Enum that identifies the HTTP/1.1 408 status code. |
+| CONFLICT | Enum that identifies the HTTP/1.1 409 status code. |
+| GONE | Enum that identifies the HTTP/1.1 410 status code. |
+| LENGTH_REQUIRED | Enum that identifies the HTTP/1.1 411 status code. |
+| PRECONDITION_FAILED | Enum that identifies the HTTP/1.1 412 status code. |
+| REQUEST_ENTITY_TOO_LARGE | Enum that identifies the HTTP/1.1 413 status code. |
+| REQUEST_URI_TOO_LARGE | Enum that identifies the HTTP/1.1 414 status code. |
+| UNSUPPORTED_MEDIA_TYPE | Enum that identifies the HTTP/1.1 415 status code. |
+| REQUESTED_RANGE_NOT_SATISFIABLE | Enum that identifies the HTTP/1.1 416 status code. |
+| EXPECTATION_FAILED | Enum that identifies the HTTP/1.1 417 status code. |
+| INTERNAL_SERVER_ERROR | Enum that identifies the HTTP/1.1 500 status code. |
+| NOT_IMPLEMENTED | Enum that identifies the HTTP/1.1 501 status code. |
+| BAD_GATEWAY | Enum that identifies the HTTP/1.1 502 status code. |
+| SERVICE_UNAVAILABLE | Enum that identifies the HTTP/1.1 503 status code. |
+| GATEWAY_TIME_OUT | Enum that identifies the HTTP/1.1 504 status code. |
+| HTTP_VERSION_NOT_SUPPORTED | Enum that identifies the HTTP/1.1 505 status code. |
 
 
 
@@ -4788,7 +5346,7 @@ Return the ETag string header of a `Carbon.HTTP.Response.Class` object. Returns 
 ### <a name="Carbon-HTTP-StringParser-Class" />Class Carbon.HTTP.StringParser.Class
 
 
-> Parses a Carbon.HTTP.Response.Class and returns a String
+> Parses a `Carbon.HTTP.Response.Class` and returns a string.
 
 
 
@@ -4800,7 +5358,7 @@ Return the ETag string header of a `Carbon.HTTP.Response.Class` object. Returns 
 parse( body:Carbon.HTTP.Response.Class ):Promise<string>
 ```
 
-Gets a string and returns a promise with the same string
+Gets a string and returns a Promise with the same string.
 
 *Parameters*
 
@@ -4811,6 +5369,7 @@ Gets a string and returns a promise with the same string
 ## <a name="Carbon-JSONLDConverter" />Module Carbon/JSONLDConverter
 
 
+**Default export:** [Carbon.JSONLDConverter.Class](#Carbon-JSONLDConverter-Class)
 
 
 
@@ -4820,9 +5379,27 @@ Gets a string and returns a promise with the same string
 ### <a name="Carbon-JSONLDConverter-Class" />Class Carbon.JSONLDConverter.Class
 
 
+> Class that have methods for convert expanded JSON-LD objects to compacted Carbon SDK Resources and vice versa.
 
 
+#### <a name="Carbon-JSONLDConverter-Class-Constructor" />Constructor
+```typescript 
+Class( literalSerializers?:Map<string, Carbon.RDF.Literal.Serializer> )
+```
 
+
+*Parameters*
+
+- literalSerializers: A Map object with the data type serializers that the converter will only be able to handle.
+
+
+#### <a name="Carbon-JSONLDConverter-Class-Properties" />Properties
+
+```typescript 
+literalSerializers:Map<string, Carbon.RDF.Literal.Serializer> 
+```
+
+A Map object with data-type/serializer pairs for stringify the data of a SDK Resource when expanding it.
 
 #### <a name="Carbon-JSONLDConverter-Class-Methods" />Methods
 
@@ -4831,24 +5408,26 @@ Gets a string and returns a promise with the same string
 compact( expandedObject:Object,  targetObject:Object,  digestedSchema:Carbon.ObjectSchema.DigestedObjectSchema,  pointerLibrary:Carbon.Pointer.Library ):Object
 ```
 
+Assign the data of the expanded JSON-LD object, to the target object in a friendly mode, ie. without the JSON-LD Syntax Tokens and parsed values, in accordance to the schema provided.
 
 *Parameters*
 
-- expandedObject
-- targetObject
-- digestedSchema
-- pointerLibrary
+- expandedObject: The JSON-LD object to compact.
+- targetObject: The target object where will be added the data of the expanded object.
+- digestedSchema: The schema that describes how compact the expanded object.
+- pointerLibrary: An object from where one can obtain pointers to SDK Resources.
 
 ##### expand
 ```typescript 
 expand( compactedObject:Object,  digestedSchema:Carbon.ObjectSchema.DigestedObjectSchema ):Object
 ```
 
+Creates a expanded JSON-LD object from the compacted object in accordance to the schema provided.
 
 *Parameters*
 
-- compactedObject
-- digestedSchema
+- compactedObject: The compacted object to generate its expanded JSON-LD object.
+- digestedSchema: The schema that describes how construct the expanded object.
 
 
 
@@ -4860,17 +5439,13 @@ expand( compactedObject:Object,  digestedSchema:Carbon.ObjectSchema.DigestedObje
 | Export name | Original Location | 
 | --- | --- |
 | AddMemberAction | [Carbon/LDP/AddMemberAction](#Carbon-LDP-AddMemberAction) |
-| BasicContainer | [Carbon/LDP/BasicContainer](#Carbon-LDP-BasicContainer) |
-| Container | [Carbon/LDP/Container](#Carbon-LDP-Container) |
 | DirectContainer | [Carbon/LDP/DirectContainer](#Carbon-LDP-DirectContainer) |
 | Error | [Carbon/LDP/Error](#Carbon-LDP-Error) |
-| IndirectContainer | [Carbon/LDP/IndirectContainer](#Carbon-LDP-IndirectContainer) |
-| PersistedContainer | [Carbon/LDP/PersistedContainer](#Carbon-LDP-PersistedContainer) |
-| RDFSource | [Carbon/LDP/RDFSource](#Carbon-LDP-RDFSource) |
-| RemoveMemberAction | [Carbon/LDP/RemoveMemberAction](#Carbon-LDP-RemoveMemberAction) |
 | ErrorResponse | [Carbon/LDP/ErrorResponse](#Carbon-LDP-ErrorResponse) |
-| ResponseMetadata | [Carbon/LDP/ResponseMetadata](#Carbon-LDP-ResponseMetadata) |
+| IndirectContainer | [Carbon/LDP/IndirectContainer](#Carbon-LDP-IndirectContainer) |
+| RemoveMemberAction | [Carbon/LDP/RemoveMemberAction](#Carbon-LDP-RemoveMemberAction) |
 | ResourceMetadata | [Carbon/LDP/ResourceMetadata](#Carbon-LDP-ResourceMetadata) |
+| ResponseMetadata | [Carbon/LDP/ResponseMetadata](#Carbon-LDP-ResponseMetadata) |
 
 
 
@@ -4898,96 +5473,44 @@ static SCHEMA:Carbon.ObjectSchema.Class
 ### <a name="Carbon-LDP-AddMemberAction-Factory" />Class Carbon.LDP.AddMemberAction.Factory
 
 
-> Factory class for LDP AddMemberAction objects
+> Factory class for `Carbon.LDP.AddMemberAction.Class` objects.
 
 
 
 
 #### <a name="Carbon-LDP-AddMemberAction-Factory-Methods" />Methods
+##### createDocument
+```typescript 
+static createDocument( targetMembers:Carbon.Pointer.Class[] ):Carbon.Document.Class
+```
+
+Creates and returns a `Carbon.Document.Class` object with a `Carbon.LDP.AddMemberAction.Class` fragment for the specified targetMembers.
+
+*Parameters*
+
+- targetMembers: The target members to add in a `addMember` request.
+
 ##### hasClassProperties
 ```typescript 
 static hasClassProperties( resource:Carbon.RDF.Node.Class ):boolean
 ```
 
-Returns true if the object has the properties to be defined as a LDP AddMemberAction
+Returns true if the object has the properties of a `Carbon.LDP.AddMemberAction.Class` object.
 
 *Parameters*
 
 - resource
 
-##### createDocument
-```typescript 
-static createDocument( targetMembers:Carbon.Pointer.Class ):Carbon.Document.Class
-```
-
-Create and returns a `Carbon.Document.Class` object with a AddMemberAction fragment for the specified targetMembers.
-
-*Parameters*
-
-- targetMembers: The target member to add in a `addMember` request.
 
 
 
-
-## <a name="Carbon-LDP-BasicContainer" />Module Carbon/LDP/BasicContainer
+## <a name="Carbon-LDP-BlankNode" />Module Carbon/LDP/BlankNode
 
 
 
 
 
-### <a name="Carbon-LDP-BasicContainer-Properties" />Properties
-```typescript 
-static RDF_CLASS:string 
-```
-
-
-
-
-
-### <a name="Carbon-LDP-BasicContainer-Factory" />Class Carbon.LDP.BasicContainer.Factory
-
-
-> Factory class for LDP BasicContainer objects
-
-
-
-
-#### <a name="Carbon-LDP-BasicContainer-Factory-Methods" />Methods
-##### hasRDFClass
-```typescript 
-static hasRDFClass( pointer:Carbon.Pointer.Class ):boolean
-```
-
-Returns true if the Pointer provided is an LDP BasicContainer.
-
-*Parameters*
-
-- pointer
-
-```typescript 
-static hasRDFClass( pointer:Carbon.Pointer.Class ):boolean
-```
-
-Returns true if the Pointer provided is an LDP BasicContainer.
-
-*Parameters*
-
-- pointer
-
-
-
-
-## <a name="Carbon-LDP-Container" />Module Carbon/LDP/Container
-
-
-
-
-
-### <a name="Carbon-LDP-Container-Properties" />Properties
-```typescript 
-static RDF_CLASS:string 
-```
-
+### <a name="Carbon-LDP-BlankNode-Properties" />Properties
 ```typescript 
 static SCHEMA:Carbon.ObjectSchema.Class 
 ```
@@ -4996,46 +5519,50 @@ static SCHEMA:Carbon.ObjectSchema.Class
 
 
 
-### <a name="Carbon-LDP-Container-Factory" />Class Carbon.LDP.Container.Factory
+### <a name="Carbon-BlankNode-Factory" />Class Carbon.BlankNode.Factory
 
 
-> Factory class for LDP Container objects
+> Factory class for `Carbon.BlankNode.Class` objects.
 
 
 
 
-#### <a name="Carbon-LDP-Container-Factory-Methods" />Methods
-##### hasClassProperties
+#### <a name="Carbon-BlankNode-Factory-Methods" />Methods
+##### createFrom
 ```typescript 
-static hasClassProperties( resource:Carbon.RDF.Node.Class ):boolean
+static createFrom<T extends Object>( object:T extends Object,  id:string,  document:Carbon.Document.Class ):T & Carbon.BlankNode.Class
 ```
 
-Returns true if the object has the properties to be defined as a LDP Container
+Creates a `Carbon.BlankNode.Class` object from the object and parameters specified.
 
 *Parameters*
 
-- resource
+- object: Object to be converted into a `Carbon.BlankNode.Class`.
+- id: The ID of the of the BlankNode to create. If no ID is provided, one will be created.
+- document: The `Carbon.Document.Class` object where the fragment is part of.
 
-##### hasRDFClass
 ```typescript 
-static hasRDFClass( pointer:Carbon.Pointer.Class ):boolean
+static createFrom<T extends Object>( object:T extends Object,  document:Carbon.Document.Class ):T & Carbon.BlankNode.Class
 ```
 
-Returns true if the Pointer provided is an LDP Container.
+Creates a `Carbon.BlankNode.Class` object from the object and parameters specified.
 
 *Parameters*
 
-- pointer
+- object: Object to be converted into a `Carbon.BlankNode.Class`.
+- document: The `Carbon.Document.Class` object where the fragment is part of.
 
+##### decorate
 ```typescript 
-static hasRDFClass( expandedObject:Object ):boolean
+static decorate( object:T extends Object,  bNodeIdentifier?:string ):T & Carbon.BlankNode.Class
 ```
 
-Returns true if the Object provided is an LDP Container.
+Decorates the object provided with the properties and methods of a Carbon.FreeResources.Class object.
 
 *Parameters*
 
-- expandedObject
+- object: The object to be decorated.
+- bNodeIdentifier: The identifier to be added to the decorated BlankNode.
 
 
 
@@ -5058,81 +5585,60 @@ static RDF_CLASS:string
 ### <a name="Carbon-DirectContainer-Factory" />Class Carbon.DirectContainer.Factory
 
 
-> Factory class for `Carbon.LDP.DirectContainer.Class` objects
+> Factory class for `Carbon.LDP.DirectContainer.Class` objects.
 
 
 
 
 #### <a name="Carbon-DirectContainer-Factory-Methods" />Methods
+##### create
+```typescript 
+static create( membershipResource:Carbon.Pointer.Class,  hasMemberRelation:string | Carbon.Pointer.Class,  isMemberOfRelation?:string | Carbon.Pointer.Class ):Carbon.LDP.DirectContainer.Class
+```
+
+Creates a `Carbon.LDP.DirectContainer.Class` object with the parameters specified.
+
+*Parameters*
+
+- membershipResource
+- hasMemberRelation
+- isMemberOfRelation
+
+##### createFrom
+```typescript 
+static createFrom<T extends Object>( object:T,  membershipResource:Carbon.Pointer.Class,  hasMemberRelation:string | Carbon.Pointer.Class,  isMemberOfRelation?:string | Carbon.Pointer.Class ):T & Carbon.LDP.DirectContainer.Class
+```
+
+Creates a `Carbon.LDP.DirectContainer.Class` object with the object provided and the parameters specified.
+
+*Parameters*
+
+- object
+- membershipResource
+- hasMemberRelation
+- isMemberOfRelation
+
 ##### hasClassProperties
 ```typescript 
 static hasClassProperties( resource:Object ):boolean
 ```
 
-Returns true if the object provided has the properties that defines a `Carbon.LDP.DirectContainer.Class` object
+Returns true if the object provided has the properties of a `Carbon.LDP.DirectContainer.Class` object.
 
 *Parameters*
 
-- resource
+- resource: Object to evaluate.
 
 ##### is
 ```typescript 
 static is( object:Object ):boolean
 ```
 
-Returns true if the object provided is considered as an `Carbon.LDP.DirectContainer.Class` object
+Returns true if the object provided is considered a `Carbon.LDP.DirectContainer.Class` object.
 
 *Parameters*
 
-- object
-
-##### create
-```typescript 
-static create( membershipResource:Carbon.Pointer.Class,  hasMemberRelation:string | Carbon.Pointer.Class,  memberOfRelation?:string | Carbon.Pointer.Class ):Carbon.LDP.DirectContainer.Class
-```
-
-Create a `Carbon.LDP.DirectContainer.Class` object with the parameters specified.
-
-*Parameters*
-
-- membershipResource
-- hasMemberRelation
-- memberOfRelation
-
-##### createFrom
-```typescript 
-static createFrom( object:T extends Object,  membershipResource:Carbon.Pointer.Class,  hasMemberRelation:string | Carbon.Pointer.Class,  memberOfRelation?:string | Carbon.Pointer.Class ):T & Carbon.LDP.DirectContainer.Class
-```
-
-Create a `Carbon.LDP.DirectContainer.Class` object with the object provided and the parameters specified.
-
-*Parameters*
-
-- object
-- membershipResource
-- hasMemberRelation
-- memberOfRelation
-
-##### hasRDFClass
-```typescript 
-static hasRDFClass( pointer:Carbon.Pointer.Class ):boolean
-```
-
-Returns true if the Pointer provided is an LDP DirectContainer.
-
-*Parameters*
-
-- pointer
-
-```typescript 
-static hasRDFClass( expandedObject:Object ):boolean
-```
-
-Returns true if the Object provided is an LDP DirectContainer.
-
-*Parameters*
-
-- expandedObject
+- object: Object to evaluate.
 
 
 
@@ -5240,7 +5746,7 @@ static RDF_CLASS:string
 ### <a name="Carbon-IndirectContainer-Factory" />Class Carbon.IndirectContainer.Factory
 
 
-> Factory class for `Carbon.LDP.IndirectContainer.Class` objects
+> Factory class for `Carbon.LDP.IndirectContainer.Class` objects.
 
 
 
@@ -5251,7 +5757,7 @@ static RDF_CLASS:string
 static hasClassProperties( resource:Object ):boolean
 ```
 
-Returns true if the object provided has the properties that defines a `Carbon.LDP.IndirectContainer.Class` object
+Returns true if the object provided has the properties of a `Carbon.LDP.IndirectContainer.Class` object.
 
 *Parameters*
 
@@ -5263,282 +5769,6 @@ Returns true if the object provided has the properties that defines a `Carbon.LD
 ## <a name="Carbon-LDP-PersistedBlankNode" />Module Carbon/LDP/PersistedBlankNode
 
 
-
-
-
-### <a name="Carbon-LDP-PersistedBlankNode-Properties" />Properties
-```typescript 
-static SCHEMA:Carbon.ObjectSchema.Class 
-```
-
-
-
-
-
-## <a name="Carbon-LDP-PersistedContainer" />Module Carbon/LDP/PersistedContainer
-
-
-
-
-
-
-
-
-### <a name="Carbon-LDP-PersistedContainer-Factory" />Class Carbon.LDP.PersistedContainer.Factory
-
-
-> Factory class for LDP PersistedContainer objects
-
-
-
-
-#### <a name="Carbon-LDP-PersistedContainer-Factory-Methods" />Methods
-##### hasClassProperties
-```typescript 
-static hasClassProperties( document:Carbon.Document.Class ):boolean
-```
-
-Returns true if the object has the properties to be defined as a PersistedContainer
-
-*Parameters*
-
-- document
-
-##### decorate
-```typescript 
-static decorate( persistedDocument:T extends Carbon.PersistedDocument.Class ):T & Carbon.LDP.PersistedContainer.Class
-```
-
-Returns the PersistedDocuments decorated as a PersistedContainer
-
-*Parameters*
-
-- persistedDocument
-
-
-
-#### <a name="Carbon-LDP-PersistedContainer-Factory-Decorated-Object" />Decorated Object
-**Interfaces:** [Carbon.LDP.PersistedContainer.Class](#Carbon-LDP-PersistedContainer-Class)
-
-> Object decorated by the Carbon.LDP.PersistedContainer.Factory.decorate function.
-
-
-##### <a name="Carbon-LDP-PersistedContainer-Factory-Decorated-Object-Methods" />Methods
-##### addMembers
-```typescript 
-addMembers( members:(Carbon.Pointer.Class | string)[] ):Promise<Carbon.HTTP.Response.Class>
-```
-
-Add the specified resources URI or Pointers as members of the container.
-
-*Parameters*
-
-- members: Array of string URIs or Pointers to add as members
-
-##### listChildren
-```typescript 
-listChildren():Promise<[ Carbon.Pointer.Class[], Carbon.HTTP.Response ]>
-```
-
-Return all the children of the container.
-
-##### getChildren
-```typescript 
-getChildren( retrievalPreferences?:Carbon.RetrievalPreferences.Class ):Promise<[ Carbon.Pointer.Class[], Carbon.HTTP.Response ]>
-```
-
-Return all the children of the container.
-
-*Parameters*
-
-- retrievalPreferences
-
-##### listMembers
-```typescript 
-listMembers( includeNonReadable?:boolean ):Promise<[ Carbon.Pointer.Class[], Carbon.HTTP.Response.Class ]>
-```
-
-
-*Parameters*
-
-- includeNonReadable: By default this option is set to `true`.
-
-##### removeMembers
-```typescript 
-removeMembers( members:(Carbon.Pointer.Class | string)[] ):Promise<Carbon.HTTP.Response.Class>
-```
-
-Remove the specified resources URI or Pointers as members of the container.
-
-*Parameters*
-
-- members: Array of string URIs or Pointers to remove as members
-
-##### removeAllMembers
-```typescript 
-removeAllMembers( members:(Carbon.Pointer.Class | string)[] ):Promise<Carbon.HTTP.Response.Class>
-```
-
-Remove the specified resources URI or Pointers as members of the container.
-
-*Parameters*
-
-- members: Array of string URIs or Pointers to remove as members
-
-##### addMember
-```typescript 
-addMember( member:Carbon.Pointer.Class ):Promise<Carbon.HTTP.Response.Class>
-```
-
-Add the specified resource Pointer as a member of the container.
-
-*Parameters*
-
-- member: Pointer object that references the resource to add as a member.
-
-```typescript 
-addMember( memberURI:string ):Promise<Carbon.HTTP.Response.Class>
-```
-
-Add the specified resource URI as a member of the container.
-
-*Parameters*
-
-- memberURI: URI of the resource to add as a member.
-
-##### createChild
-```typescript 
-createChild( slug:string,  object:Object ):Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>
-```
-
-
-*Parameters*
-
-- slug: The slug name for the children URI.
-- object: The object from where create the child. If it's a non `Carbon.Document.Class` object, it is transformed into one.
-
-```typescript 
-createChild( object:Object ):Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>
-```
-
-
-*Parameters*
-
-- object: The object from where create the child. If it's a non `Carbon.Document.Class` object, it is transformed into one.
-
-```typescript 
-createChild( slug:string ):Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>
-```
-
-
-*Parameters*
-
-- slug: The slug name for the children URI.
-
-```typescript 
-createChild():Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>
-```
-
-
-##### getMembers
-```typescript 
-getMembers( includeNonReadable?:boolean,  retrievalPreferences?:Carbon.RetrievalPreferences.Class ):Promise<[ Carbon.Pointer.Class[], Carbon.HTTP.Response.Class ]>
-```
-
-
-*Parameters*
-
-- includeNonReadable: By default this option is set to `true`.
-- retrievalPreferences
-
-##### removeMember
-```typescript 
-removeMember( member:Carbon.Pointer.Class ):Promise<Carbon.HTTP.Response.Class>
-```
-
-Remove the specified resource Pointer as a member of the container.
-
-*Parameters*
-
-- member: Pointer object that references the resource to remove as a member.
-
-```typescript 
-removeMember( memberURI:string ):Promise<Carbon.HTTP.Response.Class>
-```
-
-Remove the specified resource URI as a member of the container.
-
-*Parameters*
-
-- memberURI: URI of the resource to remove as a member.
-
-##### upload
-```typescript 
-upload( slug:string,  data:Blob ):Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>
-```
-
-Upload a File to the server as a child of the Container.
-
-*Parameters*
-
-- slug: The slug that will be used in the URI of the data.
-- data: Binary data to store in the server. The Blob works in a Browser.
-
-```typescript 
-upload( data:Blob ):Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>
-```
-
-Upload a File to the server as a child of the Container.
-
-*Parameters*
-
-- data: Binary data to store in the server. The Blob works in a Browser.
-
-```typescript 
-upload( slug:string,  data:Buffer ):Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>
-```
-
-Upload a File to the server as a child of the Container.
-
-*Parameters*
-
-- slug: The slug that will be used in the URI of the data.
-- data: Binary data to store in the server. The Buffer only works in Node.js.
-
-```typescript 
-upload( data:Buffer ):Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>
-```
-
-Upload a File to the server as a child of the Container.
-
-*Parameters*
-
-- data: Binary data to store in the server. The Buffer only works in Node.js.
-
-
-## <a name="Carbon-LDP-RDFSource" />Module Carbon/LDP/RDFSource
-
-
-
-
-
-### <a name="Carbon-LDP-RDFSource-Properties" />Properties
-```typescript 
-static RDF_CLASS:string 
-```
-
-```typescript 
-static SCHEMA:Carbon.ObjectSchema.Class 
-```
-
-
-
-
-
-### <a name="Carbon-LDP-RDFSource-Factory" />Class Carbon.LDP.RDFSource.Factory
-
-
-> Factory class for RDFSource objects
 
 
 
@@ -5567,33 +5797,33 @@ static SCHEMA:Carbon.ObjectSchema.Class
 ### <a name="Carbon-LDP-RemoveMemberAction-Factory" />Class Carbon.LDP.RemoveMemberAction.Factory
 
 
-> Factory class for LDP RemoveMemberAction objects
+> Factory class for `Carbon.LDP.RemoveMemberAction.Class` objects.
 
 
 
 
 #### <a name="Carbon-LDP-RemoveMemberAction-Factory-Methods" />Methods
-##### hasClassProperties
-```typescript 
-static hasClassProperties( resource:Carbon.RDF.Node.Class ):boolean
-```
-
-Returns true if the object has the properties to be defined as a LDP RemoveMemberAction
-
-*Parameters*
-
-- resource
-
 ##### createDocument
 ```typescript 
 static createDocument( targetMembers:Carbon.Pointer.Class ):Carbon.Document.Class
 ```
 
-Create and returns a `Carbon.Document.Class` object with a RemoveMemberAction fragment for the specified targetMembers.
+Creates and returns a `Carbon.Document.Class` object with a `Carbon.LDP.RemoveMemberAction.Class` fragment for the specified targetMembers.
 
 *Parameters*
 
 - targetMembers: The target members of the remove action.
+
+##### hasClassProperties
+```typescript 
+static hasClassProperties( resource:Carbon.RDF.Node.Class ):boolean
+```
+
+Returns true if the object has the properties of a `Carbon.LDP.RemoveMemberAction.Class` object.
+
+*Parameters*
+
+- resource
 
 
 
@@ -5620,7 +5850,7 @@ static SCHEMA:Carbon.ObjectSchema.Class
 ### <a name="Carbon-LDP-ResourceMetadata-Factory" />Class Carbon.LDP.ResourceMetadata.Factory
 
 
-> Factory class form `Carbon.LDP.ResourceMetadata.Class` objects.
+> Factory class for `Carbon.LDP.ResourceMetadata.Class` objects.
 
 
 
@@ -5637,23 +5867,23 @@ Return true if the object provided has the properties of a `Carbon.LDP.ResourceM
 
 - object: Object to check.
 
-##### is
-```typescript 
-static is( object:Object ):boolean
-```
-
-Return true if the object provided can be classified as a `Carbon.LDP.ResourceMetadata.Class` object.
-
-*Parameters*
-
-- object: Object to check.
-
 ##### hasRDFClass
 ```typescript 
 static hasRDFClass( object:Object ):boolean
 ```
 
-Return true if the object provided have the RDF_CLASS of a ResourceMetadata, either if it's a Resource or a RDF object.
+Return true if the object provided have the RDF_CLASS of a ResourceMetadata, either if it's a Carbon Resource or an RDF object.
+
+*Parameters*
+
+- object: Object to check.
+
+##### is
+```typescript 
+static is( object:Object ):boolean
+```
+
+Return true if the object provided is considered a `Carbon.LDP.ResourceMetadata.Class` object.
 
 *Parameters*
 
@@ -5684,7 +5914,7 @@ static SCHEMA:Carbon.ObjectSchema.Class
 ### <a name="Carbon-LDP-ResponseMetadata-Factory" />Class Carbon.LDP.ResponseMetadata.Factory
 
 
-> Factory class form `Carbon.LDP.ResponseMetadata.Class` objects.
+> Factory class for `Carbon.LDP.ResponseMetadata.Class` objects.
 
 
 
@@ -5701,27 +5931,27 @@ Return true if the object provided has the properties of a `Carbon.LDP.ResponseM
 
 - object: Object to check.
 
-##### is
-```typescript 
-static is( object:Object ):boolean
-```
-
-Return true if the object provided can be classified as a `Carbon.LDP.ResponseMetadata.Class` object.
-
-*Parameters*
-
-- object: Object to check
-
 ##### hasRDFClass
 ```typescript 
 static hasRDFClass( object:Object ):boolean
 ```
 
-Return true if the object provided have the RDF_CLASS of a ResponseMetadata, either if it's a Resource or a RDF object.
+Return true if the object provided have the RDF_CLASS of a ResponseMetadata, either if it's a Carbon Resource or an RDF object.
 
 *Parameters*
 
 - object: Object to check.
+
+##### is
+```typescript 
+static is( object:Object ):boolean
+```
+
+Return true if the object provided is considered a `Carbon.LDP.ResponseMetadata.Class` object.
+
+*Parameters*
+
+- object: Object to check
 
 
 
@@ -5744,29 +5974,29 @@ static RDF_CLASS:string
 ### <a name="Carbon-LDP-VolatileResource-Factory" />Class Carbon.LDP.VolatileResource.Factory
 
 
-> Factory class form `Carbon.LDP.VolatileResource.Class` objects.
+> Factory class for `Carbon.LDP.VolatileResource.Class` objects.
 
 
 
 
 #### <a name="Carbon-LDP-VolatileResource-Factory-Methods" />Methods
-##### is
-```typescript 
-static is( object:Object ):boolean
-```
-
-Return true if the object provided can be classified as a `Carbon.LDP.VolatileResource.Class` object.
-
-*Parameters*
-
-- object: Object to check.
-
 ##### hasRDFClass
 ```typescript 
 static hasRDFClass( object:Object ):boolean
 ```
 
-Return true if the object provided have the RDF_CLASS of a VolatileResource, either if it's a Resource or a RDF object.
+Return true if the object provided have the RDF_CLASS of a VolatileResource, either if it's a Carbon Resource or an RDF object.
+
+*Parameters*
+
+- object: Object to check.
+
+##### is
+```typescript 
+static is( object:Object ):boolean
+```
+
+Return true if the object provided is considered a `Carbon.LDP.VolatileResource.Class` object.
 
 *Parameters*
 
@@ -5787,8 +6017,8 @@ Return true if the object provided have the RDF_CLASS of a VolatileResource, eit
 | CS | [Carbon/NS/CS](#Carbon-NS-CS) |
 | LDP | [Carbon/NS/LDP](#Carbon-NS-LDP) |
 | RDF | [Carbon/NS/RDF](#Carbon-NS-RDF) |
-| XSD | [Carbon/NS/XSD](#Carbon-NS-XSD) |
 | VCARD | [Carbon/NS/VCARD](#Carbon-NS-VCARD) |
+| XSD | [Carbon/NS/XSD](#Carbon-NS-XSD) |
 
 
 
@@ -5812,17 +6042,33 @@ static namespace:string
 ### <a name="Carbon-NS-C-Class" />Class Carbon.NS.C.Class
 
 
-> Class that contains objects defined by the Carbon Platform
+> Class that contains classes defined by the Carbon Platform.
 
 
 
 #### <a name="Carbon-NS-C-Class-Properties" />Properties
 ```typescript 
+static API:string 
+```
+
+```typescript 
 static AccessPoint:string 
 ```
 
 ```typescript 
-static API:string 
+static AddMemberAction:string 
+```
+
+```typescript 
+static Document:string 
+```
+
+```typescript 
+static Error:string 
+```
+
+```typescript 
+static ErrorResponse:string 
 ```
 
 ```typescript 
@@ -5850,15 +6096,7 @@ static PreferMembershipTriples:string
 ```
 
 ```typescript 
-static VolatileResource:string 
-```
-
-```typescript 
 static RDFRepresentation:string 
-```
-
-```typescript 
-static AddMemberAction:string 
 ```
 
 ```typescript 
@@ -5866,11 +6104,7 @@ static RemoveMemberAction:string
 ```
 
 ```typescript 
-static ErrorResponse:string 
-```
-
-```typescript 
-static Error:string 
+static ResourceMetadata:string 
 ```
 
 ```typescript 
@@ -5878,7 +6112,7 @@ static ResponseMetadata:string
 ```
 
 ```typescript 
-static ResourceMetadata:string 
+static VolatileResource:string 
 ```
 
 
@@ -5888,13 +6122,17 @@ static ResourceMetadata:string
 ### <a name="Carbon-NS-C-Predicate" />Class Carbon.NS.C.Predicate
 
 
-> Class that contains predicates defined by the Carbon Platform
+> Class that contains predicates defined by the Carbon Platform.
 
 
 
 #### <a name="Carbon-NS-C-Predicate-Properties" />Properties
 ```typescript 
 static accessPoint:string 
+```
+
+```typescript 
+static appRoleMap:string 
 ```
 
 ```typescript 
@@ -5906,27 +6144,23 @@ static buildDate:string
 ```
 
 ```typescript 
+static carbonCode:string 
+```
+
+```typescript 
 static created:string 
 ```
 
 ```typescript 
-static modified:string 
+static defaultInteractionModel:string 
 ```
 
 ```typescript 
-static version:string 
+static eTag:string 
 ```
 
 ```typescript 
-static mediaType:string 
-```
-
-```typescript 
-static size:string 
-```
-
-```typescript 
-static targetMember:string 
+static entry:string 
 ```
 
 ```typescript 
@@ -5938,7 +6172,11 @@ static httpStatusCode:string
 ```
 
 ```typescript 
-static carbonCode:string 
+static key:string 
+```
+
+```typescript 
+static mediaType:string 
 ```
 
 ```typescript 
@@ -5946,7 +6184,11 @@ static message:string
 ```
 
 ```typescript 
-static resourceMetadata:string 
+static modified:string 
+```
+
+```typescript 
+static requestID:string 
 ```
 
 ```typescript 
@@ -5954,11 +6196,19 @@ static resource:string
 ```
 
 ```typescript 
-static eTag:string 
+static resourceMetadata:string 
 ```
 
 ```typescript 
-static requestID:string 
+static size:string 
+```
+
+```typescript 
+static targetMember:string 
+```
+
+```typescript 
+static version:string 
 ```
 
 
@@ -5983,7 +6233,7 @@ static namespace:string
 ### <a name="Carbon-NS-CP-Predicate" />Class Carbon.NS.CP.Predicate
 
 
-> Class that contains predicates defined by Carbon Patch
+> Class that contains predicates defined by Carbon Patch.
 
 
 
@@ -5993,11 +6243,11 @@ static ADD_ACTION:string
 ```
 
 ```typescript 
-static SET_ACTION:string 
+static DELETE_ACTION:string 
 ```
 
 ```typescript 
-static DELETE_ACTION:string 
+static SET_ACTION:string 
 ```
 
 
@@ -6022,21 +6272,17 @@ static namespace:string
 ### <a name="Carbon-NS-CS-Class" />Class Carbon.NS.CS.Class
 
 
-> Class that contains objects defined by Carbon Security
+> Class that contains classes defined by Carbon Security.
 
 
 
 #### <a name="Carbon-NS-CS-Class-Properties" />Properties
 ```typescript 
-static Application:string 
+static AccessControlEntry:string 
 ```
 
 ```typescript 
-static Token:string 
-```
-
-```typescript 
-static AllOrigins:string 
+static AccessControlList:string 
 ```
 
 ```typescript 
@@ -6044,7 +6290,23 @@ static Agent:string
 ```
 
 ```typescript 
+static AllOrigins:string 
+```
+
+```typescript 
+static Application:string 
+```
+
+```typescript 
+static ProtectedDocument:string 
+```
+
+```typescript 
 static Ticket:string 
+```
+
+```typescript 
+static Token:string 
 ```
 
 
@@ -6054,13 +6316,29 @@ static Ticket:string
 ### <a name="Carbon-NS-CS-Predicate" />Class Carbon.NS.CS.Predicate
 
 
-> Class that contains predicates defined by Carbon Security
+> Class that contains predicates defined by Carbon Security.
 
 
 
 #### <a name="Carbon-NS-CS-Predicate-Properties" />Properties
 ```typescript 
+static accessControlEntry:string 
+```
+
+```typescript 
+static accessControlList:string 
+```
+
+```typescript 
+static accessTo:string 
+```
+
+```typescript 
 static allowsOrigin:string 
+```
+
+```typescript 
+static credentialsOf:string 
 ```
 
 ```typescript 
@@ -6080,15 +6358,31 @@ static forIRI:string
 ```
 
 ```typescript 
+static granting:string 
+```
+
+```typescript 
+static inheritableEntry:string 
+```
+
+```typescript 
 static namae:string 
 ```
 
 ```typescript 
-static password:string 
+static permission:string 
 ```
 
 ```typescript 
 static rootContainer:string 
+```
+
+```typescript 
+static subject:string 
+```
+
+```typescript 
+static subjectClass:string 
 ```
 
 ```typescript 
@@ -6121,17 +6415,17 @@ static namespace:string
 ### <a name="Carbon-NS-LDP-Class" />Class Carbon.NS.LDP.Class
 
 
-> Class that contains objects defined in the W3C Linked Data Platform (LDP) vocabulary
+> Class that contains classes defined in the W3C Linked Data Platform (LDP) vocabulary.
 
 
 
 #### <a name="Carbon-NS-LDP-Class-Properties" />Properties
 ```typescript 
-static Resource:string 
+static Ascending:string 
 ```
 
 ```typescript 
-static RDFSource:string 
+static BasicContainer:string 
 ```
 
 ```typescript 
@@ -6139,7 +6433,7 @@ static Container:string
 ```
 
 ```typescript 
-static BasicContainer:string 
+static Descending:string 
 ```
 
 ```typescript 
@@ -6151,27 +6445,11 @@ static IndirectContainer:string
 ```
 
 ```typescript 
-static NonRDFSource:string 
-```
-
-```typescript 
 static MemberSubject:string 
 ```
 
 ```typescript 
-static PreferContainment:string 
-```
-
-```typescript 
-static PreferMembership:string 
-```
-
-```typescript 
-static PreferEmptyContainer:string 
-```
-
-```typescript 
-static PreferMinimalContainer:string 
+static NonRDFSource:string 
 ```
 
 ```typescript 
@@ -6183,11 +6461,27 @@ static PageSortCriterion:string
 ```
 
 ```typescript 
-static Ascending:string 
+static PreferContainment:string 
 ```
 
 ```typescript 
-static Descending:string 
+static PreferEmptyContainer:string 
+```
+
+```typescript 
+static PreferMembership:string 
+```
+
+```typescript 
+static PreferMinimalContainer:string 
+```
+
+```typescript 
+static RDFSource:string 
+```
+
+```typescript 
+static Resource:string 
 ```
 
 
@@ -6197,17 +6491,17 @@ static Descending:string
 ### <a name="Carbon-NS-LDP-Predicate" />Class Carbon.NS.LDP.Predicate
 
 
-> Class that contains predicates defined in the W3C Linked Data Platform (LDP) vocabulary
+> Class that contains predicates defined in the W3C Linked Data Platform (LDP) vocabulary.
 
 
 
 #### <a name="Carbon-NS-LDP-Predicate-Properties" />Properties
 ```typescript 
-static contains:string 
+static constrainedBy:string 
 ```
 
 ```typescript 
-static member:string 
+static contains:string 
 ```
 
 ```typescript 
@@ -6215,7 +6509,15 @@ static hasMemberRelation:string
 ```
 
 ```typescript 
+static insertedContentRelation:string 
+```
+
+```typescript 
 static isMemberOfRelation:string 
+```
+
+```typescript 
+static member:string 
 ```
 
 ```typescript 
@@ -6223,11 +6525,11 @@ static membershipResource:string
 ```
 
 ```typescript 
-static insertedContentRelation:string 
+static pageSequence:string 
 ```
 
 ```typescript 
-static constrainedBy:string 
+static pageSortCollation:string 
 ```
 
 ```typescript 
@@ -6236,14 +6538,6 @@ static pageSortCriteria:string
 
 ```typescript 
 static pageSortOrder:string 
-```
-
-```typescript 
-static pageSortCollation:string 
-```
-
-```typescript 
-static pageSequence:string 
 ```
 
 
@@ -6268,7 +6562,7 @@ static namespace:string
 ### <a name="Carbon-NS-RDF-Predicate" />Class Carbon.NS.RDF.Predicate
 
 
-> Class that contains predicates defined in the RDF Syntax Specification
+> Class that contains predicates defined in the RDF Syntax Specification.
 
 
 
@@ -6299,7 +6593,7 @@ static namespace:string
 ### <a name="Carbon-NS-VCARD-Predicate" />Class Carbon.NS.VCARD.Predicate
 
 
-> Class that contains some predicates defined in the vCard Ontology Specification
+> Class that contains some predicates defined in the vCard Ontology Specification.
 
 
 
@@ -6330,81 +6624,13 @@ static namespace:string
 ### <a name="Carbon-NS-XSD-DataType" />Class Carbon.NS.XSD.DataType
 
 
-> DataType that contains data-types defined in the XML Schema Definition Language (XSD)
+> DataType that contains data-types defined in the XML Schema Definition Language (XSD).
 
 
 
 #### <a name="Carbon-NS-XSD-DataType-Properties" />Properties
 ```typescript 
-static date:string 
-```
-
-```typescript 
-static http://www.w3.org/2001/XMLSchema#date:string 
-```
-
-```typescript 
-static dateTime:string 
-```
-
-```typescript 
-static http://www.w3.org/2001/XMLSchema#dateTime:string 
-```
-
-```typescript 
-static duration:string 
-```
-
-```typescript 
-static http://www.w3.org/2001/XMLSchema#duration:string 
-```
-
-```typescript 
-static gDay:string 
-```
-
-```typescript 
-static http://www.w3.org/2001/XMLSchema#gDay:string 
-```
-
-```typescript 
-static gMonth:string 
-```
-
-```typescript 
-static http://www.w3.org/2001/XMLSchema#gMonth:string 
-```
-
-```typescript 
-static gMonthDay:string 
-```
-
-```typescript 
-static http://www.w3.org/2001/XMLSchema#gMonthDay:string 
-```
-
-```typescript 
-static gYear:string 
-```
-
-```typescript 
-static http://www.w3.org/2001/XMLSchema#gYear:string 
-```
-
-```typescript 
-static gYearMonth:string 
-```
-
-```typescript 
-static http://www.w3.org/2001/XMLSchema#gYearMonth:string 
-```
-
-```typescript 
-static time:string 
-```
-
-```typescript 
-static http://www.w3.org/2001/XMLSchema#time:string 
+static boolean:string 
 ```
 
 ```typescript 
@@ -6412,7 +6638,11 @@ static byte:string
 ```
 
 ```typescript 
-static http://www.w3.org/2001/XMLSchema#byte:string 
+static date:string 
+```
+
+```typescript 
+static dateTime:string 
 ```
 
 ```typescript 
@@ -6420,111 +6650,11 @@ static decimal:string
 ```
 
 ```typescript 
-static http://www.w3.org/2001/XMLSchema#decimal:string 
-```
-
-```typescript 
-static int:string 
-```
-
-```typescript 
-static http://www.w3.org/2001/XMLSchema#int:string 
-```
-
-```typescript 
-static integer:string 
-```
-
-```typescript 
-static http://www.w3.org/2001/XMLSchema#integer:string 
-```
-
-```typescript 
-static long:string 
-```
-
-```typescript 
-static http://www.w3.org/2001/XMLSchema#long:string 
-```
-
-```typescript 
-static negativeInteger:string 
-```
-
-```typescript 
-static http://www.w3.org/2001/XMLSchema#negativeInteger:string 
-```
-
-```typescript 
-static nonNegativeInteger:string 
-```
-
-```typescript 
-static http://www.w3.org/2001/XMLSchema#nonNegativeInteger:string 
-```
-
-```typescript 
-static nonPositiveInteger:string 
-```
-
-```typescript 
-static http://www.w3.org/2001/XMLSchema#nonPositiveInteger:string 
-```
-
-```typescript 
-static positiveInteger:string 
-```
-
-```typescript 
-static http://www.w3.org/2001/XMLSchema#positiveInteger:string 
-```
-
-```typescript 
-static short:string 
-```
-
-```typescript 
-static http://www.w3.org/2001/XMLSchema#short:string 
-```
-
-```typescript 
-static unsignedLong:string 
-```
-
-```typescript 
-static http://www.w3.org/2001/XMLSchema#unsignedLong:string 
-```
-
-```typescript 
-static unsignedInt:string 
-```
-
-```typescript 
-static http://www.w3.org/2001/XMLSchema#unsignedInt:string 
-```
-
-```typescript 
-static unsignedShort:string 
-```
-
-```typescript 
-static http://www.w3.org/2001/XMLSchema#unsignedShort:string 
-```
-
-```typescript 
-static unsignedByte:string 
-```
-
-```typescript 
-static http://www.w3.org/2001/XMLSchema#unsignedByte:string 
-```
-
-```typescript 
 static double:string 
 ```
 
 ```typescript 
-static http://www.w3.org/2001/XMLSchema#double:string 
+static duration:string 
 ```
 
 ```typescript 
@@ -6532,11 +6662,23 @@ static float:string
 ```
 
 ```typescript 
-static http://www.w3.org/2001/XMLSchema#float:string 
+static gDay:string 
 ```
 
 ```typescript 
-static boolean:string 
+static gMonth:string 
+```
+
+```typescript 
+static gMonthDay:string 
+```
+
+```typescript 
+static gYear:string 
+```
+
+```typescript 
+static gYearMonth:string 
 ```
 
 ```typescript 
@@ -6544,7 +6686,87 @@ static http://www.w3.org/2001/XMLSchema#boolean:string
 ```
 
 ```typescript 
-static string:string 
+static http://www.w3.org/2001/XMLSchema#byte:string 
+```
+
+```typescript 
+static http://www.w3.org/2001/XMLSchema#date:string 
+```
+
+```typescript 
+static http://www.w3.org/2001/XMLSchema#dateTime:string 
+```
+
+```typescript 
+static http://www.w3.org/2001/XMLSchema#decimal:string 
+```
+
+```typescript 
+static http://www.w3.org/2001/XMLSchema#double:string 
+```
+
+```typescript 
+static http://www.w3.org/2001/XMLSchema#duration:string 
+```
+
+```typescript 
+static http://www.w3.org/2001/XMLSchema#float:string 
+```
+
+```typescript 
+static http://www.w3.org/2001/XMLSchema#gDay:string 
+```
+
+```typescript 
+static http://www.w3.org/2001/XMLSchema#gMonth:string 
+```
+
+```typescript 
+static http://www.w3.org/2001/XMLSchema#gMonthDay:string 
+```
+
+```typescript 
+static http://www.w3.org/2001/XMLSchema#gYear:string 
+```
+
+```typescript 
+static http://www.w3.org/2001/XMLSchema#gYearMonth:string 
+```
+
+```typescript 
+static http://www.w3.org/2001/XMLSchema#int:string 
+```
+
+```typescript 
+static http://www.w3.org/2001/XMLSchema#integer:string 
+```
+
+```typescript 
+static http://www.w3.org/2001/XMLSchema#long:string 
+```
+
+```typescript 
+static http://www.w3.org/2001/XMLSchema#negativeInteger:string 
+```
+
+```typescript 
+static http://www.w3.org/2001/XMLSchema#nonNegativeInteger:string 
+```
+
+```typescript 
+static http://www.w3.org/2001/XMLSchema#nonPositiveInteger:string 
+```
+
+```typescript 
+static http://www.w3.org/2001/XMLSchema#object:string 
+```
+
+```typescript 
+static http://www.w3.org/2001/XMLSchema#positiveInteger:string 
+```
+
+```typescript 
+static http://www.w3.org/2001/XMLSchema#short:string 
 ```
 
 ```typescript 
@@ -6552,11 +6774,83 @@ static http://www.w3.org/2001/XMLSchema#string:string
 ```
 
 ```typescript 
+static http://www.w3.org/2001/XMLSchema#time:string 
+```
+
+```typescript 
+static http://www.w3.org/2001/XMLSchema#unsignedByte:string 
+```
+
+```typescript 
+static http://www.w3.org/2001/XMLSchema#unsignedInt:string 
+```
+
+```typescript 
+static http://www.w3.org/2001/XMLSchema#unsignedLong:string 
+```
+
+```typescript 
+static http://www.w3.org/2001/XMLSchema#unsignedShort:string 
+```
+
+```typescript 
+static int:string 
+```
+
+```typescript 
+static integer:string 
+```
+
+```typescript 
+static long:string 
+```
+
+```typescript 
+static negativeInteger:string 
+```
+
+```typescript 
+static nonNegativeInteger:string 
+```
+
+```typescript 
+static nonPositiveInteger:string 
+```
+
+```typescript 
 static object:string 
 ```
 
 ```typescript 
-static http://www.w3.org/2001/XMLSchema#object:string 
+static positiveInteger:string 
+```
+
+```typescript 
+static short:string 
+```
+
+```typescript 
+static string:string 
+```
+
+```typescript 
+static time:string 
+```
+
+```typescript 
+static unsignedByte:string 
+```
+
+```typescript 
+static unsignedInt:string 
+```
+
+```typescript 
+static unsignedLong:string 
+```
+
+```typescript 
+static unsignedShort:string 
 ```
 
 
@@ -6575,100 +6869,47 @@ static http://www.w3.org/2001/XMLSchema#object:string
 ### <a name="Carbon-NamedFragment-Factory" />Class Carbon.NamedFragment.Factory
 
 
-> Factory class for NamedFragment objects.
+> Factory class for `Carbon.NamedFragment.Class` objects.
 
 
 
 
 #### <a name="Carbon-NamedFragment-Factory-Methods" />Methods
-##### hasClassProperties
-```typescript 
-static hasClassProperties( resource:Carbon.Fragment.Class ):boolean
-```
-
-Returns true if the object provided has the properties and functions of a NamedFragment object
-
-*Parameters*
-
-- resource
-
 ##### create
 ```typescript 
 static create( slug:string,  document:Carbon.Document.Class ):Carbon.NamedFragment.Class
 ```
 
-Creates a NamedFragment with the Slug provided for the document specified.
+Creates a NamedFragment with the slug provided
 
 *Parameters*
 
-- slug
-- document
+- slug: The slug that will identify the NamedFragment.
+- document: The document that the NamedFragment will be part of.
 
 ##### createFrom
 ```typescript 
-static createFrom( object:T extends Object,  slug:string,  document:Carbon.Document.Class ):T & Carbon.NamedFragment.Class
+static createFrom<T extends Object>( object:T,  slug:string,  document:Carbon.Document.Class ):T & Carbon.NamedFragment.Class
 ```
 
-Creates a NamedFragment from an Object with the Slug provided for the document specified.
+Creates a NamedFragment from an Object with the slug provided.
 
 *Parameters*
 
-- object
-- slug
-- document
+- object: Object that will be converted to a NamedFragment.
+- slug: The slug that will identify the NamedFragment.
+- document: The document that the NamedFragment will be part of.
 
-
-
-
-## <a name="Carbon-NonRDFSource" />Module Carbon/NonRDFSource
-
-
-
-
-
-### <a name="Carbon-NonRDFSource-Properties" />Properties
-```typescript 
-static RDF_CLASS:string 
-```
-
-```typescript 
-static SCHEMA:Carbon.ObjectSchema.Class 
-```
-
-
-
-
-
-### <a name="Carbon-NonRDFSource-Factory" />Class Carbon.NonRDFSource.Factory
-
-
-> Factory class for `Carbon.NonRDFSource.Class` objects
-
-
-
-
-#### <a name="Carbon-NonRDFSource-Factory-Methods" />Methods
 ##### hasClassProperties
 ```typescript 
-static hasClassProperties( resource:Object ):boolean
+static hasClassProperties( resource:Carbon.Fragment.Class ):boolean
 ```
 
-Returns true if the object provided has the properties that defines a `Carbon.NonRDFSource.Class` object
+Returns true if the object provided has the properties and methods of a `Carbon.NamedFragment.Class` object.
 
 *Parameters*
 
 - resource
-
-##### is
-```typescript 
-static is( object:Object ):boolean
-```
-
-Returns true if the object provided is considered as an `Carbon.NonRDFSource.Class` object
-
-*Parameters*
-
-- object
 
 
 
@@ -6681,7 +6922,7 @@ Returns true if the object provided is considered as an `Carbon.NonRDFSource.Cla
 ### <a name="Carbon-ObjectSchema-Enums" />Enums
 
 #### <a name"Carbon-ObjectSchema-ContainerType />Carbon.ObjectSchema.ContainerType
-> Enum for the types a container can be.
+> Enum for the types that a container can be.
 
 | Name | Description | 
 | --- | --- |
@@ -6695,7 +6936,7 @@ Returns true if the object provided is considered as an `Carbon.NonRDFSource.Cla
 ### <a name="Carbon-ObjectSchema-DigestedObjectSchema" />Class Carbon.ObjectSchema.DigestedObjectSchema
 
 
-> Class of a standardized Schema.
+> Class of a standardized Schema that is used for the SDK for compact and expand JSON-LD objects and Carbon Resources.
 
 
 #### <a name="Carbon-ObjectSchema-DigestedObjectSchema-Constructor" />Constructor
@@ -6711,29 +6952,34 @@ DigestedObjectSchema()
 base:string 
 ```
 
-This property is initialized with an empty string.
-```typescript 
-prefixes:Map<string, Carbon.RDF.URI.Class> 
-```
-
-This property is initialized with an empty Map.
-```typescript 
-properties:Map<string, Carbon.ObjectSchema.DigestedPropertyDefinition> 
-```
-
-This property is initialized with an empty Map.
+The base URI of the schema.
 ```typescript 
 prefixedURIs:Map<string, Carbon.RDF.URI.Class[]> 
 ```
 
-This property is initialized with an empty Map.
+Map with the prefixed URIs used in the schema for an easy access to its absolute URI.
+```typescript 
+prefixes:Map<string, Carbon.RDF.URI.Class> 
+```
+
+Map that contains the prefixes of absolutes URIs.
+```typescript 
+properties:Map<string, Carbon.ObjectSchema.DigestedPropertyDefinition> 
+```
+
+Map that contains the definitions of the properties in the schema.
+```typescript 
+vocab:string 
+```
+
+URI that will be used to resolve properties URIs that aren't defined in the schema.
 
 
 
 ### <a name="Carbon-ObjectSchema-DigestedPropertyDefinition" />Class Carbon.ObjectSchema.DigestedPropertyDefinition
 
 
-> Class for standardized object properties in a Schema.
+> Class for standardized object properties of a schema.
 
 
 #### <a name="Carbon-ObjectSchema-DigestedPropertyDefinition-Constructor" />Constructor
@@ -6746,37 +6992,37 @@ DigestedPropertyDefinition()
 #### <a name="Carbon-ObjectSchema-DigestedPropertyDefinition-Properties" />Properties
 
 ```typescript 
-uri:Carbon.RDF.URI.Class 
+containerType:Carbon.ObjectSchema.ContainerType 
 ```
 
-This property is initialized with null.
-```typescript 
-literal:boolean 
-```
-
-This property is initialized with null.
-```typescript 
-literalType:Carbon.RDF.URI.Class 
-```
-
-This property is initialized with null.
+The type of container the property is. It's `null` if the property is no container type.
 ```typescript 
 language:string 
 ```
 
-This property is initialized with null.
+The language the property is in. It's `null` if the property is not a container language.
 ```typescript 
-containerType:Carbon.ObjectSchema.ContainerType 
+literal:boolean 
 ```
 
-This property is initialized with null.
+Indicates if the property is a literal or not.
+```typescript 
+literalType:Carbon.RDF.URI.Class 
+```
+
+The type of literal the property is. It's `null` if the property is not a literal.
+```typescript 
+uri:Carbon.RDF.URI.Class 
+```
+
+The absolute URI that represents the property
 
 
 
 ### <a name="Carbon-ObjectSchema-Digester" />Class Carbon.ObjectSchema.Digester
 
 
-> Class with options for standardize a JSON-LD Schema.
+> Class with functions to standardize a JSON-LD Context Schema.
 
 
 
@@ -6787,7 +7033,7 @@ This property is initialized with null.
 static combineDigestedObjectSchemas( digestedSchemas:Carbon.ObjectSchema.DigestedObjectSchema[] ):Carbon.ObjectSchema.DigestedObjectSchema
 ```
 
-Combine several standardized schemas in one.
+Combine several standardized schemas into one.
 
 *Parameters*
 
@@ -6833,7 +7079,7 @@ Processes several schemas to standardize and combine them before using them.
 ### <a name="Carbon-PersistedApp-Factory" />Class Carbon.PersistedApp.Factory
 
 
-> Factory class for `Carbon.PersistedApp.Class` objects
+> Factory class for `Carbon.PersistedApp.Class` objects.
 
 
 
@@ -6844,7 +7090,7 @@ Processes several schemas to standardize and combine them before using them.
 static hasClassProperties( resource:Object ):boolean
 ```
 
-Returns true if the object provided has the properties that defines a `Carbon.PersistedApp.Class` object
+Returns true if the object provided has the properties of a `Carbon.PersistedApp.Class` object.
 
 *Parameters*
 
@@ -6855,7 +7101,7 @@ Returns true if the object provided has the properties that defines a `Carbon.Pe
 static is( object:Object ):boolean
 ```
 
-Returns true if the object provided is considered as an `Carbon.PersistedApp.Class` object
+Returns true if the object provided is considered a `Carbon.PersistedApp.Class` object.
 
 *Parameters*
 
@@ -6876,18 +7122,55 @@ Returns true if the object provided is considered as an `Carbon.PersistedApp.Cla
 ### <a name="Carbon-PersistedDocument-Factory" />Class Carbon.PersistedDocument.Factory
 
 
-> Factory class for PersistedDocument objects.
+> Factory class for `Carbon.PersistedDocument.Class` objects.
 
 
 
 
 #### <a name="Carbon-PersistedDocument-Factory-Methods" />Methods
+##### create
+```typescript 
+static create( uri:string,  documents:Carbon.Documents ):Carbon.PersistedDocument.Class
+```
+
+Creates an empty `Carbon.PersistedDocument.Class` object with the URI provided.
+
+*Parameters*
+
+- uri
+- documents: The Documents instance to which the PersistedDocument belongs.
+
+##### createFrom
+```typescript 
+static createFrom<T extends Object>( object:T,  uri:string,  documents:Carbon.Documents ):T & Carbon.PersistedDocument.Class
+```
+
+Creates a PersistedDocument object from the object and URI provided.
+
+*Parameters*
+
+- object
+- uri
+- documents: The Documents instance to which the PersistedDocument belongs.
+
+##### decorate
+```typescript 
+static decorate<T extends Object>( object:T,  documents:Carbon.Documents ):T & Carbon.PersistedDocument.Class
+```
+
+Decorates the object provided with the properties and methods of a `Carbon.PersistedDocument.Class` object.
+
+*Parameters*
+
+- object
+- documents: The Documents instance to which the PersistedDocument belongs.
+
 ##### hasClassProperties
 ```typescript 
 static hasClassProperties( document:Carbon.Document.Class ):boolean
 ```
 
-Returns true if the Document provided has the properties and functions of a PersistedDocument object
+Returns true if the Document provided has the properties and methods of a `Carbon.PersistedDocument.Class` object.
 
 *Parameters*
 
@@ -6898,61 +7181,25 @@ Returns true if the Document provided has the properties and functions of a Pers
 static is( object:Object ):boolean
 ```
 
-Returns true if the element provided is a PersistedDocument object.
+Returns true if the element provided is considered a `Carbon.PersistedDocument.Class` object.
 
 *Parameters*
 
 - object
-
-##### create
-```typescript 
-static create( uri:string,  documents:Carbon.Documents ):Carbon.PersistedDocument.Class
-```
-
-Creates an empty PersistedDocument object with the URI provided and contained by the Documents object specified.
-
-*Parameters*
-
-- uri
-- documents
-
-##### createFrom
-```typescript 
-static createFrom( object:T extends Object,  uri:string ):Carbon.PersistedDocument.Class
-```
-
-Creates a PersistedDocument object from the object and URI provided, with the Documents object specified as container.
-
-*Parameters*
-
-- object
-- uri
-
-##### decorate
-```typescript 
-static decorate( object:T extends Object,  documents:Carbon.Documents ):T & Carbon.PersistedDocument.Class
-```
-
-Adds the properties and methods necessary for a PersistedDocument object.
-
-*Parameters*
-
-- object
-- documents
 
 
 
 #### <a name="Carbon-PersistedDocument-Factory-Decorated-Object" />Decorated Object
 **Interfaces:** [Carbon.LDP.PersistedContainer.Class](#Carbon-LDP-PersistedContainer-Class)
 
-> Object decorated by the Carbon.LDP.PersistedContainer.Factory.decorate function.
+> Object decorated by the `Carbon.LDP.PersistedContainer.Factory.decorate()` function.
 
 ##### <a name="Carbon-PersistedDocument-Factory-Decorated-Object-Properties" />Properties
 ```typescript 
 _documents:Carbon.Documents 
 ```
 
-Documents object who is the container of the PersistedContainer.
+The Documents instance to which the PersistedContainer belongs.
 ```typescript 
 _etag:string 
 ```
@@ -6960,63 +7207,227 @@ _etag:string
 The ETag (entity tag) of the PersistedDocument.
 
 ##### <a name="Carbon-PersistedDocument-Factory-Decorated-Object-Methods" />Methods
-##### hasPointer
+##### addMember
 ```typescript 
-hasPointer( id:string ):boolean
+addMember( member:Carbon.Pointer.Class ):Promise<Carbon.HTTP.Response.Class>
 ```
 
-Returns true if the PersistedDocument object has a pointer referenced by the URI provided.
+Adds the specified resource Pointer as a member of the container.
 
 *Parameters*
 
-- id
+- member: Pointer object that references the resource to add as a member.
 
-##### getPointer
 ```typescript 
-getPointer( id:string ):boolean
+addMember( memberURI:string ):Promise<Carbon.HTTP.Response.Class>
 ```
 
-Returns the pointer referenced by the URI provided. If not exists a pointer is created.
-Returns null if the URI is not inside scope of the PersistedDocument.
+Adds the specified resource URI as a member of the container.
 
 *Parameters*
 
-- id
+- memberURI: URI of the resource to add as a member.
 
-##### refresh
+##### addMembers
 ```typescript 
-refresh():Promise<void>
+addMembers( members:(Carbon.Pointer.Class | string)[] ):Promise<Carbon.HTTP.Response.Class>
 ```
 
-Sync the PersistedDocument with the data in the server.
+Adds the specified resources as members of the container.
 
-##### save
+*Parameters*
+
+- members: Array of URIs or Pointers to add as members.
+
+##### addType
 ```typescript 
-save():Promise<[ Carbon.PersistedDocument.Class, HTTP.Response.Class ]>
+addType( type:string )
 ```
 
-Save the PersistedDocument to the server.
+Adds a type to the Document. Relative and prefixed types are resolved before the operation.
 
-##### destroy
+*Parameters*
+
+- type: The type to be added.
+
+##### createAccessPoint
 ```typescript 
-destroy():Promise<Carbon.HTTP.Response.Class>
+createAccessPoint<T extends Carbon.AccessPoint.Class>( accessPoint:T,  slug?:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ T & Carbon.PersistedAccessPoint.Class, Carbon.HTTP.Response ]>
+```
+
+Create an AccessPoint for the document with the slug specified.
+
+*Parameters*
+
+- accessPoint: AccessPoint Document to persist.
+- slug: Slug that will be used for the URI of the new access point.
+- requestOptions: Customisable options for the request.
+
+```typescript 
+createAccessPoint<T extends Carbon.AccessPoint.Class>( accessPoint:T,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ T & Carbon.PersistedAccessPoint.Class, Carbon.HTTP.Response ]>
+```
+
+Create an AccessPoint for the document.
+
+*Parameters*
+
+- accessPoint: AccessPoint Document to persist.
+- requestOptions:  Customizable options for the request.
+
+##### createChild
+```typescript 
+createChild<T extends Object>( object:T,  slug:string ):Promise<[ T & Carbon.PersistedDocument.Class, Carbon.HTTP.Response.Class ]>
+```
+
+Persists a document with the slug specified as a child of the current container.
+
+*Parameters*
+
+- object: The object from where create the child. If it's a non `Carbon.Document.Class` object, it's transformed into one.
+- slug: The slug that will be used in the child URI.
+
+```typescript 
+createChild<T extends Object>( object:T ):Promise<[ T & Carbon.PersistedDocument.Class, Carbon.HTTP.Response.Class ]>
+```
+
+Persists a document as a child of the current container.
+
+*Parameters*
+
+- object: The object from where create the child. If it's a non `Carbon.Document.Class` object, it's transformed into one.
+
+```typescript 
+createChild( slug:string ):Promise<[ Carbon.PersistedDocument.Class, Carbon.HTTP.Response.Class ]>
+```
+
+Creates an persists an empty child for the current container with the slug provided.
+
+*Parameters*
+
+- slug: The slug that will be used in the child URI.
+
+```typescript 
+createChild():Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>
+```
+
+Creates and persists an empty child fot he current document.
+
+##### createChildAndRetrieve
+```typescript 
+createChildAndRetrieve<T extends Object>( object:T,  slug:string ):Promise<[ T & Carbon.PersistedDocument.Class, [ Carbon.HTTP.Response.Class, Carbon.HTTP.Response.Class ] ]>
+```
+
+Create a child for the document and retrieves the updated data from the server.
+
+*Parameters*
+
+- object: The object from where create the child. If it's a non `Carbon.Document.Class` object, it is transformed into one.
+- slug: The slug name for the children URI.
+
+```typescript 
+createChildAndRetrieve<T extends Object>( object:T ):Promise<[ T & Carbon.PersistedDocument.Class, [ Carbon.HTTP.Response.Class, Carbon.HTTP.Response.Class ] ]>
+```
+
+Create a child for the document and retrieves the updated data from the server.
+
+*Parameters*
+
+- object: The object from where create the child. If it's a non `Carbon.PersistedDocument.Class` object, it is transformed into one.
+
+```typescript 
+createChildAndRetrieve( slug:string ):Promise<[ Carbon.PersistedDocument.Class, [ Carbon.HTTP.Response.Class, Carbon.HTTP.Response.Class ] ]>
+```
+
+Create a child for the document and retrieves the updated data from the server.
+
+*Parameters*
+
+- slug: The slug name for the children URI.
+
+```typescript 
+createChildAndRetrieve():Promise<[ Carbon.PersistedDocument.Class, [ Carbon.HTTP.Response.Class, Carbon.HTTP.Response.Class ] ]>
+```
+
+Create a child for the document and retrieves the updated data from the server.
+
+##### createFragment
+```typescript 
+createFragment<T extends Object>( object:T,  slug:string ):T & Carbon.PersistedFragment.Class
+```
+
+Creates a PersistedFragment from the object provided and the slug specified.
+
+*Parameters*
+
+- object
+- slug
+
+```typescript 
+createFragment<T extends Object>( object:T ):T & Carbon.PersistedFragment.Class
+```
+
+Creates a PersistedBlankNode from the object provided, sing no slug was specified.
+
+*Parameters*
+
+- object
+
+```typescript 
+createFragment( slug:string ):Carbon.PersistedFragment.Class
+```
+
+Creates a PersistedFragment with the slug provided.
+
+*Parameters*
+
+- slug
+
+```typescript 
+createFragment():Carbon.PersistedFragment.Class
+```
+
+Creates a PersistedBlankNode, since no slug is provided
+
+##### createNamedFragment
+```typescript 
+createNamedFragment( slug:string ):Carbon.PersistedNamedFragment.Class
+```
+
+Creates a PersistedNamedFragment with the slug provided
+
+*Parameters*
+
+- slug
+
+```typescript 
+createNamedFragment<T extends Object>( object:T,  slug:string ):T & Carbon.PersistedNamedFragment.Class
+```
+
+Creates a PersistedNamedFragment from the object provided and the slug specified.
+
+*Parameters*
+
+- object
+- slug
+
+##### delete
+```typescript 
+delete():Promise<Carbon.HTTP.Response.Class>
 ```
 
 Remove the data in the server referred by the id of the PersistedDocument.
 
-##### getDownloadURL
+##### executeASKQuery
 ```typescript 
-getDownloadURL():Promise<Carbon.HTTP.Response.Class>
+executeASKQuery( askQuery:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ boolean, Carbon.HTTP.Response.Class ]>
 ```
 
-Returns the URI of the current document with the properties necessarily for a single download request.
+Executes an ASK query in the document and returns a boolean of the result.
 
-##### createAccessPoint
-```typescript 
-createAccessPoint():Promise<[Carbon.Pointer.Class, Carbon.HTTP.Response.Class]>
-```
+*Parameters*
 
-Creates an AccessPoint for the PersistedDocument.
+- askQuery
+- requestOptions: Customizable options for the request.
 
 ##### executeRawASKQuery
 ```typescript 
@@ -7028,67 +7439,131 @@ Executes an ASK query in the document and returns a raw application/sparql-resul
 *Parameters*
 
 - askQuery
-- requestOptions
-
-##### executeASKQuery
-```typescript 
-executeASKQuery( askQuery:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ boolean, Carbon.HTTP.Response.Class ]>
-```
-
-Executes an ASK query in the document and returns a boolean of th result.
-
-*Parameters*
-
-- askQuery
-- requestOptions
-
-##### executeRawSELECTQuery
-```typescript 
-executeRawSELECTQuery( selectQuery:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.SPARQL.RawResults.Class, Carbon.HTTP.Response.Class ]>
-```
-
-Executes an SELECT query in the document and returns a raw application/sparql-results+json object.
-
-*Parameters*
-
-- selectQuery
-- requestOptions
-
-##### executeSELECTQuery
-```typescript 
-executeSELECTQuery( selectQuery:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.SPARQL.SELECTResults.Class, Carbon.HTTP.Response.Class ]>
-```
-
-Executes an SELECT query in the document and returns the results as a `Carbon.SPARQL.SELECTResults.Class` object.
-
-*Parameters*
-
-- selectQuery
-- requestOptions
+- requestOptions: Customizable options for the request.
 
 ##### executeRawCONSTRUCTQuery
 ```typescript 
 executeRawCONSTRUCTQuery( constructQuery:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ string, Carbon.HTTP.Response.Class ]>
 ```
 
-Executes an CONSTRUCT query in the document and returns a string with the resulting model.
+Executes a CONSTRUCT query in the document and returns a string with the resulting model.
 
 *Parameters*
 
 - constructQuery
-- requestOptions
+- requestOptions: Customizable options for the request.
 
 ##### executeRawDESCRIBEQuery
 ```typescript 
 executeRawDESCRIBEQuery( constructQuery:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ string, Carbon.HTTP.Response.Class ]>
 ```
 
-Executes an DESCRIBE query in the document and returns a string with the resulting model.
+Executes a DESCRIBE query in the document and returns a string with the resulting model.
 
 *Parameters*
 
 - constructQuery
-- requestOptions
+- requestOptions: Customizable options for the request.
+
+##### executeRawSELECTQuery
+```typescript 
+executeRawSELECTQuery( selectQuery:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.SPARQL.RawResults.Class, Carbon.HTTP.Response.Class ]>
+```
+
+Executes a SELECT query in the document and returns a raw application/sparql-results+json object.
+
+*Parameters*
+
+- selectQuery
+- requestOptions: Customizable options for the request.
+
+##### executeSELECTQuery
+```typescript 
+executeSELECTQuery( selectQuery:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.SPARQL.SELECTResults.Class, Carbon.HTTP.Response.Class ]>
+```
+
+Executes a SELECT query in the document and returns the results as a `Carbon.SPARQL.SELECTResults.Class` object.
+
+*Parameters*
+
+- selectQuery
+- requestOptions: Customizable options for the request.
+
+##### executeUPDATE
+```typescript 
+executeUPDATE( updateQuery:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<Carbon.HTTP.Response.Class>
+```
+
+Executes an UPDATE query.
+
+*Parameters*
+
+- updateQuery: UPDATE query to execute in the selected endpoint.
+- requestOptions: Customizable options for the request.
+
+##### getChildren
+```typescript 
+getChildren<T>( retrievalPreferences?:Carbon.RetrievalPreferences.Class ):Promise<[ (T & Carbon.PersistedDocument.Class)[], Carbon.HTTP.Response ]>
+```
+
+Retrieves an array of resolved persisted documents that refers to the children of the current container, in accordance to the retrieval preferences specified.
+
+*Parameters*
+
+- retrievalPreferences
+
+##### getDownloadURL
+```typescript 
+getDownloadURL():Promise<Carbon.HTTP.Response.Class>
+```
+
+Returns the URI of the current document with the properties necessarily for a single download request.
+
+##### getMembers
+```typescript 
+getMembers<T>( includeNonReadable?:boolean,  retrievalPreferences?:Carbon.RetrievalPreferences.Class ):Promise<[ (T & Carbon.PersistedDocument.Class)[], Carbon.HTTP.Response.Class ]>
+```
+
+Retrieves an array of resolved persisted documents that refers to the members of the current container, in accordance to the retrieval preferences specified.
+
+*Parameters*
+
+- includeNonReadable: By default this option is set to `true`.
+- retrievalPreferences
+
+##### getPointer
+```typescript 
+getPointer( id:string ):boolean
+```
+
+Returns the pointer referenced by the URI provided. If none exists, an empty pointer is created.
+Returns null if the URI is not inside the scope of the PersistedDocument.
+
+*Parameters*
+
+- id
+
+##### hasPointer
+```typescript 
+hasPointer( id:string ):boolean
+```
+
+Returns true if the PersistedDocument object has a pointer referenced by the URI provided.
+
+*Parameters*
+
+- id
+
+##### hasType
+```typescript 
+hasType( type:string )
+```
+
+Returns true if the Document contains the type specified. Relative and prefixed types are resolved before the operation.
+
+*Parameters*
+
+- type: The type to look for.
 
 ##### inScope
 ```typescript 
@@ -7111,6 +7586,332 @@ Returns true if the URI provided is in the scope of the PersistedDocument.
 
 - id
 
+##### listChildren
+```typescript 
+listChildren():Promise<[ Carbon.PersistedDocument.Class[], Carbon.HTTP.Response ]>
+```
+
+Retrieves an array of unresolved persisted documents that refers to the children of the current container.
+
+##### listMembers
+```typescript 
+listMembers( includeNonReadable?:boolean ):Promise<[ Carbon.PersistedDocument.Class[], Carbon.HTTP.Response.Class ]>
+```
+
+Retrieves an array of unresolved persisted documents that refers to the members of the current container.
+
+*Parameters*
+
+- includeNonReadable: By default this option is set to `true`.
+
+##### refresh
+```typescript 
+refresh<T extends Carbon.PersistedDocument.Class>():Promise<[ T, Carbon.HTTP.Response.Class]>
+```
+
+Sync the PersistedDocument with the data in the server.
+
+##### removeAllMembers
+```typescript 
+removeAllMembers():Promise<Carbon.HTTP.Response.Class>
+```
+
+Remove the specified resources URI or Pointers as members of the current container.
+
+##### removeMember
+```typescript 
+removeMember( member:Carbon.Pointer.Class ):Promise<Carbon.HTTP.Response.Class>
+```
+
+Remove the specified resource Pointer as a member of the current container.
+
+*Parameters*
+
+- member: Pointer object that references the resource to remove as a member.
+
+```typescript 
+removeMember( memberURI:string ):Promise<Carbon.HTTP.Response.Class>
+```
+
+Remove the specified resource URI as a member of the current container.
+
+*Parameters*
+
+- memberURI: URI of the resource to remove as a member.
+
+##### removeMembers
+```typescript 
+removeMembers( members:(Carbon.Pointer.Class | string)[] ):Promise<Carbon.HTTP.Response.Class>
+```
+
+Remove the specified resources URI or Pointers as members of the current container.
+
+*Parameters*
+
+- members: Array of URIs or Pointers to remove as members
+
+##### removeType
+```typescript 
+removeType( type:string )
+```
+
+Remove the type specified from the Document. Relative and prefixed types are resolved before the operation.
+
+*Parameters*
+
+- type: The type to be removed.
+
+##### save
+```typescript 
+save<T extends Carbon.PersistedDocument.Class>():Promise<[ T, Carbon.HTTP.Response.Class ]>
+```
+
+Save the PersistedDocument to the server.
+
+##### saveAndRefresh
+```typescript 
+saveAndRefresh<T extends Carbon.PersistedDocument.Class>():Promise<[ T, [ HTTP.Response.Class, HTTP.Response.Class ] ]>
+```
+
+Save and refresh the PersistedDocument.
+
+##### upload
+```typescript 
+upload( data:Blob,  slug:string ):Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>
+```
+
+Upload a File to the server as a child of the current container with the slug specified. This signature only works in a web browser.
+
+*Parameters*
+
+- data: Binary data to store in the server.
+- slug: The slug that will be used in the URI of the data.
+
+```typescript 
+upload( data:Blob ):Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>
+```
+
+Upload a File to the server as a child of the current container. This signature only works in a web browser.
+
+*Parameters*
+
+- data: Binary data to store in the server.
+
+```typescript 
+upload( data:Buffer,  slug:string ):Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>
+```
+
+Upload a File to the server as a child of the current container with the slug specified. This signature only works with Node.js.
+
+*Parameters*
+
+- data: Binary data to store in the server. The Buffer only works in Node.js.
+- slug: The slug that will be used in the URI of the data.
+
+```typescript 
+upload( data:Buffer ):Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>
+```
+
+Upload a File to the server as a child of the current container. This signature only works with Node.js.
+
+*Parameters*
+
+- data: Binary data to store in the server. The Buffer only works in Node.js.
+
+
+## <a name="Carbon-PersistedFragment" />Module Carbon/PersistedFragment
+
+
+
+
+
+
+
+
+### <a name="Carbon-PersistedFragment-Factory" />Class Carbon.PersistedFragment.Factory
+
+
+> Factory class for `Carbon.PersistedFragment.Class` objects.
+
+
+
+
+#### <a name="Carbon-PersistedFragment-Factory-Methods" />Methods
+##### decorate
+```typescript 
+static decorate( fragment:T extends Carbon.Fragment.Class,  snapshot?:Object )
+```
+
+Decorates the object provided with the properties and methods of a `Carbon.PersistedFragment.Class` object.
+
+*Parameters*
+
+- fragment: The Fragment object to convert into a persisted one.
+- snapshot: A shallow copy of the fragment, which will be used to track its changes.
+
+
+
+
+## <a name="Carbon-PersistedNamedFragment" />Module Carbon/PersistedNamedFragment
+
+
+
+
+
+
+
+
+### <a name="Carbon-PersistedNamedFragment-Factory" />Class Carbon.PersistedNamedFragment.Factory
+
+
+> Factory class for `Carbon.PersistedNamedFragment.Class` objects.
+
+
+
+
+#### <a name="Carbon-PersistedNamedFragment-Factory-Methods" />Methods
+##### decorate
+```typescript 
+static decorate( fragment:T extends Carbon.NamedFragment.Class,  snapshot?:Object )
+```
+
+Decorates the object provided with the properties and methods of a `Carbon.PersistedNamedFragment.Class` object.
+
+*Parameters*
+
+- fragment: The NamedFragment object to convert into a persisted one.
+- snapshot: A shallow copy of the fragment, which will be used to track its changes.
+
+
+
+
+## <a name="Carbon-PersistedProtectedDocument" />Module Carbon/PersistedProtectedDocument
+
+
+
+
+
+
+
+
+### <a name="Carbon-PersistedProtectedDocument-Factory" />Class Carbon.PersistedProtectedDocument.Factory
+
+
+> Factory class for `Carbon.PersistedProtectedDocument.Class` objects.
+
+
+
+
+#### <a name="Carbon-PersistedProtectedDocument-Factory-Methods" />Methods
+##### decorate
+```typescript 
+static decorate<T extends Carbon.PersistedDocument.Class>( document:T ):T & Carbon.PersistedProtectedDocument.Class
+```
+
+Decorate the object with the properties and methods of a `Carbon.PersistedProtectedDocument.Class` object.
+
+*Parameters*
+
+- document: The persisted document to decorate.
+
+##### hasClassProperties
+```typescript 
+static hasClassProperties( object:Object ):boolean
+```
+
+Returns true if the object provided contains the properties and methods of a `Carbon.PersistedProtectedDocument.Class` object.
+
+*Parameters*
+
+- object: The object to check.
+
+
+
+#### <a name="Carbon-PersistedProtectedDocument-Factory-Decorated-Object" />Decorated Object
+**Interfaces:** [Carbon.PersistedProtectedDocument.Class](#Carbon-PersistedProtectedDocument-Class)
+
+> The object decorated by `Carbon.PersistedProtectedDocument.Factory.decorate()` method.
+
+
+##### <a name="Carbon-PersistedProtectedDocument-Factory-Decorated-Object-Methods" />Methods
+##### getACL
+```typescript 
+getACL():Promise<[ Carbon.Auth.PersistedACL.Class, Carbon.HTTP.Response.Class ]>
+```
+
+Obtains and resolve the ACL of the actual document.
+
+
+## <a name="Carbon-PersistedResource" />Module Carbon/PersistedResource
+
+
+
+
+
+
+
+
+### <a name="Carbon-PersistedResource-Factory" />Class Carbon.PersistedResource.Factory
+
+
+> Factory class for `Carbon.PersistedResource.Class` objects.
+
+
+
+
+#### <a name="Carbon-PersistedResource-Factory-Methods" />Methods
+##### decorate
+```typescript 
+static decorate( fragment:T extends Object,  snapshot?:Object )
+```
+
+Decorates the object provided with the properties and methods of a `Carbon.PersistedResource.Class` object.
+
+*Parameters*
+
+- fragment: The object to convert into a persisted resource one.
+- snapshot: A shallow copy of the resource, which will be used to track its changes.
+
+##### hasClassProperties
+```typescript 
+static hasClassProperties( object:Object ):boolean
+```
+
+Returns true if the object provided has the properties and methods of a `Carbon.PersistedResource.Class` object.
+
+*Parameters*
+
+- object
+
+
+
+#### <a name="Carbon-PersistedResource-Factory-Decorated-Object" />Decorated Object
+**Interfaces:** [Carbon.PersistedResource.Class](#Carbon-PersistedResource-Class)
+
+> Object decorated by the `Carbon.PersistedResource.Factory.decorate()` function.
+
+##### <a name="Carbon-PersistedResource-Factory-Decorated-Object-Properties" />Properties
+```typescript 
+_snapshot:Object 
+```
+
+The shallow copy of the resource, which is used to track the changes on the resource.
+
+##### <a name="Carbon-PersistedResource-Factory-Decorated-Object-Methods" />Methods
+##### _syncSnapshot
+```typescript 
+_syncSnapshot()
+```
+
+Updates the snapshot with the data of the resource.
+
+##### isDirty
+```typescript 
+isDirty()
+```
+
+Returns true if the resource presents differences from its snapshot.
+
 
 ## <a name="Carbon-Pointer" />Module Carbon/Pointer
 
@@ -7124,18 +7925,52 @@ Returns true if the URI provided is in the scope of the PersistedDocument.
 ### <a name="Carbon-Pointer-Factory" />Class Carbon.Pointer.Factory
 
 
-> Factory class for Pointer objects.
+> Factory class for `Carbon.Pointer.Class` objects.
 
 
 
 
 #### <a name="Carbon-Pointer-Factory-Methods" />Methods
+##### create
+```typescript 
+static create( id?:string ):Carbon.Pointer.Class
+```
+
+Creates a Pointer object with the ID provided.
+
+*Parameters*
+
+- id
+
+##### createFrom
+```typescript 
+static createFrom<T extends Object>( object:T,  id?:string ):T & Carbon.Pointer.Class
+```
+
+Create a Pointer from the object provided with id if provided.
+
+*Parameters*
+
+- object
+- id
+
+##### decorate
+```typescript 
+static decorate<T extends Object>( object:T ):T & Carbon.Pointer.Class
+```
+
+Decorates the object provided with the properties and methods of a `Carbon.Pointer.Class` object.
+
+*Parameters*
+
+- object
+
 ##### hasClassProperties
 ```typescript 
 static hasClassProperties( resource:Object ):boolean
 ```
 
-Returns true if the object provided has the properties and functions of a Pointer object
+Returns true if the object provided has the properties and methods of a `Carbon.Pointer.Class` object.
 
 *Parameters*
 
@@ -7146,52 +7981,30 @@ Returns true if the object provided has the properties and functions of a Pointe
 static is( value:any ):boolean
 ```
 
-Returns true if the value provided is a Pinter object.
+Returns true if the value provided is considered a `Carbon.Pointer.Class` object.
 
 *Parameters*
 
 - value
-
-##### create
-```typescript 
-static create( id?:string ):Carbon.Pointer.Class
-```
-
-Create a Pointer object with id if provided.
-
-*Parameters*
-
-- id
-
-##### decorate
-```typescript 
-static decorate( object:T extends Object ):T & Carbon.Pointer.Class
-```
-
-Decorates the object provided with the elements of a Pointer object.
-
-*Parameters*
-
-- object
 
 
 
 #### <a name="Carbon-Pointer-Factory-Decorated-Object" />Decorated Object
 **Interfaces:** [Carbon.Pointer.Class](#Carbon-Pointer-Class)
 
-> Object decorated by the Carbon.Pointer.Factory.decorate function.
+> Object decorated by the `Carbon.Pointer.Factory.decorate()` function.
 
 ##### <a name="Carbon-Pointer-Factory-Decorated-Object-Properties" />Properties
 ```typescript 
 _id:string 
 ```
 
-URI that identifies the pointer.
+Private variable for the URI that identifies the pointer.
 ```typescript 
 _resolved:boolean 
 ```
 
-Flag variable that indicate if the pointer has been resolved.
+Private variable that indicates if the pointer has been resolved.
 ```typescript 
 id:string 
 ```
@@ -7208,10 +8021,63 @@ Returns true if the pointer has been resolved. It checks the `_resolved` propert
 
 ##### resolve
 ```typescript 
-resolve()
+resolve<T>():Promise<[ T & Carbon.PersistedDocument.Class, Carbon.HTTP.Response.Class ]>
 ```
 
-Resolve the pointer. This function throw an Error, it should be reimplemented for the respective type of pointer.
+Resolves the pointer. This function throw an Error if it has no been configured by another decorator.
+
+
+### <a name="Carbon-Pointer-Util" />Class Carbon.Pointer.Util
+
+
+> Class with useful functions to manage `Carbon.Pointer.Class` objects.
+
+
+
+
+#### <a name="Carbon-Pointer-Util-Methods" />Methods
+##### getIDs
+```typescript 
+static getIDs( pointers:Carbon.Pointer.Class[] ):string[]
+```
+
+Extracts the IDs of all the pointers provided.
+
+*Parameters*
+
+- pointers: The array of Pointers to obtain their IDs.
+
+##### resolveAll
+```typescript 
+static resolveAll( pointers:Carbon.Pointer.Class[] ):Promise<[ Carbon.Pointer.Class[], Carbon.HTTP.Response.Class[] ]>
+```
+
+Calls the `resolve()` method of every pointer, and returns a single Promise with the results of every call.
+
+*Parameters*
+
+- pointers: The array of Pointers to resolve.
+
+
+
+
+## <a name="Carbon-ProtectedDocument" />Module Carbon/ProtectedDocument
+
+
+
+
+
+### <a name="Carbon-ProtectedDocument-Properties" />Properties
+```typescript 
+static RDF_CLASS:string 
+```
+
+```typescript 
+static SCHEMA:Carbon.ObjectSchema.Class 
+```
+
+
+
 
 
 ## <a name="Carbon-RDF" />Module Carbon/RDF
@@ -7221,9 +8087,9 @@ Resolve the pointer. This function throw an Error, it should be reimplemented fo
 #### <a name="Carbon-RDF-Reexports" />Reexports 
 | Export name | Original Location | 
 | --- | --- |
-| Literal | [Carbon/RDF/Literal](#Carbon-RDF-Literal) |
 | Document | [Carbon/RDF/Document](#Carbon-RDF-Document) |
 | List | [Carbon/RDF/List](#Carbon-RDF-List) |
+| Literal | [Carbon/RDF/Literal](#Carbon-RDF-Literal) |
 | Node | [Carbon/RDF/Node](#Carbon-RDF-Node) |
 | URI | [Carbon/RDF/URI](#Carbon-RDF-URI) |
 | Value | [Carbon/RDF/Value](#Carbon-RDF-Value) |
@@ -7244,42 +8110,65 @@ Resolve the pointer. This function throw an Error, it should be reimplemented fo
 ### <a name="Carbon-RDF-Document-Factory" />Class Carbon.RDF.Document.Factory
 
 
-> Class Factory to manage creation and management of RDFDocument objects
+> Factory class for `Carbon.RDF.Document.Class` objects.
 
 
 
 
 #### <a name="Carbon-RDF-Document-Factory-Methods" />Methods
-##### is
-```typescript 
-static is( object:Object ):boolean
-```
-
-Returns true if the object is an RDFDocument object
-
-*Parameters*
-
-- object
-
 ##### create
 ```typescript 
 static create( resources:Carbon.RDF.RDFNode.Class[],  uri?:string ):Carbon.RDF.RDFDocument.Class
 ```
 
-Return an RDFDocument object created with the parameters provided
+Returns a `Carbon.RDF.Document.Class` object created with the parameters provided.
 
 *Parameters*
 
 - resources
 - uri
 
+##### is
+```typescript 
+static is( object:Object ):boolean
+```
+
+Returns true if the object is a `Carbon.RDF.Document.Class` object.
+
+*Parameters*
+
+- object
+
+
+
+
+### <a name="Carbon-RDF-Document-Parser" />Class Carbon.RDF.Document.Parser
+
+
+> Class to parse a JSON-LD string to an array of RDFDocuments.
+
+
+
+
+#### <a name="Carbon-RDF-Document-Parser-Methods" />Methods
+
+##### parse
+```typescript 
+parse( input:string ):Promise<any>
+```
+
+Parse the a JSON-LD string to an array of RDFDocuments.
+
+*Parameters*
+
+- input
 
 
 
 ### <a name="Carbon-RDF-Document-Util" />Class Carbon.RDF.Document.Util
 
 
-> Class with useful functions for manage RDF Documents
+> Class with useful functions to manage `Carbon.RDF.Document.Class` objects.
 
 
 
@@ -7290,7 +8179,28 @@ Return an RDFDocument object created with the parameters provided
 static getBNodeResources( document:Carbon.RDF.Document.Class ):Carbon.RDF.RDFNode.Class[]
 ```
 
-Returns all the resources that refers to blank nodes from a document.
+Returns all the resources that refers to the blank nodes from a document.
+
+*Parameters*
+
+- document
+
+##### getDocumentResources
+```typescript 
+static getDocumentResources( document:Carbon.RDF.Document.Class ):Carbon.RDF.RDFNode.Class[]
+```
+
+Returns all the resources that refers to documents from a document.
+
+*Parameters*
+
+- document
+
+```typescript 
+static getDocumentResources( document:Carbon.RDF.RDFNode.Class[] ):Carbon.RDF.RDFNode.Class[]
+```
+
+Returns all the resources that refers to documents from an array of resources.
 
 *Parameters*
 
@@ -7316,48 +8226,6 @@ Returns an array of with the object provided, if it is an RDF Document.
 *Parameters*
 
 - object
-
-##### getResources
-```typescript 
-static getResources( objects:Object[] ):Carbon.RDF.RDFNode.Class
-```
-
-Returns all the resources that not are RDF Documents from the array of RDF like objects provided.
-
-*Parameters*
-
-- objects
-
-```typescript 
-static getResources( object:Object ):Carbon.RDF.RDFNode.Class
-```
-
-Returns all the resources that not are RDF Documents from the RDF like object provided.
-
-*Parameters*
-
-- object
-
-##### getDocumentResources
-```typescript 
-static getDocumentResources( document:Carbon.RDF.Document.Class ):Carbon.RDF.RDFNode.Class[]
-```
-
-Returns all the resources that refers to documents from a document.
-
-*Parameters*
-
-- document
-
-```typescript 
-static getDocumentResources( document:Carbon.RDF.RDFNode.Class[] ):Carbon.RDF.RDFNode.Class[]
-```
-
-Returns all the resources that refers to documents from an array of resources.
-
-*Parameters*
-
-- document
 
 ##### getFragmentResources
 ```typescript 
@@ -7404,29 +8272,27 @@ Returns all the resources that refers to fragments from a document. If documentR
 - document
 - documentResourceURI
 
-
-
-
-### <a name="Carbon-RDF-Document-Parser" />Class Carbon.RDF.Document.Parser
-
-
-> Async class for parse a JSON-LD string to an array of RDFDocuments
-
-
-
-
-#### <a name="Carbon-RDF-Document-Parser-Methods" />Methods
-
-##### parse
+##### getResources
 ```typescript 
-parse( input:string ):Promise<any>
+static getResources( objects:Object[] ):Carbon.RDF.RDFNode.Class
 ```
 
-Parse the a JSON-LD string to an array of RDFDocuments
+Returns all the resources that not are RDF Documents from the array of RDF like objects provided.
 
 *Parameters*
 
-- input
+- objects
+
+```typescript 
+static getResources( object:Object ):Carbon.RDF.RDFNode.Class
+```
+
+Returns all the resources that not are RDF Documents from the RDF like object provided.
+
+*Parameters*
+
+- object
+
 
 
 
@@ -7442,7 +8308,7 @@ Parse the a JSON-LD string to an array of RDFDocuments
 ### <a name="Carbon-RDF-List-Factory" />Class Carbon.RDF.List.Factory
 
 
-> Class Factory to manage creation and management of List objects
+> Factory class for `Carbon.RDF.List.Class` objects.
 
 
 
@@ -7453,7 +8319,7 @@ Parse the a JSON-LD string to an array of RDFDocuments
 static is( value:any ):boolean
 ```
 
-Returns true if the object provided can be called a RDF List
+Returns true if the object provided is considered a `Carbon.RDF.List.Class` object.
 
 *Parameters*
 
@@ -7469,7 +8335,8 @@ Returns true if the object provided can be called a RDF List
 #### <a name="Carbon-RDF-Literal-Reexports" />Reexports 
 | Export name | Original Location | 
 | --- | --- |
-| serializer | [Carbon/RDF/Literal/Serializers](#Carbon-RDF-Literal-Serializers) |
+| Serializer | [Carbon/RDF/Literal/Serializer](#Carbon-RDF-Literal-Serializer) |
+| Serializers | [Carbon/RDF/Literal/Serializers](#Carbon-RDF-Literal-Serializers) |
 
 
 
@@ -7478,7 +8345,7 @@ Returns true if the object provided can be called a RDF List
 ### <a name="Carbon-RDF-Literal-Factory" />Class Carbon.RDF.Literal.Factory
 
 
-> Class Factory to manage creation and management of Literal objects.
+> Factory class for `Carbon.RDF.Literal.Class` objects.
 
 
 
@@ -7489,7 +8356,30 @@ Returns true if the object provided can be called a RDF List
 static from()
 ```
 
-Convert the value provided to a Literal object.
+Convert the value provided to a `Carbon.RDF.Literal.Class` object.
+
+##### hasType
+```typescript 
+static hasType( value:Carbon.RDF.Literal.Class,  type:string ):boolean
+```
+
+Returns true if the Literal has the type specified.
+
+*Parameters*
+
+- value
+- type
+
+##### is
+```typescript 
+static is( value:any ):boolean
+```
+
+Returns true if the object provided is considered a `Carbon.RDF.Literal.Class` object.
+
+*Parameters*
+
+- value
 
 ##### parse
 ```typescript 
@@ -7497,58 +8387,11 @@ static parse( literal:Carbon.RDF.Literal.Class ):any
 ```
 
 Parse the Literal object to the respective JavaScript type.
-Returns null if cannot be parsed.
+Returns `null` if the Literal can't be parsed.
 
 *Parameters*
 
 - literal
-
-##### is
-```typescript 
-static is( value:any ):boolean
-```
-
-Returns true if the object provided can be called a RDF Literal
-
-*Parameters*
-
-- value
-
-##### hasType
-```typescript 
-static hasType( value:Carbon.RDF.Literal.Class,  type:string ):boolean
-```
-
-Returns true if the Literal has the type indicated
-
-*Parameters*
-
-- value
-- type
-
-
-
-
-### <a name="Carbon-RDF-Literal-Util" />Class Carbon.RDF.Literal.Util
-
-
-> Class with useful functions for manage RDF Literals
-
-
-
-
-#### <a name="Carbon-RDF-Literal-Util-Methods" />Methods
-##### areEqual
-```typescript 
-static areEqual( literal1:Carbon.RDF.Literal.Class,  literal2:Carbon.RDF.Literal.Class ):boolean
-```
-
-Returns true if two Literals are equal
-
-*Parameters*
-
-- literal1
-- literal2
 
 
 
@@ -7574,191 +8417,54 @@ Returns true if two Literals are equal
 
 ### <a name="Carbon-RDF-Literal-Serializers-XSD-Properties" />Properties
 ```typescript 
-static dateSerializer:Carbon.RDF.Literal.Serializes.XSD.DateSerializer 
-```
-
-The already exposed instance of the class `Carbon.RDF.Literal.Serializes.XSD.DateSerializer`
-```typescript 
-static dateTimeSerializer:Carbon.RDF.Literal.Serializes.XSD.DateTimeSerializer 
-```
-
-The already exposed instance of the class `Carbon.RDF.Literal.Serializes.XSD.DateTimeSerializer`
-```typescript 
-static timeSerializer:Carbon.RDF.Literal.Serializes.XSD.TimeSerializer 
-```
-
-The already exposed instance of the class `Carbon.RDF.Literal.Serializes.XSD.TimeSerializer`
-```typescript 
-static integerSerializer:Carbon.RDF.Literal.Serializes.XSD.IntegerSerializer 
-```
-
-The already exposed instance of the class `Carbon.RDF.Literal.Serializes.XSD.IntegerSerializer`
-```typescript 
-static unsignedIntegerSerializer:Carbon.RDF.Literal.Serializes.XSD.UnsignedIntegerSerializer 
-```
-
-The already exposed instance of the class `Carbon.RDF.Literal.Serializes.XSD.UnsignedIntegerSerializer`
-```typescript 
-static floatSerializer:Carbon.RDF.Literal.Serializes.XSD.FloatSerializer 
-```
-
-The already exposed instance of the class `Carbon.RDF.Literal.Serializes.XSD.FloatSerializer`
-```typescript 
 static booleanSerializer:Carbon.RDF.Literal.Serializes.XSD.BooleanSerializer 
 ```
 
 The already exposed instance of the class `Carbon.RDF.Literal.Serializes.XSD.BooleanSerializer`
 ```typescript 
+static dateSerializer:Carbon.RDF.Literal.Serializes.XSD.DateSerializer 
+```
+
+The already exposed instance of the class `Carbon.RDF.Literal.Serializes.XSD.DateSerializer`.
+```typescript 
+static dateTimeSerializer:Carbon.RDF.Literal.Serializes.XSD.DateTimeSerializer 
+```
+
+The already exposed instance of the class `Carbon.RDF.Literal.Serializes.XSD.DateTimeSerializer`.
+```typescript 
+static floatSerializer:Carbon.RDF.Literal.Serializes.XSD.FloatSerializer 
+```
+
+The already exposed instance of the class `Carbon.RDF.Literal.Serializes.XSD.FloatSerializer`.
+```typescript 
+static integerSerializer:Carbon.RDF.Literal.Serializes.XSD.IntegerSerializer 
+```
+
+The already exposed instance of the class `Carbon.RDF.Literal.Serializes.XSD.IntegerSerializer`.
+```typescript 
 static stringSerializer:Carbon.RDF.Literal.Serializes.XSD.StringSerializer 
 ```
 
-The already exposed instance of the class `Carbon.RDF.Literal.Serializes.XSD.StringSerializer`
-
-
-
-
-### <a name="Carbon-RDF-Literal-Serializes-XSD-DateSerializer" />Class Carbon.RDF.Literal.Serializes.XSD.DateSerializer
-
-
-> Class that can serialize a Date object into a string literal with format `YYY-MM-DD`Instead of instantiate this class, use the already exposed instance `Carbon.RDF.Literal.Serializes.XSD.dateSerializer`
-
-
-
-
-#### <a name="Carbon-RDF-Literal-Serializes-XSD-DateSerializer-Methods" />Methods
-
-##### serialize
+The already exposed instance of the class `Carbon.RDF.Literal.Serializes.XSD.StringSerializer`.
 ```typescript 
-serialize( value:any ):string
+static timeSerializer:Carbon.RDF.Literal.Serializes.XSD.TimeSerializer 
 ```
 
-Returns the string with format `YYY-MM-DD`, of the Date object
-
-*Parameters*
-
-- value
-
-
-
-### <a name="Carbon-RDF-Literal-Serializes-XSD-DateTimeSerializer" />Class Carbon.RDF.Literal.Serializes.XSD.DateTimeSerializer
-
-
-> Class that can serialize a Date object into a string ISO literalInstead of instantiate this class, use the already exposed instance `Carbon.RDF.Literal.Serializes.XSD.dateTimeSerializer`
-
-
-
-
-#### <a name="Carbon-RDF-Literal-Serializes-XSD-DateTimeSerializer-Methods" />Methods
-
-##### serialize
+The already exposed instance of the class `Carbon.RDF.Literal.Serializes.XSD.TimeSerializer`.
 ```typescript 
-serialize( value:any ):string
+static unsignedIntegerSerializer:Carbon.RDF.Literal.Serializes.XSD.UnsignedIntegerSerializer 
 ```
 
-Returns the simplified extended ISO format (ISO 8601) of the Date object
+The already exposed instance of the class `Carbon.RDF.Literal.Serializes.XSD.UnsignedIntegerSerializer`.
 
-*Parameters*
-
-- value
-
-
-
-### <a name="Carbon-RDF-Literal-Serializes-XSD-TimeSerializer" />Class Carbon.RDF.Literal.Serializes.XSD.TimeSerializer
-
-
-> Class that can serialize a Date object into a literal string with format `HH:mm:ss.sssZ`Instead of instantiate this class, use the already exposed instance `Carbon.RDF.Literal.Serializes.XSD.timeSerializer`
-
-
-
-
-#### <a name="Carbon-RDF-Literal-Serializes-XSD-TimeSerializer-Methods" />Methods
-
-##### serialize
-```typescript 
-serialize( value:any ):string
-```
-
-Returns a string representing the Date object with format `HH:mm:ss.sssZ`
-
-*Parameters*
-
-- value
-
-
-
-### <a name="Carbon-RDF-Literal-Serializes-XSD-IntegerSerializer" />Class Carbon.RDF.Literal.Serializes.XSD.IntegerSerializer
-
-
-> Class that can serialize any Number value to a string literal of an integerInstead of instantiate this class, use the already exposed instance `Carbon.RDF.Literal.Serializes.XSD.integerSerializer`
-
-
-
-
-#### <a name="Carbon-RDF-Literal-Serializes-XSD-IntegerSerializer-Methods" />Methods
-
-##### serialize
-```typescript 
-serialize( value:any ):string
-```
-
-Returns a string representing a integer from the Number provided
-
-*Parameters*
-
-- value
-
-
-
-### <a name="Carbon-RDF-Literal-Serializes-XSD-UnsignedIntegerSerializer" />Class Carbon.RDF.Literal.Serializes.XSD.UnsignedIntegerSerializer
-
-
-> Class that can serialize any Number value to a string literal of an unsigned integerInstead of instantiate this class, use the already exposed instance `Carbon.RDF.Literal.Serializes.XSD.unsignedIntegerSerializer`
-
-
-
-
-#### <a name="Carbon-RDF-Literal-Serializes-XSD-UnsignedIntegerSerializer-Methods" />Methods
-
-##### serialize
-```typescript 
-serialize( value:any ):string
-```
-
-Returns a string representing an unsigned integer from the Number provided
-
-*Parameters*
-
-- value
-
-
-
-### <a name="Carbon-RDF-Literal-Serializes-XSD-FloatSerializer" />Class Carbon.RDF.Literal.Serializes.XSD.FloatSerializer
-
-
-> Class that can serialize any Number value to a string literal of floatInstead of instantiate this class, use the already exposed instance `Carbon.RDF.Literal.Serializes.XSD.floatSerializer`
-
-
-
-
-#### <a name="Carbon-RDF-Literal-Serializes-XSD-FloatSerializer-Methods" />Methods
-
-##### serialize
-```typescript 
-serialize( value:any ):string
-```
-
-Returns a string representing a float from the Number provided
-
-*Parameters*
-
-- value
 
 
 
 ### <a name="Carbon-RDF-Literal-Serializes-XSD-BooleanSerializer" />Class Carbon.RDF.Literal.Serializes.XSD.BooleanSerializer
 
 
-> Class that can serialize any variable to a string literal representation its truth valueInstead of instantiate this class, use the already exposed instance `Carbon.RDF.Literal.Serializes.XSD.booleanSerializer`
+> Class that can serialize any variable to a string literal representation its truth value.
+Instead of instantiating this class, use the already exposed instance `Carbon.RDF.Literal.Serializes.XSD.booleanSerializer`.
 
 
 
@@ -7770,7 +8476,103 @@ Returns a string representing a float from the Number provided
 serialize( value:any ):string
 ```
 
-Returns a string representing the truth value from the variable provided
+Returns a string representing the truth value from the variable provided.
+
+*Parameters*
+
+- value
+
+
+
+### <a name="Carbon-RDF-Literal-Serializes-XSD-DateSerializer" />Class Carbon.RDF.Literal.Serializes.XSD.DateSerializer
+
+
+> Class that can serialize a Date object into a string literal with format `YYYY-MM-DD`.
+Instead of instantiating this class, use the already exposed instance `Carbon.RDF.Literal.Serializes.XSD.dateSerializer`.
+
+
+
+
+#### <a name="Carbon-RDF-Literal-Serializes-XSD-DateSerializer-Methods" />Methods
+
+##### serialize
+```typescript 
+serialize( value:any ):string
+```
+
+Returns the string with format `YYYY-MM-DD`, of the Date object
+
+*Parameters*
+
+- value
+
+
+
+### <a name="Carbon-RDF-Literal-Serializes-XSD-DateTimeSerializer" />Class Carbon.RDF.Literal.Serializes.XSD.DateTimeSerializer
+
+
+> Class that can serialize a Date object into a string ISO literal.
+Instead of instantiating this class, use the already exposed instance `Carbon.RDF.Literal.Serializes.XSD.dateTimeSerializer`.
+
+
+
+
+#### <a name="Carbon-RDF-Literal-Serializes-XSD-DateTimeSerializer-Methods" />Methods
+
+##### serialize
+```typescript 
+serialize( value:any ):string
+```
+
+Returns the simplified extended ISO format (ISO 8601) of the Date object.
+
+*Parameters*
+
+- value
+
+
+
+### <a name="Carbon-RDF-Literal-Serializes-XSD-FloatSerializer" />Class Carbon.RDF.Literal.Serializes.XSD.FloatSerializer
+
+
+> Class that can serialize any Number value to a string literal of float.
+Instead of instantiating this class, use the already exposed instance `Carbon.RDF.Literal.Serializes.XSD.floatSerializer`.
+
+
+
+
+#### <a name="Carbon-RDF-Literal-Serializes-XSD-FloatSerializer-Methods" />Methods
+
+##### serialize
+```typescript 
+serialize( value:any ):string
+```
+
+Returns a string representing a float from the Number provided.
+
+*Parameters*
+
+- value
+
+
+
+### <a name="Carbon-RDF-Literal-Serializes-XSD-IntegerSerializer" />Class Carbon.RDF.Literal.Serializes.XSD.IntegerSerializer
+
+
+> Class that can serialize any Number value to a string literal of an integer.
+Instead of instantiating this class, use the already exposed instance `Carbon.RDF.Literal.Serializes.XSD.integerSerializer`.
+
+
+
+
+#### <a name="Carbon-RDF-Literal-Serializes-XSD-IntegerSerializer-Methods" />Methods
+
+##### serialize
+```typescript 
+serialize( value:any ):string
+```
+
+Returns a string representing a integer from the Number provided.
 
 *Parameters*
 
@@ -7781,7 +8583,8 @@ Returns a string representing the truth value from the variable provided
 ### <a name="Carbon-RDF-Literal-Serializes-XSD-StringSerializer" />Class Carbon.RDF.Literal.Serializes.XSD.StringSerializer
 
 
-> Class that can serialize any variable to a string literal representation its truth valueInstead of instantiate this class, use the already exposed instance `Carbon.RDF.Literal.Serializes.XSD.stringSerializer`
+> Class that can serialize any variable to a string literal representation its truth value.
+Instead of instantiating this class, use the already exposed instance `Carbon.RDF.Literal.Serializes.XSD.stringSerializer`.
 
 
 
@@ -7793,7 +8596,55 @@ Returns a string representing the truth value from the variable provided
 serialize( value:any ):string
 ```
 
-Returns a string representing the truth value from the variable provided
+Returns a string representing the truth value from the variable provided.
+
+*Parameters*
+
+- value
+
+
+
+### <a name="Carbon-RDF-Literal-Serializes-XSD-TimeSerializer" />Class Carbon.RDF.Literal.Serializes.XSD.TimeSerializer
+
+
+> Class that can serialize a Date object into a literal string with format `HH:mm:ss.sssZ`.
+Instead of instantiating this class, use the already exposed instance `Carbon.RDF.Literal.Serializes.XSD.timeSerializer`.
+
+
+
+
+#### <a name="Carbon-RDF-Literal-Serializes-XSD-TimeSerializer-Methods" />Methods
+
+##### serialize
+```typescript 
+serialize( value:any ):string
+```
+
+Returns a string representing the Date object with format `HH:mm:ss.sssZ`.
+
+*Parameters*
+
+- value
+
+
+
+### <a name="Carbon-RDF-Literal-Serializes-XSD-UnsignedIntegerSerializer" />Class Carbon.RDF.Literal.Serializes.XSD.UnsignedIntegerSerializer
+
+
+> Class that can serialize any Number value to a string literal of an unsigned integer.
+Instead of instantiating this class, use the already exposed instance `Carbon.RDF.Literal.Serializes.XSD.unsignedIntegerSerializer`.
+
+
+
+
+#### <a name="Carbon-RDF-Literal-Serializes-XSD-UnsignedIntegerSerializer-Methods" />Methods
+
+##### serialize
+```typescript 
+serialize( value:any ):string
+```
+
+Returns a string representing an unsigned integer from the Number provided.
 
 *Parameters*
 
@@ -7813,33 +8664,33 @@ Returns a string representing the truth value from the variable provided
 ### <a name="Carbon-RDF-RDFNode-Factory" />Class Carbon.RDF.RDFNode.Factory
 
 
-> Class Factory to manage creation and management of RDFNode objects
+> Factory class for `Carbon.RDF.RDFNode.Class` objects.
 
 
 
 
 #### <a name="Carbon-RDF-RDFNode-Factory-Methods" />Methods
-##### is
-```typescript 
-static is( object:Object ):boolean
-```
-
-Returns true when an object can be called an RDFNode
-
-*Parameters*
-
-- object
-
 ##### create
 ```typescript 
 static create( uri:string ):Carbon.RDF.RDFNode.Class
 ```
 
-Create a RDFNode object providing an URI string
+Creates a `Carbon.RDF.RDFNode.Class` object with the URI provided.
 
 *Parameters*
 
 - uri
+
+##### is
+```typescript 
+static is( object:Object ):boolean
+```
+
+Returns true if the object provided is considered a `Carbon.RDF.RDFNode.Class` object.
+
+*Parameters*
+
+- object
 
 
 
@@ -7847,7 +8698,7 @@ Create a RDFNode object providing an URI string
 ### <a name="Carbon-RDF-RDFNode-Util" />Class Carbon.RDF.RDFNode.Util
 
 
-> Class with useful functions for manage RDFNode objects
+> Class with useful functions to manage `Carbon.RDF.RDFNode.Class` objects.
 
 
 
@@ -7858,12 +8709,23 @@ Create a RDFNode object providing an URI string
 static areEqual( node1:Carbon.RDF.RDFDocument.Class,  node2:Carbon.RDF.RDFDocument.Class ):boolean
 ```
 
-Returns true if the objects represent the same resource
+Returns true if the objects represent the same resource.
 
 *Parameters*
 
 - node1
 - node2
+
+##### getFreeNodes
+```typescript 
+static getFreeNodes( object:T extends Object ):Carbon.RDF.Node.Class[]
+```
+
+Returns an array with the nodes that are neither a RDFDocument nor are contained inside a one.
+
+*Parameters*
+
+- object: The object to evaluate for its free nodes.
 
 ##### getPropertyURI
 ```typescript 
@@ -7871,12 +8733,35 @@ static getPropertyURI( node:Carbon.RDF.RDFNode.Class,  predicate:string ):string
 ```
 
 Returns the URI from a property resource in the RDFNode object.
-Returns null if the property not exists or the URI is not found
+Returns `null` if the property doesn't exists or the URI is not found.
 
 *Parameters*
 
 - node
 - predicate
+
+##### getTypes
+```typescript 
+static getTypes( object:Object ):string[]
+```
+
+Returns an array with the types of the RDFNode provided.
+
+*Parameters*
+
+- object: The RDFNode to evaluate.
+
+##### hasType
+```typescript 
+static hasType( object:Object,  type:string ):boolean
+```
+
+Returns true if the RDFNode provided has the specified type.
+
+*Parameters*
+
+- object: The RDFNode to evaluate.
+- type: The type to look for it existence.
 
 
 
@@ -7893,7 +8778,7 @@ Returns null if the property not exists or the URI is not found
 ### <a name="Carbon-RDF-URI-Class" />Class Carbon.RDF.URI.Class
 
 
-> Wrapper for an URI string value
+> Wrapper class for an URI string value.
 
 
 #### <a name="Carbon-RDF-URI-Class-Constructor" />Constructor
@@ -7904,9 +8789,16 @@ Class( stringValue:string )
 
 *Parameters*
 
-- stringValue: The string that represents an URI
+- stringValue: The string that represents the URI.
 
 
+#### <a name="Carbon-RDF-URI-Class-Properties" />Properties
+
+```typescript 
+stringValue:string 
+```
+
+The string value of the URI object.
 
 #### <a name="Carbon-RDF-URI-Class-Methods" />Methods
 
@@ -7915,85 +8807,19 @@ Class( stringValue:string )
 toString():string
 ```
 
-Returns a string that represents the URI of the class
+Returns a string that represents the URI of the class.
 
 
 
 ### <a name="Carbon-RDF-URI-Util" />Class Carbon.RDF.URI.Util
 
 
-> CLass with useful functions for managing URI's
+> Class with useful functions to manage URI strings.
 
 
 
 
 #### <a name="Carbon-RDF-URI-Util-Methods" />Methods
-##### hasFragment
-```typescript 
-static hasFragment( uri:string ):boolean
-```
-
-Returns true if the URI provided contains a fragment
-
-*Parameters*
-
-- uri
-
-##### hasQuery
-```typescript 
-static hasQuery( uri:string ):boolean
-```
-
-Returns true if the URI provided contains query parameters
-
-*Parameters*
-
-- uri
-
-##### hasProtocol
-```typescript 
-static hasProtocol( uri:string ):boolean
-```
-
-Returns true if the URI provided has a protocol
-
-*Parameters*
-
-- uri
-
-##### isAbsolute
-```typescript 
-static isAbsolute( uri:string ):boolean
-```
-
-Returns true if the URI provided is absolute
-
-*Parameters*
-
-- uri
-
-##### isRelative
-```typescript 
-static isRelative( uri:string ):boolean
-```
-
-Returns true if the URI provided is relative
-
-*Parameters*
-
-- uri
-
-##### isBNodeID
-```typescript 
-static isBNodeID( uri:string ):boolean
-```
-
-Returns true if the URI provided reference to a Blank Node
-
-*Parameters*
-
-- uri
-
 ##### generateBNodeID
 ```typescript 
 static generateBNodeID()
@@ -8001,59 +8827,12 @@ static generateBNodeID()
 
 Returns an ID for a BlankNode using an universally unique identifier (UUID).
 
-##### isPrefixed
-```typescript 
-static isPrefixed( uri:string ):boolean
-```
-
-Returns true if the URI provided has a prefix
-
-*Parameters*
-
-- uri
-
-##### isFragmentOf
-```typescript 
-static isFragmentOf( fragmentURI:string,  uri:string ):boolean
-```
-
-Returns true if the first URI is a fragment od the second URI provided
-
-*Parameters*
-
-- fragmentURI
-- uri
-
-##### isBaseOf
-```typescript 
-static isBaseOf( baseURI:string,  uri:string ):boolean
-```
-
-Return true if the first URI is parent of the second URI provided
-
-*Parameters*
-
-- baseURI
-- uri
-
-##### getRelativeURI
-```typescript 
-static getRelativeURI( absoluteURI:string,  base:string ):string
-```
-
-Returns the relative URI from a base URI provided
-
-*Parameters*
-
-- absoluteURI
-- base
-
 ##### getDocumentURI
 ```typescript 
 static getDocumentURI( uri:string )
 ```
 
-Returns the URI that just reference to the Document of the URI provided
+Returns the URI that just reference to the Document of the URI provided.
 
 *Parameters*
 
@@ -8064,11 +8843,34 @@ Returns the URI that just reference to the Document of the URI provided
 static getFragment( uri:string ):string
 ```
 
-Returns the name of the fragment in the URI provided. If no fragment exists in the URI, null will be returned
+Returns the name of the fragment in the URI provided. If no fragment exists in the URI, null will be returned.
 
 *Parameters*
 
 - uri
+
+##### getParameters
+```typescript 
+static getParameters( uri:string ):Map<string, string | string[]>
+```
+
+Returns the query parameters of the URI provided in form of a Map.
+
+*Parameters*
+
+- uri
+
+##### getRelativeURI
+```typescript 
+static getRelativeURI( absoluteURI:string,  base:string ):string
+```
+
+Returns the relative URI from a base URI provided.
+
+*Parameters*
+
+- absoluteURI
+- base
 
 ##### getSlug
 ```typescript 
@@ -8081,28 +8883,130 @@ Returns the slug of the URI. It takes an ending slash as part as the slug.
 
 - uri
 
-##### getParameters
+##### hasFragment
 ```typescript 
-static getParameters( uri:string ):Map<string, string | string[]>
+static hasFragment( uri:string ):boolean
 ```
 
-Returns the query parameters in form of a map of the uri provided.
+Returns true if the URI provided contains a fragment.
 
 *Parameters*
 
 - uri
 
-##### resolve
+##### hasProtocol
 ```typescript 
-static resolve( parentURI:string,  childURI:string ):string
+static hasProtocol( uri:string ):boolean
 ```
 
-Return a URI formed from a parent URI and a relative child URI
+Returns true if the URI provided has a protocol.
 
 *Parameters*
 
-- parentURI
-- childURI
+- uri
+
+##### hasQuery
+```typescript 
+static hasQuery( uri:string ):boolean
+```
+
+Returns true if the URI provided contains query parameters.
+
+*Parameters*
+
+- uri
+
+##### isAbsolute
+```typescript 
+static isAbsolute( uri:string ):boolean
+```
+
+Returns true if the URI provided is absolute.
+
+*Parameters*
+
+- uri
+
+##### isBNodeID
+```typescript 
+static isBNodeID( uri:string ):boolean
+```
+
+Returns true if the URI provided reference to a BlankNode.
+
+*Parameters*
+
+- uri
+
+##### isBaseOf
+```typescript 
+static isBaseOf( baseURI:string,  uri:string ):boolean
+```
+
+Return true if the first URI is parent of the second URI provided.
+
+*Parameters*
+
+- baseURI
+- uri
+
+##### isFragmentOf
+```typescript 
+static isFragmentOf( fragmentURI:string,  uri:string ):boolean
+```
+
+Returns true if the first URI is a fragment od the second URI provided.
+
+*Parameters*
+
+- fragmentURI
+- uri
+
+##### isPrefixed
+```typescript 
+static isPrefixed( uri:string ):boolean
+```
+
+Returns true if the URI provided has a prefix.
+
+*Parameters*
+
+- uri
+
+##### isRelative
+```typescript 
+static isRelative( uri:string ):boolean
+```
+
+Returns true if the URI provided is relative.
+
+*Parameters*
+
+- uri
+
+##### prefix
+```typescript 
+static prefix( uri:string,  prefix:string,  prefixURI:string ):string
+```
+
+Replace a base of a URI with the prefix provided. If the prefix can not be resolved, the URI provided will be returned.
+
+*Parameters*
+
+- uri
+- prefix
+- prefixURI
+
+```typescript 
+static prefix( uri:string,  objectSchema:Carbon.ObjectSchema.DigestedObjectSchema ):string
+```
+
+Replace the base of a URI with a prefix in accordance with the ObjectSchema provided. If the prefix can not be resolved, the URI provided will be returned.
+
+*Parameters*
+
+- uri
+- objectSchema
 
 ##### removeProtocol
 ```typescript 
@@ -8115,29 +9019,17 @@ Removes the protocol of the URI provided
 
 - uri
 
-##### prefix
+##### resolve
 ```typescript 
-static prefix( uri:string,  prefix:string,  prefixURI:string ):string
+static resolve( parentURI:string,  childURI:string ):string
 ```
 
-Replace a base of a URI with the prefix provided. If the prefix can not be resolved, the URI provided will be returned
+Return a URI formed from a parent URI and a relative child URI.
 
 *Parameters*
 
-- uri
-- prefix
-- prefixURI
-
-```typescript 
-static prefix( uri:string,  objectSchema:Carbon.ObjectSchema.DigestedObjectSchema ):string
-```
-
-Replace the base of a URI with a prefix in accordance with the ObjectSchema provided. If the prefix can not be resolved, the URI provided will be returned
-
-*Parameters*
-
-- uri
-- objectSchema
+- parentURI
+- childURI
 
 
 
@@ -8154,23 +9046,37 @@ Replace the base of a URI with a prefix in accordance with the ObjectSchema prov
 ### <a name="Carbon-RDF-Value-Util" />Class Carbon.RDF.Value.Util
 
 
-> Class with useful functions for manage RDF Values.
+> Class with useful functions to manage `Carbon.RDF.Value.Class` objects.
 
 
 
 
 #### <a name="Carbon-RDF-Value-Util-Methods" />Methods
-##### areEqual
+##### getList
 ```typescript 
-static areEqual( value1:Carbon.RDF.Value.Class,  value2:Carbon.RDF.Value.Class ):boolean
+static getList( propertyValues:Array<any> ):Carbon.RDF.List.Class
 ```
 
-Returns true if the two Values are considered equal.
+Returns the List object from the provided property of an expanded JSON-LD object.
+Returns null if no List object is found.
 
 *Parameters*
 
-- value1
-- value2
+- propertyValues
+
+##### getProperties
+```typescript 
+static getProperties( expandedObject:any,  propertyURI:string,  pointerLibrary:Carbon.Pointer.Library ):any
+```
+
+Returns the property searched as an Array with the parsed Literal, Pointer or List.
+Returns null if the property is not found, or an empty array if it cannot be parsed.
+
+*Parameters*
+
+- expandedObject
+- propertyURI
+- pointerLibrary
 
 ##### getProperty
 ```typescript 
@@ -8186,13 +9092,27 @@ Returns null if the property is not found or cannot be parsed.
 - propertyURI
 - pointerLibrary
 
-##### getPropertyPointer
+##### getPropertyLanguageMap
 ```typescript 
-static getPropertyPointer( expandedObject:any,  propertyURI:string,  pointerLibrary:Carbon.Pointer.Library ):any
+static getPropertyLanguageMap( expandedObject:any,  propertyURI:string,  pointerLibrary:Carbon.Pointer.Library ):any
 ```
 
-Returns the property searched as a Pointer.
-Returns null if the property is not found or cannot be parsed as a Pointer.
+Returns an object associating the language with the parsed string literal.
+Returns null if the property is not found, or an empty object if it is not a property with language.
+
+*Parameters*
+
+- expandedObject
+- propertyURI
+- pointerLibrary
+
+##### getPropertyList
+```typescript 
+static getPropertyList( expandedObject:any,  propertyURI:string,  pointerLibrary:Carbon.Pointer.Library ):any
+```
+
+Returns the property searched as an Array with every element parsed to its respective type of element.
+Returns null if the property is not found or cannot be parsed.
 
 *Parameters*
 
@@ -8214,34 +9134,6 @@ Returns null if the property is not found, the type provided not match with the 
 - propertyURI
 - literalType
 
-##### getPropertyList
-```typescript 
-static getPropertyList( expandedObject:any,  propertyURI:string,  pointerLibrary:Carbon.Pointer.Library ):any
-```
-
-Returns the property searched as an Array with every element parsed to its respective type of element.
-Returns null if the property is not found or cannot be parsed.
-
-*Parameters*
-
-- expandedObject
-- propertyURI
-- pointerLibrary
-
-##### getPropertyPointerList
-```typescript 
-static getPropertyPointerList( expandedObject:any,  propertyURI:string,  pointerLibrary:Carbon.Pointer.Library ):any
-```
-
-Returns the property list searched as an Array of Pointers. It will be filtered no pointer values.
-Returns null if the property is not found or is not a List.
-
-*Parameters*
-
-- expandedObject
-- propertyURI
-- pointerLibrary
-
 ##### getPropertyLiteralList
 ```typescript 
 static getPropertyLiteralList( expandedObject:any,  propertyURI:string,  pointerLibrary:Carbon.Pointer.Library ):any
@@ -8256,13 +9148,41 @@ Returns null if the property is not found or is not a List.
 - propertyURI
 - pointerLibrary
 
-##### getProperties
+##### getPropertyLiterals
 ```typescript 
-static getProperties( expandedObject:any,  propertyURI:string,  pointerLibrary:Carbon.Pointer.Library ):any
+static getPropertyLiterals( expandedObject:any,  propertyURI:string,  literalType:string ):any
 ```
 
-Returns the property searched as an Array with the parsed Literal, Pointer or List.
-Returns null if the property is not found, or an empty array if cannot be parsed.
+Returns the property searched as an Array with the parsed Literal.
+Returns null if the property is not found, or an empty array if it cannot be parsed.
+
+*Parameters*
+
+- expandedObject
+- propertyURI
+- literalType
+
+##### getPropertyPointer
+```typescript 
+static getPropertyPointer( expandedObject:any,  propertyURI:string,  pointerLibrary:Carbon.Pointer.Library ):any
+```
+
+Returns the property searched as a Pointer.
+Returns null if the property is not found or cannot be parsed as a Pointer.
+
+*Parameters*
+
+- expandedObject
+- propertyURI
+- pointerLibrary
+
+##### getPropertyPointerList
+```typescript 
+static getPropertyPointerList( expandedObject:any,  propertyURI:string,  pointerLibrary:Carbon.Pointer.Library ):any
+```
+
+Returns the property list searched as an Array of Pointers. It will be filtered no pointer values.
+Returns null if the property is not found or is not a List.
 
 *Parameters*
 
@@ -8297,58 +9217,71 @@ Returns null if the property is not found or an empty array if no URI was found.
 - expandedObject
 - propertyURI
 
-##### getPropertyLiterals
-```typescript 
-static getPropertyLiterals( expandedObject:any,  propertyURI:string,  literalType:string ):any
-```
-
-Returns the property searched as an Array with the parsed Literal.
-Returns null if the property is not found, or an empty array if cannot be parsed.
-
-*Parameters*
-
-- expandedObject
-- propertyURI
-- literalType
-
-##### getPropertyLanguageMap
-```typescript 
-static getPropertyLanguageMap( expandedObject:any,  propertyURI:string,  pointerLibrary:Carbon.Pointer.Library ):any
-```
-
-Returns an object associating the language with the parsed string literal.
-Returns null if the property is not found, or an empty object if not is a property with language.
-
-*Parameters*
-
-- expandedObject
-- propertyURI
-- pointerLibrary
-
-##### getList
-```typescript 
-static getList( propertyValues:Array<any> ):Carbon.RDF.List.Class
-```
-
-Returns the List object from the provided property of an expanded JSON-LD object.
-Returns null if no List object is found.
-
-*Parameters*
-
-- propertyValues
-
 ##### parseValue
 ```typescript 
 static parseValue( propertyValue:Carbon.RDF.Value.Class,  pointerLibrary:Carbon.Pointer.Library ):any
 ```
 
 Returns the parsed object from an Literal, Node, or List.
-Returns null if cannot be parsed
+Returns null if it cannot be parsed
 
 *Parameters*
 
 - propertyValue
 - pointerLibrary
+
+
+
+
+## <a name="Carbon-RDFRepresentation" />Module Carbon/RDFRepresentation
+
+
+
+
+
+### <a name="Carbon-RDFRepresentation-Properties" />Properties
+```typescript 
+static RDF_CLASS:string 
+```
+
+```typescript 
+static SCHEMA:Carbon.ObjectSchema.Class 
+```
+
+
+
+
+
+### <a name="Carbon-RDFRepresentation-Factory" />Class Carbon.RDFRepresentation.Factory
+
+
+> Factory class for `Carbon.RDFRepresentation.Class` objects.
+
+
+
+
+#### <a name="Carbon-RDFRepresentation-Factory-Methods" />Methods
+##### hasClassProperties
+```typescript 
+static hasClassProperties( resource:Object ):boolean
+```
+
+Returns true if the object provided has the properties of a `Carbon.RDFRepresentation.Class` object.
+
+*Parameters*
+
+- resource
+
+##### is
+```typescript 
+static is( object:Object ):boolean
+```
+
+Returns true if the object provided is considered a `Carbon.RDFRepresentation.Class` object.
+
+*Parameters*
+
+- object
 
 
 
@@ -8365,18 +9298,54 @@ Returns null if cannot be parsed
 ### <a name="Carbon-Resource-Factory" />Class Carbon.Resource.Factory
 
 
-> Factory class for Resource objects.
+> Factory class for `Carbon.Resource.Class` objects.
 
 
 
 
 #### <a name="Carbon-Resource-Factory-Methods" />Methods
+##### create
+```typescript 
+static create( id?:string,  types?:string[] ):Carbon.Resource.Class
+```
+
+Creates a Resource object with the id and types provided.
+
+*Parameters*
+
+- id
+- types
+
+##### createFrom
+```typescript 
+static createFrom<T extends Object>( object:T,  id?:string,  types?:string[] ):T & Carbon.Resource.Class
+```
+
+Creates a Resource object with the id and types provided.
+
+*Parameters*
+
+- object
+- id
+- types
+
+##### decorate
+```typescript 
+static decorate<T extends Object>( object:T ):T & Carbon.Resource.Class
+```
+
+Decorates the object provided with the properties and methods of a `Carbon.Resource.Class` object.
+
+*Parameters*
+
+- object
+
 ##### hasClassProperties
 ```typescript 
 static hasClassProperties( resource:Object ):boolean
 ```
 
-Returns true if the object provided has the properties and functions of a Resource object
+Returns true if the object provided has the properties of a `Carbon.Resource.Class` object.
 
 *Parameters*
 
@@ -8387,47 +9356,11 @@ Returns true if the object provided has the properties and functions of a Resour
 static is( resource:Object ):boolean
 ```
 
-Returns true if the object is a `Carbon.Resource.Class` (by duck type)
+Returns true if the object provided is considered a `Carbon.Resource.Class` object.
 
 *Parameters*
 
 - resource
-
-##### create
-```typescript 
-static create( id?:string,  types?:string[] ):Carbon.Resource.Class
-```
-
-Create a Resource object with id and types if provided.
-
-*Parameters*
-
-- id
-- types
-
-##### createFrom
-```typescript 
-static createFrom( object:T extends Object,  id?:string,  types?:string[] ):T & Carbon.Resource.Class
-```
-
-Create a Resource object with id and types if provided.
-
-*Parameters*
-
-- object
-- id
-- types
-
-##### decorate
-```typescript 
-static decorate( object:T extends Object ):T & Carbon.Resource.Class
-```
-
-Decorates the object provided with the elements of a Resource object.
-
-*Parameters*
-
-- object
 
 
 
@@ -8444,7 +9377,7 @@ Decorates the object provided with the elements of a Resource object.
 ### <a name="Carbon-RetrievalPreferences-Factory" />Class Carbon.RetrievalPreferences.Factory
 
 
-> Factory class for `Carbon.RetrievalPreferences.Class` object.
+> Factory class for `Carbon.RetrievalPreferences.Class` objects.
 
 
 
@@ -8467,7 +9400,7 @@ Returns true if the object provided has the properties of a `Carbon.RetrievalPre
 ### <a name="Carbon-RetrievalPreferences-Util" />Class Carbon.RetrievalPreferences.Util
 
 
-> Useful function when working with `Carbon.RetrievalPreferences.Class` objects.
+> Class with useful functions to manage `Carbon.RetrievalPreferences.Class` objects.
 
 
 
@@ -8499,7 +9432,7 @@ Convert the `Carbon.RetrievalPreferences.Class` object to a URL query string.
 static instance:Carbon.SDKContext.Class 
 ```
 
-Instance of SDKContext.Class for be used as a singleton and for base parent in every context.
+Instance of `Carbon.SDKContext.Class` that is used as the root parent in every context.
 
 
 
@@ -8507,7 +9440,7 @@ Instance of SDKContext.Class for be used as a singleton and for base parent in e
 ### <a name="Carbon-SDKContext-Class" />Class Carbon.SDKContext.Class
 
 
-> Base class for every Context in the SDK.
+> Base class of every Context in the SDK.
 
 
 #### <a name="Carbon-SDKContext-Class-Constructor" />Constructor
@@ -8523,124 +9456,49 @@ Class()
 auth:Carbon.Auth.Class 
 ```
 
-Instance of Auth class for manage all the authentications in the context.
+Instance of `Carbon.Auth.Class` class to manage all the authentications in the context.
 ```typescript 
 documents:Carbon.Documents 
 ```
 
-Instance of Documents class for manage all the documents in the context.
+Instance of `Carbon.Documents` class to manage all the documents in the context.
 ```typescript 
 parentContext:Carbon.Context 
 ```
 
-Accessor for the parent context of the context. It is null since SDKContext.Class its the base of all context.
+Parent context of the current context. For an instance of `Carbon.SDKContext.Class`, this is set to null since it is the root parent of every context in the SDK.
 
 #### <a name="Carbon-SDKContext-Class-Methods" />Methods
-
-##### getBaseURI
-```typescript 
-getBaseURI():string
-```
-
-Returns the base URI of the context, witch for is an empty string for this context.
-
-##### resolve
-```typescript 
-resolve( relativeURI:string ):string
-```
-
-Returns URI provided resolved in this context, witch is the same URI provided.
-
-*Parameters*
-
-- relativeURI
-
-##### hasSetting
-```typescript 
-hasSetting( name:string ):boolean
-```
-
-Returns true if the setting looked for is established in the context.
-
-*Parameters*
-
-- name
-
-##### getSetting
-```typescript 
-getSetting( name:string ):string
-```
-
-Returns the value of the setting looked for.
-Returns `null` if no setting with the name specified exists.
-
-*Parameters*
-
-- name
-
-##### setSetting
-```typescript 
-setSetting( name:string,  value:any )
-```
-
-Set a setting in the the context.
-
-*Parameters*
-
-- name
-- value
-
-##### deleteSetting
-```typescript 
-deleteSetting( name:string )
-```
-
-Deletes the setting specified from the the context.
-
-*Parameters*
-
-- name
-
-##### hasObjectSchema
-```typescript 
-hasObjectSchema( type:string ):boolean
-```
-
-Returns true if the is an ObjectSchema for the specified type.
-
-*Parameters*
-
-- type
-
-##### getObjectSchema
-```typescript 
-getObjectSchema( type?:string ):Carbon.ObjectSchema.DigestedObjectSchema
-```
-
-Returns the ObjectSchema for the specified type or null if not exits.
-If no type specified the general object schema of the context is returned. This is an schema that applies for all the types.
-
-*Parameters*
-
-- type
 
 ##### clearObjectSchema
 ```typescript 
 clearObjectSchema( type?:string )
 ```
 
-Remove the Schema of the type specified, if not provided empty the General Schema.
+Remove the schema of the type specified, or the general schema if no type is provided.
 
 *Parameters*
 
 - type
+
+##### deleteSetting
+```typescript 
+deleteSetting( name:string )
+```
+
+Deletes the setting specified by the name provided from the current context.
+
+*Parameters*
+
+- name
 
 ##### extendObjectSchema
 ```typescript 
 extendObjectSchema( type:string,  objectSchema:Carbon.ObjectSchema.DigestedObjectSchema )
 ```
 
-Extends an Schema for a specified type of Resource
+Extends the schema for a specified type of Resource.
+If a schema for the type exists in the parent context, this is duplicated for the actual context, but only the first time this schema is extended.
 
 *Parameters*
 
@@ -8651,11 +9509,90 @@ Extends an Schema for a specified type of Resource
 extendObjectSchema( objectSchema:Carbon.ObjectSchema.DigestedObjectSchema )
 ```
 
-Extends the General Schema of the context.
+Extends the general schema of the current context.
+If a general schema exists in the parent context, this is duplicated for the current context, but only the first time the schema is extended.
 
 *Parameters*
 
 - objectSchema
+
+##### getBaseURI
+```typescript 
+getBaseURI():string
+```
+
+Returns the base URI of the context. For an instance of `Carbon.SDKContext.Class`, this is an empty string.
+
+##### getObjectSchema
+```typescript 
+getObjectSchema( type?:string ):Carbon.ObjectSchema.DigestedObjectSchema
+```
+
+
+Returns the ObjectSchema for the specified type or `null` if it doesn't exists.
+If no type is specified, the general object schema of the context is returned. This is an schema that applies for all the Resources.
+
+*Parameters*
+
+- type
+
+##### getSetting
+```typescript 
+getSetting( name:string ):string
+```
+
+
+Returns the value of the setting sought for.
+Returns `null` if no setting with the name specified exists.
+
+*Parameters*
+
+- name
+
+##### hasObjectSchema
+```typescript 
+hasObjectSchema( type:string ):boolean
+```
+
+Returns true if there is an ObjectSchema for the specified type.
+
+*Parameters*
+
+- type
+
+##### hasSetting
+```typescript 
+hasSetting( name:string ):boolean
+```
+
+Returns true if the setting sought for has been assign.
+
+*Parameters*
+
+- name
+
+##### resolve
+```typescript 
+resolve( relativeURI:string ):string
+```
+
+Returns the resolved relative URI specified, in accordance with the scope of the context.
+
+*Parameters*
+
+- relativeURI
+
+##### setSetting
+```typescript 
+setSetting( name:string,  value:any )
+```
+
+Set a setting in the current context.
+
+*Parameters*
+
+- name
+- value
 
 
 
@@ -8666,9 +9603,10 @@ Extends the General Schema of the context.
 #### <a name="Carbon-SPARQL-Reexports" />Reexports 
 | Export name | Original Location | 
 | --- | --- |
-| RawResultsRawResults | [Carbon/SPARQL/RawResults](#Carbon-SPARQL-RawResults) |
 | RawResultsParserRawResultsParser | [Carbon/SPARQL/RawResultsParser](#Carbon-SPARQL-RawResultsParser) |
-| ServiceService | [Carbon/SPARQL/Service](#Carbon-SPARQL-Service) |
+| RawResultsRawResults | [Carbon/SPARQL/RawResults](#Carbon-SPARQL-RawResults) |
+| SELECTResults | [Carbon/SPARQL/SELECTResults](#Carbon-SPARQL-SELECTResults) |
+| Service | [Carbon/SPARQL/Service](#Carbon-SPARQL-Service) |
 
 
 
@@ -8686,13 +9624,13 @@ Extends the General Schema of the context.
 ### <a name="Carbon-SPARQL-RawResults" />Class Carbon.SPARQL.RawResults
 
 
-> Class where specifies the types a SPARQL query result can be
+> Class that specifies the result types of a SPARQL query.
 
 
 
 #### <a name="Carbon-SPARQL-RawResults-Properties" />Properties
 ```typescript 
-static URI:string 
+static BNODE:string 
 ```
 
 ```typescript 
@@ -8700,7 +9638,7 @@ static LITERAL:string
 ```
 
 ```typescript 
-static BNODE:string 
+static URI:string 
 ```
 
 
@@ -8710,7 +9648,7 @@ static BNODE:string
 ### <a name="Carbon-SPARQL-RawResults-Factory" />Class Carbon.SPARQL.RawResults.Factory
 
 
-> Factory class for RawResults objects
+> Factory class for `Carbon.SPARQL.RawResults.Class` objects.
 
 
 
@@ -8721,7 +9659,7 @@ static BNODE:string
 static hasClassProperties( value:Object ):boolean
 ```
 
-Returns true if the object provided contains the properties required to be a `Carbon.SPARQL.RawResult.Class` object
+Returns true if the object provided has the properties of a `Carbon.SPARQL.RawResult.Class` object.
 
 *Parameters*
 
@@ -8732,7 +9670,7 @@ Returns true if the object provided contains the properties required to be a `Ca
 static is( value:any ):boolean
 ```
 
-Returns true if the object provided is a `Carbon.SPARQL.RawResult.Class` object
+Returns true if the object provided is considered a `Carbon.SPARQL.RawResult.Class` object.
 
 *Parameters*
 
@@ -8754,7 +9692,7 @@ Returns true if the object provided is a `Carbon.SPARQL.RawResult.Class` object
 ### <a name="Carbon-SPARQL-RawResultsParser-Class" />Class Carbon.SPARQL.RawResultsParser.Class
 
 
-> Class for parse SPARQL Query result to a `Carbon.SPARQL.RawResult.Class` object
+> Class to parse SPARQL Query result to a `Carbon.SPARQL.RawResult.Class` object.
 
 
 
@@ -8766,7 +9704,7 @@ Returns true if the object provided is a `Carbon.SPARQL.RawResult.Class` object
 parse( input:string ):Promise<Carbon.SPARQL.RawResult.Class>
 ```
 
-Parse the SPARQL Query string result to a `Carbon.SPARQL.RawResult.Class` object
+Parse the SPARQL Query string result to a `Carbon.SPARQL.RawResult.Class` object.
 
 *Parameters*
 
@@ -8777,6 +9715,7 @@ Parse the SPARQL Query string result to a `Carbon.SPARQL.RawResult.Class` object
 ## <a name="Carbon-SPARQL-Service" />Module Carbon/SPARQL/Service
 
 
+**Default export:** [Carbon.SPARQL.Service.Class](#Carbon-SPARQL-Service-Class)
 
 
 
@@ -8786,31 +9725,18 @@ Parse the SPARQL Query string result to a `Carbon.SPARQL.RawResult.Class` object
 ### <a name="Carbon-SPARQL-Service-Class" />Class Carbon.SPARQL.Service.Class
 
 
-> Executes SPARQL queries and updates
+> Executes SPARQL queries and updates.
 
 
 
 
 #### <a name="Carbon-SPARQL-Service-Class-Methods" />Methods
-##### executeRawASKQuery
-```typescript 
-static executeRawASKQuery( url:string,  askQuery:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.SPARQL.RawResults.Class, Carbon.HTTP.Response.Class ]>
-```
-
-Executes an ASK Query and returns a raw application/sparql-results+json object
-
-*Parameters*
-
-- url
-- askQuery
-- requestOptions
-
 ##### executeASKQuery
 ```typescript 
 static executeASKQuery( url:string,  askQuery:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ boolean, Carbon.HTTP.Response.Class ]>
 ```
 
-Executes an ASK Query and returns a boolean
+Executes an ASK Query and returns a boolean.
 
 *Parameters*
 
@@ -8818,31 +9744,17 @@ Executes an ASK Query and returns a boolean
 - askQuery
 - requestOptions
 
-##### executeSELECTQuery
+##### executeRawASKQuery
 ```typescript 
-static executeSELECTQuery( url:string,  selectQuery:string,  pointerLibrary:Carbon.Pointer.Library,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.SPARQL.SELECTResults.Class, Carbon.HTTP.Response.Class ]>
+static executeRawASKQuery( url:string,  askQuery:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.SPARQL.RawResults.Class, Carbon.HTTP.Response.Class ]>
 ```
 
-Executes a SELECT Query and parses the results
+Executes an ASK Query and returns a raw application/sparql-results+json object.
 
 *Parameters*
 
 - url
-- selectQuery
-- pointerLibrary
-- requestOptions
-
-##### executeRawSELECTQuery
-```typescript 
-static executeRawSELECTQuery( url:string,  selectQuery:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.SPARQL.RawResults.Class, Carbon.HTTP.Response.Class ]>
-```
-
-Executes a SELECT Query and returns a raw application/sparql-results+json object
-
-*Parameters*
-
-- url
-- selectQuery
+- askQuery
 - requestOptions
 
 ##### executeRawCONSTRUCTQuery
@@ -8850,7 +9762,7 @@ Executes a SELECT Query and returns a raw application/sparql-results+json object
 static executeRawCONSTRUCTQuery( url:string,  constructQuery:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ string, Carbon.HTTP.Response.Class ]>
 ```
 
-Executes a CONSTRUCT Query and returns a string with the resulting model
+Executes a CONSTRUCT Query and returns a string with the resulting model.
 
 *Parameters*
 
@@ -8863,7 +9775,7 @@ Executes a CONSTRUCT Query and returns a string with the resulting model
 static executeRawDESCRIBEQuery( url:string,  describeQuery:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ string, Carbon.HTTP.Response.Class ]>
 ```
 
-Executes a DESCRIBE Query and returns a string with the resulting model
+Executes a DESCRIBE Query and returns a string with the resulting model.
 
 *Parameters*
 
@@ -8871,21 +9783,85 @@ Executes a DESCRIBE Query and returns a string with the resulting model
 - describeQuery
 - requestOptions
 
+##### executeRawSELECTQuery
+```typescript 
+static executeRawSELECTQuery( url:string,  selectQuery:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.SPARQL.RawResults.Class, Carbon.HTTP.Response.Class ]>
+```
+
+Executes a SELECT Query and returns a raw application/sparql-results+json object.
+
+*Parameters*
+
+- url
+- selectQuery
+- requestOptions
+
+##### executeSELECTQuery
+```typescript 
+static executeSELECTQuery( url:string,  selectQuery:string,  pointerLibrary:Carbon.Pointer.Library,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.SPARQL.SELECTResults.Class, Carbon.HTTP.Response.Class ]>
+```
+
+Executes a SELECT Query and parses the results.
+
+*Parameters*
+
+- url
+- selectQuery
+- pointerLibrary
+- requestOptions
+
+##### executeUPDATE
+```typescript 
+static executeUPDATE( url:string,  update:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<Carbon.HTTP.Response.Class>
+```
+
+Executes an UPDATE query.
+
+*Parameters*
+
+- url
+- update
+- requestOptions
+
 
 
 
 ## <a name="Carbon-Utils" />Module Carbon/Utils
 
-> The description of Carbon/Utils
+> Class with useful functions used in the SDK.
 
 
 
 
 
 ### <a name="Carbon-Utils-Methods" />Methods
+##### extend
+```typescript 
+static extend( target:Object,  ...objects:Objects[] )
+```
+
+Extends the target object’s properties with the properties of the objects provided.
+
+*Parameters*
+
+- target: The object to extend.
+- ...objects: Every parameter left from where to extract the properties to be added.
+
+##### forEachOwnProperty
+```typescript 
+static forEachOwnProperty( object:Object,  action:( name:string, value:any ) => boolean )
+```
+
+Executes an action for each own property of the object.
+
+*Parameters*
+
+- object: The object to iterate over its properties.
+- action: A function that will be called for every property own property in the object. The loop will break if the action function returns `false`.
+
 ##### hasFunction
 ```typescript 
-static hasFunction( object:object,  name:string ):boolean
+static hasFunction( object:Object,  name:string ):boolean
 ```
 
 Checks if the object has a property with that name and if it that property is a function.
@@ -8897,7 +9873,7 @@ Checks if the object has a property with that name and if it that property is a 
 
 ##### hasProperty
 ```typescript 
-static hasProperty( object:object,  name:string ):boolean
+static hasProperty( object:Object,  name:string ):boolean
 ```
 
 Checks if the object has a property with that name.
@@ -8909,7 +9885,7 @@ Checks if the object has a property with that name.
 
 ##### hasPropertyDefined
 ```typescript 
-static hasPropertyDefined( object:object,  name:string ):boolean
+static hasPropertyDefined( object:Object,  name:string ):boolean
 ```
 
 Checks if an object has a property defined under that name (even if its value is undefined).
@@ -8919,45 +9895,12 @@ Checks if an object has a property defined under that name (even if its value is
 - object
 - name
 
-##### isDefined
-```typescript 
-static isDefined( value:any ):boolean
-```
-
-Checks if the value passed is defined.
-
-*Parameters*
-
-- value
-
-##### isNull
-```typescript 
-static isNull( value:any ):boolean
-```
-
-Checks if the value passed is null.
-
-*Parameters*
-
-- value
-
 ##### isArray
 ```typescript 
 static isArray( value:any ):boolean
 ```
 
 Checks if the value passed is an array.
-
-*Parameters*
-
-- value
-
-##### isString
-```typescript 
-static isString( value:any ):boolean
-```
-
-Checks if the value passed is a string.
 
 *Parameters*
 
@@ -8974,23 +9917,23 @@ Checks if the value passed is a boolean.
 
 - value
 
-##### isNumber
+##### isDate
 ```typescript 
-static isNumber( value:any ):boolean
+static isDate( value:any ):boolean
 ```
 
-Checks if the value passed is a number
+Checks if the value passed is a Date object.
 
 *Parameters*
 
 - value
 
-##### isInteger
+##### isDefined
 ```typescript 
-static isInteger( value:any ):boolean
+static isDefined( value:any ):boolean
 ```
 
-Checks if the value passed is an integer.
+Checks if the value passed is defined.
 
 *Parameters*
 
@@ -9007,34 +9950,23 @@ Checks if the value passed is a double.
 
 - value
 
-##### isDate
-```typescript 
-static isDate( value:any ):boolean
-```
-
-Checks if the value passed is a Date object.
-
-*Parameters*
-
-- value
-
-##### isObject
-```typescript 
-static isObject( value:any ):boolean
-```
-
-Checks if the value passed is an object (doesn"t include null).
-
-*Parameters*
-
-- value
-
 ##### isFunction
 ```typescript 
 static isFunction( value:any ):boolean
 ```
 
 Checks if the value passed is a function.
+
+*Parameters*
+
+- value
+
+##### isInteger
+```typescript 
+static isInteger( value:any ):boolean
+```
+
+Checks if the value passed is an integer.
 
 *Parameters*
 
@@ -9051,6 +9983,50 @@ Checks if the value passed is an ES6 Map.
 
 - value
 
+##### isNull
+```typescript 
+static isNull( value:any ):boolean
+```
+
+Checks if the value passed is null.
+
+*Parameters*
+
+- value
+
+##### isNumber
+```typescript 
+static isNumber( value:any ):boolean
+```
+
+Checks if the value passed is a number.
+
+*Parameters*
+
+- value
+
+##### isObject
+```typescript 
+static isObject( value:any ):boolean
+```
+
+Checks if the value passed is an object (doesn't include null).
+
+*Parameters*
+
+- value
+
+##### isString
+```typescript 
+static isString( value:any ):boolean
+```
+
+Checks if the value passed is a string.
+
+*Parameters*
+
+- value
+
 ##### parseBoolean
 ```typescript 
 static parseBoolean( value:string ):boolean
@@ -9062,23 +10038,88 @@ Parses a string into a boolean.
 
 - value
 
+
+
+
+### <a name="Carbon-Utils-A" />Class Carbon.Utils.A
+
+
+> Utility functions related to Arrays.
+
+
+
+
+#### <a name="Carbon-Utils-A-Methods" />Methods
+##### from
+```typescript 
+static from( iterator:iterator ):array
+```
+
+Collects the values of an ES6 iterator and returns an array.
+
+*Parameters*
+
+- iterator
+
+##### indexOf
+```typescript 
+static indexOf<T, W>( array:Array<T>,  searchedElement:W,  comparator?:( element:T, searchedElement:W ) => boolean ):boolean
+```
+
+Returns the index of a element searched in an array with a custom comparator function.
+If the element was not found `-1` is returned
+
+*Parameters*
+
+- array: The array were to search the element.
+- searchedElement: The element searched
+- comparator: The function that must compare if the two elements provided are de same.
+
+##### joinWithoutDuplicates
+```typescript 
+static joinWithoutDuplicates( ...arrays:Array<Array<T>> ):Array<T>
+```
+
+Takes two or more arrays and joins them while removing duplicates.
+
+*Parameters*
+
+- ...arrays: Every array parameter to merge.
+
+
+
+
+### <a name="Carbon-Utils-M" />Class Carbon.Utils.M
+
+
+> Utility functions related to ES6 Maps.
+
+
+
+
+#### <a name="Carbon-Utils-M-Methods" />Methods
 ##### extend
 ```typescript 
-static extend()
+static extend( toExtend:Map<K, V>,  ...extenders:Map<K, V>[] ):Map<K, V>
 ```
 
+Adds to a target Map all the entries of the subsequents Maps provided. If entries with the same key exists between Maps, the entry's value of the first Map provided is preserved.
 
-##### forEachOwnProperty
+*Parameters*
+
+- toExtend: Target Map to extend.
+- ...extenders: Every other Map parameter, from which the entries to be added to the target Map will be taken.
+
+##### from
 ```typescript 
-static forEachOwnProperty( object:object,  action:function )
+static from( object:Object ):map
 ```
 
-Executes an action for each own property of the object.
+Takes an object and creates a map from its properties.
 
 *Parameters*
 
 - object
-- action: action( name, value )
 
 
 
@@ -9086,23 +10127,48 @@ Executes an action for each own property of the object.
 ### <a name="Carbon-Utils-O" />Class Carbon.Utils.O
 
 
-> Utility functions related to strings.
+> Utility functions related to objects.
 
 
 
 
 #### <a name="Carbon-Utils-O-Methods" />Methods
+##### areEqual
+```typescript 
+static areEqual( object1:Object,  object2:Object,  config:{arrays?:boolean, objects?:boolean} ):boolean
+```
+
+Makes a shallow or deep comparison, between all the enumerable properties of the provided objects, depending of the configuration specified.
+
+*Parameters*
+
+- object1: First object to compare.
+- object2: Second object to compare.
+- config: Object that indicates if the arrays or the objects must have a deep comparison or not. By default the comparison is shallow.
+
 ##### areShallowlyEqual
 ```typescript 
-static areShallowlyEqual( object1:object,  object2:object ):boolean
+static areShallowlyEqual( object1:Object,  object2:Object ):boolean
 ```
 
 Checks if an object has the same enumerable properties with the same values as another object.
 
 *Parameters*
 
-- object1
-- object2
+- object1: First object to compare.
+- object2: Second object to compare.
+
+##### clone
+```typescript 
+static clone( object:Object,  config:{arrays?:boolean, objects?:boolean} ):Object
+```
+
+Makes a shallow or deep clone of the object provided depending of the configuration specified.
+
+*Parameters*
+
+- object: The object to copy.
+- config: Object that indicates if the arrays or objects must be copied or not. By default, arrays and objects will not be deep copied.
 
 
 
@@ -9116,12 +10182,12 @@ Checks if an object has the same enumerable properties with the same values as a
 
 
 #### <a name="Carbon-Utils-S-Methods" />Methods
-##### startsWith
+##### contains
 ```typescript 
-static startsWith( string:string,  substring:string ):boolean
+static contains( string:string,  substring:string ):boolean
 ```
 
-Checks if a string starts with a substring.
+Checks if a string contains a substring (in any part).
 
 *Parameters*
 
@@ -9140,12 +10206,12 @@ Checks if a string ends with a substring.
 - string
 - substring
 
-##### contains
+##### startsWith
 ```typescript 
-static contains( string:string,  substring:string ):boolean
+static startsWith( string:string,  substring:string ):boolean
 ```
 
-Checks if a string contains a substring (in any part).
+Checks if a string starts with a substring.
 
 *Parameters*
 
@@ -9155,72 +10221,22 @@ Checks if a string contains a substring (in any part).
 
 
 
-### <a name="Carbon-Utils-A" />Class Carbon.Utils.A
-
-
-> Utility functions related to Arrays
-
-
-
-
-#### <a name="Carbon-Utils-A-Methods" />Methods
-##### from
-```typescript 
-static from( iterator:iterator ):array
-```
-
-Collects the values of an ES6 iterator and returns an array.
-
-*Parameters*
-
-- iterator
-
-##### joinWithoutDuplicates
-```typescript 
-static joinWithoutDuplicates( array:array ):array
-```
-
-Takes two or more arrays and joins them while removing duplicates
-
-*Parameters*
-
-- array
-
-
-
-
-### <a name="Carbon-Utils-M" />Class Carbon.Utils.M
-
-
-> Utility functions related to ES6 Maps.
-
-
-
-
-#### <a name="Carbon-Utils-M-Methods" />Methods
-##### from
-```typescript 
-static from( object:object ):map
-```
-
-Takes an object and creates a map from its properties.
-
-*Parameters*
-
-- object
-
-
-
-
 ### <a name="Carbon-Utils-UUID" />Class Carbon.Utils.UUID
 
 
-> Utility functions related to UUIDs
+> Utility functions related to UUIDs.
 
 
 
 
 #### <a name="Carbon-Utils-UUID-Methods" />Methods
+##### generate
+```typescript 
+static generate():string
+```
+
+Generates a new, version 4, UUID.
+
 ##### is
 ```typescript 
 static is( uuid:string ):string
@@ -9232,13 +10248,6 @@ Returns true if the string provided is a UUID (version 1 to 5).
 
 - uuid
 
-##### generate
-```typescript 
-static generate():string
-```
-
-Generates a new, version 4, UUID.
-
 
 
 
@@ -9247,7 +10256,7 @@ Generates a new, version 4, UUID.
 
 **Default export:** [Carbon.settings](#Carbon-settings)
 > 
-A object of type `Carbon.settings.CarbonSettings`, whitch is the default settings of a Carbon instance:
+A object of type `Carbon.settings.CarbonSettings`, which is the default settings of a Carbon instance:
 * domain: `"carbonldp.com"`
 * http.ssl: `true`
 * auth.method: `Carbon.Auth.Method.TOKEN`

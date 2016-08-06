@@ -72,7 +72,7 @@ describe( module( "Carbon/Auth/Ticket" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"create",
-			"Create and returns a `Carbon.Auth.Ticket.Class` object for the specified URI.", [
+			"Creates and returns a `Carbon.Auth.Ticket.Class` object for the specified URI.", [
 				{name: "uri", type: "string", description: "The URI to get an authentication ticket for."}
 			],
 			{type: "Carbon.Auth.Ticket.Class"}

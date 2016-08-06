@@ -15,7 +15,7 @@ var Factory = (function () {
     Factory.is = function (object) {
         return Factory.hasClassProperties(object)
             && PersistedDocument.Factory.is(object)
-            && object.types.indexOf(Agent.RDF_CLASS) !== -1;
+            && object.hasType(Agent.RDF_CLASS);
     };
     Factory.decorate = function (object) {
         var agent = object;

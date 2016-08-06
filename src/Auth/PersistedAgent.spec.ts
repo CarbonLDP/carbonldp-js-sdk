@@ -114,7 +114,11 @@ describe( module( "Carbon/Auth/PersistedAgent" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"decorate",
-			"Decorates the object provided with the properties and methods of a `Carbon.Auth.PersistedAgent.Class` object."
+			[ "T extends Object" ],
+			"Decorates the object provided with the properties and methods of a `Carbon.Auth.PersistedAgent.Class` object.", [
+				{name: "object", type: "T", description: "The object to decorate."},
+			],
+			{type: "T & Carbon.Auth.PersistedAgent.Class"}
 		), ():void => {
 			expect( PersistedAgent.Factory.decorate ).toBeDefined();
 			expect( Utils.isFunction( PersistedAgent.Factory.decorate ) ).toBe( true );
@@ -133,7 +137,7 @@ describe( module( "Carbon/Auth/PersistedAgent" ), ():void => {
 				enabled: null,
 				myProperty: "My Property",
 				enable: fn,
-				disable: fn
+				disable: fn,
 			};
 			object = PersistedAgent.Factory.decorate( object );
 			expect( object.myProperty ).toBe( "My Property" );

@@ -24,8 +24,8 @@ describe( module(
 ), ():void => {
 
 	describe( clazz(
-		"Carbon.HTTP.Errors.server.ServiceUnavailableError",
-		"Error class that can be throw to indicate that the server is currently unavailable (because it is overloaded or down for maintenance)"
+		"Carbon.HTTP.Errors.ServiceUnavailableError",
+		"Error class to indicate that the server is currently unavailable (because it's overloaded or down for maintenance)."
 	), ():void => {
 
 		let response:Response;
