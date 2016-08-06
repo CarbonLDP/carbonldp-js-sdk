@@ -310,7 +310,18 @@ var DocumentationReporter = function( baseReporterDecorator, formatError, config
 	}
 
 	function composeMethodSignature( signature ) {
-		var signatureString = composeArgumentsString( signature ) + ":";
+		var signatureString = "";
+		if ( signature.generics && signature.generics.length > 0 ) {
+			signatureString = "<";
+			for( var i = 0, length = signature.generics.length; i < length; ++i ) {
+				signatureString += signature.generics[ i ];
+				if ( i + 1 < length )
+					signatureString += ",";
+			}
+			signatureString += ">";
+		}
+
+		signatureString += composeArgumentsString( signature ) + ":";
 
 		if( "returns" in signature && signature.returns ) {
 			signatureString += signature.returns.type;

@@ -20,12 +20,12 @@ import HTTPError from "./../HTTPError";
 import {Service} from "../../Request";
 
 describe( module(
-	"Carbon/HTTP/Errors/ConflictError"
+	"Carbon/HTTP/Errors/client/ConflictError"
 ), ():void => {
 
 	describe( clazz(
 		"Carbon.HTTP.Errors.ConflictError",
-		"Error class that can be throw to indicate that the request could not be processed because of conflict in the request, such as an ID conflict"
+		"Error class to indicate that the request could not be processed because of a conflict, such as an ID conflict."
 	), ():void => {
 
 		let response:Response;

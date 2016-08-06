@@ -28,18 +28,40 @@ describe( module(
 		expect( CS.namespace ).toBeDefined();
 		expect( Utils.isString( CS.namespace ) ).toBe( true );
 
-		expect( CS.namespace ).toBe( "https://carbonldp.com/ns/v1/security#" )
+		expect( CS.namespace ).toBe( "https://carbonldp.com/ns/v1/security#" );
 	} );
 
 	describe( clazz(
 		"Carbon.NS.CS.Class",
-		"Class that contains objects defined by Carbon Security"
+		"Class that contains classes defined by Carbon Security."
 	), ():void => {
 
 		it( isDefined(), ():void => {
 			expect( CS.Class ).toBeDefined();
 			expect( Utils.isFunction( CS.Class ) ).toBe( true );
-			expect( Object.keys( CS.Class ).length ).toBe( 6 );
+			expect( Object.keys( CS.Class ).length ).toBe( 9 );
+		} );
+
+		it( hasProperty(
+			STATIC,
+			"AccessControlEntry",
+			"string"
+		), ():void => {
+			expect( CS.Class.AccessControlEntry ).toBeDefined();
+			expect( Utils.isString( CS.Class.AccessControlEntry ) ).toBe( true );
+
+			expect( CS.Class.AccessControlEntry ).toBe( "https://carbonldp.com/ns/v1/security#AccessControlEntry" );
+		} );
+
+		it( hasProperty(
+			STATIC,
+			"AccessControlList",
+			"string"
+		), ():void => {
+			expect( CS.Class.AccessControlList ).toBeDefined();
+			expect( Utils.isString( CS.Class.AccessControlList ) ).toBe( true );
+
+			expect( CS.Class.AccessControlList ).toBe( "https://carbonldp.com/ns/v1/security#AccessControlList" );
 		} );
 
 		it( hasProperty(
@@ -58,10 +80,10 @@ describe( module(
 			"AllOrigins",
 			"string"
 		), ():void => {
-			expect( CS.Class.AllOrigins ).toBeDefined();
-			expect( Utils.isString( CS.Class.AllOrigins ) ).toBe( true );
+			expect( CS.Class.Agent ).toBeDefined();
+			expect( Utils.isString( CS.Class.Agent ) ).toBe( true );
 
-			expect( CS.Class.AllOrigins ).toBe( "https://carbonldp.com/ns/v1/security#AllOrigins" );
+			expect( CS.Class.Agent ).toBe( "https://carbonldp.com/ns/v1/security#Agent" );
 		} );
 
 		it( hasProperty(
@@ -84,6 +106,17 @@ describe( module(
 			expect( Utils.isString( CS.Class.AppRole ) ).toBe( true );
 
 			expect( CS.Class.AppRole ).toBe( "https://carbonldp.com/ns/v1/security#AppRole" );
+		} );
+
+		it( hasProperty(
+			STATIC,
+			"ProtectedDocument",
+			"string"
+		), ():void => {
+			expect( CS.Class.ProtectedDocument ).toBeDefined();
+			expect( Utils.isString( CS.Class.ProtectedDocument ) ).toBe( true );
+
+			expect( CS.Class.ProtectedDocument ).toBe( "https://carbonldp.com/ns/v1/security#ProtectedDocument" );
 		} );
 
 		it( hasProperty(
@@ -112,14 +145,47 @@ describe( module(
 
 	describe( clazz(
 		"Carbon.NS.CS.Predicate",
-		"Class that contains predicates defined by Carbon Security"
+		"Class that contains predicates defined by Carbon Security."
 	), ():void => {
 
 		it( isDefined(), ():void => {
 			expect( CS.Predicate ).toBeDefined();
 			expect( Utils.isFunction( CS.Predicate ) ).toBe( true );
 
-			expect( Object.keys( CS.Predicate ).length ).toBe( 12 );
+			expect( Object.keys( CS.Predicate ).length ).toBe( 21 );
+		} );
+
+		it( hasProperty(
+			STATIC,
+			"accessControlEntry",
+			"string"
+		), ():void => {
+			expect( CS.Predicate.accessControlEntry ).toBeDefined();
+			expect( Utils.isString( CS.Predicate.accessControlEntry ) ).toBe( true );
+
+			expect( CS.Predicate.accessControlEntry ).toBe( "https://carbonldp.com/ns/v1/security#accessControlEntry" );
+		} );
+
+		it( hasProperty(
+			STATIC,
+			"accessControlList",
+			"string"
+		), ():void => {
+			expect( CS.Predicate.accessControlList ).toBeDefined();
+			expect( Utils.isString( CS.Predicate.accessControlList ) ).toBe( true );
+
+			expect( CS.Predicate.accessControlList ).toBe( "https://carbonldp.com/ns/v1/security#accessControlList" );
+		} );
+
+		it( hasProperty(
+			STATIC,
+			"accessTo",
+			"string"
+		), ():void => {
+			expect( CS.Predicate.accessTo ).toBeDefined();
+			expect( Utils.isString( CS.Predicate.accessTo ) ).toBe( true );
+
+			expect( CS.Predicate.accessTo ).toBe( "https://carbonldp.com/ns/v1/security#accessTo" );
 		} );
 
 		it( hasProperty(
@@ -157,6 +223,17 @@ describe( module(
 
 		it( hasProperty(
 			STATIC,
+			"credentialsOf",
+			"string"
+		), ():void => {
+			expect( CS.Predicate.credentialsOf ).toBeDefined();
+			expect( Utils.isString( CS.Predicate.credentialsOf ) ).toBe( true );
+
+			expect( CS.Predicate.credentialsOf ).toBe( "https://carbonldp.com/ns/v1/security#credentialsOf" );
+		} );
+
+		it( hasProperty(
+			STATIC,
 			"description",
 			"string"
 		), ():void => {
@@ -186,6 +263,28 @@ describe( module(
 			expect( Utils.isString( CS.Predicate.forIRI ) ).toBe( true );
 
 			expect( CS.Predicate.forIRI ).toBe( "https://carbonldp.com/ns/v1/security#forIRI" );
+		} );
+
+		it( hasProperty(
+			STATIC,
+			"granting",
+			"string"
+		), ():void => {
+			expect( CS.Predicate.granting ).toBeDefined();
+			expect( Utils.isString( CS.Predicate.granting ) ).toBe( true );
+
+			expect( CS.Predicate.granting ).toBe( "https://carbonldp.com/ns/v1/security#granting" );
+		} );
+
+		it( hasProperty(
+			STATIC,
+			"inheritableEntry",
+			"string"
+		), ():void => {
+			expect( CS.Predicate.inheritableEntry ).toBeDefined();
+			expect( Utils.isString( CS.Predicate.inheritableEntry ) ).toBe( true );
+
+			expect( CS.Predicate.inheritableEntry ).toBe( "https://carbonldp.com/ns/v1/security#inheritableEntry" );
 		} );
 
 		it( hasProperty(
@@ -223,13 +322,13 @@ describe( module(
 
 		it( hasProperty(
 			STATIC,
-			"ticketKey",
+			"permission",
 			"string"
 		), ():void => {
-			expect( CS.Predicate.ticketKey ).toBeDefined();
-			expect( Utils.isString( CS.Predicate.ticketKey ) ).toBe( true );
+			expect( CS.Predicate.permission ).toBeDefined();
+			expect( Utils.isString( CS.Predicate.permission ) ).toBe( true );
 
-			expect( CS.Predicate.ticketKey ).toBe( "https://carbonldp.com/ns/v1/security#ticketKey" );
+			expect( CS.Predicate.permission ).toBe( "https://carbonldp.com/ns/v1/security#permission" );
 		} );
 
 		it( hasProperty(
@@ -241,6 +340,39 @@ describe( module(
 			expect( Utils.isString( CS.Predicate.rootContainer ) ).toBe( true );
 
 			expect( CS.Predicate.rootContainer ).toBe( "https://carbonldp.com/ns/v1/security#rootContainer" );
+		} );
+
+		it( hasProperty(
+			STATIC,
+			"subject",
+			"string"
+		), ():void => {
+			expect( CS.Predicate.subject ).toBeDefined();
+			expect( Utils.isString( CS.Predicate.subject ) ).toBe( true );
+
+			expect( CS.Predicate.subject ).toBe( "https://carbonldp.com/ns/v1/security#subject" );
+		} );
+
+		it( hasProperty(
+			STATIC,
+			"subjectClass",
+			"string"
+		), ():void => {
+			expect( CS.Predicate.subjectClass ).toBeDefined();
+			expect( Utils.isString( CS.Predicate.subjectClass ) ).toBe( true );
+
+			expect( CS.Predicate.subjectClass ).toBe( "https://carbonldp.com/ns/v1/security#subjectClass" );
+		} );
+
+		it( hasProperty(
+			STATIC,
+			"ticketKey",
+			"string"
+		), ():void => {
+			expect( CS.Predicate.ticketKey ).toBeDefined();
+			expect( Utils.isString( CS.Predicate.ticketKey ) ).toBe( true );
+
+			expect( CS.Predicate.ticketKey ).toBe( "https://carbonldp.com/ns/v1/security#ticketKey" );
 		} );
 
 		it( hasProperty(

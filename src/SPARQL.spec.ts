@@ -12,6 +12,7 @@ import * as Utils from "./Utils";
 import * as RawResults from "./SPARQL/RawResults";
 import * as RawResultsParser from "./SPARQL/RawResultsParser";
 import Service from "./SPARQL/Service";
+import * as SELECTResults from "./SPARQL/SELECTResults";
 
 import * as SPARQL from "./SPARQL";
 
@@ -42,11 +43,20 @@ describe( module( "Carbon/SPARQL" ), ():void => {
 
 	it( reexports(
 		STATIC,
-		"ServiceService",
+		"Service",
 		"Carbon/SPARQL/Service"
 	), ():void => {
 		expect( SPARQL.Service ).toBeDefined();
 		expect( SPARQL.Service ).toBe( Service );
+	} );
+
+	it( reexports(
+		STATIC,
+		"SELECTResults",
+		"Carbon/SPARQL/SELECTResults"
+	), ():void => {
+		expect( SPARQL.SELECTResults ).toBeDefined();
+		expect( SPARQL.SELECTResults ).toBe( SELECTResults );
 	} );
 
 } );

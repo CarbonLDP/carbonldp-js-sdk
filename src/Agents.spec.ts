@@ -12,6 +12,7 @@ import {
 	method,
 
 	isDefined,
+	hasMethod,
 	hasSignature,
 	hasDefaultExport,
 	hasConstructor,
@@ -29,7 +30,7 @@ describe( module( "Carbon/Agents" ), ():void => {
 
 	describe( clazz(
 		"Carbon.Agents.Class",
-		"Class for manage Agents of a determined context."
+		"Class to manage the Agents of a determined context."
 	), ():void => {
 
 		it( isDefined(), ():void => {
@@ -53,112 +54,63 @@ describe( module( "Carbon/Agents" ), ():void => {
 			expect( agents instanceof Agents.Class ).toBe( true );
 		} );
 
-		describe( method(
+		it( hasMethod(
 			INSTANCE,
-			"create"
-		), ():void => {
+			"create",
+			"Persists a `Carbon.Agent.Class` object using the slug specified.\n" +
+			"Returns a Promise with a Pointer to the stored Agent, and the response of the request.",
+			[
+				{ name: "agentDocument", type: "Carbon.Agents.Agent.Class" },
+				{ name: "slug", type: "string", optional: true },
+			],
+			{ type: "Promise<Carbon.Pointer.Class, Carbon.HTTP.Response.Class>" }
+		), ( done:() => void ):void => {
+			let agents:Agents.Class;
+			let context:AbstractContext;
 
-			it( hasSignature(
-				"Persists an Agent Document in the server, generating a random unique slug.\n" +
-				"Returns a Promise with a Pointer for the stored Agent, and the response of the call.", [
-					{name: "agentDocument", type: "Carbon.Agents.Agent.Class"}
-				],
-				{type: "Promise<Carbon.Pointer.Class, Carbon.HTTP.Response.Class>"}
-			), ( done ):void => {
-				let agents:Agents.Class;
-				let context:AbstractContext;
-
-				class MockedContext extends AbstractContext {
-					resolve( uri:string ) {
-						return "http://example.com/container/" + uri;
-					}
+			class MockedContext extends AbstractContext {
+				resolve( uri:string ) {
+					return "http://example.com/container/" + uri;
 				}
-				context = new MockedContext();
-				agents = new Agents.Class( context );
+			}
+			context = new MockedContext();
+			agents = new Agents.Class( context );
 
-				expect( agents.create ).toBeDefined();
-				expect( Utils.isFunction( agents.create ) ).toBe( true );
+			expect( agents.create ).toBeDefined();
+			expect( Utils.isFunction( agents.create ) ).toBe( true );
 
-				let spy = spyOn( context.documents, "createChild" );
-				let agent:Agent.Class = Agent.Factory.create( "Agent name", "email.of.agent@example.com", "myAwesomePassword" );
+			let promise:Promise<any>;
+			let spy = spyOn( context.documents, "createChild" );
+			let agent:Agent.Class = Agent.Factory.create( "Agent name", "email.of.agent@example.com", "myAwesomePassword" );
 
-				expect( () => agents.create( agent ) ).toThrowError( Errors.IllegalStateError );
-				context.setSetting( "platform.agents.container", "agents/" );
+			expect( () => agents.create( agent ) ).toThrowError( Errors.IllegalStateError );
+			context.setSetting( "platform.agents.container", "agents/" );
 
-				agents.create( agent );
-				expect( spy ).toHaveBeenCalledWith( "http://example.com/container/agents/", agent );
+			agents.create( agent );
+			expect( spy ).toHaveBeenCalledWith( "http://example.com/container/agents/", agent, null );
 
-				let promise:Promise<any>;
-				promise = agents.create( null );
-				expect( promise instanceof Promise ).toBe( true );
+			agents.create( agent, "agentSlug" );
+			expect( spy ).toHaveBeenCalledWith( "http://example.com/container/agents/", agent, "agentSlug" );
 
-				let spies = {
-					onError: function( error:Error ):void {
-						expect( error instanceof Errors.IllegalArgumentError );
-					}
-				};
-				spy = spyOn( spies, "onError" ).and.callThrough();
-				promise = promise.catch( spies.onError );
+			spy.calls.reset();
+			agents.create( agent, null );
+			expect( spy ).toHaveBeenCalledWith( "http://example.com/container/agents/", agent, null );
 
-				Promise.all( [ promise ] ).then( ():void => {
-					expect( spy ).toHaveBeenCalled();
-					done();
-				} );
-			} );
+			promise = agents.create( null, "agentSlug" );
+			expect( promise instanceof Promise ).toBe( true );
 
-			it( hasSignature(
-				"Persists an Agent Document in the server using the slug specified.\n" +
-				"Returns a Promise with a Pointer for the stored Agent, and the response of the call.", [
-					{name: "slug", type: "string"},
-					{name: "agentDocument", type: "Carbon.Agents.Agent.Class"}
-				],
-				{type: "Promise<Carbon.Pointer.Class, Carbon.HTTP.Response.Class>"}
-			), ( done:() => void ):void => {
-				let agents:Agents.Class;
-				let context:AbstractContext;
-
-				class MockedContext extends AbstractContext {
-					resolve( uri:string ) {
-						return "http://example.com/container/" + uri;
-					}
+			let spies = {
+				onError: function( error ):void {
+					expect( error instanceof Errors.IllegalArgumentError );
 				}
-				context = new MockedContext();
-				agents = new Agents.Class( context );
+			};
+			spy = spyOn( spies, "onError" ).and.callThrough();
+			promise = promise.catch( spies.onError );
 
-				expect( agents.create ).toBeDefined();
-				expect( Utils.isFunction( agents.create ) ).toBe( true );
-
-				let promise:Promise<any>;
-				let spy = spyOn( context.documents, "createChild" );
-				let agent:Agent.Class = Agent.Factory.create( "Agent name", "email.of.agent@example.com", "myAwesomePassword" );
-
-				expect( () => agents.create( "agentSlug", agent ) ).toThrowError( Errors.IllegalStateError );
-				context.setSetting( "platform.agents.container", "agents/" );
-
-				agents.create( "agentSlug", agent );
-				expect( spy ).toHaveBeenCalledWith( "http://example.com/container/agents/", "agentSlug", agent );
-
-				spy.calls.reset();
-				agents.create( null, agent );
-				expect( spy ).toHaveBeenCalledWith( "http://example.com/container/agents/", agent );
-
-				promise = agents.create( "agentSlug", null );
-				expect( promise instanceof Promise ).toBe( true );
-
-				let spies = {
-					onError: function( error ):void {
-						expect( error instanceof Errors.IllegalArgumentError );
-					}
-				};
-				spy = spyOn( spies, "onError" ).and.callThrough();
-				promise = promise.catch( spies.onError );
-
-				Promise.all( [ promise ] ).then( ():void => {
-					expect( spy ).toHaveBeenCalled();
-					done();
-				} );
+			Promise.all( [ promise ] ).then( ():void => {
+				expect( spy ).toHaveBeenCalled();
+				done();
 			} );
-
 		} );
 
 	} );

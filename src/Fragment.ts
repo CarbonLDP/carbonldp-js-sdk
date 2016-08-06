@@ -18,14 +18,14 @@ export class Factory {
 
 	static create( id:string, document:Document.Class ):Class;
 	static create( document:Document.Class ):Class;
-	static create( idOrDocument:any, document:Document.Class = null ):Class {
+	static create( idOrDocument:any, document?:Document.Class ):Class {
 		return this.createFrom( {}, idOrDocument, document );
 	}
 
 	static createFrom<T extends Object>( object:T, id:string, document:Document.Class ):T & Class;
 	static createFrom<T extends Object>( object:T, document:Document.Class ):T & Class;
 	static createFrom<T extends Object>( object:T, idOrDocument:any, document:Document.Class = null ):T & Class {
-		let id:string = ! ! idOrDocument && Utils.isString( idOrDocument ) ? idOrDocument : RDF.URI.Util.generateBNodeID();
+		let id:string = ! ! idOrDocument && Utils.isString( idOrDocument ) ? idOrDocument : "";
 		document = document || idOrDocument;
 
 		let resource:Resource.Class = Resource.Factory.createFrom( object, id );
