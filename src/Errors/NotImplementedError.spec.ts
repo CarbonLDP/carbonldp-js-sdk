@@ -21,7 +21,7 @@ describe( module(
 
 	describe( clazz(
 		"Carbon.Errors.NotImplementedError",
-		"Error class that indicates a function that is still not implemented"
+		"Error class to indicate that an action is not yet implemented."
 	), ():void => {
 
 		it( isDefined(), ():void => {

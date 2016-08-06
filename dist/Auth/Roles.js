@@ -13,7 +13,7 @@ var Class = (function () {
         var slug = Utils.isString(slugOrRequestOptions) ? slugOrRequestOptions : null;
         requestOptions = HTTP.Request.Util.isOptions(slugOrRequestOptions) ? slugOrRequestOptions : requestOptions;
         var containerURI;
-        var rolePointer;
+        var persistedRole;
         var responseCreated;
         return this.resolveURI("").then(function (uri) {
             containerURI = uri;
@@ -25,14 +25,14 @@ var Class = (function () {
             var exists = _a[0], response = _a[1];
             if (!exists)
                 throw new Errors.IllegalArgumentError("The parent role provided does not exist.");
-            return slug ? _this.context.documents.createChild(containerURI, slug, role, requestOptions) : _this.context.documents.createChild(containerURI, role, requestOptions);
+            return _this.context.documents.createChild(containerURI, role, slug, requestOptions);
         }).then(function (_a) {
             var newRole = _a[0], response = _a[1];
-            rolePointer = newRole;
+            persistedRole = newRole;
             responseCreated = response;
             return _this.context.documents.addMember(parentURI, newRole);
         }).then(function (response) {
-            return [rolePointer, [responseCreated, response]];
+            return [persistedRole, [responseCreated, response]];
         });
     };
     Class.prototype.get = function (roleURI, requestOptions) {

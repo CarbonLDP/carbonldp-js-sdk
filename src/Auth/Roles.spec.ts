@@ -79,14 +79,15 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 		), ():void => {
 
 			it( hasSignature(
+				[ "T extends Carbon.Auth.Roles.Class" ],
 				"Persists the Role provided with the slug, if specified, as a childRole of the parentRole specified.\n" +
 				"Returns a Promise with a Pointer for the stored role; and a tuple of two responses, the first one is the response of the creation, and the second one is the response of the creation of the relation parent-child of the roles.", [
 					{name: "parentRole", type: "string | Carbon.Pointer.Class", description: "The role that will be assigned as the parent of the role that wants to persist."},
-					{name: "role", type: "Carbon.Auth.Roles.Class", description: "The appRole that wants to persist."},
+					{name: "role", type: "T", description: "The appRole that wants to persist."},
 					{name: "slug", type: "string", optional: true, description: "The slug where the role will be persisted."},
 					{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "The slug where the role will be persisted."},
 				],
-				{type: "Promise<[ Carbon.Pointer.Class, [ Carbon.HTTP.Response.Class, Carbon.HTTP.Response.Class] ]>"}
+				{type: "Promise<[ T & Carbon.PersistedDocument.Class, [ Carbon.HTTP.Response.Class, Carbon.HTTP.Response.Class] ]>"}
 			), ( done:{ ():void, fail:() => void } ):void => {
 				expect( roles.createChild ).toBeDefined();
 				expect( Utils.isFunction( roles.createChild ) ).toBe( true );
@@ -158,13 +159,14 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 			} );
 
 			it( hasSignature(
+				[ "T extends Carbon.Auth.Roles.Class" ],
 				"Persists the Role provided as a childRole of the parentRole specified.\n" +
 				"Returns a Promise with a Pointer for the stored role; and a tuple of two responses, the first one is the response of the creation, and the second one is the response of the creation of the relation parent-child of the roles.", [
 					{name: "parentRole", type: "string | Carbon.Pointer.Class", description: "The role that will be assigned as the parent of the role that wants to persist."},
-					{name: "role", type: "Carbon.Auth.Roles.Class", description: "The appRole that wants to persist."},
+					{name: "role", type: "T", description: "The appRole that wants to persist."},
 					{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "The slug where the role will be persisted."},
 				],
-				{type: "Promise<[ Carbon.Pointer.Class, [ Carbon.HTTP.Response.Class, Carbon.HTTP.Response.Class] ]>"}
+				{type: "Promise<[ T & Carbon.PersistedDocument.Class, [ Carbon.HTTP.Response.Class, Carbon.HTTP.Response.Class] ]>"}
 			), ( done:{ ():void, fail:() => void } ):void => {
 				expect( roles.createChild ).toBeDefined();
 				expect( Utils.isFunction( roles.createChild ) ).toBe( true );
@@ -228,8 +230,8 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 						expect( spyError ).toHaveBeenCalledTimes( 1 );
 
 						expect( spyCreate ).toHaveBeenCalledTimes( 2 );
-						expect( spyCreate ).toHaveBeenCalledWith( "http://example.com/roles/", jasmine.anything(), options );
-						expect( spyCreate ).toHaveBeenCalledWith( "http://example.com/roles/", jasmine.anything(), undefined );
+						expect( spyCreate ).toHaveBeenCalledWith( "http://example.com/roles/", jasmine.anything(), null, options );
+						expect( spyCreate ).toHaveBeenCalledWith( "http://example.com/roles/", jasmine.anything(), null, undefined );
 						done();
 					} ).catch( done.fail );
 
@@ -242,11 +244,12 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 		it( hasMethod(
 			INSTANCE,
 			"get",
+			[ "T" ],
 			"Retrieves a role from the current context.", [
 				{name: "roleURI", type: "string", description: "The URI of the role to retrieve."},
 				{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true},
 			],
-			{type: "Promise<[ Carbon.PersistedRole.Class, Carbon.HTTP.Response.Class ]>"}
+			{type: "Promise<[ T & Carbon.PersistedRole.Class, Carbon.HTTP.Response.Class ]>"}
 		), ( done:{ ():void, fail:() => void } ):void => {
 			expect( roles.get ).toBeDefined();
 			expect( Utils.isFunction( roles.get ) );
@@ -327,7 +330,7 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 				{name: "roleURI", type: "string", description: "The URI of the role to look for its agents."},
 				{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true},
 			],
-			{type: "Promise<[ Carbon.Auth.PersistedRole.Class, Carbon.HTTP.Response.Class ]>"}
+			{type: "Promise<[ Carbon.PersistedDocument.Class, Carbon.HTTP.Response.Class ]>"}
 		), ( done:{ ():void, fail:() => void } ):void => {
 			expect( roles.listAgents ).toBeDefined();
 			expect( Utils.isFunction( roles.listAgents ) ).toBe( true );
@@ -554,11 +557,13 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 			} );
 
 			it( hasSignature(
+				[ "T" ],
 				"Retrieves an array of resolved pointers for all the agents of the specified role.", [
 					{name: "roleURI", type: "string", description: "The URI of the role to look for its agents."},
 					{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true},
 				],
-				{type: "Promise<[ carbon.Auth.PersistedRole.Class, Carbon.HTTP.Response.Class ]>"}
+				// TODO: Change to `PersistedAgent`
+				{type: "Promise<[ (T & Carbon.PersistedDocument.Class)[], Carbon.HTTP.Response.Class ]>"}
 			), ( done:{ ():void, fail:() => void } ):void => {
 				roles.getAgents( "http://example.com/roles/a-role/", Role.Factory.create( "Role name" ) ).then( done.fail ).catch( ( stateError:Error ) => {
 					expect( stateError instanceof Errors.IllegalStateError ).toBe( true );
@@ -617,12 +622,14 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 			} );
 
 			it( hasSignature(
+				[ "T" ],
 				"Retrieves an array of resolved pointers for the agents of the role, in accordance of the retrievalPreferences provided.", [
 					{name: "roleURI", type: "string", description: "The URI of the role to look for its agents."},
 					{name: "retrievalPreferences", type: "Carbon.RetrievalPreferences.Class", optional: true, description: "An object that specify the retrieval preferences for the request."},
 					{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true},
 				],
-				{type: "Promise<[ carbon.Auth.PersistedRole.Class, Carbon.HTTP.Response.Class ]>"}
+				// TODO: Change to `PersistedAgent`
+				{type: "Promise<[ (T & Carbon.PersistedDocument.Class)[], Carbon.HTTP.Response.Class ]>"}
 			), ( done:{ ():void, fail:() => void } ):void => {
 				roles.getAgents( "http://example.com/roles/a-role/", Role.Factory.create( "Role name" ) ).then( done.fail ).catch( ( stateError:Error ) => {
 					expect( stateError instanceof Errors.IllegalStateError ).toBe( true );

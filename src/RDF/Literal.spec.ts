@@ -26,7 +26,7 @@ describe( module( "Carbon/RDF/Literal" ), ():void => {
 
 	describe( clazz(
 		"Carbon.RDF.Literal.Factory",
-		"Class Factory to manage creation and management of Literal objects."
+		"Factory class for `Carbon.RDF.Literal.Class` objects."
 	), ():void => {
 
 		it( isDefined(), ():void => {
@@ -37,7 +37,7 @@ describe( module( "Carbon/RDF/Literal" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"from",
-			"Convert the value provided to a Literal object."
+			"Convert the value provided to a `Carbon.RDF.Literal.Class` object."
 		), ():void => {
 			expect( Literal.Factory.from ).toBeDefined();
 			expect( Utils.isFunction( Literal.Factory.from ) ).toBe( true );
@@ -173,8 +173,8 @@ describe( module( "Carbon/RDF/Literal" ), ():void => {
 			STATIC,
 			"parse",
 			"Parse the Literal object to the respective JavaScript type.\n" +
-			"Returns null if cannot be parsed.", [
-				{name: "literal", type: "Carbon.RDF.Literal.Class"}
+			"Returns `null` if the Literal can't be parsed.", [
+				{name: "literal", type: "Carbon.RDF.Literal.Class"},
 			],
 			{type: "any"}
 		), ():void => {
@@ -325,8 +325,8 @@ describe( module( "Carbon/RDF/Literal" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"is",
-			"Returns true if the object provided can be called a RDF Literal", [
-				{name: "value", type: "any"}
+			"Returns true if the object provided is considered a `Carbon.RDF.Literal.Class` object.", [
+				{name: "value", type: "any"},
 			],
 			{type: "boolean"}
 		), ():void => {
@@ -344,9 +344,9 @@ describe( module( "Carbon/RDF/Literal" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"hasType",
-			"Returns true if the Literal has the type indicated", [
+			"Returns true if the Literal has the type specified.", [
 				{name: "value", type: "Carbon.RDF.Literal.Class"},
-				{name: "type", type: "string"}
+				{name: "type", type: "string"},
 			],
 			{type: "boolean"}
 		), ():void => {
@@ -389,40 +389,20 @@ describe( module( "Carbon/RDF/Literal" ), ():void => {
 
 	} );
 
-	describe( clazz(
-		"Carbon.RDF.Literal.Util",
-		"Class with useful functions for manage RDF Literals"
-	), ():void => {
-
-		it( isDefined(), ():void => {
-			expect( Literal.Util ).toBeDefined();
-			expect( Utils.isFunction( Literal.Util ) ).toBe( true );
-		} );
-
-		it( hasMethod(
-			STATIC,
-			"areEqual",
-			"Returns true if two Literals are equal", [
-				{name: "literal1", type: "Carbon.RDF.Literal.Class"},
-				{name: "literal2", type: "Carbon.RDF.Literal.Class"}
-			],
-			{type: "boolean"}
-		), ():void => {
-			expect( Literal.Util.areEqual ).toBeDefined();
-			expect( Utils.isFunction( Literal.Util.areEqual ) ).toBe( true );
-
-			// TODO wait implementation
-		} );
-
-	} );
-
 	it( reexports(
 		STATIC,
-		"serializer",
+		"Serializers",
 		"Carbon/RDF/Literal/Serializers"
 	), ():void => {
 		expect( Literal.Serializers ).toBeDefined();
 		expect( Literal.Serializers ).toBe( Serializers );
+	} );
+
+	it( reexports(
+		STATIC,
+		"Serializer",
+		"Carbon/RDF/Literal/Serializer"
+	), ():void => {
 	} );
 
 } );

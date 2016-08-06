@@ -1,10 +1,11 @@
 (function() {
 	describe( "something", () => {
+
 		it( "something else", ( done ) => {
 			"use strict";
 
 			let carbon = new Carbon();
-			carbon.setSetting( "domain", "hri-carbonldp.base22.io" );
+			carbon.setSetting( "domain", "local.carbonldp.com" );
 
 			carbon.extendObjectSchema( {
 				"acl": "http://www.w3.org/ns/auth/acl#",
@@ -61,30 +62,27 @@
 
 			let appContext;
 			let resource;
+			let fragment;
 
-			carbon.auth.authenticate( "hri@honda.com", "honda" ).then( function() {
-				return carbon.apps.getContext( "hri-emi-web-app/" );
+			carbon.auth.authenticate( "admin@carbonldp.com", "hello" ).then( function() {
+				return carbon.apps.getContext( "test-app/" );
 			} ).then( ( _appContext ) => {
 				appContext = _appContext;
-				return appContext.documents.get( "something-that-doesnt-exist/" );
+				return appContext.documents.get( "5080328326853933297/" );
 			} ).then( ( [ _resource, response ] ) => {
 				resource = _resource;
-				resource.contains = [];
+				debugger;
+				removeFragments( resource );
+				fragment = resource.myFragment = resource.createFragment( {
+					string: "A fragment",
+				} );
 				return saveAndRefresh( resource );
-			} ).then( ( [ _resource, response ] ) => {
-				done( "Save was successful when it shouldn't be" );
-			} ).catch( ( error ) => {
-				console.error( "%o", error );
-
-				expect( "errors" in error ).toEqual( true );
-				expect( error.errors ).toBeDefined( true );
-				expect( Carbon.Utils.isArray( error.errors ) ).toEqual( true );
-
-				expect( "requestID" in error ).toEqual( true );
-				expect( error.requestID ).toBeDefined( true );
-				expect( Carbon.Utils.isString( error.requestID ) ).toEqual( true );
-
+			} ).then( ( [ _resource, responses ] ) => {
+				expect( _resource ).toBe( resource );
+				expect( fragment ).toBe( _resource.myFragment );
 				done();
+			} ).catch( ( error ) => {
+				done.fail( error );
 			} );
 
 			function saveAndRefresh( persistedDocument ) {
