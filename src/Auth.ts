@@ -12,6 +12,7 @@ import UsernameAndPasswordToken from "./Auth/UsernameAndPasswordToken";
 import UsernameAndPasswordCredentials from "./Auth/UsernameAndPasswordCredentials";
 import Credentials from "./Auth/Credentials";
 
+import * as Agent from "./Agent";
 import Context from "./Context";
 import {DigestedObjectSchema} from "./ObjectSchema";
 import * as Errors from "./Errors";
@@ -45,7 +46,7 @@ export enum Method {
 
 export class Class {
 	// TODO: Change to `PersistedAgent.Class`
-	protected _authenticatedAgent:PersistedDocument.Class;
+	protected _authenticatedAgent:Agent.Class & PersistedDocument.Class;
 
 	private context:Context;
 
@@ -53,7 +54,7 @@ export class Class {
 	private authenticators:Array<Authenticator<AuthenticationToken>>;
 	private authenticator:Authenticator<AuthenticationToken>;
 
-	public get authenticatedAgent():PersistedDocument.Class {
+	public get authenticatedAgent():Agent.Class & PersistedDocument.Class {
 		if( ! this._authenticatedAgent ) {
 			if( this.context.parentContext && this.context.parentContext.auth ) return this.context.parentContext.auth.authenticatedAgent;
 			return null;
@@ -76,7 +77,7 @@ export class Class {
 		);
 	}
 
-	authenticate( username:string, password:string ):Promise<Credentials> {
+	authenticate( username:string, password:string ):Promise<Token.Class> {
 		return this.authenticateUsing( "TOKEN", username, password );
 	}
 
@@ -172,7 +173,7 @@ export class Class {
 			credentials = _credentials;
 			return this.getAuthenticatedAgent( authenticator );
 		} ).then( ( persistedAgent:PersistedDocument.Class ) => {
-			this._authenticatedAgent = persistedAgent;
+			this._authenticatedAgent = <any> persistedAgent;
 			this.authenticator = authenticator;
 			return credentials;
 		} );
@@ -198,10 +199,9 @@ export class Class {
 			credentials = _credentials;
 
 			// TODO: Use `PersistedAgent`
-			if( PersistedDocument.Factory.is( _credentials.agent ) ) return credentials.agent;
+			if( PersistedDocument.Factory.is( _credentials.agent ) ) return <any> credentials.agent;
 			return this.getAuthenticatedAgent( authenticator );
-
-		} ).then( ( persistedAgent:PersistedDocument.Class ) => {
+		} ).then( ( persistedAgent:Agent.Class & PersistedDocument.Class ) => {
 			this._authenticatedAgent = persistedAgent;
 			credentials.agent = persistedAgent;
 
@@ -210,7 +210,7 @@ export class Class {
 		} );
 	}
 
-	private getAuthenticatedAgent( authenticator:Authenticator<any> ):Promise<PersistedDocument.Class> {
+	private getAuthenticatedAgent( authenticator:Authenticator<any> ):Promise<Agent.Class & PersistedDocument.Class> {
 		let requestOptions:HTTP.Request.Options = {};
 		authenticator.addAuthentication( requestOptions );
 		HTTP.Request.Util.setAcceptHeader( "application/ld+json", requestOptions );
@@ -235,7 +235,7 @@ export class Class {
 			let document:PersistedDocument.Class = this.context.documents._getPersistedDocument( agentsDocuments[ 0 ], response );
 			document._etag = eTag;
 
-			return document;
+			return <any> document;
 		} );
 	}
 

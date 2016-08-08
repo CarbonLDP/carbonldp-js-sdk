@@ -204,7 +204,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 			INSTANCE,
 			"authenticatedAgent",
 			// TODO: Change for `PersistedAgent`
-			"Carbon.PersistedDocument.Class",
+			"Carbon.Agent.Class & Carbon.PersistedDocument.Class",
 			"The agent of the user that has been authenticated. If no authentication exists in the current context, it will ask to it's parent context.\n" +
 			"Returns `null` if the user it not authenticated."
 		), ():void => {
@@ -224,7 +224,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 				class MockedAuth extends Auth.Class {
 					constructor( _context:AbstractContext ) {
 						super( _context );
-						this._authenticatedAgent = PersistedDocument.Factory.create( "http://example.com/agents/my-agent/", _context.documents );
+						this._authenticatedAgent = <any> PersistedDocument.Factory.create( "http://example.com/agents/my-agent/", _context.documents );
 					}
 				}
 				class MockedContext extends AbstractContext {
@@ -246,7 +246,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 				class MockedAuth extends Auth.Class {
 					constructor( _context:AbstractContext ) {
 						super( _context );
-						this._authenticatedAgent = PersistedDocument.Factory.create( "http://example.com/agents/my-agent/", _context.documents );
+						this._authenticatedAgent = <any> PersistedDocument.Factory.create( "http://example.com/agents/my-agent/", _context.documents );
 					}
 				}
 				class MockedContext extends AbstractContext {
@@ -276,7 +276,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 				class MockedAuth extends Auth.Class {
 					constructor( _context:AbstractContext ) {
 						super( _context );
-						this._authenticatedAgent = PersistedDocument.Factory.create( "http://example.com/agents/my-agent/", _context.documents );
+						this._authenticatedAgent = <any> PersistedDocument.Factory.create( "http://example.com/agents/my-agent/", _context.documents );
 					}
 				}
 				class MockedContext extends AbstractContext {
@@ -308,9 +308,9 @@ describe( module( "Carbon/Auth" ), ():void => {
 			INSTANCE,
 			"isAuthenticated",
 			"Returns true if the user is authenticated.", [
-				{name: "askParent", type: "boolean", optional: true, default: "true"},
+				{ name: "askParent", type: "boolean", optional: true, default: "true" },
 			],
-			{type: "boolean"}
+			{ type: "boolean" }
 		), ():void => {
 
 			// Property Integrity
@@ -399,7 +399,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 				let context:AbstractContext = new MockedContext();
 
 				let auth:Auth.Class = new Auth.Class( context );
-				(<any> auth).authenticator = {isAuthenticated: ():boolean => true};
+				(<any> auth).authenticator = { isAuthenticated: ():boolean => true };
 
 				let spyParent:jasmine.Spy = spyOn( context.auth, "isAuthenticated" ).and.returnValue( true );
 
@@ -430,7 +430,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 				let context:AbstractContext = new MockedContext();
 
 				let auth:Auth.Class = new Auth.Class( context );
-				(<any> auth).authenticator = {isAuthenticated: ():boolean => true};
+				(<any> auth).authenticator = { isAuthenticated: ():boolean => true };
 
 				let spyParent:jasmine.Spy = spyOn( context.auth, "isAuthenticated" ).and.returnValue( false );
 
@@ -452,10 +452,10 @@ describe( module( "Carbon/Auth" ), ():void => {
 			INSTANCE,
 			"authenticate",
 			"Authenticate the user with a `username` and `password`. Uses the `TOKEN` method for the authentication.", [
-				{name: "username", type: "string"},
-				{name: "password", type: "string"},
+				{ name: "username", type: "string" },
+				{ name: "password", type: "string" },
 			],
-			{type: "Promise<Carbon.Auth.Credentials>"}
+			{ type: "Promise<Carbon.Auth.Token.Class>" }
 		), ():void => {
 			class MockedContext extends AbstractContext {
 				resolve( uri:string ):string {
@@ -493,11 +493,11 @@ describe( module( "Carbon/Auth" ), ():void => {
 
 			it( hasSignature(
 				"Authenticates the user with Basic HTTP Authentication, which uses an encoded string with username and password in every request.", [
-					{name: "method", type: "'BASIC'"},
-					{name: "username", type: "string"},
-					{name: "password", type: "string"},
+					{ name: "method", type: "'BASIC'" },
+					{ name: "username", type: "string" },
+					{ name: "password", type: "string" },
 				],
-				{type: "Promise<Carbon.Auth.UsernameAndPasswordCredentials.Class>"}
+				{ type: "Promise<Carbon.Auth.UsernameAndPasswordCredentials.Class>" }
 			), ( done:{ ():void, fail:() => void } ):void => {
 				jasmine.Ajax.stubRequest( "http://example.com/agents/me/" ).andReturn( {
 					status: 200,
@@ -583,11 +583,11 @@ describe( module( "Carbon/Auth" ), ():void => {
 
 			it( hasSignature(
 				"Authenticates the user with a username and password, and generates a JSON Web Token (JWT) credential that will be used in every request.", [
-					{name: "method", type: "'TOKEN'"},
-					{name: "username", type: "string"},
-					{name: "password", type: "string"},
+					{ name: "method", type: "'TOKEN'" },
+					{ name: "username", type: "string" },
+					{ name: "password", type: "string" },
 				],
-				{type: "Promise<Carbon.Auth.Token.Class>"}
+				{ type: "Promise<Carbon.Auth.Token.Class>" }
 			), ( done:{():void, fail:() => void} ):void => {
 				let auth:Auth.Class = new Auth.Class( context );
 				expect( auth.authenticateUsing ).toBeDefined();
@@ -704,10 +704,10 @@ describe( module( "Carbon/Auth" ), ():void => {
 
 			it( hasSignature(
 				"Authenticates the user with a `Carbon.Auth.Token.Class`, which contains a JSON Web Token (JWT) that will be used in every request.", [
-					{name: "method", type: "'TOKEN'"},
-					{name: "token", type: "Carbon.Auth.Token.Class"},
+					{ name: "method", type: "'TOKEN'" },
+					{ name: "token", type: "Carbon.Auth.Token.Class" },
 				],
-				{type: "Promise<Carbon.Auth.Token.Class>"}
+				{ type: "Promise<Carbon.Auth.Token.Class>" }
 			), ( done:{ ():void, fail:() => void } ):void => {
 				jasmine.Ajax.stubRequest( "http://example.com/agents/me/" ).andReturn( {
 					status: 200,
@@ -852,7 +852,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 			INSTANCE,
 			"addAuthentication",
 			"Adds the authentication header to a `Carbon.HTTP.Request.Options` object.", [
-				{name: "options", type: "Carbon.HTTP.Request.Options"},
+				{ name: "options", type: "Carbon.HTTP.Request.Options" },
 			]
 		), ():void => {
 
@@ -893,7 +893,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 
 				auth.addAuthentication( options );
 				expect( spyParent ).toHaveBeenCalledWith( options );
-				expect( options ).toEqual( {parentAuth: "no authenticated"} );
+				expect( options ).toEqual( { parentAuth: "no authenticated" } );
 			})();
 
 			// Current not authenticated but parent is
@@ -919,7 +919,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 
 				auth.addAuthentication( options );
 				expect( spyParent ).toHaveBeenCalledWith( options );
-				expect( options ).toEqual( {parentAuth: "is authenticated"} );
+				expect( options ).toEqual( { parentAuth: "is authenticated" } );
 			})();
 
 			// Current and parent authenticated
@@ -950,7 +950,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 
 				auth.addAuthentication( options );
 				expect( spyParent ).not.toHaveBeenCalled();
-				expect( options ).toEqual( {currentAuth: "is authenticated"} );
+				expect( options ).toEqual( { currentAuth: "is authenticated" } );
 			})();
 
 			// Current authenticated but parent not
@@ -981,7 +981,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 
 				auth.addAuthentication( options );
 				expect( spyParent ).not.toHaveBeenCalled();
-				expect( options ).toEqual( {currentAuth: "is authenticated"} );
+				expect( options ).toEqual( { currentAuth: "is authenticated" } );
 			})();
 
 		} );
@@ -1048,10 +1048,10 @@ describe( module( "Carbon/Auth" ), ():void => {
 			INSTANCE,
 			"createTicket",
 			"Retrieves an authentication ticket for the URI specified.", [
-				{name: "uri", type: "string", description: "The URI to get an authentication ticket for."},
-				{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true},
+				{ name: "uri", type: "string", description: "The URI to get an authentication ticket for." },
+				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
 			],
-			{type: "Promise<[ Carbon.Auth.Ticket.Class, Carbon.HTTP.Response.Class ]>"}
+			{ type: "Promise<[ Carbon.Auth.Ticket.Class, Carbon.HTTP.Response.Class ]>" }
 		), ( done:{ ():void, fail:() => void } ):void => {
 			class MockedContext extends AbstractContext {
 				resolve( uri:string ):string {
@@ -1178,10 +1178,10 @@ describe( module( "Carbon/Auth" ), ():void => {
 			INSTANCE,
 			"getAuthenticatedURL",
 			"Returns a Promise with a one time use only authenticated URI.", [
-				{name: "uri", type: "string", description: "The URI to generate an authenticated URI for."},
-				{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true},
+				{ name: "uri", type: "string", description: "The URI to generate an authenticated URI for." },
+				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
 			],
-			{type: "Promise<string>"}
+			{ type: "Promise<string>" }
 		), ( done:{ ():void, fail:() => void } ) => {
 			class MockedContext extends AbstractContext {
 				resolve( uri:string ):string {

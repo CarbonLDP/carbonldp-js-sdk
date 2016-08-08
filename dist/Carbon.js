@@ -43,7 +43,7 @@ var Carbon = (function (_super) {
         this.agents = new Agents.Class(this);
     }
     Object.defineProperty(Carbon, "version", {
-        get: function () { return "0.35.1"; },
+        get: function () { return "0.36.0"; },
         enumerable: true,
         configurable: true
     });
