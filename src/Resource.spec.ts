@@ -1,11 +1,13 @@
 import {
+	INSTANCE,
 	STATIC,
 
 	module,
 	clazz,
+	decoratedObject,
 
 	isDefined,
-	hasMethod
+	hasMethod,
 } from "./test/JasmineExtender";
 import * as NS from "./NS";
 import * as Pointer from "./Pointer";
@@ -34,47 +36,63 @@ describe( module( "Carbon/Resource" ), ():void => {
 			STATIC,
 			"hasClassProperties",
 			"Returns true if the object provided has the properties of a `Carbon.Resource.Class` object.", [
-				{name: "resource", type: "Object"}
+				{name: "object", type: "Object"},
 			],
 			{type: "boolean"}
 		), ():void => {
 			expect( Resource.Factory.hasClassProperties ).toBeDefined();
 			expect( Utils.isFunction( Resource.Factory.hasClassProperties ) ).toBe( true );
 
-			let resource:any = undefined;
-			expect( Resource.Factory.hasClassProperties( resource ) ).toBe( false );
-			resource = {
+			let object:any = undefined;
+			expect( Resource.Factory.hasClassProperties( object ) ).toBe( false );
+			object = {
 				types: null,
-			};
-			expect( Resource.Factory.hasClassProperties( resource ) ).toBe( true );
 
-			delete resource.types;
-			expect( Resource.Factory.hasClassProperties( resource ) ).toBe( false );
-			resource.types = null;
+				addType: ():void => {},
+				hasType: ():void => {},
+				removeType: ():void => {},
+			};
+			expect( Resource.Factory.hasClassProperties( object ) ).toBe( true );
+
+			delete object.types;
+			expect( Resource.Factory.hasClassProperties( object ) ).toBe( false );
+			object.types = null;
+
+			delete object.addType;
+			expect( Resource.Factory.hasClassProperties( object ) ).toBe( false );
+			object.addType = ():void => {};
+
+			delete object.hasType;
+			expect( Resource.Factory.hasClassProperties( object ) ).toBe( false );
+			object.hasType = ():void => {};
+
+			delete object.removeType;
+			expect( Resource.Factory.hasClassProperties( object ) ).toBe( false );
+			object.removeType = ():void => {};
 		} );
 
 		it( hasMethod(
 			STATIC,
 			"is",
 			"Returns true if the object provided is considered a `Carbon.Resource.Class` object.", [
-				{name: "resource", type: "Object"}
+				{name: "resource", type: "Object"},
 			],
 			{type: "boolean"}
 		), ():void => {
 			let object:Object = undefined;
 			expect( Resource.Factory.is( object ) ).toBe( false );
-			object = {};
+
+			object = {
+				types: null,
+
+				addType: ():void => {},
+				hasType: ():void => {},
+				removeType: ():void => {},
+			};
 			expect( Resource.Factory.is( object ) ).toBe( false );
-			object[ "types" ] = null;
-			expect( Resource.Factory.is( object ) ).toBe( false );
 
-			let resource = Pointer.Factory.decorate( object );
+			let resource:Pointer.Class = Pointer.Factory.decorate( object );
 			expect( Resource.Factory.is( resource ) ).toBe( true );
-
-			resource = Pointer.Factory.create();
-			resource[ "types" ] = null;
-			expect( Resource.Factory.is( resource ) ).toBe( true );
-
 		} );
 
 		it( hasMethod(
@@ -82,7 +100,7 @@ describe( module( "Carbon/Resource" ), ():void => {
 			"create",
 			"Creates a Resource object with the id and types provided.", [
 				{name: "id", type: "string", optional: true},
-				{name: "types", type: "string[]", optional: true}
+				{name: "types", type: "string[]", optional: true},
 			],
 			{type: "Carbon.Resource.Class"}
 		), ():void => {
@@ -136,7 +154,7 @@ describe( module( "Carbon/Resource" ), ():void => {
 			expect( Resource.Factory.createFrom ).toBeDefined();
 			expect( Utils.isFunction( Resource.Factory.createFrom ) ).toBe( true );
 
-			let simpleResource = Resource.Factory.createFrom( {}, "http://example.com/simple-resource/" );
+			let simpleResource:Resource.Class = Resource.Factory.createFrom( {}, "http://example.com/simple-resource/" );
 			expect( simpleResource ).toBeTruthy();
 			expect( Resource.Factory.hasClassProperties( simpleResource ) ).toBe( true );
 			expect( simpleResource.id ).toBe( "http://example.com/simple-resource/" );
@@ -144,7 +162,7 @@ describe( module( "Carbon/Resource" ), ():void => {
 			expect( simpleResource.types.length ).toBe( 0 );
 
 			interface MyResource {
-				myProperty:string
+				myProperty:string;
 			}
 			let resource:Resource.Class & MyResource;
 
@@ -201,7 +219,7 @@ describe( module( "Carbon/Resource" ), ():void => {
 
 
 			interface MyResource {
-				myProperty?:string
+				myProperty?:string;
 			}
 			let resource:Resource.Class & MyResource;
 
@@ -219,6 +237,93 @@ describe( module( "Carbon/Resource" ), ():void => {
 			resource.types = [ NS.LDP.Class.RDFSource ];
 			resource = Resource.Factory.decorate<MyResource>( resource );
 			expect( resource.types ).toEqual( [ NS.LDP.Class.RDFSource ] );
+		} );
+
+		describe( decoratedObject(
+			"Object decorated by the `Carbon.Resource.Factory.decorate()` function.", [
+				"Carbon.Resource.Class",
+			]
+		), ():void => {
+			let resource:Resource.Class;
+
+			beforeEach( ():void => {
+				resource = Resource.Factory.create();
+			} );
+
+			it( hasMethod(
+				INSTANCE,
+				"addType",
+				"Adds a type to the Resource.", [
+					{name: "type", type: "string", description: "The type to be added."},
+				]
+			), ():void => {
+				expect( resource.addType ).toBeDefined();
+				expect( Utils.isFunction( resource.addType ) ).toBe( true );
+
+				expect( resource.types.length ).toBe( 0 );
+
+				resource.addType( "http://example.com/types#Type-1" );
+				expect( resource.types.length ).toBe( 1 );
+				expect( resource.types ).toContain( "http://example.com/types#Type-1" );
+
+				resource.addType( "http://example.com/types#Type-2" );
+				expect( resource.types.length ).toBe( 2 );
+				expect( resource.types ).toContain( "http://example.com/types#Type-1" );
+				expect( resource.types ).toContain( "http://example.com/types#Type-2" );
+			} );
+
+			it( hasMethod(
+				INSTANCE,
+				"hasType",
+				"Returns true if the Resource contains the type specified.", [
+					{name: "type", type: "string", description: "The type to look for."},
+				]
+			), ():void => {
+				expect( resource.hasType ).toBeDefined();
+				expect( Utils.isFunction( resource.hasType ) ).toBe( true );
+
+				resource.types = [ "http://example.com/types#Type-1" ];
+				expect( resource.hasType( "http://example.com/types#Type-1" ) ).toBe( true );
+				expect( resource.hasType( "http://example.com/types#Type-2" ) ).toBe( false );
+
+
+				resource.types = [ "http://example.com/types#Type-1", "http://example.com/types#Type-2" ];
+				expect( resource.hasType( "http://example.com/types#Type-1" ) ).toBe( true );
+				expect( resource.hasType( "http://example.com/types#Type-2" ) ).toBe( true );
+				expect( resource.hasType( "http://example.com/types#Type-3" ) ).toBe( false );
+			} );
+
+			it( hasMethod(
+				INSTANCE,
+				"removeType",
+				"Remove the type specified from the Resource.", [
+					{name: "type", type: "string", description: "The type to be removed."},
+				]
+			), ():void => {
+				expect( resource.removeType ).toBeDefined();
+				expect( Utils.isFunction( resource.removeType ) ).toBe( true );
+
+				resource.types = [ "http://example.com/types#Type-1" ];
+				resource.removeType( "http://example.com/types#Type-2" );
+				expect( resource.types.length ).toBe( 1 );
+				expect( resource.types ).toContain( "http://example.com/types#Type-1" );
+
+				resource.types = [ "http://example.com/types#Type-1" ];
+				resource.removeType( "http://example.com/types#Type-1" );
+				expect( resource.types.length ).toBe( 0 );
+				expect( resource.types ).not.toContain( "http://example.com/types#Type-1" );
+
+				resource.types = [ "http://example.com/types#Type-1", "http://example.com/types#Type-2" ];
+				resource.removeType( "http://example.com/types#Type-1" );
+				expect( resource.types.length ).toBe( 1 );
+				expect( resource.types ).not.toContain( "http://example.com/types#Type-1" );
+				expect( resource.types ).toContain( "http://example.com/types#Type-2" );
+				resource.removeType( "http://example.com/types#Type-2" );
+				expect( resource.types.length ).toBe( 0 );
+				expect( resource.types ).not.toContain( "http://example.com/types#Type-1" );
+				expect( resource.types ).not.toContain( "http://example.com/types#Type-2" );
+			} );
+
 		} );
 
 	} );
