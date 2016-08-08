@@ -15,6 +15,9 @@ declare class HTTPError extends AbstractError implements LDP.ErrorResponse.Class
     types: string[];
     isResolved: () => boolean;
     resolve: () => Promise<[Pointer.Class, Response]>;
+    addType: (type: string) => void;
+    hasType: (type: string) => boolean;
+    removeType: (type: string) => void;
     constructor(message: string, response: Response);
 }
 export default HTTPError;
