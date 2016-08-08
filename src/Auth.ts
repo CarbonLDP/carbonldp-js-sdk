@@ -216,27 +216,9 @@ export class Class {
 		HTTP.Request.Util.setAcceptHeader( "application/ld+json", requestOptions );
 		HTTP.Request.Util.setPreferredInteractionModel( NS.LDP.Class.RDFSource, requestOptions );
 
-		let uri:string = this.context.resolve( "agents/me/" );
-		return HTTP.Request.Service.get( uri, requestOptions, new RDF.Document.Parser() ).then( ( [ rdfDocuments, response ]:[ any, HTTP.Response.Class ] ) => {
-			let eTag:string = HTTP.Response.Util.getETag( response );
-			if( eTag === null ) throw new HTTP.Errors.BadResponseError( "The authenticated agent doesn't contain an ETag", response );
-
-			let locationHeader:HTTP.Header.Class = response.getHeader( "Content-Location" );
-			if( ! locationHeader || locationHeader.values.length < 1 ) throw new HTTP.Errors.BadResponseError( "The response is missing a Content-Location header.", response );
-			if( locationHeader.values.length !== 1 ) throw new HTTP.Errors.BadResponseError( "The response contains more than one Content-Location header.", response );
-
-			let agentURI:string = locationHeader.toString();
-			if( ! agentURI ) throw new HTTP.Errors.BadResponseError( `The response doesn't contain a 'Content-Location' header.`, response );
-
-			let agentsDocuments:RDF.Document.Class[] = RDF.Document.Util.getDocuments( rdfDocuments ).filter( rdfDocument => rdfDocument[ "@id" ] === agentURI );
-			if( agentsDocuments.length === 0 ) throw new HTTP.Errors.BadResponseError( `The response doesn't contain a the '${ agentURI }' resource.`, response );
-			if( agentsDocuments.length > 1 ) throw new HTTP.Errors.BadResponseError( `The response contains more than one '${ agentURI }' resource.`, response );
-
-			let document:PersistedDocument.Class = this.context.documents._getPersistedDocument( agentsDocuments[ 0 ], response );
-			document._etag = eTag;
-
-			return <any> document;
-		} );
+		return this.context.documents.get<Agent.Class>( "agents/me/" ).then(
+			( [ agentDocument, response ]:[ Agent.Class & PersistedDocument.Class, HTTP.Response.Class ] ) => agentDocument
+		);
 	}
 
 }
