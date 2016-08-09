@@ -65,7 +65,7 @@ function isPlainObject(object) {
         && !isDate(object)
         && !isMap(object)
         && !(typeof Blob !== "undefined" && object instanceof Blob)
-        && !((object + "") === "[object Set]");
+        && !(Object.prototype.toString.call(object) === "[object Set]");
 }
 exports.isPlainObject = isPlainObject;
 function isFunction(value) {
@@ -141,7 +141,7 @@ var O = (function () {
         var isAnArray = isArray(object);
         if (!isAnArray && !isPlainObject(object))
             return null;
-        var clone = isAnArray ? [] : {};
+        var clone = (isAnArray ? [] : (!!Object.getPrototypeOf(object)) ? {} : Object.create(null));
         object.__SDKUtils_circularReferenceFlag = clone;
         for (var _i = 0, _a = Object.keys(object); _i < _a.length; _i++) {
             var key = _a[_i];

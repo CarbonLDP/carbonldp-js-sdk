@@ -4,6 +4,20 @@
 		it( "something else", ( done ) => {
 			"use strict";
 
+			let object = {
+				"@context": "http://schema.org/",
+				"@type": "Person",
+				"name": "Jane Doe",
+				"jobTitle": "Professor",
+				"telephone": "(425) 123-4567",
+				"url": "http://www.janedoe.com"
+			};
+			Carbon.HTTP.JSONLDParser.expand( object ).then( ( expanded ) => {
+				expect( object ).toBe( expanded );
+				done();
+			} ).catch( done.fail );
+			return;
+
 			let carbon = new Carbon();
 			carbon.setSetting( "domain", "local.carbonldp.com" );
 

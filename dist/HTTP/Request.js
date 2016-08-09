@@ -171,9 +171,7 @@ var Service = (function () {
         if (parser === void 0) { parser = null; }
         return Service.send(Method_1.default.DELETE, url, bodyOrOptions, optionsOrParser, parser);
     };
-    Service.defaultOptions = {
-        sendCredentialsOnCORS: true,
-    };
+    Service.defaultOptions = {};
     return Service;
 }());
 exports.Service = Service;

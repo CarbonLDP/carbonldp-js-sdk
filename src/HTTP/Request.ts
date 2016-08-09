@@ -144,7 +144,7 @@ function isBody( data:string | Blob | Buffer ):boolean {
 export class Service {
 
 	private static defaultOptions:Options = {
-		sendCredentialsOnCORS: true,
+		// sendCredentialsOnCORS: true,
 	};
 
 	static send( method:(Method | string), url:string, body:Blob, options?:Options ):Promise<Response>;

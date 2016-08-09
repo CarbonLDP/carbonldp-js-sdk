@@ -10031,7 +10031,7 @@ Checks if an object has the same enumerable properties with the same values as a
 
 ##### clone
 ```typescript 
-static clone( object:Object,  config:{arrays?:boolean, objects?:boolean} ):Object
+static clone<T extends Object>( object:T,  config:{arrays?:boolean, objects?:boolean} ):T
 ```
 
 Makes a shallow or deep clone of the object provided depending of the configuration specified.
