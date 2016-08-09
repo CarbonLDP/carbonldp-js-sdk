@@ -784,7 +784,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 					key: "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJodHRwczovL2V4YW1wbGUuY29tL3VzZXJzL2EtdXNlci8iLCJleHAiOjExNDkxMjAwMDAwMDB9.T8XSFKyiT-5PAx_yxv2uY94nfvx65zWz8mI2OlSUFnE",
 					types: [
 						"https://carbonldp.com/ns/v1/security#Token",
-					]
+					],
 				};
 				promise = auth01.authenticateUsing( "TOKEN", token );
 				expect( promise instanceof Promise ).toBe( true );
@@ -802,7 +802,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 						key: "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJodHRwczovL2V4YW1wbGUuY29tL3VzZXJzL2EtdXNlci8iLCJleHAiOjExNDkxMjAwMDAwMDB9.T8XSFKyiT-5PAx_yxv2uY94nfvx65zWz8mI2OlSUFnE",
 						types: [
 							"https://carbonldp.com/ns/v1/security#Token",
-						]
+						],
 					};
 					return JSON.parse( JSON.stringify( storedToken ) );
 				};
@@ -822,7 +822,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 					key: "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJodHRwczovL2V4YW1wbGUuY29tL3VzZXJzL2EtdXNlci8iLCJleHAiOjExNDkxMjAwMDAwMDB9.T8XSFKyiT-5PAx_yxv2uY94nfvx65zWz8mI2OlSUFnE",
 					types: [
 						"https://carbonldp.com/ns/v1/security#Token",
-					]
+					],
 				};
 				promise = auth03.authenticateUsing( "TOKEN", token );
 				expect( promise instanceof Promise ).toBe( true );
