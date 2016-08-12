@@ -1,7 +1,7 @@
 import * as BlankNode from "./BlankNode";
 import * as Errors from "./Errors";
 import * as Fragment from "./Fragment";
-import JSONLDConverter from "./JSONLDConverter";
+import JSONLDConverter from "./JSONLD/Converter";
 import * as NamedFragment from "./NamedFragment";
 import * as NS from "./NS";
 import * as ObjectSchema from "./ObjectSchema";

@@ -539,7 +539,7 @@
 | Errors | [Carbon/Errors](#Carbon-Errors) |
 | Fragment | [Carbon/Fragment](#Carbon-Fragment) |
 | HTTP | [Carbon/HTTP](#Carbon-HTTP) |
-| JSONLDConverter | [Carbon/JSONLDConverter](#Carbon-JSONLDConverter) |
+| JSONLD | [Carbon/JSONLD](#Carbon-JSONLD) |
 | LDP | [Carbon/LDP](#Carbon-LDP) |
 | NamedFragment | [Carbon/NamedFragment](#Carbon-NamedFragment) |
 | NS | [Carbon/NS](#Carbon-NS) |
@@ -2287,10 +2287,10 @@ Documents( context?:Carbon.Context )
 #### <a name="Carbon-Documents-Properties" />Properties
 
 ```typescript 
-jsonldConverter:Carbon.JSONLDConverter.Class 
+jsonldConverter:Carbon.JSONLD.Converter.Class 
 ```
 
-Instance of `Carbon.JSONLDConverter.Class` that is used to compact retrieved documents and to expand documents to persist. This property is not writable.
+Instance of `Carbon.JSONLD.Converter.Class` that is used to compact retrieved documents and to expand documents to persist. This property is not writable.
 
 #### <a name="Carbon-Documents-Methods" />Methods
 
@@ -3339,7 +3339,6 @@ Converts the resources contained in the current `Carbon.FreeResources.Class` obj
 | --- | --- |
 | Errors | [Carbon/HTTP/Errors](#Carbon-HTTP-Errors) |
 | Header | [Carbon/HTTP/Header](#Carbon-HTTP-Header) |
-| JSONLDParser | [Carbon/HTTP/JSONLDParser](#Carbon-HTTP-JSONLDParser) |
 | JSONParser | [Carbon/HTTP/JSONParser](#Carbon-HTTP-JSONParser) |
 | Method | [Carbon/HTTP/Method](#Carbon-HTTP-Method) |
 | Parser | [Carbon/HTTP/Parser](#Carbon-HTTP-Parser) |

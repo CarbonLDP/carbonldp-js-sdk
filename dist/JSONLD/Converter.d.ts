@@ -1,6 +1,6 @@
-import * as ObjectSchema from "./ObjectSchema";
-import * as Pointer from "./Pointer";
-import * as RDF from "./RDF";
+import * as ObjectSchema from "./../ObjectSchema";
+import * as Pointer from "./../Pointer";
+import * as RDF from "./../RDF";
 export declare class Class {
     private _literalSerializers;
     literalSerializers: Map<string, RDF.Literal.Serializer>;

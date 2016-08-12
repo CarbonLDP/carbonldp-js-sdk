@@ -129,18 +129,25 @@ export class Util {
 		return parameters;
 	}
 
-	static resolve( parentURI:string, childURI:string ):string {
+	static resolve( parentURI:string, childURI:string, options:{ untilSlash?:boolean } = {} ):string {
 		if( Util.isAbsolute( childURI ) || Util.isBNodeID( childURI ) || Util.isPrefixed( childURI ) )
 			return childURI;
 
 		let finalURI:string = parentURI;
-		if( ! Utils.S.endsWith( parentURI, "#" ) && ! Utils.S.endsWith( parentURI, "/" ) ) finalURI += "/";
+
+		if( Utils.S.startsWith( childURI, "?" ) || Utils.S.startsWith( childURI, "#" ) ) {
+			if( Util.hasQuery( finalURI ) ) finalURI = finalURI.substr( 0, finalURI.indexOf( "?" ) );
+			if( Util.hasFragment( finalURI ) ) finalURI = Util.getDocumentURI( finalURI );
+		} else {
+			if( options.untilSlash ) finalURI = finalURI.substr( 0, finalURI.lastIndexOf( "/" ) + 1 );
+			if( ! Utils.S.endsWith( finalURI, "?" ) && ! Utils.S.endsWith( finalURI, "#" )  && ! Utils.S.endsWith( finalURI, "/" ) ) finalURI += "/";
+		}
 
 		if( Utils.S.startsWith( childURI, "/" ) ) {
-			finalURI = finalURI + childURI.substr( 1, childURI.length );
-		} else finalURI += childURI;
+			childURI = childURI.substr( 1, childURI.length );
+		}
 
-		return finalURI;
+		return finalURI + childURI;
 	}
 
 	static removeProtocol( uri:string ):string {

@@ -175,7 +175,7 @@ var Class = (function () {
         var vocab;
         if (this.hasSetting("vocabulary"))
             vocab = this.resolve(this.getSetting("vocabulary"));
-        uri = ObjectSchema.Digester.resolvePrefixedURI(new RDF.URI.Class(uri), schema).stringValue;
+        uri = ObjectSchema.Digester.resolvePrefixedURI(uri, schema);
         if (vocab)
             uri = RDF.URI.Util.resolve(vocab, uri);
         return uri;

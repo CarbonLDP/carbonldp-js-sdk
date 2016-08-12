@@ -8,11 +8,11 @@ import {
 	isDefined,
 	hasMethod,
 	hasDefaultExport
-} from "./../test/JasmineExtender";
-import * as Utils from "./../Utils";
+} from "../test/JasmineExtender";
+import * as Utils from "../Utils";
 
-import * as JSONLDParser from "./JSONLDParser";
-import DefaultExport from "./JSONLDParser";
+import * as JSONLDParser from "./Parser";
+import DefaultExport from "./Parser";
 
 describe( module(
 	"Carbon/HTTP/JSONLDParser"

@@ -103,8 +103,7 @@ describe( module( "Carbon/ObjectSchema" ), ():void => {
 			"URI that will be used to resolve properties URIs that aren't defined in the schema."
 		), ():void => {
 			expect( digestedSchema.vocab ).toBeDefined();
-			expect( Utils.isString( digestedSchema.vocab ) ).toBe( true );
-			expect( digestedSchema.vocab ).toBe( "" );
+			expect( digestedSchema.vocab ).toBeNull();
 		} );
 
 		it( hasProperty(

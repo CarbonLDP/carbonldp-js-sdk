@@ -144,7 +144,7 @@ function isBody( data:string | Blob | Buffer ):boolean {
 export class Service {
 
 	private static defaultOptions:Options = {
-		// sendCredentialsOnCORS: true,
+		sendCredentialsOnCORS: true,
 	};
 
 	static send( method:(Method | string), url:string, body:Blob, options?:Options ):Promise<Response>;
@@ -168,7 +168,7 @@ export class Service {
 			options = bodyOrOptions ? bodyOrOptions : options;
 		}
 
-		options = Utils.extend( options || {}, Service.defaultOptions );
+		options = Utils.extend( {}, Service.defaultOptions, options );
 
 		if( Utils.isNumber( method ) ) method = Method[ method ];
 

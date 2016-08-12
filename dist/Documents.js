@@ -7,7 +7,7 @@ var AccessPoint = require("./AccessPoint");
 var ACL = require("./Auth/ACL");
 var Document = require("./Document");
 var FreeResources = require("./FreeResources");
-var JSONLDConverter = require("./JSONLDConverter");
+var JSONLD = require("./JSONLD");
 var PersistedACL = require("./Auth/PersistedACL");
 var PersistedDocument = require("./PersistedDocument");
 var PersistedProtectedDocument = require("./PersistedProtectedDocument");
@@ -27,10 +27,10 @@ var Documents = (function () {
         this.documentsBeingResolved = new Map();
         if (!!this.context && !!this.context.parentContext) {
             var contextJSONLDConverter = this.context.parentContext.documents.jsonldConverter;
-            this._jsonldConverter = new JSONLDConverter.Class(contextJSONLDConverter.literalSerializers);
+            this._jsonldConverter = new JSONLD.Converter.Class(contextJSONLDConverter.literalSerializers);
         }
         else {
-            this._jsonldConverter = new JSONLDConverter.Class();
+            this._jsonldConverter = new JSONLD.Converter.Class();
         }
     }
     Object.defineProperty(Documents.prototype, "jsonldConverter", {
@@ -44,7 +44,7 @@ var Documents = (function () {
             return false;
         if (!!this.context) {
             if (RDF.URI.Util.isPrefixed(id))
-                id = ObjectSchema.Digester.resolvePrefixedURI(new RDF.URI.Class(id), this.context.getObjectSchema()).stringValue;
+                id = ObjectSchema.Digester.resolvePrefixedURI(id, this.context.getObjectSchema());
             var baseURI = this.context.getBaseURI();
             if (RDF.URI.Util.isRelative(id))
                 return true;
@@ -232,7 +232,7 @@ var Documents = (function () {
             ],
         };
         HTTP.Request.Util.setContainerRetrievalPreferences(containerRetrievalPreferences, requestOptions);
-        return HTTP.Request.Service.get(parentURI, requestOptions, new HTTP.JSONLDParser.Class()).then(function (_a) {
+        return HTTP.Request.Service.get(parentURI, requestOptions, new JSONLD.Parser.Class()).then(function (_a) {
             var expandedResult = _a[0], response = _a[1];
             var freeNodes = RDF.Node.Util.getFreeNodes(expandedResult);
             var rdfDocuments = RDF.Document.Util.getDocuments(expandedResult).filter(function (document) { return document["@id"] !== containerURI; });
@@ -386,7 +386,7 @@ var Documents = (function () {
             containerRetrievalPreferences.omit.push(NS.C.Class.NonReadableMembershipResourceTriples);
         }
         HTTP.Request.Util.setContainerRetrievalPreferences(containerRetrievalPreferences, requestOptions);
-        return HTTP.Request.Service.get(uri, requestOptions, new HTTP.JSONLDParser.Class()).then(function (_a) {
+        return HTTP.Request.Service.get(uri, requestOptions, new JSONLD.Parser.Class()).then(function (_a) {
             var expandedResult = _a[0], response = _a[1];
             var freeNodes = RDF.Node.Util.getFreeNodes(expandedResult);
             var rdfDocuments = RDF.Document.Util.getDocuments(expandedResult);
@@ -638,7 +638,7 @@ var Documents = (function () {
             throw new Errors.IllegalArgumentError("BNodes cannot be fetched directly.");
         if (!!this.context) {
             if (RDF.URI.Util.isPrefixed(uri))
-                uri = ObjectSchema.Digester.resolvePrefixedURI(new RDF.URI.Class(uri), this.getGeneralSchema()).stringValue;
+                uri = ObjectSchema.Digester.resolvePrefixedURI(uri, this.getGeneralSchema());
             if (!RDF.URI.Util.isRelative(uri)) {
                 var baseURI = this.context.getBaseURI();
                 if (!RDF.URI.Util.isBaseOf(baseURI, uri))
@@ -750,7 +750,7 @@ var Documents = (function () {
         else if (RDF.URI.Util.isPrefixed(uri)) {
             if (!this.context)
                 throw new Errors.IllegalArgumentError("This Documents instance doesn't support prefixed URIs.");
-            uri = ObjectSchema.Digester.resolvePrefixedURI(new RDF.URI.Class(uri), this.context.getObjectSchema()).stringValue;
+            uri = ObjectSchema.Digester.resolvePrefixedURI(uri, this.context.getObjectSchema());
             if (RDF.URI.Util.isPrefixed(uri))
                 throw new Errors.IllegalArgumentError("The prefixed URI \"" + uri + "\" could not be resolved.");
         }

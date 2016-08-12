@@ -41,7 +41,7 @@ var Util = (function () {
                         id = id.substr(1);
                     }
                     if (!!digestedSchema && URI.Util.isRelative(id)) {
-                        id = ObjectSchema.Digester.resolvePrefixedURI(new URI.Class(id), digestedSchema).stringValue;
+                        id = ObjectSchema.Digester.resolvePrefixedURI(id, digestedSchema);
                         if (!!digestedSchema.vocab)
                             id = URI.Util.resolve(digestedSchema.vocab, id);
                     }

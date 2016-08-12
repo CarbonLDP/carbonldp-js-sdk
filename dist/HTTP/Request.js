@@ -116,7 +116,7 @@ var Service = (function () {
         else {
             options = bodyOrOptions ? bodyOrOptions : options;
         }
-        options = Utils.extend(options || {}, Service.defaultOptions);
+        options = Utils.extend({}, Service.defaultOptions, options);
         if (Utils.isNumber(method))
             method = Method_1.default[method];
         var requestPromise;
@@ -171,7 +171,9 @@ var Service = (function () {
         if (parser === void 0) { parser = null; }
         return Service.send(Method_1.default.DELETE, url, bodyOrOptions, optionsOrParser, parser);
     };
-    Service.defaultOptions = {};
+    Service.defaultOptions = {
+        sendCredentialsOnCORS: true,
+    };
     return Service;
 }());
 exports.Service = Service;

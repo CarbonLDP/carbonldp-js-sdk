@@ -1,9 +1,9 @@
-import * as Errors from "./Errors";
-import * as ObjectSchema from "./ObjectSchema";
-import * as NS from "./NS";
-import * as Pointer from "./Pointer";
-import * as RDF from "./RDF";
-import * as Utils from "./Utils";
+import * as Errors from "./../Errors";
+import * as ObjectSchema from "./../ObjectSchema";
+import * as NS from "./../NS";
+import * as Pointer from "./../Pointer";
+import * as RDF from "./../RDF";
+import * as Utils from "./../Utils";
 
 // TODO: Use Literal.Parsers to parse literals
 export class Class {
@@ -278,7 +278,7 @@ export class Class {
 			return null;
 		}
 
-		id = ObjectSchema.Digester.resolvePrefixedURI( new RDF.URI.Class( id ), generalSchema ).stringValue;
+		id = ObjectSchema.Digester.resolvePrefixedURI( id , generalSchema );
 
 		if( generalSchema.properties.has( id ) ) {
 			let definition:ObjectSchema.DigestedPropertyDefinition = generalSchema.properties.get( id );
@@ -613,7 +613,7 @@ export class Class {
 	private resolveTypeURI( uri:string, generalSchema:ObjectSchema.DigestedObjectSchema, digestedSchema:ObjectSchema.DigestedObjectSchema ):string {
 		if( RDF.URI.Util.isAbsolute( uri ) ) return uri;
 
-		uri = ObjectSchema.Digester.resolvePrefixedURI( new RDF.URI.Class( uri ), generalSchema ).stringValue;
+		uri = ObjectSchema.Digester.resolvePrefixedURI( uri , generalSchema );
 		if( digestedSchema.vocab ) uri = RDF.URI.Util.resolve( digestedSchema.vocab, uri );
 
 		return uri;

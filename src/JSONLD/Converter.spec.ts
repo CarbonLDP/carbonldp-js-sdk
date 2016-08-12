@@ -17,18 +17,18 @@ import {
 	hasInterface,
 	extendsClass,
 	hasDefaultExport,
-} from "./test/JasmineExtender";
+} from "./../test/JasmineExtender";
 
-import * as Errors from "./Errors";
-import * as HTTP from "./HTTP";
-import * as NS from "./NS";
-import * as ObjectSchema from "./ObjectSchema";
-import * as Pointer from "./Pointer";
-import * as RDF from "./RDF";
-import * as Utils from "./Utils";
+import * as Errors from "./../Errors";
+import * as HTTP from "./../HTTP";
+import * as NS from "./../NS";
+import * as ObjectSchema from "./../ObjectSchema";
+import * as Pointer from "./../Pointer";
+import * as RDF from "./../RDF";
+import * as Utils from "./../Utils";
 
-import * as JSONLDConverter from "./JSONLDConverter";
-import DefaultExport from "./JSONLDConverter";
+import * as JSONLDConverter from "./Converter";
+import DefaultExport from "./Converter";
 
 describe( module( "Carbon/JSONLDConverter" ), ():void => {
 

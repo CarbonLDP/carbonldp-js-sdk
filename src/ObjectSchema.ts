@@ -35,7 +35,7 @@ export class DigestedObjectSchema {
 
 	constructor() {
 		this.base = "";
-		this.vocab = "";
+		this.vocab = null;
 		this.prefixes = new Map<string, RDF.URI.Class>();
 		this.properties = new Map<string, DigestedPropertyDefinition>();
 		this.prefixedURIs = new Map<string, RDF.URI.Class[]>();
@@ -73,6 +73,8 @@ export class Digester {
 		if( digestedSchemas.length === 0 ) throw new Errors.IllegalArgumentError( "At least one DigestedObjectSchema needs to be specified." );
 
 		let combinedSchema:DigestedObjectSchema = new DigestedObjectSchema();
+		combinedSchema.vocab = digestedSchemas[ 0 ].vocab;
+		combinedSchema.base = digestedSchemas[ 0 ].base;
 
 		for( let digestedSchema of digestedSchemas ) {
 			Utils.M.extend( combinedSchema.prefixes, digestedSchema.prefixes );
@@ -85,8 +87,21 @@ export class Digester {
 		return combinedSchema;
 	}
 
-	static resolvePrefixedURI( uri:RDF.URI.Class, digestedSchema:DigestedObjectSchema ):RDF.URI.Class {
-		if( ! RDF.URI.Util.isPrefixed( uri.stringValue ) ) return uri;
+	public static resolvePrefixedURI( uri:string, digestedSchema:DigestedObjectSchema ):string {
+		if( uri === null ) return null;
+		if( ! RDF.URI.Util.isPrefixed( uri ) ) return uri;
+
+		let [ prefix, slug ]:[ string, string ] = <[ string, string ]> uri.split( ":" );
+
+		if( digestedSchema.prefixes.has( prefix ) ) {
+			uri = digestedSchema.prefixes.get( prefix ) + slug;
+		}
+
+		return uri;
+	}
+
+	private static _resolvePrefixedURI( uri:RDF.URI.Class, digestedSchema:DigestedObjectSchema ):RDF.URI.Class {
+		if( uri.stringValue === null || ! RDF.URI.Util.isPrefixed( uri.stringValue ) ) return uri;
 
 		let [ prefix, slug ]:[ string, string ] = <[ string, string ]> uri.stringValue.split( ":" );
 
@@ -103,26 +118,32 @@ export class Digester {
 	private static digestSingleSchema( schema:Class ):DigestedObjectSchema {
 		let digestedSchema:DigestedObjectSchema = new DigestedObjectSchema();
 
+		for( let propertyName of [ "@base", "@vocab" ] ) {
+			if( ! ( propertyName in schema ) ) continue;
+			let value:string = <string> schema[ propertyName ];
+
+			if( ! Utils.isString( value ) ) throw new Errors.IllegalArgumentError( `The value of '${ propertyName }' must be a string or null.` );
+			if( ( propertyName === "@vocab" || ! ! value ) && ! RDF.URI.Util.isAbsolute( value ) ) throw new Errors.IllegalArgumentError( `The value of '${ propertyName }' must be an absolute URI${ propertyName === "@base" ? " or an empty string" : "" }.` );
+
+			digestedSchema[ propertyName.substr( 1 ) ] = value;
+		}
+		digestedSchema.base = digestedSchema.base || "";
+
 		for( let propertyName in schema ) {
 			if( ! schema.hasOwnProperty( propertyName ) ) continue;
 
 			if( propertyName === "@reverse" ) continue;
 			if( propertyName === "@index" ) continue;
+			if( propertyName === "@base" ) continue;
+			if( propertyName === "@vocab" ) continue;
 
 			let propertyValue:( string | PropertyDefinition ) = schema[ propertyName ];
-
-			if( propertyName === "@base" || propertyName === "@vocab" ) {
-				if( ! Utils.isString( propertyValue ) ) throw new Errors.IllegalArgumentError( `The value of '${ propertyName }' must be a string or null.` );
-
-				digestedSchema[ propertyName.substr( 1 ) ] = propertyValue;
-				continue;
-			}
 
 			if( Utils.isString( propertyValue ) ) {
 				if( RDF.URI.Util.isPrefixed( propertyName ) ) throw new Errors.IllegalArgumentError( "A prefixed property cannot be equal to another URI." );
 
 				let uri:RDF.URI.Class = new RDF.URI.Class( <string> propertyValue );
-				if( RDF.URI.Util.isPrefixed( uri.stringValue ) ) uri = Digester.resolvePrefixedURI( uri, digestedSchema );
+				if( RDF.URI.Util.isPrefixed( uri.stringValue ) ) uri = Digester._resolvePrefixedURI( uri, digestedSchema );
 
 				digestedSchema.prefixes.set( propertyName, uri );
 			} else if( ! ! propertyValue && Utils.isObject( propertyValue ) ) {
@@ -133,12 +154,13 @@ export class Digester {
 					if( RDF.URI.Util.isPrefixed( propertyName ) ) throw new Errors.IllegalArgumentError( "A prefixed property cannot have assigned another URI." );
 
 					if( ! Utils.isString( schemaDefinition[ "@id" ] ) ) throw new Errors.IllegalArgumentError( "@id needs to point to a string" );
-					digestedDefinition.uri = Digester.resolvePrefixedURI( new RDF.URI.Class( schemaDefinition[ "@id" ] ), digestedSchema );
+					digestedDefinition.uri = Digester._resolvePrefixedURI( new RDF.URI.Class( schemaDefinition[ "@id" ] ), digestedSchema );
 				} else if( RDF.URI.Util.isPrefixed( propertyName ) ) {
-					digestedDefinition.uri = Digester.resolvePrefixedURI( new RDF.URI.Class( propertyName ), digestedSchema );
+					digestedDefinition.uri = Digester._resolvePrefixedURI( new RDF.URI.Class( propertyName ), digestedSchema );
+				} else if( digestedSchema.vocab !== null ) {
+					digestedDefinition.uri = new RDF.URI.Class( digestedSchema.vocab + <string> propertyName );
 				} else {
-					// TODO: Handle @vocab or @base case
-					throw new Errors.IllegalArgumentError( "Every property definition needs to have a uri defined." );
+					throw new Errors.IllegalArgumentError( `Every property definition needs to have a "@id" defined.` );
 				}
 
 				if( "@type" in schemaDefinition ) {
@@ -148,7 +170,7 @@ export class Digester {
 						digestedDefinition.literal = false;
 					} else {
 						digestedDefinition.literal = true;
-						digestedDefinition.literalType = Digester.resolvePrefixedURI( new RDF.URI.Class( schemaDefinition[ "@type" ] ), digestedSchema );
+						digestedDefinition.literalType = Digester._resolvePrefixedURI( new RDF.URI.Class( schemaDefinition[ "@type" ] ), digestedSchema );
 					}
 				}
 
@@ -191,7 +213,7 @@ export class Digester {
 
 			let prefixedURIs:RDF.URI.Class[] = digestedSchema.prefixedURIs.get( prefixName );
 			for( let prefixedURI of prefixedURIs ) {
-				Digester.resolvePrefixedURI( prefixedURI, digestedSchema );
+				Digester._resolvePrefixedURI( prefixedURI, digestedSchema );
 			}
 
 			digestedSchema.prefixedURIs.delete( prefixName );

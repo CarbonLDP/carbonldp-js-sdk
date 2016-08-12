@@ -130,6 +130,7 @@ gulp.task( "bundle-sfx", ( done ) => {
 		"sourceMaps": "inline",
 		"mangle": false,
 		"lowResSourceMaps": false,
+		"removeComments": true,
 	}).then( () => {
 		done();
 	}).catch( ( error ) => {

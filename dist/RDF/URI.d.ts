@@ -20,7 +20,9 @@ export declare class Util {
     static getFragment(uri: string): string;
     static getSlug(uri: string): string;
     static getParameters(uri: string): Map<string, string | string[]>;
-    static resolve(parentURI: string, childURI: string): string;
+    static resolve(parentURI: string, childURI: string, options?: {
+        untilSlash?: boolean;
+    }): string;
     static removeProtocol(uri: string): string;
     static prefix(uri: string, prefix: string, prefixURI: string): string;
     static prefix(uri: string, objectSchema: ObjectSchema.DigestedObjectSchema): string;

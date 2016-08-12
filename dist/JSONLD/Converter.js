@@ -1,10 +1,10 @@
 "use strict";
-var Errors = require("./Errors");
-var ObjectSchema = require("./ObjectSchema");
-var NS = require("./NS");
-var Pointer = require("./Pointer");
-var RDF = require("./RDF");
-var Utils = require("./Utils");
+var Errors = require("./../Errors");
+var ObjectSchema = require("./../ObjectSchema");
+var NS = require("./../NS");
+var Pointer = require("./../Pointer");
+var RDF = require("./../RDF");
+var Utils = require("./../Utils");
 var Class = (function () {
     function Class(literalSerializers) {
         this._literalSerializers = !!literalSerializers ? literalSerializers : Class.getDefaultSerializers();
@@ -236,7 +236,7 @@ var Class = (function () {
         if (!id) {
             return null;
         }
-        id = ObjectSchema.Digester.resolvePrefixedURI(new RDF.URI.Class(id), generalSchema).stringValue;
+        id = ObjectSchema.Digester.resolvePrefixedURI(id, generalSchema);
         if (generalSchema.properties.has(id)) {
             var definition = generalSchema.properties.get(id);
             if (definition.uri)
@@ -560,7 +560,7 @@ var Class = (function () {
     Class.prototype.resolveTypeURI = function (uri, generalSchema, digestedSchema) {
         if (RDF.URI.Util.isAbsolute(uri))
             return uri;
-        uri = ObjectSchema.Digester.resolvePrefixedURI(new RDF.URI.Class(uri), generalSchema).stringValue;
+        uri = ObjectSchema.Digester.resolvePrefixedURI(uri, generalSchema);
         if (digestedSchema.vocab)
             uri = RDF.URI.Util.resolve(digestedSchema.vocab, uri);
         return uri;
@@ -571,4 +571,4 @@ exports.Class = Class;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = Class;
 
-//# sourceMappingURL=JSONLDConverter.js.map
+//# sourceMappingURL=Converter.js.map

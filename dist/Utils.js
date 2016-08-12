@@ -113,6 +113,8 @@ function extend(target) {
     }
     for (var _a = 0, objects_1 = objects; _a < objects_1.length; _a++) {
         var toMerge = objects_1[_a];
+        if (!toMerge)
+            continue;
         for (var name_1 in toMerge) {
             if (toMerge.hasOwnProperty(name_1)) {
                 target[name_1] = toMerge[name_1];

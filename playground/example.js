@@ -5,17 +5,25 @@
 			"use strict";
 
 			let object = {
-				"@context": "http://schema.org/",
+				"@context": {
+					"@vocab": "http://example.com/ns#",
+					"@base": "http://example.com/",
+					"url": { "@type": "@id" }
+				},
 				"@type": "Person",
 				"name": "Jane Doe",
 				"jobTitle": "Professor",
 				"telephone": "(425) 123-4567",
 				"url": "http://www.janedoe.com"
 			};
-			Carbon.HTTP.JSONLDParser.expand( object ).then( ( expanded ) => {
-				expect( object ).toBe( expanded );
+			Carbon.JSONLD.Processor.expand( object ).then( ( expanded ) => {
+				expect( object ).not.toBe( expanded );
+				console.log( expanded );
 				done();
-			} ).catch( done.fail );
+			} ).catch( error => {
+				console.error( error );
+				done.fail( error );
+			} );
 			return;
 
 			let carbon = new Carbon();
