@@ -26,6 +26,11 @@ export enum ContainerType {
 	LANGUAGE
 }
 
+export enum PointerType {
+	ID,
+	VOCAB,
+}
+
 export class DigestedObjectSchema {
 	base:string;
 	vocab:string;
@@ -46,6 +51,7 @@ export class DigestedPropertyDefinition {
 	uri:RDF.URI.Class = null;
 	literal:boolean = null;
 	literalType:RDF.URI.Class = null;
+	pointerType:PointerType = null;
 	language:string = null;
 	containerType:ContainerType = null;
 }
@@ -123,7 +129,7 @@ export class Digester {
 			let value:string = <string> schema[ propertyName ];
 
 			if( ! Utils.isString( value ) ) throw new Errors.IllegalArgumentError( `The value of '${ propertyName }' must be a string or null.` );
-			if( ( propertyName === "@vocab" || ! ! value ) && ! RDF.URI.Util.isAbsolute( value ) ) throw new Errors.IllegalArgumentError( `The value of '${ propertyName }' must be an absolute URI${ propertyName === "@base" ? " or an empty string" : "" }.` );
+			if( ( propertyName === "@vocab" || ! ! value ) && ! RDF.URI.Util.isAbsolute( value ) && ! RDF.URI.Util.isBNodeID( value ) ) throw new Errors.IllegalArgumentError( `The value of '${ propertyName }' must be an absolute URI${ propertyName === "@base" ? " or an empty string" : "" }.` );
 
 			digestedSchema[ propertyName.substr( 1 ) ] = value;
 		}
@@ -166,8 +172,9 @@ export class Digester {
 				if( "@type" in schemaDefinition ) {
 					if( ! Utils.isString( schemaDefinition[ "@type" ] ) ) throw new Errors.IllegalArgumentError( "@type needs to point to a string" );
 
-					if( schemaDefinition[ "@type" ] === "@id" ) {
+					if( schemaDefinition[ "@type" ] === "@id" || schemaDefinition[ "@type" ] === "@vocab" ) {
 						digestedDefinition.literal = false;
+						digestedDefinition.pointerType = ( schemaDefinition[ "@type" ] === "@id" ) ? PointerType.ID : PointerType.VOCAB;
 					} else {
 						digestedDefinition.literal = true;
 						digestedDefinition.literalType = Digester._resolvePrefixedURI( new RDF.URI.Class( schemaDefinition[ "@type" ] ), digestedSchema );

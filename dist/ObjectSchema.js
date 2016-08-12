@@ -8,6 +8,11 @@ var Utils = require("./Utils");
     ContainerType[ContainerType["LANGUAGE"] = 2] = "LANGUAGE";
 })(exports.ContainerType || (exports.ContainerType = {}));
 var ContainerType = exports.ContainerType;
+(function (PointerType) {
+    PointerType[PointerType["ID"] = 0] = "ID";
+    PointerType[PointerType["VOCAB"] = 1] = "VOCAB";
+})(exports.PointerType || (exports.PointerType = {}));
+var PointerType = exports.PointerType;
 var DigestedObjectSchema = (function () {
     function DigestedObjectSchema() {
         this.base = "";
@@ -24,6 +29,7 @@ var DigestedPropertyDefinition = (function () {
         this.uri = null;
         this.literal = null;
         this.literalType = null;
+        this.pointerType = null;
         this.language = null;
         this.containerType = null;
     }
@@ -92,7 +98,7 @@ var Digester = (function () {
             var value = schema[propertyName];
             if (!Utils.isString(value))
                 throw new Errors.IllegalArgumentError("The value of '" + propertyName + "' must be a string or null.");
-            if ((propertyName === "@vocab" || !!value) && !RDF.URI.Util.isAbsolute(value))
+            if ((propertyName === "@vocab" || !!value) && !RDF.URI.Util.isAbsolute(value) && !RDF.URI.Util.isBNodeID(value))
                 throw new Errors.IllegalArgumentError("The value of '" + propertyName + "' must be an absolute URI" + (propertyName === "@base" ? " or an empty string" : "") + ".");
             digestedSchema[propertyName.substr(1)] = value;
         }
@@ -139,8 +145,9 @@ var Digester = (function () {
                 if ("@type" in schemaDefinition) {
                     if (!Utils.isString(schemaDefinition["@type"]))
                         throw new Errors.IllegalArgumentError("@type needs to point to a string");
-                    if (schemaDefinition["@type"] === "@id") {
+                    if (schemaDefinition["@type"] === "@id" || schemaDefinition["@type"] === "@vocab") {
                         digestedDefinition.literal = false;
+                        digestedDefinition.pointerType = (schemaDefinition["@type"] === "@id") ? PointerType.ID : PointerType.VOCAB;
                     }
                     else {
                         digestedDefinition.literal = true;

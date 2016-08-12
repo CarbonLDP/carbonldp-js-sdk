@@ -18,6 +18,10 @@ export declare enum ContainerType {
     LIST = 1,
     LANGUAGE = 2,
 }
+export declare enum PointerType {
+    ID = 0,
+    VOCAB = 1,
+}
 export declare class DigestedObjectSchema {
     base: string;
     vocab: string;
@@ -30,6 +34,7 @@ export declare class DigestedPropertyDefinition {
     uri: RDF.URI.Class;
     literal: boolean;
     literalType: RDF.URI.Class;
+    pointerType: PointerType;
     language: string;
     containerType: ContainerType;
 }

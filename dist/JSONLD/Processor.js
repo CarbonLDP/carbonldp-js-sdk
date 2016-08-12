@@ -114,7 +114,7 @@ function _retrieveContexts(input, contextsRequested, base) {
     for (var url in contextToResolved) {
         if (url in contextsRequested)
             return Promise.reject(new Error_1.default("Cyclical @context URLs detected."));
-        var requestOptions = {};
+        var requestOptions = { sendCredentialsOnCORS: false };
         HTTP.Request.Util.setAcceptHeader("application/ld+json, application/json", requestOptions);
         var promise = HTTP.Request.Service.get(url, requestOptions, new HTTP.JSONParser.Class());
         promises.push(resolved(url, promise));
@@ -163,7 +163,7 @@ function _isValidType(value) {
     }
     return true;
 }
-function _expandURI(value, schema, relativeTo) {
+function _expandURI(schema, value, relativeTo) {
     if (relativeTo === void 0) { relativeTo = {}; }
     if (value === null || _isKeyword(value) || RDF.URI.Util.isAbsolute(value))
         return value;
@@ -171,6 +171,8 @@ function _expandURI(value, schema, relativeTo) {
         return schema.properties.get(value).uri.stringValue;
     if (RDF.URI.Util.isPrefixed(value))
         return ObjectSchema.Digester.resolvePrefixedURI(value, schema);
+    if (schema.prefixes.has(value))
+        return schema.prefixes.get(value).stringValue;
     if (relativeTo.vocab) {
         if (schema.vocab === null)
             return null;
@@ -207,8 +209,38 @@ function _getContainer(context, property) {
         return context.properties.get(property).containerType;
     return undefined;
 }
-function _expandValue(context, element, propertyName) {
-    return element;
+function _expandValue(context, value, propertyName) {
+    if (Utils.isNull(value) || !Utils.isDefined(value))
+        return null;
+    if (propertyName === "@id") {
+        return _expandURI(context, value, { base: true });
+    }
+    else if (propertyName === "@type") {
+        return _expandURI(context, value, { vocab: true, base: true });
+    }
+    var definition = new ObjectSchema.DigestedPropertyDefinition();
+    if (context.properties.has(propertyName))
+        definition = context.properties.get(propertyName);
+    if (definition.literal === false || (propertyName === "@graph" && Utils.isString(value))) {
+        var options = { base: true };
+        if (definition.pointerType === ObjectSchema.PointerType.VOCAB)
+            options.vocab = true;
+        return { "@id": _expandURI(context, value, options) };
+    }
+    if (_isKeyword(propertyName))
+        return value;
+    var expandedValue = {};
+    if (!!definition.literalType) {
+        expandedValue["@type"] = definition.literalType.stringValue;
+    }
+    else if (Utils.isString(value)) {
+        if (!!definition.language)
+            expandedValue["@laguage"] = definition.language;
+    }
+    if (["boolean", "number", "string"].indexOf(typeof value) === -1)
+        value = value.toString();
+    expandedValue["@value"] = value;
+    return expandedValue;
 }
 function _process(context, element, activeProperty, insideList) {
     if (Utils.isNull(element) || !Utils.isDefined(element))
@@ -247,8 +279,8 @@ function _process(context, element, activeProperty, insideList) {
         var key = keys_2[_b];
         if (key === "@context")
             continue;
-        var uri = _expandURI(key, context, { vocab: true });
-        if (!uri || !(RDF.URI.Util.isAbsolute(uri) || _isKeyword(uri)))
+        var uri = _expandURI(context, key, { vocab: true });
+        if (!uri || !(RDF.URI.Util.isAbsolute(uri) || RDF.URI.Util.isBNodeID(uri) || _isKeyword(uri)))
             continue;
         var value = element[key];
         if (_isKeyword(uri)) {
@@ -293,8 +325,19 @@ function _process(context, element, activeProperty, insideList) {
                 expandedValue = [expandedValue];
             expandedValue = { "@list": expandedValue };
         }
-        var useArray = ["@id", "@type", "@value", "@language"].indexOf(uri) === -1;
+        var useArray = ["@type", "@id", "@value", "@language"].indexOf(uri) === -1;
         _addValue(expandedElement, uri, expandedValue, { propertyIsArray: useArray });
+    }
+    if ("@value" in expandedElement) {
+        if (expandedElement["@value"] === null)
+            expandedElement = null;
+    }
+    else if ("@type" in expandedElement) {
+        if (!Utils.isArray(expandedElement["@type"]))
+            expandedElement["@type"] = [expandedElement["@type"]];
+    }
+    else if ("@set" in expandedElement) {
+        expandedElement = expandedElement["@set"];
     }
     return expandedElement;
 }
@@ -364,7 +407,16 @@ function _hasValue(element, propertyName, value) {
 }
 function expand(input) {
     return _retrieveContexts(input, Object.create(null), "").then(function () {
-        return _process(new ObjectSchema.DigestedObjectSchema(), input);
+        var expanded = _process(new ObjectSchema.DigestedObjectSchema(), input);
+        if (Utils.isObject(expanded) && "@graph" in expanded && Object.keys(expanded).length === 1) {
+            expanded = expanded["@graph"];
+        }
+        else if (expanded === null) {
+            expanded = [];
+        }
+        if (!Utils.isArray(expanded))
+            expanded = [expanded];
+        return expanded;
     });
 }
 exports.expand = expand;

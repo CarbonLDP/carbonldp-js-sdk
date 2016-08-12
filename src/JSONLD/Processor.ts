@@ -112,7 +112,7 @@ function _retrieveContexts( input:Object, contextsRequested:{[ index:string ]:bo
 	for( let url in contextToResolved ) {
 		if( url in contextsRequested ) return Promise.reject<void>( new Error( "Cyclical @context URLs detected." ) );
 
-		let requestOptions:HTTP.Request.Options = {};
+		let requestOptions:HTTP.Request.Options = { sendCredentialsOnCORS: false };
 		HTTP.Request.Util.setAcceptHeader( "application/ld+json, application/json", requestOptions );
 
 		let promise:Promise<[ any, HTTP.Response.Class ]> = HTTP.Request.Service.get( url, requestOptions, new HTTP.JSONParser.Class() );
@@ -167,11 +167,12 @@ function _isValidType( value:any ):boolean {
 }
 
 
-function _expandURI( value:string, schema:ObjectSchema.DigestedObjectSchema, relativeTo:{ vocab?:boolean, base?:boolean } = {} ):string {
+function _expandURI( schema:ObjectSchema.DigestedObjectSchema, value:string, relativeTo:{ vocab?:boolean, base?:boolean } = {} ):string {
 	if( value === null || _isKeyword( value ) || RDF.URI.Util.isAbsolute( value ) ) return value;
 
 	if( schema.properties.has( value ) ) return schema.properties.get( value ).uri.stringValue;
 	if( RDF.URI.Util.isPrefixed( value ) ) return ObjectSchema.Digester.resolvePrefixedURI( value, schema );
+	if( schema.prefixes.has( value ) ) return schema.prefixes.get( value ).stringValue;
 
 	if( relativeTo.vocab ) {
 		if( schema.vocab === null ) return null;
@@ -208,9 +209,39 @@ function _getContainer( context:ObjectSchema.DigestedObjectSchema, property:stri
 	return undefined;
 }
 
-function _expandValue( context:ObjectSchema.DigestedObjectSchema, element:Object, propertyName:string ):Object {
-	// TODO: Expand
-	return element;
+function _expandValue( context:ObjectSchema.DigestedObjectSchema, value:any, propertyName:string ):any {
+	if( Utils.isNull( value ) || ! Utils.isDefined( value ) ) return null;
+
+	if( propertyName === "@id" ) {
+		return _expandURI( context, value, { base: true } );
+	} else if( propertyName === "@type" ) {
+		return _expandURI( context, value, { vocab: true, base: true } );
+	}
+
+	let definition:ObjectSchema.DigestedPropertyDefinition = new ObjectSchema.DigestedPropertyDefinition();
+	if( context.properties.has( propertyName ) ) definition = context.properties.get( propertyName );
+
+	if( definition.literal === false || ( propertyName === "@graph" && Utils.isString( value ) ) ) {
+		let options:{base:boolean, vocab?:boolean} = { base: true };
+		if ( definition.pointerType === ObjectSchema.PointerType.VOCAB ) options.vocab = true;
+
+		return { "@id": _expandURI( context, value, options ) };
+	}
+
+	if( _isKeyword( propertyName ) ) return value;
+
+	let expandedValue:Object = {};
+	if( ! ! definition.literalType ) {
+		expandedValue[ "@type" ] = definition.literalType.stringValue;
+	} else if( Utils.isString( value ) ) {
+		if( ! ! definition.language ) expandedValue[ "@laguage" ] = definition.language;
+	}
+
+	// Normalize to string unknowns types
+	if( [ "boolean", "number", "string" ].indexOf( typeof value ) === -1 ) value = value.toString();
+	expandedValue[ "@value" ] = value;
+
+	return expandedValue;
 }
 
 function _process( context:ObjectSchema.DigestedObjectSchema, element:Object, activeProperty?:string, insideList?:boolean ):Object {
@@ -254,8 +285,8 @@ function _process( context:ObjectSchema.DigestedObjectSchema, element:Object, ac
 	for( let key of keys ) {
 		if( key === "@context" ) continue;
 
-		let uri:string = _expandURI( key, context, { vocab: true } );
-		if( ! uri || ! ( RDF.URI.Util.isAbsolute( uri ) || _isKeyword( uri ) ) ) continue;
+		let uri:string = _expandURI( context, key, { vocab: true } );
+		if( ! uri || ! ( RDF.URI.Util.isAbsolute( uri ) || RDF.URI.Util.isBNodeID( uri ) || _isKeyword( uri ) ) ) continue;
 
 		let value:any = element[ key ];
 
@@ -298,11 +329,17 @@ function _process( context:ObjectSchema.DigestedObjectSchema, element:Object, ac
 			expandedValue = { "@list": expandedValue };
 		}
 
-		let useArray:boolean = [ "@id", "@type", "@value", "@language" ].indexOf( uri ) === -1;
+		let useArray:boolean = [ "@type", "@id", "@value", "@language" ].indexOf( uri ) === -1;
 		_addValue( expandedElement, uri, expandedValue, { propertyIsArray: useArray } );
 	}
 
-	// TODO: Validate result
+	if( "@value" in expandedElement ) {
+		if( expandedElement[ "@value" ] === null ) expandedElement = null;
+	} else if( "@type" in expandedElement ) {
+		if( ! Utils.isArray( expandedElement[ "@type" ] ) ) expandedElement[ "@type" ] = [ expandedElement[ "@type" ] ];
+	} else if( "@set" in expandedElement ) {
+		expandedElement = expandedElement[ "@set" ];
+	}
 
 	return expandedElement;
 }
@@ -377,7 +414,20 @@ function _hasValue( element:Object, propertyName:string, value:any ):boolean {
 export function expand( input:Object ):Promise<Object> {
 	// Find and resolve context URLs
 	return _retrieveContexts( input, <{[ index:string ]:boolean}> Object.create( null ), "" ).then( () => {
-		return _process( new ObjectSchema.DigestedObjectSchema(), input );
+		// Expand the document
+		let expanded:any = _process( new ObjectSchema.DigestedObjectSchema(), input );
+
+		// Optimize @graph
+		if( Utils.isObject( expanded ) && "@graph" in expanded && Object.keys( expanded ).length === 1 ) {
+			expanded = expanded[ "@graph" ];
+		} else if ( expanded === null ) {
+			expanded = [];
+		}
+
+		// Normalize to an array
+		if( ! Utils.isArray( expanded ) ) expanded = [ expanded ];
+
+		return expanded;
 	} );
 }
 
