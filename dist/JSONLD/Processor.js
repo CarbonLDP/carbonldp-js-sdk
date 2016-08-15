@@ -1,5 +1,5 @@
 "use strict";
-var Error_1 = require("./Error");
+var InvalidJSONLDSyntaxError_1 = require("../Errors/InvalidJSONLDSyntaxError");
 var Errors = require("./../Errors");
 var HTTP = require("./../HTTP");
 var ObjectSchema = require("./../ObjectSchema");
@@ -7,6 +7,26 @@ var RDF = require("./../RDF");
 var Utils = require("./../Utils");
 var MAX_CTX_URLS = 10;
 var LINK_HEADER_REL = "http://www.w3.org/ns/json-ld#context";
+var Class = (function () {
+    function Class() {
+    }
+    Class.expand = function (input) {
+        return _retrieveContexts(input, Object.create(null), "").then(function () {
+            var expanded = _process(new ObjectSchema.DigestedObjectSchema(), input);
+            if (Utils.isObject(expanded) && "@graph" in expanded && Object.keys(expanded).length === 1) {
+                expanded = expanded["@graph"];
+            }
+            else if (expanded === null) {
+                expanded = [];
+            }
+            if (!Utils.isArray(expanded))
+                expanded = [expanded];
+            return expanded;
+        });
+    };
+    return Class;
+}());
+exports.Class = Class;
 function _getTargetFromLinkHeader(header) {
     var rLinkHeader = /\s*<([^>]*?)>\s*(?:;\s*(.*))?/;
     for (var _i = 0, _a = header.values; _i < _a.length; _i++) {
@@ -84,7 +104,7 @@ function _findContextURLs(input, contexts, base, replace) {
 }
 function _retrieveContexts(input, contextsRequested, base) {
     if (Object.keys(contextsRequested).length > MAX_CTX_URLS)
-        return Promise.reject(new Error_1.default("Maximum number of @context URLs exceeded."));
+        return Promise.reject(new InvalidJSONLDSyntaxError_1.default("Maximum number of @context URLs exceeded."));
     var contextToResolved = Object.create(null);
     if (!_findContextURLs(input, contextToResolved, base))
         return Promise.resolve();
@@ -113,7 +133,7 @@ function _retrieveContexts(input, contextsRequested, base) {
     var promises = [];
     for (var url in contextToResolved) {
         if (url in contextsRequested)
-            return Promise.reject(new Error_1.default("Cyclical @context URLs detected."));
+            return Promise.reject(new InvalidJSONLDSyntaxError_1.default("Cyclical @context URLs detected."));
         var requestOptions = { sendCredentialsOnCORS: false };
         HTTP.Request.Util.setAcceptHeader("application/ld+json, application/json", requestOptions);
         var promise = HTTP.Request.Service.get(url, requestOptions, new HTTP.JSONParser.Class());
@@ -195,7 +215,7 @@ function _expandLanguageMap(languageMap) {
             if (item === null)
                 continue;
             if (!Utils.isString(item))
-                throw new Error_1.default("Language map values must be strings.");
+                throw new InvalidJSONLDSyntaxError_1.default("Language map values must be strings.");
             expandedLanguage.push({
                 "@value": item,
                 "@language": key.toLowerCase(),
@@ -260,7 +280,7 @@ function _process(context, element, activeProperty, insideList) {
             if (expandedItem === null)
                 continue;
             if (insideList && (Utils.isArray(expandedItem) || RDF.List.Factory.is(expandedItem)))
-                throw new Error_1.default("Lists of lists are not permitted.");
+                throw new InvalidJSONLDSyntaxError_1.default("Lists of lists are not permitted.");
             if (!Utils.isArray(expandedItem))
                 expandedItem = [expandedItem];
             Array.prototype.push.apply(expandedElement_1, expandedItem);
@@ -285,24 +305,24 @@ function _process(context, element, activeProperty, insideList) {
         var value = element[key];
         if (_isKeyword(uri)) {
             if (uri === "@id" && !Utils.isString(value))
-                throw new Error_1.default("\"@id\" value must a string.");
+                throw new InvalidJSONLDSyntaxError_1.default("\"@id\" value must a string.");
             if (uri === "@type" && !_isValidType(value))
-                throw new Error_1.default("\"@type\" value must a string, an array of strings.");
+                throw new InvalidJSONLDSyntaxError_1.default("\"@type\" value must a string, an array of strings.");
             if (uri === "@graph" && !(Utils.isObject(value) || Utils.isArray(value)))
-                throw new Error_1.default("\"@graph\" value must not be an object or an array.");
+                throw new InvalidJSONLDSyntaxError_1.default("\"@graph\" value must not be an object or an array.");
             if (uri === "@value" && (Utils.isObject(value) || Utils.isArray(value)))
-                throw new Error_1.default("\"@value\" value must not be an object or an array.");
+                throw new InvalidJSONLDSyntaxError_1.default("\"@value\" value must not be an object or an array.");
             if (uri === "@language") {
                 if (value)
                     continue;
                 if (!Utils.isString(value))
-                    throw new Error_1.default("\"@language\" value must be a string.");
+                    throw new InvalidJSONLDSyntaxError_1.default("\"@language\" value must be a string.");
                 value = value.toLowerCase();
             }
             if (uri === "@index" && !Utils.isString(value))
-                throw new Error_1.default("\"@index\" value must be a string.");
+                throw new InvalidJSONLDSyntaxError_1.default("\"@index\" value must be a string.");
             if (uri === "@reverse" && !Utils.isObject(value))
-                throw new Error_1.default("\"@reverse\" value must be an object.");
+                throw new InvalidJSONLDSyntaxError_1.default("\"@reverse\" value must be an object.");
             if (uri === "@index" || uri === "@reverse")
                 throw new Errors.NotImplementedError("The SDK does not support \"@index\" and \"@reverse\" tags.");
         }
@@ -405,24 +425,7 @@ function _hasValue(element, propertyName, value) {
     }
     return false;
 }
-function expand(input) {
-    return _retrieveContexts(input, Object.create(null), "").then(function () {
-        var expanded = _process(new ObjectSchema.DigestedObjectSchema(), input);
-        if (Utils.isObject(expanded) && "@graph" in expanded && Object.keys(expanded).length === 1) {
-            expanded = expanded["@graph"];
-        }
-        else if (expanded === null) {
-            expanded = [];
-        }
-        if (!Utils.isArray(expanded))
-            expanded = [expanded];
-        return expanded;
-    });
-}
-exports.expand = expand;
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = {
-    expand: expand,
-};
+exports.default = Class;
 
 //# sourceMappingURL=Processor.js.map

@@ -1,4 +1,4 @@
-import Error from "./Error";
+import Error from "../Errors/InvalidJSONLDSyntaxError";
 import * as Errors from "./../Errors";
 import * as HTTP from "./../HTTP";
 import * as ObjectSchema from "./../ObjectSchema";
@@ -7,6 +7,28 @@ import * as Utils from "./../Utils";
 
 const MAX_CTX_URLS:number = 10;
 const LINK_HEADER_REL:string = "http://www.w3.org/ns/json-ld#context";
+
+export class Class {
+	static expand( input:Object ):Promise<Array<Object>> {
+		// Find and resolve context URLs
+		return _retrieveContexts( input, <{[ index:string ]:boolean}> Object.create( null ), "" ).then( () => {
+			// Expand the document
+			let expanded:any = _process( new ObjectSchema.DigestedObjectSchema(), input );
+
+			// Optimize @graph
+			if( Utils.isObject( expanded ) && "@graph" in expanded && Object.keys( expanded ).length === 1 ) {
+				expanded = expanded[ "@graph" ];
+			} else if ( expanded === null ) {
+				expanded = [];
+			}
+
+			// Normalize to an array
+			if( ! Utils.isArray( expanded ) ) expanded = [ expanded ];
+
+			return expanded;
+		} );
+	}
+}
 
 function _getTargetFromLinkHeader( header:HTTP.Header.Class ):string {
 	let rLinkHeader:RegExp = /\s*<([^>]*?)>\s*(?:;\s*(.*))?/;
@@ -165,7 +187,6 @@ function _isValidType( value:any ):boolean {
 
 	return true;
 }
-
 
 function _expandURI( schema:ObjectSchema.DigestedObjectSchema, value:string, relativeTo:{ vocab?:boolean, base?:boolean } = {} ):string {
 	if( value === null || _isKeyword( value ) || RDF.URI.Util.isAbsolute( value ) ) return value;
@@ -411,26 +432,4 @@ function _hasValue( element:Object, propertyName:string, value:any ):boolean {
 	return false;
 }
 
-export function expand( input:Object ):Promise<Object> {
-	// Find and resolve context URLs
-	return _retrieveContexts( input, <{[ index:string ]:boolean}> Object.create( null ), "" ).then( () => {
-		// Expand the document
-		let expanded:any = _process( new ObjectSchema.DigestedObjectSchema(), input );
-
-		// Optimize @graph
-		if( Utils.isObject( expanded ) && "@graph" in expanded && Object.keys( expanded ).length === 1 ) {
-			expanded = expanded[ "@graph" ];
-		} else if ( expanded === null ) {
-			expanded = [];
-		}
-
-		// Normalize to an array
-		if( ! Utils.isArray( expanded ) ) expanded = [ expanded ];
-
-		return expanded;
-	} );
-}
-
-export default {
-	expand,
-};
+export default Class;

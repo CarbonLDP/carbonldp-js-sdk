@@ -183,3 +183,6 @@ profile
 DerivedData
 *.hmap
 *.ipa
+
+# VSCode
+.vscode/

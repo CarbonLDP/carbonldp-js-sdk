@@ -55,8 +55,7 @@ function onResolve( resolve:Resolve, reject:Reject, response:Response ):void {
 
 		let parser:ErrorResponse.Parser = new ErrorResponse.Parser();
 		parser.parse( response.data, error ).then( ( errorResponse:ErrorResponse.Class ) => {
-			let message:string = ErrorResponse.Util.getMessage( errorResponse );
-			error.message = message;
+			error.message = ErrorResponse.Util.getMessage( errorResponse );
 			reject( error );
 
 		} ).catch( () => {
@@ -95,40 +94,54 @@ function sendWithBrowser( method:string, url:string, body:string | Blob, options
 function sendWithNode( method:string, url:string, body:string | Buffer, options:Options ):Promise<Response> {
 	return new Promise<Response>( ( resolve:Resolve, reject:Reject ):void => {
 		let URL:any = require( "url" );
-		let parsedURL:Url = URL.parse( url );
-		let HTTP:any = parsedURL.protocol === "http:" ? require( "http" ) : require( "https" );
 
-		let requestOptions:RequestOptions & { withCredentials:boolean } = {
-			protocol: parsedURL.protocol,
-			hostname: parsedURL.hostname,
-			path: parsedURL.path,
-			method: method,
-			headers: {},
-			withCredentials: options.sendCredentialsOnCORS,
-		};
-		if( options.headers ) forEachHeaders( options.headers, ( name:string, value:string ) => requestOptions.headers[ name ] = value );
-
-		let request:ClientRequest = HTTP.request( requestOptions, ( res:IncomingMessage ) => {
+		function returnResponse( request:ClientRequest, res:IncomingMessage ):void {
 			let rawData:Buffer[] = [];
 
 			res.on( "data", ( chunk ) => {
 				rawData.push( chunk );
-			} );
 
-			res.on( "end", () => {
+			} ).on( "end", () => {
 				let data:string = Buffer.concat( rawData ).toString( "utf8" );
 				let response:Response = new Response( request, data, res );
+
 				onResolve( resolve, reject, response );
 			} );
-		} );
-		if( options.timeout ) request.setTimeout( options.timeout );
+		}
 
-		request.on( "error", ( error ) => {
-			let response:Response = new Response( request, error.message );
-			onResolve( resolve, reject, response );
-		} );
+		let numberOfRedirects:number = 0;
+		function sendRequest( _url:string ):void {
+			let parsedURL:Url = URL.parse( _url );
+			let HTTP:any = parsedURL.protocol === "http:" ? require( "http" ) : require( "https" );
 
-		request.end( body );
+			let requestOptions:RequestOptions & { withCredentials:boolean } = {
+				protocol: parsedURL.protocol,
+				hostname: parsedURL.hostname,
+				path: parsedURL.path,
+				method: method,
+				headers: {},
+				withCredentials: options.sendCredentialsOnCORS,
+			};
+			if( options.headers ) forEachHeaders( options.headers, ( name:string, value:string ) => requestOptions.headers[ name ] = value );
+
+			let request:ClientRequest = HTTP.request( requestOptions );
+			if( options.timeout ) request.setTimeout( options.timeout );
+			request.on( "response", ( res:IncomingMessage ) => {
+				if( res.statusCode >= 300 && res.statusCode <= 399 && "location" in res.headers ) {
+					if( ++numberOfRedirects < 10 ) return sendRequest( URL.resolve( _url, res.headers.location ) );
+				}
+
+				returnResponse( request, res );
+			} );
+
+			request.on( "error", ( error ) => {
+				let response:Response = new Response( request, error.message );
+				onResolve( resolve, reject, response );
+			} );
+			request.end( body );
+		}
+		sendRequest( url );
+
 	} );
 }
 

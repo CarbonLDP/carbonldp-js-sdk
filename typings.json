@@ -1,9 +1,11 @@
 {
   "name": "carbonldp",
-  "dependencies": {},
+  "dependencies": {
+    "jsonld": "registry:npm/jsonld#0.4.0+20160504133022"
+  },
   "globalDependencies": {
-    "jasmine": "registry:dt/jasmine#2.2.0+20160505161446",
-    "jasmine-ajax": "registry:dt/jasmine-ajax#3.1.1+20160317120654",
-    "node": "registry:dt/node#6.0.0+20160523035754"
+    "jasmine": "registry:dt/jasmine#2.2.0+20160621224255",
+    "jasmine-ajax": "registry:dt/jasmine-ajax#3.1.1+20160802133254",
+    "node": "registry:dt/node#6.0.0+20160807145350"
   }
 }

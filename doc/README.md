@@ -113,6 +113,9 @@
 		- [Constructor](#Carbon-Errors-IllegalStateError-Constructor)
 		- [Properties](#Carbon-Errors-IllegalStateError-Properties)
 		- [Methods](#Carbon-Errors-IllegalStateError-Methods)
+- [Module Carbon/Errors/InvalidJSONLDSyntaxError](#Carbon-Errors-InvalidJSONLDSyntaxError)
+	- [Class Carbon.Errors.InvalidJSONLDSyntaxError](#Carbon-Errors-InvalidJSONLDSyntaxError)
+		- [Properties](#Carbon-Errors-InvalidJSONLDSyntaxError-Properties)
 - [Module Carbon/Errors/NotImplementedError](#Carbon-Errors-NotImplementedError)
 	- [Class Carbon.Errors.NotImplementedError](#Carbon-Errors-NotImplementedError)
 		- [Constructor](#Carbon-Errors-NotImplementedError-Constructor)
@@ -281,6 +284,9 @@
 - [Module Carbon/HTTP/StringParser](#Carbon-HTTP-StringParser)
 	- [Class Carbon.HTTP.StringParser.Class](#Carbon-HTTP-StringParser-Class)
 		- [Methods](#Carbon-HTTP-StringParser-Class-Methods)
+- [Module Carbon/JSONLD/Processor](#Carbon-JSONLD-Processor)
+	- [Class Carbon.JSONLD.Processor.Class](#Carbon-JSONLD-Processor-Class)
+		- [Methods](#Carbon-JSONLD-Processor-Class-Methods)
 - [Module Carbon/JSONLDConverter](#Carbon-JSONLDConverter)
 	- [Class Carbon.JSONLDConverter.Class](#Carbon-JSONLDConverter-Class)
 		- [Constructor](#Carbon-JSONLDConverter-Class-Constructor)
@@ -2851,6 +2857,7 @@ Upload binary data, creating a child for the parent specified. This signature on
 | IllegalActionError | [Carbon/Errors/IllegalActionError](#Carbon-Errors-IllegalActionError) |
 | IllegalArgumentError | [Carbon/Errors/IllegalArgumentError](#Carbon-Errors-IllegalArgumentError) |
 | IllegalStateError | [Carbon/Errors/IllegalStateError](#Carbon-Errors-IllegalStateError) |
+| InvalidJSONLDSyntaxError | [Carbon/Errors/InvalidJSONLDSyntaxError](#Carbon-Errors-InvalidJSONLDSyntaxError) |
 | NotImplementedError | [Carbon/Errors/NotImplementedError](#Carbon-Errors-NotImplementedError) |
 
 
@@ -3022,6 +3029,32 @@ name:string
 ##### toString
 ```typescript 
 toString():string
+```
+
+
+
+
+## <a name="Carbon-Errors-InvalidJSONLDSyntaxError" />Module Carbon/Errors/InvalidJSONLDSyntaxError
+
+
+
+
+
+
+
+
+### <a name="Carbon-Errors-InvalidJSONLDSyntaxError" />Class Carbon.Errors.InvalidJSONLDSyntaxError
+
+**Extends:** [Carbon.Errors.AbstractError](#Carbon-Errors-AbstractError)
+
+> Error class to indicate that there an invalid syntax in a JSON-LD object.
+
+
+
+#### <a name="Carbon-Errors-InvalidJSONLDSyntaxError-Properties" />Properties
+
+```typescript 
+name:string 
 ```
 
 
@@ -5233,6 +5266,39 @@ Gets a string and returns a Promise with the same string.
 *Parameters*
 
 - body
+
+
+
+## <a name="Carbon-JSONLD-Processor" />Module Carbon/JSONLD/Processor
+
+
+**Default export:** [Carbon.JSONLD.Processor.Class](#Carbon-JSONLD-Processor-Class)
+
+
+
+
+
+
+### <a name="Carbon-JSONLD-Processor-Class" />Class Carbon.JSONLD.Processor.Class
+
+
+> Class that contains methods that can process JSON-LD objects.
+
+
+
+
+#### <a name="Carbon-JSONLD-Processor-Class-Methods" />Methods
+##### expand
+```typescript 
+static expand( input:Object ):Promise<Array<Object>>
+```
+
+Static method that expand a compacted JSON-LD object.
+
+*Parameters*
+
+- input: The compacted JSON-LD object to expand.
+
 
 
 

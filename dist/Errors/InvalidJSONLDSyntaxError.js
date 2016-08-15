@@ -4,20 +4,20 @@ var __extends = (this && this.__extends) || function (d, b) {
     function __() { this.constructor = d; }
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
-var AbstractError_1 = require("./../Errors/AbstractError");
-var InvalidJSONLDSyntax = (function (_super) {
-    __extends(InvalidJSONLDSyntax, _super);
-    function InvalidJSONLDSyntax() {
+var AbstractError_1 = require("./AbstractError");
+var InvalidJSONLDSyntaxError = (function (_super) {
+    __extends(InvalidJSONLDSyntaxError, _super);
+    function InvalidJSONLDSyntaxError() {
         _super.apply(this, arguments);
     }
-    Object.defineProperty(InvalidJSONLDSyntax.prototype, "name", {
-        get: function () { return "InvalidJSONLDSyntax"; },
+    Object.defineProperty(InvalidJSONLDSyntaxError.prototype, "name", {
+        get: function () { return "InvalidJSONLDSyntaxError"; },
         enumerable: true,
         configurable: true
     });
-    return InvalidJSONLDSyntax;
+    return InvalidJSONLDSyntaxError;
 }(AbstractError_1.default));
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = InvalidJSONLDSyntax;
+exports.default = InvalidJSONLDSyntaxError;
 
-//# sourceMappingURL=Error.js.map
+//# sourceMappingURL=InvalidJSONLDSyntaxError.js.map
