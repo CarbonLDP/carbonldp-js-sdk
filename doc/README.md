@@ -409,6 +409,8 @@
 - [Module Carbon/PersistedFragment](#Carbon-PersistedFragment)
 	- [Class Carbon.PersistedFragment.Factory](#Carbon-PersistedFragment-Factory)
 		- [Methods](#Carbon-PersistedFragment-Factory-Methods)
+		- [Decorated Object](#Carbon-PersistedFragment-Factory-Decorated-Object)
+			- [Methods](#Carbon-PersistedFragment-Factory-Decorated-Object-Methods)
 - [Module Carbon/PersistedNamedFragment](#Carbon-PersistedNamedFragment)
 	- [Class Carbon.PersistedNamedFragment.Factory](#Carbon-PersistedNamedFragment-Factory)
 		- [Methods](#Carbon-PersistedNamedFragment-Factory-Methods)
@@ -493,6 +495,8 @@
 - [Module Carbon/Resource](#Carbon-Resource)
 	- [Class Carbon.Resource.Factory](#Carbon-Resource-Factory)
 		- [Methods](#Carbon-Resource-Factory-Methods)
+		- [Decorated Object](#Carbon-Resource-Factory-Decorated-Object)
+			- [Methods](#Carbon-Resource-Factory-Decorated-Object-Methods)
 - [Module Carbon/RetrievalPreferences](#Carbon-RetrievalPreferences)
 	- [Class Carbon.RetrievalPreferences.Factory](#Carbon-RetrievalPreferences-Factory)
 		- [Methods](#Carbon-RetrievalPreferences-Factory-Methods)
@@ -1325,7 +1329,7 @@ Class( context:Carbon.Context )
 #### <a name="Carbon-Auth-Class-Properties" />Properties
 
 ```typescript 
-authenticatedAgent:Carbon.PersistedDocument.Class 
+authenticatedAgent:Carbon.Agent.Class & Carbon.PersistedDocument.Class 
 ```
 
 The agent of the user that has been authenticated. If no authentication exists in the current context, it will ask to it's parent context.
@@ -1352,7 +1356,7 @@ Adds the authentication header to a `Carbon.HTTP.Request.Options` object.
 
 ##### authenticate
 ```typescript 
-authenticate( username:string,  password:string ):Promise<Carbon.Auth.Credentials>
+authenticate( username:string,  password:string ):Promise<Carbon.Auth.Token.Class>
 ```
 
 Authenticate the user with a `username` and `password`. Uses the `TOKEN` method for the authentication.
@@ -2379,17 +2383,6 @@ Remove the fragment referenced by the Slug provided from the Document.
 
 - slug
 
-##### addType
-```typescript 
-addType( type:string )
-```
-
-Adds a type to the Document.
-
-*Parameters*
-
-- type: The type to be added.
-
 ##### createFragment
 ```typescript 
 createFragment<T extends Object>( object:T,  slug:string ):T & Carbon.Fragment.Class
@@ -2519,17 +2512,6 @@ Returns true if the Document has a pointer referenced by the URI provided.
 
 - id
 
-##### hasType
-```typescript 
-hasType( type:string )
-```
-
-Returns true if the Document contains the type specified.
-
-*Parameters*
-
-- type: The type to look for.
-
 ##### inScope
 ```typescript 
 inScope( pointer:Carbon.Pointer.Class ):boolean
@@ -2571,17 +2553,6 @@ Remove the named fragment referenced by the Slug provided from the Document.
 *Parameters*
 
 - slug
-
-##### removeType
-```typescript 
-removeType( type:string )
-```
-
-Remove the type specified from the Document.
-
-*Parameters*
-
-- type: The type to be removed.
 
 ##### toJSON
 ```typescript 
@@ -7431,9 +7402,9 @@ Returns true if the element provided is considered a `Carbon.PersistedDocument.C
 
 
 #### <a name="Carbon-PersistedDocument-Factory-Decorated-Object" />Decorated Object
-**Interfaces:** [Carbon.LDP.PersistedContainer.Class](#Carbon-LDP-PersistedContainer-Class)
+**Interfaces:** [Carbon.PersistedDocument.Class](#Carbon-PersistedDocument-Class)
 
-> Object decorated by the `Carbon.LDP.PersistedContainer.Factory.decorate()` function.
+> Object decorated by the `Carbon.PersistedDocument.Factory.decorate()` function.
 
 ##### <a name="Carbon-PersistedDocument-Factory-Decorated-Object-Properties" />Properties
 ```typescript 
@@ -7991,6 +7962,46 @@ Decorates the object provided with the properties and methods of a `Carbon.Persi
 - snapshot: A shallow copy of the fragment, which will be used to track its changes.
 
 
+
+#### <a name="Carbon-PersistedFragment-Factory-Decorated-Object" />Decorated Object
+**Interfaces:** [Carbon.PersistedFragment.Class](#Carbon-PersistedFragment-Class)
+
+> Object decorated by the `Carbon.PersistedFragment.Factory.decorate()` function.
+
+
+##### <a name="Carbon-PersistedFragment-Factory-Decorated-Object-Methods" />Methods
+##### addType
+```typescript 
+addType( type:string )
+```
+
+Adds a type to the PersistedFragment. Relative and prefixed types are resolved before the operation.
+
+*Parameters*
+
+- type: The type to be added.
+
+##### hasType
+```typescript 
+hasType( type:string )
+```
+
+Returns true if the PersistedFragment contains the type specified. Relative and prefixed types are resolved before the operation.
+
+*Parameters*
+
+- type: The type to look for.
+
+##### removeType
+```typescript 
+removeType( type:string )
+```
+
+Remove the type specified from the PersistedFragment. Relative and prefixed types are resolved before the operation.
+
+*Parameters*
+
+- type: The type to be removed.
 
 
 ## <a name="Carbon-PersistedNamedFragment" />Module Carbon/PersistedNamedFragment
@@ -9620,14 +9631,14 @@ Decorates the object provided with the properties and methods of a `Carbon.Resou
 
 ##### hasClassProperties
 ```typescript 
-static hasClassProperties( resource:Object ):boolean
+static hasClassProperties( object:Object ):boolean
 ```
 
 Returns true if the object provided has the properties of a `Carbon.Resource.Class` object.
 
 *Parameters*
 
-- resource
+- object
 
 ##### is
 ```typescript 
@@ -9641,6 +9652,46 @@ Returns true if the object provided is considered a `Carbon.Resource.Class` obje
 - resource
 
 
+
+#### <a name="Carbon-Resource-Factory-Decorated-Object" />Decorated Object
+**Interfaces:** [Carbon.Resource.Class](#Carbon-Resource-Class)
+
+> Object decorated by the `Carbon.Resource.Factory.decorate()` function.
+
+
+##### <a name="Carbon-Resource-Factory-Decorated-Object-Methods" />Methods
+##### addType
+```typescript 
+addType( type:string )
+```
+
+Adds a type to the Resource.
+
+*Parameters*
+
+- type: The type to be added.
+
+##### hasType
+```typescript 
+hasType( type:string )
+```
+
+Returns true if the Resource contains the type specified.
+
+*Parameters*
+
+- type: The type to look for.
+
+##### removeType
+```typescript 
+removeType( type:string )
+```
+
+Remove the type specified from the Resource.
+
+*Parameters*
+
+- type: The type to be removed.
 
 
 ## <a name="Carbon-RetrievalPreferences" />Module Carbon/RetrievalPreferences

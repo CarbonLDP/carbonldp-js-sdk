@@ -23,6 +23,10 @@ class HTTPError extends AbstractError implements LDP.ErrorResponse.Class {
 
 	resolve:() => Promise<[ Pointer.Class, Response ]>;
 
+	addType:( type:string ) => void;
+	hasType:( type:string ) => boolean;
+	removeType:( type:string ) => void;
+
 	constructor( message:string, response:Response ) {
 		super( message );
 

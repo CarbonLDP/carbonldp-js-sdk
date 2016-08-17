@@ -120,6 +120,14 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 			let eTag:string = HTTP.Response.Util.getETag( response );
 			if( eTag === null ) throw new HTTP.Errors.BadResponseError( "The response doesn't contain an ETag", response );
 
+			let locationHeader:HTTP.Header.Class = response.getHeader( "Content-Location" );
+			if ( ! ! locationHeader ) {
+				if( locationHeader.values.length !== 1 ) throw new HTTP.Errors.BadResponseError( "The response contains more than one Content-Location header.", response );
+
+				uri = locationHeader.toString();
+				if( ! uri ) throw new HTTP.Errors.BadResponseError( `The response doesn't contain a valid 'Content-Location' header.`, response );
+			}
+
 			let rdfDocument:RDF.Document.Class = this.getRDFDocument( uri, rdfDocuments, response );
 			if( rdfDocument === null ) throw new HTTP.Errors.BadResponseError( "No document was returned.", response );
 
