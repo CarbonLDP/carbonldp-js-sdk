@@ -4,5 +4,6 @@
     <option name="isCompilerEnabled" value="true" />
     <option name="typeScriptCompilerParams" value="-p tsconfig.json -m system" />
     <option name="generateSourceMap" value="false" />
+    <option name="useConfig" value="true" />
   </component>
 </project>

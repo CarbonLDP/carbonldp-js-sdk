@@ -201,5 +201,22 @@ var Digester = (function () {
     return Digester;
 }());
 exports.Digester = Digester;
+var Util = (function () {
+    function Util() {
+    }
+    Util.resolveURI = function (uri, schema) {
+        if (RDF.URI.Util.isAbsolute(uri))
+            return uri;
+        if (RDF.URI.Util.isPrefixed(uri)) {
+            uri = Digester.resolvePrefixedURI(uri, schema);
+        }
+        else if (schema.vocab) {
+            uri = schema.vocab + uri;
+        }
+        return uri;
+    };
+    return Util;
+}());
+exports.Util = Util;
 
 //# sourceMappingURL=ObjectSchema.js.map

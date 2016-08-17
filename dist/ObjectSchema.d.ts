@@ -51,4 +51,7 @@ export declare class Digester {
     private static digestSingleSchema(schema);
     private static resolvePrefixedURIs(digestedSchema);
 }
+export declare class Util {
+    static resolveURI(uri: string, schema: DigestedObjectSchema): string;
+}
 export default Class;

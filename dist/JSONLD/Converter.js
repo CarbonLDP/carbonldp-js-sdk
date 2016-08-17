@@ -56,7 +56,7 @@ var Class = (function () {
         var expandedObject = {};
         expandedObject["@id"] = !!compactedObject["id"] ? compactedObject["id"] : "";
         if (!!compactedObject["types"])
-            expandedObject["@type"] = compactedObject["types"].map(function (type) { return _this.resolveTypeURI(type, generalSchema, digestedSchema); });
+            expandedObject["@type"] = compactedObject["types"].map(function (type) { return ObjectSchema.Util.resolveURI(type, generalSchema); });
         Utils.forEachOwnProperty(compactedObject, function (propertyName, value) {
             if (propertyName === "id")
                 return;
@@ -73,7 +73,7 @@ var Class = (function () {
             }
             else if (digestedSchema.vocab) {
                 expandedValue = _this.expandPropertyValue(value, generalSchema, digestedSchema);
-                propertyName = RDF.URI.Util.resolve(digestedSchema.vocab, propertyName);
+                propertyName = ObjectSchema.Util.resolveURI(propertyName, generalSchema);
             }
             if (!expandedValue)
                 return;
@@ -243,7 +243,7 @@ var Class = (function () {
                 id = definition.uri.stringValue;
         }
         if (notPointer && !!digestedSchema.vocab)
-            id = RDF.URI.Util.resolve(digestedSchema.vocab, id);
+            id = ObjectSchema.Util.resolveURI(id, generalSchema);
         return { "@id": id };
     };
     Class.prototype.expandArray = function (propertyValue, generalSchema, digestedSchema) {
@@ -556,14 +556,6 @@ var Class = (function () {
         }
         else {
         }
-    };
-    Class.prototype.resolveTypeURI = function (uri, generalSchema, digestedSchema) {
-        if (RDF.URI.Util.isAbsolute(uri))
-            return uri;
-        uri = ObjectSchema.Digester.resolvePrefixedURI(uri, generalSchema);
-        if (digestedSchema.vocab)
-            uri = RDF.URI.Util.resolve(digestedSchema.vocab, uri);
-        return uri;
     };
     return Class;
 }());

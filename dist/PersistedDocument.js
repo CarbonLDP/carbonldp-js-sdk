@@ -34,11 +34,8 @@ function syncSavedFragments() {
 function resolveURI(uri) {
     if (URI.Util.isAbsolute(uri))
         return uri;
-    uri = ObjectSchema.Digester.resolvePrefixedURI(uri, this._documents.getGeneralSchema());
-    var schema = this._documents.getSchemaFor(this);
-    if (schema.vocab)
-        uri = URI.Util.resolve(schema.vocab, uri);
-    return uri;
+    var schema = this._documents.getGeneralSchema();
+    return ObjectSchema.Util.resolveURI(uri, schema);
 }
 function extendAddType(superFunction) {
     return function (type) {

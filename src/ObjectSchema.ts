@@ -230,5 +230,18 @@ export class Digester {
 	}
 }
 
+export class Util {
+	static resolveURI( uri:string, schema:DigestedObjectSchema ):string {
+		if( RDF.URI.Util.isAbsolute( uri ) ) return uri;
+
+		if( RDF.URI.Util.isPrefixed( uri ) ) {
+			uri = Digester.resolvePrefixedURI( uri , schema );
+		} else if( schema.vocab ) {
+			uri = schema.vocab + uri;
+		}
+
+		return uri;
+	}
+}
 
 export default Class;

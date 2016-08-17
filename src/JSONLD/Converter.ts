@@ -68,7 +68,7 @@ export class Class {
 		let expandedObject:any = {};
 
 		expandedObject[ "@id" ] = ! ! compactedObject[ "id" ] ? compactedObject[ "id" ] : "";
-		if( ! ! compactedObject[ "types" ] ) expandedObject[ "@type" ] = compactedObject[ "types" ].map( ( type:string ) => this.resolveTypeURI( type, generalSchema, digestedSchema ) );
+		if( ! ! compactedObject[ "types" ] ) expandedObject[ "@type" ] = compactedObject[ "types" ].map( ( type:string ) => ObjectSchema.Util.resolveURI( type, generalSchema ) );
 
 		Utils.forEachOwnProperty( compactedObject, ( propertyName:string, value:any ):void => {
 			if( propertyName === "id" ) return;
@@ -85,7 +85,7 @@ export class Class {
 
 			} else if( digestedSchema.vocab ) {
 				expandedValue = this.expandPropertyValue( value, generalSchema, digestedSchema );
-				propertyName = RDF.URI.Util.resolve( digestedSchema.vocab, propertyName );
+				propertyName = ObjectSchema.Util.resolveURI( propertyName, generalSchema );
 			}
 
 			if( ! expandedValue ) return;
@@ -285,7 +285,7 @@ export class Class {
 			if( definition.uri ) id = definition.uri.stringValue;
 		}
 
-		if( notPointer && ! ! digestedSchema.vocab ) id = RDF.URI.Util.resolve( digestedSchema.vocab, id );
+		if( notPointer && ! ! digestedSchema.vocab ) id = ObjectSchema.Util.resolveURI( id, generalSchema );
 
 		return {"@id": id};
 	}
@@ -608,15 +608,6 @@ export class Class {
 		} else {
 			// TODO: What else could it be?
 		}
-	}
-
-	private resolveTypeURI( uri:string, generalSchema:ObjectSchema.DigestedObjectSchema, digestedSchema:ObjectSchema.DigestedObjectSchema ):string {
-		if( RDF.URI.Util.isAbsolute( uri ) ) return uri;
-
-		uri = ObjectSchema.Digester.resolvePrefixedURI( uri , generalSchema );
-		if( digestedSchema.vocab ) uri = RDF.URI.Util.resolve( digestedSchema.vocab, uri );
-
-		return uri;
 	}
 }
 

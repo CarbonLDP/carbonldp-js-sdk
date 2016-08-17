@@ -284,14 +284,14 @@
 - [Module Carbon/HTTP/StringParser](#Carbon-HTTP-StringParser)
 	- [Class Carbon.HTTP.StringParser.Class](#Carbon-HTTP-StringParser-Class)
 		- [Methods](#Carbon-HTTP-StringParser-Class-Methods)
+- [Module Carbon/JSONLD/Converter](#Carbon-JSONLD-Converter)
+	- [Class Carbon.JSONLD.Converter.Class](#Carbon-JSONLD-Converter-Class)
+		- [Constructor](#Carbon-JSONLD-Converter-Class-Constructor)
+		- [Properties](#Carbon-JSONLD-Converter-Class-Properties)
+		- [Methods](#Carbon-JSONLD-Converter-Class-Methods)
 - [Module Carbon/JSONLD/Processor](#Carbon-JSONLD-Processor)
 	- [Class Carbon.JSONLD.Processor.Class](#Carbon-JSONLD-Processor-Class)
 		- [Methods](#Carbon-JSONLD-Processor-Class-Methods)
-- [Module Carbon/JSONLDConverter](#Carbon-JSONLDConverter)
-	- [Class Carbon.JSONLDConverter.Class](#Carbon-JSONLDConverter-Class)
-		- [Constructor](#Carbon-JSONLDConverter-Class-Constructor)
-		- [Properties](#Carbon-JSONLDConverter-Class-Properties)
-		- [Methods](#Carbon-JSONLDConverter-Class-Methods)
 - [Module Carbon/LDP](#Carbon-LDP)
 	- [Reexports](#Carbon-LDP-Reexports)
 - [Module Carbon/LDP/AddMemberAction](#Carbon-LDP-AddMemberAction)
@@ -5269,6 +5269,71 @@ Gets a string and returns a Promise with the same string.
 
 
 
+## <a name="Carbon-JSONLD-Converter" />Module Carbon/JSONLD/Converter
+
+
+**Default export:** [Carbon.JSONLD.Converter.Class](#Carbon-JSONLD-Converter-Class)
+
+
+
+
+
+
+### <a name="Carbon-JSONLD-Converter-Class" />Class Carbon.JSONLD.Converter.Class
+
+
+> Class that have methods for convert expanded JSON-LD objects to compacted Carbon SDK Resources and vice versa.
+
+
+#### <a name="Carbon-JSONLD-Converter-Class-Constructor" />Constructor
+```typescript 
+Class( literalSerializers?:Map<string, Carbon.RDF.Literal.Serializer> )
+```
+
+
+*Parameters*
+
+- literalSerializers: A Map object with the data type serializers that the converter will only be able to handle.
+
+
+#### <a name="Carbon-JSONLD-Converter-Class-Properties" />Properties
+
+```typescript 
+literalSerializers:Map<string, Carbon.RDF.Literal.Serializer> 
+```
+
+A Map object with data-type/serializer pairs for stringify the data of a SDK Resource when expanding it.
+
+#### <a name="Carbon-JSONLD-Converter-Class-Methods" />Methods
+
+##### compact
+```typescript 
+compact( expandedObject:Object,  targetObject:Object,  digestedSchema:Carbon.ObjectSchema.DigestedObjectSchema,  pointerLibrary:Carbon.Pointer.Library ):Object
+```
+
+Assign the data of the expanded JSON-LD object, to the target object in a friendly mode, ie. without the JSON-LD Syntax Tokens and parsed values, in accordance to the schema provided.
+
+*Parameters*
+
+- expandedObject: The JSON-LD object to compact.
+- targetObject: The target object where will be added the data of the expanded object.
+- digestedSchema: The schema that describes how compact the expanded object.
+- pointerLibrary: An object from where one can obtain pointers to SDK Resources.
+
+##### expand
+```typescript 
+expand( compactedObject:Object,  digestedSchema:Carbon.ObjectSchema.DigestedObjectSchema ):Object
+```
+
+Creates a expanded JSON-LD object from the compacted object in accordance to the schema provided.
+
+*Parameters*
+
+- compactedObject: The compacted object to generate its expanded JSON-LD object.
+- digestedSchema: The schema that describes how construct the expanded object.
+
+
+
 ## <a name="Carbon-JSONLD-Processor" />Module Carbon/JSONLD/Processor
 
 
@@ -5299,71 +5364,6 @@ Static method that expand a compacted JSON-LD object.
 
 - input: The compacted JSON-LD object to expand.
 
-
-
-
-## <a name="Carbon-JSONLDConverter" />Module Carbon/JSONLDConverter
-
-
-**Default export:** [Carbon.JSONLDConverter.Class](#Carbon-JSONLDConverter-Class)
-
-
-
-
-
-
-### <a name="Carbon-JSONLDConverter-Class" />Class Carbon.JSONLDConverter.Class
-
-
-> Class that have methods for convert expanded JSON-LD objects to compacted Carbon SDK Resources and vice versa.
-
-
-#### <a name="Carbon-JSONLDConverter-Class-Constructor" />Constructor
-```typescript 
-Class( literalSerializers?:Map<string, Carbon.RDF.Literal.Serializer> )
-```
-
-
-*Parameters*
-
-- literalSerializers: A Map object with the data type serializers that the converter will only be able to handle.
-
-
-#### <a name="Carbon-JSONLDConverter-Class-Properties" />Properties
-
-```typescript 
-literalSerializers:Map<string, Carbon.RDF.Literal.Serializer> 
-```
-
-A Map object with data-type/serializer pairs for stringify the data of a SDK Resource when expanding it.
-
-#### <a name="Carbon-JSONLDConverter-Class-Methods" />Methods
-
-##### compact
-```typescript 
-compact( expandedObject:Object,  targetObject:Object,  digestedSchema:Carbon.ObjectSchema.DigestedObjectSchema,  pointerLibrary:Carbon.Pointer.Library ):Object
-```
-
-Assign the data of the expanded JSON-LD object, to the target object in a friendly mode, ie. without the JSON-LD Syntax Tokens and parsed values, in accordance to the schema provided.
-
-*Parameters*
-
-- expandedObject: The JSON-LD object to compact.
-- targetObject: The target object where will be added the data of the expanded object.
-- digestedSchema: The schema that describes how compact the expanded object.
-- pointerLibrary: An object from where one can obtain pointers to SDK Resources.
-
-##### expand
-```typescript 
-expand( compactedObject:Object,  digestedSchema:Carbon.ObjectSchema.DigestedObjectSchema ):Object
-```
-
-Creates a expanded JSON-LD object from the compacted object in accordance to the schema provided.
-
-*Parameters*
-
-- compactedObject: The compacted object to generate its expanded JSON-LD object.
-- digestedSchema: The schema that describes how construct the expanded object.
 
 
 

@@ -219,7 +219,7 @@ var Documents = (function () {
         this.setDefaultRequestOptions(requestOptions, NS.LDP.Class.Container);
         var containerURI = parentURI;
         if (!!retrievalPreferences)
-            parentURI += RetrievalPreferences.Util.stringifyRetrievalPreferences(retrievalPreferences);
+            parentURI += RetrievalPreferences.Util.stringifyRetrievalPreferences(retrievalPreferences, this.getGeneralSchema());
         var containerRetrievalPreferences = {
             include: [
                 NS.LDP.Class.PreferContainment,
@@ -367,7 +367,7 @@ var Documents = (function () {
         this.setDefaultRequestOptions(requestOptions, NS.LDP.Class.Container);
         var containerURI = uri;
         if (!!retrievalPreferences)
-            uri += RetrievalPreferences.Util.stringifyRetrievalPreferences(retrievalPreferences);
+            uri += RetrievalPreferences.Util.stringifyRetrievalPreferences(retrievalPreferences, this.getGeneralSchema());
         var containerRetrievalPreferences = {
             include: [
                 NS.LDP.Class.PreferMinimalContainer,
@@ -535,10 +535,12 @@ var Documents = (function () {
         return this.context.auth.getAuthenticatedURL(documentURI, requestOptions);
     };
     Documents.prototype.getGeneralSchema = function () {
-        var schemas = [];
-        if (!!this.context)
-            schemas.push(this.context.getObjectSchema());
-        return ObjectSchema.Digester.combineDigestedObjectSchemas(schemas);
+        if (!this.context)
+            return new ObjectSchema.DigestedObjectSchema();
+        var schema = ObjectSchema.Digester.combineDigestedObjectSchemas([this.context.getObjectSchema()]);
+        if (this.context.hasSetting("vocabulary"))
+            schema.vocab = this.context.resolve(this.context.getSetting("vocabulary"));
+        return schema;
     };
     Documents.prototype.getSchemaFor = function (object) {
         var schema = ("@id" in object) ?

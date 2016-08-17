@@ -129,25 +129,27 @@ export class Util {
 		return parameters;
 	}
 
-	static resolve( parentURI:string, childURI:string, options:{ untilSlash?:boolean } = {} ):string {
+	static resolve( parentURI:string, childURI:string ):string {
 		if( Util.isAbsolute( childURI ) || Util.isBNodeID( childURI ) || Util.isPrefixed( childURI ) )
 			return childURI;
 
-		let finalURI:string = parentURI;
+		let protocol:string = parentURI.substr( 0, parentURI.indexOf( "://" ) + 3 );
+		let path:string = parentURI.substr( parentURI.indexOf( "://" ) + 3,  parentURI.length - 1 );
+		if( path.lastIndexOf( "/" ) === -1 ) path += "/";
 
 		if( Utils.S.startsWith( childURI, "?" ) || Utils.S.startsWith( childURI, "#" ) ) {
-			if( Util.hasQuery( finalURI ) ) finalURI = finalURI.substr( 0, finalURI.indexOf( "?" ) );
-			if( Util.hasFragment( finalURI ) ) finalURI = Util.getDocumentURI( finalURI );
+			if( Util.hasQuery( path ) ) path = path.substr( 0, path.indexOf( "?" ) );
+			if( Util.hasFragment( path ) && ( ! Utils.S.startsWith( childURI, "?" ) || Utils.S.endsWith( path, "#" ) ) ) path = Util.getDocumentURI( path );
 		} else {
-			if( options.untilSlash ) finalURI = finalURI.substr( 0, finalURI.lastIndexOf( "/" ) + 1 );
-			if( ! Utils.S.endsWith( finalURI, "?" ) && ! Utils.S.endsWith( finalURI, "#" )  && ! Utils.S.endsWith( finalURI, "/" ) ) finalURI += "/";
+			path = path.substr( 0, path.lastIndexOf( "/" ) + 1 );
+			if( ! Utils.S.endsWith( path, "?" ) && ! Utils.S.endsWith( path, "#" )  && ! Utils.S.endsWith( path, "/" ) ) path += "/";
 		}
 
 		if( Utils.S.startsWith( childURI, "/" ) ) {
 			childURI = childURI.substr( 1, childURI.length );
 		}
 
-		return finalURI + childURI;
+		return protocol + path + childURI;
 	}
 
 	static removeProtocol( uri:string ):string {

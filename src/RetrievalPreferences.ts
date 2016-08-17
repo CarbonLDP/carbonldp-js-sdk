@@ -55,10 +55,7 @@ export class Util {
 						id = id.substr( 1 );
 					}
 
-					if( ! ! digestedSchema && URI.Util.isRelative( id ) ) {
-						id = ObjectSchema.Digester.resolvePrefixedURI( id, digestedSchema );
-						if( ! ! digestedSchema.vocab ) id = URI.Util.resolve( digestedSchema.vocab, id );
-					}
+					if( ! ! digestedSchema && URI.Util.isRelative( id ) ) id = ObjectSchema.Util.resolveURI( id, digestedSchema );
 
 					stringOrder += `${ descending ? "-" : "" }<${ encodeURI( id ).replace( "#", "%23" ) }>`;
 				}

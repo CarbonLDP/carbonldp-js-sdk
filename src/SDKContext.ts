@@ -201,8 +201,12 @@ export class Class implements Context {
 		let vocab:string;
 		if( this.hasSetting( "vocabulary" ) ) vocab = this.resolve( this.getSetting( "vocabulary" ) );
 
-		uri = ObjectSchema.Digester.resolvePrefixedURI( uri, schema );
-		if( vocab ) uri = RDF.URI.Util.resolve( vocab, uri );
+
+		if( RDF.URI.Util.isPrefixed( uri ) ) {
+			uri = ObjectSchema.Digester.resolvePrefixedURI( uri, schema );
+		} else if( vocab ) {
+			uri = vocab + uri;
+		}
 
 		return uri;
 	}

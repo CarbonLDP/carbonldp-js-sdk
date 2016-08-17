@@ -254,7 +254,7 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 		this.setDefaultRequestOptions( requestOptions, NS.LDP.Class.Container );
 
 		let containerURI:string = parentURI;
-		if( ! ! retrievalPreferences ) parentURI += RetrievalPreferences.Util.stringifyRetrievalPreferences( retrievalPreferences );
+		if( ! ! retrievalPreferences ) parentURI += RetrievalPreferences.Util.stringifyRetrievalPreferences( retrievalPreferences, this.getGeneralSchema() );
 
 		let containerRetrievalPreferences:HTTP.Request.ContainerRetrievalPreferences = {
 			include: [
@@ -427,7 +427,7 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 		this.setDefaultRequestOptions( requestOptions, NS.LDP.Class.Container );
 
 		let containerURI:string = uri;
-		if( ! ! retrievalPreferences ) uri += RetrievalPreferences.Util.stringifyRetrievalPreferences( retrievalPreferences );
+		if( ! ! retrievalPreferences ) uri += RetrievalPreferences.Util.stringifyRetrievalPreferences( retrievalPreferences, this.getGeneralSchema() );
 
 		let containerRetrievalPreferences:HTTP.Request.ContainerRetrievalPreferences = {
 			include: [
@@ -624,10 +624,11 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 	}
 
 	getGeneralSchema():ObjectSchema.DigestedObjectSchema {
-		let schemas:ObjectSchema.DigestedObjectSchema[] = [];
-		if( ! ! this.context ) schemas.push( this.context.getObjectSchema() );
+		if( ! this.context ) return new ObjectSchema.DigestedObjectSchema();
 
-		return ObjectSchema.Digester.combineDigestedObjectSchemas( schemas );
+		let schema:ObjectSchema.DigestedObjectSchema = ObjectSchema.Digester.combineDigestedObjectSchemas( [ this.context.getObjectSchema() ] );
+		if( this.context.hasSetting( "vocabulary" ) ) schema.vocab = this.context.resolve( this.context.getSetting( "vocabulary" ) );
+		return schema;
 	}
 
 	getSchemaFor( object:Object ):ObjectSchema.DigestedObjectSchema {
