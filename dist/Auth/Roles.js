@@ -35,6 +35,12 @@ var Class = (function () {
             return [persistedRole, [responseCreated, response]];
         });
     };
+    Class.prototype.get = function (roleURI, requestOptions) {
+        var _this = this;
+        return this.resolveURI(roleURI).then(function (uri) {
+            return _this.context.documents.get(uri, requestOptions);
+        });
+    };
     Class.prototype.resolveURI = function (agentURI) {
         var _this = this;
         return new Promise(function (resolve) {

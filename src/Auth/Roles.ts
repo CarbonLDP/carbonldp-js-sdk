@@ -4,6 +4,7 @@ import * as Pointer from "./../Pointer";
 import * as HTTP from "./../HTTP";
 import * as PersistedDocument from "./../PersistedDocument";
 import * as Role from "./Role";
+import * as PersistedRole from "./PersistedRole";
 import * as URI from "./../RDF/URI";
 import * as Utils from "./../Utils";
 
@@ -42,6 +43,12 @@ export abstract class Class {
 
 		} ).then( ( response ) => {
 			return [ persistedRole, [ responseCreated, response ] ];
+		} );
+	}
+
+	get<T>( roleURI:string, requestOptions?:HTTP.Request.Options ):Promise<[ T & PersistedRole.Class, HTTP.Response.Class ]> {
+		return this.resolveURI( roleURI ).then( ( uri:string ) => {
+			return this.context.documents.get<T & PersistedRole.Class>( uri, requestOptions );
 		} );
 	}
 

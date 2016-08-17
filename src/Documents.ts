@@ -6,11 +6,13 @@ import * as Utils from "./Utils";
 
 import * as AccessPoint from "./AccessPoint";
 import * as ACL from "./Auth/ACL";
+import * as AppRole from "./App/Role";
 import * as Document from "./Document";
 import * as FreeResources from "./FreeResources";
 import * as JSONLDConverter from "./JSONLDConverter";
 import * as PersistedAccessPoint from "./PersistedAccessPoint";
 import * as PersistedACL from "./Auth/PersistedACL";
+import * as PersistedAppRole from "./App/PersistedRole";
 import * as PersistedBlankNode from "./PersistedBlankNode";
 import * as PersistedDocument from "./PersistedDocument";
 import * as PersistedFragment from "./PersistedFragment";
@@ -922,8 +924,9 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 
 		// TODO: Decorate additional behavior (app, etc.). See also updatePersistedDocument() method
 		// TODO: Make it dynamic. See also updatePersistedDocument() method
-		if( Resource.Util.hasType( persistedDocument, ProtectedDocument.RDF_CLASS ) ) PersistedProtectedDocument.Factory.decorate( persistedDocument );
-		if( Resource.Util.hasType( persistedDocument, ACL.RDF_CLASS ) ) PersistedACL.Factory.decorate( persistedDocument );
+		if( persistedDocument.hasType( ProtectedDocument.RDF_CLASS ) ) PersistedProtectedDocument.Factory.decorate( persistedDocument );
+		if( persistedDocument.hasType( ACL.RDF_CLASS ) ) PersistedACL.Factory.decorate( persistedDocument );
+		if( persistedDocument.hasType( AppRole.RDF_CLASS ) ) PersistedAppRole.Factory.decorate( persistedDocument );
 
 		return persistedDocument;
 	}

@@ -1,6 +1,5 @@
 import {
 	INSTANCE,
-	STATIC,
 
 	module,
 	clazz,
@@ -8,15 +7,16 @@ import {
 
 	isDefined,
 	hasSignature,
-	reexports,
 	hasDefaultExport,
 	hasConstructor,
+	hasMethod,
 } from "./../test/JasmineExtender";
 import AbstractContext from "./../AbstractContext";
 import * as Errors from "./../Errors";
 import * as Pointer from "./../Pointer";
 import * as Role from "./Role";
 import * as HTTP from "./../HTTP";
+import * as PersistedRole from "./PersistedRole";
 import * as URI from "./../RDF/URI";
 import * as Utils from "./../Utils";
 
@@ -237,6 +237,88 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 					} ).catch( done.fail );
 
 				} );
+
+			} );
+
+		} );
+
+		it( hasMethod(
+			INSTANCE,
+			"get",
+			[ "T" ],
+			"Retrieves a role from the current context.", [
+				{name: "roleURI", type: "string", description: "The URI of the role to retrieve."},
+				{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true},
+			],
+			{type: "Promise<[ T & Carbon.PersistedRole.Class, Carbon.HTTP.Response.Class ]>"}
+		), ( done:{ ():void, fail:() => void } ):void => {
+			expect( roles.get ).toBeDefined();
+			expect( Utils.isFunction( roles.get ) );
+
+			jasmine.Ajax.stubRequest( "http://example.com/roles/a-role/" ).andReturn( {
+				status: 200,
+				responseText: `[ {
+					"@id": "http://example.com/roles/a-role/",
+					"@graph": [ {
+						"@id": "http://example.com/roles/a-role/",
+						"@type": [ "https://carbonldp.com/ns/v1/security#AppRole" ],
+						"https://carbonldp.com/ns/v1/platform#accessPoint": [ {
+							"@id": "https://dev.carbonldp.com/apps/test-app/roles/blog-editor/agents/"
+						} ],
+						"https://carbonldp.com/ns/v1/security#name": [ {
+							"@value": "A Role"
+						} ],
+						"https://carbonldp.com/ns/v1/security#parentRole": [ {
+							"@id": "https://example.com/roles/root-role/"
+						} ]
+					} ]
+				} ]`,
+				responseHeaders: {
+					"ETag": `"1234567890"`,
+				},
+			} );
+
+			let spies:any = {
+				success: ( [ pointer, response ]:[ PersistedRole.Class, HTTP.Response.Class ] ):void => {
+					expect( pointer ).toBeTruthy();
+					expect( PersistedRole.Factory.is( pointer ) ).toBe( true );
+					expect( pointer.id ).toBe( "http://example.com/roles/a-role/" );
+
+					expect( response ).toBeTruthy();
+					expect( response instanceof HTTP.Response.Class ).toBe( true );
+				},
+				error: function( error:Error ):void {
+					expect( error instanceof Errors.IllegalArgumentError );
+				},
+			};
+
+			let spySuccess:jasmine.Spy = spyOn( spies, "success" ).and.callThrough();
+			let spyError:jasmine.Spy = spyOn( spies, "error" ).and.callThrough();
+
+			roles.get( "http://example.com/roles/a-role/" ).then( done.fail ).catch( ( error:Error ) => {
+				expect( error instanceof Errors.IllegalStateError ).toBe( true );
+				context.setSetting( "platform.roles.container", "roles/" );
+
+				let promises:Promise<any>[] = [];
+				let promise:Promise<any>;
+
+				promise = roles.get( "http://example.com/roles/a-role/" );
+				expect( promise instanceof Promise ).toBe( true );
+				promises.push( promise.then( spies.success ) );
+
+				promise = roles.get( "a-role/" );
+				expect( promise instanceof Promise ).toBe( true );
+				promises.push( promise.then( spies.success ) );
+
+				promise = roles.get( "http://example.com/wrong-path/roles/a-role/" );
+				expect( promise instanceof Promise ).toBe( true );
+				promises.push( promise.catch( spies.error ) );
+
+				Promise.all( promises ).then( ():void => {
+					expect( spySuccess ).toHaveBeenCalledTimes( 2 );
+					expect( spyError ).toHaveBeenCalledTimes( 1 );
+					done();
+				} ).catch( done.fail );
 
 			} );
 

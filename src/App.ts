@@ -5,6 +5,7 @@ import Pointer from "./Pointer";
 import * as Utils from "./Utils";
 import IllegalArgumentError from "./Errors/IllegalArgumentError";
 
+import * as PersistedRole from "./App/PersistedRole";
 import * as Role from "./App/Role";
 import * as Roles from "./App/Roles";
 import Context from "./App/Context";
@@ -72,6 +73,7 @@ export class Factory {
 
 export {
 	Context,
+	PersistedRole,
 	Role,
 	Roles,
 };

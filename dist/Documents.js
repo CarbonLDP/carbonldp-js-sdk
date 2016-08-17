@@ -5,10 +5,12 @@ var RDF = require("./RDF");
 var Utils = require("./Utils");
 var AccessPoint = require("./AccessPoint");
 var ACL = require("./Auth/ACL");
+var AppRole = require("./App/Role");
 var Document = require("./Document");
 var FreeResources = require("./FreeResources");
 var JSONLDConverter = require("./JSONLDConverter");
 var PersistedACL = require("./Auth/PersistedACL");
+var PersistedAppRole = require("./App/PersistedRole");
 var PersistedDocument = require("./PersistedDocument");
 var PersistedProtectedDocument = require("./PersistedProtectedDocument");
 var ProtectedDocument = require("./ProtectedDocument");
@@ -799,10 +801,12 @@ var Documents = (function () {
         fragments.forEach(function (fragment) { return fragment._syncSnapshot(); });
         persistedDocument._syncSavedFragments();
         persistedDocument._resolved = true;
-        if (Resource.Util.hasType(persistedDocument, ProtectedDocument.RDF_CLASS))
+        if (persistedDocument.hasType(ProtectedDocument.RDF_CLASS))
             PersistedProtectedDocument.Factory.decorate(persistedDocument);
-        if (Resource.Util.hasType(persistedDocument, ACL.RDF_CLASS))
+        if (persistedDocument.hasType(ACL.RDF_CLASS))
             PersistedACL.Factory.decorate(persistedDocument);
+        if (persistedDocument.hasType(AppRole.RDF_CLASS))
+            PersistedAppRole.Factory.decorate(persistedDocument);
         return persistedDocument;
     };
     Documents.prototype.updatePersistedDocument = function (persistedDocument, documentResource, fragmentResources) {

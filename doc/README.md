@@ -39,6 +39,9 @@
 		- [Constructor](#Carbon-App-Context-Constructor)
 		- [Properties](#Carbon-App-Context-Properties)
 		- [Methods](#Carbon-App-Context-Methods)
+- [Module Carbon/App/PersistedRole](#Carbon-App-PersistedRole)
+	- [Class Carbon.App.PersistedRole.Factory](#Carbon-App-PersistedRole-Factory)
+		- [Methods](#Carbon-App-PersistedRole-Factory-Methods)
 - [Module Carbon/App/Roles](#Carbon-App-Roles)
 	- [Class Carbon.App.Roles.Class](#Carbon-App-Roles-Class)
 		- [Constructor](#Carbon-App-Roles-Class-Constructor)
@@ -72,6 +75,9 @@
 - [Module Carbon/Auth/PersistedACL](#Carbon-Auth-PersistedACL)
 	- [Class Carbon.Auth.PersistedACL.Factory](#Carbon-Auth-PersistedACL-Factory)
 		- [Methods](#Carbon-Auth-PersistedACL-Factory-Methods)
+- [Module Carbon/Auth/PersistedRole](#Carbon-Auth-PersistedRole)
+	- [Class Carbon.Auth.PersistedRole.Factory](#Carbon-Auth-PersistedRole-Factory)
+		- [Methods](#Carbon-Auth-PersistedRole-Factory-Methods)
 - [Module Carbon/Auth/Role](#Carbon-Auth-Role)
 	- [Properties](#Carbon-Auth-Role-Properties)
 	- [Class Carbon.Auth.Role.Factory](#Carbon-Auth-Role-Factory)
@@ -1064,6 +1070,60 @@ Resolve the URI provided in the scope of the application.
 
 
 
+## <a name="Carbon-App-PersistedRole" />Module Carbon/App/PersistedRole
+
+
+
+
+
+
+
+
+### <a name="Carbon-App-PersistedRole-Factory" />Class Carbon.App.PersistedRole.Factory
+
+
+> Factory class for `Carbon.App.PersistedRole.Class` objects
+
+
+
+
+#### <a name="Carbon-App-PersistedRole-Factory-Methods" />Methods
+##### decorate
+```typescript 
+static decorate( object:T extends Object ):T & Carbon.App.PersistedRole.Class
+```
+
+Decorates the object provided with the methods and properties of a `Carbon.App.PersistedRole.Class` object.
+
+*Parameters*
+
+- object
+
+##### hasClassProperties
+```typescript 
+static hasClassProperties( resource:Object ):boolean
+```
+
+Returns true if the object provided has the properties that defines a `Carbon.App.PersistedRole.Class` object
+
+*Parameters*
+
+- resource
+
+##### is
+```typescript 
+static is( object:Object ):boolean
+```
+
+Returns true if the object provided is considered a `Carbon.App.PersistedRole.Class` object
+
+*Parameters*
+
+- object
+
+
+
+
 ## <a name="Carbon-App-Roles" />Module Carbon/App/Roles
 
 
@@ -1122,6 +1182,18 @@ Returns a Promise with a Pointer for the stored role; and a tuple of two respons
 - parentRole: The role that will be assigned as the parent of the role that wants to persist.
 - role: The appRole that wants to persist.
 - requestOptions: The slug where the role will be persisted.
+
+##### get
+```typescript 
+get( roleURI:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.PersistedRole.Class, Carbon.HTTP.Response.Class ]>
+```
+
+Retrieves a role from the current context.
+
+*Parameters*
+
+- roleURI: The URI of the app role to retrieve.
+- requestOptions
 
 
 
@@ -1858,6 +1930,60 @@ Return true if the object provided has the properties and methods of a `Carbon.A
 
 
 
+## <a name="Carbon-Auth-PersistedRole" />Module Carbon/Auth/PersistedRole
+
+
+
+
+
+
+
+
+### <a name="Carbon-Auth-PersistedRole-Factory" />Class Carbon.Auth.PersistedRole.Factory
+
+
+> Factory class for `Carbon.Auth.PersistedRole.Class` objects
+
+
+
+
+#### <a name="Carbon-Auth-PersistedRole-Factory-Methods" />Methods
+##### decorate
+```typescript 
+static decorate( object:T extends Object ):T & Carbon.Auth.PersistedRole.Class
+```
+
+Decorates the object provided with the methods and properties of a `Carbon.Auth.PersistedRole.Class` object.
+
+*Parameters*
+
+- object
+
+##### hasClassProperties
+```typescript 
+static hasClassProperties( resource:Object ):boolean
+```
+
+Returns true if the object provided has the properties that defines a `Carbon.Auth.PersistedRole.Class` object
+
+*Parameters*
+
+- resource
+
+##### is
+```typescript 
+static is( object:Object ):boolean
+```
+
+Returns true if the object provided is considered a `Carbon.Auth.PersistedRole.Class` object
+
+*Parameters*
+
+- object
+
+
+
+
 ## <a name="Carbon-Auth-Role" />Module Carbon/Auth/Role
 
 
@@ -1986,6 +2112,18 @@ Returns a Promise with a Pointer for the stored role; and a tuple of two respons
 - parentRole: The role that will be assigned as the parent of the role that wants to persist.
 - role: The appRole that wants to persist.
 - requestOptions: The slug where the role will be persisted.
+
+##### get
+```typescript 
+get<T>( roleURI:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ T & Carbon.PersistedRole.Class, Carbon.HTTP.Response.Class ]>
+```
+
+Retrieves a role from the current context.
+
+*Parameters*
+
+- roleURI: The URI of the role to retrieve.
+- requestOptions
 
 
 
