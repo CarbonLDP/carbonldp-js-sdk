@@ -806,7 +806,7 @@ var Documents = (function () {
         if (persistedDocument.hasType(ACL.RDF_CLASS))
             PersistedACL.Factory.decorate(persistedDocument);
         if (persistedDocument.hasType(AppRole.RDF_CLASS))
-            PersistedAppRole.Factory.decorate(persistedDocument);
+            PersistedAppRole.Factory.decorate(persistedDocument, this.context.auth ? this.context.auth.roles : null);
         return persistedDocument;
     };
     Documents.prototype.updatePersistedDocument = function (persistedDocument, documentResource, fragmentResources) {

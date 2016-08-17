@@ -78,6 +78,8 @@
 - [Module Carbon/Auth/PersistedRole](#Carbon-Auth-PersistedRole)
 	- [Class Carbon.Auth.PersistedRole.Factory](#Carbon-Auth-PersistedRole-Factory)
 		- [Methods](#Carbon-Auth-PersistedRole-Factory-Methods)
+		- [Decorated Object](#Carbon-Auth-PersistedRole-Factory-Decorated-Object)
+			- [Methods](#Carbon-Auth-PersistedRole-Factory-Decorated-Object-Methods)
 - [Module Carbon/Auth/Role](#Carbon-Auth-Role)
 	- [Properties](#Carbon-Auth-Role-Properties)
 	- [Class Carbon.Auth.Role.Factory](#Carbon-Auth-Role-Factory)
@@ -1983,6 +1985,46 @@ Returns true if the object provided is considered a `Carbon.Auth.PersistedRole.C
 
 
 
+#### <a name="Carbon-Auth-PersistedRole-Factory-Decorated-Object" />Decorated Object
+**Interfaces:** [Carbon.Auth.PersistedRole.Class](#Carbon-Auth-PersistedRole-Class)
+
+> Object decorated by the `Carbon.Auth.PersistedRole.Factory.decorate()` function.
+
+
+##### <a name="Carbon-Auth-PersistedRole-Factory-Decorated-Object-Methods" />Methods
+##### getAgents
+```typescript 
+getAgents( requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ carbon.Auth.PersistedRole.Class, Carbon.HTTP.Response.Class ]>
+```
+
+Retrieves an array of resolved pointers for all the agents of the role.
+
+*Parameters*
+
+- requestOptions
+
+```typescript 
+getAgents( retrievalPreferences?:Carbon.RetrievalPreferences.Class,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ carbon.Auth.PersistedRole.Class, Carbon.HTTP.Response.Class ]>
+```
+
+Retrieves an array of resolved pointers for the agents of the role, in accordance of the retrievalPreferences provided.
+
+*Parameters*
+
+- retrievalPreferences: An object that specify the retrieval preferences for the request.
+- requestOptions
+
+##### listAgents
+```typescript 
+listAgents( requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.Auth.PersistedRole.Class, Carbon.HTTP.Response.Class ]>
+```
+
+Retrieves an array of unresolved pointers for all the agents of the role.
+
+*Parameters*
+
+- requestOptions
+
 
 ## <a name="Carbon-Auth-Role" />Module Carbon/Auth/Role
 
@@ -2123,6 +2165,42 @@ Retrieves a role from the current context.
 *Parameters*
 
 - roleURI: The URI of the role to retrieve.
+- requestOptions
+
+##### getAgents
+```typescript 
+getAgents<T>( roleURI:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ (T & Carbon.PersistedDocument.Class)[], Carbon.HTTP.Response.Class ]>
+```
+
+Retrieves an array of resolved pointers for all the agents of the specified role.
+
+*Parameters*
+
+- roleURI: The URI of the role to look for its agents.
+- requestOptions
+
+```typescript 
+getAgents<T>( roleURI:string,  retrievalPreferences?:Carbon.RetrievalPreferences.Class,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ (T & Carbon.PersistedDocument.Class)[], Carbon.HTTP.Response.Class ]>
+```
+
+Retrieves an array of resolved pointers for the agents of the role, in accordance of the retrievalPreferences provided.
+
+*Parameters*
+
+- roleURI: The URI of the role to look for its agents.
+- retrievalPreferences: An object that specify the retrieval preferences for the request.
+- requestOptions
+
+##### listAgents
+```typescript 
+listAgents( roleURI:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.PersistedDocument.Class, Carbon.HTTP.Response.Class ]>
+```
+
+Retrieves an array of unresolved pointers for all the agents of the specified role.
+
+*Parameters*
+
+- roleURI: The URI of the role to look for its agents.
 - requestOptions
 
 

@@ -926,7 +926,7 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 		// TODO: Make it dynamic. See also updatePersistedDocument() method
 		if( persistedDocument.hasType( ProtectedDocument.RDF_CLASS ) ) PersistedProtectedDocument.Factory.decorate( persistedDocument );
 		if( persistedDocument.hasType( ACL.RDF_CLASS ) ) PersistedACL.Factory.decorate( persistedDocument );
-		if( persistedDocument.hasType( AppRole.RDF_CLASS ) ) PersistedAppRole.Factory.decorate( persistedDocument );
+		if( persistedDocument.hasType( AppRole.RDF_CLASS ) ) PersistedAppRole.Factory.decorate( persistedDocument, this.context.auth ? this.context.auth.roles : null );
 
 		return persistedDocument;
 	}

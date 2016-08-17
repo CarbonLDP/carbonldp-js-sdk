@@ -6,11 +6,12 @@ import {
 
 	isDefined,
 	hasMethod,
-	hasProperty
 } from "./../test/JasmineExtender";
+import AbstractContext from "../AbstractContext";
+import AppContext from "./Context";
 import * as AppRole from "./Role";
-import * as Errors from "./../Errors";
 import * as NS from "./../NS";
+import * as PersistedAuthRole from "./../Auth/PersistedRole";
 import * as Utils from "./../Utils";
 
 import * as PersistedAppRole from "./PersistedRole";
@@ -36,7 +37,7 @@ describe( module( "Carbon/App/PersistedRole" ), ():void => {
 			STATIC,
 			"hasClassProperties",
 			"Returns true if the object provided has the properties that defines a `Carbon.App.PersistedRole.Class` object", [
-				{name: "resource", type: "Object"}
+				{name: "resource", type: "Object"},
 			],
 			{type: "boolean"}
 		), ():void => {
@@ -44,14 +45,18 @@ describe( module( "Carbon/App/PersistedRole" ), ():void => {
 			expect( Utils.isFunction( PersistedAppRole.Factory.hasClassProperties ) ).toBe( true );
 
 			let object:any;
-
 			expect( PersistedAppRole.Factory.hasClassProperties( object ) ).toBe( false );
 
 			object = {
+				_roles: null,
 				parentRole: null,
 				childRoles: null,
 			};
 			expect( PersistedAppRole.Factory.hasClassProperties( object ) ).toBe( true );
+
+			delete object._roles;
+			expect( PersistedAppRole.Factory.hasClassProperties( object ) ).toBe( false );
+			object._roles = null;
 
 			delete object.parentRole;
 			expect( PersistedAppRole.Factory.hasClassProperties( object ) ).toBe( true );
@@ -66,7 +71,7 @@ describe( module( "Carbon/App/PersistedRole" ), ():void => {
 			STATIC,
 			"is",
 			"Returns true if the object provided is considered a `Carbon.App.PersistedRole.Class` object", [
-				{name: "object", type: "Object"}
+				{name: "object", type: "Object"},
 			],
 			{type: "boolean"}
 		), ():void => {
@@ -80,6 +85,7 @@ describe( module( "Carbon/App/PersistedRole" ), ():void => {
 			expect( PersistedAppRole.Factory.is( object ) ).toBe( false );
 
 			object = {
+				_roles: null,
 				name: null,
 				parentRole: null,
 				childRoles: null,
@@ -97,21 +103,38 @@ describe( module( "Carbon/App/PersistedRole" ), ():void => {
 			STATIC,
 			"decorate",
 			"Decorates the object provided with the methods and properties of a `Carbon.App.PersistedRole.Class` object.", [
-				{name: "object", type: "T extends Object"}
+				{name: "object", type: "T extends Object"},
 			],
 			{type: "T & Carbon.App.PersistedRole.Class"}
 		), ():void => {
 			expect( PersistedAppRole.Factory.decorate ).toBeDefined();
 			expect( Utils.isFunction( PersistedAppRole.Factory.decorate ) ).toBe( true );
 
+			class MockedContext extends AbstractContext {
+				resolve( uri:string ):string {
+					return uri;
+				}
+			}
+			let parentContext:AbstractContext = new MockedContext();
+			let appContext:AppContext = new AppContext( parentContext, <any> {
+				rootContainer: {
+					id: "http://example.com/apps/example-app/",
+				},
+			} );
+
 			interface ThePersistedAppRole {
 				myProperty?:string;
 			}
 			interface MyPersistedAppRole extends PersistedAppRole.Class, ThePersistedAppRole {}
 
-			let object:Object = {};
+			let spyDecorate:jasmine.Spy = spyOn( PersistedAuthRole.Factory, "decorate" ).and.callThrough();
+
+			let object:Object = {name: "Role name"};
 			let role:MyPersistedAppRole;
-			role = PersistedAppRole.Factory.decorate<ThePersistedAppRole>( object );
+			role = PersistedAppRole.Factory.decorate<ThePersistedAppRole>( object, appContext.auth.roles );
+
+			expect( PersistedAppRole.Factory.hasClassProperties( role ) ).toBe( true );
+			expect( spyDecorate ).toHaveBeenCalledWith( object, appContext.auth.roles );
 		} );
 
 	} );

@@ -41,6 +41,18 @@ var Class = (function () {
             return _this.context.documents.get(uri, requestOptions);
         });
     };
+    Class.prototype.listAgents = function (roleURI, requestOptions) {
+        var _this = this;
+        return this.getAgentsAccessPoint(roleURI).then(function (agentsAccessPoint) {
+            return _this.context.documents.listMembers(agentsAccessPoint.id, requestOptions);
+        });
+    };
+    Class.prototype.getAgents = function (roleURI, retrievalPreferencesOrRequestOptions, requestOptions) {
+        var _this = this;
+        return this.getAgentsAccessPoint(roleURI).then(function (agentsAccessPoint) {
+            return _this.context.documents.getMembers(agentsAccessPoint.id, retrievalPreferencesOrRequestOptions, requestOptions);
+        });
+    };
     Class.prototype.resolveURI = function (agentURI) {
         var _this = this;
         return new Promise(function (resolve) {
@@ -49,6 +61,15 @@ var Class = (function () {
             if (!URI.Util.isBaseOf(containerURI, uri))
                 throw new Errors.IllegalArgumentError("The URI provided is not a valid role of the current context.");
             resolve(uri);
+        });
+    };
+    Class.prototype.getAgentsAccessPoint = function (roleURI) {
+        var _this = this;
+        return this.resolveURI(roleURI).then(function (uri) {
+            return _this.context.documents.executeSELECTQuery(uri, " select distinct ?agentsAccessPoint where {\n\t\t\t\t<" + uri + "> <https://carbonldp.com/ns/v1/platform#accessPoint> ?agentsAccessPoint .\n\t\t\t\t?agentsAccessPoint <http://www.w3.org/ns/ldp#hasMemberRelation> <https://carbonldp.com/ns/v1/security#agent> .\n\t\t\t}");
+        }).then(function (_a) {
+            var selectResults = _a[0], response = _a[1];
+            return selectResults.bindings[0]["agentsAccessPoint"];
         });
     };
     Class.prototype.getContainerURI = function () {

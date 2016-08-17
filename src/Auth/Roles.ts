@@ -3,8 +3,10 @@ import * as Errors from "./../Errors";
 import * as Pointer from "./../Pointer";
 import * as HTTP from "./../HTTP";
 import * as PersistedDocument from "./../PersistedDocument";
-import * as Role from "./Role";
+import * as RetrievalPreferences from "./../RetrievalPreferences";
 import * as PersistedRole from "./PersistedRole";
+import * as Role from "./Role";
+import * as SPARQL from "./../SPARQL";
 import * as URI from "./../RDF/URI";
 import * as Utils from "./../Utils";
 
@@ -52,6 +54,21 @@ export abstract class Class {
 		} );
 	}
 
+	listAgents( roleURI:string, requestOptions?:HTTP.Request.Options ):Promise<[ PersistedDocument.Class[], HTTP.Response.Class ]> {
+		return this.getAgentsAccessPoint( roleURI ).then( ( agentsAccessPoint:Pointer.Class ) => {
+			return this.context.documents.listMembers( agentsAccessPoint.id, requestOptions );
+		} );
+	}
+
+	// TODO: Change to `PersistedAgent`
+	getAgents<T>( roleURI:string, requestOptions?:HTTP.Request.Options ):Promise<[ (T & PersistedDocument.Class)[], HTTP.Response.Class ]>;
+	getAgents<T>( roleURI:string, retrievalPreferences?:RetrievalPreferences.Class, requestOptions?:HTTP.Request.Options ):Promise<[ (T & PersistedDocument.Class)[], HTTP.Response.Class ]>;
+	getAgents<T>( roleURI:string, retrievalPreferencesOrRequestOptions?:RetrievalPreferences.Class, requestOptions?:HTTP.Request.Options ):Promise<[ (T & PersistedDocument.Class)[], HTTP.Response.Class ]> {
+		return this.getAgentsAccessPoint( roleURI ).then( ( agentsAccessPoint:Pointer.Class ) => {
+			return this.context.documents.getMembers<T>( agentsAccessPoint.id, retrievalPreferencesOrRequestOptions, requestOptions );
+		} );
+	}
+
 	private resolveURI( agentURI:string ):Promise<string> {
 		return new Promise<string>( ( resolve:( uri:string ) => void ) => {
 			let containerURI:string = this.context.resolve( this.getContainerURI() );
@@ -63,10 +80,22 @@ export abstract class Class {
 		} );
 	}
 
+	private getAgentsAccessPoint( roleURI:string ):Promise<Pointer.Class> {
+		return this.resolveURI( roleURI ).then( ( uri:string ) => {
+			return this.context.documents.executeSELECTQuery( uri, ` select distinct ?agentsAccessPoint where {
+				<${ uri }> <https://carbonldp.com/ns/v1/platform#accessPoint> ?agentsAccessPoint .
+				?agentsAccessPoint <http://www.w3.org/ns/ldp#hasMemberRelation> <https://carbonldp.com/ns/v1/security#agent> .
+			}` );
+		} ).then( ( [ selectResults, response ]:[ SPARQL.SELECTResults.Class, HTTP.Response.Class ] ) => {
+			return <Pointer.Class> selectResults.bindings[ 0 ][ "agentsAccessPoint" ];
+		} );
+	}
+
 	private getContainerURI():string {
 		if( ! this.context.hasSetting( "platform.roles.container" ) ) throw new Errors.IllegalStateError( "The roles container setting hasn't been declared." );
 		return this.context.getSetting( "platform.roles.container" );
 	}
+
 }
 
 export default Class;
