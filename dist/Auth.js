@@ -15,6 +15,10 @@ var PersistedACL = require("./Auth/PersistedACL");
 exports.PersistedACL = PersistedACL;
 var PersistedAgent = require("./Auth/PersistedAgent");
 exports.PersistedAgent = PersistedAgent;
+var Role = require("./Auth/Role");
+exports.Role = Role;
+var Roles = require("./Auth/Roles");
+exports.Roles = Roles;
 var TokenAuthenticator_1 = require("./Auth/TokenAuthenticator");
 exports.TokenAuthenticator = TokenAuthenticator_1.default;
 var Ticket = require("./Auth/Ticket");
@@ -37,6 +41,7 @@ var Utils = require("./Utils");
 var Method = exports.Method;
 var Class = (function () {
     function Class(context) {
+        this.roles = null;
         this.context = context;
         this.agents = new Agents.Class(this.context);
         this.authenticators = [];
@@ -58,7 +63,7 @@ var Class = (function () {
     Class.prototype.isAuthenticated = function (askParent) {
         if (askParent === void 0) { askParent = true; }
         return ((this.authenticator && this.authenticator.isAuthenticated()) ||
-            (askParent && !!this.context.parentContext && this.context.parentContext.auth.isAuthenticated()));
+            (askParent && !!this.context.parentContext && !!this.context.parentContext.auth && this.context.parentContext.auth.isAuthenticated()));
     };
     Class.prototype.authenticate = function (username, password) {
         return this.authenticateUsing("TOKEN", username, password);
@@ -77,7 +82,7 @@ var Class = (function () {
         if (this.isAuthenticated(false)) {
             this.authenticator.addAuthentication(requestOptions);
         }
-        else if (!!this.context.parentContext) {
+        else if (!!this.context.parentContext && !!this.context.parentContext.auth) {
             this.context.parentContext.auth.addAuthentication(requestOptions);
         }
         else {
@@ -171,33 +176,11 @@ var Class = (function () {
         });
     };
     Class.prototype.getAuthenticatedAgent = function (authenticator) {
-        var _this = this;
         var requestOptions = {};
         authenticator.addAuthentication(requestOptions);
-        HTTP.Request.Util.setAcceptHeader("application/ld+json", requestOptions);
-        HTTP.Request.Util.setPreferredInteractionModel(NS.LDP.Class.RDFSource, requestOptions);
-        var uri = this.context.resolve("agents/me/");
-        return HTTP.Request.Service.get(uri, requestOptions, new RDF.Document.Parser()).then(function (_a) {
-            var rdfDocuments = _a[0], response = _a[1];
-            var eTag = HTTP.Response.Util.getETag(response);
-            if (eTag === null)
-                throw new HTTP.Errors.BadResponseError("The authenticated agent doesn't contain an ETag", response);
-            var locationHeader = response.getHeader("Content-Location");
-            if (!locationHeader || locationHeader.values.length < 1)
-                throw new HTTP.Errors.BadResponseError("The response is missing a Content-Location header.", response);
-            if (locationHeader.values.length !== 1)
-                throw new HTTP.Errors.BadResponseError("The response contains more than one Content-Location header.", response);
-            var agentURI = locationHeader.toString();
-            if (!agentURI)
-                throw new HTTP.Errors.BadResponseError("The response doesn't contain a 'Content-Location' header.", response);
-            var agentsDocuments = RDF.Document.Util.getDocuments(rdfDocuments).filter(function (rdfDocument) { return rdfDocument["@id"] === agentURI; });
-            if (agentsDocuments.length === 0)
-                throw new HTTP.Errors.BadResponseError("The response doesn't contain a the '" + agentURI + "' resource.", response);
-            if (agentsDocuments.length > 1)
-                throw new HTTP.Errors.BadResponseError("The response contains more than one '" + agentURI + "' resource.", response);
-            var document = _this.context.documents._getPersistedDocument(agentsDocuments[0], response);
-            document._etag = eTag;
-            return document;
+        return this.context.documents.get("agents/me/", requestOptions).then(function (_a) {
+            var agentDocument = _a[0], response = _a[1];
+            return agentDocument;
         });
     };
     return Class;

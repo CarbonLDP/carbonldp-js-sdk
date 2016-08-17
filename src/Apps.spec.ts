@@ -14,6 +14,7 @@ import {
 import AbstractContext from "./AbstractContext";
 import * as App from "./App";
 import AppContext from "./App/Context";
+import * as Auth from "./Auth";
 import * as Errors from "./Errors";
 import IllegalStateError from "./Errors/IllegalStateError";
 import * as NS from "./NS";
@@ -40,7 +41,13 @@ describe( module( "Carbon/Apps" ), ():void => {
 		let appsContainerURI:string = `${platformBaseURI}apps/`;
 
 		beforeEach( ():void => {
+			class MockedAuth extends Auth.Class {}
 			class MockedContext extends AbstractContext {
+				constructor() {
+					super();
+					this.auth = new MockedAuth( this );
+				}
+
 				resolve( uri:string ):string {
 					if( ! RDF.URI.Util.isAbsolute( uri ) ) return RDF.URI.Util.resolve( platformBaseURI, uri );
 					return uri;
@@ -143,8 +150,8 @@ describe( module( "Carbon/Apps" ), ():void => {
 
 					Promise.all( promises ).then( ():void => {
 						expect( spy ).toHaveBeenCalledWith( "http://example.com/platform/apps/example-app/" );
-						expect( successSpy.calls.count() ).toBe( 2 );
-						expect( failSpy.calls.count() ).toBe( 1 );
+						expect( successSpy ).toHaveBeenCalledTimes( 2 );
+						expect( failSpy ).toHaveBeenCalledTimes( 1 );
 						done();
 					} ).catch( done.fail );
 				} );
@@ -221,8 +228,8 @@ describe( module( "Carbon/Apps" ), ():void => {
 
 					Promise.all( promises ).then( ():void => {
 						expect( spyGet ).toHaveBeenCalledWith( "http://example.com/platform/apps/example-app/" );
-						expect( successSpy.calls.count() ).toBe( 2 );
-						expect( failSpy.calls.count() ).toBe( 1 );
+						expect( successSpy ).toHaveBeenCalledTimes( 2 );
+						expect( failSpy ).toHaveBeenCalledTimes( 1 );
 						done();
 					}, done.fail );
 
@@ -355,7 +362,7 @@ describe( module( "Carbon/Apps" ), ():void => {
 				expect( promise instanceof Promise ).toBe( true );
 
 				promise.then( ():void => {
-					expect( successSpy.calls.count() ).toBe( 1 );
+					expect( successSpy ).toHaveBeenCalledTimes( 1 );
 					done();
 				} ).catch( done.fail );
 

@@ -7,6 +7,7 @@ exports.defaultSettings = {
     "platform.container": "platform/",
     "platform.apps.container": "apps/",
     "platform.agents.container": "agents/",
+    "platform.roles.container": "roles/",
     "vocabulary": "vocabulary/#",
 };
 Object.defineProperty(exports, "__esModule", { value: true });
