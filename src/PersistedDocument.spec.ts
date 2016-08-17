@@ -382,8 +382,8 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 		} );
 
 		describe( decoratedObject(
-			"Object decorated by the `Carbon.LDP.PersistedContainer.Factory.decorate()` function.", [
-				"Carbon.LDP.PersistedContainer.Class",
+			"Object decorated by the `Carbon.PersistedDocument.Factory.decorate()` function.", [
+				"Carbon.PersistedDocument.Class",
 			]
 		), ():void => {
 			let document:PersistedDocument.Class;

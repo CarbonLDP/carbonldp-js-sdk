@@ -1,3 +1,4 @@
+import * as AppRole from "./App/Role";
 import * as APIDescription from "./APIDescription";
 import * as Auth from "./Auth";
 import * as BlankNode from "./BlankNode";
@@ -31,7 +32,7 @@ export class Class implements Context {
 		this.generalObjectSchema = new ObjectSchema.DigestedObjectSchema();
 		this.typeObjectSchemaMap = new Map<string, ObjectSchema.DigestedObjectSchema>();
 
-		this.auth = new Auth.Class( this );
+		this.auth = null;
 		this.documents = new Documents( this );
 
 		this.registerDefaultObjectSchemas();
@@ -179,6 +180,8 @@ export class Class implements Context {
 				"@container": "@set",
 			},
 		} );
+		this.extendObjectSchema( AppRole.RDF_CLASS, Auth.Role.SCHEMA );
+		this.extendObjectSchema( AppRole.RDF_CLASS, AppRole.SCHEMA );
 
 		this.extendObjectSchema( LDP.ResponseMetadata.RDF_CLASS, LDP.ResponseMetadata.SCHEMA );
 		this.extendObjectSchema( LDP.ResourceMetadata.RDF_CLASS, LDP.ResourceMetadata.SCHEMA );

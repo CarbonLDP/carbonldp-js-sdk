@@ -3,12 +3,31 @@ import * as Utils from "./Utils";
 
 export interface Class extends Pointer.Class {
 	types:string[];
+
+	addType( type:string ):void;
+	hasType( type:string ):boolean;
+	removeType( type:string ):void;
+}
+
+function addType( type:string ):void {
+	this.types.push( type );
+}
+function hasType( type:string ):boolean {
+	return this.types.indexOf( type ) !== - 1;
+}
+function removeType( type:string ):void {
+	let index:number = this.types.indexOf( type );
+	if( index !== - 1 ) this.types.splice( index, 1 );
 }
 
 export class Factory {
-	static hasClassProperties( resource:Object ):boolean {
+	static hasClassProperties( object:Object ):boolean {
 		return (
-			Utils.hasPropertyDefined( resource, "types" )
+			Utils.hasPropertyDefined( object, "types" )
+
+			&& Utils.hasFunction( object, "addType" )
+			&& Utils.hasFunction( object, "hasType" )
+			&& Utils.hasFunction( object, "removeType" )
 		);
 	}
 
@@ -43,6 +62,25 @@ export class Factory {
 				enumerable: false,
 				configurable: true,
 				value: [],
+			},
+
+			"addType": {
+				writable: true,
+				enumerable: false,
+				configurable: true,
+				value: addType,
+			},
+			"hasType": {
+				writable: true,
+				enumerable: false,
+				configurable: true,
+				value: hasType,
+			},
+			"removeType": {
+				writable: true,
+				enumerable: false,
+				configurable: true,
+				value: removeType,
 			},
 		} );
 

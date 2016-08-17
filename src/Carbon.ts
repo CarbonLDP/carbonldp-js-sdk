@@ -19,6 +19,7 @@ import * as PersistedDocument from "./PersistedDocument";
 import * as PersistedFragment from "./PersistedFragment";
 import * as PersistedNamedFragment from "./PersistedNamedFragment";
 import * as PersistedResource from "./PersistedResource";
+import * as Platform from "./Platform";
 import * as Pointer from "./Pointer";
 import * as RDF from "./RDF";
 import * as Resource from "./Resource";
@@ -49,6 +50,7 @@ class Carbon extends AbstractContext {
 	static PersistedFragment:typeof PersistedFragment = PersistedFragment;
 	static PersistedNamedFragment:typeof PersistedNamedFragment = PersistedNamedFragment;
 	static PersistedResource:typeof PersistedResource = PersistedResource;
+	static Platform:typeof Platform = Platform;
 	static Pointer:typeof Pointer = Pointer;
 	static RDF:typeof RDF = RDF;
 	static Resource:typeof Resource = Resource;
@@ -59,7 +61,7 @@ class Carbon extends AbstractContext {
 	/* tslint:enable: variable-name */
 
 	// TODO: Get package.json version directly
-	static get version():string { return "0.35.1"; }
+	static get version():string { return "0.36.0"; }
 
 	apps:Apps.Class;
 
@@ -67,6 +69,7 @@ class Carbon extends AbstractContext {
 
 	constructor( settings?:Settings.Class ) {
 		super();
+		this.auth = new Platform.Auth.Class( this );
 
 		settings = settings ? settings : Settings.defaultSettings;
 

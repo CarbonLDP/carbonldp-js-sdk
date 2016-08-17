@@ -39,7 +39,7 @@ export class Class {
 
 	getAllContexts():Promise<AppContext[]> {
 		return this.resolveURI( "" ).then( ( appsContainerURI:string ) => {
-			if( ! this.context.auth.isAuthenticated() ) return this.context.documents.getMembers<PersistedApp.Class>( this.getContainerURI(), false );
+			if( ! this.context.auth || ! this.context.auth.isAuthenticated() ) return this.context.documents.getMembers<PersistedApp.Class>( this.getContainerURI(), false );
 
 			let agentID:string = this.context.auth.authenticatedAgent.id;
 			return this.context.documents.executeSELECTQuery( agentID, `

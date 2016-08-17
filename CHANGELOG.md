@@ -1,3 +1,153 @@
+# 0.36.0 (August 03, 2016)
+- [LDP-507](https://jira.base22.com/browse/LDP-507) Parse server errors. When receiving an HTTP.Error, you can now access properties that provide more information such as:
+    - `errors`: An array of errors. The platform can detect several errors per request, e.g. several invalid properties
+        - `carbonCode`: A carbon specific code that serves as a reference of the error. It can be sent to the support team when submitting an issue
+        - `message`: A string detailing the error in a more human friendly way
+    - `requestID`: A unique ID assigned to the request sent to the platform. This ID needs to be sent when reporting bugs so the request can be tracked
+- [LDP-506](https://jira.base22.com/browse/LDP-506) Execute SPARQL Updates. The following methods have been added:
+    - `documents.executeUPDATE()`
+    - `persistedDocument.executeUPDATE()`
+- [LDP-536](https://jira.base22.com/browse/LDP-536) Retrieve a `cs:ProtectedDocument`'s ACL
+    - `persistedProtectedDocument.getACL()`
+- [LDP-537](https://jira.base22.com/browse/LDP-537) Modify and save an ACL. `PersistedACL`s have now the following methods:
+    - `grant()`
+    - `deny()`
+    - `configureChildInheritance()`
+    - `grants()`
+    - `denies()`
+    - `getChildInheritance()`
+    - `remove()`
+    - `removeChildInheritance()`
+- [LDP-746](https://jira.base22.com/browse/LDP-746) - Get the current authenticated agent
+    - Add `context.auth.authenticatedAgent` property. It contains the current authenticated agent
+    - Add `token.agent` property that also contains the Agent that has been authenticated with `"TOKEN"` method
+- Many method signatures are now generic. Before, something like this needed to be done if we were expecting a specific type on a persisted document:
+  
+    ```typescript
+    interface Project {
+        name:string;
+        tasks:Task[];
+    }
+  
+    documents.get( "some-project/" ).then( ( [ document, response ]:[ PersistedDocument.Class, HTTP.Response.Class ] ) => {
+        let project:Project & PersistedDocument.Class = <any> document; // Ugly :(
+        console.log( project.name );
+    });
+    ```
+    
+    Now we can use the generic version of the `get` method and call it like this:
+    
+    ```typescript
+    interface Project {
+        name:string;
+        tasks:Task[];
+    }
+
+    documents.get<Project>( "some-project/" ).then( ( [ project, response ]:[ Project & PersistedDocument.Class, HTTP.Response.Class ] ) => {
+        console.log( project.name );
+    });
+    ```
+    
+    The changed methods are:
+    
+    - `documents.get` / `persistedDocument.get`
+    - `documents.createChild` / `persistedDocument.createChild`
+    - `documents.getChildren` / `persistedDocument.getChildren`
+    - `documents.getMembers` / `persistedDocument.getMembers`
+    - `documents.createAccessPoint` / `persistedDocument.createAccessPoint`
+    - `documents.save` / `persistedDocument.save`
+    - `documents.refresh` / `persistedDocument.refresh`
+
+- Add `documents.createChildAndRetrieve` / `persistedDocument.createChildAndRetrieve`, methods that create a child and automatically retrieve it to make sure the returned 
+    `ProtectedDocument.Class` has all the document's information.
+- Change several methods so they return already decorated pointers. Before, if you wanted to create a child of a just created child you needed to do something like this:
+
+    ```typescript
+
+    documents.createChild( "some-project/" ).then( ( [ pointer, response ]:[ Pointer.Class, HTTP.Response.Class ] ) => {
+        console.log( "createChild" in pointer ); // false
+        return pointer.resolve();
+    }).then( ( [ persistedDocument, response ]:[ PersistedDocument.Class, HTTP.Response.Class ] ) => {
+        console.log( "createChild" in persistedDocument ); // true
+        return persistedDocument.createChild( ...
+    });
+    ```
+    
+    Now, the method decorates the pointer as a `PersistedDocument.Class` and even though it doesn't resolve its missing properties, methods like `createChild` can be immediately
+    called on it:
+    
+    ```typescript
+    
+    documents.createChild( "some-project/" ).then( ( [ persistedDocument, response ]:[ PersistedDocument.Class, HTTP.Response.Class ] ) => {
+        console.log( "createChild" in persistedDocument ); // true
+        return persistedDocument.createChild( ...
+    });
+    ```
+    
+- [LDP-730](https://jira.base22.com/browse/LDP-730) - Save and refresh a document
+    - Add `documents.saveAndRefresh` / `persistedDocument.saveAndRefresh` methods
+- Methods now reuse objects instead of creating new ones for the `Pointer.Class`/`PersistedDocument.Class` results. For example, before the SDK acted like this:
+
+    ```typescript
+    let objectToPersist:any = {
+        someProperty: [
+            {
+                property: "Hello"
+            },
+            {
+                property: "World"
+            }
+        ];
+    }
+    
+    documents.createChild( "/", objectToPersist ).then( ( [ pointer, response ]:[ Pointer.Class, HTTP.Response.Class ] ) => {
+        console.log( pointer === objectToPersist ); // false
+        console.log( "someProperty" in pointer ); // false
+    });
+    ```
+    
+    But now it will reuse the objects like this:
+    
+    ```typescript
+    let objectToPersist:any = {
+        someProperty: [
+            {
+                property: "Hello"
+            },
+            {
+                property: "World"
+            }
+        ];
+    }
+    
+    documents.createChild( "/", objectToPersist ).then( ( [ document, response ]:[ PersistedDocument.Class, HTTP.Response.Class ] ) => {
+        console.log( document === objectToPersist ); // true
+        console.log( "someProperty" in pointer ); // true
+        console.log( document.someProperty[ 0 ] === objectToPersist.someProperty[ 0 ] ); // true
+        console.log( document.someProperty[ 1 ] === objectToPersist.someProperty[ 1 ] ); // true
+    });
+    ```
+
+- [LDP-712](https://jira.base22.com/browse/LDP-712) - Convert any nested object into a fragment when saving the document.
+    - Add private `document._normalize()` method that convert nested objects and remove unreferenced BlankNodes.
+    - Add `document.removeNamedFragment()` method that remove the specified NamedFragment.
+- [LDP-729](https://jira.base22.com/browse/LDP-729) - Support adding relative and prefixed types to a Document
+    - Add `addType()`, `hasType()` and `removeType()` methods to `Document` and `PersistedDocument`.
+    - Add support for prefixed URIs in `getPointer()` methods.
+- Fix [LDP-709](https://jira.base22.com/browse/LDP-709) - Error when refreshing documents with an array of fragments
+- Fix [LDP-658](https://jira.base22.com/browse/LDP-658) - Corrections in documentation and README
+- Fix [LDP-721](https://jira.base22.com/browse/LDP-721) - `apps.getAllContext` brings all applications visible to an agent
+- Fix [LDP-741](https://jira.base22.com/browse/LDP-741) - Listing members of an AccessPoint that doesn't have members throws an Error
+
+#### Breaking Changes
+- `documents.createChild()` signature was changed. `slug` is now the third argument instead of the second one
+- `documents.createAccessPoint()` signature was changed. `slug` is now the third argument instead of the second one
+- `persistedDocument.createChild()` signature was changed. `slug` is now the second argument instead of the first one
+- `persistedDocument.createAccessPoint()` signature was changed. `slug` is now the second argument instead of the first one
+- `apps.create()` signature was changed. `slug` is now the second argument instead of the first one
+- `agents.create()` signature was changed. `slug` is now the second argument instead of the first one
+- `document.removeFragment()` is now private. To remove fragments simply remove any reference the document or named fragments have of it.
+
 # 0.35.1 (June 27, 2016)
 - Improve how fragments are refreshed
 
