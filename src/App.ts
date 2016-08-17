@@ -5,6 +5,8 @@ import Pointer from "./Pointer";
 import * as Utils from "./Utils";
 import IllegalArgumentError from "./Errors/IllegalArgumentError";
 
+import * as Role from "./App/Role";
+import * as Roles from "./App/Roles";
 import Context from "./App/Context";
 
 export interface Class extends Document.Class {
@@ -69,7 +71,9 @@ export class Factory {
 }
 
 export {
-	Context
+	Context,
+	Role,
+	Roles,
 };
 
 export default Class;

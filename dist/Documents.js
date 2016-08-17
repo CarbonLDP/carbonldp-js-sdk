@@ -532,6 +532,8 @@ var Documents = (function () {
         });
     };
     Documents.prototype.getDownloadURL = function (documentURI, requestOptions) {
+        if (!this.context.auth)
+            Promise.reject(new Errors.IllegalStateError("This instance doesn't support Authenticated request."));
         return this.context.auth.getAuthenticatedURL(documentURI, requestOptions);
     };
     Documents.prototype.getGeneralSchema = function () {
@@ -549,42 +551,42 @@ var Documents = (function () {
     Documents.prototype.executeRawASKQuery = function (documentURI, askQuery, requestOptions) {
         if (requestOptions === void 0) { requestOptions = {}; }
         documentURI = this.getRequestURI(documentURI);
-        if (this.context && this.context.auth.isAuthenticated())
+        if (this.context && this.context.auth && this.context.auth.isAuthenticated())
             this.context.auth.addAuthentication(requestOptions);
         return SPARQL.Service.executeRawASKQuery(documentURI, askQuery, requestOptions);
     };
     Documents.prototype.executeASKQuery = function (documentURI, askQuery, requestOptions) {
         if (requestOptions === void 0) { requestOptions = {}; }
         documentURI = this.getRequestURI(documentURI);
-        if (this.context && this.context.auth.isAuthenticated())
+        if (this.context && this.context.auth && this.context.auth.isAuthenticated())
             this.context.auth.addAuthentication(requestOptions);
         return SPARQL.Service.executeASKQuery(documentURI, askQuery, requestOptions);
     };
     Documents.prototype.executeRawSELECTQuery = function (documentURI, selectQuery, requestOptions) {
         if (requestOptions === void 0) { requestOptions = {}; }
         documentURI = this.getRequestURI(documentURI);
-        if (this.context && this.context.auth.isAuthenticated())
+        if (this.context && this.context.auth && this.context.auth.isAuthenticated())
             this.context.auth.addAuthentication(requestOptions);
         return SPARQL.Service.executeRawSELECTQuery(documentURI, selectQuery, requestOptions);
     };
     Documents.prototype.executeSELECTQuery = function (documentURI, selectQuery, requestOptions) {
         if (requestOptions === void 0) { requestOptions = {}; }
         documentURI = this.getRequestURI(documentURI);
-        if (this.context && this.context.auth.isAuthenticated())
+        if (this.context && this.context.auth && this.context.auth.isAuthenticated())
             this.context.auth.addAuthentication(requestOptions);
         return SPARQL.Service.executeSELECTQuery(documentURI, selectQuery, this, requestOptions);
     };
     Documents.prototype.executeRawCONSTRUCTQuery = function (documentURI, constructQuery, requestOptions) {
         if (requestOptions === void 0) { requestOptions = {}; }
         documentURI = this.getRequestURI(documentURI);
-        if (this.context && this.context.auth.isAuthenticated())
+        if (this.context && this.context.auth && this.context.auth.isAuthenticated())
             this.context.auth.addAuthentication(requestOptions);
         return SPARQL.Service.executeRawCONSTRUCTQuery(documentURI, constructQuery, requestOptions);
     };
     Documents.prototype.executeRawDESCRIBEQuery = function (documentURI, describeQuery, requestOptions) {
         if (requestOptions === void 0) { requestOptions = {}; }
         documentURI = this.getRequestURI(documentURI);
-        if (this.context && this.context.auth.isAuthenticated())
+        if (this.context && this.context.auth && this.context.auth.isAuthenticated())
             this.context.auth.addAuthentication(requestOptions);
         return SPARQL.Service.executeRawDESCRIBEQuery(documentURI, describeQuery, requestOptions);
     };
@@ -595,7 +597,7 @@ var Documents = (function () {
                 throw new Errors.IllegalArgumentError("This Documents instance doesn't support relative URIs.");
             documentURI = this.context.resolve(documentURI);
         }
-        if (this.context && this.context.auth.isAuthenticated())
+        if (this.context && this.context.auth && this.context.auth.isAuthenticated())
             this.context.auth.addAuthentication(requestOptions);
         return SPARQL.Service.executeUPDATE(documentURI, update, requestOptions);
     };
@@ -757,7 +759,7 @@ var Documents = (function () {
         return uri;
     };
     Documents.prototype.setDefaultRequestOptions = function (requestOptions, interactionModel) {
-        if (this.context && this.context.auth.isAuthenticated())
+        if (this.context && this.context.auth && this.context.auth.isAuthenticated())
             this.context.auth.addAuthentication(requestOptions);
         HTTP.Request.Util.setAcceptHeader("application/ld+json", requestOptions);
         HTTP.Request.Util.setPreferredInteractionModel(interactionModel, requestOptions);

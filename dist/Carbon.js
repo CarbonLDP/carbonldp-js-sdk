@@ -26,6 +26,7 @@ var PersistedDocument = require("./PersistedDocument");
 var PersistedFragment = require("./PersistedFragment");
 var PersistedNamedFragment = require("./PersistedNamedFragment");
 var PersistedResource = require("./PersistedResource");
+var Platform = require("./Platform");
 var Pointer = require("./Pointer");
 var RDF = require("./RDF");
 var Resource = require("./Resource");
@@ -37,6 +38,7 @@ var Carbon = (function (_super) {
     __extends(Carbon, _super);
     function Carbon(settings) {
         _super.call(this);
+        this.auth = new Platform.Auth.Class(this);
         settings = settings ? settings : Settings.defaultSettings;
         Utils.M.extend(this.settings, Utils.M.from(settings));
         this.apps = new Apps.Class(this);
@@ -86,6 +88,7 @@ var Carbon = (function (_super) {
     Carbon.PersistedFragment = PersistedFragment;
     Carbon.PersistedNamedFragment = PersistedNamedFragment;
     Carbon.PersistedResource = PersistedResource;
+    Carbon.Platform = Platform;
     Carbon.Pointer = Pointer;
     Carbon.RDF = RDF;
     Carbon.Resource = Resource;

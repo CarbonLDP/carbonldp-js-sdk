@@ -5,6 +5,8 @@ import Authenticator from "./Auth/Authenticator";
 import BasicAuthenticator from "./Auth/BasicAuthenticator";
 import * as PersistedACE from "./Auth/PersistedACE";
 import * as PersistedACL from "./Auth/PersistedACL";
+import * as Role from "./Auth/Role";
+import * as Roles from "./Auth/Roles";
 import TokenAuthenticator from "./Auth/TokenAuthenticator";
 import * as Ticket from "./Auth/Ticket";
 import * as Token from "./Auth/Token";
@@ -15,12 +17,13 @@ import * as Agent from "./Agent";
 import Context from "./Context";
 import * as HTTP from "./HTTP";
 import * as PersistedDocument from "./PersistedDocument";
-export { ACE, ACL, AuthenticationToken, Authenticator, BasicAuthenticator, PersistedACE, PersistedACL, Ticket, Token, TokenAuthenticator, UsernameAndPasswordToken };
+export { ACE, ACL, AuthenticationToken, Authenticator, BasicAuthenticator, PersistedACE, PersistedACL, Role, Roles, Ticket, Token, TokenAuthenticator, UsernameAndPasswordToken };
 export declare enum Method {
     BASIC = 0,
     TOKEN = 1,
 }
-export declare class Class {
+export declare abstract class Class {
+    roles: Roles.Class;
     protected _authenticatedAgent: Agent.Class & PersistedDocument.Class;
     private context;
     private method;

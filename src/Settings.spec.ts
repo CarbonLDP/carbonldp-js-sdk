@@ -29,6 +29,7 @@ describe( module( "Carbon/settings" ), ():void => {
 		* platform.container: \`"platform/"\`
 		* platform.apps.container: \`"apps/"\`
 		* platform.agents.container: \`"agents/"\`
+		* platform.roles.container: \`"roles/"\`
 		* vocabulary: \`"vocabulary/#"\`
 		`
 	), ():void => {
@@ -49,6 +50,9 @@ describe( module( "Carbon/settings" ), ():void => {
 
 		expect( defaultExport[ "platform.apps.container" ] ).toBeDefined();
 		expect( defaultExport[ "platform.apps.container" ] ).toBe( "apps/" );
+
+		expect( defaultExport[ "platform.roles.container" ] ).toBeDefined();
+		expect( defaultExport[ "platform.roles.container" ] ).toBe( "roles/" );
 
 		expect( defaultExport[ "platform.agents.container" ] ).toBeDefined();
 		expect( defaultExport[ "platform.agents.container" ] ).toBe( "agents/" );

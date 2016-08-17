@@ -41,6 +41,7 @@ import * as PersistedDocument from "./PersistedDocument";
 import * as PersistedFragment from "./PersistedFragment";
 import * as PersistedNamedFragment from "./PersistedNamedFragment";
 import * as PersistedResource from "./PersistedResource";
+import * as Platform from "./Platform";
 import * as Pointer from "./Pointer";
 import * as RDF from "./RDF";
 import * as Resource from "./Resource";
@@ -302,6 +303,15 @@ describe( module( "Carbon" ), ():void => {
 
 		it( reexports(
 			STATIC,
+			"Platform",
+			"Carbon/Platform"
+		), ():void => {
+			expect( Carbon.Platform ).toBeDefined();
+			expect( Carbon.Platform ).toBe( Platform );
+		} );
+
+		it( reexports(
+			STATIC,
 			"Pointer",
 			"Carbon/Pointer"
 		), ():void => {
@@ -447,6 +457,17 @@ describe( module( "Carbon" ), ():void => {
 			expect( carbon.apps ).toBeDefined();
 			expect( Utils.isObject( carbon.apps ) );
 			expect( carbon.apps instanceof Apps.Class );
+		} );
+
+		it( hasProperty(
+			INSTANCE,
+			"auth",
+			"Carbon.Platform.Auth.Class",
+			"Instance of `Carbon.Platform.Auth.Class` class for manage the auth inside of the platform."
+		), ():void => {
+			expect( carbon.auth ).toBeDefined();
+			expect( Utils.isObject( carbon.auth ) );
+			expect( carbon.auth instanceof Platform.Auth.Class );
 		} );
 
 	} );

@@ -39,7 +39,7 @@ describe( module(
 		it( isDefined(), ():void => {
 			expect( CS.Class ).toBeDefined();
 			expect( Utils.isFunction( CS.Class ) ).toBe( true );
-			expect( Object.keys( CS.Class ).length ).toBe( 8 );
+			expect( Object.keys( CS.Class ).length ).toBe( 9 );
 		} );
 
 		it( hasProperty(
@@ -99,6 +99,17 @@ describe( module(
 
 		it( hasProperty(
 			STATIC,
+			"AppRole",
+			"string"
+		), ():void => {
+			expect( CS.Class.AppRole ).toBeDefined();
+			expect( Utils.isString( CS.Class.AppRole ) ).toBe( true );
+
+			expect( CS.Class.AppRole ).toBe( "https://carbonldp.com/ns/v1/security#AppRole" );
+		} );
+
+		it( hasProperty(
+			STATIC,
 			"ProtectedDocument",
 			"string"
 		), ():void => {
@@ -141,7 +152,7 @@ describe( module(
 			expect( CS.Predicate ).toBeDefined();
 			expect( Utils.isFunction( CS.Predicate ) ).toBe( true );
 
-			expect( Object.keys( CS.Predicate ).length ).toBe( 18 );
+			expect( Object.keys( CS.Predicate ).length ).toBe( 21 );
 		} );
 
 		it( hasProperty(
@@ -179,6 +190,17 @@ describe( module(
 
 		it( hasProperty(
 			STATIC,
+			"agent",
+			"string"
+		), ():void => {
+			expect( CS.Predicate.agent ).toBeDefined();
+			expect( Utils.isString( CS.Predicate.agent ) ).toBe( true );
+
+			expect( CS.Predicate.agent ).toBe( "https://carbonldp.com/ns/v1/security#agent" );
+		} );
+
+		it( hasProperty(
+			STATIC,
 			"allowsOrigin",
 			"string"
 		), ():void => {
@@ -186,6 +208,17 @@ describe( module(
 			expect( Utils.isString( CS.Predicate.allowsOrigin ) ).toBe( true );
 
 			expect( CS.Predicate.allowsOrigin ).toBe( "https://carbonldp.com/ns/v1/security#allowsOrigin" );
+		} );
+
+		it( hasProperty(
+			STATIC,
+			"childRole",
+			"string"
+		), ():void => {
+			expect( CS.Predicate.childRole ).toBeDefined();
+			expect( Utils.isString( CS.Predicate.childRole ) ).toBe( true );
+
+			expect( CS.Predicate.childRole ).toBe( "https://carbonldp.com/ns/v1/security#childRole" );
 		} );
 
 		it( hasProperty(
@@ -263,6 +296,17 @@ describe( module(
 			expect( Utils.isString( CS.Predicate.namae ) ).toBe( true );
 
 			expect( CS.Predicate.namae ).toBe( "https://carbonldp.com/ns/v1/security#name" );
+		} );
+
+		it( hasProperty(
+			STATIC,
+			"parentRole",
+			"string"
+		), ():void => {
+			expect( CS.Predicate.parentRole ).toBeDefined();
+			expect( Utils.isString( CS.Predicate.parentRole ) ).toBe( true );
+
+			expect( CS.Predicate.parentRole ).toBe( "https://carbonldp.com/ns/v1/security#parentRole" );
 		} );
 
 		it( hasProperty(

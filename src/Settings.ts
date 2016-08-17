@@ -7,6 +7,7 @@ export interface Class {
 	"platform.container"?:string;
 	"platform.apps.container"?:string;
 	"platform.agents.container"?:string;
+	"platform.roles.container"?:string;
 	"vocabulary"?:string;
 }
 
@@ -17,6 +18,7 @@ export const defaultSettings:Class = {
 	"platform.container": "platform/",
 	"platform.apps.container": "apps/",
 	"platform.agents.container": "agents/",
+	"platform.roles.container": "roles/",
 	"vocabulary": "vocabulary/#",
 };
 

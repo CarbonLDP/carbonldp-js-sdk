@@ -75,7 +75,8 @@ describe( module( "Carbon/SDKContext" ), ():void => {
 			INSTANCE,
 			"auth",
 			"Carbon.Auth.Class",
-			"Instance of `Carbon.Auth.Class` class to manage all the authentications in the context."
+			"Instance of an implementation of the `Carbon.Auth.Class` class to manage authentications and authorizations in the context.\n" +
+			"In an instance of the SDKContext this property is set to `null`, and its children contexts must instantiate a valid implementation of the `Carbon.Auth.Class` abstract class."
 		), ():void => {
 			expect( context.auth ).toBeDefined();
 			expect( context.auth instanceof Auth.Class );
