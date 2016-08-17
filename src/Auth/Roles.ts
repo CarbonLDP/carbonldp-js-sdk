@@ -79,6 +79,16 @@ export abstract class Class {
 		} );
 	}
 
+	removeAgent( roleURI:string, agent:Pointer.Class | string, requestOptions?:HTTP.Request.Options ):Promise<HTTP.Response.Class> {
+		return this.removeAgents( roleURI, [ agent ], requestOptions );
+	}
+
+	removeAgents( roleURI:string, agents:(Pointer.Class | string)[], requestOptions?:HTTP.Request.Options ):Promise<HTTP.Response.Class> {
+		return this.getAgentsAccessPoint( roleURI ).then( ( agentsAccessPoint:Pointer.Class ) => {
+			return this.context.documents.removeMembers( agentsAccessPoint.id, agents, requestOptions );
+		} );
+	}
+
 	private resolveURI( agentURI:string ):Promise<string> {
 		return new Promise<string>( ( resolve:( uri:string ) => void ) => {
 			let containerURI:string = this.context.resolve( this.getContainerURI() );
