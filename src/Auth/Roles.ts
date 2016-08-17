@@ -90,6 +90,7 @@ export abstract class Class {
 		} );
 	}
 
+	// TODO: Optimize
 	private getAgentsAccessPoint( roleURI:string ):Promise<Pointer.Class> {
 		return this.resolveURI( roleURI ).then( ( uri:string ) => {
 			return this.context.documents.executeSELECTQuery( uri, ` select distinct ?agentsAccessPoint where {
