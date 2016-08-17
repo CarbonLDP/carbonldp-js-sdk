@@ -30,7 +30,7 @@ var Class = (function () {
     Class.prototype.getAllContexts = function () {
         var _this = this;
         return this.resolveURI("").then(function (appsContainerURI) {
-            if (!_this.context.auth.isAuthenticated())
+            if (!_this.context.auth || !_this.context.auth.isAuthenticated())
                 return _this.context.documents.getMembers(_this.getContainerURI(), false);
             var agentID = _this.context.auth.authenticatedAgent.id;
             return _this.context.documents.executeSELECTQuery(agentID, "\n\t\t\t\tSELECT ?app WHERE {\n\t\t\t\t\t<" + agentID + "> <" + NS.C.Predicate.appRoleMap + "> ?roleMap.\n\t\t\t\t\t?roleMap <" + NS.C.Predicate.entry + "> ?appEntry.\n\t\t\t\t\t?appEntry <" + NS.C.Predicate.key + "> ?app.\n\t\t\t\t}\n\t\t\t").then(function (_a) {

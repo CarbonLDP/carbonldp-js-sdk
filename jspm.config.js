@@ -1,4 +1,8 @@
 SystemJS.config({
+  paths: {
+    "npm:": "test/jspm_packages/npm/",
+    "github:": "test/jspm_packages/github/"
+  },
   devConfig: {
     "map": {
       "os": "github:jspm/nodelibs-os@0.2.0-alpha",

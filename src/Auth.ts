@@ -5,6 +5,8 @@ import Authenticator from "./Auth/Authenticator";
 import BasicAuthenticator from "./Auth/BasicAuthenticator";
 import * as PersistedACE from "./Auth/PersistedACE";
 import * as PersistedACL from "./Auth/PersistedACL";
+import * as Role from "./Auth/Role";
+import * as Roles from "./Auth/Roles";
 import TokenAuthenticator from "./Auth/TokenAuthenticator";
 import * as Ticket from "./Auth/Ticket";
 import * as Token from "./Auth/Token";
@@ -33,6 +35,8 @@ export {
 	BasicAuthenticator,
 	PersistedACE,
 	PersistedACL,
+	Role,
+	Roles,
 	Ticket,
 	Token,
 	TokenAuthenticator,
@@ -44,7 +48,8 @@ export enum Method {
 	TOKEN
 }
 
-export class Class {
+export abstract class Class {
+	public roles:Roles.Class;
 	// TODO: Change to `PersistedAgent.Class`
 	protected _authenticatedAgent:Agent.Class & PersistedDocument.Class;
 
@@ -63,6 +68,8 @@ export class Class {
 	}
 
 	constructor( context:Context ) {
+		this.roles = null;
+
 		this.context = context;
 
 		this.authenticators = [];
@@ -73,7 +80,7 @@ export class Class {
 	isAuthenticated( askParent:boolean = true ):boolean {
 		return (
 			( this.authenticator && this.authenticator.isAuthenticated() ) ||
-			( askParent && ! ! this.context.parentContext && this.context.parentContext.auth.isAuthenticated() )
+			( askParent && ! ! this.context.parentContext && ! ! this.context.parentContext.auth && this.context.parentContext.auth.isAuthenticated() )
 		);
 	}
 
@@ -104,7 +111,7 @@ export class Class {
 	addAuthentication( requestOptions:HTTP.Request.Options ):void {
 		if( this.isAuthenticated( false ) ) {
 			this.authenticator.addAuthentication( requestOptions );
-		} else if( ! ! this.context.parentContext ) {
+		} else if( ! ! this.context.parentContext && ! ! this.context.parentContext.auth ) {
 			this.context.parentContext.auth.addAuthentication( requestOptions );
 		} else {
 			console.warn( "There is no authentication to add to the request." );

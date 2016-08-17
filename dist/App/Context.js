@@ -6,11 +6,13 @@ var __extends = (this && this.__extends) || function (d, b) {
 };
 var AbstractContext_1 = require("./../AbstractContext");
 var Agents_1 = require("./../Agents");
+var Auth_1 = require("./Auth");
 var RDF = require("./../RDF");
 var Class = (function (_super) {
     __extends(Class, _super);
     function Class(parentContext, app) {
         _super.call(this, parentContext);
+        this.auth = new Auth_1.default(this);
         this._app = app;
         this.base = this.getBase(this.app);
         this.agents = new Agents_1.default(this);
