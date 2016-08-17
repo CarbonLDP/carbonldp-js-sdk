@@ -102,6 +102,14 @@ var Documents = (function () {
             var eTag = HTTP.Response.Util.getETag(response);
             if (eTag === null)
                 throw new HTTP.Errors.BadResponseError("The response doesn't contain an ETag", response);
+            var locationHeader = response.getHeader("Content-Location");
+            if (!!locationHeader) {
+                if (locationHeader.values.length !== 1)
+                    throw new HTTP.Errors.BadResponseError("The response contains more than one Content-Location header.", response);
+                uri = locationHeader.toString();
+                if (!uri)
+                    throw new HTTP.Errors.BadResponseError("The response doesn't contain a valid 'Content-Location' header.", response);
+            }
             var rdfDocument = _this.getRDFDocument(uri, rdfDocuments, response);
             if (rdfDocument === null)
                 throw new HTTP.Errors.BadResponseError("No document was returned.", response);

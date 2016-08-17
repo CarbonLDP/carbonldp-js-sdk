@@ -13,6 +13,7 @@ import * as Token from "./Auth/Token";
 import UsernameAndPasswordToken from "./Auth/UsernameAndPasswordToken";
 import UsernameAndPasswordCredentials from "./Auth/UsernameAndPasswordCredentials";
 import Credentials from "./Auth/Credentials";
+import * as Agent from "./Agent";
 import Context from "./Context";
 import * as HTTP from "./HTTP";
 import * as PersistedDocument from "./PersistedDocument";
@@ -23,15 +24,15 @@ export declare enum Method {
 }
 export declare abstract class Class {
     roles: Roles.Class;
-    protected _authenticatedAgent: PersistedDocument.Class;
+    protected _authenticatedAgent: Agent.Class & PersistedDocument.Class;
     private context;
     private method;
     private authenticators;
     private authenticator;
-    authenticatedAgent: PersistedDocument.Class;
+    authenticatedAgent: Agent.Class & PersistedDocument.Class;
     constructor(context: Context);
     isAuthenticated(askParent?: boolean): boolean;
-    authenticate(username: string, password: string): Promise<Credentials>;
+    authenticate(username: string, password: string): Promise<Token.Class>;
     authenticateUsing(method: "BASIC", username: string, password: string): Promise<UsernameAndPasswordCredentials>;
     authenticateUsing(method: "TOKEN", username: string, password: string): Promise<Token.Class>;
     authenticateUsing(method: "TOKEN", token: Token.Class): Promise<Token.Class>;
