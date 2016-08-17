@@ -1992,6 +1992,30 @@ Returns true if the object provided is considered a `Carbon.Auth.PersistedRole.C
 
 
 ##### <a name="Carbon-Auth-PersistedRole-Factory-Decorated-Object-Methods" />Methods
+##### addAgent
+```typescript 
+addAgent( agent:string | Carbon.Pointer.Class,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<Carbon.HTTP.Response.Class>
+```
+
+Makes a relation in the role towards the agents specified.
+
+*Parameters*
+
+- agent: The agents that wants to add to the role.
+- requestOptions
+
+##### addAgents
+```typescript 
+addAgents( agents:(string | Carbon.Pointer.Class)[],  requestOptions?:Carbon.HTTP.Request.Options ):Promise<Carbon.HTTP.Response.Class>
+```
+
+Makes a relation in the role towards the agents specified.
+
+*Parameters*
+
+- agents: An array with strings or Pointers that refers to the agents that wants to add to the role.
+- requestOptions
+
 ##### getAgents
 ```typescript 
 getAgents( requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ carbon.Auth.PersistedRole.Class, Carbon.HTTP.Response.Class ]>
@@ -2126,6 +2150,32 @@ Class( context:Carbon.Context )
 
 
 #### <a name="Carbon-Auth-Roles-Class-Methods" />Methods
+
+##### addAgent
+```typescript 
+addAgent( roleURI:string,  agent:string | Carbon.Pointer.Class,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<Carbon.HTTP.Response.Class>
+```
+
+Makes a relation in the role specified towards the agent provided.
+
+*Parameters*
+
+- roleURI: The URI of the role where to add the agent.
+- agent: The agent that wants to add to the role.
+- requestOptions
+
+##### addAgents
+```typescript 
+addAgents( roleURI:string,  agents:(string | Carbon.Pointer.Class)[],  requestOptions?:Carbon.HTTP.Request.Options ):Promise<Carbon.HTTP.Response.Class>
+```
+
+Makes a relation in the role specified towards the agents specified.
+
+*Parameters*
+
+- roleURI: The URI of the role where to add agents.
+- agents: An array with strings or Pointers that refers to the agents that wants to add to the role.
+- requestOptions
 
 ##### createChild
 ```typescript 

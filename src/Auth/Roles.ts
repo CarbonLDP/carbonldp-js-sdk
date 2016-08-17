@@ -69,6 +69,16 @@ export abstract class Class {
 		} );
 	}
 
+	addAgent( roleURI:string, agent:Pointer.Class | string, requestOptions?:HTTP.Request.Options ):Promise<HTTP.Response.Class> {
+		return this.addAgents( roleURI, [ agent ], requestOptions );
+	}
+
+	addAgents( roleURI:string, agents:(Pointer.Class | string)[], requestOptions?:HTTP.Request.Options ):Promise<HTTP.Response.Class> {
+		return this.getAgentsAccessPoint( roleURI ).then( ( agentsAccessPoint:Pointer.Class ) => {
+			return this.context.documents.addMembers( agentsAccessPoint.id, agents, requestOptions );
+		} );
+	}
+
 	private resolveURI( agentURI:string ):Promise<string> {
 		return new Promise<string>( ( resolve:( uri:string ) => void ) => {
 			let containerURI:string = this.context.resolve( this.getContainerURI() );
@@ -80,6 +90,7 @@ export abstract class Class {
 		} );
 	}
 
+	// TODO: Optimize
 	private getAgentsAccessPoint( roleURI:string ):Promise<Pointer.Class> {
 		return this.resolveURI( roleURI ).then( ( uri:string ) => {
 			return this.context.documents.executeSELECTQuery( uri, ` select distinct ?agentsAccessPoint where {

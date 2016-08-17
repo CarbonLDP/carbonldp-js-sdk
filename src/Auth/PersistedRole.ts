@@ -17,6 +17,9 @@ export interface Class extends PersistedDocument.Class {
 
 	getAgents( requestOptions?:HTTP.Request.Options ):Promise<[ Pointer.Class[], HTTP.Response.Class ]>;
 	getAgents( retrievalPreferencesOrRequestOptions?:RetrievalPreferences.Class, requestOptions?:HTTP.Request.Options ):Promise<[ Pointer.Class[], HTTP.Response.Class ]>;
+
+	addAgent( agent:Pointer.Class | string, requestOptions?:HTTP.Request.Options ):Promise<HTTP.Response.Class>;
+	addAgents( agents:(Pointer.Class | string)[], requestOptions?:HTTP.Request.Options ):Promise<HTTP.Response.Class>;
 }
 
 export class Factory {
@@ -26,6 +29,8 @@ export class Factory {
 			&& Utils.hasPropertyDefined( object, "name" )
 			&& Utils.hasFunction( object, "listAgents" )
 			&& Utils.hasFunction( object, "getAgents" )
+			&& Utils.hasFunction( object, "addAgent" )
+			&& Utils.hasFunction( object, "addAgents" )
 			;
 	}
 
@@ -57,6 +62,18 @@ export class Factory {
 				configurable: true,
 				value: getAgents,
 			},
+			"addAgent": {
+				writable: true,
+				enumerable: false,
+				configurable: true,
+				value: addAgent,
+			},
+			"addAgents": {
+				writable: true,
+				enumerable: false,
+				configurable: true,
+				value: addAgents,
+			},
 		} );
 
 		return role;
@@ -74,6 +91,16 @@ function getAgents( requestOptions?:HTTP.Request.Options ):Promise<[ Pointer.Cla
 function getAgents( retrievalPreferencesOrRequestOptions?:RetrievalPreferences.Class, requestOptions?:HTTP.Request.Options ):Promise<[ Pointer.Class[], HTTP.Response.Class ]> {
 	checkState.call( this );
 	return (<Class> this)._roles.getAgents( (<Class> this).id, retrievalPreferencesOrRequestOptions, requestOptions );
+}
+
+
+function addAgent( agent:Pointer.Class | string, requestOptions?:HTTP.Request.Options ):Promise<HTTP.Response.Class> {
+	checkState.call( this );
+	return (<Class> this)._roles.addAgents( (<Class> this).id, [ agent ], requestOptions );
+}
+function addAgents( agents:(Pointer.Class | string)[], requestOptions?:HTTP.Request.Options ):Promise<HTTP.Response.Class> {
+	checkState.call( this );
+	return (<Class> this)._roles.addAgents( (<Class> this).id, agents, requestOptions );
 }
 
 function checkState():void {
