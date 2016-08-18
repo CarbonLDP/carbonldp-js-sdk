@@ -1,18 +1,17 @@
 import {
 	INSTANCE,
-	STATIC,
 
 	module,
 	clazz,
 
 	isDefined,
 	hasMethod,
-	hasDefaultExport
-} from "./../test/JasmineExtender";
-import * as Utils from "./../Utils";
+	hasDefaultExport,
+} from "../test/JasmineExtender";
+import * as Utils from "../Utils";
 
-import * as JSONLDParser from "./JSONLDParser";
-import DefaultExport from "./JSONLDParser";
+import * as JSONLDParser from "./Parser";
+import DefaultExport from "./Parser";
 
 describe( module(
 	"Carbon/HTTP/JSONLDParser"
@@ -27,6 +26,14 @@ describe( module(
 		"Carbon.HTTP.JSONLDParser.Class",
 		"Wrapper class for the `expand()` function of the `jsonld` lib, using the `Promise` pattern."
 	), ():void => {
+
+		beforeEach( ():void => {
+			jasmine.Ajax.install();
+		} );
+
+		afterEach( ():void => {
+			jasmine.Ajax.uninstall();
+		} );
 
 		it( isDefined(), ():void => {
 			expect( JSONLDParser.Class ).toBeDefined();
@@ -44,7 +51,11 @@ describe( module(
 			],
 			{type: "Promise <Object>"}
 		), ( done ):void => {
-			let compactedObject = {
+			jasmine.Ajax.stubRequest( /Should be error context/ ).andReturn( {
+				status: 404,
+			} );
+
+			let compactedObject:Object = {
 				"@context": {
 					"ex": "http://example.com/",
 					"ns": "http://example.com/ns#",
@@ -54,7 +65,7 @@ describe( module(
 					{
 						"@id": "http://example.com/resource/",
 						"ns:string": [ {
-							"@value": "Document Resource"
+							"@value": "Document Resource",
 						} ],
 						"ns:pointerSet": [
 							{"@id": "_:1"},
@@ -65,7 +76,7 @@ describe( module(
 					{
 						"@id": "_:1",
 						"ns:string": {
-							"@value": "Fragment 1"
+							"@value": "Fragment 1",
 						},
 						"ns:pointerSet": [
 							{"@id": "ex:resource/"},
@@ -75,18 +86,18 @@ describe( module(
 					{
 						"@id": "ex:resource/#1",
 						"ns:string": {
-							"@value": "NamedFragment 1"
+							"@value": "NamedFragment 1",
 						},
 					},
 				],
 			};
-			let expandedObject = [ {
+			let expandedObject:Object = [ {
 				"@id": "http://example.com/resource/",
 				"@graph": [
 					{
 						"@id": "http://example.com/resource/",
 						"http://example.com/ns#string": [ {
-							"@value": "Document Resource"
+							"@value": "Document Resource",
 						} ],
 						"http://example.com/ns#pointerSet": [
 							{"@id": "_:1"},
@@ -97,7 +108,7 @@ describe( module(
 					{
 						"@id": "_:1",
 						"http://example.com/ns#string": [ {
-							"@value": "Fragment 1"
+							"@value": "Fragment 1",
 						} ],
 						"http://example.com/ns#pointerSet": [
 							{"@id": "http://example.com/resource/"},
@@ -107,13 +118,13 @@ describe( module(
 					{
 						"@id": "http://example.com/resource/#1",
 						"http://example.com/ns#string": [ {
-							"@value": "NamedFragment 1"
+							"@value": "NamedFragment 1",
 						} ],
 					},
 				],
 			} ];
-			let jsonString = JSON.stringify( expandedObject );
-			let errorObject = {
+			let jsonString:string = JSON.stringify( compactedObject );
+			let errorObject:Object = {
 				"@context": "Should be error context",
 				"@graph": [
 					{
@@ -128,7 +139,7 @@ describe( module(
 					{
 						"@id": "_:1",
 						"ex:string": [ {
-							"@id": "Fragment 1"
+							"@id": "Fragment 1",
 						} ],
 						"ex:pointerSet": [
 							{"@id": "http://example.com/resource/"},
@@ -138,27 +149,27 @@ describe( module(
 					{
 						"@id": "http://example.com/resource/#1",
 						"ex:string": [ {
-							"@anotherThing": "NamedFragment 1"
+							"@anotherThing": "NamedFragment 1",
 						} ],
 					},
 				],
 			};
-			let errorString = JSON.stringify( errorObject );
+			let errorString:string = JSON.stringify( errorObject );
 			let parser:JSONLDParser.Class = new JSONLDParser.Class();
 
 			expect( parser.parse ).toBeDefined();
 			expect( Utils.isFunction( parser.parse ) ).toBe( true );
 
-			let spies = {
+			let spies:any = {
 				success: ( result ):void => {
 					expect( result ).toEqual( expandedObject );
 				},
 				error: ( error ):void => {
 					expect( error instanceof Error ).toBe( true );
-				}
+				},
 			};
-			let success = spyOn( spies, 'success' ).and.callThrough();
-			let error = spyOn( spies, 'error' ).and.callThrough();
+			let success:jasmine.Spy = spyOn( spies, "success" ).and.callThrough();
+			let error:jasmine.Spy = spyOn( spies, "error" ).and.callThrough();
 
 			let promises:Promise<any>[] = [];
 

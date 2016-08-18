@@ -2,7 +2,7 @@ import * as Auth from "./Auth";
 import Context from "./Context";
 import Documents from "./Documents";
 import * as Errors from "./Errors";
-import * as JSONLDConverter from "./JSONLDConverter";
+import * as JSONLDConverter from "./JSONLD/Converter";
 import * as Pointer from "./Pointer";
 import * as RDF from "./RDF";
 import * as SDKContext from "./SDKContext";

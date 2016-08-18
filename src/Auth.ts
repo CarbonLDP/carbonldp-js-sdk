@@ -21,6 +21,7 @@ import Context from "./Context";
 import * as ObjectSchema from "./ObjectSchema";
 import * as Errors from "./Errors";
 import * as FreeResources from "./FreeResources";
+import * as JSONLD from "./JSONLD";
 import * as HTTP from "./HTTP";
 import * as NS from "./NS";
 import * as PersistedDocument from "./PersistedDocument";
@@ -144,7 +145,7 @@ export class Class {
 		HTTP.Request.Util.setContentTypeHeader( "application/ld+json", requestOptions );
 		HTTP.Request.Util.setPreferredInteractionModel( NS.LDP.Class.RDFSource, requestOptions );
 
-		return HTTP.Request.Service.post( containerURI, freeResources.toJSON(), requestOptions, new HTTP.JSONLDParser.Class() ).then( ( [ expandedResult, response ]:[ any, HTTP.Response.Class ] ) => {
+		return HTTP.Request.Service.post( containerURI, freeResources.toJSON(), requestOptions, new JSONLD.Parser.Class() ).then( ( [ expandedResult, response ]:[ any, HTTP.Response.Class ] ) => {
 			let freeNodes:RDF.Node.Class[] = RDF.Node.Util.getFreeNodes( expandedResult );
 
 			let ticketNodes:RDF.Node.Class[] = freeNodes.filter( freeNode => RDF.Node.Util.hasType( freeNode, Ticket.RDF_CLASS ) );

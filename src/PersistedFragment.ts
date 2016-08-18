@@ -12,12 +12,8 @@ export interface Class extends PersistedResource.Class, Fragment.Class {
 function resolveURI( uri:string ):string {
 	if( RDF.URI.Util.isAbsolute( uri ) ) return uri;
 
-	uri = ObjectSchema.Digester.resolvePrefixedURI( new RDF.URI.Class( uri ), (<Class> this).document._documents.getGeneralSchema() ).stringValue;
-
-	let schema:ObjectSchema.DigestedObjectSchema = (<Class> this).document._documents.getSchemaFor( this );
-	if( schema.vocab ) uri = RDF.URI.Util.resolve( schema.vocab, uri );
-
-	return uri;
+	let schema:ObjectSchema.DigestedObjectSchema = (<Class> this).document._documents.getGeneralSchema();
+	return ObjectSchema.Util.resolveURI( uri, schema );
 }
 function extendAddType( superFunction:( type:string ) => void ):( type:string ) => void {
 	return function( type:string ):void {

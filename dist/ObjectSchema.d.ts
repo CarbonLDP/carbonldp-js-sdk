@@ -18,6 +18,10 @@ export declare enum ContainerType {
     LIST = 1,
     LANGUAGE = 2,
 }
+export declare enum PointerType {
+    ID = 0,
+    VOCAB = 1,
+}
 export declare class DigestedObjectSchema {
     base: string;
     vocab: string;
@@ -30,6 +34,7 @@ export declare class DigestedPropertyDefinition {
     uri: RDF.URI.Class;
     literal: boolean;
     literalType: RDF.URI.Class;
+    pointerType: PointerType;
     language: string;
     containerType: ContainerType;
 }
@@ -41,8 +46,12 @@ export declare class Digester {
     static digestSchema(schemas: Class[]): DigestedObjectSchema;
     static digestSchema(schema: Class): DigestedObjectSchema;
     static combineDigestedObjectSchemas(digestedSchemas: DigestedObjectSchema[]): DigestedObjectSchema;
-    static resolvePrefixedURI(uri: RDF.URI.Class, digestedSchema: DigestedObjectSchema): RDF.URI.Class;
+    static resolvePrefixedURI(uri: string, digestedSchema: DigestedObjectSchema): string;
+    private static _resolvePrefixedURI(uri, digestedSchema);
     private static digestSingleSchema(schema);
     private static resolvePrefixedURIs(digestedSchema);
+}
+export declare class Util {
+    static resolveURI(uri: string, schema: DigestedObjectSchema): string;
 }
 export default Class;

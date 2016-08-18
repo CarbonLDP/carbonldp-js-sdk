@@ -1,10 +1,10 @@
 "use strict";
-var Errors = require("./Errors");
-var ObjectSchema = require("./ObjectSchema");
-var NS = require("./NS");
-var Pointer = require("./Pointer");
-var RDF = require("./RDF");
-var Utils = require("./Utils");
+var Errors = require("./../Errors");
+var ObjectSchema = require("./../ObjectSchema");
+var NS = require("./../NS");
+var Pointer = require("./../Pointer");
+var RDF = require("./../RDF");
+var Utils = require("./../Utils");
 var Class = (function () {
     function Class(literalSerializers) {
         this._literalSerializers = !!literalSerializers ? literalSerializers : Class.getDefaultSerializers();
@@ -56,7 +56,7 @@ var Class = (function () {
         var expandedObject = {};
         expandedObject["@id"] = !!compactedObject["id"] ? compactedObject["id"] : "";
         if (!!compactedObject["types"])
-            expandedObject["@type"] = compactedObject["types"].map(function (type) { return _this.resolveTypeURI(type, generalSchema, digestedSchema); });
+            expandedObject["@type"] = compactedObject["types"].map(function (type) { return ObjectSchema.Util.resolveURI(type, generalSchema); });
         Utils.forEachOwnProperty(compactedObject, function (propertyName, value) {
             if (propertyName === "id")
                 return;
@@ -73,7 +73,7 @@ var Class = (function () {
             }
             else if (digestedSchema.vocab) {
                 expandedValue = _this.expandPropertyValue(value, generalSchema, digestedSchema);
-                propertyName = RDF.URI.Util.resolve(digestedSchema.vocab, propertyName);
+                propertyName = ObjectSchema.Util.resolveURI(propertyName, generalSchema);
             }
             if (!expandedValue)
                 return;
@@ -236,14 +236,14 @@ var Class = (function () {
         if (!id) {
             return null;
         }
-        id = ObjectSchema.Digester.resolvePrefixedURI(new RDF.URI.Class(id), generalSchema).stringValue;
+        id = ObjectSchema.Digester.resolvePrefixedURI(id, generalSchema);
         if (generalSchema.properties.has(id)) {
             var definition = generalSchema.properties.get(id);
             if (definition.uri)
                 id = definition.uri.stringValue;
         }
         if (notPointer && !!digestedSchema.vocab)
-            id = RDF.URI.Util.resolve(digestedSchema.vocab, id);
+            id = ObjectSchema.Util.resolveURI(id, generalSchema);
         return { "@id": id };
     };
     Class.prototype.expandArray = function (propertyValue, generalSchema, digestedSchema) {
@@ -557,18 +557,10 @@ var Class = (function () {
         else {
         }
     };
-    Class.prototype.resolveTypeURI = function (uri, generalSchema, digestedSchema) {
-        if (RDF.URI.Util.isAbsolute(uri))
-            return uri;
-        uri = ObjectSchema.Digester.resolvePrefixedURI(new RDF.URI.Class(uri), generalSchema).stringValue;
-        if (digestedSchema.vocab)
-            uri = RDF.URI.Util.resolve(digestedSchema.vocab, uri);
-        return uri;
-    };
     return Class;
 }());
 exports.Class = Class;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = Class;
 
-//# sourceMappingURL=JSONLDConverter.js.map
+//# sourceMappingURL=Converter.js.map
