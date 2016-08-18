@@ -1,6 +1,6 @@
 "use strict";
 var FreeResources = require("./../FreeResources");
-var JSONLDParser_1 = require("./../HTTP/JSONLDParser");
+var Parser_1 = require("./../JSONLD/Parser");
 var NS = require("./../NS");
 var RDF = require("./../RDF");
 var SDKContext_1 = require("./../SDKContext");
@@ -41,7 +41,7 @@ var Parser = (function () {
     Parser.prototype.parse = function (input, errorResponse) {
         if (errorResponse === void 0) { errorResponse = {}; }
         var documents = SDKContext_1.default.documents;
-        var parser = new JSONLDParser_1.default();
+        var parser = new Parser_1.default();
         return parser.parse(input).then(function (freeNodes) {
             var freeResources = FreeResources.Factory.create(documents);
             for (var _i = 0, freeNodes_1 = freeNodes; _i < freeNodes_1.length; _i++) {

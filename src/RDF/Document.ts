@@ -1,4 +1,5 @@
 import * as HTTP from "./../HTTP";
+import * as JSONLD from "./../JSONLD";
 import * as RDFNode from "./RDFNode";
 import * as Utils from "./../Utils";
 import * as URI from "./URI";
@@ -118,7 +119,7 @@ export class Util {
 
 export class Parser implements HTTP.Parser.Class<Class[]> {
 	parse( input:string ):Promise<any> {
-		let jsonLDParser:HTTP.JSONLDParser.Class = new HTTP.JSONLDParser.Class();
+		let jsonLDParser:JSONLD.Parser.Class = new JSONLD.Parser.Class();
 		return jsonLDParser.parse( input ).then( ( expandedResult:any ) => {
 			return Util.getDocuments( expandedResult );
 		} );

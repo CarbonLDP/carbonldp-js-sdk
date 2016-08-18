@@ -1,6 +1,6 @@
 import Documents from "./Documents";
 import * as Errors from "./Errors";
-import JSONLDConverter from "./JSONLDConverter";
+import JSONLDConverter from "./JSONLD/Converter";
 import * as ObjectSchema from "./ObjectSchema";
 import * as Pointer from "./Pointer";
 import * as RDF from "./RDF";

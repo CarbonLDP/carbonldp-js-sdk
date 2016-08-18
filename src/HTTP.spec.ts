@@ -12,7 +12,6 @@ import * as Utils from "./Utils";
 import * as Errors from "./HTTP/Errors";
 import * as Header from "./HTTP/Header";
 import * as JSONParser from "./HTTP/JSONParser";
-import * as JSONLDParser from "./HTTP/JSONLDParser";
 import Method from "./HTTP/Method";
 import * as Parser from "./HTTP/Parser";
 import * as Request from "./HTTP/Request";
@@ -54,15 +53,6 @@ describe( module( "Carbon/HTTP" ), ():void => {
 	), ():void => {
 		expect( HTTP.JSONParser ).toBeDefined();
 		expect( HTTP.JSONParser ).toBe( JSONParser );
-	} );
-
-	it( reexports(
-		STATIC,
-		"JSONLDParser",
-		"Carbon/HTTP/JSONLDParser"
-	), ():void => {
-		expect( HTTP.JSONLDParser ).toBeDefined();
-		expect( HTTP.JSONLDParser ).toBe( JSONLDParser );
 	} );
 
 	it( reexports(

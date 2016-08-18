@@ -368,11 +368,12 @@ describe( module( "Carbon/Utils", "Class with useful functions used in the SDK."
 		it( hasMethod(
 			STATIC,
 			"clone",
+			[ "T extends Object" ],
 			"Makes a shallow or deep clone of the object provided depending of the configuration specified.", [
-				{name: "object", type: "Object", description: "The object to copy."},
+				{name: "object", type: "T", description: "The object to copy."},
 				{name: "config", type: "{arrays?:boolean, objects?:boolean}", description: "Object that indicates if the arrays or objects must be copied or not. By default, arrays and objects will not be deep copied."},
 			],
-			{type: "Object", description: "The copy of the object provided."}
+			{type: "T", description: "The copy of the object provided."}
 		), ():void => {
 			expect( Utils.O.clone ).toBeDefined();
 			expect( Utils.isFunction( Utils.O.clone ) ).toBe( true );

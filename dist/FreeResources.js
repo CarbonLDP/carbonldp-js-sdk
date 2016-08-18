@@ -1,6 +1,6 @@
 "use strict";
 var Errors = require("./Errors");
-var JSONLDConverter_1 = require("./JSONLDConverter");
+var Converter_1 = require("./JSONLD/Converter");
 var Pointer = require("./Pointer");
 var RDF = require("./RDF");
 var Resource = require("./Resource");
@@ -60,7 +60,7 @@ function createResourceFrom(object, id) {
 }
 function toJSON() {
     var generalSchema = this._documents.getGeneralSchema();
-    var jsonldConverter = new JSONLDConverter_1.default();
+    var jsonldConverter = new Converter_1.default();
     var resources = this.getResources();
     var expandedResources = [];
     for (var _i = 0, resources_1 = resources; _i < resources_1.length; _i++) {

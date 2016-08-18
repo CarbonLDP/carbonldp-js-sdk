@@ -1,7 +1,7 @@
 "use strict";
 var BlankNode = require("./BlankNode");
 var Errors = require("./Errors");
-var JSONLDConverter_1 = require("./JSONLDConverter");
+var Converter_1 = require("./JSONLD/Converter");
 var NamedFragment = require("./NamedFragment");
 var NS = require("./NS");
 var ObjectSchema = require("./ObjectSchema");
@@ -176,7 +176,7 @@ function toJSON(objectSchemaResolver, jsonldConverter) {
     if (objectSchemaResolver === void 0) { objectSchemaResolver = null; }
     if (jsonldConverter === void 0) { jsonldConverter = null; }
     var generalSchema = objectSchemaResolver ? objectSchemaResolver.getGeneralSchema() : new ObjectSchema.DigestedObjectSchema();
-    jsonldConverter = !!jsonldConverter ? jsonldConverter : new JSONLDConverter_1.default();
+    jsonldConverter = !!jsonldConverter ? jsonldConverter : new Converter_1.default();
     var resources = [];
     resources.push(this);
     resources = resources.concat(this.getFragments());

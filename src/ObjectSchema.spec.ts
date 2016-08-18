@@ -6,7 +6,6 @@ import {
 
 	isDefined,
 
-	interfaze,
 	clazz,
 	method,
 
@@ -14,14 +13,10 @@ import {
 	hasMethod,
 	hasSignature,
 	hasProperty,
-	hasInterface,
-	extendsClass,
 	enumeration,
-	hasEnumeral
+	hasEnumeral,
 } from "./test/JasmineExtender";
 
-import * as Errors from "./Errors";
-import * as Pointer from "./Pointer";
 import * as RDF from "./RDF";
 import * as Utils from "./Utils";
 
@@ -103,8 +98,7 @@ describe( module( "Carbon/ObjectSchema" ), ():void => {
 			"URI that will be used to resolve properties URIs that aren't defined in the schema."
 		), ():void => {
 			expect( digestedSchema.vocab ).toBeDefined();
-			expect( Utils.isString( digestedSchema.vocab ) ).toBe( true );
-			expect( digestedSchema.vocab ).toBe( "" );
+			expect( digestedSchema.vocab ).toBeNull();
 		} );
 
 		it( hasProperty(
@@ -216,11 +210,12 @@ describe( module( "Carbon/ObjectSchema" ), ():void => {
 
 	describe( clazz( "Carbon.ObjectSchema.Digester", "Class with functions to standardize a JSON-LD Context Schema." ), ():void => {
 		describe( method( STATIC, "digestSchema" ), ():void => {
-			it( hasSignature( `
-					Processes a schema to standardize it before using it.
-				`, [
-				{name: "schema", type: "Carbon.ObjectSchema.Class"}
-			], {type: "Carbon.ObjectSchema.DigestedObjectSchema"} ), ():void => {
+			it( hasSignature(
+				"Processes a schema to standardize it before using it.", [
+					{name: "schema", type: "Carbon.ObjectSchema.Class"},
+				],
+				{type: "Carbon.ObjectSchema.DigestedObjectSchema"}
+			), ():void => {
 				expect( ObjectSchema.Digester.digestSchema ).toBeDefined();
 				expect( Utils.isFunction( ObjectSchema.Digester.digestSchema ) ).toBeDefined();
 
@@ -271,11 +266,12 @@ describe( module( "Carbon/ObjectSchema" ), ():void => {
 				expect( digestedSchema.properties.get( "name" ).language ).toEqual( null );
 			} );
 
-			it( hasSignature( `
-					Processes several schemas to standardize and combine them before using them.
-				`, [
-				{name: "schemas", type: "Array<Carbon.ObjectSchema.Class>"}
-			], {type: "Carbon.ObjectSchema.DigestedObjectSchema"} ), ():void => {
+			it( hasSignature(
+				"Processes several schemas to standardize and combine them before using them.", [
+					{name: "schemas", type: "Array<Carbon.ObjectSchema.Class>"},
+				],
+				{type: "Carbon.ObjectSchema.DigestedObjectSchema"}
+			), ():void => {
 				expect( ObjectSchema.Digester.digestSchema ).toBeDefined();
 				expect( Utils.isFunction( ObjectSchema.Digester.digestSchema ) ).toBeDefined();
 
@@ -335,7 +331,7 @@ describe( module( "Carbon/ObjectSchema" ), ():void => {
 			STATIC,
 			"combineDigestedObjectSchemas",
 			"Combine several standardized schemas into one.", [
-				{name: "digestedSchemas", type: "Carbon.ObjectSchema.DigestedObjectSchema[]"}
+				{name: "digestedSchemas", type: "Carbon.ObjectSchema.DigestedObjectSchema[]"},
 			],
 			{type: "Carbon.ObjectSchema.DigestedObjectSchema"}
 		), ():void => {
@@ -405,6 +401,41 @@ describe( module( "Carbon/ObjectSchema" ), ():void => {
 			expect( digestedSchema.properties.get( "name" ).uri.toString() ).toEqual( "http://purl.org/dc/terms/name" );
 			expect( digestedSchema.properties.get( "name" ).containerType ).toEqual( null );
 			expect( digestedSchema.properties.get( "name" ).language ).toEqual( null );
+		} );
+
+	} );
+
+	describe( clazz( "Carbon.ObjectSchema.Utils", "Class with useful functions that use schemas." ), ():void => {
+
+		it( isDefined(), ():void => {
+			expect( ObjectSchema.Util ).toBeDefined();
+			expect( Utils.isFunction( ObjectSchema.Util ) ).toBe( true );
+		} );
+
+		it( hasMethod(
+			STATIC,
+			"resolveURI",
+			"Resolves a prefixed URI, or relative URI with the vocab in the schema provided.", [
+				{name: "uri", type: "string", description: "The URI to ve resolved."},
+				{name: "schema", type: "Carbon.ObjectSchema.DigestedObjectSchema", description: "The schema where to find the prefixes or the default vocabulary to utilize."},
+			],
+			{type: "string", description: "The resolved absolute URI."}
+		), ():void => {
+			expect( ObjectSchema.Util.resolveURI ).toBeDefined();
+			expect( Utils.isFunction( ObjectSchema.Util.resolveURI ) ).toBe( true );
+
+			let schema:ObjectSchema.DigestedObjectSchema = ObjectSchema.Digester.digestSchema( {
+				"@vocab": "http://example.com/my-namespace#",
+				"ex": "http://example.com/ns#",
+				"xsd": "http://www.w3.org/2001/XMLSchema#",
+			} );
+
+			expect( ObjectSchema.Util.resolveURI( "ex:Element", schema ) ).toBe( "http://example.com/ns#Element" );
+			expect( ObjectSchema.Util.resolveURI( "ex:Element-2", schema ) ).toBe( "http://example.com/ns#Element-2" );
+			expect( ObjectSchema.Util.resolveURI( "xsd:string", schema ) ).toBe( "http://www.w3.org/2001/XMLSchema#string" );
+
+			expect( ObjectSchema.Util.resolveURI( "Element", schema ) ).toBe( "http://example.com/my-namespace#Element" );
+			expect( ObjectSchema.Util.resolveURI( "another", schema ) ).toBe( "http://example.com/my-namespace#another" );
 		} );
 
 	} );

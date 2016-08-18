@@ -12,6 +12,7 @@ import IDAlreadyInUseError from "./Errors/IDAlreadyInUseError";
 import IllegalActionError from "./Errors/IllegalActionError";
 import IllegalArgumentError from "./Errors/IllegalArgumentError";
 import IllegalStateError from "./Errors/IllegalStateError";
+import InvalidJSONLDSyntaxError from "./Errors/InvalidJSONLDSyntaxError";
 import NotImplementedError from "./Errors/NotImplementedError";
 
 import * as Errors from "./Errors";
@@ -31,6 +32,7 @@ describe( module( "Carbon/Errors" ), ():void => {
 		expect( Errors.IDAlreadyInUseError ).toBeDefined();
 		expect( Errors.IDAlreadyInUseError ).toBe( IDAlreadyInUseError );
 	} );
+
 	it( reexports(
 		STATIC,
 		"IllegalActionError",
@@ -39,6 +41,7 @@ describe( module( "Carbon/Errors" ), ():void => {
 		expect( Errors.IllegalActionError ).toBeDefined();
 		expect( Errors.IllegalActionError ).toBe( IllegalActionError );
 	} );
+
 	it( reexports(
 		STATIC,
 		"IllegalArgumentError",
@@ -47,6 +50,7 @@ describe( module( "Carbon/Errors" ), ():void => {
 		expect( Errors.IllegalArgumentError ).toBeDefined();
 		expect( Errors.IllegalArgumentError ).toBe( IllegalArgumentError );
 	} );
+
 	it( reexports(
 		STATIC,
 		"IllegalStateError",
@@ -55,6 +59,16 @@ describe( module( "Carbon/Errors" ), ():void => {
 		expect( Errors.IllegalStateError ).toBeDefined();
 		expect( Errors.IllegalStateError ).toBe( IllegalStateError );
 	} );
+
+	it( reexports(
+		STATIC,
+		"InvalidJSONLDSyntaxError",
+		"Carbon/Errors/InvalidJSONLDSyntaxError"
+	), ():void => {
+		expect( Errors.InvalidJSONLDSyntaxError ).toBeDefined();
+		expect( Errors.InvalidJSONLDSyntaxError ).toBe( InvalidJSONLDSyntaxError );
+	} );
+
 	it( reexports(
 		STATIC,
 		"NotImplementedError",

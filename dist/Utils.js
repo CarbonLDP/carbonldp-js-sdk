@@ -65,7 +65,7 @@ function isPlainObject(object) {
         && !isDate(object)
         && !isMap(object)
         && !(typeof Blob !== "undefined" && object instanceof Blob)
-        && !((object + "") === "[object Set]");
+        && !(Object.prototype.toString.call(object) === "[object Set]");
 }
 exports.isPlainObject = isPlainObject;
 function isFunction(value) {
@@ -113,6 +113,8 @@ function extend(target) {
     }
     for (var _a = 0, objects_1 = objects; _a < objects_1.length; _a++) {
         var toMerge = objects_1[_a];
+        if (!toMerge)
+            continue;
         for (var name_1 in toMerge) {
             if (toMerge.hasOwnProperty(name_1)) {
                 target[name_1] = toMerge[name_1];
@@ -141,7 +143,7 @@ var O = (function () {
         var isAnArray = isArray(object);
         if (!isAnArray && !isPlainObject(object))
             return null;
-        var clone = isAnArray ? [] : {};
+        var clone = (isAnArray ? [] : (!!Object.getPrototypeOf(object)) ? {} : Object.create(null));
         object.__SDKUtils_circularReferenceFlag = clone;
         for (var _i = 0, _a = Object.keys(object); _i < _a.length; _i++) {
             var key = _a[_i];

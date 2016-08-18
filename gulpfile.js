@@ -79,7 +79,9 @@ gulp.task( "test:node:compile", [ "clean:temp" ], () => {
 
 gulp.task( "test:node:exec", [ "test:node:compile" ], () => {
 	return gulp.src( config.dist.temp + config.source.test )
-		.pipe( jasmine() );
+		.pipe( jasmine( {
+			includeStackTrace: true
+		} ) );
 } );
 
 gulp.task( "test:node", ( done ) => {
@@ -130,6 +132,7 @@ gulp.task( "bundle-sfx", ( done ) => {
 		"sourceMaps": "inline",
 		"mangle": false,
 		"lowResSourceMaps": false,
+		"removeComments": true,
 	}).then( () => {
 		done();
 	}).catch( ( error ) => {
