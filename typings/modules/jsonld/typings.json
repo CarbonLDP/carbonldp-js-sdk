@@ -1,0 +1,21 @@
+{
+  "resolution": "main",
+  "tree": {
+    "src": "https://raw.githubusercontent.com/tpluscode/jsonld-typings/39e4819b05ab05c3e79d56c6bb64c48fab6c04a6/typings.json",
+    "raw": "registry:npm/jsonld#0.4.0+20160504133022",
+    "main": "jsonld.d.ts",
+    "global": false,
+    "dependencies": {
+      "es6-promise": {
+        "src": "https://raw.githubusercontent.com/typed-typings/npm-es6-promise/fb04188767acfec1defd054fc8024fafa5cd4de7/typings.json",
+        "raw": "registry:npm/es6-promise#3.0.0+20160211003958",
+        "main": "dist/es6-promise.d.ts",
+        "global": false,
+        "name": "es6-promise",
+        "type": "typings"
+      }
+    },
+    "name": "jsonld",
+    "type": "typings"
+  }
+}

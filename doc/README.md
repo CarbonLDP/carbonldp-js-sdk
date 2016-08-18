@@ -141,6 +141,9 @@
 		- [Constructor](#Carbon-Errors-IllegalStateError-Constructor)
 		- [Properties](#Carbon-Errors-IllegalStateError-Properties)
 		- [Methods](#Carbon-Errors-IllegalStateError-Methods)
+- [Module Carbon/Errors/InvalidJSONLDSyntaxError](#Carbon-Errors-InvalidJSONLDSyntaxError)
+	- [Class Carbon.Errors.InvalidJSONLDSyntaxError](#Carbon-Errors-InvalidJSONLDSyntaxError)
+		- [Properties](#Carbon-Errors-InvalidJSONLDSyntaxError-Properties)
 - [Module Carbon/Errors/NotImplementedError](#Carbon-Errors-NotImplementedError)
 	- [Class Carbon.Errors.NotImplementedError](#Carbon-Errors-NotImplementedError)
 		- [Constructor](#Carbon-Errors-NotImplementedError-Constructor)
@@ -309,11 +312,14 @@
 - [Module Carbon/HTTP/StringParser](#Carbon-HTTP-StringParser)
 	- [Class Carbon.HTTP.StringParser.Class](#Carbon-HTTP-StringParser-Class)
 		- [Methods](#Carbon-HTTP-StringParser-Class-Methods)
-- [Module Carbon/JSONLDConverter](#Carbon-JSONLDConverter)
-	- [Class Carbon.JSONLDConverter.Class](#Carbon-JSONLDConverter-Class)
-		- [Constructor](#Carbon-JSONLDConverter-Class-Constructor)
-		- [Properties](#Carbon-JSONLDConverter-Class-Properties)
-		- [Methods](#Carbon-JSONLDConverter-Class-Methods)
+- [Module Carbon/JSONLD/Converter](#Carbon-JSONLD-Converter)
+	- [Class Carbon.JSONLD.Converter.Class](#Carbon-JSONLD-Converter-Class)
+		- [Constructor](#Carbon-JSONLD-Converter-Class-Constructor)
+		- [Properties](#Carbon-JSONLD-Converter-Class-Properties)
+		- [Methods](#Carbon-JSONLD-Converter-Class-Methods)
+- [Module Carbon/JSONLD/Processor](#Carbon-JSONLD-Processor)
+	- [Class Carbon.JSONLD.Processor.Class](#Carbon-JSONLD-Processor-Class)
+		- [Methods](#Carbon-JSONLD-Processor-Class-Methods)
 - [Module Carbon/LDP](#Carbon-LDP)
 	- [Reexports](#Carbon-LDP-Reexports)
 - [Module Carbon/LDP/AddMemberAction](#Carbon-LDP-AddMemberAction)
@@ -406,6 +412,8 @@
 		- [Properties](#Carbon-ObjectSchema-DigestedPropertyDefinition-Properties)
 	- [Class Carbon.ObjectSchema.Digester](#Carbon-ObjectSchema-Digester)
 		- [Methods](#Carbon-ObjectSchema-Digester-Methods)
+	- [Class Carbon.ObjectSchema.Utils](#Carbon-ObjectSchema-Utils)
+		- [Methods](#Carbon-ObjectSchema-Utils-Methods)
 - [Module Carbon/PersistedApp](#Carbon-PersistedApp)
 	- [Class Carbon.PersistedApp.Factory](#Carbon-PersistedApp-Factory)
 		- [Methods](#Carbon-PersistedApp-Factory-Methods)
@@ -575,7 +583,7 @@
 | Errors | [Carbon/Errors](#Carbon-Errors) |
 | Fragment | [Carbon/Fragment](#Carbon-Fragment) |
 | HTTP | [Carbon/HTTP](#Carbon-HTTP) |
-| JSONLDConverter | [Carbon/JSONLDConverter](#Carbon-JSONLDConverter) |
+| JSONLD | [Carbon/JSONLD](#Carbon-JSONLD) |
 | LDP | [Carbon/LDP](#Carbon-LDP) |
 | NamedFragment | [Carbon/NamedFragment](#Carbon-NamedFragment) |
 | NS | [Carbon/NS](#Carbon-NS) |
@@ -2928,10 +2936,10 @@ Documents( context?:Carbon.Context )
 #### <a name="Carbon-Documents-Properties" />Properties
 
 ```typescript 
-jsonldConverter:Carbon.JSONLDConverter.Class 
+jsonldConverter:Carbon.JSONLD.Converter.Class 
 ```
 
-Instance of `Carbon.JSONLDConverter.Class` that is used to compact retrieved documents and to expand documents to persist. This property is not writable.
+Instance of `Carbon.JSONLD.Converter.Class` that is used to compact retrieved documents and to expand documents to persist. This property is not writable.
 
 #### <a name="Carbon-Documents-Methods" />Methods
 
@@ -3492,6 +3500,7 @@ Upload binary data, creating a child for the parent specified. This signature on
 | IllegalActionError | [Carbon/Errors/IllegalActionError](#Carbon-Errors-IllegalActionError) |
 | IllegalArgumentError | [Carbon/Errors/IllegalArgumentError](#Carbon-Errors-IllegalArgumentError) |
 | IllegalStateError | [Carbon/Errors/IllegalStateError](#Carbon-Errors-IllegalStateError) |
+| InvalidJSONLDSyntaxError | [Carbon/Errors/InvalidJSONLDSyntaxError](#Carbon-Errors-InvalidJSONLDSyntaxError) |
 | NotImplementedError | [Carbon/Errors/NotImplementedError](#Carbon-Errors-NotImplementedError) |
 
 
@@ -3663,6 +3672,32 @@ name:string
 ##### toString
 ```typescript 
 toString():string
+```
+
+
+
+
+## <a name="Carbon-Errors-InvalidJSONLDSyntaxError" />Module Carbon/Errors/InvalidJSONLDSyntaxError
+
+
+
+
+
+
+
+
+### <a name="Carbon-Errors-InvalidJSONLDSyntaxError" />Class Carbon.Errors.InvalidJSONLDSyntaxError
+
+**Extends:** [Carbon.Errors.AbstractError](#Carbon-Errors-AbstractError)
+
+> Error class to indicate that there an invalid syntax in a JSON-LD object.
+
+
+
+#### <a name="Carbon-Errors-InvalidJSONLDSyntaxError-Properties" />Properties
+
+```typescript 
+name:string 
 ```
 
 
@@ -3980,7 +4015,6 @@ Converts the resources contained in the current `Carbon.FreeResources.Class` obj
 | --- | --- |
 | Errors | [Carbon/HTTP/Errors](#Carbon-HTTP-Errors) |
 | Header | [Carbon/HTTP/Header](#Carbon-HTTP-Header) |
-| JSONLDParser | [Carbon/HTTP/JSONLDParser](#Carbon-HTTP-JSONLDParser) |
 | JSONParser | [Carbon/HTTP/JSONParser](#Carbon-HTTP-JSONParser) |
 | Method | [Carbon/HTTP/Method](#Carbon-HTTP-Method) |
 | Parser | [Carbon/HTTP/Parser](#Carbon-HTTP-Parser) |
@@ -5878,23 +5912,23 @@ Gets a string and returns a Promise with the same string.
 
 
 
-## <a name="Carbon-JSONLDConverter" />Module Carbon/JSONLDConverter
+## <a name="Carbon-JSONLD-Converter" />Module Carbon/JSONLD/Converter
 
 
-**Default export:** [Carbon.JSONLDConverter.Class](#Carbon-JSONLDConverter-Class)
-
-
-
+**Default export:** [Carbon.JSONLD.Converter.Class](#Carbon-JSONLD-Converter-Class)
 
 
 
-### <a name="Carbon-JSONLDConverter-Class" />Class Carbon.JSONLDConverter.Class
+
+
+
+### <a name="Carbon-JSONLD-Converter-Class" />Class Carbon.JSONLD.Converter.Class
 
 
 > Class that have methods for convert expanded JSON-LD objects to compacted Carbon SDK Resources and vice versa.
 
 
-#### <a name="Carbon-JSONLDConverter-Class-Constructor" />Constructor
+#### <a name="Carbon-JSONLD-Converter-Class-Constructor" />Constructor
 ```typescript 
 Class( literalSerializers?:Map<string, Carbon.RDF.Literal.Serializer> )
 ```
@@ -5905,7 +5939,7 @@ Class( literalSerializers?:Map<string, Carbon.RDF.Literal.Serializer> )
 - literalSerializers: A Map object with the data type serializers that the converter will only be able to handle.
 
 
-#### <a name="Carbon-JSONLDConverter-Class-Properties" />Properties
+#### <a name="Carbon-JSONLD-Converter-Class-Properties" />Properties
 
 ```typescript 
 literalSerializers:Map<string, Carbon.RDF.Literal.Serializer> 
@@ -5913,7 +5947,7 @@ literalSerializers:Map<string, Carbon.RDF.Literal.Serializer>
 
 A Map object with data-type/serializer pairs for stringify the data of a SDK Resource when expanding it.
 
-#### <a name="Carbon-JSONLDConverter-Class-Methods" />Methods
+#### <a name="Carbon-JSONLD-Converter-Class-Methods" />Methods
 
 ##### compact
 ```typescript 
@@ -5940,6 +5974,39 @@ Creates a expanded JSON-LD object from the compacted object in accordance to the
 
 - compactedObject: The compacted object to generate its expanded JSON-LD object.
 - digestedSchema: The schema that describes how construct the expanded object.
+
+
+
+## <a name="Carbon-JSONLD-Processor" />Module Carbon/JSONLD/Processor
+
+
+**Default export:** [Carbon.JSONLD.Processor.Class](#Carbon-JSONLD-Processor-Class)
+
+
+
+
+
+
+### <a name="Carbon-JSONLD-Processor-Class" />Class Carbon.JSONLD.Processor.Class
+
+
+> Class that contains methods that can process JSON-LD objects.
+
+
+
+
+#### <a name="Carbon-JSONLD-Processor-Class-Methods" />Methods
+##### expand
+```typescript 
+static expand( input:Object ):Promise<Array<Object>>
+```
+
+Static method that expand a compacted JSON-LD object.
+
+*Parameters*
+
+- input: The compacted JSON-LD object to expand.
+
 
 
 
@@ -7572,9 +7639,7 @@ Combine several standardized schemas into one.
 static digestSchema( schema:Carbon.ObjectSchema.Class ):Carbon.ObjectSchema.DigestedObjectSchema
 ```
 
-
 Processes a schema to standardize it before using it.
-
 
 *Parameters*
 
@@ -7584,13 +7649,35 @@ Processes a schema to standardize it before using it.
 static digestSchema( schemas:Array<Carbon.ObjectSchema.Class> ):Carbon.ObjectSchema.DigestedObjectSchema
 ```
 
-
 Processes several schemas to standardize and combine them before using them.
-
 
 *Parameters*
 
 - schemas
+
+
+
+
+### <a name="Carbon-ObjectSchema-Utils" />Class Carbon.ObjectSchema.Utils
+
+
+> Class with useful functions that use schemas.
+
+
+
+
+#### <a name="Carbon-ObjectSchema-Utils-Methods" />Methods
+##### resolveURI
+```typescript 
+static resolveURI( uri:string,  schema:Carbon.ObjectSchema.DigestedObjectSchema ):string
+```
+
+Resolves a prefixed URI, or relative URI with the vocab in the schema provided.
+
+*Parameters*
+
+- uri: The URI to ve resolved.
+- schema: The schema where to find the prefixes or the default vocabulary to utilize.
 
 
 
@@ -10806,7 +10893,7 @@ Checks if an object has the same enumerable properties with the same values as a
 
 ##### clone
 ```typescript 
-static clone( object:Object,  config:{arrays?:boolean, objects?:boolean} ):Object
+static clone<T extends Object>( object:T,  config:{arrays?:boolean, objects?:boolean} ):T
 ```
 
 Makes a shallow or deep clone of the object provided depending of the configuration specified.

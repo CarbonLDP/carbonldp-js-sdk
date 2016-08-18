@@ -34,11 +34,8 @@ function syncSavedFragments() {
 function resolveURI(uri) {
     if (URI.Util.isAbsolute(uri))
         return uri;
-    uri = ObjectSchema.Digester.resolvePrefixedURI(new URI.Class(uri), this._documents.getGeneralSchema()).stringValue;
-    var schema = this._documents.getSchemaFor(this);
-    if (schema.vocab)
-        uri = URI.Util.resolve(schema.vocab, uri);
-    return uri;
+    var schema = this._documents.getGeneralSchema();
+    return ObjectSchema.Util.resolveURI(uri, schema);
 }
 function extendAddType(superFunction) {
     return function (type) {
@@ -271,7 +268,7 @@ var Factory = (function () {
                     var superFunction = persistedDocument.hasPointer;
                     return function (id) {
                         if (RDF.URI.Util.isPrefixed(id)) {
-                            id = ObjectSchema.Digester.resolvePrefixedURI(new RDF.URI.Class(id), this._documents.getGeneralSchema()).stringValue;
+                            id = ObjectSchema.Digester.resolvePrefixedURI(id, this._documents.getGeneralSchema());
                         }
                         if (superFunction.call(this, id))
                             return true;
@@ -288,7 +285,7 @@ var Factory = (function () {
                     var inScopeFunction = persistedDocument.inScope;
                     return function (id) {
                         if (RDF.URI.Util.isPrefixed(id)) {
-                            id = ObjectSchema.Digester.resolvePrefixedURI(new RDF.URI.Class(id), this._documents.getGeneralSchema()).stringValue;
+                            id = ObjectSchema.Digester.resolvePrefixedURI(id, this._documents.getGeneralSchema());
                         }
                         if (inScopeFunction.call(this, id))
                             return superFunction.call(this, id);
@@ -305,7 +302,7 @@ var Factory = (function () {
                     return function (idOrPointer) {
                         var uri = Pointer.Factory.is(idOrPointer) ? idOrPointer.id : idOrPointer;
                         if (RDF.URI.Util.isPrefixed(uri)) {
-                            uri = ObjectSchema.Digester.resolvePrefixedURI(new RDF.URI.Class(uri), this._documents.getGeneralSchema()).stringValue;
+                            uri = ObjectSchema.Digester.resolvePrefixedURI(uri, this._documents.getGeneralSchema());
                         }
                         if (superFunction.call(this, uri))
                             return true;

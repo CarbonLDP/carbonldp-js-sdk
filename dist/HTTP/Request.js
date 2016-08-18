@@ -27,8 +27,7 @@ function onResolve(resolve, reject, response) {
         }
         var parser = new ErrorResponse.Parser();
         parser.parse(response.data, error_1).then(function (errorResponse) {
-            var message = ErrorResponse.Util.getMessage(errorResponse);
-            error_1.message = message;
+            error_1.message = ErrorResponse.Util.getMessage(errorResponse);
             reject(error_1);
         }).catch(function () {
             error_1.message = response.data;
@@ -63,36 +62,47 @@ function sendWithBrowser(method, url, body, options) {
 function sendWithNode(method, url, body, options) {
     return new Promise(function (resolve, reject) {
         var URL = require("url");
-        var parsedURL = URL.parse(url);
-        var HTTP = parsedURL.protocol === "http:" ? require("http") : require("https");
-        var requestOptions = {
-            protocol: parsedURL.protocol,
-            hostname: parsedURL.hostname,
-            path: parsedURL.path,
-            method: method,
-            headers: {},
-            withCredentials: options.sendCredentialsOnCORS,
-        };
-        if (options.headers)
-            forEachHeaders(options.headers, function (name, value) { return requestOptions.headers[name] = value; });
-        var request = HTTP.request(requestOptions, function (res) {
+        function returnResponse(request, res) {
             var rawData = [];
             res.on("data", function (chunk) {
                 rawData.push(chunk);
-            });
-            res.on("end", function () {
+            }).on("end", function () {
                 var data = Buffer.concat(rawData).toString("utf8");
                 var response = new Response_1.default(request, data, res);
                 onResolve(resolve, reject, response);
             });
-        });
-        if (options.timeout)
-            request.setTimeout(options.timeout);
-        request.on("error", function (error) {
-            var response = new Response_1.default(request, error.message);
-            onResolve(resolve, reject, response);
-        });
-        request.end(body);
+        }
+        var numberOfRedirects = 0;
+        function sendRequest(_url) {
+            var parsedURL = URL.parse(_url);
+            var HTTP = parsedURL.protocol === "http:" ? require("http") : require("https");
+            var requestOptions = {
+                protocol: parsedURL.protocol,
+                hostname: parsedURL.hostname,
+                path: parsedURL.path,
+                method: method,
+                headers: {},
+                withCredentials: options.sendCredentialsOnCORS,
+            };
+            if (options.headers)
+                forEachHeaders(options.headers, function (name, value) { return requestOptions.headers[name] = value; });
+            var request = HTTP.request(requestOptions);
+            if (options.timeout)
+                request.setTimeout(options.timeout);
+            request.on("response", function (res) {
+                if (res.statusCode >= 300 && res.statusCode <= 399 && "location" in res.headers) {
+                    if (++numberOfRedirects < 10)
+                        return sendRequest(URL.resolve(_url, res.headers.location));
+                }
+                returnResponse(request, res);
+            });
+            request.on("error", function (error) {
+                var response = new Response_1.default(request, error.message);
+                onResolve(resolve, reject, response);
+            });
+            request.end(body);
+        }
+        sendRequest(url);
     });
 }
 function isBody(data) {
@@ -116,7 +126,7 @@ var Service = (function () {
         else {
             options = bodyOrOptions ? bodyOrOptions : options;
         }
-        options = Utils.extend(options || {}, Service.defaultOptions);
+        options = Utils.extend({}, Service.defaultOptions, options);
         if (Utils.isNumber(method))
             method = Method_1.default[method];
         var requestPromise;

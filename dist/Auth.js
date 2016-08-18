@@ -23,6 +23,7 @@ var UsernameAndPasswordToken_1 = require("./Auth/UsernameAndPasswordToken");
 exports.UsernameAndPasswordToken = UsernameAndPasswordToken_1.default;
 var Errors = require("./Errors");
 var FreeResources = require("./FreeResources");
+var JSONLD = require("./JSONLD");
 var HTTP = require("./HTTP");
 var NS = require("./NS");
 var PersistedDocument = require("./PersistedDocument");
@@ -102,7 +103,7 @@ var Class = (function () {
         HTTP.Request.Util.setAcceptHeader("application/ld+json", requestOptions);
         HTTP.Request.Util.setContentTypeHeader("application/ld+json", requestOptions);
         HTTP.Request.Util.setPreferredInteractionModel(NS.LDP.Class.RDFSource, requestOptions);
-        return HTTP.Request.Service.post(containerURI, freeResources.toJSON(), requestOptions, new HTTP.JSONLDParser.Class()).then(function (_a) {
+        return HTTP.Request.Service.post(containerURI, freeResources.toJSON(), requestOptions, new JSONLD.Parser.Class()).then(function (_a) {
             var expandedResult = _a[0], response = _a[1];
             var freeNodes = RDF.Node.Util.getFreeNodes(expandedResult);
             var ticketNodes = freeNodes.filter(function (freeNode) { return RDF.Node.Util.hasType(freeNode, Ticket.RDF_CLASS); });
