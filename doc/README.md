@@ -412,6 +412,8 @@
 		- [Properties](#Carbon-ObjectSchema-DigestedPropertyDefinition-Properties)
 	- [Class Carbon.ObjectSchema.Digester](#Carbon-ObjectSchema-Digester)
 		- [Methods](#Carbon-ObjectSchema-Digester-Methods)
+	- [Class Carbon.ObjectSchema.Utils](#Carbon-ObjectSchema-Utils)
+		- [Methods](#Carbon-ObjectSchema-Utils-Methods)
 - [Module Carbon/PersistedApp](#Carbon-PersistedApp)
 	- [Class Carbon.PersistedApp.Factory](#Carbon-PersistedApp-Factory)
 		- [Methods](#Carbon-PersistedApp-Factory-Methods)
@@ -7637,9 +7639,7 @@ Combine several standardized schemas into one.
 static digestSchema( schema:Carbon.ObjectSchema.Class ):Carbon.ObjectSchema.DigestedObjectSchema
 ```
 
-
 Processes a schema to standardize it before using it.
-
 
 *Parameters*
 
@@ -7649,13 +7649,35 @@ Processes a schema to standardize it before using it.
 static digestSchema( schemas:Array<Carbon.ObjectSchema.Class> ):Carbon.ObjectSchema.DigestedObjectSchema
 ```
 
-
 Processes several schemas to standardize and combine them before using them.
-
 
 *Parameters*
 
 - schemas
+
+
+
+
+### <a name="Carbon-ObjectSchema-Utils" />Class Carbon.ObjectSchema.Utils
+
+
+> Class with useful functions that use schemas.
+
+
+
+
+#### <a name="Carbon-ObjectSchema-Utils-Methods" />Methods
+##### resolveURI
+```typescript 
+static resolveURI( uri:string,  schema:Carbon.ObjectSchema.DigestedObjectSchema ):string
+```
+
+Resolves a prefixed URI, or relative URI with the vocab in the schema provided.
+
+*Parameters*
+
+- uri: The URI to ve resolved.
+- schema: The schema where to find the prefixes or the default vocabulary to utilize.
 
 
 

@@ -5,11 +5,8 @@ var RDF = require("./RDF");
 function resolveURI(uri) {
     if (RDF.URI.Util.isAbsolute(uri))
         return uri;
-    uri = ObjectSchema.Digester.resolvePrefixedURI(new RDF.URI.Class(uri), this.document._documents.getGeneralSchema()).stringValue;
-    var schema = this.document._documents.getSchemaFor(this);
-    if (schema.vocab)
-        uri = RDF.URI.Util.resolve(schema.vocab, uri);
-    return uri;
+    var schema = this.document._documents.getGeneralSchema();
+    return ObjectSchema.Util.resolveURI(uri, schema);
 }
 function extendAddType(superFunction) {
     return function (type) {
