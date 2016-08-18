@@ -9,6 +9,7 @@ src/**/*.map
 
 # Typings
 **/typings/globals/
+**/typings/modules/
 **/typings/index.d.ts
 
 # JSPM
@@ -183,3 +184,6 @@ profile
 DerivedData
 *.hmap
 *.ipa
+
+# VSCode
+.vscode/

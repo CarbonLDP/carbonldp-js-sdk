@@ -1,5 +1,3 @@
-import * as App from "./App";
-
 import {
 	STATIC,
 
@@ -16,7 +14,11 @@ import * as NS from "./NS";
 import * as Errors from "./Errors";
 import * as Document from "./Document";
 
+import * as Role from "./App/Role";
+import * as Roles from "./App/Roles";
 import Context from "./App/Context";
+
+import * as App from "./App";
 
 describe( module( "Carbon/App" ), ():void => {
 
@@ -203,11 +205,29 @@ describe( module( "Carbon/App" ), ():void => {
 
 	it( reexports(
 		STATIC,
-		"App",
+		"Context",
 		"Carbon/App/Context"
 	), ():void => {
 		expect( App.Context ).toBeDefined();
 		expect( App.Context ).toEqual( Context );
+	} );
+
+	it( reexports(
+		STATIC,
+		"Role",
+		"Carbon/App/Role"
+	), ():void => {
+		expect( App.Role ).toBeDefined();
+		expect( App.Role ).toEqual( Role );
+	} );
+
+	it( reexports(
+		STATIC,
+		"Roles",
+		"Carbon/App/Roles"
+	), ():void => {
+		expect( App.Roles ).toBeDefined();
+		expect( App.Roles ).toEqual( Roles );
 	} );
 
 } );

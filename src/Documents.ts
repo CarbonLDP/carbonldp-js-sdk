@@ -5,11 +5,13 @@ import * as RDF from "./RDF";
 import * as Utils from "./Utils";
 
 import * as AccessPoint from "./AccessPoint";
+import * as AppRole from "./App/Role";
 import * as Auth from "./Auth";
 import * as Document from "./Document";
 import * as FreeResources from "./FreeResources";
-import * as JSONLDConverter from "./JSONLDConverter";
+import * as JSONLD from "./JSONLD";
 import * as PersistedAccessPoint from "./PersistedAccessPoint";
+import * as PersistedAppRole from "./App/PersistedRole";
 import * as PersistedBlankNode from "./PersistedBlankNode";
 import * as PersistedDocument from "./PersistedDocument";
 import * as PersistedFragment from "./PersistedFragment";
@@ -27,9 +29,9 @@ import * as RetrievalPreferences from "./RetrievalPreferences";
 class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Resolver {
 	private static _documentSchema:ObjectSchema.DigestedObjectSchema = ObjectSchema.Digester.digestSchema( Document.SCHEMA );
 
-	private _jsonldConverter:JSONLDConverter.Class;
+	private _jsonldConverter:JSONLD.Converter.Class;
 
-	get jsonldConverter():JSONLDConverter.Class { return this._jsonldConverter; }
+	get jsonldConverter():JSONLD.Converter.Class { return this._jsonldConverter; }
 
 	private context:Context;
 	private pointers:Map<string, Pointer.Class>;
@@ -44,10 +46,10 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 		this.documentsBeingResolved = new Map<string, Promise<[ PersistedDocument.Class, HTTP.Response.Class ]>>();
 
 		if( ! ! this.context && ! ! this.context.parentContext ) {
-			let contextJSONLDConverter:JSONLDConverter.Class = this.context.parentContext.documents.jsonldConverter;
-			this._jsonldConverter = new JSONLDConverter.Class( contextJSONLDConverter.literalSerializers );
+			let contextJSONLDConverter:JSONLD.Converter.Class = this.context.parentContext.documents.jsonldConverter;
+			this._jsonldConverter = new JSONLD.Converter.Class( contextJSONLDConverter.literalSerializers );
 		} else {
-			this._jsonldConverter = new JSONLDConverter.Class();
+			this._jsonldConverter = new JSONLD.Converter.Class();
 		}
 	}
 
@@ -59,7 +61,7 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 		if( RDF.URI.Util.isBNodeID( id ) ) return false;
 
 		if( ! ! this.context ) {
-			if( RDF.URI.Util.isPrefixed( id ) ) id = ObjectSchema.Digester.resolvePrefixedURI( new RDF.URI.Class( id ), this.context.getObjectSchema() ).stringValue;
+			if( RDF.URI.Util.isPrefixed( id ) ) id = ObjectSchema.Digester.resolvePrefixedURI( id, this.context.getObjectSchema() );
 
 			let baseURI:string = this.context.getBaseURI();
 			if( RDF.URI.Util.isRelative( id ) ) return true;
@@ -118,6 +120,14 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 		let promise:Promise<[ T & PersistedDocument.Class, HTTP.Response.Class ]> = HTTP.Request.Service.get( uri, requestOptions, new RDF.Document.Parser() ).then( ( [ rdfDocuments, response ]:[ RDF.Document.Class[], HTTP.Response.Class ] ) => {
 			let eTag:string = HTTP.Response.Util.getETag( response );
 			if( eTag === null ) throw new HTTP.Errors.BadResponseError( "The response doesn't contain an ETag", response );
+
+			let locationHeader:HTTP.Header.Class = response.getHeader( "Content-Location" );
+			if ( ! ! locationHeader ) {
+				if( locationHeader.values.length !== 1 ) throw new HTTP.Errors.BadResponseError( "The response contains more than one Content-Location header.", response );
+
+				uri = locationHeader.toString();
+				if( ! uri ) throw new HTTP.Errors.BadResponseError( `The response doesn't contain a valid 'Content-Location' header.`, response );
+			}
 
 			let rdfDocument:RDF.Document.Class = this.getRDFDocument( uri, rdfDocuments, response );
 			if( rdfDocument === null ) throw new HTTP.Errors.BadResponseError( "No document was returned.", response );
@@ -245,7 +255,7 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 		this.setDefaultRequestOptions( requestOptions, NS.LDP.Class.Container );
 
 		let containerURI:string = parentURI;
-		if( ! ! retrievalPreferences ) parentURI += RetrievalPreferences.Util.stringifyRetrievalPreferences( retrievalPreferences );
+		if( ! ! retrievalPreferences ) parentURI += RetrievalPreferences.Util.stringifyRetrievalPreferences( retrievalPreferences, this.getGeneralSchema() );
 
 		let containerRetrievalPreferences:HTTP.Request.ContainerRetrievalPreferences = {
 			include: [
@@ -260,7 +270,7 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 		};
 		HTTP.Request.Util.setContainerRetrievalPreferences( containerRetrievalPreferences, requestOptions );
 
-		return HTTP.Request.Service.get( parentURI, requestOptions, new HTTP.JSONLDParser.Class() ).then( ( [ expandedResult, response ]:[ any, HTTP.Response.Class ] ) => {
+		return HTTP.Request.Service.get( parentURI, requestOptions, new JSONLD.Parser.Class() ).then( ( [ expandedResult, response ]:[ any, HTTP.Response.Class ] ) => {
 			let freeNodes:RDF.Node.Class[] = RDF.Node.Util.getFreeNodes( expandedResult );
 			let rdfDocuments:RDF.Document.Class[] = RDF.Document.Util.getDocuments( expandedResult ).filter( document => document[ "@id" ] !== containerURI );
 
@@ -418,7 +428,7 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 		this.setDefaultRequestOptions( requestOptions, NS.LDP.Class.Container );
 
 		let containerURI:string = uri;
-		if( ! ! retrievalPreferences ) uri += RetrievalPreferences.Util.stringifyRetrievalPreferences( retrievalPreferences );
+		if( ! ! retrievalPreferences ) uri += RetrievalPreferences.Util.stringifyRetrievalPreferences( retrievalPreferences, this.getGeneralSchema() );
 
 		let containerRetrievalPreferences:HTTP.Request.ContainerRetrievalPreferences = {
 			include: [
@@ -439,7 +449,7 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 		}
 		HTTP.Request.Util.setContainerRetrievalPreferences( containerRetrievalPreferences, requestOptions );
 
-		return HTTP.Request.Service.get( uri, requestOptions, new HTTP.JSONLDParser.Class() ).then( ( [ expandedResult, response ]:[ any, HTTP.Response.Class ] ) => {
+		return HTTP.Request.Service.get( uri, requestOptions, new JSONLD.Parser.Class() ).then( ( [ expandedResult, response ]:[ any, HTTP.Response.Class ] ) => {
 			let freeNodes:RDF.Node.Class[] = RDF.Node.Util.getFreeNodes( expandedResult );
 			let rdfDocuments:RDF.Document.Class[] = RDF.Document.Util.getDocuments( expandedResult );
 
@@ -611,14 +621,16 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 	}
 
 	getDownloadURL( documentURI:string, requestOptions?:HTTP.Request.Options ):Promise<string> {
+		if( ! this.context.auth ) Promise.reject<any>( new Errors.IllegalStateError( "This instance doesn't support Authenticated request." ) );
 		return this.context.auth.getAuthenticatedURL( documentURI, requestOptions );
 	}
 
 	getGeneralSchema():ObjectSchema.DigestedObjectSchema {
-		let schemas:ObjectSchema.DigestedObjectSchema[] = [];
-		if( ! ! this.context ) schemas.push( this.context.getObjectSchema() );
+		if( ! this.context ) return new ObjectSchema.DigestedObjectSchema();
 
-		return ObjectSchema.Digester.combineDigestedObjectSchemas( schemas );
+		let schema:ObjectSchema.DigestedObjectSchema = ObjectSchema.Digester.combineDigestedObjectSchemas( [ this.context.getObjectSchema() ] );
+		if( this.context.hasSetting( "vocabulary" ) ) schema.vocab = this.context.resolve( this.context.getSetting( "vocabulary" ) );
+		return schema;
 	}
 
 	getSchemaFor( object:Object ):ObjectSchema.DigestedObjectSchema {
@@ -632,7 +644,7 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 	executeRawASKQuery( documentURI:string, askQuery:string, requestOptions:HTTP.Request.Options = {} ):Promise<[ SPARQL.RawResults.Class, HTTP.Response.Class ]> {
 		documentURI = this.getRequestURI( documentURI );
 
-		if( this.context && this.context.auth.isAuthenticated() ) this.context.auth.addAuthentication( requestOptions );
+		if( this.context && this.context.auth && this.context.auth.isAuthenticated() ) this.context.auth.addAuthentication( requestOptions );
 
 		return SPARQL.Service.executeRawASKQuery( documentURI, askQuery, requestOptions );
 	}
@@ -640,7 +652,7 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 	executeASKQuery( documentURI:string, askQuery:string, requestOptions:HTTP.Request.Options = {} ):Promise<[ boolean, HTTP.Response.Class ]> {
 		documentURI = this.getRequestURI( documentURI );
 
-		if( this.context && this.context.auth.isAuthenticated() ) this.context.auth.addAuthentication( requestOptions );
+		if( this.context && this.context.auth && this.context.auth.isAuthenticated() ) this.context.auth.addAuthentication( requestOptions );
 
 		return SPARQL.Service.executeASKQuery( documentURI, askQuery, requestOptions );
 	}
@@ -648,7 +660,7 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 	executeRawSELECTQuery( documentURI:string, selectQuery:string, requestOptions:HTTP.Request.Options = {} ):Promise<[ SPARQL.RawResults.Class, HTTP.Response.Class ]> {
 		documentURI = this.getRequestURI( documentURI );
 
-		if( this.context && this.context.auth.isAuthenticated() ) this.context.auth.addAuthentication( requestOptions );
+		if( this.context && this.context.auth && this.context.auth.isAuthenticated() ) this.context.auth.addAuthentication( requestOptions );
 
 		return SPARQL.Service.executeRawSELECTQuery( documentURI, selectQuery, requestOptions );
 	}
@@ -656,7 +668,7 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 	executeSELECTQuery( documentURI:string, selectQuery:string, requestOptions:HTTP.Request.Options = {} ):Promise<[ SPARQL.SELECTResults.Class, HTTP.Response.Class ]> {
 		documentURI = this.getRequestURI( documentURI );
 
-		if( this.context && this.context.auth.isAuthenticated() ) this.context.auth.addAuthentication( requestOptions );
+		if( this.context && this.context.auth && this.context.auth.isAuthenticated() ) this.context.auth.addAuthentication( requestOptions );
 
 		return SPARQL.Service.executeSELECTQuery( documentURI, selectQuery, this, requestOptions );
 	}
@@ -664,7 +676,7 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 	executeRawCONSTRUCTQuery( documentURI:string, constructQuery:string, requestOptions:HTTP.Request.Options = {} ):Promise<[ string, HTTP.Response.Class ]> {
 		documentURI = this.getRequestURI( documentURI );
 
-		if( this.context && this.context.auth.isAuthenticated() ) this.context.auth.addAuthentication( requestOptions );
+		if( this.context && this.context.auth && this.context.auth.isAuthenticated() ) this.context.auth.addAuthentication( requestOptions );
 
 		return SPARQL.Service.executeRawCONSTRUCTQuery( documentURI, constructQuery, requestOptions );
 	}
@@ -672,7 +684,7 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 	executeRawDESCRIBEQuery( documentURI:string, describeQuery:string, requestOptions:HTTP.Request.Options = {} ):Promise<[ string, HTTP.Response.Class ]> {
 		documentURI = this.getRequestURI( documentURI );
 
-		if( this.context && this.context.auth.isAuthenticated() ) this.context.auth.addAuthentication( requestOptions );
+		if( this.context && this.context.auth && this.context.auth.isAuthenticated() ) this.context.auth.addAuthentication( requestOptions );
 
 		return SPARQL.Service.executeRawDESCRIBEQuery( documentURI, describeQuery, requestOptions );
 	}
@@ -683,7 +695,7 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 			documentURI = this.context.resolve( documentURI );
 		}
 
-		if( this.context && this.context.auth.isAuthenticated() ) this.context.auth.addAuthentication( requestOptions );
+		if( this.context && this.context.auth && this.context.auth.isAuthenticated() ) this.context.auth.addAuthentication( requestOptions );
 
 		return SPARQL.Service.executeUPDATE( documentURI, update, requestOptions );
 	}
@@ -738,7 +750,7 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 		*/
 
 		if( ! ! this.context ) {
-			if( RDF.URI.Util.isPrefixed( uri ) ) uri = ObjectSchema.Digester.resolvePrefixedURI( new RDF.URI.Class( uri ), this.getGeneralSchema() ).stringValue;
+			if( RDF.URI.Util.isPrefixed( uri ) ) uri = ObjectSchema.Digester.resolvePrefixedURI( uri, this.getGeneralSchema() );
 
 			if( ! RDF.URI.Util.isRelative( uri ) ) {
 				let baseURI:string = this.context.getBaseURI();
@@ -858,7 +870,7 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 			uri = this.context.resolve( uri );
 		} else if( RDF.URI.Util.isPrefixed( uri ) ) {
 			if( ! this.context ) throw new Errors.IllegalArgumentError( "This Documents instance doesn't support prefixed URIs." );
-			uri = ObjectSchema.Digester.resolvePrefixedURI( new RDF.URI.Class( uri ), this.context.getObjectSchema() ).stringValue;
+			uri = ObjectSchema.Digester.resolvePrefixedURI( uri, this.context.getObjectSchema() );
 
 			if( RDF.URI.Util.isPrefixed( uri ) ) throw new Errors.IllegalArgumentError( `The prefixed URI "${ uri }" could not be resolved.` );
 		}
@@ -866,7 +878,7 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 	}
 
 	private setDefaultRequestOptions( requestOptions:HTTP.Request.Options, interactionModel:string ):void {
-		if( this.context && this.context.auth.isAuthenticated() ) this.context.auth.addAuthentication( requestOptions );
+		if( this.context && this.context.auth && this.context.auth.isAuthenticated() ) this.context.auth.addAuthentication( requestOptions );
 
 		HTTP.Request.Util.setAcceptHeader( "application/ld+json", requestOptions );
 		HTTP.Request.Util.setPreferredInteractionModel( interactionModel, requestOptions );
@@ -915,6 +927,7 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 		if( persistedDocument.hasType( ProtectedDocument.RDF_CLASS ) ) PersistedProtectedDocument.Factory.decorate( persistedDocument );
 		if( persistedDocument.hasType( Auth.ACL.RDF_CLASS ) ) Auth.PersistedACL.Factory.decorate( persistedDocument );
 		if( persistedDocument.hasType( Auth.Agent.RDF_CLASS ) ) Auth.PersistedAgent.Factory.decorate( persistedDocument );
+		if( persistedDocument.hasType( AppRole.RDF_CLASS ) ) PersistedAppRole.Factory.decorate( persistedDocument, this.context.auth ? this.context.auth.roles : null );
 
 		return persistedDocument;
 	}

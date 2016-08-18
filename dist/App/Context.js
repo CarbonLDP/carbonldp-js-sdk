@@ -5,11 +5,13 @@ var __extends = (this && this.__extends) || function (d, b) {
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
 var AbstractContext_1 = require("./../AbstractContext");
+var Auth_1 = require("./Auth");
 var RDF = require("./../RDF");
 var Class = (function (_super) {
     __extends(Class, _super);
     function Class(parentContext, app) {
         _super.call(this, parentContext);
+        this.auth = new Auth_1.default(this);
         this._app = app;
         this.base = this.getBase(this.app);
         app.rootContainer = this.documents.getPointer(app.rootContainer.id);

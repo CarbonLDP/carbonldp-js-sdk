@@ -14,7 +14,7 @@ var Documents_1 = require("./Documents");
 var Errors = require("./Errors");
 var Fragment = require("./Fragment");
 var HTTP = require("./HTTP");
-var JSONLDConverter = require("./JSONLDConverter");
+var JSONLD = require("./JSONLD");
 var LDP = require("./LDP");
 var NamedFragment = require("./NamedFragment");
 var NS = require("./NS");
@@ -24,6 +24,7 @@ var PersistedDocument = require("./PersistedDocument");
 var PersistedFragment = require("./PersistedFragment");
 var PersistedNamedFragment = require("./PersistedNamedFragment");
 var PersistedResource = require("./PersistedResource");
+var Platform = require("./Platform");
 var Pointer = require("./Pointer");
 var RDF = require("./RDF");
 var Resource = require("./Resource");
@@ -35,12 +36,13 @@ var Carbon = (function (_super) {
     __extends(Carbon, _super);
     function Carbon(settings) {
         _super.call(this);
+        this.auth = new Platform.Auth.Class(this);
         settings = settings ? settings : Settings.defaultSettings;
         Utils.M.extend(this.settings, Utils.M.from(settings));
         this.apps = new Apps.Class(this);
     }
     Object.defineProperty(Carbon, "version", {
-        get: function () { return "0.35.1"; },
+        get: function () { return "0.36.0"; },
         enumerable: true,
         configurable: true
     });
@@ -71,7 +73,7 @@ var Carbon = (function (_super) {
     Carbon.Errors = Errors;
     Carbon.Fragment = Fragment;
     Carbon.HTTP = HTTP;
-    Carbon.JSONLDConverter = JSONLDConverter;
+    Carbon.JSONLD = JSONLD;
     Carbon.LDP = LDP;
     Carbon.NamedFragment = NamedFragment;
     Carbon.NS = NS;
@@ -81,6 +83,7 @@ var Carbon = (function (_super) {
     Carbon.PersistedFragment = PersistedFragment;
     Carbon.PersistedNamedFragment = PersistedNamedFragment;
     Carbon.PersistedResource = PersistedResource;
+    Carbon.Platform = Platform;
     Carbon.Pointer = Pointer;
     Carbon.RDF = RDF;
     Carbon.Resource = Resource;

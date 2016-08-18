@@ -4,7 +4,7 @@ import * as RDF from "./RDF";
 import * as AccessPoint from "./AccessPoint";
 import * as Document from "./Document";
 import * as FreeResources from "./FreeResources";
-import * as JSONLDConverter from "./JSONLDConverter";
+import * as JSONLD from "./JSONLD";
 import * as PersistedAccessPoint from "./PersistedAccessPoint";
 import * as PersistedDocument from "./PersistedDocument";
 import * as Pointer from "./Pointer";
@@ -14,7 +14,7 @@ import * as RetrievalPreferences from "./RetrievalPreferences";
 declare class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Resolver {
     private static _documentSchema;
     private _jsonldConverter;
-    jsonldConverter: JSONLDConverter.Class;
+    jsonldConverter: JSONLD.Converter.Class;
     private context;
     private pointers;
     private documentsBeingResolved;

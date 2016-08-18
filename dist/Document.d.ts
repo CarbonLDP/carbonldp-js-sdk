@@ -1,5 +1,5 @@
 import * as Fragment from "./Fragment";
-import JSONLDConverter from "./JSONLDConverter";
+import JSONLDConverter from "./JSONLD/Converter";
 import * as NamedFragment from "./NamedFragment";
 import * as ObjectSchema from "./ObjectSchema";
 import * as Pointer from "./Pointer";
@@ -14,9 +14,6 @@ export interface Class extends Resource.Class, Pointer.Library, Pointer.Validato
     _normalize(): void;
     _removeFragment(fragment: Fragment.Class): void;
     _removeFragment(slug: string): void;
-    addType(type: string): void;
-    hasType(type: string): boolean;
-    removeType(type: string): void;
     hasFragment(slug: string): boolean;
     getFragment<T>(slug: string): T & Fragment.Class;
     getNamedFragment<T>(slug: string): T & NamedFragment.Class;

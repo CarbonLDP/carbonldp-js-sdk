@@ -1,9 +1,12 @@
 import AbstractContext from "./../AbstractContext";
+import Auth from "./Auth";
 import Context from "./../Context";
 import * as RDF from "./../RDF";
 import PersistedApp from "./../PersistedApp";
 
 export class Class extends AbstractContext {
+	public auth:Auth;
+
 	public get app():PersistedApp { return this._app; };
 
 	private _app:PersistedApp;
@@ -11,6 +14,7 @@ export class Class extends AbstractContext {
 
 	constructor( parentContext:Context, app:PersistedApp ) {
 		super( parentContext );
+		this.auth = new Auth( this );
 		this._app = app;
 
 		this.base = this.getBase( this.app );

@@ -2,7 +2,7 @@ import Documents from "./../Documents";
 import Error from "./Error";
 import * as FreeResources from "./../FreeResources";
 import HTTPParser from "./../HTTP/Parser";
-import JSONLDParser from "./../HTTP/JSONLDParser";
+import JSONLDParser from "./../JSONLD/Parser";
 import * as NS from "./../NS";
 import ObjectSchema from "./../ObjectSchema";
 import * as RDF from "./../RDF";

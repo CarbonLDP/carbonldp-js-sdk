@@ -477,21 +477,40 @@ describe( module( "Carbon/RDF/URI" ), ():void => {
 			expect( "resolve" in URI.Util ).toBe( true );
 			expect( Utils.isFunction( URI.Util.resolve ) ).toBe( true );
 
-			let parentURI:string = "http://example.com/resource/";
-			let parentURI2:string = "http://example.com/resource";
-			let childURI:string = "/child/";
-			let childURI2:string = "child/";
-			let resultURI:string = "http://example.com/resource/child/";
-			let prefixURI:string = "prefix:resource";
+			expect( URI.Util.resolve( "http://example.com/resource/", "/child/" ) ).toEqual( "http://example.com/resource/child/" );
+			expect( URI.Util.resolve( "http://example.com/resource", "/child/" ) ).toEqual( "http://example.com/child/" );
 
-			expect( URI.Util.resolve( parentURI, childURI ) ).toEqual( resultURI );
-			expect( URI.Util.resolve( parentURI2, childURI ) ).toEqual( resultURI );
+			expect( URI.Util.resolve( "http://example.com/resource/", "child/" ) ).toEqual( "http://example.com/resource/child/" );
+			expect( URI.Util.resolve( "http://example.com/resource", "child/" ) ).toEqual( "http://example.com/child/" );
 
-			expect( URI.Util.resolve( parentURI, childURI2 ) ).toEqual( resultURI );
-			expect( URI.Util.resolve( parentURI2, childURI2 ) ).toEqual( resultURI );
+			expect( URI.Util.resolve( "http://example.com/resource/", "#child" ) ).toEqual( "http://example.com/resource/#child" );
+			expect( URI.Util.resolve( "http://example.com/resource", "#child" ) ).toEqual( "http://example.com/resource#child" );
 
-			expect( URI.Util.resolve( parentURI, resultURI ) ).toEqual( resultURI );
-			expect( URI.Util.resolve( parentURI, prefixURI ) ).toEqual( prefixURI );
+
+			expect( URI.Util.resolve( "http://example.com/", "/child" ) ).toEqual( "http://example.com/child" );
+			expect( URI.Util.resolve( "http://example.com", "/child" ) ).toEqual( "http://example.com/child" );
+
+			expect( URI.Util.resolve( "http://example.com/", "child" ) ).toEqual( "http://example.com/child" );
+			expect( URI.Util.resolve( "http://example.com", "child" ) ).toEqual( "http://example.com/child" );
+
+			expect( URI.Util.resolve( "http://example.com/", "#child" ) ).toEqual( "http://example.com/#child" );
+			expect( URI.Util.resolve( "http://example.com", "#child" ) ).toEqual( "http://example.com/#child" );
+
+
+			expect( URI.Util.resolve( "http://example.com/resource#", "#child" ) ).toEqual( "http://example.com/resource#child" );
+			expect( URI.Util.resolve( "http://example.com/resource#some", "#child" ) ).toEqual( "http://example.com/resource#child" );
+			expect( URI.Util.resolve( "http://example.com/resource#some", "child#another" ) ).toEqual( "http://example.com/child#another" );
+
+			expect( URI.Util.resolve( "http://example.com/resource#", "?child" ) ).toEqual( "http://example.com/resource?child" );
+			expect( URI.Util.resolve( "http://example.com/resource#some", "?child" ) ).toEqual( "http://example.com/resource#some?child" );
+
+			expect( URI.Util.resolve( "http://example.com/resource?some", "?child" ) ).toEqual( "http://example.com/resource?child" );
+			expect( URI.Util.resolve( "http://example.com/resource?some", "#child?another" ) ).toEqual( "http://example.com/resource#child?another" );
+
+
+			expect( URI.Util.resolve( "http://example.com/resource/", "http://example.com/resource/child/" ) ).toEqual( "http://example.com/resource/child/" );
+			expect( URI.Util.resolve( "http://example.com/resource/", "prefix:resource" ) ).toEqual( "prefix:resource" );
+			expect( URI.Util.resolve( "http://example.com/resource/", "_:some-random-id" ) ).toEqual( "_:some-random-id" );
 		} );
 
 		it( hasMethod(

@@ -9,7 +9,7 @@ import Documents from "./Documents";
 import * as Errors from "./Errors";
 import * as Fragment from "./Fragment";
 import * as HTTP from "./HTTP";
-import * as JSONLDConverter from "./JSONLDConverter";
+import * as JSONLD from "./JSONLD";
 import * as LDP from "./LDP";
 import * as NamedFragment from "./NamedFragment";
 import * as NS from "./NS";
@@ -19,6 +19,7 @@ import * as PersistedDocument from "./PersistedDocument";
 import * as PersistedFragment from "./PersistedFragment";
 import * as PersistedNamedFragment from "./PersistedNamedFragment";
 import * as PersistedResource from "./PersistedResource";
+import * as Platform from "./Platform";
 import * as Pointer from "./Pointer";
 import * as RDF from "./RDF";
 import * as Resource from "./Resource";
@@ -39,7 +40,7 @@ class Carbon extends AbstractContext {
 	static Errors:typeof Errors = Errors;
 	static Fragment:typeof Fragment = Fragment;
 	static HTTP:typeof HTTP = HTTP;
-	static JSONLDConverter:typeof JSONLDConverter = JSONLDConverter;
+	static JSONLD:typeof JSONLD = JSONLD;
 	static LDP:typeof LDP = LDP;
 	static NamedFragment:typeof NamedFragment = NamedFragment;
 	static NS:typeof NS = NS;
@@ -49,6 +50,7 @@ class Carbon extends AbstractContext {
 	static PersistedFragment:typeof PersistedFragment = PersistedFragment;
 	static PersistedNamedFragment:typeof PersistedNamedFragment = PersistedNamedFragment;
 	static PersistedResource:typeof PersistedResource = PersistedResource;
+	static Platform:typeof Platform = Platform;
 	static Pointer:typeof Pointer = Pointer;
 	static RDF:typeof RDF = RDF;
 	static Resource:typeof Resource = Resource;
@@ -59,7 +61,7 @@ class Carbon extends AbstractContext {
 	/* tslint:enable: variable-name */
 
 	// TODO: Get package.json version directly
-	static get version():string { return "0.35.1"; }
+	static get version():string { return "0.36.0"; }
 
 	apps:Apps.Class;
 
@@ -67,6 +69,7 @@ class Carbon extends AbstractContext {
 
 	constructor( settings?:Settings.Class ) {
 		super();
+		this.auth = new Platform.Auth.Class( this );
 
 		settings = settings ? settings : Settings.defaultSettings;
 

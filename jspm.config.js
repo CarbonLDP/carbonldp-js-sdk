@@ -1,4 +1,8 @@
 SystemJS.config({
+  paths: {
+    "npm:": "test/jspm_packages/npm/",
+    "github:": "test/jspm_packages/github/"
+  },
   devConfig: {
     "map": {
       "os": "github:jspm/nodelibs-os@0.2.0-alpha",
@@ -85,7 +89,6 @@ SystemJS.config({
     "npm:*.json"
   ],
   map: {
-    "jsonld": "npm:jsonld@0.4.11",
     "assert": "github:jspm/nodelibs-assert@0.2.0-alpha",
     "buffer": "github:jspm/nodelibs-buffer@0.2.0-alpha",
     "child_process": "github:jspm/nodelibs-child_process@0.2.0-alpha",
@@ -330,17 +333,6 @@ SystemJS.config({
       "map": {
         "punycode": "npm:punycode@1.3.2",
         "querystring": "npm:querystring@0.2.0"
-      }
-    },
-    "npm:jsonld@0.4.11": {
-      "map": {
-        "es6-promise": "npm:es6-promise@2.3.0",
-        "node-pkginfo": "npm:pkginfo@0.4.0",
-        "node-request": "@empty",
-        "node-xmldom": "npm:xmldom@0.1.19",
-        "pkginfo": "@empty",
-        "request": "@empty",
-        "xmldom": "npm:xmldom@0.1.19"
       }
     }
   }
