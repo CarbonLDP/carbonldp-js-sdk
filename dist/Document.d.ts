@@ -1,5 +1,5 @@
 import * as Fragment from "./Fragment";
-import JSONLDConverter from "./JSONLDConverter";
+import JSONLDConverter from "./JSONLD/Converter";
 import * as NamedFragment from "./NamedFragment";
 import * as ObjectSchema from "./ObjectSchema";
 import * as Pointer from "./Pointer";

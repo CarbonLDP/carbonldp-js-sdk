@@ -17,27 +17,27 @@ import {
 	hasInterface,
 	extendsClass,
 	hasDefaultExport,
-} from "./test/JasmineExtender";
+} from "./../test/JasmineExtender";
 
-import * as Errors from "./Errors";
-import * as HTTP from "./HTTP";
-import * as NS from "./NS";
-import * as ObjectSchema from "./ObjectSchema";
-import * as Pointer from "./Pointer";
-import * as RDF from "./RDF";
-import * as Utils from "./Utils";
+import * as Errors from "./../Errors";
+import * as HTTP from "./../HTTP";
+import * as NS from "./../NS";
+import * as ObjectSchema from "./../ObjectSchema";
+import * as Pointer from "./../Pointer";
+import * as RDF from "./../RDF";
+import * as Utils from "./../Utils";
 
-import * as JSONLDConverter from "./JSONLDConverter";
-import DefaultExport from "./JSONLDConverter";
+import * as JSONLDConverter from "./Converter";
+import DefaultExport from "./Converter";
 
-describe( module( "Carbon/JSONLDConverter" ), ():void => {
+describe( module( "Carbon/JSONLD/Converter" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( JSONLDConverter ).toBeDefined();
 		expect( Utils.isObject( JSONLDConverter ) ).toEqual( true );
 	} );
 
-	describe( clazz( "Carbon.JSONLDConverter.Class", "Class that have methods for convert expanded JSON-LD objects to compacted Carbon SDK Resources and vice versa." ), ():void => {
+	describe( clazz( "Carbon.JSONLD.Converter.Class", "Class that have methods for convert expanded JSON-LD objects to compacted Carbon SDK Resources and vice versa." ), ():void => {
 
 		it( isDefined(), ():void => {
 			expect( JSONLDConverter.Class ).toBeDefined();
@@ -271,6 +271,7 @@ describe( module( "Carbon/JSONLDConverter" ), ():void => {
 				expect( Utils.isFunction( jsonldConverter.compact ) ).toBeDefined();
 
 				let generalSchema:ObjectSchema.Class = {
+					"@vocab": "http://example.com/my-namespace#",
 					"ex": "http://example.com/ns#",
 					"xsd": "http://www.w3.org/2001/XMLSchema#",
 					"propertyInGeneral": {
@@ -556,7 +557,7 @@ describe( module( "Carbon/JSONLDConverter" ), ():void => {
 
 	} );
 
-	it( hasDefaultExport( "Carbon.JSONLDConverter.Class" ), () => {
+	it( hasDefaultExport( "Carbon.JSONLD.Converter.Class" ), () => {
 		expect( DefaultExport ).toBeDefined();
 		expect( JSONLDConverter.Class ).toBe( DefaultExport );
 	} );

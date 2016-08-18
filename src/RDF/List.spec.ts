@@ -41,16 +41,17 @@ describe( module( "Carbon/RDF/List" ), ():void => {
 			expect( List.Factory.is ).toBeDefined();
 			expect( Utils.isFunction( List.Factory.is ) ).toBe( true );
 
-			expect( List.Factory.is( {"@list": []} ) ).toBe( true );
-			expect( List.Factory.is( {"@list": [ "a" ]} ) ).toBe( true );
-			expect( List.Factory.is( {"@list": [ {"@value": "a", "@type": "xsd:string"}, {"@value": 1, "@type": "xsd:number"} ]} ) ).toBe( true );
-			expect( List.Factory.is( {"@list": [ 1, 2, 3 ]} ) ).toBe( true );
+			let list:any;
+			expect( List.Factory.is( list ) ).toBe( false );
 
-			expect( List.Factory.is( {"@list": "something else"} ) ).toBe( false );
-			expect( List.Factory.is( {"@list": 1} ) ).toBe( false );
-			expect( List.Factory.is( {"list": []} ) ).toBe( false );
-			expect( List.Factory.is( {"something": "else"} ) ).toBe( false );
-			expect( List.Factory.is( {} ) ).toBe( false );
+			list = {
+				"@list": null,
+			};
+			expect( List.Factory.is( list ) ).toBe( true );
+
+			delete list[ "@list" ];
+			expect( List.Factory.is( list ) ).toBe( false );
+			list[ "@list" ] = true;
 		} );
 
 	} );

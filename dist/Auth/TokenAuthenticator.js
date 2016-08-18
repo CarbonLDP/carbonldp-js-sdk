@@ -1,6 +1,7 @@
 "use strict";
 var Errors = require("./../Errors");
 var HTTP = require("./../HTTP");
+var JSONLD = require("./../JSONLD");
 var LDP = require("./../LDP");
 var NS = require("./../NS");
 var RDF = require("./../RDF");
@@ -53,7 +54,7 @@ var Class = (function () {
         this.basicAuthenticator.addAuthentication(requestOptions);
         HTTP.Request.Util.setAcceptHeader("application/ld+json", requestOptions);
         HTTP.Request.Util.setPreferredInteractionModel(NS.LDP.Class.RDFSource, requestOptions);
-        return HTTP.Request.Service.post(uri, null, requestOptions, new HTTP.JSONLDParser.Class()).then(function (_a) {
+        return HTTP.Request.Service.post(uri, null, requestOptions, new JSONLD.Parser.Class()).then(function (_a) {
             var expandedResult = _a[0], response = _a[1];
             var freeNodes = RDF.Node.Util.getFreeNodes(expandedResult);
             var freeResources = _this.context.documents._getFreeResources(freeNodes);

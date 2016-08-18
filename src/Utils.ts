@@ -60,7 +60,7 @@ function isPlainObject( object:Object ):boolean {
 		&& ! isDate( object )
 		&& ! isMap( object )
 		&& ! ( typeof Blob !== "undefined" && object instanceof Blob )
-		&& ! ( ( object + "" ) === "[object Set]" );
+		&& ! ( Object.prototype.toString.call( object ) === "[object Set]" );
 }
 
 function isFunction( value:any ):boolean {
@@ -108,6 +108,8 @@ function parseBoolean( value:string ):boolean {
 
 function extend( target:Object, ...objects:Object[] ):Object {
 	for( let toMerge of objects ) {
+		if( ! toMerge ) continue;
+
 		for( let name in toMerge ) {
 			if( toMerge.hasOwnProperty( name ) ) {
 				target[ name ] = toMerge[ name ];
@@ -128,11 +130,11 @@ function forEachOwnProperty( object:Object, action:( name:string, value:any ) =>
 
 class O {
 
-	static clone( object:Object, config:{ arrays?:boolean, objects?:boolean } = {arrays: false, objects: false} ):Object {
+	static clone<T extends Object>( object:T, config:{ arrays?:boolean, objects?:boolean } = {arrays: false, objects: false} ):T {
 		let isAnArray:boolean = isArray( object );
 		if( ! isAnArray && ! isPlainObject( object ) ) return null;
 
-		let clone:Object = isAnArray ? [] : {};
+		let clone:T = <T> ( isAnArray ? [] : ( ! ! Object.getPrototypeOf( object ) ) ? {} : Object.create( null ) );
 		(<any> object).__SDKUtils_circularReferenceFlag = clone;
 
 		for( let key of Object.keys( object ) ) {

@@ -6,7 +6,7 @@ import {
 
 	isDefined,
 	hasProperty,
-	extendsClass
+	extendsClass,
 } from "./../test/JasmineExtender";
 import * as Utils from "./../Utils";
 

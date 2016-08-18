@@ -1,5 +1,5 @@
 "use strict";
-var HTTP = require("./../HTTP");
+var JSONLD = require("./../JSONLD");
 var RDFNode = require("./RDFNode");
 var Utils = require("./../Utils");
 var URI = require("./URI");
@@ -101,7 +101,7 @@ var Parser = (function () {
     function Parser() {
     }
     Parser.prototype.parse = function (input) {
-        var jsonLDParser = new HTTP.JSONLDParser.Class();
+        var jsonLDParser = new JSONLD.Parser.Class();
         return jsonLDParser.parse(input).then(function (expandedResult) {
             return Util.getDocuments(expandedResult);
         });

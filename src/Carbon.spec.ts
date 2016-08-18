@@ -29,7 +29,7 @@ import Documents from "./Documents";
 import * as Errors from "./Errors";
 import * as Fragment from "./Fragment";
 import * as HTTP from "./HTTP";
-import * as JSONLDConverter from "./JSONLDConverter";
+import * as JSONLD from "./JSONLD";
 import * as LDP from "./LDP";
 import * as NamedFragment from "./NamedFragment";
 import * as NS from "./NS";
@@ -193,11 +193,11 @@ describe( module( "Carbon" ), ():void => {
 
 		it( reexports(
 			STATIC,
-			"JSONLDConverter",
-			"Carbon/JSONLDConverter"
+			"JSONLD",
+			"Carbon/JSONLD"
 		), ():void => {
-			expect( Carbon.JSONLDConverter ).toBeDefined();
-			expect( Carbon.JSONLDConverter ).toBe( JSONLDConverter );
+			expect( Carbon.JSONLD ).toBeDefined();
+			expect( Carbon.JSONLD ).toBe( JSONLD );
 		} );
 
 		it( reexports(

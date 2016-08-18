@@ -2,6 +2,7 @@ import Context from "./../Context";
 import * as Errors from "./../Errors";
 import * as FreeResources from "./../FreeResources";
 import * as HTTP from "./../HTTP";
+import * as JSONLD from "./../JSONLD";
 import * as LDP from "./../LDP";
 import * as NS from "./../NS";
 import * as ObjectSchema from "./../ObjectSchema";
@@ -74,7 +75,7 @@ export class Class implements Authenticator<UsernameAndPasswordToken> {
 		HTTP.Request.Util.setAcceptHeader( "application/ld+json", requestOptions );
 		HTTP.Request.Util.setPreferredInteractionModel( NS.LDP.Class.RDFSource, requestOptions );
 
-		return HTTP.Request.Service.post( uri, null, requestOptions, new HTTP.JSONLDParser.Class() ).then( ( [ expandedResult, response ]:[ any, HTTP.Response.Class ] ) => {
+		return HTTP.Request.Service.post( uri, null, requestOptions, new JSONLD.Parser.Class() ).then( ( [ expandedResult, response ]:[ any, HTTP.Response.Class ] ) => {
 			let freeNodes:RDF.Node.Class[] = RDF.Node.Util.getFreeNodes( expandedResult );
 
 			let freeResources:FreeResources.Class = this.context.documents._getFreeResources( freeNodes );
