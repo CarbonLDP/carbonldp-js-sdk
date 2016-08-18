@@ -140,6 +140,11 @@ var Predicate = (function () {
         enumerable: true,
         configurable: true
     });
+    Object.defineProperty(Predicate, "platformRole", {
+        get: function () { return namespace + "platformRole"; },
+        enumerable: true,
+        configurable: true
+    });
     Object.defineProperty(Predicate, "rootContainer", {
         get: function () { return namespace + "rootContainer"; },
         enumerable: true,

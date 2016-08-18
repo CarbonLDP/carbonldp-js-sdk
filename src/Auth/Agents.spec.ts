@@ -5,7 +5,6 @@ import * as Agent from "./Agent";
 
 import {
 	INSTANCE,
-	STATIC,
 
 	module,
 	clazz,
@@ -31,7 +30,7 @@ describe( module( "Carbon/Auth/Agents" ), ():void => {
 
 	describe( clazz(
 		"Carbon.Auth.Agents.Class",
-		"Class for manage Agents of a determined context."
+		"Abstract class for manage Agents of a determined context."
 	), ():void => {
 
 		it( isDefined(), ():void => {
@@ -39,7 +38,9 @@ describe( module( "Carbon/Auth/Agents" ), ():void => {
 			expect( Utils.isFunction( Agents.Class ) ).toBe( true );
 		} );
 
-		it( hasConstructor(), ():void => {
+		it( hasConstructor( [
+			{name: "context", type: "Carbon.Context.Class", description: "The context where to manage its Agents."},
+		] ), ():void => {
 			let agents:Agents.Class;
 			let context:AbstractContext;
 
@@ -49,7 +50,9 @@ describe( module( "Carbon/Auth/Agents" ), ():void => {
 				}
 			}
 			context = new MockedContext();
-			agents = new Agents.Class( context );
+
+			class MockedAgents extends Agents.Class {}
+			agents = new MockedAgents( context );
 
 			expect( agents ).toBeTruthy();
 			expect( agents instanceof Agents.Class ).toBe( true );
@@ -75,7 +78,8 @@ describe( module( "Carbon/Auth/Agents" ), ():void => {
 				}
 			}
 			context = new MockedContext();
-			agents = new Agents.Class( context );
+			class MockedAgents extends Agents.Class {}
+			agents = new MockedAgents( context );
 
 			expect( agents.register ).toBeDefined();
 			expect( Utils.isFunction( agents.register ) ).toBe( true );
@@ -115,7 +119,9 @@ describe( module( "Carbon/Auth/Agents" ), ():void => {
 					expect( spy ).not.toHaveBeenCalledWith( "http://example.com/container/agents/", agent );
 					done();
 				} );
+
 			} );
+
 		} );
 
 		it( hasMethod(
@@ -136,20 +142,17 @@ describe( module( "Carbon/Auth/Agents" ), ():void => {
 				}
 			}
 			context = new MockedContext();
-			agents = new Agents.Class( context );
+
+			class MockedAgents extends Agents.Class {}
+			agents = new MockedAgents( context );
 
 			expect( agents.get ).toBeDefined();
 			expect( Utils.isFunction( agents.get ) ).toBe( true );
 
-			let statePromise:Promise<any>;
-
 			let options:HTTP.Request.Options = {timeout: 5555};
 			let spy:jasmine.Spy = spyOn( context.documents, "get" ).and.returnValue( Promise.resolve() );
 
-			statePromise = agents.get( "http://example.com/agents/an-agent/" );
-			expect( statePromise instanceof Promise ).toBe( true );
-
-			statePromise.then( done.fail ).catch( ( stateError:Error ) => {
+			agents.get( "http://example.com/agents/an-agent/" ).then( done.fail ).catch( ( stateError:Error ) => {
 				expect( stateError instanceof Errors.IllegalStateError ).toBe( true );
 				context.setSetting( "platform.agents.container", "agents/" );
 

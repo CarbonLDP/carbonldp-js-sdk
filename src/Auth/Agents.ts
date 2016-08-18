@@ -7,7 +7,7 @@ import * as PersistedDocument from "./../PersistedDocument";
 import * as URI from "./../RDF/URI";
 import * as Response from "./../HTTP/Response";
 
-export class Class {
+export abstract class Class {
 	private context:Context;
 
 	constructor( context:Context ) {

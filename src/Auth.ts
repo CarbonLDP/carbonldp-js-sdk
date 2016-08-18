@@ -54,6 +54,7 @@ export enum Method {
 }
 
 export class Class {
+	// TODO: Make the agents property an abstract property.
 	public agents:Agents.Class;
 	public roles:Roles.Class;
 
@@ -74,10 +75,9 @@ export class Class {
 
 	constructor( context:Context ) {
 		this.roles = null;
+		this.agents = null;
 
 		this.context = context;
-
-		this.agents = new Agents.Class( this.context );
 
 		this.authenticators = [];
 		this.authenticators[ Method.BASIC ] = new BasicAuthenticator();

@@ -28,6 +28,7 @@ declare class Predicate {
     static parentRole: string;
     static password: string;
     static permission: string;
+    static platformRole: string;
     static rootContainer: string;
     static subject: string;
     static subjectClass: string;
