@@ -1,11 +1,15 @@
+import * as ACE from "./Auth/ACE";
+import * as ACL from "./Auth/ACL";
 import * as Agent from "./Auth/Agent";
 import * as Agents from "./Auth/Agents";
 import AuthenticationToken from "./Auth/AuthenticationToken";
 import Authenticator from "./Auth/Authenticator";
 import BasicAuthenticator from "./Auth/BasicAuthenticator";
+import * as PersistedACE from "./Auth/PersistedACE";
+import * as PersistedACL from "./Auth/PersistedACL";
+import * as PersistedAgent from "./Auth/PersistedAgent";
 import * as Role from "./Auth/Role";
 import * as Roles from "./Auth/Roles";
-import * as PersistedAgent from "./Auth/PersistedAgent";
 import TokenAuthenticator from "./Auth/TokenAuthenticator";
 import * as Ticket from "./Auth/Ticket";
 import * as Token from "./Auth/Token";
@@ -14,21 +18,26 @@ import UsernameAndPasswordCredentials from "./Auth/UsernameAndPasswordCredential
 import Credentials from "./Auth/Credentials";
 
 import Context from "./Context";
-import {DigestedObjectSchema} from "./ObjectSchema";
+import * as ObjectSchema from "./ObjectSchema";
 import * as Errors from "./Errors";
 import * as FreeResources from "./FreeResources";
 import * as HTTP from "./HTTP";
 import * as NS from "./NS";
+import * as PersistedDocument from "./PersistedDocument";
 import * as Resource from "./Resource";
 import * as RDF from "./RDF";
 import * as Utils from "./Utils";
 
 export {
+	ACE,
+	ACL,
 	Agent,
 	Agents,
 	AuthenticationToken,
 	Authenticator,
 	BasicAuthenticator,
+	PersistedACE,
+	PersistedACL,
 	PersistedAgent,
 	Role,
 	Roles,
@@ -43,22 +52,31 @@ export enum Method {
 	TOKEN
 }
 
-export abstract class Class {
+export class Class {
 	// TODO: Make the agents property an abstract property.
 	public agents:Agents.Class;
 	public roles:Roles.Class;
+
+	protected _authenticatedAgent:PersistedAgent.Class;
 
 	private context:Context;
 	private method:Method;
 	private authenticators:Array<Authenticator<AuthenticationToken>>;
 	private authenticator:Authenticator<AuthenticationToken>;
 
+	public get authenticatedAgent():PersistedAgent.Class {
+		if( ! this._authenticatedAgent ) {
+			if( this.context.parentContext && this.context.parentContext.auth ) return this.context.parentContext.auth.authenticatedAgent;
+			return null;
+		}
+		return this._authenticatedAgent;
+	}
+
 	constructor( context:Context ) {
 		this.roles = null;
 		this.agents = null;
 
 		this.context = context;
-		this.method = context.getSetting( "auth.method" ) || Method.TOKEN;
 
 		this.authenticators = [];
 		this.authenticators[ Method.BASIC ] = new BasicAuthenticator();
@@ -72,8 +90,8 @@ export abstract class Class {
 		);
 	}
 
-	authenticate( username:string, password:string ):Promise<Credentials> {
-		return this.authenticateUsing( Method[ this.method ], username, password );
+	authenticate( username:string, password:string ):Promise<Token.Class> {
+		return this.authenticateUsing( "TOKEN", username, password );
 	}
 
 	authenticateUsing( method:"BASIC", username:string, password:string ):Promise<UsernameAndPasswordCredentials>;
@@ -111,6 +129,7 @@ export abstract class Class {
 
 		this.authenticator.clearAuthentication();
 		this.authenticator = null;
+		this._authenticatedAgent = null;
 	}
 
 	createTicket( uri:string, requestOptions:HTTP.Request.Options = {} ):Promise<[ Ticket.Class, HTTP.Response.Class ]> {
@@ -136,7 +155,7 @@ export abstract class Class {
 			let expandedTicket:RDF.Node.Class = ticketNodes[ 0 ];
 			let ticket:Ticket.Class = <any> Resource.Factory.create();
 
-			let digestedSchema:DigestedObjectSchema = this.context.documents.getSchemaFor( expandedTicket );
+			let digestedSchema:ObjectSchema.DigestedObjectSchema = this.context.documents.getSchemaFor( expandedTicket );
 
 			this.context.documents.jsonldConverter.compact( expandedTicket, ticket, digestedSchema, this.context.documents );
 
@@ -162,8 +181,15 @@ export abstract class Class {
 		authenticationToken = new UsernameAndPasswordToken( username, password );
 		this.clearAuthentication();
 
-		this.authenticator = authenticator;
-		return this.authenticator.authenticate( authenticationToken );
+		let credentials:UsernameAndPasswordCredentials;
+		return authenticator.authenticate( authenticationToken ).then( ( _credentials:UsernameAndPasswordCredentials ) => {
+			credentials = _credentials;
+			return this.getAuthenticatedAgent( authenticator );
+		} ).then( ( persistedAgent:PersistedAgent.Class ) => {
+			this._authenticatedAgent = persistedAgent;
+			this.authenticator = authenticator;
+			return credentials;
+		} );
 	}
 
 	private authenticateWithToken( userOrTokenOrCredentials:any, password:string ):Promise<Token.Class> {
@@ -174,7 +200,7 @@ export abstract class Class {
 		if( Utils.isString( userOrTokenOrCredentials ) && Utils.isString( password ) ) {
 			authenticationToken = new UsernameAndPasswordToken( userOrTokenOrCredentials, password );
 
-		} else if( Token.Factory.is( userOrTokenOrCredentials ) ) {
+		} else if( Token.Factory.hasRequiredValues( userOrTokenOrCredentials ) ) {
 			credentials = userOrTokenOrCredentials;
 
 		} else {
@@ -182,11 +208,28 @@ export abstract class Class {
 		}
 
 		this.clearAuthentication();
-		this.authenticator = authenticator;
-		if( authenticationToken )
-			return authenticator.authenticate( authenticationToken );
+		return authenticator.authenticate( ( authenticationToken ) ? authenticationToken : <any> credentials ).then( ( _credentials:Token.Class ) => {
+			credentials = _credentials;
 
-		return authenticator.authenticate( credentials );
+			if( PersistedAgent.Factory.is( credentials.agent ) ) return credentials.agent;
+			return this.getAuthenticatedAgent( authenticator );
+
+		} ).then( ( persistedAgent:PersistedAgent.Class ) => {
+			this._authenticatedAgent = persistedAgent;
+			credentials.agent = persistedAgent;
+
+			this.authenticator = authenticator;
+			return credentials;
+		} );
+	}
+
+	private getAuthenticatedAgent( authenticator:Authenticator<any> ):Promise<PersistedAgent.Class> {
+		let requestOptions:HTTP.Request.Options = {};
+		authenticator.addAuthentication( requestOptions );
+
+		return this.context.documents.get<PersistedAgent.Class>( "agents/me/", requestOptions ).then(
+			( [ agentDocument, response ]:[ PersistedAgent.Class, HTTP.Response.Class ] ) => agentDocument
+		);
 	}
 
 }

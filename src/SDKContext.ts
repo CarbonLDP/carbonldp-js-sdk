@@ -1,16 +1,19 @@
 import * as AppRole from "./App/Role";
 import * as APIDescription from "./APIDescription";
 import * as Auth from "./Auth";
+import * as BlankNode from "./BlankNode";
 import Context from "./Context";
+import * as Document from "./Document";
 import Documents from "./Documents";
+import * as Error from "./LDP/Error";
+import * as ErrorResponse from "./LDP/ErrorResponse";
 import * as Errors from "./Errors";
 import * as LDP from "./LDP";
 import * as NS from "./NS";
-import * as PersistedBlankNode from "./PersistedBlankNode";
 import * as ObjectSchema from "./ObjectSchema";
+import * as ProtectedDocument from "./ProtectedDocument";
+import * as RDF from "./RDF";
 import * as RDFRepresentation from "./RDFRepresentation";
-import * as ErrorResponse from "./LDP/ErrorResponse";
-import * as Error from "./LDP/Error";
 
 export class Class implements Context {
 	auth:Auth.Class;
@@ -63,6 +66,7 @@ export class Class implements Context {
 	}
 
 	hasObjectSchema( type:string ):boolean {
+		type = this.resolveTypeURI( type );
 		if( this.typeObjectSchemaMap.has( type ) ) return true;
 		if( ! ! this.parentContext && this.parentContext.hasObjectSchema( type ) ) return true;
 
@@ -72,6 +76,7 @@ export class Class implements Context {
 	getObjectSchema( type:string = null ):ObjectSchema.DigestedObjectSchema {
 		if( ! ! type ) {
 			// Type specific schema
+			type = this.resolveTypeURI( type );
 			if( this.typeObjectSchemaMap.has( type ) ) return this.typeObjectSchemaMap.get( type );
 			if( ! ! this.parentContext && this.parentContext.hasObjectSchema( type ) ) return this.parentContext.getObjectSchema( type );
 
@@ -103,6 +108,7 @@ export class Class implements Context {
 		if( ! type ) {
 			this.generalObjectSchema = ! ! this.parentContext ? null : new ObjectSchema.DigestedObjectSchema();
 		} else {
+			type = this.resolveTypeURI( type );
 			this.typeObjectSchemaMap.delete( type );
 		}
 	}
@@ -125,7 +131,9 @@ export class Class implements Context {
 	}
 
 	protected extendTypeObjectSchema( digestedSchema:ObjectSchema.DigestedObjectSchema, type:string ):void {
+		type = this.resolveTypeURI( type );
 		let digestedSchemaToExtend:ObjectSchema.DigestedObjectSchema;
+
 		if( this.typeObjectSchemaMap.has( type ) ) {
 			digestedSchemaToExtend = this.typeObjectSchemaMap.get( type );
 		} else if( ! ! this.parentContext && this.parentContext.hasObjectSchema( type ) ) {
@@ -135,7 +143,6 @@ export class Class implements Context {
 		}
 
 		let extendedDigestedSchema:ObjectSchema.DigestedObjectSchema = ObjectSchema.Digester.combineDigestedObjectSchemas( [
-			new ObjectSchema.DigestedObjectSchema(),
 			digestedSchemaToExtend,
 			digestedSchema,
 		] );
@@ -144,18 +151,16 @@ export class Class implements Context {
 	}
 
 	private registerDefaultObjectSchemas():void {
-		this.extendObjectSchema( PersistedBlankNode.SCHEMA );
+		this.extendObjectSchema( BlankNode.SCHEMA );
 
-		this.extendObjectSchema( LDP.RDFSource.RDF_CLASS, LDP.RDFSource.SCHEMA );
-		this.extendObjectSchema( LDP.Container.RDF_CLASS, LDP.Container.SCHEMA );
-		this.extendObjectSchema( LDP.BasicContainer.RDF_CLASS, LDP.Container.SCHEMA );
+		this.extendObjectSchema( ProtectedDocument.RDF_CLASS, ProtectedDocument.SCHEMA );
 
 		this.extendObjectSchema( RDFRepresentation.RDF_CLASS, RDFRepresentation.SCHEMA );
 		this.extendObjectSchema( APIDescription.RDF_CLASS, APIDescription.SCHEMA );
 		this.extendObjectSchema( Error.RDF_CLASS, Error.SCHEMA );
 		this.extendObjectSchema( ErrorResponse.RDF_CLASS, ErrorResponse.SCHEMA );
 
-		// TODO Fix error of cycle reference because the App module dependency of AbstractClass witch has a dependency with SDKContext. For now add manual data
+		// TODO Fix error of cycle reference because the App module dependency of AbstractClass which has a dependency with SDKContext. For now add manual data
 		/* this.extendObjectSchema( App.RDF_CLASS, App.SCHEMA ); */
 		this.extendObjectSchema( NS.CS.Class.Application, {
 			"name": {
@@ -183,9 +188,24 @@ export class Class implements Context {
 		this.extendObjectSchema( LDP.AddMemberAction.RDF_CLASS, LDP.AddMemberAction.SCHEMA );
 		this.extendObjectSchema( LDP.RemoveMemberAction.RDF_CLASS, LDP.RemoveMemberAction.SCHEMA );
 
+		this.extendObjectSchema( Auth.ACE.RDF_CLASS, Auth.ACE.SCHEMA );
+		this.extendObjectSchema( Auth.ACL.RDF_CLASS, Auth.ACL.SCHEMA );
 		this.extendObjectSchema( Auth.Agent.RDF_CLASS, Auth.Agent.SCHEMA );
 		this.extendObjectSchema( Auth.Ticket.RDF_CLASS, Auth.Ticket.SCHEMA );
 		this.extendObjectSchema( Auth.Token.RDF_CLASS, Auth.Token.SCHEMA );
+	}
+
+	private resolveTypeURI( uri:string ):string {
+		if( RDF.URI.Util.isAbsolute( uri ) ) return uri;
+
+		let schema:ObjectSchema.DigestedObjectSchema = this.getObjectSchema();
+		let vocab:string;
+		if( this.hasSetting( "vocabulary" ) ) vocab = this.resolve( this.getSetting( "vocabulary" ) );
+
+		uri = ObjectSchema.Digester.resolvePrefixedURI( new RDF.URI.Class( uri ), schema ).stringValue;
+		if( vocab ) uri = RDF.URI.Util.resolve( vocab, uri );
+
+		return uri;
 	}
 }
 

@@ -1,10 +1,5 @@
 import Auth from "./Auth";
 import Documents from "./Documents";
-import * as Errors from "./Errors";
-import * as JSONLDConverter from "./JSONLDConverter";
-import * as Pointer from "./Pointer";
-import * as RDF from "./RDF";
-import * as Utils from "./Utils";
 import * as ObjectSchema from "./ObjectSchema";
 
 interface Context {

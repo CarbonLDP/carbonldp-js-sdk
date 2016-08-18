@@ -2,19 +2,17 @@
 var Agent = require("./Agent");
 var Errors = require("./../Errors");
 var URI = require("./../RDF/URI");
-var Utils = require("./../Utils");
 var Class = (function () {
     function Class(context) {
         this.context = context;
     }
-    Class.prototype.register = function (slugOrAgent, agentDocument) {
+    Class.prototype.register = function (agentDocument, slug) {
         var _this = this;
+        if (slug === void 0) { slug = null; }
         return this.resolveURI("").then(function (containerURI) {
-            var slug = Utils.isString(slugOrAgent) ? slugOrAgent : null;
-            agentDocument = agentDocument || slugOrAgent;
             if (!Agent.Factory.is(agentDocument))
                 throw new Errors.IllegalArgumentError("The Document is not a cs:Agent object.");
-            return slug ? _this.context.documents.createChild(containerURI, slug, agentDocument) : _this.context.documents.createChild(containerURI, agentDocument);
+            return _this.context.documents.createChild(containerURI, agentDocument, slug);
         });
     };
     Class.prototype.get = function (agentURI, requestOptions) {

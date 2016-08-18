@@ -1,9 +1,13 @@
 import Context from "./../Context";
 import * as Errors from "./../Errors";
+import * as FreeResources from "./../FreeResources";
 import * as HTTP from "./../HTTP";
+import * as LDP from "./../LDP";
 import * as NS from "./../NS";
 import * as ObjectSchema from "./../ObjectSchema";
+import * as PersistedDocument from "./../PersistedDocument";
 import * as RDF from "./../RDF";
+import * as Resource from "./../Resource";
 import Authenticator from "./Authenticator";
 import AuthenticationToken from "./AuthenticationToken";
 import BasicAuthenticator from "./BasicAuthenticator";
@@ -33,34 +37,20 @@ export class Class implements Authenticator<UsernameAndPasswordToken> {
 	authenticate( authenticationToken:UsernameAndPasswordToken ):Promise<Token.Class>;
 	authenticate( credentials:Token.Class ):Promise<Token.Class>;
 	authenticate( authenticationOrCredentials:any ):Promise<Token.Class> {
-		if( Token.Factory.is( authenticationOrCredentials ) ) {
+		if( authenticationOrCredentials instanceof UsernameAndPasswordToken ) return this.basicAuthenticator.authenticate( authenticationOrCredentials ).then( () => {
+			return this.createToken();
+		} ).then( ( [ token, response ]:[ Token.Class, HTTP.Response.Class ] ):Token.Class => {
+			this.basicAuthenticator.clearAuthentication();
+			this._credentials = token;
+			return token;
+		} );
 
-			if( Utils.isString( authenticationOrCredentials.expirationTime ) )
-				authenticationOrCredentials.expirationTime = new Date( <any> authenticationOrCredentials.expirationTime );
-			this._credentials = authenticationOrCredentials;
+		let credentials:Token.Class = <Token.Class> authenticationOrCredentials;
+		if( Utils.isString( credentials.expirationTime ) ) authenticationOrCredentials.expirationTime = new Date( <any> credentials.expirationTime );
+		if( credentials.expirationTime <= new Date() ) return Promise.reject<any>( new Errors.IllegalArgumentError( "The token provided in not valid." ) );
 
-			return new Promise<Token.Class>( ( resolve:Function, reject:Function ) => {
-				if( ! this.isAuthenticated() ) {
-					this.clearAuthentication();
-					throw new Errors.IllegalArgumentError( "The token provided in not valid." );
-				}
-				resolve( this._credentials );
-			} );
-
-		} else {
-			return this.basicAuthenticator.authenticate( authenticationOrCredentials )
-				.then( ( credentials:Credentials.Class ):Promise<[ Token.Class, HTTP.Response.Class ]> => {
-					return this.createToken();
-				} )
-				.then( ( [ token, response ]:[ Token.Class, HTTP.Response.Class ] ):Token.Class => {
-						this._credentials = token;
-
-						this.basicAuthenticator.clearAuthentication();
-
-						return this._credentials;
-					}
-				);
-		}
+		this._credentials = credentials;
+		return Promise.resolve( credentials );
 	}
 
 	addAuthentication( requestOptions:HTTP.Request.Options ):HTTP.Request.Options {
@@ -75,10 +65,6 @@ export class Class implements Authenticator<UsernameAndPasswordToken> {
 		this._credentials = null;
 	}
 
-	supports( authenticationToken:AuthenticationToken ):boolean {
-		return authenticationToken instanceof UsernameAndPasswordToken;
-	}
-
 	private createToken():Promise<[ Token.Class, HTTP.Response.Class ]> {
 		let uri:string = this.context.resolve( Class.TOKEN_CONTAINER );
 		let requestOptions:HTTP.Request.Options = {};
@@ -88,37 +74,37 @@ export class Class implements Authenticator<UsernameAndPasswordToken> {
 		HTTP.Request.Util.setAcceptHeader( "application/ld+json", requestOptions );
 		HTTP.Request.Util.setPreferredInteractionModel( NS.LDP.Class.RDFSource, requestOptions );
 
-		return HTTP.Request.Service.post( uri, null, requestOptions, new HTTP.JSONLDParser.Class() ).then( ( [ expandedResult, response ]:[ Object, HTTP.Response.Class ] ) => {
-			let expandedNodes:RDF.Node.Class[] = RDF.Document.Util.getResources( expandedResult );
+		return HTTP.Request.Service.post( uri, null, requestOptions, new HTTP.JSONLDParser.Class() ).then( ( [ expandedResult, response ]:[ any, HTTP.Response.Class ] ) => {
+			let freeNodes:RDF.Node.Class[] = RDF.Node.Util.getFreeNodes( expandedResult );
 
-			expandedNodes = expandedNodes.filter( Token.Factory.hasRDFClass );
+			let freeResources:FreeResources.Class = this.context.documents._getFreeResources( freeNodes );
+			let tokenResources:Token.Class[] = <Token.Class[]> freeResources.getResources().filter( resource => Resource.Util.hasType( resource, Token.RDF_CLASS ) );
 
-			if( expandedNodes.length === 0 ) throw new HTTP.Errors.BadResponseError( "No '" + Token.RDF_CLASS + "' was returned.", response );
-			if( expandedNodes.length > 1 ) throw new HTTP.Errors.BadResponseError( "Multiple '" + Token.RDF_CLASS + "' were returned. ", response );
+			if( tokenResources.length === 0 ) throw new HTTP.Errors.BadResponseError( "No '" + Token.RDF_CLASS + "' was returned.", response );
+			if( tokenResources.length > 1 ) throw new HTTP.Errors.BadResponseError( "Multiple '" + Token.RDF_CLASS + "' were returned. ", response );
+			let token:Token.Class = tokenResources[ 0 ];
 
-			let expandedToken:RDF.Node.Class = expandedNodes[ 0 ];
-			let token:Token.Class = Token.Factory.decorate( {} );
+			let agentDocuments:RDF.Document.Class[] = RDF.Document.Util.getDocuments( expandedResult ).filter( rdfDocument => rdfDocument[ "@id" ] === token.agent.id );
+			agentDocuments.forEach( document => this.context.documents._getPersistedDocument( document, response ) );
 
-			let digestedSchema:ObjectSchema.DigestedObjectSchema = this.context.documents.getSchemaFor( expandedToken );
+			let responseMetadata:LDP.ResponseMetadata.Class = <LDP.ResponseMetadata.Class> freeResources.getResources().find( resource => Resource.Util.hasType( resource, LDP.ResponseMetadata.RDF_CLASS ) );
 
-			this.context.documents.jsonldConverter.compact( expandedToken, token, digestedSchema, this.context.documents );
+			if( ! ! responseMetadata ) responseMetadata.resourcesMetadata.forEach( ( resourceMetadata:LDP.ResourceMetadata.Class ) => {
+				(<PersistedDocument.Class> resourceMetadata.resource)._etag = resourceMetadata.eTag;
+			} );
 
 			return [ token, response ];
 		} );
 	}
 
-	private addTokenAuthenticationHeader( headers:Map<string, HTTP.Header.Class> ):Map<string, HTTP.Header.Class> {
-		let header:HTTP.Header.Class;
-		if( headers.has( "authorization" ) ) {
-			header = headers.get( "authorization" );
-		} else {
-			header = new HTTP.Header.Class();
-			headers.set( "authorization", header );
-		}
+	private addTokenAuthenticationHeader( headers:Map<string, HTTP.Header.Class> ):void {
+		if( headers.has( "authorization" ) ) return;
+
+		let header:HTTP.Header.Class = new HTTP.Header.Class();
+		headers.set( "authorization", header );
+
 		let authorization:string = "Token " + this._credentials.key;
 		header.values.push( new HTTP.Header.Value( authorization ) );
-
-		return headers;
 	}
 }
 

@@ -1,16 +1,24 @@
 "use strict";
+var ACE = require("./Auth/ACE");
+exports.ACE = ACE;
+var ACL = require("./Auth/ACL");
+exports.ACL = ACL;
 var Agent = require("./Auth/Agent");
 exports.Agent = Agent;
 var Agents = require("./Auth/Agents");
 exports.Agents = Agents;
 var BasicAuthenticator_1 = require("./Auth/BasicAuthenticator");
 exports.BasicAuthenticator = BasicAuthenticator_1.default;
+var PersistedACE = require("./Auth/PersistedACE");
+exports.PersistedACE = PersistedACE;
+var PersistedACL = require("./Auth/PersistedACL");
+exports.PersistedACL = PersistedACL;
+var PersistedAgent = require("./Auth/PersistedAgent");
+exports.PersistedAgent = PersistedAgent;
 var Role = require("./Auth/Role");
 exports.Role = Role;
 var Roles = require("./Auth/Roles");
 exports.Roles = Roles;
-var PersistedAgent = require("./Auth/PersistedAgent");
-exports.PersistedAgent = PersistedAgent;
 var TokenAuthenticator_1 = require("./Auth/TokenAuthenticator");
 exports.TokenAuthenticator = TokenAuthenticator_1.default;
 var Ticket = require("./Auth/Ticket");
@@ -36,18 +44,29 @@ var Class = (function () {
         this.roles = null;
         this.agents = null;
         this.context = context;
-        this.method = context.getSetting("auth.method") || Method.TOKEN;
         this.authenticators = [];
         this.authenticators[Method.BASIC] = new BasicAuthenticator_1.default();
         this.authenticators[Method.TOKEN] = new TokenAuthenticator_1.default(this.context);
     }
+    Object.defineProperty(Class.prototype, "authenticatedAgent", {
+        get: function () {
+            if (!this._authenticatedAgent) {
+                if (this.context.parentContext && this.context.parentContext.auth)
+                    return this.context.parentContext.auth.authenticatedAgent;
+                return null;
+            }
+            return this._authenticatedAgent;
+        },
+        enumerable: true,
+        configurable: true
+    });
     Class.prototype.isAuthenticated = function (askParent) {
         if (askParent === void 0) { askParent = true; }
         return ((this.authenticator && this.authenticator.isAuthenticated()) ||
             (askParent && !!this.context.parentContext && !!this.context.parentContext.auth && this.context.parentContext.auth.isAuthenticated()));
     };
     Class.prototype.authenticate = function (username, password) {
-        return this.authenticateUsing(Method[this.method], username, password);
+        return this.authenticateUsing("TOKEN", username, password);
     };
     Class.prototype.authenticateUsing = function (method, userOrTokenOrCredentials, password) {
         switch (method) {
@@ -75,6 +94,7 @@ var Class = (function () {
             return;
         this.authenticator.clearAuthentication();
         this.authenticator = null;
+        this._authenticatedAgent = null;
     };
     Class.prototype.createTicket = function (uri, requestOptions) {
         var _this = this;
@@ -113,31 +133,55 @@ var Class = (function () {
         });
     };
     Class.prototype.authenticateWithBasic = function (username, password) {
+        var _this = this;
         var authenticator = this.authenticators[Method.BASIC];
         var authenticationToken;
         authenticationToken = new UsernameAndPasswordToken_1.default(username, password);
         this.clearAuthentication();
-        this.authenticator = authenticator;
-        return this.authenticator.authenticate(authenticationToken);
+        var credentials;
+        return authenticator.authenticate(authenticationToken).then(function (_credentials) {
+            credentials = _credentials;
+            return _this.getAuthenticatedAgent(authenticator);
+        }).then(function (persistedAgent) {
+            _this._authenticatedAgent = persistedAgent;
+            _this.authenticator = authenticator;
+            return credentials;
+        });
     };
     Class.prototype.authenticateWithToken = function (userOrTokenOrCredentials, password) {
+        var _this = this;
         var authenticator = this.authenticators[Method.TOKEN];
         var credentials = null;
         var authenticationToken = null;
         if (Utils.isString(userOrTokenOrCredentials) && Utils.isString(password)) {
             authenticationToken = new UsernameAndPasswordToken_1.default(userOrTokenOrCredentials, password);
         }
-        else if (Token.Factory.is(userOrTokenOrCredentials)) {
+        else if (Token.Factory.hasRequiredValues(userOrTokenOrCredentials)) {
             credentials = userOrTokenOrCredentials;
         }
         else {
             return Promise.reject(new Errors.IllegalArgumentError("Parameters do not match with the authentication request."));
         }
         this.clearAuthentication();
-        this.authenticator = authenticator;
-        if (authenticationToken)
-            return authenticator.authenticate(authenticationToken);
-        return authenticator.authenticate(credentials);
+        return authenticator.authenticate((authenticationToken) ? authenticationToken : credentials).then(function (_credentials) {
+            credentials = _credentials;
+            if (PersistedAgent.Factory.is(credentials.agent))
+                return credentials.agent;
+            return _this.getAuthenticatedAgent(authenticator);
+        }).then(function (persistedAgent) {
+            _this._authenticatedAgent = persistedAgent;
+            credentials.agent = persistedAgent;
+            _this.authenticator = authenticator;
+            return credentials;
+        });
+    };
+    Class.prototype.getAuthenticatedAgent = function (authenticator) {
+        var requestOptions = {};
+        authenticator.addAuthentication(requestOptions);
+        return this.context.documents.get("agents/me/", requestOptions).then(function (_a) {
+            var agentDocument = _a[0], response = _a[1];
+            return agentDocument;
+        });
     };
     return Class;
 }());

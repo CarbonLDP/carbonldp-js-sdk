@@ -47,8 +47,8 @@ export class Factory {
 	static is( object:Object ):boolean {
 		return Factory.hasClassProperties( object )
 			&& Document.Factory.hasClassProperties( object )
-			// TODO Use (<Document.Class> object).hasType( RDF_CLASS ) when available
-			&& ( <Class> object ).types.indexOf( RDF_CLASS ) !== - 1;
+			&& (<Document.Class> object).hasType( RDF_CLASS )
+			;
 	}
 
 	static create( name:string, email:string, password:string ):Class {

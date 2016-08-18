@@ -21,9 +21,9 @@ var Factory = (function () {
             && Utils.hasPropertyDefined(object, "size");
     };
     Factory.is = function (object) {
-        return PersistedDocument.Factory.is(object)
-            && object.types.indexOf(exports.RDF_CLASS) !== -1
-            && Factory.hasClassProperties(object);
+        return Factory.hasClassProperties(object)
+            && PersistedDocument.Factory.is(object)
+            && object.hasType(exports.RDF_CLASS);
     };
     return Factory;
 }());

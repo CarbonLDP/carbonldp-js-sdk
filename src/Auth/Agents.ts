@@ -3,10 +3,9 @@ import Context from "./../Context";
 import * as Errors from "./../Errors";
 import * as HTTP from "./../HTTP";
 import * as PersistedAgent from "./PersistedAgent";
-import * as Pointer from "./../Pointer";
+import * as PersistedDocument from "./../PersistedDocument";
 import * as URI from "./../RDF/URI";
 import * as Response from "./../HTTP/Response";
-import * as Utils from "./../Utils";
 
 export abstract class Class {
 	private context:Context;
@@ -15,16 +14,11 @@ export abstract class Class {
 		this.context = context;
 	}
 
-	register( agentDocument:Agent.Class ):Promise<[ Pointer.Class, Response.Class]>;
-	register( slug:string, agentDocument:Agent.Class ):Promise<[ Pointer.Class, Response.Class]>;
-	register( slugOrAgent:any, agentDocument?:Agent.Class ):Promise<[ Pointer.Class, Response.Class]> {
+	register( agentDocument:Agent.Class, slug:string = null ):Promise<[ PersistedDocument.Class, Response.Class ]> {
 		return this.resolveURI( "" ).then( ( containerURI:string ) => {
-			let slug:string = Utils.isString( slugOrAgent ) ? slugOrAgent : null;
-			agentDocument = agentDocument || slugOrAgent;
-
 			if( ! Agent.Factory.is( agentDocument ) ) throw new Errors.IllegalArgumentError( "The Document is not a cs:Agent object." );
 
-			return slug ? this.context.documents.createChild( containerURI, slug, agentDocument ) : this.context.documents.createChild( containerURI, agentDocument );
+			return this.context.documents.createChild( containerURI, agentDocument, slug );
 		} );
 	}
 
