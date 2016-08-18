@@ -3,12 +3,18 @@ var ACE = require("./Auth/ACE");
 exports.ACE = ACE;
 var ACL = require("./Auth/ACL");
 exports.ACL = ACL;
+var Agent = require("./Auth/Agent");
+exports.Agent = Agent;
+var Agents = require("./Auth/Agents");
+exports.Agents = Agents;
 var BasicAuthenticator_1 = require("./Auth/BasicAuthenticator");
 exports.BasicAuthenticator = BasicAuthenticator_1.default;
 var PersistedACE = require("./Auth/PersistedACE");
 exports.PersistedACE = PersistedACE;
 var PersistedACL = require("./Auth/PersistedACL");
 exports.PersistedACL = PersistedACL;
+var PersistedAgent = require("./Auth/PersistedAgent");
+exports.PersistedAgent = PersistedAgent;
 var Role = require("./Auth/Role");
 exports.Role = Role;
 var Roles = require("./Auth/Roles");
@@ -26,7 +32,6 @@ var FreeResources = require("./FreeResources");
 var JSONLD = require("./JSONLD");
 var HTTP = require("./HTTP");
 var NS = require("./NS");
-var PersistedDocument = require("./PersistedDocument");
 var Resource = require("./Resource");
 var RDF = require("./RDF");
 var Utils = require("./Utils");
@@ -39,6 +44,7 @@ var Class = (function () {
     function Class(context) {
         this.roles = null;
         this.context = context;
+        this.agents = new Agents.Class(this.context);
         this.authenticators = [];
         this.authenticators[Method.BASIC] = new BasicAuthenticator_1.default();
         this.authenticators[Method.TOKEN] = new TokenAuthenticator_1.default(this.context);
@@ -160,7 +166,7 @@ var Class = (function () {
         this.clearAuthentication();
         return authenticator.authenticate((authenticationToken) ? authenticationToken : credentials).then(function (_credentials) {
             credentials = _credentials;
-            if (PersistedDocument.Factory.is(_credentials.agent))
+            if (PersistedAgent.Factory.is(credentials.agent))
                 return credentials.agent;
             return _this.getAuthenticatedAgent(authenticator);
         }).then(function (persistedAgent) {
@@ -173,9 +179,7 @@ var Class = (function () {
     Class.prototype.getAuthenticatedAgent = function (authenticator) {
         var requestOptions = {};
         authenticator.addAuthentication(requestOptions);
-        HTTP.Request.Util.setAcceptHeader("application/ld+json", requestOptions);
-        HTTP.Request.Util.setPreferredInteractionModel(NS.LDP.Class.RDFSource, requestOptions);
-        return this.context.documents.get("agents/me/").then(function (_a) {
+        return this.context.documents.get("agents/me/", requestOptions).then(function (_a) {
             var agentDocument = _a[0], response = _a[1];
             return agentDocument;
         });

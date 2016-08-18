@@ -21,8 +21,8 @@ export class Factory {
 	static is( object:Object ):boolean {
 		return (
 			Factory.hasClassProperties( object )
-			&& Resource.Util.hasType( object, RDF_CLASS )
 			&& Document.Factory.is( object )
+			&& (<Document.Class> object).hasType( RDF_CLASS )
 		);
 	}
 

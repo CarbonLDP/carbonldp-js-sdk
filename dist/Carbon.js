@@ -6,8 +6,6 @@ var __extends = (this && this.__extends) || function (d, b) {
 };
 var AbstractContext_1 = require("./AbstractContext");
 var AccessPoint = require("./AccessPoint");
-var Agent = require("./Agent");
-var Agents = require("./Agents");
 var App = require("./App");
 var Apps = require("./Apps");
 var Auth = require("./Auth");
@@ -42,7 +40,6 @@ var Carbon = (function (_super) {
         settings = settings ? settings : Settings.defaultSettings;
         Utils.M.extend(this.settings, Utils.M.from(settings));
         this.apps = new Apps.Class(this);
-        this.agents = new Agents.Class(this);
     }
     Object.defineProperty(Carbon, "version", {
         get: function () { return "0.36.0"; },
@@ -68,8 +65,6 @@ var Carbon = (function (_super) {
         });
     };
     Carbon.AccessPoint = AccessPoint;
-    Carbon.Agent = Agent;
-    Carbon.Agents = Agents;
     Carbon.App = App;
     Carbon.Apps = Apps;
     Carbon.Auth = Auth;

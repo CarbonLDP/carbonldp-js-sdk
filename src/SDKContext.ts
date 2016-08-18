@@ -1,4 +1,3 @@
-import * as Agent from "./Agent";
 import * as AppRole from "./App/Role";
 import * as APIDescription from "./APIDescription";
 import * as Auth from "./Auth";
@@ -191,10 +190,9 @@ export class Class implements Context {
 
 		this.extendObjectSchema( Auth.ACE.RDF_CLASS, Auth.ACE.SCHEMA );
 		this.extendObjectSchema( Auth.ACL.RDF_CLASS, Auth.ACL.SCHEMA );
+		this.extendObjectSchema( Auth.Agent.RDF_CLASS, Auth.Agent.SCHEMA );
 		this.extendObjectSchema( Auth.Ticket.RDF_CLASS, Auth.Ticket.SCHEMA );
 		this.extendObjectSchema( Auth.Token.RDF_CLASS, Auth.Token.SCHEMA );
-
-		this.extendObjectSchema( Agent.RDF_CLASS, Agent.SCHEMA );
 	}
 
 	private resolveTypeURI( uri:string ):string {

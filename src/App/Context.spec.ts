@@ -12,7 +12,6 @@ import {
 } from "./../test/JasmineExtender";
 
 import AbstractContext from "./../AbstractContext";
-import * as Agents from "./../Agents";
 import * as App from "./../App";
 import * as Auth from "./Auth";
 import PersistedApp from "./../PersistedApp";
@@ -69,16 +68,6 @@ describe( module( "Carbon/App/Context" ), ():void => {
 		), ():void => {
 			expect( appContext.auth ).toBeDefined();
 			expect( appContext.auth instanceof Auth.Class ).toBe( true );
-		} );
-
-		it( hasProperty(
-			INSTANCE,
-			"agents",
-			"Carbon.Agents.Class",
-			"Instance of Agents class, that helps manage the agents inside of an application."
-		), ():void => {
-			expect( appContext.agents ).toBeDefined();
-			expect( appContext.agents instanceof Agents.Class ).toBe( true );
 		} );
 
 		it( hasProperty(

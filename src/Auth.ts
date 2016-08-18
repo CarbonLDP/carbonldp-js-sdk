@@ -1,10 +1,13 @@
 import * as ACE from "./Auth/ACE";
 import * as ACL from "./Auth/ACL";
+import * as Agent from "./Auth/Agent";
+import * as Agents from "./Auth/Agents";
 import AuthenticationToken from "./Auth/AuthenticationToken";
 import Authenticator from "./Auth/Authenticator";
 import BasicAuthenticator from "./Auth/BasicAuthenticator";
 import * as PersistedACE from "./Auth/PersistedACE";
 import * as PersistedACL from "./Auth/PersistedACL";
+import * as PersistedAgent from "./Auth/PersistedAgent";
 import * as Role from "./Auth/Role";
 import * as Roles from "./Auth/Roles";
 import TokenAuthenticator from "./Auth/TokenAuthenticator";
@@ -14,9 +17,8 @@ import UsernameAndPasswordToken from "./Auth/UsernameAndPasswordToken";
 import UsernameAndPasswordCredentials from "./Auth/UsernameAndPasswordCredentials";
 import Credentials from "./Auth/Credentials";
 
-import * as Agent from "./Agent";
 import Context from "./Context";
-import {DigestedObjectSchema} from "./ObjectSchema";
+import * as ObjectSchema from "./ObjectSchema";
 import * as Errors from "./Errors";
 import * as FreeResources from "./FreeResources";
 import * as JSONLD from "./JSONLD";
@@ -30,11 +32,14 @@ import * as Utils from "./Utils";
 export {
 	ACE,
 	ACL,
+	Agent,
+	Agents,
 	AuthenticationToken,
 	Authenticator,
 	BasicAuthenticator,
 	PersistedACE,
 	PersistedACL,
+	PersistedAgent,
 	Role,
 	Roles,
 	Ticket,
@@ -48,18 +53,18 @@ export enum Method {
 	TOKEN
 }
 
-export abstract class Class {
+export class Class {
+	public agents:Agents.Class;
 	public roles:Roles.Class;
-	// TODO: Change to `PersistedAgent.Class`
-	protected _authenticatedAgent:Agent.Class & PersistedDocument.Class;
+
+	protected _authenticatedAgent:PersistedAgent.Class;
 
 	private context:Context;
-
 	private method:Method;
 	private authenticators:Array<Authenticator<AuthenticationToken>>;
 	private authenticator:Authenticator<AuthenticationToken>;
 
-	public get authenticatedAgent():Agent.Class & PersistedDocument.Class {
+	public get authenticatedAgent():PersistedAgent.Class {
 		if( ! this._authenticatedAgent ) {
 			if( this.context.parentContext && this.context.parentContext.auth ) return this.context.parentContext.auth.authenticatedAgent;
 			return null;
@@ -71,6 +76,8 @@ export abstract class Class {
 		this.roles = null;
 
 		this.context = context;
+
+		this.agents = new Agents.Class( this.context );
 
 		this.authenticators = [];
 		this.authenticators[ Method.BASIC ] = new BasicAuthenticator();
@@ -149,7 +156,7 @@ export abstract class Class {
 			let expandedTicket:RDF.Node.Class = ticketNodes[ 0 ];
 			let ticket:Ticket.Class = <any> Resource.Factory.create();
 
-			let digestedSchema:DigestedObjectSchema = this.context.documents.getSchemaFor( expandedTicket );
+			let digestedSchema:ObjectSchema.DigestedObjectSchema = this.context.documents.getSchemaFor( expandedTicket );
 
 			this.context.documents.jsonldConverter.compact( expandedTicket, ticket, digestedSchema, this.context.documents );
 
@@ -179,8 +186,8 @@ export abstract class Class {
 		return authenticator.authenticate( authenticationToken ).then( ( _credentials:UsernameAndPasswordCredentials ) => {
 			credentials = _credentials;
 			return this.getAuthenticatedAgent( authenticator );
-		} ).then( ( persistedAgent:PersistedDocument.Class ) => {
-			this._authenticatedAgent = <any> persistedAgent;
+		} ).then( ( persistedAgent:PersistedAgent.Class ) => {
+			this._authenticatedAgent = persistedAgent;
 			this.authenticator = authenticator;
 			return credentials;
 		} );
@@ -205,10 +212,10 @@ export abstract class Class {
 		return authenticator.authenticate( ( authenticationToken ) ? authenticationToken : <any> credentials ).then( ( _credentials:Token.Class ) => {
 			credentials = _credentials;
 
-			// TODO: Use `PersistedAgent`
-			if( PersistedDocument.Factory.is( _credentials.agent ) ) return <any> credentials.agent;
+			if( PersistedAgent.Factory.is( credentials.agent ) ) return credentials.agent;
 			return this.getAuthenticatedAgent( authenticator );
-		} ).then( ( persistedAgent:Agent.Class & PersistedDocument.Class ) => {
+
+		} ).then( ( persistedAgent:PersistedAgent.Class ) => {
 			this._authenticatedAgent = persistedAgent;
 			credentials.agent = persistedAgent;
 
@@ -217,14 +224,12 @@ export abstract class Class {
 		} );
 	}
 
-	private getAuthenticatedAgent( authenticator:Authenticator<any> ):Promise<Agent.Class & PersistedDocument.Class> {
+	private getAuthenticatedAgent( authenticator:Authenticator<any> ):Promise<PersistedAgent.Class> {
 		let requestOptions:HTTP.Request.Options = {};
 		authenticator.addAuthentication( requestOptions );
-		HTTP.Request.Util.setAcceptHeader( "application/ld+json", requestOptions );
-		HTTP.Request.Util.setPreferredInteractionModel( NS.LDP.Class.RDFSource, requestOptions );
 
-		return this.context.documents.get<Agent.Class>( "agents/me/" ).then(
-			( [ agentDocument, response ]:[ Agent.Class & PersistedDocument.Class, HTTP.Response.Class ] ) => agentDocument
+		return this.context.documents.get<PersistedAgent.Class>( "agents/me/", requestOptions ).then(
+			( [ agentDocument, response ]:[ PersistedAgent.Class, HTTP.Response.Class ] ) => agentDocument
 		);
 	}
 

@@ -152,7 +152,7 @@ describe( module(
 			expect( CS.Predicate ).toBeDefined();
 			expect( Utils.isFunction( CS.Predicate ) ).toBe( true );
 
-			expect( Object.keys( CS.Predicate ).length ).toBe( 21 );
+			expect( Object.keys( CS.Predicate ).length ).toBe( 22 );
 		} );
 
 		it( hasProperty(
@@ -245,6 +245,17 @@ describe( module(
 
 		it( hasProperty(
 			STATIC,
+			"enabled",
+			"string"
+		), ():void => {
+			expect( CS.Predicate.enabled ).toBeDefined();
+			expect( Utils.isString( CS.Predicate.enabled ) ).toBe( true );
+
+			expect( CS.Predicate.enabled ).toBe( "https://carbonldp.com/ns/v1/security#enabled" );
+		} );
+
+		it( hasProperty(
+			STATIC,
 			"expirationTime",
 			"string"
 		), ():void => {
@@ -311,13 +322,13 @@ describe( module(
 
 		it( hasProperty(
 			STATIC,
-			"password",
+			"forIRI",
 			"string"
 		), ():void => {
-			expect( CS.Predicate.password ).toBeDefined();
-			expect( Utils.isString( CS.Predicate.password ) ).toBe( true );
+			expect( CS.Predicate.forIRI ).toBeDefined();
+			expect( Utils.isString( CS.Predicate.forIRI ) ).toBe( true );
 
-			expect( CS.Predicate.password ).toBe( "https://carbonldp.com/ns/v1/security#password" );
+			expect( CS.Predicate.forIRI ).toBe( "https://carbonldp.com/ns/v1/security#forIRI" );
 		} );
 
 		it( hasProperty(

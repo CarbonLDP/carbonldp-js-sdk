@@ -174,11 +174,13 @@ describe( module( "Carbon/Auth/Token" ), ():void => {
 			let object:any = {
 				key: null,
 				expirationTime: null,
+				agent: null,
 			};
 			let token:Token.Class = Token.Factory.decorate( object );
 			expect( token ).toEqual( {
 				key: null,
 				expirationTime: null,
+				agent: null,
 			} );
 		} );
 

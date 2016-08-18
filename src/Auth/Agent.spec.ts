@@ -7,15 +7,15 @@ import {
 	isDefined,
 	hasMethod,
 	hasProperty,
-} from "./test/JasmineExtender";
-import * as Utils from "./Utils";
-import * as NS from "./NS";
-import * as Errors from "./Errors";
-import * as Document from "./Document";
+} from "./../test/JasmineExtender";
+import * as Document from "./../Document";
+import * as Errors from "./../Errors";
+import * as NS from "./../NS";
+import * as Utils from "./../Utils";
 
 import * as Agent from "./Agent";
 
-describe( module( "Carbon/Agent" ), ():void => {
+describe( module( "Carbon/Auth/Agent" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( Agent ).toBeDefined();
@@ -44,25 +44,25 @@ describe( module( "Carbon/Agent" ), ():void => {
 		expect( Utils.hasProperty( Agent.SCHEMA, "name" ) ).toBe( true );
 		expect( Agent.SCHEMA[ "name" ] ).toEqual( {
 			"@id": NS.CS.Predicate.namae,
-			"@type": NS.XSD.DataType.string
+			"@type": NS.XSD.DataType.string,
 		} );
 
 		expect( Utils.hasProperty( Agent.SCHEMA, "email" ) ).toBe( true );
 		expect( Agent.SCHEMA[ "email" ] ).toEqual( {
 			"@id": NS.VCARD.Predicate.email,
-			"@type": NS.XSD.DataType.string
+			"@type": NS.XSD.DataType.string,
 		} );
 
 		expect( Utils.hasProperty( Agent.SCHEMA, "password" ) ).toBe( true );
 		expect( Agent.SCHEMA[ "password" ] ).toEqual( {
 			"@id": NS.CS.Predicate.password,
-			"@type": NS.XSD.DataType.string
+			"@type": NS.XSD.DataType.string,
 		} );
 	} );
 
 	describe( clazz(
-		"Carbon.Agent.Factory",
-		"Factory class for `Carbon.Agent.Class` objects."
+		"Carbon.Auth.Agent.Factory",
+		"Factory class for `Carbon.Auth.Agent.Class` objects."
 	), ():void => {
 
 		it( isDefined(), ():void => {
@@ -73,8 +73,8 @@ describe( module( "Carbon/Agent" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"hasClassProperties",
-			"Returns true if the object provided has the properties that defines a `Carbon.Agent.Class` object.", [
-				{name: "resource", type: "Object"},
+			"Returns true if the object provided has the properties that defines a `Carbon.Auth.Agent.Class` object.", [
+				{name: "object", type: "Object"},
 			],
 			{type: "boolean"}
 		), ():void => {
@@ -100,14 +100,14 @@ describe( module( "Carbon/Agent" ), ():void => {
 			object.email = null;
 
 			delete object.password;
-			expect( Agent.Factory.hasClassProperties( object ) ).toBe( true );
+			expect( Agent.Factory.hasClassProperties( object ) ).toBe( false );
 			object.password = null;
 		} );
 
 		it( hasMethod(
 			STATIC,
 			"is",
-			"Returns true if the object provided is considered a `Carbon.Agent.Class` object.", [
+			"Returns true if the object provided is considered a `Carbon.Auth.Agent.Class` object.", [
 				{name: "object", type: "Object"},
 			],
 			{type: "boolean"}
@@ -141,17 +141,17 @@ describe( module( "Carbon/Agent" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"create",
-			"Creates a `Carbon.Agent.Class` object with the name and email specified.", [
+			"Creates a `Carbon.Auth.Agent.Class` object with the name and email specified.", [
 				{name: "name", type: "string", description: "Name of the agent to be created."},
 				{name: "email", type: "string", description: "Email of the agent to be created."},
 				{name: "password", type: "string", description: "Password of the agent to be created."},
 			],
-			{type: "Carbon.Agent.Class"}
+			{type: "Carbon.Auth.Agent.Class"}
 		), ():void => {
 			expect( Agent.Factory.create ).toBeDefined();
 			expect( Utils.isFunction( Agent.Factory.create ) ).toBe( true );
 
-			let spy = spyOn( Agent.Factory, "createFrom" );
+			let spy:jasmine.Spy = spyOn( Agent.Factory, "createFrom" );
 
 			Agent.Factory.create( "Agent name", "email.of.agent@example.com", "myAwesomePassword" );
 			expect( spy ).toHaveBeenCalledWith( {}, "Agent name", "email.of.agent@example.com", "myAwesomePassword" );
@@ -167,13 +167,13 @@ describe( module( "Carbon/Agent" ), ():void => {
 			STATIC,
 			"createFrom",
 			[ "T extends Object" ],
-			"Creates a `Carbon.Agent.Class` object from the object and parameters specified.", [
+			"Creates a `Carbon.Auth.Agent.Class` object from the object and parameters specified.", [
 				{name: "object", type: "T", description: "Object that will be converted into an Agent."},
 				{name: "name", type: "string", description: "Name of the agent to be created."},
 				{name: "email", type: "string", description: "Email of the agent to be created."},
 				{name: "password", type: "string", description: "Password of the agent to be created."},
 			],
-			{type: "T & Carbon.Agent.Class"}
+			{type: "T & Carbon.Auth.Agent.Class"}
 		), ():void => {
 			expect( Agent.Factory.createFrom ).toBeDefined();
 			expect( Utils.isFunction( Agent.Factory.createFrom ) ).toBe( true );

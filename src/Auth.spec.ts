@@ -17,15 +17,17 @@ import {
 	hasSignature,
 } from "./test/JasmineExtender";
 import * as Utils from "./Utils";
+import * as Agent from "./Auth/Agent";
+import * as Agents from "./Auth/Agents";
 import AbstractContext from "./AbstractContext";
 import * as ACE from "./Auth/ACE";
 import * as ACL from "./Auth/ACL";
-import * as Agent from "./Agent";
 import AuthenticationToken from "./Auth/AuthenticationToken";
 import Authenticator from "./Auth/Authenticator";
 import BasicAuthenticator from "./Auth/BasicAuthenticator";
 import * as PersistedACE from "./Auth/PersistedACE";
 import * as PersistedACL from "./Auth/PersistedACL";
+import * as PersistedAgent from "./Auth/PersistedAgent";
 import * as PersistedDocument from "./PersistedDocument";
 import * as Role from "./Auth/Role";
 import * as Roles from "./Auth/Roles";
@@ -68,6 +70,24 @@ describe( module( "Carbon/Auth" ), ():void => {
 
 	it( reexports(
 		STATIC,
+		"Agent",
+		"Carbon.Auth.Agent"
+	), ():void => {
+		expect( Auth.Agent ).toBeDefined();
+		expect( Auth.Agent ).toBe( Agent );
+	} );
+
+	it( reexports(
+		STATIC,
+		"Agents",
+		"Carbon.Auth.Agents"
+	), ():void => {
+		expect( Auth.Agents ).toBeDefined();
+		expect( Auth.Agents ).toBe( Agents );
+	} );
+
+	it( reexports(
+		STATIC,
 		"AuthenticationToken",
 		"Carbon.Auth.AuthenticationToken"
 	), ():void => {
@@ -105,6 +125,15 @@ describe( module( "Carbon/Auth" ), ():void => {
 	), ():void => {
 		expect( Auth.PersistedACL ).toBeDefined();
 		expect( Auth.PersistedACL ).toBe( PersistedACL );
+	} );
+
+	it( reexports(
+		STATIC,
+		"PersistedAgent",
+		"Carbon.Auth.PersistedAgent"
+	), ():void => {
+		expect( Auth.PersistedAgent ).toBeDefined();
+		expect( Auth.PersistedAgent ).toBe( PersistedAgent );
 	} );
 
 	it( reexports(
@@ -225,12 +254,41 @@ describe( module( "Carbon/Auth" ), ():void => {
 
 		it( hasProperty(
 			INSTANCE,
+			"agents",
+			"Carbon.Auth.Agents.Class",
+			"Instance of `Carbon.Auth.Agents.Class` that helps you manage the agents of the current context."
+		), ():void => {
+			let context:AbstractContext;
+			class MockedContext extends AbstractContext {
+				resolve( uri:string ):string {
+					return uri;
+				}
+			}
+			context = new MockedContext();
+
+			let auth:Auth.Class = new Auth.Class( context );
+
+			expect( auth.agents ).toBeDefined();
+			expect( auth.agents instanceof Agents.Class ).toBe( true );
+		} );
+
+		it( hasProperty(
+			INSTANCE,
 			"authenticatedAgent",
-			// TODO: Change for `PersistedAgent`
-			"Carbon.Agent.Class & Carbon.PersistedDocument.Class",
+			"Carbon.Auth.PersistedAgent.Class",
 			"The agent of the user that has been authenticated. If no authentication exists in the current context, it will ask to it's parent context.\n" +
 			"Returns `null` if the user it not authenticated."
 		), ():void => {
+
+			function createAgent( context:AbstractContext ):PersistedAgent.Class {
+				let persistedAgent:PersistedAgent.Class = <PersistedAgent.Class> PersistedDocument.Factory.create( "http://example.com/agents/my-agent/", context.documents );
+				persistedAgent.email = null;
+				persistedAgent.name = null;
+				persistedAgent.enabled = true;
+				persistedAgent.types.push( Agent.RDF_CLASS );
+
+				return persistedAgent;
+			}
 
 			(() => {
 				class MockedAuth extends Auth.Class {}
@@ -254,7 +312,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 				class MockedAuth extends Auth.Class {
 					constructor( _context:AbstractContext ) {
 						super( _context );
-						this._authenticatedAgent = <any> PersistedDocument.Factory.create( "http://example.com/agents/my-agent/", _context.documents );
+						this._authenticatedAgent = createAgent( _context );
 					}
 				}
 				class MockedContext extends AbstractContext {
@@ -274,7 +332,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 				expect( context.auth.authenticatedAgent ).toBeNull();
 
 				expect( auth.authenticatedAgent ).toBeTruthy();
-				expect( PersistedDocument.Factory.is( auth.authenticatedAgent ) ).toBe( true );
+				expect( PersistedAgent.Factory.is( auth.authenticatedAgent ) ).toBe( true );
 			})();
 
 			(() => {
@@ -282,7 +340,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 				class MockedAuth extends Auth.Class {
 					constructor( _context:AbstractContext ) {
 						super( _context );
-						this._authenticatedAgent = <any> PersistedDocument.Factory.create( "http://example.com/agents/my-agent/", _context.documents );
+						this._authenticatedAgent = createAgent( _context );
 					}
 				}
 				class MockedContext extends AbstractContext {
@@ -304,10 +362,10 @@ describe( module( "Carbon/Auth" ), ():void => {
 				let context:AbstractContext = new MockedContext( parentContext );
 
 				expect( parentContext.auth.authenticatedAgent ).toBeTruthy();
-				expect( PersistedDocument.Factory.is( parentContext.auth.authenticatedAgent ) ).toBe( true );
+				expect( PersistedAgent.Factory.is( parentContext.auth.authenticatedAgent ) ).toBe( true );
 
 				expect( context.auth.authenticatedAgent ).toBeTruthy();
-				expect( PersistedDocument.Factory.is( context.auth.authenticatedAgent ) ).toBe( true );
+				expect( PersistedAgent.Factory.is( context.auth.authenticatedAgent ) ).toBe( true );
 
 				expect( parentContext.auth.authenticatedAgent ).toBe( context.auth.authenticatedAgent );
 			})();
@@ -317,7 +375,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 				class MockedAuth extends Auth.Class {
 					constructor( _context:AbstractContext ) {
 						super( _context );
-						this._authenticatedAgent = <any> PersistedDocument.Factory.create( "http://example.com/agents/my-agent/", _context.documents );
+						this._authenticatedAgent = createAgent( _context );
 					}
 				}
 				class MockedContext extends AbstractContext {
@@ -339,10 +397,10 @@ describe( module( "Carbon/Auth" ), ():void => {
 				let context:AbstractContext = new MockedContext( parentContext, true );
 
 				expect( parentContext.auth.authenticatedAgent ).toBeTruthy();
-				expect( PersistedDocument.Factory.is( parentContext.auth.authenticatedAgent ) ).toBe( true );
+				expect( PersistedAgent.Factory.is( parentContext.auth.authenticatedAgent ) ).toBe( true );
 
 				expect( context.auth.authenticatedAgent ).toBeTruthy();
-				expect( PersistedDocument.Factory.is( context.auth.authenticatedAgent ) ).toBe( true );
+				expect( PersistedAgent.Factory.is( context.auth.authenticatedAgent ) ).toBe( true );
 
 				expect( parentContext.auth.authenticatedAgent ).not.toBe( context.auth.authenticatedAgent );
 			})();
@@ -627,8 +685,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 						expect( credentials.password ).toEqual( password );
 
 						expect( _auth.authenticatedAgent ).toBeTruthy();
-						// TODO: Change to `PersistedAgent`
-						expect( Agent.Factory.is( _auth.authenticatedAgent ) ).toBe( true );
+						expect( PersistedAgent.Factory.is( _auth.authenticatedAgent ) ).toBe( true );
 					},
 					fail: ( error ):void => {
 						expect( error.name ).toBe( Errors.IllegalArgumentError.name );
@@ -690,8 +747,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 
 						expect( _auth.authenticatedAgent ).toBeTruthy();
 						expect( credentials.agent ).toBe( _auth.authenticatedAgent );
-						// TODO: Change to `PersistedAgent`
-						expect( Agent.Factory.is( _auth.authenticatedAgent ) ).toBe( true );
+						expect( PersistedAgent.Factory.is( _auth.authenticatedAgent ) ).toBe( true );
 					},
 					fail: ( error ):void => {
 						expect( error instanceof Errors.IllegalArgumentError ).toBe( true );
@@ -840,8 +896,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 
 						expect( _auth.authenticatedAgent ).toBeTruthy();
 						expect( credentials.agent ).toBe( _auth.authenticatedAgent );
-						// TODO: Change to `PersistedAgent`
-						expect( Agent.Factory.is( _auth.authenticatedAgent ) ).toBe( true );
+						expect( PersistedAgent.Factory.is( _auth.authenticatedAgent ) ).toBe( true );
 					},
 					success02: ( _auth:Auth.Class, credentials:Token.Class ):void => {
 						expect( credentials.key ).toEqual( token.key );
@@ -849,8 +904,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 
 						expect( _auth.authenticatedAgent ).toBeTruthy();
 						expect( credentials.agent ).toBe( _auth.authenticatedAgent );
-						// TODO: Change to `PersistedAgent`
-						expect( Agent.Factory.is( _auth.authenticatedAgent ) ).toBe( true );
+						expect( PersistedAgent.Factory.is( _auth.authenticatedAgent ) ).toBe( true );
 					},
 					fail: ( error ):void => {
 						expect( error.name ).toBe( Errors.IllegalArgumentError.name );

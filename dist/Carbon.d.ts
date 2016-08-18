@@ -1,7 +1,5 @@
 import AbstractContext from "./AbstractContext";
 import * as AccessPoint from "./AccessPoint";
-import * as Agent from "./Agent";
-import * as Agents from "./Agents";
 import * as APIDescription from "./APIDescription";
 import * as App from "./App";
 import * as Apps from "./Apps";
@@ -31,8 +29,6 @@ import * as SPARQL from "./SPARQL";
 import * as Utils from "./Utils";
 declare class Carbon extends AbstractContext {
     static AccessPoint: typeof AccessPoint;
-    static Agent: typeof Agent;
-    static Agents: typeof Agents;
     static App: typeof App;
     static Apps: typeof Apps;
     static Auth: typeof Auth;
@@ -61,7 +57,6 @@ declare class Carbon extends AbstractContext {
     static Utils: typeof Utils;
     static version: string;
     apps: Apps.Class;
-    agents: Agents.Class;
     version: string;
     constructor(settings?: Settings.Class);
     resolve(uri: string): string;

@@ -1,5 +1,4 @@
 "use strict";
-var Agent = require("./Agent");
 var AppRole = require("./App/Role");
 var APIDescription = require("./APIDescription");
 var Auth = require("./Auth");
@@ -167,9 +166,9 @@ var Class = (function () {
         this.extendObjectSchema(LDP.RemoveMemberAction.RDF_CLASS, LDP.RemoveMemberAction.SCHEMA);
         this.extendObjectSchema(Auth.ACE.RDF_CLASS, Auth.ACE.SCHEMA);
         this.extendObjectSchema(Auth.ACL.RDF_CLASS, Auth.ACL.SCHEMA);
+        this.extendObjectSchema(Auth.Agent.RDF_CLASS, Auth.Agent.SCHEMA);
         this.extendObjectSchema(Auth.Ticket.RDF_CLASS, Auth.Ticket.SCHEMA);
         this.extendObjectSchema(Auth.Token.RDF_CLASS, Auth.Token.SCHEMA);
-        this.extendObjectSchema(Agent.RDF_CLASS, Agent.SCHEMA);
     };
     Class.prototype.resolveTypeURI = function (uri) {
         if (RDF.URI.Util.isAbsolute(uri))

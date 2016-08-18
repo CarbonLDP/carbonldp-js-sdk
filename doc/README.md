@@ -17,14 +17,6 @@
 	- [Properties](#Carbon-AccessPoint-Properties)
 	- [Class Carbon.AccessPoint.Factory](#Carbon-AccessPoint-Factory)
 		- [Methods](#Carbon-AccessPoint-Factory-Methods)
-- [Module Carbon/Agent](#Carbon-Agent)
-	- [Properties](#Carbon-Agent-Properties)
-	- [Class Carbon.Agent.Factory](#Carbon-Agent-Factory)
-		- [Methods](#Carbon-Agent-Factory-Methods)
-- [Module Carbon/Agents](#Carbon-Agents)
-	- [Class Carbon.Agents.Class](#Carbon-Agents-Class)
-		- [Constructor](#Carbon-Agents-Class-Constructor)
-		- [Methods](#Carbon-Agents-Class-Methods)
 - [Module Carbon/App](#Carbon-App)
 	- [Reexports](#Carbon-App-Reexports)
 	- [Properties](#Carbon-App-Properties)
@@ -68,6 +60,14 @@
 		- [Methods](#Carbon-Auth-ACL-Factory-Methods)
 		- [Decorated Object](#Carbon-Auth-ACL-Factory-Decorated-Object)
 			- [Methods](#Carbon-Auth-ACL-Factory-Decorated-Object-Methods)
+- [Module Carbon/Auth/Agent](#Carbon-Auth-Agent)
+	- [Properties](#Carbon-Auth-Agent-Properties)
+	- [Class Carbon.Auth.Agent.Factory](#Carbon-Auth-Agent-Factory)
+		- [Methods](#Carbon-Auth-Agent-Factory-Methods)
+- [Module Carbon/Auth/Agents](#Carbon-Auth-Agents)
+	- [Class Carbon.Auth.Agents.Class](#Carbon-Auth-Agents-Class)
+		- [Constructor](#Carbon-Auth-Agents-Class-Constructor)
+		- [Methods](#Carbon-Auth-Agents-Class-Methods)
 - [Module Carbon/Auth/BasicAuthenticator](#Carbon-Auth-BasicAuthenticator)
 	- [Class Carbon.Auth.BasicAuthenticator.Class](#Carbon-Auth-BasicAuthenticator-Class)
 		- [Constructor](#Carbon-Auth-BasicAuthenticator-Class-Constructor)
@@ -75,6 +75,9 @@
 - [Module Carbon/Auth/PersistedACL](#Carbon-Auth-PersistedACL)
 	- [Class Carbon.Auth.PersistedACL.Factory](#Carbon-Auth-PersistedACL-Factory)
 		- [Methods](#Carbon-Auth-PersistedACL-Factory-Methods)
+- [Module Carbon/Auth/PersistedAgent](#Carbon-Auth-PersistedAgent)
+	- [Class Carbon.Auth.PersistedAgent.Factory](#Carbon-Auth-PersistedAgent-Factory)
+		- [Methods](#Carbon-Auth-PersistedAgent-Factory-Methods)
 - [Module Carbon/Auth/PersistedRole](#Carbon-Auth-PersistedRole)
 	- [Class Carbon.Auth.PersistedRole.Factory](#Carbon-Auth-PersistedRole-Factory)
 		- [Methods](#Carbon-Auth-PersistedRole-Factory-Methods)
@@ -573,8 +576,6 @@
 | Export name | Original Location | 
 | --- | --- |
 | AccessPoint | [Carbon/AccessPoint](#Carbon-AccessPoint) |
-| Agent | [Carbon/Agent](#Carbon-Agent) |
-| Agents | [Carbon/Agents](#Carbon-Agents) |
 | App | [Carbon/App](#Carbon-App) |
 | Apps | [Carbon/Apps](#Carbon-Apps) |
 | Auth | [Carbon/Auth](#Carbon-Auth) |
@@ -777,127 +778,6 @@ Creates a `Carbon.AccessPoint.Class` object from the object and parameters speci
 
 
 
-## <a name="Carbon-Agent" />Module Carbon/Agent
-
-
-
-
-
-### <a name="Carbon-Agent-Properties" />Properties
-```typescript 
-static RDF_CLASS:string 
-```
-
-```typescript 
-static SCHEMA:Carbon.ObjectSchema.Class 
-```
-
-
-
-
-
-### <a name="Carbon-Agent-Factory" />Class Carbon.Agent.Factory
-
-
-> Factory class for `Carbon.Agent.Class` objects.
-
-
-
-
-#### <a name="Carbon-Agent-Factory-Methods" />Methods
-##### create
-```typescript 
-static create( name:string,  email:string,  password:string ):Carbon.Agent.Class
-```
-
-Creates a `Carbon.Agent.Class` object with the name and email specified.
-
-*Parameters*
-
-- name: Name of the agent to be created.
-- email: Email of the agent to be created.
-- password: Password of the agent to be created.
-
-##### createFrom
-```typescript 
-static createFrom<T extends Object>( object:T,  name:string,  email:string,  password:string ):T & Carbon.Agent.Class
-```
-
-Creates a `Carbon.Agent.Class` object from the object and parameters specified.
-
-*Parameters*
-
-- object: Object that will be converted into an Agent.
-- name: Name of the agent to be created.
-- email: Email of the agent to be created.
-- password: Password of the agent to be created.
-
-##### hasClassProperties
-```typescript 
-static hasClassProperties( resource:Object ):boolean
-```
-
-Returns true if the object provided has the properties that defines a `Carbon.Agent.Class` object.
-
-*Parameters*
-
-- resource
-
-##### is
-```typescript 
-static is( object:Object ):boolean
-```
-
-Returns true if the object provided is considered a `Carbon.Agent.Class` object.
-
-*Parameters*
-
-- object
-
-
-
-
-## <a name="Carbon-Agents" />Module Carbon/Agents
-
-
-**Default export:** [Carbon.Agents.Class](#Carbon-Agents-Class)
-
-
-
-
-
-
-### <a name="Carbon-Agents-Class" />Class Carbon.Agents.Class
-
-
-> Class to manage the Agents of a determined context.
-
-
-#### <a name="Carbon-Agents-Class-Constructor" />Constructor
-```typescript 
-Class()
-```
-
-
-
-
-#### <a name="Carbon-Agents-Class-Methods" />Methods
-
-##### create
-```typescript 
-create( agentDocument:Carbon.Agents.Agent.Class,  slug?:string ):Promise<Carbon.Pointer.Class, Carbon.HTTP.Response.Class>
-```
-
-Persists a `Carbon.Agent.Class` object using the slug specified.
-Returns a Promise with a Pointer to the stored Agent, and the response of the request.
-
-*Parameters*
-
-- agentDocument
-- slug
-
-
-
 ## <a name="Carbon-App" />Module Carbon/App
 
 
@@ -1049,11 +929,6 @@ Context( parentContext:Carbon.Context,  app:Carbon.App.Context )
 
 #### <a name="Carbon-App-Context-Properties" />Properties
 
-```typescript 
-agents:Carbon.Agents.Class 
-```
-
-Instance of Agents class, that helps manage the agents inside of an application.
 ```typescript 
 app:Carbon.App.Class 
 ```
@@ -1366,11 +1241,14 @@ Returns true if the object provided is considered a `Carbon.App.Role.Class` obje
 | --- | --- |
 | ACE | [Carbon.Auth.ACE](#Carbon-Auth-ACE) |
 | ACL | [Carbon.Auth.ACL](#Carbon-Auth-ACL) |
+| Agent | [Carbon.Auth.Agent](#Carbon-Auth-Agent) |
+| Agents | [Carbon.Auth.Agents](#Carbon-Auth-Agents) |
 | AuthenticationToken | [Carbon.Auth.AuthenticationToken](#Carbon-Auth-AuthenticationToken) |
 | Authenticator | [Carbon.Auth.Authenticator](#Carbon-Auth-Authenticator) |
 | BasicAuthenticator | [Carbon.Auth.BasicAuthenticator](#Carbon-Auth-BasicAuthenticator) |
 | PersistedACE | [Carbon.Auth.PersistedACE](#Carbon-Auth-PersistedACE) |
 | PersistedACL | [Carbon.Auth.PersistedACL](#Carbon-Auth-PersistedACL) |
+| PersistedAgent | [Carbon.Auth.PersistedAgent](#Carbon-Auth-PersistedAgent) |
 | Role | [Carbon.Auth.Role](#Carbon-Auth-Role) |
 | Roles | [Carbon.Auth.Roles](#Carbon-Auth-Roles) |
 | Ticket | [Carbon.Auth.Ticket](#Carbon-Auth-Ticket) |
@@ -1411,7 +1289,12 @@ Class( context:Carbon.Context )
 #### <a name="Carbon-Auth-Class-Properties" />Properties
 
 ```typescript 
-authenticatedAgent:Carbon.Agent.Class & Carbon.PersistedDocument.Class 
+agents:Carbon.Auth.Agents.Class 
+```
+
+Instance of `Carbon.Auth.Agents.Class` that helps you manage the agents of the current context.
+```typescript 
+authenticatedAgent:Carbon.Auth.PersistedAgent.Class 
 ```
 
 The agent of the user that has been authenticated. If no authentication exists in the current context, it will ask to it's parent context.
@@ -1833,6 +1716,139 @@ Remove the configuration of several permissions from a subject for the children 
 - permissions: The permissions to remove from the subject configuration.
 
 
+## <a name="Carbon-Auth-Agent" />Module Carbon/Auth/Agent
+
+
+
+
+
+### <a name="Carbon-Auth-Agent-Properties" />Properties
+```typescript 
+static RDF_CLASS:string 
+```
+
+```typescript 
+static SCHEMA:Carbon.ObjectSchema.Class 
+```
+
+
+
+
+
+### <a name="Carbon-Auth-Agent-Factory" />Class Carbon.Auth.Agent.Factory
+
+
+> Factory class for `Carbon.Auth.Agent.Class` objects.
+
+
+
+
+#### <a name="Carbon-Auth-Agent-Factory-Methods" />Methods
+##### create
+```typescript 
+static create( name:string,  email:string,  password:string ):Carbon.Auth.Agent.Class
+```
+
+Creates a `Carbon.Auth.Agent.Class` object with the name and email specified.
+
+*Parameters*
+
+- name: Name of the agent to be created.
+- email: Email of the agent to be created.
+- password: Password of the agent to be created.
+
+##### createFrom
+```typescript 
+static createFrom<T extends Object>( object:T,  name:string,  email:string,  password:string ):T & Carbon.Auth.Agent.Class
+```
+
+Creates a `Carbon.Auth.Agent.Class` object from the object and parameters specified.
+
+*Parameters*
+
+- object: Object that will be converted into an Agent.
+- name: Name of the agent to be created.
+- email: Email of the agent to be created.
+- password: Password of the agent to be created.
+
+##### hasClassProperties
+```typescript 
+static hasClassProperties( object:Object ):boolean
+```
+
+Returns true if the object provided has the properties that defines a `Carbon.Auth.Agent.Class` object.
+
+*Parameters*
+
+- object
+
+##### is
+```typescript 
+static is( object:Object ):boolean
+```
+
+Returns true if the object provided is considered a `Carbon.Auth.Agent.Class` object.
+
+*Parameters*
+
+- object
+
+
+
+
+## <a name="Carbon-Auth-Agents" />Module Carbon/Auth/Agents
+
+
+**Default export:** [Carbon.Auth.Agents.Class](#Carbon-Auth-Agents-Class)
+
+
+
+
+
+
+### <a name="Carbon-Auth-Agents-Class" />Class Carbon.Auth.Agents.Class
+
+
+> Class for manage Agents of a determined context.
+
+
+#### <a name="Carbon-Auth-Agents-Class-Constructor" />Constructor
+```typescript 
+Class()
+```
+
+
+
+
+#### <a name="Carbon-Auth-Agents-Class-Methods" />Methods
+
+##### get
+```typescript 
+get( agentURI:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.Auth.PersistedAgent.Class, Carbon.HTTP.Response.Class ]>
+```
+
+Retrieves the agent specified from the current context.
+
+*Parameters*
+
+- agentURI: The URI of the agent to retrieve.
+- requestOptions
+
+##### register
+```typescript 
+register( agentDocument:Carbon.Auth.Agent.Class,  slug?:string ):Promise<Carbon.Pointer.Class, Carbon.HTTP.Response.Class>
+```
+
+Persists a `Carbon.Auth.Agent.Class` object using the slug specified.
+Returns a Promise with a Pointer to the stored Agent, and the response of the request.
+
+*Parameters*
+
+- agentDocument
+- slug
+
+
+
 ## <a name="Carbon-Auth-BasicAuthenticator" />Module Carbon/Auth/BasicAuthenticator
 
 
@@ -1936,6 +1952,49 @@ Return true if the object provided has the properties and methods of a `Carbon.A
 *Parameters*
 
 - object: The object to analise.
+
+
+
+
+## <a name="Carbon-Auth-PersistedAgent" />Module Carbon/Auth/PersistedAgent
+
+
+
+
+
+
+
+
+### <a name="Carbon-Auth-PersistedAgent-Factory" />Class Carbon.Auth.PersistedAgent.Factory
+
+
+> Factory class for `Carbon.Auth.PersistedAgent.Class` objects.
+
+
+
+
+#### <a name="Carbon-Auth-PersistedAgent-Factory-Methods" />Methods
+##### hasClassProperties
+```typescript 
+static hasClassProperties( object:Object ):boolean
+```
+
+Returns true if the object provided has the properties of a `Carbon.Auth.PersistedAgent.Class` object.
+
+*Parameters*
+
+- object
+
+##### is
+```typescript 
+static is( object:Object ):boolean
+```
+
+Returns true if the object provided is considered a `Carbon.Auth.PersistedAgent.Class` object.
+
+*Parameters*
+
+- object
 
 
 
@@ -6937,6 +6996,10 @@ static description:string
 ```
 
 ```typescript 
+static enabled:string 
+```
+
+```typescript 
 static expirationTime:string 
 ```
 
@@ -6958,10 +7021,6 @@ static namae:string
 
 ```typescript 
 static parentRole:string 
-```
-
-```typescript 
-static password:string 
 ```
 
 ```typescript 

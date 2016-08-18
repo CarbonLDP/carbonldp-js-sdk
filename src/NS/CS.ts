@@ -37,6 +37,8 @@ class Predicate {
 
 	static get description():string { return namespace + "description"; }
 
+	static get enabled():string { return namespace + "enabled"; }
+
 	static get expirationTime():string { return namespace + "expirationTime"; }
 
 	static get forIRI():string { return namespace + "forIRI"; }
