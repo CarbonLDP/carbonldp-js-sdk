@@ -5,6 +5,7 @@ const del = require( "del" );
 
 const gulp = require( "gulp" );
 const util = require( "gulp-util" );
+const replace = require( "gulp-replace" );
 const runSequence = require( "run-sequence" );
 
 const karma = require( "karma" );
@@ -29,7 +30,7 @@ let config = {
 		],
 		all: "src/**/*.ts",
 		test: "/**/*.spec.js",
-		main: "src/Carbon"
+		main: "src/Carbon.ts"
 	},
 	dist: {
 		sfxBundle: "dist/bundles/Carbon.sfx.js",
@@ -39,6 +40,14 @@ let config = {
 		temp: "temp"
 	},
 };
+
+gulp.task( "version", () => {
+	let pk = JSON.parse( fs.readFileSync( "./package.json" ) );
+	return gulp.src( config.source.main )
+		.pipe( replace( /"(\d+\.\d+\.\d+.*)(";)/g, `"${pk.version}";` ) )
+		.pipe( gulp.dest( "src/" ) )
+		;
+} );
 
 gulp.task( "ts-lint", () => {
 	return gulp.src( config.source.typescript )
@@ -184,6 +193,7 @@ gulp.task( "lint", [ "ts-lint" ] );
 
 gulp.task( "build", ( done ) => {
 	runSequence(
+		"version",
 		"clean:dist",
 		[ "compile-library", "generate-doc", "bundle-sfx", "prepare-npm-package" ],
 		done

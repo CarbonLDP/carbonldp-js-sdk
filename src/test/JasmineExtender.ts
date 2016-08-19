@@ -392,7 +392,6 @@ if( typeof XMLHttpRequest === "undefined" ) {
 
 		let requests:any[] = [];
 
-		// TODO Allow unmocked request with: `nock( /.*/ , { allowUnmocked: true } )`
 		let scope:any = nock( /.*/ );
 		scope.persist();
 		scope.on( "request", updateRequests );

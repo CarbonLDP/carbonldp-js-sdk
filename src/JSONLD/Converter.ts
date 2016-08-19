@@ -263,17 +263,10 @@ export class Class {
 	}
 
 	private expandPointer( propertyValue:any, generalSchema:ObjectSchema.DigestedObjectSchema, digestedSchema:ObjectSchema.DigestedObjectSchema ):RDF.Node.Class {
-		let notPointer:boolean = true;
-		let id:string;
-		if( Pointer.Factory.is( propertyValue ) ) {
-			notPointer = false;
-			propertyValue = propertyValue.id;
-		} else if( ! Utils.isString( propertyValue ) ) {
-			propertyValue = null;
-		}
+		let notPointer:boolean = Utils.isString( propertyValue );
+		let id:string = Pointer.Factory.is( propertyValue ) ? propertyValue.id : Utils.isString( propertyValue ) ? propertyValue : null;
 
-		id = propertyValue;
-		if( ! id ) {
+		if( id === null ) {
 			// TODO: Warn of data loss
 			return null;
 		}
@@ -397,192 +390,33 @@ export class Class {
 			case null:
 				// Property is not a list
 				if( propertyDefinition.literal ) {
-					return this.getPropertyLiteral( expandedObject, propertyURI, propertyDefinition.literalType.toString() );
+					return RDF.Node.Util.getPropertyLiteral( expandedObject, propertyURI, propertyDefinition.literalType.toString() );
 				} else if( propertyDefinition.literal === false ) {
-					return this.getPropertyPointer( expandedObject, propertyURI, pointerLibrary );
+					return RDF.Node.Util.getPropertyPointer( expandedObject, propertyURI, pointerLibrary );
 				} else {
-					return this.getProperty( expandedObject, propertyURI, pointerLibrary );
+					return RDF.Node.Util.getProperty( expandedObject, propertyURI, pointerLibrary );
 				}
 			case ObjectSchema.ContainerType.LIST:
 				if( propertyDefinition.literal ) {
-					return this.getPropertyLiteralList( expandedObject, propertyURI, propertyDefinition.literalType.toString() );
+					return RDF.Node.Util.getPropertyLiteralList( expandedObject, propertyURI, propertyDefinition.literalType.toString() );
 				} else if( propertyDefinition.literal === false ) {
-					return this.getPropertyPointerList( expandedObject, propertyURI, pointerLibrary );
+					return RDF.Node.Util.getPropertyPointerList( expandedObject, propertyURI, pointerLibrary );
 				} else {
-					return this.getPropertyList( expandedObject, propertyURI, pointerLibrary );
+					return RDF.Node.Util.getPropertyList( expandedObject, propertyURI, pointerLibrary );
 				}
 			case ObjectSchema.ContainerType.SET:
 				if( propertyDefinition.literal ) {
-					return this.getPropertyLiterals( expandedObject, propertyURI, propertyDefinition.literalType.toString() );
+					return RDF.Node.Util.getPropertyLiterals( expandedObject, propertyURI, propertyDefinition.literalType.toString() );
 				} else if( propertyDefinition.literal === false ) {
-					return this.getPropertyPointers( expandedObject, propertyURI, pointerLibrary );
+					return RDF.Node.Util.getPropertyPointers( expandedObject, propertyURI, pointerLibrary );
 				} else {
-					return this.getProperties( expandedObject, propertyURI, pointerLibrary );
+					return RDF.Node.Util.getProperties( expandedObject, propertyURI, pointerLibrary );
 				}
 			case ObjectSchema.ContainerType.LANGUAGE:
-				return this.getPropertyLanguageMap( expandedObject, propertyURI );
+				return RDF.Node.Util.getPropertyLanguageMap( expandedObject, propertyURI );
 			default:
 				throw new Errors.IllegalArgumentError( "The containerType specified is not supported." );
 		}
-	}
-
-	private getProperty( expandedObject:any, propertyURI:string, pointerLibrary:Pointer.Library ):any {
-		let propertyValues:Array<any> = expandedObject[ propertyURI ];
-		if( ! propertyValues ) return null;
-		if( ! propertyValues.length ) return null;
-
-		let propertyValue:any = propertyValues[ 0 ];
-
-		return this.parseValue( propertyValue, pointerLibrary );
-	}
-
-	private getPropertyPointer( expandedObject:any, propertyURI:string, pointerLibrary:Pointer.Library ):any {
-		let propertyValues:Array<any> = expandedObject[ propertyURI ];
-		if( ! propertyValues ) return null;
-
-		for( let propertyValue of propertyValues ) {
-			if( ! RDF.Node.Factory.is( propertyValue ) ) continue;
-
-			return pointerLibrary.getPointer( propertyValue[ "@id" ] );
-		}
-
-		return null;
-	}
-
-	private getPropertyLiteral( expandedObject:any, propertyURI:string, literalType:string ):any {
-		let propertyValues:Array<any> = expandedObject[ propertyURI ];
-		if( ! propertyValues ) return null;
-
-		for( let propertyValue of propertyValues ) {
-			if( ! RDF.Literal.Factory.is( propertyValue ) ) continue;
-			if( ! RDF.Literal.Factory.hasType( propertyValue, literalType ) ) continue;
-
-			return RDF.Literal.Factory.parse( propertyValue );
-		}
-
-		return null;
-	}
-
-	private getPropertyList( expandedObject:any, propertyURI:string, pointerLibrary:Pointer.Library ):any {
-		let propertyValues:Array<any> = expandedObject[ propertyURI ];
-		if( ! propertyValues ) return null;
-
-		let propertyList:RDF.List.Class = this.getList( propertyValues );
-		if( ! propertyList ) return null;
-
-		let listValues:Array<any> = [];
-		for( let listValue of propertyList[ "@list" ] ) {
-			listValues.push( this.parseValue( listValue, pointerLibrary ) );
-		}
-
-		return listValues;
-	}
-
-	private getPropertyPointerList( expandedObject:any, propertyURI:string, pointerLibrary:Pointer.Library ):any {
-		let propertyValues:Array<any> = expandedObject[ propertyURI ];
-		if( ! propertyValues ) return null;
-
-		let propertyList:RDF.List.Class = this.getList( propertyValues );
-		if( ! propertyList ) return null;
-
-		let listPointers:Array<any> = [];
-		for( let listValue of propertyList[ "@list" ] ) {
-			if( ! RDF.Node.Factory.is( listValue ) ) continue;
-
-			let pointer:Pointer.Class = pointerLibrary.getPointer( listValue[ "@id" ] );
-			listPointers.push( pointer );
-		}
-
-		return listPointers;
-	}
-
-	private getPropertyLiteralList( expandedObject:any, propertyURI:string, literalType:string ):any {
-		let propertyValues:Array<any> = expandedObject[ propertyURI ];
-		if( ! propertyValues ) return null;
-
-		let propertyList:RDF.List.Class = this.getList( propertyValues );
-		if( ! propertyList ) return null;
-
-		let listLiterals:Array<any> = [];
-		for( let listValue of propertyList[ "@list" ] ) {
-			if( ! RDF.Literal.Factory.is( listValue ) ) continue;
-			if( ! RDF.Literal.Factory.hasType( <any> listValue, literalType ) ) continue;
-
-			listLiterals.push( RDF.Literal.Factory.parse( <any> listValue ) );
-		}
-
-		return listLiterals;
-	}
-
-	private getProperties( expandedObject:any, propertyURI:string, pointerLibrary:Pointer.Library ):any {
-		let propertyValues:Array<any> = expandedObject[ propertyURI ];
-		if( ! propertyValues ) return null;
-		if( ! propertyValues.length ) return null;
-
-		let properties:Array<any> = [];
-		for( let propertyValue of propertyValues ) {
-			properties.push( this.parseValue( propertyValue, pointerLibrary ) );
-		}
-
-		return properties;
-	}
-
-	private getPropertyPointers( expandedObject:any, propertyURI:string, pointerLibrary:Pointer.Library ):any {
-		let propertyValues:Array<any> = expandedObject[ propertyURI ];
-		if( ! propertyValues ) return null;
-		if( ! propertyValues.length ) return null;
-
-		let propertyPointers:Array<any> = [];
-		for( let propertyValue of propertyValues ) {
-			if( ! RDF.Node.Factory.is( propertyValue ) ) continue;
-
-			let pointer:Pointer.Class = pointerLibrary.getPointer( propertyValue[ "@id" ] );
-			propertyPointers.push( pointer );
-		}
-
-		return propertyPointers;
-	}
-
-	private getPropertyLiterals( expandedObject:any, propertyURI:string, literalType:string ):any {
-		let propertyValues:Array<any> = expandedObject[ propertyURI ];
-		if( ! propertyValues ) return null;
-
-		let propertyLiterals:Array<any> = [];
-		for( let propertyValue of propertyValues ) {
-			if( ! RDF.Literal.Factory.is( propertyValue ) ) continue;
-			if( ! RDF.Literal.Factory.hasType( propertyValue, literalType ) ) continue;
-
-			propertyLiterals.push( RDF.Literal.Factory.parse( propertyValue ) );
-		}
-
-		return propertyLiterals;
-	}
-
-	private getPropertyLanguageMap( expandedObject:any, propertyURI:string ):any {
-		let propertyValues:Array<any> = expandedObject[ propertyURI ];
-		if( ! propertyValues ) return null;
-
-		let propertyLanguageMap:any = {};
-		for( let propertyValue of propertyValues ) {
-			if( ! RDF.Literal.Factory.is( propertyValue ) ) continue;
-			if( ! RDF.Literal.Factory.hasType( propertyValue, NS.XSD.DataType.string ) ) continue;
-
-			let languageTag:string = propertyValue[ "@language" ];
-			if( ! languageTag ) continue;
-
-			propertyLanguageMap[ languageTag ] = RDF.Literal.Factory.parse( propertyValue );
-		}
-
-		return propertyLanguageMap;
-	}
-
-	private getList( propertyValues:Array<any> ):RDF.List.Class {
-		for( let propertyValue of propertyValues ) {
-			if( ! RDF.List.Factory.is( propertyValue ) ) continue;
-
-			return propertyValue;
-		}
-		return null;
 	}
 
 	private getPropertyURINameMap( digestedSchema:ObjectSchema.DigestedObjectSchema ):Map<string, string> {
@@ -591,23 +425,6 @@ export class Class {
 			map.set( definition.uri.toString(), propertyName );
 		} );
 		return map;
-	}
-
-	private parseValue( propertyValue:RDF.Value.Class, pointerLibrary:Pointer.Library ):any {
-		if( RDF.Literal.Factory.is( propertyValue ) ) {
-			return RDF.Literal.Factory.parse( <any> propertyValue );
-		} else if( RDF.Node.Factory.is( propertyValue ) ) {
-			return pointerLibrary.getPointer( propertyValue[ "@id" ] );
-		} else if( RDF.List.Factory.is( propertyValue ) ) {
-			let parsedValue:Array<any> = [];
-			let listValues:Array<any> = propertyValue[ "@list" ];
-			for( let listValue of listValues ) {
-				parsedValue.push( this.parseValue( listValue, pointerLibrary ) );
-			}
-			return parsedValue;
-		} else {
-			// TODO: What else could it be?
-		}
 	}
 }
 

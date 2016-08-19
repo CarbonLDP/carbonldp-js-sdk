@@ -20,9 +20,13 @@ var Factory = (function () {
     };
     Factory.createFrom = function (object, membershipResource, hasMemberRelation, isMemberOfRelation) {
         if (Factory.is(object))
-            throw new Errors.IllegalArgumentError("The base object is already a DirectContainer");
+            throw new Errors.IllegalArgumentError("The base object is already a DirectContainer.");
         if (!membershipResource)
-            throw new Errors.IllegalArgumentError("The membershipResource cannot be null");
+            throw new Errors.IllegalArgumentError("The property membershipResource cannot be null.");
+        if (!hasMemberRelation)
+            throw new Errors.IllegalArgumentError("The property hasMemberRelation cannot be empty.");
+        if (!isMemberOfRelation && Utils.isDefined(isMemberOfRelation))
+            throw new Errors.IllegalArgumentError("The property isMemberOfRelation cannot be empty.");
         var container = object;
         if (!Document.Factory.is(object))
             container = Document.Factory.createFrom(object);
