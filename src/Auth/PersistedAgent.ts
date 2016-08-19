@@ -22,7 +22,6 @@ export class Factory {
 			&& (<PersistedDocument.Class> object).hasType( Agent.RDF_CLASS )
 			;
 	}
-
 }
 
 export default Class;
