@@ -1207,6 +1207,18 @@ Returns a Promise with a Pointer to the stored App, and the response of the requ
 - slug: Slug that will be used for the URI of the new app.
 - appDocument: App document that will be persisted.
 
+##### delete
+```typescript 
+delete( appURI:string,  requestOptions:Carbon.HTTP.Request.Options ):Promise<Carbon.HTTP.Response.Class>
+```
+
+Deletes the app specified.
+
+*Parameters*
+
+- appURI: The URI of the app to be deleted.
+- requestOptions
+
 ##### getContext
 ```typescript 
 getContext( uri:string ):Promise<Carbon.App.Context>

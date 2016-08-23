@@ -66,6 +66,14 @@ export class Class {
 		} );
 	}
 
+	delete( appURI:string, requestOptions?:HTTP.Request.Options ):Promise<HTTP.Response.Class> {
+		if( ! appURI ) return Promise.reject<any>( new Errors.IllegalArgumentError( "The application's URI must be defined." ) );
+
+		return this.resolveURI( appURI ).then( ( uri:string ) => {
+			return this.context.documents.delete( uri, requestOptions );
+		} );
+	}
+
 	private resolveURI( appURI:string ):Promise<string> {
 		return new Promise<string>( ( resolve:( uri:string ) => void ) => {
 			let containerURI:string = this.context.resolve( this.getContainerURI() );
