@@ -281,7 +281,9 @@ describe( module( "Carbon/Auth" ), ():void => {
 		), ():void => {
 
 			function createAgent( context:AbstractContext ):PersistedAgent.Class {
-				let persistedAgent:PersistedAgent.Class = <PersistedAgent.Class> PersistedDocument.Factory.create( "http://example.com/agents/my-agent/", context.documents );
+				let persistedDocument:PersistedDocument.Class = PersistedDocument.Factory.create( "http://example.com/agents/my-agent/", context.documents );
+
+				let persistedAgent:PersistedAgent.Class = PersistedAgent.Factory.decorate( persistedDocument );
 				persistedAgent.email = null;
 				persistedAgent.name = null;
 				persistedAgent.enabled = true;

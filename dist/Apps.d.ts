@@ -11,6 +11,7 @@ export declare class Class {
     getContext(pointer: Pointer.Class): Promise<AppContext>;
     getAllContexts(): Promise<AppContext[]>;
     create(appDocument: App.Class, slug?: string): Promise<[PersistedDocument.Class, HTTP.Response.Class]>;
+    delete(appURI: string, requestOptions?: HTTP.Request.Options): Promise<HTTP.Response.Class>;
     private resolveURI(appURI);
     private getContainerURI();
 }

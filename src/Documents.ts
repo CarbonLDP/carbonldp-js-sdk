@@ -5,13 +5,12 @@ import * as RDF from "./RDF";
 import * as Utils from "./Utils";
 
 import * as AccessPoint from "./AccessPoint";
-import * as ACL from "./Auth/ACL";
 import * as AppRole from "./App/Role";
+import * as Auth from "./Auth";
 import * as Document from "./Document";
 import * as FreeResources from "./FreeResources";
 import * as JSONLD from "./JSONLD";
 import * as PersistedAccessPoint from "./PersistedAccessPoint";
-import * as PersistedACL from "./Auth/PersistedACL";
 import * as PersistedAppRole from "./App/PersistedRole";
 import * as PersistedBlankNode from "./PersistedBlankNode";
 import * as PersistedDocument from "./PersistedDocument";
@@ -926,7 +925,8 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 		// TODO: Decorate additional behavior (app, etc.). See also updatePersistedDocument() method
 		// TODO: Make it dynamic. See also updatePersistedDocument() method
 		if( persistedDocument.hasType( ProtectedDocument.RDF_CLASS ) ) PersistedProtectedDocument.Factory.decorate( persistedDocument );
-		if( persistedDocument.hasType( ACL.RDF_CLASS ) ) PersistedACL.Factory.decorate( persistedDocument );
+		if( persistedDocument.hasType( Auth.ACL.RDF_CLASS ) ) Auth.PersistedACL.Factory.decorate( persistedDocument );
+		if( persistedDocument.hasType( Auth.Agent.RDF_CLASS ) ) Auth.PersistedAgent.Factory.decorate( persistedDocument );
 		if( persistedDocument.hasType( AppRole.RDF_CLASS ) ) PersistedAppRole.Factory.decorate( persistedDocument, this.context.auth ? this.context.auth.roles : null );
 
 		return persistedDocument;

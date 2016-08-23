@@ -52,6 +52,14 @@ var Class = (function () {
             return _this.context.documents.createChild(appsContainerURI, appDocument, slug);
         });
     };
+    Class.prototype.delete = function (appURI, requestOptions) {
+        var _this = this;
+        if (!appURI)
+            return Promise.reject(new Errors.IllegalArgumentError("The application's URI must be defined."));
+        return this.resolveURI(appURI).then(function (uri) {
+            return _this.context.documents.delete(uri, requestOptions);
+        });
+    };
     Class.prototype.resolveURI = function (appURI) {
         var _this = this;
         return new Promise(function (resolve) {
