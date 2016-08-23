@@ -71,7 +71,7 @@ class Carbon extends AbstractContext {
 		super();
 		this.auth = new Platform.Auth.Class( this );
 
-		settings = settings ? settings : Settings.defaultSettings;
+		settings = settings ? Utils.extend( {}, Settings.defaultSettings, settings ) : Settings.defaultSettings;
 
 		Utils.M.extend( this.settings, Utils.M.from( settings ) );
 
