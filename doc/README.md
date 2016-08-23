@@ -1899,6 +1899,18 @@ Class( context:Carbon.Context.Class )
 
 #### <a name="Carbon-Auth-Agents-Class-Methods" />Methods
 
+##### delete
+```typescript 
+delete( agentURI:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.Auth.PersistedAgent.Class, Carbon.HTTP.Response.Class ]>
+```
+
+Deletes the agent specified.
+
+*Parameters*
+
+- agentURI: The URI of the agent to be deleted.
+- requestOptions
+
 ##### get
 ```typescript 
 get( agentURI:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.Auth.PersistedAgent.Class, Carbon.HTTP.Response.Class ]>

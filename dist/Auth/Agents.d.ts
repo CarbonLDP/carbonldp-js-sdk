@@ -9,6 +9,7 @@ export declare abstract class Class {
     constructor(context: Context);
     register(agentDocument: Agent.Class, slug?: string): Promise<[PersistedDocument.Class, Response.Class]>;
     get(agentURI: string, requestOptions?: HTTP.Request.Options): Promise<[PersistedAgent.Class, HTTP.Response.Class]>;
+    delete(agentURI: string, requestOptions?: HTTP.Request.Options): Promise<HTTP.Response.Class>;
     private resolveURI(agentURI);
     private getContainerURI();
 }
