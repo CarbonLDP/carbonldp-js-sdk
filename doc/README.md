@@ -6,6 +6,8 @@
 		- [Constructor](#Carbon-Constructor)
 		- [Properties](#Carbon-Properties)
 		- [Methods](#Carbon-Methods)
+- [Module Carbon.App.PersistedAgent](#Carbon-App-PersistedAgent)
+- [Module Carbon.Platform.PersistedAgent](#Carbon-Platform-PersistedAgent)
 - [Module Carbon/APIDescription](#Carbon-APIDescription)
 	- [Properties](#Carbon-APIDescription-Properties)
 - [Module Carbon/AbstractContext](#Carbon-AbstractContext)
@@ -22,6 +24,10 @@
 	- [Properties](#Carbon-App-Properties)
 	- [Class Carbon.App.Factory](#Carbon-App-Factory)
 		- [Methods](#Carbon-App-Factory-Methods)
+- [Module Carbon/App/Agents](#Carbon-App-Agents)
+	- [Class Carbon.App.Agents.Class](#Carbon-App-Agents-Class)
+		- [Constructor](#Carbon-App-Agents-Class-Constructor)
+		- [Methods](#Carbon-App-Agents-Class-Methods)
 - [Module Carbon/App/Auth](#Carbon-App-Auth)
 	- [Class Carbon.App.Auth.Class](#Carbon-App-Auth-Class)
 		- [Constructor](#Carbon-App-Auth-Class-Constructor)
@@ -445,6 +451,10 @@
 		- [Methods](#Carbon-PersistedResource-Factory-Methods)
 		- [Decorated Object](#Carbon-PersistedResource-Factory-Decorated-Object)
 			- [Methods](#Carbon-PersistedResource-Factory-Decorated-Object-Methods)
+- [Module Carbon/Platform/Agents](#Carbon-Platform-Agents)
+	- [Class Carbon.Platform.Agents.Class](#Carbon-Platform-Agents-Class)
+		- [Constructor](#Carbon-Platform-Agents-Class-Constructor)
+		- [Methods](#Carbon-Platform-Agents-Class-Methods)
 - [Module Carbon/Platform/Auth](#Carbon-Platform-Auth)
 	- [Class Carbon.Platform.Auth.Class](#Carbon-Platform-Auth-Class)
 		- [Constructor](#Carbon-Platform-Auth-Class-Constructor)
@@ -661,6 +671,24 @@ Resolve the URI provided in the scope of the CarbonLDP Platform.
 
 
 
+## <a name="Carbon-App-PersistedAgent" />Module Carbon.App.PersistedAgent
+
+
+
+
+
+
+
+
+## <a name="Carbon-Platform-PersistedAgent" />Module Carbon.Platform.PersistedAgent
+
+
+
+
+
+
+
+
 ## <a name="Carbon-APIDescription" />Module Carbon/APIDescription
 
 
@@ -861,6 +889,51 @@ Returns true if the object provided is considered a `Carbon.App.Class` object
 
 - object
 
+
+
+
+## <a name="Carbon-App-Agents" />Module Carbon/App/Agents
+
+
+**Default export:** [Carbon.App.Agents.Class](#Carbon-App-Agents-Class)
+
+
+
+
+
+
+### <a name="Carbon-App-Agents-Class" />Class Carbon.App.Agents.Class
+
+**Extends:** [Carbon.Auth.Agents.Class](#Carbon-Auth-Agents-Class)
+
+> Class for manage Agents of an application context.
+
+
+#### <a name="Carbon-App-Agents-Class-Constructor" />Constructor
+```typescript 
+Class( context:Carbon.App.Context.Class )
+```
+
+
+*Parameters*
+
+- context: The application context where to manage its Agents.
+
+
+
+#### <a name="Carbon-App-Agents-Class-Methods" />Methods
+
+##### get
+```typescript 
+get( agentURI:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.App.PersistedAgent.Class, Carbon.HTTP.Response.Class ]>
+```
+
+Retrieves the application agent specified from the current application context.
+
+*Parameters*
+
+- agentURI: The URI of the application agent to retrieve.
+- requestOptions
 
 
 
@@ -1811,14 +1884,18 @@ Returns true if the object provided is considered a `Carbon.Auth.Agent.Class` ob
 ### <a name="Carbon-Auth-Agents-Class" />Class Carbon.Auth.Agents.Class
 
 
-> Class for manage Agents of a determined context.
+> Abstract class for manage Agents of a determined context.
 
 
 #### <a name="Carbon-Auth-Agents-Class-Constructor" />Constructor
 ```typescript 
-Class()
+Class( context:Carbon.Context.Class )
 ```
 
+
+*Parameters*
+
+- context: The context where to manage its Agents.
 
 
 
@@ -7094,7 +7171,15 @@ static parentRole:string
 ```
 
 ```typescript 
+static password:string 
+```
+
+```typescript 
 static permission:string 
+```
+
+```typescript 
+static platformRole:string 
 ```
 
 ```typescript 
@@ -8695,6 +8780,51 @@ isDirty()
 ```
 
 Returns true if the resource presents differences from its snapshot.
+
+
+## <a name="Carbon-Platform-Agents" />Module Carbon/Platform/Agents
+
+
+**Default export:** [Carbon.Platform.Agents.Class](#Carbon-Platform-Agents-Class)
+
+
+
+
+
+
+### <a name="Carbon-Platform-Agents-Class" />Class Carbon.Platform.Agents.Class
+
+**Extends:** [Carbon.Auth.Agents.Class](#Carbon-Auth-Agents-Class)
+
+> Class for manage Agents of an platform context.
+
+
+#### <a name="Carbon-Platform-Agents-Class-Constructor" />Constructor
+```typescript 
+Class( context:Carbon )
+```
+
+
+*Parameters*
+
+- context: The platform context where to manage its Agents.
+
+
+
+#### <a name="Carbon-Platform-Agents-Class-Methods" />Methods
+
+##### get
+```typescript 
+get( agentURI:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.Platform.PersistedAgent.Class, Carbon.HTTP.Response.Class ]>
+```
+
+Retrieves the platform agent specified from the current platform context.
+
+*Parameters*
+
+- agentURI: The URI of the platform agent to retrieve.
+- requestOptions
+
 
 
 ## <a name="Carbon-Platform-Auth" />Module Carbon/Platform/Auth

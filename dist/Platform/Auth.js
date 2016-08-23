@@ -4,12 +4,14 @@ var __extends = (this && this.__extends) || function (d, b) {
     function __() { this.constructor = d; }
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
+var Agents = require("./Agents");
 var Auth = require("./../Auth");
 var Errors = require("./../Errors");
 var Class = (function (_super) {
     __extends(Class, _super);
     function Class(platformContext) {
         _super.call(this, platformContext);
+        this.agents = new Agents.Class(platformContext);
     }
     Object.defineProperty(Class.prototype, "roles", {
         get: function () { throw new Errors.NotImplementedError("Currently there is no support for Platform Roles"); },

@@ -265,11 +265,11 @@ describe( module( "Carbon/Auth" ), ():void => {
 				}
 			}
 			context = new MockedContext();
-
-			let auth:Auth.Class = new Auth.Class( context );
+			class MockedAuth extends Auth.Class {}
+			let auth:Auth.Class = new MockedAuth( context );
 
 			expect( auth.agents ).toBeDefined();
-			expect( auth.agents instanceof Agents.Class ).toBe( true );
+			expect( auth.agents ).toBeNull();
 		} );
 
 		it( hasProperty(
@@ -423,7 +423,6 @@ describe( module( "Carbon/Auth" ), ():void => {
 				}
 			}
 			context = new MockedContext();
-
 			class MockedAuth extends Auth.Class {}
 			let auth:Auth.Class = new MockedAuth( context );
 

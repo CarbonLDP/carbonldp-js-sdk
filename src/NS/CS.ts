@@ -55,6 +55,8 @@ class Predicate {
 
 	static get permission():string { return namespace + "permission"; }
 
+	static get platformRole():string { return namespace + "platformRole"; }
+
 	static get rootContainer():string { return namespace + "rootContainer"; }
 
 	static get subject():string { return namespace + "subject"; }

@@ -31,7 +31,7 @@ describe( module( "Carbon/Auth/Agents" ), ():void => {
 
 	describe( clazz(
 		"Carbon.Auth.Agents.Class",
-		"Class for manage Agents of a determined context."
+		"Abstract class for manage Agents of a determined context."
 	), ():void => {
 
 		it( isDefined(), ():void => {
@@ -39,7 +39,9 @@ describe( module( "Carbon/Auth/Agents" ), ():void => {
 			expect( Utils.isFunction( Agents.Class ) ).toBe( true );
 		} );
 
-		it( hasConstructor(), ():void => {
+		it( hasConstructor( [
+			{name: "context", type: "Carbon.Context.Class", description: "The context where to manage its Agents."},
+		] ), ():void => {
 			let agents:Agents.Class;
 			let context:AbstractContext;
 
@@ -49,7 +51,9 @@ describe( module( "Carbon/Auth/Agents" ), ():void => {
 				}
 			}
 			context = new MockedContext();
-			agents = new Agents.Class( context );
+
+			class MockedAgents extends Agents.Class {}
+			agents = new MockedAgents( context );
 
 			expect( agents ).toBeTruthy();
 			expect( agents instanceof Agents.Class ).toBe( true );
@@ -75,7 +79,8 @@ describe( module( "Carbon/Auth/Agents" ), ():void => {
 				}
 			}
 			context = new MockedContext();
-			agents = new Agents.Class( context );
+			class MockedAgents extends Agents.Class {}
+			agents = new MockedAgents( context );
 
 			expect( agents.register ).toBeDefined();
 			expect( Utils.isFunction( agents.register ) ).toBe( true );
@@ -115,6 +120,7 @@ describe( module( "Carbon/Auth/Agents" ), ():void => {
 					expect( spy ).not.toHaveBeenCalledWith( "http://example.com/container/agents/", agent );
 					done();
 				} );
+
 			} );
 
 		} );
@@ -137,7 +143,9 @@ describe( module( "Carbon/Auth/Agents" ), ():void => {
 				}
 			}
 			context = new MockedContext();
-			agents = new Agents.Class( context );
+
+			class MockedAgents extends Agents.Class {}
+			agents = new MockedAgents( context );
 
 			expect( agents.get ).toBeDefined();
 			expect( Utils.isFunction( agents.get ) ).toBe( true );

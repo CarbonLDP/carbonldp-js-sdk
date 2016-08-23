@@ -1,8 +1,10 @@
+import * as Agents from "./Agents";
 import Carbon from "./../Carbon";
 import * as Auth from "./../Auth";
 import * as Errors from "./../Errors";
 
 export class Class extends Auth.Class {
+	public agents:Agents.Class;
 
 	set roles( role:Auth.Roles.Class ) {}
 
@@ -10,6 +12,7 @@ export class Class extends Auth.Class {
 
 	constructor( platformContext:Carbon ) {
 		super( platformContext );
+		this.agents = new Agents.Class( platformContext );
 	}
 
 }
