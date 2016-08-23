@@ -4,12 +4,11 @@ var HTTP = require("./HTTP");
 var RDF = require("./RDF");
 var Utils = require("./Utils");
 var AccessPoint = require("./AccessPoint");
-var ACL = require("./Auth/ACL");
 var AppRole = require("./App/Role");
+var Auth = require("./Auth");
 var Document = require("./Document");
 var FreeResources = require("./FreeResources");
 var JSONLD = require("./JSONLD");
-var PersistedACL = require("./Auth/PersistedACL");
 var PersistedAppRole = require("./App/PersistedRole");
 var PersistedDocument = require("./PersistedDocument");
 var PersistedProtectedDocument = require("./PersistedProtectedDocument");
@@ -805,8 +804,10 @@ var Documents = (function () {
         persistedDocument._resolved = true;
         if (persistedDocument.hasType(ProtectedDocument.RDF_CLASS))
             PersistedProtectedDocument.Factory.decorate(persistedDocument);
-        if (persistedDocument.hasType(ACL.RDF_CLASS))
-            PersistedACL.Factory.decorate(persistedDocument);
+        if (persistedDocument.hasType(Auth.ACL.RDF_CLASS))
+            Auth.PersistedACL.Factory.decorate(persistedDocument);
+        if (persistedDocument.hasType(Auth.Agent.RDF_CLASS))
+            Auth.PersistedAgent.Factory.decorate(persistedDocument);
         if (persistedDocument.hasType(AppRole.RDF_CLASS))
             PersistedAppRole.Factory.decorate(persistedDocument, this.context.auth ? this.context.auth.roles : null);
         return persistedDocument;

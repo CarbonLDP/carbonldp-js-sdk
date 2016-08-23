@@ -133,20 +133,20 @@ gulp.task( "bundle-sfx", ( done ) => {
 		"mangle": false,
 		"lowResSourceMaps": false,
 		"removeComments": true,
-	}).then( () => {
+	} ).then( () => {
 		done();
-	}).catch( ( error ) => {
+	} ).catch( ( error ) => {
 		util.log( error );
 		done( error );
-	});
-});
+	} );
+} );
 
 gulp.task( "prepare-npm-package", ( done ) => {
 	runSequence(
 		[ "prepare-npm-package:copy-docs", "prepare-npm-package:copy-package-json" ],
 		done
 	);
-});
+} );
 
 gulp.task( "prepare-npm-package:copy-docs", () => {
 	return gulp.src( [
@@ -154,11 +154,11 @@ gulp.task( "prepare-npm-package:copy-docs", () => {
 		"CHANGELOG.md",
 		"LICENSE",
 	] ).pipe( gulp.dest( config.dist.tsOutput ) );
-});
+} );
 
 gulp.task( "prepare-npm-package:copy-package-json", () => {
 	return gulp.src( "package.json" )
-		.pipe( jeditor( (json) => {
+		.pipe( jeditor( ( json ) => {
 			delete json.private;
 			delete json.scripts;
 			delete json.devDependencies;
@@ -174,7 +174,7 @@ gulp.task( "prepare-npm-package:copy-package-json", () => {
 		} ) )
 		.pipe( gulp.dest( config.dist.tsOutput ) );
 	;
-});
+} );
 
 gulp.task( "clean:dist", ( done ) => {
 	return del( [ config.dist.all, config.dist.doc ], done );
@@ -186,6 +186,14 @@ gulp.task( "build", ( done ) => {
 	runSequence(
 		"clean:dist",
 		[ "compile-library", "generate-doc", "bundle-sfx", "prepare-npm-package" ],
+		"finish",
 		done
 	);
+} );
+
+// "build" task isn't exiting after finishing everything it needs to do
+// For now this task will finish the process
+// TODO: Find the real culprit
+gulp.task( "finish", () => {
+	process.exit( 0 );
 } );
