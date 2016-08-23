@@ -1,7 +1,6 @@
 "use strict";
 var NS = require("./NS");
 var PersistedDocument = require("./PersistedDocument");
-var Resource = require("./Resource");
 var Utils = require("./Utils");
 exports.RDF_CLASS = NS.C.Class.RDFRepresentation;
 exports.SCHEMA = {
@@ -24,7 +23,7 @@ var Factory = (function () {
     Factory.is = function (object) {
         return Factory.hasClassProperties(object)
             && PersistedDocument.Factory.is(object)
-            && Resource.Util.hasType(object, exports.RDF_CLASS);
+            && object.hasType(exports.RDF_CLASS);
     };
     return Factory;
 }());

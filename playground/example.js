@@ -5,7 +5,7 @@
 			"use strict";
 
 			let carbon = new Carbon();
-			carbon.setSetting( "domain", "local.carbonldp.com" );
+			carbon.setSetting( "domain", "carbonldp.base22.io" );
 
 			carbon.extendObjectSchema( {
 				"acl": "http://www.w3.org/ns/auth/acl#",
@@ -68,18 +68,10 @@
 				return carbon.apps.getContext( "test-app/" );
 			} ).then( ( _appContext ) => {
 				appContext = _appContext;
-				return appContext.documents.get( "5080328326853933297/" );
-			} ).then( ( [ _resource, response ] ) => {
-				resource = _resource;
-				debugger;
-				removeFragments( resource );
-				fragment = resource.myFragment = resource.createFragment( {
-					string: "A fragment",
-				} );
-				return saveAndRefresh( resource );
-			} ).then( ( [ _resource, responses ] ) => {
-				expect( _resource ).toBe( resource );
-				expect( fragment ).toBe( _resource.myFragment );
+				return appContext.documents.getChildren( "/" );
+			} ).then( ( [ _resources, response ] ) => {
+				expect( Carbon.Utils.isArray( _resources ) ).toBe( true );
+				console.log( _resources );
 				done();
 			} ).catch( ( error ) => {
 				done.fail( error );

@@ -4,11 +4,12 @@ var HTTP = require("./HTTP");
 var RDF = require("./RDF");
 var Utils = require("./Utils");
 var AccessPoint = require("./AccessPoint");
-var ACL = require("./Auth/ACL");
+var AppRole = require("./App/Role");
+var Auth = require("./Auth");
 var Document = require("./Document");
 var FreeResources = require("./FreeResources");
-var JSONLDConverter = require("./JSONLDConverter");
-var PersistedACL = require("./Auth/PersistedACL");
+var JSONLD = require("./JSONLD");
+var PersistedAppRole = require("./App/PersistedRole");
 var PersistedDocument = require("./PersistedDocument");
 var PersistedProtectedDocument = require("./PersistedProtectedDocument");
 var ProtectedDocument = require("./ProtectedDocument");
@@ -27,10 +28,10 @@ var Documents = (function () {
         this.documentsBeingResolved = new Map();
         if (!!this.context && !!this.context.parentContext) {
             var contextJSONLDConverter = this.context.parentContext.documents.jsonldConverter;
-            this._jsonldConverter = new JSONLDConverter.Class(contextJSONLDConverter.literalSerializers);
+            this._jsonldConverter = new JSONLD.Converter.Class(contextJSONLDConverter.literalSerializers);
         }
         else {
-            this._jsonldConverter = new JSONLDConverter.Class();
+            this._jsonldConverter = new JSONLD.Converter.Class();
         }
     }
     Object.defineProperty(Documents.prototype, "jsonldConverter", {
@@ -44,7 +45,7 @@ var Documents = (function () {
             return false;
         if (!!this.context) {
             if (RDF.URI.Util.isPrefixed(id))
-                id = ObjectSchema.Digester.resolvePrefixedURI(new RDF.URI.Class(id), this.context.getObjectSchema()).stringValue;
+                id = ObjectSchema.Digester.resolvePrefixedURI(id, this.context.getObjectSchema());
             var baseURI = this.context.getBaseURI();
             if (RDF.URI.Util.isRelative(id))
                 return true;
@@ -100,6 +101,14 @@ var Documents = (function () {
             var eTag = HTTP.Response.Util.getETag(response);
             if (eTag === null)
                 throw new HTTP.Errors.BadResponseError("The response doesn't contain an ETag", response);
+            var locationHeader = response.getHeader("Content-Location");
+            if (!!locationHeader) {
+                if (locationHeader.values.length !== 1)
+                    throw new HTTP.Errors.BadResponseError("The response contains more than one Content-Location header.", response);
+                uri = locationHeader.toString();
+                if (!uri)
+                    throw new HTTP.Errors.BadResponseError("The response doesn't contain a valid 'Content-Location' header.", response);
+            }
             var rdfDocument = _this.getRDFDocument(uri, rdfDocuments, response);
             if (rdfDocument === null)
                 throw new HTTP.Errors.BadResponseError("No document was returned.", response);
@@ -211,7 +220,7 @@ var Documents = (function () {
         this.setDefaultRequestOptions(requestOptions, NS.LDP.Class.Container);
         var containerURI = parentURI;
         if (!!retrievalPreferences)
-            parentURI += RetrievalPreferences.Util.stringifyRetrievalPreferences(retrievalPreferences);
+            parentURI += RetrievalPreferences.Util.stringifyRetrievalPreferences(retrievalPreferences, this.getGeneralSchema());
         var containerRetrievalPreferences = {
             include: [
                 NS.LDP.Class.PreferContainment,
@@ -224,7 +233,7 @@ var Documents = (function () {
             ],
         };
         HTTP.Request.Util.setContainerRetrievalPreferences(containerRetrievalPreferences, requestOptions);
-        return HTTP.Request.Service.get(parentURI, requestOptions, new HTTP.JSONLDParser.Class()).then(function (_a) {
+        return HTTP.Request.Service.get(parentURI, requestOptions, new JSONLD.Parser.Class()).then(function (_a) {
             var expandedResult = _a[0], response = _a[1];
             var freeNodes = RDF.Node.Util.getFreeNodes(expandedResult);
             var rdfDocuments = RDF.Document.Util.getDocuments(expandedResult).filter(function (document) { return document["@id"] !== containerURI; });
@@ -359,7 +368,7 @@ var Documents = (function () {
         this.setDefaultRequestOptions(requestOptions, NS.LDP.Class.Container);
         var containerURI = uri;
         if (!!retrievalPreferences)
-            uri += RetrievalPreferences.Util.stringifyRetrievalPreferences(retrievalPreferences);
+            uri += RetrievalPreferences.Util.stringifyRetrievalPreferences(retrievalPreferences, this.getGeneralSchema());
         var containerRetrievalPreferences = {
             include: [
                 NS.LDP.Class.PreferMinimalContainer,
@@ -378,7 +387,7 @@ var Documents = (function () {
             containerRetrievalPreferences.omit.push(NS.C.Class.NonReadableMembershipResourceTriples);
         }
         HTTP.Request.Util.setContainerRetrievalPreferences(containerRetrievalPreferences, requestOptions);
-        return HTTP.Request.Service.get(uri, requestOptions, new HTTP.JSONLDParser.Class()).then(function (_a) {
+        return HTTP.Request.Service.get(uri, requestOptions, new JSONLD.Parser.Class()).then(function (_a) {
             var expandedResult = _a[0], response = _a[1];
             var freeNodes = RDF.Node.Util.getFreeNodes(expandedResult);
             var rdfDocuments = RDF.Document.Util.getDocuments(expandedResult);
@@ -524,13 +533,17 @@ var Documents = (function () {
         });
     };
     Documents.prototype.getDownloadURL = function (documentURI, requestOptions) {
+        if (!this.context.auth)
+            Promise.reject(new Errors.IllegalStateError("This instance doesn't support Authenticated request."));
         return this.context.auth.getAuthenticatedURL(documentURI, requestOptions);
     };
     Documents.prototype.getGeneralSchema = function () {
-        var schemas = [];
-        if (!!this.context)
-            schemas.push(this.context.getObjectSchema());
-        return ObjectSchema.Digester.combineDigestedObjectSchemas(schemas);
+        if (!this.context)
+            return new ObjectSchema.DigestedObjectSchema();
+        var schema = ObjectSchema.Digester.combineDigestedObjectSchemas([this.context.getObjectSchema()]);
+        if (this.context.hasSetting("vocabulary"))
+            schema.vocab = this.context.resolve(this.context.getSetting("vocabulary"));
+        return schema;
     };
     Documents.prototype.getSchemaFor = function (object) {
         var schema = ("@id" in object) ?
@@ -541,42 +554,42 @@ var Documents = (function () {
     Documents.prototype.executeRawASKQuery = function (documentURI, askQuery, requestOptions) {
         if (requestOptions === void 0) { requestOptions = {}; }
         documentURI = this.getRequestURI(documentURI);
-        if (this.context && this.context.auth.isAuthenticated())
+        if (this.context && this.context.auth && this.context.auth.isAuthenticated())
             this.context.auth.addAuthentication(requestOptions);
         return SPARQL.Service.executeRawASKQuery(documentURI, askQuery, requestOptions);
     };
     Documents.prototype.executeASKQuery = function (documentURI, askQuery, requestOptions) {
         if (requestOptions === void 0) { requestOptions = {}; }
         documentURI = this.getRequestURI(documentURI);
-        if (this.context && this.context.auth.isAuthenticated())
+        if (this.context && this.context.auth && this.context.auth.isAuthenticated())
             this.context.auth.addAuthentication(requestOptions);
         return SPARQL.Service.executeASKQuery(documentURI, askQuery, requestOptions);
     };
     Documents.prototype.executeRawSELECTQuery = function (documentURI, selectQuery, requestOptions) {
         if (requestOptions === void 0) { requestOptions = {}; }
         documentURI = this.getRequestURI(documentURI);
-        if (this.context && this.context.auth.isAuthenticated())
+        if (this.context && this.context.auth && this.context.auth.isAuthenticated())
             this.context.auth.addAuthentication(requestOptions);
         return SPARQL.Service.executeRawSELECTQuery(documentURI, selectQuery, requestOptions);
     };
     Documents.prototype.executeSELECTQuery = function (documentURI, selectQuery, requestOptions) {
         if (requestOptions === void 0) { requestOptions = {}; }
         documentURI = this.getRequestURI(documentURI);
-        if (this.context && this.context.auth.isAuthenticated())
+        if (this.context && this.context.auth && this.context.auth.isAuthenticated())
             this.context.auth.addAuthentication(requestOptions);
         return SPARQL.Service.executeSELECTQuery(documentURI, selectQuery, this, requestOptions);
     };
     Documents.prototype.executeRawCONSTRUCTQuery = function (documentURI, constructQuery, requestOptions) {
         if (requestOptions === void 0) { requestOptions = {}; }
         documentURI = this.getRequestURI(documentURI);
-        if (this.context && this.context.auth.isAuthenticated())
+        if (this.context && this.context.auth && this.context.auth.isAuthenticated())
             this.context.auth.addAuthentication(requestOptions);
         return SPARQL.Service.executeRawCONSTRUCTQuery(documentURI, constructQuery, requestOptions);
     };
     Documents.prototype.executeRawDESCRIBEQuery = function (documentURI, describeQuery, requestOptions) {
         if (requestOptions === void 0) { requestOptions = {}; }
         documentURI = this.getRequestURI(documentURI);
-        if (this.context && this.context.auth.isAuthenticated())
+        if (this.context && this.context.auth && this.context.auth.isAuthenticated())
             this.context.auth.addAuthentication(requestOptions);
         return SPARQL.Service.executeRawDESCRIBEQuery(documentURI, describeQuery, requestOptions);
     };
@@ -587,7 +600,7 @@ var Documents = (function () {
                 throw new Errors.IllegalArgumentError("This Documents instance doesn't support relative URIs.");
             documentURI = this.context.resolve(documentURI);
         }
-        if (this.context && this.context.auth.isAuthenticated())
+        if (this.context && this.context.auth && this.context.auth.isAuthenticated())
             this.context.auth.addAuthentication(requestOptions);
         return SPARQL.Service.executeUPDATE(documentURI, update, requestOptions);
     };
@@ -630,7 +643,7 @@ var Documents = (function () {
             throw new Errors.IllegalArgumentError("BNodes cannot be fetched directly.");
         if (!!this.context) {
             if (RDF.URI.Util.isPrefixed(uri))
-                uri = ObjectSchema.Digester.resolvePrefixedURI(new RDF.URI.Class(uri), this.getGeneralSchema()).stringValue;
+                uri = ObjectSchema.Digester.resolvePrefixedURI(uri, this.getGeneralSchema());
             if (!RDF.URI.Util.isRelative(uri)) {
                 var baseURI = this.context.getBaseURI();
                 if (!RDF.URI.Util.isBaseOf(baseURI, uri))
@@ -742,14 +755,14 @@ var Documents = (function () {
         else if (RDF.URI.Util.isPrefixed(uri)) {
             if (!this.context)
                 throw new Errors.IllegalArgumentError("This Documents instance doesn't support prefixed URIs.");
-            uri = ObjectSchema.Digester.resolvePrefixedURI(new RDF.URI.Class(uri), this.context.getObjectSchema()).stringValue;
+            uri = ObjectSchema.Digester.resolvePrefixedURI(uri, this.context.getObjectSchema());
             if (RDF.URI.Util.isPrefixed(uri))
                 throw new Errors.IllegalArgumentError("The prefixed URI \"" + uri + "\" could not be resolved.");
         }
         return uri;
     };
     Documents.prototype.setDefaultRequestOptions = function (requestOptions, interactionModel) {
-        if (this.context && this.context.auth.isAuthenticated())
+        if (this.context && this.context.auth && this.context.auth.isAuthenticated())
             this.context.auth.addAuthentication(requestOptions);
         HTTP.Request.Util.setAcceptHeader("application/ld+json", requestOptions);
         HTTP.Request.Util.setPreferredInteractionModel(interactionModel, requestOptions);
@@ -789,10 +802,14 @@ var Documents = (function () {
         fragments.forEach(function (fragment) { return fragment._syncSnapshot(); });
         persistedDocument._syncSavedFragments();
         persistedDocument._resolved = true;
-        if (Resource.Util.hasType(persistedDocument, ProtectedDocument.RDF_CLASS))
+        if (persistedDocument.hasType(ProtectedDocument.RDF_CLASS))
             PersistedProtectedDocument.Factory.decorate(persistedDocument);
-        if (Resource.Util.hasType(persistedDocument, ACL.RDF_CLASS))
-            PersistedACL.Factory.decorate(persistedDocument);
+        if (persistedDocument.hasType(Auth.ACL.RDF_CLASS))
+            Auth.PersistedACL.Factory.decorate(persistedDocument);
+        if (persistedDocument.hasType(Auth.Agent.RDF_CLASS))
+            Auth.PersistedAgent.Factory.decorate(persistedDocument);
+        if (persistedDocument.hasType(AppRole.RDF_CLASS))
+            PersistedAppRole.Factory.decorate(persistedDocument, this.context.auth ? this.context.auth.roles : null);
         return persistedDocument;
     };
     Documents.prototype.updatePersistedDocument = function (persistedDocument, documentResource, fragmentResources) {

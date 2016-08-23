@@ -2,7 +2,6 @@
 var Document = require("./../Document");
 var Errors = require("./../Errors");
 var NS = require("./../NS");
-var Resource = require("./../Resource");
 var Utils = require("./../Utils");
 exports.RDF_CLASS = NS.LDP.Class.DirectContainer;
 var Factory = (function () {
@@ -13,8 +12,8 @@ var Factory = (function () {
     };
     Factory.is = function (object) {
         return (Factory.hasClassProperties(object)
-            && Resource.Util.hasType(object, exports.RDF_CLASS)
-            && Document.Factory.is(object));
+            && Document.Factory.is(object)
+            && object.hasType(exports.RDF_CLASS));
     };
     Factory.create = function (membershipResource, hasMemberRelation, isMemberOfRelation) {
         return Factory.createFrom({}, membershipResource, hasMemberRelation, isMemberOfRelation);

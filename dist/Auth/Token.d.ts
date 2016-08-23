@@ -1,13 +1,13 @@
-import * as ObjectSchema from "./../ObjectSchema";
-import * as Resource from "./../Resource";
 import Credentials from "./Credentials";
-import * as PersistedDocument from "./../PersistedDocument";
+import * as ObjectSchema from "./../ObjectSchema";
+import * as PersistedAgent from "./PersistedAgent";
+import * as Resource from "./../Resource";
 export declare const RDF_CLASS: string;
 export declare const SCHEMA: ObjectSchema.Class;
 export interface Class extends Resource.Class, Credentials {
     key: string;
     expirationTime: Date;
-    agent: PersistedDocument.Class;
+    agent: PersistedAgent.Class;
 }
 export declare class Factory {
     static is(value: any): boolean;

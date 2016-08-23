@@ -14,7 +14,7 @@ import {
 } from "./../test/JasmineExtender";
 
 import AbstractContext from "./../AbstractContext";
-import * as Agent from "./../Agent";
+import * as PersistedAgent from "./PersistedAgent";
 import * as Errors from "./../Errors";
 import * as HTTP from "./../HTTP";
 import * as Utils from "./../Utils";
@@ -211,8 +211,7 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 						expect( token ).not.toBeNull();
 						expect( Token.Factory.is( token ) ).toEqual( true );
 
-						// TODO: Change to `PersistedAgent`
-						expect( Agent.Factory.is( token.agent ) ).toBe( true );
+						expect( PersistedAgent.Factory.is( token.agent ) ).toBe( true );
 					} ) );
 				})();
 

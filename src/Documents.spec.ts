@@ -15,11 +15,12 @@ import {
 
 import AbstractContext from "./AbstractContext";
 import * as AccessPoint from "./AccessPoint";
+import * as Auth from "./Auth";
 import * as Document from "./Document";
 import Documents from "./Documents";
 import * as Errors from "./Errors";
 import * as Fragment from "./Fragment";
-import * as JSONLDConverter from "./JSONLDConverter";
+import * as JSONLD from "./JSONLD";
 import * as HTTP from "./HTTP";
 import * as NS from "./NS";
 import * as ObjectSchema from "./ObjectSchema";
@@ -72,8 +73,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 		it( hasProperty(
 			INSTANCE,
 			"jsonldConverter",
-			"Carbon.JSONLDConverter.Class",
-			"Instance of `Carbon.JSONLDConverter.Class` that is used to compact retrieved documents and to expand documents to persist. This property is not writable."
+			"Carbon.JSONLD.Converter.Class",
+			"Instance of `Carbon.JSONLD.Converter.Class` that is used to compact retrieved documents and to expand documents to persist. This property is not writable."
 		), ():void => {
 			class MockedContext extends AbstractContext {
 				resolve( uri:string ):string {
@@ -85,7 +86,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 			let documents:Documents = context.documents;
 
 			expect( documents.jsonldConverter ).toBeDefined();
-			expect( documents.jsonldConverter instanceof JSONLDConverter.Class ).toBe( true );
+			expect( documents.jsonldConverter instanceof JSONLD.Converter.Class ).toBe( true );
 		} );
 
 		describe( method(
@@ -3726,7 +3727,13 @@ describe( module( "Carbon/Documents" ), ():void => {
 			],
 			{type: "Promise<Carbon.HTTP.Response.Class>"}
 		), ( done:{ ():void, fail:() => void } ):void => {
+			class MockedAuth extends Auth.Class {}
 			class MockedContext extends AbstractContext {
+				constructor() {
+					super();
+					this.auth = new MockedAuth( this );
+				}
+
 				resolve( uri:string ):string {
 					return uri;
 				}

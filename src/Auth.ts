@@ -1,10 +1,15 @@
 import * as ACE from "./Auth/ACE";
 import * as ACL from "./Auth/ACL";
+import * as Agent from "./Auth/Agent";
+import * as Agents from "./Auth/Agents";
 import AuthenticationToken from "./Auth/AuthenticationToken";
 import Authenticator from "./Auth/Authenticator";
 import BasicAuthenticator from "./Auth/BasicAuthenticator";
 import * as PersistedACE from "./Auth/PersistedACE";
 import * as PersistedACL from "./Auth/PersistedACL";
+import * as PersistedAgent from "./Auth/PersistedAgent";
+import * as Role from "./Auth/Role";
+import * as Roles from "./Auth/Roles";
 import TokenAuthenticator from "./Auth/TokenAuthenticator";
 import * as Ticket from "./Auth/Ticket";
 import * as Token from "./Auth/Token";
@@ -13,10 +18,10 @@ import UsernameAndPasswordCredentials from "./Auth/UsernameAndPasswordCredential
 import Credentials from "./Auth/Credentials";
 
 import Context from "./Context";
-import {DigestedObjectSchema} from "./ObjectSchema";
+import * as ObjectSchema from "./ObjectSchema";
 import * as Errors from "./Errors";
 import * as FreeResources from "./FreeResources";
-import JSONLDConverter from "./JSONLDConverter";
+import * as JSONLD from "./JSONLD";
 import * as HTTP from "./HTTP";
 import * as NS from "./NS";
 import * as PersistedDocument from "./PersistedDocument";
@@ -27,11 +32,16 @@ import * as Utils from "./Utils";
 export {
 	ACE,
 	ACL,
+	Agent,
+	Agents,
 	AuthenticationToken,
 	Authenticator,
 	BasicAuthenticator,
 	PersistedACE,
 	PersistedACL,
+	PersistedAgent,
+	Role,
+	Roles,
 	Ticket,
 	Token,
 	TokenAuthenticator,
@@ -44,16 +54,18 @@ export enum Method {
 }
 
 export class Class {
-	// TODO: Change to `PersistedAgent.Class`
-	protected _authenticatedAgent:PersistedDocument.Class;
+	// TODO: Make the agents property an abstract property.
+	public agents:Agents.Class;
+	public roles:Roles.Class;
+
+	protected _authenticatedAgent:PersistedAgent.Class;
 
 	private context:Context;
-
 	private method:Method;
 	private authenticators:Array<Authenticator<AuthenticationToken>>;
 	private authenticator:Authenticator<AuthenticationToken>;
 
-	public get authenticatedAgent():PersistedDocument.Class {
+	public get authenticatedAgent():PersistedAgent.Class {
 		if( ! this._authenticatedAgent ) {
 			if( this.context.parentContext && this.context.parentContext.auth ) return this.context.parentContext.auth.authenticatedAgent;
 			return null;
@@ -62,6 +74,9 @@ export class Class {
 	}
 
 	constructor( context:Context ) {
+		this.roles = null;
+		this.agents = null;
+
 		this.context = context;
 
 		this.authenticators = [];
@@ -72,11 +87,11 @@ export class Class {
 	isAuthenticated( askParent:boolean = true ):boolean {
 		return (
 			( this.authenticator && this.authenticator.isAuthenticated() ) ||
-			( askParent && ! ! this.context.parentContext && this.context.parentContext.auth.isAuthenticated() )
+			( askParent && ! ! this.context.parentContext && ! ! this.context.parentContext.auth && this.context.parentContext.auth.isAuthenticated() )
 		);
 	}
 
-	authenticate( username:string, password:string ):Promise<Credentials> {
+	authenticate( username:string, password:string ):Promise<Token.Class> {
 		return this.authenticateUsing( "TOKEN", username, password );
 	}
 
@@ -103,7 +118,7 @@ export class Class {
 	addAuthentication( requestOptions:HTTP.Request.Options ):void {
 		if( this.isAuthenticated( false ) ) {
 			this.authenticator.addAuthentication( requestOptions );
-		} else if( ! ! this.context.parentContext ) {
+		} else if( ! ! this.context.parentContext && ! ! this.context.parentContext.auth ) {
 			this.context.parentContext.auth.addAuthentication( requestOptions );
 		} else {
 			console.warn( "There is no authentication to add to the request." );
@@ -130,7 +145,7 @@ export class Class {
 		HTTP.Request.Util.setContentTypeHeader( "application/ld+json", requestOptions );
 		HTTP.Request.Util.setPreferredInteractionModel( NS.LDP.Class.RDFSource, requestOptions );
 
-		return HTTP.Request.Service.post( containerURI, freeResources.toJSON(), requestOptions, new HTTP.JSONLDParser.Class() ).then( ( [ expandedResult, response ]:[ any, HTTP.Response.Class ] ) => {
+		return HTTP.Request.Service.post( containerURI, freeResources.toJSON(), requestOptions, new JSONLD.Parser.Class() ).then( ( [ expandedResult, response ]:[ any, HTTP.Response.Class ] ) => {
 			let freeNodes:RDF.Node.Class[] = RDF.Node.Util.getFreeNodes( expandedResult );
 
 			let ticketNodes:RDF.Node.Class[] = freeNodes.filter( freeNode => RDF.Node.Util.hasType( freeNode, Ticket.RDF_CLASS ) );
@@ -141,7 +156,7 @@ export class Class {
 			let expandedTicket:RDF.Node.Class = ticketNodes[ 0 ];
 			let ticket:Ticket.Class = <any> Resource.Factory.create();
 
-			let digestedSchema:DigestedObjectSchema = this.context.documents.getSchemaFor( expandedTicket );
+			let digestedSchema:ObjectSchema.DigestedObjectSchema = this.context.documents.getSchemaFor( expandedTicket );
 
 			this.context.documents.jsonldConverter.compact( expandedTicket, ticket, digestedSchema, this.context.documents );
 
@@ -171,7 +186,7 @@ export class Class {
 		return authenticator.authenticate( authenticationToken ).then( ( _credentials:UsernameAndPasswordCredentials ) => {
 			credentials = _credentials;
 			return this.getAuthenticatedAgent( authenticator );
-		} ).then( ( persistedAgent:PersistedDocument.Class ) => {
+		} ).then( ( persistedAgent:PersistedAgent.Class ) => {
 			this._authenticatedAgent = persistedAgent;
 			this.authenticator = authenticator;
 			return credentials;
@@ -197,11 +212,10 @@ export class Class {
 		return authenticator.authenticate( ( authenticationToken ) ? authenticationToken : <any> credentials ).then( ( _credentials:Token.Class ) => {
 			credentials = _credentials;
 
-			// TODO: Use `PersistedAgent`
-			if( PersistedDocument.Factory.is( _credentials.agent ) ) return credentials.agent;
+			if( PersistedAgent.Factory.is( credentials.agent ) ) return credentials.agent;
 			return this.getAuthenticatedAgent( authenticator );
 
-		} ).then( ( persistedAgent:PersistedDocument.Class ) => {
+		} ).then( ( persistedAgent:PersistedAgent.Class ) => {
 			this._authenticatedAgent = persistedAgent;
 			credentials.agent = persistedAgent;
 
@@ -210,33 +224,13 @@ export class Class {
 		} );
 	}
 
-	private getAuthenticatedAgent( authenticator:Authenticator<any> ):Promise<PersistedDocument.Class> {
+	private getAuthenticatedAgent( authenticator:Authenticator<any> ):Promise<PersistedAgent.Class> {
 		let requestOptions:HTTP.Request.Options = {};
 		authenticator.addAuthentication( requestOptions );
-		HTTP.Request.Util.setAcceptHeader( "application/ld+json", requestOptions );
-		HTTP.Request.Util.setPreferredInteractionModel( NS.LDP.Class.RDFSource, requestOptions );
 
-		let uri:string = this.context.resolve( "agents/me/" );
-		return HTTP.Request.Service.get( uri, requestOptions, new RDF.Document.Parser() ).then( ( [ rdfDocuments, response ]:[ any, HTTP.Response.Class ] ) => {
-			let eTag:string = HTTP.Response.Util.getETag( response );
-			if( eTag === null ) throw new HTTP.Errors.BadResponseError( "The authenticated agent doesn't contain an ETag", response );
-
-			let locationHeader:HTTP.Header.Class = response.getHeader( "Content-Location" );
-			if( ! locationHeader || locationHeader.values.length < 1 ) throw new HTTP.Errors.BadResponseError( "The response is missing a Content-Location header.", response );
-			if( locationHeader.values.length !== 1 ) throw new HTTP.Errors.BadResponseError( "The response contains more than one Content-Location header.", response );
-
-			let agentURI:string = locationHeader.toString();
-			if( ! agentURI ) throw new HTTP.Errors.BadResponseError( `The response doesn't contain a 'Content-Location' header.`, response );
-
-			let agentsDocuments:RDF.Document.Class[] = RDF.Document.Util.getDocuments( rdfDocuments ).filter( rdfDocument => rdfDocument[ "@id" ] === agentURI );
-			if( agentsDocuments.length === 0 ) throw new HTTP.Errors.BadResponseError( `The response doesn't contain a the '${ agentURI }' resource.`, response );
-			if( agentsDocuments.length > 1 ) throw new HTTP.Errors.BadResponseError( `The response contains more than one '${ agentURI }' resource.`, response );
-
-			let document:PersistedDocument.Class = this.context.documents._getPersistedDocument( agentsDocuments[ 0 ], response );
-			document._etag = eTag;
-
-			return document;
-		} );
+		return this.context.documents.get<PersistedAgent.Class>( "agents/me/", requestOptions ).then(
+			( [ agentDocument, response ]:[ PersistedAgent.Class, HTTP.Response.Class ] ) => agentDocument
+		);
 	}
 
 }

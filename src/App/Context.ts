@@ -1,11 +1,11 @@
 import AbstractContext from "./../AbstractContext";
-import Agents from "./../Agents";
+import Auth from "./Auth";
 import Context from "./../Context";
 import * as RDF from "./../RDF";
 import PersistedApp from "./../PersistedApp";
 
 export class Class extends AbstractContext {
-	public agents:Agents;
+	public auth:Auth;
 
 	public get app():PersistedApp { return this._app; };
 
@@ -14,10 +14,10 @@ export class Class extends AbstractContext {
 
 	constructor( parentContext:Context, app:PersistedApp ) {
 		super( parentContext );
+		this.auth = new Auth( this );
 		this._app = app;
 
 		this.base = this.getBase( this.app );
-		this.agents = new Agents( this );
 
 		// Reassign the rootContainer pointer because the previous one was created in the SDKContext and this one must be resolved by this context.
 		// TODO: Delete previous pointer from the SDKContext

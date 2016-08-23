@@ -20,8 +20,6 @@ import {
 
 import AbstractContext from "./AbstractContext";
 import * as AccessPoint from "./AccessPoint";
-import * as Agent from "./Agent";
-import * as Agents from "./Agents";
 import * as APIDescription from "./APIDescription";
 import * as App from "./App";
 import * as Apps from "./Apps";
@@ -31,7 +29,7 @@ import Documents from "./Documents";
 import * as Errors from "./Errors";
 import * as Fragment from "./Fragment";
 import * as HTTP from "./HTTP";
-import * as JSONLDConverter from "./JSONLDConverter";
+import * as JSONLD from "./JSONLD";
 import * as LDP from "./LDP";
 import * as NamedFragment from "./NamedFragment";
 import * as NS from "./NS";
@@ -41,6 +39,7 @@ import * as PersistedDocument from "./PersistedDocument";
 import * as PersistedFragment from "./PersistedFragment";
 import * as PersistedNamedFragment from "./PersistedNamedFragment";
 import * as PersistedResource from "./PersistedResource";
+import * as Platform from "./Platform";
 import * as Pointer from "./Pointer";
 import * as RDF from "./RDF";
 import * as Resource from "./Resource";
@@ -68,7 +67,7 @@ describe( module( "Carbon" ), ():void => {
 				"http.ssl": false,
 				"auth.method": Auth.Method.TOKEN,
 				"platform.container": "example-platform/",
-				"platform.apps.container": "example-apps/"
+				"platform.apps.container": "example-apps/",
 			} );
 
 			jasmine.Ajax.install();
@@ -113,29 +112,11 @@ describe( module( "Carbon" ), ():void => {
 
 		it( reexports(
 			STATIC,
-			"Agent",
-			"Carbon/Agent"
-		), ():void => {
-			expect( Carbon.Agent ).toBeDefined();
-			expect( Carbon.Agent ).toBe( Agent );
-		} );
-
-		it( reexports(
-			STATIC,
 			"AccessPoint",
 			"Carbon/AccessPoint"
 		), ():void => {
 			expect( Carbon.AccessPoint ).toBeDefined();
 			expect( Carbon.AccessPoint ).toBe( AccessPoint );
-		} );
-
-		it( reexports(
-			STATIC,
-			"Agents",
-			"Carbon/Agents"
-		), ():void => {
-			expect( Carbon.Agents ).toBeDefined();
-			expect( Carbon.Agents ).toBe( Agents );
 		} );
 
 		it( reexports(
@@ -212,11 +193,11 @@ describe( module( "Carbon" ), ():void => {
 
 		it( reexports(
 			STATIC,
-			"JSONLDConverter",
-			"Carbon/JSONLDConverter"
+			"JSONLD",
+			"Carbon/JSONLD"
 		), ():void => {
-			expect( Carbon.JSONLDConverter ).toBeDefined();
-			expect( Carbon.JSONLDConverter ).toBe( JSONLDConverter );
+			expect( Carbon.JSONLD ).toBeDefined();
+			expect( Carbon.JSONLD ).toBe( JSONLD );
 		} );
 
 		it( reexports(
@@ -302,6 +283,15 @@ describe( module( "Carbon" ), ():void => {
 
 		it( reexports(
 			STATIC,
+			"Platform",
+			"Carbon/Platform"
+		), ():void => {
+			expect( Carbon.Platform ).toBeDefined();
+			expect( Carbon.Platform ).toBe( Platform );
+		} );
+
+		it( reexports(
+			STATIC,
 			"Pointer",
 			"Carbon/Pointer"
 		), ():void => {
@@ -364,7 +354,7 @@ describe( module( "Carbon" ), ():void => {
 		} );
 
 		it( hasConstructor( [
-			{name: "settings", type: "Carbon.Settings.Class", optional: true}
+			{name: "settings", type: "Carbon.Settings.Class", optional: true},
 		] ), ():void => {
 			// Instantiated in BeforeEach
 			expect( carbon ).toBeTruthy();
@@ -378,7 +368,7 @@ describe( module( "Carbon" ), ():void => {
 			INSTANCE,
 			"resolve",
 			"Resolve the URI provided in the scope of the CarbonLDP Platform.", [
-				{name: "uri", type: "string"}
+				{name: "uri", type: "string"},
 			],
 			{type: "string"}
 		), ():void => {
@@ -404,27 +394,27 @@ describe( module( "Carbon" ), ():void => {
 			jasmine.Ajax.stubRequest( /api/, null, "GET" ).andReturn( {
 				status: 200,
 				responseHeaders: {
-					"ETag": 'W/"123456789"'
+					"ETag": 'W/"123456789"',
 				},
-				responseText: `[{
-				    "@graph": [{
-				        "@id": "https://carbonldp.com/platform/api/",
-				        "@type": [
+				responseText: `[ {
+					"@graph": [ {
+						"@id": "https://carbonldp.com/platform/api/",
+						"@type": [
 							"http://www.w3.org/ns/ldp#Resource",
 							"https://carbonldp.com/ns/v1/platform#API",
 							"https://carbonldp.com/ns/v1/platform#VolatileResource"
-				        ],
-				        "https://carbonldp.com/ns/v1/platform#buildDate": [{
-				            "@type": "http://www.w3.org/2001/XMLSchema#dateTime",
-				            "@value": "2016-06-01T00:00:00.000-06:00"
-				        }],
-				        "https://carbonldp.com/ns/v1/platform#version": [{
-				            "@value": "1.0.0"
-				        }]
-				      }
-				    ],
-				    "@id": "https://carbonldp.com/platform/api/"
-				}]`
+						],
+						"https://carbonldp.com/ns/v1/platform#buildDate": [ {
+							"@type": "http://www.w3.org/2001/XMLSchema#dateTime",
+							"@value": "2016-06-01T00:00:00.000-06:00"
+						} ],
+						"https://carbonldp.com/ns/v1/platform#version": [ {
+							"@value": "1.0.0"
+						} ]
+					}
+					],
+					"@id": "https://carbonldp.com/platform/api/"
+				} ]`,
 			} );
 
 			let promise:Promise<any>;
@@ -447,6 +437,17 @@ describe( module( "Carbon" ), ():void => {
 			expect( carbon.apps ).toBeDefined();
 			expect( Utils.isObject( carbon.apps ) );
 			expect( carbon.apps instanceof Apps.Class );
+		} );
+
+		it( hasProperty(
+			INSTANCE,
+			"auth",
+			"Carbon.Platform.Auth.Class",
+			"Instance of `Carbon.Platform.Auth.Class` class for manage the auth inside of the platform."
+		), ():void => {
+			expect( carbon.auth ).toBeDefined();
+			expect( Utils.isObject( carbon.auth ) );
+			expect( carbon.auth instanceof Platform.Auth.Class );
 		} );
 
 	} );

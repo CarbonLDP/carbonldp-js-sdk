@@ -1,10 +1,9 @@
+import Credentials from "./Credentials";
 import * as NS from "./../NS";
 import * as ObjectSchema from "./../ObjectSchema";
-import * as Pointer from "./../Pointer";
+import * as PersistedAgent from "./PersistedAgent";
 import * as Resource from "./../Resource";
 import * as Utils from "./../Utils";
-import Credentials from "./Credentials";
-import * as PersistedDocument from "./../PersistedDocument";
 
 export const RDF_CLASS:string = NS.CS.Class.Token;
 
@@ -26,8 +25,7 @@ export const SCHEMA:ObjectSchema.Class = {
 export interface Class extends Resource.Class, Credentials {
 	key:string;
 	expirationTime:Date;
-	// TODO: Change to `PersistedAgent`
-	agent:PersistedDocument.Class;
+	agent:PersistedAgent.Class;
 }
 
 export class Factory {

@@ -1,7 +1,7 @@
 "use strict";
 var BlankNode = require("./BlankNode");
 var Errors = require("./Errors");
-var JSONLDConverter_1 = require("./JSONLDConverter");
+var Converter_1 = require("./JSONLD/Converter");
 var NamedFragment = require("./NamedFragment");
 var NS = require("./NS");
 var ObjectSchema = require("./ObjectSchema");
@@ -83,17 +83,6 @@ function inScope(idOrPointer) {
     if (RDF.URI.Util.isFragmentOf(id, document.id))
         return true;
     return RDF.URI.Util.isFragmentOf(id, "");
-}
-function addType(type) {
-    this.types.push(type);
-}
-function hasType(type) {
-    return this.types.indexOf(type) !== -1;
-}
-function removeType(type) {
-    var index = this.types.indexOf(type);
-    if (index !== -1)
-        this.types.splice(index, 1);
 }
 function hasFragment(id) {
     var document = this;
@@ -187,7 +176,7 @@ function toJSON(objectSchemaResolver, jsonldConverter) {
     if (objectSchemaResolver === void 0) { objectSchemaResolver = null; }
     if (jsonldConverter === void 0) { jsonldConverter = null; }
     var generalSchema = objectSchemaResolver ? objectSchemaResolver.getGeneralSchema() : new ObjectSchema.DigestedObjectSchema();
-    jsonldConverter = !!jsonldConverter ? jsonldConverter : new JSONLDConverter_1.default();
+    jsonldConverter = !!jsonldConverter ? jsonldConverter : new Converter_1.default();
     var resources = [];
     resources.push(this);
     resources = resources.concat(this.getFragments());
@@ -222,9 +211,6 @@ var Factory = (function () {
             Utils.hasPropertyDefined(documentResource, "_fragmentsIndex") &&
             Utils.hasFunction(documentResource, "_normalize") &&
             Utils.hasFunction(documentResource, "_removeFragment") &&
-            Utils.hasFunction(documentResource, "addType") &&
-            Utils.hasFunction(documentResource, "hasType") &&
-            Utils.hasFunction(documentResource, "removeType") &&
             Utils.hasFunction(documentResource, "hasFragment") &&
             Utils.hasFunction(documentResource, "getFragment") &&
             Utils.hasFunction(documentResource, "getNamedFragment") &&
@@ -291,24 +277,6 @@ var Factory = (function () {
                 enumerable: false,
                 configurable: true,
                 value: inScope,
-            },
-            "addType": {
-                writable: true,
-                enumerable: false,
-                configurable: true,
-                value: addType,
-            },
-            "hasType": {
-                writable: true,
-                enumerable: false,
-                configurable: true,
-                value: hasType,
-            },
-            "removeType": {
-                writable: true,
-                enumerable: false,
-                configurable: true,
-                value: removeType,
             },
             "hasFragment": {
                 writable: true,

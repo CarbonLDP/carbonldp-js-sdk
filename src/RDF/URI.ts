@@ -133,14 +133,23 @@ export class Util {
 		if( Util.isAbsolute( childURI ) || Util.isBNodeID( childURI ) || Util.isPrefixed( childURI ) )
 			return childURI;
 
-		let finalURI:string = parentURI;
-		if( ! Utils.S.endsWith( parentURI, "#" ) && ! Utils.S.endsWith( parentURI, "/" ) ) finalURI += "/";
+		let protocol:string = parentURI.substr( 0, parentURI.indexOf( "://" ) + 3 );
+		let path:string = parentURI.substr( parentURI.indexOf( "://" ) + 3,  parentURI.length - 1 );
+		if( path.lastIndexOf( "/" ) === -1 ) path += "/";
+
+		if( Utils.S.startsWith( childURI, "?" ) || Utils.S.startsWith( childURI, "#" ) ) {
+			if( Util.hasQuery( path ) ) path = path.substr( 0, path.indexOf( "?" ) );
+			if( Util.hasFragment( path ) && ( ! Utils.S.startsWith( childURI, "?" ) || Utils.S.endsWith( path, "#" ) ) ) path = Util.getDocumentURI( path );
+		} else {
+			path = path.substr( 0, path.lastIndexOf( "/" ) + 1 );
+			if( ! Utils.S.endsWith( path, "?" ) && ! Utils.S.endsWith( path, "#" )  && ! Utils.S.endsWith( path, "/" ) ) path += "/";
+		}
 
 		if( Utils.S.startsWith( childURI, "/" ) ) {
-			finalURI = finalURI + childURI.substr( 1, childURI.length );
-		} else finalURI += childURI;
+			childURI = childURI.substr( 1, childURI.length );
+		}
 
-		return finalURI;
+		return protocol + path + childURI;
 	}
 
 	static removeProtocol( uri:string ):string {

@@ -84,8 +84,8 @@ describe( module( "Carbon/LDP/ErrorResponse" ), ():void => {
 			let data:string;
 			let promise:Promise<any>;
 			let promises:Promise<any>[] = [];
-			let spies = {
-				success: ( errorResponse:ErrorResponse.Class ) => {
+			let spies:any = {
+				success: ( errorResponse:ErrorResponse.Class ):void => {
 					expect( errorResponse ).toBeDefined();
 					expect( errorResponse.statusCode ).toBe( 1234567890 );
 					expect( errorResponse.errors ).toBeDefined();
@@ -93,69 +93,69 @@ describe( module( "Carbon/LDP/ErrorResponse" ), ():void => {
 					expect( errorResponse.errors[ 0 ].carbonCode ).toBe( "code-01" );
 					expect( errorResponse.errors[ 1 ].carbonCode ).toBe( "code-02" );
 				},
-				fail: ( error:Error ) => {
+				fail: ( error:Error ):void => {
 					expect( error instanceof Error ).toBe( true );
 				},
-				failData: ( error:Error ) => {
+				failData: ( error:Error ):void => {
 					expect( error instanceof IllegalArgumentError ).toBe( true );
-				}
+				},
 			};
-			let spySuccess = spyOn( spies, "success" ).and.callThrough();
-			let spyFail = spyOn( spies, "fail" ).and.callThrough();
+			let spySuccess:jasmine.Spy = spyOn( spies, "success" ).and.callThrough();
+			let spyFail:jasmine.Spy = spyOn( spies, "fail" ).and.callThrough();
 
 			data = `[
 				{
-			        "@id": "_:1",
-			        "@type": [
-			            "https://carbonldp.com/ns/v1/platform#ErrorResponse"
-			        ],
-			        "https://carbonldp.com/ns/v1/platform#error": [
-			            {
-			                "@id": "_:2"
-			            },
-			            {
-			                "@id": "_:3"
-			            }
-			        ],
-			        "https://carbonldp.com/ns/v1/platform#httpStatusCode": [
-			            {
-			                "@type": "http://www.w3.org/2001/XMLSchema#int",
-			                "@value": "1234567890"
-			            }
-			        ]
-			    },
-			    {
-			        "@id": "_:2",
-			        "@type": [
-			            "https://carbonldp.com/ns/v1/platform#Error"
-			        ],
-			        "https://carbonldp.com/ns/v1/platform#carbonCode": [
-			            {
-			                "@value": "code-01"
-			            }
-			        ],
-			        "https://carbonldp.com/ns/v1/platform#message": [
-			            {
-			                "@value": "Message 01"
-			            }
-			        ]
-			    },
-			    {
-			        "@id": "_:3",
-			        "@type": [
-			            "https://carbonldp.com/ns/v1/platform#Error"
-			        ],
-			        "https://carbonldp.com/ns/v1/platform#carbonCode": [
-			            {
-			                "@value": "code-02"
-			            }
-			        ],
-			        "https://carbonldp.com/ns/v1/platform#message": [
-			            {
-			                "@value": "Message 02"
-			            }
-			        ]
-			    }
+					"@id": "_:1",
+					"@type": [
+						"https://carbonldp.com/ns/v1/platform#ErrorResponse"
+					],
+					"https://carbonldp.com/ns/v1/platform#error": [
+						{
+							"@id": "_:2"
+						},
+						{
+							"@id": "_:3"
+						}
+					],
+					"https://carbonldp.com/ns/v1/platform#httpStatusCode": [
+						{
+							"@type": "http://www.w3.org/2001/XMLSchema#int",
+							"@value": "1234567890"
+						}
+					]
+				},
+				{
+					"@id": "_:2",
+					"@type": [
+						"https://carbonldp.com/ns/v1/platform#Error"
+					],
+					"https://carbonldp.com/ns/v1/platform#carbonCode": [
+						{
+							"@value": "code-01"
+						}
+					],
+					"https://carbonldp.com/ns/v1/platform#message": [
+						{
+							"@value": "Message 01"
+						}
+					]
+				},
+				{
+					"@id": "_:3",
+					"@type": [
+						"https://carbonldp.com/ns/v1/platform#Error"
+					],
+					"https://carbonldp.com/ns/v1/platform#carbonCode": [
+						{
+							"@value": "code-02"
+						}
+					],
+					"https://carbonldp.com/ns/v1/platform#message": [
+						{
+							"@value": "Message 02"
+						}
+					]
+				}
 			]`;
 
 			promise = parser.parse( data );
@@ -171,56 +171,52 @@ describe( module( "Carbon/LDP/ErrorResponse" ), ():void => {
 			promises.push( promise.catch( spies.fail ) );
 
 			data = `[
-			    {
-			        "@id": "_:1",
-			        "@type": [
-			            "https://carbonldp.com/ns/v1/platform#ErrorResponse"
-			        ],
-			        "https://carbonldp.com/ns/v1/platform#error": [
-			        ],
-			        "https://carbonldp.com/ns/v1/platform#httpStatusCode": [
-			            {
-			                "@type": "http://www.w3.org/2001/XMLSchema#int",
-			                "@value": "1234567890"
-			            }
-			        ]
-			    },{
-			        "@id": "_:2",
-			        "@type": [
-			            "https://carbonldp.com/ns/v1/platform#ErrorResponse"
-			        ],
-			        "https://carbonldp.com/ns/v1/platform#error": [
-			        ],
-			        "https://carbonldp.com/ns/v1/platform#httpStatusCode": [
-			            {
-			                "@type": "http://www.w3.org/2001/XMLSchema#int",
-			                "@value": "0987654321"
-			            }
-			        ]
-			    }
+				{
+					"@id": "_:1",
+					"@type": [
+						"https://carbonldp.com/ns/v1/platform#ErrorResponse"
+					],
+					"https://carbonldp.com/ns/v1/platform#error": [],
+					"https://carbonldp.com/ns/v1/platform#httpStatusCode": [
+						{
+							"@type": "http://www.w3.org/2001/XMLSchema#int",
+							"@value": "1234567890"
+						}
+					]
+				}, {
+					"@id": "_:2",
+					"@type": [
+						"https://carbonldp.com/ns/v1/platform#ErrorResponse"
+					],
+					"https://carbonldp.com/ns/v1/platform#error": [],
+					"https://carbonldp.com/ns/v1/platform#httpStatusCode": [
+						{
+							"@type": "http://www.w3.org/2001/XMLSchema#int",
+							"@value": "0987654321"
+						}
+					]
+				}
 			]`;
 			promise = parser.parse( data );
 			expect( promise instanceof Promise ).toBe( true );
 			promises.push( promise.catch( spies.failData ) );
 
-			data = `[
-			    {
-			        "@id": "_:3",
-			        "@type": [
-			            "https://carbonldp.com/ns/v1/platform#Error"
-			        ],
-			        "https://carbonldp.com/ns/v1/platform#carbonCode": [
-			            {
-			                "@value": "code-02"
-			            }
-			        ],
-			        "https://carbonldp.com/ns/v1/platform#message": [
-			            {
-			                "@value": "Message 02"
-			            }
-			        ]
-			    }
-			]`;
+			data = `[ {
+				"@id": "_:3",
+				"@type": [
+					"https://carbonldp.com/ns/v1/platform#Error"
+				],
+				"https://carbonldp.com/ns/v1/platform#carbonCode": [
+					{
+						"@value": "code-02"
+					}
+				],
+				"https://carbonldp.com/ns/v1/platform#message": [
+					{
+						"@value": "Message 02"
+					}
+				]
+			} ]`;
 			promise = parser.parse( data );
 			expect( promise instanceof Promise ).toBe( true );
 			promises.push( promise.catch( spies.failData ) );
@@ -248,7 +244,7 @@ describe( module( "Carbon/LDP/ErrorResponse" ), ():void => {
 			STATIC,
 			"getMessage",
 			"Returns a string with the message of all the errors in the ErrorResponse.", [
-				{name: "errorResponse", type: "Carbon.LDP.ErrorResponse.Class", description: "The ErrorResponse object to obtain the message from."}
+				{name: "errorResponse", type: "Carbon.LDP.ErrorResponse.Class", description: "The ErrorResponse object to obtain the message from."},
 			],
 			{type: "string"}
 		), ():void => {
@@ -263,9 +259,9 @@ describe( module( "Carbon/LDP/ErrorResponse" ), ():void => {
 				errors: [
 					{
 						carbonCode: "code-01",
-						message: "Message 01"
-					}
-				]
+						message: "Message 01",
+					},
+				],
 			};
 			message = ErrorResponse.Util.getMessage( errorResponse );
 			expect( Utils.isString( message ) ).toBe( true );
@@ -276,13 +272,13 @@ describe( module( "Carbon/LDP/ErrorResponse" ), ():void => {
 				errors: [
 					{
 						carbonCode: "code-01",
-						message: "Message 01"
+						message: "Message 01",
 					},
 					{
 						carbonCode: "code-02",
-						message: "Message 02"
-					}
-				]
+						message: "Message 02",
+					},
+				],
 			};
 			message = ErrorResponse.Util.getMessage( errorResponse );
 			expect( Utils.isString( message ) ).toBe( true );

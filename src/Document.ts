@@ -1,7 +1,7 @@
 import * as BlankNode from "./BlankNode";
 import * as Errors from "./Errors";
 import * as Fragment from "./Fragment";
-import JSONLDConverter from "./JSONLDConverter";
+import JSONLDConverter from "./JSONLD/Converter";
 import * as NamedFragment from "./NamedFragment";
 import * as NS from "./NS";
 import * as ObjectSchema from "./ObjectSchema";
@@ -70,10 +70,6 @@ export interface Class extends Resource.Class, Pointer.Library, Pointer.Validato
 	_removeFragment( fragment:Fragment.Class ):void;
 	_removeFragment( slug:string ):void;
 
-	addType( type:string ):void;
-	hasType( type:string ):boolean;
-	removeType( type:string ):void;
-
 	hasFragment( slug:string ):boolean;
 	getFragment<T>( slug:string ):T & Fragment.Class;
 	getNamedFragment<T>( slug:string ):T & NamedFragment.Class;
@@ -132,17 +128,6 @@ function inScope( idOrPointer:any ):boolean {
 	if( RDF.URI.Util.isFragmentOf( id, document.id ) ) return true;
 
 	return RDF.URI.Util.isFragmentOf( id, "" );
-}
-
-function addType( type:string ):void {
-	this.types.push( type );
-}
-function hasType( type:string ):boolean {
-	return this.types.indexOf( type ) !== - 1;
-}
-function removeType( type:string ):void {
-	let index:number = this.types.indexOf( type );
-	if( index !== - 1 ) this.types.splice( index, 1 );
 }
 
 function hasFragment( id:string ):boolean {
@@ -298,10 +283,6 @@ export class Factory {
 			Utils.hasFunction( documentResource, "_normalize" ) &&
 			Utils.hasFunction( documentResource, "_removeFragment" ) &&
 
-			Utils.hasFunction( documentResource, "addType" ) &&
-			Utils.hasFunction( documentResource, "hasType" ) &&
-			Utils.hasFunction( documentResource, "removeType" ) &&
-
 			Utils.hasFunction( documentResource, "hasFragment" ) &&
 			Utils.hasFunction( documentResource, "getFragment" ) &&
 			Utils.hasFunction( documentResource, "getNamedFragment" ) &&
@@ -377,25 +358,6 @@ export class Factory {
 				enumerable: false,
 				configurable: true,
 				value: inScope,
-			},
-
-			"addType": {
-				writable: true,
-				enumerable: false,
-				configurable: true,
-				value: addType,
-			},
-			"hasType": {
-				writable: true,
-				enumerable: false,
-				configurable: true,
-				value: hasType,
-			},
-			"removeType": {
-				writable: true,
-				enumerable: false,
-				configurable: true,
-				value: removeType,
 			},
 
 			"hasFragment": {

@@ -11,6 +11,8 @@ class Class {
 
 	static get Application():string { return namespace + "Application"; }
 
+	static get AppRole():string { return namespace + "AppRole"; }
+
 	static get ProtectedDocument():string { return namespace + "ProtectedDocument"; }
 
 	static get Ticket():string { return namespace + "Ticket"; }
@@ -25,11 +27,17 @@ class Predicate {
 
 	static get accessTo():string { return namespace + "accessTo"; }
 
+	static get agent():string { return namespace + "agent"; }
+
 	static get allowsOrigin():string { return namespace + "allowsOrigin"; }
+
+	static get childRole():string { return namespace + "childRole"; }
 
 	static get credentialsOf():string { return namespace + "credentialsOf"; }
 
 	static get description():string { return namespace + "description"; }
+
+	static get enabled():string { return namespace + "enabled"; }
 
 	static get expirationTime():string { return namespace + "expirationTime"; }
 
@@ -41,9 +49,13 @@ class Predicate {
 
 	static get namae():string { return namespace + "name"; }
 
+	static get parentRole():string { return namespace + "parentRole"; }
+
 	static get password():string { return namespace + "password"; }
 
 	static get permission():string { return namespace + "permission"; }
+
+	static get platformRole():string { return namespace + "platformRole"; }
 
 	static get rootContainer():string { return namespace + "rootContainer"; }
 

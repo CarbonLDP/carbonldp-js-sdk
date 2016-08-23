@@ -1,5 +1,5 @@
 "use strict";
-var Agent = require("./Agent");
+var AppRole = require("./App/Role");
 var APIDescription = require("./APIDescription");
 var Auth = require("./Auth");
 var BlankNode = require("./BlankNode");
@@ -18,7 +18,7 @@ var Class = (function () {
         this.settings = new Map();
         this.generalObjectSchema = new ObjectSchema.DigestedObjectSchema();
         this.typeObjectSchemaMap = new Map();
-        this.auth = new Auth.Class(this);
+        this.auth = null;
         this.documents = new Documents_1.default(this);
         this.registerDefaultObjectSchemas();
     }
@@ -158,15 +158,17 @@ var Class = (function () {
                 "@container": "@set",
             },
         });
+        this.extendObjectSchema(AppRole.RDF_CLASS, Auth.Role.SCHEMA);
+        this.extendObjectSchema(AppRole.RDF_CLASS, AppRole.SCHEMA);
         this.extendObjectSchema(LDP.ResponseMetadata.RDF_CLASS, LDP.ResponseMetadata.SCHEMA);
         this.extendObjectSchema(LDP.ResourceMetadata.RDF_CLASS, LDP.ResourceMetadata.SCHEMA);
         this.extendObjectSchema(LDP.AddMemberAction.RDF_CLASS, LDP.AddMemberAction.SCHEMA);
         this.extendObjectSchema(LDP.RemoveMemberAction.RDF_CLASS, LDP.RemoveMemberAction.SCHEMA);
         this.extendObjectSchema(Auth.ACE.RDF_CLASS, Auth.ACE.SCHEMA);
         this.extendObjectSchema(Auth.ACL.RDF_CLASS, Auth.ACL.SCHEMA);
+        this.extendObjectSchema(Auth.Agent.RDF_CLASS, Auth.Agent.SCHEMA);
         this.extendObjectSchema(Auth.Ticket.RDF_CLASS, Auth.Ticket.SCHEMA);
         this.extendObjectSchema(Auth.Token.RDF_CLASS, Auth.Token.SCHEMA);
-        this.extendObjectSchema(Agent.RDF_CLASS, Agent.SCHEMA);
     };
     Class.prototype.resolveTypeURI = function (uri) {
         if (RDF.URI.Util.isAbsolute(uri))
@@ -175,9 +177,12 @@ var Class = (function () {
         var vocab;
         if (this.hasSetting("vocabulary"))
             vocab = this.resolve(this.getSetting("vocabulary"));
-        uri = ObjectSchema.Digester.resolvePrefixedURI(new RDF.URI.Class(uri), schema).stringValue;
-        if (vocab)
-            uri = RDF.URI.Util.resolve(vocab, uri);
+        if (RDF.URI.Util.isPrefixed(uri)) {
+            uri = ObjectSchema.Digester.resolvePrefixedURI(uri, schema);
+        }
+        else if (vocab) {
+            uri = vocab + uri;
+        }
         return uri;
     };
     return Class;

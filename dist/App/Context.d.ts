@@ -1,9 +1,9 @@
 import AbstractContext from "./../AbstractContext";
-import Agents from "./../Agents";
+import Auth from "./Auth";
 import Context from "./../Context";
 import PersistedApp from "./../PersistedApp";
 export declare class Class extends AbstractContext {
-    agents: Agents;
+    auth: Auth;
     app: PersistedApp;
     private _app;
     private base;

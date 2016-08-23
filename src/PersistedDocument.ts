@@ -23,6 +23,7 @@ export interface Class extends PersistedResource.Class, Document.Class {
 	accessPoints?:Pointer.Class[];
 	hasMemberRelation?:Pointer.Class;
 	isMemberOfRelation?:Pointer.Class;
+	contains?:Pointer.Class[];
 
 	_documents:Documents;
 	_etag:string;
@@ -124,12 +125,8 @@ function syncSavedFragments():void {
 function resolveURI( uri:string ):string {
 	if( URI.Util.isAbsolute( uri ) ) return uri;
 
-	uri = ObjectSchema.Digester.resolvePrefixedURI( new URI.Class( uri ), this._documents.getGeneralSchema() ).stringValue;
-
-	let schema:ObjectSchema.DigestedObjectSchema = this._documents.getSchemaFor( this );
-	if( schema.vocab ) uri = URI.Util.resolve( schema.vocab, uri );
-
-	return uri;
+	let schema:ObjectSchema.DigestedObjectSchema = this._documents.getGeneralSchema();
+	return ObjectSchema.Util.resolveURI( uri, schema );
 }
 function extendAddType( superFunction:( type:string ) => void ):( type:string ) => void {
 	return function( type:string ):void {
@@ -416,7 +413,7 @@ export class Factory {
 					let superFunction:( id:string ) => boolean = persistedDocument.hasPointer;
 					return function( id:string ):boolean {
 						if( RDF.URI.Util.isPrefixed( id ) ) {
-							id = ObjectSchema.Digester.resolvePrefixedURI( new RDF.URI.Class( id ), (<Class> this)._documents.getGeneralSchema() ).stringValue;
+							id = ObjectSchema.Digester.resolvePrefixedURI( id , (<Class> this)._documents.getGeneralSchema() );
 						}
 
 						if( superFunction.call( this, id ) ) return true;
@@ -434,7 +431,7 @@ export class Factory {
 					let inScopeFunction:( id:string ) => boolean = persistedDocument.inScope;
 					return function( id:string ):Pointer.Class {
 						if( RDF.URI.Util.isPrefixed( id ) ) {
-							id = ObjectSchema.Digester.resolvePrefixedURI( new RDF.URI.Class( id ), (<Class> this)._documents.getGeneralSchema() ).stringValue;
+							id = ObjectSchema.Digester.resolvePrefixedURI( id , (<Class> this)._documents.getGeneralSchema() );
 						}
 
 						if( inScopeFunction.call( this, id ) ) return superFunction.call( this, id );
@@ -452,7 +449,7 @@ export class Factory {
 					return function( idOrPointer:any ):boolean {
 						let uri:string = Pointer.Factory.is( idOrPointer ) ? idOrPointer.id : idOrPointer;
 						if( RDF.URI.Util.isPrefixed( uri ) ) {
-							uri = ObjectSchema.Digester.resolvePrefixedURI( new RDF.URI.Class( uri ), (<Class> this)._documents.getGeneralSchema() ).stringValue;
+							uri = ObjectSchema.Digester.resolvePrefixedURI( uri , (<Class> this)._documents.getGeneralSchema() );
 						}
 
 						if( superFunction.call( this, uri ) ) return true;
