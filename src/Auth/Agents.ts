@@ -3,9 +3,8 @@ import Context from "./../Context";
 import * as Errors from "./../Errors";
 import * as HTTP from "./../HTTP";
 import * as PersistedAgent from "./PersistedAgent";
-import * as PersistedDocument from "./../PersistedDocument";
+import * as PersistedProtectedDocument from "./../PersistedProtectedDocument";
 import * as URI from "./../RDF/URI";
-import * as Utils from "./../Utils";
 
 export abstract class Class {
 	private context:Context;
@@ -14,7 +13,7 @@ export abstract class Class {
 		this.context = context;
 	}
 
-	register( agentDocument:Agent.Class, slug:string = null ):Promise<[ PersistedDocument.Class, HTTP.Response.Class ]> {
+	register( agentDocument:Agent.Class, slug:string = null ):Promise<[ PersistedProtectedDocument.Class, HTTP.Response.Class ]> {
 		return this.resolveURI( "" ).then( ( containerURI:string ) => {
 			if( ! Agent.Factory.is( agentDocument ) ) throw new Errors.IllegalArgumentError( "The Document is not a cs:Agent object." );
 

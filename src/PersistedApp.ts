@@ -1,10 +1,10 @@
 import * as App from "./App";
-import * as PersistedDocument from "./PersistedDocument";
+import * as PersistedProtectedDocument from "./PersistedProtectedDocument";
 import Pointer from "./Pointer";
 import * as Utils from "./Utils";
 
 // TODO Mark an error if it extends from App.Class
-export interface Class extends PersistedDocument.Class {
+export interface Class extends PersistedProtectedDocument.Class {
 	name:string;
 	description?:string;
 	rootContainer:Pointer;
@@ -19,7 +19,7 @@ export class Factory {
 
 	static is( object:Object ):boolean {
 		return App.Factory.is( object )
-			&& PersistedDocument.Factory.hasClassProperties( <App.Class> object )
+			&& PersistedProtectedDocument.Factory.is( object )
 			&& Factory.hasClassProperties( object );
 	}
 

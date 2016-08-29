@@ -9,6 +9,7 @@ import * as PersistedAccessPoint from "./PersistedAccessPoint";
 import * as PersistedResource from "./PersistedResource";
 import * as PersistedFragment from "./PersistedFragment";
 import * as PersistedNamedFragment from "./PersistedNamedFragment";
+import * as PersistedProtectedDocument from "./PersistedProtectedDocument";
 import * as Pointer from "./Pointer";
 import * as RetrievalPreferences from "./RetrievalPreferences";
 import * as RDF from "./RDF";
@@ -55,15 +56,15 @@ export interface Class extends PersistedResource.Class, Document.Class {
 
 	addMembers( members:(Pointer.Class | string)[] ):Promise<HTTP.Response.Class>;
 
-	createChild<T extends Object>( object:Object, slug:string ):Promise<[ T & Class, HTTP.Response.Class ]>;
-	createChild<T extends Object>( object:T ):Promise<[ T & Class, HTTP.Response.Class ]>;
-	createChild( slug:string ):Promise<[ Class, HTTP.Response.Class ]>;
-	createChild():Promise<[ Class, HTTP.Response.Class ]>;
+	createChild<T extends Object>( object:Object, slug:string, requestOptions?:HTTP.Request.Options ):Promise<[ T & PersistedProtectedDocument.Class, HTTP.Response.Class ]>;
+	createChild<T extends Object>( object:T, requestOptions?:HTTP.Request.Options ):Promise<[ T & PersistedProtectedDocument.Class, HTTP.Response.Class ]>;
+	createChild( slug:string, requestOptions?:HTTP.Request.Options ):Promise<[ PersistedProtectedDocument.Class, HTTP.Response.Class ]>;
+	createChild( requestOptions?:HTTP.Request.Options ):Promise<[ PersistedProtectedDocument.Class, HTTP.Response.Class ]>;
 
-	createChildAndRetrieve<T extends Object>( object:Object, slug:string ):Promise<[ T & Class, [ HTTP.Response.Class, HTTP.Response.Class ] ]>;
-	createChildAndRetrieve<T extends Object>( object:T ):Promise<[ T & Class, [ HTTP.Response.Class, HTTP.Response.Class ] ]>;
-	createChildAndRetrieve( slug:string ):Promise<[ Class, [ HTTP.Response.Class, HTTP.Response.Class ] ]>;
-	createChildAndRetrieve():Promise<[ Class, [ HTTP.Response.Class, HTTP.Response.Class ] ]>;
+	createChildAndRetrieve<T extends Object>( object:Object, slug:string, requestOptions?:HTTP.Request.Options  ):Promise<[ T & PersistedProtectedDocument.Class, [ HTTP.Response.Class, HTTP.Response.Class ] ]>;
+	createChildAndRetrieve<T extends Object>( object:T, requestOptions?:HTTP.Request.Options  ):Promise<[ T & PersistedProtectedDocument.Class, [ HTTP.Response.Class, HTTP.Response.Class ] ]>;
+	createChildAndRetrieve( slug:string, requestOptions?:HTTP.Request.Options  ):Promise<[ PersistedProtectedDocument.Class, [ HTTP.Response.Class, HTTP.Response.Class ] ]>;
+	createChildAndRetrieve( requestOptions?:HTTP.Request.Options ):Promise<[ PersistedProtectedDocument.Class, [ HTTP.Response.Class, HTTP.Response.Class ] ]>;
 
 	createAccessPoint<T extends AccessPoint.Class>( accessPoint:T, slug?:string, requestOptions?:HTTP.Request.Options ):Promise<[ T & PersistedAccessPoint.Class, HTTP.Response.Class ]>;
 	createAccessPoint<T extends AccessPoint.Class>( accessPoint:T, requestOptions?:HTTP.Request.Options ):Promise<[ T & PersistedAccessPoint.Class, HTTP.Response.Class ]>;
@@ -201,25 +202,27 @@ function addMembers( members:(Pointer.Class | string)[] ):Promise<HTTP.Response.
 	return this._documents.addMembers( this.id, members );
 }
 
-function createChild<T extends Object>( object:T, slug:string ):Promise<[ T & Class, HTTP.Response.Class ]>;
-function createChild<T extends Object>( object:T ):Promise<[ T & Class, HTTP.Response.Class ]>;
-function createChild( slug:string ):Promise<[ Class, HTTP.Response.Class ]>;
-function createChild():Promise<[ Class, HTTP.Response.Class ]>;
-function createChild<T extends Object>( slugOrObject?:any, slug?:string ):Promise<[ T & Class, HTTP.Response.Class ]> {
-	let object:T = ! Utils.isString( slugOrObject ) && ! ! slugOrObject ? slugOrObject : <T> {};
-	slug = Utils.isString( slugOrObject ) ? slugOrObject : slug;
+function createChild<T extends Object>( object:T, slug:string, requestOptions?:HTTP.Request.Options ):Promise<[ T & PersistedProtectedDocument.Class, HTTP.Response.Class ]>;
+function createChild<T extends Object>( object:T, requestOptions?:HTTP.Request.Options ):Promise<[ T & PersistedProtectedDocument.Class, HTTP.Response.Class ]>;
+function createChild( slug:string, requestOptions?:HTTP.Request.Options ):Promise<[ PersistedProtectedDocument.Class, HTTP.Response.Class ]>;
+function createChild( requestOptions?:HTTP.Request.Options ):Promise<[ PersistedProtectedDocument.Class, HTTP.Response.Class ]>;
+function createChild<T extends Object>( objectOrSlugOrRequestOptions?:any, slugOrRequestOptions?:any, requestOptions:HTTP.Request.Options = {} ):Promise<[ T & PersistedProtectedDocument.Class, HTTP.Response.Class ]> {
+	requestOptions = HTTP.Request.Util.isOptions( objectOrSlugOrRequestOptions ) ? objectOrSlugOrRequestOptions : HTTP.Request.Util.isOptions( slugOrRequestOptions ) ? slugOrRequestOptions : requestOptions;
+	let object:T = Utils.isString( objectOrSlugOrRequestOptions ) ||  HTTP.Request.Util.isOptions( objectOrSlugOrRequestOptions ) || ! objectOrSlugOrRequestOptions ? <T> {} : objectOrSlugOrRequestOptions;
+	let slug:string = Utils.isString( objectOrSlugOrRequestOptions ) ? objectOrSlugOrRequestOptions : Utils.isString( slugOrRequestOptions ) ? slugOrRequestOptions : null;
 
-	return (<Class> this)._documents.createChild( this.id, object, slug );
+	return (<Class> this)._documents.createChild( this.id, object, slug, requestOptions );
 }
-function createChildAndRetrieve<T extends Object>( object:T, slug:string ):Promise<[ T & Class, [ HTTP.Response.Class, HTTP.Response.Class ] ]>;
-function createChildAndRetrieve<T extends Object>( object:T ):Promise<[ T & Class, [ HTTP.Response.Class, HTTP.Response.Class ] ]>;
-function createChildAndRetrieve( slug:string ):Promise<[ Class, [ HTTP.Response.Class, HTTP.Response.Class ] ]>;
-function createChildAndRetrieve():Promise<[ Class, [ HTTP.Response.Class, HTTP.Response.Class ] ]>;
-function createChildAndRetrieve<T extends Object>( slugOrObject?:any, slug?:string ):Promise<[ T & Class, [ HTTP.Response.Class, HTTP.Response.Class ] ]> {
-	let object:T = ! Utils.isString( slugOrObject ) && ! ! slugOrObject ? slugOrObject : <T> {};
-	slug = Utils.isString( slugOrObject ) ? slugOrObject : slug;
+function createChildAndRetrieve<T extends Object>( object:T, slug:string, requestOptions?:HTTP.Request.Options ):Promise<[ T & PersistedProtectedDocument.Class, [ HTTP.Response.Class, HTTP.Response.Class ] ]>;
+function createChildAndRetrieve<T extends Object>( object:T, requestOptions?:HTTP.Request.Options ):Promise<[ T & PersistedProtectedDocument.Class, [ HTTP.Response.Class, HTTP.Response.Class ] ]>;
+function createChildAndRetrieve( slug:string, requestOptions?:HTTP.Request.Options ):Promise<[ PersistedProtectedDocument.Class, [ HTTP.Response.Class, HTTP.Response.Class ] ]>;
+function createChildAndRetrieve( requestOptions?:HTTP.Request.Options ):Promise<[ PersistedProtectedDocument.Class, [ HTTP.Response.Class, HTTP.Response.Class ] ]>;
+function createChildAndRetrieve<T extends Object>( objectOrSlugOrRequestOptions?:any, slugOrRequestOptions?:any, requestOptions:HTTP.Request.Options = {} ):Promise<[ T & PersistedProtectedDocument.Class, [ HTTP.Response.Class, HTTP.Response.Class ] ]> {
+	requestOptions = HTTP.Request.Util.isOptions( objectOrSlugOrRequestOptions ) ? objectOrSlugOrRequestOptions : HTTP.Request.Util.isOptions( slugOrRequestOptions ) ? slugOrRequestOptions : requestOptions;
+	let object:T = Utils.isString( objectOrSlugOrRequestOptions ) ||  HTTP.Request.Util.isOptions( objectOrSlugOrRequestOptions ) || ! objectOrSlugOrRequestOptions ? <T> {} : objectOrSlugOrRequestOptions;
+	let slug:string = Utils.isString( objectOrSlugOrRequestOptions ) ? objectOrSlugOrRequestOptions : Utils.isString( slugOrRequestOptions ) ? slugOrRequestOptions : null;
 
-	return (<Class> this)._documents.createChildAndRetrieve<T>( this.id, object, slug );
+	return (<Class> this)._documents.createChildAndRetrieve<T>( this.id, object, slug, requestOptions );
 }
 
 

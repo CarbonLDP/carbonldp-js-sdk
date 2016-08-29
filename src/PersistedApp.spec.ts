@@ -5,11 +5,11 @@ import {
 	clazz,
 
 	isDefined,
-	hasMethod
+	hasMethod,
 } from "./test/JasmineExtender";
 import * as Utils from "./Utils";
-import * as Pointer from "./Pointer";
 import * as PersistedDocument from "./PersistedDocument";
+import * as PersistedProtectedDocument from "./PersistedProtectedDocument";
 import * as App from "./App";
 import * as PersistedApp from "./PersistedApp";
 import Documents from "./Documents";
@@ -43,11 +43,11 @@ describe( module( "Carbon/PersistedApp" ), ():void => {
 			expect( PersistedApp.Factory.hasClassProperties ).toBeDefined();
 			expect( Utils.isFunction( PersistedApp.Factory.hasClassProperties ) ).toBe( true );
 
-			let object:any;
+			let object:any = void 0;
 			expect( PersistedApp.Factory.hasClassProperties( object ) ).toBe( false );
 
 			object = {
-				rootContainer: null
+				rootContainer: null,
 			};
 			expect( PersistedApp.Factory.hasClassProperties( object ) ).toBe( true );
 
@@ -67,29 +67,21 @@ describe( module( "Carbon/PersistedApp" ), ():void => {
 			expect( PersistedApp.Factory.is ).toBeDefined();
 			expect( Utils.isFunction( PersistedApp.Factory.is ) ).toBe( true );
 
-			let object:any = {};
-			expect( PersistedApp.Factory.is( object ) ).toBe( false );
-			object.name = "App name";
-			expect( PersistedApp.Factory.is( object ) ).toBe( false );
-			object.rootContainer = {};
-			expect( PersistedApp.Factory.is( object ) ).toBe( false );
-			object.types = [ NS.CS.Class.Application ];
+			let object:any = {
+				types: [ NS.CS.Class.Application ],
+				name: "App name",
+				rootContainer: {},
+			};
 			expect( PersistedApp.Factory.is( object ) ).toBe( false );
 
-			let app:App.Class;
-			let document:PersistedDocument.Class;
-
-			app = App.Factory.create( "The App name" );
+			let app:App.Class = App.Factory.createFrom( object,  "The App name" );
 			expect( PersistedApp.Factory.is( app ) ).toBe( false );
 
-			( <PersistedApp.Class> app ).rootContainer = <any> {};
-			expect( PersistedApp.Factory.is( app ) ).toBe( false );
-
-			document = PersistedDocument.Factory.create( "persistedApp", new Documents() );
+			let document:PersistedDocument.Class = PersistedDocument.Factory.decorate( app, new Documents() );
 			expect( PersistedApp.Factory.is( document ) ).toBe( false );
 
-			document = PersistedDocument.Factory.createFrom( object, "persistedApp", new Documents() );
-			expect( PersistedApp.Factory.is( document ) ).toBe( true );
+			let protectedDocument:PersistedProtectedDocument.Class = PersistedProtectedDocument.Factory.decorate( document );
+			expect( PersistedApp.Factory.is( protectedDocument ) ).toBe( true );
 		} );
 
 	} );

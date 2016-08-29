@@ -32,7 +32,7 @@ describe( module( "Carbon/Auth/PersistedACL" ), ():void => {
 			expect( PersistedACL.Factory.hasClassProperties ).toBeDefined();
 			expect( Utils.isFunction( PersistedACL.Factory.hasClassProperties ) ).toBe( true );
 
-			let object:any;
+			let object:any = void 0;
 			expect( PersistedACL.Factory.hasClassProperties( object ) ).toBe( false );
 
 			object = {
@@ -67,7 +67,7 @@ describe( module( "Carbon/Auth/PersistedACL" ), ():void => {
 			expect( PersistedACL.Factory.decorate ).toBeDefined();
 			expect( Utils.isFunction( PersistedACL.Factory.decorate ) ).toBe( true );
 
-			let spy:jasmine.Spy = spyOn( ACL.Factory, "decorate" );
+			let spy:jasmine.Spy = spyOn( ACL.Factory, "decorate" ).and.callThrough();
 			let document:PersistedDocument.Class = PersistedDocument.Factory.create( "http://example.com/some/acl/", new Documents() );
 			document[ "accessTo" ] = document.getPointer( "http://example.com/some/" );
 

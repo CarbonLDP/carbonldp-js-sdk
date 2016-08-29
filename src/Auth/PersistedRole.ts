@@ -1,17 +1,21 @@
 import * as HTTP from "./../HTTP";
 import * as Errors from "./../Errors";
 import * as PersistedDocument from "./../PersistedDocument";
+import * as PersistedProtectedDocument from "./../PersistedProtectedDocument";
 import * as Pointer from "./../Pointer";
 import * as RetrievalPreferences from "./../RetrievalPreferences";
 import * as Role from "./Role";
 import * as Roles from "./Roles";
 import * as Utils from "./../Utils";
 
-export interface Class extends PersistedDocument.Class {
+export interface Class extends PersistedProtectedDocument.Class {
 	_roles:Roles.Class;
 
-	name:string;
+	name?:string;
 	agents?:Pointer.Class;
+
+	createChild<T extends Role.Class>( role:T, requestOptions?:HTTP.Request.Options ):Promise<[ T & Class, HTTP.Response.Class ]>;
+	createChild<T extends Role.Class>( role:T, slug?:string, requestOptions?:HTTP.Request.Options ):Promise<[ T & Class, HTTP.Response.Class ]>;
 
 	listAgents( requestOptions?:HTTP.Request.Options ):Promise<[ Pointer.Class[], HTTP.Response.Class ]>;
 
@@ -29,7 +33,7 @@ export class Factory {
 
 	static hasClassProperties( object:Object ):boolean {
 		return Utils.hasPropertyDefined( object, "_roles" )
-			&& Utils.hasPropertyDefined( object, "name" )
+			&& Utils.hasFunction( object, "createChild" )
 			&& Utils.hasFunction( object, "listAgents" )
 			&& Utils.hasFunction( object, "getAgents" )
 			&& Utils.hasFunction( object, "addAgent" )
@@ -41,12 +45,14 @@ export class Factory {
 
 	static is( object:Object ):boolean {
 		return Factory.hasClassProperties( object )
-			&& Role.Factory.is( object );
+			&& PersistedProtectedDocument.Factory.is( object );
 	}
 
-	static decorate<T extends Object>( object:T, roles:Roles.Class ):T & Class {
+	static decorate<T extends PersistedDocument.Class>( object:T, roles:Roles.Class ):T & Class {
 		let role:Class & T = <any> object;
+
 		if( Factory.hasClassProperties( role ) ) return role;
+		if( ! PersistedProtectedDocument.Factory.hasClassProperties( role ) ) PersistedProtectedDocument.Factory.decorate( role );
 
 		Object.defineProperties( role, {
 			"_roles": {
@@ -54,6 +60,12 @@ export class Factory {
 				enumerable: false,
 				configurable: true,
 				value: roles,
+			},
+			"createChild": {
+				writable: true,
+				enumerable: false,
+				configurable: true,
+				value: createChild,
 			},
 			"listAgents": {
 				writable: true,
@@ -98,6 +110,12 @@ export class Factory {
 
 }
 
+function createChild<T extends Role.Class>( role:T, requestOptions?:HTTP.Request.Options ):Promise<[ T & Class, HTTP.Response.Class ]>;
+function createChild<T extends Role.Class>( role:T, slug?:string, requestOptions?:HTTP.Request.Options ):Promise<[ T & Class, HTTP.Response.Class ]>;
+function createChild<T extends Role.Class>( role:T, slugOrRequestOptions?:any, requestOptions?:HTTP.Request.Options ):Promise<[ T & Class, HTTP.Response.Class ]> {
+	checkState.call( this );
+	return (<Class> this)._roles.createChild( (<Class> this).id, role, slugOrRequestOptions, requestOptions );
+}
 
 function listAgents( requestOptions?:HTTP.Request.Options ):Promise<[ Pointer.Class[], HTTP.Response.Class ]> {
 	checkState.call( this );
