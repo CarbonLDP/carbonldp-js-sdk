@@ -14,6 +14,11 @@ var Class = (function () {
         enumerable: true,
         configurable: true
     });
+    Object.defineProperty(Class, "AddMember", {
+        get: function () { return namespace + "AddMember"; },
+        enumerable: true,
+        configurable: true
+    });
     Object.defineProperty(Class, "Agent", {
         get: function () { return namespace + "Agent"; },
         enumerable: true,
@@ -34,8 +39,48 @@ var Class = (function () {
         enumerable: true,
         configurable: true
     });
+    Object.defineProperty(Class, "CreateAccessPoint", {
+        get: function () { return namespace + "CreateAccessPoint"; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Class, "CreateChild", {
+        get: function () { return namespace + "CreateChild"; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Class, "Delete", {
+        get: function () { return namespace + "Delete"; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Class, "Download", {
+        get: function () { return namespace + "Download"; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Class, "Extend", {
+        get: function () { return namespace + "Extend"; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Class, "ManageSecurity", {
+        get: function () { return namespace + "ManageSecurity"; },
+        enumerable: true,
+        configurable: true
+    });
     Object.defineProperty(Class, "ProtectedDocument", {
         get: function () { return namespace + "ProtectedDocument"; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Class, "Read", {
+        get: function () { return namespace + "Read"; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Class, "RemoveMember", {
+        get: function () { return namespace + "RemoveMember"; },
         enumerable: true,
         configurable: true
     });
@@ -46,6 +91,16 @@ var Class = (function () {
     });
     Object.defineProperty(Class, "Token", {
         get: function () { return namespace + "Token"; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Class, "Update", {
+        get: function () { return namespace + "Update"; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Class, "Upload", {
+        get: function () { return namespace + "Upload"; },
         enumerable: true,
         configurable: true
     });

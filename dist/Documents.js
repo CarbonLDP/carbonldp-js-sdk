@@ -164,9 +164,10 @@ var Documents = (function () {
                 throw new HTTP.Errors.BadResponseError("The response contains more than one Location header.", response);
             var localID = _this.getPointerID(locationHeader.values[0].toString());
             var persistedDocument = PersistedDocument.Factory.decorate(_this.createPointerFrom(childDocument, localID), _this);
-            _this.pointers.set(localID, persistedDocument);
+            var persistedProtectedDocument = PersistedProtectedDocument.Factory.decorate(persistedDocument);
+            _this.pointers.set(localID, persistedProtectedDocument);
             return [
-                persistedDocument,
+                persistedProtectedDocument,
                 response,
             ];
         });
@@ -278,9 +279,10 @@ var Documents = (function () {
                 throw new HTTP.Errors.BadResponseError("The response contains more than one Location header.", response);
             var localID = _this.getPointerID(locationHeader.values[0].toString());
             var persistedAccessPoint = PersistedDocument.Factory.decorate(_this.createPointerFrom(accessPointDocument, localID), _this);
+            var persistedProtectedAccessPoint = PersistedProtectedDocument.Factory.decorate(persistedAccessPoint);
             _this.pointers.set(localID, persistedAccessPoint);
             return [
-                persistedAccessPoint,
+                persistedProtectedAccessPoint,
                 response,
             ];
         });

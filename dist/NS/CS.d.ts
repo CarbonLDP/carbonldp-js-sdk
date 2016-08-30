@@ -2,13 +2,24 @@ declare const namespace: string;
 declare class Class {
     static AccessControlEntry: string;
     static AccessControlList: string;
+    static AddMember: string;
     static Agent: string;
     static AllOrigins: string;
     static Application: string;
     static AppRole: string;
+    static CreateAccessPoint: string;
+    static CreateChild: string;
+    static Delete: string;
+    static Download: string;
+    static Extend: string;
+    static ManageSecurity: string;
     static ProtectedDocument: string;
+    static Read: string;
+    static RemoveMember: string;
     static Ticket: string;
     static Token: string;
+    static Update: string;
+    static Upload: string;
 }
 declare class Predicate {
     static accessControlEntry: string;

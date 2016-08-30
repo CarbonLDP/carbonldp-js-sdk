@@ -2,11 +2,11 @@ import * as Agent from "./Agent";
 import Context from "./../Context";
 import * as HTTP from "./../HTTP";
 import * as PersistedAgent from "./PersistedAgent";
-import * as PersistedDocument from "./../PersistedDocument";
+import * as PersistedProtectedDocument from "./../PersistedProtectedDocument";
 export declare abstract class Class {
     private context;
     constructor(context: Context);
-    register(agentDocument: Agent.Class, slug?: string): Promise<[PersistedDocument.Class, HTTP.Response.Class]>;
+    register(agentDocument: Agent.Class, slug?: string): Promise<[PersistedProtectedDocument.Class, HTTP.Response.Class]>;
     get(agentURI: string, requestOptions?: HTTP.Request.Options): Promise<[PersistedAgent.Class, HTTP.Response.Class]>;
     enable(agentURI: string, requestOptions?: HTTP.Request.Options): Promise<[PersistedAgent.Class, [HTTP.Response.Class, HTTP.Response.Class]]>;
     disable(agentURI: string, requestOptions?: HTTP.Request.Options): Promise<[PersistedAgent.Class, [HTTP.Response.Class, HTTP.Response.Class]]>;

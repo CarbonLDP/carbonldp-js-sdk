@@ -1,14 +1,20 @@
 "use strict";
 var HTTP = require("./HTTP");
 var Auth = require("./Auth");
+var NS = require("./NS");
+var PersistedDocument = require("./PersistedDocument");
 var Resource = require("./Resource");
 var Utils = require("./Utils");
 var Factory = (function () {
     function Factory() {
     }
     Factory.hasClassProperties = function (object) {
-        return Utils.hasPropertyDefined(object, "accessControlList")
+        return Utils.isObject(object)
             && Utils.hasFunction(object, "getACL");
+    };
+    Factory.is = function (object) {
+        return Factory.hasClassProperties(object)
+            && PersistedDocument.Factory.is(object);
     };
     Factory.decorate = function (document) {
         if (Factory.hasClassProperties(document))
@@ -28,8 +34,20 @@ var Factory = (function () {
 }());
 exports.Factory = Factory;
 function getACL(requestOptions) {
-    var that = this;
-    return that._documents.get(that.accessControlList.id, requestOptions).then(function (_a) {
+    var protectedDocument = this;
+    var aclPromise;
+    if (protectedDocument.isResolved()) {
+        aclPromise = Promise.resolve(protectedDocument.accessControlList);
+    }
+    else {
+        aclPromise = protectedDocument.executeSELECTQuery("SELECT ?acl WHERE {\n\t\t\t<" + protectedDocument.id + "> <" + NS.CS.Predicate.accessControlList + "> ?acl.\n\t\t}").then(function (_a) {
+            var results = _a[0], response = _a[1];
+            return results.bindings[0]["acl"];
+        });
+    }
+    return aclPromise.then(function (acl) {
+        return protectedDocument._documents.get(acl.id, requestOptions);
+    }).then(function (_a) {
         var acl = _a[0], response = _a[1];
         if (!Resource.Util.hasType(acl, Auth.ACL.RDF_CLASS))
             throw new HTTP.Errors.BadResponseError("The response does not contains a " + Auth.ACL.RDF_CLASS + " object.", response);

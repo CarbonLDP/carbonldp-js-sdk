@@ -39,7 +39,7 @@ describe( module(
 		it( isDefined(), ():void => {
 			expect( CS.Class ).toBeDefined();
 			expect( Utils.isFunction( CS.Class ) ).toBe( true );
-			expect( Object.keys( CS.Class ).length ).toBe( 9 );
+			expect( Object.keys( CS.Class ).length ).toBe( 20 );
 		} );
 
 		it( hasProperty(
@@ -62,6 +62,17 @@ describe( module(
 			expect( Utils.isString( CS.Class.AccessControlList ) ).toBe( true );
 
 			expect( CS.Class.AccessControlList ).toBe( "https://carbonldp.com/ns/v1/security#AccessControlList" );
+		} );
+
+		it( hasProperty(
+			STATIC,
+			"AddMember",
+			"string"
+		), ():void => {
+			expect( CS.Class.AddMember ).toBeDefined();
+			expect( Utils.isString( CS.Class.AddMember ) ).toBe( true );
+
+			expect( CS.Class.AddMember ).toBe( "https://carbonldp.com/ns/v1/security#AddMember" );
 		} );
 
 		it( hasProperty(
@@ -110,6 +121,72 @@ describe( module(
 
 		it( hasProperty(
 			STATIC,
+			"CreateAccessPoint",
+			"string"
+		), ():void => {
+			expect( CS.Class.CreateAccessPoint ).toBeDefined();
+			expect( Utils.isString( CS.Class.CreateAccessPoint ) ).toBe( true );
+
+			expect( CS.Class.CreateAccessPoint ).toBe( "https://carbonldp.com/ns/v1/security#CreateAccessPoint" );
+		} );
+
+		it( hasProperty(
+			STATIC,
+			"CreateChild",
+			"string"
+		), ():void => {
+			expect( CS.Class.CreateChild ).toBeDefined();
+			expect( Utils.isString( CS.Class.CreateChild ) ).toBe( true );
+
+			expect( CS.Class.CreateChild ).toBe( "https://carbonldp.com/ns/v1/security#CreateChild" );
+		} );
+
+		it( hasProperty(
+			STATIC,
+			"Delete",
+			"string"
+		), ():void => {
+			expect( CS.Class.Delete ).toBeDefined();
+			expect( Utils.isString( CS.Class.Delete ) ).toBe( true );
+
+			expect( CS.Class.Delete ).toBe( "https://carbonldp.com/ns/v1/security#Delete" );
+		} );
+
+		it( hasProperty(
+			STATIC,
+			"Download",
+			"string"
+		), ():void => {
+			expect( CS.Class.Download ).toBeDefined();
+			expect( Utils.isString( CS.Class.Download ) ).toBe( true );
+
+			expect( CS.Class.Download ).toBe( "https://carbonldp.com/ns/v1/security#Download" );
+		} );
+
+		it( hasProperty(
+			STATIC,
+			"Extend",
+			"string"
+		), ():void => {
+			expect( CS.Class.Extend ).toBeDefined();
+			expect( Utils.isString( CS.Class.Extend ) ).toBe( true );
+
+			expect( CS.Class.Extend ).toBe( "https://carbonldp.com/ns/v1/security#Extend" );
+		} );
+
+		it( hasProperty(
+			STATIC,
+			"ManageSecurity",
+			"string"
+		), ():void => {
+			expect( CS.Class.ManageSecurity ).toBeDefined();
+			expect( Utils.isString( CS.Class.ManageSecurity ) ).toBe( true );
+
+			expect( CS.Class.ManageSecurity ).toBe( "https://carbonldp.com/ns/v1/security#ManageSecurity" );
+		} );
+
+		it( hasProperty(
+			STATIC,
 			"ProtectedDocument",
 			"string"
 		), ():void => {
@@ -117,6 +194,28 @@ describe( module(
 			expect( Utils.isString( CS.Class.ProtectedDocument ) ).toBe( true );
 
 			expect( CS.Class.ProtectedDocument ).toBe( "https://carbonldp.com/ns/v1/security#ProtectedDocument" );
+		} );
+
+		it( hasProperty(
+			STATIC,
+			"Read",
+			"string"
+		), ():void => {
+			expect( CS.Class.Read ).toBeDefined();
+			expect( Utils.isString( CS.Class.Read ) ).toBe( true );
+
+			expect( CS.Class.Read ).toBe( "https://carbonldp.com/ns/v1/security#Read" );
+		} );
+
+		it( hasProperty(
+			STATIC,
+			"RemoveMember",
+			"string"
+		), ():void => {
+			expect( CS.Class.RemoveMember ).toBeDefined();
+			expect( Utils.isString( CS.Class.RemoveMember ) ).toBe( true );
+
+			expect( CS.Class.RemoveMember ).toBe( "https://carbonldp.com/ns/v1/security#RemoveMember" );
 		} );
 
 		it( hasProperty(
@@ -139,6 +238,28 @@ describe( module(
 			expect( Utils.isString( CS.Class.Token ) ).toBe( true );
 
 			expect( CS.Class.Token ).toBe( "https://carbonldp.com/ns/v1/security#Token" );
+		} );
+
+		it( hasProperty(
+			STATIC,
+			"Update",
+			"string"
+		), ():void => {
+			expect( CS.Class.Update ).toBeDefined();
+			expect( Utils.isString( CS.Class.Update ) ).toBe( true );
+
+			expect( CS.Class.Update ).toBe( "https://carbonldp.com/ns/v1/security#Update" );
+		} );
+
+		it( hasProperty(
+			STATIC,
+			"Upload",
+			"string"
+		), ():void => {
+			expect( CS.Class.Upload ).toBeDefined();
+			expect( Utils.isString( CS.Class.Upload ) ).toBe( true );
+
+			expect( CS.Class.Upload ).toBe( "https://carbonldp.com/ns/v1/security#Upload" );
 		} );
 
 	} );

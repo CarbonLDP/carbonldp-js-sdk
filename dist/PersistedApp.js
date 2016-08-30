@@ -1,6 +1,6 @@
 "use strict";
 var App = require("./App");
-var PersistedDocument = require("./PersistedDocument");
+var PersistedProtectedDocument = require("./PersistedProtectedDocument");
 var Utils = require("./Utils");
 var Factory = (function () {
     function Factory() {
@@ -10,7 +10,7 @@ var Factory = (function () {
     };
     Factory.is = function (object) {
         return App.Factory.is(object)
-            && PersistedDocument.Factory.hasClassProperties(object)
+            && PersistedProtectedDocument.Factory.is(object)
             && Factory.hasClassProperties(object);
     };
     return Factory;
