@@ -206,7 +206,8 @@ describe( module( "Carbon/Auth/Agents" ), ():void => {
 				}
 			}
 			context = new MockedContext();
-			agents = new Agents.Class( context );
+			class MockedAgents extends Agents.Class {}
+			agents = new MockedAgents( context );
 
 			expect( agents.enable ).toBeDefined();
 			expect( Utils.isFunction( agents.enable ) ).toBe( true );
@@ -277,7 +278,8 @@ describe( module( "Carbon/Auth/Agents" ), ():void => {
 				}
 			}
 			context = new MockedContext();
-			agents = new Agents.Class( context );
+			class MockedAgents extends Agents.Class {}
+			agents = new MockedAgents( context );
 
 			expect( agents.disable ).toBeDefined();
 			expect( Utils.isFunction( agents.disable ) ).toBe( true );
@@ -348,7 +350,8 @@ describe( module( "Carbon/Auth/Agents" ), ():void => {
 				}
 			}
 			context = new MockedContext();
-			agents = new Agents.Class( context );
+			class MockedAgents extends Agents.Class {}
+			agents = new MockedAgents( context );
 
 			expect( agents.delete ).toBeDefined();
 			expect( Utils.isFunction( agents.delete ) ).toBe( true );
