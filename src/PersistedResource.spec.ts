@@ -1,4 +1,16 @@
-import {module, isDefined, clazz, hasMethod, STATIC, decoratedObject, hasProperty, INSTANCE} from "./test/JasmineExtender";
+import {
+	STATIC,
+	INSTANCE,
+
+	module,
+	clazz,
+
+	isDefined,
+	hasMethod,
+	hasProperty,
+	decoratedObject,
+} from "./test/JasmineExtender";
+import * as Resource from "./Resource";
 import * as Utils from "./Utils";
 
 import * as PersistedResource from "./PersistedResource";
@@ -21,7 +33,7 @@ describe( module( "Carbon/PersistedResource" ), ():void => {
 			STATIC,
 			"hasClassProperties",
 			"Returns true if the object provided has the properties and methods of a `Carbon.PersistedResource.Class` object.", [
-				{name: "object", type: "Object"}
+				{name: "object", type: "Object"},
 			],
 			{type: "boolean"}
 		), ():void => {
@@ -33,8 +45,9 @@ describe( module( "Carbon/PersistedResource" ), ():void => {
 
 			object = {
 				_snapshot: null,
-				_syncSnapshot: () => {},
-				isDirty: () => {},
+				_syncSnapshot: ():void => {},
+				isDirty: ():void => {},
+				revert: ():void => {},
 			};
 			expect( PersistedResource.Factory.hasClassProperties( object ) ).toBe( true );
 
@@ -49,6 +62,10 @@ describe( module( "Carbon/PersistedResource" ), ():void => {
 			delete object.isDirty;
 			expect( PersistedResource.Factory.hasClassProperties( object ) ).toBe( false );
 			object.isDirty = () => {};
+
+			delete object.revert;
+			expect( PersistedResource.Factory.hasClassProperties( object ) ).toBe( false );
+			object.revert = () => {};
 		} );
 
 		it( hasMethod(
@@ -56,17 +73,18 @@ describe( module( "Carbon/PersistedResource" ), ():void => {
 			"decorate",
 			"Decorates the object provided with the properties and methods of a `Carbon.PersistedResource.Class` object.", [
 				{name: "fragment", type: "T extends Object", description: "The object to convert into a persisted resource one."},
-				{name: "snapshot", type: "Object", optional: true, description: "A shallow copy of the resource, which will be used to track its changes."}
+				{name: "snapshot", type: "Object", optional: true, description: "A shallow copy of the resource, which will be used to track its changes."},
 			]
 		), ():void => {
 			expect( PersistedResource.Factory.decorate ).toBeDefined();
 			expect( Utils.isFunction( PersistedResource.Factory.decorate ) ).toBe( true );
 
-			let fn = () => {};
+			let fn:Function = ():void => {};
 			let object:any = {
 				_snapshot: null,
 				_syncSnapshot: fn,
 				isDirty: fn,
+				revert: fn,
 			};
 			let persistedResource:PersistedResource.Class;
 
@@ -90,7 +108,7 @@ describe( module( "Carbon/PersistedResource" ), ():void => {
 
 		describe( decoratedObject(
 			"Object decorated by the `Carbon.PersistedResource.Factory.decorate()` function.", [
-				"Carbon.PersistedResource.Class"
+				"Carbon.PersistedResource.Class",
 			]
 		), ():void => {
 
@@ -148,6 +166,16 @@ describe( module( "Carbon/PersistedResource" ), ():void => {
 				expect( snapshot ).not.toBe( persistedResource._snapshot );
 				snapshot = persistedResource._snapshot;
 				expect( snapshot ).toEqual( {another: "another"} );
+
+				let resource:Resource.Class = Resource.Factory.createFrom( {another: "another"}, "http://example.com/resource/", [ "http://example.com/ns#Type" ] );
+				persistedResource = PersistedResource.Factory.decorate( resource );
+				expect( () => persistedResource._syncSnapshot() ).not.toThrow();
+
+				expect( persistedResource._snapshot ).not.toEqual( resource );
+				let resourceSnapshot:Resource.Class = persistedResource._snapshot as Resource.Class;
+				expect( Utils.O.areEqual( resource, resourceSnapshot, {}, {id: true, types: true} ) ).toBe( true );
+				expect( resourceSnapshot.id ).toEqual( resource.id );
+				expect( resourceSnapshot.types ).toEqual( resource.types );
 			} );
 
 			it( hasMethod(
@@ -193,6 +221,67 @@ describe( module( "Carbon/PersistedResource" ), ():void => {
 				expect( persistedResource.isDirty() ).toBe( false );
 				persistedResource[ "object" ] = {some: "some"};
 				expect( persistedResource.isDirty() ).toBe( true );
+
+				let resource:Resource.Class = Resource.Factory.createFrom( {another: "another"}, "http://example.com/resource/", [ "http://example.com/ns#Type" ] );
+				persistedResource = PersistedResource.Factory.decorate( resource );
+
+				persistedResource._syncSnapshot();
+				expect( persistedResource.isDirty() ).toBe( false );
+
+				resource.id = "http://example.com/another/";
+				expect( persistedResource.isDirty() ).toBe( true );
+				resource.id = "http://example.com/resource/";
+				expect( persistedResource.isDirty() ).toBe( false );
+
+				resource.types = [ "http://example.com/ns#Another-Type" ];
+				expect( persistedResource.isDirty() ).toBe( true );
+				resource.types = [ "http://example.com/ns#Type" ];
+				expect( persistedResource.isDirty() ).toBe( false );
+			} );
+
+			it( hasMethod(
+				INSTANCE,
+				"revert",
+				"Revert the changes made to the resource into the state of the snapshot."
+			), ():void => {
+				let resource:Resource.Class & {another:string, toDelete?:boolean} = Resource.Factory.createFrom( {another: "another"}, "http://example.com/resource/", [ "http://example.com/ns#Type" ] );
+				let persistedResource:PersistedResource.Class = PersistedResource.Factory.decorate( resource );
+				persistedResource._syncSnapshot();
+
+				resource.id = "http://example.com/another/";
+				expect( persistedResource.isDirty() ).toBe( true );
+				expect( () => persistedResource.revert() ).not.toThrow();
+				expect( persistedResource.isDirty() ).toBe( false );
+				expect( resource.id ).toBe( "http://example.com/resource/" );
+
+				resource.types = [ "http://example.com/ns#Another-Type" ];
+				expect( persistedResource.isDirty() ).toBe( true );
+				expect( () => persistedResource.revert() ).not.toThrow();
+				expect( persistedResource.isDirty() ).toBe( false );
+				expect( resource.types ).toEqual( [ "http://example.com/ns#Type" ] );
+
+				resource.another = "A change";
+				expect( persistedResource.isDirty() ).toBe( true );
+				expect( () => persistedResource.revert() ).not.toThrow();
+				expect( persistedResource.isDirty() ).toBe( false );
+				expect( resource.another ).toBe( "another" );
+
+				resource.toDelete = true;
+				expect( persistedResource.isDirty() ).toBe( true );
+				expect( () => persistedResource.revert() ).not.toThrow();
+				expect( persistedResource.isDirty() ).toBe( false );
+
+				resource.id = "http://example.com/another/";
+				resource.types = [ "http://example.com/ns#Another-Type" ];
+				resource.another = "A change";
+				resource.toDelete = true;
+				expect( persistedResource.isDirty() ).toBe( true );
+				expect( () => persistedResource.revert() ).not.toThrow();
+				expect( persistedResource.isDirty() ).toBe( false );
+				expect( resource.id ).toBe( "http://example.com/resource/" );
+				expect( resource.types ).toEqual( [ "http://example.com/ns#Type" ] );
+				expect( resource.another ).toBe( "another" );
+				expect( resource.toDelete ).toBeUndefined();
 			} );
 
 		} );

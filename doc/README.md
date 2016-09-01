@@ -8793,6 +8793,13 @@ isDirty()
 
 Returns true if the resource presents differences from its snapshot.
 
+##### revert
+```typescript 
+revert()
+```
+
+Revert the changes made to the resource into the state of the snapshot.
+
 
 ## <a name="Carbon-Platform-Agents" />Module Carbon/Platform/Agents
 
@@ -11139,7 +11146,7 @@ Takes an object and creates a map from its properties.
 #### <a name="Carbon-Utils-O-Methods" />Methods
 ##### areEqual
 ```typescript 
-static areEqual( object1:Object,  object2:Object,  config:{arrays?:boolean, objects?:boolean} ):boolean
+static areEqual( object1:Object,  object2:Object,  config?:{arrays?:boolean, objects?:boolean},  ignore?:{[ key:string ]:boolean} ):boolean
 ```
 
 Makes a shallow or deep comparison, between all the enumerable properties of the provided objects, depending of the configuration specified.
@@ -11149,6 +11156,7 @@ Makes a shallow or deep comparison, between all the enumerable properties of the
 - object1: First object to compare.
 - object2: Second object to compare.
 - config: Object that indicates if the arrays or the objects must have a deep comparison or not. By default the comparison is shallow.
+- ignore: Object that indicates there is any property to ignore.
 
 ##### areShallowlyEqual
 ```typescript 
@@ -11164,7 +11172,7 @@ Checks if an object has the same enumerable properties with the same values as a
 
 ##### clone
 ```typescript 
-static clone<T extends Object>( object:T,  config:{arrays?:boolean, objects?:boolean} ):T
+static clone<T extends Object>( object:T,  config?:{arrays?:boolean, objects?:boolean},  ignore?:{[ key:string ]:boolean} ):T
 ```
 
 Makes a shallow or deep clone of the object provided depending of the configuration specified.
@@ -11173,6 +11181,21 @@ Makes a shallow or deep clone of the object provided depending of the configurat
 
 - object: The object to copy.
 - config: Object that indicates if the arrays or objects must be copied or not. By default, arrays and objects will not be deep copied.
+- ignore: Object that indicates there is any property to ignore.
+
+##### extend
+```typescript 
+static extend<T extends Object, W extends Object>( target:T,  source:W,  config?:{arrays?:boolean, objects?:boolean},  ignore?:{[ key:string ]:boolean} ):T & W
+```
+
+Extends the target element making a shallow or deep copy of the properties in the source object, depending of the configuration specified.
+
+*Parameters*
+
+- target: The object to extend.
+- source: The object to copy.
+- config: Object that indicates if the arrays or objects must be copied or not. By default, arrays and objects will not be deep copied.
+- ignore: Object that indicates there is any property to ignore.
 
 
 

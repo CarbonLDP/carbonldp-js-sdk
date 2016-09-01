@@ -138,30 +138,42 @@ exports.forEachOwnProperty = forEachOwnProperty;
 var O = (function () {
     function O() {
     }
-    O.clone = function (object, config) {
+    O.extend = function (target, source, config, ignore) {
         if (config === void 0) { config = { arrays: false, objects: false }; }
+        if (ignore === void 0) { ignore = {}; }
+        if (!isArray(source) && !isPlainObject(source) || !isArray(target) && !isPlainObject(target))
+            return null;
+        var clone = target;
+        source.__CarbonSDK_circularReferenceFlag = clone;
+        for (var _i = 0, _a = Object.keys(source); _i < _a.length; _i++) {
+            var key = _a[_i];
+            if (isFunction(source[key]) || key === "__CarbonSDK_circularReferenceFlag")
+                continue;
+            if (key in ignore)
+                continue;
+            var property = source[key];
+            if (isArray(property) && config.arrays ||
+                isPlainObject(property) && config.objects) {
+                property = property.__CarbonSDK_circularReferenceFlag || O.clone(property, config);
+            }
+            clone[key] = property;
+        }
+        delete source.__CarbonSDK_circularReferenceFlag;
+        return clone;
+    };
+    O.clone = function (object, config, ignore) {
+        if (config === void 0) { config = { arrays: false, objects: false }; }
+        if (ignore === void 0) { ignore = {}; }
         var isAnArray = isArray(object);
         if (!isAnArray && !isPlainObject(object))
             return null;
         var clone = (isAnArray ? [] : (!!Object.getPrototypeOf(object)) ? {} : Object.create(null));
-        object.__SDKUtils_circularReferenceFlag = clone;
-        for (var _i = 0, _a = Object.keys(object); _i < _a.length; _i++) {
-            var key = _a[_i];
-            if (isFunction(object[key]) || key === "__SDKUtils_circularReferenceFlag")
-                continue;
-            var property = object[key];
-            if (isArray(property) && config.arrays ||
-                isPlainObject(property) && config.objects) {
-                property = property.__SDKUtils_circularReferenceFlag || O.clone(property, config);
-            }
-            clone[key] = property;
-        }
-        delete object.__SDKUtils_circularReferenceFlag;
-        return clone;
+        return O.extend(clone, object, config, ignore);
     };
-    O.areEqual = function (object1, object2, config) {
+    O.areEqual = function (object1, object2, config, ignore) {
         if (config === void 0) { config = { arrays: false, objects: false }; }
-        return internalAreEqual(object1, object2, config, [object1], [object2]);
+        if (ignore === void 0) { ignore = {}; }
+        return internalAreEqual(object1, object2, config, [object1], [object2], ignore);
     };
     O.areShallowlyEqual = function (object1, object2) {
         if (object1 === object2)
@@ -195,7 +207,8 @@ var O = (function () {
     return O;
 }());
 exports.O = O;
-function internalAreEqual(object1, object2, config, stack1, stack2) {
+function internalAreEqual(object1, object2, config, stack1, stack2, ignore) {
+    if (ignore === void 0) { ignore = {}; }
     if (object1 === object2)
         return true;
     if (!isObject(object1) || !isObject(object2))
@@ -209,6 +222,8 @@ function internalAreEqual(object1, object2, config, stack1, stack2) {
             return false;
         if (typeof object1 !== typeof object2)
             return false;
+        if (key in ignore)
+            continue;
         if (isFunction(object1[key]))
             continue;
         var firstIsPlainObject = isPlainObject(object1[key]);
