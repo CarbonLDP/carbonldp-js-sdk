@@ -1189,7 +1189,7 @@ Class( context:Carbon.Context )
 
 ##### create
 ```typescript 
-create( slug:string,  appDocument:Carbon.App.Class ):Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>
+create( appDocument:Carbon.App.Class,  slug:string ):Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>
 ```
 
 Persists a `Carbon.App.Class` object using the slug specified.
@@ -1197,8 +1197,8 @@ Returns a Promise with a Pointer to the stored App, and the response of the requ
 
 *Parameters*
 
-- slug: Slug that will be used for the URI of the new app.
 - appDocument: App document that will be persisted.
+- slug: Slug that will be used for the URI of the new app.
 
 ##### delete
 ```typescript 
