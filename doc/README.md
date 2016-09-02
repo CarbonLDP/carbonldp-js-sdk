@@ -3239,7 +3239,7 @@ Persists a child document for the respective parent source.
 - requestOptions: Customizable options for the request.
 
 ```typescript 
-createChild<T extends Carbon.Document.Class>( parentURI:string,  slug:string,  childDocument:T,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ T & Carbon.PersistedDocument.Class, Carbon.HTTP.Response.Class ]>
+createChild<T extends Carbon.Document.Class>( parentURI:string,  childDocument:T,  slug?:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ T & Carbon.PersistedDocument.Class, Carbon.HTTP.Response.Class ]>
 ```
 
 Persists a child document for the respective parent source.
@@ -3247,8 +3247,8 @@ Persists a child document for the respective parent source.
 *Parameters*
 
 - parentURI: URI of the document where to create a new child.
-- slug: Slug that will be used for the URI of the new child.
 - childDocument: Document to persists as a new child.
+- slug: Slug that will be used for the URI of the new child.
 - requestOptions: Customizable options for the request.
 
 ```typescript 
@@ -3264,7 +3264,7 @@ Persists JavaScript object as a child document for the respective parent source.
 - requestOptions: Customizable options for the request.
 
 ```typescript 
-createChild<T extends Object>( parentURI:string,  slug:string,  childObject:T,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ T & Carbon.PersistedDocument.Class, Carbon.HTTP.Response.Class ]>
+createChild<T extends Object>( parentURI:string,  childObject:T,  slug?:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ T & Carbon.PersistedDocument.Class, Carbon.HTTP.Response.Class ]>
 ```
 
 Persists JavaScript object as a child document for the respective parent source.
@@ -3272,8 +3272,8 @@ Persists JavaScript object as a child document for the respective parent source.
 *Parameters*
 
 - parentURI: URI of the document where to create a new child.
-- slug: Slug that will be used for the URI of the new child.
 - childObject: A normal JavaScript object that will be converted and persisted as a new child document.
+- slug: Slug that will be used for the URI of the new child.
 - requestOptions: Customizable options for the request.
 
 ##### createChildAndRetrieve
