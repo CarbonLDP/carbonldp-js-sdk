@@ -9741,7 +9741,7 @@ Returns true if the RDFNode provided has the specified type.
 ### <a name="Carbon-RDF-URI-Class" />Class Carbon.RDF.URI.Class
 
 
-> Wrapper class for an URI string value.
+> Wrapper class for a URI string value.
 
 
 #### <a name="Carbon-RDF-URI-Class-Constructor" />Constructor
