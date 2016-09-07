@@ -375,8 +375,8 @@ describe( module( "Carbon/Apps" ), ():void => {
 			"create",
 			"Persists a `Carbon.App.Class` object using the slug specified.\n" +
 			"Returns a Promise with a Pointer to the stored App, and the response of the request.", [
-				{ name: "slug", type: "string", description: "Slug that will be used for the URI of the new app." },
 				{ name: "appDocument", type: "Carbon.App.Class", description: "App document that will be persisted." },
+				{ name: "slug", type: "string", description: "Slug that will be used for the URI of the new app." },
 			],
 			{ type: "Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>" }
 		), ( done:{():void, fail:() => void} ):void => {

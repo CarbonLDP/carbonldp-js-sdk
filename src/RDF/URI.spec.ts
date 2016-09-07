@@ -23,7 +23,7 @@ describe( module( "Carbon/RDF/URI" ), ():void => {
 		expect( Utils.isObject( URI ) ).toBe( true );
 	} );
 
-	describe( clazz( "Carbon.RDF.URI.Class", "Wrapper class for an URI string value." ), ():void => {
+	describe( clazz( "Carbon.RDF.URI.Class", "Wrapper class for a URI string value." ), ():void => {
 
 		it( isDefined(), ():void => {
 			expect( URI.Class ).toBeDefined();
