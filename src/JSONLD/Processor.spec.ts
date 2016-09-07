@@ -246,6 +246,20 @@ describe( module( "Carbon/JSONLD/Processor" ), ():void => {
 					},
 					"published": "2015-01-25T12:34:56Z",
 				},
+				{
+					"@context": {
+						"ex": "http://example.com/vocab/",
+						"@language": "ja",
+						"name": { "@id": "ex:name", "@language": null },
+						"occupation": { "@id": "ex:occupation" },
+						"occupation_en": { "@id": "ex:occupation", "@language": "en" },
+						"occupation_cs": { "@id": "ex:occupation", "@language": "cs" },
+					},
+					"name": "Yagyū Muneyoshi",
+					"occupation": "忍者",
+					"occupation_cs": "Nindža",
+					"occupation_en": "Ninja",
+				},
 			];
 
 			let promises:Promise<void>[] = [];

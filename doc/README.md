@@ -7775,6 +7775,11 @@ base:string
 
 The base URI of the schema.
 ```typescript 
+language:string 
+```
+
+The default language of the string properties.
+```typescript 
 prefixedURIs:Map<string, Carbon.RDF.URI.Class[]> 
 ```
 
@@ -7821,7 +7826,7 @@ The type of container the property is. It's `null` if the property is no contain
 language:string 
 ```
 
-The language the property is in. It's `null` if the property is not a container language.
+The language the property is in.
 ```typescript 
 literal:boolean 
 ```

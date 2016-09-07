@@ -93,6 +93,16 @@ describe( module( "Carbon/ObjectSchema" ), ():void => {
 
 		it( hasProperty(
 			INSTANCE,
+			"language",
+			"string",
+			"The default language of the string properties."
+		), ():void => {
+			expect( digestedSchema.language ).toBeDefined();
+			expect( digestedSchema.language ).toBeNull();
+		} );
+
+		it( hasProperty(
+			INSTANCE,
 			"vocab",
 			"string",
 			"URI that will be used to resolve properties URIs that aren't defined in the schema."
@@ -190,10 +200,9 @@ describe( module( "Carbon/ObjectSchema" ), ():void => {
 			INSTANCE,
 			"language",
 			"string",
-			"The language the property is in. It's `null` if the property is not a container language."
+			"The language the property is in."
 		), ():void => {
-			expect( digestedProperty.language ).toBeDefined();
-			expect( digestedProperty.language ).toBeNull();
+			expect( digestedProperty.language ).toBeUndefined();
 		} );
 
 		it( hasProperty(
@@ -253,7 +262,7 @@ describe( module( "Carbon/ObjectSchema" ), ():void => {
 				expect( digestedSchema.properties.get( "hasTopConcept" ).uri instanceof RDF.URI.Class ).toEqual( true );
 				expect( digestedSchema.properties.get( "hasTopConcept" ).uri.toString() ).toEqual( "http://www.w3.org/2004/02/skos/core#hasTopConcept" );
 				expect( digestedSchema.properties.get( "hasTopConcept" ).containerType ).toEqual( ObjectSchema.ContainerType.SET );
-				expect( digestedSchema.properties.get( "hasTopConcept" ).language ).toEqual( null );
+				expect( digestedSchema.properties.get( "hasTopConcept" ).language ).toBeUndefined();
 
 				expect( digestedSchema.properties.has( "name" ) ).toEqual( true );
 				expect( digestedSchema.properties.get( "name" ) instanceof ObjectSchema.DigestedPropertyDefinition ).toEqual( true );
@@ -263,7 +272,7 @@ describe( module( "Carbon/ObjectSchema" ), ():void => {
 				expect( digestedSchema.properties.get( "name" ).uri instanceof RDF.URI.Class ).toEqual( true );
 				expect( digestedSchema.properties.get( "name" ).uri.toString() ).toEqual( "http://purl.org/dc/terms/name" );
 				expect( digestedSchema.properties.get( "name" ).containerType ).toEqual( null );
-				expect( digestedSchema.properties.get( "name" ).language ).toEqual( null );
+				expect( digestedSchema.properties.get( "name" ).language ).toBeUndefined();
 			} );
 
 			it( hasSignature(
@@ -313,7 +322,7 @@ describe( module( "Carbon/ObjectSchema" ), ():void => {
 				expect( digestedSchema.properties.get( "hasTopConcept" ).uri instanceof RDF.URI.Class ).toEqual( true );
 				expect( digestedSchema.properties.get( "hasTopConcept" ).uri.toString() ).toEqual( "http://www.w3.org/2004/02/skos/core#hasTopConcept" );
 				expect( digestedSchema.properties.get( "hasTopConcept" ).containerType ).toEqual( ObjectSchema.ContainerType.SET );
-				expect( digestedSchema.properties.get( "hasTopConcept" ).language ).toEqual( null );
+				expect( digestedSchema.properties.get( "hasTopConcept" ).language ).toBeUndefined();
 
 				expect( digestedSchema.properties.has( "name" ) ).toEqual( true );
 				expect( digestedSchema.properties.get( "name" ) instanceof ObjectSchema.DigestedPropertyDefinition ).toEqual( true );
@@ -323,7 +332,7 @@ describe( module( "Carbon/ObjectSchema" ), ():void => {
 				expect( digestedSchema.properties.get( "name" ).uri instanceof RDF.URI.Class ).toEqual( true );
 				expect( digestedSchema.properties.get( "name" ).uri.toString() ).toEqual( "http://purl.org/dc/terms/name" );
 				expect( digestedSchema.properties.get( "name" ).containerType ).toEqual( null );
-				expect( digestedSchema.properties.get( "name" ).language ).toEqual( null );
+				expect( digestedSchema.properties.get( "name" ).language ).toBeUndefined();
 			} );
 		} );
 
@@ -390,7 +399,7 @@ describe( module( "Carbon/ObjectSchema" ), ():void => {
 			expect( digestedSchema.properties.get( "hasTopConcept" ).uri instanceof RDF.URI.Class ).toEqual( true );
 			expect( digestedSchema.properties.get( "hasTopConcept" ).uri.toString() ).toEqual( "http://www.w3.org/2004/02/skos/core#hasTopConcept" );
 			expect( digestedSchema.properties.get( "hasTopConcept" ).containerType ).toEqual( ObjectSchema.ContainerType.SET );
-			expect( digestedSchema.properties.get( "hasTopConcept" ).language ).toEqual( null );
+			expect( digestedSchema.properties.get( "hasTopConcept" ).language ).toBeUndefined();
 
 			expect( digestedSchema.properties.has( "name" ) ).toEqual( true );
 			expect( digestedSchema.properties.get( "name" ) instanceof ObjectSchema.DigestedPropertyDefinition ).toEqual( true );
@@ -400,7 +409,7 @@ describe( module( "Carbon/ObjectSchema" ), ():void => {
 			expect( digestedSchema.properties.get( "name" ).uri instanceof RDF.URI.Class ).toEqual( true );
 			expect( digestedSchema.properties.get( "name" ).uri.toString() ).toEqual( "http://purl.org/dc/terms/name" );
 			expect( digestedSchema.properties.get( "name" ).containerType ).toEqual( null );
-			expect( digestedSchema.properties.get( "name" ).language ).toEqual( null );
+			expect( digestedSchema.properties.get( "name" ).language ).toBeUndefined();
 		} );
 
 	} );
