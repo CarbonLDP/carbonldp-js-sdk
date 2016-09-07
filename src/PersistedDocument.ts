@@ -55,12 +55,12 @@ export interface Class extends PersistedResource.Class, Document.Class {
 
 	addMembers( members:(Pointer.Class | string)[] ):Promise<HTTP.Response.Class>;
 
-	createChild<T extends Object>( object:Object, slug:string ):Promise<[ T & Class, HTTP.Response.Class ]>;
+	createChild<T extends Object>( object:T, slug:string ):Promise<[ T & Class, HTTP.Response.Class ]>;
 	createChild<T extends Object>( object:T ):Promise<[ T & Class, HTTP.Response.Class ]>;
 	createChild( slug:string ):Promise<[ Class, HTTP.Response.Class ]>;
 	createChild():Promise<[ Class, HTTP.Response.Class ]>;
 
-	createChildAndRetrieve<T extends Object>( object:Object, slug:string ):Promise<[ T & Class, [ HTTP.Response.Class, HTTP.Response.Class ] ]>;
+	createChildAndRetrieve<T extends Object>( object:T, slug:string ):Promise<[ T & Class, [ HTTP.Response.Class, HTTP.Response.Class ] ]>;
 	createChildAndRetrieve<T extends Object>( object:T ):Promise<[ T & Class, [ HTTP.Response.Class, HTTP.Response.Class ] ]>;
 	createChildAndRetrieve( slug:string ):Promise<[ Class, [ HTTP.Response.Class, HTTP.Response.Class ] ]>;
 	createChildAndRetrieve():Promise<[ Class, [ HTTP.Response.Class, HTTP.Response.Class ] ]>;

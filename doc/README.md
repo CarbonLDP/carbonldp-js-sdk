@@ -1189,7 +1189,7 @@ Class( context:Carbon.Context )
 
 ##### create
 ```typescript 
-create( slug:string,  appDocument:Carbon.App.Class ):Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>
+create( appDocument:Carbon.App.Class,  slug:string ):Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>
 ```
 
 Persists a `Carbon.App.Class` object using the slug specified.
@@ -1197,8 +1197,8 @@ Returns a Promise with a Pointer to the stored App, and the response of the requ
 
 *Parameters*
 
-- slug: Slug that will be used for the URI of the new app.
 - appDocument: App document that will be persisted.
+- slug: Slug that will be used for the URI of the new app.
 
 ##### delete
 ```typescript 
@@ -3239,7 +3239,7 @@ Persists a child document for the respective parent source.
 - requestOptions: Customizable options for the request.
 
 ```typescript 
-createChild<T extends Carbon.Document.Class>( parentURI:string,  slug:string,  childDocument:T,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ T & Carbon.PersistedDocument.Class, Carbon.HTTP.Response.Class ]>
+createChild<T extends Carbon.Document.Class>( parentURI:string,  childDocument:T,  slug?:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ T & Carbon.PersistedDocument.Class, Carbon.HTTP.Response.Class ]>
 ```
 
 Persists a child document for the respective parent source.
@@ -3247,8 +3247,8 @@ Persists a child document for the respective parent source.
 *Parameters*
 
 - parentURI: URI of the document where to create a new child.
-- slug: Slug that will be used for the URI of the new child.
 - childDocument: Document to persists as a new child.
+- slug: Slug that will be used for the URI of the new child.
 - requestOptions: Customizable options for the request.
 
 ```typescript 
@@ -3264,7 +3264,7 @@ Persists JavaScript object as a child document for the respective parent source.
 - requestOptions: Customizable options for the request.
 
 ```typescript 
-createChild<T extends Object>( parentURI:string,  slug:string,  childObject:T,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ T & Carbon.PersistedDocument.Class, Carbon.HTTP.Response.Class ]>
+createChild<T extends Object>( parentURI:string,  childObject:T,  slug?:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ T & Carbon.PersistedDocument.Class, Carbon.HTTP.Response.Class ]>
 ```
 
 Persists JavaScript object as a child document for the respective parent source.
@@ -3272,8 +3272,8 @@ Persists JavaScript object as a child document for the respective parent source.
 *Parameters*
 
 - parentURI: URI of the document where to create a new child.
-- slug: Slug that will be used for the URI of the new child.
 - childObject: A normal JavaScript object that will be converted and persisted as a new child document.
+- slug: Slug that will be used for the URI of the new child.
 - requestOptions: Customizable options for the request.
 
 ##### createChildAndRetrieve
@@ -7775,6 +7775,11 @@ base:string
 
 The base URI of the schema.
 ```typescript 
+language:string 
+```
+
+The default language of the string properties.
+```typescript 
 prefixedURIs:Map<string, Carbon.RDF.URI.Class[]> 
 ```
 
@@ -7821,7 +7826,7 @@ The type of container the property is. It's `null` if the property is no contain
 language:string 
 ```
 
-The language the property is in. It's `null` if the property is not a container language.
+The language the property is in.
 ```typescript 
 literal:boolean 
 ```
@@ -9748,7 +9753,7 @@ Returns true if the RDFNode provided has the specified type.
 ### <a name="Carbon-RDF-URI-Class" />Class Carbon.RDF.URI.Class
 
 
-> Wrapper class for an URI string value.
+> Wrapper class for a URI string value.
 
 
 #### <a name="Carbon-RDF-URI-Class-Constructor" />Constructor
