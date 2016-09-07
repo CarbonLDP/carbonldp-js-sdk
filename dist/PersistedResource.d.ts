@@ -2,6 +2,7 @@ export interface Class {
     _snapshot: Object;
     _syncSnapshot: () => void;
     isDirty(): boolean;
+    revert(): void;
 }
 export declare class Factory {
     static hasClassProperties(object: Object): boolean;

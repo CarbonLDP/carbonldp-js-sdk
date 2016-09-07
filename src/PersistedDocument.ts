@@ -117,6 +117,20 @@ function extendIsDirty( superFunction:() => boolean ):() => boolean {
 	};
 }
 
+function extendRevert( superFunction:() => void ):() => void {
+	return function():void {
+		let persistedDocument:Class = this;
+		persistedDocument._fragmentsIndex.clear();
+		for( let fragment of persistedDocument._savedFragments ) {
+			let slug:string = "slug" in fragment ? (fragment as PersistedNamedFragment.Class).slug : fragment.id;
+
+			fragment.revert();
+			persistedDocument._fragmentsIndex.set( slug, fragment );
+		}
+		superFunction.call( persistedDocument );
+	};
+}
+
 function syncSavedFragments():void {
 	let document:Class = this;
 	document._savedFragments = Utils.A.from( document._fragmentsIndex.values() );
@@ -152,7 +166,7 @@ function extendCreateFragment( superFunction:( slug:string ) => Fragment.Class )
 function extendCreateFragment( superFunction:( object:Object, slug:string ) => Fragment.Class ):( slug:string, object:Object ) => PersistedFragment.Class;
 function extendCreateFragment( superFunction:( object:Object ) => Fragment.Class ):( object:Object ) => PersistedFragment.Class;
 function extendCreateFragment( superFunction:( slugOrObject?:any, slug?:string ) => Fragment.Class ):any {
-	return function( slugOrObject?:any, slug?:string  ):any {
+	return function( slugOrObject?:any, slug?:string ):any {
 		let fragment:Fragment.Class = superFunction.call( this, slugOrObject, slug );
 		let id:string = fragment.id;
 
@@ -166,7 +180,7 @@ function extendCreateFragment( superFunction:( slugOrObject?:any, slug?:string )
 }
 function extendCreateNamedFragment( superFunction:( slug:string ) => NamedFragment.Class ):( slug:string ) => PersistedNamedFragment.Class;
 function extendCreateNamedFragment( superFunction:( object:Object, slug:string ) => NamedFragment.Class ):( slug:string, object:Object ) => PersistedNamedFragment.Class;
-function extendCreateNamedFragment( superFunction:( slugOrObject:any, slug?:string  ) => NamedFragment.Class ):any {
+function extendCreateNamedFragment( superFunction:( slugOrObject:any, slug?:string ) => NamedFragment.Class ):any {
 	return function( slugOrObject:any, slug?:string ):PersistedNamedFragment.Class {
 		let fragment:NamedFragment.Class = superFunction.call( this, slugOrObject, slug );
 		return PersistedFragment.Factory.decorate( fragment );
@@ -413,7 +427,7 @@ export class Factory {
 					let superFunction:( id:string ) => boolean = persistedDocument.hasPointer;
 					return function( id:string ):boolean {
 						if( RDF.URI.Util.isPrefixed( id ) ) {
-							id = ObjectSchema.Digester.resolvePrefixedURI( id , (<Class> this)._documents.getGeneralSchema() );
+							id = ObjectSchema.Digester.resolvePrefixedURI( id, (<Class> this)._documents.getGeneralSchema() );
 						}
 
 						if( superFunction.call( this, id ) ) return true;
@@ -431,7 +445,7 @@ export class Factory {
 					let inScopeFunction:( id:string ) => boolean = persistedDocument.inScope;
 					return function( id:string ):Pointer.Class {
 						if( RDF.URI.Util.isPrefixed( id ) ) {
-							id = ObjectSchema.Digester.resolvePrefixedURI( id , (<Class> this)._documents.getGeneralSchema() );
+							id = ObjectSchema.Digester.resolvePrefixedURI( id, (<Class> this)._documents.getGeneralSchema() );
 						}
 
 						if( inScopeFunction.call( this, id ) ) return superFunction.call( this, id );
@@ -449,7 +463,7 @@ export class Factory {
 					return function( idOrPointer:any ):boolean {
 						let uri:string = Pointer.Factory.is( idOrPointer ) ? idOrPointer.id : idOrPointer;
 						if( RDF.URI.Util.isPrefixed( uri ) ) {
-							uri = ObjectSchema.Digester.resolvePrefixedURI( uri , (<Class> this)._documents.getGeneralSchema() );
+							uri = ObjectSchema.Digester.resolvePrefixedURI( uri, (<Class> this)._documents.getGeneralSchema() );
 						}
 
 						if( superFunction.call( this, uri ) ) return true;
@@ -631,6 +645,12 @@ export class Factory {
 				enumerable: false,
 				configurable: true,
 				value: extendIsDirty( persistedDocument.isDirty ),
+			},
+			"revert": {
+				writable: false,
+				enumerable: false,
+				configurable: true,
+				value: extendRevert( persistedDocument.revert ),
 			},
 		} );
 
