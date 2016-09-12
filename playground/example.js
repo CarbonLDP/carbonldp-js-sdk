@@ -51,12 +51,12 @@
 				"hri": "http://hri.base22.com/ns#",
 				"labels": {
 					"@id": "hri:labels",
-					"@type": "@id",
+					"@type": "boolean",
 					"@container": "@set"
 				},
 				"gradient": {
 					"@id": "hri:gradient",
-					"@type": "@id"
+					"@type": "string"
 				}
 			} );
 

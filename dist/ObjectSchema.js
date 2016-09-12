@@ -1,5 +1,6 @@
 "use strict";
 var Errors = require("./Errors");
+var NS = require("./NS");
 var RDF = require("./RDF");
 var Utils = require("./Utils");
 (function (ContainerType) {
@@ -160,7 +161,10 @@ var Digester = (function () {
                     }
                     else {
                         digestedDefinition.literal = true;
-                        digestedDefinition.literalType = Digester._resolvePrefixedURI(new RDF.URI.Class(schemaDefinition["@type"]), digestedSchema);
+                        var type = Digester._resolvePrefixedURI(new RDF.URI.Class(schemaDefinition["@type"]), digestedSchema);
+                        if (RDF.URI.Util.isRelative(type.stringValue) && type.stringValue in NS.XSD.DataType)
+                            type.stringValue = NS.XSD.DataType[type.stringValue];
+                        digestedDefinition.literalType = type;
                     }
                 }
                 if ("@language" in schemaDefinition) {
