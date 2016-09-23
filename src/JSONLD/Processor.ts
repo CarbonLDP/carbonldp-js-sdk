@@ -18,7 +18,7 @@ export class Class {
 			// Optimize @graph
 			if( Utils.isObject( expanded ) && "@graph" in expanded && Object.keys( expanded ).length === 1 ) {
 				expanded = expanded[ "@graph" ];
-			} else if ( expanded === null ) {
+			} else if( expanded === null ) {
 				expanded = [];
 			}
 
@@ -58,7 +58,7 @@ export class Class {
 			for( let element of (<Array<Object>> input) ) {
 				Class.findContextURLs( element, contexts, base );
 			}
-		} else if ( Utils.isPlainObject( input ) ) {
+		} else if( Utils.isPlainObject( input ) ) {
 			for( let key in input ) {
 				if( "@context" !== key ) {
 					Class.findContextURLs( input[ key ], contexts, base );
@@ -68,31 +68,31 @@ export class Class {
 				let urlOrArrayOrContext:string | Array<string | Object> | Object = input[ key ];
 				if( Utils.isArray( urlOrArrayOrContext ) ) {
 					let contextArray:Array<string | Object> = <Array<string | Object>> urlOrArrayOrContext;
-					for( let index:number = 0, length:number = contextArray.length; index < length; ++index ) {
+					for( let index:number = 0, length:number = contextArray.length; index < length; ++ index ) {
 						let urlOrContext:string | Object = contextArray[ index ];
 						if( ! Utils.isString( urlOrContext ) ) continue;
 
 						let url:string = <string> urlOrContext;
 						url = RDF.URI.Util.resolve( base, url );
-						if ( replace ) {
-							if ( Utils.isArray( contexts[ url ] ) ) {
+						if( replace ) {
+							if( Utils.isArray( contexts[ url ] ) ) {
 								Array.prototype.splice.apply( contextArray, [ index, 1 ].concat( <any> contexts[ url ] ) );
 								index += (<Array<any>> contexts[ url ]).length - 1;
 								length = contextArray.length;
 							} else {
 								contextArray[ index ] = contexts[ url ];
 							}
-						} else if ( ! ( url in contexts ) ) {
-							contexts[ url ] =  true;
+						} else if( ! ( url in contexts ) ) {
+							contexts[ url ] = true;
 						}
 					}
-				} else if ( Utils.isString( urlOrArrayOrContext ) ) {
+				} else if( Utils.isString( urlOrArrayOrContext ) ) {
 					let url:string = <string> urlOrArrayOrContext;
 					url = RDF.URI.Util.resolve( base, url );
-					if ( replace ) {
+					if( replace ) {
 						input[ key ] = contexts[ url ];
-					} else if ( ! ( url in contexts ) ) {
-						contexts[ url ] =  null;
+					} else if( ! ( url in contexts ) ) {
+						contexts[ url ] = null;
 					}
 				}
 			}
@@ -115,13 +115,13 @@ export class Class {
 				let contextWrapper:Object = { "@context": {} };
 
 				let header:HTTP.Header.Class = response.getHeader( "Content-Type" );
-				if( ! Utils.S.contains( header.toString(),  "application/ld+json" ) ) {
+				if( ! Utils.S.contains( header.toString(), "application/ld+json" ) ) {
 					header = response.getHeader( "Link" );
 					let link:string;
 					if( ! ! header ) link = Class.getTargetFromLinkHeader( header );
 					if( ! ! link ) contextWrapper[ "@context" ] = link;
 				} else {
-					contextWrapper[ "@context" ]  = ( "@context" in object ) ? object[ "@context" ] : {};
+					contextWrapper[ "@context" ] = ( "@context" in object ) ? object[ "@context" ] : {};
 				}
 				contextToResolved[ url ] = contextWrapper[ "@context" ];
 
@@ -176,7 +176,7 @@ export class Class {
 	}
 
 	private static isValidType( value:any ):boolean {
-		if ( Utils.isString( value ) ) return true;
+		if( Utils.isString( value ) ) return true;
 
 		if( ! Utils.isArray( value ) ) return false;
 
@@ -206,7 +206,7 @@ export class Class {
 	private static expandLanguageMap( languageMap:any ):any {
 		let expandedLanguage:Array<Object> = [];
 
-		let keys:string[] = Object.keys(languageMap).sort();
+		let keys:string[] = Object.keys( languageMap ).sort();
 		for( let key of keys ) {
 			let values:Array<any> = languageMap[ key ];
 			if( ! Utils.isArray( values ) ) values = [ values ];
@@ -243,7 +243,7 @@ export class Class {
 
 		if( definition.literal === false || ( propertyName === "@graph" && Utils.isString( value ) ) ) {
 			let options:{base:boolean, vocab?:boolean} = { base: true };
-			if ( definition.pointerType === ObjectSchema.PointerType.VOCAB ) options.vocab = true;
+			if( definition.pointerType === ObjectSchema.PointerType.VOCAB ) options.vocab = true;
 
 			return { "@id": Class.expandURI( context, value, options ) };
 		}
@@ -259,7 +259,7 @@ export class Class {
 		}
 
 		// Normalize to string unknowns types
-		if( [ "boolean", "number", "string" ].indexOf( typeof value ) === -1 ) value = value.toString();
+		if( [ "boolean", "number", "string" ].indexOf( typeof value ) === - 1 ) value = value.toString();
 		expandedValue[ "@value" ] = value;
 
 		return expandedValue;
@@ -284,7 +284,7 @@ export class Class {
 				let expandedItem:any = Class.process( context, item, activeProperty );
 				if( expandedItem === null ) continue;
 
-				if( insideList && ( Utils.isArray( expandedItem )  || RDF.List.Factory.is( expandedItem ) ) ) throw new Error( "Lists of lists are not permitted." );
+				if( insideList && ( Utils.isArray( expandedItem ) || RDF.List.Factory.is( expandedItem ) ) ) throw new Error( "Lists of lists are not permitted." );
 
 				if( ! Utils.isArray( expandedItem ) ) expandedItem = [ expandedItem ];
 				Array.prototype.push.apply( expandedElement, expandedItem );
@@ -331,15 +331,18 @@ export class Class {
 
 			let expandedValue:any;
 			let container:ObjectSchema.ContainerType = Class.getContainer( context, key );
-			if( container === ObjectSchema.ContainerType.LANGUAGE  && Utils.isObject( value ) ) {
+			if( container === ObjectSchema.ContainerType.LANGUAGE && Utils.isObject( value ) ) {
 				expandedValue = Class.expandLanguageMap( value );
 			} else {
 				let nextActiveProperty:string = key;
 
-				let isList:boolean = container === ObjectSchema.ContainerType.LIST;
-				if( isList || container === ObjectSchema.ContainerType.SET ) nextActiveProperty = ( isList && activeProperty === "@graph" ) ? null : activeProperty;
+				let isList:boolean = uri === "@list";
+				if( isList || uri === "@set") {
+					nextActiveProperty = activeProperty;
+					if( isList && activeProperty === "@graph" ) nextActiveProperty = null;
+				}
 
-				expandedValue = Class.process( context, value, nextActiveProperty );
+				expandedValue = Class.process( context, value, nextActiveProperty, isList );
 			}
 
 			// Drop null values if is not a "@value" property
@@ -350,7 +353,7 @@ export class Class {
 				expandedValue = { "@list": expandedValue };
 			}
 
-			let useArray:boolean = [ "@type", "@id", "@value", "@language" ].indexOf( uri ) === -1;
+			let useArray:boolean = [ "@type", "@id", "@value", "@language" ].indexOf( uri ) === - 1;
 			Class.addValue( expandedElement, uri, expandedValue, { propertyIsArray: useArray } );
 		}
 
@@ -374,7 +377,7 @@ export class Class {
 			}
 
 		} else if( propertyName in element ) {
-			if ( ! Class.hasValue( element, propertyName, value ) ) {
+			if( ! Class.hasValue( element, propertyName, value ) ) {
 				let items:Array<any> = element[ propertyName ];
 				if( ! Utils.isArray( items ) ) items = element[ propertyName ] = [ items ];
 				items.push( value );
@@ -385,7 +388,7 @@ export class Class {
 	}
 
 	private static hasProperty( element:Object, propertyName:string ):boolean {
-		if ( propertyName in element ) {
+		if( propertyName in element ) {
 			let item:any = element[ propertyName ];
 			return ! Utils.isArray( item ) || (<Array<any>> item).length > 0;
 		}
@@ -413,13 +416,12 @@ export class Class {
 	}
 
 	private static hasValue( element:Object, propertyName:string, value:any ):boolean {
-		if( Class.hasProperty( element, propertyName) ) {
+		if( Class.hasProperty( element, propertyName ) ) {
 			let item:any = element[ propertyName ];
-			let isList:boolean = RDF.List.Factory.is( value );
+			let isList:boolean = RDF.List.Factory.is( item );
 
 			if( isList || Utils.isArray( item ) ) {
-				let items:any[] = item;
-				if( isList ) items = items[ "@list" ];
+				let items:any[] = isList ? item[ "@list" ] : item;
 
 				for( let entry of items ) {
 					if( Class.compareValues( entry, value ) ) return true;

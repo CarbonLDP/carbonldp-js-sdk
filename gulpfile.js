@@ -69,7 +69,9 @@ gulp.task( "clean:temp", () => {
 } );
 
 gulp.task( "test:node:compile", [ "clean:temp" ], () => {
-	let tsProject = ts.createProject( "tsconfig.json" );
+	let tsProject = ts.createProject( "tsconfig.json", {
+		"sourceMap": true,
+	} );
 	let tsResults = gulp.src( config.source.all )
 		.pipe( ts( tsProject ) );
 
