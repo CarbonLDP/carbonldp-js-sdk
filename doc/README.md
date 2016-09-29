@@ -7127,6 +7127,10 @@ static ManageSecurity:string
 ```
 
 ```typescript 
+static PlatformRole:string 
+```
+
+```typescript 
 static ProtectedDocument:string 
 ```
 

@@ -27,6 +27,8 @@ class Class {
 
 	static get ManageSecurity():string { return namespace + "ManageSecurity"; }
 
+	static get PlatformRole():string { return namespace + "PlatformRole"; }
+
 	static get ProtectedDocument():string { return namespace + "ProtectedDocument"; }
 
 	static get Read():string { return namespace + "Read"; }

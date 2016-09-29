@@ -13,6 +13,7 @@ declare class Class {
     static Download: string;
     static Extend: string;
     static ManageSecurity: string;
+    static PlatformRole: string;
     static ProtectedDocument: string;
     static Read: string;
     static RemoveMember: string;

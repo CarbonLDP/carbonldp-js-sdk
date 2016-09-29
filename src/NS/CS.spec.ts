@@ -39,7 +39,7 @@ describe( module(
 		it( isDefined(), ():void => {
 			expect( CS.Class ).toBeDefined();
 			expect( Utils.isFunction( CS.Class ) ).toBe( true );
-			expect( Object.keys( CS.Class ).length ).toBe( 20 );
+			expect( Object.keys( CS.Class ).length ).toBe( 21 );
 		} );
 
 		it( hasProperty(
@@ -183,6 +183,17 @@ describe( module(
 			expect( Utils.isString( CS.Class.ManageSecurity ) ).toBe( true );
 
 			expect( CS.Class.ManageSecurity ).toBe( "https://carbonldp.com/ns/v1/security#ManageSecurity" );
+		} );
+
+		it( hasProperty(
+			STATIC,
+			"PlatformRole",
+			"string"
+		), ():void => {
+			expect( CS.Class.PlatformRole ).toBeDefined();
+			expect( Utils.isString( CS.Class.PlatformRole ) ).toBe( true );
+
+			expect( CS.Class.PlatformRole ).toBe( "https://carbonldp.com/ns/v1/security#PlatformRole" );
 		} );
 
 		it( hasProperty(
