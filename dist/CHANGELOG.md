@@ -1,3 +1,15 @@
+# 0.38.0 (September 08, 2016)
+
+- [LDP-800](https://jira.base22.com/browse/LDP-800) - Revert changes from a PersistedDocument
+    - Add `persistedDocument.revert()` method that reverts any change made to the document
+    - Add `persistedFragment.revert()` method that reverts any change made to the fragment
+    - Add `persistedNamedFragment.revert()` method that reverts any change made to the named fragment
+- Fix [LDP-796](https://jira.base22.com/browse/LDP-796) - NodeJS strips the port from the configured domain
+- Fix [LDP-801](https://jira.base22.com/browse/LDP-801) - Add missing `@language` property to JSON-LD
+- Fix documentation error in `context.documents.createChild()` method
+- Fix documentation error in `apps.create()` method
+- Fix [LDP-810](https://jira.base22.com/browse/LDP-810) - Documentation error
+
 # 0.37.0 (August 22, 2016)
 
 - [LDP-531](https://jira.base22.com/browse/LDP-531) - Create an App Role

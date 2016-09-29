@@ -24,6 +24,7 @@ export declare enum PointerType {
 }
 export declare class DigestedObjectSchema {
     base: string;
+    language: string;
     vocab: string;
     prefixes: Map<string, RDF.URI.Class>;
     properties: Map<string, DigestedPropertyDefinition>;

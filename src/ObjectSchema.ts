@@ -33,6 +33,7 @@ export enum PointerType {
 
 export class DigestedObjectSchema {
 	base:string;
+	language:string;
 	vocab:string;
 	prefixes:Map<string, RDF.URI.Class>;
 	properties:Map<string, DigestedPropertyDefinition>;
@@ -41,6 +42,7 @@ export class DigestedObjectSchema {
 	constructor() {
 		this.base = "";
 		this.vocab = null;
+		this.language = null;
 		this.prefixes = new Map<string, RDF.URI.Class>();
 		this.properties = new Map<string, DigestedPropertyDefinition>();
 		this.prefixedURIs = new Map<string, RDF.URI.Class[]>();
@@ -52,7 +54,7 @@ export class DigestedPropertyDefinition {
 	literal:boolean = null;
 	literalType:RDF.URI.Class = null;
 	pointerType:PointerType = null;
-	language:string = null;
+	language:string;
 	containerType:ContainerType = null;
 }
 
@@ -81,6 +83,7 @@ export class Digester {
 		let combinedSchema:DigestedObjectSchema = new DigestedObjectSchema();
 		combinedSchema.vocab = digestedSchemas[ 0 ].vocab;
 		combinedSchema.base = digestedSchemas[ 0 ].base;
+		combinedSchema.language = digestedSchemas[ 0 ].language;
 
 		for( let digestedSchema of digestedSchemas ) {
 			Utils.M.extend( combinedSchema.prefixes, digestedSchema.prefixes );
@@ -135,6 +138,12 @@ export class Digester {
 		}
 		digestedSchema.base = digestedSchema.base || "";
 
+		if( "@language" in schema ) {
+			let value:string = <string> schema[ "@language" ];
+			if( value !== null && ! Utils.isString( value ) ) throw new Errors.InvalidJSONLDSyntaxError( `The value of '@language' must be a string or null.` );
+			digestedSchema.language = value;
+		}
+
 		for( let propertyName in schema ) {
 			if( ! schema.hasOwnProperty( propertyName ) ) continue;
 
@@ -142,6 +151,7 @@ export class Digester {
 			if( propertyName === "@index" ) continue;
 			if( propertyName === "@base" ) continue;
 			if( propertyName === "@vocab" ) continue;
+			if( propertyName === "@language" ) continue;
 
 			let propertyValue:( string | PropertyDefinition ) = schema[ propertyName ];
 
@@ -182,8 +192,9 @@ export class Digester {
 				}
 
 				if( "@language" in schemaDefinition ) {
-					if( ! Utils.isString( schemaDefinition[ "@language" ] ) ) throw new Errors.IllegalArgumentError( "@language needs to point to a string" );
-					digestedDefinition.language = schemaDefinition[ "@language" ];
+					let language:string = schemaDefinition[ "@language" ];
+					if( language !== null && ! Utils.isString( language ) ) throw new Errors.IllegalArgumentError( "@language needs to point to a string or null." );
+					digestedDefinition.language = language;
 				}
 
 				if( "@container" in schemaDefinition ) {
@@ -195,7 +206,7 @@ export class Digester {
 							digestedDefinition.containerType = ContainerType.LIST;
 							break;
 						case "@language":
-							if( digestedDefinition.language !== null ) throw new Errors.IllegalArgumentError( "@container cannot be set to @language when the property definition already contains an @language tag." );
+							if( Utils.isString( digestedDefinition.language ) ) throw new Errors.IllegalArgumentError( "@container cannot be set to @language when the property definition already contains an @language tag." );
 							digestedDefinition.containerType = ContainerType.LANGUAGE;
 							break;
 						default:

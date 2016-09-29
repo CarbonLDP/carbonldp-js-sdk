@@ -122,7 +122,7 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 			if( eTag === null ) throw new HTTP.Errors.BadResponseError( "The response doesn't contain an ETag", response );
 
 			let locationHeader:HTTP.Header.Class = response.getHeader( "Content-Location" );
-			if ( ! ! locationHeader ) {
+			if( ! ! locationHeader ) {
 				if( locationHeader.values.length !== 1 ) throw new HTTP.Errors.BadResponseError( "The response contains more than one Content-Location header.", response );
 
 				uri = locationHeader.toString();

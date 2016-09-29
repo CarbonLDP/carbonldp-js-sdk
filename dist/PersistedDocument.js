@@ -28,6 +28,19 @@ function extendIsDirty(superFunction) {
         return false;
     };
 }
+function extendRevert(superFunction) {
+    return function () {
+        var persistedDocument = this;
+        persistedDocument._fragmentsIndex.clear();
+        for (var _i = 0, _a = persistedDocument._savedFragments; _i < _a.length; _i++) {
+            var fragment = _a[_i];
+            var slug = "slug" in fragment ? fragment.slug : fragment.id;
+            fragment.revert();
+            persistedDocument._fragmentsIndex.set(slug, fragment);
+        }
+        superFunction.call(persistedDocument);
+    };
+}
 function syncSavedFragments() {
     var document = this;
     document._savedFragments = Utils.A.from(document._fragmentsIndex.values());
@@ -482,6 +495,12 @@ var Factory = (function () {
                 enumerable: false,
                 configurable: true,
                 value: extendIsDirty(persistedDocument.isDirty),
+            },
+            "revert": {
+                writable: false,
+                enumerable: false,
+                configurable: true,
+                value: extendRevert(persistedDocument.revert),
             },
         });
         return persistedDocument;

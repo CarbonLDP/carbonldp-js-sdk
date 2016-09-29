@@ -61,7 +61,7 @@ class Carbon extends AbstractContext {
 	/* tslint:enable: variable-name */
 
 	// TODO: Get package.json version directly
-	static get version():string { return "0.37.0"; }
+	static get version():string { return "0.38.0"; }
 
 	apps:Apps.Class;
 
