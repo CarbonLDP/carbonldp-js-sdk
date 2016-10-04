@@ -1,4 +1,17 @@
-import {module, isDefined, clazz, hasProperty, STATIC, hasMethod, decoratedObject, INSTANCE, method, hasSignature} from "../test/JasmineExtender";
+import {
+	STATIC,
+	INSTANCE,
+
+	module,
+	clazz,
+	method,
+
+	isDefined,
+	hasProperty,
+	hasMethod,
+	hasSignature,
+	decoratedObject,
+} from "../test/JasmineExtender";
 
 import * as ACE from "./ACE";
 import Documents from "./../Documents";
@@ -75,13 +88,14 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 			expect( ACL.Factory.hasClassProperties ).toBeDefined();
 			expect( Utils.isFunction( ACL.Factory.hasClassProperties ) ).toBe( true );
 
-			let object:any;
+			let object:any = void 0;
 			expect( ACL.Factory.hasClassProperties( object ) ).toBe( false );
 
 			object = {
 				entries: null,
 				accessTo: null,
 				inheritableEntries: null,
+				_parsePointer: ():void => {},
 				grant: ():void => {},
 				deny: ():void => {},
 				configureChildInheritance: ():void => {},
@@ -104,6 +118,10 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 			delete object.inheritableEntries;
 			expect( ACL.Factory.hasClassProperties( object ) ).toBe( true );
 			object.inheritableEntries = null;
+
+			delete object._parsePointer;
+			expect( ACL.Factory.hasClassProperties( object ) ).toBe( false );
+			object._parsePointer = ():void => {};
 
 			delete object.grant;
 			expect( ACL.Factory.hasClassProperties( object ) ).toBe( false );

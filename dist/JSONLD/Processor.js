@@ -251,8 +251,9 @@ var Class = (function () {
             expandedValue["@type"] = definition.literalType.stringValue;
         }
         else if (Utils.isString(value)) {
-            if (!!definition.language)
-                expandedValue["@laguage"] = definition.language;
+            var language = Utils.isDefined(definition.language) ? definition.language : context.language;
+            if (language !== null)
+                expandedValue["@language"] = language;
         }
         if (["boolean", "number", "string"].indexOf(typeof value) === -1)
             value = value.toString();
@@ -310,7 +311,7 @@ var Class = (function () {
                 if (uri === "@value" && (Utils.isObject(value) || Utils.isArray(value)))
                     throw new InvalidJSONLDSyntaxError_1.default("\"@value\" value must not be an object or an array.");
                 if (uri === "@language") {
-                    if (value)
+                    if (value === null)
                         continue;
                     if (!Utils.isString(value))
                         throw new InvalidJSONLDSyntaxError_1.default("\"@language\" value must be a string.");

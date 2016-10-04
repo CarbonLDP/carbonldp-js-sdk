@@ -1,14 +1,14 @@
 import * as Utils from "./Utils";
 
 import {
-	INSTANCE,
 	STATIC,
+
 	clazz,
 	module,
+
 	isDefined,
 	hasMethod,
 	hasProperty,
-	interfaze,
 } from "./test/JasmineExtender";
 
 interface Dummy {
@@ -367,11 +367,219 @@ describe( module( "Carbon/Utils", "Class with useful functions used in the SDK."
 
 		it( hasMethod(
 			STATIC,
+			"extend",
+			[ "T extends Object, W extends Object" ],
+			"Extends the target element making a shallow or deep copy of the properties in the source object, depending of the configuration specified.", [
+				{name: "target", type: "T", description: "The object to extend."},
+				{name: "source", type: "W", description: "The object to copy."},
+				{name: "config", type: "{arrays?:boolean, objects?:boolean}", optional: true, description: "Object that indicates if the arrays or objects must be copied or not. By default, arrays and objects will not be deep copied."},
+				{name: "ignore", type: "{[ key:string ]:boolean}", optional: true, description: "Object that indicates there is any property to ignore."},
+			],
+			{type: "T & W", description: "The copy of the object provided."}
+		), ():void => {
+			expect( Utils.O.extend ).toBeDefined();
+			expect( Utils.isFunction( Utils.O.extend ) ).toBe( true );
+
+			let target:Object & {targetProperty?:string};
+			let source:Object;
+			let extended:Object;
+
+			target = {};
+			source = {};
+			extended = Utils.O.extend( target, source );
+			expect( extended ).toBe( target );
+			expect( extended ).not.toBe( source );
+			expect( extended ).toEqual( {} );
+
+			target = {targetProperty: "Target Property"};
+			source = {property1: "Property 1"};
+			extended = Utils.O.extend( target, source );
+			expect( extended ).toBe( target );
+			expect( extended ).not.toBe( source );
+			expect( extended[ "targetProperty" ] ).toBe( "Target Property" );
+			expect( extended[ "property1" ] ).toBe( "Property 1" );
+
+			target = {targetProperty: "Target Property"};
+			source = {property1: "Property 1", property2: [ 1, 2, 3 ]};
+			extended = Utils.O.extend( target, source );
+			expect( extended ).toBe( target );
+			expect( extended ).not.toBe( source );
+			expect( extended[ "targetProperty" ] ).toBe( "Target Property" );
+			expect( extended[ "property1" ] ).toBe( "Property 1" );
+			expect( extended[ "property2" ] ).toEqual( [ 1, 2, 3 ] );
+			expect( extended[ "property2" ] ).toBe( source[ "property2" ] );
+
+			target = {targetProperty: "Target Property"};
+			source = {property1: "Property 1", property2: [ 1, 2, 3 ]};
+			extended = Utils.O.extend( target, source, {arrays: true} );
+			expect( extended ).toBe( target );
+			expect( extended ).not.toBe( source );
+			expect( extended[ "targetProperty" ] ).toBe( "Target Property" );
+			expect( extended[ "property1" ] ).toBe( "Property 1" );
+			expect( extended[ "property2" ] ).toEqual( [ 1, 2, 3 ] );
+			expect( extended[ "property2" ] ).not.toBe( source[ "property2" ] );
+
+			target = {targetProperty: "Target Property"};
+			source = {property1: "Property 1", property2: {nestedProperty: "Nested Property"}};
+			extended = Utils.O.extend( target, source );
+			expect( extended ).toBe( target );
+			expect( extended ).not.toBe( source );
+			expect( extended[ "targetProperty" ] ).toBe( "Target Property" );
+			expect( extended[ "property1" ] ).toBe( "Property 1" );
+			expect( extended[ "property2" ] ).toEqual( {nestedProperty: "Nested Property"} );
+			expect( extended[ "property2" ] ).toBe( source[ "property2" ] );
+
+			target = {targetProperty: "Target Property"};
+			source = {property1: "Property 1", property2: {nestedProperty: "Nested Property"}};
+			extended = Utils.O.extend( target, source, {objects: true} );
+			expect( extended ).toBe( target );
+			expect( extended ).not.toBe( source );
+			expect( extended[ "targetProperty" ] ).toBe( "Target Property" );
+			expect( extended[ "property1" ] ).toBe( "Property 1" );
+			expect( extended[ "property2" ] ).toEqual( {nestedProperty: "Nested Property"} );
+			expect( extended[ "property2" ] ).not.toBe( source[ "property2" ] );
+
+			target = {targetProperty: "Target Property"};
+			source = {property1: "Property 1", property2: [ 1, 2, 3 ], property3: {nestedProperty: "Nested Property"}};
+			extended = Utils.O.extend( target, source );
+			expect( extended ).toBe( target );
+			expect( extended ).not.toBe( source );
+			expect( extended[ "targetProperty" ] ).toBe( "Target Property" );
+			expect( extended[ "property1" ] ).toBe( "Property 1" );
+			expect( extended[ "property2" ] ).toEqual( [ 1, 2, 3 ] );
+			expect( extended[ "property2" ] ).toBe( source[ "property2" ] );
+			expect( extended[ "property3" ] ).toEqual( {nestedProperty: "Nested Property"} );
+			expect( extended[ "property3" ] ).toBe( source[ "property3" ] );
+
+			target = {targetProperty: "Target Property"};
+			source = {property1: "Property 1", property2: [ 1, 2, 3 ], property3: {nestedProperty: "Nested Property"}};
+			extended = Utils.O.extend( target, source, {arrays: true} );
+			expect( extended ).toBe( target );
+			expect( extended ).not.toBe( source );
+			expect( extended[ "targetProperty" ] ).toBe( "Target Property" );
+			expect( extended[ "property1" ] ).toBe( "Property 1" );
+			expect( extended[ "property2" ] ).toEqual( [ 1, 2, 3 ] );
+			expect( extended[ "property2" ] ).not.toBe( source[ "property2" ] );
+			expect( extended[ "property3" ] ).toEqual( {nestedProperty: "Nested Property"} );
+			expect( extended[ "property3" ] ).toBe( source[ "property3" ] );
+
+			target = {targetProperty: "Target Property"};
+			source = {property1: "Property 1", property2: [ 1, 2, 3 ], property3: {nestedProperty: "Nested Property"}};
+			extended = Utils.O.extend( target, source, {arrays: true, objects: true} );
+			expect( extended ).toBe( target );
+			expect( extended ).not.toBe( source );
+			expect( extended[ "targetProperty" ] ).toBe( "Target Property" );
+			expect( extended[ "property1" ] ).toBe( "Property 1" );
+			expect( extended[ "property2" ] ).toEqual( [ 1, 2, 3 ] );
+			expect( extended[ "property2" ] ).not.toBe( source[ "property2" ] );
+			expect( extended[ "property3" ] ).toEqual( {nestedProperty: "Nested Property"} );
+			expect( extended[ "property3" ] ).not.toBe( source[ "property3" ] );
+
+			target = {targetProperty: "Target Property"};
+			source = {property1: "Property 1", property2: [ {nestedProperty: "Nested Property of 1"}, {nestedProperty: "Nested Property of 2"} ]};
+			extended = Utils.O.extend( target, source, {arrays: true, objects: true} );
+			expect( extended ).toBe( target );
+			expect( extended ).not.toBe( source );
+			expect( extended[ "targetProperty" ] ).toBe( "Target Property" );
+			expect( extended[ "property1" ] ).toBe( "Property 1" );
+			expect( extended[ "property2" ] ).not.toBe( source[ "property2" ] );
+			expect( extended[ "property2" ].length ).toBe( 2 );
+			expect( extended[ "property2" ][ 0 ] ).toEqual( {nestedProperty: "Nested Property of 1"} );
+			expect( extended[ "property2" ][ 0 ] ).not.toBe( source[ "property2" ][ 0 ] );
+			expect( extended[ "property2" ][ 1 ] ).toEqual( {nestedProperty: "Nested Property of 2"} );
+			expect( extended[ "property2" ][ 1 ] ).not.toBe( source[ "property2" ][ 1 ] );
+
+			target = {targetProperty: "Target Property"};
+			source = {property1: "Property 1"};
+			source[ "property2" ] = source;
+			extended = Utils.O.extend( target, source );
+			expect( extended ).toBe( target );
+			expect( extended ).not.toBe( source );
+			expect( extended[ "targetProperty" ] ).toBe( "Target Property" );
+			expect( extended[ "property1" ] ).toBe( "Property 1" );
+			expect( extended[ "property2" ] ).toBe( source[ "property2" ] );
+			expect( extended[ "property2" ] ).toBe( source );
+
+			target = {targetProperty: "Target Property"};
+			source = {property1: "Property 1"};
+			source[ "property2" ] = source;
+			extended = Utils.O.extend( target, source, {objects: true} );
+			expect( extended ).toBe( target );
+			expect( extended ).not.toBe( source );
+			expect( extended[ "targetProperty" ] ).toBe( "Target Property" );
+			expect( extended[ "property1" ] ).toBe( "Property 1" );
+			expect( extended[ "property2" ] ).not.toBe( source[ "property2" ] );
+			expect( extended[ "property2" ] ).toBe( extended );
+
+			target = {targetProperty: "Target Property"};
+			source = {property1: "Property 1"};
+			source[ "property2" ] = [ source ];
+			extended = Utils.O.extend( target, source );
+			expect( extended ).toBe( target );
+			expect( extended ).not.toBe( source );
+			expect( extended[ "targetProperty" ] ).toBe( "Target Property" );
+			expect( extended[ "property1" ] ).toBe( "Property 1" );
+			expect( extended[ "property2" ] ).toBe( source[ "property2" ] );
+			expect( extended[ "property2" ].length ).toBe( 1 );
+			expect( extended[ "property2" ][ 0 ] ).toBe( source );
+
+			target = {targetProperty: "Target Property"};
+			source = {property1: "Property 1"};
+			source[ "property2" ] = [ source ];
+			extended = Utils.O.extend( target, source, {objects: true} );
+			expect( extended ).toBe( target );
+			expect( extended ).not.toBe( source );
+			expect( extended[ "targetProperty" ] ).toBe( "Target Property" );
+			expect( extended[ "property1" ] ).toBe( "Property 1" );
+			expect( extended[ "property2" ] ).toBe( source[ "property2" ] );
+			expect( extended[ "property2" ].length ).toBe( 1 );
+			expect( extended[ "property2" ][ 0 ] ).toBe( source );
+
+			target = {targetProperty: "Target Property"};
+			source = {property1: "Property 1"};
+			source[ "property2" ] = [ source ];
+			extended = Utils.O.extend( target, source, {arrays: true} );
+			expect( extended ).toBe( target );
+			expect( extended ).not.toBe( source );
+			expect( extended[ "targetProperty" ] ).toBe( "Target Property" );
+			expect( extended[ "property1" ] ).toBe( "Property 1" );
+			expect( extended[ "property2" ] ).not.toBe( source[ "property2" ] );
+			expect( extended[ "property2" ].length ).toBe( 1 );
+			expect( extended[ "property2" ][ 0 ] ).toBe( source );
+
+			target = {targetProperty: "Target Property"};
+			source = {property1: "Property 1"};
+			source[ "property2" ] = [ source ];
+			extended = Utils.O.extend( target, source, {arrays: true, objects: true} );
+			expect( extended ).toBe( target );
+			expect( extended ).not.toBe( source );
+			expect( extended[ "targetProperty" ] ).toBe( "Target Property" );
+			expect( extended[ "property1" ] ).toBe( "Property 1" );
+			expect( extended[ "property2" ] ).not.toBe( source[ "property2" ] );
+			expect( extended[ "property2" ].length ).toBe( 1 );
+			expect( extended[ "property2" ][ 0 ] ).toBe( extended );
+
+			target = {targetProperty: "Target Property"};
+			source = {property1: "Property 1", targetProperty: "Source Property"};
+			source[ "property2" ] = [ source ];
+			extended = Utils.O.extend( target, source, {arrays: true, objects: true} );
+			expect( extended ).toBe( target );
+			expect( extended ).not.toBe( source );
+			expect( extended[ "targetProperty" ] ).toBe( "Source Property" );
+			expect( extended[ "property1" ] ).toBe( "Property 1" );
+			expect( extended[ "property2" ] ).not.toBe( source[ "property2" ] );
+			expect( extended[ "property2" ].length ).toBe( 1 );
+			expect( extended[ "property2" ][ 0 ] ).toBe( extended );
+		} );
+
+		it( hasMethod(
+			STATIC,
 			"clone",
 			[ "T extends Object" ],
 			"Makes a shallow or deep clone of the object provided depending of the configuration specified.", [
 				{name: "object", type: "T", description: "The object to copy."},
-				{name: "config", type: "{arrays?:boolean, objects?:boolean}", description: "Object that indicates if the arrays or objects must be copied or not. By default, arrays and objects will not be deep copied."},
+				{name: "config", type: "{arrays?:boolean, objects?:boolean}", optional: true, description: "Object that indicates if the arrays or objects must be copied or not. By default, arrays and objects will not be deep copied."},
+				{name: "ignore", type: "{[ key:string ]:boolean}", optional: true, description: "Object that indicates there is any property to ignore."},
 			],
 			{type: "T", description: "The copy of the object provided."}
 		), ():void => {
@@ -517,7 +725,8 @@ describe( module( "Carbon/Utils", "Class with useful functions used in the SDK."
 			"Makes a shallow or deep comparison, between all the enumerable properties of the provided objects, depending of the configuration specified.", [
 				{name: "object1", type: "Object", description: "First object to compare."},
 				{name: "object2", type: "Object", description: "Second object to compare."},
-				{name: "config", type: "{arrays?:boolean, objects?:boolean}", description: "Object that indicates if the arrays or the objects must have a deep comparison or not. By default the comparison is shallow."},
+				{name: "config", type: "{arrays?:boolean, objects?:boolean}", optional: true, description: "Object that indicates if the arrays or the objects must have a deep comparison or not. By default the comparison is shallow."},
+				{name: "ignore", type: "{[ key:string ]:boolean}", optional: true, description: "Object that indicates there is any property to ignore."},
 			],
 			{type: "boolean"}
 		), ():void => {

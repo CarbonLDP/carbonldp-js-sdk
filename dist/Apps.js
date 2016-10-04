@@ -23,7 +23,7 @@ var Class = (function () {
         }).then(function (_a) {
             var app = _a[0], response = _a[1];
             if (!PersistedApp.Factory.is(app))
-                throw new Errors.IllegalArgumentError("The resource fetched is not a cs:Application.");
+                throw new Errors.IllegalArgumentError("The resource fetched is not a " + NS.CS.Class.Application + ".");
             return new Context_1.default(_this.context, app);
         });
     };
@@ -50,6 +50,14 @@ var Class = (function () {
             if (!App.Factory.is(appDocument))
                 throw new Errors.IllegalArgumentError("The Document is not a `Carbon.App.Class` object.");
             return _this.context.documents.createChild(appsContainerURI, appDocument, slug);
+        });
+    };
+    Class.prototype.delete = function (appURI, requestOptions) {
+        var _this = this;
+        if (!appURI)
+            return Promise.reject(new Errors.IllegalArgumentError("The application's URI must be defined."));
+        return this.resolveURI(appURI).then(function (uri) {
+            return _this.context.documents.delete(uri, requestOptions);
         });
     };
     Class.prototype.resolveURI = function (appURI) {

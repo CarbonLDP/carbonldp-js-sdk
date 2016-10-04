@@ -5,6 +5,7 @@ export interface Class extends PersistedDocument.Class {
     accessTo: Pointer.Class;
     entries?: PersistedACE.Class[];
     inheritableEntries?: PersistedACE.Class[];
+    _parsePointer(element: string | Pointer.Class): Pointer.Class;
     grant(subject: string | Pointer.Class, subjectClass: string | Pointer.Class, permission: string | Pointer.Class): void;
     grant(subject: string | Pointer.Class, subjectClass: string | Pointer.Class, permissions: (string | Pointer.Class)[]): void;
     grant(subjects: (string | Pointer.Class)[], subjectClass: string | Pointer.Class, permission: string | Pointer.Class): void;

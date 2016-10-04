@@ -254,7 +254,8 @@ export class Class {
 		if( ! ! definition.literalType ) {
 			expandedValue[ "@type" ] = definition.literalType.stringValue;
 		} else if( Utils.isString( value ) ) {
-			if( ! ! definition.language ) expandedValue[ "@laguage" ] = definition.language;
+			let language:string = Utils.isDefined( definition.language ) ? definition.language : context.language;
+			if( language !== null ) expandedValue[ "@language" ] = language;
 		}
 
 		// Normalize to string unknowns types
@@ -317,7 +318,7 @@ export class Class {
 				if( uri === "@graph" && ! ( Utils.isObject( value ) || Utils.isArray( value ) ) ) throw new Error( `"@graph" value must not be an object or an array.` );
 				if( uri === "@value" && ( Utils.isObject( value ) || Utils.isArray( value ) ) ) throw new Error( `"@value" value must not be an object or an array.` );
 				if( uri === "@language" ) {
-					if( value ) continue;
+					if( value === null ) continue;
 					if( ! Utils.isString( value ) ) throw new Error( `"@language" value must be a string.` );
 					value = (<string> value).toLowerCase();
 				}

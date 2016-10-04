@@ -2,7 +2,7 @@
 // Generated on Wed Nov 12 2014 12:33:32 GMT-0600 (CST)
 
 module.exports = function( config ) {
-	config.set( {
+	let configuration = {
 		frameworks: [ "jspm", "jasmine" ],
 
 		jspm: {
@@ -50,9 +50,20 @@ module.exports = function( config ) {
 		browserNoActivityTimeout: 60 * 1000,
 		browsers: [ "Chrome" ],
 
+		customLaunchers: {
+			chrome_travis_ci: {
+				base: "Chrome",
+				flags: [ "--no-sandbox" ]
+			}
+		},
+
 
 		// Continuous Integration mode
 		// if true, Karma captures browsers, runs the tests and exits
 		singleRun: true
-	} );
+	};
+
+	if( process.env.TRAVIS ) configuration.browsers = [ "chrome_travis_ci" ];
+
+	config.set( configuration );
 };

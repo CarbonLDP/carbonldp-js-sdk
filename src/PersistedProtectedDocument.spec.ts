@@ -46,7 +46,7 @@ describe( module( "Carbon/PersistedProtectedDocument" ), ():void => {
 			expect( PersistedProtectedDocument.Factory.hasClassProperties ).toBeDefined();
 			expect( Utils.isFunction( PersistedProtectedDocument.Factory.hasClassProperties ) ).toBe( true );
 
-			let object:any;
+			let object:any = void 0;
 			expect( PersistedProtectedDocument.Factory.hasClassProperties( object ) ).toBe( false );
 
 			object = {
@@ -56,12 +56,36 @@ describe( module( "Carbon/PersistedProtectedDocument" ), ():void => {
 			expect( PersistedProtectedDocument.Factory.hasClassProperties( object ) ).toBe( true );
 
 			delete object.accessControlList;
-			expect( PersistedProtectedDocument.Factory.hasClassProperties( object ) ).toBe( false );
+			expect( PersistedProtectedDocument.Factory.hasClassProperties( object ) ).toBe( true );
 			object.accessControlList = null;
 
 			delete object.getACL;
 			expect( PersistedProtectedDocument.Factory.hasClassProperties( object ) ).toBe( false );
 			object.getACL = ():void => {};
+		} );
+
+		it( hasMethod(
+			STATIC,
+			"is",
+			"Returns true if the object provided is considered a `Carbon.PersistedProtectedDocument.Class` object.", [
+				{name: "object", type: "Object", description: "The object to check."},
+			],
+			{type: "boolean"}
+		), ():void => {
+			expect( PersistedProtectedDocument.Factory.is ).toBeDefined();
+			expect( Utils.isFunction( PersistedProtectedDocument.Factory.is ) ).toBe( true );
+
+			let object:any = void 0;
+			expect( PersistedProtectedDocument.Factory.is( object ) ).toBe( false );
+
+			object = {
+				accessControlList: null,
+				getACL: ():void => {},
+			};
+			expect( PersistedProtectedDocument.Factory.is( object ) ).toBe( false );
+
+			let document:PersistedDocument.Class = PersistedDocument.Factory.decorate( object, new Documents() );
+			expect( PersistedProtectedDocument.Factory.is( document ) ).toBe( true );
 		} );
 
 		it( hasMethod(
@@ -116,6 +140,7 @@ describe( module( "Carbon/PersistedProtectedDocument" ), ():void => {
 				documents = context.documents;
 
 				let document:PersistedDocument.Class = PersistedDocument.Factory.create( "http://example.com/resource/", documents );
+				document._resolved = true;
 				protectedDocument = PersistedProtectedDocument.Factory.decorate( document );
 				protectedDocument.accessControlList = document.getPointer( "http://example.com/resource/~acl/" );
 			} );
@@ -133,6 +158,26 @@ describe( module( "Carbon/PersistedProtectedDocument" ), ():void => {
 				expect( protectedDocument.getACL ).toBeDefined();
 				expect( Utils.isFunction( protectedDocument.getACL ) ).toBe( true );
 
+				jasmine.Ajax.stubRequest( "http://example.com/resource/", null, "POST" ).andReturn( {
+					status: 200,
+					responseText: `{
+						"head": {
+							"vars": [
+								"acl"
+							]
+						},
+						"results": {
+							"bindings": [
+								{
+									"acl": {
+										"type": "uri",
+										"value": "http://example.com/resource/~acl/"
+									}
+								}
+							]
+						}
+					}`,
+				} );
 				jasmine.Ajax.stubRequest( "http://example.com/resource/~acl/" ).andReturn( {
 					responseHeaders: {
 						"ETag": `"1234567890"`,
@@ -233,7 +278,9 @@ describe( module( "Carbon/PersistedProtectedDocument" ), ():void => {
 					]`,
 				} );
 
-				protectedDocument.getACL().then( ( [ acl, response ]:[ PersistedACL.Class, HTTP.Response.Class ] ) => {
+				let promises:Promise<any>[] = [];
+
+				promises.push( protectedDocument.getACL().then( ( [ acl, response ]:[ PersistedACL.Class, HTTP.Response.Class ] ) => {
 					expect( acl ).toBeDefined();
 					expect( response ).toBeDefined();
 
@@ -243,9 +290,23 @@ describe( module( "Carbon/PersistedProtectedDocument" ), ():void => {
 					expect( acl.inheritableEntries ).toBeDefined();
 					expect( acl.inheritableEntries.length ).toBe( 1 );
 					expect( acl.accessTo.id ).toBe( protectedDocument.id );
+				} ) );
 
-					done();
-				} ).catch( done.fail );
+				let document:PersistedDocument.Class = PersistedDocument.Factory.create( "http://example.com/resource/", documents );
+				let unresolvedProtectedDocument:PersistedProtectedDocument.Class = PersistedProtectedDocument.Factory.decorate( document );
+				promises.push( unresolvedProtectedDocument.getACL().then( ( [ acl, response ]:[ PersistedACL.Class, HTTP.Response.Class ] ) => {
+					expect( acl ).toBeDefined();
+					expect( response ).toBeDefined();
+
+					expect( PersistedACL.Factory.hasClassProperties( acl ) ).toBe( true );
+					expect( acl.entries ).toBeDefined();
+					expect( acl.entries.length ).toBe( 1 );
+					expect( acl.inheritableEntries ).toBeDefined();
+					expect( acl.inheritableEntries.length ).toBe( 1 );
+					expect( acl.accessTo.id ).toBe( protectedDocument.id );
+				} ) );
+
+				Promise.all( promises ).then( done ).catch( done.fail );
 			} );
 
 		} );

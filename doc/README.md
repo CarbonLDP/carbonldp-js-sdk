@@ -84,6 +84,8 @@
 - [Module Carbon/Auth/PersistedAgent](#Carbon-Auth-PersistedAgent)
 	- [Class Carbon.Auth.PersistedAgent.Factory](#Carbon-Auth-PersistedAgent-Factory)
 		- [Methods](#Carbon-Auth-PersistedAgent-Factory-Methods)
+		- [Decorated Object](#Carbon-Auth-PersistedAgent-Factory-Decorated-Object)
+			- [Methods](#Carbon-Auth-PersistedAgent-Factory-Decorated-Object-Methods)
 - [Module Carbon/Auth/PersistedRole](#Carbon-Auth-PersistedRole)
 	- [Class Carbon.Auth.PersistedRole.Factory](#Carbon-Auth-PersistedRole-Factory)
 		- [Methods](#Carbon-Auth-PersistedRole-Factory-Methods)
@@ -1048,7 +1050,7 @@ Resolve the URI provided in the scope of the application.
 #### <a name="Carbon-App-PersistedRole-Factory-Methods" />Methods
 ##### decorate
 ```typescript 
-static decorate( object:T extends Object ):T & Carbon.App.PersistedRole.Class
+static decorate<T extends Carbon.PersistedDocument.Class>( object:T ):T & Carbon.App.PersistedRole.Class
 ```
 
 Decorates the object provided with the methods and properties of a `Carbon.App.PersistedRole.Class` object.
@@ -1187,7 +1189,7 @@ Class( context:Carbon.Context )
 
 ##### create
 ```typescript 
-create( slug:string,  appDocument:Carbon.App.Class ):Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>
+create( appDocument:Carbon.App.Class,  slug:string ):Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>
 ```
 
 Persists a `Carbon.App.Class` object using the slug specified.
@@ -1195,8 +1197,20 @@ Returns a Promise with a Pointer to the stored App, and the response of the requ
 
 *Parameters*
 
-- slug: Slug that will be used for the URI of the new app.
 - appDocument: App document that will be persisted.
+- slug: Slug that will be used for the URI of the new app.
+
+##### delete
+```typescript 
+delete( appURI:string,  requestOptions:Carbon.HTTP.Request.Options ):Promise<Carbon.HTTP.Response.Class>
+```
+
+Deletes the app specified.
+
+*Parameters*
+
+- appURI: The URI of the app to be deleted.
+- requestOptions
 
 ##### getAllContexts
 ```typescript 
@@ -1899,6 +1913,42 @@ Class( context:Carbon.Context.Class )
 
 #### <a name="Carbon-Auth-Agents-Class-Methods" />Methods
 
+##### delete
+```typescript 
+delete( agentURI:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.Auth.PersistedAgent.Class, Carbon.HTTP.Response.Class ]>
+```
+
+Deletes the agent specified.
+
+*Parameters*
+
+- agentURI: The URI of the agent to be deleted.
+- requestOptions
+
+##### disable
+```typescript 
+disable( agentURI:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.Auth.PersistedAgent.Class, [ Carbon.HTTP.Response.Class, Carbon.HTTP.Response.Class ] ]>
+```
+
+Deactivate the account of the agent specified.
+
+*Parameters*
+
+- agentURI: The URI of the agent to be deactivated.
+- requestOptions
+
+##### enable
+```typescript 
+enable( agentURI:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.Auth.PersistedAgent.Class, [ Carbon.HTTP.Response.Class, Carbon.HTTP.Response.Class ] ]>
+```
+
+Activate the account of the agent specified.
+
+*Parameters*
+
+- agentURI: The URI of the agent to be activated.
+- requestOptions
+
 ##### get
 ```typescript 
 get( agentURI:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.Auth.PersistedAgent.Class, Carbon.HTTP.Response.Class ]>
@@ -2051,6 +2101,17 @@ Return true if the object provided has the properties and methods of a `Carbon.A
 
 
 #### <a name="Carbon-Auth-PersistedAgent-Factory-Methods" />Methods
+##### decorate
+```typescript 
+static decorate<T extends Carbon.PersistedDocument.Class>( object:T ):T & Carbon.Auth.PersistedAgent.Class
+```
+
+Decorates the object provided with the properties and methods of a `Carbon.Auth.PersistedAgent.Class` object.
+
+*Parameters*
+
+- object: The object to decorate.
+
 ##### hasClassProperties
 ```typescript 
 static hasClassProperties( object:Object ):boolean
@@ -2075,6 +2136,27 @@ Returns true if the object provided is considered a `Carbon.Auth.PersistedAgent.
 
 
 
+#### <a name="Carbon-Auth-PersistedAgent-Factory-Decorated-Object" />Decorated Object
+**Interfaces:** [Carbon.Auth.PersistedAgent.Class](#Carbon-Auth-PersistedAgent-Class)
+
+> Object decorated by the `Carbon.Auth.PersistedAgent.Factory.decorate()` function.
+
+
+##### <a name="Carbon-Auth-PersistedAgent-Factory-Decorated-Object-Methods" />Methods
+##### disable
+```typescript 
+disable():Promise<[ Carbon.Auth.PersistedAgent.Class Carbon.HTTP.Response.Class ]>
+```
+
+Deactivate the account of the agent.
+
+##### enable
+```typescript 
+enable():Promise<[ Carbon.Auth.PersistedAgent.Class Carbon.HTTP.Response.Class ]>
+```
+
+Activate the account of the agent.
+
 
 ## <a name="Carbon-Auth-PersistedRole" />Module Carbon/Auth/PersistedRole
 
@@ -2096,7 +2178,7 @@ Returns true if the object provided is considered a `Carbon.Auth.PersistedAgent.
 #### <a name="Carbon-Auth-PersistedRole-Factory-Methods" />Methods
 ##### decorate
 ```typescript 
-static decorate( object:T extends Object ):T & Carbon.Auth.PersistedRole.Class
+static decorate<T extends Carbon.PersistedDocument.Class>( object:T ):T & Carbon.Auth.PersistedRole.Class
 ```
 
 Decorates the object provided with the methods and properties of a `Carbon.Auth.PersistedRole.Class` object.
@@ -2347,7 +2429,7 @@ Makes a relation in the role specified towards the agents specified.
 
 ##### createChild
 ```typescript 
-createChild<T extends Carbon.Auth.Roles.Class>( parentRole:string | Carbon.Pointer.Class,  role:T,  slug?:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ T & Carbon.PersistedDocument.Class, [ Carbon.HTTP.Response.Class, Carbon.HTTP.Response.Class] ]>
+createChild<T extends Carbon.Auth.Roles.Class>( parentRole:string | Carbon.Pointer.Class,  role:T,  slug?:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ T & Carbon.Auth.PersistedRole.Class, Carbon.HTTP.Response.Class ]>
 ```
 
 Persists the Role provided with the slug, if specified, as a childRole of the parentRole specified.
@@ -2361,7 +2443,7 @@ Returns a Promise with a Pointer for the stored role; and a tuple of two respons
 - requestOptions: The slug where the role will be persisted.
 
 ```typescript 
-createChild<T extends Carbon.Auth.Roles.Class>( parentRole:string | Carbon.Pointer.Class,  role:T,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ T & Carbon.PersistedDocument.Class, [ Carbon.HTTP.Response.Class, Carbon.HTTP.Response.Class] ]>
+createChild<T extends Carbon.Auth.Roles.Class>( parentRole:string | Carbon.Pointer.Class,  role:T,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ T & Carbon.Auth.PersistedRole.Class, Carbon.HTTP.Response.Class ]>
 ```
 
 Persists the Role provided as a childRole of the parentRole specified.
@@ -3157,7 +3239,7 @@ Persists a child document for the respective parent source.
 - requestOptions: Customizable options for the request.
 
 ```typescript 
-createChild<T extends Carbon.Document.Class>( parentURI:string,  slug:string,  childDocument:T,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ T & Carbon.PersistedDocument.Class, Carbon.HTTP.Response.Class ]>
+createChild<T extends Carbon.Document.Class>( parentURI:string,  childDocument:T,  slug?:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ T & Carbon.PersistedDocument.Class, Carbon.HTTP.Response.Class ]>
 ```
 
 Persists a child document for the respective parent source.
@@ -3165,8 +3247,8 @@ Persists a child document for the respective parent source.
 *Parameters*
 
 - parentURI: URI of the document where to create a new child.
-- slug: Slug that will be used for the URI of the new child.
 - childDocument: Document to persists as a new child.
+- slug: Slug that will be used for the URI of the new child.
 - requestOptions: Customizable options for the request.
 
 ```typescript 
@@ -3182,7 +3264,7 @@ Persists JavaScript object as a child document for the respective parent source.
 - requestOptions: Customizable options for the request.
 
 ```typescript 
-createChild<T extends Object>( parentURI:string,  slug:string,  childObject:T,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ T & Carbon.PersistedDocument.Class, Carbon.HTTP.Response.Class ]>
+createChild<T extends Object>( parentURI:string,  childObject:T,  slug?:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ T & Carbon.PersistedDocument.Class, Carbon.HTTP.Response.Class ]>
 ```
 
 Persists JavaScript object as a child document for the respective parent source.
@@ -3190,8 +3272,8 @@ Persists JavaScript object as a child document for the respective parent source.
 *Parameters*
 
 - parentURI: URI of the document where to create a new child.
-- slug: Slug that will be used for the URI of the new child.
 - childObject: A normal JavaScript object that will be converted and persisted as a new child document.
+- slug: Slug that will be used for the URI of the new child.
 - requestOptions: Customizable options for the request.
 
 ##### createChildAndRetrieve
@@ -7001,6 +7083,10 @@ static AccessControlList:string
 ```
 
 ```typescript 
+static AddMember:string 
+```
+
+```typescript 
 static Agent:string 
 ```
 
@@ -7017,7 +7103,43 @@ static Application:string
 ```
 
 ```typescript 
+static CreateAccessPoint:string 
+```
+
+```typescript 
+static CreateChild:string 
+```
+
+```typescript 
+static Delete:string 
+```
+
+```typescript 
+static Download:string 
+```
+
+```typescript 
+static Extend:string 
+```
+
+```typescript 
+static ManageSecurity:string 
+```
+
+```typescript 
+static PlatformRole:string 
+```
+
+```typescript 
 static ProtectedDocument:string 
+```
+
+```typescript 
+static Read:string 
+```
+
+```typescript 
+static RemoveMember:string 
 ```
 
 ```typescript 
@@ -7026,6 +7148,14 @@ static Ticket:string
 
 ```typescript 
 static Token:string 
+```
+
+```typescript 
+static Update:string 
+```
+
+```typescript 
+static Upload:string 
 ```
 
 
@@ -7693,6 +7823,11 @@ base:string
 
 The base URI of the schema.
 ```typescript 
+language:string 
+```
+
+The default language of the string properties.
+```typescript 
 prefixedURIs:Map<string, Carbon.RDF.URI.Class[]> 
 ```
 
@@ -7739,7 +7874,7 @@ The type of container the property is. It's `null` if the property is no contain
 language:string 
 ```
 
-The language the property is in. It's `null` if the property is not a container language.
+The language the property is in.
 ```typescript 
 literal:boolean 
 ```
@@ -8035,7 +8170,7 @@ Create an AccessPoint for the document.
 
 ##### createChild
 ```typescript 
-createChild<T extends Object>( object:T,  slug:string ):Promise<[ T & Carbon.PersistedDocument.Class, Carbon.HTTP.Response.Class ]>
+createChild<T extends Object>( object:T,  slug:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ T & Carbon.PersistedProtectedDocument.Class, Carbon.HTTP.Response.Class ]>
 ```
 
 Persists a document with the slug specified as a child of the current container.
@@ -8044,9 +8179,10 @@ Persists a document with the slug specified as a child of the current container.
 
 - object: The object from where create the child. If it's a non `Carbon.Document.Class` object, it's transformed into one.
 - slug: The slug that will be used in the child URI.
+- requestOptions: Customizable options for the request.
 
 ```typescript 
-createChild<T extends Object>( object:T ):Promise<[ T & Carbon.PersistedDocument.Class, Carbon.HTTP.Response.Class ]>
+createChild<T extends Object>( object:T,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ T & Carbon.PersistedProtectedDocument.Class, Carbon.HTTP.Response.Class ]>
 ```
 
 Persists a document as a child of the current container.
@@ -8054,9 +8190,10 @@ Persists a document as a child of the current container.
 *Parameters*
 
 - object: The object from where create the child. If it's a non `Carbon.Document.Class` object, it's transformed into one.
+- requestOptions: Customizable options for the request.
 
 ```typescript 
-createChild( slug:string ):Promise<[ Carbon.PersistedDocument.Class, Carbon.HTTP.Response.Class ]>
+createChild( slug:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.PersistedProtectedDocument.Class, Carbon.HTTP.Response.Class ]>
 ```
 
 Creates an persists an empty child for the current container with the slug provided.
@@ -8064,16 +8201,21 @@ Creates an persists an empty child for the current container with the slug provi
 *Parameters*
 
 - slug: The slug that will be used in the child URI.
+- requestOptions: Customizable options for the request.
 
 ```typescript 
-createChild():Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>
+createChild( requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.PersistedProtectedDocument.Class, Carbon.HTTP.Response.Class ]>
 ```
 
 Creates and persists an empty child fot he current document.
 
+*Parameters*
+
+- requestOptions: Customizable options for the request.
+
 ##### createChildAndRetrieve
 ```typescript 
-createChildAndRetrieve<T extends Object>( object:T,  slug:string ):Promise<[ T & Carbon.PersistedDocument.Class, [ Carbon.HTTP.Response.Class, Carbon.HTTP.Response.Class ] ]>
+createChildAndRetrieve<T extends Object>( object:T,  slug:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ T & Carbon.PersistedProtectedDocument.Class, [ Carbon.HTTP.Response.Class, Carbon.HTTP.Response.Class ] ]>
 ```
 
 Create a child for the document and retrieves the updated data from the server.
@@ -8082,19 +8224,21 @@ Create a child for the document and retrieves the updated data from the server.
 
 - object: The object from where create the child. If it's a non `Carbon.Document.Class` object, it is transformed into one.
 - slug: The slug name for the children URI.
+- requestOptions: Customizable options for the request.
 
 ```typescript 
-createChildAndRetrieve<T extends Object>( object:T ):Promise<[ T & Carbon.PersistedDocument.Class, [ Carbon.HTTP.Response.Class, Carbon.HTTP.Response.Class ] ]>
+createChildAndRetrieve<T extends Object>( object:T,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ T & Carbon.PersistedProtectedDocument.Class, [ Carbon.HTTP.Response.Class, Carbon.HTTP.Response.Class ] ]>
 ```
 
 Create a child for the document and retrieves the updated data from the server.
 
 *Parameters*
 
-- object: The object from where create the child. If it's a non `Carbon.PersistedDocument.Class` object, it is transformed into one.
+- object: The object from where create the child. If it's a non `Carbon.Document.Class` object, it is transformed into one.
+- requestOptions: Customizable options for the request.
 
 ```typescript 
-createChildAndRetrieve( slug:string ):Promise<[ Carbon.PersistedDocument.Class, [ Carbon.HTTP.Response.Class, Carbon.HTTP.Response.Class ] ]>
+createChildAndRetrieve( slug:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.PersistedProtectedDocument.Class, [ Carbon.HTTP.Response.Class, Carbon.HTTP.Response.Class ] ]>
 ```
 
 Create a child for the document and retrieves the updated data from the server.
@@ -8102,12 +8246,17 @@ Create a child for the document and retrieves the updated data from the server.
 *Parameters*
 
 - slug: The slug name for the children URI.
+- requestOptions: Customizable options for the request.
 
 ```typescript 
-createChildAndRetrieve():Promise<[ Carbon.PersistedDocument.Class, [ Carbon.HTTP.Response.Class, Carbon.HTTP.Response.Class ] ]>
+createChildAndRetrieve( requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.PersistedProtectedDocument.Class, [ Carbon.HTTP.Response.Class, Carbon.HTTP.Response.Class ] ]>
 ```
 
 Create a child for the document and retrieves the updated data from the server.
+
+*Parameters*
+
+- requestOptions: Customizable options for the request.
 
 ##### createFragment
 ```typescript 
@@ -8624,6 +8773,17 @@ Returns true if the object provided contains the properties and methods of a `Ca
 
 - object: The object to check.
 
+##### is
+```typescript 
+static is( object:Object ):boolean
+```
+
+Returns true if the object provided is considered a `Carbon.PersistedProtectedDocument.Class` object.
+
+*Parameters*
+
+- object: The object to check.
+
 
 
 #### <a name="Carbon-PersistedProtectedDocument-Factory-Decorated-Object" />Decorated Object
@@ -8710,6 +8870,13 @@ isDirty()
 ```
 
 Returns true if the resource presents differences from its snapshot.
+
+##### revert
+```typescript 
+revert()
+```
+
+Revert the changes made to the resource into the state of the snapshot.
 
 
 ## <a name="Carbon-Platform-Agents" />Module Carbon/Platform/Agents
@@ -9824,7 +9991,7 @@ Returns true if the RDFNode provided has the specified type.
 ### <a name="Carbon-RDF-URI-Class" />Class Carbon.RDF.URI.Class
 
 
-> Wrapper class for an URI string value.
+> Wrapper class for a URI string value.
 
 
 #### <a name="Carbon-RDF-URI-Class-Constructor" />Constructor
@@ -11057,7 +11224,7 @@ Takes an object and creates a map from its properties.
 #### <a name="Carbon-Utils-O-Methods" />Methods
 ##### areEqual
 ```typescript 
-static areEqual( object1:Object,  object2:Object,  config:{arrays?:boolean, objects?:boolean} ):boolean
+static areEqual( object1:Object,  object2:Object,  config?:{arrays?:boolean, objects?:boolean},  ignore?:{[ key:string ]:boolean} ):boolean
 ```
 
 Makes a shallow or deep comparison, between all the enumerable properties of the provided objects, depending of the configuration specified.
@@ -11067,6 +11234,7 @@ Makes a shallow or deep comparison, between all the enumerable properties of the
 - object1: First object to compare.
 - object2: Second object to compare.
 - config: Object that indicates if the arrays or the objects must have a deep comparison or not. By default the comparison is shallow.
+- ignore: Object that indicates there is any property to ignore.
 
 ##### areShallowlyEqual
 ```typescript 
@@ -11082,7 +11250,7 @@ Checks if an object has the same enumerable properties with the same values as a
 
 ##### clone
 ```typescript 
-static clone<T extends Object>( object:T,  config:{arrays?:boolean, objects?:boolean} ):T
+static clone<T extends Object>( object:T,  config?:{arrays?:boolean, objects?:boolean},  ignore?:{[ key:string ]:boolean} ):T
 ```
 
 Makes a shallow or deep clone of the object provided depending of the configuration specified.
@@ -11091,6 +11259,21 @@ Makes a shallow or deep clone of the object provided depending of the configurat
 
 - object: The object to copy.
 - config: Object that indicates if the arrays or objects must be copied or not. By default, arrays and objects will not be deep copied.
+- ignore: Object that indicates there is any property to ignore.
+
+##### extend
+```typescript 
+static extend<T extends Object, W extends Object>( target:T,  source:W,  config?:{arrays?:boolean, objects?:boolean},  ignore?:{[ key:string ]:boolean} ):T & W
+```
+
+Extends the target element making a shallow or deep copy of the properties in the source object, depending of the configuration specified.
+
+*Parameters*
+
+- target: The object to extend.
+- source: The object to copy.
+- config: Object that indicates if the arrays or objects must be copied or not. By default, arrays and objects will not be deep copied.
+- ignore: Object that indicates there is any property to ignore.
 
 
 

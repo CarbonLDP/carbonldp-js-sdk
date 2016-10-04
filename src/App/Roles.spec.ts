@@ -14,9 +14,11 @@ import {
 } from "./../test/JasmineExtender";
 import * as Utils from "./../Utils";
 import AbstractContext from "./../AbstractContext";
+import Documents from "./../Documents";
 import * as Errors from "./../Errors";
 import * as HTTP from "./../HTTP";
 import * as PersistedApp from "./../PersistedApp";
+import * as PersistedDocument from "./../PersistedDocument";
 
 import AppContext from "./Context";
 import * as AppRole from "./Role";
@@ -186,27 +188,27 @@ describe( module( "Carbon/App/Roles" ), ():void => {
 			let promises:Promise<any>[] = [];
 			let promise:Promise<any>;
 
-			falseRole = PersistedRole.Factory.decorate( AppRole.Factory.create( "Role Name" ), roles );
+			falseRole = PersistedRole.Factory.decorate( PersistedDocument.Factory.decorate( AppRole.Factory.create( "Role Name" ), new Documents() ), roles );
 			falseRole.id = "http://example.com/roles/a-role/";
 
 			promise = roles.get( "http://example.com/roles/a-role/" );
 			expect( promise instanceof Promise ).toBe( true );
 			promise.then( spies.success ).then( () => {
 
-				falseRole = PersistedRole.Factory.decorate( AppRole.Factory.create( "Role Name" ), roles );
+				falseRole = PersistedRole.Factory.decorate( PersistedDocument.Factory.decorate( AppRole.Factory.create( "Role Name" ), new Documents() ), roles );
 				falseRole.types = [];
 
 				promise = roles.get( "http://example.com/roles/a-role/" );
 				expect( promise instanceof Promise ).toBe( true );
 				promises.push( promise.catch( spies.error ) );
 
-				Promise.all( promises ).then( ():void => {
+				return Promise.all( promises ).then( ():void => {
 					expect( spySuccess ).toHaveBeenCalledTimes( 1 );
 					expect( spyError ).toHaveBeenCalledTimes( 1 );
 					expect( spy ).toHaveBeenCalledTimes( 2 );
-					done();
-				} ).catch( done.fail );
-			} );
+				} );
+
+			} ).then( done ).catch( done.fail );
 		} );
 
 	} );

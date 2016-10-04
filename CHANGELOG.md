@@ -1,3 +1,62 @@
+# 0.38.0 (September 08, 2016)
+
+- [LDP-800](https://jira.base22.com/browse/LDP-800) - Revert changes from a PersistedDocument
+    - Add `persistedDocument.revert()` method that reverts any change made to the document
+    - Add `persistedFragment.revert()` method that reverts any change made to the fragment
+    - Add `persistedNamedFragment.revert()` method that reverts any change made to the named fragment
+- Fix [LDP-796](https://jira.base22.com/browse/LDP-796) - NodeJS strips the port from the configured domain
+- Fix [LDP-801](https://jira.base22.com/browse/LDP-801) - Add missing `@language` property to JSON-LD
+- Fix documentation error in `context.documents.createChild()` method
+- Fix documentation error in `apps.create()` method
+- Fix [LDP-810](https://jira.base22.com/browse/LDP-810) - Documentation error
+
+# 0.37.0 (August 22, 2016)
+
+- [LDP-531](https://jira.base22.com/browse/LDP-531) - Create an App Role
+    - Add `Role`, `App.Role` modules, in memory representation of the role to create
+    - Add `Roles`, `App.Roles` modules, classes that help manage the roles of the context
+    - Add `appContext.auth.roles` property, an instance of `App.Roles` module
+    - Add `roles.createChild()` method that helps create a new app role
+- [LDP-532](https://jira.base22.com/browse/LDP-532) - Retrieve an App Role
+    - Add `PersistedRole`, `App.PersistedRole` modules, persisted representation of a role
+    - Add the `roles.get` method that helps retrieve a role from the server
+- [LDP-533](https://jira.base22.com/browse/LDP-533) - List the agents from an App Role
+    - Add `roles.listAgents()` and `role.listAgents()` methods that retrieve a list of UNRESOLVED persisted agents
+    - Add `roles.getAgents()` and `role.getAgents()` methods that retrieve a list of RESOLVED persisted agents
+- [LDP-534](https://jira.base22.com/browse/LDP-534) - Add Agents to an App Role
+    - Add `roles.addAgent()` and `role.addAgent()` methods that add an agent to a specified role
+    - Add `roles.addAgents()` and `role.addAgents()` methods that add multiple agents to a specified role
+- [LDP-535](https://jira.base22.com/browse/LDP-535) - Remove Agents from an App Role
+    - Add `roles.removeAgent` and `role.removeAgent` methods that remove an agent from the specified role
+    - Add `roles.removeAgents` and `role.removeAgents` methods that remove multiple agents from the specified role
+- [LDP-525](https://jira.base22.com/browse/LDP-525) - Retrieve an Agent Profile
+    - Add `agents.get` method which retrieves an agent from the server
+    - Add `Auth.PersistedAgent` module that represents a retrieved agent
+- [LDP-521](https://jira.base22.com/browse/LDP-521) - Register a Platform Agent, [LDP-522](https://jira.base22.com/browse/LDP-522) - Retrieve a Platform Agent
+    - Creates `Platform`, `Platform.Auth`, `Platform.Agents` and `Platform.PersistedAgent` modules.
+    - `Platform.Auth` and `Platform.Agents` extends their respective abstract classes in `Auth` that already have implemented the `register()` and `get()` methods.
+- [LDP-527](https://jira.base22.com/browse/LDP-527) - Delete an App Agent, 
+- [LDP-523](https://jira.base22.com/browse/LDP-523) - Delete a Platform Agent
+    - Add `agents.delete()` method that helps you to delete a specified agent
+- [LDP-526](https://jira.base22.com/browse/LDP-526) - Activate/Deactivate an Agent
+    - Add `agents.enable()` and `persistedAgent.enable()` methods
+    - Add `agents.disable()` and `persistedAgent.disable()` methods
+- [LDP-530](https://jira.base22.com/browse/LDP-530) - Delete an App
+    - Add `apps.delete()` method that helps delete an entire Application
+- Remove jsonld.js dependency
+- Fix [LDP-769](https://jira.base22.com/browse/LDP-769) - Fragments don't have helper functions for types
+    - Move decoration of helper functions to `Resource` module
+    - Add support for relative and prefixed types in PersistedFragments
+    
+#### Breaking Changes
+
+- Move `Carbon.Agents` module to `Carbon.Auth.Agents`
+- Move `context.agents` property to `context.auth.agents`
+- Rename `agents.create()` method to `agents.register()`
+- Move `Carbon.Agent` module to `Carbon.Auth.Agent`
+- `auth.authenticatedAgent` is now a `Carbon.Auth.PersistedAgent.Class` object
+- `token.agent` is now a `Carbon.Auth.PersistedAgent.Class` object
+
 # 0.36.0 (August 03, 2016)
 - [LDP-507](https://jira.base22.com/browse/LDP-507) Parse server errors. When receiving an HTTP.Error, you can now access properties that provide more information such as:
     - `errors`: An array of errors. The platform can detect several errors per request, e.g. several invalid properties

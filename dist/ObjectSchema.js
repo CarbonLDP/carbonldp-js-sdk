@@ -1,5 +1,6 @@
 "use strict";
 var Errors = require("./Errors");
+var NS = require("./NS");
 var RDF = require("./RDF");
 var Utils = require("./Utils");
 (function (ContainerType) {
@@ -17,6 +18,7 @@ var DigestedObjectSchema = (function () {
     function DigestedObjectSchema() {
         this.base = "";
         this.vocab = null;
+        this.language = null;
         this.prefixes = new Map();
         this.properties = new Map();
         this.prefixedURIs = new Map();
@@ -30,7 +32,6 @@ var DigestedPropertyDefinition = (function () {
         this.literal = null;
         this.literalType = null;
         this.pointerType = null;
-        this.language = null;
         this.containerType = null;
     }
     return DigestedPropertyDefinition;
@@ -55,6 +56,7 @@ var Digester = (function () {
         var combinedSchema = new DigestedObjectSchema();
         combinedSchema.vocab = digestedSchemas[0].vocab;
         combinedSchema.base = digestedSchemas[0].base;
+        combinedSchema.language = digestedSchemas[0].language;
         for (var _i = 0, digestedSchemas_1 = digestedSchemas; _i < digestedSchemas_1.length; _i++) {
             var digestedSchema = digestedSchemas_1[_i];
             Utils.M.extend(combinedSchema.prefixes, digestedSchema.prefixes);
@@ -103,6 +105,12 @@ var Digester = (function () {
             digestedSchema[propertyName.substr(1)] = value;
         }
         digestedSchema.base = digestedSchema.base || "";
+        if ("@language" in schema) {
+            var value = schema["@language"];
+            if (value !== null && !Utils.isString(value))
+                throw new Errors.InvalidJSONLDSyntaxError("The value of '@language' must be a string or null.");
+            digestedSchema.language = value;
+        }
         for (var propertyName in schema) {
             if (!schema.hasOwnProperty(propertyName))
                 continue;
@@ -113,6 +121,8 @@ var Digester = (function () {
             if (propertyName === "@base")
                 continue;
             if (propertyName === "@vocab")
+                continue;
+            if (propertyName === "@language")
                 continue;
             var propertyValue = schema[propertyName];
             if (Utils.isString(propertyValue)) {
@@ -151,13 +161,17 @@ var Digester = (function () {
                     }
                     else {
                         digestedDefinition.literal = true;
-                        digestedDefinition.literalType = Digester._resolvePrefixedURI(new RDF.URI.Class(schemaDefinition["@type"]), digestedSchema);
+                        var type = Digester._resolvePrefixedURI(new RDF.URI.Class(schemaDefinition["@type"]), digestedSchema);
+                        if (RDF.URI.Util.isRelative(type.stringValue) && type.stringValue in NS.XSD.DataType)
+                            type.stringValue = NS.XSD.DataType[type.stringValue];
+                        digestedDefinition.literalType = type;
                     }
                 }
                 if ("@language" in schemaDefinition) {
-                    if (!Utils.isString(schemaDefinition["@language"]))
-                        throw new Errors.IllegalArgumentError("@language needs to point to a string");
-                    digestedDefinition.language = schemaDefinition["@language"];
+                    var language = schemaDefinition["@language"];
+                    if (language !== null && !Utils.isString(language))
+                        throw new Errors.IllegalArgumentError("@language needs to point to a string or null.");
+                    digestedDefinition.language = language;
                 }
                 if ("@container" in schemaDefinition) {
                     switch (schemaDefinition["@container"]) {
@@ -168,7 +182,7 @@ var Digester = (function () {
                             digestedDefinition.containerType = ContainerType.LIST;
                             break;
                         case "@language":
-                            if (digestedDefinition.language !== null)
+                            if (Utils.isString(digestedDefinition.language))
                                 throw new Errors.IllegalArgumentError("@container cannot be set to @language when the property definition already contains an @language tag.");
                             digestedDefinition.containerType = ContainerType.LANGUAGE;
                             break;

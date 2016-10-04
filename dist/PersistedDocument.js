@@ -1,5 +1,6 @@
 "use strict";
 var Document = require("./Document");
+var HTTP = require("./HTTP");
 var ObjectSchema = require("./ObjectSchema");
 var PersistedResource = require("./PersistedResource");
 var PersistedFragment = require("./PersistedFragment");
@@ -25,6 +26,19 @@ function extendIsDirty(superFunction) {
                 return true;
         }
         return false;
+    };
+}
+function extendRevert(superFunction) {
+    return function () {
+        var persistedDocument = this;
+        persistedDocument._fragmentsIndex.clear();
+        for (var _i = 0, _a = persistedDocument._savedFragments; _i < _a.length; _i++) {
+            var fragment = _a[_i];
+            var slug = "slug" in fragment ? fragment.slug : fragment.id;
+            fragment.revert();
+            persistedDocument._fragmentsIndex.set(slug, fragment);
+        }
+        superFunction.call(persistedDocument);
     };
 }
 function syncSavedFragments() {
@@ -95,15 +109,19 @@ function addMember(memberOrUri) {
 function addMembers(members) {
     return this._documents.addMembers(this.id, members);
 }
-function createChild(slugOrObject, slug) {
-    var object = !Utils.isString(slugOrObject) && !!slugOrObject ? slugOrObject : {};
-    slug = Utils.isString(slugOrObject) ? slugOrObject : slug;
-    return this._documents.createChild(this.id, object, slug);
+function createChild(objectOrSlugOrRequestOptions, slugOrRequestOptions, requestOptions) {
+    if (requestOptions === void 0) { requestOptions = {}; }
+    requestOptions = HTTP.Request.Util.isOptions(objectOrSlugOrRequestOptions) ? objectOrSlugOrRequestOptions : HTTP.Request.Util.isOptions(slugOrRequestOptions) ? slugOrRequestOptions : requestOptions;
+    var object = Utils.isString(objectOrSlugOrRequestOptions) || HTTP.Request.Util.isOptions(objectOrSlugOrRequestOptions) || !objectOrSlugOrRequestOptions ? {} : objectOrSlugOrRequestOptions;
+    var slug = Utils.isString(objectOrSlugOrRequestOptions) ? objectOrSlugOrRequestOptions : Utils.isString(slugOrRequestOptions) ? slugOrRequestOptions : null;
+    return this._documents.createChild(this.id, object, slug, requestOptions);
 }
-function createChildAndRetrieve(slugOrObject, slug) {
-    var object = !Utils.isString(slugOrObject) && !!slugOrObject ? slugOrObject : {};
-    slug = Utils.isString(slugOrObject) ? slugOrObject : slug;
-    return this._documents.createChildAndRetrieve(this.id, object, slug);
+function createChildAndRetrieve(objectOrSlugOrRequestOptions, slugOrRequestOptions, requestOptions) {
+    if (requestOptions === void 0) { requestOptions = {}; }
+    requestOptions = HTTP.Request.Util.isOptions(objectOrSlugOrRequestOptions) ? objectOrSlugOrRequestOptions : HTTP.Request.Util.isOptions(slugOrRequestOptions) ? slugOrRequestOptions : requestOptions;
+    var object = Utils.isString(objectOrSlugOrRequestOptions) || HTTP.Request.Util.isOptions(objectOrSlugOrRequestOptions) || !objectOrSlugOrRequestOptions ? {} : objectOrSlugOrRequestOptions;
+    var slug = Utils.isString(objectOrSlugOrRequestOptions) ? objectOrSlugOrRequestOptions : Utils.isString(slugOrRequestOptions) ? slugOrRequestOptions : null;
+    return this._documents.createChildAndRetrieve(this.id, object, slug, requestOptions);
 }
 function createAccessPoint(accessPoint, slugOrRequestOptions, requestOptions) {
     return this._documents.createAccessPoint(this.id, accessPoint, slugOrRequestOptions, requestOptions);
@@ -477,6 +495,12 @@ var Factory = (function () {
                 enumerable: false,
                 configurable: true,
                 value: extendIsDirty(persistedDocument.isDirty),
+            },
+            "revert": {
+                writable: false,
+                enumerable: false,
+                configurable: true,
+                value: extendRevert(persistedDocument.revert),
             },
         });
         return persistedDocument;

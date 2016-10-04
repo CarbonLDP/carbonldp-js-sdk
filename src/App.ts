@@ -46,7 +46,7 @@ export class Factory {
 	static is( object:Object ):boolean {
 		return Document.Factory.hasClassProperties( object )
 			&& Factory.hasClassProperties( object )
-			&& ( <Document.Class> object ).types.indexOf( NS.CS.Class.Application ) !== - 1;
+			&& (object as Document.Class).hasType( RDF_CLASS );
 	}
 
 	static create( name:string, description?:string ):Class {

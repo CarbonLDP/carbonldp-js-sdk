@@ -16,7 +16,7 @@ import * as App from "./App";
 import AppContext from "./App/Context";
 import * as Auth from "./Auth";
 import * as Errors from "./Errors";
-import IllegalStateError from "./Errors/IllegalStateError";
+import * as HTTP from "./HTTP";
 import * as NS from "./NS";
 import * as RDF from "./RDF";
 import * as Utils from "./Utils";
@@ -97,7 +97,7 @@ describe( module( "Carbon/Apps" ), ():void => {
 						"@id": "http://example.com/platform/apps/example-app/",
 						"@graph": [ {
 							"@id": "http://example.com/platform/apps/example-app/",
-							"@type": [ "${ NS.CS.Class.Application }" ],
+							"@type": [ "${ NS.CS.Class.Application }", "${ NS.CS.Class.ProtectedDocument }" ],
 							"https://carbonldp.com/ns/v1/security#rootContainer": [ {
 								"@id": "https://example.com/apps/example-app/"
 							} ],
@@ -130,7 +130,7 @@ describe( module( "Carbon/Apps" ), ():void => {
 
 				// Test missing `platform.apps.container` setting
 				apps.getContext( "example-app/" ).catch( error => {
-					expect( error instanceof IllegalStateError ).toBe( true );
+					expect( error instanceof Errors.IllegalStateError ).toBe( true );
 					context.setSetting( "platform.apps.container", appsContainerURI );
 
 					// Test the correct execution of the method
@@ -176,7 +176,7 @@ describe( module( "Carbon/Apps" ), ():void => {
 						"@id": "http://example.com/platform/apps/example-app/",
 						"@graph": [ {
 							"@id": "http://example.com/platform/apps/example-app/",
-							"@type": [ "${ NS.CS.Class.Application }" ],
+							"@type": [ "${ NS.CS.Class.Application }", "${ NS.CS.Class.ProtectedDocument }" ],
 							"https://carbonldp.com/ns/v1/security#rootContainer": [ {
 								"@id": "https://example.com/apps/example-app/"
 							} ],
@@ -208,7 +208,7 @@ describe( module( "Carbon/Apps" ), ():void => {
 
 				// Test missing `platform.apps.container` setting
 				apps.getContext( context.documents.getPointer( "apps/example-app/" ) ).catch( error => {
-					expect( error instanceof IllegalStateError ).toBe( true );
+					expect( error instanceof Errors.IllegalStateError ).toBe( true );
 					context.setSetting( "platform.apps.container", appsContainerURI );
 
 					// Text correct execution of the method
@@ -311,7 +311,7 @@ describe( module( "Carbon/Apps" ), ():void => {
 						"@id": "http://example.com/platform/apps/another-app/",
 						"@graph": [ {
 							"@id": "http://example.com/platform/apps/another-app/",
-							"@type": [ "${NS.CS.Class.Application}" ],
+							"@type": [ "${NS.CS.Class.Application}", "${ NS.CS.Class.ProtectedDocument }" ],
 							"https://carbonldp.com/ns/v1/security#rootContainer": [ {
 								"@id": "https://example.com/apps/another-app/"
 							} ],
@@ -324,7 +324,7 @@ describe( module( "Carbon/Apps" ), ():void => {
 						"@id": "http://example.com/platform/apps/example-app/",
 						"@graph": [ {
 							"@id": "http://example.com/platform/apps/example-app/",
-							"@type": [ "${NS.CS.Class.Application}" ],
+							"@type": [ "${NS.CS.Class.Application}", "${ NS.CS.Class.ProtectedDocument }" ],
 							"https://carbonldp.com/ns/v1/security#rootContainer": [ {
 								"@id": "https://example.com/apps/example-app/"
 							} ],
@@ -354,7 +354,7 @@ describe( module( "Carbon/Apps" ), ():void => {
 
 			// Test missing `platform.apps.container` setting
 			apps.getAllContexts().catch( stateError => {
-				expect( stateError instanceof IllegalStateError ).toBe( true );
+				expect( stateError instanceof Errors.IllegalStateError ).toBe( true );
 				context.setSetting( "platform.apps.container", appsContainerURI );
 
 				// Text correct execution of the method
@@ -375,8 +375,8 @@ describe( module( "Carbon/Apps" ), ():void => {
 			"create",
 			"Persists a `Carbon.App.Class` object using the slug specified.\n" +
 			"Returns a Promise with a Pointer to the stored App, and the response of the request.", [
-				{ name: "slug", type: "string", description: "Slug that will be used for the URI of the new app." },
 				{ name: "appDocument", type: "Carbon.App.Class", description: "App document that will be persisted." },
+				{ name: "slug", type: "string", description: "Slug that will be used for the URI of the new app." },
 			],
 			{ type: "Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>" }
 		), ( done:{():void, fail:() => void} ):void => {
@@ -390,7 +390,7 @@ describe( module( "Carbon/Apps" ), ():void => {
 
 			// Test missing `platform.apps.container` setting
 			promises.push( apps.create( app ).catch( stateError => {
-				expect( stateError instanceof IllegalStateError ).toBe( true );
+				expect( stateError instanceof Errors.IllegalStateError ).toBe( true );
 			} ) );
 
 			context.setSetting( "platform.apps.container", appsContainerURI );
@@ -417,7 +417,7 @@ describe( module( "Carbon/Apps" ), ():void => {
 			} ) );
 
 			// Test correct execution of the method, where delegate the manage of the `null` slug to `context.documents.createChild` method
-			apps.create( app, null );
+			promise = apps.create( app, null );
 			expect( promise instanceof Promise ).toBe( true );
 			promises.push( promise.then( () => {
 				expect( spy ).toHaveBeenCalledWith( appsContainerURI, app, null );
@@ -432,6 +432,71 @@ describe( module( "Carbon/Apps" ), ():void => {
 
 			Promise.all( promises ).then( done ).catch( done.fail );
 		} );
+
+		it( hasMethod(
+			INSTANCE,
+			"delete",
+			"Deletes the app specified.", [
+				{name: "appURI", type: "string", description: "The URI of the app to be deleted."},
+				{name: "requestOptions", type: "Carbon.HTTP.Request.Options"},
+			],
+			{type: "Promise<Carbon.HTTP.Response.Class>"}
+		), ( done:{ ():void, fail:() => void } ):void => {
+			expect( apps.delete ).toBeDefined();
+			expect( Utils.isFunction( apps.delete ) ).toBe( true );
+
+			let promises:Promise<any>[] = [];
+			let promise:Promise<any>;
+			let spy:jasmine.Spy = spyOn( context.documents, "delete" );
+			let options:HTTP.Request.Options = {timeout: 5050};
+
+			// Test missing `platform.apps.container` setting
+			apps.delete( "the-app/" ).catch( stateError => {
+				expect( stateError instanceof Errors.IllegalStateError ).toBe( true );
+				context.setSetting( "platform.apps.container", "apps/" );
+
+				// Correct execution of the method
+				promise = apps.delete( "the-app/" );
+				expect( promise instanceof Promise ).toBe( true );
+				promises.push( promise.then( () => {
+					expect( spy ).toHaveBeenCalledWith( "http://example.com/platform/apps/the-app/", undefined );
+				} ) );
+
+				// Correct execution with options
+				promise = apps.delete( "the-app/", options );
+				expect( promise instanceof Promise ).toBe( true );
+				promises.push( promise.then( () => {
+					expect( spy ).toHaveBeenCalledWith( "http://example.com/platform/apps/the-app/", options );
+				} ) );
+
+				// Correct absolute URI
+				promise = apps.delete( "http://example.com/platform/apps/another-app/" );
+				expect( promise instanceof Promise ).toBe( true );
+				promises.push( promise.then( () => {
+					expect( spy ).toHaveBeenCalledWith( "http://example.com/platform/apps/another-app/", undefined );
+				} ) );
+
+				// Incorrect absolute URI
+				promise = apps.delete( "http://example.com/wrong-uri/the-app/" );
+				expect( promise instanceof Promise ).toBe( true );
+				promises.push( promise.catch( error => {
+					expect( error instanceof Errors.IllegalArgumentError );
+				} ) );
+
+				// Empty URI
+				promise = apps.delete( "" );
+				expect( promise instanceof Promise ).toBe( true );
+				promises.push( promise.catch( error => {
+					expect( error instanceof Errors.IllegalArgumentError );
+				} ) );
+
+				Promise.all( promises ).then( () => {
+					expect( spy ).toHaveBeenCalledTimes( 3 );
+					done();
+				} ).catch( done.fail );
+			} );
+		} );
+
 	} );
 
 	it( hasDefaultExport( "Carbon.Apps.Class" ), ():void => {

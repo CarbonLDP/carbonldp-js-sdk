@@ -31,7 +31,7 @@ export class Class {
 			return pointer.resolve<PersistedApp.Class>();
 
 		} ).then( ( [ app, response ]:[ PersistedApp.Class, HTTP.Response.Class ] ) => {
-			if( ! PersistedApp.Factory.is( app ) ) throw new Errors.IllegalArgumentError( "The resource fetched is not a cs:Application." );
+			if( ! PersistedApp.Factory.is( app ) ) throw new Errors.IllegalArgumentError( `The resource fetched is not a ${ NS.CS.Class.Application }.` );
 			return new AppContext( this.context, app );
 		} );
 
@@ -63,6 +63,14 @@ export class Class {
 			if( ! App.Factory.is( appDocument ) ) throw new Errors.IllegalArgumentError( "The Document is not a `Carbon.App.Class` object." );
 
 			return this.context.documents.createChild( appsContainerURI, appDocument, slug );
+		} );
+	}
+
+	delete( appURI:string, requestOptions?:HTTP.Request.Options ):Promise<HTTP.Response.Class> {
+		if( ! appURI ) return Promise.reject<any>( new Errors.IllegalArgumentError( "The application's URI must be defined." ) );
+
+		return this.resolveURI( appURI ).then( ( uri:string ) => {
+			return this.context.documents.delete( uri, requestOptions );
 		} );
 	}
 

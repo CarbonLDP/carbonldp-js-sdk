@@ -4,12 +4,11 @@ var HTTP = require("./HTTP");
 var RDF = require("./RDF");
 var Utils = require("./Utils");
 var AccessPoint = require("./AccessPoint");
-var ACL = require("./Auth/ACL");
 var AppRole = require("./App/Role");
+var Auth = require("./Auth");
 var Document = require("./Document");
 var FreeResources = require("./FreeResources");
 var JSONLD = require("./JSONLD");
-var PersistedACL = require("./Auth/PersistedACL");
 var PersistedAppRole = require("./App/PersistedRole");
 var PersistedDocument = require("./PersistedDocument");
 var PersistedProtectedDocument = require("./PersistedProtectedDocument");
@@ -42,7 +41,8 @@ var Documents = (function () {
         }
         else {
             decorators.set(ProtectedDocument.RDF_CLASS, { decorator: PersistedProtectedDocument.Factory.decorate });
-            decorators.set(ACL.RDF_CLASS, { decorator: PersistedACL.Factory.decorate });
+            decorators.set(Auth.ACL.RDF_CLASS, { decorator: Auth.PersistedACL.Factory.decorate });
+            decorators.set(Auth.Agent.RDF_CLASS, { decorator: Auth.PersistedAgent.Factory.decorate });
         }
         decorators.set(AppRole.RDF_CLASS, { decorator: PersistedAppRole.Factory.decorate, parameters: [(this.context && this.context.auth) ? this.context.auth.roles : null] });
         this._documentDecorators = decorators;
@@ -617,9 +617,10 @@ var Documents = (function () {
                 throw new HTTP.Errors.BadResponseError("The response contains more than one Location header.", response);
             var localID = _this.getPointerID(locationHeader.values[0].toString());
             var persistedDocument = PersistedDocument.Factory.decorate(_this.createPointerFrom(document, localID), _this);
-            _this.pointers.set(localID, persistedDocument);
+            var persistedProtectedDocument = PersistedProtectedDocument.Factory.decorate(persistedDocument);
+            _this.pointers.set(localID, persistedProtectedDocument);
             return [
-                persistedDocument,
+                persistedProtectedDocument,
                 response,
             ];
         });

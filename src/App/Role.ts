@@ -30,7 +30,7 @@ export class Factory {
 
 	static is( object:Object ):boolean {
 		return Role.Factory.is( object )
-			&& Resource.Util.hasType( <Resource.Class> object, RDF_CLASS )
+			&& (object as Role.Class).hasType( RDF_CLASS )
 			;
 	}
 

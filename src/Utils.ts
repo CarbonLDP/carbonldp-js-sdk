@@ -130,32 +130,40 @@ function forEachOwnProperty( object:Object, action:( name:string, value:any ) =>
 
 class O {
 
-	static clone<T extends Object>( object:T, config:{ arrays?:boolean, objects?:boolean } = {arrays: false, objects: false} ):T {
-		let isAnArray:boolean = isArray( object );
-		if( ! isAnArray && ! isPlainObject( object ) ) return null;
+	static extend<T extends Object, W extends Object>( target:T, source:W, config:{ arrays?:boolean, objects?:boolean } = {arrays: false, objects: false}, ignore:{[ key:string ]:boolean} = {} ):T & W {
+		if( ! isArray( source ) && ! isPlainObject( source ) || ! isArray( target ) && ! isPlainObject( target ) ) return null;
 
-		let clone:T = <T> ( isAnArray ? [] : ( ! ! Object.getPrototypeOf( object ) ) ? {} : Object.create( null ) );
-		(<any> object).__SDKUtils_circularReferenceFlag = clone;
+		let clone:T & W = <any> target;
+		(<any> source).__CarbonSDK_circularReferenceFlag = clone;
 
-		for( let key of Object.keys( object ) ) {
-			if( isFunction( object[ key ] ) || key === "__SDKUtils_circularReferenceFlag" ) continue;
+		for( let key of Object.keys( source ) ) {
+			if( isFunction( source[ key ] ) || key === "__CarbonSDK_circularReferenceFlag" ) continue;
+			if( key in ignore ) continue;
 
-			let property:any = object[ key ];
+			let property:any = source[ key ];
 			if( isArray( property ) && config.arrays ||
 				isPlainObject( property ) && config.objects ) {
 
-				property = property.__SDKUtils_circularReferenceFlag || O.clone( property, config );
+				property = property.__CarbonSDK_circularReferenceFlag || O.clone( property, config );
 			}
 
 			clone[ key ] = property;
 		}
 
-		delete (<any> object).__SDKUtils_circularReferenceFlag;
+		delete (<any> source).__CarbonSDK_circularReferenceFlag;
 		return clone;
 	}
 
-	static areEqual( object1:Object, object2:Object, config:{ arrays?:boolean, objects?:boolean } = {arrays: false, objects: false} ):boolean {
-		return internalAreEqual( object1, object2, config, [ object1 ], [ object2 ] );
+	static clone<T extends Object>( object:T, config:{ arrays?:boolean, objects?:boolean } = {arrays: false, objects: false}, ignore:{[ key:string ]:boolean} = {} ):T {
+		let isAnArray:boolean = isArray( object );
+		if( ! isAnArray && ! isPlainObject( object ) ) return null;
+
+		let clone:T = <T> ( isAnArray ? [] : ( ! ! Object.getPrototypeOf( object ) ) ? {} : Object.create( null ) );
+		return O.extend<T, T>( clone, object, config, ignore );
+	}
+
+	static areEqual( object1:Object, object2:Object, config:{ arrays?:boolean, objects?:boolean } = {arrays: false, objects: false}, ignore:{[ key:string ]:boolean} = {} ):boolean {
+		return internalAreEqual( object1, object2, config, [ object1 ], [ object2 ], ignore );
 	}
 
 	static areShallowlyEqual( object1:Object, object2:Object ):boolean {
@@ -182,7 +190,7 @@ class O {
 	}
 }
 
-function internalAreEqual( object1:Object, object2:Object, config:{ arrays?:boolean, objects?:boolean }, stack1:any[], stack2:any[] ):boolean {
+function internalAreEqual( object1:Object, object2:Object, config:{ arrays?:boolean, objects?:boolean }, stack1:any[], stack2:any[], ignore:{[ key:string ]:boolean} = {} ):boolean {
 	if( object1 === object2 ) return true;
 	if( ! isObject( object1 ) || ! isObject( object2 ) ) return false;
 
@@ -192,6 +200,7 @@ function internalAreEqual( object1:Object, object2:Object, config:{ arrays?:bool
 	for( let key of keys ) {
 		if( ! ( key in object1 ) || ! ( key in object2 ) ) return false;
 		if( typeof object1 !== typeof object2 ) return false;
+		if( key in ignore ) continue;
 
 		if( isFunction( object1[ key ] ) ) continue;
 

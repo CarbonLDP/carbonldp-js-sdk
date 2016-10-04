@@ -641,8 +641,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 				[ "T extends Carbon.Document.Class" ],
 				"Persists a child document for the respective parent source.", [
 					{name: "parentURI", type: "string", description: "URI of the document where to create a new child."},
-					{name: "slug", type: "string", description: "Slug that will be used for the URI of the new child."},
 					{name: "childDocument", type: "T", description: "Document to persists as a new child."},
+					{name: "slug", type: "string", optional: true, description: "Slug that will be used for the URI of the new child."},
 					{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request."},
 				],
 				{type: "Promise<[ T & Carbon.PersistedDocument.Class, Carbon.HTTP.Response.Class ]>"}
@@ -878,8 +878,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 				[ "T extends Object" ],
 				"Persists JavaScript object as a child document for the respective parent source.", [
 					{name: "parentURI", type: "string", description: "URI of the document where to create a new child."},
-					{name: "slug", type: "string", description: "Slug that will be used for the URI of the new child."},
 					{name: "childObject", type: "T", description: "A normal JavaScript object that will be converted and persisted as a new child document."},
+					{name: "slug", type: "string", optional: true, description: "Slug that will be used for the URI of the new child."},
 					{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request."},
 				],
 				{type: "Promise<[ T & Carbon.PersistedDocument.Class, Carbon.HTTP.Response.Class ]>"}
@@ -1876,7 +1876,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				"Upload binary data, creating a child for the parent specified. This signature only works in a web browser.", [
 					{name: "parentURI", type: "string", description: "URI of the document where to upload the new binary data child."},
 					{name: "data", type: "Blob", description: "Blob of the binary data to upload."},
-					{name: "slug", type: "string", optional:true, description: "Slug that will be used for the URI of the new binary child."},
+					{name: "slug", type: "string", optional: true, description: "Slug that will be used for the URI of the new binary child."},
 					{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request."},
 				],
 				{type: "Promise<[Carbon.Pointer.Class, Carbon.HTTP.Response.Class]>"}
@@ -1987,7 +1987,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				"Upload binary data, creating a child for the parent specified. This signature only works in Node.js.", [
 					{name: "parentURI", type: "string", description: "URI of the document where to upload the new binary data child."},
 					{name: "data", type: "Buffer", description: "Buffer of the binary data to upload."},
-					{name: "slug", type: "string", optional:true, description: "Slug that will be used fot he URI of the new binary child."},
+					{name: "slug", type: "string", optional: true, description: "Slug that will be used fot he URI of the new binary child."},
 					{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request."},
 				],
 				{type: "Promise<[Carbon.Pointer.Class, Carbon.HTTP.Response.Class]>"}

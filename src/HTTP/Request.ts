@@ -116,7 +116,9 @@ function sendWithNode( method:string, url:string, body:string | Buffer, options:
 
 			let requestOptions:RequestOptions & { withCredentials:boolean } = {
 				protocol: parsedURL.protocol,
+				host: parsedURL.host,
 				hostname: parsedURL.hostname,
+				port: parseFloat( parsedURL.port ),
 				path: parsedURL.path,
 				method: method,
 				headers: {},

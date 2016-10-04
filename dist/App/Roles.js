@@ -7,6 +7,7 @@ var __extends = (this && this.__extends) || function (d, b) {
 var Context_1 = require("./Context");
 var AppRole = require("./Role");
 var Errors = require("./../Errors");
+var NS = require("./../NS");
 var PersistedAppRole = require("./PersistedRole");
 var Roles_1 = require("./../Auth/Roles");
 var Class = (function (_super) {
@@ -25,7 +26,7 @@ var Class = (function (_super) {
         return _super.prototype.get.call(this, roleURI, requestOptions).then(function (_a) {
             var role = _a[0], response = _a[1];
             if (!PersistedAppRole.Factory.is(role))
-                throw new Errors.IllegalArgumentError("The resource fetched is not a cs:AppRole");
+                throw new Errors.IllegalArgumentError("The resource fetched is not a " + NS.CS.Class.AppRole);
             return [role, response];
         });
     };

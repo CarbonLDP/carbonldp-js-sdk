@@ -60,7 +60,7 @@ class Carbon extends AbstractContext {
 	static Utils:typeof Utils = Utils;
 	/* tslint:enable: variable-name */
 
-	static get version():string { return "0.36.0"; }
+	static get version():string { return "0.38.0"; }
 
 	apps:Apps.Class;
 
@@ -70,7 +70,7 @@ class Carbon extends AbstractContext {
 		super();
 		this.auth = new Platform.Auth.Class( this );
 
-		settings = settings ? settings : Settings.defaultSettings;
+		settings = settings ? Utils.extend( {}, Settings.defaultSettings, settings ) : Settings.defaultSettings;
 
 		Utils.M.extend( this.settings, Utils.M.from( settings ) );
 
