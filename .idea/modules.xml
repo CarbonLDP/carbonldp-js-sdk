@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/CarbonLDP-JS-SDK.iml" filepath="$PROJECT_DIR$/.idea/CarbonLDP-JS-SDK.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/carbonldp-js-sdk.iml" filepath="$PROJECT_DIR$/.idea/carbonldp-js-sdk.iml" />
     </modules>
   </component>
 </project>
