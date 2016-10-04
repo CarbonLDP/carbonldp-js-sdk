@@ -39,7 +39,7 @@ var Factory = (function () {
     Factory.is = function (object) {
         return Document.Factory.hasClassProperties(object)
             && Factory.hasClassProperties(object)
-            && object.types.indexOf(NS.CS.Class.Application) !== -1;
+            && object.hasType(exports.RDF_CLASS);
     };
     Factory.create = function (name, description) {
         return Factory.createFrom({}, name, description);

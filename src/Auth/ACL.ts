@@ -29,6 +29,8 @@ export interface Class extends Document.Class {
 	entries?:ACE.Class[];
 	inheritableEntries?:ACE.Class[];
 
+	_parsePointer( element: string | Pointer.Class ):Pointer.Class;
+
 	grant( subject:string | Pointer.Class, subjectClass:string | Pointer.Class, permission:string | Pointer.Class ):void;
 	grant( subject:string | Pointer.Class, subjectClass:string | Pointer.Class, permissions:(string | Pointer.Class)[] ):void;
 	grant( subjects:(string | Pointer.Class)[], subjectClass:string | Pointer.Class, permission:string | Pointer.Class ):void;
@@ -58,6 +60,7 @@ export class Factory {
 
 	static hasClassProperties( object:Object ):boolean {
 		return Utils.hasPropertyDefined( object, "accessTo" )
+			&& Utils.hasFunction( object, "_parsePointer" )
 			&& Utils.hasFunction( object, "grant" )
 			&& Utils.hasFunction( object, "deny" )
 			&& Utils.hasFunction( object, "configureChildInheritance" )
@@ -74,6 +77,12 @@ export class Factory {
 		if( Factory.hasClassProperties( acl ) ) return acl;
 
 		Object.defineProperties( acl, {
+			"_parsePointer": {
+				writable: true,
+				enumerable: false,
+				configurable: true,
+				value: parsePointer,
+			},
 			"grant": {
 				writable: true,
 				enumerable: false,
@@ -130,17 +139,16 @@ export class Factory {
 }
 
 function parsePointer( element:string | Pointer.Class ):Pointer.Class {
-	let acl:Class = this;
-	return Pointer.Factory.is( element ) ? <Pointer.Class> element : acl.getPointer( <string> element );
+	return Pointer.Factory.is( element ) ? <Pointer.Class> element : Pointer.Factory.create( <string> element );
 }
 
 function parsePointers( elements:string | Pointer.Class | (string | Pointer.Class)[] ):Pointer.Class[] {
 	let elementsArray:(string | Pointer.Class)[] = Utils.isArray( elements ) ? <(string | Pointer.Class)[]> elements : [ <string | Pointer.Class> elements ];
-	return elementsArray.map( ( element:string | Pointer.Class ) => parsePointer.call( this, element ) );
+	return elementsArray.map( ( element:string | Pointer.Class ) => (this as Class)._parsePointer( element ) );
 }
 
 function configACE( granting:boolean, subject:Pointer.Class, subjectClass:Pointer.Class, permissions:Pointer.Class[], aces:ACE.Class[] ):ACE.Class {
-	let subjectACEs:ACE.Class[] = aces.filter( ace => ace.subjects.length === 1 && ace.subjects.indexOf( subject ) !== - 1 && ace.granting === granting );
+	let subjectACEs:ACE.Class[] = aces.filter( ace => ace.subjects.length === 1 && ace.granting === granting && Pointer.Util.areEqual( ace.subjects[ 0 ], subject ) );
 
 	let ace:ACE.Class;
 	if( subjectACEs.length === 0 ) {
@@ -155,7 +163,7 @@ function configACE( granting:boolean, subject:Pointer.Class, subjectClass:Pointe
 }
 function configACEs( granting:boolean, subjects:string | Pointer.Class | (string | Pointer.Class)[], subjectsClass:string | Pointer.Class, permissions:string | Pointer.Class | (string | Pointer.Class)[], aces:ACE.Class[] ):void {
 	let subjectPointers:Pointer.Class[] = parsePointers.call( this, subjects );
-	let subjectClassPointer:Pointer.Class = parsePointer.call( this, subjectsClass );
+	let subjectClassPointer:Pointer.Class = (this as Class)._parsePointer( subjectsClass );
 	let permissionPointers:Pointer.Class[] = parsePointers.call( this, permissions );
 
 	for( let subject of subjectPointers ) {
@@ -203,8 +211,8 @@ function grantingFrom( subject:Pointer.Class, permission:Pointer.Class, aces:ACE
 function getGranting( subject:string | Pointer.Class, permission:string | Pointer.Class, aces:ACE.Class[] ):boolean {
 	if( ! aces ) return null;
 
-	let subjectPointer:Pointer.Class = parsePointer.call( this, subject );
-	let permissionPointer:Pointer.Class = parsePointer.call( this, permission );
+	let subjectPointer:Pointer.Class = (this as Class)._parsePointer( subject );
+	let permissionPointer:Pointer.Class = (this as Class)._parsePointer( permission );
 
 	return grantingFrom( subjectPointer, permissionPointer, aces );
 }
@@ -260,7 +268,7 @@ function removePermissionsFrom( subject:Pointer.Class, permissions:Pointer.Class
 	}
 }
 function removePermissions( subject:string | Pointer.Class, permissions:string | Pointer.Class | (string | Pointer.Class)[], aces:ACE.Class[] ):void {
-	let subjectPointer:Pointer.Class = parsePointer.call( this, subject );
+	let subjectPointer:Pointer.Class = (this as Class)._parsePointer( subject );
 	let permissionPointers:Pointer.Class[] = parsePointers.call( this, permissions );
 	removePermissionsFrom.call( this, subjectPointer, permissionPointers, aces );
 }

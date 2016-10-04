@@ -1,6 +1,6 @@
-import * as PersistedDocument from "./PersistedDocument";
+import * as PersistedProtectedDocument from "./PersistedProtectedDocument";
 import Pointer from "./Pointer";
-export interface Class extends PersistedDocument.Class {
+export interface Class extends PersistedProtectedDocument.Class {
     name: string;
     description?: string;
     rootContainer: Pointer;

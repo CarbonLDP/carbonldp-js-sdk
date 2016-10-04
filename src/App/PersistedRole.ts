@@ -1,4 +1,5 @@
 import * as AppRole from "./Role";
+import * as PersistedDocument from "./../PersistedDocument";
 import * as PersistedRole from "./../Auth/PersistedRole";
 import * as Pointer from "./../Pointer";
 import * as Roles from "./Roles";
@@ -20,10 +21,11 @@ export class Factory {
 	static is( object:Object ):boolean {
 		return Factory.hasClassProperties( object )
 			&& AppRole.Factory.is( object )
+			&& PersistedRole.Factory.is( object )
 			;
 	}
 
-	static decorate<T extends Object>( object:T, roles:Roles.Class ):T & Class {
+	static decorate<T extends PersistedDocument.Class>( object:T, roles:Roles.Class ):T & Class {
 		let role:T & Class = <any> object;
 		if( Factory.hasClassProperties( role ) ) return role;
 

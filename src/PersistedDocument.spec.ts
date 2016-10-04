@@ -1085,8 +1085,9 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 					"Persists a document with the slug specified as a child of the current container.", [
 						{name: "object", type: "T", description: "The object from where create the child. If it's a non `Carbon.Document.Class` object, it's transformed into one."},
 						{name: "slug", type: "string", description: "The slug that will be used in the child URI."},
+						{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request."},
 					],
-					{type: "Promise<[ T & Carbon.PersistedDocument.Class, Carbon.HTTP.Response.Class ]>"}
+					{type: "Promise<[ T & Carbon.PersistedProtectedDocument.Class, Carbon.HTTP.Response.Class ]>"}
 				), ():void => {
 					expect( document.createChild ).toBeDefined();
 					expect( Utils.isFunction( document.createChild ) ).toBeDefined();
@@ -1096,20 +1097,30 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 					let childDocument:Document.Class = Document.Factory.create();
 					document.createChild( childDocument, "child" );
 
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", childDocument, "child" );
+					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", childDocument, "child", {} );
 					spy.calls.reset();
 
-					let object:Object = {my: "object"};
+					let object:Object;
+					let options:HTTP.Request.Options;
+
+					object = {my: "object"};
+					options = {timeout: 5050 };
+					document.createChild( object, "child", options );
+					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", object, "child", options );
+					spy.calls.reset();
+
+					object = {my: "object"};
 					document.createChild( object, "child" );
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", object, "child" );
+					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", object, "child", {} );
 				} );
 
 				it( hasSignature(
 					[ "T extends Object" ],
 					"Persists a document as a child of the current container.", [
 						{name: "object", type: "T", description: "The object from where create the child. If it's a non `Carbon.Document.Class` object, it's transformed into one."},
+						{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request."},
 					],
-					{type: "Promise<[ T & Carbon.PersistedDocument.Class, Carbon.HTTP.Response.Class ]>"}
+					{type: "Promise<[ T & Carbon.PersistedProtectedDocument.Class, Carbon.HTTP.Response.Class ]>"}
 				), ():void => {
 					expect( document.createChild ).toBeDefined();
 					expect( Utils.isFunction( document.createChild ) ).toBeDefined();
@@ -1119,19 +1130,26 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 					let childDocument:Document.Class = Document.Factory.create();
 					document.createChild( childDocument );
 
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", childDocument, undefined );
+					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", childDocument, null, {} );
 					spy.calls.reset();
 
 					let object:Object = {my: "object"};
 					document.createChild( object );
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", object, undefined );
+					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", object, null, {} );
+					spy.calls.reset();
+
+					object = {my: "object"};
+					let options:HTTP.Request.Options = {timeout: 5050 };
+					document.createChild( object, options );
+					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", object, null, options );
 				} );
 
 				it( hasSignature(
 					"Creates an persists an empty child for the current container with the slug provided.", [
 						{name: "slug", type: "string", description: "The slug that will be used in the child URI."},
+						{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request."},
 					],
-					{type: "Promise<[ Carbon.PersistedDocument.Class, Carbon.HTTP.Response.Class ]>"}
+					{type: "Promise<[ Carbon.PersistedProtectedDocument.Class, Carbon.HTTP.Response.Class ]>"}
 				), ():void => {
 					expect( document.createChild ).toBeDefined();
 					expect( Utils.isFunction( document.createChild ) ).toBeDefined();
@@ -1139,12 +1157,19 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 					let spy:jasmine.Spy = spyOn( document._documents, "createChild" );
 
 					document.createChild( "child" );
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", {}, "child" );
+					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", {}, "child", {} );
+					spy.calls.reset();
+
+					let options:HTTP.Request.Options = {timeout: 5050 };
+					document.createChild( "child", options );
+					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", {}, "child", options );
 				} );
 
 				it( hasSignature(
-					"Creates and persists an empty child fot he current document.",
-					{type: "Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>"}
+					"Creates and persists an empty child fot he current document.", [
+						{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request."},
+					],
+					{type: "Promise<[ Carbon.PersistedProtectedDocument.Class, Carbon.HTTP.Response.Class ]>"}
 				), ():void => {
 					expect( document.createChild ).toBeDefined();
 					expect( Utils.isFunction( document.createChild ) ).toBeDefined();
@@ -1152,7 +1177,12 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 					let spy:jasmine.Spy = spyOn( document._documents, "createChild" );
 
 					document.createChild();
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", {}, undefined );
+					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", {}, null, {} );
+					spy.calls.reset();
+
+					let options:HTTP.Request.Options = {timeout: 5050 };
+					document.createChild( options );
+					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", {}, null, options );
 				} );
 
 			} );
@@ -1172,59 +1202,89 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 					[ "T extends Object" ], [
 						{name: "object", type: "T", description: "The object from where create the child. If it's a non `Carbon.Document.Class` object, it is transformed into one."},
 						{name: "slug", type: "string", description: "The slug name for the children URI."},
+						{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request."},
 					],
-					{type: "Promise<[ T & Carbon.PersistedDocument.Class, [ Carbon.HTTP.Response.Class, Carbon.HTTP.Response.Class ] ]>"}
+					{type: "Promise<[ T & Carbon.PersistedProtectedDocument.Class, [ Carbon.HTTP.Response.Class, Carbon.HTTP.Response.Class ] ]>"}
 				), ():void => {
 					let spy:jasmine.Spy = spyOn( document._documents, "createChildAndRetrieve" );
 
 					let childDocument:Document.Class = Document.Factory.create();
 					document.createChildAndRetrieve( childDocument, "child" );
 
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", childDocument, "child" );
+					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", childDocument, "child", {} );
 					spy.calls.reset();
 
-					let object:Object = {my: "object"};
+					let object:Object;
+					let options:HTTP.Request.Options;
+
+					object = {my: "object"};
+					options = {timeout: 5050 };
+					document.createChildAndRetrieve( object, "child", options );
+					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", object, "child", options );
+					spy.calls.reset();
+
+					object = {my: "object"};
 					document.createChildAndRetrieve( object, "child" );
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", object, "child" );
+					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", object, "child", {} );
 				} );
 
 				it( hasSignature(
 					[ "T extends Object" ], [
-						{name: "object", type: "T", description: "The object from where create the child. If it's a non `Carbon.PersistedDocument.Class` object, it is transformed into one."},
+						{name: "object", type: "T", description: "The object from where create the child. If it's a non `Carbon.Document.Class` object, it is transformed into one."},
+						{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request."},
 					],
-					{type: "Promise<[ T & Carbon.PersistedDocument.Class, [ Carbon.HTTP.Response.Class, Carbon.HTTP.Response.Class ] ]>"}
+					{type: "Promise<[ T & Carbon.PersistedProtectedDocument.Class, [ Carbon.HTTP.Response.Class, Carbon.HTTP.Response.Class ] ]>"}
 				), ():void => {
 					let spy:jasmine.Spy = spyOn( document._documents, "createChildAndRetrieve" );
 
 					let childDocument:Document.Class = Document.Factory.create();
 					document.createChildAndRetrieve( childDocument );
 
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", childDocument, undefined );
+					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", childDocument, null, {} );
 					spy.calls.reset();
 
 					let object:Object = {my: "object"};
 					document.createChildAndRetrieve( object );
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", object, undefined );
+					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", object, null, {} );
+					spy.calls.reset();
+
+					object = {my: "object"};
+					let options:HTTP.Request.Options = {timeout: 5050 };
+					document.createChildAndRetrieve( object, options );
+					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", object, null, options );
 				} );
 
 				it( hasSignature( [
 						{name: "slug", type: "string", description: "The slug name for the children URI."},
+						{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request."},
 					],
-					{type: "Promise<[ Carbon.PersistedDocument.Class, [ Carbon.HTTP.Response.Class, Carbon.HTTP.Response.Class ] ]>"}
+					{type: "Promise<[ Carbon.PersistedProtectedDocument.Class, [ Carbon.HTTP.Response.Class, Carbon.HTTP.Response.Class ] ]>"}
 				), ():void => {
 					let spy:jasmine.Spy = spyOn( document._documents, "createChildAndRetrieve" );
 
 					document.createChildAndRetrieve( "child" );
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", {}, "child" );
+					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", {}, "child", {} );
+					spy.calls.reset();
+
+					let options:HTTP.Request.Options = {timeout: 5050 };
+					document.createChildAndRetrieve( "child", options );
+					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", {}, "child", options );
 				} );
 
-				it( hasSignature(
-					{type: "Promise<[ Carbon.PersistedDocument.Class, [ Carbon.HTTP.Response.Class, Carbon.HTTP.Response.Class ] ]>"}
+				it( hasSignature( [
+						{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request."},
+					],
+					{type: "Promise<[ Carbon.PersistedProtectedDocument.Class, [ Carbon.HTTP.Response.Class, Carbon.HTTP.Response.Class ] ]>"}
 				), ():void => {
 					let spy:jasmine.Spy = spyOn( document._documents, "createChildAndRetrieve" );
 
 					document.createChildAndRetrieve();
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", {}, undefined );
+					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", {}, null, {} );
+					spy.calls.reset();
+
+					let options:HTTP.Request.Options = {timeout: 5050 };
+					document.createChildAndRetrieve( options );
+					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", {}, null, options );
 				} );
 
 			} );

@@ -87,7 +87,7 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 					{name: "slug", type: "string", optional: true, description: "The slug where the role will be persisted."},
 					{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "The slug where the role will be persisted."},
 				],
-				{type: "Promise<[ T & Carbon.PersistedDocument.Class, [ Carbon.HTTP.Response.Class, Carbon.HTTP.Response.Class] ]>"}
+				{type: "Promise<[ T & Carbon.Auth.PersistedRole.Class, Carbon.HTTP.Response.Class ]>"}
 			), ( done:{ ():void, fail:() => void } ):void => {
 				expect( roles.createChild ).toBeDefined();
 				expect( Utils.isFunction( roles.createChild ) ).toBe( true );
@@ -103,17 +103,13 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 				} );
 
 				let spies:any = {
-					success: ( [ pointer, [ response1, response2 ] ]:[ Pointer.Class, [ HTTP.Response.Class, HTTP.Response.Class ] ] ):void => {
+					success: ( [ pointer, response ]:[ Pointer.Class, HTTP.Response.Class ] ):void => {
 						expect( pointer ).toBeTruthy();
 						expect( Pointer.Factory.is( pointer ) ).toBe( true );
 						expect( pointer.id ).toBe( "http://example.com/roles/new-role/" );
 
-						expect( response1 ).toBeTruthy();
-						expect( response1 instanceof HTTP.Response.Class ).toBe( true );
-
-						expect( response2 ).toBeTruthy();
-						expect( response2 instanceof HTTP.Response.Class ).toBe( true );
-
+						expect( response ).toBeTruthy();
+						expect( response instanceof HTTP.Response.Class ).toBe( true );
 					},
 					error: function( error:Error ):void {
 						expect( error instanceof Errors.IllegalArgumentError );
@@ -166,7 +162,7 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 					{name: "role", type: "T", description: "The appRole that wants to persist."},
 					{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "The slug where the role will be persisted."},
 				],
-				{type: "Promise<[ T & Carbon.PersistedDocument.Class, [ Carbon.HTTP.Response.Class, Carbon.HTTP.Response.Class] ]>"}
+				{type: "Promise<[ T & Carbon.Auth.PersistedRole.Class, Carbon.HTTP.Response.Class ]>"}
 			), ( done:{ ():void, fail:() => void } ):void => {
 				expect( roles.createChild ).toBeDefined();
 				expect( Utils.isFunction( roles.createChild ) ).toBe( true );
@@ -182,17 +178,13 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 				} );
 
 				let spies:any = {
-					success: ( [ pointer, [ response1, response2 ] ]:[ Pointer.Class, [ HTTP.Response.Class, HTTP.Response.Class ] ] ):void => {
+					success: ( [ pointer, response ]:[ Pointer.Class, HTTP.Response.Class ] ):void => {
 						expect( pointer ).toBeTruthy();
 						expect( Pointer.Factory.is( pointer ) ).toBe( true );
 						expect( pointer.id ).toBe( "http://example.com/roles/new-role/" );
 
-						expect( response1 ).toBeTruthy();
-						expect( response1 instanceof HTTP.Response.Class ).toBe( true );
-
-						expect( response2 ).toBeTruthy();
-						expect( response2 instanceof HTTP.Response.Class ).toBe( true );
-
+						expect( response ).toBeTruthy();
+						expect( response instanceof HTTP.Response.Class ).toBe( true );
 					},
 					error: function( error:Error ):void {
 						expect( error instanceof Errors.IllegalArgumentError );

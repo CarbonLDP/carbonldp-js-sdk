@@ -97,7 +97,7 @@ describe( module( "Carbon/Apps" ), ():void => {
 						"@id": "http://example.com/platform/apps/example-app/",
 						"@graph": [ {
 							"@id": "http://example.com/platform/apps/example-app/",
-							"@type": [ "${ NS.CS.Class.Application }" ],
+							"@type": [ "${ NS.CS.Class.Application }", "${ NS.CS.Class.ProtectedDocument }" ],
 							"https://carbonldp.com/ns/v1/security#rootContainer": [ {
 								"@id": "https://example.com/apps/example-app/"
 							} ],
@@ -176,7 +176,7 @@ describe( module( "Carbon/Apps" ), ():void => {
 						"@id": "http://example.com/platform/apps/example-app/",
 						"@graph": [ {
 							"@id": "http://example.com/platform/apps/example-app/",
-							"@type": [ "${ NS.CS.Class.Application }" ],
+							"@type": [ "${ NS.CS.Class.Application }", "${ NS.CS.Class.ProtectedDocument }" ],
 							"https://carbonldp.com/ns/v1/security#rootContainer": [ {
 								"@id": "https://example.com/apps/example-app/"
 							} ],
@@ -311,7 +311,7 @@ describe( module( "Carbon/Apps" ), ():void => {
 						"@id": "http://example.com/platform/apps/another-app/",
 						"@graph": [ {
 							"@id": "http://example.com/platform/apps/another-app/",
-							"@type": [ "${NS.CS.Class.Application}" ],
+							"@type": [ "${NS.CS.Class.Application}", "${ NS.CS.Class.ProtectedDocument }" ],
 							"https://carbonldp.com/ns/v1/security#rootContainer": [ {
 								"@id": "https://example.com/apps/another-app/"
 							} ],
@@ -324,7 +324,7 @@ describe( module( "Carbon/Apps" ), ():void => {
 						"@id": "http://example.com/platform/apps/example-app/",
 						"@graph": [ {
 							"@id": "http://example.com/platform/apps/example-app/",
-							"@type": [ "${NS.CS.Class.Application}" ],
+							"@type": [ "${NS.CS.Class.Application}", "${ NS.CS.Class.ProtectedDocument }" ],
 							"https://carbonldp.com/ns/v1/security#rootContainer": [ {
 								"@id": "https://example.com/apps/example-app/"
 							} ],

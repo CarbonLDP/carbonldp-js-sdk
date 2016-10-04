@@ -23,7 +23,7 @@ var Class = (function () {
         }).then(function (_a) {
             var app = _a[0], response = _a[1];
             if (!PersistedApp.Factory.is(app))
-                throw new Errors.IllegalArgumentError("The resource fetched is not a cs:Application.");
+                throw new Errors.IllegalArgumentError("The resource fetched is not a " + NS.CS.Class.Application + ".");
             return new Context_1.default(_this.context, app);
         });
     };

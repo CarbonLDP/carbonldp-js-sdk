@@ -1,9 +1,10 @@
 import * as Agent from "./Agent";
 import * as HTTP from "./../HTTP";
-import * as Utils from "./../Utils";
 import * as PersistedDocument from "./../PersistedDocument";
+import * as PersistedProtectedDocument from "./../PersistedProtectedDocument";
+import * as Utils from "./../Utils";
 
-export interface Class extends PersistedDocument.Class {
+export interface Class extends PersistedProtectedDocument.Class {
 	name:string;
 	email:string;
 	enabled:boolean;
@@ -24,14 +25,16 @@ export class Factory {
 
 	static is( object:Object ):boolean {
 		return Factory.hasClassProperties( object )
-			&& PersistedDocument.Factory.is( object )
-			&& (<PersistedDocument.Class> object).hasType( Agent.RDF_CLASS )
+			&& PersistedProtectedDocument.Factory.is( object )
+			&& (<PersistedProtectedDocument.Class> object).hasType( Agent.RDF_CLASS )
 			;
 	}
 
-	static decorate<T extends Object>( object:T ):Class & T {
+	static decorate<T extends PersistedDocument.Class>( object:T ):Class & T {
 		let agent:T & Class = <any> object;
+
 		if( Factory.hasClassProperties( agent ) ) return agent;
+		if( ! PersistedProtectedDocument.Factory.hasClassProperties( agent ) ) PersistedProtectedDocument.Factory.decorate( agent );
 
 		Object.defineProperties( agent, {
 			"enable": {

@@ -8,6 +8,7 @@ export interface Class extends Document.Class {
     accessTo: Pointer.Class;
     entries?: ACE.Class[];
     inheritableEntries?: ACE.Class[];
+    _parsePointer(element: string | Pointer.Class): Pointer.Class;
     grant(subject: string | Pointer.Class, subjectClass: string | Pointer.Class, permission: string | Pointer.Class): void;
     grant(subject: string | Pointer.Class, subjectClass: string | Pointer.Class, permissions: (string | Pointer.Class)[]): void;
     grant(subjects: (string | Pointer.Class)[], subjectClass: string | Pointer.Class, permission: string | Pointer.Class): void;
