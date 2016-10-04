@@ -5,7 +5,7 @@ abstract class AbstractError extends Error {
 
 	constructor( message:string ) {
 		super( message );
-		Error.captureStackTrace( this, this.constructor );
+		if( "captureStackTrace" in Error ) Error.captureStackTrace( this, this.constructor );
 		this.message = message;
 	}
 

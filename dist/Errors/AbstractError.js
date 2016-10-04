@@ -8,7 +8,8 @@ var AbstractError = (function (_super) {
     __extends(AbstractError, _super);
     function AbstractError(message) {
         _super.call(this, message);
-        Error.captureStackTrace(this, this.constructor);
+        if ("captureStackTrace" in Error)
+            Error.captureStackTrace(this, this.constructor);
         this.message = message;
     }
     Object.defineProperty(AbstractError.prototype, "name", {
