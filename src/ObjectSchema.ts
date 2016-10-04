@@ -187,7 +187,11 @@ export class Digester {
 						digestedDefinition.pointerType = ( schemaDefinition[ "@type" ] === "@id" ) ? PointerType.ID : PointerType.VOCAB;
 					} else {
 						digestedDefinition.literal = true;
-						digestedDefinition.literalType = Digester._resolvePrefixedURI( new RDF.URI.Class( schemaDefinition[ "@type" ] ), digestedSchema );
+
+						let type:RDF.URI.Class = Digester._resolvePrefixedURI( new RDF.URI.Class( schemaDefinition[ "@type" ] ), digestedSchema );
+						if( RDF.URI.Util.isRelative( type.stringValue ) && type.stringValue in NS.XSD.DataType ) type.stringValue = NS.XSD.DataType[ type.stringValue ];
+
+						digestedDefinition.literalType = type;
 					}
 				}
 
