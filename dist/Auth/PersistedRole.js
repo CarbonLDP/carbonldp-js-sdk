@@ -1,13 +1,13 @@
 "use strict";
 var Errors = require("./../Errors");
-var Role = require("./Role");
+var PersistedProtectedDocument = require("./../PersistedProtectedDocument");
 var Utils = require("./../Utils");
 var Factory = (function () {
     function Factory() {
     }
     Factory.hasClassProperties = function (object) {
         return Utils.hasPropertyDefined(object, "_roles")
-            && Utils.hasPropertyDefined(object, "name")
+            && Utils.hasFunction(object, "createChild")
             && Utils.hasFunction(object, "listAgents")
             && Utils.hasFunction(object, "getAgents")
             && Utils.hasFunction(object, "addAgent")
@@ -17,18 +17,26 @@ var Factory = (function () {
     };
     Factory.is = function (object) {
         return Factory.hasClassProperties(object)
-            && Role.Factory.is(object);
+            && PersistedProtectedDocument.Factory.is(object);
     };
     Factory.decorate = function (object, roles) {
         var role = object;
         if (Factory.hasClassProperties(role))
             return role;
+        if (!PersistedProtectedDocument.Factory.hasClassProperties(role))
+            PersistedProtectedDocument.Factory.decorate(role);
         Object.defineProperties(role, {
             "_roles": {
                 writable: false,
                 enumerable: false,
                 configurable: true,
                 value: roles,
+            },
+            "createChild": {
+                writable: true,
+                enumerable: false,
+                configurable: true,
+                value: createChild,
             },
             "listAgents": {
                 writable: true,
@@ -72,6 +80,10 @@ var Factory = (function () {
     return Factory;
 }());
 exports.Factory = Factory;
+function createChild(role, slugOrRequestOptions, requestOptions) {
+    checkState.call(this);
+    return this._roles.createChild(this.id, role, slugOrRequestOptions, requestOptions);
+}
 function listAgents(requestOptions) {
     checkState.call(this);
     return this._roles.listAgents(this.id, requestOptions);

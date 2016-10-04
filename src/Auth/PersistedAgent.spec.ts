@@ -11,6 +11,7 @@ import {
 } from "./../test/JasmineExtender";
 import * as NS from "./../NS";
 import * as PersistedDocument from "./../PersistedDocument";
+import * as PersistedProtectedDocument from "./../PersistedProtectedDocument";
 import * as Utils from "./../Utils";
 
 import * as PersistedAgent from "./PersistedAgent";
@@ -44,7 +45,7 @@ describe( module( "Carbon/Auth/PersistedAgent" ), ():void => {
 			expect( PersistedAgent.Factory.hasClassProperties ).toBeDefined();
 			expect( Utils.isFunction( PersistedAgent.Factory.hasClassProperties ) ).toBe( true );
 
-			let object:any;
+			let object:any = void 0;
 			expect( PersistedAgent.Factory.hasClassProperties( object ) ).toBe( false );
 
 			object = {
@@ -108,13 +109,16 @@ describe( module( "Carbon/Auth/PersistedAgent" ), ():void => {
 			}, "http://example.com/resource/", null );
 			expect( PersistedAgent.Factory.is( object ) ).toBe( false );
 			object.types.push( NS.CS.Class.Agent );
+			expect( PersistedAgent.Factory.is( object ) ).toBe( false );
+
+			object = PersistedProtectedDocument.Factory.decorate( object );
 			expect( PersistedAgent.Factory.is( object ) ).toBe( true );
 		} );
 
 		it( hasMethod(
 			STATIC,
 			"decorate",
-			[ "T extends Object" ],
+			[ "T extends Carbon.PersistedDocument.Class" ],
 			"Decorates the object provided with the properties and methods of a `Carbon.Auth.PersistedAgent.Class` object.", [
 				{name: "object", type: "T", description: "The object to decorate."},
 			],
@@ -184,7 +188,7 @@ describe( module( "Carbon/Auth/PersistedAgent" ), ():void => {
 				let persistedDocument:PersistedDocument.Class;
 				let agent:PersistedAgent.Class;
 
-				agent = PersistedAgent.Factory.decorate( {} );
+				agent = PersistedAgent.Factory.decorate( <any> {} );
 				expect( agent.enable ).toBeDefined();
 				expect( Utils.isFunction( agent.enable ) ).toBe( true );
 
@@ -216,7 +220,7 @@ describe( module( "Carbon/Auth/PersistedAgent" ), ():void => {
 				let persistedDocument:PersistedDocument.Class;
 				let agent:PersistedAgent.Class;
 
-				agent = PersistedAgent.Factory.decorate( {} );
+				agent = PersistedAgent.Factory.decorate( <any> {} );
 				expect( agent.disable ).toBeDefined();
 				expect( Utils.isFunction( agent.disable ) ).toBe( true );
 

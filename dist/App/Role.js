@@ -1,6 +1,5 @@
 "use strict";
 var NS = require("./../NS");
-var Resource = require("./../Resource");
 var Role = require("./../Auth/Role");
 var Utils = require("./../Utils");
 exports.RDF_CLASS = NS.CS.Class.AppRole;
@@ -23,7 +22,7 @@ var Factory = (function () {
     };
     Factory.is = function (object) {
         return Role.Factory.is(object)
-            && Resource.Util.hasType(object, exports.RDF_CLASS);
+            && object.hasType(exports.RDF_CLASS);
     };
     Factory.create = function (name) {
         return Factory.createFrom({}, name);

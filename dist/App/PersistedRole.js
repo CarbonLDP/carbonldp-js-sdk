@@ -10,7 +10,8 @@ var Factory = (function () {
     };
     Factory.is = function (object) {
         return Factory.hasClassProperties(object)
-            && AppRole.Factory.is(object);
+            && AppRole.Factory.is(object)
+            && PersistedRole.Factory.is(object);
     };
     Factory.decorate = function (object, roles) {
         var role = object;

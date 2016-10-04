@@ -1,6 +1,8 @@
 "use strict";
 var Errors = require("./../Errors");
 var HTTP = require("./../HTTP");
+var PersistedProtectedDocument = require("./../PersistedProtectedDocument");
+var PersistedRole = require("./PersistedRole");
 var URI = require("./../RDF/URI");
 var Utils = require("./../Utils");
 var Class = (function () {
@@ -28,11 +30,11 @@ var Class = (function () {
             return _this.context.documents.createChild(containerURI, role, slug, requestOptions);
         }).then(function (_a) {
             var newRole = _a[0], response = _a[1];
-            persistedRole = newRole;
             responseCreated = response;
+            persistedRole = PersistedRole.Factory.decorate(newRole, _this);
             return _this.context.documents.addMember(parentURI, newRole);
         }).then(function (response) {
-            return [persistedRole, [responseCreated, response]];
+            return [persistedRole, responseCreated];
         });
     };
     Class.prototype.get = function (roleURI, requestOptions) {
@@ -45,6 +47,9 @@ var Class = (function () {
         var _this = this;
         return this.getAgentsAccessPoint(roleURI).then(function (agentsAccessPoint) {
             return _this.context.documents.listMembers(agentsAccessPoint.id, requestOptions);
+        }).then(function (_a) {
+            var agents = _a[0], response = _a[1];
+            return [agents.map(function (agent) { return PersistedProtectedDocument.Factory.decorate(agent); }), response];
         });
     };
     Class.prototype.getAgents = function (roleURI, retrievalPreferencesOrRequestOptions, requestOptions) {

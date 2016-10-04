@@ -12,11 +12,14 @@ import {
 	hasSignature,
 } from "./../test/JasmineExtender";
 import AbstractContext from "../AbstractContext";
+import Documents from "./../Documents";
 import * as Errors from "./../Errors";
 import * as HTTP from "./../HTTP";
 import * as RetrievalPreferences from "./../RetrievalPreferences";
 import * as Role from "./Role";
 import * as Roles from "./Roles";
+import * as PersistedDocument from "./../PersistedDocument";
+import * as PersistedProtectedDocument from "./../PersistedProtectedDocument";
 import * as Pointer from "./../Pointer";
 import * as URI from "./../RDF/URI";
 import * as Utils from "./../Utils";
@@ -51,13 +54,14 @@ describe( module( "Carbon/Auth/PersistedRole" ), ():void => {
 			expect( PersistedRole.Factory.hasClassProperties ).toBeDefined();
 			expect( Utils.isFunction( PersistedRole.Factory.hasClassProperties ) ).toBe( true );
 
-			let object:any;
+			let object:any = void 0;
 			expect( PersistedRole.Factory.hasClassProperties( object ) ).toBe( false );
 
 			object = {
 				_roles: null,
 				name: null,
 				agents: null,
+				createChild: ():void => {},
 				listAgents: ():void => {},
 				getAgents: ():void => {},
 				addAgent: ():void => {},
@@ -72,12 +76,16 @@ describe( module( "Carbon/Auth/PersistedRole" ), ():void => {
 			object._roles = null;
 
 			delete object.name;
-			expect( PersistedRole.Factory.hasClassProperties( object ) ).toBe( false );
+			expect( PersistedRole.Factory.hasClassProperties( object ) ).toBe( true );
 			object.name = null;
 
 			delete object.agents;
 			expect( PersistedRole.Factory.hasClassProperties( object ) ).toBe( true );
 			object.agents = null;
+
+			delete object.createChild;
+			expect( PersistedRole.Factory.hasClassProperties( object ) ).toBe( false );
+			object.createChild = ():void => {};
 
 			delete object.listAgents;
 			expect( PersistedRole.Factory.hasClassProperties( object ) ).toBe( false );
@@ -115,16 +123,14 @@ describe( module( "Carbon/Auth/PersistedRole" ), ():void => {
 			expect( PersistedRole.Factory.is ).toBeDefined();
 			expect( Utils.isFunction( PersistedRole.Factory.is ) ).toBe( true );
 
-			let object:any;
-
-
-			object = {};
+			let object:any = {};
 			expect( PersistedRole.Factory.is( object ) ).toBe( false );
 
 			object = {
 				_roles: null,
 				name: null,
 				agents: null,
+				createChild: ():void => {},
 				listAgents: ():void => {},
 				getAgents: ():void => {},
 				addAgent: ():void => {},
@@ -135,14 +141,21 @@ describe( module( "Carbon/Auth/PersistedRole" ), ():void => {
 			expect( PersistedRole.Factory.is( object ) ).toBe( false );
 
 			object = Role.Factory.createFrom( object, "Role name" );
+			expect( PersistedRole.Factory.is( object ) ).toBe( false );
+
+			object = PersistedDocument.Factory.decorate( object, new Documents() );
+			expect( PersistedRole.Factory.is( object ) ).toBe( false );
+
+			object = PersistedProtectedDocument.Factory.decorate( object );
 			expect( PersistedRole.Factory.is( object ) ).toBe( true );
 		} );
 
 		it( hasMethod(
 			STATIC,
 			"decorate",
+			[ "T extends Carbon.PersistedDocument.Class" ],
 			"Decorates the object provided with the methods and properties of a `Carbon.Auth.PersistedRole.Class` object.", [
-				{name: "object", type: "T extends Object"},
+				{name: "object", type: "T"},
 			],
 			{type: "T & Carbon.Auth.PersistedRole.Class"}
 		), ():void => {
@@ -164,9 +177,8 @@ describe( module( "Carbon/Auth/PersistedRole" ), ():void => {
 			}
 			interface MyPersistedRole extends PersistedRole.Class, ThePersistedRole {}
 
-			let object:Object = {name: "Role Name"};
-			let role:MyPersistedRole;
-			role = PersistedRole.Factory.decorate<ThePersistedRole>( object, roles );
+			let document:PersistedDocument.Class = PersistedDocument.Factory.createFrom( {name: "Role Name"}, "", new Documents() );
+			let role:MyPersistedRole = PersistedRole.Factory.decorate<ThePersistedRole & PersistedDocument.Class>( document, roles );
 
 			expect( PersistedRole.Factory.hasClassProperties( role ) ).toBe( true );
 		} );
@@ -190,7 +202,7 @@ describe( module( "Carbon/Auth/PersistedRole" ), ():void => {
 				class MockRoles extends Roles.Class {}
 				roles = new MockRoles( context );
 
-				role = PersistedRole.Factory.decorate( Role.Factory.create( "Role Name" ), roles );
+				role = PersistedRole.Factory.decorate( PersistedDocument.Factory.decorate( Role.Factory.create( "Role Name" ), new Documents() ), roles );
 				role.id = "http://example.com/roles/a-role/";
 			} );
 
@@ -214,7 +226,7 @@ describe( module( "Carbon/Auth/PersistedRole" ), ():void => {
 				role.listAgents( options );
 				expect( spy ).toHaveBeenCalledWith( "http://example.com/roles/a-role/", options );
 
-				role = PersistedRole.Factory.decorate( Role.Factory.create( "Role Name" ), null );
+				role = PersistedRole.Factory.decorate( PersistedDocument.Factory.decorate( Role.Factory.create( "Role Name" ), new Documents() ), null );
 				expect( () => role.listAgents() ).toThrowError( Errors.IllegalStateError );
 			} );
 
@@ -227,7 +239,7 @@ describe( module( "Carbon/Auth/PersistedRole" ), ():void => {
 					expect( role.getAgents ).toBeDefined();
 					expect( Utils.isFunction( role.getAgents ) ).toBe( true );
 
-					role = PersistedRole.Factory.decorate( Role.Factory.create( "Role Name" ), null );
+					role = PersistedRole.Factory.decorate( PersistedDocument.Factory.decorate( Role.Factory.create( "Role Name" ), new Documents() ), null );
 					expect( () => role.getAgents() ).toThrowError( Errors.IllegalStateError );
 				} );
 
@@ -295,7 +307,7 @@ describe( module( "Carbon/Auth/PersistedRole" ), ():void => {
 				role.addAgent( role.getPointer( "http://example.com/agents/another-agent/" ), options );
 				expect( spy ).toHaveBeenCalledWith( "http://example.com/roles/a-role/", [ role.getPointer( "http://example.com/agents/another-agent/" ) ], options );
 
-				role = PersistedRole.Factory.decorate( Role.Factory.create( "Role Name" ), null );
+				role = PersistedRole.Factory.decorate( PersistedDocument.Factory.decorate( Role.Factory.create( "Role Name" ), new Documents() ), null );
 				expect( () => role.addAgent( "http://example.com/agents/an-agent/" ) ).toThrowError( Errors.IllegalStateError );
 			} );
 
@@ -321,7 +333,7 @@ describe( module( "Carbon/Auth/PersistedRole" ), ():void => {
 				role.addAgents( agents, options );
 				expect( spy ).toHaveBeenCalledWith( "http://example.com/roles/a-role/", agents, options );
 
-				role = PersistedRole.Factory.decorate( Role.Factory.create( "Role Name" ), null );
+				role = PersistedRole.Factory.decorate( PersistedDocument.Factory.decorate( Role.Factory.create( "Role Name" ), new Documents() ), null );
 				expect( () => role.addAgents( agents ) ).toThrowError( Errors.IllegalStateError );
 			});
 
@@ -330,23 +342,23 @@ describe( module( "Carbon/Auth/PersistedRole" ), ():void => {
 				"removeAgent",
 				"Removes the relation in the role towards the agents specified.", [
 					{ name: "agent", type: "string | Carbon.Pointer.Class", description: "The agents that wants to be removed from the role." },
-					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true }
+					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
 				],
 				{ type: "Promise<Carbon.HTTP.Response.Class>"}
 			), ():void => {
 				expect( role.removeAgent ).toBeDefined();
 				expect( Utils.isFunction( role.removeAgent ) ).toBe( true );
 
-				let spy = spyOn( roles, "removeAgents" );
+				let spy:jasmine.Spy = spyOn( roles, "removeAgents" );
 
 				role.removeAgent( "http://example.com/agents/an-agent/" );
 				expect( spy ).toHaveBeenCalledWith( "http://example.com/roles/a-role/", [ "http://example.com/agents/an-agent/" ], undefined );
 
-				let options = { timeout: 5050 };
+				let options:HTTP.Request.Options = { timeout: 5050 };
 				role.removeAgent( role.getPointer( "http://example.com/agents/another-agent/" ), options );
 				expect( spy ).toHaveBeenCalledWith( "http://example.com/roles/a-role/", [ role.getPointer( "http://example.com/agents/another-agent/" ) ], options );
 
-				role = PersistedRole.Factory.decorate( Role.Factory.create( "Role Name" ), null );
+				role = PersistedRole.Factory.decorate( PersistedDocument.Factory.decorate( Role.Factory.create( "Role Name" ), new Documents() ), null );
 				expect( () => role.removeAgent( "http://example.com/agents/an-agent/" ) ).toThrowError( Errors.IllegalStateError );
 			});
 
@@ -355,24 +367,24 @@ describe( module( "Carbon/Auth/PersistedRole" ), ():void => {
 				"removeAgents",
 				"Remove the relation in the role towards the agents specified.", [
 					{ name: "agents", type: "(string | Carbon.Pointer.Class)[]", description: "An array with strings or Pointers that refers to the agents that wants to be removed from the role." },
-					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true }
+					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
 				],
 				{ type: "Promise<Carbon.HTTP.Response.Class>"}
 			), ():void => {
 				expect( role.removeAgents ).toBeDefined();
 				expect( Utils.isFunction( role.removeAgents ) ).toBe( true );
 
-				let spy = spyOn( roles, "removeAgents" );
-				let agents = [ "http://example.com/agents/an-agent/", role.getPointer( "http://example.com/agents/another-agent/" ) ];
+				let spy:jasmine.Spy = spyOn( roles, "removeAgents" );
+				let agents:(Pointer.Class | string)[] = [ "http://example.com/agents/an-agent/", role.getPointer( "http://example.com/agents/another-agent/" ) ];
 
 				role.removeAgents( agents );
 				expect( spy ).toHaveBeenCalledWith( "http://example.com/roles/a-role/", agents, undefined );
 
-				let options = { timeout: 5050 };
+				let options:HTTP.Request.Options = { timeout: 5050 };
 				role.removeAgents( agents, options );
 				expect( spy ).toHaveBeenCalledWith( "http://example.com/roles/a-role/", agents, options );
 
-				role = PersistedRole.Factory.decorate( Role.Factory.create( "Role Name" ), null );
+				role = PersistedRole.Factory.decorate( PersistedDocument.Factory.decorate( Role.Factory.create( "Role Name" ), new Documents() ), null );
 				expect( () => role.addAgents( agents ) ).toThrowError( Errors.IllegalStateError );
 			} );
 

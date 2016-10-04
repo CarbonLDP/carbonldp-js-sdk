@@ -5,6 +5,8 @@ class Class {
 
 	static get AccessControlList():string { return namespace + "AccessControlList"; }
 
+	static get AddMember():string { return namespace + "AddMember"; }
+
 	static get Agent():string { return namespace + "Agent"; }
 
 	static get AllOrigins():string { return namespace + "AllOrigins"; }
@@ -13,11 +15,33 @@ class Class {
 
 	static get AppRole():string { return namespace + "AppRole"; }
 
+	static get CreateAccessPoint():string { return namespace + "CreateAccessPoint"; }
+
+	static get CreateChild():string { return namespace + "CreateChild"; }
+
+	static get Delete():string { return namespace + "Delete"; }
+
+	static get Download():string { return namespace + "Download"; }
+
+	static get Extend():string { return namespace + "Extend"; }
+
+	static get ManageSecurity():string { return namespace + "ManageSecurity"; }
+
+	static get PlatformRole():string { return namespace + "PlatformRole"; }
+
 	static get ProtectedDocument():string { return namespace + "ProtectedDocument"; }
+
+	static get Read():string { return namespace + "Read"; }
+
+	static get RemoveMember():string { return namespace + "RemoveMember"; }
 
 	static get Ticket():string { return namespace + "Ticket"; }
 
 	static get Token():string { return namespace + "Token"; }
+
+	static get Update():string { return namespace + "Update"; }
+
+	static get Upload():string { return namespace + "Upload"; }
 }
 
 class Predicate {

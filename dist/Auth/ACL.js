@@ -25,6 +25,7 @@ var Factory = (function () {
     }
     Factory.hasClassProperties = function (object) {
         return Utils.hasPropertyDefined(object, "accessTo")
+            && Utils.hasFunction(object, "_parsePointer")
             && Utils.hasFunction(object, "grant")
             && Utils.hasFunction(object, "deny")
             && Utils.hasFunction(object, "configureChildInheritance")
@@ -39,6 +40,12 @@ var Factory = (function () {
         if (Factory.hasClassProperties(acl))
             return acl;
         Object.defineProperties(acl, {
+            "_parsePointer": {
+                writable: true,
+                enumerable: false,
+                configurable: true,
+                value: parsePointer,
+            },
             "grant": {
                 writable: true,
                 enumerable: false,
@@ -94,16 +101,15 @@ var Factory = (function () {
 }());
 exports.Factory = Factory;
 function parsePointer(element) {
-    var acl = this;
-    return Pointer.Factory.is(element) ? element : acl.getPointer(element);
+    return Pointer.Factory.is(element) ? element : Pointer.Factory.create(element);
 }
 function parsePointers(elements) {
     var _this = this;
     var elementsArray = Utils.isArray(elements) ? elements : [elements];
-    return elementsArray.map(function (element) { return parsePointer.call(_this, element); });
+    return elementsArray.map(function (element) { return _this._parsePointer(element); });
 }
 function configACE(granting, subject, subjectClass, permissions, aces) {
-    var subjectACEs = aces.filter(function (ace) { return ace.subjects.length === 1 && ace.subjects.indexOf(subject) !== -1 && ace.granting === granting; });
+    var subjectACEs = aces.filter(function (ace) { return ace.subjects.length === 1 && ace.granting === granting && Pointer.Util.areEqual(ace.subjects[0], subject); });
     var ace;
     if (subjectACEs.length === 0) {
         ace = ACE.Factory.createFrom(this.createFragment(), granting, [subject], subjectClass, []);
@@ -117,7 +123,7 @@ function configACE(granting, subject, subjectClass, permissions, aces) {
 }
 function configACEs(granting, subjects, subjectsClass, permissions, aces) {
     var subjectPointers = parsePointers.call(this, subjects);
-    var subjectClassPointer = parsePointer.call(this, subjectsClass);
+    var subjectClassPointer = this._parsePointer(subjectsClass);
     var permissionPointers = parsePointers.call(this, permissions);
     for (var _i = 0, subjectPointers_1 = subjectPointers; _i < subjectPointers_1.length; _i++) {
         var subject = subjectPointers_1[_i];
@@ -152,8 +158,8 @@ function grantingFrom(subject, permission, aces) {
 function getGranting(subject, permission, aces) {
     if (!aces)
         return null;
-    var subjectPointer = parsePointer.call(this, subject);
-    var permissionPointer = parsePointer.call(this, permission);
+    var subjectPointer = this._parsePointer(subject);
+    var permissionPointer = this._parsePointer(permission);
     return grantingFrom(subjectPointer, permissionPointer, aces);
 }
 function grants(subject, permission) {
@@ -203,7 +209,7 @@ function removePermissionsFrom(subject, permissions, aces) {
     }
 }
 function removePermissions(subject, permissions, aces) {
-    var subjectPointer = parsePointer.call(this, subject);
+    var subjectPointer = this._parsePointer(subject);
     var permissionPointers = parsePointers.call(this, permissions);
     removePermissionsFrom.call(this, subjectPointer, permissionPointers, aces);
 }

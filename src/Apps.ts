@@ -31,7 +31,7 @@ export class Class {
 			return pointer.resolve<PersistedApp.Class>();
 
 		} ).then( ( [ app, response ]:[ PersistedApp.Class, HTTP.Response.Class ] ) => {
-			if( ! PersistedApp.Factory.is( app ) ) throw new Errors.IllegalArgumentError( "The resource fetched is not a cs:Application." );
+			if( ! PersistedApp.Factory.is( app ) ) throw new Errors.IllegalArgumentError( `The resource fetched is not a ${ NS.CS.Class.Application }.` );
 			return new AppContext( this.context, app );
 		} );
 

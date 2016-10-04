@@ -155,11 +155,11 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 		} );
 	}
 
-	createChild<T extends Document.Class>( parentURI:string, childDocument:T, slug?:string, requestOptions?:HTTP.Request.Options ):Promise<[ T & PersistedDocument.Class, HTTP.Response.Class ]>;
-	createChild<T extends Document.Class>( parentURI:string, childDocument:T, requestOptions?:HTTP.Request.Options ):Promise<[ T & PersistedDocument.Class, HTTP.Response.Class ]>;
-	createChild<T extends Object>( parentURI:string, childObject:T, slug?:string, requestOptions?:HTTP.Request.Options ):Promise<[ T & PersistedDocument.Class, HTTP.Response.Class ]>;
-	createChild<T extends Object>( parentURI:string, childObject:T, requestOptions?:HTTP.Request.Options ):Promise<[ T & PersistedDocument.Class, HTTP.Response.Class ]>;
-	createChild<T extends Object>( parentURI:string, childObject:T, slugOrRequestOptions?:any, requestOptions:HTTP.Request.Options = {} ):Promise<[ T & PersistedDocument.Class, HTTP.Response.Class ]> {
+	createChild<T extends Document.Class>( parentURI:string, childDocument:T, slug?:string, requestOptions?:HTTP.Request.Options ):Promise<[ T & PersistedProtectedDocument.Class, HTTP.Response.Class ]>;
+	createChild<T extends Document.Class>( parentURI:string, childDocument:T, requestOptions?:HTTP.Request.Options ):Promise<[ T & PersistedProtectedDocument.Class, HTTP.Response.Class ]>;
+	createChild<T extends Object>( parentURI:string, childObject:T, slug?:string, requestOptions?:HTTP.Request.Options ):Promise<[ T & PersistedProtectedDocument.Class, HTTP.Response.Class ]>;
+	createChild<T extends Object>( parentURI:string, childObject:T, requestOptions?:HTTP.Request.Options ):Promise<[ T & PersistedProtectedDocument.Class, HTTP.Response.Class ]>;
+	createChild<T extends Object>( parentURI:string, childObject:T, slugOrRequestOptions?:any, requestOptions:HTTP.Request.Options = {} ):Promise<[ T & PersistedProtectedDocument.Class, HTTP.Response.Class ]> {
 		let slug:string = Utils.isString( slugOrRequestOptions ) ? slugOrRequestOptions : null;
 		requestOptions = ! Utils.isString( slugOrRequestOptions ) && ! ! slugOrRequestOptions ? slugOrRequestOptions : requestOptions;
 
@@ -194,20 +194,21 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 
 			let localID:string = this.getPointerID( locationHeader.values[ 0 ].toString() );
 			let persistedDocument:PersistedDocument.Class = PersistedDocument.Factory.decorate( this.createPointerFrom( childDocument, localID ), this );
-			this.pointers.set( localID, persistedDocument );
+			let persistedProtectedDocument:PersistedProtectedDocument.Class = PersistedProtectedDocument.Factory.decorate( persistedDocument );
+			this.pointers.set( localID, persistedProtectedDocument );
 
 			return [
-				persistedDocument,
+				persistedProtectedDocument,
 				response,
 			];
 		} );
 	}
 
-	createChildAndRetrieve<T extends Object>( parentURI:string, childObject:T, slug?:string, requestOptions?:HTTP.Request.Options ):Promise<[ T & PersistedDocument.Class, [ HTTP.Response.Class, HTTP.Response.Class ] ]>;
-	createChildAndRetrieve<T extends Object>( parentURI:string, childObject:T, requestOptions?:HTTP.Request.Options ):Promise<[ T & PersistedDocument.Class, [ HTTP.Response.Class, HTTP.Response.Class ] ]>;
-	createChildAndRetrieve<T extends Object>( parentURI:string, childObject:T, slugOrRequestOptions?:any, requestOptions?:HTTP.Request.Options ):Promise<[ T & PersistedDocument.Class, [ HTTP.Response.Class, HTTP.Response.Class ] ]> {
+	createChildAndRetrieve<T extends Object>( parentURI:string, childObject:T, slug?:string, requestOptions?:HTTP.Request.Options ):Promise<[ T & PersistedProtectedDocument.Class, [ HTTP.Response.Class, HTTP.Response.Class ] ]>;
+	createChildAndRetrieve<T extends Object>( parentURI:string, childObject:T, requestOptions?:HTTP.Request.Options ):Promise<[ T & PersistedProtectedDocument.Class, [ HTTP.Response.Class, HTTP.Response.Class ] ]>;
+	createChildAndRetrieve<T extends Object>( parentURI:string, childObject:T, slugOrRequestOptions?:any, requestOptions?:HTTP.Request.Options ):Promise<[ T & PersistedProtectedDocument.Class, [ HTTP.Response.Class, HTTP.Response.Class ] ]> {
 		let createResponse:HTTP.Response.Class;
-		return this.createChild( parentURI, childObject, slugOrRequestOptions, requestOptions ).then( ( [ document, response ]:[ T & PersistedDocument.Class, HTTP.Response.Class ] ) => {
+		return this.createChild( parentURI, childObject, slugOrRequestOptions, requestOptions ).then( ( [ document, response ]:[ T & PersistedProtectedDocument.Class, HTTP.Response.Class ] ) => {
 			createResponse = response;
 			return this.get<T>( document.id );
 		} ).then( ( [ persistedDocument, response ]:[ T & PersistedDocument.Class, HTTP.Response.Class ] ) => {
@@ -319,11 +320,12 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 			if( locationHeader.values.length !== 1 ) throw new HTTP.Errors.BadResponseError( "The response contains more than one Location header.", response );
 
 			let localID:string = this.getPointerID( locationHeader.values[ 0 ].toString() );
-			let persistedAccessPoint:T & PersistedAccessPoint.Class = PersistedDocument.Factory.decorate<T & AccessPoint.DocumentClass>( this.createPointerFrom( accessPointDocument, localID ), this );
+			let persistedAccessPoint:T & AccessPoint.DocumentClass & PersistedDocument.Class = PersistedDocument.Factory.decorate<T & AccessPoint.DocumentClass>( this.createPointerFrom( accessPointDocument, localID ), this );
+			let persistedProtectedAccessPoint: T & PersistedAccessPoint.Class = PersistedProtectedDocument.Factory.decorate<T & AccessPoint.DocumentClass & PersistedDocument.Class>( persistedAccessPoint );
 			this.pointers.set( localID, persistedAccessPoint );
 
 			return [
-				persistedAccessPoint,
+				persistedProtectedAccessPoint,
 				response,
 			];
 		} );
