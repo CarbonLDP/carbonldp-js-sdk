@@ -24,7 +24,7 @@ describe( module( "Carbon/JSONLD/Processor" ), ():void => {
 	describe( clazz( "Carbon.JSONLD.Processor.Class", "Class that contains methods that can process JSON-LD objects." ), ():void => {
 
 		it( isDefined(), ():void => {
-			expect( Processor.Class).toBeDefined();
+			expect( Processor.Class ).toBeDefined();
 			expect( Utils.isFunction( Processor.Class ) ).toBe( true );
 		} );
 
@@ -185,21 +185,21 @@ describe( module( "Carbon/JSONLD/Processor" ), ():void => {
 					],
 					"yield": "1 cocktail",
 					"instructions": [ {
-							"step": 1,
-							"description": "Crush lime juice, mint and sugar together in glass.",
-						}, {
-							"step": 2,
-							"description": "Fill glass to top with ice cubes.",
-						}, {
-							"step": 3,
-							"description": "Pour white rum over ice.",
-						}, {
-							"step": 4,
-							"description": "Fill the rest of glass with club soda, stir.",
-						}, {
-							"step": 5,
-							"description": "Garnish with a lime wedge.",
-						},
+						"step": 1,
+						"description": "Crush lime juice, mint and sugar together in glass.",
+					}, {
+						"step": 2,
+						"description": "Fill glass to top with ice cubes.",
+					}, {
+						"step": 3,
+						"description": "Pour white rum over ice.",
+					}, {
+						"step": 4,
+						"description": "Fill the rest of glass with club soda, stir.",
+					}, {
+						"step": 5,
+						"description": "Garnish with a lime wedge.",
+					},
 					],
 				},
 				{
@@ -259,6 +259,16 @@ describe( module( "Carbon/JSONLD/Processor" ), ():void => {
 					"occupation": "忍者",
 					"occupation_cs": "Nindža",
 					"occupation_en": "Ninja",
+				},
+				{
+					"@context": {
+						"@vocab": "http://example.com/ns#",
+					},
+					"moreList": [
+						{ "@list": [ 1, 2, 3 ] },
+						{ "@list": [ 1, 2, 3 ] },
+						{ "@value": "Another element" },
+					],
 				},
 			];
 
