@@ -331,10 +331,13 @@ var Class = (function () {
             }
             else {
                 var nextActiveProperty = key;
-                var isList = container === ObjectSchema.ContainerType.LIST;
-                if (isList || container === ObjectSchema.ContainerType.SET)
-                    nextActiveProperty = (isList && activeProperty === "@graph") ? null : activeProperty;
-                expandedValue = Class.process(context, value, nextActiveProperty);
+                var isList = uri === "@list";
+                if (isList || uri === "@set") {
+                    nextActiveProperty = activeProperty;
+                    if (isList && activeProperty === "@graph")
+                        nextActiveProperty = null;
+                }
+                expandedValue = Class.process(context, value, nextActiveProperty, isList);
             }
             if (expandedValue === null && uri !== "@value")
                 continue;
@@ -406,11 +409,9 @@ var Class = (function () {
     Class.hasValue = function (element, propertyName, value) {
         if (Class.hasProperty(element, propertyName)) {
             var item = element[propertyName];
-            var isList = RDF.List.Factory.is(value);
+            var isList = RDF.List.Factory.is(item);
             if (isList || Utils.isArray(item)) {
-                var items = item;
-                if (isList)
-                    items = items["@list"];
+                var items = isList ? item["@list"] : item;
                 for (var _i = 0, items_1 = items; _i < items_1.length; _i++) {
                     var entry = items_1[_i];
                     if (Class.compareValues(entry, value))

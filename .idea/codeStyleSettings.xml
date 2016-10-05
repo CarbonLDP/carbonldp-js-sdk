@@ -36,6 +36,7 @@
           <option name="SPACE_AFTER_TYPE_COLON" value="false" />
           <option name="SPACE_BEFORE_FUNCTION_LEFT_PARENTH" value="false" />
           <option name="REFORMAT_C_STYLE_COMMENTS" value="false" />
+          <option name="SPACES_WITHIN_OBJECT_LITERAL_BRACES" value="true" />
           <option name="SPACES_WITHIN_IMPORTS" value="true" />
         </TypeScriptCodeStyleSettings>
         <XML>
