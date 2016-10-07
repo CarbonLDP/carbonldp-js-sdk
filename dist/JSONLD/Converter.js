@@ -63,21 +63,28 @@ var Class = (function () {
             if (propertyName === "types")
                 return;
             var expandedValue;
+            var expandedPropertyName = null;
             if (digestedSchema.properties.has(propertyName)) {
-                var definition = digestedSchema.properties.get(propertyName);
+                var definition = Utils.O.clone(digestedSchema.properties.get(propertyName), { objects: true });
+                if (definition.uri !== null) {
+                    expandedPropertyName = definition.uri.toString();
+                }
+                else if (digestedSchema.vocab !== null) {
+                    expandedPropertyName = digestedSchema.vocab + propertyName;
+                    definition.uri = new RDF.URI.Class(expandedPropertyName);
+                }
+                else {
+                    throw new Errors.InvalidJSONLDSyntaxError("The context doesn't have a default vocabulary and the object schema does not define a proper @id for the property '" + propertyName + "'");
+                }
                 expandedValue = _this.expandProperty(value, definition, generalSchema, digestedSchema);
-                propertyName = definition.uri.toString();
             }
-            else if (RDF.URI.Util.isAbsolute(propertyName)) {
-                expandedValue = _this.expandPropertyValues(value, generalSchema, digestedSchema);
-            }
-            else if (digestedSchema.vocab) {
+            else if (RDF.URI.Util.isAbsolute(propertyName) || digestedSchema.vocab !== null) {
                 expandedValue = _this.expandPropertyValue(value, generalSchema, digestedSchema);
-                propertyName = ObjectSchema.Util.resolveURI(propertyName, generalSchema);
+                expandedPropertyName = ObjectSchema.Util.resolveURI(propertyName, generalSchema);
             }
-            if (!expandedValue)
+            if (!expandedValue || !expandedPropertyName)
                 return;
-            expandedObject[propertyName] = expandedValue;
+            expandedObject[expandedPropertyName] = expandedValue;
         });
         return expandedObject;
     };
@@ -306,26 +313,22 @@ var Class = (function () {
                 return;
             if (propertyURI === "@type")
                 return;
+            var propertyName = propertyURI;
+            var propertyValues = expandedObject[propertyURI];
+            var definition;
             if (propertyURINameMap.has(propertyURI)) {
-                var propertyName = propertyURINameMap.get(propertyURI);
-                _this.assignProperty(targetObject, expandedObject, propertyName, digestedSchema, pointerLibrary);
+                propertyName = propertyURINameMap.get(propertyURI);
+                definition = digestedSchema.properties.get(propertyName);
             }
             else {
-                var propertyName = digestedSchema.vocab ? RDF.URI.Util.getRelativeURI(propertyURI, digestedSchema.vocab) : propertyURI;
-                _this.assignURIProperty(targetObject, expandedObject, propertyURI, propertyName, pointerLibrary);
+                if (digestedSchema.vocab !== null)
+                    propertyName = RDF.URI.Util.getRelativeURI(propertyURI, digestedSchema.vocab);
+                definition = new ObjectSchema.DigestedPropertyDefinition();
+                definition.containerType = _this.getPropertyContainerType(propertyValues);
             }
+            targetObject[propertyName] = _this.getPropertyValue(propertyValues, definition, pointerLibrary);
         });
         return targetObject;
-    };
-    Class.prototype.assignProperty = function (compactedObject, expandedObject, propertyName, digestedSchema, pointerLibrary) {
-        var propertyDefinition = digestedSchema.properties.get(propertyName);
-        compactedObject[propertyName] = this.getPropertyValue(expandedObject, propertyDefinition, pointerLibrary);
-    };
-    Class.prototype.assignURIProperty = function (compactedObject, expandedObject, propertyURI, propertyName, pointerLibrary) {
-        var guessedDefinition = new ObjectSchema.DigestedPropertyDefinition();
-        guessedDefinition.uri = new RDF.URI.Class(propertyURI);
-        guessedDefinition.containerType = this.getPropertyContainerType(expandedObject[propertyURI]);
-        compactedObject[propertyName] = this.getPropertyValue(expandedObject, guessedDefinition, pointerLibrary);
     };
     Class.prototype.getPropertyContainerType = function (propertyValues) {
         if (propertyValues.length === 1) {
@@ -337,47 +340,45 @@ var Class = (function () {
         }
         return null;
     };
-    Class.prototype.getPropertyValue = function (expandedObject, propertyDefinition, pointerLibrary) {
-        var propertyURI = propertyDefinition.uri.toString();
+    Class.prototype.getPropertyValue = function (propertyValues, propertyDefinition, pointerLibrary) {
         switch (propertyDefinition.containerType) {
             case null:
                 if (propertyDefinition.literal) {
-                    return this.getPropertyLiteral(expandedObject, propertyURI, propertyDefinition.literalType.toString());
+                    return this.getPropertyLiteral(propertyValues, propertyDefinition.literalType.toString());
                 }
                 else if (propertyDefinition.literal === false) {
-                    return this.getPropertyPointer(expandedObject, propertyURI, pointerLibrary);
+                    return this.getPropertyPointer(propertyValues, pointerLibrary);
                 }
                 else {
-                    return this.getProperty(expandedObject, propertyURI, pointerLibrary);
+                    return this.getProperty(propertyValues, pointerLibrary);
                 }
             case ObjectSchema.ContainerType.LIST:
                 if (propertyDefinition.literal) {
-                    return this.getPropertyLiteralList(expandedObject, propertyURI, propertyDefinition.literalType.toString());
+                    return this.getPropertyLiteralList(propertyValues, propertyDefinition.literalType.toString());
                 }
                 else if (propertyDefinition.literal === false) {
-                    return this.getPropertyPointerList(expandedObject, propertyURI, pointerLibrary);
+                    return this.getPropertyPointerList(propertyValues, pointerLibrary);
                 }
                 else {
-                    return this.getPropertyList(expandedObject, propertyURI, pointerLibrary);
+                    return this.getPropertyList(propertyValues, pointerLibrary);
                 }
             case ObjectSchema.ContainerType.SET:
                 if (propertyDefinition.literal) {
-                    return this.getPropertyLiterals(expandedObject, propertyURI, propertyDefinition.literalType.toString());
+                    return this.getPropertyLiterals(propertyValues, propertyDefinition.literalType.toString());
                 }
                 else if (propertyDefinition.literal === false) {
-                    return this.getPropertyPointers(expandedObject, propertyURI, pointerLibrary);
+                    return this.getPropertyPointers(propertyValues, pointerLibrary);
                 }
                 else {
-                    return this.getProperties(expandedObject, propertyURI, pointerLibrary);
+                    return this.getProperties(propertyValues, pointerLibrary);
                 }
             case ObjectSchema.ContainerType.LANGUAGE:
-                return this.getPropertyLanguageMap(expandedObject, propertyURI);
+                return this.getPropertyLanguageMap(propertyValues);
             default:
                 throw new Errors.IllegalArgumentError("The containerType specified is not supported.");
         }
     };
-    Class.prototype.getProperty = function (expandedObject, propertyURI, pointerLibrary) {
-        var propertyValues = expandedObject[propertyURI];
+    Class.prototype.getProperty = function (propertyValues, pointerLibrary) {
         if (!propertyValues)
             return null;
         if (!propertyValues.length)
@@ -385,8 +386,7 @@ var Class = (function () {
         var propertyValue = propertyValues[0];
         return this.parseValue(propertyValue, pointerLibrary);
     };
-    Class.prototype.getPropertyPointer = function (expandedObject, propertyURI, pointerLibrary) {
-        var propertyValues = expandedObject[propertyURI];
+    Class.prototype.getPropertyPointer = function (propertyValues, pointerLibrary) {
         if (!propertyValues)
             return null;
         for (var _i = 0, propertyValues_3 = propertyValues; _i < propertyValues_3.length; _i++) {
@@ -397,8 +397,7 @@ var Class = (function () {
         }
         return null;
     };
-    Class.prototype.getPropertyLiteral = function (expandedObject, propertyURI, literalType) {
-        var propertyValues = expandedObject[propertyURI];
+    Class.prototype.getPropertyLiteral = function (propertyValues, literalType) {
         if (!propertyValues)
             return null;
         for (var _i = 0, propertyValues_4 = propertyValues; _i < propertyValues_4.length; _i++) {
@@ -411,8 +410,7 @@ var Class = (function () {
         }
         return null;
     };
-    Class.prototype.getPropertyList = function (expandedObject, propertyURI, pointerLibrary) {
-        var propertyValues = expandedObject[propertyURI];
+    Class.prototype.getPropertyList = function (propertyValues, pointerLibrary) {
         if (!propertyValues)
             return null;
         var propertyList = this.getList(propertyValues);
@@ -425,8 +423,7 @@ var Class = (function () {
         }
         return listValues;
     };
-    Class.prototype.getPropertyPointerList = function (expandedObject, propertyURI, pointerLibrary) {
-        var propertyValues = expandedObject[propertyURI];
+    Class.prototype.getPropertyPointerList = function (propertyValues, pointerLibrary) {
         if (!propertyValues)
             return null;
         var propertyList = this.getList(propertyValues);
@@ -442,8 +439,7 @@ var Class = (function () {
         }
         return listPointers;
     };
-    Class.prototype.getPropertyLiteralList = function (expandedObject, propertyURI, literalType) {
-        var propertyValues = expandedObject[propertyURI];
+    Class.prototype.getPropertyLiteralList = function (propertyValues, literalType) {
         if (!propertyValues)
             return null;
         var propertyList = this.getList(propertyValues);
@@ -460,8 +456,7 @@ var Class = (function () {
         }
         return listLiterals;
     };
-    Class.prototype.getProperties = function (expandedObject, propertyURI, pointerLibrary) {
-        var propertyValues = expandedObject[propertyURI];
+    Class.prototype.getProperties = function (propertyValues, pointerLibrary) {
         if (!propertyValues)
             return null;
         if (!propertyValues.length)
@@ -473,8 +468,7 @@ var Class = (function () {
         }
         return properties;
     };
-    Class.prototype.getPropertyPointers = function (expandedObject, propertyURI, pointerLibrary) {
-        var propertyValues = expandedObject[propertyURI];
+    Class.prototype.getPropertyPointers = function (propertyValues, pointerLibrary) {
         if (!propertyValues)
             return null;
         if (!propertyValues.length)
@@ -489,8 +483,7 @@ var Class = (function () {
         }
         return propertyPointers;
     };
-    Class.prototype.getPropertyLiterals = function (expandedObject, propertyURI, literalType) {
-        var propertyValues = expandedObject[propertyURI];
+    Class.prototype.getPropertyLiterals = function (propertyValues, literalType) {
         if (!propertyValues)
             return null;
         var propertyLiterals = [];
@@ -504,8 +497,7 @@ var Class = (function () {
         }
         return propertyLiterals;
     };
-    Class.prototype.getPropertyLanguageMap = function (expandedObject, propertyURI) {
-        var propertyValues = expandedObject[propertyURI];
+    Class.prototype.getPropertyLanguageMap = function (propertyValues) {
         if (!propertyValues)
             return null;
         var propertyLanguageMap = {};
@@ -534,7 +526,17 @@ var Class = (function () {
     Class.prototype.getPropertyURINameMap = function (digestedSchema) {
         var map = new Map();
         digestedSchema.properties.forEach(function (definition, propertyName) {
-            map.set(definition.uri.toString(), propertyName);
+            var uri;
+            if (definition.uri !== null) {
+                uri = definition.uri.toString();
+            }
+            else if (digestedSchema.vocab !== null) {
+                uri = digestedSchema.vocab + propertyName;
+            }
+            else {
+                throw new Errors.InvalidJSONLDSyntaxError("The context doesn't have a default vocabulary and the object schema does not define a proper @id for the property '" + propertyName + "'");
+            }
+            map.set(uri, propertyName);
         });
         return map;
     };

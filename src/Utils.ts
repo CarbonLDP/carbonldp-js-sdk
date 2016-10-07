@@ -158,7 +158,7 @@ class O {
 		let isAnArray:boolean = isArray( object );
 		if( ! isAnArray && ! isPlainObject( object ) ) return null;
 
-		let clone:T = <T> ( isAnArray ? [] : ( ! ! Object.getPrototypeOf( object ) ) ? {} : Object.create( null ) );
+		let clone:T = <T> ( isAnArray ? [] : Object.create( Object.getPrototypeOf( object ) ) );
 		return O.extend<T, T>( clone, object, config, ignore );
 	}
 
