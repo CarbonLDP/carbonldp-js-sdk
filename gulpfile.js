@@ -46,7 +46,7 @@ gulp.task( "default", [ "build" ] );
 gulp.task( "version", () => {
 	let pk = JSON.parse( fs.readFileSync( "./package.json" ) );
 	return gulp.src( config.source.main )
-		.pipe( replace( /"(\d+\.\d+\.\d+.*)(";)/g, `"${pk.version}";` ) )
+		.pipe( replace( /(static get version\(\):string \{ return ")(.*)("; })/g, `$1${pk.version}$3` ) )
 		.pipe( gulp.dest( "src/" ) )
 		;
 } );
