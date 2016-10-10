@@ -10,7 +10,6 @@ import {
 	hasConstructor,
 	hasProperty,
 	hasMethod,
-	hasInterface,
 } from "./../../test/JasmineExtender";
 import * as Utils from "./../../Utils";
 
@@ -18,7 +17,7 @@ import Response from "./../Response";
 
 import HTTPError from "./HTTPError";
 import AbstractError from "./../../Errors/AbstractError";
-import {Service} from "../Request";
+import { Service } from "../Request";
 
 describe( module(
 	"Carbon/HTTP/Errors/HTTPError"
@@ -35,7 +34,7 @@ describe( module(
 			jasmine.Ajax.install();
 			jasmine.Ajax.stubRequest( "http://example.com/request/" ).andReturn( {
 				"status": 200,
-				"responseText": "A response"
+				"responseText": "A response",
 			} );
 
 			Service.send( "GET", "http://example.com/request/" ).then( ( _response ) => {
@@ -63,8 +62,8 @@ describe( module(
 		} );
 
 		it( hasConstructor( [
-			{name: "message", type: "string"},
-			{name: "response", type: "Carbon.HTTP.Response"}
+			{ name: "message", type: "string" },
+			{ name: "response", type: "Carbon.HTTP.Response" },
 		] ), ():void => {
 			let error:HTTPError = new HTTPError( "Message of the error", response );
 
@@ -75,7 +74,7 @@ describe( module(
 		it( hasMethod(
 			INSTANCE,
 			"toString",
-			{type: "string"}
+			{ type: "string" }
 		), ():void => {
 			let error:HTTPError = new HTTPError( "Message of the error", response );
 
@@ -142,7 +141,6 @@ describe( module(
 			expect( error.requestID ).toEqual( null );
 		} );
 
-		it( hasInterface( INSTANCE, "Carbon.LDP.ErrorResponse.Class" ), () => {} );
 	} );
 
 } );

@@ -266,7 +266,7 @@ describe( module( "Carbon/SDKContext" ), ():void => {
 			"getObjectSchema", `
 			Returns the ObjectSchema for the specified type or \`null\` if it doesn't exists.
 			If no type is specified, the general object schema of the context is returned. This is an schema that applies for all the Resources.`, [
-				{name: "type", type: "string", optional: true, default: "null"}
+				{name: "type", type: "string", optional: true, defaultValue: "null"}
 			],
 			{type: "Carbon.ObjectSchema.DigestedObjectSchema"}
 		), ():void => {

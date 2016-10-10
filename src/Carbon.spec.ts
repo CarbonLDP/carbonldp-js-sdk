@@ -12,7 +12,6 @@ import {
 	hasMethod,
 	hasSignature,
 	hasProperty,
-	hasInterface,
 	extendsClass,
 	reexports,
 

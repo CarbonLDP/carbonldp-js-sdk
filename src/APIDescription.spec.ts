@@ -41,13 +41,13 @@ describe( module( "Carbon/APIDescription" ), ():void => {
 		expect( Utils.hasProperty( APIDescription.SCHEMA, "version" ) ).toBe( true );
 		expect( APIDescription.SCHEMA[ "version" ] ).toEqual( {
 			"@id": NS.C.Predicate.version,
-			"@type": NS.XSD.DataType.string
+			"@type": NS.XSD.DataType.string,
 		} );
 
 		expect( Utils.hasProperty( APIDescription.SCHEMA, "buildDate" ) ).toBe( true );
 		expect( APIDescription.SCHEMA[ "buildDate" ] ).toEqual( {
 			"@id": NS.C.Predicate.buildDate,
-			"@type": NS.XSD.DataType.dateTime
+			"@type": NS.XSD.DataType.dateTime,
 		} );
 	} );
 

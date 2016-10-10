@@ -7,12 +7,8 @@ import {
 	method,
 
 	isDefined,
-	hasConstructor,
 	hasMethod,
 	hasSignature,
-	hasProperty,
-	hasInterface,
-	extendsClass
 } from "./../test/JasmineExtender";
 import * as Utils from "./../Utils";
 import * as RDFNode from "./RDFNode";

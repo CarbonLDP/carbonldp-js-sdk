@@ -74,7 +74,7 @@ describe( module( "Carbon/LDP/ErrorResponse" ), ():void => {
 			"parse",
 			"Parse the string data provided and create an `Carbon.LDP.ResponseError.Class` object.", [
 				{name: "data", type: "string", description: "The json-ld string, which represents an error response from a Carbon server."},
-				{name: "object", type: "Object", description: "The object to use as a base when parsing the ErrorResponse object", default: "{}"},
+				{name: "object", type: "Object", description: "The object to use as a base when parsing the ErrorResponse object", defaultValue: "{}"},
 			],
 			{type: "Promise<Carbon.LDP.ErrorResponse.Class>"}
 		), ( done:{ ():void, fail:() => void } ):void => {

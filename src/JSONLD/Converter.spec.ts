@@ -1,21 +1,14 @@
 import {
 	INSTANCE,
-	STATIC,
 
 	module,
-
-	isDefined,
-
-	interfaze,
 	clazz,
 	method,
 
+	isDefined,
 	hasConstructor,
-	hasMethod,
 	hasSignature,
 	hasProperty,
-	hasInterface,
-	extendsClass,
 	hasDefaultExport,
 } from "./../test/JasmineExtender";
 

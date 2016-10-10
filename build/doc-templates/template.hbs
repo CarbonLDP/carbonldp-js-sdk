@@ -7,7 +7,7 @@
 {{#each modules}}
 
 	{{#with path~}}
-		## <a name="{{sanitize this}}" />Module {{this}}
+		## <a name="Module-{{sanitize this}}"/>Module {{this}}
 	{{/with}}
 
 	{{#with description~}}
@@ -24,14 +24,14 @@
 	{{~> reexports}}
 
 	{{#if enums~}}
-		### <a name="{{sanitize path}}-Enums" />Enums
+		### <a name="{{sanitize path}}-Enums"/>Enums
 		{{#each enums}}
 			{{~>enum this}}
 		{{/each}}
 	{{/if}}
 
 	{{#if properties~}}
-		### <a name="{{sanitize path}}-Properties" />Properties
+		### <a name="{{sanitize path}}-Properties"/>Properties
 
 		{{~> properties properties=properties.static access="static " }}
 
@@ -39,17 +39,42 @@
 	{{/if}}
 
 	{{#if methods~}}
-		### <a name="{{sanitize path}}-Methods" />Methods
+		### <a name="{{sanitize path}}-Methods"/>Methods
 
 		{{~>methods methods=methods.static access="static " }}
 
 		{{~>methods methods=methods.instance access="" }}
 	{{/if}}
+	{{#each interfaces}}
 
+		{{#with path~}}
+			### <a name="{{sanitize this}}"/>Interface {{this}}
+		{{/with}}
+
+		{{#if super-classes~}}
+			**Extends:** {{#each super-classes}}[{{name}}](#{{sanitize name}}){{^if @last}}, {{/if}}{{/each}}
+		{{/if}}
+
+		{{#with description~}}
+			> {{{trim this}}}
+		{{/with}}
+
+		{{#if properties~}}
+			#### <a name="{{sanitize path}}-Properties"/>Properties
+
+			{{~>properties properties=properties access="" }}
+		{{/if}}
+
+		{{#if methods~}}
+			#### <a name="{{sanitize path}}-Methods"/>Methods
+
+			{{~>methods methods=methods access="" }}
+		{{/if}}
+	{{/each}}
 	{{#each classes}}
 
 		{{#with path~}}
-			### <a name="{{sanitize this}}" />Class {{this}}
+			### <a name="{{sanitize this}}"/>Class {{this}}
 		{{/with}}
 
 		{{#if super-classes~}}
@@ -63,13 +88,13 @@
 		{{~> reexports}}
 
 		{{#with constructors~}}
-			#### <a name="{{sanitize ../path}}-Constructor" />Constructor
+			#### <a name="{{sanitize ../path}}-Constructor"/>Constructor
 
 			{{~>signatures name=../name }}
 		{{/with}}
 
 		{{#if properties~}}
-			#### <a name="{{sanitize path}}-Properties" />Properties
+			#### <a name="{{sanitize path}}-Properties"/>Properties
 
 			{{~>properties properties=properties.static access="static " }}
 
@@ -77,7 +102,7 @@
 		{{/if}}
 
 		{{#if methods~}}
-			#### <a name="{{sanitize path}}-Methods" />Methods
+			#### <a name="{{sanitize path}}-Methods"/>Methods
 
 			{{~>methods methods=methods.static access="static " }}
 
@@ -85,7 +110,7 @@
 		{{/if}}
 
 		{{#with decorated-object~}}
-			#### <a name="{{sanitize ../path}}-Decorated-Object" />Decorated Object
+			#### <a name="{{sanitize ../path}}-Decorated-Object"/>Decorated Object
 			{{#if type~}}
 				**Interfaces:** {{#each type}}[{{this}}](#{{sanitize this}}){{^if @last}}, {{/if}}{{/each}}
 			{{/if}}
@@ -95,13 +120,13 @@
 			{{/with}}
 
 			{{#if properties ~}}
-				##### <a name="{{sanitize ../path}}-Decorated-Object-Properties" />Properties
+				##### <a name="{{sanitize ../path}}-Decorated-Object-Properties"/>Properties
 
 				{{~>properties properties=properties.instance access=""}}
 			{{/if}}
 
 			{{#if methods~}}
-				##### <a name="{{sanitize ../path}}-Decorated-Object-Methods" />Methods
+				##### <a name="{{sanitize ../path}}-Decorated-Object-Methods"/>Methods
 
 				{{~>methods methods=methods.instance access=""}}
 			{{/if}}

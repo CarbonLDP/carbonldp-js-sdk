@@ -1,4 +1,11 @@
-import {module, isDefined, STATIC, hasProperty, hasInterface} from "./../test/JasmineExtender";
+import {
+	STATIC,
+
+	module,
+
+	isDefined,
+	hasProperty,
+} from "./../test/JasmineExtender";
 import * as Error from "./Error";
 import * as NS from "./../NS";
 import * as Utils from "./../Utils";
@@ -32,13 +39,13 @@ describe( module( "Carbon/LDP/Error" ), ():void => {
 		expect( Utils.hasProperty( Error.SCHEMA, "carbonCode" ) ).toBe( true );
 		expect( Error.SCHEMA[ "carbonCode" ] ).toEqual( {
 			"@id": NS.C.Predicate.carbonCode,
-			"@type": NS.XSD.DataType.string
+			"@type": NS.XSD.DataType.string,
 		} );
 
 		expect( Utils.hasProperty( Error.SCHEMA, "message" ) ).toBe( true );
 		expect( Error.SCHEMA[ "message" ] ).toEqual( {
 			"@id": NS.C.Predicate.message,
-			"@type": NS.XSD.DataType.string
+			"@type": NS.XSD.DataType.string,
 		} );
 	} );
 

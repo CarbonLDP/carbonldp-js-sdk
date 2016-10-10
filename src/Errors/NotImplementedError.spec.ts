@@ -8,7 +8,7 @@ import {
 	hasProperty,
 	extendsClass,
 	hasConstructor,
-	hasMethod
+	hasMethod,
 } from "./../test/JasmineExtender";
 import * as Utils from "./../Utils";
 
@@ -38,7 +38,7 @@ describe( module(
 		} );
 
 		it( hasConstructor( [
-			{name: "message", type: "string", optional: true, default: ""}
+			{name: "message", type: "string", optional: true, defaultValue: ""}
 		] ), ():void => {
 			let error:NotImplementedError = new NotImplementedError( "Message of the error" );
 

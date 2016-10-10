@@ -1,8 +1,8 @@
 "use strict";
 
 var fs = require( "fs" );
-var glob = require("glob");
-var path = require('path');
+var glob = require( "glob" );
+var path = require( "path" );
 var Handlebars = require( "handlebars" );
 var swag = require( "swag" );
 swag.registerHelpers( Handlebars );
@@ -10,11 +10,11 @@ swag.registerHelpers( Handlebars );
 (() => {
 	Handlebars.registerHelper( "new-line", () => {
 		return "\n";
-	});
+	} );
 	Handlebars.registerHelper( "trim", str => {
 		str = str || "";
-		return str.replace(/\t/g, '');
-	});
+		return str.replace( /\t/g, '' );
+	} );
 })();
 
 var MarkdownReporter = (() => {
@@ -28,7 +28,7 @@ var MarkdownReporter = (() => {
 
 	// Parse the string data of a suite or spec
 	function parseData( data ) {
-		if ( isJSON( data ) ) {
+		if( isJSON( data ) ) {
 			data = data.substring( 4 );
 			try {
 				return JSON.parse( data );
@@ -66,15 +66,20 @@ var MarkdownReporter = (() => {
 				break;
 
 			case "interface":
-				// TODO not used in specs yet, implement when used
-				return null;
+				parent = parent[ "interfaces" ] || ( parent[ "interfaces" ] = {} );
+				suite.path = suite.name;
+				suite.name = suite.path.split( "." ).pop();
+				break;
 
 			case "constructor":
 				return parent[ "constructors" ] || ( parent[ "constructors" ] = suite );
 
 			case "method":
 				parent = parent[ "methods" ] || ( parent[ "methods" ] = {} );
-				parent = parent[ suite.access ] || ( parent[ suite.access ] = {} );
+
+				if( suite.access !== null ) {
+					parent = parent[ suite.access ] || ( parent[ suite.access ] = {} );
+				}
 				break;
 
 			case "decoratedObject":
@@ -106,9 +111,12 @@ var MarkdownReporter = (() => {
 
 			case "method":
 				var methods = parent[ "methods" ] || ( parent[ "methods" ] = {} );
-				methods = methods[ spec.access ] || ( methods[ spec.access ] = {} );
 
-				var method = methods[ spec.name ] = { access: spec.access, name: spec.name };
+				if( spec.access !== null ) {
+					methods = methods[ spec.access ] || ( methods[ spec.access ] = {} );
+				}
+
+				var method = methods[ spec.name ] = { name: spec.name };
 
 				signatures = method[ "signatures" ] || ( method[ "signatures" ] = [] );
 				signatures.push( spec );
@@ -116,9 +124,12 @@ var MarkdownReporter = (() => {
 
 			case "property":
 				var properties = parent[ "properties" ] || ( parent[ "properties" ] = {} );
-				properties = properties[ spec.access ] || ( properties[ spec.access ] = {} );
 
-				properties[ spec.name ] =  spec;
+				if( spec.access !== null ) {
+					properties = properties[ spec.access ] || ( properties[ spec.access ] = {} );
+				}
+
+				properties[ spec.name ] = spec;
 				break;
 
 			case "signature":
@@ -135,10 +146,6 @@ var MarkdownReporter = (() => {
 				superClasses.push( spec );
 				break;
 
-			case "interface":
-				// TODO not used in specs yet, implement when used
-				return null;
-
 			case "reexports":
 				var reexports = parent[ "reexports" ] || ( parent[ "reexports" ] = [] );
 				reexports.push( spec );
@@ -149,7 +156,7 @@ var MarkdownReporter = (() => {
 				break;
 
 			case "enum":
-				var enumerals = parent[ "enumerals" ] || ( parent[ "enumerals"] = [] );
+				var enumerals = parent[ "enumerals" ] || ( parent[ "enumerals" ] = [] );
 				enumerals.push( spec );
 				break;
 
@@ -210,7 +217,7 @@ var MarkdownReporter = (() => {
 		for( let key of Object.keys( specs ) ) {
 			data = parseData( key );
 			container = getContainer( parent, data, true );
-			for ( let spec of specs[ key ]._ ) {
+			for( let spec of specs[ key ]._ ) {
 				data = parseData( spec );
 				getContainer( container, data, false );
 			}
@@ -245,19 +252,21 @@ var MarkdownReporter = (() => {
 	}
 
 	function sortObjectProperty( object, property, extra ) {
-		if ( ! object[ property ] ) return;
+		if( ! object[ property ] ) return;
 		var propertyObject = object[ property ];
 
-		if ( !! extra ) {
-			if ( ! propertyObject[ extra ] ) return;
+		if( ! ! extra ) {
+			if( ! propertyObject[ extra ] ) return;
 			object = propertyObject;
 			property = extra;
 
 			propertyObject = propertyObject[ extra ];
 		}
 
-		if ( Array.isArray( propertyObject ) )
-			return propertyObject.sort( function( a, b ) { return a.name.localeCompare( b.name ) } );
+		if( Array.isArray( propertyObject ) )
+			return propertyObject.sort( function( a, b ) {
+				return a.name.localeCompare( b.name )
+			} );
 
 		return object[ property ] = sortObject( propertyObject );
 	}
@@ -265,14 +274,14 @@ var MarkdownReporter = (() => {
 	function sortObject( object ) {
 		var keys = Object.keys( object ).sort();
 		var result = [];
-		for ( var key of keys ) {
+		for( var key of keys ) {
 			result.push( object[ key ] );
 		}
 		return result;
 	}
 
 	function obtainConfig( config, name ) {
-		if ( config[ name ] )
+		if( config[ name ] )
 			return config[ name ];
 
 		throw new Error( `No ${name} configuration provided.` );
@@ -281,24 +290,24 @@ var MarkdownReporter = (() => {
 	function addPartials( partials ) {
 		var partial;
 
-		if ( typeof partials === "object" ) {
-			for ( var key of Object.keys( partials ) ) {
+		if( typeof partials === "object" ) {
+			for( var key of Object.keys( partials ) ) {
 				partial = partials[ key ];
-				if ( partial.src ) {
-					partial = fs.readFileSync( partial.src , "utf8" );
+				if( partial.src ) {
+					partial = fs.readFileSync( partial.src, "utf8" );
 				}
 				Handlebars.registerPartial( key, partial );
 			}
 
-		} else if ( typeof partials === "string" ) {
-			glob( partials, function (err, files) {
-				if ( err ) throw  err;
+		} else if( typeof partials === "string" ) {
+			glob( partials, function( err, files ) {
+				if( err ) throw  err;
 
-				for ( var file of files ) {
-					partial = fs.readFileSync( file , "utf8" );
+				for( var file of files ) {
+					partial = fs.readFileSync( file, "utf8" );
 					Handlebars.registerPartial( path.basename( file, ".hbs" ), partial );
 				}
-			});
+			} );
 		} else {
 			throw new Error( "Partials configuration malformed. Partial no recognized: " + partials );
 		}
@@ -313,7 +322,7 @@ var MarkdownReporter = (() => {
 		template = Handlebars.compile( src );
 
 		var partials = Array.isArray( config.partials ) ? config.partials : [ config.partials ];
-		for ( var partial of partials ) {
+		for( var partial of partials ) {
 			addPartials( partial );
 		}
 

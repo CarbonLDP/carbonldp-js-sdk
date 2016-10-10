@@ -3,4 +3,7 @@
 	#####{{#if ../one-more}}#{{/if}} {{name}}
 
 	{{~>signatures access=../access}}
+
+{{^if @last}}--{{/if}}
+
 {{/each}}
