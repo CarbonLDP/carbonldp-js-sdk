@@ -175,8 +175,6 @@ export class Digester {
 					digestedDefinition.uri = Digester._resolvePrefixedURI( new RDF.URI.Class( propertyName ), digestedSchema );
 				} else if( digestedSchema.vocab !== null ) {
 					digestedDefinition.uri = new RDF.URI.Class( digestedSchema.vocab + <string> propertyName );
-				} else {
-					throw new Errors.IllegalArgumentError( `Every property definition needs to have a "@id" defined.` );
 				}
 
 				if( "@type" in schemaDefinition ) {
@@ -250,8 +248,8 @@ export class Util {
 		if( RDF.URI.Util.isAbsolute( uri ) ) return uri;
 
 		if( RDF.URI.Util.isPrefixed( uri ) ) {
-			uri = Digester.resolvePrefixedURI( uri , schema );
-		} else if( schema.vocab ) {
+			uri = Digester.resolvePrefixedURI( uri, schema );
+		} else if( schema.vocab !== null ) {
 			uri = schema.vocab + uri;
 		}
 
