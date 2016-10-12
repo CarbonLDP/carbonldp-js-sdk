@@ -1,1 +1,1 @@
-{"version":3,"sources":["Platform.ts"],"names":[],"mappings":";AAAA,IAAY,IAAI,WAAM,iBAAiB,CAAC,CAAA;AAGvC,YAAI;AACH","file":"Platform.js","sourcesContent":["import * as Auth from \"./Platform/Auth\";\n\nexport {\n\tAuth,\n};\n"],"sourceRoot":"/source/"}
+{"version":3,"sources":["Platform.ts"],"names":[],"mappings":";AAAA,IAAY,IAAI,WAAM,iBAAiB,CAAC,CAAA;AAGvC,YAAI;AACH","file":"Platform.js","sourcesContent":["import * as Auth from \"./Platform/Auth\";\n\nexport {\n\tAuth,\n};\n"]}
