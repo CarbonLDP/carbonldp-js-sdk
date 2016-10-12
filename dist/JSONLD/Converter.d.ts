@@ -30,10 +30,8 @@ export declare class Class {
     private expandValue(propertyValue, generalSchema, digestedSchema);
     private expandLiteral(literalValue);
     private compactSingle(expandedObject, targetObject, digestedSchema, pointerLibrary);
-    private assignProperty(compactedObject, expandedObject, propertyName, digestedSchema, pointerLibrary);
-    private assignURIProperty(compactedObject, expandedObject, propertyURI, propertyName, pointerLibrary);
     private getPropertyContainerType(propertyValues);
-    private getPropertyValue(expandedObject, propertyDefinition, pointerLibrary);
+    private getPropertyValue(expandedObject, propertyURI, propertyDefinition, pointerLibrary);
     private getPropertyURINameMap(digestedSchema);
 }
 export default Class;

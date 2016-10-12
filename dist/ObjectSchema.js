@@ -149,9 +149,6 @@ var Digester = (function () {
                 else if (digestedSchema.vocab !== null) {
                     digestedDefinition.uri = new RDF.URI.Class(digestedSchema.vocab + propertyName);
                 }
-                else {
-                    throw new Errors.IllegalArgumentError("Every property definition needs to have a \"@id\" defined.");
-                }
                 if ("@type" in schemaDefinition) {
                     if (!Utils.isString(schemaDefinition["@type"]))
                         throw new Errors.IllegalArgumentError("@type needs to point to a string");
@@ -224,7 +221,7 @@ var Util = (function () {
         if (RDF.URI.Util.isPrefixed(uri)) {
             uri = Digester.resolvePrefixedURI(uri, schema);
         }
-        else if (schema.vocab) {
+        else if (schema.vocab !== null) {
             uri = schema.vocab + uri;
         }
         return uri;

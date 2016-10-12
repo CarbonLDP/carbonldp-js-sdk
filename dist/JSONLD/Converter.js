@@ -63,21 +63,28 @@ var Class = (function () {
             if (propertyName === "types")
                 return;
             var expandedValue;
+            var expandedPropertyName = null;
             if (digestedSchema.properties.has(propertyName)) {
-                var definition = digestedSchema.properties.get(propertyName);
+                var definition = Utils.O.clone(digestedSchema.properties.get(propertyName), { objects: true });
+                if (definition.uri !== null) {
+                    expandedPropertyName = definition.uri.toString();
+                }
+                else if (digestedSchema.vocab !== null) {
+                    expandedPropertyName = digestedSchema.vocab + propertyName;
+                    definition.uri = new RDF.URI.Class(expandedPropertyName);
+                }
+                else {
+                    throw new Errors.InvalidJSONLDSyntaxError("The context doesn't have a default vocabulary and the object schema does not define a proper @id for the property '" + propertyName + "'");
+                }
                 expandedValue = _this.expandProperty(value, definition, generalSchema, digestedSchema);
-                propertyName = definition.uri.toString();
             }
-            else if (RDF.URI.Util.isAbsolute(propertyName)) {
-                expandedValue = _this.expandPropertyValues(value, generalSchema, digestedSchema);
-            }
-            else if (digestedSchema.vocab) {
+            else if (RDF.URI.Util.isAbsolute(propertyName) || digestedSchema.vocab !== null) {
                 expandedValue = _this.expandPropertyValue(value, generalSchema, digestedSchema);
-                propertyName = ObjectSchema.Util.resolveURI(propertyName, generalSchema);
+                expandedPropertyName = ObjectSchema.Util.resolveURI(propertyName, generalSchema);
             }
-            if (!expandedValue)
+            if (!expandedValue || !expandedPropertyName)
                 return;
-            expandedObject[propertyName] = expandedValue;
+            expandedObject[expandedPropertyName] = expandedValue;
         });
         return expandedObject;
     };
@@ -223,9 +230,17 @@ var Class = (function () {
         }
     };
     Class.prototype.expandPointer = function (propertyValue, generalSchema, digestedSchema) {
-        var notPointer = Utils.isString(propertyValue);
-        var id = Pointer.Factory.is(propertyValue) ? propertyValue.id : Utils.isString(propertyValue) ? propertyValue : null;
-        if (id === null) {
+        var notPointer = true;
+        var id;
+        if (Pointer.Factory.is(propertyValue)) {
+            notPointer = false;
+            propertyValue = propertyValue.id;
+        }
+        else if (!Utils.isString(propertyValue)) {
+            propertyValue = null;
+        }
+        id = propertyValue;
+        if (!id) {
             return null;
         }
         id = ObjectSchema.Digester.resolvePrefixedURI(id, generalSchema);
@@ -298,26 +313,22 @@ var Class = (function () {
                 return;
             if (propertyURI === "@type")
                 return;
+            var propertyName = propertyURI;
+            var propertyValues = expandedObject[propertyURI];
+            var definition;
             if (propertyURINameMap.has(propertyURI)) {
-                var propertyName = propertyURINameMap.get(propertyURI);
-                _this.assignProperty(targetObject, expandedObject, propertyName, digestedSchema, pointerLibrary);
+                propertyName = propertyURINameMap.get(propertyURI);
+                definition = digestedSchema.properties.get(propertyName);
             }
             else {
-                var propertyName = digestedSchema.vocab ? RDF.URI.Util.getRelativeURI(propertyURI, digestedSchema.vocab) : propertyURI;
-                _this.assignURIProperty(targetObject, expandedObject, propertyURI, propertyName, pointerLibrary);
+                if (digestedSchema.vocab !== null)
+                    propertyName = RDF.URI.Util.getRelativeURI(propertyURI, digestedSchema.vocab);
+                definition = new ObjectSchema.DigestedPropertyDefinition();
+                definition.containerType = _this.getPropertyContainerType(propertyValues);
             }
+            targetObject[propertyName] = _this.getPropertyValue(expandedObject, propertyURI, definition, pointerLibrary);
         });
         return targetObject;
-    };
-    Class.prototype.assignProperty = function (compactedObject, expandedObject, propertyName, digestedSchema, pointerLibrary) {
-        var propertyDefinition = digestedSchema.properties.get(propertyName);
-        compactedObject[propertyName] = this.getPropertyValue(expandedObject, propertyDefinition, pointerLibrary);
-    };
-    Class.prototype.assignURIProperty = function (compactedObject, expandedObject, propertyURI, propertyName, pointerLibrary) {
-        var guessedDefinition = new ObjectSchema.DigestedPropertyDefinition();
-        guessedDefinition.uri = new RDF.URI.Class(propertyURI);
-        guessedDefinition.containerType = this.getPropertyContainerType(expandedObject[propertyURI]);
-        compactedObject[propertyName] = this.getPropertyValue(expandedObject, guessedDefinition, pointerLibrary);
     };
     Class.prototype.getPropertyContainerType = function (propertyValues) {
         if (propertyValues.length === 1) {
@@ -329,8 +340,7 @@ var Class = (function () {
         }
         return null;
     };
-    Class.prototype.getPropertyValue = function (expandedObject, propertyDefinition, pointerLibrary) {
-        var propertyURI = propertyDefinition.uri.toString();
+    Class.prototype.getPropertyValue = function (expandedObject, propertyURI, propertyDefinition, pointerLibrary) {
         switch (propertyDefinition.containerType) {
             case null:
                 if (propertyDefinition.literal) {
@@ -371,7 +381,17 @@ var Class = (function () {
     Class.prototype.getPropertyURINameMap = function (digestedSchema) {
         var map = new Map();
         digestedSchema.properties.forEach(function (definition, propertyName) {
-            map.set(definition.uri.toString(), propertyName);
+            var uri;
+            if (definition.uri !== null) {
+                uri = definition.uri.toString();
+            }
+            else if (digestedSchema.vocab !== null) {
+                uri = digestedSchema.vocab + propertyName;
+            }
+            else {
+                throw new Errors.InvalidJSONLDSyntaxError("The context doesn't have a default vocabulary and the object schema does not define a proper @id for the property '" + propertyName + "'");
+            }
+            map.set(uri, propertyName);
         });
         return map;
     };

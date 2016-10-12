@@ -221,9 +221,9 @@ describe( module( "Carbon/ObjectSchema" ), ():void => {
 		describe( method( STATIC, "digestSchema" ), ():void => {
 			it( hasSignature(
 				"Processes a schema to standardize it before using it.", [
-					{name: "schema", type: "Carbon.ObjectSchema.Class"},
+					{ name: "schema", type: "Carbon.ObjectSchema.Class" },
 				],
-				{type: "Carbon.ObjectSchema.DigestedObjectSchema"}
+				{ type: "Carbon.ObjectSchema.DigestedObjectSchema" }
 			), ():void => {
 				expect( ObjectSchema.Digester.digestSchema ).toBeDefined();
 				expect( Utils.isFunction( ObjectSchema.Digester.digestSchema ) ).toBeDefined();
@@ -245,6 +245,10 @@ describe( module( "Carbon/ObjectSchema" ), ():void => {
 						"@id": "dct:created",
 						"@type": "xsd:datetime",
 					},
+					"elementWithoutID": {
+						"@type": "xsd:string",
+						"@container": "@set",
+					},
 				};
 
 				let digestedSchema:ObjectSchema.DigestedObjectSchema = ObjectSchema.Digester.digestSchema( schema );
@@ -254,7 +258,7 @@ describe( module( "Carbon/ObjectSchema" ), ():void => {
 				expect( digestedSchema.prefixes.get( "skos" ) instanceof RDF.URI.Class ).toEqual( true );
 				expect( digestedSchema.prefixes.get( "skos" ).toString() ).toEqual( "http://www.w3.org/2004/02/skos/core#" );
 
-				expect( digestedSchema.properties.size ).toEqual( 3 );
+				expect( digestedSchema.properties.size ).toEqual( 4 );
 				expect( digestedSchema.properties.has( "hasTopConcept" ) ).toEqual( true );
 				expect( digestedSchema.properties.get( "hasTopConcept" ) instanceof ObjectSchema.DigestedPropertyDefinition ).toEqual( true );
 				expect( digestedSchema.properties.get( "hasTopConcept" ).literal ).toEqual( false );
@@ -273,13 +277,22 @@ describe( module( "Carbon/ObjectSchema" ), ():void => {
 				expect( digestedSchema.properties.get( "name" ).uri.toString() ).toEqual( "http://purl.org/dc/terms/name" );
 				expect( digestedSchema.properties.get( "name" ).containerType ).toEqual( null );
 				expect( digestedSchema.properties.get( "name" ).language ).toBeUndefined();
+
+				expect( digestedSchema.properties.has( "elementWithoutID" ) ).toEqual( true );
+				expect( digestedSchema.properties.get( "elementWithoutID" ) instanceof ObjectSchema.DigestedPropertyDefinition ).toEqual( true );
+				expect( digestedSchema.properties.get( "elementWithoutID" ).literal ).toEqual( true );
+				expect( digestedSchema.properties.get( "elementWithoutID" ).literalType instanceof RDF.URI.Class ).toEqual( true );
+				expect( digestedSchema.properties.get( "elementWithoutID" ).literalType.toString() ).toEqual( "http://www.w3.org/2001/XMLSchema#string" );
+				expect( digestedSchema.properties.get( "elementWithoutID" ).uri ).toBeNull();
+				expect( digestedSchema.properties.get( "elementWithoutID" ).containerType ).toEqual( ObjectSchema.ContainerType.SET );
+				expect( digestedSchema.properties.get( "elementWithoutID" ).language ).toBeUndefined();
 			} );
 
 			it( hasSignature(
 				"Processes several schemas to standardize and combine them before using them.", [
-					{name: "schemas", type: "Array<Carbon.ObjectSchema.Class>"},
+					{ name: "schemas", type: "Array<Carbon.ObjectSchema.Class>" },
 				],
-				{type: "Carbon.ObjectSchema.DigestedObjectSchema"}
+				{ type: "Carbon.ObjectSchema.DigestedObjectSchema" }
 			), ():void => {
 				expect( ObjectSchema.Digester.digestSchema ).toBeDefined();
 				expect( Utils.isFunction( ObjectSchema.Digester.digestSchema ) ).toBeDefined();
@@ -340,9 +353,9 @@ describe( module( "Carbon/ObjectSchema" ), ():void => {
 			STATIC,
 			"combineDigestedObjectSchemas",
 			"Combine several standardized schemas into one.", [
-				{name: "digestedSchemas", type: "Carbon.ObjectSchema.DigestedObjectSchema[]"},
+				{ name: "digestedSchemas", type: "Carbon.ObjectSchema.DigestedObjectSchema[]" },
 			],
-			{type: "Carbon.ObjectSchema.DigestedObjectSchema"}
+			{ type: "Carbon.ObjectSchema.DigestedObjectSchema" }
 		), ():void => {
 
 			expect( ObjectSchema.Digester.digestSchema ).toBeDefined();
@@ -425,10 +438,10 @@ describe( module( "Carbon/ObjectSchema" ), ():void => {
 			STATIC,
 			"resolveURI",
 			"Resolves a prefixed URI, or relative URI with the vocab in the schema provided.", [
-				{name: "uri", type: "string", description: "The URI to ve resolved."},
-				{name: "schema", type: "Carbon.ObjectSchema.DigestedObjectSchema", description: "The schema where to find the prefixes or the default vocabulary to utilize."},
+				{ name: "uri", type: "string", description: "The URI to ve resolved." },
+				{ name: "schema", type: "Carbon.ObjectSchema.DigestedObjectSchema", description: "The schema where to find the prefixes or the default vocabulary to utilize." },
 			],
-			{type: "string", description: "The resolved absolute URI."}
+			{ type: "string", description: "The resolved absolute URI." }
 		), ():void => {
 			expect( ObjectSchema.Util.resolveURI ).toBeDefined();
 			expect( Utils.isFunction( ObjectSchema.Util.resolveURI ) ).toBe( true );
