@@ -33,9 +33,27 @@ var Documents = (function () {
         else {
             this._jsonldConverter = new JSONLD.Converter.Class();
         }
+        var decorators = new Map();
+        if (!!this.context && !!this.context.parentContext) {
+            var parentDecorators = this.context.parentContext.documents.documentDecorators;
+            if (parentDecorators)
+                decorators = this._documentDecorators = Utils.M.extend(decorators, parentDecorators);
+        }
+        else {
+            decorators.set(ProtectedDocument.RDF_CLASS, { decorator: PersistedProtectedDocument.Factory.decorate });
+            decorators.set(Auth.ACL.RDF_CLASS, { decorator: Auth.PersistedACL.Factory.decorate });
+            decorators.set(Auth.Agent.RDF_CLASS, { decorator: Auth.PersistedAgent.Factory.decorate });
+        }
+        decorators.set(AppRole.RDF_CLASS, { decorator: PersistedAppRole.Factory.decorate, parameters: [(this.context && this.context.auth) ? this.context.auth.roles : null] });
+        this._documentDecorators = decorators;
     }
     Object.defineProperty(Documents.prototype, "jsonldConverter", {
         get: function () { return this._jsonldConverter; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Documents.prototype, "documentDecorators", {
+        get: function () { return this._documentDecorators; },
         enumerable: true,
         configurable: true
     });
@@ -81,6 +99,16 @@ var Documents = (function () {
             this.pointers.set(localID, pointer);
         }
         return this.pointers.get(localID);
+    };
+    Documents.prototype.removePointer = function (idOrPointer) {
+        var id = Utils.isString(idOrPointer) ? idOrPointer : idOrPointer.id;
+        var localID = this.getPointerID(id);
+        if (localID === null) {
+            if (!!this.context && !!this.context.parentContext)
+                return this.context.parentContext.documents.removePointer(id);
+            return false;
+        }
+        return this.pointers.delete(localID);
     };
     Documents.prototype.get = function (uri, requestOptions) {
         var _this = this;
@@ -131,46 +159,14 @@ var Documents = (function () {
         });
     };
     Documents.prototype.createChild = function (parentURI, childObject, slugOrRequestOptions, requestOptions) {
-        var _this = this;
         if (requestOptions === void 0) { requestOptions = {}; }
         var slug = Utils.isString(slugOrRequestOptions) ? slugOrRequestOptions : null;
         requestOptions = !Utils.isString(slugOrRequestOptions) && !!slugOrRequestOptions ? slugOrRequestOptions : requestOptions;
         if (PersistedDocument.Factory.is(childObject))
             return Promise.reject(new Errors.IllegalArgumentError("The child provided has been already persisted."));
         var childDocument = Document.Factory.is(childObject) ? childObject : Document.Factory.createFrom(childObject);
-        parentURI = this.getRequestURI(parentURI);
         this.setDefaultRequestOptions(requestOptions, NS.LDP.Class.Container);
-        HTTP.Request.Util.setContentTypeHeader("application/ld+json", requestOptions);
-        if (childDocument.id) {
-            var childURI = childDocument.id;
-            if (!!this.context)
-                childURI = this.context.resolve(childURI);
-            if (!RDF.URI.Util.isBaseOf(parentURI, childURI)) {
-                return Promise.reject(new Errors.IllegalArgumentError("The childDocument's URI is not relative to the parentURI specified"));
-            }
-        }
-        if (childDocument["__CarbonSDK_InProgressOfPersisting"])
-            return Promise.reject(new Errors.IllegalArgumentError("The childDocument is already being persisted."));
-        Object.defineProperty(childDocument, "__CarbonSDK_InProgressOfPersisting", { configurable: true, enumerable: false, writable: false, value: true });
-        var body = childDocument.toJSON(this, this.jsonldConverter);
-        if (!!slug)
-            HTTP.Request.Util.setSlug(slug, requestOptions);
-        return HTTP.Request.Service.post(parentURI, body, requestOptions).then(function (response) {
-            delete childDocument["__CarbonSDK_InProgressOfPersisting"];
-            var locationHeader = response.getHeader("Location");
-            if (locationHeader === null || locationHeader.values.length < 1)
-                throw new HTTP.Errors.BadResponseError("The response is missing a Location header.", response);
-            if (locationHeader.values.length !== 1)
-                throw new HTTP.Errors.BadResponseError("The response contains more than one Location header.", response);
-            var localID = _this.getPointerID(locationHeader.values[0].toString());
-            var persistedDocument = PersistedDocument.Factory.decorate(_this.createPointerFrom(childDocument, localID), _this);
-            var persistedProtectedDocument = PersistedProtectedDocument.Factory.decorate(persistedDocument);
-            _this.pointers.set(localID, persistedProtectedDocument);
-            return [
-                persistedProtectedDocument,
-                response,
-            ];
-        });
+        return this.persistDocument(parentURI, slug, childDocument, requestOptions);
     };
     Documents.prototype.createChildAndRetrieve = function (parentURI, childObject, slugOrRequestOptions, requestOptions) {
         var _this = this;
@@ -208,7 +204,7 @@ var Documents = (function () {
             if (rdfDocument === null)
                 return [[], response];
             var documentResource = _this.getDocumentResource(rdfDocument, response);
-            var childPointers = RDF.Value.Util.getPropertyPointers(documentResource, NS.LDP.Predicate.contains, _this);
+            var childPointers = RDF.Node.Util.getPropertyPointers(documentResource, NS.LDP.Predicate.contains, _this);
             var persistedChildPointers = childPointers.map(function (pointer) { return PersistedDocument.Factory.decorate(pointer, _this); });
             return [persistedChildPointers, response];
         });
@@ -243,49 +239,17 @@ var Documents = (function () {
         });
     };
     Documents.prototype.createAccessPoint = function (documentURI, accessPoint, slugOrRequestOptions, requestOptions) {
-        var _this = this;
         if (requestOptions === void 0) { requestOptions = {}; }
         var slug = Utils.isString(slugOrRequestOptions) ? slugOrRequestOptions : null;
         requestOptions = !Utils.isString(slugOrRequestOptions) && !!slugOrRequestOptions ? slugOrRequestOptions : requestOptions;
-        documentURI = this.getRequestURI(documentURI);
-        this.setDefaultRequestOptions(requestOptions, NS.LDP.Class.RDFSource);
-        HTTP.Request.Util.setContentTypeHeader("application/ld+json", requestOptions);
         if (PersistedDocument.Factory.is(accessPoint))
             return Promise.reject(new Errors.IllegalArgumentError("The accessPoint provided has been already persisted."));
         var accessPointDocument = AccessPoint.Factory.is(accessPoint) ? accessPoint
             : AccessPoint.Factory.createFrom(accessPoint, this.getPointer(documentURI), accessPoint.hasMemberRelation, accessPoint.isMemberOfRelation);
         if (accessPointDocument.membershipResource.id !== documentURI)
             return Promise.reject(new Errors.IllegalArgumentError("The documentURI must be the same as the accessPoint's membershipResource"));
-        if (accessPointDocument.id) {
-            var childURI = accessPointDocument.id;
-            if (!!this.context)
-                childURI = this.context.resolve(childURI);
-            if (!RDF.URI.Util.isBaseOf(documentURI, childURI)) {
-                return Promise.reject(new Errors.IllegalArgumentError("The accessPoint's URI is not relative to the parentURI specified"));
-            }
-        }
-        if (accessPoint["__CarbonSDK_InProgressOfPersisting"])
-            return Promise.reject(new Errors.IllegalArgumentError("The accessPoint is already being persisted."));
-        Object.defineProperty(accessPoint, "__CarbonSDK_InProgressOfPersisting", { configurable: true, enumerable: false, writable: false, value: true });
-        var body = accessPointDocument.toJSON(this, this.jsonldConverter);
-        if (!!slug)
-            HTTP.Request.Util.setSlug(slug, requestOptions);
-        return HTTP.Request.Service.post(documentURI, body, requestOptions).then(function (response) {
-            delete accessPoint["__CarbonSDK_InProgressOfPersisting"];
-            var locationHeader = response.getHeader("Location");
-            if (locationHeader === null || locationHeader.values.length < 1)
-                throw new HTTP.Errors.BadResponseError("The response is missing a Location header.", response);
-            if (locationHeader.values.length !== 1)
-                throw new HTTP.Errors.BadResponseError("The response contains more than one Location header.", response);
-            var localID = _this.getPointerID(locationHeader.values[0].toString());
-            var persistedAccessPoint = PersistedDocument.Factory.decorate(_this.createPointerFrom(accessPointDocument, localID), _this);
-            var persistedProtectedAccessPoint = PersistedProtectedDocument.Factory.decorate(persistedAccessPoint);
-            _this.pointers.set(localID, persistedAccessPoint);
-            return [
-                persistedProtectedAccessPoint,
-                response,
-            ];
-        });
+        this.setDefaultRequestOptions(requestOptions, NS.LDP.Class.RDFSource);
+        return this.persistDocument(documentURI, slug, accessPointDocument, requestOptions);
     };
     Documents.prototype.upload = function (parentURI, data, slugOrRequestOptions, requestOptions) {
         var _this = this;
@@ -356,7 +320,7 @@ var Documents = (function () {
             if (membershipResource === null)
                 return [[], response];
             var hasMemberRelation = RDF.Node.Util.getPropertyURI(documentResource, NS.LDP.Predicate.hasMemberRelation);
-            var memberPointers = RDF.Value.Util.getPropertyPointers(membershipResource, hasMemberRelation, _this);
+            var memberPointers = RDF.Node.Util.getPropertyPointers(membershipResource, hasMemberRelation, _this);
             var persistedMemberPointers = memberPointers.map(function (pointer) { return PersistedDocument.Factory.decorate(pointer, _this); });
             return [persistedMemberPointers, response];
         });
@@ -626,6 +590,41 @@ var Documents = (function () {
         this.compact(nodes, resources, freeResourcesDocument);
         return freeResourcesDocument;
     };
+    Documents.prototype.persistDocument = function (parentURI, slug, document, requestOptions) {
+        var _this = this;
+        parentURI = this.getRequestURI(parentURI);
+        HTTP.Request.Util.setContentTypeHeader("application/ld+json", requestOptions);
+        if (document.id) {
+            var childURI = document.id;
+            if (!!this.context)
+                childURI = this.context.resolve(childURI);
+            if (!RDF.URI.Util.isBaseOf(parentURI, childURI)) {
+                return Promise.reject(new Errors.IllegalArgumentError("The document's URI is not relative to the parentURI specified"));
+            }
+        }
+        if (document["__CarbonSDK_InProgressOfPersisting"])
+            return Promise.reject(new Errors.IllegalArgumentError("The document is already being persisted."));
+        Object.defineProperty(document, "__CarbonSDK_InProgressOfPersisting", { configurable: true, enumerable: false, writable: false, value: true });
+        var body = document.toJSON(this, this.jsonldConverter);
+        if (!!slug)
+            HTTP.Request.Util.setSlug(slug, requestOptions);
+        return HTTP.Request.Service.post(parentURI, body, requestOptions).then(function (response) {
+            delete document["__CarbonSDK_InProgressOfPersisting"];
+            var locationHeader = response.getHeader("Location");
+            if (locationHeader === null || locationHeader.values.length < 1)
+                throw new HTTP.Errors.BadResponseError("The response is missing a Location header.", response);
+            if (locationHeader.values.length !== 1)
+                throw new HTTP.Errors.BadResponseError("The response contains more than one Location header.", response);
+            var localID = _this.getPointerID(locationHeader.values[0].toString());
+            var persistedDocument = PersistedDocument.Factory.decorate(_this.createPointerFrom(document, localID), _this);
+            var persistedProtectedDocument = PersistedProtectedDocument.Factory.decorate(persistedDocument);
+            _this.pointers.set(localID, persistedProtectedDocument);
+            return [
+                persistedProtectedDocument,
+                response,
+            ];
+        });
+    };
     Documents.prototype.getRDFDocument = function (requestURL, rdfDocuments, response) {
         rdfDocuments = rdfDocuments.filter(function (rdfDocument) { return rdfDocument["@id"] === requestURL; });
         if (rdfDocuments.length > 1)
@@ -737,7 +736,7 @@ var Documents = (function () {
     Documents.prototype.getAssociatedFragment = function (blankNodes, namedFragments, searchedFragment) {
         if (!RDF.URI.Util.isBNodeID(searchedFragment["@id"]))
             return namedFragments.get(searchedFragment["@id"]);
-        var bNodeIdentifier = RDF.Value.Util.getProperty(searchedFragment, NS.C.Predicate.bNodeIdentifier, null);
+        var bNodeIdentifier = RDF.Node.Util.getProperty(searchedFragment, NS.C.Predicate.bNodeIdentifier, null);
         for (var _i = 0, blankNodes_1 = blankNodes; _i < blankNodes_1.length; _i++) {
             var fragment = blankNodes_1[_i];
             if (!RDF.URI.Util.isBNodeID(fragment.id))
@@ -804,14 +803,7 @@ var Documents = (function () {
         fragments.forEach(function (fragment) { return fragment._syncSnapshot(); });
         persistedDocument._syncSavedFragments();
         persistedDocument._resolved = true;
-        if (persistedDocument.hasType(ProtectedDocument.RDF_CLASS))
-            PersistedProtectedDocument.Factory.decorate(persistedDocument);
-        if (persistedDocument.hasType(Auth.ACL.RDF_CLASS))
-            Auth.PersistedACL.Factory.decorate(persistedDocument);
-        if (persistedDocument.hasType(Auth.Agent.RDF_CLASS))
-            Auth.PersistedAgent.Factory.decorate(persistedDocument);
-        if (persistedDocument.hasType(AppRole.RDF_CLASS))
-            PersistedAppRole.Factory.decorate(persistedDocument, this.context.auth ? this.context.auth.roles : null);
+        this.decoratePersistedDocument(persistedDocument);
         return persistedDocument;
     };
     Documents.prototype.updatePersistedDocument = function (persistedDocument, documentResource, fragmentResources) {
@@ -838,6 +830,7 @@ var Documents = (function () {
         persistedDocument._syncSavedFragments();
         this.updateObject(persistedDocument, this.compact(documentResource, {}, persistedDocument));
         persistedDocument._syncSnapshot();
+        this.decoratePersistedDocument(persistedDocument);
         return persistedDocument;
     };
     Documents.prototype.getPersistedMetadataResources = function (freeNodes, rdfDocuments, response) {
@@ -855,6 +848,15 @@ var Documents = (function () {
             resource._etag = resourceMetadata.eTag;
             return resource;
         });
+    };
+    Documents.prototype.decoratePersistedDocument = function (persistedDocument) {
+        var entries = this._documentDecorators.entries();
+        for (var _i = 0, _a = Utils.A.from(entries); _i < _a.length; _i++) {
+            var _b = _a[_i], type = _b[0], options = _b[1];
+            if (persistedDocument.hasType(type)) {
+                options.decorator.apply(null, [persistedDocument].concat(options.parameters));
+            }
+        }
     };
     Documents._documentSchema = ObjectSchema.Digester.digestSchema(Document.SCHEMA);
     return Documents;

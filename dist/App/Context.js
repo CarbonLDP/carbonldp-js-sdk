@@ -14,6 +14,7 @@ var Class = (function (_super) {
         this.auth = new Auth_1.default(this);
         this._app = app;
         this.base = this.getBase(this.app);
+        this.documents.removePointer(app.rootContainer);
         app.rootContainer = this.documents.getPointer(app.rootContainer.id);
     }
     Object.defineProperty(Class.prototype, "app", {

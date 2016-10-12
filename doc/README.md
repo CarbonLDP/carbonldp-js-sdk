@@ -505,8 +505,8 @@
 	- [Class Carbon.RDF.Literal.Serializes.XSD.UnsignedIntegerSerializer](#Carbon-RDF-Literal-Serializes-XSD-UnsignedIntegerSerializer)
 		- [Methods](#Carbon-RDF-Literal-Serializes-XSD-UnsignedIntegerSerializer-Methods)
 - [Module Carbon/RDF/RDFNode](#Carbon-RDF-RDFNode)
-	- [Class Carbon.RDF.RDFNode.Factory](#Carbon-RDF-RDFNode-Factory)
-		- [Methods](#Carbon-RDF-RDFNode-Factory-Methods)
+	- [Class Carbon.RDF.Node.Factory](#Carbon-RDF-Node-Factory)
+		- [Methods](#Carbon-RDF-Node-Factory-Methods)
 	- [Class Carbon.RDF.RDFNode.Util](#Carbon-RDF-RDFNode-Util)
 		- [Methods](#Carbon-RDF-RDFNode-Util-Methods)
 - [Module Carbon/RDF/URI](#Carbon-RDF-URI)
@@ -9709,15 +9709,15 @@ Returns a string representing an unsigned integer from the Number provided.
 
 
 
-### <a name="Carbon-RDF-RDFNode-Factory" />Class Carbon.RDF.RDFNode.Factory
+### <a name="Carbon-RDF-Node-Factory" />Class Carbon.RDF.Node.Factory
 
 
-> Factory class for `Carbon.RDF.RDFNode.Class` objects.
+> Factory class for `Carbon.RDF.Node.Class` objects.
 
 
 
 
-#### <a name="Carbon-RDF-RDFNode-Factory-Methods" />Methods
+#### <a name="Carbon-RDF-Node-Factory-Methods" />Methods
 ##### create
 ```typescript 
 static create( uri:string ):Carbon.RDF.RDFNode.Class
@@ -9734,7 +9734,7 @@ Creates a `Carbon.RDF.RDFNode.Class` object with the URI provided.
 static is( object:Object ):boolean
 ```
 
-Returns true if the object provided is considered a `Carbon.RDF.RDFNode.Class` object.
+Returns true if the object provided is considered a `Carbon.RDF.Node.Class` object.
 
 *Parameters*
 
@@ -9775,6 +9775,158 @@ Returns an array with the nodes that are neither a RDFDocument nor are contained
 
 - object: The object to evaluate for its free nodes.
 
+##### getList
+```typescript 
+static getList( propertyValues:Array<any> ):Carbon.RDF.List.Class
+```
+
+Returns the List object from the provided property of an expanded JSON-LD object.
+Returns null if no List object is found.
+
+*Parameters*
+
+- propertyValues
+
+##### getProperties
+```typescript 
+static getProperties( expandedObject:any,  propertyURI:string,  pointerLibrary:Carbon.Pointer.Library ):any
+```
+
+Returns the property searched as an Array with the parsed Literal, Pointer or List.
+Returns null if the property is not found, or an empty array if it cannot be parsed.
+
+*Parameters*
+
+- expandedObject
+- propertyURI
+- pointerLibrary
+
+##### getProperty
+```typescript 
+static getProperty( expandedObject:any,  propertyURI:string,  pointerLibrary:Carbon.Pointer.Library ):any
+```
+
+Returns the property searched, parsed in accordance to the RDF object it is.
+Returns null if the property is not found or cannot be parsed.
+
+*Parameters*
+
+- expandedObject
+- propertyURI
+- pointerLibrary
+
+##### getPropertyLanguageMap
+```typescript 
+static getPropertyLanguageMap( expandedObject:any,  propertyURI:string,  pointerLibrary:Carbon.Pointer.Library ):any
+```
+
+Returns an object associating the language with the parsed string literal.
+Returns null if the property is not found, or an empty object if it is not a property with language.
+
+*Parameters*
+
+- expandedObject
+- propertyURI
+- pointerLibrary
+
+##### getPropertyList
+```typescript 
+static getPropertyList( expandedObject:any,  propertyURI:string,  pointerLibrary:Carbon.Pointer.Library ):any
+```
+
+Returns the property searched as an Array with every element parsed to its respective type of element.
+Returns null if the property is not found or cannot be parsed.
+
+*Parameters*
+
+- expandedObject
+- propertyURI
+- pointerLibrary
+
+##### getPropertyLiteral
+```typescript 
+static getPropertyLiteral( expandedObject:any,  propertyURI:string,  literalType:string ):any
+```
+
+Returns the property searched as a javascript variable. The property must be an RDF Literal.
+Returns null if the property is not found, the type provided not match with the type of the Literal, or cannot be parsed from a Literal.
+
+*Parameters*
+
+- expandedObject
+- propertyURI
+- literalType
+
+##### getPropertyLiteralList
+```typescript 
+static getPropertyLiteralList( expandedObject:any,  propertyURI:string,  pointerLibrary:Carbon.Pointer.Library ):any
+```
+
+Returns the property list searched as an Array of parsed Literals. It will be filtered no Literal values with the type specified.
+Returns null if the property is not found or is not a List.
+
+*Parameters*
+
+- expandedObject
+- propertyURI
+- pointerLibrary
+
+##### getPropertyLiterals
+```typescript 
+static getPropertyLiterals( expandedObject:any,  propertyURI:string,  literalType:string ):any
+```
+
+Returns the property searched as an Array with the parsed Literal.
+Returns null if the property is not found, or an empty array if it cannot be parsed.
+
+*Parameters*
+
+- expandedObject
+- propertyURI
+- literalType
+
+##### getPropertyPointer
+```typescript 
+static getPropertyPointer( expandedObject:any,  propertyURI:string,  pointerLibrary:Carbon.Pointer.Library ):any
+```
+
+Returns the property searched as a Pointer.
+Returns null if the property is not found or cannot be parsed as a Pointer.
+
+*Parameters*
+
+- expandedObject
+- propertyURI
+- pointerLibrary
+
+##### getPropertyPointerList
+```typescript 
+static getPropertyPointerList( expandedObject:any,  propertyURI:string,  pointerLibrary:Carbon.Pointer.Library ):any
+```
+
+Returns the property list searched as an Array of Pointers. It will be filtered no pointer values.
+Returns null if the property is not found or is not a List.
+
+*Parameters*
+
+- expandedObject
+- propertyURI
+- pointerLibrary
+
+##### getPropertyPointers
+```typescript 
+static getPropertyPointers( expandedObject:any,  propertyURI:string,  pointerLibrary:Carbon.Pointer.Library ):any
+```
+
+Returns the property searched as an Array with the parsed Pointer.
+Returns an empty array if the property is not found, or the property cannot be parsed as a pointer.
+
+*Parameters*
+
+- expandedObject
+- propertyURI
+- pointerLibrary
+
 ##### getPropertyURI
 ```typescript 
 static getPropertyURI( node:Carbon.RDF.RDFNode.Class,  predicate:string ):string
@@ -9787,6 +9939,19 @@ Returns `null` if the property doesn't exists or the URI is not found.
 
 - node
 - predicate
+
+##### getPropertyURIs
+```typescript 
+static getPropertyURIs( expandedObject:any,  propertyURI:string ):any
+```
+
+Returns the URIs of the property searched.
+Returns null if the property is not found or an empty array if no URI was found.
+
+*Parameters*
+
+- expandedObject
+- propertyURI
 
 ##### getTypes
 ```typescript 
@@ -10100,171 +10265,6 @@ Return a URI formed from a parent URI and a relative child URI.
 
 
 #### <a name="Carbon-RDF-Value-Util-Methods" />Methods
-##### getList
-```typescript 
-static getList( propertyValues:Array<any> ):Carbon.RDF.List.Class
-```
-
-Returns the List object from the provided property of an expanded JSON-LD object.
-Returns null if no List object is found.
-
-*Parameters*
-
-- propertyValues
-
-##### getProperties
-```typescript 
-static getProperties( expandedObject:any,  propertyURI:string,  pointerLibrary:Carbon.Pointer.Library ):any
-```
-
-Returns the property searched as an Array with the parsed Literal, Pointer or List.
-Returns null if the property is not found, or an empty array if it cannot be parsed.
-
-*Parameters*
-
-- expandedObject
-- propertyURI
-- pointerLibrary
-
-##### getProperty
-```typescript 
-static getProperty( expandedObject:any,  propertyURI:string,  pointerLibrary:Carbon.Pointer.Library ):any
-```
-
-Returns the property searched, parsed in accordance to the RDF object it is.
-Returns null if the property is not found or cannot be parsed.
-
-*Parameters*
-
-- expandedObject
-- propertyURI
-- pointerLibrary
-
-##### getPropertyLanguageMap
-```typescript 
-static getPropertyLanguageMap( expandedObject:any,  propertyURI:string,  pointerLibrary:Carbon.Pointer.Library ):any
-```
-
-Returns an object associating the language with the parsed string literal.
-Returns null if the property is not found, or an empty object if it is not a property with language.
-
-*Parameters*
-
-- expandedObject
-- propertyURI
-- pointerLibrary
-
-##### getPropertyList
-```typescript 
-static getPropertyList( expandedObject:any,  propertyURI:string,  pointerLibrary:Carbon.Pointer.Library ):any
-```
-
-Returns the property searched as an Array with every element parsed to its respective type of element.
-Returns null if the property is not found or cannot be parsed.
-
-*Parameters*
-
-- expandedObject
-- propertyURI
-- pointerLibrary
-
-##### getPropertyLiteral
-```typescript 
-static getPropertyLiteral( expandedObject:any,  propertyURI:string,  literalType:string ):any
-```
-
-Returns the property searched as a javascript variable. The property must be an RDF Literal.
-Returns null if the property is not found, the type provided not match with the type of the Literal, or cannot be parsed from a Literal.
-
-*Parameters*
-
-- expandedObject
-- propertyURI
-- literalType
-
-##### getPropertyLiteralList
-```typescript 
-static getPropertyLiteralList( expandedObject:any,  propertyURI:string,  pointerLibrary:Carbon.Pointer.Library ):any
-```
-
-Returns the property list searched as an Array of parsed Literals. It will be filtered no Literal values with the type specified.
-Returns null if the property is not found or is not a List.
-
-*Parameters*
-
-- expandedObject
-- propertyURI
-- pointerLibrary
-
-##### getPropertyLiterals
-```typescript 
-static getPropertyLiterals( expandedObject:any,  propertyURI:string,  literalType:string ):any
-```
-
-Returns the property searched as an Array with the parsed Literal.
-Returns null if the property is not found, or an empty array if it cannot be parsed.
-
-*Parameters*
-
-- expandedObject
-- propertyURI
-- literalType
-
-##### getPropertyPointer
-```typescript 
-static getPropertyPointer( expandedObject:any,  propertyURI:string,  pointerLibrary:Carbon.Pointer.Library ):any
-```
-
-Returns the property searched as a Pointer.
-Returns null if the property is not found or cannot be parsed as a Pointer.
-
-*Parameters*
-
-- expandedObject
-- propertyURI
-- pointerLibrary
-
-##### getPropertyPointerList
-```typescript 
-static getPropertyPointerList( expandedObject:any,  propertyURI:string,  pointerLibrary:Carbon.Pointer.Library ):any
-```
-
-Returns the property list searched as an Array of Pointers. It will be filtered no pointer values.
-Returns null if the property is not found or is not a List.
-
-*Parameters*
-
-- expandedObject
-- propertyURI
-- pointerLibrary
-
-##### getPropertyPointers
-```typescript 
-static getPropertyPointers( expandedObject:any,  propertyURI:string,  pointerLibrary:Carbon.Pointer.Library ):any
-```
-
-Returns the property searched as an Array with the parsed Pointer.
-Returns an empty array if the property is not found, or the property cannot be parsed as a pointer.
-
-*Parameters*
-
-- expandedObject
-- propertyURI
-- pointerLibrary
-
-##### getPropertyURIs
-```typescript 
-static getPropertyURIs( expandedObject:any,  propertyURI:string ):any
-```
-
-Returns the URIs of the property searched.
-Returns null if the property is not found or an empty array if no URI was found.
-
-*Parameters*
-
-- expandedObject
-- propertyURI
-
 ##### parseValue
 ```typescript 
 static parseValue( propertyValue:Carbon.RDF.Value.Class,  pointerLibrary:Carbon.Pointer.Library ):any

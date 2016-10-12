@@ -16,6 +16,11 @@ declare class Documents implements Pointer.Library, Pointer.Validator, ObjectSch
     private static _documentSchema;
     private _jsonldConverter;
     jsonldConverter: JSONLD.Converter.Class;
+    private _documentDecorators;
+    documentDecorators: Map<string, {
+        decorator: Function;
+        parameters?: any[];
+    }>;
     private context;
     private pointers;
     private documentsBeingResolved;
@@ -24,6 +29,8 @@ declare class Documents implements Pointer.Library, Pointer.Validator, ObjectSch
     inScope(id: string): boolean;
     hasPointer(id: string): boolean;
     getPointer(id: string): Pointer.Class;
+    removePointer(id: Pointer.Class): boolean;
+    removePointer(id: string): boolean;
     get<T>(uri: string, requestOptions?: HTTP.Request.Options): Promise<[T & PersistedDocument.Class, HTTP.Response.Class]>;
     exists(documentURI: string, requestOptions?: HTTP.Request.Options): Promise<[boolean, HTTP.Response.Class]>;
     createChild<T extends Document.Class>(parentURI: string, childDocument: T, slug?: string, requestOptions?: HTTP.Request.Options): Promise<[T & PersistedProtectedDocument.Class, HTTP.Response.Class]>;
@@ -70,6 +77,7 @@ declare class Documents implements Pointer.Library, Pointer.Validator, ObjectSch
     executeUPDATE(documentURI: string, update: string, requestOptions?: HTTP.Request.Options): Promise<HTTP.Response.Class>;
     _getPersistedDocument(rdfDocument: RDF.Document.Class, response: HTTP.Response.Class): PersistedDocument.Class;
     _getFreeResources(nodes: RDF.Node.Class[]): FreeResources.Class;
+    private persistDocument<T, W>(parentURI, slug, document, requestOptions);
     private getRDFDocument(requestURL, rdfDocuments, response);
     private getDocumentResource(rdfDocument, response);
     private getPointerID(uri);
@@ -89,5 +97,6 @@ declare class Documents implements Pointer.Library, Pointer.Validator, ObjectSch
     private createPersistedDocument(documentPointer, documentResource, fragmentResources);
     private updatePersistedDocument(persistedDocument, documentResource, fragmentResources);
     private getPersistedMetadataResources(freeNodes, rdfDocuments, response);
+    private decoratePersistedDocument(persistedDocument);
 }
 export default Documents;

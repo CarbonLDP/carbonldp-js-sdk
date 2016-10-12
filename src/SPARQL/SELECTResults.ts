@@ -1,6 +1,7 @@
+import * as Pointer from "./../Pointer";
+
 export interface BindingObject {
-	// TODO: Remove any
-	[ binding:string ]:any;
+	[ binding:string ]:string | number | boolean | Date | Pointer.Class;
 }
 
 export interface Class {
